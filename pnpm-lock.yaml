@@ -1,0 +1,20 @@
+lockfileVersion: 5.4
+
+specifiers:
+  treer: ^1.0.4
+
+dependencies:
+  treer: 1.0.4
+
+packages:
+
+  /commander/2.20.3:
+    resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
+    dev: false
+
+  /treer/1.0.4:
+    resolution: {integrity: sha512-Q2oAOOxzGYq+/KoKT1bZSSwDL4Y4WYukjiYBAn6GrNlt1xKKf5JS216dsSzkPDoYTHA9CXdbYkehUG7F1JT+5A==}
+    hasBin: true
+    dependencies:
+      commander: 2.20.3
+    dev: false
