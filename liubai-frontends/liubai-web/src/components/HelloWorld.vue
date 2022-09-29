@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import ScrollView from './scroll-view/scroll-view.vue';
+import ScrollView from './common/scroll-view/scroll-view.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t, locale, availableLocales } = useI18n()
 
 const onScrollToLower = (data: { scrollTop: number }) => {
   console.log("触底了.......")
@@ -7,12 +10,19 @@ const onScrollToLower = (data: { scrollTop: number }) => {
   console.log(" ")
 }
 
+const onChangeLocales = () => {
+  console.log("availableLocales: ", availableLocales)
+  const cur = locale.value
+  const idx = availableLocales.indexOf(cur)
+  locale.value = availableLocales[(idx + 1) % availableLocales.length]
+}
+
 </script>
 
 <template>
   <scroll-view class="hello-world" @scrolltolower="onScrollToLower">
-    <div class="box"></div>
-    <div class="box" style="background: blue"></div>
+    <div class="box">{{ t("hello.world") }}</div>
+    <div class="box" style="background: blue" @click="onChangeLocales"></div>
     <div class="box" style="background: yellowgreen"></div>
     <div class="box" style="background: goldenrod"></div>
   </scroll-view>

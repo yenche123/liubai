@@ -19,3 +19,7 @@
  * w.sidebarWidth
  */
 
+export const useWidthStore = () => {
+  
+}
+

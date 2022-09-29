@@ -11,9 +11,11 @@
   "dependencies": {
     "pinia": "^2.0.22",
     "vue": "^3.2.37",
+    "vue-i18n": "9",
     "vue-router": "4"
   },
   "devDependencies": {
+    "@intlify/vite-plugin-vue-i18n": "^6.0.3",
     "@types/node": "^18.7.18",
     "@vitejs/plugin-vue": "^3.1.0",
     "sass": "^1.55.0",
