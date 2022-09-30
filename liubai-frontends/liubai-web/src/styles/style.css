@@ -56,3 +56,11 @@ input {
   background-repeat: no-repeat;
   background-position: center;
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+}

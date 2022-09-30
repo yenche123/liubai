@@ -5,9 +5,6 @@ import VueI18n from '@intlify/vite-plugin-vue-i18n'
 
 const projectRoot = __dirname
 
-const ttt = resolve(projectRoot, "src/locales/messages/**")
-console.log("ttt: ", ttt)
-
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [

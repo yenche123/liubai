@@ -1,9 +1,38 @@
 <script setup lang="ts">
+import { useMainView } from "./tools/useMainView"
+
+const { leftPx, rightPx } = useMainView()
 
 </script>
 <template>
 
+  <div class="mv-container">
+    <div class="mv-left" :style="{ width: leftPx + 'px' }"></div>
+    <div class="mv-center"></div>
+    <div class="mv-right" :style="{ width: rightPx + 'px' }"></div>
+  </div>
+
 </template>
 <style scoped>
+
+.mv-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  background-color: #f5f5f0;
+}
+
+.mv-left, .mv-right {
+  height: 100%;
+  transition: .25s;
+  background-color: #e6e4bf;
+}
+
+.mv-center {
+  flex: 1;
+  min-height: 100vh;
+}
+
 
 </style>
