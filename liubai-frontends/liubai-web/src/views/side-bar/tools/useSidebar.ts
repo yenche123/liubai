@@ -1,4 +1,4 @@
-import { ref, Ref } from "vue";
+import { onMounted, onUnmounted, ref, Ref } from "vue";
 import { useLayoutStore, LayoutStore } from "../../useLayoutStore";
 import { useWindowSize, useResizeObserver } from "../../../hooks/useVueUse";
 import cfg from "../../../config";
@@ -41,6 +41,45 @@ function listenUserDrag(
   sidebarEl: Ref<HTMLElement | null>,
   layoutStore: LayoutStore
 ) {
+  let lastResizeStamp = 0
+
+
+  const collectState = () => {
+    if(!sidebarEl.value) return
+    const newV = sidebarEl.value.offsetWidth
+    const oldV = layoutStore.sidebarWidth
+    if(newV === oldV) return
+    layoutStore.$patch(state => {
+      console.log("newV: ", newV)
+      state.changeType = "sidebar"
+      state.sidebarWidth = newV
+    })
+  }
+
+  const whenResizeChange = () => {
+    if(lastResizeStamp) window.clearTimeout(lastResizeStamp)
+    lastResizeStamp = window.setTimeout(() => {
+      collectState()
+    }, LISTEN_DELAY)
+  }
+
+  // console.log("111111111")
+
+  // useResizeObserver(sidebarEl.value, entries => {
+  //   console.log("useResizeObserver 监听到发生改变......")
+  //   console.log(entries)
+  //   whenResizeChange()
+  // })
+
+  const rzObserver = new ResizeObserver(entries => {
+    whenResizeChange()
+  })
+  onMounted(() => {
+    rzObserver.observe(sidebarEl.value as HTMLElement)
+  })
+  onUnmounted(() => {
+    rzObserver.disconnect()
+  })
 
 }
 

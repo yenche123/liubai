@@ -69,6 +69,10 @@ const {
   overflow: auto;
 }
 
+.scroll-view::-webkit-scrollbar-thumb {
+  background: #cccccc;
+}
+
 .sv-loading-container {
   width: 100%;
   overflow: hidden;

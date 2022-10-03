@@ -1,5 +1,5 @@
 <script setup lang="ts">
-
+import cfg from "../../config"
 import { useSidebar } from './tools/useSidebar';
 
 const {
@@ -77,7 +77,7 @@ const {
 }
 
 .sb-bar {
-  width: 300px;
+  width: v-bind("cfg.default_sidebar_width + 'px'");
   height: inherit;
   resize: horizontal;
   cursor: ew-resize;
@@ -89,9 +89,9 @@ const {
   transition: .25s;
 }
 
-/* 没有以下该属性 拖动会不生效 */
+/* 没有以下该属性 竖直拖动条会不生效 */
 .sb-bar::-webkit-scrollbar {
-  width: 300px;
+  width: 200px;
   height: inherit;
 }
 
