@@ -9,17 +9,18 @@ export type LayoutChangeType = "window" | "sidebar" | ""
 
 export const useLayoutStore = defineStore("layout", () => {
   const { width, height } = useWindowSize()
+  // console.log("1111111111111")
+  // console.log(width.value)
+  // console.log(" ")
   
   // 需要返回的数据
-  const sidebarWidth = ref(cfg.default_sidebar_width)
+  const sidebarWidth = ref(cfg.default_sidebar_width)    // 如果侧边栏收起来时，该值为 0
   const clientWidth = ref(width.value)
-  const clientHeight = ref(height.value)
   const changeType = ref<LayoutChangeType>("")
 
   return { 
     sidebarWidth, 
-    clientWidth, 
-    clientHeight,
+    clientWidth,
     changeType,
   }
 })

@@ -14,7 +14,7 @@ const {
 <template>
 
   <div class="sb-container"
-    :class="{ 'sb-container_hidden': !open }"
+    :class="{ 'sb-container_hidden': open !== 'open' }"
   >
     <!-- 放于底部给用户拖动的盒子 -->
     <div

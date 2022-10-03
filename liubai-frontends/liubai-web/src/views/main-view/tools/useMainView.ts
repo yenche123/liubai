@@ -24,6 +24,9 @@ function initMainView(
   rightPx: Ref<number>
 ) {
   const { width, height } = useWindowSize()
+  // console.log("2222222222222")
+  // console.log(width.value)
+  // console.log(" ")
 
   leftPx.value = layoutStore.sidebarWidth
   centerPx.value = width.value - leftPx.value - rightPx.value
