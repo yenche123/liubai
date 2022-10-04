@@ -26,3 +26,8 @@ export const useLayoutStore = defineStore("layout", () => {
 })
 
 export type LayoutStore = ReturnType<typeof useLayoutStore>
+export interface LayoutType {
+  sidebarWidth: number
+  clientWidth: number
+  changeType: LayoutChangeType
+}

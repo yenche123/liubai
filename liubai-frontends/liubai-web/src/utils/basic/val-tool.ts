@@ -80,6 +80,12 @@ const getLowerCaseNum = (text: string): number => {
   return num
 }
 
+const getValInMinAndMax = (val: number, min: number, max: number): number => {
+  if(val < min) return min
+  if(val > max) return max
+  return val
+}
+
 export default {
   waitMilli,
   copyObject,
@@ -89,4 +95,5 @@ export default {
   format0,
   getChineseCharNum,
   getLowerCaseNum,
+  getValInMinAndMax,
 }

@@ -20,7 +20,10 @@ const {
     <div
       ref="sidebarEl" 
       class="sb-bar"
-      :style="{ minWidth: minSidebarPx + 'px', maxWidth: maxSidebarPx + 'px' }"
+      :style="{
+        minWidth: minSidebarPx > 0 ? minSidebarPx + 'px' : undefined,
+        maxWidth: maxSidebarPx > 0 ? maxSidebarPx + 'px' : undefined 
+      }"
       :class="{ 'sb-bar_animating': isAnimating }"
     ></div>
 
