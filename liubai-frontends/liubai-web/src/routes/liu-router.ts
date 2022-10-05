@@ -3,12 +3,14 @@ import {
   useRouter as useVueRouter, 
   useRoute as useVueRoute,
   isNavigationFailure, 
-  NavigationHookAfter, 
   Router as VueRouter, 
   RouteLocationRaw,
   NavigationFailure,
   RouteLocationNormalized,
   RouteLocationNormalizedLoaded,
+  useLink,
+  onBeforeRouteLeave,
+  onBeforeRouteUpdate,
 } from "vue-router"
 import time from "../utils/time"
 import { isSameRoute } from "./route-util"
@@ -286,4 +288,7 @@ export {
   goHome,
   useRouter,
   useRouteAndLiuRouter,
+  useLink,
+  onBeforeRouteLeave,
+  onBeforeRouteUpdate,
 }

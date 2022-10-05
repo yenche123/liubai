@@ -4,11 +4,18 @@ import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 
+const props = defineProps({
+  title: {
+    type: String,
+    default: "你好，world!"
+  }
+})
+
 </script>
 <template>
 
   <div class="nb-container">
-    {{ t("hello.world") }}
+    {{ title }}
   </div>
 
 </template>

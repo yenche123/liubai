@@ -24,9 +24,6 @@ function initMainView(
   rightPx: Ref<number>
 ) {
   const { width, height } = useWindowSize()
-  // console.log("2222222222222")
-  // console.log(width.value)
-  // console.log(" ")
 
   leftPx.value = layoutStore.sidebarWidth
   centerPx.value = width.value - leftPx.value - rightPx.value
@@ -34,6 +31,5 @@ function initMainView(
   // 监听左边侧边栏的改变
   layoutStore.$subscribe((mutation, state) => {
     leftPx.value = state.sidebarWidth
-    // console.log("state.sidebarWidth: ", state.sidebarWidth)
   })
 }
