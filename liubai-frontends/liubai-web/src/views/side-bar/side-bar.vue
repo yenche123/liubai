@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import cfg from "../../config"
+import { toRefs } from 'vue';
 import { useSidebar } from './tools/useSidebar';
 
+const { sidebarEl, sbData } = useSidebar()
+
 const {
-  sidebarEl,
   openType,
   minSidebarPx,
+  firstSidebarPx,
   maxSidebarPx,
   isAnimating,
-} = useSidebar()
+} = toRefs(sbData)
 
 </script>
 <template>
@@ -80,7 +82,7 @@ const {
 }
 
 .sb-bar {
-  width: v-bind("cfg.default_sidebar_width + 'px'");
+  width: v-bind("firstSidebarPx + 'px'");
   height: inherit;
   resize: horizontal;
   cursor: ew-resize;
