@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import cfg from "../../../config"
+import { useI18n } from "vue-i18n"
+
+const { t } = useI18n()
 
 </script>
 <template>
 
   <div class="nb-container">
-    導航欄標題
+    {{ t("hello.world") }}
   </div>
 
 </template>
