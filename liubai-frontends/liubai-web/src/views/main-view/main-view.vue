@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useMainView } from "./tools/useMainView"
 import ScrollView from "../../components/common/scroll-view/scroll-view.vue";
+import MainContent from "./main-content/main-content.vue";
+import NaviBar from "../../components/common/navi-bar/navi-bar.vue";
+import NaviVirtual from '../../components/common/navi-virtual/navi-virtual.vue';
 
 const { leftPx, rightPx } = useMainView()
 
@@ -11,15 +14,10 @@ const { leftPx, rightPx } = useMainView()
     <div class="mv-left" :style="{ width: leftPx + 'px' }"></div>
     <div class="mv-center">
       <scroll-view>
-        <div class="mv-test"></div>
-        <div class="mv-test"></div>
-        <div class="mv-test"></div>
-        <div class="mv-test"></div>
-        <div class="mv-test"></div>
-        <div class="mv-test"></div>
-        <div class="mv-test"></div>
-        <div class="mv-test"></div>
+        <navi-virtual></navi-virtual>
+        <main-content></main-content>
       </scroll-view>
+      <navi-bar></navi-bar>
     </div>
     <div class="mv-right" :style="{ width: rightPx + 'px' }"></div>
   </div>
@@ -45,14 +43,6 @@ const { leftPx, rightPx } = useMainView()
   flex: 1;
   height: 100vh;
   position: relative;
-}
-
-.mv-test {
-  width: 50%;
-  height: 300px;
-  background-color: salmon;
-  margin-bottom: 100px;
-  border-radius: 24px;
 }
 
 </style>

@@ -4,7 +4,7 @@ import { useSidebar } from './tools/useSidebar';
 
 const {
   sidebarEl,
-  open,
+  openType,
   minSidebarPx,
   maxSidebarPx,
   isAnimating,
@@ -14,7 +14,7 @@ const {
 <template>
 
   <div class="sb-container"
-    :class="{ 'sb-container_hidden': open !== 'open' }"
+    :class="{ 'sb-container_hidden': openType !== 'opened' }"
   >
     <!-- 放于底部给用户拖动的盒子 -->
     <div
@@ -89,7 +89,7 @@ const {
 }
 
 .sb-bar_animating {
-  transition: .25s;
+  transition: .3s;
 }
 
 /* 没有以下该属性 竖直拖动条会不生效 */

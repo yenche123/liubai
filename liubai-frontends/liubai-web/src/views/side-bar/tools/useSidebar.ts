@@ -1,19 +1,18 @@
 import { onMounted, onUnmounted, ref, Ref, watch } from "vue";
-import { useLayoutStore } from "../../useLayoutStore"
-import type { LayoutStore, LayoutType } from "../../useLayoutStore"
+import { useLayoutStore } from "../../useLayoutStore";
+import type { LayoutStore, LayoutType } from "../../useLayoutStore";
 import { useWindowSize, useResizeObserver } from "../../../hooks/useVueUse";
 import cfg from "../../../config";
 import valTool from "../../../utils/basic/val-tool";
 import time from "../../../utils/time";
+import type { OpenType } from "../../../types/types-view";
 
 const LISTEN_DELAY = 300
 let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后的宽度
 let lastWinResizeStamp = 0
 
-type OpenType = "closed_by_user" | "closed_by_auto" | "open"
-
 interface SidebarData {
-  open: Ref<OpenType>
+  openType: Ref<OpenType>
   minSidebarPx: Ref<number>
   maxSidebarPx: Ref<number>
   isAnimating: Ref<boolean>
@@ -25,18 +24,18 @@ export function useSidebar() {
 
   const sidebarEl = ref<HTMLElement | null>(null)
 
-  const open = ref<OpenType>("open")
+  const openType = ref<OpenType>("opened")
   const minSidebarPx = ref(cfg.min_sidebar_width)
   const maxSidebarPx = ref(600)
   const isAnimating = ref(false)    // 为 true 时表示正在进行过度动画
 
-  initSidebar(layoutStore, open, minSidebarPx, maxSidebarPx)
-  listenUserDrag(sidebarEl, layoutStore, open)
-  listenWindowChange(sidebarEl, layoutStore, { open, minSidebarPx, maxSidebarPx, isAnimating })
+  initSidebar(layoutStore, openType, minSidebarPx, maxSidebarPx)
+  listenUserDrag(sidebarEl, layoutStore, openType)
+  listenWindowChange(sidebarEl, layoutStore, { openType, minSidebarPx, maxSidebarPx, isAnimating })
 
   return {
     sidebarEl,
-    open,
+    openType,
     minSidebarPx,
     maxSidebarPx,
     isAnimating,
@@ -48,13 +47,13 @@ export function useSidebar() {
 function listenUserDrag(
   sidebarEl: Ref<HTMLElement | null>,
   layoutStore: LayoutStore,
-  open: Ref<OpenType>
+  openType: Ref<OpenType>
 ) {
   let lastResizeTimeout = 0
 
   const collectState = () => {
     if(!sidebarEl.value) return
-    if(open.value !== "open") return
+    if(openType.value !== "opened") return
     const newV = sidebarEl.value.offsetWidth
     const oldV = layoutStore.sidebarWidth
     if(newV === oldV) return
@@ -104,7 +103,7 @@ function listenWindowChange(
     const oldSidebarPx = layoutStore.sidebarWidth
     if(newV === oldV) return
     lastWinResizeStamp = time.getLocalTime()
-    let { isAnimating, open, minSidebarPx, maxSidebarPx } = sidebarData
+    let { isAnimating, openType, minSidebarPx, maxSidebarPx } = sidebarData
 
     let newState: Partial<LayoutType> = {
       changeType: "window",
@@ -112,13 +111,13 @@ function listenWindowChange(
     }
 
     // 如果用户已选择关闭侧边栏时
-    if(open.value === "closed_by_user") {
+    if(openType.value === "closed_by_user") {
       layoutStore.$patch(newState)
       return
     }
 
     // 如果是自动关闭侧边栏 并且 窗口小于 700px 时
-    if(open.value === "closed_by_auto" && newV < 700) {
+    if(openType.value === "closed_by_auto" && newV < 700) {
       layoutStore.$patch(newState)
       return
     }
@@ -138,7 +137,7 @@ function listenWindowChange(
       // 先判断 侧边栏已关闭的情况
       newState.sidebarWidth = valTool.getValInMinAndMax(sidebarPxByDrag, min, max)
       isAnimating.value = true
-      if(newState.sidebarWidth > 0) open.value = "open"
+      if(newState.sidebarWidth > 0) openType.value = "opened"
     }
     else if(sidebarPxByDrag !== oldSidebarPx) {
       // sidebarPxByDrag 和 oldSidebarPx 不一致时
@@ -157,7 +156,7 @@ function listenWindowChange(
     
     // 查看是否要设置成关闭侧边栏
     if(max === 0) {
-      open.value = "closed_by_auto"
+      openType.value = "closed_by_auto"
     }
 
     // 设置数据
@@ -168,7 +167,7 @@ function listenWindowChange(
     console.log(newState)
     console.log(" ")
     layoutStore.$patch(newState)
-    checkSidebarElement(sidebarEl, layoutStore, open)
+    checkSidebarElement(sidebarEl, layoutStore, openType)
 
     // 如果在动画中 把动画切回来
     if(isAnimating.value) {
@@ -194,11 +193,11 @@ function listenWindowChange(
 async function checkSidebarElement(
   sidebarEl: Ref<HTMLElement | null>,
   layoutStore: LayoutStore,
-  open: Ref<OpenType>
+  openType: Ref<OpenType>
 ) {
   await valTool.waitMilli(LISTEN_DELAY + 50)
   if(!sidebarEl.value) return
-  if(open.value !== "open") return
+  if(openType.value !== "opened") return
   const newV = sidebarEl.value.offsetWidth
   const oldV = layoutStore.sidebarWidth
   const diff = Math.abs(newV - oldV)
@@ -225,14 +224,14 @@ function getCurrentMinMax(cw: number): { min: number, max: number } {
 // 初始化 sidebar 的宽度
 function initSidebar(
   layoutStore: LayoutStore,
-  open: Ref<OpenType>,
+  openType: Ref<OpenType>,
   minSidebarPx: Ref<number>,
   maxSidebarPx: Ref<number>
 ) {
   const { width } = useWindowSize()
   const w = width.value
   if(w < 600) {
-    open.value = "closed_by_auto"
+    openType.value = "closed_by_auto"
   }
   const { min, max } = getCurrentMinMax(w)
   if(min > 0) minSidebarPx.value = min

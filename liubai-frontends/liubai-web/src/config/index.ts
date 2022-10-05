@@ -11,5 +11,9 @@ export default {
   // 最小 detail-view 所需的宽度 
   min_detailview_width: 350,
 
-  
+  // 默认 detail-view 所需的宽度
+  default_detailview_width: 350,
+
+  // 导航栏高度
+  navi_height: 70,
 }
