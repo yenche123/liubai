@@ -133,12 +133,12 @@ function listenWindowChange(
     // 先获取最小和最大宽
     
     const { min, max } = getCurrentMinMax(newV)
-    console.log("当前窗口宽度: ", newV)
-    console.log("min: ", min)
-    console.log("max: ", max)
-    console.log("sidebarPxByDrag: ", sidebarPxByDrag)
-    console.log("oldSidebarPx: ", oldSidebarPx)
-    console.log(" ")
+    // console.log("当前窗口宽度: ", newV)
+    // console.log("min: ", min)
+    // console.log("max: ", max)
+    // console.log("sidebarPxByDrag: ", sidebarPxByDrag)
+    // console.log("oldSidebarPx: ", oldSidebarPx)
+    // console.log(" ")
 
     if(oldSidebarPx === 0) {
       // 先判断 侧边栏已关闭的情况
@@ -244,30 +244,30 @@ function initSidebar(
   const d2 = layoutStore.sidebarWidth
   const d3 = cfg.default_sidebar_width
 
-  console.log("sidebar 正在初始化..........")
-  console.log("手动拖动 sidebar 的宽为: ", d1)
-  console.log("store 存储 main-view 左侧的宽:", d2)
-  console.log("默认的 sidebar 宽为:   ", d3)
-  console.log("min: ", min)
-  console.log("max: ", max)
-  console.log(" ")
+  // console.log("sidebar 正在初始化..........")
+  // console.log("手动拖动 sidebar 的宽为: ", d1)
+  // console.log("store 存储 main-view 左侧的宽:", d2)
+  // console.log("默认的 sidebar 宽为:   ", d3)
+  // console.log("min: ", min)
+  // console.log("max: ", max)
+  // console.log(" ")
 
   if(w < 600 && sbData.openType === "opened") {
-    console.log("发现 窗口宽度不足 600px，但之前却是打开状态")
-    console.log("则优先采纳 store 的.........")
+    // console.log("发现 窗口宽度不足 600px，但之前却是打开状态")
+    // console.log("则优先采纳 store 的.........")
     sbData.openType = "closed_by_auto"
     sbData.firstSidebarPx = d2
     sidebarPxByDrag = d2
     newState.sidebarWidth = 0
   }
   else if(d2 === 0) {
-    console.log("发现侧边栏 之前已是被关闭状态")
-    console.log("则 firstSidebarPx 设置为上次拖动的宽度")
+    // console.log("发现侧边栏 之前已是被关闭状态")
+    // console.log("则 firstSidebarPx 设置为上次拖动的宽度")
     sbData.firstSidebarPx = sidebarPxByDrag
   }
   else if(d1 !== d2 || d2 !== d3) {
-    console.log("发现侧边栏 之前就是打开状态(store 不为 0)，但三值有所不同")
-    console.log("则优先采纳 store 的")
+    // console.log("发现侧边栏 之前就是打开状态(store 不为 0)，但三值有所不同")
+    // console.log("则优先采纳 store 的")
     sbData.firstSidebarPx = d2
     sidebarPxByDrag = d2
   }
