@@ -1,5 +1,5 @@
-import { ref } from "vue";
-import { SvProps, SvEmits } from "./types"
+import { onActivated, ref } from "vue";
+import type { SvProps, SvEmits } from "./types"
 
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
@@ -53,6 +53,11 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   
     lastScrollTop = sT
   }
+
+  onActivated(() => {
+    if(!sv.value || !scrollTop.value) return
+    sv.value.scrollTop = scrollTop.value
+  })
 
   return { sv, scrollTop, onScrolling }
 }
