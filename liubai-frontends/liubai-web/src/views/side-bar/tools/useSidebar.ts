@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, reactive, ref, Ref, watch } from "vue";
+import { onActivated, onDeactivated, onMounted, onUnmounted, reactive, ref, Ref, watch } from "vue";
 import { useLayoutStore } from "../../useLayoutStore";
 import type { LayoutStore, LayoutType } from "../../useLayoutStore";
 import { useWindowSize, useResizeObserver } from "../../../hooks/useVueUse";
@@ -17,6 +17,7 @@ interface SbData {
   firstSidebarPx: number
   maxSidebarPx: number
   isAnimating: boolean
+  isActivate: boolean
 }
 
 const sbData = reactive<SbData>({
@@ -25,6 +26,7 @@ const sbData = reactive<SbData>({
   firstSidebarPx: cfg.default_sidebar_width,
   maxSidebarPx: 600,
   isAnimating: false,
+  isActivate: true,
 })
 
 
@@ -36,11 +38,22 @@ export function useSidebar() {
   initSidebar(layoutStore)
   listenUserDrag(sidebarEl, layoutStore)
   listenWindowChange(sidebarEl, layoutStore)
+  listenRouteChange()
 
   return {
     sidebarEl,
     sbData,
   }
+}
+
+function listenRouteChange() {
+  onActivated(() => {
+    sbData.isActivate = true
+  })
+
+  onDeactivated(() => {
+    sbData.isActivate = false
+  })
 }
 
 
@@ -52,6 +65,7 @@ function listenUserDrag(
   let lastResizeTimeout = 0
 
   const collectState = () => {
+    if(!sbData.isActivate) return
     if(!sidebarEl.value) return
     if(sbData.openType !== "opened") return
     const newV = sidebarEl.value.offsetWidth

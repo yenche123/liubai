@@ -10,9 +10,14 @@ const { route } = initLiuRouter()
 <template>
   <div class="app-container">
 
-    <!-- 应用内侧边栏 （不包括设置页的侧边栏） -->
-    <side-bar v-if="route.meta.sidebar"></side-bar>
+    <!-- 侧边栏视图 -->
+    <router-view name="LeftSidebar" v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
     
+    <!-- 默认视图 -->
     <router-view v-if="route.meta.keepAlive" v-slot="{ Component }">
       <keep-alive>
         <component :is="Component" />

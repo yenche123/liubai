@@ -1,14 +1,15 @@
 import { RouteRecordRaw, createRouter, createWebHistory } from "vue-router"
-import HomePage from "../pages/home-page/home-page.vue"
-import IndexPage from "../pages/index-page/index-page.vue"
-import LoginPage from "../pages/login-page/login-page.vue"
-import DetailPage from "../pages/detail-page/detail-page.vue"
+
+const HomePage = () => import("../pages/home-page/home-page.vue")
+const LoginPage = () => import("../pages/login-page/login-page.vue")
+const IndexPage = () => import("../pages/index-page/index-page.vue")
+const DetailPage = () => import("../pages/detail-page/detail-page.vue")
+const LeftSidebar = () => import("../views/side-bar/side-bar.vue")
 
 // 扩展 vue-router 下的 RouteMeta 接口
 declare module 'vue-router' {
   interface RouteMeta {
     keepAlive?: boolean
-    sidebar?: boolean
   }
 }
 
@@ -31,20 +32,24 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/",
-    component: IndexPage,
+    components: {
+      default: IndexPage,
+      LeftSidebar,
+    },
     name: "index",
     meta: {
       keepAlive: true,
-      sidebar: true,
     }
   },
   {
     path: "/:contentId(\\w{10,})",
-    component: DetailPage,
+    components: {
+      default: DetailPage,
+      LeftSidebar,
+    },
     name: "detail",
     meta: {
       keepAlive: true,
-      sidebar: true,
     }
   }
 ]
