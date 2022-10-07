@@ -11,13 +11,6 @@ const LISTEN_DELAY = 300
 let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后的宽度
 let lastWinResizeStamp = 0
 
-interface SidebarData {
-  openType: Ref<OpenType>
-  minSidebarPx: Ref<number>
-  maxSidebarPx: Ref<number>
-  isAnimating: Ref<boolean>
-}
-
 interface SbData {
   openType: OpenType
   minSidebarPx: number
@@ -75,11 +68,7 @@ function listenUserDrag(
 
   const whenResizeChange = () => {
     if(lastResizeTimeout) window.clearTimeout(lastResizeTimeout)
-    const now = time.getLocalTime()
-    const diff = lastWinResizeStamp + LISTEN_DELAY + 50 - now
-    if(diff > 0) {
-      return
-    }
+    if(isJustWindowResize()) return
     lastResizeTimeout = window.setTimeout(() => {
       collectState()
     }, LISTEN_DELAY)
@@ -95,6 +84,14 @@ function listenUserDrag(
     rzObserver.disconnect()
   })
 
+}
+
+// 是否刚刚有发生窗口变化
+function isJustWindowResize(): boolean {
+  const now = time.getLocalTime()
+  const diff = lastWinResizeStamp + LISTEN_DELAY + 50 - now
+  if(diff > 0) return true
+  return false
 }
 
 // 监听窗口发生变化
@@ -143,23 +140,10 @@ function listenWindowChange(
     if(oldSidebarPx === 0) {
       // 先判断 侧边栏已关闭的情况
       newState.sidebarWidth = valTool.getValInMinAndMax(sidebarPxByDrag, min, max)
-      sbData.isAnimating = true
       if(newState.sidebarWidth > 0) sbData.openType = "opened"
     }
-    else if(sidebarPxByDrag !== oldSidebarPx) {
-      // sidebarPxByDrag 和 oldSidebarPx 不一致时
-      newState.sidebarWidth = valTool.getValInMinAndMax(sidebarPxByDrag, min, max)
-      sbData.isAnimating = true
-    }
-    else if(oldSidebarPx < min) {
-      // 判断宽高是否在范围内，如果不在就修改之
-      newState.sidebarWidth = min
-      sbData.isAnimating = true
-    }
-    else if(oldSidebarPx > max) {
-      newState.sidebarWidth = max
-      sbData.isAnimating = true
-    }
+
+    sbData.isAnimating = true
     
     // 查看是否要设置成关闭侧边栏
     if(max === 0) {
@@ -169,15 +153,22 @@ function listenWindowChange(
     // 设置数据
     if(min > 0) sbData.minSidebarPx = min
     if(max > 0) sbData.maxSidebarPx = max
+
+    // 等待 316ms 执行动画
+    await valTool.waitMilli(LISTEN_DELAY + 16)
+
+    sbData.isAnimating = false
+
+    // 动画执行后，更新 store 的 sidebarWidth
+    if(max > 0 && sidebarEl.value) {
+      newState.sidebarWidth = sidebarEl.value.offsetWidth
+    }
+    else {
+      newState.sidebarWidth = 0
+    }
+
     // 广播数据
     layoutStore.$patch(newState)
-    checkSidebarElement(sidebarEl, layoutStore)
-
-    // 如果在动画中 把动画切回来
-    if(sbData.isAnimating) {
-      await valTool.waitMilli(301)
-      sbData.isAnimating = false
-    }
   }
 
   const whenWindowChange = () => {
@@ -190,28 +181,6 @@ function listenWindowChange(
   // watch 挂在 setup 周期内 所以不需要在 onUnmounted 手写销毁，vue 会自动完成
   watch(width, (newV, oldV) => {
     whenWindowChange()
-  })
-}
-
-// 由于窗口变化后 sidebar 可能被浏览器乱动，所以这里做一个检查
-async function checkSidebarElement(
-  sidebarEl: Ref<HTMLElement | null>,
-  layoutStore: LayoutStore
-) {
-  await valTool.waitMilli(LISTEN_DELAY + 50)
-  if(!sidebarEl.value) return
-  if(sbData.openType !== "opened") return
-  const newV = sidebarEl.value.offsetWidth
-  const oldV = layoutStore.sidebarWidth
-  const diff = Math.abs(newV - oldV)
-  if(diff < 1) return
-  console.log("发现 sidebar 的宽度不正确........")
-  console.log("newV: ", newV)
-  console.log("oldV: ", oldV)
-  console.log(" ")
-  layoutStore.$patch(state => {
-    state.changeType = ""
-    state.sidebarWidth = newV
   })
 }
 
