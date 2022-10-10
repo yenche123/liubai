@@ -13,7 +13,9 @@ import AppLink from '../../../components/common/app-link/app-link.vue';
   <div class="mv-test">
     <app-link to="/login">去登录页</app-link>
   </div>
-  <div class="mv-test"></div>
+  <div class="mv-test">
+    <app-link to="?cid=sdfgtytfrdesw">打开侧边栏</app-link>
+  </div>
   <div class="mv-test"></div>
   <div class="mv-test"></div>
   <div class="mv-test"></div>

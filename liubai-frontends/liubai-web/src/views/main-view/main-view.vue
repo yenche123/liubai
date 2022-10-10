@@ -7,7 +7,14 @@ import NaviBar from "../../components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '../../components/common/navi-virtual/navi-virtual.vue';
 import { useRouteAndLiuRouter } from "../../routes/liu-router";
 
-const { leftPx, rightPx } = useMainView()
+const props = defineProps({
+  viceViewPx: {
+    type: Number,
+    default: 0,
+  }
+})
+
+const { leftPx, rightPx } = useMainView(props)
 const { route, router } = useRouteAndLiuRouter()
 const routeName = route.name
 
