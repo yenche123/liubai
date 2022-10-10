@@ -38,7 +38,7 @@ export function useSidebar() {
   initSidebar(layoutStore)
   listenUserDrag(sidebarEl, layoutStore)
   listenWindowChange(sidebarEl, layoutStore)
-  listenRouteChange()
+  listenIfActivated()
 
   return {
     sidebarEl,
@@ -46,7 +46,7 @@ export function useSidebar() {
   }
 }
 
-function listenRouteChange() {
+function listenIfActivated() {
   onActivated(() => {
     sbData.isActivate = true
   })
