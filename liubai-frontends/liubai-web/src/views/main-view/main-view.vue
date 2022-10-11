@@ -16,6 +16,7 @@ const props = defineProps({
 
 const { leftPx, rightPx } = useMainView(props)
 const { route, router } = useRouteAndLiuRouter()
+// routeName 在 setup 初始化后就不再改变，避免路由切换影响到当前页面的状态 
 const routeName = route.name
 
 

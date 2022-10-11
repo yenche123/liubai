@@ -8,12 +8,12 @@ export default {
   // 默认 sidebar 宽度
   default_sidebar_width: 300,
 
-  // 最小 detail-view 所需的宽度 
-  min_detailview_width: 350,
+  // 最小 vice-view 所需的宽度 
+  min_viceview_width: 350,
 
-  // 默认 detail-view 所需的宽度
-  default_detailview_width: 350,
+  // 默认 vice-view 所需的宽度
+  default_viceview_width: 350,
 
   // 导航栏高度
-  navi_height: 70,
+  navi_height: 80,
 }

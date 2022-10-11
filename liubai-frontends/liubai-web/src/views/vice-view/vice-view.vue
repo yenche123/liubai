@@ -10,7 +10,7 @@ const { vvData, vvEl } = useViceView(emits)
 const {
   openType,
   minVvPx,
-  detailViewPx,
+  viceViewPx,
   maxVvPx,
   isAnimating,
 } = toRefs(vvData)
@@ -42,22 +42,9 @@ const {
 
     <!-- 装内容的盒子 -->
     <div class="vv-box">
-      <div class="vv-inner-box">
 
-        <div class="vv-content-box"></div>
+      <div class="vv-inner-box"></div>
 
-        <div class="vv-content-box"></div>
-
-        <div class="vv-content-box"></div>
-
-        <div class="vv-content-box"></div>
-
-        <div class="vv-content-box"></div>
-
-        <div class="vv-content-box"></div>
-        <div class="vv-content-box"></div>
-
-      </div>
     </div>
     
   </div>
@@ -70,7 +57,9 @@ const {
   bottom: 0;
   height: 100vh;
   background: #f5f5f0;
+  z-index: 700;
   transition: .3s;
+  direction: rtl;;
 }
 
 .vv-container_hidden {
@@ -78,12 +67,13 @@ const {
 }
 
 .vv-bar {
-  width: v-bind("detailViewPx + 'px'");
+  width: v-bind("viceViewPx + 'px'");
   height: inherit;
   resize: horizontal;
   cursor: ew-resize;
-  opacity: 0;
+  /* opacity: 0; */
   overflow: scroll;   /** 这一行一定要是 scroll 否则无法拖动 */
+  background-color: rebeccapurple;
 }
 
 .vv-bar_animating {
@@ -145,13 +135,13 @@ const {
   justify-content: flex-end;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #dfe8f7;
-  padding-left: 10px;
+  direction: ltr;
+  /* background-color: #dfe8f7; */
 }
 
 .vv-inner-box {
-  width: 80%;
-  max-width: 500px;
+  width: 100%;
+  height: 100%;
   position: relative;
 }
 

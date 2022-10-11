@@ -2,15 +2,15 @@
 import { nextTick, onActivated, onDeactivated, reactive, ref, watch } from "vue";
 import { OpenType } from "../../../types/types-view";
 import { useLayoutStore } from "../../useLayoutStore";
-import type { LayoutStore, LayoutType } from "../../useLayoutStore";
 import cfg from "../../../config";
 import { useRouteAndLiuRouter } from "../../../routes/liu-router"
 import type { LocationQuery } from "vue-router"
+import { useWindowSize } from "../../../hooks/useVueUse"
 
 interface VvData {
   openType: OpenType
   minVvPx: number
-  detailViewPx: number
+  viceViewPx: number
   maxVvPx: number
   isAnimating: boolean
   isActivate: boolean
@@ -30,9 +30,9 @@ export function useViceView(emits: Emits) {
 
   const vvData = reactive<VvData>({
     openType: "closed_by_auto",
-    minVvPx: cfg.min_detailview_width,
-    detailViewPx: cfg.default_sidebar_width,
-    maxVvPx: cfg.default_detailview_width,
+    minVvPx: cfg.min_viceview_width,
+    viceViewPx: cfg.default_viceview_width,
+    maxVvPx: cfg.default_viceview_width,
     isAnimating: false,
     isActivate: true,
   })
@@ -73,9 +73,31 @@ function listenRouteChange(vvData: VvData, emits: Emits) {
   whenQueryChange(route.query)
 }
 
+// 获取最小和最大宽度
+function getMinAndMax() {
+  const { width } = useWindowSize()
+  const winW = width.value
+  const max = winW - layoutStore.sidebarWidth
+  const min = Math.min(max, cfg.min_viceview_width)
+  return { max, min }
+}
+
 function openDetailView(vvData: VvData, emits: Emits) {
+  const { max, min } = getMinAndMax()
+  vvData.minVvPx = min
+  vvData.maxVvPx = max
+  if(vvData.viceViewPx > max) vvData.viceViewPx = max
+  else if(vvData.viceViewPx < min) vvData.viceViewPx = min
   vvData.openType = "opened"
-  emits("widthchange", cfg.default_detailview_width)
+
+
+  console.log("min: ", min)
+  console.log("max: ", max)
+  console.log("viceViewPx: ", vvData.viceViewPx)
+  console.log(" ")
+
+
+  emits("widthchange", vvData.viceViewPx)
 }
 
 function closeDetailView(vvData: VvData, emits: Emits, openType: OpenType = "closed_by_user") {

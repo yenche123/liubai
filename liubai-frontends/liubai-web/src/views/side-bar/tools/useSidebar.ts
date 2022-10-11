@@ -8,7 +8,7 @@ import time from "../../../utils/time";
 import type { OpenType } from "../../../types/types-view";
 
 const LISTEN_DELAY = 300
-let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后的宽度
+let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后视觉上呈现的宽度
 let lastWinResizeStamp = 0
 
 interface SbData {
@@ -56,6 +56,32 @@ function listenIfActivated() {
   })
 }
 
+// 从 sidebarEl 里获取 style 所设置的宽度
+function getSidebarPxFromStyle(sidebarEl: Ref<HTMLElement | null>): number {
+  if(!sidebarEl.value) return cfg.default_sidebar_width
+  const style = sidebarEl.value.style
+  console.log("style: ")
+  console.log(style)
+  console.log(" ")
+
+  let widthStr = style.width
+  if(!widthStr) {
+    const domRect = sidebarEl.value.getBoundingClientRect()
+    console.log("domRect: ", domRect)
+    console.log(" ")
+    return domRect.width
+  }
+
+  const idx = widthStr.indexOf("px")
+  if(idx > 0) {
+    widthStr = widthStr.substring(0, idx)
+  }
+  let w = Number(widthStr)
+  console.log("w: ", w)
+  if(isNaN(w)) return cfg.default_sidebar_width
+  return w
+}
+
 
 // 监听用户拖动侧边栏
 function listenUserDrag(
@@ -71,8 +97,6 @@ function listenUserDrag(
     const newV = sidebarEl.value.offsetWidth
     const oldV = layoutStore.sidebarWidth
     if(newV === oldV) return
-    console.log("sidebarPxByDrag 发生变化................ ", newV)
-    console.log(" ")
     layoutStore.$patch(state => {
       state.changeType = "sidebar"
       state.sidebarWidth = newV
@@ -140,10 +164,10 @@ function listenWindowChange(
       return
     }
 
-    // 其他情况
-    // 先获取最小和最大宽
+    // 其他情况: 侧边栏必须是打开的情况
     
     const { min, max } = getCurrentMinMax(newV)
+    const sidebarPxStyle = getSidebarPxFromStyle(sidebarEl)
     // console.log("当前窗口宽度: ", newV)
     // console.log("min: ", min)
     // console.log("max: ", max)
@@ -151,9 +175,10 @@ function listenWindowChange(
     // console.log("oldSidebarPx: ", oldSidebarPx)
     // console.log(" ")
 
+    newState.sidebarWidth = valTool.getValInMinAndMax(sidebarPxStyle, min, max)
+
     if(oldSidebarPx === 0) {
       // 先判断 侧边栏已关闭的情况
-      newState.sidebarWidth = valTool.getValInMinAndMax(sidebarPxByDrag, min, max)
       if(newState.sidebarWidth > 0) sbData.openType = "opened"
     }
 
@@ -168,21 +193,15 @@ function listenWindowChange(
     if(min > 0) sbData.minSidebarPx = min
     if(max > 0) sbData.maxSidebarPx = max
 
-    // 等待 316ms 执行动画
-    await valTool.waitMilli(LISTEN_DELAY + 16)
-
-    sbData.isAnimating = false
-
-    // 动画执行后，更新 store 的 sidebarWidth
-    if(max > 0 && sidebarEl.value) {
-      newState.sidebarWidth = sidebarEl.value.offsetWidth
-    }
-    else {
-      newState.sidebarWidth = 0
-    }
+    console.log("看一下 newState: ", newState)
+    console.log(" ")
 
     // 广播数据
     layoutStore.$patch(newState)
+
+    // 等待 316ms 执行动画
+    await valTool.waitMilli(LISTEN_DELAY + 16)
+    sbData.isAnimating = false
   }
 
   const whenWindowChange = () => {

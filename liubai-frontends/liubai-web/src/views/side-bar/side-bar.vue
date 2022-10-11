@@ -94,7 +94,7 @@ const {
   transition: .3s;
 }
 
-/* 没有以下该属性 竖直拖动条会不生效 */
+/* 没有以下该属性 只会在右小角一个很小的区域能 drag */
 .sb-bar::-webkit-scrollbar {
   width: 200px;
   height: inherit;
