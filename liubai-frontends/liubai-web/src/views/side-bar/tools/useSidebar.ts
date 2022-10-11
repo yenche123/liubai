@@ -91,7 +91,6 @@ function listenUserDrag(
   let lastResizeTimeout = 0
 
   const collectState = () => {
-    if(!sbData.isActivate) return
     if(!sidebarEl.value) return
     if(sbData.openType !== "opened") return
     const newV = sidebarEl.value.offsetWidth
@@ -105,8 +104,9 @@ function listenUserDrag(
   }
 
   const whenResizeChange = () => {
-    if(lastResizeTimeout) window.clearTimeout(lastResizeTimeout)
     if(isJustWindowResize()) return
+    if(!sbData.isActivate) return
+    if(lastResizeTimeout) window.clearTimeout(lastResizeTimeout)
     lastResizeTimeout = window.setTimeout(() => {
       collectState()
     }, LISTEN_DELAY)

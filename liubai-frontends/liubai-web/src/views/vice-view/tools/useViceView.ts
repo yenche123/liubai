@@ -1,11 +1,22 @@
 
-import { nextTick, onActivated, onDeactivated, reactive, ref, watch } from "vue";
+import { 
+  nextTick, 
+  onActivated, 
+  onDeactivated, 
+  onMounted, 
+  onUnmounted, 
+  reactive, 
+  Ref, 
+  ref, 
+  watch 
+} from "vue";
 import { OpenType } from "../../../types/types-view";
 import { useLayoutStore } from "../../useLayoutStore";
 import cfg from "../../../config";
 import { useRouteAndLiuRouter } from "../../../routes/liu-router"
 import type { LocationQuery } from "vue-router"
 import { useWindowSize } from "../../../hooks/useVueUse"
+import time from "../../../utils/time";
 
 interface VvData {
   openType: OpenType
@@ -14,13 +25,14 @@ interface VvData {
   maxVvPx: number
   isAnimating: boolean
   isActivate: boolean
+  lastParentResizeStamp: number
 }
 
 interface Emits {
   (e: "widthchange", widthPx: number): void
 }
 
-
+const LISTEN_DELAY = 300
 const layoutStore = useLayoutStore()
 
 export function useViceView(emits: Emits) {
@@ -35,16 +47,23 @@ export function useViceView(emits: Emits) {
     maxVvPx: cfg.default_viceview_width,
     isAnimating: false,
     isActivate: true,
+    lastParentResizeStamp: 0,
   })
 
   initViceView(vvData)
-  listenRouteChange(vvData, emits)
+  listenUserDrag(vvData, emits, vvEl)
+  listenRouteChange(vvData, emits, vvEl)
   listenIfActivated(vvData)
+  listenParentChange(vvData, emits, vvEl)
 
   return { vvEl, vvData }
 }
 
-function listenRouteChange(vvData: VvData, emits: Emits) {
+function listenRouteChange(
+  vvData: VvData, 
+  emits: Emits,
+  vvEl: Ref<HTMLElement | null>
+) {
   const { route } = useRouteAndLiuRouter()
 
   const whenQueryChange = (
@@ -52,12 +71,12 @@ function listenRouteChange(vvData: VvData, emits: Emits) {
     oldQuery?: LocationQuery
   ) => {
     if(newQuery.cid && vvData.openType !== "opened") {
-      openDetailView(vvData, emits)
+      openViceView(vvData, emits, vvEl)
       return
     }
 
     if(!newQuery.cid && vvData.openType === "opened") {
-      closeDetailView(vvData, emits)
+      closeViceView(vvData, emits)
       return
     }
 
@@ -82,25 +101,49 @@ function getMinAndMax() {
   return { max, min }
 }
 
-function openDetailView(vvData: VvData, emits: Emits) {
+// 从 vvEl 里获取 style 所设置的宽度
+function getViceViewPxFromStyle(
+  vvEl: Ref<HTMLElement | null>,
+  originalPx: number
+): number {
+  if(!vvEl.value) return originalPx
+  const style = vvEl.value.style
+  let widthStr = style.width
+  if(!widthStr) {
+    const domRect = vvEl.value.getBoundingClientRect()
+    return domRect.width
+  }
+
+  const idx = widthStr.indexOf("px")
+  if(idx > 0) {
+    widthStr = widthStr.substring(0, idx)
+  }
+  let w = Number(widthStr)
+  if(isNaN(w)) return originalPx
+  return w
+}
+
+function openViceView(
+  vvData: VvData, 
+  emits: Emits,
+  vvEl: Ref<HTMLElement | null>  
+) {
   const { max, min } = getMinAndMax()
   vvData.minVvPx = min
   vvData.maxVvPx = max
   if(vvData.viceViewPx > max) vvData.viceViewPx = max
   else if(vvData.viceViewPx < min) vvData.viceViewPx = min
+  else vvData.viceViewPx = getViceViewPxFromStyle(vvEl, vvData.viceViewPx)
   vvData.openType = "opened"
-
-
-  console.log("min: ", min)
-  console.log("max: ", max)
-  console.log("viceViewPx: ", vvData.viceViewPx)
-  console.log(" ")
-
 
   emits("widthchange", vvData.viceViewPx)
 }
 
-function closeDetailView(vvData: VvData, emits: Emits, openType: OpenType = "closed_by_user") {
+function closeViceView(
+  vvData: VvData, 
+  emits: Emits, 
+  openType: OpenType = "closed_by_user"
+) {
   vvData.openType = openType
   emits("widthchange", 0)
 }
@@ -123,3 +166,80 @@ function listenIfActivated(vvData: VvData) {
     vvData.isActivate = false
   })
 }
+
+// 监听自身的拖动
+function listenUserDrag(
+  vvData: VvData, 
+  emits: Emits,
+  vvEl: Ref<HTMLElement | null>
+) {
+
+  let lastResizeTimeout = 0
+
+  const _isJustParentChange = (): boolean => {
+    const now = time.getLocalTime()
+    const diff = vvData.lastParentResizeStamp + LISTEN_DELAY + 50 - now
+    if(diff > 0) return true
+    return false
+  }
+
+  const collectState = () => {
+    if(!vvEl.value) return
+    if(vvData.openType !== "opened") return
+    const newV = vvEl.value.offsetWidth
+    if(newV === vvData.viceViewPx) return
+    console.log("传递 viceview 发生用户手动拖动的变化.........")
+    console.log(newV)
+    console.log(" ")
+    vvData.viceViewPx = newV
+    emits("widthchange", newV)
+  }
+
+  const whenResizeChange = () => {
+    if(_isJustParentChange()) return
+    if(!vvData.isActivate) return
+    if(lastResizeTimeout) window.clearTimeout(lastResizeTimeout)
+    lastResizeTimeout = window.setTimeout(() => {
+      collectState()
+    }, LISTEN_DELAY)
+  }
+
+  const rzObserver = new ResizeObserver(entries => {
+    whenResizeChange()
+  })
+  onMounted(() => {
+    rzObserver.observe(vvEl.value as HTMLElement)
+  })
+  onUnmounted(() => {
+    rzObserver.disconnect()
+  })
+}
+
+// 监听 sidebar 或者 window 窗口的宽度变化
+function listenParentChange(
+  vvData: VvData, 
+  emits: Emits,
+  vvEl: Ref<HTMLElement | null>
+) {
+  layoutStore.$subscribe((mutation, state) => {
+    if(vvData.openType !== "opened") return
+
+    console.log("viceView listenParentChange 监听到变化.........")
+    console.log(" ")
+
+    let vvPx = getViceViewPxFromStyle(vvEl, vvData.viceViewPx)
+    const { min, max } = getMinAndMax()
+    if(vvPx < min) vvPx = min
+    if(vvPx > max) vvPx = max
+
+    vvData.lastParentResizeStamp = time.getLocalTime()
+    vvData.viceViewPx = vvPx
+    vvData.minVvPx = min
+    vvData.maxVvPx = max
+
+    emits("widthchange", vvPx)
+  })
+}
+
+
+
