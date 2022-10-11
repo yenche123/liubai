@@ -17,6 +17,7 @@ import { useRouteAndLiuRouter } from "../../../routes/liu-router"
 import type { LocationQuery } from "vue-router"
 import { useWindowSize } from "../../../hooks/useVueUse"
 import time from "../../../utils/time";
+import valTool from "../../../utils/basic/val-tool";
 
 interface VvData {
   openType: OpenType
@@ -221,7 +222,7 @@ function listenParentChange(
   emits: Emits,
   vvEl: Ref<HTMLElement | null>
 ) {
-  layoutStore.$subscribe((mutation, state) => {
+  layoutStore.$subscribe(async (mutation, state) => {
     if(vvData.openType !== "opened") return
 
     console.log("viceView listenParentChange 监听到变化.........")
@@ -232,12 +233,16 @@ function listenParentChange(
     if(vvPx < min) vvPx = min
     if(vvPx > max) vvPx = max
 
+    vvData.isAnimating = true
     vvData.lastParentResizeStamp = time.getLocalTime()
     vvData.viceViewPx = vvPx
     vvData.minVvPx = min
     vvData.maxVvPx = max
 
     emits("widthchange", vvPx)
+
+    await valTool.waitMilli(LISTEN_DELAY + 16)
+    vvData.isAnimating = false
   })
 }
 
