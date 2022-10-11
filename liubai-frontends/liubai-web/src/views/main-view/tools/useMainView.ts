@@ -3,6 +3,7 @@
 import { ref, Ref, toRefs, watch } from "vue"
 import { useLayoutStore, LayoutStore } from "../../useLayoutStore"
 import { useWindowSize } from "../../../hooks/useVueUse"
+import cfg from "../../../config"
 
 interface MainViewProps {
   viceViewPx: number
@@ -38,11 +39,18 @@ function initMainView(
   // 监听左边侧边栏的改变
   layoutStore.$subscribe((mutation, state) => {
     leftPx.value = state.sidebarWidth
-    centerPx.value = width.value - leftPx.value - props.viceViewPx
+    centerPx.value = width.value - leftPx.value - rightPx.value
   })
 
   // 监听右边侧边栏的改变
   watch(() => props.viceViewPx, (newV) => {
+    let tmpCenter = width.value - leftPx.value - newV
+    if(tmpCenter < cfg.min_mainview_width) {
+      rightPx.value = 0
+      centerPx.value = width.value - leftPx.value
+      return
+    }
+    
     rightPx.value = newV
     centerPx.value = width.value - leftPx.value - newV
   })

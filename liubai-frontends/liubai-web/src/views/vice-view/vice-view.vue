@@ -43,7 +43,7 @@ const {
     <!-- 装内容的盒子 -->
     <div class="vv-box">
 
-      <div class="vv-inner-box"></div>
+      <div class="vv-inner-box">你好哦</div>
 
     </div>
     
@@ -71,9 +71,8 @@ const {
   height: inherit;
   resize: horizontal;
   cursor: ew-resize;
-  /* opacity: 0; */
+  opacity: 0;
   overflow: scroll;   /** 这一行一定要是 scroll 否则无法拖动 */
-  background-color: rebeccapurple;
 }
 
 .vv-bar_animating {
@@ -105,7 +104,8 @@ const {
   pointer-events: none;
 }
 
-.vv-bar:hover ~ .vv-default-line {
+.vv-bar:hover ~ .vv-default-line,
+.vv-bar:active ~ .vv-default-line {
   opacity: 0;
 }
 
@@ -120,7 +120,8 @@ const {
   pointer-events: none;
 }
 
-.vv-bar:hover ~ .vv-drag-line {
+.vv-bar:hover ~ .vv-drag-line,
+.vv-bar:active ~ .vv-drag-line {
   opacity: 1;
 }
 
@@ -136,7 +137,7 @@ const {
   overflow-x: hidden;
   overflow-y: auto;
   direction: ltr;
-  /* background-color: #dfe8f7; */
+  background-color: #dfe8f7;
 }
 
 .vv-inner-box {

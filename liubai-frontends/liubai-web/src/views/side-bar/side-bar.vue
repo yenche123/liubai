@@ -119,7 +119,8 @@ const {
   pointer-events: none;
 }
 
-.sb-bar:hover ~ .sb-default-line {
+.sb-bar:hover ~ .sb-default-line, 
+.sb-bar:active ~ .sb-bar-default-line {
   opacity: 0;
 }
 
@@ -134,7 +135,8 @@ const {
   pointer-events: none;
 }
 
-.sb-bar:hover ~ .sb-drag-line {
+.sb-bar:hover ~ .sb-drag-line,
+.sb-bar:active ~ .sb-drag-line {
   opacity: 1;
 }
 
