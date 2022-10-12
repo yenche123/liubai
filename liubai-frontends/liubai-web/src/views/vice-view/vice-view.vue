@@ -13,12 +13,16 @@ const {
   viceViewPx,
   maxVvPx,
   isAnimating,
+  shadow,
 } = toRefs(vvData)
 
 </script>
 <template>
   <div class="vv-container"
-    :class="{ 'vv-container_hidden': openType !== 'opened'}"
+    :class="{ 
+      'vv-container_hidden': openType !== 'opened',
+      'vv-container_shadow': shadow,
+    }"
   >
     <!-- 放于底部给用户拖动的盒子 -->
     <div
@@ -63,7 +67,11 @@ const {
 }
 
 .vv-container_hidden {
-  transform: translateX(100%);
+  transform: translateX(102%);
+}
+
+.vv-container_shadow {
+  box-shadow: -7px 0 14px rgba(0,0,0,.11);
 }
 
 .vv-bar {

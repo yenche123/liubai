@@ -27,6 +27,7 @@ interface VvData {
   isAnimating: boolean
   isActivate: boolean
   lastParentResizeStamp: number
+  shadow: boolean
 }
 
 interface Emits {
@@ -49,6 +50,7 @@ export function useViceView(emits: Emits) {
     isAnimating: false,
     isActivate: true,
     lastParentResizeStamp: 0,
+    shadow: false,
   })
 
   initViceView(vvData)
@@ -193,6 +195,7 @@ function listenUserDrag(
     console.log(newV)
     console.log(" ")
     vvData.viceViewPx = newV
+    vvData.shadow = judgeIfShadow(vvData)
     emits("widthchange", newV)
   }
 
@@ -238,12 +241,20 @@ function listenParentChange(
     vvData.viceViewPx = vvPx
     vvData.minVvPx = min
     vvData.maxVvPx = max
+    vvData.shadow = judgeIfShadow(vvData)
 
     emits("widthchange", vvPx)
 
     await valTool.waitMilli(LISTEN_DELAY + 16)
     vvData.isAnimating = false
   })
+}
+
+function judgeIfShadow(vvData: VvData) {
+  let { sidebarWidth, clientWidth } = layoutStore
+  let diff = clientWidth - sidebarWidth - vvData.viceViewPx
+  if(diff < cfg.min_mainview_width) return true
+  return false
 }
 
 
