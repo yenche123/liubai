@@ -1,11 +1,5 @@
+/** 公用的 css 变量 */
 
-
-.theme-light {
-  --primary-color: #00416A;   /** 皇家蓝 */
-  --on-primay: #fafafa;
-
-}
-
-.theme-dark {
-
+.theme-common {
+  --hover-opacity: 0.5;
 }

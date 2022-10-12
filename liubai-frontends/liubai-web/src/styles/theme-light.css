@@ -1,0 +1,12 @@
+/** 浅色系 */
+
+.theme-light {
+  --primary-color: #2a6885;   /** 皇家蓝 #00416A */
+  --on-primary: #fafafa;
+  --primary-hover: #19465e;
+  --primary-active: #0c2738;
+  --card-bg: #ffffff;
+  --sidebar-bg: #ffffff;
+  --bg-color: #f9f9f9;
+  --main-text: #1f2429;
+}

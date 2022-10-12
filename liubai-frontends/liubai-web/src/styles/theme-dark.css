@@ -1,0 +1,12 @@
+/** 深色系 */
+
+.theme-dark {
+  --primary-color: #99cbff;
+  --on-primary: #003354;
+  --primary-hover: #77a3d9;
+  --primary-active: #597eb3;
+  --card-bg: #282828;
+  --sidebar-bg: #282828;
+  --bg-color: #373737;
+  --main-text: #e7e9ea;
+}
