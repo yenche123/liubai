@@ -165,7 +165,6 @@ function listenIfActivated(vvData: VvData) {
   })
 
   onDeactivated(() => {
-    console.log("onDeactivated.................")
     vvData.isActivate = false
   })
 }
@@ -191,9 +190,6 @@ function listenUserDrag(
     if(vvData.openType !== "opened") return
     const newV = vvEl.value.offsetWidth
     if(newV === vvData.viceViewPx) return
-    console.log("传递 viceview 发生用户手动拖动的变化.........")
-    console.log(newV)
-    console.log(" ")
     vvData.viceViewPx = newV
     vvData.shadow = judgeIfShadow(vvData)
     emits("widthchange", newV)
@@ -227,9 +223,6 @@ function listenParentChange(
 ) {
   layoutStore.$subscribe(async (mutation, state) => {
     if(vvData.openType !== "opened") return
-
-    console.log("viceView listenParentChange 监听到变化.........")
-    console.log(" ")
 
     let vvPx = getViceViewPxFromStyle(vvEl, vvData.viceViewPx)
     const { min, max } = getMinAndMax()

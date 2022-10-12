@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { toRefs } from "vue";
 import { useViceView } from "./tools/useViceView"
+import { useVvUI } from "./tools/useVvUI";
+import ViceContent from "./vice-content/vice-content.vue";
 
 const emits = defineEmits<{
   (e: "widthchange", widthPx: number): void
@@ -15,6 +17,12 @@ const {
   isAnimating,
   shadow,
 } = toRefs(vvData)
+
+const {
+  isDraging,
+  onStartDrag,
+} = useVvUI()
+
 
 </script>
 <template>
@@ -33,6 +41,7 @@ const {
         maxWidth: maxVvPx > 0 ? maxVvPx + 'px' : undefined 
       }"
       :class="{ 'vv-bar_animating': isAnimating }"
+      @pointerdown="onStartDrag"
     ></div>
 
     <!-- 默认的分割线 -->
@@ -47,8 +56,10 @@ const {
     <!-- 装内容的盒子 -->
     <div class="vv-box">
 
-      <div class="vv-inner-box">你好哦</div>
-
+      <div class="vv-inner-box">
+        <ViceContent :is-outter-draging="isDraging"></ViceContent>
+      </div>
+      
     </div>
     
   </div>
@@ -63,7 +74,7 @@ const {
   background: #f5f5f0;
   z-index: 700;
   transition: .3s;
-  direction: rtl;;
+  direction: rtl;
 }
 
 .vv-container_hidden {
@@ -98,7 +109,7 @@ const {
   top: 0;
   bottom: 0;
   left: 0;
-  border-right: 2px solid #e6e6e6;
+  border-left: 2px solid #e6e6e6;
   transition: .2s;
   pointer-events: none;
 }
@@ -108,7 +119,7 @@ const {
   top: 0;
   bottom: 0;
   left: 2px;
-  border-right: 2px solid #dfe8f7;
+  border-left: 2px solid #dfe8f7;
   pointer-events: none;
 }
 
@@ -122,15 +133,19 @@ const {
   top: 0;
   bottom: 0;
   left: 0;
-  border-right: 2px dashed #bbbbbb;
+  border-left: 2px dashed #bbbbbb;
   opacity: 0;
   transition: .2s;
   pointer-events: none;
 }
 
-.vv-bar:hover ~ .vv-drag-line,
+.vv-bar:hover ~ .vv-drag-line {
+  opacity: 1;
+}
+
 .vv-bar:active ~ .vv-drag-line {
   opacity: 1;
+  border-left: 2px solid #aaaaaa;
 }
 
 /** 真正承载侧边栏内容的盒子 */
