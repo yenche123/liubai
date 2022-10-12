@@ -60,15 +60,10 @@ function listenIfActivated() {
 function getSidebarPxFromStyle(sidebarEl: Ref<HTMLElement | null>): number {
   if(!sidebarEl.value) return cfg.default_sidebar_width
   const style = sidebarEl.value.style
-  console.log("style: ")
-  console.log(style)
-  console.log(" ")
 
   let widthStr = style.width
   if(!widthStr) {
     const domRect = sidebarEl.value.getBoundingClientRect()
-    console.log("domRect: ", domRect)
-    console.log(" ")
     return domRect.width
   }
 

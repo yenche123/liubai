@@ -39,7 +39,16 @@ function initMainView(
   // 监听左边侧边栏的改变
   layoutStore.$subscribe((mutation, state) => {
     leftPx.value = state.sidebarWidth
-    centerPx.value = width.value - leftPx.value - rightPx.value
+    let tmpCenter = state.clientWidth - leftPx.value - props.viceViewPx
+    console.log("tmpCenter: ", tmpCenter)
+    console.log(" ")
+    if(tmpCenter < cfg.min_mainview_width) {
+      rightPx.value = 0
+      centerPx.value = state.clientWidth - leftPx.value
+      return
+    }
+    rightPx.value = props.viceViewPx
+    centerPx.value = tmpCenter
   })
 
   // 监听右边侧边栏的改变
@@ -52,6 +61,6 @@ function initMainView(
     }
     
     rightPx.value = newV
-    centerPx.value = width.value - leftPx.value - newV
+    centerPx.value = tmpCenter
   })
 }

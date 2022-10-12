@@ -9,7 +9,7 @@ const props = defineProps({
 
 </script>
 <template>
-  <iframe width="100%" height="315" src="https://www.youtube.com/embed/1dudOwY9Jp4" title="YouTube video player"
+  <iframe width="100%" height="100%" src="https://www.youtube.com/embed/1dudOwY9Jp4" title="YouTube video player"
     frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
     allowfullscreen
   ></iframe>
@@ -20,8 +20,8 @@ const props = defineProps({
 
 .vc-cover {
   width: 100%;
-  height: 315px;
-  margin-top: -315px;
+  height: 100vh;
+  margin-top: -101vh;
   background-color: aliceblue;
   opacity: 0.5;
 }

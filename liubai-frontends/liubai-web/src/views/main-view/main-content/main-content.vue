@@ -14,7 +14,7 @@ import AppLink from '../../../components/common/app-link/app-link.vue';
     <app-link to="/login">去登录页</app-link>
   </div>
   <div class="mv-test">
-    <app-link to="?cid=sdfgtytfrdesw">打开侧边栏</app-link>
+    <app-link to="?cid=sdfgtytfrdesw">搜尋: 嘉義</app-link>
   </div>
   <div class="mv-test"></div>
   <div class="mv-test"></div>
@@ -29,6 +29,7 @@ import AppLink from '../../../components/common/app-link/app-link.vue';
   background-color: salmon;
   margin-bottom: 100px;
   border-radius: 24px;
+  padding: 10px;
 }
 
 .test-a-active {

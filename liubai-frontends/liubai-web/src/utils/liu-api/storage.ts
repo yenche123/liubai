@@ -10,7 +10,6 @@ const _listenStorageChange = () => {
 
   // 只有在不同标签页或窗口才监听得到
   window.addEventListener("storage", e => {
-    console.log("监听到 storage 变化.......")
     const { key, newValue } = e
 
     // key 不存在，代表调用了 localStorage.clear()
