@@ -55,7 +55,7 @@ const routeName = route.name
   min-height: 100vh;
   display: flex;
   align-items: flex-start;
-  background-color: #f5f5f0;
+  background-color: var(--bg-color);
 }
 
 .mv-left, .mv-right {

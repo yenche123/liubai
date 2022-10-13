@@ -1,5 +1,6 @@
 /** 公用的 css 变量 */
 
 .theme-common {
+  transition: color .3s, background-color .3s;
   --hover-opacity: 0.5;
 }

@@ -71,7 +71,7 @@ const {
 }
 
 .scroll-view::-webkit-scrollbar-thumb {
-  background: #cccccc;
+  background: var(--scrollbar-thumb);
 }
 
 .sv-loading-container {

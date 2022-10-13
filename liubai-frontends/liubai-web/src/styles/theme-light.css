@@ -5,8 +5,23 @@
   --on-primary: #fafafa;
   --primary-hover: #19465e;
   --primary-active: #0c2738;
+
   --card-bg: #ffffff;
-  --sidebar-bg: #ffffff;
   --bg-color: #f9f9f9;
   --main-text: #1f2429;
+  --scrollbar-thumb: #c3c3c3;
+
+  --sidebar-bg: #ffffff;
+  --sidebar-scrollbar-thumb: #e3e3e3;
+  
+  
+  --line-default: #efefef;    /** 浅浅的分割线 */
+  --line-hover: #d1d1d1;
+  --line-active: #ababab;
+
+  /** 一些比较少用到的 css 变量 */
+  --vice-bg: #f3f3f3;
+  --vice-shadow: -7px 0 14px 1px rgba(0,0,0,.11);
+  --vice-scrollbar-thumb: #bababa;
+  
 }

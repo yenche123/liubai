@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import { useViceContent } from "./tools/useViceContent";
 
 const props = defineProps({
   isOutterDraging: {
@@ -9,8 +10,7 @@ const props = defineProps({
 })
 
 const iframeEl = ref<HTMLIFrameElement | null>(null)
-const iframeSrc = ref("")
-const I_SRC = "https://www.google.com/?igu=1"
+const { iframeSrc } = useViceContent()
 const google_map_key = "AIzaSyCpLdXu0Smt4skm4P6tBfJ8kzE6vgZ9t40"
 
 onMounted(() => {
@@ -25,11 +25,13 @@ onMounted(() => {
     value: customUa,
     writable: false
   })
-  console.log("iframeWindow.navigator:")
-  console.log(iframeWindow.navigator)
-  console.log(" ")
-  iframeSrc.value = I_SRC
 })
+
+const onIframeLoad = (e: Event) => {
+  console.log("onIframeLoad............")
+  console.log(e)
+  console.log(" ")
+}
 
 </script>
 <template>
@@ -42,9 +44,10 @@ onMounted(() => {
     width="100%" height="100%"
     :src="iframeSrc"
     class="vc-iframe"
+    @load="onIframeLoad"
   ></iframe>
   
-  <div v-if="isOutterDraging" class="vc-cover"></div>
+  <div class="vc-cover" :class="{ 'vc-cover_show': isOutterDraging }"></div>
 
 </template>
 <style scoped>
@@ -59,7 +62,14 @@ onMounted(() => {
   height: 100vh;
   margin-top: -101vh;
   background-color: aliceblue;
-  opacity: 0.5;
+  opacity: 0;
+  visibility: hidden;
+  transition: .3s;
+}
+
+.vc-cover_show {
+  opacity: .5;
+  visibility: visible;
 }
 
 </style>

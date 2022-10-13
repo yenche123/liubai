@@ -73,12 +73,13 @@ function listenRouteChange(
     newQuery: LocationQuery, 
     oldQuery?: LocationQuery
   ) => {
-    if(newQuery.cid && vvData.openType !== "opened") {
+    const openRequired = judgeIfOpen(newQuery)
+    if(openRequired && vvData.openType !== "opened") {
       openViceView(vvData, emits, vvEl)
       return
     }
 
-    if(!newQuery.cid && vvData.openType === "opened") {
+    if(!openRequired && vvData.openType === "opened") {
       closeViceView(vvData, emits)
       return
     }
@@ -93,6 +94,13 @@ function listenRouteChange(
 
   // 初始化时，先执行一次
   whenQueryChange(route.query)
+}
+
+/*********** 根据参数判断是否打开侧边栏  *************/
+function judgeIfOpen(newQuery: LocationQuery): boolean {
+  let { cid, outq } = newQuery
+  if(cid || outq) return true
+  return false
 }
 
 // 获取最小和最大宽度

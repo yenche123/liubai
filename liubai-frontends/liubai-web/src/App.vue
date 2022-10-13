@@ -1,14 +1,21 @@
 <script setup lang="ts">
-import SideBar from './views/side-bar/side-bar.vue';
+import { useDynamics } from "./hooks/useDynamics"
 import { initLiuRouter } from "./routes/liu-router"
 
 const { route } = initLiuRouter()
-
+const { theme } = useDynamics()
 
 </script>
 
 <template>
-  <div class="app-container">
+
+  <!-- theme-common 放在 theme.css 文件里 -->
+  <!-- theme-light 放在 theme-light.css 文件里 -->
+  <!-- theme-dark 放在 theme-dark.css 文件里 -->
+  <div 
+    class="app-container theme-common theme-light"
+    :class="{ 'theme-dark': theme === 'dark' }"
+  >
 
     <!-- 侧边栏视图 -->
     <router-view name="LeftSidebar" v-slot="{ Component }">

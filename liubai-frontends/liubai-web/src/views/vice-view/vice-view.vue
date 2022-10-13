@@ -71,7 +71,7 @@ const {
   right: 0;
   bottom: 0;
   height: 100vh;
-  background: #f5f5f0;
+  background-color: var(--bg-color);
   z-index: 700;
   transition: .3s;
   direction: rtl;
@@ -82,7 +82,7 @@ const {
 }
 
 .vv-container_shadow {
-  box-shadow: -7px 0 14px rgba(0,0,0,.11);
+  box-shadow: var(--vice-shadow);
 }
 
 .vv-bar {
@@ -109,7 +109,7 @@ const {
   top: 0;
   bottom: 0;
   left: 0;
-  border-left: 2px solid #e6e6e6;
+  border-left: 2px solid var(--line-default);
   transition: .2s;
   pointer-events: none;
 }
@@ -119,7 +119,7 @@ const {
   top: 0;
   bottom: 0;
   left: 2px;
-  border-left: 2px solid #dfe8f7;
+  border-left: 2px solid var(--vice-bg);
   pointer-events: none;
 }
 
@@ -133,7 +133,7 @@ const {
   top: 0;
   bottom: 0;
   left: 0;
-  border-left: 2px dashed #bbbbbb;
+  border-left: 2px dashed var(--line-hover);
   opacity: 0;
   transition: .2s;
   pointer-events: none;
@@ -145,7 +145,7 @@ const {
 
 .vv-bar:active ~ .vv-drag-line {
   opacity: 1;
-  border-left: 2px solid #aaaaaa;
+  border-left: 2px solid var(--line-active);
 }
 
 /** 真正承载侧边栏内容的盒子 */
@@ -160,7 +160,7 @@ const {
   overflow-x: hidden;
   overflow-y: auto;
   direction: ltr;
-  background-color: #dfe8f7;
+  background-color: var(--vice-bg);
 }
 
 .vv-inner-box {
@@ -171,21 +171,13 @@ const {
 }
 
 .vv-box::-webkit-scrollbar-thumb {
-  background: #dfe8f7;
+  background: var(--vice-scrollbar-thumb);
   opacity: 0;
   transition: .15s;
 }
 
 .vv-box:hover::-webkit-scrollbar-thumb {
-  background: #84afd1;
+  opacity: 1;
 }
-
-.vv-content-box {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 50px;
-  background-color: #fdeede;
-}
-
 
 </style>

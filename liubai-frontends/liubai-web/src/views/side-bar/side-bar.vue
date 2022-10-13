@@ -72,7 +72,6 @@ const {
   left: 0;
   bottom: 0;
   height: 100vh;
-  background: #f5f5f0;
   z-index: 500;
   transition: .3s;
 }
@@ -105,7 +104,7 @@ const {
   top: 0;
   bottom: 0;
   right: 4px;
-  border-right: 2px solid #e6e6e6;
+  border-right: 2px solid var(--line-default);
   transition: .2s;
   pointer-events: none;
 }
@@ -115,13 +114,13 @@ const {
   top: 0;
   bottom: 0;
   right: 6px;
-  border-right: 2px solid #dfe8f7;
+  border-right: 4px solid var(--sidebar-bg);
   pointer-events: none;
 }
 
 .sb-bar:hover ~ .sb-default-line, 
 .sb-bar:active ~ .sb-bar-default-line {
-  opacity: 0;
+  border-right: 2px solid var(--sidebar-bg);
 }
 
 .sb-drag-line {
@@ -129,15 +128,19 @@ const {
   top: 0;
   bottom: 0;
   right: 4px;
-  border-right: 2px dashed #bbbbbb;
+  border-right: 2px dashed var(--line-hover);
   opacity: 0;
   transition: .2s;
   pointer-events: none;
 }
 
-.sb-bar:hover ~ .sb-drag-line,
+.sb-bar:hover ~ .sb-drag-line {
+  opacity: 1;
+}
+
 .sb-bar:active ~ .sb-drag-line {
   opacity: 1;
+  border-right: 2px dashed var(--line-active);
 }
 
 /** 真正承载侧边栏内容的盒子 */
@@ -146,12 +149,12 @@ const {
   left: 0;
   top: 0;
   bottom: 0;
-  right: 8px;
+  right: 6px;
   display: flex;
   justify-content: flex-end;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #dfe8f7;
+  background-color: var(--sidebar-bg);
   padding-right: 10px;
 }
 
@@ -162,13 +165,12 @@ const {
 }
 
 .sb-box::-webkit-scrollbar-thumb {
-  background: #dfe8f7;
-  opacity: 0;
+  background-color: var(--sidebar-bg);
   transition: .15s;
 }
 
 .sb-box:hover::-webkit-scrollbar-thumb {
-  background: #84afd1;
+  background-color: var(--sidebar-scrollbar-thumb);
 }
 
 .sb-content-box {
@@ -177,7 +179,5 @@ const {
   margin-bottom: 50px;
   background-color: #fdeede;
 }
-
-
 
 </style>

@@ -244,11 +244,16 @@ const initLiuRouter = (): RouteAndRouter => {
   })
 
   const _listenPopState = (e: PopStateEvent) => {
+    // console.log("popstate...........")
+    // console.log(e)
+    // console.log(" ")
+
     stateFromPopState = e.state
     lastSetPopStateStamp = time.getLocalTime()
     _judgeBrowserJump()
   }
 
+  // iframe 内的路由历史变化（前进或后退） 不会在这里触发
   window.addEventListener("popstate", _listenPopState)
 
   onUnmounted(() => {

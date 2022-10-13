@@ -14,7 +14,9 @@ import AppLink from '../../../components/common/app-link/app-link.vue';
     <app-link to="/login">去登录页</app-link>
   </div>
   <div class="mv-test">
-    <app-link to="?cid=sdfgtytfrdesw">搜尋: 嘉義</app-link>
+    <span>自閉症類群（英語：Autism spectrum）是一種心理狀況的譜系障礙，亦稱自閉症類群障礙（英語：autism spectrum disorders，簡寫</span>
+    <app-link to="?outq=ASD">ASD</app-link>
+    <span>；或autism spectrum conditions，簡寫ASC）或泛自閉症障礙，描述了一個被DSM-5歸類為神經發展症候群的譜系範圍。</span>
   </div>
   <div class="mv-test"></div>
   <div class="mv-test"></div>
