@@ -39,7 +39,11 @@ function initMainView(
   // 监听左边侧边栏的改变
   layoutStore.$subscribe((mutation, state) => {
     leftPx.value = state.sidebarWidth
+    
     let tmpCenter = state.clientWidth - leftPx.value - props.viceViewPx
+    console.log("state.clientWidth: ", state.clientWidth)
+    console.log("leftPx.value: ", leftPx.value)
+    console.log("props.viceViewPx: ", props.viceViewPx)
     console.log("tmpCenter: ", tmpCenter)
     console.log(" ")
     if(tmpCenter < cfg.min_mainview_width) {

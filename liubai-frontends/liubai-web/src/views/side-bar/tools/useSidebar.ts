@@ -188,9 +188,6 @@ function listenWindowChange(
     if(min > 0) sbData.minSidebarPx = min
     if(max > 0) sbData.maxSidebarPx = max
 
-    console.log("看一下 newState: ", newState)
-    console.log(" ")
-
     // 广播数据
     layoutStore.$patch(newState)
 
