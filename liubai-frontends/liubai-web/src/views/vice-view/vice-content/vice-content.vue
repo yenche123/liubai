@@ -9,8 +9,7 @@ const props = defineProps({
   }
 })
 
-const iframeEl = ref<HTMLIFrameElement | null>(null)
-const { iframeSrc } = useViceContent()
+const { iframeSrc, iframeEl, onTapBack } = useViceContent()
 const google_map_key = "AIzaSyCpLdXu0Smt4skm4P6tBfJ8kzE6vgZ9t40"
 
 onMounted(() => {
@@ -41,13 +40,14 @@ const onIframeLoad = (e: Event) => {
   ></iframe> -->
   <iframe
     ref="iframeEl"
-    width="100%" height="100%"
+    width="100%" height="90%"
     :src="iframeSrc"
     class="vc-iframe"
     @load="onIframeLoad"
   ></iframe>
   
   <div class="vc-cover" :class="{ 'vc-cover_show': isOutterDraging }"></div>
+  <div class="vc-btn" @click="onTapBack">返回</div>
 
 </template>
 <style scoped>
@@ -59,17 +59,34 @@ const onIframeLoad = (e: Event) => {
 
 .vc-cover {
   width: 100%;
-  height: 100vh;
-  margin-top: -101vh;
+  height: 90vh;
+  margin-top: -91vh;
   background-color: aliceblue;
   opacity: 0;
   visibility: hidden;
   transition: .3s;
+  user-select: none;
 }
 
 .vc-cover_show {
   opacity: .5;
   visibility: visible;
 }
+
+.vc-btn {
+  cursor: pointer;
+  width: 100%;
+  height: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  color: var(--on-primary);
+  background-color: var(--primary-color);
+}
+
+
+
+
 
 </style>

@@ -5,8 +5,22 @@
   --on-primary: #003354;
   --primary-hover: #77a3d9;
   --primary-active: #597eb3;
+
   --card-bg: #282828;
-  --sidebar-bg: #282828;
-  --bg-color: #373737;
+  --bg-color: #323232;
   --main-text: #e7e9ea;
+  --scrollbar-thumb: #585858;
+
+  --sidebar-bg: #282828;
+  --sidebar-scrollbar-thumb: #3a3a3a;
+
+  --line-default: #393939;
+  --line-hover: #585858;
+  --line-active: #7c7c7c;
+
+  /** 一些比较少用到的 css 变量 */
+  --vice-bg: #353535;
+  --vice-shadow: -7px 0 14px 1px rgba(255,255,255,.11);
+  --vice-scrollbar-thumb: #6a6a6a;
+  
 }
