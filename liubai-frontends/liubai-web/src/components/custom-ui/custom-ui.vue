@@ -198,7 +198,7 @@ const {
 
       .cui-modal-btn {
         padding: 10px 16px;
-        border-radius: 20px;
+        border-radius: 24px;
         font-size: var(--btn-font);
         color: var(--other-btn-text);
         background-color: var(--cui-modal-other-btn-bg);
