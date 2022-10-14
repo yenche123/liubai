@@ -1,26 +1,42 @@
 /** 深色系 */
 
 .theme-dark {
-  --primary-color: #99cbff;
+  --primary-color: #77d1ff;
   --on-primary: #003354;
-  --primary-hover: #77a3d9;
-  --primary-active: #597eb3;
+  --primary-hover: #5abdee;
+  --primary-active: #48abdd;
 
-  --card-bg: #282828;
-  --bg-color: #323232;
+  --card-bg: #232323;
+  --bg-color: #2b2b2b;
   --main-text: #e7e9ea;
-  --scrollbar-thumb: #585858;
+  --main-note: #686868;
+  --scrollbar-thumb: #484848;
+  --popup-bg: rgba(168, 168, 168, 0.66);
 
-  --sidebar-bg: #282828;
-  --sidebar-scrollbar-thumb: #3a3a3a;
+  --sidebar-bg: #232323;
+  --sidebar-scrollbar-thumb: #353535;
 
-  --line-default: #393939;
+  --line-default: #343434;
   --line-hover: #585858;
   --line-active: #7c7c7c;
 
+  --other-btn-bg: #333333;
+  --other-btn-text: #a9a9a9;
+  --other-btn-hover: #3c3c3c;
+
   /** 一些比较少用到的 css 变量 */
-  --vice-bg: #353535;
+  --vice-bg: #303030;
   --vice-shadow: -7px 0 14px 1px rgba(255,255,255,.11);
   --vice-scrollbar-thumb: #6a6a6a;
-  
+
+  /** 自定义组件 */
+  --cui-loading: rgba(56, 56, 56, .93);
+  --on-cui-loading: #e8e8e8;
+  --cui-loading-shadow: 0 10px 28px -1px rgba(222, 222, 222, .28);
+
+  /** 自定义组件: modal */
+  --cui-modal: rgba(29, 29, 29, .9);
+  --cui-modal-blur: blur(3px);
+  --cui-modal-other-btn-bg: #1a1a1a;
+  --cui-modal-other-btn-hover: #2f2f2f;
 }

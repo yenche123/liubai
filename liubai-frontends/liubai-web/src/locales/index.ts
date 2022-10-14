@@ -4,8 +4,16 @@ import zhHans from "./messages/zh-Hans.json"
 import zhHant from "./messages/zh-Hant.json"
 import type { SupportedLocale } from "../types/types-locale"
 import { isSupportedLocale } from '../types/types-locale'
+import type { LocalPreference } from '../types'
+import liuApi from '../utils/liu-api'
 
 const initLocale = (): SupportedLocale => {
+  // 从缓存里取
+  const localPf = liuApi.getStorageSync<LocalPreference>("local-preference")
+  const lang0 = localPf?.language
+  if(lang0 && isSupportedLocale(lang0)) return lang0
+
+  // 从浏览器的 navigator 里取
   const lang = navigator.language
   if(isSupportedLocale(lang)) return lang
 
@@ -18,6 +26,9 @@ const initLocale = (): SupportedLocale => {
     if(aLang === "zh-CN") return "zh-Hans"
     if(aLang === "en-US") return "en"
   }
+
+  // 判断 langs 是否有 zh
+  if(langs.includes("zh")) return "zh-Hans"
 
   return "en"
 }

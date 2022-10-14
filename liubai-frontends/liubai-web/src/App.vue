@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CustomUi from "./components/custom-ui/custom-ui.vue"
 import { useDynamics } from "./hooks/useDynamics"
 import { initLiuRouter } from "./routes/liu-router"
 
@@ -32,6 +33,7 @@ const { theme } = useDynamics()
     </router-view>
     <router-view v-else></router-view>
     
+    <custom-ui />
   </div>
 </template>
 

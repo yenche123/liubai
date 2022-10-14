@@ -1,5 +1,12 @@
 {
   "hello": {
     "world": "Hello, World!"
+  },
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "cui": {
+    "plz_input_txt": "Text here"
   }
 }

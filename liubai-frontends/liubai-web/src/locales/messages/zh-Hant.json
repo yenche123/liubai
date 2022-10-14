@@ -1,5 +1,12 @@
 {
   "hello": {
     "world": "你好，留白記事！"
+  },
+  "common": {
+    "confirm": "確定",
+    "cancel": "取消"
+  },
+  "cui": {
+    "plz_input_txt": "請輸入文字"
   }
 }
