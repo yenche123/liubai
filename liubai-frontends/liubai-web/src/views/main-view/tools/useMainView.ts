@@ -1,9 +1,10 @@
 // 主视图 宽度控制器
 
-import { ref, Ref, watch } from "vue"
+import { onMounted, ref, Ref, watch } from "vue"
 import { useLayoutStore, LayoutStore } from "../../useLayoutStore"
 import { useWindowSize } from "../../../hooks/useVueUse"
 import cfg from "../../../config"
+import cui from "../../../components/custom-ui"
 
 interface MainViewProps {
   viceViewPx: number
@@ -19,6 +20,10 @@ export const useMainView = (props: MainViewProps) => {
   const rightPx = ref(0)
 
   initMainView(layoutStore, props, leftPx, centerPx, rightPx)
+
+  // onMounted(() => {
+  //   cui.showModal({ title: "你好", content: "这个世界！" })
+  // })
   
   return { leftPx, centerPx, rightPx }
 }

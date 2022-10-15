@@ -1,9 +1,9 @@
 /** 深色系 */
 
 .theme-dark {
-  --primary-color: #77d1ff;
+  --primary-color: #88d1ff;   /**  88c4e3 */
   --on-primary: #003354;
-  --primary-hover: #5abdee;
+  --primary-hover: #68c4f3;
   --primary-active: #48abdd;
 
   --card-bg: #232323;
