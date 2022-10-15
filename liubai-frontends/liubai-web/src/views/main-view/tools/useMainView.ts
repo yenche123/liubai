@@ -20,13 +20,6 @@ export const useMainView = (props: MainViewProps) => {
   const rightPx = ref(0)
 
   initMainView(layoutStore, props, leftPx, centerPx, rightPx)
-
-  onMounted(() => {
-    cui.showModal({
-      title: "Hello World!",
-      content: "你好！欢迎！！",
-    })
-  })
   
   return { leftPx, centerPx, rightPx }
 }
