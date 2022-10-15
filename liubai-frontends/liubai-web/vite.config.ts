@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import { resolve } from "path"
 import vue from '@vitejs/plugin-vue'
 import VueI18n from '@intlify/vite-plugin-vue-i18n'
+import mkcert from 'vite-plugin-mkcert'
 
 const projectRoot = __dirname
 
@@ -16,6 +17,13 @@ export default defineConfig({
       include: [
         resolve(projectRoot, "src/locales/messages/**")
       ]
-    })
-  ]
+    }),
+
+    mkcert()    // 使用 SSL
+  ],
+  server: {
+    host: true,
+    port: 5174,
+    https: true
+  }
 })
