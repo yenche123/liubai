@@ -14,7 +14,6 @@ const google_map_key = "AIzaSyCpLdXu0Smt4skm4P6tBfJ8kzE6vgZ9t40"
 
 onMounted(() => {
   if(!iframeEl.value) {
-    console.log("还没有获取到 iframeEl.............")
     return
   }
   const iframeWindow = iframeEl.value.contentWindow
@@ -38,13 +37,13 @@ const onIframeLoad = (e: Event) => {
     :src="'https://www.google.com/maps/embed/v1/view?zoom=11&center=25.0330,121.5654&key=' + google_map_key" 
     title="Google Search"
   ></iframe> -->
-  <iframe
+  <!-- <iframe
     ref="iframeEl"
     width="100%" height="90%"
     :src="iframeSrc"
     class="vc-iframe"
     @load="onIframeLoad"
-  ></iframe>
+  ></iframe> -->
   
   <div class="vc-cover" :class="{ 'vc-cover_show': isOutterDraging }"></div>
   <div class="vc-btn" @click="onTapBack">返回</div>

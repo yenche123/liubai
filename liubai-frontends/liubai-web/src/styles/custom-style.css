@@ -1,0 +1,52 @@
+/** 以 liu 为开头的全局自定义 class */
+
+/************** 使用 aria-label 的 tooltip *****************/
+.liu-tooltip[aria-label] {
+  position: relative;
+}
+
+.liu-tooltip[aria-label]::before {
+  content: "";
+  position: absolute;
+  right: 50%;
+  bottom: -7px;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+  border-bottom-color: var(--cui-loading);
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: .15s;
+}
+
+.liu-tooltip[aria-label]::after {
+  content: attr(aria-label);
+  position: absolute;
+  top: 100%;
+  right: 50%;
+  padding: 2px 12px;
+  border-radius: 4px;
+  background-color: var(--cui-loading);
+  color: var(--on-cui-loading);
+  font-size: var(--mini-font);
+  font-weight: 500;
+  white-space: pre;
+  margin-top: 5px;
+  line-height: 2;
+  transform: translateX(50%);
+  user-select: none;
+  box-shadow: var(--cui-loading-shadow);
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: .15s;
+}
+
+.liu-tooltip[aria-label]:hover::before, 
+.liu-tooltip[aria-label]:hover::after {
+  visibility: visible;
+  opacity: 1;
+}
+
+

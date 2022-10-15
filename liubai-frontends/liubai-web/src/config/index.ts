@@ -18,5 +18,6 @@ export default {
   min_mainview_width: 300,
 
   // 导航栏高度
-  navi_height: 80,
+  navi_height: 70,
+  
 }

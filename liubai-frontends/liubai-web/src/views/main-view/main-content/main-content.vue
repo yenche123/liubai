@@ -3,7 +3,7 @@ import cfg from "../../../config"
 import CustomEditor from "../../../components/custom-editor/custom-editor.vue"
 import AppLink from "../../../components/common/app-link/app-link.vue"
 
-const virtualHeight = cfg.navi_height - 10
+const virtualHeight = cfg.navi_height / 3
 
 </script>
 <template>
@@ -14,7 +14,7 @@ const virtualHeight = cfg.navi_height - 10
       
       <CustomEditor></CustomEditor>
       <div class="mc-spacing"></div>
-      <div class="mc-test">
+      <div class="mc-test liu-tooltip" aria-label="这是测试 ASD">
         <AppLink to="?outq=ASD">ASD</AppLink>
       </div>
 
@@ -39,8 +39,8 @@ const virtualHeight = cfg.navi_height - 10
 
   .mc-box {
     width: 90%;
-    max-width: 800px;
-    min-width: 280px;
+    max-width: var(--card-max);
+    min-width: var(--card-min);
     position: relative;
 
     .mc-spacing {
@@ -53,6 +53,7 @@ const virtualHeight = cfg.navi_height - 10
       background-color: var(--card-bg);
       width: 100%;
       height: 100px;
+      box-shadow: 0 23px 60px rgba(0,0,0,.09);
     }
 
   }
