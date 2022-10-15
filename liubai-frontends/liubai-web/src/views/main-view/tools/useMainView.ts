@@ -1,10 +1,9 @@
 // 主视图 宽度控制器
 
-import { onMounted, ref, Ref, toRefs, watch } from "vue"
+import { ref, Ref, watch } from "vue"
 import { useLayoutStore, LayoutStore } from "../../useLayoutStore"
 import { useWindowSize } from "../../../hooks/useVueUse"
 import cfg from "../../../config"
-import cui from "../../../components/custom-ui"
 
 interface MainViewProps {
   viceViewPx: number
