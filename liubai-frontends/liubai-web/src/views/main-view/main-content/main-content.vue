@@ -1,45 +1,63 @@
 <script setup lang="ts">
-import AppLink from '../../../components/common/app-link/app-link.vue';
+import cfg from "../../../config"
+import CustomEditor from "../../../components/custom-editor/custom-editor.vue"
+import AppLink from "../../../components/common/app-link/app-link.vue"
+
+const virtualHeight = cfg.navi_height - 10
 
 </script>
 <template>
+
+  <div class="mc-container">
+    <div class="mc-virtual"></div>
+    <div class="mc-box">
+      
+      <CustomEditor></CustomEditor>
+      <div class="mc-spacing"></div>
+      <div class="mc-test">
+        <AppLink to="?outq=ASD">ASD</AppLink>
+      </div>
+
+    </div>
+
+  </div>
   
-  <div class="mv-test">
-
-  </div>
-  <div class="mv-test">
-    <app-link to="/sdfghdfghjhgf">去详情页</app-link>
-  </div>
-  <div class="mv-test">
-    <app-link to="/login">去登录页</app-link>
-  </div>
-  <div class="mv-test">
-    <span>自閉症類群（英語：Autism spectrum）是一種心理狀況的譜系障礙，亦稱自閉症類群障礙（英語：autism spectrum disorders，簡寫</span>
-    <app-link to="?outq=ASD">ASD</app-link>
-    <span>；或autism spectrum conditions，簡寫ASC）或泛自閉症障礙，描述了一個被DSM-5歸類為神經發展症候群的譜系範圍。</span>
-  </div>
-  <div class="mv-test"></div>
-  <div class="mv-test"></div>
-  <div class="mv-test"></div>
-  <div class="mv-test"></div>
 </template>
-<style>
+<style scoped lang="scss">
 
-.mv-test {
-  width: 50%;
-  height: 300px;
-  background-color: salmon;
-  margin-bottom: 100px;
-  border-radius: 24px;
-  padding: 10px;
+.mc-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  .mc-virtual {
+    width: 100%;
+    height: v-bind("virtualHeight + 'px'");
+  }
+
+  .mc-box {
+    width: 90%;
+    max-width: 800px;
+    min-width: 280px;
+    position: relative;
+
+    .mc-spacing {
+      width: 100%;
+      height: 10px;
+    }
+
+    .mc-test {
+      border-radius: 20px;
+      background-color: var(--card-bg);
+      width: 100%;
+      height: 100px;
+    }
+
+  }
+
 }
 
-.test-a-active {
-  color: yellow;
-}
-
-.test-a-inactive {
-  color: #a0a0a0;
-}
 
 </style>

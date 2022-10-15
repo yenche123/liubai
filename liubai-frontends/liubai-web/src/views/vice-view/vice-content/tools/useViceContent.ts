@@ -9,16 +9,11 @@ const SOUGO_SEARCH = "https://m.sogou.com/"
 export function useViceContent() {
   const iframeSrc = ref("")
   const iframeEl = ref<HTMLIFrameElement | null>(null)
-  const { route } = useRouteAndLiuRouter()
+  const { route, router } = useRouteAndLiuRouter()
 
   listenRouteChange(iframeSrc, route)
   const onTapBack = () => {
-    if(!iframeEl.value) return
-    console.log("onTapBack.................")
-    const iWindow = iframeEl.value.contentWindow
-    console.log("onTapBack 111111111111111")
-    iWindow?.history.back()
-    console.log("onTapBack 222222222222222")
+    router.back()
   }
 
   return { iframeSrc, iframeEl, onTapBack }
@@ -33,7 +28,7 @@ function listenRouteChange(iframeSrc: Ref<string>, route: RouteLocationNormalize
     const outq = newQuery.outq
 
     if(!outq || typeof outq !== "string") {
-      if(!iframeSrc.value) iframeSrc.value = GOOGLE_SEARCH
+      iframeSrc.value = GOOGLE_SEARCH
       return
     }
 
@@ -43,7 +38,7 @@ function listenRouteChange(iframeSrc: Ref<string>, route: RouteLocationNormalize
     url.searchParams.append("q", outq)
     url2.searchParams.append("keyword", outq)
 
-    iframeSrc.value = url2.toString()
+    iframeSrc.value = url.toString()
   }
 
   watch(() => route.query, (newQuery) => {

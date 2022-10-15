@@ -99,6 +99,7 @@ class LiuRouter {
     this.router.forward()
   }
 
+  // 调用该方法不见得会改变顶部地址栏，因为可能操作的是 iframe（其他上下文）内的返回
   public back() {
     routeChangeTmpData = { operation: "go", delta: -1, stamp: time.getLocalTime() }
     this.router.back()
