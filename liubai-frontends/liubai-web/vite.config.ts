@@ -3,6 +3,7 @@ import { resolve } from "path"
 import vue from '@vitejs/plugin-vue'
 import VueI18n from '@intlify/vite-plugin-vue-i18n'
 import mkcert from 'vite-plugin-mkcert'
+const { version } = require("./package.json")
 
 const projectRoot = __dirname
 
@@ -25,5 +26,11 @@ export default defineConfig({
     host: true,
     port: 5174,
     https: true
+  },
+  define: {
+    "LIU_ENV": {
+      "version": version,
+      "client": "web"
+    }
   }
 })

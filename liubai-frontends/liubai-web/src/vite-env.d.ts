@@ -5,3 +5,10 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+interface LiuEnv {
+  version: string
+  client: string
+}
+
+declare const LIU_ENV: LiuEnv
