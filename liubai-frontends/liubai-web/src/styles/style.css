@@ -54,12 +54,6 @@ input {
   background: transparent;
 }
 
-.div-bg-img {
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
 ::-webkit-scrollbar {
   width: 10px;
 }

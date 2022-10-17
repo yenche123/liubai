@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { toRefs } from 'vue';
 import { useSidebar } from './tools/useSidebar';
+import { useSidebarOther } from './tools/useSidebarOther';
+import SvgIcon from '../../assets/svg-icon.vue';
 
 const { sidebarEl, sbData } = useSidebar()
+const {
+  innerBoxWidth
+} = useSidebarOther()
 
 const {
   openType,
@@ -41,6 +46,15 @@ const {
     <!-- 装内容的盒子 -->
     <div class="sb-box">
       <div class="sb-inner-box">
+
+        <div class="sb-virtual-box"></div>
+
+        <div class="sb-navi-box">
+          <SvgIcon class="sbnb-icon" name="arrow-back"></SvgIcon>
+          <span>标签</span>
+        </div>
+
+        <div class="sb-virtual-box"></div>
 
         <div class="sb-content-box"></div>
 
@@ -158,12 +172,6 @@ const {
   padding-right: 10px;
 }
 
-.sb-inner-box {
-  width: 80%;
-  max-width: 500px;
-  position: relative;
-}
-
 .sb-box::-webkit-scrollbar-thumb {
   background-color: var(--sidebar-bg);
   transition: .15s;
@@ -172,6 +180,49 @@ const {
 .sb-box:hover::-webkit-scrollbar-thumb {
   background-color: var(--sidebar-scrollbar-thumb);
 }
+
+
+.sb-inner-box {
+  width: v-bind("innerBoxWidth");
+  /** max-content 浏览器兼容性: 所有浏览器皆支持 */
+  /** https://developer.mozilla.org/zh-CN/docs/Web/CSS/height#%E6%B5%8F%E8%A7%88%E5%99%A8%E5%85%BC%E5%AE%B9%E6%80%A7 */
+  height: max-content;
+  max-width: 500px;
+  position: relative;
+  transition: .3s;
+}
+
+.sb-navi-box {
+  padding-top: 10px;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  background-color: cadetblue;
+  color: var(--main-text);
+  font-size: var(--title-font);
+  top: 0;
+}
+
+.sbnb-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+  border-radius: 8px;
+  transition: .3s;
+  cursor: pointer;
+}
+
+.sbnb-icon:hover {
+  background-color: antiquewhite;
+}
+
+.sb-virtual-box {
+  width: 100%;
+  height: 20px;
+}
+
 
 .sb-content-box {
   width: 100%;

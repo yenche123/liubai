@@ -3,6 +3,7 @@ import { resolve } from "path"
 import vue from '@vitejs/plugin-vue'
 import VueI18n from '@intlify/vite-plugin-vue-i18n'
 import mkcert from 'vite-plugin-mkcert'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 const { version } = require("./package.json")
 
 const projectRoot = __dirname
@@ -12,6 +13,7 @@ export default defineConfig({
   plugins: [
     vue(),
 
+    // vue-i18n 插件
     VueI18n({
       runtimeOnly: true,
       compositionOnly: true,
@@ -20,7 +22,14 @@ export default defineConfig({
       ]
     }),
 
-    mkcert()    // 使用 SSL
+    // 使用 SSL
+    mkcert(),
+
+    // 使用 svg 雪碧图
+    createSvgIconsPlugin({
+      iconDirs: [resolve(process.cwd(), 'src/assets/icons')],
+      symbolId: 'icon-[dir]-[name]',
+    })
   ],
   server: {
     host: true,
