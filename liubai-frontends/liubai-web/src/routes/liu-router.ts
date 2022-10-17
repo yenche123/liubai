@@ -11,6 +11,7 @@ import {
   useLink,
   onBeforeRouteLeave,
   onBeforeRouteUpdate,
+  NavigationGuard,
 } from "vue-router"
 import time from "../utils/time"
 import { isSameRoute } from "./route-util"
@@ -113,6 +114,16 @@ class LiuRouter {
       return v2
     })
     return list
+  }
+
+  // 添加一个导航守卫，在任何导航前执行
+  public beforeEach(guard: NavigationGuard): () => void {
+    return this.router.beforeEach(guard)
+  }
+
+  // 添加一个导航守卫，在导航即将解析之前执行
+  public beforeResolve(guard: NavigationGuard): () => void {
+    return this.router.beforeResolve(guard)
   }
 
 }

@@ -3,11 +3,15 @@ import { toRefs } from 'vue';
 import { useSidebar } from './tools/useSidebar';
 import { useSidebarOther } from './tools/useSidebarOther';
 import SvgIcon from '../../assets/svg-icon.vue';
+import { useSidebarRoute } from './tools/useSidebarRoute';
+import SbContent from './sb-content/sb-content.vue';
+import SbTags from './sb-tags/sb-tags.vue';
 
 const { sidebarEl, sbData } = useSidebar()
 const {
   innerBoxWidth
 } = useSidebarOther()
+const { expandState } = useSidebarRoute()
 
 const {
   openType,
@@ -43,32 +47,21 @@ const {
     <!-- 悬浮或拖动时显示的分割线 -->
     <div class="sb-drag-line"></div>
 
-    <!-- 装内容的盒子 -->
-    <div class="sb-box">
+    <!-- 1. 侧边栏主内容 -->
+    <div class="sb-box"
+      :class="{ 'sb-box-main_hidden': expandState !== '' }"
+    >
       <div class="sb-inner-box">
+        <SbContent></SbContent>
+      </div>
+    </div>
 
-        <div class="sb-virtual-box"></div>
-
-        <div class="sb-navi-box">
-          <SvgIcon class="sbnb-icon" name="arrow-back"></SvgIcon>
-          <span>标签</span>
-        </div>
-
-        <div class="sb-virtual-box"></div>
-
-        <div class="sb-content-box"></div>
-
-        <div class="sb-content-box"></div>
-
-        <div class="sb-content-box"></div>
-
-        <div class="sb-content-box"></div>
-
-        <div class="sb-content-box"></div>
-
-        <div class="sb-content-box"></div>
-        <div class="sb-content-box"></div>
-
+    <!-- 2. 侧边栏展示标签 -->
+    <div class="sb-box sb-box-other_hidden"
+      :class="{ 'sb-box-other_show': expandState === 'tags' }"
+    >
+      <div class="sb-inner-box">
+        <SbTags></SbTags>
       </div>
     </div>
 
@@ -88,6 +81,7 @@ const {
   height: 100vh;
   z-index: 500;
   transition: .3s;
+  overflow: hidden;
 }
 
 .sb-container_hidden {
@@ -170,6 +164,7 @@ const {
   overflow-y: auto;
   background-color: var(--sidebar-bg);
   padding-right: 10px;
+  transition: .3s;
 }
 
 .sb-box::-webkit-scrollbar-thumb {
@@ -181,6 +176,20 @@ const {
   background-color: var(--sidebar-scrollbar-thumb);
 }
 
+.sb-box-main_hidden {
+  transform: translateX(-100%);
+  opacity: .1;
+}
+
+.sb-box-other_hidden {
+  transform: translateX(110%);
+  opacity: 0;
+}
+
+.sb-box-other_show {
+  transform: translateX(0);
+  opacity: 1;
+}
 
 .sb-inner-box {
   width: v-bind("innerBoxWidth");
@@ -190,45 +199,6 @@ const {
   max-width: 500px;
   position: relative;
   transition: .3s;
-}
-
-.sb-navi-box {
-  padding-top: 10px;
-  width: 100%;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  position: sticky;
-  background-color: cadetblue;
-  color: var(--main-text);
-  font-size: var(--title-font);
-  top: 0;
-}
-
-.sbnb-icon {
-  width: 32px;
-  height: 32px;
-  margin-right: 10px;
-  border-radius: 8px;
-  transition: .3s;
-  cursor: pointer;
-}
-
-.sbnb-icon:hover {
-  background-color: antiquewhite;
-}
-
-.sb-virtual-box {
-  width: 100%;
-  height: 20px;
-}
-
-
-.sb-content-box {
-  width: 100%;
-  height: 200px;
-  margin-bottom: 50px;
-  background-color: #fdeede;
 }
 
 </style>

@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import CustomUi from "./components/custom-ui/custom-ui.vue"
+import { useApp } from "./hooks/useApp";
 import { useDynamics } from "./hooks/useDynamics"
 import { initLiuRouter } from "./routes/liu-router"
 
+useApp()
 const { route } = initLiuRouter()
 const { theme } = useDynamics()
 

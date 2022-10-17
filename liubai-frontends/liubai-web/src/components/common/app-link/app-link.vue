@@ -1,6 +1,6 @@
 <script lang="ts">
-import { computed } from "vue";
-import { RouterLink, useLink } from 'vue-router'
+import { RouterLink } from 'vue-router'
+import { useAppLink } from "./tools/useAppLink";
 
 export default {
   name: "AppLink",
@@ -13,23 +13,15 @@ export default {
   },
 
   setup(props: any, context: any) {
-    const { navigate, href, route, isActive, isExactActive } = useLink(props)
-    const isExternalLink  = computed(() => {
-      const t = props.to
-      if(typeof t !== "string") return false
-      if(t.startsWith("http")) return true
-      return false
-    })
+    const {
+      isExternalLink,
+      href,
+      isActive,
+      isExactActive,
+      onTapLink,
+    } = useAppLink(props)
 
-    const onTapLink = (e: MouseEvent) => {
-      // console.log("被点击了............")
-      // console.log(e)
-      // console.log(" ")
-      // e.preventDefault()
-      navigate(e)
-    }
-
-    return { isExternalLink, href, isActive, onTapLink }
+    return { isExternalLink, href, isActive, isExactActive, onTapLink }
   }
 }
 
@@ -43,6 +35,7 @@ export default {
     v-else
     v-bind="$props"
     custom
+    :to="to"
   >
     <a
       v-bind="$attrs"
@@ -51,6 +44,8 @@ export default {
       :class="isActive ? activeClass : inactiveClass"
     >
       <slot />
+      <span>查看 isExactActive: </span>
+      <span>{{ isExactActive }}</span>
     </a>
   </router-link>
 </template>

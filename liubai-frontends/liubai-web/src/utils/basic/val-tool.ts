@@ -86,6 +86,15 @@ const getValInMinAndMax = (val: number, min: number, max: number): number => {
   return val
 }
 
+// 检查 a 是否包含于 b，即 a 的属性和值，是否 b 都有且一致（但 b 可以有 a 所没有的属性）
+const isAIncludedInB = (a: Record<string, any>, b: Record<string, any>): boolean => {
+  for(let key in a) {
+    if(a[key] !== b[key]) return false
+  }
+  return true
+}
+
+
 export default {
   waitMilli,
   copyObject,
@@ -96,4 +105,5 @@ export default {
   getChineseCharNum,
   getLowerCaseNum,
   getValInMinAndMax,
+  isAIncludedInB,
 }
