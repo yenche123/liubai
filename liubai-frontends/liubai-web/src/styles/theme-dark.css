@@ -29,6 +29,7 @@
   --vice-bg: #303030;
   --vice-shadow: -7px 0 14px 1px rgba(255,255,255,.11);
   --vice-scrollbar-thumb: #6a6a6a;
+  --navi-normal: #989898;            /** 侧边栏链接 默认颜色 */
 
   /** 自定义组件 */
   --cui-loading: rgba(56, 56, 56, .93);

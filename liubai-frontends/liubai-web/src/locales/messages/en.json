@@ -4,7 +4,11 @@
   },
   "common": {
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "home": "Home",
+    "favorite": "Favorite",
+    "tags": "Tags",
+    "trash": "Trash"
   },
   "cui": {
     "plz_input_txt": "Text here"

@@ -211,11 +211,12 @@ function listenWindowChange(
 
 // 获取可拖动的最大值和最小值
 function getCurrentMinMax(cw: number): { min: number, max: number } {
-  if(cw <= 600) return { min: 0, max: 0 }
-  if(cw <= 720) return { min: 250, max: Math.max(260, cw / 2.5) }
-  if(cw <= 1080) return { min: 280, max: cw / 2 }
-  if(cw <= 1560) return { min: 300, max: Math.min(700, cw / 2) }
-  return { min: 350, max: 800 }
+  const _min = cfg.min_sidebar_width
+  if(cw <= 600) return { min: _min, max: 0 }
+  if(cw <= 720) return { min: _min, max: Math.max(260, cw / 2.5) }
+  if(cw <= 1080) return { min: _min, max: cw / 2 }
+  if(cw <= 1560) return { min: _min, max: Math.min(700, cw / 2) }
+  return { min: _min, max: 800 }
 }
 
 // 初始化 sidebar 的宽度

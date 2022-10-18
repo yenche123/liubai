@@ -4,7 +4,11 @@
   },
   "common": {
     "confirm": "確定",
-    "cancel": "取消"
+    "cancel": "取消",
+    "home": "首頁",
+    "favorite": "收藏",
+    "tags": "標籤",
+    "trash": "回收站"
   },
   "cui": {
     "plz_input_txt": "請輸入文字"

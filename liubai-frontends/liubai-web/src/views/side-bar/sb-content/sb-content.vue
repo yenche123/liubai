@@ -4,6 +4,9 @@ import NaviLink from "../../../components/common/navi-link/navi-link.vue";
 import SvgIcon from '../../../assets/svg-icon.vue';
 import { useRouteAndLiuRouter } from '../../../routes/liu-router';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n()
 
 const { route } = useRouteAndLiuRouter()
 const state = computed(() => {
@@ -33,7 +36,7 @@ const color_selected = "var(--main-text)"
         :color="state === 'index' ? color_selected : color"
       ></SvgIcon>
     </div>
-    <span>首页</span>
+    <span>{{ t("common.home") }}</span>
   </NaviLink>
   
   <!-- 收藏 -->
@@ -46,7 +49,7 @@ const color_selected = "var(--main-text)"
         :color="state === 'favorite' ? color_selected : color"
       ></SvgIcon>
     </div>
-    <span>收藏</span>
+    <span>{{ t("common.favorite") }}</span>
   </NaviLink>
 
   <!-- 标签 -->
@@ -59,7 +62,7 @@ const color_selected = "var(--main-text)"
         :color="state === 'tags' ? color_selected : color"
       ></SvgIcon>
     </div>
-    <span>标签</span>
+    <span>{{ t("common.tags") }}</span>
   </AppLink>
 
   <!-- 回收桶 -->
@@ -72,7 +75,7 @@ const color_selected = "var(--main-text)"
         :color="state === 'trash' ? color_selected : color"
       ></SvgIcon>
     </div>
-    <span>回收桶</span>
+    <span>{{ t("common.trash") }}</span>
   </NaviLink>
 
 </template>
@@ -85,14 +88,14 @@ const color_selected = "var(--main-text)"
 
 .sb-link {
   width: 100%;
-  height: 54px;
+  height: 50px;
   margin-bottom: 2px;
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   box-sizing: border-box;
   padding-left: 8px;
-  font-size: var(--desc-font);
+  font-size: var(--navi-font);
   color: var(--navi-normal);
   line-height: 1.5;
   overflow: hidden;
@@ -142,8 +145,8 @@ const color_selected = "var(--main-text)"
 }
 
 .sb-link_selected .sb-icon {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
 }
 
 
