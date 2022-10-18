@@ -19,7 +19,6 @@ import { isSameRoute } from "./route-util"
 interface RouteChangeState {
   operation?: "push" | "replace" | "go"
   delta?: number
-  stamp?: number
 }
 
 interface RouteAndRouter {
@@ -78,31 +77,31 @@ class LiuRouter {
 
   /** 主动记录堆栈 */
   async replace(to: RouteLocationRaw): Promise<NavigationFailure | void | undefined> {
-    routeChangeTmpData = { operation: "replace", delta: 0, stamp: time.getLocalTime() }
+    routeChangeTmpData = { operation: "replace", delta: 0 }
     let res = await this.router.replace(to)
     return res
   }
 
   /** 主动记录堆栈 */
   async push(to: RouteLocationRaw): Promise<NavigationFailure | void | undefined> {
-    routeChangeTmpData = { operation: "push", delta: 1, stamp: time.getLocalTime() }
+    routeChangeTmpData = { operation: "push", delta: 1 }
     let res = await this.router.push(to)
     return res
   }
 
   public go(delta: number) {
-    routeChangeTmpData = { operation: "go", delta, stamp: time.getLocalTime() }
+    routeChangeTmpData = { operation: "go", delta }
     this.router.go(delta)
   }
 
   public forward() {
-    routeChangeTmpData = { operation: "go", delta: 1, stamp: time.getLocalTime() }
+    routeChangeTmpData = { operation: "go", delta: 1 }
     this.router.forward()
   }
 
   // 调用该方法不见得会改变顶部地址栏，因为可能操作的是 iframe（其他上下文）内的返回
   public back() {
-    routeChangeTmpData = { operation: "go", delta: -1, stamp: time.getLocalTime() }
+    routeChangeTmpData = { operation: "go", delta: -1 }
     this.router.back()
   }
 
@@ -145,13 +144,8 @@ const _changeLastHasPrev = (val: boolean) => {
 // 判断前端代码触发跳转成功与否，并操作堆栈
 // 如果是浏览器导航栏的操作，则存储 to 和 from，再触发 _judgeBrowserJump
 const _judgeInitiativeJump = (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
-  let { operation, delta = 0, stamp = 0 } = routeChangeTmpData
-  const now = time.getLocalTime()
-  const diff = now - stamp
-  console.log("diff: ", diff)
-  console.log(" ")
-
-  if(diff < availableDuration) {
+  let { operation, delta = 0 } = routeChangeTmpData
+  if(operation) {
     if(delta === 1) stack.push(to)
     else if(delta === 0) {
       stack.splice(stack.length - 1, 1, to)
@@ -166,8 +160,7 @@ const _judgeInitiativeJump = (to: RouteLocationNormalized, from: RouteLocationNo
       _changeLastHasPrev(true)
     }
 
-    routeChangeTmpData.stamp = 0
-    availableDuration = DEFAULT_DURATION
+    routeChangeTmpData = {}
   }
   else {
     // 保存状态以等待 window.addEventListener("popstate") 触发
@@ -245,7 +238,6 @@ const initLiuRouter = (): RouteAndRouter => {
 
     console.log("to: ", to)
     console.log("from: ", from)
-    console.log("vueRoute: ", vueRoute)
     console.log(" ")
     
     // 判断是不是第一个路由
