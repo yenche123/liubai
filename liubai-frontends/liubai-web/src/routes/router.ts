@@ -1,9 +1,10 @@
 import { RouteRecordRaw, createRouter, createWebHistory } from "vue-router"
 
-const HomePage = () => import("../pages/home-page/home-page.vue")
-const LoginPage = () => import("../pages/login-page/login-page.vue")
-const IndexPage = () => import("../pages/index-page/index-page.vue")
-const DetailPage = () => import("../pages/detail-page/detail-page.vue")
+const HomePage = () => import("../pages/level1/home-page/home-page.vue")
+const LoginPage = () => import("../pages/level1/login-page/login-page.vue")
+const IndexPage = () => import("../pages/level1/index-page/index-page.vue")
+const DetailPage = () => import("../pages/level2/detail-page/detail-page.vue")
+const FavoritePage = () => import("../pages/level2/favorite-page/favorite-page.vue")
 const LeftSidebar = () => import("../views/side-bar/side-bar.vue")
 
 // 扩展 vue-router 下的 RouteMeta 接口
@@ -51,7 +52,18 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       keepAlive: true,
     }
-  }
+  },
+  {
+    path: "/favorite",
+    components: {
+      default: FavoritePage,
+      LeftSidebar,
+    },
+    name: "favorite",
+    meta: {
+      keepAlive: true,
+    }
+  },
 ]
 
 const router = createRouter({

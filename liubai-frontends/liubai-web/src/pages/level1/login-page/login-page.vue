@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRouteAndLiuRouter } from "../../routes/liu-router";
+import { useRouteAndLiuRouter } from "../../../routes/liu-router";
 const { router } = useRouteAndLiuRouter()
 const onBack = () => {
   router.back()

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import MainView from "../../views/main-view/main-view.vue"
-import ViceView from "../../views/vice-view/vice-view.vue";
-import { useMainVice } from "../../hooks/useMainVice";
+import MainView from "../../../views/main-view/main-view.vue"
+import ViceView from "../../../views/vice-view/vice-view.vue";
+import { useMainVice } from "../../../hooks/useMainVice";
 
 const { viceViewPx, onVvWidthChange } = useMainVice()
 
