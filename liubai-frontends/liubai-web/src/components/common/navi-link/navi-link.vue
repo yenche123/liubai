@@ -9,10 +9,6 @@ export default {
   props: {
     //@ts-ignore
     ...RouterLink.props,
-    naviName: {
-      type: String,
-      required: true,
-    }
   },
 
   setup(props: any, context: any) {

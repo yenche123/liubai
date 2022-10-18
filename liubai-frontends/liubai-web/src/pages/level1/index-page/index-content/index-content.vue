@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import cfg from "../../../config"
-import CustomEditor from "../../../components/custom-editor/custom-editor.vue"
-import AppLink from "../../../components/common/app-link/app-link.vue"
+import cfg from "../../../../config"
+import CustomEditor from "../../../../components/custom-editor/custom-editor.vue"
+import AppLink from "../../../../components/common/app-link/app-link.vue"
 
 const virtualHeight = cfg.navi_height / 3
 
@@ -16,6 +16,10 @@ const virtualHeight = cfg.navi_height / 3
       <div class="mc-spacing"></div>
       <div class="mc-test liu-tooltip" aria-label="这是测试 ASD">
         <AppLink to="?outq=ASD">ASD</AppLink>
+      </div>
+
+      <div class="mc-test liu-tooltip" aria-label="测试跳转详情页">
+        <AppLink to="/sdxcfghgtfsedfc">打开 id 为 sdxcfghgtfsedfc 的详情页</AppLink>
       </div>
 
     </div>
@@ -54,6 +58,7 @@ const virtualHeight = cfg.navi_height / 3
       width: 100%;
       height: 100px;
       box-shadow: 0 23px 60px rgba(0,0,0,.09);
+      margin-bottom: 30px;
     }
 
   }

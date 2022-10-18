@@ -45,7 +45,9 @@ export function useAppLink(props: any) {
         return
       }
     }
-    navigate(e)
+    
+    e.preventDefault()
+    router.push(toRoute)
   }
 
   return { isExternalLink, href, isActive, isExactActive, onTapLink }

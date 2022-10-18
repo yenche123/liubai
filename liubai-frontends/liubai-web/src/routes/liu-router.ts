@@ -109,8 +109,7 @@ class LiuRouter {
   // 获取路由堆栈
   public getStack(): RouteLocationNormalized[] {
     let list = stack.map(v => {
-      let v2: RouteLocationNormalized
-      v2 = JSON.parse(JSON.stringify(v))
+      let v2 = Object.assign({}, v)
       return v2
     })
     return list
@@ -149,6 +148,9 @@ const _judgeInitiativeJump = (to: RouteLocationNormalized, from: RouteLocationNo
   let { operation, delta = 0, stamp = 0 } = routeChangeTmpData
   const now = time.getLocalTime()
   const diff = now - stamp
+  console.log("diff: ", diff)
+  console.log(" ")
+
   if(diff < availableDuration) {
     if(delta === 1) stack.push(to)
     else if(delta === 0) {
@@ -238,13 +240,13 @@ const initLiuRouter = (): RouteAndRouter => {
   const vueRoute = useVueRoute()
 
   let cancelAfterEach = vueRouter.afterEach((to, from, failure) => {
-    // console.log("########  监听到路由发生变化  ########")
+    console.log("########  监听到路由已发生变化  ########")
     if(isNavigationFailure(failure)) return
 
-    // console.log("to: ", to)
-    // console.log("from: ", from)
-    // console.log("vueRoute: ", vueRoute)
-    // console.log(" ")
+    console.log("to: ", to)
+    console.log("from: ", from)
+    console.log("vueRoute: ", vueRoute)
+    console.log(" ")
     
     // 判断是不是第一个路由
     if(stack.length === 0 && !from.name) {
@@ -306,6 +308,8 @@ export {
   useRouter,
   useRouteAndLiuRouter,
   useLink,
+
+  // 下面这两个监听方法，必须在 router-view 里的组件调用
   onBeforeRouteLeave,
   onBeforeRouteUpdate,
 }
