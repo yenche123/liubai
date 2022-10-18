@@ -47,6 +47,9 @@ const {
     <!-- 悬浮或拖动时显示的分割线 -->
     <div class="sb-drag-line"></div>
 
+    <!-- 存放背景颜色 -->
+    <div class="sb-bg"></div>
+
     <!-- 1. 侧边栏主内容 -->
     <div class="sb-box"
       :class="{ 'sb-box-main_hidden': expandState !== '' }"
@@ -142,6 +145,17 @@ const {
   pointer-events: none;
 }
 
+.sb-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 6px;
+  background-color: var(--sidebar-bg);
+  width: calc(100% - 6px);
+  height: 100%;
+}
+
 .sb-bar:hover ~ .sb-drag-line {
   opacity: 1;
 }
@@ -162,7 +176,6 @@ const {
   justify-content: flex-end;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: var(--sidebar-bg);
   padding-right: 10px;
   transition: .3s;
 }

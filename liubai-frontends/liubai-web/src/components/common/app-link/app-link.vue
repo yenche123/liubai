@@ -44,8 +44,6 @@ export default {
       :class="isActive ? activeClass : inactiveClass"
     >
       <slot />
-      <span>查看 isExactActive: </span>
-      <span>{{ isExactActive }}</span>
     </a>
   </router-link>
 </template>
