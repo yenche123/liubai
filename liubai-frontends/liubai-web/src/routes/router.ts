@@ -5,6 +5,7 @@ const LoginPage = () => import("../pages/level1/login-page/login-page.vue")
 const IndexPage = () => import("../pages/level1/index-page/index-page.vue")
 const DetailPage = () => import("../pages/level2/detail-page/detail-page.vue")
 const FavoritePage = () => import("../pages/level2/favorite-page/favorite-page.vue")
+const TrashPage = () => import("../pages/level2/trash-page/trash-page.vue")
 const LeftSidebar = () => import("../views/side-bar/side-bar.vue")
 
 // 扩展 vue-router 下的 RouteMeta 接口
@@ -64,6 +65,51 @@ const routes: Array<RouteRecordRaw> = [
       keepAlive: true,
     }
   },
+  {
+    path: "/trash",
+    components: {
+      default: TrashPage,
+      LeftSidebar,
+    },
+    name: "trash",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  /************************** 协作工作区 ***********************/
+  {
+    path: "/w/:workspaceId(\\w{10,})",
+    components: {
+      default: IndexPage,
+      LeftSidebar,
+    },
+    name: "collaborative-index",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/favorite",
+    components: {
+      default: FavoritePage,
+      LeftSidebar,
+    },
+    name: "collaborative-favorite",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/trash",
+    components: {
+      default: TrashPage,
+      LeftSidebar,
+    },
+    name: "collaborative-trash",
+    meta: {
+      keepAlive: true,
+    }
+  }
 ]
 
 const router = createRouter({
