@@ -124,6 +124,23 @@ class LiuRouter {
     return this.router.beforeResolve(guard)
   }
 
+  public naviBack() {
+    let list = this.getStack()
+    if(list.length > 1) {
+      this.back()
+      return
+    }
+
+    // 导航去首页
+    this.goHome()
+  }
+
+  // 导航去首页
+  // 【待完善】注意区别登录态和工作区
+  public goHome() {
+    this.replace({ name: "index" })
+  }
+
 }
 
 const _popStacks = (num: number) => {
@@ -278,10 +295,6 @@ const hasPreviousRouteInApp = (): Ref<boolean> => {
   return prev
 }
 
-const goHome = (router: LiuRouter) => {
-  router.replace({ name: "index"})
-}
-
 const useRouter = (): LiuRouter => {
   return new LiuRouter()
 }
@@ -296,7 +309,6 @@ export {
   LiuRouter,
   initLiuRouter,
   hasPreviousRouteInApp,
-  goHome,
   useRouter,
   useRouteAndLiuRouter,
   useLink,

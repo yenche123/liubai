@@ -1,10 +1,14 @@
 import 'virtual:svg-icons-register'
 import { createApp } from 'vue'
+
+// 引入 CSS
+// 根据加载顺序 custom-style 可以使用 theme-light/dark 里的 CSS 变量
 import './styles/style.css'
 import './styles/theme.css'
 import './styles/theme-light.css'
 import './styles/theme-dark.css'
 import './styles/custom-style.css'
+
 import App from './App.vue'
 import { i18n } from './locales'
 import { createPinia } from 'pinia'

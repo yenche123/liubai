@@ -20,14 +20,14 @@ const state = computed(() => {
 })
 
 const color = "var(--navi-normal)"
-const color_selected = "var(--main-text)"
+const color_selected = "var(--main-normal)"
 
 </script>
 <template>
   <div class="sb-virtual"></div>
 
   <!-- 首页 -->
-  <NaviLink class="sb-link" 
+  <NaviLink class="sb-link liu-hover" 
     :class="{ 'sb-link_selected': state === 'index' }" to="/"
   >
     <div class="sb-icon-container">
@@ -40,7 +40,7 @@ const color_selected = "var(--main-text)"
   </NaviLink>
   
   <!-- 收藏 -->
-  <NaviLink class="sb-link" 
+  <NaviLink class="sb-link liu-hover" 
     :class="{ 'sb-link_selected': state === 'favorite' }" to="/favorite"
   >
     <div class="sb-icon-container">
@@ -53,7 +53,7 @@ const color_selected = "var(--main-text)"
   </NaviLink>
 
   <!-- 标签 -->
-  <AppLink class="sb-link" to="?tags=01"
+  <AppLink class="sb-link liu-hover" to="?tags=01"
     :class="{ 'sb-link_selected': state === 'tags' }"
   >
     <div class="sb-icon-container">
@@ -66,7 +66,7 @@ const color_selected = "var(--main-text)"
   </AppLink>
 
   <!-- 回收桶 -->
-  <NaviLink class="sb-link" to="/trash"
+  <NaviLink class="sb-link liu-hover" to="/trash"
     :class="{ 'sb-link_selected': state === 'trash' }"
   >
     <div class="sb-icon-container">
@@ -105,28 +105,8 @@ const color_selected = "var(--main-text)"
 }
 
 .sb-link_selected {
-  color: var(--main-text);
+  color: var(--main-normal);
   font-weight: 700;
-}
-
-.sb-link::before {
-  transition: .15s;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  content: "";
-  background-color: var(--primary-color);
-  opacity: 0;
-}
-
-.sb-link:hover::before {
-  opacity: .05;
-}
-
-.sb-link:active::before {
-  opacity: .1;
 }
 
 .sb-icon-container {

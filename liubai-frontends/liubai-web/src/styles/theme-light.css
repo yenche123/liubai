@@ -29,8 +29,8 @@
   --vice-bg: #f3f3f3;
   --vice-shadow: -7px 0 14px 1px rgba(0,0,0,.11);
   --vice-scrollbar-thumb: #bababa;
-  --navi-normal: #686868;            /** 侧边栏链接 默认颜色 */
-
+  --navi-normal: #3f4549;            /** 侧边栏链接 默认颜色 */
+  
   /** 自定义组件: 加载框 */
   --cui-loading: rgba(46, 46, 46, .93);
   --on-cui-loading: #eeeeee;
@@ -41,4 +41,7 @@
   --cui-modal-blur: blur(2.5px);
   --cui-modal-other-btn-bg: #f1f1f1;
   --cui-modal-other-btn-hover: #eaeaea;
+
+  /** 毛玻璃背景 */
+  --frosted-glass: rgba(255, 255, 255, .6);    /** 跟随 sidebar 的背景 */
 }

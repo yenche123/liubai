@@ -52,4 +52,50 @@
   z-index: 5210;
 }
 
+/** 对于按钮的特效 */
 
+.liu-hover {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.liu-hover::before {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  content: "";
+  transition: .1s;
+  opacity: 0;
+  background-color: var(--primary-color);
+}
+
+.liu-hover:hover::before {
+  opacity: .06;
+}
+
+.liu-hover:active::before {
+  opacity: .1;
+}
+
+/** 对于毛玻璃的效果 */
+.liu-frosted-glass {
+  position: relative;
+}
+
+.liu-frosted-glass::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  background-color: var(--frosted-glass);
+  border-radius: 20px;
+  overflow: hidden;
+}
