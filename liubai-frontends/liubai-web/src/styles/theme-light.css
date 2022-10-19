@@ -44,4 +44,5 @@
 
   /** 毛玻璃背景 */
   --frosted-glass: rgba(255, 255, 255, .6);    /** 跟随 sidebar 的背景 */
+  --frosted-glass-two: rgba(249, 249, 249, .75);  /** 跟随 bg-color 的背景 */
 }

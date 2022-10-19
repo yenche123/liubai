@@ -6,7 +6,7 @@ export default {
   min_sidebar_width: 200,
 
   // 默认 sidebar 宽度
-  default_sidebar_width: 300,
+  default_sidebar_width: 250,
 
   // 最小 vice-view 所需的宽度 
   min_viceview_width: 350,

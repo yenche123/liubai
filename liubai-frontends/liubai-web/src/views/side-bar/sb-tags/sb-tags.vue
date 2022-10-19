@@ -20,7 +20,7 @@ const onNaviBack = () => {
 
   <div class="liu-frosted-glass st-navibar">
     <div class="liu-hover st-navi-back" @click="onNaviBack">
-      <SvgIcon class="st-navi-back-icon" name="arrow-back700" color="var(--main-text)"></SvgIcon>
+      <SvgIcon class="st-navi-back-icon" name="arrow-back700"></SvgIcon>
     </div>
     <div class="st-navi-title">
       <span>{{ t("common.tags") }}</span>

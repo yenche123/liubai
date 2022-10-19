@@ -8,7 +8,8 @@
     "home": "Home",
     "favorite": "Favorite",
     "tags": "Tags",
-    "trash": "Trash"
+    "trash": "Trash",
+    "detail": "Detail"
   },
   "cui": {
     "plz_input_txt": "Text here"

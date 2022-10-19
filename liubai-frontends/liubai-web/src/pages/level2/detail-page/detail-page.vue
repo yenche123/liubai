@@ -6,8 +6,10 @@ import DetailContent from "./detail-content/detail-content.vue";
 import NaviBar from "../../../components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '../../../components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "../../../hooks/useMainVice";
+import { useI18n } from "vue-i18n";
 
 const { viceViewPx, onVvWidthChange } = useMainVice()
+const { t } = useI18n()
 
 </script>
 <template>
@@ -18,7 +20,7 @@ const { viceViewPx, onVvWidthChange } = useMainVice()
       <navi-virtual></navi-virtual>
       <detail-content></detail-content>
     </scroll-view>
-    <navi-bar></navi-bar>
+    <navi-bar :title="t('common.detail')"></navi-bar>
   </main-view>
 
   <!-- 副视图 -->
