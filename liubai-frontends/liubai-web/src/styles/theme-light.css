@@ -30,6 +30,8 @@
   --vice-shadow: -7px 0 14px 1px rgba(0,0,0,.11);
   --vice-scrollbar-thumb: #bababa;
   --navi-normal: #3f4549;            /** 侧边栏链接 默认颜色 */
+  --drag-bg: #ddf2f9;        /** 拖动时的背景色 */
+  --drag-border: #aaf2f9;    /** 拖动时的边框色 */
   
   /** 自定义组件: 加载框 */
   --cui-loading: rgba(46, 46, 46, .93);

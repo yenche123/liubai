@@ -89,19 +89,20 @@ const color_selected = "var(--main-normal)"
 .sb-link {
   width: 100%;
   height: 50px;
-  margin-bottom: 2px;
+  margin-bottom: 8px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   box-sizing: border-box;
   padding-left: 8px;
-  font-size: var(--navi-font);
+  font-size: var(--desc-font);
   color: var(--navi-normal);
   line-height: 1.5;
   overflow: hidden;
   position: relative;
   transition: .3s;
   user-select: none;
+  letter-spacing: 1px;
 }
 
 .sb-link_selected {
@@ -119,8 +120,8 @@ const color_selected = "var(--main-normal)"
 }
 
 .sb-icon {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   transition: .15s;
 }
 
