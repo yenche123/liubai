@@ -132,7 +132,8 @@ const onNaviBack = () => {
     .tag-arrow {
       width: 32px;
       height: 32px;
-      margin-right: 2px;
+      margin-left: 4px;
+      margin-right: 4px;
       border-radius: 8px;
       overflow: hidden;
       display: flex;
