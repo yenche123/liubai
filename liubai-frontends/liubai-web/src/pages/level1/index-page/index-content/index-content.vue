@@ -14,13 +14,6 @@ const virtualHeight = cfg.navi_height / 3
       
       <CustomEditor></CustomEditor>
       <div class="mc-spacing"></div>
-      <div class="mc-test liu-tooltip" aria-label="这是测试 ASD">
-        <AppLink to="?outq=ASD">ASD</AppLink>
-      </div>
-
-      <div class="mc-test liu-tooltip" aria-label="测试跳转详情页">
-        <AppLink to="/sdxcfghgtfsedfc">打开 id 为 sdxcfghgtfsedfc 的详情页</AppLink>
-      </div>
 
     </div>
 

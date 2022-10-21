@@ -19,5 +19,8 @@ export default {
 
   // 导航栏高度
   navi_height: 70,
+
+  // 文本编辑器最低尺寸
+  min_editor_height: 100,
   
 }

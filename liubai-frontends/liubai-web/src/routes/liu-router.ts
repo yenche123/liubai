@@ -250,12 +250,12 @@ const initLiuRouter = (): RouteAndRouter => {
   const vueRoute = useVueRoute()
 
   let cancelAfterEach = vueRouter.afterEach((to, from, failure) => {
-    console.log("########  监听到路由已发生变化  ########")
+    // console.log("########  监听到路由已发生变化  ########")
     if(isNavigationFailure(failure)) return
 
-    console.log("to: ", to)
-    console.log("from: ", from)
-    console.log(" ")
+    // console.log("to: ", to)
+    // console.log("from: ", from)
+    // console.log(" ")
     
     // 判断是不是第一个路由
     if(stack.length === 0 && !from.name) {

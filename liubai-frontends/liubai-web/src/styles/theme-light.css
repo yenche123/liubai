@@ -25,6 +25,10 @@
   --other-btn-text: #565656;
   --other-btn-hover: #e1e1e1;
 
+  --editor-shadow: 0 10px 20px -6px rgba(0, 0, 0, .1);
+  --liu-hr: #e9e9e9;   /** 卡片里的分割线 */
+  --liu-quote: #868686;  /** 引言 */
+
   /** 一些比较少用到的 css 变量 */
   --vice-bg: #f3f3f3;
   --vice-shadow: -7px 0 14px 1px rgba(0,0,0,.11);

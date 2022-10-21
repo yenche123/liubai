@@ -46,11 +46,11 @@ function initMainView(
     leftPx.value = state.sidebarWidth
     
     let tmpCenter = state.clientWidth - leftPx.value - props.viceViewPx
-    console.log("state.clientWidth: ", state.clientWidth)
-    console.log("leftPx.value: ", leftPx.value)
-    console.log("props.viceViewPx: ", props.viceViewPx)
-    console.log("tmpCenter: ", tmpCenter)
-    console.log(" ")
+    // console.log("state.clientWidth: ", state.clientWidth)
+    // console.log("leftPx.value: ", leftPx.value)
+    // console.log("props.viceViewPx: ", props.viceViewPx)
+    // console.log("tmpCenter: ", tmpCenter)
+    // console.log(" ")
     if(tmpCenter < cfg.min_mainview_width) {
       rightPx.value = 0
       centerPx.value = state.clientWidth - leftPx.value

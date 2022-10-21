@@ -42,6 +42,7 @@ const onNaviBack = () => {
   <Draggable v-model="tagNodes" ref="treeEl"
     :indent="20"
     @change="onTreeChange"
+    :watermark="false"
   >
     <template #default="{ node, stat }">
       <div class="liu-hover tag-container"
