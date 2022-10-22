@@ -3,7 +3,18 @@ import { EditorContent } from '@tiptap/vue-3'
 import { useEditorCore } from './tools/useEditorCore';
 import cfg from "../../config"
 
-const { editor } = useEditorCore()
+const props = defineProps({
+  titlePlaceholder: {
+    type: String,
+    default: "",
+  },
+  descPlaceholder: {
+    type: String,
+    default: "",
+  }
+})
+
+const { editor } = useEditorCore(props)
 
 </script>
 <template>
@@ -20,10 +31,19 @@ const { editor } = useEditorCore()
   line-height: 2;
   color: var(--main-normal);
   min-height: v-bind("cfg.min_editor_height + 'px'");
+  transition: .3s;
 
   p {
     margin-block-start: 0;
     margin-block-end: 0;
+  }
+
+  p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: var(--main-note);
+    pointer-events: none;
+    height: 0;
   }
 
   ul,

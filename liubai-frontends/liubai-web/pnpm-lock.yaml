@@ -4,6 +4,7 @@ specifiers:
   '@he-tree/vue': ^2.0.4
   '@intlify/vite-plugin-vue-i18n': ^6.0.3
   '@tiptap/core': 2.0.0-beta.199
+  '@tiptap/extension-placeholder': 2.0.0-beta.199
   '@tiptap/starter-kit': 2.0.0-beta.199
   '@tiptap/vue-3': 2.0.0-beta.199
   '@types/node': ^18.7.18
@@ -24,6 +25,7 @@ specifiers:
 dependencies:
   '@he-tree/vue': 2.0.4_vue@3.2.39
   '@tiptap/core': 2.0.0-beta.199
+  '@tiptap/extension-placeholder': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/starter-kit': 2.0.0-beta.199
   '@tiptap/vue-3': 2.0.0-beta.199_t7tm5r4k3qe7a6xtmhcuo56bra
   '@vueuse/core': 9.3.0_vue@3.2.39
@@ -535,6 +537,17 @@ packages:
       '@tiptap/core': ^2.0.0-beta.193
     dependencies:
       '@tiptap/core': 2.0.0-beta.199
+    dev: false
+
+  /@tiptap/extension-placeholder/2.0.0-beta.199_4focsuckzeocqotdxlryrtksam:
+    resolution: {integrity: sha512-Tdq0r9XQ6hcu4ASvw2Xko6h8uS/xONmMmOFiTkK/54REB3RRQpkdCtXrhFn/T4DunJVBf6FUOLTjYN3SONhuew==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0-beta.193
+    dependencies:
+      '@tiptap/core': 2.0.0-beta.199
+      prosemirror-model: 1.18.1
+      prosemirror-state: 1.4.1
+      prosemirror-view: 1.29.0
     dev: false
 
   /@tiptap/extension-strike/2.0.0-beta.199_4focsuckzeocqotdxlryrtksam:

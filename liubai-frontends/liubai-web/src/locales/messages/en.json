@@ -9,7 +9,9 @@
     "favorite": "Favorite",
     "tags": "Tags",
     "trash": "Trash",
-    "detail": "Detail"
+    "detail": "Detail",
+    "title_ph": "Title",
+    "desc_ph": "Write something ..."
   },
   "cui": {
     "plz_input_txt": "Text here"

@@ -48,7 +48,9 @@ const {
     <div class="sb-drag-line"></div>
 
     <!-- 存放背景颜色 -->
-    <div class="sb-bg"></div>
+    <div class="sb-bg">
+      
+    </div>
 
     <!-- 1. 侧边栏主内容 -->
     <div class="sb-box"

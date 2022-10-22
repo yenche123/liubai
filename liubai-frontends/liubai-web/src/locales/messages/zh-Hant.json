@@ -9,7 +9,9 @@
     "favorite": "收藏",
     "tags": "標籤",
     "trash": "回收站",
-    "detail": "詳情"
+    "detail": "詳情",
+    "title_ph": "標題",
+    "desc_ph": "寫點東西..."
   },
   "cui": {
     "plz_input_txt": "請輸入文字"
