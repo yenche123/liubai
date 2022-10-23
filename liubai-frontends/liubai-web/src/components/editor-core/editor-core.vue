@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { EditorContent } from '@tiptap/vue-3'
 import { useEditorCore } from './tools/useEditorCore'
-import { TipTapJSONContent } from "../../types/types-editor"
+import { EditorCoreContent } from "../../types/types-editor"
 import cfg from "../../config"
 
 const props = defineProps({
@@ -16,7 +16,9 @@ const props = defineProps({
 })
 
 const emits = defineEmits<{
-  (event: "update", data: { html: string, text: string, json: TipTapJSONContent }): void
+  (event: "update", data: EditorCoreContent): void
+  (event: "focus", data: EditorCoreContent): void
+  (event: "blur", data: EditorCoreContent): void
 }>()
 
 const { editor } = useEditorCore(props, emits)

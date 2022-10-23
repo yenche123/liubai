@@ -2,7 +2,7 @@ import { useEditor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import { useI18n, ComposerTranslation } from 'vue-i18n'
-import { TipTapEditor, TipTapJSONContent } from "../../../types/types-editor"
+import { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
 import { onMounted } from 'vue'
 
 export interface EditorCoreProps {
@@ -12,7 +12,9 @@ export interface EditorCoreProps {
 }
 
 export interface EditorCoreEmits {
-  (event: "update", data: { html: string, text: string, json: TipTapJSONContent }): void
+  (event: "update", data: EditorCoreContent): void
+  (event: "focus", data: EditorCoreContent): void
+  (event: "blur", data: EditorCoreContent): void
 }
 
 let lastEmpty: boolean
@@ -30,7 +32,13 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
     content,
     extensions,
     onUpdate({ editor }) {
-      onEditorUpdate(editor, t, props, emits)
+      onEditorUpdate(editor, props, emits)
+    },
+    onFocus({ editor }) {
+      onEditorFocus(editor, emits)
+    },
+    onBlur({ editor }) {
+      onEditorBlur(editor, emits)
     }
   })
 
@@ -44,12 +52,30 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
   return { editor }
 }
 
+function onEditorFocus(
+  editor: TipTapEditor,
+  emits: EditorCoreEmits
+) {
+  const html = editor.getHTML()
+  const text = editor.getText()
+  const json = editor.getJSON()
+  const data = { html, text, json }
+  emits("focus", data)
+}
 
-
+function onEditorBlur(
+  editor: TipTapEditor,
+  emits: EditorCoreEmits
+) {
+  const html = editor.getHTML()
+  const text = editor.getText()
+  const json = editor.getJSON()
+  const data = { html, text, json }
+  emits("blur", data)
+}
 
 function onEditorUpdate(
-  editor: TipTapEditor, 
-  t: ComposerTranslation,
+  editor: TipTapEditor,
   props: EditorCoreProps,
   emits: EditorCoreEmits
 ) {

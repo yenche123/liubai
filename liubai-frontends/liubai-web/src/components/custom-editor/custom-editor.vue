@@ -2,21 +2,22 @@
 import EditorCore from "../editor-core/editor-core.vue"
 import { useCustomEditor } from "./tools/useCustomEditor";
 import cfg from "../../config";
-import { TipTapJSONContent } from "../../types/types-editor"
-
-interface EditorUpdateData {
-  text: string
-  html: string
-  json: TipTapJSONContent
-}
+import { EditorCoreContent } from "../../types/types-editor"
 
 const { maxEditorHeight } = useCustomEditor()
-const onEditorUpdate = (data: EditorUpdateData) => {
+const onEditorUpdate = (data: EditorCoreContent) => {
   console.log("onEditorUpdate.............")
   console.log(data)
   console.log(" ")
-
 }
+
+const onEditorFocus = (data: EditorCoreContent) => {
+  console.log("focus 了!!!!!!!!!!!!!!")
+}
+
+const onEditorBlur = (data: EditorCoreContent) => {
+  console.log("blur 了!!!!!!!!!!!!!!")
+} 
 
 </script>
 <template>
@@ -24,7 +25,11 @@ const onEditorUpdate = (data: EditorUpdateData) => {
 <div class="ce-container">
 
   <div class="ce-editor">
-    <EditorCore @update="onEditorUpdate"></EditorCore>
+    <EditorCore 
+      @update="onEditorUpdate"
+      @focus="onEditorFocus"
+      @blur="onEditorBlur"
+    ></EditorCore>
   </div>
 
 </div>
