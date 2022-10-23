@@ -1,9 +1,22 @@
 <script setup lang="ts">
 import EditorCore from "../editor-core/editor-core.vue"
 import { useCustomEditor } from "./tools/useCustomEditor";
-import cfg from "../../config"
+import cfg from "../../config";
+import { TipTapJSONContent } from "../../types/types-editor"
+
+interface EditorUpdateData {
+  text: string
+  html: string
+  json: TipTapJSONContent
+}
 
 const { maxEditorHeight } = useCustomEditor()
+const onEditorUpdate = (data: EditorUpdateData) => {
+  console.log("onEditorUpdate.............")
+  console.log(data)
+  console.log(" ")
+
+}
 
 </script>
 <template>
@@ -11,7 +24,7 @@ const { maxEditorHeight } = useCustomEditor()
 <div class="ce-container">
 
   <div class="ce-editor">
-    <EditorCore></EditorCore>
+    <EditorCore @update="onEditorUpdate"></EditorCore>
   </div>
 
 </div>

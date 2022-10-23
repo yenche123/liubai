@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { EditorContent } from '@tiptap/vue-3'
-import { useEditorCore } from './tools/useEditorCore';
+import { useEditorCore } from './tools/useEditorCore'
+import { TipTapJSONContent } from "../../types/types-editor"
 import cfg from "../../config"
 
 const props = defineProps({
@@ -14,7 +15,11 @@ const props = defineProps({
   }
 })
 
-const { editor } = useEditorCore(props)
+const emits = defineEmits<{
+  (event: "update", data: { html: string, text: string, json: TipTapJSONContent }): void
+}>()
+
+const { editor } = useEditorCore(props, emits)
 
 </script>
 <template>
@@ -38,7 +43,7 @@ const { editor } = useEditorCore(props)
     margin-block-end: 0;
   }
 
-  p.is-editor-empty:first-child::before {
+  p.is-empty:first-child::before {
     content: attr(data-placeholder);
     float: left;
     color: var(--main-note);
