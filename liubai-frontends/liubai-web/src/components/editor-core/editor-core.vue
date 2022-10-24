@@ -23,6 +23,10 @@ const emits = defineEmits<{
 
 const { editor } = useEditorCore(props, emits)
 
+defineExpose({
+  editor
+})
+
 </script>
 <template>
 

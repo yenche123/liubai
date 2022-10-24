@@ -1,13 +1,25 @@
-import { ref, watch } from "vue"
+import { onMounted, ref, watch } from "vue"
 import type { Ref } from "vue"
 import { useWindowSize } from "../../../hooks/useVueUse"
+import EditorCore from "../../editor-core/editor-core.vue"
+import { TipTapEditor } from "../../../types/types-editor"
 
 export function useCustomEditor() {
   const maxEditorHeight = ref(500)
+  const editorCoreRef = ref<typeof EditorCore | null>(null)
+  const editor = ref<TipTapEditor | null>(null)
   
   listenWindowChange(maxEditorHeight)
 
-  return { maxEditorHeight }
+  onMounted(() => {
+    if(!editorCoreRef.value) return
+    editor.value = editorCoreRef.value.editor as TipTapEditor
+    console.log("editor focus() ::::")
+    console.log(editor.value.chain().focus().run())
+    console.log(" ")
+  })
+
+  return { maxEditorHeight, editorCoreRef, editor }
 }
 
 function listenWindowChange(maxEditorHeight: Ref<number>) {
