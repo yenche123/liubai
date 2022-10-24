@@ -14,9 +14,6 @@ export function useCustomEditor() {
   onMounted(() => {
     if(!editorCoreRef.value) return
     editor.value = editorCoreRef.value.editor as TipTapEditor
-    console.log("editor focus() ::::")
-    console.log(editor.value.chain().focus().run())
-    console.log(" ")
   })
 
   return { maxEditorHeight, editorCoreRef, editor }
