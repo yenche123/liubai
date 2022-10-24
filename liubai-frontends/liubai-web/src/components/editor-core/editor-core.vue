@@ -59,7 +59,9 @@ defineExpose({
 
   ul,
   ol {
-    padding: 0 10px;
+    padding: 0 24px;
+    margin-block-start: 8px;
+    margin-block-end: 8px;
   }
 
   code {
