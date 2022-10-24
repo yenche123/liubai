@@ -1,6 +1,8 @@
 import { useEditor } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
+import TaskItem from '@tiptap/extension-task-item'
+import TaskList from '@tiptap/extension-task-list'
 import { useI18n, ComposerTranslation } from 'vue-i18n'
 import { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
 import { onMounted } from 'vue'
@@ -106,8 +108,24 @@ function onEditorUpdate(
 
 function initExtensions(props: EditorCoreProps, t: ComposerTranslation) {
   const extensions = [
+    TaskList.configure({
+      HTMLAttributes: {
+        class: "liu-tasklist"
+      }
+    }),
+    TaskItem.configure({
+      nested: false,
+      HTMLAttributes: {
+        class: "liu-taskitem"
+      },
+    }),
     StarterKit.configure({
       heading: false,
+      bulletList: {
+        HTMLAttributes: {
+          class: "liu-bulletList"
+        }
+      }
     }),
     Placeholder.configure({
       placeholder: ({ node }) => {

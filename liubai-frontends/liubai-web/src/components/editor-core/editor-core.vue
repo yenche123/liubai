@@ -57,11 +57,38 @@ defineExpose({
     height: 0;
   }
 
-  ul,
-  ol {
-    padding: 0 24px;
+  ul, ol {
+    padding: 0 0 0 24px;
     margin-block-start: 8px;
     margin-block-end: 8px;
+  }
+
+  .liu-tasklist {
+    padding: 0 0 0 6px;
+    margin-block-start: 8px;
+    margin-block-end: 8px;
+
+    .liu-taskitem {
+      display: flex;
+
+      > label {
+        flex: 0 0 auto;
+        margin-right: 0.5rem;
+        user-select: none;
+
+        > input[type=checkbox] {
+          position: relative;
+          background-color: var(--primary-color);
+          background: var(--primary-color);
+          color: var(--primary-color);
+        }
+
+      }
+
+      > div {
+        flex: 1 1 auto;
+      }
+    }
   }
 
   code {
