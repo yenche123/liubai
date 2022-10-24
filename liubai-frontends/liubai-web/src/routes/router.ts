@@ -6,6 +6,7 @@ const IndexPage = () => import("../pages/level1/index-page/index-page.vue")
 const DetailPage = () => import("../pages/level2/detail-page/detail-page.vue")
 const FavoritePage = () => import("../pages/level2/favorite-page/favorite-page.vue")
 const TrashPage = () => import("../pages/level2/trash-page/trash-page.vue")
+const ConnectPage = () => import("../pages/level2/connect-page/connect-page.vue")
 const LeftSidebar = () => import("../views/side-bar/side-bar.vue")
 
 // 扩展 vue-router 下的 RouteMeta 接口
@@ -76,6 +77,17 @@ const routes: Array<RouteRecordRaw> = [
       keepAlive: true,
     }
   },
+  {
+    path: "/connect",
+    components: {
+      default: ConnectPage,
+      LeftSidebar,
+    },
+    name: "connect",
+    meta: {
+      keepAlive: true,
+    }
+  },
   /************************** 协作工作区 ***********************/
   {
     path: "/w/:workspaceId(\\w{10,})",
@@ -109,7 +121,18 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       keepAlive: true,
     }
-  }
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/connect",
+    components: {
+      default: ConnectPage,
+      LeftSidebar,
+    },
+    name: "collaborative-connect",
+    meta: {
+      keepAlive: true,
+    }
+  },
 ]
 
 const router = createRouter({

@@ -22,13 +22,17 @@ const symbolId = computed(() => {
 </script>
 <template>
   <svg aria-hidden="true" class="svg-icon">
-    <use :xlink:href="symbolId" :fill="color ? color : undefined" />
+    <use :xlink:href="symbolId" 
+      :fill="color ? color : undefined" 
+      :stroke="color ? color : undefined" 
+    />
   </svg>
 </template>
 <style scoped>
 
 .svg-icon {
   fill: var(--main-text);
+  stroke: var(--main-text);
 }
 
 </style>

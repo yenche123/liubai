@@ -16,6 +16,7 @@ const state = computed(() => {
   if(n === "index") return "index"
   if(n === "favorite") return "favorite"
   if(n === "trash") return "trash"
+  if(n === "connect") return "connect"
   return ""
 })
 
@@ -64,6 +65,19 @@ const color_selected = "var(--main-normal)"
     </div>
     <span>{{ t("common.tags") }}</span>
   </AppLink>
+
+  <!-- 连接 -->
+  <NaviLink class="sb-link liu-hover" to="/connect"
+    :class="{ 'sb-link_selected': state === 'connect' }"
+  >
+    <div class="sb-icon-container">
+      <SvgIcon class="sb-icon" 
+        :name="state === 'connect' ? 'hub_selected' : 'hub'" 
+        :color="state === 'connect' ? color_selected : color"
+      ></SvgIcon>
+    </div>
+    <span>{{ t("common.connects") }}</span>
+  </NaviLink>
 
   <!-- 回收桶 -->
   <NaviLink class="sb-link liu-hover" to="/trash"

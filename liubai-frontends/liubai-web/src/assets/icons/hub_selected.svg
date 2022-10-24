@@ -1,0 +1,13 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="48" height="48">
+	<title>hub-svg</title>
+	<style>
+		.s0 { stroke-width: 80 } 
+		.s1 { stroke-width: 80 } 
+	</style>
+	<circle id="图层 1" class="s0" cx="271" cy="285" r="133"/>
+	<circle id="图层 2" class="s0" cx="265" cy="768" r="113"/>
+	<circle id="图层 3" class="s0" cx="813.5" cy="542.5" r="77.5"/>
+	<path id="图层 4" class="s1" d="m398.9 368l2.2-4.5 300 146.3-2.2 4.4z"/>
+	<path id="图层 5" class="s1" d="m399.1 725.9l-2.2-4.4 308-158 2.2 4.4z"/>
+	<path id="图层 6" class="s1" d="m259.5 435.7h5l2 190h-5z"/>
+</svg>
