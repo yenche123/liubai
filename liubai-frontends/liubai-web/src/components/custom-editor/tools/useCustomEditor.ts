@@ -1,4 +1,4 @@
-import { onMounted, ref, watch } from "vue"
+import { onMounted, ref, shallowRef, watch } from "vue"
 import type { Ref } from "vue"
 import { useWindowSize } from "../../../hooks/useVueUse"
 import EditorCore from "../../editor-core/editor-core.vue"
@@ -7,7 +7,7 @@ import { TipTapEditor } from "../../../types/types-editor"
 export function useCustomEditor() {
   const maxEditorHeight = ref(500)
   const editorCoreRef = ref<typeof EditorCore | null>(null)
-  const editor = ref<TipTapEditor | null>(null)
+  const editor = shallowRef<TipTapEditor>()
   
   listenWindowChange(maxEditorHeight)
 
