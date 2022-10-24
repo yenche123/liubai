@@ -2,9 +2,15 @@
 import EditorCore from "../editor-core/editor-core.vue"
 import { useCustomEditor } from "./tools/useCustomEditor";
 import cfg from "../../config";
-import { EditorCoreContent } from "../../types/types-editor"
+import { EditorCoreContent } from "../../types/types-editor";
+import { useMoreItems } from "./tools/useMoreItems";
 
-let { maxEditorHeight, editorCoreRef, editor } = useCustomEditor()
+const { maxEditorHeight, editorCoreRef, editor } = useCustomEditor()
+const {
+  moreRef,
+  onTapMore,
+} = useMoreItems()
+
 const onEditorUpdate = (data: EditorCoreContent) => {
   console.log("onEditorUpdate.............")
   console.log(data)
@@ -64,6 +70,16 @@ const onEditorBlur = (data: EditorCoreContent) => {
       <svg-icon name="editor-strike" class="ceti-icon" />
     </div>
 
+    <!-- 更多 -->
+    <div class="liu-hover cet-item"
+      :class="{ 'cet-item_selected': moreRef }"
+      @click="onTapMore"
+    >
+      <svg-icon name="more" class="ceti-icon ceti-more" 
+        :class="{ 'ceti-more_open': moreRef }"
+      />
+    </div>
+
   </div>
 
 </div>
@@ -105,12 +121,19 @@ const onEditorBlur = (data: EditorCoreContent) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 8px;
-    
+    margin-inline-end: 8px;
     
     .ceti-icon {
       width: 30px;
       height: 30px;
+    }
+
+    .ceti-more {
+      transition: .25s;
+    }
+
+    .ceti-more_open {
+      transform: rotate(90deg);
     }
   }
 
