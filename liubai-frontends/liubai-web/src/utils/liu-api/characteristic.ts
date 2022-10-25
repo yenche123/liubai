@@ -5,6 +5,7 @@ let isMobile: boolean;   // 此字段表示是否为移动装置，包含是否�
 let isWeChat: boolean = false;
 let isIOS: boolean = false;
 let isIPadOS: boolean = false;
+let isMac: boolean = false;
 let isFeishu: boolean = false;
 let isInWebView: boolean = false;   // 是否在桌面应用 App 的 Webview 中，小程序也算
 
@@ -14,6 +15,7 @@ interface GetChaRes {
   isWeChat: boolean
   isIOS: boolean         // 是否为 iphone
   isIPadOS: boolean      // 是否为 iPad
+  isMac: boolean         // 是否为 mac，注意 iphone 和 ipad 时，此值可能为 false
   isFeishu: boolean
   isInWebView: boolean
 }
@@ -53,6 +55,7 @@ const getCharacteristic = (): GetChaRes => {
 
   if(ua.includes("iphone") || ua.includes("ios")) isIOS = true
   if(ua.includes("ipad")) isIPadOS = true
+  if(ua.includes("macintosh")) isMac = true
   if(ua.includes("feishu")) {
     isFeishu = true
     isInWebView = true
@@ -63,7 +66,16 @@ const getCharacteristic = (): GetChaRes => {
 }
 
 function _returnData(): GetChaRes {
-  return { isPC, isMobile, isWeChat, isIOS, isIPadOS, isFeishu, isInWebView }
+  return { 
+    isPC, 
+    isMobile, 
+    isWeChat, 
+    isIOS, 
+    isIPadOS,
+    isMac,
+    isFeishu, 
+    isInWebView,
+  }
 }
 
 
