@@ -12,7 +12,8 @@
     "connects": "Connection",
     "detail": "Detail",
     "title_ph": "Title",
-    "desc_ph": "Write something ..."
+    "desc_ph": "Write something ...",
+    "finish": "Finish"
   },
   "cui": {
     "plz_input_txt": "Text here"

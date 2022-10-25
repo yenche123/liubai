@@ -4,18 +4,17 @@ import { useCustomEditor } from "./tools/useCustomEditor";
 import cfg from "../../config";
 import { EditorCoreContent } from "../../types/types-editor";
 import { useMoreItems } from "./tools/useMoreItems";
+import liuUtil from "../../utils/liu-util";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n()
 const { maxEditorHeight, editorCoreRef, editor } = useCustomEditor()
 const {
   moreRef,
   onTapMore,
+  canSubmitRef,
+  onEditorUpdate,
 } = useMoreItems()
-
-const onEditorUpdate = (data: EditorCoreContent) => {
-  console.log("onEditorUpdate.............")
-  console.log(data)
-  console.log(" ")
-}
 
 const onEditorFocus = (data: EditorCoreContent) => {
   console.log("focus 了!!!!!!!!!!!!!!")
@@ -89,6 +88,14 @@ const onEditorFinish = (data: EditorCoreContent) => {
 
   </div>
 
+  <!-- 右小角: 提示字 + 按钮 -->
+  <div class="ce-finish-area">
+    <span class="cefa-tip">{{ liuUtil.getHelpTip('Mod_Enter') }}</span>
+    <custom-btn size="mini" class="cefa-btn" :disabled="!canSubmitRef">
+      <span>{{ t("common.finish") }}</span>
+    </custom-btn>
+  </div>
+
 </div>
   
 </template>
@@ -159,6 +166,25 @@ const onEditorFinish = (data: EditorCoreContent) => {
     }
   }
 
+}
+
+.ce-finish-area {
+  position: absolute;
+  bottom: 25px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+
+  .cefa-tip {
+    font-size: var(--mini-font);
+    color: var(--main-note);
+    margin-inline-end: 10px;
+    user-select: none;
+  }
+
+  .cefa-btn {
+    padding: 0 30px;
+  }
 }
 
 

@@ -12,7 +12,8 @@
     "connects": "连接",
     "detail": "详情",
     "title_ph": "标题",
-    "desc_ph": "写点东西..."
+    "desc_ph": "写点东西...",
+    "finish": "完成"
   },
   "cui": {
     "plz_input_txt": "请输入文字"

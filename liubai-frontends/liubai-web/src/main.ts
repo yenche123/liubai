@@ -14,10 +14,12 @@ import { i18n } from './locales'
 import { createPinia } from 'pinia'
 import { router } from './routes/router'
 import SvgIcon from "./assets/svg-icon.vue"
+import CustomBtn from "./components/custom-ui/custom-button.vue"
 
 const app = createApp(App)
 
 app.component("SvgIcon", SvgIcon)
+app.component("CustomBtn", CustomBtn)
 app.use(createPinia())
 app.use(i18n)
 app.use(router)
