@@ -7,6 +7,13 @@ import { useMoreItems } from "./tools/useMoreItems";
 import liuUtil from "../../utils/liu-util";
 import { useI18n } from "vue-i18n";
 
+defineProps({
+  lastBar: {
+    type: Boolean,
+    default: false,
+  }
+})
+
 const { t } = useI18n()
 const { maxEditorHeight, editorCoreRef, editor } = useCustomEditor()
 const {
