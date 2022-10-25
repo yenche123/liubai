@@ -5,6 +5,7 @@ specifiers:
   '@intlify/vite-plugin-vue-i18n': ^6.0.3
   '@tiptap/core': 2.0.0-beta.199
   '@tiptap/extension-blockquote': 2.0.0-beta.199
+  '@tiptap/extension-code-block-lowlight': 2.0.0-beta.199
   '@tiptap/extension-hard-break': 2.0.0-beta.199
   '@tiptap/extension-placeholder': 2.0.0-beta.199
   '@tiptap/extension-task-item': 2.0.0-beta.199
@@ -14,6 +15,8 @@ specifiers:
   '@types/node': ^18.7.18
   '@vitejs/plugin-vue': ^3.1.0
   '@vueuse/core': ^9.3.0
+  highlight.js: ^11.6.0
+  lowlight: ^2.7.0
   pinia: ^2.0.22
   sass: ^1.55.0
   typescript: ^4.6.4
@@ -30,6 +33,7 @@ dependencies:
   '@he-tree/vue': 2.0.4_vue@3.2.39
   '@tiptap/core': 2.0.0-beta.199
   '@tiptap/extension-blockquote': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
+  '@tiptap/extension-code-block-lowlight': 2.0.0-beta.199_nzrxqt3ixacyd5eims6i4aeceq
   '@tiptap/extension-hard-break': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/extension-placeholder': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/extension-task-item': 2.0.0-beta.199_5sl3hchzcdn6ovfbj7zpabzlra
@@ -37,6 +41,8 @@ dependencies:
   '@tiptap/starter-kit': 2.0.0-beta.199
   '@tiptap/vue-3': 2.0.0-beta.199_t7tm5r4k3qe7a6xtmhcuo56bra
   '@vueuse/core': 9.3.0_vue@3.2.39
+  highlight.js: 11.6.0
+  lowlight: 2.7.0
   pinia: 2.0.22_arz4dztosvwy2ghjrlh2wdhejm
   vue: 3.2.39
   vue-i18n: 9.2.2_vue@3.2.39
@@ -427,6 +433,19 @@ packages:
       '@tiptap/core': 2.0.0-beta.199
     dev: false
 
+  /@tiptap/extension-code-block-lowlight/2.0.0-beta.199_nzrxqt3ixacyd5eims6i4aeceq:
+    resolution: {integrity: sha512-1FWMdut6ZB/c0/3qbd+ljiB1M/YWADiGHBpm9bVhnoMcPGGkVS5ww+bUYpLBdBpTDcemfzkt7FtrfV0SKEg3+g==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0-beta.193
+      '@tiptap/extension-code-block': ^2.0.0-beta.193
+    dependencies:
+      '@tiptap/core': 2.0.0-beta.199
+      '@tiptap/extension-code-block': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
+      prosemirror-model: 1.18.1
+      prosemirror-state: 1.4.1
+      prosemirror-view: 1.29.0
+    dev: false
+
   /@tiptap/extension-code-block/2.0.0-beta.199_4focsuckzeocqotdxlryrtksam:
     resolution: {integrity: sha512-ZfftYE1kHA2pD46hXDkeYd1vuxp3bJLS854B2yHfw1cp3JVDjMXzm4Mzg7zLfr+YV1dT/N/fUfdCg38fqEUCyA==}
     peerDependencies:
@@ -635,6 +654,12 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: true
 
+  /@types/hast/2.3.4:
+    resolution: {integrity: sha512-wLEm0QvaoawEDoTRwzTXp4b4jpwiJDvR5KMnFnVodm3scufTlBOWRD6N1OBf9TZMhjlNsSfcO5V+7AF4+Vy+9g==}
+    dependencies:
+      '@types/unist': 2.0.6
+    dev: false
+
   /@types/node/18.7.18:
     resolution: {integrity: sha512-m+6nTEOadJZuTPkKR/SYK3A2d7FZrgElol9UP1Kae90VVU4a6mxnPuLiIW1m4Cq4gZ/nWb9GrdVXJCoCazDAbg==}
     dev: true
@@ -644,6 +669,10 @@ packages:
     dependencies:
       '@types/node': 18.7.18
     dev: true
+
+  /@types/unist/2.0.6:
+    resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
+    dev: false
 
   /@types/web-bluetooth/0.0.15:
     resolution: {integrity: sha512-w7hEHXnPMEZ+4nGKl/KDRVpxkwYxYExuHOYXyzIzCDzEZ9ZCGMAewulr9IqJu2LR4N37fcnb1XVeuZ09qgOxhA==}
@@ -1569,6 +1598,12 @@ packages:
       reusify: 1.0.4
     dev: true
 
+  /fault/2.0.1:
+    resolution: {integrity: sha512-WtySTkS4OKev5JtpHXnib4Gxiurzh5NCGvWrFaZ34m6JehfTUhKZvn9njTfw48t6JumVQOmrKqpmGcdwxnhqBQ==}
+    dependencies:
+      format: 0.2.2
+    dev: false
+
   /fill-range/4.0.0:
     resolution: {integrity: sha512-VcpLTWqWDiTerugjj8e3+esbg+skS3M9e54UuR3iCeIDMXCLTsAH8hTSzDQU/X6/6t3eYkOKoZSef2PlU6U1XQ==}
     engines: {node: '>=0.10.0'}
@@ -1602,6 +1637,11 @@ packages:
     resolution: {integrity: sha512-7EwmXrOjyL+ChxMhmG5lnW9MPt1aIeZEwKhQzoBUdTV0N3zuwWDZYVJatDvZ2OyzPUvdIAZDsCetk3coyMfcnQ==}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /format/0.2.2:
+    resolution: {integrity: sha512-wzsgA6WOq+09wrU1tsJ09udeR/YZRaeArL9e1wPbFg3GG2yDnC2ldKpxs4xunpFF9DgqCqOIra3bc1HWrJ37Ww==}
+    engines: {node: '>=0.4.x'}
+    dev: false
 
   /fragment-cache/0.2.1:
     resolution: {integrity: sha512-GMBAbW9antB8iZRHLoGw0b3HANt57diZYFO/HL1JGIC1MjKrdmhxvrJbupnVvpys0zsz7yBApXdQyfepKly2kA==}
@@ -1706,6 +1746,11 @@ packages:
     resolution: {integrity: sha512-fILDxC1mwnJ6iDHHNttD1CAdshqlHgax0JcIxiYnuYfFH5tW7X26fz5yOr9evEKLiDdQ++BCt4L2UfzxuIHvgg==}
     dependencies:
       '@babel/runtime': 7.19.4
+    dev: false
+
+  /highlight.js/11.6.0:
+    resolution: {integrity: sha512-ig1eqDzJaB0pqEvlPVIpSSyMaO92bH1N2rJpLMN/nX396wTpDA4Eq0uK+7I/2XG17pFaaKE0kjV/XPeGt7Evjw==}
+    engines: {node: '>=12.0.0'}
     dev: false
 
   /htmlparser2/3.10.1:
@@ -1936,6 +1981,14 @@ packages:
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
     dev: true
+
+  /lowlight/2.7.0:
+    resolution: {integrity: sha512-RRdrHalFfjpxL91ITTX7KhJYH3QmX5bW9Uie2D2E5GPIR3XBYDYhScBjE291ewFZkStz/k2PN9KC+8deNLiI3Q==}
+    dependencies:
+      '@types/hast': 2.3.4
+      fault: 2.0.1
+      highlight.js: 11.6.0
+    dev: false
 
   /magic-string/0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}

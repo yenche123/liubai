@@ -104,14 +104,67 @@ defineExpose({
     background: #0D0D0D;
     color: #FFF;
     font-family: 'JetBrainsMono', monospace;
-    padding: 0.75rem 1rem;
+    padding: 2rem 1rem 0.75rem;
     border-radius: 0.5rem;
+    margin: 0.75rem 0;
 
     code {
       color: inherit;
       padding: 0;
       background: none;
-      font-size: 0.8rem;
+      font-size: var(--inline-code-font);
+    }
+
+    .hljs-comment,
+    .hljs-quote {
+      color: #616161;
+    }
+
+    .hljs-variable,
+    .hljs-template-variable,
+    .hljs-attribute,
+    .hljs-tag,
+    .hljs-name,
+    .hljs-regexp,
+    .hljs-link,
+    .hljs-name,
+    .hljs-selector-id,
+    .hljs-selector-class {
+      color: #F98181;
+    }
+
+    .hljs-number,
+    .hljs-meta,
+    .hljs-built_in,
+    .hljs-builtin-name,
+    .hljs-literal,
+    .hljs-type,
+    .hljs-params {
+      color: #FBBC88;
+    }
+
+    .hljs-string,
+    .hljs-symbol,
+    .hljs-bullet {
+      color: #B9F18D;
+    }
+
+    .hljs-title,
+    .hljs-section {
+      color: #FAF594;
+    }
+
+    .hljs-keyword,
+    .hljs-selector-tag {
+      color: #70CFF8;
+    }
+
+    .hljs-emphasis {
+      font-style: italic;
+    }
+
+    .hljs-strong {
+      font-weight: 700;
     }
   }
 

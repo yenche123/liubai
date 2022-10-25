@@ -1,14 +1,18 @@
-import { useEditor } from '@tiptap/vue-3'
+import { useEditor, VueNodeViewRenderer } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import Blockquote from "@tiptap/extension-blockquote"
 import HardBreak from "@tiptap/extension-hard-break"
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import { useI18n, ComposerTranslation } from 'vue-i18n'
 import { wrappingInputRule } from "@tiptap/core"
 import { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
 import { onMounted } from 'vue'
+import { lowlight } from 'lowlight'
+
+import CodeBlockComponent from '../code-block-component/code-block-component.vue'
 
 export interface EditorCoreProps {
   titlePlaceholder: string
@@ -147,16 +151,31 @@ function initExtensions(
   const CustomHardBreak = HardBreak.extend({
     addKeyboardShortcuts() {
       return {
-        'Mod-Enter': () => {
-          onModEnter(this.editor, emits)
-          return this.editor.commands.blur()
+        'Mod-Enter': ({ editor }) => {
+          const isCodeBlock = editor.isActive("codeBlock")
+          console.log("isCodeBlock: ", isCodeBlock)
+          console.log(" ")
+          if(isCodeBlock) {
+            return false
+          }
+          onModEnter(editor, emits)
+          return editor.commands.blur()
         }
       }
     },
   })
 
+  const CustomCodeBlockLowlight = CodeBlockLowlight.extend({
+    addNodeView() {
+      return VueNodeViewRenderer(CodeBlockComponent)
+    }
+  })
+
   const extensions = [
     CustomBlockQuote,
+    CustomCodeBlockLowlight.configure({
+      lowlight
+    }),
     CustomHardBreak,
     TaskList.configure({
       HTMLAttributes: {
