@@ -6,6 +6,7 @@ import TaskList from '@tiptap/extension-task-list'
 import Blockquote from "@tiptap/extension-blockquote"
 import HardBreak from "@tiptap/extension-hard-break"
 import { useI18n, ComposerTranslation } from 'vue-i18n'
+import { wrappingInputRule } from "@tiptap/core"
 import { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
 import { onMounted } from 'vue'
 
@@ -126,9 +127,19 @@ function initExtensions(
   t: ComposerTranslation
 ) {
 
+  const bqRegex = /^[>》]\s$/
+
   const CustomBlockQuote = Blockquote.extend({
     addKeyboardShortcuts() {
       return {}
+    },
+    addInputRules() {
+      return [
+        wrappingInputRule({
+          find: bqRegex,
+          type: this.type
+        })
+      ]
     },
     content: "paragraph*"
   })
