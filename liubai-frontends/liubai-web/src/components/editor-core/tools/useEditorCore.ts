@@ -3,6 +3,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
+import Blockquote from "@tiptap/extension-blockquote"
 import { useI18n, ComposerTranslation } from 'vue-i18n'
 import { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
 import { onMounted } from 'vue'
@@ -107,7 +108,16 @@ function onEditorUpdate(
 
 
 function initExtensions(props: EditorCoreProps, t: ComposerTranslation) {
+
+  const CustomBlockQuote = Blockquote.extend({
+    addKeyboardShortcuts() {
+      return {}
+    },
+    content: "paragraph*"
+  })
+
   const extensions = [
+    CustomBlockQuote,
     TaskList.configure({
       HTMLAttributes: {
         class: "liu-tasklist"
@@ -125,7 +135,8 @@ function initExtensions(props: EditorCoreProps, t: ComposerTranslation) {
         HTMLAttributes: {
           class: "liu-bulletList"
         }
-      }
+      },
+      blockquote: false,
     }),
     Placeholder.configure({
       placeholder: ({ node }) => {
