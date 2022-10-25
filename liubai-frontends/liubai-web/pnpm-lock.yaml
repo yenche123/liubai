@@ -5,6 +5,7 @@ specifiers:
   '@intlify/vite-plugin-vue-i18n': ^6.0.3
   '@tiptap/core': 2.0.0-beta.199
   '@tiptap/extension-blockquote': 2.0.0-beta.199
+  '@tiptap/extension-hard-break': 2.0.0-beta.199
   '@tiptap/extension-placeholder': 2.0.0-beta.199
   '@tiptap/extension-task-item': 2.0.0-beta.199
   '@tiptap/extension-task-list': 2.0.0-beta.199
@@ -29,8 +30,9 @@ dependencies:
   '@he-tree/vue': 2.0.4_vue@3.2.39
   '@tiptap/core': 2.0.0-beta.199
   '@tiptap/extension-blockquote': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
+  '@tiptap/extension-hard-break': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/extension-placeholder': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
-  '@tiptap/extension-task-item': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
+  '@tiptap/extension-task-item': 2.0.0-beta.199_5sl3hchzcdn6ovfbj7zpabzlra
   '@tiptap/extension-task-list': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/starter-kit': 2.0.0-beta.199
   '@tiptap/vue-3': 2.0.0-beta.199_t7tm5r4k3qe7a6xtmhcuo56bra
@@ -564,13 +566,14 @@ packages:
       '@tiptap/core': 2.0.0-beta.199
     dev: false
 
-  /@tiptap/extension-task-item/2.0.0-beta.199_4focsuckzeocqotdxlryrtksam:
+  /@tiptap/extension-task-item/2.0.0-beta.199_5sl3hchzcdn6ovfbj7zpabzlra:
     resolution: {integrity: sha512-dvMgXr4B/V8dYvksLtbby3R2wM9zk3xdkOBuohTLQuRq73dK12Bh/h5xrl4cey8i/2tQBWgUfFiGVPsEUJjQCQ==}
     peerDependencies:
       '@tiptap/core': ^2.0.0-beta.193
       prosemirror-model: ^1.18.1
     dependencies:
       '@tiptap/core': 2.0.0-beta.199
+      prosemirror-model: 1.18.1
     dev: false
 
   /@tiptap/extension-task-list/2.0.0-beta.199_4focsuckzeocqotdxlryrtksam:

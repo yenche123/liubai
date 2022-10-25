@@ -19,6 +19,7 @@ const emits = defineEmits<{
   (event: "update", data: EditorCoreContent): void
   (event: "focus", data: EditorCoreContent): void
   (event: "blur", data: EditorCoreContent): void
+  (event: "finish", data: EditorCoreContent): void
 }>()
 
 const { editor } = useEditorCore(props, emits)

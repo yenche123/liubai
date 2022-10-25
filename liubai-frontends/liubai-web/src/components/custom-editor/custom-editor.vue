@@ -25,6 +25,12 @@ const onEditorBlur = (data: EditorCoreContent) => {
   console.log("blur 了!!!!!!!!!!!!!!")
 } 
 
+const onEditorFinish = (data: EditorCoreContent) => {
+  console.log("用户敲击了 ctrl + Enter")
+  console.log(data)
+  console.log(" ")
+}
+
 </script>
 <template>
 
@@ -36,6 +42,7 @@ const onEditorBlur = (data: EditorCoreContent) => {
       @update="onEditorUpdate"
       @focus="onEditorFocus"
       @blur="onEditorBlur"
+      @finish="onEditorFinish"
     ></EditorCore>
   </div>
 
