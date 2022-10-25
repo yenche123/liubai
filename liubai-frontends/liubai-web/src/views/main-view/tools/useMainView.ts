@@ -6,12 +6,7 @@ import { useWindowSize } from "../../../hooks/useVueUse"
 import cfg from "../../../config"
 import { vvKey } from "../../../utils/provide-keys"
 
-interface MainViewProps {
-  viceViewPx: number
-}
-
-
-export const useMainView = (props: MainViewProps) => {
+export const useMainView = () => {
 
   const layoutStore = useLayoutStore()
 

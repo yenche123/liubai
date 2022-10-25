@@ -1,14 +1,7 @@
 <script setup lang="ts">
 import { useMainView } from "./tools/useMainView"
 
-const props = defineProps({
-  viceViewPx: {
-    type: Number,
-    default: 0,
-  }
-})
-
-const { leftPx, rightPx } = useMainView(props)
+const { leftPx, rightPx } = useMainView()
 
 </script>
 <template>

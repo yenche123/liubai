@@ -8,14 +8,14 @@ import NaviVirtual from '../../../components/common/navi-virtual/navi-virtual.vu
 import { useMainVice } from "../../../hooks/useMainVice";
 import { useI18n } from "vue-i18n";
 
-const { viceViewPx, onVvWidthChange } = useMainVice()
+const { onVvWidthChange } = useMainVice()
 const { t } = useI18n()
 
 </script>
 <template>
 
   <!-- 主视图 -->
-  <main-view :vice-view-px="viceViewPx">
+  <main-view>
     <scroll-view>
       <navi-virtual></navi-virtual>
       <FavoriteContent></FavoriteContent>

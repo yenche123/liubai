@@ -5,14 +5,13 @@ import { useMainVice } from "../../../hooks/useMainVice";
 import ScrollView from "../../../components/common/scroll-view/scroll-view.vue"
 import IndexContent from "./index-content/index-content.vue"
 
-const { viceViewPx, onVvWidthChange } = useMainVice()
-
+const { onVvWidthChange } = useMainVice()
 
 </script>
 <template>
 
   <!-- 主视图 -->
-  <main-view :vice-view-px="viceViewPx">
+  <main-view>
     <scroll-view>
       <index-content></index-content>
     </scroll-view>
