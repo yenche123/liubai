@@ -4,8 +4,7 @@ import { useCustomEditor } from "./tools/useCustomEditor";
 import cfg from "../../config";
 import { EditorCoreContent } from "../../types/types-editor";
 import { useMoreItems } from "./tools/useMoreItems";
-import liuUtil from "../../utils/liu-util";
-import { useI18n } from "vue-i18n";
+import CeFinishArea from "./ce-finish-area.vue"
 
 defineProps({
   lastBar: {
@@ -14,7 +13,6 @@ defineProps({
   }
 })
 
-const { t } = useI18n()
 const { maxEditorHeight, editorCoreRef, editor } = useCustomEditor()
 const {
   moreRef,
@@ -99,12 +97,7 @@ const icon_color = "var(--main-normal)"
   </div>
 
   <!-- 右小角: 提示字 + 按钮 -->
-  <div class="ce-finish-area">
-    <span class="cefa-tip">{{ liuUtil.getHelpTip('Mod_Enter') }}</span>
-    <custom-btn size="mini" class="cefa-btn" :disabled="!canSubmitRef">
-      <span>{{ t("common.finish") }}</span>
-    </custom-btn>
-  </div>
+  <ce-finish-area :can-submit="canSubmitRef"></ce-finish-area>
 
 </div>
   
@@ -176,25 +169,6 @@ const icon_color = "var(--main-normal)"
     }
   }
 
-}
-
-.ce-finish-area {
-  position: absolute;
-  bottom: 25px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-
-  .cefa-tip {
-    font-size: var(--mini-font);
-    color: var(--main-note);
-    margin-inline-end: 10px;
-    user-select: none;
-  }
-
-  .cefa-btn {
-    padding: 0 30px;
-  }
 }
 
 

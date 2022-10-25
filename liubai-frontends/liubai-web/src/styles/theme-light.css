@@ -26,8 +26,8 @@
   --other-btn-hover: #e1e1e1;
 
   --editor-shadow: 0 10px 20px -6px rgba(0, 0, 0, .1);
-  --liu-hr: #e9e9e9;   /** 卡片里的分割线 */
-  --liu-quote: #868686;  /** 引言 */
+  --liu-hr: #e9e9e9;   /** 卡片里的分割线、引用的那条 bar */
+  --liu-quote: #868686;  /** 引用里的文字色 */
 
   /** 一些比较少用到的 css 变量 */
   --vice-bg: #f3f3f3;
@@ -36,6 +36,7 @@
   --navi-normal: #3f4549;            /** 侧边栏链接 默认颜色 */
   --drag-bg: #ddf2f9;        /** 拖动时的背景色 */
   --drag-border: #aaf2f9;    /** 拖动时的边框色 */
+  --gradient-one: linear-gradient(90deg, rgba(255, 255, 255, 0) 10%, rgba(255, 255, 255, 1) 96%);
   
   /** 自定义组件: 加载框 */
   --cui-loading: rgba(46, 46, 46, .93);
