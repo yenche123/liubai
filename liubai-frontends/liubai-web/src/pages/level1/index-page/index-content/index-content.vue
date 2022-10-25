@@ -15,6 +15,10 @@ const virtualHeight = cfg.navi_height / 3
       <CustomEditor></CustomEditor>
       <div class="mc-spacing"></div>
 
+      <div class="mc-test">
+        <AppLink to="?cid=sdfghjkhgfd">跳转到侧边栏详情页</AppLink>
+      </div>
+
     </div>
 
   </div>
@@ -50,7 +54,7 @@ const virtualHeight = cfg.navi_height / 3
       background-color: var(--card-bg);
       width: 100%;
       height: 100px;
-      box-shadow: 0 23px 60px rgba(0,0,0,.09);
+      box-shadow: var(--editor-shadow);
       margin-bottom: 30px;
     }
 
