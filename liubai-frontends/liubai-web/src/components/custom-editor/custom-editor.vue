@@ -30,6 +30,8 @@ const onEditorFinish = (data: EditorCoreContent) => {
   console.log(" ")
 }
 
+const icon_color = "var(--main-normal)"
+
 </script>
 <template>
 
@@ -49,7 +51,7 @@ const onEditorFinish = (data: EditorCoreContent) => {
   <div class="ce-toolbar">
     <!-- 图片 -->
     <div class="liu-hover cet-item">
-      <svg-icon name="editor-image" class="ceti-icon" />
+      <svg-icon name="editor-image" class="ceti-icon" :color="icon_color" />
     </div>
 
     <!-- 粗体 -->
@@ -57,7 +59,7 @@ const onEditorFinish = (data: EditorCoreContent) => {
       :class="{ 'cet-item_selected': editor?.isActive('bold') }"
       @click="editor?.chain().focus().toggleBold().run()"
     >
-      <svg-icon name="editor-bold" class="ceti-icon" />
+      <svg-icon name="editor-bold" class="ceti-icon" :color="icon_color" />
     </div>
 
     <!-- 斜体 -->
@@ -65,7 +67,7 @@ const onEditorFinish = (data: EditorCoreContent) => {
       :class="{ 'cet-item_selected': editor?.isActive('italic') }"
       @click="editor?.chain().focus().toggleItalic().run()"
     >
-      <svg-icon name="editor-italic" class="ceti-icon" />
+      <svg-icon name="editor-italic" class="ceti-icon" :color="icon_color" />
     </div>
 
     <!-- 删除线 -->
@@ -73,7 +75,7 @@ const onEditorFinish = (data: EditorCoreContent) => {
       :class="{ 'cet-item_selected': editor?.isActive('strike') }"
       @click="editor?.chain().focus().toggleStrike().run()"
     >
-      <svg-icon name="editor-strike" class="ceti-icon" />
+      <svg-icon name="editor-strike" class="ceti-icon" :color="icon_color" />
     </div>
 
     <!-- 更多 -->
@@ -83,6 +85,7 @@ const onEditorFinish = (data: EditorCoreContent) => {
     >
       <svg-icon name="more" class="ceti-icon ceti-more" 
         :class="{ 'ceti-more_open': moreRef }"
+        :color="icon_color"
       />
     </div>
 

@@ -82,7 +82,7 @@ const onTapBtn = (e: Event) => {
 
 .btn-container:disabled {
   background-color: var(--primary-color);
-  opacity: .6;
+  opacity: .5;
   cursor: default;
 }
 
