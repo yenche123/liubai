@@ -105,7 +105,7 @@ defineExpose({
   }
 
   pre {
-    background: #0D0D0D;
+    background: #121212;
     color: #FFF;
     font-family: 'JetBrainsMono', monospace;
     padding: 2rem 1rem 0.75rem;
