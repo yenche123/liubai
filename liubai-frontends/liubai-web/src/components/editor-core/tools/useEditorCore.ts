@@ -195,6 +195,7 @@ function initExtensions(
       },
       blockquote: false,
       hardBreak: false,
+      codeBlock: false,
     }),
     Placeholder.configure({
       placeholder: ({ node }) => {
