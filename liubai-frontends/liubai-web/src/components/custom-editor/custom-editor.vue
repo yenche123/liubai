@@ -162,6 +162,20 @@ const icon_color = "var(--main-normal)"
     }
   }
 
+  @media screen and (max-width: 380px)  {
+    .cet-item {
+      width: 40px;
+      height: 40px;
+      margin-inline-end: 4px;
+
+      .ceti-icon {
+        width: 28px;
+        height: 28px;
+      }
+    }
+    
+  }
+
   .cet-item_selected {
     position: relative;
     overflow: hidden;
