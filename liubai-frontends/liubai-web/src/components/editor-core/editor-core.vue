@@ -93,11 +93,15 @@ defineExpose({
   }
 
   code {
-    background-color: rgba(#616161, 0.1);
-    color: #616161;
+    background-color: var(--on-main-code);
+    color: var(--main-code);
     padding: 4px 6px;
     border-radius: 4px;
     font-size: var(--inline-code-font);
+  }
+
+  p::selection, code::selection {
+    background-color: var(--select-bg);
   }
 
   pre {
@@ -114,6 +118,10 @@ defineExpose({
       background: none;
       font-size: var(--btn-font);
       line-height: 1.6;
+
+      div::selection, span::selection {
+        background-color: var(--select-code);
+      }
     }
 
     .hljs-comment,

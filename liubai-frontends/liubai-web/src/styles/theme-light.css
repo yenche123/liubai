@@ -11,8 +11,12 @@
   --main-text: #1f2429;
   --main-normal: #3f4549;
   --main-note: #ababab;
+  --main-code: #686868;
+  --on-main-code: rgba(104, 104, 104, .1);
   --scrollbar-thumb: #c3c3c3;
   --popup-bg: rgba(0, 0, 0, .8);
+  --select-bg: #ddf2f9;
+  --select-code: #264f78;
 
   --sidebar-bg: #ffffff;
   --sidebar-scrollbar-thumb: #e3e3e3;

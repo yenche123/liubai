@@ -55,13 +55,14 @@ export default {
     right: 0.5rem;
     font-size: var(--btn-font);
     font-family: inherit;
-    color: black;
+    color: var(--main-text);
     margin: 0.1rem;
-    border: 1px solid black;
+    border: 1px solid var(--line-default);
     border-radius: 0.3rem;
     padding: 0.1rem 0.4rem;
-    background: white;
-    accent-color: black;
+    background: var(--card-bg);
+    accent-color: var(--main-text);
+    cursor: pointer;
 
     &[disabled] {
       opacity: 0.3;
