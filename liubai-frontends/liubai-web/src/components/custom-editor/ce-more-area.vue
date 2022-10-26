@@ -144,6 +144,10 @@ const default_color = "var(--main-normal)"
     font-weight: 700;
     color: var(--main-normal);
     user-select: none;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .mai-footer {
