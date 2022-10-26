@@ -32,7 +32,7 @@ const default_color = "var(--main-normal)"
       :class="{ 'ma-grid-one-column': mvRef < critialPoint }"
     >
       <!-- 什么时候 -->
-      <div class="ma-item">
+      <div class="liu-hover ma-item">
         <div class="mai-icon">
           <svg-icon name="when" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
@@ -45,7 +45,7 @@ const default_color = "var(--main-normal)"
       </div>
 
       <!-- 提醒我 -->
-      <div class="ma-item">
+      <div class="liu-hover ma-item">
         <div class="mai-icon">
           <svg-icon name="notification" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
@@ -58,7 +58,7 @@ const default_color = "var(--main-normal)"
       </div>
 
       <!-- 加标题 -->
-      <div class="ma-item">
+      <div class="liu-hover ma-item">
         <div class="mai-icon">
           <svg-icon name="title" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
@@ -71,7 +71,7 @@ const default_color = "var(--main-normal)"
       </div>
 
       <!-- 加附件 -->
-      <div class="ma-item">
+      <div class="liu-hover ma-item">
         <div class="mai-icon">
           <svg-icon name="upload_file" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
@@ -109,7 +109,7 @@ const default_color = "var(--main-normal)"
 .ma-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;    /** <grid-row-gap> <grid-column-gap> */
+  gap: 10px 5px;    /** <grid-row-gap> <grid-column-gap> */
 }
 
 .ma-grid-one-column {
@@ -123,16 +123,6 @@ const default_color = "var(--main-normal)"
   display: flex;
   align-items: center;
   height: 46px;
-  transition: .15s;
-  cursor: pointer;
-
-  &:hover {
-    opacity: .7;
-  }
-
-  &:active {
-    opacity: .6;
-  }
 
   .mai-icon {
     width: 40px;
@@ -157,11 +147,13 @@ const default_color = "var(--main-normal)"
   }
 
   .mai-footer {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
+    border-radius: 4px;
+    margin-inline-end: 4px;
 
     .maif-icon {
       width: 16px;
