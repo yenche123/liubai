@@ -112,7 +112,8 @@ defineExpose({
       color: inherit;
       padding: 0;
       background: none;
-      font-size: var(--inline-code-font);
+      font-size: var(--btn-font);
+      line-height: 1.6;
     }
 
     .hljs-comment,

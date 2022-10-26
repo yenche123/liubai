@@ -153,8 +153,6 @@ function initExtensions(
       return {
         'Mod-Enter': ({ editor }) => {
           const isCodeBlock = editor.isActive("codeBlock")
-          console.log("isCodeBlock: ", isCodeBlock)
-          console.log(" ")
           if(isCodeBlock) {
             return false
           }
