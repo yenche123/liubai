@@ -2,8 +2,10 @@
 import cfg from "../../../../config"
 import CustomEditor from "../../../../components/custom-editor/custom-editor.vue"
 import AppLink from "../../../../components/common/app-link/app-link.vue"
+import { useIndexContent } from "./tools/useIndexContent";
 
 const virtualHeight = cfg.navi_height / 3
+const { lastBar } = useIndexContent()
 
 </script>
 <template>
@@ -12,7 +14,7 @@ const virtualHeight = cfg.navi_height / 3
     <div class="mc-virtual"></div>
     <div class="mc-box">
       
-      <CustomEditor></CustomEditor>
+      <CustomEditor :last-bar="lastBar"></CustomEditor>
       <div class="mc-spacing"></div>
 
       <div class="mc-test">

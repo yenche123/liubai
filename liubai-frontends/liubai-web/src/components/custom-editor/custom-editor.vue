@@ -4,9 +4,10 @@ import { useCustomEditor } from "./tools/useCustomEditor";
 import cfg from "../../config";
 import { EditorCoreContent } from "../../types/types-editor";
 import { useMoreItems } from "./tools/useMoreItems";
-import CeFinishArea from "./ce-finish-area.vue"
+import CeFinishArea from "./ce-finish-area.vue";
+import CeMoreArea from "./ce-more-area.vue";
 
-defineProps({
+const props = defineProps({
   lastBar: {
     type: Boolean,
     default: false,
@@ -19,7 +20,8 @@ const {
   onTapMore,
   canSubmitRef,
   onEditorUpdate,
-} = useMoreItems()
+  showVirtualBar,
+} = useMoreItems(props)
 
 const onEditorFocus = (data: EditorCoreContent) => {
   console.log("focus 了!!!!!!!!!!!!!!")
@@ -96,6 +98,12 @@ const icon_color = "var(--main-normal)"
 
   </div>
 
+  <!-- 更多栏 -->
+  <ce-more-area :show="moreRef"></ce-more-area>
+
+  <!-- 虚拟空间 用于避免完成按钮挡到其他地方 -->
+  <div class="ce-virtual" :class="{ 'ce-virtual_show': showVirtualBar }"></div>
+
   <!-- 右小角: 提示字 + 按钮 -->
   <ce-finish-area :can-submit="canSubmitRef"></ce-finish-area>
 
@@ -169,6 +177,17 @@ const icon_color = "var(--main-normal)"
     }
   }
 
+}
+
+.ce-virtual {
+  width: 100%;
+  transition: .2s;
+  height: 55px;
+  max-height: 0;
+}
+
+.ce-virtual_show {
+  max-height: 55px;
 }
 
 

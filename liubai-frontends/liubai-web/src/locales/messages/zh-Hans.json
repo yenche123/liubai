@@ -15,6 +15,12 @@
     "desc_ph": "写点东西...",
     "finish": "完成"
   },
+  "editor": {
+    "when": "什么时候",
+    "remind": "提醒我",
+    "add_title": "加标题",
+    "add_file": "加附件"
+  },
   "cui": {
     "plz_input_txt": "请输入文字"
   }

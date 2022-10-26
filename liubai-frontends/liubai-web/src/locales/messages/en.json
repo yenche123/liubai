@@ -15,6 +15,12 @@
     "desc_ph": "Write something ...",
     "finish": "Finish"
   },
+  "editor": {
+    "when": "When",
+    "remind": "Remind me",
+    "add_title": "Add a title",
+    "add_file": "Add a file"
+  },
   "cui": {
     "plz_input_txt": "Text here"
   }

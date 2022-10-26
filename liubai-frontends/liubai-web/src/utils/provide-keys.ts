@@ -5,3 +5,4 @@ import type { InjectionKey, Ref } from 'vue'
 // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-provide-inject
 
 export const vvKey = Symbol() as InjectionKey<Ref<number>>
+export const mvKey = Symbol() as InjectionKey<Ref<number>>

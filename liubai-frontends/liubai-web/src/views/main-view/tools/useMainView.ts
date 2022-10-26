@@ -1,10 +1,10 @@
 // 主视图 宽度控制器
 
-import { inject, ref, Ref, watch } from "vue"
+import { inject, provide, ref, Ref, watch } from "vue"
 import { useLayoutStore, LayoutStore } from "../../useLayoutStore"
 import { useWindowSize } from "../../../hooks/useVueUse"
 import cfg from "../../../config"
-import { vvKey } from "../../../utils/provide-keys"
+import { vvKey, mvKey } from "../../../utils/provide-keys"
 
 export const useMainView = () => {
 
@@ -31,6 +31,8 @@ function initMainView(
   leftPx.value = layoutStore.sidebarWidth
   centerPx.value = width.value - leftPx.value - vvRef.value
   rightPx.value = vvRef.value
+
+  provide(mvKey, centerPx)
 
   // 监听左边侧边栏的改变
   layoutStore.$subscribe((mutation, state) => {
