@@ -51,9 +51,10 @@ defineProps({
 
     .cefa-tip {
       font-size: var(--mini-font);
-      color: var(--main-note);
+      color: var(--main-tip);
       margin-inline-end: 10px;
       user-select: none;
+      font-weight: 300;
     }
 
     .cefa-btn {

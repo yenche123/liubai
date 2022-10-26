@@ -18,7 +18,7 @@ const containerMaxHeightPx = computed(() => {
 })
 const { t } = useI18n()
 
-const default_color = "var(--main-normal)"
+const default_color = "var(--other-btn-text)"
 
 </script>
 <template>
@@ -141,8 +141,8 @@ const default_color = "var(--main-normal)"
   .mai-title {
     flex: 1;
     font-size: var(--btn-font);
-    font-weight: 700;
-    color: var(--main-normal);
+    font-weight: 400;
+    color: var(--other-btn-text);
     user-select: none;
     display: inline-block;
     white-space: nowrap;

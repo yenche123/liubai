@@ -10,8 +10,9 @@
   --bg-color: #2b2b2b;
   --main-text: #e7e9ea;
   --main-normal: #c7c9ca;
-  --main-note: #686868;
   --main-code: #ababab;
+  --main-note: #686868;
+  --main-tip: #4e4e4e;
   --on-main-code: rgba(171, 171, 171, .1);
   --scrollbar-thumb: #484848;
   --popup-bg: rgba(168, 168, 168, 0.66);
