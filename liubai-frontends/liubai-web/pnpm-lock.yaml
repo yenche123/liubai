@@ -16,6 +16,7 @@ specifiers:
   '@vitejs/plugin-vue': ^3.1.0
   '@vuepic/vue-datepicker': ^3.5.2
   '@vueuse/core': ^9.3.0
+  date-fns: ^2.29.3
   highlight.js: ^11.6.0
   lowlight: ^2.7.0
   pinia: ^2.0.22
@@ -43,6 +44,7 @@ dependencies:
   '@tiptap/vue-3': 2.0.0-beta.199_t7tm5r4k3qe7a6xtmhcuo56bra
   '@vuepic/vue-datepicker': 3.5.2_vue@3.2.39
   '@vueuse/core': 9.3.0_vue@3.2.39
+  date-fns: 2.29.3
   highlight.js: 11.6.0
   lowlight: 2.7.0
   pinia: 2.0.22_arz4dztosvwy2ghjrlh2wdhejm

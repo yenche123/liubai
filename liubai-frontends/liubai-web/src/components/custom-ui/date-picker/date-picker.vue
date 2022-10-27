@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useDynamics } from '../../../hooks/useDynamics';
 import liuUtil from "../../../utils/liu-util";
@@ -22,6 +22,16 @@ const {
   onTapConfirm,
   onTapCancel,
 } = initDatePicker()
+
+const handleInternal = (newDate: Date) => {
+  if(!date.value) {
+    date.value = newDate
+    return
+  }
+  const res = liuUtil.areTheDatesEqual(date.value, newDate)
+  if(res) return
+  date.value = newDate
+}
 
 </script>
 <template>
@@ -44,6 +54,7 @@ const {
       calendarClassName="dp-custom-calendar-wrapper"
       calendarCellClassName="dp-custom-cell"
       minutesIncrement="5"
+      @internalModelChange="handleInternal"
     >
       <template #action-select>
         <div class="liu-dp-btns">
@@ -61,7 +72,7 @@ const {
       <template #clock-icon>
         <div class="liu-dp-clock-calendar">
           <svg-icon name="when" class="liu-dcc-icon" color="var(--dp-icon-color)"></svg-icon>
-          <span>{{ t("date_picker.select_time") }}</span>
+          <span>{{ timeStr ? timeStr : t("date_picker.select_time") }}</span>
         </div>
       </template>
 
