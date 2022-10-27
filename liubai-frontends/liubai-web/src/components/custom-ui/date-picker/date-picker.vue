@@ -219,6 +219,7 @@ const previewDate = computed(() => {
   max-width: 13vw;
   max-height: 13vw;
   transition: .16s;
+  font-size: var(--btn-font);
 }
 
 </style>
