@@ -146,6 +146,7 @@ function openViceView(
   else if(vvData.viceViewPx < min) vvData.viceViewPx = min
   else vvData.viceViewPx = getViceViewPxFromStyle(vvEl, vvData.viceViewPx)
   vvData.openType = "opened"
+  vvData.shadow = judgeIfShadow(vvData)
 
   emits("widthchange", vvData.viceViewPx)
 }
