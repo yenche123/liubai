@@ -14,6 +14,7 @@ specifiers:
   '@tiptap/vue-3': 2.0.0-beta.199
   '@types/node': ^18.7.18
   '@vitejs/plugin-vue': ^3.1.0
+  '@vuepic/vue-datepicker': ^3.5.2
   '@vueuse/core': ^9.3.0
   highlight.js: ^11.6.0
   lowlight: ^2.7.0
@@ -40,6 +41,7 @@ dependencies:
   '@tiptap/extension-task-list': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/starter-kit': 2.0.0-beta.199
   '@tiptap/vue-3': 2.0.0-beta.199_t7tm5r4k3qe7a6xtmhcuo56bra
+  '@vuepic/vue-datepicker': 3.5.2_vue@3.2.39
   '@vueuse/core': 9.3.0_vue@3.2.39
   highlight.js: 11.6.0
   lowlight: 2.7.0
@@ -878,6 +880,16 @@ packages:
     resolution: {integrity: sha512-0PLQ6RUtZM0vO3teRfzGi4ltLUO5aO+kLgwh4Um3THSR03rpQWLTuRCkuO5A41ITzwdWeKdPHtSARuPkoo5pCQ==}
     dev: true
 
+  /@vuepic/vue-datepicker/3.5.2_vue@3.2.39:
+    resolution: {integrity: sha512-kaMqs6Bf3xXeIwHY/NLTTJ2WznROdkFEbKj5eYq7u6AkZhg9l/+U7aF+JhfncLIpPAIil3+V4nej2gxPewKiiQ==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      vue: '>=3.2.0'
+    dependencies:
+      date-fns: 2.29.3
+      vue: 3.2.39
+    dev: false
+
   /@vueuse/core/9.3.0_vue@3.2.39:
     resolution: {integrity: sha512-64Rna8IQDWpdrJxgitDg7yv1yTp41ZmvV8zlLEylK4QQLWAhz1OFGZDPZ8bU4lwcGgbEJ2sGi2jrdNh4LttUSQ==}
     dependencies:
@@ -1161,6 +1173,11 @@ packages:
 
   /csstype/2.6.21:
     resolution: {integrity: sha512-Z1PhmomIfypOpoMjRQB70jfvy/wxT50qW08YXO5lMIJkrdq4yOTR+AW7FqutScmB9NkLwxo+jU+kZLbofZZq/w==}
+
+  /date-fns/2.29.3:
+    resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
+    engines: {node: '>=0.11'}
+    dev: false
 
   /de-indent/1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
