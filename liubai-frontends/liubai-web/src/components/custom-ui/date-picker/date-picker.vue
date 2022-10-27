@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useDynamics } from '../../../hooks/useDynamics';
 import liuUtil from "../../../utils/liu-util";
@@ -14,7 +14,10 @@ const dayNames = liuUtil.getDayNames()
 const {
   enable,
   show,
-  _date,
+  date,
+  timeStr,
+  minDate,
+  maxDate,
   TRANSITION_DURATION: dpTranMs,
   onTapConfirm,
   onTapCancel,
@@ -32,13 +35,15 @@ const {
       :dayNames="dayNames" 
       weekStart="0" 
       :dark="theme === 'dark'"
-      :selectText="t('common.confirm')"
-      :cancelText="t('common.cancel')"
       inline
       arrowNavigation
-      v-model="_date"
+      v-model="date"
+      :min-date="minDate"
+      :max-date="maxDate"
+      menuClassName="dp-custom-menu"
       calendarClassName="dp-custom-calendar-wrapper"
       calendarCellClassName="dp-custom-cell"
+      minutesIncrement="5"
     >
       <template #action-select>
         <div class="liu-dp-btns">
@@ -52,6 +57,22 @@ const {
 
         </div>
       </template>
+
+      <template #clock-icon>
+        <div class="liu-dp-clock-calendar">
+          <svg-icon name="when" class="liu-dcc-icon" color="var(--dp-icon-color)"></svg-icon>
+          <span>{{ t("date_picker.select_time") }}</span>
+        </div>
+      </template>
+
+      <template #calendar-icon>
+        <div class="liu-dp-clock-calendar">
+          <svg-icon name="arrow-back" class="liu-dcc-icon" color="var(--dp-icon-color)"></svg-icon>
+          <span>{{ t("common.back") }}</span>
+        </div>
+      </template>
+
+
     </VueDatePicker>
 
   </div>
@@ -115,6 +136,21 @@ const {
 
 }
 
+.liu-dp-clock-calendar {
+  display: flex;
+  align-items: center;
+  font-size: var(--btn-font);
+  font-weight: 700;
+  color: var(--dp-icon-color);
+
+  .liu-dcc-icon {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    margin-right: 4px;
+  }
+}
+
 </style>
 <style lang="scss">
 
@@ -126,6 +162,16 @@ const {
 .dp__theme_dark {
   --dp-primary-color: var(--primary-color);
   --dp-background-color: var(--card-bg);
+  --dp-text-color: var(--main-text);
+
+  .dp__range_end, .dp__range_start, .dp__active_date {
+    color: var(--on-primary);
+  }
+}
+
+.dp-custom-menu {
+  padding: 20px 20px 10px;
+  border-radius: 20px;
 }
 
 .dp-custom-calendar-wrapper {
@@ -133,8 +179,8 @@ const {
   .dp__calendar_header_item {
     width: 46px;
     height: 46px;
-    max-width: 13.2vw;
-    max-height: 13.2vw;
+    max-width: 13vw;
+    max-height: 13vw;
   }
 
 }
@@ -143,8 +189,9 @@ const {
   border-radius: 50%;
   width: 46px;
   height: 46px;
-  max-width: 13.2vw;
-  max-height: 13.2vw;
+  max-width: 13vw;
+  max-height: 13vw;
+  transition: .16s;
 }
 
 </style>

@@ -14,7 +14,8 @@
     "detail": "詳情",
     "title_ph": "標題",
     "desc_ph": "寫點東西...",
-    "finish": "完成"
+    "finish": "完成",
+    "back": "返回"
   },
   "editor": {
     "when": "什麼時候",
@@ -33,5 +34,8 @@
     "Th": "四",
     "Fr": "五",
     "Sa": "六"
+  },
+  "date_picker": {
+    "select_time": "選擇時間"
   }
 }

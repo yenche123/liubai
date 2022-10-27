@@ -14,7 +14,8 @@
     "detail": "Detail",
     "title_ph": "Title",
     "desc_ph": "Write something ...",
-    "finish": "Finish"
+    "finish": "Finish",
+    "back": "Back"
   },
   "editor": {
     "when": "When",
@@ -33,5 +34,9 @@
     "Th": "Th",
     "Fr": "Fr",
     "Sa": "Sa"
+  },
+  "date_picker": {
+    "select_time": "Select Time",
+    "format1": "MM/dd/yyyy HH:mm"
   }
 }
