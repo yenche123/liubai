@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
-import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useDynamics } from '../../../hooks/useDynamics';
 import liuUtil from "../../../utils/liu-util";
