@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DatePicker from "./date-picker/date-picker.vue"
 import { initModal } from "./modal"
 import { initLoading } from "./loading"
 import { initTextEditor } from "./text-editor";
@@ -103,6 +104,9 @@ const {
       <span v-if="loadingTitle" class="cui-loading-title">{{ loadingTitle }}</span>
     </div>
   </div>
+
+  <!-- 日期选择器 -->
+  <DatePicker></DatePicker>
 
 </template>
 

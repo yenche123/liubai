@@ -24,5 +24,14 @@
   },
   "cui": {
     "plz_input_txt": "Text here"
+  },
+  "dayNames": {
+    "Su": "Su",
+    "Mo": "Mo",
+    "Tu": "Tu",
+    "We": "We",
+    "Th": "Th",
+    "Fr": "Fr",
+    "Sa": "Sa"
   }
 }

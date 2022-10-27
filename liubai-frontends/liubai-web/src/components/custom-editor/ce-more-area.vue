@@ -2,6 +2,7 @@
 import { computed, inject, Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { mvKey } from "../../utils/provide-keys"
+import cui from "../../components/custom-ui"
 
 defineProps({
   show: {
@@ -20,6 +21,11 @@ const { t } = useI18n()
 
 const default_color = "var(--other-btn-text)"
 
+const onTapWhen = async () => {
+  console.log("showDatePicker...........")
+  await cui.showDatePicker()
+}
+
 </script>
 <template>
   <div class="ma-container"
@@ -32,7 +38,7 @@ const default_color = "var(--other-btn-text)"
       :class="{ 'ma-grid-one-column': mvRef < critialPoint }"
     >
       <!-- 什么时候 -->
-      <div class="liu-hover ma-item">
+      <div class="liu-hover ma-item" @click="onTapWhen">
         <div class="mai-icon">
           <svg-icon name="when" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
