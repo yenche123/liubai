@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useDynamics } from '../../../hooks/useDynamics';
+import { SupportedLocale } from '../../../types/types-locale';
 import liuUtil from "../../../utils/liu-util";
 import { initDatePicker } from "./index"
 
@@ -32,6 +34,13 @@ const handleInternal = (newDate: Date) => {
   date.value = newDate
 }
 
+const previewDate = computed(() => {
+  const lang = locale.value as SupportedLocale
+  const d = date.value
+  if(!d) return ""
+  return liuUtil.showBasicDate(d, lang)
+})
+
 </script>
 <template>
 
@@ -55,6 +64,12 @@ const handleInternal = (newDate: Date) => {
       minutesIncrement="5"
       @internalModelChange="handleInternal"
     >
+
+      <template #action-preview="{ value }">
+        <span>{{ previewDate }}</span>
+      </template>
+
+      <!-- 按钮区域 -->
       <template #action-select>
         <div class="liu-dp-btns">
           <div class="liu-hover liu-dp-btn liu-dp-cancel" @click="onTapCancel">
@@ -68,6 +83,7 @@ const handleInternal = (newDate: Date) => {
         </div>
       </template>
 
+      <!-- 选择时间 -->
       <template #clock-icon>
         <div class="liu-dp-clock-calendar">
           <svg-icon name="when" class="liu-dcc-icon" color="var(--dp-icon-color)"></svg-icon>
@@ -75,6 +91,7 @@ const handleInternal = (newDate: Date) => {
         </div>
       </template>
 
+      <!-- 返回 -->
       <template #calendar-icon>
         <div class="liu-dp-clock-calendar">
           <svg-icon name="arrow-back" class="liu-dcc-icon" color="var(--dp-icon-color)"></svg-icon>

@@ -42,7 +42,7 @@ export function initDatePicker() {
     maxDate,
     TRANSITION_DURATION,
     onTapConfirm, 
-    onTapCancel
+    onTapCancel,
   }
 }
 
