@@ -5,6 +5,7 @@ specifiers:
   '@intlify/vite-plugin-vue-i18n': ^6.0.3
   '@tiptap/core': 2.0.0-beta.199
   '@tiptap/extension-blockquote': 2.0.0-beta.199
+  '@tiptap/extension-code': 2.0.0-beta.199
   '@tiptap/extension-code-block-lowlight': 2.0.0-beta.199
   '@tiptap/extension-hard-break': 2.0.0-beta.199
   '@tiptap/extension-placeholder': 2.0.0-beta.199
@@ -35,6 +36,7 @@ dependencies:
   '@he-tree/vue': 2.0.4_vue@3.2.39
   '@tiptap/core': 2.0.0-beta.199
   '@tiptap/extension-blockquote': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
+  '@tiptap/extension-code': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/extension-code-block-lowlight': 2.0.0-beta.199_nzrxqt3ixacyd5eims6i4aeceq
   '@tiptap/extension-hard-break': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/extension-placeholder': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
