@@ -158,6 +158,11 @@ function initExtensions(
           }
           onModEnter(editor, emits)
           return editor.commands.blur()
+        },
+        'Escape': ({ editor }) => {
+          const isCodeBlock = editor.isActive("codeBlock")
+          if(isCodeBlock) false
+          return editor.commands.blur()
         }
       }
     },
