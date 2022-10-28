@@ -38,13 +38,13 @@ function initMainView(
   layoutStore.$subscribe((mutation, state) => {
     leftPx.value = state.sidebarWidth
     
-    let tmpCenter = state.clientWidth - leftPx.value - vvRef.value
-    // console.log("state.clientWidth: ", state.clientWidth)
-    // console.log("leftPx.value: ", leftPx.value)
-    // console.log("props.viceViewPx: ", props.viceViewPx)
-    // console.log("tmpCenter: ", tmpCenter)
-    // console.log(" ")
-    if(tmpCenter < cfg.min_mainview_width) {
+    const tmpCenter = state.clientWidth - leftPx.value - vvRef.value
+    const centerRight = state.clientWidth - leftPx.value
+    // 临界值: 取 "mainview 最小宽度" & "(全宽减掉左侧边栏)的三分之一" 的最大值
+    const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 3)
+    console.log("tmpCenter: ", tmpCenter)
+
+    if(tmpCenter < criticalValue) {
       rightPx.value = 0
       centerPx.value = state.clientWidth - leftPx.value
       return
@@ -55,8 +55,12 @@ function initMainView(
 
   // 监听右边侧边栏的改变
   watch(vvRef, (newV) => {
-    let tmpCenter = width.value - leftPx.value - newV
-    if(tmpCenter < cfg.min_mainview_width) {
+    const tmpCenter = width.value - leftPx.value - newV
+    const centerRight = width.value - leftPx.value
+    const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 3)
+    console.log("tmpCenter: ", tmpCenter)
+
+    if(tmpCenter < criticalValue) {
       rightPx.value = 0
       centerPx.value = width.value - leftPx.value
       return
