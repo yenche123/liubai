@@ -184,6 +184,7 @@ const previewDate = computed(() => {
 .dp__theme_light  {
   --dp-primary-color: var(--primary-color);
   --dp-background-color: var(--card-bg);
+  --dp-border-color: var(--line-default);
 }
 
 .dp__theme_dark {

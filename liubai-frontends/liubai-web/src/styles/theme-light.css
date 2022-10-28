@@ -7,7 +7,7 @@
   --primary-active: #15455e;
 
   --card-bg: #ffffff;
-  --bg-color: #f9f9f9;
+  --bg-color: #eaecef;
   --main-text: #1f2429;
   --main-normal: #3f4549;
   --main-code: #686868;
@@ -22,7 +22,7 @@
   --sidebar-bg: #ffffff;
   --sidebar-scrollbar-thumb: #dcd7d5;
   
-  --line-default: #efefef;    /** 浅浅的分割线 */
+  --line-default: #e7e7e7;    /** 浅浅的分割线 */
   --line-hover: #d1d1d1;
   --line-active: #ababab;
 
