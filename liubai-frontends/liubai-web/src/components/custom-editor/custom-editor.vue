@@ -7,7 +7,7 @@ import { useMoreItems } from "./tools/useMoreItems";
 import { useCeState } from "./tools/useCeState";
 import type { ShallowRef } from "vue";
 import CeFinishArea from "./ce-finish-area.vue";
-import CeMoreArea from "./ce-more-area.vue";
+import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 
 const props = defineProps({
   lastBar: {
@@ -30,6 +30,7 @@ const {
   onEditorFocus,
   onEditorBlur,
   onEditorFinish,
+  onWhenChange,
 } = useCeState(editor as ShallowRef<TipTapEditor>)
 
 
@@ -97,7 +98,9 @@ const icon_color = "var(--main-normal)"
   </div>
 
   <!-- 更多栏 -->
-  <ce-more-area :show="moreRef"></ce-more-area>
+  <ce-more-area :show="moreRef"
+    
+  ></ce-more-area>
 
   <!-- 虚拟空间 用于避免完成按钮挡到其他地方 -->
   <div class="ce-virtual" :class="{ 'ce-virtual_show': showVirtualBar }"></div>

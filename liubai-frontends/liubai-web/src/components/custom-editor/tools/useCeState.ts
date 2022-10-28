@@ -1,9 +1,20 @@
 
-import { ref, ShallowRef } from "vue";
+import { reactive, ref, ShallowRef } from "vue";
 import { TipTapEditor, EditorCoreContent } from "../../../types/types-editor";
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
 
+
+interface CeState {
+  when: Date | null
+
+}
+
+
 export function useCeState(editor: ShallowRef<TipTapEditor>) {
+  
+  let state = reactive<CeState>({
+    when: null,
+  })
 
   const focused = ref(false)
   const gs = useGlobalStateStore()
@@ -29,10 +40,17 @@ export function useCeState(editor: ShallowRef<TipTapEditor>) {
     
   }
 
+  const onWhenChange = (date: Date | null) => {
+    state.when = date
+  }
+
+  
+
   return {
     focused,
     onEditorFocus,
     onEditorBlur,
     onEditorFinish,
+    onWhenChange,
   }
 }

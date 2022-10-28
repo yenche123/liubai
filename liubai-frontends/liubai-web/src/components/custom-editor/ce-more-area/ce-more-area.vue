@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, inject, Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { mvKey } from "../../utils/provide-keys"
-import cui from "../../components/custom-ui"
+import { mvKey } from "../../../utils/provide-keys"
+import cui from "../../custom-ui";
+import type { LiuRemindMe } from "../../../types/types-atom";
 
 defineProps({
   show: {
@@ -25,6 +26,11 @@ const onTapWhen = async () => {
   console.log("showDatePicker...........")
   await cui.showDatePicker()
 }
+
+const emits = defineEmits<{
+  (event: "whenchange", val: Date | null): void
+  (event: "remindmechange", val: LiuRemindMe): void
+}>()
 
 </script>
 <template>

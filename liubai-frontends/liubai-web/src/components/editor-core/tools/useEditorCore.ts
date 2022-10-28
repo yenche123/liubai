@@ -160,6 +160,18 @@ function initExtensions(
           return editor.commands.blur()
         },
         'Escape': ({ editor }) => {
+          const { state } = editor
+          const { selection } = state
+          const { $from } = selection
+
+
+          console.log("$from.parentOffset: ")
+          console.log($from.parentOffset)
+          console.log("$from.parent: ")
+          console.log($from.parent)
+          console.log(" ")
+
+
           const isCodeBlock = editor.isActive("codeBlock")
           if(isCodeBlock) false
           return editor.commands.blur()
