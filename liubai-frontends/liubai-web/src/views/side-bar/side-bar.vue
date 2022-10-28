@@ -6,7 +6,9 @@ import SvgIcon from '../../assets/svg-icon.vue';
 import { useSidebarRoute } from './tools/useSidebarRoute';
 import SbContent from './sb-content/sb-content.vue';
 import SbTags from './sb-tags/sb-tags.vue';
+import { useImages } from '../../hooks/useImages';
 
+const { images } = useImages()
 const { sidebarEl, sbData } = useSidebar()
 const {
   innerBoxWidth
@@ -49,7 +51,7 @@ const {
 
     <!-- 存放背景颜色 -->
     <div class="sb-bg">
-      
+      <div class="sb-bg-mask"></div>
     </div>
 
     <!-- 1. 侧边栏主内容 -->
@@ -158,6 +160,26 @@ const {
   height: 100%;
 }
 
+.sb-bg::before {
+  width: 100%;
+  height: 100%;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: v-bind("'url(' + images.bg1 + ')'");
+  background-size: cover;
+  background-position: left;
+}
+
+.sb-bg-mask {
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  width: 100%;
+  height: 100%;
+  background-color: var(--frosted-glass);
+}
+
 .sb-bar:hover ~ .sb-drag-line {
   opacity: 1;
 }
@@ -183,7 +205,7 @@ const {
 }
 
 .sb-box::-webkit-scrollbar-thumb {
-  background-color: var(--sidebar-bg);
+  background-color: transparent;
   transition: .15s;
 }
 

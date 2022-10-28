@@ -32,7 +32,6 @@ const onTapBack = () => {
 
 .liu-frosted-glass::before {
   border-radius: 0;
-  background-color: var(--frosted-glass-two);
 }
 
 .nb-container {

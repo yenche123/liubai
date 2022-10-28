@@ -20,7 +20,7 @@
   --select-code: #264f78;
 
   --sidebar-bg: #ffffff;
-  --sidebar-scrollbar-thumb: #e3e3e3;
+  --sidebar-scrollbar-thumb: #dcd7d5;
   
   --line-default: #efefef;    /** 浅浅的分割线 */
   --line-hover: #d1d1d1;
@@ -56,6 +56,5 @@
   --cui-modal-other-btn-hover: #eaeaea;
 
   /** 毛玻璃背景 */
-  --frosted-glass: rgba(255, 255, 255, .6);    /** 跟随 sidebar 的背景 */
-  --frosted-glass-two: rgba(249, 249, 249, .75);  /** 跟随 bg-color 的背景 */
+  --frosted-glass: rgba(255, 255, 255, .7);    /** 跟随 sidebar 的背景 */
 }
