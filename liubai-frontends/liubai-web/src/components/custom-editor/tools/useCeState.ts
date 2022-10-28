@@ -7,15 +7,22 @@ export function useCeState(editor: ShallowRef<TipTapEditor>) {
 
   const focused = ref(false)
   const gs = useGlobalStateStore()
+  let timeout = 0
+
+  let setFocus = (newV: boolean) => {
+    if(timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      focused.value = newV
+      gs.$patch({ mainInputing: newV })
+    }, 100)
+  }
 
   const onEditorFocus = (data: EditorCoreContent) => {
-    focused.value = true
-    gs.$patch({ mainInputing: true })
+    setFocus(true)
   }
 
   const onEditorBlur = (data: EditorCoreContent) => {
-    focused.value = false
-    gs.$patch({ mainInputing: false })
+    setFocus(false)
   } 
 
   const onEditorFinish = (data: EditorCoreContent) => {
