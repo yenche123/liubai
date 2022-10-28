@@ -46,18 +46,18 @@ const onTapBack = () => {
 }
 
 .nb-back-box {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 8px;
-  margin-left: 8px;
+  margin-inline-start: 6px;
+  margin-inline-end: 6px;
 }
 
 .nb-back-icon {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
 }
 
 .nb-title {
