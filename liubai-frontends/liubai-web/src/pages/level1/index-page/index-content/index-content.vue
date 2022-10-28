@@ -56,7 +56,7 @@ const { lastBar } = useIndexContent()
       background-color: var(--card-bg);
       width: 100%;
       height: 100px;
-      box-shadow: var(--editor-shadow);
+      box-shadow: var(--card-shadow);
       margin-bottom: 30px;
     }
 
