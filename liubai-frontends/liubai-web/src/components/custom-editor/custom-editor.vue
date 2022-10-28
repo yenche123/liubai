@@ -2,8 +2,10 @@
 import EditorCore from "../editor-core/editor-core.vue"
 import { useCustomEditor } from "./tools/useCustomEditor";
 import cfg from "../../config";
-import { EditorCoreContent } from "../../types/types-editor";
+import { TipTapEditor } from "../../types/types-editor";
 import { useMoreItems } from "./tools/useMoreItems";
+import { useCeState } from "./tools/useCeState";
+import type { ShallowRef } from "vue";
 import CeFinishArea from "./ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area.vue";
 
@@ -23,26 +25,22 @@ const {
   showVirtualBar,
 } = useMoreItems(props)
 
-const onEditorFocus = (data: EditorCoreContent) => {
-  console.log("focus 了!!!!!!!!!!!!!!")
-}
+const {
+  focused,
+  onEditorFocus,
+  onEditorBlur,
+  onEditorFinish,
+} = useCeState(editor as ShallowRef<TipTapEditor>)
 
-const onEditorBlur = (data: EditorCoreContent) => {
-  console.log("blur 了!!!!!!!!!!!!!!")
-} 
-
-const onEditorFinish = (data: EditorCoreContent) => {
-  console.log("用户敲击了 ctrl + Enter")
-  console.log(data)
-  console.log(" ")
-}
 
 const icon_color = "var(--main-normal)"
 
 </script>
 <template>
 
-<div class="ce-container">
+<div class="ce-container"
+  :class="{ 'ce-container_focused': focused }"
+>
 
   <div class="ce-editor">
     <EditorCore 
@@ -119,10 +117,16 @@ const icon_color = "var(--main-normal)"
   padding: 20px 20px;
   border-radius: 20px;
   margin-bottom: 20px;
-  box-shadow: var(--editor-shadow);
+  box-shadow: var(--card-shadow);
   position: relative;
   overflow: hidden;
+  transition: box-shadow .3s;
+
+  &.ce-container_focused {
+    box-shadow: var(--editor-shadow);
+  }
 }
+
 
 .ce-editor {
   width: 100%;

@@ -30,7 +30,8 @@
   --other-btn-text: #a9a9a9;
   --other-btn-hover: #3c3c3c;
 
-  --editor-shadow: 0 10px 20px -6px rgba(0, 0, 0, .1);
+  --card-shadow: 0 4px 6px -2px rgba(222, 222, 222, .12);
+  --editor-shadow: 0 10px 20px -6px rgba(222, 222, 222, .1);
   --liu-hr: #343434;   /** 卡片里的分割线、引用的那条 bar */
   --liu-quote: #a0a0a0;  /** 引用里的文字色 */
 
