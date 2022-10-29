@@ -6,6 +6,7 @@ import TaskList from '@tiptap/extension-task-list'
 import Blockquote from "@tiptap/extension-blockquote"
 import HardBreak from "@tiptap/extension-hard-break"
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import Code from '@tiptap/extension-code'
 import { useI18n, ComposerTranslation } from 'vue-i18n'
 import { wrappingInputRule } from "@tiptap/core"
 import { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
@@ -133,6 +134,27 @@ function initExtensions(
 
   const bqRegex = /^[>》]\s$/
 
+  const CustomCode = Code.extend({
+    addKeyboardShortcuts() {
+      return {
+        // 在行内代码敲击 Enter，自动退出行内代码
+        "Enter": ({ editor }) => {
+          console.log("Enter 被触发了........")
+          console.log(" ")
+          const isCode = editor.isActive("code")
+          if(isCode) {
+            return editor.chain()
+            .toggleCode()
+            .insertContent(" ")
+            .run()
+          }
+          
+          return false
+        }
+      }
+    },
+  })
+
   const CustomBlockQuote = Blockquote.extend({
     addKeyboardShortcuts() {
       return {}
@@ -156,22 +178,18 @@ function initExtensions(
           if(isCodeBlock) {
             return false
           }
+          const isCode = editor.isActive("code")
+          if(isCode) {
+            return editor.chain()
+              .toggleCode()
+              .insertContent(" ")
+              .run()
+          }
+
           onModEnter(editor, emits)
           return editor.commands.blur()
         },
         'Escape': ({ editor }) => {
-          const { state } = editor
-          const { selection } = state
-          const { $from } = selection
-
-
-          console.log("$from.parentOffset: ")
-          console.log($from.parentOffset)
-          console.log("$from.parent: ")
-          console.log($from.parent)
-          console.log(" ")
-
-
           const isCodeBlock = editor.isActive("codeBlock")
           if(isCodeBlock) false
           return editor.commands.blur()
@@ -187,6 +205,7 @@ function initExtensions(
   })
 
   const extensions = [
+    CustomCode,
     CustomBlockQuote,
     CustomCodeBlockLowlight.configure({
       lowlight
@@ -213,6 +232,7 @@ function initExtensions(
       blockquote: false,
       hardBreak: false,
       codeBlock: false,
+      code: false,
     }),
     Placeholder.configure({
       placeholder: ({ node }) => {
