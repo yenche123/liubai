@@ -2,7 +2,6 @@
 import { toRefs } from 'vue';
 import { useSidebar } from './tools/useSidebar';
 import { useSidebarOther } from './tools/useSidebarOther';
-import SvgIcon from '../../assets/svg-icon.vue';
 import { useSidebarRoute } from './tools/useSidebarRoute';
 import SbContent from './sb-content/sb-content.vue';
 import SbTags from './sb-tags/sb-tags.vue';

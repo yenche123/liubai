@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import SvgIcon from '../../../assets/svg-icon.vue';
 import cfg from "../../../config"
 import { useRouteAndLiuRouter } from '../../../routes/liu-router';
 import { Draggable } from "@he-tree/vue";
