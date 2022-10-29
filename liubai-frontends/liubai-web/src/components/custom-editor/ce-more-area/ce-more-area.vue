@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import { mvKey } from "../../../utils/provide-keys"
 import cui from "../../custom-ui";
 import type { LiuRemindMe } from "../../../types/types-atom";
+import { useMoreArea } from "./tools/useMoreArea";
 
 defineProps({
   show: {
@@ -22,15 +23,16 @@ const { t } = useI18n()
 
 const default_color = "var(--other-btn-text)"
 
-const onTapWhen = async () => {
-  console.log("showDatePicker...........")
-  await cui.showDatePicker()
-}
-
 const emits = defineEmits<{
   (event: "whenchange", val: Date | null): void
   (event: "remindmechange", val: LiuRemindMe): void
 }>()
+
+const {
+  data,
+  onTapWhen,
+  onTapClearWhen,
+} = useMoreArea(emits)
 
 </script>
 <template>
@@ -49,9 +51,13 @@ const emits = defineEmits<{
           <svg-icon name="when" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
         <div class="mai-title">
-          <span>{{ t("editor.when") }}</span>
+          <span v-if="data.when">{{ data.when }}</span>
+          <span v-else>{{ t("editor.when") }}</span>
         </div>
-        <div class="mai-footer">
+        <div v-if="data.when" class="liu-hover mai-footer" @click="onTapClearWhen">
+          <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
+        </div>
+        <div v-else class="mai-footer">
           <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
         </div>
       </div>
@@ -174,6 +180,11 @@ const emits = defineEmits<{
     .maif-icon {
       width: 16px;
       height: 16px;
+    }
+
+    .maif-clear {
+      width: 20px;
+      height: 20px;
     }
   }
 
