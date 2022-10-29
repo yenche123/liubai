@@ -2,7 +2,7 @@
 import { computed, inject, Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { mvKey } from "../../../utils/provide-keys"
-import cui from "../../custom-ui";
+import LiuMenu from "../../common/liu-menu/liu-menu.vue"
 import type { LiuRemindMe } from "../../../types/types-atom";
 import { useMoreArea } from "./tools/useMoreArea";
 
@@ -63,17 +63,22 @@ const {
       </div>
 
       <!-- 提醒我 -->
-      <div class="liu-hover ma-item">
-        <div class="mai-icon">
-          <svg-icon name="notification" class="mai-svgicon" :color="default_color"></svg-icon>
+      <LiuMenu :menu="[{ text: '这' }, { text: '这是一个很长很长的文字，显然还不够长怎么办！！！' }]">
+
+        <div class="liu-hover ma-item">
+          <div class="mai-icon">
+            <svg-icon name="notification" class="mai-svgicon" :color="default_color"></svg-icon>
+          </div>
+          <div class="mai-title">
+            <span>{{ t("editor.remind") }}</span>
+          </div>
+          <div class="mai-footer">
+            <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
+          </div>
         </div>
-        <div class="mai-title">
-          <span>{{ t("editor.remind") }}</span>
-        </div>
-        <div class="mai-footer">
-          <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
-        </div>
-      </div>
+
+      </LiuMenu>
+      
 
       <!-- 加标题 -->
       <div class="liu-hover ma-item">
