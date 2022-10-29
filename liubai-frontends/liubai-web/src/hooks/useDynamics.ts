@@ -21,6 +21,7 @@ export const useDynamics = () => {
 
   const setTheme = (val: SupportedTheme) => {
     theme.value = val
+    setBodyClassForTheme()
   }
 
   const setNickName = (val: string) => {
@@ -44,9 +45,22 @@ function initTheme() {
   const _theme = localPf?.theme
   if(!_theme || _theme === "system") {
     theme.value = getThemeFromSystem()
-    return
   }
-  theme.value = _theme
+  else theme.value = _theme
+
+  // 为 body 添加 .theme-light，有必要的话再添加 .theme-dark
+  const body = document.querySelector("body")
+  body?.classList.add("theme-light")
+  if(theme.value === "dark") body?.classList.add("theme-dark")
+}
+
+// classList 的用法，见
+// https://teagan-hsu.coderbridge.io/2020/12/29/how-to-set-css-styles-using-javascript/
+function setBodyClassForTheme() {
+  const t = theme.value
+  const body = document.querySelector("body")
+  const val = t === "light" ? false : true
+  body?.classList.toggle("theme-dark", val)
 }
 
 // 从浏览器获取当前主题
