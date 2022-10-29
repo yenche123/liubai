@@ -1,5 +1,5 @@
 import { isEqual, isToday, isTomorrow, isYesterday } from 'date-fns'
-import { useI18n } from 'vue-i18n'
+import { i18n } from '../../locales'
 import { SupportedLocale } from '../../types/types-locale'
 import valTool from '../basic/val-tool'
 
@@ -20,10 +20,14 @@ export function areTheDatesEqual(d1: Date, d2: Date) {
 }
 
 // 在编辑态时，展示时间
-export function showBasicDate(val: Date | number, lang: SupportedLocale) {
+export function showBasicDate(val: Date | number, lang?: SupportedLocale) {
   let d = typeof val === "number" ? new Date(val) : val
   const curDate = new Date()
-  const { t } = useI18n()
+  const { t, locale } = i18n.global
+  if(!lang) {
+    lang = locale.value as SupportedLocale
+  }
+
   const yy = d.getFullYear()
   const mm = valTool.format0(d.getMonth() + 1)
   const dd = valTool.format0(d.getDate())
