@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // 各模块的加载框
+// 【待完善项】因为是 Menu 选单，应该可以用 Keyboard 的上下键来选择，待加上
 
 import { computed } from 'vue'
 
@@ -111,12 +112,28 @@ const onTapItem = (item: MenuItem, index: number) => {
   }
 
   .menu-item:hover {
-    background-color: antiquewhite;
+    background-color: var(--floating-select-bg);
   }
 
 
 }
 
+
+/** 覆盖原 floating-vue 的 css */
+.v-popper--theme-dropdown .v-popper__inner {
+  border-radius: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--line-default);
+  box-shadow: var(--floating-shadow);
+}
+
+.v-popper--theme-dropdown .v-popper__arrow-outer {
+  border-color: var(--line-default);
+}
+
+.v-popper--theme-dropdown .v-popper__arrow-inner {
+  border-color: var(--card-bg);
+}
 
 
 </style>
