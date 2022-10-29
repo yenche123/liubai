@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import cfg from "../../../config"
-import SvgIcon from "../../../assets/svg-icon.vue";
 import { useRouteAndLiuRouter } from "../../../routes/liu-router";
 
 const { router } = useRouteAndLiuRouter()
