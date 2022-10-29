@@ -24,6 +24,7 @@
     "@vuepic/vue-datepicker": "^3.5.2",
     "@vueuse/core": "^9.3.0",
     "date-fns": "^2.29.3",
+    "floating-vue": "2.0.0-beta.20",
     "highlight.js": "^11.6.0",
     "lowlight": "^2.7.0",
     "pinia": "^2.0.22",

@@ -18,6 +18,7 @@ specifiers:
   '@vuepic/vue-datepicker': ^3.5.2
   '@vueuse/core': ^9.3.0
   date-fns: ^2.29.3
+  floating-vue: 2.0.0-beta.20
   highlight.js: ^11.6.0
   lowlight: ^2.7.0
   pinia: ^2.0.22
@@ -47,6 +48,7 @@ dependencies:
   '@vuepic/vue-datepicker': 3.5.2_vue@3.2.39
   '@vueuse/core': 9.3.0_vue@3.2.39
   date-fns: 2.29.3
+  floating-vue: 2.0.0-beta.20_vue@3.2.39
   highlight.js: 11.6.0
   lowlight: 2.7.0
   pinia: 2.0.22_arz4dztosvwy2ghjrlh2wdhejm
@@ -115,6 +117,16 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@floating-ui/core/0.3.1:
+    resolution: {integrity: sha512-ensKY7Ub59u16qsVIFEo2hwTCqZ/r9oZZFh51ivcLGHfUwTn8l1Xzng8RJUe91H/UP8PeqeBronAGx0qmzwk2g==}
+    dev: false
+
+  /@floating-ui/dom/0.1.10:
+    resolution: {integrity: sha512-4kAVoogvQm2N0XE0G6APQJuCNuErjOfPW8Ux7DFxh8+AfugWflwVJ5LDlHOwrwut7z/30NUvdtHzQ3zSip4EzQ==}
+    dependencies:
+      '@floating-ui/core': 0.3.1
+    dev: false
 
   /@he-tree/dnd-utils/0.0.3-alpha.0:
     resolution: {integrity: sha512-jd/YSHEaDVnIt01uYtiYfcIAIcvq+USxaq+t8Wvkul07cIBSdUsueMwMxbdYEp3YyrdJt8pYp+TZGj7oFZVQJw==}
@@ -1642,6 +1654,16 @@ packages:
       to-regex-range: 5.0.1
     dev: true
 
+  /floating-vue/2.0.0-beta.20_vue@3.2.39:
+    resolution: {integrity: sha512-N68otcpp6WwcYC7zP8GeJqNZVdfvS7tEY88lwmuAHeqRgnfWx1Un8enzLxROyVnBDZ3TwUoUdj5IFg+bUT7JeA==}
+    peerDependencies:
+      vue: ^3.2.0
+    dependencies:
+      '@floating-ui/dom': 0.1.10
+      vue: 3.2.39
+      vue-resize: 2.0.0-alpha.1_vue@3.2.39
+    dev: false
+
   /follow-redirects/1.15.2_debug@4.3.4:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
     engines: {node: '>=4.0'}
@@ -2842,6 +2864,14 @@ packages:
       '@intlify/vue-devtools': 9.2.2
       '@vue/devtools-api': 6.2.1
       vue: 3.2.39
+
+  /vue-resize/2.0.0-alpha.1_vue@3.2.39:
+    resolution: {integrity: sha512-7+iqOueLU7uc9NrMfrzbG8hwMqchfVfSzpVlCMeJQe4pyibqyoifDNbKTZvwxZKDvGkB+PdFeKvnGZMoEb8esg==}
+    peerDependencies:
+      vue: ^3.0.0
+    dependencies:
+      vue: 3.2.39
+    dev: false
 
   /vue-router/4.1.5_vue@3.2.39:
     resolution: {integrity: sha512-IsvoF5D2GQ/EGTs/Th4NQms9gd2NSqV+yylxIyp/OYp8xOwxmU8Kj/74E9DTSYAyH5LX7idVUngN3JSj1X4xcQ==}

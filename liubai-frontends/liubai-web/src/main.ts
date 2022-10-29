@@ -8,6 +8,7 @@ import './styles/theme.css'
 import './styles/theme-light.css'
 import './styles/theme-dark.css'
 import './styles/custom-style.css'
+import 'floating-vue/dist/style.css'
 
 import App from './App.vue'
 import { i18n } from './locales'
@@ -15,6 +16,8 @@ import { createPinia } from 'pinia'
 import { router } from './routes/router'
 import SvgIcon from "./assets/svg-icon.vue"
 import CustomBtn from "./components/custom-ui/custom-button.vue"
+import FloatingVue from 'floating-vue'
+
 
 const app = createApp(App)
 
@@ -23,5 +26,6 @@ app.component("CustomBtn", CustomBtn)
 app.use(createPinia())
 app.use(i18n)
 app.use(router)
+app.use(FloatingVue)
 
 app.mount('#app')
