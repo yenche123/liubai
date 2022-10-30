@@ -33,6 +33,8 @@ const {
   remindMenu,
   onTapWhen,
   onTapClearWhen,
+  onTapRemindItem,
+  onTapClearRemind,
 } = useMoreArea(emits)
 
 </script>
@@ -64,16 +66,22 @@ const {
       </div>
 
       <!-- 提醒我 -->
-      <LiuMenu :menu="remindMenu">
+      <LiuMenu :menu="remindMenu"
+        @tapitem="onTapRemindItem"
+      >
 
         <div class="liu-hover ma-item">
           <div class="mai-icon">
             <svg-icon name="notification" class="mai-svgicon" :color="default_color"></svg-icon>
           </div>
           <div class="mai-title">
-            <span>{{ t("editor.remind") }}</span>
+            <span v-if="data.remindMe">{{ data.remindMe }}</span>
+            <span v-else>{{ t("editor.remind") }}</span>
           </div>
-          <div class="mai-footer">
+          <div v-if="data.remindMe" class="liu-hover mai-footer" @click="onTapClearRemind">
+            <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
+          </div>
+          <div v-else class="mai-footer">
             <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
           </div>
         </div>

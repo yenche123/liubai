@@ -34,14 +34,11 @@ const onTapItem = (item: MenuItem, index: number) => {
   emits("tapitem", item, index)
 }
 
-
 const onMenuShow = () => {
-  console.log("onMenuShow............")
   emits("menushow")
 }
 
 const onMenuHide = () => {
-  console.log("onMenuHide...........")
   emits("menuhide")
 }
 
