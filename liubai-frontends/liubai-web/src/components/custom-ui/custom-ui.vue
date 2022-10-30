@@ -350,11 +350,10 @@ const {
       font-size: var(--mini-font);
       margin-top: 30px;
       max-width: 80%;
-      text-overflow: ellipsis;
       display: inline-block;
+      text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-      display: inline-block;
       z-index: 5212;
       user-select: none;
     }
