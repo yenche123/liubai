@@ -2,7 +2,7 @@
 import { computed, inject, Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { mvKey } from "../../../utils/provide-keys"
-import cui from "../../custom-ui";
+import LiuMenu from "../../common/liu-menu/liu-menu.vue"
 import type { LiuRemindMe } from "../../../types/types-atom";
 import { useMoreArea } from "./tools/useMoreArea";
 
@@ -25,13 +25,16 @@ const default_color = "var(--other-btn-text)"
 
 const emits = defineEmits<{
   (event: "whenchange", val: Date | null): void
-  (event: "remindmechange", val: LiuRemindMe): void
+  (event: "remindmechange", val: LiuRemindMe | null): void
 }>()
 
 const {
   data,
+  remindMenu,
   onTapWhen,
   onTapClearWhen,
+  onTapRemindItem,
+  onTapClearRemind,
 } = useMoreArea(emits)
 
 </script>
@@ -63,17 +66,28 @@ const {
       </div>
 
       <!-- 提醒我 -->
-      <div class="liu-hover ma-item">
-        <div class="mai-icon">
-          <svg-icon name="notification" class="mai-svgicon" :color="default_color"></svg-icon>
+      <LiuMenu :menu="remindMenu"
+        @tapitem="onTapRemindItem"
+      >
+
+        <div class="liu-hover ma-item">
+          <div class="mai-icon">
+            <svg-icon name="notification" class="mai-svgicon" :color="default_color"></svg-icon>
+          </div>
+          <div class="mai-title">
+            <span v-if="data.remindMe">{{ data.remindMe }}</span>
+            <span v-else>{{ t("editor.remind") }}</span>
+          </div>
+          <div v-if="data.remindMe" class="liu-hover mai-footer" @click="onTapClearRemind">
+            <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
+          </div>
+          <div v-else class="mai-footer">
+            <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
+          </div>
         </div>
-        <div class="mai-title">
-          <span>{{ t("editor.remind") }}</span>
-        </div>
-        <div class="mai-footer">
-          <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
-        </div>
-      </div>
+
+      </LiuMenu>
+      
 
       <!-- 加标题 -->
       <div class="liu-hover ma-item">
