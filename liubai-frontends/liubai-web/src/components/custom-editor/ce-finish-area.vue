@@ -1,15 +1,21 @@
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  props: {
+    canSubmit: {
+      type: Boolean,
+      default: false,
+    },
+    inCodeBlock: Boolean,
+  },
+})
+</script>
+
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import liuUtil from "../../utils/liu-util"
-
 const { t } = useI18n()
-
-defineProps({
-  canSubmit: {
-    type: Boolean,
-    default: false,
-  }
-})
 
 </script>
 <template>
@@ -19,7 +25,9 @@ defineProps({
     <div class="cefa-virtual"></div>
 
     <div class="cefa-box">
-      <span class="cefa-tip">{{ liuUtil.getHelpTip('Mod_Enter') }}</span>
+      <span class="cefa-tip"
+        :class="{ 'cefa-tip_hidden': inCodeBlock }"
+      >{{ liuUtil.getHelpTip('Mod_Enter') }}</span>
       <custom-btn size="mini" class="cefa-btn" :disabled="!canSubmit">
         <span>{{ t("common.finish") }}</span>
       </custom-btn>
@@ -55,6 +63,12 @@ defineProps({
       margin-inline-end: 10px;
       user-select: none;
       font-weight: 300;
+      opacity: 1;
+      transition: .15s;
+    }
+
+    .cefa-tip_hidden {
+      opacity: 0;
     }
 
     .cefa-btn {

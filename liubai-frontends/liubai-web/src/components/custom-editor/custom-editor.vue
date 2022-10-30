@@ -106,7 +106,9 @@ const icon_color = "var(--main-normal)"
   <div class="ce-virtual" :class="{ 'ce-virtual_show': showVirtualBar }"></div>
 
   <!-- 右小角: 提示字 + 按钮 -->
-  <ce-finish-area :can-submit="canSubmitRef"></ce-finish-area>
+  <ce-finish-area :can-submit="canSubmitRef"
+    :in-code-block="editor?.isActive('codeBlock') ?? false"
+  ></ce-finish-area>
 
 </div>
   

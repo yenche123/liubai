@@ -24,7 +24,8 @@
     "when": "什麼時候",
     "remind": "提醒我",
     "add_title": "加標題",
-    "add_file": "加附件"
+    "add_file": "加附件",
+    "leave_codeBlock": "{tip} 離開程式編輯"
   },
   "cui": {
     "plz_input_txt": "請輸入文字"

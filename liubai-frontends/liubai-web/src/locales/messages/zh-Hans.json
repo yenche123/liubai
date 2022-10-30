@@ -24,7 +24,8 @@
     "when": "什么时候",
     "remind": "提醒我",
     "add_title": "加标题",
-    "add_file": "加附件"
+    "add_file": "加附件",
+    "leave_codeBlock": "{tip} 离开代码块"
   },
   "cui": {
     "plz_input_txt": "请输入文字"

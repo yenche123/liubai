@@ -1,22 +1,36 @@
 <template>
   <node-view-wrapper class="code-block">
-    <select contenteditable="false" v-model="selectedLanguage">
-      <option :value="null">
-        auto
-      </option>
-      <option disabled>
-        —
-      </option>
-      <option v-for="(language, index) in languages" :value="language" :key="index">
-        {{ language }}
-      </option>
-    </select>
+
+    <div class="cb-right-top">
+
+      <div class="code-block-tip"
+        :class="{ 'code-block-tip_hidden': !editor.isActive('codeBlock') }"
+      >
+        <span>{{ t("editor.leave_codeBlock", { tip: leaveTip }) }}</span>
+      </div>
+
+      <select contenteditable="false" v-model="selectedLanguage">
+        <option :value="null">
+          auto
+        </option>
+        <option disabled>
+          —
+        </option>
+        <option v-for="(language, index) in languages" :value="language" :key="index">
+          {{ language }}
+        </option>
+      </select>
+
+    </div>
+
     <pre><code><node-view-content /></code></pre>
   </node-view-wrapper>
 </template>
 
 <script lang="ts">
 import { NodeViewContent, nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
+import liuUtil from '../../../utils/liu-util'
+import { useI18n } from 'vue-i18n'
 
 export default {
   components: {
@@ -29,6 +43,7 @@ export default {
   data() {
     return {
       languages: this.extension.options.lowlight.listLanguages(),
+      leaveTip: liuUtil.getHelpTip("Mod_Enter"),
     }
   },
 
@@ -42,6 +57,11 @@ export default {
       },
     },
   },
+
+  setup() {
+    const { t } = useI18n()
+    return { t }
+  },
 }
 </script>
 
@@ -49,25 +69,52 @@ export default {
 .code-block {
   position: relative;
 
-  select {
+  .cb-right-top {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
-    font-size: var(--btn-font);
-    font-family: inherit;
-    color: var(--main-text);
-    margin: 0.1rem;
-    border: 1px solid var(--line-default);
-    border-radius: 0.3rem;
-    padding: 0.1rem 0.4rem;
-    background: var(--card-bg);
-    accent-color: var(--main-text);
-    cursor: pointer;
+    width: calc(100% - 1rem);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 
-    &[disabled] {
-      opacity: 0.3;
+    .code-block-tip {
+      margin-inline-end: 10px;
+      font-size: var(--mini-font);
+      font-family: inherit;
+      color: #686868;
+      display: inline-block;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      max-width: 48%;
+      transition: .15s;
+      opacity: 1;
     }
+
+    .code-block-tip_hidden {
+      opacity: 0;
+    }
+
+    select {
+      font-size: var(--btn-font);
+      font-family: inherit;
+      color: var(--main-text);
+      margin: 0.1rem;
+      border: 1px solid var(--line-default);
+      border-radius: 0.3rem;
+      padding: 0.1rem 0.4rem;
+      background: var(--card-bg);
+      accent-color: var(--main-text);
+      cursor: pointer;
+
+      &[disabled] {
+        opacity: 0.3;
+      }
+    }
+
   }
+
 }
 
 </style>

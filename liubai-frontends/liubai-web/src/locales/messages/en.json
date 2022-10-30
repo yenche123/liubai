@@ -24,7 +24,8 @@
     "when": "When",
     "remind": "Remind me",
     "add_title": "Add a title",
-    "add_file": "Add a file"
+    "add_file": "Add a file",
+    "leave_codeBlock": "Press {tip} to leave"
   },
   "cui": {
     "plz_input_txt": "Text here"

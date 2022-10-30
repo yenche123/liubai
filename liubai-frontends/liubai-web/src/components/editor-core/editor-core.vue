@@ -108,7 +108,7 @@ defineExpose({
     background: #121212;
     color: #FFF;
     font-family: 'JetBrainsMono', monospace;
-    padding: 2rem 1rem 0.75rem;
+    padding: 2.5rem 1rem 0.75rem;
     border-radius: 0.5rem;
     margin: 0.75rem 0;
 
