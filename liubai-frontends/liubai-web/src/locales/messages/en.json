@@ -61,6 +61,21 @@
     "day_4": "Th",
     "day_5": "Fr",
     "day_6": "Sa",
-    "show_1": "{mm} {dd}, {hr}:{min}"
+    "show_1": "{mm} {dd}, {hr}:{min}",
+    "remind_early": [
+      "On time", 
+      "10 mins early", 
+      "30 mins early", 
+      "1 hr early",
+      "1 day early"
+    ],
+    "remind_later": [
+      "30 mins later",
+      "1 hr later",
+      "2 hrs later",
+      "3 hrs later",
+      "1 day later",
+      "Other"
+    ]
   }
 }

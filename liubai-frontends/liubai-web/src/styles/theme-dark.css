@@ -33,7 +33,6 @@
   --card-shadow: 0 4px 6px -2px rgba(212, 212, 212, .1);
   --editor-shadow: 0 24px 4px -12px rgba(222, 222, 222, .04);
   --floating-shadow: 0 6px 24px rgba(222, 222, 222, .15);
-  --floating-select-bg: rgba(72, 171, 221, .15);
   --liu-hr: #343434;   /** 卡片里的分割线、引用的那条 bar */
   --liu-quote: #a0a0a0;  /** 引用里的文字色 */
 

@@ -10,6 +10,7 @@ export interface MenuItem {
   color?: string
   borderBottom?: boolean
   children?: MenuItem[]
+  [otherKey: string]: any
 }
 
 export interface Props {
@@ -19,19 +20,38 @@ export interface Props {
 const props = withDefaults(defineProps<Props>(), {
   menu: () => [],
 })
+const emits = defineEmits<{
+  (event: "tapitem", item: MenuItem, index: number): void
+  (event: "menushow"): void
+  (event: "menuhide"): void
+}>()
+
 const hasIcon = computed(() => props.menu.some(v => !!v.iconName))
 const defaultColor = "var(--main-normal)"
 
 const onTapItem = (item: MenuItem, index: number) => {
   console.log("onTapItem.........")
-  console.log(index)
-  console.log(item)
-  console.log(" ")
+  emits("tapitem", item, index)
 }
+
+
+const onMenuShow = () => {
+  console.log("onMenuShow............")
+  emits("menushow")
+}
+
+const onMenuHide = () => {
+  console.log("onMenuHide...........")
+  emits("menuhide")
+}
+
 
 </script>
 <template>
-  <VDropdown :hideTriggers="['click']">
+  <VDropdown :hideTriggers="['click']"
+    @show="onMenuShow"
+    @hide="onMenuHide"
+  >
 
     <template #default>
       <slot></slot>
@@ -40,24 +60,31 @@ const onTapItem = (item: MenuItem, index: number) => {
     <template #popper>
       <div class="menu-container">
 
-        <div class="menu-item" v-for="(item, index) in menu" :key="item.text"
-          @click="onTapItem(item, index)"
-        >
-          
-          <div v-if="hasIcon" class="mi-icon-box">
-            <SvgIcon v-if="item.iconName" :name="item.iconName"
-              class="mi-icon"
-              :color="item.color ? item.color : defaultColor"
-            ></SvgIcon>
-          </div>
-
-          <div class="mi-title"
-            :style="{ 'color': item.color ? item.color : defaultColor }"
+        <template v-for="(item, index) in menu" :key="item.text">
+        
+          <div class="menu-item"
+            @click="onTapItem(item, index)"
+            v-close-popper="item.children?.length ? false : true"
           >
-            <span>{{ item.text }}</span>
-          </div>
+          
+            <div v-if="hasIcon" class="mi-icon-box">
+              <SvgIcon v-if="item.iconName" :name="item.iconName"
+                class="mi-icon"
+                :color="item.color ? item.color : defaultColor"
+              ></SvgIcon>
+            </div>
+  
+            <div class="mi-title"
+              :style="{ 'color': item.color ? item.color : defaultColor }"
+            >
+              <span>{{ item.text }}</span>
+            </div>
 
-        </div>
+          </div>
+        
+        </template>
+
+        
 
         
       </div>
@@ -83,6 +110,27 @@ const onTapItem = (item: MenuItem, index: number) => {
     transition: .15s;
     position: relative;
     cursor: pointer;
+    overflow: hidden;
+
+    &::before {
+      background-color: var(--primary-active);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      content: "";
+      transition: .15s;
+      opacity: 0;
+    }
+
+    &:hover::before {
+      opacity: .14;
+    }
+
+    &:active::before {
+      opacity: .17;
+    }
 
     .mi-icon-box {
       width: 28px;
@@ -107,14 +155,10 @@ const onTapItem = (item: MenuItem, index: number) => {
       text-overflow: ellipsis;
       font-size: var(--mini-font);
       line-height: 28px;
+      user-select: none;
     }
 
   }
-
-  .menu-item:hover {
-    background-color: var(--floating-select-bg);
-  }
-
 
 }
 

@@ -25,11 +25,12 @@ const default_color = "var(--other-btn-text)"
 
 const emits = defineEmits<{
   (event: "whenchange", val: Date | null): void
-  (event: "remindmechange", val: LiuRemindMe): void
+  (event: "remindmechange", val: LiuRemindMe | null): void
 }>()
 
 const {
   data,
+  remindMenu,
   onTapWhen,
   onTapClearWhen,
 } = useMoreArea(emits)
@@ -63,7 +64,7 @@ const {
       </div>
 
       <!-- 提醒我 -->
-      <LiuMenu :menu="[{ text: '这' }, { text: '这是一个很长很长的文字，显然还不够长怎么办！！！' }]">
+      <LiuMenu :menu="remindMenu">
 
         <div class="liu-hover ma-item">
           <div class="mai-icon">
