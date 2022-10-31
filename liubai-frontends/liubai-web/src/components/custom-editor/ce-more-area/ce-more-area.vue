@@ -120,7 +120,7 @@ const {
       <!-- 加附件 -->
       <div class="liu-hover ma-item">
         <div class="mai-icon">
-          <svg-icon name="upload_file" class="mai-svgicon" :color="default_color"></svg-icon>
+          <svg-icon name="attachment" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
         <div class="mai-title">
           <span>{{ t("editor.add_file") }}</span>
