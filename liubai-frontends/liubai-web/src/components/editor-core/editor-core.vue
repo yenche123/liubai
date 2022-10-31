@@ -123,6 +123,13 @@ defineExpose({
       font-size: var(--btn-font);
       line-height: 1.6;
 
+      // div {
+      //   max-width: 100%;
+      //   white-space: pre-wrap;
+      //   word-wrap: break-word;
+      //   overflow-wrap: break-word;
+      // }
+
       div::selection, span::selection {
         background-color: var(--select-code);
       }

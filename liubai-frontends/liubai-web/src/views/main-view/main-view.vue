@@ -26,6 +26,7 @@ const { leftPx, rightPx } = useMainView()
 }
 
 .mv-left, .mv-right {
+  flex-shrink: 0;
   height: 100%;
   transition: .25s;
   background-color: #e6e4bf;
@@ -35,6 +36,7 @@ const { leftPx, rightPx } = useMainView()
   flex: 1;
   height: 100vh;
   position: relative;
+  overflow-x: auto;
 }
 
 </style>
