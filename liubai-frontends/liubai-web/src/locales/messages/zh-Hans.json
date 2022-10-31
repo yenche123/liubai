@@ -24,6 +24,9 @@
     "when": "什么时候",
     "remind": "提醒我",
     "add_title": "加标题",
+    "add_site": "加地点",
+    "only_local": "仅存于本地",
+    "sync_cloud": "同步到云端",
     "add_file": "加附件",
     "leave_codeBlock": "{tip} 离开代码块"
   },

@@ -35,6 +35,8 @@ const {
   onTapClearWhen,
   onTapRemindItem,
   onTapClearRemind,
+  onTapSyncToCloud,
+  onSyncCloudChange
 } = useMoreArea(emits)
 
 </script>
@@ -102,6 +104,19 @@ const {
         </div>
       </div>
 
+      <!-- 加位置 -->
+      <div class="liu-hover ma-item">
+        <div class="mai-icon">
+          <svg-icon name="location" class="mai-svgicon" :color="default_color"></svg-icon>
+        </div>
+        <div class="mai-title">
+          <span>{{ t("editor.add_site") }}</span>
+        </div>
+        <div class="mai-footer">
+          <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
+        </div>
+      </div>
+
       <!-- 加附件 -->
       <div class="liu-hover ma-item">
         <div class="mai-icon">
@@ -112,6 +127,21 @@ const {
         </div>
         <div class="mai-footer">
           <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
+        </div>
+      </div>
+
+      <!-- 同步到云端 -->
+      <div class="liu-hover ma-item" @click="onTapSyncToCloud">
+        <div class="mai-icon">
+          <svg-icon name="cloud" class="mai-svgicon" :color="default_color"></svg-icon>
+        </div>
+        <div class="mai-title">
+          <span>{{ t("editor.sync_cloud") }}</span>
+        </div>
+        <div class="mai-switch-footer">
+          <liu-switch :checked="data.syncCloud"
+            @change="onSyncCloudChange"
+          ></liu-switch>
         </div>
       </div>
 
@@ -154,7 +184,7 @@ const {
   position: relative;
   display: flex;
   align-items: center;
-  height: 46px;
+  min-height: 48px;
 
   .mai-icon {
     width: 40px;
@@ -200,6 +230,11 @@ const {
       width: 20px;
       height: 20px;
     }
+  }
+
+  .mai-switch-footer {
+    margin-inline-start: 4px;
+    margin-inline-end: 4px;
   }
 
 }

@@ -6,6 +6,7 @@ import type { MenuItem } from "../../../common/liu-menu/liu-menu.vue"
 import { useI18n } from "vue-i18n";
 import en from "../../../../locales/messages/en.json"
 import { REMIND_LATER, REMIND_EARLY } from "../../../../config/atom"
+import type { SwitchChangeEmitOpt } from "../../../common/liu-switch/liu-switch.vue"
 
 interface MoreAreaEmits {
   (event: "whenchange", val: Date | null): void
@@ -16,7 +17,9 @@ interface MaData {
   when: string
   remindMe: string
   title: string
+  site: string
   attachment: string
+  syncCloud: boolean
 
   // 浅浅记录一下 什么时候的 Date 类型，这样子再选择时，定位到该日期
   whenDate?: Date
@@ -38,7 +41,9 @@ export function useMoreArea(emits: MoreAreaEmits) {
     when: "",       // 什么时候
     remindMe: "",   // 提醒我
     title: "",      // 标题
+    site: "",       // 地点名称，如果没有就显示经纬度
     attachment: "",  // 附件名称
+    syncCloud: true,
     remindType: "later",
   })
 
@@ -83,6 +88,18 @@ export function useMoreArea(emits: MoreAreaEmits) {
     }
   }
 
+  const onTapSyncToCloud = () => {
+    console.log("onTapSyncToCloud..........")
+    data.syncCloud = !data.syncCloud
+  }
+
+  const onSyncCloudChange = (val: SwitchChangeEmitOpt) => {
+    console.log("onSyncCloudChange..........")
+    if(val.checked !== data.syncCloud) {
+      data.syncCloud = val.checked
+    }
+  }
+
   return { 
     data,
     remindMenu,
@@ -90,6 +107,8 @@ export function useMoreArea(emits: MoreAreaEmits) {
     onTapClearWhen,
     onTapRemindItem,
     onTapClearRemind,
+    onTapSyncToCloud,
+    onSyncCloudChange,
   }
 }
 

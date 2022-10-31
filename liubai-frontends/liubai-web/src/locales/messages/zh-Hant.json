@@ -24,6 +24,9 @@
     "when": "什麼時候",
     "remind": "提醒我",
     "add_title": "加標題",
+    "add_site": "加地點",
+    "only_local": "僅存於本機",
+    "sync_cloud": "同步到雲端",
     "add_file": "加附件",
     "leave_codeBlock": "{tip} 離開程式編輯"
   },
