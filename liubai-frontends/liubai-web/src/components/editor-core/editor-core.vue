@@ -100,6 +100,10 @@ defineExpose({
     font-size: var(--inline-code-font);
   }
 
+  em {
+    margin-inline-end: 1px;
+  }
+
   p::selection, code::selection, em::selection, strong::selection {
     background-color: var(--select-bg);
   }
