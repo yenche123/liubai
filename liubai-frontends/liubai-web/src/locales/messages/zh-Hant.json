@@ -28,7 +28,9 @@
     "only_local": "僅存於本機",
     "sync_cloud": "同步到雲端",
     "add_file": "加附件",
-    "leave_codeBlock": "{tip} 離開程式編輯"
+    "leave_codeBlock": "{tip} 離開程式編輯",
+    "add_title2": "標題",
+    "title_ph": "請輸入標題"
   },
   "cui": {
     "plz_input_txt": "請輸入文字"

@@ -69,10 +69,12 @@ const {
     <div class="cui-modal-bg"></div>
     <div class="cui-modal-box">
       <h1 v-if="teData.title">{{ teData.title }}</h1>
+      <h1 v-else-if="teData.title_key">{{ t(teData.title_key) }}</h1>
       <input class="cui-text-editor-input" 
         v-model="teData.value" 
         ref="textEditorInputEl" 
-        :placeholder="teData.placeholder ? teData.placeholder: t('cui.plz_input_txt')"
+        :placeholder="teData.placeholder ? teData.placeholder: teData.placeholder_key ? 
+          t(teData.placeholder_key) : t('cui.plz_input_txt')"
         :maxlength="teData.maxLength"
       />
       <div class="cui-modal-btns">
@@ -246,9 +248,14 @@ const {
   text-align: center;
   border: 0;
   outline: none;
+  position: relative;
 
   &::-webkit-input-placeholder {
-    color: var(--main-note);
+    color: var(--main-code);
+  }
+
+  &::selection {
+    background-color: var(--select-bg);
   }
 }
 

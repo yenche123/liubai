@@ -11,7 +11,9 @@ interface TextEditorSuccessRes {
 
 interface TextEditorParam {
   title?: string
+  title_key?: string
   placeholder?: string
+  placeholder_key?: string   // t(placeholder_key)
   value?: string          // 用户已输入的文字
   minLength?: number
   maxLength?: number
@@ -34,7 +36,9 @@ const DEFAULT_MAX_LENGTH = 20
 
 const teData = reactive({
   title: "",
+  title_key: "",
   placeholder: "",
+  placeholder_key: "",
   value: "",
   minLength: DEFAULT_MIN_LENGTH,
   maxLength: DEFAULT_MAX_LENGTH,
@@ -90,14 +94,11 @@ const initTextEditor = () => {
 }
 
 const showTextEditor = async (opt: TextEditorParam): Promise<TextEditorSuccessRes> => {
-  if(opt.title) teData.title = opt.title
-  else teData.title = ""
-
-  if(opt.placeholder) teData.placeholder = opt.placeholder
-  else teData.placeholder = ""
-
-  if(opt.value) teData.value = opt.value
-  else teData.value = ""
+  teData.title = opt.title ?? ""
+  teData.title_key = opt.title_key ?? ""
+  teData.placeholder = opt.placeholder ?? ""
+  teData.placeholder_key = opt.placeholder_key ?? ""
+  teData.value = opt.value ?? ""
 
   if(typeof opt.minLength === "number") teData.minLength = opt.minLength
   else teData.minLength = DEFAULT_MIN_LENGTH

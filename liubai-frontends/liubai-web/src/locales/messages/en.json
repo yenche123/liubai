@@ -28,7 +28,9 @@
     "only_local": "Only Local",
     "sync_cloud": "Sync to cloud",
     "add_file": "Add a file",
-    "leave_codeBlock": "Press {tip} to leave"
+    "leave_codeBlock": "Press {tip} to leave",
+    "add_title2": "Title",
+    "title_ph": "Please enter a title"
   },
   "cui": {
     "plz_input_txt": "Text here"

@@ -26,6 +26,8 @@ const default_color = "var(--other-btn-text)"
 const emits = defineEmits<{
   (event: "whenchange", val: Date | null): void
   (event: "remindmechange", val: LiuRemindMe | null): void
+  (event: "titlechange", val: string): void
+  (event: "synccloudchange", val: boolean): void
 }>()
 
 const {
@@ -36,7 +38,9 @@ const {
   onTapRemindItem,
   onTapClearRemind,
   onTapSyncToCloud,
-  onSyncCloudChange
+  onSyncCloudChange,
+  onTapAddTitle,
+  onTapClearTitle,
 } = useMoreArea(emits)
 
 </script>
@@ -90,16 +94,19 @@ const {
 
       </LiuMenu>
       
-
       <!-- 加标题 -->
-      <div class="liu-hover ma-item">
+      <div class="liu-hover ma-item" @click="onTapAddTitle">
         <div class="mai-icon">
           <svg-icon name="title" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
         <div class="mai-title">
-          <span>{{ t("editor.add_title") }}</span>
+          <span v-if="data.title">{{ data.title }}</span>
+          <span v-else>{{ t("editor.add_title") }}</span>
         </div>
-        <div class="mai-footer">
+        <div v-if="data.title" class="liu-hover mai-footer" @click="onTapClearTitle">
+          <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
+        </div>
+        <div v-else class="mai-footer">
           <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
         </div>
       </div>

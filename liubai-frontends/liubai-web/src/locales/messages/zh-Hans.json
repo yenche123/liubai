@@ -28,7 +28,9 @@
     "only_local": "仅存于本地",
     "sync_cloud": "同步到云端",
     "add_file": "加附件",
-    "leave_codeBlock": "{tip} 离开代码块"
+    "leave_codeBlock": "{tip} 离开代码块",
+    "add_title2": "标题",
+    "title_ph": "请输入标题"
   },
   "cui": {
     "plz_input_txt": "请输入文字"

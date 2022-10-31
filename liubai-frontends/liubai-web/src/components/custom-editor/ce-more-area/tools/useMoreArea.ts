@@ -11,6 +11,8 @@ import type { SwitchChangeEmitOpt } from "../../../common/liu-switch/liu-switch.
 interface MoreAreaEmits {
   (event: "whenchange", val: Date | null): void
   (event: "remindmechange", val: LiuRemindMe | null): void
+  (event: "titlechange", val: string): void
+  (event: "synccloudchange", val: boolean): void
 }
 
 interface MaData {
@@ -89,15 +91,25 @@ export function useMoreArea(emits: MoreAreaEmits) {
   }
 
   const onTapSyncToCloud = () => {
-    console.log("onTapSyncToCloud..........")
-    data.syncCloud = !data.syncCloud
+    const newV = !data.syncCloud
+    data.syncCloud = newV
+    emits("synccloudchange", newV)
   }
 
   const onSyncCloudChange = (val: SwitchChangeEmitOpt) => {
-    console.log("onSyncCloudChange..........")
     if(val.checked !== data.syncCloud) {
       data.syncCloud = val.checked
+      emits("synccloudchange", val.checked)
     }
+  }
+
+  const onTapAddTitle = () => {
+    toAddTitle(ctx)
+  }
+
+  const onTapClearTitle = (e: MouseEvent) => {
+    toClearTitle(ctx)
+    e.stopPropagation()
   }
 
   return { 
@@ -109,7 +121,26 @@ export function useMoreArea(emits: MoreAreaEmits) {
     onTapClearRemind,
     onTapSyncToCloud,
     onSyncCloudChange,
+    onTapAddTitle,
+    onTapClearTitle,
   }
+}
+
+async function toAddTitle(ctx: MaContext) {
+  const res = await cui.showTextEditor({
+    title_key: "editor.add_title2",
+    placeholder_key: "editor.title_ph",
+    value: ctx.data.title,
+    maxLength: 32,
+  })
+  if(!res.confirm || !res.value) return
+  ctx.data.title = res.value
+  ctx.emits("titlechange", res.value)
+}
+
+function toClearTitle(ctx: MaContext) {
+  ctx.data.title = ""
+  ctx.emits("titlechange", "")
 }
 
 function setNewRemind(ctx: MaContext, item?: MenuItem, index?: number) {
