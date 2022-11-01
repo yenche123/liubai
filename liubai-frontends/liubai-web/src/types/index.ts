@@ -10,3 +10,9 @@ export interface LocalPreference {
   language?: LocalLanguage
   nickName?: string
 }
+
+export interface BlobWithWH {
+  width?: number         // 可能为 undefined 表示计算失败
+  height?: number
+  blob: Blob | File
+}

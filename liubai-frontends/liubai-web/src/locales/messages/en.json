@@ -18,7 +18,8 @@
     "back": "Back",
     "today": "Today",
     "tomorrow": "Tomorrow",
-    "yesterday": "Yesterday"
+    "yesterday": "Yesterday",
+    "processing": "Processing"
   },
   "editor": {
     "when": "When",

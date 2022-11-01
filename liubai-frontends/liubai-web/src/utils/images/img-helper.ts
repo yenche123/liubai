@@ -1,6 +1,8 @@
 import Compressor from 'compressorjs';
+import type { BlobWithWH } from "../../types"
 
 type CompressResolver = (res: File | Blob) => void
+type WidthHeightResolver = (res: BlobWithWH) => void
 
 // 临界值，处于该值以上的 size 才需要压缩
 const COMPRESS_POINT = 300 * 1024    // 300 kb
@@ -54,7 +56,61 @@ function _toCompress(file: File) {
   return new Promise(_excute)
 }
 
+async function getHeightWidthFromFiles(files: (File | Blob)[]) {
+  const list: BlobWithWH[] = []
+
+  const _get = (file: File | Blob) => {
+
+    const _calc = (a: WidthHeightResolver, base64: string) => {
+      const img = new Image()
+      img.onload = () => {
+        const w = img.width
+        const h = img.height
+        a({ width: w, height: h, blob: file })
+      }
+      img.onerror = (e: Event | string) => {
+        console.warn("图片计算错误........")
+        console.log(e)
+        console.log(" ")
+        a({ blob: file })
+      }
+      img.src = base64
+    }
+
+    const _read = (a: WidthHeightResolver) => {
+      let reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+
+        if(!e.target?.result) {
+          console.warn("reader onload 事件回调 不存在 e.target.result")
+          console.log(e.target)
+          console.log(" ")
+          a({ blob: file })
+          return
+        }
+
+        _calc(a, e.target.result as string)
+      }
+      reader.onerror = (e: ProgressEvent<FileReader>) => {
+        console.warn("reader onerror 事件被触发.........")
+        console.log(e)
+        a({ blob: file })
+      }
+    }
+    return new Promise(_read)
+  }
+
+  for(let i=0; i<files.length; i++) {
+    const v = files[i]
+    const res = await _get(v)
+    list.push(res)
+  }
+  return list
+}
+
 
 export default {
   compress,
+  getHeightWidthFromFiles,
 }

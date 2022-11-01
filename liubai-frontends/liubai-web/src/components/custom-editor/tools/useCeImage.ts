@@ -15,6 +15,11 @@ export function useCeImage() {
     console.log("得到最新的图片.......")
     console.log(res)
     console.log(" ")
+    console.log("去计算宽高...........")
+    const res2 = await imgHelper.getHeightWidthFromFiles(res)
+    console.log("计算结果...........")
+    console.log(res2)
+    console.log(" ")
   }
 
   return { selectImagesEl, onImageChange }
