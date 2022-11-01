@@ -6,6 +6,10 @@ import {
   areTheDatesEqual,
   showBasicDate,
 } from "./date-util";
+import {
+  getAcceptImgTypes,
+  createObjURLs,
+} from "./file-util"
 
 export default {
   getEnv,
@@ -15,4 +19,6 @@ export default {
   getDefaultDate,
   areTheDatesEqual,
   showBasicDate,
+  getAcceptImgTypes,
+  createObjURLs,
 }

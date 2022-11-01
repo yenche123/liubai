@@ -9,6 +9,7 @@ import type { ShallowRef } from "vue";
 import CeFinishArea from "./ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 import { useCeImage } from "./tools/useCeImage";
+import liuUtil from "../../utils/liu-util";
 
 const props = defineProps({
   lastBar: {
@@ -65,7 +66,7 @@ const icon_color = "var(--main-normal)"
     <div class="liu-hover cet-item">
       <input ref="selectImagesEl" 
         type="file" 
-        accept="image/*" 
+        :accept="liuUtil.getAcceptImgTypes()" 
         class="ceti-input" 
         @change="onImageChange"
         multiple
