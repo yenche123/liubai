@@ -8,6 +8,7 @@ import { useCeState } from "./tools/useCeState";
 import type { ShallowRef } from "vue";
 import CeFinishArea from "./ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
+import { useCeImage } from "./tools/useCeImage";
 
 const props = defineProps({
   lastBar: {
@@ -33,6 +34,11 @@ const {
   onWhenChange,
 } = useCeState(editor as ShallowRef<TipTapEditor>)
 
+const {
+  selectImagesEl,
+  onImageChange
+} = useCeImage()
+
 
 const icon_color = "var(--main-normal)"
 
@@ -57,6 +63,13 @@ const icon_color = "var(--main-normal)"
   <div class="ce-toolbar">
     <!-- 图片 -->
     <div class="liu-hover cet-item">
+      <input ref="selectImagesEl" 
+        type="file" 
+        accept="image/*" 
+        class="ceti-input" 
+        @change="onImageChange"
+        multiple
+      />
       <svg-icon name="editor-image" class="ceti-icon" :color="icon_color" />
     </div>
 
@@ -156,6 +169,17 @@ const icon_color = "var(--main-normal)"
     align-items: center;
     justify-content: center;
     margin-inline-end: 8px;
+    position: relative;
+
+    .ceti-input {
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+    }
     
     .ceti-icon {
       width: 30px;
