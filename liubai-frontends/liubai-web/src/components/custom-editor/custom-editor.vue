@@ -10,6 +10,7 @@ import CeFinishArea from "./ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 import { useCeImage } from "./tools/useCeImage";
 import liuUtil from "../../utils/liu-util";
+import CeCovers from "./ce-covers/ce-covers.vue"
 
 const props = defineProps({
   lastBar: {
@@ -37,7 +38,8 @@ const {
 
 const {
   selectImagesEl,
-  onImageChange
+  onImageChange,
+  covers,
 } = useCeImage()
 
 
@@ -59,6 +61,8 @@ const icon_color = "var(--main-normal)"
       @finish="onEditorFinish"
     ></EditorCore>
   </div>
+
+  <CeCovers :covers="covers"></CeCovers>
 
   <!-- 第一排工具栏 -->
   <div class="ce-toolbar">

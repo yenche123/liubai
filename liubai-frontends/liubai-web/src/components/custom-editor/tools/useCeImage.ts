@@ -1,26 +1,32 @@
 import { ref } from "vue"
+import type { ImageShow } from "../../../types"
 import imgHelper from "../../../utils/images/img-helper"
+import liuUtil from "../../../utils/liu-util"
 
 export function useCeImage() {
   const selectImagesEl = ref<HTMLInputElement | null>(null)
+  const covers = ref<ImageShow[]>([])
 
   const onImageChange = async () => {
     const el = selectImagesEl.value
     if(!el) return
     if(!el.files || !el.files.length) return
-    console.log("el.files: ")
-    console.log(el.files)
-    console.log("去压缩图片..............")
+
     const res = await imgHelper.compress(el.files)
-    console.log("得到最新的图片.......")
-    console.log(res)
-    console.log(" ")
-    console.log("去计算宽高...........")
-    const res2 = await imgHelper.getHeightWidthFromFiles(res)
-    console.log("计算结果...........")
-    console.log(res2)
-    console.log(" ")
+    const res2 = await imgHelper.getMetaDataFromFiles(res)
+    const res3 = liuUtil.createObjURLs(res)
+    res3.forEach((v, i) => {
+      const v2 = res2[i]
+      const obj: ImageShow = {
+        src: v,
+        id: "local_" + v2.local_id,
+        width: v2.width,
+        height: v2.height,
+        h2w: v2.h2w,
+      }
+      covers.value.push(obj)
+    })
   }
 
-  return { selectImagesEl, onImageChange }
+  return { selectImagesEl, onImageChange, covers }
 }

@@ -1,8 +1,10 @@
 import Compressor from 'compressorjs';
-import type { BlobWithWH } from "../../types"
+import type { ImageLocal } from "../../types"
+import { customAlphabet } from 'nanoid'
 
-type CompressResolver = (res: File | Blob) => void
-type WidthHeightResolver = (res: BlobWithWH) => void
+type FileWithWH = { file: File, width?: number, height?: number }
+type CompressResolver = (res: File) => void
+type WidthHeightResolver = (res: FileWithWH) => void
 
 // 临界值，处于该值以上的 size 才需要压缩
 const COMPRESS_POINT = 300 * 1024    // 300 kb
@@ -12,7 +14,7 @@ const NO_COMPRESS_TYPES = ["image/gif"]
 const CHECK_ORIENTATION_POINT = 5 * 1024 * 1024   // 5mb 以下才去 checkOrientation
 
 async function compress(files: FileList) {
-  const list: Array<Blob | File> = []
+  const list: Array<File> = []
   for(let i=0; i<files.length; i++) {
     const v = files[i]
     const noCompress = NO_COMPRESS_TYPES.includes(v.type)
@@ -56,23 +58,23 @@ function _toCompress(file: File) {
   return new Promise(_excute)
 }
 
-async function getHeightWidthFromFiles(files: (File | Blob)[]) {
-  const list: BlobWithWH[] = []
+async function getMetaDataFromFiles(files: File[]) {
+  const list: ImageLocal[] = []
 
-  const _get = (file: File | Blob) => {
+  const _get = (file: File) => {
 
     const _calc = (a: WidthHeightResolver, base64: string) => {
       const img = new Image()
       img.onload = () => {
         const w = img.width
         const h = img.height
-        a({ width: w, height: h, blob: file })
+        a({ width: w, height: h, file })
       }
       img.onerror = (e: Event | string) => {
         console.warn("图片计算错误........")
         console.log(e)
         console.log(" ")
-        a({ blob: file })
+        a({ file })
       }
       img.src = base64
     }
@@ -86,7 +88,7 @@ async function getHeightWidthFromFiles(files: (File | Blob)[]) {
           console.warn("reader onload 事件回调 不存在 e.target.result")
           console.log(e.target)
           console.log(" ")
-          a({ blob: file })
+          a({ file })
           return
         }
 
@@ -95,22 +97,42 @@ async function getHeightWidthFromFiles(files: (File | Blob)[]) {
       reader.onerror = (e: ProgressEvent<FileReader>) => {
         console.warn("reader onerror 事件被触发.........")
         console.log(e)
-        a({ blob: file })
+        a({ file })
       }
     }
     return new Promise(_read)
   }
 
+  const _pack = (data: FileWithWH) => {
+    const w = data.width
+    const h = data.height
+    let h2w = w && h ? (h / w).toFixed(2) : undefined
+    const obj: ImageLocal = {
+      local_id: _createId(),
+      name: data.file.name,
+      file: data.file,
+      width: w,
+      height: h,
+      h2w,
+    }
+    return obj
+  }
+
   for(let i=0; i<files.length; i++) {
     const v = files[i]
     const res = await _get(v)
-    list.push(res)
+    list.push(_pack(res))
   }
   return list
 }
 
+function _createId() {
+  const ABC = "0123456789abcdefghijkmnopqrstuvwxyz"
+  const nanoid = customAlphabet(ABC, 23)
+  return nanoid()
+}
 
 export default {
   compress,
-  getHeightWidthFromFiles,
+  getMetaDataFromFiles,
 }

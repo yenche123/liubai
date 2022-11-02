@@ -11,8 +11,20 @@ export interface LocalPreference {
   nickName?: string
 }
 
-export interface BlobWithWH {
-  width?: number         // 可能为 undefined 表示计算失败
+export interface ImageLocal {
+  local_id: string
+  name: string
+  file: File
+  width?: number
   height?: number
-  blob: Blob | File
+  h2w?: string
+  cloud_url?: string
+}
+
+export interface ImageShow {
+  src: string
+  id: string,
+  width?: number
+  height?: number
+  h2w?: string
 }
