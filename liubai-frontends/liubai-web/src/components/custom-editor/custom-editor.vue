@@ -40,6 +40,7 @@ const {
   selectImagesEl,
   onImageChange,
   covers,
+  onClearCover,
 } = useCeImage()
 
 
@@ -62,7 +63,9 @@ const icon_color = "var(--main-normal)"
     ></EditorCore>
   </div>
 
-  <CeCovers v-model="covers"></CeCovers>
+  <CeCovers v-model="covers"
+    @clear="onClearCover"
+  ></CeCovers>
 
   <!-- 第一排工具栏 -->
   <div class="ce-toolbar">

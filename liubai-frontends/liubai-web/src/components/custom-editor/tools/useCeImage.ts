@@ -28,5 +28,17 @@ export function useCeImage() {
     })
   }
 
-  return { selectImagesEl, onImageChange, covers }
+  const onClearCover = (index: number) => {
+    const list = covers.value
+    const item = list[index]
+    if(!item) return
+    list.splice(index, 1)
+  }
+
+  return { 
+    selectImagesEl, 
+    onImageChange, 
+    covers, 
+    onClearCover 
+  }
 }
