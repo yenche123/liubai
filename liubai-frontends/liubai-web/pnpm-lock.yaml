@@ -19,6 +19,7 @@ specifiers:
   '@vueuse/core': ^9.4.0
   compressorjs: ^1.1.1
   date-fns: ^2.29.3
+  dexie: ^3.2.2
   floating-vue: 2.0.0-beta.20
   highlight.js: ^11.6.0
   lowlight: ^2.7.0
@@ -51,6 +52,7 @@ dependencies:
   '@vueuse/core': 9.4.0_vue@3.2.41
   compressorjs: 1.1.1
   date-fns: 2.29.3
+  dexie: 3.2.2
   floating-vue: 2.0.0-beta.20_vue@3.2.41
   highlight.js: 11.6.0
   lowlight: 2.7.0
@@ -132,16 +134,16 @@ packages:
       '@floating-ui/core': 0.3.1
     dev: false
 
-  /@he-tree/dnd-utils/0.0.3-alpha.0:
-    resolution: {integrity: sha512-jd/YSHEaDVnIt01uYtiYfcIAIcvq+USxaq+t8Wvkul07cIBSdUsueMwMxbdYEp3YyrdJt8pYp+TZGj7oFZVQJw==}
+  /@he-tree/dnd-utils/0.1.0-alpha.0:
+    resolution: {integrity: sha512-80OOqN5qQZUmfqyT6q4aIWdhyLEkhB2OfGn4BYdSJumwOp0n+Tkst643Ee0tWRNLyh0rA6oZijejQ0uLhe9Pfw==}
     dependencies:
       '@babel/runtime': 7.19.4
       drag-event-service: 2.0.0
       helper-js: 3.1.2
     dev: false
 
-  /@he-tree/tree-utils/0.0.3-alpha.0:
-    resolution: {integrity: sha512-FrDB/VoFY3bSKYCuwT6MFwtCmKNR7Rlg0uoo7BwQOq9WMVdnt5hICcuBks9EskLjt0vPsTaLB1Mx+YoSQWjz6Q==}
+  /@he-tree/tree-utils/0.1.0-alpha.0:
+    resolution: {integrity: sha512-7eM1oSNgyfjDpBCmYMHFK6M5VfPfPzQ7x6BT9ruf0iYDokyWyCyMu4HhUSbcmJFVMF0Bzqrtkdu6JlWj4orLyQ==}
     dependencies:
       '@babel/runtime': 7.19.4
       drag-event-service: 2.0.0
@@ -158,8 +160,8 @@ packages:
       '@vue/composition-api':
         optional: true
     dependencies:
-      '@he-tree/dnd-utils': 0.0.3-alpha.0
-      '@he-tree/tree-utils': 0.0.3-alpha.0
+      '@he-tree/dnd-utils': 0.1.0-alpha.0
+      '@he-tree/tree-utils': 0.1.0-alpha.0
       '@virtual-list/vue': 1.1.5_vue@3.2.41
       helper-js: 3.1.2
       vue: 3.2.41
@@ -1271,6 +1273,11 @@ packages:
   /deprecation/2.3.1:
     resolution: {integrity: sha512-xmHIy4F3scKVwMsQ4WnVaS8bHOx0DmVwRywosKhaILI0ywMDWPtBSku2HNxRvF7jtwDRsoEwYQSfbxj8b7RlJQ==}
     dev: true
+
+  /dexie/3.2.2:
+    resolution: {integrity: sha512-q5dC3HPmir2DERlX+toCBbHQXW5MsyrFqPFcovkH9N2S/UW/H3H5AWAB6iEOExeraAu+j+zRDG+zg/D7YhH0qg==}
+    engines: {node: '>=6.0'}
+    dev: false
 
   /dom-serializer/0.2.2:
     resolution: {integrity: sha512-2/xPb3ORsQ42nHYiSunXkDjPLBaEj/xTwUO4B7XCZQTRk7EBtTOPaygh10YAAh2OI1Qrp6NWfpAhzswj0ydt9g==}
