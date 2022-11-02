@@ -17,6 +17,7 @@ import { router } from './routes/router'
 import SvgIcon from "./assets/svg-icon.vue"
 import CustomBtn from "./components/custom-ui/custom-button.vue"
 import LiuSwitch from "./components/common/liu-switch/liu-switch.vue"
+import LiuImg from "./components/common/liu-img/liu-img.vue"
 import FloatingVue from 'floating-vue'
 
 
@@ -25,6 +26,7 @@ const app = createApp(App)
 app.component("SvgIcon", SvgIcon)
 app.component("CustomBtn", CustomBtn)
 app.component("LiuSwitch", LiuSwitch)
+app.component("LiuImg", LiuImg)
 app.use(createPinia())
 app.use(i18n)
 app.use(router)

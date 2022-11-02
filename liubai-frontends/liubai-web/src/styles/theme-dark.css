@@ -35,6 +35,7 @@
   --floating-shadow: 0 6px 24px rgba(222, 222, 222, .15);
   --liu-hr: #343434;   /** 卡片里的分割线、引用的那条 bar */
   --liu-quote: #a0a0a0;  /** 引用里的文字色 */
+  --liu-image: #2a2a2a;
 
   /** 一些比较少用到的 css 变量 */
   --vice-bg: #303030;
