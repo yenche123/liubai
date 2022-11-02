@@ -62,7 +62,7 @@ const icon_color = "var(--main-normal)"
     ></EditorCore>
   </div>
 
-  <CeCovers :covers="covers"></CeCovers>
+  <CeCovers v-model="covers"></CeCovers>
 
   <!-- 第一排工具栏 -->
   <div class="ce-toolbar">

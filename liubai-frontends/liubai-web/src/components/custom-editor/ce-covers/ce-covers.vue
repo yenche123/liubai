@@ -1,34 +1,53 @@
 <script lang="ts">
+import DraggAble from 'vuedraggable'
 import { defineComponent } from 'vue';
 import type { ImageShow } from '../../../types';
 
 export default defineComponent({
+  components: {
+    DraggAble
+  },
   props: {
-    covers: {
+    modelValue: {
       type: Array<ImageShow>,
     }
   },
-  setup() {
-    const imgWidth = 120
+  emits: ['update:modelValue'],
+  setup(props) {
+    const imgWidth = 140
     return { imgWidth }
   },
+  methods: {
+    onListUpdate(newV: ImageShow[]) {
+      console.log("onListUpdate..........")
+      console.log(newV)
+      console.log(" ")
+      this.$emit("update:modelValue", newV)
+    },
+  },
 })
-
 
 </script>
 <template>
 
-  <div v-if="covers?.length" class="cc-container">
-    <template v-for="(item, index) in covers" :key="item.id">
-      <liu-img :src="item.src" :width="imgWidth" :height="imgWidth"
+  <DraggAble v-if="modelValue?.length" 
+    class="cc-container"
+    :modelValue="modelValue"
+    @update:modelValue="onListUpdate"
+    :animation="300"
+    ghost-class="ghost"
+    item-key="id"
+  >
+    <template #item="{ element }">
+      <liu-img :src="element.src" :width="imgWidth" :height="imgWidth"
         class="cc-img"
         object-fit="cover"
       ></liu-img>
     </template>
-  </div>
+  </DraggAble>
 
 </template>
-<style scoped lang="scss">
+<style lang="scss">
 
 .cc-container {
   display: flex;
@@ -42,7 +61,22 @@ export default defineComponent({
     border-radius: 10px;
     margin-right: 10px;
     margin-bottom: 10px;
+    cursor: move;
   }
+}
+
+/** the following is for draggable */
+
+.flip-list-move {
+  transition: transform 0.45s;
+}
+
+.no-move {
+  transition: transform 0s;
+}
+
+.ghost {
+  opacity: 0.3;
 }
 
 

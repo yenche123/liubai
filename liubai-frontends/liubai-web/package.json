@@ -33,7 +33,8 @@
     "pinia": "^2.0.23",
     "vue": "^3.2.41",
     "vue-i18n": "9",
-    "vue-router": "4"
+    "vue-router": "4",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^6.0.3",
