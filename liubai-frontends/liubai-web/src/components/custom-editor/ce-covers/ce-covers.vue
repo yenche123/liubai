@@ -3,6 +3,7 @@ import DraggAble from 'vuedraggable'
 import { defineComponent } from 'vue';
 import type { ImageShow } from '../../../types';
 import liuApi from "../../../utils/liu-api"
+import { useCeCovers } from "./tools/useCeCovers"
 
 export default defineComponent({
   components: {
@@ -17,8 +18,12 @@ export default defineComponent({
   setup(props) {
     const imgWidth = 140    
     const cha = liuApi.getCharacteristic()
+    const {
+      onDragStart,
+      onDragEnd,
+    } = useCeCovers()
 
-    return { imgWidth, cha }
+    return { imgWidth, cha, onDragStart, onDragEnd }
   },
   methods: {
     onListUpdate(newV: ImageShow[]) {
@@ -42,6 +47,8 @@ export default defineComponent({
     class="cc-container"
     :modelValue="modelValue"
     @update:modelValue="onListUpdate"
+    @start="onDragStart"
+    @end="onDragEnd"
     :animation="300"
     handle=".cec-drag"
     ghost-class="ghost"

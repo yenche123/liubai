@@ -12,5 +12,12 @@ export const useGlobalStateStore = defineStore("globalState", () => {
     return true
   })
 
-  return { mainInputing, canListenKeyboard }
+  // 是否正在拖动以排序图片
+  const isDragToSort = ref(false)
+
+  return { 
+    mainInputing, 
+    canListenKeyboard,
+    isDragToSort,
+  }
 })
