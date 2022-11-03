@@ -17,10 +17,17 @@ defineProps({
 })
 
 const { t } = useI18n()
+const color = "#c7c9ca"
 
 </script>
 <template>
-  <div v-if="isOverDropZone" class="cdz-container">
+  <div class="cdz-container"
+    :class="{ 'cdz-container_show': isOverDropZone }"
+  >
+
+    <div class="cdz-add">
+      <svg-icon name="add" class="cdz-add-icon" :color="color"></svg-icon>
+    </div>
 
     <div class="cdz-title">
       <span>{{ t('dnd.add_tip') }}</span>
@@ -40,7 +47,9 @@ const { t } = useI18n()
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: whitesmoke;
+  transition: .11s;
+  opacity: 0;
+  visibility: hidden;
 
   &::before {
     position: absolute;
@@ -49,16 +58,40 @@ const { t } = useI18n()
     width: 100%;
     height: 100%;
     content: "";
-    background-color: rgba(0, 0, 0, .5);
+    background-color: rgba(0, 0, 0, .75);
+  }
+
+  .cdz-add {
+    width: 100px;
+    height: 100px;
+    border: 4px solid v-bind("color");
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+    position: relative;
+
+    .cdz-add-icon {
+      width: 50px;
+      height: 50px;
+    }
   }
 
   .cdz-title {
     position: relative;
-    color: whitesmoke;
+    color: v-bind("color");
     font-size: var(--title-font);
     text-align: center;
+    letter-spacing: 1.2px;
+    user-select: none;
   }
 
+}
+
+.cdz-container_show {
+  visibility: visible;
+  opacity: 1;
 }
 
 
