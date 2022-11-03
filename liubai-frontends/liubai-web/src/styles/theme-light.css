@@ -60,4 +60,8 @@
 
   /** 毛玻璃背景 */
   --frosted-glass: rgba(255, 255, 255, .7);    /** 跟随 sidebar 的背景 */
+
+
+  /** 再最后给 body 添加背景色 */
+  background-color: var(--bg-color);
 }

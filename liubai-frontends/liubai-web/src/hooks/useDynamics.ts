@@ -48,9 +48,8 @@ function initTheme() {
   }
   else theme.value = _theme
 
-  // 为 body 添加 .theme-light，有必要的话再添加 .theme-dark
+  // 有必要的话为 body 添加 .theme-dark
   const body = document.querySelector("body")
-  body?.classList.add("theme-light")
   if(theme.value === "dark") body?.classList.add("theme-dark")
 }
 
