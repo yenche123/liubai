@@ -1,6 +1,12 @@
 import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore"
+import type { ImageShow } from '../../../../types';
+import cui from "../../../custom-ui";
 
-export function useCeCovers() {
+interface CeCoversProps {
+  modelValue?: ImageShow[]
+}
+
+export function useCeCovers(props: CeCoversProps) {
 
   const globalStore = useGlobalStateStore()
 
@@ -12,8 +18,18 @@ export function useCeCovers() {
     globalStore.isDragToSort = false
   }
 
+  const onTapImage = (index: number) => {
+    const covers = props.modelValue
+    if(!covers || !covers[index]) return
+    cui.previewImage({
+      imgs: covers,
+      index,
+    })
+  }
+
   return {
     onDragStart,
     onDragEnd,
+    onTapImage,
   }
 }

@@ -38,7 +38,7 @@ export function useCeImage() {
     selectImagesEl, 
     onImageChange, 
     covers, 
-    onClearCover 
+    onClearCover,
   }
 }
 

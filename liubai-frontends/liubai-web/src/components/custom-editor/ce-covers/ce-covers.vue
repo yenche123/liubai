@@ -21,9 +21,16 @@ export default defineComponent({
     const {
       onDragStart,
       onDragEnd,
-    } = useCeCovers()
+      onTapImage,
+    } = useCeCovers(props)
 
-    return { imgWidth, cha, onDragStart, onDragEnd }
+    return { 
+      imgWidth, 
+      cha, 
+      onDragStart, 
+      onDragEnd,
+      onTapImage 
+    }
   },
   methods: {
     onListUpdate(newV: ImageShow[]) {
@@ -63,6 +70,7 @@ export default defineComponent({
           :height="imgWidth"
           class="cc-img"
           object-fit="cover"
+          @click="onTapImage(index)"
         ></liu-img>
 
         <!-- 右上角的删除按钮 -->

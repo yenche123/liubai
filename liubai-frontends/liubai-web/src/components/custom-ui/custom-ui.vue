@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import DatePicker from "./date-picker/date-picker.vue"
+import PreviewImage from "./preview-image/preview-image.vue";
 import { initModal } from "./modal"
 import { initLoading } from "./loading"
 import { initTextEditor } from "./text-editor";
@@ -109,6 +110,9 @@ const {
 
   <!-- 日期选择器 -->
   <DatePicker></DatePicker>
+
+  <!-- 预览图片 -->
+  <PreviewImage></PreviewImage>
 
 </template>
 
