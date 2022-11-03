@@ -20,7 +20,8 @@ defineProps({
   loading: {
     type: String,
     default: "auto",    // 使用 lazy 表示，lazy-loading
-  }
+  },
+  bgColor: String,
 })
 
 const show = ref(false)
@@ -30,8 +31,6 @@ const bgOpacity = computed(() => {
 })
 
 const onImgLoaded = async () => {
-  console.log("图片加载成功.......")
-  await valTool.waitMilli(1300)
   show.value = true
 }
 
@@ -64,7 +63,7 @@ const onImgLoaded = async () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--liu-image);
+  background-color: v-bind("bgColor ? bgColor : 'var(--liu-image)'");
   transition: .15s;
   opacity: v-bind("bgOpacity");
 }

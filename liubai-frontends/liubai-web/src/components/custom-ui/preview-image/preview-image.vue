@@ -35,7 +35,7 @@ const {
   left: 0;
   user-select: none;
   opacity: 0;
-  background-color: var(--popup-bg);
+  background-color: rgba(0, 0, 0, .8);
   transition: v-bind("TRANSITION_DURATION + 'ms'");
   z-index: 3000;
 }

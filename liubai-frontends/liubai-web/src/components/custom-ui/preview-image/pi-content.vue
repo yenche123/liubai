@@ -49,6 +49,7 @@ export default defineComponent({
             object-fit="contain"
             class="pi-image"
             :style="{ 'height': item.h2w ? 'calc(100vw * ' + item.h2w + ')' : undefined }"
+            bg-color="#1f1f1f"
           ></liu-img>
         </div>
       </SwiperSlide>
