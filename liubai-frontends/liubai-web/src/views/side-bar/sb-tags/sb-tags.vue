@@ -6,6 +6,13 @@ import { Draggable } from "@he-tree/vue";
 import { useSbTags } from "./tools/useSbTags";
 // 侧边栏: 标签
 
+defineProps({
+  show: {
+    type: Boolean,
+    default: false,
+  }
+})
+
 const { router } = useRouteAndLiuRouter()
 const { t } = useI18n()
 const naviHeightPx = `${cfg.navi_height}px`
@@ -28,9 +35,9 @@ const onNaviBack = () => {
   <div class="st-virtual"></div>
 
   <div class="liu-frosted-glass st-navibar">
-    <div class="liu-hover st-navi-back" @click="onNaviBack">
+    <button class="liu-hover st-navi-back" @click="onNaviBack" :tabindex="show ? 0 : -1">
       <SvgIcon class="st-navi-back-icon" name="arrow-back700"></SvgIcon>
-    </div>
+    </button>
     <div class="st-navi-title">
       <span>{{ t("common.tags") }}</span>
     </div>

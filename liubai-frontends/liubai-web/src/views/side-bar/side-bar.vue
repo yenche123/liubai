@@ -58,7 +58,7 @@ const {
       :class="{ 'sb-box-main_hidden': expandState !== '' }"
     >
       <div class="sb-inner-box">
-        <SbContent></SbContent>
+        <SbContent :show="expandState === ''"></SbContent>
       </div>
     </div>
 
@@ -67,7 +67,7 @@ const {
       :class="{ 'sb-box-other_show': expandState === 'tags' }"
     >
       <div class="sb-inner-box">
-        <SbTags></SbTags>
+        <SbTags :show="expandState === 'tags'"></SbTags>
       </div>
     </div>
 

@@ -5,6 +5,17 @@ import { useRouteAndLiuRouter } from '../../../routes/liu-router';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+const props = defineProps({
+  show: {
+    type: Boolean,
+    default: true,
+  }
+})
+const tabindex = computed(() => {
+  if(props.show) return 0
+  return -1
+})
+
 const { t } = useI18n()
 
 const { route } = useRouteAndLiuRouter()
@@ -30,6 +41,7 @@ const color_selected = "var(--main-normal)"
   <!-- 首页 -->
   <NaviLink class="sb-link liu-hover" 
     :class="{ 'sb-link_selected': state === 'index' }" to="/"
+    :tabindex="tabindex"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -43,6 +55,7 @@ const color_selected = "var(--main-normal)"
   <!-- 收藏 -->
   <NaviLink class="sb-link liu-hover" 
     :class="{ 'sb-link_selected': state === 'favorite' }" to="/favorite"
+    :tabindex="tabindex"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -56,6 +69,7 @@ const color_selected = "var(--main-normal)"
   <!-- 标签 -->
   <AppLink class="sb-link liu-hover" to="?tags=01"
     :class="{ 'sb-link_selected': state === 'tags' }"
+    :tabindex="tabindex"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -69,6 +83,7 @@ const color_selected = "var(--main-normal)"
   <!-- 看板 -->
   <NaviLink class="sb-link liu-hover" to="/kanban"
     :class="{ 'sb-link_selected': state === 'kanban' }"
+    :tabindex="tabindex"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -82,6 +97,7 @@ const color_selected = "var(--main-normal)"
   <!-- 连接 -->
   <NaviLink class="sb-link liu-hover" to="/connect"
     :class="{ 'sb-link_selected': state === 'connect' }"
+    :tabindex="tabindex"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -95,6 +111,7 @@ const color_selected = "var(--main-normal)"
   <!-- 回收桶 -->
   <NaviLink class="sb-link liu-hover" to="/trash"
     :class="{ 'sb-link_selected': state === 'trash' }"
+    :tabindex="tabindex"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 

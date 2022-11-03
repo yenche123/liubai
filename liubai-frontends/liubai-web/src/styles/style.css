@@ -49,6 +49,13 @@ a:hover {
   text-decoration: none;
 }
 
+button {
+  background-color: transparent;
+  background: transparent;
+  padding: 0;
+  border: 0;
+}
+
 input {
   background: transparent;
 }
