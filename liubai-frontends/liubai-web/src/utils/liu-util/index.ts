@@ -7,8 +7,11 @@ import {
   showBasicDate,
 } from "./date-util";
 import {
-  getAcceptImgTypes,
+  getAcceptImgTypesString,
+  getAcceptImgTypesArray,
   createObjURLs,
+  getArrayFromFileList,
+  getOnlyImageFiles,
 } from "./file-util"
 
 export default {
@@ -19,6 +22,9 @@ export default {
   getDefaultDate,
   areTheDatesEqual,
   showBasicDate,
-  getAcceptImgTypes,
+  getAcceptImgTypesString,
+  getAcceptImgTypesArray,
   createObjURLs,
+  getArrayFromFileList,
+  getOnlyImageFiles,
 }

@@ -13,7 +13,7 @@ const NO_COMPRESS_TYPES = ["image/gif"]
 
 const CHECK_ORIENTATION_POINT = 5 * 1024 * 1024   // 5mb 以下才去 checkOrientation
 
-async function compress(files: FileList) {
+async function compress(files: File[]) {
   const list: Array<File> = []
   for(let i=0; i<files.length; i++) {
     const v = files[i]

@@ -1,15 +1,25 @@
 <script setup lang="ts">
+import CenterDropZone from "./center-drop-zone/center-drop-zone.vue"
 import { useMainView } from "./tools/useMainView"
+import { useMvDropZone } from "./tools/useMvDropZone"
 
 const { leftPx, rightPx } = useMainView()
+const { isOverDropZone, centerRef } = useMvDropZone()
 
 </script>
 <template>
 
   <div class="mv-container">
     <div class="mv-left" :style="{ width: leftPx + 'px' }"></div>
-    <div class="mv-center">
+    <div class="mv-center" ref="centerRef">
       <slot />
+
+      <center-drop-zone 
+        :is-over-drop-zone="isOverDropZone"
+        :left-px="leftPx"
+        :right-px="rightPx"
+      ></center-drop-zone>
+
     </div>
     <div class="mv-right" :style="{ width: rightPx + 'px' }"></div>
   </div>

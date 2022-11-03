@@ -84,5 +84,8 @@
       "1 day later",
       "Other"
     ]
+  },
+  "dnd": {
+    "add_tip": "Add photos or files"
   }
 }

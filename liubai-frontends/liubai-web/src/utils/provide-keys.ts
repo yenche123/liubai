@@ -6,3 +6,4 @@ import type { InjectionKey, Ref } from 'vue'
 
 export const vvKey = Symbol() as InjectionKey<Ref<number>>
 export const mvKey = Symbol() as InjectionKey<Ref<number>>
+export const mvFileKey = Symbol() as InjectionKey<Ref<File[]>>

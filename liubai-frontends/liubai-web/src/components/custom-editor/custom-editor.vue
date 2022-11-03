@@ -73,7 +73,7 @@ const icon_color = "var(--main-normal)"
     <div class="liu-hover cet-item">
       <input ref="selectImagesEl" 
         type="file" 
-        :accept="liuUtil.getAcceptImgTypes()" 
+        :accept="liuUtil.getAcceptImgTypesString()" 
         class="ceti-input" 
         @change="onImageChange"
         multiple
