@@ -104,7 +104,7 @@ defineExpose({
     margin-inline-end: 1px;
   }
 
-  p::selection, code::selection, em::selection, strong::selection {
+  p::selection, code::selection, em::selection, strong::selection, br::selection {
     background-color: var(--select-bg);
   }
 
