@@ -29,9 +29,10 @@ const emits = defineEmits<{
 const hasIcon = computed(() => props.menu.some(v => !!v.iconName))
 const defaultColor = "var(--main-normal)"
 
-const onTapItem = (item: MenuItem, index: number) => {
+const onTapItem = (item: MenuItem, index: number, hide: () => void) => {
   console.log("onTapItem.........")
   emits("tapitem", item, index)
+  hide()
 }
 
 const onMenuShow = () => {
@@ -54,14 +55,13 @@ const onMenuHide = () => {
       <slot></slot>
     </template>
     
-    <template #popper>
+    <template #popper="{ hide }">
       <div class="menu-container">
 
         <template v-for="(item, index) in menu" :key="item.text">
         
           <div class="menu-item"
-            @click="onTapItem(item, index)"
-            v-close-popper="item.children?.length ? false : true"
+            @click="onTapItem(item, index, hide)"
           >
           
             <div v-if="hasIcon" class="mi-icon-box">
