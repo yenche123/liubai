@@ -18,22 +18,29 @@ export interface LiuRemindMe {
 }
 
 
-// liu 的内容格式
-export type LiuNodeType = 
-  "paragraph"         // 段落
-  | "bulletList"      // 无序列表
-  | "orderedList"     // 有序列表
-  | "listItem"        // 列表里的单元
-  | "blockquote"      // 引言
-  | "codeBlock"       // 代码块
-  | "text"            // 纯文本
-  | "horizontalRule"  // 分割线
+export const liuNodeTypes = [
+  "paragraph",        // 段落
+  "bulletList",       // 无序列表
+  "orderedList",      // 有序列表
+  "listItem",         // 列表里的单元
+  "blockquote",       // 引言
+  "codeBlock",        // 代码块
+  "text",             // 纯文本
+  "horizontalRule",   // 分割线
+] as const
 
-export type LiuMarkType = 
-  "bold"       // 粗体
-  | "strike"   // 删除线
-  | "italic"   // 斜体
-  | "code"     // 行内代码
+// liu 的内容格式; array[number] 的写法来自
+// https://segmentfault.com/q/1010000037769845
+export type LiuNodeType = typeof liuNodeTypes[number]
+
+export const liuMarkTypes = [
+  "bold",     // 粗体
+  "strike",   // 删除线
+  "italic",   // 斜体
+  "code"      // 行内代码
+] as const
+
+export type LiuMarkType = typeof liuMarkTypes[number]
 
 export interface LiuMarkAtom {
   type: LiuMarkType
