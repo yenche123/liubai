@@ -12,7 +12,11 @@ const props = defineProps({
   descPlaceholder: {
     type: String,
     default: "",
-  }
+  },
+  editMode: {         // 是否为编辑模式
+    type: Boolean,
+    default: true
+  },
 })
 
 const emits = defineEmits<{

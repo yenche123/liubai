@@ -35,9 +35,16 @@ export type LiuMarkType =
   | "italic"   // 斜体
   | "code"     // 行内代码
 
+export interface LiuMarkAtom {
+  type: LiuMarkType
+  attrs?: Record<string, any>
+}
+
 export interface LiuContent {
   type: LiuNodeType
   content?: LiuContent[]
+
+  marks?: LiuMarkAtom[]
 
   // 一些附件信息
   // 比如 有序列表的 start: number 就会放在这里，表示起始的序号

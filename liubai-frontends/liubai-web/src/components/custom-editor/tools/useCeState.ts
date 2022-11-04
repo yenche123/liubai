@@ -2,7 +2,7 @@
 import { reactive, ref, ShallowRef } from "vue";
 import { TipTapEditor, EditorCoreContent } from "../../../types/types-editor";
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
-
+import transfer from "../../../utils/transfer-util"
 
 interface CeState {
   when: Date | null
@@ -40,6 +40,8 @@ export function useCeState(editor: ShallowRef<TipTapEditor>) {
     console.log("onEditorFinish........")
     console.log(data)
     console.log(" ")
+    const { type, content } = data.json
+    transfer.tiptapToLiu(content ?? [])
   }
 
   const onWhenChange = (date: Date | null) => {

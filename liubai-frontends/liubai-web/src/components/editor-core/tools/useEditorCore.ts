@@ -19,6 +19,7 @@ import CodeBlockComponent from '../code-block-component/code-block-component.vue
 export interface EditorCoreProps {
   titlePlaceholder: string
   descPlaceholder: string
+  editMode: boolean
   content?: TipTapJSONContent
 }
 
@@ -43,6 +44,7 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
   const editor = useEditor({
     content,
     extensions,
+    editable: props.editMode,
     onUpdate({ editor }) {
       onEditorUpdate(editor, props, emits)
     },
