@@ -1,0 +1,159 @@
+
+import type { TipTapJSONContent } from "../../types/types-editor"
+import type { LiuContent } from "../../types/types-atom"
+import valTool from "../basic/val-tool"
+
+// 装载 link
+export function equipLink(list: TipTapJSONContent[]) {
+  if(list.length < 1) return []
+
+
+  for(let i=0; i<list.length; i++) {
+    
+    const v = list[i]
+    const type = v.type
+    if(!type) continue
+    if(type === "paragraph" && v.content) {
+      v.content = _parseTextsForLink(v.content)
+      continue
+    }
+
+    // 写面这些 node 都允许再往更深处寻找 paragraph
+    const canDeepTypes = ["orderedList", "bulletList", "listItem", "blockquote"]
+    const allowDeep = canDeepTypes.includes(type)
+    if(allowDeep && v.content) {
+      v.content = equipLink(v.content)
+    }
+  }
+
+  return list
+}
+
+
+function _parseTextsForLink(content: TipTapJSONContent[]): TipTapJSONContent[] {
+  if(content.length < 1) return []
+
+  for(let i=0; i<content.length; i++) {
+    const v = content[i]
+    const { type, marks, text } = v
+    if(!type || type !== "text" || !text) continue
+    
+    // 已经有样式，就 pass
+    if(marks && marks.length) continue
+
+    // 解析 email
+    const regEmail = /[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*/g
+    let list = _innerParse(text, regEmail, "email")
+    if(list) {
+      content.splice(i, 1, ...list)
+      i--
+      continue
+    }
+
+    // 解析 一般链接
+    const regUrl = /[\w\./:-]*\w{1,32}\.\w{2,6}\S*/g
+    let list2 = _innerParse(text, regUrl, "url")
+    if(list2) {
+      content.splice(i, 1, ...list2)
+      i--
+      continue
+    }
+  }
+
+  return content
+}
+
+
+/**
+ * 给定字符串和正则，若有命中的，则返回新的待取代的 list
+ * 否则返回 undefined
+ */
+function _innerParse(
+  text: string, 
+  reg: RegExp,
+  forType?: "url" | "email",
+): TipTapJSONContent[] | undefined {
+
+  const matches = text.matchAll(reg)
+  let tmpList: TipTapJSONContent[] = []
+  let tmpEndIdx = 0
+
+  for(let match of matches) {
+    let mTxt = match[0]
+    let mLen = mTxt.length
+    if(forType === "email" && mLen < 6) continue
+    if(forType === "url" && mLen < 8) continue
+    if(forType === "url" && !_checkUrlMore(mTxt)) continue
+
+    const href = forType === "email" ? `mailto:${mTxt}` : mTxt
+    const startIdx = match.index
+    if(startIdx === undefined) continue
+    const endIdx = startIdx + mLen
+    const obj: TipTapJSONContent = {
+      type: "text",
+      text: mTxt,
+      marks: [
+        {
+          "type": "link",
+          "attrs": { href, target: "_blank", class: null }
+        }
+      ]
+    }
+
+    if(startIdx > 0) {
+      const prevLetter = text[startIdx - 1]
+      if(forType === "url" && (prevLetter === "@" || prevLetter === "#")) continue
+
+      const frontObj = {
+        type: "text",
+        text: text.substring(tmpEndIdx, startIdx),
+      }
+      tmpList.push(frontObj, obj)
+    }
+    else {
+      tmpList.push(obj)
+    }
+    tmpEndIdx = endIdx
+  }
+
+  if(tmpList.length < 1) return
+
+  if(text.length > tmpEndIdx) {
+    const behindObj = {
+      type: "text",
+      text: text.substring(tmpEndIdx)
+    }
+    tmpList.push(behindObj)
+  }
+
+  return tmpList
+}
+
+
+function _checkUrlMore(text: string) {
+  const reg = /^[\d\.-]{2,}$/   // 避免字符串里 全是: 数字 . - 的情况
+  if(reg.test(text)) return false
+  const engNum = _howManyLowerCase(text)
+  if(engNum < 3) return false
+  if(text.indexOf("http") === 0) return true
+  const manNum = valTool.getChineseCharNum(text)
+  if(manNum > 2 && !text.includes("/")) return false
+  return true
+}
+
+function _howManyLowerCase(text: string) {
+  if(!text || text.length < 1) return 0
+  let list = text.split("")
+  let num = 0
+  list.forEach(v => {
+    if(v >= "a" && v <= "z") num++
+  })
+  return num
+}
+
+
+
+// 卸载 link
+export function depriveLink(list: LiuContent[]) {
+
+}
