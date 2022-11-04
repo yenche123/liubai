@@ -142,8 +142,6 @@ function initExtensions(
       return {
         // 在行内代码敲击 Enter，自动退出行内代码
         "Enter": ({ editor }) => {
-          console.log("Enter 被触发了........")
-          console.log(" ")
           const isCode = editor.isActive("code")
           if(isCode) {
             return editor.chain()

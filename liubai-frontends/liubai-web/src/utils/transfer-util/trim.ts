@@ -29,9 +29,6 @@ function trimOneDirection(list: TipTapJSONContent[], direction: 1 | -1) {
 
     // 以下代码 已知当前节点是 paragraph 时
     content = trimTextContent({ content, direction })
-    console.log(`dir: ${direction}, content: `)
-    console.log(content)
-    console.log(" ")
     if(!content) {
       list.splice(i, 1)
       if(direction > 0) i--
