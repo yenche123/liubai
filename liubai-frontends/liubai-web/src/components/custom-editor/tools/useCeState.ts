@@ -37,7 +37,9 @@ export function useCeState(editor: ShallowRef<TipTapEditor>) {
   } 
 
   const onEditorFinish = (data: EditorCoreContent) => {
-    
+    console.log("onEditorFinish........")
+    console.log(data)
+    console.log(" ")
   }
 
   const onWhenChange = (date: Date | null) => {
