@@ -6,9 +6,10 @@ import TaskList from '@tiptap/extension-task-list'
 import Blockquote from "@tiptap/extension-blockquote"
 import HardBreak from "@tiptap/extension-hard-break"
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import HorizontalRule from "@tiptap/extension-horizontal-rule"
 import Code from '@tiptap/extension-code'
 import { useI18n, ComposerTranslation } from 'vue-i18n'
-import { wrappingInputRule } from "@tiptap/core"
+import { wrappingInputRule, nodeInputRule } from "@tiptap/core"
 import { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
 import { onMounted } from 'vue'
 import { lowlight } from 'lowlight'
@@ -204,6 +205,17 @@ function initExtensions(
     }
   })
 
+  const CustomHorizontalRule = HorizontalRule.extend({
+    addInputRules() {
+      return [
+        nodeInputRule({
+          find: /^(?:---\s)$/,
+          type: this.type,
+        })
+      ]
+    },
+  })
+
   const extensions = [
     CustomCode,
     CustomBlockQuote,
@@ -211,6 +223,7 @@ function initExtensions(
       lowlight
     }),
     CustomHardBreak,
+    CustomHorizontalRule,
     TaskList.configure({
       HTMLAttributes: {
         class: "liu-tasklist"
@@ -233,6 +246,7 @@ function initExtensions(
       hardBreak: false,
       codeBlock: false,
       code: false,
+      horizontalRule: false,
     }),
     Placeholder.configure({
       placeholder: ({ node }) => {

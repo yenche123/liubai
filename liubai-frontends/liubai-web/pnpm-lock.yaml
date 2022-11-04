@@ -8,6 +8,7 @@ specifiers:
   '@tiptap/extension-code': 2.0.0-beta.199
   '@tiptap/extension-code-block-lowlight': 2.0.0-beta.199
   '@tiptap/extension-hard-break': 2.0.0-beta.199
+  '@tiptap/extension-horizontal-rule': 2.0.0-beta.199
   '@tiptap/extension-placeholder': 2.0.0-beta.199
   '@tiptap/extension-task-item': 2.0.0-beta.199
   '@tiptap/extension-task-list': 2.0.0-beta.199
@@ -46,6 +47,7 @@ dependencies:
   '@tiptap/extension-code': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/extension-code-block-lowlight': 2.0.0-beta.199_nzrxqt3ixacyd5eims6i4aeceq
   '@tiptap/extension-hard-break': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
+  '@tiptap/extension-horizontal-rule': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/extension-placeholder': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/extension-task-item': 2.0.0-beta.199_5sl3hchzcdn6ovfbj7zpabzlra
   '@tiptap/extension-task-list': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
