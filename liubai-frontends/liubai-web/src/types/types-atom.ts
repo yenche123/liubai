@@ -16,3 +16,33 @@ export interface LiuRemindMe {
   // 具体时间
   specific_time?: Date
 }
+
+
+// liu 的内容格式
+export type LiuNodeType = 
+  "paragraph"         // 段落
+  | "bulletList"      // 无序列表
+  | "orderedList"     // 有序列表
+  | "listItem"        // 列表里的单元
+  | "blockquote"      // 引言
+  | "codeBlock"       // 代码块
+  | "text"            // 纯文本
+  | "horizontalRule"  // 分割线
+
+export type LiuMarkType = 
+  "bold"       // 粗体
+  | "strike"   // 删除线
+  | "italic"   // 斜体
+  | "code"     // 行内代码
+
+export interface LiuContent {
+  type: LiuNodeType
+  content?: LiuContent[]
+
+  // 一些附件信息
+  // 比如 有序列表的 start: number 就会放在这里，表示起始的序号
+  // 再比如 codeBlock 里的 language: string | null 也会放在这里，表示代码块的语言
+  attrs?: Record<string, any>
+
+  text?: string
+}
