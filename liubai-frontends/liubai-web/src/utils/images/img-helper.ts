@@ -108,8 +108,9 @@ async function getMetaDataFromFiles(files: File[]) {
     const h = data.height
     let h2w = w && h ? (h / w).toFixed(2) : undefined
     const obj: ImageLocal = {
-      local_id: _createId(),
+      id: _createId(),
       name: data.file.name,
+      lastModified: data.file.lastModified,
       file: data.file,
       width: w,
       height: h,

@@ -56,7 +56,7 @@ async function handleFiles(
     const v2 = res2[i]
     const obj: ImageShow = {
       src: v,
-      id: "local_" + v2.local_id,
+      id: "local_" + v2.id,
       width: v2.width,
       height: v2.height,
       h2w: v2.h2w,

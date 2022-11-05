@@ -12,9 +12,10 @@ export interface LocalPreference {
 }
 
 export interface ImageLocal {
-  local_id: string
+  id: string
   name: string
-  file: File
+  lastModified: number       // 文件最后修改的时间戳，精确到 ms
+  file?: File
   width?: number
   height?: number
   h2w?: string
