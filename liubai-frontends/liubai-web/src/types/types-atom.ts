@@ -33,14 +33,23 @@ export const liuNodeTypes = [
 // https://segmentfault.com/q/1010000037769845
 export type LiuNodeType = typeof liuNodeTypes[number]
 
+export const isLiuNodeType = (val: string): val is LiuNodeType => {
+  return liuNodeTypes.includes(val as LiuNodeType)
+}
+
 export const liuMarkTypes = [
   "bold",     // 粗体
   "strike",   // 删除线
   "italic",   // 斜体
-  "code"      // 行内代码
+  "code",     // 行内代码
+  "link",     // 链接
 ] as const
 
 export type LiuMarkType = typeof liuMarkTypes[number]
+
+export const isLiuMarkType = (val: string): val is LiuMarkType => {
+  return liuMarkTypes.includes(val as LiuMarkType)
+}
 
 export interface LiuMarkAtom {
   type: LiuMarkType
