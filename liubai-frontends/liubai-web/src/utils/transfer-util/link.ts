@@ -152,8 +152,28 @@ function _howManyLowerCase(text: string) {
 }
 
 
-
 // 卸载 link
 export function depriveLink(list: LiuContent[]) {
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    let { type, content, marks } = v
+    const canDeepTypes = [
+      "paragraph", 
+      "orderedList", 
+      "bulletList", 
+      "listItem", 
+      "blockquote"
+    ]
+    if(canDeepTypes.includes(type) && content) {
+      content = depriveLink(content)
+      continue
+    }
 
+    if(marks) {
+      marks = marks.filter(v2 => v2.type !== "link")
+      if(marks.length < 1) delete v.marks
+    }
+  }
+
+  return list
 }
