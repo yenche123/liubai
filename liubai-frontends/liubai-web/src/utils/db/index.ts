@@ -21,10 +21,10 @@ export class LiuDexie extends Dexie {
 
   constructor() {
     super('LiubaiDatabase')
-    this.version(4).stores({
+    this.version(6).stores({
       users: "_id, user_id, oState, createdStamp, updatedStamp, lastRefresh",
-      workspaces: "_id, space_id, infoType, oState, owner",
-      members: "_id, member_id, name"
+      workspaces: "_id, space_id, infoType, oState, owner, createdStamp, updatedStamp",
+      members: "_id, member_id, name, workspace, createdStamp, updatedStamp, oState, user"
     })
   }
 

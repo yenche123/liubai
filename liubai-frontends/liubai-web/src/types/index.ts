@@ -8,7 +8,8 @@ export type LocalLanguage = SupportedLocale | "system"
 export interface LocalPreference {
   theme?: LocalTheme
   language?: LocalLanguage
-  nickName?: string
+  local_id?: string
+  token?: string
 }
 
 export interface ImageLocal {

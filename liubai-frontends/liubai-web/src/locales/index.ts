@@ -4,14 +4,13 @@ import zhHans from "./messages/zh-Hans.json"
 import zhHant from "./messages/zh-Hant.json"
 import type { SupportedLocale } from "../types/types-locale"
 import { isSupportedLocale } from '../types/types-locale'
-import type { LocalPreference } from '../types'
-import liuApi from '../utils/liu-api'
+import { getLocalPreference } from '../utils/system/local-preference'
 
 // 初始化语言
 const initLocale = (): SupportedLocale => {
   // 从缓存里取
-  const localPf = liuApi.getStorageSync<LocalPreference>("local-preference")
-  const lang0 = localPf?.language
+  const localPf = getLocalPreference()
+  const lang0 = localPf.language
   // return "en"
   if(lang0 && isSupportedLocale(lang0)) return lang0
 

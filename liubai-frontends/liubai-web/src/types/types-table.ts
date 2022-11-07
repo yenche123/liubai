@@ -23,6 +23,8 @@ export interface WorkspaceLocalTable {
   tagList?: TagView[]
   oState: OState
   owner: string
+  createdStamp: number
+  updatedStamp: number
 }
 
 export interface MemberLocalTable {
@@ -34,4 +36,9 @@ export interface MemberLocalTable {
     url?: string
     url0?: string
   }
+  workspace: string
+  createdStamp: number
+  updatedStamp: number
+  user: string
+  oState: "OK" | "LEFT" | "DELETED"
 }
