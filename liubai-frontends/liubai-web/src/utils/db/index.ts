@@ -1,4 +1,9 @@
 import Dexie, { Table } from 'dexie';
+import type { 
+  UserLocalTable, 
+  WorkspaceLocalTable, 
+  MemberLocalTable
+} from "../../types/types-table"
 
 /**
  * 注意：
@@ -8,29 +13,18 @@ import Dexie, { Table } from 'dexie';
  *   4. 只提升 version 并不会造成原有数据丢失，除非 this.version(3).stores() 里头没有定义了
  */
 
-export interface Table1 {
-  id?: number
-  name: string
-  age: string
-  gender?: 0 | 1
-  nickName?: string
-}
-
-export interface Table2 {
-  id?: number
-  keyA: string
-  keyB: number
-}
-
-
 export class LiuDexie extends Dexie {
 
-  table2!: Table<Table2>
+  users!: Table<UserLocalTable>
+  workspaces!: Table<WorkspaceLocalTable>
+  members!: Table<MemberLocalTable>
 
   constructor() {
     super('LiubaiDatabase')
-    this.version(3).stores({
-      table2: "++id, keyA, name, age, gender"
+    this.version(4).stores({
+      users: "_id, user_id, oState, createdStamp, updatedStamp, lastRefresh",
+      workspaces: "_id, space_id, infoType, oState, owner",
+      members: "_id, member_id, name"
     })
   }
 

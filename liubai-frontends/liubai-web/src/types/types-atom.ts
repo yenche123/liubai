@@ -69,3 +69,20 @@ export interface LiuContent {
 
   text?: string
 }
+
+export interface StatusView {
+  statusId: string
+  statusType: "SYSTEM" | "CUSTOM"
+  title?: string         // statusType 为 CUSTOM 时必填
+  color?: string         // statusType 为 CUSTOM 时必填
+}
+
+export interface TagView {
+  tagId: string
+  text: string
+  icon?: string
+  oState: "OK" | "REMOVED"
+  createdStamp: number
+  updatedStamp: number
+  children?: TagView[]
+}

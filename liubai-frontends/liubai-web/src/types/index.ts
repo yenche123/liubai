@@ -29,3 +29,12 @@ export interface ImageShow {
   height?: number
   h2w?: string
 }
+
+
+export interface LiuUser {
+  local_id: string
+  user_id?: string
+  token?: string
+  createdStamp: number
+  lastRefresh: number
+}
