@@ -87,5 +87,8 @@
   },
   "dnd": {
     "add_tip": "添加圖片或附件"
+  },
+  "who_r_u": {
+    "placeholder": "怎麼稱呼你?"
   }
 }

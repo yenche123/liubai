@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CustomUi from "./components/custom-ui/custom-ui.vue"
+import WhoAreYou from "./components/level1/who-are-you/who-are-you.vue"
 import { useApp } from "./hooks/useApp";
 import { initLiuRouter } from "./routes/liu-router"
 
@@ -33,6 +34,7 @@ const { route } = initLiuRouter()
     <router-view v-else></router-view>
     
     <custom-ui />
+    <who-are-you />
   </div>
 </template>
 

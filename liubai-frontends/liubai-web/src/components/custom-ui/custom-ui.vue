@@ -250,8 +250,6 @@ const {
   margin-block-end: 20px;
   width: 100%;
   text-align: center;
-  border: 0;
-  outline: none;
   position: relative;
 
   &::-webkit-input-placeholder {

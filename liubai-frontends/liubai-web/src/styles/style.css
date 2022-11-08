@@ -58,6 +58,8 @@ button {
 
 input {
   background: transparent;
+  border: 0;
+  outline: none;
 }
 
 ::-webkit-scrollbar {
