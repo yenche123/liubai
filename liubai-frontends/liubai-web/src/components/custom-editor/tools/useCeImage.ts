@@ -1,4 +1,4 @@
-import { inject, Ref, ref, watch } from "vue"
+import { inject, onActivated, onDeactivated, Ref, ref, watch } from "vue"
 import type { ImageShow } from "../../../types"
 import imgHelper from "../../../utils/images/img-helper"
 import liuUtil from "../../../utils/liu-util"
@@ -18,6 +18,8 @@ export function useCeImage() {
     if(!dropFiles?.value) return
     dropFiles.value = []
   })
+
+  listenDocumentPaste(covers)
 
   const onImageChange = async () => {
     const el = selectImagesEl.value
@@ -41,6 +43,31 @@ export function useCeImage() {
     onClearCover,
   }
 }
+
+// 全局监听 "黏贴事件"
+function listenDocumentPaste(
+  covers: Ref<ImageShow[]>
+) {
+  const whenPaste = (e: ClipboardEvent) => {
+    const fileList = e.clipboardData?.files
+    if(!fileList || fileList.length < 1) return
+    const fileArr: File[] = []
+    for(let i=0; i<fileList.length; i++) {
+      const v = fileList[i]
+      fileArr.push(v)
+    }
+    handleFiles(covers, fileArr)
+  }
+  
+  onActivated(() => {
+    document.addEventListener("paste", whenPaste)
+  })
+
+  onDeactivated(() => {
+    document.removeEventListener("paste", whenPaste)
+  })
+}
+
 
 async function handleFiles(
   covers: Ref<ImageShow[]>,
