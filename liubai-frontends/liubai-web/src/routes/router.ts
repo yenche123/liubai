@@ -11,7 +11,7 @@ const ConnectPage = () => import("../pages/level2/connect-page/connect-page.vue"
 const LeftSidebar = () => import("../views/side-bar/side-bar.vue")
 
 // 扩展 vue-router 下的 RouteMeta 接口
-// inApp 为 false 表示不在应用内（可能在落地页内等等）
+// inApp 为 false 表示不在应用内（可能在落地页 / share 分享内等等）
 declare module 'vue-router' {
   interface RouteMeta {
     keepAlive?: boolean
