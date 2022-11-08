@@ -179,7 +179,7 @@ async function toSelectSpecificRemind(ctx: MaContext) {
   ctx.data.remindMe = liuUtil.showBasicDate(res.date)
   const r: LiuRemindMe = {
     type: "specific_time",
-    specific_time: res.date
+    specific_stamp: res.date.getTime()
   }
   ctx.emits("remindmechange", r)
 }

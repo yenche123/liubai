@@ -13,8 +13,8 @@ export interface LiuRemindMe {
   // 30分钟后、1小时候、2小时后、3小时后、明天此刻
   later?: LiuRemindLater
 
-  // 具体时间
-  specific_time?: Date
+  // 具体时间的时间戳
+  specific_stamp?: number
 }
 
 
