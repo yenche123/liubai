@@ -26,6 +26,6 @@ export async function init() {
   let createData = await firstCreate()
   if(!createData) return
   setLocalPreference("local_id", createData.user_local)
-  store.setSpaceId(createData.workspace_local)
+  store.setSpace(createData.workspace_local)
 }
 

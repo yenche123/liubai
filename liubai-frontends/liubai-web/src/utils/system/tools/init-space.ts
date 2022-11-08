@@ -22,7 +22,7 @@ async function whenRouteChange(
 
   const inApp = newV.meta.inApp
   if(inApp === false) {
-    if(store.spaceId) store.setSpaceId("")
+    if(store.spaceId) store.setSpace("")
     return
   }
 
@@ -30,7 +30,7 @@ async function whenRouteChange(
   let spaceId = newV.params.workspaceId
   if(spaceId) {
     if(typeof spaceId === 'string' && spaceId !== store.spaceId) {
-      store.setSpaceId(spaceId)
+      store.setSpace(spaceId, "TEAM")
     }
     return
   }
@@ -49,5 +49,5 @@ async function whenRouteChange(
     return
   }
 
-  store.setSpaceId(mine._id)
+  store.setSpace(mine._id)
 }
