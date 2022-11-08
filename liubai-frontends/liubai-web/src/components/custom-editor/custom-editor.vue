@@ -34,6 +34,9 @@ const {
   onEditorBlur,
   onEditorFinish,
   onWhenChange,
+  onRemindMeChange,
+  onTitleChange,
+  onSyncCloudChange,
 } = useCeState(editor as ShallowRef<TipTapEditor>)
 
 const {
@@ -120,7 +123,10 @@ const icon_color = "var(--main-normal)"
 
   <!-- 更多栏 -->
   <ce-more-area :show="moreRef"
-    
+    @whenchange="onWhenChange"
+    @remindmechange="onRemindMeChange"
+    @titlechange="onTitleChange"
+    @synccloudchange="onSyncCloudChange"
   ></ce-more-area>
 
   <!-- 虚拟空间 用于避免完成按钮挡到其他地方 -->
