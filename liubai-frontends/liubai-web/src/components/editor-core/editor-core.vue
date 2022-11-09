@@ -1,38 +1,44 @@
-<script setup lang="ts">
+
+<script lang="ts">
 import { EditorContent } from '@tiptap/vue-3'
 import { useEditorCore } from './tools/useEditorCore'
 import { EditorCoreContent } from "../../types/types-editor"
 import cfg from "../../config"
+import { defineComponent } from 'vue'
 
-const props = defineProps({
-  titlePlaceholder: {
-    type: String,
-    default: "",
+export default defineComponent({
+  components: {
+    EditorContent,
   },
-  descPlaceholder: {
-    type: String,
-    default: "",
+  props: {
+    titlePlaceholder: {
+      type: String,
+      default: "",
+    },
+    descPlaceholder: {
+      type: String,
+      default: "",
+    },
+    editMode: {         // 是否为编辑模式
+      type: Boolean,
+      default: true
+    },
   },
-  editMode: {         // 是否为编辑模式
-    type: Boolean,
-    default: true
+  emits: {
+    update: (payload: EditorCoreContent) => true,
+    focus: (payload: EditorCoreContent) => true,
+    blur: (payload: EditorCoreContent) => true,
+    finish: (payload: EditorCoreContent) => true,
   },
-})
-
-const emits = defineEmits<{
-  (event: "update", data: EditorCoreContent): void
-  (event: "focus", data: EditorCoreContent): void
-  (event: "blur", data: EditorCoreContent): void
-  (event: "finish", data: EditorCoreContent): void
-}>()
-
-const { editor } = useEditorCore(props, emits)
-
-defineExpose({
-  editor
+  expose: ['editor'],
+  setup(props, { emit }) {
+    const { editor } = useEditorCore(props, emit)
+    return { editor, cfg }
+  },
 })
 
 </script>
+
 <template>
 
   <editor-content :editor="editor" />
