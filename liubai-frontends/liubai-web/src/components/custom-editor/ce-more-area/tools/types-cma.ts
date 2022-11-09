@@ -1,6 +1,9 @@
 import type { LiuRemindMe } from "../../../../types/types-atom"
 import { CeState } from "../../tools/types-ce"
 
+
+export type CmaRemindType = "early" | "later"
+
 export interface MaData {
   when: string
   remindMe: string
@@ -8,12 +11,13 @@ export interface MaData {
   site: string
   attachment: string
   syncCloud: boolean
+  scDisabled: boolean
 
   // 浅浅记录一下 什么时候的 Date 类型，这样子再选择时，定位到该日期
   whenDate?: Date
 
   // 提醒我的类型，分成 early (准时 / 提前10分钟..) 和 later (30分钟后 / 1小时后.....)
-  remindType: "early" | "later"
+  remindType: CmaRemindType
 }
 
 export interface MoreAreaEmits {

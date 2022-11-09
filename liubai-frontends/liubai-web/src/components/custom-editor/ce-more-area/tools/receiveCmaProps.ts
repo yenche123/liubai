@@ -1,24 +1,36 @@
-import { watch } from "vue";
-import type { CmaProps, MaData } from "./types-cma";
+import { toRef, watchEffect } from "vue";
+import type { CmaProps, CmaRemindType, MaData } from "./types-cma";
 import type { CeState } from "../../tools/types-ce";
 import liuUtil from "../../../../utils/liu-util";
+import { LiuRemindMe } from "../../../../types/types-atom";
+import { REMIND_LATER, REMIND_EARLY } from "../../../../config/atom"
+import { useI18n } from "vue-i18n"
+import type { ComposerTranslation } from "vue-i18n"
 
 export function receiveCmaProps(props: CmaProps, data: MaData) {
-  watch(() => props.state, (newV) => {
-    stateChanged(data, newV)
+  const { t, locale } = useI18n()
+  const stateRef = toRef(props, "state")
+  watchEffect(() => {
+    const state = stateRef.value
+    const lang = locale.value
+    if(state && lang) stateChanged(data, state, t)
   })
-  stateChanged(data, props.state)
 }
 
-function stateChanged(data: MaData, state?: CeState) {
-  if(!state) return
-  console.log("stateChanged..............")
+function stateChanged(
+  data: MaData, 
+  state: CeState,
+  t: ComposerTranslation,
+) {
+  
+  console.log("stateChanged.............. 看此值有没有疯狂触发........")
+  console.log(state)
   console.log(" ")
 
   const { 
     whenStamp, 
     storageState, 
-    title: newTitle,
+    title: newTitle = "",
     remindMe,
   } = state
 
@@ -31,10 +43,49 @@ function stateChanged(data: MaData, state?: CeState) {
     if(whenStamp) data.whenDate = new Date(whenStamp)
   }
 
-  // 
+  // remindType 依赖于 when
+  const newRemindType = newWhen ? "early" : "later"
+  if(data.remindType !== newRemindType) data.remindType = newRemindType
+
+  // 提醒我
+  const newRemindMeStr = _getRemindMeStr(t, remindMe)
+  if(newRemindMeStr !== data.remindMe) {
+    data.remindMe = newRemindMeStr
+  }
+
+  // 标题
+  if(newTitle !== data.title) {
+    data.title = newTitle
+  }
+
+  // 云同步
+  const newSyncCloud = storageState === "CLOUD" || storageState === "WAIT_UPLOAD"
+  if(newSyncCloud !== data.syncCloud) data.syncCloud = newSyncCloud
+  const newDisabled = storageState === "ONLY_LOCAL"
+  if(newDisabled !== data.scDisabled) data.scDisabled = newDisabled
+
+  
+  
+  
+}
 
 
-
-
-
+function _getRemindMeStr(
+  t: ComposerTranslation,
+  remindMe?: LiuRemindMe
+) {
+  if(!remindMe) return ""
+  const { type, early_minute, later, specific_stamp } = remindMe
+  if(type === "early" && typeof early_minute === "number") {
+    const idx = REMIND_EARLY.indexOf(early_minute)
+    if(idx >= 0) return t(`date_related.remind_early[${idx}]`)
+  }
+  else if(type === "later" && later) {
+    const idx = REMIND_LATER.indexOf(later)
+    if(idx >= 0) return t(`date_related.remind_later[${idx}]`)
+  }
+  else if(type === "specific_time" && specific_stamp) {
+    return liuUtil.showBasicDate(specific_stamp)
+  }
+  return ""
 }

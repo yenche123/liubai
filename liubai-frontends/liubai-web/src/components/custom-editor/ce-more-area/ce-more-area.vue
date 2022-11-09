@@ -153,6 +153,7 @@ export default defineComponent({
         <div class="mai-switch-footer">
           <liu-switch :checked="data.syncCloud"
             @change="onSyncCloudChange"
+            :disabled="data.scDisabled"
           ></liu-switch>
         </div>
       </div>

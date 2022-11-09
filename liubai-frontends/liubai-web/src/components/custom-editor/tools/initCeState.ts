@@ -33,10 +33,6 @@ export function initCeState(
   watchEffect(() => {
     const editorVal = editor.value
     const spaceVal = space.value
-    console.log("watchEffect 被触发........")
-    console.log(editorVal)
-    console.log(spaceVal)
-    console.log(" ")
     if(editorVal && spaceVal) {
       initDraft(state, editor, props.threadId)
     }
