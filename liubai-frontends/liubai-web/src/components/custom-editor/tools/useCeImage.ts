@@ -51,12 +51,8 @@ function listenDocumentPaste(
   const whenPaste = (e: ClipboardEvent) => {
     const fileList = e.clipboardData?.files
     if(!fileList || fileList.length < 1) return
-    const fileArr: File[] = []
-    for(let i=0; i<fileList.length; i++) {
-      const v = fileList[i]
-      fileArr.push(v)
-    }
-    handleFiles(covers, fileArr)
+    const files = liuUtil.getArrayFromFileList(fileList)
+    handleFiles(covers, files)
   }
   
   onActivated(() => {
