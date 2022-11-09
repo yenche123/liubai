@@ -21,11 +21,7 @@ export function useCeImage() {
 
   listenDocumentPaste(covers)
 
-  const onImageChange = async () => {
-    const el = selectImagesEl.value
-    if(!el) return
-    if(!el.files || !el.files.length) return
-    const files = liuUtil.getArrayFromFileList(el.files)
+  const onImageChange = (files: File[]) => {
     handleFiles(covers, files)
   }
 

@@ -9,8 +9,8 @@ import type { ShallowRef } from "vue";
 import CeFinishArea from "./ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 import { useCeImage } from "./tools/useCeImage";
-import liuUtil from "../../utils/liu-util";
-import CeCovers from "./ce-covers/ce-covers.vue"
+import CeCovers from "./ce-covers/ce-covers.vue";
+import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
 
 const props = defineProps({
   lastBar: {
@@ -40,14 +40,10 @@ const {
 } = useCeState(editor as ShallowRef<TipTapEditor>)
 
 const {
-  selectImagesEl,
   onImageChange,
   covers,
   onClearCover,
 } = useCeImage()
-
-
-const icon_color = "var(--main-normal)"
 
 </script>
 <template>
@@ -70,56 +66,12 @@ const icon_color = "var(--main-normal)"
     @clear="onClearCover"
   ></CeCovers>
 
-  <!-- 第一排工具栏 -->
-  <div class="ce-toolbar">
-    <!-- 图片 -->
-    <div class="liu-hover cet-item">
-      <input ref="selectImagesEl" 
-        type="file" 
-        :accept="liuUtil.getAcceptImgTypesString()" 
-        class="ceti-input" 
-        @change="onImageChange"
-        multiple
-      />
-      <svg-icon name="editor-image" class="ceti-icon" :color="icon_color" />
-    </div>
-
-    <!-- 粗体 -->
-    <div class="liu-hover cet-item"
-      :class="{ 'cet-item_selected': editor?.isActive('bold') }"
-      @click="editor?.chain().focus().toggleBold().run()"
-    >
-      <svg-icon name="editor-bold" class="ceti-icon" :color="icon_color" />
-    </div>
-
-    <!-- 斜体 -->
-    <div class="liu-hover cet-item"
-      :class="{ 'cet-item_selected': editor?.isActive('italic') }"
-      @click="editor?.chain().focus().toggleItalic().run()"
-    >
-      <svg-icon name="editor-italic" class="ceti-icon" :color="icon_color" />
-    </div>
-
-    <!-- 删除线 -->
-    <div class="liu-hover cet-item"
-      :class="{ 'cet-item_selected': editor?.isActive('strike') }"
-      @click="editor?.chain().focus().toggleStrike().run()"
-    >
-      <svg-icon name="editor-strike" class="ceti-icon" :color="icon_color" />
-    </div>
-
-    <!-- 更多 -->
-    <div class="liu-hover cet-item"
-      :class="{ 'cet-item_selected': moreRef }"
-      @click="onTapMore"
-    >
-      <svg-icon name="more" class="ceti-icon ceti-more" 
-        :class="{ 'ceti-more_open': moreRef }"
-        :color="icon_color"
-      />
-    </div>
-
-  </div>
+  <ce-toolbar
+    :editor="editor"
+    :more="moreRef"
+    @imagechange="onImageChange"
+    @tapmore="onTapMore"
+  ></ce-toolbar>
 
   <!-- 更多栏 -->
   <ce-more-area :show="moreRef"
@@ -167,77 +119,6 @@ const icon_color = "var(--main-normal)"
   position: relative;
   overflow-y: overlay;
   overflow-y: auto;
-}
-
-.ce-toolbar {
-  width: 100%;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  position: relative;
-
-  .cet-item {
-    width: 48px;
-    height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-inline-end: 8px;
-    position: relative;
-
-    .ceti-input {
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      position: absolute;
-      opacity: 0;
-      cursor: pointer;
-    }
-    
-    .ceti-icon {
-      width: 30px;
-      height: 30px;
-    }
-
-    .ceti-more {
-      transition: .25s;
-    }
-
-    .ceti-more_open {
-      transform: rotate(90deg);
-    }
-  }
-
-  @media screen and (max-width: 380px)  {
-    .cet-item {
-      width: 40px;
-      height: 40px;
-      margin-inline-end: 4px;
-
-      .ceti-icon {
-        width: 28px;
-        height: 28px;
-      }
-    }
-    
-  }
-
-  .cet-item_selected {
-    position: relative;
-    overflow: hidden;
-    
-    &::before {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: var(--primary-color);
-      opacity: .12;
-    }
-  }
-
 }
 
 .ce-virtual {
