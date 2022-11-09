@@ -4,23 +4,12 @@ import { TipTapEditor, EditorCoreContent } from "../../../types/types-editor";
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
 import transfer from "../../../utils/transfer-util"
 import type { LiuRemindMe } from "../../../types/types-atom";
+import type { CeState } from "./types-ce"
 
-interface CeState {
-  when: Date | null
-  remindMe: LiuRemindMe | null
-  title: string
-  syncCloud: boolean
-}
-
-
-export function useCeState(editor: ShallowRef<TipTapEditor>) {
-  
-  let state = reactive<CeState>({
-    when: null,
-    remindMe: null,
-    title: "",
-    syncCloud: true
-  })
+export function useCeState(
+  editor: ShallowRef<TipTapEditor>,
+  state: CeState,
+) {
 
   const focused = ref(false)
   const gs = useGlobalStateStore()
@@ -82,28 +71,20 @@ function toWhenChange(
   date: Date | null,
   state: CeState,
 ) {
-  console.log("接收到消息 whenChange..........")
-  state.when = date
+  state.whenStamp = date ? date.getTime() : undefined
 }
 
 function toRemindMeChange(
   val: LiuRemindMe | null,
   state: CeState,
 ) {
-  console.log("接收到 remindMe change.............")
-  console.log(val)
-  console.log(" ")
-  state.remindMe = val
-
+  state.remindMe = val ? val : undefined
 }
 
 function toTitleChange(
   val: string,
   state: CeState,
 ) {
-  console.log("接收到 title change.................")
-  console.log(val)
-  console.log(" ")
   state.title = val
 }
 
@@ -111,8 +92,5 @@ function toSyncCloudChange(
   val: boolean,
   state: CeState,
 ) {
-  console.log("接收到 syncCloud change.................")
-  console.log(val)
-  console.log(" ")
-  state.syncCloud = val
+  state.storageState = val ? "CLOUD" : "LOCAL"
 }

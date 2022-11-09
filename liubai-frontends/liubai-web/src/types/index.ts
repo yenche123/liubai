@@ -12,6 +12,14 @@ export interface LocalPreference {
   token?: string
 }
 
+export interface FileLocal {
+  id: string
+  name: string
+  lastModified: number       // 文件最后修改的时间戳，精确到 ms
+  file?: File
+  cloud_url?: string
+}
+
 export interface ImageLocal {
   id: string
   name: string

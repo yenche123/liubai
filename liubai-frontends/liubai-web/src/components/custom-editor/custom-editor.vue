@@ -1,4 +1,11 @@
 <script setup lang="ts">
+/**
+ * 本组件两种使用场景:
+ * 1. 新的动态 NEW
+ * 2. 旧的动态再编辑 EDIT
+ * 使用 props.threadId 做区分，该字段有值代表为后者
+ */
+
 import EditorCore from "../editor-core/editor-core.vue"
 import { useCustomEditor } from "./tools/useCustomEditor";
 import cfg from "../../config";
@@ -11,15 +18,20 @@ import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 import { useCeImage } from "./tools/useCeImage";
 import CeCovers from "./ce-covers/ce-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
+import { initCeState } from "./tools/initCeState";
 
 const props = defineProps({
   lastBar: {
     type: Boolean,
     default: false,
-  }
+  },
+  threadId: String
 })
 
+
 const { maxEditorHeight, editorCoreRef, editor } = useCustomEditor()
+const { state } = initCeState(props, editor)
+
 const {
   moreRef,
   onTapMore,
@@ -37,7 +49,7 @@ const {
   onRemindMeChange,
   onTitleChange,
   onSyncCloudChange,
-} = useCeState(editor as ShallowRef<TipTapEditor>)
+} = useCeState(editor as ShallowRef<TipTapEditor>, state)
 
 const {
   onImageChange,

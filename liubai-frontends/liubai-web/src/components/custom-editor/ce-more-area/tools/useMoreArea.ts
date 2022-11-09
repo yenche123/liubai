@@ -7,33 +7,7 @@ import { useI18n } from "vue-i18n";
 import en from "../../../../locales/messages/en.json"
 import { REMIND_LATER, REMIND_EARLY } from "../../../../config/atom"
 import type { SwitchChangeEmitOpt } from "../../../common/liu-switch/liu-switch.vue"
-
-interface MoreAreaEmits {
-  (event: "whenchange", val: Date | null): void
-  (event: "remindmechange", val: LiuRemindMe | null): void
-  (event: "titlechange", val: string): void
-  (event: "synccloudchange", val: boolean): void
-}
-
-interface MaData {
-  when: string
-  remindMe: string
-  title: string
-  site: string
-  attachment: string
-  syncCloud: boolean
-
-  // 浅浅记录一下 什么时候的 Date 类型，这样子再选择时，定位到该日期
-  whenDate?: Date
-
-  // 提醒我的类型，分成 early (准时 / 提前10分钟..) 和 later (30分钟后 / 1小时后.....)
-  remindType: "early" | "later"
-}
-
-interface MaContext {
-  emits: MoreAreaEmits
-  data: MaData
-}
+import type { MaData, MoreAreaEmits, MaContext } from "./types-cma"
 
 export function useMoreArea(emits: MoreAreaEmits) {
   const { t } = useI18n()

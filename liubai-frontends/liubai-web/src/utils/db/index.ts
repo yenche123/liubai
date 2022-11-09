@@ -2,7 +2,9 @@ import Dexie, { Table } from 'dexie';
 import type { 
   UserLocalTable, 
   WorkspaceLocalTable, 
-  MemberLocalTable
+  MemberLocalTable,
+  DraftLocalTable,
+  ContentLocalTable,
 } from "../../types/types-table"
 
 /**
@@ -18,13 +20,17 @@ export class LiuDexie extends Dexie {
   users!: Table<UserLocalTable>
   workspaces!: Table<WorkspaceLocalTable>
   members!: Table<MemberLocalTable>
+  drafts!: Table<DraftLocalTable>
+  contents!: Table<ContentLocalTable>
 
   constructor() {
     super('LiubaiDatabase')
-    this.version(6).stores({
+    this.version(8).stores({
       users: "_id, user_id, oState, createdStamp, updatedStamp, lastRefresh",
       workspaces: "_id, space_id, infoType, oState, owner, createdStamp, updatedStamp",
-      members: "_id, member_id, name, workspace, createdStamp, updatedStamp, oState, user"
+      members: "_id, member_id, name, workspace, createdStamp, updatedStamp, oState, user",
+      drafts: "_id, draft_id, infoType, oState, user, workspace, lastSet, threadEdited, commentEdited, insertedStamp, updatedStamp",
+      contents: "_id, content_id, infoType, oState, user, workspace, insertedStamp, updatedStamp"
     })
   }
 

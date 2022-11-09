@@ -1,47 +1,52 @@
-<script setup lang="ts">
-import { computed, inject, Ref } from 'vue';
+<script lang="ts">
+import { computed, defineComponent, inject, PropType, Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { mvKey } from "../../../utils/provide-keys"
 import LiuMenu from "../../common/liu-menu/liu-menu.vue"
 import type { LiuRemindMe } from "../../../types/types-atom";
 import { useMoreArea } from "./tools/useMoreArea";
+import { CeState } from '../tools/types-ce';
+import { receiveCmaProps } from "./tools/receiveCmaProps"
 
-defineProps({
-  show: {
-    type: Boolean,
-    default: false,
-  }
+export default defineComponent({
+  components: {
+    LiuMenu,
+  },
+  props: {
+    show: {
+      type: Boolean,
+      default: false,
+    },
+    state: Object as PropType<CeState>,
+  },
+  emits: {
+    whenchange: (val: Date | null) => true,
+    remindmechange: (val: LiuRemindMe | null) => true,
+    titlechange: (val: string) => true,
+    synccloudchange: (val: boolean) => true,
+  },
+  setup(props, { emit }){
+    const critialPoint = 600
+    const mvRef = inject(mvKey) as Ref<number>
+    const containerMaxHeightPx = computed(() => {
+      if(mvRef.value < critialPoint) return 400
+      return 200
+    })
+    const { t } = useI18n()
+    const default_color = "var(--other-btn-text)"
+    const moreArea = useMoreArea(emit)
+    receiveCmaProps(props, moreArea.data)
+    
+    return {
+      critialPoint,
+      mvRef,
+      containerMaxHeightPx,
+      t,
+      default_color,
+      ...moreArea
+    }
+  },
 })
-
-const critialPoint = 600
-const mvRef = inject(mvKey) as Ref<number>
-const containerMaxHeightPx = computed(() => {
-  if(mvRef.value < critialPoint) return 400
-  return 200 
-})
-const { t } = useI18n()
-
-const default_color = "var(--other-btn-text)"
-
-const emits = defineEmits<{
-  (event: "whenchange", val: Date | null): void
-  (event: "remindmechange", val: LiuRemindMe | null): void
-  (event: "titlechange", val: string): void
-  (event: "synccloudchange", val: boolean): void
-}>()
-
-const {
-  data,
-  remindMenu,
-  onTapWhen,
-  onTapClearWhen,
-  onTapRemindItem,
-  onTapClearRemind,
-  onTapSyncToCloud,
-  onSyncCloudChange,
-  onTapAddTitle,
-  onTapClearTitle,
-} = useMoreArea(emits)
 
 </script>
 <template>
