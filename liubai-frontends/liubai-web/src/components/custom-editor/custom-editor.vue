@@ -6,7 +6,7 @@ import { TipTapEditor } from "../../types/types-editor";
 import { useMoreItems } from "./tools/useMoreItems";
 import { useCeState } from "./tools/useCeState";
 import type { ShallowRef } from "vue";
-import CeFinishArea from "./ce-finish-area.vue";
+import CeFinishArea from "./ce-finish-area/ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 import { useCeImage } from "./tools/useCeImage";
 import CeCovers from "./ce-covers/ce-covers.vue";
