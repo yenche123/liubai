@@ -98,6 +98,7 @@ function toWhenChange(
   state: CeState,
 ) {
   state.whenStamp = date ? date.getTime() : undefined
+  collectState(state, true)
 }
 
 function toRemindMeChange(
@@ -105,6 +106,7 @@ function toRemindMeChange(
   state: CeState,
 ) {
   state.remindMe = val ? val : undefined
+  collectState(state, true)
 }
 
 function toTitleChange(
@@ -112,6 +114,7 @@ function toTitleChange(
   state: CeState,
 ) {
   state.title = val
+  collectState(state, true)
 }
 
 function toSyncCloudChange(
@@ -119,6 +122,7 @@ function toSyncCloudChange(
   state: CeState,
 ) {
   state.storageState = val ? "CLOUD" : "LOCAL"
+  collectState(state, true)
 }
 
 
@@ -136,5 +140,7 @@ function collectState(state: CeState, instant: boolean = false) {
 }
 
 function toSave(state: CeState) {
+  console.log("toSave.............")
+  
 
 }

@@ -50,11 +50,6 @@ async function getDraft(workspace: string) {
   return res
 }
 
-async function createDraft() {
-  const id = "draft_" + nanoid()
-
-}
-
 async function deleteDraftById(id: string) {
 
 }
@@ -68,7 +63,6 @@ export default {
   getDraftByThreadId,
   getDraftById,
   getDraft,
-  createDraft,
   deleteDraftById,
   setDraft,
 }
