@@ -22,6 +22,14 @@ defineProps({
     default: "auto",    // 使用 lazy 表示，lazy-loading
   },
   bgColor: String,
+  draggable: {
+    type: Boolean,
+    default: true
+  },
+  userSelect: {
+    type: Boolean,
+    default: false,
+  }
 })
 
 const show = ref(false)
@@ -44,6 +52,7 @@ const onImgLoaded = async () => {
       :height="height ? height: undefined"
       :src="src" 
       :loading="loading"
+      :draggable="draggable"
       @load="onImgLoaded" 
     >
   </div>
@@ -75,6 +84,7 @@ const onImgLoaded = async () => {
   opacity: 0;
   transition: .15s;
   object-fit: v-bind("objectFit ? objectFit : 'fill'");
+  user-select: v-bind("userSelect ? 'auto' : 'none'");
 }
 
 .custom-img_loaded {

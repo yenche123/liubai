@@ -65,6 +65,7 @@ export default defineComponent({
         <liu-img :src="element.src" 
           :width="imgWidth" 
           :height="imgWidth"
+          :draggable="false"
           class="cc-img"
           object-fit="cover"
           @click="onTapImage(index)"
@@ -102,6 +103,7 @@ export default defineComponent({
   display: flex;
   flex-wrap: wrap;
   flex: 1;
+  user-select: none;
 
   .cec-item {
     width: v-bind("imgWidth + 'px'");
