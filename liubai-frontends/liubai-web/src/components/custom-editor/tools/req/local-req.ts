@@ -51,7 +51,7 @@ async function getDraft(workspace: string) {
 }
 
 async function deleteDraftById(id: string) {
-
+  await db.drafts.delete(id)
 }
 
 async function setDraft() {

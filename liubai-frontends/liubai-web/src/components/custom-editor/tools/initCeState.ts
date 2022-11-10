@@ -51,27 +51,44 @@ async function initDraft(
   editor: TipTapEditor,
   threadId?: string,
 ) {
-  let res = await initDraftFromDraft(state, editor, threadId)
-  if(res) return
-  if(threadId) initDraftFromThread(state, editor, threadId)
+  let draft: DraftLocalTable | null = null
+  if(threadId) {
+    // 使用 lastWin 法则，比较 thread 和 draft
+
+    draft = await localReq.getDraftByThreadId(threadId, space.value)
+    let thread = await localReq.getThreadByThreadId(threadId, space.value)
+
+    if(!draft && !thread) return
+    
+    let e1 = draft?.editedStamp ?? 1
+    let e2 = thread?.editedStamp ?? 1
+
+    // draft 编辑时间比较大的情况
+    if(e1 > e2) {
+      console.log("####### draft 编辑时间比较大的情况 ########")
+      if(draft) initDraftFromDraft(state, editor, draft)
+      return
+    }
+
+    // thread 编辑时间比较大的情况
+    console.log("####### thread 编辑时间比较大的情况 ########")
+
+    if(thread) initDraftFromThread(state, editor, thread)
+    if(draft) localReq.deleteDraftById(draft._id)
+  }
+  else {
+    draft = await localReq.getDraft(space.value)
+    if(draft) initDraftFromDraft(state, editor, draft)
+    return
+  }
 }
 
 // 尚未发表
 async function initDraftFromDraft(
   state: CeState,
   editor: TipTapEditor,
-  threadId?: string
+  draft: DraftLocalTable,
 ) {
-  let draft: DraftLocalTable | null = null
-  if(threadId) {
-    draft = await localReq.getDraftByThreadId(threadId, space.value)
-  }
-  else {
-    draft = await localReq.getDraft(space.value)
-  }
-
-  if(!draft) return false
-
   // 开始处理 draft 有值的情况
   state.draftId = draft._id
 
@@ -90,17 +107,13 @@ async function initDraftFromDraft(
   if(draft.liuDesc) {
     editor.commands.setContent({ type: "doc", content: draft.liuDesc })
   }
-  return true
 }
 
 async function initDraftFromThread(
   state: CeState,
   editor: TipTapEditor,
-  threadId: string
+  thread: ContentLocalTable,
 ) {
-  let thread = await localReq.getThreadByThreadId(threadId, space.value)
-  if(!thread) return
-
   state.visScope = thread.visScope
   state.storageState = thread.storageState
   state.title = thread.title

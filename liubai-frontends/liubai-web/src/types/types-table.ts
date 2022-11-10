@@ -60,9 +60,10 @@ export interface ContentLocalTable {
   remindStamp?: number
   whenStamp?: number
   remindMe?: LiuRemindMe
-  createdStamp: number
+  createdStamp: number      // 动态被创建的时间戳
   insertedStamp: number
-  updatedStamp: number
+  updatedStamp: number      // 该行数据被更新的时间戳
+  editedStamp: number       // 动态被编辑的时间戳
 }
 
 
@@ -88,5 +89,6 @@ export interface DraftLocalTable {
   whenStamp?: number
   remindMe?: LiuRemindMe
   insertedStamp: number
-  updatedStamp: number
+  updatedStamp: number      // 该行数据被更新的时间戳
+  editedStamp: number       // 草稿被用户实际编辑的时间戳
 }
