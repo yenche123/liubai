@@ -1,9 +1,10 @@
-import { inject, onActivated, onDeactivated, Ref, ref, toRef, watch, watchEffect } from "vue"
+import { inject, onActivated, onDeactivated, ref, watch } from "vue"
 import type { ImageLocal, ImageShow } from "../../../types"
 import imgHelper from "../../../utils/images/img-helper"
 import liuUtil from "../../../utils/liu-util"
 import { mvFileKey } from "../../../utils/provide-keys"
 import type { CeState } from "./types-ce"
+import type { Ref } from "vue"
 
 export function useCeImage(
   state: CeState,

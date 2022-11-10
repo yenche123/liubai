@@ -106,6 +106,7 @@ async function initDraftFromDraft(
   
   if(draft.liuDesc) {
     editor.commands.setContent({ type: "doc", content: draft.liuDesc })
+    state.descInited = draft.liuDesc
   }
 }
 
@@ -124,6 +125,7 @@ async function initDraftFromThread(
   if(thread.liuDesc) {
     let draftDesc = transferUtil.liuToTiptap(thread.liuDesc)
     editor.commands.setContent({ type: "doc", content: draftDesc })
+    state.descInited = draftDesc
   }
 }
 

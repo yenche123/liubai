@@ -1,5 +1,5 @@
 
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, toRaw } from "vue";
 import { EditorCoreContent, TipTapJSONContent } from "../../../types/types-editor";
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
 import transfer from "../../../utils/transfer-util"
@@ -25,6 +25,16 @@ export function useCeState(
   space = computed(() => {
     if(!spaceStore.isCollaborative) return "ME"
     return spaceStore.spaceId
+  })
+
+  watch(() => state.descInited, (newV) => {
+    if(!newV || newV.length < 1) return
+    const content = toRaw(newV)
+    editorContent = {
+      json: { type: "doc", content },
+      text: transfer.tiptapToText(newV)
+    }
+    checkCanSubmit(state, canSubmitRef)
   })
   
   const focused = ref(false)

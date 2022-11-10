@@ -3,6 +3,7 @@ import type { LiuContent } from "../../types/types-atom"
 import { trimJSONContent } from "./trim"
 import { equipLink, depriveLink } from "./link"
 import { filterNotLiuType } from "./filter"
+import { listToText } from "./text"
 
 function tiptapToLiu(list: TipTapJSONContent[]): LiuContent[] {
   list = trimJSONContent(list)
@@ -21,9 +22,14 @@ function liuToTiptap(list: LiuContent[]) {
   return newList as TipTapJSONContent[]
 }
 
+function tiptapToText(list: TipTapJSONContent[]): string {
+  return listToText(list)
+}
+
 export default {
   tiptapToLiu,
   liuToTiptap,
+  tiptapToText,
 }
 
 
