@@ -3,7 +3,7 @@
 
 
 import { TipTapEditor } from "../../../types/types-editor"
-import { computed, shallowReactive, watchEffect } from "vue"
+import { computed, reactive, watchEffect } from "vue"
 import type { ShallowRef, ComputedRef } from "vue"
 import type { CeState } from "./types-ce"
 import { ContentLocalTable, DraftLocalTable } from "../../../types/types-table"
@@ -27,7 +27,9 @@ export function initCeState(
 
   const tId = props.threadId
   
-  let state = shallowReactive<CeState>({
+  // 不能用 shallowReactive 
+  // 因为 images 属性必须监听内部数据的变化
+  let state = reactive<CeState>({
     infoType: "THREAD",
     visScope: "DEFAULT",
     storageState: "CLOUD",

@@ -18,6 +18,12 @@ export function useCeImage(
     whenImagesChanged(covers, newImages)
   }, { deep: true })
 
+  // ce-covers 传来用户拖动图片，调整了顺序
+  // 开始对 "逻辑数据" 排序，这样视图数据 covers 就会在上方的 watch 响应
+  const onCoversSorted = (newCovers: ImageShow[]) => {
+    whenCoversSorted(newCovers, state)
+  }
+
   // 监听文件拖动掉落
   const dropFiles = inject(mvFileKey)
   watch(() => dropFiles?.value, async (files) => {
@@ -37,21 +43,14 @@ export function useCeImage(
   }
 
   const onClearCover = (index: number) => {
-    const list = state.images ?? []
+    const list = state.images
+    if(!list) return
     const item = list[index]
-
-    console.log("onClearCover.........")
-    console.log("index: ", index)
-    console.log("item: ", item)
-    console.log(" ")
 
     if(!item) return
     list.splice(index, 1)
   }
 
-  const onCoversSorted = (newCovers: ImageShow[]) => {
-    whenCoversSorted(newCovers, state)
-  }
 
   return { 
     selectImagesEl, 
@@ -66,13 +65,11 @@ function whenCoversSorted(
   newCovers: ImageShow[],
   state: CeState,
 ) {
-  console.log("whenCoversSorted..........")
   const oldImages = state.images ?? []
   const newImages: ImageLocal[] = []
   for(let i=0; i<newCovers.length; i++) {
     const id = newCovers[i].id
     const data = oldImages.find(v => v.id === id)
-    console.log("data: ", data)
     if(data) newImages.push(data)
   }
   state.images = newImages
@@ -82,7 +79,6 @@ function whenImagesChanged(
   coversRef: Ref<ImageShow[]>,
   newImages?: ImageLocal[],
 ) {
-  console.log("whenImagesChanged..............")
   const newLength = newImages?.length ?? 0
   if(newLength < 1) {
     if(coversRef.value.length > 0) coversRef.value = []
