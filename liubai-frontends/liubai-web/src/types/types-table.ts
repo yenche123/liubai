@@ -60,6 +60,7 @@ export interface ContentLocalTable {
   remindStamp?: number
   whenStamp?: number
   remindMe?: LiuRemindMe
+  createdStamp: number
   insertedStamp: number
   updatedStamp: number
 }
@@ -84,8 +85,6 @@ export interface DraftLocalTable {
   liuDesc?: LiuContent[]
   images?: ImageLocal[]
   files?: FileLocal[]
-  calendarStamp?: number
-  remindStamp?: number
   whenStamp?: number
   remindMe?: LiuRemindMe
   insertedStamp: number

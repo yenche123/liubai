@@ -65,10 +65,10 @@ export default defineComponent({
           <svg-icon name="when" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
         <div class="mai-title">
-          <span v-if="data.when">{{ data.when }}</span>
+          <span v-if="data.whenStr">{{ data.whenStr }}</span>
           <span v-else>{{ t("editor.when") }}</span>
         </div>
-        <div v-if="data.when" class="liu-hover mai-footer" @click="onTapClearWhen">
+        <div v-if="data.whenStr" class="liu-hover mai-footer" @click="onTapClearWhen">
           <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
         </div>
         <div v-else class="mai-footer">
@@ -86,10 +86,10 @@ export default defineComponent({
             <svg-icon name="notification" class="mai-svgicon" :color="default_color"></svg-icon>
           </div>
           <div class="mai-title">
-            <span v-if="data.remindMe">{{ data.remindMe }}</span>
+            <span v-if="data.remindMeStr">{{ data.remindMeStr }}</span>
             <span v-else>{{ t("editor.remind") }}</span>
           </div>
-          <div v-if="data.remindMe" class="liu-hover mai-footer" @click="onTapClearRemind">
+          <div v-if="data.remindMeStr" class="liu-hover mai-footer" @click="onTapClearRemind">
             <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
           </div>
           <div v-else class="mai-footer">

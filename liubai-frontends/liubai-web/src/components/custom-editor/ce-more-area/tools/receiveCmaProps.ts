@@ -38,8 +38,8 @@ function stateChanged(
 
   // 什么时候
   const newWhen = whenStamp ? liuUtil.showBasicDate(whenStamp) : ""
-  if(newWhen !== data.when) {
-    data.when = newWhen
+  if(newWhen !== data.whenStr) {
+    data.whenStr = newWhen
     if(whenStamp) data.whenDate = new Date(whenStamp)
   }
 
@@ -49,8 +49,8 @@ function stateChanged(
 
   // 提醒我
   const newRemindMeStr = _getRemindMeStr(t, remindMe)
-  if(newRemindMeStr !== data.remindMe) {
-    data.remindMe = newRemindMeStr
+  if(newRemindMeStr !== data.remindMeStr) {
+    data.remindMeStr = newRemindMeStr
   }
 
   // 标题
@@ -63,9 +63,6 @@ function stateChanged(
   if(newSyncCloud !== data.syncCloud) data.syncCloud = newSyncCloud
   const newDisabled = storageState === "ONLY_LOCAL"
   if(newDisabled !== data.scDisabled) data.scDisabled = newDisabled
-
-  
-  
   
 }
 

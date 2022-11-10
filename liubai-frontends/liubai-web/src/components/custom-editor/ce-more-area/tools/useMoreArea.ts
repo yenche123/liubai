@@ -14,8 +14,8 @@ export function useMoreArea(emits: MoreAreaEmits) {
 
   // 仅存储 "UI" 信息即可，逻辑原子化信息会回传至 custom-editor
   const data = reactive<MaData>({
-    when: "",       // 什么时候
-    remindMe: "",   // 提醒我
+    whenStr: "",       // 什么时候
+    remindMeStr: "",   // 提醒我
     title: "",      // 标题
     site: "",       // 地点名称，如果没有就显示经纬度
     attachment: "",  // 附件名称
@@ -26,7 +26,7 @@ export function useMoreArea(emits: MoreAreaEmits) {
 
   const remindMenu = computed<MenuItem[]>(() => {
     const list: MenuItem[] = []
-    const hasWhen = data.when.length > 0
+    const hasWhen = data.whenStr.length > 0
     
     // 有几个数组，请查阅 en.json 的 remind_later / remind_early
     
@@ -48,7 +48,7 @@ export function useMoreArea(emits: MoreAreaEmits) {
   }
 
   const onTapClearWhen = (e: MouseEvent) => {
-    if(data.when) {
+    if(data.whenStr) {
       setNewWhen(ctx)
       e.stopPropagation()
     }
@@ -59,7 +59,7 @@ export function useMoreArea(emits: MoreAreaEmits) {
   }
 
   const onTapClearRemind = (e: MouseEvent) => {
-    if(data.remindMe) {
+    if(data.remindMeStr) {
       setNewRemind(ctx)
       e.stopPropagation()
     }
@@ -120,7 +120,7 @@ function toClearTitle(ctx: MaContext) {
 
 function setNewRemind(ctx: MaContext, item?: MenuItem, index?: number) {
   if(!item || index === undefined) {
-    ctx.data.remindMe = ""
+    ctx.data.remindMeStr = ""
     ctx.emits("remindmechange", null)
     return
   }
@@ -138,7 +138,7 @@ function setNewRemind(ctx: MaContext, item?: MenuItem, index?: number) {
     return
   }
 
-  ctx.data.remindMe = item.text
+  ctx.data.remindMeStr = item.text
   const r: LiuRemindMe = {
     type: remindType,
     early_minute: remindType === "early" ? (v as LiuRemindEarly) : undefined,
@@ -151,7 +151,7 @@ function setNewRemind(ctx: MaContext, item?: MenuItem, index?: number) {
 async function toSelectSpecificRemind(ctx: MaContext) {
   const res = await cui.showDatePicker({ minDate: new Date() })
   if(!res.confirm || !res.date) return
-  ctx.data.remindMe = liuUtil.showBasicDate(res.date)
+  ctx.data.remindMeStr = liuUtil.showBasicDate(res.date)
   const r: LiuRemindMe = {
     type: "specific_time",
     specific_stamp: res.date.getTime()
@@ -160,21 +160,21 @@ async function toSelectSpecificRemind(ctx: MaContext) {
 }
 
 function setNewWhen(ctx: MaContext, date?: Date) {
-  ctx.data.when = !date ? "" : liuUtil.showBasicDate(date)
+  ctx.data.whenStr = !date ? "" : liuUtil.showBasicDate(date)
   ctx.data.whenDate = date
   ctx.emits("whenchange", date ? date : null)
 
   if(date && ctx.data.remindType === "later") {
     ctx.data.remindType = "early"
-    if(ctx.data.remindMe) {
-      ctx.data.remindMe = ""
+    if(ctx.data.remindMeStr) {
+      ctx.data.remindMeStr = ""
       ctx.emits("remindmechange", null)
     }
   }
   else if(!date && ctx.data.remindType === "early") {
     ctx.data.remindType = "later"
-    if(ctx.data.remindMe) {
-      ctx.data.remindMe = ""
+    if(ctx.data.remindMeStr) {
+      ctx.data.remindMeStr = ""
       ctx.emits("remindmechange", null)
     }
   }

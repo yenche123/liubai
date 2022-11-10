@@ -5,8 +5,8 @@ import { CeState } from "../../tools/types-ce"
 export type CmaRemindType = "early" | "later"
 
 export interface MaData {
-  when: string
-  remindMe: string
+  whenStr: string
+  remindMeStr: string
   title: string
   site: string
   attachment: string
