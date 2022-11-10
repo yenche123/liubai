@@ -22,7 +22,6 @@ async function whenRouteChange(
 
   const inApp = newV.meta.inApp
   if(inApp === false) {
-    if(store.spaceId) store.setSpace("")
     return
   }
 
