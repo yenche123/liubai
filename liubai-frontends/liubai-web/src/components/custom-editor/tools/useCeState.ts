@@ -1,11 +1,10 @@
 
-import { reactive, Ref, ref, ShallowRef, watch } from "vue";
-import { TipTapEditor, EditorCoreContent, TipTapJSONContent } from "../../../types/types-editor";
+import { Ref, ref, watch } from "vue";
+import { EditorCoreContent } from "../../../types/types-editor";
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
 import transfer from "../../../utils/transfer-util"
 import type { LiuRemindMe } from "../../../types/types-atom";
 import type { CeState } from "./types-ce"
-import type { ImageShow } from "../../../types"
 
 let editorContent: EditorCoreContent | null = null
 
@@ -47,11 +46,7 @@ export function useCeState(
   }
 
   const onEditorFinish = (data: EditorCoreContent) => {
-    console.log("onEditorFinish........")
-    console.log(data)
-    console.log(" ")
-    const { type, content } = data.json
-    transfer.tiptapToLiu(content ?? [])
+    editorContent = data
   }
 
   const onWhenChange = (date: Date | null) => {
