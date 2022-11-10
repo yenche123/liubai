@@ -13,7 +13,7 @@ import {
   onBeforeRouteUpdate,
   NavigationGuard,
 } from "vue-router"
-import time from "../utils/time"
+import time from "../utils/basic/time"
 import { isSameRoute } from "./route-util"
 
 interface RouteChangeState {

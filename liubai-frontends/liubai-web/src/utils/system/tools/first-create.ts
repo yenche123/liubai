@@ -1,7 +1,7 @@
 
 import { customAlphabet } from 'nanoid'
 import { db } from '../../db'
-import time from "../../time"
+import time from "../../basic/time"
 import type { 
   UserLocalTable, 
   WorkspaceLocalTable, 

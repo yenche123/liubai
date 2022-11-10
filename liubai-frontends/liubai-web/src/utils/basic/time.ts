@@ -1,4 +1,4 @@
-import valTool from "./basic/val-tool"
+import valTool from "./val-tool"
 
 let diff = 0
 

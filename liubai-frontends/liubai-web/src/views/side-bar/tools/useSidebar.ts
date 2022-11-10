@@ -4,7 +4,7 @@ import type { LayoutStore, LayoutType } from "../../useLayoutStore";
 import { useWindowSize, useResizeObserver } from "../../../hooks/useVueUse";
 import cfg from "../../../config";
 import valTool from "../../../utils/basic/val-tool";
-import time from "../../../utils/time";
+import time from "../../../utils/basic/time";
 import type { OpenType } from "../../../types/types-view";
 
 const LISTEN_DELAY = 300

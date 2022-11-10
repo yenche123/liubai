@@ -16,7 +16,7 @@ import cfg from "../../../config";
 import { useRouteAndLiuRouter } from "../../../routes/liu-router"
 import type { LocationQuery } from "vue-router"
 import { useWindowSize } from "../../../hooks/useVueUse"
-import time from "../../../utils/time";
+import time from "../../../utils/basic/time";
 import valTool from "../../../utils/basic/val-tool";
 
 interface VvData {
