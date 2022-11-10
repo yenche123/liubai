@@ -10,6 +10,13 @@ import type { ComposerTranslation } from "vue-i18n"
 export function receiveCmaProps(props: CmaProps, data: MaData) {
   const { t, locale } = useI18n()
   const stateRef = toRef(props, "state")
+
+  // 在外部 的一个同步周期内连续的使用 
+  //   state.x1 = "xxxxx"
+  //   state.x2 = "yyyyy"
+  // 比如: useCeState.ts 文件里，toWhenChange 和 toRemindMeChange 同时被触发了
+  // 同时更改了 state.whenStamp 和 state.remindMe
+  // 这里的 watchEffect 只会被触发一次
   watchEffect(() => {
     const state = stateRef.value
     const lang = locale.value
@@ -23,9 +30,9 @@ function stateChanged(
   t: ComposerTranslation,
 ) {
   
-  console.log("stateChanged.............. 看此值有没有疯狂触发........")
-  console.log(JSON.stringify(toRaw(state)))
-  console.log(" ")
+  console.log("stateChanged，看此值有没有疯狂触发........")
+  // console.log(JSON.stringify(toRaw(state)))
+  // console.log(" ")
 
   const { 
     whenStamp, 
