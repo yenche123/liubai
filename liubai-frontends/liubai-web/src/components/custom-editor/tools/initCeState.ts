@@ -105,6 +105,7 @@ async function initDraftFromDraft(
   state.title = draft.title
   state.whenStamp = draft.whenStamp
   state.remindMe = draft.remindMe
+  state.images = draft.images
   
   if(draft.liuDesc) {
     editor.commands.setContent({ type: "doc", content: draft.liuDesc })
