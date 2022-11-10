@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid"
 import { db } from "../../../../utils/db"
 import { DraftLocalTable, ContentLocalTable } from "../../../../types/types-table"
 import { getLocalPreference } from "../../../../utils/system/local-preference"

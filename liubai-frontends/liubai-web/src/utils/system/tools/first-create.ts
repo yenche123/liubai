@@ -1,5 +1,3 @@
-
-import { customAlphabet } from 'nanoid'
 import { db } from '../../db'
 import time from "../../basic/time"
 import type { 
@@ -7,6 +5,7 @@ import type {
   WorkspaceLocalTable, 
   MemberLocalTable 
 } from "../../../types/types-table"
+import ider from '../../basic/ider'
 
 interface CreateData {
   user_local: string
@@ -17,9 +16,9 @@ interface CreateData {
 export async function firstCreate(tryNum: number = 1): Promise<CreateData | null> {
   if(tryNum > 3) return null
 
-  const user_local = _createId(19)
-  const workspace_local = _createId(21)
-  const member_local = _createId(23)
+  const user_local = ider.createUserId()
+  const workspace_local = ider.createWorkspaceId()
+  const member_local = ider.createMemberId()
 
   const res1 = await createUser(user_local, workspace_local)
   if(!res1) {
@@ -126,10 +125,4 @@ async function _deleteWorkspace(workspace_local: string) {
   console.log("workspace 被删除了.........")
   console.log(del)
   console.log(" ")
-}
-
-function _createId(digits: number = 21) {
-  const ABC = "0123456789abcdefghijkmnopqrstuvwxyz"
-  const nanoid = customAlphabet(ABC, digits)
-  return nanoid()
 }

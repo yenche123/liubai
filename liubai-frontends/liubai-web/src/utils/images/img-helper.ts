@@ -1,7 +1,7 @@
 import Compressor from 'compressorjs';
 import type { ImageLocal, ImageShow } from "../../types"
-import { customAlphabet } from 'nanoid'
 import liuUtil from '../liu-util';
+import ider from '../basic/ider';
 
 type FileWithWH = { file: File, width?: number, height?: number }
 type CompressResolver = (res: File) => void
@@ -109,7 +109,7 @@ async function getMetaDataFromFiles(files: File[]) {
     const h = data.height
     let h2w = w && h ? (h / w).toFixed(2) : undefined
     const obj: ImageLocal = {
-      id: _createId(),
+      id: ider.createImgId(),
       name: data.file.name,
       lastModified: data.file.lastModified,
       file: data.file,
@@ -126,12 +126,6 @@ async function getMetaDataFromFiles(files: File[]) {
     list.push(_pack(res))
   }
   return list
-}
-
-function _createId() {
-  const ABC = "0123456789abcdefghijkmnopqrstuvwxyz"
-  const nanoid = customAlphabet(ABC, 23)
-  return nanoid()
 }
 
 function imageLocalToShow(val: ImageLocal): ImageShow {
