@@ -9,13 +9,18 @@ export function listToText(
   for(let i=0; i<list.length; i++) {
     const v = list[i]
     const { type, content, text } = v
-    if(text) plainText += text
-    else if(content) {
-      plainText = listToText(content, plainText)
+    if(text) {
+      plainText += text
+      continue
     }
-  }
 
-  if(plainText) plainText += "\n"
+    if(content) {
+      plainText = listToText(content, plainText)
+      if(type === "codeBlock") plainText += "\n"
+    }
+
+    plainText += "\n"
+  }
 
   return plainText
 }
