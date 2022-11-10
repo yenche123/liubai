@@ -2,6 +2,7 @@
 import type { OState, VisScope, StorageState } from "./types-basic"
 import type { LiuContent, LiuRemindMe, StatusView, TagView } from "./types-atom"
 import type { FileLocal, ImageLocal } from "./index"
+import type { TipTapJSONContent } from "./types-editor"
 
 export interface UserLocalTable {
   _id: string
@@ -83,7 +84,7 @@ export interface DraftLocalTable {
   visScope?: VisScope
   storageState?: StorageState
   title?: string
-  liuDesc?: LiuContent[]
+  liuDesc?: TipTapJSONContent[]
   images?: ImageLocal[]
   files?: FileLocal[]
   whenStamp?: number
