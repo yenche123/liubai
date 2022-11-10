@@ -1,6 +1,7 @@
 import Compressor from 'compressorjs';
-import type { ImageLocal } from "../../types"
+import type { ImageLocal, ImageShow } from "../../types"
 import { customAlphabet } from 'nanoid'
+import liuUtil from '../liu-util';
 
 type FileWithWH = { file: File, width?: number, height?: number }
 type CompressResolver = (res: File) => void
@@ -133,7 +134,19 @@ function _createId() {
   return nanoid()
 }
 
+function imageLocalToShow(val: ImageLocal): ImageShow {
+  const obj: ImageShow = {
+    src: val.file ? liuUtil.createObjURLs([val.file])[0] : (val.cloud_url ?? ""),
+    id: val.id,
+    width: val.width,
+    height: val.height,
+    h2w: val.h2w
+  }
+  return obj
+}
+
 export default {
   compress,
   getMetaDataFromFiles,
+  imageLocalToShow,
 }

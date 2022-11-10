@@ -1,5 +1,4 @@
 import { computed, ref } from "vue";
-import { EditorCoreContent } from "../../../types/types-editor";
 
 interface CustomEditorProps {
   lastBar: boolean
@@ -7,16 +6,9 @@ interface CustomEditorProps {
 
 export function useMoreItems(props: CustomEditorProps) {
   const moreRef = ref(false)
-  const canSubmitRef = ref(false)
-
+  
   const onTapMore = () => {
     moreRef.value = !moreRef.value
-  }
-
-  const onEditorUpdate = (data: EditorCoreContent) => {
-    const text = data.text.trim()
-    if (text.length) canSubmitRef.value = true
-    else canSubmitRef.value = false
   }
 
   const showVirtualBar = computed(() => {
@@ -26,5 +18,5 @@ export function useMoreItems(props: CustomEditorProps) {
   })
 
 
-  return { moreRef, onTapMore, canSubmitRef, onEditorUpdate, showVirtualBar }
+  return { moreRef, onTapMore, showVirtualBar }
 }

@@ -7,7 +7,7 @@ import { computed, reactive, watchEffect } from "vue"
 import type { ShallowRef, ComputedRef } from "vue"
 import type { CeState } from "./types-ce"
 import { ContentLocalTable, DraftLocalTable } from "../../../types/types-table"
-import { LiuContent, LiuRemindMe } from "../../../types/types-atom"
+import { LiuRemindMe } from "../../../types/types-atom"
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore"
 import localReq from "./req/local-req"
 import transferUtil from "../../../utils/transfer-util"
@@ -106,6 +106,7 @@ async function initDraftFromThread(
   state.title = thread.title
   state.whenStamp = thread.whenStamp
   state.remindMe = _getRemindMeFromThread(thread)
+  state.images = thread.images
 
   if(thread.liuDesc) {
     let draftDesc = transferUtil.liuToTiptap(thread.liuDesc)

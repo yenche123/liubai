@@ -1,5 +1,6 @@
-import type { LiuRemindMe, LiuContent } from "../../../types/types-atom";
+import type { LiuRemindMe } from "../../../types/types-atom";
 import type { StorageState, VisScope } from "../../../types/types-basic";
+import type { ImageLocal, FileLocal } from "../../../types"
 
 export interface CeState {
   draftId?: string
@@ -10,4 +11,6 @@ export interface CeState {
   title?: string
   whenStamp?: number
   remindMe?: LiuRemindMe
+  images?: ImageLocal[]
+  files?: FileLocal[]
 }

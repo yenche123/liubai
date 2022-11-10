@@ -9,10 +9,9 @@
 import EditorCore from "../editor-core/editor-core.vue"
 import { useCustomEditor } from "./tools/useCustomEditor";
 import cfg from "../../config";
-import { TipTapEditor } from "../../types/types-editor";
 import { useMoreItems } from "./tools/useMoreItems";
 import { useCeState } from "./tools/useCeState";
-import type { ShallowRef } from "vue";
+import { ref } from "vue";
 import CeFinishArea from "./ce-finish-area/ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 import { useCeImage } from "./tools/useCeImage";
@@ -29,14 +28,19 @@ const props = defineProps({
 })
 
 
+
+const canSubmitRef = ref(false)
 const { maxEditorHeight, editorCoreRef, editor } = useCustomEditor()
 const { state } = initCeState(props, editor)
+const {
+  onImageChange,
+  covers,
+  onClearCover,
+} = useCeImage(state)
 
 const {
   moreRef,
   onTapMore,
-  canSubmitRef,
-  onEditorUpdate,
   showVirtualBar,
 } = useMoreItems(props)
 
@@ -44,18 +48,15 @@ const {
   focused,
   onEditorFocus,
   onEditorBlur,
+  onEditorUpdate,
   onEditorFinish,
   onWhenChange,
   onRemindMeChange,
   onTitleChange,
   onSyncCloudChange,
-} = useCeState(editor as ShallowRef<TipTapEditor>, state)
+} = useCeState(state, canSubmitRef)
 
-const {
-  onImageChange,
-  covers,
-  onClearCover,
-} = useCeImage()
+
 
 </script>
 <template>

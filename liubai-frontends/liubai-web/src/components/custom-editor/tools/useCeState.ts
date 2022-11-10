@@ -1,19 +1,27 @@
 
-import { reactive, ref, ShallowRef } from "vue";
-import { TipTapEditor, EditorCoreContent } from "../../../types/types-editor";
+import { reactive, Ref, ref, ShallowRef, watch } from "vue";
+import { TipTapEditor, EditorCoreContent, TipTapJSONContent } from "../../../types/types-editor";
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
 import transfer from "../../../utils/transfer-util"
 import type { LiuRemindMe } from "../../../types/types-atom";
 import type { CeState } from "./types-ce"
+import type { ImageShow } from "../../../types"
+
+let editorContent: EditorCoreContent | null = null
 
 export function useCeState(
-  editor: ShallowRef<TipTapEditor>,
   state: CeState,
+  canSubmitRef: Ref<boolean>,
 ) {
-
+  
   const focused = ref(false)
   const gs = useGlobalStateStore()
   let timeout = 0
+
+  // 监听 covers 发生改变....
+  watch(() => state.images, (newV) => {
+    checkCanSubmit(state, canSubmitRef)
+  })
 
   const _setFocus = (newV: boolean) => {
     if(timeout) clearTimeout(timeout)
@@ -24,12 +32,19 @@ export function useCeState(
   }
 
   const onEditorFocus = (data: EditorCoreContent) => {
+    editorContent = data
     _setFocus(true)
   }
 
   const onEditorBlur = (data: EditorCoreContent) => {
+    editorContent = data
     _setFocus(false)
   } 
+
+  const onEditorUpdate = (data: EditorCoreContent) => {
+    editorContent = data
+    checkCanSubmit(state, canSubmitRef)
+  }
 
   const onEditorFinish = (data: EditorCoreContent) => {
     console.log("onEditorFinish........")
@@ -59,6 +74,7 @@ export function useCeState(
     focused,
     onEditorFocus,
     onEditorBlur,
+    onEditorUpdate,
     onEditorFinish,
     onWhenChange,
     onRemindMeChange,
@@ -66,6 +82,16 @@ export function useCeState(
     onSyncCloudChange,
   }
 }
+
+
+function checkCanSubmit(
+  state: CeState,
+  canSubmitRef: Ref<boolean>,
+) {
+  let newCanSubmit = Boolean(state.images?.length) || Boolean(editorContent?.text.trim())
+  canSubmitRef.value = newCanSubmit
+}
+
 
 function toWhenChange(
   date: Date | null,
@@ -93,4 +119,22 @@ function toSyncCloudChange(
   state: CeState,
 ) {
   state.storageState = val ? "CLOUD" : "LOCAL"
+}
+
+
+/****************** 收集信息、缓存 ***************/
+let collectTimeout = 0
+function collectState(state: CeState, instant: boolean = false) {
+  if(collectTimeout) clearTimeout(collectTimeout)
+  if(instant) {
+    toSave(state)
+    return
+  }
+  collectTimeout = setTimeout(() => {
+    toSave(state)
+  }, 1000)
+}
+
+function toSave(state: CeState) {
+
 }
