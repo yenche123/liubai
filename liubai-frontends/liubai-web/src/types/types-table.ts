@@ -75,7 +75,6 @@ export interface DraftLocalTable {
   oState: "OK" | "POSTED" | "DELETED"
   user: string
   workspace: string
-  lastSet: number
   threadEdited?: string
   commentEdited?: string
   underThread?: string

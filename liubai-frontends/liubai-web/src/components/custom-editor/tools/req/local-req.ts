@@ -1,6 +1,7 @@
 import { db } from "../../../../utils/db"
 import { DraftLocalTable, ContentLocalTable } from "../../../../types/types-table"
 import { getLocalPreference } from "../../../../utils/system/local-preference"
+import ider from "../../../../utils/basic/ider"
 
 function _getUserId(): string {
   const { local_id } = getLocalPreference()
@@ -31,8 +32,9 @@ async function getDraftByThreadId(threadId: string, workspace: string) {
   return res
 }
 
-async function getDraftById(id: string, workspace: string) {
-
+async function getDraftById(id: string) {
+  const res = await db.drafts.get(id)
+  return res
 }
 
 // 什么入参都没有，查看有没有 draft
@@ -53,8 +55,10 @@ async function deleteDraftById(id: string) {
   await db.drafts.delete(id)
 }
 
-async function setDraft() {
-  
+async function setDraft(data: Partial<DraftLocalTable>) {
+  if(!data._id) data._id = ider.createDraftId()
+  const res = await db.drafts.put(data as DraftLocalTable)
+  return res
 }
 
 export default {

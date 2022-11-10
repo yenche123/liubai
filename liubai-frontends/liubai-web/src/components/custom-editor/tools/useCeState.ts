@@ -1,17 +1,31 @@
 
-import { Ref, ref, watch } from "vue";
-import { EditorCoreContent } from "../../../types/types-editor";
+import { ref, watch, computed } from "vue";
+import { EditorCoreContent, TipTapJSONContent } from "../../../types/types-editor";
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
 import transfer from "../../../utils/transfer-util"
 import type { LiuRemindMe } from "../../../types/types-atom";
 import type { CeState } from "./types-ce"
+import type { ComputedRef, Ref } from "vue";
+import ider from "../../../utils/basic/ider";
+import { DraftLocalTable } from "../../../types/types-table";
+import { getLocalPreference } from "../../../utils/system/local-preference";
+import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
+import time from "../../../utils/basic/time";
+import localReq from "./req/local-req"
 
 let editorContent: EditorCoreContent | null = null
+let space: ComputedRef<string>
 
 export function useCeState(
   state: CeState,
   canSubmitRef: Ref<boolean>,
 ) {
+
+  const spaceStore = useWorkspaceStore()  
+  space = computed(() => {
+    if(!spaceStore.isCollaborative) return "ME"
+    return spaceStore.spaceId
+  })
   
   const focused = ref(false)
   const gs = useGlobalStateStore()
@@ -43,6 +57,7 @@ export function useCeState(
   const onEditorUpdate = (data: EditorCoreContent) => {
     editorContent = data
     checkCanSubmit(state, canSubmitRef)
+    collectState(state)
   }
 
   const onEditorFinish = (data: EditorCoreContent) => {
@@ -134,8 +149,48 @@ function collectState(state: CeState, instant: boolean = false) {
   }, 1000)
 }
 
-function toSave(state: CeState) {
+async function toSave(state: CeState) {
   console.log("toSave.............")
   
+  const now = time.getTime()
 
+  let insertedStamp = now
+  if(state.draftId) {
+    const tmp = await localReq.getDraftById(state.draftId)
+    if(tmp) insertedStamp = tmp.insertedStamp
+  }
+
+  const draftId = state.draftId ?? ider.createDraftId()
+  const { local_id: userId } = getLocalPreference()
+  let liuDesc: TipTapJSONContent[] | undefined = undefined
+  if(editorContent?.json) {
+    const { type, content } = editorContent.json
+    if(type === "doc" && content) liuDesc = content
+  }
+
+  const draft: DraftLocalTable = {
+    _id: draftId,
+    infoType: "THREAD",
+    oState: "OK",
+    user: userId as string,
+    workspace: space.value,
+    threadEdited: state.threadEdited,
+    visScope: state.visScope,
+    storageState: state.storageState,
+    title: state.title,
+    liuDesc,
+    images: state.images,
+    whenStamp: state.whenStamp,
+    remindMe: state.remindMe,
+    insertedStamp: insertedStamp,
+    updatedStamp: now,
+    editedStamp: now,
+  }
+
+  console.log("去本地存储 draft.........")
+  console.log(draft)
+  console.log(" ")
+
+  const res = await localReq.setDraft(draft)
+  if(!state.draftId && res) state.draftId = res as string
 }
