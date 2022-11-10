@@ -154,8 +154,9 @@ function _howManyLowerCase(text: string) {
 
 // 卸载 link
 export function depriveLink(list: LiuContent[]) {
-  for(let i=0; i<list.length; i++) {
-    const v = list[i]
+  const newList: LiuContent[] = JSON.parse(JSON.stringify(list))
+  for(let i=0; i<newList.length; i++) {
+    const v = newList[i]
     let { type, content, marks } = v
     const canDeepTypes = [
       "paragraph", 
@@ -175,5 +176,5 @@ export function depriveLink(list: LiuContent[]) {
     }
   }
 
-  return list
+  return newList
 }
