@@ -3,7 +3,7 @@
 
 
 import { TipTapEditor } from "../../../types/types-editor"
-import { computed, reactive, watchEffect } from "vue"
+import { computed, shallowReactive, watchEffect } from "vue"
 import type { ShallowRef, ComputedRef } from "vue"
 import type { CeState } from "./types-ce"
 import { ContentLocalTable, DraftLocalTable } from "../../../types/types-table"
@@ -27,7 +27,7 @@ export function initCeState(
 
   const tId = props.threadId
   
-  let state = reactive<CeState>({
+  let state = shallowReactive<CeState>({
     infoType: "THREAD",
     visScope: "DEFAULT",
     storageState: "CLOUD",

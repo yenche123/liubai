@@ -89,6 +89,7 @@ const {
 
   <!-- 更多栏 -->
   <ce-more-area :show="moreRef"
+    :state="state"
     @whenchange="onWhenChange"
     @remindmechange="onRemindMeChange"
     @titlechange="onTitleChange"

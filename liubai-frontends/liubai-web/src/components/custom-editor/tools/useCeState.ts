@@ -1,5 +1,5 @@
 
-import { ref, watch, computed, toRaw } from "vue";
+import { ref, watch, computed, toRaw, isProxy, isReactive } from "vue";
 import { EditorCoreContent, TipTapJSONContent } from "../../../types/types-editor";
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
 import transfer from "../../../utils/transfer-util"
@@ -29,11 +29,14 @@ export function useCeState(
 
   watch(() => state.descInited, (newV) => {
     if(!newV || newV.length < 1) return
-    const content = toRaw(newV)
+    const content = newV
     editorContent = {
       json: { type: "doc", content },
       text: transfer.tiptapToText(newV)
     }
+    console.log("看一下 自己生成的 text: ")
+    console.log(editorContent.text)
+    console.log(" ")
     checkCanSubmit(state, canSubmitRef)
   })
   
@@ -118,7 +121,7 @@ function toWhenChange(
   state: CeState,
 ) {
   state.whenStamp = date ? date.getTime() : undefined
-  collectState(state, true)
+  collectState(state)
 }
 
 function toRemindMeChange(
@@ -126,7 +129,7 @@ function toRemindMeChange(
   state: CeState,
 ) {
   state.remindMe = val ? val : undefined
-  collectState(state, true)
+  collectState(state)
 }
 
 function toTitleChange(
@@ -178,6 +181,11 @@ async function toSave(state: CeState) {
     if(type === "doc" && content) liuDesc = content
   }
 
+  // 响应式对象 转为普通对象
+  if(isProxy(liuDesc)) liuDesc = toRaw(liuDesc)
+  let images = isProxy(state.images) ? toRaw(state.images) : state.images
+  let remindMe = isProxy(state.remindMe) ? toRaw(state.remindMe) : state.remindMe
+
   const draft: DraftLocalTable = {
     _id: draftId,
     infoType: "THREAD",
@@ -189,9 +197,9 @@ async function toSave(state: CeState) {
     storageState: state.storageState,
     title: state.title,
     liuDesc,
-    images: state.images,
+    images,
     whenStamp: state.whenStamp,
-    remindMe: state.remindMe,
+    remindMe,
     insertedStamp: insertedStamp,
     updatedStamp: now,
     editedStamp: now,

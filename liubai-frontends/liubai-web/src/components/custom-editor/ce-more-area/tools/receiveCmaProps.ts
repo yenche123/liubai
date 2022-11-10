@@ -1,4 +1,4 @@
-import { toRef, watchEffect } from "vue";
+import { toRef, watchEffect, toRaw } from "vue";
 import type { CmaProps, CmaRemindType, MaData } from "./types-cma";
 import type { CeState } from "../../tools/types-ce";
 import liuUtil from "../../../../utils/liu-util";
@@ -24,7 +24,7 @@ function stateChanged(
 ) {
   
   console.log("stateChanged.............. 看此值有没有疯狂触发........")
-  console.log(state)
+  console.log(JSON.stringify(toRaw(state)))
   console.log(" ")
 
   const { 
