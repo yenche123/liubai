@@ -27,8 +27,6 @@ const props = defineProps({
   threadId: String
 })
 
-
-
 const canSubmitRef = ref(false)
 const { maxEditorHeight, editorCoreRef, editor } = useCustomEditor()
 const { state } = initCeState(props, editor)
@@ -36,6 +34,7 @@ const {
   onImageChange,
   covers,
   onClearCover,
+  onCoversSorted,
 } = useCeImage(state)
 
 const {
@@ -75,7 +74,9 @@ const {
     ></EditorCore>
   </div>
 
-  <CeCovers v-model="covers"
+  <CeCovers 
+    :model-value="covers"
+    @update:model-value="onCoversSorted"
     @clear="onClearCover"
   ></CeCovers>
 

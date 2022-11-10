@@ -48,14 +48,34 @@ export function useCeImage(
     list.splice(index, 1)
   }
 
+  const onCoversSorted = (newCovers: ImageShow[]) => {
+    whenCoversSorted(newCovers, state)
+  }
+
   return { 
     selectImagesEl, 
     onImageChange, 
     covers, 
     onClearCover,
+    onCoversSorted,
   }
 }
 
+function whenCoversSorted(
+  newCovers: ImageShow[],
+  state: CeState,
+) {
+  console.log("whenCoversSorted..........")
+  const oldImages = state.images ?? []
+  const newImages: ImageLocal[] = []
+  for(let i=0; i<newCovers.length; i++) {
+    const id = newCovers[i].id
+    const data = oldImages.find(v => v.id === id)
+    console.log("data: ", data)
+    if(data) newImages.push(data)
+  }
+  state.images = newImages
+}
 
 function whenImagesChanged(
   coversRef: Ref<ImageShow[]>,

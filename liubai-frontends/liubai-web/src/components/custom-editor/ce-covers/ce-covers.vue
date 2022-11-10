@@ -34,9 +34,6 @@ export default defineComponent({
   },
   methods: {
     onListUpdate(newV: ImageShow[]) {
-      console.log("onListUpdate..........")
-      console.log(newV)
-      console.log(" ")
       this.$emit("update:modelValue", newV)
     },
 
