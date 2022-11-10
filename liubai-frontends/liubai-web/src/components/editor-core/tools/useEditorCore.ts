@@ -12,8 +12,9 @@ import { useI18n, ComposerTranslation } from 'vue-i18n'
 import { wrappingInputRule, nodeInputRule } from "@tiptap/core"
 import { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
 import { onMounted } from 'vue'
-import { lowlight } from 'lowlight'
+import valTool from '../../../utils/basic/val-tool'
 
+import { lowlight } from 'lowlight'
 import CodeBlockComponent from '../code-block-component/code-block-component.vue'
 
 export interface EditorCoreProps {
@@ -56,11 +57,22 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
     }
   })
 
-  onMounted(() => {
+  onMounted(async () => {
     const eee = editor.value
     if(!eee) return
+    
     lastEmpty = eee.isEmpty
     lastText = eee.getText()
+
+    // 由于 外部的 editor.commonds.setContent() 不会触发 update 回调
+    // 所以这里使用了拍脑袋等 500ms 去看外部有无变化
+    // 待优化
+    await valTool.waitMilli(500)
+
+    const eee2 = editor.value
+    if(!eee2) return
+    lastEmpty = eee2.isEmpty
+    lastText = eee2.getText()
   })
 
   return { editor }
@@ -99,6 +111,13 @@ function onEditorUpdate(
   const data = { html, text, json }
   const empty = editor.isEmpty
   if(lastTriggetUpdate) clearTimeout(lastTriggetUpdate)
+
+  // console.log("onEditorUpdate........")
+  // console.log("lastEmpty: ", lastEmpty)
+  // console.log("empty: ", empty)
+  // console.log(" ")
+
+
   if(lastEmpty !== empty) {
     emits("update", data)
     lastEmpty = empty
@@ -106,6 +125,7 @@ function onEditorUpdate(
     return
   }
   if(!text && !lastText) {
+    console.log("onEditorUpdate 被阻断了................")
     return
   }
 
