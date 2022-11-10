@@ -160,21 +160,15 @@ async function toSelectSpecificRemind(ctx: MaContext) {
 }
 
 function setNewWhen(ctx: MaContext, date?: Date) {
-  ctx.data.whenStr = !date ? "" : liuUtil.showBasicDate(date)
-  ctx.data.whenDate = date
   ctx.emits("whenchange", date ? date : null)
 
   if(date && ctx.data.remindType === "later") {
-    ctx.data.remindType = "early"
     if(ctx.data.remindMeStr) {
-      ctx.data.remindMeStr = ""
       ctx.emits("remindmechange", null)
     }
   }
   else if(!date && ctx.data.remindType === "early") {
-    ctx.data.remindType = "later"
     if(ctx.data.remindMeStr) {
-      ctx.data.remindMeStr = ""
       ctx.emits("remindmechange", null)
     }
   }
