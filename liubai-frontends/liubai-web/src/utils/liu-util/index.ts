@@ -12,6 +12,7 @@ import {
   createObjURLs,
   getArrayFromFileList,
   getOnlyImageFiles,
+  getNotImageFiles,
 } from "./file-util"
 
 export default {
@@ -27,4 +28,5 @@ export default {
   createObjURLs,
   getArrayFromFileList,
   getOnlyImageFiles,
+  getNotImageFiles,
 }

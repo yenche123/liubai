@@ -43,3 +43,14 @@ export function getOnlyImageFiles(files: File[]): File[] {
   }
   return imgFiles
 }
+
+export function getNotImageFiles(files: File[]): File[] {
+  const newList: File[] = []
+  const arr = getAcceptImgTypesArray()
+  for(let i=0; i<files.length; i++) {
+    const v = files[i]
+    console.log("看一下文件的 type: ", v.type)
+    if(!arr.includes(v.type)) newList.push(v)
+  }
+  return newList
+}

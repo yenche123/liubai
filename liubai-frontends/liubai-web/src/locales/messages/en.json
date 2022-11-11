@@ -90,5 +90,10 @@
   },
   "who_r_u": {
     "placeholder": "How to call you?"
+  },
+  "tip": {
+    "tip": "TIP",
+    "file_exceed_title": "The maxmium size is 10 MB",
+    "file_exceed_content": "If you need more size, we recommand that you use a dedicated cloud service"
   }
 }

@@ -12,6 +12,8 @@ interface ModalSuccessRes {
 interface ModalParam {
   title?: string
   content?: string
+  title_key?: string      // 用于 i18n
+  content_key?: string    // 用于 i18n
   showCancel?: boolean
   cancelText?: string
   confirmText?: string
@@ -27,15 +29,14 @@ const enable = ref(false)
 const show = ref(false)
 const TRANSITION_DURATION = 120 // 200
 
-const DEFAULT_CANCEL = "取消"
-const DEFAULT_CONFIRM = "确定"
-
 const modalData = reactive({
   title: "",
+  title_key: "",
   content: "",
+  content_key: "",
   showCancel: true,
-  cancelText: DEFAULT_CANCEL,
-  confirmText: DEFAULT_CONFIRM,
+  cancelText: "",
+  confirmText: "",
 })
 
 const _openModal = async (): Promise<void> => {
@@ -77,11 +78,13 @@ const initModal = () => {
 }
 
 const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
-  if(opt.title) modalData.title = opt.title
-  else modalData.title = ""
 
-  if(opt.content) modalData.content = opt.content
-  else modalData.content = ""
+  modalData.title = opt.title ?? ""
+  modalData.content = opt.content ?? ""
+  modalData.title_key = opt.title_key ?? ""
+  modalData.content_key = opt.content_key ?? ""
+  modalData.cancelText = opt.cancelText ?? ""
+  modalData.confirmText = opt.confirmText ?? ""
 
   if(typeof opt.showCancel === "boolean") {
     modalData.showCancel = opt.showCancel
@@ -89,18 +92,7 @@ const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
   else {
     modalData.showCancel = true
   }
-  if(opt.cancelText) {
-    modalData.cancelText = opt.cancelText
-  }
-  else {
-    modalData.cancelText = DEFAULT_CANCEL
-  }
-  if(opt.confirmText) {
-    modalData.confirmText = opt.confirmText
-  }
-  else {
-    modalData.confirmText = DEFAULT_CONFIRM
-  }
+
   if(opt.success) {
     _success = opt.success
   }

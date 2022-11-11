@@ -14,7 +14,7 @@ import { useCeState } from "./tools/useCeState";
 import { ref } from "vue";
 import CeFinishArea from "./ce-finish-area/ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
-import { useCeImage } from "./tools/useCeImage";
+import { useCeImage } from "./tools/useCeFile";
 import CeCovers from "./ce-covers/ce-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
 import { initCeState } from "./tools/initCeState";

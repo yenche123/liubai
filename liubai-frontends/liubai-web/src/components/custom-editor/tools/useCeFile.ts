@@ -1,10 +1,13 @@
 import { inject, onActivated, onDeactivated, ref, watch } from "vue"
-import type { ImageLocal, ImageShow } from "../../../types"
+import type { FileLocal, ImageLocal, ImageShow } from "../../../types"
 import imgHelper from "../../../utils/images/img-helper"
 import liuUtil from "../../../utils/liu-util"
 import { mvFileKey } from "../../../utils/provide-keys"
 import type { CeState } from "./types-ce"
 import type { Ref } from "vue"
+import cui from "../../custom-ui"
+import valTool from "../../../utils/basic/val-tool"
+import ider from "../../../utils/basic/ider"
 
 export function useCeImage(
   state: CeState,
@@ -130,7 +133,55 @@ async function handleFiles(
   files: File[],
 ) {
   const imgFiles = liuUtil.getOnlyImageFiles(files)
-  if(imgFiles.length < 1) return
+  if(imgFiles.length > 0) {
+    handleImages(state, imgFiles)
+  }
+
+  const otherFiles = liuUtil.getNotImageFiles(files)
+  if(otherFiles.length > 0) {
+    handleOtherFiles(state, files)
+  }
+}
+
+async function handleOtherFiles(
+  state: CeState,
+  files: File[],
+) {
+  const fileList: FileLocal[] = []
+  const MB = 1024 * 1024
+
+  for(let i=0; i<files.length; i++) {
+    const v = files[i]
+    const suffix = valTool.getSuffix(v.name)
+    const obj: FileLocal = {
+      id: ider.createFileId(),
+      name: v.name,
+      lastModified: v.lastModified,
+      suffix,
+      size: v.size,
+      file: v,
+    }
+    fileList.push(obj)
+  }
+
+  const firstFile = fileList[0]
+  if(!firstFile) return
+  if(firstFile.size > 10 * MB) {
+    cui.showModal({
+      title_key: "tip.file_exceed_title",
+      content_key: "tip.file_exceed_content",
+      showCancel: false
+    })
+    return
+  }
+
+  state.files = fileList
+}
+
+async function handleImages(
+  state: CeState,
+  imgFiles: File[],
+) {
 
   const res = await imgHelper.compress(imgFiles)
   const res2 = await imgHelper.getMetaDataFromFiles(res)
@@ -138,4 +189,5 @@ async function handleFiles(
   res2.forEach(v => {
     state.images?.push(v)
   })
+
 }

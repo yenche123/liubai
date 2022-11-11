@@ -45,18 +45,29 @@ const {
   >
     <div class="cui-modal-bg"></div>
     <div class="cui-modal-box">
+
       <h1 v-if="modalData.title">{{ modalData.title }}</h1>
+      <h1 v-else-if="modalData.title_key">{{ t(modalData.title_key) }}</h1>
+
       <p v-if="modalData.content">{{ modalData.content }}</p>
+      <p v-else-if="modalData.content_key">{{ t(modalData.content_key) }}</p>
+
       <div class="cui-modal-btns">
         <div 
           v-if="modalData.showCancel" 
           class="cui-modal-btn"
           @click="onTapModalCancel"
-        >{{ modalData.cancelText }}</div>
+        >
+          <span v-if="modalData.cancelText">{{ modalData.cancelText }}</span>
+          <span v-else>{{ t('common.cancel') }}</span>
+        </div>
         <div 
           class="cui-modal-btn cui-modal-confirm"
           @click="onTapModalConfirm"
-        >{{ modalData.confirmText }}</div>
+        >
+          <span v-if="modalData.confirmText">{{ modalData.confirmText }}</span>
+          <span v-else>{{ t('common.confirm') }}</span>
+        </div>
       </div>
     </div>
   </div>
