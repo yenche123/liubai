@@ -20,6 +20,14 @@ export interface FileLocal {
   cloud_url?: string
 }
 
+export interface FileShow {
+  id: string
+  name: string
+  suffix: string   // 后缀的英文
+  size: number     // 单位为 bytes
+  cloud_url?: string
+}
+
 export interface ImageLocal {
   id: string
   name: string

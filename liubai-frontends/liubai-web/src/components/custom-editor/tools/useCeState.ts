@@ -12,7 +12,7 @@ import { getLocalPreference } from "../../../utils/system/local-preference";
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
 import time from "../../../utils/basic/time";
 import localReq from "./req/local-req"
-import type { ImageLocal } from "../../../types";
+import type { FileLocal, ImageLocal } from "../../../types";
 
 let initStamp = 0
 let editorContent: EditorCoreContent | null = null
@@ -47,7 +47,12 @@ export function useCeState(
 
   // 监听用户操作 images 的变化，去存储到 IndexedDB 上
   watch(() => state.images, (newV) => {
-    toImagesChange(state)
+    toFilesChange(state)
+  })
+
+  // 监听用户操作 files 的变化，去存储到 IndexedDB 上
+  watch(() => state.files, (newV) => {
+    toFilesChange(state)
   })
   
   const focused = ref(false)
@@ -116,17 +121,19 @@ export function useCeState(
   }
 }
 
-// 图片发生变化时，去保存
-function toImagesChange(state: CeState) {
+function _isRequiredChange() {
   const now = time.getTime()
 
-  // 刚刚才 setup，拒绝缓存 images
-  // 因为只是 images 初始化被赋值，获得的响应罢了
+  // 刚刚才 setup，拒绝缓存 images 或 files
   if(initStamp + 300 > now) {
-    return
+    return false
   }
+  return true
+}
 
-  collectState(state)
+// 图片发生变化时，去保存
+function toFilesChange(state: CeState) {
+  if(_isRequiredChange()) collectState(state)
 }
 
 
@@ -186,8 +193,6 @@ function collectState(state: CeState, instant: boolean = false) {
 }
 
 async function toSave(state: CeState) {
-  console.log("toSave.............")
-  
   const now = time.getTime()
 
   let insertedStamp = now
@@ -206,7 +211,8 @@ async function toSave(state: CeState) {
 
   // 响应式对象 转为普通对象
   if(isProxy(liuDesc)) liuDesc = toRaw(liuDesc)
-  let images = _getStoragedImages(state)
+  let images = _getStoragedFiles(state)
+  let files = _getStoragedFiles<FileLocal>(state, "files")
   let remindMe = isProxy(state.remindMe) ? toRaw(state.remindMe) : state.remindMe
 
   const draft: DraftLocalTable = {
@@ -221,6 +227,7 @@ async function toSave(state: CeState) {
     title: state.title,
     liuDesc,
     images,
+    files,
     whenStamp: state.whenStamp,
     remindMe,
     insertedStamp: insertedStamp,
@@ -237,14 +244,17 @@ async function toSave(state: CeState) {
 }
 
 
-function _getStoragedImages(state: CeState): ImageLocal[] | undefined {
-  if(!state.images || state.images.length < 1) return
-  const images = state.images
-  const newList: ImageLocal[] = []
-  for(let i=0; i<images.length; i++) {
-    const v = images[i]
+function _getStoragedFiles<T = ImageLocal>(
+  state: CeState, 
+  key: keyof CeState = "images"
+): T[] | undefined {
+  const files = state[key] as (T[] | undefined)
+  if(!files) return
+
+  const newList: T[] = []
+  for(let i=0; i<files.length; i++) {
+    const v = files[i]
     if(isReactive(v)) {
-      console.log("发现响应式的图片对象...........")
       newList.push(toRaw(v))
     }
     else {

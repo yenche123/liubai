@@ -106,6 +106,7 @@ async function initDraftFromDraft(
   state.whenStamp = draft.whenStamp
   state.remindMe = draft.remindMe
   state.images = draft.images
+  state.files = draft.files
   
   if(draft.liuDesc) {
     editor.commands.setContent({ type: "doc", content: draft.liuDesc })
@@ -124,6 +125,7 @@ async function initDraftFromThread(
   state.whenStamp = thread.whenStamp
   state.remindMe = _getRemindMeFromThread(thread)
   state.images = thread.images
+  state.files = thread.files
 
   if(thread.liuDesc) {
     let draftDesc = transferUtil.liuToTiptap(thread.liuDesc)
