@@ -1,4 +1,4 @@
-import { computed, reactive } from "vue";
+import { computed, reactive, ref } from "vue";
 import cui from "../../../custom-ui";
 import type { LiuRemindMe, LiuRemindEarly, LiuRemindLater } from "../../../../types/types-atom"
 import liuUtil from "../../../../utils/liu-util";
@@ -10,6 +10,7 @@ import type { SwitchChangeEmitOpt } from "../../../common/liu-switch/liu-switch.
 import type { MaData, MoreAreaEmits, MaContext } from "./types-cma"
 
 export function useMoreArea(emits: MoreAreaEmits) {
+  const selectFileEl = ref<HTMLInputElement | null>(null)
   const { t } = useI18n()
 
   // 仅存储 "UI" 信息即可，逻辑原子化信息会回传至 custom-editor
@@ -86,7 +87,22 @@ export function useMoreArea(emits: MoreAreaEmits) {
     e.stopPropagation()
   }
 
+  const onFileChange = () => {
+    const el = selectFileEl.value
+    if(!el) return
+    if(!el.files || !el.files.length) return
+    const files = liuUtil.getArrayFromFileList(el.files)
+    emits("filechange", files)
+    el.blur()
+  }
+
+  const onTapClearAttachment = (e: MouseEvent) => {
+    toClearAttachment(ctx)
+    e.stopPropagation()
+  }
+
   return { 
+    selectFileEl,
     data,
     remindMenu,
     onTapWhen,
@@ -97,6 +113,8 @@ export function useMoreArea(emits: MoreAreaEmits) {
     onSyncCloudChange,
     onTapAddTitle,
     onTapClearTitle,
+    onFileChange,
+    onTapClearAttachment,
   }
 }
 
@@ -108,18 +126,19 @@ async function toAddTitle(ctx: MaContext) {
     maxLength: 32,
   })
   if(!res.confirm || !res.value) return
-  ctx.data.title = res.value
   ctx.emits("titlechange", res.value)
 }
 
 function toClearTitle(ctx: MaContext) {
-  ctx.data.title = ""
   ctx.emits("titlechange", "")
+}
+
+function toClearAttachment(ctx: MaContext) {
+  ctx.emits("filechange", null)
 }
 
 function setNewRemind(ctx: MaContext, item?: MenuItem, index?: number) {
   if(!item || index === undefined) {
-    ctx.data.remindMeStr = ""
     ctx.emits("remindmechange", null)
     return
   }
@@ -137,7 +156,6 @@ function setNewRemind(ctx: MaContext, item?: MenuItem, index?: number) {
     return
   }
 
-  ctx.data.remindMeStr = item.text
   const r: LiuRemindMe = {
     type: remindType,
     early_minute: remindType === "early" ? (v as LiuRemindEarly) : undefined,
@@ -150,7 +168,6 @@ function setNewRemind(ctx: MaContext, item?: MenuItem, index?: number) {
 async function toSelectSpecificRemind(ctx: MaContext) {
   const res = await cui.showDatePicker({ minDate: new Date() })
   if(!res.confirm || !res.date) return
-  ctx.data.remindMeStr = liuUtil.showBasicDate(res.date)
   const r: LiuRemindMe = {
     type: "specific_time",
     specific_stamp: res.date.getTime()

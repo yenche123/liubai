@@ -24,6 +24,7 @@ export default defineComponent({
     remindmechange: (val: LiuRemindMe | null) => true,
     titlechange: (val: string) => true,
     synccloudchange: (val: boolean) => true,
+    filechange: (val: File[] | null) => true,
   },
   setup(props, { emit }){
     const critialPoint = 600
@@ -131,15 +132,27 @@ export default defineComponent({
 
       <!-- 加附件 -->
       <div class="liu-hover ma-item">
+
+        <input ref="selectFileEl" 
+          type="file" 
+          class="mai-input" 
+          @change="onFileChange"
+        />
+
         <div class="mai-icon">
           <svg-icon name="attachment" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
         <div class="mai-title">
-          <span>{{ t("editor.add_file") }}</span>
+          <span v-if="data.fileShow?.name">{{ data.fileShow.name }}</span>
+          <span v-else>{{ t("editor.add_file") }}</span>
         </div>
-        <div class="mai-footer">
+        <div v-if="data.fileShow?.name" class="liu-hover mai-footer" @click="onTapClearAttachment">
+          <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
+        </div>
+        <div v-else class="mai-footer">
           <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
         </div>
+        
       </div>
 
       <!-- 同步到云端 -->
@@ -243,6 +256,16 @@ export default defineComponent({
       width: 20px;
       height: 20px;
     }
+  }
+
+  .mai-input {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
   }
 
   .mai-switch-footer {

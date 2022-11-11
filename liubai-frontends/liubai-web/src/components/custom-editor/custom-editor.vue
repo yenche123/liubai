@@ -14,7 +14,7 @@ import { useCeState } from "./tools/useCeState";
 import { ref } from "vue";
 import CeFinishArea from "./ce-finish-area/ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
-import { useCeImage } from "./tools/useCeFile";
+import { useCeFile } from "./tools/useCeFile";
 import CeCovers from "./ce-covers/ce-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
 import { initCeState } from "./tools/initCeState";
@@ -35,7 +35,8 @@ const {
   covers,
   onClearCover,
   onCoversSorted,
-} = useCeImage(state)
+  onFileChange,
+} = useCeFile(state)
 
 const {
   moreRef,
@@ -94,6 +95,7 @@ const {
     @remindmechange="onRemindMeChange"
     @titlechange="onTitleChange"
     @synccloudchange="onSyncCloudChange"
+    @filechange="onFileChange"
   ></ce-more-area>
 
   <!-- 虚拟空间 用于避免完成按钮挡到其他地方 -->

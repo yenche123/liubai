@@ -26,6 +26,7 @@ export interface MoreAreaEmits {
   (event: "remindmechange", val: LiuRemindMe | null): void
   (event: "titlechange", val: string): void
   (event: "synccloudchange", val: boolean): void
+  (event: "filechange", val: File[] | null): void
 }
 
 export interface MaContext {

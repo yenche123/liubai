@@ -9,7 +9,7 @@ import cui from "../../custom-ui"
 import valTool from "../../../utils/basic/val-tool"
 import ider from "../../../utils/basic/ider"
 
-export function useCeImage(
+export function useCeFile(
   state: CeState,
 ) {
   
@@ -54,6 +54,10 @@ export function useCeImage(
     list.splice(index, 1)
   }
 
+  // 接收 来自 more-area 用户选择/移除 文件的响应
+  const onFileChange = (files: File[] | null) => {
+    whenFileChange(state, files)
+  }
 
   return { 
     selectImagesEl, 
@@ -61,7 +65,20 @@ export function useCeImage(
     covers, 
     onClearCover,
     onCoversSorted,
+    onFileChange,
   }
+}
+
+function whenFileChange(
+  state: CeState,
+  files: File[] | null
+) {
+  if(!files || files.length < 1) {
+    if(state.files) delete state.files
+    return
+  }
+
+  handleOtherFiles(state, files)
 }
 
 function whenCoversSorted(
@@ -143,7 +160,7 @@ async function handleFiles(
   }
 }
 
-async function handleOtherFiles(
+function handleOtherFiles(
   state: CeState,
   files: File[],
 ) {
