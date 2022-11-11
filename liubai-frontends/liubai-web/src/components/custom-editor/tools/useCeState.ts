@@ -48,21 +48,17 @@ export function useCeState(
   // 监听用户操作 images 的变化，去存储到 IndexedDB 上
   watch(() => state.images, (newV) => {
     toFilesChange(state)
-  })
+    checkCanSubmit(state, canSubmitRef)
+  }, { deep: true })
 
   // 监听用户操作 files 的变化，去存储到 IndexedDB 上
   watch(() => state.files, (newV) => {
     toFilesChange(state)
-  })
+  }, { deep: true })
   
   const focused = ref(false)
   const gs = useGlobalStateStore()
   let timeout = 0
-
-  // 监听 covers 发生改变....
-  watch(() => state.images, (newV) => {
-    checkCanSubmit(state, canSubmitRef)
-  })
 
   const _setFocus = (newV: boolean) => {
     if(timeout) clearTimeout(timeout)
