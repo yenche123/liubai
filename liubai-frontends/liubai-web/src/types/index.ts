@@ -16,6 +16,8 @@ export interface FileLocal {
   id: string
   name: string
   lastModified: number       // 文件最后修改的时间戳，精确到 ms
+  suffix: string             // 后缀的英文
+  size: number               // 单位为 bytes
   file?: File
   cloud_url?: string
 }

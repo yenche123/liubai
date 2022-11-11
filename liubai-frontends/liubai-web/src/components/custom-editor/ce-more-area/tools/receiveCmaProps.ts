@@ -6,6 +6,7 @@ import { LiuRemindMe } from "../../../../types/types-atom";
 import { REMIND_LATER, REMIND_EARLY } from "../../../../config/atom"
 import { useI18n } from "vue-i18n"
 import type { ComposerTranslation } from "vue-i18n"
+import { FileLocal, FileShow } from "../../../../types";
 
 export function receiveCmaProps(props: CmaProps, data: MaData) {
   const { t, locale } = useI18n()
@@ -39,6 +40,7 @@ function stateChanged(
     storageState, 
     title: newTitle = "",
     remindMe,
+    files: newFiles,
   } = state
 
   // 开始一个个字段判断
@@ -65,12 +67,39 @@ function stateChanged(
     data.title = newTitle
   }
 
+  // 文件
+  checkAttachment(data, newFiles)
+
   // 云同步
   const newSyncCloud = storageState === "CLOUD" || storageState === "WAIT_UPLOAD"
   if(newSyncCloud !== data.syncCloud) data.syncCloud = newSyncCloud
   const newDisabled = storageState === "ONLY_LOCAL"
   if(newDisabled !== data.scDisabled) data.scDisabled = newDisabled
   
+}
+
+function checkAttachment(
+  data: MaData,
+  newFiles?: FileLocal[],
+) {
+  const firstFile = newFiles?.[0]
+  if(!firstFile) {
+    if(data.fileShow) delete data.fileShow
+    return
+  }
+
+  const currentId = data.fileShow?.id
+  if(currentId === firstFile.id) return
+
+  const newFileShow: FileShow = {
+    id: firstFile.id,
+    name: firstFile.name,
+    suffix: firstFile.suffix,
+    size: firstFile.size,
+    cloud_url: firstFile.cloud_url,
+  }
+
+  data.fileShow = newFileShow
 }
 
 

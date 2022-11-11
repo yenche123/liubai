@@ -18,7 +18,6 @@ export function useMoreArea(emits: MoreAreaEmits) {
     remindMeStr: "",   // 提醒我
     title: "",      // 标题
     site: "",       // 地点名称，如果没有就显示经纬度
-    attachment: "",  // 附件名称
     syncCloud: true,
     scDisabled: false,
     remindType: "later",

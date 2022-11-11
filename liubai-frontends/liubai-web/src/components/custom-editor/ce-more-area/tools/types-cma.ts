@@ -1,3 +1,4 @@
+import { FileShow } from "../../../../types"
 import type { LiuRemindMe } from "../../../../types/types-atom"
 import { CeState } from "../../tools/types-ce"
 
@@ -9,7 +10,7 @@ export interface MaData {
   remindMeStr: string
   title: string
   site: string
-  attachment: string
+  fileShow?: FileShow
   syncCloud: boolean
   scDisabled: boolean
 
