@@ -32,10 +32,11 @@ export interface EditorCoreEmits {
   (event: "finish", data: EditorCoreContent): void
 }
 
-let lastEmpty: boolean
-let lastText: string
-let lastTriggetUpdate = 0    // update 事件防抖节流的标记
-
+interface EcContext {
+  lastEmpty: boolean
+  lastText: string
+  lastTriggetUpdate: number
+}
 
 export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
   const { t } = useI18n()
@@ -43,12 +44,18 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
   const extensions = initExtensions(props, emits, t)
   const content = props?.content ?? "<p></p>"
 
+  const ctx: EcContext = {
+    lastEmpty: true,
+    lastText: "",
+    lastTriggetUpdate: 0
+  }
+
   const editor = useEditor({
     content,
     extensions,
     editable: props.editMode,
     onUpdate({ editor }) {
-      onEditorUpdate(editor, props, emits)
+      onEditorUpdate(editor, props, emits, ctx)
     },
     onFocus({ editor }) {
       onEditorFocus(editor, emits)
@@ -58,25 +65,28 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
     }
   })
   
-  const numWhenSet = inject(editorSetKey, ref(0))
-  watch(numWhenSet, (newV) => {
-    if(newV > 0) setLastData(editor)
-  })
-
-  onMounted(async () => {
-    setLastData(editor)
-  })
+  // 编辑模式时，去初始化 lastEmpty / lastText
+  if(props.editMode) {
+    const numWhenSet = inject(editorSetKey, ref(0))
+    watch(numWhenSet, (newV) => {
+      if(newV > 0) setLastData(editor, ctx)
+    })
+    onMounted(() => {
+      setLastData(editor, ctx)
+    })
+  }
 
   return { editor }
 }
 
 function setLastData(
   editor: ShallowRef<TipTapEditor | undefined>,
+  ctx: EcContext,
 ) {
   const eee = editor.value
   if(!eee) return
-  lastEmpty = eee.isEmpty
-  lastText = eee.getText()
+  ctx.lastEmpty = eee.isEmpty
+  ctx.lastText = eee.getText()
 }
 
 function onEditorFocus(
@@ -104,37 +114,37 @@ function onEditorBlur(
 function onEditorUpdate(
   editor: TipTapEditor,
   props: EditorCoreProps,
-  emits: EditorCoreEmits
+  emits: EditorCoreEmits,
+  ctx: EcContext,
 ) {
   const html = editor.getHTML()
   const text = editor.getText()
   const json = editor.getJSON()
   const data = { html, text, json }
   const empty = editor.isEmpty
-  if(lastTriggetUpdate) clearTimeout(lastTriggetUpdate)
+  if(ctx.lastTriggetUpdate) clearTimeout(ctx.lastTriggetUpdate)
 
   // console.log("onEditorUpdate........")
   // console.log("lastEmpty: ", lastEmpty)
   // console.log("empty: ", empty)
   // console.log(" ")
 
-
-  if(lastEmpty !== empty) {
+  if(ctx.lastEmpty !== empty) {
     emits("update", data)
-    lastEmpty = empty
-    lastText = text
+    ctx.lastEmpty = empty
+    ctx.lastText = text
     return
   }
-  if(!text && !lastText) {
+  if(!text && !ctx.lastText) {
     console.log("onEditorUpdate 被阻断了................")
     return
   }
 
-  lastTriggetUpdate = setTimeout(() => {
-    lastTriggetUpdate = 0
+  ctx.lastTriggetUpdate = setTimeout(() => {
+    ctx.lastTriggetUpdate = 0
     emits("update", data)
-    lastEmpty = empty
-    lastText = text
+    ctx.lastEmpty = empty
+    ctx.lastText = text
   }, 150)
 }
 
