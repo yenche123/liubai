@@ -114,7 +114,12 @@ export default defineComponent({
     margin-inline-end: 1px;
   }
 
-  p::selection, code::selection, em::selection, strong::selection, br::selection {
+  p::selection, 
+  code::selection, 
+  em::selection, 
+  strong::selection, 
+  br::selection, 
+  s::selection {
     background-color: var(--select-bg);
   }
 
