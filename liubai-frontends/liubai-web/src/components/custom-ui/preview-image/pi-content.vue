@@ -27,16 +27,10 @@ export default defineComponent({
   },
   methods: {
     onSwiper(swiper: Swiper) {
-      // console.log("onSwiper............")
-      // console.log("看一下 swiper")
-      // console.log(swiper)
-      // console.log(" ")
-      
       swiper.activeIndex = this.currentIndex
     },
-    onSlideChange() {
-      console.log("onSlideChange..............")
-    },
+
+    onSlideChange() {},
   },
 })
 

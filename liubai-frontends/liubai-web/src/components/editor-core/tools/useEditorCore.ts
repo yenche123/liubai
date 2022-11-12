@@ -60,8 +60,6 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
   
   const numWhenSet = inject(editorSetKey, ref(0))
   watch(numWhenSet, (newV) => {
-    console.log("watch numWhenSet 被触发........")
-    console.log(newV)
     if(newV > 0) setLastData(editor)
   })
 
