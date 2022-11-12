@@ -3,16 +3,23 @@
 
 
 import { TipTapEditor } from "../../../types/types-editor"
-import { computed, reactive, watchEffect } from "vue"
-import type { ShallowRef, ComputedRef } from "vue"
+import { computed, reactive, watchEffect, ref, provide } from "vue"
+import type { ShallowRef, ComputedRef, Ref } from "vue"
 import type { CeState } from "./types-ce"
 import { ContentLocalTable, DraftLocalTable } from "../../../types/types-table"
 import { LiuRemindMe } from "../../../types/types-atom"
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore"
 import localReq from "./req/local-req"
 import transferUtil from "../../../utils/transfer-util"
+import { editorSetKey } from "../../../utils/provide-keys"
 
 let space: ComputedRef<string>
+
+interface IcsContext {
+  state: CeState
+  editor: TipTapEditor
+  numWhenSet: Ref<number>
+}
 
 export function initCeState(
   props: { threadId?: string },
@@ -35,13 +42,20 @@ export function initCeState(
     storageState: "CLOUD",
     threadEdited: tId
   })
+  
+  const numWhenSet = ref(0)
+  provide(editorSetKey, numWhenSet)
 
   watchEffect(() => {
     const editorVal = editor.value
     const spaceVal = space.value
-    if(editorVal && spaceVal) {
-      initDraft(state, editorVal, tId)
+    if(!editorVal || !spaceVal) return
+    const ctx: IcsContext = {
+      state,
+      editor: editorVal,
+      numWhenSet,
     }
+    initDraft(ctx, tId)
   })
 
   return { state }
@@ -49,8 +63,7 @@ export function initCeState(
 
 // spaceId 有值的周期内，本地的 user_id 肯定存在了
 async function initDraft(
-  state: CeState,
-  editor: TipTapEditor,
+  ctx: IcsContext,
   threadId?: string,
 ) {
   let draft: DraftLocalTable | null = null
@@ -68,29 +81,30 @@ async function initDraft(
     // draft 编辑时间比较大的情况
     if(e1 > e2) {
       console.log("####### draft 编辑时间比较大的情况 ########")
-      if(draft) initDraftFromDraft(state, editor, draft)
+      if(draft) initDraftFromDraft(ctx, draft)
       return
     }
 
     // thread 编辑时间比较大的情况
     console.log("####### thread 编辑时间比较大的情况 ########")
 
-    if(thread) initDraftFromThread(state, editor, thread)
+    if(thread) initDraftFromThread(ctx, thread)
     if(draft) localReq.deleteDraftById(draft._id)
   }
   else {
     draft = await localReq.getDraft(space.value)
-    if(draft) initDraftFromDraft(state, editor, draft)
+    if(draft) initDraftFromDraft(ctx, draft)
     return
   }
 }
 
 // 尚未发表
 async function initDraftFromDraft(
-  state: CeState,
-  editor: TipTapEditor,
+  ctx: IcsContext,
   draft: DraftLocalTable,
 ) {
+  let { state, editor, numWhenSet } = ctx
+
   // 开始处理 draft 有值的情况
   state.draftId = draft._id
 
@@ -111,14 +125,15 @@ async function initDraftFromDraft(
   if(draft.liuDesc) {
     editor.commands.setContent({ type: "doc", content: draft.liuDesc })
     state.descInited = draft.liuDesc
+    numWhenSet.value++
   }
 }
 
 async function initDraftFromThread(
-  state: CeState,
-  editor: TipTapEditor,
+  ctx: IcsContext,
   thread: ContentLocalTable,
 ) {
+  let { state, editor, numWhenSet } = ctx
   state.visScope = thread.visScope
   state.storageState = thread.storageState
   state.title = thread.title
@@ -131,6 +146,7 @@ async function initDraftFromThread(
     let draftDesc = transferUtil.liuToTiptap(thread.liuDesc)
     editor.commands.setContent({ type: "doc", content: draftDesc })
     state.descInited = draftDesc
+    numWhenSet.value++
   }
 }
 

@@ -11,11 +11,12 @@ import Code from '@tiptap/extension-code'
 import { useI18n, ComposerTranslation } from 'vue-i18n'
 import { wrappingInputRule, nodeInputRule } from "@tiptap/core"
 import { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
-import { onMounted } from 'vue'
-import valTool from '../../../utils/basic/val-tool'
+import { inject, onMounted, ref, watch } from 'vue'
+import type { ShallowRef } from "vue"
 
 import { lowlight } from 'lowlight'
 import CodeBlockComponent from '../code-block-component/code-block-component.vue'
+import { editorSetKey } from '../../../utils/provide-keys'
 
 export interface EditorCoreProps {
   titlePlaceholder: string
@@ -56,26 +57,28 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
       onEditorBlur(editor, emits)
     }
   })
+  
+  const numWhenSet = inject(editorSetKey, ref(0))
+  watch(numWhenSet, (newV) => {
+    console.log("watch numWhenSet 被触发........")
+    console.log(newV)
+    if(newV > 0) setLastData(editor)
+  })
 
   onMounted(async () => {
-    const eee = editor.value
-    if(!eee) return
-    
-    lastEmpty = eee.isEmpty
-    lastText = eee.getText()
-
-    // 由于 外部的 editor.commonds.setContent() 不会触发 update 回调
-    // 所以这里使用了拍脑袋等 500ms 去看外部有无变化
-    // 待优化
-    await valTool.waitMilli(500)
-
-    const eee2 = editor.value
-    if(!eee2) return
-    lastEmpty = eee2.isEmpty
-    lastText = eee2.getText()
+    setLastData(editor)
   })
 
   return { editor }
+}
+
+function setLastData(
+  editor: ShallowRef<TipTapEditor | undefined>,
+) {
+  const eee = editor.value
+  if(!eee) return
+  lastEmpty = eee.isEmpty
+  lastText = eee.getText()
 }
 
 function onEditorFocus(
