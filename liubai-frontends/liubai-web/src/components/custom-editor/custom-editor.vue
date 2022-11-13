@@ -18,6 +18,7 @@ import { useCeFile } from "./tools/useCeFile";
 import CeCovers from "./ce-covers/ce-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
 import { initCeState } from "./tools/initCeState";
+import { useCePost } from "./tools/useCePost";
 
 const props = defineProps({
   lastBar: {
@@ -44,6 +45,14 @@ const {
   showVirtualBar,
 } = useMoreItems(props)
 
+const ctx = {
+  canSubmitRef,
+  editor,
+  state
+}
+
+const { toPost } = useCePost(ctx)
+
 const {
   focused,
   onEditorFocus,
@@ -54,8 +63,7 @@ const {
   onRemindMeChange,
   onTitleChange,
   onSyncCloudChange,
-} = useCeState(state, canSubmitRef)
-
+} = useCeState(state, canSubmitRef, toPost)
 
 
 </script>

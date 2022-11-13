@@ -1,7 +1,7 @@
 import type { LiuRemindMe } from "../../../types/types-atom";
 import type { StorageState, VisScope } from "../../../types/types-basic";
 import type { ImageLocal, FileLocal } from "../../../types"
-import { TipTapJSONContent } from "../../../types/types-editor";
+import { TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor";
 
 export interface CeState {
   draftId?: string
@@ -14,5 +14,11 @@ export interface CeState {
   remindMe?: LiuRemindMe
   images?: ImageLocal[]
   files?: FileLocal[]
-  descInited?: TipTapJSONContent[]  // 只在初始化时 从 initCeState 传递给 useCeState 所使用！
+  editorContent?: EditorCoreContent
+}
+
+export const defaultState: CeState = {
+  infoType: "THREAD",
+  visScope: "DEFAULT",
+  storageState: "CLOUD",
 }

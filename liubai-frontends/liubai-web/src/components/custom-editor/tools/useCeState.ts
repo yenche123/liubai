@@ -1,26 +1,26 @@
 
 import { ref, watch, computed, toRaw, isProxy, isReactive } from "vue";
-import { EditorCoreContent, TipTapJSONContent } from "../../../types/types-editor";
+import type { EditorCoreContent, TipTapJSONContent } from "../../../types/types-editor";
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
-import transfer from "../../../utils/transfer-util"
 import type { LiuRemindMe } from "../../../types/types-atom";
-import type { CeState } from "./types-ce"
+import type { CeState } from "./atom-ce"
 import type { ComputedRef, Ref } from "vue";
 import ider from "../../../utils/basic/ider";
 import { DraftLocalTable } from "../../../types/types-table";
 import { getLocalPreference } from "../../../utils/system/local-preference";
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
 import time from "../../../utils/basic/time";
-import localReq from "./req/local-req"
+import localReq from "./req/local-req";
 import type { FileLocal, ImageLocal } from "../../../types";
+import type { CepToPost } from "./useCePost"
 
 let initStamp = 0
-let editorContent: EditorCoreContent | null = null
 let space: ComputedRef<string>
 
 export function useCeState(
   state: CeState,
   canSubmitRef: Ref<boolean>,
+  toPost: CepToPost,
 ) {
 
   initStamp = time.getTime()
@@ -29,20 +29,6 @@ export function useCeState(
   space = computed(() => {
     if(!spaceStore.isCollaborative) return "ME"
     return spaceStore.spaceId
-  })
-
-  // 监听 输入框初始化的值
-  watch(() => state.descInited, (newV) => {
-    if(!newV || newV.length < 1) return
-    const content = newV
-    editorContent = {
-      json: { type: "doc", content },
-      text: transfer.tiptapToText(newV)
-    }
-    // console.log("看一下 自己生成的 text: ")
-    // console.log(editorContent.text)
-    // console.log(" ")
-    checkCanSubmit(state, canSubmitRef)
   })
 
   // 监听用户操作 images 的变化，去存储到 IndexedDB 上
@@ -69,23 +55,26 @@ export function useCeState(
   }
 
   const onEditorFocus = (data: EditorCoreContent) => {
-    editorContent = data
+    state.editorContent = data
     _setFocus(true)
   }
 
   const onEditorBlur = (data: EditorCoreContent) => {
-    editorContent = data
+    state.editorContent = data
     _setFocus(false)
   } 
 
   const onEditorUpdate = (data: EditorCoreContent) => {
-    editorContent = data
+    console.log("onEditorUpdate..............")
+    state.editorContent = data
     checkCanSubmit(state, canSubmitRef)
     collectState(state)
   }
 
   const onEditorFinish = (data: EditorCoreContent) => {
-    editorContent = data
+    state.editorContent = data
+    checkCanSubmit(state, canSubmitRef)
+
   }
 
   const onWhenChange = (date: Date | null) => {
@@ -137,7 +126,9 @@ function checkCanSubmit(
   state: CeState,
   canSubmitRef: Ref<boolean>,
 ) {
-  let newCanSubmit = Boolean(state.images?.length) || Boolean(editorContent?.text.trim())
+  const imgLength = state.images?.length
+  const text = state.editorContent?.text.trim()
+  let newCanSubmit = Boolean(imgLength) || Boolean(text)
   canSubmitRef.value = newCanSubmit
 }
 
@@ -200,8 +191,8 @@ async function toSave(state: CeState) {
   const draftId = state.draftId ?? ider.createDraftId()
   const { local_id: userId } = getLocalPreference()
   let liuDesc: TipTapJSONContent[] | undefined = undefined
-  if(editorContent?.json) {
-    const { type, content } = editorContent.json
+  if(state.editorContent?.json) {
+    const { type, content } = state.editorContent.json
     if(type === "doc" && content) liuDesc = content
   }
 

@@ -1,6 +1,6 @@
 import { toRef, watchEffect, toRaw } from "vue";
 import type { CmaProps, CmaRemindType, MaData } from "./types-cma";
-import type { CeState } from "../../tools/types-ce";
+import type { CeState } from "../../tools/atom-ce";
 import liuUtil from "../../../../utils/liu-util";
 import { LiuRemindMe } from "../../../../types/types-atom";
 import { REMIND_LATER, REMIND_EARLY } from "../../../../config/atom"

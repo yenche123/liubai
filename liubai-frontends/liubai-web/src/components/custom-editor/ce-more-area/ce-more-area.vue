@@ -5,7 +5,7 @@ import { mvKey } from "../../../utils/provide-keys"
 import LiuMenu from "../../common/liu-menu/liu-menu.vue"
 import type { LiuRemindMe } from "../../../types/types-atom";
 import { useMoreArea } from "./tools/useMoreArea";
-import { CeState } from '../tools/types-ce';
+import { CeState } from '../tools/atom-ce';
 import { receiveCmaProps } from "./tools/receiveCmaProps"
 
 export default defineComponent({

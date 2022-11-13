@@ -5,7 +5,8 @@
 import { TipTapEditor } from "../../../types/types-editor"
 import { computed, reactive, watchEffect, ref, provide } from "vue"
 import type { ShallowRef, ComputedRef, Ref } from "vue"
-import type { CeState } from "./types-ce"
+import type { CeState } from "./atom-ce"
+import { defaultState } from "./atom-ce"
 import { ContentLocalTable, DraftLocalTable } from "../../../types/types-table"
 import { LiuRemindMe } from "../../../types/types-atom"
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore"
@@ -37,9 +38,7 @@ export function initCeState(
   // 不能用 shallowReactive 
   // 因为 images 属性必须监听内部数据的变化
   let state = reactive<CeState>({
-    infoType: "THREAD",
-    visScope: "DEFAULT",
-    storageState: "CLOUD",
+    ...defaultState,
     threadEdited: tId
   })
   
@@ -123,8 +122,11 @@ async function initDraftFromDraft(
   state.files = draft.files
   
   if(draft.liuDesc) {
-    editor.commands.setContent({ type: "doc", content: draft.liuDesc })
-    state.descInited = draft.liuDesc
+    let text = transferUtil.tiptapToText(draft.liuDesc)
+    let json = { type: "doc", content: draft.liuDesc }
+
+    editor.commands.setContent(json)
+    state.editorContent = { text, json }
     numWhenSet.value++
   }
 }
@@ -143,9 +145,12 @@ async function initDraftFromThread(
   state.files = thread.files
 
   if(thread.liuDesc) {
-    let draftDesc = transferUtil.liuToTiptap(thread.liuDesc)
-    editor.commands.setContent({ type: "doc", content: draftDesc })
-    state.descInited = draftDesc
+    let draftDescJSON = transferUtil.liuToTiptap(thread.liuDesc)
+    let text = transferUtil.tiptapToText(draftDescJSON)
+    let json = { type: "doc", content: draftDescJSON }
+
+    editor.commands.setContent(json)
+    state.editorContent = { text, json }
     numWhenSet.value++
   }
 }

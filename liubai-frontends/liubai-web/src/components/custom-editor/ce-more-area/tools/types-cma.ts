@@ -1,6 +1,6 @@
 import { FileShow } from "../../../../types"
 import type { LiuRemindMe } from "../../../../types/types-atom"
-import { CeState } from "../../tools/types-ce"
+import { CeState } from "../../tools/atom-ce"
 
 
 export type CmaRemindType = "early" | "later"
