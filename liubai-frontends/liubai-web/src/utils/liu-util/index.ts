@@ -14,6 +14,10 @@ import {
   getOnlyImageFiles,
   getNotImageFiles,
 } from "./file-util"
+import {
+  toRawData,
+  getRawList
+} from "./vue-util"
 
 export default {
   getEnv,
@@ -29,4 +33,6 @@ export default {
   getArrayFromFileList,
   getOnlyImageFiles,
   getNotImageFiles,
+  toRawData,
+  getRawList,
 }

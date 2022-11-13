@@ -18,7 +18,7 @@ import { useCeFile } from "./tools/useCeFile";
 import CeCovers from "./ce-covers/ce-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
 import { initCeState } from "./tools/initCeState";
-import { useCePost } from "./tools/useCePost";
+import { useCeFinish } from "./tools/useCeFinish";
 
 const props = defineProps({
   lastBar: {
@@ -51,7 +51,7 @@ const ctx = {
   state
 }
 
-const { toPost } = useCePost(ctx)
+const { toFinish } = useCeFinish(ctx)
 
 const {
   focused,
@@ -63,7 +63,7 @@ const {
   onRemindMeChange,
   onTitleChange,
   onSyncCloudChange,
-} = useCeState(state, canSubmitRef, toPost)
+} = useCeState(state, canSubmitRef, toFinish)
 
 
 </script>

@@ -12,7 +12,8 @@ import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
 import time from "../../../utils/basic/time";
 import localReq from "./req/local-req";
 import type { FileLocal, ImageLocal } from "../../../types";
-import type { CepToPost } from "./useCePost"
+import type { CepToPost } from "./useCeFinish"
+import liuUtil from "../../../utils/liu-util";
 
 let initStamp = 0
 let space: ComputedRef<string>
@@ -20,7 +21,7 @@ let space: ComputedRef<string>
 export function useCeState(
   state: CeState,
   canSubmitRef: Ref<boolean>,
-  toPost: CepToPost,
+  toFinish: CepToPost,
 ) {
 
   initStamp = time.getTime()
@@ -74,7 +75,7 @@ export function useCeState(
   const onEditorFinish = (data: EditorCoreContent) => {
     state.editorContent = data
     checkCanSubmit(state, canSubmitRef)
-
+    toFinish()
   }
 
   const onWhenChange = (date: Date | null) => {
@@ -237,16 +238,6 @@ function _getStoragedFiles<T = ImageLocal>(
 ): T[] | undefined {
   const files = state[key] as (T[] | undefined)
   if(!files) return
-
-  const newList: T[] = []
-  for(let i=0; i<files.length; i++) {
-    const v = files[i]
-    if(isReactive(v)) {
-      newList.push(toRaw(v))
-    }
-    else {
-      newList.push(v)
-    }
-  }
+  const newList = liuUtil.getRawList(files)
   return newList
 }
