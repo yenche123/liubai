@@ -103,6 +103,7 @@ function _getThreadData(
   const liuList = list.length > 0 ? transferUtil.tiptapToLiu(list) : undefined
   const liuDesc = liuUtil.getRawList(liuList)
 
+  const storageState = state.storageState === 'CLOUD' ? 'WAIT_UPLOAD' : state.storageState
   const images = liuUtil.getRawList(state.images)
   const files = liuUtil.getRawList(state.files)
   const remindMe = liuUtil.toRawData(state.remindMe)
@@ -116,7 +117,7 @@ function _getThreadData(
     user,
     workspace: space.value,
     visScope: state.visScope,
-    storageState: state.storageState,
+    storageState,
     title: state.title,
     liuDesc,
     images,
