@@ -13,6 +13,7 @@ import liuUtil from "../../../utils/liu-util";
 import { LiuRemindMe } from "../../../types/types-atom";
 import localReq from "./req/local-req";
 import type { GlobalStateStore } from "../../../hooks/stores/useGlobalStateStore"
+import { ThreadStore } from "../../../hooks/stores/useThreadStore";
 
 // 本文件处理发表的逻辑
 
@@ -20,7 +21,7 @@ export interface CepContext {
   canSubmitRef: Ref<boolean>
   editor: ShallowRef<TipTapEditor | undefined>
   state: CeState
-  globalStore: GlobalStateStore
+  threadStore: ThreadStore
 }
 
 export type CepToPost = () => void
@@ -74,7 +75,7 @@ async function toRelease(ctx: CepContext) {
   ctx.editor.value?.commands.setContent("<p></p>")
 
   // 5. 通知全局 需要更新 threads
-  ctx.globalStore.$patch({ updatedThreadData: preThread })
+  ctx.threadStore.setNewThreads([preThread as ContentLocalTable])
 }
 
 function _resetState(state: CeState) {
