@@ -71,11 +71,11 @@ async function toRelease(ctx: CepContext) {
   // 3. 重置编辑器的 state
   _resetState(state)
 
-  // 4. 重置 editor
-  ctx.editor.value?.commands.setContent("<p></p>")
-
-  // 5. 通知全局 需要更新 threads
+  // 4. 通知全局 需要更新 threads
   ctx.threadStore.setNewThreads([preThread as ContentLocalTable])
+
+  // 5. 重置 editor
+  ctx.editor.value?.chain().setContent('<p></p>').focus().run()
 }
 
 function _resetState(state: CeState) {
