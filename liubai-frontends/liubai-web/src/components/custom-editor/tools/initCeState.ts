@@ -69,8 +69,8 @@ async function initDraft(
   if(threadId) {
     // 使用 lastWin 法则，比较 thread 和 draft
 
-    draft = await localReq.getDraftByThreadId(threadId, space.value)
-    let thread = await localReq.getThreadByThreadId(threadId, space.value)
+    draft = await localReq.getDraftByThreadId(threadId)
+    let thread = await localReq.getThreadByThreadId(threadId)
 
     if(!draft && !thread) return
     

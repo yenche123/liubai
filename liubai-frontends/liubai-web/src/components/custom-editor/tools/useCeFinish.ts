@@ -116,7 +116,6 @@ function _getThreadData(
     infoType: "THREAD",
     oState: "OK",
     user,
-    workspace: space.value,
     visScope: state.visScope,
     storageState,
     title: state.title,
@@ -129,6 +128,11 @@ function _getThreadData(
     remindMe,
     updatedStamp: now,
     editedStamp: now,
+  }
+
+  // 没有 threadEdited 代表当前是发表模式，必须设置 workspace
+  if(!state.threadEdited) {
+    aThread.workspace = space.value
   }
 
   return aThread
@@ -169,7 +173,34 @@ function _getRemindStamp(
 
 
 // 去更新
-function toUpdate(ctx: CepContext) {
+async function toUpdate(ctx: CepContext) {
+  const state = ctx.state
+  const preThread = _getThreadData(state)
+  if(!preThread) return
+
+  console.log("看一下 preThread.........")
+  console.log(preThread)
+  console.log(" ")
+
+  const threadId = state.threadEdited as string
+
+  // 1. 更新进 contents 表里
+  const res1 = await localReq.updateContent(threadId, preThread)
+  
+  // 2. 删除 drafts
+  if(state.draftId) await localReq.deleteDraftById(state.draftId)
+
+  // 3. 重置编辑器的 state
+  _resetState(state)
+
+  // 4. 重置 editor
+  ctx.editor.value?.chain().setContent('<p></p>').run()
+
+  // 5. 查找该 thread，然后通知全局
+  const theThread = await localReq.getThreadByThreadId(threadId)
+  if(theThread) {
+    ctx.threadStore.setUpdatedThreads([theThread])
+  }
 
 }
 

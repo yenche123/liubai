@@ -8,23 +8,21 @@ function _getUserId(): string {
   return local_id as string
 }
 
-async function getThreadByThreadId(threadId: string, workspace: string) {
+async function getThreadByThreadId(threadId: string) {
   const w: Partial<ContentLocalTable> = {
     _id: threadId,
     infoType: "THREAD",
     oState: "OK",
-    workspace,
   }
   const res = await db.contents.get(w)
   if(!res) return null
   return res
 }
 
-async function getDraftByThreadId(threadId: string, workspace: string) {
+async function getDraftByThreadId(threadId: string) {
   const w: Partial<DraftLocalTable> = {
     infoType: "THREAD",
     oState: "OK",
-    workspace,
     threadEdited: threadId,
   }
   const res = await db.drafts.get(w)
@@ -37,7 +35,7 @@ async function getDraftById(id: string) {
   return res
 }
 
-// 什么入参都没有，查看有没有 draft
+// 根据 workspace，来查询有没有 draft
 async function getDraft(workspace: string) {
   const user = _getUserId()
   const w: Partial<DraftLocalTable> = {
