@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, shallowRef } from "vue";
+import { ContentLocalTable } from "../../types/types-table";
 
 export const useGlobalStateStore = defineStore("globalState", () => {
 
@@ -15,9 +16,15 @@ export const useGlobalStateStore = defineStore("globalState", () => {
   // 是否正在拖动以排序图片
   const isDragToSort = ref(false)
 
+  // 被更新或被新增的 thread 数据
+  const updatedThreadData = shallowRef<ContentLocalTable>()
+
   return { 
     mainInputing, 
     canListenKeyboard,
     isDragToSort,
+    updatedThreadData,
   }
 })
+
+export type GlobalStateStore = ReturnType<typeof useGlobalStateStore>

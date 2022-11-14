@@ -61,6 +61,22 @@ async function setDraft(data: Partial<DraftLocalTable>) {
   return res
 }
 
+async function addContent(data: ContentLocalTable) {
+  const res = await db.contents.add(data)
+  console.log("查看 contents 被添加的结果.........")
+  console.log(res)
+  console.log(" ")
+  return res
+}
+
+async function updateContent(id: string, data: Partial<ContentLocalTable>) {
+  const res = await db.contents.update(id, data)
+  console.log("查看 contents 被更新的结果.........")
+  console.log(res)
+  console.log(" ")
+  return res
+}
+
 export default {
   getThreadByThreadId,
   getDraftByThreadId,
@@ -68,4 +84,6 @@ export default {
   getDraft,
   deleteDraftById,
   setDraft,
+  addContent,
+  updateContent,
 }

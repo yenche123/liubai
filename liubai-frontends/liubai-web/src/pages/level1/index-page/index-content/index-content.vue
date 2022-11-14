@@ -3,9 +3,20 @@ import cfg from "../../../../config"
 import CustomEditor from "../../../../components/custom-editor/custom-editor.vue"
 import AppLink from "../../../../components/common/app-link/app-link.vue"
 import { useIndexContent } from "./tools/useIndexContent";
+import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore";
+import { storeToRefs } from "pinia";
+import { watch } from "vue";
 
 const virtualHeight = cfg.navi_height / 3
 const { lastBar } = useIndexContent()
+
+const globalStore = useGlobalStateStore()
+const { updatedThreadData } = storeToRefs(globalStore)
+watch(updatedThreadData, (newV) => {
+  console.log("index-content 收到 updatedThreadData 发生了更新: ")
+  console.log(newV)
+  console.log(" ")
+})
 
 </script>
 <template>

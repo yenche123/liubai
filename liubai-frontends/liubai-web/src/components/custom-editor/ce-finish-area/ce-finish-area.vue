@@ -17,6 +17,10 @@ import { useI18n } from "vue-i18n";
 import liuUtil from "../../../utils/liu-util"
 const { t } = useI18n()
 
+const emits = defineEmits<{
+  (event: "confirm"): void
+}>()
+
 </script>
 <template>
 
@@ -28,7 +32,12 @@ const { t } = useI18n()
       <span class="cefa-tip"
         :class="{ 'cefa-tip_hidden': inCodeBlock }"
       >{{ liuUtil.getHelpTip('Mod_Enter') }}</span>
-      <custom-btn size="mini" class="cefa-btn" :disabled="!canSubmit">
+      <custom-btn 
+        size="mini" 
+        class="cefa-btn" 
+        :disabled="!canSubmit"
+        @click="emits('confirm')"
+      >
         <span>{{ t("common.finish") }}</span>
       </custom-btn>
     </div>

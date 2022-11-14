@@ -16,6 +16,7 @@ import type { CepToPost } from "./useCeFinish"
 import liuUtil from "../../../utils/liu-util";
 
 let initStamp = 0
+let collectTimeout = 0
 let space: ComputedRef<string>
 
 export function useCeState(
@@ -61,21 +62,28 @@ export function useCeState(
   }
 
   const onEditorBlur = (data: EditorCoreContent) => {
+    console.log("onEditorBlur..............")
     state.editorContent = data
     _setFocus(false)
   } 
 
   const onEditorUpdate = (data: EditorCoreContent) => {
-    console.log("onEditorUpdate..............")
     state.editorContent = data
     checkCanSubmit(state, canSubmitRef)
     collectState(state)
   }
 
+  const _prepareFinish = () => {
+    if(collectTimeout) clearTimeout(collectTimeout)
+    toFinish()
+  }
+
   const onEditorFinish = (data: EditorCoreContent) => {
+    console.log("onEditorFinish............")
+    console.log(" ")
     state.editorContent = data
     checkCanSubmit(state, canSubmitRef)
-    toFinish()
+    _prepareFinish()
   }
 
   const onWhenChange = (date: Date | null) => {
@@ -93,6 +101,12 @@ export function useCeState(
   const onSyncCloudChange = (val: boolean) => {
     toSyncCloudChange(val, state)
   }
+
+  const onTapFinish = () => {
+    console.log("onTapFinish...........")
+    console.log(" ")
+    _prepareFinish()
+  }
   
   return {
     focused,
@@ -104,6 +118,7 @@ export function useCeState(
     onRemindMeChange,
     onTitleChange,
     onSyncCloudChange,
+    onTapFinish,
   }
 }
 
@@ -168,7 +183,6 @@ function toSyncCloudChange(
 
 
 /****************** 收集信息、缓存 ***************/
-let collectTimeout = 0
 function collectState(state: CeState, instant: boolean = false) {
   if(collectTimeout) clearTimeout(collectTimeout)
   if(instant) {

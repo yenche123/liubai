@@ -11,6 +11,8 @@ import time from "../../../utils/basic/time";
 import transferUtil from "../../../utils/transfer-util";
 import liuUtil from "../../../utils/liu-util";
 import { LiuRemindMe } from "../../../types/types-atom";
+import localReq from "./req/local-req";
+import type { GlobalStateStore } from "../../../hooks/stores/useGlobalStateStore"
 
 // 本文件处理发表的逻辑
 
@@ -18,6 +20,7 @@ export interface CepContext {
   canSubmitRef: Ref<boolean>
   editor: ShallowRef<TipTapEditor | undefined>
   state: CeState
+  globalStore: GlobalStateStore
 }
 
 export type CepToPost = () => void
@@ -44,10 +47,46 @@ export function useCeFinish(ctx: CepContext) {
 }
 
 // 去发表
-function toRelease(ctx: CepContext) {
-  const preThread = _getThreadData(ctx.state)
+async function toRelease(ctx: CepContext) {
+  const state = ctx.state
+  const preThread = _getThreadData(state)
   if(!preThread) return
 
+  const now = time.getTime()
+  preThread._id = ider.createThreadId()
+  preThread.createdStamp = now
+  preThread.insertedStamp = now
+
+  console.log("看一下 preThread.........")
+  console.log(preThread)
+  console.log(" ")
+
+  // 1. 添加进 contents 表里
+  const res1 = await localReq.addContent(preThread as ContentLocalTable)
+  
+  // 2. 删除 drafts
+  if(state.draftId) await localReq.deleteDraftById(state.draftId)
+
+  // 3. 重置编辑器的 state
+  _resetState(state)
+
+  // 4. 重置 editor
+  ctx.editor.value?.commands.setContent("<p></p>")
+
+  // 5. 通知全局 需要更新 threads
+  ctx.globalStore.$patch({ updatedThreadData: preThread })
+}
+
+function _resetState(state: CeState) {
+  delete state.draftId
+  delete state.threadEdited
+  state.visScope = "DEFAULT"
+  delete state.title
+  delete state.whenStamp
+  delete state.remindMe
+  delete state.images
+  delete state.files
+  delete state.editorContent
 }
 
 
@@ -61,7 +100,8 @@ function _getThreadData(
   const { editorContent } = state
   const contentJSON = editorContent?.json
   const list = contentJSON?.type === "doc" && contentJSON.content ? contentJSON.content : []
-  const liuDesc =  list.length > 0 ? transferUtil.tiptapToLiu(list) : undefined
+  const liuList = list.length > 0 ? transferUtil.tiptapToLiu(list) : undefined
+  const liuDesc = liuUtil.getRawList(liuList)
 
   const images = liuUtil.getRawList(state.images)
   const files = liuUtil.getRawList(state.files)

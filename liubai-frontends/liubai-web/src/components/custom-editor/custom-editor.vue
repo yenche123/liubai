@@ -19,6 +19,7 @@ import CeCovers from "./ce-covers/ce-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
 import { initCeState } from "./tools/initCeState";
 import { useCeFinish } from "./tools/useCeFinish";
+import { useGlobalStateStore } from "../../hooks/stores/useGlobalStateStore";
 
 const props = defineProps({
   lastBar: {
@@ -45,12 +46,13 @@ const {
   showVirtualBar,
 } = useMoreItems(props)
 
+const globalStore = useGlobalStateStore()
 const ctx = {
   canSubmitRef,
   editor,
-  state
+  state,
+  globalStore
 }
-
 const { toFinish } = useCeFinish(ctx)
 
 const {
@@ -63,6 +65,7 @@ const {
   onRemindMeChange,
   onTitleChange,
   onSyncCloudChange,
+  onTapFinish,
 } = useCeState(state, canSubmitRef, toFinish)
 
 
@@ -112,6 +115,7 @@ const {
   <!-- 右小角: 提示字 + 按钮 -->
   <ce-finish-area :can-submit="canSubmitRef"
     :in-code-block="editor?.isActive('codeBlock') ?? false"
+    @confirm="onTapFinish"
   ></ce-finish-area>
 
 </div>
