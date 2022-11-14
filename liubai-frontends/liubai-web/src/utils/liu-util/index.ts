@@ -5,6 +5,9 @@ import {
   getDefaultDate, 
   areTheDatesEqual,
   showBasicDate,
+  formatStamp,
+  getLaterStamp,
+  getEarlyStamp,
 } from "./date-util";
 import {
   getAcceptImgTypesString,
@@ -27,6 +30,9 @@ export default {
   getDefaultDate,
   areTheDatesEqual,
   showBasicDate,
+  formatStamp,
+  getLaterStamp,
+  getEarlyStamp,
   getAcceptImgTypesString,
   getAcceptImgTypesArray,
   createObjURLs,

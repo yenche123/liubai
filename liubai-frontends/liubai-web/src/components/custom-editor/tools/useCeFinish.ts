@@ -10,6 +10,7 @@ import type { CeState } from "./atom-ce"
 import time from "../../../utils/basic/time";
 import transferUtil from "../../../utils/transfer-util";
 import liuUtil from "../../../utils/liu-util";
+import { LiuRemindMe } from "../../../types/types-atom";
 
 // 本文件处理发表的逻辑
 
@@ -65,6 +66,9 @@ function _getThreadData(
   const images = liuUtil.getRawList(state.images)
   const files = liuUtil.getRawList(state.files)
   const remindMe = liuUtil.toRawData(state.remindMe)
+  const calendarStamp = _getCalendarStamp(state.whenStamp, remindMe)
+  const whenStamp = state.whenStamp ? liuUtil.formatStamp(state.whenStamp) : undefined
+  const remindStamp = _getRemindStamp(remindMe, whenStamp)
   
   const aThread: Partial<ContentLocalTable> = {
     infoType: "THREAD",
@@ -77,11 +81,9 @@ function _getThreadData(
     liuDesc,
     images,
     files,
-
-    // calendarStamp 待完善
-    // remindStamp   待完善
-
-    whenStamp: state.whenStamp,
+    calendarStamp,
+    remindStamp,
+    whenStamp,
     remindMe,
     updatedStamp: now,
     editedStamp: now,
@@ -90,6 +92,38 @@ function _getThreadData(
   return aThread
 }
 
+function _getCalendarStamp(
+  whenStamp: number | undefined,
+  remindMe: LiuRemindMe | undefined
+): number | undefined {
+  if(whenStamp) return liuUtil.formatStamp(whenStamp)
+  if(!remindMe) return
+  const { type, later, specific_stamp } = remindMe
+  if(type === "specific_time" && specific_stamp) {
+    return liuUtil.formatStamp(specific_stamp)
+  }
+
+  if(type === "later" && later) {
+    return liuUtil.getLaterStamp(later)
+  }
+}
+
+function _getRemindStamp(
+  remindMe: LiuRemindMe | undefined,
+  whenStamp: number | undefined,
+): number | undefined {
+  if(!remindMe) return
+  const { type, early_minute, later, specific_stamp } = remindMe
+  if(type === "specific_time" && specific_stamp) {
+    return liuUtil.formatStamp(specific_stamp)
+  }
+  if(type === "early" && typeof early_minute === 'number' && whenStamp) {
+    return liuUtil.getEarlyStamp(whenStamp, early_minute)
+  }
+  if(type === "later" && later) {
+    return liuUtil.getLaterStamp(later)
+  }
+}
 
 
 // 去更新

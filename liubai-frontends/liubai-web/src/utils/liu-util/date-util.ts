@@ -1,6 +1,8 @@
 import { isEqual, isToday, isTomorrow, isYesterday } from 'date-fns'
 import { i18n } from '../../locales'
+import { LiuRemindEarly, LiuRemindLater } from '../../types/types-atom'
 import { SupportedLocale } from '../../types/types-locale'
+import time from '../basic/time'
 import valTool from '../basic/val-tool'
 
 // 如果当前分钟数 < 30，获取下一个点的整点时间
@@ -59,4 +61,52 @@ export function showBasicDate(val: Date | number, lang?: SupportedLocale) {
   }
 
   return `${MON} ${dd} ${yy}, ${hr}:${min}`
+}
+
+
+/**
+ * 将一个时间戳转换为 "整 x 分"
+ * @param stamp 待转换的时间戳
+ * @param min 多少分钟来除，默认为 1，表示除以1分钟，若要化整到 5 分钟，则填 5
+ */
+export function formatStamp(
+  stamp: number,
+  min: number = 1
+) {
+  const A_MIN = 1000 * 60
+  let divisor = min * A_MIN
+
+  let remainder = stamp % divisor            // 准确时间戳到前一个整 x 分的差
+  if(remainder === 0) return stamp
+  let remainder2 = divisor - remainder       // 准确时间戳到后一个整 x 分的差
+  if(remainder < remainder2) return stamp - remainder
+  return stamp + remainder2
+}
+
+// 给定类型为 LiuRemindLater 的值，以当前时间为基准，计算出对应的时间戳
+// 并且四舍五入到对应的 "整分" 上
+export function getLaterStamp(val: LiuRemindLater): number {
+  const now = time.getTime()
+  const MIN = 1000 * 60
+  const HOUR = 60 * MIN
+  const DAY = 24 * HOUR
+
+  let diff = 0
+  if(val === "30min") diff = 30 * MIN
+  else if(val === "1hr") diff = HOUR
+  else if(val === "2hr") diff = 2 * HOUR
+  else if(val === "3hr") diff = 3 * HOUR
+  else if(val === "tomorrow_this_moment") diff = DAY
+
+  let laterStamp = now + diff
+  return formatStamp(laterStamp)
+}
+
+export function getEarlyStamp(
+  whenStamp: number, 
+  early_minute: LiuRemindEarly
+) {
+  const MIN = 1000 * 60
+  const earlyStamp = whenStamp - (early_minute * MIN)
+  return formatStamp(earlyStamp)
 }
