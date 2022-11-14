@@ -19,7 +19,6 @@ import CeCovers from "./ce-covers/ce-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
 import { initCeState } from "./tools/initCeState";
 import { useCeFinish } from "./tools/useCeFinish";
-import { useGlobalStateStore } from "../../hooks/stores/useGlobalStateStore";
 import { useThreadStore } from "../../hooks/stores/useThreadStore";
 
 const props = defineProps({
@@ -47,7 +46,6 @@ const {
   showVirtualBar,
 } = useMoreItems(props)
 
-const globalStore = useGlobalStateStore()
 const threadStore = useThreadStore()
 const ctx = {
   canSubmitRef,
