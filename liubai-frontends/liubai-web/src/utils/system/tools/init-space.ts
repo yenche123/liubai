@@ -38,11 +38,17 @@ async function whenRouteChange(
   const localP = getLocalPreference()
   const userId = localP.local_id
   if(!userId) return
-  const myList = await db.workspaces.where("infoType").equals("ME").and((v) => {
-    return v.owner === userId
-  }).toArray()
 
-  const mine = myList[0]
+  const g = {
+    infoType: "ME",
+    owner: userId
+  }
+  console.log("使用 g 去查找.........")
+  console.log(g)
+  console.log(" ")
+  const mine = await db.workspaces.get(g)
+  console.log("查找到我了......: ", mine)
+  
   if(!mine) return
   if(store.spaceId === mine._id) {
     return

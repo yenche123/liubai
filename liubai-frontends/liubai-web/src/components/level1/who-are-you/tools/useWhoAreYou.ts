@@ -45,9 +45,7 @@ async function whenSpaceChange(
   const localP = getLocalPreference()
   const userId = localP.local_id
   if(!userId) return
-  const myList = await db.members.where("user").equals(userId)
-    .and(v => v.workspace === newSpaceId).toArray()
-  const mine = myList[0]
+  const mine = await db.members.get({ user: userId, workspace: newSpaceId })
   if(!mine) return
   if(!mine.name) _open(show)
 }
@@ -58,8 +56,10 @@ async function saveMyName(name: string) {
   const userId = localP.local_id
   if(!userId) return
   if(!spaceId) return
-  const res = await db.members.where("user").equals(userId)
-    .and(v => v.workspace === spaceId).modify({ name })
+  const res = await db.members.where({ user: userId, workspace: spaceId }).modify({ name })
+  console.log("查看 saveMyName 的结果.......")
+  console.log(res)
+  console.log(" ")
 }
 
 function _open(show: Ref<boolean>) {
