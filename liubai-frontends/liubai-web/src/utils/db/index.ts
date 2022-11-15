@@ -5,6 +5,7 @@ import type {
   MemberLocalTable,
   DraftLocalTable,
   ContentLocalTable,
+  CollectionLocalTable,
 } from "../../types/types-table"
 
 /**
@@ -22,15 +23,17 @@ export class LiuDexie extends Dexie {
   members!: Table<MemberLocalTable>
   drafts!: Table<DraftLocalTable>
   contents!: Table<ContentLocalTable>
+  collections!: Table<CollectionLocalTable>
 
   constructor() {
     super('LiubaiDatabase')
-    this.version(9).stores({
-      users: "_id, user_id, oState, createdStamp, updatedStamp, lastRefresh",
-      workspaces: "_id, space_id, infoType, oState, owner, createdStamp, updatedStamp",
-      members: "_id, member_id, name, workspace, createdStamp, updatedStamp, oState, user",
+    this.version(10).stores({
+      users: "_id, cloud_id, oState, insertedStamp, updatedStamp, lastRefresh",
+      workspaces: "_id, cloud_id, infoType, oState, owner, insertedStamp, updatedStamp",
+      members: "_id, cloud_id, name, workspace, insertedStamp, updatedStamp, oState, user",
       drafts: "_id, [infoType+oState+user+workspace]",
-      contents: "_id, content_id, infoType, oState, user, workspace, insertedStamp, updatedStamp"
+      contents: "_id, cloud_id, infoType, oState, user, workspace, insertedStamp, updatedStamp",
+      collections: "_id, cloud_id, infoType, user"
     })
   }
 

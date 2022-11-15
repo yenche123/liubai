@@ -50,7 +50,7 @@ async function createUser(
   const data: UserLocalTable = {
     _id: user_local,
     oState: "NORMAL",
-    createdStamp: t,
+    insertedStamp: t,
     updatedStamp: t,
     lastRefresh: t,
     workspaces: [workspace_local]
@@ -76,7 +76,7 @@ async function createWorkspace(
     infoType: "ME",
     oState: "OK",
     owner: user_local,
-    createdStamp: t,
+    insertedStamp: t,
     updatedStamp: t,
   }
   try {
@@ -98,7 +98,7 @@ async function createMember(
   const data: MemberLocalTable = {
     _id: member_local,
     workspace: workspace_local,
-    createdStamp: t,
+    insertedStamp: t,
     updatedStamp: t,
     user: user_local,
     oState: "OK",

@@ -4,33 +4,30 @@ import type { LiuContent, LiuRemindMe, StatusView, TagView } from "./types-atom"
 import type { FileLocal, ImageLocal } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
 
-export interface UserLocalTable {
+interface BaseLocalTable {
   _id: string
-  user_id?: string
-  oState: "NORMAL"
-  createdStamp: number
+  cloud_id?: string
+  insertedStamp: number
   updatedStamp: number
+}
+
+export interface UserLocalTable extends BaseLocalTable{
+  oState: "NORMAL"
   lastRefresh: number
   email?: string
   phone?: string
   workspaces: string[]
 }
 
-export interface WorkspaceLocalTable {
-  _id: string
-  space_id?: string
+export interface WorkspaceLocalTable extends BaseLocalTable {
   infoType: "ME" | "TEAM"
   statusList?: StatusView[]
   tagList?: TagView[]
   oState: OState
   owner: string
-  createdStamp: number
-  updatedStamp: number
 }
 
-export interface MemberLocalTable {
-  _id: string
-  member_id?: string
+export interface MemberLocalTable extends BaseLocalTable {
   name?: string
   avatar?: {
     file: File
@@ -38,15 +35,11 @@ export interface MemberLocalTable {
     url0?: string
   }
   workspace: string
-  createdStamp: number
-  updatedStamp: number
   user: string
   oState: "OK" | "LEFT" | "DELETED"
 }
 
-export interface ContentLocalTable {
-  _id: string
-  content_id?: string
+export interface ContentLocalTable extends BaseLocalTable {
   infoType: "THREAD" | "COMMENT"
   oState: "OK" | "REMOVED" | "DELETED"
   user: string
@@ -62,15 +55,10 @@ export interface ContentLocalTable {
   whenStamp?: number
   remindMe?: LiuRemindMe
   createdStamp: number      // 动态被创建的时间戳
-  insertedStamp: number
-  updatedStamp: number      // 该行数据被更新的时间戳
   editedStamp: number       // 动态被编辑的时间戳
 }
 
-
-export interface DraftLocalTable {
-  _id: string
-  draft_id?: string
+export interface DraftLocalTable extends BaseLocalTable {
   infoType: "THREAD" | "COMMENT"
   oState: "OK" | "POSTED" | "DELETED"
   user: string
@@ -88,7 +76,14 @@ export interface DraftLocalTable {
   files?: FileLocal[]
   whenStamp?: number
   remindMe?: LiuRemindMe
-  insertedStamp: number
-  updatedStamp: number      // 该行数据被更新的时间戳
   editedStamp: number       // 草稿被用户实际编辑的时间戳
+}
+
+export interface CollectionLocalTable extends BaseLocalTable {
+  user: string
+  infoType: "EXPRESS" | "FAVORITE"
+  forType: "THREAD" | "COMMENT"
+  thread_id?: string
+  comment_id?: string
+  emoji?: string
 }
