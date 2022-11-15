@@ -3,14 +3,16 @@ import { firstCreate } from "./tools/first-create"
 import { getLocalPreference, setLocalPreference } from "./local-preference"
 import { useWorkspaceStore } from "../../hooks/stores/useWorkspaceStore"
 import { initSpace } from "./tools/init-space"
+import { findSystem } from "./tools/find-sytem"
 
 export async function init() {
   const store = useWorkspaceStore()
   const env = liuUtil.getEnv()
 
+  initSpace(store)
+
   // 当前为登录模式，则忽略
   if(env.API_URL) {
-    initSpace(store)
     return
   }
 
@@ -18,8 +20,11 @@ export async function init() {
   if(localPf.local_id) {
     // 【待完善】去修改 User 表里的 lastRefresh
     // 【待完善】去初始化 workspace id
-    initSpace(store)
-    return
+    const isOk = await findSystem(localPf.local_id)
+    if(isOk) {
+      console.log("万事 Ok！")
+      return
+    }
   }
 
   // 去创建 user / workspace / member

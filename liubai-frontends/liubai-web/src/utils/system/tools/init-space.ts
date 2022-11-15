@@ -43,11 +43,10 @@ async function whenRouteChange(
     infoType: "ME",
     owner: userId
   }
-  console.log("使用 g 去查找.........")
-  console.log(g)
-  console.log(" ")
+
+  console.time("init-space")
   const mine = await db.workspaces.get(g)
-  console.log("查找到我了......: ", mine)
+  console.timeEnd("init-space")
   
   if(!mine) return
   if(store.spaceId === mine._id) {

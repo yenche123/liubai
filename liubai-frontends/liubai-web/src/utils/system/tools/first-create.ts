@@ -6,6 +6,7 @@ import type {
   MemberLocalTable 
 } from "../../../types/types-table"
 import ider from '../../basic/ider'
+import localReq from "./local-req"
 
 interface CreateData {
   user_local: string
@@ -27,14 +28,14 @@ export async function firstCreate(tryNum: number = 1): Promise<CreateData | null
   }
   const res2 = await createWorkspace(workspace_local, user_local)
   if(!res2) {
-    _deleteUser(user_local)
+    localReq.deleteUser(user_local)
     const res0 = await firstCreate(tryNum + 1)
     return res0
   }
   const res3 = await createMember(member_local, workspace_local, user_local)
   if(!res3) {
-    _deleteUser(user_local)
-    _deleteWorkspace(workspace_local)
+    localReq.deleteUser(user_local)
+    localReq.deleteWorkspace(workspace_local)
     const res0 = await firstCreate(tryNum + 1)
     return res0
   }
@@ -111,18 +112,4 @@ async function createMember(
   }
   
   return true
-}
-
-async function _deleteUser(user_local: string) {
-  const del = await db.users.delete(user_local)
-  console.log("user 被删除了.........")
-  console.log(del)
-  console.log(" ")
-}
-
-async function _deleteWorkspace(workspace_local: string) {
-  const del = await db.workspaces.delete(workspace_local)
-  console.log("workspace 被删除了.........")
-  console.log(del)
-  console.log(" ")
 }
