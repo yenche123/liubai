@@ -143,8 +143,9 @@ function checkCanSubmit(
   canSubmitRef: Ref<boolean>,
 ) {
   const imgLength = state.images?.length
+  const fileLength = state.files?.length
   const text = state.editorContent?.text.trim()
-  let newCanSubmit = Boolean(imgLength) || Boolean(text)
+  let newCanSubmit = Boolean(imgLength) || Boolean(text) || Boolean(fileLength)
   canSubmitRef.value = newCanSubmit
 }
 
