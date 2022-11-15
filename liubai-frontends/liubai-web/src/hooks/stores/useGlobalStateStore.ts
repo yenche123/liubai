@@ -16,14 +16,10 @@ export const useGlobalStateStore = defineStore("globalState", () => {
   // 是否正在拖动以排序图片
   const isDragToSort = ref(false)
 
-  // 被更新或被新增的 thread 数据
-  const updatedThreadData = shallowRef<ContentLocalTable>()
-
   return { 
     mainInputing, 
     canListenKeyboard,
     isDragToSort,
-    updatedThreadData,
   }
 })
 
