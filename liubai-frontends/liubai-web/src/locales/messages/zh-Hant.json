@@ -94,6 +94,7 @@
   "tip": {
     "tip": "提示",
     "file_exceed_title": "文件最大存取大小為 10 MB",
-    "file_exceed_content": "如果有更大存取的需要，我们推薦使用專門的雲端服務"
+    "file_exceed_content": "如果有更大存取的需要，我们推薦使用專門的雲端服務",
+    "max_pic_num": "最多顯示 {num} 張圖片"
   }
 }

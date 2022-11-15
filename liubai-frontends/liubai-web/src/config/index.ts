@@ -22,5 +22,8 @@ export default {
 
   // 文本编辑器最低尺寸
   min_editor_height: 100,
+
+  // 单则动态最大上传的图片数
+  max_picture_num: 9,
   
 }

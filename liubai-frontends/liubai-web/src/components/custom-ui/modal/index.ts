@@ -14,10 +14,24 @@ interface ModalParam {
   content?: string
   title_key?: string      // 用于 i18n
   content_key?: string    // 用于 i18n
+  title_opt?: Record<string, any>    // 用于 i18n t() 函数的第二个参数
+  content_opt?: Record<string, any>  // 用于 i18n t() 函数的第二个参数
   showCancel?: boolean
   cancelText?: string
   confirmText?: string
   success?: (res: ModalSuccessRes) => void
+}
+
+interface ModalData {
+  title: string
+  title_key: string
+  title_opt?: Record<string, any>
+  content: string
+  content_key: string
+  content_opt?: Record<string, any>
+  showCancel: boolean
+  cancelText: string
+  confirmText: string
 }
 
 type ModalResolver = (res: ModalSuccessRes) => void
@@ -29,7 +43,7 @@ const enable = ref(false)
 const show = ref(false)
 const TRANSITION_DURATION = 120 // 200
 
-const modalData = reactive({
+const modalData = reactive<ModalData>({
   title: "",
   title_key: "",
   content: "",
@@ -85,6 +99,8 @@ const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
   modalData.content_key = opt.content_key ?? ""
   modalData.cancelText = opt.cancelText ?? ""
   modalData.confirmText = opt.confirmText ?? ""
+  modalData.title_opt = opt.title_opt
+  modalData.content_opt = opt.content_opt
 
   if(typeof opt.showCancel === "boolean") {
     modalData.showCancel = opt.showCancel

@@ -8,6 +8,7 @@ import type { Ref } from "vue"
 import cui from "../../custom-ui"
 import valTool from "../../../utils/basic/val-tool"
 import ider from "../../../utils/basic/ider"
+import cfg from "../../../config"
 
 export function useCeFile(
   state: CeState,
@@ -200,11 +201,24 @@ async function handleImages(
   imgFiles: File[],
 ) {
 
+  state.images = state.images ?? []
+  const hasLength = state.images.length
+  const canPushNum = cfg.max_picture_num - hasLength
+  if(canPushNum <= 0) {
+    cui.showModal({
+      title_key: "tip.tip",
+      content_key: "tip.max_pic_num",
+      content_opt: { num: cfg.max_picture_num },
+      showCancel: false
+    })
+    return
+  }
+
   const res = await imgHelper.compress(imgFiles)
   const res2 = await imgHelper.getMetaDataFromFiles(res)
-  state.images = state.images ?? []
-  res2.forEach(v => {
-    state.images?.push(v)
+
+  res2.forEach((v, i) => {
+    if(i < canPushNum) state.images?.push(v)
   })
 
 }

@@ -47,9 +47,11 @@ const {
     <div class="cui-modal-box">
 
       <h1 v-if="modalData.title">{{ modalData.title }}</h1>
+      <h1 v-else-if="modalData.title_key && modalData.title_opt">{{ t(modalData.title_key, modalData.title_opt) }}</h1>
       <h1 v-else-if="modalData.title_key">{{ t(modalData.title_key) }}</h1>
 
       <p v-if="modalData.content">{{ modalData.content }}</p>
+      <p v-else-if="modalData.content_key && modalData.content_opt">{{ t(modalData.content_key, modalData.content_opt) }}</p>
       <p v-else-if="modalData.content_key">{{ t(modalData.content_key) }}</p>
 
       <div class="cui-modal-btns">
