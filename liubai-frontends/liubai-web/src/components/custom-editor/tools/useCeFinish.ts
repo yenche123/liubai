@@ -13,7 +13,7 @@ import liuUtil from "../../../utils/liu-util";
 import { LiuRemindMe } from "../../../types/types-atom";
 import localReq from "./req/local-req";
 import type { GlobalStateStore } from "../../../hooks/stores/useGlobalStateStore"
-import { ThreadStore } from "../../../hooks/stores/useThreadStore";
+import type { ThreadStore } from "../../../hooks/stores/useThreadStore";
 
 // 本文件处理发表的逻辑
 
@@ -27,17 +27,25 @@ export interface CepContext {
 export type CepToPost = () => void
 
 let space: ComputedRef<string>
+let member: ComputedRef<string>
 
 export function useCeFinish(ctx: CepContext) {
 
-  const spaceStore = useWorkspaceStore()  
+  const spaceStore = useWorkspaceStore()
   space = computed(() => {
     if(!spaceStore.isCollaborative) return "ME"
     return spaceStore.spaceId
   })
-
+  member = computed(() => {
+    console.log("在 useCeFinish 里查看一下 member")
+    const val = spaceStore.memberId
+    console.log(val)
+    console.log(" ")
+    return val
+  })
 
   const toFinish: CepToPost = () => {
+    if(!member.value) return
     if(!ctx.canSubmitRef.value) return
     const { threadEdited } = ctx.state
     if(threadEdited) toUpdate(ctx)
@@ -49,12 +57,18 @@ export function useCeFinish(ctx: CepContext) {
 
 // 去发表
 async function toRelease(ctx: CepContext) {
+  
+  const { local_id: user } = getLocalPreference()
+  if(!user) return
+
   const state = ctx.state
   const preThread = _getThreadData(state)
   if(!preThread) return
 
   const now = time.getTime()
   preThread._id = ider.createThreadId()
+  preThread.user = user
+  preThread.member = member.value
   preThread.createdStamp = now
   preThread.insertedStamp = now
 
@@ -91,12 +105,11 @@ function _resetState(state: CeState) {
 }
 
 
-// 只有 _id / createdStamp / insertedStamp 没有被添加进 state
+// 只有 _id / createdStamp / insertedStamp / user / member 
+// 没有被添加进 state
 function _getThreadData(
   state: CeState,
 ) {
-  const { local_id: user } = getLocalPreference()
-  if(!user) return
   const now = time.getTime()
   const { editorContent } = state
   const contentJSON = editorContent?.json
@@ -115,7 +128,6 @@ function _getThreadData(
   const aThread: Partial<ContentLocalTable> = {
     infoType: "THREAD",
     oState: "OK",
-    user,
     visScope: state.visScope,
     storageState,
     title: state.title,

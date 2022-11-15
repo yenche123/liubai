@@ -4,6 +4,7 @@ import { getLocalPreference, setLocalPreference } from "./local-preference"
 import { useWorkspaceStore } from "../../hooks/stores/useWorkspaceStore"
 import { initSpace } from "./tools/init-space"
 import { findSystem } from "./tools/find-sytem"
+import type { SpaceAndMemberOpt } from "../../hooks/stores/useWorkspaceStore"
 
 export async function init() {
   const store = useWorkspaceStore()
@@ -30,7 +31,16 @@ export async function init() {
   // 去创建 user / workspace / member
   let createData = await firstCreate()
   if(!createData) return
-  setLocalPreference("local_id", createData.user_local)
-  store.setSpace(createData.workspace_local)
+  const { workspace, member, user } = createData
+  setLocalPreference("local_id", user._id)
+  
+  const opt: SpaceAndMemberOpt = {
+    spaceId: workspace._id,
+    memberId: member._id,
+    isCollaborative: false,
+    currentSpace: workspace,
+    myMember: member
+  }
+  store.setSpaceAndMember(opt)
 }
 

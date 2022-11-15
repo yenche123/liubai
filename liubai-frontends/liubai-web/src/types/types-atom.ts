@@ -86,5 +86,3 @@ export interface TagView {
   updatedStamp: number
   children?: TagView[]
 }
-
-export type SpaceType = "ME" | "TEAM"

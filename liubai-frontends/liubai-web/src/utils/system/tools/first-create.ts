@@ -9,9 +9,9 @@ import ider from '../../basic/ider'
 import localReq from "./local-req"
 
 interface CreateData {
-  user_local: string
-  workspace_local: string
-  member_local: string
+  user: UserLocalTable
+  workspace: WorkspaceLocalTable
+  member: MemberLocalTable
 }
 
 export async function firstCreate(tryNum: number = 1): Promise<CreateData | null> {
@@ -21,32 +21,32 @@ export async function firstCreate(tryNum: number = 1): Promise<CreateData | null
   const workspace_local = ider.createWorkspaceId()
   const member_local = ider.createMemberId()
 
-  const res1 = await createUser(user_local, workspace_local)
-  if(!res1) {
+  const user = await createUser(user_local, workspace_local)
+  if(!user) {
     const res0 = await firstCreate(tryNum + 1)
     return res0
   }
-  const res2 = await createWorkspace(workspace_local, user_local)
-  if(!res2) {
+  const workspace = await createWorkspace(workspace_local, user_local)
+  if(!workspace) {
     localReq.deleteUser(user_local)
     const res0 = await firstCreate(tryNum + 1)
     return res0
   }
-  const res3 = await createMember(member_local, workspace_local, user_local)
-  if(!res3) {
+  const member = await createMember(member_local, workspace_local, user_local)
+  if(!member) {
     localReq.deleteUser(user_local)
     localReq.deleteWorkspace(workspace_local)
     const res0 = await firstCreate(tryNum + 1)
     return res0
   }
 
-  return { user_local, workspace_local, member_local }
+  return { user, workspace, member }
 }
 
 async function createUser(
   user_local: string,
   workspace_local: string,
-) {
+): Promise<UserLocalTable | void> {
   const t = time.getTime()
   const data: UserLocalTable = {
     _id: user_local,
@@ -61,16 +61,16 @@ async function createUser(
     const res = await db.users.add(data)
   }
   catch(err) {
-    return false
+    return
   }
   
-  return true
+  return data
 }
 
 async function createWorkspace(
   workspace_local: string,
   user_local: string,
-) {
+): Promise<WorkspaceLocalTable | void> {
   const t = time.getTime()
   const data: WorkspaceLocalTable = {
     _id: workspace_local,
@@ -84,17 +84,17 @@ async function createWorkspace(
     const res = await db.workspaces.add(data)
   }
   catch(err) {
-    return false
+    return
   }
   
-  return true
+  return data
 }
 
 async function createMember(
   member_local: string,
   workspace_local: string,
   user_local: string,
-) {
+): Promise<MemberLocalTable | void> {
   const t = time.getTime()
   const data: MemberLocalTable = {
     _id: member_local,
@@ -108,8 +108,8 @@ async function createMember(
     const res = await db.members.add(data)
   }
   catch(err) {
-    return false
+    return
   }
   
-  return true
+  return data
 }

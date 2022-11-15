@@ -24,7 +24,7 @@ export interface WorkspaceLocalTable extends BaseLocalTable {
   statusList?: StatusView[]
   tagList?: TagView[]
   oState: OState
-  owner: string
+  owner?: string
 }
 
 export interface MemberLocalTable extends BaseLocalTable {
@@ -35,14 +35,15 @@ export interface MemberLocalTable extends BaseLocalTable {
     url0?: string
   }
   workspace: string
-  user: string
+  user?: string
   oState: "OK" | "LEFT" | "DELETED"
 }
 
 export interface ContentLocalTable extends BaseLocalTable {
   infoType: "THREAD" | "COMMENT"
   oState: "OK" | "REMOVED" | "DELETED"
-  user: string
+  user?: string
+  member: string
   workspace: string
   visScope: VisScope
   storageState: StorageState
@@ -80,7 +81,8 @@ export interface DraftLocalTable extends BaseLocalTable {
 }
 
 export interface CollectionLocalTable extends BaseLocalTable {
-  user: string
+  user?: string
+  member: string
   infoType: "EXPRESS" | "FAVORITE"
   forType: "THREAD" | "COMMENT"
   thread_id?: string
