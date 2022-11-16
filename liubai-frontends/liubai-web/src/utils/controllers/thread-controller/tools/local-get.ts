@@ -32,7 +32,10 @@ async function getList(
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
     tmp = tmp.limit(10)
+
+    console.time("查询首页")
     list = await tmp.toArray()
+    console.timeEnd("查询首页")
   }
   else {
     // 查询首页以后
@@ -41,8 +44,12 @@ async function getList(
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
     tmp = tmp.limit(10)
+    console.time("查询非首页")
     list = await tmp.toArray()
+    console.timeEnd("查询非首页")
   }
+
+  console.log(" ")
   
   return list
 }
