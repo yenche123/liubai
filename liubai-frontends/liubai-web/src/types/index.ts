@@ -1,5 +1,5 @@
 
-import { SupportedLocale } from "./types-locale"
+import type { SupportedLocale } from "./types-locale"
 
 export type SupportedTheme = "light" | "dark"
 export type LocalTheme = SupportedTheme | "system"
@@ -48,7 +48,6 @@ export interface ImageShow {
   height?: number
   h2w?: string
 }
-
 
 export interface LiuUser {
   local_id: string
