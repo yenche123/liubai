@@ -1,7 +1,7 @@
 
 import type { OState, VisScope, StorageState } from "./types-basic"
 import type { LiuContent, LiuRemindMe, StatusView, TagView } from "./types-atom"
-import type { FileShow, ImageShow } from "./index"
+import type { FileLocal, ImageShow } from "./index"
 
 
 export interface EmojiSystem {
@@ -28,18 +28,18 @@ export interface ThreadShow {
   insertedStamp: number
   updatedStamp: number
   oState: OState
-  user?: string
-  member: string
+  user_id?: string
+  member_id: string
   workspace: string
   visScope: VisScope
   storageState: StorageState
   title?: string
   liuDesc?: LiuContent[]
   images?: ImageShow[]
-  files?: FileShow[]
+  files?: FileLocal[]
   whenStamp?: number
   remindMe?: LiuRemindMe
-  creator: MemberShow         // 发表者本人的 memberShow
+  creator?: MemberShow         // 发表者本人的 memberShow
   isMine: boolean             // 是否为我所发表的
   myFavorite: boolean         // 是否已收藏
   myEmoji: string             // 是否点过表态，若点过则为 emoji 的 encodeURIComponent，若没有点过则为空字符串

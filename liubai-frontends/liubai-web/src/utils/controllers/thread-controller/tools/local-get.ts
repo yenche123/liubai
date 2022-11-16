@@ -2,8 +2,8 @@ import type { SortWay, OState } from "../../../../types/types-basic";
 import time from "../../../basic/time";
 import { db } from "../../../db";
 import type { TcListOption } from "../type";
-import { fastForward } from "../../tools/util-db"
 import { ContentLocalTable } from "../../../../types/types-table";
+import { equipThreads } from "../../equip-content/equip-content";
 
 async function getList(
   opt?: TcListOption
@@ -50,8 +50,13 @@ async function getList(
   }
 
   console.log(" ")
+
+  console.time("equipThreads")
+  let threads = await equipThreads(list)
+  console.timeEnd("equipThreads")
+  console.log(" ")
   
-  return list
+  return threads
 }
 
 function getData(

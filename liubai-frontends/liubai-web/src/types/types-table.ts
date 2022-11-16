@@ -30,11 +30,7 @@ export interface WorkspaceLocalTable extends BaseLocalTable {
 
 export interface MemberLocalTable extends BaseLocalTable {
   name?: string
-  avatar?: {
-    file: File
-    url?: string
-    url0?: string
-  }
+  avatar?: ImageLocal
   workspace: string
   user?: string
   oState: "OK" | "LEFT" | "DELETED"
@@ -90,7 +86,6 @@ export interface CollectionLocalTable extends BaseLocalTable {
   member: string
   infoType: "EXPRESS" | "FAVORITE"
   forType: "THREAD" | "COMMENT"
-  thread_id?: string
-  comment_id?: string
+  content_id: string
   emoji?: string
 }

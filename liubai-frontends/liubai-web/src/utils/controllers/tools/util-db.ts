@@ -1,6 +1,4 @@
 
-
-
 export type CriteriaFunc<T> = (row: T) => boolean
 
 // 参数 T 为行数据的类型

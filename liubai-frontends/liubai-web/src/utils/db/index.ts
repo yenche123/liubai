@@ -36,13 +36,15 @@ export class LiuDexie extends Dexie {
 
     let contentsIdx = "_id, createdStamp"
 
-    this.version(17).stores({
+    let collectionsIdx = "_id, content_id"
+
+    this.version(19).stores({
       users: "_id",
       workspaces: workspacesIdx,
       members: membersIdx,
       drafts: draftsIdx,
       contents: contentsIdx,
-      collections: "_id, cloud_id, infoType"
+      collections: collectionsIdx
     })
   }
 
