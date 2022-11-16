@@ -1,4 +1,5 @@
 // 动态加载管理器
+import type { SortWay } from "../../../types/types-basic"
 
 import localGet from "./tools/local-get"
 import cloudGet from "./tools/cloud-get"
@@ -13,6 +14,9 @@ export interface TcListOption {
   // 默认为 ME
   workspace?: string    
 
+  // 默认为降序，desc
+  sort?: SortWay
+
   // 已加载出来的最后一个 id 的 createdStamp，注意不是 insertedStamp
   lastCreatedStamp?: number
 }
@@ -24,13 +28,18 @@ export interface TcDataOption {
 
 
 async function getList(opt?: TcListOption) {
-  const { onlyLocal = true, workspace = "ME", lastCreatedStamp } = opt ?? {}
+  const { 
+    onlyLocal = true, 
+    workspace = "ME",
+    sort = "desc",
+    lastCreatedStamp,
+  } = opt ?? {}
 
   if(onlyLocal) {
-    localGet.getList(workspace, lastCreatedStamp)
+    localGet.getList(workspace, sort, lastCreatedStamp)
   }
   else {
-    cloudGet.getList(workspace, lastCreatedStamp)
+    cloudGet.getList(workspace, sort, lastCreatedStamp)
   }
   
 }

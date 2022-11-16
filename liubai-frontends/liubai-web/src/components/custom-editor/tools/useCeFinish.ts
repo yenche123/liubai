@@ -68,6 +68,8 @@ async function toRelease(
   preThread._id = ider.createThreadId()
   preThread.user = user
   preThread.member = member.value
+  preThread.commentNum = 0
+  preThread.emojiData = { total: 0, system: [] }
   preThread.createdStamp = now
   preThread.insertedStamp = now
 
@@ -113,7 +115,7 @@ function _resetState(state: CeState) {
 }
 
 
-// 只有 _id / createdStamp / insertedStamp / user / member 
+// _id / createdStamp / insertedStamp / user / member / commentNum / emojiData
 // 没有被添加进 state
 function _getThreadData(
   state: CeState,

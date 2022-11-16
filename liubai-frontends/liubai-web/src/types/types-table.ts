@@ -3,6 +3,7 @@ import type { OState, VisScope, StorageState } from "./types-basic"
 import type { LiuContent, LiuRemindMe, StatusView, TagView } from "./types-atom"
 import type { FileLocal, ImageLocal } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
+import type { EmojiData } from "./types-content"
 
 interface BaseLocalTable {
   _id: string
@@ -55,6 +56,10 @@ export interface ContentLocalTable extends BaseLocalTable {
   remindStamp?: number
   whenStamp?: number
   remindMe?: LiuRemindMe
+  commentNum?: number
+  emojiData: EmojiData
+  underThread?: string
+  replyTo?: string
   createdStamp: number      // 动态被创建的时间戳
   editedStamp: number       // 动态被编辑的时间戳
 }

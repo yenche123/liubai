@@ -1,8 +1,10 @@
+import { SortWay } from "../../../../types/types-basic";
 
 
 
 function getList(
-  workspace: string, 
+  workspace: string,
+  sort: SortWay,
   lastCreatedStamp?: number
 ) {
 
