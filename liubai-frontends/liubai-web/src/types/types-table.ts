@@ -41,7 +41,7 @@ export interface MemberLocalTable extends BaseLocalTable {
 
 export interface ContentLocalTable extends BaseLocalTable {
   infoType: "THREAD" | "COMMENT"
-  oState: "OK" | "REMOVED" | "DELETED"
+  oState: OState
   user?: string
   member: string
   workspace: string
