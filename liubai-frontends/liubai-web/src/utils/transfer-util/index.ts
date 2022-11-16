@@ -8,9 +8,7 @@ import { listToText } from "./text"
 function tiptapToLiu(list: TipTapJSONContent[]): LiuContent[] {
   list = trimJSONContent(list)
   
-  console.time("equit")
   list = equipLink(list)
-  console.timeEnd("equit")
 
   // 开始过滤掉未定义的标签
   const newList = filterNotLiuType(list)

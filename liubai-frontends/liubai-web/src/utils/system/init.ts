@@ -23,7 +23,7 @@ export async function init() {
     // 【待完善】去初始化 workspace id
     const isOk = await findSystem(localPf.local_id)
     if(isOk) {
-      console.log("万事 Ok！")
+      // console.log("万事 Ok！")
       return
     }
   }

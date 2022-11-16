@@ -73,17 +73,15 @@ export function useCeState(
     collectState(state)
   }
 
-  const _prepareFinish = () => {
+  const _prepareFinish = (focusRequired: boolean) => {
     if(collectTimeout) clearTimeout(collectTimeout)
-    toFinish()
+    toFinish(focusRequired)
   }
 
   const onEditorFinish = (data: EditorCoreContent) => {
-    console.log("onEditorFinish............")
-    console.log(" ")
     state.editorContent = data
     checkCanSubmit(state, canSubmitRef)
-    _prepareFinish()
+    _prepareFinish(true)
   }
 
   const onWhenChange = (date: Date | null) => {
@@ -103,9 +101,7 @@ export function useCeState(
   }
 
   const onTapFinish = () => {
-    console.log("onTapFinish...........")
-    console.log(" ")
-    _prepareFinish()
+    _prepareFinish(false)
   }
   
   return {
@@ -124,9 +120,10 @@ export function useCeState(
 
 function _isRequiredChange() {
   const now = time.getTime()
+  const diff = now - initStamp
 
   // 刚刚才 setup，拒绝缓存 images 或 files
-  if(initStamp + 300 > now) {
+  if(diff < 900) {
     return false
   }
   return true
@@ -134,7 +131,9 @@ function _isRequiredChange() {
 
 // 图片发生变化时，去保存
 function toFilesChange(state: CeState) {
-  if(_isRequiredChange()) collectState(state)
+  if(_isRequiredChange()) {
+    collectState(state)
+  }
 }
 
 

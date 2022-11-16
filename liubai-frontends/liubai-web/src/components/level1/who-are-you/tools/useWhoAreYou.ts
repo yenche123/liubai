@@ -9,8 +9,8 @@ export function useWhoAreYou() {
 
   store.$subscribe((mutation, state) => {
     const myMember = state.myMember
-    console.log("看一下 myMember: ", myMember)
-    console.log(" ")
+    // console.log("看一下 myMember: ", myMember)
+    // console.log(" ")
     if(!myMember) return
     if(!myMember.name) _open(show)
   })

@@ -12,7 +12,6 @@ import transferUtil from "../../../utils/transfer-util";
 import liuUtil from "../../../utils/liu-util";
 import { LiuRemindMe } from "../../../types/types-atom";
 import localReq from "./req/local-req";
-import type { GlobalStateStore } from "../../../hooks/stores/useGlobalStateStore"
 import type { ThreadStore } from "../../../hooks/stores/useThreadStore";
 
 // 本文件处理发表的逻辑
@@ -24,7 +23,7 @@ export interface CepContext {
   threadStore: ThreadStore
 }
 
-export type CepToPost = () => void
+export type CepToPost = (focusRequired: boolean) => void
 
 let space: ComputedRef<string>
 let member: ComputedRef<string>
@@ -37,26 +36,26 @@ export function useCeFinish(ctx: CepContext) {
     return spaceStore.spaceId
   })
   member = computed(() => {
-    console.log("在 useCeFinish 里查看一下 member")
     const val = spaceStore.memberId
-    console.log(val)
-    console.log(" ")
     return val
   })
 
-  const toFinish: CepToPost = () => {
+  const toFinish: CepToPost = (focusRequired: boolean) => {
     if(!member.value) return
     if(!ctx.canSubmitRef.value) return
     const { threadEdited } = ctx.state
     if(threadEdited) toUpdate(ctx)
-    else toRelease(ctx)
+    else toRelease(ctx, focusRequired)
   }
 
   return { toFinish }
 }
 
 // 去发表
-async function toRelease(ctx: CepContext) {
+async function toRelease(
+  ctx: CepContext,
+  focusRequired: boolean
+) {
   
   const { local_id: user } = getLocalPreference()
   if(!user) return
@@ -89,7 +88,13 @@ async function toRelease(ctx: CepContext) {
   ctx.threadStore.setNewThreads([preThread as ContentLocalTable])
 
   // 5. 重置 editor
-  ctx.editor.value?.chain().setContent('<p></p>').focus().run()
+  if(focusRequired) {
+    ctx.editor.value?.chain().setContent('<p></p>').focus().run()
+  }
+  else {
+    ctx.editor.value?.chain().setContent('<p></p>').run()
+  }
+  
 }
 
 function _resetState(state: CeState) {
