@@ -59,6 +59,7 @@ watch(show, async (newV) => {
     transition: .15s;
     border-bottom: 3px solid transparent;
     letter-spacing: 1px;
+    caret-color: var(--main-normal);
   }
 
   .wru-input:focus {
