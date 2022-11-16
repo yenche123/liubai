@@ -1,10 +1,8 @@
-import { SortWay } from "../../../../types/types-basic";
-
+import type { SortWay } from "../../../../types/types-basic";
+import type { TcListOption } from "../type"
 
 function getList(
-  workspace: string, 
-  sort: SortWay,
-  lastCreatedStamp?: number
+  opt?: TcListOption
 ) {
 
 }

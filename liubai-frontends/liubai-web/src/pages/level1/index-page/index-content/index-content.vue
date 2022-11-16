@@ -6,6 +6,7 @@ import { useIndexContent } from "./tools/useIndexContent";
 import { storeToRefs } from "pinia";
 import { watch } from "vue";
 import { useThreadStore } from "../../../../hooks/stores/useThreadStore";
+import ThreadList from "../../../../components/level1/thread-list/thread-list.vue"
 
 const virtualHeight = cfg.navi_height / 3
 const { lastBar } = useIndexContent()
@@ -28,9 +29,7 @@ watch(newThreads, (newV) => {
       <CustomEditor :last-bar="lastBar"></CustomEditor>
       <div class="mc-spacing"></div>
 
-      <div class="mc-test">
-        <AppLink to="?cid=sdfghjkhgfd">跳转到侧边栏详情页</AppLink>
-      </div>
+      <ThreadList></ThreadList>
 
     </div>
 
