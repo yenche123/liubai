@@ -87,12 +87,15 @@ async function toRelease(
   // 4. 通知全局 需要更新 threads
   ctx.threadStore.setNewThreads([preThread as ContentLocalTable])
 
+  
   // 5. 重置 editor
+  const editor = ctx.editor.value
+  if(!editor) return
   if(focusRequired) {
-    ctx.editor.value?.chain().setContent('<p></p>').focus().run()
+    editor.chain().setContent('<p></p>').focus().run()
   }
   else {
-    ctx.editor.value?.chain().setContent('<p></p>').run()
+    editor.chain().setContent('<p></p>').run()
   }
   
 }
