@@ -1,4 +1,4 @@
-import { isEqual, isToday, isTomorrow, isYesterday } from 'date-fns'
+import { isEqual, isToday, isTomorrow, isYesterday, min } from 'date-fns'
 import { i18n } from '../../locales'
 import type { LiuRemindEarly, LiuRemindLater, LiuRemindMe } from '../../types/types-atom'
 import { REMIND_LATER, REMIND_EARLY } from "../../config/atom"
@@ -23,7 +23,7 @@ export function areTheDatesEqual(d1: Date, d2: Date) {
   return isEqual(d1, d2)
 }
 
-// 在编辑态时，展示时间
+// 给定时间（戳），展示时间
 export function showBasicDate(val: Date | number, lang?: SupportedLocale) {
   let d = typeof val === "number" ? new Date(val) : val
   const curDate = new Date()
@@ -132,4 +132,49 @@ export function getRemindMeStr(
     return showBasicDate(specific_stamp)
   }
   return ""
+}
+
+export function getCountDownStr(
+  diffStamp: number
+) {
+
+  const { t, locale } = i18n.global
+  const lang = locale.value
+  const SEC = 1000
+  const MIN = 60 * SEC
+  const HOUR = 60 * MIN
+
+  // 剩下一秒钟内
+  if(diffStamp < 999) {
+    return "00:00"
+  }
+
+  let hr_num = 0
+  let min_num = 0
+  let sec_num = 0
+  let hr = ""
+  let min = ""
+  let sec = ""
+
+  // 剩下一小时内
+  if(diffStamp < HOUR) {
+    min_num = Math.floor(diffStamp / MIN)
+    sec_num = Math.round((diffStamp % MIN) / SEC)
+    min = lang === "en" ? valTool.format0(min_num) : String(min_num)
+    sec = lang === "en" ? valTool.format0(sec_num) : String(sec_num)
+    return t("date_related.countdown_1", { min, sec })
+  }
+
+  // 大于一小时的时候
+  hr_num = Math.floor(diffStamp / HOUR)
+  min_num = Math.round((diffStamp % HOUR) / MIN)
+  if(lang === "en") {
+    let tmp = `${hr_num} hr${hr_num > 1 ? "s" : ""} `
+    tmp += `${min_num} min${min_num > 1 ? "s" : ""} remaining`
+    return tmp
+  }
+
+  hr = String(hr_num)
+  min = String(min_num)
+  return t("date_related.countdown_2", { hr, min })
 }

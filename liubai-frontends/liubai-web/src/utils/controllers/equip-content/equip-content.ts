@@ -62,6 +62,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       images,
       files: v.files,
       whenStamp: v.whenStamp,
+      remindStamp: v.remindStamp,
       remindMe: v.remindMe,
       creator,
       isMine,

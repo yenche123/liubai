@@ -69,6 +69,8 @@
     "day_5": "五",
     "day_6": "六",
     "show_1": "{mm}/{dd} ({day}) {hr}:{min}",
+    "countdown_1": "剩餘 {min} 分 {sec} 秒",
+    "countdown_2": "剩餘 {hr} 小時 {min} 分鐘",
     "remind_early": [
       "準時", 
       "提前 10 分鐘", 

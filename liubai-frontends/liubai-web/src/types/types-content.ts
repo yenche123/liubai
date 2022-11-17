@@ -38,6 +38,7 @@ export interface ThreadShow {
   images?: ImageShow[]
   files?: FileLocal[]
   whenStamp?: number
+  remindStamp?: number
   remindMe?: LiuRemindMe
   creator?: MemberShow         // 发表者本人的 memberShow
   isMine: boolean             // 是否为我所发表的
