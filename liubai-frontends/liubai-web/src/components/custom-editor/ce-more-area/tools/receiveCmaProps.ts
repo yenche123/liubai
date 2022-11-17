@@ -2,7 +2,7 @@ import { toRef, watchEffect, toRaw } from "vue";
 import type { CmaProps, CmaRemindType, MaData } from "./types-cma";
 import type { CeState } from "../../tools/atom-ce";
 import liuUtil from "../../../../utils/liu-util";
-import { LiuRemindMe } from "../../../../types/types-atom";
+import type { LiuRemindMe } from "../../../../types/types-atom";
 import { REMIND_LATER, REMIND_EARLY } from "../../../../config/atom"
 import { useI18n } from "vue-i18n"
 import type { ComposerTranslation } from "vue-i18n"
@@ -57,7 +57,7 @@ function stateChanged(
   if(data.remindType !== newRemindType) data.remindType = newRemindType
 
   // 提醒我
-  const newRemindMeStr = _getRemindMeStr(t, remindMe)
+  const newRemindMeStr = liuUtil.getRemindMeStr(t, remindMe)
   if(newRemindMeStr !== data.remindMeStr) {
     data.remindMeStr = newRemindMeStr
   }

@@ -1,9 +1,11 @@
 import { isEqual, isToday, isTomorrow, isYesterday } from 'date-fns'
 import { i18n } from '../../locales'
-import { LiuRemindEarly, LiuRemindLater } from '../../types/types-atom'
+import type { LiuRemindEarly, LiuRemindLater, LiuRemindMe } from '../../types/types-atom'
+import { REMIND_LATER, REMIND_EARLY } from "../../config/atom"
 import { SupportedLocale } from '../../types/types-locale'
 import time from '../basic/time'
 import valTool from '../basic/val-tool'
+import type { ComposerTranslation } from "vue-i18n"
 
 // 如果当前分钟数 < 30，获取下一个点的整点时间
 // 否则获取下两个点的整点时间
@@ -109,4 +111,25 @@ export function getEarlyStamp(
   const MIN = 1000 * 60
   const earlyStamp = whenStamp - (early_minute * MIN)
   return formatStamp(earlyStamp)
+}
+
+
+export function getRemindMeStr(
+  t: ComposerTranslation,
+  remindMe?: LiuRemindMe
+) {
+  if(!remindMe) return ""
+  const { type, early_minute, later, specific_stamp } = remindMe
+  if(type === "early" && typeof early_minute === "number") {
+    const idx = REMIND_EARLY.indexOf(early_minute)
+    if(idx >= 0) return t(`date_related.remind_early[${idx}]`)
+  }
+  else if(type === "later" && later) {
+    const idx = REMIND_LATER.indexOf(later)
+    if(idx >= 0) return t(`date_related.remind_later[${idx}]`)
+  }
+  else if(type === "specific_time" && specific_stamp) {
+    return showBasicDate(specific_stamp)
+  }
+  return ""
 }
