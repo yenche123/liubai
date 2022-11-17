@@ -52,6 +52,7 @@ const onTapBtn = (e: Event) => {
   cursor: pointer;
   font-size: var(--btn-font);
   transition: .15s;
+  user-select: none;
 }
 
 .btn-mini {
