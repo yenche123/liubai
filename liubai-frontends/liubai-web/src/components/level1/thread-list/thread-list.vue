@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useThreadList } from './tools/useThreadList';
+import ThreadCard from './thread-card/thread-card.vue';
 
 const props = defineProps({
   viewType: {
@@ -18,8 +19,16 @@ const {
 
 </script>
 <template>
-  <div class="tl-test">
-    测试中
+  <div class="tl-container">
+
+    <template v-for="(item, index) in list">
+      
+      <ThreadCard 
+        :thread-data="item"
+      ></ThreadCard>
+    
+    </template>
+
   </div>
 </template>
 <style lang="scss">

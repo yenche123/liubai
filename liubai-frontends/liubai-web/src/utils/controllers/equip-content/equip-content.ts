@@ -6,6 +6,7 @@ import collectionController from "../collection-controller/collection-controller
 import type { MemberShow, ThreadShow } from "../../../types/types-content";
 import imgHelper from "../../images/img-helper";
 import { getLocalPreference } from "../../system/local-preference";
+import { TipTapJSONContent } from "../../../types/types-editor";
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
 
@@ -46,6 +47,9 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       return imgHelper.imageLocalToShow(v2)
     })
 
+    let tiptapContent: TipTapJSONContent | undefined = v.liuDesc?.length 
+      ? { type: "doc", content: v.liuDesc } : undefined
+
     const obj: ThreadShow = {
       _id,
       cloud_id: v.cloud_id,
@@ -58,7 +62,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       visScope: v.visScope,
       storageState: v.storageState,
       title: v.title,
-      liuDesc: v.liuDesc,
+      content: tiptapContent,
       images,
       files: v.files,
       whenStamp: v.whenStamp,

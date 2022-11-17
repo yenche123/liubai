@@ -10,7 +10,7 @@ import HorizontalRule from "@tiptap/extension-horizontal-rule"
 import Code from '@tiptap/extension-code'
 import { useI18n, ComposerTranslation } from 'vue-i18n'
 import { wrappingInputRule, nodeInputRule } from "@tiptap/core"
-import { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
+import type { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
 import { inject, onMounted, ref, watch } from 'vue'
 import type { ShallowRef } from "vue"
 

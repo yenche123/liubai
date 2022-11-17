@@ -1,10 +1,12 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { ThreadShow } from '../../../../types/types-content';
-
+import EditorCore from '../../../editor-core/editor-core.vue';
 
 export default defineComponent({
+  components: {
+    EditorCore
+  },
   props: {
     threadData: {
       type: Object as PropType<ThreadShow>,
@@ -15,9 +17,6 @@ export default defineComponent({
     }
   },
   setup(props) {
-    const { t } = useI18n()
-
-
 
   }
 })
@@ -28,7 +27,10 @@ export default defineComponent({
   <div class="tc-container">
 
     <div class="tc-box">
-
+      <EditorCore 
+        :edit-mode="false"
+        :content="threadData.content"
+      ></EditorCore>
     </div>
 
   </div>
@@ -41,16 +43,20 @@ export default defineComponent({
   border-radius: 20px;
   position: relative;
   background-color: var(--card-bg);
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--card-shadow-2);
   overflow: hidden;
-  transition: box-shadow .3s;
-  margin-bottom: 20px;
+  transition: border-radius .3s;
+  margin-bottom: 16px;
+
+  &:hover {
+    border-radius: 36px;
+  }
 
   .tc-box {
     width: 100%;
     box-sizing: border-box;
     padding: 20px;
-
+    position: relative;
   }
 
 

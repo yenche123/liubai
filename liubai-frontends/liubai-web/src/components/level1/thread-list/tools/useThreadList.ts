@@ -68,14 +68,6 @@ async function loadList(
   console.log(results)
   console.log(" ")
   
-  const length = results.length
-  if(length < 1) return
-  const lastOne = results[length - 1]
-  const results2 = await threadController.getList({ lastCreatedStamp: lastOne.createdStamp })
-  console.log("results2 结果.......")
-  console.log(results2)
-  console.log(" ")
-
-
+  ctx.list.value = results
 
 }

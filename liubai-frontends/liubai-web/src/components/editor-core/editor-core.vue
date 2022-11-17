@@ -2,9 +2,9 @@
 <script lang="ts">
 import { EditorContent } from '@tiptap/vue-3'
 import { useEditorCore } from './tools/useEditorCore'
-import { EditorCoreContent } from "../../types/types-editor"
+import type { EditorCoreContent, TipTapJSONContent } from "../../types/types-editor"
 import cfg from "../../config"
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 
 export default defineComponent({
   components: {
@@ -23,6 +23,9 @@ export default defineComponent({
       type: Boolean,
       default: true
     },
+    content: {
+      type: Object as PropType<TipTapJSONContent>
+    }
   },
   emits: {
     update: (payload: EditorCoreContent) => true,
@@ -52,7 +55,7 @@ export default defineComponent({
   font-size: var(--desc-font);
   line-height: 2;
   color: var(--main-normal);
-  min-height: v-bind("cfg.min_editor_height + 'px'");
+  min-height: v-bind("editMode ? cfg.min_editor_height + 'px' : 0");
   transition: .3s;
 
   p {

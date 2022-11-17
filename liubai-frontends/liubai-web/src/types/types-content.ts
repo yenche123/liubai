@@ -2,6 +2,7 @@
 import type { OState, VisScope, StorageState } from "./types-basic"
 import type { LiuContent, LiuRemindMe, StatusView, TagView } from "./types-atom"
 import type { FileLocal, ImageShow } from "./index"
+import type { TipTapJSONContent } from "./types-editor"
 
 
 export interface EmojiSystem {
@@ -34,7 +35,7 @@ export interface ThreadShow {
   visScope: VisScope
   storageState: StorageState
   title?: string
-  liuDesc?: LiuContent[]
+  content?: TipTapJSONContent
   images?: ImageShow[]
   files?: FileLocal[]
   whenStamp?: number
