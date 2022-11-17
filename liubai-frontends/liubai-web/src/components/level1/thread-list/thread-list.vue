@@ -4,7 +4,11 @@ import { useThreadList } from './tools/useThreadList';
 const props = defineProps({
   viewType: {
     type: String,
-    default: "",      // 默认为空，表示不区分
+    default: "",      // "": 默认; "TRASH": 回收站; "TAG": 标签; "FAVORITE": 收藏;
+  },
+  tagId: {
+    type: String,
+    default: "",
   }
 })
 

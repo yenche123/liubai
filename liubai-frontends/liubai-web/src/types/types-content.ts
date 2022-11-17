@@ -42,7 +42,9 @@ export interface ThreadShow {
   creator?: MemberShow         // 发表者本人的 memberShow
   isMine: boolean             // 是否为我所发表的
   myFavorite: boolean         // 是否已收藏
+  myFavoriteStamp?: number    // 我收藏时的时间戳
   myEmoji: string             // 是否点过表态，若点过则为 emoji 的 encodeURIComponent，若没有点过则为空字符串
+  myEmojiStamp?: number       // 我点赞时的时间戳
   commentNum: number          // 评论数
   emojiData: EmojiData
   createdStamp: number      // 动态被创建的时间戳

@@ -31,7 +31,7 @@ function stateChanged(
   t: ComposerTranslation,
 ) {
   
-  console.log("stateChanged，看此值有没有疯狂触发........")
+  // console.log("stateChanged，看此值有没有疯狂触发........")
   // console.log(JSON.stringify(toRaw(state)))
   // console.log(" ")
 

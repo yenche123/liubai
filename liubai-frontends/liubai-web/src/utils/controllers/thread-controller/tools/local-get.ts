@@ -33,9 +33,9 @@ async function getList(
     tmp = tmp.filter(filterFunc)
     tmp = tmp.limit(10)
 
-    console.time("查询首页")
+    // console.time("查询首页")
     list = await tmp.toArray()
-    console.timeEnd("查询首页")
+    // console.timeEnd("查询首页")
   }
   else {
     // 查询首页以后
@@ -44,17 +44,17 @@ async function getList(
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
     tmp = tmp.limit(10)
-    console.time("查询非首页")
+    // console.time("查询非首页")
     list = await tmp.toArray()
-    console.timeEnd("查询非首页")
+    // console.timeEnd("查询非首页")
   }
 
-  console.log(" ")
+  // console.log(" ")
 
-  console.time("equipThreads")
+  // console.time("equipThreads")
   let threads = await equipThreads(list)
-  console.timeEnd("equipThreads")
-  console.log(" ")
+  // console.timeEnd("equipThreads")
+  // console.log(" ")
   
   return threads
 }

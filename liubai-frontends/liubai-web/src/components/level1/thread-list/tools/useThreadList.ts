@@ -1,24 +1,65 @@
-import { ref } from "vue"
+import { onActivated, ref, toRefs, watch, watchEffect } from "vue"
 import { ThreadShow } from "../../../../types/types-content"
 import type { Ref } from "vue"
 import threadController from "../../../../utils/controllers/thread-controller/thread-controller"
+import { useRouteAndLiuRouter } from "../../../../routes/liu-router"
 
 interface TlProps {
   viewType: string
+  tagId: string
+}
+
+interface TlContext {
+  list: Ref<ThreadShow[]>
+  viewType: Ref<string>
+  tagId: Ref<string>
 }
 
 export function useThreadList(props: TlProps) {
+  let { viewType, tagId } = toRefs(props)
 
   const list = ref<ThreadShow[]>([])
+  const ctx: TlContext = {
+    list,
+    viewType,
+    tagId,
+  }
 
+  onActivated(() => {
+    console.log("onActivated!!!")
+    checkList(ctx)
+  })
 
-  loadList(list)
+  watch([viewType, tagId], ([newViewType, newTagId]) => {
+    console.log("newViewType: ", newViewType)
+    console.log("newTagId: ", newTagId)
+    console.log(" ")
+    loadList(ctx, true)
+  })
+  
 
   return { list }
 }
 
+// 页面 onActivated 或者窗口重新被 focus 时，触发该函数
+// 来判断要不要重新加载或局部更新
+function checkList(
+  ctx: TlContext
+) {
+  const { list } = ctx
+  if(list.value.length < 1) {
+    loadList(ctx)
+    return
+  }
+
+  // 局部更新技术
+  
+
+}
+
+
 async function loadList(
-  list: Ref<ThreadShow[]>,
+  ctx: TlContext,
   reload: boolean = false
 ) {
 

@@ -23,10 +23,19 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
     const v = contents[i]
     const { member, _id, user } = v
 
-    let myFavorite = collections.some(v2 => v2.content_id === _id && v2.infoType === "FAVORITE")
+    let myFavorite = false
+    let myFavoriteStamp: number | undefined
     let myEmoji = ""
+    let myEmojiStamp: number | undefined
     collections.forEach(v2 => {
-      if(v2.content_id === _id && v2.infoType === "EXPRESS" && v2.emoji) myEmoji = v2.emoji
+      if(v2.content_id === _id && v2.infoType === "EXPRESS" && v2.emoji) {
+        myEmoji = v2.emoji
+        myEmojiStamp = v2.insertedStamp
+      }
+      else if(v2.content_id === _id && v2.infoType === "FAVORITE") {
+        myFavorite = true
+        myFavoriteStamp = v2.insertedStamp
+      }
     })
 
     let creator = members.find(v2 => v2._id === member)
@@ -57,7 +66,9 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       creator,
       isMine,
       myFavorite,
+      myFavoriteStamp,
       myEmoji,
+      myEmojiStamp,
       commentNum: v.commentNum ?? 0,
       emojiData: v.emojiData,
       createdStamp: v.createdStamp,
