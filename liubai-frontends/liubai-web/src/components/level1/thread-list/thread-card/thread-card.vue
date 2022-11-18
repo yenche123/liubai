@@ -4,11 +4,13 @@ import { ThreadShow } from '../../../../types/types-content';
 import EditorCore from '../../../editor-core/editor-core.vue';
 import { useWhenAndRemind } from './tools/useWhenAndRemind';
 import TcWhenRemind from './tc-when-remind/tc-when-remind.vue';
+import TcActionbar from './tc-actionbar/tc-actionbar.vue';
 
 export default defineComponent({
   components: {
     EditorCore,
     TcWhenRemind,
+    TcActionbar,
   },
   props: {
     threadData: {
@@ -54,6 +56,14 @@ export default defineComponent({
         :remind-str="remindStr"
       ></TcWhenRemind>
 
+      <!-- 操作栏 -->
+      <TcActionbar
+        :workspace="threadData.workspace"
+        :comment-num="threadData.commentNum"
+        :emoji-num="threadData.emojiData.total"
+        :my-favorite="threadData.myFavorite"
+        :my-emoji="threadData.myEmoji"
+      ></TcActionbar>
       
     </div>
 
