@@ -1,11 +1,15 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
+
 
 defineProps({
   whenStr: String,
   remindStr: String
 })
 
-const default_color = "var(--other-btn-text)"
+const default_color = "var(--main-code)"
+
+const { t } = useI18n()
 
 </script>
 
@@ -15,26 +19,30 @@ const default_color = "var(--other-btn-text)"
     class="tcwr-container"
   >
 
-    <div v-if="whenStr" class="tcwr-item">
+    <div v-if="whenStr" class="liu-hover tcwr-item">
       <div class="tcwr-icon">
         <svg-icon name="when"
           class="tcwr-svgicon"
           :color="default_color"
         ></svg-icon>
       </div>
-      <div class="tcwr-title">
+      <div class="tcwr-title"
+        :aria-label="t('editor.when')"
+      >
         <span>{{ whenStr }}</span>
       </div>
     </div>
 
-    <div v-if="remindStr" class="tcwr-item">
+    <div v-if="remindStr" class="liu-hover tcwr-item">
       <div class="tcwr-icon">
         <svg-icon name="notification"
           class="tcwr-svgicon"
           :color="default_color"
         ></svg-icon>
       </div>
-      <div class="tcwr-title">
+      <div class="tcwr-title"
+        aria-label="提醒我"
+      >
         <span>{{ remindStr }}</span>
       </div>
     </div>
@@ -52,8 +60,11 @@ const default_color = "var(--other-btn-text)"
   .tcwr-item {
     display: flex;
     align-items: center;
-    height: 38px;
+    width: min-content;
+    min-width: 160px;
+    height: 40px;
     border-radius: 10px;
+    padding-inline-end: 10px;
     overflow: hidden;
 
     .tcwr-icon {
@@ -74,7 +85,7 @@ const default_color = "var(--other-btn-text)"
     .tcwr-title {
       font-size: var(--btn-font);
       font-weight: 400;
-      color: var(--other-btn-text);
+      color: var(--main-code);
       user-select: none;
       display: inline-block;
       white-space: nowrap;

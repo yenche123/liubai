@@ -47,7 +47,7 @@ const commentShow = computed(() => {
   return `${props.commentNum}`
 })
 
-const default_color = "var(--main-normal)"
+const default_color = "var(--main-code)"
 
 
 </script>
@@ -113,7 +113,6 @@ const default_color = "var(--main-normal)"
     margin-inline-end: 8px;
 
     .tcb-text {
-      padding-inline-start: 4px;
       font-size: var(--btn-font);
       color: var(--main-normal);
     }
