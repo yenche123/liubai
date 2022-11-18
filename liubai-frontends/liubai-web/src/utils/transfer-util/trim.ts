@@ -57,14 +57,14 @@ function trimTextContent(
     const v = content[i]
     let { type, text } = v
     if(type !== "text") break
-    v.text = text?.trim()
-    if(!v.text) {
+    let tmp = text?.trim()
+    if(!tmp) {
       content.splice(i, 1)
       if(dir > 0) i--
+      continue
     }
-    else {
-      break
-    }
+    v.text = dir > 0 ? text?.trimStart() : text?.trimEnd()
+    break
   }
 
   if(content.length === 0) content = undefined
