@@ -101,24 +101,3 @@ function checkAttachment(
 
   data.fileShow = newFileShow
 }
-
-
-function _getRemindMeStr(
-  t: ComposerTranslation,
-  remindMe?: LiuRemindMe
-) {
-  if(!remindMe) return ""
-  const { type, early_minute, later, specific_stamp } = remindMe
-  if(type === "early" && typeof early_minute === "number") {
-    const idx = REMIND_EARLY.indexOf(early_minute)
-    if(idx >= 0) return t(`date_related.remind_early[${idx}]`)
-  }
-  else if(type === "later" && later) {
-    const idx = REMIND_LATER.indexOf(later)
-    if(idx >= 0) return t(`date_related.remind_later[${idx}]`)
-  }
-  else if(type === "specific_time" && specific_stamp) {
-    return liuUtil.showBasicDate(specific_stamp)
-  }
-  return ""
-}

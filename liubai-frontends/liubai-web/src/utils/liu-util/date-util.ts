@@ -86,7 +86,6 @@ export function formatStamp(
 }
 
 // 给定类型为 LiuRemindLater 的值，以当前时间为基准，计算出对应的时间戳
-// 并且四舍五入到对应的 "整分" 上
 export function getLaterStamp(val: LiuRemindLater): number {
   const now = time.getTime()
   const MIN = 1000 * 60
@@ -101,7 +100,7 @@ export function getLaterStamp(val: LiuRemindLater): number {
   else if(val === "tomorrow_this_moment") diff = DAY
 
   let laterStamp = now + diff
-  return formatStamp(laterStamp)
+  return laterStamp
 }
 
 export function getEarlyStamp(
@@ -110,7 +109,7 @@ export function getEarlyStamp(
 ) {
   const MIN = 1000 * 60
   const earlyStamp = whenStamp - (early_minute * MIN)
-  return formatStamp(earlyStamp)
+  return earlyStamp
 }
 
 
