@@ -31,7 +31,12 @@
     "add_file": "加附件",
     "leave_codeBlock": "{tip} 离开代码块",
     "add_title2": "标题",
-    "title_ph": "请输入标题"
+    "title_ph": "请输入标题",
+    "image": "图片",
+    "bold": "粗体",
+    "italic": "斜体",
+    "strike": "删除线",
+    "more": "更多"
   },
   "cui": {
     "plz_input_txt": "请输入文字"

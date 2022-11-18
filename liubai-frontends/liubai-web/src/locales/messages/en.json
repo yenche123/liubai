@@ -31,7 +31,12 @@
     "add_file": "Add a file",
     "leave_codeBlock": "Press {tip} to leave",
     "add_title2": "Title",
-    "title_ph": "Please enter a title"
+    "title_ph": "Please enter a title",
+    "image": "Picture",
+    "bold": "Bold",
+    "italic": "Italic",
+    "strike": "Strikethrough",
+    "more": "More"
   },
   "cui": {
     "plz_input_txt": "Text here"

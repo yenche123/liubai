@@ -56,14 +56,14 @@
 
 .liu-hover {
   position: relative;
-  overflow: hidden;
-  border-radius: 8px;
   cursor: pointer;
 }
 
 .liu-hover::before {
   top: 0;
   left: 0;
+  border-radius: 8px;
+  overflow: hidden;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -83,6 +83,36 @@
 
 .liu-hover:active::before {
   opacity: .1;
+}
+
+.liu-hover[aria-label]::after {
+  content: attr(aria-label);
+  position: absolute;
+  top: 100%;
+  right: 50%;
+  padding: 0px 12px;
+  border-radius: 4px;
+  background-color: var(--cui-loading);
+  color: var(--on-cui-loading);
+  font-size: var(--mini-font);
+  font-weight: 400;
+  white-space: pre;
+  margin-top: 4px;
+  line-height: 2;
+  transform: translateX(50%);
+  user-select: none;
+  box-shadow: var(--cui-loading-shadow);
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 5210;
+  transition: opacity .15s;
+  transition-delay: 800ms;
+}
+
+.liu-hover[aria-label]:hover::after {
+  visibility: visible;
+  opacity: 1;
 }
 
 /** 对于毛玻璃的效果 */

@@ -3,6 +3,7 @@ import { defineComponent, ref } from 'vue';
 import type { PropType } from "vue"
 import { TipTapEditor } from "../../../types/types-editor"
 import liuUtil from "../../../utils/liu-util";
+import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
   props: {
@@ -26,7 +27,10 @@ export default defineComponent({
       emit("tapmore")
     }
 
+    const { t } = useI18n()
+
     return { 
+      t,
       liuUtil, 
       selectImagesEl, 
       onImageChange, 
@@ -41,12 +45,13 @@ export default defineComponent({
   <!-- 第一排工具栏 -->
   <div class="ce-toolbar">
     <!-- 图片 -->
-    <div class="liu-hover cet-item">
+    <div class="liu-hover cet-item" :aria-label="t('editor.image')">
       <input ref="selectImagesEl" 
         type="file" 
         :accept="liuUtil.getAcceptImgTypesString()" 
         class="ceti-input" 
         @change="onImageChange"
+        title=""
         multiple
       />
       <svg-icon name="editor-image" class="ceti-icon" :color="icon_color" />
@@ -56,6 +61,7 @@ export default defineComponent({
     <div class="liu-hover cet-item"
       :class="{ 'cet-item_selected': editor?.isActive('bold') }"
       @click="editor?.chain().focus().toggleBold().run()"
+      :aria-label="t('editor.bold')"
     >
       <svg-icon name="editor-bold" class="ceti-icon" :color="icon_color" />
     </div>
@@ -64,6 +70,7 @@ export default defineComponent({
     <div class="liu-hover cet-item"
       :class="{ 'cet-item_selected': editor?.isActive('italic') }"
       @click="editor?.chain().focus().toggleItalic().run()"
+      :aria-label="t('editor.italic')"
     >
       <svg-icon name="editor-italic" class="ceti-icon" :color="icon_color" />
     </div>
@@ -72,6 +79,7 @@ export default defineComponent({
     <div class="liu-hover cet-item"
       :class="{ 'cet-item_selected': editor?.isActive('strike') }"
       @click="editor?.chain().focus().toggleStrike().run()"
+      :aria-label="t('editor.strike')"
     >
       <svg-icon name="editor-strike" class="ceti-icon" :color="icon_color" />
     </div>
@@ -80,6 +88,7 @@ export default defineComponent({
     <div class="liu-hover cet-item"
       :class="{ 'cet-item_selected': more }"
       @click="onTapMore"
+      :aria-label="t('editor.more')"
     >
       <svg-icon name="more" class="ceti-icon ceti-more" 
         :class="{ 'ceti-more_open': more }"
@@ -105,7 +114,6 @@ export default defineComponent({
     align-items: center;
     justify-content: center;
     margin-inline-end: 8px;
-    position: relative;
 
     .ceti-input {
       width: 100%;
@@ -115,6 +123,7 @@ export default defineComponent({
       position: absolute;
       opacity: 0;
       cursor: pointer;
+      color: transparent;
     }
     
     .ceti-icon {

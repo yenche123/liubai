@@ -31,7 +31,12 @@
     "add_file": "加附件",
     "leave_codeBlock": "{tip} 離開程式編輯",
     "add_title2": "標題",
-    "title_ph": "請輸入標題"
+    "title_ph": "請輸入標題",
+    "image": "圖片",
+    "bold": "粗體",
+    "italic": "斜體",
+    "strike": "删除線",
+    "more": "更多"
   },
   "cui": {
     "plz_input_txt": "請輸入文字"

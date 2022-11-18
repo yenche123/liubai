@@ -132,7 +132,6 @@ const {
   margin-bottom: 20px;
   box-shadow: var(--card-shadow);
   position: relative;
-  overflow: hidden;
   transition: box-shadow .3s;
 
   &.ce-container_focused {
