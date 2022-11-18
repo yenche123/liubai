@@ -3,10 +3,12 @@ import { defineComponent, PropType } from 'vue';
 import { ThreadShow } from '../../../../types/types-content';
 import EditorCore from '../../../editor-core/editor-core.vue';
 import { useWhenAndRemind } from './tools/useWhenAndRemind';
+import TcWhenRemind from './tc-when-remind/tc-when-remind.vue';
 
 export default defineComponent({
   components: {
-    EditorCore
+    EditorCore,
+    TcWhenRemind,
   },
   props: {
     threadData: {
@@ -46,6 +48,11 @@ export default defineComponent({
         ></EditorCore>
       </div>
 
+      <!-- 什么时候、 -->
+      <TcWhenRemind
+        :when-str="whenStr"
+        :remind-str="remindStr"
+      ></TcWhenRemind>
 
       
     </div>
