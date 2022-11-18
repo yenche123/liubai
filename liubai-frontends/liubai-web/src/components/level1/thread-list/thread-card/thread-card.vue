@@ -2,6 +2,7 @@
 import { defineComponent, PropType } from 'vue';
 import { ThreadShow } from '../../../../types/types-content';
 import EditorCore from '../../../editor-core/editor-core.vue';
+import { useWhenAndRemind } from './tools/useWhenAndRemind';
 
 export default defineComponent({
   components: {
@@ -17,7 +18,16 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const {
+      whenStr,
+      remindStr,
+    } = useWhenAndRemind(props.threadData)
 
+
+    return {
+      whenStr,
+      remindStr
+    }
   }
 })
 
@@ -27,10 +37,17 @@ export default defineComponent({
   <div class="tc-container">
 
     <div class="tc-box">
-      <EditorCore 
-        :edit-mode="false"
-        :content="threadData.content"
-      ></EditorCore>
+
+
+      <div class="tc-content">
+        <EditorCore 
+          :edit-mode="false"
+          :content="threadData.content"
+        ></EditorCore>
+      </div>
+
+
+      
     </div>
 
   </div>
@@ -57,6 +74,12 @@ export default defineComponent({
     box-sizing: border-box;
     padding: 20px;
     position: relative;
+
+
+    .tc-content {
+      position: relative;
+    }
+
   }
 
 

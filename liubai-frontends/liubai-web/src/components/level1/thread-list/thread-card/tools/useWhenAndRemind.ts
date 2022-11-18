@@ -1,4 +1,4 @@
-import { computed, ref, toRef, watch } from "vue";
+import { computed, onActivated, onDeactivated, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import type { ThreadShow } from "../../../../../types/types-content";
 import liuUtil from "../../../../../utils/liu-util";
@@ -100,6 +100,17 @@ export function useWhenAndRemind(threadData: ThreadShow) {
   })
 
   _setRemindStr()
+
+  onActivated(() => {
+    _setRemindStr()
+  })
+
+  onDeactivated(() => {
+    if(timeout) {
+      clearTimeout(timeout)
+      timeout = 0
+    }
+  })
 
   return { whenStr, remindStr }
 }
