@@ -13,4 +13,9 @@ export interface SvEmits {
 }
 
 // 默认、下拉中、加载中、松开跑回去
-export type RefreshState = "default" | "pulling" | "loading" | "loosing" 
+export type RefreshState = "default" | "pulling" | "loading" | "loosing"
+
+export interface SvProvideInject {
+  type: "to_lower" | "to_upper" | ""
+  triggerNum: number
+}

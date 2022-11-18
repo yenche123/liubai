@@ -1,8 +1,9 @@
-import { onActivated, ref, toRefs, watch, watchEffect } from "vue"
+import { inject, onActivated, ref, toRef, toRefs, watch, watchEffect } from "vue"
 import { ThreadShow } from "../../../../types/types-content"
 import type { Ref } from "vue"
 import threadController from "../../../../utils/controllers/thread-controller/thread-controller"
 import { useRouteAndLiuRouter } from "../../../../routes/liu-router"
+import { scrollViewKey } from "../../../../utils/provide-keys"
 
 interface TlProps {
   viewType: string
@@ -24,6 +25,16 @@ export function useThreadList(props: TlProps) {
     viewType,
     tagId,
   }
+
+  const svData = inject(scrollViewKey, { type: "", triggerNum: 0 })
+  const svTrigger = toRef(svData, "triggerNum")
+  watch(svTrigger, (newV) => {
+    console.log("scroll-view 传来消息...........")
+    console.log("triggerNum: ", newV)
+    console.log("type: ", svData.type)
+    console.log(" ")
+  })
+
 
   onActivated(() => {
     console.log("onActivated!!!")

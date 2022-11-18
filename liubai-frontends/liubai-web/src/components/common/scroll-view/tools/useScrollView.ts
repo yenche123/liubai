@@ -1,5 +1,6 @@
-import { onActivated, ref } from "vue";
-import type { SvProps, SvEmits } from "./types"
+import { onActivated, provide, reactive, ref } from "vue";
+import type { SvProps, SvEmits, SvProvideInject } from "./types"
+import { scrollViewKey } from "../../../../utils/provide-keys"
 
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
@@ -7,6 +8,13 @@ const MIN_INVOKE_DURATION = 300
 export function useScrollView(props: SvProps, emits: SvEmits) {
   const sv = ref<HTMLElement | null>(null)
   const scrollTop = ref(0)
+
+  const proData = reactive<SvProvideInject>({
+    type: "",
+    triggerNum: 0,
+  })
+
+  provide(scrollViewKey, proData)
 
   let lastScrollTop = 0
   let lastScrollStamp = 0
@@ -38,6 +46,8 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
       if(lastScrollTop < middleLine && middleLine <= sT) {
         if(lastInvokeStamp + MIN_INVOKE_DURATION < now) {
           emits("scrolltolower", { scrollTop: sT })
+          proData.type = "to_lower"
+          proData.triggerNum++
           lastInvokeStamp = now
         }
       }
@@ -46,6 +56,8 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
       if(lastScrollTop > middleLine && middleLine >= sT) {
         if(lastInvokeStamp + MIN_INVOKE_DURATION < now) {
           emits("scrolltoupper", { scrollTop: sT })
+          proData.type = "to_upper"
+          proData.triggerNum++
           lastInvokeStamp = now
         }
       }
