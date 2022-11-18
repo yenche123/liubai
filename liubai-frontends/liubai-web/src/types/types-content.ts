@@ -49,6 +49,7 @@ export interface ThreadShow {
   myEmojiStamp?: number       // 我点赞时的时间戳
   commentNum: number          // 评论数
   emojiData: EmojiData
+  pinStamp?: number             // 被置顶时的时间戳
   createdStamp: number      // 动态被创建的时间戳
   editedStamp: number       // 动态被编辑的时间戳
 }

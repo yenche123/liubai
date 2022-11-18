@@ -5,7 +5,7 @@ import ThreadCard from './thread-card/thread-card.vue';
 const props = defineProps({
   viewType: {
     type: String,
-    default: "",      // "": 默认; "TRASH": 回收站; "TAG": 标签; "FAVORITE": 收藏;
+    default: "",  // "": 默认; "TRASH": 回收站; "TAG": 标签; "FAVORITE": 收藏;  "PINNED": 被置顶
   },
   tagId: {
     type: String,

@@ -76,6 +76,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       myEmojiStamp,
       commentNum: v.commentNum ?? 0,
       emojiData: v.emojiData,
+      pinStamp: v.pinStamp,
       createdStamp: v.createdStamp,
       editedStamp: v.editedStamp,
     }

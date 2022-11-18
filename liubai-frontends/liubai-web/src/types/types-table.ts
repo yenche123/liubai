@@ -56,6 +56,7 @@ export interface ContentLocalTable extends BaseLocalTable {
   emojiData: EmojiData
   underThread?: string
   replyTo?: string
+  pinStamp?: number         // 被置顶时的时间戳
   createdStamp: number      // 动态被创建的时间戳
   editedStamp: number       // 动态被编辑的时间戳
 }
