@@ -1,4 +1,4 @@
-import { toRef, watch, ref } from 'vue';
+import { toRef, watch, ref, computed } from 'vue';
 import type { Ref } from "vue";
 import { useWindowSize } from '../../../../hooks/useVueUse';
 import type { ImageShow } from '../../../../types';
@@ -18,6 +18,7 @@ interface PicCover {
 export function usePiContent(props: PicProps) {
 
   const covers = ref<PicCover[]>([])
+  const coverLength = computed(() => covers.value.length)
   const { width, height } = useWindowSize()
   const imgsRef = toRef(props, "imgs")
 
@@ -31,7 +32,7 @@ export function usePiContent(props: PicProps) {
 
   calcImages(covers, imgsRef.value, width.value, height.value)
 
-  return { covers }
+  return { covers, coverLength }
 }
 
 /**

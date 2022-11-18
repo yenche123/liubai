@@ -22,8 +22,8 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { covers } = usePiContent(props)
-    return { covers }
+    const { covers, coverLength } = usePiContent(props)
+    return { covers, coverLength }
   },
   methods: {
     onSwiper(swiper: Swiper) {
@@ -42,7 +42,9 @@ export default defineComponent({
   >
     <template v-for="(item, index) in covers" :key="item.id">
       <SwiperSlide>
-        <div class="pi-item">
+        <div class="pi-item"
+          :class="{'pi-item_grab': coverLength > 1}"
+        >
           <liu-img 
             :src="item.src"
             object-fit="contain"
@@ -77,6 +79,14 @@ export default defineComponent({
     transition: .2s;
   }
 
+}
+
+.pi-item_grab {
+  cursor: grab;
+}
+
+.pi-item_grab:active {
+  cursor: grabbing;
 }
 
 </style>
