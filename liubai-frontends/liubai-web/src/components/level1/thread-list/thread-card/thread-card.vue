@@ -49,7 +49,7 @@ export default defineComponent({
   margin-bottom: 16px;
 
   &:hover {
-    border-radius: 36px;
+    border-radius: 10px;
   }
 
   .tc-box {
