@@ -13,7 +13,8 @@ async function getList(
     sort = "desc",
     lastCreatedStamp,
     oState = "OK",
-    member
+    member,
+    limit = 16
   } = opt ?? {}
 
   let list: ContentLocalTable[] = []
@@ -31,7 +32,7 @@ async function getList(
     let tmp = db.contents.orderBy("createdStamp")
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
-    tmp = tmp.limit(10)
+    tmp = tmp.limit(limit)
 
     // console.time("查询首页")
     list = await tmp.toArray()
@@ -43,7 +44,7 @@ async function getList(
     let tmp = sort === "desc" ? w.below(lastCreatedStamp) : w.above(lastCreatedStamp)
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
-    tmp = tmp.limit(10)
+    tmp = tmp.limit(limit)
     // console.time("查询非首页")
     list = await tmp.toArray()
     // console.timeEnd("查询非首页")

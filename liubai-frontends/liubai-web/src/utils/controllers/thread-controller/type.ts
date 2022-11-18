@@ -9,6 +9,9 @@ export interface TcListOption {
   // 再把包含 LOCAL / ONLY_LOCAL 的数据返回给调用者，让业务侧能批量绑定到视图上，无需过滤
   onlyLocal?: boolean
 
+  // 每次最多加载多少个，默认为 16
+  limit?: number
+
   // 默认为 ME
   workspace?: string    
 
