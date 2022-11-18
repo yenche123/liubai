@@ -42,6 +42,9 @@ export default defineComponent({
 
     <div class="tc-box">
 
+      <div v-if="threadData.title" class="tc-title">
+        <span>{{ threadData.title }}</span>
+      </div>
 
       <div class="tc-content">
         <EditorCore 
@@ -91,6 +94,16 @@ export default defineComponent({
     box-sizing: border-box;
     padding: 20px;
     position: relative;
+
+    .tc-title {
+      font-size: var(--title-font);
+      font-weight: 700;
+      color: var(--main-normal);
+
+      span::selection {
+        background-color: var(--select-bg);
+      }
+    }
 
 
     .tc-content {
