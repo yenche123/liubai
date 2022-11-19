@@ -16,6 +16,7 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
 
   const spaceId = ref("")
   const memberId = ref("")
+  const workspace = ref("")    // 协作工作区时，是 spaceId；个人工作区时是 ME
   const isCollaborative = ref(false)
 
   const currentSpace = ref<WorkspaceLocalTable | null>(null)
@@ -25,6 +26,7 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
     spaceId.value = opt.spaceId
     memberId.value = opt.memberId
     isCollaborative.value = opt.isCollaborative
+    workspace.value = opt.isCollaborative ? opt.spaceId : "ME"
     currentSpace.value = opt.currentSpace ?? null
     myMember.value = opt.myMember ?? null
   }
@@ -40,6 +42,7 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
   return { 
     spaceId, 
     memberId,
+    workspace,
     isCollaborative, 
     currentSpace,
     myMember,

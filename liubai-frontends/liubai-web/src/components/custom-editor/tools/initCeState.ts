@@ -3,8 +3,8 @@
 
 
 import { TipTapEditor } from "../../../types/types-editor"
-import { computed, reactive, watchEffect, ref, provide } from "vue"
-import type { ShallowRef, ComputedRef, Ref } from "vue"
+import { reactive, watchEffect, ref, provide } from "vue"
+import type { ShallowRef, Ref } from "vue"
 import type { CeState } from "./atom-ce"
 import { defaultState } from "./atom-ce"
 import { ContentLocalTable, DraftLocalTable } from "../../../types/types-table"
@@ -13,8 +13,9 @@ import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore"
 import localReq from "./req/local-req"
 import transferUtil from "../../../utils/transfer-util"
 import { editorSetKey } from "../../../utils/provide-keys"
+import { storeToRefs } from "pinia"
 
-let space: ComputedRef<string>
+let space: Ref<string>
 
 interface IcsContext {
   state: CeState
@@ -28,10 +29,7 @@ export function initCeState(
 ) {
 
   const spaceStore = useWorkspaceStore()  
-  space = computed(() => {
-    if(!spaceStore.isCollaborative) return "ME"
-    return spaceStore.spaceId
-  })
+  space = storeToRefs(spaceStore).workspace
 
   const tId = props.threadId
   

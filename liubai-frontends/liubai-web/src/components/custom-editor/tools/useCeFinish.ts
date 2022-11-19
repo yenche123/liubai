@@ -1,8 +1,6 @@
-import { computed, Ref, ShallowRef } from "vue";
+import type { Ref, ShallowRef } from "vue";
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
-import type { EditorCoreContent, TipTapJSONContent } from "../../../types/types-editor";
 import type { TipTapEditor } from "../../../types/types-editor"
-import type { ComputedRef } from "vue"
 import type { ContentLocalTable } from "../../../types/types-table";
 import ider from "../../../utils/basic/ider";
 import { getLocalPreference } from "../../../utils/system/local-preference";
@@ -13,6 +11,7 @@ import liuUtil from "../../../utils/liu-util";
 import { LiuRemindMe } from "../../../types/types-atom";
 import localReq from "./req/local-req";
 import type { ThreadStore } from "../../../hooks/stores/useThreadStore";
+import { storeToRefs } from "pinia";
 
 // 本文件处理发表的逻辑
 
@@ -25,20 +24,15 @@ export interface CepContext {
 
 export type CepToPost = (focusRequired: boolean) => void
 
-let space: ComputedRef<string>
-let member: ComputedRef<string>
+let space: Ref<string>
+let member: Ref<string>
 
 export function useCeFinish(ctx: CepContext) {
 
   const spaceStore = useWorkspaceStore()
-  space = computed(() => {
-    if(!spaceStore.isCollaborative) return "ME"
-    return spaceStore.spaceId
-  })
-  member = computed(() => {
-    const val = spaceStore.memberId
-    return val
-  })
+  const spaceRefs = storeToRefs(spaceStore)
+  space = spaceRefs.workspace
+  member = spaceRefs.memberId
 
   const toFinish: CepToPost = (focusRequired: boolean) => {
     if(!member.value) return

@@ -4,7 +4,7 @@ import type { EditorCoreContent, TipTapJSONContent } from "../../../types/types-
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
 import type { LiuRemindMe } from "../../../types/types-atom";
 import type { CeState } from "./atom-ce"
-import type { ComputedRef, Ref } from "vue";
+import type { Ref } from "vue";
 import ider from "../../../utils/basic/ider";
 import { DraftLocalTable } from "../../../types/types-table";
 import { getLocalPreference } from "../../../utils/system/local-preference";
@@ -14,10 +14,11 @@ import localReq from "./req/local-req";
 import type { FileLocal, ImageLocal } from "../../../types";
 import type { CepToPost } from "./useCeFinish"
 import liuUtil from "../../../utils/liu-util";
+import { storeToRefs } from "pinia";
 
 let initStamp = 0
 let collectTimeout = 0
-let space: ComputedRef<string>
+let space: Ref<string>
 
 export function useCeState(
   state: CeState,
@@ -28,10 +29,7 @@ export function useCeState(
   initStamp = time.getTime()
 
   const spaceStore = useWorkspaceStore()  
-  space = computed(() => {
-    if(!spaceStore.isCollaborative) return "ME"
-    return spaceStore.spaceId
-  })
+  space = storeToRefs(spaceStore).workspace
 
   // 监听用户操作 images 的变化，去存储到 IndexedDB 上
   watch(() => state.images, (newV) => {

@@ -1,10 +1,9 @@
 import { watch } from "vue"
-import type { WorkspaceStore } from "../../../hooks/stores/useWorkspaceStore"
 import { useRouteAndLiuRouter } from "../../../routes/liu-router"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import { db } from "../../db"
 import { getLocalPreference } from "../local-preference"
-import type { SpaceAndMemberOpt } from "../../../hooks/stores/useWorkspaceStore"
+import type { SpaceAndMemberOpt, WorkspaceStore } from "../../../hooks/stores/useWorkspaceStore"
 
 export function initSpace(
   store: WorkspaceStore

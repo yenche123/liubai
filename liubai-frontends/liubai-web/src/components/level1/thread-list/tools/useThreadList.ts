@@ -68,11 +68,25 @@ function checkList(
 
 }
 
-
+// 重新加载 & 触底加载
+// 所以该函数并不是局部更新技术，遇到重新加载会整个重置 list
+// 遇到触底加载，当为云端来的数据时，会使用云端数据的第一行 id 查找当前 list 里的位置
+// 找到后，把该行之后的数据全删除，再赋值云端来的数据进 list 里
 async function loadList(
   ctx: TlContext,
   reload: boolean = false
 ) {
+
+  const oldList = ctx.list.value
+  const viewType = ctx.viewType.value
+  const tagId = ctx.tagId.value
+
+  let length = oldList.length
+  let lastCreatedStamp = reload || length < 1 ? undefined : oldList[length - 1].createdStamp
+
+  const opt1 = {
+
+  }
 
   const results = await threadController.getList()
   console.log("results 结果.......")

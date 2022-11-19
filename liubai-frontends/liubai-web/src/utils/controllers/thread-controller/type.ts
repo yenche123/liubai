@@ -9,11 +9,14 @@ export interface TcListOption {
   // 再把包含 LOCAL / ONLY_LOCAL 的数据返回给调用者，让业务侧能批量绑定到视图上，无需过滤
   onlyLocal?: boolean
 
-  // 每次最多加载多少个，默认为 16
+  // 每次最多加载多少个，默认为 16（该值是计算过，在 1980px 的大屏上也可以触发触底加载的）
   limit?: number
 
   // 默认为 ME
   workspace?: string    
+
+  // 加载某个标签
+  tagId?: string
 
   // 默认为降序，desc
   sort?: SortWay
