@@ -80,9 +80,6 @@ const default_color = "var(--main-code)"
       <div v-if="commentNum > 0" class="tcb-text tcb-text_adjusted">
         <span>{{ commentShow }}</span>
       </div>
-      <div class="tcb-text tcb-text_adjusted">
-        <span>17</span>
-      </div>
     </div>
 
     <!-- 分享 -->
