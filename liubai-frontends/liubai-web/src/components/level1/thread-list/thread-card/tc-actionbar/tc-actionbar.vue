@@ -57,8 +57,7 @@ const default_color = "var(--main-code)"
     <!-- 收藏 -->
     <div v-if="workspace === 'ME'" class="liu-hover tca-item">
       <div class="tca-icon-box">
-        <!-- 待完善，收藏后换颜色 -->
-        <svg-icon name="star" class="tca-icon" :color="default_color"></svg-icon>
+        <svg-icon name="star" class="tca-icon_star" :color="default_color"></svg-icon>
       </div>
     </div>
 
@@ -68,10 +67,19 @@ const default_color = "var(--main-code)"
         <span v-if="theEmoji">{{ theEmoji }}</span>
         <svg-icon v-else name="emoji" class="tca-icon" :color="default_color"></svg-icon>
       </div>
-      <div v-if="emojiNum > 0" class="tcb-text">
+      <div v-if="emojiNum > 0" class="tcb-text tcb-text_adjusted">
         <span>{{ emojiShow }}</span>
       </div>
     </div>
+    <!-- <div class="liu-hover tca-item">
+      <div class="tca-icon-box">
+        <span v-if="theEmoji">{{ theEmoji }}</span>
+        <svg-icon v-else name="emoji" class="tca-icon_emoji" :color="default_color"></svg-icon>
+      </div>
+      <div class="tcb-text tcb-text_adjusted">
+        <span>21</span>
+      </div>
+    </div> -->
 
     <!-- 评论 -->
     <div class="liu-hover tca-item">
@@ -80,6 +88,9 @@ const default_color = "var(--main-code)"
       </div>
       <div v-if="commentNum > 0" class="tcb-text">
         <span>{{ commentShow }}</span>
+      </div>
+      <div class="tcb-text tcb-text_adjusted">
+        <span>9</span>
       </div>
     </div>
 
@@ -106,6 +117,7 @@ const default_color = "var(--main-code)"
   position: relative;
   padding-block-start: 10px;
   display: flex;
+  align-items: flex-start;
 
   .tca-item {
     display: flex;
@@ -114,8 +126,16 @@ const default_color = "var(--main-code)"
 
     .tcb-text {
       font-size: var(--btn-font);
-      color: var(--main-normal);
+      color: var(--main-code);
+      padding-inline-start: 2px;
+      padding-inline-end: 8px;
+      user-select: none;
     }
+
+    .tcb-text_adjusted {
+      padding-top: 3px;
+    }
+
   }
 
   .tca-icon-box {
@@ -124,10 +144,24 @@ const default_color = "var(--main-code)"
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: var(--btn-font);
+    user-select: none;
 
     .tca-icon {
       width: 26px;
       height: 26px;
+    }
+
+    .tca-icon_star {
+      width: 26px;
+      height: 26px;
+      margin-bottom: 1px;
+    }
+
+    .tca-icon_emoji {
+      margin-top: 3px;
+      width: 24px;
+      height: 24px;
     }
 
     .tca-icon_comment {
