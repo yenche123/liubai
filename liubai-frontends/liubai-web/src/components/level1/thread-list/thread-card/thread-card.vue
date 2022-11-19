@@ -42,9 +42,9 @@ export default defineComponent({
 
     <div class="tc-box">
 
-      <div v-if="threadData.title" class="tc-title">
+      <h1 v-if="threadData.title" class="tc-title">
         <span>{{ threadData.title }}</span>
-      </div>
+      </h1>
 
       <div class="tc-content">
         <EditorCore 
@@ -99,6 +99,8 @@ export default defineComponent({
       font-size: var(--title-font);
       font-weight: 700;
       color: var(--main-normal);
+      margin-block-start: 0.5rem;
+      margin-block-end: 0.5rem;
 
       span::selection {
         background-color: var(--select-bg);
