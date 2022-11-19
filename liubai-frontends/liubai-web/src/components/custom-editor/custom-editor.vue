@@ -86,6 +86,9 @@ const {
     ></EditorCore>
   </div>
 
+  <!-- 隐入隐出渐变分隔条 -->
+  <div class="ce-editor-bottom"></div>
+
   <CeCovers 
     :model-value="covers"
     @update:model-value="onCoversSorted"
@@ -148,6 +151,15 @@ const {
   overflow-y: overlay;
   overflow-y: auto;
 }
+
+.ce-editor-bottom {
+  width: 100%;
+  height: 20px;
+  margin-top: -20px;
+  background: var(--gradient-two);
+  position: relative;
+}
+
 
 .ce-virtual {
   width: 100%;

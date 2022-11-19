@@ -46,6 +46,7 @@
   --drag-bg: #ddf2f9;        /** 拖动时的背景色 */
   --drag-border: #aaf2f9;    /** 拖动时的边框色 */
   --gradient-one: linear-gradient(90deg, rgba(255, 255, 255, 0) 10%, rgba(255, 255, 255, 1) 96%);
+  --gradient-two: linear-gradient(0deg, rgba(255, 255, 255, 1) 10%, rgba(255, 255, 255, 0) 96%);
   --cool-bg: linear-gradient(30deg, #ACB6E5, #70ded9);
 
   /** 自定义组件: 加载框 */
