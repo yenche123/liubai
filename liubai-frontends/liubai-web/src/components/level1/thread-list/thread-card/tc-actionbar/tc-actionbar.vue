@@ -65,7 +65,7 @@ const default_color = "var(--main-code)"
     <div v-else class="liu-hover tca-item">
       <div class="tca-icon-box">
         <span v-if="theEmoji">{{ theEmoji }}</span>
-        <svg-icon v-else name="emoji" class="tca-icon" :color="default_color"></svg-icon>
+        <svg-icon v-else name="emoji" class="tca-icon_emoji" :color="default_color"></svg-icon>
       </div>
       <div v-if="emojiNum > 0" class="tcb-text tcb-text_adjusted">
         <span>{{ emojiShow }}</span>
