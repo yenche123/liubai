@@ -1,9 +1,11 @@
-import { inject, onActivated, ref, toRef, toRefs, watch, watchEffect } from "vue"
+import { inject, onActivated, ref, toRef, toRefs, watch } from "vue"
 import { ThreadShow } from "../../../../types/types-content"
 import type { Ref } from "vue"
 import threadController from "../../../../utils/controllers/thread-controller/thread-controller"
-import { useRouteAndLiuRouter } from "../../../../routes/liu-router"
 import { scrollViewKey } from "../../../../utils/provide-keys"
+import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore"
+import { storeToRefs } from "pinia"
+import type { OState } from "../../../../types/types-basic"
 
 interface TlProps {
   viewType: string
@@ -14,16 +16,23 @@ interface TlContext {
   list: Ref<ThreadShow[]>
   viewType: Ref<string>
   tagId: Ref<string>
+  workspace: Ref<string>
+  showNum: number
 }
 
 export function useThreadList(props: TlProps) {
   let { viewType, tagId } = toRefs(props)
+
+  const spaceStore = useWorkspaceStore()
+  let workspace = storeToRefs(spaceStore).workspace
 
   const list = ref<ThreadShow[]>([])
   const ctx: TlContext = {
     list,
     viewType,
     tagId,
+    workspace,
+    showNum: 0,
   }
 
   const svData = inject(scrollViewKey, { type: "", triggerNum: 0 })
@@ -35,18 +44,27 @@ export function useThreadList(props: TlProps) {
     console.log(" ")
   })
 
-
   onActivated(() => {
-    console.log("onActivated!!!")
-    checkList(ctx)
+    ctx.showNum++
+    if(ctx.showNum > 1) {
+      console.log("page opened again!")
+      checkList(ctx)
+    }
+    else {
+      console.log("page just opened!")
+    }
   })
 
-  watch([viewType, tagId], ([newViewType, newTagId]) => {
-    console.log("newViewType: ", newViewType)
-    console.log("newTagId: ", newTagId)
-    console.log(" ")
+  watch([viewType, tagId, workspace], ([newViewType, newTagId, newWorkspace]) => {
+    if(!newWorkspace) return
     loadList(ctx, true)
   })
+
+  // 如果 workspace 已经存在了，那么就不会触发上方的 watch
+  // 所以这里加一段 loadList
+  if(workspace.value) {
+    loadList(ctx, true)
+  }
   
 
   return { list }
@@ -76,6 +94,8 @@ async function loadList(
   ctx: TlContext,
   reload: boolean = false
 ) {
+  const workspace = ctx.workspace.value
+  if(!workspace) return
 
   const oldList = ctx.list.value
   const viewType = ctx.viewType.value
@@ -83,12 +103,16 @@ async function loadList(
 
   let length = oldList.length
   let lastCreatedStamp = reload || length < 1 ? undefined : oldList[length - 1].createdStamp
+  let oState: OState = viewType === 'TRASH' ? 'REMOVED' : 'OK'
 
   const opt1 = {
-
+    workspace,
+    tagId,
+    lastCreatedStamp,
+    oState,
   }
 
-  const results = await threadController.getList()
+  const results = await threadController.getList(opt1)
   console.log("results 结果.......")
   console.log(results)
   console.log(" ")
