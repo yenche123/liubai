@@ -71,26 +71,17 @@ const default_color = "var(--main-code)"
         <span>{{ emojiShow }}</span>
       </div>
     </div>
-    <!-- <div class="liu-hover tca-item">
-      <div class="tca-icon-box">
-        <span v-if="theEmoji">{{ theEmoji }}</span>
-        <svg-icon v-else name="emoji" class="tca-icon_emoji" :color="default_color"></svg-icon>
-      </div>
-      <div class="tcb-text tcb-text_adjusted">
-        <span>21</span>
-      </div>
-    </div> -->
 
     <!-- 评论 -->
     <div class="liu-hover tca-item">
       <div class="tca-icon-box">
         <svg-icon name="comment" class="tca-icon_comment" :color="default_color"></svg-icon>
       </div>
-      <div v-if="commentNum > 0" class="tcb-text">
+      <div v-if="commentNum > 0" class="tcb-text tcb-text_adjusted">
         <span>{{ commentShow }}</span>
       </div>
       <div class="tcb-text tcb-text_adjusted">
-        <span>9</span>
+        <span>17</span>
       </div>
     </div>
 
@@ -102,11 +93,11 @@ const default_color = "var(--main-code)"
     </div>
 
     <!-- footer: 更多 -->
-    <div class="tca-footer">
+    <!-- <div class="tca-footer">
       <div class="liu-hover tca-icon-box">
         <svg-icon name="more" class="tca-icon" :color="default_color"></svg-icon>
       </div>
-    </div>
+    </div> -->
 
   </div>
 </template>
@@ -133,7 +124,7 @@ const default_color = "var(--main-code)"
     }
 
     .tcb-text_adjusted {
-      padding-top: 3px;
+      padding-top: 4px;
     }
 
   }
@@ -155,7 +146,6 @@ const default_color = "var(--main-code)"
     .tca-icon_star {
       width: 26px;
       height: 26px;
-      margin-bottom: 1px;
     }
 
     .tca-icon_emoji {
