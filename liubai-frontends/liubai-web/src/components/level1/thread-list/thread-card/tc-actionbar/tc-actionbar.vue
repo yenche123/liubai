@@ -101,6 +101,7 @@ const default_color = "var(--main-code)"
 <style scoped lang="scss">
 
 .tca-container {
+  margin-inline-start: -4px;
   width: 100%;
   position: relative;
   padding-block-start: 10px;
