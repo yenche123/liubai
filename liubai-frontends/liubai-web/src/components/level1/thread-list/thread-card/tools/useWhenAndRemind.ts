@@ -57,27 +57,28 @@ export function useWhenAndRemind(threadData: ThreadShow) {
     if(timeout) clearTimeout(timeout)
 
     const rStamp = remindStamp.value
+    const rVal = remindMe.value
 
-    if(!remindMe.value || !rStamp) {
+    if(!rVal || !rStamp) {
       remindStr.value = ""
       return
     }
     const now = time.getTime()
     const diff = rStamp - now
 
-    const { type, early_minute } = remindMe.value
+    const { type, early_minute } = rVal
 
     // xx分之前或准点
     if(type === "early" && typeof early_minute === "number") {
       // 如果已过时，或者时间差只剩 1 分钟之内，那么正常显示时间
       if(diff < MIN) {
-        remindStr.value = liuUtil.getRemindMeStr(t, remindMe.value)
+        remindStr.value = liuUtil.getRemindMeStrAfterPost(rStamp, rVal)
         return
       }
 
       // 如果提醒我的时间不是准点，也不采用倒计时
       if(early_minute !== 0) {
-        remindStr.value = liuUtil.getRemindMeStr(t, remindMe.value)
+        remindStr.value = liuUtil.getRemindMeStrAfterPost(rStamp, rVal)
         return
       }
 
@@ -92,7 +93,7 @@ export function useWhenAndRemind(threadData: ThreadShow) {
       return
     }
 
-    remindStr.value = liuUtil.getRemindMeStr(t, remindMe.value)
+    remindStr.value = liuUtil.getRemindMeStrAfterPost(rStamp, rVal)
   }
 
   watch(remindStamp, (newV) => {

@@ -9,6 +9,7 @@ import {
   getLaterStamp,
   getEarlyStamp,
   getRemindMeStr,
+  getRemindMeStrAfterPost,
   getCountDownStr,
 } from "./date-util";
 import {
@@ -36,6 +37,7 @@ export default {
   getLaterStamp,
   getEarlyStamp,
   getRemindMeStr,
+  getRemindMeStrAfterPost,
   getCountDownStr,
   getAcceptImgTypesString,
   getAcceptImgTypesArray,

@@ -112,7 +112,7 @@ export function getEarlyStamp(
   return earlyStamp
 }
 
-
+// 用于发布前/编辑时，展示 "提醒我"
 export function getRemindMeStr(
   t: ComposerTranslation,
   remindMe?: LiuRemindMe
@@ -132,6 +132,35 @@ export function getRemindMeStr(
   }
   return ""
 }
+
+// 用于发布后，展示 "提醒我"
+export function getRemindMeStrAfterPost(
+  remindStamp: number,
+  remindMe: LiuRemindMe
+) {
+  if(!remindStamp) return ""
+  const { type, early_minute, later, specific_stamp } = remindMe
+  const { t } = i18n.global
+  const now = time.getTime()
+
+  if(type === "early" && typeof early_minute === "number") {
+    const idx = REMIND_EARLY.indexOf(early_minute)
+    if(idx >= 0) return t(`date_related.remind_early[${idx}]`)
+  }
+  else if(type === "later" && later) {
+    if(now >= remindStamp) {
+      return showBasicDate(remindStamp)
+    }
+    const idx = REMIND_LATER.indexOf(later)
+    if(idx >= 0) return t(`date_related.remind_later[${idx}]`)
+  }
+  else if(type === "specific_time" && specific_stamp) {
+    return showBasicDate(specific_stamp)
+  }
+
+  return ""
+}
+
 
 export function getCountDownStr(
   diffStamp: number
