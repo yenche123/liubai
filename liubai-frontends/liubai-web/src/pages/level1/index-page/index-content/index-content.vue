@@ -3,21 +3,10 @@ import cfg from "../../../../config"
 import CustomEditor from "../../../../components/custom-editor/custom-editor.vue"
 import AppLink from "../../../../components/common/app-link/app-link.vue"
 import { useIndexContent } from "./tools/useIndexContent";
-import { storeToRefs } from "pinia";
-import { watch } from "vue";
-import { useThreadStore } from "../../../../hooks/stores/useThreadStore";
 import ThreadList from "../../../../components/level1/thread-list/thread-list.vue"
 
 const virtualHeight = cfg.navi_height / 3
 const { lastBar } = useIndexContent()
-
-const threadStore = useThreadStore()
-const { newThreads } = storeToRefs(threadStore)
-watch(newThreads, (newV) => {
-  console.log("index-content 收到 newThreads 发生了更新: ")
-  console.log(newV)
-  console.log(" ")
-})
 
 </script>
 <template>

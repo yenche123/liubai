@@ -19,7 +19,7 @@ import CeCovers from "./ce-covers/ce-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
 import { initCeState } from "./tools/initCeState";
 import { useCeFinish } from "./tools/useCeFinish";
-import { useThreadStore } from "../../hooks/stores/useThreadStore";
+import { useThreadShowStore } from "../../hooks/stores/useThreadShowStore";
 
 const props = defineProps({
   lastBar: {
@@ -46,12 +46,12 @@ const {
   showVirtualBar,
 } = useMoreItems(props)
 
-const threadStore = useThreadStore()
+const threadShowStore = useThreadShowStore()
 const ctx = {
   canSubmitRef,
   editor,
   state,
-  threadStore,
+  threadShowStore,
 }
 const { toFinish } = useCeFinish(ctx)
 

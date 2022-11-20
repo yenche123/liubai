@@ -10,8 +10,9 @@ import transferUtil from "../../../utils/transfer-util";
 import liuUtil from "../../../utils/liu-util";
 import { LiuRemindMe } from "../../../types/types-atom";
 import localReq from "./req/local-req";
-import type { ThreadStore } from "../../../hooks/stores/useThreadStore";
+import type { ThreadShowStore } from "../../../hooks/stores/useThreadShowStore";
 import { storeToRefs } from "pinia";
+import { equipThreads } from "../../../utils/controllers/equip-content/equip-content";
 
 // 本文件处理发表的逻辑
 
@@ -19,7 +20,7 @@ export interface CepContext {
   canSubmitRef: Ref<boolean>
   editor: ShallowRef<TipTapEditor | undefined>
   state: CeState
-  threadStore: ThreadStore
+  threadShowStore: ThreadShowStore
 }
 
 export type CepToPost = (focusRequired: boolean) => void
@@ -80,11 +81,8 @@ async function toRelease(
   // 3. 重置编辑器的 state
   _resetState(state)
 
-  // 4. 通知全局 需要更新 threads
-  ctx.threadStore.setNewThreads([preThread as ContentLocalTable])
-
-  
-  // 5. 重置 editor
+ 
+  // 4. 重置 editor
   const editor = ctx.editor.value
   if(!editor) return
   if(focusRequired) {
@@ -93,6 +91,10 @@ async function toRelease(
   else {
     editor.chain().setContent('<p></p>').run()
   }
+
+   // 5. 通知全局 需要更新 threads
+   const threadShows = await equipThreads([preThread as ContentLocalTable])
+   ctx.threadShowStore.setNewThreadShows(threadShows)
   
 }
 
@@ -214,9 +216,8 @@ async function toUpdate(ctx: CepContext) {
 
   // 5. 查找该 thread，然后通知全局
   const theThread = await localReq.getThreadByThreadId(threadId)
-  if(theThread) {
-    ctx.threadStore.setUpdatedThreads([theThread])
-  }
-
+  if(!theThread) return
+  const threadShows = await equipThreads([theThread])
+  ctx.threadShowStore.setUpdatedThreadShows(threadShows)
 }
 

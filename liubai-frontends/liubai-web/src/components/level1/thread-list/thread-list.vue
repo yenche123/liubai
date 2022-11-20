@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useThreadList } from './tools/useThreadList';
 import ThreadCard from './thread-card/thread-card.vue';
+import { useNewAndUpdate } from './tools/useNewAndUpdate';
 
 const props = defineProps({
   viewType: {
@@ -16,6 +17,7 @@ const props = defineProps({
 const {
   list
 } = useThreadList(props)
+useNewAndUpdate(list)
 
 </script>
 <template>
