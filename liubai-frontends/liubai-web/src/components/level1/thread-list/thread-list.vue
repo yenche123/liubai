@@ -21,7 +21,7 @@ const {
 <template>
   <div class="tl-container">
 
-    <template v-for="(item, index) in list">
+    <template v-for="(item, index) in list" :key="item._id">
       
       <ThreadCard 
         :thread-data="item"

@@ -36,13 +36,16 @@ export function useThreadList(props: TlProps) {
     showNum: 0,
   }
 
-  // 监听触底加载
+  // 监听触底/顶加载
   const svData = inject(scrollViewKey, { type: "", triggerNum: 0 }) as SvProvideInject
   const svTrigger = toRef(svData, "triggerNum")
   watch(svTrigger, (newV) => {
     const { type } = svData
     if(type === "to_lower") {
       loadList(ctx)
+    }
+    else if(type === "to_upper") {
+      loadList(ctx, true)
     }
   })
 
