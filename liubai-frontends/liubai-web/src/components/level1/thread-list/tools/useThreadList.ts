@@ -1,11 +1,12 @@
 import { inject, onActivated, ref, toRef, toRefs, watch } from "vue"
-import { ThreadShow } from "../../../../types/types-content"
+import type { ThreadShow } from "../../../../types/types-content"
 import type { Ref } from "vue"
 import threadController from "../../../../utils/controllers/thread-controller/thread-controller"
 import { scrollViewKey } from "../../../../utils/provide-keys"
 import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
 import type { OState } from "../../../../types/types-basic"
+import type { SvProvideInject } from "../../../common/scroll-view/tools/types"
 
 interface TlProps {
   viewType: string
@@ -35,13 +36,14 @@ export function useThreadList(props: TlProps) {
     showNum: 0,
   }
 
-  const svData = inject(scrollViewKey, { type: "", triggerNum: 0 })
+  // 监听触底加载
+  const svData = inject(scrollViewKey, { type: "", triggerNum: 0 }) as SvProvideInject
   const svTrigger = toRef(svData, "triggerNum")
   watch(svTrigger, (newV) => {
-    console.log("scroll-view 传来消息...........")
-    console.log("triggerNum: ", newV)
-    console.log("type: ", svData.type)
-    console.log(" ")
+    const { type } = svData
+    if(type === "to_lower") {
+      loadList(ctx)
+    }
   })
 
   onActivated(() => {
@@ -113,10 +115,12 @@ async function loadList(
   }
 
   const results = await threadController.getList(opt1)
-  console.log("results 结果.......")
-  console.log(results)
-  console.log(" ")
+  if(length < 1 || reload) {
+    ctx.list.value = results
+  }
+  else if(results.length) {
+    ctx.list.value.push(...results)
+  }
   
-  ctx.list.value = results
 
 }
