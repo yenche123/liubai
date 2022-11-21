@@ -36,6 +36,7 @@ export interface ThreadShow {
   storageState: StorageState
   title?: string
   content?: TipTapJSONContent
+  briefing?: TipTapJSONContent   // 文本很多时的摘要
   images?: ImageShow[]
   files?: FileLocal[]
   whenStamp?: number
