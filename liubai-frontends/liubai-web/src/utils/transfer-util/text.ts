@@ -19,7 +19,19 @@ export function listToText(
       if(type === "codeBlock") plainText += "\n"
     }
 
-    plainText += "\n"
+    let addes = [
+      "paragraph", 
+      "bulletList",
+      "orderedList", 
+      "taskList",
+      "blockquote", 
+      "codeBlock",
+      "horizontalRule"
+    ]
+    if(type && addes.includes(type)) {
+      plainText += "\n"
+    }
+
   }
 
   return plainText
