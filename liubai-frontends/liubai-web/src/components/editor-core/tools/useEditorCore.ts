@@ -8,6 +8,7 @@ import HardBreak from "@tiptap/extension-hard-break"
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import HorizontalRule from "@tiptap/extension-horizontal-rule"
 import Code from '@tiptap/extension-code'
+import Link from '@tiptap/extension-link'
 import { useI18n, ComposerTranslation } from 'vue-i18n'
 import { wrappingInputRule, nodeInputRule } from "@tiptap/core"
 import type { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
@@ -289,6 +290,10 @@ function initExtensions(
       }
     })
   ]
+
+  if(!props.editMode) {
+    extensions.push(Link)
+  }
 
   return extensions
 }
