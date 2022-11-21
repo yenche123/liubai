@@ -25,7 +25,10 @@ export function getBriefing(
     for(let i=0; i<len; i++) {
       const v = newLiuDesc[i]
       const { type, content } = v
-      if(content && content.length) charNum += listToText(content).length
+      if(content && content.length) {
+        let tmpText = listToText(content)
+        charNum += tmpText.length
+      }
       if(charNum > MAGIC_NUM) {
         if(type !== "codeBlock") requiredBrief = true
         if(i < (len - 1)) requiredBrief = true
@@ -43,7 +46,14 @@ export function getBriefing(
   for(let i=0; i<len; i++) {
     const v = newLiuDesc[i]
     const { content } = v
-    if(content && content.length) charNum += listToText(content).length
+    if(content && content.length) {
+      let tmpText = listToText(content)
+      charNum += tmpText.length
+      console.log("===============")
+      console.log(tmpText)
+      console.log("===============")
+      console.log(" ")
+    }
     if(charNum > MAGIC_NUM) {
       const newNode = _getBreakPoint(v, i + 1, prevCharNum)
       briefing.push(newNode)
@@ -116,6 +126,7 @@ function _handleBlockQuote(
 ) {
   let charNum = prevCharNum
   const newParagraphs: LiuContent[] = []
+  row -= 1
 
   for(let i=0; i<paragraphs.length; i++) {
     const v = paragraphs[i]
@@ -155,6 +166,7 @@ function _handleList(
 
   let charNum = prevCharNum
   const newItems: LiuContent[] = []
+  row -= 1
 
   for(let i=0; i<items.length; i++) {
     const v = items[i]
