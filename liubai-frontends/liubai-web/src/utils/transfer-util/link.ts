@@ -19,7 +19,14 @@ export function equipLink(list: TipTapJSONContent[]) {
     }
 
     // 写面这些 node 都允许再往更深处寻找 paragraph
-    const canDeepTypes = ["orderedList", "bulletList", "listItem", "blockquote"]
+    const canDeepTypes = [
+      "orderedList", 
+      "bulletList", 
+      "listItem", 
+      "blockquote",
+      "taskList",
+      "taskItem",
+    ]
     const allowDeep = canDeepTypes.includes(type)
     if(allowDeep && v.content) {
       v.content = equipLink(v.content)

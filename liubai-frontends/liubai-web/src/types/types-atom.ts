@@ -23,6 +23,8 @@ export const liuNodeTypes = [
   "bulletList",       // 无序列表
   "orderedList",      // 有序列表
   "listItem",         // 列表里的单元
+  "taskList",         // 任务列表
+  "taskItem",         // 任务单元
   "blockquote",       // 引言
   "codeBlock",        // 代码块
   "text",             // 纯文本

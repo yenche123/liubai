@@ -97,7 +97,7 @@ function _getBreakPoint(
   if(type === "blockquote") {
     newNode.content = _handleBlockQuote(content, row, prevCharNum)
   }
-  else if(type === "bulletList" || type === "orderedList") {
+  else if(type === "bulletList" || type === "orderedList" || type === "taskList") {
     newNode.content = _handleList(content, row, prevCharNum)
   }
   else if(type === "paragraph") {
@@ -160,7 +160,7 @@ function _handleList(
     const v = items[i]
     const { type, content } = v
 
-    if(type !== "listItem" || !content?.length) {
+    if((type !== "listItem" && type !== "taskItem") || !content?.length) {
       newItems.push(v)
       continue
     }
