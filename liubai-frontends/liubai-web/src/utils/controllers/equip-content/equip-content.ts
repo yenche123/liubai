@@ -7,6 +7,7 @@ import type { MemberShow, ThreadShow } from "../../../types/types-content";
 import imgHelper from "../../images/img-helper";
 import { getLocalPreference } from "../../system/local-preference";
 import { TipTapJSONContent } from "../../../types/types-editor";
+import liuUtil from "../../liu-util";
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
 
@@ -79,6 +80,8 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       pinStamp: v.pinStamp,
       createdStamp: v.createdStamp,
       editedStamp: v.editedStamp,
+      createdStr: liuUtil.showBasicDate(v.createdStamp),
+      editedStr: _getEditedStr(v.createdStamp, v.editedStamp),
     }
 
     list.push(obj)
@@ -87,6 +90,11 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
   return list
 }
 
+function _getEditedStr(createdStamp: number, editedStamp?: number) {
+  if(!editedStamp) return
+  if(createdStamp === editedStamp) return
+  return liuUtil.showBasicDate(editedStamp)
+}
 
 async function _getMemberShows(member_ids: string[]) {
   if(member_ids.length < 1) return []

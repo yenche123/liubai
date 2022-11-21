@@ -23,10 +23,10 @@ export function areTheDatesEqual(d1: Date, d2: Date) {
   return isEqual(d1, d2)
 }
 
-// 给定时间（戳），展示时间
+// 给定时间（戳），展示时间，用于 "什么时候" / "提醒我"
 export function showBasicDate(val: Date | number, lang?: SupportedLocale) {
   let d = typeof val === "number" ? new Date(val) : val
-  const curDate = new Date()
+  const curDate = time.getDate()
   const { t, locale } = i18n.global
   if(!lang) {
     lang = locale.value as SupportedLocale

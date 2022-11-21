@@ -89,13 +89,6 @@ const default_color = "var(--main-code)"
       </div>
     </div>
 
-    <!-- footer: 更多 -->
-    <!-- <div class="tca-footer">
-      <div class="liu-hover tca-icon-box">
-        <svg-icon name="more" class="tca-icon" :color="default_color"></svg-icon>
-      </div>
-    </div> -->
-
   </div>
 </template>
 <style scoped lang="scss">

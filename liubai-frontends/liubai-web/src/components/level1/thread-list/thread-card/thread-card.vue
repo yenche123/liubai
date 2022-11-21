@@ -1,16 +1,18 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { ThreadShow } from '../../../../types/types-content';
+import type { ThreadShow } from '../../../../types/types-content';
 import EditorCore from '../../../editor-core/editor-core.vue';
 import { useWhenAndRemind } from './tools/useWhenAndRemind';
 import TcWhenRemind from './tc-when-remind/tc-when-remind.vue';
 import TcActionbar from './tc-actionbar/tc-actionbar.vue';
+import TcBottombar from "./tc-bottombar/tc-bottombar.vue";
 
 export default defineComponent({
   components: {
     EditorCore,
     TcWhenRemind,
     TcActionbar,
+    TcBottombar,
   },
   props: {
     threadData: {
@@ -67,6 +69,9 @@ export default defineComponent({
         :my-favorite="threadData.myFavorite"
         :my-emoji="threadData.myEmoji"
       ></TcActionbar>
+
+      <!-- 底部时间 -->
+      <TcBottombar :thread-data="threadData"></TcBottombar>
       
     </div>
 

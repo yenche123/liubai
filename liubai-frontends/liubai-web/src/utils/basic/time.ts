@@ -18,6 +18,11 @@ const getLocalTime = (): number => {
   return Date.now()
 }
 
+// 返回经过标定的 Date
+const getDate = () => {
+  return new Date(getTime())
+}
+
 // 返回当前时间的字符串
 const getLocalTimeStr = (): string => {
   let t = getTime()
@@ -34,5 +39,6 @@ const getLocalTimeStr = (): string => {
 export default {
   getTime,
   getLocalTime,
+  getDate,
   getLocalTimeStr
 }
