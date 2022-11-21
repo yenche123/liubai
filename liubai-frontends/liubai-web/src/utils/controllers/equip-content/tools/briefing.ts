@@ -1,11 +1,11 @@
 
 import type { LiuContent } from "../../../../types/types-atom";
 import type { TipTapJSONContent } from "../../../../types/types-editor";
-import { listToText } from "../../../transfer-util/text";
+import { listToText, getRowNum } from "../../../transfer-util/text";
 
 
 const MAGIC_NUM = 140
-
+const MAX_ROW = 3
 
 export function getBriefing(
   liuDesc?: LiuContent[]
@@ -16,11 +16,14 @@ export function getBriefing(
   let requiredBrief = false
   const len = newLiuDesc.length
 
-  // 行数大于 5 行
+  // 行数大于 3 行
   if(len > 3) requiredBrief = true
 
   // 查找文字很多的情况
+  // 为什么不直接把 newLiuDesc 带入 listToText() 去计算字符呢？因为要考虑代码块的情况
+  // 可能卡片的前半段全是代码，很容易就超过 MAGIC_NUM 和 特定的行数
   let charNum = 0
+  let rowNum = 0
   if(!requiredBrief) {
     for(let i=0; i<len; i++) {
       const v = newLiuDesc[i]
@@ -28,8 +31,14 @@ export function getBriefing(
       if(content && content.length) {
         let tmpText = listToText(content)
         charNum += tmpText.length
+        let tmpRow = getRowNum([v])
+        rowNum += tmpRow
       }
       if(charNum > MAGIC_NUM) {
+        if(type !== "codeBlock") requiredBrief = true
+        if(i < (len - 1)) requiredBrief = true
+      }
+      if(rowNum > MAX_ROW) {
         if(type !== "codeBlock") requiredBrief = true
         if(i < (len - 1)) requiredBrief = true
       }
@@ -42,20 +51,20 @@ export function getBriefing(
   // 开始计算 briefing
   const briefing: LiuContent[] = []
   let prevCharNum = 0
+  let prevRowNum = 0
   charNum = 0
+  rowNum = 0
   for(let i=0; i<len; i++) {
     const v = newLiuDesc[i]
     const { content } = v
     if(content && content.length) {
       let tmpText = listToText(content)
       charNum += tmpText.length
-      console.log("===============")
-      console.log(tmpText)
-      console.log("===============")
-      console.log(" ")
+      let tmpRow = getRowNum([v])
+      rowNum += tmpRow
     }
-    if(charNum > MAGIC_NUM) {
-      const newNode = _getBreakPoint(v, i + 1, prevCharNum)
+    if(charNum > MAGIC_NUM || rowNum > MAX_ROW) {
+      const newNode = _getBreakPoint(v, prevRowNum, prevCharNum)
       briefing.push(newNode)
       break
     }
@@ -67,6 +76,7 @@ export function getBriefing(
     }
 
     prevCharNum = charNum
+    prevRowNum = rowNum
     briefing.push(v)
   }
   
@@ -92,12 +102,12 @@ function _addPoint3x(node: LiuContent) {
 /**
  * 当临界 MAGIC_NUM 发生在该节点内时，执行该函数
  * @param node 当前节点信息
- * @param row 当前行数
+ * @param prevRowNum 未包含当前节点时，已有的行数
  * @param prevCharNum 未包含当前节点时，已有的文字数
  */
 function _getBreakPoint(
   node: LiuContent, 
-  row: number, 
+  prevRowNum: number, 
   prevCharNum: number
 ) {
   const { type, content } = node
@@ -105,10 +115,10 @@ function _getBreakPoint(
   let newNode = JSON.parse(JSON.stringify(node)) as LiuContent
 
   if(type === "blockquote") {
-    newNode.content = _handleBlockQuote(content, row, prevCharNum)
+    newNode.content = _handleBlockQuote(content, prevRowNum, prevCharNum)
   }
   else if(type === "bulletList" || type === "orderedList" || type === "taskList") {
-    newNode.content = _handleList(content, row, prevCharNum)
+    newNode.content = _handleList(content, prevRowNum, prevCharNum)
   }
   else if(type === "paragraph") {
     const tmp = _handleParagraph(content, prevCharNum)
@@ -121,12 +131,11 @@ function _getBreakPoint(
 // 返回 blockquote 所需的 content
 function _handleBlockQuote(
   paragraphs: LiuContent[], 
-  row: number, 
+  prevRowNum: number, 
   prevCharNum: number
 ) {
   let charNum = prevCharNum
   const newParagraphs: LiuContent[] = []
-  row -= 1
 
   for(let i=0; i<paragraphs.length; i++) {
     const v = paragraphs[i]
@@ -135,7 +144,7 @@ function _handleBlockQuote(
       newParagraphs.push(v)
       continue
     }
-    row += 1
+    prevRowNum += 1
 
     let tmp = _handleParagraph(content, charNum)
     charNum = tmp.charNum
@@ -149,7 +158,7 @@ function _handleBlockQuote(
     }
 
     // 当前已在第三行
-    if(row >= 3) {
+    if(prevRowNum >= 3) {
       break
     }
   }
@@ -160,13 +169,12 @@ function _handleBlockQuote(
 // 返回 有序列表或无序列表 所需的 content
 function _handleList(
   items: LiuContent[], 
-  row: number, 
+  prevRowNum: number, 
   prevCharNum: number
 ) {
 
   let charNum = prevCharNum
   const newItems: LiuContent[] = []
-  row -= 1
 
   for(let i=0; i<items.length; i++) {
     const v = items[i]
@@ -185,7 +193,7 @@ function _handleList(
       continue
     }
 
-    row += 1
+    prevRowNum += 1
 
     let tmp = _handleParagraph(content2, charNum)
     charNum = tmp.charNum
@@ -199,7 +207,7 @@ function _handleList(
     }
 
     // 当前已在第三行
-    if(row >= 3) {
+    if(prevRowNum >= 3) {
       break
     }
   }

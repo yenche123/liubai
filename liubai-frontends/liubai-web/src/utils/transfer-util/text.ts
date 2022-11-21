@@ -36,3 +36,33 @@ export function listToText(
 
   return plainText
 }
+
+// 是检测到 type === "codeBlock" 或 "paragraph" 来增加行数的
+export function getRowNum(
+  list: TipTapJSONContent[],
+  rowNum: number = 0,
+) {
+
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    const { type, content } = v
+    if(!type) continue
+
+    if(type !== "codeBlock" && content?.length) {
+      const tmpNum = getRowNum(content)
+      rowNum += tmpNum
+    }
+
+    if(type === "codeBlock" && content?.length) {
+      // 由一个 text 所组成
+      const firContent = content[0]
+      const codeText = firContent.text ?? ""
+      const codeList = codeText.split("\n")
+      rowNum += codeList.length
+    }
+
+    if(type === "paragraph") rowNum += 1
+  }
+
+  return rowNum
+}
