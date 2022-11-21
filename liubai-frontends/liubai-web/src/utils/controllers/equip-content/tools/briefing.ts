@@ -7,6 +7,11 @@ import { listToText, getRowNum } from "../../../transfer-util/text";
 const MAGIC_NUM = 140
 const MAX_ROW = 3
 
+/**
+ * 当字数大于 140 行数大于 3 时，显示摘要
+ * @param liuDesc 用户填写的完整内容
+ * @returns 摘要
+ */
 export function getBriefing(
   liuDesc?: LiuContent[]
 ): TipTapJSONContent | undefined {
@@ -17,7 +22,7 @@ export function getBriefing(
   const len = newLiuDesc.length
 
   // 行数大于 3 行
-  if(len > 3) requiredBrief = true
+  if(len > MAX_ROW) requiredBrief = true
 
   // 查找文字很多的情况
   // 为什么不直接把 newLiuDesc 带入 listToText() 去计算字符呢？因为要考虑代码块的情况
@@ -158,7 +163,7 @@ function _handleBlockQuote(
     }
 
     // 当前已在第三行
-    if(prevRowNum >= 3) {
+    if(prevRowNum >= MAX_ROW) {
       break
     }
   }
@@ -207,7 +212,7 @@ function _handleList(
     }
 
     // 当前已在第三行
-    if(prevRowNum >= 3) {
+    if(prevRowNum >= MAX_ROW) {
       break
     }
   }
