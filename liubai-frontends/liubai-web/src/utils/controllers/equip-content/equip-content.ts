@@ -8,8 +8,7 @@ import imgHelper from "../../images/img-helper";
 import { getLocalPreference } from "../../system/local-preference";
 import { TipTapJSONContent } from "../../../types/types-editor";
 import liuUtil from "../../liu-util";
-import { LiuContent } from "../../../types/types-atom";
-import { listToText } from "../../transfer-util/text";
+import { getBriefing } from "./tools/briefing";
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
 
@@ -66,6 +65,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       storageState: v.storageState,
       title: v.title,
       content: tiptapContent,
+      briefing: getBriefing(liuDesc),
       images,
       files: v.files,
       whenStamp: v.whenStamp,
@@ -85,6 +85,10 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       createdStr: liuUtil.showBasicDate(v.createdStamp),
       editedStr: _getEditedStr(v.createdStamp, v.editedStamp),
     }
+
+    console.log("看一下 briefing: ")
+    console.log(obj.briefing)
+    console.log(" ")
 
     list.push(obj)
   }
@@ -112,38 +116,4 @@ async function _getMemberShows(member_ids: string[]) {
     return obj
   })
   return list
-}
-
-function _getBriefing(liuDesc?: LiuContent[]) {
-  if(!liuDesc || liuDesc.length < 1) return
-
-  let requiredBrief = false
-  const len = liuDesc.length
-
-  // 行数大于 5 行
-  if(len > 3) requiredBrief = true
-
-  // 查找文字很多的情况
-  let charNum = 0
-  if(!requiredBrief) {
-    for(let i=0; i<len; i++) {
-      const v = liuDesc[i]
-      const { type, content } = v
-      if(content && content.length) charNum += listToText(content).length
-      if(charNum > 200 && type !== "codeBlock") requiredBrief = true
-      else if(charNum > 140 && i < (len - 1)) requiredBrief = true
-    }
-  }
-
-  if(!requiredBrief) return
-
-  // 开始计算 briefing
-  const briefing: LiuContent[] = []
-  charNum = 0
-  for(let i=0; i<len; i++) {
-    const v = liuDesc[i]
-    
-  }
-  
-
 }
