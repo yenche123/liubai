@@ -117,12 +117,21 @@ export default defineComponent({
     margin-inline-end: 1px;
   }
 
+  a {
+    color: var(--primary-color);
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
   p::selection, 
   code::selection, 
   em::selection, 
   strong::selection, 
   br::selection, 
-  s::selection {
+  s::selection, 
+  a::selection {
     background-color: var(--select-bg);
   }
 
