@@ -86,10 +86,12 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       editedStr: _getEditedStr(v.createdStamp, v.editedStamp),
     }
 
-    console.log("看一下 briefing: ")
-    console.log(obj.briefing)
-    console.log(" ")
-
+    if(obj.briefing) {
+      console.log("看一下 briefing: ")
+      console.log(obj.briefing)
+      console.log(" ")
+    }
+    
     list.push(obj)
   }
 

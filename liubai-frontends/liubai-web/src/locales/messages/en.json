@@ -19,7 +19,8 @@
     "today": "Today",
     "tomorrow": "Tomorrow",
     "yesterday": "Yesterday",
-    "processing": "Processing"
+    "processing": "Processing",
+    "checkMore": "More"
   },
   "editor": {
     "when": "When",

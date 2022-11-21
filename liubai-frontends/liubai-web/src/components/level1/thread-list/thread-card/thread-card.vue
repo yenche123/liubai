@@ -6,6 +6,8 @@ import { useWhenAndRemind } from './tools/useWhenAndRemind';
 import TcWhenRemind from './tc-when-remind/tc-when-remind.vue';
 import TcActionbar from './tc-actionbar/tc-actionbar.vue';
 import TcBottombar from "./tc-bottombar/tc-bottombar.vue";
+import { useThreadCard } from './tools/useThreadCard';
+import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
   components: {
@@ -20,7 +22,8 @@ export default defineComponent({
       required: true
     },
     displayType: {
-      type: String as PropType<"list" | "detail">
+      type: String as PropType<"list" | "detail">,
+      default: "list",
     }
   },
   setup(props) {
@@ -28,11 +31,18 @@ export default defineComponent({
       whenStr,
       remindStr,
     } = useWhenAndRemind(props.threadData)
-
+    const {
+      isBriefing,
+      onTapBriefing
+    } = useThreadCard(props)
+    const { t } = useI18n()
 
     return {
+      t,
       whenStr,
-      remindStr
+      remindStr,
+      isBriefing,
+      onTapBriefing,
     }
   }
 })
@@ -48,7 +58,22 @@ export default defineComponent({
         <span>{{ threadData.title }}</span>
       </h1>
 
-      <div class="tc-content">
+      <!-- 摘要 -->
+      <div v-if="threadData.briefing" v-show="isBriefing" 
+        class="tc-briefing"
+        @click="onTapBriefing"
+      >
+        <EditorCore
+          :edit-mode="false"
+          :content="threadData.briefing"
+        ></EditorCore>
+        <div class="tcb-more">
+          <span>{{ t('common.checkMore') }}</span>
+        </div>
+      </div>
+
+      <!-- 全文 -->
+      <div v-if="threadData.content" v-show="!isBriefing" class="tc-content">
         <EditorCore 
           :edit-mode="false"
           :content="threadData.content"
@@ -112,6 +137,17 @@ export default defineComponent({
       }
     }
 
+    .tc-briefing {
+      position: relative;
+      cursor: pointer;
+
+      .tcb-more {
+        font-size: var(--btn-font);
+        line-height: 1.5;
+        color: var(--main-note);
+        text-align: right;
+      }
+    }
 
     .tc-content {
       position: relative;
