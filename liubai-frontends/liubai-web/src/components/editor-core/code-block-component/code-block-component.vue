@@ -1,7 +1,8 @@
 <template>
   <node-view-wrapper class="code-block">
 
-    <div class="cb-right-top">
+    <!-- 编辑模式 -->
+    <div v-if="editor.isEditable" class="cb-right-top">
 
       <div class="code-block-tip"
         :class="{ 'code-block-tip_hidden': !editor.isActive('codeBlock') }"
@@ -21,6 +22,14 @@
         </option>
       </select>
 
+    </div>
+
+    <!-- 阅读模式 -->
+    <div v-else class="cb-right-top_read">
+      <div class="cbrt-tip">
+        <span v-if="selectedLanguage">{{ selectedLanguage }}</span>
+        <span v-else>AUTO</span>
+      </div>
     </div>
 
     <pre><code><node-view-content /></code></pre>
@@ -109,10 +118,28 @@ export default {
       cursor: pointer;
 
       &[disabled] {
-        opacity: 0.3;
+        opacity: 0.8;
+        cursor: auto;
       }
     }
 
+  }
+
+  .cb-right-top_read {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.5rem;
+    width: calc(100% - 1rem);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .cbrt-tip {
+      font-size: var(--mini-font);
+      font-family: inherit;
+      color: #686868;
+      user-select: none;
+    }
   }
 
 }
