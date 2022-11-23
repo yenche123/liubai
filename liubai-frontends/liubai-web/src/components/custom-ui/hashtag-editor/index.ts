@@ -1,29 +1,27 @@
-import { computed, ref } from "vue"
+import { ref } from "vue"
 import valTool from "../../../utils/basic/val-tool"
 import liuUtil from "../../../utils/liu-util"
+import type { 
+  HteMode,
+  HashTagEditorParam, 
+  HashTagEditorRes, 
+  HteResolver,
+  TagItem
+} from "./tools/types"
+import { formatTagText } from "./tools/handle"
 
 // 使用 element.scrollIntoView 让元素露出来 
-
-interface HashTagEditorParam {
-  text?: string
-  mode: "search" | "rename"          // 前者不可编辑 emoji，后者则可以
-  emoji?: string                     // encodeURIComponent
-}
-
-interface HashTagEditorRes {
-  confirm: boolean
-  text?: string
-  isNew?: boolean   // 是否为新创建的 hashtag，在 mode 为 rename 时若此值为 false 代表要合并 hashtag
-                    // 值得一提的是， oState 为 REMOVED 的 tag 转为 OK 时，也是 new 的
-  emoji?: string    // encodeURIComponent()
-}
-
-type HteResolver = (res: HashTagEditorRes) => void
 
 const TRANSITION_DURATION = 150
 const enable = ref(false)
 const show = ref(false)
-const selectedIndex = -1
+
+const inputVal = ref("")    // 输入框里的文字
+const errCode = ref(0)      // 错误提示. 1: 不得输入奇怪的字符; 2: 最多若干个 "/"
+const newTag = ref("")      // 可以被创建的标签，注意该文字不能回传到业务侧，因为它的结构为 "xxx / yyy / zzz"
+const list = ref<TagItem[]>([])
+const selectedIndex = ref(-1)        // 被选择的 index
+const mode = ref<HteMode>("rename")
 
 let _resolve: HteResolver | undefined
 
@@ -33,7 +31,125 @@ export function initDatePicker() {
     enable, 
     show,
     TRANSITION_DURATION,
+    inputVal,
+    errCode,
+    newTag,
+    list,
+    selectedIndex,
+    mode,
   }
 }
 
+
+export async function showHashTagEditor(opt: HashTagEditorParam) {
+  inputVal.value = opt.text ?? ""
+  errCode.value = 0
+  newTag.value = ""
+  list.value = []
+  selectedIndex.value = -1
+  mode.value = opt.mode
+
+  await _open()
+
+  const _wait = (a: HteResolver): void => {
+    _resolve = a
+  }
+  return new Promise(_wait)
+}
+
+const onTapCancel = () => {
+  _resolve && _resolve({ confirm: false })
+  _close()
+}
+
+const onTapConfirm = () => {
+  if(!checkState()) {
+    onTapCancel()
+    return
+  }
+
+  packData()
+  
+}
+
+function packData() {
+
+}
+
+// 检测 onTapConfirm
+function checkState() {
+  if(errCode.value > 0) {
+    return false
+  }
+
+  const m = mode.value
+  const inputValFormatted = formatTagText(inputVal.value)
+
+  if(m === "search") {
+    if(!newTag.value && selectedIndex.value < 0) {
+      return false
+    }
+  }
+  else if(m === "rename") {
+    if(!inputValFormatted) {
+      return false
+    }
+  }
+
+  return true
+}
+
+
+async function _open() {
+  if(show.value) return
+  enable.value = true
+  await valTool.waitMilli(16)
+  show.value = true
+  _toListenKeyUp()
+}
+
+async function _close() {
+  if(!show.value) return
+  show.value = false
+  await valTool.waitMilli(TRANSITION_DURATION)
+  enable.value = false
+  _cancelListenKeyUp()
+}
+
+
+/*********** 监听键盘敲击 Escape、Enter、上、下 的逻辑 ***********/
+function _whenKeyUp(e: KeyboardEvent) {
+  const key = e.key
+  if(key === "Escape") {
+    onTapCancel()
+    return
+  }
+  if(key === "Enter") {
+    onTapConfirm()
+    return
+  }
+  if(key !== "ArrowDown" && key !== "ArrowUp") return
+  const len = list.value.length
+  if(errCode.value > 0) return
+  if(len < 1) return
+  
+  let diff = key === "ArrowDown" ? 1 : -1
+  let tmpIdx = selectedIndex.value + diff
+  if(tmpIdx >= len) tmpIdx = -1
+  else if(tmpIdx < -1) tmpIdx = len - 1
+  selectedIndex.value = tmpIdx
+
+  
+  if(tmpIdx < 0) return
+  // 等待若干毫秒后，让选项滚动到可识区域
+
+}
+
+function _toListenKeyUp() {
+  window.addEventListener("keyup", _whenKeyUp)
+}
+
+function _cancelListenKeyUp() {
+  window.removeEventListener("keyup", _whenKeyUp)
+}
 
