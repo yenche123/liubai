@@ -25,7 +25,11 @@ export default defineComponent({
     },
     content: {
       type: Object as PropType<TipTapJSONContent>
-    }
+    },
+    hashTrigger: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: {
     update: (payload: EditorCoreContent) => true,

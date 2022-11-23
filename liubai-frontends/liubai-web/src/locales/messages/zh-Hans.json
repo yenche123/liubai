@@ -37,7 +37,8 @@
     "bold": "粗体",
     "italic": "斜体",
     "strike": "删除线",
-    "more": "更多"
+    "more": "更多",
+    "add_editor": "标签里不得有奇奇怪怪的字符"
   },
   "cui": {
     "plz_input_txt": "请输入文字"

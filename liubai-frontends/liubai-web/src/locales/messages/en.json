@@ -37,7 +37,8 @@
     "bold": "Bold",
     "italic": "Italic",
     "strike": "Strikethrough",
-    "more": "More"
+    "more": "More",
+    "add_editor": "There must be no strange characters in the tag"
   },
   "cui": {
     "plz_input_txt": "Text here"

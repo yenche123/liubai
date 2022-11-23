@@ -24,6 +24,7 @@ export interface EditorCoreProps {
   descPlaceholder: string
   editMode: boolean
   content?: TipTapJSONContent
+  hashTrigger: boolean            // 是否允许输入 # 来激发 cui.showHashTagEditor
 }
 
 export interface EditorCoreEmits {
@@ -160,6 +161,10 @@ function onModEnter(
   emits("finish", data)
 }
 
+// 激发 cui.showHashTagEditor() 
+async function triggerHashTagEditor(editor: TipTapEditor) {
+
+}
 
 function initExtensions(
   props: EditorCoreProps,
@@ -226,6 +231,13 @@ function initExtensions(
           const isCodeBlock = editor.isActive("codeBlock")
           if(isCodeBlock) false
           return editor.commands.blur()
+        },
+        '#': ({ editor }) => {
+          if(!props.hashTrigger) return false
+          const isPara = editor.isActive("paragraph")
+          if(!isPara) return false
+          triggerHashTagEditor(editor)
+          return false
         }
       }
     },
