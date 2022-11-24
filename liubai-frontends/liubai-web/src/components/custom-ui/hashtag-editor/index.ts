@@ -8,7 +8,8 @@ import type {
   HteResolver,
   TagItem
 } from "./tools/types"
-import { formatTagText, searchLocal } from "./tools/handle"
+import { searchLocal } from "./tools/handle"
+import { formatTagText, findTagId } from "../../../utils/system/workspace"
 
 // 使用 element.scrollIntoView 让元素露出来 
 
@@ -103,6 +104,7 @@ function hasStrangeChar(val: string) {
 
 
 function onTapCancel() {
+  if(inputEl.value) inputEl.value.blur()
   _resolve && _resolve({ confirm: false })
   _close()
 }
@@ -113,16 +115,61 @@ function onTapConfirm() {
     return
   }
 
-  packData()
+  toEnter()
 }
 
 function onTapItem(index: number) {
   if(selectedIndex.value !== index) selectedIndex.value = index
-  
+  toEnter()
 }
 
-function packData() {
+function toEnter() {
+  if(inputEl.value) inputEl.value.blur()
 
+  const m = mode.value
+  if(m === "rename") {
+    toRename()
+  }
+  else if(m === "search") {
+    toSelect()
+  }
+}
+
+function toRename() {
+  const text = formatTagText(inputVal.value)
+  const tagId = findTagId(text)
+  const icon = emoji.value ? encodeURIComponent(emoji.value) : undefined
+  const res: HashTagEditorRes = {
+    confirm: true,
+    text,
+    tagId: tagId ? tagId : undefined,
+    icon,
+  }
+  _resolve && _resolve(res)
+  _close()
+}
+
+function toSelect() {
+  const idx = selectedIndex.value
+  const item = idx >= 0 ? list.value[idx] : undefined
+  if(idx >= 0 && !item) {
+    console.log("选择的选项，却没有任何东西")
+    return
+  }
+
+  let text = idx < 0 ? newTag.value : (item as TagItem).textBlank
+  text = formatTagText(text)
+  const tagId = findTagId(text)
+  const _emoji = idx < 0 ? undefined : (item as TagItem).emoji
+  const icon = _emoji ? encodeURIComponent(_emoji) : undefined
+  const res: HashTagEditorRes = {
+    confirm: true,
+    text,
+    tagId: tagId ? tagId : undefined,
+    icon,
+  }
+  _resolve && _resolve(res)
+  _close()
 }
 
 // 检测 onTapConfirm
@@ -132,14 +179,13 @@ function checkState() {
   }
 
   const m = mode.value
-  const inputValFormatted = formatTagText(inputVal.value)
-
   if(m === "search") {
     if(!newTag.value && selectedIndex.value < 0) {
       return false
     }
   }
   else if(m === "rename") {
+    const inputValFormatted = formatTagText(inputVal.value)
     if(!inputValFormatted) {
       return false
     }

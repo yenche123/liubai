@@ -9,7 +9,7 @@ export interface HashTagEditorParam {
 
 export interface HashTagEditorRes {
   confirm: boolean
-  text?: string
+  text?: string     // 已 format 过
   tagId?: string    // 如果是已经创建的 tag，则会有该字段
   icon?: string    // encodeURIComponent()
 }

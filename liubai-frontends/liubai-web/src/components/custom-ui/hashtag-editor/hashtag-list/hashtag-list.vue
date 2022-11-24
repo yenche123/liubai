@@ -28,6 +28,7 @@ export default defineComponent({
     // 处理 selectedIndex 变化时，让被选中的选项进入可视区域
     const selectedIndex = toRef(props, "selectedIndex")
     watch(selectedIndex, (newV) => {
+      if(newV < 0) return
       const el = document.querySelector(".ht-item_selected")
       if(!el) return
       el.scrollIntoView()
@@ -106,6 +107,7 @@ export default defineComponent({
   max-height: max(60vh, 400px);
   overflow-y: auto;
   border-top: 1px solid var(--line-default);
+  transition: .2s;
 
   &::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);
@@ -122,8 +124,8 @@ export default defineComponent({
     cursor: pointer;
 
     .hti-icon {
-      width: 32px;
-      height: 32px;
+      width: 38px;
+      height: 38px;
       margin-inline-end: 6px;
       display: flex;
       align-items: center;
