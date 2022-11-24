@@ -20,8 +20,7 @@
     "tomorrow": "明天",
     "yesterday": "昨天",
     "processing": "處理中",
-    "checkMore": "查看更多",
-    "add_editor": "標籤中不得有奇奇怪怪的字符"
+    "checkMore": "查看更多"
   },
   "editor": {
     "when": "什麼時候",
@@ -104,6 +103,8 @@
     "tip": "提示",
     "file_exceed_title": "文件最大存取大小為 10 MB",
     "file_exceed_content": "如果有更大存取的需要，我们推薦使用專門的雲端服務",
-    "max_pic_num": "最多顯示 {num} 張圖片"
+    "max_pic_num": "最多顯示 {num} 張圖片",
+    "no_strange_char": "標籤中不得有奇奇怪怪的字符",
+    "add_tag": "+ 新建標籤 \"{tag}\""
   }
 }

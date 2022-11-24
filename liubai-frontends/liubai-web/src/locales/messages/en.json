@@ -37,8 +37,7 @@
     "bold": "Bold",
     "italic": "Italic",
     "strike": "Strikethrough",
-    "more": "More",
-    "add_editor": "There must be no strange characters in the tag"
+    "more": "More"
   },
   "cui": {
     "plz_input_txt": "Text here"
@@ -104,6 +103,8 @@
     "tip": "TIP",
     "file_exceed_title": "The maxmium size is 10 MB",
     "file_exceed_content": "If you need more size, we recommand that you use a dedicated cloud service",
-    "max_pic_num": "Show up to {num} images"
+    "max_pic_num": "Show up to {num} images",
+    "no_strange_char": "There must be no strange characters in the tag",
+    "add_tag": "+ Add a tag \"{tag}\""
   }
 }

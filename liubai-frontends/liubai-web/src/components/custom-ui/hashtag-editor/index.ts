@@ -16,7 +16,9 @@ const TRANSITION_DURATION = 150
 const enable = ref(false)
 const show = ref(false)
 
+const inputEl = ref<HTMLInputElement | null>(null)
 const inputVal = ref("")    // 输入框里的文字
+const emoji = ref("")       // 输入框左侧的 emoji
 const errCode = ref(0)      // 错误提示. 1: 不得输入奇怪的字符; 2: 最多若干个 "/"
 const newTag = ref("")      // 可以被创建的标签，注意该文字不能回传到业务侧，因为它的结构为 "xxx / yyy / zzz"
 const list = ref<TagItem[]>([])
@@ -25,24 +27,30 @@ const mode = ref<HteMode>("rename")
 
 let _resolve: HteResolver | undefined
 
-export function initDatePicker() {
+export function initHtePicker() {
 
   return { 
+    inputEl,
     enable, 
     show,
     TRANSITION_DURATION,
     inputVal,
+    emoji,
     errCode,
     newTag,
     list,
     selectedIndex,
     mode,
+    onTapCancel,
+    onTapConfirm,
+    onTapItem,
   }
 }
 
 
 export async function showHashTagEditor(opt: HashTagEditorParam) {
   inputVal.value = opt.text ?? ""
+  emoji.value = opt.icon ? decodeURIComponent(opt.icon) : ""
   errCode.value = 0
   newTag.value = ""
   list.value = []
@@ -57,19 +65,22 @@ export async function showHashTagEditor(opt: HashTagEditorParam) {
   return new Promise(_wait)
 }
 
-const onTapCancel = () => {
+function onTapCancel() {
   _resolve && _resolve({ confirm: false })
   _close()
 }
 
-const onTapConfirm = () => {
+function onTapConfirm() {
   if(!checkState()) {
     onTapCancel()
     return
   }
 
   packData()
-  
+}
+
+function onTapItem(index: number) {
+
 }
 
 function packData() {
@@ -106,6 +117,9 @@ async function _open() {
   await valTool.waitMilli(16)
   show.value = true
   _toListenKeyUp()
+  await valTool.waitMilli(TRANSITION_DURATION)
+  if(!inputEl.value) return
+  inputEl.value.focus()
 }
 
 async function _close() {
