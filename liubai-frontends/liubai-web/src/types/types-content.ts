@@ -23,6 +23,12 @@ export interface MemberShow {
   oState: "OK" | "LEFT" | "DELETED"
 }
 
+export interface TagShow {
+  tagId: string
+  text: string
+  emoji?: string
+}
+
 export interface ThreadShow {
   _id: string
   cloud_id?: string
@@ -55,4 +61,5 @@ export interface ThreadShow {
   editedStamp: number       // 动态被编辑的时间戳
   createdStr: string
   editedStr?: string
+  tags?: TagShow[]
 }

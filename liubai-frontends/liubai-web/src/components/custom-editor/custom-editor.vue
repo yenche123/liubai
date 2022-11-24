@@ -20,6 +20,7 @@ import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
 import { initCeState } from "./tools/initCeState";
 import { useCeFinish } from "./tools/useCeFinish";
 import { useThreadShowStore } from "../../hooks/stores/useThreadShowStore";
+import { useCeTag } from "./tools/useCeTag";
 
 const props = defineProps({
   lastBar: {
@@ -39,6 +40,11 @@ const {
   onCoversSorted,
   onFileChange,
 } = useCeFile(state)
+const {
+  tagShows,
+  onTapClearTag,
+  onAddHashTag,
+} = useCeTag(state)
 
 const {
   moreRef,
@@ -83,6 +89,7 @@ const {
       @focus="onEditorFocus"
       @blur="onEditorBlur"
       @finish="onEditorFinish"
+      @addhashtag="onAddHashTag"
       :hash-trigger="true"
     ></EditorCore>
   </div>

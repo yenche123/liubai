@@ -5,6 +5,7 @@ import { useEditorCore } from './tools/useEditorCore'
 import type { EditorCoreContent, TipTapJSONContent } from "../../types/types-editor"
 import cfg from "../../config"
 import { defineComponent, PropType } from 'vue'
+import type { HashTagEditorRes } from "../../types/other/types-hashtag"
 
 export default defineComponent({
   components: {
@@ -36,6 +37,7 @@ export default defineComponent({
     focus: (payload: EditorCoreContent) => true,
     blur: (payload: EditorCoreContent) => true,
     finish: (payload: EditorCoreContent) => true,
+    addhashtag: (payload: HashTagEditorRes) => true
   },
   expose: ['editor'],
   setup(props, { emit }) {

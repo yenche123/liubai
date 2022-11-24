@@ -1,13 +1,14 @@
 import { ref } from "vue"
 import valTool from "../../../utils/basic/val-tool"
-import liuUtil from "../../../utils/liu-util"
-import type { 
-  HteMode,
-  HashTagEditorParam, 
-  HashTagEditorRes, 
+import type {
   HteResolver,
   TagItem
 } from "./tools/types"
+import type {
+  HteMode,
+  HashTagEditorParam, 
+  HashTagEditorRes, 
+} from "../../../types/other/types-hashtag"
 import { searchLocal } from "./tools/handle"
 import { formatTagText, findTagId } from "../../../utils/system/workspace"
 
@@ -230,16 +231,14 @@ function _whenKeyUp(e: KeyboardEvent) {
   const len = list.value.length
   if(errCode.value > 0) return
   if(len < 1) return
+
+  e.preventDefault()
   
   let diff = key === "ArrowDown" ? 1 : -1
   let tmpIdx = selectedIndex.value + diff
   if(tmpIdx >= len) tmpIdx = -1
   else if(tmpIdx < -1) tmpIdx = len - 1
   selectedIndex.value = tmpIdx
-
-  
-  if(tmpIdx < 0) return
-  // 等待若干毫秒后，让选项滚动到可识区域
 
 }
 

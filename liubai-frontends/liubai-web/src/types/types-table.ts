@@ -79,6 +79,7 @@ export interface DraftLocalTable extends BaseLocalTable {
   files?: FileLocal[]
   whenStamp?: number
   remindMe?: LiuRemindMe
+  tagIds?: string[]
   editedStamp: number       // 草稿被用户实际编辑的时间戳
 }
 

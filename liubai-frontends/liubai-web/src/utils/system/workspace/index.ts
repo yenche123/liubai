@@ -1,6 +1,10 @@
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
 import { TagView } from "../../../types/types-atom";
-import { findIndexInThisTagList } from "./tools/workspace-util"
+import { TagShow } from "../../../types/types-content";
+import { 
+  findIndexInThisTagList,
+  findTagShowById,
+} from "./tools/workspace-util"
 
 // 返回当前工作区的 tags
 export function getCurrentSpaceTagList(): TagView[] {
@@ -64,4 +68,22 @@ export function findTagId(val: string) {
   }
 
   return tagId
+}
+
+export function tagIdsToShows(ids: string[]) {
+  const tagList = getCurrentSpaceTagList()
+  if(tagList.length < 1) return { tagShows: [], newIds: [] }
+  const tagShows: TagShow[] = []
+  const newIds: string[] = []
+
+  for(let i=0; i<ids.length; i++) {
+    const id = ids[i]
+    const res = findTagShowById(id, tagList)
+    if(res) {
+      tagShows.push(res)
+      newIds.push(id)
+    }
+  }
+
+  return { tagShows, newIds }
 }

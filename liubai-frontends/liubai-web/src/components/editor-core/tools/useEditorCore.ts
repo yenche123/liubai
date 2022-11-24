@@ -14,6 +14,7 @@ import { wrappingInputRule, nodeInputRule } from "@tiptap/core"
 import type { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
 import { inject, onMounted, ref, watch } from 'vue'
 import type { ShallowRef } from "vue"
+import type { HashTagEditorRes } from "../../../types/other/types-hashtag"
 
 import { lowlight } from 'lowlight'
 import CodeBlockComponent from '../code-block-component/code-block-component.vue'
@@ -33,6 +34,7 @@ export interface EditorCoreEmits {
   (event: "focus", data: EditorCoreContent): void
   (event: "blur", data: EditorCoreContent): void
   (event: "finish", data: EditorCoreContent): void
+  (event: "addhashtag", data: HashTagEditorRes): void
 }
 
 interface EcContext {
@@ -163,22 +165,23 @@ function onModEnter(
 }
 
 // 激发 cui.showHashTagEditor() 
-async function triggerHashTagEditor(editor: TipTapEditor) {
-  console.log("去激发 hash editor.........")
+async function triggerHashTagEditor(
+  editor: TipTapEditor,
+  emits: EditorCoreEmits,
+) {
   const res = await cui.showHashTagEditor({ mode: "search" })
-  console.log("triggerHashTagEditor res: ")
-  console.log(res)
-  console.log(" ")
   if(!res.confirm) {
     editor.commands.focus()
     return
   }
+
+  emits("addhashtag", res)
+
+  // 查看是否要删掉 #
   const { state } = editor
   const { selection } = state
   const { $from, empty } = selection
-  console.log("empty: ", empty)
   if(!empty) return
-  console.log("去执行命令.........")
   editor.chain()
     .focus()
     .command(({ tr }) => {
@@ -259,7 +262,7 @@ function initExtensions(
           if(!props.hashTrigger) return false
           const isPara = editor.isActive("paragraph")
           if(!isPara) return false
-          triggerHashTagEditor(editor)
+          triggerHashTagEditor(editor, emits)
           return false
         }
       }

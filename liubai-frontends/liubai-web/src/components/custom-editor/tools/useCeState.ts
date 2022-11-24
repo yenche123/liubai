@@ -33,13 +33,18 @@ export function useCeState(
 
   // 监听用户操作 images 的变化，去存储到 IndexedDB 上
   watch(() => state.images, (newV) => {
-    toFilesChange(state)
+    toAutoChange(state)
     checkCanSubmit(state, canSubmitRef)
   }, { deep: true })
 
   // 监听用户操作 files 的变化，去存储到 IndexedDB 上
   watch(() => state.files, (newV) => {
-    toFilesChange(state)
+    toAutoChange(state)
+  }, { deep: true })
+
+  // 监听 tagIds 的变化
+  watch(() => state.tagIds, (newV) => {
+    toAutoChange(state)
   }, { deep: true })
   
   const focused = ref(false)
@@ -127,8 +132,8 @@ function _isRequiredChange() {
   return true
 }
 
-// 图片发生变化时，去保存
-function toFilesChange(state: CeState) {
+// 图片、文件、tagIds 发生变化时，去保存
+function toAutoChange(state: CeState) {
   if(_isRequiredChange()) {
     collectState(state)
   }

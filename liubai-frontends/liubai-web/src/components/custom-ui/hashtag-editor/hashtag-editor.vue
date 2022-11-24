@@ -143,6 +143,10 @@ const onMouseEnterItem = (index: number) => {
         width: calc(100% - 100px);
       }
 
+      .hteb-input::selection {
+        background-color: var(--select-bg);
+      }
+
       .hteb-input::-webkit-input-placeholder {
         color: var(--main-note)
       }
