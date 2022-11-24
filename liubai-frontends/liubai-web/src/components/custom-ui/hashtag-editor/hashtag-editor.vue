@@ -17,6 +17,7 @@ const {
   mode,
   onTapCancel,
   onTapItem,
+  onInput,
 } = initHtePicker()
 
 const { t } = useI18n()
@@ -25,15 +26,10 @@ const onMouseEnterItem = (index: number) => {
   selectedIndex.value = index
 }
 
-
 </script>
 <template>
 
-  <div 
-    v-if="enable"
-    class="hte-container"
-    :class="{ 'hte-container_show': show }"
-  >
+  <div v-if="enable" class="hte-container" :class="{ 'hte-container_show': show }">
 
     <div class="hte-bg" @click="onTapCancel" />
 
@@ -43,49 +39,177 @@ const onMouseEnterItem = (index: number) => {
       <div class="hte-bar">
 
         <div class="hteb-box">
-          <svg-icon v-if="mode === 'search' || !emoji" name="tag"
-            class="hteb-icon"
+          <svg-icon v-if="mode === 'search' || !emoji" name="tag" class="hteb-icon"
+            color="var(--main-normal)"
           ></svg-icon>
           <span v-else>{{ emoji }}</span>
         </div>
 
-        <input ref="inputEl" 
-          class="hteb-input" 
-          v-model="inputVal" 
-          :maxlength="50" 
-        />
-        
+        <input ref="inputEl" class="hteb-input" v-model="inputVal" :maxlength="50" :placeholder="t('tip.tag_ph')"
+          @input="onInput" />
+
       </div>
 
       <!-- 第二行: 错误提示 -->
       <div v-if="errCode > 0" class="hte-err">
+        <span>*</span>
         <span v-if="errCode === 1">{{ t('tip.no_strange_char') }}</span>
       </div>
 
       <!-- 第三行: 创建标签 -->
       <div v-else-if="newTag" class="hte-create-box">
-        <div class="hte-create"
-          
-        >
+        <div class="hte-create" :class="{ 'hte-create_selected': selectedIndex === -1 }" @click="() => onTapItem(-1)"
+          @mouseenter="() => onMouseEnterItem(-1)">
           <span>{{ t('tip.add_tag', { tag: newTag }) }}</span>
         </div>
       </div>
 
       <!-- 第四部分: 搜索结果 -->
-      <HashtagList 
-        v-if="mode === 'search' && list.length > 0"
-        :list="list" 
-        :selected-index="selectedIndex"
-        @mouseenteritem="onMouseEnterItem"
-        @tapitem="onTapItem"
-      ></HashtagList>
-      
+      <HashtagList v-if="mode === 'search' && list.length > 0" :list="list" :selected-index="selectedIndex"
+        @mouseenteritem="onMouseEnterItem" @tapitem="onTapItem"></HashtagList>
+
     </div>
 
   </div>
 
 </template>
 <style scoped lang="scss">
+.hte-container {
+  width: 100%;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transition: v-bind("tranMs + 'ms'");
+
+  &.hte-container_show {
+    opacity: 1;
+  }
+
+  .hte-bg {
+    z-index: 5101;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--popup-bg);
+  }
+
+  .hte-box {
+    z-index: 5102;
+    margin-top: 25vh;
+    width: 90vw;
+    max-width: 750px;
+    border-radius: 20px;
+    background-color: var(--card-bg);
+    box-shadow: var(--card-shadow-2);
+    position: relative;
 
 
+    .hte-bar {
+      height: 90px;
+      display: flex;
+      align-items: center;
+      flex: 1;
+      position: relative;
+
+      .hteb-box {
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--main-normal);
+        font-weight: 700;
+        font-size: var(--title-font);
+
+        .hteb-icon {
+          width: 40px;
+          height: 40px;
+        }
+
+      }
+
+      .hteb-input {
+        font-size: var(--title-font);
+        color: var(--main-normal);
+        line-height: 1.75;
+        width: calc(100% - 100px);
+      }
+
+      .hteb-input::-webkit-input-placeholder {
+        color: var(--main-note)
+      }
+
+    }
+
+    @media screen and (max-width: 380px) {
+
+      .hte-bar {
+        height: 80px;
+
+        .hteb-box {
+          height: 80px;
+          width: 80px;
+
+          .hteb-icon {
+            width: 32px;
+            height: 32px;
+          }
+
+        }
+
+        .hteb-input {
+          width: calc(100% - 90px);
+          font-size: var(--desc-font);
+        }
+      }
+    }
+
+    .hte-err {
+      height: 30px;
+      margin-inline-start: 90px;
+      padding-bottom: 20px;
+      font-size: var(--btn-font);
+      color: var(--main-note);
+    }
+
+    .hte-create-box {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0px 10px 10px;
+      position: relative;
+
+      .hte-create {
+        border-radius: 10px;
+        overflow: hidden;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 20px;
+        font-size: var(--desc-font);
+        color: var(--main-normal);
+        transition: .15s;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .hte-create_selected {
+        background-color: var(--bg-color);
+      }
+
+    }
+
+
+  }
+
+}
 </style>

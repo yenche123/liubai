@@ -44,17 +44,21 @@ function _getTagList(): TagView[] {
  * 用户可能输入 yyy/zzz 那么 xxx/yyy/zzz 的结果必须找出来
  * @param text 必须已 format 过了
  */
-export async function search(text: string) {
+export function searchLocal(text: string) {
   const texts = text.split("/")
   const tagList = _getTagList()
   if(tagList.length < 1) return []
-  const list = _searchInList(texts, [], tagList)
-  return list
+  const data = _searchInList(texts, [], tagList)
+  return data
 }
 
 
 // 递归检测 tagViews，查看是否有匹配由关键词组成的 texts
-function _searchInList(texts: string[], parents: string[], tagViews: TagView[]) {
+function _searchInList(
+  texts: string[], 
+  parents: string[], 
+  tagViews: TagView[]
+) {
   let list: TagItem[] = []
 
   for(let i=0; i<tagViews.length; i++) {

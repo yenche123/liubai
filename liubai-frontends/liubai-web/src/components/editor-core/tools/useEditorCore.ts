@@ -18,6 +18,7 @@ import type { ShallowRef } from "vue"
 import { lowlight } from 'lowlight'
 import CodeBlockComponent from '../code-block-component/code-block-component.vue'
 import { editorSetKey } from '../../../utils/provide-keys'
+import cui from '../../custom-ui'
 
 export interface EditorCoreProps {
   titlePlaceholder: string
@@ -163,7 +164,28 @@ function onModEnter(
 
 // 激发 cui.showHashTagEditor() 
 async function triggerHashTagEditor(editor: TipTapEditor) {
-
+  console.log("去激发 hash editor.........")
+  const res = await cui.showHashTagEditor({ mode: "search" })
+  console.log("triggerHashTagEditor res: ")
+  console.log(res)
+  console.log(" ")
+  if(!res.confirm) {
+    editor.commands.focus()
+    return
+  }
+  const { state } = editor
+  const { selection } = state
+  const { $from, empty } = selection
+  console.log("empty: ", empty)
+  if(!empty) return
+  console.log("去执行命令.........")
+  editor.chain()
+    .focus()
+    .command(({ tr }) => {
+      tr.delete($from.pos - 1, $from.pos)
+      return true
+    })
+    .run()
 }
 
 function initExtensions(
@@ -233,6 +255,7 @@ function initExtensions(
           return editor.commands.blur()
         },
         '#': ({ editor }) => {
+          console.log("addKeyboardShortcuts #")
           if(!props.hashTrigger) return false
           const isPara = editor.isActive("paragraph")
           if(!isPara) return false

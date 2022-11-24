@@ -8,7 +8,7 @@ import type {
   HteResolver,
   TagItem
 } from "./tools/types"
-import { formatTagText } from "./tools/handle"
+import { formatTagText, searchLocal } from "./tools/handle"
 
 // 使用 element.scrollIntoView 让元素露出来 
 
@@ -44,6 +44,7 @@ export function initHtePicker() {
     onTapCancel,
     onTapConfirm,
     onTapItem,
+    onInput,
   }
 }
 
@@ -65,6 +66,42 @@ export async function showHashTagEditor(opt: HashTagEditorParam) {
   return new Promise(_wait)
 }
 
+function onInput() {
+  let val = inputVal.value.trim()
+  if(!val) {
+    errCode.value = 0
+    newTag.value = ""
+    list.value = []
+    return
+  }
+  const res1 = hasStrangeChar(val)
+  if(res1) {
+    errCode.value = 1
+    return
+  }
+  errCode.value = 0
+
+  if(mode.value === "rename") return
+
+  val = formatTagText(val)
+  const res2 = searchLocal(val)
+  console.log("查看结果: ")
+  console.log(res2)
+  list.value = res2
+  newTag.value = val.split("/").join(" / ")
+}
+
+function hasStrangeChar(val: string) {
+  const strange_char = "~@#$%^*'\"{}\\"
+  for(let i=0; i<val.length; i++) {
+    const v = val[i]
+    const res = strange_char.includes(v)
+    if(res) return true
+  }
+  return false
+}
+
+
 function onTapCancel() {
   _resolve && _resolve({ confirm: false })
   _close()
@@ -80,7 +117,8 @@ function onTapConfirm() {
 }
 
 function onTapItem(index: number) {
-
+  if(selectedIndex.value !== index) selectedIndex.value = index
+  
 }
 
 function packData() {

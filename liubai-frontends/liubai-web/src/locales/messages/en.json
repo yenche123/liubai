@@ -105,6 +105,7 @@
     "file_exceed_content": "If you need more size, we recommand that you use a dedicated cloud service",
     "max_pic_num": "Show up to {num} images",
     "no_strange_char": "There must be no strange characters in the tag",
-    "add_tag": "+ Add a tag \"{tag}\""
+    "add_tag": "+ Add a tag \"{tag}\"",
+    "tag_ph": "Please input a tag name"
   }
 }

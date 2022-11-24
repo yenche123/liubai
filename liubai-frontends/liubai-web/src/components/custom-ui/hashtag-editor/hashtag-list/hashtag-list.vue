@@ -105,6 +105,7 @@ export default defineComponent({
   align-items: center;
   max-height: max(60vh, 400px);
   overflow-y: auto;
+  border-top: 1px solid var(--line-default);
 
   &::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);

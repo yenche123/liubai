@@ -83,6 +83,7 @@ const {
       @focus="onEditorFocus"
       @blur="onEditorBlur"
       @finish="onEditorFinish"
+      :hash-trigger="true"
     ></EditorCore>
   </div>
 

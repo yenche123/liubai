@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import DatePicker from "./date-picker/date-picker.vue"
 import PreviewImage from "./preview-image/preview-image.vue";
+import HashtagEditor from "./hashtag-editor/hashtag-editor.vue";
 import { initModal } from "./modal"
 import { initLoading } from "./loading"
 import { initTextEditor } from "./text-editor";
@@ -120,6 +121,9 @@ const {
       <span v-if="loadingTitle" class="cui-loading-title">{{ loadingTitle }}</span>
     </div>
   </div>
+
+  <!-- hashtag 编辑器 -->
+  <HashtagEditor></HashtagEditor>
 
   <!-- 日期选择器 -->
   <DatePicker></DatePicker>
