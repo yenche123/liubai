@@ -17,6 +17,7 @@ import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 import { useCeFile } from "./tools/useCeFile";
 import CeCovers from "./ce-covers/ce-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
+import CeTags from "./ce-tags/ce-tags.vue";
 import { initCeState } from "./tools/initCeState";
 import { useCeFinish } from "./tools/useCeFinish";
 import { useThreadShowStore } from "../../hooks/stores/useThreadShowStore";
@@ -102,6 +103,11 @@ const {
     @update:model-value="onCoversSorted"
     @clear="onClearCover"
   ></CeCovers>
+
+  <CeTags
+    :tag-shows="tagShows"
+    @cleartag="onTapClearTag"
+  ></CeTags>
 
   <ce-toolbar
     :editor="editor"

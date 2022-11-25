@@ -1,6 +1,6 @@
 
 import { ref, watch } from "vue"
-import { TagShow } from "../../../types/types-content"
+import type { TagShow } from "../../../types/types-content"
 import type { CeState } from "./atom-ce"
 import type { Ref } from "vue"
 import { addATag, tagIdsToShows } from "../../../utils/system/workspace"

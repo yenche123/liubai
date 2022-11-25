@@ -118,6 +118,7 @@ async function initDraftFromDraft(
   state.remindMe = draft.remindMe
   state.images = draft.images
   state.files = draft.files
+  state.tagIds = draft.tagIds ?? []
   
   if(draft.liuDesc) {
     let text = transferUtil.tiptapToText(draft.liuDesc)
@@ -141,6 +142,7 @@ async function initDraftFromThread(
   state.remindMe = _getRemindMeFromThread(thread)
   state.images = thread.images
   state.files = thread.files
+  state.tagIds = thread.tagIds ?? []
 
   if(thread.liuDesc) {
     let draftDescJSON = transferUtil.liuToTiptap(thread.liuDesc)
