@@ -63,7 +63,9 @@ const onMouseEnterItem = (index: number) => {
           <div class="htec-icon">
             <svg-icon name="add" color="var(--main-normal)" class="htec-svgicon"></svg-icon>
           </div>
-          <span>{{ t('tip.add_tag', { tag: newTag }) }}</span>
+          <div class="hte-create-title">
+            <span>{{ t('tip.add_tag', { tag: newTag }) }}</span>
+          </div>
         </div>
       </div>
 
@@ -73,6 +75,7 @@ const onMouseEnterItem = (index: number) => {
 
     </div>
 
+
   </div>
 
 </template>
@@ -80,6 +83,7 @@ const onMouseEnterItem = (index: number) => {
 .hte-container {
   width: 100%;
   min-height: 100vh;
+  max-height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
@@ -106,13 +110,25 @@ const onMouseEnterItem = (index: number) => {
 
   .hte-box {
     z-index: 5102;
-    margin-top: 25vh;
+    margin-top: 20vh;
     width: 90vw;
     max-width: 750px;
     border-radius: 20px;
-    background-color: var(--card-bg);
     box-shadow: var(--card-shadow-2);
     position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--frosted-glass-2);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+    }
 
 
     .hte-bar {
@@ -196,14 +212,12 @@ const onMouseEnterItem = (index: number) => {
       .hte-create {
         border-radius: 10px;
         overflow: hidden;
-        height: 70px;
+        height: 60px;
         display: flex;
         align-items: center;
         width: 100%;
         box-sizing: border-box;
         padding: 10px 10px;
-        font-size: var(--desc-font);
-        color: var(--main-normal);
         transition: .02s;
         cursor: pointer;
         user-select: none;
@@ -215,6 +229,7 @@ const onMouseEnterItem = (index: number) => {
           display: flex;
           align-items: center;
           justify-content: center;
+          position: relative;
 
           .htec-svgicon {
             width: 24px;
@@ -222,10 +237,29 @@ const onMouseEnterItem = (index: number) => {
           }
         }
 
+        .hte-create-title {
+          font-size: var(--desc-font);
+          color: var(--main-normal);
+          position: relative;
+        }
+
       }
 
       .hte-create_selected {
-        background-color: var(--bg-color);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 1px 2px 3px rgba(0, 0, 0, .03);
+
+        &::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: var(--bg-color);
+          opacity: .6;
+        }
       }
 
     }

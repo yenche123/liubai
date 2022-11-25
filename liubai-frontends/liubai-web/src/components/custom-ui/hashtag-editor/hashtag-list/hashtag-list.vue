@@ -1,7 +1,8 @@
 <script lang="ts">
-import { defineComponent, PropType, toRef, watch } from 'vue';
+import { defineComponent, nextTick, PropType, toRef, watch } from 'vue';
 import liuApi from '../../../../utils/liu-api';
 import type { TagItem } from "../tools/types"
+import { useHashtagList } from "./tools/useHashtagList" 
 
 const default_color = "var(--main-normal)"
 
@@ -25,19 +26,12 @@ export default defineComponent({
   setup(props, { emit }) {
     
 
-    // 处理 selectedIndex 变化时，让被选中的选项进入可视区域
-    const selectedIndex = toRef(props, "selectedIndex")
-    watch(selectedIndex, (newV) => {
-      if(newV < 0) return
-      const el = document.querySelector(".ht-item_selected")
-      if(!el) return
-      el.scrollIntoView()
-    })
-
+    useHashtagList(props)
+    
     const { isPC } = liuApi.getCharacteristic()
 
     const onMouseEnter = (index: number) => {
-      if(index === selectedIndex.value) return
+      if(index === props.selectedIndex) return
       emit("mouseenteritem", index)
     }
 
@@ -63,7 +57,6 @@ export default defineComponent({
 
 
   <template v-for="(item, index) in list" :key="item.tagId">
-  
     <div class="ht-item"
       :class="{ 'ht-item_selected': index === selectedIndex }"
       @mouseenter="() => onMouseEnter(index)"
@@ -100,13 +93,14 @@ export default defineComponent({
 .ht-list {
   padding: 10px 0;
   width: 100%;
+  box-sizing: border-box;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-height: max(60vh, 400px);
+  max-height: 40vh;
   overflow-y: auto;
-  border-top: 1px solid var(--line-default);
+  border-top: 1px solid var(--line-hover);
   transition: .2s;
 
   &::-webkit-scrollbar-thumb {
@@ -115,15 +109,18 @@ export default defineComponent({
 
   .ht-item {
     width: calc(100% - 20px);
-    padding: 16px 10px 16px 10px;
+    min-height: 60px;
     box-sizing: border-box;
+    padding: 10px;
     border-radius: 10px;
+    overflow: hidden;
     display: flex;
     align-items: center;
-    transition: .02s;
     cursor: pointer;
+    user-select: none;
 
     .hti-icon {
+      position: relative;
       width: 38px;
       height: 38px;
       margin-inline-end: 6px;
@@ -139,6 +136,7 @@ export default defineComponent({
     }
 
     .hti-title {
+      position: relative;
       flex: 1;
       font-size: var(--desc-font);
       color: var(--main-normal);
@@ -147,6 +145,7 @@ export default defineComponent({
     }
 
     .hti-footer {
+      position: relative;
       margin-inline-start: 6px;
       font-size: var(--desc-font);
       color: var(--main-note);
@@ -155,7 +154,20 @@ export default defineComponent({
   }
 
   .ht-item_selected {
-    background-color: var(--bg-color);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, .03);
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      opacity: .6;
+    }
   }
 
 }

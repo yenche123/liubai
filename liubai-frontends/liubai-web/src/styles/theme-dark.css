@@ -62,4 +62,7 @@
 
   /** 毛玻璃背景 */
   --frosted-glass: rgba(5, 5, 5, .75);   /** 跟随 sidebar，rgb(35,35,35) 即 #232323 */
+  --frosted-glass-2: rgba(10, 10, 10, .85);  /** spotlight 模态框的背景色 */
+
+
 }
