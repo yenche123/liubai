@@ -80,6 +80,7 @@ function onInput() {
   const res1 = hasStrangeChar(val)
   if(res1) {
     errCode.value = 1
+    newTag.value = ""
     return
   }
   errCode.value = 0
@@ -88,8 +89,6 @@ function onInput() {
 
   val = formatTagText(val)
   const res2 = searchLocal(val)
-  console.log("查看结果: ")
-  console.log(res2)
   list.value = res2
   newTag.value = val.split("/").join(" / ")
   if(selectedIndex.value >= res2.length) {
@@ -179,19 +178,22 @@ function toSelect() {
 
 // 检测 onTapConfirm
 function checkState() {
-  if(errCode.value > 0) {
-    return false
-  }
-
+  
   const m = mode.value
   if(m === "search") {
-    if(!newTag.value && selectedIndex.value < 0) {
-      return false
-    }
+    const sIdx = selectedIndex.value
+    if(newTag.value && sIdx === -1) return true
+    const item = list.value[sIdx]
+    if(item) return true
+    return false
   }
-  else if(m === "rename") {
+  
+  if(m === "rename") {
     const inputValFormatted = formatTagText(inputVal.value)
     if(!inputValFormatted) {
+      return false
+    }
+    if(errCode.value > 0) {
       return false
     }
   }
@@ -233,7 +235,6 @@ function _whenKeyDown(e: KeyboardEvent) {
   }
   if(key !== "ArrowDown" && key !== "ArrowUp") return
   const len = list.value.length
-  if(errCode.value > 0) return
   if(len < 1) return
 
   e.preventDefault()
@@ -245,7 +246,6 @@ function _whenKeyDown(e: KeyboardEvent) {
   if(tmpIdx >= len) tmpIdx = -1
   else if(tmpIdx < -1) tmpIdx = len - 1
   selectedIndex.value = tmpIdx
-
 }
 
 
