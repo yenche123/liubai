@@ -196,6 +196,7 @@ const onMouseEnterItem = (index: number) => {
     }
 
     .hte-err {
+      position: relative;
       height: 30px;
       margin-inline-start: 90px;
       padding-bottom: 20px;
