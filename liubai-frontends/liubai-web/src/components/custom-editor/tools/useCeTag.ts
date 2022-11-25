@@ -3,7 +3,8 @@ import { ref, watch } from "vue"
 import { TagShow } from "../../../types/types-content"
 import type { CeState } from "./atom-ce"
 import type { Ref } from "vue"
-import { tagIdsToShows } from "../../../utils/system/workspace"
+import { addATag, tagIdsToShows } from "../../../utils/system/workspace"
+import type { HashTagEditorRes } from "../../../types/other/types-hashtag"
 
 export function useCeTag(
   state: CeState
@@ -21,10 +22,20 @@ export function useCeTag(
     tagIds.splice(index, 1)
   }
 
-  const onAddHashTag = () => {
-
+  const onAddHashTag = async (data: HashTagEditorRes) => {
+    let tagIds = state.tagIds
+    let id = data.tagId
+    if(id) {
+      if(tagIds.includes(id)) return
+      state.tagIds.push(id)
+      return
+    }
+    const text = data.text as string
+    const res = await addATag({ text, icon: data.icon })
+    id = res.id
+    if(!id) return
+    state.tagIds.push(id)
   }
-
 
   return {
     tagShows,

@@ -1,9 +1,10 @@
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
-import { TagView } from "../../../types/types-atom";
-import { TagShow } from "../../../types/types-content";
+import type { TagView } from "../../../types/types-atom";
+import type { TagShow } from "../../../types/types-content";
 import { 
   findIndexInThisTagList,
   findTagShowById,
+  addTagToTagList,
 } from "./tools/workspace-util"
 
 // 返回当前工作区的 tags
@@ -86,4 +87,30 @@ export function tagIdsToShows(ids: string[]) {
   }
 
   return { tagShows, newIds }
+}
+
+
+interface AddATagParam {
+  text: string          // 必须是已 formatTagText() 过的文字
+  icon?: string
+}
+
+interface AddATagRes {
+  id?: string
+  isOk: boolean
+  errMsg?: string
+}
+
+/**
+ * 将一个标签添加到 tagList 里
+ */
+export async function addATag(opt: AddATagParam): Promise<AddATagRes> {
+  const store = useWorkspaceStore()
+  const workspace = store.currentSpace
+  if(!workspace) return { isOk: false, errMsg: "no workspace locally" }
+  let tagList = workspace.tagList ?? []
+  const texts = opt.text.split("/")
+  const data = addTagToTagList(texts, tagList, opt.icon)
+  const res = await store.setTagList(data.tagList)
+  return { isOk: true, id: data.tagId }
 }

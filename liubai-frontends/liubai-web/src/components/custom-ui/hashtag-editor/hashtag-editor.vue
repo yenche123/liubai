@@ -201,7 +201,7 @@ const onMouseEnterItem = (index: number) => {
         padding: 10px 20px;
         font-size: var(--desc-font);
         color: var(--main-normal);
-        transition: .15s;
+        transition: .03s;
         cursor: pointer;
         user-select: none;
       }

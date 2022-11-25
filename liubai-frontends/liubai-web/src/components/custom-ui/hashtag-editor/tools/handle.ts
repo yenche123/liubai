@@ -30,9 +30,13 @@ function _searchInList(
 
     const res1 = _searchInTagView(texts, parents, tagView)
     if(res1) {
+      let textBlank = tagView.text
+      if(parents.length > 1) textBlank = parents.join(" / ") + " / " + tagView.text
+      else if(parents.length > 0) textBlank = parents[0] + " / " + tagView.text
+
       const obj: TagItem = {
         tagId: tagView.tagId,
-        textBlank: parents.join(" / ") + " / " + tagView.text,
+        textBlank,
         emoji: tagView.icon ? decodeURIComponent(tagView.icon) : undefined
       }
       list.push(obj)

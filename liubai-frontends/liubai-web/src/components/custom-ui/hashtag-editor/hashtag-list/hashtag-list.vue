@@ -115,12 +115,12 @@ export default defineComponent({
 
   .ht-item {
     width: calc(100% - 20px);
-    padding: 16px 10px 16px 20px;
+    padding: 16px 10px 16px 10px;
     box-sizing: border-box;
     border-radius: 10px;
     display: flex;
     align-items: center;
-    transition: .15s;
+    transition: .03s;
     cursor: pointer;
 
     .hti-icon {
@@ -149,7 +149,7 @@ export default defineComponent({
     .hti-footer {
       margin-inline-start: 6px;
       font-size: var(--desc-font);
-      color: var(--main-code);
+      color: var(--main-note);
     }
 
   }

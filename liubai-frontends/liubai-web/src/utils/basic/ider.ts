@@ -40,6 +40,10 @@ const createFileId = () => {
   return "file_" + _createId(23)
 }
 
+const createTagId = () => {
+  return "tag_" + _createId(23)
+}
+
 export default {
   createUserId,
   createWorkspaceId,
@@ -49,4 +53,5 @@ export default {
   createCommentId,
   createImgId,
   createFileId,
+  createTagId,
 }

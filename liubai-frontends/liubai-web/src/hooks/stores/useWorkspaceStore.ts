@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { TagView } from "../../types/types-atom";
 import { MemberLocalTable, WorkspaceLocalTable } from "../../types/types-table";
 import { db } from "../../utils/db";
 
@@ -39,6 +40,17 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
     console.log(res)
   }
 
+  const setTagList = async (list: TagView[]) => {
+    const spaceVal = currentSpace.value
+    if(!spaceVal) return
+    spaceVal.tagList = list
+    const tmpList = JSON.parse(JSON.stringify(list)) as TagView[]
+    const res = await db.workspaces.update(spaceVal._id, { tagList: tmpList })
+    console.log("setTagList res: ")
+    console.log(res)
+    return true
+  }
+
   return { 
     spaceId, 
     memberId,
@@ -47,7 +59,8 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
     currentSpace,
     myMember,
     setSpaceAndMember,
-    setNickName 
+    setNickName,
+    setTagList,
   }
 })
 

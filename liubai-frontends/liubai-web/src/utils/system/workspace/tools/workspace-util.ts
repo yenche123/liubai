@@ -1,5 +1,7 @@
 import type { TagView } from "../../../../types/types-atom";
 import { TagShow } from "../../../../types/types-content";
+import ider from "../../../basic/ider";
+import time from "../../../basic/time";
 
 
 /**
@@ -42,4 +44,58 @@ export function findTagShowById(
   }
 
   return null
+}
+
+export function addTagToTagList(
+  texts: string[],
+  tagList: TagView[],
+  icon?: string,
+) {
+
+  let tagId = ""
+  const keyWords = texts.splice(0, 1)
+  const keyWord = keyWords[0]
+  const key_lower = keyWord.toLowerCase()
+
+  let hasFind = false
+  
+  const now = time.getTime()
+
+  for(let i=0; i<tagList.length; i++) {
+    const v = tagList[i]
+    const text = v.text.toLowerCase()
+    if(text !== key_lower) continue
+    hasFind = true
+    tagId = v.tagId
+    if(v.oState === "REMOVED") {
+      v.oState = "OK"
+      v.updatedStamp = now
+    }
+    if(texts.length > 0) {
+      let tmpList = v.children ?? []
+      const data = addTagToTagList(texts, tmpList, icon)
+      v.children = data.tagList
+      tagId = data.tagId
+    }
+    break
+  }
+
+  if(!hasFind) {
+    const obj: TagView = {
+      tagId: ider.createTagId(),
+      text: keyWord,
+      icon: texts.length < 1 ? icon : undefined,
+      oState: "OK",
+      createdStamp: now,
+      updatedStamp: now,
+    }
+    if(texts.length > 0) {
+      const data = addTagToTagList(texts, [], icon)
+      obj.children = data.tagList
+      tagId = data.tagId
+    }
+    tagList.splice(0, 0, obj)
+  }
+
+  return { tagList, tagId }
 }

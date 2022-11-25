@@ -175,7 +175,7 @@ async function triggerHashTagEditor(
     return
   }
 
-  emits("addhashtag", res)
+  if(res.text) emits("addhashtag", res)
 
   // 查看是否要删掉 #
   const { state } = editor

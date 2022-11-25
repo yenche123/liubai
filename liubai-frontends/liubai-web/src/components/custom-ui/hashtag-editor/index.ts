@@ -217,7 +217,7 @@ async function _close() {
 
 
 /*********** 监听键盘敲击 Escape、Enter、上、下 的逻辑 ***********/
-function _whenKeyUp(e: KeyboardEvent) {
+function _whenKeyDown(e: KeyboardEvent) {
   const key = e.key
   if(key === "Escape") {
     onTapCancel()
@@ -243,10 +243,10 @@ function _whenKeyUp(e: KeyboardEvent) {
 }
 
 function _toListenKeyUp() {
-  window.addEventListener("keyup", _whenKeyUp)
+  window.addEventListener("keydown", _whenKeyDown)
 }
 
 function _cancelListenKeyUp() {
-  window.removeEventListener("keyup", _whenKeyUp)
+  window.removeEventListener("keydown", _whenKeyDown)
 }
 
