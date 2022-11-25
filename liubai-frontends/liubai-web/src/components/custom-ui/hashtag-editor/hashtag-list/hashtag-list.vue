@@ -120,7 +120,7 @@ export default defineComponent({
     border-radius: 10px;
     display: flex;
     align-items: center;
-    transition: .03s;
+    transition: .02s;
     cursor: pointer;
 
     .hti-icon {

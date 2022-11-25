@@ -11,6 +11,7 @@ import type {
 } from "../../../types/other/types-hashtag"
 import { searchLocal } from "./tools/handle"
 import { formatTagText, findTagId } from "../../../utils/system/workspace"
+import time from "../../../utils/basic/time"
 
 // 使用 element.scrollIntoView 让元素露出来 
 
@@ -91,6 +92,9 @@ function onInput() {
   console.log(res2)
   list.value = res2
   newTag.value = val.split("/").join(" / ")
+  if(selectedIndex.value >= res2.length) {
+    selectedIndex.value = res2.length - 1
+  }
 }
 
 function hasStrangeChar(val: string) {
@@ -233,6 +237,8 @@ function _whenKeyDown(e: KeyboardEvent) {
   if(len < 1) return
 
   e.preventDefault()
+
+  if(!canKeyUpDown()) return
   
   let diff = key === "ArrowDown" ? 1 : -1
   let tmpIdx = selectedIndex.value + diff
@@ -241,6 +247,17 @@ function _whenKeyDown(e: KeyboardEvent) {
   selectedIndex.value = tmpIdx
 
 }
+
+
+let lastKeyUpDown = 0
+function canKeyUpDown() {
+  const now = time.getTime()
+  const diff = now - lastKeyUpDown
+  if(diff < 20) return false
+  lastKeyUpDown = now
+  return true
+}
+
 
 function _toListenKeyUp() {
   window.addEventListener("keydown", _whenKeyDown)

@@ -105,7 +105,7 @@
     "file_exceed_content": "如果有更大尺寸的需要，我们推荐使用专业的网盘服务",
     "max_pic_num": "最多展示 {num} 张图片",
     "no_strange_char": "标签里不得有奇奇怪怪的字符",
-    "add_tag": "+ 添加标签 \"{tag}\"",
+    "add_tag": "添加标签 \"{tag}\"",
     "tag_ph": "请输入标签名"
   }
 }

@@ -105,7 +105,7 @@
     "file_exceed_content": "如果有更大存取的需要，我们推薦使用專門的雲端服務",
     "max_pic_num": "最多顯示 {num} 張圖片",
     "no_strange_char": "標籤中不得有奇奇怪怪的字符",
-    "add_tag": "+ 新建標籤 \"{tag}\"",
+    "add_tag": "新建標籤 \"{tag}\"",
     "tag_ph": "請輸入標籤名"
   }
 }

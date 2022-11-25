@@ -219,6 +219,7 @@ async function toSave(state: CeState) {
   let images = _getStoragedFiles(state)
   let files = _getStoragedFiles<FileLocal>(state, "files")
   let remindMe = isProxy(state.remindMe) ? toRaw(state.remindMe) : state.remindMe
+  let tagIds = isProxy(state.tagIds) ? toRaw(state.tagIds) : state.tagIds
 
   const draft: DraftLocalTable = {
     _id: draftId,
@@ -238,6 +239,7 @@ async function toSave(state: CeState) {
     insertedStamp: insertedStamp,
     updatedStamp: now,
     editedStamp: now,
+    tagIds,
   }
 
   console.log("去本地存储 draft.........")

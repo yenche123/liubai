@@ -60,6 +60,9 @@ const onMouseEnterItem = (index: number) => {
       <div v-else-if="newTag" class="hte-create-box">
         <div class="hte-create" :class="{ 'hte-create_selected': selectedIndex === -1 }" @click="() => onTapItem(-1)"
           @mouseenter="() => onMouseEnterItem(-1)">
+          <div class="htec-icon">
+            <svg-icon name="add" color="var(--main-normal)" class="htec-svgicon"></svg-icon>
+          </div>
           <span>{{ t('tip.add_tag', { tag: newTag }) }}</span>
         </div>
       </div>
@@ -198,12 +201,27 @@ const onMouseEnterItem = (index: number) => {
         align-items: center;
         width: 100%;
         box-sizing: border-box;
-        padding: 10px 20px;
+        padding: 10px 10px;
         font-size: var(--desc-font);
         color: var(--main-normal);
-        transition: .03s;
+        transition: .02s;
         cursor: pointer;
         user-select: none;
+
+        .htec-icon {
+          width: 38px;
+          height: 38px;
+          margin-inline-end: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .htec-svgicon {
+            width: 24px;
+            height: 24px;
+          }
+        }
+
       }
 
       .hte-create_selected {

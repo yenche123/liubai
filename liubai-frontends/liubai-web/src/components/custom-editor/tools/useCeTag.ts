@@ -50,8 +50,6 @@ function whenTagIdsChange(
   newTagIds: string[] | undefined,
   tagShows: Ref<TagShow[]>,
 ) {
-  console.log("whenTagIdsChange..........")
-
   if(!newTagIds || newTagIds.length < 1) {
     tagShows.value = []
     return

@@ -81,7 +81,8 @@ function _searchInTagView(texts: string[], parents: string[], tagView: TagView) 
   for(let i=0; i<newTexts.length; i++) {
     const v1 = newTexts[i].toLowerCase()
     const v2 = list[0].toLowerCase()
-    if(v1 === v2) {
+
+    if(v2.startsWith(v1)) {
       list.splice(0, 1)
       continue
     }
