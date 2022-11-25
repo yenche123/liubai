@@ -99,6 +99,9 @@ export function addTagToTagList(
       obj.children = data.tagList
       tagId = data.tagId
     }
+    else {
+      tagId = obj.tagId
+    }
     tagList.splice(0, 0, obj)
   }
 
