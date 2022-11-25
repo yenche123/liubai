@@ -24,22 +24,27 @@ export function findIndexInThisTagList(val: string, tagList: TagView[]) {
 
 export function findTagShowById(
   id: string, 
-  tagList: TagView[]
+  tagList: TagView[],
+  parents?: string[],
 ): TagShow | null {
+  if(!parents) parents = []
   for(let i=0; i<tagList.length; i++) {
     const v = tagList[i]
     if(v.oState === "REMOVED") continue
     if(v.tagId === id) {
+      parents.push(v.text)
       const obj: TagShow = {
         tagId: v.tagId,
-        text: v.text,
+        text: parents.join(" / "),
         emoji: v.icon ? decodeURIComponent(v.icon) : undefined,
       }
       return obj
     }
     if(v.children) {
-      const tmp = findTagShowById(id, v.children)
+      parents.push(v.text)
+      const tmp = findTagShowById(id, v.children, parents)
       if(tmp) return tmp
+      else parents.pop()
     }
   }
 
