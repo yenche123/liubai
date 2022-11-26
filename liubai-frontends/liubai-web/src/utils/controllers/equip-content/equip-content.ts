@@ -3,7 +3,7 @@
 import { ContentLocalTable } from "../../../types/types-table";
 import { db } from "../../db";
 import collectionController from "../collection-controller/collection-controller";
-import type { MemberShow, ThreadShow } from "../../../types/types-content";
+import type { MemberShow, TagShow, ThreadShow } from "../../../types/types-content";
 import imgHelper from "../../images/img-helper";
 import { getLocalPreference } from "../../system/local-preference";
 import { TipTapJSONContent } from "../../../types/types-editor";
@@ -54,9 +54,12 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
 
     let tiptapContent: TipTapJSONContent | undefined = liuDesc?.length 
       ? { type: "doc", content: liuDesc } : undefined
-
+ 
+    
+    let tags: TagShow[] = []
+    // 判断当前工作区与当前动态是否匹配
     const tagData = v.tagIds ? tagIdsToShows(v.tagIds) : undefined
-    const tags = tagData?.tagShows ? tagData.tagShows : []
+    tags = tagData?.tagShows ? tagData.tagShows : []
 
     const obj: ThreadShow = {
       _id,

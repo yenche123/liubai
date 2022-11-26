@@ -18,6 +18,14 @@ export function initSpace(
   })
 }
 
+
+// 查找我所在的工作区
+async function getMySpaceIds(userId: string) {
+  const res = await db.members.where({ user: userId }).toArray()
+  const list = res.map(v => v.workspace)
+  return list
+}
+
 async function whenRouteChange(
   store: WorkspaceStore,
   newV: RouteLocationNormalizedLoaded,
@@ -81,6 +89,13 @@ async function whenRouteChange(
     myMember: myMember,
   }
 
+  // 检查 mySpaceIds 是否存在，不存在就去查找并赋值
+  // 因为 equip-content 时，判断 标签tag 时会用到
+  if(store.mySpaceIds.length < 1) {
+    const mySpaceIds = await getMySpaceIds(userId)
+    store.setMySpaceIds(mySpaceIds)
+  }
+
   store.setSpaceAndMember(opt)
 }
 
@@ -116,5 +131,12 @@ async function handleCollaborativeSpace(
   const member = await db.members.get(g)
   opt.memberId = member?._id ?? ""
   opt.myMember = member
+
+  // 3. 检查 mySpaceIds 是否存在
+  if(store.mySpaceIds.length < 1) {
+    const mySpaceIds = await getMySpaceIds(userId)
+    store.setMySpaceIds(mySpaceIds)
+  }
+
   store.setSpaceAndMember(opt)
 }

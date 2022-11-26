@@ -41,6 +41,7 @@ export async function init() {
     currentSpace: workspace,
     myMember: member
   }
+  store.setMySpaceIds([workspace._id])
   store.setSpaceAndMember(opt)
 }
 

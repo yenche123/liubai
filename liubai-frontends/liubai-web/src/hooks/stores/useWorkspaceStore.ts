@@ -23,6 +23,9 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
   const currentSpace = ref<WorkspaceLocalTable | null>(null)
   const myMember = ref<MemberLocalTable | null>(null)
 
+  // 我有在的工作区 id
+  const mySpaceIds = ref<string[]>([])
+
   const setSpaceAndMember = (opt: SpaceAndMemberOpt) => {
     spaceId.value = opt.spaceId
     memberId.value = opt.memberId
@@ -51,6 +54,10 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
     return true
   }
 
+  const setMySpaceIds = (list: string[]) => {
+    mySpaceIds.value = list
+  }
+
   return { 
     spaceId, 
     memberId,
@@ -58,9 +65,11 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
     isCollaborative, 
     currentSpace,
     myMember,
+    mySpaceIds,
     setSpaceAndMember,
     setNickName,
     setTagList,
+    setMySpaceIds,
   }
 })
 
