@@ -25,6 +25,7 @@ async function whenRouteChange(
 ) {
 
   const inApp = newV.meta.inApp
+  const pageName = newV.name
   if(inApp === false) {
     return
   }
@@ -41,6 +42,10 @@ async function whenRouteChange(
   // 只剩 个人工作区的可能了
   // 先检查是否已经在个人工作区里
   if(!store.isCollaborative && store.spaceId) return
+
+  // 再检查是否为 detail 页，且已有 spaceId 就忽略
+  // 因为 动态详情页可能是其他工作区的
+  if(pageName === "detail" && store.spaceId) return
 
   // 从 IndexedDB 里查找 个人工作区的 spaceId
   const localP = getLocalPreference()

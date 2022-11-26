@@ -7,6 +7,7 @@ const DetailPage = () => import("../pages/level2/detail-page/detail-page.vue")
 const FavoritePage = () => import("../pages/level2/favorite-page/favorite-page.vue")
 const KanbanPage = () => import("../pages/level2/kanban-page/kanban-page.vue")
 const TrashPage = () => import("../pages/level2/trash-page/trash-page.vue")
+const TagPage = () => import("../pages/level2/tag-page/tag-page.vue")
 const ConnectPage = () => import("../pages/level2/connect-page/connect-page.vue")
 const LeftSidebar = () => import("../views/side-bar/side-bar.vue")
 
@@ -55,6 +56,17 @@ const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "detail",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
+    path: "/tag/:tagId(\\w{20,})",
+    components: {
+      default: TagPage,
+      LeftSidebar,
+    },
+    name: "tag",
     meta: {
       keepAlive: true,
     }
@@ -111,6 +123,17 @@ const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-index",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/tag/:tagId(\\w{20,})",
+    components: {
+      default: TagPage,
+      LeftSidebar,
+    },
+    name: "collaborative-tag",
     meta: {
       keepAlive: true,
     }
