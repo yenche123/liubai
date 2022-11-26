@@ -6,6 +6,7 @@ import { useWhenAndRemind } from './tools/useWhenAndRemind';
 import TcWhenRemind from './tc-when-remind/tc-when-remind.vue';
 import TcActionbar from './tc-actionbar/tc-actionbar.vue';
 import TcBottombar from "./tc-bottombar/tc-bottombar.vue";
+import TcTags from "./tc-tags/tc-tags.vue";
 import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
 
@@ -15,6 +16,7 @@ export default defineComponent({
     TcWhenRemind,
     TcActionbar,
     TcBottombar,
+    TcTags,
   },
   props: {
     threadData: {
@@ -85,6 +87,12 @@ export default defineComponent({
         :when-str="whenStr"
         :remind-str="remindStr"
       ></TcWhenRemind>
+
+      <!-- 标签 -->
+      <TcTags
+        v-if="threadData.tags?.length"
+        :tag-shows="threadData.tags"
+      ></TcTags>
 
       <!-- 操作栏 -->
       <TcActionbar
