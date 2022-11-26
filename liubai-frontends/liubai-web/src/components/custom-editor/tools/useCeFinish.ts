@@ -102,6 +102,7 @@ function _resetState(state: CeState) {
   delete state.draftId
   delete state.threadEdited
   state.visScope = "DEFAULT"
+  state.tagIds = []
   delete state.title
   delete state.whenStamp
   delete state.remindMe
@@ -130,6 +131,7 @@ function _getThreadData(
   const calendarStamp = _getCalendarStamp(state.whenStamp, remindMe)
   const whenStamp = state.whenStamp ? liuUtil.formatStamp(state.whenStamp) : undefined
   const remindStamp = _getRemindStamp(remindMe, whenStamp)
+  const tagIds = liuUtil.getRawList(state.tagIds)
   
   const aThread: Partial<ContentLocalTable> = {
     infoType: "THREAD",
@@ -146,6 +148,7 @@ function _getThreadData(
     remindMe,
     updatedStamp: now,
     editedStamp: now,
+    tagIds,
   }
 
   // 没有 threadEdited 代表当前是发表模式，必须设置 workspace
