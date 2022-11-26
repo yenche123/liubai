@@ -9,6 +9,7 @@ import { getLocalPreference } from "../../system/local-preference";
 import { TipTapJSONContent } from "../../../types/types-editor";
 import liuUtil from "../../liu-util";
 import { getBriefing } from "./tools/briefing";
+import { tagIdsToShows } from "../../system/workspace";
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
 
@@ -20,6 +21,8 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
 
   const members = await _getMemberShows(member_ids)
   const collections = await collectionController.getMyCollectionByIds({ content_ids })
+
+  console.time("equip-content")
 
   let list: ThreadShow[] = []
   for(let i=0; i<contents.length; i++) {
@@ -51,6 +54,9 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
 
     let tiptapContent: TipTapJSONContent | undefined = liuDesc?.length 
       ? { type: "doc", content: liuDesc } : undefined
+
+    const tagData = v.tagIds ? tagIdsToShows(v.tagIds) : undefined
+    const tags = tagData?.tagShows ? tagData.tagShows : []
 
     const obj: ThreadShow = {
       _id,
@@ -84,6 +90,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       editedStamp: v.editedStamp,
       createdStr: liuUtil.showBasicDate(v.createdStamp),
       editedStr: _getEditedStr(v.createdStamp, v.editedStamp),
+      tags,
     }
 
     // if(obj.briefing) {
@@ -94,6 +101,8 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
     
     list.push(obj)
   }
+
+  console.timeEnd("equip-content")
 
   return list
 }
