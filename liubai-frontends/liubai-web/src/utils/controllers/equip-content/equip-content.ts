@@ -10,9 +10,11 @@ import { TipTapJSONContent } from "../../../types/types-editor";
 import liuUtil from "../../liu-util";
 import { getBriefing } from "./tools/briefing";
 import { tagIdsToShows } from "../../system/workspace";
+import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
 
+  const wStore = useWorkspaceStore()
   const { local_id: user_id } = getLocalPreference()
   if(contents.length < 1) return []
 
@@ -27,7 +29,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
   let list: ThreadShow[] = []
   for(let i=0; i<contents.length; i++) {
     const v = contents[i]
-    const { member, _id, user, liuDesc } = v
+    const { member, _id, user, liuDesc, workspace } = v
 
     let myFavorite = false
     let myFavoriteStamp: number | undefined
@@ -58,8 +60,14 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
     
     let tags: TagShow[] = []
     // 判断当前工作区与当前动态是否匹配
-    const tagData = v.tagIds ? tagIdsToShows(v.tagIds) : undefined
-    tags = tagData?.tagShows ? tagData.tagShows : []
+    let canTag = workspace === "ME" && user === user_id && !wStore.isCollaborative
+    if(!canTag) canTag = workspace === wStore.spaceId
+    // 如果动态所属的工作区与当前工作区匹配
+    if(canTag) {
+      const tagData = v.tagIds ? tagIdsToShows(v.tagIds) : undefined
+      tags = tagData?.tagShows ? tagData.tagShows : []
+    }
+    
 
     const obj: ThreadShow = {
       _id,
@@ -69,7 +77,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       oState: v.oState,
       user_id: user,
       member_id: member,
-      workspace: v.workspace,
+      workspace,
       visScope: v.visScope,
       storageState: v.storageState,
       title: v.title,
