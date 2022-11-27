@@ -1,12 +1,12 @@
 // 给定 ContentLocalTable 返回 ThreadShow
 
-import { ContentLocalTable } from "../../../types/types-table";
+import type { ContentLocalTable } from "../../../types/types-table";
 import { db } from "../../db";
 import collectionController from "../collection-controller/collection-controller";
 import type { MemberShow, TagShow, ThreadShow } from "../../../types/types-content";
 import imgHelper from "../../images/img-helper";
 import { getLocalPreference } from "../../system/local-preference";
-import { TipTapJSONContent } from "../../../types/types-editor";
+import type { TipTapJSONContent } from "../../../types/types-editor";
 import liuUtil from "../../liu-util";
 import { getBriefing } from "./tools/briefing";
 import { tagIdsToShows } from "../../system/workspace";
