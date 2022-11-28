@@ -82,13 +82,13 @@ export default defineComponent({
         ></EditorCore>
       </div>
 
-      <!-- 什么时候、 -->
+      <!-- 什么时候 -->
       <TcWhenRemind
         :when-str="whenStr"
         :remind-str="remindStr"
       ></TcWhenRemind>
 
-      <!-- 标签 -->
+      <!-- 标签: 只有当前工作区与动态所属工作区一致时，才会有标签 -->
       <TcTags
         v-if="threadData.tags?.length"
         :tag-shows="threadData.tags"

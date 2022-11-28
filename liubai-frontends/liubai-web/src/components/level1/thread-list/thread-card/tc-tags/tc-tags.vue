@@ -1,8 +1,15 @@
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 import type { TagShow } from "../../../../../types/types-content"
+import { RouterLink } from 'vue-router'
+import { useWorkspaceStore } from '../../../../../hooks/stores/useWorkspaceStore';
+import { storeToRefs } from 'pinia';
+import { useRouteAndLiuRouter } from '../../../../../routes/liu-router';
 
 export default defineComponent({
+  components: {
+    RouterLink
+  },
   props: {
     tagShows: {
       type: Array as PropType<TagShow[]>,
@@ -10,13 +17,24 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
+    const { router } = useRouteAndLiuRouter()
+    
+    const wStore = useWorkspaceStore()
+    const { workspace } = storeToRefs(wStore)
+    const toPath = computed(() => {
+      const w = workspace.value
+      if(w === "ME") return `/tag/`
+      return `/w/${w}/tag/`
+    })
 
-    const onTapTag = () => {
-      console.log("onTapTag.........")
+    const onTapTag = (e: MouseEvent, href: string) => {
+      e.preventDefault()
+      router.push(href)
     }
 
     return {
-      onTapTag
+      toPath,
+      onTapTag,
     }
   },
 })
@@ -27,12 +45,22 @@ export default defineComponent({
   <div class="ce-tags">
 
     <template v-for="(item, index) in tagShows" :key="item.tagId">
+      <RouterLink
+        :to="toPath + item.tagId"
+        custom
+      >
+        <a
+          :href="toPath + item.tagId"
+          @click="onTapTag($event, toPath + item.tagId)"
+        >
+          <div class="ce-tag-item">
+            <span v-if="item.emoji" class="ce-tag-emoji">{{ item.emoji }} </span>
+            <span>{{ item.text }}</span>
+          </div>
+        </a>
+      
+      </RouterLink>
 
-      <div class="ce-tag-item">
-        <span v-if="item.emoji" class="ce-tag-emoji">{{ item.emoji }} </span>
-        <span>{{ item.text }}</span>
-      </div>
-    
     </template>
 
   </div>
