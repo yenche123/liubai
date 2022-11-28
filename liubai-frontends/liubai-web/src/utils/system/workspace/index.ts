@@ -5,6 +5,7 @@ import {
   findIndexInThisTagList,
   findTagShowById,
   addTagToTagList,
+  findParentOfTag,
 } from "./tools/workspace-util"
 
 // 返回当前工作区的 tags
@@ -113,4 +114,21 @@ export async function addATag(opt: AddATagParam): Promise<AddATagRes> {
   const data = addTagToTagList(texts, tagList, opt.icon)
   const res = await store.setTagList(data.tagList)
   return { isOk: true, id: data.tagId }
+}
+
+/**
+ * 查找一群 tagIds 的 parents Id，并包含自己本身
+ */
+export function getTagIdsParents(tagIds: string[]) {
+  const tagList = getCurrentSpaceTagList()
+  if(tagList.length < 1) return []
+  let tagSearched: string[] = []
+  for(let i=0; i<tagIds.length; i++) {
+    const tagId = tagIds[i]
+    const tmpList = findParentOfTag(tagId, [], tagList)
+    if(tmpList.length < 1) continue
+    tagSearched = tagSearched.concat(tmpList)
+  }
+  tagSearched = [...new Set(tagSearched)]
+  return tagSearched
 }

@@ -59,7 +59,8 @@ export interface ContentLocalTable extends BaseLocalTable {
   pinStamp?: number         // 被置顶时的时间戳
   createdStamp: number      // 动态被创建的时间戳
   editedStamp: number       // 动态被编辑的时间戳
-  tagIds?: string[]
+  tagIds?: string[]         // 用于显示的 tagId
+  tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
 }
 
 export interface DraftLocalTable extends BaseLocalTable {

@@ -107,3 +107,27 @@ export function addTagToTagList(
 
   return { tagList, tagId }
 }
+
+export function findParentOfTag(
+  tagId: string,
+  parentIds: string[],
+  tagViews: TagView[],
+): string[] {
+  
+  for(let i=0; i<tagViews.length; i++) {
+    const v = tagViews[i]
+    if(v.oState === "REMOVED") continue
+    if(v.tagId === tagId) {
+      parentIds.push(tagId)
+      return parentIds
+    }
+    if(v.children?.length) {
+      parentIds.push(v.tagId)
+      const tmpList = findParentOfTag(tagId, parentIds, v.children)
+      if(tmpList.length) return tmpList
+      parentIds.pop()
+    }
+  }
+
+  return []
+}

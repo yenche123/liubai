@@ -8,11 +8,12 @@ import type { CeState } from "./atom-ce"
 import time from "../../../utils/basic/time";
 import transferUtil from "../../../utils/transfer-util";
 import liuUtil from "../../../utils/liu-util";
-import { LiuRemindMe } from "../../../types/types-atom";
+import type { LiuRemindMe } from "../../../types/types-atom";
 import localReq from "./req/local-req";
 import type { ThreadShowStore } from "../../../hooks/stores/useThreadShowStore";
 import { storeToRefs } from "pinia";
 import { equipThreads } from "../../../utils/controllers/equip-content/equip-content";
+import { getTagIdsParents } from "../../../utils/system/workspace";
 
 // 本文件处理发表的逻辑
 
@@ -92,9 +93,9 @@ async function toRelease(
     editor.chain().setContent('<p></p>').run()
   }
 
-   // 5. 通知全局 需要更新 threads
-   const threadShows = await equipThreads([preThread as ContentLocalTable])
-   ctx.threadShowStore.setNewThreadShows(threadShows)
+  // 5. 通知全局 需要更新 threads
+  const threadShows = await equipThreads([preThread as ContentLocalTable])
+  ctx.threadShowStore.setNewThreadShows(threadShows)
   
 }
 
@@ -132,6 +133,7 @@ function _getThreadData(
   const whenStamp = state.whenStamp ? liuUtil.formatStamp(state.whenStamp) : undefined
   const remindStamp = _getRemindStamp(remindMe, whenStamp)
   const tagIds = liuUtil.getRawList(state.tagIds)
+  const tagSearched = getTagIdsParents(tagIds)
   
   const aThread: Partial<ContentLocalTable> = {
     infoType: "THREAD",
@@ -149,6 +151,7 @@ function _getThreadData(
     updatedStamp: now,
     editedStamp: now,
     tagIds,
+    tagSearched,
   }
 
   // 没有 threadEdited 代表当前是发表模式，必须设置 workspace
