@@ -17,7 +17,7 @@ export default defineComponent({
     },
   },
   setup(props, { emit }) {
-    const { router } = useRouteAndLiuRouter()
+    const { router, route } = useRouteAndLiuRouter()
     
     const wStore = useWorkspaceStore()
     const { workspace } = storeToRefs(wStore)
@@ -29,7 +29,7 @@ export default defineComponent({
 
     const onTapTag = (e: MouseEvent, href: string) => {
       e.preventDefault()
-      router.push(href)
+      router.push({ path: href, query: route.query })
     }
 
     return {
