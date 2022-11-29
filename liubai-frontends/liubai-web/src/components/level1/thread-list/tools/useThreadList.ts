@@ -52,11 +52,7 @@ export function useThreadList(props: TlProps) {
   onActivated(() => {
     ctx.showNum++
     if(ctx.showNum > 1) {
-      console.log("page opened again!")
       checkList(ctx)
-    }
-    else {
-      console.log("page just opened!")
     }
   })
 
