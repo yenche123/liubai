@@ -119,7 +119,6 @@ export default defineComponent({
   position: relative;
   background-color: var(--card-bg);
   box-shadow: var(--card-shadow-2);
-  overflow: hidden;
   transition: border-radius .3s;
   margin-bottom: 16px;
 

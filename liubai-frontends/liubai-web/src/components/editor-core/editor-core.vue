@@ -1,15 +1,17 @@
 
 <script lang="ts">
-import { EditorContent } from '@tiptap/vue-3'
+import { EditorContent, BubbleMenu } from '@tiptap/vue-3'
 import { useEditorCore } from './tools/useEditorCore'
 import type { EditorCoreContent, TipTapJSONContent } from "../../types/types-editor"
 import cfg from "../../config"
 import { defineComponent, PropType } from 'vue'
 import type { HashTagEditorRes } from "../../types/other/types-hashtag"
+import { useBubbleMenu } from './tools/useBubbleMenu'
 
 export default defineComponent({
   components: {
     EditorContent,
+    BubbleMenu,
   },
   props: {
     titlePlaceholder: {
@@ -42,7 +44,14 @@ export default defineComponent({
   expose: ['editor'],
   setup(props, { emit }) {
     const { editor } = useEditorCore(props, emit)
-    return { editor, cfg }
+    const { shouldShow, tippyOptions } = useBubbleMenu({ editMode: props.editMode })
+
+    return { 
+      editor, 
+      cfg,
+      shouldShow,
+      tippyOptions,
+    }
   },
 })
 
@@ -50,9 +59,36 @@ export default defineComponent({
 
 <template>
 
+  <bubble-menu
+    v-if="editor"
+    :editor="editor"
+    :should-show="shouldShow"
+    :updateDelay="250"
+    :tippy-options="tippyOptions"
+  >
+    <div class="ec-bubble-menu">
+      <div>待实现</div>
+    </div>
+  </bubble-menu>
+
   <editor-content :editor="editor" />
   
 </template>
+
+<style scoped>
+
+.ec-bubble-menu {
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  background-color: var(--card-bg);
+  margin: 10px;
+  box-shadow: var(--floating-shadow);
+}
+
+</style>
+
+
 <style lang="scss">
 
 .ProseMirror {
