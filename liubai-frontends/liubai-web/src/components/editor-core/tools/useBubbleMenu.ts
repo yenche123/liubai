@@ -2,6 +2,7 @@ import { isTextSelection } from "@tiptap/core"
 import { ShallowRef } from "vue"
 import type { TipTapEditor } from "../../../types/types-editor"
 import liuApi from "../../../utils/liu-api"
+import { Instance, Props } from 'tippy.js'
 
 interface ShouldShowProps {
   state: {
@@ -37,10 +38,15 @@ export function useBubbleMenu(opt: BubbleMenuOpt) {
     return true
   }
 
-  const tippyOptions: any = {
+  let tippy: Instance | undefined = undefined
+
+  const tippyOptions: Partial<Props> = {
     // hideOnClick: opt.editMode ? 'toggle' : true
     hideOnClick: true,
-    interactive: opt.editMode,
+    interactive: true,
+    onMount(instance) {
+      tippy = instance
+    }
   }
 
   const _getSelectionText = (editor: TipTapEditor) => {
@@ -55,16 +61,19 @@ export function useBubbleMenu(opt: BubbleMenuOpt) {
     const editor = editorRef.value
     if(!editor) return
     const text = _getSelectionText(editor)
-    liuApi.copyToClipboard(text)
-    editor.commands.blur()
+    if(text) {
+      liuApi.copyToClipboard(text)
+    }
+    tippy?.hide()
   }
 
   const onTapSearchIn = () => {
+    tippy?.hide()
 
   }
 
   const onTapSearchOut = () => {
-
+    tippy?.hide()
   }
 
 

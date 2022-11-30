@@ -29,6 +29,7 @@ specifiers:
   pinia: ^2.0.23
   sass: ^1.55.0
   swiper: ^8.4.4
+  tippy.js: ^6.3.7
   typescript: ^4.8.4
   user-agent-data-types: ^0.3.0
   vconsole: ^3.15.0
@@ -66,6 +67,7 @@ dependencies:
   nanoid: 4.0.0
   pinia: 2.0.23_l7r24p6nevbtlimqmqcwa3ouhu
   swiper: 8.4.4
+  tippy.js: 6.3.7
   vconsole: 3.15.0
   vue: 3.2.41
   vue-i18n: 9.2.2_vue@3.2.41
@@ -144,8 +146,8 @@ packages:
       '@floating-ui/core': 0.3.1
     dev: false
 
-  /@he-tree/dnd-utils/0.1.0-alpha.1:
-    resolution: {integrity: sha512-nVI7C4duQOWH1ySxQqHbyKvoJUKezWH1L2g9QroJ7vHm0oGDd+FhLzsLd9Pkp8mBDZzdd2tOIcmuTZXJ4RIfzA==}
+  /@he-tree/dnd-utils/0.1.0-alpha.2:
+    resolution: {integrity: sha512-sH+iuInUso2EX0s1RBzkBVA6ru/G2hlo9BJBq89UhNHEC3BcBOqG4Fhs3PJwlIMGw1AI+rXUN/CH2nSJZDyFOg==}
     dependencies:
       '@babel/runtime': 7.19.4
       drag-event-service: 2.0.0
@@ -170,7 +172,7 @@ packages:
       '@vue/composition-api':
         optional: true
     dependencies:
-      '@he-tree/dnd-utils': 0.1.0-alpha.1
+      '@he-tree/dnd-utils': 0.1.0-alpha.2
       '@he-tree/tree-utils': 0.1.0-alpha.0
       '@virtual-list/vue': 1.1.5_vue@3.2.41
       helper-js: 3.1.2
@@ -190,8 +192,8 @@ packages:
       vue-i18n:
         optional: true
     dependencies:
-      '@intlify/message-compiler': 9.3.0-beta.6
-      '@intlify/shared': 9.3.0-beta.6
+      '@intlify/message-compiler': 9.3.0-beta.10
+      '@intlify/shared': 9.3.0-beta.10
       jsonc-eslint-parser: 1.4.1
       source-map: 0.6.1
       vue-i18n: 9.2.2_vue@3.2.41
@@ -220,11 +222,11 @@ packages:
       '@intlify/shared': 9.2.2
       source-map: 0.6.1
 
-  /@intlify/message-compiler/9.3.0-beta.6:
-    resolution: {integrity: sha512-3PJqRJoqvFHExA9DCkf7fZYKbvYne1tYQ0fptJAhUOZsELarh8wr4aPLKWCkQSRuutdrtZ/n5CcPgJgUmVthDw==}
+  /@intlify/message-compiler/9.3.0-beta.10:
+    resolution: {integrity: sha512-RoOC6yceOykLRhN0NlbkNOBUx1el6iphx3W8NfOx3jHVNtfT1FYokx14/5sU3F1F0uxeG4sp6q+ppKvaF8o+ww==}
     engines: {node: '>= 14'}
     dependencies:
-      '@intlify/shared': 9.3.0-beta.6
+      '@intlify/shared': 9.3.0-beta.10
       source-map: 0.6.1
     dev: true
 
@@ -232,8 +234,8 @@ packages:
     resolution: {integrity: sha512-wRwTpsslgZS5HNyM7uDQYZtxnbI12aGiBZURX3BTR9RFIKKRWpllTsgzHWvj3HKm3Y2Sh5LPC1r0PDCKEhVn9Q==}
     engines: {node: '>= 14'}
 
-  /@intlify/shared/9.3.0-beta.6:
-    resolution: {integrity: sha512-ITA1R4tvJYwZXT5x6QCSwxcwQ4dU52zrzVm/EUbgsp8oWzYS1xexBrxyNM80PSQudYvL2rvcZJKQ7yBh7b0LkQ==}
+  /@intlify/shared/9.3.0-beta.10:
+    resolution: {integrity: sha512-h93uAanbAt/XgjDHclrVB7xix6r7Uz11wx0iGNOCdHP7aA2LCJjUT3uNbekJjjbo+Fl5jzTSJZdm2SexzoqhRA==}
     engines: {node: '>= 14'}
     dev: true
 
@@ -253,7 +255,7 @@ packages:
         optional: true
     dependencies:
       '@intlify/bundle-utils': 3.2.1_vue-i18n@9.2.2
-      '@intlify/shared': 9.3.0-beta.6
+      '@intlify/shared': 9.3.0-beta.10
       '@rollup/pluginutils': 4.2.1
       debug: 4.3.4
       fast-glob: 3.2.12
