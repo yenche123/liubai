@@ -1,6 +1,9 @@
 import { isTextSelection } from "@tiptap/core"
+import { ShallowRef } from "vue"
+import type { TipTapEditor } from "../../../types/types-editor"
+import liuApi from "../../../utils/liu-api"
 
-interface ShowShowProps {
+interface ShouldShowProps {
   state: {
     doc: any
     selection: {
@@ -14,11 +17,13 @@ interface ShowShowProps {
 
 interface BubbleMenuOpt {
   editMode: boolean
+  editor: ShallowRef<TipTapEditor | undefined>
 }
 
 export function useBubbleMenu(opt: BubbleMenuOpt) {
+  const editorRef = opt.editor
 
-  const shouldShow = (props: ShowShowProps): boolean => {
+  const shouldShow = (props: ShouldShowProps): boolean => {
 
     const { state, from, to, view } = props
     const { doc, selection } = state
@@ -34,8 +39,40 @@ export function useBubbleMenu(opt: BubbleMenuOpt) {
 
   const tippyOptions: any = {
     // hideOnClick: opt.editMode ? 'toggle' : true
-    hideOnClick: true
+    hideOnClick: true,
+    interactive: opt.editMode,
   }
 
-  return { shouldShow, tippyOptions }
+  const _getSelectionText = (editor: TipTapEditor) => {
+    const { state } = editor
+    const { doc, selection } = state
+    const { from, to } = selection
+    const str = doc.textBetween(from, to)
+    return str
+  }
+
+  const onTapCopy = () => {
+    const editor = editorRef.value
+    if(!editor) return
+    const text = _getSelectionText(editor)
+    liuApi.copyToClipboard(text)
+    editor.commands.blur()
+  }
+
+  const onTapSearchIn = () => {
+
+  }
+
+  const onTapSearchOut = () => {
+
+  }
+
+
+  return { 
+    shouldShow, 
+    tippyOptions,
+    onTapCopy,
+    onTapSearchIn,
+    onTapSearchOut,
+  }
 }

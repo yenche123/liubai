@@ -48,7 +48,13 @@ export default defineComponent({
   setup(props, { emit }) {
     const { t } = useI18n()
     const { editor } = useEditorCore(props, emit)
-    const { shouldShow, tippyOptions } = useBubbleMenu({ editMode: props.editMode })
+    const { 
+      shouldShow, 
+      tippyOptions,
+      onTapCopy,
+      onTapSearchIn,
+      onTapSearchOut,
+    } = useBubbleMenu({ editMode: props.editMode, editor })
 
     return { 
       t,
@@ -57,6 +63,9 @@ export default defineComponent({
       shouldShow,
       tippyOptions,
       bubbleColor,
+      onTapCopy,
+      onTapSearchIn,
+      onTapSearchOut,
     }
   },
 })
@@ -72,6 +81,8 @@ export default defineComponent({
     :updateDelay="250"
     :tippy-options="tippyOptions"
   >
+    
+    <!-- 编辑时: 粗体、斜体、删除线 -->
     <div v-if="editMode" class="ec-bubble-menu">
       <!-- 粗体 -->
       <div class="ec-bubble-box"
@@ -101,6 +112,36 @@ export default defineComponent({
       </div>
       
     </div>
+
+    <!-- 浏览时: 复制、内部搜索、外部搜索 -->
+    <div v-else class="ec-bubble-menu">
+      <!-- 复制 -->
+      <div class="ec-bb-two"
+        @click="onTapCopy"
+      >
+        <svg-icon name="copy" :color="bubbleColor" class="ec-bubble-icon"></svg-icon>
+        <span>{{ t('card_bubble.copy') }}</span>
+      </div>
+
+      <!-- 站内搜索 -->
+      <div class="ec-bb-two"
+        @click="onTapSearchIn"
+      >
+        <svg-icon name="search" :color="bubbleColor" class="ec-bubble-icon"></svg-icon>
+        <span>{{ t('card_bubble.search_in') }}</span>
+      </div>
+
+      <!-- 站外搜索 -->
+      <div class="ec-bb-two"
+        @click="onTapSearchOut"
+      >
+        <svg-icon name="google" :color="bubbleColor" class="ec-bubble-icon ec-bubble-outside"></svg-icon>
+        <span>{{ t('card_bubble.search_out') }}</span>
+      </div>
+      
+    </div>
+
+
   </bubble-menu>
 
   <editor-content :editor="editor" />
@@ -128,6 +169,7 @@ export default defineComponent({
   transition: .2s;
   opacity: .6;
   cursor: pointer;
+  user-select: none;
 }
 
 .ec-bubble-box:hover {
@@ -138,10 +180,33 @@ export default defineComponent({
   opacity: 1;
 }
 
+.ec-bb-two {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  font-size: var(--mini-font);
+  color: var(--bubble-menu-color);
+  transition: .15s;
+  opacity: .96;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ec-bb-two:hover {
+  opacity: .7;
+}
+
 .ec-bubble-icon {
   width: 24px;
   height: 24px;
   margin-bottom: 4px;
+}
+
+.ec-bubble-outside {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 6px;
 }
 
 

@@ -107,5 +107,10 @@
     "no_strange_char": "標籤中不得有奇奇怪怪的字符",
     "add_tag": "新建標籤 \"{tag}\"",
     "tag_ph": "請輸入標籤名"
+  },
+  "card_bubble": {
+    "copy": "複製",
+    "search_in": "内部搜尋",
+    "search_out": "外部搜尋"
   }
 }

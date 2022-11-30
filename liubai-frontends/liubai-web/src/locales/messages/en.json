@@ -107,5 +107,10 @@
     "no_strange_char": "There must be no strange characters in the tag",
     "add_tag": "Add a tag \"{tag}\"",
     "tag_ph": "Please input a tag name"
+  },
+  "card_bubble": {
+    "copy": "Copy",
+    "search_in": "Search inside",
+    "search_out": "Search outside"
   }
 }

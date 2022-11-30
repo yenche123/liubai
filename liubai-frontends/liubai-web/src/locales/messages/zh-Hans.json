@@ -107,5 +107,10 @@
     "no_strange_char": "标签里不得有奇奇怪怪的字符",
     "add_tag": "添加标签 \"{tag}\"",
     "tag_ph": "请输入标签名"
+  },
+  "card_bubble": {
+    "copy": "复制",
+    "search_in": "内部搜索",
+    "search_out": "外部搜索"
   }
 }
