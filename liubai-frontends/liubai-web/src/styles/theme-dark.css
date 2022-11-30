@@ -54,6 +54,11 @@
   --on-cui-loading: #e8e8e8;
   --cui-loading-shadow: 0 10px 28px -1px rgba(222, 222, 222, .28);
 
+  /** bubble-menu */
+  --bubble-menu-bg: #3a3a3a;
+  --bubble-menu-color: #efefef;
+  --bubble-menu-shadow: 0 6px 12px rgba(0, 0, 0, .38);
+
   /** 自定义组件: modal */
   --cui-modal: rgba(29, 29, 29, .9);
   --cui-modal-blur: blur(3px);

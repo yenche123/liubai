@@ -7,6 +7,9 @@ import cfg from "../../config"
 import { defineComponent, PropType } from 'vue'
 import type { HashTagEditorRes } from "../../types/other/types-hashtag"
 import { useBubbleMenu } from './tools/useBubbleMenu'
+import { useI18n } from 'vue-i18n'
+
+const bubbleColor = "var(--bubble-menu-color)"
 
 export default defineComponent({
   components: {
@@ -43,14 +46,17 @@ export default defineComponent({
   },
   expose: ['editor'],
   setup(props, { emit }) {
+    const { t } = useI18n()
     const { editor } = useEditorCore(props, emit)
     const { shouldShow, tippyOptions } = useBubbleMenu({ editMode: props.editMode })
 
     return { 
+      t,
       editor, 
       cfg,
       shouldShow,
       tippyOptions,
+      bubbleColor,
     }
   },
 })
@@ -66,8 +72,34 @@ export default defineComponent({
     :updateDelay="250"
     :tippy-options="tippyOptions"
   >
-    <div class="ec-bubble-menu">
-      <div>待实现</div>
+    <div v-if="editMode" class="ec-bubble-menu">
+      <!-- 粗体 -->
+      <div class="ec-bubble-box"
+        :class="{ 'ec-bubble-box_selected': editor?.isActive('bold') }"
+        @click="editor?.chain().focus().toggleBold().run()"
+      >
+        <svg-icon name="editor-bold" :color="bubbleColor" class="ec-bubble-icon"></svg-icon>
+        <span>{{ t('editor.bold') }}</span>
+      </div>
+
+      <!-- 斜体 -->
+      <div class="ec-bubble-box"
+        :class="{ 'ec-bubble-box_selected': editor?.isActive('italic') }"
+        @click="editor?.chain().focus().toggleItalic().run()"
+      >
+        <svg-icon name="editor-italic" :color="bubbleColor" class="ec-bubble-icon"></svg-icon>
+        <span>{{ t('editor.italic') }}</span>
+      </div>
+
+      <!-- 删除线 -->
+      <div class="ec-bubble-box"
+        :class="{ 'ec-bubble-box_selected': editor?.isActive('strike') }"
+        @click="editor?.chain().focus().toggleStrike().run()"
+      >
+        <svg-icon name="editor-strike" :color="bubbleColor" class="ec-bubble-icon"></svg-icon>
+        <span>{{ t('editor.strike') }}</span>
+      </div>
+      
     </div>
   </bubble-menu>
 
@@ -78,13 +110,41 @@ export default defineComponent({
 <style scoped>
 
 .ec-bubble-menu {
-  padding: 10px;
-  border-radius: 6px;
+  padding: 0 10px;
+  border-radius: 10px;
   display: flex;
-  background-color: var(--card-bg);
+  background-color: var(--bubble-menu-bg);
   margin: 10px;
-  box-shadow: var(--floating-shadow);
+  box-shadow: var(--bubble-menu-shadow);
 }
+
+.ec-bubble-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  font-size: var(--mini-font);
+  color: var(--bubble-menu-color);
+  transition: .2s;
+  opacity: .6;
+  cursor: pointer;
+}
+
+.ec-bubble-box:hover {
+  opacity: .86;
+}
+
+.ec-bubble-box_selected {
+  opacity: 1;
+}
+
+.ec-bubble-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+}
+
+
 
 </style>
 
