@@ -20,6 +20,7 @@ export default defineComponent({
   setup(props) {
     const { t } = useI18n()
     const {
+      selectedIndex,
       tippyOptions,
       onTapCopy,
       onTapSearchIn,
@@ -30,6 +31,7 @@ export default defineComponent({
       t,
       bubbleColor,
       shouldShow,
+      selectedIndex,
       tippyOptions,
       onTapCopy,
       onTapSearchIn,
@@ -53,6 +55,7 @@ export default defineComponent({
     <div class="ec-bubble-menu">
       <!-- 复制 -->
       <div class="ec-bb-two"
+        :class="{ 'ec-bb-two_selected': selectedIndex === 0 }"
         @click="onTapCopy"
       >
         <svg-icon name="copy" :color="bubbleColor" class="ec-bubble-icon"></svg-icon>
@@ -61,6 +64,7 @@ export default defineComponent({
 
       <!-- 站内搜索 -->
       <div class="ec-bb-two"
+        :class="{ 'ec-bb-two_selected': selectedIndex === 1 }"
         @click="onTapSearchIn"
       >
         <svg-icon name="search" :color="bubbleColor" class="ec-bubble-icon"></svg-icon>
@@ -69,6 +73,7 @@ export default defineComponent({
 
       <!-- 站外搜索 -->
       <div class="ec-bb-two"
+        :class="{ 'ec-bb-two_selected': selectedIndex === 2 }"
         @click="onTapSearchOut"
       >
         <svg-icon name="google" :color="bubbleColor" class="ec-bubble-icon ec-bubble-outside"></svg-icon>
@@ -103,11 +108,32 @@ export default defineComponent({
   opacity: .96;
   cursor: pointer;
   user-select: none;
+  position: relative;
+  min-width: 50px;
+}
+
+.ec-bb-two::before {
+  content: "";
+  position: absolute;
+  opacity: 0;
+  transition: .1s;
+  top: 5px;
+  left: 5px;
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  background-color: var(--bubble-menu-color);
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 .ec-bb-two:hover {
   opacity: .7;
 }
+
+.ec-bb-two_selected::before {
+  opacity: 0.1;
+}
+
 
 .ec-bubble-icon {
   width: 24px;

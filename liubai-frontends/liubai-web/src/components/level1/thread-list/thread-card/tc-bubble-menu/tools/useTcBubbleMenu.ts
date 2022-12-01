@@ -2,6 +2,8 @@
 import type { TipTapEditor } from '../../../../../../types/types-editor';
 import liuApi from "../../../../../../utils/liu-api"
 import type { Instance, Props } from 'tippy.js'
+import { ref } from 'vue';
+import valTool from '../../../../../../utils/basic/val-tool';
 
 
 interface TcBubbleMenuOpt {
@@ -11,6 +13,7 @@ interface TcBubbleMenuOpt {
 export function useTcBubbleMenu(
   opt: TcBubbleMenuOpt,
 ) {
+  const selectedIndex = ref(-1)
   let tippy: Instance | undefined = undefined
 
   const tippyOptions: Partial<Props> = {
@@ -20,23 +23,31 @@ export function useTcBubbleMenu(
     }
   }
 
+  const _toCloseTippy = async (idx: number) => {
+    selectedIndex.value = idx
+    await valTool.waitMilli(500)
+    selectedIndex.value = -1
+    tippy?.hide()
+  }
+
   const onTapCopy = () => {
     const text = _getSelectionText(opt.editor)
     if(text) {
       liuApi.copyToClipboard(text)
     }
-    tippy?.hide()
+    _toCloseTippy(0)
   }
 
   const onTapSearchIn = () => {
-    tippy?.hide()
+    _toCloseTippy(1)
   }
 
   const onTapSearchOut = () => {
-    tippy?.hide()
+    _toCloseTippy(2)
   }
 
   return {
+    selectedIndex,
     tippyOptions,
     onTapCopy,
     onTapSearchIn,
