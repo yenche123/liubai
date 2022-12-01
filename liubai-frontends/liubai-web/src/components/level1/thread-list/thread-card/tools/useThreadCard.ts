@@ -1,6 +1,7 @@
-import { ref } from 'vue';
+import { onMounted, ref, shallowRef } from 'vue';
 import type { ThreadShow } from '../../../../../types/types-content';
-
+import EditorCore from "../../../../editor-core/editor-core.vue"
+import type { TipTapEditor } from "../../../../../types/types-editor"
 
 interface TcProps {
   threadData: ThreadShow
@@ -9,6 +10,14 @@ interface TcProps {
 
 
 export function useThreadCard(props: TcProps) {
+  const editorCoreRef = ref<typeof EditorCore | null>(null)
+  const editor = shallowRef<TipTapEditor>()
+
+  onMounted(() => {
+    if(!editorCoreRef.value) return
+    editor.value = editorCoreRef.value.editor as TipTapEditor
+  })
+
   const { threadData, displayType } = props
   let isBriefing = ref(Boolean(threadData.briefing))
   if(displayType === "detail") isBriefing.value = false
@@ -27,6 +36,8 @@ export function useThreadCard(props: TcProps) {
 
 
   return {
+    editorCoreRef,
+    editor,
     isBriefing,
     onTapBriefing,
   }

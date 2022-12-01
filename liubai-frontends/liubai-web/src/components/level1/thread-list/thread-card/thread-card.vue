@@ -9,6 +9,7 @@ import TcBottombar from "./tc-bottombar/tc-bottombar.vue";
 import TcTags from "./tc-tags/tc-tags.vue";
 import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
+import TcBubbleMenu from './tc-bubble-menu/tc-bubble-menu.vue';
 
 export default defineComponent({
   components: {
@@ -17,6 +18,7 @@ export default defineComponent({
     TcActionbar,
     TcBottombar,
     TcTags,
+    TcBubbleMenu,
   },
   props: {
     threadData: {
@@ -34,12 +36,16 @@ export default defineComponent({
       remindStr,
     } = useWhenAndRemind(props.threadData)
     const {
+      editorCoreRef,
+      editor,
       isBriefing,
       onTapBriefing
     } = useThreadCard(props)
     const { t } = useI18n()
 
     return {
+      editorCoreRef,
+      editor,
       t,
       whenStr,
       remindStr,
@@ -74,9 +80,16 @@ export default defineComponent({
         </div>
       </div>
 
+      <!-- 全文的 bubble-menu -->
+      <TcBubbleMenu
+        v-if="threadData.content"
+        :editor="editor"
+      ></TcBubbleMenu>
+
       <!-- 全文 -->
       <div v-if="threadData.content" v-show="!isBriefing" class="tc-content">
         <EditorCore 
+          ref="editorCoreRef"
           :edit-mode="false"
           :content="threadData.content"
         ></EditorCore>

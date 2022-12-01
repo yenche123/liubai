@@ -22,6 +22,7 @@ import { initCeState } from "./tools/initCeState";
 import { useCeFinish } from "./tools/useCeFinish";
 import { useThreadShowStore } from "../../hooks/stores/useThreadShowStore";
 import { useCeTag } from "./tools/useCeTag";
+import CeBubbleMenu from "./ce-bubble-menu/ce-bubble-menu.vue";
 
 const props = defineProps({
   lastBar: {
@@ -82,6 +83,11 @@ const {
 <div class="ce-container"
   :class="{ 'ce-container_focused': focused }"
 >
+
+  <!-- 气泡: 放在 editor-core 外层是因为避免被 ce-editor 遮挡 -->
+  <CeBubbleMenu 
+    :editor="editor"
+  ></CeBubbleMenu>
 
   <div class="ce-editor">
     <EditorCore 
