@@ -5,6 +5,7 @@
   --on-primary: #fafafa;
   --primary-hover: #1c5671;
   --primary-active: #15455e;
+  --inverse-primary: #88d1ff;
 
   --card-bg: #ffffff;
   --bg-color: #eaecef;
@@ -65,6 +66,11 @@
   --cui-modal-blur: blur(2.5px);
   --cui-modal-other-btn-bg: #f1f1f1;
   --cui-modal-other-btn-hover: #eaeaea;
+
+  /** 自定义组件: snackbar */
+  --cui-snackbar: #362f2f;
+  --on-cui-snackbar: #ffffff;
+  --cui-snackbar-shadow: 0 6px 12px rgba(0, 0, 0, .18);
 
   /** 毛玻璃背景 */
   --frosted-glass: rgba(255, 255, 255, .7);    /** 跟随 sidebar 的背景 */

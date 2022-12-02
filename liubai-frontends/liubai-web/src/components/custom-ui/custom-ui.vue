@@ -2,6 +2,7 @@
 import DatePicker from "./date-picker/date-picker.vue"
 import PreviewImage from "./preview-image/preview-image.vue";
 import HashtagEditor from "./hashtag-editor/hashtag-editor.vue";
+import SnackBar from "./snack-bar/snack-bar.vue";
 import { initModal } from "./modal"
 import { initLoading } from "./loading"
 import { initTextEditor } from "./text-editor";
@@ -130,6 +131,9 @@ const {
 
   <!-- 预览图片 -->
   <PreviewImage></PreviewImage>
+
+  <!-- snack-bar -->
+  <SnackBar></SnackBar>
 
 </template>
 

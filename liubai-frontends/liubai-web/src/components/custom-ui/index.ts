@@ -5,6 +5,7 @@ import { showTextEditor } from "./text-editor"
 import { showDatePicker } from "./date-picker"
 import { previewImage } from "./preview-image"
 import { showHashTagEditor } from "./hashtag-editor"
+import { showSnackBar } from "./snack-bar"
 
 export default {
   showModal,
@@ -14,4 +15,5 @@ export default {
   showDatePicker,
   previewImage,
   showHashTagEditor,
+  showSnackBar,
 }

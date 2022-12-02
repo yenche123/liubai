@@ -4,6 +4,7 @@ import liuApi from "../../../../../../utils/liu-api"
 import type { Instance, Props } from 'tippy.js'
 import { ref } from 'vue';
 import valTool from '../../../../../../utils/basic/val-tool';
+import cui from '../../../../../custom-ui';
 
 
 interface TcBubbleMenuOpt {
@@ -34,6 +35,7 @@ export function useTcBubbleMenu(
     const text = _getSelectionText(opt.editor)
     if(text) {
       liuApi.copyToClipboard(text)
+      cui.showSnackBar({ text_key: "common.copied" })
     }
     _toCloseTippy(0)
   }

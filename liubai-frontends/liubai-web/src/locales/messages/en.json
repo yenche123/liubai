@@ -20,7 +20,8 @@
     "tomorrow": "Tomorrow",
     "yesterday": "Yesterday",
     "processing": "Processing",
-    "checkMore": "More"
+    "checkMore": "More",
+    "copied": "Copied"
   },
   "editor": {
     "when": "When",
