@@ -8,10 +8,7 @@ export type LayoutChangeType = "window" | "sidebar" | ""
 // 给 main-view 和 detail-view 接收变化用的
 
 export const useLayoutStore = defineStore("layout", () => {
-  const { width, height } = useWindowSize()
-  // console.log("1111111111111")
-  // console.log(width.value)
-  // console.log(" ")
+  const { width } = useWindowSize()
   
   // 需要返回的数据
   const sidebarWidth = ref(cfg.default_sidebar_width)    // 如果侧边栏收起来时，该值为 0

@@ -1,0 +1,101 @@
+<script setup lang="ts">
+import { useNaviAuto } from "./tools/useNaviAuto"
+import cfg from "../../../config"
+
+const naviHeightPx = `${cfg.navi_height}px`
+
+const {
+  enable,
+  show,
+  TRANSITION_DURATION,
+  onTapMenu,
+} = useNaviAuto()
+
+const default_color = "var(--navi-normal)"
+
+</script>
+<template>
+
+  <div v-if="enable"
+    class="liu-frosted-glass na-container"
+    :class="{ 'na-container_show': show }"
+  >
+
+    <div class="na-box">
+
+      <div class="liu-hover na-menu-box" @click="onTapMenu">
+        <svg-icon class="na-menu-icon" 
+          :color="default_color"
+          name="stair_menu"
+        ></svg-icon>
+      </div>
+
+      <div class="na-title">
+        <span>留白记事</span>
+      </div>
+
+      <div class="na-menu-box"></div>
+    </div>
+
+  </div>
+
+
+</template>
+<style lang="scss" scoped>
+
+.na-container {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: v-bind("naviHeightPx");
+  display: flex;
+  justify-content: center;
+  transition: v-bind("TRANSITION_DURATION + 'ms'");
+  transform: translateY(-100%);
+  z-index: 500;
+
+  .na-box {
+    width: 92%;
+    height: 100%;
+    max-width: var(--card-max);
+    min-width: var(--card-min);
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    .na-menu-box {
+      width: 40px;
+      height: 40px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+
+      .na-menu-icon {
+        width: 26px;
+        height: 26px;
+      }
+    }
+
+    .na-title {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      font-size: var(--desc-font);
+      color: v-bind("default_color");
+      line-height: 1.5;
+      font-weight: 700;
+      user-select: none;
+    }
+
+  }
+}
+
+.na-container_show {
+  transform: translateY(0);
+}
+
+
+
+</style>

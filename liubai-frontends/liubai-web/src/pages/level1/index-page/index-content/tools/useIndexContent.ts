@@ -1,7 +1,12 @@
+import { storeToRefs } from "pinia";
 import { computed, inject, Ref, ref } from "vue";
 import { mvKey } from "../../../../../utils/provide-keys";
+import { useLayoutStore } from "../../../../../views/useLayoutStore";
 
 export function useIndexContent() {
+
+  const layoutStore = useLayoutStore()
+  const { sidebarWidth } = storeToRefs(layoutStore)
 
   // custom-editor 的底部要不要多一栏，让 完成按钮 跟工具栏不同行
   const mvRef = inject(mvKey) as Ref<number>
@@ -10,5 +15,5 @@ export function useIndexContent() {
     return false
   })
 
-  return { lastBar }
+  return { lastBar, sidebarWidth }
 }

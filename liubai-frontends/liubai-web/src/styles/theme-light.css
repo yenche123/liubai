@@ -43,7 +43,7 @@
   --vice-bg: #f3f3f3;
   --vice-shadow: -7px 0 14px 1px rgba(0,0,0,.11);
   --vice-scrollbar-thumb: #bababa;
-  --navi-normal: #3f4549;            /** 侧边栏链接 默认颜色 */
+  --navi-normal: #4f5559;            /** 侧边栏链接 默认颜色 */
   --drag-bg: #ddf2f9;        /** 拖动时的背景色 */
   --drag-border: #aaf2f9;    /** 拖动时的边框色 */
   --gradient-one: linear-gradient(90deg, rgba(255, 255, 255, 0) 10%, rgba(255, 255, 255, 1) 96%);
@@ -72,9 +72,11 @@
   --on-cui-snackbar: #ffffff;
   --cui-snackbar-shadow: 0 6px 12px rgba(0, 0, 0, .18);
 
-  /** 毛玻璃背景 */
+  /********* 毛玻璃背景 **********/
   --frosted-glass: rgba(255, 255, 255, .7);    /** 跟随 sidebar 的背景 */
   --frosted-glass-2: rgba(250, 250, 250, .85);  /** spotlight 模态框的背景色 */
+  /** 跟随 --bg-color 的背景色 */
+  --frosted-glass-3: linear-gradient(0deg, rgba(234, 236, 239, .96) 50%, rgba(234, 236, 239, .75) 90%);
 
 
   /** 再最后给 body 添加背景色 */

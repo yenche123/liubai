@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import cfg from "../../../../config"
 import CustomEditor from "../../../../components/custom-editor/custom-editor.vue"
-import AppLink from "../../../../components/common/app-link/app-link.vue"
 import { useIndexContent } from "./tools/useIndexContent";
 import ThreadList from "../../../../components/level1/thread-list/thread-list.vue"
 
 const virtualHeight = cfg.navi_height / 3
-const { lastBar } = useIndexContent()
+const shortVirtual = cfg.navi_height / 9
+const { lastBar, sidebarWidth } = useIndexContent()
 
 </script>
 <template>
 
   <div class="mc-container">
-    <div class="mc-virtual"></div>
+    <div class="mc-virtual"
+      :class="{ 'mc-virtual_short': sidebarWidth <= 0 }"
+    ></div>
     <div class="mc-box">
       
       <CustomEditor :last-bar="lastBar"></CustomEditor>
@@ -37,7 +39,14 @@ const { lastBar } = useIndexContent()
   .mc-virtual {
     width: 100%;
     height: v-bind("virtualHeight + 'px'");
+    max-height: v-bind("virtualHeight + 'px'");
+    transition: .15s;
   }
+
+  .mc-virtual_short {
+    max-height: v-bind("shortVirtual + 'px'");
+  }
+
 
   .mc-box {
     width: 90%;
@@ -48,15 +57,6 @@ const { lastBar } = useIndexContent()
     .mc-spacing {
       width: 100%;
       height: 10px;
-    }
-
-    .mc-test {
-      border-radius: 20px;
-      background-color: var(--card-bg);
-      width: 100%;
-      height: 100px;
-      box-shadow: var(--card-shadow);
-      margin-bottom: 30px;
     }
 
   }

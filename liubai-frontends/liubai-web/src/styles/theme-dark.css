@@ -66,14 +66,15 @@
   --cui-modal-other-btn-bg: #1a1a1a;
   --cui-modal-other-btn-hover: #2f2f2f;
 
-    /** 自定义组件: snackbar */
-    --cui-snackbar: #dfe8f7;
-    --on-cui-snackbar: #292b2d;
-    --cui-snackbar-shadow: 0 6px 12px rgba(255, 255, 255, .18);
+  /** 自定义组件: snackbar */
+  --cui-snackbar: #dfe8f7;
+  --on-cui-snackbar: #292b2d;
+  --cui-snackbar-shadow: 0 6px 12px rgba(255, 255, 255, .18);
 
   /** 毛玻璃背景 */
   --frosted-glass: rgba(5, 5, 5, .75);   /** 跟随 sidebar，rgb(35,35,35) 即 #232323 */
   --frosted-glass-2: rgba(10, 10, 10, .85);  /** spotlight 模态框的背景色 */
-
+  /** 跟随 --bg-color 的背景色 */
+  --frosted-glass-3: linear-gradient(0deg, rgba(41, 43, 45, 96) 50%, rgba(41, 43, 45, .75) 90%);
 
 }

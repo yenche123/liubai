@@ -29,10 +29,6 @@ const onTapBack = () => {
 </template>
 <style scoped>
 
-.liu-frosted-glass::before {
-  border-radius: 0;
-}
-
 .nb-container {
   width: 100%;
   height: v-bind("cfg.navi_height + 'px'");
