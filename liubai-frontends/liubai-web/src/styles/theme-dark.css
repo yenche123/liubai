@@ -67,9 +67,9 @@
   --cui-modal-other-btn-hover: #2f2f2f;
 
   /** 自定义组件: snackbar */
-  --cui-snackbar: #dfe8f7;
+  --cui-snackbar: #dae3f2;
   --on-cui-snackbar: #292b2d;
-  --cui-snackbar-shadow: 0 6px 12px rgba(255, 255, 255, .18);
+  --cui-snackbar-shadow: 0 6px 12px rgba(255, 255, 255, .14);
 
   /** 毛玻璃背景 */
   --frosted-glass: rgba(5, 5, 5, .75);   /** 跟随 sidebar，rgb(35,35,35) 即 #232323 */
