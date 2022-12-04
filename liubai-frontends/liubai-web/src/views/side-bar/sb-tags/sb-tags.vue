@@ -80,6 +80,12 @@ const onNaviBack = () => {
 </template>
 <style scoped lang="scss">
 
+.liu-frosted-glass::before {
+  background: none;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
 .st-virtual {
   width: 100%;
   height: 50px;
