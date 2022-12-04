@@ -1,6 +1,6 @@
 
 <script lang="ts">
-import { EditorContent, BubbleMenu } from '@tiptap/vue-3'
+import { EditorContent } from '@tiptap/vue-3'
 import { useEditorCore } from './tools/useEditorCore'
 import type { EditorCoreContent, TipTapJSONContent } from "../../types/types-editor"
 import cfg from "../../config"
@@ -10,7 +10,6 @@ import type { HashTagEditorRes } from "../../types/other/types-hashtag"
 export default defineComponent({
   components: {
     EditorContent,
-    BubbleMenu,
   },
   props: {
     titlePlaceholder: {
