@@ -21,7 +21,7 @@ export default {
   navi_height: 70,
 
   // 文本编辑器最低尺寸
-  min_editor_height: 100,
+  min_editor_height: 140,
 
   // 单则动态最大上传的图片数
   max_picture_num: 9,

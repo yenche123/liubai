@@ -101,7 +101,7 @@
   line-height: 2;
   transform: translateX(50%);
   user-select: none;
-  box-shadow: var(--cui-loading-shadow);
+  box-shadow: var(--tooltip-shadow);
   pointer-events: none;
   visibility: hidden;
   opacity: 0;

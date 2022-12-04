@@ -49,6 +49,8 @@
   --gradient-one: linear-gradient(90deg, rgba(35, 35, 35, 0) 10%, rgba(35, 35, 35, 1) 96%);
   --gradient-two: linear-gradient(0deg, rgba(35, 35, 35, 1) 10%, rgba(35, 35, 35, 0) 96%);
   --cool-bg: linear-gradient(30deg, #8e95b7, #10635f);
+  --tag-bg: #292b2d;
+  --tooltip-shadow: 0 4px 12px -1px rgba(255, 255, 255, .1);
 
   /** 自定义组件 */
   --cui-loading: rgba(56, 56, 56, .93);
@@ -58,7 +60,7 @@
   /** bubble-menu */
   --bubble-menu-bg: #3a3a3a;
   --bubble-menu-color: #efefef;
-  --bubble-menu-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+  --bubble-menu-shadow: 0 6px 12px rgba(0, 0, 0, .14);
 
   /** 自定义组件: modal */
   --cui-modal: rgba(29, 29, 29, .9);

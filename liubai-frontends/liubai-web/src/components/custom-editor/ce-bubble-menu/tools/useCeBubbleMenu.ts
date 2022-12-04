@@ -6,6 +6,7 @@ export function useCeBubbleMenu() {
 
   const tippyOptions: Partial<Props> = {
     hideOnClick: true,
+    placement: 'bottom',
     onMount(instance) {
       tippy = instance
     }

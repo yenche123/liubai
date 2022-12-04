@@ -50,6 +50,7 @@
   --gradient-two: linear-gradient(0deg, rgba(255, 255, 255, 1) 10%, rgba(255, 255, 255, 0) 96%);
   --cool-bg: linear-gradient(30deg, #ACB6E5, #70ded9);
   --tag-bg: #f2f4f7;
+  --tooltip-shadow: 0 8px 18px 1px rgba(0,0,0,.28);
 
   /** 自定义组件: 加载框 */
   --cui-loading: rgba(46, 46, 46, .93);
