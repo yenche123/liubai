@@ -58,7 +58,7 @@
   /** bubble-menu */
   --bubble-menu-bg: #3a3a3a;
   --bubble-menu-color: #efefef;
-  --bubble-menu-shadow: 0 6px 12px rgba(0, 0, 0, .38);
+  --bubble-menu-shadow: 0 6px 18px rgba(0, 0, 0, .18);
 
   /** 自定义组件: modal */
   --cui-modal: rgba(29, 29, 29, .9);
