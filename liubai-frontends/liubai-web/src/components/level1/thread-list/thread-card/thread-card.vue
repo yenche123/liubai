@@ -149,8 +149,8 @@ export default defineComponent({
       font-size: var(--title-font);
       font-weight: 700;
       color: var(--main-normal);
-      margin-block-start: 0.5rem;
-      margin-block-end: 0.5rem;
+      margin-block-start: 0.2rem;
+      margin-block-end: 0rem;
 
       span::selection {
         background-color: var(--select-bg);

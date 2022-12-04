@@ -62,7 +62,7 @@ const { t } = useI18n()
     align-items: center;
     width: min-content;
     min-width: 160px;
-    height: 40px;
+    height: 36px;
     border-radius: 10px;
     padding-inline-end: 10px;
     overflow: hidden;
