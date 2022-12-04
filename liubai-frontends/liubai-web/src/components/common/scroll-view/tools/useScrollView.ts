@@ -1,6 +1,6 @@
 import { onActivated, provide, reactive, ref } from "vue";
 import type { SvProps, SvEmits, SvProvideInject } from "./types"
-import { scrollViewKey } from "../../../../utils/provide-keys"
+import { scrollViewKey, svScollingKey } from "../../../../utils/provide-keys"
 
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
@@ -15,6 +15,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   })
 
   provide(scrollViewKey, proData)
+  provide(svScollingKey, scrollTop)
 
   let lastScrollTop = 0
   let lastScrollStamp = 0

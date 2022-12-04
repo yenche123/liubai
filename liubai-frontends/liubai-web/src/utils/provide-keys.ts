@@ -17,3 +17,6 @@ export const editorSetKey = Symbol() as InjectionKey<Ref<number>>
 
 // 用于跨级传递 scroll-view 的事件被触发
 export const scrollViewKey = Symbol() as InjectionKey<SvProvideInject>
+
+// 用于跨级传递 scroll-view scolling 事件
+export const svScollingKey = Symbol() as InjectionKey<Ref<number>>

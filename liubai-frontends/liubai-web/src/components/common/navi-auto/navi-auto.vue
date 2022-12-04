@@ -7,6 +7,7 @@ const naviHeightPx = `${cfg.navi_height}px`
 const {
   enable,
   show,
+  shadow,
   TRANSITION_DURATION,
   onTapMenu,
 } = useNaviAuto()
@@ -18,7 +19,7 @@ const default_color = "var(--navi-normal)"
 
   <div v-if="enable"
     class="liu-frosted-glass na-container"
-    :class="{ 'na-container_show': show }"
+    :class="{ 'na-container_show': show, 'na-container_shadow': shadow }"
   >
 
     <div class="na-box">
@@ -96,6 +97,9 @@ const default_color = "var(--navi-normal)"
   transform: translateY(0);
 }
 
+.na-container_shadow {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, .1);
+}
 
 
 </style>

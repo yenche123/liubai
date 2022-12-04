@@ -1,21 +1,50 @@
-import { ref, watch } from "vue";
+import { inject, ref, watch } from "vue";
 import type { Ref } from "vue";
 import { useLayoutStore } from "../../../../views/useLayoutStore";
 import { storeToRefs } from "pinia";
 import valTool from "../../../../utils/basic/val-tool";
+import { svScollingKey } from "../../../../utils/provide-keys";
 
 const TRANSITION_DURATION = 150
+
+interface NaviAutoCtx {
+  enable: Ref<boolean>
+  show: Ref<boolean>
+  shadow: Ref<boolean>
+  scrollTop: Ref<number>
+}
 
 export function useNaviAuto() {
   
   const enable = ref(false)
   const show = ref(false)
+  const shadow = ref(false)
+
+  // 引入上下文
   const layout = useLayoutStore()
+  const scrollTop = inject(svScollingKey, ref(0))
+
+  const ctx = {
+    enable,
+    show,
+    shadow,
+    scrollTop,
+  }
+
+
+  // 处理 左侧边栏的变化
   const { sidebarWidth } = storeToRefs(layout)
   watch(sidebarWidth, (newV) => {
-    judgeState(enable, show, newV)
+    judgeState(ctx, newV)
   })
-  judgeState(enable, show, sidebarWidth.value)
+  judgeState(ctx, sidebarWidth.value)
+
+  // 监听滚动，处理是否要显示阴影
+  watch(scrollTop, (newV) => {
+    if(!enable.value) return
+    judgeShadow(newV, shadow)
+  })
+  
 
   const onTapMenu = () => {
 
@@ -25,20 +54,32 @@ export function useNaviAuto() {
     TRANSITION_DURATION,
     enable,
     show,
+    shadow,
     onTapMenu,
   }
 }
 
+function judgeShadow(
+  sT: number,
+  shadow: Ref<boolean>
+) {
+  if(sT >= 40 && !shadow.value) shadow.value = true
+  else if(sT <= 20 && shadow.value) shadow.value = false
+}
+
+
 function judgeState(
-  enable: Ref<boolean>,
-  show: Ref<boolean>,
+  ctx: NaviAutoCtx,
   sidebarWidth: number,
 ) {
   console.log("judgeState sidebarWidth: ")
   console.log(sidebarWidth)
   console.log(" ")
-  if(sidebarWidth > 0) _close(enable, show)
-  else _open(enable, show)
+  if(sidebarWidth > 0) _close(ctx.enable, ctx.show)
+  else _open(ctx.enable, ctx.show)
+
+  // 判断阴影变化
+  judgeShadow(ctx.scrollTop.value, ctx.shadow)
 }
 
 async function _open(
