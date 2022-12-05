@@ -98,8 +98,8 @@ function listenRouteChange(
 
 /*********** 根据参数判断是否打开侧边栏  *************/
 function judgeIfOpen(newQuery: LocationQuery): boolean {
-  let { cid, outq } = newQuery
-  if(cid || outq) return true
+  let { cid, outq, gpt3 } = newQuery
+  if(cid || outq || gpt3) return true
   return false
 }
 

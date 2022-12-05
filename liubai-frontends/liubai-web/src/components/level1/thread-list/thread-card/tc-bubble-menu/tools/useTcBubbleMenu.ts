@@ -5,6 +5,7 @@ import type { Instance, Props } from 'tippy.js'
 import { ref } from 'vue';
 import valTool from '../../../../../../utils/basic/val-tool';
 import cui from '../../../../../custom-ui';
+import { useRouteAndLiuRouter } from '../../../../../../routes/liu-router';
 
 
 interface TcBubbleMenuOpt {
@@ -23,6 +24,8 @@ export function useTcBubbleMenu(
       tippy = instance
     }
   }
+
+  const { route, router } = useRouteAndLiuRouter()
 
   const _toCloseTippy = async (idx: number) => {
     selectedIndex.value = idx
@@ -45,10 +48,18 @@ export function useTcBubbleMenu(
   }
 
   const onTapSearchOut = () => {
+    const text = _getSelectionText(opt.editor)
+    if(text) {
+      router.pushCurrentWithNewQuery(route, { outq: text })
+    }
     _toCloseTippy(2)
   }
 
   const onTapBot = () => {
+    const text = _getSelectionText(opt.editor)
+    if(text) {
+      router.pushCurrentWithNewQuery(route, { gpt3: text })
+    }
     _toCloseTippy(3)
   }
 

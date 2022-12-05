@@ -75,17 +75,39 @@ class LiuRouter {
     this.router = useVueRouter()
   }
 
-  /** 主动记录堆栈 */
   async replace(to: RouteLocationRaw): Promise<NavigationFailure | void | undefined> {
     routeChangeTmpData = { operation: "replace", delta: 0 }
     let res = await this.router.replace(to)
     return res
   }
 
-  /** 主动记录堆栈 */
   async push(to: RouteLocationRaw): Promise<NavigationFailure | void | undefined> {
     routeChangeTmpData = { operation: "push", delta: 1 }
     let res = await this.router.push(to)
+    return res
+  }
+
+  /** 自定义一些 push 的情况  */
+  async pushCurrentWithNewQuery(
+    route: RouteLocationNormalizedLoaded,
+    query: Record<string, string>,
+  ) {
+    const name = route.name
+    const params = route.params
+    const oldQuery = route.query
+    const newQuery = { ...query }
+
+    if(typeof name !== "string") {
+      console.warn("当前的 route.name 不是 string 类型，无法执行 pushCurrentNameWithQuery")
+      return
+    }
+
+    // 如果是左侧侧边栏显示 tags 时，依然保持显示标签
+    if(oldQuery.tags && typeof oldQuery.tags === 'string') {
+      newQuery.tags = oldQuery.tags
+    }
+
+    let res = await this.router.push({ name, query: newQuery, params })
     return res
   }
 

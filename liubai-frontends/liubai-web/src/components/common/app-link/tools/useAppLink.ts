@@ -34,6 +34,7 @@ export function useAppLink(props: any) {
 
       // console.log("c1: ", c1)
       
+      // 如果 c1 为 false，代表 mergedQuery 的属性中有 toQuery 所没有的
       // 如果 c1 为 ture，表示 mergedQuery 的属性和值都与 toQuery 一致
       // 那么就不用重定向。
       if(!c1) {
