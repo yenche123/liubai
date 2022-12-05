@@ -1,10 +1,12 @@
 <script lang="ts">
 import { Swiper } from "swiper"
 import { Swiper as VueSwiper, SwiperSlide } from 'swiper/vue';
-import { defineComponent } from 'vue';
+import { defineComponent, ref, shallowRef } from 'vue';
 import type { ImageShow } from '../../../types';
 import 'swiper/css';
 import { usePiContent } from "./tools/usePiContent";
+
+const iconColor = "rgba(255, 255, 255, .95)"
 
 export default defineComponent({
   components: {
@@ -23,45 +25,86 @@ export default defineComponent({
   },
   setup(props) {
     const { covers, coverLength } = usePiContent(props)
-    return { covers, coverLength }
+    
+    let _swiper = shallowRef<Swiper | null>(null)
+    const leftArrow = ref(false)
+    const rightArrow = ref(false)
+    const cLen = coverLength.value
+    if(cLen > 1) {
+      if(props.currentIndex > 0) leftArrow.value = true
+      if(props.currentIndex < cLen - 1) rightArrow.value = true
+    }
+
+    const onSlideChange = (swiper: Swiper) => {
+      const actIdx = swiper.activeIndex
+      leftArrow.value = actIdx > 0
+      rightArrow.value = actIdx < (coverLength.value - 1)
+    }
+
+    const onTapLeft = (e: MouseEvent) => {
+      e.stopPropagation()
+      if(!_swiper.value) return
+      _swiper.value.slidePrev()
+    }
+
+    const onTapRight = (e: MouseEvent) => {
+      e.stopPropagation()
+      if(!_swiper.value) return
+      _swiper.value.slideNext()
+    }
+    
+    const onSwiper = (swiper: Swiper) => {
+      swiper.activeIndex = props.currentIndex
+      _swiper.value = swiper
+    }
+
+    return { 
+      covers, 
+      coverLength, 
+      iconColor, 
+      leftArrow,
+      rightArrow,
+      onTapLeft,
+      onTapRight,
+      onSlideChange,
+      onSwiper,
+    }
   },
   methods: {
-    onSwiper(swiper: Swiper) {
-      swiper.activeIndex = this.currentIndex
-    },
-
-    onSlideChange() {},
   },
 })
 
 </script>
 <template>
-  <VueSwiper
-    @swiper="onSwiper"
-    @slideChange="onSlideChange"
-  >
+  <VueSwiper @swiper="onSwiper" @slideChange="onSlideChange">
     <template v-for="(item, index) in covers" :key="item.id">
       <SwiperSlide>
-        <div class="pi-item"
-          :class="{'pi-item_grab': coverLength > 1}"
-        >
-          <liu-img 
-            :src="item.src"
-            object-fit="contain"
-            class="pi-image"
-            :style="{ 
-              'width': item.width + 'px',
-              'height': item.height + 'px',
-            }"
-            bg-color="#1f1f1f"
-          ></liu-img>
+        <div class="pi-item" :class="{ 'pi-item_grab': coverLength > 1 }">
+          <liu-img :src="item.src" object-fit="contain" class="pi-image" :style="{
+            'width': item.width + 'px',
+            'height': item.height + 'px',
+          }" bg-color="#1f1f1f"></liu-img>
         </div>
       </SwiperSlide>
     </template>
   </VueSwiper>
-</template>
-<style lang="scss">
 
+  <!-- 右上角: x按钮 -->
+  <div class="pi-close">
+    <svg-icon name="close" class="pi-close-icon" :color="iconColor"></svg-icon>
+  </div>
+
+  <!-- 往左 -->
+  <div class="pi-direction pi-left" v-if="leftArrow" @click="onTapLeft">
+    <svg-icon name="arrow-right2" class="pid-icon pid-rotated" :color="iconColor"></svg-icon>
+  </div>
+
+  <!-- 往右 -->
+  <div class="pi-direction pi-right" v-if="rightArrow" @click="onTapRight">
+    <svg-icon name="arrow-right2" class="pid-icon" :color="iconColor"></svg-icon>
+  </div>
+</template>
+<style scoped lang="scss">
 .pi-item {
   width: 100vw;
   height: 100vh;
@@ -87,6 +130,80 @@ export default defineComponent({
 
 .pi-item_grab:active {
   cursor: grabbing;
+}
+
+.pi-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: .2s;
+  opacity: .33;
+  background-color: transparent;
+  cursor: pointer;
+  z-index: 999;
+
+  &:hover {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, .5);
+  }
+
+  .pi-close-icon {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.pi-direction {
+  position: absolute;
+  top: 50%;
+  width: 90px;
+  height: 60vh;
+  margin-top: -30vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: .2s;
+  opacity: .33;
+  background-color: transparent;
+  cursor: pointer;
+  z-index: 999;
+
+  &:hover {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, .5);
+  }
+
+  .pid-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .pid-rotated {
+    transform: rotate(180deg);
+  }
+}
+
+.pi-left {
+  left: 0;
+}
+
+.pi-right {
+  right: 0;
+}
+
+@media screen and (max-width: 600px) {
+  .pi-close {
+    display: none;
+  }
+
+  .pi-direction {
+    display: none;
+  }
 }
 
 </style>
