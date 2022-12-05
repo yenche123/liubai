@@ -187,7 +187,7 @@ export function getCountDownStr(
   // 剩下一小时内
   if(diffStamp < HOUR) {
     min_num = Math.floor(diffStamp / MIN)
-    sec_num = Math.round((diffStamp % MIN) / SEC)
+    sec_num = Math.floor((diffStamp % MIN) / SEC)
     min = lang === "en" ? valTool.format0(min_num) : String(min_num)
     sec = lang === "en" ? valTool.format0(sec_num) : String(sec_num)
     return t("date_related.countdown_1", { min, sec })
@@ -195,7 +195,7 @@ export function getCountDownStr(
 
   // 大于一小时的时候
   hr_num = Math.floor(diffStamp / HOUR)
-  min_num = Math.round((diffStamp % HOUR) / MIN)
+  min_num = Math.floor((diffStamp % HOUR) / MIN)
   if(lang === "en") {
     let tmp = `${hr_num} hr${hr_num > 1 ? "s" : ""} `
     tmp += `${min_num} min${min_num > 1 ? "s" : ""} remaining`
