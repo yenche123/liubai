@@ -1,5 +1,6 @@
 
 import type { SupportedLocale } from "./types-locale"
+import type { RouteLocation } from 'vue-router'
 
 export type SupportedTheme = "light" | "dark"
 export type LocalTheme = SupportedTheme | "system"
@@ -56,3 +57,5 @@ export interface LiuUser {
   createdStamp: number
   lastRefresh: number
 }
+
+export type ToRoute = RouteLocation & { href: string }

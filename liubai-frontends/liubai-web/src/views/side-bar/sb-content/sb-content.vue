@@ -5,12 +5,21 @@ import { useRouteAndLiuRouter } from '../../../routes/liu-router';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+const emits = defineEmits<{
+  (event: "canclosepopup"): void
+}>()
+
+const onTapItem = () => {
+  emits("canclosepopup")
+}
+
 const props = defineProps({
   show: {
     type: Boolean,
     default: true,
   }
 })
+// 用于判断 用户点击 tab 键后，是否要响应该元素，小于 0 代表不要响应
 const tabindex = computed(() => {
   if(props.show) return 0
   return -1
@@ -42,6 +51,7 @@ const color_selected = "var(--main-normal)"
   <NaviLink class="sb-link liu-hover" 
     :class="{ 'sb-link_selected': state === 'index' }" to="/"
     :tabindex="tabindex"
+    @aftertap="onTapItem"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -56,6 +66,7 @@ const color_selected = "var(--main-normal)"
   <NaviLink class="sb-link liu-hover" 
     :class="{ 'sb-link_selected': state === 'favorite' }" to="/favorite"
     :tabindex="tabindex"
+    @aftertap="onTapItem"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -84,6 +95,7 @@ const color_selected = "var(--main-normal)"
   <NaviLink class="sb-link liu-hover" to="/kanban"
     :class="{ 'sb-link_selected': state === 'kanban' }"
     :tabindex="tabindex"
+    @aftertap="onTapItem"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -98,6 +110,7 @@ const color_selected = "var(--main-normal)"
   <NaviLink class="sb-link liu-hover" to="/connect"
     :class="{ 'sb-link_selected': state === 'connect' }"
     :tabindex="tabindex"
+    @aftertap="onTapItem"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -112,6 +125,7 @@ const color_selected = "var(--main-normal)"
   <NaviLink class="sb-link liu-hover" to="/trash"
     :class="{ 'sb-link_selected': state === 'trash' }"
     :tabindex="tabindex"
+    @aftertap="onTapItem"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 

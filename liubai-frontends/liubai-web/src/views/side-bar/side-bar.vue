@@ -5,6 +5,7 @@ import { useSidebarOther } from './tools/useSidebarOther';
 import { useSidebarRoute } from './tools/useSidebarRoute';
 import SbContent from './sb-content/sb-content.vue';
 import SbTags from './sb-tags/sb-tags.vue';
+import SbFixed from './sb-fixed/sb-fixed.vue';
 import { useImages } from '../../hooks/useImages';
 
 const { images } = useImages()
@@ -74,7 +75,8 @@ const {
 
   </div>
 
-  <!-- 如果是弹出层 底部多一个黑色的蒙层 -->
+  <!-- fixed 布局、底部有黑色蒙层的 side-bar -->
+  <SbFixed :expand-state="expandState"></SbFixed>
 
 </template>
 <style scoped>

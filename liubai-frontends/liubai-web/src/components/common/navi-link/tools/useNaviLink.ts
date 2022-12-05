@@ -1,9 +1,12 @@
-import { RouteLocation, RouteLocationNormalized, RouteLocationNormalizedLoaded, useLink } from 'vue-router'
+import { RouteLocationNormalized, RouteLocationNormalizedLoaded, useLink } from 'vue-router'
 import { useRouteAndLiuRouter } from '../../../../routes/liu-router'
+import type { ToRoute } from "../../../../types"
 
-type ToRoute = RouteLocation & { href: string }
+interface NaviLinkEmits {
+  (event: "aftertap", toRoute: ToRoute): void
+}
 
-export function useNaviLink(props: any) {
+export function useNaviLink(props: any, emit: NaviLinkEmits) {
   const { route: fromRoute, router } = useRouteAndLiuRouter()
   const { href, route: toRouteRef } = useLink(props)
 
@@ -11,6 +14,8 @@ export function useNaviLink(props: any) {
     const toRoute = toRouteRef.value
     const stacks = router.getStack()
     e.preventDefault()
+
+    emit("aftertap", toRoute)
 
     const num = getNaviBackStackNum(toRoute, fromRoute, stacks)
     if(num === 0) {

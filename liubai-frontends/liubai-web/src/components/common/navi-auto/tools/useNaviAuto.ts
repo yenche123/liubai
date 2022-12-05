@@ -5,6 +5,7 @@ import type { LayoutStore } from "../../../../views/useLayoutStore";
 import { storeToRefs } from "pinia";
 import valTool from "../../../../utils/basic/val-tool";
 import { svScollingKey } from "../../../../utils/provide-keys";
+import sideBar from "../../../../views/side-bar";
 
 const TRANSITION_DURATION = 150
 
@@ -50,7 +51,8 @@ export function useNaviAuto() {
   
 
   const onTapMenu = () => {
-
+    console.log("onTapMenu...........")
+    sideBar.showFixedSideBar()
   }
   
   return {

@@ -1,6 +1,7 @@
 <script lang="ts">
 import { RouterLink } from 'vue-router'
 import { useNaviLink } from "./tools/useNaviLink";
+import type { ToRoute } from "../../../types";
 
 export default {
   name: "NaviLink",
@@ -11,11 +12,15 @@ export default {
     ...RouterLink.props,
   },
 
-  setup(props: any, context: any) {
+  emits: {
+    aftertap: (toRoute: ToRoute) => true,
+  },
+
+  setup(props: any, { emit }) {
     const {
       href,
       onTapLink,
-    } = useNaviLink(props)
+    } = useNaviLink(props, emit)
 
     return { href, onTapLink }
   }
