@@ -118,6 +118,15 @@ const {
   position: relative;
   transition: v-bind("TRANSITION_DURATION + 'ms'");
 
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    transition: .15s;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+  }
+
   .sf-inner-box {
     width: 90%;
     height: max-content;
