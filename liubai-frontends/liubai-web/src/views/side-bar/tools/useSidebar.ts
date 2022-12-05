@@ -1,7 +1,7 @@
 import { onActivated, onDeactivated, onMounted, onUnmounted, reactive, ref, Ref, watch } from "vue";
 import { useLayoutStore } from "../../useLayoutStore";
 import type { LayoutStore, LayoutType } from "../../useLayoutStore";
-import { useWindowSize, useResizeObserver } from "../../../hooks/useVueUse";
+import { useWindowSize } from "../../../hooks/useVueUse";
 import cfg from "../../../config";
 import valTool from "../../../utils/basic/val-tool";
 import time from "../../../utils/basic/time";
@@ -18,6 +18,7 @@ interface SbData {
   maxSidebarPx: number
   isAnimating: boolean
   isActivate: boolean
+  status: string
 }
 
 const sbData = reactive<SbData>({
@@ -27,8 +28,8 @@ const sbData = reactive<SbData>({
   maxSidebarPx: 600,
   isAnimating: false,
   isActivate: true,
+  status: "default"
 })
-
 
 export function useSidebar() {
 
@@ -72,7 +73,6 @@ function getSidebarPxFromStyle(sidebarEl: Ref<HTMLElement | null>): number {
     widthStr = widthStr.substring(0, idx)
   }
   let w = Number(widthStr)
-  console.log("w: ", w)
   if(isNaN(w)) return cfg.default_sidebar_width
   return w
 }
@@ -205,6 +205,13 @@ function listenWindowChange(
 
   // watch 挂在 setup 周期内 所以不需要在 onUnmounted 手写销毁，vue 会自动完成
   watch(width, (newV, oldV) => {
+    const { sidebarWidth, sidebarStatus } = layoutStore
+
+    // 如果当前宽度为 0 并且用户开启了全屏状态，就忽略窗口变化
+    if(sidebarWidth === 0 && sidebarStatus === "window") {
+      return
+    }
+
     whenWindowChange()
   })
 }

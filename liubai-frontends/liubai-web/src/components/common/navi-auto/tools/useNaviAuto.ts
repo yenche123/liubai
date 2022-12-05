@@ -1,6 +1,7 @@
 import { inject, ref, watch } from "vue";
 import type { Ref } from "vue";
 import { useLayoutStore } from "../../../../views/useLayoutStore";
+import type { LayoutStore } from "../../../../views/useLayoutStore";
 import { storeToRefs } from "pinia";
 import valTool from "../../../../utils/basic/val-tool";
 import { svScollingKey } from "../../../../utils/provide-keys";
@@ -12,6 +13,7 @@ interface NaviAutoCtx {
   show: Ref<boolean>
   shadow: Ref<boolean>
   scrollTop: Ref<number>
+  layout: LayoutStore,
 }
 
 export function useNaviAuto() {
@@ -29,15 +31,16 @@ export function useNaviAuto() {
     show,
     shadow,
     scrollTop,
+    layout,
   }
 
 
   // 处理 左侧边栏的变化
   const { sidebarWidth } = storeToRefs(layout)
   watch(sidebarWidth, (newV) => {
-    judgeState(ctx, newV)
+    judgeState(ctx)
   })
-  judgeState(ctx, sidebarWidth.value)
+  judgeState(ctx)
 
   // 监听滚动，处理是否要显示阴影
   watch(scrollTop, (newV) => {
@@ -70,12 +73,9 @@ function judgeShadow(
 
 function judgeState(
   ctx: NaviAutoCtx,
-  sidebarWidth: number,
 ) {
-  console.log("judgeState sidebarWidth: ")
-  console.log(sidebarWidth)
-  console.log(" ")
-  if(sidebarWidth > 0) _close(ctx.enable, ctx.show)
+  const { sidebarWidth, sidebarStatus } = ctx.layout
+  if(sidebarWidth > 0 || sidebarStatus === "window") _close(ctx.enable, ctx.show)
   else _open(ctx.enable, ctx.show)
 
   // 判断阴影变化
