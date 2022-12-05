@@ -112,6 +112,7 @@
   "card_bubble": {
     "copy": "複製",
     "search_in": "内部搜尋",
-    "search_out": "外部搜尋"
+    "search_out": "外部搜尋",
+    "ask_bot": "ChatGPT"
   }
 }

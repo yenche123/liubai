@@ -48,12 +48,17 @@ export function useTcBubbleMenu(
     _toCloseTippy(2)
   }
 
+  const onTapBot = () => {
+    _toCloseTippy(3)
+  }
+
   return {
     selectedIndex,
     tippyOptions,
     onTapCopy,
     onTapSearchIn,
     onTapSearchOut,
+    onTapBot,
   }
 }
 

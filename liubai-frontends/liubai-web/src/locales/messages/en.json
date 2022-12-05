@@ -112,6 +112,7 @@
   "card_bubble": {
     "copy": "Copy",
     "search_in": "Search inside",
-    "search_out": "Search outside"
+    "search_out": "Search outside",
+    "ask_bot": "ChatGPT"
   }
 }

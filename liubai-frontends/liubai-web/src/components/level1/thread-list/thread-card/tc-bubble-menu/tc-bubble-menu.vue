@@ -25,6 +25,7 @@ export default defineComponent({
       onTapCopy,
       onTapSearchIn,
       onTapSearchOut,
+      onTapBot,
     } = useTcBubbleMenu(props)
 
     return {
@@ -36,6 +37,7 @@ export default defineComponent({
       onTapCopy,
       onTapSearchIn,
       onTapSearchOut,
+      onTapBot,
     }
   }
 })
@@ -76,8 +78,17 @@ export default defineComponent({
         :class="{ 'ec-bb-two_selected': selectedIndex === 2 }"
         @click="onTapSearchOut"
       >
-        <svg-icon name="google" :color="bubbleColor" class="ec-bubble-icon ec-bubble-outside"></svg-icon>
+        <svg-icon name="logos-google" :color="bubbleColor" class="ec-bubble-icon ec-bubble-outside"></svg-icon>
         <span>{{ t('card_bubble.search_out') }}</span>
+      </div>
+
+      <!-- ChatGPT -->
+      <div class="ec-bb-two"
+        :class="{ 'ec-bb-two_selected': selectedIndex === 3 }"
+        @click="onTapBot"
+      >
+        <svg-icon name="logos-openai" :color="bubbleColor" class="ec-bubble-icon ec-bubble-chatgpt"></svg-icon>
+        <span>{{ t('card_bubble.ask_bot') }}</span>
       </div>
       
     </div>
@@ -95,6 +106,9 @@ export default defineComponent({
   background-color: var(--bubble-menu-bg);
   margin: 10px;
   box-shadow: var(--bubble-menu-shadow);
+  max-width: 90vw;
+  width: max-content;
+  flex-wrap: wrap;
 }
 
 .ec-bb-two {
@@ -110,6 +124,7 @@ export default defineComponent({
   user-select: none;
   position: relative;
   min-width: 50px;
+  text-align: center;
 }
 
 .ec-bb-two::before {
@@ -145,6 +160,13 @@ export default defineComponent({
   width: 22px;
   height: 22px;
   margin-bottom: 6px;
+}
+
+.ec-bubble-chatgpt {
+  width: 19px;
+  height: 19px;
+  margin-top: 2px;
+  margin-bottom: 7px;
 }
 
 
