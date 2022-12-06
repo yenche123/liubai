@@ -1,4 +1,4 @@
-import { ref, watch } from "vue";
+import { onActivated, onDeactivated, ref, watch } from "vue";
 import type { Ref } from "vue";
 import type { LocationQuery, RouteLocationNormalizedLoaded } from "vue-router";
 import { useRouteAndLiuRouter } from '../../../../routes/liu-router';
@@ -63,24 +63,32 @@ export function useViceContent() {
 function listenRouteChange(
   ctx: VcCtx,
 ) {
+  let located = ""
   const { iframeSrc, vcState, route, cid: cidRef } = ctx
 
+  const setNewIframeSrc = (val: string) => {
+    if(val === iframeSrc.value) {
+      return
+    }
+    iframeSrc.value = val
+  }
+
   const openChatGPT = (q: string) => {
-    iframeSrc.value = CHAT_GPT3
+    setNewIframeSrc(CHAT_GPT3)
   }
 
   const openGougoSearch = (q: string) => {
     const url = new URL(SOUGO_SEARCH)
     url.pathname = "/web/searchList.jsp"
     url.searchParams.append("keyword", q)
-    iframeSrc.value = url.toString()
+    setNewIframeSrc(url.toString())
   }
 
   const openGoogleSerach = (q: string) => {
     const url = new URL(GOOGLE_SEARCH)
     url.pathname = "/search"
     url.searchParams.append("q", q)
-    iframeSrc.value = url.toString()
+    setNewIframeSrc(url.toString())
   }
   
   const checkRouteChange = (newQuery: LocationQuery) => {
@@ -101,8 +109,16 @@ function listenRouteChange(
   }
 
   watch(() => route.query, (newQuery) => {
-    checkRouteChange(newQuery)
+    if(located === route.name) {
+      checkRouteChange(newQuery)
+    }
   })
 
-  checkRouteChange(route.query)
+  onActivated(() => {
+    if(located) return
+    if(typeof route.name === "string") {
+      located = route.name
+    }
+    checkRouteChange(route.query)
+  })
 }
