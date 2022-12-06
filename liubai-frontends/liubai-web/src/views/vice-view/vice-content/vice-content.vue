@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useViceContent } from "./tools/useViceContent";
+import { useVcHeight } from "./tools/useVcHeight";
+import cfg from "../../../config"
+
+const { iframeHeight, maskMarginTop } = useVcHeight()
 
 const props = defineProps({
   isOutterDraging: {
@@ -37,17 +41,21 @@ const onIframeLoad = (e: Event) => {
     :src="'https://www.google.com/maps/embed/v1/view?zoom=11&center=25.0330,121.5654&key=' + google_map_key" 
     title="Google Search"
   ></iframe> -->
+
+  <div class="vc-btn" @click="onTapBack">返回</div>
+
   <iframe
     v-if="iframeSrc"
     ref="iframeEl"
-    width="100%" height="90%"
+    width="100%" 
+    :height="iframeHeight"
     :src="iframeSrc"
     class="vc-iframe"
     @load="onIframeLoad"
   ></iframe>
   
+  <!-- 用于显示拖动时覆盖在 iframe 上的透明度白屏 -->
   <div class="vc-cover" :class="{ 'vc-cover_show': isOutterDraging }"></div>
-  <div class="vc-btn" @click="onTapBack">返回</div>
 
 </template>
 <style scoped>
@@ -59,8 +67,8 @@ const onIframeLoad = (e: Event) => {
 
 .vc-cover {
   width: 100%;
-  height: 90vh;
-  margin-top: -91vh;
+  height: v-bind("iframeHeight + 'px'");
+  margin-top: v-bind("maskMarginTop + 'px'");
   background-color: aliceblue;
   opacity: 0;
   visibility: hidden;
@@ -76,7 +84,7 @@ const onIframeLoad = (e: Event) => {
 .vc-btn {
   cursor: pointer;
   width: 100%;
-  height: 10%;
+  height: v-bind("cfg.vice_navi_height + 'px'");
   display: flex;
   align-items: center;
   justify-content: center;

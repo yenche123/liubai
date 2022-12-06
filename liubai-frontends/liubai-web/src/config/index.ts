@@ -20,6 +20,9 @@ export default {
   // 导航栏高度
   navi_height: 70,
 
+  // vice-view 的导航栏高度
+  vice_navi_height: 50,
+
   // 文本编辑器最低尺寸
   min_editor_height: 140,
 
