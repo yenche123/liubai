@@ -37,9 +37,7 @@ interface Emits {
 const LISTEN_DELAY = 300
 const layoutStore = useLayoutStore()
 
-export function useViceView(emits: Emits) {
-
-  
+export function useViceView(emits: Emits) {  
   const vvEl = ref<HTMLElement | null>(null) 
 
   const vvData = reactive<VvData>({
@@ -53,7 +51,6 @@ export function useViceView(emits: Emits) {
     shadow: false,
   })
 
-  initViceView(vvData)
   listenUserDrag(vvData, emits, vvEl)
   listenRouteChange(vvData, emits, vvEl)
   listenIfActivated(vvData)
@@ -67,11 +64,11 @@ function listenRouteChange(
   emits: Emits,
   vvEl: Ref<HTMLElement | null>
 ) {
+  let located = ""
   const { route } = useRouteAndLiuRouter()
 
   const whenQueryChange = (
-    newQuery: LocationQuery, 
-    oldQuery?: LocationQuery
+    newQuery: LocationQuery,
   ) => {
     const openRequired = judgeIfOpen(newQuery)
     if(openRequired && vvData.openType !== "opened") {
@@ -83,17 +80,23 @@ function listenRouteChange(
       closeViceView(vvData, emits)
       return
     }
-
   }
 
   watch(() => route.query, async (newQuery, oldQuery) => {
     await nextTick()
-    if(!vvData.isActivate) return
-    whenQueryChange(newQuery, oldQuery)
+    if(route.name !== located) {
+      return
+    }
+    whenQueryChange(newQuery)
   })
 
-  // 初始化时，先执行一次
-  whenQueryChange(route.query)
+  onActivated(() => {
+    if(located) return
+    if(typeof route.name === "string") {
+      located = route.name
+    }
+    whenQueryChange(route.query)
+  })
 }
 
 /*********** 根据参数判断是否打开侧边栏  *************/
@@ -158,14 +161,6 @@ function closeViceView(
 ) {
   vvData.openType = openType
   emits("widthchange", 0)
-}
-
-
-function initViceView( 
-  vvData: VvData
-) {
-
-
 }
 
 function listenIfActivated(vvData: VvData) {
