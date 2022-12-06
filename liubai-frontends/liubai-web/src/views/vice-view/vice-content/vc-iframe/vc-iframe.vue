@@ -1,22 +1,9 @@
 <script lang="ts" setup>
-import { ref, onMounted } from "vue"
+import { ref } from "vue"
 import { useViHeight } from "./tools/useViHeight"
 
 const iframeEl = ref<HTMLIFrameElement | null>(null)
 const { iframeHeight, maskMarginTop } = useViHeight()
-
-onMounted(() => {
-  if(!iframeEl.value) {
-    return
-  }
-  const iframeWindow = iframeEl.value.contentWindow
-  if(!iframeWindow) return
-  const customUa = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Mobile Safari/537.36"
-  Object.defineProperty(iframeWindow.navigator, "userAgent", {
-    value: customUa,
-    writable: false
-  })
-})
 
 defineProps({
   isOutterDraging: {
@@ -28,12 +15,6 @@ defineProps({
   },
 })
 
-const onIframeLoad = (e: Event) => {
-  console.log("onIframeLoad............")
-  console.log(e)
-  console.log(" ")
-}
-
 </script>
 <template>
 
@@ -44,7 +25,6 @@ const onIframeLoad = (e: Event) => {
     :height="iframeHeight"
     :src="iframeSrc"
     class="vc-iframe"
-    @load="onIframeLoad"
   ></iframe>
   
   <!-- 用于显示拖动时覆盖在 iframe 上的透明度白屏 -->
