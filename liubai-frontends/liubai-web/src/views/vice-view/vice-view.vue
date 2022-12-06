@@ -28,8 +28,7 @@ const {
 <template>
   <div class="vv-container"
     :class="{ 
-      'vv-container_hidden': openType !== 'opened',
-      'vv-container_shadow': shadow,
+      'vv-container_hidden': openType !== 'opened'
     }"
   >
     <!-- 放于底部给用户拖动的盒子 -->
@@ -44,17 +43,21 @@ const {
       @pointerdown="onStartDrag"
     ></div>
 
-    <!-- 默认的分割线 -->
-    <div class="vv-default-line"></div>
+    <!-- 最左侧到分割线的留空，让用户可以有比较大的区域拖动 -->
+    <div class="vv-buffer-zone"
+      :class="{ 'vv-buffer-zone_transparent': shadow }"
+    ></div>
 
-    <!-- 分割线到内容盒子的区域 4px -->
+    <!-- 分割线  -->
     <div class="vv-space-line"></div>
 
     <!-- 悬浮或拖动时显示的分割线 -->
     <div class="vv-drag-line"></div>
 
     <!-- 装内容的盒子 -->
-    <div class="vv-box">
+    <div class="vv-box"
+      :class="{ 'vv-box_shadow': shadow }"
+    >
 
       <div class="vv-inner-box">
         <ViceContent :is-outter-draging="isDraging"></ViceContent>
@@ -71,7 +74,6 @@ const {
   right: 0;
   bottom: 0;
   height: 100vh;
-  background-color: var(--bg-color);
   z-index: 700;
   transition: .3s;
   direction: rtl;
@@ -79,10 +81,6 @@ const {
 
 .vv-container_hidden {
   transform: translateX(102%);
-}
-
-.vv-container_shadow {
-  box-shadow: var(--vice-shadow);
 }
 
 .vv-bar {
@@ -104,14 +102,18 @@ const {
   height: inherit;
 }
 
-.vv-default-line {
+.vv-buffer-zone {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
-  border-left: 2px solid var(--line-default);
+  border-left: 2px solid var(--bg-color);
   transition: .2s;
   pointer-events: none;
+}
+
+.vv-buffer-zone_transparent {
+  border-left: 2px solid transparent;
 }
 
 .vv-space-line {
@@ -119,12 +121,13 @@ const {
   top: 0;
   bottom: 0;
   left: 2px;
-  border-left: 2px solid var(--vice-bg);
+  border-left: 2px solid var(--line-default);
   pointer-events: none;
+  z-index: 705;
 }
 
-.vv-bar:hover ~ .vv-default-line,
-.vv-bar:active ~ .vv-default-line {
+.vv-bar:hover ~ .vv-buffer-zone,
+.vv-bar:active ~ .vv-buffer-zone {
   opacity: 0;
 }
 
@@ -132,11 +135,12 @@ const {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
+  left: 2px;
   border-left: 2px dashed var(--line-hover);
   opacity: 0;
   transition: .2s;
   pointer-events: none;
+  z-index: 705;
 }
 
 .vv-bar:hover ~ .vv-drag-line {
@@ -161,6 +165,10 @@ const {
   overflow-y: auto;
   direction: ltr;
   background-color: var(--vice-bg);
+}
+
+.vv-box_shadow {
+  box-shadow: var(--vice-shadow);
 }
 
 .vv-inner-box {

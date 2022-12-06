@@ -49,7 +49,7 @@ defineProps({
 }
 
 .vc-cover_show {
-  opacity: .5;
+  opacity: .6;
   visibility: visible;
 }
 

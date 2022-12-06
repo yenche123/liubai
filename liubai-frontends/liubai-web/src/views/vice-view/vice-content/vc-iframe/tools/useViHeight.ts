@@ -11,7 +11,7 @@ export function useViHeight() {
   const _calc = () => {
     const tmp = Math.ceil(height.value - cfg.vice_navi_height)
     iframeHeight.value = tmp
-    maskMarginTop.value = (-tmp) - 5
+    maskMarginTop.value = (-tmp) - 8
   }
 
   const whenWindowChange = () => {
