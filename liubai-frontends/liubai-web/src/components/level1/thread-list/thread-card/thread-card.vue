@@ -160,6 +160,7 @@ export default defineComponent({
     .tc-briefing {
       position: relative;
       cursor: pointer;
+      user-select: none;
 
       .tcb-more {
         font-size: var(--btn-font);
