@@ -53,7 +53,7 @@ const default_color = "var(--navi-normal)"
   justify-content: center;
   transition: v-bind("TRANSITION_DURATION + 'ms'");
   transform: translateY(-100%);
-  z-index: 500;
+  z-index: 550;
 
   .na-box {
     width: 92%;

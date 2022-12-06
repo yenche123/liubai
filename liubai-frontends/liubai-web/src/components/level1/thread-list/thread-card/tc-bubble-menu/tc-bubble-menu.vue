@@ -104,10 +104,10 @@ export default defineComponent({
   border-radius: 10px;
   display: flex;
   background-color: var(--bubble-menu-bg);
-  margin: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   box-shadow: var(--bubble-menu-shadow);
-  max-width: 90vw;
-  width: max-content;
+  width: fit-content;
   flex-wrap: wrap;
 }
 
