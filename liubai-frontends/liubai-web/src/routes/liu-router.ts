@@ -87,7 +87,7 @@ class LiuRouter {
     return res
   }
 
-  /** 自定义一些 push 的情况  */
+  /** 自定义携带新的 query 的 push 情况  */
   async pushCurrentWithNewQuery(
     route: RouteLocationNormalizedLoaded,
     query: Record<string, string>,
@@ -108,6 +108,26 @@ class LiuRouter {
     }
 
     let res = await this.router.push({ name, query: newQuery, params })
+    return res
+  }
+
+  /** 自定义携带没有query(tags参数除外，依然保留) 的 push 情况  */
+  async pushCurrentNoQuery(
+    route: RouteLocationNormalizedLoaded,
+  ) {
+    const name = route.name
+    const params = route.params
+    const oldQuery = route.query
+    if(typeof name !== "string") {
+      console.warn("当前的 route.name 不是 string 类型，无法执行 pushCurrentNoQuery")
+      return
+    }
+    let newRoute: RouteLocationRaw = { name, params, query: {} }
+    if(oldQuery.tags && typeof oldQuery.tags === 'string') {
+      newRoute.query = { tags: oldQuery.tags }
+    }
+
+    let res = await this.router.push(newRoute)
     return res
   }
 
