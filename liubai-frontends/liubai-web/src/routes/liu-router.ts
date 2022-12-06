@@ -107,6 +107,7 @@ class LiuRouter {
       newQuery.tags = oldQuery.tags
     }
 
+    routeChangeTmpData = { operation: "push", delta: 1 }
     let res = await this.router.push({ name, query: newQuery, params })
     return res
   }
@@ -127,6 +128,7 @@ class LiuRouter {
       newRoute.query = { tags: oldQuery.tags }
     }
 
+    routeChangeTmpData = { operation: "push", delta: 1 }
     let res = await this.router.push(newRoute)
     return res
   }

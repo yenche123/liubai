@@ -1,9 +1,8 @@
 import { ref, watch } from "vue";
-import { useWindowSize } from "../../../../hooks/useVueUse";
-import cfg from "../../../../config"
+import { useWindowSize } from "../../../../../hooks/useVueUse";
+import cfg from "../../../../../config"
 
-
-export function useVcHeight() {
+export function useViHeight() {
   let timeout = 0
   const iframeHeight = ref(0)
   const maskMarginTop = ref(0)
@@ -11,9 +10,6 @@ export function useVcHeight() {
   const { height } = useWindowSize()
   const _calc = () => {
     const tmp = Math.ceil(height.value - cfg.vice_navi_height)
-    console.log("看一下 iframe 计算出来的高度: ")
-    console.log(tmp)
-    console.log(" ")
     iframeHeight.value = tmp
     maskMarginTop.value = (-tmp) - 5
   }
@@ -34,7 +30,6 @@ export function useVcHeight() {
     whenWindowChange()
   })
   whenWindowChange()
-
 
   return {
     iframeHeight,

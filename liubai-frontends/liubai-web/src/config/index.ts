@@ -28,5 +28,8 @@ export default {
 
   // 单则动态最大上传的图片数
   max_picture_num: 9,
+
+  // 打开 特定 iframe 的参数
+  iframe_keys: ["outq", "gpt3"]
   
 }

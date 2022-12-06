@@ -21,7 +21,9 @@
     "yesterday": "Yesterday",
     "processing": "Processing",
     "checkMore": "More",
-    "copied": "Copied"
+    "copied": "Copied",    
+    "close": "Close",
+    "open_in_new": "Open in New"
   },
   "editor": {
     "when": "When",

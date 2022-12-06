@@ -7,24 +7,55 @@ const GOOGLE_SEARCH = "https://www.google.com/?igu=1"
 const SOUGO_SEARCH = "https://m.sogou.com/"
 const CHAT_GPT3 = "https://chat.openai.com/chat"
 
+export type VcState = "thread" | "iframe" | ""
+
+interface VcCtx {
+  iframeSrc: Ref<string>
+  route: RouteLocationNormalizedLoaded
+  vcState: Ref<VcState>
+  cid: Ref<string>
+}
+
 export function useViceContent() {
   const iframeSrc = ref("")
-  const iframeEl = ref<HTMLIFrameElement | null>(null)
+  const vcState = ref<VcState>("")
+  const cid = ref("")
   const { route, router } = useRouteAndLiuRouter()
 
-  listenRouteChange(iframeSrc, route)
+  const ctx = {
+    iframeSrc,
+    route,
+    vcState,
+    cid,
+  }
+
+  listenRouteChange(ctx)
   const onTapBack = () => {
     router.back()
   }
 
-  return { iframeSrc, iframeEl, onTapBack }
+  const onTapClose = () => {
+    router.pushCurrentNoQuery(route)
+  }
+
+  const onTapOpenInNew = () => {
+
+  }
+
+  return {
+    vcState,
+    iframeSrc,
+    onTapBack,
+    onTapClose,
+    onTapOpenInNew,
+  }
 }
 
 
 function listenRouteChange(
-  iframeSrc: Ref<string>, 
-  route: RouteLocationNormalizedLoaded
+  ctx: VcCtx,
 ) {
+  const { iframeSrc, vcState, route, cid: cidRef } = ctx
 
   const openChatGPT = (q: string) => {
     iframeSrc.value = CHAT_GPT3
@@ -45,15 +76,20 @@ function listenRouteChange(
   }
   
   const checkRouteChange = (newQuery: LocationQuery) => {
-    const { outq, gpt3 } = newQuery
+    const { outq, gpt3, cid } = newQuery
 
     if(outq && typeof outq === "string") {
+      vcState.value = "iframe"
       openGoogleSerach(outq)
     }
     else if(gpt3 && typeof gpt3 === "string") {
+      vcState.value = "iframe"
       openChatGPT(gpt3)
     }
-
+    else if(cid && typeof cid === "string") {
+      vcState.value = "thread"
+      cidRef.value = cid
+    }
   }
 
   watch(() => route.query, (newQuery) => {

@@ -21,7 +21,9 @@
     "yesterday": "昨天",
     "processing": "处理中",
     "checkMore": "查看更多",
-    "copied": "已复制"
+    "copied": "已复制",
+    "close": "关闭",
+    "open_in_new": "在新的分页打开"
   },
   "editor": {
     "when": "什么时候",
