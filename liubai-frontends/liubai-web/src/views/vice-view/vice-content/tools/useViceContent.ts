@@ -39,7 +39,15 @@ export function useViceContent() {
   }
 
   const onTapOpenInNew = () => {
+    if(!iframeSrc.value) return
+    const url = new URL(iframeSrc.value)
+    const query = url.searchParams
+    if(query.has("igu")) {
+      query.delete("igu")
+    }
 
+    const tmp = url.toString()
+    window.open(tmp, "_blank")
   }
 
   return {

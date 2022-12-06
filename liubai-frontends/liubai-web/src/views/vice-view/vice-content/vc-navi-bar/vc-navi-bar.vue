@@ -17,18 +17,18 @@ const iconColor = "var(--main-normal)"
   <div class="vc-navi-bar">
 
     <!-- 返回键 -->
-    <div class="liu-hover vc-navi-btn" :aria-label="t('common.back')" @click="emits('tapback')">
+    <div class="liu-hover vc-navi-btn" @click="emits('tapback')">
       <svg-icon class="vc-navi-icon" name="arrow-back" :color="iconColor"></svg-icon>
     </div>
 
     <!-- 关闭按钮 -->
-    <div class="liu-hover vc-navi-btn" :aria-label="t('common.close')" @click="emits('tapclose')">
+    <div class="liu-hover vc-navi-btn" @click="emits('tapclose')">
       <svg-icon class="vc-navi-icon" name="close" :color="iconColor"></svg-icon>
     </div>
 
     <div class="vc-navi-footer">
       <!-- 用新分页打开 -->
-      <div class="liu-hover vc-navi-btn" :aria-label="t('common.open_in_new')" @click="emits('tapopeninnew')">
+      <div class="liu-hover vc-navi-btn" @click="emits('tapopeninnew')">
         <svg-icon class="vcn-open-new" name="open_in_new" :color="iconColor"></svg-icon>
       </div>
     </div>
