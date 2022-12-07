@@ -109,7 +109,9 @@
     "max_pic_num": "最多顯示 {num} 張圖片",
     "no_strange_char": "標籤中不得有奇奇怪怪的字符",
     "add_tag": "新建標籤 \"{tag}\"",
-    "tag_ph": "請輸入標籤名"
+    "tag_ph": "請輸入標籤名",
+    "tag_merge_title": "合併標籤",
+    "tag_merge_content": "是否將 \"{tag1}\" 合併至 \"{tag2}\"?"
   },
   "card_bubble": {
     "copy": "複製",

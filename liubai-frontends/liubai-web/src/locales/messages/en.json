@@ -109,7 +109,9 @@
     "max_pic_num": "Show up to {num} images",
     "no_strange_char": "There must be no strange characters in the tag",
     "add_tag": "Add a tag \"{tag}\"",
-    "tag_ph": "Please input a tag name"
+    "tag_ph": "Please input a tag name",
+    "tag_merge_title": "Merge Tags",
+    "tag_merge_content": "Are you sure to merge \"{tag1}\" into \"{tag2}\"?"
   },
   "card_bubble": {
     "copy": "Copy",

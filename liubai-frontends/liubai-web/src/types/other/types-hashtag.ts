@@ -14,3 +14,7 @@ export interface HashTagEditorRes {
   tagId?: string    // 如果是已经创建的 tag，则会有该字段
   icon?: string    // encodeURIComponent()
 }
+
+
+export type TagMovedType = "translate" | "across"    // 平移 / 跨级移动
+export type TagChangedType = TagMovedType | "renamed" | "deleted" | "merged"

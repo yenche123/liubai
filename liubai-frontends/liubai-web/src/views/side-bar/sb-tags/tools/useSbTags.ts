@@ -3,7 +3,8 @@ import { Draggable } from "@he-tree/vue";
 import type { TagView } from "../../../../types/types-atom";
 import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
-import { getCurrentSpaceTagList, tagMovedInTree } from "../../../../utils/system/workspace";
+import { getCurrentSpaceTagList } from "../../../../utils/system/workspace";
+import { tagMovedInTree } from "../../../../utils/system/workspace/tags";
 
 interface TagNode {
   text: string

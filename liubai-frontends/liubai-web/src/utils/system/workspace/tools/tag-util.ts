@@ -144,6 +144,7 @@ interface WhichTagChange {
   changeType?: "translate" | "across"    // 平移 / 跨级移动
   tagId?: string
   parents?: string[]    // 如果是跨级移动，必存在，并且包含自己，也就是说移动到最顶级也会有自身的 tagId
+  isMerged?: boolean
 }
 
 /**
@@ -161,6 +162,7 @@ export function findWhichTagChange(
   for(let i=0; i<newChildren.length; i++) {
     const v1 = newChildren[i]
     const v2 = oldChildren[i + offset]
+    let { tagId, text } = v1
     if(v1.oState !== "OK") continue
     if(v1.tagId === v2?.tagId) {
       if(v1.children) {
@@ -173,7 +175,7 @@ export function findWhichTagChange(
     // 来看看怎么个不一样
     // I. v2 不存在，代表被移动到了这里
     if(!v2 || v2.oState !== "OK") {
-      return tagAddedHere(v1.tagId, newTree, oldTree)
+      return tagAddedHere(tagId, text, oldChildren, newTree, oldTree)
     }
 
     // II. 剩下一种情况 v2 也存在，但与 v1 不一样
@@ -182,14 +184,14 @@ export function findWhichTagChange(
     // 如果是 tag 被移走了，那么当前 v1 会跟下一个 v2 （设为 v3）一致
     // 这时就让 i--，offset++，continue，重新进入回圈再次比较这个 v1 和 v3，直到找到 "被移入" 的情况
     const v3 = oldChildren[i + 1]
-    if(v3?.tagId === v1.tagId) {
+    if(v3?.tagId === tagId) {
       i--
       offset++
       continue
     }
 
     // 剩下最后一种情况，tag 被移入到了这里
-    return tagAddedHere(v1.tagId, newTree, oldTree)
+    return tagAddedHere(tagId, text, oldChildren, newTree, oldTree)
   }
 
   return {}
@@ -197,6 +199,8 @@ export function findWhichTagChange(
 
 function tagAddedHere(
   tagId: string,
+  text: string,
+  oldChildren: TagView[],
   newTree: TagView[],
   oldTree: TagView[],
 ): WhichTagChange {
@@ -212,10 +216,24 @@ function tagAddedHere(
     }
   }
 
+  let isMerged = false
+  let lowerText = text.toLowerCase()
+  for(let i=0; i<oldChildren.length; i++) {
+    const v = oldChildren[i]
+    if(v.oState !== "OK") continue
+    let lowerText2 = v.text.toLowerCase()
+    if(lowerText === lowerText2) {
+      isMerged = true
+      break
+    }
+  }
+  
+
   // 跨级的情况
   return {
     changeType: "across",
     tagId,
-    parents: parents1
+    parents: parents1,
+    isMerged,
   }
 }

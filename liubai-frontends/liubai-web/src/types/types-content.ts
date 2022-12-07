@@ -62,4 +62,5 @@ export interface ThreadShow {
   createdStr: string
   editedStr?: string
   tags?: TagShow[]
+  tagSearched?: string[]
 }

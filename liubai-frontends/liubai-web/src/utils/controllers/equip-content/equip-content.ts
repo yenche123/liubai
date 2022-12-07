@@ -102,6 +102,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       createdStr: liuUtil.showBasicDate(v.createdStamp),
       editedStr: _getEditedStr(v.createdStamp, v.editedStamp),
       tags,
+      tagSearched: v.tagSearched,
     }
 
     // if(obj.briefing) {

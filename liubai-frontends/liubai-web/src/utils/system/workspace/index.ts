@@ -136,15 +136,3 @@ export function getTagIdsParents(tagIds: string[]) {
   tagSearched = [...new Set(tagSearched)]
   return tagSearched
 }
-
-export function tagMovedInTree(newTree: TagView[], oldTree: TagView[]) {
-  console.time("tagMovedInTree")
-  const res = findWhichTagChange(newTree, oldTree, newTree, oldTree)
-  console.timeEnd("tagMovedInTree")
-
-  console.log("看一下 tagMovedInTree 结果: ")
-  console.log(res)
-  console.log(" ")
-  console.log(toRaw(newTree))
-  console.log(oldTree)
-}
