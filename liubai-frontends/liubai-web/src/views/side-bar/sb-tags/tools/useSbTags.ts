@@ -1,5 +1,9 @@
-import { Ref, ref } from "vue";
+import { Ref, ref, watch } from "vue";
 import { Draggable } from "@he-tree/vue";
+import type { TagView } from "../../../../types/types-atom";
+import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore";
+import { storeToRefs } from "pinia";
+import { getCurrentSpaceTagList } from "../../../../utils/system/workspace";
 
 interface TagNode {
   text: string
@@ -23,7 +27,7 @@ interface Stat<T> {
 
 export function useSbTags() {
   const treeEl = ref<typeof Draggable | null>(null)
-  const tagNodes = ref<TagNode[]>([])
+  const tagNodes = ref<TagView[]>([])
 
   initTagNodes(tagNodes)
 
@@ -31,14 +35,14 @@ export function useSbTags() {
 
   }
 
-  const onTapTagArrow = (e: MouseEvent, node: TagNode, stat: Stat<TagNode>) => {
+  const onTapTagArrow = (e: MouseEvent, node: TagView, stat: Stat<TagView>) => {
     const length = node.children?.length ?? 0
     if(!length) return
     stat.open = !stat.open
     e.stopPropagation()
   }
 
-  const onTapTagItem = (e: MouseEvent, node: TagNode, stat: Stat<TagNode>) => {
+  const onTapTagItem = (e: MouseEvent, node: TagView, stat: Stat<TagView>) => {
     console.log("onTapTagItem............")
     
   }
@@ -46,103 +50,18 @@ export function useSbTags() {
   return { tagNodes, treeEl, onTreeChange, onTapTagItem, onTapTagArrow }
 }
 
-function initTagNodes(tagNodes: Ref<TagNode[]>) {
-  const tree: TagNode[] = [
-    {
-      text: "收件箱"
-    },
-    {
-      text: "领域",
-      children: [
-        {
-          text: "收件箱",
-          children: [
-            {
-              text: "一封信",
-            },
-            {
-              text: "第 2 封信"
-            }
-          ]
-        },
-        {
-          text: "投资",
-          children: [
-            {
-              text: "短线"
-            },
-            {
-              text: "长线"
-            }
-          ]
-        },
-        {
-          text: "计算机",
-          children: [
-            {
-              text: "JS 技术栈",
-              children: [
-                {
-                  text: "HTML"
-                },
-                {
-                  text: "CSS"
-                },
-                {
-                  text: "JavaScript"
-                },
-                {
-                  text: "TypeScript",
-                },
-                {
-                  text: "Vue"
-                }
-              ]
-            },
-            {
-              text: "AI 人工智能",
-            },
-            {
-              text: "Python",
-            }
-          ]
-        }
-      ]
-    },
-    {
-      text: "资源",
-      children: [
-        {
-          text: "书籍",
-        },
-        {
-          text: "电影",
-        },
-        {
-          text: "音乐",
-          children: [
-            {
-              text: "嘻哈 (Hip Hop)",
-            },
-            {
-              text: "R&B",
-            },
-            {
-              text: "华语流行",
-            },
-            {
-              text: "美国流行",
-            },
-            {
-              text: "英伦摇滚"
-            }
-          ]
-        },
-      ]
-    },
-    {
-      text: "项目"
-    }
-  ]
-  tagNodes.value = tree
+function initTagNodes(tagNodes: Ref<TagView[]>) {
+  const wStore = useWorkspaceStore()
+  const { workspace } = storeToRefs(wStore)
+
+  const _get = () => {
+    if(!workspace.value) return
+    const list = getCurrentSpaceTagList()
+    tagNodes.value = list
+  }
+
+  watch(workspace, (newV) => {
+    _get()
+  })
+  _get()
 }

@@ -15,7 +15,7 @@ export function getCurrentSpaceTagList(): TagView[] {
   if(!workspace) return []
   const tagList = workspace.tagList
   if(!tagList?.length) return []
-  return tagList
+  return JSON.parse(JSON.stringify(tagList))
 }
 
 // 转换文字成规范格式
