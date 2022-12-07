@@ -104,6 +104,21 @@ const getSuffix = (name: string): string => {
   return format
 }
 
+const isSameSimpleList = (
+  list1: Array<string | number>, 
+  list2: Array<string | number>
+): boolean => {
+  if(list1.length !== list2.length) return false
+  
+  for(let i=0; i<list1.length; i++) {
+    const v1 = list1[i]
+    const v2 = list2[i]
+    if(v1 !== v2) return false
+  }
+
+  return true
+}
+
 
 export default {
   waitMilli,
@@ -117,4 +132,5 @@ export default {
   getValInMinAndMax,
   isAIncludedInB,
   getSuffix,
+  isSameSimpleList,
 }

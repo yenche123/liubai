@@ -1,12 +1,15 @@
+import { toRaw } from "vue";
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
 import type { TagView } from "../../../types/types-atom";
 import type { TagShow } from "../../../types/types-content";
+import liuUtil from "../../liu-util";
 import { 
   findIndexInThisTagList,
   findTagShowById,
   addTagToTagList,
   findParentOfTag,
-} from "./tools/workspace-util"
+  findWhichTagChange,
+} from "./tools/tag-util"
 
 // 返回当前工作区的 tags
 export function getCurrentSpaceTagList(): TagView[] {
@@ -15,7 +18,8 @@ export function getCurrentSpaceTagList(): TagView[] {
   if(!workspace) return []
   const tagList = workspace.tagList
   if(!tagList?.length) return []
-  return JSON.parse(JSON.stringify(tagList))
+  const list = liuUtil.getRawList(tagList)
+  return list
 }
 
 // 转换文字成规范格式
@@ -131,4 +135,16 @@ export function getTagIdsParents(tagIds: string[]) {
   }
   tagSearched = [...new Set(tagSearched)]
   return tagSearched
+}
+
+export function tagMovedInTree(newTree: TagView[], oldTree: TagView[]) {
+  console.time("tagMovedInTree")
+  const res = findWhichTagChange(newTree, oldTree, newTree, oldTree)
+  console.timeEnd("tagMovedInTree")
+
+  console.log("看一下 tagMovedInTree 结果: ")
+  console.log(res)
+  console.log(" ")
+  console.log(toRaw(newTree))
+  console.log(oldTree)
 }

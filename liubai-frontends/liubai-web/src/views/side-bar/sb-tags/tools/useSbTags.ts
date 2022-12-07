@@ -1,9 +1,9 @@
-import { Ref, ref, watch } from "vue";
+import { isProxy, isReactive, Ref, ref, watch } from "vue";
 import { Draggable } from "@he-tree/vue";
 import type { TagView } from "../../../../types/types-atom";
 import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
-import { getCurrentSpaceTagList } from "../../../../utils/system/workspace";
+import { getCurrentSpaceTagList, tagMovedInTree } from "../../../../utils/system/workspace";
 
 interface TagNode {
   text: string
@@ -25,14 +25,17 @@ interface Stat<T> {
   class: any // 自定义样式类. 支持Vue的class格式.
 }
 
+let oldTagNodes: TagView[] = []
+
 export function useSbTags() {
   const treeEl = ref<typeof Draggable | null>(null)
   const tagNodes = ref<TagView[]>([])
 
   initTagNodes(tagNodes)
 
-  const onTreeChange = () => {
-
+  const onTreeChange = (e: any) => {
+    tagMovedInTree(tagNodes.value, oldTagNodes)
+    oldTagNodes = JSON.parse(JSON.stringify(tagNodes.value)) as TagView[]
   }
 
   const onTapTagArrow = (e: MouseEvent, node: TagView, stat: Stat<TagView>) => {
@@ -58,6 +61,7 @@ function initTagNodes(tagNodes: Ref<TagView[]>) {
     if(!workspace.value) return
     const list = getCurrentSpaceTagList()
     tagNodes.value = list
+    oldTagNodes = JSON.parse(JSON.stringify(list)) as TagView[]
   }
 
   watch(workspace, (newV) => {

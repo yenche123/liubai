@@ -2,6 +2,7 @@ import type { TagView } from "../../../../types/types-atom";
 import { TagShow } from "../../../../types/types-content";
 import ider from "../../../basic/ider";
 import time from "../../../basic/time";
+import valTool from "../../../basic/val-tool";
 
 
 /**
@@ -108,6 +109,11 @@ export function addTagToTagList(
   return { tagList, tagId }
 }
 
+
+/**
+ * 查找当前 tagId 所有的 parents id
+ * parents id 的顺序为最上游到小游，并且包含自己
+ */
 export function findParentOfTag(
   tagId: string,
   parentIds: string[],
@@ -130,4 +136,86 @@ export function findParentOfTag(
   }
 
   return []
+}
+
+
+
+interface WhichTagChange {
+  changeType?: "translate" | "across"    // 平移 / 跨级移动
+  tagId?: string
+  parents?: string[]    // 如果是跨级移动，必存在，并且包含自己，也就是说移动到最顶级也会有自身的 tagId
+}
+
+/**
+ * 查找哪个 tag 变到哪了
+ */
+export function findWhichTagChange(
+  newChildren: TagView[],
+  oldChildren: TagView[],
+  newTree: TagView[],
+  oldTree: TagView[],
+): WhichTagChange {
+
+  let offset = 0
+  
+  for(let i=0; i<newChildren.length; i++) {
+    const v1 = newChildren[i]
+    const v2 = oldChildren[i + offset]
+    if(v1.oState !== "OK") continue
+    if(v1.tagId === v2?.tagId) {
+      if(v1.children) {
+        const res = findWhichTagChange(v1.children, v2.children ?? [], newTree, oldTree)
+        if(res.tagId) return res
+      }
+      continue
+    }
+    
+    // 来看看怎么个不一样
+    // I. v2 不存在，代表被移动到了这里
+    if(!v2 || v2.oState !== "OK") {
+      return tagAddedHere(v1.tagId, newTree, oldTree)
+    }
+
+    // II. 剩下一种情况 v2 也存在，但与 v1 不一样
+    // 这时又有两种可能: 1. tag 被插入到了这里   2. tag 被移走了    这两种情况导致两者不一样
+    
+    // 如果是 tag 被移走了，那么当前 v1 会跟下一个 v2 （设为 v3）一致
+    // 这时就让 i--，offset++，continue，重新进入回圈再次比较这个 v1 和 v3，直到找到 "被移入" 的情况
+    const v3 = oldChildren[i + 1]
+    if(v3?.tagId === v1.tagId) {
+      i--
+      offset++
+      continue
+    }
+
+    // 剩下最后一种情况，tag 被移入到了这里
+    return tagAddedHere(v1.tagId, newTree, oldTree)
+  }
+
+  return {}
+}
+
+function tagAddedHere(
+  tagId: string,
+  newTree: TagView[],
+  oldTree: TagView[],
+): WhichTagChange {
+
+  let parents1 = findParentOfTag(tagId, [], newTree)
+  let parents2 = findParentOfTag(tagId, [], oldTree)
+
+  // 平移的情况
+  if(valTool.isSameSimpleList(parents1, parents2)) {
+    return {
+      changeType: "translate",
+      tagId,
+    }
+  }
+
+  // 跨级的情况
+  return {
+    changeType: "across",
+    tagId,
+    parents: parents1
+  }
 }
