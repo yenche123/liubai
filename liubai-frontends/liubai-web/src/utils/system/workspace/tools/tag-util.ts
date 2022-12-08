@@ -3,7 +3,7 @@ import { TagShow } from "../../../../types/types-content";
 import ider from "../../../basic/ider";
 import time from "../../../basic/time";
 import valTool from "../../../basic/val-tool";
-
+import type { WhichTagChange } from "./types";
 
 /**
  * 寻找某个片段文字（忽略大小写）是否在该级的 tagViews 中存在
@@ -140,13 +140,6 @@ export function findParentOfTag(
 
 
 
-interface WhichTagChange {
-  changeType?: "translate" | "across"    // 平移 / 跨级移动
-  tagId?: string
-  parents?: string[]    // 如果是跨级移动，必存在，并且包含自己，也就是说移动到最顶级也会有自身的 tagId
-  isMerged?: boolean
-}
-
 /**
  * 查找哪个 tag 变到哪了
  */
@@ -175,7 +168,7 @@ export function findWhichTagChange(
     // 来看看怎么个不一样
     // I. v2 不存在，代表被移动到了这里
     if(!v2 || v2.oState !== "OK") {
-      return tagAddedHere(tagId, text, oldChildren, newTree, oldTree)
+      return tagAddedHere(tagId, text, oldChildren, newTree, oldTree, v1)
     }
 
     // II. 剩下一种情况 v2 也存在，但与 v1 不一样
@@ -191,7 +184,7 @@ export function findWhichTagChange(
     }
 
     // 剩下最后一种情况，tag 被移入到了这里
-    return tagAddedHere(tagId, text, oldChildren, newTree, oldTree)
+    return tagAddedHere(tagId, text, oldChildren, newTree, oldTree, v1)
   }
 
   return {}
@@ -203,6 +196,7 @@ function tagAddedHere(
   oldChildren: TagView[],
   newTree: TagView[],
   oldTree: TagView[],
+  tagView: TagView,
 ): WhichTagChange {
 
   let parents1 = findParentOfTag(tagId, [], newTree)
@@ -216,24 +210,138 @@ function tagAddedHere(
     }
   }
 
-  let isMerged = false
+  
+  // 跨级的情况
+  let res: WhichTagChange = {
+    changeType: "across",
+    tagId,
+    children: getChildrenAndMeIds(tagView)
+  }
   let lowerText = text.toLowerCase()
+  
   for(let i=0; i<oldChildren.length; i++) {
     const v = oldChildren[i]
     if(v.oState !== "OK") continue
     let lowerText2 = v.text.toLowerCase()
     if(lowerText === lowerText2) {
-      isMerged = true
+      res.isMerged = true
+      let { newChild, to_ids, from_ids } = getMergedChildTree(tagView, v)
+      res.to_ids = to_ids
+      res.from_ids = from_ids
+      res.newNewTree = generateNewTreeForMerge(newTree, newChild, tagId)
       break
     }
   }
   
+  return res
+}
 
-  // 跨级的情况
-  return {
-    changeType: "across",
-    tagId,
-    parents: parents1,
-    isMerged,
+
+// 获取 我的子级和孙级所有的 id
+function getChildrenAndMeIds(tagView: TagView) {
+  const list: string[] = [tagView.tagId]
+
+  const _get = (children: TagView[]) => {
+    for(let i=0; i<children.length; i++) {
+      const v = children[i]
+      if(v.oState !== "OK") {
+        continue
+      }
+      list.push(v.tagId)
+      if(v.children) _get(v.children)
+    }
   }
+  if(tagView.children) _get(tagView.children)
+
+  return list
+}
+
+/** 给定两个 text 已相同的 tagView，做一个合并 
+ * 得出新的 newChild / from_ids / to_ids
+*/
+function getMergedChildTree(
+  fromChild: TagView, 
+  toChild: TagView
+) {
+  let newChild = JSON.parse(JSON.stringify(toChild)) as TagView
+  let from_ids = [fromChild.tagId]
+  let to_ids = [toChild.tagId]
+
+  const _handle = (
+    from_children: TagView[],
+    to_children: TagView[],
+  ) => {
+    let to_texts = to_children.map(v => {
+      return v.text.toLowerCase()
+    })
+    const now = time.getTime()
+
+    for(let i=0; i<from_children.length; i++) {
+      const v = from_children[i]
+      const { text, oState } = v
+      if(oState !== "OK") continue
+      const idx = to_texts.indexOf(text.toLowerCase())
+
+      // 如果 to_children 里没有这个文字的标签，就直接添加
+      if(idx < 0) {
+        v.updatedStamp = now
+        to_children.push(v)
+        continue
+      }
+
+      // 如果已有这个文字的标签，就往下检查 children
+      const v2 = to_children[idx]
+      v2.updatedStamp = now
+      v2.oState = "OK"
+      from_ids.push(v.tagId)
+      to_ids.push(v2.tagId)
+      if(v.children) {
+        const tmp2_children = v2.children ?? []
+        v2.children = _handle(v.children, tmp2_children)
+      }
+    }
+
+    return to_children
+  }
+
+  if(fromChild.children) {
+    let tmp_children = newChild.children ?? []
+    newChild.children = _handle(fromChild.children, tmp_children)
+  }
+
+  return { newChild, from_ids, to_ids }
+}
+
+
+/**
+ * 移除某个 tag，直接从节点上 delete 掉，而不是修改 oState
+ * 再把某个节点替换成 newChild
+ */
+function generateNewTreeForMerge(
+  originTree: TagView[],
+  newChild: TagView,
+  removedId: string,
+) {
+  const newTree = JSON.parse(JSON.stringify(originTree)) as TagView[]
+
+  const _run = (tree: TagView[]) => {
+    for(let i=0; i<tree.length; i++) {
+      const v = tree[i]
+      if(v.tagId === removedId) {
+        tree.splice(i, 1)
+        i--
+        continue
+      }
+      if(v.tagId === newChild.tagId) {
+        tree[i] = newChild
+        continue
+      }
+      if(v.children) {
+        _run(v.children)
+      }
+    }
+  }
+  _run(newTree)
+
+  return newTree
 }

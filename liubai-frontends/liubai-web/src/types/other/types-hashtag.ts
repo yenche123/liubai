@@ -17,4 +17,4 @@ export interface HashTagEditorRes {
 
 
 export type TagMovedType = "translate" | "across"    // 平移 / 跨级移动
-export type TagChangedType = TagMovedType | "renamed" | "deleted" | "merged"
+export type TagChangedType = TagMovedType | "across_rename" | "renamed" | "deleted" | "merged"

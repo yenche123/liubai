@@ -13,6 +13,7 @@ import { i18n } from "../../../locales"
 
 interface TagMovedInTreeRes {
   moved: boolean
+  newNewTree?: TagView[]
 }
 
 export async function tagMovedInTree(
@@ -25,6 +26,7 @@ export async function tagMovedInTree(
   if(!res.tagId) return { moved: true }
 
   const { t } = i18n.global
+  let newNewTree: TagView[] | undefined = undefined
 
   // 是跨级移动，并且发现已有一样的 tag，那么这时要去询问一下用户确定吗
   if(res.changeType === "across" && res.isMerged) {
@@ -53,6 +55,9 @@ export async function tagMovedInTree(
 
 
   // 修改 contents
+  if(res.changeType === "across") {
+
+  }
 
   return { moved: true }
 }
