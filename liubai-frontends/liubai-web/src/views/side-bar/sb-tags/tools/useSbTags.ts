@@ -35,6 +35,18 @@ export function useSbTags() {
   initTagNodes(tagNodes)
 
   const onTreeChange = async (e: any) => {
+
+    // const tree = treeEl.value
+    // if(!tree) return
+    // const newData = tree.getData()
+    // const newStats = tree.stats
+    // console.log("newData: ")
+    // console.log(newData)
+    // console.log(" ")
+    // console.log("newStates: ")
+    // console.log(newStats)
+    // console.log(" ")
+    
     const res = await tagMovedInTree(tagNodes.value, oldTagNodes)
     if(!res.moved) {
       console.log("没有移动！！！！")

@@ -53,6 +53,7 @@ const statHandler = () => {
     :indent="20"
     @change="onTreeChange"
     :watermark="false"
+    update-behavior="new"
   >
     <template #default="{ node, stat }">
       <div class="liu-hover tag-container"

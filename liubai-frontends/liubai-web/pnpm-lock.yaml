@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@he-tree/vue': ^2.0.4
+  '@he-tree/vue': ^2.2.5
   '@intlify/vite-plugin-vue-i18n': ^6.0.3
   '@tiptap/core': 2.0.0-beta.199
   '@tiptap/extension-blockquote': 2.0.0-beta.199
@@ -43,7 +43,7 @@ specifiers:
   vuedraggable: ^4.1.0
 
 dependencies:
-  '@he-tree/vue': 2.0.4_vue@3.2.41
+  '@he-tree/vue': 2.2.5_vue@3.2.41
   '@tiptap/core': 2.0.0-beta.199
   '@tiptap/extension-blockquote': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
   '@tiptap/extension-code': 2.0.0-beta.199_4focsuckzeocqotdxlryrtksam
@@ -162,8 +162,8 @@ packages:
       helper-js: 3.1.2
     dev: false
 
-  /@he-tree/vue/2.0.4_vue@3.2.41:
-    resolution: {integrity: sha512-ED3eL/20f72oujYRQQvResiOknoQ14dHQiY5kI8q9ycLvkFTIScL6dfoJUCyNznAsmcBcfvBe+G8pqDIIl918w==}
+  /@he-tree/vue/2.2.5_vue@3.2.41:
+    resolution: {integrity: sha512-SP07KdMUOom4JpFbffXuLQHGTx93pVQ1dmERL2Iv/snC8kx4ucSGBGyX7UukGAFdKoNxW+90bXDpO0Ney9eaMg==}
     engines: {node: '>=12'}
     peerDependencies:
       '@vue/composition-api': ^1.4.6
@@ -174,7 +174,7 @@ packages:
     dependencies:
       '@he-tree/dnd-utils': 0.1.0-alpha.2
       '@he-tree/tree-utils': 0.1.0-alpha.0
-      '@virtual-list/vue': 1.1.5_vue@3.2.41
+      '@virtual-list/vue': 1.1.9_vue@3.2.41
       helper-js: 3.1.2
       vue: 3.2.41
       vue-demi: 0.13.11_vue@3.2.41
@@ -725,8 +725,8 @@ packages:
     resolution: {integrity: sha512-oh8q2Zc32S6gd/j50GowEjKLoOVOwHP/bWVjKJInBwQqdOYMdPrf1oVlelTlyfFK3CKxL1uahMDAr+vy8T7yMQ==}
     dev: false
 
-  /@virtual-list/vue/1.1.5_vue@3.2.41:
-    resolution: {integrity: sha512-os+mR4pwBojbuA45UBVKkQxN5uGM8KwaHxv4/U6OLW2gMEoeP4oWNIAltouC7nFZNxsmpZO6qzZkM7x1boX76Q==}
+  /@virtual-list/vue/1.1.9_vue@3.2.41:
+    resolution: {integrity: sha512-BCDb6+GMjshPVENC1fiaK4wjGnOmw3jlV8KufP23NsBrjO3uoB6frfrt/v3RrUcD9KTb1acm4mVC19z706k+XQ==}
     engines: {node: '>=12'}
     peerDependencies:
       '@vue/composition-api': ^1.4.6
