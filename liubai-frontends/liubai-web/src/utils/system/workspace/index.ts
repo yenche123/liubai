@@ -8,7 +8,6 @@ import {
   findTagShowById,
   addTagToTagList,
   findParentOfTag,
-  findWhichTagChange,
 } from "./tools/tag-util"
 
 // 返回当前工作区的 tags

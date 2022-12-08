@@ -3,6 +3,7 @@ import { TagShow } from "../../../../types/types-content";
 import ider from "../../../basic/ider";
 import time from "../../../basic/time";
 import valTool from "../../../basic/val-tool";
+import liuUtil from "../../../liu-util";
 import type { WhichTagChange } from "./types";
 
 /**
@@ -277,7 +278,7 @@ function getMergedChildTree(
     const now = time.getTime()
 
     for(let i=0; i<from_children.length; i++) {
-      const v = from_children[i]
+      const v = liuUtil.toRawData(from_children[i])
       const { text, oState } = v
       if(oState !== "OK") continue
       const idx = to_texts.indexOf(text.toLowerCase())

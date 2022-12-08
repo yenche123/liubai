@@ -16,10 +16,18 @@ export const useGlobalStateStore = defineStore("globalState", () => {
   // 是否正在拖动以排序图片
   const isDragToSort = ref(false)
 
+  // 如果 tag 发生移动、重命名、删除等情况
+  const tagChangedNum = ref(0)
+  const addTagChangedNum = () => {
+    tagChangedNum.value += 1
+  }
+
   return { 
     mainInputing, 
     canListenKeyboard,
     isDragToSort,
+    tagChangedNum,
+    addTagChangedNum,
   }
 })
 

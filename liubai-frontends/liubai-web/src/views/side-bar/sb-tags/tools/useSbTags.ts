@@ -34,8 +34,22 @@ export function useSbTags() {
 
   initTagNodes(tagNodes)
 
-  const onTreeChange = (e: any) => {
-    tagMovedInTree(tagNodes.value, oldTagNodes)
+  const onTreeChange = async (e: any) => {
+    const res = await tagMovedInTree(tagNodes.value, oldTagNodes)
+    if(!res.moved) {
+      console.log("没有移动！！！！")
+      console.log(oldTagNodes)
+      console.log(" ")
+      tagNodes.value = oldTagNodes
+      return
+    }
+
+    console.log("有成功移动!!!!!")
+
+    if(res.newNewTree) {
+      tagNodes.value = res.newNewTree
+    }
+    
     oldTagNodes = JSON.parse(JSON.stringify(tagNodes.value)) as TagView[]
   }
 

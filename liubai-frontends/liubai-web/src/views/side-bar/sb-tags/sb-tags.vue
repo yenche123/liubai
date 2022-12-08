@@ -29,6 +29,10 @@ const onNaviBack = () => {
   router.naviBack()
 }
 
+const statHandler = () => {
+
+}
+
 </script>
 <template>
   
