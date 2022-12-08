@@ -12,14 +12,11 @@ export async function updateDraftForTagAcross(
     return true
   }
 
-  const list = await db.drafts.where("tagIds").anyOf(children).toArray()
-
-  console.log("看一下 drafts 找到的 list: ", list)
-  
+  const list = await db.drafts.where("tagIds").anyOf(children).distinct().toArray()
   const newList: DraftLocalTable[] = []
   for(let i=0; i<list.length; i++) {
     const v = list[i]
-    const { tagIds = [] } = v
+    let { tagIds = [] } = v
     for(let j=0; j<tagIds.length; j++) {
       const tId = tagIds[j]
       const idx = from_ids.indexOf(tId)
@@ -27,6 +24,7 @@ export async function updateDraftForTagAcross(
       const newId = to_ids[idx]
       tagIds.splice(j, 1, newId)
     }
+    tagIds = [...new Set(tagIds)]
     v.tagIds = tagIds
     newList.push(v)
   }

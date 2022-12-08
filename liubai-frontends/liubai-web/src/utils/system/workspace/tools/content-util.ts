@@ -13,7 +13,7 @@ export async function updateContentForTagAcross(
     return true
   }
 
-  const list = await db.contents.where("tagIds").anyOf(children).toArray()
+  const list = await db.contents.where("tagIds").anyOf(children).distinct().toArray()
 
   console.log("看一下 contents 找到的 list: ", list)
   
@@ -21,7 +21,7 @@ export async function updateContentForTagAcross(
   let tagChangeRequired = from_ids.length > 0
   for(let i=0; i<list.length; i++) {
     const v = list[i]
-    const { tagIds = [] } = v
+    let { tagIds = [] } = v
     if(tagChangeRequired) {
       for(let j=0; j<tagIds.length; j++) {
         const tId = tagIds[j]
@@ -31,6 +31,7 @@ export async function updateContentForTagAcross(
         tagIds.splice(j, 1, newId)
       }
     }
+    tagIds = [...new Set(tagIds)]
     const newTagSearched = getTagIdsParents(tagIds)
     v.tagIds = tagIds
     v.tagSearched = newTagSearched
