@@ -14,6 +14,8 @@ export async function updateContentForTagAcross(
   }
 
   const list = await db.contents.where("tagIds").anyOf(children).toArray()
+
+  console.log("看一下 contents 找到的 list: ", list)
   
   const newList: ContentLocalTable[] = []
   let tagChangeRequired = from_ids.length > 0

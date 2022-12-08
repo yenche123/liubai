@@ -57,8 +57,11 @@ export function useSbTags() {
     }
 
     console.log("有成功移动!!!!!")
+    console.log(res)
+    console.log(" ")
 
     if(res.newNewTree) {
+      console.log("有 newNewTree 所以去赋值......")
       tagNodes.value = res.newNewTree
     }
     

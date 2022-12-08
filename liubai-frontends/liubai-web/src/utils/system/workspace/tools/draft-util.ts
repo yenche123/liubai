@@ -13,6 +13,8 @@ export async function updateDraftForTagAcross(
   }
 
   const list = await db.drafts.where("tagIds").anyOf(children).toArray()
+
+  console.log("看一下 drafts 找到的 list: ", list)
   
   const newList: DraftLocalTable[] = []
   for(let i=0; i<list.length; i++) {

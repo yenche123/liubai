@@ -31,7 +31,7 @@ export async function tagMovedInTree(
   if(!res.tagId) return { moved: true }
 
   const { t } = i18n.global
-  let newNewTree = res.newNewTree ? res.newNewTree : newTree
+  let newNewTree = res.newNewTree
 
   // 是跨级移动，并且发现已有一样的 tag，那么这时要去询问一下用户确定吗
   if(res.changeType === "across" && res.isMerged) {
@@ -58,7 +58,6 @@ export async function tagMovedInTree(
     return { moved: false }
   }
 
-
   // 修改 contents / drafts
   if(res.changeType === "across") {
     const res4 = await updateContentForTagAcross(res)
@@ -71,5 +70,5 @@ export async function tagMovedInTree(
   const gStore = useGlobalStateStore()
   gStore.addTagChangedNum()
 
-  return { moved: true }
+  return { moved: true, newNewTree }
 }
