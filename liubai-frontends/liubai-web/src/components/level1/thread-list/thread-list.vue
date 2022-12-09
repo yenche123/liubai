@@ -2,6 +2,7 @@
 import { useThreadList } from './tools/useThreadList';
 import ThreadCard from './thread-card/thread-card.vue';
 import { useNewAndUpdate } from './tools/useNewAndUpdate';
+import ListBottom from '../list-bottom/list-bottom.vue';
 
 const props = defineProps({
   viewType: {
@@ -30,6 +31,8 @@ useNewAndUpdate(list)
       ></ThreadCard>
     
     </template>
+    
+    <ListBottom :has-data="list.length > 0" :reached="true"></ListBottom>
 
   </div>
 </template>
