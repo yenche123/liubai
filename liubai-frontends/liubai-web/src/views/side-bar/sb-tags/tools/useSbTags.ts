@@ -1,4 +1,4 @@
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import type { Ref } from "vue";
 import { Draggable } from "@he-tree/vue";
 import type { TagView } from "../../../../types/types-atom";
@@ -8,6 +8,7 @@ import { getCurrentSpaceTagList } from "../../../../utils/system/workspace";
 import { tagMovedInTree } from "../../../../utils/system/workspace/tags";
 import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore";
 import time from "../../../../utils/basic/time";
+import { useRouteAndLiuRouter } from "../../../../routes/liu-router";
 
 interface Stat<T> {
   data: T
@@ -27,13 +28,23 @@ interface Stat<T> {
 let oldTagNodes: TagView[] = []
 
 export function useSbTags() {
+  const wStore = useWorkspaceStore()
+  const { workspace } = storeToRefs(wStore)
+  const toPath = computed(() => {
+    const w = workspace.value
+    if(w === "ME") return `/tag/`
+    return `/w/${w}/tag/`
+  })
+
+  const { router, route } = useRouteAndLiuRouter()
+
   const treeEl = ref<typeof Draggable | null>(null)
   const tagNodes = ref<TagView[]>([])
   const gStore = useGlobalStateStore()
   let lastTagChangeStamp = time.getTime()
   const { tagChangedNum } = storeToRefs(gStore)
 
-  initTagNodes(tagNodes)
+  initTagNodes(tagNodes, workspace)
 
   // 监听 tag 从外部发生变化
   watch(tagChangedNum, (newV) => {
@@ -67,18 +78,27 @@ export function useSbTags() {
   }
 
   const onTapTagArrow = (e: MouseEvent, node: TagView, stat: Stat<TagView>) => {
+    e.stopPropagation()
+    e.preventDefault()
     const length = node.children?.length ?? 0
     if(!length) return
     stat.open = !stat.open
-    e.stopPropagation()
-  }
-
-  const onTapTagItem = (e: MouseEvent, node: TagView, stat: Stat<TagView>) => {
-    console.log("onTapTagItem............")
     
   }
 
-  return { tagNodes, treeEl, onTreeChange, onTapTagItem, onTapTagArrow }
+  const onTapTagItem = (e: MouseEvent, href: string) => {
+    e.preventDefault()
+    router.push({ path: href, query: route.query })
+  }
+
+  return { 
+    tagNodes, 
+    treeEl, 
+    onTreeChange, 
+    onTapTagItem, 
+    onTapTagArrow,
+    toPath,
+  }
 }
 
 function getLatestSpaceTag(tagNodes: Ref<TagView[]>) {
@@ -87,10 +107,10 @@ function getLatestSpaceTag(tagNodes: Ref<TagView[]>) {
   oldTagNodes = JSON.parse(JSON.stringify(list)) as TagView[]
 }
 
-function initTagNodes(tagNodes: Ref<TagView[]>) {
-  const wStore = useWorkspaceStore()
-  const { workspace } = storeToRefs(wStore)
-
+function initTagNodes(
+  tagNodes: Ref<TagView[]>,
+  workspace: Ref<string>,
+) {
   const _get = () => {
     if(!workspace.value) return
     getLatestSpaceTag(tagNodes)

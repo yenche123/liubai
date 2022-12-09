@@ -4,7 +4,7 @@ import cfg from "../../../config"
 import { useRouteAndLiuRouter } from '../../../routes/liu-router';
 import { Draggable } from "@he-tree/vue";
 import { useSbTags } from "./tools/useSbTags";
-// 侧边栏: 标签
+import { RouterLink } from 'vue-router'
 
 defineProps({
   show: {
@@ -17,25 +17,22 @@ const { router } = useRouteAndLiuRouter()
 const { t } = useI18n()
 const naviHeightPx = `${cfg.navi_height}px`
 
-const { 
-  tagNodes, 
-  treeEl, 
+const {
+  tagNodes,
+  treeEl,
   onTreeChange,
   onTapTagItem,
   onTapTagArrow,
+  toPath
 } = useSbTags()
 
 const onNaviBack = () => {
   router.naviBack()
 }
 
-const statHandler = () => {
-
-}
-
 </script>
 <template>
-  
+
   <div class="st-virtual"></div>
 
   <div class="liu-frosted-glass st-navibar">
@@ -49,36 +46,39 @@ const statHandler = () => {
 
   <div class="st-virtual-two"></div>
 
-  <Draggable v-model="tagNodes" ref="treeEl"
-    :indent="20"
-    @change="onTreeChange"
-    :watermark="false"
-    update-behavior="new"
-  >
+  <Draggable v-model="tagNodes" ref="treeEl" :indent="20" @change="onTreeChange" :watermark="false"
+    update-behavior="new">
     <template #default="{ node, stat }">
-      <div class="liu-hover tag-container"
-        @click="onTapTagItem($event, node, stat)"
-      >
 
-        <!-- tag 所在的该行 -->
-        <div class="tag-box">
-          <div class="liu-hover tag-arrow"
-            :class="{ 'tag-arrow_unhover': !stat.children.length}"
-            @click="onTapTagArrow($event, node, stat)"
-          >
-            <SvgIcon v-if="stat.children.length" 
-              class="tag-arrow-icon" 
-              :class="{ 'tag-arrow-icon_open': stat.open }"
-              name="arrow-right"
-              color="var(--main-normal)"
-            ></SvgIcon>
-          </div>
-          <div class="tag-title">
-            <span>{{ node.text }}</span>
-          </div>
-        </div>
+      <RouterLink :to="toPath + node.tagId" custom>
 
-      </div>
+        <a :href="toPath + node.tagId" @click="onTapTagItem($event, toPath + node.tagId)">
+
+          <div class="liu-hover tag-container">
+
+            <!-- tag 所在的该行 -->
+            <div class="tag-box">
+              <div class="liu-hover tag-arrow" 
+                :class="{ 'tag-arrow_unhover': !stat.children.length }"
+                @click="onTapTagArrow($event, node, stat)"
+              >
+                <SvgIcon v-if="stat.children.length" class="tag-arrow-icon"
+                  :class="{ 'tag-arrow-icon_open': stat.open }" 
+                  name="arrow-right" 
+                  color="var(--main-normal)"
+                ></SvgIcon>
+              </div>
+              <div class="tag-title">
+                <span>{{ node.text }}</span>
+              </div>
+            </div>
+
+          </div>
+
+        </a>
+
+      </RouterLink>
+
     </template>
   </Draggable>
 
@@ -88,7 +88,6 @@ const statHandler = () => {
 
 </template>
 <style scoped lang="scss">
-
 .liu-frosted-glass::before {
   background: none;
   backdrop-filter: blur(3px);
@@ -203,10 +202,8 @@ const statHandler = () => {
   color: var(--main-normal);
   line-height: 1.25;
 }
-
 </style>
 <style>
-
 /** 当标签正在拖动时的 css */
 
 .he-tree-drag-placeholder {
@@ -215,5 +212,4 @@ const statHandler = () => {
   border-radius: 8px;
   border: 1px dashed var(--drag-border);
 }
-
 </style>
