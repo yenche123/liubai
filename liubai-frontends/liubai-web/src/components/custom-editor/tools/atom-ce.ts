@@ -16,6 +16,7 @@ export interface CeState {
   files?: FileLocal[]
   tagIds: string[]
   editorContent?: EditorCoreContent
+  lastTagChangeStamp?: number
 }
 
 export const defaultState: CeState = {

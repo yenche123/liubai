@@ -5,11 +5,13 @@ import type { CeState } from "./atom-ce"
 import type { Ref } from "vue"
 import { addATag, tagIdsToShows } from "../../../utils/system/workspace"
 import type { HashTagEditorRes } from "../../../types/other/types-hashtag"
+import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore"
+import time from "../../../utils/basic/time"
 
 export function useCeTag(
   state: CeState
 ) {
-
+  const gStore = useGlobalStateStore()
   const tagShows = ref<TagShow[]>([])
   
   watch(() => state.tagIds, (newV) => {
@@ -35,6 +37,10 @@ export function useCeTag(
     id = res.id
     if(!id) return
     state.tagIds.push(id)
+
+    // 通知全局
+    state.lastTagChangeStamp = time.getTime()
+    gStore.addTagChangedNum()
   }
 
   return {

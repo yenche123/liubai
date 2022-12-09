@@ -1,15 +1,13 @@
-import { isProxy, isReactive, Ref, ref, watch } from "vue";
+import { ref, watch } from "vue";
+import type { Ref } from "vue";
 import { Draggable } from "@he-tree/vue";
 import type { TagView } from "../../../../types/types-atom";
 import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import { getCurrentSpaceTagList } from "../../../../utils/system/workspace";
 import { tagMovedInTree } from "../../../../utils/system/workspace/tags";
-
-interface TagNode {
-  text: string
-  children?: TagNode[]
-}
+import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore";
+import time from "../../../../utils/basic/time";
 
 interface Stat<T> {
   data: T
@@ -31,34 +29,30 @@ let oldTagNodes: TagView[] = []
 export function useSbTags() {
   const treeEl = ref<typeof Draggable | null>(null)
   const tagNodes = ref<TagView[]>([])
+  const gStore = useGlobalStateStore()
+  let lastTagChangeStamp = time.getTime()
+  const { tagChangedNum } = storeToRefs(gStore)
 
   initTagNodes(tagNodes)
 
-  const onTreeChange = async (e: any) => {
+  // 监听 tag 从外部发生变化
+  watch(tagChangedNum, (newV) => {
+    const diff = time.getTime() - lastTagChangeStamp
+    if(diff < 500) {
+      console.log("tagChangedNum 才刚内部发生变化 忽略")
+      return
+    }
+    console.log("重新初始化 tagNodes...")
+    getLatestSpaceTag(tagNodes)
+  })
 
-    // const tree = treeEl.value
-    // if(!tree) return
-    // const newData = tree.getData()
-    // const newStats = tree.stats
-    // console.log("newData: ")
-    // console.log(newData)
-    // console.log(" ")
-    // console.log("newStates: ")
-    // console.log(newStats)
-    // console.log(" ")
+  const onTreeChange = async (e: any) => {
     
     const res = await tagMovedInTree(tagNodes.value, oldTagNodes)
     if(!res.moved) {
-      console.log("没有移动！！！！")
-      console.log(oldTagNodes)
-      console.log(" ")
       tagNodes.value = oldTagNodes
       return
     }
-
-    console.log("有成功移动!!!!!")
-    console.log(res)
-    console.log(" ")
 
     if(res.newNewTree) {
       console.log("有 newNewTree 所以去赋值......")
@@ -66,6 +60,10 @@ export function useSbTags() {
     }
     
     oldTagNodes = JSON.parse(JSON.stringify(tagNodes.value)) as TagView[]
+
+    // 通知全局 tag 发生了变化
+    lastTagChangeStamp = time.getTime()
+    gStore.addTagChangedNum()
   }
 
   const onTapTagArrow = (e: MouseEvent, node: TagView, stat: Stat<TagView>) => {
@@ -83,15 +81,19 @@ export function useSbTags() {
   return { tagNodes, treeEl, onTreeChange, onTapTagItem, onTapTagArrow }
 }
 
+function getLatestSpaceTag(tagNodes: Ref<TagView[]>) {
+  const list = getCurrentSpaceTagList()
+  tagNodes.value = list
+  oldTagNodes = JSON.parse(JSON.stringify(list)) as TagView[]
+}
+
 function initTagNodes(tagNodes: Ref<TagView[]>) {
   const wStore = useWorkspaceStore()
   const { workspace } = storeToRefs(wStore)
 
   const _get = () => {
     if(!workspace.value) return
-    const list = getCurrentSpaceTagList()
-    tagNodes.value = list
-    oldTagNodes = JSON.parse(JSON.stringify(list)) as TagView[]
+    getLatestSpaceTag(tagNodes)
   }
 
   watch(workspace, (newV) => {

@@ -3,7 +3,7 @@
 
 
 import { TipTapEditor } from "../../../types/types-editor"
-import { reactive, watchEffect, ref, provide } from "vue"
+import { reactive, watchEffect, ref, provide, watch } from "vue"
 import type { ShallowRef, Ref } from "vue"
 import type { CeState } from "./atom-ce"
 import { defaultState } from "./atom-ce"
@@ -14,6 +14,8 @@ import localReq from "./req/local-req"
 import transferUtil from "../../../utils/transfer-util"
 import { editorSetKey } from "../../../utils/provide-keys"
 import { storeToRefs } from "pinia"
+import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore"
+import time from "../../../utils/basic/time"
 
 let space: Ref<string>
 
@@ -52,6 +54,26 @@ export function initCeState(
       editor: editorVal,
       numWhenSet,
     }
+    console.log("去 initDraft.........")
+    initDraft(ctx, tId)
+  })
+
+
+  // 监听 tag 从外部发生变化
+  const gStore = useGlobalStateStore()
+  const { tagChangedNum } = storeToRefs(gStore)
+  watch(tagChangedNum, (newV) => {
+    const diff = time.getTime() - (state.lastTagChangeStamp ?? 1)
+    if(diff < 500) return
+    const editorVal = editor.value
+    const spaceVal = space.value
+    if(!editorVal || !spaceVal) return
+    const ctx: IcsContext = {
+      state,
+      editor: editorVal,
+      numWhenSet,
+    }
+    console.log("再次 initDraft.........")
     initDraft(ctx, tId)
   })
 

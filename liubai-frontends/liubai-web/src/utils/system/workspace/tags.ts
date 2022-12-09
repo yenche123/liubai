@@ -51,7 +51,7 @@ export async function tagMovedInTree(
 
   // 修改 workspaceStore
   const wStore = useWorkspaceStore()
-  const rawList = liuUtil.getRawList(newNewTree)
+  const rawList = liuUtil.getRawList(newNewTree ?? newTree)
   const res3 = await wStore.setTagList(rawList)
   if(!res3) {
     console.log("操作失败........")
