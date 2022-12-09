@@ -5,7 +5,7 @@ import type { TagView } from "../../../../types/types-atom";
 import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import { getCurrentSpaceTagList } from "../../../../utils/system/workspace";
-import { tagMovedInTree } from "../../../../utils/system/workspace/tags";
+import { filterTag, tagMovedInTree } from "../../../../utils/system/workspace/tags";
 import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore";
 import time from "../../../../utils/basic/time";
 import { useRouteAndLiuRouter } from "../../../../routes/liu-router";
@@ -58,7 +58,13 @@ export function useSbTags() {
   })
 
   const onTreeChange = async (e: any) => {
-    
+    console.log("onTreeChange.........")
+    const res0 = filterTag(tagNodes.value)
+    if(res0.hasChange) {
+      console.warn("过滤掉有问题的 tag!!!!")
+      tagNodes.value = res0.tree
+    }
+
     const res = await tagMovedInTree(tagNodes.value, oldTagNodes)
     if(!res.moved) {
       tagNodes.value = oldTagNodes
@@ -102,8 +108,9 @@ export function useSbTags() {
 }
 
 function getLatestSpaceTag(tagNodes: Ref<TagView[]>) {
-  const list = getCurrentSpaceTagList()
-  tagNodes.value = list
+  let list = getCurrentSpaceTagList()
+  const { tree } = filterTag(list)
+  tagNodes.value = tree
   oldTagNodes = JSON.parse(JSON.stringify(list)) as TagView[]
 }
 

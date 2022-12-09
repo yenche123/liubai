@@ -17,6 +17,37 @@ interface TagMovedInTreeRes {
   newNewTree?: TagView[]
 }
 
+/**
+ * 删掉结构有问题的 tag
+ */
+export function filterTag(
+  tree: TagView[],
+  hasChange: boolean = false,
+) {
+
+  for(let i=0; i<tree.length; i++) {
+    const leaf = tree[i]
+    if(!leaf.tagId || !leaf.text) {
+      hasChange = true
+      tree.splice(i, 1)
+      i--
+      continue
+    }
+    if(leaf.children) {
+      const res = filterTag(leaf.children, hasChange)
+      if(res.hasChange) {
+        hasChange = res.hasChange
+        leaf.children = res.tree
+        if(leaf.children.length < 1) {
+          delete leaf.children
+        }
+      }
+    }
+  }
+
+  return { tree, hasChange }
+}
+
 export async function tagMovedInTree(
   newTree: TagView[], 
   oldTree: TagView[]
