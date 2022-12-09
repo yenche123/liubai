@@ -118,5 +118,8 @@
     "search_in": "Search inside",
     "search_out": "Search outside",
     "ask_bot": "ChatGPT"
+  },
+  "placeholder": {
+    "no_tag_yet": "No tags yet"
   }
 }

@@ -118,5 +118,8 @@
     "search_in": "内部搜尋",
     "search_out": "外部搜尋",
     "ask_bot": "ChatGPT"
+  },
+  "placeholder": {
+    "no_tag_yet": "還沒有任何標籤"
   }
 }

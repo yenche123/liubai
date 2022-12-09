@@ -82,6 +82,10 @@ const statHandler = () => {
     </template>
   </Draggable>
 
+  <div v-if="tagNodes.length < 1" class="st-no-tags">
+    <span>{{ t('placeholder.no_tag_yet') }}</span>
+  </div>
+
 </template>
 <style scoped lang="scss">
 
@@ -182,12 +186,22 @@ const statHandler = () => {
 
     .tag-title {
       flex: 1;
-      font-size: var(--desc-font);
+      font-size: var(--btn-font);
       color: var(--main-normal);
     }
 
   }
 
+}
+
+.st-no-tags {
+  width: 100%;
+  padding: 20px 0;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: var(--mini-font);
+  color: var(--main-normal);
+  line-height: 1.25;
 }
 
 </style>
