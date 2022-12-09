@@ -136,7 +136,7 @@ const {
 
 .sb-bar:hover ~ .sb-default-line, 
 .sb-bar:active ~ .sb-bar-default-line {
-  border-right: 2px solid var(--sidebar-bg);
+  border-right: 2px solid var(--bg-color);
 }
 
 .sb-drag-line {
