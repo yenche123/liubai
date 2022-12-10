@@ -5,12 +5,12 @@ import {
   onDeactivated, 
   onMounted, 
   onUnmounted, 
-  reactive, 
-  Ref, 
+  reactive,
   ref, 
   watch 
 } from "vue";
-import { OpenType } from "../../../types/types-view";
+import type { Ref } from "vue";
+import type { OpenType } from "../../../types/types-view";
 import { useLayoutStore } from "../../useLayoutStore";
 import cfg from "../../../config";
 import { useRouteAndLiuRouter } from "../../../routes/liu-router"
