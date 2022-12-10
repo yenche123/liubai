@@ -33,15 +33,15 @@ const createCommentId = () => {
 }
 
 const createImgId = () => {
-  return "img_" + _createId(23)
+  return "i0" + _createId(23)
 }
 
 const createFileId = () => {
-  return "file_" + _createId(23)
+  return "f0" + _createId(23)
 }
 
 const createTagId = () => {
-  return "tag_" + _createId(23)
+  return "t1" + _createId(23)
 }
 
 export default {
