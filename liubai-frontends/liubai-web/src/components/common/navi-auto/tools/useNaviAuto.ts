@@ -7,7 +7,7 @@ import valTool from "../../../../utils/basic/val-tool";
 import { svScollingKey } from "../../../../utils/provide-keys";
 import sideBar from "../../../../views/side-bar";
 
-const TRANSITION_DURATION = 150
+const TRANSITION_DURATION = 300
 
 interface NaviAutoCtx {
   enable: Ref<boolean>

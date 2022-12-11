@@ -49,6 +49,9 @@ const default_color = "var(--navi-normal)"
   top: 0;
   width: 100%;
   height: v-bind("naviHeightPx");
+  max-height: 0;
+  opacity: .3;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   transition: v-bind("TRANSITION_DURATION + 'ms'");
@@ -95,6 +98,8 @@ const default_color = "var(--navi-normal)"
 
 .na-container_show {
   transform: translateY(0);
+  max-height: v-bind("naviHeightPx");
+  opacity: 1;
 }
 
 .na-container_shadow {
