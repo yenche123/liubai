@@ -72,16 +72,29 @@ function judgeShadow(
   else if(sT <= 20 && shadow.value) shadow.value = false
 }
 
-
+let justLoad = true
 function judgeState(
   ctx: NaviAutoCtx,
 ) {
   const { sidebarWidth, sidebarStatus } = ctx.layout
   if(sidebarWidth > 0 || sidebarStatus === "fullscreen") _close(ctx.enable, ctx.show)
-  else _open(ctx.enable, ctx.show)
+  else {
+    if(justLoad) _openInstantly(ctx.enable, ctx.show)
+    else _open(ctx.enable, ctx.show)
+  }
+
+  justLoad = false
 
   // 判断阴影变化
   judgeShadow(ctx.scrollTop.value, ctx.shadow)
+}
+
+function _openInstantly(
+  enable: Ref<boolean>,
+  show: Ref<boolean>,
+) {
+  enable.value = true
+  show.value = true
 }
 
 async function _open(
