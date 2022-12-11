@@ -31,6 +31,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    minHeight: {
+      type: String,
+      default: `${cfg.min_editor_height}px`
+    },
   },
   emits: {
     update: (payload: EditorCoreContent) => true,
@@ -66,7 +70,7 @@ export default defineComponent({
   font-size: var(--desc-font);
   line-height: 2;
   color: var(--main-normal);
-  min-height: v-bind("editMode ? cfg.min_editor_height + 'px' : 0");
+  min-height: v-bind("editMode ? minHeight : 0");
   transition: .3s;
 
   p {

@@ -33,7 +33,7 @@ const props = defineProps({
 })
 
 const canSubmitRef = ref(false)
-const { maxEditorHeight, editorCoreRef, editor } = useCustomEditor()
+const { maxEditorHeight, minEditorHeight, editorCoreRef, editor } = useCustomEditor()
 const { state } = initCeState(props, editor)
 const {
   onImageChange,
@@ -98,7 +98,9 @@ const {
       @finish="onEditorFinish"
       @addhashtag="onAddHashTag"
       :hash-trigger="true"
+      :min-height="'' + minEditorHeight + 'px'"
     ></EditorCore>
+    <div class="ce-editor-virtual"></div>
   </div>
 
   <!-- 隐入隐出渐变分隔条 -->
@@ -165,11 +167,17 @@ const {
 
 .ce-editor {
   width: 100%;
-  min-height: v-bind("cfg.min_editor_height + 'px'");
+  min-height: v-bind("minEditorHeight + 'px'");
   max-height: v-bind("maxEditorHeight + 'px'");
   position: relative;
   overflow-y: overlay;
   overflow-y: auto;
+  transition: .3s;
+
+  .ce-editor-virtual {
+    width: 100%;
+    height: 20px;
+  }
 }
 
 .ce-editor-bottom {

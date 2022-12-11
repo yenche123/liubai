@@ -3,29 +3,54 @@ import type { Ref } from "vue"
 import { useWindowSize } from "../../../hooks/useVueUse"
 import EditorCore from "../../editor-core/editor-core.vue"
 import type { TipTapEditor } from "../../../types/types-editor"
+import cfg from "../../../config"
+import { useLayoutStore } from "../../../views/useLayoutStore"
+import { storeToRefs } from "pinia"
 
 export function useCustomEditor() {
   const maxEditorHeight = ref(500)
+  const minEditorHeight = ref(cfg.min_editor_height)
   const editorCoreRef = ref<typeof EditorCore | null>(null)
   const editor = shallowRef<TipTapEditor>()
   
-  listenWindowChange(maxEditorHeight)
+  listenWindowChange(maxEditorHeight, minEditorHeight)
 
   onMounted(() => {
     if(!editorCoreRef.value) return
     editor.value = editorCoreRef.value.editor as TipTapEditor
   })
 
-  return { maxEditorHeight, editorCoreRef, editor }
+  return { 
+    maxEditorHeight, 
+    minEditorHeight,
+    editorCoreRef, 
+    editor
+  }
 }
 
-function listenWindowChange(maxEditorHeight: Ref<number>) {
+function listenWindowChange(
+  maxEditorHeight: Ref<number>,
+  minEditorHeight: Ref<number>,
+) {
   let lastWinHeightChange = 0
   const { height } = useWindowSize()
+  const layout = useLayoutStore()
+  const { sidebarStatus } = storeToRefs(layout)
 
   const whenWindowHeightChange = () => {
     let h = Math.max(height.value - 150, 100)
     maxEditorHeight.value = h
+    if(sidebarStatus.value === "fullscreen") {
+      minEditorHeight.value = h
+    }
+  }
+
+  const whenSidebarStatusChange = () => {
+    if(sidebarStatus.value !== "fullscreen") {
+      minEditorHeight.value = cfg.min_editor_height
+      return
+    }
+    minEditorHeight.value = maxEditorHeight.value
   }
 
   watch(height, () => {
@@ -34,6 +59,10 @@ function listenWindowChange(maxEditorHeight: Ref<number>) {
       lastWinHeightChange = 0
       whenWindowHeightChange()
     }, 300)
+  })
+
+  watch(sidebarStatus, () => {
+    whenSidebarStatusChange()
   })
 
   whenWindowHeightChange()
