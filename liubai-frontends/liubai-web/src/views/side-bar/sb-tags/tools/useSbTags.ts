@@ -25,9 +25,13 @@ interface Stat<T> {
   class: any // 自定义样式类. 支持Vue的class格式.
 }
 
+interface SbtEmits {
+  (event: "aftertap"): void
+}
+
 let oldTagNodes: TagView[] = []
 
-export function useSbTags() {
+export function useSbTags(emits: SbtEmits) {
   const wStore = useWorkspaceStore()
   const { workspace } = storeToRefs(wStore)
   const toPath = computed(() => {
@@ -95,6 +99,7 @@ export function useSbTags() {
   const onTapTagItem = (e: MouseEvent, href: string) => {
     e.preventDefault()
     router.push({ path: href, query: route.query })
+    emits("aftertap")
   }
 
   return { 

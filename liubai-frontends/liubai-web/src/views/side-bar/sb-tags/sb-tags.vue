@@ -13,6 +13,10 @@ defineProps({
   }
 })
 
+const emits = defineEmits<{
+  (event: "aftertap"): void
+}>()
+
 const { router } = useRouteAndLiuRouter()
 const { t } = useI18n()
 const naviHeightPx = `${cfg.navi_height}px`
@@ -24,7 +28,7 @@ const {
   onTapTagItem,
   onTapTagArrow,
   toPath
-} = useSbTags()
+} = useSbTags(emits)
 
 const onNaviBack = () => {
   router.naviBack()

@@ -48,7 +48,9 @@ const {
         :class="{ 'sf-other_show': expandState === 'tags' }"
       >
         <div class="sf-inner-box">
-          <SbTags :show="expandState === 'tags'"></SbTags>
+          <SbTags :show="expandState === 'tags'"
+            @aftertap="onTapPopup"
+          ></SbTags>
         </div>        
       </div>
 
