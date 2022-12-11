@@ -70,8 +70,8 @@ export default defineComponent({
       @click="onTapExpand"
       :aria-label="expanded ? t('editor.restore') : t('editor.expand')"
     >
-      <svg-icon :name="expanded ? 'editor-close_full' : 'editor-open_full'" 
-        class="ceti-expand" :color="icon_color" />
+      <svg-icon :name="expanded ? 'editor-cancel_fullscreen' : 'editor-open_fullscreen'" 
+        :class="expanded ? 'ceti-close-fullscreen' : 'ceti-open-fullscreen'" :color="icon_color" />
     </div>
 
     <!-- 粗体 -->
@@ -146,6 +146,16 @@ export default defineComponent({
     .ceti-icon {
       width: 30px;
       height: 30px;
+    }
+
+    .ceti-open-fullscreen {
+      width: 30px;
+      height: 30px;
+    }
+
+    .ceti-close-fullscreen {
+      width: 26px;
+      height: 26px;
     }
 
     .ceti-expand {
