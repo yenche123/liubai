@@ -33,7 +33,14 @@ const props = defineProps({
 })
 
 const canSubmitRef = ref(false)
-const { maxEditorHeight, minEditorHeight, editorCoreRef, editor } = useCustomEditor()
+const { 
+  maxEditorHeight, 
+  minEditorHeight, 
+  editorCoreRef, 
+  editor,
+  onEditorScrolling,
+  showMask,
+} = useCustomEditor()
 const { state } = initCeState(props, editor)
 const {
   onImageChange,
@@ -89,7 +96,9 @@ const {
     :editor="editor"
   ></CeBubbleMenu>
 
-  <div class="ce-editor">
+  <div class="ce-editor"
+    @scroll="onEditorScrolling"
+  >
     <EditorCore 
       ref="editorCoreRef"
       @update="onEditorUpdate"
@@ -105,6 +114,9 @@ const {
 
   <!-- 隐入隐出渐变分隔条 -->
   <div class="ce-editor-bottom"></div>
+
+  <!-- 留白 -->
+  <div class="ce-editor-bottom-two"></div>
 
   <CeCovers 
     :model-value="covers"
@@ -184,8 +196,16 @@ const {
   width: 100%;
   height: 20px;
   margin-top: -20px;
+  transition: .6s;
   background: var(--gradient-two);
+  opacity: v-bind("showMask ? 1 : 0");
   position: relative;
+  pointer-events: none;
+}
+
+.ce-editor-bottom-two {
+  width: 100%;
+  height: 15px;
 }
 
 
@@ -193,7 +213,7 @@ const {
   width: 100%;
   transition: .2s;
   height: 55px;
-  max-height: 0;
+  max-height: 0px;
 }
 
 .ce-virtual_show {

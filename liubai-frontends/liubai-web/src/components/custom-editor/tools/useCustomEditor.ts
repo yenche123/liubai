@@ -6,12 +6,14 @@ import type { TipTapEditor } from "../../../types/types-editor"
 import cfg from "../../../config"
 import { useLayoutStore } from "../../../views/useLayoutStore"
 import { storeToRefs } from "pinia"
+import time from "../../../utils/basic/time"
 
 export function useCustomEditor() {
   const maxEditorHeight = ref(500)
   const minEditorHeight = ref(cfg.min_editor_height)
   const editorCoreRef = ref<typeof EditorCore | null>(null)
   const editor = shallowRef<TipTapEditor>()
+  const showMask = ref(false)
   
   listenWindowChange(maxEditorHeight, minEditorHeight)
 
@@ -20,11 +22,28 @@ export function useCustomEditor() {
     editor.value = editorCoreRef.value.editor as TipTapEditor
   })
 
+  let lastScoll = 0
+  let hideMaskTimeout = 0
+  const onEditorScrolling = () => {
+    const now = time.getTime()
+    const diff = now - lastScoll
+    if(diff < 1000) return
+    lastScoll = now
+    showMask.value = true
+    if(hideMaskTimeout) clearTimeout(hideMaskTimeout)
+    hideMaskTimeout = setTimeout(() => {
+      hideMaskTimeout = 0
+      showMask.value = false
+    }, 2000)
+  }
+
   return { 
     maxEditorHeight, 
     minEditorHeight,
     editorCoreRef, 
-    editor
+    editor,
+    onEditorScrolling,
+    showMask,
   }
 }
 
