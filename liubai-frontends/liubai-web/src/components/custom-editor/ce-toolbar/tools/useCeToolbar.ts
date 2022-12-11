@@ -6,12 +6,12 @@ export function useCeToolbar() {
   const layout = useLayoutStore()
   const { sidebarStatus } = storeToRefs(layout)
   const expanded = computed(() => {
-    if(sidebarStatus.value === "window") return true
+    if(sidebarStatus.value === "fullscreen") return true
     return false
   })
 
   const onTapExpand = () => {
-    const newV = sidebarStatus.value === "window" ? "default" : "window"
+    const newV = sidebarStatus.value === "fullscreen" ? "default" : "fullscreen"
     layout.$patch({ sidebarStatus: newV })
   }
 

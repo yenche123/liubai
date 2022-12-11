@@ -77,7 +77,7 @@ function judgeState(
   ctx: NaviAutoCtx,
 ) {
   const { sidebarWidth, sidebarStatus } = ctx.layout
-  if(sidebarWidth > 0 || sidebarStatus === "window") _close(ctx.enable, ctx.show)
+  if(sidebarWidth > 0 || sidebarStatus === "fullscreen") _close(ctx.enable, ctx.show)
   else _open(ctx.enable, ctx.show)
 
   // 判断阴影变化

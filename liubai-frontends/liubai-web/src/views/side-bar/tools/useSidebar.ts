@@ -342,7 +342,7 @@ function listenChangeFromOtherComponent(
     console.log("监听到 sidebarStatus 来自其他组件的变化.....")
     console.log(newV)
     console.log(" ")
-    if(newV === "window") _close()
+    if(newV === "fullscreen") _close()
     else _restore()
   })
 }

@@ -9,7 +9,7 @@ export function useIndexContent() {
   const layoutStore = useLayoutStore()
   const { sidebarWidth, sidebarStatus } = storeToRefs(layoutStore)
   const showTop = computed(() => {
-    if(sidebarStatus.value === "window") return true
+    if(sidebarStatus.value === "fullscreen") return true
     if(sidebarWidth.value <= 0) return false
     return true
   })
