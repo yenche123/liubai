@@ -37,8 +37,8 @@ export function useNaviAuto() {
 
 
   // 处理 左侧边栏的变化
-  const { sidebarWidth } = storeToRefs(layout)
-  watch(sidebarWidth, (newV) => {
+  const { sidebarWidth, sidebarStatus } = storeToRefs(layout)
+  watch([sidebarWidth, sidebarStatus], (newV) => {
     judgeState(ctx)
   })
   judgeState(ctx)

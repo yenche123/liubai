@@ -5,8 +5,14 @@ import { useLayoutStore } from "../../../../../views/useLayoutStore";
 
 export function useIndexContent() {
 
+  // 判断是否显示最顶部的边距
   const layoutStore = useLayoutStore()
-  const { sidebarWidth } = storeToRefs(layoutStore)
+  const { sidebarWidth, sidebarStatus } = storeToRefs(layoutStore)
+  const showTop = computed(() => {
+    if(sidebarStatus.value === "window") return true
+    if(sidebarWidth.value <= 0) return false
+    return true
+  })
 
   // custom-editor 的底部要不要多一栏，让 完成按钮 跟工具栏不同行
   const mvRef = inject(mvKey) as Ref<number>
@@ -15,5 +21,5 @@ export function useIndexContent() {
     return false
   })
 
-  return { lastBar, sidebarWidth }
+  return { lastBar, showTop }
 }

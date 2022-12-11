@@ -40,7 +40,9 @@
     "bold": "粗體",
     "italic": "斜體",
     "strike": "删除線",
-    "more": "更多"
+    "more": "更多",
+    "expand": "展開",
+    "restore": "恢復"
   },
   "cui": {
     "plz_input_txt": "請輸入文字"

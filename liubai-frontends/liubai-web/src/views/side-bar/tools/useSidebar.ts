@@ -150,13 +150,6 @@ function listenWindowChange(
 
   // watch 挂在 setup 周期内 所以不需要在 onUnmounted 手写销毁，vue 会自动完成
   watch(width, (newV, oldV) => {
-    const { sidebarWidth, sidebarStatus } = layoutStore
-
-    // 如果当前宽度为 0 并且用户开启了全屏状态，就忽略窗口变化
-    if(sidebarWidth === 0 && sidebarStatus === "window") {
-      return
-    }
-
     whenWindowChange()
   })
 }
@@ -346,6 +339,9 @@ function listenChangeFromOtherComponent(
   }
 
   watch(sidebarStatus, (newV) => {
+    console.log("监听到 sidebarStatus 来自其他组件的变化.....")
+    console.log(newV)
+    console.log(" ")
     if(newV === "window") _close()
     else _restore()
   })

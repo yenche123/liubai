@@ -4,6 +4,7 @@ import type { PropType } from "vue"
 import { TipTapEditor } from "../../../types/types-editor"
 import liuUtil from "../../../utils/liu-util";
 import { useI18n } from 'vue-i18n';
+import { useCeToolbar } from './tools/useCeToolbar';
 
 export default defineComponent({
   props: {
@@ -29,6 +30,11 @@ export default defineComponent({
 
     const { t } = useI18n()
 
+    const {
+      expanded,
+      onTapExpand
+    } = useCeToolbar()
+
     return { 
       t,
       liuUtil, 
@@ -36,6 +42,8 @@ export default defineComponent({
       onImageChange, 
       icon_color,
       onTapMore,
+      expanded,
+      onTapExpand,
     }
   },
 })
@@ -57,32 +65,41 @@ export default defineComponent({
       <svg-icon name="editor-image" class="ceti-icon" :color="icon_color" />
     </div>
 
-    <!-- 粗体 -->
+    <!-- 开启/关闭全屏 -->
     <div class="liu-hover cet-item"
+      @click="onTapExpand"
+      :aria-label="expanded ? t('editor.restore') : t('editor.expand')"
+    >
+      <svg-icon :name="expanded ? 'editor-close_full' : 'editor-open_full'" 
+        class="ceti-expand" :color="icon_color" />
+    </div>
+
+    <!-- 粗体 -->
+    <!-- <div class="liu-hover cet-item"
       :class="{ 'cet-item_selected': editor?.isActive('bold') }"
       @click="editor?.chain().focus().toggleBold().run()"
       :aria-label="t('editor.bold')"
     >
       <svg-icon name="editor-bold" class="ceti-icon" :color="icon_color" />
-    </div>
+    </div> -->
 
     <!-- 斜体 -->
-    <div class="liu-hover cet-item"
+    <!-- <div class="liu-hover cet-item"
       :class="{ 'cet-item_selected': editor?.isActive('italic') }"
       @click="editor?.chain().focus().toggleItalic().run()"
       :aria-label="t('editor.italic')"
     >
       <svg-icon name="editor-italic" class="ceti-icon" :color="icon_color" />
-    </div>
+    </div> -->
 
     <!-- 删除线 -->
-    <div class="liu-hover cet-item"
+    <!-- <div class="liu-hover cet-item"
       :class="{ 'cet-item_selected': editor?.isActive('strike') }"
       @click="editor?.chain().focus().toggleStrike().run()"
       :aria-label="t('editor.strike')"
     >
       <svg-icon name="editor-strike" class="ceti-icon" :color="icon_color" />
-    </div>
+    </div> -->
 
     <!-- 更多 -->
     <div class="liu-hover cet-item"
@@ -129,6 +146,11 @@ export default defineComponent({
     .ceti-icon {
       width: 30px;
       height: 30px;
+    }
+
+    .ceti-expand {
+      width: 26px;
+      height: 26px;
     }
 
     .ceti-more {

@@ -6,14 +6,14 @@ import ThreadList from "../../../../components/level1/thread-list/thread-list.vu
 
 const virtualHeight = cfg.navi_height / 3
 const shortVirtual = cfg.navi_height / 9
-const { lastBar, sidebarWidth } = useIndexContent()
+const { lastBar, showTop } = useIndexContent()
 
 </script>
 <template>
 
   <div class="mc-container">
     <div class="mc-virtual"
-      :class="{ 'mc-virtual_short': sidebarWidth <= 0 }"
+      :class="{ 'mc-virtual_short': !showTop }"
     ></div>
     <div class="mc-box">
       
