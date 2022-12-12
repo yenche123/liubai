@@ -12,7 +12,7 @@ import { useTagPage } from "./tools/useTagPage";
 const { onVvWidthChange } = useMainVice()
 const { t } = useI18n()
 
-const { tagName } = useTagPage()
+const { tagName, tagId } = useTagPage()
 
 </script>
 <template>
@@ -21,7 +21,7 @@ const { tagName } = useTagPage()
   <main-view>
     <scroll-view>
       <navi-virtual></navi-virtual>
-      <TagContent></TagContent>
+      <TagContent :tag-id="tagId"></TagContent>
     </scroll-view>
     <navi-bar :title="tagName ? tagName : t('common.tags')"></navi-bar>
   </main-view>

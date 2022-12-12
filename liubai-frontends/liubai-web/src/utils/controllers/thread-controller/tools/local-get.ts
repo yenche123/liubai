@@ -14,12 +14,15 @@ async function getList(
     lastCreatedStamp,
     oState = "OK",
     member,
-    limit = 16
+    limit = 16,
+    tagId,
   } = opt ?? {}
 
   let list: ContentLocalTable[] = []
 
   const filterFunc = (item: ContentLocalTable) => {
+    const { tagSearched = [] } = item
+    if(tagId && !tagSearched.includes(tagId)) return false
     if(item.workspace === workspace && item.oState === oState) {
       if(!member) return true
       if(member === item.member) return true

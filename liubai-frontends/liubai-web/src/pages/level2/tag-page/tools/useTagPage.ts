@@ -6,43 +6,54 @@ import { tagIdsToShows } from "../../../../utils/system/workspace";
 import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 
-export function useTagPage() {
+interface TpCtx {
+  route: RouteLocationNormalizedLoaded
+  tagName: Ref<string>
+  tagId: Ref<string>
+  spaceId: Ref<string>
+}
 
+export function useTagPage() {
+  const tagId = ref("")
   const tagName = ref("")
   const { route } = useRouteAndLiuRouter()
   const wStore = useWorkspaceStore()
   const { spaceId } = storeToRefs(wStore)
 
+  const ctx = {
+    route,
+    tagId,
+    spaceId,
+    tagName
+  }
+
   // 必须等 workspace 已初始化好，才能去加载 tag
   // 因为 tag 依赖于工作区
   watch([route, spaceId], (newV) => {
-    judgeTagName(tagName, route, spaceId)
+    judgeTagName(ctx)
   })
 
-  judgeTagName(tagName, route, spaceId)
+  judgeTagName(ctx)
   
-  return { tagName }
+  return { tagName, tagId }
 }
 
 
 function judgeTagName(
-  tagName: Ref<string>,
-  route: RouteLocationNormalizedLoaded,
-  spaceId: Ref<string>,
+  ctx: TpCtx,
 ) {
-  if(!route) return
-  if(!spaceId.value) return
-  const n = route.name
+  if(!ctx.route) return
+  if(!ctx.spaceId.value) return
+  const n = ctx.route.name
   if(!n) return
   if(n !== "tag" && n !== "collaborative-tag") return
-  const { tagId } = route.params
+  const { tagId } = ctx.route.params
   if(typeof tagId !== "string") return
 
-  console.log("根据 tagId 查询 show...........")
-  console.log(" ")
   const { tagShows } = tagIdsToShows([tagId])
   if(!tagShows.length) return
   const t = tagShows[0]
   const str = `${t.emoji ? t.emoji + ' ' : '# '}${t.text}`
-  tagName.value = str
+  ctx.tagId.value = tagId
+  ctx.tagName.value = str
 }

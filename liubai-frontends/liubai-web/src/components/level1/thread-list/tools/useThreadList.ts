@@ -82,9 +82,6 @@ function checkList(
     return
   }
 
-  // 局部更新技术
-  
-
 }
 
 // 重新加载 & 触底加载
