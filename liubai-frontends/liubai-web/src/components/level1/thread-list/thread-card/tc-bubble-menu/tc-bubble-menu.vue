@@ -83,13 +83,13 @@ export default defineComponent({
       </div>
 
       <!-- ChatGPT -->
-      <div class="ec-bb-two"
+      <!-- <div class="ec-bb-two"
         :class="{ 'ec-bb-two_selected': selectedIndex === 3 }"
         @click="onTapBot"
       >
         <svg-icon name="logos-openai" :color="bubbleColor" class="ec-bubble-icon ec-bubble-chatgpt"></svg-icon>
         <span>{{ t('card_bubble.ask_bot') }}</span>
-      </div>
+      </div> -->
       
     </div>
 
