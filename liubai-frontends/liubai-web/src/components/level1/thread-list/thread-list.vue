@@ -28,6 +28,7 @@ useNewAndUpdate(props, list)
       
       <ThreadCard 
         :thread-data="item"
+        :position="index"
       ></ThreadCard>
     
     </template>

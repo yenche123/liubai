@@ -29,7 +29,11 @@ export default defineComponent({
     displayType: {
       type: String as PropType<"list" | "detail">,
       default: "list",
-    }
+    },
+    position: {
+      type: Number,
+      required: true
+    },
   },
   setup(props) {
     const {
