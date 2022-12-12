@@ -32,6 +32,7 @@ interface SbtEmits {
 let oldTagNodes: TagView[] = []
 
 export function useSbTags(emits: SbtEmits) {
+  const currentTagId = ref("")
   const wStore = useWorkspaceStore()
   const { workspace } = storeToRefs(wStore)
   const toPath = computed(() => {
@@ -57,8 +58,18 @@ export function useSbTags(emits: SbtEmits) {
       console.log("tagChangedNum 才刚内部发生变化 忽略")
       return
     }
-    console.log("重新初始化 tagNodes...")
     getLatestSpaceTag(tagNodes)
+  })
+
+  // 监听 route 变化
+  watch(route, (newV) => {
+    const { name, params } = newV
+    if(name !== "tag" && name !== "collaborative-tag") {
+      currentTagId.value = ""
+      return
+    }
+    const { tagId } = params
+    if(typeof tagId === "string") currentTagId.value = tagId
   })
 
   const onTreeChange = async (e: any) => {
@@ -93,7 +104,6 @@ export function useSbTags(emits: SbtEmits) {
     const length = node.children?.length ?? 0
     if(!length) return
     stat.open = !stat.open
-    
   }
 
   const onTapTagItem = (e: MouseEvent, href: string) => {
@@ -102,13 +112,19 @@ export function useSbTags(emits: SbtEmits) {
     emits("aftertap")
   }
 
+  const onNaviBack = () => {
+    router.naviBack()
+  }
+
   return { 
+    currentTagId,
     tagNodes, 
     treeEl, 
     onTreeChange, 
     onTapTagItem, 
     onTapTagArrow,
     toPath,
+    onNaviBack,
   }
 }
 

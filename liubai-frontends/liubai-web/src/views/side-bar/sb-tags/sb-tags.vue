@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import cfg from "../../../config"
-import { useRouteAndLiuRouter } from '../../../routes/liu-router';
 import { Draggable } from "@he-tree/vue";
 import { useSbTags } from "./tools/useSbTags";
 import { RouterLink } from 'vue-router'
@@ -17,7 +16,6 @@ const emits = defineEmits<{
   (event: "aftertap"): void
 }>()
 
-const { router } = useRouteAndLiuRouter()
 const { t } = useI18n()
 const naviHeightPx = `${cfg.navi_height}px`
 
@@ -27,12 +25,11 @@ const {
   onTreeChange,
   onTapTagItem,
   onTapTagArrow,
-  toPath
+  toPath,
+  onNaviBack,
+  currentTagId,
 } = useSbTags(emits)
 
-const onNaviBack = () => {
-  router.naviBack()
-}
 
 </script>
 <template>
@@ -58,7 +55,9 @@ const onNaviBack = () => {
 
         <a :href="toPath + node.tagId" @click="onTapTagItem($event, toPath + node.tagId)">
 
-          <div class="liu-hover tag-container">
+          <div class="liu-hover tag-container"
+            :class="{ 'tag-container_selected': node.tagId === currentTagId }"
+          >
 
             <!-- tag 所在的该行 -->
             <div class="tag-box">
@@ -145,8 +144,9 @@ const onNaviBack = () => {
 
 .tag-container {
   position: relative;
-  padding: 8px 0;
+  padding: 5px 0;
   transition: .15s;
+  margin-block-end: 3px;
 
   .tag-box {
     display: flex;
@@ -195,6 +195,10 @@ const onNaviBack = () => {
 
   }
 
+}
+
+.tag-container_selected::before {
+  opacity: .06;
 }
 
 .st-no-tags {
