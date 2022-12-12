@@ -109,7 +109,6 @@ const {
       :hash-trigger="true"
       :min-height="'' + minEditorHeight + 'px'"
     ></EditorCore>
-    <div class="ce-editor-virtual"></div>
   </div>
 
   <!-- 隐入隐出渐变分隔条 -->
@@ -185,11 +184,6 @@ const {
   overflow-y: overlay;
   overflow-y: auto;
   transition: .3s;
-
-  .ce-editor-virtual {
-    width: 100%;
-    height: 20px;
-  }
 }
 
 .ce-editor-bottom {
