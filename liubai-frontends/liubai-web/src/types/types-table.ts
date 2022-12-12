@@ -87,6 +87,7 @@ export interface DraftLocalTable extends BaseLocalTable {
 
 export interface CollectionLocalTable extends BaseLocalTable {
   user?: string
+  oState: "OK" | "CANCELED"
   member: string
   infoType: "EXPRESS" | "FAVORITE"
   forType: "THREAD" | "COMMENT"

@@ -10,6 +10,7 @@ import TcTags from "./tc-tags/tc-tags.vue";
 import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
 import TcBubbleMenu from './tc-bubble-menu/tc-bubble-menu.vue';
+import { useTcOperation } from "./tools/useTcOperation";
 
 export default defineComponent({
   components: {
@@ -43,6 +44,8 @@ export default defineComponent({
     } = useThreadCard(props)
     const { t } = useI18n()
 
+    const operations = useTcOperation(props)
+
     return {
       editorCoreRef,
       editor,
@@ -51,6 +54,7 @@ export default defineComponent({
       remindStr,
       isBriefing,
       onTapBriefing,
+      ...operations,
     }
   }
 })
@@ -114,6 +118,9 @@ export default defineComponent({
         :emoji-num="threadData.emojiData.total"
         :my-favorite="threadData.myFavorite"
         :my-emoji="threadData.myEmoji"
+        @tapcollect="onTapCollect"
+        @tapcomment="onTapComment"
+        @tapshare="onTapShare"
       ></TcActionbar>
 
       <!-- 底部时间 -->

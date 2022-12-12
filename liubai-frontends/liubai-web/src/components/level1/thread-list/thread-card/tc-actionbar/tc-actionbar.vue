@@ -28,6 +28,12 @@ const props = defineProps({
   }
 })
 
+const emits = defineEmits<{
+  (event: "tapcollect"): void
+  (event: "tapcomment"): void
+  (event: "tapshare"): void
+}>()
+
 // decode emoji
 const theEmoji = computed(() => {
   if(!props.myEmoji) return ""
@@ -55,9 +61,12 @@ const default_color = "var(--main-code)"
   <div class="tca-container">
 
     <!-- 收藏 -->
-    <div v-if="workspace === 'ME'" class="liu-hover tca-item">
+    <div v-if="workspace === 'ME'" class="liu-hover tca-item"
+      @click="emits('tapcollect')"
+    >
       <div class="tca-icon-box">
-        <svg-icon name="star" class="tca-icon_star" :color="default_color"></svg-icon>
+        <svg-icon v-show="!myFavorite" name="star" class="tca-icon_star" :color="default_color"></svg-icon>
+        <svg-icon v-show="myFavorite" name="collected" class="tca-icon_collected"></svg-icon>
       </div>
     </div>
 
@@ -73,7 +82,9 @@ const default_color = "var(--main-code)"
     </div>
 
     <!-- 评论 -->
-    <div class="liu-hover tca-item">
+    <div class="liu-hover tca-item"
+      @click="emits('tapcomment')"
+    >
       <div class="tca-icon-box">
         <svg-icon name="comment" class="tca-icon_comment" :color="default_color"></svg-icon>
       </div>
@@ -83,7 +94,9 @@ const default_color = "var(--main-code)"
     </div>
 
     <!-- 分享 -->
-    <div class="liu-hover tca-item">
+    <div class="liu-hover tca-item"
+      @click="emits('tapshare')"
+    >
       <div class="tca-icon-box">
         <svg-icon name="share" class="tca-icon" :color="default_color"></svg-icon>
       </div>
@@ -137,6 +150,11 @@ const default_color = "var(--main-code)"
     .tca-icon_star {
       width: 26px;
       height: 26px;
+    }
+
+    .tca-icon_collected {
+      width: 28px;
+      height: 28px;
     }
 
     .tca-icon_emoji {

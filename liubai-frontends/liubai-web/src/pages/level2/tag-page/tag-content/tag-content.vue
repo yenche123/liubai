@@ -11,7 +11,10 @@ defineProps({
   <div class="mc-container">
     <div class="tc-virtual"></div>
     <div class="mc-box">
-      <thread-list v-if="tagId" :tag-id="tagId"></thread-list>
+      <thread-list v-if="tagId" 
+        view-type="TAG"
+        :tag-id="tagId"
+      ></thread-list>
     </div>
   </div>
 

@@ -7,11 +7,7 @@ import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
 import type { OState } from "../../../../types/types-basic"
 import type { SvProvideInject } from "../../../common/scroll-view/tools/types"
-
-interface TlProps {
-  viewType: string
-  tagId: string
-}
+import type { TlProps } from "./types"
 
 interface TlContext {
   list: Ref<ThreadShow[]>

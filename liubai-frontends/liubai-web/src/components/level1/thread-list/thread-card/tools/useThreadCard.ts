@@ -1,13 +1,7 @@
 import { onMounted, ref, shallowRef } from 'vue';
-import type { ThreadShow } from '../../../../../types/types-content';
 import EditorCore from "../../../../editor-core/editor-core.vue"
 import type { TipTapEditor } from "../../../../../types/types-editor"
-
-interface TcProps {
-  threadData: ThreadShow
-  displayType: "list" | "detail"
-}
-
+import type { TcProps } from "./types"
 
 export function useThreadCard(props: TcProps) {
   const editorCoreRef = ref<typeof EditorCore | null>(null)

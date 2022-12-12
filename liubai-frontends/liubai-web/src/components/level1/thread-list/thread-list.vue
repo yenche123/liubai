@@ -18,7 +18,7 @@ const props = defineProps({
 const {
   list
 } = useThreadList(props)
-useNewAndUpdate(list)
+useNewAndUpdate(props, list)
 
 </script>
 <template>
