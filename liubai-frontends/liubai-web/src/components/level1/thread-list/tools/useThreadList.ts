@@ -8,6 +8,7 @@ import { storeToRefs } from "pinia"
 import type { OState } from "../../../../types/types-basic"
 import type { SvProvideInject } from "../../../common/scroll-view/tools/types"
 import type { TlProps } from "./types"
+import type { TcListOption } from "../../../../utils/controllers/thread-controller/type"
 
 interface TlContext {
   list: Ref<ThreadShow[]>
@@ -99,11 +100,16 @@ async function loadList(
   let lastCreatedStamp = reload || length < 1 ? undefined : oldList[length - 1].createdStamp
   let oState: OState = viewType === 'TRASH' ? 'REMOVED' : 'OK'
 
-  const opt1 = {
+  const opt1: TcListOption = {
     workspace,
     tagId,
     lastCreatedStamp,
     oState,
+  }
+  if(viewType === "FAVORITE") {
+    delete opt1.lastCreatedStamp
+    opt1.collectType = "FAVORITE"
+    opt1.lastCollectedStamp = reload || length < 1 ? undefined : oldList[length - 1].myFavoriteStamp
   }
 
   const results = await threadController.getList(opt1)

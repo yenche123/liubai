@@ -40,7 +40,6 @@ export async function getThreadsByCollectionOrEmoji(
     workspace = "ME", 
     sort = "desc",
     lastCollectedStamp,
-    member,
     limit = 16,
     emojiSpecific,
     collectType,
@@ -51,8 +50,11 @@ export async function getThreadsByCollectionOrEmoji(
   let res: CollectionLocalTable[] = []
 
   const filterFunc = (item: CollectionLocalTable) => {
+    console.log("opt::: ", opt)
+    console.log("item:::", item)
+    console.log(" ")
     if(item.oState !== "OK") return false
-    if(member !== item.member) return false
+    if(user_id !== item.user) return false
     if(collectType !== item.infoType) return false
     if(item.forType !== "THREAD") return false
     if(item.workspace !== workspace) return false
@@ -115,9 +117,9 @@ export async function getThreadsByCollectionOrEmoji(
       myFavoriteStamp = c.insertedStamp
     }
 
-    let creator = members.find(v2 => v2._id === member)
+    let creator = members.find(v2 => v2._id === m)
     let isMine = false
-    if(m === member) isMine = true
+    if(u && user_id && u === user_id) isMine = true
 
     const images = v.images?.map(v2 => {
       return imgHelper.imageLocalToShow(v2)
