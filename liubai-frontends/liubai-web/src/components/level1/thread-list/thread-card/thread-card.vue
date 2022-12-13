@@ -11,6 +11,7 @@ import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
 import TcBubbleMenu from './tc-bubble-menu/tc-bubble-menu.vue';
 import { useTcOperation } from "./tools/useTcOperation";
+import type { ThreadOperation } from "../tools/types"
 
 export default defineComponent({
   components: {
@@ -34,6 +35,9 @@ export default defineComponent({
       type: Number,
       required: true
     },
+  },
+  emits: {
+    newoperate: (operation: ThreadOperation, position: number, oldThread: ThreadShow) => true
   },
   setup(props) {
     const {
@@ -122,9 +126,9 @@ export default defineComponent({
         :emoji-num="threadData.emojiData.total"
         :my-favorite="threadData.myFavorite"
         :my-emoji="threadData.myEmoji"
-        @tapcollect="onTapCollect"
-        @tapcomment="onTapComment"
-        @tapshare="onTapShare"
+        @tapcollect="$emit('newoperate', 'collect', position, threadData)"
+        @tapcomment="$emit('newoperate', 'comment', position, threadData)"
+        @tapshare="$emit('newoperate', 'share', position, threadData)"
       ></TcActionbar>
 
       <!-- 底部时间 -->

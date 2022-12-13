@@ -3,6 +3,7 @@ import { useThreadList } from './tools/useThreadList';
 import ThreadCard from './thread-card/thread-card.vue';
 import { useNewAndUpdate } from './tools/useNewAndUpdate';
 import ListBottom from '../list-bottom/list-bottom.vue';
+import { useThreadOperate } from './tools/useThreadOperate';
 
 const props = defineProps({
   viewType: {
@@ -20,6 +21,10 @@ const {
 } = useThreadList(props)
 useNewAndUpdate(props, list)
 
+const {
+  receiveOperation
+} = useThreadOperate(props, list)
+
 </script>
 <template>
   <div class="tl-container">
@@ -29,6 +34,7 @@ useNewAndUpdate(props, list)
       <ThreadCard 
         :thread-data="item"
         :position="index"
+        @newoperate="receiveOperation"
       ></ThreadCard>
     
     </template>

@@ -6,3 +6,5 @@ export interface TlProps {
   viewType: string
   tagId: string
 }
+
+export type ThreadOperation = "collect" | "emoji" | "share" | "comment"

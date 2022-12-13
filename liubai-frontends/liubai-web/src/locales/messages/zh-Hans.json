@@ -113,7 +113,10 @@
     "add_tag": "添加标签 \"{tag}\"",
     "tag_ph": "请输入标签名",
     "tag_merge_title": "合并标签",
-    "tag_merge_content": "是否将 \"{tag1}\" 合并至 \"{tag2}\"？"
+    "tag_merge_content": "是否将 \"{tag1}\" 合并至 \"{tag2}\"？",
+    "collected": "已收藏",
+    "canceled": "已取消",
+    "undo": "撤销"
   },
   "card_bubble": {
     "copy": "复制",

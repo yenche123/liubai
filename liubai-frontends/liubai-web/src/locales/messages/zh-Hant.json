@@ -113,7 +113,10 @@
     "add_tag": "新建標籤 \"{tag}\"",
     "tag_ph": "請輸入標籤名",
     "tag_merge_title": "合併標籤",
-    "tag_merge_content": "是否將 \"{tag1}\" 合併至 \"{tag2}\"?"
+    "tag_merge_content": "是否將 \"{tag1}\" 合併至 \"{tag2}\"?",
+    "collected": "已收藏",
+    "canceled": "已取消",
+    "undo": "復原"
   },
   "card_bubble": {
     "copy": "複製",

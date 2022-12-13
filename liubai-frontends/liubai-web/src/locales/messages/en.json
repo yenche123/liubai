@@ -113,7 +113,10 @@
     "add_tag": "Add a tag \"{tag}\"",
     "tag_ph": "Please input a tag name",
     "tag_merge_title": "Merge Tags",
-    "tag_merge_content": "Are you sure to merge \"{tag1}\" into \"{tag2}\"?"
+    "tag_merge_content": "Are you sure to merge \"{tag1}\" into \"{tag2}\"?",
+    "collected": "Marked",
+    "canceled": "Canceled",
+    "undo": "Undo"
   },
   "card_bubble": {
     "copy": "Copy",

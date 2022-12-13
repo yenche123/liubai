@@ -44,6 +44,10 @@ const createTagId = () => {
   return "t1" + _createId(23)
 }
 
+const createCollectId = () => {
+  return "c1" + _createId(25)
+}
+
 export default {
   createUserId,
   createWorkspaceId,
@@ -54,4 +58,5 @@ export default {
   createImgId,
   createFileId,
   createTagId,
+  createCollectId,
 }

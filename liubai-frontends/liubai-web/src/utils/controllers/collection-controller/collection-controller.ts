@@ -14,8 +14,7 @@ async function getMyCollectionByIds(opt: MyCollectionOpt) {
 
   let tmp = db.collections.where("content_id").anyOf(opt.content_ids)
   tmp = tmp.filter(v => {
-    if(v.user === user_id) return true
-    if(v.oState === "OK") return true
+    if(v.user === user_id && v.oState === 'OK') return true
     return false
   })
   const res = await tmp.toArray()
