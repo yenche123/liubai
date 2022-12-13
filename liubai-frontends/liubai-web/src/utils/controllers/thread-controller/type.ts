@@ -12,6 +12,15 @@ export interface TcListOption {
   // 每次最多加载多少个，默认为 16（该值是计算过，在 1980px 的大屏上也可以触发触底加载的）
   limit?: number
 
+  // 加载收藏
+  collectType?: "EXPRESS" | "FAVORITE"
+
+  // 已加载出来的最后一个 id 的 myFavoriteStamp / 或 myEmojiStamp
+  lastCollectedStamp?: number
+
+  // 加载某个 emoji
+  emojiSpecific?: string
+
   // 默认为 ME
   workspace?: string    
 

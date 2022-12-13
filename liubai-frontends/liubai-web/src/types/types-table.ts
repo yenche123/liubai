@@ -91,6 +91,7 @@ export interface CollectionLocalTable extends BaseLocalTable {
   member: string
   infoType: "EXPRESS" | "FAVORITE"
   forType: "THREAD" | "COMMENT"
+  workspace: string
   content_id: string
   emoji?: string
 }

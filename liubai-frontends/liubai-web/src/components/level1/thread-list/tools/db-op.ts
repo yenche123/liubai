@@ -36,6 +36,7 @@ async function collect(
       member: memberId,
       infoType: "FAVORITE",
       forType: "THREAD",
+      workspace: thread.workspace,
       content_id: thread._id,
     }
     const res1 = await db.collections.add(data0)

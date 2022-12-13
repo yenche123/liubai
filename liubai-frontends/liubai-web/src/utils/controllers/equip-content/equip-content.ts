@@ -21,7 +21,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
   const content_ids = contents.map(v => v._id)
   const member_ids = [...new Set(contents.map(v => v.member))]
 
-  const members = await _getMemberShows(member_ids)
+  const members = await getMemberShows(member_ids)
   const collections = await collectionController.getMyCollectionByIds({ content_ids })
 
   console.time("equip-content")
@@ -65,7 +65,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
     // 如果动态所属的工作区与当前工作区匹配
     if(canTag) {
       const tagData = v.tagIds ? tagIdsToShows(v.tagIds) : undefined
-      tags = tagData?.tagShows ? tagData.tagShows : []
+      tags = tagData?.tagShows ?? []
     }
     
 
@@ -100,7 +100,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       createdStamp: v.createdStamp,
       editedStamp: v.editedStamp,
       createdStr: liuUtil.showBasicDate(v.createdStamp),
-      editedStr: _getEditedStr(v.createdStamp, v.editedStamp),
+      editedStr: getEditedStr(v.createdStamp, v.editedStamp),
       tags,
       tagSearched: v.tagSearched,
     }
@@ -119,13 +119,13 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
   return list
 }
 
-function _getEditedStr(createdStamp: number, editedStamp?: number) {
+export function getEditedStr(createdStamp: number, editedStamp?: number) {
   if(!editedStamp) return
   if(createdStamp === editedStamp) return
   return liuUtil.showBasicDate(editedStamp)
 }
 
-async function _getMemberShows(member_ids: string[]) {
+export async function getMemberShows(member_ids: string[]) {
   if(member_ids.length < 1) return []
   const res = await db.members.where("_id").anyOf(member_ids).toArray()
   const list = res.map(v => {

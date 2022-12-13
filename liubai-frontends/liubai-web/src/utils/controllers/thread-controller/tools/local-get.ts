@@ -1,22 +1,27 @@
-import type { SortWay, OState } from "../../../../types/types-basic";
-import time from "../../../basic/time";
 import { db } from "../../../db";
 import type { TcListOption } from "../type";
-import { ContentLocalTable } from "../../../../types/types-table";
+import type { ContentLocalTable } from "../../../../types/types-table";
 import { equipThreads } from "../../equip-content/equip-content";
+import { getThreadsByCollectionOrEmoji } from "../../collection-controller/collection-controller"
 
 async function getList(
   opt?: TcListOption
 ) {
   const { 
-    workspace = "ME", 
+    workspace = "ME",
     sort = "desc",
     lastCreatedStamp,
     oState = "OK",
     member,
     limit = 16,
     tagId,
+    collectType,
   } = opt ?? {}
+
+  if(collectType === "EXPRESS" || collectType === "FAVORITE") {
+    const res0 = await getThreadsByCollectionOrEmoji(opt as TcListOption)
+    return res0
+  }
 
   let list: ContentLocalTable[] = []
 
