@@ -18,17 +18,20 @@ const onTapBack = () => {
 <template>
 
   <div class="liu-frosted-glass nb-container">
-    <div class="liu-hover nb-back-box" @click="onTapBack">
-      <SvgIcon class="nb-back-icon" name="arrow-back700"></SvgIcon>
+
+    <div class="nb-box">
+      <div class="liu-hover nb-back-box" @click="onTapBack">
+        <SvgIcon class="nb-back-icon" name="arrow-back700"></SvgIcon>
+      </div>
+      <div class="nb-title">
+        <span>{{ title }}</span>
+      </div>
     </div>
-    <div class="nb-title">
-      <span>{{ title }}</span>
-    </div>
+
   </div>
 
 </template>
-<style scoped>
-
+<style scoped lang="scss">
 .nb-container {
   width: 100%;
   height: v-bind("cfg.navi_height + 'px'");
@@ -36,7 +39,17 @@ const onTapBack = () => {
   top: 0;
   left: 0;
   display: flex;
-  align-items: center;
+  justify-content: center;
+
+  .nb-box {
+    width: 92%;
+    height: 100%;
+    max-width: var(--card-max);
+    min-width: var(--card-min);
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
 }
 
 .nb-back-box {
@@ -45,24 +58,21 @@ const onTapBack = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-inline-start: 6px;
   margin-inline-end: 6px;
-}
 
-.nb-back-icon {
-  width: 26px;
-  height: 26px;
+  .nb-back-icon {
+    width: 26px;
+    height: 26px;
+  }
 }
 
 .nb-title {
   position: relative;
-  font-size: var(--title-font);
+  font-size: var(--desc-font);
   color: var(--main-text);
   line-height: 1.5;
   font-weight: 700;
   user-select: none;
 }
-
-
 
 </style>
