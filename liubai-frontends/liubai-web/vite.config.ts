@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import { resolve } from "path"
 import vue from '@vitejs/plugin-vue'
-import VueI18n from '@intlify/vite-plugin-vue-i18n'
+import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import mkcert from 'vite-plugin-mkcert'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 const { version } = require("./package.json")
