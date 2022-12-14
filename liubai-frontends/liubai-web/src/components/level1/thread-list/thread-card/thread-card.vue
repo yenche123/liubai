@@ -7,6 +7,7 @@ import TcWhenRemind from './tc-when-remind/tc-when-remind.vue';
 import TcActionbar from './tc-actionbar/tc-actionbar.vue';
 import TcBottombar from "./tc-bottombar/tc-bottombar.vue";
 import TcTags from "./tc-tags/tc-tags.vue";
+import TcCovers from "./tc-covers/tc-covers.vue";
 import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
 import TcBubbleMenu from './tc-bubble-menu/tc-bubble-menu.vue';
@@ -20,6 +21,7 @@ export default defineComponent({
     TcActionbar,
     TcBottombar,
     TcTags,
+    TcCovers,
     TcBubbleMenu,
   },
   props: {
@@ -106,6 +108,9 @@ export default defineComponent({
           :content="threadData.content"
         ></EditorCore>
       </div>
+
+      <!-- 图片 -->
+      <TcCovers :covers="threadData.images"></TcCovers>
 
       <!-- 什么时候 -->
       <TcWhenRemind
