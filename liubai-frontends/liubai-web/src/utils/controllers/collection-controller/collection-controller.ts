@@ -50,9 +50,9 @@ export async function getThreadsByCollectionOrEmoji(
   let res: CollectionLocalTable[] = []
 
   const filterFunc = (item: CollectionLocalTable) => {
-    console.log("opt::: ", opt)
-    console.log("item:::", item)
-    console.log(" ")
+    // console.log("opt::: ", opt)
+    // console.log("item:::", item)
+    // console.log(" ")
     if(item.oState !== "OK") return false
     if(user_id !== item.user) return false
     if(collectType !== item.infoType) return false
@@ -65,7 +65,7 @@ export async function getThreadsByCollectionOrEmoji(
   // 1. 先去加载 collections
   if(!lastCollectedStamp) {
     // 首次加载
-    let tmp = db.collections.orderBy("insertedStamp")
+    let tmp = db.collections.orderBy("updatedStamp")
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
     tmp = tmp.limit(limit)
@@ -74,7 +74,7 @@ export async function getThreadsByCollectionOrEmoji(
   }
   else {
     // 分页加载
-    let w = db.collections.where("insertedStamp")
+    let w = db.collections.where("updatedStamp")
     let tmp = sort === "desc" ? w.below(lastCollectedStamp) :  w.above(lastCollectedStamp)
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
@@ -82,8 +82,8 @@ export async function getThreadsByCollectionOrEmoji(
     res = await tmp.toArray()
   }
 
-  console.log("查看一下 getListByCollectionOrEmoji 加载出来的 res: ")
-  console.log(res)
+  // console.log("查看一下 getListByCollectionOrEmoji 加载出来的 res: ")
+  // console.log(res)
   if(!res || res.length < 1) return []
 
   // 2. 去加载 threads

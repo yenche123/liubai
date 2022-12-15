@@ -89,7 +89,6 @@ async function handle_collect(ctx: ToCtx) {
   newThread.myFavorite = !Boolean(oldThread.myFavorite)
   newThread.myFavoriteStamp = time.getTime()
 
-  console.log("去更新 threadShows!")
   // 2. 通知全局
   ctx.tsStore.setUpdatedThreadShows([newThread])
 

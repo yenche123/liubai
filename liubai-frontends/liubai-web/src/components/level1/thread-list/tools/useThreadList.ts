@@ -16,6 +16,7 @@ interface TlContext {
   tagId: Ref<string>
   workspace: Ref<string>
   showNum: number
+  lastItemStamp: Ref<number>
 }
 
 export function useThreadList(props: TlProps) {
@@ -31,6 +32,7 @@ export function useThreadList(props: TlProps) {
     tagId,
     workspace,
     showNum: 0,
+    lastItemStamp: ref(0),
   }
 
   // 监听触底/顶加载
@@ -55,6 +57,7 @@ export function useThreadList(props: TlProps) {
 
   watch([viewType, tagId, workspace], ([newViewType, newTagId, newWorkspace]) => {
     if(!newWorkspace) return
+    console.log("watch 到变化 要去 loadList.........")
     loadList(ctx, true)
   })
 
@@ -73,9 +76,10 @@ export function useThreadList(props: TlProps) {
 function checkList(
   ctx: TlContext
 ) {
+  console.log("checkList 被触发...........")
   const { list } = ctx
-  if(list.value.length < 1) {
-    loadList(ctx)
+  if(list.value.length < 10) {
+    loadList(ctx, true)
     return
   }
 
@@ -97,7 +101,7 @@ async function loadList(
   const tagId = ctx.tagId.value
 
   let length = oldList.length
-  let lastCreatedStamp = reload || length < 1 ? undefined : oldList[length - 1].createdStamp
+  let lastCreatedStamp = reload || length < 1 ? undefined : ctx.lastItemStamp.value
   let oState: OState = viewType === 'TRASH' ? 'REMOVED' : 'OK'
 
   const opt1: TcListOption = {
@@ -109,15 +113,28 @@ async function loadList(
   if(viewType === "FAVORITE") {
     delete opt1.lastCreatedStamp
     opt1.collectType = "FAVORITE"
-    opt1.lastCollectedStamp = reload || length < 1 ? undefined : oldList[length - 1].myFavoriteStamp
+    opt1.lastCollectedStamp = reload || length < 1 ? undefined : ctx.lastItemStamp.value
   }
 
   const results = await threadController.getList(opt1)
+
+  // 赋值到 list 上
   if(length < 1 || reload) {
     ctx.list.value = results
   }
   else if(results.length) {
     ctx.list.value.push(...results)
+  }
+
+  // 处理 lastItemStamp
+  if(results.length) {
+    const lastItem = results[results.length - 1]
+    if(viewType === "FAVORITE") {
+      ctx.lastItemStamp.value = lastItem.myFavoriteStamp ?? 0
+    }
+    else {
+      ctx.lastItemStamp.value = lastItem.createdStamp
+    }
   }
   
 

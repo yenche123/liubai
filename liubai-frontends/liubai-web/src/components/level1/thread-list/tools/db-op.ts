@@ -45,7 +45,7 @@ async function collect(
     console.log(" ")
   }
   else if(newState && res0?.oState === "CANCELED") {
-    // update 数据
+    // 目标状态: 已收藏、逻辑数据: 已取消 ——> 更新数据
     const data0: Partial<CollectionLocalTable> = { oState: "OK", updatedStamp: stamp ?? now1 }
     const res1 = await db.collections.update(res0._id, data0)
     console.log("update collection to OK 的结果.......")
