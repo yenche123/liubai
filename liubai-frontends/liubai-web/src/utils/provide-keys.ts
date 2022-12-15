@@ -1,6 +1,6 @@
 
-import type { InjectionKey, Ref } from 'vue'
-import type { SvProvideInject } from "../components/common/scroll-view/tools/types"
+import type { InjectionKey, Ref, ShallowRef } from 'vue'
+import type { SvProvideInject, SvBottomUp } from "../components/common/scroll-view/tools/types"
 
 // InjectionKey 是什么? 参考: 
 // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-provide-inject
@@ -15,8 +15,11 @@ export const mvFileKey = Symbol() as InjectionKey<Ref<File[]>>
 // 每次触发置入时，对应的 number += 1
 export const editorSetKey = Symbol() as InjectionKey<Ref<number>>
 
-// 用于跨级传递 scroll-view 的事件被触发
+// 用于跨级传递 scroll-view 的事件 (触底和触顶) 被触发
 export const scrollViewKey = Symbol() as InjectionKey<SvProvideInject>
 
 // 用于跨级传递 scroll-view scolling 事件
 export const svScollingKey = Symbol() as InjectionKey<Ref<number>>
+
+// 用于让子/孙组件传递参数给 scroll-view 让后者滚动到特定位置
+export const svBottomUpKey = Symbol() as InjectionKey<ShallowRef<SvBottomUp>>

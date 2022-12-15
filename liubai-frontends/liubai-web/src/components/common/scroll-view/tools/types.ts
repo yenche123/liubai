@@ -19,3 +19,9 @@ export interface SvProvideInject {
   type: "to_lower" | "to_upper" | ""
   triggerNum: number
 }
+
+export interface SvBottomUp {
+  type: "pixel" | "selectors"
+  pixel?: number
+  selectors?: string
+}

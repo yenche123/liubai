@@ -10,6 +10,7 @@ const {
   shadow,
   TRANSITION_DURATION,
   onTapMenu,
+  onTapTitle,
 } = useNaviAuto()
 
 const default_color = "var(--navi-normal)"
@@ -31,8 +32,10 @@ const default_color = "var(--navi-normal)"
         ></svg-icon>
       </div>
 
-      <div class="na-title">
-        <span>留白记事</span>
+      <div class="na-title" @click="onTapTitle">
+        <div class="na-title-inner">
+          <span>留白记事</span>
+        </div>
       </div>
 
       <div class="na-menu-box"></div>
@@ -84,13 +87,22 @@ const default_color = "var(--navi-normal)"
 
     .na-title {
       flex: 1;
-      text-align: center;
+      display: flex;
+      justify-content: center;
       position: relative;
-      font-size: var(--desc-font);
-      color: v-bind("default_color");
-      line-height: 1.5;
-      font-weight: 700;
-      user-select: none;
+      
+
+      .na-title-inner {
+        display: flex;
+        text-align: center;
+        font-size: var(--desc-font);
+        color: v-bind("default_color");
+        line-height: 1.5;
+        font-weight: 700;
+        user-select: none;
+        cursor: pointer;
+      }
+
     }
 
   }

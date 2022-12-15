@@ -1,10 +1,10 @@
-import { inject, ref, watch } from "vue";
+import { inject, ref, shallowRef, watch } from "vue";
 import type { Ref } from "vue";
 import { useLayoutStore } from "../../../../views/useLayoutStore";
 import type { LayoutStore } from "../../../../views/useLayoutStore";
 import { storeToRefs } from "pinia";
 import valTool from "../../../../utils/basic/val-tool";
-import { svScollingKey } from "../../../../utils/provide-keys";
+import { svScollingKey, svBottomUpKey } from "../../../../utils/provide-keys";
 import sideBar from "../../../../views/side-bar";
 
 const TRANSITION_DURATION = 300
@@ -54,6 +54,12 @@ export function useNaviAuto() {
     console.log("onTapMenu...........")
     sideBar.showFixedSideBar()
   }
+
+  const svBottomUp = inject(svBottomUpKey)
+  const onTapTitle = () => {
+    if(!svBottomUp) return
+    svBottomUp.value = { type: "pixel", pixel: 0 }
+  }
   
   return {
     TRANSITION_DURATION,
@@ -61,6 +67,7 @@ export function useNaviAuto() {
     show,
     shadow,
     onTapMenu,
+    onTapTitle,
   }
 }
 
