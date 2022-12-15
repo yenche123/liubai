@@ -9,6 +9,7 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview"
   },
+  "engines": { "node": "16.x" },
   "dependencies": {
     "@he-tree/vue": "^2.2.5",
     "@intlify/unplugin-vue-i18n": "^0.8.1",
