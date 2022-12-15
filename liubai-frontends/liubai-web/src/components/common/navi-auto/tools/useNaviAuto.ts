@@ -58,7 +58,7 @@ export function useNaviAuto() {
   const svBottomUp = inject(svBottomUpKey)
   const onTapTitle = () => {
     if(!svBottomUp) return
-    svBottomUp.value = { type: "pixel", pixel: 0 }
+    svBottomUp.value = { type: "selectors", selectors: ".mc-spacing" }
   }
   
   return {

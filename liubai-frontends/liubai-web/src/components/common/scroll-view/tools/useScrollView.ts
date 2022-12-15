@@ -1,4 +1,4 @@
-import { onActivated, provide, reactive, ref, ShallowRef, shallowRef, watch } from "vue";
+import { onActivated, provide, reactive, ref, shallowRef, watch } from "vue";
 import type { SvProps, SvEmits, SvProvideInject, SvBottomUp } from "./types"
 import { scrollViewKey, svScollingKey, svBottomUpKey } from "../../../../utils/provide-keys"
 import type { Ref } from "vue";
@@ -36,7 +36,6 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
       // 确保在零点时 不会受防抖节流影响
       if(sT !== 0 || scrollTop.value === 0) return
     }
-    console.log("onScrolling.........")
     lastScrollStamp = now
   
     
@@ -105,16 +104,11 @@ function whenBottomUp(
   const scrollTop = sv.value.scrollTop
 
   const domRect = el.getBoundingClientRect()
-  console.log("domRect: ", domRect)
   const { top } = domRect
   const diff = top - cfg.navi_height
-  
-  console.log("diff: ", diff)
 
-  const sT = scrollTop + diff
-
-  console.log("sT: ", sT)
-  console.log(" ")
+  let sT = scrollTop + diff
+  if(sT < 0) sT = 0
 
   sv.value.scrollTo({ top: sT, behavior: "smooth" })
 }
