@@ -118,5 +118,11 @@ const default_color = "var(--navi-normal)"
   box-shadow: 0 5px 15px rgba(0, 0, 0, .1);
 }
 
+.na-container_shadow::before {
+  content: "";
+  position: absolute;
+  background: var(--frosted-glass-4);
+}
+
 
 </style>
