@@ -126,5 +126,9 @@
   },
   "placeholder": {
     "no_tag_yet": "還沒有任何標籤"
+  },
+  "tag_related": {
+    "edit": "編輯",
+    "delete": "删除"
   }
 }

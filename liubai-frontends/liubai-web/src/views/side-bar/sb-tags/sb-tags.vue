@@ -5,6 +5,7 @@ import { Draggable } from "@he-tree/vue";
 import { useSbTags } from "./tools/useSbTags";
 import { RouterLink } from 'vue-router'
 import LiuMenu from "../../../components/common/liu-menu/liu-menu.vue"
+import { menuList } from "./tools/menuList"
 
 defineProps({
   show: {
@@ -78,9 +79,13 @@ const {
             </div>
 
             <!-- ... -->
-            <LiuMenu>
-              <div class="tag-more">
-                
+            <LiuMenu :menu="menuList" min-width-str="100px">
+              <div class="liu-hover tag-more">
+                <svg-icon 
+                  class="tag-more-icon" 
+                  name="more" 
+                  color="var(--main-normal)"
+                ></svg-icon>
               </div>
             </LiuMenu>
             
@@ -209,6 +214,29 @@ const {
 .tag-container_selected::before {
   opacity: .06;
 }
+
+.tag-more {
+  position: absolute;
+  top: 5px;
+  right: 4px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: .1s;
+  opacity: 0;
+
+  .tag-more-icon {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+.tag-container:hover .tag-more {
+  opacity: 1;
+}
+
 
 .st-no-tags {
   width: 100%;

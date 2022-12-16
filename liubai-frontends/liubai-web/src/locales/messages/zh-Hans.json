@@ -126,5 +126,9 @@
   },
   "placeholder": {
     "no_tag_yet": "还没有任何标签"
+  },
+  "tag_related": {
+    "edit": "编辑",
+    "delete": "删除"
   }
 }

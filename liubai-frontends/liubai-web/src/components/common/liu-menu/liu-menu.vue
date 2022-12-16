@@ -11,6 +11,10 @@ export default defineComponent({
       type: Array as PropType<MenuItem[]>,
       default: [],
     },
+    minWidthStr: {
+      type: String,
+      default: "200px"
+    }
   },
   emits: {
     tapitem: (item: MenuItem, index: number) => true,
@@ -22,13 +26,17 @@ export default defineComponent({
     const defaultColor = "var(--main-normal)"
     const { t } = useI18n()
 
+    const onTapBox = (e: Event) => {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+
     const onTapItem = (item: MenuItem, index: number, hide: () => void) => {
-      console.log("onTapItem.........")
       emit("tapitem", item, index)
       hide()
     }
 
-    const onMenuShow = () => {
+    const onMenuShow = (e: any) => {
       emit("menushow")
     }
 
@@ -40,6 +48,7 @@ export default defineComponent({
       t,
       hasIcon,
       defaultColor,
+      onTapBox,
       onTapItem,
       onMenuShow,
       onMenuHide,
@@ -49,17 +58,22 @@ export default defineComponent({
 
 </script>
 <template>
-  <VDropdown :hideTriggers="['click']"
+  <VDropdown 
+    :hideTriggers="['click']"
     @show="onMenuShow"
     @hide="onMenuHide"
   >
 
     <template #default>
-      <slot></slot>
+      <div class="menu-slot-box" @click="onTapBox">
+        <slot></slot>
+      </div>
     </template>
     
     <template #popper="{ hide }">
-      <div class="menu-container">
+      <div class="menu-container"
+        :style="{ 'min-width': minWidthStr }"
+      >
 
         <template v-for="(item, index) in menu" :key="item.text_key">
         
@@ -95,7 +109,6 @@ export default defineComponent({
 <style lang="scss">
 
 .menu-container {
-  min-width: 200px;
   max-width: 90vw;
   position: relative;
   padding: 8px 4px 4px;

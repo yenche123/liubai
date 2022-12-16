@@ -126,5 +126,9 @@
   },
   "placeholder": {
     "no_tag_yet": "No tags yet"
+  },
+  "tag_related": {
+    "edit": "Edit",
+    "delete": "Delete"
   }
 }
