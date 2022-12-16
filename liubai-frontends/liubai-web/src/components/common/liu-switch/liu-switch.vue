@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-
-export interface SwitchChangeEmitOpt {
-  checked: boolean
-  msg: string
-}
+import type { SwitchChangeEmitOpt } from "./types"
 
 const props = defineProps({
   checked: {

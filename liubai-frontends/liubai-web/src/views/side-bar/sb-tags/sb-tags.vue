@@ -4,6 +4,7 @@ import cfg from "../../../config"
 import { Draggable } from "@he-tree/vue";
 import { useSbTags } from "./tools/useSbTags";
 import { RouterLink } from 'vue-router'
+import LiuMenu from "../../../components/common/liu-menu/liu-menu.vue"
 
 defineProps({
   show: {
@@ -75,6 +76,14 @@ const {
                 <span>{{ node.text }}</span>
               </div>
             </div>
+
+            <!-- ... -->
+            <LiuMenu>
+              <div class="tag-more">
+                
+              </div>
+            </LiuMenu>
+            
 
           </div>
 

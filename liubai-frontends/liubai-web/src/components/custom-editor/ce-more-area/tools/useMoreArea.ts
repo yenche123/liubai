@@ -2,11 +2,11 @@ import { computed, reactive, ref } from "vue";
 import cui from "../../../custom-ui";
 import type { LiuRemindMe, LiuRemindEarly, LiuRemindLater } from "../../../../types/types-atom"
 import liuUtil from "../../../../utils/liu-util";
-import type { MenuItem } from "../../../common/liu-menu/liu-menu.vue"
+import type { MenuItem } from "../../../common/liu-menu/tools/types"
 import { useI18n } from "vue-i18n";
 import en from "../../../../locales/messages/en.json"
 import { REMIND_LATER, REMIND_EARLY } from "../../../../config/atom"
-import type { SwitchChangeEmitOpt } from "../../../common/liu-switch/liu-switch.vue"
+import type { SwitchChangeEmitOpt } from "../../../common/liu-switch/types"
 import type { MaData, MoreAreaEmits, MaContext } from "./types-cma"
 
 export function useMoreArea(emits: MoreAreaEmits) {

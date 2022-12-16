@@ -1,48 +1,48 @@
-<script setup lang="ts">
-// 各模块的加载框
-// 【待完善项】因为是 Menu 选单，应该可以用 Keyboard 的上下键来选择，待加上
 
-import { computed } from 'vue'
+<script lang="ts">
+import { computed, defineComponent, PropType } from 'vue'
+import type { MenuItem } from "./tools/types"
+// 【待完善项】因为是 Menu 选单，应该可以用 Keyboard 的上下键来选择
 
-export interface MenuItem {
-  text: string
-  iconName?: string
-  color?: string
-  borderBottom?: boolean
-  children?: MenuItem[]
-  [otherKey: string]: any
-}
+export default defineComponent({
+  props: {
+    menu: {
+      type: Array as PropType<MenuItem[]>,
+      default: [],
+    },
+  },
+  emits: {
+    tapitem: (item: MenuItem, index: number) => true,
+    menushow: () => true,
+    menuhide: () => true
+  },
+  setup(props, { emit }) {
+    const hasIcon = computed(() => props.menu.some(v => !!v.iconName))
+    const defaultColor = "var(--main-normal)"
 
-export interface Props {
-  menu: MenuItem[]
-}
+    const onTapItem = (item: MenuItem, index: number, hide: () => void) => {
+      console.log("onTapItem.........")
+      emit("tapitem", item, index)
+      hide()
+    }
 
-const props = withDefaults(defineProps<Props>(), {
-  menu: () => [],
+    const onMenuShow = () => {
+      emit("menushow")
+    }
+
+    const onMenuHide = () => {
+      emit("menuhide")
+    }
+
+    return {
+      hasIcon,
+      defaultColor,
+      onTapItem,
+      onMenuShow,
+      onMenuHide,
+    }
+  },
 })
-const emits = defineEmits<{
-  (event: "tapitem", item: MenuItem, index: number): void
-  (event: "menushow"): void
-  (event: "menuhide"): void
-}>()
-
-const hasIcon = computed(() => props.menu.some(v => !!v.iconName))
-const defaultColor = "var(--main-normal)"
-
-const onTapItem = (item: MenuItem, index: number, hide: () => void) => {
-  console.log("onTapItem.........")
-  emits("tapitem", item, index)
-  hide()
-}
-
-const onMenuShow = () => {
-  emits("menushow")
-}
-
-const onMenuHide = () => {
-  emits("menuhide")
-}
-
 
 </script>
 <template>
