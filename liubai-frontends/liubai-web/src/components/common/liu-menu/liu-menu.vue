@@ -98,12 +98,12 @@ export default defineComponent({
   min-width: 200px;
   max-width: 90vw;
   position: relative;
-  padding: 8px 8px 4px;
+  padding: 8px 4px 4px;
 
   .menu-item {
     display: flex;
     flex: 1;
-    padding: 4px;
+    padding: 4px 8px;
     margin-bottom: 4px;
     border: 0;
     border-radius: 4px;
@@ -125,11 +125,11 @@ export default defineComponent({
     }
 
     &:hover::before {
-      opacity: .14;
+      opacity: .07;
     }
 
     &:active::before {
-      opacity: .17;
+      opacity: .11;
     }
 
     .mi-icon-box {
