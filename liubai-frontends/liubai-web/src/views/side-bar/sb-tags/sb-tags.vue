@@ -10,6 +10,8 @@ import { useStMenu } from "./tools/useStMenu";
 const {
   isPC,
   menuList,
+  menuList2,
+  onTapMenuItem,
 } = useStMenu()
 
 defineProps({
@@ -84,7 +86,10 @@ const {
             </div>
 
             <!-- ... -->
-            <LiuMenu :menu="menuList" min-width-str="100px">
+            <LiuMenu :menu="stat.level < 3 ? menuList2 : menuList" 
+              min-width-str="100px"
+              @tapitem="(item2, index2) => onTapMenuItem(item2, index2, node, stat)"
+            >
               <div class="liu-hover tag-more"
                 :class="{ 'tag-more_always': !isPC }"
               >

@@ -129,6 +129,7 @@
   },
   "tag_related": {
     "edit": "編輯",
-    "delete": "删除"
+    "delete": "删除",
+    "create": "新建"
   }
 }

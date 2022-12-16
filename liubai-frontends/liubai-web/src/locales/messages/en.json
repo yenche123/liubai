@@ -129,6 +129,7 @@
   },
   "tag_related": {
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "create": "New"
   }
 }

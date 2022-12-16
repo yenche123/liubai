@@ -10,7 +10,7 @@ import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStor
 import time from "../../../../utils/basic/time";
 import { useRouteAndLiuRouter } from "../../../../routes/liu-router";
 
-interface Stat<T> {
+export interface Stat<T> {
   data: T
   open: boolean // 是否展开
   parent: Stat<T> | null // 父级节点stat
