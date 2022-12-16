@@ -5,7 +5,12 @@ import { Draggable } from "@he-tree/vue";
 import { useSbTags } from "./tools/useSbTags";
 import { RouterLink } from 'vue-router'
 import LiuMenu from "../../../components/common/liu-menu/liu-menu.vue"
-import { menuList } from "./tools/menuList"
+import { useStMenu } from "./tools/useStMenu";
+
+const {
+  isPC,
+  menuList,
+} = useStMenu()
 
 defineProps({
   show: {
@@ -80,7 +85,9 @@ const {
 
             <!-- ... -->
             <LiuMenu :menu="menuList" min-width-str="100px">
-              <div class="liu-hover tag-more">
+              <div class="liu-hover tag-more"
+                :class="{ 'tag-more_always': !isPC }"
+              >
                 <svg-icon 
                   class="tag-more-icon" 
                   name="more" 
@@ -234,6 +241,10 @@ const {
 }
 
 .tag-container:hover .tag-more {
+  opacity: 1;
+}
+
+.tag-more_always {
   opacity: 1;
 }
 
