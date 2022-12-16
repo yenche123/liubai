@@ -1,5 +1,5 @@
 export interface MenuItem {
-  text: string
+  text_key: string
   iconName?: string
   color?: string
   borderBottom?: boolean

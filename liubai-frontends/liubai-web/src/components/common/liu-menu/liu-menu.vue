@@ -1,6 +1,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { MenuItem } from "./tools/types"
 // 【待完善项】因为是 Menu 选单，应该可以用 Keyboard 的上下键来选择
 
@@ -19,6 +20,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const hasIcon = computed(() => props.menu.some(v => !!v.iconName))
     const defaultColor = "var(--main-normal)"
+    const { t } = useI18n()
 
     const onTapItem = (item: MenuItem, index: number, hide: () => void) => {
       console.log("onTapItem.........")
@@ -35,6 +37,7 @@ export default defineComponent({
     }
 
     return {
+      t,
       hasIcon,
       defaultColor,
       onTapItem,
@@ -58,7 +61,7 @@ export default defineComponent({
     <template #popper="{ hide }">
       <div class="menu-container">
 
-        <template v-for="(item, index) in menu" :key="item.text">
+        <template v-for="(item, index) in menu" :key="item.text_key">
         
           <div class="menu-item"
             @click="onTapItem(item, index, hide)"
@@ -74,7 +77,7 @@ export default defineComponent({
             <div class="mi-title"
               :style="{ 'color': item.color ? item.color : defaultColor }"
             >
-              <span>{{ item.text }}</span>
+              <span>{{ t(item.text_key) }}</span>
             </div>
 
           </div>

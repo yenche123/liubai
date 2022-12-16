@@ -3,7 +3,6 @@ import cui from "../../../custom-ui";
 import type { LiuRemindMe, LiuRemindEarly, LiuRemindLater } from "../../../../types/types-atom"
 import liuUtil from "../../../../utils/liu-util";
 import type { MenuItem } from "../../../common/liu-menu/tools/types"
-import { useI18n } from "vue-i18n";
 import en from "../../../../locales/messages/en.json"
 import { REMIND_LATER, REMIND_EARLY } from "../../../../config/atom"
 import type { SwitchChangeEmitOpt } from "../../../common/liu-switch/types"
@@ -11,7 +10,6 @@ import type { MaData, MoreAreaEmits, MaContext } from "./types-cma"
 
 export function useMoreArea(emits: MoreAreaEmits) {
   const selectFileEl = ref<HTMLInputElement | null>(null)
-  const { t } = useI18n()
 
   // 仅存储 "UI" 信息即可，逻辑原子化信息会回传至 custom-editor
   const data = reactive<MaData>({
@@ -29,12 +27,11 @@ export function useMoreArea(emits: MoreAreaEmits) {
     const hasWhen = data.whenStr.length > 0
     
     // 有几个数组，请查阅 en.json 的 remind_later / remind_early
-    
     const text_key = hasWhen ? "remind_early" : "remind_later"
     const length = en.date_related[text_key].length
 
     for(let i=0; i<length; i++) {
-      list.push({ text: t(`date_related.${text_key}[${i}]`) })
+      list.push({ text_key: `date_related.${text_key}[${i}]` })
     }
     return list
   })
