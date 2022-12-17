@@ -26,7 +26,7 @@ const errCode = ref(0)      // 错误提示. 1: 不得输入奇怪的字符; 2: 
 const newTag = ref("")      // 可以被创建的标签，注意该文字不能回传到业务侧，因为它的结构为 "xxx / yyy / zzz"
 const list = ref<TagItem[]>([])
 const selectedIndex = ref(-1)        // 被选择的 index
-const mode = ref<HteMode>("rename")
+const mode = ref<HteMode>("edit")
 
 let _resolve: HteResolver | undefined
 
@@ -85,7 +85,7 @@ function onInput() {
   }
   errCode.value = 0
 
-  if(mode.value === "rename") return
+  if(mode.value === "edit") return
 
   val = formatTagText(val)
   const res2 = searchLocal(val)
@@ -131,7 +131,7 @@ function toEnter() {
   if(inputEl.value) inputEl.value.blur()
 
   const m = mode.value
-  if(m === "rename") {
+  if(m === "edit") {
     toRename()
   }
   else if(m === "search") {
@@ -188,7 +188,7 @@ function checkState() {
     return false
   }
   
-  if(m === "rename") {
+  if(m === "edit") {
     const inputValFormatted = formatTagText(inputVal.value)
     if(!inputValFormatted) {
       return false

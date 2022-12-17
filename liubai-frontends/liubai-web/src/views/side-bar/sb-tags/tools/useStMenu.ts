@@ -1,6 +1,9 @@
 import { MenuItem } from "../../../../components/common/liu-menu/tools/types"
+import cui from "../../../../components/custom-ui"
+import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore"
 import { TagView } from "../../../../types/types-atom"
 import liuApi from "../../../../utils/liu-api"
+import { addATag, tagIdsToShows } from "../../../../utils/system/workspace"
 import type { Stat } from "./useSbTags"
 
 export function useStMenu() {
@@ -61,13 +64,35 @@ function initMenu(isPC: boolean) {
   return { menuList, menuList2 }
 }
 
-function handle_create(
+async function handle_create(
   node: TagView,
   stat: Stat<TagView>
 ) {
   if(stat.level >= 3) return
-  console.log("去创建....")
+  const tagId = node.tagId
+  const { tagShows } = tagIdsToShows([tagId])
+  if(tagShows.length < 1) return
+  const { text } = tagShows[0]
+  let tmp = text + " / "
+  const res = await cui.showHashTagEditor({
+    text: tmp,
+    mode: "edit",
+  })
 
+  if(!res.confirm || res.tagId || !res.text) return
+
+  const param = {
+    text: res.text,
+    icon: res.icon,
+  }
+  const res2 = await addATag(param)
+
+  if(!res2.id) {
+    console.log("创建标签失败.......")
+    return
+  }
+  const gStore = useGlobalStateStore()
+  gStore.addTagChangedNum()
 }
 
 function handle_edit(

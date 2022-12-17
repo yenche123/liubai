@@ -1,10 +1,10 @@
 
 
-export type HteMode = "search" | "rename"
+export type HteMode = "search" | "edit"
 
 export interface HashTagEditorParam {
   text?: string
-  mode: HteMode          // 前者不可编辑 emoji，后者则可以
+  mode: HteMode          // search 不可编辑 emoji，edit 时则可以
   icon?: string                     // encodeURIComponent()
 }
 
