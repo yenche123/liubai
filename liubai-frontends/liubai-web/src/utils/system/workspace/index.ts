@@ -6,9 +6,19 @@ import liuUtil from "../../liu-util";
 import { 
   findIndexInThisTagList,
   findTagShowById,
+  findTagViewById,
+  editTagToTagList,
   addTagToTagList,
   findParentOfTag,
+  getMergedChildTree,
+  generateNewTreeForMerge,
 } from "./tools/tag-util"
+import type {
+  AddATagParam,
+  RenameTagParam,
+  AddATagRes,
+  BaseTagRes,
+} from "./tools/types"
 
 // 返回当前工作区的 tags
 export function getCurrentSpaceTagList(): TagView[] {
@@ -94,16 +104,7 @@ export function tagIdsToShows(ids: string[]) {
 }
 
 
-interface AddATagParam {
-  text: string          // 必须是已 formatTagText() 过的文字
-  icon?: string
-}
 
-interface AddATagRes {
-  id?: string
-  isOk: boolean
-  errMsg?: string
-}
 
 /**
  * 将一个标签添加到 tagList 里
@@ -118,6 +119,61 @@ export async function addATag(opt: AddATagParam): Promise<AddATagRes> {
   const res = await store.setTagList(data.tagList)
   return { isOk: true, id: data.tagId }
 }
+
+
+/**
+ * 修改一个标签的 text 或 icon
+ */
+export async function editATag(opt: RenameTagParam): Promise<BaseTagRes> {
+  const store = useWorkspaceStore()
+  const workspace = store.currentSpace
+  if(!workspace) return { isOk: false, errMsg: "no workspace locally" }
+  let tagList = workspace.tagList ?? []
+  const tmpList: TagView[] = JSON.parse(JSON.stringify(tagList))
+  const res = editTagToTagList(opt, tmpList)
+  console.log("editATag res: ")
+  console.log(res)
+  console.log(" ")
+  if(!res) return { isOk: false, errMsg: "cannot find the tag by tagId" }
+  console.log("看一下全新的 tagList: ")
+  console.log(tmpList)
+  console.log(" ")
+  const res2 = await store.setTagList(tmpList)
+  return { isOk: true }
+}
+
+export async function mergeTag(
+  fromTagView: TagView, 
+  fromId: string, 
+  toId: string
+): Promise<BaseTagRes> {
+  const store = useWorkspaceStore()
+  const workspace = store.currentSpace
+  if(!workspace) return { isOk: false, errMsg: "no workspace locally" }
+  let tagList = workspace.tagList ?? []
+  const toTagView = findTagViewById(toId, tagList)
+  if(!toTagView) return { isOk: false, errMsg: "no toTagView" }
+
+  const toChild: TagView = JSON.parse(JSON.stringify(toTagView))
+  const res = getMergedChildTree(fromTagView, toChild)
+  console.log("mergeTag res: ")
+  console.log(res)
+  console.log(" ")
+
+  const res2 = generateNewTreeForMerge(tagList, res.newChild, fromId)
+  console.log("mergeTag res2: ")
+  console.log(res2)
+  console.log(" ")
+  
+  const res3 = store.setTagList(res2)
+
+
+  // 待完善，去更新 contents 和 drafts
+
+
+  return { isOk: true }
+}
+
 
 /**
  * 查找一群 tagIds 的 parents Id，并包含自己本身

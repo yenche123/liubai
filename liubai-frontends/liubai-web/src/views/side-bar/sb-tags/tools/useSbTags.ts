@@ -29,8 +29,6 @@ interface SbtEmits {
   (event: "aftertap"): void
 }
 
-let oldTagNodes: TagView[] = []
-
 export function useSbTags(emits: SbtEmits) {
   const currentTagId = ref("")
   const wStore = useWorkspaceStore()
@@ -45,20 +43,21 @@ export function useSbTags(emits: SbtEmits) {
 
   const treeEl = ref<typeof Draggable | null>(null)
   const tagNodes = ref<TagView[]>([])
+  const oldTagNodes = ref<TagView[]>([])
   const gStore = useGlobalStateStore()
-  let lastTagChangeStamp = time.getTime()
+  const lastTagChangeStamp = ref(time.getTime())
   const { tagChangedNum } = storeToRefs(gStore)
 
-  initTagNodes(tagNodes, workspace)
+  initTagNodes(tagNodes, oldTagNodes, workspace)
 
   // 监听 tag 从外部发生变化
   watch(tagChangedNum, (newV) => {
-    const diff = time.getTime() - lastTagChangeStamp
+    const diff = time.getTime() - lastTagChangeStamp.value
     if(diff < 500) {
       console.log("tagChangedNum 才刚内部发生变化 忽略")
       return
     }
-    getLatestSpaceTag(tagNodes)
+    getLatestSpaceTag(tagNodes, oldTagNodes)
   })
 
   // 监听 route 变化
@@ -80,9 +79,9 @@ export function useSbTags(emits: SbtEmits) {
       tagNodes.value = res0.tree
     }
 
-    const res = await tagMovedInTree(tagNodes.value, oldTagNodes)
+    const res = await tagMovedInTree(tagNodes.value, oldTagNodes.value)
     if(!res.moved) {
-      tagNodes.value = oldTagNodes
+      tagNodes.value = oldTagNodes.value
       return
     }
 
@@ -91,10 +90,10 @@ export function useSbTags(emits: SbtEmits) {
       tagNodes.value = res.newNewTree
     }
     
-    oldTagNodes = JSON.parse(JSON.stringify(tagNodes.value)) as TagView[]
+    oldTagNodes.value = JSON.parse(JSON.stringify(tagNodes.value)) as TagView[]
 
     // 通知全局 tag 发生了变化
-    lastTagChangeStamp = time.getTime()
+    lastTagChangeStamp.value = time.getTime()
     gStore.addTagChangedNum()
   }
 
@@ -119,6 +118,8 @@ export function useSbTags(emits: SbtEmits) {
   return { 
     currentTagId,
     tagNodes, 
+    oldTagNodes,
+    lastTagChangeStamp,
     treeEl, 
     onTreeChange, 
     onTapTagItem, 
@@ -128,20 +129,24 @@ export function useSbTags(emits: SbtEmits) {
   }
 }
 
-function getLatestSpaceTag(tagNodes: Ref<TagView[]>) {
+function getLatestSpaceTag(
+  tagNodes: Ref<TagView[]>,
+  oldTagNodes: Ref<TagView[]>,
+) {
   let list = getCurrentSpaceTagList()
   const { tree } = filterTag(list)
   tagNodes.value = tree
-  oldTagNodes = JSON.parse(JSON.stringify(list)) as TagView[]
+  oldTagNodes.value = JSON.parse(JSON.stringify(list)) as TagView[]
 }
 
 function initTagNodes(
   tagNodes: Ref<TagView[]>,
+  oldTagNodes: Ref<TagView[]>,
   workspace: Ref<string>,
 ) {
   const _get = () => {
     if(!workspace.value) return
-    getLatestSpaceTag(tagNodes)
+    getLatestSpaceTag(tagNodes, oldTagNodes)
   }
 
   watch(workspace, (newV) => {

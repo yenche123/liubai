@@ -3,13 +3,39 @@ import cui from "../../../../components/custom-ui"
 import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore"
 import { TagView } from "../../../../types/types-atom"
 import liuApi from "../../../../utils/liu-api"
-import { addATag, tagIdsToShows } from "../../../../utils/system/workspace"
+import { addATag, tagIdsToShows, editATag, mergeTag } from "../../../../utils/system/workspace"
 import type { Stat } from "./useSbTags"
+import type { Ref } from "vue"
+import { i18n } from "../../../../locales"
 
-export function useStMenu() {
+export interface StmCtx {
+  tagNodes: Ref<TagView[]>
+  oldTagNodes: Ref<TagView[]>
+  lastTagChangeStamp: Ref<number>
+}
+
+export function useStMenu(ctx: StmCtx) {
   const cha = liuApi.getCharacteristic() 
   const isPC = cha.isPC
   const { menuList, menuList2 } = initMenu(isPC)
+
+  const onTapMenuItem = (
+    item: MenuItem, 
+    index: number, 
+    node: TagView, 
+    stat: Stat<TagView>
+  ) => {
+    const { text_key } = item
+    if(text_key === "tag_related.create") {
+      handle_create(node, stat)
+    }
+    else if(text_key === "tag_related.edit") {
+      handle_edit(node, stat, ctx)
+    }
+    else if(text_key === "tag_related.delete") {
+      handle_delete(node, stat)
+    }
+  }
 
   return {
     isPC,
@@ -18,26 +44,6 @@ export function useStMenu() {
     onTapMenuItem,
   }
 }
-
-
-function onTapMenuItem(
-  item: MenuItem, 
-  index: number, 
-  node: TagView, 
-  stat: Stat<TagView>
-) {
-  const { text_key } = item
-  if(text_key === "tag_related.create") {
-    handle_create(node, stat)
-  }
-  else if(text_key === "tag_related.edit") {
-    handle_edit(node, stat)
-  }
-  else if(text_key === "tag_related.delete") {
-    handle_delete(node, stat)
-  }
-}
-
 
 function initMenu(isPC: boolean) {
   const menuList: MenuItem[] = [
@@ -95,12 +101,56 @@ async function handle_create(
   gStore.addTagChangedNum()
 }
 
-function handle_edit(
+async function handle_edit(
   node: TagView,
-  stat: Stat<TagView>
+  stat: Stat<TagView>,
+  ctx: StmCtx,
 ) {
   console.log("去编辑....")
+  const oldTagId = node.tagId
+  const { tagShows } = tagIdsToShows([oldTagId])
+  if(tagShows.length < 1) return
+  const tShow = tagShows[0]
+  const oldText = tShow.text
+  const oldEmoji = tShow.emoji
+  const res = await cui.showHashTagEditor({
+    text: oldText,
+    mode: "edit",
+    icon: oldEmoji ? encodeURIComponent(oldEmoji) : undefined,
+  })
 
+  console.log("showHashTagEditor res: ")
+  console.log(res)
+
+  if(!res.confirm || !res.text) return
+  const newTagId = res.tagId
+  if(newTagId === oldTagId) return
+  
+  const gStore = useGlobalStateStore()
+  const { t } = i18n.global
+
+  // 去编辑
+  // if(!newTagId) {
+  //   const param = {
+  //     id: oldTagId,
+  //     text: res.text,
+  //     icon: res.icon,
+  //   }
+  //   const res2 = await editATag(param)
+  //   if(!res2.isOk) return
+  //   gStore.addTagChangedNum()
+  //   return
+  // }
+
+  // 去合并
+  // const res2 = await cui.showModal({
+  //   title: t("tip.tag_merge_title"),
+  //   content: t("tip.tag_merge_content", { tag1: oldText, tag2: res.text })
+  // })
+  // if(!res2.confirm) return
+  // const res3 = await mergeTag(node, oldTagId, newTagId)
+  // if(!res3.isOk) return
+  // gStore.addTagChangedNum()
 }
 
 function handle_delete(

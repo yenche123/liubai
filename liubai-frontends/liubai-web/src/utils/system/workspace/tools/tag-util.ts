@@ -4,7 +4,7 @@ import ider from "../../../basic/ider";
 import time from "../../../basic/time";
 import valTool from "../../../basic/val-tool";
 import liuUtil from "../../../liu-util";
-import type { WhichTagChange } from "./types";
+import type { WhichTagChange, RenameTagParam } from "./types";
 
 /**
  * 寻找某个片段文字（忽略大小写）是否在该级的 tagViews 中存在
@@ -51,6 +51,45 @@ export function findTagShowById(
   }
 
   return null
+}
+
+export function findTagViewById(
+  id: string, 
+  tagList: TagView[],
+): TagView | null {
+  for(let i=0; i<tagList.length; i++) {
+    const v = tagList[i]
+    if(v.oState === "REMOVED") continue
+    if(v.tagId === id) {
+      return v
+    }
+    if(v.children) {
+      const res = findTagViewById(id, v.children)
+      if(res) return res
+    }
+  }
+
+  return null
+}
+
+export function editTagToTagList(
+  opt: RenameTagParam,
+  tagList: TagView[]
+): boolean {
+  for(let i=0; i<tagList.length; i++) {
+    const v = tagList[i]
+    if(v.tagId === opt.id) {
+      v.text = opt.text
+      v.icon = opt.icon
+      return true
+    }
+    if(v.children) {
+      const res = editTagToTagList(opt, v.children)
+      if(res) return res
+    }
+  }
+
+  return false
 }
 
 export function addTagToTagList(
@@ -260,7 +299,7 @@ function getChildrenAndMeIds(tagView: TagView) {
 /** 给定两个 text 已相同的 tagView，做一个合并 
  * 得出新的 newChild / from_ids / to_ids
 */
-function getMergedChildTree(
+export function getMergedChildTree(
   fromChild: TagView, 
   toChild: TagView
 ) {
@@ -318,7 +357,7 @@ function getMergedChildTree(
  * 移除某个 tag，直接从节点上 delete 掉，而不是修改 oState
  * 再把某个节点替换成 newChild
  */
-function generateNewTreeForMerge(
+export function generateNewTreeForMerge(
   originTree: TagView[],
   newChild: TagView,
   removedId: string,

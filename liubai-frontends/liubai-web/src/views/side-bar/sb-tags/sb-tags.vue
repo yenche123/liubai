@@ -7,13 +7,6 @@ import { RouterLink } from 'vue-router'
 import LiuMenu from "../../../components/common/liu-menu/liu-menu.vue"
 import { useStMenu } from "./tools/useStMenu";
 
-const {
-  isPC,
-  menuList,
-  menuList2,
-  onTapMenuItem,
-} = useStMenu()
-
 defineProps({
   show: {
     type: Boolean,
@@ -30,6 +23,8 @@ const naviHeightPx = `${cfg.navi_height}px`
 
 const {
   tagNodes,
+  oldTagNodes,
+  lastTagChangeStamp,
   treeEl,
   onTreeChange,
   onTapTagItem,
@@ -38,6 +33,19 @@ const {
   onNaviBack,
   currentTagId,
 } = useSbTags(emits)
+
+const ctx = {
+  tagNodes,
+  oldTagNodes,
+  lastTagChangeStamp
+}
+
+const {
+  isPC,
+  menuList,
+  menuList2,
+  onTapMenuItem,
+} = useStMenu(ctx)
 
 
 </script>
