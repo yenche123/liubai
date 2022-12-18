@@ -333,6 +333,10 @@ export function getMergedChildTree(
     from_children: TagView[],
     to_children: TagView[],
   ) => {
+
+    // 先过滤 to_children 里，可能有 fromChild
+    to_children = to_children.filter(v => v.tagId !== fromChild.tagId)
+
     let to_texts = to_children.map(v => {
       return v.text.toLowerCase()
     })
@@ -370,6 +374,8 @@ export function getMergedChildTree(
     let tmp_children = newChild.children ?? []
     newChild.children = _handle(fromChild.children, tmp_children)
   }
+  
+  deleteATagView([newChild], fromChild.tagId)
 
   return { newChild, from_ids, to_ids }
 }

@@ -1,4 +1,3 @@
-import { toRaw } from "vue";
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
 import type { TagView } from "../../../types/types-atom";
 import type { TagShow } from "../../../types/types-content";
@@ -7,7 +6,6 @@ import {
   findIndexInThisTagList,
   findTagShowById,
   findTagViewById,
-  getTagViewLevel,
   deleteATagView,
   addTagToTagList,
   findParentOfTag,
@@ -20,8 +18,15 @@ import type {
   RenameTagParam,
   AddATagRes,
   BaseTagRes,
+  WhichTagChange,
 } from "./tools/types"
-import { updateContentForTagRename } from "./tools/content-util"
+import { 
+  updateContentForTagAcross, 
+  updateContentForTagRename 
+} from "./tools/content-util"
+import {
+  updateDraftForTagAcross
+} from "./tools/draft-util"
 
 // 返回当前工作区的 tags
 export function getCurrentSpaceTagList(): TagView[] {
@@ -131,12 +136,6 @@ export async function editATag(opt: RenameTagParam): Promise<BaseTagRes> {
   const texts = opt.text.split("/").map(v => v.trim())
   const children = getChildrenAndMeIds(opt.originTag)
 
-  // 检查层级是否大于 3
-  const level = texts.length - 1 + getTagViewLevel([opt.originTag])
-  if(level > 3) {
-    return { isOk: false, errMsg: "level has been more than 3", errCode: "01" }
-  }
-
   // 获取 tagList
   const tagList = getCurrentSpaceTagList()
   const oldList = JSON.parse(JSON.stringify(tagList)) as TagView[]
@@ -174,23 +173,34 @@ export async function mergeTag(
   const toTagView = findTagViewById(toId, tagList)
   if(!toTagView) return { isOk: false, errMsg: "no toTagView" }
 
+  // 1. 先生成 fromTagView 的所有 tagId
+  const children = getChildrenAndMeIds(fromTagView)
+
+  // 2. 生成新的 child
   const toChild: TagView = JSON.parse(JSON.stringify(toTagView))
   const res = getMergedChildTree(fromTagView, toChild)
-  console.log("mergeTag res: ")
-  console.log(res)
-  console.log(" ")
+  // console.log("mergeTag res: ")
+  // console.log(res)
+  // console.log(" ")
 
+  // 3. 把新的 child 加到 tree 中，并删掉旧的
   const res2 = generateNewTreeForMerge(tagList, res.newChild, fromId)
-  console.log("mergeTag res2: ")
-  console.log(res2)
-  console.log(" ")
+  // console.log("mergeTag res2: ")
+  // console.log(res2)
+  // console.log(" ")
   
   const res3 = await store.setTagList(res2)
 
-
   // 待完善，去更新 contents 和 drafts
-
-
+  const param: WhichTagChange = {
+    children,
+    from_ids: res.from_ids,
+    to_ids: res.to_ids,
+  }
+  const res4 = await updateContentForTagAcross(param)
+  if(!res4) return { isOk: false }
+  const res5 = await updateDraftForTagAcross(param)
+  if(!res5) return { isOk: false }
 
   return { isOk: true }
 }

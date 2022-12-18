@@ -8,6 +8,7 @@ import type { Stat } from "./useSbTags"
 import type { Ref } from "vue"
 import { i18n } from "../../../../locales"
 import { RenameTagParam } from "../../../../utils/system/workspace/tools/types"
+import { getTagViewLevel } from "../../../../utils/system/workspace/tools/tag-util"
 
 type T_i18n = typeof i18n.global.t
 
@@ -109,7 +110,6 @@ async function handle_edit(
   stat: Stat<TagView>,
   ctx: StmCtx,
 ) {
-  console.log("去编辑....")
   const oldTagId = node.tagId
   const { tagShows } = tagIdsToShows([oldTagId])
   if(tagShows.length < 1) return
@@ -122,9 +122,6 @@ async function handle_edit(
     icon: oldEmoji ? encodeURIComponent(oldEmoji) : undefined,
   })
 
-  console.log("showHashTagEditor res: ")
-  console.log(res)
-
   if(!res.confirm || !res.text) return
   const newTagId = res.tagId
   if(newTagId === oldTagId) {
@@ -134,6 +131,14 @@ async function handle_edit(
   
   const gStore = useGlobalStateStore()
   const { t } = i18n.global
+
+  // 检查层级是否已大于 3
+  const texts = res.text.split("/").map(v => v.trim())
+  const level = texts.length - 1 + getTagViewLevel([node])
+  if(level > 3) {
+    _showErr(t, "01")
+    return
+  }
 
   // 去编辑
   if(!newTagId) {
@@ -155,14 +160,15 @@ async function handle_edit(
   }
 
   // 去合并
+  const newText = res.text.replace("/", " / ")
   const res2 = await cui.showModal({
     title: t("tip.tag_merge_title"),
-    content: t("tip.tag_merge_content", { tag1: oldText, tag2: res.text })
+    content: t("tip.tag_merge_content", { tag1: oldText, tag2: newText })
   })
   if(!res2.confirm) return
-  // const res3 = await mergeTag(node, oldTagId, newTagId)
-  // if(!res3.isOk) return
-  // gStore.addTagChangedNum()
+  const res3 = await mergeTag(node, oldTagId, newTagId)
+  if(!res3.isOk) return
+  gStore.addTagChangedNum()
 }
 
 function _showErr(
