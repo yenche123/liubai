@@ -87,13 +87,14 @@ const {
                   name="arrow-right" 
                   color="var(--main-normal)"
                 ></SvgIcon>
+                <div v-else class="tag-arrow-dot"></div>
               </div>
               <div class="tag-title">
                 <span>{{ node.text }}</span>
               </div>
             </div>
 
-            <!-- ... -->
+            <!-- 更多 -->
             <LiuMenu :menu="stat.level < 3 ? menuList2 : menuList" 
               min-width-str="100px"
               @tapitem="(item2, index2) => onTapMenuItem(item2, index2, node, stat)"
@@ -191,8 +192,8 @@ const {
     .tag-arrow {
       width: 32px;
       height: 32px;
-      margin-left: 4px;
-      margin-right: 4px;
+      margin-inline-start: 4px;
+      margin-inline-end: 4px;
       border-radius: 8px;
       overflow: hidden;
       display: flex;
@@ -207,6 +208,14 @@ const {
       .tag-arrow-icon_open {
         transform: rotate(90deg);
       }
+
+      .tag-arrow-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 10px;
+        background-color: var(--main-normal);
+      }
+
     }
 
     .tag-arrow_unhover {
