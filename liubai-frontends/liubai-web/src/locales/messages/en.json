@@ -130,6 +130,7 @@
   "tag_related": {
     "edit": "Edit",
     "delete": "Delete",
-    "create": "New"
+    "create": "New",
+    "level_limit": "The maxmim of a tag level is {level}"
   }
 }

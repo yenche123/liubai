@@ -28,5 +28,6 @@ export interface RenameTagParam {
   id: string
   text: string
   icon?: string
+  originTag: TagView
 }
 

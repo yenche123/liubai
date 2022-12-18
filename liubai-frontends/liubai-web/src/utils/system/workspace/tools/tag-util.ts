@@ -4,7 +4,7 @@ import ider from "../../../basic/ider";
 import time from "../../../basic/time";
 import valTool from "../../../basic/val-tool";
 import liuUtil from "../../../liu-util";
-import type { WhichTagChange, RenameTagParam } from "./types";
+import type { WhichTagChange } from "./types";
 
 /**
  * 寻找某个片段文字（忽略大小写）是否在该级的 tagViews 中存在
@@ -72,30 +72,36 @@ export function findTagViewById(
   return null
 }
 
-export function editTagToTagList(
-  opt: RenameTagParam,
-  tagList: TagView[]
-): boolean {
-  for(let i=0; i<tagList.length; i++) {
-    const v = tagList[i]
-    if(v.tagId === opt.id) {
-      v.text = opt.text
-      v.icon = opt.icon
-      return true
-    }
-    if(v.children) {
-      const res = editTagToTagList(opt, v.children)
-      if(res) return res
+// 返回有多少层，从 1 开始
+export function getTagViewLevel(
+  tagViews: TagView[],
+  current: number = 1,
+): number {
+  let bigOne = current
+  for(let i=0; i<tagViews.length; i++) {
+    const v = tagViews[i]
+    if(v.oState === "REMOVED") continue
+    if(v.children?.length) {
+      const tmp = getTagViewLevel(v.children, current + 1)
+      if(tmp > bigOne) bigOne = tmp
     }
   }
-
-  return false
+  return bigOne
 }
 
+/**
+ * 新建标签至 tagList 里
+ * @param texts 
+ * @param tagList 
+ * @param icon 
+ * @param originTag 只在 "编辑" 场景时有该值，表示原 tag 的信息
+ * @returns 
+ */
 export function addTagToTagList(
   texts: string[],
   tagList: TagView[],
   icon?: string,
+  originTag?: TagView,
 ) {
 
   let tagId = ""
@@ -112,16 +118,27 @@ export function addTagToTagList(
     const text = v.text.toLowerCase()
     if(text !== key_lower) continue
     hasFind = true
-    tagId = v.tagId
     if(v.oState === "REMOVED") {
       v.oState = "OK"
       v.updatedStamp = now
     }
     if(texts.length > 0) {
       let tmpList = v.children ?? []
-      const data = addTagToTagList(texts, tmpList, icon)
+      const data = addTagToTagList(texts, tmpList, icon, originTag)
       v.children = data.tagList
       tagId = data.tagId
+    }
+    else {
+      v.icon = icon
+      if(originTag) {
+        v.tagId = originTag.tagId
+        v.children = originTag.children
+        v.updatedStamp = now
+        if(v.createdStamp > originTag.createdStamp) {
+          v.createdStamp = originTag.createdStamp
+        }
+      }
+      tagId = v.tagId
     }
     break
   }
@@ -136,11 +153,16 @@ export function addTagToTagList(
       updatedStamp: now,
     }
     if(texts.length > 0) {
-      const data = addTagToTagList(texts, [], icon)
+      const data = addTagToTagList(texts, [], icon, originTag)
       obj.children = data.tagList
       tagId = data.tagId
     }
     else {
+      if(originTag) {
+        obj.tagId = originTag.tagId
+        obj.createdStamp = originTag.createdStamp
+        obj.children = originTag.children
+      }
       tagId = obj.tagId
     }
     tagList.splice(0, 0, obj)
@@ -296,7 +318,7 @@ function getChildrenAndMeIds(tagView: TagView) {
   return list
 }
 
-/** 给定两个 text 已相同的 tagView，做一个合并 
+/** 对两个 tagView 做一个合并，以 toChild 为基准
  * 得出新的 newChild / from_ids / to_ids
 */
 export function getMergedChildTree(
@@ -384,4 +406,29 @@ export function generateNewTreeForMerge(
   _run(newTree)
 
   return newTree
+}
+
+// 整个从 tree 里砍掉，而不是修改 oState 而已
+export function deleteATagView(
+  tagViews: TagView[],
+  tagId: string
+): TagView[] | null {
+  for(let i=0; i<tagViews.length; i++) {
+    const v = tagViews[i]
+    if(v.tagId === tagId) {
+      tagViews.splice(i, 1)
+      return tagViews
+    }
+    if(v.children?.length) {
+      const tmp = deleteATagView(v.children, tagId)
+      if(tmp) {
+        if(tmp.length < 1) {
+          delete v.children
+        }
+        return tagViews
+      }
+    }
+  }
+  
+  return null
 }

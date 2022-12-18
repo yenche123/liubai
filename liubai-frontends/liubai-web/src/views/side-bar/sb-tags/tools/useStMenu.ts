@@ -124,7 +124,10 @@ async function handle_edit(
 
   if(!res.confirm || !res.text) return
   const newTagId = res.tagId
-  if(newTagId === oldTagId) return
+  if(newTagId === oldTagId) {
+    // 待完善，检查有没有改了 emoji
+    return
+  }
   
   const gStore = useGlobalStateStore()
   const { t } = i18n.global

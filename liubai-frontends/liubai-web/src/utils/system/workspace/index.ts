@@ -7,7 +7,8 @@ import {
   findIndexInThisTagList,
   findTagShowById,
   findTagViewById,
-  editTagToTagList,
+  getTagViewLevel,
+  deleteATagView,
   addTagToTagList,
   findParentOfTag,
   getMergedChildTree,
@@ -124,22 +125,36 @@ export async function addATag(opt: AddATagParam): Promise<AddATagRes> {
 /**
  * 修改一个标签的 text 或 icon
  */
-export async function editATag(opt: RenameTagParam): Promise<BaseTagRes> {
-  const store = useWorkspaceStore()
-  const workspace = store.currentSpace
-  if(!workspace) return { isOk: false, errMsg: "no workspace locally" }
-  let tagList = workspace.tagList ?? []
-  const tmpList: TagView[] = JSON.parse(JSON.stringify(tagList))
-  const res = editTagToTagList(opt, tmpList)
-  console.log("editATag res: ")
-  console.log(res)
-  console.log(" ")
-  if(!res) return { isOk: false, errMsg: "cannot find the tag by tagId" }
-  console.log("看一下全新的 tagList: ")
-  console.log(tmpList)
-  console.log(" ")
-  const res2 = await store.setTagList(tmpList)
-  return { isOk: true }
+export async function editATag(opt: RenameTagParam) {
+  const texts = opt.text.split("/").map(v => v.trim())
+
+  // 检查层级是否大于 3
+  const level = texts.length - 1 + getTagViewLevel([opt.originTag])
+  if(level > 3) {
+    return { isOk: false, errMsg: "level has been more than 3" }
+  }
+
+  // 获取 tagList
+  const tagList = getCurrentSpaceTagList()
+  const oldList = JSON.parse(JSON.stringify(tagList)) as TagView[]
+
+  // 先去删除
+  deleteATagView(oldList, opt.id)
+
+  // 再去重建
+  const { tagList: tagList2 } = addTagToTagList(texts, oldList, opt.icon, opt.originTag)
+
+  // 修改 workspaceStore
+  const newList = JSON.parse(JSON.stringify(tagList2)) as TagView[]
+  console.log("去修改 workspaceStore:::")
+  console.log(newList)
+  const wStore = useWorkspaceStore()
+  const res = await wStore.setTagList(newList)
+
+  // 更新 contents
+
+  // drafts 不用更新 因为 draft 不涉及 tagSearched
+
 }
 
 export async function mergeTag(
@@ -165,10 +180,11 @@ export async function mergeTag(
   console.log(res2)
   console.log(" ")
   
-  const res3 = store.setTagList(res2)
+  const res3 = await store.setTagList(res2)
 
 
   // 待完善，去更新 contents 和 drafts
+
 
 
   return { isOk: true }

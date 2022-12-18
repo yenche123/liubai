@@ -130,6 +130,7 @@
   "tag_related": {
     "edit": "编辑",
     "delete": "删除",
-    "create": "新建"
+    "create": "新建",
+    "level_limit": "标签层数最多支持 {level} 级"
   }
 }

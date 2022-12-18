@@ -2,6 +2,8 @@ import { db } from "../../../db";
 import type { WhichTagChange } from "./types";
 import { getTagIdsParents } from "../index"
 import type { ContentLocalTable } from "../../../../types/types-table";
+import { findParentOfTag } from "./tag-util";
+import { TagView } from "../../../../types/types-atom";
 
 export async function updateContentForTagAcross(
   whichTagChange: WhichTagChange,
@@ -49,5 +51,38 @@ export async function updateContentForTagAcross(
   console.log(res)
   console.log(" ")
   
+  return true
+}
+
+/**
+ * 更新特定 id 的 content，重新计算它们的 tagSearched
+ * @param ids 要这群 id 去检索 contents 的 tagIds 字段
+ * @returns 
+ */
+export async function updateContentForTagRename(
+  ids: string[],
+  tagList: TagView[]
+) {
+  const list = await db.contents.where("tagIds").anyOf(ids).distinct().toArray()
+  if(list.length < 1) return true
+  const newList: ContentLocalTable[] = []
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    const { tagIds = [] } = v
+    let tagSearched: string[] = []
+    for(let j=0; j<tagIds.length; j++) {
+      const tagId = tagIds[j]
+      const tmpList = findParentOfTag(tagId, [], tagList)
+      if(tmpList.length < 1) continue
+      tagSearched = tagSearched.concat(tmpList)
+    }
+    tagSearched = [...new Set(tagSearched)]
+    v.tagSearched = tagSearched
+    newList.push(v)
+  }
+  const res = await db.contents.bulkPut(newList)
+  console.log("updateContentForTagRename 看一下批量修改的结果........")
+  console.log(res)
+  console.log(" ")
   return true
 }
