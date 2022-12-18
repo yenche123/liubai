@@ -42,7 +42,7 @@ function initMainView(
     const centerRight = state.clientWidth - leftPx.value
     // 临界值: 取 "mainview 最小宽度" & "(全宽减掉左侧边栏)的三分之一" 的最大值
     const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 3)
-    console.log("监听左边侧边栏的改变 tmpCenter: ", tmpCenter)
+    // console.log("监听左边侧边栏的改变 tmpCenter: ", tmpCenter)
 
     if(tmpCenter < criticalValue) {
       rightPx.value = 0
