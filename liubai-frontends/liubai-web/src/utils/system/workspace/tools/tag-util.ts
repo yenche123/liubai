@@ -300,7 +300,7 @@ function tagAddedHere(
 
 
 // 获取 我的子级和孙级所有的 id
-function getChildrenAndMeIds(tagView: TagView) {
+export function getChildrenAndMeIds(tagView: TagView) {
   const list: string[] = [tagView.tagId]
 
   const _get = (children: TagView[]) => {

@@ -222,17 +222,9 @@ async function _close() {
 }
 
 
-/*********** 监听键盘敲击 Escape、Enter、上、下 的逻辑 ***********/
+/*********** 监听键盘敲击 上、下 的逻辑 ***********/
 function _whenKeyDown(e: KeyboardEvent) {
   const key = e.key
-  if(key === "Escape") {
-    onTapCancel()
-    return
-  }
-  if(key === "Enter") {
-    onTapConfirm()
-    return
-  }
   if(key !== "ArrowDown" && key !== "ArrowUp") return
   const len = list.value.length
   if(len < 1) return
@@ -248,6 +240,19 @@ function _whenKeyDown(e: KeyboardEvent) {
   selectedIndex.value = tmpIdx
 }
 
+/*********** 监听键盘敲击 Enter、Escape 的逻辑 ***********/
+function _whenKeyUp(e: KeyboardEvent) {
+  const key = e.key
+  if(key === "Escape") {
+    onTapCancel()
+    return
+  }
+  if(key === "Enter") {
+    onTapConfirm()
+    return
+  }
+}
+
 
 let lastKeyUpDown = 0
 function canKeyUpDown() {
@@ -261,9 +266,11 @@ function canKeyUpDown() {
 
 function _toListenKeyUp() {
   window.addEventListener("keydown", _whenKeyDown)
+  window.addEventListener("keyup", _whenKeyUp)
 }
 
 function _cancelListenKeyUp() {
   window.removeEventListener("keydown", _whenKeyDown)
+  window.removeEventListener("keyup", _whenKeyUp)
 }
 

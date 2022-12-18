@@ -13,6 +13,7 @@ import {
   findParentOfTag,
   getMergedChildTree,
   generateNewTreeForMerge,
+  getChildrenAndMeIds,
 } from "./tools/tag-util"
 import type {
   AddATagParam,
@@ -20,6 +21,7 @@ import type {
   AddATagRes,
   BaseTagRes,
 } from "./tools/types"
+import { updateContentForTagRename } from "./tools/content-util"
 
 // 返回当前工作区的 tags
 export function getCurrentSpaceTagList(): TagView[] {
@@ -125,13 +127,14 @@ export async function addATag(opt: AddATagParam): Promise<AddATagRes> {
 /**
  * 修改一个标签的 text 或 icon
  */
-export async function editATag(opt: RenameTagParam) {
+export async function editATag(opt: RenameTagParam): Promise<BaseTagRes> {
   const texts = opt.text.split("/").map(v => v.trim())
+  const children = getChildrenAndMeIds(opt.originTag)
 
   // 检查层级是否大于 3
   const level = texts.length - 1 + getTagViewLevel([opt.originTag])
   if(level > 3) {
-    return { isOk: false, errMsg: "level has been more than 3" }
+    return { isOk: false, errMsg: "level has been more than 3", errCode: "01" }
   }
 
   // 获取 tagList
@@ -148,13 +151,15 @@ export async function editATag(opt: RenameTagParam) {
   const newList = JSON.parse(JSON.stringify(tagList2)) as TagView[]
   console.log("去修改 workspaceStore:::")
   console.log(newList)
+  console.log(" ")
   const wStore = useWorkspaceStore()
   const res = await wStore.setTagList(newList)
 
   // 更新 contents
+  const res2 = await updateContentForTagRename(children, newList)
 
   // drafts 不用更新 因为 draft 不涉及 tagSearched
-
+  return { isOk: true }
 }
 
 export async function mergeTag(

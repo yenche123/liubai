@@ -7,6 +7,9 @@ import { addATag, tagIdsToShows, editATag, mergeTag } from "../../../../utils/sy
 import type { Stat } from "./useSbTags"
 import type { Ref } from "vue"
 import { i18n } from "../../../../locales"
+import { RenameTagParam } from "../../../../utils/system/workspace/tools/types"
+
+type T_i18n = typeof i18n.global.t
 
 export interface StmCtx {
   tagNodes: Ref<TagView[]>
@@ -133,27 +136,51 @@ async function handle_edit(
   const { t } = i18n.global
 
   // 去编辑
-  // if(!newTagId) {
-  //   const param = {
-  //     id: oldTagId,
-  //     text: res.text,
-  //     icon: res.icon,
-  //   }
-  //   const res2 = await editATag(param)
-  //   if(!res2.isOk) return
-  //   gStore.addTagChangedNum()
-  //   return
-  // }
+  if(!newTagId) {
+    const param: RenameTagParam = {
+      id: oldTagId,
+      text: res.text,
+      icon: res.icon,
+      originTag: node,
+    }
+    const res2 = await editATag(param)
+    if(res2.isOk) {
+      gStore.addTagChangedNum()
+      return
+    }
+    console.log("没有编辑成功.....")
+    console.log(res2)
+    _showErr(t, res2.errCode)
+    return
+  }
 
   // 去合并
-  // const res2 = await cui.showModal({
-  //   title: t("tip.tag_merge_title"),
-  //   content: t("tip.tag_merge_content", { tag1: oldText, tag2: res.text })
-  // })
-  // if(!res2.confirm) return
+  const res2 = await cui.showModal({
+    title: t("tip.tag_merge_title"),
+    content: t("tip.tag_merge_content", { tag1: oldText, tag2: res.text })
+  })
+  if(!res2.confirm) return
   // const res3 = await mergeTag(node, oldTagId, newTagId)
   // if(!res3.isOk) return
   // gStore.addTagChangedNum()
+}
+
+function _showErr(
+  t: T_i18n,
+  err?: string
+) {
+  if(!err) return
+  let title = t("tip.tip")
+  let content = ""
+  if(err === "01") {
+    content = t("tag_related.level_limit", { level: "3" })
+  }
+  if(!content) return
+  cui.showModal({
+    title,
+    content,
+    showCancel: false,
+  })
 }
 
 function handle_delete(

@@ -13,6 +13,7 @@ export interface WhichTagChange {
 export interface BaseTagRes {
   isOk: boolean
   errMsg?: string
+  errCode?: string     // 01: 超过 3 级了
 }
 
 export interface AddATagParam {
