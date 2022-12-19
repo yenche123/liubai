@@ -10,7 +10,7 @@ async function getList(
   const { 
     workspace = "ME",
     sort = "desc",
-    lastCreatedStamp,
+    lastItemStamp,
     oState = "OK",
     member,
     limit = 16,
@@ -36,8 +36,9 @@ async function getList(
   }
 
   // 查询首页
-  if(!lastCreatedStamp) {
-    let tmp = db.contents.orderBy("createdStamp")
+  let key = oState === 'OK' ? "createdStamp" : "updatedStamp"
+  if(!lastItemStamp) {
+    let tmp = db.contents.orderBy(key)
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
     tmp = tmp.limit(limit)
@@ -48,8 +49,8 @@ async function getList(
   }
   else {
     // 查询首页以后
-    let w = db.contents.where("createdStamp")
-    let tmp = sort === "desc" ? w.below(lastCreatedStamp) : w.above(lastCreatedStamp)
+    let w = db.contents.where(key)
+    let tmp = sort === "desc" ? w.below(lastItemStamp) : w.above(lastItemStamp)
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
     tmp = tmp.limit(limit)

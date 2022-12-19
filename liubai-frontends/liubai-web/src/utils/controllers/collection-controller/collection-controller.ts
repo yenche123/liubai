@@ -39,7 +39,7 @@ export async function getThreadsByCollectionOrEmoji(
   const { 
     workspace = "ME", 
     sort = "desc",
-    lastCollectedStamp,
+    lastItemStamp,
     limit = 16,
     emojiSpecific,
     collectType,
@@ -63,7 +63,7 @@ export async function getThreadsByCollectionOrEmoji(
   }
 
   // 1. 先去加载 collections
-  if(!lastCollectedStamp) {
+  if(!lastItemStamp) {
     // 首次加载
     let tmp = db.collections.orderBy("updatedStamp")
     if(sort === "desc") tmp = tmp.reverse()
@@ -75,7 +75,7 @@ export async function getThreadsByCollectionOrEmoji(
   else {
     // 分页加载
     let w = db.collections.where("updatedStamp")
-    let tmp = sort === "desc" ? w.below(lastCollectedStamp) :  w.above(lastCollectedStamp)
+    let tmp = sort === "desc" ? w.below(lastItemStamp) :  w.above(lastItemStamp)
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
     tmp = tmp.limit(limit)

@@ -101,19 +101,17 @@ async function loadList(
   const tagId = ctx.tagId.value
 
   let length = oldList.length
-  let lastCreatedStamp = reload || length < 1 ? undefined : ctx.lastItemStamp.value
   let oState: OState = viewType === 'TRASH' ? 'REMOVED' : 'OK'
+  let lastItemStamp = reload || length < 1 ? undefined : ctx.lastItemStamp.value
 
   const opt1: TcListOption = {
     workspace,
     tagId,
-    lastCreatedStamp,
+    lastItemStamp,
     oState,
   }
   if(viewType === "FAVORITE") {
-    delete opt1.lastCreatedStamp
     opt1.collectType = "FAVORITE"
-    opt1.lastCollectedStamp = reload || length < 1 ? undefined : ctx.lastItemStamp.value
   }
 
   const results = await threadController.getList(opt1)
@@ -131,6 +129,9 @@ async function loadList(
     const lastItem = results[results.length - 1]
     if(viewType === "FAVORITE") {
       ctx.lastItemStamp.value = lastItem.myFavoriteStamp ?? 0
+    }
+    else if(viewType === "TRASH") {
+      ctx.lastItemStamp.value = lastItem.updatedStamp
     }
     else {
       ctx.lastItemStamp.value = lastItem.createdStamp

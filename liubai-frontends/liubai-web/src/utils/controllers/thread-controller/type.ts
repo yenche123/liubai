@@ -15,9 +15,6 @@ export interface TcListOption {
   // 加载收藏
   collectType?: "EXPRESS" | "FAVORITE"
 
-  // 已加载出来的最后一个 id 的 myFavoriteStamp / 或 myEmojiStamp
-  lastCollectedStamp?: number
-
   // 加载某个 emoji
   emojiSpecific?: string
 
@@ -30,8 +27,9 @@ export interface TcListOption {
   // 默认为降序，desc
   sort?: SortWay
 
-  // 已加载出来的最后一个 id 的 createdStamp，注意不是 insertedStamp
-  lastCreatedStamp?: number
+  // 已加载出来的最后一个 id 的 createdStamp 或 updatedStamp 或 myFavoriteStamp 或 myEmojiStamp
+  // 根据 collectType 和 oState 的不同，用不同 item 的属性
+  lastItemStamp?: number
 
   // 加载正常 / 已移除 / 已删除的哪一种，默认为正常
   oState?: OState
