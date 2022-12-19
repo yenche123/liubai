@@ -131,6 +131,9 @@
     "edit": "编辑",
     "delete": "删除",
     "create": "新建",
-    "level_limit": "标签层数最多支持 {level} 级"
+    "level_limit": "标签层数最多支持 {level} 级",
+    "delete_hd": "删除标签",
+    "delete_bd": "确定要删除 \"{tag}\" 标签？",
+    "delete_tip": "同时删除动态"
   }
 }

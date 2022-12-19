@@ -16,6 +16,7 @@ const {
   onTapConfirm: onTapModalConfirm,
   onTapCancel: onTapModalCancel,
   TRANSITION_DURATION: modalTranMs,
+  onTapTip: onTapModalTip,
 } = initModal()
 
 const {
@@ -55,6 +56,20 @@ const {
       <p v-if="modalData.content">{{ modalData.content }}</p>
       <p v-else-if="modalData.content_key && modalData.content_opt">{{ t(modalData.content_key, modalData.content_opt) }}</p>
       <p v-else-if="modalData.content_key">{{ t(modalData.content_key) }}</p>
+
+      <div v-if="modalData.tip_key" 
+        class="cui-modal-tip"
+        @click="onTapModalTip"
+      >
+        <LiuCheckbox :checked="modalData.tipSelected" 
+          class="cui-checkbox"
+          :size="20"
+          :circleSize="10.6"
+        ></LiuCheckbox>
+        <div class="cui-modal-tip-text">
+          <span>{{ t(modalData.tip_key) }}</span>
+        </div>
+      </div>
 
       <div class="cui-modal-btns">
         <div 
@@ -218,6 +233,30 @@ const {
       overflow-wrap: break-word;
       user-select: text;
       z-index: 5112;
+    }
+
+    .cui-modal-tip {
+      display: flex;
+      max-width: 100%;
+      z-index: 5112;
+      margin-block-end: 30px;
+      cursor: pointer;
+
+      .cui-checkbox {
+        margin-block-start: 1px;
+        margin-inline-end: 8px;
+      }
+
+      .cui-modal-tip-text {
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        line-height: 22px;
+        font-size: var(--mini-font);
+        color: var(--main-code);
+        text-align: left;
+      }
+
     }
 
     .cui-modal-btns {

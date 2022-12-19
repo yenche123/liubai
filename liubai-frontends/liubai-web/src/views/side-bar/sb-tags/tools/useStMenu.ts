@@ -189,10 +189,24 @@ function _showErr(
   })
 }
 
-function handle_delete(
+async function handle_delete(
   node: TagView,
   stat: Stat<TagView>
 ) {
-  console.log("去删除....")
+  const tagId = node.tagId
+  const { tagShows } = tagIdsToShows([tagId])
+  const firstTag = tagShows[0]
+  if(!firstTag) return
+  const tag = firstTag.text
+  const res = await cui.showModal({
+    title_key: "tag_related.delete_hd",
+    content_key: "tag_related.delete_bd",
+    content_opt: { tag },
+    tip_key: "tag_related.delete_tip"
+  })
+
+  console.log("res: ")
+  console.log(res)
+  
 
 }

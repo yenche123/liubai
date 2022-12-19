@@ -6,6 +6,7 @@ import { toListenEnterKeyUp, cancelListenEnterKeyUp } from "../tools/listen-keyu
 interface ModalSuccessRes {
   confirm: boolean
   cancel: boolean
+  tipToggle?: boolean
   tapType: "confirm" | "cancel" | "mask"     // 目前不会有 mask 选项
 }
 
@@ -16,6 +17,7 @@ interface ModalParam {
   content_key?: string    // 用于 i18n
   title_opt?: Record<string, any>    // 用于 i18n t() 函数的第二个参数
   content_opt?: Record<string, any>  // 用于 i18n t() 函数的第二个参数
+  tip_key?: string        // content 下方一排小字让用户勾选
   showCancel?: boolean
   cancelText?: string
   confirmText?: string
@@ -29,9 +31,11 @@ interface ModalData {
   content: string
   content_key: string
   content_opt?: Record<string, any>
+  tip_key?: string
   showCancel: boolean
   cancelText: string
   confirmText: string
+  tipSelected: boolean
 }
 
 type ModalResolver = (res: ModalSuccessRes) => void
@@ -51,6 +55,7 @@ const modalData = reactive<ModalData>({
   showCancel: true,
   cancelText: "",
   confirmText: "",
+  tipSelected: false,
 })
 
 const _openModal = async (): Promise<void> => {
@@ -72,23 +77,47 @@ const _closeModal = async (): Promise<void> => {
 }
 
 const onTapConfirm = (): void => {
-  _resolve && _resolve({ confirm: true, cancel: false, tapType: "confirm" })
+  const res: ModalSuccessRes = {
+    confirm: true, 
+    cancel: false, 
+    tapType: "confirm",
+  }
+  if(modalData.tip_key) res.tipToggle = modalData.tipSelected
+  _resolve && _resolve(res)
   _resolve = undefined
-  _success && _success({ confirm: true, cancel: false, tapType: "confirm" })
+  _success && _success(res)
   _success = undefined
   _closeModal()
 }
 
 const onTapCancel = (): void => {
-  _resolve && _resolve({ confirm: false, cancel: true, tapType: "cancel" })
+  const res: ModalSuccessRes = {
+    confirm: false, 
+    cancel: true, 
+    tapType: "cancel",
+  }
+  if(modalData.tip_key) res.tipToggle = modalData.tipSelected
+  _resolve && _resolve(res)
   _resolve = undefined
-  _success && _success({ confirm: false, cancel: true, tapType: "cancel" })
+  _success && _success(res)
   _success = undefined
   _closeModal()
 }
 
+const onTapTip = () => {
+  modalData.tipSelected = !modalData.tipSelected
+}
+
 const initModal = () => {
-  return { enable, show, TRANSITION_DURATION, modalData, onTapConfirm, onTapCancel }
+  return { 
+    enable, 
+    show, 
+    TRANSITION_DURATION, 
+    modalData, 
+    onTapConfirm, 
+    onTapCancel,
+    onTapTip,
+  }
 }
 
 const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
@@ -101,6 +130,8 @@ const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
   modalData.confirmText = opt.confirmText ?? ""
   modalData.title_opt = opt.title_opt
   modalData.content_opt = opt.content_opt
+  modalData.tip_key = opt.tip_key
+  modalData.tipSelected = false
 
   if(typeof opt.showCancel === "boolean") {
     modalData.showCancel = opt.showCancel

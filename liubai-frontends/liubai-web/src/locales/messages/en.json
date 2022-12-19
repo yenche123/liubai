@@ -131,6 +131,9 @@
     "edit": "Edit",
     "delete": "Delete",
     "create": "New",
-    "level_limit": "The maxmim of a tag level is {level}"
+    "level_limit": "The maxmim of a tag level is {level}",
+    "delete_hd": "Delete the tag",
+    "delete_bd": "Are you sure to delete the tag called \"{tag}\"?",
+    "delete_tip": "Also delete the threads"
   }
 }
