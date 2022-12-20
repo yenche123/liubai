@@ -3,7 +3,13 @@ import cui from "../../../../components/custom-ui"
 import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore"
 import { TagView } from "../../../../types/types-atom"
 import liuApi from "../../../../utils/liu-api"
-import { addATag, tagIdsToShows, editATag, mergeTag } from "../../../../utils/system/workspace"
+import { 
+  addATag, 
+  tagIdsToShows, 
+  editATag, 
+  mergeTag, 
+  deleteTag,
+} from "../../../../utils/system/workspace"
 import type { Stat } from "./useSbTags"
 import type { Ref } from "vue"
 import { i18n } from "../../../../locales"
@@ -204,9 +210,11 @@ async function handle_delete(
     content_opt: { tag },
     tip_key: "tag_related.delete_tip"
   })
+  if(!res.confirm) return
+  const deleteContent = Boolean(res.tipToggle)
+  const res2 = await deleteTag(node, deleteContent)
 
-  console.log("res: ")
-  console.log(res)
-  
-
+  console.log("已更新完标签、动态和草稿，去通知其他组件.......")
+  const gStore = useGlobalStateStore()
+  gStore.addTagChangedNum()
 }

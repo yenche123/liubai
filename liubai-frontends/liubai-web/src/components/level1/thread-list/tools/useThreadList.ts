@@ -1,4 +1,4 @@
-import { inject, onActivated, ref, toRef, toRefs, watch } from "vue"
+import { inject, onActivated, onDeactivated, ref, ShallowRef, toRef, toRefs, watch } from "vue"
 import type { ThreadShow } from "../../../../types/types-content"
 import type { Ref } from "vue"
 import threadController from "../../../../utils/controllers/thread-controller/thread-controller"
@@ -9,6 +9,9 @@ import type { OState } from "../../../../types/types-basic"
 import type { SvProvideInject } from "../../../common/scroll-view/tools/types"
 import type { TlProps } from "./types"
 import type { TcListOption } from "../../../../utils/controllers/thread-controller/type"
+import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore";
+import { svBottomUpKey } from "../../../../utils/provide-keys";
+import type { SvBottomUp } from "../../../common/scroll-view/tools/types"
 
 interface TlContext {
   list: Ref<ThreadShow[]>
@@ -17,6 +20,8 @@ interface TlContext {
   workspace: Ref<string>
   showNum: number
   lastItemStamp: Ref<number>
+  svBottomUp?: ShallowRef<SvBottomUp>
+  reloadRequired: boolean
 }
 
 export function useThreadList(props: TlProps) {
@@ -24,6 +29,7 @@ export function useThreadList(props: TlProps) {
 
   const spaceStore = useWorkspaceStore()
   let workspace = storeToRefs(spaceStore).workspace
+  const svBottomUp = inject(svBottomUpKey)
 
   const list = ref<ThreadShow[]>([])
   const ctx: TlContext = {
@@ -33,6 +39,8 @@ export function useThreadList(props: TlProps) {
     workspace,
     showNum: 0,
     lastItemStamp: ref(0),
+    svBottomUp,
+    reloadRequired: false
   }
 
   // 监听触底/顶加载
@@ -48,17 +56,36 @@ export function useThreadList(props: TlProps) {
     }
   })
 
+  let isActivated = true
   onActivated(() => {
+    isActivated = true
     ctx.showNum++
-    if(ctx.showNum > 1) {
+    if(ctx.reloadRequired) {
+      scollTopAndUpdate(ctx)
+    }
+    else if(ctx.showNum > 1) {
       checkList(ctx)
     }
   })
+  onDeactivated(() => {
+    isActivated = false
+  })
 
-  watch([viewType, tagId, workspace], ([newViewType, newTagId, newWorkspace]) => {
-    if(!newWorkspace) return
-    console.log("watch 到变化 要去 loadList.........")
-    loadList(ctx, true)
+  const gStore = useGlobalStateStore()
+  const { tagChangedNum } = storeToRefs(gStore)
+
+  watch([viewType, tagId, workspace, tagChangedNum], (
+      [newV1, newV2, newV3, newV4],
+      [oldV1, oldV2, oldV3, oldV4]
+    ) => {
+    if(!newV3) return
+    if(newV4 > oldV4 && !isActivated) {
+      console.log("useThreadList 监听到 tag 发生变化，但是不在显示范围内！")
+      ctx.reloadRequired = true
+      return
+    }
+
+    scollTopAndUpdate(ctx)
   })
 
   // 如果 workspace 已经存在了，那么就不会触发上方的 watch
@@ -66,9 +93,19 @@ export function useThreadList(props: TlProps) {
   if(workspace.value) {
     loadList(ctx, true)
   }
-  
 
   return { list }
+}
+
+// 滚动到最顶部，然后更新 list
+function scollTopAndUpdate(
+  ctx: TlContext,
+) {
+  if(ctx.svBottomUp) {
+    ctx.svBottomUp.value = { type: "pixel", pixel: 0 }
+  }
+  console.log(`${ctx.viewType.value} ${ctx.tagId.value} 正在执行 scollTopAndUpdate...`)
+  loadList(ctx, true)
 }
 
 // 页面 onActivated 或者窗口重新被 focus 时，触发该函数
@@ -95,6 +132,10 @@ async function loadList(
 ) {
   const workspace = ctx.workspace.value
   if(!workspace) return
+  if(reload) {
+    ctx.reloadRequired = false
+    console.log("已关闭 reloadRequired")
+  }
 
   const oldList = ctx.list.value
   const viewType = ctx.viewType.value

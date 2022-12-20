@@ -7,6 +7,7 @@ import {
   findTagShowById,
   findTagViewById,
   deleteATagView,
+  deleteTheTag,
   addTagToTagList,
   findParentOfTag,
   getMergedChildTree,
@@ -22,10 +23,13 @@ import type {
 } from "./tools/types"
 import { 
   updateContentForTagAcross, 
-  updateContentForTagRename 
+  updateContentForTagRename,
+  updateContentForTagDeleted,
+  deleteContentsForTagDeleted
 } from "./tools/content-util"
 import {
-  updateDraftForTagAcross
+  updateDraftForTagAcross,
+  updateDraftWhenTagDeleted,
 } from "./tools/draft-util"
 
 // 返回当前工作区的 tags
@@ -201,6 +205,42 @@ export async function mergeTag(
   if(!res4) return { isOk: false }
   const res5 = await updateDraftForTagAcross(param)
   if(!res5) return { isOk: false }
+
+  return { isOk: true }
+}
+
+export async function deleteTag(
+  node: TagView,
+  deleteThread: boolean
+): Promise<BaseTagRes> {
+
+  const tagId = node.tagId
+
+  // 获取 tagList
+  const tagList = getCurrentSpaceTagList()
+  const newList = JSON.parse(JSON.stringify(tagList)) as TagView[]
+
+  deleteTheTag(tagId, newList)
+
+  // 更新 tagList
+  const wStore = useWorkspaceStore()
+  const res = await wStore.setTagList(newList)
+  const idAndChildren = getChildrenAndMeIds(node)
+
+  // 删除动态或修改动态
+  if(deleteThread) {
+    const res2 = await deleteContentsForTagDeleted(tagId, newList)
+    console.log("看一下删除动态的结果.....")
+    console.log(res2)
+  }
+  else {
+    const res2 = await updateContentForTagDeleted(idAndChildren, newList)
+    console.log("看一下更新动态的结果.....")
+    console.log(res2)
+  }
+
+  // 处理草稿
+  const res3 = await updateDraftWhenTagDeleted(idAndChildren)
 
   return { isOk: true }
 }

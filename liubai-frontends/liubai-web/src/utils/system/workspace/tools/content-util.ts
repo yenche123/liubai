@@ -4,6 +4,7 @@ import { getTagIdsParents } from "../index"
 import type { ContentLocalTable } from "../../../../types/types-table";
 import { findParentOfTag } from "./tag-util";
 import { TagView } from "../../../../types/types-atom";
+import time from "../../../basic/time";
 
 export async function updateContentForTagAcross(
   whichTagChange: WhichTagChange,
@@ -16,8 +17,6 @@ export async function updateContentForTagAcross(
   }
 
   const list = await db.contents.where("tagIds").anyOf(children).distinct().toArray()
-
-  console.log("看一下 contents 找到的 list: ", list)
   
   const newList: ContentLocalTable[] = []
   let tagChangeRequired = from_ids.length > 0
@@ -82,6 +81,78 @@ export async function updateContentForTagRename(
   }
   const res = await db.contents.bulkPut(newList)
   console.log("updateContentForTagRename 看一下批量修改的结果........")
+  console.log(res)
+  console.log(" ")
+  return true
+}
+
+
+/**
+ * 当用户删除标签，但不删除动态时
+ * @param idAndChildren 被删除的标签以及其子（孙）标签
+ * @param tagList 新的 tagList
+ */
+export async function updateContentForTagDeleted(
+  idAndChildren: string[],
+  tagList: TagView[]
+) {
+  const list = await db.contents.where("tagIds").anyOf(idAndChildren).distinct().toArray()
+  if(list.length < 1) return true
+  const newList: ContentLocalTable[] = []
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    let { tagIds = [] } = v
+    let tagSearched: string[] = []
+    for(let j=0; j<tagIds.length; j++) {
+      const _tagId = tagIds[j]
+      if(idAndChildren.includes(_tagId)) {
+        tagIds.splice(j, 1)
+        j--
+        continue
+      }
+      const tmpList = findParentOfTag(_tagId, [], tagList)
+      if(tmpList.length < 1) continue
+      tagSearched = tagSearched.concat(tmpList)
+    }
+    tagSearched = [...new Set(tagSearched)]
+    v.tagIds = tagIds
+    v.tagSearched = tagSearched
+    newList.push(v)
+  }
+  const res = await db.contents.bulkPut(newList)
+  console.log("updateContentForTagDeleted 看一下批量修改的结果........")
+  console.log(res)
+  console.log(" ")
+  return true
+  
+}
+
+// 删除 tagSearched 字段里包含 tagId 的动态
+export async function deleteContentsForTagDeleted(
+  tagId: string,
+  tagList: TagView[],
+) {
+  const list = await db.contents.where("tagSearched").anyOf([tagId]).distinct().toArray()
+  if(list.length < 1) return true
+  const now = time.getTime()
+  const newList: ContentLocalTable[] = []
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    const { tagIds = [] } = v
+    let tagSearched: string[] = []
+    for(let j=0; j<tagIds.length; j++) {
+      const _tagId = tagIds[j]
+      const tmpList = findParentOfTag(_tagId, [], tagList)
+      tagSearched = tagSearched.concat(tmpList)
+    }
+    tagSearched = [...new Set(tagSearched)]
+    v.tagSearched = tagSearched
+    v.oState = "REMOVED"
+    v.updatedStamp = now + i
+    newList.push(v)
+  }
+  const res = await db.contents.bulkPut(newList)
+  console.log("deleteContentsForTagDeleted 看一下批量修改的结果........")
   console.log(res)
   console.log(" ")
   return true

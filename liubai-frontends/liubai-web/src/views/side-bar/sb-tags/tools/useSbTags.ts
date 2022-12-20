@@ -73,7 +73,9 @@ export function useSbTags(emits: SbtEmits) {
 
   const onTreeChange = async (e: any) => {
     console.log("onTreeChange.........")
-    const res0 = filterTag(tagNodes.value)
+
+    const tagNodes2 = JSON.parse(JSON.stringify(tagNodes.value)) as TagView[]
+    const res0 = filterTag(tagNodes2)
     if(res0.hasChange) {
       console.warn("过滤掉有问题的 tag!!!!")
       tagNodes.value = res0.tree
@@ -134,7 +136,8 @@ function getLatestSpaceTag(
   oldTagNodes: Ref<TagView[]>,
 ) {
   let list = getCurrentSpaceTagList()
-  const { tree } = filterTag(list)
+  const list2 = JSON.parse(JSON.stringify(list)) as TagView[]
+  const { tree } = filterTag(list2)
   tagNodes.value = tree
   oldTagNodes.value = JSON.parse(JSON.stringify(list)) as TagView[]
 }

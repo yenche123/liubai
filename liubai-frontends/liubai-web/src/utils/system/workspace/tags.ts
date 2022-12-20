@@ -18,7 +18,7 @@ interface TagMovedInTreeRes {
 }
 
 /**
- * 删掉结构有问题的 tag
+ * 删掉结构有问题的 tag 并且移除 oState 为 REMOVED 的 leaf
  */
 export function filterTag(
   tree: TagView[],
@@ -27,12 +27,19 @@ export function filterTag(
 
   for(let i=0; i<tree.length; i++) {
     const leaf = tree[i]
+    if(leaf.oState === "REMOVED") {
+      tree.splice(i, 1)
+      i--
+      continue
+    }
+
     if(!leaf.tagId || !leaf.text) {
       hasChange = true
       tree.splice(i, 1)
       i--
       continue
     }
+
     if(leaf.children) {
       const res = filterTag(leaf.children, hasChange)
       if(res.hasChange) {

@@ -42,3 +42,34 @@ export async function updateDraftForTagAcross(
   
   return true
 }
+
+export async function updateDraftWhenTagDeleted(
+  idAndChildren: string[],
+) {
+  const list = await db.drafts.where("tagIds").anyOf(idAndChildren).distinct().toArray()
+  const newList: DraftLocalTable[] = []
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    let { tagIds = [] } = v
+    for(let j=0; j<tagIds.length; j++) {
+      const tId = tagIds[j]
+      if(idAndChildren.includes(tId)) {
+        tagIds.splice(j, 1)
+        j--
+      }
+    }
+    tagIds = [...new Set(tagIds)]
+    v.tagIds = tagIds
+    newList.push(v)
+  }
+  if(newList.length < 1) return true
+  console.log("因为 tags 被删除，准备去修改 drafts")
+  console.log(newList)
+  console.log(" ")
+
+  const res = await db.drafts.bulkPut(newList)
+  console.log("updateDraftWhenTagDeleted 结果........")
+  console.log(res)
+  console.log(" ")
+  return true
+}

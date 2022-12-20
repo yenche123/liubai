@@ -438,3 +438,27 @@ export function deleteATagView(
   
   return null
 }
+
+// 将 tag 的 oState 改为 REMOVED，并且移除 children
+export function deleteTheTag(
+  tagId: string,
+  tagList: TagView[]
+): boolean {
+  for(let i=0; i<tagList.length; i++) {
+    const v = tagList[i]
+    if(v.tagId === tagId) {
+      v.oState = "REMOVED"
+      if(v.children) {
+        delete v.children
+      }
+      return true
+    }
+    if(v.oState === "REMOVED") continue
+    if(v.children) {
+      const res = deleteTheTag(tagId, v.children)
+      if(res) return res
+    }
+  }
+
+  return false
+}

@@ -7,8 +7,8 @@ export function useNewAndUpdate(
   props: TlProps,
   list: Ref<ThreadShow[]>
 ) {
-  const store = useThreadShowStore()
-  store.$subscribe((mutation, state) => {
+  const tStore = useThreadShowStore()
+  tStore.$subscribe((mutation, state) => {
     // console.log("thread-list 收到有 threadShow 发生变化!")
     // console.log("type: ", mutation.type)
     // console.log("storeId: ", mutation.storeId)
