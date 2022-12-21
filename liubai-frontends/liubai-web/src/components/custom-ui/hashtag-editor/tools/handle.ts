@@ -12,7 +12,37 @@ export function searchLocal(text: string) {
   const tagList = getCurrentSpaceTagList()
   if(tagList.length < 1) return []
   const data = _searchInList(texts, [], tagList)
-  return data
+  return _sortList(data, texts)
+}
+
+function _sortList(
+  list: TagItem[],
+  texts: string[],
+) {
+  if(list.length < 2) return list
+
+  // 分数越高 排得越后面
+  const _getScore = (txt: string) => {
+    let score = 0
+    texts.forEach(v => {
+      let idx = txt.indexOf(v)
+      if(idx < 0) score += 100
+      else score += idx
+    })
+    return score
+  }
+
+  const _compare = (a: TagItem, b: TagItem) => {
+    const aText = a.textBlank
+    const bText = b.textBlank
+    const aScore = _getScore(aText)
+    const bScore = _getScore(bText)
+    if(aScore > bScore) return 1
+    else if(aScore < bScore) return -1
+    return 0
+  }
+  list.sort(_compare)
+  return list
 }
 
 
@@ -67,6 +97,7 @@ function _pushSomeChildren(
   for(let i=0; i<children.length; i++) {
     if(i >= 3) break
     const v = children[i]
+    if(v.oState !== "OK") continue
     let textBlank = v.text
     if(parents.length > 1) textBlank = parents.join(" / ") + " / " + v.text
     else if(parents.length > 0) textBlank = parents[0] + " / " + v.text
@@ -101,8 +132,8 @@ function _searchInTagView(texts: string[], parents: string[], tagView: TagView) 
 
   let newTexts = [...texts]
   newTexts.reverse()   // 反转
-  console.log("看一下 texts: ", texts)
-  console.log("看一下 newTexts: ", newTexts)
+  // console.log("看一下 texts: ", texts)
+  // console.log("看一下 newTexts: ", newTexts)
   let newParents = [...parents]
   newParents.reverse()
 
