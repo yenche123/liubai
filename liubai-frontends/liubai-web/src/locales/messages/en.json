@@ -42,7 +42,8 @@
     "strike": "Strikethrough",
     "more": "More",
     "expand": "Expand",
-    "restore": "Restore"
+    "restore": "Restore",
+    "tag": "Tag"
   },
   "cui": {
     "plz_input_txt": "Text here"

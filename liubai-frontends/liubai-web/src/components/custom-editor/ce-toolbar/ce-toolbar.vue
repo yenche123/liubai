@@ -4,14 +4,14 @@ import type { PropType } from "vue"
 import { TipTapEditor } from "../../../types/types-editor"
 import liuUtil from "../../../utils/liu-util";
 import { useI18n } from 'vue-i18n';
-import { useCeToolbar } from './tools/useCeToolbar';
+import { useCeToolbar, cetEmit } from './tools/useCeToolbar';
 
 export default defineComponent({
   props: {
     editor: Object as PropType<TipTapEditor>,
     more: Boolean,
   },
-  emits: ["imagechange", "tapmore"],
+  emits: cetEmit,
   setup(props, { emit }) {
     const icon_color = "var(--main-normal)"
     const selectImagesEl = ref<HTMLInputElement | null>(null)
@@ -24,16 +24,14 @@ export default defineComponent({
       emit("imagechange", files)
     }
 
-    const onTapMore = () => {
-      emit("tapmore")
-    }
-
     const { t } = useI18n()
 
     const {
       expanded,
-      onTapExpand
-    } = useCeToolbar()
+      onTapExpand,
+      onTapTag,
+      onTapMore,
+    } = useCeToolbar(emit)
 
     return { 
       t,
@@ -41,6 +39,7 @@ export default defineComponent({
       selectImagesEl, 
       onImageChange, 
       icon_color,
+      onTapTag,
       onTapMore,
       expanded,
       onTapExpand,
@@ -63,6 +62,14 @@ export default defineComponent({
         multiple
       />
       <svg-icon name="editor-image" class="ceti-icon" :color="icon_color" />
+    </div>
+
+    <!-- 标签 -->
+    <div class="liu-hover cet-item"
+      @click="onTapTag"
+      :aria-label="t('editor.tag')"
+    >
+      <svg-icon name="tag" class="ceti-icon" :color="icon_color" />
     </div>
 
     <!-- 开启/关闭全屏 -->

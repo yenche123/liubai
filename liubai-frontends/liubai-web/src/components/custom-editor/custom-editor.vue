@@ -133,6 +133,7 @@ const {
     :more="moreRef"
     @imagechange="onImageChange"
     @tapmore="onTapMore"
+    @addhashtag="onAddHashTag"
   ></ce-toolbar>
 
   <!-- 更多栏 -->
