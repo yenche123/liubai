@@ -185,6 +185,7 @@ function toSyncCloudChange(
 }
 
 
+let lastSaveStamp = 0
 /****************** 收集信息、缓存 ***************/
 function collectState(state: CeState, instant: boolean = false) {
   if(collectTimeout) clearTimeout(collectTimeout)
@@ -192,13 +193,20 @@ function collectState(state: CeState, instant: boolean = false) {
     toSave(state)
     return
   }
+
+  // 判断缓存间隔，超过 3s 没有存储过，就缩短防抖节流的阈值
+  if(!lastSaveStamp) lastSaveStamp = time.getTime()
+  const now = time.getTime()
+  const diff = now - lastSaveStamp
+  let duration = diff > 3000 ? 250 : 1000
   collectTimeout = setTimeout(() => {
     toSave(state)
-  }, 1000)
+  }, duration)
 }
 
 async function toSave(state: CeState) {
   const now = time.getTime()
+  lastSaveStamp = now
 
   let insertedStamp = now
   if(state.draftId) {
