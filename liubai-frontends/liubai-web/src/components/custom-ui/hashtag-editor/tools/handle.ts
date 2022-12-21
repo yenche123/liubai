@@ -24,8 +24,9 @@ function _sortList(
   // 分数越高 排得越后面
   const _getScore = (txt: string) => {
     let score = 0
+    const txt2 = txt.toLowerCase()
     texts.forEach(v => {
-      let idx = txt.indexOf(v)
+      let idx = txt2.indexOf(v.toLowerCase())
       if(idx < 0) score += 100
       else score += idx
     })
