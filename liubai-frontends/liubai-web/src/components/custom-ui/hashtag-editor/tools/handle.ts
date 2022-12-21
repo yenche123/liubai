@@ -27,6 +27,7 @@ function _searchInList(
   for(let i=0; i<tagViews.length; i++) {
     const tagView = tagViews[i]
     if(tagView.oState !== "OK") continue
+    const newParents = [...parents, tagView.text]
 
     const res1 = _searchInTagView(texts, parents, tagView)
     if(res1) {
@@ -40,15 +41,43 @@ function _searchInList(
         emoji: tagView.icon ? decodeURIComponent(tagView.icon) : undefined
       }
       list.push(obj)
+      if(list.length < 10 && tagView.children) {
+        const tmpList = _pushSomeChildren(newParents, tagView.children)
+        list = list.concat(tmpList)
+      }
     }
     else if(tagView.children) {
-      let newParents = [...parents, tagView.text]
       const tmpList = _searchInList(texts, newParents, tagView.children)
       list = list.concat(tmpList)
     }
 
   }
 
+  return list
+}
+
+/**
+ * 多放一些已匹配到的节点的子节点进来
+ */
+function _pushSomeChildren(
+  parents: string[],
+  children: TagView[]
+) {
+  const list: TagItem[] = []
+  for(let i=0; i<children.length; i++) {
+    if(i >= 3) break
+    const v = children[i]
+    let textBlank = v.text
+    if(parents.length > 1) textBlank = parents.join(" / ") + " / " + v.text
+    else if(parents.length > 0) textBlank = parents[0] + " / " + v.text
+
+    const obj: TagItem = {
+      tagId: v.tagId,
+      textBlank,
+      emoji: v.icon ? decodeURIComponent(v.icon) : undefined
+    }
+    list.push(obj)
+  }
   return list
 }
 
