@@ -33,7 +33,7 @@ const onTapBack = () => {
 </template>
 <style scoped lang="scss">
 .nb-container {
-  width: 100%;
+  width: calc(100% - 10px);    /** 剪掉 10px 是因为滚动条 */
   height: v-bind("cfg.navi_height + 'px'");
   position: absolute;
   top: 0;
