@@ -5,6 +5,7 @@ import type { RouteLocationNormalizedLoaded } from "vue-router";
 import { tagIdsToShows } from "../../../../utils/system/workspace";
 import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
+import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore";
 
 interface TpCtx {
   route: RouteLocationNormalizedLoaded
@@ -19,6 +20,8 @@ export function useTagPage() {
   const { route } = useRouteAndLiuRouter()
   const wStore = useWorkspaceStore()
   const { spaceId } = storeToRefs(wStore)
+  const gStore = useGlobalStateStore()
+  const { tagChangedNum } = storeToRefs(gStore)
 
   const ctx = {
     route,
@@ -29,7 +32,7 @@ export function useTagPage() {
 
   // 必须等 workspace 已初始化好，才能去加载 tag
   // 因为 tag 依赖于工作区
-  watch([route, spaceId], (newV) => {
+  watch([route, spaceId, tagChangedNum], (newV) => {
     judgeTagName(ctx)
   })
 
