@@ -48,6 +48,7 @@ export function initHtePicker() {
     onTapConfirm,
     onTapItem,
     onInput,
+    onEmojiChange,
   }
 }
 
@@ -67,6 +68,10 @@ export async function showHashTagEditor(opt: HashTagEditorParam) {
     _resolve = a
   }
   return new Promise(_wait)
+}
+
+function onEmojiChange(newEmoji: string) {
+  emoji.value = newEmoji
 }
 
 function onInput() {

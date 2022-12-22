@@ -2,6 +2,7 @@
 import { useI18n } from "vue-i18n";
 import { initHtePicker } from "./index"
 import HashtagList from "./hashtag-list/hashtag-list.vue";
+import HashtagEmoji from "./hashtag-emoji/hashtag-emoji.vue";
 
 const {
   inputEl,
@@ -18,6 +19,7 @@ const {
   onTapCancel,
   onTapItem,
   onInput,
+  onEmojiChange,
 } = initHtePicker()
 
 const { t } = useI18n()
@@ -38,12 +40,26 @@ const onMouseEnterItem = (index: number) => {
       <!-- 第一行: 图标 + 输入框 -->
       <div class="hte-bar">
 
-        <div class="hteb-box">
-          <svg-icon v-if="mode === 'search' || !emoji" name="tag" class="hteb-icon"
+        <!-- search 模式，仅显示一个 # 字符 -->
+        <div class="hteb-box"
+          v-if="mode === 'search'"
+        >
+          <svg-icon name="tag" class="hteb-icon"
             color="var(--main-normal)"
           ></svg-icon>
-          <span v-else>{{ emoji }}</span>
         </div>
+        <!-- edit 模式，允许被点击-->
+        <HashtagEmoji v-else @emojichange="onEmojiChange">
+          <div class="liu-hover hteb-box">
+            <svg-icon 
+              v-if="!emoji"
+              name="tag" class="hteb-icon"
+              color="var(--main-normal)"
+            ></svg-icon>
+            <span v-else>{{ emoji }}</span>
+          </div>
+        </HashtagEmoji>
+        
 
         <input ref="inputEl" class="hteb-input" v-model="inputVal" :maxlength="50" :placeholder="t('tip.tag_ph')"
           @input="onInput" />
