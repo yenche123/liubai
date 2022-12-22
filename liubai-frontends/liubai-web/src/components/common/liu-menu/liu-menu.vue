@@ -177,20 +177,24 @@ export default defineComponent({
 
 
 /** 覆盖原 floating-vue 的 css */
-.v-popper--theme-dropdown .v-popper__inner {
-  border-radius: 8px;
-  background: var(--card-bg);
-  border: 1px solid var(--line-default);
-  box-shadow: var(--floating-shadow);
+.v-popper--theme-liu-menu {
+  .v-popper__inner {
+    border-radius: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--line-default);
+    box-shadow: var(--floating-shadow);
+  }
+
+  .v-popper__arrow-outer {
+    border-color: var(--line-default);
+  }
+
+  .v-popper__arrow-inner {
+    border-color: var(--card-bg);
+  }
+
 }
 
-.v-popper--theme-dropdown .v-popper__arrow-outer {
-  border-color: var(--line-default);
-}
-
-.v-popper--theme-dropdown .v-popper__arrow-inner {
-  border-color: var(--card-bg);
-}
 
 
 </style>

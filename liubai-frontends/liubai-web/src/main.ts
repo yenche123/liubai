@@ -32,6 +32,17 @@ app.component("LiuCheckbox", LiuCheckbox)
 app.use(createPinia())
 app.use(i18n)
 app.use(router)
-app.use(FloatingVue)
+app.use(FloatingVue, {
+  themes: {
+    'emoji-select': {
+      $extend: "dropdown",
+      distance: 10,
+      skidding: 10,
+    },
+    'liu-menu': {
+      $extend: "dropdown",
+    }
+  }
+})
 
 app.mount('#app')

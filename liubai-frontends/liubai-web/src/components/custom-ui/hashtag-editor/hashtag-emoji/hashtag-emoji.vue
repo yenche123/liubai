@@ -15,6 +15,7 @@ const onTapEmoji = (emoji: string, hide: () => void) => {
 <template>
   <VDropdown 
     :hideTriggers="['click']"
+    theme="emoji-select"
   >
 
     <template #default>
@@ -104,21 +105,23 @@ const onTapEmoji = (emoji: string, hide: () => void) => {
   }
 }
 
-/** 【待完善】覆盖原 floating-vue 的 css */
-.v-popper--theme-dropdown .v-popper__inner {
-  border-radius: 20px;
-  background: var(--card-bg);
-  border: 1px solid var(--line-default);
-  box-shadow: var(--floating-shadow);
+/** 覆盖原 floating-vue 的 css */
+.v-popper--theme-emoji-select {
+
+  .v-popper__inner {
+    border-radius: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--line-default);
+    box-shadow: var(--floating-shadow);
+  }
+
+  .v-popper__arrow-outer {
+    visibility: hidden;
+  }
+
 }
 
-.v-popper--theme-dropdown .v-popper__arrow-outer {
-  border-color: var(--line-default);
-}
 
-.v-popper--theme-dropdown .v-popper__arrow-inner {
-  border-color: var(--card-bg);
-}
 
 
 </style>
