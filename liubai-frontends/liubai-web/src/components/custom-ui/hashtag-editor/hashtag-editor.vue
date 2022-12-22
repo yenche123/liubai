@@ -162,7 +162,7 @@ const onMouseEnterItem = (index: number) => {
         justify-content: center;
         color: var(--main-normal);
         font-weight: 700;
-        font-size: var(--title-font);
+        font-size: var(--head-font);
 
         .hteb-icon {
           width: 40px;

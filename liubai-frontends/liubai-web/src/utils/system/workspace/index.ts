@@ -13,6 +13,7 @@ import {
   getMergedChildTree,
   generateNewTreeForMerge,
   getChildrenAndMeIds,
+  toEditTagIcon,
 } from "./tools/tag-util"
 import type {
   AddATagParam,
@@ -241,6 +242,22 @@ export async function deleteTag(
 
   // 处理草稿
   const res3 = await updateDraftWhenTagDeleted(idAndChildren)
+
+  return { isOk: true }
+}
+
+export async function editTagIcon(
+  tagId: string, 
+  icon?: string
+): Promise<BaseTagRes> {
+  // 获取 tagList
+  const tagList = getCurrentSpaceTagList()
+  const newList = JSON.parse(JSON.stringify(tagList)) as TagView[]
+  toEditTagIcon(tagId, newList, icon)
+
+  // 更新 tagList
+  const wStore = useWorkspaceStore()
+  const res = await wStore.setTagList(newList)
 
   return { isOk: true }
 }

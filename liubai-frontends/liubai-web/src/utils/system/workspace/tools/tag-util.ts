@@ -462,3 +462,24 @@ export function deleteTheTag(
 
   return false
 }
+
+export function toEditTagIcon(
+  tagId: string,
+  tagList: TagView[],
+  icon?: string
+): boolean {
+  for(let i=0; i<tagList.length; i++) {
+    const v = tagList[i]
+    if(v.tagId === tagId) {
+      v.icon = icon
+      return true
+    }
+    if(v.oState === "REMOVED") continue
+    if(v.children) {
+      const res = toEditTagIcon(tagId, v.children, icon)
+      if(res) return res
+    }
+  }
+
+  return false
+}

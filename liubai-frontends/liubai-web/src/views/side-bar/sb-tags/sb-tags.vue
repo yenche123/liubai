@@ -89,6 +89,9 @@ const {
                 ></SvgIcon>
                 <div v-else class="tag-arrow-dot"></div>
               </div>
+              <div v-if="node.icon" class="tag-icon">
+                <span>{{ decodeURIComponent(node.icon) }}</span>
+              </div>
               <div class="tag-title">
                 <span>{{ node.text }}</span>
               </div>
@@ -228,6 +231,14 @@ const {
       &:active::before {
         opacity: 0;
       }
+    }
+
+    .tag-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      font-size: var(--desc-font);
     }
 
     .tag-title {

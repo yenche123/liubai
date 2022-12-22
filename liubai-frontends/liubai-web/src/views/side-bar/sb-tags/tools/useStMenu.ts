@@ -9,12 +9,14 @@ import {
   editATag, 
   mergeTag, 
   deleteTag,
+  editTagIcon,
 } from "../../../../utils/system/workspace"
 import type { Stat } from "./useSbTags"
 import type { Ref } from "vue"
 import { i18n } from "../../../../locales"
 import { RenameTagParam } from "../../../../utils/system/workspace/tools/types"
 import { getTagViewLevel } from "../../../../utils/system/workspace/tools/tag-util"
+import time from "../../../../utils/basic/time"
 
 type T_i18n = typeof i18n.global.t
 
@@ -129,13 +131,19 @@ async function handle_edit(
   })
 
   if(!res.confirm || !res.text) return
+  const gStore = useGlobalStateStore()
+
   const newTagId = res.tagId
   if(newTagId === oldTagId) {
     // 待完善，检查有没有改了 emoji
+    if(res.icon === node.icon) return
+    const res2 = await editTagIcon(oldTagId, res.icon)
+    node.icon = res.icon
+    ctx.lastTagChangeStamp.value = time.getTime()
+    gStore.addTagChangedNum()
     return
   }
   
-  const gStore = useGlobalStateStore()
   const { t } = i18n.global
 
   // 检查层级是否已大于 3
