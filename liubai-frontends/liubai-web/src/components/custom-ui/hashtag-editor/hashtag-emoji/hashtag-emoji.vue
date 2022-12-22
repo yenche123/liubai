@@ -155,6 +155,10 @@ const onTapRemove = (hide: () => void) => {
     visibility: hidden;
   }
 
+  .v-popper__arrow-inner {
+    border-color: var(--card-bg);
+  }
+
 }
 
 

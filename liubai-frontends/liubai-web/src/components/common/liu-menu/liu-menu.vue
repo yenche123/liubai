@@ -60,6 +60,7 @@ export default defineComponent({
 <template>
   <VDropdown 
     :hideTriggers="['click']"
+    theme="liu-menu"
     @show="onMenuShow"
     @hide="onMenuHide"
   >
