@@ -70,8 +70,8 @@ export async function showHashTagEditor(opt: HashTagEditorParam) {
   return new Promise(_wait)
 }
 
-function onEmojiChange(newEmoji: string) {
-  emoji.value = newEmoji
+function onEmojiChange(newEmoji?: string) {
+  emoji.value = newEmoji ?? ""
 }
 
 function onInput() {

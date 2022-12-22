@@ -49,7 +49,10 @@ const onMouseEnterItem = (index: number) => {
           ></svg-icon>
         </div>
         <!-- edit 模式，允许被点击-->
-        <HashtagEmoji v-else @emojichange="onEmojiChange">
+        <HashtagEmoji v-else 
+          @emojichange="onEmojiChange"
+          :has-emoji="Boolean(emoji)"
+        >
           <div class="liu-hover hteb-box">
             <svg-icon 
               v-if="!emoji"

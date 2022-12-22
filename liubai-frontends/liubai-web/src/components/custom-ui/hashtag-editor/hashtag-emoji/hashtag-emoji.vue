@@ -2,12 +2,24 @@
 
 import { CUSTOM_EMOJIS } from "./tools/custom-emojis"
 
+defineProps({
+  hasEmoji: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const emit = defineEmits<{
-  (event: "emojichange", newEmoji: string): void
+  (event: "emojichange", newEmoji?: string): void
 }>()
 
 const onTapEmoji = (emoji: string, hide: () => void) => {
   emit("emojichange", emoji)
+  hide()
+}
+
+const onTapRemove = (hide: () => void) => {
+  emit("emojichange")
   hide()
 }
 
@@ -25,13 +37,24 @@ const onTapEmoji = (emoji: string, hide: () => void) => {
     <template #popper="{ hide }">
 
       <div class="he-container">
-        <template v-for="(item, index) in CUSTOM_EMOJIS" :key="index">
-        
-          <div class="liu-hover he-item" @click="onTapEmoji(item, hide)">
-            <span>{{ item }}</span>
-          </div>
 
-        </template>
+        <div v-if="hasEmoji" class="he-first-bar">
+          <CustomBtn type="other" size="mini" @click="onTapRemove(hide)">
+            <span>移除</span>
+          </CustomBtn>
+        </div>
+
+        <div class="he-box">
+
+          <template v-for="(item, index) in CUSTOM_EMOJIS" :key="index">
+        
+            <div class="liu-hover he-item" @click="onTapEmoji(item, hide)">
+              <span>{{ item }}</span>
+            </div>
+
+          </template>
+        </div>
+        
       </div>
     
     </template>
@@ -47,11 +70,22 @@ const onTapEmoji = (emoji: string, hide: () => void) => {
   padding: 10px;
   width: 490px;
   max-height: 50vh;
-  display: flex;
-  flex-wrap: wrap;
+  position: relative;
 
   &::-webkit-scrollbar-thumb {
     background: var(--sidebar-scrollbar-thumb);
+  }
+
+  .he-first-bar {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .he-box {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
   }
 
   .he-item {
@@ -62,6 +96,7 @@ const onTapEmoji = (emoji: string, hide: () => void) => {
     justify-content: center;
     font-size: var(--head-font);
   }
+
 }
 
 @media screen and (max-width: 600px) {
@@ -101,6 +136,7 @@ const onTapEmoji = (emoji: string, hide: () => void) => {
     .he-item {
       width: 50px;
       height: 50px;
+      font-size: var(--title-font);
     }
   }
 }
