@@ -1,3 +1,3 @@
 # LB
 
-I don't want to write any fucking code
+I don't know how to write the code again
