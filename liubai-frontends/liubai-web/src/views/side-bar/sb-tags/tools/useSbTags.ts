@@ -114,7 +114,7 @@ export function useSbTags(emits: SbtEmits) {
   }
 
   const onNaviBack = () => {
-    router.naviBack()
+    router.naviBackUntilNoSpecificQuery(route, "tags")
   }
 
   return { 

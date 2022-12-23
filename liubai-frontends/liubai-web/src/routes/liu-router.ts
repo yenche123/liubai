@@ -112,9 +112,12 @@ class LiuRouter {
     return res
   }
 
-  /** 自定义携带没有query(tags参数除外，依然保留) 的 push 情况  */
+  /** 自定义携带没有query 的 push 情况 
+   * 可选择是否保留 query 中的 tags 参数，默认会保留
+  */
   async pushCurrentNoQuery(
     route: RouteLocationNormalizedLoaded,
+    reserveTags: boolean = true,
   ) {
     const name = route.name
     const params = route.params
@@ -124,7 +127,7 @@ class LiuRouter {
       return
     }
     let newRoute: RouteLocationRaw = { name, params, query: {} }
-    if(oldQuery.tags && typeof oldQuery.tags === 'string') {
+    if(reserveTags && oldQuery.tags && typeof oldQuery.tags === 'string') {
       newRoute.query = { tags: oldQuery.tags }
     }
 
@@ -177,6 +180,60 @@ class LiuRouter {
 
     // 导航去首页
     this.goHome()
+  }
+
+  /**
+   * 回退页面，直到 query 中没有 key 或者 key 跟 val 不匹配
+   * @param key query 中目标的属性
+   * @param val query 中目标的属性值
+   * @returns 
+   */
+  public naviBackUntilNoSpecificQuery(
+    route: RouteLocationNormalizedLoaded,
+    key: string,
+    val?: string,
+  ) {
+    const _this = this
+    const list = this.getStack()
+    if(list.length <= 1) {
+      _this.goHome()
+      return
+    }
+
+    const _go = (pageNum: number) => {
+      if(pageNum === 0) {
+        _this.go(-1)
+        return
+      }
+      if(pageNum > 9) {
+        _this.pushCurrentNoQuery(route, false)
+        return
+      }
+      _this.go(-pageNum)
+    }
+
+    let delta = 0
+    for(let i = list.length - 1; i >= 0; i--) {
+      const v = list[i]
+      const q = v.query
+      if(!q) {
+        _go(delta)
+        return
+      }
+      const q2 = q[key]
+      if(!q2) {
+        _go(delta)
+        return
+      }
+      if(val && q2 !== val) {
+        _go(delta)
+        return
+      }
+
+      delta++
+    }
+
+    _this.pushCurrentNoQuery(route, false)
   }
 
   // 导航去首页
