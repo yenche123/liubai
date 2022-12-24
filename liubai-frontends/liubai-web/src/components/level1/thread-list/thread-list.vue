@@ -4,10 +4,11 @@ import ThreadCard from './thread-card/thread-card.vue';
 import { useNewAndUpdate } from './tools/useNewAndUpdate';
 import ListBottom from '../list-bottom/list-bottom.vue';
 import { useThreadOperate } from './tools/useThreadOperate';
+import type { PropType } from 'vue';
 
 const props = defineProps({
   viewType: {
-    type: String,
+    type: String as PropType<"" | "TRASH" | "TAG" | "FAVORITE" | "PINNED">,
     default: "",  // "": 默认; "TRASH": 回收站; "TAG": 标签; "FAVORITE": 收藏;  "PINNED": 被置顶
   },
   tagId: {
@@ -34,6 +35,7 @@ const {
       <ThreadCard 
         :thread-data="item"
         :position="index"
+        :view-type="viewType"
         @newoperate="receiveOperation"
       ></ThreadCard>
     

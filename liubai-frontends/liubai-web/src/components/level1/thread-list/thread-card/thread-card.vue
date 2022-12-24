@@ -12,7 +12,7 @@ import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
 import TcBubbleMenu from './tc-bubble-menu/tc-bubble-menu.vue';
 import { useTcOperation } from "./tools/useTcOperation";
-import type { ThreadOperation } from "../tools/types"
+import type { ThreadOperation, TlViewType } from "../tools/types";
 
 export default defineComponent({
   components: {
@@ -32,6 +32,10 @@ export default defineComponent({
     displayType: {
       type: String as PropType<"list" | "detail">,
       default: "list",
+    },
+    viewType: {
+      type: String as PropType<TlViewType>,
+      default: "",
     },
     position: {
       type: Number,
@@ -126,6 +130,7 @@ export default defineComponent({
 
       <!-- 操作栏 -->
       <TcActionbar
+        v-if="viewType !== 'TRASH'"
         :workspace="threadData.workspace"
         :comment-num="threadData.commentNum"
         :emoji-num="threadData.emojiData.total"
