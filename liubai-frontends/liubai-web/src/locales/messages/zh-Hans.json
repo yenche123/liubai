@@ -136,5 +136,9 @@
     "delete_hd": "删除标签",
     "delete_bd": "确定要删除 \"{tag}\" 标签？",
     "delete_tip": "同时删除动态"
+  },
+  "err": {
+    "no_data": "这里什么都没有",
+    "no_auth": "没有访问权限"
   }
 }

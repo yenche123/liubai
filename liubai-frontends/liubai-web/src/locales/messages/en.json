@@ -136,5 +136,9 @@
     "delete_hd": "Delete the tag",
     "delete_bd": "Are you sure to delete the tag called \"{tag}\"?",
     "delete_tip": "Also delete the threads"
+  },
+  "err": {
+    "no_data": "Nothing Here",
+    "no_auth": "No Access"
   }
 }

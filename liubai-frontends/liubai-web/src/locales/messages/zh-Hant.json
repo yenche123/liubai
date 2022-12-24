@@ -136,5 +136,9 @@
     "delete_hd": "删除標籤",
     "delete_bd": "確定要刪除 \"{tag}\" 標籤？",
     "delete_tip": "同時删除動態"
+  },
+  "err": {
+    "no_data": "這裡什麼都沒有",
+    "no_auth": "沒有訪問權限"
   }
 }

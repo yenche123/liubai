@@ -13,6 +13,10 @@ const props = defineProps({
   color: {
     type: String,
     default: "",
+  },
+  coverFillStroke: {
+    type: Boolean,
+    default: true
   }
 })
 const symbolId = computed(() => {
@@ -21,7 +25,7 @@ const symbolId = computed(() => {
 
 </script>
 <template>
-  <svg aria-hidden="true" class="svg-icon">
+  <svg aria-hidden="true" :class="{ 'svg-icon': coverFillStroke }">
     <use :xlink:href="symbolId" 
       :fill="color ? color : undefined" 
       :stroke="color ? color : undefined" 
