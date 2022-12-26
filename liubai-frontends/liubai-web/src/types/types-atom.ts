@@ -88,3 +88,12 @@ export interface TagView {
   updatedStamp: number
   children?: TagView[]
 }
+
+// 页面状态
+/**
+ * -1: 正常
+ * 0: 加载中
+ * 50: 查无内容（404）
+ * 51: 没有权限
+ */
+export type PageState = -1 | 0 | 50 | 51

@@ -21,13 +21,15 @@ async function getList(opt?: TcListOption) {
 
 
 async function getData(opt: TcDataOption) {
-  const { id, onlyLocal = true } = opt
-  if(onlyLocal) {
-    localGet.getData(id)
+  const { id, local = true } = opt
+  if(local) {
+    const res = await localGet.getData(id)
+    return res
   }
   else {
     cloudGet.getData(id)
   }
+  return undefined
 }
 
 export default {

@@ -69,10 +69,13 @@ async function getList(
   return threads
 }
 
-function getData(
+async function getData(
   id: string
 ) {
-
+  const data = await db.contents.get(id)
+  if(!data) return data
+  const threads = await equipThreads([data])
+  return threads[0]
 }
 
 

@@ -40,5 +40,5 @@ export interface TcListOption {
 
 export interface TcDataOption {
   id: string
-  onlyLocal?: boolean
+  local?: boolean    // 默认为 true
 }

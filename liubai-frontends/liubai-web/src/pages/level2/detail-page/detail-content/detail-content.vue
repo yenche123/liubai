@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import cfg from "../../../../config"
 import PlaceholderView from "../../../../views/common/placeholder-view/placeholder-view.vue";
+import ThreadCard from "../../../../components/level1/thread-list/thread-card/thread-card.vue";
+import { useDetailContent } from "./tools/useDetailContent";
+
+const {
+  dcData
+} = useDetailContent()
 
 </script>
 <template>
@@ -8,7 +13,14 @@ import PlaceholderView from "../../../../views/common/placeholder-view/placehold
   <div class="mc-container">
     <div class="tc-virtual"></div>
     <div class="mc-box">
-      <PlaceholderView :p-state="0" err-msg="查无任何资讯，如果有问题欢迎咨询客服"></PlaceholderView>
+      <PlaceholderView 
+        :p-state="dcData.state"
+      ></PlaceholderView>
+      <ThreadCard 
+        v-if="dcData.threadShow && dcData.state < 0"
+        :thread-data="dcData.threadShow"
+        :position="0"
+      ></ThreadCard>
     </div>
   </div>
 
