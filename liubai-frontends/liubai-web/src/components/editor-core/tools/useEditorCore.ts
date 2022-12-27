@@ -286,6 +286,10 @@ function initExtensions(
     },
   })
 
+  const CustomLink = Link.configure({
+    openOnClick: false
+  })
+
   const extensions = [
     CustomCode,
     CustomBlockQuote,
@@ -330,7 +334,7 @@ function initExtensions(
   ]
 
   if(!props.editMode) {
-    extensions.push(Link)
+    extensions.push(CustomLink)
   }
 
   return extensions

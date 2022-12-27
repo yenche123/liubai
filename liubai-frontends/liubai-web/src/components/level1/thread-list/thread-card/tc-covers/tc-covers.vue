@@ -13,13 +13,14 @@ export default defineComponent({
   setup(props) {
     const imgWidth = 140
 
-    const onTapImage = (index: number) => {
+    const onTapImage = (e: MouseEvent, index: number) => {
       const c = props.covers
       if(!c || !c[index]) return
       cui.previewImage({
         imgs: c,
         index
       })
+      e.stopPropagation()
     }
 
     return {
@@ -45,7 +46,7 @@ export default defineComponent({
           :draggable="false" 
           class="cc-img"
           object-fit="cover" 
-          @click="onTapImage(index)"
+          @click="onTapImage($event, index)"
         ></liu-img>
 
       </div>

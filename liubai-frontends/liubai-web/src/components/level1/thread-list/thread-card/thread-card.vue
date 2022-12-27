@@ -54,7 +54,9 @@ export default defineComponent({
       editorCoreRef,
       editor,
       isBriefing,
-      onTapBriefing
+      onTapBriefing,
+      onTapThreadCard,
+      onTapContent,
     } = useThreadCard(props)
     const { t } = useI18n()
 
@@ -68,6 +70,8 @@ export default defineComponent({
       remindStr,
       isBriefing,
       onTapBriefing,
+      onTapThreadCard,
+      onTapContent,
       ...operations,
     }
   }
@@ -78,7 +82,7 @@ export default defineComponent({
 
   <div class="tc-container">
 
-    <div class="tc-box">
+    <div class="tc-box" @click="onTapThreadCard">
 
       <h1 v-if="threadData.title" class="tc-title">
         <span>{{ threadData.title }}</span>
@@ -105,7 +109,10 @@ export default defineComponent({
       ></TcBubbleMenu>
 
       <!-- 全文 -->
-      <div v-if="threadData.content" v-show="!isBriefing" class="tc-content">
+      <div v-if="threadData.content" v-show="!isBriefing" 
+        class="tc-content"
+        @click="onTapContent"
+      >
         <EditorCore 
           ref="editorCoreRef"
           :edit-mode="false"

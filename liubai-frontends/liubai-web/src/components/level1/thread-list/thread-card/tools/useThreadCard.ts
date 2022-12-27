@@ -26,6 +26,7 @@ export function useThreadCard(props: TcProps) {
       }
     }
     isBriefing.value = false
+    e.stopPropagation()
   }
 
 
@@ -34,6 +35,20 @@ export function useThreadCard(props: TcProps) {
     editor,
     isBriefing,
     onTapBriefing,
+    onTapThreadCard,
+    onTapContent,
   }
+}
+
+function onTapContent(e: MouseEvent) {
+  e.stopPropagation()
+}
+
+function onTapThreadCard(e: MouseEvent) {
+  const { target, currentTarget } = e
+  console.log("onTapThreadCard.......")
+  console.log(target)
+  console.log(currentTarget)
+  console.log(" ")
 }
 

@@ -29,6 +29,7 @@ export default defineComponent({
 
     const onTapTag = (e: MouseEvent, href: string) => {
       e.preventDefault()
+      e.stopPropagation()
       router.push({ path: href, query: route.query })
     }
 
