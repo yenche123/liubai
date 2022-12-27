@@ -9,6 +9,7 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import HorizontalRule from "@tiptap/extension-horizontal-rule"
 import Code from '@tiptap/extension-code'
 import Link from '@tiptap/extension-link'
+import Heading from '@tiptap/extension-heading'
 import { useI18n, ComposerTranslation } from 'vue-i18n'
 import { wrappingInputRule, nodeInputRule } from "@tiptap/core"
 import type { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
@@ -290,6 +291,10 @@ function initExtensions(
     openOnClick: false
   })
 
+  const CustomHeading = Heading.configure({
+    levels: [1],
+  })
+
   const extensions = [
     CustomCode,
     CustomBlockQuote,
@@ -335,6 +340,7 @@ function initExtensions(
 
   if(!props.editMode) {
     extensions.push(CustomLink)
+    extensions.push(CustomHeading)
   }
 
   return extensions

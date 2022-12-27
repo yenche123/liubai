@@ -73,6 +73,14 @@ export default defineComponent({
   min-height: v-bind("editMode ? minHeight : 0");
   transition: .3s;
 
+  h1 {
+    font-size: var(--title-font);
+    font-weight: 700;
+    color: var(--main-normal);
+    margin-block-start: 0.2rem;
+    margin-block-end: 0rem;
+  }
+
   p {
     margin-block-start: 0;
     margin-block-end: 0;
@@ -146,7 +154,8 @@ export default defineComponent({
   strong::selection, 
   br::selection, 
   s::selection, 
-  a::selection {
+  a::selection,
+  h1::selection {
     background-color: var(--select-bg);
   }
 

@@ -19,6 +19,7 @@ export interface LiuRemindMe {
 
 
 export const liuNodeTypes = [
+  "heading",          // 标题（只有 h1）
   "paragraph",        // 段落
   "bulletList",       // 无序列表
   "orderedList",      // 有序列表

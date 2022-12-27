@@ -11,6 +11,7 @@ import liuUtil from "../../liu-util";
 import { getBriefing } from "./tools/briefing";
 import { tagIdsToShows } from "../../system/workspace";
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
+import { LiuContent } from "../../../types/types-atom";
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
 
@@ -29,7 +30,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
   let list: ThreadShow[] = []
   for(let i=0; i<contents.length; i++) {
     const v = contents[i]
-    const { member, _id, user, liuDesc, workspace } = v
+    const { member, _id, user, liuDesc, workspace, title } = v
 
     let myFavorite = false
     let myFavoriteStamp: number | undefined
@@ -54,9 +55,9 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       return imgHelper.imageLocalToShow(v2)
     })
 
-    let tiptapContent: TipTapJSONContent | undefined = liuDesc?.length 
-      ? { type: "doc", content: liuDesc } : undefined
- 
+    let newDesc = _packLiuDesc(liuDesc, title)
+    let tiptapContent: TipTapJSONContent | undefined = newDesc?.length 
+      ? { type: "doc", content: newDesc } : undefined
     
     let tags: TagShow[] = []
     // 判断当前工作区与当前动态是否匹配
@@ -80,7 +81,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       workspace,
       visScope: v.visScope,
       storageState: v.storageState,
-      title: v.title,
+      title,
       content: tiptapContent,
       briefing: getBriefing(liuDesc),
       images,
@@ -118,6 +119,32 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
 
   return list
 }
+
+/**
+ * 判断有没有 title，若有加到 content 里
+ */
+function _packLiuDesc(
+  liuDesc: LiuContent[] | undefined,
+  title?: string,
+) {
+  if(!title) return liuDesc
+  let newDesc = liuDesc ? JSON.parse(JSON.stringify(liuDesc)) as LiuContent[] : []
+  const h1: LiuContent = {
+    type: "heading",
+    attrs: {
+      level: 1,
+    },
+    content: [
+      {
+        "type": "text",
+        "text": title
+      }
+    ]
+  }
+  newDesc.splice(0, 0, h1)
+  return newDesc
+}
+
 
 export function getEditedStr(createdStamp: number, editedStamp?: number) {
   if(!editedStamp) return

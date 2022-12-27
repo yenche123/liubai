@@ -84,10 +84,6 @@ export default defineComponent({
 
     <div class="tc-box" @click="onTapThreadCard">
 
-      <h1 v-if="threadData.title" class="tc-title">
-        <span>{{ threadData.title }}</span>
-      </h1>
-
       <!-- 摘要 -->
       <div v-if="threadData.briefing" v-show="isBriefing" 
         class="tc-briefing"
@@ -176,18 +172,6 @@ export default defineComponent({
     box-sizing: border-box;
     padding: 20px;
     position: relative;
-
-    .tc-title {
-      font-size: var(--title-font);
-      font-weight: 700;
-      color: var(--main-normal);
-      margin-block-start: 0.2rem;
-      margin-block-end: 0rem;
-
-      span::selection {
-        background-color: var(--select-bg);
-      }
-    }
 
     .tc-briefing {
       position: relative;
