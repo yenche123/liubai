@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import PlaceholderView from "../../../../views/common/placeholder-view/placeholder-view.vue";
-import ThreadCard from "../../../../components/level1/thread-list/thread-card/thread-card.vue";
-import { useDetailContent } from "./tools/useDetailContent";
-
-const {
-  dcData
-} = useDetailContent()
+import ThreadDetail from "../../../../components/level1/thread-detail/thread-detail.vue";
 
 </script>
 <template>
@@ -13,15 +7,7 @@ const {
   <div class="mc-container">
     <div class="tc-virtual"></div>
     <div class="mc-box">
-      <PlaceholderView 
-        :p-state="dcData.state"
-      ></PlaceholderView>
-      <ThreadCard 
-        v-if="dcData.threadShow && dcData.state < 0"
-        :thread-data="dcData.threadShow"
-        display-type="detail"
-        :position="0"
-      ></ThreadCard>
+      <ThreadDetail location="detail-page"></ThreadDetail>
     </div>
   </div>
 

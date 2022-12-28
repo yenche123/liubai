@@ -13,7 +13,7 @@ import Heading from '@tiptap/extension-heading'
 import { useI18n, ComposerTranslation } from 'vue-i18n'
 import { wrappingInputRule, nodeInputRule } from "@tiptap/core"
 import type { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
-import { inject, onMounted, ref, watch } from 'vue'
+import { inject, onMounted, ref, toRef, watch } from 'vue'
 import type { ShallowRef } from "vue"
 import type { HashTagEditorRes } from "../../../types/other/types-hashtag"
 
@@ -47,6 +47,7 @@ interface EcContext {
 export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
   const { t } = useI18n()
 
+  const contentRef = toRef(props, "content")
   const extensions = initExtensions(props, emits, t)
   const content = props?.content ?? "<p></p>"
 
@@ -71,14 +72,25 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
     }
   })
   
-  // 编辑模式时，去初始化 lastEmpty / lastText
+  
   if(props.editMode) {
+    // 编辑模式时，去初始化 lastEmpty / lastText
+
     const numWhenSet = inject(editorSetKey, ref(0))
     watch(numWhenSet, (newV) => {
       if(newV > 0) setLastData(editor, ctx)
     })
     onMounted(() => {
       setLastData(editor, ctx)
+    })
+  }
+  else {
+    // 浏览模式时，外部可能修改 content
+
+    watch(contentRef, (newV) => {
+      if(!editor.value) return
+      if(!newV) return
+      editor.value.commands.setContent(newV)
     })
   }
 
