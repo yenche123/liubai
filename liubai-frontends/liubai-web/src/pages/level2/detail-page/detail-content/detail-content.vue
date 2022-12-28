@@ -19,6 +19,7 @@ const {
       <ThreadCard 
         v-if="dcData.threadShow && dcData.state < 0"
         :thread-data="dcData.threadShow"
+        display-type="detail"
         :position="0"
       ></ThreadCard>
     </div>
