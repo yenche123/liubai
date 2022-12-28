@@ -23,7 +23,8 @@
     "checkMore": "More",
     "copied": "Copied",    
     "close": "Close",
-    "open_in_new": "Open in New"
+    "open_in_new": "Open in New",
+    "login": "Sign in"
   },
   "editor": {
     "when": "When",
@@ -117,7 +118,12 @@
     "tag_merge_content": "Are you sure to merge \"{tag1}\" into \"{tag2}\"?",
     "collected": "Marked",
     "canceled": "Canceled",
-    "undo": "Undo"
+    "undo": "Undo",
+    "not_login_yet": "You haven't signed in",
+    "login_first": "Please sign in first",
+    "not_join_bd": "You haven't joined the workspace yet.",
+    "to_join": "JOIN",
+    "workspace_different": "There is deference between the current workspace and the workspace of the thread. Please switch to the corresponding workspace first."
   },
   "card_bubble": {
     "copy": "Copy",

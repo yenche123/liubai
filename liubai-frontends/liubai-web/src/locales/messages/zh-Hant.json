@@ -23,7 +23,8 @@
     "checkMore": "查看更多",
     "copied": "已複製",
     "close": "關閉",
-    "open_in_new": "在新的分頁打開"
+    "open_in_new": "在新的分頁打開",
+    "login": "登入"
   },
   "editor": {
     "when": "什麼時候",
@@ -117,7 +118,12 @@
     "tag_merge_content": "是否將 \"{tag1}\" 合併至 \"{tag2}\"?",
     "collected": "已收藏",
     "canceled": "已取消",
-    "undo": "復原"
+    "undo": "復原",
+    "not_login_yet": "尚未登入",
+    "login_first": "請先登入",
+    "not_join_bd": "你尚未加入該工作區",
+    "to_join": "去加入",
+    "workspace_different": "當前工作區與動態所屬的不一致。請先切換工作區。"
   },
   "card_bubble": {
     "copy": "複製",

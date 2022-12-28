@@ -4,7 +4,6 @@ import type { ThreadShow } from "../../../../types/types-content";
 import type { PageState } from "../../../../types/types-atom";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 import threadController from "../../../../utils/controllers/thread-controller/thread-controller";
-import valTool from "../../../../utils/basic/val-tool";
 
 export interface TdData {
   state: PageState

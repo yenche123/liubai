@@ -78,6 +78,7 @@ const {
           @click="onTapModalCancel"
         >
           <span v-if="modalData.cancelText">{{ modalData.cancelText }}</span>
+          <span v-else-if="modalData.cancel_key">{{ t(modalData.cancel_key) }}</span>
           <span v-else>{{ t('common.cancel') }}</span>
         </div>
         <div 
@@ -85,6 +86,7 @@ const {
           @click="onTapModalConfirm"
         >
           <span v-if="modalData.confirmText">{{ modalData.confirmText }}</span>
+          <span v-else-if="modalData.confirm_key">{{ t(modalData.confirm_key) }}</span>
           <span v-else>{{ t('common.confirm') }}</span>
         </div>
       </div>

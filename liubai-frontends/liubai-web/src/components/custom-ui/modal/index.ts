@@ -21,6 +21,8 @@ interface ModalParam {
   showCancel?: boolean
   cancelText?: string
   confirmText?: string
+  confirm_key?: string
+  cancel_key?: string
   success?: (res: ModalSuccessRes) => void
 }
 
@@ -35,6 +37,8 @@ interface ModalData {
   showCancel: boolean
   cancelText: string
   confirmText: string
+  confirm_key?: string
+  cancel_key?: string
   tipSelected: boolean
 }
 
@@ -128,6 +132,8 @@ const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
   modalData.content_key = opt.content_key ?? ""
   modalData.cancelText = opt.cancelText ?? ""
   modalData.confirmText = opt.confirmText ?? ""
+  modalData.confirm_key = opt.confirm_key
+  modalData.cancel_key = opt.cancel_key
   modalData.title_opt = opt.title_opt
   modalData.content_opt = opt.content_opt
   modalData.tip_key = opt.tip_key
