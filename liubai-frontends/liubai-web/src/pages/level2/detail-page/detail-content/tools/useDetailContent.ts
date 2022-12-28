@@ -40,7 +40,8 @@ function whenRouteChange(
 
   const id = params.contentId
   if(!params || typeof id !== "string") return
-
+  
+  dcData.state = 0
   loadLocal(id, dcData)
 }
 

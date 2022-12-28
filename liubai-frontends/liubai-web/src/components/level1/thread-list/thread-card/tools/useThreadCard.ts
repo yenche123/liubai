@@ -65,10 +65,10 @@ function handleTapThreadCard(
 ) {
   const { target, currentTarget } = e
   const { props, route, router } = ctx
-  console.log("onTapThreadCard.......")
-  console.log(target)
-  console.log(currentTarget)
-  console.log(" ")
+  // console.log("onTapThreadCard.......")
+  // console.log(target)
+  // console.log(currentTarget)
+  // console.log(" ")
 
   if(liuApi.eventTargetIsSomeTag(target, "a")) return
   if(props.displayType === "detail") return
