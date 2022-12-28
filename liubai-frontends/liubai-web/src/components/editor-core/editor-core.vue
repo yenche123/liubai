@@ -71,7 +71,7 @@ export default defineComponent({
   line-height: 2;
   color: var(--main-normal);
   min-height: v-bind("editMode ? minHeight : 0");
-  transition: .3s;
+  transition: v-bind("editMode ? '.3s' : 0");
 
   h1 {
     font-size: var(--title-font);
