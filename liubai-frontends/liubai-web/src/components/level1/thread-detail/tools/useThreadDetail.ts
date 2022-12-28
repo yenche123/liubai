@@ -50,8 +50,6 @@ function whenRouteChange(
 
   const location = props.location
 
-  tdData.state = 0
-
   if(location === "detail-page") {
     if(typeof id !== "string" || !id) {
       return
@@ -83,7 +81,6 @@ async function loadLocal(
   tdData: TdData
 ) {
   const res = await threadController.getData({ id })
-  await valTool.waitMilli(1500)
   if(res && res.oState === "OK") {
     tdData.state = -1
     tdData.threadShow = res
