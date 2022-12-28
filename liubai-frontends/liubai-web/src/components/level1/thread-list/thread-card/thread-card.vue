@@ -100,7 +100,7 @@ export default defineComponent({
 
       <!-- 全文的 bubble-menu -->
       <TcBubbleMenu
-        v-if="threadData.content"
+        v-if="threadData.content && !isBriefing"
         :editor="editor"
       ></TcBubbleMenu>
 
