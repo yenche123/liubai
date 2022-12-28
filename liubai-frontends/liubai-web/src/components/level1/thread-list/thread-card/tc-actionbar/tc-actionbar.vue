@@ -55,6 +55,20 @@ const commentShow = computed(() => {
 
 const default_color = "var(--main-code)"
 
+const onTapCollect = (e: MouseEvent) => {
+  e.stopPropagation()
+  emits('tapcollect')
+}
+
+const onTapComment = (e: MouseEvent) => {
+  e.stopPropagation()
+  emits('tapcomment')
+}
+
+const onTapShare = (e: MouseEvent) => {
+  e.stopPropagation()
+  emits('tapshare')
+}
 
 </script>
 <template>
@@ -62,7 +76,7 @@ const default_color = "var(--main-code)"
 
     <!-- 收藏 -->
     <div v-if="workspace === 'ME'" class="liu-hover tca-item"
-      @click="emits('tapcollect')"
+      @click="onTapCollect"
     >
       <div class="tca-icon-box">
         <svg-icon v-show="!myFavorite" name="star" class="tca-icon_star" :color="default_color"></svg-icon>
@@ -83,7 +97,7 @@ const default_color = "var(--main-code)"
 
     <!-- 评论 -->
     <div class="liu-hover tca-item"
-      @click="emits('tapcomment')"
+      @click="onTapComment"
     >
       <div class="tca-icon-box">
         <svg-icon name="comment" class="tca-icon_comment" :color="default_color"></svg-icon>
@@ -95,7 +109,7 @@ const default_color = "var(--main-code)"
 
     <!-- 分享 -->
     <div class="liu-hover tca-item"
-      @click="emits('tapshare')"
+      @click="onTapShare"
     >
       <div class="tca-icon-box">
         <svg-icon name="share" class="tca-icon" :color="default_color"></svg-icon>

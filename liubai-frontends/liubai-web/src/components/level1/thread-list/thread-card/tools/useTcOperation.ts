@@ -36,10 +36,6 @@ export function useTcOperation(
     wStore,
   }
 
-  const onTapCollect = () => {
-    handleCollect(ctx)
-  }
-
   const onTapComment = () => {
 
   }
@@ -50,7 +46,6 @@ export function useTcOperation(
 
 
   return {
-    onTapCollect,
     onTapComment,
     onTapShare,
   }
@@ -67,27 +62,6 @@ function _getMyData(ctx: TcoCtx) {
   const { local_id: userId = "" } = getLocalPreference()
 
   return { memberId, userId }
-}
-
-async function handleCollect(ctx: TcoCtx) {
-  //0. 取出我的个人数据
-  const { userId, memberId } = _getMyData(ctx)
-  if(!memberId) {
-    console.warn("没有 memberId")
-    return
-  }
-
-  //1. 生成新的 threadShow 然后通知全局，以快速响应视图
-  const newThread = _getNewThreadShow(ctx.props)
-  newThread.myFavorite = !Boolean(newThread.myFavorite)
-  newThread.myFavoriteStamp = time.getTime()
-
-  console.log("去更新 threadShows.......")
-  ctx.tsStore.setUpdatedThreadShows([newThread])
-
-  // 2. 修改本地数据
-  
-
 }
 
 function handleComment(ctx: TcoCtx) {
