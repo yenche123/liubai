@@ -57,18 +57,12 @@ function whenRouteChange(
     if(name !== "detail") {
       return
     }
-    console.log("看一下 detail-page 里欲加载的 id: ")
-    console.log(id)
-    console.log(" ")
     loadLocal(id, tdData)
   }
   else if(location === "vice-view") {
     if(typeof cid !== "string" || !cid) {
       return
     }
-    console.log("看一下 vice-view 里欲加载的 id: ")
-    console.log(id)
-    console.log(" ")
     loadLocal(cid, tdData)
   }
 }
