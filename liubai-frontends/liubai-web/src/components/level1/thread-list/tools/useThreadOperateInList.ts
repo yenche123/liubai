@@ -25,7 +25,7 @@ interface ToCtx {
   list: Ref<ThreadShow[]>
 }
 
-export function useThreadOperate(
+export function useThreadOperateInList(
   props: TlProps,
   list: Ref<ThreadShow[]>
 ) {

@@ -3,7 +3,7 @@ import { useThreadList } from './tools/useThreadList';
 import ThreadCard from './thread-card/thread-card.vue';
 import { useNewAndUpdate } from './tools/useNewAndUpdate';
 import ListBottom from '../list-bottom/list-bottom.vue';
-import { useThreadOperate } from './tools/useThreadOperate';
+import { useThreadOperateInList } from './tools/useThreadOperateInList';
 import type { PropType } from 'vue';
 
 const props = defineProps({
@@ -24,7 +24,7 @@ useNewAndUpdate(props, list)
 
 const {
   receiveOperation
-} = useThreadOperate(props, list)
+} = useThreadOperateInList(props, list)
 
 </script>
 <template>
