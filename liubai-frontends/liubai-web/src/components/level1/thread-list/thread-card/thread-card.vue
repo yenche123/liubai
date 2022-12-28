@@ -12,7 +12,7 @@ import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
 import TcBubbleMenu from './tc-bubble-menu/tc-bubble-menu.vue';
 import { useTcOperation } from "./tools/useTcOperation";
-import type { ThreadOperation, TlViewType } from "../tools/types";
+import type { ThreadOperation, TlViewType, TlDisplayType } from "../tools/types";
 
 export default defineComponent({
   components: {
@@ -30,7 +30,7 @@ export default defineComponent({
       required: true
     },
     displayType: {
-      type: String as PropType<"list" | "detail">,
+      type: String as PropType<TlDisplayType>,
       default: "list",
     },
     viewType: {

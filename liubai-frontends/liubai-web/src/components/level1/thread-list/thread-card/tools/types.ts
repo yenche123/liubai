@@ -1,6 +1,9 @@
 import type { ThreadShow } from '../../../../../types/types-content';
+import { TlViewType, TlDisplayType } from '../../tools/types';
 
 export interface TcProps {
   threadData: ThreadShow
-  displayType: "list" | "detail"
+  displayType: TlDisplayType
+  viewType: TlViewType
+  position: number
 }

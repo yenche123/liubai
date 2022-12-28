@@ -91,6 +91,7 @@ class LiuRouter {
   async pushCurrentWithNewQuery(
     route: RouteLocationNormalizedLoaded,
     query: Record<string, string>,
+    reserveTags: boolean = true,
   ) {
     const name = route.name
     const params = route.params
@@ -103,7 +104,7 @@ class LiuRouter {
     }
 
     // 如果是左侧侧边栏显示 tags 时，依然保持显示标签
-    if(oldQuery.tags && typeof oldQuery.tags === 'string') {
+    if(reserveTags && oldQuery.tags && typeof oldQuery.tags === 'string') {
       newQuery.tags = oldQuery.tags
     }
 
@@ -129,6 +130,21 @@ class LiuRouter {
     let newRoute: RouteLocationRaw = { name, params, query: {} }
     if(reserveTags && oldQuery.tags && typeof oldQuery.tags === 'string') {
       newRoute.query = { tags: oldQuery.tags }
+    }
+
+    routeChangeTmpData = { operation: "push", delta: 1 }
+    let res = await this.router.push(newRoute)
+    return res
+  }
+
+  /** 保留现有的 query 但是打开新的页面 */
+  async pushNewPageWithOldQuery(
+    route: RouteLocationNormalizedLoaded,
+    to: RouteLocationRaw,
+  ) {
+    const newRoute = this.router.resolve(to)
+    if(route.query) {
+      newRoute.query = route.query
     }
 
     routeChangeTmpData = { operation: "push", delta: 1 }

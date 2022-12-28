@@ -7,4 +7,6 @@ export interface TlProps {
   tagId: string
 }
 
+export type TlDisplayType = "list" | "detail"
+
 export type ThreadOperation = "collect" | "emoji" | "share" | "comment"

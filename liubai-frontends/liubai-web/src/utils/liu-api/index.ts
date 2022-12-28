@@ -12,6 +12,7 @@ export default {
   clearStorageSync: storage.clearStorageSync,
   getCharacteristic: characteristic.getCharacteristic,
   requestAnimationFrame: basic.requestAnimationFrame,
+  eventTargetIsSomeTag: basic.eventTargetIsSomeTag,
   share,
   canShare,
 }
