@@ -22,6 +22,14 @@ export function createObjURLs(files: Array<Blob | File>): string[] {
   return list
 }
 
+export function revokeObjURLs(urls: string[]) {
+  for(let i=0; i<urls.length; i++) {
+    const v = urls[i]
+    URL.revokeObjectURL(v)
+  }
+  return true
+}
+
 export function getArrayFromFileList(fileList: FileList): File[] {
   const arr: File[] = []
   for(let i=0; i<fileList.length; i++) {
