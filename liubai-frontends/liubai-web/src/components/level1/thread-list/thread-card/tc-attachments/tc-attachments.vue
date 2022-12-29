@@ -1,40 +1,19 @@
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { FileLocal } from '../../../../../types';
-import liuUtil from '../../../../../utils/liu-util';
+import { tcaProps, useTcAttachments } from "./tools/useTcAttachments"
 
 const default_color = "var(--main-code)"
 
 export default defineComponent({
 
-  props: {
-    whenStr: String,
-    remindStr: String,
-    files: Array as PropType<FileLocal[]>
-  },
+  props: tcaProps,
 
   setup(props) {
     const { t } = useI18n()
-
-
-    const onTapFile = (e: MouseEvent, index: number) => {
-      e.stopPropagation()
-      if(!props.files?.length) return
-      const v = props.files[index]
-
-      let url = ""
-      if(v.file) {
-        const tmpList = liuUtil.createObjURLs([v.file])
-        url = tmpList[0]
-      }
-      else if(v.cloud_url) {
-        url = v.cloud_url
-      }
-      
-      if(!url) return
-      window.open(url, "_blank")
-    }
+    const {
+      onTapFile
+    } = useTcAttachments(props)
 
     return {
       t,
