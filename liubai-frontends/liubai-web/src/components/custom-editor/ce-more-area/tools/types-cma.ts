@@ -1,7 +1,7 @@
-import { FileShow } from "../../../../types"
+import type { FileShow } from "../../../../types"
 import type { LiuRemindMe } from "../../../../types/types-atom"
-import { CeState } from "../../tools/atom-ce"
-
+import type { CeState } from "../../tools/atom-ce"
+import type { PropType } from "vue"
 
 export type CmaRemindType = "early" | "later"
 
@@ -37,4 +37,12 @@ export interface MaContext {
 export interface CmaProps {
   show: boolean
   state?: CeState
+}
+
+export const cmaProps = {
+  show: {
+    type: Boolean,
+    default: false,
+  },
+  state: Object as PropType<CeState>,
 }

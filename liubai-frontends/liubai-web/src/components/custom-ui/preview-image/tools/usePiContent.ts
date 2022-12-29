@@ -8,6 +8,17 @@ interface PicProps {
   currentIndex: number
 }
 
+export const picProps = {
+  imgs: {
+    type: Array<ImageShow>,
+    default: [],
+  },
+  currentIndex: {
+    type: Number,
+    default: 0,
+  },
+}
+
 interface PicCover {
   src: string
   id: string

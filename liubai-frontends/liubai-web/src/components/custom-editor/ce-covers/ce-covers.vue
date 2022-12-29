@@ -3,17 +3,13 @@ import DraggAble from 'vuedraggable'
 import { defineComponent } from 'vue';
 import type { ImageShow } from '../../../types';
 import liuApi from "../../../utils/liu-api"
-import { useCeCovers } from "./tools/useCeCovers"
+import { useCeCovers, ceCoversProps } from "./tools/useCeCovers"
 
 export default defineComponent({
   components: {
     DraggAble
   },
-  props: {
-    modelValue: {
-      type: Array<ImageShow>,
-    }
-  },
+  props: ceCoversProps,
   emits: ['update:modelValue', 'clear'],
   setup(props) {
     const imgWidth = 140    

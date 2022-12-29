@@ -11,7 +11,6 @@ interface TcCtx {
   props: TcProps
   route: RouteLocationNormalizedLoaded
   router: LiuRouter
-
 }
 
 export function useThreadCard(props: TcProps) {

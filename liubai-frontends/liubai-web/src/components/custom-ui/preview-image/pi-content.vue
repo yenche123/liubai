@@ -2,9 +2,8 @@
 import { Swiper } from "swiper"
 import { Swiper as VueSwiper, SwiperSlide } from 'swiper/vue';
 import { defineComponent, ref, shallowRef } from 'vue';
-import type { ImageShow } from '../../../types';
 import 'swiper/css';
-import { usePiContent } from "./tools/usePiContent";
+import { usePiContent, picProps } from "./tools/usePiContent";
 
 const iconColor = "rgba(255, 255, 255, .95)"
 
@@ -13,16 +12,7 @@ export default defineComponent({
     VueSwiper,
     SwiperSlide,
   },
-  props: {
-    imgs: {
-      type: Array<ImageShow>,
-      default: [],
-    },
-    currentIndex: {
-      type: Number,
-      default: 0,
-    },
-  },
+  props: picProps,
   setup(props) {
     const { covers, coverLength } = usePiContent(props)
     

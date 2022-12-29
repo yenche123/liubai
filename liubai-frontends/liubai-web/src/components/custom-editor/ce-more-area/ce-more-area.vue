@@ -1,24 +1,19 @@
 <script lang="ts">
-import { computed, defineComponent, inject, PropType, Ref } from 'vue';
+import { computed, defineComponent, inject } from 'vue';
+import type { Ref } from "vue";
 import { useI18n } from 'vue-i18n';
 import { mvKey } from "../../../utils/provide-keys"
 import LiuMenu from "../../common/liu-menu/liu-menu.vue"
 import type { LiuRemindMe } from "../../../types/types-atom";
 import { useMoreArea } from "./tools/useMoreArea";
-import { CeState } from '../tools/atom-ce';
 import { receiveCmaProps } from "./tools/receiveCmaProps"
+import { cmaProps } from "./tools/types-cma"
 
 export default defineComponent({
   components: {
     LiuMenu,
   },
-  props: {
-    show: {
-      type: Boolean,
-      default: false,
-    },
-    state: Object as PropType<CeState>,
-  },
+  props: cmaProps,
   emits: {
     whenchange: (val: Date | null) => true,
     remindmechange: (val: LiuRemindMe | null) => true,

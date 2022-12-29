@@ -6,6 +6,10 @@ interface CeCoversProps {
   modelValue?: ImageShow[]
 }
 
+export const ceCoversProps = {
+  modelValue: Array<ImageShow>
+}
+
 export function useCeCovers(props: CeCoversProps) {
 
   const globalStore = useGlobalStateStore()
