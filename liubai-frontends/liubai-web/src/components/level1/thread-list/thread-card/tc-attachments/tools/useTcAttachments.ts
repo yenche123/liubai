@@ -42,6 +42,7 @@ function checkHowToDownload(f: FileLocal) {
   }
 }
 
+/** 使用 a 标签来下载 */
 function _downloadByA(f: FileLocal) {
   let url = ""
   let useCreateObj = false
@@ -67,8 +68,9 @@ function _downloadByA(f: FileLocal) {
 }
 
 /**
- * 开启新分页下载文件时，请不要使用 revokeObjURLs 回收文件
- * 因为这样用户在新的分页时，会无法另存成新的文件
+ * 使用 window.open 来下载
+ *   开启新分页下载文件时，请不要使用 revokeObjURLs 回收文件
+ *   因为这样用户在新的分页时，会无法另存成新的文件
  */
 function _downloadByWindow(f: FileLocal) {
   let url = ""
