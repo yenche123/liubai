@@ -56,12 +56,14 @@ function whenRouteChange(
     if(name !== "detail") {
       return
     }
+    tdData.state = 0
     loadLocal(id, tdData)
   }
   else if(location === "vice-view") {
     if(typeof cid !== "string" || !cid) {
       return
     }
+    tdData.state = 0
     loadLocal(cid, tdData)
   }
 }
