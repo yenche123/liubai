@@ -1,22 +1,23 @@
 import { computed, onActivated, onDeactivated, ref, toRef, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import type { ThreadShow } from "../../../../../types/types-content";
 import liuUtil from "../../../../../utils/liu-util";
 import type { SupportedLocale } from "../../../../../types/types-locale"; 
 import time from "../../../../../utils/basic/time";
+import type { TcProps } from "./types"
 
 const SEC = 1000
 const MIN = 60 * SEC
 const HOUR = 60 * MIN
 
 // 专门显示 "什么时候" / "提醒我"
-export function useWhenAndRemind(threadData: ThreadShow) {
+export function useWhenAndRemind(props: TcProps) {
 
   const { t, locale } = useI18n()
+  const threadData = toRef(props, "threadData")
 
-  const whenStamp = toRef(threadData, "whenStamp")
-  const remindStamp = toRef(threadData, "remindStamp")
-  const remindMe = toRef(threadData, "remindMe")
+  const whenStamp = computed(() => threadData.value.whenStamp)
+  const remindStamp = computed(() => threadData.value.remindStamp)
+  const remindMe = computed(() => threadData.value.remindMe)
 
   const whenStr = computed(() => {
     let nowLocale = locale.value

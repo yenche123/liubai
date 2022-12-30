@@ -49,7 +49,7 @@ export default defineComponent({
     const {
       whenStr,
       remindStr,
-    } = useWhenAndRemind(props.threadData)
+    } = useWhenAndRemind(props)
     const {
       editorCoreRef,
       editor,
