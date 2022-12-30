@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { computed, ref, shallowRef } from "vue";
-import { ContentLocalTable } from "../../types/types-table";
+import { computed, ref } from "vue";
+import time from "../../utils/basic/time";
 
 export const useGlobalStateStore = defineStore("globalState", () => {
 
@@ -22,12 +22,26 @@ export const useGlobalStateStore = defineStore("globalState", () => {
     tagChangedNum.value += 1
   }
 
+  // 处理全局 selection 状态
+  const lastSelectionChange = ref(0)
+  const setLatestSelectionChange = () => {
+    lastSelectionChange.value = time.getTime()
+  }
+  const isJustSelect = () => {
+    const now = time.getTime()
+    const diff = now - lastSelectionChange.value
+    if(diff < 300) return true
+    return false
+  }
+
   return { 
     mainInputing, 
     canListenKeyboard,
     isDragToSort,
     tagChangedNum,
     addTagChangedNum,
+    setLatestSelectionChange,
+    isJustSelect,
   }
 })
 

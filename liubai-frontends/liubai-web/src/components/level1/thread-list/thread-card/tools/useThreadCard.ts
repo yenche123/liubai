@@ -6,22 +6,29 @@ import liuApi from '../../../../../utils/liu-api';
 import { useRouteAndLiuRouter } from '../../../../../routes/liu-router';
 import type { LiuRouter } from '../../../../../routes/liu-router';
 import type { RouteLocationNormalizedLoaded } from "vue-router"
+import { useGlobalStateStore } from '../../../../../hooks/stores/useGlobalStateStore';
+import type {
+  GlobalStateStore
+} from "../../../../../hooks/stores/useGlobalStateStore"
 
 interface TcCtx {
   props: TcProps
   route: RouteLocationNormalizedLoaded
   router: LiuRouter
+  gStore: GlobalStateStore
 }
 
 export function useThreadCard(props: TcProps) {
   const editorCoreRef = ref<typeof EditorCore | null>(null)
   const editor = shallowRef<TipTapEditor>()
   const { route, router } = useRouteAndLiuRouter()
+  const gStore = useGlobalStateStore()
 
   const ctx: TcCtx = {
     props,
     route,
-    router
+    router,
+    gStore
   }
 
   onMounted(() => {
@@ -55,7 +62,8 @@ export function useThreadCard(props: TcProps) {
 }
 
 function onTapContent(e: MouseEvent) {
-  e.stopPropagation()
+  // e.stopPropagation()
+  // console.log("eeee")
 }
 
 function handleTapThreadCard(
@@ -69,6 +77,10 @@ function handleTapThreadCard(
   // console.log(currentTarget)
   // console.log(" ")
 
+  if(liuApi.getSelectionText()) return
+
+  const res = ctx.gStore.isJustSelect()
+  if(res) return
   if(liuApi.eventTargetIsSomeTag(target, "a")) return
   if(props.displayType === "detail") return
   if(props.viewType === "TRASH") return

@@ -25,7 +25,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
   const members = await getMemberShows(member_ids)
   const collections = await collectionController.getMyCollectionByIds({ content_ids })
 
-  console.time("equip-content")
+  // console.time("equip-content")
 
   let list: ThreadShow[] = []
   for(let i=0; i<contents.length; i++) {
@@ -115,7 +115,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
     list.push(obj)
   }
 
-  console.timeEnd("equip-content")
+  // console.timeEnd("equip-content")
 
   return list
 }

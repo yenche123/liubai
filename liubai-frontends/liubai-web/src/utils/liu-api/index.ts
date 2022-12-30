@@ -3,6 +3,9 @@ import device from "./device"
 import storage from "./storage"
 import basic from "./basic"
 import { share, canShare } from "./share"
+import {
+  getSelectionText
+} from "./selection"
 
 export default {
   copyToClipboard: device.copyToClipboard,
@@ -15,4 +18,5 @@ export default {
   eventTargetIsSomeTag: basic.eventTargetIsSomeTag,
   share,
   canShare,
+  getSelectionText,
 }

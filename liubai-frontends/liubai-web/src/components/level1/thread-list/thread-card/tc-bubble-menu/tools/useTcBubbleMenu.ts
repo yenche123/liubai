@@ -34,25 +34,28 @@ export function useTcBubbleMenu(
     tippy?.hide()
   }
 
-  const onTapCopy = () => {
+  const onTapCopy = (e: Event) => {
     const text = _getSelectionText(opt.editor)
     if(text) {
       liuApi.copyToClipboard(text)
       cui.showSnackBar({ text_key: "common.copied" })
     }
     _toCloseTippy(0)
+    e.stopPropagation()
   }
 
-  const onTapSearchIn = () => {
+  const onTapSearchIn = (e: Event) => {
     _toCloseTippy(1)
+    e.stopPropagation()
   }
 
-  const onTapSearchOut = () => {
+  const onTapSearchOut = (e: Event) => {
     const text = _getSelectionText(opt.editor)
     if(text) {
       router.pushCurrentWithNewQuery(route, { outq: text })
     }
     _toCloseTippy(2)
+    e.stopPropagation()
   }
 
   const onTapBot = () => {
