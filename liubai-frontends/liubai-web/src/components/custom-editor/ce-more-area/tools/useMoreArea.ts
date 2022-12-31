@@ -120,7 +120,7 @@ async function toAddTitle(ctx: MaContext) {
     title_key: "editor.add_title2",
     placeholder_key: "editor.title_ph",
     value: ctx.data.title,
-    maxLength: 32,
+    maxLength: 66,
   })
   if(!res.confirm || !res.value) return
   ctx.emits("titlechange", res.value)
