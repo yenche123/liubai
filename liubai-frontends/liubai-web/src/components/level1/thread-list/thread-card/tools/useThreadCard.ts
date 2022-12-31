@@ -72,10 +72,6 @@ function handleTapThreadCard(
 ) {
   const { target, currentTarget } = e
   const { props, route, router } = ctx
-  // console.log("onTapThreadCard.......")
-  // console.log(target)
-  // console.log(currentTarget)
-  // console.log(" ")
 
   if(liuApi.getSelectionText()) return
 
@@ -87,13 +83,8 @@ function handleTapThreadCard(
 
   const { threadData } = props
   const cid = threadData._id
-
-  console.log("cid: ")
-  console.log(cid)
-  console.log(" ")
   
-  // 先试试用侧边栏打开.......
-
+  // 用侧边栏打开.......
 
   // 用 detail-page 打开
   openDetailWithDetailPage(cid, ctx)
