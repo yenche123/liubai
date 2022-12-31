@@ -10,6 +10,7 @@ import { tagIdsToShows } from "../../system/workspace";
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore"
 import { getBriefing } from "../equip-content/tools/briefing";
 import liuUtil from "../../liu-util"
+import commonPack from "../tools/common-pack"
 interface MyCollectionOpt {
   content_ids: string[]
 }
@@ -102,7 +103,14 @@ export async function getThreadsByCollectionOrEmoji(
     const c = res[i]
     const v = res2.find(v1 => v1._id === c.content_id)
     if(!v) continue
-    const { member: m, _id, user: u, liuDesc, workspace: w } = v
+    const { 
+      member: m, 
+      _id, 
+      user: u, 
+      liuDesc, 
+      workspace: w, 
+      title
+    } = v
 
     let myFavorite = false
     let myFavoriteStamp: number | undefined
@@ -125,8 +133,9 @@ export async function getThreadsByCollectionOrEmoji(
       return imgHelper.imageLocalToShow(v2)
     })
 
-    let tiptapContent: TipTapJSONContent | undefined = liuDesc?.length 
-      ? { type: "doc", content: liuDesc } : undefined
+    let newDesc = commonPack.packLiuDesc(liuDesc, title)
+    let tiptapContent: TipTapJSONContent | undefined = newDesc?.length 
+      ? { type: "doc", content: newDesc } : undefined
 
     let tags: TagShow[] = []
     // 判断当前工作区与当前动态是否匹配
@@ -149,7 +158,7 @@ export async function getThreadsByCollectionOrEmoji(
       workspace: w,
       visScope: v.visScope,
       storageState: v.storageState,
-      title: v.title,
+      title,
       content: tiptapContent,
       briefing: getBriefing(liuDesc),
       images,

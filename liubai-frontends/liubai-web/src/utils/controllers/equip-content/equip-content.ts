@@ -11,7 +11,7 @@ import liuUtil from "../../liu-util";
 import { getBriefing } from "./tools/briefing";
 import { tagIdsToShows } from "../../system/workspace";
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
-import { LiuContent } from "../../../types/types-atom";
+import commonPack from "../tools/common-pack";
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
 
@@ -55,7 +55,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       return imgHelper.imageLocalToShow(v2)
     })
 
-    let newDesc = _packLiuDesc(liuDesc, title)
+    let newDesc = commonPack.packLiuDesc(liuDesc, title)
     let tiptapContent: TipTapJSONContent | undefined = newDesc?.length 
       ? { type: "doc", content: newDesc } : undefined
     
@@ -119,32 +119,6 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
 
   return list
 }
-
-/**
- * 判断有没有 title，若有加到 content 里
- */
-function _packLiuDesc(
-  liuDesc: LiuContent[] | undefined,
-  title?: string,
-) {
-  if(!title) return liuDesc
-  let newDesc = liuDesc ? JSON.parse(JSON.stringify(liuDesc)) as LiuContent[] : []
-  const h1: LiuContent = {
-    type: "heading",
-    attrs: {
-      level: 1,
-    },
-    content: [
-      {
-        "type": "text",
-        "text": title
-      }
-    ]
-  }
-  newDesc.splice(0, 0, h1)
-  return newDesc
-}
-
 
 export function getEditedStr(createdStamp: number, editedStamp?: number) {
   if(!editedStamp) return
