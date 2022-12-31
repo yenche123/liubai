@@ -8,10 +8,12 @@ import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore"
 import { useThreadShowStore } from "../../../../hooks/stores/useThreadShowStore"
 import { getLocalPreference } from "../../../../utils/system/local-preference"
 import time from "../../../../utils/basic/time"
-import dbOp from "./db-op"
+import dbOp from "../../utils/db-op"
 import cui from "../../../custom-ui"
 import type { TlProps, TlViewType } from "./types"
 import type { Ref } from "vue";
+import valTool from "../../../../utils/basic/val-tool"
+import commonOperate from "../../utils/common-operate"
 
 interface ToCtx {
   router: LiuRouter
@@ -76,51 +78,31 @@ export function useThreadOperateInList(
   return { receiveOperation }
 }
 
-function _copyThread(t1: ThreadShow) {
-  const t2 = JSON.parse(JSON.stringify(t1)) as ThreadShow
-  return t2
-}
-
 async function handle_collect(ctx: ToCtx) {
-  const oldThread = _copyThread(ctx.thread)
-  const newThread = _copyThread(ctx.thread)
+  const { memberId, userId, thread } = ctx
+  const oldThread = valTool.copyObject(thread)
+  const { newFavorite, tipPromise } = await commonOperate.toCollect(oldThread, memberId, userId)
 
-  // 1. 修改状态
-  newThread.myFavorite = !Boolean(oldThread.myFavorite)
-  newThread.myFavoriteStamp = time.getTime()
-
-  // 2. 通知全局
-  ctx.tsStore.setUpdatedThreadShows([newThread])
-
-  // 3. 操作 db
-  const res = await dbOp.collect(newThread, ctx.memberId, ctx.userId)
-
-  // 4. 判断当前列表里的 该 item 是否要删除
+  // 1. 来判断当前列表里的该 item 是否要删除
   let removedFromList = false
   const viewType = ctx.props.viewType as TlViewType
-  if(viewType === "FAVORITE" && !newThread.myFavorite) {
+  if(viewType === "FAVORITE" && !newFavorite) {
     removedFromList = true
     ctx.list.value.splice(ctx.position, 1)
   }
 
-  // 5. 显示操作成功的 snackbar 并且带撤回按钮
-  let text_key = newThread.myFavorite ? "tip.collected" : "tip.canceled"
-  const res2 = await cui.showSnackBar({ text_key, action_key: "tip.undo" })
+  // 2. 等待 snackbar 的返回
+  const res2 = await tipPromise
+  if(res2.result !== "tap") return
 
-  if(res2.result !== "tap") {
-    // 用户没有撤销，去同步远端
-    return
-  }
+  // 发生撤销之后
+  // 3. 去执行公共的取消逻辑
+  await commonOperate.undoCollect(oldThread, memberId, userId)
 
-  // 6.1 复原
-  ctx.tsStore.setUpdatedThreadShows([oldThread])
-  // 6.2 操作 db
-  const res3 = await dbOp.collect(oldThread, ctx.memberId, ctx.userId)
-  // 6.3 判断是否重新加回
+  // 4. 判断是否重新加回
   if(removedFromList) {
     ctx.list.value.splice(ctx.position, 0, oldThread)
   }
-
 }
 
 

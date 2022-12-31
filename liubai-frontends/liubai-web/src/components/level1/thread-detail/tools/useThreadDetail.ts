@@ -1,20 +1,8 @@
 import { watch, reactive } from "vue";
 import { useRouteAndLiuRouter } from "../../../../routes/liu-router";
-import type { ThreadShow } from "../../../../types/types-content";
-import type { PageState } from "../../../../types/types-atom";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 import threadController from "../../../../utils/controllers/thread-controller/thread-controller";
-
-export interface TdData {
-  state: PageState
-  threadShow: ThreadShow | undefined
-}
-
-type TdLocation = "vice-view" | "detail-page"
-
-interface TdProps {
-  location: TdLocation
-}
+import type { TdData, TdProps } from "./types"
 
 export function useThreadDetail(props: TdProps) {
 
