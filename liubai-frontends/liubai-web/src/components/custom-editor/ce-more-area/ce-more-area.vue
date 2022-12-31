@@ -191,12 +191,15 @@ export default defineComponent({
 /** 默认使用 两列布局 */
 .ma-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /** 下方这样写，而不是 1fr 1fr 的好处是 .mai-title 下的文字可能溢出，会撑爆单元格 */
+  /** 然而这样写，代表每个单元格已有确切的宽度了 */
+  grid-template-columns: calc(50% - 3px) calc(50% - 3px);
   gap: 10px 5px;    /** <grid-row-gap> <grid-column-gap> */
 }
 
 .ma-grid-one-column {
-  grid-template-columns: 1fr;
+  /** 如果下方写成 1fr，那么 .mai-title 里的内容过长会撑爆单元格 */
+  grid-template-columns: 100%;
   gap: 4px;
 }
 
