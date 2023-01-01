@@ -3,16 +3,12 @@ import { computed, defineComponent, inject } from 'vue';
 import type { Ref } from "vue";
 import { useI18n } from 'vue-i18n';
 import { mvKey } from "../../../utils/provide-keys"
-import LiuMenu from "../../common/liu-menu/liu-menu.vue"
 import type { LiuRemindMe } from "../../../types/types-atom";
 import { useMoreArea } from "./tools/useMoreArea";
 import { receiveCmaProps } from "./tools/receiveCmaProps"
 import { cmaProps } from "./tools/types-cma"
 
 export default defineComponent({
-  components: {
-    LiuMenu,
-  },
   props: cmaProps,
   emits: {
     whenchange: (val: Date | null) => true,
