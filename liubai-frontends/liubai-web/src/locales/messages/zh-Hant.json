@@ -123,7 +123,8 @@
     "login_first": "請先登入",
     "not_join_bd": "你尚未加入該工作區",
     "to_join": "去加入",
-    "workspace_different": "當前工作區與動態所屬的不一致。請先切換工作區。"
+    "workspace_different": "當前工作區與動態所屬的不一致。請先切換工作區。",
+    "removed": "已移除"
   },
   "card_bubble": {
     "copy": "複製",

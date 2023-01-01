@@ -72,7 +72,29 @@ async function collect(
   return true
 }
 
+/** 向 content 设置新的 "什么时候" 和 "提醒我" */
+async function editWhenRemind(
+  thread: ThreadShow, 
+  memberId: string, 
+  userId: string
+) {
+  const now1 = time.getTime()
+  const newData: Partial<ContentLocalTable> = {
+    whenStamp: thread.whenStamp,
+    remindStamp: thread.remindStamp,
+    remindMe: thread.remindMe,
+    updatedStamp: now1
+  }
+  const res = await db.contents.update(thread._id, newData)
+  console.log("dp-opt 的结果: ")
+  console.log(res)
+  console.log(" ")
+
+  return true
+}
+
 
 export default {
   collect,
+  editWhenRemind,
 }

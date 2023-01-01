@@ -206,3 +206,12 @@ export function getCountDownStr(
   min = String(min_num)
   return t("date_related.countdown_2", { hr, min })
 }
+
+export function getEditedStr(
+  createdStamp: number, 
+  editedStamp?: number
+) {
+  if(!editedStamp) return
+  if(createdStamp === editedStamp) return
+  return showBasicDate(editedStamp)
+}

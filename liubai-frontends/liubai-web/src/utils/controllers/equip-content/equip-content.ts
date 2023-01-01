@@ -101,7 +101,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       createdStamp: v.createdStamp,
       editedStamp: v.editedStamp,
       createdStr: liuUtil.showBasicDate(v.createdStamp),
-      editedStr: getEditedStr(v.createdStamp, v.editedStamp),
+      editedStr: liuUtil.getEditedStr(v.createdStamp, v.editedStamp),
       tags,
       tagSearched: v.tagSearched,
     }
@@ -118,12 +118,6 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
   // console.timeEnd("equip-content")
 
   return list
-}
-
-export function getEditedStr(createdStamp: number, editedStamp?: number) {
-  if(!editedStamp) return
-  if(createdStamp === editedStamp) return
-  return liuUtil.showBasicDate(editedStamp)
 }
 
 export async function getMemberShows(member_ids: string[]) {

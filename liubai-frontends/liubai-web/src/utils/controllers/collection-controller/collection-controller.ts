@@ -2,7 +2,7 @@ import type { CollectionLocalTable } from "../../../types/types-table"
 import { db } from "../../db"
 import { getLocalPreference } from "../../system/local-preference"
 import type { TcListOption } from "../thread-controller/type"
-import { getMemberShows, getEditedStr } from "../equip-content/equip-content"
+import { getMemberShows } from "../equip-content/equip-content"
 import type { TagShow, ThreadShow } from "../../../types/types-content";
 import imgHelper from "../../images/img-helper"
 import type { TipTapJSONContent } from "../../../types/types-editor";
@@ -178,7 +178,7 @@ export async function getThreadsByCollectionOrEmoji(
       createdStamp: v.createdStamp,
       editedStamp: v.editedStamp,
       createdStr: liuUtil.showBasicDate(v.createdStamp),
-      editedStr: getEditedStr(v.createdStamp, v.editedStamp),
+      editedStr: liuUtil.getEditedStr(v.createdStamp, v.editedStamp),
       tags,
       tagSearched: v.tagSearched,
     }
