@@ -134,7 +134,6 @@ async function loadList(
   if(!workspace) return
   if(reload) {
     ctx.reloadRequired = false
-    console.log("已关闭 reloadRequired")
   }
 
   const oldList = ctx.list.value
