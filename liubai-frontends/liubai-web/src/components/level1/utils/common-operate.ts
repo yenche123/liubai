@@ -12,4 +12,9 @@ import {
 export default {
   toCollect,
   undoCollect,
+  setWhen,
+  setRemind,
+  clearWhen,
+  clearRemind,
+  undoWhenRemind,
 }

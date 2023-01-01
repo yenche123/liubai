@@ -2,8 +2,18 @@
 import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { tcaProps, useTcAttachments } from "./tools/useTcAttachments"
+import type { MenuItem } from "../../../../../components/common/liu-menu/tools/types"
 
 const default_color = "var(--main-code)"
+
+const menu: MenuItem[] = [
+  {
+    text_key: "common.reselect",
+  },
+  {
+    text_key: "common.remove",
+  }
+]
 
 export default defineComponent({
 
@@ -19,6 +29,7 @@ export default defineComponent({
       t,
       default_color,
       onTapFile,
+      menu,
     }
   }
 })
@@ -31,33 +42,50 @@ export default defineComponent({
     class="tcwr-container"
   >
 
-    <div v-if="whenStr" class="liu-hover tcwr-item">
-      <div class="tcwr-icon">
-        <svg-icon name="when"
-          class="tcwr-svgicon"
-          :color="default_color"
-        ></svg-icon>
-      </div>
-      <div class="tcwr-title"
-        :aria-label="t('editor.when')"
+    <!-- 什么时候 -->
+    <div class="tcwr-item-box" v-if="whenStr">
+      <LiuMenu 
+        :menu="menu"
+        min-width-str="100px"
       >
-        <span>{{ whenStr }}</span>
-      </div>
+        <div class="liu-hover tcwr-item">
+          <div class="tcwr-icon">
+            <svg-icon name="when"
+              class="tcwr-svgicon"
+              :color="default_color"
+            ></svg-icon>
+          </div>
+          <div class="tcwr-title"
+            :aria-label="t('editor.when')"
+          >
+            <span>{{ whenStr }}</span>
+          </div>
+        </div>
+      </LiuMenu>
     </div>
-
-    <div v-if="remindStr" class="liu-hover tcwr-item">
-      <div class="tcwr-icon">
-        <svg-icon name="notification"
-          class="tcwr-svgicon"
-          :color="default_color"
-        ></svg-icon>
-      </div>
-      <div class="tcwr-title"
-        :aria-label="t('editor.remind')"
+    
+    <!-- 提醒我 -->
+    <div class="tcwr-item-box" v-if="remindStr">
+      <LiuMenu 
+        :menu="menu"
+        min-width-str="100px"
       >
-        <span>{{ remindStr }}</span>
-      </div>
+        <div  class="liu-hover tcwr-item">
+          <div class="tcwr-icon">
+            <svg-icon name="notification"
+              class="tcwr-svgicon"
+              :color="default_color"
+            ></svg-icon>
+          </div>
+          <div class="tcwr-title"
+            :aria-label="t('editor.remind')"
+          >
+            <span>{{ remindStr }}</span>
+          </div>
+        </div>
+      </LiuMenu>
     </div>
+    
 
     <!-- 文件 -->
     <div class="tca-item" v-if="files?.length">
@@ -87,6 +115,10 @@ export default defineComponent({
   width: 100%;
   position: relative;
   padding-block-start: 10px;
+
+  .tcwr-item-box {
+    display: flex;
+  }
 
   .tcwr-item {
     display: flex;

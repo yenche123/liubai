@@ -24,7 +24,9 @@
     "copied": "Copied",    
     "close": "Close",
     "open_in_new": "Open in New",
-    "login": "Sign in"
+    "login": "Sign in",
+    "reselect": "Reselect",
+    "remove": "Remove"
   },
   "editor": {
     "when": "When",

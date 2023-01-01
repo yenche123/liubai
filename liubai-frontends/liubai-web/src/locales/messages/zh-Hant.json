@@ -24,7 +24,9 @@
     "copied": "已複製",
     "close": "關閉",
     "open_in_new": "在新的分頁打開",
-    "login": "登入"
+    "login": "登入",
+    "reselect": "重選",
+    "remove": "移除"
   },
   "editor": {
     "when": "什麼時候",

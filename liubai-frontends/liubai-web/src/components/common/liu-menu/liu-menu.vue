@@ -66,7 +66,7 @@ export default defineComponent({
   >
 
     <template #default>
-      <div class="menu-slot-box" @click="onTapBox">
+      <div @click="onTapBox">
         <slot></slot>
       </div>
     </template>

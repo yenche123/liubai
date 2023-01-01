@@ -24,7 +24,9 @@
     "copied": "已复制",
     "close": "关闭",
     "open_in_new": "在新的分页打开",
-    "login": "登录"
+    "login": "登录",
+    "reselect": "重选",
+    "remove": "移除"
   },
   "editor": {
     "when": "什么时候",

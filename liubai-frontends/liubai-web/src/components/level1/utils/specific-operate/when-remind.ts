@@ -1,6 +1,5 @@
 import { useThreadShowStore } from "../../../../hooks/stores/useThreadShowStore"
 import type { ThreadShow } from "../../../../types/types-content"
-import time from "../../../../utils/basic/time"
 import valTool from "../../../../utils/basic/val-tool"
 import cui from "../../../custom-ui"
 import dbOp from "../db-op"
