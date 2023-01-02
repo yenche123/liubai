@@ -126,7 +126,8 @@
     "not_join_bd": "你尚未加入该工作区",
     "to_join": "去加入",
     "workspace_different": "当前工作区与动态所属的不一致。请先切换工作区。",
-    "removed": "已移除"
+    "removed": "已移除",
+    "updated": "已更新"
   },
   "card_bubble": {
     "copy": "复制",

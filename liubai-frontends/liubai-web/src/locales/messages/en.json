@@ -126,7 +126,8 @@
     "not_join_bd": "You haven't joined the workspace yet.",
     "to_join": "JOIN",
     "workspace_different": "There is deference between the current workspace and the workspace of the thread. Please switch to the corresponding workspace first.",
-    "removed": "Removed"
+    "removed": "Removed",
+    "updated": "Updated"
   },
   "card_bubble": {
     "copy": "Copy",
