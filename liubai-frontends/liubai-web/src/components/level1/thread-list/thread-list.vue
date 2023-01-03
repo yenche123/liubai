@@ -41,7 +41,11 @@ const {
     
     </template>
     
-    <ListBottom :has-data="list.length > 0" :reached="true"></ListBottom>
+    <ListBottom 
+      v-if="viewType !== 'PINNED'"
+      :has-data="list.length > 0" 
+      :reached="true"
+    ></ListBottom>
 
   </div>
 </template>
