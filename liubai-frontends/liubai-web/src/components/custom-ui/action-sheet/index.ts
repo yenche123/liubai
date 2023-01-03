@@ -19,7 +19,7 @@ interface AsSuccessRes {
 
 type AsResolver = (res: AsSuccessRes) => void
 
-const TRANSITION_DURATION = 120
+const TRANSITION_DURATION = 220
 const enable = ref(false)
 const show = ref(false)
 const asData = reactive<Required<ActionSheetParam>>({

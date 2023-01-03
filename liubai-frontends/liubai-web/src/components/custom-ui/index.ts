@@ -6,6 +6,7 @@ import { showDatePicker } from "./date-picker"
 import { previewImage } from "./preview-image"
 import { showHashTagEditor } from "./hashtag-editor"
 import { showSnackBar } from "./snack-bar"
+import { showActionSheet } from "./action-sheet"
 
 export default {
   showModal,
@@ -16,4 +17,5 @@ export default {
   previewImage,
   showHashTagEditor,
   showSnackBar,
+  showActionSheet,
 }
