@@ -2,7 +2,6 @@
 import { defineComponent, PropType } from 'vue';
 import type { ThreadShow } from '../../../../types/types-content';
 import EditorCore from '../../../editor-core/editor-core.vue';
-import { useWhenAndRemind } from './tools/useWhenAndRemind';
 import TcAttachments from './tc-attachments/tc-attachments.vue';
 import TcActionbar from './tc-actionbar/tc-actionbar.vue';
 import TcBottombar from "./tc-bottombar/tc-bottombar.vue";
@@ -47,10 +46,6 @@ export default defineComponent({
   },
   setup(props) {
     const {
-      whenStr,
-      remindStr,
-    } = useWhenAndRemind(props)
-    const {
       editorCoreRef,
       editor,
       isBriefing,
@@ -66,8 +61,6 @@ export default defineComponent({
       editorCoreRef,
       editor,
       t,
-      whenStr,
-      remindStr,
       isBriefing,
       onTapBriefing,
       onTapThreadCard,
@@ -119,11 +112,9 @@ export default defineComponent({
       <!-- 图片 -->
       <TcCovers :covers="threadData.images"></TcCovers>
 
-      <!-- 什么时候 -->
+      <!-- 什么时候、提醒我、文件、地点、创建人、指派给 -->
       <TcAttachments
-        :when-str="whenStr"
-        :remind-str="remindStr"
-        :files="threadData.files"
+        :thread="threadData"
       ></TcAttachments>
 
       <!-- 标签: 只有当前工作区与动态所属工作区一致时，才会有标签 -->

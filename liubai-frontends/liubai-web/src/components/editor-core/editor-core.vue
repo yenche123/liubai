@@ -78,7 +78,8 @@ export default defineComponent({
     font-weight: 700;
     color: var(--main-normal);
     margin-block-start: 0.2rem;
-    margin-block-end: 0rem;
+    margin-block-end: 0.5rem;
+    line-height: 1.5;
   }
 
   p {

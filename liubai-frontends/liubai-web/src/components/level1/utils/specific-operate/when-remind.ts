@@ -1,6 +1,7 @@
 import { useThreadShowStore } from "../../../../hooks/stores/useThreadShowStore"
 import type { ThreadShow } from "../../../../types/types-content"
 import valTool from "../../../../utils/basic/val-tool"
+import liuUtil from "../../../../utils/liu-util"
 import cui from "../../../custom-ui"
 import dbOp from "../db-op"
 import soTool from "./tools/so-tool"
@@ -41,11 +42,16 @@ export const setRemind = async (
   userId: string,
 ) => {
   const newThread = valTool.copyObject(oldThread)
-  const { remindMe, remindStamp } = newThread
+  const { remindMe, remindStamp, whenStamp } = newThread
   if(!remindMe) return
 
   // 展示 actionsheet
-  
+  const hasWhen = Boolean(whenStamp)
+  const itemList = liuUtil.getRemindMenu(hasWhen)
+  const res = await cui.showActionSheet({ itemList })
+  console.log("看一下结果: ")
+  console.log(res)
+  console.log(" ")
 
 }
 

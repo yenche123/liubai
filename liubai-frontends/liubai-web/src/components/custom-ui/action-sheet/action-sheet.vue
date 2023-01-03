@@ -96,7 +96,7 @@ const { t } = useI18n()
     width: 100%;
     position: relative;
     overflow: hidden;
-    border-radius: 20px;
+    border-radius: 24px;
 
     .as-title {
       width: 100%;
@@ -151,6 +151,8 @@ const { t } = useI18n()
     background-color: var(--card-bg);
     transition: .15s;
     z-index: 5055;
+    border-radius: 24px;
+    overflow: hidden;
 
     &:hover {
       opacity: .7;

@@ -12,6 +12,7 @@ import {
   getRemindMeStrAfterPost,
   getCountDownStr,
   getEditedStr,
+  getRemindMenu,
 } from "./date-util";
 import {
   getAcceptImgTypesString,
@@ -42,6 +43,7 @@ export default {
   getRemindMeStrAfterPost,
   getCountDownStr,
   getEditedStr,
+  getRemindMenu,
   getAcceptImgTypesString,
   getAcceptImgTypesArray,
   createObjURLs,

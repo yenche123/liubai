@@ -1,8 +1,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { tcaProps, useTcAttachments } from "./tools/useTcAttachments"
+import { useTcAttachments } from "./tools/useTcAttachments"
 import type { MenuItem } from "../../../../../components/common/liu-menu/tools/types"
+import type { PropType } from "vue"
+import type { ThreadShow } from '../../../../../types/types-content';
+import { useWhenAndRemind } from './tools/useWhenAndRemind';
 
 const default_color = "var(--main-code)"
 
@@ -17,19 +20,30 @@ const menu: MenuItem[] = [
 
 export default defineComponent({
 
-  props: tcaProps,
+  props: {
+    thread: {
+      type: Object as PropType<ThreadShow>,
+      required: true,
+    }
+  },
 
   setup(props) {
     const { t } = useI18n()
     const {
       onTapFile
     } = useTcAttachments(props)
+    const {
+      whenStr,
+      remindStr,
+    } = useWhenAndRemind(props)
 
     return {
       t,
       default_color,
       onTapFile,
       menu,
+      whenStr,
+      remindStr,
     }
   }
 })
@@ -38,7 +52,7 @@ export default defineComponent({
 
 <template>
   <div 
-    v-if="whenStr || remindStr || files?.length"
+    v-if="whenStr || remindStr || thread.files?.length"
     class="tcwr-container"
   >
 
@@ -88,7 +102,7 @@ export default defineComponent({
     
 
     <!-- 文件 -->
-    <div class="tca-item" v-if="files?.length">
+    <div class="tca-item" v-if="thread.files?.length">
 
       <div class="tca-icon">
         <svg-icon name="attachment"
@@ -98,7 +112,7 @@ export default defineComponent({
       </div>
 
       <div class="tca-list">
-        <template v-for="(item, index) in files" :key="item.id">
+        <template v-for="(item, index) in thread.files" :key="item.id">
           <div class="tcal-item" @click="onTapFile($event, index)">
             <span>{{ item.name }}</span>
           </div>

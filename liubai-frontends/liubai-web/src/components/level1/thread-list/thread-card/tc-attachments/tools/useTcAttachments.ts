@@ -1,26 +1,24 @@
-import { PropType } from 'vue';
 import type { FileLocal } from '../../../../../../types';
 import liuUtil from '../../../../../../utils/liu-util';
-
-interface TcaProps {
-  whenStr?: string
-  remindStr?: string
-  files?: FileLocal[]
-}
-
-export const tcaProps = {
-  whenStr: String,
-  remindStr: String,
-  files: Array as PropType<FileLocal[]>
-}
+import type { MenuItem } from "../../../../../common/liu-menu/tools/types"
+import type { TcaProps } from './types';
 
 export function useTcAttachments(props: TcaProps) {
 
   const onTapFile = (e: MouseEvent, index: number) => {
     e.stopPropagation()
-    if(!props.files?.length) return
-    const v = props.files[index]
+    if(!props.thread?.files?.length) return
+    const v = props.thread.files[index]
     checkHowToDownload(v)
+  }
+
+
+  const onTapWhenItem = (item: MenuItem, index: number) => {
+
+  }
+
+  const onTapRemindItem = (item: MenuItem, index: number) => {
+
   }
 
 
