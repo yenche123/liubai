@@ -127,7 +127,8 @@
     "to_join": "去加入",
     "workspace_different": "當前工作區與動態所屬的不一致。請先切換工作區。",
     "removed": "已移除",
-    "updated": "已更新"
+    "updated": "已更新",
+    "no_auth": "沒有權限"
   },
   "card_bubble": {
     "copy": "複製",

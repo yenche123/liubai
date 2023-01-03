@@ -1,6 +1,5 @@
 import type { FileLocal } from '../../../../../../types';
 import liuUtil from '../../../../../../utils/liu-util';
-import type { MenuItem } from "../../../../../common/liu-menu/tools/types"
 import type { TcaProps } from './types';
 
 export function useTcAttachments(props: TcaProps) {
@@ -11,16 +10,6 @@ export function useTcAttachments(props: TcaProps) {
     const v = props.thread.files[index]
     checkHowToDownload(v)
   }
-
-
-  const onTapWhenItem = (item: MenuItem, index: number) => {
-
-  }
-
-  const onTapRemindItem = (item: MenuItem, index: number) => {
-
-  }
-
 
   return {
     onTapFile

@@ -4,6 +4,7 @@ import type { ToidCtx } from "./types"
 import { ThreadShow } from "../../../../types/types-content"
 import valTool from "../../../../utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
+import checker from "../../../../utils/other/checker"
 
 export function handleCollect(ctx: ToidCtx) {
   check(ctx)
@@ -13,56 +14,29 @@ export function handleCollect(ctx: ToidCtx) {
 // 1. 检测数据是否正常、有没有权限
 async function check(ctx: ToidCtx) {
   
-  const { thread, wStore, userId } = ctx
-  const { memberId, workspace } = wStore
+  const { thread } = ctx
+  const { userId, modalPromise } = checker.getUserId()
 
   if(!userId) {
-    const res1 = await cui.showModal({
-      title_key: "tip.not_login_yet",
-      content_key: "tip.login_first",
-      confirm_key: "common.login"
-    })
-    if(res1.confirm) {
-      console.log("跑去登錄頁........")
+    if(modalPromise) {
+      const res = await modalPromise
+      if(res.confirm) {
+        // 去登录
+      }
     }
     return
   }
 
   
-  if(thread.workspace === "ME") {
-    // 动态属于 个人工作区 时
-
-    if(thread.user_id !== userId) {
-      console.warn("不能收藏别人的个人工作区动态")
-      return
-    }
-  }
-  else {
-    // 动态属于 协作工作区 时
-
-    // 工作区与当前不一致
-    if(thread.workspace !== workspace) {
-      cui.showModal({
-        title_key: "tip.tip",
-        content_key: "tip.workspace_different",
-        showCancel: false
-      })
-      return
-    }
-    
-    // 尚未加到该工作区里
-    if(!memberId || memberId !== thread.member_id) {
-      const res2 = await cui.showModal({
-        title_key: "tip.tip",
-        content_key: "tip.not_join_bd",
-        confirm_key: "tip.to_join"
-      })
-      if(res2.confirm) {
-        // 跳转到去加入
-        console.log("待完善: 跳转到去加入该工作区......")
+  const { memberId, joinPromise } = checker.getMemberId(thread)
+  if(!memberId) {
+    if(joinPromise) {
+      const res = await joinPromise
+      if(res.confirm) {
+        // 去加入
       }
-      return
     }
+    return
   }
 
   handle(thread, memberId, userId)

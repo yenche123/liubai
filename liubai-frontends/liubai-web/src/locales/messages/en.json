@@ -127,7 +127,8 @@
     "to_join": "JOIN",
     "workspace_different": "There is deference between the current workspace and the workspace of the thread. Please switch to the corresponding workspace first.",
     "removed": "Removed",
-    "updated": "Updated"
+    "updated": "Updated",
+    "no_auth": "No Access"
   },
   "card_bubble": {
     "copy": "Copy",

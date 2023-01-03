@@ -15,8 +15,6 @@ export interface TdProps {
 }
 
 export interface ToidCtx {
-  wStore: WorkspaceStore
-  userId?: string
   thread: ThreadShow
   rr: RouteAndLiuRouter
 }

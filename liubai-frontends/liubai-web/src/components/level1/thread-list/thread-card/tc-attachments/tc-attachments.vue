@@ -6,6 +6,7 @@ import type { MenuItem } from "../../../../../components/common/liu-menu/tools/t
 import type { PropType } from "vue"
 import type { ThreadShow } from '../../../../../types/types-content';
 import { useWhenAndRemind } from './tools/useWhenAndRemind';
+import TcWhenRemind from './tc-when-remind/tc-when-remind.vue';
 
 const default_color = "var(--main-code)"
 
@@ -19,6 +20,10 @@ const menu: MenuItem[] = [
 ]
 
 export default defineComponent({
+
+  components: {
+    TcWhenRemind,
+  },
 
   props: {
     thread: {
@@ -35,6 +40,9 @@ export default defineComponent({
     const {
       whenStr,
       remindStr,
+      canEdit,
+      onTapWhenItem,
+      onTapRemindItem,
     } = useWhenAndRemind(props)
 
     return {
@@ -44,6 +52,9 @@ export default defineComponent({
       menu,
       whenStr,
       remindStr,
+      canEdit,
+      onTapWhenItem,
+      onTapRemindItem,
     }
   }
 })
@@ -61,21 +72,24 @@ export default defineComponent({
       <LiuMenu 
         :menu="menu"
         min-width-str="100px"
+        v-if="canEdit"
       >
-        <div class="liu-hover tcwr-item">
-          <div class="tcwr-icon">
-            <svg-icon name="when"
-              class="tcwr-svgicon"
-              :color="default_color"
-            ></svg-icon>
-          </div>
-          <div class="tcwr-title"
-            :aria-label="t('editor.when')"
-          >
-            <span>{{ whenStr }}</span>
-          </div>
-        </div>
+        <TcWhenRemind
+          :title="whenStr"
+          icon-name="when"
+          :can-hover="true"
+          :color="default_color"
+          label-key="editor.when"
+        ></TcWhenRemind>
       </LiuMenu>
+      <TcWhenRemind
+        v-else
+        :title="whenStr"
+        icon-name="when"
+        :can-hover="false"
+        :color="default_color"
+        label-key="editor.when"
+      ></TcWhenRemind>
     </div>
     
     <!-- 提醒我 -->
@@ -83,21 +97,25 @@ export default defineComponent({
       <LiuMenu 
         :menu="menu"
         min-width-str="100px"
+        v-if="canEdit"
       >
-        <div  class="liu-hover tcwr-item">
-          <div class="tcwr-icon">
-            <svg-icon name="notification"
-              class="tcwr-svgicon"
-              :color="default_color"
-            ></svg-icon>
-          </div>
-          <div class="tcwr-title"
-            :aria-label="t('editor.remind')"
-          >
-            <span>{{ remindStr }}</span>
-          </div>
-        </div>
+        <TcWhenRemind
+          :title="remindStr"
+          icon-name="notification"
+          :can-hover="true"
+          :color="default_color"
+          label-key="editor.remind"
+        ></TcWhenRemind>
       </LiuMenu>
+      <TcWhenRemind
+        v-else
+        :title="remindStr"
+        icon-name="notification"
+        :can-hover="false"
+        :color="default_color"
+        label-key="editor.remind"
+      ></TcWhenRemind>
+
     </div>
     
 
@@ -132,44 +150,6 @@ export default defineComponent({
 
   .tcwr-item-box {
     display: flex;
-  }
-
-  .tcwr-item {
-    display: flex;
-    align-items: center;
-    width: min-content;
-    min-width: 160px;
-    height: 36px;
-    border-radius: 10px;
-    padding-inline-end: 10px;
-    overflow: hidden;
-
-    .tcwr-icon {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-inline-end: 4px;
-      padding-block-end: 2px;
-
-      .tcwr-svgicon {
-        width: 20px;
-        height: 20px;
-      }
-    }
-
-    .tcwr-title {
-      font-size: var(--btn-font);
-      font-weight: 400;
-      color: var(--main-code);
-      user-select: none;
-      display: inline-block;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
   }
 
   .tca-item {

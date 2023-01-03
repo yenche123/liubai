@@ -4,6 +4,12 @@ import liuUtil from "../../../../../../utils/liu-util";
 import type { SupportedLocale } from "../../../../../../types/types-locale"; 
 import time from "../../../../../../utils/basic/time";
 import type { TcaProps } from "./types"
+import type { MenuItem } from "../../../../../common/liu-menu/tools/types"
+import { ThreadShow } from "../../../../../../types/types-content";
+import valTool from "../../../../../../utils/basic/val-tool";
+import commonOperate from "../../../../utils/common-operate";
+import checker from "../../../../../../utils/other/checker";
+import { useWorkspaceStore } from "../../../../../../hooks/stores/useWorkspaceStore";
 
 const SEC = 1000
 const MIN = 60 * SEC
@@ -18,6 +24,16 @@ export function useWhenAndRemind(props: TcaProps) {
   const whenStamp = computed(() => threadData.value.whenStamp)
   const remindStamp = computed(() => threadData.value.remindStamp)
   const remindMe = computed(() => threadData.value.remindMe)
+  const wStore = useWorkspaceStore()
+
+  const canEdit = computed(() => {
+    const t = threadData.value
+    if(t.oState !== 'OK') return false
+    if(!wStore.memberId) return false
+    if(wStore.memberId === t.member_id) return true
+    if(wStore.workspace !== t.workspace) return false
+    return true
+  })
 
   const whenStr = computed(() => {
     let nowLocale = locale.value
@@ -114,5 +130,73 @@ export function useWhenAndRemind(props: TcaProps) {
     }
   })
 
-  return { whenStr, remindStr }
+  const onTapWhenItem = (item: MenuItem, index: number) => {
+    const { userId, memberId } = getUserAndMemberId(props.thread)
+    if(!userId || !memberId) return
+    toTapWhenItem(index, props.thread, userId, memberId)
+  }
+
+  const onTapRemindItem = (item: MenuItem, index: number) => {
+    const { userId, memberId } = getUserAndMemberId(props.thread)
+    if(!userId || !memberId) return
+    toTapRemindItem(index, props.thread, userId, memberId)
+  }
+
+  return { 
+    whenStr, 
+    remindStr,
+    canEdit,
+    onTapWhenItem,
+    onTapRemindItem,
+  }
+}
+
+function getUserAndMemberId(
+  thread: ThreadShow
+) {
+  const { userId } = checker.getUserId()
+  if(!userId) return {}
+  const { memberId } = checker.getMemberId(thread)
+
+  return { userId, memberId }
+}
+
+
+async function toTapWhenItem(
+  index: number,
+  thread: ThreadShow,
+  userId: string,
+  memberId: string
+) {
+  const oldThread = valTool.copyObject(thread)
+
+  if(index === 0) {
+    // 重选
+    
+
+  }
+  else if(index === 1) {
+    // 清除
+
+  }
+}
+
+async function toTapRemindItem(
+  index: number,
+  thread: ThreadShow,
+  userId: string,
+  memberId: string,
+) {
+  const oldThread = valTool.copyObject(thread)
+
+  if(index === 0) {
+    // 重选
+    
+
+  }
+  else if(index === 1) {
+    // 清除
+
+  }
+
 }
