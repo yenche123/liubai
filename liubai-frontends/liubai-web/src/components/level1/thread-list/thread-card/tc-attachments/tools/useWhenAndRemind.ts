@@ -10,6 +10,7 @@ import valTool from "../../../../../../utils/basic/val-tool";
 import commonOperate from "../../../../utils/common-operate";
 import checker from "../../../../../../utils/other/checker";
 import { useWorkspaceStore } from "../../../../../../hooks/stores/useWorkspaceStore";
+import type { SnackbarRes } from "../../../../../../types/other/types-snackbar"
 
 const SEC = 1000
 const MIN = 60 * SEC
@@ -170,15 +171,22 @@ async function toTapWhenItem(
 ) {
   const oldThread = valTool.copyObject(thread)
 
+  let res: { tipPromise: Promise<SnackbarRes> } | undefined
   if(index === 0) {
     // 重选
-    
-
+    res = await commonOperate.setWhen(oldThread, memberId, userId)
   }
   else if(index === 1) {
     // 清除
-
+    res = await commonOperate.clearWhen(oldThread, memberId, userId)
   }
+
+  if(!res?.tipPromise) return
+
+  const res2 = await res.tipPromise
+  if(res2.result !== "tap") return
+  commonOperate.undoWhenRemind(oldThread, memberId, userId)
+
 }
 
 async function toTapRemindItem(
@@ -189,14 +197,19 @@ async function toTapRemindItem(
 ) {
   const oldThread = valTool.copyObject(thread)
 
+  let res: { tipPromise: Promise<SnackbarRes> } | undefined
   if(index === 0) {
     // 重选
-    
-
+    res = await commonOperate.setRemind(oldThread, memberId, userId)
   }
   else if(index === 1) {
     // 清除
-
+    res = await commonOperate.clearRemind(oldThread, memberId, userId)
   }
 
+  if(!res?.tipPromise) return
+
+  const res2 = await res.tipPromise
+  if(res2.result !== "tap") return
+  commonOperate.undoWhenRemind(oldThread, memberId, userId)
 }

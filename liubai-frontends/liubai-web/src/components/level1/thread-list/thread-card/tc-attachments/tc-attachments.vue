@@ -72,6 +72,7 @@ export default defineComponent({
       <LiuMenu 
         :menu="menu"
         min-width-str="100px"
+        @tapitem="onTapWhenItem"
         v-if="canEdit"
       >
         <TcWhenRemind
@@ -97,6 +98,7 @@ export default defineComponent({
       <LiuMenu 
         :menu="menu"
         min-width-str="100px"
+        @tapitem="onTapRemindItem"
         v-if="canEdit"
       >
         <TcWhenRemind

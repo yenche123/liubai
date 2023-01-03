@@ -100,21 +100,21 @@ const { t } = useI18n()
 
     .as-title {
       width: 100%;
-      height: 40px;
+      height: 48px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       font-size: var(--mini-font);
-      color: var(--main-tip);
+      color: var(--liu-quote);
       border-bottom: 0.5px solid var(--line-default);
-      font-weight: 700;
       background-color: var(--on-primary);
+      font-weight: 700;
     }
 
     .as-item {
       width: 100%;
-      height: 50px;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -124,9 +124,11 @@ const { t } = useI18n()
       border-bottom: 0.5px solid var(--line-default);
       background-color: var(--on-primary);
       transition: .15s;
+      cursor: pointer;
+      user-select: none;
 
       &:hover {
-        opacity: .7;
+        opacity: .95;
       }
     }
 
@@ -135,28 +137,30 @@ const { t } = useI18n()
     }
 
   }
+}
 
-  .as-cancel-box {
-    margin-top: 10px;
-    margin-bottom: 40px;
-    width: 100%;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: var(--desc-font);
-    color: var(--primary-color);
-    font-weight: 700;
-    background-color: var(--card-bg);
-    transition: .15s;
-    z-index: 5055;
-    border-radius: 24px;
-    overflow: hidden;
+.as-cancel-box {
+  margin-top: 10px;
+  margin-bottom: 32px;
+  width: 100%;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: var(--desc-font);
+  color: var(--primary-color);
+  font-weight: 700;
+  background-color: var(--card-bg);
+  transition: .15s;
+  z-index: 5055;
+  border-radius: 24px;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  display: none;
 
-    &:hover {
-      opacity: .7;
-    }
+  &:hover {
+    opacity: .95;
   }
 }
 
@@ -167,9 +171,12 @@ const { t } = useI18n()
 
 @media screen and (max-width: 500px) {
   .as-container {
-    justify-content: flex-end;
+    align-items: flex-end;
   }
 
+  .as-cancel-box {
+    display: flex;
+  }
 }
 
 
