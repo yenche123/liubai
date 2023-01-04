@@ -74,6 +74,9 @@
   --on-cui-snackbar: #ffffff;
   --cui-snackbar-shadow: 0 6px 12px rgba(0, 0, 0, .18);
 
+  /** 自定义组件: action-sheet，但希望这个组件的颜色是通用的 */
+  --cui-actionsheet-bg: #fafafa;
+
   /********* 毛玻璃背景 **********/
   --frosted-glass: rgba(255, 255, 255, .7);    /** 盖在 sidebar 上，让侧边栏的绚彩模糊 */
   --frosted-glass-2: rgba(250, 250, 250, .85);  /** spotlight 模态框的背景色 */

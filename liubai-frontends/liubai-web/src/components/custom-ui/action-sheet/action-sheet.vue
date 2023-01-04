@@ -108,7 +108,7 @@ const { t } = useI18n()
       font-size: var(--mini-font);
       color: var(--liu-quote);
       border-bottom: 0.5px solid var(--line-default);
-      background-color: var(--on-primary);
+      background-color: var(--cui-actionsheet-bg);
       font-weight: 700;
     }
 
@@ -119,10 +119,10 @@ const { t } = useI18n()
       align-items: center;
       justify-content: center;
       text-align: center;
-      font-size: var(--desc-font);
+      font-size: var(--inline-code-font);
       color: var(--main-normal);
       border-bottom: 0.5px solid var(--line-default);
-      background-color: var(--on-primary);
+      background-color: var(--cui-actionsheet-bg);
       transition: .15s;
       cursor: pointer;
       user-select: none;
