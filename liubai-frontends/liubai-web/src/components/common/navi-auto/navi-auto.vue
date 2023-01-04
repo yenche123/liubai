@@ -115,7 +115,7 @@ const default_color = "var(--navi-normal)"
 }
 
 .na-container_shadow {
-  box-shadow: 0 5px 15px rgba(0, 0, 0, .1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .07);
 }
 
 .na-container_shadow::before {
