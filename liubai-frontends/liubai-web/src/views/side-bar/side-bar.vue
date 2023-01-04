@@ -119,8 +119,8 @@ const {
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 4px;
-  border-right: 2px solid var(--line-default);
+  right: 5px;
+  border-right: 1px solid var(--line-default);
   transition: .2s;
   pointer-events: none;
 }
