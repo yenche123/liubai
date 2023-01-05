@@ -3,9 +3,9 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useDynamics } from '../../../hooks/useDynamics';
-import { SupportedLocale } from '../../../types/types-locale';
-import liuUtil from "../../../utils/liu-util";
+import { useDynamics } from '~/hooks/useDynamics';
+import { SupportedLocale } from '~/types/types-locale';
+import liuUtil from "~/utils/liu-util";
 import { initDatePicker } from "./index"
 
 const { theme } = useDynamics()

@@ -1,11 +1,11 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import PlaceholderView from '../../../views/common/placeholder-view/placeholder-view.vue';
+import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
 import ThreadCard from "../thread-list/thread-card/thread-card.vue"
 import { useThreadDetail } from "./tools/useThreadDetail"
 import { useThreadOperateInDetail } from './tools/useThreadOperateInDetail';
 import { subscribeUpdate } from "./tools/subscribeUpdate"
-import type { WhatDetail } from '../../../types/other/types-custom';
+import type { WhatDetail } from '~/types/other/types-custom';
 
 export default defineComponent({
 

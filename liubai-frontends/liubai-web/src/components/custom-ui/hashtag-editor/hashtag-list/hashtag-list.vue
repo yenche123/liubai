@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, nextTick, PropType, toRef, watch } from 'vue';
-import liuApi from '../../../../utils/liu-api';
+import liuApi from '~/utils/liu-api';
 import type { TagItem } from "../tools/types"
 import { useHashtagList } from "./tools/useHashtagList" 
 

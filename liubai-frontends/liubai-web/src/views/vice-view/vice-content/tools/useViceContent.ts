@@ -1,8 +1,8 @@
 import { onActivated, onDeactivated, ref, watch } from "vue";
 import type { Ref } from "vue";
 import type { LocationQuery, RouteLocationNormalizedLoaded } from "vue-router";
-import { useRouteAndLiuRouter } from '../../../../routes/liu-router';
-import valTool from "../../../../utils/basic/val-tool";
+import { useRouteAndLiuRouter } from '~/routes/liu-router';
+import valTool from "~/utils/basic/val-tool";
 
 const GOOGLE_SEARCH = "https://www.google.com/?igu=1"
 const SOUGO_SEARCH = "https://m.sogou.com/"

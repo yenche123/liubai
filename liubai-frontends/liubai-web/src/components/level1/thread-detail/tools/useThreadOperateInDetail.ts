@@ -3,7 +3,7 @@ import type {
 } from "../../thread-list/tools/types"
 import { handleCollect } from "./handleCollect"
 import type { TdData } from "./types"
-import { useRouteAndLiuRouter } from "../../../../routes/liu-router"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { ToidCtx } from "./types"
 
 export function useThreadOperateInDetail(

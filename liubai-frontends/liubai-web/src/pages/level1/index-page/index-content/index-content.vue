@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import cfg from "../../../../config"
-import CustomEditor from "../../../../components/custom-editor/custom-editor.vue"
+import cfg from "~/config"
+import CustomEditor from "~/components/custom-editor/custom-editor.vue"
 import { useIndexContent } from "./tools/useIndexContent";
-import ThreadList from "../../../../components/level1/thread-list/thread-list.vue"
+import ThreadList from "~/components/level1/thread-list/thread-list.vue"
 
 const virtualHeight = cfg.navi_height / 3
 const shortVirtual = cfg.navi_height / 9

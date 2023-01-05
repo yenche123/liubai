@@ -1,5 +1,5 @@
 import { ref } from "vue"
-import valTool from "../../../utils/basic/val-tool"
+import valTool from "~/utils/basic/val-tool"
 import type {
   HteResolver,
   TagItem
@@ -8,10 +8,10 @@ import type {
   HteMode,
   HashTagEditorParam, 
   HashTagEditorRes, 
-} from "../../../types/other/types-hashtag"
+} from "~/types/other/types-hashtag"
 import { searchLocal } from "./tools/handle"
-import { formatTagText, findTagId } from "../../../utils/system/workspace"
-import time from "../../../utils/basic/time"
+import { formatTagText, findTagId } from "~/utils/system/workspace"
+import time from "~/utils/basic/time"
 
 // 使用 element.scrollIntoView 让元素露出来 
 

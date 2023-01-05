@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import type { Ref } from "vue";
-import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore";
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 
 export function useWhoAreYou() {
   const store = useWorkspaceStore()

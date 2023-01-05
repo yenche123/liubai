@@ -1,14 +1,14 @@
 import { computed, ref, watch } from "vue";
 import type { Ref } from "vue";
 import { Draggable } from "@he-tree/vue";
-import type { TagView } from "../../../../types/types-atom";
-import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore";
+import type { TagView } from "~/types/types-atom";
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
-import { getCurrentSpaceTagList } from "../../../../utils/system/workspace";
-import { filterTag, tagMovedInTree } from "../../../../utils/system/workspace/tags";
-import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore";
-import time from "../../../../utils/basic/time";
-import { useRouteAndLiuRouter } from "../../../../routes/liu-router";
+import { getCurrentSpaceTagList } from "~/utils/system/workspace";
+import { filterTag, tagMovedInTree } from "~/utils/system/workspace/tags";
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import time from "~/utils/basic/time";
+import { useRouteAndLiuRouter } from "~/routes/liu-router";
 
 export interface Stat<T> {
   data: T

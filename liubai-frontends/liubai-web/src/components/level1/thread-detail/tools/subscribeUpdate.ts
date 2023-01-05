@@ -1,6 +1,6 @@
-import { useThreadShowStore } from "../../../../hooks/stores/useThreadShowStore"
+import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import type { TdData } from "./types"
-import type { ThreadShow } from "../../../../types/types-content"
+import type { ThreadShow } from "~/types/types-content"
 
 export function subscribeUpdate(
   tdData: TdData

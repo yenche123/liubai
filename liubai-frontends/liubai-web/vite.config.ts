@@ -10,6 +10,13 @@ const projectRoot = __dirname
 
 // https://vitejs.dev/config/
 export default defineConfig({
+
+  resolve: {
+    alias: {
+      '~/': `${resolve(projectRoot, 'src')}/`,
+    },
+  },
+
   plugins: [
     vue(),
 
@@ -31,11 +38,13 @@ export default defineConfig({
       symbolId: 'icon-[dir]-[name]',
     })
   ],
+
   server: {
     host: true,
     port: 5174,
     https: true
   },
+  
   define: {
     "LIU_ENV": {
       "version": version,

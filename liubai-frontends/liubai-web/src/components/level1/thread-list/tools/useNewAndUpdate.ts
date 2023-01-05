@@ -1,6 +1,6 @@
 import type { Ref } from "vue";
-import { useThreadShowStore } from "../../../../hooks/stores/useThreadShowStore";
-import type { ThreadShow } from "../../../../types/types-content"
+import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
+import type { ThreadShow } from "~/types/types-content"
 import type { TlProps, TlViewType } from "./types"
 
 export function useNewAndUpdate(

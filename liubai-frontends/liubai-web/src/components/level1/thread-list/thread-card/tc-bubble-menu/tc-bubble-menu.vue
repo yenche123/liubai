@@ -1,9 +1,9 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { BubbleMenu } from '@tiptap/vue-3'
-import type { TipTapEditor } from '../../../../../types/types-editor';
+import type { TipTapEditor } from '~/types/types-editor';
 import { useI18n } from 'vue-i18n'
-import { shouldShow } from '../../../../../utils/other/bubble-menu';
+import { shouldShow } from '~/utils/other/bubble-menu';
 import { useTcBubbleMenu } from "./tools/useTcBubbleMenu"
 
 const bubbleColor = "var(--bubble-menu-color)"

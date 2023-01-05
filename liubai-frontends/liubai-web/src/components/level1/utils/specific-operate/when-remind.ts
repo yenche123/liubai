@@ -1,12 +1,12 @@
-import { useThreadShowStore } from "../../../../hooks/stores/useThreadShowStore"
-import type { ThreadShow } from "../../../../types/types-content"
-import valTool from "../../../../utils/basic/val-tool"
-import liuUtil from "../../../../utils/liu-util"
+import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
+import type { ThreadShow } from "~/types/types-content"
+import valTool from "~/utils/basic/val-tool"
+import liuUtil from "~/utils/liu-util"
 import cui from "../../../custom-ui"
 import dbOp from "../db-op"
 import soTool from "./tools/so-tool"
-import time from "../../../../utils/basic/time"
-import { REMIND_EARLY, REMIND_LATER } from "../../../../config/atom"
+import time from "~/utils/basic/time"
+import { REMIND_EARLY, REMIND_LATER } from "~/config/atom"
 
 export const setWhen = async (
   oldThread: ThreadShow,

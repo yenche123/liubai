@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import type { ThreadShow } from '../../../../../types/types-content';
+import type { ThreadShow } from '~/types/types-content';
 
 export default defineComponent({
   props: {

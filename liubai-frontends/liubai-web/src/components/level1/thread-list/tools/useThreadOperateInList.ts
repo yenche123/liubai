@@ -75,6 +75,12 @@ export function useThreadOperateInList(
   return { receiveOperation }
 }
 
+// 跳转到详情页
+function handel_comment(ctx: ToCtx) {
+
+}
+
+
 async function handle_collect(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx
   const oldThread = valTool.copyObject(thread)

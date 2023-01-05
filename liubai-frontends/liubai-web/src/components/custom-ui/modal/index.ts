@@ -1,6 +1,6 @@
 
 import { reactive, ref } from "vue"
-import valTool from "../../../utils/basic/val-tool"
+import valTool from "~/utils/basic/val-tool"
 import { toListenEnterKeyUp, cancelListenEnterKeyUp } from "../tools/listen-keyup"
 
 interface ModalSuccessRes {

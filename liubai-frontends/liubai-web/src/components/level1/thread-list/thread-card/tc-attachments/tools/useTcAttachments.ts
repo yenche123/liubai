@@ -1,5 +1,5 @@
-import type { FileLocal } from '../../../../../../types';
-import liuUtil from '../../../../../../utils/liu-util';
+import type { FileLocal } from '~/types';
+import liuUtil from '~/utils/liu-util';
 import type { TcaProps } from './types';
 
 export function useTcAttachments(props: TcaProps) {

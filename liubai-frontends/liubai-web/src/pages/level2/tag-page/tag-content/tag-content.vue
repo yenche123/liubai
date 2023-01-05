@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ThreadList from '../../../../components/level1/thread-list/thread-list.vue';
+import ThreadList from '~/components/level1/thread-list/thread-list.vue';
 
 defineProps({
   tagId: String

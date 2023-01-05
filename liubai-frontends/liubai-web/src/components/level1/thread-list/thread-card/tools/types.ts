@@ -1,4 +1,4 @@
-import type { ThreadShow } from '../../../../../types/types-content';
+import type { ThreadShow } from '~/types/types-content';
 import { TlViewType, TlDisplayType } from '../../tools/types';
 
 export interface TcProps {

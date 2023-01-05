@@ -1,5 +1,5 @@
 import { computed } from "vue";
-import { useRouteAndLiuRouter } from "../../../routes/liu-router";
+import { useRouteAndLiuRouter } from "~/routes/liu-router";
 
 // 展开状态，为空表示展示默认侧边栏
 type ExpandState = "tags" | ""

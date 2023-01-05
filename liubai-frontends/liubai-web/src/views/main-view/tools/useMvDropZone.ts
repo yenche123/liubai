@@ -1,7 +1,7 @@
 import { provide, ref, watch, watchEffect } from "vue";
-import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
-import { useDropZone } from "../../../hooks/useVueUse"
-import { mvFileKey } from "../../../utils/provide-keys"
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import { useDropZone } from "~/hooks/useVueUse"
+import { mvFileKey } from "~/utils/provide-keys"
 
 export function useMvDropZone() {
   const centerRef = ref<HTMLDivElement>()

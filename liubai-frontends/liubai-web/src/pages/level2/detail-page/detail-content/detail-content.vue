@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ThreadDetail from "../../../../components/level1/thread-detail/thread-detail.vue";
+import ThreadDetail from "~/components/level1/thread-detail/thread-detail.vue";
 
 </script>
 <template>

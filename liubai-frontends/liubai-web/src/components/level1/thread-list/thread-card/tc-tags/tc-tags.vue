@@ -1,10 +1,10 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from 'vue';
-import type { TagShow } from "../../../../../types/types-content"
+import type { TagShow } from "~/types/types-content"
 import { RouterLink } from 'vue-router'
-import { useWorkspaceStore } from '../../../../../hooks/stores/useWorkspaceStore';
+import { useWorkspaceStore } from '~/hooks/stores/useWorkspaceStore';
 import { storeToRefs } from 'pinia';
-import { useRouteAndLiuRouter } from '../../../../../routes/liu-router';
+import { useRouteAndLiuRouter } from '~/routes/liu-router';
 
 export default defineComponent({
   components: {

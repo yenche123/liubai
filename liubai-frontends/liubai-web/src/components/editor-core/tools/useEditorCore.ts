@@ -12,14 +12,14 @@ import Link from '@tiptap/extension-link'
 import Heading from '@tiptap/extension-heading'
 import { useI18n, ComposerTranslation } from 'vue-i18n'
 import { wrappingInputRule, nodeInputRule } from "@tiptap/core"
-import type { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "../../../types/types-editor"
+import type { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "~/types/types-editor"
 import { inject, onMounted, ref, toRef, watch } from 'vue'
 import type { ShallowRef } from "vue"
-import type { HashTagEditorRes } from "../../../types/other/types-hashtag"
+import type { HashTagEditorRes } from "~/types/other/types-hashtag"
 
 import { lowlight } from 'lowlight'
 import CodeBlockComponent from '../code-block-component/code-block-component.vue'
-import { editorSetKey } from '../../../utils/provide-keys'
+import { editorSetKey } from '~/utils/provide-keys'
 import cui from '../../custom-ui'
 
 export interface EditorCoreProps {

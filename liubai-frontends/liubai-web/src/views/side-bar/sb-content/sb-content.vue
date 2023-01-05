@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AppLink from '../../../components/common/app-link/app-link.vue';
-import NaviLink from "../../../components/common/navi-link/navi-link.vue";
-import { useRouteAndLiuRouter } from '../../../routes/liu-router';
+import AppLink from '~/components/common/app-link/app-link.vue';
+import NaviLink from "~/components/common/navi-link/navi-link.vue";
+import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 

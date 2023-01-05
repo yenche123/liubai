@@ -1,8 +1,8 @@
-import { MenuItem } from "../../../../components/common/liu-menu/tools/types"
-import cui from "../../../../components/custom-ui"
-import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore"
-import { TagView } from "../../../../types/types-atom"
-import liuApi from "../../../../utils/liu-api"
+import { MenuItem } from "~/components/common/liu-menu/tools/types"
+import cui from "~/components/custom-ui"
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
+import { TagView } from "~/types/types-atom"
+import liuApi from "~/utils/liu-api"
 import { 
   addATag, 
   tagIdsToShows, 
@@ -10,13 +10,13 @@ import {
   mergeTag, 
   deleteTag,
   editTagIcon,
-} from "../../../../utils/system/workspace"
+} from "~/utils/system/workspace"
 import type { Stat } from "./useSbTags"
 import type { Ref } from "vue"
-import { i18n } from "../../../../locales"
-import { RenameTagParam } from "../../../../utils/system/workspace/tools/types"
-import { getTagViewLevel } from "../../../../utils/system/workspace/tools/tag-util"
-import time from "../../../../utils/basic/time"
+import { i18n } from "~/locales"
+import { RenameTagParam } from "~/utils/system/workspace/tools/types"
+import { getTagViewLevel } from "~/utils/system/workspace/tools/tag-util"
+import time from "~/utils/basic/time"
 
 type T_i18n = typeof i18n.global.t
 

@@ -1,7 +1,7 @@
 import { toRef, watch, ref, computed } from 'vue';
 import type { Ref } from "vue";
-import { useWindowSize } from '../../../../hooks/useVueUse';
-import type { ImageShow } from '../../../../types';
+import { useWindowSize } from '~/hooks/useVueUse';
+import type { ImageShow } from '~/types';
 
 interface PicProps {
   imgs: ImageShow[]

@@ -1,11 +1,11 @@
 
-import type { TipTapEditor } from '../../../../../../types/types-editor';
-import liuApi from "../../../../../../utils/liu-api"
+import type { TipTapEditor } from '~/types/types-editor';
+import liuApi from "~/utils/liu-api"
 import type { Instance, Props } from 'tippy.js'
 import { ref } from 'vue';
-import valTool from '../../../../../../utils/basic/val-tool';
+import valTool from '~/utils/basic/val-tool';
 import cui from '../../../../../custom-ui';
-import { useRouteAndLiuRouter } from '../../../../../../routes/liu-router';
+import { useRouteAndLiuRouter } from '~/routes/liu-router';
 
 
 interface TcBubbleMenuOpt {

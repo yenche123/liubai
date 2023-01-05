@@ -1,6 +1,6 @@
 import { reactive, ref } from "vue"
-import valTool from "../../../utils/basic/val-tool"
-import type { ImageShow } from '../../../types';
+import valTool from "~/utils/basic/val-tool"
+import type { ImageShow } from '~/types';
 
 interface PiParam {
   imgs: ImageShow[]

@@ -1,6 +1,4 @@
-import { Ref, ref } from "vue";
-import valTool from "../../../utils/basic/val-tool";
-
+import { ref } from "vue";
 
 export function useVvUI() {
   const isDraging = ref(false)

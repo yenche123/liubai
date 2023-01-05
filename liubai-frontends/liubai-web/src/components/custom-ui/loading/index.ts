@@ -1,6 +1,6 @@
 
 import { ref } from "vue";
-import valTool from "../../../utils/basic/val-tool"
+import valTool from "~/utils/basic/val-tool"
 
 interface LoadingParam {
   title?: string

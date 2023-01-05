@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import type { ImageShow } from '../../../../../types';
+import type { ImageShow } from '~/types';
 import cui from '../../../../custom-ui';
 
 

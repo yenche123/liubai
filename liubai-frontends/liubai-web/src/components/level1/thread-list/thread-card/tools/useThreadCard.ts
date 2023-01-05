@@ -1,15 +1,15 @@
 import { onMounted, ref, shallowRef } from 'vue';
 import EditorCore from "../../../../editor-core/editor-core.vue"
-import type { TipTapEditor } from "../../../../../types/types-editor"
+import type { TipTapEditor } from "~/types/types-editor"
 import type { TcProps } from "./types"
-import liuApi from '../../../../../utils/liu-api';
-import { useRouteAndLiuRouter } from '../../../../../routes/liu-router';
-import type { LiuRouter } from '../../../../../routes/liu-router';
+import liuApi from '~/utils/liu-api';
+import { useRouteAndLiuRouter } from '~/routes/liu-router';
+import type { LiuRouter } from '~/routes/liu-router';
 import type { RouteLocationNormalizedLoaded } from "vue-router"
-import { useGlobalStateStore } from '../../../../../hooks/stores/useGlobalStateStore';
+import { useGlobalStateStore } from '~/hooks/stores/useGlobalStateStore';
 import type {
   GlobalStateStore
-} from "../../../../../hooks/stores/useGlobalStateStore"
+} from "~/hooks/stores/useGlobalStateStore"
 
 interface TcCtx {
   props: TcProps

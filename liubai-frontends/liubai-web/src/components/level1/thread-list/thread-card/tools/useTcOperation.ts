@@ -1,16 +1,16 @@
 // 处理点击赞、收藏、评论分享等按钮
 
-import { LiuRouter, useRouteAndLiuRouter } from "../../../../../routes/liu-router"
-import type { ThreadShow } from "../../../../../types/types-content"
-import time from "../../../../../utils/basic/time"
+import { LiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
+import type { ThreadShow } from "~/types/types-content"
+import time from "~/utils/basic/time"
 import type { TcProps } from "./types"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
-import { useThreadShowStore } from "../../../../../hooks/stores/useThreadShowStore"
-import type { ThreadShowStore } from "../../../../../hooks/stores/useThreadShowStore"
-import { useWorkspaceStore } from "../../../../../hooks/stores/useWorkspaceStore"
-import type { WorkspaceStore } from "../../../../../hooks/stores/useWorkspaceStore"
-import { db } from "../../../../../utils/db"
-import { getLocalPreference } from "../../../../../utils/system/local-preference"
+import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
+import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
+import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
+import { db } from "~/utils/db"
+import { getLocalPreference } from "~/utils/system/local-preference"
 
 interface TcoCtx {
   props: TcProps

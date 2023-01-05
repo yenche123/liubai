@@ -1,6 +1,6 @@
 import { computed, ref } from "vue"
-import valTool from "../../../utils/basic/val-tool"
-import liuUtil from "../../../utils/liu-util"
+import valTool from "~/utils/basic/val-tool"
+import liuUtil from "~/utils/liu-util"
 
 interface DatePickerParam {
   date?: Date

@@ -2,9 +2,9 @@
 import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTcAttachments } from "./tools/useTcAttachments"
-import type { MenuItem } from "../../../../../components/common/liu-menu/tools/types"
+import type { MenuItem } from "~/components/common/liu-menu/tools/types"
 import type { PropType } from "vue"
-import type { ThreadShow } from '../../../../../types/types-content';
+import type { ThreadShow } from '~/types/types-content';
 import { useWhenAndRemind } from './tools/useWhenAndRemind';
 import TcWhenRemind from './tc-when-remind/tc-when-remind.vue';
 

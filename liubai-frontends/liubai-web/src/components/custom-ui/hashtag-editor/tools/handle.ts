@@ -1,6 +1,6 @@
 import type { TagItem } from "./types"
-import type { TagView } from "../../../../types/types-atom"
-import { getCurrentSpaceTagList } from "../../../../utils/system/workspace"
+import type { TagView } from "~/types/types-atom"
+import { getCurrentSpaceTagList } from "~/utils/system/workspace"
 
 /**
  * 从 useWorkspaceStore 里取数据，开始查找，返回 TagItem[]

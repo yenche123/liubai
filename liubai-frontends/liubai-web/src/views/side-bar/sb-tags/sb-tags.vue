@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import cfg from "../../../config"
+import cfg from "~/config"
 import { Draggable } from "@he-tree/vue";
 import { useSbTags } from "./tools/useSbTags";
 import { RouterLink } from 'vue-router'
-import LiuMenu from "../../../components/common/liu-menu/liu-menu.vue"
+import LiuMenu from "~/components/common/liu-menu/liu-menu.vue"
 import { useStMenu } from "./tools/useStMenu";
 
 defineProps({

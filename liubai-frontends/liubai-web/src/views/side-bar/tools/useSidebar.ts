@@ -1,11 +1,11 @@
 import { onActivated, onDeactivated, onMounted, onUnmounted, reactive, ref, Ref, watch } from "vue";
 import { useLayoutStore } from "../../useLayoutStore";
 import type { LayoutStore, LayoutType } from "../../useLayoutStore";
-import { useWindowSize } from "../../../hooks/useVueUse";
-import cfg from "../../../config";
-import valTool from "../../../utils/basic/val-tool";
-import time from "../../../utils/basic/time";
-import type { OpenType } from "../../../types/types-view";
+import { useWindowSize } from "~/hooks/useVueUse";
+import cfg from "~/config";
+import valTool from "~/utils/basic/val-tool";
+import time from "~/utils/basic/time";
+import type { OpenType } from "~/types/types-view";
 import { storeToRefs } from "pinia";
 
 const LISTEN_DELAY = 300

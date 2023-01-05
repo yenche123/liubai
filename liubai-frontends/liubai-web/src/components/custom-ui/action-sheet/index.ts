@@ -1,5 +1,5 @@
 import { reactive, ref } from "vue"
-import valTool from "../../../utils/basic/val-tool"
+import valTool from "~/utils/basic/val-tool"
 
 interface ActionSheetItem {
   text_key: string

@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import valTool from "../../../utils/basic/val-tool";
+import valTool from "~/utils/basic/val-tool";
 
 const enable = ref(false)
 const show = ref(false)

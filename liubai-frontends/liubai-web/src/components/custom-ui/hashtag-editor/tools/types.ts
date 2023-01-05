@@ -1,6 +1,6 @@
 import type {
   HashTagEditorRes,
-} from "../../../../types/other/types-hashtag"
+} from "~/types/other/types-hashtag"
 
 export type HteResolver = (res: HashTagEditorRes) => void
 

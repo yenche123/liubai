@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -14,7 +15,10 @@
     "skipLibCheck": true,
     "types": [
       "./node_modules/user-agent-data-types"
-    ]
+    ],
+    "paths": {
+      "~/*": ["src/*"]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]

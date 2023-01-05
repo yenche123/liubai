@@ -2,9 +2,9 @@
 
 import { inject, provide, ref, Ref, watch } from "vue"
 import { useLayoutStore, LayoutStore } from "../../useLayoutStore"
-import { useWindowSize } from "../../../hooks/useVueUse"
-import cfg from "../../../config"
-import { vvKey, mvKey } from "../../../utils/provide-keys"
+import { useWindowSize } from "~/hooks/useVueUse"
+import cfg from "~/config"
+import { vvKey, mvKey } from "~/utils/provide-keys"
 
 export const useMainView = () => {
 

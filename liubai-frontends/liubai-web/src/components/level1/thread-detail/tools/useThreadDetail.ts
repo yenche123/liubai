@@ -1,7 +1,7 @@
 import { watch, reactive } from "vue";
-import { useRouteAndLiuRouter } from "../../../../routes/liu-router";
+import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
-import threadController from "../../../../utils/controllers/thread-controller/thread-controller";
+import threadController from "~/utils/controllers/thread-controller/thread-controller";
 import type { TdData, TdProps } from "./types"
 
 export function useThreadDetail(props: TdProps) {

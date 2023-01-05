@@ -1,7 +1,7 @@
 import { storeToRefs } from "pinia";
 import { computed, inject, Ref, ref } from "vue";
-import { mvKey } from "../../../../../utils/provide-keys";
-import { useLayoutStore } from "../../../../../views/useLayoutStore";
+import { mvKey } from "~/utils/provide-keys";
+import { useLayoutStore } from "~/views/useLayoutStore";
 
 export function useIndexContent() {
 

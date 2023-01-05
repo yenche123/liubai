@@ -1,6 +1,6 @@
 import { ref, watch } from "vue";
-import { useWindowSize } from "../../../../../hooks/useVueUse";
-import cfg from "../../../../../config"
+import { useWindowSize } from "~/hooks/useVueUse";
+import cfg from "~/config"
 
 export function useViHeight() {
   let timeout = 0

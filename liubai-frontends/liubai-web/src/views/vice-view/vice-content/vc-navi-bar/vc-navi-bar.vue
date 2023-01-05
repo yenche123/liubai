@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import cfg from "../../../../config"
-import { useI18n } from 'vue-i18n';
-const { t } = useI18n()
 
 const emits = defineEmits<{
   (event: "tapback"): void

@@ -1,16 +1,16 @@
 import { inject, onActivated, onDeactivated, ref, ShallowRef, toRef, toRefs, watch } from "vue"
-import type { ThreadShow } from "../../../../types/types-content"
+import type { ThreadShow } from "~/types/types-content"
 import type { Ref } from "vue"
-import threadController from "../../../../utils/controllers/thread-controller/thread-controller"
-import { scrollViewKey } from "../../../../utils/provide-keys"
-import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore"
+import threadController from "~/utils/controllers/thread-controller/thread-controller"
+import { scrollViewKey } from "~/utils/provide-keys"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
-import type { OState } from "../../../../types/types-basic"
+import type { OState } from "~/types/types-basic"
 import type { SvProvideInject } from "../../../common/scroll-view/tools/types"
 import type { TlProps } from "./types"
-import type { TcListOption } from "../../../../utils/controllers/thread-controller/type"
-import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore";
-import { svBottomUpKey } from "../../../../utils/provide-keys";
+import type { TcListOption } from "~/utils/controllers/thread-controller/type"
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import { svBottomUpKey } from "~/utils/provide-keys";
 import type { SvBottomUp } from "../../../common/scroll-view/tools/types"
 
 interface TlContext {

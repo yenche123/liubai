@@ -1,10 +1,10 @@
 import dbOp from "../../utils/db-op"
 import cui from "../../../custom-ui"
 import type { ToidCtx } from "./types"
-import { ThreadShow } from "../../../../types/types-content"
-import valTool from "../../../../utils/basic/val-tool"
+import { ThreadShow } from "~/types/types-content"
+import valTool from "~/utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
-import checker from "../../../../utils/other/checker"
+import checker from "~/utils/other/checker"
 
 export function handleCollect(ctx: ToidCtx) {
   check(ctx)

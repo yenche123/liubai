@@ -1,7 +1,7 @@
 
 import { reactive, ref } from "vue"
-import valTool from "../../../utils/basic/val-tool"
-import { SnackbarParam, SnackbarRes } from "../../../types/other/types-snackbar"
+import valTool from "~/utils/basic/val-tool"
+import { SnackbarParam, SnackbarRes } from "~/types/other/types-snackbar"
 import { SbResolver } from "./tools/types"
 
 
