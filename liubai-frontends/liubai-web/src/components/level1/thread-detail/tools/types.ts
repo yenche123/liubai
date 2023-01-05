@@ -1,17 +1,15 @@
 import type { ThreadShow } from "../../../../types/types-content"
-import type { WorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore"
 import type { RouteAndLiuRouter } from "../../../../routes/liu-router"
 import type { PageState } from "../../../../types/types-atom";
+import type { WhatDetail } from "../../../../types/other/types-custom";
 
 export interface TdData {
   state: PageState
   threadShow: ThreadShow | undefined
 }
 
-type TdLocation = "vice-view" | "detail-page"
-
 export interface TdProps {
-  location: TdLocation
+  location: WhatDetail
 }
 
 export interface ToidCtx {

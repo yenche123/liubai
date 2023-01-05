@@ -1,27 +1,44 @@
-<script setup lang="ts">
-import { PropType } from 'vue';
+<script lang="ts">
+import { defineComponent, PropType } from 'vue';
 import PlaceholderView from '../../../views/common/placeholder-view/placeholder-view.vue';
 import ThreadCard from "../thread-list/thread-card/thread-card.vue"
 import { useThreadDetail } from "./tools/useThreadDetail"
 import { useThreadOperateInDetail } from './tools/useThreadOperateInDetail';
 import { subscribeUpdate } from "./tools/subscribeUpdate"
+import type { WhatDetail } from '../../../types/other/types-custom';
 
-const props = defineProps({
-  location: {
-    type: String as PropType<"vice-view" | "detail-page">,
-    required: true
-  }
+export default defineComponent({
+
+  components: {
+    PlaceholderView,
+    ThreadCard,
+  },
+
+  props: {
+    location: {
+      type: String as PropType<WhatDetail>,
+      required: true
+    }
+  },
+
+  setup(props) {
+    const {
+      tdData
+    } = useThreadDetail(props)
+
+    const {
+      receiveOperation
+    } = useThreadOperateInDetail(tdData)
+
+    subscribeUpdate(tdData)
+
+    return {
+      tdData,
+      receiveOperation
+    }
+  },
 })
 
-const {
-  tdData
-} = useThreadDetail(props)
-
-const {
-  receiveOperation
-} = useThreadOperateInDetail(tdData)
-
-subscribeUpdate(tdData)
 
 </script>
 <template>
