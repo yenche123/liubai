@@ -44,6 +44,8 @@ function whenRouteChange(
     if(name !== "detail") {
       return
     }
+    if(_isLoaded(id, tdData)) return
+
     tdData.state = 0
     loadLocal(id, tdData)
   }
@@ -51,10 +53,23 @@ function whenRouteChange(
     if(typeof cid !== "string" || !cid) {
       return
     }
+    if(_isLoaded(cid, tdData)) return
+
     tdData.state = 0
     loadLocal(cid, tdData)
   }
 }
+
+function _isLoaded(
+  id: string,
+  tdData: TdData,
+) {
+  const thread = tdData.threadShow
+  if(!thread) return false
+  if(thread._id === id) return true
+  return false
+}
+
 
 /**
  * 本地加载 thread
