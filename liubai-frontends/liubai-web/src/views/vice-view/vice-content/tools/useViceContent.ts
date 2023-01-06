@@ -1,21 +1,12 @@
 import { onActivated, onDeactivated, ref, watch } from "vue";
-import type { Ref } from "vue";
-import type { LocationQuery, RouteLocationNormalizedLoaded } from "vue-router";
+import type { LocationQuery } from "vue-router";
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import valTool from "~/utils/basic/val-tool";
+import type { VcState, VcCtx } from "./types"
 
 const GOOGLE_SEARCH = "https://www.google.com/?igu=1"
 const SOUGO_SEARCH = "https://m.sogou.com/"
 const CHAT_GPT3 = "https://chat.openai.com/chat"
-
-export type VcState = "thread" | "iframe" | ""
-
-interface VcCtx {
-  iframeSrc: Ref<string>
-  route: RouteLocationNormalizedLoaded
-  vcState: Ref<VcState>
-  cid: Ref<string>
-}
 
 export function useViceContent() {
   const iframeSrc = ref("")
