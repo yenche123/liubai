@@ -5,8 +5,10 @@ import {
   onDeactivated, 
   onMounted, 
   onUnmounted, 
+  provide, 
   reactive,
   ref, 
+  toRef, 
   watch 
 } from "vue";
 import type { Ref } from "vue";
@@ -18,6 +20,7 @@ import type { LocationQuery } from "vue-router"
 import { useWindowSize } from "~/hooks/useVueUse"
 import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
+import { outterWidthKey } from "~/utils/provide-keys"
 
 interface VvData {
   openType: OpenType
@@ -30,14 +33,14 @@ interface VvData {
   shadow: boolean
 }
 
-interface Emits {
+interface VvEmits {
   (e: "widthchange", widthPx: number): void
 }
 
 const LISTEN_DELAY = 300
 const layoutStore = useLayoutStore()
 
-export function useViceView(emits: Emits) {  
+export function useViceView(emits: VvEmits) {  
   const vvEl = ref<HTMLElement | null>(null) 
 
   const vvData = reactive<VvData>({
@@ -51,6 +54,9 @@ export function useViceView(emits: Emits) {
     shadow: false,
   })
 
+  const vvPx = toRef(vvData, "viceViewPx")
+  provide(outterWidthKey, vvPx)
+
   listenUserDrag(vvData, emits, vvEl)
   listenRouteChange(vvData, emits, vvEl)
   listenIfActivated(vvData)
@@ -61,7 +67,7 @@ export function useViceView(emits: Emits) {
 
 function listenRouteChange(
   vvData: VvData, 
-  emits: Emits,
+  emits: VvEmits,
   vvEl: Ref<HTMLElement | null>
 ) {
   let located = ""
@@ -139,7 +145,7 @@ function getViceViewPxFromStyle(
 
 function openViceView(
   vvData: VvData, 
-  emits: Emits,
+  emits: VvEmits,
   vvEl: Ref<HTMLElement | null>  
 ) {
   const { max, min } = getMinAndMax()
@@ -156,7 +162,7 @@ function openViceView(
 
 function closeViceView(
   vvData: VvData, 
-  emits: Emits, 
+  emits: VvEmits, 
   openType: OpenType = "closed_by_user"
 ) {
   vvData.openType = openType
@@ -176,7 +182,7 @@ function listenIfActivated(vvData: VvData) {
 // 监听自身的拖动
 function listenUserDrag(
   vvData: VvData, 
-  emits: Emits,
+  emits: VvEmits,
   vvEl: Ref<HTMLElement | null>
 ) {
 
@@ -222,7 +228,7 @@ function listenUserDrag(
 // 监听 sidebar 或者 window 窗口的宽度变化
 function listenParentChange(
   vvData: VvData, 
-  emits: Emits,
+  emits: VvEmits,
   vvEl: Ref<HTMLElement | null>
 ) {
   layoutStore.$subscribe(async (mutation, state) => {

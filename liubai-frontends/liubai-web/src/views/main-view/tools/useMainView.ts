@@ -4,7 +4,7 @@ import { inject, provide, ref, Ref, watch } from "vue"
 import { useLayoutStore, LayoutStore } from "../../useLayoutStore"
 import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
-import { viceViewWidthKey, mainViewWidthKey } from "~/utils/provide-keys"
+import { viceViewWidthKey, mainViewWidthKey, outterWidthKey } from "~/utils/provide-keys"
 
 export const useMainView = () => {
 
@@ -33,6 +33,7 @@ function initMainView(
   rightPx.value = vvRef.value
 
   provide(mainViewWidthKey, centerPx)
+  provide(outterWidthKey, centerPx)
 
   // 监听左边侧边栏的改变
   layoutStore.$subscribe((mutation, state) => {
