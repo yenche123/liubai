@@ -13,6 +13,7 @@ import {
   onBeforeRouteUpdate,
   NavigationGuard,
 } from "vue-router"
+import valTool from "~/utils/basic/val-tool"
 import time from "../utils/basic/time"
 import { isSameRoute } from "./route-util"
 
@@ -141,10 +142,19 @@ class LiuRouter {
   async pushNewPageWithOldQuery(
     route: RouteLocationNormalizedLoaded,
     to: RouteLocationRaw,
+    trimQuery: boolean = false
   ) {
     const newRoute = this.router.resolve(to)
     if(route.query) {
-      newRoute.query = route.query
+      if(trimQuery) {
+        const q = valTool.copyObject(route.query)
+        delete q.cid
+        delete q.outq
+        newRoute.query = q
+      }
+      else {
+        newRoute.query = route.query
+      }
     }
 
     routeChangeTmpData = { operation: "push", delta: 1 }

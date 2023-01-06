@@ -54,11 +54,11 @@ export default defineComponent({
 
 
   .ce-tag-item {
-    padding: 6px 8px 6px 14px;
+    padding: 6px 12px 6px 16px;
     font-size: var(--btn-font);
     color: var(--liu-quote);
     background-color: var(--tag-bg);
-    border-radius: 10px;
+    border-radius: 24px;
     margin-inline-end: 10px;
     margin-block-end: 10px;
     user-select: none;

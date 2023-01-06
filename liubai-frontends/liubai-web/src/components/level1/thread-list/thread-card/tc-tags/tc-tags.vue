@@ -30,7 +30,7 @@ export default defineComponent({
     const onTapTag = (e: MouseEvent, href: string) => {
       e.preventDefault()
       e.stopPropagation()
-      router.push({ path: href, query: route.query })
+      router.pushNewPageWithOldQuery(route, { path: href }, true)
     }
 
     return {
@@ -76,11 +76,11 @@ export default defineComponent({
 
 
   .ce-tag-item {
-    padding: 6px 12px 6px 12px;
+    padding: 6px 14px 6px 14px;
     font-size: var(--btn-font);
     color: var(--liu-quote);
     background-color: var(--tag-bg);
-    border-radius: 10px;
+    border-radius: 24px;
     margin-inline-end: 10px;
     margin-block-start: 10px;
     user-select: none;
