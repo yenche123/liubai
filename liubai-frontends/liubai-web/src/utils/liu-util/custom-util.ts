@@ -4,6 +4,6 @@ import { useWindowSize } from "~/hooks/useVueUse"
 
 export function toWhatDetail(): WhatDetail {
   const { width } = useWindowSize()
-  if(width.value < 700) return "detail-page"
+  if(width.value < 901) return "detail-page"
   return "vice-view"
 }
