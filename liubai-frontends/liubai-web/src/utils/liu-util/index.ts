@@ -27,6 +27,9 @@ import {
   toRawData,
   getRawList
 } from "./vue-util"
+import {
+  toWhatDetail
+} from "./custom-util"
 
 export default {
   getEnv,
@@ -53,4 +56,5 @@ export default {
   getNotImageFiles,
   toRawData,
   getRawList,
+  toWhatDetail,
 }

@@ -26,7 +26,7 @@ export function useThreadOperateInDetail(
       handleCollect(ctx)
     }
     else if(operation === "comment") {
-
+      focusCommentBar(ctx)
     }
     else if(operation === "emoji") {
 
@@ -39,4 +39,13 @@ export function useThreadOperateInDetail(
   return {
     receiveOperation
   }
+}
+
+function focusCommentBar(
+  ctx: ToidCtx
+) {
+
+  console.log("想办法聚焦 comment............")
+
+
 }

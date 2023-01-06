@@ -11,6 +11,7 @@ import type { TlProps, TlViewType } from "./types"
 import type { Ref } from "vue";
 import valTool from "../../../../utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
+import liuUtil from "~/utils/liu-util"
 
 interface ToCtx {
   router: LiuRouter
@@ -62,7 +63,7 @@ export function useThreadOperateInList(
       handle_collect(ctx)
     }
     else if(operation === "comment") {
-
+      handel_comment(ctx)
     }
     else if(operation === "emoji") {
 
@@ -77,7 +78,24 @@ export function useThreadOperateInList(
 
 // 跳转到详情页
 function handel_comment(ctx: ToCtx) {
+  const cid = ctx.thread._id
+  const res = liuUtil.toWhatDetail()
+  if(res === "detail-page") {
+    openDetailWithDetailPage(cid, ctx)
+  }
+  else if(res === "vice-view") {
+    openDetailWithViceView(cid, ctx)
+  }
+}
 
+function openDetailWithViceView(cid: string, ctx: ToCtx) {
+  const { route, router } = ctx
+  router.pushCurrentWithNewQuery(route, { cid })
+}
+
+function openDetailWithDetailPage(contentId: string, ctx: ToCtx) {
+  const { route, router } = ctx
+  router.pushNewPageWithOldQuery(route, { name: "detail", params: { contentId } })
 }
 
 

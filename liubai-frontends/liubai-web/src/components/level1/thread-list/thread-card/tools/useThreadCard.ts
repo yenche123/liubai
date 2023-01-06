@@ -10,6 +10,7 @@ import { useGlobalStateStore } from '~/hooks/stores/useGlobalStateStore';
 import type {
   GlobalStateStore
 } from "~/hooks/stores/useGlobalStateStore"
+import liuUtil from '~/utils/liu-util';
 
 interface TcCtx {
   props: TcProps
@@ -83,11 +84,16 @@ function handleTapThreadCard(
 
   const { threadData } = props
   const cid = threadData._id
+  const toWhere = liuUtil.toWhatDetail()
   
-  // 用侧边栏打开.......
-
-  // 用 detail-page 打开
-  openDetailWithDetailPage(cid, ctx)
+  if(toWhere === "detail-page") {
+    // 用 detail-page 打开
+    openDetailWithDetailPage(cid, ctx)
+  }
+  else if(toWhere === "vice-view") {
+    // 用侧边栏打开.......
+    openDetailWithViceView(cid, ctx)
+  }
 }
 
 
