@@ -1,6 +1,7 @@
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
+import type { PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { MenuItem } from "./tools/types"
 // 【待完善项】因为是 Menu 选单，应该可以用 Keyboard 的上下键来选择
@@ -21,6 +22,14 @@ export default defineComponent({
       type: String as PropType<MenuPlacement>,
       default: "bottom",
     },
+    allowMask: {
+      type: Boolean,
+      default: true
+    },
+    maskZIndex: {
+      type: String,
+      default: "2000"
+    },
   },
   emits: {
     tapitem: (item: MenuItem, index: number) => true,
@@ -28,6 +37,7 @@ export default defineComponent({
     menuhide: () => true
   },
   setup(props, { emit }) {
+    const showMask = ref(false)
     const hasIcon = computed(() => props.menu.some(v => !!v.iconName))
     const defaultColor = "var(--main-normal)"
     const { t } = useI18n()
@@ -45,14 +55,17 @@ export default defineComponent({
     const onMenuShow = (e: any) => {
       console.log("menu show.............")
       emit("menushow")
+      if(props.allowMask) showMask.value = true
     }
 
     const onMenuHide = () => {
       console.log("menu hide.............")
       emit("menuhide")
+      if(props.allowMask) showMask.value = false
     }
 
     return {
+      showMask,
       t,
       hasIcon,
       defaultColor,
@@ -66,6 +79,9 @@ export default defineComponent({
 
 </script>
 <template>
+
+  <div v-if="allowMask && showMask" class="lm-mask" />
+
   <VDropdown 
     :hideTriggers="['click']"
     :placement="placement"
@@ -116,6 +132,21 @@ export default defineComponent({
 
   </VDropdown>
 </template>
+
+<style lang="scss" scoped>
+
+.lm-mask {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: v-bind("maskZIndex");
+  cursor: auto;
+}
+
+</style>
+
 <style lang="scss">
 
 .menu-container {
