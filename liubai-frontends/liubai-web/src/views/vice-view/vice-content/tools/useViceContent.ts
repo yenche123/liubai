@@ -31,13 +31,21 @@ export function useViceContent() {
   }
 
   const onTapOpenInNew = () => {
-    if(!iframeSrc.value) return
-    const url = new URL(iframeSrc.value)
-    const query = url.searchParams
-    if(query.has("igu")) {
-      query.delete("igu")
+    let url: URL | undefined
+    const vs = vcState.value
+    if(vs === "iframe" && iframeSrc.value) {
+      url = new URL(iframeSrc.value)
+      const query = url.searchParams
+      if(query.has("igu")) {
+        query.delete("igu")
+      }
     }
-
+    else if(vs === "thread" && cid.value) {
+      const u = router.resolve({ name: "detail", params: { contentId: cid.value } })
+      url = new URL(u.fullPath, location.origin)
+    }
+    
+    if(!url) return
     const tmp = url.toString()
     window.open(tmp, "_blank")
   }

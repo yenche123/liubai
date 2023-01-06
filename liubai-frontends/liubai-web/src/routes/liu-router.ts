@@ -162,6 +162,14 @@ class LiuRouter {
     return res
   }
 
+  public resolve(
+    to: RouteLocationRaw, 
+    currentLocation?: RouteLocationNormalizedLoaded
+  ) {
+    const res = this.router.resolve(to, currentLocation)
+    return res
+  }
+
   public go(delta: number) {
     routeChangeTmpData = { operation: "go", delta }
     this.router.go(delta)
