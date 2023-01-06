@@ -64,6 +64,11 @@ export default defineComponent({
       if(props.allowMask) showMask.value = false
     }
 
+    const onTapMask = (e: MouseEvent) => {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+
     return {
       showMask,
       t,
@@ -73,6 +78,7 @@ export default defineComponent({
       onTapItem,
       onMenuShow,
       onMenuHide,
+      onTapMask,
     }
   },
 })
@@ -80,7 +86,10 @@ export default defineComponent({
 </script>
 <template>
 
-  <div v-if="allowMask && showMask" class="lm-mask" />
+  <div v-if="allowMask && showMask" 
+    class="lm-mask" 
+    @click="onTapMask"
+  />
 
   <VDropdown 
     :hideTriggers="['click']"
@@ -124,9 +133,6 @@ export default defineComponent({
         
         </template>
 
-        
-
-        
       </div>
     </template>
 
