@@ -41,7 +41,7 @@
   --liu-image: #2a2a2a;
 
   /** 一些比较少用到的 css 变量 */
-  --vice-bg: #303030;
+  --vice-bg: #2d2f32;
   --vice-shadow: -7px 0 14px 1px rgba(255, 255, 255, .11);
   --vice-scrollbar-thumb: #6a6a6a;
   --navi-normal: #989898;            /** 侧边栏链接 默认颜色 */
