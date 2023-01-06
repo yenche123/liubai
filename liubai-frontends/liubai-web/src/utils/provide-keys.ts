@@ -5,8 +5,11 @@ import type { SvProvideInject, SvBottomUp } from "../components/common/scroll-vi
 // InjectionKey 是什么? 参考: 
 // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-provide-inject
 
-export const vvKey = Symbol() as InjectionKey<Ref<number>>
-export const mvKey = Symbol() as InjectionKey<Ref<number>>
+export const viceViewWidthKey = Symbol() as InjectionKey<Ref<number>>
+export const mainViewWidthKey = Symbol() as InjectionKey<Ref<number>>
+
+// 在 main-view 里面，就等于 mainViewWidthKey; 在 vice-view 里面就等于 viceViewWidthKey
+export const outterWidthKey = Symbol() as InjectionKey<Ref<number>>
 
 // 用于拖动掉落文件
 export const mvFileKey = Symbol() as InjectionKey<Ref<File[]>>

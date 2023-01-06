@@ -2,7 +2,7 @@
 import { computed, defineComponent, inject } from 'vue';
 import type { Ref } from "vue";
 import { useI18n } from 'vue-i18n';
-import { mvKey } from "../../../utils/provide-keys"
+import { mainViewWidthKey } from "../../../utils/provide-keys"
 import type { LiuRemindMe } from "../../../types/types-atom";
 import { useMoreArea } from "./tools/useMoreArea";
 import { receiveCmaProps } from "./tools/receiveCmaProps"
@@ -19,7 +19,7 @@ export default defineComponent({
   },
   setup(props, { emit }){
     const critialPoint = 600
-    const mvRef = inject(mvKey) as Ref<number>
+    const mvRef = inject(mainViewWidthKey) as Ref<number>
     const containerMaxHeightPx = computed(() => {
       if(mvRef.value < critialPoint) return 400
       return 200

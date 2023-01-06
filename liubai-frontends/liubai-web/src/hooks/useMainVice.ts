@@ -1,6 +1,6 @@
 
 import { provide, ref } from "vue"
-import { vvKey } from "../utils/provide-keys"
+import { viceViewWidthKey } from "../utils/provide-keys"
 
 export function useMainVice() {
   const viceViewPx = ref(0)
@@ -8,7 +8,7 @@ export function useMainVice() {
     viceViewPx.value = val
   }
 
-  provide(vvKey, viceViewPx)
+  provide(viceViewWidthKey, viceViewPx)
 
   return { viceViewPx, onVvWidthChange }
 }
