@@ -71,6 +71,7 @@ export default defineComponent({
       <!-- 提醒我 -->
       <LiuMenu :menu="remindMenu"
         @tapitem="onTapRemindItem"
+        min-width-str="120px"
       >
 
         <div class="liu-hover ma-item">

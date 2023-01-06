@@ -5,6 +5,9 @@ import { useI18n } from 'vue-i18n'
 import type { MenuItem } from "./tools/types"
 // 【待完善项】因为是 Menu 选单，应该可以用 Keyboard 的上下键来选择
 
+type MenuPlacement = "bottom" | "bottom-start" | "bottom-end" 
+  | "auto" | "top" | "top-start" | "top-end"
+
 export default defineComponent({
   props: {
     menu: {
@@ -13,8 +16,11 @@ export default defineComponent({
     },
     minWidthStr: {
       type: String,
-      default: "200px"
-    }
+    },
+    placement: {
+      type: String as PropType<MenuPlacement>,
+      default: "bottom",
+    },
   },
   emits: {
     tapitem: (item: MenuItem, index: number) => true,
@@ -37,10 +43,12 @@ export default defineComponent({
     }
 
     const onMenuShow = (e: any) => {
+      console.log("menu show.............")
       emit("menushow")
     }
 
     const onMenuHide = () => {
+      console.log("menu hide.............")
       emit("menuhide")
     }
 
@@ -60,6 +68,7 @@ export default defineComponent({
 <template>
   <VDropdown 
     :hideTriggers="['click']"
+    :placement="placement"
     theme="liu-menu"
     @show="onMenuShow"
     @hide="onMenuHide"
@@ -73,7 +82,7 @@ export default defineComponent({
     
     <template #popper="{ hide }">
       <div class="menu-container"
-        :style="{ 'min-width': minWidthStr }"
+        :style="{ 'min-width': minWidthStr ? minWidthStr : undefined }"
       >
 
         <template v-for="(item, index) in menu" :key="item.text_key">
@@ -111,6 +120,9 @@ export default defineComponent({
 
 .menu-container {
   max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  width: max-content;
   position: relative;
   padding: 8px 4px 4px;
 
@@ -152,7 +164,7 @@ export default defineComponent({
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 4px;
+      margin-right: 8px;
 
       .mi-icon {
         width: 20px;

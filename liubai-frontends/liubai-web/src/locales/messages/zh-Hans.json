@@ -26,7 +26,14 @@
     "open_in_new": "在新的分页打开",
     "login": "登录",
     "reselect": "重选",
-    "remove": "移除"
+    "remove": "移除",
+    "edit": "编辑",
+    "delete": "删除",
+    "state": "状态",
+    "restore": "恢复",
+    "delete_forever": "永久删除",
+    "export": "导出",
+    "multi_sekect": "多选"
   },
   "editor": {
     "when": "什么时候",
@@ -140,8 +147,6 @@
     "no_tag_yet": "还没有任何标签"
   },
   "tag_related": {
-    "edit": "编辑",
-    "delete": "删除",
     "create": "新建",
     "level_limit": "标签层数最多支持 {level} 级",
     "delete_hd": "删除标签",

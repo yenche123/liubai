@@ -41,10 +41,10 @@ export function useStMenu(ctx: StmCtx) {
     if(text_key === "tag_related.create") {
       handle_create(node, stat)
     }
-    else if(text_key === "tag_related.edit") {
+    else if(text_key === "common.edit") {
       handle_edit(node, stat, ctx)
     }
-    else if(text_key === "tag_related.delete") {
+    else if(text_key === "common.delete") {
       handle_delete(node, stat)
     }
   }
@@ -60,10 +60,10 @@ export function useStMenu(ctx: StmCtx) {
 function initMenu(isPC: boolean) {
   const menuList: MenuItem[] = [
     {
-      text_key: "tag_related.edit"
+      text_key: "common.edit"
     },
     {
-      text_key: "tag_related.delete"
+      text_key: "common.delete"
     }
   ]
 
@@ -72,10 +72,10 @@ function initMenu(isPC: boolean) {
       text_key: "tag_related.create"
     },
     {
-      text_key: "tag_related.edit"
+      text_key: "common.edit"
     },
     {
-      text_key: "tag_related.delete"
+      text_key: "common.delete"
     }
   ]
 

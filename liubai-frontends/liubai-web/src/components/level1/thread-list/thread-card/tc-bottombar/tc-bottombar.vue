@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import type { ThreadShow } from '~/types/types-content';
+import { useTcBottombar } from './tools/useTcBottombar';
 
 export default defineComponent({
   props: {
@@ -11,9 +12,11 @@ export default defineComponent({
   },
   setup(props) {
     const default_color = "var(--main-code)"
+    const { footerMenu } = useTcBottombar(props)
 
     return {
-      default_color
+      default_color,
+      footerMenu,
     }
   }
 })
@@ -29,8 +32,16 @@ export default defineComponent({
 
     <!-- 更多 -->
     <div class="tcb-footer">
-      <div class="liu-hover tcbf-icon-box">
-        <svg-icon name="more" class="tcbf-icon" :color="default_color"></svg-icon>
+      <div class="tcbf-box">
+        <LiuMenu
+          :menu="footerMenu"
+          min-width-str="100px"
+          placement="top-end"
+        >
+          <div class="liu-hover tcbf-icon-box">
+            <svg-icon name="more" class="tcbf-icon" :color="default_color"></svg-icon>
+          </div>
+        </LiuMenu>
       </div>
     </div>
   </div>
@@ -56,11 +67,16 @@ export default defineComponent({
     display: flex;
     justify-content: flex-end;
 
-    .tcbf-icon-box {
+    .tcbf-box {
       width: 40px;
       height: 40px;
       margin-inline-end: -10px;
       margin-block-end: -10px;
+    }
+
+    .tcbf-icon-box {
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;

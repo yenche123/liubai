@@ -26,7 +26,14 @@
     "open_in_new": "Open in New",
     "login": "Sign in",
     "reselect": "Reselect",
-    "remove": "Remove"
+    "remove": "Remove",
+    "edit": "Edit",
+    "delete": "Delete",
+    "state": "State",
+    "restore": "Restore",
+    "delete_forever": "Delete Forever",
+    "export": "Export",
+    "multi_sekect": "Multi Select"
   },
   "editor": {
     "when": "When",
@@ -140,8 +147,6 @@
     "no_tag_yet": "No tags yet"
   },
   "tag_related": {
-    "edit": "Edit",
-    "delete": "Delete",
     "create": "New",
     "level_limit": "The maxmim of a tag level is {level}",
     "delete_hd": "Delete the tag",
