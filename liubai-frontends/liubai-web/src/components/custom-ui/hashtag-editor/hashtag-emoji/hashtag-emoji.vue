@@ -27,6 +27,7 @@ const onTapRemove = (hide: () => void) => {
 <template>
   <VDropdown 
     :hideTriggers="['click']"
+    placement="bottom-start"
     theme="emoji-select"
   >
 
