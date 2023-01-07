@@ -8,6 +8,7 @@ let isIPadOS: boolean = false;
 let isMac: boolean = false;
 let isFeishu: boolean = false;
 let isInWebView: boolean = false;   // 是否在桌面应用 App 的 Webview 中，小程序也算
+let isFirefox: boolean = false;
 
 interface GetChaRes {
   isPC: boolean
@@ -18,6 +19,7 @@ interface GetChaRes {
   isMac: boolean         // 是否为 mac，注意 iphone 和 ipad 时，此值可能为 false
   isFeishu: boolean
   isInWebView: boolean
+  isFirefox: boolean
 }
 
 const getCharacteristic = (): GetChaRes => {
@@ -60,6 +62,7 @@ const getCharacteristic = (): GetChaRes => {
     isFeishu = true
     isInWebView = true
   }
+  if(ua.includes("firefox")) isFirefox = true
 
   let res = _returnData()
   return res
@@ -75,6 +78,7 @@ function _returnData(): GetChaRes {
     isMac,
     isFeishu, 
     isInWebView,
+    isFirefox,
   }
 }
 

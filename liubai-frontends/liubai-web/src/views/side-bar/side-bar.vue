@@ -134,8 +134,7 @@ const {
   pointer-events: none;
 }
 
-.sb-bar:hover ~ .sb-default-line, 
-.sb-bar:active ~ .sb-bar-default-line {
+.sb-bar:hover ~ .sb-default-line {
   border-right: 2px solid var(--bg-color);
 }
 
@@ -189,6 +188,31 @@ const {
   opacity: 1;
   border-right: 2px dashed var(--line-active);
 }
+
+/** firefox 浏览器不支持整块拖动，
+  使用 @support 查询支持 -moz-user-select: none 语法的浏览器 
+  等于查询 firefox 浏览器
+*/
+@supports (-moz-user-select: none) {
+
+  .sb-bar {
+    cursor: auto;
+  }
+
+  .sb-bar:hover ~ .sb-default-line {
+    border-right: 1px solid var(--line-default);
+  }
+
+  .sb-bar:hover ~ .sb-drag-line {
+    opacity: 0;
+  }
+
+  .sb-bar:active ~ .sb-drag-line {
+    border-right: 2px dashed var(--line-hover);
+    opacity: 0;
+  }
+}
+
 
 /** 真正承载侧边栏内容的盒子 */
 .sb-box {

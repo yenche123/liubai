@@ -152,6 +152,26 @@ const {
   border-left: 2px solid var(--line-active);
 }
 
+@supports (-moz-user-select: none) {
+  .vv-bar {
+    cursor: auto;
+  }
+
+  .vv-bar:hover ~ .vv-buffer-zone,
+  .vv-bar:active ~ .vv-buffer-zone {
+    opacity: 1;
+  }
+
+  .vv-bar:hover ~ .vv-drag-line {
+    opacity: 0;
+  }
+
+  .vv-bar:active ~ .vv-drag-line {
+    opacity: 0;
+    border-left: 2px dashed var(--line-hover);
+  }
+}
+
 /** 真正承载侧边栏内容的盒子 */
 .vv-box {
   position: absolute;
