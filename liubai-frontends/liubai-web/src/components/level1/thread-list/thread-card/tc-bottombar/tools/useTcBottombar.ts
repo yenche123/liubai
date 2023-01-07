@@ -1,6 +1,7 @@
-import { ThreadShow } from "~/types/types-content";
+import type { ThreadShow } from "~/types/types-content";
 import type { MenuItem } from "~/components/common/liu-menu/tools/types"
 import { computed } from "vue";
+import type { ComputedRef } from "vue"
  
 interface TcbProps {
   threadData: ThreadShow
@@ -8,6 +9,11 @@ interface TcbProps {
 
 interface TcbMenuItem extends MenuItem {
   operation: "edit" | "delete" | "state" | "restore" | "delete_forever"
+}
+
+interface TcbCtx {
+  footerMenu: ComputedRef<TcbMenuItem[]>
+  thread: ThreadShow
 }
 
 // 正常: 编辑、状态、编辑
@@ -43,7 +49,6 @@ const MENU_2: TcbMenuItem[] = [
   }
 ]
 
-
 export function useTcBottombar(props: TcbProps) {
 
   const footerMenu = computed<TcbMenuItem[]>(() => {
@@ -51,8 +56,35 @@ export function useTcBottombar(props: TcbProps) {
     if(t.oState === "OK") return MENU_1
     return MENU_2
   })
+
+  const ctx: TcbCtx = {
+    footerMenu,
+    thread: props.threadData,
+  }
+
+  const onTapMenuItem = (item: MenuItem, index: number) => {
+    receiveMenuItem(ctx, index)
+  }
   
   return {
-    footerMenu
+    footerMenu,
+    onTapMenuItem,
   }
+}
+
+function receiveMenuItem(
+  ctx: TcbCtx,
+  index: number
+) {
+  const { footerMenu } = ctx
+  const list = footerMenu.value
+  const item = list[index]
+  if(!item) return
+
+  const { operation } = item
+  if(operation === "edit") {
+
+  }
+  
+
 }

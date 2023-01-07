@@ -12,11 +12,12 @@ export default defineComponent({
   },
   setup(props) {
     const default_color = "var(--main-code)"
-    const { footerMenu } = useTcBottombar(props)
+    const { footerMenu, onTapMenuItem } = useTcBottombar(props)
 
     return {
       default_color,
       footerMenu,
+      onTapMenuItem,
     }
   }
 })
@@ -37,6 +38,7 @@ export default defineComponent({
           :menu="footerMenu"
           min-width-str="100px"
           placement="top-end"
+          @tapitem="onTapMenuItem"
         >
           <div class="liu-hover tcbf-icon-box">
             <svg-icon name="more" class="tcbf-icon" :color="default_color"></svg-icon>
