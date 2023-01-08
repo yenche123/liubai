@@ -1,20 +1,11 @@
-import type { ThreadShow } from "~/types/types-content";
 import type { MenuItem } from "~/components/common/liu-menu/tools/types"
 import { computed } from "vue";
-import type { ComputedRef } from "vue"
- 
-interface TcbProps {
-  threadData: ThreadShow
-}
+import type {
+  TcbProps,
+  TcbEmits,
+  TcbMenuItem,
+} from "./types"
 
-interface TcbMenuItem extends MenuItem {
-  operation: "edit" | "delete" | "state" | "restore" | "delete_forever"
-}
-
-interface TcbCtx {
-  footerMenu: ComputedRef<TcbMenuItem[]>
-  thread: ThreadShow
-}
 
 // 正常: 编辑、状态、编辑
 const MENU_1: TcbMenuItem[] = [
@@ -49,7 +40,10 @@ const MENU_2: TcbMenuItem[] = [
   }
 ]
 
-export function useTcBottombar(props: TcbProps) {
+export function useTcBottombar(
+  props: TcbProps,
+  emits: TcbEmits,  
+) {
 
   const footerMenu = computed<TcbMenuItem[]>(() => {
     const t = props.threadData
@@ -57,34 +51,15 @@ export function useTcBottombar(props: TcbProps) {
     return MENU_2
   })
 
-  const ctx: TcbCtx = {
-    footerMenu,
-    thread: props.threadData,
-  }
-
   const onTapMenuItem = (item: MenuItem, index: number) => {
-    receiveMenuItem(ctx, index)
+    const theItem = footerMenu.value[index]
+    if(!theItem) return
+    const { operation } = theItem
+    emits("newoperate", operation)
   }
   
   return {
     footerMenu,
     onTapMenuItem,
   }
-}
-
-function receiveMenuItem(
-  ctx: TcbCtx,
-  index: number
-) {
-  const { footerMenu } = ctx
-  const list = footerMenu.value
-  const item = list[index]
-  if(!item) return
-
-  const { operation } = item
-  if(operation === "edit") {
-
-  }
-  
-
 }

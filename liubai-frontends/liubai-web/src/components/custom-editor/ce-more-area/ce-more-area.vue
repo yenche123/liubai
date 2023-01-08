@@ -3,20 +3,13 @@ import { computed, defineComponent, inject } from 'vue';
 import type { Ref } from "vue";
 import { useI18n } from 'vue-i18n';
 import { outterWidthKey } from "../../../utils/provide-keys"
-import type { LiuRemindMe } from "../../../types/types-atom";
 import { useMoreArea } from "./tools/useMoreArea";
 import { receiveCmaProps } from "./tools/receiveCmaProps"
-import { cmaProps } from "./tools/types-cma"
+import { cmaProps, cmaEmits } from "./tools/types-cma"
 
 export default defineComponent({
   props: cmaProps,
-  emits: {
-    whenchange: (val: Date | null) => true,
-    remindmechange: (val: LiuRemindMe | null) => true,
-    titlechange: (val: string) => true,
-    synccloudchange: (val: boolean) => true,
-    filechange: (val: File[] | null) => true,
-  },
+  emits: cmaEmits,
   setup(props, { emit }){
     const critialPoint = 600
     const mvRef = inject(outterWidthKey) as Ref<number>

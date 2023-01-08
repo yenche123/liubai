@@ -10,3 +10,4 @@ export interface TlProps {
 export type TlDisplayType = "list" | "detail"
 
 export type ThreadOperation = "collect" | "emoji" | "share" | "comment"
+  | "edit" | "delete" | "state" | "restore" | "delete_forever"

@@ -46,3 +46,11 @@ export const cmaProps = {
   },
   state: Object as PropType<CeState>,
 }
+
+export const cmaEmits = {
+  whenchange: (val: Date | null) => true,
+  remindmechange: (val: LiuRemindMe | null) => true,
+  titlechange: (val: string) => true,
+  synccloudchange: (val: boolean) => true,
+  filechange: (val: File[] | null) => true,
+}

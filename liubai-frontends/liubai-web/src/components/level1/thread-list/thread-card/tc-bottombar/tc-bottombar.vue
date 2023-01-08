@@ -2,6 +2,7 @@
 import { defineComponent, PropType } from 'vue';
 import type { ThreadShow } from '~/types/types-content';
 import { useTcBottombar } from './tools/useTcBottombar';
+import { tcbEmits } from "./tools/types"
 
 export default defineComponent({
   props: {
@@ -10,9 +11,10 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props) {
+  emits: tcbEmits,
+  setup(props, { emit }) {
     const default_color = "var(--main-code)"
-    const { footerMenu, onTapMenuItem } = useTcBottombar(props)
+    const { footerMenu, onTapMenuItem } = useTcBottombar(props, emit)
 
     return {
       default_color,
