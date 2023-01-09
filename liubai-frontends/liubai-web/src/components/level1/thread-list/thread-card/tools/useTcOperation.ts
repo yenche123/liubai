@@ -2,15 +2,15 @@
 
 import { LiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { ThreadShow } from "~/types/types-content"
-import time from "~/utils/basic/time"
 import type { TcProps } from "./types"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
-import { db } from "~/utils/db"
 import { getLocalPreference } from "~/utils/system/local-preference"
+import liuUtil from "~/utils/liu-util"
+import tcCommon from "./tc-common"
 
 interface TcoCtx {
   props: TcProps
@@ -37,11 +37,12 @@ export function useTcOperation(
   }
 
   const onTapComment = () => {
-
+    console.log("onTapComment.........")
+    handel_comment(ctx, props)
   }
 
   const onTapShare = () => {
-
+    console.log("onTapShare.........")
   }
 
 
@@ -64,8 +65,20 @@ function _getMyData(ctx: TcoCtx) {
   return { memberId, userId }
 }
 
-function handleComment(ctx: TcoCtx) {
-
+// 跳转到详情页
+function handel_comment(ctx: TcoCtx, props: TcProps) {
+  if(props.displayType !== "list") {
+    console.log("想办法聚焦 comment 的输入框......")
+    return
+  }
+  const cid = props.threadData._id
+  const res = liuUtil.toWhatDetail()
+  if(res === "detail-page") {
+    tcCommon.openDetailWithDetailPage(cid, ctx)
+  }
+  else if(res === "vice-view") {
+    tcCommon.openDetailWithViceView(cid, ctx)
+  }
 }
 
 function handleShare(ctx: TcoCtx) {

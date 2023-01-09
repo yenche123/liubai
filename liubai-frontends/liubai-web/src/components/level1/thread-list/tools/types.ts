@@ -9,5 +9,9 @@ export interface TlProps {
 
 export type TlDisplayType = "list" | "detail"
 
-export type ThreadOperation = "collect" | "emoji" | "share" | "comment"
-  | "edit" | "delete" | "state" | "restore" | "delete_forever"
+// 在 thread-card 内部消化完成的操作（不需要移除或添加至列表里）
+export type ThreadInnerOperation = "comment" | "edit" | "share"
+
+export type ThreadOutterOperation = "collect" | "emoji" | "delete" | "state" | "restore" | "delete_forever"
+
+export type ThreadOperation = ThreadInnerOperation | ThreadOutterOperation

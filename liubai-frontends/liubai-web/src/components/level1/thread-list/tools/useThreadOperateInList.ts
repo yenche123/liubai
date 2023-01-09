@@ -1,4 +1,4 @@
-import type { ThreadOperation } from "./types"
+import type { ThreadOutterOperation } from "./types"
 import type { ThreadShow } from '../../../../types/types-content'
 import type { LiuRouter } from "../../../../routes/liu-router"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
@@ -35,7 +35,7 @@ export function useThreadOperateInList(
 
 
   const receiveOperation = (
-    operation: ThreadOperation, 
+    operation: ThreadOutterOperation, 
     position: number, 
     thread: ThreadShow
   ) => {
@@ -62,42 +62,13 @@ export function useThreadOperateInList(
     if(operation === "collect") {
       handle_collect(ctx)
     }
-    else if(operation === "comment") {
-      handel_comment(ctx)
-    }
     else if(operation === "emoji") {
-
-    }
-    else if(operation === "share") {
 
     }
   }
 
   return { receiveOperation }
 }
-
-// 跳转到详情页
-function handel_comment(ctx: ToCtx) {
-  const cid = ctx.thread._id
-  const res = liuUtil.toWhatDetail()
-  if(res === "detail-page") {
-    openDetailWithDetailPage(cid, ctx)
-  }
-  else if(res === "vice-view") {
-    openDetailWithViceView(cid, ctx)
-  }
-}
-
-function openDetailWithViceView(cid: string, ctx: ToCtx) {
-  const { route, router } = ctx
-  router.pushCurrentWithNewQuery(route, { cid })
-}
-
-function openDetailWithDetailPage(contentId: string, ctx: ToCtx) {
-  const { route, router } = ctx
-  router.pushNewPageWithOldQuery(route, { name: "detail", params: { contentId } })
-}
-
 
 async function handle_collect(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx

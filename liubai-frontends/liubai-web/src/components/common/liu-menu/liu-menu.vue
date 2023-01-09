@@ -59,7 +59,6 @@ export default defineComponent({
     }
 
     const onMenuHide = () => {
-      console.log("menu hide.............")
       emit("menuhide")
       if(props.allowMask) showMask.value = false
     }

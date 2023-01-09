@@ -1,6 +1,4 @@
-import type {
-  ThreadOperation
-} from "../../thread-list/tools/types"
+import type { ThreadOutterOperation } from "../../thread-list/tools/types"
 import { handleCollect } from "./handleCollect"
 import type { TdData } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
@@ -12,7 +10,7 @@ export function useThreadOperateInDetail(
   const rr = useRouteAndLiuRouter()
 
   const receiveOperation = (
-    operation: ThreadOperation,
+    operation: ThreadOutterOperation,
   ) => {
     const { threadShow } = tdData
 
@@ -25,13 +23,7 @@ export function useThreadOperateInDetail(
     if(operation === "collect") {
       handleCollect(ctx)
     }
-    else if(operation === "comment") {
-      focusCommentBar(ctx)
-    }
     else if(operation === "emoji") {
-
-    }
-    else if(operation === "share") {
 
     }
   }
@@ -39,13 +31,4 @@ export function useThreadOperateInDetail(
   return {
     receiveOperation
   }
-}
-
-function focusCommentBar(
-  ctx: ToidCtx
-) {
-
-  console.log("想办法聚焦 comment............")
-
-
 }
