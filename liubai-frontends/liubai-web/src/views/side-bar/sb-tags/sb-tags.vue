@@ -127,6 +127,8 @@ const {
     <span>{{ t('placeholder.no_tag_yet') }}</span>
   </div>
 
+  <div class="st-virtual-two"></div>
+
 </template>
 <style scoped lang="scss">
 .liu-frosted-glass::before {
