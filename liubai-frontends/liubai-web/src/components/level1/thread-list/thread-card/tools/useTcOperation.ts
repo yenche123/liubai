@@ -2,13 +2,14 @@
 
 import { LiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { ThreadShow } from "~/types/types-content"
-import type { TcProps } from "./types"
+import type { TcProps, TcEmits } from "./types"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { getLocalPreference } from "~/utils/system/local-preference"
+import type { ThreadOperation } from "../../tools/types"
 import liuUtil from "~/utils/liu-util"
 import tcCommon from "./tc-common"
 
@@ -18,10 +19,12 @@ interface TcoCtx {
   route: RouteLocationNormalizedLoaded
   tsStore: ThreadShowStore
   wStore: WorkspaceStore
+  emits: TcEmits
 }
 
 export function useTcOperation(
   props: TcProps,
+  emits: TcEmits,
 ) {
 
   const wStore = useWorkspaceStore()
@@ -34,6 +37,7 @@ export function useTcOperation(
     route,
     tsStore,
     wStore,
+    emits
   }
 
   const onTapComment = () => {
@@ -45,12 +49,46 @@ export function useTcOperation(
     console.log("onTapShare.........")
   }
 
+  const receiveBottomOperation = (operation: ThreadOperation) => {
+    handleOperationFromBottomBar(ctx, operation)
+  }
 
   return {
     onTapComment,
     onTapShare,
+    receiveBottomOperation,
   }
 }
+
+function handleOperationFromBottomBar(
+  ctx: TcoCtx,
+  operation: ThreadOperation
+) {
+  const { position, threadData } = ctx.props
+
+  if(operation === "edit") {
+    // 编辑
+    console.log("跳转去编辑页............")
+    
+  }
+  else if(operation === "state") {
+    // 去 emit "状态"
+    ctx.emits("newoperate", "state", position, threadData)
+  }
+  else if(operation === "delete") {
+    // 去 emit 删除
+    ctx.emits("newoperate", "delete", position, threadData)
+  }
+  else if(operation === "restore") {
+    // 去 emit 恢复
+    ctx.emits("newoperate", "restore", position, threadData)
+  }
+  else if(operation === "delete_forever") {
+    // 去 emit 永久删除
+    ctx.emits("newoperate", "restore", position, threadData)
+  }
+}
+
 
 function _getNewThreadShow(props: TcProps) {
   const oldThread = props.threadData

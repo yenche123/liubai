@@ -59,16 +59,31 @@ export function useThreadOperateInList(
       list
     }
 
-    if(operation === "collect") {
-      handle_collect(ctx)
-    }
-    else if(operation === "emoji") {
-
-    }
+    handleOutterOperation(ctx, operation)
   }
 
   return { receiveOperation }
 }
+
+
+function handleOutterOperation(
+  ctx: ToCtx,
+  operation: ThreadOutterOperation
+) {
+
+  console.log("handleOutterOperation..........")
+  console.log(operation)
+  console.log(" ")
+
+  if(operation === "collect") {
+    handle_collect(ctx)
+  }
+  else if(operation === "emoji") {
+
+  }
+
+}
+
 
 async function handle_collect(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx

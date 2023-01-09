@@ -8,6 +8,8 @@ import soTool from "./tools/so-tool"
 import time from "~/utils/basic/time"
 import { REMIND_EARLY, REMIND_LATER } from "~/config/atom"
 
+// 处理设置动态的 "什么时候" 和 "提醒我" 的公共逻辑
+
 export const setWhen = async (
   oldThread: ThreadShow,
   memberId: string,

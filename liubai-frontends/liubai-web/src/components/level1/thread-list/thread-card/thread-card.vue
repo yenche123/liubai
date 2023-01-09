@@ -11,7 +11,8 @@ import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
 import TcBubbleMenu from './tc-bubble-menu/tc-bubble-menu.vue';
 import { useTcOperation } from "./tools/useTcOperation";
-import type { TlViewType, TlDisplayType, ThreadOutterOperation } from "../tools/types";
+import type { TlViewType, TlDisplayType } from "../tools/types";
+import { tcEmits } from "./tools/types"
 
 export default defineComponent({
   components: {
@@ -41,10 +42,8 @@ export default defineComponent({
       required: true
     },
   },
-  emits: {
-    newoperate: (operation: ThreadOutterOperation, position: number, oldThread: ThreadShow) => true
-  },
-  setup(props) {
+  emits: tcEmits,
+  setup(props, { emit }) {
     const {
       editorCoreRef,
       editor,
@@ -55,7 +54,7 @@ export default defineComponent({
     } = useThreadCard(props)
     const { t } = useI18n()
 
-    const operations = useTcOperation(props)
+    const operations = useTcOperation(props, emit)
 
     return {
       editorCoreRef,
@@ -137,7 +136,9 @@ export default defineComponent({
       ></TcActionbar>
 
       <!-- 底部时间 -->
-      <TcBottombar :thread-data="threadData"></TcBottombar>
+      <TcBottombar :thread-data="threadData"
+        @newoperate="receiveBottomOperation"
+      ></TcBottombar>
       
     </div>
 

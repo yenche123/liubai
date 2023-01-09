@@ -5,6 +5,7 @@ import valTool from "~/utils/basic/val-tool"
 import cui from "../../../custom-ui"
 import dbOp from "../db-op"
 
+// 处理动态 "收藏" 的公共逻辑
 export const toCollect = async (
   oldThread: ThreadShow,
   memberId: string,
