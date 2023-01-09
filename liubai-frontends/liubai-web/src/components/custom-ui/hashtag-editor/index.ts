@@ -28,6 +28,9 @@ const list = ref<TagItem[]>([])
 const selectedIndex = ref(-1)        // 被选择的 index
 const mode = ref<HteMode>("edit")
 
+let lastInputVal = ""
+let lastEmoji = ""
+
 let _resolve: HteResolver | undefined
 
 export function initHtePicker() {
@@ -44,7 +47,7 @@ export function initHtePicker() {
     list,
     selectedIndex,
     mode,
-    onTapCancel,
+    onTapMask,
     onTapConfirm,
     onTapItem,
     onInput,
@@ -54,8 +57,10 @@ export function initHtePicker() {
 
 
 export async function showHashTagEditor(opt: HashTagEditorParam) {
-  inputVal.value = opt.text ?? ""
-  emoji.value = opt.icon ? decodeURIComponent(opt.icon) : ""
+  lastInputVal = opt.text ?? ""
+  inputVal.value = lastInputVal
+  lastEmoji = opt.icon ? decodeURIComponent(opt.icon) : ""
+  emoji.value = lastEmoji
   errCode.value = 0
   newTag.value = ""
   list.value = []
@@ -111,8 +116,17 @@ function hasStrangeChar(val: string) {
   return false
 }
 
+function onTapMask() {
+  if(checkState()) {
+    if(inputEl.value) inputEl.value.blur()
+    toEnter()
+  }
+  else {
+    toCancel()
+  }
+}
 
-function onTapCancel() {
+function toCancel() {
   if(inputEl.value) inputEl.value.blur()
   _resolve && _resolve({ confirm: false })
   _close()
@@ -120,7 +134,7 @@ function onTapCancel() {
 
 function onTapConfirm() {
   if(!checkState()) {
-    onTapCancel()
+    toCancel()
     return
   }
 
@@ -194,6 +208,11 @@ function checkState() {
   }
   
   if(m === "edit") {
+
+    if(lastInputVal === inputVal.value && lastEmoji === emoji.value) {
+      return false
+    }
+
     const inputValFormatted = formatTagText(inputVal.value)
     if(!inputValFormatted) {
       return false
@@ -249,7 +268,7 @@ function _whenKeyDown(e: KeyboardEvent) {
 function _whenKeyUp(e: KeyboardEvent) {
   const key = e.key
   if(key === "Escape") {
-    onTapCancel()
+    toCancel()
     return
   }
   if(key === "Enter") {

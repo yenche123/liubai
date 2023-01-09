@@ -16,7 +16,7 @@ const {
   list,
   selectedIndex,
   mode,
-  onTapCancel,
+  onTapMask,
   onTapItem,
   onInput,
   onEmojiChange,
@@ -33,7 +33,7 @@ const onMouseEnterItem = (index: number) => {
 
   <div v-if="enable" class="hte-container" :class="{ 'hte-container_show': show }">
 
-    <div class="hte-bg" @click="onTapCancel" />
+    <div class="hte-bg" @click="onTapMask" />
 
     <div class="hte-box">
 
