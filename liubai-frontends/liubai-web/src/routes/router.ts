@@ -9,6 +9,7 @@ const KanbanPage = () => import("../pages/level2/kanban-page/kanban-page.vue")
 const TrashPage = () => import("../pages/level2/trash-page/trash-page.vue")
 const TagPage = () => import("../pages/level2/tag-page/tag-page.vue")
 const ConnectPage = () => import("../pages/level2/connect-page/connect-page.vue")
+const EditPage = () => import("../pages/level2/edit-page/edit-page.vue")
 const LeftSidebar = () => import("../views/side-bar/side-bar.vue")
 
 // 扩展 vue-router 下的 RouteMeta 接口
@@ -56,6 +57,17 @@ const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "detail",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
+    path: "/:contentId(\\w{10,})/edit",
+    components: {
+      default: EditPage,
+      LeftSidebar,
+    },
+    name: "edit",
     meta: {
       keepAlive: true,
     }

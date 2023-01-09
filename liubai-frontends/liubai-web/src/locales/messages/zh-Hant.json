@@ -33,7 +33,8 @@
     "restore": "復原",
     "delete_forever": "永久删除",
     "export": "導出",
-    "multi_sekect": "多選"
+    "multi_sekect": "多選",
+    "editing": "編輯中"
   },
   "editor": {
     "when": "什麼時候",

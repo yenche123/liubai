@@ -33,7 +33,8 @@
     "restore": "Restore",
     "delete_forever": "Delete Forever",
     "export": "Export",
-    "multi_sekect": "Multi Select"
+    "multi_sekect": "Multi Select",
+    "editing": "Editing"
   },
   "editor": {
     "when": "When",
