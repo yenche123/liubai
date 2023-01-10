@@ -8,6 +8,11 @@ import {
   clearRemind,
   undoWhenRemind,
 } from "./specific-operate/when-remind"
+import {
+  deleteThread,
+  deleteForever,
+  undoDelete,
+} from "./specific-operate/delete-related"
 
 export default {
   toCollect,
@@ -17,4 +22,7 @@ export default {
   clearWhen,
   clearRemind,
   undoWhenRemind,
+  deleteThread,
+  deleteForever,
+  undoDelete,
 }

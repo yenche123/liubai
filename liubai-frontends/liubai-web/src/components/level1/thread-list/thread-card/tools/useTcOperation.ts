@@ -65,26 +65,17 @@ function handleOperationFromBottomBar(
   operation: ThreadOperation
 ) {
   const { position, threadData } = ctx.props
+  const op = operation
 
-  if(operation === "edit") {
+  if(op === "edit") {
     // 编辑
     ctx.router.push({ name: "edit", params: { contentId: threadData._id } })
   }
-  else if(operation === "state") {
-    // 去 emit "状态"
-    ctx.emits("newoperate", "state", position, threadData)
+  else if(op === "state" || op === "delete") {
+    ctx.emits("newoperate", op, position, threadData)
   }
-  else if(operation === "delete") {
-    // 去 emit 删除
-    ctx.emits("newoperate", "delete", position, threadData)
-  }
-  else if(operation === "restore") {
-    // 去 emit 恢复
-    ctx.emits("newoperate", "restore", position, threadData)
-  }
-  else if(operation === "delete_forever") {
-    // 去 emit 永久删除
-    ctx.emits("newoperate", "restore", position, threadData)
+  else if(op === "restore" || op === "delete_forever") {
+    ctx.emits("newoperate", op, position, threadData)
   }
 }
 

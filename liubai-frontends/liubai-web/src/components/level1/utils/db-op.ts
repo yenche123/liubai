@@ -1,5 +1,6 @@
 import type { ThreadShow } from "~/types/types-content";
 import type { CollectionLocalTable, ContentLocalTable } from "~/types/types-table";
+import type { OState } from "~/types/types-basic";
 import ider from "~/utils/basic/ider";
 import time from "~/utils/basic/time";
 import { db } from "~/utils/db";
@@ -86,7 +87,25 @@ async function editWhenRemind(
     updatedStamp: now1
   }
   const res = await db.contents.update(thread._id, newData)
-  console.log("dp-opt 的结果: ")
+  console.log("db-opt 的结果: ")
+  console.log(res)
+  console.log(" ")
+
+  return true
+}
+
+/** 向 content 设置新的 oState */
+async function setNewOState(
+  id: string,
+  oState: OState,
+) {
+  const now1 = time.getTime()
+  const newData: Partial<ContentLocalTable> = {
+    oState,
+    updatedStamp: now1
+  }
+  const res = await db.contents.update(id, newData)
+  console.log(`db-opt setNewOState ${oState} 的结果: `)
   console.log(res)
   console.log(" ")
 
@@ -94,7 +113,31 @@ async function editWhenRemind(
 }
 
 
+async function deleteForever(
+  id: string,
+) {
+  const now1 = time.getTime()
+  const newData: Partial<ContentLocalTable> = {
+    oState: "DELETED",
+    updatedStamp: now1,
+    title: "",
+    liuDesc: [],
+    images: [],
+    files: [],
+    tagIds: [],
+    tagSearched: [],
+  }
+  const res = await db.contents.update(id, newData)
+  console.log(`db-opt deleteForever 的结果: `)
+  console.log(res)
+  console.log(" ")
+
+  return true
+}
+
 export default {
   collect,
   editWhenRemind,
+  setNewOState,
+  deleteForever,
 }

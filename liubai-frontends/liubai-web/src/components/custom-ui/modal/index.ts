@@ -23,6 +23,7 @@ interface ModalParam {
   confirmText?: string
   confirm_key?: string
   cancel_key?: string
+  modalType?: "normal" | "warning"
   success?: (res: ModalSuccessRes) => void
 }
 
@@ -39,6 +40,7 @@ interface ModalData {
   confirmText: string
   confirm_key?: string
   cancel_key?: string
+  modalType?: "normal" | "warning"
   tipSelected: boolean
 }
 
@@ -60,6 +62,7 @@ const modalData = reactive<ModalData>({
   cancelText: "",
   confirmText: "",
   tipSelected: false,
+  modalType: "normal"
 })
 
 const _openModal = async (): Promise<void> => {
@@ -138,6 +141,7 @@ const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
   modalData.content_opt = opt.content_opt
   modalData.tip_key = opt.tip_key
   modalData.tipSelected = false
+  modalData.modalType = opt.modalType ?? "normal"
 
   if(typeof opt.showCancel === "boolean") {
     modalData.showCancel = opt.showCancel

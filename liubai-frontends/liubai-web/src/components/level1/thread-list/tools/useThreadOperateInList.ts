@@ -81,7 +81,47 @@ function handleOutterOperation(
   else if(operation === "emoji") {
 
   }
+  else if(operation === "delete") {
+    handle_delete(ctx)
+  }
+  else if(operation === "restore") {
+    
+  }
+  else if(operation === "delete_forever") {
+    handle_deleteForever(ctx)
+  }
+}
 
+// 去删除（允许复原）
+async function handle_delete(ctx: ToCtx) {
+  const { memberId, userId, thread } = ctx
+  const oldThread = valTool.copyObject(thread)
+  const { tipPromise } = await commonOperate.deleteThread(oldThread, memberId, userId)
+
+  // 1. 从列表里删除 item
+  ctx.list.value.splice(ctx.position, 1)
+
+  // 2. 等待 snackbar 的返回
+  const res2 = await tipPromise
+  if(res2.result !== "tap") return
+
+  // 发生撤销之后
+  // 3. 去执行公共的取消逻辑
+  await commonOperate.undoDelete(oldThread, memberId, userId)
+
+  // 4. 把 item 加回 list 中
+  ctx.list.value.splice(ctx.position, 0, oldThread)
+}
+
+// 去彻底删除
+async function handle_deleteForever(ctx: ToCtx) {
+  const { memberId, userId, thread } = ctx
+  const oldThread = valTool.copyObject(thread)
+  const res = await commonOperate.deleteForever(oldThread, memberId, userId)
+  if(!res) return
+
+  // 1. 从列表里删除 item
+  ctx.list.value.splice(ctx.position, 1)
 }
 
 

@@ -84,6 +84,7 @@ const {
         </div>
         <div 
           class="cui-modal-btn cui-modal-confirm"
+          :class="{ 'cui-modal-btn_red': modalData.modalType === 'warning' }"
           @click="onTapModalConfirm"
         >
           <span v-if="modalData.confirmText">{{ modalData.confirmText }}</span>
@@ -300,6 +301,15 @@ const {
 
         &:active {
           background-color: var(--primary-active);
+        }
+      }
+
+      .cui-modal-btn_red {
+        color: white;
+        background-color: #dc1e30;
+
+        &:hover, &:active {
+          background-color: #c61d2e;
         }
       }
     }

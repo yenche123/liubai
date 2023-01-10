@@ -136,7 +136,9 @@
     "workspace_different": "當前工作區與動態所屬的不一致。請先切換工作區。",
     "removed": "已移除",
     "updated": "已更新",
-    "no_auth": "沒有權限"
+    "no_auth": "沒有權限",
+    "deleted": "已删除",
+    "deleted_forever": "已完全删除"
   },
   "card_bubble": {
     "copy": "複製",
@@ -153,6 +155,11 @@
     "delete_hd": "删除標籤",
     "delete_bd": "確定要刪除 \"{tag}\" 標籤？",
     "delete_tip": "同時删除動態"
+  },
+  "thread_related": {
+    "delete_forever_1": "徹底刪除",
+    "delete_forever_2": "確定要徹底刪除嗎？此動作無法被復原",
+    "delete_btn": "徹底刪除"
   },
   "err": {
     "no_data": "這裡什麼都沒有",

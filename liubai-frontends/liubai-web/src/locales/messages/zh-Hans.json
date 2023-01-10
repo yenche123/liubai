@@ -136,7 +136,9 @@
     "workspace_different": "当前工作区与动态所属的不一致。请先切换工作区。",
     "removed": "已移除",
     "updated": "已更新",
-    "no_auth": "没有权限"
+    "no_auth": "没有权限",
+    "deleted": "已删除",
+    "deleted_forever": "已完全删除"
   },
   "card_bubble": {
     "copy": "复制",
@@ -153,6 +155,11 @@
     "delete_hd": "删除标签",
     "delete_bd": "确定要删除 \"{tag}\" 标签？",
     "delete_tip": "同时删除动态"
+  },
+  "thread_related": {
+    "delete_forever_1": "彻底删除",
+    "delete_forever_2": "确定要彻底删除吗？该操作无法恢复。",
+    "delete_btn": "彻底删除"
   },
   "err": {
     "no_data": "这里什么都没有",
