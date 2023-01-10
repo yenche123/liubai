@@ -12,6 +12,7 @@ import {
   deleteThread,
   deleteForever,
   undoDelete,
+  restoreThread,
 } from "./specific-operate/delete-related"
 
 export default {
@@ -25,4 +26,5 @@ export default {
   deleteThread,
   deleteForever,
   undoDelete,
+  restoreThread,
 }

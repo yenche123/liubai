@@ -29,6 +29,30 @@ export async function deleteThread(
   return { tipPromise }
 }
 
+export async function restoreThread(
+  oldThread: ThreadShow,
+  memberId: string,
+  userId: string,
+) {
+  const newThread = valTool.copyObject(oldThread)
+
+  // 1. 修改数据
+  newThread.oState = "OK"
+  newThread.updatedStamp = time.getTime()
+
+  // 2. 通知到全局
+  const tsStore = useThreadShowStore()
+  tsStore.setUpdatedThreadShows([newThread])
+
+  // 3. 操作 db
+  const res = await dbOp.setNewOState(newThread._id, "OK")
+
+  // 4. 展示通知
+  cui.showSnackBar({ text_key: "tip.restored" })
+
+  return true
+}
+
 export async function undoDelete(
   oldThread: ThreadShow,
   memberId: string,

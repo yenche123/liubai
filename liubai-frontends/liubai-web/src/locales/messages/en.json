@@ -138,7 +138,8 @@
     "updated": "Updated",
     "no_auth": "No Access",
     "deleted": "Deleted",
-    "deleted_forever": "Deleted Completely"
+    "deleted_forever": "Deleted Completely",
+    "restored": "Restored"
   },
   "card_bubble": {
     "copy": "Copy",

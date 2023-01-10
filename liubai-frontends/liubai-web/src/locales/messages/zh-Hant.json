@@ -138,7 +138,8 @@
     "updated": "已更新",
     "no_auth": "沒有權限",
     "deleted": "已删除",
-    "deleted_forever": "已完全删除"
+    "deleted_forever": "已完全删除",
+    "restored": "已復原"
   },
   "card_bubble": {
     "copy": "複製",

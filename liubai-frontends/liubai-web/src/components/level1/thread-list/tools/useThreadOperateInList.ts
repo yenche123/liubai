@@ -85,10 +85,20 @@ function handleOutterOperation(
     handle_delete(ctx)
   }
   else if(operation === "restore") {
-    
+    handle_restore(ctx)
   }
   else if(operation === "delete_forever") {
     handle_deleteForever(ctx)
+  }
+}
+
+// 去恢复
+async function handle_restore(ctx: ToCtx) {
+  const { memberId, userId, thread } = ctx
+  const oldThread = valTool.copyObject(thread)
+  const res = await commonOperate.restoreThread(oldThread, memberId, userId)
+  if(res) {
+    ctx.list.value.splice(ctx.position, 1)
   }
 }
 
