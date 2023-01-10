@@ -34,6 +34,7 @@ const props = defineProps({
 const emits = defineEmits<{
   (event: "nodata", threadId: string): void
   (event: "hasdata", threadId: string): void
+  (event: "updated", threadId: string): void
 }>()
 
 const canSubmitRef = ref(false)
@@ -71,6 +72,7 @@ const ctx = {
   editor,
   state,
   threadShowStore,
+  emits,
 }
 const { toFinish } = useCeFinish(ctx)
 

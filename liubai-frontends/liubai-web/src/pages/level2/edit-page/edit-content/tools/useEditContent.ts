@@ -7,7 +7,7 @@ import { PageState } from "~/types/types-atom";
 export function useEditContent() {
   const threadId = ref("")
   const state = ref<PageState>(0)
-  const { route } = useRouteAndLiuRouter()
+  const { route, router } = useRouteAndLiuRouter()
   watch(route, (newV) => {
     whenRouteChange(threadId, state, newV)
   })
@@ -20,11 +20,16 @@ export function useEditContent() {
     state.value = -1
   }
 
+  const onUpdated = () => {
+    router.naviBack()
+  }
+
   return {
     threadId,
     state,
     onNodata,
     onHasdata,
+    onUpdated,
   }
 }
 

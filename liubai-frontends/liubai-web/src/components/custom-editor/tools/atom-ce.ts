@@ -34,4 +34,7 @@ export interface CeEmits {
 
   // 当前为 编辑状态时，并且查到了该动态，则 emit 此事件
   (event: "hasdata", threadId: string): void
+
+  // 动态已更新
+  (event: "updated", threadId: string): void
 }

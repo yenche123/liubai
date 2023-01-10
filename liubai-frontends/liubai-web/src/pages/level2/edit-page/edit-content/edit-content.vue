@@ -8,6 +8,7 @@ const {
   state,
   onNodata,
   onHasdata,
+  onUpdated,
 } = useEditContent()
 
 </script>
@@ -26,6 +27,7 @@ const {
           :thread-id="threadId"
           @hasdata="onHasdata"
           @nodata="onNodata"
+          @updated="onUpdated"
           class="ec-custom-editor"
           :class="{ 'ec-custom-editor_show': state === -1 }"
         ></CustomEditor>

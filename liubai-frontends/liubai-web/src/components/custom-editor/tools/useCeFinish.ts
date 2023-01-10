@@ -4,7 +4,7 @@ import type { TipTapEditor } from "../../../types/types-editor"
 import type { ContentLocalTable } from "../../../types/types-table";
 import ider from "../../../utils/basic/ider";
 import { getLocalPreference } from "../../../utils/system/local-preference";
-import type { CeState } from "./atom-ce"
+import type { CeState, CeEmits } from "./atom-ce"
 import time from "../../../utils/basic/time";
 import transferUtil from "../../../utils/transfer-util";
 import liuUtil from "../../../utils/liu-util";
@@ -22,6 +22,7 @@ export interface CepContext {
   editor: ShallowRef<TipTapEditor | undefined>
   state: CeState
   threadShowStore: ThreadShowStore
+  emits: CeEmits
 }
 
 export type CepToPost = (focusRequired: boolean) => void
@@ -214,16 +215,13 @@ async function toUpdate(ctx: CepContext) {
   // 2. 删除 drafts
   if(state.draftId) await localReq.deleteDraftById(state.draftId)
 
-  // 3. 重置编辑器的 state
-  _resetState(state)
-
-  // 4. 重置 editor
-  ctx.editor.value?.chain().setContent('<p></p>').run()
-
-  // 5. 查找该 thread，然后通知全局
+  // 3. 查找该 thread，然后通知全局
   const theThread = await localReq.getThreadByThreadId(threadId)
   if(!theThread) return
   const threadShows = await equipThreads([theThread])
   ctx.threadShowStore.setUpdatedThreadShows(threadShows)
+
+  // 4. emits 到页面
+  ctx.emits("updated", threadId)
 }
 
