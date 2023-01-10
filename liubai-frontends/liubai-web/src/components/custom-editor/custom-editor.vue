@@ -8,7 +8,6 @@
 
 import EditorCore from "../editor-core/editor-core.vue"
 import { useCustomEditor } from "./tools/useCustomEditor";
-import cfg from "../../config";
 import { useMoreItems } from "./tools/useMoreItems";
 import { useCeState } from "./tools/useCeState";
 import { ref } from "vue";
@@ -32,6 +31,11 @@ const props = defineProps({
   threadId: String
 })
 
+const emits = defineEmits<{
+  (event: "nodata", threadId: string): void
+  (event: "hasdata", threadId: string): void
+}>()
+
 const canSubmitRef = ref(false)
 const { 
   maxEditorHeight, 
@@ -41,7 +45,7 @@ const {
   onEditorScrolling,
   showMask,
 } = useCustomEditor()
-const { state } = initCeState(props, editor)
+const { state } = initCeState(props, emits, editor)
 const {
   onImageChange,
   covers,

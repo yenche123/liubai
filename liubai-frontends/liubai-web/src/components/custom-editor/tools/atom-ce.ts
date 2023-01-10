@@ -25,3 +25,12 @@ export const defaultState: CeState = {
   storageState: "CLOUD",
   tagIds: []
 }
+
+
+export interface CeEmits {
+   // 当前为 编辑状态时，并且查无该动态（包含草稿）则 emit 此事件
+  (event: "nodata", threadId: string): void
+
+  // 当前为 编辑状态时，并且查到了该动态，则 emit 此事件
+  (event: "hasdata", threadId: string): void
+}

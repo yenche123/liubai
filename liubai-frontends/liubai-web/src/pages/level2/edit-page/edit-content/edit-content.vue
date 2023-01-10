@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { useEditContent } from './tools/useEditContent';
+import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
+import CustomEditor from '~/components/custom-editor/custom-editor.vue';
 
 const {
   threadId,
+  state,
+  onNodata,
+  onHasdata,
 } = useEditContent()
 
 </script>
@@ -11,7 +16,21 @@ const {
   <div class="mc-container">
     <div class="tc-virtual"></div>
     <div class="mc-box">
-      开发 edit 页中: {{ threadId }}
+      <PlaceholderView
+        :p-state="state"
+      ></PlaceholderView>
+      <div v-if="threadId && state < 50"
+        v-show="state < 0"
+      >
+        <CustomEditor
+          :thread-id="threadId"
+          @hasdata="onHasdata"
+          @nodata="onNodata"
+          class="ec-custom-editor"
+          :class="{ 'ec-custom-editor_show': state === -1 }"
+        ></CustomEditor>
+      </div>
+      
     </div>
   </div>
 
@@ -36,6 +55,15 @@ const {
   max-width: var(--card-max);
   min-width: var(--card-min);
   position: relative;
+}
+
+.ec-custom-editor {
+  transition: opacity .25s;
+  opacity: 0;
+}
+
+.ec-custom-editor_show {
+  opacity: 1;
 }
 
 </style>

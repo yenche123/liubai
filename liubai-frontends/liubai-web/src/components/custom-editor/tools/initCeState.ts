@@ -2,12 +2,12 @@
 // 仅从本地缓存上寻找！
 
 
-import { TipTapEditor } from "../../../types/types-editor"
+import type { TipTapEditor } from "../../../types/types-editor"
 import { reactive, watchEffect, ref, provide, watch } from "vue"
 import type { ShallowRef, Ref } from "vue"
-import type { CeState } from "./atom-ce"
+import type { CeState, CeEmits } from "./atom-ce"
 import { defaultState } from "./atom-ce"
-import { ContentLocalTable, DraftLocalTable } from "../../../types/types-table"
+import type { ContentLocalTable, DraftLocalTable } from "../../../types/types-table"
 import { LiuRemindMe } from "../../../types/types-atom"
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore"
 import localReq from "./req/local-req"
@@ -23,10 +23,12 @@ interface IcsContext {
   state: CeState
   editor: TipTapEditor
   numWhenSet: Ref<number>
+  emits: CeEmits
 }
 
 export function initCeState(
   props: { threadId?: string },
+  emits: CeEmits,
   editor: ShallowRef<TipTapEditor | undefined>,
 ) {
 
@@ -53,6 +55,7 @@ export function initCeState(
       state,
       editor: editorVal,
       numWhenSet,
+      emits,
     }
     console.log("去 initDraft.........")
     initDraft(ctx, tId)
@@ -72,6 +75,7 @@ export function initCeState(
       state,
       editor: editorVal,
       numWhenSet,
+      emits,
     }
     console.log("再次 initDraft.........")
     initDraft(ctx, tId)
@@ -92,7 +96,11 @@ async function initDraft(
     draft = await localReq.getDraftByThreadId(threadId)
     let thread = await localReq.getThreadByThreadId(threadId)
 
-    if(!draft && !thread) return
+    if(!draft && !thread) {
+      ctx.emits("nodata", threadId)
+      return
+    }
+    ctx.emits("hasdata", threadId)
     
     let e1 = draft?.editedStamp ?? 1
     let e2 = thread?.editedStamp ?? 1
