@@ -53,7 +53,6 @@ export default defineComponent({
     }
 
     const onMenuShow = (e: any) => {
-      console.log("menu show.............")
       emit("menushow")
       if(props.allowMask) showMask.value = true
     }

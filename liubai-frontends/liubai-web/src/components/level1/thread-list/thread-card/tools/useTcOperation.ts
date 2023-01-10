@@ -68,7 +68,6 @@ function handleOperationFromBottomBar(
 
   if(operation === "edit") {
     // 编辑
-    console.log("跳转去编辑页............")
     ctx.router.push({ name: "edit", params: { contentId: threadData._id } })
   }
   else if(operation === "state") {
