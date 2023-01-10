@@ -213,7 +213,10 @@ async function toUpdate(ctx: CepContext) {
   const res1 = await localReq.updateContent(threadId, preThread)
   
   // 2. 删除 drafts
-  if(state.draftId) await localReq.deleteDraftById(state.draftId)
+  if(state.draftId) {
+    await localReq.deleteDraftById(state.draftId)
+    delete state.draftId
+  }
 
   // 3. 查找该 thread，然后通知全局
   const theThread = await localReq.getThreadByThreadId(threadId)
