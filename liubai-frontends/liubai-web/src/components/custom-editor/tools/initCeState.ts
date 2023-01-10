@@ -3,7 +3,7 @@
 
 
 import type { TipTapEditor } from "../../../types/types-editor"
-import { reactive, watchEffect, ref, provide, watch } from "vue"
+import { reactive, watchEffect, ref, provide, watch, toRef } from "vue"
 import type { ShallowRef, Ref } from "vue"
 import type { CeState, CeEmits } from "./atom-ce"
 import { defaultState } from "./atom-ce"
@@ -35,19 +35,20 @@ export function initCeState(
   const spaceStore = useWorkspaceStore()  
   space = storeToRefs(spaceStore).workspace
 
-  const tId = props.threadId
+  
+  const tVal = toRef(props, "threadId")
   
   // 不能用 shallowReactive 
   // 因为 images 属性必须监听内部数据的变化
   let state = reactive<CeState>({
     ...defaultState,
-    threadEdited: tId
+    threadEdited: tVal.value
   })
   
   const numWhenSet = ref(0)
   provide(editorSetKey, numWhenSet)
 
-  watchEffect(() => {
+  const getCtx = () => {
     const editorVal = editor.value
     const spaceVal = space.value
     if(!editorVal || !spaceVal) return
@@ -57,10 +58,15 @@ export function initCeState(
       numWhenSet,
       emits,
     }
-    console.log("去 initDraft.........")
-    initDraft(ctx, tId)
-  })
+    return ctx
+  }
 
+  watchEffect(() => {
+    const ctx = getCtx()
+    if(!ctx) return
+    console.log("去 initDraft.........")
+    initDraft(ctx, tVal.value)
+  })
 
   // 监听 tag 从外部发生变化
   const gStore = useGlobalStateStore()
@@ -68,17 +74,10 @@ export function initCeState(
   watch(tagChangedNum, (newV) => {
     const diff = time.getTime() - (state.lastTagChangeStamp ?? 1)
     if(diff < 500) return
-    const editorVal = editor.value
-    const spaceVal = space.value
-    if(!editorVal || !spaceVal) return
-    const ctx: IcsContext = {
-      state,
-      editor: editorVal,
-      numWhenSet,
-      emits,
-    }
+    const ctx = getCtx()
+    if(!ctx) return
     console.log("再次 initDraft.........")
-    initDraft(ctx, tId)
+    initDraft(ctx, tVal.value)
   })
 
   return { state }
@@ -120,6 +119,9 @@ async function initDraft(
   }
   else {
     draft = await localReq.getDraft(space.value)
+    console.log("找到 draft: ")
+    console.log(draft)
+    console.log(" ")
     if(draft) initDraftFromDraft(ctx, draft)
     return
   }

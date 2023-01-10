@@ -8,7 +8,7 @@ export function useEditContent() {
   const threadId = ref("")
   const state = ref<PageState>(0)
   const { route } = useRouteAndLiuRouter()
-  watch(() => route, (newV) => {
+  watch(route, (newV) => {
     whenRouteChange(threadId, state, newV)
   })
   whenRouteChange(threadId, state, route)
@@ -36,9 +36,9 @@ function whenRouteChange(
   const { name, params } = route
   if(name !== "edit") return
   const { contentId } = params
-  if(contentId && typeof contentId === "string") {
-    state.value = 0
-    threadId.value = contentId
-  }
+  if(!contentId || typeof contentId !== "string") return
+  if(threadId.value === contentId) return
+  state.value = 0
+  threadId.value = contentId
 }
 
