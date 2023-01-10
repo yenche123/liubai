@@ -16,7 +16,6 @@ import type { CepToPost } from "./useCeFinish"
 import liuUtil from "../../../utils/liu-util";
 import { storeToRefs } from "pinia";
 
-let initStamp = 0
 let collectTimeout = 0
 let space: Ref<string>
 
@@ -25,8 +24,6 @@ export function useCeState(
   canSubmitRef: Ref<boolean>,
   toFinish: CepToPost,
 ) {
-
-  initStamp = time.getTime()
 
   const spaceStore = useWorkspaceStore()  
   space = storeToRefs(spaceStore).workspace
@@ -121,11 +118,11 @@ export function useCeState(
   }
 }
 
-function _isRequiredChange() {
+function _isRequiredChange(state: CeState) {
   const now = time.getTime()
-  const diff = now - initStamp
+  const diff = now - (state.lastInitStamp ?? 1)
 
-  // 刚刚才 setup，拒绝缓存 images 或 files
+  // 刚刚才 setup，拒绝缓存图片、文件、tagIds
   if(diff < 900) {
     return false
   }
@@ -134,7 +131,7 @@ function _isRequiredChange() {
 
 // 图片、文件、tagIds 发生变化时，去保存
 function toAutoChange(state: CeState) {
-  if(_isRequiredChange()) {
+  if(_isRequiredChange(state)) {
     collectState(state)
   }
 }

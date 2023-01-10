@@ -42,7 +42,8 @@ export function initCeState(
   // 因为 images 属性必须监听内部数据的变化
   let state = reactive<CeState>({
     ...defaultState,
-    threadEdited: tVal.value
+    threadEdited: tVal.value,
+    lastInitStamp: time.getTime(),
   })
   
   const numWhenSet = ref(0)
@@ -65,6 +66,7 @@ export function initCeState(
     const ctx = getCtx()
     if(!ctx) return
     console.log("去 initDraft.........")
+    state.threadEdited = tVal.value
     initDraft(ctx, tVal.value)
   })
 
@@ -123,8 +125,9 @@ async function initDraft(
     console.log(draft)
     console.log(" ")
     if(draft) initDraftFromDraft(ctx, draft)
-    return
+    else ctx.state.draftId = ""
   }
+  
 }
 
 // 尚未发表
@@ -135,6 +138,7 @@ async function initDraftFromDraft(
   let { state, editor, numWhenSet } = ctx
 
   // 开始处理 draft 有值的情况
+  state.lastInitStamp = time.getTime()
   state.draftId = draft._id
 
   if(draft.visScope) {
@@ -167,6 +171,9 @@ async function initDraftFromThread(
   thread: ContentLocalTable,
 ) {
   let { state, editor, numWhenSet } = ctx
+
+  state.lastInitStamp = time.getTime()
+  state.draftId = ""
   state.visScope = thread.visScope
   state.storageState = thread.storageState
   state.title = thread.title
