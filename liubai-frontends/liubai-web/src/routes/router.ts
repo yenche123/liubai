@@ -18,6 +18,11 @@ declare module 'vue-router' {
   interface RouteMeta {
     keepAlive?: boolean
     inApp?: boolean
+
+    // 在 init-space.ts 中，是否要检查 workspace 的变化
+    // 默认为 true 代表会检查
+    // 目前 detail 和 edit 这两个 page 为 false 表示不必检查
+    checkWorkspace?: boolean
   }
 }
 
@@ -59,6 +64,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "detail",
     meta: {
       keepAlive: true,
+      checkWorkspace: false,
     }
   },
   {
@@ -70,6 +76,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "edit",
     meta: {
       keepAlive: true,
+      checkWorkspace: false,
     }
   },
   {
