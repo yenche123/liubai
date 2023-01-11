@@ -11,7 +11,6 @@ import type { TlProps, TlViewType } from "./types"
 import type { Ref } from "vue";
 import valTool from "../../../../utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
-import liuUtil from "~/utils/liu-util"
 
 interface ToCtx {
   router: LiuRouter
@@ -96,20 +95,24 @@ function handleOutterOperation(
 async function handle_restore(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx
   const oldThread = valTool.copyObject(thread)
+
+  // 1. 先从 list 里删除是为了避免 menu 的抖动
+  ctx.list.value.splice(ctx.position, 1)
+
+  // 2. 执行 restore 公共逻辑
   const res = await commonOperate.restoreThread(oldThread, memberId, userId)
-  if(res) {
-    ctx.list.value.splice(ctx.position, 1)
-  }
 }
 
 // 去删除（允许复原）
 async function handle_delete(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx
   const oldThread = valTool.copyObject(thread)
-  const { tipPromise } = await commonOperate.deleteThread(oldThread, memberId, userId)
 
-  // 1. 从列表里删除 item
+  // 0. 从列表里删除 item，先删除的原因是避免 menu 的抖动
   ctx.list.value.splice(ctx.position, 1)
+
+  // 1. 执行公共逻辑
+  const { tipPromise } = await commonOperate.deleteThread(oldThread, memberId, userId)
 
   // 2. 等待 snackbar 的返回
   const res2 = await tipPromise
