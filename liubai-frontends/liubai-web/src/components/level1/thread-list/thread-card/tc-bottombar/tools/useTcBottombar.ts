@@ -47,8 +47,24 @@ export function useTcBottombar(
 
   const footerMenu = computed<TcbMenuItem[]>(() => {
     const t = props.threadData
-    if(t.oState === "OK") return MENU_1
-    return MENU_2
+    if(t.oState !== "OK") {
+      return MENU_2
+    }
+    const list = [...MENU_1]
+
+    // 动态添加置顶/取消置顶
+    let pinObj: TcbMenuItem = {
+      text_key: "common.pin",
+      operation: "pin",
+      iconName: "unpin"
+    }
+    if(t.pinStamp) {
+      // 已置顶，添加 "取消置顶"
+      pinObj.text_key = "common.unpin"
+    }
+    list.splice(0, 0, pinObj)
+
+    return list
   })
 
   const onTapMenuItem = (item: MenuItem, index: number) => {

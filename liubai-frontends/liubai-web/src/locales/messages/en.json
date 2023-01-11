@@ -34,7 +34,9 @@
     "delete_forever": "Delete Forever",
     "export": "Export",
     "multi_sekect": "Multi Select",
-    "editing": "Editing"
+    "editing": "Editing",
+    "pin": "Pin",
+    "unpin": "Unpin"
   },
   "editor": {
     "when": "When",
