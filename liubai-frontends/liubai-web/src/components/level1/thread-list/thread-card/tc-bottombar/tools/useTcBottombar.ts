@@ -56,11 +56,12 @@ export function useTcBottombar(
     let pinObj: TcbMenuItem = {
       text_key: "common.pin",
       operation: "pin",
-      iconName: "unpin"
+      iconName: "pin"
     }
     if(t.pinStamp) {
       // 已置顶，添加 "取消置顶"
       pinObj.text_key = "common.unpin"
+      pinObj.iconName = "unpin"
     }
     list.splice(0, 0, pinObj)
 
