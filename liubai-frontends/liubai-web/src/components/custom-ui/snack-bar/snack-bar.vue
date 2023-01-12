@@ -32,6 +32,7 @@ const {
         <span v-if="sbData.action">{{ sbData.action }}</span>
         <span v-else>{{ t(sbData.action_key) }}</span>
       </div>
+      <div v-else class="sb-virtual"></div>
     </div>
   </div>
 
@@ -94,6 +95,12 @@ const {
 
 .sb-action:hover {
   opacity: .66;
+}
+
+/** 当 sb-action 不存在时显示的占位 */
+.sb-virtual {
+  height: 8x;
+  width: 8px;
 }
 
 

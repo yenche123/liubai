@@ -17,6 +17,7 @@ const sbData = reactive({
   action: "",
   action_key: "",
   action_color: "",
+  duration: 0,
 })
 
 export function initSnackBar() {
@@ -39,6 +40,7 @@ export async function showSnackBar(opt: SnackbarParam) {
   sbData.action = opt.action ?? ""
   sbData.action_key = opt.action_key ?? ""
   sbData.action_color = opt.action_color ?? ""
+  sbData.duration = opt.duration ?? 0
 
   await _open()
 
@@ -54,10 +56,16 @@ export async function showSnackBar(opt: SnackbarParam) {
 function listenAutoClose() {
   if(autoTimeout) clearTimeout(autoTimeout)
   let hasAction = Boolean(sbData.action_key) || Boolean(sbData.action)
+
+  let duration = hasAction ? 3000 : 2000
+  if(sbData.duration) duration = sbData.duration
+
+  console.log("duration: ", duration)
+
   autoTimeout = setTimeout(() => {
     _resolve && _resolve({ result: "auto" })
     _close()
-  }, hasAction ? 3000 : 2000)
+  }, duration)
 }
 
 
