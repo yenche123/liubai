@@ -20,7 +20,15 @@ const { lastBar, showTop } = useIndexContent()
       <CustomEditor :last-bar="lastBar"></CustomEditor>
       <div class="mc-spacing"></div>
 
-      <ThreadList></ThreadList>
+      <!-- 置顶 -->
+      <ThreadList
+        view-type="PINNED"
+      ></ThreadList>
+
+      <!-- 一般 -->
+      <ThreadList
+        view-type="INDEX"
+      ></ThreadList>
 
     </div>
 

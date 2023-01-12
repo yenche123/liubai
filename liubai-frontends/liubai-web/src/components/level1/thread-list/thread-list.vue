@@ -1,30 +1,46 @@
-<script setup lang="ts">
+<script lang="ts">
 import { useThreadList } from './tools/useThreadList';
 import ThreadCard from './thread-card/thread-card.vue';
 import { useNewAndUpdate } from './tools/useNewAndUpdate';
 import ListBottom from '../list-bottom/list-bottom.vue';
 import { useThreadOperateInList } from './tools/useThreadOperateInList';
+import { defineComponent } from "vue";
 import type { PropType } from 'vue';
+import type { TlViewType } from "./tools/types"
 
-const props = defineProps({
-  viewType: {
-    type: String as PropType<"" | "TRASH" | "TAG" | "FAVORITE" | "PINNED">,
-    default: "",  // "": 默认; "TRASH": 回收站; "TAG": 标签; "FAVORITE": 收藏;  "PINNED": 被置顶
+export default defineComponent({
+  components: {
+    ThreadCard,
+    ListBottom,
   },
-  tagId: {
-    type: String,
-    default: "",
+  props: {
+    viewType: {
+      type: String as PropType<TlViewType>,
+      default: "",
+    },
+    tagId: {
+      type: String,
+      default: "",
+    }
+  },
+  setup(props) {
+    const {
+      list
+    } = useThreadList(props)
+    useNewAndUpdate(props, list)
+
+    const {
+      receiveOperation
+    } = useThreadOperateInList(props, list)
+
+    return {
+      list,
+      receiveOperation,
+    }
   }
 })
 
-const {
-  list
-} = useThreadList(props)
-useNewAndUpdate(props, list)
 
-const {
-  receiveOperation
-} = useThreadOperateInList(props, list)
 
 </script>
 <template>

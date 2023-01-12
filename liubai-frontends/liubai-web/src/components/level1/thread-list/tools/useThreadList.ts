@@ -1,21 +1,20 @@
-import { inject, onActivated, onDeactivated, ref, ShallowRef, toRef, toRefs, watch } from "vue"
+import { inject, onActivated, onDeactivated, ref, toRef, toRefs, watch } from "vue"
 import type { ThreadShow } from "~/types/types-content"
-import type { Ref } from "vue"
+import type { Ref, ShallowRef } from "vue"
 import threadController from "~/utils/controllers/thread-controller/thread-controller"
 import { scrollViewKey } from "~/utils/provide-keys"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
 import type { OState } from "~/types/types-basic"
-import type { SvProvideInject } from "../../../common/scroll-view/tools/types"
-import type { TlProps } from "./types"
+import type { SvProvideInject, SvBottomUp } from "../../../common/scroll-view/tools/types"
+import type { TlProps, TlViewType } from "./types"
 import type { TcListOption } from "~/utils/controllers/thread-controller/type"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { svBottomUpKey } from "~/utils/provide-keys";
-import type { SvBottomUp } from "../../../common/scroll-view/tools/types"
 
 interface TlContext {
   list: Ref<ThreadShow[]>
-  viewType: Ref<string>
+  viewType: Ref<TlViewType>
   tagId: Ref<string>
   workspace: Ref<string>
   showNum: number
@@ -34,7 +33,7 @@ export function useThreadList(props: TlProps) {
   const list = ref<ThreadShow[]>([])
   const ctx: TlContext = {
     list,
-    viewType,
+    viewType: viewType as Ref<TlViewType>,
     tagId,
     workspace,
     showNum: 0,
@@ -48,6 +47,7 @@ export function useThreadList(props: TlProps) {
   const svTrigger = toRef(svData, "triggerNum")
   watch(svTrigger, (newV) => {
     const { type } = svData
+    if(isViewType(ctx, "PINNED")) return
     if(type === "to_lower") {
       loadList(ctx)
     }
@@ -101,7 +101,7 @@ export function useThreadList(props: TlProps) {
 function scollTopAndUpdate(
   ctx: TlContext,
 ) {
-  if(ctx.svBottomUp) {
+  if(ctx.svBottomUp && !isViewType(ctx, "PINNED")) {
     ctx.svBottomUp.value = { type: "pixel", pixel: 0 }
   }
   console.log(`${ctx.viewType.value} ${ctx.tagId.value} 正在执行 scollTopAndUpdate...`)
@@ -113,14 +113,23 @@ function scollTopAndUpdate(
 function checkList(
   ctx: TlContext
 ) {
+  if(isViewType(ctx, "PINNED")) return
+
   console.log("checkList 被触发...........")
+
   const { list } = ctx
   if(list.value.length < 10) {
     loadList(ctx, true)
     return
   }
-
 }
+
+function isViewType(ctx: TlContext, val: TlViewType) {
+  const vT = ctx.viewType.value
+  if(vT === val) return true
+  return false
+}
+
 
 // 重新加载 & 触底加载
 // 所以该函数并不是局部更新技术，遇到重新加载会整个重置 list
@@ -136,6 +145,8 @@ async function loadList(
     ctx.reloadRequired = false
   }
 
+  console.log("let's load list!!!!!!!!!!!")
+
   const oldList = ctx.list.value
   const viewType = ctx.viewType.value
   const tagId = ctx.tagId.value
@@ -145,6 +156,7 @@ async function loadList(
   let lastItemStamp = reload || length < 1 ? undefined : ctx.lastItemStamp.value
 
   const opt1: TcListOption = {
+    viewType,
     workspace,
     tagId,
     lastItemStamp,
@@ -153,11 +165,15 @@ async function loadList(
   if(viewType === "FAVORITE") {
     opt1.collectType = "FAVORITE"
   }
+  else if(viewType === "PINNED") {
+    opt1.loadPin = true
+    delete opt1.lastItemStamp
+  }
 
   const results = await threadController.getList(opt1)
 
   // 赋值到 list 上
-  if(length < 1 || reload) {
+  if(length < 1 || reload || viewType === "PINNED") {
     ctx.list.value = results
   }
   else if(results.length) {

@@ -16,6 +16,8 @@ async function getList(
     limit = 16,
     tagId,
     collectType,
+    loadPin,
+    viewType,
   } = opt ?? {}
 
   if(collectType === "EXPRESS" || collectType === "FAVORITE") {
@@ -26,8 +28,9 @@ async function getList(
   let list: ContentLocalTable[] = []
 
   const filterFunc = (item: ContentLocalTable) => {
-    const { tagSearched = [] } = item
+    const { tagSearched = [], pinStamp } = item
     if(tagId && !tagSearched.includes(tagId)) return false
+    if(viewType === "INDEX" && pinStamp) return false
     if(item.workspace === workspace && item.oState === oState) {
       if(!member) return true
       if(member === item.member) return true
@@ -35,9 +38,10 @@ async function getList(
     return false
   }
 
-  // 查询首页
   let key = oState === 'OK' ? "createdStamp" : "updatedStamp"
-  if(!lastItemStamp) {
+  if(loadPin) key = "pinStamp"
+
+  if(!lastItemStamp || loadPin) {
     let tmp = db.contents.orderBy(key)
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)

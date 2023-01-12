@@ -1,6 +1,7 @@
 import type { Ref } from "vue";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import type { ThreadShow } from "~/types/types-content"
+import valTool from "~/utils/basic/val-tool";
 import type { TlProps, TlViewType } from "./types"
 
 export function useNewAndUpdate(
@@ -56,6 +57,13 @@ function handleUpdatedList(
   updatedList: ThreadShow[]
 ) {
   const list = listRef.value
+  const viewType = props.viewType as TlViewType
+
+  if(viewType === "PINNED") {
+    handleUpdateForPinnedList(listRef, updatedList)
+    return
+  }
+
   for(let i=0; i<list.length; i++) {
     const v1 = list[i]
     const v2 = updatedList.find(v => {
@@ -69,4 +77,61 @@ function handleUpdatedList(
     if(!v2) continue
     list[i] = v2
   }
+}
+
+// 有动态更新时，特别处理置顶列表
+function handleUpdateForPinnedList(
+  listRef: Ref<ThreadShow[]>,
+  updatedList: ThreadShow[]
+) {
+  const list = listRef.value
+  const newList = valTool.copyObject(updatedList)
+  const pinList = newList.filter(v => Boolean(v.pinStamp))
+  const unpinList = newList.filter(v => !Boolean(v.pinStamp))
+
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    let idx = -1
+    const inPin = pinList.find((v1, i1) => {
+      if(v._id === v1._id) {
+        idx = i1
+        return true
+      }
+      if(v1._old_id && v1._old_id === v._id) {
+        idx = i1
+        return true
+      }
+      return false
+    })
+    if(inPin) {
+      list[i] = inPin
+      pinList.splice(idx, 1)
+      continue
+    }
+
+    const inUnpin = unpinList.find((v1, i1) => {
+      if(v._id === v1._id) {
+        idx = i1
+        return true
+      }
+      if(v1._old_id && v1._old_id === v._id) {
+        idx = i1
+        return true
+      }
+      return false
+    })
+
+    if(inUnpin) {
+      list.splice(i, 1)
+      i--
+      unpinList.splice(idx, 1)
+    }
+  }
+
+  if(pinList.length > 0) {
+    console.log("还有 pinList 没有被添加进 list 中")
+    console.log("全部加到 list 的最前面")
+    list.splice(0, 0, ...pinList)
+  }
+
 }

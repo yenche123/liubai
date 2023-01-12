@@ -1,9 +1,8 @@
 
 import type { OState, VisScope, StorageState } from "./types-basic"
-import type { LiuContent, LiuRemindMe, StatusView, TagView } from "./types-atom"
+import type { LiuRemindMe } from "./types-atom"
 import type { FileLocal, ImageShow } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
-
 
 export interface EmojiSystem {
   num: number
