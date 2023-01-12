@@ -142,7 +142,8 @@
     "deleted": "Deleted",
     "deleted_forever": "Deleted Completely",
     "restored": "Restored",
-    "pinned": "Pinned"
+    "pinned": "Pinned",
+    "pin_maximum": "The pin number has reached the maximum"
   },
   "card_bubble": {
     "copy": "Copy",

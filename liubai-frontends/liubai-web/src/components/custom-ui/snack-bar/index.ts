@@ -1,7 +1,7 @@
 
 import { reactive, ref } from "vue"
 import valTool from "~/utils/basic/val-tool"
-import { SnackbarParam, SnackbarRes } from "~/types/other/types-snackbar"
+import { SnackbarParam } from "~/types/other/types-snackbar"
 import { SbResolver } from "./tools/types"
 
 
@@ -59,8 +59,6 @@ function listenAutoClose() {
 
   let duration = hasAction ? 3000 : 2000
   if(sbData.duration) duration = sbData.duration
-
-  console.log("duration: ", duration)
 
   autoTimeout = setTimeout(() => {
     _resolve && _resolve({ result: "auto" })

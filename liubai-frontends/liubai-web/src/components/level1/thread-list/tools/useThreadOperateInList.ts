@@ -145,6 +145,7 @@ async function handle_pin(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx
   const oldThread = valTool.copyObject(thread)
   const { newPin, tipPromise } = await commonOperate.toPin(oldThread, memberId, userId)
+  if(!tipPromise) return
 
   // 1. 来判断当前列表里的该 item 是否要删除
   let removedFromList = false

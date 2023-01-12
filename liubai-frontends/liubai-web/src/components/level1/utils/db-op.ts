@@ -155,10 +155,23 @@ async function deleteForever(
   return true
 }
 
+async function countPin() {
+  const filterFunc = (item: ContentLocalTable) => {
+    if(item.oState !== "OK") return false
+    if(item.infoType !== "THREAD") return false
+    return true
+  }
+  const res = await db.contents.where("pinStamp").above(0).filter(filterFunc).count()
+  // console.log("countPin res: ", res)
+  return res
+}
+
+
 export default {
   collect,
   pin,
   editWhenRemind,
   setNewOState,
   deleteForever,
+  countPin,
 }

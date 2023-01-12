@@ -142,7 +142,8 @@
     "deleted": "已删除",
     "deleted_forever": "已完全删除",
     "restored": "已復原",
-    "pinned": "已釘選"
+    "pinned": "已釘選",
+    "pin_maximum": "釘選個數已達上限"
   },
   "card_bubble": {
     "copy": "複製",

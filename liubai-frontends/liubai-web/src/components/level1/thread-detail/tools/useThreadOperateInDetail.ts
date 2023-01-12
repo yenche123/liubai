@@ -8,6 +8,9 @@ import {
   handleRestore,
   handleDeleteForever,
 } from "./handleDeleteRelated"
+import {
+  handlePin
+} from "./handlePin"
 
 export function useThreadOperateInDetail(
   tdData: TdData,
@@ -55,5 +58,8 @@ function handleOutterOperation(
   }
   else if(operation === "delete_forever") {
     handleDeleteForever(ctx)
+  }
+  else if(operation === "pin") {
+    handlePin(ctx)
   }
 }
