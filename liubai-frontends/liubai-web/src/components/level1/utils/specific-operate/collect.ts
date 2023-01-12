@@ -26,7 +26,7 @@ export const toCollect = async (
   const res = await dbOp.collect(newThread, memberId, userId)
 
   // 4. 展示通知，并回传 promise
-  const text_key = newThread.myFavorite ? "tip.collected" : "tip.canceled"
+  const text_key = newFavorite ? "tip.collected" : "tip.canceled"
   const tipPromise = cui.showSnackBar({ text_key, action_key: "tip.undo" })
 
   // 5. 【待完善】将该操作塞入远端待同步的队列
