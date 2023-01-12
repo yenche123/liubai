@@ -32,6 +32,7 @@ export interface TagShow {
 export interface ThreadShow {
   _id: string
   cloud_id?: string
+  _old_id?: string           // 刚上传完的动态会有此字段，表示旧的 _id
   insertedStamp: number
   updatedStamp: number
   oState: OState

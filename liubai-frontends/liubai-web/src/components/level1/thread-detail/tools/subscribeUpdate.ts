@@ -22,7 +22,15 @@ function whenThreadsUpdated(
   const thread = tdData.threadShow
   if(!thread) return
 
-  const newThread = updatedList.find(v => v._id === thread._id)
+  const newThread = updatedList.find(v => {
+    if(v._id === thread._id) return true
+    
+    // 如果 此时刚上传完动态至远端，那么会有一个短暂的字段 _old_id
+    // 若其与 _id 相同，代表是相同的动态
+    if(v._old_id && v._old_id === thread._id) return true
+
+    return false
+  })
   if(!newThread) return
 
   if(newThread.oState !== "OK") {

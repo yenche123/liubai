@@ -58,7 +58,14 @@ function handleUpdatedList(
   const list = listRef.value
   for(let i=0; i<list.length; i++) {
     const v1 = list[i]
-    const v2 = updatedList.find(v => v._id === v1._id)
+    const v2 = updatedList.find(v => {
+      if(v._id === v1._id) return true
+
+      // 如果 此时刚上传完动态至远端，那么会有一个短暂的字段 _old_id
+      // 若其与 _id 相同，代表是相同的动态
+      if(v._old_id && v._old_id === v1._id) return true
+      return false
+    })
     if(!v2) continue
     list[i] = v2
   }
