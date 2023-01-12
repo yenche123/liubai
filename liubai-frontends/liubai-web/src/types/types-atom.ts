@@ -98,3 +98,7 @@ export interface TagView {
  * 51: 没有权限
  */
 export type PageState = -1 | 0 | 50 | 51
+
+
+// 方案限制
+export type LiuLimit = "pin" | "workspace" | "thread"
