@@ -141,7 +141,8 @@
     "no_auth": "没有权限",
     "deleted": "已删除",
     "deleted_forever": "已完全删除",
-    "restored": "已恢复"
+    "restored": "已恢复",
+    "pinned": "已置顶"
   },
   "card_bubble": {
     "copy": "复制",

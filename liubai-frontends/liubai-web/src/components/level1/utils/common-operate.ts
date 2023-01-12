@@ -14,6 +14,7 @@ import {
   undoDelete,
   restoreThread,
 } from "./specific-operate/delete-related"
+import { toPin, undoPin } from "./specific-operate/pin"
 
 export default {
   toCollect,
@@ -27,4 +28,6 @@ export default {
   deleteForever,
   undoDelete,
   restoreThread,
+  toPin,
+  undoPin,
 }

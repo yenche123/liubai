@@ -141,7 +141,8 @@
     "no_auth": "No Access",
     "deleted": "Deleted",
     "deleted_forever": "Deleted Completely",
-    "restored": "Restored"
+    "restored": "Restored",
+    "pinned": "Pinned"
   },
   "card_bubble": {
     "copy": "Copy",

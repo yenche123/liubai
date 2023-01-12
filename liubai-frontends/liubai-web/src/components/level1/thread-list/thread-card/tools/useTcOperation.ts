@@ -77,6 +77,9 @@ function handleOperationFromBottomBar(
   else if(op === "restore" || op === "delete_forever") {
     ctx.emits("newoperate", op, position, threadData)
   }
+  else if(op === "pin") {
+    ctx.emits("newoperate", op, position, threadData)
+  }
 }
 
 

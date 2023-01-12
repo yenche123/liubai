@@ -5,6 +5,7 @@ import EditorCore from '../../../editor-core/editor-core.vue';
 import TcAttachments from './tc-attachments/tc-attachments.vue';
 import TcActionbar from './tc-actionbar/tc-actionbar.vue';
 import TcBottombar from "./tc-bottombar/tc-bottombar.vue";
+import TcTopbar from './tc-topbar/tc-topbar.vue';
 import TcTags from "./tc-tags/tc-tags.vue";
 import TcCovers from "./tc-covers/tc-covers.vue";
 import { useThreadCard } from './tools/useThreadCard';
@@ -17,6 +18,7 @@ import { tcEmits } from "./tools/types"
 export default defineComponent({
   components: {
     EditorCore,
+    TcTopbar,
     TcAttachments,
     TcActionbar,
     TcBottombar,
@@ -75,6 +77,10 @@ export default defineComponent({
   <div class="tc-container">
 
     <div class="tc-box" @click="onTapThreadCard">
+
+      <TcTopbar
+        :thread-data="threadData"
+      ></TcTopbar>
 
       <!-- 摘要 -->
       <div v-if="threadData.briefing" v-show="isBriefing" 

@@ -89,6 +89,9 @@ function handleOutterOperation(
   else if(operation === "delete_forever") {
     handle_deleteForever(ctx)
   }
+  else if(operation === "pin") {
+    handle_pin(ctx)
+  }
 }
 
 // 去恢复
@@ -137,7 +140,34 @@ async function handle_deleteForever(ctx: ToCtx) {
   ctx.list.value.splice(ctx.position, 1)
 }
 
+// 去置顶（or 取消）
+async function handle_pin(ctx: ToCtx) {
+  const { memberId, userId, thread } = ctx
+  const oldThread = valTool.copyObject(thread)
+  const { newPin, tipPromise } = await commonOperate.toPin(oldThread, memberId, userId)
 
+  // 1. 来判断当前列表里的该 item 是否要删除
+  let removedFromList = false
+  const vT = ctx.props.viewType as TlViewType
+  if(vT === "INDEX" && newPin) {
+    removedFromList = true
+    ctx.list.value.splice(ctx.position, 1)
+  }
+
+  // 2. 等待 snackbar 的返回
+  const res2 = await tipPromise
+  if(res2.result !== "tap") return
+
+  // 3. 去执行公共的取消逻辑
+  await commonOperate.undoPin(oldThread, memberId, userId)
+
+  // 4. 判断是否重新加回
+  if(removedFromList) {
+    ctx.list.value.splice(ctx.position, 0, oldThread)
+  }
+}
+
+// 去收藏（or 取消）
 async function handle_collect(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx
   const oldThread = valTool.copyObject(thread)
@@ -145,8 +175,8 @@ async function handle_collect(ctx: ToCtx) {
 
   // 1. 来判断当前列表里的该 item 是否要删除
   let removedFromList = false
-  const viewType = ctx.props.viewType as TlViewType
-  if(viewType === "FAVORITE" && !newFavorite) {
+  const vT = ctx.props.viewType as TlViewType
+  if(vT === "FAVORITE" && !newFavorite) {
     removedFromList = true
     ctx.list.value.splice(ctx.position, 1)
   }
