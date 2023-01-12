@@ -1,4 +1,4 @@
-import { LiuLimit } from "~/types/types-atom"
+import type { LiuLimit } from "~/types/types-atom"
 import liuUtil from "../liu-util"
 
 function getMode() {
