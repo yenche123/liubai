@@ -16,7 +16,6 @@ async function getList(
     limit = 16,
     tagId,
     collectType,
-    loadPin,
     viewType,
   } = opt ?? {}
 
@@ -25,12 +24,15 @@ async function getList(
     return res0
   }
 
+  const isIndex= viewType === "INDEX"
+  const isPin = viewType === "PINNED"
   let list: ContentLocalTable[] = []
 
   const filterFunc = (item: ContentLocalTable) => {
     const { tagSearched = [], pinStamp } = item
     if(tagId && !tagSearched.includes(tagId)) return false
-    if(viewType === "INDEX" && pinStamp) return false
+    if(isIndex && pinStamp) return false
+    if(isPin && !pinStamp) return false
     if(item.workspace === workspace && item.oState === oState) {
       if(!member) return true
       if(member === item.member) return true
@@ -39,9 +41,9 @@ async function getList(
   }
 
   let key = oState === 'OK' ? "createdStamp" : "updatedStamp"
-  if(loadPin) key = "pinStamp"
+  if(isPin) key = "pinStamp"
 
-  if(!lastItemStamp || loadPin) {
+  if(!lastItemStamp || isPin) {
     let tmp = db.contents.orderBy(key)
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)

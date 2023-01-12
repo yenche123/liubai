@@ -166,7 +166,6 @@ async function loadList(
     opt1.collectType = "FAVORITE"
   }
   else if(viewType === "PINNED") {
-    opt1.loadPin = true
     delete opt1.lastItemStamp
   }
 

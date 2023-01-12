@@ -35,9 +35,6 @@ export interface TcListOption {
   // 根据 collectType 和 oState 的不同，用不同 item 的属性
   lastItemStamp?: number
 
-  // 是否为加载置顶的动态，默认为 false
-  loadPin?: boolean
-
   // 加载正常 / 已移除 / 已删除的哪一种，默认为正常
   oState?: OState
 
