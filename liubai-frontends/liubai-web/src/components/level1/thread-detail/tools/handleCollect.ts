@@ -1,45 +1,15 @@
-import dbOp from "../../utils/db-op"
-import cui from "../../../custom-ui"
 import type { ToidCtx } from "./types"
 import { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
-import checker from "~/utils/other/checker"
+import { preHandle } from "./preHandle"
 
-export function handleCollect(ctx: ToidCtx) {
-  check(ctx)
-}
-
-
-// 1. 检测数据是否正常、有没有权限
-async function check(ctx: ToidCtx) {
-  
+// 1. 开始执行，去获取前置数据
+export async function handleCollect(ctx: ToidCtx) {
   const { thread } = ctx
-  const { userId, modalPromise } = checker.getUserId()
-
-  if(!userId) {
-    if(modalPromise) {
-      const res = await modalPromise
-      if(res.confirm) {
-        // 去登录
-      }
-    }
-    return
-  }
-
-  
-  const { memberId, joinPromise } = checker.getMemberId(thread)
-  if(!memberId) {
-    if(joinPromise) {
-      const res = await joinPromise
-      if(res.confirm) {
-        // 去加入
-      }
-    }
-    return
-  }
-
-  handle(thread, memberId, userId)
+  const data = await preHandle(ctx)
+  if(!data) return
+  handle(thread, data.memberId, data.userId)
 }
 
 // 2. 开始执行逻辑
