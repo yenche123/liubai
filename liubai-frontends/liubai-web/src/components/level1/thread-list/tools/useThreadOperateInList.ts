@@ -110,6 +110,7 @@ async function handle_restore(ctx: ToCtx) {
 async function handle_delete(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx
   const oldThread = valTool.copyObject(thread)
+  const vT = ctx.props.viewType as TlViewType
 
   // 0. 从列表里删除 item，先删除的原因是避免 menu 的抖动
   ctx.list.value.splice(ctx.position, 1)
@@ -125,8 +126,11 @@ async function handle_delete(ctx: ToCtx) {
   // 3. 去执行公共的取消逻辑
   await commonOperate.undoDelete(oldThread, memberId, userId)
 
-  // 4. 把 item 加回 list 中
-  ctx.list.value.splice(ctx.position, 0, oldThread)
+  // 4. 如果当前列表不是 PINNED, 把 item 加回 list 中
+  // 因为 PINNED 列表在 useNewAndUpdate 里会自动将其加回
+  if(vT !== "PINNED") {
+    ctx.list.value.splice(ctx.position, 0, oldThread)
+  }
 }
 
 // 去彻底删除

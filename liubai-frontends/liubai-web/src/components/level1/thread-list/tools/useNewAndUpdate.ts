@@ -86,8 +86,8 @@ function handleUpdateForPinnedList(
 ) {
   const list = listRef.value
   const newList = valTool.copyObject(updatedList)
-  const pinList = newList.filter(v => Boolean(v.pinStamp))
-  const unpinList = newList.filter(v => !Boolean(v.pinStamp))
+  const pinList = newList.filter(v => Boolean(v.pinStamp) && Boolean(v.oState === "OK"))
+  const unpinList = newList.filter(v => !Boolean(v.pinStamp) || Boolean(v.oState !== "OK"))
 
   for(let i=0; i<list.length; i++) {
     const v = list[i]
