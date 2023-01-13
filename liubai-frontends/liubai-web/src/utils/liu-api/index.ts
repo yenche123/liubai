@@ -6,6 +6,8 @@ import { share, canShare } from "./share"
 import {
   getSelectionText
 } from "./selection"
+import liuMedia from "./media"
+import liuPermission from "./permission"
 
 export default {
   copyToClipboard: device.copyToClipboard,
@@ -19,4 +21,9 @@ export default {
   share,
   canShare,
   getSelectionText,
+  enumerateDevices: liuMedia.enumerateDevices,
+  getUserMedia: liuMedia.getUserMedia,
+  getDisplayMedia: liuMedia.getDisplayMedia,
+  getSupportedConstraints: liuMedia.getSupportedConstraints,
+  permissionsQuery: liuPermission.permissionsQuery,
 }
