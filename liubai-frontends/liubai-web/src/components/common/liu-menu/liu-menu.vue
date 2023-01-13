@@ -1,36 +1,15 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue'
-import type { PropType } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { MenuItem } from "./tools/types"
+import { useLiuMenu } from './tools/useLiuMenu'
+import { liumenu_props } from "./tools/types"
+
 // 【待完善项】因为是 Menu 选单，应该可以用 Keyboard 的上下键来选择
 
-type MenuPlacement = "bottom" | "bottom-start" | "bottom-end" 
-  | "auto" | "top" | "top-start" | "top-end"
-
 export default defineComponent({
-  props: {
-    menu: {
-      type: Array as PropType<MenuItem[]>,
-      default: [],
-    },
-    minWidthStr: {
-      type: String,
-    },
-    placement: {
-      type: String as PropType<MenuPlacement>,
-      default: "bottom",
-    },
-    allowMask: {
-      type: Boolean,
-      default: true
-    },
-    maskZIndex: {
-      type: String,
-      default: "2000"
-    },
-  },
+  props: liumenu_props,
   emits: {
     tapitem: (item: MenuItem, index: number) => true,
     menushow: () => true,
@@ -41,6 +20,11 @@ export default defineComponent({
     const hasIcon = computed(() => props.menu.some(v => !!v.iconName))
     const defaultColor = "var(--main-normal)"
     const { t } = useI18n()
+    const { 
+      maskEl,
+      connectMaskEl,
+      disconnectMaskEl,
+    } = useLiuMenu(props)
 
     const onTapBox = (e: Event) => {
       e.stopPropagation()
@@ -55,11 +39,13 @@ export default defineComponent({
     const onMenuShow = (e: any) => {
       emit("menushow")
       if(props.allowMask) showMask.value = true
+      connectMaskEl()
     }
 
     const onMenuHide = () => {
       emit("menuhide")
       if(props.allowMask) showMask.value = false
+      disconnectMaskEl()
     }
 
     const onTapMask = (e: MouseEvent) => {
@@ -77,6 +63,7 @@ export default defineComponent({
       onMenuShow,
       onMenuHide,
       onTapMask,
+      maskEl,
     }
   },
 })
@@ -85,6 +72,7 @@ export default defineComponent({
 <template>
 
   <div v-if="allowMask && showMask" 
+    ref="maskEl"
     class="lm-mask" 
     @click="onTapMask"
   />
