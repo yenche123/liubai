@@ -115,7 +115,7 @@ function checkList(
 ) {
   if(isViewType(ctx, "PINNED")) return
 
-  console.log("checkList 被触发...........")
+  // console.log("checkList 被触发...........")
 
   const { list } = ctx
   if(list.value.length < 10) {
@@ -145,7 +145,7 @@ async function loadList(
     ctx.reloadRequired = false
   }
 
-  console.log("let's load list!!!!!!!!!!!")
+  // console.log("let's load list!!!!!!!!!!!")
 
   const oldList = ctx.list.value
   const viewType = ctx.viewType.value

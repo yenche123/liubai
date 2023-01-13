@@ -85,10 +85,6 @@ async function pin(
     updatedStamp: now1,
   } 
   const res = await db.contents.update(thread._id, newData)
-  console.log("db-opt pin 的结果: ")
-  console.log(res)
-  console.log(" ")
-
   return true
 }
 

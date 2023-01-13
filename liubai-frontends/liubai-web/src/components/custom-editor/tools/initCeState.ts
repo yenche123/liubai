@@ -65,7 +65,7 @@ export function initCeState(
   watchEffect(() => {
     const ctx = getCtx()
     if(!ctx) return
-    console.log("去 initDraft.........")
+    // console.log("去 initDraft.........")
     state.threadEdited = tVal.value
     initDraft(ctx, tVal.value)
   })
@@ -78,7 +78,7 @@ export function initCeState(
     if(diff < 500) return
     const ctx = getCtx()
     if(!ctx) return
-    console.log("再次 initDraft.........")
+    // console.log("再次 initDraft.........")
     initDraft(ctx, tVal.value)
   })
 
@@ -121,9 +121,6 @@ async function initDraft(
   }
   else {
     draft = await localReq.getDraft(space.value)
-    console.log("找到 draft: ")
-    console.log(draft)
-    console.log(" ")
     if(draft) initDraftFromDraft(ctx, draft)
     else ctx.state.draftId = ""
   }
