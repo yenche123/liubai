@@ -77,42 +77,8 @@
   outline: 2px solid var(--main-normal);
 }
 
-.liu-hover:hover::before {
-  opacity: .06;
-}
-
 .liu-hover:active::before {
   opacity: .1;
-}
-
-.liu-hover[aria-label]::after {
-  content: attr(aria-label);
-  position: absolute;
-  top: 100%;
-  right: 50%;
-  padding: 0px 12px;
-  border-radius: 4px;
-  background-color: var(--cui-loading);
-  color: var(--on-cui-loading);
-  font-size: var(--mini-font);
-  font-weight: 400;
-  white-space: pre;
-  margin-top: 4px;
-  line-height: 2;
-  transform: translateX(50%);
-  user-select: none;
-  box-shadow: var(--tooltip-shadow);
-  pointer-events: none;
-  visibility: hidden;
-  opacity: 0;
-  z-index: 5210;
-  transition: opacity .15s;
-  transition-delay: 800ms;
-}
-
-.liu-hover[aria-label]:hover::after {
-  visibility: visible;
-  opacity: 1;
 }
 
 /** 对于毛玻璃的效果 */
@@ -131,4 +97,42 @@
   -webkit-backdrop-filter: blur(10px);
   background: var(--frosted-glass-3);
   overflow: hidden;
+}
+
+
+/********* 仅在有鼠标的设备上生效 *********/
+@media(hover: hover) {
+  .liu-hover:hover::before {
+    opacity: .06;
+  }
+
+  .liu-hover[aria-label]::after {
+    content: attr(aria-label);
+    position: absolute;
+    top: 100%;
+    right: 50%;
+    padding: 0px 12px;
+    border-radius: 4px;
+    background-color: var(--cui-loading);
+    color: var(--on-cui-loading);
+    font-size: var(--mini-font);
+    font-weight: 400;
+    white-space: pre;
+    margin-top: 4px;
+    line-height: 2;
+    transform: translateX(50%);
+    user-select: none;
+    box-shadow: var(--tooltip-shadow);
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    z-index: 5210;
+    transition: opacity .15s;
+    transition-delay: 800ms;
+  }
+
+  .liu-hover[aria-label]:hover::after {
+    visibility: visible;
+    opacity: 1;
+  }
 }

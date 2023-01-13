@@ -162,8 +162,10 @@ export default defineComponent({
   transition: border-radius .3s;
   margin-bottom: 16px;
 
-  &:hover {
-    border-radius: 10px;
+  @media(hover: hover) {
+    &:hover {
+      border-radius: 10px;
+    }
   }
 
   .tc-box {

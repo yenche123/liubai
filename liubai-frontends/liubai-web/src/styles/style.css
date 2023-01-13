@@ -7,6 +7,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
 
   /** 一些全局的 css 变量 */
   /** 设备断点 */
