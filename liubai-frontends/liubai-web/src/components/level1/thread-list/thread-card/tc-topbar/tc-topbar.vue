@@ -24,9 +24,9 @@ export default defineComponent({
   <div v-if="showTopbar" class="tct-container">
     
     <!-- 置顶 -->
-    <div v-if="threadData.pinStamp" class="tct-pin">
-      <div class="tct-triangle"></div>
-    </div>
+    <svg v-if="threadData.pinStamp" class="tct-pin" viewBox="-50 -50 300 300">
+      <polygon class="tct-triangle" stroke-linejoin="round" points="20,-20 220,-20 220,180"/>
+    </svg>
 
   </div>
 </template>
@@ -40,21 +40,16 @@ export default defineComponent({
   position: relative;
 
   .tct-pin {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     border-top-right-radius: 4px;
     overflow: hidden;
     position: relative;
 
     .tct-triangle {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 0 12px 12px 0;
-      border-color: transparent var(--line-bottom) transparent transparent;
+      fill: var(--main-tip);
+      stroke: var(--main-tip);
+      stroke-width: 60;
     }
   }
 
