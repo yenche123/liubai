@@ -128,10 +128,25 @@ function handleUpdateForPinnedList(
     }
   }
 
-  if(pinList.length > 0) {
-    console.log("还有 pinList 没有被添加进 list 中")
-    console.log("全部加到 list 的最前面")
-    list.splice(0, 0, ...pinList)
+  if(pinList.length < 1) return
+
+  // 将未置入 list 的 pinList 排序后放入其中
+  for(let i=0; i<pinList.length; i++) {
+    const v1 = pinList[i]
+    const p1 = v1.pinStamp as number
+    let hasInserted = false
+    for(let j=0; j<list.length; j++) {
+      const v2 = list[j]
+      const p2 = v2.pinStamp ?? 1
+      if(p1 > p2) {
+        hasInserted = true
+        list.splice(j, 0, v1)
+        break
+      }
+    }
+    if(!hasInserted) {
+      list.push(v1)
+    }
   }
 
 }
