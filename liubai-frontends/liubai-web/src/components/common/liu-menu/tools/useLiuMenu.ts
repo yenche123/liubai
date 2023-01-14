@@ -7,9 +7,9 @@ export function useLiuMenu(props: LiuMenuProps) {
   const maskEl = ref<HTMLElement | null>(null)
 
   const _whenWheel = (ev: WheelEvent) => {
-    console.log("whenWheel ev: ")
-    console.log(ev)
-    console.log(" ")
+    // console.log("whenWheel ev: ")
+    // console.log(ev)
+    // console.log(" ")
     hideAllPoppers()
   }
 
