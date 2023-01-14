@@ -30,6 +30,7 @@
     "@tiptap/vue-3": "2.0.0-beta.209",
     "@vuepic/vue-datepicker": "^3.6.4",
     "@vueuse/core": "^9.10.0",
+    "blurhash": "^2.0.4",
     "compressorjs": "^1.1.1",
     "date-fns": "^2.29.3",
     "dexie": "^3.2.2",

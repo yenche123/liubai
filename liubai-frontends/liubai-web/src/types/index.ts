@@ -40,6 +40,7 @@ export interface ImageLocal {
   height?: number
   h2w?: string
   cloud_url?: string
+  blurhash?: string
 }
 
 export interface ImageShow {
