@@ -20,6 +20,7 @@ specifiers:
   '@vitejs/plugin-vue': ^4.0.0
   '@vuepic/vue-datepicker': ^3.6.4
   '@vueuse/core': ^9.10.0
+  another-vue3-blurhash: ^0.0.1
   blurhash: ^2.0.4
   compressorjs: ^1.1.1
   date-fns: ^2.29.3
@@ -62,6 +63,7 @@ dependencies:
   '@tiptap/vue-3': 2.0.0-beta.209_z47upszvd4zehlqvwskdpw752y
   '@vuepic/vue-datepicker': 3.6.4_vue@3.2.45
   '@vueuse/core': 9.10.0_vue@3.2.45
+  another-vue3-blurhash: 0.0.1
   blurhash: 2.0.4
   compressorjs: 1.1.1
   date-fns: 2.29.3
@@ -376,8 +378,8 @@ packages:
       vue-i18n:
         optional: true
     dependencies:
-      '@intlify/message-compiler': 9.3.0-beta.15
-      '@intlify/shared': 9.3.0-beta.15
+      '@intlify/message-compiler': 9.3.0-beta.16
+      '@intlify/shared': 9.3.0-beta.16
       jsonc-eslint-parser: 1.4.1
       source-map: 0.6.1
       vue-i18n: 9.2.2_vue@3.2.45
@@ -409,11 +411,11 @@ packages:
       source-map: 0.6.1
     dev: false
 
-  /@intlify/message-compiler/9.3.0-beta.15:
-    resolution: {integrity: sha512-kxx+pXsyoWhyFLEaJgnMk4AFiW3fvaCqpiql1alOHtkvQwzDKlrcKJ784GO4v/8SLt6JUHWfPpQH65GoYahdLA==}
+  /@intlify/message-compiler/9.3.0-beta.16:
+    resolution: {integrity: sha512-CGQI3xRcs1ET75eDQ0DUy3MRYOqTauRIIgaMoISKiF83gqRWg93FqN8lGMKcpBqaF4tI0JhsfosCaGiBL9+dnw==}
     engines: {node: '>= 14'}
     dependencies:
-      '@intlify/shared': 9.3.0-beta.15
+      '@intlify/shared': 9.3.0-beta.16
       source-map: 0.6.1
     dev: false
 
@@ -422,8 +424,8 @@ packages:
     engines: {node: '>= 14'}
     dev: false
 
-  /@intlify/shared/9.3.0-beta.15:
-    resolution: {integrity: sha512-thDJ+TGK8GGmOrgh/Vul24pPvRtRGvCyuGXcw/uh2t3lyJsCPfhzY5ZihJFkGvKEl4/J4M0F/SAeWKoZNm7hlw==}
+  /@intlify/shared/9.3.0-beta.16:
+    resolution: {integrity: sha512-kXbm4svALe3lX+EjdJxfnabOphqS4yQ1Ge/iIlR8tvUiYRCoNz3hig1M4336iY++Dfx5ytEQJPNjIcknNIuvig==}
     engines: {node: '>= 14'}
     dev: false
 
@@ -443,7 +445,7 @@ packages:
         optional: true
     dependencies:
       '@intlify/bundle-utils': 3.4.0_vue-i18n@9.2.2
-      '@intlify/shared': 9.3.0-beta.15
+      '@intlify/shared': 9.3.0-beta.16
       '@rollup/pluginutils': 4.2.1
       '@vue/compiler-sfc': 3.2.45
       debug: 4.3.4
@@ -1164,6 +1166,13 @@ packages:
     hasBin: true
     dev: false
 
+  /another-vue3-blurhash/0.0.1:
+    resolution: {integrity: sha512-ykSqVXFXpG5Yer4L9X0IcFNecO6tg2oRSCQS5KkrbzAQVMrZZLrwhSy94WPbH1bpC5YsRxaAieKm9B9QTSNvWA==}
+    dependencies:
+      blurhash: 1.1.5
+      vue: 3.2.45
+    dev: false
+
   /ansi-regex/2.1.1:
     resolution: {integrity: sha512-TIGnTpdo+E3+pCyAluZvtED5p5wCqLdezCyhPZzKPcxvFplEt4i+W7OONCKgeZFT3+y5NZZfOOS/Bdcanm1MYA==}
     engines: {node: '>=0.10.0'}
@@ -1259,6 +1268,10 @@ packages:
 
   /blueimp-canvas-to-blob/3.29.0:
     resolution: {integrity: sha512-0pcSSGxC0QxT+yVkivxIqW0Y4VlO2XSDPofBAqoJ1qJxgH9eiUDLv50Rixij2cDuEfx4M6DpD9UGZpRhT5Q8qg==}
+    dev: false
+
+  /blurhash/1.1.5:
+    resolution: {integrity: sha512-a+LO3A2DfxTaTztsmkbLYmUzUeApi0LZuKalwbNmqAHR6HhJGMt1qSV/R3wc+w4DL28holjqO3Bg74aUGavGjg==}
     dev: false
 
   /blurhash/2.0.4:

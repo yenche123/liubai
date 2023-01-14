@@ -24,6 +24,7 @@ interface PicCover {
   id: string
   width: number
   height: number
+  blurhash?: string
 }
 
 export function usePiContent(props: PicProps) {
@@ -64,10 +65,10 @@ function calcImages(
 
   for(let i=0; i<imgs.length; i++) {
     const v = imgs[i]
-    const { width, height, h2w, id, src } = v
+    const { width, height, h2w, id, src, blurhash } = v
 
     if(width && height && width <= w && height <= h) {
-      newList.push({ id, src, width, height })
+      newList.push({ id, src, width, height, blurhash })
       continue
     }
 
@@ -76,6 +77,7 @@ function calcImages(
       src,
       width: width ? Math.min(width, w) : w,
       height: height ? Math.min(height, h) : h,
+      blurhash,
     }
     
     const img_h2w = Number(h2w)

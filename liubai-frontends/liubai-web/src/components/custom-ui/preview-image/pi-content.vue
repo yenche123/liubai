@@ -70,10 +70,17 @@ export default defineComponent({
     <template v-for="(item, index) in covers" :key="item.id">
       <SwiperSlide>
         <div class="pi-item" :class="{ 'pi-item_grab': coverLength > 1 }">
-          <liu-img :src="item.src" object-fit="contain" class="pi-image" :style="{
-            'width': item.width + 'px',
-            'height': item.height + 'px',
-          }" bg-color="#1f1f1f"></liu-img>
+          <liu-img :src="item.src" 
+            object-fit="contain" class="pi-image" 
+            :style="{
+              'width': item.width + 'px',
+              'height': item.height + 'px',
+            }"
+            :width="item.width"
+            :height="item.height"
+            :blurhash="item.blurhash"
+            bg-color="#1f1f1f"
+          ></liu-img>
         </div>
       </SwiperSlide>
     </template>

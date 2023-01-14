@@ -62,3 +62,23 @@ export function getNotImageFiles(files: File[]): File[] {
   }
   return newList
 }
+
+export function constraintWidthHeight(
+  w: number,
+  h: number,
+  maxW: number,
+  maxH: number,
+) {
+  if (w > maxW && w > h) {
+    return {
+      width: maxW,
+      height: Math.round(h * (maxW / w))
+    }
+  } else if (h > maxH) {
+    return {
+      width: Math.round( w * (maxH / h)),
+      height: maxH
+    }
+  }
+  return { width: w, height: h }
+}

@@ -49,6 +49,7 @@ export interface ImageShow {
   width?: number
   height?: number
   h2w?: string
+  blurhash?: string
 }
 
 export interface LiuUser {

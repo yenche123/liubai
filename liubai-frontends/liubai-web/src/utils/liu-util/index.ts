@@ -22,6 +22,7 @@ import {
   getArrayFromFileList,
   getOnlyImageFiles,
   getNotImageFiles,
+  constraintWidthHeight,
 } from "./file-util"
 import {
   toRawData,
@@ -54,6 +55,7 @@ export default {
   getArrayFromFileList,
   getOnlyImageFiles,
   getNotImageFiles,
+  constraintWidthHeight,
   toRawData,
   getRawList,
   toWhatDetail,

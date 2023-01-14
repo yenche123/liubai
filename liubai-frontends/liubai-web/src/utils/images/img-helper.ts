@@ -171,6 +171,7 @@ async function getMetaDataFromFiles(files: File[]) {
       width: w,
       height: h,
       h2w,
+      blurhash: data.blurhash,
     }
     return obj
   }
@@ -188,18 +189,7 @@ async function getMetaDataFromFiles(files: File[]) {
 function _resizeDimensions(img: HTMLImageElement) {
   const { width, height } = img
   const { maxHeight, maxWidth } = BlurhashEncoding 
-  if (width > maxWidth && width > height) {
-    return {
-      width: maxWidth,
-      height: height * (maxWidth / width)
-    }
-  } else if (height > maxHeight) {
-    return {
-      width: width * (maxHeight / height),
-      height: maxHeight
-    }
-  }
-  return { width, height }
+  return liuUtil.constraintWidthHeight(width, height, maxWidth, maxHeight)
 }
 
 function imageLocalToShow(val: ImageLocal): ImageShow {
@@ -208,7 +198,8 @@ function imageLocalToShow(val: ImageLocal): ImageShow {
     id: val.id,
     width: val.width,
     height: val.height,
-    h2w: val.h2w
+    h2w: val.h2w,
+    blurhash: val.blurhash,
   }
   return obj
 }
