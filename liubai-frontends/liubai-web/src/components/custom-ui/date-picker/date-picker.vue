@@ -223,4 +223,25 @@ const previewDate = computed(() => {
   font-size: var(--btn-font);
 }
 
+@media screen and (max-width: 380px) {
+  .dp-custom-menu {
+    padding: 10px 10px 10px;
+  }
+
+  .dp__action_row {
+    padding: 5px;
+  }
+}
+
+@media screen and (max-width: 350px) {
+
+  .dp-custom-menu {
+    padding: 10px 3vw 10px;
+  }
+
+  .dp__action_row {
+    padding: 0px;
+  }
+}
+
 </style>
