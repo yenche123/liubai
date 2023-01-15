@@ -18,7 +18,7 @@ specifiers:
   '@tiptap/vue-3': 2.0.0-beta.209
   '@types/node': ^18.11.18
   '@vitejs/plugin-vue': ^4.0.0
-  '@vuepic/vue-datepicker': ^3.6.4
+  '@vuepic/vue-datepicker': ^3.6.5
   '@vueuse/core': ^9.10.0
   another-vue3-blurhash: ^0.0.1
   blurhash: ^2.0.4
@@ -61,7 +61,7 @@ dependencies:
   '@tiptap/extension-task-list': 2.0.0-beta.209_f4ffqkgz5d3wev7su7t7l2rrua
   '@tiptap/starter-kit': 2.0.0-beta.209_mr3bhnmfox2kjnahwbtgkxt4cy
   '@tiptap/vue-3': 2.0.0-beta.209_z47upszvd4zehlqvwskdpw752y
-  '@vuepic/vue-datepicker': 3.6.4_vue@3.2.45
+  '@vuepic/vue-datepicker': 3.6.5_vue@3.2.45
   '@vueuse/core': 9.10.0_vue@3.2.45
   another-vue3-blurhash: 0.0.1
   blurhash: 2.0.4
@@ -1110,8 +1110,8 @@ packages:
   /@vue/shared/3.2.45:
     resolution: {integrity: sha512-Ewzq5Yhimg7pSztDV+RH1UDKBzmtqieXQlpTVm2AwraoRL/Rks96mvd8Vgi7Lj+h+TH8dv7mXD3FRZR3TUvbSg==}
 
-  /@vuepic/vue-datepicker/3.6.4_vue@3.2.45:
-    resolution: {integrity: sha512-A13K+UNf29H2kQK4RYbFwqgkAFnWxArqW3AD3inhtIDmhI5n3QsUIvSTWJBszYcuhx2k2f2mD6dEPncOtsZi3A==}
+  /@vuepic/vue-datepicker/3.6.5_vue@3.2.45:
+    resolution: {integrity: sha512-axf9st9UIjxbLUL/WjbYPSzkNKfedfDqV3wQIBeCAekN2/w45RNmWfIUXIxpbfZKiRo2ie+U23IW20I33oGauw==}
     engines: {node: '>=14'}
     peerDependencies:
       vue: '>=3.2.0'
