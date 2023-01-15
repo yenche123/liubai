@@ -26,10 +26,17 @@ export function useLiuMenu(props: LiuMenuProps) {
     if(!maskEl.value) return
     maskEl.value.removeEventListener("wheel", _whenWheel)
   }
+
+  const onTouchEndMask = (e: TouchEvent) => {
+    hideAllPoppers()
+    e.stopPropagation()
+    e.preventDefault()
+  }
   
   return {
     maskEl,
     connectMaskEl,
     disconnectMaskEl,
+    onTouchEndMask
   }
 }

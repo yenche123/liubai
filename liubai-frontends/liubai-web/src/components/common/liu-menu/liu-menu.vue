@@ -24,6 +24,7 @@ export default defineComponent({
       maskEl,
       connectMaskEl,
       disconnectMaskEl,
+      onTouchEndMask,
     } = useLiuMenu(props)
 
     const onTapBox = (e: Event) => {
@@ -64,6 +65,7 @@ export default defineComponent({
       onMenuHide,
       onTapMask,
       maskEl,
+      onTouchEndMask,
     }
   },
 })
@@ -75,6 +77,7 @@ export default defineComponent({
     ref="maskEl"
     class="lm-mask" 
     @click="onTapMask"
+    @touchend="onTouchEndMask"
   />
 
   <VDropdown 
