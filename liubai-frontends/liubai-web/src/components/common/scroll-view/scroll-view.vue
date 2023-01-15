@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import liuApi from '~/utils/liu-api';
 import { useRefresh } from './tools/useRefresh';
 import { useScrollView } from './tools/useScrollView';
 
@@ -29,6 +30,8 @@ const { sv, scrollTop, onScrolling } = useScrollView(props, emits)
 const { 
   style1, style2, loadingScale, onTouchStart, onTouchMove, onTouchEnd 
 } = useRefresh(props, emits, sv, scrollTop)
+
+const { isMobile, isIPadOS } = liuApi.getCharacteristic()
 
 </script>
 
@@ -68,6 +71,10 @@ const {
   height: 100%;
   position: relative;
   overflow: auto;
+}
+
+.scroll-view::-webkit-scrollbar {
+  display: v-bind("isMobile || isIPadOS ? 'none' : 'block'");
 }
 
 .scroll-view::-webkit-scrollbar-thumb {

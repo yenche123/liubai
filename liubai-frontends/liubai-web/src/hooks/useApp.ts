@@ -17,8 +17,11 @@ export function useApp() {
 
   const env = liuUtil.getEnv()
   const cha = liuApi.getCharacteristic()
-  if(env.DEV && (cha.isMobile || cha.isIPadOS)) {
-    new VConsole()
+  if(cha.isMobile || cha.isIPadOS) {
+    if(env.DEV) {
+      new VConsole()
+    }
+    import("~/styles/mobile-style.css")
   }
 
   initForSystem()
