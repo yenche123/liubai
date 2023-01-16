@@ -136,6 +136,8 @@ const color_selected = "var(--main-normal)"
     <span>{{ t("common.trash") }}</span>
   </NaviLink>
 
+  <div class="sb-virtual"></div>
+
 </template>
 <style>
 

@@ -134,10 +134,6 @@ const {
   pointer-events: none;
 }
 
-.sb-bar:hover ~ .sb-default-line {
-  border-right: 2px solid var(--bg-color);
-}
-
 .sb-drag-line {
   position: absolute;
   top: 0;
@@ -180,39 +176,10 @@ const {
   background-color: var(--frosted-glass);
 }
 
-.sb-bar:hover ~ .sb-drag-line {
-  opacity: 1;
-}
-
 .sb-bar:active ~ .sb-drag-line {
   opacity: 1;
   border-right: 2px dashed var(--line-active);
 }
-
-/** firefox 浏览器不支持整块拖动，
-  使用 @support 查询支持 -moz-user-select: none 语法的浏览器 
-  等于查询 firefox 浏览器
-*/
-@supports (-moz-user-select: none) {
-
-  .sb-bar {
-    cursor: auto;
-  }
-
-  .sb-bar:hover ~ .sb-default-line {
-    border-right: 1px solid var(--line-default);
-  }
-
-  .sb-bar:hover ~ .sb-drag-line {
-    opacity: 0;
-  }
-
-  .sb-bar:active ~ .sb-drag-line {
-    border-right: 2px dashed var(--line-hover);
-    opacity: 0;
-  }
-}
-
 
 /** 真正承载侧边栏内容的盒子 */
 .sb-box {
@@ -234,7 +201,7 @@ const {
   transition: .15s;
 }
 
-.sb-box:hover::-webkit-scrollbar-thumb {
+.sb-box:active::-webkit-scrollbar-thumb {
   background-color: var(--sidebar-scrollbar-thumb);
 }
 
@@ -261,6 +228,48 @@ const {
   max-width: 500px;
   position: relative;
   transition: .3s;
+}
+
+
+/**** 适配拥有鼠标设备 *****/
+@media(hover: hover) {
+
+  .sb-bar:hover ~ .sb-default-line {
+    border-right: 2px solid var(--bg-color);
+  }
+
+  .sb-bar:hover ~ .sb-drag-line {
+    opacity: 1;
+  }
+
+  .sb-box:hover::-webkit-scrollbar-thumb {
+    background-color: var(--sidebar-scrollbar-thumb);
+  }
+}
+
+
+/** firefox 浏览器不支持整块拖动，
+  使用 @support 查询支持 -moz-user-select: none 语法的浏览器 
+  等于查询 firefox 浏览器
+*/
+@supports (-moz-user-select: none) {
+
+  .sb-bar {
+    cursor: auto;
+  }
+
+  .sb-bar:hover ~ .sb-default-line {
+    border-right: 1px solid var(--line-default);
+  }
+
+  .sb-bar:hover ~ .sb-drag-line {
+    opacity: 0;
+  }
+
+  .sb-bar:active ~ .sb-drag-line {
+    border-right: 2px dashed var(--line-hover);
+    opacity: 0;
+  }
 }
 
 </style>
