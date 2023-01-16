@@ -6,7 +6,8 @@
 
 import { defineStore } from "pinia";
 import { shallowRef } from "vue";
-import type { ThreadShow } from "../../types/types-content"
+import type { ThreadShow } from "~/types/types-content"
+import type { WhyThreadChange } from "~/types/types-atom"
 
 export const useThreadShowStore = defineStore("threadShow", () => {
 
@@ -14,18 +15,25 @@ export const useThreadShowStore = defineStore("threadShow", () => {
 
   // 点赞、评论、收藏等操作，也是修改以下变量
   const updatedThreadShows = shallowRef<ThreadShow[]>([])
+  const whyChange = shallowRef<WhyThreadChange>("")
 
   const setNewThreadShows = (list: ThreadShow[]) => {
+    whyChange.value = ""
     newThreadShows.value = list
     updatedThreadShows.value = []
   }
 
-  const setUpdatedThreadShows = (list: ThreadShow[]) => {
+  const setUpdatedThreadShows = (
+    list: ThreadShow[], 
+    whyThreadChange: WhyThreadChange = ""
+  ) => {
+    whyChange.value = whyThreadChange
     updatedThreadShows.value = list
     newThreadShows.value = []
   }
 
   return {
+    whyChange,
     newThreadShows,
     updatedThreadShows,
     setNewThreadShows,

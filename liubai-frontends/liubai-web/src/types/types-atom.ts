@@ -115,3 +115,8 @@ export type ThreadOutterOperation = "collect" | "emoji" | "delete" | "state"
   | "restore" | "delete_forever" | "pin"
 
 export type ThreadOperation = ThreadInnerOperation | ThreadOutterOperation
+
+export type ThreadOutterUndo = "undo_collect" | "undo_emoji" | "undo_delete"
+  | "undo_state" | "undo_pin"
+
+export type WhyThreadChange = ThreadOutterOperation | ThreadOutterUndo | ""

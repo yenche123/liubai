@@ -3,6 +3,7 @@ import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import type { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool";
 import type { TlProps, TlViewType } from "./types"
+import type { WhyThreadChange } from "~/types/types-atom"
 
 export function useNewAndUpdate(
   props: TlProps,
@@ -19,17 +20,21 @@ export function useNewAndUpdate(
     // console.log("updatedList: ")
     // console.log(state.updatedThreadShows)
     // console.log(" ")
-    const { newThreadShows, updatedThreadShows } = state
+    const { newThreadShows, updatedThreadShows, whyChange } = state
 
-    if(newThreadShows.length > 0) handleNewList(props, list, newThreadShows)
-    if(updatedThreadShows.length > 0) handleUpdatedList(props, list, updatedThreadShows)
+    if(newThreadShows.length > 0) {
+      handleNewList(props, list, newThreadShows)
+    }
+    if(updatedThreadShows.length > 0) {
+      handleUpdatedList(props, list, updatedThreadShows, whyChange)
+    }
   })
 }
 
 function handleNewList(
   props: TlProps,
   listRef: Ref<ThreadShow[]>,
-  newList: ThreadShow[]
+  newList: ThreadShow[],
 ) {
   const { tagId } = props
   const viewType = props.viewType as TlViewType
@@ -54,7 +59,8 @@ function handleNewList(
 function handleUpdatedList(
   props: TlProps,
   listRef: Ref<ThreadShow[]>,
-  updatedList: ThreadShow[]
+  updatedList: ThreadShow[],
+  whyChange: WhyThreadChange,
 ) {
   const list = listRef.value
   const viewType = props.viewType as TlViewType
@@ -75,6 +81,11 @@ function handleUpdatedList(
       return false
     })
     if(!v2) continue
+
+    if(v2.oState !== "OK") {
+      
+    }
+
     list[i] = v2
   }
 }

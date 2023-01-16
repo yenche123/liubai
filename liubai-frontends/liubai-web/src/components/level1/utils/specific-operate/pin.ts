@@ -32,7 +32,7 @@ export async function toPin(
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([newThread])
+  tsStore.setUpdatedThreadShows([newThread], "pin")
 
   // 3. 操作 db
   const res = await dbOp.pin(newThread, memberId, userId)
@@ -52,7 +52,7 @@ export async function undoPin(
 
   // 1. 通知全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([oldThread])
+  tsStore.setUpdatedThreadShows([oldThread], "undo_pin")
   
   // 2. 修改 db
   const res3 = await dbOp.pin(oldThread, memberId, userId)

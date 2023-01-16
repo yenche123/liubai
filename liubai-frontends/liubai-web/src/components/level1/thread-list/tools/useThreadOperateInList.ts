@@ -96,11 +96,14 @@ function handleOutterOperation(
 
 // 去恢复
 async function handle_restore(ctx: ToCtx) {
-  const { memberId, userId, thread } = ctx
+  const { memberId, userId, thread, props } = ctx
   const oldThread = valTool.copyObject(thread)
+  const vT = props.viewType as TlViewType
 
-  // 1. 先从 list 里删除是为了避免 menu 的抖动
-  ctx.list.value.splice(ctx.position, 1)
+  // 1. 如果当前是在回收桶里，先从 list 里删除是为了避免 menu 的抖动
+  if(vT === "TRASH") {
+    ctx.list.value.splice(ctx.position, 1)
+  }
 
   // 2. 执行 restore 公共逻辑
   const res = await commonOperate.restoreThread(oldThread, memberId, userId)

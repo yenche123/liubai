@@ -18,7 +18,7 @@ export async function deleteThread(
 
   // 2. 通知到全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([newThread])
+  tsStore.setUpdatedThreadShows([newThread], "delete")
 
   // 3. 操作 db
   const res = await dbOp.setNewOState(newThread._id, "REMOVED")
@@ -42,7 +42,7 @@ export async function restoreThread(
 
   // 2. 通知到全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([newThread])
+  tsStore.setUpdatedThreadShows([newThread], "restore")
 
   // 3. 操作 db
   const res = await dbOp.setNewOState(newThread._id, "OK")
@@ -60,7 +60,7 @@ export async function undoDelete(
 ) {
   // 1. 通知全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([oldThread])
+  tsStore.setUpdatedThreadShows([oldThread], "undo_delete")
 
   // 2. 修改 db
   const res = await dbOp.setNewOState(oldThread._id, "OK")
@@ -88,7 +88,7 @@ export async function deleteForever(
 
   // 2. 通知到全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([newThread])
+  tsStore.setUpdatedThreadShows([newThread], "delete_forever")
   
   // 3. 操作 db
   const res2 = await dbOp.deleteForever(newThread._id)

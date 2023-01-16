@@ -20,7 +20,7 @@ export const toCollect = async (
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([newThread])
+  tsStore.setUpdatedThreadShows([newThread], "collect")
 
   // 3. 操作 db
   const res = await dbOp.collect(newThread, memberId, userId)
@@ -42,7 +42,7 @@ export const undoCollect = async (
 
   // 1. 通知全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([oldThread])
+  tsStore.setUpdatedThreadShows([oldThread], "undo_collect")
 
   // 2. 修改 db
   const res3 = await dbOp.collect(oldThread, memberId, userId)
