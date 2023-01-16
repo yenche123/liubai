@@ -1,15 +1,15 @@
-import type { ThreadOutterOperation } from "./types"
-import type { ThreadShow } from '../../../../types/types-content'
-import type { LiuRouter } from "../../../../routes/liu-router"
+import type { ThreadOutterOperation } from "~/types/types-atom"
+import type { ThreadShow } from '~/types/types-content'
+import type { LiuRouter } from "~/routes/liu-router"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
-import type { ThreadShowStore } from "../../../../hooks/stores/useThreadShowStore"
-import { useRouteAndLiuRouter } from "../../../../routes/liu-router"
-import { useWorkspaceStore } from "../../../../hooks/stores/useWorkspaceStore"
-import { useThreadShowStore } from "../../../../hooks/stores/useThreadShowStore"
-import { getLocalPreference } from "../../../../utils/system/local-preference"
+import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
+import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
+import { getLocalPreference } from "~/utils/system/local-preference"
 import type { TlProps, TlViewType } from "./types"
 import type { Ref } from "vue";
-import valTool from "../../../../utils/basic/val-tool"
+import valTool from "~/utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
 
 interface ToCtx {

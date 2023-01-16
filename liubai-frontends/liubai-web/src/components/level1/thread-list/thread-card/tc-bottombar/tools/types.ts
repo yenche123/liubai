@@ -1,6 +1,6 @@
 import type { ThreadShow } from "~/types/types-content";
 import type { MenuItem } from "~/components/common/liu-menu/tools/types"
-import type { ThreadOperation } from "../../../tools/types"
+import type { ThreadOperation } from "~/types/types-atom"
 
 export interface TcbProps {
   threadData: ThreadShow

@@ -9,7 +9,7 @@ import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { getLocalPreference } from "~/utils/system/local-preference"
-import type { ThreadOperation } from "../../tools/types"
+import type { ThreadOperation } from "~/types/types-atom"
 import liuUtil from "~/utils/liu-util"
 import tcCommon from "./tc-common"
 

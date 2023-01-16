@@ -1,4 +1,4 @@
-import type { ThreadOutterOperation } from "../../thread-list/tools/types"
+import type { ThreadOutterOperation } from "~/types/types-atom"
 import { handleCollect } from "./handleCollect"
 import type { TdData } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
