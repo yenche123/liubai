@@ -33,6 +33,16 @@ function getLimit(val: LiuLimit) {
     if(isPaid) return env.PREMIUM_WORKSPACE_NUM
     return env.FREE_WORKSPACE_NUM
   }
+  else if(val === "thread_img") {
+    if(mode === "pure_local") return env.LOCAL_THREAD_IMG_NUM
+    if(isPaid) return env.PREMIUM_THREAD_IMG_NUM
+    return env.FREE_THREAD_IMG_NUM
+  }
+  else if(val === "comment_img") {
+    if(mode === "pure_local") return env.LOCAL_COMMENT_IMG_NUM
+    if(isPaid) return env.PREMIUM_COMMENT_IMG_NUM
+    return env.FREE_COMMENT_IMG_NUM
+  }
 
   return -1
 }

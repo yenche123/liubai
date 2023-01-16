@@ -8,7 +8,7 @@ import type { Ref } from "vue"
 import cui from "../../custom-ui"
 import valTool from "../../../utils/basic/val-tool"
 import ider from "../../../utils/basic/ider"
-import cfg from "../../../config"
+import limit from "~/utils/limit"
 
 export function useCeFile(
   state: CeState,
@@ -203,12 +203,14 @@ async function handleImages(
 
   state.images = state.images ?? []
   const hasLength = state.images.length
-  const canPushNum = cfg.max_picture_num - hasLength
+  let max_pic_num = limit.getLimit("thread_img")
+  if(max_pic_num <= 0) max_pic_num = 9
+  const canPushNum = max_pic_num - hasLength
   if(canPushNum <= 0) {
     cui.showModal({
       title_key: "tip.tip",
       content_key: "tip.max_pic_num",
-      content_opt: { num: cfg.max_picture_num },
+      content_opt: { num: max_pic_num },
       showCancel: false
     })
     return

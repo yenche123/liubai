@@ -101,4 +101,8 @@ export type PageState = -1 | 0 | 50 | 51
 
 
 // 方案限制
-export type LiuLimit = "pin" | "workspace" | "thread"
+export type LiuLimit = "pin" // 置顶数
+  | "workspace"      // 空间数
+  | "thread"         // 动态保留数，比如免费版是 200 条
+  | "thread_img"     // 动态图片数
+  | "comment_img"    // 评论图片数
