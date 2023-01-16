@@ -12,21 +12,21 @@ const iconColor = "var(--main-normal)"
 </script>
 <template>
 
-  <div class="vc-navi-bar">
+  <div class="vcliu-navi-bar">
 
     <!-- 返回键 -->
-    <div class="liu-hover vc-navi-btn" @click="emits('tapback')">
-      <svg-icon class="vc-navi-icon" name="arrow-back" :color="iconColor"></svg-icon>
+    <div class="liu-hover vcliu-navi-btn" @click="emits('tapback')">
+      <svg-icon class="vcliu-navi-icon" name="arrow-back" :color="iconColor"></svg-icon>
     </div>
 
     <!-- 关闭按钮 -->
-    <div class="liu-hover vc-navi-btn" @click="emits('tapclose')">
-      <svg-icon class="vc-navi-icon" name="close" :color="iconColor"></svg-icon>
+    <div class="liu-hover vcliu-navi-btn" @click="emits('tapclose')">
+      <svg-icon class="vcliu-navi-icon" name="close" :color="iconColor"></svg-icon>
     </div>
 
-    <div class="vc-navi-footer">
+    <div class="vcliu-navi-footer">
       <!-- 用新分页打开 -->
-      <div class="liu-hover vc-navi-btn" @click="emits('tapopeninnew')">
+      <div class="liu-hover vcliu-navi-btn" @click="emits('tapopeninnew')">
         <svg-icon class="vcn-open-new" name="open_in_new" :color="iconColor"></svg-icon>
       </div>
     </div>
@@ -36,7 +36,7 @@ const iconColor = "var(--main-normal)"
 </template>
 <style lang="scss" scoped>
 
-.vc-navi-bar {
+.vcliu-navi-bar {
   width: 100%;
   height: v-bind("cfg.vice_navi_height + 'px'");
   position: relative;
@@ -48,7 +48,7 @@ const iconColor = "var(--main-normal)"
   border-radius: 0;
 }
 
-.vc-navi-btn {
+.vcliu-navi-btn {
   width: v-bind("cfg.vice_navi_height + 'px'");
   height: v-bind("cfg.vice_navi_height + 'px'");
   position: relative;
@@ -56,7 +56,7 @@ const iconColor = "var(--main-normal)"
   align-items: center;
   justify-content: center;
 
-  .vc-navi-icon {
+  .vcliu-navi-icon {
     width: 50%;
     height: 50%;
   }
@@ -67,7 +67,7 @@ const iconColor = "var(--main-normal)"
   }
 }
 
-.vc-navi-footer {
+.vcliu-navi-footer {
   flex: 1;
   display: flex;
   justify-content: flex-end;

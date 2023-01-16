@@ -46,12 +46,12 @@ const {
   ></VcIframe>
 
   <!-- 动态 -->
-  <div class="vc-content"
+  <div class="vcliu-content"
     v-show="vcState === 'thread'"
   >
     <ScrollView>
-      <div class="vc-virtual"></div>
-      <div class="vc-box">
+      <div class="vcliu-virtual"></div>
+      <div class="vcliu-box">
         <ThreadDetail
           location="vice-view"
         ></ThreadDetail>
@@ -63,17 +63,17 @@ const {
 </template>
 <style scoped lang="scss">
 
-.vc-content {
+.vcliu-content {
   width: 100%;
   height: v-bind("vcHeight + 'px'");
   position: relative;
 
-  .vc-virtual {
+  .vcliu-virtual {
     width: 100%;
     height: 10px;
   }
 
-  .vc-box {
+  .vcliu-box {
     width: 90%;
     max-width: var(--card-max);
     min-width: var(--card-min);

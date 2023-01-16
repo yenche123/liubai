@@ -35,20 +35,20 @@ defineProps({
     width="100%" 
     :height="vcHeight"
     :src="iframeSrc"
-    class="vc-iframe"
+    class="vcliu-iframe"
   ></iframe>
   
   <!-- 用于显示拖动时覆盖在 iframe 上的透明度白屏 -->
-  <div v-show="show" class="vc-cover" :class="{ 'vc-cover_show': isOutterDraging }"></div>
+  <div v-show="show" class="vcliu-cover" :class="{ 'vcliu-cover_show': isOutterDraging }"></div>
 </template>
 <style scoped>
 
-.vc-iframe {
+.vcliu-iframe {
   border: none;
   overflow: auto;
 }
 
-.vc-cover {
+.vcliu-cover {
   width: 100%;
   height: v-bind("vcHeight + 'px'");
   margin-top: v-bind("maskMarginTop + 'px'");
@@ -59,7 +59,7 @@ defineProps({
   user-select: none;
 }
 
-.vc-cover_show {
+.vcliu-cover_show {
   opacity: .6;
   visibility: visible;
 }
