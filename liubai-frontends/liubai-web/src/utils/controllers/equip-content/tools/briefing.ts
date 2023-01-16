@@ -4,11 +4,11 @@ import type { TipTapJSONContent } from "../../../../types/types-editor";
 import { listToText, getRowNum } from "../../../transfer-util/text";
 
 
-const MAGIC_NUM = 140
+const MAGIC_NUM = 66
 const MAX_ROW = 3
 
 /**
- * 当字数大于 140 行数大于 3 时，显示摘要
+ * 当字数大于 MAGIC_NUM 或行数大于 3 时，显示摘要
  * @param liuDesc 用户填写的完整内容
  * @returns 摘要
  */
