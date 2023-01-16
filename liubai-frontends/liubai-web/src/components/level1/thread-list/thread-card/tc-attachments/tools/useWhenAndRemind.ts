@@ -42,93 +42,75 @@ export function useWhenAndRemind(props: TcaProps) {
     if(!whenStampVal) return ""
     return liuUtil.showBasicDate(whenStampVal, nowLocale as SupportedLocale)
   })
-  const remindStr = ref("")
+  const remindStr = computed(() => {
+    const rStamp = remindStamp.value
+    const rVal = remindMe.value
+    if(!rStamp || !rVal) return ""
+    return liuUtil.getRemindMeStrAfterPost(rStamp, rVal)
+  })
+  const countdownStr = ref("")
 
   let timeout = 0
 
-  // 给定终点的时间戳，开始倒计时
-  // 如果已到或过终点时间，则使用 showBasicDate 展示
-  const _setCountDown = (endStamp: number) => {
-
-    const now = time.getTime()
-    const diff = endStamp - now
-
-    // 如果倒计时只剩下 1s 或者已过时
-    if(diff < SEC) {
-      clearTimeout(timeout)
-      remindStr.value = liuUtil.showBasicDate(endStamp)
-      return
-    }
-
-    // 开始计算怎么显示
-    remindStr.value = liuUtil.getCountDownStr(diff)
-
-    // 最后计算多久之后再改变 remindStr
-    let delay = diff < HOUR ? SEC : MIN
-    timeout = setTimeout(() => {
-      _setCountDown(endStamp)
-    }, delay)
-  }
-
-
-  const _setRemindStr = () => {
-    if(timeout) clearTimeout(timeout)
-
-    const rStamp = remindStamp.value
-    const rVal = remindMe.value
-
-    if(!rVal || !rStamp) {
-      remindStr.value = ""
-      return
-    }
-    const now = time.getTime()
-    const diff = rStamp - now
-
-    const { type, early_minute } = rVal
-
-    // xx分之前或准点
-    if(type === "early" && typeof early_minute === "number") {
-      // 如果已过时，或者时间差只剩 1 分钟之内，那么正常显示时间
-      if(diff < MIN) {
-        remindStr.value = liuUtil.getRemindMeStrAfterPost(rStamp, rVal)
-        return
-      }
-
-      // 如果提醒我的时间不是准点，也不采用倒计时
-      if(early_minute !== 0) {
-        remindStr.value = liuUtil.getRemindMeStrAfterPost(rStamp, rVal)
-        return
-      }
-
-      // 采用倒计时显示 提醒我
-      _setCountDown(rStamp)
-      return
-    }
-
-    // 剩余 24 小时内的
-    if(diff > (3 * SEC) && diff < (24 * HOUR)) {
-      _setCountDown(rStamp)
-      return
-    }
-
-    remindStr.value = liuUtil.getRemindMeStrAfterPost(rStamp, rVal)
-  }
-
-  watch(remindStamp, (newV) => {
-    _setRemindStr()
-  })
-
-  _setRemindStr()
-
-  onActivated(() => {
-    _setRemindStr()
-  })
-
-  onDeactivated(() => {
+  const _clearTimeout = () => {
     if(timeout) {
       clearTimeout(timeout)
       timeout = 0
     }
+  }
+
+  // 给定终点的时间戳，开始倒计时
+  const _setCountDown = (endStamp: number) => {
+    const now = time.getTime()
+    const diff = endStamp - now
+
+    // 如果倒计时只剩下 半秒 或者已过时
+    if(diff < (SEC / 2)) {
+      _clearTimeout()
+      countdownStr.value = ""
+      return
+    }
+
+    // 开始计算怎么显示
+    countdownStr.value = liuUtil.getCountDownStr(diff)
+
+    // 最后计算多久之后再改变 remindStr
+    let delay = diff < HOUR ? SEC : MIN
+    // 校准 timer
+    if(delay === SEC) {
+      let tmp = diff % SEC
+      if(tmp < 500) delay += tmp
+      else delay = tmp
+    }
+
+    timeout = setTimeout(() => {
+      timeout = 0
+      _setCountDown(endStamp)
+    }, delay)
+  }
+
+  const _judgeCountdown = () => {
+    _clearTimeout()
+    const wStamp = whenStamp.value
+    if(!wStamp) {
+      countdownStr.value = ""
+      return
+    }
+    _setCountDown(wStamp)
+  }
+
+  watch(whenStamp, (newV) => {
+    _judgeCountdown()
+  })
+
+  _judgeCountdown()
+
+  onActivated(() => {
+    _judgeCountdown()
+  })
+
+  onDeactivated(() => {
+    _clearTimeout()
   })
 
   const onTapWhenItem = (item: MenuItem, index: number) => {
@@ -146,6 +128,7 @@ export function useWhenAndRemind(props: TcaProps) {
   return { 
     whenStr, 
     remindStr,
+    countdownStr,
     canEdit,
     onTapWhenItem,
     onTapRemindItem,

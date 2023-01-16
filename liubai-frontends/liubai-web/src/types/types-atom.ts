@@ -1,7 +1,9 @@
 // 一些最基础的原子类型
 
 export type LiuRemindLater = "30min" | "1hr" | "2hr" | "3hr" | "tomorrow_this_moment"
-export type LiuRemindEarly = 0 | 10 | 30 | 60 | 1440
+
+// 必须是 number 因为可能跟其他系统对接，会有不同的提前时间（单位为 minute）
+export type LiuRemindEarly = number
 
 // "提醒我" 的结构
 export interface LiuRemindMe {

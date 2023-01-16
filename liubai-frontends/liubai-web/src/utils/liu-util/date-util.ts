@@ -123,6 +123,7 @@ export function getRemindMeStr(
   if(type === "early" && typeof early_minute === "number") {
     const idx = REMIND_EARLY.indexOf(early_minute)
     if(idx >= 0) return t(`date_related.remind_early[${idx}]`)
+    return t("date_related.remind_early_other", { min: String(early_minute) })
   }
   else if(type === "later" && later) {
     const idx = REMIND_LATER.indexOf(later)
@@ -147,6 +148,7 @@ export function getRemindMeStrAfterPost(
   if(type === "early" && typeof early_minute === "number") {
     const idx = REMIND_EARLY.indexOf(early_minute)
     if(idx >= 0) return t(`date_related.remind_early[${idx}]`)
+    return t("date_related.remind_early_other", { min: String(early_minute) })
   }
   else if(type === "later" && later) {
     if(now >= remindStamp) {
@@ -172,15 +174,20 @@ export function getCountDownStr(
   const SEC = 1000
   const MIN = 60 * SEC
   const HOUR = 60 * MIN
+  const DAY = 24 * HOUR
+  const DAY_10 = 10 * DAY
+  const DAY_31 = 31 * DAY
 
-  // 剩下一秒钟内
-  if(diffStamp < 999) {
+  if(diffStamp <= 0) {
     return "00:00"
   }
 
+  let remainder = 0
+  let day_num = 0
   let hr_num = 0
   let min_num = 0
   let sec_num = 0
+  let day = ""
   let hr = ""
   let min = ""
   let sec = ""
@@ -194,18 +201,84 @@ export function getCountDownStr(
     return t("date_related.countdown_1", { min, sec })
   }
 
-  // 大于一小时的时候
-  hr_num = Math.floor(diffStamp / HOUR)
-  min_num = Math.floor((diffStamp % HOUR) / MIN)
-  if(lang === "en") {
-    let tmp = `${hr_num} hr${hr_num > 1 ? "s" : ""} `
-    tmp += `${min_num} min${min_num > 1 ? "s" : ""} remaining`
-    return tmp
+  // 剩下一天内
+  if(diffStamp < DAY) {
+    hr_num = Math.floor(diffStamp / HOUR)
+    min_num = Math.floor((diffStamp % HOUR) / MIN)
+    if(lang === "en") {
+      return handleS({ hr_num, min_num })
+    }
+
+    hr = String(hr_num)
+    min = String(min_num)
+    return t("date_related.countdown_2", { hr, min })
   }
 
-  hr = String(hr_num)
-  min = String(min_num)
-  return t("date_related.countdown_2", { hr, min })
+  // 剩下 10 天内
+  if(diffStamp < DAY_10) {
+    day_num = Math.floor(diffStamp / DAY)
+    remainder = diffStamp % DAY
+    hr_num = Math.floor(remainder / HOUR)
+    remainder = remainder % HOUR
+    min_num = Math.floor(remainder / MIN)
+    if(lang === "en") {
+      return handleS({ day_num, hr_num, min_num })
+    }
+    
+    day = String(day_num)
+    hr = String(hr_num)
+    min = String(min_num)
+    return t("date_related.countdown_3", { day, hr, min })
+  }
+
+  // 剩下一个月内
+  if(diffStamp < DAY_31) {
+    day_num = Math.floor(diffStamp / DAY)
+    remainder = diffStamp % DAY
+    hr_num = Math.min(Math.ceil(remainder / HOUR), 23)
+    if(lang === "en") {
+      return handleS({ day_num, hr_num })
+    }
+    day = String(day_num)
+    hr = String(hr_num)
+    return t("date_related.countdown_4", { day, hr })
+  }
+
+  // 剩下 超过一个月
+  day_num = Math.ceil(diffStamp / DAY)
+  if(lang === "en") {
+    return handleS({ day_num })
+  }
+  day = String(day_num)
+  return t("date_related.countdown_5", { day })
+}
+
+interface HSParam {
+  day_num?: number
+  hr_num?: number
+  min_num?: number
+  sec_num?: number
+}
+
+function handleS(opt: HSParam) {
+  let tmp = ""
+  let { day_num, hr_num, min_num, sec_num } = opt
+  if(typeof day_num === "number") {
+    tmp += `${day_num} day${day_num > 1 ? "s" : ""} `
+  }
+  if(typeof hr_num === "number") {
+    tmp += `${hr_num} hr${hr_num > 1 ? "s" : ""} `
+  }
+  if(typeof min_num === "number") {
+    tmp += `${min_num} min${min_num > 1 ? "s" : ""} `
+  }
+  if(typeof sec_num === "number") {
+    tmp += `${sec_num} sec${sec_num > 1 ? "s" : ""} `
+  }
+
+  if(tmp) tmp += "remaining"
+
+  return tmp
 }
 
 export function getEditedStr(

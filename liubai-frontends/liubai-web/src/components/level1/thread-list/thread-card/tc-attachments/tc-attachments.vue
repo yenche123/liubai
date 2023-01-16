@@ -40,6 +40,7 @@ export default defineComponent({
     const {
       whenStr,
       remindStr,
+      countdownStr,
       canEdit,
       onTapWhenItem,
       onTapRemindItem,
@@ -52,6 +53,7 @@ export default defineComponent({
       menu,
       whenStr,
       remindStr,
+      countdownStr,
       canEdit,
       onTapWhenItem,
       onTapRemindItem,
@@ -92,6 +94,14 @@ export default defineComponent({
         label-key="editor.when"
       ></TcWhenRemind>
     </div>
+
+    <!-- 倒计时器 -->
+    <TcWhenRemind
+      v-if="countdownStr"
+      :title="countdownStr"
+      icon-name="hourglass_empty"
+      :color="default_color"
+    ></TcWhenRemind>
     
     <!-- 提醒我 -->
     <div class="tcwr-item-box" v-if="remindStr">

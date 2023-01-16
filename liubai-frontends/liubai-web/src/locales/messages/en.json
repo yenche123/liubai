@@ -96,6 +96,9 @@
     "show_1": "{mm} {dd}, {hr}:{min}",
     "countdown_1": "{min}:{sec}",
     "countdown_2": "Only {hr} hr {min} min",
+    "countdown_3": "Only {day} day {hr} hr {min} min",
+    "countdown_4": "Remaining {day} days {hr} hr",
+    "countdown_5": "Remaining {day} days",
     "remind_early": [
       "On time", 
       "10 mins early", 
@@ -103,6 +106,7 @@
       "1 hr early",
       "1 day early"
     ],
+    "remind_early_other": "{min} mins early",
     "remind_later": [
       "30 mins later",
       "1 hr later",
