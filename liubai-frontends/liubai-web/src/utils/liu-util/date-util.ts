@@ -235,7 +235,11 @@ export function getCountDownStr(
   if(diffStamp < DAY_31) {
     day_num = Math.floor(diffStamp / DAY)
     remainder = diffStamp % DAY
-    hr_num = Math.min(Math.ceil(remainder / HOUR), 23)
+    hr_num = Math.ceil(remainder / HOUR)
+    if(hr_num >= 24) {
+      day_num += 1
+      hr_num = 0
+    }
     if(lang === "en") {
       return handleS({ day_num, hr_num })
     }
