@@ -1,10 +1,11 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { BubbleMenu } from '@tiptap/vue-3'
+import { BubbleMenu } from '@tiptap/vue-3';
 import type { TipTapEditor } from '~/types/types-editor';
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'vue-i18n';
 import { shouldShow } from '~/utils/other/bubble-menu';
-import { useTcBubbleMenu } from "./tools/useTcBubbleMenu"
+import { useTcBubbleMenu } from "./tools/useTcBubbleMenu";
+import liuApi from '~/utils/liu-api';
 
 const bubbleColor = "var(--bubble-menu-color)"
 
@@ -19,6 +20,7 @@ export default defineComponent({
   },
   setup(props) {
     const { t } = useI18n()
+    const cha = liuApi.getCharacteristic()
     const {
       selectedIndex,
       tippyOptions,
@@ -29,6 +31,7 @@ export default defineComponent({
     } = useTcBubbleMenu(props)
 
     return {
+      cha,
       t,
       bubbleColor,
       shouldShow,
@@ -46,7 +49,7 @@ export default defineComponent({
 <template>
 
   <bubble-menu
-    v-if="editor"
+    v-if="cha.isPC && editor"
     :editor="editor"
     :should-show="shouldShow"
     :updateDelay="250"
