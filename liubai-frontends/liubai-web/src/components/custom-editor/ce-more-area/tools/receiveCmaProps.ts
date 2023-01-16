@@ -1,9 +1,7 @@
-import { toRef, watchEffect, toRaw } from "vue";
-import type { CmaProps, CmaRemindType, MaData } from "./types-cma";
+import { toRef, watchEffect } from "vue";
+import type { CmaProps, MaData } from "./types-cma";
 import type { CeState } from "../../tools/atom-ce";
 import liuUtil from "../../../../utils/liu-util";
-import type { LiuRemindMe } from "../../../../types/types-atom";
-import { REMIND_LATER, REMIND_EARLY } from "../../../../config/atom"
 import { useI18n } from "vue-i18n"
 import type { ComposerTranslation } from "vue-i18n"
 import { FileLocal, FileShow } from "../../../../types";
