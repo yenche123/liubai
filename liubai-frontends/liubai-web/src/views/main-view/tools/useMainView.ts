@@ -46,8 +46,9 @@ function initMainView(
     // console.log("监听左边侧边栏的改变 tmpCenter: ", tmpCenter)
 
     if(tmpCenter < criticalValue) {
-      rightPx.value = 0
-      centerPx.value = state.clientWidth - leftPx.value
+      let rc = getRightAndCenterPx(state.clientWidth, leftPx.value, vvRef.value)
+      rightPx.value = rc.right
+      centerPx.value = rc.center
       return
     }
     rightPx.value = vvRef.value
@@ -59,15 +60,48 @@ function initMainView(
     const tmpCenter = width.value - leftPx.value - newV
     const centerRight = width.value - leftPx.value
     const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 3)
-    console.log("tmpCenter: ", tmpCenter)
 
     if(tmpCenter < criticalValue) {
-      rightPx.value = 0
-      centerPx.value = width.value - leftPx.value
+      let rc = getRightAndCenterPx(width.value, leftPx.value, newV)
+      rightPx.value = rc.right
+      centerPx.value = rc.center
       return
     }
     
     rightPx.value = newV
     centerPx.value = tmpCenter
   })
+}
+
+
+function getRightAndCenterPx(
+  screenPx: number,
+  topLeftPx: number,
+  topRightPx: number,
+) {
+  let originCenter = screenPx - topLeftPx
+  let tmpCenter = originCenter
+  if(tmpCenter <= 800 || topRightPx < 1) {
+    return { right: 0, center: originCenter }
+  }
+
+  let tmpRight = Math.round(topRightPx / 2)
+  tmpCenter = originCenter - tmpRight
+  if(tmpCenter > 800) {
+    return { right: tmpRight, center: tmpCenter }
+  }
+
+  tmpRight = Math.round(topRightPx / 3)
+  tmpCenter = originCenter - tmpRight
+  if(tmpCenter > 800) {
+    return { right: tmpRight, center: tmpCenter }
+  }
+
+  tmpRight = Math.round(topRightPx / 4)
+  tmpCenter = originCenter - tmpRight
+  if(tmpCenter > 800) {
+    return { right: tmpRight, center: tmpCenter }
+  }
+
+  return { right: 0, center: originCenter }
 }
