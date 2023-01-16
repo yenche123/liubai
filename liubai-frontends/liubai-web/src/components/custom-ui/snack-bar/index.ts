@@ -57,7 +57,7 @@ function listenAutoClose() {
   if(autoTimeout) clearTimeout(autoTimeout)
   let hasAction = Boolean(sbData.action_key) || Boolean(sbData.action)
 
-  let duration = hasAction ? 3000 : 2000
+  let duration = hasAction ? 3500 : 2500
   if(sbData.duration) duration = sbData.duration
 
   autoTimeout = setTimeout(() => {
