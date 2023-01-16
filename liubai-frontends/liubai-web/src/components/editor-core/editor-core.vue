@@ -72,6 +72,7 @@ export default defineComponent({
   color: var(--main-normal);
   min-height: v-bind("editMode ? minHeight : 0");
   transition: v-bind("editMode ? '.3s' : 0");
+  caret-color: var(--primary-color);
 
   h1 {
     font-size: var(--title-font);
