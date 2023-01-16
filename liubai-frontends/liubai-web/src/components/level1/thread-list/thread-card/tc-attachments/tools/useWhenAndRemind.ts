@@ -1,4 +1,5 @@
 import { computed, onActivated, onDeactivated, ref, toRef, watch } from "vue";
+import type { ComputedRef, Ref } from "vue";
 import { useI18n } from "vue-i18n";
 import liuUtil from "~/utils/liu-util";
 import type { SupportedLocale } from "~/types/types-locale"; 
@@ -11,6 +12,7 @@ import commonOperate from "../../../../utils/common-operate";
 import checker from "~/utils/other/checker";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import type { SnackbarRes } from "~/types/other/types-snackbar"
+import type { LiuRemindMe } from "~/types/types-atom"
 
 const SEC = 1000
 const MIN = 60 * SEC
@@ -42,14 +44,38 @@ export function useWhenAndRemind(props: TcaProps) {
     if(!whenStampVal) return ""
     return liuUtil.showBasicDate(whenStampVal, nowLocale as SupportedLocale)
   })
-  const remindStr = computed(() => {
-    const rStamp = remindStamp.value
-    const rVal = remindMe.value
-    if(!rStamp || !rVal) return ""
-    return liuUtil.getRemindMeStrAfterPost(rStamp, rVal)
-  })
+  const remindStr = ref("")
   const countdownStr = ref("")
+  handleCountdown(whenStamp, countdownStr)
+  handleRemind(remindStamp, remindMe, remindStr)
 
+  const onTapWhenItem = (item: MenuItem, index: number) => {
+    const { userId, memberId } = getUserAndMemberId(props.thread)
+    if(!userId || !memberId) return
+    toTapWhenItem(index, props.thread, userId, memberId)
+  }
+
+  const onTapRemindItem = (item: MenuItem, index: number) => {
+    const { userId, memberId } = getUserAndMemberId(props.thread)
+    if(!userId || !memberId) return
+    toTapRemindItem(index, props.thread, userId, memberId)
+  }
+
+  return { 
+    whenStr, 
+    remindStr,
+    countdownStr,
+    canEdit,
+    onTapWhenItem,
+    onTapRemindItem,
+  }
+}
+
+
+function handleCountdown(
+  whenStamp: ComputedRef<number | undefined>,
+  countdownStr: Ref<string>,
+) {
   let timeout = 0
 
   const _clearTimeout = () => {
@@ -74,7 +100,7 @@ export function useWhenAndRemind(props: TcaProps) {
     // 开始计算怎么显示
     countdownStr.value = liuUtil.getCountDownStr(diff)
 
-    // 最后计算多久之后再改变 remindStr
+    // 最后计算多久之后再改变 countdownStr
     let delay = diff < HOUR ? SEC : MIN
     // 校准 timer
     if(delay === SEC) {
@@ -112,28 +138,85 @@ export function useWhenAndRemind(props: TcaProps) {
   onDeactivated(() => {
     _clearTimeout()
   })
-
-  const onTapWhenItem = (item: MenuItem, index: number) => {
-    const { userId, memberId } = getUserAndMemberId(props.thread)
-    if(!userId || !memberId) return
-    toTapWhenItem(index, props.thread, userId, memberId)
-  }
-
-  const onTapRemindItem = (item: MenuItem, index: number) => {
-    const { userId, memberId } = getUserAndMemberId(props.thread)
-    if(!userId || !memberId) return
-    toTapRemindItem(index, props.thread, userId, memberId)
-  }
-
-  return { 
-    whenStr, 
-    remindStr,
-    countdownStr,
-    canEdit,
-    onTapWhenItem,
-    onTapRemindItem,
-  }
 }
+
+
+function handleRemind(
+  remindStamp: ComputedRef<number | undefined>,
+  remindMe: ComputedRef<LiuRemindMe | undefined>,
+  remindStr: Ref<string>,
+) {
+
+  let timeout = 0
+
+  const _clearTimeout = () => {
+    if(timeout) {
+      clearTimeout(timeout)
+      timeout = 0
+    }
+  }
+
+  const _setRemindStr = (
+    rStamp: number,
+    rMe: LiuRemindMe,
+  ) => {
+    const now = time.getTime()
+    const diff = rStamp - now
+    const { type } = rMe
+    if(diff < (SEC / 2)) {
+      _clearTimeout()
+      remindStr.value = liuUtil.getRemindMeStrAfterPost(rStamp, rMe)
+      return
+    }
+    if(type === "early" || type === "specific_time") {
+      _clearTimeout()
+      remindStr.value = liuUtil.getRemindMeStrAfterPost(rStamp, rMe)
+      return
+    }
+
+    remindStr.value = liuUtil.getCountDownStr(diff)
+
+    // 最后计算多久之后再改变 remindStr
+    let delay = diff < HOUR ? SEC : MIN
+    // 校准 timer
+    if(delay === SEC) {
+      let tmp = diff % SEC
+      if(tmp < 500) delay += tmp
+      else delay = tmp
+    }
+    timeout = setTimeout(() => {
+      timeout = 0
+      _setRemindStr(rStamp, rMe)
+    }, delay)
+  }
+
+  const _judgeRemind = () => {
+    _clearTimeout()
+    const rStamp = remindStamp.value
+    const rMe = remindMe.value
+
+    if(!rStamp || !rMe) {
+      remindStr.value = ""
+      return
+    }
+    _setRemindStr(rStamp, rMe)
+  }
+
+  watch(remindStamp, (newV) => {
+    _judgeRemind()
+  })
+
+  _judgeRemind()
+
+  onActivated(() => {
+    _judgeRemind()
+  })
+
+  onDeactivated(() => {
+    _clearTimeout()
+  })
+}
+
 
 function getUserAndMemberId(
   thread: ThreadShow

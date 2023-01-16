@@ -144,6 +144,7 @@ export function getRemindMeStrAfterPost(
   const { type, early_minute, later, specific_stamp } = remindMe
   const { t } = i18n.global
   const now = time.getTime()
+  const diff = remindStamp - now
 
   if(type === "early" && typeof early_minute === "number") {
     const idx = REMIND_EARLY.indexOf(early_minute)
@@ -151,7 +152,7 @@ export function getRemindMeStrAfterPost(
     return t("date_related.remind_early_other", { min: String(early_minute) })
   }
   else if(type === "later" && later) {
-    if(now >= remindStamp) {
+    if(diff < 1000) {
       return showBasicDate(remindStamp)
     }
     const idx = REMIND_LATER.indexOf(later)
