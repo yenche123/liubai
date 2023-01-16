@@ -42,12 +42,13 @@ const layoutStore = useLayoutStore()
 
 export function useViceView(emits: VvEmits) {  
   const vvEl = ref<HTMLElement | null>(null) 
+  let defaultPx = getDefaultPx()
 
   const vvData = reactive<VvData>({
     openType: "closed_by_auto",
     minVvPx: cfg.min_viceview_width,
-    viceViewPx: cfg.default_viceview_width,
-    maxVvPx: cfg.default_viceview_width,
+    viceViewPx: defaultPx,
+    maxVvPx: defaultPx,
     isAnimating: false,
     isActivate: true,
     lastParentResizeStamp: 0,
@@ -63,6 +64,16 @@ export function useViceView(emits: VvEmits) {
   listenParentChange(vvData, emits, vvEl)
 
   return { vvEl, vvData }
+}
+
+function getDefaultPx() {
+  let defaultPx = cfg.default_viceview_width
+  const { width } = useWindowSize()
+  const w = width.value
+  if(w > 1280) {
+    defaultPx = Math.max(defaultPx, Math.round(w / 3))
+  }
+  return defaultPx
 }
 
 function listenRouteChange(
