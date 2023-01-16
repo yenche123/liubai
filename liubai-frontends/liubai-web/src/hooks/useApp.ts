@@ -17,7 +17,7 @@ export function useApp() {
 
   const env = liuUtil.getEnv()
   const cha = liuApi.getCharacteristic()
-  if(cha.isMobile || cha.isIPadOS) {
+  if(cha.isMobile) {
     if(env.DEV) {
       new VConsole()
     }

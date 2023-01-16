@@ -31,7 +31,7 @@ const {
   style1, style2, loadingScale, onTouchStart, onTouchMove, onTouchEnd 
 } = useRefresh(props, emits, sv, scrollTop)
 
-const { isMobile, isIPadOS } = liuApi.getCharacteristic()
+const { isMobile } = liuApi.getCharacteristic()
 
 </script>
 
@@ -74,7 +74,7 @@ const { isMobile, isIPadOS } = liuApi.getCharacteristic()
 }
 
 .scroll-view::-webkit-scrollbar {
-  display: v-bind("isMobile || isIPadOS ? 'none' : 'block'");
+  display: v-bind("isMobile ? 'none' : 'block'");
 }
 
 .scroll-view::-webkit-scrollbar-thumb {

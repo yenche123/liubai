@@ -55,8 +55,19 @@ const getCharacteristic = (): GetChaRes => {
     isPC = true
   }
 
-  if(ua.includes("iphone") || ua.includes("ios")) isIOS = true
-  if(ua.includes("ipad")) isIPadOS = true
+  if(ua.includes("iphone")) {
+    isIOS = true
+    isMobile = true
+    isPC = false
+  }
+  if(ua.includes("ios")) {
+    isIOS = true
+  }
+  if(ua.includes("ipad")) {
+    isIPadOS = true
+    isMobile = true
+    isPC = false
+  }
   if(ua.includes("macintosh")) isMac = true
   if(ua.includes("feishu")) {
     isFeishu = true
