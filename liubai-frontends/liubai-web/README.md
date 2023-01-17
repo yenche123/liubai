@@ -4,6 +4,8 @@ I don't know how to write the fucking code again
 
 What the fucking world!
 
+Today I learned tauri, whereas sadly it didn't give me any CORS solution
+
 ## 图标库
 
 https://fonts.google.com/icons
