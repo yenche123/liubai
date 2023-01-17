@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
-import PinwheelLoader from "~/components/loaders/pinwheel-loader/pinwheel-loader.vue"
+import PulsarLoader from '~/components/loaders/pulsar-loader/pulsar-loader.vue';
 
 const { t } = useI18n()
 
@@ -31,7 +31,7 @@ defineProps({
   <div v-if="pState >= 0" class="pv-container">
 
     <div v-if="pState === 0" class="pv-loading">
-      <PinwheelLoader color="var(--main-normal)"></PinwheelLoader>
+      <PulsarLoader color="var(--main-normal)"></PulsarLoader>
     </div>
 
     <div v-else-if="pState >= 50" class="pv-err-box">
