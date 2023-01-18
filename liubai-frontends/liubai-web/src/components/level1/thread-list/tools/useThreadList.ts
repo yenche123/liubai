@@ -48,10 +48,10 @@ export function useThreadList(props: TlProps) {
   watch(svTrigger, (newV) => {
     const { type } = svData
     if(isViewType(ctx, "PINNED")) return
-    if(type === "to_lower") {
+    if(type === "to_end") {
       loadList(ctx)
     }
-    else if(type === "to_upper") {
+    else if(type === "to_start") {
       loadList(ctx, true)
     }
   })
