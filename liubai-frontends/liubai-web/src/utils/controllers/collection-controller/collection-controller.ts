@@ -160,6 +160,7 @@ export async function getThreadsByCollectionOrEmoji(
       title,
       content: tiptapContent,
       briefing: commonPack.getBriefing(newDesc),
+      summary: commonPack.getSummary(liuDesc, v.files),
       images,
       files: v.files,
       whenStamp: v.whenStamp,

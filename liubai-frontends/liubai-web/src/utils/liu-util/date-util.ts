@@ -1,8 +1,8 @@
 import { isEqual, isToday, isTomorrow, isYesterday } from 'date-fns'
-import { i18n } from '../../locales'
-import type { LiuRemindEarly, LiuRemindLater, LiuRemindMe } from '../../types/types-atom'
-import { REMIND_LATER, REMIND_EARLY } from "../../config/atom"
-import { SupportedLocale } from '../../types/types-locale'
+import { i18n } from '~/locales'
+import type { LiuRemindEarly, LiuRemindLater, LiuRemindMe } from '~/types/types-atom'
+import { REMIND_LATER, REMIND_EARLY } from "~/config/atom"
+import { SupportedLocale } from '~/types/types-locale'
 import time from '../basic/time'
 import valTool from '../basic/val-tool'
 import type { ComposerTranslation } from "vue-i18n"

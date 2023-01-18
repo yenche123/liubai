@@ -45,7 +45,7 @@ export interface ThreadShow {
   content?: TipTapJSONContent
   briefing?: TipTapJSONContent   // 文本很多时的摘要
   summary?: string               // content 转为单行的纯文本，并且限制字数在 140 字内;
-                                 // 如果 content 不存在，可能生成诸如 [文件] / [图片] 之类的文字
+                                 // 如果 content 不存在，看文件是否存在，若有打印文件名
   images?: ImageShow[]
   files?: FileLocal[]
   whenStamp?: number
