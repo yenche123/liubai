@@ -1,8 +1,7 @@
 
-import type { LiuContent } from "../../../../types/types-atom";
-import type { TipTapJSONContent } from "../../../../types/types-editor";
-import { listToText, getRowNum } from "../../../transfer-util/text";
-
+import type { LiuContent } from "~/types/types-atom";
+import type { TipTapJSONContent } from "~/types/types-editor";
+import { listToText, getRowNum } from "~/utils/transfer-util/text";
 
 const MAGIC_NUM = 66
 const MAX_ROW = 3

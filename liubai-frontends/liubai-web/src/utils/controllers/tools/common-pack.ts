@@ -1,5 +1,5 @@
-import { LiuContent } from "../../../types/types-atom";
-
+import type { LiuContent } from "../../../types/types-atom";
+import { getBriefing } from "./briefing"
 
 /**
  * 判断有没有 title，若有加到 content 里
@@ -26,7 +26,16 @@ function packLiuDesc(
   return newDesc
 }
 
+/**
+ * 生成 summary 字段
+ */
+function getSummary(
+
+) {
+
+}
 
 export default {
-  packLiuDesc
+  packLiuDesc,
+  getBriefing,
 }

@@ -8,7 +8,6 @@ import imgHelper from "../../images/img-helper";
 import { getLocalPreference } from "../../system/local-preference";
 import type { TipTapJSONContent } from "../../../types/types-editor";
 import liuUtil from "../../liu-util";
-import { getBriefing } from "./tools/briefing";
 import { tagIdsToShows } from "../../system/workspace";
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
 import commonPack from "../tools/common-pack";
@@ -83,7 +82,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       storageState: v.storageState,
       title,
       content: tiptapContent,
-      briefing: getBriefing(newDesc),
+      briefing: commonPack.getBriefing(newDesc),
       images,
       files: v.files,
       whenStamp: v.whenStamp,
