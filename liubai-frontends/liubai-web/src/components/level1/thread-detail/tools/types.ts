@@ -11,8 +11,3 @@ export interface TdData {
 export interface TdProps {
   location: WhatDetail
 }
-
-export interface ToidCtx {
-  thread: ThreadShow
-  rr: RouteAndLiuRouter
-}

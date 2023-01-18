@@ -6,7 +6,6 @@ import { SupportedLocale } from '../../types/types-locale'
 import time from '../basic/time'
 import valTool from '../basic/val-tool'
 import type { ComposerTranslation } from "vue-i18n"
-import en from "../../locales/messages/en.json"
 
 // 如果当前分钟数 < 30，获取下一个点的整点时间
 // 否则获取下两个点的整点时间
@@ -303,7 +302,8 @@ interface BaseMenuItem {
 
 export function getRemindMenu(hasWhen: boolean) {
   const text_key = hasWhen ? "remind_early" : "remind_later"
-  const length = en.date_related[text_key].length
+  const _list = hasWhen ? REMIND_EARLY : REMIND_LATER
+  const length = _list.length
 
   const list: BaseMenuItem[] = []
   for(let i=0; i<length; i++) {

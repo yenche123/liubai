@@ -13,6 +13,7 @@ import checker from "~/utils/other/checker";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import type { SnackbarRes } from "~/types/other/types-snackbar"
 import type { LiuRemindMe } from "~/types/types-atom"
+import type { ContentConfig } from "~/types/other/types-custom";
 
 const SEC = 1000
 const MIN = 60 * SEC
@@ -27,6 +28,7 @@ export function useWhenAndRemind(props: TcaProps) {
   const whenStamp = computed(() => threadData.value.whenStamp)
   const remindStamp = computed(() => threadData.value.remindStamp)
   const remindMe = computed(() => threadData.value.remindMe)
+  const contentCfg = computed(() => threadData.value.config)
   const wStore = useWorkspaceStore()
 
   const canEdit = computed(() => {
@@ -46,7 +48,7 @@ export function useWhenAndRemind(props: TcaProps) {
   })
   const remindStr = ref("")
   const countdownStr = ref("")
-  handleCountdown(whenStamp, countdownStr)
+  handleCountdown(whenStamp, countdownStr, contentCfg)
   handleRemind(remindStamp, remindMe, remindStr)
 
   const onTapWhenItem = (item: MenuItem, index: number) => {
@@ -75,6 +77,7 @@ export function useWhenAndRemind(props: TcaProps) {
 function handleCountdown(
   whenStamp: ComputedRef<number | undefined>,
   countdownStr: Ref<string>,
+  contentCfg: ComputedRef<ContentConfig | undefined>
 ) {
   let timeout = 0
 
@@ -122,10 +125,17 @@ function handleCountdown(
       countdownStr.value = ""
       return
     }
+
+    const cCfg = contentCfg.value
+    if(cCfg && cCfg.showCountdown === false) {
+      countdownStr.value = ""
+      return
+    }
+
     _setCountDown(wStamp)
   }
 
-  watch(whenStamp, (newV) => {
+  watch([whenStamp, contentCfg], (newV) => {
     _judgeCountdown()
   })
 

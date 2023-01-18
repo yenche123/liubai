@@ -1,22 +1,24 @@
 // 处理点击赞、收藏、评论分享等按钮
 
-import { LiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import type { ThreadShow } from "~/types/types-content"
 import type { TcProps, TcEmits } from "./types"
-import type { RouteLocationNormalizedLoaded } from "vue-router"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
-import { getLocalPreference } from "~/utils/system/local-preference"
 import type { ThreadOperation } from "~/types/types-atom"
 import liuUtil from "~/utils/liu-util"
 import tcCommon from "./tc-common"
+import valTool from "~/utils/basic/val-tool"
+import type { PreCtx } from "~/components/level1/utils/tools/types"
+import { preHandle } from "~/components/level1/utils/preHandle"
+import commonOperate from "~/components/level1/utils/common-operate"
 
 interface TcoCtx {
   props: TcProps
-  router: LiuRouter
-  route: RouteLocationNormalizedLoaded
+  rr: RouteAndLiuRouter
   tsStore: ThreadShowStore
   wStore: WorkspaceStore
   emits: TcEmits
@@ -28,13 +30,12 @@ export function useTcOperation(
 ) {
 
   const wStore = useWorkspaceStore()
-  const { route, router } = useRouteAndLiuRouter()
+  const rr = useRouteAndLiuRouter()
   const tsStore = useThreadShowStore()
 
   const ctx: TcoCtx = {
     props,
-    router,
-    route,
+    rr,
     tsStore,
     wStore,
     emits
@@ -69,7 +70,10 @@ function handleOperationFromBottomBar(
 
   if(op === "edit") {
     // 编辑
-    ctx.router.push({ name: "edit", params: { contentId: threadData._id } })
+    handle_edit(ctx, threadData)
+  }
+  else if(op === "hourglass") {
+    handle_showCountdown(ctx, threadData)
   }
   else if(op === "state" || op === "delete") {
     ctx.emits("newoperate", op, position, threadData)
@@ -82,18 +86,26 @@ function handleOperationFromBottomBar(
   }
 }
 
-
-function _getNewThreadShow(props: TcProps) {
-  const oldThread = props.threadData
-  const newThread = JSON.parse(JSON.stringify(oldThread)) as ThreadShow
-  return newThread
+function handle_edit(
+  ctx: TcoCtx,
+  threadData: ThreadShow,
+) {
+  ctx.rr.router.push({ name: "edit", params: { contentId: threadData._id } })
 }
 
-function _getMyData(ctx: TcoCtx) {
-  const { memberId } = ctx.wStore
-  const { local_id: userId = "" } = getLocalPreference()
-
-  return { memberId, userId }
+async function handle_showCountdown(
+  ctx: TcoCtx,
+  threadData: ThreadShow,
+) {
+  const thread = valTool.copyObject(threadData)
+  const preCtx: PreCtx = {
+    thread,
+    rr: ctx.rr,
+  }
+  const d = await preHandle(preCtx)
+  if(!d) return
+  
+  commonOperate.setShowCountdown(thread, d.memberId, d.userId)
 }
 
 // 跳转到详情页

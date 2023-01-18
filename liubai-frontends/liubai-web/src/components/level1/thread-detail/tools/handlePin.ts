@@ -1,10 +1,10 @@
-import type { ToidCtx } from "./types"
+import type { PreCtx } from "../../utils/tools/types"
 import { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
-import { preHandle } from "./preHandle"
+import { preHandle } from "../../utils/preHandle"
 
-export async function handlePin(ctx: ToidCtx) {
+export async function handlePin(ctx: PreCtx) {
   const { thread } = ctx
   const data = await preHandle(ctx)
   if(!data) return

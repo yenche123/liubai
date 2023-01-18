@@ -4,6 +4,7 @@ import type { LiuContent, LiuRemindMe, StatusView, TagView } from "./types-atom"
 import type { FileLocal, ImageLocal } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
 import type { EmojiData } from "./types-content"
+import type { ContentConfig } from "./other/types-custom"
 
 interface BaseLocalTable {
   _id: string
@@ -61,6 +62,7 @@ export interface ContentLocalTable extends BaseLocalTable {
   editedStamp: number       // 动态被编辑的时间戳
   tagIds?: string[]         // 用于显示的 tagId
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
+  config?: ContentConfig
 }
 
 export interface DraftLocalTable extends BaseLocalTable {
@@ -83,6 +85,7 @@ export interface DraftLocalTable extends BaseLocalTable {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   editedStamp: number       // 草稿被用户实际编辑的时间戳
+  config?: ContentConfig
 }
 
 export interface CollectionLocalTable extends BaseLocalTable {

@@ -15,6 +15,7 @@ import {
   restoreThread,
 } from "./specific-operate/delete-related"
 import { toPin, undoPin } from "./specific-operate/pin"
+import { setShowCountdown } from "./specific-operate/other"
 
 export default {
   toCollect,
@@ -30,4 +31,5 @@ export default {
   restoreThread,
   toPin,
   undoPin,
+  setShowCountdown,
 }

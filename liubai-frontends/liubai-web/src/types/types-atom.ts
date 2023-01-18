@@ -111,14 +111,17 @@ export type LiuLimit = "pin" // 置顶数
 
 
 // 在 thread-card 内部消化完成的操作（不需要移除或添加至列表里）
-export type ThreadInnerOperation = "comment" | "edit" | "share"
+export type ThreadInnerOperation = "comment" | "edit" | "share" | "hourglass"
 
 export type ThreadOutterOperation = "collect" | "emoji" | "delete" | "state" 
   | "restore" | "delete_forever" | "pin"
 
 export type ThreadOperation = ThreadInnerOperation | ThreadOutterOperation
 
+export type ThreadInnerUndo = "undo_hourglass"
+
 export type ThreadOutterUndo = "undo_collect" | "undo_emoji" | "undo_delete"
   | "undo_state" | "undo_pin"
 
-export type WhyThreadChange = ThreadOutterOperation | ThreadOutterUndo | ""
+export type WhyThreadChange = ThreadInnerOperation | ThreadOutterOperation
+  | ThreadInnerUndo | ThreadOutterUndo | ""

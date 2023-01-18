@@ -181,6 +181,7 @@ export async function getThreadsByCollectionOrEmoji(
       editedStr: liuUtil.getEditedStr(v.createdStamp, v.editedStamp),
       tags,
       tagSearched: v.tagSearched,
+      config: v.config,
     }
 
     list.push(obj)

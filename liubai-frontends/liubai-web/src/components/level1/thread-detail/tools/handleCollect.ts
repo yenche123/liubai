@@ -1,11 +1,11 @@
-import type { ToidCtx } from "./types"
+import type { PreCtx } from "../../utils/tools/types"
 import { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
-import { preHandle } from "./preHandle"
+import { preHandle } from "../../utils/preHandle"
 
 // 1. 开始执行，去获取前置数据
-export async function handleCollect(ctx: ToidCtx) {
+export async function handleCollect(ctx: PreCtx) {
   const { thread } = ctx
   const data = await preHandle(ctx)
   if(!data) return

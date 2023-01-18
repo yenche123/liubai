@@ -4,6 +4,7 @@ import type { OState } from "~/types/types-basic";
 import ider from "~/utils/basic/ider";
 import time from "~/utils/basic/time";
 import { db } from "~/utils/db";
+import type { ContentConfig } from "~/types/other/types-custom"
 
 async function collect(
   thread: ThreadShow, 
@@ -151,6 +152,23 @@ async function deleteForever(
   return true
 }
 
+async function setContentConfig(
+  id: string,
+  contentConfig?: ContentConfig
+) {
+  const now1 = time.getTime()
+  const newData: Partial<ContentLocalTable> = {
+    updatedStamp: now1,
+    config: contentConfig,
+  } 
+  const res = await db.contents.update(id, newData)
+  console.log(`db-opt setContentConfig 的结果: `)
+  console.log(res)
+  console.log(" ")
+
+  return true
+}
+
 async function countPin() {
   const filterFunc = (item: ContentLocalTable) => {
     if(item.oState !== "OK") return false
@@ -169,5 +187,6 @@ export default {
   editWhenRemind,
   setNewOState,
   deleteForever,
+  setContentConfig,
   countPin,
 }

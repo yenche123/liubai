@@ -1,19 +1,17 @@
-import type { LiuRouter } from "~/routes/liu-router"
-import type { RouteLocationNormalizedLoaded } from "vue-router"
+import type { RouteAndLiuRouter } from "~/routes/liu-router"
 
 interface TccCtx {
-  router: LiuRouter
-  route: RouteLocationNormalizedLoaded
+  rr: RouteAndLiuRouter
   [otherKey: string]: any
 }
 
 function openDetailWithViceView(cid: string, ctx: TccCtx) {
-  const { route, router } = ctx
+  const { route, router } = ctx.rr
   router.pushCurrentWithNewQuery(route, { cid })
 }
 
 function openDetailWithDetailPage(contentId: string, ctx: TccCtx) {
-  const { route, router } = ctx
+  const { route, router } = ctx.rr
   router.pushNewPageWithOldQuery(route, { name: "detail", params: { contentId } })
 }
 

@@ -1,8 +1,8 @@
-import type { ToidCtx } from "./types"
+import type { PreCtx } from "./tools/types"
 import checker from "~/utils/other/checker"
 
 // 前置检查，若都正常则返回 memberId 和 userId
-export async function preHandle(ctx: ToidCtx) {
+export async function preHandle(ctx: PreCtx) {
 
   const { thread } = ctx
   const { userId, modalPromise } = checker.getUserId()

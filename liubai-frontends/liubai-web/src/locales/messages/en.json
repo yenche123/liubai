@@ -35,7 +35,9 @@
     "multi_sekect": "Multi Select",
     "editing": "Editing",
     "pin": "Pin",
-    "unpin": "Unpin"
+    "unpin": "Unpin",
+    "open_countdown": "Enable Hourglass",
+    "close_countdown": "Disable Hourglass"
   },
   "editor": {
     "when": "When",
