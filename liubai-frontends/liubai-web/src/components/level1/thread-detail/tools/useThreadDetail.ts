@@ -3,6 +3,7 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 import threadController from "~/utils/controllers/thread-controller/thread-controller";
 import type { TdData, TdProps } from "./types"
+import valTool from "~/utils/basic/val-tool";
 
 export function useThreadDetail(props: TdProps) {
 
@@ -79,6 +80,7 @@ async function loadLocal(
   tdData: TdData
 ) {
   const res = await threadController.getData({ id })
+  // await valTool.waitMilli(1500)
   if(res && res.oState === "OK") {
     tdData.state = -1
     tdData.threadShow = res

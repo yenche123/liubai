@@ -2,10 +2,11 @@
 import { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PulsarLoader from '~/components/loaders/pulsar-loader/pulsar-loader.vue';
+import { usePlaceholderView, TRANSITION_MS } from "./tools/usePlaceholderView"
 
 const { t } = useI18n()
 
-defineProps({
+const props = defineProps({
   pState: {
     // -1: 不显示 
     // 0: loading      
@@ -21,16 +22,25 @@ defineProps({
   errMsg: {
     type: String,
     default: "",
+  },
+  zIndex: {
+    type: Number,
+    default: 500,
   }
 })
 
+const { enable, show } = usePlaceholderView(props)
 
 </script>
 <template>
 
-  <div v-if="pState >= 0" class="pv-container">
+<div v-if="enable" class="pv-shell">
 
-    <div v-if="pState === 0" class="pv-loading">
+  <div class="pv-container"
+    :class="{ 'pv-container_hidden': !show }"
+  >
+
+    <div v-if="pState <= 0" class="pv-loading">
       <PulsarLoader color="var(--main-normal)"></PulsarLoader>
     </div>
 
@@ -53,16 +63,30 @@ defineProps({
 
   </div>
 
+</div>
+
 </template>
 <style scoped lang="scss">
+
+.pv-shell {
+  width: 100%;
+  height: 0px;
+  position: relative;
+  z-index: v-bind("zIndex");
+}
 
 .pv-container {
   width: 100%;
   height: calc(100vh - 80px);
+  top: 0;
+  left: 0;
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  transition: v-bind("TRANSITION_MS + 'ms'");
+  z-index: v-bind("zIndex");
 
   .pv-loading {
     display: flex;
@@ -110,6 +134,10 @@ defineProps({
     
   }
 
+}
+
+.pv-container_hidden {
+  opacity: 0;
 }
 
 
