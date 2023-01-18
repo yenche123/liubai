@@ -4,31 +4,29 @@ import type { TipTapEditor } from "~/types/types-editor"
 import type { TcProps } from "./types"
 import liuApi from '~/utils/liu-api';
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
-import type { LiuRouter } from '~/routes/liu-router';
-import type { RouteLocationNormalizedLoaded } from "vue-router"
+import type { RouteAndLiuRouter } from '~/routes/liu-router';
 import { useGlobalStateStore } from '~/hooks/stores/useGlobalStateStore';
 import type {
   GlobalStateStore
 } from "~/hooks/stores/useGlobalStateStore"
 import liuUtil from '~/utils/liu-util';
+import tcCommon from "./tc-common"
 
 interface TcCtx {
   props: TcProps
-  route: RouteLocationNormalizedLoaded
-  router: LiuRouter
+  rr: RouteAndLiuRouter
   gStore: GlobalStateStore
 }
 
 export function useThreadCard(props: TcProps) {
   const editorCoreRef = ref<typeof EditorCore | null>(null)
   const editor = shallowRef<TipTapEditor>()
-  const { route, router } = useRouteAndLiuRouter()
+  const rr = useRouteAndLiuRouter()
   const gStore = useGlobalStateStore()
 
   const ctx: TcCtx = {
     props,
-    route,
-    router,
+    rr,
     gStore
   }
 
@@ -72,7 +70,7 @@ function handleTapThreadCard(
   ctx: TcCtx,
 ) {
   const { target, currentTarget } = e
-  const { props, route, router } = ctx
+  const { props } = ctx
 
   if(liuApi.getSelectionText()) return
 
@@ -88,22 +86,11 @@ function handleTapThreadCard(
   
   if(toWhere === "detail-page") {
     // 用 detail-page 打开
-    openDetailWithDetailPage(cid, ctx)
+    tcCommon.openDetailWithDetailPage(cid, ctx)
   }
   else if(toWhere === "vice-view") {
     // 用侧边栏打开.......
-    openDetailWithViceView(cid, ctx)
+    tcCommon.openDetailWithViceView(cid, ctx)
   }
-}
-
-
-function openDetailWithViceView(cid: string, ctx: TcCtx) {
-  const { route, router } = ctx
-  router.pushCurrentWithNewQuery(route, { cid })
-}
-
-function openDetailWithDetailPage(contentId: string, ctx: TcCtx) {
-  const { route, router } = ctx
-  router.pushNewPageWithOldQuery(route, { name: "detail", params: { contentId } })
 }
 
