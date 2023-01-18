@@ -171,10 +171,6 @@ async function loadList(
 
   const results = await threadController.getList(opt1)
 
-  console.log("让我看看 results: ")
-  console.log(results)
-  console.log(" ")
-
   // 赋值到 list 上
   if(length < 1 || reload || viewType === "PINNED") {
     ctx.list.value = results
