@@ -2,7 +2,7 @@ import type { ThreadOutterOperation } from "~/types/types-atom"
 import { handleCollect } from "./handleCollect"
 import type { TdData } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
-import type { ToidCtx } from "./types"
+import type { PreCtx } from "../../utils/tools/types"
 import {
   handleDelete,
   handleRestore,
@@ -23,7 +23,7 @@ export function useThreadOperateInDetail(
     const { threadShow } = tdData
 
     if(!threadShow) return
-    const ctx: ToidCtx = {
+    const ctx: PreCtx = {
       thread: threadShow,
       rr
     }
@@ -36,7 +36,7 @@ export function useThreadOperateInDetail(
 }
 
 function handleOutterOperation(
-  ctx: ToidCtx,
+  ctx: PreCtx,
   operation: ThreadOutterOperation
 ) {
 

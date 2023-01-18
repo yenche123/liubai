@@ -1,10 +1,10 @@
-import type { ToidCtx } from "./types"
-import { preHandle } from "./preHandle"
+import type { PreCtx } from "../../utils/tools/types"
+import { preHandle } from "../../utils/preHandle"
 import valTool from "~/utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
 
 export async function handleDelete(
-  ctx: ToidCtx
+  ctx: PreCtx
 ) {
   const d = await preHandle(ctx)
   if(!d) return
@@ -25,7 +25,7 @@ export async function handleDelete(
 
 // 恢复
 export async function handleRestore(
-  ctx: ToidCtx
+  ctx: PreCtx
 ) {
   const d = await preHandle(ctx)
   if(!d) return
@@ -39,7 +39,7 @@ export async function handleRestore(
 
 // 彻底删除
 export async function handleDeleteForever(
-  ctx: ToidCtx
+  ctx: PreCtx
 ) {
   const d = await preHandle(ctx)
   if(!d) return
