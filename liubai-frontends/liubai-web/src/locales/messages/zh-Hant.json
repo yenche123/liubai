@@ -36,7 +36,9 @@
     "multi_sekect": "多選",
     "editing": "編輯中",
     "pin": "釘選",
-    "unpin": "取消釘選"
+    "unpin": "取消釘選",
+    "open_countdown": "開啟倒數",
+    "close_countdown": "關閉倒數"
   },
   "editor": {
     "when": "什麼時候",

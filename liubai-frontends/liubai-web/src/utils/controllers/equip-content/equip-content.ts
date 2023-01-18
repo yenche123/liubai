@@ -104,6 +104,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       editedStr: liuUtil.getEditedStr(v.createdStamp, v.editedStamp),
       tags,
       tagSearched: v.tagSearched,
+      config: v.config,
     }
 
     // if(obj.briefing) {

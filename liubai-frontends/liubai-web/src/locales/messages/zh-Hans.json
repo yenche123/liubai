@@ -36,7 +36,9 @@
     "multi_sekect": "多选",
     "editing": "编辑中",
     "pin": "置顶",
-    "unpin": "取消置顶"
+    "unpin": "取消置顶",
+    "open_countdown": "开启倒计时",
+    "close_countdown": "关闭倒计时"
   },
   "editor": {
     "when": "什么时候",

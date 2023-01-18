@@ -5,9 +5,11 @@ import type {
   TcbEmits,
   TcbMenuItem,
 } from "./types"
+import time from "~/utils/basic/time";
+import type { ThreadShow } from "~/types/types-content";
 
 
-// 正常: 编辑、状态、编辑
+// 正常: 编辑、状态、删除
 const MENU_1: TcbMenuItem[] = [
   {
     text_key: "common.edit",
@@ -54,17 +56,10 @@ export function useTcBottombar(
     const list = [...MENU_1]
 
     // 动态添加置顶/取消置顶
-    let pinObj: TcbMenuItem = {
-      text_key: "common.pin",
-      operation: "pin",
-      iconName: "pin"
-    }
-    if(t.pinStamp) {
-      // 已置顶，添加 "取消置顶"
-      pinObj.text_key = "common.unpin"
-      pinObj.iconName = "unpin"
-    }
-    list.splice(0, 0, pinObj)
+    handlePin(t, list)
+
+    // 动态添加（倒计时器）开关
+    handleCountdown(t, list)
 
     return list
   })
@@ -80,4 +75,45 @@ export function useTcBottombar(
     footerMenu,
     onTapMenuItem,
   }
+}
+
+function handlePin(
+  t: ThreadShow,
+  list: TcbMenuItem[],
+) {
+  // 动态添加置顶/取消置顶
+  let pinObj: TcbMenuItem = {
+    text_key: "common.pin",
+    operation: "pin",
+    iconName: "pin"
+  }
+  if(t.pinStamp) {
+    // 已置顶，添加 "取消置顶"
+    pinObj.text_key = "common.unpin"
+    pinObj.iconName = "unpin"
+  }
+  list.splice(0, 0, pinObj)
+}
+
+
+function handleCountdown(
+  t: ThreadShow,
+  list: TcbMenuItem[],
+) {
+  const { whenStamp, config: cCfg } = t
+  if(!whenStamp) return
+  const now = time.getTime() 
+  const diff = whenStamp - now
+  if(diff < 1000) return
+
+  let hourglassObj: TcbMenuItem = {
+    text_key: "common.close_countdown",
+    operation: "hourglass",
+    iconName: "hourglass_disabled_400"
+  }
+  if(cCfg && cCfg.showCountdown === false) {
+    hourglassObj.text_key = "common.open_countdown"
+    hourglassObj.iconName = "hourglass_enable_400"
+  }
+  list.push(hourglassObj)
 }

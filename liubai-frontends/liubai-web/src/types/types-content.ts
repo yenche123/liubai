@@ -3,6 +3,7 @@ import type { OState, VisScope, StorageState } from "./types-basic"
 import type { LiuRemindMe } from "./types-atom"
 import type { FileLocal, ImageShow } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
+import type { ContentConfig } from "./other/types-custom"
 
 export interface EmojiSystem {
   num: number
@@ -63,4 +64,5 @@ export interface ThreadShow {
   editedStr?: string
   tags?: TagShow[]
   tagSearched?: string[]
+  config?: ContentConfig
 }
