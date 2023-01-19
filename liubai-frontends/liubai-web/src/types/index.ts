@@ -13,6 +13,10 @@ export interface LocalPreference {
   token?: string
 }
 
+export interface LocalOnceData {
+  iframeRestriction?: number
+}
+
 export interface FileLocal {
   id: string
   name: string

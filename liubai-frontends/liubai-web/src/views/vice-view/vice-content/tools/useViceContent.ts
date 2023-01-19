@@ -96,6 +96,7 @@ function listenRouteChange(
     if(iframeSrc.value) {
       iframeSrc.value = ""
     }
+    vcState.value = ""
   }
   
   const checkRouteChange = (newQuery: LocationQuery) => {

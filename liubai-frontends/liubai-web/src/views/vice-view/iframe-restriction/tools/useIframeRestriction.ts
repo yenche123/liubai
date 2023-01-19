@@ -90,12 +90,16 @@ function listenViceViewPx(
 function whenVcStateChange(
   ctx: IrCtx,
 ) {
-  if(ctx.enable.value) return
-  if(ctx.vcStateRef.value !== "iframe") return
+  const enable = ctx.enable.value
+  if(ctx.vcStateRef.value !== "iframe") {
+    if(enable) close(ctx)
+    return
+  }
 
   // Todo: 检查缓存
 
-  open(ctx)
+  // 当前 是 iframe 页没错......
+  if(!enable) open(ctx)
 }
 
 async function open(

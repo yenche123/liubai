@@ -56,6 +56,9 @@ const { t } = useI18n()
       </div>
 
       <!-- 我知道了 -->
+      <div class="ir-got-it" @click="onTapConfirm">
+        <span>{{ t('tip.got_it') }}</span>
+      </div>
 
     </div>
 
@@ -115,13 +118,17 @@ const { t } = useI18n()
 }
 
 .ir-content {
-  margin-top: 10px;
+  margin-block-start: 10px;
   color: var(--main-normal);
   font-size: var(--btn-font);
   line-height: 30px;
   text-align: center;
   max-width: 75%;
   vertical-align: baseline;
+
+  span::selection {
+    background-color: var(--main-tip);
+  }
 
   .ir-open-in-new {
     width: 24px;
@@ -130,6 +137,33 @@ const { t } = useI18n()
     vertical-align: text-bottom;
   }
 }
+
+.ir-got-it {
+  margin-block-start: 24px;
+  height: 50px;
+  width: 180px;
+  font-size: var(--btn-font);
+  color: var(--card-bg);
+  background-color: var(--main-text);
+  transition: .15s;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  cursor: pointer;
+}
+
+.ir-got-it:active {
+  opacity: .66;
+}
+
+@media(hover: hover) {
+  .ir-got-it:hover {
+    opacity: .75;
+  }
+}
+
 
 .ir-container_show {
   opacity: 1;
