@@ -5,6 +5,8 @@ import VcIframe from './vc-iframe/vc-iframe.vue';
 import ThreadDetail from "~/components/level1/thread-detail/thread-detail.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
 import { useVcHeight } from "./tools/useVcHeight"
+import type { VcState } from "./tools/types"
+import { watch } from "vue";
 
 defineProps({
   isOutterDraging: {
@@ -13,6 +15,10 @@ defineProps({
   }
 })
 
+const emits = defineEmits<{
+  (event: "vcstatechange", vcState: VcState): void
+}>()
+
 const { 
   vcState,
   iframeSrc,
@@ -20,6 +26,10 @@ const {
   onTapClose,
   onTapOpenInNew,
 } = useViceContent()
+
+watch(vcState, (newV) => {
+  emits("vcstatechange", newV)
+})
 
 const {
   vcHeight,

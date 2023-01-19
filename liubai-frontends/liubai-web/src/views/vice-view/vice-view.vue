@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { toRefs } from "vue";
+import { ref, toRefs } from "vue";
 import { useViceView } from "./tools/useViceView"
 import { useVvUI } from "./tools/useVvUI";
+import type { VcState } from "./vice-content/tools/types";
 import ViceContent from "./vice-content/vice-content.vue";
 
 const emits = defineEmits<{
@@ -22,6 +23,11 @@ const {
   isDraging,
   onStartDrag,
 } = useVvUI()
+
+const vcStateToIr = ref<VcState>("")
+const onVcStateChange = (newV: VcState) => {
+  vcStateToIr.value = newV
+}
 
 
 </script>
@@ -60,12 +66,16 @@ const {
     >
 
       <div class="vv-inner-box">
-        <ViceContent :is-outter-draging="isDraging"></ViceContent>
+        <ViceContent :is-outter-draging="isDraging"
+          @vcstatechange="onVcStateChange"
+        ></ViceContent>
       </div>
       
     </div>
     
   </div>
+
+
 </template>
 <style scoped>
 .vv-container {
