@@ -1,4 +1,4 @@
-import type { LocalPreference } from "~/types";
+import type { LocalPreference, LocalOnceData } from "~/types";
 import liuApi from "../liu-api";
 
 function getLocalPreference(): LocalPreference {
@@ -10,12 +10,22 @@ function setLocalPreference(key: keyof LocalPreference, data: any) {
   const localP = getLocalPreference()
   localP[key] = data
   const res = liuApi.setStorageSync("local-preference", localP)
-  console.log("setLocalPreference 结果...........")
-  console.log(res)
-  console.log(" ")
+}
+
+function getLocalOnceData(): LocalOnceData {
+  const res = liuApi.getStorageSync<LocalOnceData>("local-once-data") || {}
+  return res
+}
+
+function setLocalOnceData(key: keyof LocalOnceData, data: any) {
+  const localData = getLocalOnceData()
+  localData[key] = data
+  const res = liuApi.setStorageSync("local-once-data", localData)
 }
 
 export default {
   getLocalPreference,
   setLocalPreference,
+  getLocalOnceData,
+  setLocalOnceData,
 }

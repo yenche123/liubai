@@ -3,8 +3,8 @@ import { ref, toRef, watch } from "vue"
 import type { Ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
 import valTool from "~/utils/basic/val-tool"
+import localCache from "~/utils/system/local-cache"
 import time from "~/utils/basic/time"
-
 
 interface IframeRestrictionProps {
   viceViewPx: number
@@ -48,6 +48,7 @@ export function useIframeRestriction(props: IframeRestrictionProps) {
   const onTapConfirm = () => {
 
     // TODO: 操作缓存
+    localCache.setLocalOnceData("iframeRestriction", time.getTime())
 
     close(ctx)
   }
@@ -91,14 +92,18 @@ function whenVcStateChange(
   ctx: IrCtx,
 ) {
   const enable = ctx.enable.value
+
+  // 如果当前没有 iframe
   if(ctx.vcStateRef.value !== "iframe") {
     if(enable) close(ctx)
     return
   }
 
-  // Todo: 检查缓存
+  // 检查缓存
+  const res = localCache.getLocalOnceData()
+  if(res.iframeRestriction) return
 
-  // 当前 是 iframe 页没错......
+  // 当前 是 iframe 页并且 enable 是关闭的
   if(!enable) open(ctx)
 }
 
