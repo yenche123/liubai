@@ -37,7 +37,9 @@
     "pin": "Pin",
     "unpin": "Unpin",
     "open_countdown": "Enable Hourglass",
-    "close_countdown": "Disable Hourglass"
+    "close_countdown": "Disable Hourglass",
+    "list": "List",
+    "kanban": "Kanban"
   },
   "editor": {
     "when": "When",

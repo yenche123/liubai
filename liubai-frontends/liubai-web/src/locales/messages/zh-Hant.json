@@ -37,7 +37,9 @@
     "pin": "釘選",
     "unpin": "取消釘選",
     "open_countdown": "開啟倒數",
-    "close_countdown": "關閉倒數"
+    "close_countdown": "關閉倒數",
+    "list": "列表",
+    "kanban": "看板"
   },
   "editor": {
     "when": "什麼時候",

@@ -37,7 +37,9 @@
     "pin": "置顶",
     "unpin": "取消置顶",
     "open_countdown": "开启倒计时",
-    "close_countdown": "关闭倒计时"
+    "close_countdown": "关闭倒计时",
+    "list": "列表",
+    "kanban": "看板"
   },
   "editor": {
     "when": "什么时候",
