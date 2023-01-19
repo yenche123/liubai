@@ -19,14 +19,18 @@ useProvideSnIndicator()
   <main-view>
     
     <!-- 列表 -->
-    <div v-show="whichPage === 1">
+    <div v-show="whichPage === 1"
+      class="sp-layout"
+    >
       <list-page :current="whichPage"
         @tapnavi="onNaviChange"
       ></list-page>
     </div>
 
     <!-- 看板 -->
-    <div v-show="whichPage === 2">
+    <div v-show="whichPage === 2"
+      class="sp-layout"
+    >
       <kanban-page :current="whichPage"
         @tapnavi="onNaviChange"
       ></kanban-page>
@@ -39,5 +43,11 @@ useProvideSnIndicator()
 
 </template>
 <style scoped>
+
+.sp-layout {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 
 </style>

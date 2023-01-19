@@ -43,10 +43,26 @@ export default defineComponent({
       @tapnavi="$emit('tapnavi', $event)"
     ></StateNavi>
 
+    <div class="kp-test"></div>
+    <div class="kp-test2"></div>
+    <div class="kp-test"></div>
+
+
   </scroll-view>
 
 </template>
 <style scoped lang="scss">
 
+.kp-test {
+  width: 500px;
+  height: 500px;
+  background-color: wheat;
+}
+
+.kp-test2 {
+  width: 500px;
+  height: 500px;
+  background-color: darkcyan;
+}
 
 </style>

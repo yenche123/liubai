@@ -34,27 +34,38 @@ const { isMobile } = liuApi.getCharacteristic()
 
 <template>
 
-  <div ref="sv" class="scroll-view" 
+  <div ref="sv" class="liu-scroll-view" 
+    :class="{ 'liu-scroll-view_flex': direction === 'horizontal' }"
     @scroll="onScrolling"
   >
     <slot></slot>
   </div>
 </template>
 
-<style scoped lang="scss">
-.scroll-view {
+<style scoped>
+.liu-scroll-view {
   width: 100%;
   height: 100%;
   position: relative;
   overflow: auto;
+  display: v-bind("direction === 'horizontal' ? 'flex' : 'block'");
+  align-items: flex-start;
+  flex-wrap: nowrap;
 }
 
-.scroll-view::-webkit-scrollbar {
+.liu-scroll-view::-webkit-scrollbar {
   display: v-bind("isMobile ? 'none' : 'block'");
 }
 
-.scroll-view::-webkit-scrollbar-thumb {
+.liu-scroll-view::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
+}
+
+</style>
+<style>
+
+.liu-scroll-view_flex > div {
+  flex: 0 0 auto;
 }
 
 </style>
