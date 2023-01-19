@@ -21,6 +21,7 @@ import LiuImg from "./components/common/liu-img/liu-img.vue"
 import LiuCheckbox from "./components/common/liu-checkbox/liu-checkbox.vue"
 import LiuMenu from "./components/common/liu-menu/liu-menu.vue"
 import FloatingVue from 'floating-vue'
+import { plugin as Slicksort } from 'vue-slicksort';
 
 
 const app = createApp(App)
@@ -46,5 +47,6 @@ app.use(FloatingVue, {
     }
   }
 })
+app.use(Slicksort)
 
 app.mount('#app')

@@ -5,7 +5,7 @@ const LoginPage = () => import("../pages/level1/login-page/login-page.vue")
 const IndexPage = () => import("../pages/level1/index-page/index-page.vue")
 const DetailPage = () => import("../pages/level2/detail-page/detail-page.vue")
 const FavoritePage = () => import("../pages/level2/favorite-page/favorite-page.vue")
-const KanbanPage = () => import("../pages/level2/kanban-page/kanban-page.vue")
+const StatePage = () => import("../pages/level2/state-page/state-page.vue")
 const TrashPage = () => import("../pages/level2/trash-page/trash-page.vue")
 const TagPage = () => import("../pages/level2/tag-page/tag-page.vue")
 const ConnectPage = () => import("../pages/level2/connect-page/connect-page.vue")
@@ -102,12 +102,12 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/kanban",
+    path: "/state",
     components: {
-      default: KanbanPage,
+      default: StatePage,
       LeftSidebar,
     },
-    name: "kanban",
+    name: "state",
     meta: {
       keepAlive: true,
     }
@@ -169,12 +169,12 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/w/:workspaceId(\\w{10,})/kanban",
+    path: "/w/:workspaceId(\\w{10,})/state",
     components: {
-      default: KanbanPage,
+      default: StatePage,
       LeftSidebar,
     },
-    name: "collaborative-kanban",
+    name: "collaborative-state",
     meta: {
       keepAlive: true,
     }

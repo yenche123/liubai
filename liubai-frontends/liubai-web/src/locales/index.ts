@@ -35,7 +35,7 @@ const initLocale = (): SupportedLocale => {
 }
 
 
-const i18n = createI18n({
+export const i18n = createI18n({
   locale: initLocale(),
   messages: {
     "en": en,
@@ -45,6 +45,4 @@ const i18n = createI18n({
   legacy: false
 })
 
-export {
-  i18n
-}
+export type LiuI18n = typeof i18n

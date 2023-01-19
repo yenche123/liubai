@@ -1,5 +1,5 @@
-import { TipTapJSONContent } from "../../types/types-editor";
-
+import type { TipTapJSONContent } from "~/types/types-editor";
+import type { LiuNodeType } from "~/types/types-atom"
 
 export function listToText(
   list: TipTapJSONContent[],
@@ -19,7 +19,8 @@ export function listToText(
       if(type === "codeBlock") plainText += "\n"
     }
 
-    let addes = [
+    let addes: LiuNodeType[] = [
+      "heading",
       "paragraph", 
       "bulletList",
       "orderedList", 
@@ -28,7 +29,7 @@ export function listToText(
       "codeBlock",
       "horizontalRule"
     ]
-    if(type && addes.includes(type)) {
+    if(type && addes.includes(type as LiuNodeType)) {
       plainText += "\n"
     }
 

@@ -8,7 +8,6 @@ import imgHelper from "../../images/img-helper"
 import type { TipTapJSONContent } from "~/types/types-editor";
 import { tagIdsToShows } from "../../system/workspace";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
-import { getBriefing } from "../equip-content/tools/briefing";
 import liuUtil from "../../liu-util"
 import commonPack from "../tools/common-pack"
 interface MyCollectionOpt {
@@ -160,7 +159,8 @@ export async function getThreadsByCollectionOrEmoji(
       storageState: v.storageState,
       title,
       content: tiptapContent,
-      briefing: getBriefing(newDesc),
+      briefing: commonPack.getBriefing(newDesc),
+      summary: commonPack.getSummary(liuDesc, v.files),
       images,
       files: v.files,
       whenStamp: v.whenStamp,

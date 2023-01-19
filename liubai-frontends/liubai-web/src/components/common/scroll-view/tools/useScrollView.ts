@@ -2,14 +2,13 @@ import { onActivated, provide, reactive, ref, shallowRef, watch } from "vue";
 import type { SvProps, SvEmits, SvProvideInject, SvBottomUp } from "./types"
 import { scrollViewKey, svScollingKey, svBottomUpKey } from "../../../../utils/provide-keys"
 import type { Ref } from "vue";
-import cfg from "../../../../config";
 
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
 
 export function useScrollView(props: SvProps, emits: SvEmits) {
   const sv = ref<HTMLElement | null>(null)
-  const scrollTop = ref(0)
+  const scrollPosition = ref(0)
 
   const proData = reactive<SvProvideInject>({
     type: "",
@@ -19,80 +18,94 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   const bottomUp = shallowRef<SvBottomUp>({ type: "pixel" })
 
   provide(scrollViewKey, proData)
-  provide(svScollingKey, scrollTop)
+  provide(svScollingKey, scrollPosition)
   provide(svBottomUpKey, bottomUp)
 
-  let lastScrollTop = 0
+  let lastScrollPosition = 0
   let lastScrollStamp = 0
   let lastInvokeStamp = 0
 
   const onScrolling = (e: Event) => {
-    if(!sv.value) return
+    const _sv = sv.value
+    if(!_sv) return
 
-    const sT = sv.value.scrollTop
+    const isVertical = props.direction === "vertical"
+    const sP = isVertical ? _sv.scrollTop : _sv.scrollLeft
 
     const now = Date.now()
     if(lastScrollStamp + MIN_SCROLL_DURATION > now) {
       // 确保在零点时 不会受防抖节流影响
-      if(sT !== 0 || scrollTop.value === 0) return
+      if(sP !== 0 || scrollPosition.value === 0) return
     }
     lastScrollStamp = now
   
     
-    const cH = sv.value.clientHeight
-    const sH = sv.value.scrollHeight - cH
+    const cH = isVertical ? _sv.clientHeight : _sv.clientWidth
+    const sH0 = isVertical ? _sv.scrollHeight : _sv.scrollWidth
+    const sH = sH0 - cH
 
-    scrollTop.value = sT
-    emits("scroll", { scrollTop: sT })
+    scrollPosition.value = sP
+    emits("scroll", { scrollPosition: sP })
   
-    const DIRECTION = sT - lastScrollTop > 0 ? "DOWN" : "UP"
+    const DIRECTION = sP - lastScrollPosition > 0 ? "DOWN" : "UP"
     const middleLine = DIRECTION === "DOWN" ? sH - props.lowerThreshold : props.upperThreshold
     
     if(DIRECTION === "DOWN") {
-      if(lastScrollTop < middleLine && middleLine <= sT) {
+      if(lastScrollPosition < middleLine && middleLine <= sP) {
         if(lastInvokeStamp + MIN_INVOKE_DURATION < now) {
-          emits("scrolltolower", { scrollTop: sT })
-          proData.type = "to_lower"
+          emits("scrolltoend", { scrollPosition: sP })
+          proData.type = "to_end"
           proData.triggerNum++
           lastInvokeStamp = now
         }
       }
     }
     else if(DIRECTION === "UP") {
-      if(lastScrollTop > middleLine && middleLine >= sT) {
+      if(lastScrollPosition > middleLine && middleLine >= sP) {
         if(lastInvokeStamp + MIN_INVOKE_DURATION < now) {
-          emits("scrolltoupper", { scrollTop: sT })
-          proData.type = "to_upper"
+          emits("scrolltostart", { scrollPosition: sP })
+          proData.type = "to_start"
           proData.triggerNum++
           lastInvokeStamp = now
         }
       }
     }
   
-    lastScrollTop = sT
+    lastScrollPosition = sP
   }
 
   onActivated(() => {
-    if(!sv.value || !scrollTop.value) return
-    sv.value.scrollTop = scrollTop.value
+    const sp = scrollPosition.value
+    if(!sv.value || !sp) return
+    const isVertical = props.direction === "vertical"
+    if(isVertical) sv.value.scrollTop = sp
+    else sv.value.scrollLeft = sp
   })
 
   watch(bottomUp, (newV) => {
-    whenBottomUp(sv, newV)
+    whenBottomUp(sv, newV, props)
   })
 
-  return { sv, scrollTop, onScrolling }
+  return { sv, scrollPosition, onScrolling }
 }
 
 function whenBottomUp(
   sv: Ref<HTMLElement | null>,
   bu: SvBottomUp,
+  props: SvProps,
 ) {
   if(!sv.value) return
+  
+  const isVertical = props.direction === "vertical"
+  const sop: ScrollToOptions = {
+    behavior: "smooth" 
+  }
 
   // 如果是 number 类型，直接滚动到特定位置
   if(bu.type === "pixel" && typeof bu.pixel !== "undefined") {
-    sv.value.scrollTo({ top: bu.pixel, behavior: "smooth" })
+    if(isVertical) sop.top = bu.pixel
+    else sop.left = bu.pixel
+    sv.value.scrollTo(sop)
     return
   }
 
@@ -101,15 +114,19 @@ function whenBottomUp(
   const el = sv.value.querySelector(bu.selectors)
   if(!el) return
 
-  const scrollTop = sv.value.scrollTop
+  const scrollPosition = isVertical ? sv.value.scrollTop : sv.value.scrollLeft
 
   const domRect = el.getBoundingClientRect()
-  const { top } = domRect
-  const diff = top - cfg.navi_height
+  const { top, left } = domRect
+  let diff = isVertical ? top : left
+  if(bu.initPixel) diff = diff - bu.initPixel
 
-  let sT = scrollTop + diff
-  if(sT < 0) sT = 0
+  let sP = scrollPosition + diff
+  if(sP < 0) sP = 0
 
-  sv.value.scrollTo({ top: sT, behavior: "smooth" })
+  if(isVertical) sop.top = sP
+  else sop.left = sP
+
+  sv.value.scrollTo(sop)
 }
 

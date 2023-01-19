@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { PropType } from 'vue';
+import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PulsarLoader from '~/components/loaders/pulsar-loader/pulsar-loader.vue';
 import { usePlaceholderView, TRANSITION_MS } from "./tools/usePlaceholderView"
+import type { PageState } from "~/types/types-atom"
 
 const { t } = useI18n()
 
@@ -12,7 +13,7 @@ const props = defineProps({
     // 0: loading      
     // 50: 404   
     // 51: 没有访问权限
-    type: Number as PropType<-1 | 0 | 50 | 51>,
+    type: Number as PropType<PageState>,
     default: -1
   },
   errTitle: {

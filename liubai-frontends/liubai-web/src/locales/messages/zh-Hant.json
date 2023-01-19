@@ -8,7 +8,6 @@
     "home": "首頁",
     "favorite": "收藏",
     "tags": "標籤",
-    "kanban": "看板",
     "trash": "回收站",
     "connects": "連接",
     "detail": "詳情",
@@ -38,7 +37,9 @@
     "pin": "釘選",
     "unpin": "取消釘選",
     "open_countdown": "開啟倒數",
-    "close_countdown": "關閉倒數"
+    "close_countdown": "關閉倒數",
+    "list": "列表",
+    "kanban": "看板"
   },
   "editor": {
     "when": "什麼時候",

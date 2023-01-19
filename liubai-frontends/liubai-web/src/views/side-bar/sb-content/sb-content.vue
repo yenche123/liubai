@@ -34,7 +34,7 @@ const state = computed(() => {
   if(q.tags === "01") return "tags"
   if(n === "index") return "index"
   if(n === "favorite") return "favorite"
-  if(n === "kanban") return "kanban"
+  if(n === "state") return "state"
   if(n === "trash") return "trash"
   if(n === "connect") return "connect"
   return ""
@@ -92,18 +92,18 @@ const color_selected = "var(--main-normal)"
   </AppLink>
 
   <!-- 看板 -->
-  <NaviLink class="sb-link liu-hover" to="/kanban"
-    :class="{ 'sb-link_selected': state === 'kanban' }"
+  <NaviLink class="sb-link liu-hover" to="/state"
+    :class="{ 'sb-link_selected': state === 'state' }"
     :tabindex="tabindex"
     @aftertap="onTapItem"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
-        :name="state === 'kanban' ? 'kanban_selected' : 'kanban'" 
-        :color="state === 'kanban' ? color_selected : color"
+        :name="state === 'state' ? 'state_selected' : 'state'" 
+        :color="state === 'state' ? color_selected : color"
       ></SvgIcon>
     </div>
-    <span>{{ t("common.kanban") }}</span>
+    <span>{{ t("common.state") }}</span>
   </NaviLink>
 
   <!-- 连接 -->

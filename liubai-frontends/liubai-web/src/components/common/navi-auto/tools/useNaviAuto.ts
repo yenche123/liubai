@@ -13,7 +13,7 @@ interface NaviAutoCtx {
   enable: Ref<boolean>
   show: Ref<boolean>
   shadow: Ref<boolean>
-  scrollTop: Ref<number>
+  scrollPosition: Ref<number>
   layout: LayoutStore,
 }
 
@@ -25,13 +25,13 @@ export function useNaviAuto() {
 
   // 引入上下文
   const layout = useLayoutStore()
-  const scrollTop = inject(svScollingKey, ref(0))
+  const scrollPosition = inject(svScollingKey, ref(0))
 
   const ctx = {
     enable,
     show,
     shadow,
-    scrollTop,
+    scrollPosition,
     layout,
   }
 
@@ -44,7 +44,7 @@ export function useNaviAuto() {
   judgeState(ctx)
 
   // 监听滚动，处理是否要显示阴影
-  watch(scrollTop, (newV) => {
+  watch(scrollPosition, (newV) => {
     if(!enable.value) return
     judgeShadow(newV, shadow)
   })
@@ -94,7 +94,7 @@ function judgeState(
   justLoad = false
 
   // 判断阴影变化
-  judgeShadow(ctx.scrollTop.value, ctx.shadow)
+  judgeShadow(ctx.scrollPosition.value, ctx.shadow)
 }
 
 function _openInstantly(
