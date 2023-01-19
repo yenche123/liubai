@@ -4,6 +4,7 @@ import { useViceView } from "./tools/useViceView"
 import { useVvUI } from "./tools/useVvUI";
 import type { VcState } from "./vice-content/tools/types";
 import ViceContent from "./vice-content/vice-content.vue";
+import IframeRestriction from "./iframe-restriction/iframe-restriction.vue";
 
 const emits = defineEmits<{
   (e: "widthchange", widthPx: number): void
@@ -75,6 +76,10 @@ const onVcStateChange = (newV: VcState) => {
     
   </div>
 
+  <IframeRestriction
+    :vice-view-px="viceViewPx"
+    :vc-state="vcStateToIr"
+  ></IframeRestriction>
 
 </template>
 <style scoped>

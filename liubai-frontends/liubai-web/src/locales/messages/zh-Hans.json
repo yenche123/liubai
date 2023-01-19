@@ -149,7 +149,11 @@
     "deleted_forever": "已完全删除",
     "restored": "已恢复",
     "pinned": "已置顶",
-    "pin_maximum": "置顶数已达上限"
+    "pin_maximum": "置顶数已达上限",
+    "ir_title": "有一件事要告诉你",
+    "ir_content_1": "部分网页不支持在侧边栏 (iframe) 中打开，若遇到无法正常加载的情况，可点击",
+    "ir_content_2": "用新的分页开启。",
+    "got_it": "我知道了"
   },
   "card_bubble": {
     "copy": "复制",

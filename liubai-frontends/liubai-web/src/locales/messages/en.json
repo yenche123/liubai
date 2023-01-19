@@ -149,7 +149,11 @@
     "deleted_forever": "Deleted Completely",
     "restored": "Restored",
     "pinned": "Pinned",
-    "pin_maximum": "The pin number has reached the maximum"
+    "pin_maximum": "The pin number has reached the maximum",
+    "ir_title": "One thing to tell",
+    "ir_content_1": "Some websites do not support opening in the sidebar (iframe). If you are enable to open a webpage normally, you can tap ",
+    "ir_content_2": " to open in new tab.",
+    "got_it": "Got it"
   },
   "card_bubble": {
     "copy": "Copy",
