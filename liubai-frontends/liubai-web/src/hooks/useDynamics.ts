@@ -3,7 +3,7 @@
 import { Ref, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import type { SupportedTheme } from "../types"
-import { getLocalPreference } from "../utils/system/local-preference"
+import localCache from "../utils/system/local-cache"
 
 const theme = ref<SupportedTheme | "">("")
 
@@ -33,7 +33,7 @@ export const useDynamics = () => {
 // 初始化主题
 function initTheme() {
   if(theme.value) return
-  const localPf = getLocalPreference()
+  const localPf = localCache.getLocalPreference()
   const _theme = localPf.theme
   if(!_theme || _theme === "system") {
     theme.value = getThemeFromSystem()

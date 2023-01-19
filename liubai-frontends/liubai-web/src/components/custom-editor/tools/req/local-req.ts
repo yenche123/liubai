@@ -1,10 +1,10 @@
-import { db } from "../../../../utils/db"
-import { DraftLocalTable, ContentLocalTable } from "../../../../types/types-table"
-import { getLocalPreference } from "../../../../utils/system/local-preference"
-import ider from "../../../../utils/basic/ider"
+import { db } from "~/utils/db"
+import { DraftLocalTable, ContentLocalTable } from "~/types/types-table"
+import localCache from "~/utils/system/local-cache"
+import ider from "~/utils/basic/ider"
 
 function _getUserId(): string {
-  const { local_id } = getLocalPreference()
+  const { local_id } = localCache.getLocalPreference()
   return local_id as string
 }
 

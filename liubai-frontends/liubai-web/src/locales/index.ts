@@ -4,12 +4,12 @@ import zhHans from "./messages/zh-Hans.json"
 import zhHant from "./messages/zh-Hant.json"
 import type { SupportedLocale } from "../types/types-locale"
 import { isSupportedLocale } from '../types/types-locale'
-import { getLocalPreference } from '../utils/system/local-preference'
+import localCache from '../utils/system/local-cache'
 
 // 初始化语言
 const initLocale = (): SupportedLocale => {
   // 从缓存里取
-  const localPf = getLocalPreference()
+  const localPf = localCache.getLocalPreference()
   const lang0 = localPf.language
   // return "en"
   if(lang0 && isSupportedLocale(lang0)) return lang0

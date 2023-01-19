@@ -3,7 +3,7 @@
 import cui from "../../components/custom-ui"
 import { useWorkspaceStore } from "../../hooks/stores/useWorkspaceStore"
 import { ThreadShow } from "../../types/types-content"
-import { getLocalPreference } from "../system/local-preference"
+import localCache from "~/utils/system/local-cache"
 
 interface GetUParam {
   showTip?: boolean        // 如果不存在 userId 时，是否展示弹窗提示
@@ -14,7 +14,7 @@ const getUserId = (
 ) => {
   opt.showTip = opt.showTip ?? true
 
-  const { local_id: userId } = getLocalPreference()
+  const { local_id: userId } = localCache.getLocalPreference()
   if(!userId) {
     if(opt.showTip) {
       const res = cui.showModal({

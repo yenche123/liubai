@@ -1,22 +1,22 @@
 // 给定 ContentLocalTable 返回 ThreadShow
 
-import type { ContentLocalTable } from "../../../types/types-table";
+import type { ContentLocalTable } from "~/types/types-table";
 import { db } from "../../db";
 import collectionController from "../collection-controller/collection-controller";
-import type { MemberShow, TagShow, ThreadShow } from "../../../types/types-content";
+import type { MemberShow, TagShow, ThreadShow } from "~/types/types-content";
 import imgHelper from "../../images/img-helper";
-import { getLocalPreference } from "../../system/local-preference";
-import type { TipTapJSONContent } from "../../../types/types-editor";
+import localCache from "../../system/local-cache";
+import type { TipTapJSONContent } from "~/types/types-editor";
 import liuUtil from "../../liu-util";
 import { getBriefing } from "./tools/briefing";
 import { tagIdsToShows } from "../../system/workspace";
-import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import commonPack from "../tools/common-pack";
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
 
   const wStore = useWorkspaceStore()
-  const { local_id: user_id } = getLocalPreference()
+  const { local_id: user_id } = localCache.getLocalPreference()
   if(contents.length < 1) return []
 
   const content_ids = contents.map(v => v._id)

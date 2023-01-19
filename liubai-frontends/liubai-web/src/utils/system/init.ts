@@ -1,6 +1,6 @@
 import liuUtil from "../liu-util"
 import { firstCreate } from "./tools/first-create"
-import { getLocalPreference, setLocalPreference } from "./local-preference"
+import localCache from "./local-cache"
 import { useWorkspaceStore } from "../../hooks/stores/useWorkspaceStore"
 import { initSpace } from "./tools/init-space"
 import { findSystem } from "./tools/find-sytem"
@@ -17,7 +17,7 @@ export async function init() {
     return
   }
 
-  const localPf = getLocalPreference()
+  const localPf = localCache.getLocalPreference()
   if(localPf.local_id) {
     // 【待完善】去修改 User 表里的 lastRefresh
     // 【待完善】去初始化 workspace id
@@ -32,7 +32,7 @@ export async function init() {
   let createData = await firstCreate()
   if(!createData) return
   const { workspace, member, user } = createData
-  setLocalPreference("local_id", user._id)
+  localCache.setLocalPreference("local_id", user._id)
   
   const opt: SpaceAndMemberOpt = {
     spaceId: workspace._id,

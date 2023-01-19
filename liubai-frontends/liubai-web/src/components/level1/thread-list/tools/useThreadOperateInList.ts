@@ -6,7 +6,7 @@ import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
-import { getLocalPreference } from "~/utils/system/local-preference"
+import localCache from "~/utils/system/local-cache"
 import type { TlProps, TlViewType } from "./types"
 import type { Ref } from "vue";
 import valTool from "~/utils/basic/val-tool"
@@ -39,7 +39,7 @@ export function useThreadOperateInList(
     thread: ThreadShow
   ) => {
     const { memberId } = wStore
-    const { local_id: userId } = getLocalPreference()
+    const { local_id: userId } = localCache.getLocalPreference()
 
     // 因为是列表页，是登录的情况下才能查看得到，故 memberId / userId 不存在，直接走异常逻辑
     if(!memberId || !userId) {

@@ -1,9 +1,9 @@
 import { watch } from "vue"
-import { useRouteAndLiuRouter } from "../../../routes/liu-router"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import { db } from "../../db"
-import { getLocalPreference } from "../local-preference"
-import type { SpaceAndMemberOpt, WorkspaceStore } from "../../../hooks/stores/useWorkspaceStore"
+import localCache from "../local-cache"
+import type { SpaceAndMemberOpt, WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 
 export function initSpace(
   store: WorkspaceStore
@@ -57,7 +57,7 @@ async function whenRouteChange(
   if(checkWorkspace === false && store.spaceId) return
 
   // 从 IndexedDB 里查找 个人工作区的 spaceId
-  const localP = getLocalPreference()
+  const localP = localCache.getLocalPreference()
   const userId = localP.local_id
   if(!userId) return
 
@@ -105,7 +105,7 @@ async function handleCollaborativeSpace(
   newSpaceId: string,
 ) {
   if(store.spaceId === newSpaceId) return
-  const localP = getLocalPreference()
+  const localP = localCache.getLocalPreference()
   const userId = localP.local_id
   if(!userId) return
 

@@ -7,7 +7,7 @@ import type { CeState } from "./atom-ce"
 import type { Ref } from "vue";
 import ider from "../../../utils/basic/ider";
 import { DraftLocalTable } from "../../../types/types-table";
-import { getLocalPreference } from "../../../utils/system/local-preference";
+import localCache from "~/utils/system/local-cache";
 import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
 import time from "../../../utils/basic/time";
 import localReq from "./req/local-req";
@@ -212,7 +212,7 @@ async function toSave(state: CeState) {
   }
 
   const draftId = state.draftId ?? ider.createDraftId()
-  const { local_id: userId } = getLocalPreference()
+  const { local_id: userId } = localCache.getLocalPreference()
   let liuDesc: TipTapJSONContent[] | undefined = undefined
   if(state.editorContent?.json) {
     const { type, content } = state.editorContent.json

@@ -1,13 +1,13 @@
-import type { CollectionLocalTable } from "../../../types/types-table"
+import type { CollectionLocalTable } from "~/types/types-table"
 import { db } from "../../db"
-import { getLocalPreference } from "../../system/local-preference"
+import localCache from "../../system/local-cache"
 import type { TcListOption } from "../thread-controller/type"
 import { getMemberShows } from "../equip-content/equip-content"
-import type { TagShow, ThreadShow } from "../../../types/types-content";
+import type { TagShow, ThreadShow } from "~/types/types-content";
 import imgHelper from "../../images/img-helper"
-import type { TipTapJSONContent } from "../../../types/types-editor";
+import type { TipTapJSONContent } from "~/types/types-editor";
 import { tagIdsToShows } from "../../system/workspace";
-import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { getBriefing } from "../equip-content/tools/briefing";
 import liuUtil from "../../liu-util"
 import commonPack from "../tools/common-pack"
@@ -18,7 +18,7 @@ interface MyCollectionOpt {
 // 根据 contents 的 id 来获取我的收藏或点赞
 async function getMyCollectionByIds(opt: MyCollectionOpt) {
 
-  const { local_id: user_id } = getLocalPreference()
+  const { local_id: user_id } = localCache.getLocalPreference()
   if(!user_id) return []
 
   let tmp = db.collections.where("content_id").anyOf(opt.content_ids)
@@ -47,7 +47,7 @@ export async function getThreadsByCollectionOrEmoji(
   } = opt ?? {}
 
   const wStore = useWorkspaceStore()
-  const { local_id: user_id } = getLocalPreference()
+  const { local_id: user_id } = localCache.getLocalPreference()
   let res: CollectionLocalTable[] = []
 
   const filterFunc = (item: CollectionLocalTable) => {

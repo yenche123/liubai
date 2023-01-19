@@ -1,19 +1,19 @@
 import type { Ref, ShallowRef } from "vue";
-import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
-import type { TipTapEditor } from "../../../types/types-editor"
-import type { ContentLocalTable } from "../../../types/types-table";
-import ider from "../../../utils/basic/ider";
-import { getLocalPreference } from "../../../utils/system/local-preference";
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
+import type { TipTapEditor } from "~/types/types-editor"
+import type { ContentLocalTable } from "~/types/types-table";
+import ider from "~/utils/basic/ider";
+import localCache from "~/utils/system/local-cache";
 import type { CeState, CeEmits } from "./atom-ce"
-import time from "../../../utils/basic/time";
-import transferUtil from "../../../utils/transfer-util";
-import liuUtil from "../../../utils/liu-util";
-import type { LiuRemindMe } from "../../../types/types-atom";
+import time from "~/utils/basic/time";
+import transferUtil from "~/utils/transfer-util";
+import liuUtil from "~/utils/liu-util";
+import type { LiuRemindMe } from "~/types/types-atom";
 import localReq from "./req/local-req";
-import type { ThreadShowStore } from "../../../hooks/stores/useThreadShowStore";
+import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { storeToRefs } from "pinia";
-import { equipThreads } from "../../../utils/controllers/equip-content/equip-content";
-import { getTagIdsParents } from "../../../utils/system/workspace";
+import { equipThreads } from "~/utils/controllers/equip-content/equip-content";
+import { getTagIdsParents } from "~/utils/system/workspace";
 
 // 本文件处理发表的逻辑
 
@@ -54,7 +54,7 @@ async function toRelease(
   focusRequired: boolean
 ) {
   
-  const { local_id: user } = getLocalPreference()
+  const { local_id: user } = localCache.getLocalPreference()
   if(!user) return
 
   const state = ctx.state
