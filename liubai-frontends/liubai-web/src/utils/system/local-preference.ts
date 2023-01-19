@@ -1,6 +1,5 @@
-import type { LocalPreference } from "../../types";
+import type { LocalPreference } from "~/types";
 import liuApi from "../liu-api";
-
 
 
 export function getLocalPreference(): LocalPreference {
