@@ -80,6 +80,7 @@ export interface LiuAtomState {
   text?: string
   color?: string         // TODO: 改为 LiuStateColor
   showInIndex?: boolean
+  contentIds?: string[]
   updateStamp: number
   insertStamp: number
 }
