@@ -1,6 +1,6 @@
 // 接口名称后缀为 LocalTable 的，代表是本地的数据表
 import type { OState, VisScope, StorageState } from "./types-basic"
-import type { LiuContent, LiuRemindMe, StatusView, TagView } from "./types-atom"
+import type { LiuContent, LiuRemindMe, TagView, LiuContentState } from "./types-atom"
 import type { FileLocal, ImageLocal } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
 import type { EmojiData } from "./types-content"
@@ -13,7 +13,7 @@ interface BaseLocalTable {
   updatedStamp: number
 }
 
-export interface UserLocalTable extends BaseLocalTable{
+export interface UserLocalTable extends BaseLocalTable {
   oState: "NORMAL"
   lastRefresh: number
   email?: string
@@ -23,7 +23,7 @@ export interface UserLocalTable extends BaseLocalTable{
 
 export interface WorkspaceLocalTable extends BaseLocalTable {
   infoType: "ME" | "TEAM"
-  statusList?: StatusView[]
+  stateConfig?: LiuContentState
   tagList?: TagView[]
   oState: OState
   owner?: string

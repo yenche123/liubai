@@ -75,11 +75,18 @@ export interface LiuContent {
   text?: string
 }
 
-export interface StatusView {
-  statusId: string
-  statusType: "SYSTEM" | "CUSTOM"
-  title?: string         // statusType 为 CUSTOM 时必填
-  color?: string         // statusType 为 CUSTOM 时必填
+export interface LiuAtomState {
+  id: string
+  text?: string
+  color?: string         // TODO: 改为 LiuStateColor
+  showInIndex?: boolean
+  updateStamp: number
+  insertStamp: number
+}
+
+export interface LiuContentState {
+  stateList?: LiuAtomState[]
+  updateStamp: number
 }
 
 export interface TagView {
