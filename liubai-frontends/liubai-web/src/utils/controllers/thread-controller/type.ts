@@ -11,7 +11,7 @@ export interface TcListOption {
   onlyLocal?: boolean
 
   // 当前列表的视图类型
-  viewType: ThreadListViewType,
+  viewType: ThreadListViewType
 
   // 每次最多加载多少个，默认为 16（该值是计算过，在 1980px 的大屏上也可以触发触底加载的）
   limit?: number
@@ -40,6 +40,16 @@ export interface TcListOption {
 
   // 指定某个 member 的动态，若有值填 member_id
   member?: string
+
+  // 加载特定的动态
+  ids?: string[]
+
+  // 排除某些动态
+  excludeIds?: string[]
+
+  // 加载特定状态的动态
+  stateId?: string
+  
 }
 
 export interface TcDataOption {

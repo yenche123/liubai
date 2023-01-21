@@ -62,6 +62,7 @@ export interface ContentLocalTable extends BaseLocalTable {
   editedStamp: number       // 动态被编辑的时间戳
   tagIds?: string[]         // 用于显示的 tagId
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
+  stateId?: string
   config?: ContentConfig
 }
 

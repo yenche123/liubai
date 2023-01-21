@@ -1,6 +1,6 @@
 import { db } from "../../../db";
 import type { TcListOption } from "../type";
-import type { ContentLocalTable } from "../../../../types/types-table";
+import type { ContentLocalTable } from "~/types/types-table";
 import { equipThreads } from "../../equip-content/equip-content";
 import { getThreadsByCollectionOrEmoji } from "../../collection-controller/collection-controller"
 
@@ -17,6 +17,9 @@ async function getList(
     tagId,
     collectType,
     viewType,
+    ids,
+    excludeIds,
+    stateId,
   } = opt ?? {}
 
   if(collectType === "EXPRESS" || collectType === "FAVORITE") {
@@ -29,10 +32,12 @@ async function getList(
   let list: ContentLocalTable[] = []
 
   const filterFunc = (item: ContentLocalTable) => {
-    const { tagSearched = [], pinStamp } = item
+    const { tagSearched = [], pinStamp, _id } = item
     if(tagId && !tagSearched.includes(tagId)) return false
+    if(stateId && stateId !== item.stateId) return false
     if(isIndex && pinStamp) return false
     if(isPin && !pinStamp) return false
+    if(excludeIds && excludeIds.includes(_id)) return false
     if(item.workspace === workspace && item.oState === oState) {
       if(!member) return true
       if(member === item.member) return true
@@ -43,7 +48,26 @@ async function getList(
   let key = oState === 'OK' ? "createdStamp" : "updatedStamp"
   if(isPin) key = "pinStamp"
 
-  if(!lastItemStamp || isPin) {
+  if(ids?.length) {
+    // I. 加载特定 ids
+    let tmp = db.contents.where("_id").anyOf(ids)
+    tmp = tmp.filter(filterFunc)
+    let tmpList = await tmp.toArray()
+
+    // 排序成 ids 的顺序
+    if(tmpList.length > 1) {
+      ids.forEach(id => {
+        let data = tmpList.find(v => v._id === id)
+        if(data) list.push(data)
+      })
+    }
+    else {
+      list = tmpList
+    }
+
+  }
+  else if(!lastItemStamp || isPin) {
+    // II. 首次加载
     let tmp = db.contents.orderBy(key)
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
@@ -54,7 +78,7 @@ async function getList(
     // console.timeEnd("查询首页")
   }
   else {
-    // 查询首页以后
+    // III. 分页加载
     let w = db.contents.where(key)
     let tmp = sort === "desc" ? w.below(lastItemStamp) : w.above(lastItemStamp)
     if(sort === "desc") tmp = tmp.reverse()
