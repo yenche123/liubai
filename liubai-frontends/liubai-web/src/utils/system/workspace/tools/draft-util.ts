@@ -1,6 +1,6 @@
 import { db } from "../../../db";
 import type { WhichTagChange } from "./types";
-import type { DraftLocalTable } from "../../../../types/types-table";
+import type { DraftLocalTable } from "~/types/types-table";
 
 export async function updateDraftForTagAcross(
   whichTagChange: WhichTagChange,

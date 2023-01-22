@@ -1,5 +1,5 @@
-import type { TipTapJSONContent } from "../../types/types-editor"
-import type { LiuContent } from "../../types/types-atom"
+import type { TipTapJSONContent } from "~/types/types-editor"
+import type { LiuContent } from "~/types/types-atom"
 import { trimJSONContent } from "./trim"
 import { equipLink, depriveLink } from "./link"
 import { filterNotLiuType } from "./filter"

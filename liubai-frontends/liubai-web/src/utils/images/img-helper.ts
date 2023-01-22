@@ -1,5 +1,5 @@
 import Compressor from 'compressorjs';
-import type { ImageLocal, ImageShow } from "../../types"
+import type { ImageLocal, ImageShow } from "~/types"
 import liuUtil from '../liu-util';
 import ider from '../basic/ider';
 import { encode as blurhashEncode } from "blurhash";

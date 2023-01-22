@@ -1,4 +1,4 @@
-import type { TipTapJSONContent } from "../../types/types-editor"
+import type { TipTapJSONContent } from "~/types/types-editor"
 
 export function trimJSONContent(list: TipTapJSONContent[]) {
   // 从前面开始 trim

@@ -1,4 +1,4 @@
-import { TagView } from "../../../../types/types-atom"
+import type { TagView } from "~/types/types-atom"
 
 export interface WhichTagChange {
   changeType?: "translate" | "across"    // 平移 / 跨级移动

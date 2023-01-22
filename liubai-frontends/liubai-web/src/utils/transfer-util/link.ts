@@ -1,6 +1,6 @@
 
-import type { TipTapJSONContent } from "../../types/types-editor"
-import type { LiuContent } from "../../types/types-atom"
+import type { TipTapJSONContent } from "~/types/types-editor"
+import type { LiuContent } from "~/types/types-atom"
 import valTool from "../basic/val-tool"
 
 // 装载 link

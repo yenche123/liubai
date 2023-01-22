@@ -1,9 +1,9 @@
 import { db } from "../../../db";
 import type { WhichTagChange } from "./types";
 import { getTagIdsParents } from "../index"
-import type { ContentLocalTable } from "../../../../types/types-table";
+import type { ContentLocalTable } from "~/types/types-table";
 import { findParentOfTag } from "./tag-util";
-import { TagView } from "../../../../types/types-atom";
+import type { TagView } from "~/types/types-atom";
 import time from "../../../basic/time";
 
 export async function updateContentForTagAcross(

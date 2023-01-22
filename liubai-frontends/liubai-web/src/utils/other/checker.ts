@@ -1,8 +1,8 @@
 // 执行一些操作之前的前置操作，比如获取 userId / memberId 等等的
 
-import cui from "../../components/custom-ui"
-import { useWorkspaceStore } from "../../hooks/stores/useWorkspaceStore"
-import { ThreadShow } from "../../types/types-content"
+import cui from "~/components/custom-ui"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
+import type { ThreadShow } from "~/types/types-content"
 import localCache from "~/utils/system/local-cache"
 
 interface GetUParam {

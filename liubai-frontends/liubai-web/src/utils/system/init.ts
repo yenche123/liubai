@@ -1,10 +1,10 @@
 import liuUtil from "../liu-util"
 import { firstCreate } from "./tools/first-create"
 import localCache from "./local-cache"
-import { useWorkspaceStore } from "../../hooks/stores/useWorkspaceStore"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { initSpace } from "./tools/init-space"
 import { findSystem } from "./tools/find-sytem"
-import type { SpaceAndMemberOpt } from "../../hooks/stores/useWorkspaceStore"
+import type { SpaceAndMemberOpt } from "~/hooks/stores/useWorkspaceStore"
 
 export async function init() {
   const store = useWorkspaceStore()

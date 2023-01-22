@@ -1,5 +1,5 @@
 // 一些自定义的 util
-import type { WhatDetail } from "../../types/other/types-custom"
+import type { WhatDetail } from "~/types/other/types-custom"
 import { useWindowSize } from "~/hooks/useVueUse"
 
 export function toWhatDetail(): WhatDetail {

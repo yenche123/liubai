@@ -1,5 +1,5 @@
-import type { TagView } from "../../../../types/types-atom";
-import { TagShow } from "../../../../types/types-content";
+import type { TagView } from "~/types/types-atom";
+import type { TagShow } from "~/types/types-content";
 import ider from "../../../basic/ider";
 import time from "../../../basic/time";
 import valTool from "../../../basic/val-tool";

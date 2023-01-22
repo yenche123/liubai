@@ -1,6 +1,6 @@
-import type { TipTapJSONContent } from "../../types/types-editor"
-import type { LiuContent } from "../../types/types-atom"
-import { isLiuNodeType, isLiuMarkType } from "../../types/types-atom"
+import type { TipTapJSONContent } from "~/types/types-editor"
+import type { LiuContent } from "~/types/types-atom"
+import { isLiuNodeType, isLiuMarkType } from "~/types/types-atom"
 
 // 过滤掉不是 liu 的节点或 mark 类型
 export function filterNotLiuType(
