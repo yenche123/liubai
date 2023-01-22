@@ -35,7 +35,7 @@ const {
   left: 0;
   user-select: none;
   opacity: 0;
-  background-color: rgba(0, 0, 0, .86);
+  background-color: rgba(0, 0, 0, 1);
   transition: v-bind("TRANSITION_DURATION + 'ms'");
   z-index: 3000;
 }
@@ -44,5 +44,11 @@ const {
   opacity: 1;
 }
 
+/** pc 设备，背景有透明度 */
+@media(hover: hover) {
+  .pi-container {
+    background-color: rgba(0, 0, 0, .86);
+  }
+}
 
 </style>
