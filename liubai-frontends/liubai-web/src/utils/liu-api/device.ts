@@ -1,6 +1,12 @@
 
 
 type ResolveReject = (res: boolean | undefined) => void
+export interface BatteryManager extends EventTarget {
+  charging: boolean
+  chargingTime: number
+  dischargingTime: number
+  level: number
+}
 
 const copyToClipboard = (text: string) => {
 
@@ -50,6 +56,35 @@ const copyToClipboard = (text: string) => {
   return new Promise(_t)
 }
 
+const vibrate = (pattern: VibratePattern) => {
+  if(!navigator || !('vibrate' in navigator)) {
+    return false
+  }
+
+  let res: Boolean
+  try {
+    res = navigator.vibrate(pattern)
+  }
+  catch(err) {
+    console.log("vibrate err: ")
+    console.log(err)
+    return false
+  }
+  return res
+}
+
+const getBattery = async () => {
+  if(!navigator || !('getBattery' in navigator)) {
+    return false
+  }
+
+  //@ts-ignore
+  const res = await navigator.getBattery() as BatteryManager
+  return res
+}
+
 export default {
   copyToClipboard,
+  vibrate,
+  getBattery,
 }

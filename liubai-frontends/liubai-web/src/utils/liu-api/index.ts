@@ -11,6 +11,8 @@ import liuPermission from "./permission"
 
 export default {
   copyToClipboard: device.copyToClipboard,
+  vibrate: device.vibrate,
+  getBattery: device.getBattery,
   getStorageSync: storage.getStorageSync,
   setStorageSync: storage.setStorageSync,
   removeStorageSync: storage.removeStorageSync,
