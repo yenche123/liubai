@@ -33,7 +33,13 @@ export function useViceContent() {
   const onTapOpenInNew = () => {
     let url: URL | undefined
     const vs = vcState.value
-    if(vs === "iframe" && iframeSrc.value) {
+    const q = route.query
+
+    if(q.pdf && typeof q.pdf === "string") {
+      window.open(q.pdf, "_blank")
+      return
+    }
+    else if(vs === "iframe" && iframeSrc.value) {
       url = new URL(iframeSrc.value)
       const query = url.searchParams
       if(query.has("igu")) {
