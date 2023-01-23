@@ -118,8 +118,15 @@ function listenRouteChange(
 
 /*********** 根据参数判断是否打开侧边栏  *************/
 function judgeIfOpen(newQuery: LocationQuery): boolean {
-  let { cid, outq, gpt3 } = newQuery
-  if(cid || outq || gpt3) return true
+  if(!newQuery) return false
+  let { cid } = newQuery
+  if(cid) return true
+  const { iframe_keys } = cfg
+  for(let key of iframe_keys) {
+    if(newQuery[key]) {
+      return true
+    }
+  }
   return false
 }
 

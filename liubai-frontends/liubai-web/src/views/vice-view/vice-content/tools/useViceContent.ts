@@ -1,4 +1,4 @@
-import { onActivated, onDeactivated, ref, watch } from "vue";
+import { onActivated, ref, watch } from "vue";
 import type { LocationQuery } from "vue-router";
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import valTool from "~/utils/basic/val-tool";
@@ -77,6 +77,11 @@ function listenRouteChange(
     setNewIframeSrc(CHAT_GPT3)
   }
 
+  const openPDF = (q: string) => {
+    const url = `/lib/pdf-js/web/viewer.html?file=${encodeURIComponent(q)}`
+    setNewIframeSrc(url)
+  }
+
   const openGougoSearch = (q: string) => {
     const url = new URL(SOUGO_SEARCH)
     url.pathname = "/web/searchList.jsp"
@@ -100,11 +105,15 @@ function listenRouteChange(
   }
   
   const checkRouteChange = (newQuery: LocationQuery) => {
-    const { outq, gpt3, cid } = newQuery
+    const { outq, gpt3, cid, pdf } = newQuery
 
     if(outq && typeof outq === "string") {
       vcState.value = "iframe"
       openGoogleSerach(outq)
+    }
+    else if(pdf && typeof pdf === "string") {
+      vcState.value = "iframe"
+      openPDF(pdf)
     }
     else if(gpt3 && typeof gpt3 === "string") {
       vcState.value = "iframe"
