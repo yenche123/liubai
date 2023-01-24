@@ -50,7 +50,7 @@ function _openByIframe(
 ) {
   let url = ""
   if(f.file) {
-    [url] = liuUtil.createObjURLs([f.file])
+    [url] = liuUtil.createURLsFromFileOrImage([f])
   }
   else if(f.cloud_url) {
     url = f.cloud_url
@@ -66,7 +66,7 @@ function _downloadByA(f: FileLocal) {
   let url = ""
   let useCreateObj = false
   if(f.file) {
-    [url] = liuUtil.createObjURLs([f.file])
+    [url] = liuUtil.createURLsFromFileOrImage([f])
     useCreateObj = true
   }
   else if(f.cloud_url) {
@@ -94,7 +94,7 @@ function _downloadByA(f: FileLocal) {
 function _downloadByWindow(f: FileLocal) {
   let url = ""
   if(f.file) {
-    [url] = liuUtil.createObjURLs([f.file])
+    [url] = liuUtil.createURLsFromFileOrImage([f])
   }
   else if(f.cloud_url) {
     url = f.cloud_url

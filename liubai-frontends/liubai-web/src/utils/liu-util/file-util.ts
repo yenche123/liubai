@@ -1,5 +1,5 @@
-
-
+import type { FileLocal, ImageLocal } from "~/types"
+import time from "../basic/time"
 
 // 获取允许的图片类型 由 , 拼接而成的字符串
 export function getAcceptImgTypesString() {
@@ -20,6 +20,81 @@ export function createObjURLs(files: Array<Blob | File>): string[] {
   }
 
   return list
+}
+
+
+type UrlMapKey = string
+
+interface UrlMapVal {
+  createStamp: number
+  usedStamp: number
+  url: string
+  num: number
+}
+
+let fileMap = new Map<UrlMapKey, UrlMapVal>()
+
+export function createURLsFromFileOrImage(
+  files: Array<FileLocal | ImageLocal>,
+) {
+  const list: string[] = []
+  for(let i=0; i<files.length; i++) {
+    const v = files[i]
+    const data = fileMap.get(v.id)
+    const now = time.getTime()
+    if(data) {
+      list.push(data.url)
+      data.usedStamp = now
+      data.num++
+
+      fileMap.set(v.id, data)
+    }
+    else if(v.file) {
+      const res = URL.createObjectURL(v.file)
+      list.push(res)
+      const newData: UrlMapVal = {
+        createStamp: now,
+        usedStamp: now,
+        url: res,
+        num: 1,
+      }
+      fileMap.set(v.id, newData)
+    }
+    else {
+      list.push("")
+    }
+  }
+
+  // 修剪 map
+  _trimFileMap()
+
+  return list
+}
+
+/**
+ * 修剪 fileMap，控制 fileMap 的大小
+ */
+function _trimFileMap() {
+  const size = fileMap.size
+
+  const MAX_SIZE = 100
+  if(size < MAX_SIZE) return
+
+  const now = time.getTime()
+  const MIN_3 = 1000 * 60 * 3
+
+  const keys = fileMap.keys()
+  for(let key of keys) {
+    const data = fileMap.get(key)
+    if(!data) continue
+    const diff = now - data.usedStamp
+    if(diff < MIN_3) continue
+    
+    URL.revokeObjectURL(data.url)
+    fileMap.delete(key)
+
+    if(fileMap.size < MAX_SIZE) break 
+  }
 }
 
 export function revokeObjURLs(urls: string[]) {

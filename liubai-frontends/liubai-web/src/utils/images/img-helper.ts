@@ -194,7 +194,7 @@ function _resizeDimensions(img: HTMLImageElement) {
 
 function imageLocalToShow(val: ImageLocal): ImageShow {
   const obj: ImageShow = {
-    src: val.file ? liuUtil.createObjURLs([val.file])[0] : (val.cloud_url ?? ""),
+    src: val.file ? liuUtil.createURLsFromFileOrImage([val])[0] : (val.cloud_url ?? ""),
     id: val.id,
     width: val.width,
     height: val.height,
