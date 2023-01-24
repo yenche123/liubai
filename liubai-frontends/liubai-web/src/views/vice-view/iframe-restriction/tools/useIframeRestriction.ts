@@ -5,6 +5,8 @@ import { useWindowSize } from "~/hooks/useVueUse"
 import valTool from "~/utils/basic/val-tool"
 import localCache from "~/utils/system/local-cache"
 import time from "~/utils/basic/time"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import type { RouteLocationNormalizedLoaded } from "vue-router"
 
 interface IframeRestrictionProps {
   viceViewPx: number
@@ -17,6 +19,7 @@ interface IrCtx {
   show: Ref<boolean>
   irPx: Ref<number>
   vvPxRef: Ref<number>
+  route: RouteLocationNormalizedLoaded
 }
 
 const MIN_IR_PX = 200
@@ -30,6 +33,7 @@ export function useIframeRestriction(props: IframeRestrictionProps) {
 
   const vcStateRef = toRef(props, "vcState")
   const vvPxRef = toRef(props, "viceViewPx")
+  const { route } = useRouteAndLiuRouter()
 
   const ctx: IrCtx = {
     vcStateRef,
@@ -37,6 +41,7 @@ export function useIframeRestriction(props: IframeRestrictionProps) {
     show,
     irPx,
     vvPxRef,
+    route,
   }
 
   watch(vcStateRef, (newV) => {
@@ -92,9 +97,11 @@ function whenVcStateChange(
   ctx: IrCtx,
 ) {
   const enable = ctx.enable.value
+  const vcState = ctx.vcStateRef.value
+  const pdfQuery = ctx.route.query?.pdf
 
-  // 如果当前没有 iframe
-  if(ctx.vcStateRef.value !== "iframe") {
+  // 如果当前不是 iframe 或当前为 pdf 预览
+  if(vcState !== "iframe" || pdfQuery) {
     if(enable) close(ctx)
     return
   }
