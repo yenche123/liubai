@@ -8,7 +8,7 @@ import { useWhoAreYou } from './tools/useWhoAreYou';
 
 const inputEl = ref<HTMLInputElement | null>(null) 
 
-const { show, inputValue, onEnter } = useWhoAreYou()
+const { show, inputValue, trimVal, onEnter } = useWhoAreYou()
 const { t } = useI18n()
 
 watch(show, async (newV) => {
@@ -34,11 +34,18 @@ watch(show, async (newV) => {
     />
   </div>
 
+  <div v-if="show" class="wru-btn-box">
+    <CustomBtn class="wru-btn" :class="{ 'wru-btn_show': trimVal }" @click="onEnter">
+      <span>{{ t('common.thatsit') }} ↵</span>
+    </CustomBtn>
+  </div>
+
 </template>
 <style scoped lang="scss">
 
 .wru-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   position: fixed;
@@ -46,6 +53,7 @@ watch(show, async (newV) => {
   left: 0;
   width: 100%;
   height: 100%;
+  min-height: 500px;
   background-color: var(--bg-color);
   z-index: 800;
 
@@ -74,6 +82,39 @@ watch(show, async (newV) => {
     .wru-input {
       font-size: var(--head-font)
     }
+  }
+
+}
+
+.wru-btn-box {
+  z-index: 801;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  visibility: hidden;
+
+  .wru-btn {
+    width: 200px;
+    opacity: 0;
+    transition: .3s;
+  }
+
+  .wru-btn_show {
+    opacity: 1;
+  }
+
+}
+
+@media screen and (min-height: 450px) {
+  .wru-btn-box {
+    visibility: visible;
   }
 
 }

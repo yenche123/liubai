@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { Ref } from "vue";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 
@@ -6,6 +6,10 @@ export function useWhoAreYou() {
   const store = useWorkspaceStore()
   const show = ref(false)
   const inputValue = ref("")
+  const trimVal = computed(() => {
+    const iv = inputValue.value
+    return iv.trim()
+  })
 
   store.$subscribe((mutation, state) => {
     const myMember = state.myMember
@@ -22,7 +26,7 @@ export function useWhoAreYou() {
     _close(show)
   }
 
-  return { show, inputValue, onEnter }
+  return { show, inputValue, trimVal, onEnter }
 }
 
 function _open(show: Ref<boolean>) {

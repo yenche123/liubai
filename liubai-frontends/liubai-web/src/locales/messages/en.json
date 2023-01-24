@@ -39,7 +39,8 @@
     "open_countdown": "Enable Hourglass",
     "close_countdown": "Disable Hourglass",
     "list": "List",
-    "kanban": "Kanban"
+    "kanban": "Kanban",
+    "thatsit": "That's it"
   },
   "editor": {
     "when": "When",
