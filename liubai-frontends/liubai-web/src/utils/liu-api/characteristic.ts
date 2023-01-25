@@ -63,6 +63,11 @@ const getCharacteristic = (): GetChaRes => {
   if(ua.includes("ios")) {
     isIOS = true
   }
+  if(ua.includes("ipod")) {
+    isIOS = true
+    isMobile = true
+    isPC = false
+  }
   if(ua.includes("ipad")) {
     isIPadOS = true
     isMobile = true
