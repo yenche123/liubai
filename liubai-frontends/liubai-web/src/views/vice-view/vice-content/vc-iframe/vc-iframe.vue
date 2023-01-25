@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import { ref } from "vue"
+import { useVcIframe } from "./tools/useVcIframe"
 
-const iframeEl = ref<HTMLIFrameElement | null>(null)
+const {
+  iframeEl,
+} = useVcIframe()
 
 defineProps({
   isOutterDraging: {
