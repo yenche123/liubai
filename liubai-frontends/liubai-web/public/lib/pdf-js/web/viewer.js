@@ -560,6 +560,28 @@ const OptionKind = {
   PREFERENCE: 0x80
 };
 exports.OptionKind = OptionKind;
+
+
+/*********** 由 liu 自定义片段 *************/
+// 判断应用语言，赋值到 lang0 上，再有 lang0 传递给 defaultOptions.locale.value
+let lang0 = navigator.language || "en-US"
+let s = null
+try {
+  s = localStorage.getItem("liu_local-preference")
+}
+catch(err) {
+  console.log("localStorage.getItem err: ", err)
+}
+if(s && typeof s === "string") {
+  let obj = JSON.parse(s)
+  if(obj.data && obj.data.language) {
+    const liuLang = obj.data.language
+    if(liuLang === "en") lang0 = "en-US"
+    else if(liuLang === "zh-Hant") lang0 = "zh-TW"
+    else if(liuLang === "zh-Hans") lang0 = "zh-CN"
+  }
+}
+
 const defaultOptions = {
   annotationEditorMode: {
     value: 0,
@@ -752,7 +774,7 @@ const defaultOptions = {
     kind: OptionKind.VIEWER
   };
   defaultOptions.locale = {
-    value: navigator.language || "en-US",
+    value: lang0,
     kind: OptionKind.VIEWER
   };
   defaultOptions.renderer = {
