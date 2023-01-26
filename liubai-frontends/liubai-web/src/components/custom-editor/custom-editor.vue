@@ -47,24 +47,26 @@ const {
   showMask,
 } = useCustomEditor()
 const { state } = initCeState(props, emits, editor)
-const {
-  onImageChange,
-  covers,
-  onClearCover,
-  onCoversSorted,
-  onFileChange,
-} = useCeFile(state)
-const {
-  tagShows,
-  onTapClearTag,
-  onAddHashTag,
-} = useCeTag(state)
 
 const {
   moreRef,
   onTapMore,
   showVirtualBar,
 } = useMoreItems(props)
+
+const {
+  onImageChange,
+  covers,
+  onClearCover,
+  onCoversSorted,
+  onFileChange,
+} = useCeFile(state, moreRef)
+const {
+  tagShows,
+  onTapClearTag,
+  onAddHashTag,
+} = useCeTag(state)
+
 
 const threadShowStore = useThreadShowStore()
 const ctx = {

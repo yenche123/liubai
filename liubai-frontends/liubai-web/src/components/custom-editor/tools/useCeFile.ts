@@ -12,6 +12,7 @@ import limit from "~/utils/limit"
 
 export function useCeFile(
   state: CeState,
+  moreRef: Ref<boolean>
 ) {
   
   const selectImagesEl = ref<HTMLInputElement | null>(null)
@@ -34,13 +35,13 @@ export function useCeFile(
     if(!files?.length) return
     console.log("接收到掉落的文件............")
     console.log(files)
-    await handleFiles(state, files)
+    await handleFiles(state, files, moreRef)
     if(!dropFiles?.value) return
     dropFiles.value = []
   })
 
   // 监听文件黏贴上来
-  listenDocumentPaste(state)
+  listenDocumentPaste(state, moreRef)
 
   const onImageChange = (files: File[]) => {
     handleFiles(state, files)
@@ -127,13 +128,14 @@ function whenImagesChanged(
 
 // 全局监听 "黏贴事件"
 function listenDocumentPaste(
-  state: CeState
+  state: CeState,
+  moreRef: Ref<boolean>,
 ) {
   const whenPaste = (e: ClipboardEvent) => {
     const fileList = e.clipboardData?.files
     if(!fileList || fileList.length < 1) return
     const files = liuUtil.getArrayFromFileList(fileList)
-    handleFiles(state, files)
+    handleFiles(state, files, moreRef)
   }
   
   onActivated(() => {
@@ -149,6 +151,7 @@ function listenDocumentPaste(
 async function handleFiles(
   state: CeState,
   files: File[],
+  moreRef?: Ref<boolean>,
 ) {
   const imgFiles = liuUtil.getOnlyImageFiles(files)
   if(imgFiles.length > 0) {
@@ -157,13 +160,14 @@ async function handleFiles(
 
   const otherFiles = liuUtil.getNotImageFiles(files)
   if(otherFiles.length > 0) {
-    handleOtherFiles(state, files)
+    handleOtherFiles(state, files, moreRef)
   }
 }
 
 function handleOtherFiles(
   state: CeState,
   files: File[],
+  moreRef?: Ref<boolean>,
 ) {
   const fileList: FileLocal[] = []
   const MB = 1024 * 1024
@@ -194,6 +198,7 @@ function handleOtherFiles(
   }
 
   state.files = fileList
+  if(moreRef) moreRef.value = true
 }
 
 async function handleImages(
