@@ -6,6 +6,7 @@ import { useSbTags } from "./tools/useSbTags";
 import { RouterLink } from 'vue-router'
 import LiuMenu from "~/components/common/liu-menu/liu-menu.vue"
 import { useStMenu } from "./tools/useStMenu";
+import liuApi from '~/utils/liu-api';
 
 defineProps({
   show: {
@@ -90,7 +91,7 @@ const {
                 <div v-else class="tag-arrow-dot"></div>
               </div>
               <div v-if="node.icon" class="tag-icon">
-                <span>{{ decodeURIComponent(node.icon) }}</span>
+                <span>{{ liuApi.decode_URI_component(node.icon) }}</span>
               </div>
               <div class="tag-title">
                 <span>{{ node.text }}</span>

@@ -1,5 +1,6 @@
 import type { TagView } from "~/types/types-atom";
 import type { TagShow } from "~/types/types-content";
+import liuApi from "~/utils/liu-api";
 import ider from "../../../basic/ider";
 import time from "../../../basic/time";
 import valTool from "../../../basic/val-tool";
@@ -38,7 +39,7 @@ export function findTagShowById(
       const obj: TagShow = {
         tagId: v.tagId,
         text: parents.join(" / "),
-        emoji: v.icon ? decodeURIComponent(v.icon) : undefined,
+        emoji: v.icon ? liuApi.decode_URI_component(v.icon) : undefined,
       }
       return obj
     }

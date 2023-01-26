@@ -12,6 +12,7 @@ import type {
 import { searchLocal } from "./tools/handle"
 import { formatTagText, findTagId } from "~/utils/system/workspace"
 import time from "~/utils/basic/time"
+import liuApi from "~/utils/liu-api"
 
 // 使用 element.scrollIntoView 让元素露出来 
 
@@ -59,7 +60,7 @@ export function initHtePicker() {
 export async function showHashTagEditor(opt: HashTagEditorParam) {
   lastInputVal = opt.text ?? ""
   inputVal.value = lastInputVal
-  lastEmoji = opt.icon ? decodeURIComponent(opt.icon) : ""
+  lastEmoji = opt.icon ? liuApi.decode_URI_component(opt.icon) : ""
   emoji.value = lastEmoji
   errCode.value = 0
   newTag.value = ""
@@ -161,7 +162,7 @@ function toEnter() {
 function toRename() {
   const text = formatTagText(inputVal.value)
   const tagId = findTagId(text)
-  const icon = emoji.value ? encodeURIComponent(emoji.value) : undefined
+  const icon = emoji.value ? liuApi.encode_URI_component(emoji.value) : undefined
   const res: HashTagEditorRes = {
     confirm: true,
     text,
@@ -184,7 +185,7 @@ function toSelect() {
   text = formatTagText(text)
   const tagId = findTagId(text)
   const _emoji = idx < 0 ? undefined : (item as TagItem).emoji
-  const icon = _emoji ? encodeURIComponent(_emoji) : undefined
+  const icon = _emoji ? liuApi.encode_URI_component(_emoji) : undefined
   const res: HashTagEditorRes = {
     confirm: true,
     text,

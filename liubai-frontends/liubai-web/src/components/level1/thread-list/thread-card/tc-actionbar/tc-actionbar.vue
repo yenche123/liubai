@@ -4,6 +4,7 @@
 // 协作工作区: 点赞、评论数（、分享）
 
 import { computed } from 'vue';
+import liuApi from '~/utils/liu-api';
 
 const props = defineProps({
   workspace: {
@@ -37,7 +38,7 @@ const emits = defineEmits<{
 // decode emoji
 const theEmoji = computed(() => {
   if(!props.myEmoji) return ""
-  const tmp = decodeURIComponent(props.myEmoji)
+  const tmp = liuApi.decode_URI_component(props.myEmoji)
   return tmp
 })
 

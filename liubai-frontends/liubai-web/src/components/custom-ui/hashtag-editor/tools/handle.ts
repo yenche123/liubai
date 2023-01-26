@@ -1,6 +1,7 @@
 import type { TagItem } from "./types"
 import type { TagView } from "~/types/types-atom"
 import { getCurrentSpaceTagList } from "~/utils/system/workspace"
+import liuApi from "~/utils/liu-api"
 
 /**
  * 从 useWorkspaceStore 里取数据，开始查找，返回 TagItem[]
@@ -69,7 +70,7 @@ function _searchInList(
       const obj: TagItem = {
         tagId: tagView.tagId,
         textBlank,
-        emoji: tagView.icon ? decodeURIComponent(tagView.icon) : undefined
+        emoji: tagView.icon ? liuApi.decode_URI_component(tagView.icon) : undefined
       }
       list.push(obj)
       if(list.length < 10 && tagView.children) {
@@ -106,7 +107,7 @@ function _pushSomeChildren(
     const obj: TagItem = {
       tagId: v.tagId,
       textBlank,
-      emoji: v.icon ? decodeURIComponent(v.icon) : undefined
+      emoji: v.icon ? liuApi.decode_URI_component(v.icon) : undefined
     }
     list.push(obj)
   }

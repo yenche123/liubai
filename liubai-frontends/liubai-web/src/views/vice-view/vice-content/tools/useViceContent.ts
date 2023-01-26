@@ -2,6 +2,7 @@ import { onActivated, ref, watch } from "vue";
 import type { LocationQuery } from "vue-router";
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import valTool from "~/utils/basic/val-tool";
+import liuApi from "~/utils/liu-api";
 import type { VcState, VcCtx } from "./types"
 
 const GOOGLE_SEARCH = "https://www.google.com/?igu=1"
@@ -84,7 +85,8 @@ function listenRouteChange(
   }
 
   const openPDF = (q: string) => {
-    const url = `/lib/pdf-js/web/viewer.html?file=${encodeURIComponent(q)}`
+    const f = liuApi.encode_URI_component(q)
+    const url = `/lib/pdf-js/web/viewer.html?file=${f}`
     setNewIframeSrc(url)
   }
 

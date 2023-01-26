@@ -20,6 +20,8 @@ export default {
   getCharacteristic: characteristic.getCharacteristic,
   requestAnimationFrame: basic.requestAnimationFrame,
   eventTargetIsSomeTag: basic.eventTargetIsSomeTag,
+  encode_URI_component: basic.encode_URI_component,
+  decode_URI_component: basic.decode_URI_component,
   share,
   canShare,
   getSelectionText,

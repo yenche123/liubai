@@ -127,7 +127,7 @@ async function handle_edit(
   const res = await cui.showHashTagEditor({
     text: oldText,
     mode: "edit",
-    icon: oldEmoji ? encodeURIComponent(oldEmoji) : undefined,
+    icon: oldEmoji ? liuApi.encode_URI_component(oldEmoji) : undefined,
   })
 
   if(!res.confirm || !res.text) return
