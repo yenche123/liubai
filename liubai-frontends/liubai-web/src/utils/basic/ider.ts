@@ -12,6 +12,11 @@ const createUserId = () => {
   return "u0" + _createId(19)
 }
 
+/** 生成 LiuAtomState 的 id */
+const createStateId = () => {
+  return "s0" + _createId(21)
+}
+
 const createWorkspaceId = () => {
   return "w0" + _createId(21)
 }
@@ -50,6 +55,7 @@ const createCollectId = () => {
 
 export default {
   createUserId,
+  createStateId,
   createWorkspaceId,
   createMemberId,
   createDraftId,
