@@ -143,6 +143,7 @@ export default defineComponent({
 
       <!-- 底部时间 -->
       <TcBottombar :thread-data="threadData"
+        :view-type="viewType"
         @newoperate="receiveBottomOperation"
       ></TcBottombar>
       

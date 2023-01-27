@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import type { ThreadShow } from '~/types/types-content';
+import type { TlViewType } from "../../tools/types";
 import { useTcBottombar } from './tools/useTcBottombar';
 import { tcbEmits } from "./tools/types"
 
@@ -9,7 +10,11 @@ export default defineComponent({
     threadData: {
       type: Object as PropType<ThreadShow>,
       required: true
-    }
+    },
+    viewType: {
+      type: String as PropType<TlViewType>,
+      required: true
+    },
   },
   emits: tcbEmits,
   setup(props, { emit }) {

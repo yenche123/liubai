@@ -7,7 +7,7 @@ import type {
 } from "./types"
 import time from "~/utils/basic/time";
 import type { ThreadShow } from "~/types/types-content";
-
+import type { TlViewType } from "../../../tools/types";
 
 // 正常: 编辑、状态、删除
 const MENU_1: TcbMenuItem[] = [
@@ -50,13 +50,14 @@ export function useTcBottombar(
 
   const footerMenu = computed<TcbMenuItem[]>(() => {
     const t = props.threadData
+    const viewType = props.viewType
     if(t.oState !== "OK") {
       return MENU_2
     }
     const list = [...MENU_1]
 
-    // 动态添加置顶/取消置顶
-    handlePin(t, list)
+    // 动态添加置顶/取消置顶 或 浮上去
+    handleFirstMenuItem(t, viewType, list)
 
     // 动态添加（倒计时器）开关
     handleCountdown(t, list)
@@ -77,10 +78,23 @@ export function useTcBottombar(
   }
 }
 
-function handlePin(
+function handleFirstMenuItem(
   t: ThreadShow,
+  viewType: TlViewType,
   list: TcbMenuItem[],
 ) {
+
+  // 当前在 状态栏 更多里
+  if(viewType === "STATE") {
+    let stateObj: TcbMenuItem = {
+      text_key: "common.float_up",
+      operation: "float_up",
+      iconName: "pin"
+    }
+    list.splice(0, 0, stateObj)
+    return
+  }
+
   // 动态添加置顶/取消置顶
   let pinObj: TcbMenuItem = {
     text_key: "common.pin",

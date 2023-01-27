@@ -40,7 +40,8 @@
     "close_countdown": "Disable Hourglass",
     "list": "List",
     "kanban": "Kanban",
-    "thatsit": "That's it"
+    "thatsit": "That's it",
+    "float_up": "Float up"
   },
   "editor": {
     "when": "When",

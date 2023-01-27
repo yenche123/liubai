@@ -40,7 +40,8 @@
     "close_countdown": "关闭倒计时",
     "list": "列表",
     "kanban": "看板",
-    "thatsit": "就这样"
+    "thatsit": "就这样",
+    "float_up": "浮上去"
   },
   "editor": {
     "when": "什么时候",
