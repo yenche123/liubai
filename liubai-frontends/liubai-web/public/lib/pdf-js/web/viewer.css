@@ -1088,8 +1088,7 @@
   --progressBar-color: rgba(10, 132, 255, 1);
   --progressBar-bg-color: rgba(221, 221, 222, 1);
   --progressBar-blend-color: rgba(116, 177, 239, 1);
-  --scrollbar-color: auto;
-  --scrollbar-bg-color: auto;
+  --scrollbar-thumb: #b3b3b3;
   --toolbar-icon-bg-color: rgba(0, 0, 0, 1);
   --toolbar-icon-hover-bg-color: rgba(0, 0, 0, 1);
 
@@ -1179,8 +1178,7 @@
     --progressBar-color: rgba(0, 96, 223, 1);
     --progressBar-bg-color: rgba(40, 40, 43, 1);
     --progressBar-blend-color: rgba(20, 68, 133, 1);
-    --scrollbar-color: rgba(121, 121, 123, 1);
-    --scrollbar-bg-color: rgba(35, 35, 39, 1);
+    --scrollbar-thumb: #787878;
     --toolbar-icon-bg-color: rgba(255, 255, 255, 1);
     --toolbar-icon-hover-bg-color: rgba(255, 255, 255, 1);
 
@@ -1258,7 +1256,20 @@ body {
 
 body {
   background-color: var(--body-bg-color);
-  scrollbar-color: var(--scrollbar-color) var(--scrollbar-bg-color);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: var(--scrollbar-thumb);
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
 }
 
 .hidden,

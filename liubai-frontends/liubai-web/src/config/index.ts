@@ -12,7 +12,7 @@ export default {
   min_viceview_width: 350,
 
   // 默认 vice-view 所需的宽度
-  default_viceview_width: 350,
+  default_viceview_width: 370,
 
   // 最小的 main-view 所需宽度
   min_mainview_width: 300,
