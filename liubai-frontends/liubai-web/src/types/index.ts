@@ -39,7 +39,7 @@ export interface ImageLocal {
   id: string
   name: string
   lastModified: number       // 文件最后修改的时间戳，精确到 ms
-  file?: File
+  file?: File | Blob
   width?: number
   height?: number
   h2w?: string

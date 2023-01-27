@@ -81,7 +81,10 @@ const getCharacteristic = (): GetChaRes => {
   if(ua.includes("firefox")) isFirefox = true
 
   // 处理 iOS 13 之后的 iPad 的 userAgent 里没有 ipad 字段的问题
+  // maxTouchPoints 表示设备最多支持一次有多少个 touch 点击
+  // 比如触屏设备通常一次两次 touch points 以实现两指 pitch 缩放
   if(!isIPadOS && platform === 'MacIntel' && maxTouchPoints > 1) {
+    isIOS = true
     isIPadOS = true
     isMobile = true
     isPC = false
