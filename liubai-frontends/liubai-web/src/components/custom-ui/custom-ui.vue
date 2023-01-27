@@ -157,6 +157,11 @@ const {
   <!-- snack-bar -->
   <SnackBar></SnackBar>
 
+  <!-- 状态选择组件 -->
+  
+
+  <!-- 状态编辑组件 -->
+
 </template>
 
 <style scoped lang="scss">
