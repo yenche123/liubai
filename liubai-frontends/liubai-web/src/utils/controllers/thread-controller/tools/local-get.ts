@@ -33,6 +33,7 @@ async function getList(
 
   const filterFunc = (item: ContentLocalTable) => {
     const { tagSearched = [], pinStamp, _id } = item
+    if(ids && ids.includes(_id)) return true
     if(tagId && !tagSearched.includes(tagId)) return false
     if(stateId && stateId !== item.stateId) return false
     if(isIndex && pinStamp) return false

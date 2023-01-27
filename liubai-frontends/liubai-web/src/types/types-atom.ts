@@ -77,16 +77,16 @@ export interface LiuContent {
 
 export interface LiuAtomState {
   id: string
+  showInIndex: boolean
   text?: string
   color?: string         // TODO: 改为 LiuStateColor
-  showInIndex?: boolean
   contentIds?: string[]
   updatedStamp: number
   insertedStamp: number
 }
 
 export interface LiuContentState {
-  stateList?: LiuAtomState[]
+  stateList: LiuAtomState[]
   updatedStamp: number
 }
 
