@@ -91,7 +91,7 @@ const color_selected = "var(--main-normal)"
     <span>{{ t("common.tags") }}</span>
   </AppLink>
 
-  <!-- 看板 -->
+  <!-- 状态 -->
   <NaviLink class="sb-link liu-hover" to="/state"
     :class="{ 'sb-link_selected': state === 'state' }"
     :tabindex="tabindex"
@@ -99,7 +99,7 @@ const color_selected = "var(--main-normal)"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
-        :name="state === 'state' ? 'state_selected' : 'state'" 
+        :name="state === 'state' ? 'priority_selected' : 'priority'" 
         :color="state === 'state' ? color_selected : color"
       ></SvgIcon>
     </div>

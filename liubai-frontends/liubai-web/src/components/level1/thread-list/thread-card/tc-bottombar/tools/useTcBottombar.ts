@@ -19,7 +19,7 @@ const MENU_1: TcbMenuItem[] = [
   {
     text_key: "common.state",
     operation: "state",
-    iconName: "state_400",
+    iconName: "priority_400",
   },
   {
     text_key: "common.delete",
@@ -57,7 +57,7 @@ export function useTcBottombar(
     const list = [...MENU_1]
 
     // 动态添加置顶/取消置顶 或 浮上去
-    handleFirstMenuItem(t, viewType, list)
+    handlePinFloatState(t, viewType, list)
 
     // 动态添加（倒计时器）开关
     handleCountdown(t, list)
@@ -78,7 +78,7 @@ export function useTcBottombar(
   }
 }
 
-function handleFirstMenuItem(
+function handlePinFloatState(
   t: ThreadShow,
   viewType: TlViewType,
   list: TcbMenuItem[],
@@ -86,12 +86,16 @@ function handleFirstMenuItem(
 
   // 当前在 状态栏 更多里
   if(viewType === "STATE") {
+    // 1. 添加 附上去
     let stateObj: TcbMenuItem = {
       text_key: "common.float_up",
       operation: "float_up",
       iconName: "pin"
     }
     list.splice(0, 0, stateObj)
+
+    // 2. 移除 state 选项
+    list = list.filter(v => v.operation !== "state")
     return
   }
 
