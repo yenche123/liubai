@@ -102,6 +102,7 @@ export default defineComponent({
   overflow-y: auto;
   border-top: 1px solid var(--line-hover);
   transition: .2s;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 
   &::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);

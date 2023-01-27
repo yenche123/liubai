@@ -200,6 +200,7 @@ const onVcStateChange = (newV: VcState) => {
   overflow-y: auto;
   direction: ltr;
   background-color: var(--vice-bg);
+  scrollbar-color: transparent transparent;
 }
 
 .vv-box_shadow {
@@ -217,6 +218,10 @@ const onVcStateChange = (newV: VcState) => {
   background: var(--vice-scrollbar-thumb);
   opacity: 0;
   transition: .15s;
+}
+
+.vv-box:hover {
+  scrollbar-color: var(--vice-scrollbar-thumb) transparent;
 }
 
 .vv-box:hover::-webkit-scrollbar-thumb {

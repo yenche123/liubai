@@ -1246,6 +1246,7 @@
 * {
   padding: 0;
   margin: 0;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 html,

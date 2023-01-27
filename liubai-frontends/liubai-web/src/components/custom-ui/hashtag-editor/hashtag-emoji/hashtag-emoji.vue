@@ -72,6 +72,7 @@ const onTapRemove = (hide: () => void) => {
   width: 490px;
   max-height: 50vh;
   position: relative;
+  scrollbar-color: var(--sidebar-scrollbar-thumb) transparent;
 
   &::-webkit-scrollbar-thumb {
     background: var(--sidebar-scrollbar-thumb);

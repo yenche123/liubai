@@ -119,10 +119,15 @@ const {
   justify-content: center;
   position: relative;
   transition: v-bind("TRANSITION_DURATION + 'ms'");
+  scrollbar-color: transparent transparent;
 
   &::-webkit-scrollbar-thumb {
     background-color: transparent;
     transition: .15s;
+  }
+
+  &:hover {
+    scrollbar-color: var(--scrollbar-thumb) transparent;
   }
 
   &:hover::-webkit-scrollbar-thumb {

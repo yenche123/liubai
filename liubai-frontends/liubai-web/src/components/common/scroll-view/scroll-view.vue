@@ -51,6 +51,7 @@ const { isMobile } = liuApi.getCharacteristic()
   display: v-bind("direction === 'horizontal' ? 'flex' : 'block'");
   align-items: flex-start;
   flex-wrap: nowrap;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 .liu-scroll-view::-webkit-scrollbar {

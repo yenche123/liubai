@@ -194,11 +194,16 @@ const {
   overflow-y: auto;
   padding-right: 10px;
   transition: .3s;
+  scrollbar-color: transparent transparent;
 }
 
 .sb-box::-webkit-scrollbar-thumb {
   background-color: transparent;
   transition: .15s;
+}
+
+.sb-box:active {
+  scrollbar-color: var(--sidebar-scrollbar-thumb) transparent;
 }
 
 .sb-box:active::-webkit-scrollbar-thumb {
@@ -240,6 +245,10 @@ const {
 
   .sb-bar:hover ~ .sb-drag-line {
     opacity: 1;
+  }
+
+  .sb-box:hover {
+    scrollbar-color: var(--sidebar-scrollbar-thumb) transparent;
   }
 
   .sb-box:hover::-webkit-scrollbar-thumb {
