@@ -81,13 +81,13 @@ export interface LiuAtomState {
   color?: string         // TODO: 改为 LiuStateColor
   showInIndex?: boolean
   contentIds?: string[]
-  updateStamp: number
-  insertStamp: number
+  updatedStamp: number
+  insertedStamp: number
 }
 
 export interface LiuContentState {
   stateList?: LiuAtomState[]
-  updateStamp: number
+  updatedStamp: number
 }
 
 export interface TagView {
