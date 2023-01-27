@@ -90,7 +90,6 @@ function _trimFileMap() {
     const diff = now - data.usedStamp
     if(diff < MIN_3) continue
     
-    URL.revokeObjectURL(data.url)
     fileMap.delete(key)
 
     if(fileMap.size < MAX_SIZE) break 

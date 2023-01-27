@@ -45,6 +45,7 @@ export default defineComponent({
           :height="imgWidth" 
           :draggable="false" 
           :blurhash="item.blurhash"
+          border-radius="10px"
           class="cc-img"
           object-fit="cover" 
           @click="onTapImage($event, index)"

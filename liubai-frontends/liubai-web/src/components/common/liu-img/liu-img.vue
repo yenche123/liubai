@@ -27,6 +27,7 @@ const props = defineProps({
     default: "auto",    // 使用 lazy 表示，lazy-loading
   },
   bgColor: String,
+  borderRadius: String,
   draggable: {
     type: Boolean,
     default: true
@@ -123,6 +124,7 @@ const onImgLoaded = async () => {
   transition: v-bind("TRANSITION_MS + 'ms'");
   object-fit: v-bind("objectFit ? objectFit : 'fill'");
   user-select: v-bind("userSelect ? 'auto' : 'none'");
+  border-radius: v-bind("borderRadius ? borderRadius : '0'");
 }
 
 .custom-img_loaded {
@@ -136,6 +138,8 @@ const onImgLoaded = async () => {
   width: 100%;
   height: 100%;
   transition: v-bind("TRANSITION_MS + 'ms'");
+  overflow: hidden;
+  border-radius: v-bind("borderRadius ? borderRadius : '0'");
 }
 
 .liu-blurhash_hidden {
