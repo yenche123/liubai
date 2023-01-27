@@ -22,10 +22,11 @@ const initLocale = (): SupportedLocale => {
   for(let i=0; i<langs.length; i++) {
     let aLang = langs[i]
     if(isSupportedLocale(aLang)) return aLang
-    if(aLang === "zh-TW") return "zh-Hant"
-    if(aLang === "zh-HK") return "zh-Hant"
-    if(aLang === "zh-CN") return "zh-Hans"
-    if(aLang === "en-US") return "en"
+    const _aLang = aLang.toLowerCase()
+    if(_aLang === "zh-tw") return "zh-Hant"
+    if(_aLang === "zh-hk") return "zh-Hant"
+    if(_aLang === "zh-cn") return "zh-Hans"
+    if(_aLang === "en-us") return "en"
   }
 
   // 判断 langs 是否有 zh
