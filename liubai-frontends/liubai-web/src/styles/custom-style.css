@@ -73,8 +73,8 @@
   background-color: var(--primary-color);
 }
 
-.liu-hover:focus-visible {
-  outline: 2px solid var(--main-normal);
+.liu-hover {
+  outline: 0;
 }
 
 .liu-hover:active::before {
@@ -102,6 +102,11 @@
 
 /********* 仅在有鼠标的设备上生效 *********/
 @media(hover: hover) {
+
+  .liu-hover:focus-visible {
+    outline: 2px solid var(--main-normal);
+  }
+
   .liu-hover:hover::before {
     opacity: .06;
   }

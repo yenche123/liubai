@@ -27,7 +27,7 @@ const getCharacteristic = (): GetChaRes => {
     return _returnData()
   }
 
-  const { userAgent = "", userAgentData } = navigator
+  const { userAgent = "", userAgentData, platform, maxTouchPoints } = navigator
   const ua = userAgent.toLowerCase()
   const mobileMatch = userAgent.match(/AppleWebKit.*Mobile.*/)
 
@@ -79,6 +79,14 @@ const getCharacteristic = (): GetChaRes => {
     isInWebView = true
   }
   if(ua.includes("firefox")) isFirefox = true
+
+  // 处理 iOS 13 之后的 iPad 的 userAgent 里没有 ipad 字段的问题
+  if(!isIPadOS && platform === 'MacIntel' && maxTouchPoints > 1) {
+    isIPadOS = true
+    isMobile = true
+    isPC = false
+    isMac = false
+  }
 
   let res = _returnData()
   return res

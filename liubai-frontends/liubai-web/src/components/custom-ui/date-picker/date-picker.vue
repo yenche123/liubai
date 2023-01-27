@@ -211,17 +211,21 @@ const previewDate = computed(() => {
     max-height: 13vw;
   }
 
+  .dp__calendar_item {
+    outline: none;
+  }
+
+  .dp-custom-cell {
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    max-width: 13vw;
+    max-height: 13vw;
+    transition: .16s;
+    font-size: var(--btn-font);
+  }
 }
 
-.dp-custom-cell {
-  border-radius: 50%;
-  width: 46px;
-  height: 46px;
-  max-width: 13vw;
-  max-height: 13vw;
-  transition: .16s;
-  font-size: var(--btn-font);
-}
 
 @media screen and (max-width: 380px) {
   .dp-custom-menu {
