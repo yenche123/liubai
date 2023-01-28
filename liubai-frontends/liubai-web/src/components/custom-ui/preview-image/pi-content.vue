@@ -69,18 +69,25 @@ export default defineComponent({
   <VueSwiper @swiper="onSwiper" @slideChange="onSlideChange">
     <template v-for="(item, index) in covers" :key="item.id">
       <SwiperSlide>
-        <div class="pi-item" :class="{ 'pi-item_grab': coverLength > 1 }">
-          <liu-img :src="item.src" 
-            object-fit="contain" class="pi-image" 
-            :style="{
-              'width': item.width + 'px',
-              'height': item.height + 'px',
-            }"
-            :width="item.width"
-            :height="item.height"
-            :blurhash="item.blurhash"
-            bg-color="#1f1f1f"
-          ></liu-img>
+
+        <!-- 先给出一个内部可以上下滚动的 slide -->
+        <div class="pi-scroll-box" :class="{ 'pi-item_grab': coverLength > 1 }">
+
+          <!-- 再给出这个 slide 可以上下左右自动对齐的盒子 -->
+          <div class="pi-item">
+            <liu-img :src="item.src" 
+              object-fit="contain" class="pi-image" 
+              :style="{
+                'width': item.width + 'px',
+                'height': item.height + 'px',
+              }"
+              :width="item.width"
+              :height="item.height"
+              :blurhash="item.blurhash"
+              bg-color="#1f1f1f"
+            ></liu-img>
+          </div>
+
         </div>
       </SwiperSlide>
     </template>
@@ -102,18 +109,25 @@ export default defineComponent({
   </div>
 </template>
 <style scoped lang="scss">
+
+.pi-scroll-box {
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .pi-item {
   width: 100vw;
   height: 100vh;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-x: hidden;
-  overflow-y: auto;
 
   .pi-image {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     max-width: 100vw;
     max-height: 100vh;
     transition: .2s;
