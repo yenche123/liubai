@@ -80,7 +80,7 @@ export default defineComponent({
     cursor: pointer;
     transition: .15s;
 
-    &:hover {
+    &:active {
       opacity: .66;
     }
 
@@ -90,7 +90,11 @@ export default defineComponent({
     }
   }
 
-
+  @media(hover: hover) {
+    .cec-item:hover {
+      opacity: .66;
+    }
+  }
 
 }
 
