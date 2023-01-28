@@ -1,4 +1,4 @@
-import type { FileLocal, ImageLocal } from "~/types"
+import type { LiuFileStore, LiuImageStore } from "~/types"
 import time from "../basic/time"
 
 // 获取允许的图片类型 由 , 拼接而成的字符串
@@ -34,8 +34,8 @@ interface UrlMapVal {
 
 let fileMap = new Map<UrlMapKey, UrlMapVal>()
 
-export function createURLsFromFileOrImage(
-  files: Array<FileLocal | ImageLocal>,
+export function createURLsFromStore(
+  files: Array<LiuImageStore | LiuFileStore>,
 ) {
   const list: string[] = []
   for(let i=0; i<files.length; i++) {
@@ -46,11 +46,11 @@ export function createURLsFromFileOrImage(
       list.push(data.url)
       data.usedStamp = now
       data.num++
-
       fileMap.set(v.id, data)
     }
-    else if(v.file) {
-      const res = URL.createObjectURL(v.file)
+    else if(v.arrayBuffer) {
+      const blob = new Blob([v.arrayBuffer], { type: v.mimeType })
+      const res = URL.createObjectURL(blob)
       list.push(res)
       const newData: UrlMapVal = {
         createStamp: now,

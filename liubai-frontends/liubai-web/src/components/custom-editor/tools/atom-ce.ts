@@ -1,7 +1,7 @@
-import type { LiuRemindMe } from "../../../types/types-atom";
-import type { StorageState, VisScope } from "../../../types/types-basic";
-import type { ImageLocal, FileLocal } from "../../../types"
-import type { EditorCoreContent } from "../../../types/types-editor";
+import type { LiuRemindMe } from "~/types/types-atom";
+import type { StorageState, VisScope } from "~/types/types-basic";
+import type { LiuFileStore, LiuImageStore } from "~/types"
+import type { EditorCoreContent } from "~/types/types-editor";
 
 export interface CeState {
   draftId?: string
@@ -12,8 +12,8 @@ export interface CeState {
   title?: string
   whenStamp?: number
   remindMe?: LiuRemindMe
-  images?: ImageLocal[]
-  files?: FileLocal[]
+  images?: LiuImageStore[]
+  files?: LiuFileStore[]
   tagIds: string[]
   editorContent?: EditorCoreContent
   lastTagChangeStamp?: number

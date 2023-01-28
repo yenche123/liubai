@@ -129,7 +129,7 @@ export async function getThreadsByCollectionOrEmoji(
     if(u && user_id && u === user_id) isMine = true
 
     const images = v.images?.map(v2 => {
-      return imgHelper.imageLocalToShow(v2)
+      return imgHelper.imageStoreToShow(v2)
     })
 
     let newDesc = commonPack.packLiuDesc(liuDesc, title)

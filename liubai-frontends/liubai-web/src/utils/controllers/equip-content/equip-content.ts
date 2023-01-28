@@ -51,7 +51,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
     if(user && user_id && user === user_id) isMine = true
 
     const images = v.images?.map(v2 => {
-      return imgHelper.imageLocalToShow(v2)
+      return imgHelper.imageStoreToShow(v2)
     })
 
     let newDesc = commonPack.packLiuDesc(liuDesc, title)
@@ -128,7 +128,7 @@ export async function getMemberShows(member_ids: string[]) {
     const obj: MemberShow = {
       _id: v._id,
       name: v.name,
-      avatar: v.avatar ? imgHelper.imageLocalToShow(v.avatar) : undefined,
+      avatar: v.avatar ? imgHelper.imageStoreToShow(v.avatar) : undefined,
       workspace: v.workspace,
       oState: v.oState,
     }

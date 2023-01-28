@@ -1,19 +1,19 @@
 
 import { ref, watch, computed, toRaw, isProxy, isReactive } from "vue";
-import type { EditorCoreContent, TipTapJSONContent } from "../../../types/types-editor";
-import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
-import type { LiuRemindMe } from "../../../types/types-atom";
+import type { EditorCoreContent, TipTapJSONContent } from "~/types/types-editor";
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import type { LiuRemindMe } from "~/types/types-atom";
 import type { CeState } from "./atom-ce"
 import type { Ref } from "vue";
-import ider from "../../../utils/basic/ider";
-import { DraftLocalTable } from "../../../types/types-table";
+import ider from "~/utils/basic/ider";
+import { DraftLocalTable } from "~/types/types-table";
 import localCache from "~/utils/system/local-cache";
-import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
-import time from "../../../utils/basic/time";
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
+import time from "~/utils/basic/time";
 import localReq from "./req/local-req";
-import type { FileLocal, ImageLocal } from "../../../types";
+import type { LiuFileStore, LiuImageStore } from "~/types";
 import type { CepToPost } from "./useCeFinish"
-import liuUtil from "../../../utils/liu-util";
+import liuUtil from "~/utils/liu-util";
 import { storeToRefs } from "pinia";
 
 let collectTimeout = 0
@@ -222,7 +222,7 @@ async function toSave(state: CeState) {
   // 响应式对象 转为普通对象
   if(isProxy(liuDesc)) liuDesc = toRaw(liuDesc)
   let images = _getStoragedFiles(state)
-  let files = _getStoragedFiles<FileLocal>(state, "files")
+  let files = _getStoragedFiles<LiuFileStore>(state, "files")
   let remindMe = isProxy(state.remindMe) ? toRaw(state.remindMe) : state.remindMe
   let tagIds = isProxy(state.tagIds) ? toRaw(state.tagIds) : state.tagIds
 
@@ -256,7 +256,7 @@ async function toSave(state: CeState) {
 }
 
 
-function _getStoragedFiles<T = ImageLocal>(
+function _getStoragedFiles<T = LiuImageStore>(
   state: CeState, 
   key: keyof CeState = "images"
 ): T[] | undefined {

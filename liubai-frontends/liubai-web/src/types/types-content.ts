@@ -1,7 +1,7 @@
 
 import type { OState, VisScope, StorageState } from "./types-basic"
 import type { LiuRemindMe } from "./types-atom"
-import type { FileLocal, ImageShow } from "./index"
+import type { ImageShow, LiuFileStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
 import type { ContentConfig } from "./other/types-custom"
 
@@ -47,7 +47,7 @@ export interface ThreadShow {
   summary?: string               // content 转为单行的纯文本，并且限制字数在 140 字内;
                                  // 如果 content 不存在，看文件是否存在，若有打印文件名
   images?: ImageShow[]
-  files?: FileLocal[]
+  files?: LiuFileStore[]
   whenStamp?: number
   remindStamp?: number
   remindMe?: LiuRemindMe

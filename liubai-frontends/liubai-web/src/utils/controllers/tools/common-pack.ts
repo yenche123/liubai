@@ -1,5 +1,5 @@
 import type { LiuContent } from "../../../types/types-atom";
-import type { FileLocal } from "~/types"
+import type { LiuFileStore } from "~/types"
 import { getBriefing } from "./briefing"
 import { listToText } from "~/utils/transfer-util/text";
 
@@ -33,7 +33,7 @@ function packLiuDesc(
  */
 function getSummary(
   content: LiuContent[] | undefined,
-  files: FileLocal[] | undefined,
+  files: LiuFileStore[] | undefined,
 ) {
   let text = ""
   if(content && content.length > 0) {

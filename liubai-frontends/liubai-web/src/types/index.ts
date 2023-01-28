@@ -17,13 +17,14 @@ export interface LocalOnceData {
   iframeRestriction?: number
 }
 
-export interface FileLocal {
+export interface LiuFileStore {
   id: string
   name: string
   lastModified: number       // 文件最后修改的时间戳，精确到 ms
   suffix: string             // 后缀的英文
   size: number               // 单位为 bytes
-  file?: File
+  mimeType: string
+  arrayBuffer?: ArrayBuffer
   cloud_url?: string
 }
 
@@ -35,11 +36,12 @@ export interface FileShow {
   cloud_url?: string
 }
 
-export interface ImageLocal {
+export interface LiuImageStore {
   id: string
   name: string
   lastModified: number       // 文件最后修改的时间戳，精确到 ms
-  file?: File | Blob
+  mimeType: string
+  arrayBuffer?: ArrayBuffer
   width?: number
   height?: number
   h2w?: string

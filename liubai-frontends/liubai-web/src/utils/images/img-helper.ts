@@ -1,5 +1,5 @@
 import Compressor from 'compressorjs';
-import type { ImageLocal, ImageShow } from "~/types"
+import type { ImageShow, LiuImageStore } from "~/types"
 import liuUtil from '../liu-util';
 import ider from '../basic/ider';
 import { encode as blurhashEncode } from "blurhash";
@@ -73,7 +73,7 @@ function _toCompress(file: File) {
 }
 
 async function getMetaDataFromFiles(files: File[]) {
-  const list: ImageLocal[] = []
+  const list: LiuImageStore[] = []
 
   const _get = (file: File) => {
 
@@ -159,15 +159,26 @@ async function getMetaDataFromFiles(files: File[]) {
     return new Promise(_read)
   }
 
-  const _pack = (data: FileWithCharacteristic) => {
+  const _pack = async (data: FileWithCharacteristic) => {
     const w = data.width
     const h = data.height
     let h2w = w && h ? (h / w).toFixed(2) : undefined
-    const obj: ImageLocal = {
+    let arrayBuffer: ArrayBuffer
+    try {
+      arrayBuffer = await data.file.arrayBuffer()
+    }
+    catch(err) {
+      console.log("arrayBuffer() err: ")
+      console.log(err)
+      return null
+    }
+
+    const obj: LiuImageStore = {
       id: ider.createImgId(),
       name: data.file.name,
       lastModified: data.file.lastModified,
-      file: data.file,
+      mimeType: data.file.type,
+      arrayBuffer,
       width: w,
       height: h,
       h2w,
@@ -179,7 +190,8 @@ async function getMetaDataFromFiles(files: File[]) {
   for(let i=0; i<files.length; i++) {
     const v = files[i]
     const res = await _get(v)
-    list.push(_pack(res))
+    const res2 = await _pack(res)
+    if(res2) list.push(res2)
   }
   return list
 }
@@ -192,9 +204,10 @@ function _resizeDimensions(img: HTMLImageElement) {
   return liuUtil.constraintWidthHeight(width, height, maxWidth, maxHeight)
 }
 
-function imageLocalToShow(val: ImageLocal): ImageShow {
+function imageStoreToShow(val: LiuImageStore): ImageShow {
+  let [src] = liuUtil.createURLsFromStore([val])
   const obj: ImageShow = {
-    src: val.file ? liuUtil.createURLsFromFileOrImage([val])[0] : (val.cloud_url ?? ""),
+    src,
     id: val.id,
     width: val.width,
     height: val.height,
@@ -207,5 +220,5 @@ function imageLocalToShow(val: ImageLocal): ImageShow {
 export default {
   compress,
   getMetaDataFromFiles,
-  imageLocalToShow,
+  imageStoreToShow,
 }

@@ -4,7 +4,7 @@ import type { CeState } from "../../tools/atom-ce";
 import liuUtil from "../../../../utils/liu-util";
 import { useI18n } from "vue-i18n"
 import type { ComposerTranslation } from "vue-i18n"
-import { FileLocal, FileShow } from "../../../../types";
+import type { FileShow, LiuFileStore } from "../../../../types";
 
 export function receiveCmaProps(props: CmaProps, data: MaData) {
   const { t, locale } = useI18n()
@@ -78,7 +78,7 @@ function stateChanged(
 
 function checkAttachment(
   data: MaData,
-  newFiles?: FileLocal[],
+  newFiles?: LiuFileStore[],
 ) {
   const firstFile = newFiles?.[0]
   if(!firstFile) {

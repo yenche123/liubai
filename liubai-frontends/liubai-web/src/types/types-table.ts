@@ -1,7 +1,7 @@
 // 接口名称后缀为 LocalTable 的，代表是本地的数据表
 import type { OState, VisScope, StorageState } from "./types-basic"
 import type { LiuContent, LiuRemindMe, TagView, LiuContentState } from "./types-atom"
-import type { FileLocal, ImageLocal } from "./index"
+import type { LiuFileStore, LiuImageStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
 import type { EmojiData } from "./types-content"
 import type { ContentConfig } from "./other/types-custom"
@@ -31,7 +31,7 @@ export interface WorkspaceLocalTable extends BaseLocalTable {
 
 export interface MemberLocalTable extends BaseLocalTable {
   name?: string
-  avatar?: ImageLocal
+  avatar?: LiuImageStore
   workspace: string
   user?: string
   oState: "OK" | "LEFT" | "DELETED"
@@ -47,8 +47,8 @@ export interface ContentLocalTable extends BaseLocalTable {
   storageState: StorageState
   title?: string
   liuDesc?: LiuContent[]
-  images?: ImageLocal[]
-  files?: FileLocal[]
+  images?: LiuImageStore[]
+  files?: LiuFileStore[]
   calendarStamp?: number
   remindStamp?: number
   whenStamp?: number
@@ -80,8 +80,8 @@ export interface DraftLocalTable extends BaseLocalTable {
   storageState?: StorageState
   title?: string
   liuDesc?: TipTapJSONContent[]
-  images?: ImageLocal[]
-  files?: FileLocal[]
+  images?: LiuImageStore[]
+  files?: LiuFileStore[]
   whenStamp?: number
   remindMe?: LiuRemindMe
   tagIds?: string[]

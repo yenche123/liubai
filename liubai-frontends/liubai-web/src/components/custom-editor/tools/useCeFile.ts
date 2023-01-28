@@ -1,5 +1,5 @@
 import { inject, onActivated, onDeactivated, ref, watch } from "vue"
-import type { FileLocal, ImageLocal, ImageShow } from "~/types"
+import type { ImageShow, LiuFileStore, LiuImageStore } from "~/types"
 import imgHelper from "~/utils/images/img-helper"
 import liuUtil from "~/utils/liu-util"
 import { mvFileKey } from "~/utils/provide-keys"
@@ -88,7 +88,7 @@ function whenCoversSorted(
   state: CeState,
 ) {
   const oldImages = state.images ?? []
-  const newImages: ImageLocal[] = []
+  const newImages: LiuImageStore[] = []
   for(let i=0; i<newCovers.length; i++) {
     const id = newCovers[i].id
     const data = oldImages.find(v => v.id === id)
@@ -99,7 +99,7 @@ function whenCoversSorted(
 
 function whenImagesChanged(
   coversRef: Ref<ImageShow[]>,
-  newImages?: ImageLocal[],
+  newImages?: LiuImageStore[],
 ) {
   const newLength = newImages?.length ?? 0
   if(newLength < 1) {
@@ -107,13 +107,13 @@ function whenImagesChanged(
     return
   }
 
-  (newImages as ImageLocal[]).forEach((v, i) => {
+  (newImages as LiuImageStore[]).forEach((v, i) => {
     const v2 = coversRef.value[i]
     if(!v2) {
-      coversRef.value.push(imgHelper.imageLocalToShow(v))
+      coversRef.value.push(imgHelper.imageStoreToShow(v))
     }
     else if(v2.id !== v.id) {
-      coversRef.value[i] = imgHelper.imageLocalToShow(v)
+      coversRef.value[i] = imgHelper.imageStoreToShow(v)
     }
   })
 
@@ -164,24 +164,26 @@ async function handleFiles(
   }
 }
 
-function handleOtherFiles(
+async function handleOtherFiles(
   state: CeState,
   files: File[],
   moreRef?: Ref<boolean>,
 ) {
-  const fileList: FileLocal[] = []
+  const fileList: LiuFileStore[] = []
   const MB = 1024 * 1024
 
   for(let i=0; i<files.length; i++) {
     const v = files[i]
+    const arrayBuffer = await v.arrayBuffer()
     const suffix = valTool.getSuffix(v.name)
-    const obj: FileLocal = {
+    const obj: LiuFileStore = {
       id: ider.createFileId(),
       name: v.name,
       lastModified: v.lastModified,
       suffix,
       size: v.size,
-      file: v,
+      mimeType: v.type,
+      arrayBuffer,
     }
     fileList.push(obj)
   }

@@ -1,7 +1,7 @@
 import { useWindowSize } from '~/hooks/useVueUse';
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import type { RouteAndLiuRouter } from "~/routes/liu-router";
-import type { FileLocal } from '~/types';
+import type { LiuFileStore } from '~/types';
 import liuUtil from '~/utils/liu-util';
 import type { TcaProps } from './types';
 import cfg from '~/config';
@@ -23,7 +23,7 @@ export function useTcAttachments(props: TcaProps) {
 
 
 function checkHowToDownload(
-  f: FileLocal,
+  f: LiuFileStore,
   rr: RouteAndLiuRouter,
 ) {
   const _suffix = f.suffix.toLowerCase()
@@ -45,33 +45,18 @@ function checkHowToDownload(
 }
 
 function _openByIframe(
-  f: FileLocal,
+  f: LiuFileStore,
   rr: RouteAndLiuRouter,
 ) {
-  let url = ""
-  if(f.file) {
-    [url] = liuUtil.createURLsFromFileOrImage([f])
-  }
-  else if(f.cloud_url) {
-    url = f.cloud_url
-  }
-
+  let [url] = liuUtil.createURLsFromStore([f])
   if(!url) return
   rr.router.pushCurrentWithNewQuery(rr.route, { pdf: url })
 }
 
 
 /** 使用 a 标签来下载 */
-function _downloadByA(f: FileLocal) {
-  let url = ""
-  let useCreateObj = false
-  if(f.file) {
-    [url] = liuUtil.createURLsFromFileOrImage([f])
-    useCreateObj = true
-  }
-  else if(f.cloud_url) {
-    url = f.cloud_url
-  }
+function _downloadByA(f: LiuFileStore) {
+  let [url] = liuUtil.createURLsFromStore([f])
   if(!url) return
 
   const a = document.createElement("a")
@@ -80,10 +65,6 @@ function _downloadByA(f: FileLocal) {
   document.body.appendChild(a)
   a.click()
   a.remove()
-
-  if(useCreateObj) {
-    liuUtil.revokeObjURLs([url])
-  }
 }
 
 /**
@@ -91,15 +72,8 @@ function _downloadByA(f: FileLocal) {
  *   开启新分页下载文件时，请不要使用 revokeObjURLs 回收文件
  *   因为这样用户在新的分页时，会无法另存成新的文件
  */
-function _downloadByWindow(f: FileLocal) {
-  let url = ""
-  if(f.file) {
-    [url] = liuUtil.createURLsFromFileOrImage([f])
-  }
-  else if(f.cloud_url) {
-    url = f.cloud_url
-  }
-
+function _downloadByWindow(f: LiuFileStore) {
+  let [url] = liuUtil.createURLsFromStore([f])
   if(!url) return
   window.open(url, f.name)
 }
