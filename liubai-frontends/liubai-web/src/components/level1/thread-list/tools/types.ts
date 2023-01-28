@@ -6,6 +6,7 @@ export type TlViewType = ThreadListViewType
 export interface TlProps {
   viewType: string
   tagId: string
+  stateId: string
 }
 
 export type TlDisplayType = "list" | "detail"

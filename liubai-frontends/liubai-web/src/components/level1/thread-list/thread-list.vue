@@ -21,13 +21,18 @@ export default defineComponent({
     tagId: {
       type: String,
       default: "",
+    },
+    stateId: {
+      type: String,
+      default: "",
     }
   },
   setup(props) {
     const {
-      list
+      list,
+      lastItemStamp,
     } = useThreadList(props)
-    useNewAndUpdate(props, list)
+    useNewAndUpdate(props, list, lastItemStamp)
 
     const {
       receiveOperation

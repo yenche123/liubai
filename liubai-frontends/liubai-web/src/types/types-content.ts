@@ -66,5 +66,6 @@ export interface ThreadShow {
   editedStr?: string
   tags?: TagShow[]
   tagSearched?: string[]
+  stateId?: string
   config?: ContentConfig
 }

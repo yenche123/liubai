@@ -4,14 +4,16 @@ import type { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool";
 import type { TlProps, TlViewType } from "./types"
 import type { WhyThreadChange } from "~/types/types-atom"
+import { handleLastItemStamp } from "./useTLCommon";
 
 export function useNewAndUpdate(
   props: TlProps,
-  list: Ref<ThreadShow[]>
+  list: Ref<ThreadShow[]>,
+  lastItemStamp: Ref<number>,
 ) {
   const tStore = useThreadShowStore()
   tStore.$subscribe((mutation, state) => {
-    // console.log("thread-list 收到有 threadShow 发生变化!")
+    // console.log(`${props.viewType} thread-list 收到有 threadShow 发生变化!`)
     // console.log("type: ", mutation.type)
     // console.log("storeId: ", mutation.storeId)
     // console.log("events: ", mutation.events)
@@ -23,7 +25,7 @@ export function useNewAndUpdate(
     const { newThreadShows, updatedThreadShows, whyChange } = state
 
     if(newThreadShows.length > 0) {
-      handleNewList(props, list, newThreadShows)
+      handleNewList(props, list, newThreadShows, lastItemStamp)
     }
     if(updatedThreadShows.length > 0) {
       handleUpdatedList(props, list, updatedThreadShows, whyChange)
@@ -35,8 +37,9 @@ function handleNewList(
   props: TlProps,
   listRef: Ref<ThreadShow[]>,
   newList: ThreadShow[],
+  lastItemStamp: Ref<number>,
 ) {
-  const { tagId } = props
+  const { tagId, stateId } = props
   const viewType = props.viewType as TlViewType
   const myList = newList.filter(v => {
     const { tagSearched = [] } = v
@@ -49,11 +52,20 @@ function handleNewList(
     if(viewType === "TAG") return tagSearched.includes(tagId)
     if(viewType === "FAVORITE") return v.myFavorite
     if(viewType === "PINNED") return Boolean(v.pinStamp)
+    if(viewType === "STATE") {
+      if(!v.stateId) return false
+      return stateId === v.stateId
+    }
     
     return true
   })
   if(myList.length < 1) return
   listRef.value.splice(0, 0, ...myList)
+
+  if(lastItemStamp.value) return
+  // 处理 lastItemStamp 为 0 的情况
+  const listVal = listRef.value
+  handleLastItemStamp(viewType, listVal, lastItemStamp)
 }
 
 function handleUpdatedList(

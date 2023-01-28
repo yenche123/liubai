@@ -11,6 +11,7 @@ import type { TlProps, TlViewType } from "./types"
 import type { TcListOption } from "~/utils/controllers/thread-controller/type"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { svBottomUpKey } from "~/utils/provide-keys";
+import { handleLastItemStamp } from "./useTLCommon"
 
 interface TlContext {
   list: Ref<ThreadShow[]>
@@ -31,13 +32,14 @@ export function useThreadList(props: TlProps) {
   const svBottomUp = inject(svBottomUpKey)
 
   const list = ref<ThreadShow[]>([])
+  const lastItemStamp = ref(0)
   const ctx: TlContext = {
     list,
     viewType: viewType as Ref<TlViewType>,
     tagId,
     workspace,
     showNum: 0,
-    lastItemStamp: ref(0),
+    lastItemStamp,
     svBottomUp,
     reloadRequired: false
   }
@@ -48,6 +50,11 @@ export function useThreadList(props: TlProps) {
   watch(svTrigger, (newV) => {
     const { type } = svData
     if(isViewType(ctx, "PINNED")) return
+
+    // console.log("触底或触顶.........")
+    // console.log(type)
+    // console.log(" ")
+
     if(type === "to_end") {
       loadList(ctx)
     }
@@ -84,7 +91,6 @@ export function useThreadList(props: TlProps) {
       ctx.reloadRequired = true
       return
     }
-
     scollTopAndUpdate(ctx)
   })
 
@@ -94,7 +100,7 @@ export function useThreadList(props: TlProps) {
     loadList(ctx, true)
   }
 
-  return { list }
+  return { list, lastItemStamp }
 }
 
 // 滚动到最顶部，然后更新 list
@@ -114,8 +120,6 @@ function checkList(
   ctx: TlContext
 ) {
   if(isViewType(ctx, "PINNED")) return
-
-  // console.log("checkList 被触发...........")
 
   const { list } = ctx
   if(list.value.length < 10) {
@@ -144,8 +148,6 @@ async function loadList(
   if(reload) {
     ctx.reloadRequired = false
   }
-
-  // console.log("let's load list!!!!!!!!!!!")
 
   const oldList = ctx.list.value
   const viewType = ctx.viewType.value
@@ -181,16 +183,7 @@ async function loadList(
 
   // 处理 lastItemStamp
   if(results.length) {
-    const lastItem = results[results.length - 1]
-    if(viewType === "FAVORITE") {
-      ctx.lastItemStamp.value = lastItem.myFavoriteStamp ?? 0
-    }
-    else if(viewType === "TRASH") {
-      ctx.lastItemStamp.value = lastItem.updatedStamp
-    }
-    else {
-      ctx.lastItemStamp.value = lastItem.createdStamp
-    }
+    handleLastItemStamp(viewType, results, ctx.lastItemStamp)
   }
   
 
