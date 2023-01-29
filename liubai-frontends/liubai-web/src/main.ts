@@ -9,6 +9,7 @@ import './styles/theme-light.css'
 import './styles/theme-dark.css'
 import './styles/custom-style.css'
 import 'floating-vue/dist/style.css'
+import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 
 import App from './App.vue'
 import { i18n } from './locales'

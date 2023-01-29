@@ -7,7 +7,6 @@ import SbContent from './sb-content/sb-content.vue';
 import SbTags from './sb-tags/sb-tags.vue';
 import SbFixed from './sb-fixed/sb-fixed.vue';
 import { useImages } from '../../hooks/useImages';
-import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 import VueDraggableResizable from "vue-draggable-resizable/src/components/vue-draggable-resizable.vue";
 
 const { images } = useImages()
