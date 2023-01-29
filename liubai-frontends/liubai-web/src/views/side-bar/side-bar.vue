@@ -118,7 +118,7 @@ const {
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 7px;
+  right: 7.2px;
   border-right: 3px solid var(--line-default);
   transition: .2s;
   pointer-events: none;
@@ -223,14 +223,14 @@ const {
 
 .liu-vdr-handle {
   position: absolute;
-  height: 70px;
+  height: 100px;
   width: 14px;
   transition: 150ms;
 }
 
 .liu-vdr-handle-mr {
   top: 50%;
-  margin-top: -35px;
+  margin-top: -50px;
   right: 0px;
   cursor: e-resize;
   transform-origin: center;
