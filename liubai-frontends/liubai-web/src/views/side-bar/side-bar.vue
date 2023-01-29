@@ -7,9 +7,16 @@ import SbContent from './sb-content/sb-content.vue';
 import SbTags from './sb-tags/sb-tags.vue';
 import SbFixed from './sb-fixed/sb-fixed.vue';
 import { useImages } from '../../hooks/useImages';
+import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
+import VueDraggableResizable from "vue-draggable-resizable/src/components/vue-draggable-resizable.vue";
 
 const { images } = useImages()
-const { sidebarEl, sbData } = useSidebar()
+const {
+  sbData, 
+  onResizing,
+  onSbMouseEnter,
+  onSbMouseLeave,
+} = useSidebar()
 const {
   innerBoxWidth
 } = useSidebarOther()
@@ -18,9 +25,11 @@ const { expandState } = useSidebarRoute()
 const {
   openType,
   minSidebarPx,
-  firstSidebarPx,
+  sidebarWidthPx,
   maxSidebarPx,
   isAnimating,
+  sidebarHeightPx,
+  showHandle,
 } = toRefs(sbData)
 
 </script>
@@ -28,31 +37,40 @@ const {
 
   <div class="sb-container"
     :class="{ 'sb-container_hidden': openType !== 'opened' }"
+    @mouseenter="onSbMouseEnter"
+    @mouseleave="onSbMouseLeave"
   >
-    <!-- 放于底部给用户拖动的盒子 -->
-    <div
-      ref="sidebarEl" 
-      class="sb-bar"
-      :style="{
-        minWidth: minSidebarPx > 0 ? minSidebarPx + 'px' : undefined,
-        maxWidth: maxSidebarPx > 0 ? maxSidebarPx + 'px' : undefined 
-      }"
-      :class="{ 'sb-bar_animating': isAnimating }"
-    ></div>
 
     <!-- 默认的分割线 -->
     <div class="sb-default-line"></div>
-
-    <!-- 分割线到内容盒子的区域 4px -->
-    <div class="sb-space-line"></div>
-
-    <!-- 悬浮或拖动时显示的分割线 -->
-    <div class="sb-drag-line"></div>
 
     <!-- 存放背景颜色 -->
     <div class="sb-bg">
       <div class="sb-bg-mask"></div>
     </div>
+
+    <!-- 放于底部给用户拖动的盒子 -->
+    <vue-draggable-resizable
+      @resizing="onResizing"
+      :class-name="isAnimating ? 'liu-vdr_animating' : 'liu-vdr'"
+      class-name-handle="liu-vdr-handle"
+      :w="sidebarWidthPx"
+      :h="sidebarHeightPx"
+      :min-width="minSidebarPx"
+      :max-width="maxSidebarPx"
+      :active="true"
+      :prevent-deactivation="true"
+      :draggable="false"
+      :resizable="true"
+      :handles="['mr']"
+      :z-index="501"
+    >
+      <template #mr>
+        <div class="sb-handle-mr"></div>
+      </template>
+    </vue-draggable-resizable>
+
+    
 
     <!-- 1. 侧边栏主内容 -->
     <div class="sb-box"
@@ -96,51 +114,12 @@ const {
   transform: translateX(-100%);
 }
 
-.sb-bar {
-  width: v-bind("firstSidebarPx + 'px'");
-  height: inherit;
-  resize: horizontal;
-  cursor: ew-resize;
-  opacity: 0;
-  overflow: scroll;   /** 这一行一定要是 scroll 否则无法拖动 */
-}
-
-.sb-bar_animating {
-  transition: .3s;
-}
-
-/* 没有以下该属性 只会在右小角一个很小的区域能 drag */
-.sb-bar::-webkit-scrollbar {
-  width: 200px;
-  height: inherit;
-}
-
 .sb-default-line {
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 5px;
-  border-right: 1px solid var(--line-default);
-  transition: .2s;
-  pointer-events: none;
-}
-
-.sb-space-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 6px;
-  border-right: 4px solid var(--sidebar-bg);
-  pointer-events: none;
-}
-
-.sb-drag-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 4px;
-  border-right: 2px dashed var(--line-hover);
-  opacity: 0;
+  right: 7px;
+  border-right: 3px solid var(--line-default);
   transition: .2s;
   pointer-events: none;
 }
@@ -150,9 +129,9 @@ const {
   left: 0;
   top: 0;
   bottom: 0;
-  right: 6px;
+  right: 8px;
   background-color: var(--sidebar-bg);
-  width: calc(100% - 6px);
+  width: calc(100% - 8px);
   height: 100%;
 }
 
@@ -176,9 +155,17 @@ const {
   background-color: var(--frosted-glass);
 }
 
-.sb-bar:active ~ .sb-drag-line {
-  opacity: 1;
-  border-right: 2px dashed var(--line-active);
+.sb-handle-mr {
+  height: 60px;
+  width: 8px;
+  background-color: var(--liu-drag-handle);
+  border-radius: 4px;
+  transition: .2s;
+  opacity: v-bind("showHandle ? 1 : 0");
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  margin-top: -30px;
 }
 
 /** 真正承载侧边栏内容的盒子 */
@@ -187,7 +174,7 @@ const {
   left: 0;
   top: 0;
   bottom: 0;
-  right: 6px;
+  right: 14px;
   display: flex;
   justify-content: flex-end;
   overflow-x: hidden;
@@ -195,19 +182,6 @@ const {
   padding-right: 10px;
   transition: .3s;
   scrollbar-color: transparent transparent;
-}
-
-.sb-box::-webkit-scrollbar-thumb {
-  background-color: transparent;
-  transition: .15s;
-}
-
-.sb-box:active {
-  scrollbar-color: var(--sidebar-scrollbar-thumb) transparent;
-}
-
-.sb-box:active::-webkit-scrollbar-thumb {
-  background-color: var(--sidebar-scrollbar-thumb);
 }
 
 .sb-box-main_hidden {
@@ -235,49 +209,40 @@ const {
   transition: .3s;
 }
 
+</style>
+<style>
 
-/**** 适配拥有鼠标设备 *****/
-@media(hover: hover) {
-
-  .sb-bar:hover ~ .sb-default-line {
-    border-right: 2px solid var(--bg-color);
-  }
-
-  .sb-bar:hover ~ .sb-drag-line {
-    opacity: 1;
-  }
-
-  .sb-box:hover {
-    scrollbar-color: var(--sidebar-scrollbar-thumb) transparent;
-  }
-
-  .sb-box:hover::-webkit-scrollbar-thumb {
-    background-color: var(--sidebar-scrollbar-thumb);
-  }
+.liu-vdr {
+  height: inherit;
 }
 
+.liu-vdr_animating {
+  height: inherit;
+  transition: .3s;
+}
 
-/** firefox 浏览器不支持整块拖动，
-  使用 @support 查询支持 -moz-user-select: none 语法的浏览器 
-  等于查询 firefox 浏览器
-*/
-@supports (-moz-user-select: none) {
+.liu-vdr-handle {
+  position: absolute;
+  height: 70px;
+  width: 14px;
+  transition: 150ms;
+}
 
-  .sb-bar {
-    cursor: auto;
-  }
+.liu-vdr-handle-mr {
+  top: 50%;
+  margin-top: -35px;
+  right: 0px;
+  cursor: e-resize;
+  transform-origin: center;
+}
 
-  .sb-bar:hover ~ .sb-default-line {
-    border-right: 1px solid var(--line-default);
-  }
+.liu-vdr-handle-mr:active {
+  transform: scale(1.2);
+}
 
-  .sb-bar:hover ~ .sb-drag-line {
-    opacity: 0;
-  }
-
-  .sb-bar:active ~ .sb-drag-line {
-    border-right: 2px dashed var(--line-hover);
-    opacity: 0;
+@media(hover: hover) {
+  .liu-vdr-handle-mr:hover {
+    transform: scale(1.2);
   }
 }
 

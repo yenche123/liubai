@@ -5,7 +5,7 @@ import { useWindowSize } from "../hooks/useVueUse"
 
 export type LayoutChangeType = "window" | "sidebar" | ""
 
-// sidebar状态: default 表示根据用户拖动边框的自然状态; window 表示用户手动点击输入框的全屏
+// sidebar状态: default 表示根据用户拖动边框的自然状态; fullscreen 表示用户手动点击输入框的全屏
 export type SidebarStatus = "default" | "fullscreen"
 
 export const useLayoutStore = defineStore("layout", () => {

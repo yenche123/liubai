@@ -84,6 +84,9 @@
   --frosted-glass-3: linear-gradient(0deg, rgba(234, 236, 239, .86) 50%, rgba(234, 236, 239, .75) 90%);
   --frosted-glass-4: rgba(255, 255, 255, .66);    /** navi-auto 在有阴影状态时的背景色 */
 
+  /** drag-handle */
+  --liu-drag-handle: #d0d3d9;
+
   /** 再最后给 body 添加背景色 */
   background-color: var(--bg-color);
 }

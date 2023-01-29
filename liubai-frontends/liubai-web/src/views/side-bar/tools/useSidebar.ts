@@ -1,4 +1,4 @@
-import { onActivated, onDeactivated, onMounted, onUnmounted, reactive, ref, Ref, watch } from "vue";
+import { onActivated, onDeactivated, reactive, watch } from "vue";
 import { useLayoutStore } from "../../useLayoutStore";
 import type { LayoutStore, LayoutType } from "../../useLayoutStore";
 import { useWindowSize } from "~/hooks/useVueUse";
@@ -7,6 +7,7 @@ import valTool from "~/utils/basic/val-tool";
 import time from "~/utils/basic/time";
 import type { OpenType } from "~/types/types-view";
 import { storeToRefs } from "pinia";
+import liuApi from "~/utils/liu-api";
 
 const LISTEN_DELAY = 300
 let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后视觉上呈现的宽度
@@ -15,82 +16,78 @@ let lastWinResizeStamp = 0
 interface SbData {
   openType: OpenType
   minSidebarPx: number
-  firstSidebarPx: number
+  sidebarWidthPx: number
+  sidebarHeightPx: number
   maxSidebarPx: number
   isAnimating: boolean
   isActivate: boolean
-  status: string
+  showHandle: boolean
 }
 
 const sbData = reactive<SbData>({
   openType: "opened",
   minSidebarPx: cfg.min_sidebar_width,
-  firstSidebarPx: cfg.default_sidebar_width,
+  sidebarWidthPx: cfg.default_sidebar_width,
+  sidebarHeightPx: 0,
   maxSidebarPx: 600,
   isAnimating: false,
   isActivate: true,
-  status: "default"
+  showHandle: false,
 })
 
 export function useSidebar() {
 
   const layoutStore = useLayoutStore()
-  const sidebarEl = ref<HTMLElement | null>(null)
-
   initSidebar(layoutStore)
-  listenUserDrag(sidebarEl, layoutStore)
-  listenWindowChange(sidebarEl, layoutStore)
-  listenChangeFromOtherComponent(sidebarEl, layoutStore)
+  listenWindowChange(layoutStore)
+  listenChangeFromOtherComponent(layoutStore)
   listenIfActivated()
 
+  const { onResizing } = initResizing(layoutStore)
+  const {
+    onSbMouseEnter,
+    onSbMouseLeave,
+  } = initMouse()
+  
+
   return {
-    sidebarEl,
     sbData,
+    onResizing,
+    onSbMouseEnter,
+    onSbMouseLeave,
   }
 }
 
-function listenIfActivated() {
-  onActivated(() => {
-    sbData.isActivate = true
-  })
-
-  onDeactivated(() => {
-    sbData.isActivate = false
-  })
-}
-
-// 从 sidebarEl 里获取 style 所设置的宽度
-function getSidebarPxFromStyle(sidebarEl: Ref<HTMLElement | null>): number {
-  if(!sidebarEl.value) return cfg.default_sidebar_width
-  const style = sidebarEl.value.style
-
-  let widthStr = style.width
-  if(!widthStr) {
-    const domRect = sidebarEl.value.getBoundingClientRect()
-    return domRect.width
+function initMouse() {
+  let lastLeave = 0
+  const onSbMouseEnter = () => {
+    if(lastLeave) clearTimeout(lastLeave)
+    sbData.showHandle = true
   }
 
-  const idx = widthStr.indexOf("px")
-  if(idx > 0) {
-    widthStr = widthStr.substring(0, idx)
+  const onSbMouseLeave = () => {
+    if(lastLeave) clearTimeout(lastLeave)
+    lastLeave = setTimeout(() => {
+      lastLeave = 0
+      sbData.showHandle = false
+    }, 600)
   }
-  let w = Number(widthStr)
-  if(isNaN(w)) return cfg.default_sidebar_width
-  return w
+
+  return {
+    onSbMouseEnter,
+    onSbMouseLeave,
+  }
 }
 
 
-// 监听用户拖动侧边栏
-function listenUserDrag(
-  sidebarEl: Ref<HTMLElement | null>,
+function initResizing(
   layoutStore: LayoutStore,
 ) {
   let lastResizeTimeout = 0
 
   const collectState = () => {
-    if(!sidebarEl.value) return
     if(sbData.openType !== "opened") return
-    const newV = sidebarEl.value.offsetWidth
+    const newV = sbData.sidebarWidthPx
     const oldV = layoutStore.sidebarWidth
     if(newV === oldV) return
     layoutStore.$patch(state => {
@@ -100,25 +97,35 @@ function listenUserDrag(
     sidebarPxByDrag = newV
   }
 
-  const whenResizeChange = () => {
+  const onResizing = (
+    left: number,
+    top: number,
+    width: number,
+    height: number,
+  ) => {
+    sbData.sidebarWidthPx = width
+
     if(isJustWindowResize()) return
     if(!sbData.isActivate) return
-    if(lastResizeTimeout) window.clearTimeout(lastResizeTimeout)
-    lastResizeTimeout = window.setTimeout(() => {
+    if(lastResizeTimeout) clearTimeout(lastResizeTimeout)
+    lastResizeTimeout = setTimeout(() => {
+      lastResizeTimeout = 0
       collectState()
     }, LISTEN_DELAY)
   }
 
-  const rzObserver = new ResizeObserver(entries => {
-    whenResizeChange()
-  })
-  onMounted(() => {
-    rzObserver.observe(sidebarEl.value as HTMLElement)
-  })
-  onUnmounted(() => {
-    rzObserver.disconnect()
+  return { onResizing }
+}
+
+
+function listenIfActivated() {
+  onActivated(() => {
+    sbData.isActivate = true
   })
 
+  onDeactivated(() => {
+    sbData.isActivate = false
+  })
 }
 
 // 是否刚刚有发生窗口变化
@@ -131,19 +138,18 @@ function isJustWindowResize(): boolean {
 
 // 监听窗口发生变化
 function listenWindowChange(
-  sidebarEl: Ref<HTMLElement | null>,
   layoutStore: LayoutStore,
 ) {
   const { width } = useWindowSize()
   let lastWindowTimeout = 0
 
   const collectState = async () => {
-    recalculate(sidebarEl, layoutStore)
+    recalculate(layoutStore)
   }
 
   const whenWindowChange = () => {
     if(lastWindowTimeout) clearTimeout(lastWindowTimeout)
-    lastWindowTimeout = window.setTimeout(() => {
+    lastWindowTimeout = setTimeout(() => {
       collectState()
     }, LISTEN_DELAY)
   }
@@ -155,7 +161,6 @@ function listenWindowChange(
 }
 
 async function recalculate(
-  sidebarEl: Ref<HTMLElement | null>,
   layoutStore: LayoutStore,
 ) {
   const { width } = useWindowSize()
@@ -185,11 +190,11 @@ async function recalculate(
   // 其他情况: 侧边栏必须是打开的情况
   
   const { min, max } = getCurrentMinMax(newV)
-  const sidebarPxStyle = getSidebarPxFromStyle(sidebarEl)
+  const sidebarPxStyle = sbData.sidebarWidthPx
   // console.log("当前窗口宽度: ", newV)
   // console.log("min: ", min)
   // console.log("max: ", max)
-  // console.log("sidebarPxByDrag: ", sidebarPxByDrag)
+  // console.log("sidebarPxByDrag 这个很重要: ", sidebarPxByDrag)
   // console.log("oldSidebarPx: ", oldSidebarPx)
   // console.log(" ")
 
@@ -208,8 +213,14 @@ async function recalculate(
   }
 
   // 设置数据
-  if(min > 0) sbData.minSidebarPx = min
-  if(max > 0) sbData.maxSidebarPx = max
+  if(min > 0) {
+    sbData.minSidebarPx = min
+    if(sidebarPxStyle < min) sbData.sidebarWidthPx = min 
+  }
+  if(max > 0) {
+    sbData.maxSidebarPx = max
+    if(max < sidebarPxStyle) sbData.sidebarWidthPx = max
+  }
 
   // 广播数据
   layoutStore.$patch(newState)
@@ -234,7 +245,16 @@ function getCurrentMinMax(cw: number): { min: number, max: number } {
 function initSidebar(
   layoutStore: LayoutStore,
 ) {
-  const { width } = useWindowSize()
+  const { width, height } = useWindowSize()
+  const cha = liuApi.getCharacteristic()
+  if(cha.isMobile) sbData.showHandle = true
+
+  sbData.sidebarHeightPx = height.value
+  watch(height, (newV) => {
+    sbData.sidebarHeightPx = newV
+  })
+
+
   const w = width.value
   let newState: Partial<LayoutType> = {
     changeType: "window",
@@ -262,31 +282,31 @@ function initSidebar(
     // console.log("发现 窗口宽度不足 600px，但之前却是打开状态")
     // console.log("则优先采纳 store 的.........")
     sbData.openType = "closed_by_auto"
-    sbData.firstSidebarPx = d2
+    sbData.sidebarWidthPx = d2
     sidebarPxByDrag = d2
     newState.sidebarWidth = 0
   }
   else if(d2 === 0) {
     // console.log("发现侧边栏 之前已是被关闭状态")
-    // console.log("则 firstSidebarPx 设置为上次拖动的宽度")
-    sbData.firstSidebarPx = sidebarPxByDrag
+    // console.log("则 sidebarWidthPx 设置为上次拖动的宽度")
+    sbData.sidebarWidthPx = sidebarPxByDrag
   }
   else if(d1 !== d2 || d2 !== d3) {
     // console.log("发现侧边栏 之前就是打开状态(store 不为 0)，但三值有所不同")
     // console.log("则优先采纳 store 的")
-    sbData.firstSidebarPx = d2
+    sbData.sidebarWidthPx = d2
     sidebarPxByDrag = d2
   }
 
   // 如果当前是 打开状态 考虑一下 min 和 max
   if(sbData.openType === "opened") {
     if(sidebarPxByDrag < min) {
-      sbData.firstSidebarPx = min
+      sbData.sidebarWidthPx = min
       sidebarPxByDrag = min
       newState.sidebarWidth = min
     } 
     else if(sidebarPxByDrag > max) {
-      sbData.firstSidebarPx = max
+      sbData.sidebarWidthPx = max
       sidebarPxByDrag = max
       newState.sidebarWidth = max
     }
@@ -300,7 +320,6 @@ function initSidebar(
 
 // 监听来自其他组件的变化
 function listenChangeFromOtherComponent(
-  sidebarEl: Ref<HTMLElement | null>,
   layoutStore: LayoutStore,
 ) {
 
@@ -314,15 +333,23 @@ function listenChangeFromOtherComponent(
       clientWidth: newV,
     }
     const { min, max } = getCurrentMinMax(newV)
-    const sidebarPxStyle = getSidebarPxFromStyle(sidebarEl)
+    const sidebarPxStyle = sbData.sidebarWidthPx
     newState.sidebarWidth = valTool.getValInMinAndMax(sidebarPxStyle, min, max)
 
     if(newState.sidebarWidth > 0) sbData.openType = "opened"
     else sbData.openType = "closed_by_auto"
 
     sbData.isAnimating = true
-    if(min > 0) sbData.minSidebarPx = min
-    if(max > 0) sbData.maxSidebarPx = max
+    if(min > 0) {
+      sbData.minSidebarPx = min
+      if(sidebarPxStyle < min) sbData.sidebarWidthPx = min 
+    }
+    if(max > 0) {
+      sbData.maxSidebarPx = max
+      if(max < sidebarPxStyle) sbData.sidebarWidthPx = max
+    }
+
+    console.log("打印 sidebarWidthPx: ", sbData.sidebarWidthPx)
     
     // 广播数据
     layoutStore.$patch(newState)
