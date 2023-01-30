@@ -2,9 +2,7 @@
 import { 
   nextTick, 
   onActivated, 
-  onDeactivated, 
-  onMounted, 
-  onUnmounted, 
+  onDeactivated,
   provide, 
   reactive,
   ref, 
@@ -21,16 +19,20 @@ import { useWindowSize } from "~/hooks/useVueUse"
 import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
 import { outterWidthKey } from "~/utils/provide-keys"
+import liuApi from "~/utils/liu-api";
 
 interface VvData {
   openType: OpenType
   minVvPx: number
   viceViewPx: number
+  vvHeightPx: number
   maxVvPx: number
   isAnimating: boolean
   isActivate: boolean
   lastParentResizeStamp: number
+  lastOpenStamp: number
   shadow: boolean
+  showHandle: boolean
 }
 
 interface VvEmits {
@@ -42,44 +44,132 @@ const layoutStore = useLayoutStore()
 
 export function useViceView(emits: VvEmits) {  
   const vvEl = ref<HTMLElement | null>(null) 
-  let defaultPx = getDefaultPx()
+  const { vvData } = initViceView()
+
+  const vvPx = toRef(vvData, "viceViewPx")
+  provide(outterWidthKey, vvPx)
+
+  listenRouteChange(vvData, emits)
+  listenIfActivated(vvData)
+  listenParentChange(vvData, emits, vvEl)
+  const { onResizing } = initResizing(vvData, emits)
+  const {
+    onVvMouseEnter,
+    onVvMouseLeave,
+  } = initMouse(vvData)
+
+  return { 
+    vvData, 
+    onResizing,
+    onVvMouseEnter,
+    onVvMouseLeave,
+  }
+}
+
+function initViceView() {
+  let defaultPx = cfg.default_viceview_width
+  const { width, height } = useWindowSize()
+  const w = width.value
+  if(w > 1280) {
+    defaultPx = Math.max(defaultPx, Math.round(w / 3))
+  }
+  
+  const cha = liuApi.getCharacteristic()
+  let showHandle = cha.isMobile
 
   const vvData = reactive<VvData>({
     openType: "closed_by_auto",
     minVvPx: cfg.min_viceview_width,
     viceViewPx: defaultPx,
+    vvHeightPx: height.value,
     maxVvPx: defaultPx,
     isAnimating: false,
     isActivate: true,
     lastParentResizeStamp: 0,
+    lastOpenStamp: 0,
     shadow: false,
+    showHandle,
   })
 
-  const vvPx = toRef(vvData, "viceViewPx")
-  provide(outterWidthKey, vvPx)
+  watch(height, (newV) => {
+    vvData.vvHeightPx = newV
+  })
 
-  listenUserDrag(vvData, emits, vvEl)
-  listenRouteChange(vvData, emits, vvEl)
-  listenIfActivated(vvData)
-  listenParentChange(vvData, emits, vvEl)
-
-  return { vvEl, vvData }
+  return { vvData }
 }
 
-function getDefaultPx() {
-  let defaultPx = cfg.default_viceview_width
-  const { width } = useWindowSize()
-  const w = width.value
-  if(w > 1280) {
-    defaultPx = Math.max(defaultPx, Math.round(w / 3))
+function initMouse(
+  vvData: VvData,
+) {
+  let lastLeave = 0
+  const onVvMouseEnter = () => {
+    if(lastLeave) clearTimeout(lastLeave)
+    vvData.showHandle = true
   }
-  return defaultPx
+
+  const onVvMouseLeave = () => {
+    if(lastLeave) clearTimeout(lastLeave)
+    lastLeave = setTimeout(() => {
+      lastLeave = 0
+
+      // 判断是不是才刚打开，若是则不要隐藏
+      const diff = time.getLocalTime() - vvData.lastOpenStamp
+      if(diff < 900) return
+      
+      vvData.showHandle = false
+    }, 600)
+  }
+
+  return {
+    onVvMouseEnter,
+    onVvMouseLeave,
+  }
+}
+
+
+function initResizing(
+  vvData: VvData, 
+  emits: VvEmits,
+) {
+  let lastResizeTimeout = 0
+
+  const _isJustParentChange = (): boolean => {
+    const now = time.getLocalTime()
+    const diff = vvData.lastParentResizeStamp + LISTEN_DELAY + 50 - now
+    if(diff > 0) return true
+    return false
+  }
+
+  const collectState = () => {
+    if(vvData.openType !== "opened") return
+    let newV = vvData.viceViewPx
+    vvData.shadow = judgeIfShadow(vvData)
+    emits("widthchange", newV)
+  }
+
+  const onResizing = (
+    left: number,
+    top: number,
+    width: number,
+    height: number,
+  ) => {
+    vvData.viceViewPx = width
+
+    if(_isJustParentChange()) return
+    if(!vvData.isActivate) return
+    if(lastResizeTimeout) clearTimeout(lastResizeTimeout)
+    lastResizeTimeout = setTimeout(() => {
+      lastResizeTimeout = 0
+      collectState()
+    }, LISTEN_DELAY)
+  }
+
+  return { onResizing }
 }
 
 function listenRouteChange(
   vvData: VvData, 
   emits: VvEmits,
-  vvEl: Ref<HTMLElement | null>
 ) {
   let located = ""
   const { route } = useRouteAndLiuRouter()
@@ -89,7 +179,7 @@ function listenRouteChange(
   ) => {
     const openRequired = judgeIfOpen(newQuery)
     if(openRequired && vvData.openType !== "opened") {
-      openViceView(vvData, emits, vvEl)
+      openViceView(vvData, emits)
       return
     }
 
@@ -164,16 +254,18 @@ function getViceViewPxFromStyle(
 function openViceView(
   vvData: VvData, 
   emits: VvEmits,
-  vvEl: Ref<HTMLElement | null>  
 ) {
   const { max, min } = getMinAndMax()
+  vvData.lastOpenStamp = time.getLocalTime()
   vvData.minVvPx = min
   vvData.maxVvPx = max
   if(vvData.viceViewPx > max) vvData.viceViewPx = max
   else if(vvData.viceViewPx < min) vvData.viceViewPx = min
-  else vvData.viceViewPx = getViceViewPxFromStyle(vvEl, vvData.viceViewPx)
   vvData.openType = "opened"
   vvData.shadow = judgeIfShadow(vvData)
+
+  const cha = liuApi.getCharacteristic()
+  if(cha.isMobile) vvData.showHandle = true
 
   emits("widthchange", vvData.viceViewPx)
 }
@@ -197,51 +289,6 @@ function listenIfActivated(vvData: VvData) {
   })
 }
 
-// 监听自身的拖动
-function listenUserDrag(
-  vvData: VvData, 
-  emits: VvEmits,
-  vvEl: Ref<HTMLElement | null>
-) {
-
-  let lastResizeTimeout = 0
-
-  const _isJustParentChange = (): boolean => {
-    const now = time.getLocalTime()
-    const diff = vvData.lastParentResizeStamp + LISTEN_DELAY + 50 - now
-    if(diff > 0) return true
-    return false
-  }
-
-  const collectState = () => {
-    if(!vvEl.value) return
-    if(vvData.openType !== "opened") return
-    const newV = vvEl.value.offsetWidth
-    if(newV === vvData.viceViewPx) return
-    vvData.viceViewPx = newV
-    vvData.shadow = judgeIfShadow(vvData)
-    emits("widthchange", newV)
-  }
-
-  const whenResizeChange = () => {
-    if(_isJustParentChange()) return
-    if(!vvData.isActivate) return
-    if(lastResizeTimeout) window.clearTimeout(lastResizeTimeout)
-    lastResizeTimeout = window.setTimeout(() => {
-      collectState()
-    }, LISTEN_DELAY)
-  }
-
-  const rzObserver = new ResizeObserver(entries => {
-    whenResizeChange()
-  })
-  onMounted(() => {
-    rzObserver.observe(vvEl.value as HTMLElement)
-  })
-  onUnmounted(() => {
-    rzObserver.disconnect()
-  })
-}
 
 // 监听 sidebar 或者 window 窗口的宽度变化
 function listenParentChange(
@@ -252,7 +299,7 @@ function listenParentChange(
   layoutStore.$subscribe(async (mutation, state) => {
     if(vvData.openType !== "opened") return
 
-    let vvPx = getViceViewPxFromStyle(vvEl, vvData.viceViewPx)
+    let vvPx = vvData.viceViewPx
     const { min, max } = getMinAndMax()
     if(vvPx < min) vvPx = min
     if(vvPx > max) vvPx = max

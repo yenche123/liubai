@@ -5,24 +5,34 @@ import { useVvUI } from "./tools/useVvUI";
 import type { VcState } from "./vice-content/tools/types";
 import ViceContent from "./vice-content/vice-content.vue";
 import IframeRestriction from "./iframe-restriction/iframe-restriction.vue";
+import VueDraggableResizable from "vue-draggable-resizable/src/components/vue-draggable-resizable.vue";
+
 
 const emits = defineEmits<{
   (e: "widthchange", widthPx: number): void
 }>()
 
-const { vvData, vvEl } = useViceView(emits)
+const { 
+  vvData, 
+  onResizing,
+  onVvMouseEnter,
+  onVvMouseLeave,
+} = useViceView(emits)
+
 const {
   openType,
   minVvPx,
   viceViewPx,
+  vvHeightPx,
   maxVvPx,
   isAnimating,
   shadow,
+  showHandle,
 } = toRefs(vvData)
 
 const {
-  isDraging,
   onStartDrag,
+  isDraging,
 } = useVvUI()
 
 const vcStateToIr = ref<VcState>("")
@@ -37,34 +47,22 @@ const onVcStateChange = (newV: VcState) => {
     :class="{ 
       'vv-container_hidden': openType !== 'opened'
     }"
+    @mouseenter="onVvMouseEnter"
+    @mouseleave="onVvMouseLeave"
   >
-    <!-- 放于底部给用户拖动的盒子 -->
-    <div
-      ref="vvEl" 
-      class="vv-bar"
-      :style="{
-        minWidth: minVvPx > 0 ? minVvPx + 'px' : undefined,
-        maxWidth: maxVvPx > 0 ? maxVvPx + 'px' : undefined 
-      }"
-      :class="{ 'vv-bar_animating': isAnimating }"
-      @pointerdown="onStartDrag"
-    ></div>
 
-    <!-- 最左侧到分割线的留空，让用户可以有比较大的区域拖动 -->
-    <div class="vv-buffer-zone"
-      :class="{ 'vv-buffer-zone_transparent': shadow }"
+    <div class="vv-bg"
+      :class="{ 'vv-bg_shadow': shadow }"
     ></div>
 
     <!-- 分割线  -->
     <div class="vv-space-line"></div>
 
-    <!-- 悬浮或拖动时显示的分割线 -->
-    <div class="vv-drag-line"></div>
+    
+
 
     <!-- 装内容的盒子 -->
-    <div class="vv-box"
-      :class="{ 'vv-box_shadow': shadow }"
-    >
+    <div class="vv-box">
 
       <div class="vv-inner-box">
         <ViceContent :is-outter-draging="isDraging"
@@ -73,6 +71,29 @@ const onVcStateChange = (newV: VcState) => {
       </div>
       
     </div>
+
+    <!-- 放于底部给用户拖动的盒子 -->
+    <vue-draggable-resizable
+      @resizing="onResizing"
+      :class-name="isAnimating ? 'liu-vv-vdr_animating' : 'liu-vv-vdr'"
+      class-name-handle="liu-vv-vdr-handle"
+      style="transform: translate(0px, 0px)"
+      :w="viceViewPx"
+      :h="vvHeightPx"
+      :min-width="minVvPx"
+      :max-width="maxVvPx"
+      :active="true"
+      :prevent-deactivation="true"
+      :draggable="false"
+      :resizable="true"
+      :handles="['ml']"
+      :z-index="706"
+      @pointerdown="onStartDrag"
+    >
+      <template #ml>
+        <div class="vv-handle-ml"></div>
+      </template>
+    </vue-draggable-resizable>
     
   </div>
 
@@ -95,96 +116,42 @@ const onVcStateChange = (newV: VcState) => {
 }
 
 .vv-container_hidden {
-  transform: translateX(102%);
+  transform: translateX(105%);
 }
 
-.vv-bar {
-  width: v-bind("viceViewPx + 'px'");
-  height: inherit;
-  resize: horizontal;
-  cursor: ew-resize;
-  opacity: 0;
-  overflow: scroll;   /** 这一行一定要是 scroll 否则无法拖动 */
-}
-
-.vv-bar_animating {
-  transition: .3s;
-}
-
-/* 没有以下该属性 竖直拖动条会不生效 */
-.vv-bar::-webkit-scrollbar {
-  width: 200px;
-  height: inherit;
-}
-
-.vv-buffer-zone {
+.vv-bg {
   position: absolute;
+  right: 0;
   top: 0;
   bottom: 0;
-  left: 0;
-  border-left: 2px solid var(--bg-color);
-  transition: .2s;
-  pointer-events: none;
+  left: 2px;
+  background-color: var(--vice-bg);
 }
 
-.vv-buffer-zone_transparent {
-  border-left: 2px solid transparent;
+.vv-bg_shadow {
+  box-shadow: var(--vice-shadow);
 }
 
 .vv-space-line {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 2px;
-  border-left: 2px solid var(--line-default);
+  left: 1px;
+  border-left: 1px solid var(--line-default);
   pointer-events: none;
-  z-index: 705;
 }
 
-.vv-bar:hover ~ .vv-buffer-zone,
-.vv-bar:active ~ .vv-buffer-zone {
-  opacity: 0;
-}
-
-.vv-drag-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 2px;
-  border-left: 2px dashed var(--line-hover);
-  opacity: 0;
+.vv-handle-ml {
+  height: 60px;
+  width: 8px;
+  background-color: var(--liu-drag-handle);
+  border-radius: 4px;
   transition: .2s;
-  pointer-events: none;
-  z-index: 705;
-}
-
-.vv-bar:hover ~ .vv-drag-line {
-  opacity: 1;
-}
-
-.vv-bar:active ~ .vv-drag-line {
-  opacity: 1;
-  border-left: 2px solid var(--line-active);
-}
-
-@supports (-moz-user-select: none) {
-  .vv-bar {
-    cursor: auto;
-  }
-
-  .vv-bar:hover ~ .vv-buffer-zone,
-  .vv-bar:active ~ .vv-buffer-zone {
-    opacity: 1;
-  }
-
-  .vv-bar:hover ~ .vv-drag-line {
-    opacity: 0;
-  }
-
-  .vv-bar:active ~ .vv-drag-line {
-    opacity: 0;
-    border-left: 2px dashed var(--line-hover);
-  }
+  opacity: v-bind("showHandle ? 1 : 0");
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  margin-top: -30px;
 }
 
 /** 真正承载侧边栏内容的盒子 */
@@ -193,18 +160,13 @@ const onVcStateChange = (newV: VcState) => {
   right: 0;
   top: 0;
   bottom: 0;
-  left: 4px;
+  left: 2px;
   display: flex;
   justify-content: flex-end;
   overflow-x: hidden;
   overflow-y: auto;
   direction: ltr;
-  background-color: var(--vice-bg);
   scrollbar-color: transparent transparent;
-}
-
-.vv-box_shadow {
-  box-shadow: var(--vice-shadow);
 }
 
 .vv-inner-box {
@@ -226,6 +188,47 @@ const onVcStateChange = (newV: VcState) => {
 
 .vv-box:hover::-webkit-scrollbar-thumb {
   opacity: 1;
+}
+
+</style>
+<style>
+
+.liu-vv-vdr {
+  direction: rtl;
+  pointer-events: none;
+}
+
+.liu-vv-vdr_animating {
+  direction: rtl;
+  pointer-events: none;
+  transition: .3s;
+}
+
+.liu-vv-vdr-handle {
+  position: absolute;
+  height: 100px;
+  width: 14px;
+  transition: 150ms;
+  pointer-events: auto;
+}
+
+.liu-vv-vdr-handle-ml {
+  top: 50%;
+  margin-top: -50px;
+  left: 0;
+  margin-left: -6px;
+  cursor: e-resize;
+  transform-origin: center;
+}
+
+.liu-vv-vdr-handle-ml:active {
+  transform: scale(1.2);
+}
+
+@media(hover: hover) {
+  .liu-vv-vdr-handle-ml:hover {
+    transform: scale(1.2);
+  }
 }
 
 </style>
