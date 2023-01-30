@@ -117,7 +117,7 @@ const {
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 7px;
+  right: 7.4px;
   border-right: 3px solid var(--line-default);
   transition: .2s;
   pointer-events: none;
@@ -128,9 +128,9 @@ const {
   left: 0;
   top: 0;
   bottom: 0;
-  right: 7.6px;
+  right: 8px;
   background-color: var(--sidebar-bg);
-  width: calc(100% - 7.6px);
+  width: calc(100% - 8px);
   height: 100%;
 }
 
