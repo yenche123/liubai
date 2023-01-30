@@ -117,7 +117,7 @@ const {
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 7.2px;
+  right: 7px;
   border-right: 3px solid var(--line-default);
   transition: .2s;
   pointer-events: none;
@@ -128,9 +128,9 @@ const {
   left: 0;
   top: 0;
   bottom: 0;
-  right: 8px;
+  right: 7.6px;
   background-color: var(--sidebar-bg);
-  width: calc(100% - 8px);
+  width: calc(100% - 7.6px);
   height: 100%;
 }
 
@@ -162,7 +162,7 @@ const {
   transition: .2s;
   opacity: v-bind("showHandle ? 1 : 0");
   position: absolute;
-  right: 4px;
+  right: 3.5px;
   top: 50%;
   margin-top: -30px;
 }
