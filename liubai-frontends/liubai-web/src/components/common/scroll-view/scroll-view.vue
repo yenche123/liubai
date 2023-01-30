@@ -16,6 +16,10 @@ const props = defineProps({
     type: String as PropType<"vertical" | "horizontal">,
     default: "vertical",
   },
+  hiddenScrollbar: {
+    type: Boolean,
+    default: false,
+  }
 })
 
 const emits = defineEmits<{
@@ -35,7 +39,10 @@ const { isMobile } = liuApi.getCharacteristic()
 <template>
 
   <div ref="sv" class="liu-scroll-view" 
-    :class="{ 'liu-scroll-view_flex': direction === 'horizontal' }"
+    :class="{ 
+      'liu-scroll-view_flex': direction === 'horizontal',
+      'liu-scollbar_hidden': hiddenScrollbar,
+    }"
     @scroll="onScrolling"
   >
     <slot></slot>
@@ -54,12 +61,20 @@ const { isMobile } = liuApi.getCharacteristic()
   scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
+.liu-scollbar_hidden {
+  scrollbar-color: transparent transparent;
+}
+
 .liu-scroll-view::-webkit-scrollbar {
   display: v-bind("isMobile ? 'none' : 'block'");
 }
 
 .liu-scroll-view::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
+}
+
+.liu-scollbar_hidden::-webkit-scrollbar {
+  display: none;
 }
 
 </style>

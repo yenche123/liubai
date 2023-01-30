@@ -6,14 +6,14 @@ import ScrollView from "~/components/common/scroll-view/scroll-view.vue"
 import IndexContent from "./index-content/index-content.vue"
 import NaviAuto from "~/components/common/navi-auto/navi-auto.vue";
 
-const { onVvWidthChange } = useMainVice()
+const { hiddenScrollBar, onVvWidthChange } = useMainVice()
 
 </script>
 <template>
 
   <!-- 主视图 -->
   <main-view>
-    <scroll-view>
+    <scroll-view :hidden-scrollbar="hiddenScrollBar">
       <NaviAuto></NaviAuto>
       <index-content></index-content>
     </scroll-view>

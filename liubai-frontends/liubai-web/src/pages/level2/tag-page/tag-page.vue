@@ -9,7 +9,7 @@ import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
 import { useTagPage } from "./tools/useTagPage";
 
-const { onVvWidthChange } = useMainVice()
+const { hiddenScrollBar, onVvWidthChange } = useMainVice()
 const { t } = useI18n()
 
 const { tagName, tagId } = useTagPage()
@@ -19,7 +19,7 @@ const { tagName, tagId } = useTagPage()
 
   <!-- 主视图 -->
   <main-view>
-    <scroll-view>
+    <scroll-view :hidden-scrollbar="hiddenScrollBar">
       <navi-virtual></navi-virtual>
       <TagContent :tag-id="tagId"></TagContent>
     </scroll-view>
