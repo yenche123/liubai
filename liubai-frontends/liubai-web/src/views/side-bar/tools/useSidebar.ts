@@ -87,6 +87,7 @@ function initResizing(
 
   const collectState = () => {
     if(sbData.openType !== "opened") return
+    if(!sbData.showHandle) sbData.showHandle = true
     const newV = sbData.sidebarWidthPx
     const oldV = layoutStore.sidebarWidth
     if(newV === oldV) return
