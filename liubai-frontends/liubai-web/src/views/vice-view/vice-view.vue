@@ -149,9 +149,10 @@ const onVcStateChange = (newV: VcState) => {
   transition: .2s;
   opacity: v-bind("showHandle ? 1 : 0");
   position: absolute;
-  left: 4px;
+  left: 50%;
   top: 50%;
   margin-top: -30px;
+  margin-left: -4px;
 }
 
 /** 真正承载侧边栏内容的盒子 */
@@ -207,7 +208,7 @@ const onVcStateChange = (newV: VcState) => {
 .liu-vv-vdr-handle {
   position: absolute;
   height: 100px;
-  width: 14px;
+  width: 20px;
   transition: 150ms;
   pointer-events: auto;
 }
@@ -216,7 +217,7 @@ const onVcStateChange = (newV: VcState) => {
   top: 50%;
   margin-top: -50px;
   left: 0;
-  margin-left: -6px;
+  margin-left: -9px;
   cursor: e-resize;
   transform-origin: center;
 }

@@ -48,6 +48,24 @@ const {
       <div class="sb-bg-mask"></div>
     </div>
 
+    <!-- 1. 侧边栏主内容 -->
+    <div class="sb-box"
+      :class="{ 'sb-box-main_hidden': expandState !== '' }"
+    >
+      <div class="sb-inner-box">
+        <SbContent :show="expandState === ''"></SbContent>
+      </div>
+    </div>
+
+    <!-- 2. 侧边栏展示标签 -->
+    <div class="sb-box sb-box-other_hidden"
+      :class="{ 'sb-box-other_show': expandState === 'tags' }"
+    >
+      <div class="sb-inner-box">
+        <SbTags :show="expandState === 'tags'"></SbTags>
+      </div>
+    </div>
+
     <!-- 放于底部给用户拖动的盒子 -->
     <vue-draggable-resizable
       @resizing="onResizing"
@@ -68,26 +86,6 @@ const {
         <div class="sb-handle-mr"></div>
       </template>
     </vue-draggable-resizable>
-
-    
-
-    <!-- 1. 侧边栏主内容 -->
-    <div class="sb-box"
-      :class="{ 'sb-box-main_hidden': expandState !== '' }"
-    >
-      <div class="sb-inner-box">
-        <SbContent :show="expandState === ''"></SbContent>
-      </div>
-    </div>
-
-    <!-- 2. 侧边栏展示标签 -->
-    <div class="sb-box sb-box-other_hidden"
-      :class="{ 'sb-box-other_show': expandState === 'tags' }"
-    >
-      <div class="sb-inner-box">
-        <SbTags :show="expandState === 'tags'"></SbTags>
-      </div>
-    </div>
 
 
   </div>
@@ -117,7 +115,7 @@ const {
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 7.4px;
+  right: 10.4px;
   border-right: 3px solid var(--line-default);
   transition: .2s;
   pointer-events: none;
@@ -128,9 +126,9 @@ const {
   left: 0;
   top: 0;
   bottom: 0;
-  right: 8px;
+  right: 11px;
   background-color: var(--sidebar-bg);
-  width: calc(100% - 8px);
+  width: calc(100% - 11px);
   height: 100%;
 }
 
@@ -162,7 +160,7 @@ const {
   transition: .2s;
   opacity: v-bind("showHandle ? 1 : 0");
   position: absolute;
-  right: 3.5px;
+  right: 6.5px;
   top: 50%;
   margin-top: -30px;
 }
@@ -212,19 +210,20 @@ const {
 <style>
 
 .liu-vdr {
-  height: inherit;
+  pointer-events: none;
 }
 
 .liu-vdr_animating {
-  height: inherit;
+  pointer-events: none;
   transition: .3s;
 }
 
 .liu-vdr-handle {
   position: absolute;
   height: 100px;
-  width: 14px;
+  width: 20px;
   transition: 150ms;
+  pointer-events: auto;
 }
 
 .liu-vdr-handle-mr {
