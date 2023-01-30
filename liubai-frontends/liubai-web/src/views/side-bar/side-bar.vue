@@ -115,7 +115,7 @@ const {
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 10.4px;
+  right: 9.4px;
   border-right: 3px solid var(--line-default);
   transition: .2s;
   pointer-events: none;
@@ -126,9 +126,9 @@ const {
   left: 0;
   top: 0;
   bottom: 0;
-  right: 11px;
+  right: 10px;
   background-color: var(--sidebar-bg);
-  width: calc(100% - 11px);
+  width: calc(100% - 10px);
   height: 100%;
 }
 
@@ -160,9 +160,10 @@ const {
   transition: .2s;
   opacity: v-bind("showHandle ? 1 : 0");
   position: absolute;
-  right: 6.5px;
+  right: 50%;
   top: 50%;
   margin-top: -30px;
+  margin-right: -4px;
 }
 
 /** 真正承载侧边栏内容的盒子 */
