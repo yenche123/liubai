@@ -69,7 +69,14 @@ function onTapMask() {
 }
 
 // 点击移除
-function onTapRemove() {
+async function onTapRemove() {
+  // 修改 list
+  const _list = list.value
+  _list.forEach((v, i) => {
+    if(v.selected) v.selected = false
+  })
+
+  await valTool.waitMilli(75)
   _resolve && _resolve({ action: "remove" })
   _close()
 }
