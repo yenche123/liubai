@@ -179,7 +179,8 @@
     "delete_forever_2": "確定要徹底刪除嗎？此動作無法被復原",
     "delete_btn": "徹底刪除",    
     "finished": "已完成",
-    "todo": "待辦"
+    "todo": "待辦",
+    "select_state": "選擇狀態"
   },
   "err": {
     "no_data": "這裡什麼都沒有",

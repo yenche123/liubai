@@ -179,7 +179,8 @@
     "delete_forever_2": "确定要彻底删除吗？该操作无法恢复。",
     "delete_btn": "彻底删除",
     "finished": "已完成",
-    "todo": "待办"
+    "todo": "待办",
+    "select_state": "选择状态"
   },
   "err": {
     "no_data": "这里什么都没有",

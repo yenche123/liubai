@@ -11,6 +11,7 @@ import type { TlProps, TlViewType } from "./types"
 import type { Ref } from "vue";
 import valTool from "~/utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
+import cui from "~/components/custom-ui"
 
 interface ToCtx {
   router: LiuRouter
@@ -92,6 +93,16 @@ function handleOutterOperation(
   else if(operation === "pin") {
     handle_pin(ctx)
   }
+  else if(operation === "state") {
+    handle_state(ctx)
+  }
+}
+
+// 去打开状态选择面板
+async function handle_state(ctx: ToCtx) {
+  const stateIdSelected = ctx.thread.stateId
+  const res = await cui.showStateSelector({ stateIdSelected })
+  console.log("看一下 res: ", res)
 }
 
 // 去恢复

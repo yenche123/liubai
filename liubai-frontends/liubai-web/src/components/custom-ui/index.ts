@@ -7,6 +7,7 @@ import { previewImage } from "./preview-image"
 import { showHashTagEditor } from "./hashtag-editor"
 import { showSnackBar } from "./snack-bar"
 import { showActionSheet } from "./action-sheet"
+import { showStateSelector } from "./state-selector"
 
 export default {
   showModal,
@@ -18,4 +19,5 @@ export default {
   showHashTagEditor,
   showSnackBar,
   showActionSheet,
+  showStateSelector,
 }

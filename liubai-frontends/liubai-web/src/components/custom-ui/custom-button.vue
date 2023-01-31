@@ -103,4 +103,15 @@ const onTapBtn = (e: Event) => {
   background-color: var(--other-btn-hover);
 }
 
+@media screen and (max-width: 320px) {
+
+  .btn-mini {
+    height: 32px;
+    line-height: 32px;
+    border-radius: 8px;
+    padding: 0 16px;
+  }
+  
+}
+
 </style>

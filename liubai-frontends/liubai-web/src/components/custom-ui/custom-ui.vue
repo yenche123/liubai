@@ -4,6 +4,7 @@ import PreviewImage from "./preview-image/preview-image.vue";
 import HashtagEditor from "./hashtag-editor/hashtag-editor.vue";
 import SnackBar from "./snack-bar/snack-bar.vue";
 import ActionSheet from "./action-sheet/action-sheet.vue";
+import StateSelector from "./state-selector/state-selector.vue";
 import { initModal } from "./modal"
 import { initLoading } from "./loading"
 import { initTextEditor } from "./text-editor";
@@ -158,7 +159,7 @@ const {
   <SnackBar></SnackBar>
 
   <!-- 状态选择组件 -->
-  
+  <StateSelector></StateSelector>
 
   <!-- 状态编辑组件 -->
 

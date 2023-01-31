@@ -27,6 +27,7 @@ export function initStateSelector() {
     onTapItem,
     onTapMask,
     onTapRemove,
+    TRANSITION_DURATION,
   }
 }
 
@@ -43,10 +44,20 @@ export async function showStateSelector(param: StateSelectorParam) {
 }
 
 // 点击某一项
-function onTapItem(index: number) {
+async function onTapItem(index: number) {
   const item = list.value[index]
   if(!item) return
   const stateId = item.id
+
+  // 修改 list
+  const _list = list.value
+  _list.forEach((v, i) => {
+    if(i === index) v.selected = true
+    else if(v.selected) v.selected = false
+  })
+
+  await valTool.waitMilli(150)
+  
   _resolve && _resolve({ action: "confirm", stateId })
   _close()
 }
@@ -128,7 +139,33 @@ function getDefaultList() {
       text_key: "thread_related.finished",
       color: "var(--liu-state-2)",
       selected: false,
-    }
+    },
+    {
+      id: "TEST",
+      text_key: "thread_related.todo",
+      color: "var(--liu-state-1)",
+      selected: false,
+    },
+    {
+      id: "HAHA",
+      text_key: "thread_related.finished",
+      color: "var(--liu-state-2)",
+      selected: false,
+    },
+    {
+      id: "TEST2",
+      text_key: "thread_related.todo",
+      color: "var(--liu-state-1)",
+      selected: false,
+    },
+    {
+      id: "HAHA2",
+      text_key: "thread_related.finished",
+      color: "var(--liu-state-2)",
+      selected: false,
+    },
+
+
   ]
   return tmpList
 }

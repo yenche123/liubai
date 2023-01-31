@@ -179,7 +179,8 @@
     "delete_forever_2": "Are you sure to delete the post completely? The action cannot be undone.",
     "delete_btn": "DELETE",    
     "finished": "Finished",
-    "todo": "Todo"
+    "todo": "Todo",
+    "select_state": "Select"
   },
   "err": {
     "no_data": "Nothing Here",

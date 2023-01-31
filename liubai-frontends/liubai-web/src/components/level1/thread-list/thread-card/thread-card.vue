@@ -141,7 +141,7 @@ export default defineComponent({
         @tapshare="onTapShare"
       ></TcActionbar>
 
-      <!-- 底部时间 -->
+      <!-- 底部更多、发表或编辑时间 -->
       <TcBottombar :thread-data="threadData"
         :view-type="viewType"
         @newoperate="receiveBottomOperation"
