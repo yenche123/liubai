@@ -58,8 +58,6 @@ const onVcStateChange = (newV: VcState) => {
     <!-- 分割线  -->
     <div class="vv-space-line"></div>
 
-    
-
 
     <!-- 装内容的盒子 -->
     <div class="vv-box">

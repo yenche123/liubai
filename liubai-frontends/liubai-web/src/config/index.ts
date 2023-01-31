@@ -37,4 +37,8 @@ export default {
   max_kanban_column: 8,    // 看板里，最多有几个列表
 
   sidebar_spacing: 10,      // sidebar 到 main-view 的间距，用于拖动区域变大
+
+  viceview_spacing: 1,      // vice-view 到 main-view 的间距
+                            // 由于 vice-view 不是 overflow: hidden，所以其不需要留太多间距
+                            // drag-handle 可以超出 container 也没关系
 }

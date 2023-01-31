@@ -51,8 +51,10 @@ function initMainView(
       centerPx.value = rc.center
       return
     }
-    rightPx.value = vvRef.value
-    centerPx.value = tmpCenter
+
+    let cr = getCalibratedCenterAndRight(tmpCenter, vvRef.value)
+    rightPx.value = cr.right
+    centerPx.value = cr.center
   })
 
   // 监听右边侧边栏的改变
@@ -68,8 +70,9 @@ function initMainView(
       return
     }
     
-    rightPx.value = newV
-    centerPx.value = tmpCenter
+    let cr = getCalibratedCenterAndRight(tmpCenter, newV)
+    rightPx.value = cr.right
+    centerPx.value = cr.center
   })
 }
 
@@ -79,6 +82,14 @@ function getCalibratedLeft(sidebarWidth: number) {
   return val
 }
 
+function getCalibratedCenterAndRight(tmpCenter: number, tmpRight: number) {
+  let px1 = tmpCenter + cfg.viceview_spacing
+  let px2 = tmpRight - cfg.viceview_spacing
+  if(px2 <= 0) {
+    return { center: tmpCenter, right: tmpRight }
+  }
+  return { center: px1, right: px2 }
+}
 
 function getRightAndCenterPx(
   screenPx: number,
