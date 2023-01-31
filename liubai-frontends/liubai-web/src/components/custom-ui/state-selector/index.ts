@@ -139,33 +139,7 @@ function getDefaultList() {
       text_key: "thread_related.finished",
       color: "var(--liu-state-2)",
       selected: false,
-    },
-    {
-      id: "TEST",
-      text_key: "thread_related.todo",
-      color: "var(--liu-state-1)",
-      selected: false,
-    },
-    {
-      id: "HAHA",
-      text_key: "thread_related.finished",
-      color: "var(--liu-state-2)",
-      selected: false,
-    },
-    {
-      id: "TEST2",
-      text_key: "thread_related.todo",
-      color: "var(--liu-state-1)",
-      selected: false,
-    },
-    {
-      id: "HAHA2",
-      text_key: "thread_related.finished",
-      color: "var(--liu-state-2)",
-      selected: false,
-    },
-
-
+    }
   ]
   return tmpList
 }

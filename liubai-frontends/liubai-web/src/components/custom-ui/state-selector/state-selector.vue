@@ -35,7 +35,7 @@ const { t } = useI18n()
         <div class="ss-title">
           <span>{{ t('thread_related.select_state') }}</span>
         </div>
-        <div class="ssf-footer">
+        <div class="ssf-footer" v-if="hasRemoveBtn">
           <CustomBtn type="other" size="mini" @click="onTapRemove">
             <span>{{ t('common.remove') }}</span>
           </CustomBtn>
@@ -117,6 +117,7 @@ const { t } = useI18n()
   background-color: var(--card-bg);
   overflow: hidden;
   transition: v-bind("transDuration + 'ms'");
+  user-select: none;
 }
 
 .ss-box_show {
