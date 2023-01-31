@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 
+import { useI18n } from "vue-i18n";
 import { CUSTOM_EMOJIS } from "./tools/custom-emojis"
 
 defineProps({
@@ -23,6 +24,8 @@ const onTapRemove = (hide: () => void) => {
   hide()
 }
 
+const { t } = useI18n()
+
 </script>
 <template>
   <VDropdown 
@@ -41,7 +44,7 @@ const onTapRemove = (hide: () => void) => {
 
         <div v-if="hasEmoji" class="he-first-bar">
           <CustomBtn type="other" size="mini" @click="onTapRemove(hide)">
-            <span>移除</span>
+            <span>{{ t('common.remove') }}</span>
           </CustomBtn>
         </div>
 
