@@ -5,7 +5,7 @@
 import type { TipTapEditor } from "../../../types/types-editor"
 import { reactive, watchEffect, ref, provide, watch, toRef } from "vue"
 import type { ShallowRef, Ref } from "vue"
-import type { CeState, CeEmits } from "./atom-ce"
+import type { CeState, CeEmits, CeProps } from "./atom-ce"
 import { defaultState } from "./atom-ce"
 import type { ContentLocalTable, DraftLocalTable } from "../../../types/types-table"
 import { LiuRemindMe } from "../../../types/types-atom"
@@ -27,7 +27,7 @@ interface IcsContext {
 }
 
 export function initCeState(
-  props: { threadId?: string },
+  props: CeProps,
   emits: CeEmits,
   editor: ShallowRef<TipTapEditor | undefined>,
 ) {

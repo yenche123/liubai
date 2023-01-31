@@ -27,6 +27,10 @@ export const defaultState: CeState = {
   tagIds: []
 }
 
+export interface CeProps {
+  lastBar: boolean
+  threadId?: string
+}
 
 export interface CeEmits {
    // 当前为 编辑状态时，并且查无该动态（包含草稿）则 emit 此事件

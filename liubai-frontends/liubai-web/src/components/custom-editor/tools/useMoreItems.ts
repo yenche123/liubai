@@ -1,10 +1,7 @@
 import { computed, ref } from "vue";
+import type { CeProps } from "./atom-ce";
 
-interface CustomEditorProps {
-  lastBar: boolean
-}
-
-export function useMoreItems(props: CustomEditorProps) {
+export function useMoreItems(props: CeProps) {
   const moreRef = ref(false)
   
   const onTapMore = () => {
