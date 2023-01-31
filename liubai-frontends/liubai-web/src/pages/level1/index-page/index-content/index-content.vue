@@ -3,10 +3,12 @@ import cfg from "~/config"
 import CustomEditor from "~/components/custom-editor/custom-editor.vue"
 import { useIndexContent } from "./tools/useIndexContent";
 import ThreadList from "~/components/level1/thread-list/thread-list.vue"
+import { useCustomEditorLastBar } from "~/pages/utils/useCustomEditorLastBar"
 
 const virtualHeight = cfg.navi_height / 3
 const shortVirtual = cfg.navi_height / 9
-const { lastBar, showTop } = useIndexContent()
+const { showTop } = useIndexContent()
+const { lastBar } = useCustomEditorLastBar()
 
 </script>
 <template>

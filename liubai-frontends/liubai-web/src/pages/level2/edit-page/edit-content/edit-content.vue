@@ -2,6 +2,7 @@
 import { useEditContent } from './tools/useEditContent';
 import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
 import CustomEditor from '~/components/custom-editor/custom-editor.vue';
+import { useCustomEditorLastBar } from "~/pages/utils/useCustomEditorLastBar"
 
 const {
   threadId,
@@ -10,6 +11,8 @@ const {
   onHasdata,
   onUpdated,
 } = useEditContent()
+
+const { lastBar } = useCustomEditorLastBar()
 
 </script>
 <template>
@@ -25,6 +28,7 @@ const {
       >
         <CustomEditor
           :thread-id="threadId"
+          :last-bar="lastBar"
           @hasdata="onHasdata"
           @nodata="onNodata"
           @updated="onUpdated"
