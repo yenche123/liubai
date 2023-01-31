@@ -12,7 +12,9 @@ export interface StateSelectorRes {
 export type SsResolver = (res: StateSelectorRes) => void
 
 export interface SsItem {
+  id: string
   text?: string
   text_key?: string
   color: string
+  selected: boolean
 }
