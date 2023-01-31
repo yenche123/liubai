@@ -87,6 +87,18 @@
   /** drag-handle */
   --liu-drag-handle: #d0d3d9;
 
+  /** 状态色 */
+  --liu-state-1: #E3E2DF;
+  --liu-state-2: #D6DBB3;
+  --liu-state-3: #E2CAC7;
+  --liu-state-4: #BDB1BF;
+  --liu-state-5: #DCBB9F;
+  --liu-state-6: #8DB1BF;
+  --liu-state-7: #ACB5A0;
+  --liu-state-8: #E4C3D1;
+  --liu-state-9: #88ABDA;
+  --liu-state-10: #FFD194;
+
   /** 再最后给 body 添加背景色 */
   background-color: var(--bg-color);
 }

@@ -177,7 +177,9 @@
   "thread_related": {
     "delete_forever_1": "Delete Completely",
     "delete_forever_2": "Are you sure to delete the post completely? The action cannot be undone.",
-    "delete_btn": "DELETE"
+    "delete_btn": "DELETE",    
+    "finished": "Finished",
+    "todo": "Todo"
   },
   "err": {
     "no_data": "Nothing Here",

@@ -3,7 +3,7 @@
 import type { ContentLocalTable } from "~/types/types-table";
 import { db } from "../../db";
 import collectionController from "../collection-controller/collection-controller";
-import type { MemberShow, TagShow, ThreadShow } from "~/types/types-content";
+import type { MemberShow, StateShow, TagShow, ThreadShow } from "~/types/types-content";
 import imgHelper from "../../images/img-helper";
 import localCache from "../../system/local-cache";
 import type { TipTapJSONContent } from "~/types/types-editor";
@@ -59,13 +59,15 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       ? { type: "doc", content: newDesc } : undefined
     
     let tags: TagShow[] = []
-    // 判断当前工作区与当前动态是否匹配
+    let stateShow: StateShow | undefined = undefined
+    // 判断当前工作区与当前动态是否匹配，若匹配则可展示标签和状态
     let canTag = workspace === "ME" && user === user_id && !wStore.isCollaborative
     if(!canTag) canTag = workspace === wStore.spaceId
     // 如果动态所属的工作区与当前工作区匹配
     if(canTag) {
       const tagData = v.tagIds ? tagIdsToShows(v.tagIds) : undefined
       tags = tagData?.tagShows ?? []
+      stateShow = commonPack.getStateShow(v.stateId, wStore)
     }
     
 
@@ -105,6 +107,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       tags,
       tagSearched: v.tagSearched,
       stateId: v.stateId,
+      stateShow,
       config: v.config,
     }
 

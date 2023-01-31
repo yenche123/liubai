@@ -3,7 +3,7 @@ import { db } from "../../db"
 import localCache from "../../system/local-cache"
 import type { TcListOption } from "../thread-controller/type"
 import { getMemberShows } from "../equip-content/equip-content"
-import type { TagShow, ThreadShow } from "~/types/types-content";
+import type { TagShow, ThreadShow, StateShow } from "~/types/types-content";
 import imgHelper from "../../images/img-helper"
 import type { TipTapJSONContent } from "~/types/types-editor";
 import { tagIdsToShows } from "../../system/workspace";
@@ -137,13 +137,15 @@ export async function getThreadsByCollectionOrEmoji(
       ? { type: "doc", content: newDesc } : undefined
 
     let tags: TagShow[] = []
-    // 判断当前工作区与当前动态是否匹配
+    let stateShow: StateShow | undefined = undefined
+    // 判断当前工作区与当前动态是否匹配，若匹配则可展示标签和状态
     let canTag = w === "ME" && u === user_id && !wStore.isCollaborative
     if(!canTag) canTag = w === wStore.spaceId
     // 如果动态所属的工作区与当前工作区匹配
     if(canTag) {
       const tagData = v.tagIds ? tagIdsToShows(v.tagIds) : undefined
       tags = tagData?.tagShows ?? []
+      stateShow = commonPack.getStateShow(v.stateId, wStore)
     }
 
     const obj: ThreadShow = {
@@ -182,6 +184,7 @@ export async function getThreadsByCollectionOrEmoji(
       tags,
       tagSearched: v.tagSearched,
       stateId: v.stateId,
+      stateShow,
       config: v.config,
     }
 

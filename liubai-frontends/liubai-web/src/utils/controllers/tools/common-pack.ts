@@ -1,7 +1,9 @@
-import type { LiuContent } from "../../../types/types-atom";
+import type { LiuContent } from "~/types/types-atom";
 import type { LiuFileStore } from "~/types"
+import type { StateShow } from "~/types/types-content"
 import { getBriefing } from "./briefing"
 import { listToText } from "~/utils/transfer-util/text";
+import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 
 /**
  * 判断有没有 title，若有加到 content 里
@@ -53,8 +55,52 @@ function getSummary(
   return text
 }
 
+function getStateShow(
+  stateId: string | undefined,
+  wStore: WorkspaceStore,
+): StateShow | undefined {
+  if(!stateId) return
+
+  const { currentSpace } = wStore
+  if(!currentSpace) return
+  const { stateConfig } = currentSpace
+  if(!stateConfig) return
+  const { stateList } = stateConfig
+  const stateData = stateList.find(v => v.id === stateId)
+  if(!stateData) return
+
+  // 处理文字
+  let text_key = ""
+  let text = stateData.text
+  if(!text) {
+    if(stateId === "TODO") text_key = "thread_related.todo"
+    else if(stateId === "FINISHED") text_key = "thread_related.finished"
+  }
+  if(!text && !text_key) return
+
+  // 处理颜色
+  let bgColor = stateData.color
+  if(!bgColor) {
+    if(stateId === "TODO") bgColor = "--liu-state-1"
+    else if(stateId === "FINISHED") bgColor = "--liu-state-2"
+  }
+  if(!bgColor) return
+  if(bgColor.includes("--liu-state")) bgColor = `var(${bgColor})`
+
+  let obj: StateShow = {
+    text,
+    text_key,
+    bgColor,
+    fontColor: "var(--main-normal)",
+  }
+
+  return obj
+}
+
+
 export default {
   packLiuDesc,
   getBriefing,
   getSummary,
+  getStateShow,
 }

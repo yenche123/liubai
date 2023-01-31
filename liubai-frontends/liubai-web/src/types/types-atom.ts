@@ -79,7 +79,7 @@ export interface LiuAtomState {
   id: string
   showInIndex: boolean
   text?: string
-  color?: string         // TODO: 改为 LiuStateColor
+  color?: string              // 存储 # 开头的 hex，或者 --liu-state- 开头的系统颜色
   contentIds?: string[]
   updatedStamp: number
   insertedStamp: number

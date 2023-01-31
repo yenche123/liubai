@@ -86,4 +86,16 @@
 
   /** drag-handle */
   --liu-drag-handle: #505359;
+
+  /** 状态色 */
+  --liu-state-1: #BAAEA2;
+  --liu-state-2: #909871;
+  --liu-state-3: #BC7F79;
+  --liu-state-4: #7C728B;
+  --liu-state-5: #9D7867;
+  --liu-state-6: #47575E;
+  --liu-state-7: #4A675A;
+  --liu-state-8: #573F4C;
+  --liu-state-9: #5976BA;
+  --liu-state-10: #D39340;
 }
