@@ -47,3 +47,4 @@ export const i18n = createI18n({
 })
 
 export type LiuI18n = typeof i18n
+export type T_i18n = typeof i18n.global.t

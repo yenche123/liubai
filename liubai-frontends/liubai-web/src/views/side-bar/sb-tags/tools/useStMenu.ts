@@ -14,11 +14,10 @@ import {
 import type { Stat } from "./useSbTags"
 import type { Ref } from "vue"
 import { i18n } from "~/locales"
+import type { T_i18n } from "~/locales"
 import { RenameTagParam } from "~/utils/system/workspace/tools/types"
 import { getTagViewLevel } from "~/utils/system/workspace/tools/tag-util"
 import time from "~/utils/basic/time"
-
-type T_i18n = typeof i18n.global.t
 
 export interface StmCtx {
   tagNodes: Ref<TagView[]>

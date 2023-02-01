@@ -1,6 +1,4 @@
 
-
-
 export interface SnackbarParam {
   text?: string
   text_key?: string
