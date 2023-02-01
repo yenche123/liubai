@@ -79,19 +79,18 @@ function getStateShow(
   if(!text && !text_key) return
 
   // 处理颜色
-  let bgColor = stateData.color
-  if(!bgColor) {
-    if(stateId === "TODO") bgColor = "--liu-state-1"
-    else if(stateId === "FINISHED") bgColor = "--liu-state-2"
+  let color = stateData.color
+  if(!color) {
+    if(stateId === "TODO") color = "--liu-state-1"
+    else if(stateId === "FINISHED") color = "--liu-state-2"
   }
-  if(!bgColor) return
-  if(bgColor.includes("--liu-state")) bgColor = `var(${bgColor})`
+  if(!color) return
+  if(color.includes("--liu-state")) color = `var(${color})`
 
   let obj: StateShow = {
     text,
     text_key,
-    bgColor,
-    fontColor: "var(--main-normal)",
+    color,
   }
 
   return obj

@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { ThreadShow } from '~/types/types-content';
 import { useTcTopbar } from './tools/useTcTopbar';
 
@@ -11,9 +12,11 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const { t } = useI18n()
     const { showTopbar } = useTcTopbar(props)
 
     return {
+      t,
       showTopbar
     }
   }
@@ -26,11 +29,16 @@ export default defineComponent({
     <!-- 状态 -->
     <div class="tct-state-box" v-if="threadData.stateShow"
       :style="{ 
-        'background-color': threadData.stateShow.bgColor,
-        'color': threadData.stateShow.fontColor,
+        'color': threadData.stateShow.color,
       }"
     >
-      <span>{{ threadData.stateShow.text }}</span>
+      <div class="tctsb-bg"
+        :style="{
+          'background-color': threadData.stateShow.color
+        }"
+      ></div>
+      <span v-if="threadData.stateShow.text">{{ threadData.stateShow.text }}</span>
+      <span v-else-if="threadData.stateShow.text_key">{{ t(threadData.stateShow.text_key) }}</span>
     </div>
 
     
@@ -51,9 +59,26 @@ export default defineComponent({
   position: relative;
 
   .tct-state-box {
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: var(--mini-font);
+    padding: 2px 8px;
+    border-radius: 2px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    min-width: 40px;
+    text-align: center;
+    font-size: var(--state-font);
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+
+    .tctsb-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: .2;
+    }
+
   }
 
   .tct-pin {

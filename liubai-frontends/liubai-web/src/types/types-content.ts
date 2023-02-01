@@ -32,8 +32,7 @@ export interface TagShow {
 export interface StateShow {
   text?: string           // 用户输入的问题，该字段跟 text_key 二选一，优先使用 text
   text_key?: string       // i18n 的字段，该字段跟 text 二选一
-  bgColor: string         // 状态的背景色，如果是 css 变量，必须包含 var(....)
-  fontColor: string       // 状态的文字色，如果是 css 变量，必须包含 var(....)
+  color: string         // 状态的背景色，如果是 css 变量，必须包含 var(....)
 }
 
 export interface ThreadShow {
