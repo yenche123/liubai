@@ -180,7 +180,8 @@
     "delete_btn": "DELETE",    
     "finished": "Finished",
     "todo": "Todo",
-    "select_state": "Select"
+    "select_state": "Select",
+    "switch_to": "Switch to "
   },
   "err": {
     "no_data": "Nothing Here",

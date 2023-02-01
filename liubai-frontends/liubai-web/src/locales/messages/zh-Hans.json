@@ -180,7 +180,8 @@
     "delete_btn": "彻底删除",
     "finished": "已完成",
     "todo": "待办",
-    "select_state": "选择状态"
+    "select_state": "选择状态",
+    "switch_to": "切换至 "
   },
   "err": {
     "no_data": "这里什么都没有",

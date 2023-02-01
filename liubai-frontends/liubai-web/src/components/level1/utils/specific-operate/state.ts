@@ -1,5 +1,5 @@
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
-import type { ThreadShow } from "~/types/types-content"
+import type { ThreadShow, StateShow } from "~/types/types-content"
 import time from "~/utils/basic/time"
 import valTool from "~/utils/basic/val-tool"
 import liuApi from "~/utils/liu-api"
@@ -7,9 +7,10 @@ import cui from "../../../custom-ui"
 import dbOp from "../db-op"
 import commonPack from "~/utils/controllers/tools/common-pack"
 import { useWorkspaceStore, WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
-import type { SnackbarRes } from "~/types/other/types-snackbar"
+import type { SnackbarRes, SnackbarParam } from "~/types/other/types-snackbar"
 import type { LiuStateConfig, LiuAtomState } from "~/types/types-atom"
 import stateController from "~/utils/controllers/state-controller/state-controller"
+import { i18n } from "~/locales"
 
 interface SelectStateRes {
   tipPromise?: Promise<SnackbarRes>
@@ -39,31 +40,60 @@ export async function selectState(
   if(res.action === "remove" && !stateIdSelected) return {}
   if(res.action === "confirm" && stateIdSelected === res.stateId) return {}
 
-  let res2: SelectStateRes = {}
+  // 注: thread 的操作分两步是因为 getStateShow 依赖 wStore 的变化
 
-  // 2. 操作 thread
+  // 2. 操作 thread.stateId
   let newStateId = res.stateId
   if(res.action === "confirm" && newStateId) {
     newThread.stateId = newStateId
-    newThread.stateShow = commonPack.getStateShow(newStateId, wStore)
   }
   else if(res.action === "remove") {
     delete newThread.stateId
+  }
+
+  // 3. 处理 workspace
+  await handleWorkspace(wStore, newThread)
+
+  // 4. 操作 thread.stateShow 字段
+  let tmpStateShow: StateShow | undefined
+  if(res.action === "confirm" && newStateId) {
+    tmpStateShow = commonPack.getStateShow(newStateId, wStore)
+    console.log("看一下 tmpStateShow: ", tmpStateShow)
+    newThread.stateShow = tmpStateShow
+  }
+  else if(res.action === "remove") {
     delete newThread.stateShow
   }
 
-  // 3. 通知到全局
+  // 5. 通知到全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread], "state")
 
-  // 4. 修改动态的 db
+  // 6. 修改动态的 db
   const res3 = await dbOp.setState(newThread._id, newStateId)
 
-  // 5. 处理 workspace
-  handleWorkspace(wStore, newThread)
-  
+  // 7. 显示 snack-bar
+  const t = i18n.global.t
+  let snackParam: SnackbarParam = {
+    action_key: "tip.undo"
+  }
+  if(newStateId && tmpStateShow) {
+    if(tmpStateShow.text) {
+      snackParam.text = t("thread_related.switch_to") + tmpStateShow.text
+    }
+    else if(newStateId === "FINISHED") {
+      snackParam.text_key = "thread_related.finished"
+    }
+    else {
+      snackParam.text_key = "tip.updated"
+    }
+  }
+  else {
+    snackParam.text_key = "tip.removed"
+  }
+  const tipPromise = cui.showSnackBar(snackParam)
 
-  return res2
+  return { tipPromise, newStateId }
 }
 
 
