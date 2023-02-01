@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { TagView } from "../../types/types-atom";
-import { MemberLocalTable, WorkspaceLocalTable } from "../../types/types-table";
-import { db } from "../../utils/db";
+import valTool from "~/utils/basic/val-tool";
+import type { TagView, LiuStateConfig } from "~/types/types-atom";
+import type { MemberLocalTable, WorkspaceLocalTable } from "~/types/types-table";
+import { db } from "~/utils/db";
 
 
 export interface SpaceAndMemberOpt {
@@ -47,10 +48,20 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
     const spaceVal = currentSpace.value
     if(!spaceVal) return
     spaceVal.tagList = list
-    const tmpList = JSON.parse(JSON.stringify(list)) as TagView[]
+    const tmpList = valTool.copyObject(list)
     const res = await db.workspaces.update(spaceVal._id, { tagList: tmpList })
     console.log("setTagList res: ")
     console.log(res)
+    return true
+  }
+
+  // 设置 状态 配置
+  const setStateConfig = async (stateConfig?: LiuStateConfig) => {
+    const spaceVal = currentSpace.value
+    if(!spaceVal) return
+    spaceVal.stateConfig = stateConfig
+    const res = await db.workspaces.update(spaceVal._id, { stateConfig })
+    console.log("setStateConfig......", res)
     return true
   }
 
@@ -69,6 +80,7 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
     setSpaceAndMember,
     setNickName,
     setTagList,
+    setStateConfig,
     setMySpaceIds,
   }
 })

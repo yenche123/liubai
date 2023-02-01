@@ -100,9 +100,10 @@ function handleOutterOperation(
 
 // 去打开状态选择面板
 async function handle_state(ctx: ToCtx) {
-  const stateIdSelected = ctx.thread.stateId
-  const res = await cui.showStateSelector({ stateIdSelected })
-  console.log("看一下 res: ", res)
+  const { memberId, userId, thread } = ctx
+  const oldThread = valTool.copyObject(thread)
+  
+  commonOperate.selectState(oldThread, memberId, userId)
 }
 
 // 去恢复

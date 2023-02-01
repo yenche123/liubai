@@ -85,9 +85,11 @@ export interface LiuAtomState {
   insertedStamp: number
 }
 
-export interface LiuContentState {
+export interface LiuStateConfig {
   stateList: LiuAtomState[]
+  cloudStateList: LiuAtomState[]        // 远端最新存储的 stateList
   updatedStamp: number
+  cloudUpdatedStamp: number             // cloudStateList 被修改的时间戳    
 }
 
 export interface TagView {
@@ -129,7 +131,7 @@ export type ThreadOperation = ThreadInnerOperation | ThreadOutterOperation
 export type ThreadInnerUndo = "undo_hourglass"
 
 export type ThreadOutterUndo = "undo_collect" | "undo_emoji" | "undo_delete"
-  | "undo_state" | "undo_pin"
+  | "undo_state" | "undo_pin" | "undo_state"
 
 export type WhyThreadChange = ThreadInnerOperation | ThreadOutterOperation
   | ThreadInnerUndo | ThreadOutterUndo | ""

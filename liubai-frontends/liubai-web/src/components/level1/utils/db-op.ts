@@ -180,6 +180,24 @@ async function countPin() {
   return res
 }
 
+async function setState(
+  id: string,
+  newStateId?: string
+) {
+  const now1 = time.getTime()
+  const newData: Partial<ContentLocalTable> = {
+    updatedStamp: now1,
+    stateId: newStateId,
+  }
+  console.log("db-op setState newData: ")
+  console.log(newData)
+  console.log(" ")
+  const res = await db.contents.update(id, newData)
+  console.log("db.contents.update res: ")
+  console.log(res)
+  console.log(" ")
+  return true
+}
 
 export default {
   collect,
@@ -189,4 +207,5 @@ export default {
   deleteForever,
   setContentConfig,
   countPin,
+  setState,
 }

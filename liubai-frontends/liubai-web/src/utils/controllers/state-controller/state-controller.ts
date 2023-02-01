@@ -26,14 +26,14 @@ function getStates() {
   const currentSpace = wStore.currentSpace
   if(!currentSpace) return []
   const stateCfg = currentSpace.stateConfig
-  if(!stateCfg) return _getSystemStates()
-  if(stateCfg.stateList.length < 1) return _getSystemStates()
+  if(!stateCfg) return getSystemStates()
+  if(stateCfg.stateList.length < 1) return getSystemStates()
   const list = valTool.copyObject(stateCfg.stateList)
   return list
 }
 
 
-function _getSystemStates() {
+function getSystemStates() {
   const now = time.getTime()
   const defaultStates: LiuAtomState[] = [
     {
@@ -133,5 +133,6 @@ async function getThreadsOfAThread(
 export default {
   getStates,
   getThreadsOfAThread,
+  getSystemStates,
 }
 
