@@ -11,6 +11,7 @@ import type { SnackbarRes, SnackbarParam } from "~/types/other/types-snackbar"
 import type { LiuStateConfig, LiuAtomState } from "~/types/types-atom"
 import stateController from "~/utils/controllers/state-controller/state-controller"
 import { i18n } from "~/locales"
+import { db } from "~/utils/db"
 
 interface SelectStateRes {
   tipPromise?: Promise<SnackbarRes>
@@ -22,7 +23,7 @@ interface StateCfgBackup {
   backupStamp: number
 }
 
-let stateCfgBackup: StateCfgBackup
+let stateCfgBackup: StateCfgBackup | undefined
 
 // 处理动态 状态 的公共逻辑
 export async function selectState(
@@ -70,7 +71,7 @@ export async function selectState(
   tsStore.setUpdatedThreadShows([newThread], "state")
 
   // 6. 修改动态的 db
-  const res3 = await dbOp.setState(newThread._id, newStateId)
+  const res2 = await dbOp.setStateId(newThread._id, newStateId)
 
   // 7. 显示 snack-bar
   const t = i18n.global.t
@@ -96,6 +97,40 @@ export async function selectState(
   return { tipPromise, newStateId }
 }
 
+
+export async function undoState(
+  oldThread: ThreadShow,
+  memberId: string,
+  userId: string,
+) {
+
+  // 1. 通知全局
+  const tsStore = useThreadShowStore()
+  tsStore.setUpdatedThreadShows([oldThread], "undo_collect")
+
+  // 2. 修改 db
+  const res2 = await dbOp.setStateId(oldThread._id, oldThread.stateId)
+
+  // 3. 复原 workspace
+  const wStore = useWorkspaceStore()
+  await restoreStateCfg(wStore)
+}
+
+async function restoreStateCfg(
+  wStore: WorkspaceStore,
+) {
+  if(!stateCfgBackup) return
+  const stateCfg = valTool.copyObject(stateCfgBackup.oldStateConfig)
+  console.log("复原 stateConfig: ")
+  console.log(stateCfg)
+  console.log(" ")
+  const res = await wStore.setStateConfig(stateCfg)
+  console.log("restoreStateCfg res: ")
+  console.log(res)
+  console.log(" ")
+  stateCfgBackup = undefined
+  return true
+}
 
 async function handleWorkspace(
   wStore: WorkspaceStore,
@@ -202,15 +237,4 @@ function getDefaultStateCfg() {
     cloudUpdatedStamp: now,
   }
   return obj
-}
-
-
-
-// 【严重问题】需要考虑 动态本身的 storageState 这样才知道是否要修改到远端......
-// 要考虑怎么修改远端的 workspace.stateConfig
-function setNewStateId(
-  newThread: ThreadShow,
-  newStateId: string,
-) {
-
 }

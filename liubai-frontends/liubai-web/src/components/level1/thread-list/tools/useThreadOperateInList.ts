@@ -103,7 +103,29 @@ async function handle_state(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx
   const oldThread = valTool.copyObject(thread)
   
-  commonOperate.selectState(oldThread, memberId, userId)
+  const { tipPromise, newStateId } = await commonOperate.selectState(oldThread, memberId, userId)
+  if(!tipPromise) return
+
+    // 1. 来判断当前列表里的该 item 是否要删除
+  let removedFromList = false
+  const vT = ctx.props.viewType as TlViewType
+  const listStateId = ctx.props.stateId
+  if(vT === "STATE" && newStateId !== listStateId) {
+    removedFromList = true
+    ctx.list.value.splice(ctx.position, 1)
+  }
+
+  // 2. 等待 snackbar 的返回
+  const res2 = await tipPromise
+  if(res2.result !== "tap") return
+
+  // 3. 去执行公共的取消逻辑
+  await commonOperate.undoState(oldThread, memberId, userId)
+
+  // 4. 判断是否重新加回
+  if(removedFromList) {
+    ctx.list.value.splice(ctx.position, 0, oldThread)
+  }
 }
 
 // 去恢复

@@ -16,7 +16,7 @@ import {
 } from "./specific-operate/delete-related"
 import { toPin, undoPin } from "./specific-operate/pin"
 import { setShowCountdown } from "./specific-operate/other"
-import { selectState } from "./specific-operate/state"
+import { selectState, undoState } from "./specific-operate/state"
 
 export default {
   toCollect,
@@ -34,4 +34,5 @@ export default {
   undoPin,
   setShowCountdown,
   selectState,
+  undoState,
 }

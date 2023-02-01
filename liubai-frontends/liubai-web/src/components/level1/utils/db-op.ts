@@ -180,7 +180,7 @@ async function countPin() {
   return res
 }
 
-async function setState(
+async function setStateId(
   id: string,
   newStateId?: string
 ) {
@@ -189,7 +189,7 @@ async function setState(
     updatedStamp: now1,
     stateId: newStateId,
   }
-  console.log("db-op setState newData: ")
+  console.log("db-op setStateId newData: ")
   console.log(newData)
   console.log(" ")
   const res = await db.contents.update(id, newData)
@@ -207,5 +207,5 @@ export default {
   deleteForever,
   setContentConfig,
   countPin,
-  setState,
+  setStateId,
 }
