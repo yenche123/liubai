@@ -11,6 +11,7 @@ import {
 import {
   handlePin
 } from "./handlePin"
+import { handleSelectState } from "./handleState"
 
 export function useThreadOperateInDetail(
   tdData: TdData,
@@ -61,5 +62,8 @@ function handleOutterOperation(
   }
   else if(operation === "pin") {
     handlePin(ctx)
+  }
+  else if(operation === "state") {
+    handleSelectState(ctx)
   }
 }
