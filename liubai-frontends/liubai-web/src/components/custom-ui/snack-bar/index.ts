@@ -81,9 +81,9 @@ async function _open() {
 }
 
 async function _close() {
-  if(!show.value) return
+  if(!enable.value) return
   show.value = false
   await valTool.waitMilli(TRANSITION_DURATION)
-  enable.value = false
+  if(!show.value) enable.value = false
 }
 
