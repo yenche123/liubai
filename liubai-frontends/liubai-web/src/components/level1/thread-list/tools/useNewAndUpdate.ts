@@ -28,7 +28,7 @@ export function useNewAndUpdate(
       handleNewList(props, list, newThreadShows, lastItemStamp)
     }
     if(updatedThreadShows.length > 0) {
-      handleUpdatedList(props, list, updatedThreadShows, whyChange)
+      handleUpdatedList(props, list, updatedThreadShows, whyChange, lastItemStamp)
     }
   })
 }
@@ -73,32 +73,78 @@ function handleUpdatedList(
   listRef: Ref<ThreadShow[]>,
   updatedList: ThreadShow[],
   whyChange: WhyThreadChange,
+  lastItemStamp: Ref<number>,
 ) {
   const list = listRef.value
-  const viewType = props.viewType as TlViewType
+  const vT = props.viewType as TlViewType
 
-  if(viewType === "PINNED") {
+  if(vT === "PINNED") {
     handleUpdateForPinnedList(listRef, updatedList)
     return
   }
 
+  const newList = valTool.copyObject(updatedList)
   for(let i=0; i<list.length; i++) {
+    let idx = -1
     const v1 = list[i]
-    const v2 = updatedList.find(v => {
-      if(v._id === v1._id) return true
+    const v2 = newList.find((v, i1) => {
+      if(v._id === v1._id) {
+        idx = i1
+        return true
+      }
 
       // 如果 此时刚上传完动态至远端，那么会有一个短暂的字段 _old_id
       // 若其与 _id 相同，代表是相同的动态
-      if(v._old_id && v._old_id === v1._id) return true
+      if(v._old_id && v._old_id === v1._id) {
+        idx = i1
+        return true
+      }
       return false
     })
-    if(!v2) continue
+    if(!v2 || idx < 0) continue
 
-    if(v2.oState !== "OK") {
-      
+    // 如果当前是首页列表，并且是由 复原置顶 操作所引发的更改，那么去看最新动态是否置顶，若是则移除
+    if(vT === "INDEX" && whyChange === "undo_pin") {
+      if(Boolean(v2.pinStamp)) {
+        list.splice(i, 1)
+        i--
+        newList.splice(idx, 1)
+        continue
+      }
     }
 
     list[i] = v2
+    newList.splice(idx, 1)
+  }
+
+  // 如果当前为 INDEX 列表 whyChange 是 pin 事件，并且有 unpin 的 thread 
+  // 设法把这些 thread 加入到列表里
+  if(vT === "INDEX" && whyChange === "pin") {
+    _handleIndexListWhenPin(list, newList)
+  }
+
+  // handleLastItemStamp(vT, list, lastItemStamp)
+}
+
+function _handleIndexListWhenPin(
+  list: ThreadShow[],
+  newList: ThreadShow[],
+) {
+  const unpinList = newList.filter(v => !Boolean(v.pinStamp) && Boolean(v.oState === 'OK'))
+  if(unpinList.length < 1) return
+
+  for(let i=0; i<unpinList.length; i++) {
+    const v0 = unpinList[i]
+    for(let j=0; j<list.length; j++) {
+      if(j >= (list.length - 1)) break
+      const v1 = list[j]
+      const v2 = list[j + 1]
+      // TODO: 列表是依照时间 "顺序" 由上至下排列的情况，当前仅实现 "逆序" 排列
+      if(v1.createdStamp > v0.createdStamp && v0.createdStamp > v2.createdStamp) {
+        list.splice(j + 1, 0, v0)
+        break
+      }
+    }
   }
 }
 
