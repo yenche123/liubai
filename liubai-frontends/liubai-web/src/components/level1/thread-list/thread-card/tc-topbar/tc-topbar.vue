@@ -22,6 +22,17 @@ export default defineComponent({
 </script>
 <template>
   <div v-if="showTopbar" class="tct-container">
+
+    <!-- 状态 -->
+    <div class="tct-state-box" v-if="threadData.stateShow"
+      :style="{ 
+        'background-color': threadData.stateShow.bgColor,
+        'color': threadData.stateShow.fontColor,
+      }"
+    >
+      <span>{{ threadData.stateShow.text }}</span>
+    </div>
+
     
     <!-- 置顶 -->
     <svg v-if="threadData.pinStamp" class="tct-pin" viewBox="-50 -50 300 300">
@@ -39,7 +50,14 @@ export default defineComponent({
   justify-content: flex-end;
   position: relative;
 
+  .tct-state-box {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: var(--mini-font);
+  }
+
   .tct-pin {
+    margin-inline-start: 10px;
     width: 14px;
     height: 14px;
     border-top-right-radius: 4px;
