@@ -27,6 +27,26 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
   // 我有在的工作区 id
   const mySpaceIds = ref<string[]>([])
 
+  // 获取当前工作区的状态列表
+  const getStateList = () => {
+    const spaceVal = currentSpace.value
+    if(!spaceVal) return []
+    const { stateConfig } = spaceVal
+    if(!stateConfig) return []
+    const tmpList = valTool.copyObject(stateConfig.stateList)
+    return tmpList
+  }
+
+  // 获取 不在首页展示的 状态
+  const getStatesNoInIndex = () => {
+    const tmpList = getStateList()
+    const list: string[] = []
+    tmpList.forEach(v => {
+      if(!v.showInIndex) list.push(v.id)
+    })
+    return list
+  }
+
   const setSpaceAndMember = (opt: SpaceAndMemberOpt) => {
     spaceId.value = opt.spaceId
     memberId.value = opt.memberId
@@ -77,6 +97,8 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
     currentSpace,
     myMember,
     mySpaceIds,
+    getStateList,
+    getStatesNoInIndex,
     setSpaceAndMember,
     setNickName,
     setTagList,

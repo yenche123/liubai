@@ -2,20 +2,20 @@ import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import type { ThreadShow, StateShow } from "~/types/types-content"
 import time from "~/utils/basic/time"
 import valTool from "~/utils/basic/val-tool"
-import liuApi from "~/utils/liu-api"
 import cui from "../../../custom-ui"
 import dbOp from "../db-op"
 import commonPack from "~/utils/controllers/tools/common-pack"
-import { useWorkspaceStore, WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
+import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { SnackbarRes, SnackbarParam } from "~/types/other/types-snackbar"
 import type { LiuStateConfig, LiuAtomState } from "~/types/types-atom"
 import stateController from "~/utils/controllers/state-controller/state-controller"
 import { i18n } from "~/locales"
-import { db } from "~/utils/db"
 
 interface SelectStateRes {
   tipPromise?: Promise<SnackbarRes>
   newStateId?: string
+  newStateShow?: StateShow
 }
 
 interface StateCfgBackup {
@@ -56,10 +56,9 @@ export async function selectState(
   await handleWorkspace(wStore, newThread)
 
   // 4. 操作 thread.stateShow 字段
-  let tmpStateShow: StateShow | undefined
+  let tmpStateShow: StateShow | undefined = undefined
   if(res.action === "confirm" && newStateId) {
     tmpStateShow = commonPack.getStateShow(newStateId, wStore)
-    console.log("看一下 tmpStateShow: ", tmpStateShow)
     newThread.stateShow = tmpStateShow
   }
   else if(res.action === "remove") {
@@ -94,7 +93,7 @@ export async function selectState(
   }
   const tipPromise = cui.showSnackBar(snackParam)
 
-  return { tipPromise, newStateId }
+  return { tipPromise, newStateId, newStateShow: tmpStateShow }
 }
 
 

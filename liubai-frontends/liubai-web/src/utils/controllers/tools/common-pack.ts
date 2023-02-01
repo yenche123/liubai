@@ -61,11 +61,7 @@ function getStateShow(
 ): StateShow | undefined {
   if(!stateId) return
 
-  const { currentSpace } = wStore
-  if(!currentSpace) return
-  const { stateConfig } = currentSpace
-  if(!stateConfig) return
-  const { stateList } = stateConfig
+  const stateList = wStore.getStateList()
   const stateData = stateList.find(v => v.id === stateId)
   if(!stateData) return
 
@@ -91,6 +87,7 @@ function getStateShow(
     text,
     text_key,
     color,
+    showInIndex: stateData.showInIndex,
   }
 
   return obj

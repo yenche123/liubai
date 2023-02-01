@@ -3,6 +3,7 @@ import type { TcListOption } from "../type";
 import type { ContentLocalTable } from "~/types/types-table";
 import { equipThreads } from "../../equip-content/equip-content";
 import { getThreadsByCollectionOrEmoji } from "../../collection-controller/collection-controller"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore" 
 
 async function getList(
   opt?: TcListOption
@@ -30,13 +31,17 @@ async function getList(
   const isIndex= viewType === "INDEX"
   const isPin = viewType === "PINNED"
   let list: ContentLocalTable[] = []
+  const statesNoInIndex = getNoShowInIndexStates(isIndex)
 
   const filterFunc = (item: ContentLocalTable) => {
-    const { tagSearched = [], pinStamp, _id } = item
+    const { tagSearched = [], pinStamp, _id, stateId: stateOnThread } = item
     if(ids && ids.includes(_id)) return true
     if(tagId && !tagSearched.includes(tagId)) return false
-    if(stateId && stateId !== item.stateId) return false
-    if(isIndex && pinStamp) return false
+    if(stateId && stateId !== stateOnThread) return false
+    if(isIndex) {
+      if(pinStamp) return false
+      if(stateOnThread && statesNoInIndex.includes(stateOnThread)) return false
+    }
     if(isPin && !pinStamp) return false
     if(excludeIds && excludeIds.includes(_id)) return false
     if(item.workspace === workspace && item.oState === oState) {
@@ -99,6 +104,13 @@ async function getList(
   
   return threads
 }
+
+function getNoShowInIndexStates(isIndex: boolean) {
+  if(!isIndex) return []
+  const wStore = useWorkspaceStore()
+  return wStore.getStatesNoInIndex()
+}
+
 
 async function getData(
   id: string

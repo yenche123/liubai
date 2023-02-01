@@ -11,7 +11,6 @@ import type { TlProps, TlViewType } from "./types"
 import type { Ref } from "vue";
 import valTool from "~/utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
-import cui from "~/components/custom-ui"
 
 interface ToCtx {
   router: LiuRouter
@@ -103,7 +102,11 @@ async function handle_state(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx
   const oldThread = valTool.copyObject(thread)
   
-  const { tipPromise, newStateId } = await commonOperate.selectState(oldThread, memberId, userId)
+  const { 
+    tipPromise, 
+    newStateId, 
+    newStateShow 
+  } = await commonOperate.selectState(oldThread, memberId, userId)
   if(!tipPromise) return
 
     // 1. 来判断当前列表里的该 item 是否要删除
@@ -111,6 +114,10 @@ async function handle_state(ctx: ToCtx) {
   const vT = ctx.props.viewType as TlViewType
   const listStateId = ctx.props.stateId
   if(vT === "STATE" && newStateId !== listStateId) {
+    removedFromList = true
+    ctx.list.value.splice(ctx.position, 1)
+  }
+  else if(vT === "INDEX" && newStateShow?.showInIndex === false) {
     removedFromList = true
     ctx.list.value.splice(ctx.position, 1)
   }
