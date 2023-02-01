@@ -159,7 +159,7 @@ const { t } = useI18n()
 
 .ss-item {
   width: 100%;
-  padding-inline-start: 20px;
+  padding-inline-start: 24px;
   padding-inline-end: 20px;
   height: 56px;
   box-sizing: border-box;
@@ -171,8 +171,8 @@ const { t } = useI18n()
 }
 
 .ssi-color {
-  width: 20px;
-  height: 20px;
+  width: 12px;
+  height: 12px;
   overflow: hidden;
   border-radius: 50%;
   margin-inline-end: 20px;
@@ -246,18 +246,23 @@ const { t } = useI18n()
 
 @media screen and (max-width: 320px) {
 
+  .ss-first-bar {
+    padding: 24px 16px 16px 20px;
+  }
+
   .ss-title {
     font-size: var(--title-font);
-
   }
 
   .ss-item {
+    padding-inline-start: 20px;
+    padding-inline-end: 20px;
     height: 50px;
   }
 
   .ssi-color {
-    width: 16px;
-    height: 16px;
+    width: 10px;
+    height: 10px;
   }
 
   .ssi-text {
@@ -267,7 +272,7 @@ const { t } = useI18n()
   .ssi-select-box {
     width: 14px;
     height: 14px;
-    border: 2px solid var(--main-normal);
+    border: 2px solid var(--main-code);
   }
 
   .ssi-select-dot {
