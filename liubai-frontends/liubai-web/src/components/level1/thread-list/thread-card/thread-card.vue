@@ -163,9 +163,15 @@ export default defineComponent({
   transition: border-radius .3s;
   margin-bottom: 16px;
 
+  &:active {
+    border-radius: 10px;
+    box-shadow: var(--card-shadow2-hover);
+  }
+
   @media(hover: hover) {
     &:hover {
       border-radius: 10px;
+      box-shadow: var(--card-shadow2-hover);
     }
   }
 

@@ -33,7 +33,8 @@
   --other-btn-hover: #e9e9e9;
 
   --card-shadow: 0 4px 6px -2px rgba(0, 0, 0, .1);
-  --card-shadow-2: 0 4px 2px -0.5px rgba(0, 0, 0, .04);
+  --card-shadow-2: 0 2px 2px -0.5px rgba(0, 0, 0, .04);
+  --card-shadow2-hover: 0 12px 5px -6px rgba(0, 0, 0, .04);
   --editor-shadow: 0 24px 4px -12px rgba(0, 0, 0, .04);
   --floating-shadow: 0 6px 24px rgba(0, 0, 0, .15);
   --liu-hr: #e9e9e9;   /** 卡片里的分割线、引用的那条 bar */
@@ -51,6 +52,7 @@
   --gradient-two: linear-gradient(0deg, rgba(255, 255, 255, 1) 10%, rgba(255, 255, 255, 0) 96%);
   --cool-bg: linear-gradient(30deg, #ACB6E5, #70ded9);
   --tag-bg: #f2f4f7;
+  --tag-hover: linear-gradient(60deg, #eaeaea, #f2f4f7);
   --tooltip-shadow: 0 8px 18px 1px rgba(0,0,0,.28);
 
   /** 自定义组件: 加载框 */

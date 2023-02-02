@@ -79,7 +79,7 @@ export default defineComponent({
     padding: 6px 14px 6px 14px;
     font-size: var(--btn-font);
     color: var(--liu-quote);
-    background-color: var(--tag-bg);
+    background: var(--tag-bg);
     border-radius: 24px;
     margin-inline-end: 10px;
     margin-block-start: 10px;
@@ -91,6 +91,12 @@ export default defineComponent({
     
     .ce-tag-emoji {
       margin-inline-end: 6px;
+    }
+
+    @media(hover: hover) {
+      &:hover {
+        background: var(--tag-hover);
+      }
     }
 
 
