@@ -8,6 +8,7 @@
   */
  export type RequireSth<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
 
+ export type AnyFunc = (...args: any[]) => any
 
  export type SimpleFunc = () => void
  
