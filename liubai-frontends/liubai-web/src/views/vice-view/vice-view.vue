@@ -159,7 +159,7 @@ const onVcStateChange = (newV: VcState) => {
   right: 0;
   top: 0;
   bottom: 0;
-  left: 2px;
+  left: 1px;
   display: flex;
   justify-content: flex-end;
   overflow-x: hidden;
