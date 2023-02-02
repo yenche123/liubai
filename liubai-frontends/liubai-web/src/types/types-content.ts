@@ -77,3 +77,16 @@ export interface ThreadShow {
   stateShow?: StateShow
   config?: ContentConfig
 }
+
+// 状态页的结构
+export interface KanbanColumn {
+  id: string
+  showInIndex: boolean
+  text?: string
+  text_key?: string
+  color: string
+  threads: ThreadShow[]
+  updatedStamp: number
+  insertedStamp: number
+  hasMore: boolean
+}

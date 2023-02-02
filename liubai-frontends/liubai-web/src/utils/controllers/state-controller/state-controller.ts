@@ -9,7 +9,7 @@ import threadController from "../thread-controller/thread-controller"
 
 export interface GetThreadsOfAStateOpt {
   stateId: string
-  excludeInKanban?: boolean        // 是否排除 kanban 上的动态
+  excludeInKanban: boolean        // 是否排除 kanban 上的动态
   lastItemStamp?: number
 }
 
@@ -70,8 +70,8 @@ async function getThreadsOfAThread(
     stateId,
   }
 
-  const states = getStates()
-  const stateData = states.find(v => v.id === stateId)
+  const stateList = getStates()
+  const stateData = stateList.find(v => v.id === stateId)
   if(!stateData || !stateData.contentIds) return nothingData
   const contentIds = stateData.contentIds
 
