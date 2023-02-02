@@ -122,7 +122,7 @@ const onVcStateChange = (newV: VcState) => {
   right: 0;
   top: 0;
   bottom: 0;
-  left: 2px;
+  left: 1.6px;
   background-color: var(--vice-bg);
 }
 
