@@ -1,6 +1,6 @@
 // 监听 Enter 回车键
+import type { SimpleFunc } from "~/utils/basic/type-tool"
 
-type SimpleFunc = () => void
 let funAfterEnter: SimpleFunc | undefined
 
 const _onListenKepUp = (e: KeyboardEvent) => {
