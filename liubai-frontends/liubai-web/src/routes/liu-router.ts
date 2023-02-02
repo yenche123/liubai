@@ -17,6 +17,7 @@ import valTool from "~/utils/basic/val-tool"
 import time from "../utils/basic/time"
 import { isSameRoute } from "./route-util"
 import cui from "~/components/custom-ui"
+import type { SimpleFunc } from "~/utils/basic/type-tool"
 
 interface RouteChangeState {
   operation?: "push" | "replace" | "go"
@@ -203,12 +204,12 @@ class LiuRouter {
   }
 
   // 添加一个导航守卫，在任何导航前执行
-  public beforeEach(guard: NavigationGuard): () => void {
+  public beforeEach(guard: NavigationGuard): SimpleFunc {
     return this.router.beforeEach(guard)
   }
 
   // 添加一个导航守卫，在导航即将解析之前执行
-  public beforeResolve(guard: NavigationGuard): () => void {
+  public beforeResolve(guard: NavigationGuard): SimpleFunc {
     return this.router.beforeResolve(guard)
   }
 

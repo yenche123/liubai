@@ -27,8 +27,8 @@ interface TlContext {
 export function useThreadList(props: TlProps) {
   let { viewType, tagId } = toRefs(props)
 
-  const spaceStore = useWorkspaceStore()
-  let workspace = storeToRefs(spaceStore).workspace
+  const wStore = useWorkspaceStore()
+  let workspace = storeToRefs(wStore).workspace
   const svBottomUp = inject(svBottomUpKey)
 
   const list = ref<ThreadShow[]>([])

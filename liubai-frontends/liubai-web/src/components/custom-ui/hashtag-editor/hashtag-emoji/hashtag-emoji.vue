@@ -2,6 +2,7 @@
 
 import { useI18n } from "vue-i18n";
 import { CUSTOM_EMOJIS } from "./tools/custom-emojis"
+import type { SimpleFunc } from "~/utils/basic/type-tool";
 
 defineProps({
   hasEmoji: {
@@ -14,12 +15,12 @@ const emit = defineEmits<{
   (event: "emojichange", newEmoji?: string): void
 }>()
 
-const onTapEmoji = (emoji: string, hide: () => void) => {
+const onTapEmoji = (emoji: string, hide: SimpleFunc) => {
   emit("emojichange", emoji)
   hide()
 }
 
-const onTapRemove = (hide: () => void) => {
+const onTapRemove = (hide: SimpleFunc) => {
   emit("emojichange")
   hide()
 }

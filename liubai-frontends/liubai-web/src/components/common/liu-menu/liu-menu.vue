@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n'
 import type { MenuItem } from "./tools/types"
 import { useLiuMenu } from './tools/useLiuMenu'
 import { liumenu_props } from "./tools/types"
+import type { SimpleFunc } from "~/utils/basic/type-tool"
 
 // 【待完善项】因为是 Menu 选单，应该可以用 Keyboard 的上下键来选择
 
@@ -32,7 +33,7 @@ export default defineComponent({
       e.preventDefault()
     }
 
-    const onTapItem = (item: MenuItem, index: number, hide: () => void) => {
+    const onTapItem = (item: MenuItem, index: number, hide: SimpleFunc) => {
       emit("tapitem", item, index)
       hide()
     }
