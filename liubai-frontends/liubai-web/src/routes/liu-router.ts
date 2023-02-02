@@ -1,4 +1,4 @@
-import { onUnmounted, reactive, ref, Ref } from "vue"
+import { onUnmounted, ref, Ref } from "vue"
 import { 
   useRouter as useVueRouter, 
   useRoute as useVueRoute,
@@ -16,6 +16,7 @@ import {
 import valTool from "~/utils/basic/val-tool"
 import time from "../utils/basic/time"
 import { isSameRoute } from "./route-util"
+import cui from "~/components/custom-ui"
 
 interface RouteChangeState {
   operation?: "push" | "replace" | "go"
@@ -143,8 +144,14 @@ class LiuRouter {
     route: RouteLocationNormalizedLoaded,
     to: RouteLocationRaw,
     trimQuery: boolean = false
-  ) {
+  ): Promise<NavigationFailure | void | undefined | false> {
     const newRoute = this.router.resolve(to)
+
+    if(newRoute.name === route.name && newRoute.fullPath === route.fullPath) {
+      cui.showSnackBar({ text_key: "tip.its_right_here" })
+      return false
+    }
+
     if(route.query) {
       if(trimQuery) {
         const q = valTool.copyObject(route.query)
