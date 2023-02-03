@@ -3,9 +3,11 @@ import type {
   SsResolver,
   SsItem,
 } from "./tools/types"
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import valTool from "~/utils/basic/val-tool"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import type { RouteAndLiuRouter } from "~/routes/liu-router"
 
 let _resolve: SsResolver | undefined
 const list = ref<SsItem[]>([])
@@ -13,12 +15,16 @@ const enable = ref(false)
 const show = ref(false)
 const hasRemoveBtn = ref(false)
 const TRANSITION_DURATION = 300
+const queryKey = "stateselector"
+let rr: RouteAndLiuRouter | undefined
 
 /**
  * 本组件只涉及 ui，负责给用户 "选择"
  * 至于具体的逻辑处理和存储，都不在本组件内完成
  */
 export function initStateSelector() {
+  rr = useRouteAndLiuRouter()
+  listenRouteChange()
   return {
     list,
     enable,
@@ -30,6 +36,23 @@ export function initStateSelector() {
     TRANSITION_DURATION,
   }
 }
+
+
+function listenRouteChange() {
+  if(!rr) return
+  watch(rr.route, (newV) => {
+    const { query } = newV
+    if(!query) return
+
+    if(query[queryKey] === "01") {
+      _toOpen()
+    }
+    else {
+      _toClose()
+    }
+  })
+}
+
 
 export async function showStateSelector(param: StateSelectorParam) {
   let tmpList = getList()
@@ -152,15 +175,28 @@ function getDefaultList() {
 }
 
 async function _open() {
+  if(!rr) return
+  const newQ = {
+    [queryKey]: "01"
+  }
+  rr.router.addNewQueryWithOldQuery(rr.route, newQ)
+}
+
+async function _toOpen() {
   if(show.value) return
   enable.value = true
   await valTool.waitMilli(16)
   show.value = true
 }
 
-async function _close() {
-  if(!show.value) return
+async function _toClose() {
+  if(!enable.value) return
   show.value = false
   await valTool.waitMilli(TRANSITION_DURATION)
   enable.value = false
+}
+
+async function _close() {
+  if(!rr) return
+  rr.router.naviBackUntilNoSpecificQuery(rr.route, queryKey)
 }

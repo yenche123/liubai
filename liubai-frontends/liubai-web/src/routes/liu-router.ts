@@ -78,13 +78,13 @@ class LiuRouter {
     this.router = useVueRouter()
   }
 
-  async replace(to: RouteLocationRaw): Promise<NavigationFailure | void | undefined> {
+  async replace(to: RouteLocationRaw) {
     routeChangeTmpData = { operation: "replace", delta: 0 }
     let res = await this.router.replace(to)
     return res
   }
 
-  async push(to: RouteLocationRaw): Promise<NavigationFailure | void | undefined> {
+  async push(to: RouteLocationRaw) {
     routeChangeTmpData = { operation: "push", delta: 1 }
     let res = await this.router.push(to)
     return res
@@ -96,13 +96,11 @@ class LiuRouter {
     query: Record<string, string>,
     reserveTags: boolean = true,
   ) {
-    const name = route.name
-    const params = route.params
-    const oldQuery = route.query
+    const { name, params, query: oldQuery } = route
     const newQuery = { ...query }
 
     if(typeof name !== "string") {
-      console.warn("当前的 route.name 不是 string 类型，无法执行 pushCurrentNameWithQuery")
+      console.warn("当前的 route.name 不是 string 类型，无法执行 pushCurrentWithNewQuery")
       return
     }
 
@@ -123,9 +121,7 @@ class LiuRouter {
     route: RouteLocationNormalizedLoaded,
     reserveTags: boolean = true,
   ) {
-    const name = route.name
-    const params = route.params
-    const oldQuery = route.query
+    const { name, params, query: oldQuery } = route
     if(typeof name !== "string") {
       console.warn("当前的 route.name 不是 string 类型，无法执行 pushCurrentNoQuery")
       return
@@ -169,6 +165,27 @@ class LiuRouter {
     let res = await this.router.push(newRoute)
     return res
   }
+
+  /** 保留现有的 query 同时追加新的 query */
+  async addNewQueryWithOldQuery(
+    route: RouteLocationNormalizedLoaded,
+    newQuery: Record<string, string>,
+  ) {
+    const { name, params } = route
+    if(typeof name !== "string") {
+      console.warn("当前的 route.name 不是 string 类型，无法执行 addNewQueryWithOldQuery")
+      return
+    }
+
+    let q = valTool.copyObject(route.query)
+    q = Object.assign(q, newQuery)
+    let newRoute: RouteLocationRaw = { name, params, query: q }
+   
+    routeChangeTmpData = { operation: "push", delta: 1 }
+    let res = await this.router.push(newRoute)
+    return res
+  }
+
 
   public resolve(
     to: RouteLocationRaw, 
