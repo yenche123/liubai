@@ -28,7 +28,7 @@
     "@tiptap/extension-task-list": "2.0.0-beta.209",
     "@tiptap/starter-kit": "2.0.0-beta.209",
     "@tiptap/vue-3": "2.0.0-beta.209",
-    "@vuepic/vue-datepicker": "^3.6.5",
+    "@vuepic/vue-datepicker": "^3.6.7",
     "@vueuse/core": "^9.10.0",
     "another-vue3-blurhash": "^0.0.1",
     "blurhash": "^2.0.4",
