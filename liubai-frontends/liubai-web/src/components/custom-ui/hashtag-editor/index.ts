@@ -1,4 +1,4 @@
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import valTool from "~/utils/basic/val-tool"
 import type {
   HteResolver,
@@ -13,6 +13,8 @@ import { searchLocal } from "./tools/handle"
 import { formatTagText, findTagId } from "~/utils/system/workspace"
 import time from "~/utils/basic/time"
 import liuApi from "~/utils/liu-api"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import type { RouteAndLiuRouter } from "~/routes/liu-router"
 
 // 使用 element.scrollIntoView 让元素露出来 
 
@@ -28,6 +30,8 @@ const newTag = ref("")      // 可以被创建的标签，注意该文字不能�
 const list = ref<TagItem[]>([])
 const selectedIndex = ref(-1)        // 被选择的 index
 const mode = ref<HteMode>("edit")
+const queryKey = "hashtageditor"
+let rr: RouteAndLiuRouter | undefined
 
 let lastInputVal = ""
 let lastEmoji = ""
@@ -35,7 +39,8 @@ let lastEmoji = ""
 let _resolve: HteResolver | undefined
 
 export function initHtePicker() {
-
+  rr = useRouteAndLiuRouter()
+  listenRouteChange()
   return { 
     inputEl,
     enable, 
@@ -54,6 +59,26 @@ export function initHtePicker() {
     onInput,
     onEmojiChange,
   }
+}
+
+function listenRouteChange() {
+  if(!rr) return
+  watch(rr.route, (newV) => {
+    const { query } = newV
+    if(!query) return
+
+    if(query[queryKey] === "01") {
+      _toOpen()
+      return
+    }
+
+    if(_resolve) {
+      if(inputEl.value) inputEl.value.blur()
+      toResolve({ confirm: false })
+    }
+
+    _toClose()
+  })
 }
 
 
@@ -78,6 +103,12 @@ export async function showHashTagEditor(opt: HashTagEditorParam) {
 
 function onEmojiChange(newEmoji?: string) {
   emoji.value = newEmoji ?? ""
+}
+
+function toResolve(res: HashTagEditorRes) {
+  if(!_resolve) return
+  _resolve(res)
+  _resolve = undefined
 }
 
 function onInput() {
@@ -129,7 +160,7 @@ function onTapMask() {
 
 function toCancel() {
   if(inputEl.value) inputEl.value.blur()
-  _resolve && _resolve({ confirm: false })
+  toResolve({ confirm: false })
   _close()
 }
 
@@ -169,7 +200,7 @@ function toRename() {
     tagId: tagId ? tagId : undefined,
     icon,
   }
-  _resolve && _resolve(res)
+  toResolve(res)
   _close()
 }
 
@@ -192,7 +223,7 @@ function toSelect() {
     tagId: tagId ? tagId : undefined,
     icon,
   }
-  _resolve && _resolve(res)
+  toResolve(res)
   _close()
 }
 
@@ -228,6 +259,14 @@ function checkState() {
 
 
 async function _open() {
+  if(!rr) return
+  const newQ = {
+    [queryKey]: "01"
+  }
+  rr.router.addNewQueryWithOldQuery(rr.route, newQ)
+}
+
+async function _toOpen() {
   if(show.value) return
   enable.value = true
   await valTool.waitMilli(16)
@@ -239,7 +278,12 @@ async function _open() {
 }
 
 async function _close() {
-  if(!show.value) return
+  if(!rr) return
+  rr.router.naviBackUntilNoSpecificQuery(rr.route, queryKey)
+}
+
+async function _toClose() {
+  if(!enable.value) return
   show.value = false
   await valTool.waitMilli(TRANSITION_DURATION)
   enable.value = false
