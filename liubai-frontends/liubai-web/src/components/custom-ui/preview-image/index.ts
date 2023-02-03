@@ -1,20 +1,12 @@
-import { reactive, ref } from "vue"
+import { reactive, ref, watch } from "vue"
 import valTool from "~/utils/basic/val-tool"
-import type { ImageShow } from '~/types';
-
-interface PiParam {
-  imgs: ImageShow[]
-  index?: number
-}
-
-interface PiReturn {
-  hasBack: boolean
-}
-
-interface PiData {
-  imgs: ImageShow[]
-  index: number
-}
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import type { RouteAndLiuRouter } from "~/routes/liu-router"
+import type {
+  PiParam,
+  PiReturn,
+  PiData,
+} from "./tools/types"
 
 type PiResolver = (res: PiReturn) => void
 
@@ -23,6 +15,8 @@ let _resolve: PiResolver | undefined
 const TRANSITION_DURATION = 120
 const enable = ref(false)
 const show = ref(false)
+const queryKey = "previewimage"
+let rr: RouteAndLiuRouter | undefined
 
 const data = reactive<PiData>({
   imgs: [],
@@ -30,6 +24,8 @@ const data = reactive<PiData>({
 })
 
 export function initPreviewImage() {
+  rr = useRouteAndLiuRouter()
+  listenRouteChange()
   return {
     TRANSITION_DURATION,
     enable,
@@ -37,6 +33,21 @@ export function initPreviewImage() {
     data,
     onTapCancel,
   }
+}
+
+function listenRouteChange() {
+  if(!rr) return
+  watch(rr.route, (newV) => {
+    const { query } = newV
+    if(!query) return
+
+    if(query[queryKey] === "01") {
+      _toOpen()
+    }
+    else {
+      _toClose()
+    }
+  })
 }
 
 function onTapCancel() {
@@ -69,6 +80,14 @@ export async function previewImage(opt: PiParam) {
 }
 
 async function _open() {
+  if(!rr) return
+  const newQ = {
+    [queryKey]: "01"
+  }
+  rr.router.addNewQueryWithOldQuery(rr.route, newQ)
+}
+
+async function _toOpen() {
   if(show.value) return
   enable.value = true
   await valTool.waitMilli(16)
@@ -76,7 +95,12 @@ async function _open() {
 }
 
 async function _close() {
-  if(!show.value) return
+  if(!rr) return
+  rr.router.naviBackUntilNoSpecificQuery(rr.route, queryKey)
+}
+
+async function _toClose() {
+  if(!enable.value) return
   show.value = false
   await valTool.waitMilli(TRANSITION_DURATION)
   enable.value = false
