@@ -6,6 +6,7 @@ export interface SnackbarParam {
   action_key?: string
   action_color?: string
   duration?: number
+  dot_color?: string
 }
 
 export interface SnackbarRes {

@@ -18,6 +18,7 @@ const sbData = reactive({
   action_key: "",
   action_color: "",
   duration: 0,
+  dot_color: "",
 })
 
 export function initSnackBar() {
@@ -41,6 +42,7 @@ export async function showSnackBar(opt: SnackbarParam) {
   sbData.action_key = opt.action_key ?? ""
   sbData.action_color = opt.action_color ?? ""
   sbData.duration = opt.duration ?? 0
+  sbData.dot_color = opt.dot_color ?? ""
 
   await _open()
 

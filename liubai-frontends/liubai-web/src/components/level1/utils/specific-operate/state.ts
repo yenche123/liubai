@@ -78,6 +78,7 @@ export async function selectState(
     action_key: "tip.undo"
   }
   if(newStateId && tmpStateShow) {
+    snackParam.dot_color = tmpStateShow.color
     if(tmpStateShow.text) {
       snackParam.text = t("thread_related.switch_to") + tmpStateShow.text
     }

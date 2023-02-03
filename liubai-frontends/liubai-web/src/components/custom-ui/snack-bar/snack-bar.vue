@@ -20,9 +20,16 @@ const {
     :class="{ 'sb-container_show': show }"
   >
     <div class="sb-box">
-      <div class="sb-text">
-        <span v-if="sbData.text">{{ sbData.text }}</span>
-        <span v-else-if="sbData.text_key">{{ t(sbData.text_key) }}</span>
+      <div class="sb-main-box">
+
+        <div v-if="sbData.dot_color" class="sb-dot"
+          :style="{ backgroundColor: sbData.dot_color }"
+        ></div>
+
+        <div class="sb-text">
+          <span v-if="sbData.text">{{ sbData.text }}</span>
+          <span v-else-if="sbData.text_key">{{ t(sbData.text_key) }}</span>
+        </div>
       </div>
       <div v-if="(sbData.action || sbData.action_key)" 
         class="sb-action"
@@ -37,7 +44,9 @@ const {
   </div>
 
 </template>
-<style scoped>
+<style scoped lang="scss">
+
+/** 以移动端小于 600px 先写 class，最后再用媒体查询写其他情况 */
 
 .sb-container {
   width: 100%;
@@ -69,17 +78,30 @@ const {
   position: relative;
 }
 
-.sb-text {
+.sb-main-box {
   flex: 1;
   display: flex;
   flex-wrap: wrap;
-  max-width: 600px;
   padding: 14px 8px 14px 16px;
+  position: relative;
+}
+
+.sb-dot {
+  margin-block-start: 5px;
+  margin-inline-end: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: none;
+}
+
+.sb-text {
   font-size: var(--mini-font);
   color: var(--on-cui-snackbar);
   line-height: 1.33;
-  position: relative;
   user-select: none;
+  flex: 1;
 }
 
 .sb-action {
@@ -113,6 +135,7 @@ const {
   .sb-box {
     width: auto;
     min-width: max(20vw, 250px);
+    max-width: max(45vw, 560px);
   }
 
 }
