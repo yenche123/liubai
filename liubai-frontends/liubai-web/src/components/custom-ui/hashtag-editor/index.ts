@@ -15,6 +15,7 @@ import time from "~/utils/basic/time"
 import liuApi from "~/utils/liu-api"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
+import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
 
 // 使用 element.scrollIntoView 让元素露出来 
 
@@ -29,7 +30,7 @@ const errCode = ref(0)      // 错误提示. 1: 不得输入奇怪的字符; 2: 
 const newTag = ref("")      // 可以被创建的标签，注意该文字不能回传到业务侧，因为它的结构为 "xxx / yyy / zzz"
 const list = ref<TagItem[]>([])
 const selectedIndex = ref(-1)        // 被选择的 index
-const mode = ref<HteMode>("edit")
+const mode = ref<HteMode | "">("")
 const queryKey = "hashtageditor"
 let rr: RouteAndLiuRouter | undefined
 
@@ -68,7 +69,8 @@ function listenRouteChange() {
     if(!query) return
 
     if(query[queryKey] === "01") {
-      _toOpen()
+      if(mode.value !== "") _toOpen()
+      else handleCuiQueryErr(rr, queryKey)
       return
     }
 
@@ -93,7 +95,7 @@ export async function showHashTagEditor(opt: HashTagEditorParam) {
   selectedIndex.value = -1
   mode.value = opt.mode
 
-  await _open()
+  openIt(rr, queryKey)
 
   const _wait = (a: HteResolver): void => {
     _resolve = a
@@ -161,7 +163,7 @@ function onTapMask() {
 function toCancel() {
   if(inputEl.value) inputEl.value.blur()
   toResolve({ confirm: false })
-  _close()
+  closeIt(rr, queryKey)
 }
 
 function onTapConfirm() {
@@ -201,7 +203,7 @@ function toRename() {
     icon,
   }
   toResolve(res)
-  _close()
+  closeIt(rr, queryKey)
 }
 
 function toSelect() {
@@ -224,7 +226,7 @@ function toSelect() {
     icon,
   }
   toResolve(res)
-  _close()
+  closeIt(rr, queryKey)
 }
 
 // 检测 onTapConfirm
@@ -257,15 +259,6 @@ function checkState() {
   return true
 }
 
-
-async function _open() {
-  if(!rr) return
-  const newQ = {
-    [queryKey]: "01"
-  }
-  rr.router.addNewQueryWithOldQuery(rr.route, newQ)
-}
-
 async function _toOpen() {
   if(show.value) return
   enable.value = true
@@ -275,11 +268,6 @@ async function _toOpen() {
   await valTool.waitMilli(TRANSITION_DURATION)
   if(!inputEl.value) return
   inputEl.value.focus()
-}
-
-async function _close() {
-  if(!rr) return
-  rr.router.naviBackUntilNoSpecificQuery(rr.route, queryKey)
 }
 
 async function _toClose() {

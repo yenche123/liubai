@@ -7,6 +7,7 @@ import type {
   PiReturn,
   PiData,
 } from "./tools/types"
+import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
 
 type PiResolver = (res: PiReturn) => void
 
@@ -42,7 +43,8 @@ function listenRouteChange() {
     if(!query) return
 
     if(query[queryKey] === "01") {
-      _toOpen()
+      if(data.imgs.length) _toOpen()
+      else handleCuiQueryErr(rr, queryKey)
     }
     else {
       _toClose()
@@ -52,7 +54,7 @@ function listenRouteChange() {
 
 function onTapCancel() {
   _resolve && _resolve({ hasBack: true })
-  _close()
+  closeIt(rr, queryKey)
 }
 
 export async function previewImage(opt: PiParam) {
@@ -71,7 +73,7 @@ export async function previewImage(opt: PiParam) {
   data.imgs = imgs
   data.index = idx
 
-  await _open()
+  openIt(rr, queryKey)
 
   const _wait = (a: PiResolver) => {
     _resolve = a
@@ -79,24 +81,11 @@ export async function previewImage(opt: PiParam) {
   return new Promise(_wait)
 }
 
-async function _open() {
-  if(!rr) return
-  const newQ = {
-    [queryKey]: "01"
-  }
-  rr.router.addNewQueryWithOldQuery(rr.route, newQ)
-}
-
 async function _toOpen() {
   if(show.value) return
   enable.value = true
   await valTool.waitMilli(16)
   show.value = true
-}
-
-async function _close() {
-  if(!rr) return
-  rr.router.naviBackUntilNoSpecificQuery(rr.route, queryKey)
 }
 
 async function _toClose() {

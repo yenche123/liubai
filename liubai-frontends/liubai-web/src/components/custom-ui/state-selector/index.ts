@@ -8,6 +8,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import valTool from "~/utils/basic/val-tool"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
+import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
 
 let _resolve: SsResolver | undefined
 const list = ref<SsItem[]>([])
@@ -45,7 +46,8 @@ function listenRouteChange() {
     if(!query) return
 
     if(query[queryKey] === "01") {
-      _toOpen()
+      if(list.value.length) _toOpen()
+      else handleCuiQueryErr(rr, queryKey)
     }
     else {
       _toClose()
@@ -58,7 +60,7 @@ export async function showStateSelector(param: StateSelectorParam) {
   let tmpList = getList()
   initList(tmpList, param.stateIdSelected)
 
-  await _open()
+  openIt(rr, queryKey)
 
   const _wait = (a: SsResolver): void => {
     _resolve = a
@@ -82,13 +84,13 @@ async function onTapItem(index: number) {
   await valTool.waitMilli(150)
   
   _resolve && _resolve({ action: "confirm", stateId })
-  _close()
+  closeIt(rr, queryKey)
 }
 
 // 点击蒙层关闭
 function onTapMask() {
   _resolve && _resolve({ action: "mask" })
-  _close()
+  closeIt(rr, queryKey)
 }
 
 // 点击移除
@@ -101,7 +103,7 @@ async function onTapRemove() {
 
   await valTool.waitMilli(75)
   _resolve && _resolve({ action: "remove" })
-  _close()
+  closeIt(rr, queryKey)
 }
 
 // 已存在原始的列表时，判断 selected 放在哪里以及是否需要移除按钮
@@ -174,14 +176,6 @@ function getDefaultList() {
   return tmpList
 }
 
-async function _open() {
-  if(!rr) return
-  const newQ = {
-    [queryKey]: "01"
-  }
-  rr.router.addNewQueryWithOldQuery(rr.route, newQ)
-}
-
 async function _toOpen() {
   if(show.value) return
   enable.value = true
@@ -194,9 +188,4 @@ async function _toClose() {
   show.value = false
   await valTool.waitMilli(TRANSITION_DURATION)
   enable.value = false
-}
-
-async function _close() {
-  if(!rr) return
-  rr.router.naviBackUntilNoSpecificQuery(rr.route, queryKey)
 }
