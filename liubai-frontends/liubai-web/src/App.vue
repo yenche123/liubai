@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import CustomUi from "./components/custom-ui/custom-ui.vue"
 import WhoAreYou from "./components/level1/who-are-you/who-are-you.vue"
 import { useApp } from "./hooks/useApp";
 import { initLiuRouter } from "./routes/liu-router"
+import { defineAsyncComponent } from "vue"
+
+const CustomUi = defineAsyncComponent(() => {
+  return import("./components/custom-ui/custom-ui.vue")
+})
 
 useApp()
 const { route } = initLiuRouter()
