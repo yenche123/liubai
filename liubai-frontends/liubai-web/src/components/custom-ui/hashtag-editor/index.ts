@@ -149,7 +149,7 @@ function hasStrangeChar(val: string) {
 }
 
 function onTapMask() {
-  if(checkState()) {
+  if(mode.value === "edit" && checkState()) {
     if(inputEl.value) inputEl.value.blur()
     toEnter()
   }
