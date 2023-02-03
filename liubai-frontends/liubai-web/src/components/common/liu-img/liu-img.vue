@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { BlurHashCanvas } from "another-vue3-blurhash"
 import valTool from '~/utils/basic/val-tool';
 import liuUtil from '~/utils/liu-util';
+import type { CSSProperties, PropType } from 'vue';
 
 const TRANSITION_MS = 300
 
@@ -19,7 +20,7 @@ const props = defineProps({
   width: Number,
   height: Number,
   objectFit: {
-    type: String,
+    type: String as PropType<"fill" | "contain" | "cover" | "none" | "scale-down">,
     default: "fill"
   },
   loading: {
@@ -37,6 +38,13 @@ const props = defineProps({
     default: false,
   }
 })
+
+const imgStyles: CSSProperties = {
+  objectFit: props.objectFit,
+  transition: TRANSITION_MS + "ms",
+  userSelect: props.userSelect ? 'auto' : 'none',
+  borderRadius: props.borderRadius ? props.borderRadius : '0',
+}
 
 const canvasWH = computed(() => {
   const w = props.width
@@ -86,6 +94,7 @@ const onImgLoaded = async () => {
 
     <img class="custom-img" 
       :class="{ 'custom-img_loaded': show }"
+      :style="imgStyles"
       :width="width ? width : undefined"
       :height="height ? height: undefined"
       :src="src" 
@@ -121,10 +130,6 @@ const onImgLoaded = async () => {
   width: 100%;
   height: 100%;
   opacity: 0;
-  transition: v-bind("TRANSITION_MS + 'ms'");
-  object-fit: v-bind("objectFit ? objectFit : 'fill'");
-  user-select: v-bind("userSelect ? 'auto' : 'none'");
-  border-radius: v-bind("borderRadius ? borderRadius : '0'");
 }
 
 .custom-img_loaded {

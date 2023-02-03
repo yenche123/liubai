@@ -7,10 +7,11 @@ import type { SimpleFunc, AnyFunc } from "~/utils/basic/type-tool"
 export function useLiuWatch<T = any, F extends AnyFunc = SimpleFunc>(
   aRef: Ref<T>,
   foo: F,
+  deep: boolean = false,
 ) {
   watch(aRef, (newV) => {
     if(newV) foo()
-  })
+  }, { deep })
   if(aRef.value) {
     foo()
   }

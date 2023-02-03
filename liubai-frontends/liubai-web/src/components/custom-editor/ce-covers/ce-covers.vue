@@ -1,203 +1,196 @@
 <script lang="ts">
-import DraggAble from 'vuedraggable'
 import { defineComponent } from 'vue';
 import type { ImageShow } from '../../../types';
 import liuApi from "../../../utils/liu-api"
 import { useCeCovers, ceCoversProps } from "./tools/useCeCovers"
+import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 
 export default defineComponent({
   components: {
-    DraggAble
+    SlickList,
+    SlickItem,
   },
   props: ceCoversProps,
   emits: ['update:modelValue', 'clear'],
-  setup(props) {
-    const imgWidth = 140    
+  setup(props, { emit }) {
+    const imgWidth = 140
+    
     const cha = liuApi.getCharacteristic()
     const {
+      sortList,
       onDragStart,
       onDragEnd,
       onTapImage,
     } = useCeCovers(props)
 
+    const onListUpdate = (newV: ImageShow[]) => {
+      emit("update:modelValue", newV)
+    }
+
+    const onTapClear = (e: MouseEvent, index: number) => {
+      emit("clear", index)
+      e.stopPropagation()
+    }
+
     return { 
       imgWidth, 
-      cha, 
+      cha,
+      sortList,
       onDragStart, 
       onDragEnd,
-      onTapImage 
+      onTapImage,
+      onListUpdate,
+      onTapClear,
     }
   },
-  methods: {
-    onListUpdate(newV: ImageShow[]) {
-      this.$emit("update:modelValue", newV)
-    },
 
-    onTapClear(e: MouseEvent, index: number) {
-      this.$emit("clear", index)
-      e.stopPropagation()
-    },
+  directives: {
+    handle: HandleDirective
   },
 })
 
 </script>
 <template>
 
-  <DraggAble v-if="modelValue?.length" 
+  <SlickList v-if="sortList.length" 
+    axis="xy"
+    v-model:list="sortList"
+    use-drag-handle
+    @sort-start="onDragStart"
+    @sort-end="onDragEnd"
+    @sort-cancel="onDragEnd"
+    @update:list="onListUpdate"
     class="cc-container"
-    :modelValue="modelValue"
-    @update:modelValue="onListUpdate"
-    @start="onDragStart"
-    @end="onDragEnd"
-    :animation="300"
-    handle=".cec-drag"
-    ghost-class="ghost"
-    item-key="id"
+    helper-class="cec-item_helper"
+    :hideSortableGhost="true"
   >
-    <template #item="{ element, index }">
+    <SlickItem v-for="(item, index) in modelValue" :key="item.id" :index="index"
+      class="cec-item"
+    >
 
-      <div class="cec-item">
+      <liu-img :src="item.src" 
+        :width="imgWidth" 
+        :height="imgWidth"
+        :draggable="false"
+        :blurhash="item.blurhash"
+        border-radius="10px"
+        :style="{
+          'width': imgWidth + 'px',
+          'height': imgWidth + 'px',
+        }"
+        object-fit="cover"
+        @click="onTapImage(index)"
+      ></liu-img>
 
-        <liu-img :src="element.src" 
-          :width="imgWidth" 
-          :height="imgWidth"
-          :draggable="false"
-          :blurhash="element.blurhash"
-          border-radius="10px"
-          class="cc-img"
-          object-fit="cover"
-          @click="onTapImage(index)"
-        ></liu-img>
-
-        <!-- 右上角的删除按钮 -->
-        <div class="cec-delete"
-          @click="onTapClear($event, index)"
-        >
-          <svg-icon name="close" 
-            class="cec-icon"
-            color="#e0e0e0"
-          ></svg-icon>
-        </div>
-
-        <!-- 右下角的拖动按钮 -->
-        <div class="cec-drag"
-          :class="{ 'cec-drag_mobile': cha.isMobile }"
-        >
-          <svg-icon name="drag_indicator" 
-            class="cec-drag-icon"
-            color="#f1f1f1"
-          ></svg-icon>
-        </div>
-
+      <!-- 右上角的删除按钮 -->
+      <div class="cec-delete"
+        @click="onTapClear($event, index)"
+      >
+        <svg-icon name="close" 
+          class="cec-icon"
+          color="#e0e0e0"
+        ></svg-icon>
       </div>
-      
-    </template>
-  </DraggAble>
+
+      <!-- 右下角的拖动按钮 -->
+      <span class="cec-drag"
+        :class="{ 'cec-drag_mobile': cha.isMobile }"
+        v-handle
+      >
+        <svg-icon name="drag_indicator" 
+          class="cec-drag-icon"
+          color="#f1f1f1"
+        ></svg-icon>
+      </span>
+    </SlickItem> 
+  </SlickList>
 
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
 
 .cc-container {
   display: flex;
   flex-wrap: wrap;
   flex: 1;
   user-select: none;
+}
 
-  .cec-item {
-    width: v-bind("imgWidth + 'px'");
-    height: v-bind("imgWidth + 'px'");
+.cec-item {
+  width: v-bind("imgWidth + 'px'");
+  height: v-bind("imgWidth + 'px'");
+  overflow: hidden;
+  border-radius: 10px;
+  margin-inline-end: 10px;
+  margin-block-end: 10px;
+  position: relative;
+
+  .cec-delete {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border-radius: 4px;
     overflow: hidden;
-    border-radius: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    position: relative;
-
-    .cec-delete {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 30px;
-      height: 30px;
-      cursor: pointer;
-      border-radius: 4px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, .66);
-    }
-
-    .cec-drag {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 38px;
-      height: 38px;
-      cursor: move;
-      border-top-left-radius: 4px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: .15s;
-      opacity: 0;
-    }
-
-    .cec-drag_mobile {
-      opacity: 1;
-    }
-
-    .cec-drag::before {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      content: "";
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
-      border-radius: 20px 0 10px 0;
-      overflow: hidden;
-    }
-
-    .cec-icon {
-      width: 20px;
-      height: 20px;
-    }
-
-    .cec-drag-icon {
-      width: 28px;
-      height: 28px;
-      position: relative;
-      filter: drop-shadow(0 1px 0px rgba(0, 0, 0, .5));
-    }
-
-    .cc-img {
-      width: v-bind("imgWidth + 'px'");
-      height: v-bind("imgWidth + 'px'");
-    }
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, .66);
   }
 
-  .cec-item:hover .cec-drag {
+  .cec-drag {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 38px;
+    height: 38px;
+    cursor: move;
+    border-top-left-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .15s;
+    opacity: 0;
+  }
+
+  .cec-drag_mobile {
     opacity: 1;
   }
 
+  .cec-drag::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    content: "";
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    border-radius: 20px 0 10px 0;
+    overflow: hidden;
+  }
+
+  .cec-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .cec-drag-icon {
+    width: 28px;
+    height: 28px;
+    position: relative;
+    filter: drop-shadow(0 1px 0px rgba(0, 0, 0, .5));
+  }
 }
 
-/** the following is for draggable */
-
-.flip-list-move {
-  transition: transform 0.45s;
+.cec-item:hover .cec-drag {
+  opacity: 1;
 }
 
-.no-move {
-  transition: transform 0s;
+.cec-item_helper {
+  opacity: .6;
 }
-
-.ghost {
-  opacity: 0.3;
-}
-
 
 </style>

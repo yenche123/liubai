@@ -1,3 +1,5 @@
+import { toRef, ref } from "vue";
+import { useLiuWatch } from "~/hooks/useLiuWatch";
 import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore"
 import type { ImageShow } from '../../../../types';
 import cui from "../../../custom-ui";
@@ -13,6 +15,18 @@ export const ceCoversProps = {
 export function useCeCovers(props: CeCoversProps) {
 
   const globalStore = useGlobalStateStore()
+  const modelValue = toRef(props, "modelValue")
+  const sortList = ref<ImageShow[]>([])
+  const whenPropChange = () => {
+    const tmpList = modelValue.value
+    console.log(tmpList)
+    if(!tmpList || tmpList.length < 1) {
+      sortList.value = []
+      return
+    }
+    sortList.value = tmpList
+  }
+  useLiuWatch(modelValue, whenPropChange, true)
 
   const onDragStart = () => {
     globalStore.isDragToSort = true
@@ -32,6 +46,7 @@ export function useCeCovers(props: CeCoversProps) {
   }
 
   return {
+    sortList,
     onDragStart,
     onDragEnd,
     onTapImage,
