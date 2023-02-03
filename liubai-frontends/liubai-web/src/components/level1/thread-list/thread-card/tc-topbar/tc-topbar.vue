@@ -69,6 +69,7 @@ export default defineComponent({
     letter-spacing: 1px;
     position: relative;
     overflow: hidden;
+    user-select: none;
 
     .tctsb-bg {
       position: absolute;
