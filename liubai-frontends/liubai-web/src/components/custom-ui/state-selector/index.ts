@@ -14,7 +14,7 @@ const list = ref<SsItem[]>([])
 const enable = ref(false)
 const show = ref(false)
 const hasRemoveBtn = ref(false)
-const TRANSITION_DURATION = 300
+const TRANSITION_DURATION = 250
 const queryKey = "stateselector"
 let rr: RouteAndLiuRouter | undefined
 
