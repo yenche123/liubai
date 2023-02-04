@@ -56,6 +56,7 @@ export default defineComponent({
     group="kanban"
     v-model:list="list"
     use-drag-handle
+    :distance="1"
   >
 
     <SlickItem
