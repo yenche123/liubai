@@ -1,4 +1,5 @@
 import { computed } from "vue";
+import valTool from "~/utils/basic/val-tool";
 import type { KbListEmits, KbListProps } from "./types";
 
 export function useKanbanThreads(

@@ -8,7 +8,7 @@ export function useKpColumn() {
   const { height } = useWindowSize()
 
   const _cal = () => {
-    let h = height.value - cfg.navi_height - cfg.kanban_header_height - 15
+    let h = height.value - cfg.navi_height - cfg.kanban_header_height - 18
     if(h < 100) h = 100
     columnHeight.value = h
   }

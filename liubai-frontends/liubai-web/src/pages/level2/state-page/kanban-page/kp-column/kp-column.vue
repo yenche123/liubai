@@ -67,6 +67,10 @@ export default defineComponent({
 
       <div class="kcki-inner">
 
+        <div class="kc-title" v-if="thread.title">
+          <span>{{ thread.title }}</span>
+        </div>
+
         <div class="kc-text">
           <span v-if="thread.summary">{{ thread.summary }}</span>
           <span v-else>[图片或文件]</span>
@@ -94,6 +98,11 @@ export default defineComponent({
 .kc-kanban-list {
   width: 330px;
   position: relative;
+  overflow-y: auto;
+}
+
+.kc-kanban-list::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
 }
 
 .kc-kanban-item {
@@ -109,6 +118,8 @@ export default defineComponent({
   width: 100%;
   box-sizing: border-box;
   box-shadow: var(--card-shadow-2);
+  position: relative;
+  user-select: none;
 }
 
 .kc-kanban-helper {
@@ -119,10 +130,27 @@ export default defineComponent({
   transform: rotate(5deg);
 }
 
-.kc-text {
+.kc-title {
+  line-height: 2;
   font-size: var(--btn-font);
-  line-height: 1.5;
+  font-weight: 700;
   color: var(--main-normal);
+}
+
+.kc-text {
+  position: relative;
+  width: 100%;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--main-code);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  max-height: 77px;
 }
 
 .kc-footer {
