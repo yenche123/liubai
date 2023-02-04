@@ -1,9 +1,10 @@
-import { toRef, ref } from "vue";
+import { toRef, ref, inject, watch } from "vue";
 import { useLiuWatch } from "~/hooks/useLiuWatch";
 import time from "~/utils/basic/time";
 import { useGlobalStateStore } from "../../../../hooks/stores/useGlobalStateStore"
 import type { ImageShow } from '../../../../types';
 import cui from "../../../custom-ui";
+import { mainViewWidthKey } from "~/utils/provide-keys"
 
 interface CeCoversProps {
   modelValue?: ImageShow[]
@@ -36,6 +37,18 @@ export function useCeCovers(props: CeCoversProps) {
   }
   useLiuWatch(modelValue, whenPropChange, true)
 
+
+  const axis = ref<"xy" | "y">("xy")
+  const mv = inject(mainViewWidthKey)
+  if(mv) {
+    const _getAxis = () => {
+      const newV = mv.value
+      if(newV > 380) axis.value = "xy"
+      else axis.value = "y"
+    }
+    useLiuWatch(mv, _getAxis)
+  }
+
   const onDragStart = () => {
     globalStore.isDragToSort = true
   }
@@ -54,6 +67,7 @@ export function useCeCovers(props: CeCoversProps) {
   }
 
   return {
+    axis,
     sortList,
     onDragStart,
     onDragEnd,

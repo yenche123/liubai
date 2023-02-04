@@ -17,6 +17,7 @@ export default defineComponent({
     
     const cha = liuApi.getCharacteristic()
     const {
+      axis,
       sortList,
       onDragStart,
       onDragEnd,
@@ -33,6 +34,7 @@ export default defineComponent({
     }
 
     return { 
+      axis,
       imgWidth, 
       cha,
       sortList,
@@ -53,7 +55,7 @@ export default defineComponent({
 <template>
 
   <SlickList v-if="sortList.length" 
-    axis="xy"
+    :axis="axis"
     v-model:list="sortList"
     use-drag-handle
     @sort-start="onDragStart"
