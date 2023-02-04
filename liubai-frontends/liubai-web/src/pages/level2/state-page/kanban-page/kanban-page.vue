@@ -46,7 +46,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const { t } = useI18n()
     const indicatorData = useInjectSnIndicator()
-    const kpHeightStr = `calc(100% - ${cfg.navi_height}px)`
+    const kpHeightStr = `calc(100% - ${cfg.navi_height + 1}px)`
 
     const { columns } = useKanbanColumns(props, emit)
 
@@ -96,6 +96,7 @@ export default defineComponent({
           >
             <svg-icon class="kp-handle-svg"
               name="drag_handle400"
+              color="var(--main-code)"
             ></svg-icon>
           </span>
 
@@ -138,6 +139,7 @@ export default defineComponent({
 }
 
 .kp-column-container {
+  padding-inline-start: 20px;
   display: flex;
   align-items: flex-start;
 }
@@ -164,8 +166,13 @@ export default defineComponent({
   justify-content: center;
   padding-block-start: 10px;
   padding-block-end: 10px;
-  padding-block-end: 6px;
+  padding-inline-end: 6px;
   flex: none;
+  cursor: grab;
+}
+
+.kp-handle:active {
+  cursor: grabbing;
 }
 
 .kp-handle-svg {
@@ -175,6 +182,7 @@ export default defineComponent({
 
 .kp-state-box {
   flex: 1;
+  display: flex;
 }
 
 .kp-state {
@@ -184,7 +192,7 @@ export default defineComponent({
   border-bottom-left-radius: 10px;
   min-width: 40px;
   text-align: center;
-  font-size: var(--btn-font);
+  font-size: var(--mini-font);
   letter-spacing: 1px;
   position: relative;
   overflow: hidden;
