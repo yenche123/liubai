@@ -3,6 +3,7 @@ import { resolve } from "path"
 import vue from '@vitejs/plugin-vue'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import mkcert from 'vite-plugin-mkcert'
+import viteCompression from 'vite-plugin-compression'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 const { version } = require("./package.json")
 
@@ -19,6 +20,8 @@ export default defineConfig({
 
   plugins: [
     vue(),
+
+    viteCompression(),
 
     // vue-i18n 插件
     VueI18n({
