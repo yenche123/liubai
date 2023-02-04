@@ -78,6 +78,7 @@ export default defineComponent({
       axis="x"
       lockAxis="x"
       class="kp-column-container"
+      helper-class="kp-column-container_helper"
       v-model:list="columns"
       use-drag-handle
     >
@@ -171,7 +172,8 @@ export default defineComponent({
   cursor: grab;
 }
 
-.kp-handle:active {
+.kp-column-container_helper {
+  opacity: .5;
   cursor: grabbing;
 }
 
