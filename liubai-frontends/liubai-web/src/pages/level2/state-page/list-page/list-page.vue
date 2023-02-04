@@ -2,18 +2,25 @@
 import { defineComponent, PropType } from 'vue';
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
 import type { StateWhichPage } from "../tools/types";
+import type { KanbanColumn } from '~/types/types-content';
 import StateNavi from '../state-navi/state-navi.vue';
 import { useInjectSnIndicator } from "../tools/useSnIndicator";
+import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 
 export default defineComponent({
 
   components: {
     ScrollView,
-    StateNavi
+    StateNavi,
+    SlickList,
+    SlickItem,
   },
 
   emits: {
-    tapnavi: (index: StateWhichPage) => true,
+    "tapnavi": (index: StateWhichPage) => true,
+
+    // 父组件使用 v-model:kanban-columns="" 完成双向绑定
+    "update:kanbanColumns": (val: KanbanColumn[]) => true,
   },
 
   props: {
@@ -21,9 +28,17 @@ export default defineComponent({
       type: Number as PropType<StateWhichPage>,
       default: 0,
     },
+    kanbanColumns: {
+      type: Array as PropType<KanbanColumn[]>,
+      required: true
+    },
   },
 
-  setup() {
+  directives: {
+    handle: HandleDirective
+  },
+
+  setup(props, { emit }) {
     const indicatorData = useInjectSnIndicator()
     return {
       indicatorData

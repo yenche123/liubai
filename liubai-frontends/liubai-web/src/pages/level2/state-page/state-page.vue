@@ -8,7 +8,7 @@ import { useStatePage } from "./tools/useStatePage"
 import { useProvideSnIndicator } from "./tools/useSnIndicator";
 
 const { onVvWidthChange } = useMainVice()
-const { whichPage, onNaviChange } = useStatePage()
+const { whichPage, onNaviChange, kanban } = useStatePage()
 useProvideSnIndicator()
 
 
@@ -23,6 +23,7 @@ useProvideSnIndicator()
       class="sp-layout"
     >
       <list-page :current="whichPage"
+        v-model:kanban-columns="kanban.columns"
         @tapnavi="onNaviChange"
       ></list-page>
     </div>
@@ -32,6 +33,7 @@ useProvideSnIndicator()
       class="sp-layout"
     >
       <kanban-page :current="whichPage"
+        v-model:kanban-columns="kanban.columns"
         @tapnavi="onNaviChange"
       ></kanban-page>
     </div>
