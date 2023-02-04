@@ -150,7 +150,7 @@ export default defineComponent({
 
 .kp-column-header {
   width: 96%;
-  height: 60px;
+  height: v-bind("cfg.kanban_header_height + 'px'");
   position: relative;
   display: flex;
   align-items: center;

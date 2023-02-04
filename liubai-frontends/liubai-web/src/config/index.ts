@@ -20,6 +20,9 @@ export default {
   // 导航栏高度
   navi_height: 70,
 
+  // kanban header 的高度
+  kanban_header_height: 56,
+
   // vice-view 的导航栏高度
   vice_navi_height: 50,
 
