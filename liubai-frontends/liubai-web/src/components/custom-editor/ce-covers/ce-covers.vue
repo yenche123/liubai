@@ -64,7 +64,7 @@ export default defineComponent({
     helper-class="cec-item_helper"
     :hideSortableGhost="true"
   >
-    <SlickItem v-for="(item, index) in modelValue" :key="item.id" :index="index"
+    <SlickItem v-for="(item, index) in sortList" :key="item.id" :index="index"
       class="cec-item"
     >
 
