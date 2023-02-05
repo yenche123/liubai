@@ -34,3 +34,8 @@ export interface KbListProps {
   threads: ThreadShow[]
   stateId: string
 }
+
+export interface ColumnsInsertData {
+  newIndex: number
+  value: KanbanColumn
+}

@@ -1,5 +1,5 @@
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
-import type { LiuAtomState } from "~/types/types-atom"
+import type { LiuStateConfig, LiuAtomState } from "~/types/types-atom"
 import type { TcListOption } from "../thread-controller/type"
 import time from "~/utils/basic/time"
 import valTool from "~/utils/basic/val-tool"
@@ -129,10 +129,53 @@ async function getThreadsOfAThread(
   return { hasMore, threads: res2 }
 }
 
+// 重新排列 workspace.LiuStateConfig.stateList
+async function stateListSorted(
+  newStateIds: string[]
+) {
+  const tmpList = getStates()
+  const newList: LiuAtomState[] = []
+  for(let i=0; i<newStateIds.length; i++) {
+    const id = newStateIds[i]
+    const data = tmpList.find(v => v.id === id)
+    if(data) newList.push(data)
+  }
+
+  const wStore = useWorkspaceStore()
+  const currentSpace = wStore.currentSpace
+  if(!currentSpace) return false
+
+  let stateCfg = currentSpace.stateConfig
+  if(!stateCfg) {
+    stateCfg = getDefaultStateCfg()
+  }
+  stateCfg.stateList = newList
+  stateCfg.cloudStateList = newList
+  stateCfg.updatedStamp = time.getTime()
+
+  const res = await wStore.setStateConfig(stateCfg)
+  return res
+}
+
+
+function getDefaultStateCfg() {
+  const now = time.getTime()
+  let stateList = getSystemStates()
+  const obj: LiuStateConfig = {
+    stateList,
+    cloudStateList: valTool.copyObject(stateList),
+    updatedStamp: now,
+    cloudUpdatedStamp: now,
+  }
+  return obj
+}
+
 
 export default {
   getStates,
   getThreadsOfAThread,
   getSystemStates,
+  stateListSorted,
+  getDefaultStateCfg,
 }
 

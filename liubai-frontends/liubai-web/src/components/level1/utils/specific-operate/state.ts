@@ -152,10 +152,10 @@ async function handleWorkspace(
   // 2. 去生成 newStateConfig
   let newStateCfg: LiuStateConfig
   if(!oldStateConfig) {
-    newStateCfg = getDefaultStateCfg()
+    newStateCfg = stateController.getDefaultStateCfg()
   }
   else if(oldStateConfig.stateList.length < 1) {
-    newStateCfg = getDefaultStateCfg()
+    newStateCfg = stateController.getDefaultStateCfg()
   }
   else {
     newStateCfg = valTool.copyObject(oldStateConfig)
@@ -227,16 +227,4 @@ function _deleteState(
       column.contentIds = tmpList.filter(v => v !== threadId)
     }
   }
-}
-
-function getDefaultStateCfg() {
-  const now = time.getTime()
-  let stateList = stateController.getSystemStates()
-  const obj: LiuStateConfig = {
-    stateList,
-    cloudStateList: valTool.copyObject(stateList),
-    updatedStamp: now,
-    cloudUpdatedStamp: now,
-  }
-  return obj
 }

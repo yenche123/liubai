@@ -80,8 +80,8 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
     const spaceVal = currentSpace.value
     if(!spaceVal) return
     spaceVal.stateConfig = stateConfig
-    const res = await db.workspaces.update(spaceVal._id, { stateConfig })
-    console.log("setStateConfig......", res)
+    const copyData = valTool.copyObject(stateConfig)
+    const res = await db.workspaces.update(spaceVal._id, { stateConfig: copyData })
     return true
   }
 
