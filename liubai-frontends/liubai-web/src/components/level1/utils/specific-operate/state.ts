@@ -11,6 +11,7 @@ import type { SnackbarRes, SnackbarParam } from "~/types/other/types-snackbar"
 import type { LiuStateConfig, LiuAtomState } from "~/types/types-atom"
 import stateController from "~/utils/controllers/state-controller/state-controller"
 import { i18n } from "~/locales"
+import { mapStateColor } from "~/config/state-color"
 
 interface SelectStateRes {
   tipPromise?: Promise<SnackbarRes>
@@ -78,7 +79,8 @@ export async function selectState(
     action_key: "tip.undo"
   }
   if(newStateId && tmpStateShow) {
-    snackParam.dot_color = tmpStateShow.color
+    let dot_color = mapStateColor("dot_color", tmpStateShow.color)
+    snackParam.dot_color = dot_color
     if(tmpStateShow.text) {
       snackParam.text = t("thread_related.switch_to") + tmpStateShow.text
     }

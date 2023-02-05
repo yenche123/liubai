@@ -1,19 +1,20 @@
 // 返回全局动态参数，比如语言 (language) / 主题 (theme)
 
-import { Ref, ref } from "vue"
-import { useI18n } from "vue-i18n"
+import { ref } from "vue"
+import type { Ref } from "vue"
 import type { SupportedTheme } from "../types"
+import type { SupportedLocale } from "../types/types-locale"
+import { i18n } from "~/locales"
 import localCache from "../utils/system/local-cache"
 
 const theme = ref<SupportedTheme | "">("")
 
 export const useDynamics = () => {
-  const i18n = useI18n()
-  let language = i18n.locale
+  const language = i18n.global.locale
 
   initTheme()
 
-  const setLanguage = (val: string) => {
+  const setLanguage = (val: SupportedLocale) => {
     language.value = val
   }
 
