@@ -105,7 +105,7 @@ export default defineComponent({
           >
             <svg-icon class="kp-handle-svg"
               name="drag_handle400"
-              color="var(--main-code)"
+              color="var(--main-note)"
             ></svg-icon>
           </span>
 
@@ -155,8 +155,10 @@ export default defineComponent({
 
 .kp-kanban-column {
   width: 330px;
+  padding-inline-start: 6px;
   padding-inline-end: 6px;
   position: relative;
+  background-color: var(--bg-color);
 }
 
 .kp-column-header {

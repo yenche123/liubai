@@ -109,6 +109,11 @@ export default defineComponent({
   background: var(--scrollbar-thumb);
 }
 
+.kc-kanban-list::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
 .kc-kanban-item {
   margin-block-end: 10px;
   width: 96%;
@@ -176,13 +181,6 @@ export default defineComponent({
   width: 20px;
   height: 20px;
 }
-
-
-</style>
-<style lang="scss">
-
-
-
 
 
 </style>
