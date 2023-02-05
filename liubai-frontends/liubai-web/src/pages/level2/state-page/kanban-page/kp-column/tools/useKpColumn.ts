@@ -15,14 +15,8 @@ export function useKpColumn(emits: KbListEmits2) {
   }
   useLiuWatch(height, _cal)
 
-  const onScrolling = (data: { scrollPosition: number }) => {
-    console.log("data.scrollPosition: ", data.scrollPosition)
-    
-  }
-
 
   return {
     columnHeight,
-    onScrolling,
   }
 }

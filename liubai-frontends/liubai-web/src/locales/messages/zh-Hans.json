@@ -182,7 +182,8 @@
     "finished": "已完成",
     "todo": "待办",
     "select_state": "选择状态",
-    "switch_to": "切换至 "
+    "switch_to": "切换至 ",
+    "img_file": "[图片或文件]"
   },
   "err": {
     "no_data": "这里什么都没有",

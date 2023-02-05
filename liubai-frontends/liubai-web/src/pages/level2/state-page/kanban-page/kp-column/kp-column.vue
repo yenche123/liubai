@@ -4,6 +4,7 @@ import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 import type { ThreadShow } from '~/types/types-content';
 import { useKanbanThreads } from "../../tools/useKanbanThreads"
 import { useKpColumn } from './tools/useKpColumn';
+import { useI18n } from "vue-i18n"
 
 export default defineComponent({
 
@@ -18,6 +19,10 @@ export default defineComponent({
   },
 
   props: {
+    stateId: {
+      type: String,
+      required: true,
+    },
     threads: {
       type: Array as PropType<ThreadShow[]>,
       default: []
@@ -29,18 +34,18 @@ export default defineComponent({
   },
 
   setup(props, { emit }) {
+    const { t } = useI18n()
     const {
       list
     } = useKanbanThreads(props, emit)
     const {
       columnHeight,
-      onScrolling,
     } = useKpColumn(emit)
 
     return {
+      t,
       list,
       columnHeight,
-      onScrolling,
     }
   },
 
@@ -77,7 +82,7 @@ export default defineComponent({
 
         <div class="kc-text">
           <span v-if="thread.summary">{{ thread.summary }}</span>
-          <span v-else>[图片或文件]</span>
+          <span v-else>{{ t("thread_related.img_file") }}</span>
         </div>
 
         <div class="kc-footer">
@@ -89,8 +94,6 @@ export default defineComponent({
         </div>
 
       </div>
-
-      
 
     </SlickItem>
 

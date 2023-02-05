@@ -182,7 +182,8 @@
     "finished": "Finished",
     "todo": "Todo",
     "select_state": "Select",
-    "switch_to": "Switch to "
+    "switch_to": "Switch to ",
+    "img_file": "[Image or file]"
   },
   "err": {
     "no_data": "Nothing Here",

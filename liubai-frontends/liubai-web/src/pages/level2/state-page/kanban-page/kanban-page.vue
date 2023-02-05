@@ -132,6 +132,7 @@ export default defineComponent({
         </div>
         <KpColumn
           v-model:threads="item.threads"
+          :state-id="item.id"
         ></KpColumn>
       </SlickItem>
 

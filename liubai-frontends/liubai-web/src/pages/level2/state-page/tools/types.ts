@@ -32,4 +32,5 @@ export interface KbListEmits2 extends KbListEmits {
 
 export interface KbListProps {
   threads: ThreadShow[]
+  stateId: string
 }
