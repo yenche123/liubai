@@ -97,7 +97,9 @@ export default defineComponent({
       >
 
         <!-- 看板每一列的标头 -->
-        <div class="kp-column-header">
+        <div class="kp-column-header"
+          :class="{ 'kpch-shadow': scollTops[item.id] > 10 }"
+        >
 
           <!-- column 的把手 -->
           <span class="kp-handle"
@@ -133,6 +135,7 @@ export default defineComponent({
         <KpColumn
           v-model:threads="item.threads"
           :state-id="item.id"
+          @scrolling="setScrollTop(item.id, $event)"
         ></KpColumn>
       </SlickItem>
 
@@ -160,14 +163,20 @@ export default defineComponent({
   padding-inline-end: 6px;
   position: relative;
   background-color: var(--bg-color);
+  overflow: hidden;
 }
 
 .kp-column-header {
-  width: 96%;
+  width: 100%;
   height: v-bind("cfg.kanban_header_height + 'px'");
   position: relative;
   display: flex;
   align-items: center;
+  z-index: 100;
+}
+
+.kpch-shadow {
+  box-shadow: var(--kanban-header-shadow);
 }
 
 .kp-handle {
@@ -176,6 +185,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-inline-start: 6px;
   padding-block-start: 10px;
   padding-block-end: 10px;
   padding-inline-end: 6px;

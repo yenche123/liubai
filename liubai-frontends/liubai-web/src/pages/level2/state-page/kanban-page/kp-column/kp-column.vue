@@ -40,7 +40,7 @@ export default defineComponent({
     } = useKanbanThreads(props, emit)
     const {
       columnHeight,
-    } = useKpColumn(emit)
+    } = useKpColumn(props, emit)
 
     return {
       t,
@@ -65,6 +65,7 @@ export default defineComponent({
     v-model:list="list"
     use-drag-handle
     :distance="1"
+    :id="'kanban-' + stateId"
   >
 
     <SlickItem
@@ -103,7 +104,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 
 .kc-kanban-list {
-  width: 330px;
+  padding-inline-start: 10px;
+  width: 320px;
   position: relative;
   overflow-y: auto;
 }
@@ -119,7 +121,7 @@ export default defineComponent({
 
 .kc-kanban-item {
   margin-block-end: 10px;
-  width: 96%;
+  width: 98%;
   position: relative;
 }
 
