@@ -26,6 +26,10 @@ export interface KbListEmits {
   (event: "update:threads", val: ThreadShow[]): void
 }
 
+export interface KbListEmits2 extends KbListEmits {
+  (event: "scrolling", val: number): void
+}
+
 export interface KbListProps {
   threads: ThreadShow[]
 }

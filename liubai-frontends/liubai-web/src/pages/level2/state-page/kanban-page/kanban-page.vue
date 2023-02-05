@@ -48,7 +48,11 @@ export default defineComponent({
     const indicatorData = useInjectSnIndicator()
     const kpHeightStr = `calc(100% - ${cfg.navi_height + 1}px)`
 
-    const { columns } = useKanbanColumns(props, emit)
+    const { 
+      columns, 
+      scollTops, 
+      setScrollTop, 
+    } = useKanbanColumns(props, emit)
 
     return {
       t,
@@ -56,6 +60,8 @@ export default defineComponent({
       indicatorData,
       cfg,
       kpHeightStr,
+      scollTops, 
+      setScrollTop,
     }
   },
 
@@ -89,6 +95,8 @@ export default defineComponent({
         :index="index"
         class="kp-kanban-column"
       >
+
+        <!-- 看板每一列的标头 -->
         <div class="kp-column-header">
 
           <!-- column 的把手 -->

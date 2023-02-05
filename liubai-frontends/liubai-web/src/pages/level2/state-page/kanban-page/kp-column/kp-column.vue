@@ -14,6 +14,7 @@ export default defineComponent({
 
   emits: {
     "update:threads": (val: ThreadShow[]) => true,
+    "scrolling": (val: number) => true,
   },
 
   props: {
@@ -33,11 +34,13 @@ export default defineComponent({
     } = useKanbanThreads(props, emit)
     const {
       columnHeight,
-    } = useKpColumn()
+      onScrolling,
+    } = useKpColumn(emit)
 
     return {
       list,
       columnHeight,
+      onScrolling,
     }
   },
 

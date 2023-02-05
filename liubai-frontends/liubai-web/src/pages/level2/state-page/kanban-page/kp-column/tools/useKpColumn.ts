@@ -2,8 +2,9 @@ import { ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
 import { useLiuWatch } from "~/hooks/useLiuWatch"
+import type { KbListEmits2 } from "../../../tools/types"
 
-export function useKpColumn() {
+export function useKpColumn(emits: KbListEmits2) {
   const columnHeight = ref(500)
   const { height } = useWindowSize()
 
@@ -14,7 +15,14 @@ export function useKpColumn() {
   }
   useLiuWatch(height, _cal)
 
+  const onScrolling = (data: { scrollPosition: number }) => {
+    console.log("data.scrollPosition: ", data.scrollPosition)
+    
+  }
+
+
   return {
-    columnHeight
+    columnHeight,
+    onScrolling,
   }
 }
