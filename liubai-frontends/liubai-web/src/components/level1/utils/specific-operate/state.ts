@@ -200,6 +200,7 @@ async function handleWorkspace(
       _deleteState(cloudStateList, threadId)
     }
   }
+  newStateCfg.updatedStamp = time.getTime()
 
   // 4. 写入到 wStore 中
   const res = await wStore.setStateConfig(newStateCfg)
