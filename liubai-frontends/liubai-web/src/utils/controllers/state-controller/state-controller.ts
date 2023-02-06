@@ -141,6 +141,12 @@ async function stateListSorted(
     if(data) newList.push(data)
   }
 
+  const res = await setNewStateList(newList)
+  return res
+}
+
+// 设置新的 stateList 进 stateConfig 里
+async function setNewStateList(newList: LiuAtomState[]) {
   const wStore = useWorkspaceStore()
   const currentSpace = wStore.currentSpace
   if(!currentSpace) return false
@@ -176,6 +182,7 @@ export default {
   getThreadsOfAThread,
   getSystemStates,
   stateListSorted,
+  setNewStateList,
   getDefaultStateCfg,
 }
 

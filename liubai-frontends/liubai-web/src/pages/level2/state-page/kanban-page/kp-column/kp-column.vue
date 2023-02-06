@@ -5,7 +5,9 @@ import type { ThreadShow } from '~/types/types-content';
 import { useKanbanThreads } from "../../tools/useKanbanThreads"
 import { useKpColumn } from './tools/useKpColumn';
 import { useI18n } from "vue-i18n"
-import type { ColumnInsertData } from "../../tools/types"
+import type { 
+  ColumnInsertData,
+} from "../../tools/types"
 
 export default defineComponent({
 

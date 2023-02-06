@@ -56,10 +56,6 @@ function initKanbanColumns(
       }
       const data = await stateController.getThreadsOfAThread(opt)
 
-      console.log("_getThreads: ")
-      console.log(data)
-      console.log(" ")
-
       col.hasMore = data.hasMore
       col.threads = data.threads
     }
@@ -68,10 +64,6 @@ function initKanbanColumns(
   const _getColumns = () => {
     const stateList = stateController.getStates()
     kanban.columns = transferStateListToColumns(stateList)
-
-    console.log("看一下当前的 columns: ")
-    console.log(valTool.copyObject(kanban.columns))
-    console.log(" ")
 
     _getThreads()
   }

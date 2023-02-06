@@ -1,6 +1,10 @@
 import { computed, reactive } from "vue";
 import type { KanbanColumn, ThreadShow } from "~/types/types-content";
-import type { ColumnInsertData, KanbanEmits, KanbanProps } from "./types";
+import type { 
+  ColumnInsertData,
+  KanbanEmits, 
+  KanbanProps,
+} from "./types";
 import stateController from "~/utils/controllers/state-controller/state-controller";
 import { whenThreadInserted, whenThreadListUpdated } from "./handleKanbanSort"
 
@@ -32,7 +36,7 @@ export function useKanbanColumns(
     console.log("onThreadInserted........")
     whenThreadInserted(stateId, data.value)
   }
-  
+
   return {
     columns,
     scollTops,
