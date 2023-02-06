@@ -5,6 +5,7 @@ import type { ThreadShow } from '~/types/types-content';
 import { useKanbanThreads } from "../../tools/useKanbanThreads"
 import { useKpColumn } from './tools/useKpColumn';
 import { useI18n } from "vue-i18n"
+import type { ColumnInsertData } from "../../tools/types"
 
 export default defineComponent({
 
@@ -16,6 +17,8 @@ export default defineComponent({
   emits: {
     "update:threads": (val: ThreadShow[]) => true,
     "scrolling": (val: number) => true,
+    "sort-insert": (val: ColumnInsertData) => true,
+    "threadsupdated": (val: ThreadShow[]) => true,
   },
 
   props: {
@@ -66,6 +69,8 @@ export default defineComponent({
     use-drag-handle
     :distance="1"
     :id="'kanban-' + stateId"
+    @sort-insert="$emit('sort-insert', $event)"
+    @update:list="$emit('threadsupdated', $event)"
   >
 
     <SlickItem

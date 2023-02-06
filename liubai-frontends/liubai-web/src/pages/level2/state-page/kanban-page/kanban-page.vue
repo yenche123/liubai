@@ -52,7 +52,9 @@ export default defineComponent({
       columns, 
       scollTops, 
       setScrollTop,
-      onUpdateList
+      onUpdateList,
+      onThreadInserted,
+      onThreadsUpdated,
     } = useKanbanColumns(props, emit)
 
     return {
@@ -64,6 +66,8 @@ export default defineComponent({
       scollTops, 
       setScrollTop,
       onUpdateList,
+      onThreadInserted,
+      onThreadsUpdated,
     }
   },
 
@@ -139,6 +143,8 @@ export default defineComponent({
           v-model:threads="item.threads"
           :state-id="item.id"
           @scrolling="setScrollTop(item.id, $event)"
+          @sort-insert="onThreadInserted(item.id, $event)"
+          @threadsupdated="onThreadsUpdated(item.id, $event)"
         ></KpColumn>
       </SlickItem>
 

@@ -26,7 +26,7 @@ interface StateCfgBackup {
 
 let stateCfgBackup: StateCfgBackup | undefined
 
-// 处理动态 状态 的公共逻辑
+// 用户从 More 里点击 状态 后的公共逻辑
 export async function selectState(
   oldThread: ThreadShow,
   memberId: string,
@@ -117,6 +117,26 @@ export async function undoState(
   const wStore = useWorkspaceStore()
   await restoreStateCfg(wStore)
 }
+
+
+// 只修改 thread 上的 id
+export async function setNewStateForThread(
+  oldThread: ThreadShow,
+  newStateId: string,
+) {
+  const newThread = valTool.copyObject(oldThread)
+  newThread.stateId = newStateId
+
+  // 1. 修改 db
+  const res = await dbOp.setStateId(newThread._id, newStateId)
+
+  // 2. 通知全局
+  const tsStore = useThreadShowStore()
+  tsStore.setUpdatedThreadShows([newThread], "state")
+  
+  return true
+}
+
 
 async function restoreStateCfg(
   wStore: WorkspaceStore,

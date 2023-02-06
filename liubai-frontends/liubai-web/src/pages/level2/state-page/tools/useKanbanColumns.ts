@@ -1,7 +1,8 @@
 import { computed, reactive } from "vue";
-import type { KanbanColumn } from "~/types/types-content";
-import type { KanbanEmits, KanbanProps } from "./types";
+import type { KanbanColumn, ThreadShow } from "~/types/types-content";
+import type { ColumnInsertData, KanbanEmits, KanbanProps } from "./types";
 import stateController from "~/utils/controllers/state-controller/state-controller";
+import { whenThreadInserted, whenThreadListUpdated } from "./handleKanbanSort"
 
 export function useKanbanColumns(
   props: KanbanProps,
@@ -27,14 +28,21 @@ export function useKanbanColumns(
     whenColumnsSorted(newStateIds)
   }
 
+  const onThreadInserted = (stateId: string, data: ColumnInsertData) => {
+    console.log("onThreadInserted........")
+    whenThreadInserted(stateId, data.value)
+  }
   
   return {
     columns,
     scollTops,
     setScrollTop,
-    onUpdateList
+    onUpdateList,
+    onThreadInserted,
+    onThreadsUpdated: whenThreadListUpdated,
   }
 }
+
 
 function whenColumnsSorted(
   newStateIds: string[]
@@ -53,7 +61,6 @@ function whenColumnsSorted(
   }
 
   if(!_hasChange()) {
-    console.log("没有发生改变啦！")
     return
   }
 
