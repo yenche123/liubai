@@ -26,3 +26,6 @@ export const svScollingKey = Symbol() as InjectionKey<Ref<number>>
 
 // 用于让子/孙组件传递参数给 scroll-view 让后者滚动到特定位置
 export const svBottomUpKey = Symbol() as InjectionKey<ShallowRef<SvBottomUp>>
+
+// 用于看板 传递内部 (kanban-page / list-page) 改变的时间戳给 state-page
+export const kanbanInnerChangeKey = Symbol() as InjectionKey<Ref<number>>

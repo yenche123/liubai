@@ -1,8 +1,7 @@
-import { toRef, watch, ref, onMounted, nextTick, shallowRef } from "vue";
+import { toRef, watch, ref, onMounted, nextTick } from "vue";
 import type { Ref, ShallowRef } from "vue";
 import type { StateWhichPage, SnIndicatorData } from "../../tools/types";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
-import valTool from "~/utils/basic/val-tool";
 import { useInjectSnIndicator } from "../../tools/useSnIndicator"
 import { useI18n } from "vue-i18n";
 
@@ -84,10 +83,6 @@ async function whenWhichPageChange(
 
   const left = childClient.left - parentClient.left
   const width = childClient.width
-
-  console.log("left: ", left)
-  console.log("width: ", width)
-  console.log(" ")
 
   ctx._indicatorData.value = {
     left: `${left}px`,

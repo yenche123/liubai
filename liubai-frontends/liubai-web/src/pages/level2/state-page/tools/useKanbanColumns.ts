@@ -1,4 +1,4 @@
-import { computed, reactive } from "vue";
+import { computed, inject, reactive } from "vue";
 import type { KanbanColumn, ThreadShow } from "~/types/types-content";
 import type { 
   ColumnInsertData,
@@ -7,11 +7,14 @@ import type {
 } from "./types";
 import stateController from "~/utils/controllers/state-controller/state-controller";
 import { whenThreadInserted, whenThreadListUpdated } from "./handleKanbanSort"
+import { kanbanInnerChangeKey } from "~/utils/provide-keys"
+import time from "~/utils/basic/time";
 
 export function useKanbanColumns(
   props: KanbanProps,
   emits: KanbanEmits
 ) {
+  const lastInnerStampRef = inject(kanbanInnerChangeKey)
 
   const columns = computed({
     get() {
@@ -27,23 +30,33 @@ export function useKanbanColumns(
     scollTops[stateId] = sT
   }
 
-  const onUpdateList = (e: KanbanColumn[]) => {
+  const onColumnsSorted = (e: KanbanColumn[]) => {
     const newStateIds = e.map(v => v.id)
     whenColumnsSorted(newStateIds)
   }
 
+  const _setInnerStamp = () => {
+    if(!lastInnerStampRef) return
+    lastInnerStampRef.value = time.getTime()
+  }
+
   const onThreadInserted = (stateId: string, data: ColumnInsertData) => {
-    console.log("onThreadInserted........")
+    _setInnerStamp()
     whenThreadInserted(stateId, data.value)
+  }
+
+  const onThreadsUpdated = (stateId: string, threads: ThreadShow[]) => {
+    _setInnerStamp()
+    whenThreadListUpdated(stateId, threads)
   }
 
   return {
     columns,
     scollTops,
     setScrollTop,
-    onUpdateList,
+    onColumnsSorted,
     onThreadInserted,
-    onThreadsUpdated: whenThreadListUpdated,
+    onThreadsUpdated,
   }
 }
 

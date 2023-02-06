@@ -1,4 +1,4 @@
-import { reactive, ref } from "vue"
+import { provide, reactive, ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
 import type { StateWhichPage, KanbanData } from "./types"
 import type { KanbanColumn } from "~/types/types-content"
@@ -7,7 +7,10 @@ import stateController from "~/utils/controllers/state-controller/state-controll
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
 import { useLiuWatch } from "~/hooks/useLiuWatch"
-import valTool from "~/utils/basic/val-tool"
+import { kanbanInnerChangeKey } from "~/utils/provide-keys"
+import time from "~/utils/basic/time"
+import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
+import { recalculateKanban } from "./recalculateKanban"
 
 export function useStatePage() {
 
@@ -32,11 +35,35 @@ export function useStatePage() {
   })
   initKanbanColumns(kanban)
 
+  /*************** 监听 thread-show 的变化 **********/
+  listenThreadShowChanged(kanban)
+
   return {
     whichPage,
     onNaviChange,
     kanban,
   }
+}
+
+
+function listenThreadShowChanged(
+  kanban: KanbanData
+) {
+  // 内部改变的时间戳
+  const lastInnerStampRef = ref(time.getTime())
+  provide(kanbanInnerChangeKey, lastInnerStampRef)
+
+  const tStore = useThreadShowStore()
+  tStore.$subscribe((mutation, state) => {
+    const now = time.getTime()
+    const diff = now - lastInnerStampRef.value
+    if(diff < 600) {
+      console.log("这是内部 kanban 的变化，请忽略！")
+      return
+    }
+
+    recalculateKanban(kanban)
+  })
 }
 
 

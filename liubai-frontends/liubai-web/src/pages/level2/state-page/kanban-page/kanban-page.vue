@@ -52,7 +52,7 @@ export default defineComponent({
       columns, 
       scollTops, 
       setScrollTop,
-      onUpdateList,
+      onColumnsSorted,
       onThreadInserted,
       onThreadsUpdated,
     } = useKanbanColumns(props, emit)
@@ -65,7 +65,7 @@ export default defineComponent({
       kpHeightStr,
       scollTops, 
       setScrollTop,
-      onUpdateList,
+      onColumnsSorted,
       onThreadInserted,
       onThreadsUpdated,
     }
@@ -93,7 +93,7 @@ export default defineComponent({
       helper-class="kp-column-container_helper"
       v-model:list="columns"
       use-drag-handle
-      @update:list="onUpdateList"
+      @update:list="onColumnsSorted"
     >
 
       <SlickItem

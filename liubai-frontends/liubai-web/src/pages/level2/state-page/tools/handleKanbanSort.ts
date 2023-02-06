@@ -47,11 +47,7 @@ export function whenThreadListUpdated(
 }
 
 async function updateStateList() {
-  console.log("查看 waitList")
-  console.log(waitList)
   if(waitList.length < 1) return
-  console.log("waitList 最后记得置空")
-
 
   const wStore = useWorkspaceStore()
   const currentSpace = wStore.currentSpace
@@ -112,16 +108,14 @@ async function updateStateList() {
     if(newContentIds.length > 0) {
       contentIds = contentIds.concat(newContentIds)
     }
+    contentIds = [...new Set(contentIds)]
     
     v1.contentIds = contentIds
   }
 
-  console.log("看一下新的 stateList: ")
-  console.log(stateList)
-  console.log(" ")
 
   waitList = []
   crossData = null
 
-  // await stateController.setNewStateList(stateList)
+  const res = await stateController.setNewStateList(stateList)
 }
