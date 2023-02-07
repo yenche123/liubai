@@ -12,7 +12,7 @@ const { hiddenScrollBar, onVvWidthChange } = useMainVice()
 <template>
 
   <!-- 主视图 -->
-  <main-view>
+  <main-view :drop-files="true">
     <scroll-view :hidden-scrollbar="hiddenScrollBar">
       <NaviAuto></NaviAuto>
       <index-content></index-content>

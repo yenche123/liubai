@@ -2,8 +2,11 @@ import { provide, ref, watch, watchEffect } from "vue";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { useDropZone } from "~/hooks/useVueUse"
 import { mvFileKey } from "~/utils/provide-keys"
+import type { MainViewProps } from "./types"
 
-export function useMvDropZone() {
+export function useMvDropZone(
+  props: MainViewProps
+) {
   const centerRef = ref<HTMLDivElement>()
   const dropFiles = ref<File[]>()
   provide(mvFileKey, dropFiles)
@@ -11,7 +14,7 @@ export function useMvDropZone() {
   const globalState = useGlobalStateStore()
 
   const onDrop = (files: File[] | null) => {
-    if(globalState.isDragToSort) {
+    if(globalState.isDragToSort || !props.dropFiles) {
       return
     }
     // console.log("onDrop..........")

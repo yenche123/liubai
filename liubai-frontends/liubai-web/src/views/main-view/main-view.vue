@@ -3,8 +3,15 @@ import CenterDropZone from "./center-drop-zone/center-drop-zone.vue"
 import { useMainView } from "./tools/useMainView"
 import { useMvDropZone } from "./tools/useMvDropZone"
 
+const props = defineProps({
+  dropFiles: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const { leftPx, rightPx } = useMainView()
-const { isOverDropZone, centerRef } = useMvDropZone()
+const { isOverDropZone, centerRef } = useMvDropZone(props)
 
 </script>
 <template>
@@ -15,6 +22,7 @@ const { isOverDropZone, centerRef } = useMvDropZone()
       <slot />
 
       <center-drop-zone 
+        v-if="dropFiles"
         :is-over-drop-zone="isOverDropZone"
         :left-px="leftPx"
         :right-px="rightPx"
