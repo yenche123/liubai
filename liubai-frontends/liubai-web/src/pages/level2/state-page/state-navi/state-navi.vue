@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ref } from "vue";
 import type { PropType } from 'vue';
 import { useStateNavi } from "./tools/useStateNavi"
 import type { 
@@ -41,6 +42,12 @@ const selectedColor = "var(--main-normal)"
 const onTapNavi = (index: StateWhichPage) => {
   if(index === props.current) return
   emits("tapnavi", index)
+}
+
+const reloadRotateDeg = ref(0)
+const onTapReload = () => {
+  reloadData?.tapreload()
+  reloadRotateDeg.value += 360
 }
 
 </script>
@@ -93,6 +100,8 @@ const onTapNavi = (index: StateWhichPage) => {
         <!-- 刷新 -->
         <div class="liu-hover snf-box"
           :aria-label="t('common.refresh')"
+          v-if="reloadData?.showReload.value"
+          @click="onTapReload"
         >
           <svg-icon name="refresh" class="snf-svg"></svg-icon>
         </div>
@@ -215,6 +224,8 @@ const onTapNavi = (index: StateWhichPage) => {
   .snf-svg {
     width: 24px;
     height: 24px;
+    transition: .6s;
+    transform: v-bind("'rotate(' + reloadRotateDeg + 'deg)'");
   }
 
   .snf-svg_add {

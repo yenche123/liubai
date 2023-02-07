@@ -17,6 +17,7 @@ import { kanbanInnerChangeKey } from "~/utils/provide-keys"
 import time from "~/utils/basic/time"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import { recalculateKanban } from "./recalculateKanban"
+import cui from "~/components/custom-ui"
 
 export function useStatePage() {
 
@@ -66,8 +67,10 @@ function initReload(
   ctx: StatePageCtx
 ) {
 
-  const onTapReload = () => {
-    console.log("useStatePage onTapReload............")
+  const onTapReload = async () => {
+    toGetColumns(ctx)
+    await toGetThreads(ctx)
+    cui.showSnackBar({ text_key: "tip.refreshed" })
   }
 
   const reloadData: KanbanReload = {
@@ -106,31 +109,43 @@ function initKanbanColumns(
 ) {
   const wStore = useWorkspaceStore()
   const spaceIdRef = storeToRefs(wStore).spaceId
-  const { kanban } = ctx
 
-  const _getThreads = async () => {
-    for(let i=0; i<kanban.columns.length; i++) {
-      const col = kanban.columns[i]
-
-      const opt = {
-        stateId: col.id, 
-        excludeInKanban: false,
-      }
-      const data = await stateController.getThreadsOfAThread(opt)
-
-      col.hasMore = data.hasMore
-      col.threads = data.threads
-    }
+  const _getThreads = () => {
+    toGetThreads(ctx)
   }
 
   const _getColumns = () => {
-    const stateList = stateController.getStates()
-    kanban.columns = transferStateListToColumns(stateList)
-
+    toGetColumns(ctx)
     _getThreads()
   }
 
   useLiuWatch(spaceIdRef, _getColumns)
+}
+
+function toGetColumns(
+  ctx: StatePageCtx
+) {
+  const { kanban } = ctx
+  const stateList = stateController.getStates()
+  kanban.columns = transferStateListToColumns(stateList)
+}
+
+async function toGetThreads(
+  ctx: StatePageCtx
+) {
+  const { kanban } = ctx
+  for(let i=0; i<kanban.columns.length; i++) {
+    const col = kanban.columns[i]
+
+    const opt = {
+      stateId: col.id, 
+      excludeInKanban: false,
+    }
+    const data = await stateController.getThreadsOfAThread(opt)
+
+    col.hasMore = data.hasMore
+    col.threads = data.threads
+  }
 }
 
 
