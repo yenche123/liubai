@@ -5,13 +5,17 @@ import { kanbanReloadKey } from "../../tools/types";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { useInjectSnIndicator } from "../../tools/useSnIndicator"
 import { useI18n } from "vue-i18n";
+import { useWindowSize } from "~/hooks/useVueUse"
 
 interface SnProps {
-  whichPage: StateWhichPage
+  current: StateWhichPage
+  indicatorData: SnIndicatorData
+  pageIn: StateWhichPage
 }
 
 interface SnCtx {
   whichPage: StateWhichPage
+  pageIn: StateWhichPage
   _indicatorData: ShallowRef<SnIndicatorData>
   indicatorParentEl: Ref<HTMLElement | null>
   indiListEl: Ref<HTMLElement | null>
@@ -26,7 +30,8 @@ export function useStateNavi(props: SnProps) {
   const indiListEl = ref<HTMLElement | null>(null)
   const indiKanbanEl = ref<HTMLElement | null>(null)
 
-  const whichPage = toRef(props, "whichPage")
+  const whichPage = toRef(props, "current")
+  const pageIn = toRef(props, "pageIn")
   const { t, locale } = useI18n()
 
   const ctx: SnCtx = {
@@ -35,6 +40,7 @@ export function useStateNavi(props: SnProps) {
     indiListEl,
     indiKanbanEl,
     whichPage: whichPage.value,
+    pageIn: pageIn.value,
   }
 
   watch([whichPage, locale], ([newV1, newV2]) => {
@@ -57,6 +63,8 @@ export function useStateNavi(props: SnProps) {
   console.log("reloadData..........")
   console.log(reloadData)
   console.log(" ")
+
+  listenWindowWidthChange(ctx)
   
   return {
     t,
@@ -66,6 +74,27 @@ export function useStateNavi(props: SnProps) {
     onTapBack,
     reloadData,
   }
+}
+
+
+function listenWindowWidthChange(
+  ctx: SnCtx
+) {
+  const { width } = useWindowSize()
+  let lastWidthPx = width.value
+
+  const critialPoint = 400
+
+  watch(width, (newV) => {
+    let needChange = false
+    if(newV <= critialPoint && lastWidthPx > critialPoint) needChange = true
+    else if(newV > critialPoint && lastWidthPx <= critialPoint) needChange = true
+
+    if(!needChange) return
+    lastWidthPx = newV
+    if(ctx.whichPage !== ctx.pageIn) return
+    whenWhichPageChange(ctx)
+  })
 }
 
 async function whenWhichPageChange(

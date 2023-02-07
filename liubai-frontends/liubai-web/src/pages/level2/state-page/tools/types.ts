@@ -1,6 +1,7 @@
 import type { Ref, InjectionKey } from "vue"
 import type { KanbanColumn, ThreadShow } from "~/types/types-content"
 
+// 0: 未知    1: 列表    2: 看板
 export type StateWhichPage = 0 | 1 | 2
 
 export interface SnIndicatorData {

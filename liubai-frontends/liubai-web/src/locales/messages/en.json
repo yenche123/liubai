@@ -41,7 +41,8 @@
     "list": "List",
     "kanban": "Kanban",
     "thatsit": "That's it",
-    "float_up": "Float up"
+    "float_up": "Float up",
+    "refresh": "Refresh"
   },
   "editor": {
     "when": "When",
@@ -184,6 +185,9 @@
     "select_state": "Select",
     "switch_to": "Switch to ",
     "img_file": "[Image or file]"
+  },
+  "state_related": {
+    "add_state": "New State"
   },
   "err": {
     "no_data": "Nothing Here",

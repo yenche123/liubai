@@ -1,18 +1,24 @@
 <script lang="ts" setup>
-import { PropType } from 'vue';
-import { useI18n } from 'vue-i18n';
+import type { PropType } from 'vue';
 import { useStateNavi } from "./tools/useStateNavi"
-import type { StateWhichPage, SnIndicatorData } from "../tools/types"
+import type { 
+  StateWhichPage, 
+  SnIndicatorData 
+} from "../tools/types"
 import cfg from "~/config"
 
 const props = defineProps({
-  whichPage: {
+  current: {
     type: Number as PropType<StateWhichPage>,
     default: 0,
   },
   indicatorData: {
     type: Object as PropType<SnIndicatorData>,
     required: true,
+  },
+  pageIn: {
+    type: Number as PropType<StateWhichPage>,
+    default: 0,
   },
 })
 
@@ -33,7 +39,7 @@ const defaultColor = "var(--main-code)"
 const selectedColor = "var(--main-normal)"
 
 const onTapNavi = (index: StateWhichPage) => {
-  if(index === props.whichPage) return
+  if(index === props.current) return
   emits("tapnavi", index)
 }
 
@@ -57,23 +63,23 @@ const onTapNavi = (index: StateWhichPage) => {
 
         <div class="sn-toggle-item" 
           ref="indiListEl"
-          :class="{ 'sn-toggle-item_selected': whichPage === 1 }"
+          :class="{ 'sn-toggle-item_selected': current === 1 }"
           style="margin-inline-end: 7px;"
           @click="onTapNavi(1)"
         >
           <SvgIcon class="snt-icon" name="list"
-            :color="whichPage === 1 ? selectedColor : defaultColor"
+            :color="current === 1 ? selectedColor : defaultColor"
           ></SvgIcon>
           <span>{{ t('common.list') }}</span>
         </div>
 
         <div class="sn-toggle-item" 
           ref="indiKanbanEl"
-          :class="{ 'sn-toggle-item_selected': whichPage === 2 }"
+          :class="{ 'sn-toggle-item_selected': current === 2 }"
           @click="onTapNavi(2)"
         >
           <SvgIcon class="snt-icon" name="kanban"
-            :color="whichPage === 2 ? selectedColor : defaultColor"
+            :color="current === 2 ? selectedColor : defaultColor"
           ></SvgIcon>
           <span>{{ t('common.kanban') }}</span>
         </div>
@@ -84,6 +90,20 @@ const onTapNavi = (index: StateWhichPage) => {
 
       <!-- footer: 添加按钮 -->
       <div class="sn-footer">
+
+        <!-- 刷新 -->
+        <div class="liu-hover snf-box"
+          :aria-label="t('common.refresh')"
+        >
+          <svg-icon name="refresh" class="snf-svg"></svg-icon>
+        </div>
+
+        <!-- 添加 -->
+        <div class="liu-hover snf-box"
+          :aria-label="t('state_related.add_state')"
+        >
+          <svg-icon name="add" class="snf-svg_add"></svg-icon>
+        </div>
 
       </div>
 
@@ -100,7 +120,7 @@ const onTapNavi = (index: StateWhichPage) => {
   height: v-bind("cfg.navi_height + 'px'");
   display: flex;
   justify-content: center;
-  position: sticky;
+  position: v-bind("pageIn === 1 ? 'sticky' : 'relative'");
   top: 0;
 }
 
@@ -174,6 +194,86 @@ const onTapNavi = (index: StateWhichPage) => {
   }
 
 }
+
+.sn-footer {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.snf-box {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline-start: 6px;
+
+  .snf-svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .snf-svg_add {
+    width: 27px;
+    height: 27px;
+  }
+}
+
+
+
+
+@media screen and (max-width: 400px) {
+
+  .sn-back-box {
+    width: 32px;
+    height: 32px;
+    margin-inline-end: 3px;
+
+    .nb-back-icon {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .sn-toggle {
+    height: 44px;
+    border-radius: 5px;
+
+    .sn-toggle-item {
+      height: 38px;
+      padding: 0 10px;
+
+      .snt-icon {
+        width: 16px;
+        height: 16px;
+        margin-inline-end: 6px;
+      }
+    }
+
+    .sn-toggle-indicator {
+      top: 6px;
+      height: 32px;
+      border-radius: 12px;
+    }
+  }
+
+  .snf-box {
+    width: 32px;
+    height: 32px;
+
+    .snf-svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .snf-svg_add {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
 
 
 </style>

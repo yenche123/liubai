@@ -53,8 +53,9 @@ export default defineComponent({
   <scroll-view>
 
     <StateNavi 
-      :which-page="current"
+      :current="current"
       :indicator-data="indicatorData"
+      :page-in="1"
       @tapnavi="$emit('tapnavi', $event)"
     ></StateNavi>
 

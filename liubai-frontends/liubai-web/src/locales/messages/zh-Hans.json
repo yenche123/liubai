@@ -41,7 +41,8 @@
     "list": "列表",
     "kanban": "看板",
     "thatsit": "就这样",
-    "float_up": "浮上去"
+    "float_up": "浮上去",
+    "refresh": "刷新"
   },
   "editor": {
     "when": "什么时候",
@@ -184,6 +185,9 @@
     "select_state": "选择状态",
     "switch_to": "切换至 ",
     "img_file": "[图片或文件]"
+  },
+  "state_related": {
+    "add_state": "添加状态"
   },
   "err": {
     "no_data": "这里什么都没有",
