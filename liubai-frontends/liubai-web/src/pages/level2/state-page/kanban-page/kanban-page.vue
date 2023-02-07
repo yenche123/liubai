@@ -242,5 +242,11 @@ export default defineComponent({
   }
 }
 
+@media screen and (max-width: 400px) {
+  .kp-column-container {
+    padding-inline-start: 5px;
+  }
+}
+
 
 </style>
