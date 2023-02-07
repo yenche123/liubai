@@ -1,3 +1,4 @@
+import type { Ref, InjectionKey } from "vue"
 import type { KanbanColumn, ThreadShow } from "~/types/types-content"
 
 export type StateWhichPage = 0 | 1 | 2
@@ -39,3 +40,15 @@ export interface ColumnInsertData {
   newIndex: number
   value: ThreadShow
 }
+
+export interface StatePageCtx {
+  showReload: Ref<boolean>
+  kanban: KanbanData
+}
+
+export interface KanbanReload {
+  showReload: Ref<boolean>
+  tapreload: () => void
+}
+
+export const kanbanReloadKey = Symbol() as InjectionKey<KanbanReload>

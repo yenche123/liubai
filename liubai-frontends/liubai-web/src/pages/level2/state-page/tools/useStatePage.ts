@@ -1,6 +1,12 @@
 import { provide, reactive, ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
-import type { StateWhichPage, KanbanData } from "./types"
+import { kanbanReloadKey } from "./types"
+import type { 
+  StateWhichPage, 
+  KanbanData,
+  KanbanReload,
+  StatePageCtx,
+} from "./types"
 import type { KanbanColumn } from "~/types/types-content"
 import type { LiuAtomState } from "~/types/types-atom"
 import stateController from "~/utils/controllers/state-controller/state-controller"
@@ -33,10 +39,20 @@ export function useStatePage() {
     name: "kanban_is_really_cool",
     columns: []
   })
-  initKanbanColumns(kanban)
+  const showReload = ref(false)
+  const ctx: StatePageCtx = {
+    kanban,
+    showReload,
+  }
+
+
+  initKanbanColumns(ctx)
 
   /*************** 监听 thread-show 的变化 **********/
-  listenThreadShowChanged(kanban)
+  listenThreadShowChanged(ctx)
+
+  /*************** 传递 reload 给子组件 ************** */
+  initReload(ctx)
 
   return {
     whichPage,
@@ -46,9 +62,27 @@ export function useStatePage() {
 }
 
 
-function listenThreadShowChanged(
-  kanban: KanbanData
+function initReload(
+  ctx: StatePageCtx
 ) {
+
+  const onTapReload = () => {
+    console.log("useStatePage onTapReload............")
+  }
+
+  const reloadData: KanbanReload = {
+    showReload: ctx.showReload,
+    tapreload: onTapReload
+  }
+
+  provide(kanbanReloadKey, reloadData)
+}
+
+
+function listenThreadShowChanged(
+  ctx: StatePageCtx
+) {
+  const { kanban } = ctx
   // 内部改变的时间戳
   const lastInnerStampRef = ref(time.getTime())
   provide(kanbanInnerChangeKey, lastInnerStampRef)
@@ -58,20 +92,21 @@ function listenThreadShowChanged(
     const now = time.getTime()
     const diff = now - lastInnerStampRef.value
     if(diff < 600) {
-      console.log("这是内部 kanban 的变化，请忽略！")
       return
     }
 
+    ctx.showReload.value = true
     recalculateKanban(kanban)
   })
 }
 
 
 function initKanbanColumns(
-  kanban: KanbanData
+  ctx: StatePageCtx
 ) {
   const wStore = useWorkspaceStore()
   const spaceIdRef = storeToRefs(wStore).spaceId
+  const { kanban } = ctx
 
   const _getThreads = async () => {
     for(let i=0; i<kanban.columns.length; i++) {

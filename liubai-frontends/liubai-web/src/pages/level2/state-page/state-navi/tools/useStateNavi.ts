@@ -1,6 +1,7 @@
-import { toRef, watch, ref, onMounted, nextTick } from "vue";
+import { toRef, watch, ref, onMounted, nextTick, inject } from "vue";
 import type { Ref, ShallowRef } from "vue";
 import type { StateWhichPage, SnIndicatorData } from "../../tools/types";
+import { kanbanReloadKey } from "../../tools/types";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { useInjectSnIndicator } from "../../tools/useSnIndicator"
 import { useI18n } from "vue-i18n";
@@ -51,12 +52,19 @@ export function useStateNavi(props: SnProps) {
     router.naviBack()
   }
 
+
+  const reloadData = inject(kanbanReloadKey)
+  console.log("reloadData..........")
+  console.log(reloadData)
+  console.log(" ")
+  
   return {
     t,
     indicatorParentEl,
     indiListEl,
     indiKanbanEl,
     onTapBack,
+    reloadData,
   }
 }
 

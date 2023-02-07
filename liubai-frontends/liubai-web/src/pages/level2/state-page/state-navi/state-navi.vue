@@ -26,6 +26,7 @@ const {
   indiListEl,
   indiKanbanEl,
   onTapBack,
+  reloadData,
 } = useStateNavi(props)
 
 const defaultColor = "var(--main-code)"
