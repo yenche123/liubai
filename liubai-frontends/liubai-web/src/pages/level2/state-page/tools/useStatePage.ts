@@ -68,9 +68,7 @@ function initReload(
 ) {
 
   const onTapReload = async () => {
-    toGetColumns(ctx)
-    await toGetThreads(ctx)
-    cui.showSnackBar({ text_key: "tip.refreshed" })
+    toRefresh(ctx)
   }
 
   const reloadData: KanbanReload = {
@@ -79,6 +77,30 @@ function initReload(
   }
 
   provide(kanbanReloadKey, reloadData)
+}
+
+async function toRefresh(
+  ctx: StatePageCtx
+) {
+  const { kanban } = ctx
+  const stateList = stateController.getStates()
+  const columns = transferStateListToColumns(stateList)
+  const oldList = kanban.columns
+  const newList: KanbanColumn[] = []
+  for(let i=0; i<columns.length; i++) {
+    const v1 = columns[i]
+    const v2 = oldList.find(v => v.id === v1.id)
+    if(v2) {
+      newList.push(v2)
+    }
+    else {
+      newList.push(v1)
+    }
+  }
+  kanban.columns = newList
+
+  await toGetThreads(ctx)
+  cui.showSnackBar({ text_key: "tip.refreshed" })
 }
 
 
