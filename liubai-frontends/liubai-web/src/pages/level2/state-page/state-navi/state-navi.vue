@@ -64,7 +64,6 @@ const onTapNavi = (index: StateWhichPage) => {
         <div class="sn-toggle-item" 
           ref="indiListEl"
           :class="{ 'sn-toggle-item_selected': current === 1 }"
-          style="margin-inline-end: 7px;"
           @click="onTapNavi(1)"
         >
           <SvgIcon class="snt-icon" name="list"
@@ -167,6 +166,10 @@ const onTapNavi = (index: StateWhichPage) => {
     z-index: 100;
     cursor: pointer;
 
+    &:first-child {
+      margin-inline-end: 7px;
+    }
+
     .snt-icon {
       width: 18px;
       height: 18px;
@@ -243,6 +246,11 @@ const onTapNavi = (index: StateWhichPage) => {
     .sn-toggle-item {
       height: 38px;
       padding: 0 10px;
+      font-size: var(--mini-font);
+
+      &:first-child {
+        margin-inline-end: 2px;
+      }
 
       .snt-icon {
         width: 16px;

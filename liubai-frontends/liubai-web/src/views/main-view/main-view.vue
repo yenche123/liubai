@@ -46,7 +46,7 @@ const { isOverDropZone, centerRef } = useMvDropZone()
   flex: 1;
   height: 100vh;
   position: relative;
-  overflow-x: auto;
+  overflow-x: hidden;
 }
 
 </style>
