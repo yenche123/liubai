@@ -7,6 +7,7 @@ import type {
   SnIndicatorData 
 } from "../tools/types"
 import cfg from "~/config"
+import time from "~/utils/basic/time";
 
 const props = defineProps({
   current: {
@@ -44,8 +45,13 @@ const onTapNavi = (index: StateWhichPage) => {
   emits("tapnavi", index)
 }
 
+let lastTapBtn = 0
 const reloadRotateDeg = ref(0)
 const onTapReload = () => {
+  const now = time.getTime()
+  const diff = now - lastTapBtn
+  if(diff < 600) return
+  lastTapBtn = now
   reloadData?.tapreload()
   reloadRotateDeg.value += 360
 }
