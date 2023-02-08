@@ -1,10 +1,10 @@
 import { provide, reactive, ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
-import { kanbanReloadKey } from "./types"
+import { StateProvideKey } from "./types"
 import type { 
   StateWhichPage, 
   KanbanData,
-  KanbanReload,
+  StateProvideData,
   StatePageCtx,
 } from "./types"
 import type { KanbanColumn } from "~/types/types-content"
@@ -53,7 +53,7 @@ export function useStatePage() {
   listenThreadShowChanged(ctx)
 
   /*************** 传递 reload 给子组件 ************** */
-  initReload(ctx)
+  initProvideData(ctx)
 
   return {
     whichPage,
@@ -63,20 +63,25 @@ export function useStatePage() {
 }
 
 
-function initReload(
+function initProvideData(
   ctx: StatePageCtx
 ) {
 
-  const onTapReload = async () => {
+  const onTapReload = () => {
     toRefresh(ctx)
   }
 
-  const reloadData: KanbanReload = {
-    showReload: ctx.showReload,
-    tapreload: onTapReload
+  const onTapAddState = () => {
+    console.log("onTapAddState..........")
   }
 
-  provide(kanbanReloadKey, reloadData)
+  const stateProvideData: StateProvideData = {
+    showReload: ctx.showReload,
+    tapreload: onTapReload,
+    tapaddstate: onTapAddState,
+  }
+
+  provide(StateProvideKey, stateProvideData)
 }
 
 async function toRefresh(

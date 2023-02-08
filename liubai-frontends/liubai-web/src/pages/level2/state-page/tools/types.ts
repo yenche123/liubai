@@ -1,5 +1,6 @@
 import type { Ref, InjectionKey } from "vue"
 import type { KanbanColumn, ThreadShow } from "~/types/types-content"
+import type { SimpleFunc } from "~/utils/basic/type-tool"
 
 // 0: 未知    1: 列表    2: 看板
 export type StateWhichPage = 0 | 1 | 2
@@ -47,9 +48,10 @@ export interface StatePageCtx {
   kanban: KanbanData
 }
 
-export interface KanbanReload {
+export interface StateProvideData {
   showReload: Ref<boolean>
-  tapreload: () => void
+  tapreload: SimpleFunc
+  tapaddstate: SimpleFunc
 }
 
-export const kanbanReloadKey = Symbol() as InjectionKey<KanbanReload>
+export const StateProvideKey = Symbol() as InjectionKey<StateProvideData>

@@ -1,11 +1,12 @@
 import { toRef, watch, ref, onMounted, nextTick, inject } from "vue";
 import type { Ref, ShallowRef } from "vue";
 import type { StateWhichPage, SnIndicatorData } from "../../tools/types";
-import { kanbanReloadKey } from "../../tools/types";
+import { StateProvideKey } from "../../tools/types";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { useInjectSnIndicator } from "../../tools/useSnIndicator"
 import { useI18n } from "vue-i18n";
 import { useWindowSize } from "~/hooks/useVueUse"
+import time from "~/utils/basic/time";
 
 interface SnProps {
   current: StateWhichPage
@@ -22,7 +23,9 @@ interface SnCtx {
   indiKanbanEl: Ref<HTMLElement | null>
 }
 
-export function useStateNavi(props: SnProps) {
+export function useStateNavi(
+  props: SnProps
+) {
 
   const _indicatorData = useInjectSnIndicator()
 
@@ -58,22 +61,45 @@ export function useStateNavi(props: SnProps) {
     router.naviBack()
   }
 
-
-  const reloadData = inject(kanbanReloadKey)
-  console.log("reloadData..........")
-  console.log(reloadData)
-  console.log(" ")
+  const stateProvideData = inject(StateProvideKey)
 
   listenWindowWidthChange(ctx)
+
+  // 点击 "刷新"
+  const reloadRotateDeg = ref(0)
+  const onTapReload = () => {
+    if(!canTap()) return
+    stateProvideData?.tapreload()
+    reloadRotateDeg.value += 360
+  }
+
+
+  const onTapAddState = () => {
+    if(!canTap()) return
+    stateProvideData?.tapaddstate()
+  }
   
   return {
     t,
+    reloadRotateDeg,
     indicatorParentEl,
     indiListEl,
     indiKanbanEl,
     onTapBack,
-    reloadData,
+    onTapReload,
+    onTapAddState,
+    stateProvideData,
   }
+}
+
+//  防抖节流
+let lastTapBtn = 0
+function canTap() {
+  const now = time.getTime()
+  const diff = now - lastTapBtn
+  if(diff < 600) return false
+  lastTapBtn = now
+  return true
 }
 
 

@@ -7,7 +7,6 @@ import type {
   SnIndicatorData 
 } from "../tools/types"
 import cfg from "~/config"
-import time from "~/utils/basic/time";
 
 const props = defineProps({
   current: {
@@ -34,7 +33,10 @@ const {
   indiListEl,
   indiKanbanEl,
   onTapBack,
-  reloadData,
+  stateProvideData,
+  reloadRotateDeg,
+  onTapReload,
+  onTapAddState,
 } = useStateNavi(props)
 
 const defaultColor = "var(--main-code)"
@@ -45,16 +47,9 @@ const onTapNavi = (index: StateWhichPage) => {
   emits("tapnavi", index)
 }
 
-let lastTapBtn = 0
-const reloadRotateDeg = ref(0)
-const onTapReload = () => {
-  const now = time.getTime()
-  const diff = now - lastTapBtn
-  if(diff < 600) return
-  lastTapBtn = now
-  reloadData?.tapreload()
-  reloadRotateDeg.value += 360
-}
+
+
+
 
 </script>
 <template>
@@ -106,7 +101,7 @@ const onTapReload = () => {
         <!-- 刷新 -->
         <div class="liu-hover snf-box"
           :aria-label="t('common.refresh')"
-          v-if="reloadData?.showReload.value"
+          v-if="stateProvideData?.showReload.value"
           @click="onTapReload"
         >
           <svg-icon name="refresh" class="snf-svg"></svg-icon>
@@ -115,6 +110,7 @@ const onTapReload = () => {
         <!-- 添加 -->
         <div class="liu-hover snf-box"
           :aria-label="t('state_related.add_state')"
+          @click="onTapAddState"
         >
           <svg-icon name="add" class="snf-svg_add"></svg-icon>
         </div>
