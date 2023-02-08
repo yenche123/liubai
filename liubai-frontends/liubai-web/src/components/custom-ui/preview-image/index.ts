@@ -4,12 +4,10 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import type {
   PiParam,
-  PiReturn,
   PiData,
+  PiResolver,
 } from "./tools/types"
 import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
-
-type PiResolver = (res: PiReturn) => void
 
 let _resolve: PiResolver | undefined
 

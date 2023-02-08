@@ -13,3 +13,5 @@ export interface PiData {
   imgs: ImageShow[]
   index: number
 }
+
+export type PiResolver = (res: PiReturn) => void
