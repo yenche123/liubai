@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref } from "vue";
 import type { PropType } from 'vue';
 import { useStateNavi } from "./tools/useStateNavi"
 import type { 
@@ -46,9 +45,6 @@ const onTapNavi = (index: StateWhichPage) => {
   if(index === props.current) return
   emits("tapnavi", index)
 }
-
-
-
 
 
 </script>

@@ -30,7 +30,9 @@ import {
   getRawList
 } from "./vue-util"
 import {
-  toWhatDetail
+  toWhatDetail,
+  colorToShow,
+  colorToStorage,
 } from "./custom-util"
 
 export default {
@@ -61,4 +63,6 @@ export default {
   toRawData,
   getRawList,
   toWhatDetail,
+  colorToShow,
+  colorToStorage,
 }

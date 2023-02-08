@@ -8,3 +8,25 @@ export function toWhatDetail(): WhatDetail {
   if(width.value < cfg.vice_detail_breakpoint) return "detail-page"
   return "vice-view"
 }
+
+/******* 转换颜色 *******/
+
+// 将 --liu 转为 #.....
+export function colorToShow(val: string) {
+  let idx1 = val.indexOf("var(")
+  if(idx1 === 0) return val
+  let idx2 = val.indexOf("--liu")
+  if(idx2 === 0) {
+    return `var(${val})`
+  }
+  return val
+}
+
+// 将 `var(CSS变量)` 变量转为 CSS 变量
+export function colorToStorage(val: string) {
+  let idx1 = val.indexOf("var(")
+  if(idx1 === 0) {
+    return val.substring(4, val.length - 1)
+  }
+  return val
+}
