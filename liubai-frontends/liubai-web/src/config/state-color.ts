@@ -49,6 +49,9 @@ export function mapStateColor(
   }
 
   let res = ""
+
+  // 因为 深色模式时，snackbar 是白色背景的，再用深色模式的颜色时会看不清楚
+  // 故遇到 dot_color (也就是 snackbar 上的点颜色)，都使用浅色模式时的配色
   if(useTo === "dot_color") {
     res = LIGHT_MAP[colorKey]
   }
