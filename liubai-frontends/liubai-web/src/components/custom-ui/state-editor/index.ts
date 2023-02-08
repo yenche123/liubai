@@ -1,7 +1,8 @@
 import type {
   SeResolver,
   StateEditorData,
-  StateEditorParam
+  StateEditorParam,
+  StateEditorRes,
 } from "./tools/types"
 import { ref, reactive, watch, toRef } from "vue"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
@@ -12,7 +13,7 @@ import liuUtil from "~/utils/liu-util"
 
 let _resolve: SeResolver | undefined
 
-const TRANSITION_DURATION = 150
+const TRANSITION_DURATION = 200
 const enable = ref(false)
 const show = ref(false)
 const queryKey = "stateeditor"
@@ -37,6 +38,8 @@ export function initStateEditor() {
     reData,
     onTapColor,
     onToggleShowIndex,
+    onTapConfirm,
+    onTapCancel,
   }
 }
 
@@ -63,7 +66,6 @@ function listenText() {
 }
 
 function onTapColor(newColor: string) {
-  console.log("newColor: ", newColor)
   if(newColor !== reData.color) {
     reData.color = newColor
   }
@@ -71,7 +73,27 @@ function onTapColor(newColor: string) {
     reData.color = ""
   }
   checkCanSubmuit()
-} 
+}
+
+function onTapConfirm() {
+  if(!reData.canSubmit) return
+  let obj: StateEditorRes = {
+    action: "confirm",
+    data: {
+      text: reData.text,
+      showIndex: reData.showIndex,
+      color: reData.color,
+    }
+  }
+  _resolve && _resolve(obj)
+  closeIt(rr, queryKey)
+}
+
+function onTapCancel() {
+  _resolve && _resolve({ action: "cancel" })
+  closeIt(rr, queryKey)
+}
+
 
 function onToggleShowIndex(newV: boolean) {
   reData.showIndex = newV

@@ -10,6 +10,8 @@ const {
   reData,
   onTapColor,
   onToggleShowIndex,
+  onTapConfirm,
+  onTapCancel,
 } = initStateEditor()
 
 const { t } = useI18n()
@@ -21,7 +23,7 @@ const { t } = useI18n()
     :class="{ 'se-container_show': show }"
   >
 
-    <div class="se-bg"></div>
+    <div class="se-bg" @click="onTapCancel"></div>
 
     <div class="se-box">
 
