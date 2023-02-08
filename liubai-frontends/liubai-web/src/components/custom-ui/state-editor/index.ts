@@ -1,7 +1,7 @@
 import type {
   SeResolver,
   StateEditorData,
-StateEditorParam
+  StateEditorParam
 } from "./tools/types"
 import { ref, reactive, watch, toRef } from "vue"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
@@ -63,10 +63,13 @@ function listenText() {
 }
 
 function onTapColor(newColor: string) {
+  console.log("newColor: ", newColor)
   if(newColor !== reData.color) {
     reData.color = newColor
   }
-  reData.color = ""
+  else {
+    reData.color = ""
+  }
   checkCanSubmuit()
 } 
 

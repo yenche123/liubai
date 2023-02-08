@@ -72,7 +72,7 @@ function initProvideData(
   }
 
   const onTapAddState = () => {
-    console.log("onTapAddState..........")
+    cui.showStateEditor({ mode: "create" })
   }
 
   const stateProvideData: StateProvideData = {

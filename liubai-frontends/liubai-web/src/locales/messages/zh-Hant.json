@@ -188,7 +188,11 @@
     "img_file": "[圖片或文件]"
   },
   "state_related": {
-    "add_state": "新增狀態"
+    "add_state": "新增狀態",
+    "state_title": "  狀態名",
+    "state_showIndex": "在首頁上顯示",
+    "state_color": "顏色",
+    "state_ph": "輸入狀態名"
   },
   "err": {
     "no_data": "這裡什麼都沒有",

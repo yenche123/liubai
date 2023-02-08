@@ -188,7 +188,11 @@
     "img_file": "[图片或文件]"
   },
   "state_related": {
-    "add_state": "添加状态"
+    "add_state": "添加状态",
+    "state_title": " 状态名",
+    "state_showIndex": "在首页上显示",
+    "state_color": "颜色",
+    "state_ph": "输入状态名"
   },
   "err": {
     "no_data": "这里什么都没有",

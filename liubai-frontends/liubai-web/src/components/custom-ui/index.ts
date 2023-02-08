@@ -8,6 +8,7 @@ import { showHashTagEditor } from "./hashtag-editor"
 import { showSnackBar } from "./snack-bar"
 import { showActionSheet } from "./action-sheet"
 import { showStateSelector } from "./state-selector"
+import { showStateEditor } from "./state-editor"
 
 export default {
   showModal,
@@ -20,4 +21,5 @@ export default {
   showSnackBar,
   showActionSheet,
   showStateSelector,
+  showStateEditor,
 }

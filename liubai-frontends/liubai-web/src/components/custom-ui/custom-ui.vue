@@ -5,6 +5,7 @@ import HashtagEditor from "./hashtag-editor/hashtag-editor.vue";
 import SnackBar from "./snack-bar/snack-bar.vue";
 import ActionSheet from "./action-sheet/action-sheet.vue";
 import StateSelector from "./state-selector/state-selector.vue";
+import StateEditor from "./state-editor/state-editor.vue";
 import { initModal } from "./modal"
 import { initLoading } from "./loading"
 import { initTextEditor } from "./text-editor";
@@ -162,6 +163,7 @@ const {
   <StateSelector></StateSelector>
 
   <!-- 状态编辑组件 -->
+  <StateEditor></StateEditor>
 
 </template>
 
