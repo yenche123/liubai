@@ -77,6 +77,20 @@ const { t } = useI18n()
       </div>
 
       <!-- 确定/取消 -->
+      <div class="se-btns">
+        <CustomBtn size="common" type="other" @click="onTapCancel"
+          class="se-btn"
+        >
+          <span>{{ t('common.cancel') }}</span>
+        </CustomBtn>
+
+        <CustomBtn size="common" @click="onTapConfirm" 
+          :disabled="!reData.canSubmit"
+          class="se-btn"
+        >
+          <span>{{ t('common.confirm') }}</span>
+        </CustomBtn>
+      </div>
 
     </div>
 
@@ -216,6 +230,23 @@ const { t } = useI18n()
   overflow: hidden;
 }
 
+.se-btns {
+  padding: 0 30px 34px 30px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+@media screen and (max-width: 450px) {
+  .se-btns {
+    justify-content: space-between;
+  }
+
+  .se-btn {
+    min-width: 45%;
+  }
+}
+
+
 @media screen and (max-width: 400px) {
   .se-box {
     border-radius: 24px;
@@ -258,8 +289,10 @@ const { t } = useI18n()
     height: 20px;
   }
 
+  .se-btns {
+    padding-block-end: 24px;
+  }
 
 }
-
 
 </style>

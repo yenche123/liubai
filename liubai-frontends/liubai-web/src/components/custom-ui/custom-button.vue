@@ -1,13 +1,15 @@
 <script setup lang="ts">
-
-const props = defineProps({
+import type { PropType } from "vue";
+ 
+defineProps({
   type: {
     type: String,
     default: "main",     // main: 主要的;  other: 一般的;  transparent: 透明的
   },
   size: {
-    type: String,
-    default: "normal",   // normal: 正常大小;  mini: 宽度同 slot
+    type: String as PropType<"normal" | "mini" | "common">,
+    default: "normal",   // normal: 正常大小;  mini: 宽度同 slot; 
+                         // common: 宽度同 slot 但是高度是 50px
   },
   disabled: {
     type: Boolean,
@@ -28,11 +30,12 @@ const onTapBtn = (e: Event) => {
   <button 
     class="btn-container"
     :class="{ 
-      'btn-mini': props.size === 'mini',
-      'btn-other': props.type === 'other',
-      'btn-transparent': props.type === 'transparent',
+      'btn-mini': size === 'mini',
+      'btn-other': type === 'other',
+      'btn-transparent': type === 'transparent',
+      'btn-common': size === 'common',
     }"
-    :disabled="props.disabled"
+    :disabled="disabled"
     @click="onTapBtn"
   >
     <slot />
@@ -61,6 +64,17 @@ const onTapBtn = (e: Event) => {
   width: auto;
   border-radius: 10px;
   padding: 0 20px;
+}
+
+.btn-common {
+  height: 50px;
+  line-height: 50px;
+  border-radius: 18px;
+  width: auto;
+  text-align: center;
+  min-width: 160px;
+  padding: 0 24px;
+  font-weight: 700;
 }
 
 .btn-other {
