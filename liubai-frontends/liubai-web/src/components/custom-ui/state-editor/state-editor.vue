@@ -242,6 +242,20 @@ const { t } = useI18n()
     grid-template-rows: 50px 50px;
   }
 
+  .se-a-color {
+    width: 28px;
+    height: 28px;
+
+    &.se-a-color_selected {
+      border: 3px solid var(--main-normal);
+    }
+  }
+
+  .seac-color {
+    width: 20px;
+    height: 20px;
+  }
+
 
 }
 
