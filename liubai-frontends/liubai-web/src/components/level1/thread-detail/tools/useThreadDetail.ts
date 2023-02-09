@@ -109,5 +109,11 @@ async function loadRemote(
   tdData: TdData
 ) {
   // 待完善
+
+  // 如果内容还不存在 或者内容不为目标内容时（id不一致）
+  let tShow = tdData.threadShow
+  if(!tShow || tShow._id !== id) {
+    tdData.state = 0
+  }
   
 }
