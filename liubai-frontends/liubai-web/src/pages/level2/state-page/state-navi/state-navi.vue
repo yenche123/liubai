@@ -46,6 +46,8 @@ const onTapNavi = (index: StateWhichPage) => {
   emits("tapnavi", index)
 }
 
+const iconColor = "var(--main-normal)"
+
 
 </script>
 <template>
@@ -57,7 +59,9 @@ const onTapNavi = (index: StateWhichPage) => {
 
       <!-- 返回按钮 -->
       <div class="liu-hover sn-back-box" @click="onTapBack">
-        <SvgIcon class="nb-back-icon" name="arrow-back700"></SvgIcon>
+        <SvgIcon class="nb-back-icon" name="arrow-back700"
+          :color="iconColor"
+        ></SvgIcon>
       </div>
 
       <!-- 列表 / 看板 -->
@@ -100,7 +104,9 @@ const onTapNavi = (index: StateWhichPage) => {
           v-if="stateProvideData?.showReload.value"
           @click="onTapReload"
         >
-          <svg-icon name="refresh" class="snf-svg"></svg-icon>
+          <svg-icon name="refresh" class="snf-svg"
+            :color="iconColor"
+          ></svg-icon>
         </div>
 
         <!-- 添加 -->
@@ -108,7 +114,9 @@ const onTapNavi = (index: StateWhichPage) => {
           :aria-label="t('state_related.add_state')"
           @click="onTapAddState"
         >
-          <svg-icon name="add" class="snf-svg_add"></svg-icon>
+          <svg-icon name="add" class="snf-svg_add"
+            :color="iconColor"
+          ></svg-icon>
         </div>
 
       </div>
