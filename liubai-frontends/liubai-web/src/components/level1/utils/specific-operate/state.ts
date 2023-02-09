@@ -124,8 +124,10 @@ export async function setNewStateForThread(
   oldThread: ThreadShow,
   newStateId: string,
 ) {
+  const wStore = useWorkspaceStore()
   const newThread = valTool.copyObject(oldThread)
   newThread.stateId = newStateId
+  newThread.stateShow = commonPack.getStateShow(newStateId, wStore)
 
   // 1. 修改 db
   const res = await dbOp.setStateId(newThread._id, newStateId)
