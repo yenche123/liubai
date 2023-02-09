@@ -25,6 +25,7 @@ export async function whenThreadInserted(
   
   if(newStateId === oldStateId) return
   const res = await commonOperate.setNewStateForThread(thread, newStateId)
+  if(res) thread.stateId = newStateId
 }
 
 
