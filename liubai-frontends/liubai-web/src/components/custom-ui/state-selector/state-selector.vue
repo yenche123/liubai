@@ -49,7 +49,7 @@ const { t } = useI18n()
 
             <!-- 状态颜色 -->
             <div class="ssi-color"
-              :style="{ 'background-color': item.color }"
+              :style="{ 'background-color': item.colorShow }"
             ></div>
 
             <!-- 状态文字 -->

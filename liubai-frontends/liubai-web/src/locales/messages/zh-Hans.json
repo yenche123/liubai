@@ -192,7 +192,10 @@
     "state_title": " 状态名",
     "state_showIndex": "在首页上显示",
     "state_color": "颜色",
-    "state_ph": "输入状态名"
+    "state_ph": "输入状态名",
+    "kanban_h1": "看板个数达上限",
+    "kanban_b1": "看板最大个数为 {max}",
+    "replicate_kanban_name": "已有相同名称的看板"
   },
   "err": {
     "no_data": "这里什么都没有",

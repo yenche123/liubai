@@ -16,6 +16,10 @@ export default defineComponent({
   },
 
   props: {
+    stateId: {
+      type: String,
+      required: true,
+    },
     threads: {
       type: Array as PropType<ThreadShow[]>,
       default: []

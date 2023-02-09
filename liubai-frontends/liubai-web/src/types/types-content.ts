@@ -84,7 +84,7 @@ export interface KanbanColumn {
   showInIndex: boolean
   text?: string
   text_key?: string
-  color: string
+  colorShow: string
   threads: ThreadShow[]
   updatedStamp: number
   insertedStamp: number

@@ -18,6 +18,9 @@ import time from "~/utils/basic/time"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import { recalculateKanban } from "./recalculateKanban"
 import cui from "~/components/custom-ui"
+import cfg from "~/config"
+import ider from "~/utils/basic/ider"
+import liuUtil from "~/utils/liu-util"
 
 export function useStatePage() {
 
@@ -72,7 +75,7 @@ function initProvideData(
   }
 
   const onTapAddState = () => {
-    cui.showStateEditor({ mode: "create" })
+    toAddState(ctx)
   }
 
   const stateProvideData: StateProvideData = {
@@ -82,6 +85,68 @@ function initProvideData(
   }
 
   provide(StateProvideKey, stateProvideData)
+}
+
+async function toAddState(
+  ctx: StatePageCtx,
+) {
+  const stateList = stateController.getStates()
+  if(stateList.length >= cfg.max_kanban_column) {
+    cui.showModal({
+      title_key: "state_related.kanban_h1",
+      content_key: "state_related.kanban_b1",
+      content_opt: { max: "8" },
+      showCancel: false
+    })
+    return
+  }
+
+  const res = await cui.showStateEditor({ mode: "create" })
+  if(res.action !== "confirm" || !res.data) return
+  const rData = res.data
+
+  // 检查名称是否重复
+  let replicated = false
+  stateList.forEach(v => {
+    if(v.text === rData.text) replicated = true
+  })
+  if(replicated) {
+    cui.showModal({
+      title_key: "tip.tip",
+      content_key: "state_related.replicate_kanban_name",
+      showCancel: false,
+    })
+    return
+  }
+
+  const now = time.getTime()
+
+  // 去创建
+  let atom = {
+    id: ider.createStateId(),
+    showInIndex: rData.showIndex,
+    text: rData.text,
+    color: rData.color,
+    contentIds: [],
+    updatedStamp: now,
+    insertedStamp: now,
+  }
+  stateList.splice(0, 0, atom)
+  const res2 = await stateController.setNewStateList(stateList)
+  
+  // 在视图上创建一个
+  const { kanban } = ctx
+  const col: KanbanColumn = {
+    id: atom.id,
+    showInIndex: atom.showInIndex,
+    text: atom.text,
+    colorShow: liuUtil.colorToShow(atom.color),
+    threads: [],
+    updatedStamp: now,
+    insertedStamp: now,
+    hasMore: false,
+  }
+  kanban.columns.splice(0, 0, col)
 }
 
 async function toRefresh(
@@ -192,16 +257,17 @@ function transferStateListToColumns(
     // 处理颜色
     let color = v.color
     if(!color) {
-      color = "var(--liu-state-1)"
-      if(v.id === "FINISHED") color = "var(--liu-state-2)"
+      color = "--liu-state-1"
+      if(v.id === "FINISHED") color = "--liu-state-2"
     }
+    let colorShow = liuUtil.colorToShow(color)
 
     const obj: KanbanColumn = {
       id: v.id,
       showInIndex: v.showInIndex,
       text,
       text_key,
-      color,
+      colorShow,
       threads: [],
       updatedStamp: v.updatedStamp,
       insertedStamp: v.insertedStamp,

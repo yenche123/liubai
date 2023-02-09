@@ -15,6 +15,6 @@ export interface SsItem {
   id: string
   text?: string
   text_key?: string
-  color: string
+  colorShow: string
   selected: boolean
 }

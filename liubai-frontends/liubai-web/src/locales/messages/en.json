@@ -192,7 +192,10 @@
     "state_title": "State Name",
     "state_showIndex": "Display in Index",
     "state_color": "Color",
-    "state_ph": "Text state"
+    "state_ph": "Text state",    
+    "kanban_h1": "Tip",
+    "kanban_b1": "Number of Kanban boards reached the maxmium",
+    "replicate_kanban_name": "There has been the same name of Kanban"
   },
   "err": {
     "no_data": "Nothing Here",

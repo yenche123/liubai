@@ -9,6 +9,7 @@ import valTool from "~/utils/basic/val-tool"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
+import liuUtil from "~/utils/liu-util"
 
 let _resolve: SsResolver | undefined
 const list = ref<SsItem[]>([])
@@ -144,14 +145,16 @@ function getList() {
     // 处理颜色
     let color = v.color
     if(!color) {
-      color = "var(--liu-state-1)"
-      if(v.id === "FINISHED") color = "var(--liu-state-2)"
+      color = "--liu-state-1"
+      if(v.id === "FINISHED") color = "--liu-state-2"
     }
+    let colorShow = liuUtil.colorToShow(color)
+
     return {
       id: v.id,
       text,
       text_key,
-      color,
+      colorShow,
       selected: false,
     }
   })
@@ -163,13 +166,13 @@ function getDefaultList() {
     {
       id: "TODO",
       text_key: "thread_related.todo",
-      color: "var(--liu-state-1)",
+      colorShow: "var(--liu-state-1)",
       selected: false,
     },
     {
       id: "FINISHED",
       text_key: "thread_related.finished",
-      color: "var(--liu-state-2)",
+      colorShow: "var(--liu-state-2)",
       selected: false,
     }
   ]

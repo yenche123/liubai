@@ -123,12 +123,12 @@ export default defineComponent({
           <div class="kp-state-box">
             <div class="kp-state"
               :style="{ 
-                'color': item.color,
+                'color': item.colorShow,
               }"
             >
               <div class="kps-bg"
                 :style="{
-                  'background-color': item.color
+                  'background-color': item.colorShow
                 }"
               ></div>
               <span v-if="item.text">{{ item.text }}</span>
