@@ -44,6 +44,7 @@ export default defineComponent({
   },
 
   setup(props, { emit }) {
+    const iconColor = "var(--main-note)"
     const { t } = useI18n()
     const indicatorData = useInjectSnIndicator()
     const kpHeightStr = `calc(100% - ${cfg.navi_height + 1}px)`
@@ -58,6 +59,7 @@ export default defineComponent({
     } = useKanbanColumns(props, emit)
 
     return {
+      iconColor,
       t,
       columns,
       indicatorData,
@@ -115,7 +117,7 @@ export default defineComponent({
           >
             <svg-icon class="kp-handle-svg"
               name="drag_handle400"
-              color="var(--main-note)"
+              :color="iconColor"
             ></svg-icon>
           </span>
 
@@ -138,6 +140,23 @@ export default defineComponent({
           
 
           <!-- 状态 // 更多 -->
+          <div class="kpch-footer">
+
+            <!-- 更多 -->
+            <div class="liu-hover kpch-btn">
+              <svg-icon name="more" class="kpch-svg" 
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+
+            <!-- 添加动态 -->
+            <div class="liu-hover kpch-btn">
+              <svg-icon name="add" class="kpch-svg" 
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+
+          </div>
 
         </div>
         <KpColumn
@@ -239,6 +258,36 @@ export default defineComponent({
     width: 100%;
     height: 100%;
     opacity: .2;
+  }
+}
+
+.kpch-footer {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  transition: .15s;
+}
+
+.kpch-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .kpch-svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media(hover: hover) {
+  .kpch-footer {
+    opacity: 0;
+  }
+
+  .kp-kanban-column:hover .kpch-footer {
+    opacity: 1;
   }
 }
 
