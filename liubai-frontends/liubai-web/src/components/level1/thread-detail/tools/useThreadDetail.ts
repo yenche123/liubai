@@ -3,7 +3,6 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 import threadController from "~/utils/controllers/thread-controller/thread-controller";
 import type { TdData, TdProps } from "./types"
-import valTool from "~/utils/basic/val-tool";
 
 export function useThreadDetail(props: TdProps) {
 
@@ -45,23 +44,21 @@ function whenRouteChange(
     if(name !== "detail") {
       return
     }
-    if(_isLoaded(id, tdData)) return
-
-    tdData.state = 0
-    loadLocal(id, tdData)
+    if(_hasLoaded(id, tdData)) return
+    
+    toLoad(id, tdData)
   }
   else if(location === "vice-view") {
     if(typeof cid !== "string" || !cid) {
       return
     }
-    if(_isLoaded(cid, tdData)) return
+    if(_hasLoaded(cid, tdData)) return
 
-    tdData.state = 0
-    loadLocal(cid, tdData)
+    toLoad(cid, tdData)
   }
 }
 
-function _isLoaded(
+function _hasLoaded(
   id: string,
   tdData: TdData,
 ) {
@@ -69,6 +66,17 @@ function _isLoaded(
   if(!thread) return false
   if(thread._id === id) return true
   return false
+}
+
+
+function toLoad(
+  id: string,
+  tdData: TdData
+) {
+  if(tdData.threadShow) tdData.state = 1
+  else tdData.state = 0
+
+  loadLocal(id, tdData)
 }
 
 

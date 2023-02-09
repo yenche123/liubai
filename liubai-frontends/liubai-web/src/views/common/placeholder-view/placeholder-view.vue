@@ -10,7 +10,8 @@ const { t } = useI18n()
 const props = defineProps({
   pState: {
     // -1: 不显示 
-    // 0: loading      
+    // 0: loading
+    // 1: 切换中
     // 50: 404   
     // 51: 没有访问权限
     type: Number as PropType<PageState>,

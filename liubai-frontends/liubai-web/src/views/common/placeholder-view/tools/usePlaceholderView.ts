@@ -31,10 +31,12 @@ function whenPStateChange(
   enable: Ref<boolean>,
   show: Ref<boolean>,
 ) {
-  if(newV >= 0 && enable.value === false) {
+  let needOpen = newV === 0 || newV >= 2
+  
+  if(needOpen && enable.value === false) {
     open(enable, show)
   }
-  else if(newV < 0 && enable.value === true) {
+  else if(!needOpen && enable.value === true) {
     close(enable, show)
   }
 }

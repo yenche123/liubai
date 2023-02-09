@@ -106,10 +106,11 @@ export interface TagView {
 /**
  * -1: 正常
  * 0: 加载中
+ * 1: 切换中（比如已有内容）
  * 50: 查无内容（404）
  * 51: 没有权限
  */
-export type PageState = -1 | 0 | 50 | 51
+export type PageState = -1 | 0 | 1 | 50 | 51
 
 
 // 方案限制
