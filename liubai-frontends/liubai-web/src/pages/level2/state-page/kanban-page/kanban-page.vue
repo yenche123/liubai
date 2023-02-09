@@ -169,6 +169,8 @@ export default defineComponent({
       </SlickItem>
 
     </SlickList>
+
+    <div class="kp-virtual"></div>
   </ScrollView>
 
 </template>
@@ -279,6 +281,12 @@ export default defineComponent({
     width: 24px;
     height: 24px;
   }
+}
+
+
+.kp-virtual {
+  width: 20px;
+  height: 100px;
 }
 
 @media(hover: hover) {
