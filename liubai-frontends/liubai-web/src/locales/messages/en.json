@@ -42,7 +42,8 @@
     "kanban": "Kanban",
     "thatsit": "That's it",
     "float_up": "Float up",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "add": "Add"
   },
   "editor": {
     "when": "When",

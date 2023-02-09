@@ -42,7 +42,8 @@
     "kanban": "看板",
     "thatsit": "就这样",
     "float_up": "浮上去",
-    "refresh": "刷新"
+    "refresh": "刷新",
+    "add": "添加"
   },
   "editor": {
     "when": "什么时候",

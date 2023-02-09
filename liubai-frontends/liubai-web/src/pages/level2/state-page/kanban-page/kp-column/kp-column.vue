@@ -41,7 +41,8 @@ export default defineComponent({
   setup(props, { emit }) {
     const { t } = useI18n()
     const {
-      list
+      list,
+      showAddBox,
     } = useKanbanThreads(props, emit)
     const {
       columnHeight,
@@ -50,6 +51,7 @@ export default defineComponent({
     return {
       t,
       list,
+      showAddBox,
       columnHeight,
     }
   },
@@ -74,6 +76,15 @@ export default defineComponent({
     @sort-insert="$emit('sort-insert', $event)"
     @update:list="$emit('threadsupdated', $event)"
   >
+
+    <div v-if="list.length < 1" class="kc-add-box"
+      :class="{ 'kc-add-box_show': showAddBox }"
+    >
+      <svg-icon name="add" class="kc-add-svg"
+        color="var(--main-note)"
+      ></svg-icon>
+      <span>{{ t('common.add') }}</span>
+    </div>
 
     <SlickItem
       v-for="(thread, j) in list"
@@ -109,6 +120,55 @@ export default defineComponent({
   
 </template>
 <style lang="scss" scoped>
+
+.kc-add-box {
+  width: 312px;
+  border: 3px dashed var(--line-bottom);
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: var(--btn-font);
+  color: var(--main-note);
+  border-radius: 20px;
+  user-select: none;
+  cursor: pointer;
+  transition: .15s;
+  opacity: 0;
+
+  .kc-add-svg {
+    width: 30px;
+    height: 30px;
+    transition: .15s;
+    margin-inline-end: 10px;
+  }
+}
+
+.kc-add-box_show {
+  opacity: 1;
+}
+
+@media(hover: hover) {
+  .kc-add-box:hover {
+    font-size: var(--title-font);
+
+    .kc-add-svg {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+.kc-add-box:active {
+  opacity: .7;
+  font-size: var(--title-font);
+
+  .kc-add-svg {
+    width: 36px;
+    height: 36px;
+  }
+}
 
 .kc-kanban-list {
   padding-inline-start: 10px;
