@@ -77,6 +77,7 @@ export default defineComponent({
     @update:list="$emit('threadsupdated', $event)"
   >
 
+    <!-- 为空时的添加按钮 -->
     <div v-if="list.length < 1" class="kc-add-box"
       :class="{ 'kc-add-box_show': showAddBox }"
     >
