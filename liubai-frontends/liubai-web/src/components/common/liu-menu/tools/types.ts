@@ -14,6 +14,7 @@ export type MenuPlacement = "bottom" | "bottom-start" | "bottom-end"
 
 export interface LiuMenuProps {
   menu: MenuItem[]
+  container: string
   minWidthStr?: string
   placement: MenuPlacement
   allowMask: boolean
@@ -24,6 +25,10 @@ export const liumenu_props = {
   menu: {
     type: Array as PropType<MenuItem[]>,
     default: [],
+  },
+  container: {
+    type: String,
+    default: "body"
   },
   minWidthStr: {
     type: String,

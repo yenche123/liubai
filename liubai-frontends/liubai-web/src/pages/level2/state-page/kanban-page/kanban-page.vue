@@ -49,16 +49,19 @@ export default defineComponent({
     const indicatorData = useInjectSnIndicator()
     const kpHeightStr = `calc(100% - ${cfg.navi_height + 1}px)`
 
-    const { 
+    const {
+      MORE_ITEMS,
       columns, 
       scollTops, 
       setScrollTop,
       onColumnsSorted,
       onThreadInserted,
       onThreadsUpdated,
+      onTapMoreMenuItem,
     } = useKanbanColumns(props, emit)
 
     return {
+      MORE_ITEMS,
       iconColor,
       t,
       columns,
@@ -70,6 +73,7 @@ export default defineComponent({
       onColumnsSorted,
       onThreadInserted,
       onThreadsUpdated,
+      onTapMoreMenuItem,
     }
   },
 
@@ -109,6 +113,7 @@ export default defineComponent({
         <!-- 看板每一列的标头 -->
         <div class="kp-column-header"
           :class="{ 'kpch-shadow': scollTops[item.id] > 10 }"
+          :id="'kp-column-header_' + item.id"
         >
 
           <!-- column 的把手 -->
@@ -143,11 +148,19 @@ export default defineComponent({
           <div class="kpch-footer">
 
             <!-- 更多 -->
-            <div class="liu-hover kpch-btn">
-              <svg-icon name="more" class="kpch-svg" 
-                :color="iconColor"
-              ></svg-icon>
-            </div>
+            <LiuMenu
+              :menu="MORE_ITEMS"
+              :container="'#kp-column-header_' + item.id"
+              placement="bottom-end"
+              @tapitem="onTapMoreMenuItem"
+            >
+              <div class="liu-hover kpch-btn">
+                <svg-icon name="more" class="kpch-svg" 
+                  :color="iconColor"
+                ></svg-icon>
+              </div>
+            </LiuMenu>
+            
 
             <!-- 添加动态 -->
             <div class="liu-hover kpch-btn">

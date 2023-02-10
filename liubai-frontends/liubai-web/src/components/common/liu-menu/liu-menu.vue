@@ -84,6 +84,7 @@ export default defineComponent({
   <VDropdown 
     :hideTriggers="['click']"
     :placement="placement"
+    :container="container"
     theme="liu-menu"
     @show="onMenuShow"
     @hide="onMenuHide"
@@ -114,6 +115,7 @@ export default defineComponent({
             </div>
   
             <div class="mi-title"
+              :class="{ 'mi-title_long': hasIcon }"
               :style="{ 'color': item.color ? item.color : defaultColor }"
             >
               <span>{{ t(item.text_key) }}</span>
@@ -209,6 +211,10 @@ export default defineComponent({
       font-size: var(--mini-font);
       line-height: 28px;
       user-select: none;
+    }
+
+    .mi-title_long {
+      padding-inline-end: 8px;
     }
 
   }

@@ -9,6 +9,18 @@ import stateController from "~/utils/controllers/state-controller/state-controll
 import { whenThreadInserted, whenThreadListUpdated } from "./handleKanbanSort"
 import { kanbanInnerChangeKey } from "~/utils/provide-keys"
 import time from "~/utils/basic/time";
+import { MenuItem } from "~/components/common/liu-menu/tools/types";
+
+const MORE_ITEMS: MenuItem[] = [
+  {
+    text_key: "common.edit",
+    iconName: "edit_400"
+  },
+  {
+    text_key: "common.delete",
+    iconName: "delete_400"
+  }
+]
 
 export function useKanbanColumns(
   props: KanbanProps,
@@ -50,13 +62,24 @@ export function useKanbanColumns(
     whenThreadListUpdated(stateId, threads)
   }
 
+
+  const onTapMoreMenuItem = (item: MenuItem, index: number) => {
+    console.log("onTapMoreMenuItem..........")
+    console.log(item)
+    console.log(index)
+    console.log(" ")
+  }
+
+
   return {
+    MORE_ITEMS,
     columns,
     scollTops,
     setScrollTop,
     onColumnsSorted,
     onThreadInserted,
     onThreadsUpdated,
+    onTapMoreMenuItem,
   }
 }
 
