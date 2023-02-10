@@ -1,10 +1,14 @@
 import type { Ref } from "vue";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import type { ThreadShow } from "~/types/types-content"
+import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
 import valTool from "~/utils/basic/val-tool";
 import type { TlProps, TlViewType } from "./types"
 import type { WhyThreadChange } from "~/types/types-atom"
 import { handleLastItemStamp } from "./useTLCommon";
+import { storeToRefs } from "pinia"
+import { watch } from "vue"
 
 export function useNewAndUpdate(
   props: TlProps,
@@ -31,7 +35,49 @@ export function useNewAndUpdate(
       handleUpdatedList(props, list, updatedThreadShows, whyChange, lastItemStamp)
     }
   })
+
+  // 监听 "看板状态" 变化
+  const gStore = useGlobalStateStore()
+  const { kanbanStateChange } = storeToRefs(gStore)
+  watch(kanbanStateChange, (newV) => {
+    if(!newV) return
+    handleKanbanStateChange(props, list, newV)
+  })
 }
+
+function handleKanbanStateChange(
+  props: TlProps,
+  listRef: Ref<ThreadShow[]>,
+  ksc: KanbanStateChange,
+) {
+  const list = listRef.value
+  const vT = props.viewType as TlViewType
+  const inIndex = vT === "INDEX" || vT === "PINNED"
+
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    if(v.stateId !== ksc.stateId) continue
+
+    if(ksc.whyChange === "delete") {
+      v.stateId = undefined
+      v.stateShow = undefined
+    }
+
+    else if(ksc.whyChange === "edit") {
+      v.stateShow = ksc.stateShow
+
+      if(inIndex && ksc.stateShow?.showInIndex === false) {
+        list.splice(i, 1)
+        i--
+        continue
+      }
+    }
+
+  }
+
+
+}
+
 
 function handleNewList(
   props: TlProps,

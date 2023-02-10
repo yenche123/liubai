@@ -1,10 +1,16 @@
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import type { TdData } from "./types"
+import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
 import type { ThreadShow } from "~/types/types-content"
+import { storeToRefs } from "pinia"
+import { watch } from "vue"
 
 export function subscribeUpdate(
   tdData: TdData
 ) {
+
+  // 监听 "动态" 发生变化
   const tStore = useThreadShowStore()
   tStore.$subscribe((mutation, state) => {
     const { updatedThreadShows } = state
@@ -12,7 +18,37 @@ export function subscribeUpdate(
       whenThreadsUpdated(tdData, updatedThreadShows)
     }
   })
+
+  // 监听 "看板状态" 变化
+  const gStore = useGlobalStateStore()
+  const { kanbanStateChange } = storeToRefs(gStore)
+  watch(kanbanStateChange, (newV) => {
+    if(!newV) return
+    whenKanbanStateUpdated(tdData, newV)
+  })
+
 }
+
+
+function whenKanbanStateUpdated(
+  tdData: TdData,
+  ksc: KanbanStateChange,
+) {
+  const thread = tdData.threadShow
+  if(!thread) return
+  let stateId = thread.stateId
+  if(stateId !== ksc.stateId) return
+
+  const { whyChange } = ksc
+  if(whyChange === "delete") {
+    thread.stateId = undefined
+    thread.stateShow = undefined
+  }
+  else if(whyChange === "edit") {
+    thread.stateShow = ksc.stateShow
+  }
+}
+
 
 function whenThreadsUpdated(
   tdData: TdData,
