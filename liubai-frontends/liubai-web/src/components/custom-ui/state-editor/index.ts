@@ -104,6 +104,7 @@ function onTapCancel() {
 
 function onToggleShowIndex(newV: boolean) {
   reData.showInIndex = newV
+  checkCanSubmuit()
 }
 
 function checkCanSubmuit() {
