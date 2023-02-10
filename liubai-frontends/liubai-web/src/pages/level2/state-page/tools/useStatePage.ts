@@ -124,7 +124,7 @@ async function toAddState(
   // 去创建
   let atom = {
     id: ider.createStateId(),
-    showInIndex: rData.showIndex,
+    showInIndex: rData.showInIndex,
     text: rData.text,
     color: rData.color,
     contentIds: [],

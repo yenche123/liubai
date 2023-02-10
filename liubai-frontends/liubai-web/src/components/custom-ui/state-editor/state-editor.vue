@@ -49,7 +49,7 @@ const { t } = useI18n()
         </div>
 
         <div class="seb-footer">
-          <liu-switch :checked="reData.showIndex" 
+          <liu-switch :checked="reData.showInIndex" 
             @change="onToggleShowIndex($event.checked)"
           ></liu-switch>
         </div>

@@ -86,7 +86,7 @@ function getStateShow(
   let obj: StateShow = {
     text,
     text_key,
-    color,
+    colorShow: color,
     showInIndex: stateData.showInIndex,
   }
 

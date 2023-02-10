@@ -10,6 +10,7 @@ import { whenThreadInserted, whenThreadListUpdated } from "./handleKanbanSort"
 import { kanbanInnerChangeKey } from "~/utils/provide-keys"
 import time from "~/utils/basic/time";
 import { MenuItem } from "~/components/common/liu-menu/tools/types";
+import kanbanOperate from "./kanban-operate";
 
 const MORE_ITEMS: MenuItem[] = [
   {
@@ -63,11 +64,14 @@ export function useKanbanColumns(
   }
 
 
-  const onTapMoreMenuItem = (item: MenuItem, index: number) => {
-    console.log("onTapMoreMenuItem..........")
-    console.log(item)
-    console.log(index)
-    console.log(" ")
+  const onTapMoreMenuItem = (id: string, item: MenuItem, index: number) => {
+    const textKey = item.text_key
+    if(textKey === "common.edit") {
+      kanbanOperate.editKanban(columns, id)
+    }
+    else if(textKey === "common.delete") {
+      kanbanOperate.deleteKanban(columns, id)
+    }
   }
 
 

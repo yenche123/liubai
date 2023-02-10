@@ -10,6 +10,7 @@ import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 import { useKanbanColumns } from '../tools/useKanbanColumns';
 import KpColumn from "./kp-column/kp-column.vue"
 import { useI18n } from 'vue-i18n';
+import type { MenuItem } from '~/components/common/liu-menu/tools/types';
 
 export default defineComponent({
 
@@ -152,7 +153,7 @@ export default defineComponent({
               :menu="MORE_ITEMS"
               :container="'#kp-column-header_' + item.id"
               placement="bottom-end"
-              @tapitem="onTapMoreMenuItem"
+              @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
             >
               <div class="liu-hover kpch-btn">
                 <svg-icon name="more" class="kpch-svg" 

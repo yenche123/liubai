@@ -79,7 +79,7 @@ export async function selectState(
     action_key: "tip.undo"
   }
   if(newStateId && tmpStateShow) {
-    let dot_color = mapStateColor("dot_color", tmpStateShow.color)
+    let dot_color = mapStateColor("dot_color", tmpStateShow.colorShow)
     snackParam.dot_color = dot_color
     if(tmpStateShow.text) {
       snackParam.text = t("thread_related.switch_to") + tmpStateShow.text

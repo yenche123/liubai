@@ -29,12 +29,12 @@ export default defineComponent({
     <!-- 状态 -->
     <div class="tct-state-box" v-if="threadData.stateShow"
       :style="{ 
-        'color': threadData.stateShow.color,
+        'color': threadData.stateShow.colorShow,
       }"
     >
       <div class="tctsb-bg"
         :style="{
-          'background-color': threadData.stateShow.color
+          'background-color': threadData.stateShow.colorShow
         }"
       ></div>
       <span v-if="threadData.stateShow.text">{{ threadData.stateShow.text }}</span>

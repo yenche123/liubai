@@ -1,6 +1,13 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, shallowRef } from "vue";
+import type { StateShow } from "~/types/types-content";
 import time from "../../utils/basic/time";
+
+export interface KanbanStateChange {
+  whyChange: "edit" | "delete"
+  stateId: string
+  stateShow?: StateShow
+}
 
 export const useGlobalStateStore = defineStore("globalState", () => {
 
@@ -22,6 +29,13 @@ export const useGlobalStateStore = defineStore("globalState", () => {
     tagChangedNum.value += 1
   }
 
+
+  // 当有看板状态发生改变时
+  const kanbanStateChange = shallowRef<KanbanStateChange | null>(null)
+  const setKanbanStateChange = (newV: KanbanStateChange) => {
+    kanbanStateChange.value = newV
+  }
+
   // 处理全局 selection 状态
   const lastSelectionChange = ref(0)
   const setLatestSelectionChange = () => {
@@ -38,6 +52,8 @@ export const useGlobalStateStore = defineStore("globalState", () => {
     mainInputing, 
     canListenKeyboard,
     isDragToSort,
+    kanbanStateChange,
+    setKanbanStateChange,
     tagChangedNum,
     addTagChangedNum,
     setLatestSelectionChange,

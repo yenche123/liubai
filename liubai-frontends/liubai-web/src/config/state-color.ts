@@ -26,9 +26,6 @@ const DARK_MAP: Record<string, string> = {
   "--liu-state-10": "#FFD194",
 }
 
-export type ColorKey = string
-
-
 /**
  * 映射颜色
  * @param useTo 
@@ -37,7 +34,7 @@ export type ColorKey = string
  */
 export function mapStateColor(
   useTo: "dot_color" | "",
-  colorKey: ColorKey
+  colorKey: string
 ) {
   const { theme } = useDynamics()
 

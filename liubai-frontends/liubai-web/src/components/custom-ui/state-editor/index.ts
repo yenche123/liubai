@@ -10,6 +10,7 @@ import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool"
 import liuUtil from "~/utils/liu-util"
+import time from "~/utils/basic/time"
 
 let _resolve: SeResolver | undefined
 
@@ -19,11 +20,13 @@ const show = ref(false)
 const queryKey = "stateeditor"
 let rr: RouteAndLiuRouter | undefined
 
+let lastShowEditorStamp = 0
+
 const reData = reactive<StateEditorData>({
   mode: "",
   canSubmit: false,
   text: "",
-  showIndex: true,
+  showInIndex: true,
   color: "",
 })
 
@@ -44,9 +47,10 @@ export function initStateEditor() {
 }
 
 export function showStateEditor(param: StateEditorParam) {
+  lastShowEditorStamp = time.getTime()
   reData.mode = param.mode
   reData.text = param.text ?? ""
-  reData.showIndex = param.showIndex ?? true
+  reData.showInIndex = param.showInIndex ?? true
   reData.color = param.color ? liuUtil.colorToStorage(param.color) : ""
   reData.canSubmit = false
 
@@ -61,7 +65,10 @@ export function showStateEditor(param: StateEditorParam) {
 function listenText() {
   const text = toRef(reData, "text")
   watch(text, () => {
-    checkCanSubmuit()
+    const diff = time.getTime() - lastShowEditorStamp
+    if(diff > TRANSITION_DURATION) {
+      checkCanSubmuit()
+    }
   })
 }
 
@@ -81,7 +88,7 @@ function onTapConfirm() {
     action: "confirm",
     data: {
       text: reData.text,
-      showIndex: reData.showIndex,
+      showInIndex: reData.showInIndex,
       color: reData.color,
     }
   }
@@ -96,7 +103,7 @@ function onTapCancel() {
 
 
 function onToggleShowIndex(newV: boolean) {
-  reData.showIndex = newV
+  reData.showInIndex = newV
 }
 
 function checkCanSubmuit() {
