@@ -19,13 +19,16 @@ async function editKanban(
   if(!aCol) return
 
   const t = i18n.global.t
+  const TODO_TXT = t('thread_related.todo')
+  const FINISHED_TXT = t('thread_related.finished')
+
   let oldTxtKey = aCol.text_key
   let oldText = aCol.text
   let oldColor = liuUtil.colorToStorage(aCol.colorShow)
   let oldShowIndex = aCol.showInIndex
   if(!oldText) {
-    if(stateId === "TODO") oldText = t('thread_related.todo')
-    else if(stateId === "FINISHED") oldText = t('thread_related.finished')
+    if(stateId === "TODO") oldText = TODO_TXT
+    else if(stateId === "FINISHED") oldText = FINISHED_TXT
   }
 
   // 1. 显示 编辑面板
@@ -42,9 +45,25 @@ async function editKanban(
 
   let txtUpdated = text !== oldText
 
-  // 2.去更新 wStore 和 workspace 的 db
+  // 2. 检查是否有一样的状态名 再更新列表
+  let hasSame = false
   const stateList = stateController.getStates()
   stateList.forEach(v => {
+
+    // 检查是否有一样的状态名
+    if(v.id !== stateId) {
+      if(v.text === text) hasSame = true
+      else {
+        if(v.id === "FINISHED" && FINISHED_TXT === text) {
+          hasSame = true
+        }
+        else if(v.id === "TODO" && TODO_TXT === text) {
+          hasSame = true
+        }
+      }
+    }
+
+    // stateId 一致则更新
     if(v.id === stateId) {
       v.updatedStamp = time.getTime()
       v.color = color
@@ -52,11 +71,21 @@ async function editKanban(
       if(txtUpdated) v.text = text
     }
   })
+  if(hasSame) {
+    cui.showModal({
+      title_key: "tip.tip",
+      content_key: "state_related.replicate_kanban_name",
+      showCancel: false,
+    })
+    return
+  }
+
+  // 3. 更新 workspace db 和 workspaceStore
   const res2 = await stateController.setNewStateList(stateList)
 
   const colorShow = liuUtil.colorToShow(color)
 
-  // 3. 使用 gStore 通知全局
+  // 4. 使用 gStore 通知全局
   const gStore = useGlobalStateStore()
   const newData: KanbanStateChange = {
     whyChange: "edit",
@@ -70,7 +99,7 @@ async function editKanban(
   }
   gStore.setKanbanStateChange(newData)
 
-  // 4. 更新本地看板视图
+  // 5. 更新本地看板视图
   if(txtUpdated) aCol.text = text
   aCol.colorShow = colorShow
   aCol.showInIndex = showInIndex
