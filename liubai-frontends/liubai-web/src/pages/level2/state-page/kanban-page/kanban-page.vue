@@ -90,116 +90,119 @@ export default defineComponent({
     :page-in="2"
     @tapnavi="$emit('tapnavi', $event)"
   ></StateNavi>
-  <ScrollView
-    class="kp-sv"
-    direction="horizontal"
+
+  <SlickList 
+    axis="x"
+    lockAxis="x"
+    class="kp-column-container"
+    helper-class="kp-column-container_helper"
+    v-model:list="columns"
+    use-drag-handle
+    @update:list="onColumnsSorted"
   >
-    <SlickList 
-      axis="x"
-      lockAxis="x"
-      class="kp-column-container"
-      helper-class="kp-column-container_helper"
-      v-model:list="columns"
-      use-drag-handle
-      @update:list="onColumnsSorted"
+
+    <SlickItem
+      v-for="(item, index) in columns"
+      :key="item.id"
+      :index="index"
+      class="kp-kanban-column"
     >
 
-      <SlickItem
-        v-for="(item, index) in columns"
-        :key="item.id"
-        :index="index"
-        class="kp-kanban-column"
+      <!-- 看板每一列的标头 -->
+      <div class="kp-column-header"
+        :class="{ 'kpch-shadow': scollTops[item.id] > 10 }"
+        :id="'kp-column-header_' + item.id"
       >
 
-        <!-- 看板每一列的标头 -->
-        <div class="kp-column-header"
-          :class="{ 'kpch-shadow': scollTops[item.id] > 10 }"
-          :id="'kp-column-header_' + item.id"
+        <!-- column 的把手 -->
+        <span class="kp-handle"
+          v-handle
         >
+          <svg-icon class="kp-handle-svg"
+             name="drag_handle400"
+            :color="iconColor"
+          ></svg-icon>
+        </span>
 
-          <!-- column 的把手 -->
-          <span class="kp-handle"
-            v-handle
+        <!--状态标题 -->
+        <div class="kp-state-box">
+          <div class="kp-state"
+            :style="{ 
+              'color': item.colorShow,
+            }"
           >
-            <svg-icon class="kp-handle-svg"
-              name="drag_handle400"
-              :color="iconColor"
-            ></svg-icon>
-          </span>
-
-          <!--状态标题 -->
-          <div class="kp-state-box">
-            <div class="kp-state"
-              :style="{ 
-                'color': item.colorShow,
+            <div class="kps-bg"
+              :style="{
+                'background-color': item.colorShow
               }"
-            >
-              <div class="kps-bg"
-                :style="{
-                  'background-color': item.colorShow
-                }"
-              ></div>
-              <span v-if="item.text">{{ item.text }}</span>
-              <span v-else-if="item.text_key">{{ t(item.text_key) }}</span>
-            </div>
+            ></div>
+            <span v-if="item.text">{{ item.text }}</span>
+            <span v-else-if="item.text_key">{{ t(item.text_key) }}</span>
           </div>
+        </div>
           
 
-          <!-- 状态 // 更多 -->
-          <div class="kpch-footer">
+        <!-- 状态 // 更多 -->
+        <div class="kpch-footer">
 
-            <!-- 更多 -->
-            <LiuMenu
-              :menu="MORE_ITEMS"
-              :container="'#kp-column-header_' + item.id"
-              placement="bottom-end"
-              @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
-            >
-              <div class="liu-hover kpch-btn">
-                <svg-icon name="more" class="kpch-svg" 
-                  :color="iconColor"
-                ></svg-icon>
-              </div>
-            </LiuMenu>
-            
-
-            <!-- 添加动态 -->
+          <!-- 更多 -->
+          <LiuMenu
+            :menu="MORE_ITEMS"
+            :container="'#kp-column-header_' + item.id"
+            placement="bottom-end"
+            @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
+          >
             <div class="liu-hover kpch-btn">
-              <svg-icon name="add" class="kpch-svg" 
+              <svg-icon name="more" class="kpch-svg" 
                 :color="iconColor"
               ></svg-icon>
             </div>
+          </LiuMenu>
+            
 
+          <!-- 添加动态 -->
+          <div class="liu-hover kpch-btn">
+            <svg-icon name="add" class="kpch-svg" 
+              :color="iconColor"
+            ></svg-icon>
           </div>
 
         </div>
-        <KpColumn
-          v-model:threads="item.threads"
-          :state-id="item.id"
-          @scrolling="setScrollTop(item.id, $event)"
-          @sort-insert="onThreadInserted(item.id, $event)"
-          @threadsupdated="onThreadsUpdated(item.id, $event)"
-        ></KpColumn>
-      </SlickItem>
 
-    </SlickList>
+      </div>
+      <KpColumn
+        v-model:threads="item.threads"
+        :state-id="item.id"
+        @scrolling="setScrollTop(item.id, $event)"
+        @sort-insert="onThreadInserted(item.id, $event)"
+        @threadsupdated="onThreadsUpdated(item.id, $event)"
+      ></KpColumn>
+    </SlickItem>
 
     <div class="kp-virtual"></div>
-  </ScrollView>
+
+  </SlickList>
 
 </template>
 <style scoped lang="scss">
 
-.kp-sv {
+.kp-column-container {
   width: 100%;
   border-top: 0.6px solid var(--line-default);
   height: v-bind("kpHeightStr");
-}
-
-.kp-column-container {
   padding-inline-start: 20px;
+  box-sizing: border-box;
   display: flex;
   align-items: flex-start;
+  overflow-x: auto;
+}
+
+.kp-column-container::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+}
+
+.kp-column-container > div {
+  flex: 0 0 auto;
 }
 
 .kp-kanban-column {
