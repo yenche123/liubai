@@ -1,4 +1,4 @@
-import { provide, reactive, ref } from "vue"
+import { onActivated, provide, reactive, ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
 import { StateProvideKey } from "./types"
 import type { 
@@ -8,7 +8,7 @@ import type {
   StatePageCtx,
 } from "./types"
 import type { KanbanColumn } from "~/types/types-content"
-import type { LiuAtomState } from "~/types/types-atom"
+import type { LiuAtomState, WhyThreadChange } from "~/types/types-atom"
 import stateController from "~/utils/controllers/state-controller/state-controller"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
@@ -16,7 +16,6 @@ import { useLiuWatch } from "~/hooks/useLiuWatch"
 import { kanbanInnerChangeKey } from "~/utils/provide-keys"
 import time from "~/utils/basic/time"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
-import { recalculateKanban } from "./recalculateKanban"
 import cui from "~/components/custom-ui"
 import cfg from "~/config"
 import ider from "~/utils/basic/ider"
@@ -177,7 +176,15 @@ async function toRefresh(
 function listenThreadShowChanged(
   ctx: StatePageCtx
 ) {
-  const { kanban } = ctx
+  let reloadRequired = false
+  const followEvents: WhyThreadChange[] = [
+    "delete", 
+    "delete_forever", 
+    "undo_delete",
+    "state",
+    "undo_state",
+  ]
+
   // 内部改变的时间戳
   const lastInnerStampRef = ref(time.getTime())
   provide(kanbanInnerChangeKey, lastInnerStampRef)
@@ -187,11 +194,22 @@ function listenThreadShowChanged(
     const now = time.getTime()
     const diff = now - lastInnerStampRef.value
     if(diff < 600) {
+      console.log("刚刚 600ms 内，kanban 内有触发变化，故阻断！！！！")
       return
     }
 
-    ctx.showReload.value = true
-    recalculateKanban(kanban)
+    const tmp = followEvents.includes(state.whyChange)
+    if(!tmp) return
+
+    reloadRequired = true
+  })
+
+  onActivated(() => {
+    if(reloadRequired) {
+      ctx.showReload.value = true
+      toRefresh(ctx)
+    }
+    reloadRequired = false
   })
 }
 
