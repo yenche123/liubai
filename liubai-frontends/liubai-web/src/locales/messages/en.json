@@ -160,7 +160,9 @@
     "ir_content_2": " to open in new tab.",
     "got_it": "Got it",
     "its_right_here": "It's right here!",
-    "refreshed": "Refreshed"
+    "refreshed": "Refreshed",
+    "fail_to_operate": "Fail to operate",
+    "try_again_later": "Please try again later"
   },
   "card_bubble": {
     "copy": "Copy",
@@ -196,7 +198,10 @@
     "state_ph": "Text state",    
     "kanban_h1": "Tip",
     "kanban_b1": "Number of Kanban boards reached the maxmium",
-    "replicate_kanban_name": "There has been the same name of Kanban"
+    "replicate_kanban_name": "There has been the same name of Kanban",
+    "delete_h1": "Delete the state [{name}]?",
+    "delete_b1": "1. The operation cannot be undone\n2. Your posts under the state will not be deleted",
+    "min_kanban": "It's better to keep 2 states"
   },
   "err": {
     "no_data": "Nothing Here",

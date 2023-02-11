@@ -160,7 +160,9 @@
     "ir_content_2": "用新的分页开启。",
     "got_it": "我知道了",
     "its_right_here": "就在这里！",
-    "refreshed": "已刷新"
+    "refreshed": "已刷新",
+    "fail_to_operate": "操作失败",
+    "try_again_later": "请稍后再试"
   },
   "card_bubble": {
     "copy": "复制",
@@ -196,7 +198,10 @@
     "state_ph": "输入状态名",
     "kanban_h1": "看板个数达上限",
     "kanban_b1": "看板最大个数为 {max}",
-    "replicate_kanban_name": "已有相同名称的看板"
+    "replicate_kanban_name": "已有相同名称的看板",
+    "delete_h1": "确定删除状态【{name}】吗？",
+    "delete_b1": "1. 该操作无法撤回\n2. 这不会删除该状态下的动态",
+    "min_kanban": "最好保留 2 个状态比较合适"
   },
   "err": {
     "no_data": "这里什么都没有",

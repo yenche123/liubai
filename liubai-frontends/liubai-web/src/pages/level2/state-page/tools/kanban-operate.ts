@@ -8,6 +8,7 @@ import stateController from "~/utils/controllers/state-controller/state-controll
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
+import { db } from "~/utils/db"
 
 // 编辑某一栏的看板，也不提供撤回功能
 // 如何更新 thread-list 的动态呢？用 useGlobalState 进行事件传递
@@ -113,7 +114,107 @@ async function deleteKanban(
   columns: WritableComputedRef<KanbanColumn[]>,
   stateId: string,
 ) {
+  const aIdx = columns.value.findIndex(v => v.id === stateId)
+  if(aIdx < 0) return
+  const aCol = columns.value[aIdx]
 
+  const t = i18n.global.t
+  const TODO_TXT = t('thread_related.todo')
+  const FINISHED_TXT = t('thread_related.finished')
+
+  let oldText = aCol.text
+  if(!oldText) {
+    if(stateId === "TODO") oldText = TODO_TXT
+    else if(stateId === "FINISHED") oldText = FINISHED_TXT
+  }
+
+  // 1. 检查 state 个数
+  const stateList = stateController.getStates()
+  if(stateList.length <= 2) {
+    cui.showModal({
+      title_key: "tip.tip",
+      content_key: "state_related.min_kanban",
+      showCancel: false,
+    })
+    return
+  }
+
+  // 2. 弹窗确认
+  const res = await cui.showModal({
+    title_key: "state_related.delete_h1",
+    title_opt: { name: oldText },
+    content_key: "state_related.delete_b1",
+    confirm_key: "common.delete",
+    modalType: "warning"
+  })
+  if(!res.confirm) return
+
+  // 3. 删除 workspace 里的 state
+  for(let i=0; i<stateList.length; i++) {
+    const v = stateList[i]
+    if(v.id === stateId) {
+      stateList.splice(i, 1)
+      i--
+    }
+  }
+  const res2 = await stateController.setNewStateList(stateList)
+
+  // 4. 更新 db.contents
+  const res3 = await _updateThreadsWhenDeleteState(stateId)
+  if(!res3) {
+    _showErr()
+    return
+  }
+
+  // 5. 使用 gStore 通知全局
+  const gStore = useGlobalStateStore()
+  const newData: KanbanStateChange = {
+    whyChange: "delete",
+    stateId,
+  }
+  gStore.setKanbanStateChange(newData)
+
+  // 6. 更新本地视图
+  columns.value.splice(aIdx, 1)
+
+  return true
+}
+
+
+function _showErr() {
+  cui.showModal({
+    title_key: "tip.fail_to_operate",
+    content_key: "tip.try_again_later",
+    showCancel: false
+  })
+}
+
+
+async function _updateThreadsWhenDeleteState(
+  stateId: string
+) {
+
+  let modifiedObj = {
+    stateId: undefined,
+    updatedStamp: time.getTime()
+  }
+
+  let res: any
+  try {
+    res = await db.contents.where({ stateId }).modify(modifiedObj)
+  }
+  catch(err) {
+    console.log("modify 失败........")
+    console.log(err)
+    console.log(" ")
+    return false
+  }
+
+  console.log("modify 成功........")
+  console.log(res)
+  console.log(" ")
+
+  return true
 }
 
 
