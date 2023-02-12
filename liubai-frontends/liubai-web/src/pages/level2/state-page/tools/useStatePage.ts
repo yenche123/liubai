@@ -149,7 +149,8 @@ async function toAddState(
 }
 
 async function toRefresh(
-  ctx: StatePageCtx
+  ctx: StatePageCtx,
+  snackbar: boolean = true
 ) {
   const { kanban } = ctx
   const stateList = stateController.getStates()
@@ -169,7 +170,7 @@ async function toRefresh(
   kanban.columns = newList
 
   await toGetThreads(ctx)
-  cui.showSnackBar({ text_key: "tip.refreshed" })
+  if(snackbar) cui.showSnackBar({ text_key: "tip.refreshed" })
 }
 
 
@@ -207,7 +208,7 @@ function listenThreadShowChanged(
   onActivated(() => {
     if(reloadRequired) {
       ctx.showReload.value = true
-      toRefresh(ctx)
+      toRefresh(ctx, false)
     }
     reloadRequired = false
   })
