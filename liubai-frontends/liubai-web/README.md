@@ -1,10 +1,6 @@
 # LB
 
-I don't know how to write the fucking code again
-
-What the fucking world!
-
-Today I learned tauri, whereas sadly it didn't give me any CORS solution
+慶祝 LaiLai 來嘉，今日不寫代碼!
 
 ## 图标库
 
