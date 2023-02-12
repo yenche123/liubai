@@ -4,6 +4,7 @@ import valTool from "~/utils/basic/val-tool"
 import cui from "../../../custom-ui"
 import dbOp from "../db-op"
 import time from "~/utils/basic/time"
+import stateController from "~/utils/controllers/state-controller/state-controller"
 
 export async function deleteThread(
   oldThread: ThreadShow,
@@ -86,12 +87,38 @@ export async function deleteForever(
   newThread.oState = "DELETED"
   newThread.updatedStamp = time.getTime()
 
-  // 2. 通知到全局
+  // 2. 检查 workspace.stateConfig
+  await deleteThreadsFromWorkspaceStateCfg(newThread._id)
+
+  // 3. 通知到全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread], "delete_forever")
   
-  // 3. 操作 db
+  // 4. 操作 db
   const res2 = await dbOp.deleteForever(newThread._id)
   
+  return true
+}
+
+async function deleteThreadsFromWorkspaceStateCfg(
+  threadId: string
+) {
+  const stateList = stateController.getStates()
+  if(stateList.length < 1) return true
+
+  let hasFound = false
+  for(let i=0; i<stateList.length; i++) {
+    const v = stateList[i]
+    const { contentIds } = v
+    if(!contentIds) continue
+    const idx = contentIds.indexOf(threadId)
+    if(idx < 0) continue
+    hasFound = true
+    contentIds.splice(idx, 1)
+  }
+
+  if(!hasFound) return true
+
+  const res = await stateController.setNewStateList(stateList)
   return true
 }

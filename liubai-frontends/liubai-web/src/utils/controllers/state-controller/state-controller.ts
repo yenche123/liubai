@@ -33,6 +33,7 @@ function getStates() {
 }
 
 
+/** 获取初始的两个状态列表 */
 function getSystemStates() {
   const now = time.getTime()
   const defaultStates: LiuAtomState[] = [
@@ -163,7 +164,7 @@ async function setNewStateList(newList: LiuAtomState[]) {
   return res
 }
 
-
+/** 获取默认 stateConfig */
 function getDefaultStateCfg() {
   const now = time.getTime()
   let stateList = getSystemStates()
