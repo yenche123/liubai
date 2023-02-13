@@ -195,14 +195,19 @@ export default defineComponent({
   display: flex;
   align-items: flex-start;
   overflow-x: auto;
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+  }
+
+  & > div {
+    flex: 0 0 auto;
+  }
 }
 
-.kp-column-container::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-}
-
-.kp-column-container > div {
-  flex: 0 0 auto;
+.kp-column-container_helper {
+  opacity: .5;
+  cursor: grabbing;
 }
 
 .kp-kanban-column {
@@ -239,11 +244,6 @@ export default defineComponent({
   padding-inline-end: 6px;
   flex: none;
   cursor: grab;
-}
-
-.kp-column-container_helper {
-  opacity: .5;
-  cursor: grabbing;
 }
 
 .kp-handle-svg {

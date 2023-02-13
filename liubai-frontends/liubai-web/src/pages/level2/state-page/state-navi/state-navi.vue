@@ -136,6 +136,7 @@ const iconColor = "var(--main-normal)"
   justify-content: center;
   position: v-bind("pageIn === 1 ? 'sticky' : 'relative'");
   top: 0;
+  z-index: 50;
 }
 
 .sn-box {
