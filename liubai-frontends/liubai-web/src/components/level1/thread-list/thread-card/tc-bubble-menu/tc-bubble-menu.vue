@@ -81,8 +81,11 @@ export default defineComponent({
         :class="{ 'ec-bb-two_selected': selectedIndex === 2 }"
         @click="onTapSearchOut"
       >
-        <svg-icon name="logos-google" :color="bubbleColor" class="ec-bubble-icon ec-bubble-outside"></svg-icon>
-        <span>{{ t('card_bubble.search_out') }}</span>
+        <!-- <svg-icon name="logos-google" :color="bubbleColor" class="ec-bubble-icon ec-bubble-outside"></svg-icon>
+        <span>{{ t('card_bubble.search_out') }}</span> -->
+
+        <svg-icon name="logos-bing" :color="bubbleColor" class="ec-bubble-icon ec-bubble-outside"></svg-icon>
+        <span>{{ t('card_bubble.ask_bing') }}</span>
       </div>
 
       <!-- ChatGPT -->

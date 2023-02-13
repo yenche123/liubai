@@ -168,7 +168,8 @@
     "copy": "复制",
     "search_in": "内部搜索",
     "search_out": "外部搜索",
-    "ask_bot": "ChatGPT"
+    "ask_bot": "ChatGPT",
+    "ask_bing": "问 Bing"
   },
   "placeholder": {
     "no_tag_yet": "还没有任何标签"

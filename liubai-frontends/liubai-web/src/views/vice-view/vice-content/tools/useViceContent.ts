@@ -8,6 +8,7 @@ import type { VcState, VcCtx } from "./types"
 const GOOGLE_SEARCH = "https://www.google.com/?igu=1"
 const SOUGO_SEARCH = "https://m.sogou.com/"
 const CHAT_GPT3 = "https://chat.openai.com/chat"
+const BING_SEARCH = "https://www.bing.com/"
 
 export function useViceContent() {
   const iframeSrc = ref("")
@@ -97,6 +98,13 @@ function listenRouteChange(
     setNewIframeSrc(url.toString())
   }
 
+  const openBingSearch = (q: string) => {
+    const url = new URL(BING_SEARCH)
+    url.pathname = "/search"
+    url.searchParams.append("q", q)
+    setNewIframeSrc(url.toString())
+  }
+
   const openGoogleSerach = (q: string) => {
     const url = new URL(GOOGLE_SEARCH)
     url.pathname = "/search"
@@ -117,7 +125,8 @@ function listenRouteChange(
 
     if(outq && typeof outq === "string") {
       vcState.value = "iframe"
-      openGoogleSerach(outq)
+      // openGoogleSerach(outq)
+      openBingSearch(outq)
     }
     else if(pdf && typeof pdf === "string") {
       vcState.value = "iframe"
