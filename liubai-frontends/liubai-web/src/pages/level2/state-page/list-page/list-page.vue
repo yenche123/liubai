@@ -9,6 +9,7 @@ import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 import { useI18n } from 'vue-i18n';
 import { useKanbanColumns } from '../tools/useKanbanColumns';
 import type { MenuItem } from '~/components/common/liu-menu/tools/types';
+import LpColumn from "./lp-column/lp-column.vue";
 
 export default defineComponent({
 
@@ -17,6 +18,7 @@ export default defineComponent({
     StateNavi,
     SlickList,
     SlickItem,
+    LpColumn,
   },
 
   emits: {
@@ -101,71 +103,74 @@ export default defineComponent({
       <div class="lpc-box">
 
 
-      <!-- 列表的标头 -->
-      <div class="lp-column-header"
-        :id="'lp-column-header_' + item.id"
-      >
-
-        <!-- column 的把手 -->
-        <span class="lp-handle"
-          v-handle
+        <!-- 列表的标头 -->
+        <div class="lp-column-header"
+          :id="'lp-column-header_' + item.id"
         >
-          <svg-icon class="lp-handle-svg"
-             name="drag_handle400"
-            :color="iconColor"
-          ></svg-icon>
-        </span>
 
-        <!--状态标题 -->
-        <div class="lp-state-box">
-          <div class="lp-state"
-            :style="{ 
-              'color': item.colorShow,
-            }"
+          <!-- column 的把手 -->
+          <span class="lp-handle"
+            v-handle
           >
-            <div class="lps-bg"
-              :style="{
-                'background-color': item.colorShow
+            <svg-icon class="lp-handle-svg"
+               name="drag_handle400"
+              :color="iconColor"
+            ></svg-icon>
+          </span>
+
+          <!--状态标题 -->
+          <div class="lp-state-box">
+            <div class="lp-state"
+              :style="{ 
+                'color': item.colorShow,
               }"
-            ></div>
-            <span v-if="item.text">{{ item.text }}</span>
-            <span v-else-if="item.text_key">{{ t(item.text_key) }}</span>
+            >
+              <div class="lps-bg"
+                :style="{
+                  'background-color': item.colorShow
+                }"
+              ></div>
+              <span v-if="item.text">{{ item.text }}</span>
+              <span v-else-if="item.text_key">{{ t(item.text_key) }}</span>
+            </div>
           </div>
-        </div>
 
-        <!-- 状态 // 更多 -->
-        <div class="lpch-footer">
+          <!-- 状态 // 更多 -->
+          <div class="lpch-footer">
 
-          <!-- 更多 -->
-          <LiuMenu
-            :menu="MORE_ITEMS"
-            :container="'#lp-column-header_' + item.id"
-            placement="bottom-end"
-            @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
-          >
+            <!-- 更多 -->
+            <LiuMenu
+              :menu="MORE_ITEMS"
+              :container="'#lp-column-header_' + item.id"
+              placement="bottom-end"
+              @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
+            >
+              <div class="liu-hover lpch-btn">
+                <svg-icon name="more" class="lpch-svg" 
+                  :color="iconColor"
+                ></svg-icon>
+              </div>
+            </LiuMenu>
+          
+            <!-- 添加动态 -->
             <div class="liu-hover lpch-btn">
-              <svg-icon name="more" class="lpch-svg" 
+              <svg-icon name="add" class="lpch-svg" 
                 :color="iconColor"
               ></svg-icon>
             </div>
-          </LiuMenu>
-          
-          <!-- 添加动态 -->
-          <div class="liu-hover lpch-btn">
-            <svg-icon name="add" class="lpch-svg" 
-              :color="iconColor"
-            ></svg-icon>
+
           </div>
-
-        </div>
         
+        </div>
+
+        <LpColumn
+          v-model:threads="item.threads"
+          :state-id="item.id"
+          @sort-insert="onThreadInserted(item.id, $event)"
+          @threadsupdated="onThreadsUpdated(item.id, $event)"
+        ></LpColumn>
+
       </div>
-
-      <div class="lp-test"></div>
-
-      </div>
-
-      
 
     </SlickItem>
 

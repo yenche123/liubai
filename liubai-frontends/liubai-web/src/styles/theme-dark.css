@@ -8,7 +8,7 @@
   --inverse-primary: #2a6885;
 
   --card-bg: #232323;
-  --bg-color: #292b2d;
+  --bg-color: #2a2c2e;
   --main-text: #e7e9ea;
   --main-normal: #c7c9ca;
   --main-code: #ababab;
@@ -19,6 +19,7 @@
   --popup-bg: rgba(98, 100, 102, 0.8);
   --select-bg: #3d5259;
   --select-code: #264f78;
+  --card-hover: #25272a;
 
   --sidebar-bg: #232323;
   --sidebar-scrollbar-thumb: #484848;
@@ -52,8 +53,8 @@
   --gradient-one: linear-gradient(90deg, rgba(35, 35, 35, 0) 10%, rgba(35, 35, 35, 1) 96%);
   --gradient-two: linear-gradient(0deg, rgba(35, 35, 35, 1) 10%, rgba(35, 35, 35, 0) 96%);
   --cool-bg: linear-gradient(30deg, #8e95b7, #10635f);
-  --tag-bg: #292b2d;
-  --tag-hover: linear-gradient(60deg, #353535, #292b2d);
+  --tag-bg: #2a2c2e;
+  --tag-hover: linear-gradient(60deg, #353535, #2a2c2e);
   --tooltip-shadow: 0 4px 12px -1px rgba(255, 255, 255, .1);
 
   /** 自定义组件 */
@@ -74,7 +75,7 @@
 
   /** 自定义组件: snackbar */
   --cui-snackbar: #dae3f2;
-  --on-cui-snackbar: #292b2d;
+  --on-cui-snackbar: #2a2c2e;
   --cui-snackbar-shadow: 0 6px 12px rgba(255, 255, 255, .14);
 
   /** 自定义组件: action-sheet，但希望这个组件的颜色是通用的 */
