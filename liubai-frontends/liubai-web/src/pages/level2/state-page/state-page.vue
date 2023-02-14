@@ -7,7 +7,7 @@ import { useMainVice } from "~/hooks/useMainVice";
 import { useStatePage } from "./tools/useStatePage"
 import { useProvideSnIndicator } from "./tools/useSnIndicator";
 
-const { onVvWidthChange } = useMainVice()
+const { onVvWidthChange, hiddenScrollBar } = useMainVice()
 const { whichPage, onNaviChange, kanban } = useStatePage()
 useProvideSnIndicator()
 
@@ -22,7 +22,9 @@ useProvideSnIndicator()
     <div v-show="whichPage === 1"
       class="sp-layout"
     >
-      <list-page :current="whichPage"
+      <list-page 
+        :current="whichPage"
+        :hide-scrollbar="hiddenScrollBar"
         v-model:kanban-columns="kanban.columns"
         @tapnavi="onNaviChange"
       ></list-page>

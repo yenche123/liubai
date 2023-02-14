@@ -37,6 +37,10 @@ export default defineComponent({
       type: Array as PropType<KanbanColumn[]>,
       required: true
     },
+    hideScrollbar: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   directives: {
@@ -81,6 +85,7 @@ export default defineComponent({
     axis="y"
     lockAxis="y"
     class="lp-container"
+    :class="{ 'lp-scroll_hidden': hideScrollbar }"
     helper-class="lp-container_helper"
     v-model:list="columns"
     use-drag-handle
@@ -187,9 +192,19 @@ export default defineComponent({
   height: 100%;
   position: relative;
   overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 
   &::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);
+  }
+}
+
+.lp-scroll_hidden {
+  scrollbar-color: transparent transparent;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 

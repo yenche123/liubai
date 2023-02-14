@@ -49,7 +49,7 @@ const { isMobile } = liuApi.getCharacteristic()
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .liu-scroll-view {
   width: 100%;
   height: 100%;
@@ -59,22 +59,22 @@ const { isMobile } = liuApi.getCharacteristic()
   align-items: flex-start;
   flex-wrap: nowrap;
   scrollbar-color: var(--scrollbar-thumb) transparent;
+
+  &::-webkit-scrollbar {
+    display: v-bind("isMobile ? 'none' : 'block'");
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+  }
 }
 
 .liu-scollbar_hidden {
   scrollbar-color: transparent transparent;
-}
 
-.liu-scroll-view::-webkit-scrollbar {
-  display: v-bind("isMobile ? 'none' : 'block'");
-}
-
-.liu-scroll-view::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-}
-
-.liu-scollbar_hidden::-webkit-scrollbar {
-  display: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 </style>
