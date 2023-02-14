@@ -11,6 +11,8 @@ import { kanbanInnerChangeKey } from "~/utils/provide-keys"
 import time from "~/utils/basic/time";
 import { MenuItem } from "~/components/common/liu-menu/tools/types";
 import kanbanOperate from "./kanban-operate";
+import { useRouteAndLiuRouter } from "~/routes/liu-router";
+import liuUtil from "~/utils/liu-util";
 
 const MORE_ITEMS: MenuItem[] = [
   {
@@ -27,6 +29,7 @@ export function useKanbanColumns(
   props: KanbanProps,
   emits: KanbanEmits
 ) {
+  const rr = useRouteAndLiuRouter()
   const lastInnerStampRef = inject(kanbanInnerChangeKey)
 
   const columns = computed({
@@ -74,6 +77,12 @@ export function useKanbanColumns(
     }
   }
 
+  const onTapThreadItem = (id: string) => {
+    const res = liuUtil.toWhatDetail()
+    if(res === "detail-page") liuUtil.openDetailWithDetailPage(id, { rr })
+    else if(res === "vice-view") liuUtil.openDetailWithViceView(id, { rr })
+  }
+
 
   return {
     MORE_ITEMS,
@@ -84,6 +93,7 @@ export function useKanbanColumns(
     onThreadInserted,
     onThreadsUpdated,
     onTapMoreMenuItem,
+    onTapThreadItem,
   }
 }
 

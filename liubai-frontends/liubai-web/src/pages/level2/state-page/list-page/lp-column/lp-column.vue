@@ -19,6 +19,7 @@ export default defineComponent({
     "update:threads": (val: ThreadShow[]) => true,
     "sort-insert": (val: ColumnInsertData) => true,
     "threadsupdated": (val: ThreadShow[]) => true,
+    "tapitem": (contentId: string) => true,
   },
 
   props: {
@@ -86,7 +87,7 @@ export default defineComponent({
       :index="j"
       class="lc-item"
     >
-      <div class="lci-inner">
+      <div class="lci-inner" @click="$emit('tapitem', thread._id)">
 
         <div class="lci-text">
           <span v-if="thread.title" class="lci-title">{{ thread.title }}</span>

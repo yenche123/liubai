@@ -25,8 +25,16 @@ export interface KanbanProps {
   kanbanColumns: KanbanColumn[]
 }
 
+export interface ColumnInsertData {
+  newIndex: number
+  value: ThreadShow
+}
+
 export interface KbListEmits {
   (event: "update:threads", val: ThreadShow[]): void
+  (event: "sort-insert", val: ColumnInsertData): void
+  (event: "threadsupdated", val: ThreadShow[]): void
+  (event: "tapitem", contentId: string): void
 }
 
 export interface KbListEmits2 extends KbListEmits {
@@ -38,10 +46,7 @@ export interface KbListProps {
   stateId: string
 }
 
-export interface ColumnInsertData {
-  newIndex: number
-  value: ThreadShow
-}
+
 
 export interface StatePageCtx {
   showReload: Ref<boolean>

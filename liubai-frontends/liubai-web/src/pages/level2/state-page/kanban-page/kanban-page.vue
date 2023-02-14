@@ -59,6 +59,7 @@ export default defineComponent({
       onThreadInserted,
       onThreadsUpdated,
       onTapMoreMenuItem,
+      onTapThreadItem,
     } = useKanbanColumns(props, emit)
 
     return {
@@ -75,6 +76,7 @@ export default defineComponent({
       onThreadInserted,
       onThreadsUpdated,
       onTapMoreMenuItem,
+      onTapThreadItem,
     }
   },
 
@@ -176,6 +178,7 @@ export default defineComponent({
         @scrolling="setScrollTop(item.id, $event)"
         @sort-insert="onThreadInserted(item.id, $event)"
         @threadsupdated="onThreadsUpdated(item.id, $event)"
+        @tapitem="onTapThreadItem"
       ></KpColumn>
     </SlickItem>
 

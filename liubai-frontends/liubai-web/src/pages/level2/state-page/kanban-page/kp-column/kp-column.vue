@@ -21,6 +21,7 @@ export default defineComponent({
     "scrolling": (val: number) => true,
     "sort-insert": (val: ColumnInsertData) => true,
     "threadsupdated": (val: ThreadShow[]) => true,
+    "tapitem": (contentId: string) => true,
   },
 
   props: {
@@ -94,7 +95,9 @@ export default defineComponent({
       class="kc-kanban-item"
     >
 
-      <div class="kcki-inner">
+      <div class="kcki-inner"
+        @click="$emit('tapitem', thread._id)"
+      >
 
         <div class="kc-title" v-if="thread.title">
           <span>{{ thread.title }}</span>

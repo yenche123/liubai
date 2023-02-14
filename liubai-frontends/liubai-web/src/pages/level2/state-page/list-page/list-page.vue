@@ -55,6 +55,7 @@ export default defineComponent({
       onThreadInserted,
       onThreadsUpdated,
       onTapMoreMenuItem,
+      onTapThreadItem,
     } = useKanbanColumns(props, emit)
 
     return {
@@ -67,6 +68,7 @@ export default defineComponent({
       onThreadInserted,
       onThreadsUpdated,
       onTapMoreMenuItem,
+      onTapThreadItem,
     }
   },
 
@@ -168,6 +170,7 @@ export default defineComponent({
           :state-id="item.id"
           @sort-insert="onThreadInserted(item.id, $event)"
           @threadsupdated="onThreadsUpdated(item.id, $event)"
+          @tapitem="onTapThreadItem"
         ></LpColumn>
 
       </div>
