@@ -10,7 +10,6 @@ import type {
   GlobalStateStore
 } from "~/hooks/stores/useGlobalStateStore"
 import liuUtil from '~/utils/liu-util';
-import tcCommon from "./tc-common"
 
 interface TcCtx {
   props: TcProps
@@ -86,11 +85,11 @@ function handleTapThreadCard(
   
   if(toWhere === "detail-page") {
     // 用 detail-page 打开
-    tcCommon.openDetailWithDetailPage(cid, ctx)
+    liuUtil.openDetailWithDetailPage(cid, ctx)
   }
   else if(toWhere === "vice-view") {
     // 用侧边栏打开.......
-    tcCommon.openDetailWithViceView(cid, ctx)
+    liuUtil.openDetailWithViceView(cid, ctx)
   }
 }
 

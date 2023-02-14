@@ -30,6 +30,8 @@ import {
   getRawList
 } from "./vue-util"
 import {
+  openDetailWithViceView,
+  openDetailWithDetailPage,
   toWhatDetail,
   colorToShow,
   colorToStorage,
@@ -65,4 +67,6 @@ export default {
   toWhatDetail,
   colorToShow,
   colorToStorage,
+  openDetailWithViceView,
+  openDetailWithDetailPage,
 }

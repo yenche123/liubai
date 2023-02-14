@@ -2,6 +2,22 @@
 import type { WhatDetail } from "~/types/other/types-custom"
 import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
+import type { RouteAndLiuRouter } from "~/routes/liu-router"
+
+interface RrOpt {
+  rr: RouteAndLiuRouter
+  [otherKey: string]: any
+}
+
+export function openDetailWithViceView(cid: string, opt: RrOpt) {
+  const { route, router } = opt.rr
+  router.pushCurrentWithNewQuery(route, { cid })
+}
+
+export function openDetailWithDetailPage(contentId: string, opt: RrOpt) {
+  const { route, router } = opt.rr
+  router.pushNewPageWithOldQuery(route, { name: "detail", params: { contentId } })
+}
 
 export function toWhatDetail(): WhatDetail {
   const { width } = useWindowSize()

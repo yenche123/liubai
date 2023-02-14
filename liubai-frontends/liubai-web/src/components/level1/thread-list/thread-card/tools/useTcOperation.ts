@@ -10,7 +10,6 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { ThreadOperation } from "~/types/types-atom"
 import liuUtil from "~/utils/liu-util"
-import tcCommon from "./tc-common"
 import valTool from "~/utils/basic/val-tool"
 import type { PreCtx } from "~/components/level1/utils/tools/types"
 import { preHandle } from "~/components/level1/utils/preHandle"
@@ -117,10 +116,10 @@ function handel_comment(ctx: TcoCtx, props: TcProps) {
   const cid = props.threadData._id
   const res = liuUtil.toWhatDetail()
   if(res === "detail-page") {
-    tcCommon.openDetailWithDetailPage(cid, ctx)
+    liuUtil.openDetailWithDetailPage(cid, ctx)
   }
   else if(res === "vice-view") {
-    tcCommon.openDetailWithViceView(cid, ctx)
+    liuUtil.openDetailWithViceView(cid, ctx)
   }
 }
 
