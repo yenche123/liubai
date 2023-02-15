@@ -32,7 +32,7 @@ const { memberShow } = useScTop()
   align-items: center;
 
   .sc-avatar {
-    margin-inline-start: 16px;
+    margin-inline-start: 17px;
     margin-inline-end: 16px;
     flex: none;
   }
