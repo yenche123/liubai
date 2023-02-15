@@ -133,7 +133,7 @@ export async function getMemberShows(member_ids: string[]) {
       _id: v._id,
       name: v.name,
       avatar: v.avatar ? imgHelper.imageStoreToShow(v.avatar) : undefined,
-      workspace: v.workspace,
+      spaceId: v.spaceId,
       oState: v.oState,
     }
     return obj

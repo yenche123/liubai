@@ -22,7 +22,7 @@ export function initSpace(
 // 查找我所在的工作区
 async function getMySpaceIds(userId: string) {
   const res = await db.members.where({ user: userId }).toArray()
-  const list = res.map(v => v.workspace)
+  const list = res.map(v => v.spaceId)
   return list
 }
 
@@ -78,7 +78,7 @@ async function whenRouteChange(
   // 去查找我在该 workspace 的 member_id
   // 可能不存在，没有关系，就置入空字符串 "" 即可
   const g2 = {
-    workspace: mySpace._id,
+    spaceId: mySpace._id,
     user: userId,
   }
   const myMember = await db.members.get(g2)
@@ -126,7 +126,7 @@ async function handleCollaborativeSpace(
 
   // 2. 本地查找 member
   const g = {
-    workspace: newSpaceId,
+    spaceId: newSpaceId,
     user: userId,
   }
   const member = await db.members.get(g)

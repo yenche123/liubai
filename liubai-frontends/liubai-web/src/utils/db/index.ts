@@ -30,7 +30,7 @@ export class LiuDexie extends Dexie {
 
     let workspacesIdx = "_id, [infoType+owner]"
 
-    let membersIdx = "_id, [user+workspace]"
+    let membersIdx = "_id, [user+spaceId]"
 
     let draftsIdx = "_id, [infoType+oState+user+workspace], [infoType+oState+threadEdited], *tagIds"
 
@@ -38,7 +38,7 @@ export class LiuDexie extends Dexie {
 
     let collectionsIdx = "_id, content_id, insertedStamp, [member+infoType+forType+content_id], updatedStamp"
 
-    this.version(30).stores({
+    this.version(31).stores({
       users: "_id",
       workspaces: workspacesIdx,
       members: membersIdx,

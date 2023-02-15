@@ -1,5 +1,5 @@
 
-import type { OState, VisScope, StorageState } from "./types-basic"
+import type { OState, VisScope, StorageState, MemberState } from "./types-basic"
 import type { LiuRemindMe } from "./types-atom"
 import type { ImageShow, LiuFileStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
@@ -19,8 +19,8 @@ export interface MemberShow {
   _id: string
   name?: string
   avatar?: ImageShow
-  workspace: string
-  oState: "OK" | "LEFT" | "DELETED"
+  spaceId: string
+  oState: MemberState
 }
 
 export interface TagShow {

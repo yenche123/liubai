@@ -98,7 +98,7 @@ async function createMember(
   const t = time.getTime()
   const data: MemberLocalTable = {
     _id: member_local,
-    workspace: workspace_local,
+    spaceId: workspace_local,
     insertedStamp: t,
     updatedStamp: t,
     user: user_local,

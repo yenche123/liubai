@@ -30,7 +30,7 @@ export async function findSystem(user_id: string) {
 
   const g = {
     user: user_id,
-    workspace: workspace_local,
+    spaceId: workspace_local,
   }
 
   // console.time("fs members")
