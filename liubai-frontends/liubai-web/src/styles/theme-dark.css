@@ -56,6 +56,8 @@
   --tag-bg: #2a2c2e;
   --tag-hover: linear-gradient(60deg, #353535, #2a2c2e);
   --tooltip-shadow: 0 4px 12px -1px rgba(255, 255, 255, .1);
+  --avatar-bg: #a6bbc5;
+  --avatar-color: #1f1f1f;
 
   /** 自定义组件 */
   --cui-loading: rgba(56, 56, 56, .93);

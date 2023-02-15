@@ -56,6 +56,8 @@
   --tag-bg: #f2f4f7;
   --tag-hover: linear-gradient(60deg, #eaeaea, #f2f4f7);
   --tooltip-shadow: 0 8px 18px 1px rgba(0,0,0,.28);
+  --avatar-bg: #82969f;
+  --avatar-color: #f1f1f1;
 
   /** 自定义组件: 加载框 */
   --cui-loading: rgba(46, 46, 46, .93);

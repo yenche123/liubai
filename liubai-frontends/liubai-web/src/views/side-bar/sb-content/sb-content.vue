@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AppLink from '~/components/common/app-link/app-link.vue';
 import NaviLink from "~/components/common/navi-link/navi-link.vue";
+import ScTop from './sc-top/sc-top.vue';
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -45,7 +46,9 @@ const color_selected = "var(--main-normal)"
 
 </script>
 <template>
-  <div class="sb-virtual"></div>
+  
+  <!-- 顶部区域 -->
+  <ScTop></ScTop>
 
   <!-- 首页 -->
   <NaviLink class="sb-link liu-hover" 

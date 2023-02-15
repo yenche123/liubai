@@ -1,4 +1,5 @@
 import type { LiuFileStore, LiuImageStore } from "~/types"
+import { MemberLocalTable } from "~/types/types-table"
 import time from "../basic/time"
 
 // 获取允许的图片类型 由 , 拼接而成的字符串

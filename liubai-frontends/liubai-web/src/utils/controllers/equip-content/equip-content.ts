@@ -3,7 +3,7 @@
 import type { ContentLocalTable } from "~/types/types-table";
 import { db } from "../../db";
 import collectionController from "../collection-controller/collection-controller";
-import type { MemberShow, StateShow, TagShow, ThreadShow } from "~/types/types-content";
+import type { StateShow, TagShow, ThreadShow } from "~/types/types-content";
 import imgHelper from "../../images/img-helper";
 import localCache from "../../system/local-cache";
 import type { TipTapJSONContent } from "~/types/types-editor";
@@ -11,6 +11,7 @@ import liuUtil from "../../liu-util";
 import { tagIdsToShows } from "../../system/workspace";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import commonPack from "../tools/common-pack";
+import { membersToShows } from "../../other/member-related"
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
 
@@ -128,15 +129,6 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
 export async function getMemberShows(member_ids: string[]) {
   if(member_ids.length < 1) return []
   const res = await db.members.where("_id").anyOf(member_ids).toArray()
-  const list = res.map(v => {
-    const obj: MemberShow = {
-      _id: v._id,
-      name: v.name,
-      avatar: v.avatar ? imgHelper.imageStoreToShow(v.avatar) : undefined,
-      spaceId: v.spaceId,
-      oState: v.oState,
-    }
-    return obj
-  })
+  const list = membersToShows(res)
   return list
 }
