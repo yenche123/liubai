@@ -5,6 +5,9 @@ import type { ThreadListViewType } from "~/types/types-view"
 
 export interface TcListOption {
 
+  // 加载哪个工作区的动态
+  spaceId: string
+
   // 是否为仅本地获取，默认为 ture
   // 若为 false 则从云端获取，获取过程中会把更新融进 IndexedDB 里
   // 再把包含 LOCAL / ONLY_LOCAL 的数据返回给调用者，让业务侧能批量绑定到视图上，无需过滤
@@ -21,9 +24,6 @@ export interface TcListOption {
 
   // 加载某个 emoji
   emojiSpecific?: string
-
-  // 默认为 ME
-  workspace?: string    
 
   // 加载某个标签
   tagId?: string

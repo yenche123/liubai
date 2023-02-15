@@ -1,5 +1,5 @@
 
-import type { OState, VisScope, StorageState, MemberState } from "./types-basic"
+import type { OState, VisScope, StorageState, MemberState, SpaceType } from "./types-basic"
 import type { LiuRemindMe } from "./types-atom"
 import type { ImageShow, LiuFileStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
@@ -45,7 +45,8 @@ export interface ThreadShow {
   oState: OState
   user_id?: string
   member_id: string
-  workspace: string
+  spaceId: string
+  spaceType: SpaceType
   visScope: VisScope
   storageState: StorageState
   title?: string

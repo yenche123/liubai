@@ -14,6 +14,7 @@ import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { storeToRefs } from "pinia";
 import { equipThreads } from "~/utils/controllers/equip-content/equip-content";
 import { getTagIdsParents } from "~/utils/system/workspace";
+import type { SpaceType } from "~/types/types-basic";
 
 // 本文件处理发表的逻辑
 
@@ -27,14 +28,16 @@ export interface CepContext {
 
 export type CepToPost = (focusRequired: boolean) => void
 
-let space: Ref<string>
+let spaceIdRef: Ref<string>
+let spaceTypeRef: Ref<SpaceType>
 let member: Ref<string>
 
 export function useCeFinish(ctx: CepContext) {
 
   const spaceStore = useWorkspaceStore()
   const spaceRefs = storeToRefs(spaceStore)
-  space = spaceRefs.workspace
+  spaceIdRef = spaceRefs.spaceId
+  spaceTypeRef = spaceRefs.spaceType as Ref<SpaceType>
   member = spaceRefs.memberId
 
   const toFinish: CepToPost = (focusRequired: boolean) => {
@@ -157,7 +160,8 @@ function _getThreadData(
 
   // 没有 threadEdited 代表当前是发表模式，必须设置 workspace
   if(!state.threadEdited) {
-    aThread.workspace = space.value
+    aThread.spaceId = spaceIdRef.value
+    aThread.spaceType = spaceTypeRef.value
   }
 
   return aThread

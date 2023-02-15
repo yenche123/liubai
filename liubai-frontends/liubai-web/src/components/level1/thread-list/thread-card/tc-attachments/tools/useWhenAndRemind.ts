@@ -22,7 +22,7 @@ const HOUR = 60 * MIN
 // 专门显示 "什么时候" / "提醒我"
 export function useWhenAndRemind(props: TcaProps) {
 
-  const { t, locale } = useI18n()
+  const { locale } = useI18n()
   const threadData = toRef(props, "thread")
 
   const whenStamp = computed(() => threadData.value.whenStamp)
@@ -35,8 +35,8 @@ export function useWhenAndRemind(props: TcaProps) {
     const t = threadData.value
     if(t.oState !== 'OK') return false
     if(!wStore.memberId) return false
-    if(wStore.memberId === t.member_id) return true
-    if(wStore.workspace !== t.workspace) return false
+    if(wStore.spaceId !== t.spaceId) return false
+    if(t.spaceType === "ME" && !t.isMine) return false
     return true
   })
 

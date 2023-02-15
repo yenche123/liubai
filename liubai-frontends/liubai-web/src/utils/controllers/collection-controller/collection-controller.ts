@@ -37,13 +37,13 @@ export async function getThreadsByCollectionOrEmoji(
   opt: TcListOption
 ) {
   const { 
-    workspace = "ME", 
+    spaceId, 
     sort = "desc",
     lastItemStamp,
     limit = 16,
     emojiSpecific,
     collectType,
-  } = opt ?? {}
+  } = opt
 
   const wStore = useWorkspaceStore()
   const { local_id: user_id } = localCache.getLocalPreference()
@@ -53,11 +53,11 @@ export async function getThreadsByCollectionOrEmoji(
     // console.log("opt::: ", opt)
     // console.log("item:::", item)
     // console.log(" ")
+    if(item.spaceId !== spaceId) return false
     if(item.oState !== "OK") return false
     if(user_id !== item.user) return false
     if(collectType !== item.infoType) return false
     if(item.forType !== "THREAD") return false
-    if(item.workspace !== workspace) return false
     if(emojiSpecific && collectType === "EXPRESS" && emojiSpecific !== item.emoji) return false
     return true
   }
@@ -107,7 +107,7 @@ export async function getThreadsByCollectionOrEmoji(
       _id, 
       user: u, 
       liuDesc, 
-      workspace: w, 
+      spaceId,
       title
     } = v
 
@@ -139,8 +139,7 @@ export async function getThreadsByCollectionOrEmoji(
     let tags: TagShow[] = []
     let stateShow: StateShow | undefined = undefined
     // 判断当前工作区与当前动态是否匹配，若匹配则可展示标签和状态
-    let canTag = w === "ME" && u === user_id && !wStore.isCollaborative
-    if(!canTag) canTag = w === wStore.spaceId
+    let canTag = spaceId === wStore.spaceId
     // 如果动态所属的工作区与当前工作区匹配
     if(canTag) {
       const tagData = v.tagIds ? tagIdsToShows(v.tagIds) : undefined
@@ -156,7 +155,8 @@ export async function getThreadsByCollectionOrEmoji(
       oState: v.oState,
       user_id: u,
       member_id: m,
-      workspace: w,
+      spaceId,
+      spaceType: v.spaceType,
       visScope: v.visScope,
       storageState: v.storageState,
       title,

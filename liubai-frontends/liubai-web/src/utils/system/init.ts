@@ -20,7 +20,6 @@ export async function init() {
   const localPf = localCache.getLocalPreference()
   if(localPf.local_id) {
     // 【待完善】去修改 User 表里的 lastRefresh
-    // 【待完善】去初始化 workspace id
     const isOk = await findSystem(localPf.local_id)
     if(isOk) {
       // console.log("万事 Ok！")

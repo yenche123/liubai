@@ -131,7 +131,8 @@ export default defineComponent({
       <!-- 操作栏 -->
       <TcActionbar
         v-if="viewType !== 'TRASH'"
-        :workspace="threadData.workspace"
+        :space-type="threadData.spaceType"
+        :is-mine="threadData.isMine"
         :comment-num="threadData.commentNum"
         :emoji-num="threadData.emojiData.total"
         :my-favorite="threadData.myFavorite"

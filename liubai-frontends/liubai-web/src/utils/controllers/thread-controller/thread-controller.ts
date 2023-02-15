@@ -3,10 +3,10 @@ import localGet from "./tools/local-get"
 import cloudGet from "./tools/cloud-get"
 import type { TcListOption, TcDataOption } from "./type"
 
-async function getList(opt?: TcListOption) {
+async function getList(opt: TcListOption) {
   const { 
     onlyLocal = true,
-  } = opt ?? {}
+  } = opt
 
   if(onlyLocal) {
     const res = await localGet.getList(opt)

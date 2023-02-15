@@ -20,11 +20,11 @@ export default defineComponent({
     const { router, route } = useRouteAndLiuRouter()
     
     const wStore = useWorkspaceStore()
-    const { workspace } = storeToRefs(wStore)
+    const { spaceType } = storeToRefs(wStore)
     const toPath = computed(() => {
-      const w = workspace.value
-      if(w === "ME") return `/tag/`
-      return `/w/${w}/tag/`
+      const w = spaceType.value
+      if(w === "TEAM") return `/w/${w}/tag/`
+      return `/tag/`
     })
 
     const onTapTag = (e: MouseEvent, href: string) => {

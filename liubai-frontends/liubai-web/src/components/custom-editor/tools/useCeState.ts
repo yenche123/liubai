@@ -1,5 +1,5 @@
 
-import { ref, watch, computed, toRaw, isProxy, isReactive } from "vue";
+import { ref, watch, toRaw, isProxy } from "vue";
 import type { EditorCoreContent, TipTapJSONContent } from "~/types/types-editor";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { LiuRemindMe } from "~/types/types-atom";
@@ -15,9 +15,11 @@ import type { LiuFileStore, LiuImageStore } from "~/types";
 import type { CepToPost } from "./useCeFinish"
 import liuUtil from "~/utils/liu-util";
 import { storeToRefs } from "pinia";
+import type { SpaceType } from "~/types/types-basic"
 
 let collectTimeout = 0
-let space: Ref<string>
+let spaceIdRef: Ref<string>
+let spaceTypeRef: Ref<SpaceType>
 
 export function useCeState(
   state: CeState,
@@ -25,8 +27,11 @@ export function useCeState(
   toFinish: CepToPost,
 ) {
 
-  const spaceStore = useWorkspaceStore()  
-  space = storeToRefs(spaceStore).workspace
+  const wStore = useWorkspaceStore()
+  const wRefs = storeToRefs(wStore)
+  spaceIdRef = wRefs.spaceId
+  spaceTypeRef = wRefs.spaceType as Ref<SpaceType>
+ 
 
   // 监听用户操作 images 的变化，去存储到 IndexedDB 上
   watch(() => state.images, (newV) => {
@@ -231,7 +236,8 @@ async function toSave(state: CeState) {
     infoType: "THREAD",
     oState: "OK",
     user: userId as string,
-    workspace: space.value,
+    spaceId: spaceIdRef.value,
+    spaceType: spaceTypeRef.value,
     threadEdited: state.threadEdited,
     visScope: state.visScope,
     storageState: state.storageState,

@@ -17,7 +17,7 @@ interface TlContext {
   list: Ref<ThreadShow[]>
   viewType: Ref<TlViewType>
   tagId: Ref<string>
-  workspace: Ref<string>
+  spaceIdRef: Ref<string>
   showNum: number
   lastItemStamp: Ref<number>
   svBottomUp?: ShallowRef<SvBottomUp>
@@ -28,7 +28,7 @@ export function useThreadList(props: TlProps) {
   let { viewType, tagId } = toRefs(props)
 
   const wStore = useWorkspaceStore()
-  let workspace = storeToRefs(wStore).workspace
+  let spaceIdRef = storeToRefs(wStore).spaceId
   const svBottomUp = inject(svBottomUpKey)
 
   const list = ref<ThreadShow[]>([])
@@ -37,7 +37,7 @@ export function useThreadList(props: TlProps) {
     list,
     viewType: viewType as Ref<TlViewType>,
     tagId,
-    workspace,
+    spaceIdRef,
     showNum: 0,
     lastItemStamp,
     svBottomUp,
@@ -81,7 +81,7 @@ export function useThreadList(props: TlProps) {
   const gStore = useGlobalStateStore()
   const { tagChangedNum } = storeToRefs(gStore)
 
-  watch([viewType, tagId, workspace, tagChangedNum], (
+  watch([viewType, tagId, spaceIdRef, tagChangedNum], (
       [newV1, newV2, newV3, newV4],
       [oldV1, oldV2, oldV3, oldV4]
     ) => {
@@ -96,7 +96,7 @@ export function useThreadList(props: TlProps) {
 
   // 如果 workspace 已经存在了，那么就不会触发上方的 watch
   // 所以这里加一段 loadList
-  if(workspace.value) {
+  if(spaceIdRef.value) {
     loadList(ctx, true)
   }
 
@@ -143,8 +143,8 @@ async function loadList(
   ctx: TlContext,
   reload: boolean = false
 ) {
-  const workspace = ctx.workspace.value
-  if(!workspace) return
+  const spaceId = ctx.spaceIdRef.value
+  if(!spaceId) return
   if(reload) {
     ctx.reloadRequired = false
   }
@@ -159,7 +159,7 @@ async function loadList(
 
   const opt1: TcListOption = {
     viewType,
-    workspace,
+    spaceId,
     tagId,
     lastItemStamp,
     oState,

@@ -32,11 +32,11 @@ interface SbtEmits {
 export function useSbTags(emits: SbtEmits) {
   const currentTagId = ref("")
   const wStore = useWorkspaceStore()
-  const { workspace } = storeToRefs(wStore)
+  const { spaceType, spaceId } = storeToRefs(wStore)
   const toPath = computed(() => {
-    const w = workspace.value
-    if(w === "ME") return `/tag/`
-    return `/w/${w}/tag/`
+    const s = spaceType.value
+    if(s === "TEAM") return `/w/${s}/tag/`
+    return `/tag/`
   })
 
   const { router, route } = useRouteAndLiuRouter()
@@ -48,7 +48,7 @@ export function useSbTags(emits: SbtEmits) {
   const lastTagChangeStamp = ref(time.getTime())
   const { tagChangedNum } = storeToRefs(gStore)
 
-  initTagNodes(tagNodes, oldTagNodes, workspace)
+  initTagNodes(tagNodes, oldTagNodes, spaceId)
 
   // 监听 tag 从外部发生变化
   watch(tagChangedNum, (newV) => {
@@ -145,14 +145,14 @@ function getLatestSpaceTag(
 function initTagNodes(
   tagNodes: Ref<TagView[]>,
   oldTagNodes: Ref<TagView[]>,
-  workspace: Ref<string>,
+  spaceId: Ref<string>,
 ) {
   const _get = () => {
-    if(!workspace.value) return
+    if(!spaceId.value) return
     getLatestSpaceTag(tagNodes, oldTagNodes)
   }
 
-  watch(workspace, (newV) => {
+  watch(spaceId, (newV) => {
     _get()
   })
   _get()

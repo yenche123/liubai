@@ -42,13 +42,12 @@ const getMemberId = (
   opt.showTip = opt.showTip ?? true
 
   const wStore = useWorkspaceStore()
-  const { workspace, memberId } = wStore
+  const { memberId, spaceId, spaceType } = wStore
 
   
-  if(thread.workspace === "ME") {
+  if(spaceType === "ME") {
     // 个人工作区
-    if(!memberId || memberId !== thread.member_id) {
-      // 显示没有权限
+    if(!memberId || !thread.isMine) {
       if(opt.showTip) cui.showSnackBar({ text_key: "tip.no_auth" })
       return { memberId: "" }
     }
@@ -57,7 +56,7 @@ const getMemberId = (
     // 协作工作区
 
     // 工作区与当前不一致
-    if(thread.workspace !== workspace) {
+    if(thread.spaceId !== spaceId) {
       if(opt.showTip) {
         cui.showModal({
           title_key: "tip.tip",

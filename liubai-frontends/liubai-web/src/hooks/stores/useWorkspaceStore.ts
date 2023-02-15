@@ -4,6 +4,7 @@ import valTool from "~/utils/basic/val-tool";
 import type { TagView, LiuStateConfig } from "~/types/types-atom";
 import type { MemberLocalTable, WorkspaceLocalTable } from "~/types/types-table";
 import { db } from "~/utils/db";
+import type { SpaceType } from "~/types/types-basic"
 
 
 export interface SpaceAndMemberOpt {
@@ -17,6 +18,7 @@ export interface SpaceAndMemberOpt {
 export const useWorkspaceStore = defineStore("workspaceState", () => {
 
   const spaceId = ref("")
+  const spaceType = ref<SpaceType | "">("")
   const memberId = ref("")
   const workspace = ref("")    // 协作工作区时，是 spaceId；个人工作区时是 ME
   const isCollaborative = ref(false)
@@ -48,6 +50,7 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
   }
 
   const setSpaceAndMember = (opt: SpaceAndMemberOpt) => {
+    spaceType.value = opt.isCollaborative ? "TEAM" : "ME"
     spaceId.value = opt.spaceId
     memberId.value = opt.memberId
     isCollaborative.value = opt.isCollaborative
@@ -90,6 +93,7 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
   }
 
   return { 
+    spaceType,
     spaceId, 
     memberId,
     workspace,

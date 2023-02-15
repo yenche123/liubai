@@ -17,7 +17,7 @@ import { storeToRefs } from "pinia"
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore"
 import time from "../../../utils/basic/time"
 
-let space: Ref<string>
+let spaceIdRef: Ref<string>
 
 interface IcsContext {
   state: CeState
@@ -33,7 +33,7 @@ export function initCeState(
 ) {
 
   const spaceStore = useWorkspaceStore()  
-  space = storeToRefs(spaceStore).workspace
+  spaceIdRef = storeToRefs(spaceStore).spaceId
 
   
   const tVal = toRef(props, "threadId")
@@ -51,8 +51,8 @@ export function initCeState(
 
   const getCtx = () => {
     const editorVal = editor.value
-    const spaceVal = space.value
-    if(!editorVal || !spaceVal) return
+    const spaceId = spaceIdRef.value
+    if(!editorVal || !spaceId) return
     const ctx: IcsContext = {
       state,
       editor: editorVal,
@@ -120,7 +120,7 @@ async function initDraft(
     if(draft) localReq.deleteDraftById(draft._id)
   }
   else {
-    draft = await localReq.getDraft(space.value)
+    draft = await localReq.getDraft(spaceIdRef.value)
     if(draft) initDraftFromDraft(ctx, draft)
     else ctx.state.draftId = ""
   }

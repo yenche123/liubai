@@ -1,5 +1,5 @@
 // 接口名称后缀为 LocalTable 的，代表是本地的数据表
-import type { OState, VisScope, StorageState, MemberState } from "./types-basic"
+import type { OState, VisScope, StorageState, MemberState, SpaceType } from "./types-basic"
 import type { LiuContent, LiuRemindMe, TagView, LiuStateConfig } from "./types-atom"
 import type { LiuFileStore, LiuImageStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
@@ -42,7 +42,8 @@ export interface ContentLocalTable extends BaseLocalTable {
   oState: OState
   user?: string
   member: string
-  workspace: string
+  spaceId: string
+  spaceType: SpaceType
   visScope: VisScope
   storageState: StorageState
   title?: string
@@ -70,7 +71,8 @@ export interface DraftLocalTable extends BaseLocalTable {
   infoType: "THREAD" | "COMMENT"
   oState: "OK" | "POSTED" | "DELETED"
   user: string
-  workspace: string
+  spaceId: string
+  spaceType: SpaceType
   threadEdited?: string
   commentEdited?: string
   underThread?: string
@@ -95,7 +97,8 @@ export interface CollectionLocalTable extends BaseLocalTable {
   member: string
   infoType: "EXPRESS" | "FAVORITE"
   forType: "THREAD" | "COMMENT"
-  workspace: string
+  spaceId: string
+  spaceType: SpaceType
   content_id: string
   emoji?: string
 }

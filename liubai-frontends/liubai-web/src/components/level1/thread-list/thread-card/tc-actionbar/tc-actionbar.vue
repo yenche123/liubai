@@ -2,14 +2,19 @@
 // 操作栏: 收藏、（点赞）、评论数、分享
 // 个人工作区: 收藏、评论数（、分享）
 // 协作工作区: 点赞、评论数（、分享）
-
+import type { SpaceType } from "~/types/types-basic"
+import type { PropType } from "vue";
 import { computed } from 'vue';
 import liuApi from '~/utils/liu-api';
 
 const props = defineProps({
-  workspace: {
-    type: String,
+  spaceType: {
+    type: String as PropType<SpaceType>,
     required: true
+  },
+  isMine: {
+    type: Boolean,
+    required: true,
   },
   commentNum: {
     type: Number,
@@ -76,7 +81,7 @@ const onTapShare = (e: MouseEvent) => {
   <div class="tca-container">
 
     <!-- 收藏 -->
-    <div v-if="workspace === 'ME'" class="liu-hover tca-item"
+    <div v-if="spaceType === 'ME' && isMine" class="liu-hover tca-item"
       @click="onTapCollect"
     >
       <div class="tca-icon-box">

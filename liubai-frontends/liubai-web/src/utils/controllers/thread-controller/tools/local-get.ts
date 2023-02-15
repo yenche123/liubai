@@ -6,10 +6,10 @@ import { getThreadsByCollectionOrEmoji } from "../../collection-controller/colle
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore" 
 
 async function getList(
-  opt?: TcListOption
+  opt: TcListOption
 ) {
   const { 
-    workspace = "ME",
+    spaceId,
     sort = "desc",
     lastItemStamp,
     oState = "OK",
@@ -21,7 +21,7 @@ async function getList(
     ids,
     excludeIds,
     stateId,
-  } = opt ?? {}
+  } = opt
 
   if(collectType === "EXPRESS" || collectType === "FAVORITE") {
     const res0 = await getThreadsByCollectionOrEmoji(opt as TcListOption)
@@ -44,11 +44,10 @@ async function getList(
     }
     if(isPin && !pinStamp) return false
     if(excludeIds && excludeIds.includes(_id)) return false
-    if(item.workspace === workspace && item.oState === oState) {
-      if(!member) return true
-      if(member === item.member) return true
-    }
-    return false
+    if(item.spaceId !== spaceId) return false
+    if(item.oState !== oState) return false
+    if(member && member !== item.member) return false
+    return true
   }
 
   let key = oState === 'OK' ? "createdStamp" : "updatedStamp"

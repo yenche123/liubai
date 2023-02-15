@@ -61,13 +61,13 @@ async function getThreadsOfAThread(
 ): Promise<GetThreadsOfAStateRes> {
   const { stateId, excludeInKanban, lastItemStamp } = opt
   const wStore = useWorkspaceStore()
-  const workspace = wStore.workspace
+  const spaceId = wStore.spaceId
   const nothingData = { threads: [], hasMore: false }
-  if(!workspace) return nothingData
+  if(!spaceId) return nothingData
 
   const listOpt: TcListOption = {
     viewType: "STATE",
-    workspace,
+    spaceId,
     stateId,
   }
 
