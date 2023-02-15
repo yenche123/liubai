@@ -68,7 +68,7 @@ export default defineComponent({
   padding: 3px;
   outline: 0;
   font-size: var(--desc-font);
-  line-height: 2;
+  line-height: 1.9;
   color: var(--main-normal);
   min-height: v-bind("editMode ? minHeight : 0");
   transition: v-bind("editMode ? '.3s' : 0");
@@ -78,9 +78,9 @@ export default defineComponent({
     font-size: var(--title-font);
     font-weight: 700;
     color: var(--main-normal);
-    margin-block-start: 0.2rem;
-    margin-block-end: 0.5rem;
-    line-height: 1.5;
+    margin-block-start: 0;
+    margin-block-end: 0.3rem;
+    line-height: 1.4;
   }
 
   p {
