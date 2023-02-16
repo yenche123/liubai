@@ -125,7 +125,7 @@ const color_selected = "var(--main-normal)"
   </NaviLink>
 
   <!-- 回收桶 -->
-  <NaviLink class="sb-link liu-hover" to="/trash"
+  <!-- <NaviLink class="sb-link liu-hover" to="/trash"
     :class="{ 'sb-link_selected': state === 'trash' }"
     :tabindex="tabindex"
     @aftertap="onTapItem"
@@ -137,7 +137,7 @@ const color_selected = "var(--main-normal)"
       ></SvgIcon>
     </div>
     <span>{{ t("common.trash") }}</span>
-  </NaviLink>
+  </NaviLink> -->
 
   <div class="sb-virtual"></div>
 

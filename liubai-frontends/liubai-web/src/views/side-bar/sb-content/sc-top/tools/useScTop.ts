@@ -1,10 +1,12 @@
 import { storeToRefs } from "pinia";
-import { ref, watch } from "vue";
+import { inject, ref, watch } from "vue";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import type { MemberShow } from "~/types/types-content";
 import { membersToShows } from "~/utils/other/member-related";
+import { sidebarWidthKey } from "~/utils/provide-keys"
 
 export function useScTop() {
+  const sidebarWidthPx = inject(sidebarWidthKey, ref(300))
   const memberShow = ref<MemberShow | null>(null)
 
   const wStore = useWorkspaceStore()
@@ -21,6 +23,12 @@ export function useScTop() {
   watch(myMember, (newV) => {
     whenMemberChange()
   }, { deep: true })
+  if(myMember.value) {
+    whenMemberChange()
+  }
 
-  return { memberShow }
+  return {
+    memberShow,
+    sidebarWidthPx,
+  }
 }

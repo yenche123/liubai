@@ -1,4 +1,4 @@
-import { onActivated, onDeactivated, reactive, watch } from "vue";
+import { onActivated, onDeactivated, provide, reactive, toRef, watch } from "vue";
 import { useLayoutStore } from "../../useLayoutStore";
 import type { LayoutStore, LayoutType } from "../../useLayoutStore";
 import { useWindowSize } from "~/hooks/useVueUse";
@@ -8,6 +8,7 @@ import time from "~/utils/basic/time";
 import type { OpenType } from "~/types/types-view";
 import { storeToRefs } from "pinia";
 import liuApi from "~/utils/liu-api";
+import { sidebarWidthKey } from "~/utils/provide-keys"
 
 const LISTEN_DELAY = 300
 let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后视觉上呈现的宽度
@@ -49,6 +50,9 @@ export function useSidebar() {
     onSbMouseLeave,
   } = initMouse()
   
+  // 向子组件传递自身宽度
+  const sbWidthPx = toRef(sbData, "sidebarWidthPx")
+  provide(sidebarWidthKey, sbWidthPx)
 
   return {
     sbData,

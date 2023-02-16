@@ -8,6 +8,9 @@ import type { SvProvideInject, SvBottomUp } from "../components/common/scroll-vi
 export const viceViewWidthKey = Symbol() as InjectionKey<Ref<number>>
 export const mainViewWidthKey = Symbol() as InjectionKey<Ref<number>>
 
+// sidebar 内部向子组件传递自身宽度
+export const sidebarWidthKey = Symbol() as InjectionKey<Ref<number>>
+
 // 在 main-view 里面，就等于 mainViewWidthKey; 在 vice-view 里面就等于 viceViewWidthKey
 export const outterWidthKey = Symbol() as InjectionKey<Ref<number>>
 
