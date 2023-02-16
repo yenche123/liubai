@@ -12,6 +12,7 @@
     "connects": "Connection",
     "setting": "Setting",
     "search": "Search",
+    "notification": "Notification",
     "detail": "Detail",
     "title_ph": "Title",
     "desc_ph": "Write something ...",
@@ -205,6 +206,9 @@
     "delete_h1": "Delete the state [{name}]?",
     "delete_b1": "1. The operation cannot be undone\n2. Your posts under the state will not be deleted",
     "min_kanban": "It's better to keep 2 states"
+  },
+  "whatever": {
+    "sidebar_more": "Setting & Trash"
   },
   "err": {
     "no_data": "Nothing Here",

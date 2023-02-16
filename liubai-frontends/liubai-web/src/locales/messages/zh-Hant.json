@@ -12,6 +12,7 @@
     "connects": "連接",
     "setting": "設定",
     "search": " 搜尋",
+    "notification": "通知",
     "detail": "詳情",
     "title_ph": "標題",
     "desc_ph": "寫點東西...",
@@ -205,6 +206,9 @@
     "delete_h1": "確定删除狀態【{name}】嗎？",
     "delete_b1": "1. 該操作無法撤回\n2. 這不會删除該狀態下的動態",
     "min_kanban": "最好保留 2 個狀態會比較舒適"
+  },
+  "whatever": {
+    "sidebar_more": "設定、回收站"
   },
   "err": {
     "no_data": "這裡什麼都沒有",

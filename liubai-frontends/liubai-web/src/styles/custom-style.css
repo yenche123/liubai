@@ -140,4 +140,14 @@
     visibility: visible;
     opacity: 1;
   }
+
+  .liu-hover_first[aria-label]::after {
+    right: 100%;
+    transform: translateX(100%);
+  }
+
+  .liu-hover_last[aria-label]::after {
+    right: 0;
+    transform: translateX(0);
+  }
 }

@@ -12,6 +12,7 @@
     "connects": "连接",
     "setting": "设置",
     "search": "搜索",
+    "notification": "通知",
     "detail": "详情",
     "title_ph": "标题",
     "desc_ph": "写点东西...",
@@ -205,6 +206,9 @@
     "delete_h1": "确定删除状态【{name}】吗？",
     "delete_b1": "1. 该操作无法撤回\n2. 这不会删除该状态下的动态",
     "min_kanban": "最好保留 2 个状态比较合适"
+  },
+  "whatever": {
+    "sidebar_more": "设置、垃圾桶"
   },
   "err": {
     "no_data": "这里什么都没有",

@@ -2,7 +2,7 @@
   <style>
 		.setting { 
       fill: none; 
-      stroke-width: 4;
+      stroke-width: 4.8;
     } 
 	</style>
   <path class="setting" d="m34 41l10-17L34 7H14L4 24l10 17h20Z" stroke-linecap="round" stroke-linejoin="round" />

@@ -3,6 +3,7 @@
 import { useScTop } from './tools/useScTop';
 import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
 import { useI18n } from 'vue-i18n';
+import { ref, watch } from 'vue';
 
 const { t } = useI18n()
 
@@ -10,6 +11,31 @@ const {
   memberShow,
   sidebarWidthPx,
 } = useScTop()
+
+const boxWidth = ref("34px")
+const iconWidth = ref("24px")
+const showMore = ref(false)
+
+const whenSidebarWidthChange = (newV: number) => {
+  const oldShowMore = showMore.value
+  if(newV < 240 && !oldShowMore) showMore.value = true
+  else if(newV >= 240 && oldShowMore) showMore.value = false
+
+  if(newV < 320) {
+    boxWidth.value = "34px"
+    iconWidth.value = "24px"
+  }
+  else {
+    boxWidth.value = "40px"
+    iconWidth.value = "28px"
+  }
+}
+watch(sidebarWidthPx, (newV) => {
+  whenSidebarWidthChange(newV)
+})
+whenSidebarWidthChange(sidebarWidthPx.value)
+
+
 
 const iconColor = "var(--main-normal)"
 
@@ -31,33 +57,48 @@ const iconColor = "var(--main-normal)"
   <div class="sc-toolbar">
 
     <!-- 搜索 -->
-    <div class="liu-hover sct-box">
-      <svg-icon name="search" class="sct-icon"
+    <div class="liu-hover liu-hover_first sct-box"
+      :aria-label="t('common.search')"
+    >
+      <svg-icon name="search_700" class="sct-icon"
         :color="iconColor"
       ></svg-icon>
-      <div class="sctb-title">
-        <span>{{ t('common.search') }}</span>
-      </div>
+    </div>
+
+    <!-- 通知 -->
+    <div class="liu-hover sct-box"
+      :aria-label="t('common.notification')"
+    >
+      <svg-icon name="notification" class="sct-icon"
+        :color="iconColor"
+      ></svg-icon>
+    </div>
+
+    <!-- 更多 -->
+    <div class="liu-hover liu-hover_last sct-box" v-show="showMore"
+      :aria-label="t('whatever.sidebar_more')"
+    >
+      <svg-icon name="more" class="sct-icon"
+        :color="iconColor"
+      ></svg-icon>
     </div>
 
     <!-- 设置 -->
-    <div class="liu-hover sct-box">
+    <div class="liu-hover sct-box" v-show="!showMore"
+      :aria-label="t('common.setting')"
+    >
       <svg-icon name="setting" class="sct-icon"
         :color="iconColor"
       ></svg-icon>
-      <div class="sctb-title">
-        <span>{{ t('common.setting') }}</span>
-      </div>
     </div>
 
     <!-- 垃圾桶 -->
-    <div class="liu-hover sct-box">
-      <svg-icon name="delete_400" class="sct-icon"
+    <div class="liu-hover liu-hover_last sct-box" v-show="!showMore"
+      :aria-label="t('common.trash')"
+    >
+      <svg-icon name="delete_400" class="sct-icon sct-icon_big"
         :color="iconColor"
       ></svg-icon>
-      <div class="sctb-title">
-        <span>{{ t('common.trash') }}</span>
-      </div>
     </div>
 
   </div>
@@ -96,32 +137,29 @@ const iconColor = "var(--main-normal)"
 .sc-toolbar {
   padding-inline-start: 12px;
   width: 94%;
+  min-height: 40px;
   width: calc(95% - 12px);
-  margin-block-end: 24px;
+  margin-block-end: 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 
 
   .sct-box {
-    min-width: 40px;
-    height: 40px;
+    min-width: v-bind("boxWidth");
+    height: v-bind("boxWidth");
     display: flex;
     align-items: center;
     justify-content: center;
 
     .sct-icon {
-      width: 28px;
-      height: 28px;
-      margin-inline-start: v-bind("sidebarWidthPx > 430 ? '6px' : '0'");
+      width: v-bind("iconWidth");
+      height: v-bind("iconWidth");
       flex: none;
     }
 
-    .sctb-title {
-      padding-inline: 8px;
-      font-size: var(--btn-font);
-      color: var(--main-normal);
-      display: v-bind("sidebarWidthPx > 430 ? 'block' : 'none'");
+    .sct-icon_big {
+      transform: scale(1.05);
     }
   }
 
