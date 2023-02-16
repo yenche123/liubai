@@ -2,9 +2,8 @@
 import AppLink from '~/components/common/app-link/app-link.vue';
 import NaviLink from "~/components/common/navi-link/navi-link.vue";
 import ScTop from './sc-top/sc-top.vue';
-import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useSbContent } from './tools/useSbContent';
 
 const emits = defineEmits<{
   (event: "canclosepopup"): void
@@ -26,20 +25,11 @@ const tabindex = computed(() => {
   return -1
 })
 
-const { t } = useI18n()
-
-const { route } = useRouteAndLiuRouter()
-const state = computed(() => {
-  const n = route.name
-  const q = route.query
-  if(q.tags === "01") return "tags"
-  if(n === "index") return "index"
-  if(n === "favorite") return "favorite"
-  if(n === "state") return "state"
-  if(n === "trash") return "trash"
-  if(n === "connect") return "connect"
-  return ""
-})
+const {
+  t,
+  state,
+  prefix,
+} = useSbContent()
 
 const color = "var(--navi-normal)"
 const color_selected = "var(--main-normal)"
@@ -52,7 +42,8 @@ const color_selected = "var(--main-normal)"
 
   <!-- 首页 -->
   <NaviLink class="sb-link liu-hover" 
-    :class="{ 'sb-link_selected': state === 'index' }" to="/"
+    :class="{ 'sb-link_selected': state === 'index' }" 
+    :to="prefix"
     :tabindex="tabindex"
     @aftertap="onTapItem"
   >
@@ -67,7 +58,8 @@ const color_selected = "var(--main-normal)"
   
   <!-- 收藏 -->
   <NaviLink class="sb-link liu-hover" 
-    :class="{ 'sb-link_selected': state === 'favorite' }" to="/favorite"
+    :class="{ 'sb-link_selected': state === 'favorite' }" 
+    :to="prefix + 'favorite'"
     :tabindex="tabindex"
     @aftertap="onTapItem"
   >
@@ -81,7 +73,8 @@ const color_selected = "var(--main-normal)"
   </NaviLink>
 
   <!-- 标签 -->
-  <AppLink class="sb-link liu-hover" to="?tags=01"
+  <AppLink class="sb-link liu-hover" 
+    to="?tags=01"
     :class="{ 'sb-link_selected': state === 'tags' }"
     :tabindex="tabindex"
   >
@@ -95,7 +88,8 @@ const color_selected = "var(--main-normal)"
   </AppLink>
 
   <!-- 状态 -->
-  <NaviLink class="sb-link liu-hover" to="/state"
+  <NaviLink class="sb-link liu-hover" 
+    :to="prefix + 'state'"
     :class="{ 'sb-link_selected': state === 'state' }"
     :tabindex="tabindex"
     @aftertap="onTapItem"
@@ -110,7 +104,8 @@ const color_selected = "var(--main-normal)"
   </NaviLink>
 
   <!-- 连接 -->
-  <NaviLink class="sb-link liu-hover" to="/connect"
+  <NaviLink class="sb-link liu-hover" 
+    :to="prefix + 'connect'"
     :class="{ 'sb-link_selected': state === 'connect' }"
     :tabindex="tabindex"
     @aftertap="onTapItem"
@@ -123,21 +118,6 @@ const color_selected = "var(--main-normal)"
     </div>
     <span>{{ t("common.connects") }}</span>
   </NaviLink>
-
-  <!-- 回收桶 -->
-  <!-- <NaviLink class="sb-link liu-hover" to="/trash"
-    :class="{ 'sb-link_selected': state === 'trash' }"
-    :tabindex="tabindex"
-    @aftertap="onTapItem"
-  >
-    <div class="sb-icon-container">
-      <SvgIcon class="sb-icon" 
-        :name="state === 'trash' ? 'delete_selected' : 'delete'" 
-        :color="state === 'trash' ? color_selected : color"
-      ></SvgIcon>
-    </div>
-    <span>{{ t("common.trash") }}</span>
-  </NaviLink> -->
 
   <div class="sb-virtual"></div>
 
