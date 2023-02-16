@@ -64,7 +64,7 @@ const iconColor = "var(--main-normal)"
     <div class="liu-hover liu-hover_first sct-box"
       :aria-label="t('common.search')"
     >
-      <svg-icon name="search_700" class="sct-icon"
+      <svg-icon name="search" class="sct-icon"
         :color="iconColor"
       ></svg-icon>
     </div>
