@@ -1,5 +1,6 @@
 import { RouteRecordRaw, createRouter, createWebHistory } from "vue-router"
 
+const LeftSidebar = () => import("../views/side-bar/side-bar.vue")
 const HomePage = () => import("../pages/level1/home-page/home-page.vue")
 const LoginPage = () => import("../pages/level1/login-page/login-page.vue")
 const IndexPage = () => import("../pages/level1/index-page/index-page.vue")
@@ -10,7 +11,9 @@ const TrashPage = () => import("../pages/level2/trash-page/trash-page.vue")
 const TagPage = () => import("../pages/level2/tag-page/tag-page.vue")
 const ConnectPage = () => import("../pages/level2/connect-page/connect-page.vue")
 const EditPage = () => import("../pages/level2/edit-page/edit-page.vue")
-const LeftSidebar = () => import("../views/side-bar/side-bar.vue")
+const SettingPage = () => import("../pages/level3/setting-page/setting-page.vue")
+const NotificationPage = () => import("../pages/level3/notification-page/notification-page.vue")
+
 
 // 扩展 vue-router 下的 RouteMeta 接口
 // inApp 为 false 表示不在应用内（可能在落地页 / share 分享内等等）
@@ -134,6 +137,28 @@ const routes: Array<RouteRecordRaw> = [
       keepAlive: true,
     }
   },
+  {
+    path: "/setting",
+    components: {
+      default: SettingPage,
+      LeftSidebar,
+    },
+    name: "setting",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
+    path: "/notification",
+    components: {
+      default: NotificationPage,
+      LeftSidebar,
+    },
+    name: "notification",
+    meta: {
+      keepAlive: true,
+    }
+  },
   /************************** 协作工作区 ***********************/
   {
     path: "/w/:workspaceId(\\w{10,})",
@@ -197,6 +222,28 @@ const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-connect",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/setting",
+    components: {
+      default: SettingPage,
+      LeftSidebar,
+    },
+    name: "collaborative-setting",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/notification",
+    components: {
+      default: NotificationPage,
+      LeftSidebar,
+    },
+    name: "collaborative-notification",
     meta: {
       keepAlive: true,
     }
