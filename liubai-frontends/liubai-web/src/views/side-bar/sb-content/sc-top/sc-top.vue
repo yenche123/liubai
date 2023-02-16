@@ -12,17 +12,21 @@ const {
   sidebarWidthPx,
 } = useScTop()
 
-const boxWidth = ref("34px")
+const boxWidth = ref("36px")
 const iconWidth = ref("24px")
 const showMore = ref(false)
+const toolWidth = ref("calc(96% - 12px)")
 
 const whenSidebarWidthChange = (newV: number) => {
   const oldShowMore = showMore.value
   if(newV < 240 && !oldShowMore) showMore.value = true
   else if(newV >= 240 && oldShowMore) showMore.value = false
 
+  if(newV < 450) toolWidth.value = "calc(96% - 12px)"
+  else toolWidth.value = "calc(66% - 12px)"
+
   if(newV < 320) {
-    boxWidth.value = "34px"
+    boxWidth.value = "36px"
     iconWidth.value = "24px"
   }
   else {
@@ -137,9 +141,9 @@ const iconColor = "var(--main-normal)"
 .sc-toolbar {
   padding-inline-start: 12px;
   width: 94%;
-  min-height: 40px;
-  width: calc(95% - 12px);
+  width: v-bind("toolWidth");
   margin-block-end: 30px;
+  min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
