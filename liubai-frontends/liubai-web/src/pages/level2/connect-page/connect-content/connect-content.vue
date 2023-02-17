@@ -27,6 +27,7 @@
   width: 100px;
   height: 100px;
   margin-bottom: 100px;
+  user-select: none;
 }
 
 .cc-text {
@@ -34,6 +35,11 @@
   line-height: 1.9;
   padding-block-end: 100px;
   color: var(--main-text);
+}
+
+.cc-text span::selection {
+  color: var(--on-primary);
+  background-color: var(--primary-active);
 }
 
 </style>
