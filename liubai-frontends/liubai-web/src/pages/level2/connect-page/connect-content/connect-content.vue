@@ -33,6 +33,7 @@
   text-align: center;
   line-height: 1.9;
   padding-block-end: 100px;
+  color: var(--main-text);
 }
 
 </style>
