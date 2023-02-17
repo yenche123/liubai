@@ -9,7 +9,7 @@ const emits = defineEmits<{
   (event: "canclosepopup"): void
 }>()
 
-const onTapItem = () => {
+const toClosePopup = () => {
   emits("canclosepopup")
 }
 
@@ -38,14 +38,16 @@ const color_selected = "var(--main-normal)"
 <template>
   
   <!-- 顶部区域 -->
-  <ScTop></ScTop>
+  <ScTop
+    @canclosepopup="toClosePopup"
+  ></ScTop>
 
   <!-- 首页 -->
   <NaviLink class="sb-link liu-hover" 
     :class="{ 'sb-link_selected': state === 'index' }" 
     :to="prefix"
     :tabindex="tabindex"
-    @aftertap="onTapItem"
+    @aftertap="toClosePopup"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -61,7 +63,7 @@ const color_selected = "var(--main-normal)"
     :class="{ 'sb-link_selected': state === 'favorite' }" 
     :to="prefix + 'favorite'"
     :tabindex="tabindex"
-    @aftertap="onTapItem"
+    @aftertap="toClosePopup"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -92,7 +94,7 @@ const color_selected = "var(--main-normal)"
     :to="prefix + 'state'"
     :class="{ 'sb-link_selected': state === 'state' }"
     :tabindex="tabindex"
-    @aftertap="onTapItem"
+    @aftertap="toClosePopup"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 
@@ -108,7 +110,7 @@ const color_selected = "var(--main-normal)"
     :to="prefix + 'connect'"
     :class="{ 'sb-link_selected': state === 'connect' }"
     :tabindex="tabindex"
-    @aftertap="onTapItem"
+    @aftertap="toClosePopup"
   >
     <div class="sb-icon-container">
       <SvgIcon class="sb-icon" 

@@ -21,6 +21,7 @@ declare module 'vue-router' {
   interface RouteMeta {
     keepAlive?: boolean
     inApp?: boolean
+    inSetting?: boolean     // 是否处于 setting 的子页中，默认为 false
 
     // 在 init-space.ts 中，是否要检查 workspace 的变化
     // 默认为 true 代表会检查
@@ -146,6 +147,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "setting",
     meta: {
       keepAlive: true,
+      inSetting: true,
     }
   },
   {
@@ -235,6 +237,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "collaborative-setting",
     meta: {
       keepAlive: true,
+      inSetting: true,
     }
   },
   {

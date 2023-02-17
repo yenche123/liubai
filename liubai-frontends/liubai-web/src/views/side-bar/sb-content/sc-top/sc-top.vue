@@ -1,44 +1,37 @@
 <script setup lang="ts">
 // 侧边栏顶部区域
 import { useScTop } from './tools/useScTop';
+import { useSctLayout } from "./tools/useSctLayout";
 import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
+import NaviLink from "~/components/common/navi-link/navi-link.vue";
 import { useI18n } from 'vue-i18n';
-import { ref, watch } from 'vue';
+import { useSctRoute } from './tools/useSctRoute';
 
 const { t } = useI18n()
 
+const emits = defineEmits<{
+  (event: "canclosepopup"): void
+}>()
+
+const onTapItem = () => {
+  emits("canclosepopup")
+}
+
 const {
+  prefix,
   memberShow,
-  sidebarWidthPx,
 } = useScTop()
 
-const boxWidth = ref("36px")
-const iconWidth = ref("24px")
-const showMore = ref(false)
-const toolWidth = ref("calc(96% - 12px)")
+const {
+  boxWidth,
+  iconWidth,
+  showMore,
+  toolWidth,
+} = useSctLayout()
 
-const whenSidebarWidthChange = (newV: number) => {
-  const oldShowMore = showMore.value
-  if(newV < 240 && !oldShowMore) showMore.value = true
-  else if(newV >= 240 && oldShowMore) showMore.value = false
-
-  if(newV < 450) toolWidth.value = "calc(96% - 12px)"
-  else toolWidth.value = "calc(66% - 12px)"
-
-  if(newV < 320) {
-    boxWidth.value = "36px"
-    iconWidth.value = "24px"
-  }
-  else {
-    boxWidth.value = "40px"
-    iconWidth.value = "28px"
-  }
-}
-watch(sidebarWidthPx, (newV) => {
-  whenSidebarWidthChange(newV)
-})
-whenSidebarWidthChange(sidebarWidthPx.value)
-
+const {
+  sctIndicator
+} = useSctRoute()
 
 
 const iconColor = "var(--main-normal)"
@@ -70,16 +63,21 @@ const iconColor = "var(--main-normal)"
     </div>
 
     <!-- 通知 -->
-    <div class="liu-hover sct-box"
-      :aria-label="t('common.notification')"
+    <NaviLink 
+      @aftertap="onTapItem"
+      :to="prefix + 'notification'"
     >
-      <svg-icon name="notification" class="sct-icon"
-        :color="iconColor"
-      ></svg-icon>
-    </div>
+      <div class="liu-hover sct-box" :aria-label="t('common.notification')"
+        :class="{'sc-selected': sctIndicator === 'notification'}"
+      >
+        <svg-icon name="notification" class="sct-icon"
+          :color="iconColor"
+        ></svg-icon>
+      </div>
+    </NaviLink>
 
     <!-- 更多 -->
-    <div class="liu-hover liu-hover_last sct-box" v-show="showMore"
+    <div class="liu-hover liu-hover_last sct-box" v-if="showMore"
       :aria-label="t('whatever.sidebar_more')"
     >
       <svg-icon name="more" class="sct-icon"
@@ -88,22 +86,35 @@ const iconColor = "var(--main-normal)"
     </div>
 
     <!-- 设置 -->
-    <div class="liu-hover sct-box" v-show="!showMore"
-      :aria-label="t('common.setting')"
+    <NaviLink 
+      v-if="!showMore"
+      @aftertap="onTapItem"
+      :to="prefix + 'setting'"
     >
-      <svg-icon name="setting" class="sct-icon"
-        :color="iconColor"
-      ></svg-icon>
-    </div>
+      <div class="liu-hover sct-box" :aria-label="t('common.setting')"
+        :class="{'sc-selected': sctIndicator === 'setting'}"
+      >
+        <svg-icon name="setting" class="sct-icon"
+          :color="iconColor"
+        ></svg-icon>
+      </div>
+    </NaviLink>
 
     <!-- 垃圾桶 -->
-    <div class="liu-hover liu-hover_last sct-box" v-show="!showMore"
-      :aria-label="t('common.trash')"
+    <NaviLink 
+      v-if="!showMore"
+      @aftertap="onTapItem"
+      :to="prefix + 'trash'"
     >
-      <svg-icon name="delete_400" class="sct-icon sct-icon_big"
-        :color="iconColor"
-      ></svg-icon>
-    </div>
+      <div class="liu-hover liu-hover_last sct-box"
+        :aria-label="t('common.trash')"
+        :class="{'sc-selected': sctIndicator === 'trash'}"
+      >
+        <svg-icon name="delete_400" class="sct-icon sct-icon_big"
+          :color="iconColor"
+        ></svg-icon>
+      </div>
+    </NaviLink>
 
   </div>
 
@@ -156,6 +167,10 @@ const iconColor = "var(--main-normal)"
     align-items: center;
     justify-content: center;
 
+    &::before {
+      transition: .25s;
+    }
+
     .sct-icon {
       width: v-bind("iconWidth");
       height: v-bind("iconWidth");
@@ -166,7 +181,10 @@ const iconColor = "var(--main-normal)"
       transform: scale(1.05);
     }
   }
+}
 
+.sc-selected::before {
+  opacity: .11;
 }
 
 

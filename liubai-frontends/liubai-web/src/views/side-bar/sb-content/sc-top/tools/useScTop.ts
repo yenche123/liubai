@@ -1,16 +1,14 @@
 import { storeToRefs } from "pinia";
-import { inject, ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import type { MemberShow } from "~/types/types-content";
 import { membersToShows } from "~/utils/other/member-related";
-import { sidebarWidthKey } from "~/utils/provide-keys"
 
 export function useScTop() {
-  const sidebarWidthPx = inject(sidebarWidthKey, ref(300))
   const memberShow = ref<MemberShow | null>(null)
 
   const wStore = useWorkspaceStore()
-  const { myMember } = storeToRefs(wStore)
+  const { myMember, isCollaborative, spaceId } = storeToRefs(wStore)
 
   const whenMemberChange = () => {
     const m = myMember.value
@@ -27,8 +25,14 @@ export function useScTop() {
     whenMemberChange()
   }
 
+  const prefix = computed(() => {
+    const isCo = isCollaborative.value
+    if(isCo) return `/w/${spaceId.value}/`
+    return `/`
+  })
+
   return {
+    prefix,
     memberShow,
-    sidebarWidthPx,
   }
 }
