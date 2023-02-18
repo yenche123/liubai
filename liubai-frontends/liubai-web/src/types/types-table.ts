@@ -65,6 +65,8 @@ export interface ContentLocalTable extends BaseLocalTable {
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
   stateId?: string
   config?: ContentConfig
+  search_title?: string
+  search_other?: string
 }
 
 export interface DraftLocalTable extends BaseLocalTable {
