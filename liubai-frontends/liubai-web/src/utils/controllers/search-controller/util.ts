@@ -69,6 +69,7 @@ function _getTitleAndDesc(v: ContentLocalTable, keyword?: string) {
   return { title, desc }
 }
 
+// 获取关键词所在的那一句
 function _getHighlight(text: string, keyword?: string) {
   let lowerText = text.toLowerCase()
   if(keyword) {
@@ -81,9 +82,7 @@ function _getHighlight(text: string, keyword?: string) {
   }
 
   // 向后 trim
-  if(text.length > 40) {
-    text = _trimBackward(text, 0)
-  }
+  text = _trimBackward(text, keyword)
   
   text = text.replace(/\n/g, " ")
   text = text.trim()
@@ -91,13 +90,48 @@ function _getHighlight(text: string, keyword?: string) {
   return text
 }
 
+
+
+const POINTS = ["\n", ",", ".", "，", "。", ";", "；"]
+
 function _trimForward(text: string, end: number) {
+  for(let i = end-1; i >= 0; i--) {
+    const char = text[i]
+    if(!POINTS.includes(char)) continue
+
+    text = text.substring(i + 1)
+    text = text.trimStart()
+
+    break
+  }
 
   
   return text
 }
 
-function _trimBackward(text: string, start: number) {
+function _trimBackward(text: string, keyword?: string) {
+  if(text.length < 20) {
+    return text
+  }
+
+  let start = 10
+  if(keyword) {
+    let idx = text.toLowerCase().indexOf(keyword)
+    if(idx >= 0) {
+      start = idx + keyword.length
+    }
+  }
+
+  for(let i=start; i<text.length; i++) {
+    const char = text[i]
+    if(!POINTS.includes(char)) continue
+
+    text = text.substring(0, i)
+    text = text.trimEnd()
+
+    break
+  }
+
 
   return text
 }
