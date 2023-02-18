@@ -32,6 +32,7 @@ function packLiuDesc(
 
 /**
  * 生成 summary 字段，用于看板的卡片以及搜索结果的文字
+ * 不包含 title
  */
 function getSummary(
   content: LiuContent[] | undefined,
