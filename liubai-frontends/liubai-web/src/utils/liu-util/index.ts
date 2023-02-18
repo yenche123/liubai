@@ -35,7 +35,11 @@ import {
   toWhatDetail,
   colorToShow,
   colorToStorage,
+  canKeyUpDown,
 } from "./custom-util"
+import {
+  isChildElementVisible
+} from "./element-util"
 
 export default {
   getEnv,
@@ -69,4 +73,6 @@ export default {
   colorToStorage,
   openDetailWithViceView,
   openDetailWithDetailPage,
+  canKeyUpDown,
+  isChildElementVisible,
 }

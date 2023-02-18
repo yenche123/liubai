@@ -1,5 +1,6 @@
 import { nextTick, toRef, watch } from "vue";
-import { TagItem } from "../../tools/types";
+import liuUtil from "~/utils/liu-util";
+import type { TagItem } from "../../tools/types";
 
 interface HtlProps {
   list: TagItem[]
@@ -15,26 +16,10 @@ export function useHashtagList(props: HtlProps) {
     await nextTick()
     const el = document.querySelector(".ht-item_selected")
     if(!el) return
-    if(isContain(el)) return
+    const parent = document.querySelector(".ht-list")
+    if(!parent) return
+    if(liuUtil.isChildElementVisible(parent, el)) return
     let alignToTop = newV > oldV ? false : true
     el.scrollIntoView(alignToTop)
   })
-}
-
-function isContain(child: Element) {
-  const box = document.querySelector(".ht-list")
-  if(!box) return true
-  const boxInfo = box.getBoundingClientRect()
-  const childInfo = child.getBoundingClientRect()
-  const minY = boxInfo.y
-  const maxY = minY + boxInfo.height
-  const top = childInfo.top
-  const top2 = top + childInfo.height
-  // console.log("minY: ", minY)
-  // console.log("maxY: ", maxY)
-  // console.log("y: ", top)
-  // console.log(" ")
-  if(top < (minY - 1) || top >= (maxY - 5)) return false
-  if(top2 >= (maxY + 10)) return false
-  return true
 }

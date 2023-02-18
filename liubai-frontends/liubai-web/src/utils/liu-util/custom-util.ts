@@ -3,6 +3,7 @@ import type { WhatDetail } from "~/types/other/types-custom"
 import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
+import time from "../basic/time"
 
 interface RrOpt {
   rr: RouteAndLiuRouter
@@ -45,4 +46,14 @@ export function colorToStorage(val: string) {
     return val.substring(4, val.length - 1)
   }
   return val
+}
+
+/***** 一些防抖节流相关的函数 */
+let lastKeyUpDown = 0
+export function canKeyUpDown() {
+  const now = time.getTime()
+  const diff = now - lastKeyUpDown
+  if(diff < 20) return false
+  lastKeyUpDown = now
+  return true
 }

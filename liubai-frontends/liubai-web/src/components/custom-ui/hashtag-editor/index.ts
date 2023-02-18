@@ -11,11 +11,11 @@ import type {
 } from "~/types/other/types-hashtag"
 import { searchLocal } from "./tools/handle"
 import { formatTagText, findTagId } from "~/utils/system/workspace"
-import time from "~/utils/basic/time"
 import liuApi from "~/utils/liu-api"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
+import liuUtil from "~/utils/liu-util"
 
 // 使用 element.scrollIntoView 让元素露出来 
 
@@ -288,7 +288,7 @@ function _whenKeyDown(e: KeyboardEvent) {
 
   e.preventDefault()
 
-  if(!canKeyUpDown()) return
+  if(!liuUtil.canKeyUpDown()) return
   
   let diff = key === "ArrowDown" ? 1 : -1
   let tmpIdx = selectedIndex.value + diff
@@ -308,16 +308,6 @@ function _whenKeyUp(e: KeyboardEvent) {
     onTapConfirm()
     return
   }
-}
-
-
-let lastKeyUpDown = 0
-function canKeyUpDown() {
-  const now = time.getTime()
-  const diff = now - lastKeyUpDown
-  if(diff < 20) return false
-  lastKeyUpDown = now
-  return true
 }
 
 
