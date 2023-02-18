@@ -1,4 +1,13 @@
 <script setup lang="ts">
+import { initSearchEditor } from "./index"
+
+const {
+  TRANSITION_DURATION,
+  inputEl,
+  enable,
+  show,
+  seData,
+} = initSearchEditor()
 
 
 </script>
@@ -6,4 +15,7 @@
 
 
 </template>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+
+
+</style>
