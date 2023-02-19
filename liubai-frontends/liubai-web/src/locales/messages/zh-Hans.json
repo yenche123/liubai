@@ -210,6 +210,15 @@
     "delete_b1": "1. 该操作无法撤回\n2. 这不会删除该状态下的动态",
     "min_kanban": "最好保留 2 个状态比较合适"
   },
+  "search_related": {
+    "suggest": "建议",
+    "recent": "最近",
+    "results": "搜索结果",
+    "third_party": "第三方",
+    "bing_search": "问 Bing",
+    "xhs_search": "打开小红书",
+    "github_search": "Github 搜索"
+  },
   "whatever": {
     "sidebar_more": "设置、垃圾桶"
   },

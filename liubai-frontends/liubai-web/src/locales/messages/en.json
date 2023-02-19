@@ -210,6 +210,15 @@
     "delete_b1": "1. The operation cannot be undone\n2. Your posts under the state will not be deleted",
     "min_kanban": "It's better to keep 2 states"
   },
+  "search_related": {
+    "suggest": "Suggestion",
+    "recent": "Recently",
+    "results": "Results",
+    "third_party": "Third Party",
+    "bing_search": "Ask Bing",
+    "xhs_search": "Open xhs",
+    "github_search": "Github Search"
+  },
   "whatever": {
     "sidebar_more": "Setting & Trash"
   },
