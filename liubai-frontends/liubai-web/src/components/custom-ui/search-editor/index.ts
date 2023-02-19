@@ -277,14 +277,12 @@ function toCancel() {
 }
 
 function toConfirm() {
-
   let res = getConfirmRes()
   if(!res) return
 
   if(inputEl.value) inputEl.value.blur()
-  
-  
-
+  toResolve(res)
+  closeIt()
 }
 
 function getConfirmRes() {

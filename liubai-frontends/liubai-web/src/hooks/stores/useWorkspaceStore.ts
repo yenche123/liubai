@@ -5,7 +5,7 @@ import type { TagView, LiuStateConfig } from "~/types/types-atom";
 import type { MemberLocalTable, WorkspaceLocalTable } from "~/types/types-table";
 import { db } from "~/utils/db";
 import type { SpaceType } from "~/types/types-basic"
-
+import type { MemberConfig } from "~/types/other/types-custom";
 
 export interface SpaceAndMemberOpt {
   spaceId: string
@@ -78,6 +78,19 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
     return true
   }
 
+  // 设置 member 的 conifg
+  const setMemberConfig = async (memberCfg: MemberConfig) => {
+    const memberVal = myMember.value
+    if(!memberVal) return
+    memberVal.config = memberCfg
+    const copyData = valTool.copyObject(memberCfg)
+    const res = await db.members.update(memberVal._id, { config: copyData })
+    console.log("setMemberConfig res: ")
+    console.log(res)
+    console.log(" ")
+    return true
+  }
+
   // 设置 状态 配置
   const setStateConfig = async (stateConfig?: LiuStateConfig) => {
     const spaceVal = currentSpace.value
@@ -106,6 +119,7 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
     setSpaceAndMember,
     setNickName,
     setTagList,
+    setMemberConfig,
     setStateConfig,
     setMySpaceIds,
   }

@@ -4,7 +4,7 @@ import type { LiuContent, LiuRemindMe, TagView, LiuStateConfig } from "./types-a
 import type { LiuFileStore, LiuImageStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
 import type { EmojiData } from "./types-content"
-import type { ContentConfig } from "./other/types-custom"
+import type { ContentConfig, MemberConfig } from "./other/types-custom"
 
 interface BaseLocalTable {
   _id: string
@@ -35,6 +35,7 @@ export interface MemberLocalTable extends BaseLocalTable {
   spaceId: string
   user?: string
   oState: MemberState
+  config?: MemberConfig
 }
 
 export interface ContentLocalTable extends BaseLocalTable {

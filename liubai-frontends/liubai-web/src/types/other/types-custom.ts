@@ -18,3 +18,7 @@ export interface SearchItem {
   innerLink?: string   // 可以直接 router.push()
   outterLink?: string  // 外部链接
 }
+
+export interface MemberConfig {
+  searchKeywords: string[]
+}
