@@ -152,7 +152,7 @@ const onTapItem = () => {
 }
 
 .si-container::before {
-  transition: .1s;
+  transition: 80ms;
   position: absolute;
   content: "";
   top: 0;
