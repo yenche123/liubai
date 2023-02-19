@@ -1,6 +1,6 @@
 import type { TagItem } from "./types"
 import type { TagView } from "~/types/types-atom"
-import { getCurrentSpaceTagList } from "~/utils/system/workspace"
+import { getCurrentSpaceTagList } from "~/utils/system/tag-related"
 import liuApi from "~/utils/liu-api"
 
 /**

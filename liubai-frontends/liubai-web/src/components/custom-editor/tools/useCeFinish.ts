@@ -13,7 +13,7 @@ import localReq from "./req/local-req";
 import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { storeToRefs } from "pinia";
 import { equipThreads } from "~/utils/controllers/equip-content/equip-content";
-import { getTagIdsParents } from "~/utils/system/workspace";
+import { getTagIdsParents } from "~/utils/system/tag-related";
 import type { SpaceType } from "~/types/types-basic";
 
 // 本文件处理发表的逻辑

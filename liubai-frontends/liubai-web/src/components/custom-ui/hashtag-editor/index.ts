@@ -10,7 +10,7 @@ import type {
   HashTagEditorRes, 
 } from "~/types/other/types-hashtag"
 import { searchLocal } from "./tools/handle"
-import { formatTagText, findTagId } from "~/utils/system/workspace"
+import { formatTagText, findTagId } from "~/utils/system/tag-related"
 import liuApi from "~/utils/liu-api"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"

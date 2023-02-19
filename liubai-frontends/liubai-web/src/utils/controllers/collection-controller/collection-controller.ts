@@ -6,7 +6,7 @@ import { getMemberShows } from "../equip-content/equip-content"
 import type { TagShow, ThreadShow, StateShow } from "~/types/types-content";
 import imgHelper from "../../images/img-helper"
 import type { TipTapJSONContent } from "~/types/types-editor";
-import { tagIdsToShows } from "../../system/workspace";
+import { tagIdsToShows } from "../../system/tag-related";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import liuUtil from "../../liu-util"
 import commonPack from "../tools/common-pack"

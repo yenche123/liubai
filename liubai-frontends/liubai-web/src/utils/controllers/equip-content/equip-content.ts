@@ -8,7 +8,7 @@ import imgHelper from "../../images/img-helper";
 import localCache from "../../system/local-cache";
 import type { TipTapJSONContent } from "~/types/types-editor";
 import liuUtil from "../../liu-util";
-import { tagIdsToShows } from "../../system/workspace";
+import { tagIdsToShows } from "../../system/tag-related";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import commonPack from "../tools/common-pack";
 import { membersToShows } from "../../other/member-related"

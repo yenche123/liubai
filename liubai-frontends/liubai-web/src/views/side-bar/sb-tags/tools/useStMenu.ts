@@ -10,13 +10,13 @@ import {
   mergeTag, 
   deleteTag,
   editTagIcon,
-} from "~/utils/system/workspace"
+} from "~/utils/system/tag-related"
 import type { Stat } from "./useSbTags"
 import type { Ref } from "vue"
 import { i18n } from "~/locales"
 import type { T_i18n } from "~/locales"
-import { RenameTagParam } from "~/utils/system/workspace/tools/types"
-import { getTagViewLevel } from "~/utils/system/workspace/tools/tag-util"
+import { RenameTagParam } from "~/utils/system/tag-related/tools/types"
+import { getTagViewLevel } from "~/utils/system/tag-related/tools/tag-util"
 import time from "~/utils/basic/time"
 
 export interface StmCtx {

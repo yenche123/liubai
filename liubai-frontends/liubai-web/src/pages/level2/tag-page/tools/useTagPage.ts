@@ -2,7 +2,7 @@ import { ref, watch } from "vue";
 import type { Ref } from "vue";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
-import { tagIdsToShows } from "~/utils/system/workspace";
+import { tagIdsToShows } from "~/utils/system/tag-related";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
