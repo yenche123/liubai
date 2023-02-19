@@ -2,6 +2,7 @@
 import { initSearchEditor } from "./index"
 import SearchResults from "./search-results/search-results.vue";
 import { useI18n } from "vue-i18n";
+import liuUtil from "~/utils/liu-util";
 
 const {
   TRANSITION_DURATION: tranMs,
@@ -45,7 +46,7 @@ const { t } = useI18n()
             <span>{{ t('tip.to_navigate') }}</span>
           </div>
           <div class="seff-part">
-            <span class="se-bold">Enter</span>
+            <span class="se-bold">{{ liuUtil.getHelpTip('Enter') }}</span>
             <span>{{ t('tip.to_open') }}</span>
           </div>
         </div>

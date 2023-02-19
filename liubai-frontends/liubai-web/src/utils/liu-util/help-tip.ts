@@ -4,6 +4,7 @@ import liuApi from "../liu-api"
 const MAC_MAPS = {
   "Mod_Enter": "⌘ + ↵",
   "Mod_P": "⌘ + P",
+  "Enter": "↵",
 }
 
 type HelpMap = typeof MAC_MAPS
@@ -11,6 +12,7 @@ type HelpMap = typeof MAC_MAPS
 const WIN_MAPS: HelpMap = {
   "Mod_Enter": "Ctrl + Enter",
   "Mod_P": "Ctrl + P",
+  "Enter": "Enter",
 }
 
 export const getHelpTip = (key: keyof HelpMap): string => {
