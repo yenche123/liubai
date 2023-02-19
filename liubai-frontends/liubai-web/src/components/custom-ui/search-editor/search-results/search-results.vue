@@ -144,6 +144,7 @@ const { t } = useI18n()
   font-size: var(--mini-font);
   margin-inline-start: 10px;
   margin-block-end: 6px;
+  user-select: none;
 }
 
 

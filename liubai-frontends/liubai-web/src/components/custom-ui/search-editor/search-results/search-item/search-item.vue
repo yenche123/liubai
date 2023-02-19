@@ -201,8 +201,7 @@ const onTapItem = () => {
 }
 
 .si-main {
-  flex: 1;
-  padding-inline-end: 8px;
+  width: calc(100% - 68px);
   min-height: 48px;
   display: flex;
   flex-direction: column;
