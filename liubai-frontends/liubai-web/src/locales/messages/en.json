@@ -165,7 +165,10 @@
     "its_right_here": "It's right here!",
     "refreshed": "Refreshed",
     "fail_to_operate": "Fail to operate",
-    "try_again_later": "Please try again later"
+    "try_again_later": "Please try again later",
+    "to_leave": " to leave",
+    "to_navigate": " to navigate",
+    "to_open": " to confirm"
   },
   "card_bubble": {
     "copy": "Copy",

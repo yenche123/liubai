@@ -165,7 +165,10 @@
     "its_right_here": "就在這裡！",
     "refreshed": "已刷新",
     "fail_to_operate": "操作失敗",
-    "try_again_later": "請稍後再試"
+    "try_again_later": "請稍後再試",
+    "to_leave": " 退出",
+    "to_navigate": " 切換",
+    "to_open": " 確認"
   },
   "card_bubble": {
     "copy": "複製",

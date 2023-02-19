@@ -4,6 +4,7 @@ import PreviewImage from "./preview-image/preview-image.vue";
 import HashtagEditor from "./hashtag-editor/hashtag-editor.vue";
 import SnackBar from "./snack-bar/snack-bar.vue";
 import ActionSheet from "./action-sheet/action-sheet.vue";
+import SearchEditor from "./search-editor/search-editor.vue";
 import StateSelector from "./state-selector/state-selector.vue";
 import StateEditor from "./state-editor/state-editor.vue";
 import { initModal } from "./modal"
@@ -158,6 +159,9 @@ const {
 
   <!-- snack-bar -->
   <SnackBar></SnackBar>
+
+  <!-- 搜索 -->
+  <SearchEditor></SearchEditor>
 
   <!-- 状态选择组件 -->
   <StateSelector></StateSelector>

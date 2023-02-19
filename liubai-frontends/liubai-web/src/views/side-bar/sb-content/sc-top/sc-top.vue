@@ -6,6 +6,7 @@ import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
 import NaviLink from "~/components/common/navi-link/navi-link.vue";
 import { useI18n } from 'vue-i18n';
 import { useSctRoute } from './tools/useSctRoute';
+import cui from '~/components/custom-ui';
 
 const { t } = useI18n()
 
@@ -34,6 +35,11 @@ const {
 } = useSctRoute()
 
 
+const onTapSearch = () => {
+  cui.showSearchEditor({ type: "search" })
+}
+
+
 const iconColor = "var(--main-normal)"
 
 </script>
@@ -55,6 +61,7 @@ const iconColor = "var(--main-normal)"
 
     <!-- 搜索 -->
     <div class="liu-hover liu-hover_first sct-box"
+      @click="onTapSearch"
       :aria-label="t('common.search')"
     >
       <svg-icon name="search" class="sct-icon"

@@ -7,6 +7,7 @@ import { previewImage } from "./preview-image"
 import { showHashTagEditor } from "./hashtag-editor"
 import { showSnackBar } from "./snack-bar"
 import { showActionSheet } from "./action-sheet"
+import { showSearchEditor } from "./search-editor"
 import { showStateSelector } from "./state-selector"
 import { showStateEditor } from "./state-editor"
 
@@ -20,6 +21,7 @@ export default {
   showHashTagEditor,
   showSnackBar,
   showActionSheet,
+  showSearchEditor,
   showStateSelector,
   showStateEditor,
 }
