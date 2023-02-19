@@ -277,7 +277,7 @@ const onMouseEnterItem = (index: number) => {
           left: 0;
           width: 100%;
           height: 100%;
-          background-color: var(--bg-color);
+          background-color: var(--card-bg);
           opacity: .6;
         }
       }

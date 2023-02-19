@@ -16,6 +16,8 @@ import time from "~/utils/basic/time";
 import searchController from "~/utils/controllers/search-controller";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
+import liuUtil from "~/utils/liu-util";
+import { handleKeyDown } from "./tools/handle"
 
 const TRANSITION_DURATION = 150
 const enable = ref(false)
@@ -76,8 +78,12 @@ function initProvideData() {
   provide(searchFuncsKey, provideData)
 }
 
-function onTapItem(listType: SearchListType, atomId: string) {
-  console.log("onTapItem........")
+async function onTapItem(listType: SearchListType, atomId: string) {
+  if(seData.indicator !== atomId) {
+    seData.indicator = atomId
+    await valTool.waitMilli(90)
+  }
+  toConfirm()
 }
 
 function onMouseEnter(newIndicator: string) {
@@ -136,13 +142,21 @@ function listenInputChange() {
   }
 
   const toSearch = async () => {
-    let txt = seData.trimTxt
-    if(!txt) return
+    let text = seData.trimTxt
+    if(!text) return
 
-    seData.thirdList = searchController.searchThird(txt)
+    // 1. 先弹出 third 列表
+    let opt1 = {
+      text,
+      mode: seData.mode,
+      excludeThreads: seData.excludeThreads,
+    }
+    seData.thirdList = searchController.searchThird(opt1)
 
-    console.log("去查询 innerList........")
+    // 2. 搜索结果
 
+
+    // 3. 设置当前的 indicator
     toSetIndicator()
   }
 
@@ -262,19 +276,70 @@ function toCancel() {
   closeIt()
 }
 
+function toConfirm() {
+
+  let res = getConfirmRes()
+  if(!res) return
+
+  if(inputEl.value) inputEl.value.blur()
+  
+  
+
+}
+
+function getConfirmRes() {
+  let res: SearchEditorRes = {
+    action: "confirm",
+  }
+  let { indicator } = seData
+  let hasTxt = Boolean(seData.trimTxt)
+  if(hasTxt) {
+    let tmp1 = seData.innerList.find(v => v.atomId === indicator)
+    if(tmp1) {
+      res.commentId = tmp1.commentId
+      res.threadId = tmp1.threadId
+      return res
+    }
+    let tmp2 = seData.thirdList.find(v => v.atomId === indicator)
+    if(tmp2) {
+
+    }
+  }
+  else {
+    let tmp3 = seData.suggestList.find(v => v.atomId === indicator)
+    if(tmp3) {
+      res.commentId = tmp3.commentId
+      res.threadId = tmp3.threadId
+      return res
+    }
+    let tmp4 = seData.recentList.find(v => v.atomId === indicator)
+    if(tmp4) {
+      seData.inputTxt = tmp4.title
+      return null
+    }
+  }
+
+  return res
+}
+
 function onTapMask() {
   toCancel()
 }
 
 
-function onTapConfirm() {
-
+function onTapEnter() {
+  toConfirm()
 }
 
 
 /*********** 监听键盘敲击 上、下 的逻辑 ***********/
 function _whenKeyDown(e: KeyboardEvent) {
+  const key = e.key
+  if(key !== "ArrowDown" && key !== "ArrowUp") return
+  if(!liuUtil.canKeyUpDown()) return
 
+  let diff: 1 | -1 = key === "ArrowDown" ? 1 : -1
+  handleKeyDown(seData, diff, e)
 }
 
 /*********** 监听键盘敲击 Enter、Escape 的逻辑 ***********/
@@ -285,7 +350,7 @@ function _whenKeyUp(e: KeyboardEvent) {
     return
   }
   if(key === "Enter") {
-    onTapConfirm()
+    onTapEnter()
     return
   }
 }

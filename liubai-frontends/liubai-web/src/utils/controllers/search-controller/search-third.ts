@@ -1,6 +1,7 @@
-import type { ScThirdPartyAtom } from "./types";
+import type { ScThirdPartyAtom, SearchOpt } from "./types";
 
-export function searchThird(text: string) {
+export function searchThird(param: SearchOpt) {
+  if(param.mode === "select_thread") return []
   let list: ScThirdPartyAtom[] = [
     {
       atomId: "bing"

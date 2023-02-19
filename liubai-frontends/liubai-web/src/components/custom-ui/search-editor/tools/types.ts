@@ -34,6 +34,7 @@ export interface SearchEditorRes {
   action: "confirm" | "cancel"
   threadId?: string
   commentId?: string
+  atomId?: string
 }
 
 export type SeResolver = (res: SearchEditorRes) => void
