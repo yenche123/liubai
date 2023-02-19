@@ -4,7 +4,12 @@ import type {
   ScThirdPartyAtom,
   ScMode,
 } from "~/utils/controllers/search-controller/types"
+import type {
+  InjectionKey
+} from "vue"
 
+
+export type SearchListType = "suggest" | "recent" | "results" | "third_party"
 
 export interface SearchEditorData {
   mode: ScMode
@@ -32,3 +37,11 @@ export interface SearchEditorRes {
 }
 
 export type SeResolver = (res: SearchEditorRes) => void
+
+
+export interface SearchFuncs {
+  mouseenteritem: (newIndicator: string) => void
+  tapitem: (listType: SearchListType, atomId: string) => void
+}
+
+export const searchFuncsKey = Symbol() as InjectionKey<SearchFuncs>

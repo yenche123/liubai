@@ -4,6 +4,7 @@ import type { PropType } from "vue";
 import { useI18n } from 'vue-i18n';
 import type { SearchEditorData } from "../tools/types";
 import SearchItem from './search-item/search-item.vue';
+import { useSearchResults } from './tools/useSearchResults';
 
 const props = defineProps({
   seData: {
@@ -11,6 +12,8 @@ const props = defineProps({
     required: true
   }
 })
+
+useSearchResults(props)
 
 const show = computed(() => {
   const { suggestList, recentList, trimTxt } = props.seData

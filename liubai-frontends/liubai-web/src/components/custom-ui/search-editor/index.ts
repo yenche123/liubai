@@ -1,10 +1,13 @@
-import { reactive, ref, toRef, watch } from "vue";
+import { provide, reactive, ref, toRef, watch } from "vue";
 import type { 
   SearchEditorData,
   SearchEditorParam,
   SearchEditorRes,
   SeResolver,
+  SearchFuncs,
+  SearchListType,
 } from "./tools/types"
+import { searchFuncsKey } from "./tools/types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import typeCheck from "~/utils/basic/type-check";
@@ -33,6 +36,7 @@ let _resolve: SeResolver | undefined
 let rr: RouteAndLiuRouter | undefined
 
 export function initSearchEditor() {
+  initProvideData()
   listenRouteChange()
   listenInputChange()
 
@@ -60,6 +64,24 @@ export function showSearchEditor(param: SearchEditorParam) {
     _resolve = a
   }
   return new Promise(_wait)
+}
+
+
+// 传递事件给子组件，供其调用
+function initProvideData() {
+  const provideData: SearchFuncs = {
+    tapitem: onTapItem,
+    mouseenteritem: onMouseEnter
+  }
+  provide(searchFuncsKey, provideData)
+}
+
+function onTapItem(listType: SearchListType, atomId: string) {
+  console.log("onTapItem........")
+}
+
+function onMouseEnter(newIndicator: string) {
+  seData.indicator = newIndicator
 }
 
 

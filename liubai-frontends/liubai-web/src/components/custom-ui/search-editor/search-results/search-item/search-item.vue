@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { computed, PropType } from 'vue';
+import { computed, PropType, inject } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type {
   ScContentAtom,
   ScRecentAtom,
   ScThirdPartyAtom,
 } from "~/utils/controllers/search-controller/types"
+import type { SearchListType } from "../../tools/types"
+import { searchFuncsKey } from "../../tools/types"
 
 const props = defineProps({
   siType: {
-    type: String as PropType<"suggest" | "recent" | "results" | "third_party">,
+    type: String as PropType<SearchListType>,
     required: true
   },
   atomId: {
@@ -44,10 +46,25 @@ const desc = computed(() => {
 
 const iconColor = "var(--main-code)"
 
+
+const injectData = inject(searchFuncsKey)
+
+const onMouseEnter = () => {
+  if(!injectData) return
+  injectData.mouseenteritem(props.atomId)
+}
+
+const onTapItem = () => {
+  if(!injectData) return
+  injectData.tapitem(props.siType, props.atomId)
+}
+
 </script>
 <template>
   <div class="si-container"
     :class="{ 'si-container_selected': indicator && indicator === atomId }"
+    @mouseenter="onMouseEnter"
+    @click="onTapItem"
   >
 
     <!-- 图片框 -->
@@ -142,7 +159,7 @@ const iconColor = "var(--main-code)"
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: var(--bg-color);
+  background-color: var(--card-bg);
   opacity: 0;
 }
 
