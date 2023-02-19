@@ -11,6 +11,8 @@ import typeCheck from "~/utils/basic/type-check";
 import valTool from "~/utils/basic/val-tool";
 import time from "~/utils/basic/time";
 import searchController from "~/utils/controllers/search-controller";
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
+import { storeToRefs } from "pinia";
 
 const TRANSITION_DURATION = 150
 const enable = ref(false)
@@ -85,6 +87,8 @@ function listenRouteChange() {
 }
 
 function listenInputChange() {
+  const wStore = useWorkspaceStore()
+  const { spaceId } = storeToRefs(wStore)
   const inputTxt = toRef(seData, "inputTxt")
   const DURATION = 200
   let lastSearchStamp = 0
@@ -145,8 +149,9 @@ function listenInputChange() {
     }, DURATION - diff)
   }
 
-  watch(inputTxt, (newV) => {
-    whenInputChange(newV)
+  watch([inputTxt, spaceId], ([newV1, newV2]) => {
+    if(!newV2) return
+    whenInputChange(newV1)
   })
 }
 
