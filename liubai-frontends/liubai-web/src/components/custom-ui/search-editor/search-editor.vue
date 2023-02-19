@@ -95,7 +95,7 @@ const { t } = useI18n()
   margin-top: 16vh;
   width: 90vw;
   max-width: 750px;
-  border-radius: 7px;
+  border-radius: 9px;
   box-shadow: var(--card-shadow-2);
   position: relative;
   overflow: hidden;
@@ -130,7 +130,7 @@ const { t } = useI18n()
   line-height: 1.75;
 
   &::-webkit-input-placeholder {
-    color: var(--liu-quote);
+    color: var(--main-code);
   }
 
   &::selection {
@@ -147,7 +147,8 @@ const { t } = useI18n()
   position: relative;
   display: flex;
   align-items: center;
-  border-top: 0.6px solid var(--line-active);
+  border-top: 0.6px solid var(--main-tip);
+  user-select: none;
 }
 
 .sef-first {
