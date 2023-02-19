@@ -12,6 +12,7 @@ import type {
 export type SearchListType = "suggest" | "recent" | "results" | "third_party"
 
 export interface SearchEditorData {
+  reloadNum: number
   mode: ScMode
   inputTxt: string
   trimTxt: string

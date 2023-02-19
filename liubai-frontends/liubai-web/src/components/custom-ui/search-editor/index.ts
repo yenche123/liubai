@@ -24,6 +24,7 @@ const enable = ref(false)
 const show = ref(false)
 const inputEl = ref<HTMLInputElement | null>(null)
 const seData = reactive<SearchEditorData>({
+  reloadNum: 0,
   mode: "search",
   inputTxt: "",
   trimTxt: "",
@@ -59,6 +60,7 @@ export function showSearchEditor(param: SearchEditorParam) {
   seData.inputTxt = initTxt
   seData.excludeThreads = param.excludeThreads ?? []
   seData.innerList = []
+  seData.reloadNum++
 
   openIt()
 
@@ -102,6 +104,7 @@ function listenRouteChange() {
       if(q && typeCheck.isString(q) && q !== seData.inputTxt) {
         seData.inputTxt = q
       }
+      if(seData.reloadNum < 1) seData.reloadNum = 1
       _toOpen()
       return
     }
@@ -119,6 +122,7 @@ function listenInputChange() {
   const wStore = useWorkspaceStore()
   const { spaceId } = storeToRefs(wStore)
   const inputTxt = toRef(seData, "inputTxt")
+  const reloadNum = toRef(seData, "reloadNum")
   const DURATION = 200
   let lastSearchStamp = 0
   let timeout = 0
@@ -186,9 +190,11 @@ function listenInputChange() {
     }, DURATION - diff)
   }
 
-  watch([inputTxt, spaceId], ([newV1, newV2]) => {
-    if(!newV2) return
-    whenInputChange(newV1)
+  watch([reloadNum, spaceId, inputTxt], (
+    [newV1, newV2, newV3]
+  ) => {
+    if(!newV1 || !newV2) return
+    whenInputChange(newV3)
   })
 }
 
