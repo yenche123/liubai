@@ -42,6 +42,7 @@ export function initSearchEditor() {
     enable,
     show,
     seData,
+    onTapMask,
   }
 }
 
@@ -234,7 +235,13 @@ async function _toClose() {
 
 
 function toCancel() {
+  if(inputEl.value) inputEl.value.blur()
+  toResolve({ action: "cancel" })
+  closeIt()
+}
 
+function onTapMask() {
+  toCancel()
 }
 
 

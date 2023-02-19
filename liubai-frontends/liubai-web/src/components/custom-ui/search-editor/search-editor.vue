@@ -10,6 +10,7 @@ const {
   enable,
   show,
   seData,
+  onTapMask,
 } = initSearchEditor()
 
 const { t } = useI18n()
@@ -22,7 +23,7 @@ const { t } = useI18n()
     :class="{ 'se-container_show': show }"
   >
 
-    <div class="se-bg" />
+    <div class="se-bg" @click="onTapMask" />
 
 
     <div class="se-box">
