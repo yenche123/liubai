@@ -2,5 +2,6 @@
   "i18n-ally.localesPaths": [
     "src/locales/messages"
   ],
-  "i18n-ally.keystyle": "nested"
+  "i18n-ally.keystyle": "nested",
+  "volar.inlayHints.eventArgumentInInlineHandlers": false
 }
