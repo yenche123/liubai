@@ -33,6 +33,7 @@ import {
   colorToShow,
   colorToStorage,
   canKeyUpDown,
+  getDefaultRouteQuery,
 } from "./custom-util"
 import openUtil from "./open-util"
 import {
@@ -69,6 +70,7 @@ export default {
   colorToShow,
   colorToStorage,
   canKeyUpDown,
+  getDefaultRouteQuery,
   isChildElementVisible,
   open: openUtil,
 }

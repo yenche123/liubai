@@ -26,7 +26,8 @@ export function useViceContent() {
   }
 
   const onTapClose = () => {
-    router.pushCurrentNoQuery(route)
+    const newQuery = liuUtil.getDefaultRouteQuery(route)
+    router.replaceWithNewQuery(route, newQuery)
   }
 
   const onTapOpenInNew = () => {

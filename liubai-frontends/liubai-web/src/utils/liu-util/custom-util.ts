@@ -1,6 +1,6 @@
 // 一些自定义的 util
 import time from "../basic/time"
-
+import type { RouteLocationNormalizedLoaded } from "vue-router"
 
 /******* 转换颜色 *******/
 
@@ -32,4 +32,20 @@ export function canKeyUpDown() {
   if(diff < 28) return false
   lastKeyUpDown = now
   return true
+}
+
+/*** 根据当前的 route.query 获取基本要保留的参数，比如 tags **/
+export function getDefaultRouteQuery(
+  route: RouteLocationNormalizedLoaded
+) {
+  const newQuery: Record<string, string> = {}
+  const q = route.query
+
+  const { tags } = q
+
+  if(tags && typeof tags === "string") {
+    newQuery.tags = tags
+  }
+
+  return newQuery
 }
