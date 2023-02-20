@@ -68,17 +68,19 @@ const onTapItem = () => {
   >
 
     <!-- 图片框 -->
-    <div class="si-img-box">
+    <div class="si-img-box"
+      :class="{ 'si-img-box_small': siType === 'recent' }"
+    >
 
       <!-- 最近时，放大镜-->
       <svg-icon v-if="siType === 'recent'"
-        class="si-search-icon"
+        class="si-zoom-icon"
         name="search"
         :color="iconColor"
       ></svg-icon>
 
       <!-- 第三方 -->
-      <template v-if="siType === 'third_party' && thirdAtom">
+      <template v-else-if="siType === 'third_party' && thirdAtom">
         <svg-icon
           :name="'logos-' + thirdAtom.atomId"
           class="si-search-icon"
@@ -112,7 +114,9 @@ const onTapItem = () => {
 
     </div>
 
-    <div class="si-main">
+    <div class="si-main"
+      :class="{ 'si-main_small': siType === 'recent' }"
+    >
 
       <!-- 标题 -->
       <div class="si-title">
@@ -180,11 +184,20 @@ const onTapItem = () => {
   position: relative;
 }
 
+.si-img-box_small {
+  height: 36px;
+}
+
 .si-search-icon {
   width: 32px;
   height: 32px;
   border-radius: 4px;
   overflow: hidden;
+}
+
+.si-zoom-icon {
+  width: 24px;
+  height: 24px;
 }
 
 .si-img {
@@ -201,6 +214,10 @@ const onTapItem = () => {
   flex-direction: column;
   justify-content: center;
   position: relative;
+}
+
+.si-main_small {
+  min-height: 36px;
 }
 
 .si-title {

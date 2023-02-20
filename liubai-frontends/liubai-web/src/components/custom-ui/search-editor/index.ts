@@ -141,6 +141,8 @@ function listenInputChange() {
     seData.suggestList = list1
 
     // 2. 携带 mode 去获取最近搜索的关键词
+    const list2 = await searchController.searchRecent(opt1)
+    seData.recentList = list2
 
     // 3. 设置当前的 indicator
     toSetIndicator()
@@ -290,6 +292,7 @@ function toConfirm() {
   let hasClosed = false
   if(seData.mode === "search") {
     hasClosed = toRedirectAndSave(res)
+    searchController.addKeywordToRecent(seData.trimTxt)
   }
 
   if(inputEl.value) inputEl.value.blur()
