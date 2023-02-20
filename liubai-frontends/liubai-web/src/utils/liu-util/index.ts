@@ -34,6 +34,7 @@ import {
   colorToStorage,
   canKeyUpDown,
   getDefaultRouteQuery,
+  needToOpenViceView,
 } from "./custom-util"
 import openUtil from "./open-util"
 import {
@@ -71,6 +72,7 @@ export default {
   colorToStorage,
   canKeyUpDown,
   getDefaultRouteQuery,
+  needToOpenViceView,
   isChildElementVisible,
   open: openUtil,
 }

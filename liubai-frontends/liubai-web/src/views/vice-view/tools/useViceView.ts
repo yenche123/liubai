@@ -20,6 +20,7 @@ import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
 import { outterWidthKey } from "~/utils/provide-keys"
 import liuApi from "~/utils/liu-api";
+import liuUtil from "~/utils/liu-util";
 
 interface VvData {
   openType: OpenType
@@ -177,7 +178,7 @@ function listenRouteChange(
   const whenQueryChange = (
     newQuery: LocationQuery,
   ) => {
-    const openRequired = judgeIfOpen(newQuery)
+    const openRequired = liuUtil.needToOpenViceView(newQuery)
     if(openRequired && vvData.openType !== "opened") {
       openViceView(vvData, emits)
       return
@@ -204,20 +205,6 @@ function listenRouteChange(
     }
     whenQueryChange(route.query)
   })
-}
-
-/*********** 根据参数判断是否打开侧边栏  *************/
-function judgeIfOpen(newQuery: LocationQuery): boolean {
-  if(!newQuery) return false
-  let { cid } = newQuery
-  if(cid) return true
-  const { iframe_keys } = cfg
-  for(let key of iframe_keys) {
-    if(newQuery[key]) {
-      return true
-    }
-  }
-  return false
 }
 
 // 获取最小和最大宽度

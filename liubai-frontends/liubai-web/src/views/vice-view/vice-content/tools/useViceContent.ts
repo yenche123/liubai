@@ -25,7 +25,7 @@ export function useViceContent() {
     router.back()
   }
 
-  const onTapClose = () => {
+  const onTapClose = async () => {
     const newQuery = liuUtil.getDefaultRouteQuery(route)
     router.replaceWithNewQuery(route, newQuery)
   }
@@ -118,7 +118,11 @@ function listenRouteChange(
   }
 
   const whenNoMatch = async () => {
+    if(!vcState.value) return
     await valTool.waitMilli(350)
+    if(liuUtil.needToOpenViceView(route.query)) {
+      return
+    }
     if(iframeSrc.value) {
       iframeSrc.value = ""
     }

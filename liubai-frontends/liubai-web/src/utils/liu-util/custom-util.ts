@@ -1,6 +1,10 @@
 // 一些自定义的 util
 import time from "../basic/time"
-import type { RouteLocationNormalizedLoaded } from "vue-router"
+import type { 
+  RouteLocationNormalizedLoaded,
+  LocationQuery,
+} from "vue-router"
+import cfg from "~/config"
 
 /******* 转换颜色 *******/
 
@@ -48,4 +52,18 @@ export function getDefaultRouteQuery(
   }
 
   return newQuery
+}
+
+/** 是否该打开侧边栏 vice-view */
+export function needToOpenViceView(query: LocationQuery) {
+  if(!query) return false
+  let { cid } = query
+  if(cid) return true
+  const { iframe_keys } = cfg
+  for(let key of iframe_keys) {
+    if(query[key]) {
+      return true
+    }
+  }
+  return false
 }
