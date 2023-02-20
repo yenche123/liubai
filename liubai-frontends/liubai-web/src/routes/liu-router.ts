@@ -124,30 +124,7 @@ class LiuRouter {
       newQuery.tags = oldQuery.tags
     }
 
-    routeChangeTmpData = { operation: "push", delta: 1 }
-    let res = await this.router.push({ name, query: newQuery, params })
-    return res
-  }
-
-  /** 自定义携带没有query 的 push 情况 
-   * 可选择是否保留 query 中的 tags 参数，默认会保留
-  */
-  async pushCurrentNoQuery(
-    route: RouteLocationNormalizedLoaded,
-    reserveTags: boolean = true,
-  ) {
-    const { name, params, query: oldQuery } = route
-    if(typeof name !== "string") {
-      console.warn("当前的 route.name 不是 string 类型，无法执行 pushCurrentNoQuery")
-      return
-    }
-    let newRoute: RouteLocationRaw = { name, params, query: {} }
-    if(reserveTags && oldQuery.tags && typeof oldQuery.tags === 'string') {
-      newRoute.query = { tags: oldQuery.tags }
-    }
-
-    routeChangeTmpData = { operation: "push", delta: 1 }
-    let res = await this.router.push(newRoute)
+    let res = await this.push({ name, query: newQuery, params })
     return res
   }
 
@@ -176,8 +153,7 @@ class LiuRouter {
       }
     }
 
-    routeChangeTmpData = { operation: "push", delta: 1 }
-    let res = await this.router.push(newRoute)
+    let res = await this.push(newRoute)
     return res
   }
 
@@ -195,9 +171,8 @@ class LiuRouter {
     let q = valTool.copyObject(route.query)
     q = Object.assign(q, newQuery)
     let newRoute: RouteLocationRaw = { name, params, query: q }
-   
-    routeChangeTmpData = { operation: "push", delta: 1 }
-    let res = await this.router.push(newRoute)
+    
+    let res = await this.push(newRoute)
     return res
   }
 
@@ -280,7 +255,7 @@ class LiuRouter {
         return
       }
       if(pageNum > 9) {
-        _this.pushCurrentNoQuery(route, false)
+        _this.replaceWithNewQuery(route, {})
         return
       }
       _this.go(-pageNum)
@@ -307,7 +282,7 @@ class LiuRouter {
       delta++
     }
 
-    _this.pushCurrentNoQuery(route, false)
+    _this.replaceWithNewQuery(route, {})
   }
 
   // 导航去首页
