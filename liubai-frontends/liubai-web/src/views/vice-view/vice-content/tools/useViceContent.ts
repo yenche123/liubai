@@ -88,14 +88,14 @@ function listenRouteChange(
     setNewIframeSrc(url)
   }
 
-  const openGougoSearch = (q: string) => {
+  const openSougoSearch = (q: string) => {
     const url = new URL(thirdLink.SOUGO_SEARCH)
     url.searchParams.append("keyword", q)
     setNewIframeSrc(url.toString())
   }
 
   const openBingSearch = (q: string) => {
-    const url = liuUtil.open.getXhsSearchLink(q)
+    const url = liuUtil.open.getBingSearchLink(q)
     setNewIframeSrc(url)
   }
 
@@ -132,7 +132,7 @@ function listenRouteChange(
       // openGoogleSerach(outq)
       openBingSearch(outq)
     }
-    if(bing && typeof bing === "string") {
+    else if(bing && typeof bing === "string") {
       vcState.value = "iframe"
       openBingSearch(bing)
     }

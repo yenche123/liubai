@@ -31,6 +31,12 @@ watch(vcState, (newV) => {
   emits("vcstatechange", newV)
 })
 
+watch(iframeSrc, (newV) => {
+  console.log("iframeSrc 發生變化........")
+  console.log(newV)
+  console.log(" ")
+})
+
 const {
   vcHeight,
   maskMarginTop,
