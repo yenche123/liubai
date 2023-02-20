@@ -4,11 +4,8 @@ import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import valTool from "~/utils/basic/val-tool";
 import liuApi from "~/utils/liu-api";
 import type { VcState, VcCtx } from "./types"
-
-const GOOGLE_SEARCH = "https://www.google.com/?igu=1"
-const SOUGO_SEARCH = "https://m.sogou.com/"
-const CHAT_GPT3 = "https://chat.openai.com/chat"
-const BING_SEARCH = "https://www.bing.com/"
+import thirdLink from "~/config/third-link";
+import liuUtil from "~/utils/liu-util";
 
 export function useViceContent() {
   const iframeSrc = ref("")
@@ -82,7 +79,7 @@ function listenRouteChange(
   }
 
   const openChatGPT = (q: string) => {
-    setNewIframeSrc(CHAT_GPT3)
+    setNewIframeSrc(thirdLink.CHAT_GPT)
   }
 
   const openPDF = (q: string) => {
@@ -92,24 +89,31 @@ function listenRouteChange(
   }
 
   const openGougoSearch = (q: string) => {
-    const url = new URL(SOUGO_SEARCH)
-    url.pathname = "/web/searchList.jsp"
+    const url = new URL(thirdLink.SOUGO_SEARCH)
     url.searchParams.append("keyword", q)
     setNewIframeSrc(url.toString())
   }
 
   const openBingSearch = (q: string) => {
-    const url = new URL(BING_SEARCH)
+    const url = liuUtil.open.getXhsSearchLink(q)
+    setNewIframeSrc(url)
+  }
+
+  const openGoogleSerach = (q: string) => {
+    const url = new URL(thirdLink.GOOGLE_SEARCH)
     url.pathname = "/search"
     url.searchParams.append("q", q)
     setNewIframeSrc(url.toString())
   }
 
-  const openGoogleSerach = (q: string) => {
-    const url = new URL(GOOGLE_SEARCH)
-    url.pathname = "/search"
-    url.searchParams.append("q", q)
-    setNewIframeSrc(url.toString())
+  const openXhsSearch = (name: string) => {
+    const url = liuUtil.open.getXhsSearchLink(name)
+    setNewIframeSrc(url)
+  }
+
+  const openGithubSearch = (q: string) => {
+    const url = liuUtil.open.getGithubSearchLink(q)
+    setNewIframeSrc(url)
   }
 
   const whenNoMatch = async () => {
@@ -121,12 +125,16 @@ function listenRouteChange(
   }
   
   const checkRouteChange = (newQuery: LocationQuery) => {
-    const { outq, gpt3, cid, pdf } = newQuery
+    const { outq, gpt3, cid, pdf, xhs, github, bing } = newQuery
 
     if(outq && typeof outq === "string") {
       vcState.value = "iframe"
       // openGoogleSerach(outq)
       openBingSearch(outq)
+    }
+    if(bing && typeof bing === "string") {
+      vcState.value = "iframe"
+      openBingSearch(bing)
     }
     else if(pdf && typeof pdf === "string") {
       vcState.value = "iframe"
@@ -135,6 +143,14 @@ function listenRouteChange(
     else if(gpt3 && typeof gpt3 === "string") {
       vcState.value = "iframe"
       openChatGPT(gpt3)
+    }
+    else if(xhs && typeof xhs === "string") {
+      vcState.value = "iframe"
+      openXhsSearch(xhs)
+    }
+    else if(github && typeof github === "string") {
+      vcState.value = "iframe"
+      openGithubSearch(github)
     }
     else if(cid && typeof cid === "string") {
       vcState.value = "thread"

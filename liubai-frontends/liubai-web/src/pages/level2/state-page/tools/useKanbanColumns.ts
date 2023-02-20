@@ -78,9 +78,9 @@ export function useKanbanColumns(
   }
 
   const onTapThreadItem = (id: string) => {
-    const res = liuUtil.toWhatDetail()
-    if(res === "detail-page") liuUtil.openDetailWithDetailPage(id, { rr })
-    else if(res === "vice-view") liuUtil.openDetailWithViceView(id, { rr })
+    const res = liuUtil.open.toWhatDetail()
+    if(res === "detail-page") liuUtil.open.openDetailWithDetailPage(id, { rr })
+    else if(res === "vice-view") liuUtil.open.openDetailWithViceView(id, { rr })
   }
 
 

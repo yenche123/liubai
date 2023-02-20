@@ -17,8 +17,10 @@ export interface ScRecentAtom {
   title: string
 }
 
+export type ScThirdPartyType = "bing" | "xhs" | "github"
+
 export interface ScThirdPartyAtom {
-  atomId: "bing" | "xhs" | "github"
+  atomId: ScThirdPartyType
 }
 
 export interface SearchOpt {

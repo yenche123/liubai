@@ -30,13 +30,11 @@ import {
   getRawList
 } from "./vue-util"
 import {
-  openDetailWithViceView,
-  openDetailWithDetailPage,
-  toWhatDetail,
   colorToShow,
   colorToStorage,
   canKeyUpDown,
 } from "./custom-util"
+import openUtil from "./open-util"
 import {
   isChildElementVisible
 } from "./element-util"
@@ -68,11 +66,9 @@ export default {
   constraintWidthHeight,
   toRawData,
   getRawList,
-  toWhatDetail,
   colorToShow,
   colorToStorage,
-  openDetailWithViceView,
-  openDetailWithDetailPage,
   canKeyUpDown,
   isChildElementVisible,
+  open: openUtil,
 }

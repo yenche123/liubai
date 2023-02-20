@@ -114,12 +114,12 @@ function handel_comment(ctx: TcoCtx, props: TcProps) {
     return
   }
   const cid = props.threadData._id
-  const res = liuUtil.toWhatDetail()
+  const res = liuUtil.open.toWhatDetail()
   if(res === "detail-page") {
-    liuUtil.openDetailWithDetailPage(cid, ctx)
+    liuUtil.open.openDetailWithDetailPage(cid, ctx)
   }
   else if(res === "vice-view") {
-    liuUtil.openDetailWithViceView(cid, ctx)
+    liuUtil.open.openDetailWithViceView(cid, ctx)
   }
 }
 

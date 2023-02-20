@@ -2,12 +2,14 @@ import type {
   ScContentAtom,
   ScRecentAtom,
   ScThirdPartyAtom,
+  ScThirdPartyType,
   ScMode,
 } from "~/utils/controllers/search-controller/types"
 import type {
   InjectionKey
 } from "vue"
 
+export type ThirdPartyType = ScThirdPartyType
 
 export type SearchListType = "suggest" | "recent" | "results" | "third_party"
 

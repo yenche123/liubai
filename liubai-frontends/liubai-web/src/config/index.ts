@@ -30,7 +30,7 @@ export default {
   min_editor_height: 140,
 
   // 打开 特定 iframe 的参数
-  iframe_keys: ["outq", "gpt3", "pdf"],
+  iframe_keys: ["outq", "gpt3", "pdf", "xhs", "bing", "github"],
 
   // 用侧边栏还是详情页打开的分野界限
   vice_detail_breakpoint: 901,

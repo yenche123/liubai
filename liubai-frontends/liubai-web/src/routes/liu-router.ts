@@ -84,6 +84,21 @@ class LiuRouter {
     return res
   }
 
+  /** 用新的参数，取代当前页面 */
+  async replaceWithNewQuery(
+    route: RouteLocationNormalizedLoaded,
+    newQuery: Record<string, string>,
+  ) {
+    const { name, params } = route
+    if(typeof name !== "string") {
+      console.warn("当前的 route.name 不是 string 类型，无法执行 replaceWithNewQuery")
+      return
+    }
+    let newRoute: RouteLocationRaw = { name, params, query: newQuery }
+    let res = await this.replace(newRoute)
+    return res
+  }
+
   async push(to: RouteLocationRaw) {
     routeChangeTmpData = { operation: "push", delta: 1 }
     let res = await this.router.push(to)

@@ -6,6 +6,7 @@ import type {
   SeResolver,
   SearchFuncs,
   SearchListType,
+  ThirdPartyType,
 } from "./tools/types"
 import { searchFuncsKey } from "./tools/types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
@@ -286,9 +287,44 @@ function toConfirm() {
   let res = getConfirmRes()
   if(!res) return
 
+  let hasClosed = false
+  if(seData.mode === "search") {
+    hasClosed = toRedirectAndSave(res)
+  }
+
   if(inputEl.value) inputEl.value.blur()
   toResolve(res)
-  closeIt()
+  if(!hasClosed) closeIt()
+}
+
+function toRedirectAndSave(res: SearchEditorRes) {
+  let hasClosed = false
+  if(!rr) return hasClosed
+  const text = seData.trimTxt
+  const a = res.atomId as ThirdPartyType
+  
+  let opt = { rr, replace: true }
+  if(a === "bing") {
+    let res = liuUtil.open.openBing(text, opt)
+    if(res === "inner") hasClosed = true
+  }
+  else if(a === "xhs") {
+    let res = liuUtil.open.openXhs(text, opt)
+    if(res === "inner") hasClosed = true
+  }
+  else if(a === "github") {
+    let res = liuUtil.open.openGithub(text, opt)
+    if(res === "inner") hasClosed = true
+  }
+  else if(res.commentId && res.threadId) {
+    hasClosed = true
+    liuUtil.open.openDetail(res.threadId, opt)
+  }
+  else if(res.threadId) {
+    hasClosed = true
+    liuUtil.open.openDetail(res.threadId, opt)
+  }
+  return hasClosed
 }
 
 function getConfirmRes() {
@@ -306,7 +342,8 @@ function getConfirmRes() {
     }
     let tmp2 = seData.thirdList.find(v => v.atomId === indicator)
     if(tmp2) {
-
+      res.atomId = tmp2.atomId
+      return res
     }
   }
   else {

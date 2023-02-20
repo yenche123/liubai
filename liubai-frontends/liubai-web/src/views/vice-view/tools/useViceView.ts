@@ -229,27 +229,6 @@ function getMinAndMax() {
   return { max, min }
 }
 
-// 从 vvEl 里获取 style 所设置的宽度
-function getViceViewPxFromStyle(
-  vvEl: Ref<HTMLElement | null>,
-  originalPx: number
-): number {
-  if(!vvEl.value) return originalPx
-  const style = vvEl.value.style
-  let widthStr = style.width
-  if(!widthStr) {
-    const domRect = vvEl.value.getBoundingClientRect()
-    return domRect.width
-  }
-
-  const idx = widthStr.indexOf("px")
-  if(idx > 0) {
-    widthStr = widthStr.substring(0, idx)
-  }
-  let w = Number(widthStr)
-  if(isNaN(w)) return originalPx
-  return w
-}
 
 function openViceView(
   vvData: VvData, 
