@@ -60,13 +60,21 @@ const format0 = (val: string | number): string => {
 /**
  * 获取文本的中文字符数
  */
-const getChineseCharNum = (val: string): number => {
+const getChineseCharNum = (val: string) => {
   if(!val) return 0
   let num = 0
   for(let i=0; i<val.length; i++) {
     if(val.charCodeAt(i) >= 10000) num++
   }
   return num
+}
+
+/**
+ * 判断一段文本是否全为英文字符
+ */
+const isAllEnglishChar = (val: string) => {
+  const regex = /^[a-z]+$/
+  return regex.test(val)
 }
 
 //获取小写字符串的数量
@@ -128,6 +136,7 @@ export default {
   numToFix,
   format0,
   getChineseCharNum,
+  isAllEnglishChar,
   getLowerCaseNum,
   getValInMinAndMax,
   isAIncludedInB,
