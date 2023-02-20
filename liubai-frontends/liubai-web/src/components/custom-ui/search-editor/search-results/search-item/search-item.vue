@@ -82,7 +82,6 @@ const onTapItem = () => {
         <svg-icon
           :name="'logos-' + thirdAtom.atomId"
           class="si-search-icon"
-          :class="{ 'si-search-icon_bing': atomId === 'bing' }"
           :color="iconColor"
         ></svg-icon>
       
@@ -186,11 +185,6 @@ const onTapItem = () => {
   height: 32px;
   border-radius: 4px;
   overflow: hidden;
-}
-
-.si-search-icon_bing {
-  margin-inline-end: 4px;
-  margin-block-end: 4px;
 }
 
 .si-img {
