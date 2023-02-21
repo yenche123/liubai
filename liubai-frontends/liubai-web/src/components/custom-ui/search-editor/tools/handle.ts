@@ -16,8 +16,6 @@ export function handleKeyDown(
 
   let { trimTxt, indicator, suggestList, recentList, innerList, thirdList } = seData
 
-  console.log("000000000000")
-
   let newIndicator = ""
   if(trimTxt) {
     newIndicator = findIndicator(indicator, diff, innerList, [thirdList])
@@ -31,8 +29,6 @@ export function handleKeyDown(
       newIndicator = findIndicator(indicator, diff, recentList, [suggestList])
     }
   }
-
-  console.log("newIndicator: ", newIndicator)
 
   if(newIndicator) {
     seData.indicator = newIndicator

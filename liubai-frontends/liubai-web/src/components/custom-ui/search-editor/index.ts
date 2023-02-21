@@ -18,7 +18,7 @@ import searchController from "~/utils/controllers/search-controller";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import liuUtil from "~/utils/liu-util";
-import { handleKeyDown } from "./tools/handle"
+import { useSeKeyboard } from "./tools/useSeKeyboard";
 
 const TRANSITION_DURATION = 150
 const enable = ref(false)
@@ -43,6 +43,16 @@ export function initSearchEditor() {
   initProvideData()
   listenRouteChange()
   listenInputChange()
+
+  let opt = {
+    whenEsc: toCancel,
+    whenEnter: toConfirm,
+    whenOpen: showSearchEditor,
+    seData,
+    tranMs: TRANSITION_DURATION,
+    show
+  }
+  useSeKeyboard(opt)
 
   return {
     TRANSITION_DURATION,
@@ -267,7 +277,6 @@ async function _toOpen() {
   enable.value = true
   await valTool.waitMilli(16)
   show.value = true
-  _toListenKeyUp()
   await valTool.waitMilli(TRANSITION_DURATION)
   if(!inputEl.value) return
   inputEl.value.focus()
@@ -278,7 +287,6 @@ async function _toClose() {
   show.value = false
   await valTool.waitMilli(TRANSITION_DURATION)
   enable.value = false
-  _cancelListenKeyUp()
 }
 
 
@@ -372,44 +380,3 @@ function getConfirmRes() {
 function onTapMask() {
   toCancel()
 }
-
-
-function onTapEnter() {
-  toConfirm()
-}
-
-
-/*********** 监听键盘敲击 上、下 的逻辑 ***********/
-function _whenKeyDown(e: KeyboardEvent) {
-  const key = e.key
-  if(key !== "ArrowDown" && key !== "ArrowUp") return
-  if(!liuUtil.canKeyUpDown()) return
-
-  let diff: 1 | -1 = key === "ArrowDown" ? 1 : -1
-  handleKeyDown(seData, diff, e)
-}
-
-/*********** 监听键盘敲击 Enter、Escape 的逻辑 ***********/
-function _whenKeyUp(e: KeyboardEvent) {
-  const key = e.key
-  if(key === "Escape") {
-    toCancel()
-    return
-  }
-  if(key === "Enter") {
-    onTapEnter()
-    return
-  }
-}
-
-
-function _toListenKeyUp() {
-  window.addEventListener("keydown", _whenKeyDown)
-  window.addEventListener("keyup", _whenKeyUp)
-}
-
-function _cancelListenKeyUp() {
-  window.removeEventListener("keydown", _whenKeyDown)
-  window.removeEventListener("keyup", _whenKeyUp)
-}
-
