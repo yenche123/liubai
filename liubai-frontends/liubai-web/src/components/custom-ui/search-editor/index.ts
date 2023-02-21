@@ -161,7 +161,10 @@ function listenInputChange() {
     seData.thirdList = searchController.searchThird(opt1)
 
     // 2. 搜索结果
-
+    console.time("searchInner")
+    const list = await searchController.searchInner(opt1)
+    console.timeEnd("searchInner")
+    seData.innerList = list
 
     // 3. 设置当前的 indicator
     toSetIndicator()
