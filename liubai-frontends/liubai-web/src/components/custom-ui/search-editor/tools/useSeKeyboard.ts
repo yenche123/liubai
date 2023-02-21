@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted } from "vue"
+import { onMounted, onUnmounted, watch } from "vue"
 import type { Ref } from "vue"
 import type { 
   SearchEditorParam,
@@ -9,6 +9,7 @@ import { handleKeyDown } from "./handle"
 import liuUtil from "~/utils/liu-util"
 import time from "~/utils/basic/time"
 import liuApi from "~/utils/liu-api"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
 
 
 interface SeKeyboardParam {
@@ -32,6 +33,15 @@ export function useSeKeyboard(param: SeKeyboardParam) {
   let lastEventTrigger = 0
   const cha = liuApi.getCharacteristic()
   const isMac = cha.isMac
+
+  // 监听页面，查看是否处于允许搜索的页面
+  let allowSearch = false
+  const rr = useRouteAndLiuRouter()
+  watch(rr.route, (newV) => {
+    const inApp = newV.meta.inApp
+    if(inApp === false) allowSearch = false
+    else allowSearch = true
+  })
 
   const _keydownDuringOpening = (e: KeyboardEvent) => {
     const key = e.key
@@ -58,11 +68,13 @@ export function useSeKeyboard(param: SeKeyboardParam) {
   }
 
   const _whenKeyDown = (e: KeyboardEvent) => {
+    if(!allowSearch) return
     if(show.value) _keydownDuringOpening(e)
     else _keydownDuringClosing(e)
   }
   
   const _whenKeyUp = (e: KeyboardEvent) => {
+    if(!allowSearch) return
     if(!show.value) return
     
     const key = e.key
