@@ -7,6 +7,7 @@ import NaviLink from "~/components/common/navi-link/navi-link.vue";
 import { useI18n } from 'vue-i18n';
 import { useSctRoute } from './tools/useSctRoute';
 import cui from '~/components/custom-ui';
+import liuUtil from '~/utils/liu-util';
 
 const { t } = useI18n()
 
@@ -41,6 +42,7 @@ const onTapSearch = () => {
 
 
 const iconColor = "var(--main-normal)"
+const searchTip = ` (${liuUtil.getHelpTip('Mod')} K)`
 
 </script>
 <template>
@@ -62,7 +64,7 @@ const iconColor = "var(--main-normal)"
     <!-- 搜索 -->
     <div class="liu-hover liu-hover_first sct-box"
       @click="onTapSearch"
-      :aria-label="t('common.search')"
+      :aria-label="t('common.search') + searchTip"
     >
       <svg-icon name="search" class="sct-icon"
         :color="iconColor"
