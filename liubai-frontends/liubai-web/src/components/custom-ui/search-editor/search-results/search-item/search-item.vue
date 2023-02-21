@@ -94,6 +94,8 @@ const onTapItem = () => {
         class="si-img"
         :src="contentAtom.imgShow.src"
         :blurhash="contentAtom.imgShow.blurhash"
+        object-fit="cover"
+        disable-transition
         border-radius="4px"
       ></liu-img>
 

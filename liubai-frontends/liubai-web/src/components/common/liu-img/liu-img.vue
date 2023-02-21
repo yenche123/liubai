@@ -36,7 +36,11 @@ const props = defineProps({
   userSelect: {
     type: Boolean,
     default: false,
-  }
+  },
+  disableTransition: {
+    type: Boolean,
+    default: false,     // 是否关闭渐变加载
+  },
 })
 
 const imgStyles: CSSProperties = {
@@ -63,6 +67,7 @@ const bgOpacity = computed(() => {
 })
 
 const onImgLoaded = async () => {
+  if(props.disableTransition) return
   if(show.value) return
   show.value = true
 
@@ -79,7 +84,7 @@ const onImgLoaded = async () => {
   <div class="custom-img-box">
 
     <div
-      v-if="blurhash && canvasWH && !closeCanvas"
+      v-if="blurhash && !disableTransition && canvasWH && !closeCanvas"
       class="liu-blurhash"
       :class="{ 'liu-blurhash_hidden': show }"
     >
@@ -93,7 +98,7 @@ const onImgLoaded = async () => {
 
 
     <img class="custom-img" 
-      :class="{ 'custom-img_loaded': show }"
+      :class="{ 'custom-img_loaded': disableTransition || show }"
       :style="imgStyles"
       :width="width ? width : undefined"
       :height="height ? height: undefined"
