@@ -73,9 +73,23 @@ const getChineseCharNum = (val: string) => {
  * 判断一段文本是否全为英文字符
  */
 const isAllEnglishChar = (val: string) => {
-  const regex = /^[a-z]+$/
+  const regex = /^[a-zA-Z]+$/
   return regex.test(val)
 }
+
+/**
+ * 统计字符的数量，拉丁字母为 1，中文字为 2
+ */
+const getTextCharNum = (val: string) => {
+  let num = 0
+  for(let i=0; i<val.length; i++) {
+    const v = val[i]
+    if(getChineseCharNum(v) > 0) num += 2
+    else num += 1
+  }
+  return num
+}
+
 
 //获取小写字符串的数量
 const getLowerCaseNum = (text: string): number => {
@@ -138,6 +152,7 @@ export default {
   getChineseCharNum,
   isAllEnglishChar,
   getLowerCaseNum,
+  getTextCharNum,
   getValInMinAndMax,
   isAIncludedInB,
   getSuffix,

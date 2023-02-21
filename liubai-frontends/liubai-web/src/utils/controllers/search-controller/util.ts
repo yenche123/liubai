@@ -5,6 +5,7 @@ import type { ScContentAtom } from "./types"
 import time from "~/utils/basic/time";
 import imgHelper from "~/utils/images/img-helper";
 import transferUtil from "../../../utils/transfer-util"
+import valTool from "~/utils/basic/val-tool";
 
 export function getSpaceId() {
   const wStore = useWorkspaceStore()
@@ -58,9 +59,16 @@ function _getTitleAndDesc(v: ContentLocalTable, keyword?: string) {
   let desc = ""
 
   let content = transferUtil.tiptapToText(v.liuDesc ?? [])
-  // TODO: Highlight
   if(!title) {
-    title = _getHighlight(content, keyword)
+    let tmpTitle = _getOneLine(content)
+    let tmpDesc = _getHighlight(content, keyword)
+    if(tmpTitle) {
+      title = tmpTitle
+      if(tmpDesc !== tmpTitle) desc = tmpDesc
+    }
+    else {
+      title = tmpDesc
+    }
   }
   else {
     desc = _getHighlight(content, keyword)
@@ -69,7 +77,13 @@ function _getTitleAndDesc(v: ContentLocalTable, keyword?: string) {
   return { title, desc }
 }
 
-// 获取关键词所在的那一句
+// 获取文本的第一行
+function _getOneLine(text: string) {
+  const lines = text.split("\n").filter(v => Boolean(v.trim()))
+  return lines[0]
+}
+
+// 获取关键词所在的那一段
 function _getHighlight(text: string, keyword?: string) {
   let lowerText = text.toLowerCase()
   if(keyword) {
@@ -95,12 +109,21 @@ function _getHighlight(text: string, keyword?: string) {
 const POINTS = ["\n", ",", ".", "，", "。", ";", "；"]
 
 function _trimForward(text: string, end: number) {
+  let num = 0
   for(let i = end-1; i >= 0; i--) {
     const char = text[i]
+
+    num += valTool.getTextCharNum(char)
+
+    if(num < 10) continue
     if(!POINTS.includes(char)) continue
 
     text = text.substring(i + 1)
     text = text.trimStart()
+
+    if(i > 0) {
+      text = "..." + text
+    }
 
     break
   }
@@ -114,7 +137,7 @@ function _trimBackward(text: string, keyword?: string) {
     return text
   }
 
-  let start = 10
+  let start = 16
   if(keyword) {
     let idx = text.toLowerCase().indexOf(keyword)
     if(idx >= 0) {
@@ -122,12 +145,22 @@ function _trimBackward(text: string, keyword?: string) {
     }
   }
 
+  let num = 0
   for(let i=start; i<text.length; i++) {
     const char = text[i]
+
+    num += valTool.getTextCharNum(char)
+
+    if(num < 90) continue
     if(!POINTS.includes(char)) continue
 
+    let isEndPoint = i >= (text.length - 1)
     text = text.substring(0, i)
     text = text.trimEnd()
+
+    if(!isEndPoint) {
+      text = text + "......"
+    }
 
     break
   }

@@ -138,6 +138,12 @@ function _getThreadData(
   const remindStamp = _getRemindStamp(remindMe, whenStamp)
   const tagIds = liuUtil.getRawList(state.tagIds)
   const tagSearched = getTagIdsParents(tagIds)
+
+  const search_title = (state.title ?? "").toLowerCase()
+  const search_other = (transferUtil.tiptapToText(liuDesc)).toLowerCase()
+
+  // console.log("看一下 search_title: ", search_title)
+  // console.log("看一下 search_other: ", search_other)
   
   const aThread: Partial<ContentLocalTable> = {
     infoType: "THREAD",
@@ -156,6 +162,8 @@ function _getThreadData(
     editedStamp: now,
     tagIds,
     tagSearched,
+    search_title,
+    search_other,
   }
 
   // 没有 threadEdited 代表当前是发表模式，必须设置 workspace
