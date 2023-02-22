@@ -1,42 +1,12 @@
-import { useEditor, VueNodeViewRenderer } from '@tiptap/vue-3'
-import StarterKit from '@tiptap/starter-kit'
-import Placeholder from '@tiptap/extension-placeholder'
-import TaskItem from '@tiptap/extension-task-item'
-import TaskList from '@tiptap/extension-task-list'
-import Blockquote from "@tiptap/extension-blockquote"
-import HardBreak from "@tiptap/extension-hard-break"
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-import HorizontalRule from "@tiptap/extension-horizontal-rule"
-import Code from '@tiptap/extension-code'
-import Link from '@tiptap/extension-link'
-import Heading from '@tiptap/extension-heading'
-import { useI18n, ComposerTranslation } from 'vue-i18n'
-import { wrappingInputRule, nodeInputRule } from "@tiptap/core"
-import type { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "~/types/types-editor"
+import { useEditor } from '@tiptap/vue-3'
+import { useI18n } from 'vue-i18n'
+import type { TipTapEditor } from "~/types/types-editor"
 import { inject, onMounted, ref, toRef, watch } from 'vue'
 import type { ShallowRef } from "vue"
-import type { HashTagEditorRes } from "~/types/other/types-hashtag"
-
-import { lowlight } from 'lowlight'
-import CodeBlockComponent from '../code-block-component/code-block-component.vue'
+import type { EditorCoreProps, EditorCoreEmits } from "./types"
+import { initExtensions } from "./init-extensions"
+import { useEcHashtag } from "./useEcHashtag"
 import { editorSetKey } from '~/utils/provide-keys'
-import cui from '../../custom-ui'
-
-export interface EditorCoreProps {
-  titlePlaceholder: string
-  descPlaceholder: string
-  editMode: boolean
-  content?: TipTapJSONContent
-  hashTrigger: boolean            // 是否允许输入 # 来激发 cui.showHashTagEditor
-}
-
-export interface EditorCoreEmits {
-  (event: "update", data: EditorCoreContent): void
-  (event: "focus", data: EditorCoreContent): void
-  (event: "blur", data: EditorCoreContent): void
-  (event: "finish", data: EditorCoreContent): void
-  (event: "addhashtag", data: HashTagEditorRes): void
-}
 
 interface EcContext {
   lastEmpty: boolean
@@ -72,6 +42,7 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
     }
   })
   
+  useEcHashtag(editor, props, emits)
   
   if(props.editMode) {
     // 编辑模式时，去初始化 lastEmpty / lastText
@@ -142,11 +113,6 @@ function onEditorUpdate(
   const empty = editor.isEmpty
   if(ctx.lastTriggetUpdate) clearTimeout(ctx.lastTriggetUpdate)
 
-  // console.log("onEditorUpdate........")
-  // console.log("lastEmpty: ", lastEmpty)
-  // console.log("empty: ", empty)
-  // console.log(" ")
-
   if(ctx.lastEmpty !== empty) {
     emits("update", data)
     ctx.lastEmpty = empty
@@ -154,7 +120,6 @@ function onEditorUpdate(
     return
   }
   if(!text && !ctx.lastText) {
-    console.log("onEditorUpdate 被阻断了................")
     return
   }
 
@@ -164,196 +129,4 @@ function onEditorUpdate(
     ctx.lastEmpty = empty
     ctx.lastText = text
   }, 150)
-}
-
-function onModEnter(
-  editor: TipTapEditor,
-  emits: EditorCoreEmits
-) {
-  const html = editor.getHTML()
-  const text = editor.getText()
-  const json = editor.getJSON()
-  const data = { html, text, json }
-  emits("finish", data)
-}
-
-// 激发 cui.showHashTagEditor() 
-async function triggerHashTagEditor(
-  editor: TipTapEditor,
-  emits: EditorCoreEmits,
-) {
-  const res = await cui.showHashTagEditor({ mode: "search" })
-  if(!res.confirm) {
-    editor.commands.focus()
-    return
-  }
-
-  if(res.text) emits("addhashtag", res)
-
-  // 查看是否要删掉 #
-  const { state } = editor
-  const { selection } = state
-  const { $from, empty } = selection
-  if(!empty) return
-  editor.chain()
-    .focus()
-    .command(({ tr }) => {
-      tr.delete($from.pos - 1, $from.pos)
-      return true
-    })
-    .run()
-}
-
-function initExtensions(
-  props: EditorCoreProps,
-  emits: EditorCoreEmits,
-  t: ComposerTranslation
-) {
-
-  const bqRegex = /^[>》]\s$/
-
-  const CustomCode = Code.extend({
-    addKeyboardShortcuts() {
-      return {
-        // 在行内代码敲击 Enter，自动退出行内代码
-        "Enter": ({ editor }) => {
-          const isCode = editor.isActive("code")
-          if(isCode) {
-            return editor.chain()
-            .toggleCode()
-            .insertContent(" ")
-            .run()
-          }
-          
-          return false
-        }
-      }
-    },
-  })
-
-  const CustomBlockQuote = Blockquote.extend({
-    addKeyboardShortcuts() {
-      return {}
-    },
-    addInputRules() {
-      return [
-        wrappingInputRule({
-          find: bqRegex,
-          type: this.type
-        })
-      ]
-    },
-    content: "paragraph*"
-  })
-
-  const CustomHardBreak = HardBreak.extend({
-    addKeyboardShortcuts() {
-      return {
-        'Mod-Enter': ({ editor }) => {
-          const isCodeBlock = editor.isActive("codeBlock")
-          if(isCodeBlock) {
-            return false
-          }
-          const isCode = editor.isActive("code")
-          if(isCode) {
-            return editor.chain()
-              .toggleCode()
-              .insertContent(" ")
-              .run()
-          }
-
-          onModEnter(editor, emits)
-          return editor.commands.blur()
-        },
-        'Escape': ({ editor }) => {
-          const isCodeBlock = editor.isActive("codeBlock")
-          if(isCodeBlock) false
-          return editor.commands.blur()
-        },
-        '#': ({ editor }) => {
-          console.log("addKeyboardShortcuts #")
-          if(!props.hashTrigger) return false
-          const isPara = editor.isActive("paragraph")
-          if(!isPara) return false
-          triggerHashTagEditor(editor, emits)
-          return false
-        }
-      }
-    },
-  })
-
-  const CustomCodeBlockLowlight = CodeBlockLowlight.extend({
-    addNodeView() {
-      return VueNodeViewRenderer(CodeBlockComponent)
-    }
-  })
-
-  const CustomHorizontalRule = HorizontalRule.extend({
-    addInputRules() {
-      return [
-        nodeInputRule({
-          find: /^(?:---\s)$/,
-          type: this.type,
-        })
-      ]
-    },
-  })
-
-  const CustomLink = Link.configure({
-    openOnClick: false
-  })
-
-  const CustomHeading = Heading.configure({
-    levels: [1],
-  })
-
-  const extensions = [
-    CustomCode,
-    CustomBlockQuote,
-    CustomCodeBlockLowlight.configure({
-      lowlight
-    }),
-    CustomHardBreak,
-    CustomHorizontalRule,
-    TaskList.configure({
-      HTMLAttributes: {
-        class: "liu-tasklist"
-      }
-    }),
-    TaskItem.configure({
-      nested: false,
-      HTMLAttributes: {
-        class: "liu-taskitem"
-      },
-    }),
-    StarterKit.configure({
-      heading: false,
-      bulletList: {
-        HTMLAttributes: {
-          class: "liu-bulletList"
-        }
-      },
-      blockquote: false,
-      hardBreak: false,
-      codeBlock: false,
-      code: false,
-      horizontalRule: false,
-    }),
-    Placeholder.configure({
-      placeholder: ({ node }) => {
-        if(node.type.name === "heading") {
-          return props.titlePlaceholder || t("common.title_ph")
-        }
-        const ph = props.descPlaceholder || t("common.desc_ph")
-        return ph
-      }
-    })
-  ]
-
-  if(!props.editMode) {
-    extensions.push(CustomLink)
-    extensions.push(CustomHeading)
-  }
-
-  return extensions
 }
