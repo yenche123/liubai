@@ -173,7 +173,7 @@ export function depriveLink(list: LiuContent[]) {
       "blockquote"
     ]
     if(canDeepTypes.includes(type) && content) {
-      content = depriveLink(content)
+      v.content = depriveLink(content)
       continue
     }
 
