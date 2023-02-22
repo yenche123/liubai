@@ -241,6 +241,7 @@ export default defineComponent({
 }
 
 .kc-footer {
+  padding-block-start: 5px;
   width: 100%;
   display: flex;
   justify-content: flex-end;
