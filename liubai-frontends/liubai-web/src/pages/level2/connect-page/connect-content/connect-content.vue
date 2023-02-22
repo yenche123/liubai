@@ -16,24 +16,25 @@
 .cc-box {
   width: 60%;
   padding-inline: 20%;
-  height: 80%;
+  height: 85%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .cc-img {
   width: 100px;
   height: 100px;
-  margin-bottom: 100px;
+  margin-block-end: min(20%, 100px);
   user-select: none;
 }
 
 .cc-text {
   text-align: center;
   line-height: 1.9;
-  padding-block-end: 100px;
+  padding-block-end: min(15%, 75px);
   color: var(--main-text);
 }
 
