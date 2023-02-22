@@ -83,6 +83,10 @@ export function useKanbanColumns(
     else if(res === "vice-view") liuUtil.open.openDetailWithViceView(id, { rr })
   }
 
+  const onTapAddThread = (stateId: string) => {
+    kanbanOperate.addThreadToKanban(columns, stateId)
+  }
+
 
   return {
     MORE_ITEMS,
@@ -94,6 +98,7 @@ export function useKanbanColumns(
     onThreadsUpdated,
     onTapMoreMenuItem,
     onTapThreadItem,
+    onTapAddThread,
   }
 }
 

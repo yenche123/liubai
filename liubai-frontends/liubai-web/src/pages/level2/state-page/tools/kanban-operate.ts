@@ -6,11 +6,15 @@ import { i18n } from "~/locales"
 import liuUtil from "~/utils/liu-util"
 import stateController from "~/utils/controllers/state-controller/state-controller"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
+import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
 import { db } from "~/utils/db"
+import dbOp from "~/components/level1/utils/db-op"
+import threadController from "~/utils/controllers/thread-controller/thread-controller"
 
-// 编辑某一栏的看板，也不提供撤回功能
+// 编辑某一栏的看板
+// 不提供撤回功能
 // 如何更新 thread-list 的动态呢？用 useGlobalState 进行事件传递
 async function editKanban(
   columns: WritableComputedRef<KanbanColumn[]>,
@@ -109,6 +113,7 @@ async function editKanban(
 }
 
 
+// 删除某栏看板
 // 不提供撤回功能，因为改动过大
 async function deleteKanban(
   columns: WritableComputedRef<KanbanColumn[]>,
@@ -180,6 +185,50 @@ async function deleteKanban(
   return true
 }
 
+// 添加动态至某栏看板里
+// 允许添加 "不在该栏看板中，但已是该状态的动态"
+async function addThreadToKanban(
+  columns: WritableComputedRef<KanbanColumn[]>,
+  stateId: string,
+) {
+  const aCol = columns.value.find(v => v.id === stateId)
+  if(!aCol) return
+
+  // 1. 搜索要添加哪个动态
+  const excludeThreads = aCol.threads.map(v => v._id)
+  const res = await cui.showSearchEditor({ type: "select_thread", excludeThreads })
+  if(res.action !== "confirm" || !res.threadId) return
+
+  // 2. 先把已在 kanban 里的该 thread 删除，再添加到 kanban 为 stateId 的第一项
+  const threadId = res.threadId
+  const stateList = stateController.getStates()
+  stateList.forEach(v1 => {
+    let { contentIds } =  v1
+    if(contentIds) {
+      contentIds = contentIds.filter(v2 => v2 !== threadId)
+    }
+    if(v1.id === stateId) {
+      if(!contentIds) contentIds = []
+      contentIds.unshift(threadId)
+    }
+    v1.contentIds = contentIds
+  })
+
+  // 3. 发起更新 stateList
+  const res2 = await stateController.setNewStateList(stateList)
+
+  // 4. 更新 content
+  const res3 = await dbOp.setStateId(threadId, stateId)
+
+  // 5. 加载该 thread
+  const newThread = await threadController.getData({ id: threadId })
+  if(!newThread) return
+
+  // 6. 使用 useThreadShowStore 通知全局
+  const tStore = useThreadShowStore()
+  tStore.setUpdatedThreadShows([newThread], "state")
+}
+
 
 function _showErr() {
   cui.showModal({
@@ -188,7 +237,6 @@ function _showErr() {
     showCancel: false
   })
 }
-
 
 async function _updateThreadsWhenDeleteState(
   stateId: string
@@ -222,4 +270,5 @@ async function _updateThreadsWhenDeleteState(
 export default {
   editKanban,
   deleteKanban,
+  addThreadToKanban,
 }

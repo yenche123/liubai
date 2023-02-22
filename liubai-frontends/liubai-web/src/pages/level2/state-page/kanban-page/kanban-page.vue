@@ -60,6 +60,7 @@ export default defineComponent({
       onThreadsUpdated,
       onTapMoreMenuItem,
       onTapThreadItem,
+      onTapAddThread,
     } = useKanbanColumns(props, emit)
 
     return {
@@ -77,6 +78,7 @@ export default defineComponent({
       onThreadsUpdated,
       onTapMoreMenuItem,
       onTapThreadItem,
+      onTapAddThread,
     }
   },
 
@@ -163,7 +165,9 @@ export default defineComponent({
             
 
           <!-- 添加动态 -->
-          <div class="liu-hover kpch-btn">
+          <div class="liu-hover kpch-btn"
+            @click="onTapAddThread(item.id)"
+          >
             <svg-icon name="add" class="kpch-svg" 
               :color="iconColor"
             ></svg-icon>
@@ -179,6 +183,7 @@ export default defineComponent({
         @sort-insert="onThreadInserted(item.id, $event)"
         @threadsupdated="onThreadsUpdated(item.id, $event)"
         @tapitem="onTapThreadItem"
+        @tapadd="onTapAddThread(item.id)"
       ></KpColumn>
     </SlickItem>
 

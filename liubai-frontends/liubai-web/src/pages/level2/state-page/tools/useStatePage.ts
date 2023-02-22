@@ -1,4 +1,4 @@
-import { onActivated, provide, reactive, ref } from "vue"
+import { onActivated, onDeactivated, provide, reactive, ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
 import { StateProvideKey } from "./types"
 import type { 
@@ -177,6 +177,7 @@ async function toRefresh(
 function listenThreadShowChanged(
   ctx: StatePageCtx
 ) {
+  let isActivated = false
   let reloadRequired = false
   const followEvents: WhyThreadChange[] = [
     "delete", 
@@ -202,15 +203,25 @@ function listenThreadShowChanged(
     const tmp = followEvents.includes(state.whyChange)
     if(!tmp) return
 
-    reloadRequired = true
+    if(isActivated) {
+      toRefresh(ctx, false)
+    }
+    else {
+      reloadRequired = true
+    }
   })
 
   onActivated(() => {
+    isActivated = true
     if(reloadRequired) {
       ctx.showReload.value = true
       toRefresh(ctx, false)
     }
     reloadRequired = false
+  })
+
+  onDeactivated(() => {
+    isActivated = false
   })
 }
 

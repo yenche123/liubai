@@ -35,6 +35,7 @@ export interface KbListEmits {
   (event: "sort-insert", val: ColumnInsertData): void
   (event: "threadsupdated", val: ThreadShow[]): void
   (event: "tapitem", contentId: string): void
+  (event: "tapadd"): void
 }
 
 export interface KbListEmits2 extends KbListEmits {

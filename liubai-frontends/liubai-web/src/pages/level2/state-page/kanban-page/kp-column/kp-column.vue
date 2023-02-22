@@ -22,6 +22,7 @@ export default defineComponent({
     "sort-insert": (val: ColumnInsertData) => true,
     "threadsupdated": (val: ThreadShow[]) => true,
     "tapitem": (contentId: string) => true,
+    "tapadd": () => true,
   },
 
   props: {
@@ -81,6 +82,7 @@ export default defineComponent({
     <!-- 为空时的添加按钮 -->
     <div v-if="list.length < 1" class="kc-add-box"
       :class="{ 'kc-add-box_show': showAddBox }"
+      @click="$emit('tapadd')"
     >
       <svg-icon name="add" class="kc-add-svg"
         color="var(--main-note)"

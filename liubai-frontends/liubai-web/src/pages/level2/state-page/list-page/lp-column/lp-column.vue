@@ -20,6 +20,7 @@ export default defineComponent({
     "sort-insert": (val: ColumnInsertData) => true,
     "threadsupdated": (val: ThreadShow[]) => true,
     "tapitem": (contentId: string) => true,
+    "tapadd": () => true,
   },
 
   props: {
@@ -73,7 +74,9 @@ export default defineComponent({
     <div v-if="list.length < 1" class="lc-add-box"
       :class="{ 'lc-add-box_show': showAddBox }"
     >
-      <div class="liu-hover lc-add">
+      <div class="liu-hover lc-add"
+        @click="$emit('tapadd')"
+      >
         <svg-icon name="add" class="lc-add-svg"
           color="var(--main-code)"
         ></svg-icon>
