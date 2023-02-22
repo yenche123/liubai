@@ -217,7 +217,8 @@
     "third_party": "Third Party",
     "bing_search": "Ask Bing",
     "xhs_search": "Open xhs",
-    "github_search": "Github Search"
+    "github_search": "Github Search",
+    "no_data": "0 result"
   },
   "whatever": {
     "sidebar_more": "Setting & Trash"

@@ -217,7 +217,8 @@
     "third_party": "第三方",    
     "bing_search": "問 Bing",
     "xhs_search": "開啟小紅書",
-    "github_search": "Github 搜尋"
+    "github_search": "Github 搜尋",
+    "no_data": "0 個搜尋結果"
   },
   "whatever": {
     "sidebar_more": "設定、回收站"

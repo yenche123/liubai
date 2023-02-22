@@ -217,7 +217,8 @@
     "third_party": "第三方",
     "bing_search": "问 Bing",
     "xhs_search": "打开小红书",
-    "github_search": "Github 搜索"
+    "github_search": "Github 搜索",
+    "no_data": "0 个搜索结果"
   },
   "whatever": {
     "sidebar_more": "设置、垃圾桶"

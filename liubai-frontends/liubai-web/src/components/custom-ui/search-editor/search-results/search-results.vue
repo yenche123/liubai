@@ -105,6 +105,13 @@ const { t } = useI18n()
           ></SearchItem>
         </template>
       </div>
+
+      <!-- 任何结果都不存在时 -->
+      <div class="sr-no-data"
+        v-if="!seData.innerList.length && !seData.thirdList.length"
+      >
+        <span>{{ t('search_related.no_data') }}</span>
+      </div>
     
     </div>
 
@@ -147,7 +154,17 @@ const { t } = useI18n()
   user-select: none;
 }
 
-
+.sr-no-data {
+  height: 50px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--mini-font);
+  color: var(--main-note);
+  user-select: none;
+}
 
 
 </style>
