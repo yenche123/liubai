@@ -9,6 +9,7 @@ import SbFixed from './sb-fixed/sb-fixed.vue';
 import SbBottom from './sb-bottom/sb-bottom.vue';
 import { useImages } from '../../hooks/useImages';
 import VueDraggableResizable from "vue-draggable-resizable/src/components/vue-draggable-resizable.vue";
+import SbOpen from './sb-open/sb-open.vue';
 
 const { images } = useImages()
 
@@ -17,6 +18,7 @@ const {
   onResizing,
   onSbMouseEnter,
   onSbMouseLeave,
+  onTapOpenBtn,
   onTapCloseBtn,
 } = useSidebar()
 
@@ -102,6 +104,11 @@ const {
 
   <!-- fixed 布局、底部有黑色蒙层的 side-bar -->
   <SbFixed :expand-state="expandState"></SbFixed>
+
+  <!-- 左下角的 open 按钮 -->
+  <SbOpen
+    @tapopen="onTapOpenBtn"
+  ></SbOpen>
 
 </template>
 <style scoped>

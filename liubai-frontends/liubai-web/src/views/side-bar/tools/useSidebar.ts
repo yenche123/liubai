@@ -55,7 +55,11 @@ export function useSidebar() {
   provide(sidebarWidthKey, sbWidthPx)
 
   const onTapCloseBtn = () => {
-    toCloseByClosingBtn(layoutStore)
+    toClose(layoutStore)
+  }
+
+  const onTapOpenBtn = () => {
+    toOpen(layoutStore)
   }
 
   return {
@@ -63,12 +67,48 @@ export function useSidebar() {
     onResizing,
     onSbMouseEnter,
     onSbMouseLeave,
+    onTapOpenBtn,
     onTapCloseBtn,
   }
 }
 
+async function toOpen(
+  layoutStore: LayoutStore,
+) {
+  const { width } = useWindowSize()
+  const newV = width.value
+  let newState: Partial<LayoutType> = {
+    changeType: "window",
+    clientWidth: newV,
+  }
+  const { min, max } = getCurrentMinMax(newV)
+  const sidebarPxStyle = sbData.sidebarWidthPx
+  newState.sidebarWidth = valTool.getValInMinAndMax(sidebarPxStyle, min, max)
 
-function toCloseByClosingBtn(
+  if(newState.sidebarWidth > 0) sbData.openType = "opened"
+  else sbData.openType = "closed_by_auto"
+
+  sbData.isAnimating = true
+  if(min > 0) {
+    sbData.minSidebarPx = min
+    if(sidebarPxStyle < min) sbData.sidebarWidthPx = min 
+  }
+  if(max > 0) {
+    sbData.maxSidebarPx = max
+    if(max < sidebarPxStyle) sbData.sidebarWidthPx = max
+  }
+
+  console.log("打印 sidebarWidthPx: ", sbData.sidebarWidthPx)
+  
+  // 广播数据
+  layoutStore.$patch(newState)
+
+  // 等待 316ms 执行动画
+  await valTool.waitMilli(LISTEN_DELAY + 16)
+  sbData.isAnimating = false
+}
+
+function toClose(
   layoutStore: LayoutStore,
 ) {
   layoutStore.$patch({ sidebarWidth: 0 })
@@ -341,54 +381,9 @@ function initSidebar(
 function listenChangeFromOtherComponent(
   layoutStore: LayoutStore,
 ) {
-
   const { sidebarStatus } = storeToRefs(layoutStore)
-
-  const _restore = async () => {
-    const { width } = useWindowSize()
-    const newV = width.value
-    let newState: Partial<LayoutType> = {
-      changeType: "window",
-      clientWidth: newV,
-    }
-    const { min, max } = getCurrentMinMax(newV)
-    const sidebarPxStyle = sbData.sidebarWidthPx
-    newState.sidebarWidth = valTool.getValInMinAndMax(sidebarPxStyle, min, max)
-
-    if(newState.sidebarWidth > 0) sbData.openType = "opened"
-    else sbData.openType = "closed_by_auto"
-
-    sbData.isAnimating = true
-    if(min > 0) {
-      sbData.minSidebarPx = min
-      if(sidebarPxStyle < min) sbData.sidebarWidthPx = min 
-    }
-    if(max > 0) {
-      sbData.maxSidebarPx = max
-      if(max < sidebarPxStyle) sbData.sidebarWidthPx = max
-    }
-
-    console.log("打印 sidebarWidthPx: ", sbData.sidebarWidthPx)
-    
-    // 广播数据
-    layoutStore.$patch(newState)
-
-    // 等待 316ms 执行动画
-    await valTool.waitMilli(LISTEN_DELAY + 16)
-    sbData.isAnimating = false
-  }
-
-
-  const _close = () => {
-    layoutStore.$patch({ sidebarWidth: 0 })
-    sbData.openType = "closed_by_user"
-  }
-
   watch(sidebarStatus, (newV) => {
-    console.log("监听到 sidebarStatus 来自其他组件的变化.....")
-    console.log(newV)
-    console.log(" ")
-    if(newV === "fullscreen") _close()
-    else _restore()
+    if(newV === "fullscreen") toClose(layoutStore)
+    else toOpen(layoutStore)
   })
 }
