@@ -36,6 +36,8 @@ const color_selected = "var(--main-normal)"
 
 </script>
 <template>
+
+  <div class="sb-virtual-first"></div>
   
   <!-- 顶部区域 -->
   <ScTop
@@ -125,6 +127,11 @@ const color_selected = "var(--main-normal)"
 
 </template>
 <style>
+
+.sb-virtual-first {
+  width: 100%;
+  height: 30px;
+}
 
 .sb-virtual {
   width: 100%;

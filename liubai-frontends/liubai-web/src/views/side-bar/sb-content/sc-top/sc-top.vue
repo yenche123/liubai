@@ -131,7 +131,7 @@ const searchTip = ` (${liuUtil.getHelpTip('Mod')} K)`
 <style lang="scss" scoped>
 
 .sc-avatar-name {
-  margin-block-start: 40px;
+  margin-block-start: 10px;
   width: 100%;
   height: 50px;
   margin-block-end: 20px;
