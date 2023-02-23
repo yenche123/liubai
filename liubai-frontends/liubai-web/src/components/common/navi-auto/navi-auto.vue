@@ -4,6 +4,10 @@ import cfg from "../../../config"
 
 const naviHeightPx = `${cfg.navi_height}px`
 
+const emits = defineEmits<{
+  (event: "naviautochangeed", newV: boolean): void
+}>()
+
 const {
   enable,
   show,
@@ -11,7 +15,7 @@ const {
   TRANSITION_DURATION,
   onTapMenu,
   onTapTitle,
-} = useNaviAuto()
+} = useNaviAuto(emits)
 
 const default_color = "var(--navi-normal)"
 

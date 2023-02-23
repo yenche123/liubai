@@ -7,6 +7,7 @@ import { useSbContent } from './tools/useSbContent';
 
 const emits = defineEmits<{
   (event: "canclosepopup"): void
+  (event: "tapclose"): void
 }>()
 
 const toClosePopup = () => {
@@ -44,7 +45,9 @@ const color_selected = "var(--main-normal)"
 
   <!-- 关闭按钮 -->
   <div v-if="mode === 'common'" class="sb-close-bar">
-    <div class="liu-hover sb-close">
+    <div class="liu-hover sb-close"
+      @click="emits('tapclose')"
+    >
       <svg-icon 
         class="sb-close-svg" 
         name="double-arrow-left" 

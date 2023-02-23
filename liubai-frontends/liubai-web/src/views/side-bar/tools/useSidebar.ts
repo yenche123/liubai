@@ -54,13 +54,27 @@ export function useSidebar() {
   const sbWidthPx = toRef(sbData, "sidebarWidthPx")
   provide(sidebarWidthKey, sbWidthPx)
 
+  const onTapCloseBtn = () => {
+    toCloseByClosingBtn(layoutStore)
+  }
+
   return {
     sbData,
     onResizing,
     onSbMouseEnter,
     onSbMouseLeave,
+    onTapCloseBtn,
   }
 }
+
+
+function toCloseByClosingBtn(
+  layoutStore: LayoutStore,
+) {
+  layoutStore.$patch({ sidebarWidth: 0 })
+  sbData.openType = "closed_by_user"
+}
+
 
 function initMouse() {
   let lastLeave = 0
@@ -187,7 +201,7 @@ async function recalculate(
   }
 
   // 如果是自动关闭侧边栏 并且 窗口小于 700px 时
-  if(sbData.openType === "closed_by_auto" && newV < 700) {
+  if(sbData.openType === "closed_by_auto" && newV < cfg.sidebar_open_point) {
     layoutStore.$patch(newState)
     return
   }
@@ -239,7 +253,7 @@ async function recalculate(
 // 获取可拖动的最大值和最小值
 function getCurrentMinMax(cw: number): { min: number, max: number } {
   const _min = cfg.min_sidebar_width
-  if(cw <= 600) return { min: _min, max: 0 }
+  if(cw <= cfg.sidebar_close_point) return { min: _min, max: 0 }
   if(cw <= 720) return { min: _min, max: Math.max(260, cw / 2.5) }
   if(cw <= 1080) return { min: _min, max: cw / 2 }
   if(cw <= 1560) return { min: _min, max: Math.min(700, cw / 2) }
@@ -283,7 +297,7 @@ function initSidebar(
   // console.log("max: ", max)
   // console.log(" ")
 
-  if(w < 600 && sbData.openType === "opened") {
+  if(w < cfg.sidebar_close_point && sbData.openType === "opened") {
     // console.log("发现 窗口宽度不足 600px，但之前却是打开状态")
     // console.log("则优先采纳 store 的.........")
     sbData.openType = "closed_by_auto"

@@ -5,8 +5,13 @@ import { useMainVice } from "~/hooks/useMainVice";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue"
 import IndexContent from "./index-content/index-content.vue"
 import NaviAuto from "~/components/common/navi-auto/navi-auto.vue";
+import { useIndexPage } from "./tools/useIndexPage";
 
 const { hiddenScrollBar, onVvWidthChange } = useMainVice()
+const {
+  showTop,
+  onNaviAutoChanged,
+} = useIndexPage()
 
 </script>
 <template>
@@ -14,8 +19,8 @@ const { hiddenScrollBar, onVvWidthChange } = useMainVice()
   <!-- 主视图 -->
   <main-view :drop-files="true">
     <scroll-view :hidden-scrollbar="hiddenScrollBar">
-      <NaviAuto></NaviAuto>
-      <index-content></index-content>
+      <NaviAuto @naviautochangeed="onNaviAutoChanged"></NaviAuto>
+      <index-content :show-top="showTop" ></index-content>
     </scroll-view>
   </main-view>
 

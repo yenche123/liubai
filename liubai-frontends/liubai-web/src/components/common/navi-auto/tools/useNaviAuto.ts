@@ -1,11 +1,14 @@
-import { inject, ref, shallowRef, watch } from "vue";
+import { inject, ref, watch } from "vue";
 import type { Ref } from "vue";
-import { useLayoutStore } from "../../../../views/useLayoutStore";
-import type { LayoutStore } from "../../../../views/useLayoutStore";
+import { useLayoutStore } from "~/views/useLayoutStore";
+import type { LayoutStore } from "~/views/useLayoutStore";
 import { storeToRefs } from "pinia";
-import valTool from "../../../../utils/basic/val-tool";
-import { svScollingKey, svBottomUpKey } from "../../../../utils/provide-keys";
-import sideBar from "../../../../views/side-bar";
+import valTool from "~/utils/basic/val-tool";
+import { svScollingKey, svBottomUpKey } from "~/utils/provide-keys";
+import sideBar from "~/views/side-bar";
+import { useWindowSize } from "~/hooks/useVueUse";
+import cfg from "~/config";
+import type { NaviAutoEmits } from "./types"
 
 const TRANSITION_DURATION = 300
 
@@ -15,9 +18,13 @@ interface NaviAutoCtx {
   shadow: Ref<boolean>
   scrollPosition: Ref<number>
   layout: LayoutStore,
+  windowWidth: Ref<number>,
+  emits: NaviAutoEmits,
 }
 
-export function useNaviAuto() {
+export function useNaviAuto(
+  emits: NaviAutoEmits,
+) {
   
   const enable = ref(false)
   const show = ref(false)
@@ -27,12 +34,17 @@ export function useNaviAuto() {
   const layout = useLayoutStore()
   const scrollPosition = inject(svScollingKey, ref(0))
 
+  // 窗口宽度
+  const { width: windowWidth } = useWindowSize()
+
   const ctx = {
     enable,
     show,
     shadow,
     scrollPosition,
     layout,
+    windowWidth,
+    emits,
   }
 
 
@@ -48,6 +60,9 @@ export function useNaviAuto() {
     if(!enable.value) return
     judgeShadow(newV, shadow)
   })
+
+  // 监听窗口变化
+  listenWindowChange(ctx)
   
 
   const onTapMenu = () => {
@@ -84,11 +99,19 @@ let justLoad = true
 function judgeState(
   ctx: NaviAutoCtx,
 ) {
+  const { windowWidth } = ctx
+  const winWidthPx = windowWidth.value
+
   const { sidebarWidth, sidebarStatus } = ctx.layout
-  if(sidebarWidth > 0 || sidebarStatus === "fullscreen") _close(ctx.enable, ctx.show)
+  if(sidebarWidth > 0 || sidebarStatus === "fullscreen") {
+    _close(ctx)
+  }
+  else if(winWidthPx >= cfg.sidebar_close_point) {
+    _close(ctx)
+  }
   else {
-    if(justLoad) _openInstantly(ctx.enable, ctx.show)
-    else _open(ctx.enable, ctx.show)
+    if(justLoad) _openInstantly(ctx)
+    else _open(ctx)
   }
 
   justLoad = false
@@ -97,32 +120,56 @@ function judgeState(
   judgeShadow(ctx.scrollPosition.value, ctx.shadow)
 }
 
-function _openInstantly(
-  enable: Ref<boolean>,
-  show: Ref<boolean>,
+// 聆听窗口变化
+function listenWindowChange(
+  ctx: NaviAutoCtx,
 ) {
-  enable.value = true
-  show.value = true
+
+  const whenWindowChange = (winWidthPx: number) => {
+    const { sidebarWidth, sidebarStatus } = ctx.layout
+    if(sidebarWidth > 0 || sidebarStatus === "fullscreen") return
+
+    const { enable, show } = ctx
+
+    if(winWidthPx < cfg.sidebar_close_point && !enable.value) {
+      _open(ctx)
+    }
+    else if(winWidthPx >= cfg.sidebar_open_point && show.value) {
+      _close(ctx)
+    }
+  }
+
+  watch(ctx.windowWidth, (newV) => {
+    whenWindowChange(newV)
+  })
+}
+
+function _openInstantly(
+  ctx: NaviAutoCtx,
+) {
+  ctx.enable.value = true
+  ctx.show.value = true
+  ctx.emits("naviautochangeed", true)
 }
 
 async function _open(
-  enable: Ref<boolean>,
-  show: Ref<boolean>,
+  ctx: NaviAutoCtx,
 ) {
-  if(show.value) return
-  enable.value = true
+  if(ctx.show.value) return
+  ctx.enable.value = true
+  ctx.emits("naviautochangeed", true)
   await valTool.waitMilli(16)
-  show.value = true
+  ctx.show.value = true
 }
 
 async function _close(
-  enable: Ref<boolean>,
-  show: Ref<boolean>,
+  ctx: NaviAutoCtx,
 ) {
-  if(!enable.value) return
-  show.value = false
+  if(!ctx.enable.value) return
+  ctx.show.value = false
+  ctx.emits("naviautochangeed", false)
   await valTool.waitMilli(TRANSITION_DURATION)
-  enable.value = false
+  ctx.enable.value = false
 }
 
 

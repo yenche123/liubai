@@ -10,15 +10,19 @@ import { useImages } from '../../hooks/useImages';
 import VueDraggableResizable from "vue-draggable-resizable/src/components/vue-draggable-resizable.vue";
 
 const { images } = useImages()
+
 const {
   sbData, 
   onResizing,
   onSbMouseEnter,
   onSbMouseLeave,
+  onTapCloseBtn,
 } = useSidebar()
+
 const {
   innerBoxWidth
 } = useSidebarOther()
+
 const { expandState } = useSidebarRoute()
 
 const {
@@ -53,7 +57,9 @@ const {
       :class="{ 'sb-box-main_hidden': expandState !== '' }"
     >
       <div class="sb-inner-box">
-        <SbContent :show="expandState === ''"></SbContent>
+        <SbContent :show="expandState === ''"
+          @tapclose="onTapCloseBtn"
+        ></SbContent>
       </div>
     </div>
 
