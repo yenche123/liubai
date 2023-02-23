@@ -8,7 +8,6 @@ export type LayoutChangeType = "window" | "sidebar" | ""
 // sidebar状态: 
 //   default 表示根据用户拖动边框的自然状态; 
 //   fullscreen 表示用户手动点击输入框的全屏;
-//   reduced 表示用户手动收起了侧边栏
 export type SidebarStatus = "default" | "fullscreen"
 
 export const useLayoutStore = defineStore("layout", () => {

@@ -6,6 +6,7 @@ import { useSidebarRoute } from './tools/useSidebarRoute';
 import SbContent from './sb-content/sb-content.vue';
 import SbTags from './sb-tags/sb-tags.vue';
 import SbFixed from './sb-fixed/sb-fixed.vue';
+import SbBottom from './sb-bottom/sb-bottom.vue';
 import { useImages } from '../../hooks/useImages';
 import VueDraggableResizable from "vue-draggable-resizable/src/components/vue-draggable-resizable.vue";
 
@@ -57,8 +58,8 @@ const {
       :class="{ 'sb-box-main_hidden': expandState !== '' }"
     >
       <div class="sb-inner-box">
-        <SbContent :show="expandState === ''"
-          @tapclose="onTapCloseBtn"
+        <SbContent
+          :show="expandState === ''"
         ></SbContent>
       </div>
     </div>
@@ -93,6 +94,9 @@ const {
       </template>
     </vue-draggable-resizable>
 
+    <SbBottom :show-handle="showHandle"
+      @tapclose="onTapCloseBtn"
+    ></SbBottom>
 
   </div>
 
