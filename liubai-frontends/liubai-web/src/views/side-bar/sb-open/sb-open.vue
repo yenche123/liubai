@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // 在左下角的 "打开侧边栏" 的按钮
 
+import { useI18n } from 'vue-i18n';
 import { useSbOpen } from './tools/useSbOpen';
 
 defineEmits<{
@@ -11,12 +12,15 @@ const {
   show
 } = useSbOpen()
 
+const { t } = useI18n()
+
 
 </script>
 <template>
 
-  <div class="sb-open"
+  <div class="liu-hover sb-open"
     @click="$emit('tapopen')"
+    :aria-label="t('dnd.sidebar')"
   >
     <svg-icon
       name="triangle_open"
@@ -39,7 +43,6 @@ const {
   left: 0;
   bottom: 30px;
   z-index: 300;
-  overflow: hidden;
   cursor: pointer;
   border-top-right-radius: 9px;
   border-bottom-right-radius: 9px;
@@ -49,7 +52,6 @@ const {
   transform-origin: center left;
   visibility: v-bind("show ? 'visible' : 'hidden'");
  
-
   .sb-open-svg {
     position: relative;
     width: 9px;
@@ -57,9 +59,28 @@ const {
   }
 }
 
+.liu-hover::before {
+  border-radius: 0;
+}
+
+.liu-hover:active::before {
+  opacity: 0;
+}
+
+
 @media(hover: hover) {
   .sb-open:hover {
     transform: scale(1.25);
+  }
+
+  .liu-hover:hover::before {
+    opacity: 0;
+  }
+
+  .liu-hover[aria-label]::after {
+    top: 0;
+    right: 0;
+    transform: translateX(100%) scale(0.77);
   }
 
 }
