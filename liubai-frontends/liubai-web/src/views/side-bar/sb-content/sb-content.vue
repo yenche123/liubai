@@ -2,7 +2,7 @@
 import AppLink from '~/components/common/app-link/app-link.vue';
 import NaviLink from "~/components/common/navi-link/navi-link.vue";
 import ScTop from './sc-top/sc-top.vue';
-import { computed } from 'vue';
+import { computed, PropType } from 'vue';
 import { useSbContent } from './tools/useSbContent';
 
 const emits = defineEmits<{
@@ -17,8 +17,13 @@ const props = defineProps({
   show: {
     type: Boolean,
     default: true,
+  },
+  mode: {
+    type: String as PropType<"fixed" | "common">,
+    default: "common"
   }
 })
+
 // 用于判断 用户点击 tab 键后，是否要响应该元素，小于 0 代表不要响应
 const tabindex = computed(() => {
   if(props.show) return 0
@@ -37,7 +42,18 @@ const color_selected = "var(--main-normal)"
 </script>
 <template>
 
-  <div class="sb-virtual-first"></div>
+  <!-- 关闭按钮 -->
+  <div v-if="mode === 'common'" class="sb-close-bar">
+    <div class="liu-hover sb-close">
+      <svg-icon 
+        class="sb-close-svg" 
+        name="double-arrow-left" 
+        :color="color"
+      ></svg-icon>
+    </div>
+
+  </div>
+  <div v-else class="sb-virtual-first" />
   
   <!-- 顶部区域 -->
   <ScTop
@@ -126,7 +142,27 @@ const color_selected = "var(--main-normal)"
   <div class="sb-virtual"></div>
 
 </template>
-<style>
+
+<style lang="scss" scoped>
+.sb-close-bar {
+  padding-block-start: 16px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+
+  .sb-close {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .sb-close-svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
 
 .sb-virtual-first {
   width: 100%;
@@ -137,6 +173,9 @@ const color_selected = "var(--main-normal)"
   width: 100%;
   height: 50px;
 }
+
+</style>
+<style>
 
 .sb-link {
   width: 100%;

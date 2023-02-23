@@ -39,6 +39,7 @@ const {
         <div class="sf-inner-box">
           <SbContent :show="expandState === ''"
             @canclosepopup="onTapPopup"
+            mode="fixed"
           ></SbContent>
         </div>
       </div>
