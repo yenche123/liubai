@@ -80,7 +80,7 @@ const { t } = useI18n()
   .liu-hover[aria-label]::after {
     top: 0;
     right: 0;
-    transform: translateX(100%) scale(0.77);
+    transform: translateX(100%) scale(0.8);
   }
 
 }
