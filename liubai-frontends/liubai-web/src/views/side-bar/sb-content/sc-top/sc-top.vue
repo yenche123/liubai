@@ -90,10 +90,11 @@ const searchTip = ` (${liuUtil.getHelpTip('Mod')} K)`
 
     <!-- 更多 -->
     <LiuMenu
+      v-if="showMore"
       :menu="MORE_ITEMS"
       @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(event1, event2)"
     >
-      <div class="liu-hover liu-hover_last sct-box" v-if="showMore"
+      <div class="liu-hover liu-hover_last sct-box"
         :aria-label="t('whatever.sidebar_more')"
       >
         <svg-icon name="more" class="sct-icon"
