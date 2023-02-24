@@ -8,6 +8,7 @@ import { useI18n } from 'vue-i18n';
 import { useSctRoute } from './tools/useSctRoute';
 import cui from '~/components/custom-ui';
 import liuUtil from '~/utils/liu-util';
+import type { MenuItem } from "~/components/common/liu-menu/tools/types";
 
 const { t } = useI18n()
 
@@ -22,7 +23,9 @@ const onTapItem = () => {
 const {
   prefix,
   memberShow,
-} = useScTop()
+  MORE_ITEMS,
+  onTapMoreMenuItem,
+} = useScTop(emits)
 
 const {
   boxWidth,
@@ -86,13 +89,19 @@ const searchTip = ` (${liuUtil.getHelpTip('Mod')} K)`
     </NaviLink>
 
     <!-- 更多 -->
-    <div class="liu-hover liu-hover_last sct-box" v-if="showMore"
-      :aria-label="t('whatever.sidebar_more')"
+    <LiuMenu
+      :menu="MORE_ITEMS"
+      @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(event1, event2)"
     >
-      <svg-icon name="more" class="sct-icon"
-        :color="iconColor"
-      ></svg-icon>
-    </div>
+      <div class="liu-hover liu-hover_last sct-box" v-if="showMore"
+        :aria-label="t('whatever.sidebar_more')"
+      >
+        <svg-icon name="more" class="sct-icon"
+          :color="iconColor"
+        ></svg-icon>
+      </div>
+    </LiuMenu>
+    
 
     <!-- 设置 -->
     <NaviLink 
