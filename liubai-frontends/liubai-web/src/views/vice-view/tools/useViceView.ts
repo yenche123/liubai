@@ -288,7 +288,7 @@ function judgeIfShadow(vvData: VvData) {
   let { sidebarWidth, clientWidth } = layoutStore
   const tmpCenter = clientWidth - sidebarWidth - vvData.viceViewPx
   const centerRight = clientWidth - sidebarWidth
-  const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 3)
+  const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 4)
 
   if(tmpCenter < criticalValue) return true
   return false

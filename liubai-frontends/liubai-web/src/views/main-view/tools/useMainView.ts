@@ -41,8 +41,8 @@ function initMainView(
     
     const tmpCenter = state.clientWidth - leftPx.value - vvRef.value
     const centerRight = state.clientWidth - leftPx.value
-    // 临界值: 取 "mainview 最小宽度" & "(全宽减掉左侧边栏)的三分之一" 的最大值
-    const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 3)
+    // 临界值: 取 "mainview 最小宽度" & "(全宽减掉左侧边栏)的四分之一" 的最大值
+    const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 4)
     // console.log("监听左边侧边栏的改变 tmpCenter: ", tmpCenter)
 
     if(tmpCenter < criticalValue) {
@@ -61,7 +61,7 @@ function initMainView(
   watch(vvRef, (newV) => {
     const tmpCenter = width.value - leftPx.value - newV
     const centerRight = width.value - leftPx.value
-    const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 3)
+    const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 4)
 
     if(tmpCenter < criticalValue) {
       let rc = getRightAndCenterPx(width.value, leftPx.value, newV)
