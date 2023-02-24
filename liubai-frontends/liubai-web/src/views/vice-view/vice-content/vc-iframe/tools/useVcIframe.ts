@@ -8,26 +8,37 @@ export function useVcIframe() {
 
   const whenWebViewerLoaded = () => {
     const iframeVal = iframeEl.value
-    const localPf = localCache.getLocalPreference()
-    const localTheme = localPf.theme
-
-    if(!localTheme || localTheme === "system") return
-    const viewerCssTheme = localTheme === "dark" ? 2 : 1
+    
     if(!iframeVal) return
     if(!route.query.pdf) return
 
+
+    let iframeWindow: any
+
     try {
-      const iframeWindow = iframeVal.contentWindow as any
-      if(!iframeWindow) return
-      iframeWindow.PDFViewerApplicationOptions.set("disablePreferences", true)
-      iframeWindow.PDFViewerApplicationOptions.set("viewerCssTheme", viewerCssTheme)
-      iframeWindow.PDFViewerApplication._forceCssTheme()
+      iframeWindow = iframeVal.contentWindow as any
     }
     catch(err) {
-      console.log("err: ")
+      console.log("iframeVal.contentWindow err: ")
       console.log(err)
+      return
     }
+    if(!iframeWindow) return
+    
+    iframeWindow.addEventListener("error", (event: any) => {
+      console.log("iframeWindow 捕获到错误...........")
+      console.log(event)
+      console.log(" ")
+    })
 
+    const localPf = localCache.getLocalPreference()
+    const localTheme = localPf.theme
+    if(!localTheme || localTheme === "system") return
+    const viewerCssTheme = localTheme === "dark" ? 2 : 1
+    
+    iframeWindow.PDFViewerApplicationOptions.set("disablePreferences", true)
+    iframeWindow.PDFViewerApplicationOptions.set("viewerCssTheme", viewerCssTheme)
+    iframeWindow.PDFViewerApplication._forceCssTheme()
   }
 
   onMounted(() => {
