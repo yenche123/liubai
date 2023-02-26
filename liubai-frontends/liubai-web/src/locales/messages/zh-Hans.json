@@ -169,7 +169,8 @@
     "try_again_later": "请稍后再试",
     "to_leave": " 退出",
     "to_navigate": " 切换",
-    "to_open": " 确认"
+    "to_open": " 确认",
+    "delete_banner": "垃圾桶仅保留最近 30 天所删除的动态，30 天后将自动彻底删除。"
   },
   "card_bubble": {
     "copy": "复制",

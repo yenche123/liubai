@@ -169,7 +169,8 @@
     "try_again_later": "Please try again later",
     "to_leave": " to leave",
     "to_navigate": " to navigate",
-    "to_open": " to confirm"
+    "to_open": " to confirm",
+    "delete_banner": "The threads in the trash are only reserverd in these 30 days. They will be deleted thoroughly after 30 days."
   },
   "card_bubble": {
     "copy": "Copy",
