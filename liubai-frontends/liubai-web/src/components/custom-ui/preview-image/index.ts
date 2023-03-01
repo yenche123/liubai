@@ -23,7 +23,6 @@ const data = reactive<PiData>({
 })
 
 export function initPreviewImage() {
-  rr = useRouteAndLiuRouter()
   listenRouteChange()
   return {
     TRANSITION_DURATION,
@@ -35,7 +34,7 @@ export function initPreviewImage() {
 }
 
 function listenRouteChange() {
-  if(!rr) return
+  rr = useRouteAndLiuRouter()
   watch(rr.route, (newV) => {
     const { query } = newV
     if(!query) return
