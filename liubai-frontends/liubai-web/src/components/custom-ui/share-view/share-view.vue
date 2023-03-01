@@ -6,6 +6,7 @@ const {
   enable,
   show,
   svData,
+  onTapMask,
 } = initShareView()
 
 
