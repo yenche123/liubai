@@ -2,7 +2,7 @@ import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import valTool from "~/utils/basic/val-tool"
 
 let errNum = 0
-export async function handleCuiQueryErr(
+export async function handleCustomUiQueryErr(
   rr: RouteAndLiuRouter | undefined,
   queryKey: string,
 ) {

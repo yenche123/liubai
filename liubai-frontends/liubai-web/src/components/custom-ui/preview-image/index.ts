@@ -8,7 +8,7 @@ import type {
   PiResolver,
   PreviewImageRes,
 } from "./tools/types"
-import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
+import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
 
 let _resolve: PiResolver | undefined
 
@@ -42,7 +42,7 @@ function listenRouteChange() {
 
     if(query[queryKey] === "01") {
       if(data.imgs.length) _toOpen()
-      else handleCuiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey)
     }
     else {
       _toClose()

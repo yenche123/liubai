@@ -8,7 +8,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import valTool from "~/utils/basic/val-tool"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
-import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
+import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
 import liuUtil from "~/utils/liu-util"
 
 let _resolve: SsResolver | undefined
@@ -48,7 +48,7 @@ function listenRouteChange() {
 
     if(query[queryKey] === "01") {
       if(list.value.length) _toOpen()
-      else handleCuiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey)
     }
     else {
       _toClose()

@@ -7,7 +7,7 @@ import type {
 import { ref, reactive, watch, toRef } from "vue"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
-import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
+import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool"
 import liuUtil from "~/utils/liu-util"
 import time from "~/utils/basic/time"
@@ -125,7 +125,7 @@ function listenRouteChange() {
 
     if(query[queryKey] === "01") {
       if(reData.mode) _toOpen()
-      else handleCuiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey)
     }
     else {
       _toClose()

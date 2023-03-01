@@ -14,7 +14,7 @@ import { formatTagText, findTagId } from "~/utils/system/tag-related"
 import liuApi from "~/utils/liu-api"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
-import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
+import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
 import liuUtil from "~/utils/liu-util"
 
 // 使用 element.scrollIntoView 让元素露出来 
@@ -70,7 +70,7 @@ function listenRouteChange() {
 
     if(query[queryKey] === "01") {
       if(mode.value !== "") _toOpen()
-      else handleCuiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey)
       return
     }
 

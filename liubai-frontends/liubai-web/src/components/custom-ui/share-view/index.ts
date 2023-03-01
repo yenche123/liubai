@@ -8,7 +8,7 @@ import type {
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import valTool from "~/utils/basic/val-tool"
-import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
+import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
 
 let _resolve: SvResolver | undefined
 const TRANSITION_DURATION = 150
@@ -56,7 +56,7 @@ function listenRouteChange() {
     const { q, search } = query
     if(search === "01" || q) {
       if(_resolve) _toOpen()
-      else handleCuiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey)
       return
     }
 
