@@ -6,6 +6,7 @@ import type {
   PiParam,
   PiData,
   PiResolver,
+  PreviewImageRes,
 } from "./tools/types"
 import { openIt, closeIt, handleCuiQueryErr } from "../tools/useCuiTool"
 
@@ -50,7 +51,7 @@ function listenRouteChange() {
 }
 
 function onTapCancel() {
-  _resolve && _resolve({ hasBack: true })
+  toResolve({ hasBack: true })
   closeIt(rr, queryKey)
 }
 
@@ -90,4 +91,10 @@ async function _toClose() {
   show.value = false
   await valTool.waitMilli(TRANSITION_DURATION)
   enable.value = false
+}
+
+function toResolve(res: PreviewImageRes) {
+  if(!_resolve) return
+  _resolve(res)
+  _resolve = undefined
 }

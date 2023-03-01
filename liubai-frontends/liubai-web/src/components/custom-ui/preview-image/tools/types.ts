@@ -5,7 +5,7 @@ export interface PiParam {
   index?: number
 }
 
-export interface PiReturn {
+export interface PreviewImageRes {
   hasBack: boolean
 }
 
@@ -14,4 +14,4 @@ export interface PiData {
   index: number
 }
 
-export type PiResolver = (res: PiReturn) => void
+export type PiResolver = (res: PreviewImageRes) => void
