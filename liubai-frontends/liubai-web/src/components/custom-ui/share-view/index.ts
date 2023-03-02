@@ -31,6 +31,8 @@ export function initShareView() {
     show,
     svData,
     onTapMask,
+    onPublicChanged,
+    onAllowCommentChanged,
   }
 }
 
@@ -68,6 +70,15 @@ function listenRouteChange() {
   })
 }
 
+
+
+function onPublicChanged(newV: boolean) {
+  svData.public = newV
+}
+
+function onAllowCommentChanged(newV: boolean) {
+  svData.allowComment = newV
+}
 
 function toResolve(res: ShareViewRes) {
   if(!_resolve) return

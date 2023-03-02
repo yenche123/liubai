@@ -222,6 +222,11 @@
     "github_search": "Github 搜索",
     "no_data": "0 个搜索结果"
   },
+  "share_related": {
+    "public_share": "公开分享",
+    "allow_comment": "允许评论",
+    "export_to": "导出至"
+  },
   "whatever": {
     "sidebar_more": "设置、垃圾桶"
   },

@@ -222,6 +222,11 @@
     "github_search": "Github 搜尋",
     "no_data": "0 個搜尋結果"
   },
+  "share_related": {
+    "public_share": "公開分享",
+    "allow_comment": "允許留言",
+    "export_to": "導出至"
+  },
   "whatever": {
     "sidebar_more": "設定、回收站"
   },

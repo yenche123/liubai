@@ -222,6 +222,11 @@
     "github_search": "Github Search",
     "no_data": "0 result"
   },
+  "share_related": {
+    "public_share": "Public",
+    "allow_comment": "Allow comments",
+    "export_to": "Export to"
+  },
   "whatever": {
     "sidebar_more": "Setting & Trash"
   },
