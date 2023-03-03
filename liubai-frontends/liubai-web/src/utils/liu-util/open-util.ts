@@ -70,6 +70,7 @@ function openBing(
 
 function getBingSearchLink(keyword: string) {
   const url = new URL(thirdLink.BING_SEARCH)
+  url.searchParams.append("showconv", "1")
   url.searchParams.append("q", keyword)
   return url.toString()
 }
