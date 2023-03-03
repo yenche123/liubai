@@ -7,6 +7,7 @@ import ActionSheet from "./action-sheet/action-sheet.vue";
 import SearchEditor from "./search-editor/search-editor.vue";
 import StateSelector from "./state-selector/state-selector.vue";
 import StateEditor from "./state-editor/state-editor.vue";
+import ShareView from "./share-view/share-view.vue";
 import { initModal } from "./modal"
 import { initLoading } from "./loading"
 import { initTextEditor } from "./text-editor";
@@ -168,6 +169,9 @@ const {
 
   <!-- 状态编辑组件 -->
   <StateEditor></StateEditor>
+
+  <!-- 分享管理弹窗: 公开分享、允许评论、到出至 -->
+  <ShareView></ShareView>
 
 </template>
 

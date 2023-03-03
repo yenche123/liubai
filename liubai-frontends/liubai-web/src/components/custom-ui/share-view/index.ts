@@ -19,7 +19,7 @@ const svData = reactive({
   allowComment: false,
   threadId: "",
 })
-const queryKey = "previewimage"
+const queryKey = "shareview"
 let rr: RouteAndLiuRouter | undefined
 
 export function initShareView() {
@@ -55,8 +55,7 @@ function listenRouteChange() {
     const { query } = newV
     if(!query) return
 
-    const { q, search } = query
-    if(search === "01" || q) {
+    if(query[queryKey] === "01") {
       if(_resolve) _toOpen()
       else handleCustomUiQueryErr(rr, queryKey)
       return

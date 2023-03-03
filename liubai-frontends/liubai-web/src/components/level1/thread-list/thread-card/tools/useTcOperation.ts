@@ -14,6 +14,7 @@ import valTool from "~/utils/basic/val-tool"
 import type { PreCtx } from "~/components/level1/utils/tools/types"
 import { preHandle } from "~/components/level1/utils/preHandle"
 import commonOperate from "~/components/level1/utils/common-operate"
+import cui from "~/components/custom-ui"
 
 interface TcoCtx {
   props: TcProps
@@ -42,11 +43,12 @@ export function useTcOperation(
 
   const onTapComment = () => {
     console.log("onTapComment.........")
-    handel_comment(ctx, props)
+    handel_comment(ctx)
   }
 
   const onTapShare = () => {
     console.log("onTapShare.........")
+    handle_share(ctx)
   }
 
   const receiveBottomOperation = (operation: ThreadOperation) => {
@@ -108,12 +110,12 @@ async function handle_showCountdown(
 }
 
 // 跳转到详情页
-function handel_comment(ctx: TcoCtx, props: TcProps) {
-  if(props.displayType !== "list") {
+function handel_comment(ctx: TcoCtx) {
+  if(ctx.props.displayType !== "list") {
     console.log("想办法聚焦 comment 的输入框......")
     return
   }
-  const cid = props.threadData._id
+  const cid = ctx.props.threadData._id
   const res = liuUtil.open.toWhatDetail()
   if(res === "detail-page") {
     liuUtil.open.openDetailWithDetailPage(cid, ctx)
@@ -123,7 +125,11 @@ function handel_comment(ctx: TcoCtx, props: TcProps) {
   }
 }
 
-function handleShare(ctx: TcoCtx) {
-
+function handle_share(ctx: TcoCtx) {
+  const thread = ctx.props.threadData
+  const { visScope, _id: threadId, config: cfg } = thread
+  const allowComment = cfg?.allowComment ?? false
+  
+  cui.showShareView({ threadId, visScope, allowComment })
 }
 

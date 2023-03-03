@@ -83,6 +83,7 @@ const { t } = useI18n()
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  z-index: 4900;
 
   &.sv-container_show {
     opacity: 1;
@@ -95,6 +96,7 @@ const { t } = useI18n()
     width: 100%;
     height: 100%;
     background: var(--popup-bg);
+    z-index: 4901;
   }
 }
 
@@ -108,6 +110,7 @@ const { t } = useI18n()
   background-color: var(--card-bg);
   overflow-x: hidden;
   overflow-y: auto;
+  z-index: 4902;
 }
 
 .sv-box::-webkit-scrollbar-thumb {

@@ -10,6 +10,7 @@ import { showActionSheet } from "./action-sheet"
 import { showSearchEditor } from "./search-editor"
 import { showStateSelector } from "./state-selector"
 import { showStateEditor } from "./state-editor"
+import { showShareView } from "./share-view"
 
 export default {
   showModal,
@@ -24,4 +25,5 @@ export default {
   showSearchEditor,
   showStateSelector,
   showStateEditor,
+  showShareView
 }
