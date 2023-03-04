@@ -59,7 +59,7 @@ const { t } = useI18n()
       </div>
 
       <!-- export to -->
-      <div class="sv-bar">
+      <div class="sv-bar" style="cursor: auto">
         <div class="svb-hd">
           <span>{{ t('share_related.export_to') }}</span>
         </div>
