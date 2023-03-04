@@ -225,7 +225,8 @@
   "share_related": {
     "public_share": "公开分享",
     "allow_comment": "允许评论",
-    "export_to": "导出至"
+    "export_to": "导出至",
+    "download_ics": "下载 .ics"
   },
   "whatever": {
     "sidebar_more": "设置、垃圾桶"

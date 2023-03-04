@@ -82,6 +82,13 @@ const { t } = useI18n()
           ></svg-icon>
           <span>Outlook</span>
         </div>
+
+        <div class="liu-hover sv-app-item">
+          <svg-icon name="calendar" :coverFillStroke="false"
+            class="sv-app-item_svg"
+          ></svg-icon>
+          <span>{{ t('share_related.download_ics') }}</span>
+        </div>
         
       </div>
 
@@ -199,6 +206,39 @@ const { t } = useI18n()
     width: 42px;
     height: 42px;
     margin-block-end: 10px;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .sv-app-item {
+    min-width: 75px;
+    padding: 10px;
+    margin-inline-end: 4px;
+    margin-block-end: 4px;
+  }
+}
+
+@media screen and (max-width: 430px) {
+  .sv-app-item {
+    min-width: 60px;
+    padding: 8px;
+    font-size: var(--state-font);
+
+    .sv-app-item_svg {
+      width: 38px;
+      height: 38px;
+      margin-block-end: 8px;
+    }
+  }
+}
+
+@media screen and (max-width: 365px) {
+  .sv-bar{
+    margin-block-start: 20px;
+  }
+
+  .svb-hd {
+    font-size: var(--desc-font);
   }
 }
 
