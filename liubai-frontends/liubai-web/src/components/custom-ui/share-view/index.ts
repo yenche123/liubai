@@ -9,6 +9,7 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import valTool from "~/utils/basic/val-tool"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
+import { sv } from "date-fns/locale"
 
 let _resolve: SvResolver | undefined
 const TRANSITION_DURATION = 150
@@ -32,7 +33,7 @@ export function initShareView() {
     svData,
     onTapMask,
     onPublicChanged,
-    onAllowCommentChanged,
+    onTapAllowComment,
   }
 }
 
@@ -70,13 +71,13 @@ function listenRouteChange() {
 }
 
 
-
 function onPublicChanged(newV: boolean) {
   svData.public = newV
 }
 
-function onAllowCommentChanged(newV: boolean) {
-  svData.allowComment = newV
+function onTapAllowComment() {
+  if(!svData.public) return
+  svData.allowComment = !svData.allowComment
 }
 
 function toResolve(res: ShareViewRes) {
