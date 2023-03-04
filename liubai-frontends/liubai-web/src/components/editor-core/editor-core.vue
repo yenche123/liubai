@@ -97,7 +97,7 @@ export default defineComponent({
   }
 
   ul, ol {
-    padding: 0 0 0 24px;
+    padding: 0 0 0 32px;
     margin-block-start: 8px;
     margin-block-end: 8px;
   }
