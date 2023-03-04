@@ -30,8 +30,10 @@ const onTapToggle = (e: MouseEvent) => {
 </script>
 <template>
 
-  <div class="switch-container" @click="onTapToggle">
-    <div class="switch-box" :class="{ 'switch-box_disabled': props.disabled }">
+  <div class="switch-container" @click="onTapToggle"
+    :class="{ 'switch-container_disabled': disabled }"
+  >
+    <div class="switch-box" :class="{ 'switch-box_disabled': disabled }">
       <div class="switch-bg" :class="{ 'switch-bg_show': switchVal }"></div>
       <div class="switch-ball" :class="{ 'switch-ball_on': switchVal }"></div>
     </div>
@@ -45,6 +47,10 @@ const onTapToggle = (e: MouseEvent) => {
   height: 24px;
   position: relative;
   cursor: pointer;
+}
+
+.switch-container_disabled {
+  cursor: auto;
 }
 
 .switch-box {
