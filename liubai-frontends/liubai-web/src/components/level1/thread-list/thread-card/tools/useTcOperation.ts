@@ -130,6 +130,6 @@ function handle_share(ctx: TcoCtx) {
   const { visScope, _id: threadId, config: cfg } = thread
   const allowComment = cfg?.allowComment ?? false
   
-  cui.showShareView({ threadId, visScope, allowComment })
+  cui.showShareView({ threadId, visScope, allowComment, thread })
 }
 

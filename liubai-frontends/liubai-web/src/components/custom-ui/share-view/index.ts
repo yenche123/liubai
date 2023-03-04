@@ -3,22 +3,26 @@ import { reactive, ref, watch } from "vue"
 import type {
   ShareViewParam,
   ShareViewRes,
-  SvResolver
+  SvResolver,
+  ShareViewData,
 } from "./tools/types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import valTool from "~/utils/basic/val-tool"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
-import { sv } from "date-fns/locale"
+import { handleLinks } from "./tools/handle-links"
 
 let _resolve: SvResolver | undefined
 const TRANSITION_DURATION = 150
 const enable = ref(false)
 const show = ref(false)
-const svData = reactive({
+const svData = reactive<ShareViewData>({
   public: false,
   allowComment: false,
   threadId: "",
+  copyLink: "",
+  googleCalendarLink: "",
+  outlookLink: "",
 })
 const queryKey = "shareview"
 let rr: RouteAndLiuRouter | undefined
@@ -41,6 +45,8 @@ export function showShareView(param: ShareViewParam) {
   svData.public = param.visScope === "PUBLIC"
   svData.allowComment = param.allowComment ?? false
   svData.threadId = param.threadId
+
+  handleLinks(svData, param.thread)
 
   openIt(rr, queryKey)
 
