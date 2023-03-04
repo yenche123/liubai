@@ -35,6 +35,7 @@ const { t } = useI18n()
 
         <div class="svb-footer">
           <liu-switch :checked="svData.public"
+            @change="onPublicChanged($event.checked)"
           ></liu-switch>
         </div>
       </div>
@@ -54,6 +55,7 @@ const { t } = useI18n()
         <div class="svb-footer">
           <liu-switch :checked="svData.allowComment"
             :disabled="!svData.public"
+            @change="onTapAllowComment"
           ></liu-switch>
         </div>
       </div>
