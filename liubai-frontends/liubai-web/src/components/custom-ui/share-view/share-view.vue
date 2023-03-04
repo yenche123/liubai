@@ -41,7 +41,9 @@ const { t } = useI18n()
 
       <!-- allow comment -->
       <div class="sv-bar">
-        <div class="svb-hd">
+        <div class="svb-hd"
+          :class="{ 'svb-hd_disabled': !svData.public }"
+        >
           <span>{{ t('share_related.allow_comment') }}</span>
         </div>
 
@@ -120,7 +122,7 @@ const { t } = useI18n()
 .sv-bar {
   width: 100%;
   box-sizing: border-box;
-  padding: 24px 20px 0px 24px;
+  padding: 28px 20px 0px 24px;
   display: flex;
   align-items: center;
   position: relative;
@@ -132,6 +134,11 @@ const { t } = useI18n()
   color: var(--main-normal);
   font-size: var(--title-font);
   font-weight: 700;
+  transition: .15s;
+}
+
+.svb-hd_disabled {
+  opacity: .5;
 }
 
 .svb-footer {

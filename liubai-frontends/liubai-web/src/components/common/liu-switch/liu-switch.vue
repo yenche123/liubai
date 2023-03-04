@@ -70,7 +70,7 @@ const onTapToggle = (e: MouseEvent) => {
   border-radius: 10px;
   overflow: hidden;
   background: var(--cool-bg);
-  transition: .2s;
+  transition: .15s;
 }
 
 .switch-bg_show {
@@ -86,7 +86,7 @@ const onTapToggle = (e: MouseEvent) => {
   border-radius: 10px;
   overflow: hidden;
   background-color: var(--other-btn-text);
-  transition: .2s;
+  transition: .15s;
 }
 
 .switch-ball_on {
