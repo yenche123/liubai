@@ -77,7 +77,7 @@ export default defineComponent({
 
   .ce-tag-item {
     padding: 6px 14px 6px 14px;
-    font-size: var(--btn-font);
+    font-size: var(--mini-font);
     color: var(--liu-quote);
     background: var(--tag-bg);
     border-radius: 24px;

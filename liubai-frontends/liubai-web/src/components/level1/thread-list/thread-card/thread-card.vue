@@ -157,7 +157,7 @@ export default defineComponent({
 
 .tc-container {
   width: 100%;
-  border-radius: 20px;
+  border-radius: 16px;
   position: relative;
   background-color: var(--card-bg);
   box-shadow: var(--card-shadow-2);
@@ -165,13 +165,13 @@ export default defineComponent({
   margin-bottom: 16px;
 
   &:active {
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: var(--card-shadow2-hover);
   }
 
   @media(hover: hover) {
     &:hover {
-      border-radius: 10px;
+      border-radius: 8px;
       box-shadow: var(--card-shadow2-hover);
     }
   }
