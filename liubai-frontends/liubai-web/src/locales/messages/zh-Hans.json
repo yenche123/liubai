@@ -129,7 +129,7 @@
   "dnd": {
     "add_tip": "添加图片或附件",
     "sidebar": "侧边栏",
-    "retract": "收起"
+    "collapse": "收起"
   },
   "who_r_u": {
     "placeholder": "怎么称呼你？"

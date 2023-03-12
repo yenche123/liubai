@@ -24,7 +24,7 @@ const color = "var(--main-note)"
     </div>
     <div class="liu-hover sbb-close"
       @click="$emit('tapclose')"
-      :aria-label="t('dnd.retract')"
+      :aria-label="t('dnd.collapse')"
     >
       <svg-icon 
         class="sbb-close-svg" 
