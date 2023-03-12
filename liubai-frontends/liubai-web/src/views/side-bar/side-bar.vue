@@ -96,6 +96,7 @@ const {
       </template>
     </vue-draggable-resizable>
 
+    <!-- 侧边栏里的关闭按钮 -->
     <SbBottom :show-handle="showHandle"
       @tapclose="onTapCloseBtn"
     ></SbBottom>
@@ -105,7 +106,7 @@ const {
   <!-- fixed 布局、底部有黑色蒙层的 side-bar -->
   <SbFixed :expand-state="expandState"></SbFixed>
 
-  <!-- 左下角的 open 按钮 -->
+  <!-- 侧边栏关闭后，会显示在屏幕左下角的 open 按钮 -->
   <SbOpen
     @tapopen="onTapOpenBtn"
   ></SbOpen>
