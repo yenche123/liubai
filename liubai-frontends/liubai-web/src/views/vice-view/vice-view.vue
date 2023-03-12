@@ -102,12 +102,14 @@ const onVcStateChange = (newV: VcState) => {
 
 </template>
 <style scoped>
+
 .vv-container {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   height: 100vh;
+  height: 100dvh;
   z-index: 700;
   transition: .3s;
   direction: rtl;

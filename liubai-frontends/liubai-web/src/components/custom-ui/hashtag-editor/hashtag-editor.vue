@@ -102,7 +102,9 @@ const onMouseEnterItem = (index: number) => {
 .hte-container {
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   max-height: 100vh;
+  max-height: 100dvh;
   position: fixed;
   top: 0;
   left: 0;
@@ -130,6 +132,7 @@ const onMouseEnterItem = (index: number) => {
   .hte-box {
     z-index: 5102;
     margin-top: 20vh;
+    margin-top: 20dvh;
     width: 90vw;
     max-width: 750px;
     border-radius: 20px;

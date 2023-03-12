@@ -112,6 +112,7 @@ const previewDate = computed(() => {
 .liu-dp-container {
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   position: fixed;
   z-index: 5000;
   top: 0;

@@ -113,6 +113,7 @@ export default defineComponent({
 .pi-scroll-box {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -120,6 +121,7 @@ export default defineComponent({
 .pi-item {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   position: relative;
   display: flex;
   align-items: center;
@@ -130,6 +132,7 @@ export default defineComponent({
     height: 100%;
     max-width: 100vw;
     max-height: 100vh;
+    max-height: 100dvh;
     transition: .2s;
   }
 
@@ -174,7 +177,9 @@ export default defineComponent({
   top: 50%;
   width: 90px;
   height: 60vh;
+  height: 60dvh;
   margin-top: -30vh;
+  margin-top: -30dvh;
   display: flex;
   align-items: center;
   justify-content: center;

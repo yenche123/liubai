@@ -120,6 +120,7 @@ const {
   left: 0;
   bottom: 0;
   height: 100vh;
+  height: 100dvh;
   z-index: 500;
   transition: .3s;
   overflow: hidden;

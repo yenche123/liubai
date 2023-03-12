@@ -368,6 +368,7 @@ const {
 .cui-loading-container {
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   position: fixed;
   z-index: 5200;
   top: 0;

@@ -147,6 +147,7 @@ const { t } = useI18n()
   width: 100%;
   overflow-y: auto;
   max-height: 52vh;
+  max-height: 52dvh;
   position: relative;
 }
 

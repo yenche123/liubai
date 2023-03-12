@@ -142,5 +142,12 @@ const { enable, show } = usePlaceholderView(props)
   opacity: 0;
 }
 
+@supports (height: calc(100dvh - 80px)) {
+
+  .pv-container {
+    height: calc(100dvh - 80px);
+  }
+
+}
 
 </style>

@@ -132,6 +132,7 @@ const { t } = useI18n()
   width: 96%;
   max-width: 700px;
   max-height: 90vh;
+  max-height: 90dvh;
   overflow-y: auto;
   border-radius: 30px;
   background-color: var(--card-bg);

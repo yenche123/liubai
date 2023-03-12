@@ -67,6 +67,7 @@ const {
   position: fixed;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   z-index: 750;
   top: 0;
   left: 0;
@@ -92,6 +93,7 @@ const {
   display: flex;
   width: 86vw;
   height: 100vh;
+  height: 100dvh;
   max-width: 400px;
   min-width: 250px;
   position: relative;
