@@ -128,7 +128,8 @@
   },
   "dnd": {
     "add_tip": "添加圖片或附件",
-    "sidebar": "側邊欄"
+    "sidebar": "側邊欄",
+    "retract": "收起"
   },
   "who_r_u": {
     "placeholder": "怎麼稱呼你?"

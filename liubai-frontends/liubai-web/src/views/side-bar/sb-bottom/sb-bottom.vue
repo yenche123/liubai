@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n"
 
 defineEmits<{
   (event: "tapclose"): void
@@ -10,7 +11,8 @@ defineProps({
   },
 })
 
-const color = "var(--navi-normal)"
+const { t } = useI18n()
+const color = "var(--main-note)"
 
 </script>
 <template>
@@ -22,10 +24,11 @@ const color = "var(--navi-normal)"
     </div>
     <div class="liu-hover sbb-close"
       @click="$emit('tapclose')"
+      :aria-label="t('dnd.retract')"
     >
       <svg-icon 
         class="sbb-close-svg" 
-        name="double-arrow-left" 
+        name="triangle_open" 
         :color="color"
       ></svg-icon>
     </div>
@@ -42,12 +45,19 @@ const color = "var(--navi-normal)"
   -webkit-backdrop-filter: blur(5px);
 }
 
+.liu-hover::before {
+  border-radius: 0;
+}
+
+.liu-hover:active::before {
+  opacity: 0;
+}
+
 .sb-bottom {
-  padding-block-end: 8px;
   position: absolute;
-  bottom: 0;
+  bottom: 30px;
   left: 0;
-  right: 14px;
+  right: 10px;
   display: flex;
 }
 
@@ -56,18 +66,42 @@ const color = "var(--navi-normal)"
 }
 
 .sbb-close {
-  width: 40px;
-  height: 40px;
-  margin-inline-end: 2px;
+  width: 14px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  border-top-left-radius: 9px;
+  border-bottom-left-radius: 9px;
+  border: 0.6px solid var(--line-default);
+  background-color: var(--bg-color);
   transition: .15s;
+  transform-origin: center right;
   opacity: v-bind("showHandle ? '1' : '0'");
+  position: relative;
 
   .sbb-close-svg {
-    width: 30px;
-    height: 30px;
+    width: 9px;
+    height: 9px;
+    transform: rotate(180deg);
+  }
+}
+
+
+@media(hover: hover) {
+  .sbb-close:hover {
+    transform: scale(1.25);
+  }
+
+  .liu-hover:hover::before {
+    opacity: 0;
+  }
+
+  .liu-hover[aria-label]::after {
+    top: 0;
+    right: 100%;
+    transform: translateX(-3%) scale(0.8);
   }
 }
 

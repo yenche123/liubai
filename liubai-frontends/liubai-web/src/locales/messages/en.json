@@ -128,7 +128,8 @@
   },
   "dnd": {
     "add_tip": "Add photos or files",
-    "sidebar": "Sidebar"
+    "sidebar": "Sidebar",
+    "retract": "Retract"
   },
   "who_r_u": {
     "placeholder": "How to call you?"
