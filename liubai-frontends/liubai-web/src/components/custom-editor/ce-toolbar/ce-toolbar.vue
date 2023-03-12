@@ -81,33 +81,6 @@ export default defineComponent({
         :class="expanded ? 'ceti-close-fullscreen' : 'ceti-open-fullscreen'" :color="icon_color" />
     </div>
 
-    <!-- 粗体 -->
-    <!-- <div class="liu-hover cet-item"
-      :class="{ 'cet-item_selected': editor?.isActive('bold') }"
-      @click="editor?.chain().focus().toggleBold().run()"
-      :aria-label="t('editor.bold')"
-    >
-      <svg-icon name="editor-bold" class="ceti-icon" :color="icon_color" />
-    </div> -->
-
-    <!-- 斜体 -->
-    <!-- <div class="liu-hover cet-item"
-      :class="{ 'cet-item_selected': editor?.isActive('italic') }"
-      @click="editor?.chain().focus().toggleItalic().run()"
-      :aria-label="t('editor.italic')"
-    >
-      <svg-icon name="editor-italic" class="ceti-icon" :color="icon_color" />
-    </div> -->
-
-    <!-- 删除线 -->
-    <!-- <div class="liu-hover cet-item"
-      :class="{ 'cet-item_selected': editor?.isActive('strike') }"
-      @click="editor?.chain().focus().toggleStrike().run()"
-      :aria-label="t('editor.strike')"
-    >
-      <svg-icon name="editor-strike" class="ceti-icon" :color="icon_color" />
-    </div> -->
-
     <!-- 更多 -->
     <div class="liu-hover cet-item"
       :class="{ 'cet-item_selected': more }"
