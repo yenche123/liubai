@@ -47,6 +47,7 @@ const { t } = useI18n()
   border-top-right-radius: 9px;
   border-bottom-right-radius: 9px;
   border: 0.6px solid var(--sidebar-scrollbar-thumb);
+  border-left: 0;
   background-color: var(--sidebar-bg);
   transition: .15s;
   transform-origin: center left;
