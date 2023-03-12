@@ -74,6 +74,15 @@ export function useMoreArea(emits: MoreAreaEmits) {
     e.stopPropagation()
   }
 
+  const onTapAddSite = (e: MouseEvent) => {
+    cui.showModal({
+      title_key: "tip.tip",
+      content: "Coming Soon!",
+      showCancel: false,
+    })
+    e.stopPropagation()
+  }
+
   const onFileChange = () => {
     const el = selectFileEl.value
     if(!el) return
@@ -102,6 +111,7 @@ export function useMoreArea(emits: MoreAreaEmits) {
     onTapClearTitle,
     onFileChange,
     onTapClearAttachment,
+    onTapAddSite,
   }
 }
 

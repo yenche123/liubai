@@ -103,7 +103,7 @@ export default defineComponent({
       </div>
 
       <!-- 加位置 -->
-      <div class="liu-hover ma-item">
+      <div class="liu-hover ma-item" @click="onTapAddSite">
         <div class="mai-icon">
           <svg-icon name="location" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
