@@ -258,6 +258,11 @@ const {
       z-index: 5112;
     }
 
+    p::selection {
+      color: var(--on-primary);
+      background-color: var(--primary-active);
+    }
+
     .cui-modal-tip {
       display: flex;
       max-width: 100%;
