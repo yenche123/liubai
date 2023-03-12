@@ -17,7 +17,7 @@ const color = "var(--main-note)"
 </script>
 <template>
 
-  <div class="liu-frosted-glass sb-bottom">
+  <div class="sb-bottom">
 
     <div class="sbb-main">
 
@@ -39,12 +39,6 @@ const color = "var(--main-note)"
 </template>
 <style lang="scss" scoped>
 
-.liu-frosted-glass::before {
-  background: none;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-}
-
 .liu-hover::before {
   border-radius: 0;
 }
@@ -57,7 +51,7 @@ const color = "var(--main-note)"
   position: absolute;
   bottom: 30px;
   left: 0;
-  right: 10px;
+  right: 9px;
   display: flex;
 }
 
@@ -75,6 +69,7 @@ const color = "var(--main-note)"
   border-top-left-radius: 9px;
   border-bottom-left-radius: 9px;
   border: 0.6px solid var(--line-default);
+  border-right: 0;
   background-color: var(--bg-color);
   transition: .15s;
   transform-origin: center right;
