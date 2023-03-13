@@ -294,6 +294,24 @@ const {
       flex-wrap: wrap;
       position: relative;
 
+      @media(hover: hover) {
+        .cui-modal-btn:hover {
+          background-color: var(--cui-modal-other-btn-hover);
+        }
+
+        .cui-modal-confirm:hover {
+          background-color: var(--primary-hover);
+        }
+
+        .cui-btn_disabled:hover {
+          background-color: var(--primary-color);
+        }
+
+        .cui-modal-btn_red:hover {
+          background-color: #c61d2e;
+        }
+      }
+
       .cui-modal-btn {
         padding: 10px 16px;
         border-radius: 24px;
@@ -307,7 +325,7 @@ const {
         margin-bottom: 10px;
         cursor: pointer;
 
-        &:hover, &:active {
+        &:active {
           background-color: var(--cui-modal-other-btn-hover);
         }
       }
@@ -316,12 +334,17 @@ const {
         color: var(--on-primary);
         background-color: var(--primary-color);
 
-        &:hover {
-          background-color: var(--primary-hover);
-        }
-
         &:active {
           background-color: var(--primary-active);
+        }
+      }
+
+      .cui-btn_disabled {
+        opacity: .6;
+        cursor: auto;
+
+        &:active {
+          background-color: var(--primary-color);
         }
       }
 
@@ -329,10 +352,11 @@ const {
         color: white;
         background-color: #dc1e30;
 
-        &:hover, &:active {
+        &:active {
           background-color: #c61d2e;
         }
       }
+
     }
   }
 
@@ -356,11 +380,6 @@ const {
   &::selection {
     background-color: var(--select-bg);
   }
-}
-
-.cui-btn_disabled {
-  opacity: .6;
-  cursor: default;
 }
 
 
