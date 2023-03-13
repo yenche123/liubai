@@ -222,14 +222,15 @@ const onVcStateChange = (newV: VcState) => {
   transform-origin: center;
 }
 
-.liu-vv-vdr-handle-ml:active {
-  transform: scale(1.2);
-}
-
 @media(hover: hover) {
   .liu-vv-vdr-handle-ml:hover {
     transform: scale(1.2);
   }
 }
+
+.liu-vv-vdr-handle-ml:active {
+  transform: scale(1.2);
+}
+
 
 </style>

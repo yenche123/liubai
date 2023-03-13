@@ -217,15 +217,14 @@ const { t } = useI18n()
   height: 20px;
 }
 
-
-.ss-item:active {
-  opacity: .7;
-}
-
 @media(hover: hover) {
   .ss-item:hover {
     opacity: .7;
   }
+}
+
+.ss-item:active {
+  opacity: .7;
 }
 
 

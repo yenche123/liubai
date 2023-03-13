@@ -169,10 +169,6 @@ export default defineComponent({
   transition: .15s;
 }
 
-.lci-inner:active {
-  background-color: var(--card-hover);
-}
-
 .lci-text {
   width: 100%;
   color: var(--main-normal);
@@ -192,6 +188,10 @@ export default defineComponent({
   .lci-inner:hover {
     background-color: var(--card-hover);
   }
+}
+
+.lci-inner:active {
+  background-color: var(--card-hover);
 }
 
 </style>

@@ -154,14 +154,14 @@ const { t } = useI18n()
   cursor: pointer;
 }
 
-.ir-got-it:active {
-  opacity: .66;
-}
-
 @media(hover: hover) {
   .ir-got-it:hover {
     opacity: .75;
   }
+}
+
+.ir-got-it:active {
+  opacity: .66;
 }
 
 

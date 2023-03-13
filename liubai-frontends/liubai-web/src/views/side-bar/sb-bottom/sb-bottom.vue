@@ -43,10 +43,6 @@ const color = "var(--main-note)"
   border-radius: 0;
 }
 
-.liu-hover:active::before {
-  opacity: 0;
-}
-
 .sb-bottom {
   position: absolute;
   bottom: 30px;
@@ -100,6 +96,9 @@ const color = "var(--main-note)"
   }
 }
 
+.liu-hover:active::before {
+  opacity: 0;
+}
 
 
 </style>

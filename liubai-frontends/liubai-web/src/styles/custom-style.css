@@ -22,10 +22,6 @@
   background-color: var(--primary-color);
 }
 
-.liu-hover:active::before {
-  opacity: .1;
-}
-
 /** 对于毛玻璃的效果 */
 .liu-frosted-glass {
   position: relative;
@@ -95,4 +91,8 @@
     right: 0;
     transform: translateX(0);
   }
+}
+
+.liu-hover:active::before {
+  opacity: .1;
 }

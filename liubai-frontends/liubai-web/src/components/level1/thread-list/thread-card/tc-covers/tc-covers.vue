@@ -133,20 +133,20 @@ export default defineComponent({
     cursor: pointer;
     transition: .15s;
 
+    @media(hover: hover) {
+      &:hover {
+        opacity: .7;
+      }
+    }
+
     &:active {
-      opacity: .66;
+      opacity: .6;
     }
 
     .cc-img {
       width: v-bind("imgWidth + 'px'");
       height: v-bind("imgWidth + 'px'");
       cursor: pointer;
-    }
-  }
-
-  @media(hover: hover) {
-    .cec-item:hover {
-      opacity: .66;
     }
   }
 

@@ -64,10 +64,6 @@ const { t } = useI18n()
   border-radius: 0;
 }
 
-.liu-hover:active::before {
-  opacity: 0;
-}
-
 
 @media(hover: hover) {
   .sb-open:hover {
@@ -83,7 +79,10 @@ const { t } = useI18n()
     right: 0;
     transform: translateX(100%) scale(0.8);
   }
+}
 
+.liu-hover:active::before {
+  opacity: 0;
 }
 
 

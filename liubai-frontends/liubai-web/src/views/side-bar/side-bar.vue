@@ -254,14 +254,14 @@ const {
   transform-origin: center;
 }
 
-.liu-vdr-handle-mr:active {
-  transform: scale(1.2);
-}
-
 @media(hover: hover) {
   .liu-vdr-handle-mr:hover {
     transform: scale(1.2);
   }
+}
+
+.liu-vdr-handle-mr:active {
+  transform: scale(1.2);
 }
 
 </style>
