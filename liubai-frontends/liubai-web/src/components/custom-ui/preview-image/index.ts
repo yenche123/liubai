@@ -9,6 +9,7 @@ import type {
   PreviewImageRes,
 } from "./tools/types"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
+import { toListenEscKeyUp, cancelListenEscKeyUp } from "../tools/listen-keyup"
 
 let _resolve: PiResolver | undefined
 
@@ -84,6 +85,7 @@ async function _toOpen() {
   enable.value = true
   await valTool.waitMilli(16)
   show.value = true
+  toListenEscKeyUp(onTapCancel)
 }
 
 async function _toClose() {
@@ -91,6 +93,7 @@ async function _toClose() {
   show.value = false
   await valTool.waitMilli(TRANSITION_DURATION)
   enable.value = false
+  cancelListenEscKeyUp()
 }
 
 function toResolve(res: PreviewImageRes) {
