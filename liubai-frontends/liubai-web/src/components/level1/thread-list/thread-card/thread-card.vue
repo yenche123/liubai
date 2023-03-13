@@ -184,7 +184,6 @@ export default defineComponent({
     box-sizing: border-box;
     padding: 20px;
     position: relative;
-    cursor: v-bind("viewType === 'TRASH' || displayType === 'detail' ? 'auto' : 'pointer'");
 
     .tc-briefing {
       position: relative;

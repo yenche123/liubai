@@ -112,6 +112,7 @@ export default defineComponent({
   .tcc-one-img {
     width: 100%;
     height: 100%;
+    cursor: pointer;
   }
 }
 
@@ -139,6 +140,7 @@ export default defineComponent({
     .cc-img {
       width: v-bind("imgWidth + 'px'");
       height: v-bind("imgWidth + 'px'");
+      cursor: pointer;
     }
   }
 
