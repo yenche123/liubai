@@ -164,6 +164,7 @@ export async function getThreadsByCollectionOrEmoji(
       briefing: commonPack.getBriefing(newDesc),
       summary: commonPack.getSummary(liuDesc, v.files),
       images,
+      imgLayout: imgHelper.getImgLayout(images),
       files: v.files,
       whenStamp: v.whenStamp,
       remindStamp: v.remindStamp,

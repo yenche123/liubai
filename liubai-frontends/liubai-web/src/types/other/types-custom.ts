@@ -23,3 +23,17 @@ export interface SearchItem {
 export interface MemberConfig {
   searchKeywords: string[]
 }
+
+export interface ImgOneLayout {
+  heightStr: string           // 整个盒子的高度，比如 80% （相对于宽度）
+  maxWidthPx: number          // 整个 covers 盒子的最大宽度，单位 px
+}
+
+export interface ImgTwoLayout extends ImgOneLayout {
+  isColumn?: boolean          // 是否 竖直排列
+}
+
+export interface ImgLayout {
+  one?: ImgOneLayout
+  two?: ImgTwoLayout
+}

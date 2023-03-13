@@ -3,6 +3,7 @@ import type { ImageShow, LiuImageStore } from "~/types"
 import liuUtil from '../liu-util';
 import ider from '../basic/ider';
 import { encode as blurhashEncode } from "blurhash";
+import { getImgLayout } from "./tools/img-layout"
 
 type FileWithCharacteristic = { 
   file: File
@@ -221,4 +222,5 @@ export default {
   compress,
   getMetaDataFromFiles,
   imageStoreToShow,
+  getImgLayout,
 }

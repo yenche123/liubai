@@ -88,6 +88,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       briefing: commonPack.getBriefing(newDesc),
       summary: commonPack.getSummary(liuDesc, v.files),
       images,
+      imgLayout: imgHelper.getImgLayout(images),
       files: v.files,
       whenStamp: v.whenStamp,
       remindStamp: v.remindStamp,

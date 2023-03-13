@@ -3,7 +3,7 @@ import type { OState, VisScope, StorageState, MemberState, SpaceType } from "./t
 import type { LiuRemindMe } from "./types-atom"
 import type { ImageShow, LiuFileStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
-import type { ContentConfig } from "./other/types-custom"
+import type { ContentConfig, ImgLayout } from "./other/types-custom"
 
 export interface EmojiSystem {
   num: number
@@ -56,6 +56,7 @@ export interface ThreadShow {
                                  // 如果 content 不存在，看文件是否存在，若有打印文件名
   images?: ImageShow[]
   files?: LiuFileStore[]
+  imgLayout?: ImgLayout
   whenStamp?: number
   remindStamp?: number
   remindMe?: LiuRemindMe

@@ -115,7 +115,10 @@ export default defineComponent({
       </div>
 
       <!-- 图片 -->
-      <TcCovers :covers="threadData.images"></TcCovers>
+      <TcCovers 
+        :covers="threadData.images"
+        :img-layout="threadData.imgLayout"
+      ></TcCovers>
 
       <!-- 什么时候、提醒我、文件、地点、创建人、指派给 -->
       <TcAttachments
