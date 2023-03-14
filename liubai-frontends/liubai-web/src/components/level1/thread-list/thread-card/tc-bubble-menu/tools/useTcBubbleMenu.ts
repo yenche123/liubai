@@ -28,9 +28,11 @@ export function useTcBubbleMenu(
 
   const rr = useRouteAndLiuRouter()
 
-  const _toCloseTippy = async (idx: number) => {
+  const _toCloseTippy = async (idx: number, instantly: boolean = false) => {
     selectedIndex.value = idx
-    await valTool.waitMilli(500)
+    if(!instantly) {
+      await valTool.waitMilli(500)
+    }
     selectedIndex.value = -1
     tippy?.hide()
   }
@@ -50,7 +52,7 @@ export function useTcBubbleMenu(
     if(text) {
       cui.showSearchEditor({ type: "search", initText: text })
     }
-    _toCloseTippy(1)
+    _toCloseTippy(1, true)
     e.stopPropagation()
   }
 
