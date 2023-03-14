@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
+import liuApi from "~/utils/liu-api";
 
 export default defineComponent({
   props: {
@@ -17,6 +18,8 @@ import { useI18n } from "vue-i18n";
 import liuUtil from "../../../utils/liu-util"
 const { t } = useI18n()
 
+const cha = liuApi.getCharacteristic()
+
 const emits = defineEmits<{
   (event: "confirm"): void
 }>()
@@ -30,7 +33,7 @@ const emits = defineEmits<{
 
     <div class="cefa-box">
       <span class="cefa-tip"
-        :class="{ 'cefa-tip_hidden': inCodeBlock }"
+        :class="{ 'cefa-tip_hidden': inCodeBlock || cha.isMobile }"
       >{{ liuUtil.getHelpTip('Mod_Enter') }}</span>
       <custom-btn 
         size="mini" 

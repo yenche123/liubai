@@ -19,7 +19,6 @@ const WIN_MAPS: HelpMap = {
 
 export const getHelpTip = (key: keyof HelpMap): string => {
   const cha = liuApi.getCharacteristic()
-  if(!cha.isPC) return ""
   if(cha.isMac) return MAC_MAPS[key]
   return WIN_MAPS[key]
 }

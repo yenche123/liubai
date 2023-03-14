@@ -178,7 +178,11 @@ const { t } = useI18n()
   padding-inline-end: 20px;
 }
 
-
+@media screen and (max-width: 600px) {
+  .se-footer {
+    display: none;
+  }
+}
 
 
 </style>
