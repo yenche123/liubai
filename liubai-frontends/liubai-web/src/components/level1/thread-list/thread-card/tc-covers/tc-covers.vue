@@ -56,11 +56,44 @@ export default defineComponent({
         <liu-img :src="covers[0].src" 
           :draggable="false" 
           :blurhash="covers[0].blurhash"
-          border-radius="10px"
+          border-radius="12px"
           class="tcc-one-img"
           object-fit="cover" 
           @click="onTapImage($event, 0)"
         ></liu-img>
+      </div>
+    </div>
+
+    <!-- 两张图片时 -->
+    <div v-else-if="imgLayout?.two" class="tcc-box"
+      :style="{ 
+        'max-width': imgLayout.two.maxWidthPx + 'px',
+      }"
+    >
+      <div class="tcc-virtual" 
+        :style="{
+          'padding-bottom': imgLayout.two.heightStr,
+        }"
+      ></div>
+      <div class="tcc-two-box"
+        :class="{ 
+          'tcc-two-box_column': imgLayout.two.isColumn 
+        }"
+      >
+        <div v-for="(item, index) in covers" :key="item.id"
+          class="tcctb-img-box"
+          :class="{
+            'tcctb-img-box_column': imgLayout.two.isColumn
+          }"
+        >
+          <liu-img :src="item.src" 
+            :draggable="false" 
+            :blurhash="item.blurhash"
+            class="tcc-two-img"
+            object-fit="cover" 
+            @click="onTapImage($event, index)"
+          ></liu-img>
+        </div>
       </div>
     </div>
 
@@ -108,12 +141,55 @@ export default defineComponent({
   left: 0;
   width: 100%;
   height: 100%;
-
+  
   .tcc-one-img {
     width: 100%;
     height: 100%;
     cursor: pointer;
   }
+}
+
+.tcc-two-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tcc-two-box_column {
+  flex-direction: column;
+}
+
+.tcctb-img-box {
+  flex: 1;
+  width: 10px;
+  height: 100%;
+  position: relative;
+  flex-basis: 0;
+
+  .tcc-two-img {
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+}
+
+.tcctb-img-box:first-child {
+  margin-inline-end: 3px;
+}
+
+.tcctb-img-box_column {
+  width: 100%;
+  height: 10px;
+}
+
+.tcctb-img-box_column:first-child {
+  margin-inline-end: 0;
+  margin-block-end: 3px;
 }
 
 
