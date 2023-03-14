@@ -48,6 +48,15 @@ function _parseTextsForLink(content: TipTapJSONContent[]): TipTapJSONContent[] {
     // 已经有样式，就 pass
     if(marks && marks.length) continue
 
+    // 解析 @xxx@aaa.bbb
+    const regSocialLink = /@[\w\.-]{2,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*/g
+    let list0 = _innerParse(text, regSocialLink, "social_link")
+    if(list0) {
+      content.splice(i, 1, ...list0)
+      i--
+      continue
+    }
+
     // 解析 email
     const regEmail = /[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*/g
     let list = _innerParse(text, regEmail, "email")
@@ -78,7 +87,7 @@ function _parseTextsForLink(content: TipTapJSONContent[]): TipTapJSONContent[] {
 function _innerParse(
   text: string, 
   reg: RegExp,
-  forType?: "url" | "email",
+  forType?: "url" | "email" | "social_link",
 ): TipTapJSONContent[] | undefined {
 
   const matches = text.matchAll(reg)
@@ -89,10 +98,15 @@ function _innerParse(
     let mTxt = match[0]
     let mLen = mTxt.length
     if(forType === "email" && mLen < 6) continue
+    if(forType === "social_link" && mLen < 7) continue
     if(forType === "url" && mLen < 8) continue
     if(forType === "url" && !_checkUrlMore(mTxt)) continue
 
-    const href = forType === "email" ? `mailto:${mTxt}` : mTxt
+    let href = forType === "email" ? `mailto:${mTxt}` : mTxt
+    if(forType === "social_link") {
+      href = _handleSocialLink(mTxt)
+    }
+
     const startIdx = match.index
     if(startIdx === undefined) continue
     const endIdx = startIdx + mLen
@@ -134,6 +148,34 @@ function _innerParse(
   }
 
   return tmpList
+}
+
+/**
+ * 处理 @xxx@aa.com 返回 href
+ * @param text 长这样 "@xxx@aa.com"
+ */
+function _handleSocialLink(text: string) {
+  let tmpList = text.split("@")
+  let username = tmpList[1]
+  let domain = tmpList[2]
+
+  if(!username || !domain) {
+    return ""
+  }
+
+  if(domain === "twitter.com") {
+    return `https://twitter.com/${username}`
+  }
+
+  if(domain === "instagram.com") {
+    return `https://instagram.com/${username}`
+  }
+
+  if(domain === "youtube.com") {
+    return `https://youtube.com/@${username}`
+  }
+
+  return `https://elk.zone/${domain}/@${username}`
 }
 
 
