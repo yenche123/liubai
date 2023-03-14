@@ -40,7 +40,7 @@
     "lowlight": "^2.8.0",
     "nanoid": "^4.0.0",
     "pinia": "^2.0.28",
-    "swiper": "^8.4.5",
+    "swiper": "9",
     "tippy.js": "^6.3.7",
     "vconsole": "^3.15.0",
     "vue": "^3.2.45",
