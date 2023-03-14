@@ -106,7 +106,7 @@ function _getHighlight(text: string, keyword?: string) {
 
 
 
-const POINTS = ["\n", ",", ".", "，", "。", ";", "；"]
+const POINTS = ["\n", ",", ".", "，", "。", ";", "；", "!", "?", "！", "？"]
 
 function _trimForward(text: string, end: number) {
   let num = 0

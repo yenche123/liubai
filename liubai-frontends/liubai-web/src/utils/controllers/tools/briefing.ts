@@ -4,7 +4,8 @@ import type { TipTapJSONContent } from "~/types/types-editor";
 import { listToText, getRowNum } from "~/utils/transfer-util/text";
 import valTool from "~/utils/basic/val-tool";
 
-const MAGIC_NUM = 72
+const MAGIC_NUM = 66
+const TOLERANT_NUM = 10
 const MAX_ROW = 3
 
 /**
@@ -39,7 +40,7 @@ export function getBriefing(
         let tmpRow = getRowNum([v])
         rowNum += tmpRow
       }
-      if(charNum > MAGIC_NUM * 2) {
+      if(charNum > (MAGIC_NUM * 2 + TOLERANT_NUM * 2)) {
         if(type !== "codeBlock") requiredBrief = true
         if(i < (len - 1)) requiredBrief = true
       }
@@ -220,6 +221,10 @@ function _handleList(
   return newItems
 }
 
+
+
+const POINTS = ["\n", ",", ".", "，", "。", ";", "；", " ", "!", "?", "！", "？"]
+
 /**
  * 如果字符数超过 MAGIC_NUM 自动截断，并返回特定类型
  * @param textList 由 { type: 'text', text: '文本' } 所组成的数组
@@ -243,16 +248,34 @@ function _handleParagraph(
     }
 
     let tmpNum = charNum + valTool.getTextCharNum(text)
-    if(tmpNum <= MAGIC_NUM * 2) {
+    let diff_0 = tmpNum - (MAGIC_NUM * 2)
+    if(diff_0 <= 0) {
       charNum = tmpNum
       newTextList.push(v)
       continue
     }
 
-    let diff = (MAGIC_NUM * 2) - charNum
-    v.text = text.substring(0, diff) + "......"
+    let diff_1 = (MAGIC_NUM * 2) - charNum
+
+    // 希望不要断点在单词内，开始往前找合适的断点
+    let targetText = text.substring(0, diff_1)
+    const tLength = targetText.length
+    for(let j=tLength-1; j>3; j--) {
+      const _char = targetText[j]
+      if(POINTS.includes(_char)) {
+        hasMagic = true
+        targetText = targetText.substring(0, j) + "......"
+        break
+      }
+    }
+    if(!hasMagic) {
+      hasMagic = true
+      targetText += "......"
+    }
+
+    v.text = targetText
+
     newTextList.push(v)
-    hasMagic = true
     break
   }
 
