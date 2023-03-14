@@ -54,7 +54,7 @@ function _handleOneImg(
     if(maxWidthPx > imgWidthPx) maxWidthPx = imgWidthPx
   }
   if(maxWidthPx > 700) maxWidthPx = 700
-  if(maxWidthPx < 200) maxWidthPx = 200
+  if(maxWidthPx < 100) maxWidthPx = 100
   
 
   let heightStr = `${Math.round(h2w * 100)}%`
