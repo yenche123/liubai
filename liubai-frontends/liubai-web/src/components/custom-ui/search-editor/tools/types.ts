@@ -28,9 +28,8 @@ export interface SearchEditorData {
 
 export interface SearchEditorParam {
   type: ScMode
-  initText?: ""
+  initText?: string
   excludeThreads?: string[]
-
 }
 
 export interface SearchEditorRes {

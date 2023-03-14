@@ -46,6 +46,10 @@ export function useTcBubbleMenu(
   }
 
   const onTapSearchIn = (e: Event) => {
+    const text = _getSelectionText(opt.editor)
+    if(text) {
+      cui.showSearchEditor({ type: "search", initText: text })
+    }
     _toCloseTippy(1)
     e.stopPropagation()
   }
