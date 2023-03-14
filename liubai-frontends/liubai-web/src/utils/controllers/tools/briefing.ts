@@ -2,8 +2,9 @@
 import type { LiuContent } from "~/types/types-atom";
 import type { TipTapJSONContent } from "~/types/types-editor";
 import { listToText, getRowNum } from "~/utils/transfer-util/text";
+import valTool from "~/utils/basic/val-tool";
 
-const MAGIC_NUM = 66
+const MAGIC_NUM = 72
 const MAX_ROW = 3
 
 /**
@@ -34,11 +35,11 @@ export function getBriefing(
       const { type, content } = v
       if(content && content.length) {
         let tmpText = listToText(content)
-        charNum += tmpText.length
+        charNum += valTool.getTextCharNum(tmpText)
         let tmpRow = getRowNum([v])
         rowNum += tmpRow
       }
-      if(charNum > MAGIC_NUM) {
+      if(charNum > MAGIC_NUM * 2) {
         if(type !== "codeBlock") requiredBrief = true
         if(i < (len - 1)) requiredBrief = true
       }
@@ -63,11 +64,11 @@ export function getBriefing(
     const { content } = v
     if(content && content.length) {
       let tmpText = listToText(content)
-      charNum += tmpText.length
+      charNum += valTool.getTextCharNum(tmpText)
       let tmpRow = getRowNum([v])
       rowNum += tmpRow
     }
-    if(charNum > MAGIC_NUM || rowNum > MAX_ROW) {
+    if(charNum > (MAGIC_NUM * 2) || rowNum > MAX_ROW) {
       const newNode = _getBreakPoint(v, prevRowNum, prevCharNum)
       briefing.push(newNode)
       break
@@ -241,15 +242,15 @@ function _handleParagraph(
       continue
     }
 
-    let tmpNum = charNum + text.length
-    if(tmpNum <= MAGIC_NUM) {
+    let tmpNum = charNum + valTool.getTextCharNum(text)
+    if(tmpNum <= MAGIC_NUM * 2) {
       charNum = tmpNum
       newTextList.push(v)
       continue
     }
 
-    let diff = MAGIC_NUM - charNum
-    v.text = text.substring(0, diff) + "..."
+    let diff = (MAGIC_NUM * 2) - charNum
+    v.text = text.substring(0, diff) + "......"
     newTextList.push(v)
     hasMagic = true
     break
