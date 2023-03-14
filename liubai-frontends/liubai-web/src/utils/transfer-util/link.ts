@@ -106,6 +106,12 @@ function _innerParse(
     if(forType === "social_link") {
       href = _handleSocialLink(mTxt)
     }
+    if(forType === "url") {
+      const idx = href.indexOf("://")
+      if(idx < 0) {
+        href = `https://` + href
+      }
+    }
 
     const startIdx = match.index
     if(startIdx === undefined) continue
