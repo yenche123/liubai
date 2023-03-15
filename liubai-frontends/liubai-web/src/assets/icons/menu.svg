@@ -1,0 +1,8 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="48" height="48">
+	<style>
+		.s0 { fill: none; stroke-width: 24 } 
+	</style>
+	<rect class="s0" x="75" y="67" width="150" height="16" rx="25" ry="25"></rect>
+	<rect class="s0" x="75" y="142" width="150" height="16" rx="25" ry="25"></rect>
+	<rect class="s0" x="75" y="217" width="100" height="16" rx="25" ry="25"></rect>
+</svg>

@@ -2,7 +2,7 @@
 	<style>
 		.s0 { fill: none; stroke-width: 24 } 
 	</style>
-	<rect id="形状 1" class="s0" x="43" y="67" width="126" height="16" rx="25" ry="25"></rect>
-	<rect id="形状 1 copy 2" class="s0" x="130" y="217" width="126" height="16" rx="25" ry="25"></rect>
-	<rect id="形状 1 copy" class="s0" x="87" y="142" width="126" height="16" rx="25" ry="25"></rect>
+	<rect class="s0" x="43" y="67" width="126" height="16" rx="25" ry="25"></rect>
+	<rect class="s0" x="130" y="217" width="126" height="16" rx="25" ry="25"></rect>
+	<rect class="s0" x="87" y="142" width="126" height="16" rx="25" ry="25"></rect>
 </svg>

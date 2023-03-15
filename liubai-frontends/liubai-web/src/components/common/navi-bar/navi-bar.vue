@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import cfg from "../../../config"
 import { useRouteAndLiuRouter } from "../../../routes/liu-router";
+import { useNaviBar } from "./tools/useNaviBar";
 
 const { router } = useRouteAndLiuRouter()
 const props = defineProps({
@@ -14,16 +15,34 @@ const onTapBack = () => {
   router.naviBack()
 }
 
+
+const {
+  showMenuBtn,
+  onTapMenu
+} = useNaviBar()
+
 </script>
 <template>
 
   <div class="liu-frosted-glass nb-container">
 
     <div class="nb-box">
-      <div class="liu-hover nb-back-box" @click="onTapBack">
-        <SvgIcon class="nb-back-icon" name="arrow-back700"></SvgIcon>
+      <!-- back -->
+      <div class="liu-hover nbb-normal" @click="onTapBack"
+        :class="{ 'nbb-small': showMenuBtn }"
+      >
+        <SvgIcon class="nb-icon" name="arrow-back700"></SvgIcon>
       </div>
-      <div class="nb-title">
+      <!-- menu -->
+      <div v-if="showMenuBtn" 
+        class="liu-hover nbb-normal nbb-small" 
+        @click="onTapMenu"
+      >
+        <SvgIcon class="nb-icon" name="menu"></SvgIcon>
+      </div>
+      <div class="nb-title"
+        :style="{ 'margin-inline-start': showMenuBtn ? '10px' : '6px' }"
+      >
         <span>{{ title }}</span>
       </div>
     </div>
@@ -52,19 +71,29 @@ const onTapBack = () => {
   }
 }
 
-.nb-back-box {
+.nbb-normal {
   width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-inline-end: 6px;
 
-  .nb-back-icon {
+  .nb-icon {
     width: 26px;
     height: 26px;
   }
 }
+
+.nbb-small {
+  width: 34px;
+  height: 34px;
+
+  .nb-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 
 .nb-title {
   position: relative;
