@@ -122,13 +122,14 @@ const onTapItem = () => {
 
       <!-- 标题 -->
       <div class="si-title">
-        <span v-if="contentAtom">{{ contentAtom.title }}</span>
-        <span v-else-if="recentAtom">{{ recentAtom.title }}</span>
+        <span v-if="contentAtom?.title">{{ contentAtom.title }}</span>
+        <span v-else-if="recentAtom?.title">{{ recentAtom.title }}</span>
         <template v-else-if="thirdAtom">
           <span v-if="atomId === 'bing'">{{ t('search_related.bing_search') }}</span>
           <span v-else-if="atomId === 'xhs'">{{ t('search_related.xhs_search') }}</span>
           <span v-else-if="atomId === 'github'">{{ t('search_related.github_search') }}</span>
         </template>
+        <span v-else class="si-placeholder">{{ t('thread_related.img_file') }}</span>
       </div>
 
       <!--内文-->
@@ -232,6 +233,10 @@ const onTapItem = () => {
   overflow: hidden;
   text-overflow: ellipsis;
   padding-block: 4px;
+
+  .si-placeholder {
+    color: var(--liu-quote);
+  }
 }
 
 .si-desc {
