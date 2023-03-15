@@ -182,71 +182,85 @@ const previewDate = computed(() => {
 </style>
 <style lang="scss">
 
-.dp__theme_light  {
-  --dp-primary-color: var(--primary-color);
-  --dp-background-color: var(--card-bg);
-  --dp-border-color: var(--line-default);
-}
+.liu-dp-container {
 
-.dp__theme_dark {
-  --dp-primary-color: var(--primary-color);
-  --dp-background-color: var(--card-bg);
-  --dp-text-color: var(--main-text);
+  .dp__flex_display {
+    justify-content: center;
 
-  .dp__range_end, .dp__range_start, .dp__active_date {
-    color: var(--on-primary);
-  }
-}
-
-.dp-custom-menu {
-  padding: 20px 20px 10px;
-  border-radius: 20px;
-}
-
-.dp-custom-calendar-wrapper {
-
-  .dp__calendar_header_item {
-    width: 46px;
-    height: 46px;
-    max-width: 13vw;
-    max-height: 13vw;
+    .dp__outer_menu_wrap {
+      display: flex;
+      justify-content: center;
+    }
   }
 
-  .dp__calendar_item {
-    outline: none;
+  .dp__theme_light  {
+    --dp-primary-color: var(--primary-color);
+    --dp-background-color: var(--card-bg);
+    --dp-border-color: var(--line-default);
   }
 
-  .dp-custom-cell {
-    border-radius: 50%;
-    width: 46px;
-    height: 46px;
-    max-width: 13vw;
-    max-height: 13vw;
-    transition: .16s;
-    font-size: var(--btn-font);
+  .dp__theme_dark {
+    --dp-primary-color: var(--primary-color);
+    --dp-background-color: var(--card-bg);
+    --dp-text-color: var(--main-text);
+
+    .dp__range_end, .dp__range_start, .dp__active_date {
+      color: var(--on-primary);
+    }
   }
-}
-
-
-@media screen and (max-width: 380px) {
-  .dp-custom-menu {
-    padding: 10px 10px 10px;
-  }
-
-  .dp__action_row {
-    padding: 5px;
-  }
-}
-
-@media screen and (max-width: 350px) {
 
   .dp-custom-menu {
-    padding: 10px 3vw 10px;
+    padding: 20px 20px 10px;
+    border-radius: 20px;
   }
 
-  .dp__action_row {
-    padding: 0px;
+  .dp-custom-calendar-wrapper {
+
+    .dp__calendar_header_item {
+      width: 46px;
+      height: 46px;
+      max-width: 13vw;
+      max-height: 13vw;
+    }
+
+    .dp__calendar_item {
+      outline: none;
+    }
+
+    .dp-custom-cell {
+      border-radius: 50%;
+      width: 46px;
+      height: 46px;
+      max-width: 13vw;
+      max-height: 13vw;
+      transition: .16s;
+      font-size: var(--btn-font);
+    }
   }
+
+
+  @media screen and (max-width: 380px) {
+    .dp-custom-menu {
+      padding: 10px 10px 10px;
+    }
+
+    .dp__action_row {
+      padding: 5px;
+    }
+  }
+
+  @media screen and (max-width: 350px) {
+
+    .dp-custom-menu {
+      padding: 10px 2vw 10px;
+    }
+
+    .dp__action_row {
+      padding: 0px;
+      padding-inline-start: 5px;
+    }
+  }
+
 }
 
 </style>
