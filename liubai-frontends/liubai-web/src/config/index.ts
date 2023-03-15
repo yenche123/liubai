@@ -45,7 +45,7 @@ export default {
                             // 由于 vice-view 不是 overflow: hidden，所以其不需要留太多间距
                             // drag-handle 可以超出 container 也没关系
 
-  sidebar_close_point: 600,   // 窗口宽度小于该尺寸，就会关闭
-  sidebar_open_point: 700,    // 窗口尺寸大于等于该尺寸，并且为 closed_by_auto 状态，就会自动展开
+  sidebar_close_point: 600,   // 窗口宽度小于该尺寸，就会关闭 sidebar
+  sidebar_open_point: 700,    // 窗口尺寸大于等于该尺寸，并且为 closed_by_auto 状态，就会自动展开 sidebar
   
 }
