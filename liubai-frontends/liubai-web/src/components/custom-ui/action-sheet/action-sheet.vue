@@ -14,6 +14,8 @@ const {
 
 const { t } = useI18n()
 
+const iconColor = "var(--main-normal)"
+
 </script>
 <template>
 
@@ -35,7 +37,24 @@ const { t } = useI18n()
 
         <template v-for="(item, index) in asData.itemList" :key="item.text_key">
           <div class="as-item" @click="onTapItem(index)">
-            <span>{{ t(item.text_key) }}</span>
+
+            <div class="as-item-box">
+
+              <div v-if="item.iconName" class="as-item-icon">
+                <svg-icon :name="item.iconName" class="as-item-svg-icon"
+                  :color="item.color ? item.color : iconColor"
+                ></svg-icon>
+              </div>
+
+              <div class="as-item-text"
+                :class="{ 'asit-with-icon': item.iconName }"
+              >
+                <span v-if="item.text">{{ item.text }}</span>
+                <span v-else-if="item.text_key">{{ t(item.text_key) }}</span>
+              </div>
+
+            </div>
+            
           </div>
         </template>
 
@@ -119,18 +138,20 @@ const { t } = useI18n()
       display: flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      font-size: var(--inline-code-font);
-      color: var(--main-normal);
       border-bottom: 0.5px solid var(--line-default);
       background-color: var(--cui-actionsheet-bg);
       transition: .15s;
       cursor: pointer;
       user-select: none;
+      position: relative;
+      padding-inline-start: 12px;
+      padding-inline-end: 12px;
+      box-sizing: border-box;
 
       &:hover {
         opacity: .95;
       }
+
     }
 
     .as-item:last-child {
@@ -138,6 +159,40 @@ const { t } = useI18n()
     }
 
   }
+}
+
+.as-item-box {
+  min-width: 190px;
+  max-width: 100%;
+  position: relative;
+  display: flex;
+
+  .as-item-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+
+    .as-item-svg-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .as-item-text {
+    text-align: center;
+    font-size: var(--inline-code-font);
+    color: var(--main-normal);
+    flex: 1;
+    line-height: 32px;
+  }
+
+  .asit-with-icon {
+    padding-inline-end: 32px;
+  }
+
 }
 
 .as-cancel-box {

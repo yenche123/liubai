@@ -2,7 +2,9 @@ import { reactive, ref } from "vue"
 import valTool from "~/utils/basic/val-tool"
 
 interface ActionSheetItem {
-  text_key: string
+  text?: string
+  text_key?: string
+  iconName?: string
   color?: string
 }
 

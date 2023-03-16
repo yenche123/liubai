@@ -6,6 +6,7 @@ import type { SupportedTheme } from "../types"
 import type { SupportedLocale } from "../types/types-locale"
 import { i18n } from "~/locales"
 import localCache from "../utils/system/local-cache"
+import liuApi from "~/utils/liu-api"
 
 const theme = ref<SupportedTheme | "">("")
 
@@ -37,7 +38,7 @@ function initTheme() {
   const localPf = localCache.getLocalPreference()
   const _theme = localPf.theme
   if(!_theme || _theme === "system") {
-    theme.value = getThemeFromSystem()
+    theme.value = liuApi.getThemeFromSystem()
   }
   else theme.value = _theme
 
@@ -53,12 +54,4 @@ function setBodyClassForTheme() {
   const body = document.querySelector("body")
   const val = t === "light" ? false : true
   body?.classList.toggle("theme-dark", val)
-}
-
-// 从浏览器获取当前主题
-function getThemeFromSystem(): SupportedTheme {
-  const m = window.matchMedia('(prefers-color-scheme: dark)')
-  const isDarkWhenInit: boolean = m.matches
-  if(isDarkWhenInit) return "dark"
-  return "light"
 }

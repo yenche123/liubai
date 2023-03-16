@@ -6,7 +6,9 @@ import cfg from "~/config"
 const { t } = useI18n()
 
 const {
-  data
+  data,
+  onTapTheme,
+  onTapLanguage,
 } = useSettingContent()
 
 const iconColor = "var(--main-normal)"
@@ -24,7 +26,7 @@ const iconColor = "var(--main-normal)"
       </div>
       <div class="sc-box">
         <!-- 主题 -->
-        <div class="liu-hover sc-bar">
+        <div class="liu-hover sc-bar" @click="onTapTheme">
           <div class="scb-hd">
             <span>{{ t('setting.theme') }}</span>
           </div>
@@ -54,7 +56,7 @@ const iconColor = "var(--main-normal)"
         </div>
 
         <!-- 语言 -->
-        <div class="liu-hover sc-bar">
+        <div class="liu-hover sc-bar" @click="onTapLanguage">
           <div class="scb-hd">
             <span>{{ t('setting.language') }}</span>
           </div>
@@ -101,7 +103,7 @@ const iconColor = "var(--main-normal)"
 }
 
 .sc-title {
-  font-size: var(--title-font);
+  font-size: var(--head-font);
   font-weight: 700;
   color: var(--main-normal);
   margin-block-end: 8px;
@@ -151,24 +153,25 @@ const iconColor = "var(--main-normal)"
 .scb-footer-text {
   font-size: var(--btn-font);
   color: var(--main-note);
+  letter-spacing: 1px;
 }
 
 .scb-footer-icon {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
 
 .scbf-svg-icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 
 .scbf-back {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 

@@ -6,7 +6,9 @@ function getLocalPreference(): LocalPreference {
   return res
 }
 
-function setLocalPreference(key: keyof LocalPreference, data: any) {
+function setLocalPreference<T extends keyof LocalPreference>(
+  key: T, data: LocalPreference[T]
+) {
   const localP = getLocalPreference()
   localP[key] = data
   const res = liuApi.setStorageSync("local-preference", localP)

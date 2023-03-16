@@ -13,6 +13,7 @@ export default {
   copyToClipboard: device.copyToClipboard,
   vibrate: device.vibrate,
   getBattery: device.getBattery,
+  getThemeFromSystem: device.getThemeFromSystem,
   getStorageSync: storage.getStorageSync,
   setStorageSync: storage.setStorageSync,
   removeStorageSync: storage.removeStorageSync,

@@ -1,4 +1,4 @@
-
+import type { SupportedTheme } from "~/types"
 
 type ResolveReject = (res: boolean | undefined) => void
 export interface BatteryManager extends EventTarget {
@@ -83,8 +83,17 @@ const getBattery = async () => {
   return res
 }
 
+// 从浏览器获取当前主题
+function getThemeFromSystem(): SupportedTheme {
+  const m = window.matchMedia('(prefers-color-scheme: dark)')
+  const isDarkWhenInit: boolean = m.matches
+  if(isDarkWhenInit) return "dark"
+  return "light"
+}
+
 export default {
   copyToClipboard,
   vibrate,
   getBattery,
+  getThemeFromSystem,
 }

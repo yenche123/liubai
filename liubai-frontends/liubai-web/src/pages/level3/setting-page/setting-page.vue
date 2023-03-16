@@ -20,7 +20,7 @@ const { t } = useI18n()
       <navi-virtual></navi-virtual>
       <SettingContent></SettingContent>
     </scroll-view>
-    <navi-bar :title="t('common.setting')"></navi-bar>
+    <navi-bar></navi-bar>
   </main-view>
 
   <!-- 副视图 -->
