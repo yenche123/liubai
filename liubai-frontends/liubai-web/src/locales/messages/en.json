@@ -235,5 +235,13 @@
   "err": {
     "no_data": "Nothing Here",
     "no_auth": "No Access"
+  },
+  "setting": {
+    "preference": "Preference",
+    "theme": "Theme",
+    "language": "Language",
+    "follow_system": "System",
+    "dark": "Dark",
+    "light": "Light"
   }
 }

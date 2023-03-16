@@ -235,5 +235,13 @@
   "err": {
     "no_data": "这里什么都没有",
     "no_auth": "没有访问权限"
+  },
+  "setting": {
+    "preference": "个人偏好",
+    "theme": "主题",
+    "language": "语言",
+    "follow_system": "跟随系统",
+    "dark": "深色",
+    "light": "浅色"
   }
 }
