@@ -240,7 +240,7 @@
     "preference": "個人偏好",
     "theme": "主題",
     "language": "語言",
-    "follow_system": "跟隨系統",
+    "system": "跟隨系統",
     "dark": "深色",
     "light": "淺色"
   }

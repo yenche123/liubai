@@ -11,14 +11,15 @@ import { i18n } from "~/locales"
 import cui from "~/components/custom-ui"
 import liuApi from "~/utils/liu-api"
 import { useDynamics } from "~/hooks/useDynamics"
+import type { SupportedLocale } from "~/types/types-locale"
 
 const t = i18n.global.t
 
 export function useSettingContent() {
   const data = reactive<SettingContentData>({
+    language: "system",
     language_txt: "",
     theme: "system",
-    theme_txt: "",
   })
 
   initSettingContent(data)
@@ -38,34 +39,22 @@ function initSettingContent(
 ) {
 
   const localP = localCache.getLocalPreference()
+
+  /** 初始化主题 */
   const theme = localP.theme
-  if(!theme || theme === "system") {
-    data.theme = "system"
-    data.theme_txt = t('setting.follow_system')
-  }
-  else if(theme === "light") {
-    data.theme = "light"
-    data.theme_txt = t('setting.light')
-  }
-  else if(theme === "dark") {
-    data.theme = "dark"
-    data.theme_txt = t('setting.dark')
+  if(theme) {
+    data.theme = theme
   }
 
-  const lang = localP.language
-  if(!lang || lang === "system") {
-    data.language_txt = t('setting.follow_system')
+  /** 初始化语言 */
+  let lang = localP.language
+  if(!lang) lang = "system"
+  data.language = lang
+  const langList = _getLanguageList()
+  const langItem = langList.find(v => v.id === lang)
+  if(langItem) {
+    data.language_txt = langItem.text
   }
-  else if(lang === "zh-Hans") {
-    data.language_txt = "简体中文"
-  }
-  else if(lang === "zh-Hant") {
-    data.language_txt = "繁體中文"
-  }
-  else {
-    data.language_txt = "English"
-  }
-
 }
 
 async function whenTapTheme(
@@ -81,33 +70,23 @@ async function whenTapTheme(
 
   const res = await cui.showActionSheet({ itemList })
   if(res.result !== "option" || res.tapIndex === undefined) return
-  const item = list[res.tapIndex]
-  if(item.id === data.theme) return
-
-
+  const item = list[res.tapIndex]  
   const id = item.id
+  if(id === data.theme) return
 
   localCache.setLocalPreference("theme", id)
   let newTheme: SupportedTheme
-  let new_theme_txt: string = ""
 
-  if(id === "light") {
+  if(id !== "system") {
     newTheme = id
-    new_theme_txt = t('setting.light')
-  }
-  else if(id === "dark") {
-    newTheme = id
-    new_theme_txt = t('setting.dark')
   }
   else {
     newTheme = liuApi.getThemeFromSystem()
-    new_theme_txt = t('setting.follow_system')
   }
   const { setTheme } = useDynamics()
   setTheme(newTheme)
 
   data.theme = id
-  data.theme_txt = new_theme_txt
 }
 
 async function whenTapLanguage(
@@ -117,15 +96,35 @@ async function whenTapLanguage(
   const itemList = list.map(v => ({ text: v.text }))
 
   const res = await cui.showActionSheet({ itemList })
+  if(res.result !== "option" || res.tapIndex === undefined) return
 
+  const item = list[res.tapIndex]
+  const id = item.id
+  if(id === data.language) return
 
+  localCache.setLocalPreference("language", id)
+
+  let newLang: SupportedLocale
+  let new_lang_txt = item.text
+  if(id !== "system") {
+    newLang = id
+  }
+  else {
+    newLang = liuApi.getLanguageFromSystem()
+  }
+  
+  const { setLanguage } = useDynamics()
+  setLanguage(newLang)
+
+  data.language = id
+  data.language_txt = new_lang_txt
 }
 
 function _getThemeList() {
   const list: ThemeItem[] = [
     {
       id: "system",
-      text: t('setting.follow_system'),
+      text: t('setting.system'),
       iconName: "theme-system-theme",
     },
     {
@@ -146,7 +145,7 @@ function _getLanguageList() {
   const list: LanguageItem[] = [
     {
       id: "system",
-      text: t('setting.follow_system'),
+      text: t('setting.system'),
     },
     {
       id: "zh-Hans",

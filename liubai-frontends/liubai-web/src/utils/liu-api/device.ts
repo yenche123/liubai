@@ -1,4 +1,6 @@
 import type { SupportedTheme } from "~/types"
+import type { SupportedLocale } from "~/types/types-locale"
+import { isSupportedLocale } from '~/types/types-locale'
 
 type ResolveReject = (res: boolean | undefined) => void
 export interface BatteryManager extends EventTarget {
@@ -91,9 +93,32 @@ function getThemeFromSystem(): SupportedTheme {
   return "light"
 }
 
+// 从浏览器获取当前支持的语言
+function getLanguageFromSystem(): SupportedLocale {
+  const lang = navigator.language
+  if(isSupportedLocale(lang)) return lang
+
+  const langs = navigator.languages
+  for(let i=0; i<langs.length; i++) {
+    let aLang = langs[i]
+    if(isSupportedLocale(aLang)) return aLang
+    const _aLang = aLang.toLowerCase()
+    if(_aLang === "zh-tw") return "zh-Hant"
+    if(_aLang === "zh-hk") return "zh-Hant"
+    if(_aLang === "zh-cn") return "zh-Hans"
+    if(_aLang === "en-us") return "en"
+  }
+
+  // 判断 langs 是否有 zh
+  if(langs.includes("zh")) return "zh-Hans"
+
+  return "en"
+}
+
 export default {
   copyToClipboard,
   vibrate,
   getBattery,
   getThemeFromSystem,
+  getLanguageFromSystem,
 }

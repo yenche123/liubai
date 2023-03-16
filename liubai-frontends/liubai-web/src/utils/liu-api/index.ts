@@ -14,6 +14,7 @@ export default {
   vibrate: device.vibrate,
   getBattery: device.getBattery,
   getThemeFromSystem: device.getThemeFromSystem,
+  getLanguageFromSystem: device.getLanguageFromSystem,
   getStorageSync: storage.getStorageSync,
   setStorageSync: storage.setStorageSync,
   removeStorageSync: storage.removeStorageSync,

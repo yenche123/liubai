@@ -13,7 +13,7 @@ export interface ThemeItem {
 }
 
 export interface SettingContentData {
+  language: LocalLanguage
   language_txt: string
   theme: LocalTheme
-  theme_txt: string
 }

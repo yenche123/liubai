@@ -33,7 +33,7 @@ const iconColor = "var(--main-normal)"
           <div class="scb-footer">
 
             <div class="scb-footer-text">
-              <span>{{ data.theme_txt }}</span>
+              <span>{{ t('setting.' + data.theme) }}</span>
             </div>
             <div class="scb-footer-icon">
               <svg-icon v-if="data.theme === 'light'"
@@ -63,7 +63,8 @@ const iconColor = "var(--main-normal)"
           <div class="scb-footer">
 
             <div class="scb-footer-text">
-              <span>{{ data.language_txt }}</span>
+              <span v-if="data.language === 'system'">{{ t('setting.system') }}</span>
+              <span v-else>{{ data.language_txt }}</span>
             </div>
             <div class="scb-footer-icon">
               <svg-icon class="scbf-back"

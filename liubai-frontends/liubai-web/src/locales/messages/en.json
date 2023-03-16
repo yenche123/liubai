@@ -240,7 +240,7 @@
     "preference": "Preference",
     "theme": "Theme",
     "language": "Language",
-    "follow_system": "System",
+    "system": "System",
     "dark": "Dark",
     "light": "Light"
   }
