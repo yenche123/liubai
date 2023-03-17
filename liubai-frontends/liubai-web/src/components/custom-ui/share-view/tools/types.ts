@@ -15,6 +15,7 @@ export interface ShareViewData {
   copyLink: string
   googleCalendarLink: string
   outlookLink: string
+  icsLink: string
 }
 
 export type ShareViewRes = true

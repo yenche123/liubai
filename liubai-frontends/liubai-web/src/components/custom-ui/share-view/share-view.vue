@@ -73,24 +73,36 @@ const { t } = useI18n()
           <svg-icon name="logos-google-calendar" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
-          <span>Google Calendar</span>
+          <div class="sva-text">
+            <span>Google Calendar</span>
+          </div>
         </a>
 
         <a class="liu-hover sv-app-item" target="_blank" :href="svData.outlookLink">
           <svg-icon name="logos-outlook" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
-          <span>Outlook</span>
+          <div class="sva-text">
+            <span>Outlook</span>
+          </div>
         </a>
 
-        <div class="liu-hover sv-app-item">
+        <a 
+          class="liu-hover sv-app-item"
+          target="_blank"
+          :href="svData.icsLink"
+        >
           <svg-icon name="calendar" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
-          <span>{{ t('share_related.download_ics') }}</span>
-        </div>
+          <div class="sva-text">
+            <span>{{ t('share_related.download_ics') }}</span>
+          </div>
+        </a>
         
       </div>
+
+      <div class="sv-virtual"></div>
 
     </div>
   </div>
@@ -181,18 +193,26 @@ const { t } = useI18n()
 }
 
 .sv-apps {
-  padding: 12px 20px 12px 24px;
-  width: 100%;
+  margin-inline-start: 24px;
+  margin-inline-end: 20px;
+  padding-block-start: 12px;
+  width: calc(100% - 44px);
   box-sizing: border-box;
   display: flex;
-  flex-wrap: wrap;
+  align-items: flex-start;
+  overflow-x: auto;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+  }
 }
 
 .sv-app-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 100px;
+  min-width: 90px;
   margin-inline-end: 6px;
   margin-block-end: 6px;
   padding: 12px;
@@ -201,13 +221,27 @@ const { t } = useI18n()
   font-size: var(--mini-font);
   color: var(--other-btn-text);
   user-select: none;
+  flex: none;
 
   .sv-app-item_svg {
     width: 42px;
     height: 42px;
     margin-block-end: 10px;
   }
+
+  .sva-text {
+    text-align: center;
+    font-size: var(--mini-font);
+    color: var(--other-btn-text);
+    max-width: 90px;
+  }
 }
+
+.sv-virtual {
+  width: 100%;
+  height: 12px;
+}
+
 
 @media screen and (max-width: 520px) {
   .sv-app-item {
@@ -229,11 +263,16 @@ const { t } = useI18n()
       height: 38px;
       margin-block-end: 8px;
     }
+
+    .sva-text {
+      font-size: var(--state-font);
+      max-width: 80px;
+    }
   }
 }
 
 @media screen and (max-width: 365px) {
-  .sv-bar{
+  .sv-bar {
     margin-block-start: 20px;
   }
 

@@ -18,6 +18,8 @@ export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
   // 3. 处理 outlook
   handleOutlook(svData, thread, td)
 
+  // 4. 处理 .ics
+  handleIcs(svData, thread, td)
 }
 
 function getExportData(thread: ThreadShow) {
@@ -122,4 +124,18 @@ function handleOutlook(
 
   const oLink = url.toString()
   svData.outlookLink = oLink
+}
+
+
+function handleIcs(
+  svData: ShareViewData, 
+  thread: ThreadShow,
+  td: ExportData,
+) {
+  if(!td.startStamp) {
+    svData.icsLink = ""
+    return
+  }
+  
+
 }

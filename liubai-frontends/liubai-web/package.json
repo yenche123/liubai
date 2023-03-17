@@ -37,6 +37,7 @@
     "dexie": "^3.2.3",
     "floating-vue": "2.0.0-beta.20",
     "highlight.js": "^11.7.0",
+    "ics": "^3.1.0",
     "lowlight": "^2.8.0",
     "nanoid": "^4.0.1",
     "pinia": "^2.0.33",
