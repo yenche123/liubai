@@ -1,5 +1,5 @@
 import type { ThreadShow } from "~/types/types-content";
-import type { ShareViewData, ExportTitleDesc } from "./types"
+import type { ShareViewData, ExportData } from "./types"
 import thirdLink from "~/config/third-link"
 import { add } from "date-fns"
 import liuUtil from "~/utils/liu-util";
@@ -10,7 +10,7 @@ export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
   handleCopyLink(svData, thread)
 
   // 获取要传给外部应用的 title / desc
-  const td = getTitleDesc(thread)
+  const td = getExportData(thread)
 
   // 2. 处理 google calendar
   handleGoogleCalendar(svData, thread, td)
@@ -20,7 +20,7 @@ export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
 
 }
 
-function getTitleDesc(thread: ThreadShow) {
+function getExportData(thread: ThreadShow) {
   let title = thread.title ?? ""
   let desc = thread.desc ?? ""
 
@@ -45,7 +45,15 @@ function getTitleDesc(thread: ThreadShow) {
     desc = ""
   }
 
-  return { title, desc }
+  let startStamp: number | undefined
+  if(thread.whenStamp) {
+    startStamp = thread.whenStamp
+  }
+  else if(thread.remindStamp) {
+    startStamp = thread.remindStamp
+  }
+
+  return { title, desc, startStamp }
 }
 
 function handleCopyLink(svData: ShareViewData, thread: ThreadShow) {
@@ -57,7 +65,7 @@ function handleCopyLink(svData: ShareViewData, thread: ThreadShow) {
 function handleGoogleCalendar(
   svData: ShareViewData, 
   thread: ThreadShow,
-  td: ExportTitleDesc,
+  td: ExportData,
 ) {
   const url = new URL(thirdLink.GOOGLE_CALENDAR_ADD)
   const sp = url.searchParams
@@ -78,12 +86,8 @@ function handleGoogleCalendar(
   if(td.desc) {
     sp.append("details", td.desc)
   }
-
-  if(thread.whenStamp) {
-    sp.append("dates", getDates(thread.whenStamp))
-  }
-  else if(thread.remindStamp) {
-    sp.append("dates", getDates(thread.remindStamp))
+  if(td.startStamp) {
+    sp.append("dates", getDates(td.startStamp))
   }
   
   const gLink = url.toString()
@@ -93,7 +97,7 @@ function handleGoogleCalendar(
 function handleOutlook(
   svData: ShareViewData, 
   thread: ThreadShow,
-  td: ExportTitleDesc,
+  td: ExportData,
 ) {
   const url = new URL(thirdLink.OUTLOOK_ADD)
   const sp = url.searchParams
@@ -112,11 +116,8 @@ function handleOutlook(
     return startDt
   }
 
-  if(thread.whenStamp) {
-    sp.append("startdt", getStartDt(thread.whenStamp))
-  }
-  else if(thread.remindStamp) {
-    sp.append("startdt", getStartDt(thread.remindStamp))
+  if(td.startStamp) {
+    sp.append("startdt", getStartDt(td.startStamp))
   }
 
   const oLink = url.toString()

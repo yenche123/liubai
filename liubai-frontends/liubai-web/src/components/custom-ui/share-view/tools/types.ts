@@ -21,7 +21,8 @@ export type ShareViewRes = true
 
 export type SvResolver = (res: ShareViewRes) => void
 
-export interface ExportTitleDesc {
+export interface ExportData {
   title: string
   desc: string
+  startStamp?: number
 }
