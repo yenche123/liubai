@@ -13,6 +13,7 @@ import {
   getCountDownStr,
   getEditedStr,
   getRemindMenu,
+  getLiuDate,
 } from "./date-util";
 import {
   getAcceptImgTypesString,
@@ -57,6 +58,7 @@ export default {
   getCountDownStr,
   getEditedStr,
   getRemindMenu,
+  getLiuDate,
   getAcceptImgTypesString,
   getAcceptImgTypesArray,
   createObjURLs,

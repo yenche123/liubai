@@ -52,8 +52,9 @@ export interface ThreadShow {
   title?: string
   content?: TipTapJSONContent
   briefing?: TipTapJSONContent   // 文本很多时的摘要
-  summary?: string               // content 转为单行的纯文本，并且限制字数在 140 字内;
-                                 // 如果 content 不存在，看文件是否存在，若有打印文件名
+  summary?: string               // liuDesc 转为单行的纯文本，并且限制字数在 140 字内;
+                                 // 如果 liuDesc 不存在，看文件是否存在，若有打印文件名
+  desc?: string                  // liuDesc 的纯文本
   images?: ImageShow[]
   files?: LiuFileStore[]
   imgLayout?: ImgLayout

@@ -12,6 +12,7 @@ import { tagIdsToShows } from "../../system/tag-related";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import commonPack from "../tools/common-pack";
 import { membersToShows } from "../../other/member-related"
+import transferUtil from "~/utils/transfer-util";
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
 
@@ -55,6 +56,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       return imgHelper.imageStoreToShow(v2)
     })
 
+    const desc = transferUtil.tiptapToText(liuDesc ?? [])
     let newDesc = commonPack.packLiuDesc(liuDesc, title)
     let tiptapContent: TipTapJSONContent | undefined = newDesc?.length 
       ? { type: "doc", content: newDesc } : undefined
@@ -69,7 +71,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       tags = tagData?.tagShows ?? []
       stateShow = commonPack.getStateShow(v.stateId, wStore)
     }
-    
+
 
     const obj: ThreadShow = {
       _id,
@@ -87,6 +89,7 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
       content: tiptapContent,
       briefing: commonPack.getBriefing(newDesc),
       summary: commonPack.getSummary(liuDesc, v.files),
+      desc,
       images,
       imgLayout: imgHelper.getImgLayout(images),
       files: v.files,

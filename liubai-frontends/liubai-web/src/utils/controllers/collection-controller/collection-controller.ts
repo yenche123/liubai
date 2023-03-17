@@ -10,6 +10,7 @@ import { tagIdsToShows } from "../../system/tag-related";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import liuUtil from "../../liu-util"
 import commonPack from "../tools/common-pack"
+import transferUtil from "~/utils/transfer-util"
 interface MyCollectionOpt {
   content_ids: string[]
 }
@@ -132,6 +133,7 @@ export async function getThreadsByCollectionOrEmoji(
       return imgHelper.imageStoreToShow(v2)
     })
 
+    const desc = transferUtil.tiptapToText(liuDesc ?? [])
     let newDesc = commonPack.packLiuDesc(liuDesc, title)
     let tiptapContent: TipTapJSONContent | undefined = newDesc?.length 
       ? { type: "doc", content: newDesc } : undefined
@@ -163,6 +165,7 @@ export async function getThreadsByCollectionOrEmoji(
       content: tiptapContent,
       briefing: commonPack.getBriefing(newDesc),
       summary: commonPack.getSummary(liuDesc, v.files),
+      desc,
       images,
       imgLayout: imgHelper.getImgLayout(images),
       files: v.files,

@@ -311,3 +311,35 @@ export function getRemindMenu(hasWhen: boolean) {
   }
   return list
 }
+
+interface LiuDateObj {
+  YYYY: string      // YYYY
+  MM: string     // MM
+  DD: string      // DD
+  hh: string      // hh
+  mm: string    // mm
+  ss: string    // ss
+}
+
+interface GetLiuDateOpt {
+  utc?: boolean      // 是否返回的是 UTC+0 的世界时，默认为 false
+}
+
+// 返回一个 字符串构成的自定义 Date Object
+export function getLiuDate(d: Date, opt?: GetLiuDateOpt): LiuDateObj {
+  const utc = opt?.utc ?? false
+  const YYYY = valTool.format0(utc ? d.getUTCFullYear() : d.getFullYear())
+  const MM = valTool.format0(utc ? (d.getUTCMonth() + 1) : (d.getMonth() + 1))
+  const DD = valTool.format0(utc ? d.getUTCDate() : d.getDate())
+  const hh = valTool.format0(utc ? d.getUTCHours() : d.getHours())
+  const mm = valTool.format0(utc ? d.getUTCMinutes() : d.getMinutes())
+  const ss = valTool.format0(utc ? d.getUTCSeconds() : d.getSeconds())
+  return {
+    YYYY,
+    MM,
+    DD,
+    hh,
+    mm,
+    ss
+  }
+}

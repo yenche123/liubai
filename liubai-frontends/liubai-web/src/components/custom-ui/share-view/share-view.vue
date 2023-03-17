@@ -69,12 +69,12 @@ const { t } = useI18n()
       <!-- third-party apps' btns -->
       <div class="sv-apps">
 
-        <div class="liu-hover sv-app-item">
+        <a class="liu-hover sv-app-item" target="_blank" :href="svData.googleCalendarLink">
           <svg-icon name="logos-google-calendar" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
           <span>Google Calendar</span>
-        </div>
+        </a>
 
         <div class="liu-hover sv-app-item">
           <svg-icon name="logos-outlook" :coverFillStroke="false"
