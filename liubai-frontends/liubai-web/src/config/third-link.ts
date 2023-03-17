@@ -8,4 +8,5 @@ export default {
   XHS_SEARCH: "https://www.xiaohongshu.com/mobile/tags/2301846829538365187",
   GITHUB_SEARCH: "https://github.com/search",
   GOOGLE_CALENDAR_ADD: "https://calendar.google.com/calendar/u/0/r/eventedit",
+  OUTLOOK_ADD: "https://outlook.live.com/calendar/0/deeplink/compose",
 }

@@ -76,12 +76,12 @@ const { t } = useI18n()
           <span>Google Calendar</span>
         </a>
 
-        <div class="liu-hover sv-app-item">
+        <a class="liu-hover sv-app-item" target="_blank" :href="svData.outlookLink">
           <svg-icon name="logos-outlook" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
           <span>Outlook</span>
-        </div>
+        </a>
 
         <div class="liu-hover sv-app-item">
           <svg-icon name="calendar" :coverFillStroke="false"

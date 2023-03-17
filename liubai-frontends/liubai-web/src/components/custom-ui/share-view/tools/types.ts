@@ -20,3 +20,8 @@ export interface ShareViewData {
 export type ShareViewRes = true
 
 export type SvResolver = (res: ShareViewRes) => void
+
+export interface ExportTitleDesc {
+  title: string
+  desc: string
+}
