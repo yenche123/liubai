@@ -3,5 +3,6 @@
     "src/locales/messages"
   ],
   "i18n-ally.keystyle": "nested",
-  "volar.inlayHints.eventArgumentInInlineHandlers": false
+  "volar.inlayHints.eventArgumentInInlineHandlers": false,
+  "typescript.tsdk": "D:/research/TypeScript/built/local"
 }

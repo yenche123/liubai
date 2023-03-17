@@ -14,4 +14,6 @@ https://icons.radix-ui.com/
 
 1. `vc-` 开头的 css 类名，会跟 `vconsole` 库的样式冲突，请避免使用。
 
+2. 开源前，记得移除 `.vscode.settings.json` 里的 `typescript.tsdk`
+
 
