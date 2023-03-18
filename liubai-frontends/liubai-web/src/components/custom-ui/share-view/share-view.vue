@@ -99,6 +99,24 @@ const { t } = useI18n()
             <span>{{ t('share_related.download_ics') }}</span>
           </div>
         </a>
+
+        <a class="liu-hover sv-app-item" target="_blank" :href="svData.twitterLink">
+          <svg-icon name="logos-twitter" :coverFillStroke="false"
+            class="sv-app-item_svg"
+          ></svg-icon>
+          <div class="sva-text">
+            <span>Twitter</span>
+          </div>
+        </a>
+
+        <a class="liu-hover sv-app-item" target="_blank" :href="svData.facebookLink">
+          <svg-icon name="logos-facebook" :coverFillStroke="false"
+            class="sv-app-item_svg"
+          ></svg-icon>
+          <div class="sva-text">
+            <span>Facebook</span>
+          </div>
+        </a>
         
       </div>
 
