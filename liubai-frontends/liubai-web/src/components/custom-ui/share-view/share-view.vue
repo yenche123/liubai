@@ -104,15 +104,6 @@ const { t } = useI18n()
             class="sv-app-item_svg"
           ></svg-icon>
         </a>
-
-        <a class="liu-hover sv-app-item" target="_blank" 
-          :href="svData.facebookLink"
-          title="Facebook"
-        >
-          <svg-icon name="logos-facebook" :coverFillStroke="false"
-            class="sv-app-item_svg"
-          ></svg-icon>
-        </a>
         
       </div>
 

@@ -17,7 +17,6 @@ export interface ShareViewData {
   googleCalendarLink: string
   outlookLink: string
   icsLink: string
-  facebookLink: string
   twitterLink: string
 }
 
