@@ -69,53 +69,49 @@ const { t } = useI18n()
       <!-- third-party apps' btns -->
       <div class="sv-apps">
 
-        <a class="liu-hover sv-app-item" target="_blank" :href="svData.googleCalendarLink">
+        <a class="liu-hover sv-app-item" target="_blank" :href="svData.googleCalendarLink"
+          title="Google Calendar"
+        >
           <svg-icon name="logos-google-calendar" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
-          <div class="sva-text">
-            <span>Google Calendar</span>
-          </div>
         </a>
 
-        <a class="liu-hover sv-app-item" target="_blank" :href="svData.outlookLink">
+        <a class="liu-hover sv-app-item" target="_blank" :href="svData.outlookLink"
+          title="Outlook"
+        >
           <svg-icon name="logos-outlook" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
-          <div class="sva-text">
-            <span>Outlook</span>
-          </div>
         </a>
 
         <a 
           v-if="svData.icsLink"
           class="liu-hover sv-app-item"
           :href="svData.icsLink"
+          :title="t('share_related.download_ics')"
         >
           <svg-icon name="calendar" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
-          <div class="sva-text">
-            <span>{{ t('share_related.download_ics') }}</span>
-          </div>
         </a>
 
-        <a class="liu-hover sv-app-item" target="_blank" :href="svData.twitterLink">
+        <a class="liu-hover sv-app-item" target="_blank" 
+          :href="svData.twitterLink"
+          title="Twitter"
+        >
           <svg-icon name="logos-twitter" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
-          <div class="sva-text">
-            <span>Twitter</span>
-          </div>
         </a>
 
-        <a class="liu-hover sv-app-item" target="_blank" :href="svData.facebookLink">
+        <a class="liu-hover sv-app-item" target="_blank" 
+          :href="svData.facebookLink"
+          title="Facebook"
+        >
           <svg-icon name="logos-facebook" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
-          <div class="sva-text">
-            <span>Facebook</span>
-          </div>
         </a>
         
       </div>
@@ -230,12 +226,11 @@ const { t } = useI18n()
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 90px;
+  min-width: 50px;
   margin-inline-end: 6px;
   margin-block-end: 6px;
   padding: 12px;
   border-radius: 12px;
-  overflow: hidden;
   font-size: var(--mini-font);
   color: var(--other-btn-text);
   user-select: none;
@@ -244,7 +239,6 @@ const { t } = useI18n()
   .sv-app-item_svg {
     width: 42px;
     height: 42px;
-    margin-block-end: 10px;
   }
 
   .sva-text {
@@ -261,25 +255,28 @@ const { t } = useI18n()
 }
 
 
-@media screen and (max-width: 520px) {
+@media screen and (max-width: 550px) {
   .sv-app-item {
-    min-width: 75px;
+    min-width: 42px;
     padding: 10px;
     margin-inline-end: 4px;
-    margin-block-end: 4px;
+
+    .sv-app-item_svg {
+      width: 38px;
+      height: 38px;
+    }
   }
 }
 
 @media screen and (max-width: 430px) {
   .sv-app-item {
-    min-width: 60px;
     padding: 8px;
     font-size: var(--state-font);
+    min-width: 32px;
 
     .sv-app-item_svg {
-      width: 38px;
-      height: 38px;
-      margin-block-end: 8px;
+      width: 32px;
+      height: 32px;
     }
 
     .sva-text {
