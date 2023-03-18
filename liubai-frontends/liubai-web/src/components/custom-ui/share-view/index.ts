@@ -25,7 +25,8 @@ const svData = reactive<ShareViewData>({
   googleCalendarLink: "",
   outlookLink: "",
   icsLink: "",
-  twitterLink: ""
+  twitterLink: "",
+  emailLink: "",
 })
 const queryKey = "shareview"
 let rr: RouteAndLiuRouter | undefined

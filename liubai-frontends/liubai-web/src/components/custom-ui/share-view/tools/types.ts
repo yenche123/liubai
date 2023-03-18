@@ -18,6 +18,7 @@ export interface ShareViewData {
   outlookLink: string
   icsLink: string
   twitterLink: string
+  emailLink: string
 }
 
 export type ShareViewRes = true

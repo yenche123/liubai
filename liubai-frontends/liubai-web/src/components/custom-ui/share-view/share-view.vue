@@ -104,6 +104,16 @@ const { t } = useI18n()
             class="sv-app-item_svg"
           ></svg-icon>
         </a>
+
+        <a class="liu-hover sv-app-item" target="_blank" 
+          v-if="svData.emailLink"
+          :href="svData.emailLink"
+          title="Email"
+        >
+          <svg-icon name="email" :coverFillStroke="false"
+            class="sv-app-item_svg sv-app-item_email"
+          ></svg-icon>
+        </a>
         
       </div>
 
@@ -230,6 +240,10 @@ const { t } = useI18n()
   .sv-app-item_svg {
     width: 42px;
     height: 42px;
+  }
+
+  .sv-app-item_email {
+    transform: translateY(10%) scale(1.08);
   }
 
   .sva-text {

@@ -26,6 +26,9 @@ export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
 
   // 5. 处理 Twitter
   handleTwitter(svData, thread, ed)
+
+  // 6. 处理 mail
+  handleEmail(svData, thread, ed)
 }
 
 function getExportData(thread: ThreadShow) {
@@ -223,4 +226,30 @@ function handleIcs(
 
     receiveIcs(val)
   })
+}
+
+
+function handleEmail(
+  svData: ShareViewData, 
+  thread: ThreadShow,
+  ed: ExportData,
+) {
+
+  const url = new URL("mailto:")
+  const sp = url.searchParams
+
+  if(!ed.title && !ed.desc) {
+    svData.emailLink = ""
+    return
+  }
+
+  if(ed.title) {
+    sp.append("subject", ed.title)
+  }
+  if(ed.desc) {
+    sp.append("body", ed.desc)
+  }
+
+  const eLink = url.toString()
+  svData.emailLink = eLink
 }
