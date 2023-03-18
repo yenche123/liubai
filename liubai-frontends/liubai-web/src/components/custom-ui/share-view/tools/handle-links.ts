@@ -23,11 +23,19 @@ export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
 
   // 4. 处理 .ics
   handleIcs(svData, thread, ed)
+
+  // 5. 处理 Twitter
+  handleTwitter(svData, thread, ed)
 }
 
 function getExportData(thread: ThreadShow) {
   let title = thread.title ?? ""
   let desc = thread.desc ?? ""
+  let content = thread.title ?? ""
+
+  if(desc) {
+    content += ("\n" + desc)
+  }
 
   if(!title && desc) {
     const tmpList = desc.split("\n")
@@ -42,9 +50,13 @@ function getExportData(thread: ThreadShow) {
   if(desc.length > 140) {
     desc = desc.substring(0, 140)
   }
+  if(content.length > 140) {
+    content = content.substring(0, 140)
+  }
 
   title = title.trim()
   desc = desc.trim()
+  content = content.trim()
 
   if(desc && title === desc) {
     desc = ""
@@ -59,7 +71,7 @@ function getExportData(thread: ThreadShow) {
   }
 
   let exportData: ExportData = {
-    title, desc, startStamp
+    title, desc, startStamp, content
   }
 
   let alarm: Alarm = {
@@ -143,6 +155,25 @@ function handleOutlook(
 
   const oLink = url.toString()
   svData.outlookLink = oLink
+}
+
+
+function handleTwitter(
+  svData: ShareViewData, 
+  thread: ThreadShow,
+  ed: ExportData,
+) {
+  const url = new URL(thirdLink.TWITTER_ADD)
+  const sp = url.searchParams
+
+  sp.append("related", "liubai")
+  sp.append("hashtags", "Liubai")
+  if(ed.content) {
+    sp.append("text", ed.content)
+  }
+
+  const tLink = url.toString()
+  svData.twitterLink = tLink
 }
 
 

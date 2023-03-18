@@ -9,4 +9,5 @@ export default {
   GITHUB_SEARCH: "https://github.com/search",
   GOOGLE_CALENDAR_ADD: "https://calendar.google.com/calendar/u/0/r/eventedit",
   OUTLOOK_ADD: "https://outlook.live.com/calendar/0/deeplink/compose",
+  TWITTER_ADD: "https://twitter.com/intent/tweet",
 }

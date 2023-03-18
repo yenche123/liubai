@@ -30,6 +30,7 @@ export type IcsDateTime = [number, number, number, number, number]
 export interface ExportData {
   title: string
   desc: string
+  content: string
   startStamp?: number
   alarms?: Alarm[]
 }
