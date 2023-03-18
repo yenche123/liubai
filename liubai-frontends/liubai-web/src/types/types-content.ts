@@ -27,6 +27,7 @@ export interface TagShow {
   tagId: string
   text: string
   emoji?: string
+  parentEmoji?: string
 }
 
 export interface StateShow {

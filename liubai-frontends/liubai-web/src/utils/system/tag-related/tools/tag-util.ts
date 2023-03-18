@@ -29,6 +29,7 @@ export function findTagShowById(
   id: string, 
   tagList: TagView[],
   parents?: string[],
+  parentIcon?: string,
 ): TagShow | null {
   if(!parents) parents = []
   for(let i=0; i<tagList.length; i++) {
@@ -40,12 +41,13 @@ export function findTagShowById(
         tagId: v.tagId,
         text: parents.join(" / "),
         emoji: v.icon ? liuApi.decode_URI_component(v.icon) : undefined,
+        parentEmoji: parentIcon ? liuApi.decode_URI_component(parentIcon) : undefined,
       }
       return obj
     }
     if(v.children) {
       parents.push(v.text)
-      const tmp = findTagShowById(id, v.children, parents)
+      const tmp = findTagShowById(id, v.children, parents, v.icon)
       if(tmp) return tmp
       else parents.pop()
     }

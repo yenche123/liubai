@@ -56,6 +56,7 @@ export default defineComponent({
         >
           <div class="ce-tag-item">
             <span v-if="item.emoji" class="ce-tag-emoji">{{ item.emoji }} </span>
+            <span v-else-if="item.parentEmoji" class="ce-tag-emoji">{{ item.parentEmoji }}</span>
             <span>{{ item.text }}</span>
           </div>
         </a>
