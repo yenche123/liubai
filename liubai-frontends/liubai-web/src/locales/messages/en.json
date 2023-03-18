@@ -1,6 +1,7 @@
 {
   "hello": {
-    "world": "Hello, World!"
+    "world": "Hello, World!",
+    "appName": "Liubai"
   },
   "common": {
     "confirm": "Confirm",

@@ -1,5 +1,6 @@
 import type { VisScope } from "~/types/types-basic"
 import { ThreadShow } from "~/types/types-content"
+import type { Alarm } from "ics"
 
 export interface ShareViewParam {
   threadId: string
@@ -22,8 +23,11 @@ export type ShareViewRes = true
 
 export type SvResolver = (res: ShareViewRes) => void
 
+export type IcsDateTime = [number, number, number, number, number]
+
 export interface ExportData {
   title: string
   desc: string
   startStamp?: number
+  alarms?: Alarm[]
 }

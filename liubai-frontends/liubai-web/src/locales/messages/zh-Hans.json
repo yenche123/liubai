@@ -1,6 +1,7 @@
 {
   "hello": {
-    "world": "你好，留白记事！"
+    "world": "你好，留白记事！",
+    "appName": "留白记事"
   },
   "common": {
     "confirm": "确认",

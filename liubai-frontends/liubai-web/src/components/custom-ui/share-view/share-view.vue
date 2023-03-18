@@ -88,8 +88,8 @@ const { t } = useI18n()
         </a>
 
         <a 
+          v-if="svData.icsLink"
           class="liu-hover sv-app-item"
-          target="_blank"
           :href="svData.icsLink"
         >
           <svg-icon name="calendar" :coverFillStroke="false"

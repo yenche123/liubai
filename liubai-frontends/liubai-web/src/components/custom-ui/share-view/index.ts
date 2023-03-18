@@ -11,6 +11,7 @@ import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import valTool from "~/utils/basic/val-tool"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
 import { handleLinks } from "./tools/handle-links"
+import liuUtil from "~/utils/liu-util"
 
 let _resolve: SvResolver | undefined
 const TRANSITION_DURATION = 150
@@ -106,6 +107,13 @@ async function _toClose() {
   show.value = false
   await valTool.waitMilli(TRANSITION_DURATION)
   enable.value = false
+
+  const icsUrl = svData.icsLink
+  if(icsUrl) {
+    liuUtil.revokeObjURLs([icsUrl])
+    svData.icsLink = ""
+    console.log("已销毁 icsUrl.........")
+  }
 }
 
 function onTapMask() {

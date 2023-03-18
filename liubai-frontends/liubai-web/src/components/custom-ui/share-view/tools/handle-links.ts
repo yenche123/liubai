@@ -1,8 +1,11 @@
 import type { ThreadShow } from "~/types/types-content";
-import type { ShareViewData, ExportData } from "./types"
+import type { ShareViewData, ExportData, IcsDateTime } from "./types"
 import thirdLink from "~/config/third-link"
 import { add } from "date-fns"
 import liuUtil from "~/utils/liu-util";
+import { createEvent } from "ics"
+import type { EventAttributes, Alarm } from "ics"
+import { i18n } from "~/locales";
 
 export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
 
@@ -10,16 +13,16 @@ export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
   handleCopyLink(svData, thread)
 
   // 获取要传给外部应用的 title / desc
-  const td = getExportData(thread)
+  const ed = getExportData(thread)
 
   // 2. 处理 google calendar
-  handleGoogleCalendar(svData, thread, td)
+  handleGoogleCalendar(svData, thread, ed)
 
   // 3. 处理 outlook
-  handleOutlook(svData, thread, td)
+  handleOutlook(svData, thread, ed)
 
   // 4. 处理 .ics
-  handleIcs(svData, thread, td)
+  handleIcs(svData, thread, ed)
 }
 
 function getExportData(thread: ThreadShow) {
@@ -55,7 +58,23 @@ function getExportData(thread: ThreadShow) {
     startStamp = thread.remindStamp
   }
 
-  return { title, desc, startStamp }
+  let exportData: ExportData = {
+    title, desc, startStamp
+  }
+
+  let alarm: Alarm = {
+    action: "display",
+    description: "Reminder",
+  }
+  if(thread.remindMe && thread.remindStamp) {
+    const r = thread.remindMe
+    if(r.type === "early" && typeof r.early_minute === "number") {
+      alarm.trigger = { minutes: r.early_minute, before: true }
+      exportData.alarms = [alarm]
+    }
+  }
+
+  return exportData
 }
 
 function handleCopyLink(svData: ShareViewData, thread: ThreadShow) {
@@ -67,7 +86,7 @@ function handleCopyLink(svData: ShareViewData, thread: ThreadShow) {
 function handleGoogleCalendar(
   svData: ShareViewData, 
   thread: ThreadShow,
-  td: ExportData,
+  ed: ExportData,
 ) {
   const url = new URL(thirdLink.GOOGLE_CALENDAR_ADD)
   const sp = url.searchParams
@@ -82,14 +101,14 @@ function handleGoogleCalendar(
     return dates
   }
 
-  if(td.title) {
-    sp.append("text", td.title)
+  if(ed.title) {
+    sp.append("text", ed.title)
   }
-  if(td.desc) {
-    sp.append("details", td.desc)
+  if(ed.desc) {
+    sp.append("details", ed.desc)
   }
-  if(td.startStamp) {
-    sp.append("dates", getDates(td.startStamp))
+  if(ed.startStamp) {
+    sp.append("dates", getDates(ed.startStamp))
   }
   
   const gLink = url.toString()
@@ -99,16 +118,16 @@ function handleGoogleCalendar(
 function handleOutlook(
   svData: ShareViewData, 
   thread: ThreadShow,
-  td: ExportData,
+  ed: ExportData,
 ) {
   const url = new URL(thirdLink.OUTLOOK_ADD)
   const sp = url.searchParams
 
-  if(td.title) {
-    sp.append("subject", td.title)
+  if(ed.title) {
+    sp.append("subject", ed.title)
   }
-  if(td.desc) {
-    sp.append("body", td.desc)
+  if(ed.desc) {
+    sp.append("body", ed.desc)
   }
 
   const getStartDt = (stamp: number) => {
@@ -118,8 +137,8 @@ function handleOutlook(
     return startDt
   }
 
-  if(td.startStamp) {
-    sp.append("startdt", getStartDt(td.startStamp))
+  if(ed.startStamp) {
+    sp.append("startdt", getStartDt(ed.startStamp))
   }
 
   const oLink = url.toString()
@@ -130,12 +149,47 @@ function handleOutlook(
 function handleIcs(
   svData: ShareViewData, 
   thread: ThreadShow,
-  td: ExportData,
+  ed: ExportData,
 ) {
-  if(!td.startStamp) {
+  if(!ed.startStamp) {
     svData.icsLink = ""
     return
   }
-  
 
+  const t = i18n.global.t
+  const s = liuUtil.getLiuDate(new Date(ed.startStamp))
+  const s2 = liuUtil.getLiuDate(new Date(thread.createdStamp))
+  const s3 = liuUtil.getLiuDate(new Date(thread.editedStamp))
+  
+  const event: EventAttributes = {
+    start: [Number(s.YYYY), Number(s.MM), Number(s.DD), Number(s.hh), Number(s.mm)],
+    startInputType: "local",
+    duration: { minutes: 30 },
+    title: ed.title,
+    description: ed.desc,
+    uid: thread._id,
+    categories: [t('hello.appName')],
+    alarms: ed.alarms,
+    created: [Number(s2.YYYY), Number(s2.MM), Number(s2.DD), Number(s2.hh), Number(s2.mm)],
+    lastModified: [Number(s3.YYYY), Number(s3.MM), Number(s3.DD), Number(s3.hh), Number(s3.mm)],
+  }
+
+  const receiveIcs = (plainText: string) => {
+    const file = new File([plainText], "liubai.ics", { type: "text/calendar" })
+    const [url] = liuUtil.createObjURLs([file])
+    svData.icsLink = url
+  }
+
+  createEvent(event, (err, val) => {
+    if(err) {
+      console.warn("createEvent err: ")
+      console.log(err)
+      console.log(" ")
+
+      svData.icsLink = ""
+      return
+    }
+
+    receiveIcs(val)
+  })
 }
