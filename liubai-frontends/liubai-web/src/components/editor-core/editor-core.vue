@@ -120,6 +120,7 @@ export default defineComponent({
           background-color: var(--primary-color);
           background: var(--primary-color);
           color: var(--primary-color);
+          accent-color: var(--primary-color);
         }
 
       }
