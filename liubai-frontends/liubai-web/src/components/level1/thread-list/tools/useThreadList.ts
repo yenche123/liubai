@@ -110,7 +110,7 @@ function scollTopAndUpdate(
   if(ctx.svBottomUp && !isViewType(ctx, "PINNED")) {
     ctx.svBottomUp.value = { type: "pixel", pixel: 0 }
   }
-  console.log(`${ctx.viewType.value} ${ctx.tagId.value} 正在执行 scollTopAndUpdate...`)
+  // console.log(`${ctx.viewType.value} ${ctx.tagId.value} 正在执行 scollTopAndUpdate...`)
   loadList(ctx, true)
 }
 

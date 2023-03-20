@@ -67,7 +67,6 @@ export function useCeState(
   }
 
   const onEditorBlur = (data: EditorCoreContent) => {
-    console.log("onEditorBlur..............")
     state.editorContent = data
     _setFocus(false)
   } 
@@ -253,9 +252,9 @@ async function toSave(state: CeState) {
     tagIds,
   }
 
-  console.log("去本地存储 draft.........")
-  console.log(draft)
-  console.log(" ")
+  // console.log("去本地存储 draft.........")
+  // console.log(draft)
+  // console.log(" ")
 
   const res = await localReq.setDraft(draft)
   if(!state.draftId && res) state.draftId = res as string

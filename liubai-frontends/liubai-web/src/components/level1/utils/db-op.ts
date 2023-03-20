@@ -190,13 +190,13 @@ async function setStateId(
     updatedStamp: now1,
     stateId: newStateId,
   }
-  console.log("db-op setStateId newData: ")
-  console.log(newData)
-  console.log(" ")
+  // console.log("db-op setStateId newData: ")
+  // console.log(newData)
+  // console.log(" ")
   const res = await db.contents.update(id, newData)
-  console.log("db.contents.update res: ")
-  console.log(res)
-  console.log(" ")
+  // console.log("db.contents.update res: ")
+  // console.log(res)
+  // console.log(" ")
   return true
 }
 
