@@ -98,7 +98,7 @@ async function toOpen(
     if(max < sidebarPxStyle) sbData.sidebarWidthPx = max
   }
 
-  console.log("打印 sidebarWidthPx: ", sbData.sidebarWidthPx)
+  // console.log("打印 sidebarWidthPx: ", sbData.sidebarWidthPx)
   
   // 广播数据
   layoutStore.$patch(newState)
