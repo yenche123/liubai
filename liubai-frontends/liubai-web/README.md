@@ -16,4 +16,6 @@ https://icons.radix-ui.com/
 
 2. 开源前，记得移除 `.vscode.settings.json` 里的 `typescript.tsdk`
 
+3. 升级 tiptap 下的依赖至最新，使用 `pnpm up @tiptap/* --latest`
+
 
