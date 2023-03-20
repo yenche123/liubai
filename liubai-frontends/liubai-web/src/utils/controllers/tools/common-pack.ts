@@ -4,6 +4,8 @@ import type { StateShow } from "~/types/types-content"
 import { getBriefing } from "./briefing"
 import { listToText } from "~/utils/transfer-util/text";
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
+import valTool from "~/utils/basic/val-tool";
+import { addSomethingWhenBrowsing } from "./show-content"
 
 /**
  * 判断有没有 title，若有加到 content 里
@@ -12,8 +14,10 @@ function packLiuDesc(
   liuDesc: LiuContent[] | undefined,
   title?: string,
 ) {
-  if(!title) return liuDesc
-  let newDesc = liuDesc ? JSON.parse(JSON.stringify(liuDesc)) as LiuContent[] : []
+  let newDesc = liuDesc ? valTool.copyObject(liuDesc) : []
+  newDesc = addSomethingWhenBrowsing(newDesc)
+
+  if(!title) return newDesc
   const h1: LiuContent = {
     type: "heading",
     attrs: {

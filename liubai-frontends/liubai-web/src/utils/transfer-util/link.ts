@@ -2,6 +2,7 @@
 import type { TipTapJSONContent } from "~/types/types-editor"
 import type { LiuContent } from "~/types/types-atom"
 import valTool from "../basic/val-tool"
+import { ALLOW_DEEP_TYPES } from "~/config/atom"
 
 // 装载 link
 export function equipLink(list: TipTapJSONContent[]) {
@@ -18,16 +19,7 @@ export function equipLink(list: TipTapJSONContent[]) {
       continue
     }
 
-    // 写面这些 node 都允许再往更深处寻找 paragraph
-    const canDeepTypes = [
-      "orderedList", 
-      "bulletList", 
-      "listItem", 
-      "blockquote",
-      "taskList",
-      "taskItem",
-    ]
-    const allowDeep = canDeepTypes.includes(type)
+    const allowDeep = ALLOW_DEEP_TYPES.includes(type)
     if(allowDeep && v.content) {
       v.content = equipLink(v.content)
     }

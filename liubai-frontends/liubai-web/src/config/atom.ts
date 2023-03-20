@@ -11,3 +11,12 @@ export const REMIND_LATER: Array<LiuRemindLater | "other"> = [
 ]
 
 export const REMIND_EARLY: LiuRemindEarly[] = [0, 10, 30, 60, 1440]
+
+export const ALLOW_DEEP_TYPES = [
+  "orderedList", 
+  "bulletList", 
+  "listItem", 
+  "blockquote",
+  "taskList",
+  "taskItem",
+]
