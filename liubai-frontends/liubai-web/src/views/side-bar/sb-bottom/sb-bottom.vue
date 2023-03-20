@@ -49,6 +49,7 @@ const color = "var(--main-note)"
   left: 0;
   right: 9px;
   display: flex;
+  pointer-events: none;
 }
 
 .sbb-main {
@@ -56,6 +57,7 @@ const color = "var(--main-note)"
 }
 
 .sbb-close {
+  pointer-events: auto;
   width: 14px;
   height: 42px;
   display: flex;

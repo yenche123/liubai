@@ -128,7 +128,7 @@ const {
     <span>{{ t('placeholder.no_tag_yet') }}</span>
   </div>
 
-  <div class="st-virtual-two"></div>
+  <div class="st-virtual-three"></div>
 
 </template>
 <style scoped lang="scss">
@@ -181,6 +181,11 @@ const {
 .st-virtual-two {
   width: 100%;
   height: 30px;
+}
+
+.st-virtual-three {
+  width: 100%;
+  height: 60px;
 }
 
 .tag-container {
