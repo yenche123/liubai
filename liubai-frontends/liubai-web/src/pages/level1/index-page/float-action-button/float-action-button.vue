@@ -1,12 +1,26 @@
 <script setup lang="ts">
+import { useFAB } from './tools/useFAB';
 
+const props = defineProps({
+  scrollPosition: {
+    type: Number,
+    default: 0
+  }
+})
 
-const color = `var(--main-normal)`
+const {
+  enable,
+  show,
+} = useFAB(props)
+
+const color = `var(--main-text)`
 
 </script>
 <template>
 
-  <div class="fab-container">
+  <div v-if="enable" class="fab-container"
+    :class="{ 'fab-container_show': show }"
+  >
     <div class="fab-icon-box">
       <svg-icon 
         class="fab-svg-icon"
@@ -30,9 +44,18 @@ const color = `var(--main-normal)`
   right: 16px;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--secondary-shadow);
   background-color: var(--secondary-color);
+  transform-origin: bottom right;
+  transform: scale(0.01);
   cursor: pointer;
+  transition: .3s;
+  opacity: .8;
+}
+
+.fab-container_show {
+  transform: scale(1);
+  opacity: 1;
 }
 
 .fab-icon-box {
@@ -58,6 +81,15 @@ const color = `var(--main-normal)`
   }
 }
 
+@media(hover: hover) {
+  .fab-container:hover {
+    background-color: var(--secondary-hover);
+  }
+}
+
+.fab-container:active {
+  background-color: var(--secondary-active);
+}
 
 
 </style>

@@ -6,7 +6,6 @@
   --primary-hover: #1c5671;
   --primary-active: #15455e;
   --inverse-primary: #88d1ff;
-  --secondary-color: #bfdfed;
 
   --card-bg: #ffffff;
   --bg-color: #eaecef;
@@ -21,6 +20,11 @@
   --select-bg: #ddf2f9;
   --select-code: #264f78;
   --card-hover: #f5f7fa;
+
+  --secondary-color: #bfdfed;
+  --secondary-hover: #afd6e7;
+  --secondary-active: #a9cfdf;
+  --secondary-shadow: 0 4px 6px -1px rgba(0, 0, 0, .22);
 
   --sidebar-bg: #ffffff;
   --sidebar-scrollbar-thumb: #dcd7d5;

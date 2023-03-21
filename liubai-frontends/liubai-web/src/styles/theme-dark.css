@@ -6,7 +6,6 @@
   --primary-hover: #68c4f3;
   --primary-active: #48abdd;
   --inverse-primary: #2a6885;
-  --secondary-color: #3f5c68;
 
   --card-bg: #232323;
   --bg-color: #2a2c2e;
@@ -21,6 +20,11 @@
   --select-bg: #3d5259;
   --select-code: #264f78;
   --card-hover: #25272a;
+
+  --secondary-color: #3f5c68;
+  --secondary-hover: #4d6671;
+  --secondary-active: #586f79;
+  --secondary-shadow: 0 4px 6px -1px rgba(212, 212, 212, .22);
 
   --sidebar-bg: #232323;
   --sidebar-scrollbar-thumb: #484848;
