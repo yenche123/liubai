@@ -6,6 +6,7 @@
   --primary-hover: #1c5671;
   --primary-active: #15455e;
   --inverse-primary: #88d1ff;
+  --secondary-color: #bfdfed;
 
   --card-bg: #ffffff;
   --bg-color: #eaecef;
@@ -35,7 +36,7 @@
 
   --card-shadow: 0 4px 6px -2px rgba(0, 0, 0, .1);
   --card-shadow-2: 0 2px 2px -0.5px rgba(0, 0, 0, .04);
-  --card-shadow2-hover: 0 12px 5px -6px rgba(0, 0, 0, .04);
+  --card-shadow2-hover: 0 9px 4px -6px rgba(0, 0, 0, .04);
   --editor-shadow: 0 24px 4px -12px rgba(0, 0, 0, .04);
   --floating-shadow: 0 6px 24px rgba(0, 0, 0, .15);
   --kanban-header-shadow: 0 12px 6px -6px rgba(0, 0, 0, .1);
