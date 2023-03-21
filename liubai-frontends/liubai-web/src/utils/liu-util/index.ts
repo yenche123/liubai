@@ -36,6 +36,7 @@ import {
   canKeyUpDown,
   getDefaultRouteQuery,
   needToOpenViceView,
+  canTap,
 } from "./custom-util"
 import openUtil from "./open-util"
 import {
@@ -76,5 +77,6 @@ export default {
   getDefaultRouteQuery,
   needToOpenViceView,
   isChildElementVisible,
+  canTap,
   open: openUtil,
 }

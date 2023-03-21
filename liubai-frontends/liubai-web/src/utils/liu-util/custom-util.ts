@@ -67,3 +67,23 @@ export function needToOpenViceView(query: LocationQuery) {
   }
   return false
 }
+
+/** 防抖节流，判断点击是否过于频繁，若过于频繁返回 false，反之为 true */
+interface CanTapOpt {
+  duration: number
+}
+
+let lastTapBtn = 0
+export function canTap(opt?: CanTapOpt) {
+  if(!opt) {
+    opt = {
+      duration: 600
+    }
+  }
+
+  const now = time.getTime()
+  const diff = now - lastTapBtn
+  if(diff < opt.duration) return false
+  lastTapBtn = now
+  return true
+}

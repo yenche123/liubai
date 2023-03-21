@@ -6,7 +6,7 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { useInjectSnIndicator } from "../../tools/useSnIndicator"
 import { useI18n } from "vue-i18n";
 import { useWindowSize } from "~/hooks/useVueUse"
-import time from "~/utils/basic/time";
+import liuUtil from "~/utils/liu-util";
 
 interface SnProps {
   current: StateWhichPage
@@ -68,14 +68,14 @@ export function useStateNavi(
   // 点击 "刷新"
   const reloadRotateDeg = ref(0)
   const onTapReload = () => {
-    if(!canTap()) return
+    if(!liuUtil.canTap()) return
     stateProvideData?.tapreload()
     reloadRotateDeg.value += 360
   }
 
 
   const onTapAddState = () => {
-    if(!canTap()) return
+    if(!liuUtil.canTap()) return
     stateProvideData?.tapaddstate()
   }
   
@@ -90,16 +90,6 @@ export function useStateNavi(
     onTapAddState,
     stateProvideData,
   }
-}
-
-//  防抖节流
-let lastTapBtn = 0
-function canTap() {
-  const now = time.getTime()
-  const diff = now - lastTapBtn
-  if(diff < 600) return false
-  lastTapBtn = now
-  return true
 }
 
 
