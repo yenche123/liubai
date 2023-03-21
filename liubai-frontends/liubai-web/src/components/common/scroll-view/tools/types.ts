@@ -4,6 +4,8 @@ export interface SvProps {
   upperThreshold: number
   lowerThreshold: number
   direction: "vertical" | "horizontal"
+  hiddenScrollbar: boolean
+  goToTop: number
 }
 
 export interface SvEmits {

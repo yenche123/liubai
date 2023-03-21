@@ -8,6 +8,10 @@ const props = defineProps({
   }
 })
 
+const emits = defineEmits<{
+  (event: "tapfab"): void
+}>()
+
 const {
   enable,
   show,
@@ -20,6 +24,7 @@ const color = `var(--main-text)`
 
   <div v-if="enable" class="fab-container"
     :class="{ 'fab-container_show': show }"
+    @click="emits('tapfab')"
   >
     <div class="fab-icon-box">
       <svg-icon 

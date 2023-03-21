@@ -19,6 +19,10 @@ const props = defineProps({
   hiddenScrollbar: {
     type: Boolean,
     default: false,
+  },
+  goToTop: {
+    type: Number,
+    default: 0,
   }
 })
 

@@ -1,4 +1,4 @@
-import { onActivated, provide, reactive, ref, shallowRef, watch } from "vue";
+import { onActivated, provide, reactive, ref, shallowRef, toRef, watch } from "vue";
 import type { SvProps, SvEmits, SvProvideInject, SvBottomUp } from "./types"
 import { scrollViewKey, svScollingKey, svBottomUpKey } from "../../../../utils/provide-keys"
 import type { Ref } from "vue";
@@ -84,6 +84,13 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
 
   watch(bottomUp, (newV) => {
     whenBottomUp(sv, newV, props)
+  })
+
+  const goToTop = toRef(props, "goToTop")
+  watch(goToTop, (newV) => {
+    if(newV > 0) {
+      whenBottomUp(sv, { type: "pixel", pixel: 0 }, props)
+    }
   })
 
   return { sv, scrollPosition, onScrolling }
