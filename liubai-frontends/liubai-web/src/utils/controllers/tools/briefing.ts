@@ -63,13 +63,14 @@ export function getBriefing(
   for(let i=0; i<len; i++) {
     const v = newLiuDesc[i]
     const { content } = v
-    if(content && content.length) {
+    if(content?.length) {
       let tmpText = listToText(content)
       charNum += valTool.getTextCharNum(tmpText)
       let tmpRow = getRowNum([v])
       rowNum += tmpRow
     }
     if(charNum > (MAGIC_NUM * 2) || rowNum > MAX_ROW) {
+      // 字数大于阈值 (MAGIC_NUM * 2) 或者行数大于 MAX_ROW
       const newNode = _getBreakPoint(v, prevRowNum, prevCharNum)
       briefing.push(newNode)
       break
@@ -84,6 +85,11 @@ export function getBriefing(
     prevCharNum = charNum
     prevRowNum = rowNum
     briefing.push(v)
+
+    if(rowNum >= 3 && i < (len - 1)) {
+      break
+    }
+
   }
   
   return { type: "doc", content: briefing }
