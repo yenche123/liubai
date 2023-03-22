@@ -91,6 +91,7 @@ export default defineComponent({
           :edit-mode="false"
           :content="threadData.briefing"
         ></EditorCore>
+        <div class="tcb-mask"></div>
         <div class="tcb-more">
           <span>{{ t('common.checkMore') }}</span>
         </div>
@@ -189,9 +190,18 @@ export default defineComponent({
       position: relative;
       cursor: pointer;
       user-select: none;
+      position: relative;
+
+      .tcb-mask {
+        width: 100%;
+        height: 50px;
+        background: var(--gradient-two);
+        margin-block-start: -52px;
+        position: relative;
+      }
 
       .tcb-more {
-        font-size: var(--btn-font);
+        font-size: var(--mini-font);
         line-height: 1.5;
         color: var(--main-note);
         text-align: right;
