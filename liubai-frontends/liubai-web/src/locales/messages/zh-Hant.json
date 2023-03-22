@@ -243,6 +243,9 @@
     "language": "語言",
     "system": "跟隨系統",
     "dark": "深色",
-    "light": "淺色"
+    "light": "淺色",
+    "import_export": "導入 & 導出",    
+    "import": "導入",
+    "export": "導出"
   }
 }

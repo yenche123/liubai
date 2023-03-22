@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { useSettingContent } from "./tools/useSettingContent";
-import cfg from "~/config"
 
 const { t } = useI18n()
 
@@ -77,6 +76,46 @@ const iconColor = "var(--main-normal)"
 
       </div>
 
+
+      <!-- 导入 & 导出 -->
+      <div class="sc-title">
+        <span>{{ t('setting.import_export') }}</span>
+      </div>
+      <div class="sc-box">
+        <!-- 导入 -->
+        <div class="liu-hover sc-bar">
+          <div class="scb-hd">
+            <span>{{ t('setting.import') }}</span>
+          </div>
+          <div class="scb-footer">
+
+            <div class="scb-footer-icon">
+              <svg-icon class="scbf-svg-icon scbf-import"
+                name="arrow_outward"
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- 导出 -->
+        <div class="liu-hover sc-bar">
+          <div class="scb-hd">
+            <span>{{ t('setting.export') }}</span>
+          </div>
+          <div class="scb-footer">
+
+            <div class="scb-footer-icon">
+              <svg-icon class="scbf-svg-icon"
+                name="arrow_outward"
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
   </div>
 
@@ -119,7 +158,7 @@ const iconColor = "var(--main-normal)"
   width: 100%;
   box-sizing: border-box;
   box-shadow: var(--card-shadow-2);
-  margin-block-end: 24px;
+  margin-block-end: 32px;
 }
 
 .sc-bar {
@@ -168,6 +207,10 @@ const iconColor = "var(--main-normal)"
 .scbf-svg-icon {
   width: 22px;
   height: 22px;
+}
+
+.scbf-import {
+  transform: rotate(180deg);
 }
 
 .scbf-back {

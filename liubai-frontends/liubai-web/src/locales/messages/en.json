@@ -243,6 +243,9 @@
     "language": "Language",
     "system": "System",
     "dark": "Dark",
-    "light": "Light"
+    "light": "Light",
+    "import_export": "Import & Export",    
+    "import": "Import",
+    "export": "Export"
   }
 }
