@@ -1,6 +1,6 @@
 # LB
 
-搬家中...
+Welcome Eleanor to Chiayi!
 
 ## 图标库
 
