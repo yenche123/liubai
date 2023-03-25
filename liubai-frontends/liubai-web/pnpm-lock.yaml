@@ -16,6 +16,7 @@ specifiers:
   '@tiptap/extension-task-list': 2.0.0-beta.220
   '@tiptap/starter-kit': 2.0.0-beta.220
   '@tiptap/vue-3': 2.0.0-beta.220
+  '@types/file-saver': ^2.0.5
   '@types/node': ^18.15.3
   '@vitejs/plugin-vue': ^4.0.0
   '@vuepic/vue-datepicker': ^4.2.1
@@ -25,6 +26,7 @@ specifiers:
   compressorjs: ^1.2.1
   date-fns: ^2.29.3
   dexie: ^3.2.3
+  file-saver: ^2.0.5
   floating-vue: 2.0.0-beta.20
   highlight.js: ^11.7.0
   ics: ^3.1.0
@@ -71,6 +73,7 @@ dependencies:
   compressorjs: 1.2.1
   date-fns: 2.29.3
   dexie: 3.2.3
+  file-saver: 2.0.5
   floating-vue: 2.0.0-beta.20_vue@3.2.47
   highlight.js: 11.7.0
   ics: 3.1.0
@@ -87,6 +90,7 @@ dependencies:
   vue-slicksort: 2.0.5_vue@3.2.47
 
 devDependencies:
+  '@types/file-saver': 2.0.5
   '@types/node': 18.15.3
   '@vitejs/plugin-vue': 4.0.0_vite@4.2.1+vue@3.2.47
   sass: 1.59.3
@@ -391,8 +395,8 @@ packages:
       vue-i18n:
         optional: true
     dependencies:
-      '@intlify/message-compiler': 9.3.0-beta.16
-      '@intlify/shared': 9.3.0-beta.16
+      '@intlify/message-compiler': 9.3.0-beta.17
+      '@intlify/shared': 9.3.0-beta.17
       jsonc-eslint-parser: 1.4.1
       source-map: 0.6.1
       vue-i18n: 9.2.2_vue@3.2.47
@@ -424,11 +428,11 @@ packages:
       source-map: 0.6.1
     dev: false
 
-  /@intlify/message-compiler/9.3.0-beta.16:
-    resolution: {integrity: sha512-CGQI3xRcs1ET75eDQ0DUy3MRYOqTauRIIgaMoISKiF83gqRWg93FqN8lGMKcpBqaF4tI0JhsfosCaGiBL9+dnw==}
+  /@intlify/message-compiler/9.3.0-beta.17:
+    resolution: {integrity: sha512-i7hvVIRk1Ax2uKa9xLRJCT57to08OhFMhFXXjWN07rmx5pWQYQ23MfX1xgggv9drnWTNhqEiD+u4EJeHoS5+Ww==}
     engines: {node: '>= 14'}
     dependencies:
-      '@intlify/shared': 9.3.0-beta.16
+      '@intlify/shared': 9.3.0-beta.17
       source-map: 0.6.1
     dev: false
 
@@ -437,8 +441,8 @@ packages:
     engines: {node: '>= 14'}
     dev: false
 
-  /@intlify/shared/9.3.0-beta.16:
-    resolution: {integrity: sha512-kXbm4svALe3lX+EjdJxfnabOphqS4yQ1Ge/iIlR8tvUiYRCoNz3hig1M4336iY++Dfx5ytEQJPNjIcknNIuvig==}
+  /@intlify/shared/9.3.0-beta.17:
+    resolution: {integrity: sha512-mscf7RQsUTOil35jTij4KGW1RC9SWQjYScwLxP53Ns6g24iEd5HN7ksbt9O6FvTmlQuX77u+MXpBdfJsGqizLQ==}
     engines: {node: '>= 14'}
     dev: false
 
@@ -458,7 +462,7 @@ packages:
         optional: true
     dependencies:
       '@intlify/bundle-utils': 3.4.0_vue-i18n@9.2.2
-      '@intlify/shared': 9.3.0-beta.16
+      '@intlify/shared': 9.3.0-beta.17
       '@rollup/pluginutils': 4.2.1
       '@vue/compiler-sfc': 3.2.45
       debug: 4.3.4
@@ -972,6 +976,10 @@ packages:
   /@trysound/sax/0.2.0:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
+    dev: true
+
+  /@types/file-saver/2.0.5:
+    resolution: {integrity: sha512-zv9kNf3keYegP5oThGLaPk8E081DFDuwfqjtiTzm6PoxChdJ1raSuADf2YGCVIyrSynLrgc8JWv296s7Q7pQSQ==}
     dev: true
 
   /@types/hast/2.3.4:
@@ -1898,6 +1906,10 @@ packages:
     resolution: {integrity: sha512-WtySTkS4OKev5JtpHXnib4Gxiurzh5NCGvWrFaZ34m6JehfTUhKZvn9njTfw48t6JumVQOmrKqpmGcdwxnhqBQ==}
     dependencies:
       format: 0.2.2
+    dev: false
+
+  /file-saver/2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
     dev: false
 
   /fill-range/4.0.0:

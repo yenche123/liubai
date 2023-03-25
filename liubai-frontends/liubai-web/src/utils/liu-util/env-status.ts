@@ -5,6 +5,7 @@ export function getEnv() {
   const DEV = import.meta.env.DEV
   const API_URL = import.meta.env.VITE_API_URL
 
+  const APP_NAME = import.meta.env.VITE_APP_NAME
   const LOCAL_PIN_NUM = import.meta.env.VITE_LOCAL_PIN_NUM
   const FREE_PIN_NUM = import.meta.env.VITE_FREE_PIN_NUM
   const PREMIUM_PIN_NUM = import.meta.env.VITE_PREMIUM_PIN_NUM
@@ -22,6 +23,7 @@ export function getEnv() {
   return {
     DEV,
     API_URL,
+    APP_NAME,
     LOCAL_PIN_NUM: Number(LOCAL_PIN_NUM),
     FREE_PIN_NUM: Number(FREE_PIN_NUM),
     PREMIUM_PIN_NUM: Number(PREMIUM_PIN_NUM),

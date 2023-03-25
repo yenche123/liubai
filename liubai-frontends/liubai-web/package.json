@@ -35,6 +35,7 @@
     "compressorjs": "^1.2.1",
     "date-fns": "^2.29.3",
     "dexie": "^3.2.3",
+    "file-saver": "^2.0.5",
     "floating-vue": "2.0.0-beta.20",
     "highlight.js": "^11.7.0",
     "ics": "^3.1.0",
@@ -51,6 +52,7 @@
     "vue-slicksort": "^2.0.5"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.5",
     "@types/node": "^18.15.3",
     "@vitejs/plugin-vue": "^4.0.0",
     "sass": "^1.59.3",

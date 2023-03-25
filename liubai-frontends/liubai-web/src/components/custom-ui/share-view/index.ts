@@ -12,6 +12,8 @@ import valTool from "~/utils/basic/val-tool"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
 import { handleLinks } from "./tools/handle-links"
 import liuUtil from "~/utils/liu-util"
+import { saveAs as fileSaverSaveAs } from 'file-saver';
+import time from "~/utils/basic/time"
 
 let _resolve: SvResolver | undefined
 const TRANSITION_DURATION = 150
@@ -42,6 +44,7 @@ export function initShareView() {
     onTapMask,
     onPublicChanged,
     onTapAllowComment,
+    onTapIcs,
   }
 }
 
@@ -58,6 +61,17 @@ export function showShareView(param: ShareViewParam) {
     _resolve = a
   }
   return new Promise(_wait)
+}
+
+function onTapIcs(e: MouseEvent) {
+  if(!svData.icsLink) return
+  e.stopPropagation()
+  e.preventDefault()
+
+  const { APP_NAME } = liuUtil.getEnv()
+  const stamp = time.getTime()
+  const sec = Math.round(stamp / 1000)
+  fileSaverSaveAs(svData.icsLink, `${APP_NAME}-${sec}.ics`)
 }
 
 function listenRouteChange() {

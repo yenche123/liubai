@@ -10,6 +10,7 @@ const {
   onTapMask,
   onPublicChanged,
   onTapAllowComment,
+  onTapIcs,
 } = initShareView()
 
 
@@ -90,6 +91,7 @@ const { t } = useI18n()
           class="liu-hover sv-app-item"
           :href="svData.icsLink"
           :title="t('share_related.download_ics')"
+          @click="onTapIcs"
         >
           <svg-icon name="calendar" :coverFillStroke="false"
             class="sv-app-item_svg"
