@@ -246,6 +246,9 @@
     "light": "浅色",
     "import_export": "导入 & 导出",
     "import": "导入",
-    "export": "导出"
+    "export": "导出",
+    "other": "其它",
+    "terms": "条款",
+    "logout": "退出"
   }
 }

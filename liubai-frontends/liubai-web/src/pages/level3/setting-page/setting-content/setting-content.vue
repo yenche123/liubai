@@ -116,6 +116,44 @@ const iconColor = "var(--main-normal)"
 
       </div>
 
+      <!-- 其他 -->
+      <div class="sc-title">
+        <span>{{ t('setting.other') }}</span>
+      </div>
+      <div class="sc-box">
+        <!-- 条款 -->
+        <div class="liu-hover sc-bar">
+          <div class="scb-hd">
+            <span>{{ t('setting.terms') }}</span>
+          </div>
+          <div class="scb-footer">
+
+            <div class="scb-footer-icon">
+              <svg-icon class="scbf-back"
+                name="arrow-right2"
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- 退出 -->
+        <div class="liu-hover sc-bar">
+          <div class="scb-hd">
+            <span>{{ t('setting.logout') }}</span>
+          </div>
+          <div class="scb-footer">
+            <div class="scb-footer-icon">
+              <svg-icon class="scbf-back"
+                name="arrow-right2"
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
   </div>
 

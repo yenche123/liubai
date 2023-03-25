@@ -246,6 +246,9 @@
     "light": "Light",
     "import_export": "Import & Export",    
     "import": "Import",
-    "export": "Export"
+    "export": "Export",
+    "other": "Other",
+    "terms": "Terms",
+    "logout": "Log out"
   }
 }
