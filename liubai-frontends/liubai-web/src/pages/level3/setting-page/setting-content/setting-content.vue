@@ -132,10 +132,30 @@ const iconColor = "var(--main-normal)"
 
             <div class="scb-footer-icon">
               <svg-icon class="scbf-back"
+                :class="{ 'scbfb_rotated': data.openTerms }"
                 name="arrow-right2"
                 :color="iconColor"
               ></svg-icon>
             </div>
+          </div>
+        </div>
+        <!-- 条款们 -->
+        <div class="sc-terms" :class="{ 'sc-terms_opened': data.openTerms }">
+          <div class="sc-terms-box" :class="{ 'sc-terms-box_opened': data.openTerms }">
+            <template v-for="(item, index) in data.termsList"
+              :key="item.text"
+            >
+              <a :href="item.link" target="_blank" class="liu-hover sc-terms-item">
+                <div class="sc-terms-title">
+                  <span>{{ item.text }}</span>
+                </div>
+                <div class="sc-terms-icon">
+                  <svg-icon class="scti-back"
+                    name="arrow-right2"
+                  ></svg-icon>
+                </div>
+              </a>
+            </template>
           </div>
         </div>
 
@@ -256,7 +276,70 @@ const iconColor = "var(--main-normal)"
 .scbf-back {
   width: 18px;
   height: 18px;
+  transition: .3s;
 }
+
+.scbfb_rotated {
+  transform: rotate(90deg);
+}
+
+.sc-terms {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: .3s;
+}
+
+.sc-terms_opened {
+  max-height: 200px;
+  opacity: 1;
+}
+
+.sc-terms-box {
+  position: relative;
+  width: 100%;
+  transform: translateY(-50%);
+  transition: .3s;
+}
+
+.sc-terms-box_opened {
+  transform: translateY(0);
+}
+
+.sc-terms-item {
+  width: 100%;
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  box-sizing: border-box;
+  margin-block-end: 4px;
+  overflow: hidden;
+  padding: 7px 10px;
+  user-select: none;
+}
+
+.sc-terms-title {
+  font-size: var(--btn-font);
+  color: var(--main-normal);
+  font-weight: 700;
+  flex: 1;
+}
+
+.sc-terms-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .scti-back {
+    width: 16px;
+    height: 16px;
+  }
+}
+
 
 
 </style>
