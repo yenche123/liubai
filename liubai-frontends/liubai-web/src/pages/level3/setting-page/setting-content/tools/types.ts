@@ -12,8 +12,15 @@ export interface ThemeItem {
   iconName: string
 }
 
+export interface TermsItem {
+  text: string
+  link: string
+}
+
 export interface SettingContentData {
   language: LocalLanguage
   language_txt: string
   theme: LocalTheme
+  openTerms: boolean
+  termsList: TermsItem[]
 }

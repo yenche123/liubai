@@ -249,6 +249,10 @@
     "export": "Export",
     "other": "Other",
     "terms": "Terms",
-    "logout": "Log out"
+    "service_terms": "Terms of Service",
+    "privacy_policy": "Privacy Policy",
+    "logout": "Log out",
+    "logout_bd": "Are you sure to log out?",
+    "logout_tip": "Delete my local data as well"
   }
 }

@@ -249,6 +249,10 @@
     "export": "導出",
     "other": "其它",
     "terms": "條款",
-    "logout": "登出"
+    "service_terms": "服務條款",
+    "privacy_policy": "隱私政策",
+    "logout": "登出",    
+    "logout_bd": "確定要登出嗎?",
+    "logout_tip": "同時刪除我的本地資料"
   }
 }

@@ -1,36 +1,39 @@
 
 import { reactive } from "vue"
 import type { 
-  SettingContentData, 
-  LanguageItem, 
-  ThemeItem 
+  SettingContentData,
 } from "./types"
 import type { SupportedTheme } from "~/types"
 import localCache from "~/utils/system/local-cache"
-import { i18n } from "~/locales"
 import cui from "~/components/custom-ui"
 import liuApi from "~/utils/liu-api"
 import { useDynamics } from "~/hooks/useDynamics"
 import type { SupportedLocale } from "~/types/types-locale"
-
-const t = i18n.global.t
+import { getLanguageList, getThemeList, getTermsList } from "./get-list"
 
 export function useSettingContent() {
   const data = reactive<SettingContentData>({
     language: "system",
     language_txt: "",
     theme: "system",
+    openTerms: false,
+    termsList: getTermsList(),
   })
 
   initSettingContent(data)
 
   const onTapTheme = () => whenTapTheme(data)
   const onTapLanguage = () => whenTapLanguage(data)
+  const onTapTerms = () => data.openTerms = !data.openTerms
+  const onTapLogout = () => whenTapLogout(data)
+
 
   return {
     data,
     onTapTheme,
-    onTapLanguage
+    onTapLanguage,
+    onTapTerms,
+    onTapLogout,
   }
 }
 
@@ -50,17 +53,23 @@ function initSettingContent(
   let lang = localP.language
   if(!lang) lang = "system"
   data.language = lang
-  const langList = _getLanguageList()
+  const langList = getLanguageList()
   const langItem = langList.find(v => v.id === lang)
   if(langItem) {
     data.language_txt = langItem.text
   }
 }
 
+function whenTapLogout(
+  data: SettingContentData
+) {
+
+}
+
 async function whenTapTheme(
   data: SettingContentData
 ) {
-  const list = _getThemeList()
+  const list = getThemeList()
   const itemList = list.map(v => {
     return {
       text: v.text,
@@ -92,7 +101,7 @@ async function whenTapTheme(
 async function whenTapLanguage(
   data: SettingContentData
 ) {
-  const list = _getLanguageList()
+  const list = getLanguageList()
   const itemList = list.map(v => ({ text: v.text }))
 
   const res = await cui.showActionSheet({ itemList })
@@ -118,47 +127,4 @@ async function whenTapLanguage(
 
   data.language = id
   data.language_txt = new_lang_txt
-}
-
-function _getThemeList() {
-  const list: ThemeItem[] = [
-    {
-      id: "system",
-      text: t('setting.system'),
-      iconName: "theme-system-theme",
-    },
-    {
-      id: "light",
-      text: t('setting.light'),
-      iconName: "theme-light_mode",
-    },
-    {
-      id: "dark",
-      text: t('setting.dark'),
-      iconName: "theme-dark_mode",
-    }
-  ]
-  return list
-}
-
-function _getLanguageList() {
-  const list: LanguageItem[] = [
-    {
-      id: "system",
-      text: t('setting.system'),
-    },
-    {
-      id: "zh-Hans",
-      text: "简体中文",
-    },
-    {
-      id: "zh-Hant",
-      text: "繁體中文",
-    },
-    {
-      id: "en",
-      text: "English",
-    }
-  ]
-  return list
 }

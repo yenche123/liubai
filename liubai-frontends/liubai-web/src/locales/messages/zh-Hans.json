@@ -249,6 +249,10 @@
     "export": "导出",
     "other": "其它",
     "terms": "条款",
-    "logout": "退出"
+    "service_terms": "服务条款",
+    "privacy_policy": "隐私政策",
+    "logout": "退出",    
+    "logout_bd": "确定要退出吗？",
+    "logout_tip": "同时删除我的本地数据"
   }
 }

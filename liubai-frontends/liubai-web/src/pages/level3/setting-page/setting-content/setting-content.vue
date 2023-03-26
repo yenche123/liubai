@@ -8,6 +8,8 @@ const {
   data,
   onTapTheme,
   onTapLanguage,
+  onTapTerms,
+  onTapLogout,
 } = useSettingContent()
 
 const iconColor = "var(--main-normal)"
@@ -122,7 +124,7 @@ const iconColor = "var(--main-normal)"
       </div>
       <div class="sc-box">
         <!-- 条款 -->
-        <div class="liu-hover sc-bar">
+        <div class="liu-hover sc-bar" @click="onTapTerms">
           <div class="scb-hd">
             <span>{{ t('setting.terms') }}</span>
           </div>
@@ -138,7 +140,7 @@ const iconColor = "var(--main-normal)"
         </div>
 
         <!-- 退出 -->
-        <div class="liu-hover sc-bar">
+        <div class="liu-hover sc-bar" @click="onTapLogout">
           <div class="scb-hd">
             <span>{{ t('setting.logout') }}</span>
           </div>
