@@ -254,6 +254,8 @@
     "logout": "Log out",
     "logout_bd": "Are you sure to log out?",
     "logout_bd_2": "After logging out of the native APP, all data of the current APP will be directly deleted. Are you sure to log out?",
-    "logout_tip": "Delete my local data as well"
+    "logout_tip": "Delete my local data as well",    
+    "logout_hd_2": "Warning",
+    "logout_bd_3": "It will delete all data. Are you sure?"
   }
 }

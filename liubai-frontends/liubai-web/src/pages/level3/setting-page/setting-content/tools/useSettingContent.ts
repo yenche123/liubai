@@ -76,6 +76,12 @@ async function askLogoutWithPurelyLocal() {
     content_key: "setting.logout_bd_2",
   })
   if(!res.confirm) return
+  const res2 = await cui.showModal({
+    title_key: "setting.logout_hd_2",
+    content_key: "setting.logout_bd_3",
+    modalType: "warning",
+  })
+  if(!res2.confirm) return
   handleLogoutWithPurlyLocal()
 }
 
