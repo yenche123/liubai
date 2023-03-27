@@ -220,6 +220,11 @@ class LiuRouter {
     return this.router.beforeResolve(guard)
   }
 
+  // isReady
+  public isReady() {
+    return this.router.isReady()
+  }
+
   public naviBack() {
     let list = this.getStack()
     if(list.length > 1) {

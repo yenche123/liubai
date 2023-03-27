@@ -1,4 +1,4 @@
-import { useRouteAndLiuRouter } from "../routes/liu-router"
+import { useGlobalLoading } from "./tools/useGlobalLoading"
 import liuApi from "../utils/liu-api"
 import liuUtil from "../utils/liu-util"
 import VConsole from 'vconsole';
@@ -9,11 +9,8 @@ import { useGlobalStateStore } from "./stores/useGlobalStateStore";
 // 监听和处理一些全局的事务，比如路由变化
 
 export function useApp() {
-  const { router } = useRouteAndLiuRouter()
 
-  router.beforeEach((to, from, next) => {
-    next()
-  })
+  useGlobalLoading()
 
   const env = liuUtil.getEnv()
   const cha = liuApi.getCharacteristic()
