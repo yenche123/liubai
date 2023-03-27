@@ -1,7 +1,12 @@
 
 import { reactive, ref } from "vue"
 import valTool from "~/utils/basic/val-tool"
-import { toListenEnterKeyUp, cancelListenEnterKeyUp } from "../tools/listen-keyup"
+import { 
+  toListenEnterKeyUp, 
+  cancelListenEnterKeyUp, 
+  toListenEscKeyUp, 
+  cancelListenEscKeyUp
+} from "../tools/listen-keyup"
 
 interface ModalSuccessRes {
   confirm: boolean
@@ -71,6 +76,7 @@ const _openModal = async (): Promise<void> => {
   await valTool.waitMilli(16)
   show.value = true
   toListenEnterKeyUp(onTapConfirm)
+  toListenEscKeyUp(onTapCancel)
 }
 
 const _closeModal = async (): Promise<void> => {
@@ -78,6 +84,7 @@ const _closeModal = async (): Promise<void> => {
   show.value = false
 
   cancelListenEnterKeyUp()
+  cancelListenEscKeyUp()
 
   await valTool.waitMilli(TRANSITION_DURATION)
   if(show.value) return
