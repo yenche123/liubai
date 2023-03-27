@@ -1,7 +1,12 @@
 
 import { computed, reactive, ref } from "vue"
 import valTool from "~/utils/basic/val-tool"
-import { toListenEnterKeyUp, cancelListenEnterKeyUp } from "../tools/listen-keyup"
+import { 
+  toListenEnterKeyUp, 
+  cancelListenEnterKeyUp,
+  toListenEscKeyUp,
+  cancelListenEscKeyUp,
+} from "../tools/listen-keyup"
 
 interface TextEditorSuccessRes {
   confirm: boolean
@@ -58,6 +63,7 @@ const _openTextEditor = async (): Promise<void> => {
   await valTool.waitMilli(16)
   show.value = true
   toListenEnterKeyUp(onTapConfirm)
+  toListenEscKeyUp(onTapCancel)
 }
 
 const _closeTextEditor = async (): Promise<void> => {
@@ -65,8 +71,10 @@ const _closeTextEditor = async (): Promise<void> => {
   show.value = false
 
   cancelListenEnterKeyUp()
+  cancelListenEscKeyUp()
 
   await valTool.waitMilli(TRANSITION_DURATION)
+  if(show.value) return
   enable.value = false
 }
 
