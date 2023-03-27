@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import WhoAreYou from "./components/level1/who-are-you/who-are-you.vue"
+import GlobalLoading from "./components/loaders/global-loading/global-loading.vue"
 import { useApp } from "./hooks/useApp";
 import { initLiuRouter } from "./routes/liu-router"
 import { defineAsyncComponent } from "vue"
@@ -39,6 +40,7 @@ const { route } = initLiuRouter()
     
     <custom-ui />
     <who-are-you />
+    <GlobalLoading></GlobalLoading>
   </div>
 </template>
 

@@ -1,4 +1,5 @@
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import { showGlobalLoading, hideGlobalLoading } from "~/components/loaders/global-loading"
 import time from "~/utils/basic/time";
 
 const DURATION_LOADING = 190
@@ -10,11 +11,10 @@ export function useGlobalLoading() {
   let s2: number = 0
   let timeout = 0
 
-
   const _beforeEach = async () => {
     timeout = setTimeout(() => {
       timeout = 0
-      
+      showGlobalLoading()
     }, DURATION_LOADING)
   }
 
@@ -22,23 +22,22 @@ export function useGlobalLoading() {
     s1 = time.getTime()
     s2 = 0
 
-    console.log("beforeEach..........")
+    // console.log("beforeEach..........")
 
     _beforeEach()
   })
 
   router.beforeResolve((to, from) => {
     s2 = time.getTime()
-    console.log("beforeResolve..........")
-    console.log(`耗时: ${s2 - s1}ms`)
+    // console.log("beforeResolve..........")
+    // console.log(`耗时: ${s2 - s1}ms`)
 
     if(timeout) {
-      console.log("移除 timeout.....")
       clearTimeout(timeout)
     }
     else {
       // 去隐藏 loading
-      console.log("隐藏 loading.....")
+      hideGlobalLoading()
     }
 
     console.log(" ")
