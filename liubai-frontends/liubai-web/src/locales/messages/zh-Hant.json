@@ -253,6 +253,7 @@
     "privacy_policy": "隱私政策",
     "logout": "登出",    
     "logout_bd": "確定要登出嗎?",
+    "logout_bd_2": "純本機應用登出後將直接刪除當前 APP 的所有資料，確定要登出嗎？",
     "logout_tip": "同時刪除我的本地資料"
   }
 }

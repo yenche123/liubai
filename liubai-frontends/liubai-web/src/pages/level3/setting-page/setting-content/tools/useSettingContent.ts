@@ -10,6 +10,8 @@ import liuApi from "~/utils/liu-api"
 import { useDynamics } from "~/hooks/useDynamics"
 import type { SupportedLocale } from "~/types/types-locale"
 import { getLanguageList, getThemeList, getTermsList } from "./get-list"
+import { handleLogoutWithBackend, handleLogoutWithPurlyLocal } from "./handle-logout"
+import liuUtil from "~/utils/liu-util"
 
 export function useSettingContent() {
   const data = reactive<SettingContentData>({
@@ -63,7 +65,29 @@ function initSettingContent(
 function whenTapLogout(
   data: SettingContentData
 ) {
+  const res0 = liuUtil.getIfPurelyLocal()
+  if(res0) askLogoutWithPurelyLocal()
+  else askLogoutWithBackend()
+}
 
+async function askLogoutWithPurelyLocal() {
+  const res = await cui.showModal({
+    title_key: "setting.logout",
+    content_key: "setting.logout_bd_2",
+  })
+  if(!res.confirm) return
+  handleLogoutWithPurlyLocal()
+}
+
+async function askLogoutWithBackend() {
+  const res = await cui.showModal({
+    title_key: "setting.logout",
+    content_key: "setting.logout_bd",
+    tip_key: "setting.logout_tip",
+  })
+
+  if(!res.confirm) return
+  handleLogoutWithBackend(res.tipToggle ?? false)
 }
 
 async function whenTapTheme(

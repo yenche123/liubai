@@ -253,6 +253,7 @@
     "privacy_policy": "Privacy Policy",
     "logout": "Log out",
     "logout_bd": "Are you sure to log out?",
+    "logout_bd_2": "After logging out of the native APP, all data of the current APP will be directly deleted. Are you sure to log out?",
     "logout_tip": "Delete my local data as well"
   }
 }
