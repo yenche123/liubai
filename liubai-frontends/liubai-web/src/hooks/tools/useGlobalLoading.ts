@@ -31,6 +31,7 @@ export function useGlobalLoading() {
     s2 = time.getTime()
     // console.log("beforeResolve..........")
     // console.log(`耗时: ${s2 - s1}ms`)
+    // console.log(" ")
 
     if(timeout) {
       clearTimeout(timeout)
@@ -39,8 +40,6 @@ export function useGlobalLoading() {
       // 去隐藏 loading
       hideGlobalLoading()
     }
-
-    console.log(" ")
 
     timeout = 0
   })
