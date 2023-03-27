@@ -80,6 +80,7 @@ const _closeModal = async (): Promise<void> => {
   cancelListenEnterKeyUp()
 
   await valTool.waitMilli(TRANSITION_DURATION)
+  if(show.value) return
   enable.value = false
 }
 
