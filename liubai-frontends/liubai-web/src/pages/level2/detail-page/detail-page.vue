@@ -16,7 +16,7 @@ const { t } = useI18n()
 
   <!-- 主视图 -->
   <main-view>
-    <scroll-view :hidden-scrollbar="hiddenScrollBar">
+    <scroll-view :hidden-scroll-bar="hiddenScrollBar">
       <navi-virtual></navi-virtual>
       <detail-content></detail-content>
     </scroll-view>

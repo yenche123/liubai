@@ -28,7 +28,7 @@ const {
 
   <!-- 主视图 -->
   <main-view :drop-files="true" @tapmainview="onTapMainView">
-    <scroll-view :hidden-scrollbar="hiddenScrollBar" @scroll="onScroll"
+    <scroll-view :hidden-scroll-bar="hiddenScrollBar" @scroll="onScroll"
       :go-to-top="goToTop"
     >
       <NaviAuto @naviautochangeed="onNaviAutoChanged"></NaviAuto>

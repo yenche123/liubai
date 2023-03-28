@@ -16,7 +16,7 @@ const props = defineProps({
     type: String as PropType<"vertical" | "horizontal">,
     default: "vertical",
   },
-  hiddenScrollbar: {
+  hiddenScrollBar: {
     type: Boolean,
     default: false,
   },
@@ -45,7 +45,7 @@ const { isMobile } = liuApi.getCharacteristic()
   <div ref="sv" class="liu-scroll-view" 
     :class="{ 
       'liu-scroll-view_flex': direction === 'horizontal',
-      'liu-scollbar_hidden': hiddenScrollbar,
+      'liu-scollbar_hidden': hiddenScrollBar,
     }"
     @scroll="onScrolling"
   >

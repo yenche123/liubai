@@ -19,7 +19,7 @@ const { tagName, tagId } = useTagPage()
 
   <!-- 主视图 -->
   <main-view>
-    <scroll-view :hidden-scrollbar="hiddenScrollBar">
+    <scroll-view :hidden-scroll-bar="hiddenScrollBar">
       <navi-virtual></navi-virtual>
       <TagContent :tag-id="tagId"></TagContent>
     </scroll-view>
