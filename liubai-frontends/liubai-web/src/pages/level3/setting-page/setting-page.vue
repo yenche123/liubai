@@ -6,17 +6,18 @@ import SettingContent from "./setting-content/setting-content.vue";
 import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
-import { useI18n } from "vue-i18n";
 
-const { onVvWidthChange } = useMainVice()
-const { t } = useI18n()
+const { 
+  hiddenScrollBar,
+  onVvWidthChange
+} = useMainVice()
 
 </script>
 <template>
 
   <!-- 主视图 -->
   <main-view>
-    <scroll-view>
+    <scroll-view :hidden-scroll-bar="hiddenScrollBar">
       <navi-virtual></navi-virtual>
       <SettingContent></SettingContent>
     </scroll-view>
