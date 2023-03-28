@@ -8,6 +8,10 @@ import type { SvProvideInject, SvBottomUp } from "../components/common/scroll-vi
 export const viceViewWidthKey = Symbol() as InjectionKey<Ref<number>>
 export const mainViewWidthKey = Symbol() as InjectionKey<Ref<number>>
 
+// 当 main-view 发生被点击事件时
+// 告知 useMainVice 再用 provide / inject 通知 vice-view 可能要关闭侧边栏
+export const tapMainViewStampKey = Symbol() as InjectionKey<Ref<number>>
+
 // sidebar 内部向子组件传递自身宽度
 export const sidebarWidthKey = Symbol() as InjectionKey<Ref<number>>
 

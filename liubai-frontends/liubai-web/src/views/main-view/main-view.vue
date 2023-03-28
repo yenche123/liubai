@@ -10,15 +10,23 @@ const props = defineProps({
   }
 })
 
+const emits = defineEmits<{
+  (event: "tapmainview"): void
+}>()
+
 const { leftPx, rightPx } = useMainView()
 const { isOverDropZone, centerRef } = useMvDropZone(props)
+
+const onTapCenter = (e: MouseEvent) => {
+  emits("tapmainview")
+}
 
 </script>
 <template>
 
   <div class="mv-container">
     <div class="mv-left" :style="{ width: leftPx + 'px' }"></div>
-    <div class="mv-center" ref="centerRef">
+    <div class="mv-center" ref="centerRef" @click="onTapCenter">
       <slot />
 
       <center-drop-zone 

@@ -19,12 +19,17 @@ const {
 
 const color = `var(--main-text)`
 
+const onTapBtn = (e: MouseEvent) => {
+  emits('tapfab')
+  e.stopPropagation()
+}
+
 </script>
 <template>
 
   <div v-if="enable" class="fab-container"
     :class="{ 'fab-container_show': show }"
-    @click="emits('tapfab')"
+    @click="onTapBtn"
   >
     <div class="fab-icon-box">
       <svg-icon 

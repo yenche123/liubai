@@ -15,6 +15,7 @@ const {
   onTapFab,
   scrollPosition,
   onScroll,
+  onTapMainView,
 } = useMainVice()
 
 const {
@@ -26,7 +27,7 @@ const {
 <template>
 
   <!-- 主视图 -->
-  <main-view :drop-files="true">
+  <main-view :drop-files="true" @tapmainview="onTapMainView">
     <scroll-view :hidden-scrollbar="hiddenScrollBar" @scroll="onScroll"
       :go-to-top="goToTop"
     >

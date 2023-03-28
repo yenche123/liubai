@@ -1,5 +1,6 @@
 
 import { 
+  inject,
   nextTick, 
   onActivated, 
   onDeactivated,
@@ -18,7 +19,7 @@ import type { LocationQuery } from "vue-router"
 import { useWindowSize } from "~/hooks/useVueUse"
 import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
-import { outterWidthKey } from "~/utils/provide-keys"
+import { outterWidthKey, tapMainViewStampKey } from "~/utils/provide-keys"
 import liuApi from "~/utils/liu-api";
 import liuUtil from "~/utils/liu-util";
 
@@ -59,6 +60,9 @@ export function useViceView(emits: VvEmits) {
     onVvMouseLeave,
   } = initMouse(vvData)
 
+  // 处理 main-view 被点击的情况
+  handleMainViewTapped(vvData)
+
   return { 
     vvData, 
     onResizing,
@@ -66,6 +70,28 @@ export function useViceView(emits: VvEmits) {
     onVvMouseLeave,
   }
 }
+
+function handleMainViewTapped(
+  vvData: VvData,
+) {
+  const { route, router } = useRouteAndLiuRouter()
+
+  // 接收来自 page 的 tapMvStamp，當 tapMvStamp 變化時，代表有被點擊
+  const tapMvStamp = inject(tapMainViewStampKey, ref(0))
+  watch(tapMvStamp, (newV, oldV) => {
+    if(newV <= 0) return
+    const diff = newV - oldV
+    if(diff < 600) return
+    if(vvData.openType !== "opened") return
+    if(!vvData.shadow) return
+
+    // 去控制路由，关闭侧边栏
+    const newQuery = liuUtil.getDefaultRouteQuery(route)
+    router.replaceWithNewQuery(route, newQuery)
+  })
+}
+
+
 
 function initViceView() {
   let defaultPx = cfg.default_viceview_width

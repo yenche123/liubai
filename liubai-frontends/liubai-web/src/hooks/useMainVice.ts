@@ -1,7 +1,8 @@
 
 import { provide, ref } from "vue"
+import time from "~/utils/basic/time"
 import liuUtil from "~/utils/liu-util"
-import { viceViewWidthKey } from "../utils/provide-keys"
+import { viceViewWidthKey, tapMainViewStampKey } from "~/utils/provide-keys"
 
 export function useMainVice() {
   const viceViewPx = ref(0)
@@ -32,6 +33,13 @@ export function useMainVice() {
     scrollPosition.value = data.scrollPosition
   }
 
+  // 处理 main-view 点击空白区域时，传递给 vice-view
+  const tapMvStamp = ref(0)
+  provide(tapMainViewStampKey, tapMvStamp)
+  const onTapMainView = () => {
+    tapMvStamp.value = time.getTime()
+  }
+
   return { 
     hiddenScrollBar, 
     onVvWidthChange,
@@ -39,5 +47,6 @@ export function useMainVice() {
     onTapFab,
     scrollPosition,
     onScroll,
+    onTapMainView,
   }
 }

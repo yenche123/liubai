@@ -11,8 +11,9 @@ const props = defineProps({
   }
 })
 
-const onTapBack = () => {
+const onTapBack = (e: MouseEvent) => {
   router.naviBack()
+  e.stopPropagation()
 }
 
 

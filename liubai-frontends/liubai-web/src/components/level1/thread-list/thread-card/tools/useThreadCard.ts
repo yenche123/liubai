@@ -47,6 +47,7 @@ export function useThreadCard(props: TcProps) {
 
   const onTapThreadCard = (e: MouseEvent) => {
     handleTapThreadCard(e, ctx)
+    e.stopPropagation()
   }
 
   return {
