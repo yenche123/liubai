@@ -45,7 +45,7 @@ async function toOpen(ctx: FabCtx) {
   if(show.value) return
   enable.value = true
   await valTool.waitMilli(16)
-  show.value = true
+  if(enable.value) show.value = true
 }
 
 async function toClose(ctx: FabCtx) {
@@ -53,5 +53,5 @@ async function toClose(ctx: FabCtx) {
   if(!enable.value) return
   show.value = false
   await valTool.waitMilli(310)
-  enable.value = false
+  if(!show.value) enable.value = false
 }
