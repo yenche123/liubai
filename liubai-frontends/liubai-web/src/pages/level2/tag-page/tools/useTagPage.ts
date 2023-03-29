@@ -76,6 +76,7 @@ async function toLoadRemote(
   // TODO: 去远端加载 tag
   // 目前先直接告诉组件查无动态
   
+  ctx.tagId.value = ""
   ctx.pState.value = 50
 
   

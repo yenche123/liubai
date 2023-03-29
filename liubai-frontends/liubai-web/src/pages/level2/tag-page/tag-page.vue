@@ -25,7 +25,9 @@ const { tagName, tagId, pState } = useTagPage()
       <PlaceholderView 
         :p-state="pState"
       ></PlaceholderView>
-      <TagContent :tag-id="tagId"></TagContent>
+      <TagContent 
+        :tag-id="tagId"
+      ></TagContent>
     </scroll-view>
     <navi-bar :title="tagName ? tagName : t('common.tags')"></navi-bar>
   </main-view>
