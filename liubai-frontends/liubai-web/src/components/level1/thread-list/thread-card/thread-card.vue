@@ -80,6 +80,7 @@ export default defineComponent({
 
       <TcTopbar
         :thread-data="threadData"
+        @newoperate="receiveBottomOperation"
       ></TcTopbar>
 
       <!-- 摘要 -->

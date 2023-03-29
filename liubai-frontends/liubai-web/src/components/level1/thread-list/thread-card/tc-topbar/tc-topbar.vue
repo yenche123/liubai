@@ -3,6 +3,7 @@ import { defineComponent, PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ThreadShow } from '~/types/types-content';
 import { useTcTopbar } from './tools/useTcTopbar';
+import { tctEmits } from "./tools/types"
 
 export default defineComponent({
   props: {
@@ -11,13 +12,20 @@ export default defineComponent({
       required: true
     }
   },
-  setup(props) {
+  emits: tctEmits,
+  setup(props, { emit }) {
     const { t } = useI18n()
     const { showTopbar } = useTcTopbar(props)
 
+    const onTapState = (e: MouseEvent) => {
+      e.stopPropagation()
+      emit('newoperate', 'state')
+    }
+
     return {
       t,
-      showTopbar
+      showTopbar,
+      onTapState,
     }
   }
 })
@@ -31,6 +39,7 @@ export default defineComponent({
       :style="{ 
         'color': threadData.stateShow.colorShow,
       }"
+      @click="onTapState"
     >
       <div class="tctsb-bg"
         :style="{
@@ -70,6 +79,7 @@ export default defineComponent({
     position: relative;
     overflow: hidden;
     user-select: none;
+    cursor: pointer;
 
     .tctsb-bg {
       position: absolute;
