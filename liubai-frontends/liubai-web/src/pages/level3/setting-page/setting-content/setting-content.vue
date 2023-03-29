@@ -203,9 +203,10 @@ const iconColor = "var(--main-normal)"
 }
 
 .sc-title {
-  font-size: var(--head-font);
+  font-size: var(--title-font);
   font-weight: 700;
   color: var(--main-normal);
+  margin-inline-start: 10px;
   margin-block-end: 8px;
   user-select: none;
 }
