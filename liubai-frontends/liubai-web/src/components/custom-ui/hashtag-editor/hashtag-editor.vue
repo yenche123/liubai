@@ -64,8 +64,14 @@ const onMouseEnterItem = (index: number) => {
         </HashtagEmoji>
         
 
-        <input ref="inputEl" class="hteb-input" v-model="inputVal" :maxlength="50" :placeholder="t('tip.tag_ph')"
-          @input="onInput" />
+        <input ref="inputEl" 
+          class="hteb-input" 
+          v-model="inputVal" 
+          :maxlength="50" 
+          :placeholder="t('tip.tag_ph')"
+          @input="onInput" 
+          autocomplete="nope"
+        />
 
       </div>
 

@@ -31,6 +31,7 @@ watch(show, async (newV) => {
       :placeholder="t('who_r_u.placeholder')" 
       :maxlength="20"
       @keyup.enter="onEnter" 
+      autocomplete="nickname"
     />
   </div>
 

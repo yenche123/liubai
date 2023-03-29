@@ -31,6 +31,7 @@ const { t } = useI18n()
       <div class="se-bar">
         <input class="se-input" :placeholder="t('common.search')" ref="inputEl"
           v-model="seData.inputTxt"
+          autocomplete="nope"
         />
       </div>
 

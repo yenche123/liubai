@@ -115,6 +115,7 @@ const {
         :placeholder="teData.placeholder ? teData.placeholder: teData.placeholder_key ? 
           t(teData.placeholder_key) : t('cui.plz_input_txt')"
         :maxlength="teData.maxLength"
+        autocomplete="nope"
       />
       <div class="cui-modal-btns">
         <div 

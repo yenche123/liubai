@@ -37,6 +37,7 @@ const { t } = useI18n()
 
         <input v-model="reData.text" class="se-input" 
           :placeholder="t('state_related.state_ph')"
+          autocomplete="nope"
         />
 
       </div>
