@@ -185,6 +185,7 @@ function listenThreadShowChanged(
     "undo_delete",
     "state",
     "undo_state",
+    "restore",
   ]
 
   // 内部改变的时间戳
@@ -196,7 +197,7 @@ function listenThreadShowChanged(
     const now = time.getTime()
     const diff = now - lastInnerStampRef.value
     if(diff < 600) {
-      console.log("刚刚 600ms 内，kanban 内有触发变化，故阻断！！！！")
+      // console.log("刚刚 600ms 内，kanban 内有触发变化，故阻断！！！！")
       return
     }
 
