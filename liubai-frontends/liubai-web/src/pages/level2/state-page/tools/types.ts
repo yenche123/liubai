@@ -60,4 +60,4 @@ export interface StateProvideData {
   tapaddstate: SimpleFunc
 }
 
-export const StateProvideKey = Symbol() as InjectionKey<StateProvideData>
+export const stateProvideKey = Symbol() as InjectionKey<StateProvideData>

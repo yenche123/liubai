@@ -1,6 +1,6 @@
 import { onActivated, onDeactivated, provide, reactive, ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
-import { StateProvideKey } from "./types"
+import { stateProvideKey } from "./types"
 import type { 
   StateWhichPage, 
   KanbanData,
@@ -83,7 +83,7 @@ function initProvideData(
     tapaddstate: onTapAddState,
   }
 
-  provide(StateProvideKey, stateProvideData)
+  provide(stateProvideKey, stateProvideData)
 }
 
 async function toAddState(

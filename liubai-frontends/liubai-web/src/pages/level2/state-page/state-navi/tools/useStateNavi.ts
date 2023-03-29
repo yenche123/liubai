@@ -1,7 +1,7 @@
 import { toRef, watch, ref, onMounted, nextTick, inject } from "vue";
 import type { Ref, ShallowRef } from "vue";
 import type { StateWhichPage, SnIndicatorData } from "../../tools/types";
-import { StateProvideKey } from "../../tools/types";
+import { stateProvideKey } from "../../tools/types";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { useInjectSnIndicator } from "../../tools/useSnIndicator"
 import { useI18n } from "vue-i18n";
@@ -61,7 +61,7 @@ export function useStateNavi(
     router.naviBack()
   }
 
-  const stateProvideData = inject(StateProvideKey)
+  const stateProvideData = inject(stateProvideKey)
 
   listenWindowWidthChange(ctx)
 
