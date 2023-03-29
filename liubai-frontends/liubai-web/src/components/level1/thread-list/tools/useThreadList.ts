@@ -7,7 +7,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
 import type { OState } from "~/types/types-basic"
 import type { SvProvideInject, SvBottomUp } from "../../../common/scroll-view/tools/types"
-import type { TlProps, TlViewType } from "./types"
+import type { TlProps, TlViewType, TlEmits } from "./types"
 import type { TcListOption } from "~/utils/controllers/thread-controller/type"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { svBottomUpKey } from "~/utils/provide-keys";
@@ -22,9 +22,13 @@ interface TlContext {
   lastItemStamp: Ref<number>
   svBottomUp?: ShallowRef<SvBottomUp>
   reloadRequired: boolean
+  emits: TlEmits
 }
 
-export function useThreadList(props: TlProps) {
+export function useThreadList(
+  props: TlProps,
+  emits: TlEmits,
+) {
   let { viewType, tagId } = toRefs(props)
 
   const wStore = useWorkspaceStore()
@@ -41,7 +45,8 @@ export function useThreadList(props: TlProps) {
     showNum: 0,
     lastItemStamp,
     svBottomUp,
-    reloadRequired: false
+    reloadRequired: false,
+    emits,
   }
 
   // 监听触底/顶加载
@@ -176,6 +181,10 @@ async function loadList(
   // 赋值到 list 上
   if(length < 1 || reload || viewType === "PINNED") {
     ctx.list.value = results
+
+    if(results.length) ctx.emits("hasdata")
+    else ctx.emits("nodata")
+    
   }
   else if(results.length) {
     ctx.list.value.push(...results)

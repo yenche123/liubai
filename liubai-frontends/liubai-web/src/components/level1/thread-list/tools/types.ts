@@ -10,3 +10,13 @@ export interface TlProps {
 }
 
 export type TlDisplayType = "list" | "detail"
+
+export interface TlEmits {
+  (event: "nodata"): void
+  (event: "hasdata"): void
+}
+
+export const tlEmits = {
+  nodata: () => true,
+  hasdata: () => true,
+}

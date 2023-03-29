@@ -8,11 +8,12 @@ import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
 import { useTagPage } from "./tools/useTagPage";
+import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
 
 const { hiddenScrollBar, onVvWidthChange } = useMainVice()
 const { t } = useI18n()
 
-const { tagName, tagId } = useTagPage()
+const { tagName, tagId, pState } = useTagPage()
 
 </script>
 <template>
@@ -21,6 +22,9 @@ const { tagName, tagId } = useTagPage()
   <main-view>
     <scroll-view :hidden-scroll-bar="hiddenScrollBar">
       <navi-virtual></navi-virtual>
+      <PlaceholderView 
+        :p-state="pState"
+      ></PlaceholderView>
       <TagContent :tag-id="tagId"></TagContent>
     </scroll-view>
     <navi-bar :title="tagName ? tagName : t('common.tags')"></navi-bar>

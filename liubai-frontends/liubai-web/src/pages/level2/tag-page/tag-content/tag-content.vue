@@ -5,6 +5,14 @@ defineProps({
   tagId: String
 })
 
+const onNodata = () => {
+  // console.log("该标签下没有动态")
+}
+
+const onHasdata = () => {
+  // console.log("该标签下有动态.......")
+}
+
 </script>
 <template>
 
@@ -14,6 +22,8 @@ defineProps({
       <thread-list v-if="tagId" 
         view-type="TAG"
         :tag-id="tagId"
+        @nodata="onNodata"
+        @hasdata="onHasdata"
       ></thread-list>
     </div>
   </div>

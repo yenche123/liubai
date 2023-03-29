@@ -7,6 +7,7 @@ import { useThreadOperateInList } from './tools/useThreadOperateInList';
 import { defineComponent } from "vue";
 import type { PropType } from 'vue';
 import type { TlViewType } from "./tools/types"
+import { tlEmits } from "./tools/types"
 
 export default defineComponent({
   components: {
@@ -27,11 +28,12 @@ export default defineComponent({
       default: "",
     }
   },
-  setup(props) {
+  emits: tlEmits,
+  setup(props, { emit }) {
     const {
       list,
       lastItemStamp,
-    } = useThreadList(props)
+    } = useThreadList(props, emit)
     useNewAndUpdate(props, list, lastItemStamp)
 
     const {
