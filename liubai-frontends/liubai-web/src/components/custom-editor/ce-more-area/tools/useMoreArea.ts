@@ -54,13 +54,11 @@ export function useMoreArea(emits: MoreAreaEmits) {
 
   const onTapSyncToCloud = () => {
     const newV = !data.syncCloud
-    data.syncCloud = newV
     emits("synccloudchange", newV)
   }
 
   const onSyncCloudChange = (val: SwitchChangeEmitOpt) => {
     if(val.checked !== data.syncCloud) {
-      data.syncCloud = val.checked
       emits("synccloudchange", val.checked)
     }
   }
