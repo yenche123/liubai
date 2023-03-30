@@ -257,5 +257,10 @@
     "logout_tip": "同時刪除我的本地資料",    
     "logout_hd_2": "再次詢問",
     "logout_bd_3": "確定要刪除所有資料嗎?"
+  },
+  "export": {
+    "markdown": "導出成 markdown 文件",
+    "json": "導出成 json 文件",
+    "json_tip": "支援再導入"
   }
 }

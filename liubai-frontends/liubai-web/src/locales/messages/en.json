@@ -257,5 +257,10 @@
     "logout_tip": "Delete my local data as well",    
     "logout_hd_2": "Warning",
     "logout_bd_3": "It will delete all data. Are you sure?"
+  },
+  "export": {
+    "markdown": "Export as markdown files",
+    "json": "Export as json files",
+    "json_tip": "Importing again is supported"
   }
 }
