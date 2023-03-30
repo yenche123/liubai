@@ -21,9 +21,9 @@ const iconColor = "var(--main-normal)"
 </script>
 <template>
 
-  <div class="mc-container">
-    <div class="mc-box">
-      <div class="mc-spacing"></div>
+  <div class="liu-mc-container">
+    <div class="liu-mc-box">
+      <div class="liu-mc-spacing"></div>
 
       <!-- 个人偏好 -->
       <div class="sc-title">
@@ -188,26 +188,6 @@ const iconColor = "var(--main-normal)"
 
 </template>
 <style scoped lang="scss">
-
-.mc-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-
-  .mc-box {
-    width: 90%;
-    max-width: var(--card-max);
-    min-width: var(--card-min);
-    position: relative;
-
-    .mc-spacing {
-      width: 100%;
-      height: 10px;
-    }
-  }
-}
 
 .sc-title {
   font-size: var(--title-font);

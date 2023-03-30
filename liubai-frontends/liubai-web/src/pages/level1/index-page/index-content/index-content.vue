@@ -17,14 +17,14 @@ const { lastBar } = useCustomEditorLastBar()
 </script>
 <template>
 
-  <div class="mc-container">
+  <div class="liu-mc-container">
     <div class="mc-virtual"
       :class="{ 'mc-virtual_short': !showTop }"
     ></div>
-    <div class="mc-box">
+    <div class="liu-mc-box">
       
       <CustomEditor :last-bar="lastBar"></CustomEditor>
-      <div class="mc-spacing"></div>
+      <div class="liu-mc-spacing"></div>
 
       <!-- 置顶 -->
       <ThreadList
@@ -43,38 +43,15 @@ const { lastBar } = useCustomEditorLastBar()
 </template>
 <style scoped lang="scss">
 
-.mc-container {
+.mc-virtual {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
+  height: v-bind("virtualHeight + 'px'");
+  max-height: v-bind("virtualHeight + 'px'");
+  transition: .15s;
+}
 
-  .mc-virtual {
-    width: 100%;
-    height: v-bind("virtualHeight + 'px'");
-    max-height: v-bind("virtualHeight + 'px'");
-    transition: .15s;
-  }
-
-  .mc-virtual_short {
-    max-height: v-bind("shortVirtual + 'px'");
-  }
-
-
-  .mc-box {
-    width: 90%;
-    max-width: var(--card-max);
-    min-width: var(--card-min);
-    position: relative;
-
-    .mc-spacing {
-      width: 100%;
-      height: 10px;
-    }
-
-  }
-
+.mc-virtual_short {
+  max-height: v-bind("shortVirtual + 'px'");
 }
 
 

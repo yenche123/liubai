@@ -76,3 +76,31 @@ input {
 ::-webkit-scrollbar-corner {
   background-color: transparent;
 }
+
+/**************** 一些常用的 css **************/
+
+/** xxx-content 的 layout */
+.liu-mc-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.liu-mc-container > .liu-tc-virtual {
+  width: 100%;
+  height: 10px;
+}
+
+.liu-mc-container > .liu-mc-box {
+  width: 90%;
+  max-width: var(--card-max);
+  min-width: var(--card-min);
+  position: relative;
+}
+
+.liu-mc-box > .liu-mc-spacing {
+  width: 100%;
+  height: 10px;
+}

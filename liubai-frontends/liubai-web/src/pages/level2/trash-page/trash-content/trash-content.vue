@@ -7,9 +7,9 @@ const { t } = useI18n()
 </script>
 <template>
 
-  <div class="mc-container">
+  <div class="liu-mc-container">
     <div class="tc-virtual"></div>
-    <div class="mc-box">
+    <div class="liu-mc-box">
 
       <div class="trash-tip-box">
         <span>{{ t('tip.delete_banner') }}</span>
@@ -24,24 +24,9 @@ const { t } = useI18n()
 </template>
 <style scoped>
 
-.mc-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
 .tc-virtual {
   width: 100%;
   height: 10px;
-}
-
-.mc-box {
-  width: 90%;
-  max-width: var(--card-max);
-  min-width: var(--card-min);
-  position: relative;
 }
 
 .trash-tip-box {
