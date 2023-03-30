@@ -6,7 +6,7 @@ import type { EditorCoreContent } from "~/types/types-editor";
 export interface CeState {
   draftId?: string
   infoType: "THREAD" | "COMMENT"
-  threadEdited?: string
+  threadEdited?: string     // 已发表的动态的 id (可能是 local_id)，表示是编辑该动态
   visScope: VisScope
   storageState: StorageState
   title?: string
@@ -17,7 +17,7 @@ export interface CeState {
   tagIds: string[]
   editorContent?: EditorCoreContent
   lastTagChangeStamp?: number
-  lastInitStamp?: number       // 上一次重新赋值 init 的时间戳
+  lastInitStamp?: number     // 上一次重新赋值 init 的时间戳
 }
 
 export const defaultState: CeState = {
