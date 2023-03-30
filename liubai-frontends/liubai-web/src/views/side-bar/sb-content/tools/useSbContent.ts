@@ -1,8 +1,7 @@
 import { computed } from "vue";
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import { useI18n } from 'vue-i18n';
-import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
-import { storeToRefs } from "pinia";
+import { usePrefix } from "~/hooks/useCommon"
 
 export function useSbContent() {
   const { t } = useI18n()
@@ -20,13 +19,7 @@ export function useSbContent() {
     return ""
   })
 
-  const wStore = useWorkspaceStore()
-  const { isCollaborative, spaceId } = storeToRefs(wStore)
-  const prefix = computed(() => {
-    const isCo = isCollaborative.value
-    if(isCo) return `/w/${spaceId.value}/`
-    return `/`
-  })
+  const { prefix } = usePrefix()
 
   return {
     t,

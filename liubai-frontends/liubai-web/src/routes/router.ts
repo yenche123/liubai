@@ -13,7 +13,8 @@ const ConnectPage = () => import("../pages/level2/connect-page/connect-page.vue"
 const EditPage = () => import("../pages/level2/edit-page/edit-page.vue")
 const SettingPage = () => import("../pages/level3/setting-page/setting-page.vue")
 const NotificationPage = () => import("../pages/level3/notification-page/notification-page.vue")
-
+const ExportPage = () => import("../pages/level3/setting-page/export-page/export-page.vue")
+const ImportPage = () => import("../pages/level3/setting-page/import-page/import-page.vue")
 
 // 扩展 vue-router 下的 RouteMeta 接口
 // inApp 为 false 表示不在应用内（可能在落地页 / share 分享内等等）
@@ -151,6 +152,30 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: "/export",
+    components: {
+      default: ExportPage,
+      LeftSidebar,
+    },
+    name: "export",
+    meta: {
+      keepAlive: true,
+      inSetting: true,
+    }
+  },
+  {
+    path: "/import",
+    components: {
+      default: ImportPage,
+      LeftSidebar,
+    },
+    name: "import",
+    meta: {
+      keepAlive: true,
+      inSetting: true,
+    }
+  },
+  {
     path: "/notification",
     components: {
       default: NotificationPage,
@@ -235,6 +260,30 @@ const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-setting",
+    meta: {
+      keepAlive: true,
+      inSetting: true,
+    }
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/export",
+    components: {
+      default: ExportPage,
+      LeftSidebar,
+    },
+    name: "collaborative-export",
+    meta: {
+      keepAlive: true,
+      inSetting: true,
+    }
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/import",
+    components: {
+      default: ImportPage,
+      LeftSidebar,
+    },
+    name: "collaborative-import",
     meta: {
       keepAlive: true,
       inSetting: true,

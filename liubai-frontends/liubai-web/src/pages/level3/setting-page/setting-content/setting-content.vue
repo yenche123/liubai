@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import AppLink from '~/components/common/app-link/app-link.vue';
 import { useI18n } from "vue-i18n";
+import { usePrefix } from "~/hooks/useCommon";
 import { useSettingContent } from "./tools/useSettingContent";
 
 const { t } = useI18n()
@@ -11,6 +13,8 @@ const {
   onTapTerms,
   onTapLogout,
 } = useSettingContent()
+
+const { prefix } = usePrefix()
 
 const iconColor = "var(--main-normal)"
 
@@ -85,36 +89,39 @@ const iconColor = "var(--main-normal)"
       </div>
       <div class="sc-box">
         <!-- 导入 -->
-        <div class="liu-hover sc-bar">
-          <div class="scb-hd">
-            <span>{{ t('setting.import') }}</span>
-          </div>
-          <div class="scb-footer">
-
-            <div class="scb-footer-icon">
-              <svg-icon class="scbf-svg-icon scbf-import"
-                name="arrow_outward"
-                :color="iconColor"
-              ></svg-icon>
+        <AppLink :to="prefix + 'import'">
+          <div class="liu-hover sc-bar">
+            <div class="scb-hd">
+              <span>{{ t('setting.import') }}</span>
+            </div>
+            <div class="scb-footer">
+              <div class="scb-footer-icon">
+                <svg-icon class="scbf-svg-icon scbf-import"
+                  name="arrow_outward"
+                  :color="iconColor"
+                ></svg-icon>
+              </div>
             </div>
           </div>
-        </div>
+        </AppLink>
 
         <!-- 导出 -->
-        <div class="liu-hover sc-bar">
-          <div class="scb-hd">
-            <span>{{ t('setting.export') }}</span>
-          </div>
-          <div class="scb-footer">
-
-            <div class="scb-footer-icon">
-              <svg-icon class="scbf-svg-icon"
-                name="arrow_outward"
-                :color="iconColor"
-              ></svg-icon>
+        <AppLink :to="prefix + 'export'">
+          <div class="liu-hover sc-bar">
+            <div class="scb-hd">
+              <span>{{ t('setting.export') }}</span>
+            </div>
+            <div class="scb-footer">
+              <div class="scb-footer-icon">
+                <svg-icon class="scbf-svg-icon"
+                  name="arrow_outward"
+                  :color="iconColor"
+                ></svg-icon>
+              </div>
             </div>
           </div>
-        </div>
+        </AppLink>
+        
 
       </div>
 
