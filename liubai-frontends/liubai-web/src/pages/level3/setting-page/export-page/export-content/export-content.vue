@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
+import { useExportContent } from "./tools/useExportContent";
 
 const { t } = useI18n()
 
 const iconColor = "var(--main-normal)"
+const {
+  onTapMarkdown,
+  onTapJSON,
+} = useExportContent()
 
 </script>
 <template>
@@ -15,7 +20,7 @@ const iconColor = "var(--main-normal)"
       <div class="sc-box">
 
         <!-- 导出成 .md 文件 -->
-        <div class="liu-hover sc-bar">
+        <div class="liu-hover sc-bar" @click="onTapMarkdown">
           <div class="scb-hd">
             <span>{{ t('export.markdown') }}</span>
           </div>
@@ -30,7 +35,7 @@ const iconColor = "var(--main-normal)"
         </div>
 
         <!-- 导出成 .json 文件 -->
-        <div class="liu-hover sc-bar">
+        <div class="liu-hover sc-bar" @click="onTapJSON">
           <div class="scb-main">
             <div class="scb-hd scbm-hd">
               <span>{{ t('export.json') }}</span>

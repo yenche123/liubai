@@ -261,6 +261,7 @@
   "export": {
     "markdown": "Export as markdown files",
     "json": "Export as json files",
-    "json_tip": "Importing again is supported"
+    "json_tip": "Importing again is supported",
+    "take_time": "It will take a little time. Are you sure?"
   }
 }
