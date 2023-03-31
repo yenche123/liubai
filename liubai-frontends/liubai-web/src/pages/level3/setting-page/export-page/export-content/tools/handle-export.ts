@@ -1,4 +1,8 @@
-import type { ExportType, GetDataOpt } from "./types"
+import type { 
+  ExportType, 
+  GetDataOpt,
+  LiuExportContentJSON,
+} from "./types"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import cfg from "~/config";
 import { getData } from "./get-data"
@@ -25,11 +29,6 @@ export async function handleExport(
   const list = await getContents(spaceId)
   console.timeEnd("getContents")
 
-  console.log(" ")
-  console.log("看一下加载到的 list: ")
-  console.log(list)
-  console.log(" ")
-
   if(list.length < 1) {
     cui.showModal({ 
       title_key: "tip.tip", 
@@ -53,6 +52,26 @@ export async function handleExport(
   }
   zip.file("metadata.json", JSON.stringify(metadata, null, 2))
 
+
+  // 2. 生成 contents 文件夹
+  const contents = zip.folder("contents")
+  if(!contents) {
+    console.warn("构建 contents 失败..........")
+    return
+  }
+
+  console.time("generate_data")
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    if(exportType === "json") {
+      insertJsonContent(contents, v)
+    }
+    else if(exportType === "md") {
+
+    }
+  }
+  console.timeEnd("generate_data")
+
   console.time("resZip")
   const resZip = await zip.generateAsync({ type: "blob" })
   console.timeEnd("resZip")
@@ -62,6 +81,71 @@ export async function handleExport(
   console.time("fileSaverSaveAs")
   fileSaverSaveAs(resZip, fileName)
   console.timeEnd("fileSaverSaveAs")
+}
+
+
+async function insertJsonContent(
+  contents: JSZip,
+  d: ContentLocalTable,
+) {
+  const s = liuUtil.getLiuDate(new Date(d.createdStamp))
+  const folderName = `${s.YYYY}-${s.MM}-${s.DD} ${s.hh}_${s.mm}_${s.ss}`
+  const theFolder = contents.folder(folderName)
+  if(!theFolder) {
+    console.warn("构建 theFolder 失败..........")
+    return
+  }
+
+  let imageNames: string[] = []
+  let fileNames: string[] = []
+  if(d.images?.length) {
+    for(let i=0; i<d.images.length; i++) {
+      const img = d.images[i]
+      const { arrayBuffer, id, name, lastModified } = img
+      if(!arrayBuffer) continue
+      theFolder.file(`assets/${name}`, arrayBuffer, { date: new Date(lastModified) })
+      imageNames.push(name)
+    }
+  }
+  if(d.files?.length) {
+    for(let i=0; i<d.files.length; i++) {
+      const f = d.files[i]
+      const { arrayBuffer, id, name, lastModified } = f
+      if(!arrayBuffer) continue
+      theFolder.file(`assets/${name}`, arrayBuffer, { date: new Date(lastModified) })
+      fileNames.push(name)
+    }
+  }
+
+  const jsonData: LiuExportContentJSON = {
+    infoType: d.infoType,
+    user: d.user,
+    member: d.member,
+    spaceId: d.spaceId,
+    spaceType: d.spaceType,
+    visScope: d.visScope,
+    storageState: d.storageState,
+    title: d.title,
+    liuDesc: d.liuDesc,
+    imageNames,
+    fileNames,
+    calendarStamp: d.calendarStamp,
+    remindStamp: d.remindStamp,
+    whenStamp: d.whenStamp,
+    remindMe: d.remindMe,
+    commentNum: d.commentNum,
+    emojiData: d.emojiData,
+    underThread: d.underThread,
+    replyTo: d.replyTo,
+    pinStamp: d.pinStamp,
+    createdStamp: d.createdStamp,
+    editedStamp: d.editedStamp,
+    tagIds: d.tagIds,
+    tagSearched: d.tagSearched,
+    stateId: d.stateId,
+    config: d.config,
+  }
+  theFolder.file("card.json", JSON.stringify(jsonData, null, 2))
 }
 
 
