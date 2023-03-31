@@ -1,6 +1,7 @@
 
 
 export interface GetDataOpt {
+  spaceId: string
   limit: number
   lastItemStamp?: number
 }

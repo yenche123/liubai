@@ -1,19 +1,17 @@
-import { ThreadShow } from "~/types/types-content"
-import type { ExportType } from "./types"
-import threadController from "~/utils/controllers/thread-controller/thread-controller";
+import type { ExportType, GetDataOpt } from "./types"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
-import type { TcListOption } from "~/utils/controllers/thread-controller/type"
 import cfg from "~/config";
-
+import { getData } from "./get-data"
+import type { ContentLocalTable } from "~/types/types-table";
 
 export async function handleExport(
   exportType: ExportType
 ) {
   
-  // 1. 先去把数据 ThreadShow 加载出来
-  console.time("getThreadShows")
-  const list = await getThreadShows()
-  console.timeEnd("getThreadShows")
+  // 1. 先去把数据 contents 加载出来
+  console.time("getContents")
+  const list = await getContents()
+  console.timeEnd("getContents")
 
   console.log(" ")
   console.log("看一下加载到的 list: ")
@@ -22,8 +20,8 @@ export async function handleExport(
 }
 
 
-async function getThreadShows() {
-  const list: ThreadShow[] = []
+async function getContents() {
+  const list: ContentLocalTable[] = []
   const wStore = useWorkspaceStore()
   const spaceId = wStore.spaceId
 
@@ -32,17 +30,18 @@ async function getThreadShows() {
   const MAX_TIMES = 10
 
   while(true) {
+    let len1 = list.length
+    let diff = cfg.max_export_num - len1
+    let limit = diff > 16 ? 16 : diff
 
-    const opt: TcListOption = {
+    const opt: GetDataOpt = {
       spaceId,
-      onlyLocal: true,
-      viewType: "",
+      limit,
     }
-    const len1 = list.length
     if(len1 > 0) {
       opt.lastItemStamp = list[len1 - 1].createdStamp
     }
-    const tmpList = await threadController.getList(opt)
+    const tmpList = await getData(opt)
     list.push(...tmpList)
 
     const len2 = list.length
