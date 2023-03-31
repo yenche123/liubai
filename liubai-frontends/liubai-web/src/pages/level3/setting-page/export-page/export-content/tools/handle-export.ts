@@ -3,27 +3,70 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import cfg from "~/config";
 import { getData } from "./get-data"
 import type { ContentLocalTable } from "~/types/types-table";
+import JSZip from "jszip";
+import cui from "~/components/custom-ui";
+import liuUtil from "~/utils/liu-util";
+import time from "~/utils/basic/time";
+import { membersToShows } from "~/utils/other/member-related";
+import { saveAs as fileSaverSaveAs } from 'file-saver';
 
 export async function handleExport(
   exportType: ExportType
 ) {
+
+  // 0. 获取工作区状态
+  const wStore = useWorkspaceStore()
+  const { spaceId, myMember } = wStore
+  if(!spaceId || !myMember) return
+  const [m] = membersToShows([myMember])
   
   // 1. 先去把数据 contents 加载出来
   console.time("getContents")
-  const list = await getContents()
+  const list = await getContents(spaceId)
   console.timeEnd("getContents")
 
   console.log(" ")
   console.log("看一下加载到的 list: ")
   console.log(list)
+  console.log(" ")
 
+  if(list.length < 1) {
+    cui.showModal({ 
+      title_key: "tip.tip", 
+      content_key: "export.no_data", 
+      showCancel: false
+    })
+    return
+  }
+
+  const zip = new JSZip()
+
+  // 1. 生成 metadata
+  const appName = liuUtil.getEnv().APP_NAME ?? ""
+  const metadata = {
+    appName,
+    version: LIU_ENV.version,
+    client: LIU_ENV.client,
+    export_num: list.length,
+    export_stamp: time.getTime(),
+    operator: m.name ?? "",
+  }
+  zip.file("metadata.json", JSON.stringify(metadata, null, 2))
+
+  console.time("resZip")
+  const resZip = await zip.generateAsync({ type: "blob" })
+  console.timeEnd("resZip")
+
+  let fileName = exportType === "json" ? `${appName}-json.zip` : `${appName}-markdown.zip`
+
+  console.time("fileSaverSaveAs")
+  fileSaverSaveAs(resZip, fileName)
+  console.timeEnd("fileSaverSaveAs")
 }
 
 
-async function getContents() {
+async function getContents(spaceId: string) {
   const list: ContentLocalTable[] = []
-  const wStore = useWorkspaceStore()
-  const spaceId = wStore.spaceId
 
   // 预防性的计数器，避免陷入疯狂循环
   let runTimes = 0

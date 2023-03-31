@@ -43,3 +43,16 @@
        |--- ${id2}.jpg
        |--- ${id3}.文件名后缀
 ```
+
+### metadata.json
+
+```json
+{
+  "appName": "应用名",
+  "version": "0.0.1",
+  "client": "web",
+  "export_num": 19,
+  "export_stamp": 1680246583009,
+  "operator": "ccc"
+}
+```

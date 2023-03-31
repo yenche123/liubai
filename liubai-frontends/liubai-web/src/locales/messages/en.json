@@ -262,6 +262,7 @@
     "markdown": "Export as markdown files",
     "json": "Export as json files",
     "json_tip": "Importing again is supported",
-    "take_time": "It will take a little time. Are you sure?"
+    "take_time": "It will take a little time. Are you sure?",
+    "no_data": "No post can be exported"
   }
 }
