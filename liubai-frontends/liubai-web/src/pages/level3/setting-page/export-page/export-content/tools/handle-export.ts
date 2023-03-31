@@ -13,6 +13,7 @@ import liuUtil from "~/utils/liu-util";
 import time from "~/utils/basic/time";
 import { membersToShows } from "~/utils/other/member-related";
 import { saveAs as fileSaverSaveAs } from 'file-saver';
+import transferUtil from "~/utils/transfer-util";
 
 export async function handleExport(
   exportType: ExportType
@@ -67,10 +68,15 @@ export async function handleExport(
       insertJsonContent(contents, v)
     }
     else if(exportType === "md") {
-
+      insertMarkdownContent(contents, v)
     }
   }
   console.timeEnd("generate_data")
+
+  if(exportType === "md") {
+    console.log("先暂停看一下打印的结果.........")
+    return
+  }
 
   console.time("resZip")
   const resZip = await zip.generateAsync({ type: "blob" })
@@ -83,6 +89,24 @@ export async function handleExport(
   console.timeEnd("fileSaverSaveAs")
 }
 
+async function insertMarkdownContent(
+  contents: JSZip,
+  d: ContentLocalTable,
+) {
+  const s = liuUtil.getLiuDate(new Date(d.createdStamp))
+  const folderName = `${s.YYYY}-${s.MM}-${s.DD} ${s.hh}_${s.mm}_${s.ss}`
+  const theFolder = contents.folder(folderName)
+  if(!theFolder) {
+    console.warn("构建 theFolder 失败..........")
+    return
+  }
+
+  let md = transferUtil.tiptapToMarkdown(d.liuDesc ?? [], { title: d.title })
+  console.log("======== 看一下 markdown ===========")
+  console.log(md)
+  console.log("===================================")
+  console.log(" ")
+}
 
 async function insertJsonContent(
   contents: JSZip,

@@ -4,6 +4,8 @@ import { trimJSONContent } from "./trim"
 import { equipLink, depriveLink } from "./link"
 import { filterNotLiuType } from "./filter"
 import { listToText } from "./text"
+import { listToMarkdown } from "./markdown"
+import type { ListToMdOpt } from "./markdown"
 
 function tiptapToLiu(list: TipTapJSONContent[]): LiuContent[] {
   list = trimJSONContent(list)
@@ -24,10 +26,18 @@ function tiptapToText(list: TipTapJSONContent[]): string {
   return listToText(list)
 }
 
+function tiptapToMarkdown(
+  list: LiuContent[],
+  opt?: ListToMdOpt,
+): string {
+  return listToMarkdown(list, opt)
+}
+
 export default {
   tiptapToLiu,
   liuToTiptap,
   tiptapToText,
+  tiptapToMarkdown,
 }
 
 
