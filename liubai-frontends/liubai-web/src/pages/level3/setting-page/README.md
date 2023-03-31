@@ -4,31 +4,42 @@
 
 ### `liubai-markdown.zip` 文件结构:
 
-由以下一个个 `/YYYY-MM-DD hh:mm:ss` 文件夹构成一个 `liubai-markdown.zip`
 ```
---- /YYYY-MM-DD hh:mm:ss
+--- liubai-markdown.zip
  |
- |--- README.md
+ |--- metadata.json
  |
- |--- /assets
+ |--- /contents
    |
-   |--- 1.jpg
-   |--- 2.jpg
-   |--- name.文件名后缀
+   |--- /YYYY-MM-DD hh:mm:ss 1
+   |--- /YYYY-MM-DD hh:mm:ss 2
+   |--- /YYYY-MM-DD hh:mm:ss 3
+     |
+     |--- README.md
+     |--- /assets
+       |
+       |--- 1.jpg
+       |--- 2.jpg
+       |--- name.文件名后缀
 ```
-
 
 ### `liubai-json.zip` 文件结构:
 
-由以下一个个 `/YYYY-MM-DD hh:mm:ss` 文件夹构成一个 `liubai-json.zip`
 ```
---- /YYYY-MM-DD hh:mm:ss
+--- liubai-json.zip
  |
- |--- card.json
+ |--- metadata.json
  |
- |--- /assets
+ |--- /contents
    |
-   |--- ${id1}.jpg
-   |--- ${id2}.jpg
-   |--- ${id3}.文件名后缀
+   |--- /YYYY-MM-DD hh:mm:ss 1
+   |--- /YYYY-MM-DD hh:mm:ss 2
+   |--- /YYYY-MM-DD hh:mm:ss 3
+     |
+     |--- card.json
+     |--- /assets
+       |
+       |--- ${id1}.jpg
+       |--- ${id2}.jpg
+       |--- ${id3}.文件名后缀
 ```

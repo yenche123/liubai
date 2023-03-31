@@ -1,7 +1,5 @@
 import cui from "~/components/custom-ui"
-
-
-
+import { handleExport } from "./handle-export"
 
 export function useExportContent() {
 
@@ -17,12 +15,13 @@ export function useExportContent() {
   const onTapMarkdown = async () => {
     const res = await _preAsk()
     if(!res) return
+    handleExport("md")
   }
 
   const onTapJSON = async () => {
     const res = await _preAsk()
     if(!res) return
-
+    handleExport("json")
   }
 
 
