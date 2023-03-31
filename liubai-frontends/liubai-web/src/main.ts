@@ -50,4 +50,10 @@ app.use(FloatingVue, {
 })
 app.use(Slicksort)
 
+app.config.unwrapInjectedRef = true    
+// vue 3.2.x 仍需要有这一行
+// 来自 tiptap 解析 `codeBlock` 时的警告
+// 详情请见: https://cn.vuejs.org/guide/components/provide-inject.html#working-with-reactivity
+// 上述链接记得将 API 风格切换至: 选项式
+
 app.mount('#app')
