@@ -73,11 +73,6 @@ export async function handleExport(
   }
   console.timeEnd("generate_data")
 
-  if(exportType === "md") {
-    console.log("先暂停看一下打印的结果.........")
-    return
-  }
-
   console.time("resZip")
   const resZip = await zip.generateAsync({ type: "blob" })
   console.timeEnd("resZip")
@@ -93,35 +88,45 @@ async function insertMarkdownContent(
   contents: JSZip,
   d: ContentLocalTable,
 ) {
-  const s = liuUtil.getLiuDate(new Date(d.createdStamp))
-  const folderName = `${s.YYYY}-${s.MM}-${s.DD} ${s.hh}_${s.mm}_${s.ss}`
-  const theFolder = contents.folder(folderName)
-  if(!theFolder) {
-    console.warn("构建 theFolder 失败..........")
-    return
-  }
+  const { theFolder, imageNames, fileNames } = preInsert(contents, d)
+  if(!theFolder) return
 
   let md = transferUtil.tiptapToMarkdown(d.liuDesc ?? [], { title: d.title })
-  console.log("======== 看一下 markdown ===========")
-  console.log(md)
-  console.log("===================================")
-  console.log(" ")
+
+  // 添加图片
+  if(imageNames.length) {
+    md += `\n`
+    imageNames.forEach(v => {
+      md += `![${v}](./assets/${v})\n`
+    })
+  }
+  // 添加文件链接
+  if(fileNames.length) {
+    md += `\n`
+    fileNames.forEach(v => {
+      md += `[${v}](./assets/${v})\n`
+    })
+  }
+
+  theFolder.file("README.md", md)
 }
 
-async function insertJsonContent(
+function preInsert(
   contents: JSZip,
   d: ContentLocalTable,
 ) {
+  
+  let imageNames: string[] = []
+  let fileNames: string[] = []
+
   const s = liuUtil.getLiuDate(new Date(d.createdStamp))
   const folderName = `${s.YYYY}-${s.MM}-${s.DD} ${s.hh}_${s.mm}_${s.ss}`
   const theFolder = contents.folder(folderName)
   if(!theFolder) {
     console.warn("构建 theFolder 失败..........")
-    return
+    return { theFolder, imageNames, fileNames }
   }
 
-  let imageNames: string[] = []
-  let fileNames: string[] = []
   if(d.images?.length) {
     for(let i=0; i<d.images.length; i++) {
       const img = d.images[i]
@@ -140,6 +145,18 @@ async function insertJsonContent(
       fileNames.push(name)
     }
   }
+
+  return { theFolder, imageNames, fileNames }
+}
+
+
+
+function insertJsonContent(
+  contents: JSZip,
+  d: ContentLocalTable,
+) {
+  const { theFolder, imageNames, fileNames } = preInsert(contents, d)
+  if(!theFolder) return
 
   const jsonData: LiuExportContentJSON = {
     infoType: d.infoType,
