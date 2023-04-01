@@ -15,7 +15,10 @@ const {
 
   <div class="liu-mc-container">
     <div class="liu-mc-box">
-      <div class="liu-mc-spacing"></div>
+
+      <div class="liu-highlight-box">
+        <span>{{ t('export.highlight_tip') }}</span>
+      </div>
 
       <div class="sc-box">
 

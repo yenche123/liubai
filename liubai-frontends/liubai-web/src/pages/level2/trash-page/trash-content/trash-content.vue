@@ -11,7 +11,7 @@ const { t } = useI18n()
     <div class="tc-virtual"></div>
     <div class="liu-mc-box">
 
-      <div class="trash-tip-box">
+      <div class="liu-highlight-box">
         <span>{{ t('tip.delete_banner') }}</span>
       </div>
 
@@ -28,32 +28,5 @@ const { t } = useI18n()
   width: 100%;
   height: 10px;
 }
-
-.trash-tip-box {
-  width: calc(100%);
-  position: relative;
-  padding: 30px;
-  border-radius: 8px;
-  box-sizing: border-box;
-  color: var(--primary-color);
-  font-size: var(--mini-font);
-  margin-block-end: 20px;
-  overflow: hidden;
-  background-color: var(--card-bg);
-  user-select: none;
-}
-
-.trash-tip-box::before {
-  position: absolute;
-  content: "";
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--primary-color);
-  opacity: .19;
-}
-
-
 
 </style>

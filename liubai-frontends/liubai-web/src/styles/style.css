@@ -104,3 +104,30 @@ input {
   width: 100%;
   height: 10px;
 }
+
+
+/** 一些页面顶部，会出现的置顶提示 highlight 框 */
+.liu-highlight-box {
+  width: 100%;
+  position: relative;
+  padding: 30px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: var(--primary-color);
+  font-size: var(--mini-font);
+  margin-block-end: 20px;
+  overflow: hidden;
+  background-color: var(--card-bg);
+  user-select: none;
+}
+
+.liu-highlight-box::before {
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--primary-color);
+  opacity: .19;
+}
