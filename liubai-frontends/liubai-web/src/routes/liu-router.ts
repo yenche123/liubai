@@ -134,23 +134,24 @@ class LiuRouter {
     to: RouteLocationRaw,
     trimQuery: boolean = false
   ): Promise<NavigationFailure | void | undefined | false> {
-    const newRoute = this.router.resolve(to)
-
-    if(newRoute.name === route.name && newRoute.fullPath === route.fullPath) {
-      cui.showSnackBar({ text_key: "tip.its_right_here" })
-      return false
-    }
+    const tmpRoute = this.router.resolve(to)
 
     if(route.query) {
       if(trimQuery) {
         const q = valTool.copyObject(route.query)
         delete q.cid
         delete q.outq
-        newRoute.query = q
+        tmpRoute.query = q
       }
       else {
-        newRoute.query = route.query
+        tmpRoute.query = route.query
       }
+    }
+
+    const newRoute = this.router.resolve(tmpRoute)
+    if(newRoute.name === route.name && newRoute.fullPath === route.fullPath) {
+      cui.showSnackBar({ text_key: "tip.its_right_here" })
+      return false
     }
 
     let res = await this.push(newRoute)
