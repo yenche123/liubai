@@ -143,7 +143,7 @@ export default defineComponent({
 
       <div class="tca-list">
         <template v-for="(item, index) in thread.files" :key="item.id">
-          <div class="tcal-item" @click="onTapFile($event, index)">
+          <div class="tcal-item" @click.stop="onTapFile($event, index)">
             <span>{{ item.name }}</span>
           </div>
         </template>

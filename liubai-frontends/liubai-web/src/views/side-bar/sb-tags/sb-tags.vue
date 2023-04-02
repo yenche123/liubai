@@ -71,7 +71,7 @@ const {
 
       <RouterLink :to="toPath + node.tagId" custom>
 
-        <a :href="toPath + node.tagId" @click="onTapTagItem($event, toPath + node.tagId)">
+        <a :href="toPath + node.tagId" @click.prevent="onTapTagItem($event, toPath + node.tagId)">
 
           <div class="liu-hover tag-container"
             :class="{ 'tag-container_selected': node.tagId === currentTagId }"
@@ -81,7 +81,7 @@ const {
             <div class="tag-box">
               <div class="liu-hover tag-arrow" 
                 :class="{ 'tag-arrow_unhover': !stat.children.length }"
-                @click="onTapTagArrow($event, node, stat)"
+                @click.stop.prevent="onTapTagArrow($event, node, stat)"
               >
                 <SvgIcon v-if="stat.children.length" class="tag-arrow-icon"
                   :class="{ 'tag-arrow-icon_open': stat.open }" 

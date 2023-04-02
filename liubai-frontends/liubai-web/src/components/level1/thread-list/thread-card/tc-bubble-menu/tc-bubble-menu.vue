@@ -61,7 +61,7 @@ export default defineComponent({
       <!-- 复制 -->
       <div class="ec-bb-two"
         :class="{ 'ec-bb-two_selected': selectedIndex === 0 }"
-        @click="onTapCopy"
+        @click.stop="onTapCopy"
       >
         <svg-icon name="copy" :color="bubbleColor" class="ec-bubble-icon"></svg-icon>
         <span>{{ t('card_bubble.copy') }}</span>
@@ -70,7 +70,7 @@ export default defineComponent({
       <!-- 站内搜索 -->
       <div class="ec-bb-two"
         :class="{ 'ec-bb-two_selected': selectedIndex === 1 }"
-        @click="onTapSearchIn"
+        @click.stop="onTapSearchIn"
       >
         <svg-icon name="search" :color="bubbleColor" class="ec-bubble-icon"></svg-icon>
         <span>{{ t('card_bubble.search_in') }}</span>
@@ -79,7 +79,7 @@ export default defineComponent({
       <!-- 站外搜索 -->
       <div class="ec-bb-two"
         :class="{ 'ec-bb-two_selected': selectedIndex === 2 }"
-        @click="onTapSearchOut"
+        @click.stop="onTapSearchOut"
       >
         <!-- <svg-icon name="logos-google" :color="bubbleColor" class="ec-bubble-icon ec-bubble-outside"></svg-icon>
         <span>{{ t('card_bubble.search_out') }}</span> -->

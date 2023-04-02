@@ -91,16 +91,14 @@ const {
   onTapFinish,
 } = useCeState(state, canSubmitRef, toFinish)
 
-const onTapCeContainer = (e: MouseEvent) => {
-  e.stopPropagation()
-}
+const onTapCeContainer = (e: MouseEvent) => {}
 
 </script>
 <template>
 
 <div class="ce-container"
   :class="{ 'ce-container_focused': focused }"
-  @click="onTapCeContainer"
+  @click.stop="onTapCeContainer"
 >
 
   <!-- 气泡: 放在 editor-core 外层是因为避免被 ce-editor 遮挡 -->

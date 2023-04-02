@@ -24,7 +24,6 @@ export default defineComponent({
         imgs: c,
         index
       })
-      e.stopPropagation()
     }
 
     return {
@@ -59,7 +58,7 @@ export default defineComponent({
           border-radius="12px"
           class="tcc-one-img"
           object-fit="cover" 
-          @click="onTapImage($event, 0)"
+          @click.stop="onTapImage($event, 0)"
         ></liu-img>
       </div>
     </div>
@@ -91,7 +90,7 @@ export default defineComponent({
             :blurhash="item.blurhash"
             class="tcc-two-img"
             object-fit="cover" 
-            @click="onTapImage($event, index)"
+            @click.stop="onTapImage($event, index)"
           ></liu-img>
         </div>
       </div>
@@ -108,7 +107,7 @@ export default defineComponent({
             border-radius="10px"
             class="cc-img"
             object-fit="cover" 
-            @click="onTapImage($event, index)"
+            @click.stop="onTapImage($event, index)"
           ></liu-img>
         </div>
       </template>

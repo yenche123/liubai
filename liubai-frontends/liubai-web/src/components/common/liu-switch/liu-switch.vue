@@ -21,7 +21,6 @@ const emit = defineEmits<{
   (event: "change", opt: SwitchChangeEmitOpt): void
 }>()
 const onTapToggle = (e: MouseEvent) => {
-  e.stopPropagation()
   if(props.disabled) return
   switchVal.value = !switchVal.value
   emit("change", { checked: switchVal.value, msg: "toggle changes" })
@@ -30,7 +29,7 @@ const onTapToggle = (e: MouseEvent) => {
 </script>
 <template>
 
-  <div class="switch-container" @click="onTapToggle"
+  <div class="switch-container" @click.stop="onTapToggle"
     :class="{ 'switch-container_disabled': disabled }"
   >
     <div class="switch-box" :class="{ 'switch-box_disabled': disabled }">

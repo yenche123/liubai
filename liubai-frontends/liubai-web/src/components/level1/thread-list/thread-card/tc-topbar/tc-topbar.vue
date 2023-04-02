@@ -17,8 +17,7 @@ export default defineComponent({
     const { t } = useI18n()
     const { showTopbar } = useTcTopbar(props)
 
-    const onTapState = (e: MouseEvent) => {
-      e.stopPropagation()
+    const onTapState = () => {
       emit('newoperate', 'state')
     }
 
@@ -39,7 +38,7 @@ export default defineComponent({
       :style="{ 
         'color': threadData.stateShow.colorShow,
       }"
-      @click="onTapState"
+      @click.stop="onTapState"
     >
       <div class="tctsb-bg"
         :style="{

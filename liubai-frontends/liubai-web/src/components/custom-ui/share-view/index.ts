@@ -65,8 +65,6 @@ export function showShareView(param: ShareViewParam) {
 
 function onTapIcs(e: MouseEvent) {
   if(!svData.icsLink) return
-  e.stopPropagation()
-  e.preventDefault()
 
   const { APP_NAME } = liuUtil.getEnv()
   const stamp = time.getTime()

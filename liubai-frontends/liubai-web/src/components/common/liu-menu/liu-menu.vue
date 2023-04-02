@@ -28,10 +28,7 @@ export default defineComponent({
       onTouchEndMask,
     } = useLiuMenu(props)
 
-    const onTapBox = (e: Event) => {
-      e.stopPropagation()
-      e.preventDefault()
-    }
+    const onTapBox = (e: Event) => {}
 
     const onTapItem = (item: MenuItem, index: number, hide: SimpleFunc) => {
       emit("tapitem", item, index)
@@ -50,10 +47,7 @@ export default defineComponent({
       disconnectMaskEl()
     }
 
-    const onTapMask = (e: MouseEvent) => {
-      e.stopPropagation()
-      e.preventDefault()
-    }
+    const onTapMask = (e: MouseEvent) => {}
 
     return {
       showMask,
@@ -77,8 +71,8 @@ export default defineComponent({
   <div v-if="allowMask && showMask" 
     ref="maskEl"
     class="lm-mask" 
-    @click="onTapMask"
-    @touchend="onTouchEndMask"
+    @click.stop.prevent="onTapMask"
+    @touchend.stop.prevent="onTouchEndMask"
   />
 
   <VDropdown 
@@ -91,7 +85,7 @@ export default defineComponent({
   >
 
     <template #default>
-      <div @click="onTapBox">
+      <div @click.stop.prevent="onTapBox">
         <slot></slot>
       </div>
     </template>

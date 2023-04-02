@@ -44,7 +44,6 @@ export function useTcBubbleMenu(
       cui.showSnackBar({ text_key: "common.copied" })
     }
     _toCloseTippy(0)
-    e.stopPropagation()
   }
 
   const onTapSearchIn = (e: Event) => {
@@ -53,7 +52,6 @@ export function useTcBubbleMenu(
       cui.showSearchEditor({ type: "search", initText: text })
     }
     _toCloseTippy(1, true)
-    e.stopPropagation()
   }
 
   const onTapSearchOut = (e: Event) => {
@@ -62,7 +60,6 @@ export function useTcBubbleMenu(
       liuUtil.open.openOutSearch(text, { rr })
     }
     _toCloseTippy(2)
-    e.stopPropagation()
   }
 
   const onTapBot = () => {

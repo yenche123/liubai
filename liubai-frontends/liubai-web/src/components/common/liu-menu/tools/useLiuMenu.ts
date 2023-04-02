@@ -29,8 +29,6 @@ export function useLiuMenu(props: LiuMenuProps) {
 
   const onTouchEndMask = (e: TouchEvent) => {
     hideAllPoppers()
-    e.stopPropagation()
-    e.preventDefault()
   }
   
   return {

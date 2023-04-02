@@ -37,7 +37,6 @@ export function useMoreArea(emits: MoreAreaEmits) {
   const onTapClearWhen = (e: MouseEvent) => {
     if(data.whenStr) {
       setNewWhen(ctx)
-      e.stopPropagation()
     }
   }
 
@@ -48,7 +47,6 @@ export function useMoreArea(emits: MoreAreaEmits) {
   const onTapClearRemind = (e: MouseEvent) => {
     if(data.remindMeStr) {
       setNewRemind(ctx)
-      e.stopPropagation()
     }
   }
 
@@ -69,7 +67,6 @@ export function useMoreArea(emits: MoreAreaEmits) {
 
   const onTapClearTitle = (e: MouseEvent) => {
     toClearTitle(ctx)
-    e.stopPropagation()
   }
 
   const onTapAddSite = (e: MouseEvent) => {
@@ -78,7 +75,6 @@ export function useMoreArea(emits: MoreAreaEmits) {
       content: "Coming Soon!",
       showCancel: false,
     })
-    e.stopPropagation()
   }
 
   const onFileChange = () => {
@@ -92,7 +88,6 @@ export function useMoreArea(emits: MoreAreaEmits) {
 
   const onTapClearAttachment = (e: MouseEvent) => {
     toClearAttachment(ctx)
-    e.stopPropagation()
   }
 
   return { 

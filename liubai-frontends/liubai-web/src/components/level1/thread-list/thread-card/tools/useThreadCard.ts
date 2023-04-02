@@ -42,12 +42,10 @@ export function useThreadCard(props: TcProps) {
     const { target, currentTarget } = e
     if(liuApi.eventTargetIsSomeTag(target, "a")) return
     isBriefing.value = false
-    e.stopPropagation()
   }
 
   const onTapThreadCard = (e: MouseEvent) => {
     handleTapThreadCard(e, ctx)
-    e.stopPropagation()
   }
 
   return {
@@ -60,10 +58,7 @@ export function useThreadCard(props: TcProps) {
   }
 }
 
-function onTapContent(e: MouseEvent) {
-  // e.stopPropagation()
-  // console.log("eeee")
-}
+function onTapContent(e: MouseEvent) {}
 
 function handleTapThreadCard(
   e: MouseEvent,

@@ -13,7 +13,6 @@ export function useNaviLink(props: any, emit: NaviLinkEmits) {
   const onTapLink = (e: MouseEvent) => {
     const toRoute = toRouteRef.value
     const stacks = router.getStack()
-    e.preventDefault()
 
     emit("aftertap", toRoute)
 

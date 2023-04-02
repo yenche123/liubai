@@ -40,7 +40,7 @@ export default {
     <a
       v-bind="$attrs"
       :href="href"
-      @click="onTapLink"
+      @click.prevent="onTapLink"
       :class="isActive ? activeClass : inactiveClass"
     >
       <slot />

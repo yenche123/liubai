@@ -32,13 +32,11 @@ export default defineComponent({
     }
 
     const onTapLeft = (e: MouseEvent) => {
-      e.stopPropagation()
       if(!_swiper.value) return
       _swiper.value.slidePrev()
     }
 
     const onTapRight = (e: MouseEvent) => {
-      e.stopPropagation()
       if(!_swiper.value) return
       _swiper.value.slideNext()
     }
@@ -99,12 +97,12 @@ export default defineComponent({
   </div>
 
   <!-- 往左 -->
-  <div class="pi-direction pi-left" v-if="leftArrow" @click="onTapLeft">
+  <div class="pi-direction pi-left" v-if="leftArrow" @click.stop="onTapLeft">
     <svg-icon name="arrow-right2" class="pid-icon pid-rotated" :color="iconColor"></svg-icon>
   </div>
 
   <!-- 往右 -->
-  <div class="pi-direction pi-right" v-if="rightArrow" @click="onTapRight">
+  <div class="pi-direction pi-right" v-if="rightArrow" @click.stop="onTapRight">
     <svg-icon name="arrow-right2" class="pid-icon" :color="iconColor"></svg-icon>
   </div>
 </template>

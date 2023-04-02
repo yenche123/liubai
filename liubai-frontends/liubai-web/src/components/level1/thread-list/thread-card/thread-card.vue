@@ -76,7 +76,7 @@ export default defineComponent({
 
   <div class="tc-container">
 
-    <div class="tc-box" @click="onTapThreadCard">
+    <div class="tc-box" @click.stop="onTapThreadCard">
 
       <TcTopbar
         :thread-data="threadData"
@@ -86,7 +86,7 @@ export default defineComponent({
       <!-- 摘要 -->
       <div v-if="threadData.briefing" v-show="isBriefing" 
         class="tc-briefing"
-        @click="onTapBriefing"
+        @click.stop="onTapBriefing"
       >
         <EditorCore
           :edit-mode="false"
@@ -107,7 +107,7 @@ export default defineComponent({
       <!-- 全文 -->
       <div v-if="threadData.content" v-show="!isBriefing" 
         class="tc-content"
-        @click="onTapContent"
+        @click.stop="onTapContent"
       >
         <EditorCore 
           ref="editorCoreRef"

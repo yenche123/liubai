@@ -36,7 +36,7 @@ export default {
     <a
       v-bind="$attrs"
       :href="href"
-      @click="onTapLink"
+      @click.prevent="onTapLink"
     >
       <slot />
     </a>

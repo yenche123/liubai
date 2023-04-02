@@ -100,15 +100,12 @@ export function useSbTags(emits: SbtEmits) {
   }
 
   const onTapTagArrow = (e: MouseEvent, node: TagView, stat: Stat<TagView>) => {
-    e.stopPropagation()
-    e.preventDefault()
     const length = node.children?.length ?? 0
     if(!length) return
     stat.open = !stat.open
   }
 
   const onTapTagItem = (e: MouseEvent, href: string) => {
-    e.preventDefault()
     router.push({ path: href, query: route.query })
     emits("aftertap")
   }

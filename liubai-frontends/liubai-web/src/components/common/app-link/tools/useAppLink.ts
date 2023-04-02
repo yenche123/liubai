@@ -41,13 +41,11 @@ export function useAppLink(props: any) {
         // console.log("阻止默认事件..............")
         // console.log("开始重定向...............")
         // console.log(" ")
-        e.preventDefault()
         router.push({ name: toName, query: mergedQuery })
         return
       }
     }
     
-    e.preventDefault()
     router.push(toRoute)
   }
 

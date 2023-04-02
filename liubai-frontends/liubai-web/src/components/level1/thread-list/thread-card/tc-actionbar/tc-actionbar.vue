@@ -61,18 +61,15 @@ const commentShow = computed(() => {
 
 const default_color = "var(--main-code)"
 
-const onTapCollect = (e: MouseEvent) => {
-  e.stopPropagation()
+const onTapCollect = () => {
   emits('tapcollect')
 }
 
-const onTapComment = (e: MouseEvent) => {
-  e.stopPropagation()
+const onTapComment = () => {
   emits('tapcomment')
 }
 
-const onTapShare = (e: MouseEvent) => {
-  e.stopPropagation()
+const onTapShare = () => {
   emits('tapshare')
 }
 
@@ -82,7 +79,7 @@ const onTapShare = (e: MouseEvent) => {
 
     <!-- 收藏 -->
     <div v-if="spaceType === 'ME' && isMine" class="liu-hover tca-item"
-      @click="onTapCollect"
+      @click.stop="onTapCollect"
     >
       <div class="tca-icon-box">
         <svg-icon v-show="!myFavorite" name="star" class="tca-icon_star" :color="default_color"></svg-icon>
@@ -103,7 +100,7 @@ const onTapShare = (e: MouseEvent) => {
 
     <!-- 评论 -->
     <div class="liu-hover tca-item"
-      @click="onTapComment"
+      @click.stop="onTapComment"
     >
       <div class="tca-icon-box">
         <svg-icon name="comment" class="tca-icon_comment" :color="default_color"></svg-icon>
@@ -115,7 +112,7 @@ const onTapShare = (e: MouseEvent) => {
 
     <!-- 分享 -->
     <div class="liu-hover tca-item"
-      @click="onTapShare"
+      @click.stop="onTapShare"
     >
       <div class="tca-icon-box">
         <svg-icon name="share" class="tca-icon" :color="default_color"></svg-icon>

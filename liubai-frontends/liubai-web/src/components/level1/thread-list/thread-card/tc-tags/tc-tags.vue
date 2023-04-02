@@ -28,8 +28,6 @@ export default defineComponent({
     })
 
     const onTapTag = (e: MouseEvent, href: string) => {
-      e.preventDefault()
-      e.stopPropagation()
       router.pushNewPageWithOldQuery(route, { path: href }, true)
     }
 
@@ -52,7 +50,7 @@ export default defineComponent({
       >
         <a
           :href="toPath + item.tagId"
-          @click="onTapTag($event, toPath + item.tagId)"
+          @click.stop.prevent="onTapTag($event, toPath + item.tagId)"
         >
           <div class="ce-tag-item">
             <span v-if="item.emoji" class="ce-tag-emoji">{{ item.emoji }} </span>

@@ -30,7 +30,6 @@ export default defineComponent({
 
     const onTapClear = (e: MouseEvent, index: number) => {
       emit("clear", index)
-      e.stopPropagation()
     }
 
     return { 
@@ -86,7 +85,7 @@ export default defineComponent({
 
       <!-- 右上角的删除按钮 -->
       <div class="cec-delete"
-        @click="onTapClear($event, index)"
+        @click.stop="onTapClear($event, index)"
       >
         <svg-icon name="close" 
           class="cec-icon"

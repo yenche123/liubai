@@ -10,7 +10,6 @@ export function useTcAttachments(props: TcaProps) {
   const rr = useRouteAndLiuRouter()
 
   const onTapFile = (e: MouseEvent, index: number) => {
-    e.stopPropagation()
     if(!props.thread?.files?.length) return
     const v = props.thread.files[index]
     checkHowToDownload(v, rr)

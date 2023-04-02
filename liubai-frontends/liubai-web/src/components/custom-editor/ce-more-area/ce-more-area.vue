@@ -53,7 +53,7 @@ export default defineComponent({
           <span v-if="data.whenStr">{{ data.whenStr }}</span>
           <span v-else>{{ t("editor.when") }}</span>
         </div>
-        <div v-if="data.whenStr" class="liu-hover mai-footer" @click="onTapClearWhen">
+        <div v-if="data.whenStr" class="liu-hover mai-footer" @click.stop="onTapClearWhen">
           <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
         </div>
         <div v-else class="mai-footer">
@@ -75,7 +75,7 @@ export default defineComponent({
             <span v-if="data.remindMeStr">{{ data.remindMeStr }}</span>
             <span v-else>{{ t("editor.remind") }}</span>
           </div>
-          <div v-if="data.remindMeStr" class="liu-hover mai-footer" @click="onTapClearRemind">
+          <div v-if="data.remindMeStr" class="liu-hover mai-footer" @click.stop="onTapClearRemind">
             <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
           </div>
           <div v-else class="mai-footer">
@@ -94,7 +94,7 @@ export default defineComponent({
           <span v-if="data.title">{{ data.title }}</span>
           <span v-else>{{ t("editor.add_title") }}</span>
         </div>
-        <div v-if="data.title" class="liu-hover mai-footer" @click="onTapClearTitle">
+        <div v-if="data.title" class="liu-hover mai-footer" @click.stop="onTapClearTitle">
           <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
         </div>
         <div v-else class="mai-footer">
@@ -103,7 +103,7 @@ export default defineComponent({
       </div>
 
       <!-- 加位置 -->
-      <div class="liu-hover ma-item" @click="onTapAddSite">
+      <div class="liu-hover ma-item" @click.stop="onTapAddSite">
         <div class="mai-icon">
           <svg-icon name="location" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
@@ -131,7 +131,7 @@ export default defineComponent({
           <span v-if="data.fileShow?.name">{{ data.fileShow.name }}</span>
           <span v-else>{{ t("editor.add_file") }}</span>
         </div>
-        <div v-if="data.fileShow?.name" class="liu-hover mai-footer" @click="onTapClearAttachment">
+        <div v-if="data.fileShow?.name" class="liu-hover mai-footer" @click.stop="onTapClearAttachment">
           <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
         </div>
         <div v-else class="mai-footer">

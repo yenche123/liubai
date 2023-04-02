@@ -13,7 +13,6 @@ const props = defineProps({
 
 const onTapBack = (e: MouseEvent) => {
   router.naviBack()
-  e.stopPropagation()
 }
 
 
@@ -29,7 +28,7 @@ const {
 
     <div class="nb-box">
       <!-- back -->
-      <div class="liu-hover nbb-normal" @click="onTapBack"
+      <div class="liu-hover nbb-normal" @click.stop="onTapBack"
         :class="{ 'nbb-small': showMenuBtn }"
       >
         <SvgIcon class="nb-icon" name="arrow-back700"></SvgIcon>
