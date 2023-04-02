@@ -45,6 +45,7 @@ export type SeResolver = (res: SearchEditorRes) => void
 export interface SearchFuncs {
   mouseenteritem: (newIndicator: string) => void
   tapitem: (listType: SearchListType, atomId: string) => void
+  clearitem: (listType: SearchListType, atomId: string) => void
 }
 
 export const searchFuncsKey = Symbol() as InjectionKey<SearchFuncs>

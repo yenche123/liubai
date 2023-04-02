@@ -86,7 +86,8 @@ export function showSearchEditor(param: SearchEditorParam) {
 function initProvideData() {
   const provideData: SearchFuncs = {
     tapitem: onTapItem,
-    mouseenteritem: onMouseEnter
+    mouseenteritem: onMouseEnter,
+    clearitem: onTapClear,
   }
   provide(searchFuncsKey, provideData)
 }
@@ -101,6 +102,11 @@ async function onTapItem(listType: SearchListType, atomId: string) {
 
 function onMouseEnter(newIndicator: string) {
   seData.indicator = newIndicator
+}
+
+function onTapClear(listType: SearchListType, atomId: string) {
+  if(listType !== "recent") return
+
 }
 
 
@@ -199,7 +205,7 @@ function listenInputChange() {
       return
     }
     if(timeout) return
-    timeout = setTimeout(() => {
+    timeout = window.setTimeout(() => {
       timeout = 0
       lastSearchStamp = time.getTime()
       toSearch()

@@ -59,12 +59,24 @@ const onTapItem = () => {
   injectData.tapitem(props.siType, props.atomId)
 }
 
+const showClear = computed(() => {
+  const { indicator, atomId, siType } = props
+  if(indicator && indicator === atomId && siType === 'recent') return true
+  return false
+})
+
+const onTapClear = () => {
+  if(!injectData) return
+  injectData.clearitem(props.siType, props.atomId)
+}
+
+
 </script>
 <template>
   <div class="si-container"
     :class="{ 'si-container_selected': indicator && indicator === atomId }"
     @mouseenter="onMouseEnter"
-    @click="onTapItem"
+    @click.stop="onTapItem"
   >
 
     <!-- 图片框 -->
@@ -116,8 +128,12 @@ const onTapItem = () => {
 
     </div>
 
+    <!-- 标题 & 一点点内文 -->
     <div class="si-main"
-      :class="{ 'si-main_small': siType === 'recent' }"
+      :class="{ 
+        'si-main_small': siType === 'recent',
+        'si-main_small-2': showClear,
+      }"
     >
 
       <!-- 标题 -->
@@ -137,6 +153,15 @@ const onTapItem = () => {
         <span>{{ desc }}</span>
       </div>
 
+    </div>
+
+    <div v-show="showClear" 
+      class="si-footer"
+      @click.stop="onTapClear"
+    >
+      <div class="liu-hover si-clear">
+        <svg-icon name="close" class="si-clear-icon" :color="iconColor"></svg-icon>
+      </div>
     </div>
 
   </div>
@@ -223,6 +248,10 @@ const onTapItem = () => {
   min-height: 36px;
 }
 
+.si-main_small-2 {
+  width: calc(100% - 100px);
+}
+
 .si-title {
   font-size: var(--btn-font);
   color: var(--main-normal);
@@ -249,5 +278,32 @@ const onTapItem = () => {
   text-overflow: ellipsis;
   padding-block-end: 4px;
 }
+
+.si-footer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 60px;
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.si-clear {
+  width: 36px;
+  height: 36px;
+  margin-block-start: 6px;
+  margin-inline-end: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.si-clear-icon {
+  width: 24px;
+  height: 24px;
+}
+
 
 </style>
