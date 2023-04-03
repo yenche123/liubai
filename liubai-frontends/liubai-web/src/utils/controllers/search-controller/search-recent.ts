@@ -39,3 +39,16 @@ export async function addKeywordToRecent(text: string) {
   const res = await wStore.setMemberConfig(memberCfg)
   return res
 }
+
+export async function deleteKeyword(text: string) {
+  const wStore = useWorkspaceStore()
+  const memberCfg = wStore.myMember?.config ?? memberRelated.getDefaultMemberCfg()
+  const { searchKeywords } = memberCfg
+  const idx = searchKeywords.indexOf(text)
+  if(idx >= 0) {
+    searchKeywords.splice(idx, 1)
+  }
+  memberCfg.searchKeywords = searchKeywords
+  const res = await wStore.setMemberConfig(memberCfg)
+  return res
+}

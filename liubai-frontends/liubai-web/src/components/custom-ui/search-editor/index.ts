@@ -104,9 +104,20 @@ function onMouseEnter(newIndicator: string) {
   seData.indicator = newIndicator
 }
 
-function onTapClear(listType: SearchListType, atomId: string) {
+// 清除某个最近搜索的记录
+async function onTapClear(listType: SearchListType, atomId: string) {
   if(listType !== "recent") return
-
+  let idx = -1
+  let txt = ""
+  seData.recentList.forEach((v, i) => {
+    if(v.atomId === atomId) {
+      idx = i
+      txt = v.title
+    }
+  })
+  if(idx < 0 || !txt) return
+  await searchController.deleteKeyword(txt)
+  seData.recentList.splice(idx, 1)
 }
 
 
