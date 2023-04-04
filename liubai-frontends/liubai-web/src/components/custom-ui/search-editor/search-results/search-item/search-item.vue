@@ -66,6 +66,8 @@ const showClear = computed(() => {
 })
 
 const onTapClear = () => {
+  const { indicator, atomId } = props
+  if(!indicator || indicator !== atomId) return
   if(!injectData) return
   injectData.clearitem(props.siType, props.atomId)
 }
@@ -155,8 +157,9 @@ const onTapClear = () => {
 
     </div>
 
-    <div v-show="showClear" 
+    <div
       class="si-footer"
+      :class="{ 'si-footer_show': showClear }"
       @click.stop="onTapClear"
     >
       <div class="liu-hover si-clear">
@@ -288,6 +291,14 @@ const onTapClear = () => {
   height: 100%;
   display: flex;
   justify-content: flex-end;
+  opacity: 0;
+  transition: 80ms;
+  visibility: hidden;
+}
+
+.si-footer_show {
+  opacity: 1;
+  visibility: visible;
 }
 
 .si-clear {
