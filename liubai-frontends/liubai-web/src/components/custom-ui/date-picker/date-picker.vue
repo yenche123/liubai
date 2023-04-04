@@ -212,6 +212,11 @@ const previewDate = computed(() => {
   .dp-custom-menu {
     padding: 20px 20px 10px;
     border-radius: 20px;
+
+    .dp__button {
+      border-radius: 4px;
+    }
+
   }
 
   .dp-custom-calendar-wrapper {
