@@ -18,6 +18,10 @@ export function showFixedSideBar() {
   _open()
 }
 
+export function closeFixedSideBar() {
+  _close()
+}
+
 function onTapPopup() {
   _close()
 }

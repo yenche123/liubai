@@ -19,6 +19,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import liuUtil from "~/utils/liu-util";
 import { useSeKeyboard } from "./tools/useSeKeyboard";
+import sideBar from "~/views/side-bar";
 
 const TRANSITION_DURATION = 150
 const enable = ref(false)
@@ -326,6 +327,7 @@ function toConfirm() {
   if(inputEl.value) inputEl.value.blur()
   toResolve(res)
   if(!hasClosed) closeIt()
+  sideBar.closeFixedSideBar()
 }
 
 function toRedirectAndSave(res: SearchEditorRes) {

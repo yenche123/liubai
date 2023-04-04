@@ -1,5 +1,6 @@
-import { showFixedSideBar } from "./sb-fixed/index"
+import { showFixedSideBar, closeFixedSideBar } from "./sb-fixed/index"
 
 export default {
-  showFixedSideBar
+  showFixedSideBar,
+  closeFixedSideBar,
 }
