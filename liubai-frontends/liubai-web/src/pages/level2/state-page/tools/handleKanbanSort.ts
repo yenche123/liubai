@@ -3,6 +3,7 @@ import type { ThreadShow } from "~/types/types-content";
 import commonOperate from "~/components/level1/utils/common-operate";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import stateController from "~/utils/controllers/state-controller/state-controller";
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 
 interface CrossData {
   stateId: string
@@ -34,15 +35,15 @@ interface WtluData {
   threads: ThreadShow[]
 }
 let waitList: WtluData[] = []
-let waitTimeout = 0
+let waitTimeout: LiuTimeout
 export function whenThreadListUpdated(
   stateId: string,
   threads: ThreadShow[]
 ) {
   waitList.push({ stateId, threads })
   if(waitTimeout) return
-  waitTimeout = window.setTimeout(() => {
-    waitTimeout = 0
+  waitTimeout = setTimeout(() => {
+    waitTimeout = undefined
     updateStateList()
   }, 300)
 }

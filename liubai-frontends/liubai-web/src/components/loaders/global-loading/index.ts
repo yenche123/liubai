@@ -1,10 +1,11 @@
 import { ref } from "vue";
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 import valTool from "~/utils/basic/val-tool";
 
 const enable = ref(false)
 const number = ref(0)
 const transition = ref(300)   // 移动时要消耗多少毫秒数
-let timeout = 0
+let timeout: LiuTimeout
 
 export function initGlobalLoading() {
   return {
@@ -53,7 +54,7 @@ function _step3() {
 
 export async function hideGlobalLoading() {
   if(timeout) clearTimeout(timeout)
-  timeout = 0
+  timeout = undefined
 
   transition.value = 400
   number.value = 100

@@ -20,6 +20,7 @@ import { storeToRefs } from "pinia";
 import liuUtil from "~/utils/liu-util";
 import { useSeKeyboard } from "./tools/useSeKeyboard";
 import sideBar from "~/views/side-bar";
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 
 const TRANSITION_DURATION = 150
 const enable = ref(false)
@@ -154,7 +155,7 @@ function listenInputChange() {
   const reloadNum = toRef(seData, "reloadNum")
   const DURATION = 200
   let lastSearchStamp = 0
-  let timeout = 0
+  let timeout: LiuTimeout
 
   const whenEmpty = async () => {
     seData.trimTxt = ""
@@ -217,8 +218,8 @@ function listenInputChange() {
       return
     }
     if(timeout) return
-    timeout = window.setTimeout(() => {
-      timeout = 0
+    timeout = setTimeout(() => {
+      timeout = undefined
       lastSearchStamp = time.getTime()
       toSearch()
     }, DURATION - diff)

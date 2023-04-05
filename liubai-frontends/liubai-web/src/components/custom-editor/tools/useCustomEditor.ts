@@ -7,6 +7,7 @@ import cfg from "../../../config"
 import { useLayoutStore } from "../../../views/useLayoutStore"
 import { storeToRefs } from "pinia"
 import time from "../../../utils/basic/time"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 export function useCustomEditor() {
   const maxEditorHeight = ref(500)
@@ -23,7 +24,7 @@ export function useCustomEditor() {
   })
 
   let lastScoll = 0
-  let hideMaskTimeout = 0
+  let hideMaskTimeout: LiuTimeout
   const onEditorScrolling = () => {
     const now = time.getTime()
     const diff = now - lastScoll
@@ -31,8 +32,8 @@ export function useCustomEditor() {
     lastScoll = now
     showMask.value = true
     if(hideMaskTimeout) clearTimeout(hideMaskTimeout)
-    hideMaskTimeout = window.setTimeout(() => {
-      hideMaskTimeout = 0
+    hideMaskTimeout = setTimeout(() => {
+      hideMaskTimeout = undefined
       showMask.value = false
     }, 2000)
   }
@@ -51,7 +52,7 @@ function listenWindowChange(
   maxEditorHeight: Ref<number>,
   minEditorHeight: Ref<number>,
 ) {
-  let lastWinHeightChange = 0
+  let lastWinHeightChange: LiuTimeout
   const { height } = useWindowSize()
   const layout = useLayoutStore()
   const { sidebarStatus } = storeToRefs(layout)
@@ -74,8 +75,8 @@ function listenWindowChange(
 
   watch(height, () => {
     if(lastWinHeightChange) clearTimeout(lastWinHeightChange)
-    lastWinHeightChange = window.setTimeout(() => {
-      lastWinHeightChange = 0
+    lastWinHeightChange = setTimeout(() => {
+      lastWinHeightChange = undefined
       whenWindowHeightChange()
     }, 300)
   })

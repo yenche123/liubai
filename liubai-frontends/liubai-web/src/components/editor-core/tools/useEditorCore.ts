@@ -7,11 +7,12 @@ import type { EditorCoreProps, EditorCoreEmits } from "./types"
 import { initExtensions } from "./init-extensions"
 import { useEcHashtag } from "./useEcHashtag"
 import { editorSetKey } from '~/utils/provide-keys'
+import type { LiuTimeout } from '~/utils/basic/type-tool'
 
 interface EcContext {
   lastEmpty: boolean
   lastText: string
-  lastTriggetUpdate: number
+  lastTriggetUpdate: LiuTimeout
 }
 
 export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
@@ -24,7 +25,7 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
   const ctx: EcContext = {
     lastEmpty: true,
     lastText: "",
-    lastTriggetUpdate: 0
+    lastTriggetUpdate: undefined
   }
 
   const editor = useEditor({
@@ -123,8 +124,8 @@ function onEditorUpdate(
     return
   }
 
-  ctx.lastTriggetUpdate = window.setTimeout(() => {
-    ctx.lastTriggetUpdate = 0
+  ctx.lastTriggetUpdate = setTimeout(() => {
+    ctx.lastTriggetUpdate = undefined
     emits("update", data)
     ctx.lastEmpty = empty
     ctx.lastText = text

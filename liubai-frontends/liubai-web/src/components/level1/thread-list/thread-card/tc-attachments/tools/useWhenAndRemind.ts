@@ -14,6 +14,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import type { SnackbarRes } from "~/types/other/types-snackbar"
 import type { LiuRemindMe } from "~/types/types-atom"
 import type { ContentConfig } from "~/types/other/types-custom";
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 
 const SEC = 1000
 const MIN = 60 * SEC
@@ -79,12 +80,12 @@ function handleCountdown(
   countdownStr: Ref<string>,
   contentCfg: ComputedRef<ContentConfig | undefined>
 ) {
-  let timeout = 0
+  let timeout: LiuTimeout
 
   const _clearTimeout = () => {
     if(timeout) {
       clearTimeout(timeout)
-      timeout = 0
+      timeout = undefined
     }
   }
 
@@ -112,8 +113,8 @@ function handleCountdown(
       else delay = tmp
     }
 
-    timeout = window.setTimeout(() => {
-      timeout = 0
+    timeout = setTimeout(() => {
+      timeout = undefined
       _setCountDown(endStamp)
     }, delay)
   }
@@ -155,12 +156,12 @@ function handleRemind(
   remindStr: Ref<string>,
 ) {
 
-  let timeout = 0
+  let timeout: LiuTimeout
 
   const _clearTimeout = () => {
     if(timeout) {
       clearTimeout(timeout)
-      timeout = 0
+      timeout = undefined
     }
   }
 
@@ -192,8 +193,8 @@ function handleRemind(
       if(tmp < 500) delay += tmp
       else delay = tmp
     }
-    timeout = window.setTimeout(() => {
-      timeout = 0
+    timeout = setTimeout(() => {
+      timeout = undefined
       _setRemindStr(rStamp, rMe)
     }, delay)
   }

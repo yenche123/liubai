@@ -3,10 +3,11 @@ import { reactive, ref } from "vue"
 import valTool from "~/utils/basic/val-tool"
 import { SnackbarParam } from "~/types/other/types-snackbar"
 import { SbResolver } from "./tools/types"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 
 let _resolve: SbResolver | undefined
-let autoTimeout = 0
+let autoTimeout: LiuTimeout
 const TRANSITION_DURATION = 150
 const enable = ref(false)
 const show = ref(false)

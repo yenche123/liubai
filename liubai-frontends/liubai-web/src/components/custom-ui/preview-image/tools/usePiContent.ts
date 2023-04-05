@@ -2,6 +2,7 @@ import { toRef, watch, ref, computed } from 'vue';
 import type { Ref } from "vue";
 import { useWindowSize } from '~/hooks/useVueUse';
 import type { ImageShow } from '~/types';
+import type { LiuTimeout } from '~/utils/basic/type-tool';
 
 interface PicProps {
   imgs: ImageShow[]
@@ -34,10 +35,11 @@ export function usePiContent(props: PicProps) {
   const { width, height } = useWindowSize()
   const imgsRef = toRef(props, "imgs")
 
-  let timeout = 0
+  let timeout: LiuTimeout
   watch([imgsRef, width, height], (newV) => {
     if(timeout) clearTimeout(timeout)
-    timeout = window.setTimeout(() => {
+    timeout = setTimeout(() => {
+      timeout = undefined
       calcImages(covers, imgsRef.value, width.value, height.value)
     }, 300)
   })

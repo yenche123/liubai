@@ -16,8 +16,9 @@ import type { CepToPost } from "./useCeFinish"
 import liuUtil from "~/utils/liu-util";
 import { storeToRefs } from "pinia";
 import type { SpaceType } from "~/types/types-basic"
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 
-let collectTimeout = 0
+let collectTimeout: LiuTimeout
 let spaceIdRef: Ref<string>
 let spaceTypeRef: Ref<SpaceType>
 
@@ -51,11 +52,11 @@ export function useCeState(
   
   const focused = ref(false)
   const gs = useGlobalStateStore()
-  let timeout = 0
+  let timeout: LiuTimeout
 
   const _setFocus = (newV: boolean) => {
     if(timeout) clearTimeout(timeout)
-    timeout = window.setTimeout(() => {
+    timeout = setTimeout(() => {
       focused.value = newV
       gs.$patch({ mainInputing: newV })
     }, 100)
@@ -200,7 +201,7 @@ function collectState(state: CeState, instant: boolean = false) {
   const now = time.getTime()
   const diff = now - lastSaveStamp
   let duration = diff > 3000 ? 250 : 1000
-  collectTimeout = window.setTimeout(() => {
+  collectTimeout = setTimeout(() => {
     toSave(state)
   }, duration)
 }

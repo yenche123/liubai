@@ -1,6 +1,7 @@
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import { showGlobalLoading, hideGlobalLoading } from "~/components/loaders/global-loading"
 import time from "~/utils/basic/time";
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 
 const DURATION_LOADING = 190
 
@@ -9,11 +10,11 @@ export function useGlobalLoading() {
 
   let s1: number = 0
   let s2: number = 0
-  let timeout = 0
+  let timeout: LiuTimeout
 
   const _beforeEach = async () => {
     timeout = setTimeout(() => {
-      timeout = 0
+      timeout = undefined
       showGlobalLoading()
     }, DURATION_LOADING)
   }
@@ -41,6 +42,6 @@ export function useGlobalLoading() {
       hideGlobalLoading()
     }
 
-    timeout = 0
+    timeout = undefined
   })
 }
