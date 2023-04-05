@@ -47,6 +47,7 @@ const color_selected = "var(--main-normal)"
   <!-- 顶部区域 -->
   <ScTop
     @canclosepopup="toClosePopup"
+    :is-fixed="mode === 'fixed'"
   ></ScTop>
 
   <!-- 首页 -->

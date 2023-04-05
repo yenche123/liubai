@@ -12,6 +12,13 @@ import type { MenuItem } from "~/components/common/liu-menu/tools/types";
 
 const { t } = useI18n()
 
+const props = defineProps({
+  isFixed: {
+    type: Boolean,
+    default: false,
+  }
+})
+
 const emits = defineEmits<{
   (event: "canclosepopup"): void
 }>()
@@ -32,7 +39,7 @@ const {
   iconWidth,
   showMore,
   toolWidth,
-} = useSctLayout()
+} = useSctLayout(props)
 
 const {
   sctIndicator
@@ -182,6 +189,7 @@ const searchTip = ` (${liuUtil.getHelpTip('Mod')} K)`
   .sct-box {
     min-width: v-bind("boxWidth");
     height: v-bind("boxWidth");
+    max-height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
