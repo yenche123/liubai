@@ -17,8 +17,7 @@ export function usePlaceholderView(props: PvProps) {
   const pState = toRef(props, "pState")
   watch(pState, (newV) => {
     whenPStateChange(newV, enable, show)
-  })
-  whenPStateChange(pState.value, enable, show)
+  }, { immediate: true })
 
   return {
     enable,

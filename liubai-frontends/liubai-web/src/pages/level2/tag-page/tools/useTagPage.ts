@@ -39,9 +39,7 @@ export function useTagPage() {
   // 因为 tag 依赖于工作区
   watch([route, spaceId, tagChangedNum], (newV) => {
     judgeTagName(ctx)
-  })
-
-  judgeTagName(ctx)
+  }, { immediate: true })
   
   return { tagName, tagId, pState }
 }

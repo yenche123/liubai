@@ -52,8 +52,7 @@ export function useNaviAuto(
   const { sidebarWidth, sidebarStatus } = storeToRefs(layout)
   watch([sidebarWidth, sidebarStatus], (newV) => {
     judgeState(ctx)
-  })
-  judgeState(ctx)
+  }, { immediate: true })
 
   // 监听滚动，处理是否要显示阴影
   watch(scrollPosition, (newV) => {

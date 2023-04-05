@@ -9,6 +9,7 @@ import type { OpenType } from "~/types/types-view";
 import { storeToRefs } from "pinia";
 import liuApi from "~/utils/liu-api";
 import { sidebarWidthKey } from "~/utils/provide-keys"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 const LISTEN_DELAY = 300
 let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后视觉上呈现的宽度
@@ -117,7 +118,7 @@ function toClose(
 
 
 function initMouse() {
-  let lastLeave = 0
+  let lastLeave: LiuTimeout
   const onSbMouseEnter = () => {
     if(lastLeave) clearTimeout(lastLeave)
     sbData.showHandle = true
@@ -126,7 +127,7 @@ function initMouse() {
   const onSbMouseLeave = () => {
     if(lastLeave) clearTimeout(lastLeave)
     lastLeave = setTimeout(() => {
-      lastLeave = 0
+      lastLeave = undefined
       sbData.showHandle = false
     }, 600)
   }
@@ -167,7 +168,7 @@ function initResizing(
     if(isJustWindowResize()) return
     if(!sbData.isActivate) return
     if(lastResizeTimeout) clearTimeout(lastResizeTimeout)
-    lastResizeTimeout = setTimeout(() => {
+    lastResizeTimeout = window.setTimeout(() => {
       lastResizeTimeout = 0
       collectState()
     }, LISTEN_DELAY)
@@ -208,13 +209,13 @@ function listenWindowChange(
 
   const whenWindowChange = () => {
     if(lastWindowTimeout) clearTimeout(lastWindowTimeout)
-    lastWindowTimeout = setTimeout(() => {
+    lastWindowTimeout = window.setTimeout(() => {
       collectState()
     }, LISTEN_DELAY)
   }
 
   // watch 挂在 setup 周期内 所以不需要在 onUnmounted 手写销毁，vue 会自动完成
-  watch(width, (newV, oldV) => {
+  watch(width, () => {
     whenWindowChange()
   })
 }

@@ -37,7 +37,7 @@ export function usePiContent(props: PicProps) {
   let timeout = 0
   watch([imgsRef, width, height], (newV) => {
     if(timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => {
+    timeout = window.setTimeout(() => {
       calcImages(covers, imgsRef.value, width.value, height.value)
     }, 300)
   })

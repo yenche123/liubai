@@ -6,6 +6,7 @@ import { membersToShows } from "~/utils/other/member-related";
 import type { MenuItem } from "~/components/common/liu-menu/tools/types";
 import type { ScTopEmits } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
+import { useLiuWatch } from "~/hooks/useLiuWatch"
 
 const MORE_ITEMS: MenuItem[] = [
   {
@@ -33,12 +34,7 @@ export function useScTop(emits: ScTopEmits) {
     let [tmp] = membersToShows([m])
     memberShow.value = tmp
   }
-  watch(myMember, (newV) => {
-    whenMemberChange()
-  }, { deep: true })
-  if(myMember.value) {
-    whenMemberChange()
-  }
+  useLiuWatch(myMember, whenMemberChange, true)
 
   const prefix = computed(() => {
     const isCo = isCollaborative.value

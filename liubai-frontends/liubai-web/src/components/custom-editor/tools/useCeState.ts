@@ -55,7 +55,7 @@ export function useCeState(
 
   const _setFocus = (newV: boolean) => {
     if(timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => {
+    timeout = window.setTimeout(() => {
       focused.value = newV
       gs.$patch({ mainInputing: newV })
     }, 100)
@@ -200,7 +200,7 @@ function collectState(state: CeState, instant: boolean = false) {
   const now = time.getTime()
   const diff = now - lastSaveStamp
   let duration = diff > 3000 ? 250 : 1000
-  collectTimeout = setTimeout(() => {
+  collectTimeout = window.setTimeout(() => {
     toSave(state)
   }, duration)
 }

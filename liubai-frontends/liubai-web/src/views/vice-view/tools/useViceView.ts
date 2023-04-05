@@ -22,6 +22,7 @@ import valTool from "~/utils/basic/val-tool";
 import { outterWidthKey, tapMainViewStampKey } from "~/utils/provide-keys"
 import liuApi from "~/utils/liu-api";
 import liuUtil from "~/utils/liu-util";
+import { LiuTimeout } from "~/utils/basic/type-tool";
 
 interface VvData {
   openType: OpenType
@@ -128,7 +129,7 @@ function initViceView() {
 function initMouse(
   vvData: VvData,
 ) {
-  let lastLeave = 0
+  let lastLeave: LiuTimeout
   const onVvMouseEnter = () => {
     if(lastLeave) clearTimeout(lastLeave)
     vvData.showHandle = true
@@ -137,7 +138,7 @@ function initMouse(
   const onVvMouseLeave = () => {
     if(lastLeave) clearTimeout(lastLeave)
     lastLeave = setTimeout(() => {
-      lastLeave = 0
+      lastLeave = undefined
 
       // 判断是不是才刚打开，若是则不要隐藏
       const diff = time.getLocalTime() - vvData.lastOpenStamp
@@ -158,7 +159,7 @@ function initResizing(
   vvData: VvData, 
   emits: VvEmits,
 ) {
-  let lastResizeTimeout = 0
+  let lastResizeTimeout: LiuTimeout
 
   const _isJustParentChange = (): boolean => {
     const now = time.getLocalTime()
@@ -186,7 +187,7 @@ function initResizing(
     if(!vvData.isActivate) return
     if(lastResizeTimeout) clearTimeout(lastResizeTimeout)
     lastResizeTimeout = setTimeout(() => {
-      lastResizeTimeout = 0
+      lastResizeTimeout = undefined
       collectState()
     }, LISTEN_DELAY)
   }

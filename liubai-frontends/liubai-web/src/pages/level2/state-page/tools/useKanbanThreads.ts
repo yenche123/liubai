@@ -25,13 +25,12 @@ export function useKanbanThreads(
     if(len < 1 && oldV) return
     let newV = !oldV
     if(timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => {
+    timeout = window.setTimeout(() => {
       timeout = 0
       showAddBox.value = newV
     }, 120)
   }
-  watch(list, _handleShowAddBox)
-  _handleShowAddBox()
+  watch(list, _handleShowAddBox, { immediate: true })
   
   return {
     list,

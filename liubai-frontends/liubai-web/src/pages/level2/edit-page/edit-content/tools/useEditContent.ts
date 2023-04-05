@@ -10,8 +10,7 @@ export function useEditContent() {
   const { route, router } = useRouteAndLiuRouter()
   watch(route, (newV) => {
     whenRouteChange(threadId, state, newV)
-  })
-  whenRouteChange(threadId, state, route)
+  }, { immediate: true })
 
   const onNodata = () => {
     state.value = 50

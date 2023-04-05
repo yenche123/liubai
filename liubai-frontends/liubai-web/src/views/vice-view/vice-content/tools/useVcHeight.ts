@@ -1,9 +1,10 @@
 import { ref, watch } from "vue";
 import { useWindowSize } from "~/hooks/useVueUse";
 import cfg from "~/config"
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 
 export function useVcHeight() {
-  let timeout = 0
+  let timeout: LiuTimeout
   const vcHeight = ref(0)
   const maskMarginTop = ref(0)
 
@@ -28,8 +29,7 @@ export function useVcHeight() {
 
   watch(height, (newV) => {
     whenWindowChange()
-  })
-  whenWindowChange()
+  }, { immediate: true })
 
   return {
     vcHeight,

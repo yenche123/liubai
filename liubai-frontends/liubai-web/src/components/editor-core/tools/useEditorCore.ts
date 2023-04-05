@@ -123,7 +123,7 @@ function onEditorUpdate(
     return
   }
 
-  ctx.lastTriggetUpdate = setTimeout(() => {
+  ctx.lastTriggetUpdate = window.setTimeout(() => {
     ctx.lastTriggetUpdate = 0
     emits("update", data)
     ctx.lastEmpty = empty

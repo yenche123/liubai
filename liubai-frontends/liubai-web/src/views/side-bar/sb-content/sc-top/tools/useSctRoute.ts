@@ -31,11 +31,8 @@ export function useSctRoute() {
   }
 
   watch(route, (newV) => {
-    whenRouteChange(newV)
-  })
-  if(route) {
-    whenRouteChange(route)
-  }
+    if(newV) whenRouteChange(newV)
+  }, { immediate: true })
 
   return {
     sctIndicator

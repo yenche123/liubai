@@ -41,7 +41,7 @@ export function whenThreadListUpdated(
 ) {
   waitList.push({ stateId, threads })
   if(waitTimeout) return
-  waitTimeout = setTimeout(() => {
+  waitTimeout = window.setTimeout(() => {
     waitTimeout = 0
     updateStateList()
   }, 300)

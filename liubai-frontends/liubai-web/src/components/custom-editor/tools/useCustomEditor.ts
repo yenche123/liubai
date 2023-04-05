@@ -31,7 +31,7 @@ export function useCustomEditor() {
     lastScoll = now
     showMask.value = true
     if(hideMaskTimeout) clearTimeout(hideMaskTimeout)
-    hideMaskTimeout = setTimeout(() => {
+    hideMaskTimeout = window.setTimeout(() => {
       hideMaskTimeout = 0
       showMask.value = false
     }, 2000)
@@ -74,7 +74,7 @@ function listenWindowChange(
 
   watch(height, () => {
     if(lastWinHeightChange) clearTimeout(lastWinHeightChange)
-    lastWinHeightChange = setTimeout(() => {
+    lastWinHeightChange = window.setTimeout(() => {
       lastWinHeightChange = 0
       whenWindowHeightChange()
     }, 300)

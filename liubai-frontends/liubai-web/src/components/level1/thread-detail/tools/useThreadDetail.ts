@@ -14,8 +14,7 @@ export function useThreadDetail(props: TdProps) {
   const { route } = useRouteAndLiuRouter()
   watch(route, (newV) => {
     whenRouteChange(route, tdData, props)
-  })
-  whenRouteChange(route, tdData, props)
+  }, { immediate: true })
 
   return {
     tdData,

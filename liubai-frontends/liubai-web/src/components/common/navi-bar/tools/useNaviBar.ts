@@ -26,8 +26,7 @@ export function useNaviBar() {
 
   watch([sidebarWidth, width], () => {
     _judge()
-  })
-  _judge()
+  }, { immediate: true })
 
   const onTapMenu = () => {
     sideBar.showFixedSideBar()

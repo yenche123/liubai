@@ -112,7 +112,7 @@ function handleCountdown(
       else delay = tmp
     }
 
-    timeout = setTimeout(() => {
+    timeout = window.setTimeout(() => {
       timeout = 0
       _setCountDown(endStamp)
     }, delay)
@@ -137,9 +137,7 @@ function handleCountdown(
 
   watch([whenStamp, contentCfg], (newV) => {
     _judgeCountdown()
-  })
-
-  _judgeCountdown()
+  }, { immediate: true })
 
   onActivated(() => {
     _judgeCountdown()
@@ -194,7 +192,7 @@ function handleRemind(
       if(tmp < 500) delay += tmp
       else delay = tmp
     }
-    timeout = setTimeout(() => {
+    timeout = window.setTimeout(() => {
       timeout = 0
       _setRemindStr(rStamp, rMe)
     }, delay)
@@ -214,9 +212,7 @@ function handleRemind(
 
   watch(remindStamp, (newV) => {
     _judgeRemind()
-  })
-
-  _judgeRemind()
+  }, { immediate: true })
 
   onActivated(() => {
     _judgeRemind()

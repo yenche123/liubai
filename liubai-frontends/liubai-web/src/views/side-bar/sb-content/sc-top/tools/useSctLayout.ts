@@ -28,8 +28,7 @@ export function useSctLayout() {
   }
   watch(sidebarWidthPx, (newV) => {
     whenSidebarWidthChange(newV)
-  })
-  whenSidebarWidthChange(sidebarWidthPx.value)
+  }, { immediate: true })
 
   return {
     boxWidth,

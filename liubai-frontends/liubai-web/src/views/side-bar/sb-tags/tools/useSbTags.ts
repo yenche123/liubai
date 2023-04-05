@@ -151,6 +151,5 @@ function initTagNodes(
 
   watch(spaceId, (newV) => {
     _get()
-  })
-  _get()
+  }, { immediate: true })
 }

@@ -7,6 +7,7 @@ import localCache from "~/utils/system/local-cache"
 import time from "~/utils/basic/time"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 interface IframeRestrictionProps {
   viceViewPx: number
@@ -70,7 +71,7 @@ export function useIframeRestriction(props: IframeRestrictionProps) {
 function listenViceViewPx(
   ctx: IrCtx,
 ) {
-  let lastTimeout = 0
+  let lastTimeout: LiuTimeout
   const { width } = useWindowSize()
   const { vvPxRef, vcStateRef, enable } = ctx
 
@@ -86,7 +87,7 @@ function listenViceViewPx(
     if(newV2 !== "iframe") return
     if(lastTimeout) clearTimeout(lastTimeout)
     lastTimeout = setTimeout(() => {
-      lastTimeout = 0
+      lastTimeout = undefined
       whenVvPxChange()
     }, TRANSITION_MS)
   })
