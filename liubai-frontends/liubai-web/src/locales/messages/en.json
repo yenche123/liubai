@@ -265,5 +265,8 @@
     "take_time": "It will take a little time. Are you sure?",
     "no_data": "No post can be exported",
     "highlight_tip": "Considering perfomance of computers, we only support exporting the last 200 posts currnetly. We recommend that you export data regularly to keep your thoughts from time to time."
+  },
+  "import": {
+    "t1": "Importing from {appName}-json.zip"
   }
 }

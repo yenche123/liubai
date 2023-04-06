@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { useExportContent } from "./tools/useExportContent";
+import { useImportContent } from "./tools/useImportContent";
+import liuUtil from "~/utils/liu-util";
 
 const { t } = useI18n()
 
 const iconColor = "var(--main-normal)"
-const {
-  onTapMarkdown,
-  onTapJSON,
-} = useExportContent()
+const { 
+  oursFileEl,
+  onOursFileChange 
+} = useImportContent()
+const { APP_NAME } = liuUtil.getEnv()
 
 </script>
 <template>
@@ -16,16 +18,12 @@ const {
   <div class="liu-mc-container">
     <div class="liu-mc-box">
 
-      <div class="liu-highlight-box">
-        <span>{{ t('export.highlight_tip') }}</span>
-      </div>
-
       <div class="sc-box">
 
-        <!-- 导出成 .md 文件 -->
-        <div class="liu-hover sc-bar" @click="onTapMarkdown">
+        <!-- 从专有格式导入 -->
+        <div class="liu-hover sc-bar">
           <div class="scb-hd">
-            <span>{{ t('export.markdown') }}</span>
+            <span>{{ t('import.t1', { appName: APP_NAME }) }}</span>
           </div>
           <div class="scb-footer">
             <div class="scb-footer-icon">
@@ -35,26 +33,13 @@ const {
               ></svg-icon>
             </div>
           </div>
-        </div>
 
-        <!-- 导出成 .json 文件 -->
-        <div class="liu-hover sc-bar" @click="onTapJSON">
-          <div class="scb-main">
-            <div class="scb-hd scbm-hd">
-              <span>{{ t('export.json') }}</span>
-            </div>
-            <div class="scbm-bd">
-              <span>{{ t('export.json_tip') }}</span>
-            </div>
-          </div>
-          <div class="scb-footer">
-            <div class="scb-footer-icon">
-              <svg-icon class="scbf-back"
-                name="arrow-right2"
-                :color="iconColor"
-              ></svg-icon>
-            </div>
-          </div>
+          <input ref="oursFileEl" 
+            type="file" 
+            class="sc-file-input" 
+            @change="onOursFileChange"
+            accept="application/zip"
+          />
         </div>
 
       </div>
@@ -91,6 +76,16 @@ const {
 
 .sc-bar::before {
   border-radius: 8px;
+}
+
+.sc-file-input {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
 }
 
 .scb-hd {
@@ -133,7 +128,6 @@ const {
   height: 18px;
   transition: .3s;
 }
-
 
 
 </style>
