@@ -269,6 +269,7 @@
   "import": {
     "t1": "Importing from {appName}-json.zip",
     "t2": "No post can be imported",
-    "t3": "The file format doesn't match ours"
+    "t3": "The file format doesn't match ours",
+    "t4": "Failed to load the file"
   }
 }
