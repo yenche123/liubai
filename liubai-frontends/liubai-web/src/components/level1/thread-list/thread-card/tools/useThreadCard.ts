@@ -54,11 +54,8 @@ export function useThreadCard(props: TcProps) {
     isBriefing,
     onTapBriefing,
     onTapThreadCard,
-    onTapContent,
   }
 }
-
-function onTapContent(e: MouseEvent) {}
 
 function handleTapThreadCard(
   e: MouseEvent,

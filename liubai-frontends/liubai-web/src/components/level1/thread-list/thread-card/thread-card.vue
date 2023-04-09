@@ -52,7 +52,6 @@ export default defineComponent({
       isBriefing,
       onTapBriefing,
       onTapThreadCard,
-      onTapContent,
     } = useThreadCard(props)
     const { t } = useI18n()
 
@@ -65,7 +64,6 @@ export default defineComponent({
       isBriefing,
       onTapBriefing,
       onTapThreadCard,
-      onTapContent,
       ...operations,
     }
   }
@@ -107,7 +105,6 @@ export default defineComponent({
       <!-- 全文 -->
       <div v-if="threadData.content" v-show="!isBriefing" 
         class="tc-content"
-        @click.stop="onTapContent"
       >
         <EditorCore 
           ref="editorCoreRef"
