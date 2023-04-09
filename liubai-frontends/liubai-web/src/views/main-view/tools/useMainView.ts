@@ -29,7 +29,7 @@ function initMainView(
   const vvRef = inject(viceViewWidthKey, ref(0))
   const { width } = useWindowSize()
 
-  leftPx.value = liuUtil.calibratedSidebarWidth(layoutStore.sidebarWidth)
+  leftPx.value = liuUtil.calibrateSidebarWidth(layoutStore.sidebarWidth)
   centerPx.value = width.value - leftPx.value - vvRef.value
   rightPx.value = vvRef.value
 
@@ -38,7 +38,7 @@ function initMainView(
 
   // 监听左边侧边栏的改变
   layoutStore.$subscribe((mutation, state) => {
-    leftPx.value = liuUtil.calibratedSidebarWidth(state.sidebarWidth)
+    leftPx.value = liuUtil.calibrateSidebarWidth(state.sidebarWidth)
     
     const tmpCenter = state.clientWidth - leftPx.value - vvRef.value
     const centerRight = state.clientWidth - leftPx.value
