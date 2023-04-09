@@ -36,7 +36,7 @@ function initMainView(
   provide(mainViewWidthKey, centerPx)
   provide(outterWidthKey, centerPx)
 
-  // 监听左边侧边栏的改变
+  // 监听左边侧边栏 + 窗口的变化
   layoutStore.$subscribe((mutation, state) => {
     leftPx.value = liuUtil.calibrateSidebarWidth(state.sidebarWidth)
     
