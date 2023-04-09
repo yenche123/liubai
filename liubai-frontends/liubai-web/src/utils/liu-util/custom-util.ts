@@ -87,3 +87,13 @@ export function canTap(opt?: CanTapOpt) {
   lastTapBtn = now
   return true
 }
+
+
+/** 校准侧边栏的宽度 
+ *    原宽度包含隐藏拖动的范围若干 px，需要校准成视觉上看起来的宽度
+*/
+export function calibratedSidebarWidth(sidebarWidth: number) {
+  let val = sidebarWidth - cfg.sidebar_spacing
+  if(val < 0) val = 0
+  return val
+}

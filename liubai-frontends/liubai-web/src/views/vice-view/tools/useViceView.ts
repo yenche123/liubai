@@ -313,8 +313,10 @@ function listenParentChange(
 
 function judgeIfShadow(vvData: VvData) {
   let { sidebarWidth, clientWidth } = layoutStore
-  const tmpCenter = clientWidth - sidebarWidth - vvData.viceViewPx
-  const centerRight = clientWidth - sidebarWidth
+
+  const realSidebarPx = liuUtil.calibratedSidebarWidth(sidebarWidth)
+  const tmpCenter = clientWidth - realSidebarPx - vvData.viceViewPx
+  const centerRight = clientWidth - realSidebarPx
   const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 4)
 
   if(tmpCenter < criticalValue) return true

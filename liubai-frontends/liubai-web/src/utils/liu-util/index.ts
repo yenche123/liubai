@@ -37,6 +37,7 @@ import {
   getDefaultRouteQuery,
   needToOpenViceView,
   canTap,
+  calibratedSidebarWidth,
 } from "./custom-util"
 import openUtil from "./open-util"
 import {
@@ -78,5 +79,6 @@ export default {
   needToOpenViceView,
   isChildElementVisible,
   canTap,
+  calibratedSidebarWidth,
   open: openUtil,
 }

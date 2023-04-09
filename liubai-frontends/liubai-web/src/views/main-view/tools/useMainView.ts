@@ -5,6 +5,7 @@ import { useLayoutStore, LayoutStore } from "../../useLayoutStore"
 import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
 import { viceViewWidthKey, mainViewWidthKey, outterWidthKey } from "~/utils/provide-keys"
+import liuUtil from "~/utils/liu-util"
 
 export const useMainView = () => {
 
@@ -28,7 +29,7 @@ function initMainView(
   const vvRef = inject(viceViewWidthKey, ref(0))
   const { width } = useWindowSize()
 
-  leftPx.value = getCalibratedLeft(layoutStore.sidebarWidth)
+  leftPx.value = liuUtil.calibratedSidebarWidth(layoutStore.sidebarWidth)
   centerPx.value = width.value - leftPx.value - vvRef.value
   rightPx.value = vvRef.value
 
@@ -37,7 +38,7 @@ function initMainView(
 
   // 监听左边侧边栏的改变
   layoutStore.$subscribe((mutation, state) => {
-    leftPx.value = getCalibratedLeft(state.sidebarWidth)
+    leftPx.value = liuUtil.calibratedSidebarWidth(state.sidebarWidth)
     
     const tmpCenter = state.clientWidth - leftPx.value - vvRef.value
     const centerRight = state.clientWidth - leftPx.value
@@ -74,12 +75,6 @@ function initMainView(
     rightPx.value = cr.right
     centerPx.value = cr.center
   })
-}
-
-function getCalibratedLeft(sidebarWidth: number) {
-  let val = sidebarWidth - cfg.sidebar_spacing
-  if(val < 0) val = 0
-  return val
 }
 
 function getCalibratedCenterAndRight(tmpCenter: number, tmpRight: number) {
