@@ -1,12 +1,24 @@
 import { ref } from "vue"
+import type { Ref } from "vue"
 import liuUtil from "~/utils/liu-util"
 import JSZip from "jszip"
 import cui from "~/components/custom-ui"
-import type { ImportedAtom } from "./types"
+import type { 
+  ImportedAtom,
+  ImportedAtom2,
+} from "./types"
+
+interface IcCtx {
+  list: Ref<ImportedAtom2[]>
+}
 
 export function useImportContent() {
 
+  const list = ref<ImportedAtom2[]>([])
   const oursFileEl = ref<HTMLInputElement | null>(null)
+  const ctx: IcCtx = {
+    list,
+  }
 
   const onOursFileChange = () => {
     const el = oursFileEl.value
@@ -15,16 +27,17 @@ export function useImportContent() {
     const files = liuUtil.getArrayFromFileList(el.files)
     const firstFile = files[0]
     if(!firstFile) return
-    loadZip(firstFile)
+    loadZip(firstFile, ctx)
   }
 
   return {
+    list,
     oursFileEl,
     onOursFileChange,
   }
 }
 
-async function loadZip(f: File) {
+async function loadZip(f: File, ctx: IcCtx) {
 
   let results: JSZip
   try {
@@ -104,5 +117,14 @@ async function loadZip(f: File) {
     cui.showModal({ title_key: "tip.tip", content_key: "import.t2" })
     return
   }
+
+  parseAtoms(atoms, ctx)
+}
+
+function parseAtoms(
+  atoms: ImportedAtom[],
+  ctx: IcCtx,
+) {
+
 
 }
