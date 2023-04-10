@@ -1,8 +1,10 @@
 import type { 
   ExportType, 
   GetDataOpt,
-  LiuExportContentJSON,
 } from "./types"
+import type {
+  LiuExportContentJSON
+} from "~/types/other/types-export"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import cfg from "~/config";
 import { getData } from "./get-data"
@@ -159,6 +161,10 @@ function insertJsonContent(
   if(!theFolder) return
 
   const jsonData: LiuExportContentJSON = {
+    _id: d._id,
+    cloud_id: d.cloud_id,
+    insertedStamp: d.insertedStamp,
+    updatedStamp: d.updatedStamp,
     infoType: d.infoType,
     user: d.user,
     member: d.member,

@@ -6,7 +6,7 @@ import type { TipTapJSONContent } from "./types-editor"
 import type { EmojiData } from "./types-content"
 import type { ContentConfig, MemberConfig } from "./other/types-custom"
 
-interface BaseLocalTable {
+export interface BaseLocalTable {
   _id: string
   cloud_id?: string
   insertedStamp: number

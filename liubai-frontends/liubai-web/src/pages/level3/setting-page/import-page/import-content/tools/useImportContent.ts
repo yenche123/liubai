@@ -7,6 +7,8 @@ import type {
   ImportedAtom,
   ImportedAtom2,
 } from "./types"
+import valTool from "~/utils/basic/val-tool"
+import type { LiuExportContentJSON } from "~/types/other/types-export"
 
 interface IcCtx {
   list: Ref<ImportedAtom2[]>
@@ -121,10 +123,26 @@ async function loadZip(f: File, ctx: IcCtx) {
   parseAtoms(atoms, ctx)
 }
 
-function parseAtoms(
+async function parseAtoms(
   atoms: ImportedAtom[],
   ctx: IcCtx,
 ) {
 
+  console.time("start to parse")
+  for(let i=0; i<atoms.length; i++) {
+    const v = atoms[i]
+    const { cardJSON, dateStr } = v
+    if(!cardJSON || !dateStr) continue
+    const jsonStr = await cardJSON.async("text")
+
+    const jsonData = valTool.strToObj<LiuExportContentJSON>(jsonStr)
+
+    if(i < 1) {
+      console.log("jsonStr:")
+      console.log(jsonStr)
+    }
+  }
+
+  console.timeEnd("start to parse")
 
 }
