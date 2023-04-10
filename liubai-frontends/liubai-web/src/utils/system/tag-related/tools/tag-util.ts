@@ -328,7 +328,7 @@ export function getMergedChildTree(
   fromChild: TagView, 
   toChild: TagView
 ) {
-  let newChild = JSON.parse(JSON.stringify(toChild)) as TagView
+  let newChild = valTool.copyObject(toChild)
   let from_ids = [fromChild.tagId]
   let to_ids = [toChild.tagId]
 
@@ -393,7 +393,7 @@ export function generateNewTreeForMerge(
   newChild: TagView,
   removedId: string,
 ) {
-  const newTree = JSON.parse(JSON.stringify(originTree)) as TagView[]
+  const newTree = valTool.copyObject(originTree)
 
   const _run = (tree: TagView[]) => {
     for(let i=0; i<tree.length; i++) {

@@ -17,7 +17,7 @@ export function getBriefing(
   liuDesc?: LiuContent[]
 ): TipTapJSONContent | undefined {
   if(!liuDesc || liuDesc.length < 1) return
-  let newLiuDesc = JSON.parse(JSON.stringify(liuDesc)) as LiuContent[]
+  let newLiuDesc = valTool.copyObject(liuDesc)
 
   let requiredBrief = false
   const len = newLiuDesc.length
@@ -97,7 +97,7 @@ export function getBriefing(
 
 // 在该节点的尾巴添加 ...
 function _addPoint3x(node: LiuContent) {
-  const newNode = JSON.parse(JSON.stringify(node)) as LiuContent
+  const newNode = valTool.copyObject(node)
   let { type, content } = newNode
   if(type === "paragraph" && content) {
     content.push({ type: "text", text: "..." })
@@ -124,7 +124,7 @@ function _getBreakPoint(
 ) {
   const { type, content } = node
   if(!content) return node
-  let newNode = JSON.parse(JSON.stringify(node)) as LiuContent
+  let newNode = valTool.copyObject(node)
 
   if(type === "blockquote") {
     newNode.content = _handleBlockQuote(content, prevRowNum, prevCharNum)

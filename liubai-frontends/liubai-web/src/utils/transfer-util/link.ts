@@ -201,7 +201,7 @@ function _howManyLowerCase(text: string) {
 
 // 卸载 link
 export function depriveLink(list: LiuContent[]) {
-  const newList: LiuContent[] = JSON.parse(JSON.stringify(list))
+  const newList = valTool.copyObject(list)
   for(let i=0; i<newList.length; i++) {
     const v = newList[i]
     let { type, content, marks } = v

@@ -32,6 +32,7 @@ import {
   updateDraftForTagAcross,
   updateDraftWhenTagDeleted,
 } from "./tools/draft-util"
+import valTool from "~/utils/basic/val-tool";
 
 // 返回当前工作区的 tags
 export function getCurrentSpaceTagList(): TagView[] {
@@ -82,7 +83,7 @@ export function findTagId(val: string) {
 
   val = formatTagText(val)
   let tagNames = val.split("/")
-  let newTagList = JSON.parse(JSON.stringify(tagList)) as TagView[]
+  let newTagList = valTool.copyObject(tagList)
 
   let tagId = ""
   
@@ -143,7 +144,7 @@ export async function editATag(opt: RenameTagParam): Promise<BaseTagRes> {
 
   // 获取 tagList
   const tagList = getCurrentSpaceTagList()
-  const oldList = JSON.parse(JSON.stringify(tagList)) as TagView[]
+  const oldList = valTool.copyObject(tagList)
 
   // 先去删除
   deleteATagView(oldList, opt.id)
@@ -152,7 +153,7 @@ export async function editATag(opt: RenameTagParam): Promise<BaseTagRes> {
   const { tagList: tagList2 } = addTagToTagList(texts, oldList, opt.icon, opt.originTag)
 
   // 修改 workspaceStore
-  const newList = JSON.parse(JSON.stringify(tagList2)) as TagView[]
+  const newList = valTool.copyObject(tagList2)
   console.log("去修改 workspaceStore:::")
   console.log(newList)
   console.log(" ")
@@ -182,7 +183,7 @@ export async function mergeTag(
   const children = getChildrenAndMeIds(fromTagView)
 
   // 2. 生成新的 child
-  const toChild: TagView = JSON.parse(JSON.stringify(toTagView))
+  const toChild: TagView = valTool.copyObject(toTagView)
   const res = getMergedChildTree(fromTagView, toChild)
   // console.log("mergeTag res: ")
   // console.log(res)
@@ -219,7 +220,7 @@ export async function deleteTag(
 
   // 获取 tagList
   const tagList = getCurrentSpaceTagList()
-  const newList = JSON.parse(JSON.stringify(tagList)) as TagView[]
+  const newList = valTool.copyObject(tagList)
 
   deleteTheTag(tagId, newList)
 
@@ -252,7 +253,7 @@ export async function editTagIcon(
 ): Promise<BaseTagRes> {
   // 获取 tagList
   const tagList = getCurrentSpaceTagList()
-  const newList = JSON.parse(JSON.stringify(tagList)) as TagView[]
+  const newList = valTool.copyObject(tagList)
   toEditTagIcon(tagId, newList, icon)
 
   // 更新 tagList
