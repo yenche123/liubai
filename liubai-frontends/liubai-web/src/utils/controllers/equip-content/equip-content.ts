@@ -15,10 +15,10 @@ import { membersToShows } from "../../other/member-related"
 import transferUtil from "~/utils/transfer-util";
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
+  if(contents.length < 1) return []
 
   const wStore = useWorkspaceStore()
   const { local_id: user_id } = localCache.getLocalPreference()
-  if(contents.length < 1) return []
 
   const content_ids = contents.map(v => v._id)
   const member_ids = [...new Set(contents.map(v => v.member))]
