@@ -125,6 +125,16 @@ const setAppBadge = async (val?: number) => {
   return res
 }
 
+// 清除小红点，clearAppBadge() 等效于 setAppBadge(0)
+const clearAppBadge = async () => {
+  const supported = "clearAppBadge" in navigator
+  if(!supported) return false
+
+  //@ts-ignore
+  const res = await navigator.clearAppBadge()
+  return res
+}
+
 
 export default {
   copyToClipboard,
@@ -133,4 +143,5 @@ export default {
   getThemeFromSystem,
   getLanguageFromSystem,
   setAppBadge,
+  clearAppBadge,
 }

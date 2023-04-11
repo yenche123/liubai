@@ -16,6 +16,7 @@ export default {
   getThemeFromSystem: device.getThemeFromSystem,
   getLanguageFromSystem: device.getLanguageFromSystem,
   setAppBadge: device.setAppBadge,
+  clearAppBadge: device.clearAppBadge,
   getStorageSync: storage.getStorageSync,
   setStorageSync: storage.setStorageSync,
   removeStorageSync: storage.removeStorageSync,
