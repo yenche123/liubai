@@ -39,12 +39,15 @@ export interface MemberLocalTable extends BaseLocalTable {
 }
 
 export interface ContentLocalTable extends BaseLocalTable {
-  infoType: "THREAD" | "COMMENT"
-  oState: OState
+
+  /** 以下 4 个属性，若赋值后，不得修改 */
   user?: string
   member: string
   spaceId: string
   spaceType: SpaceType
+
+  infoType: "THREAD" | "COMMENT"
+  oState: OState
   visScope: VisScope
   storageState: StorageState
   title?: string
