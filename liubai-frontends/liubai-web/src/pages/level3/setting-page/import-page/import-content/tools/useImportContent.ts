@@ -8,6 +8,7 @@ import type {
   ImportedAtom2,
 } from "./types"
 import { parseOurJson } from "./our-json"
+import checker from "~/utils/other/checker"
 
 interface IcCtx {
   list: Ref<ImportedAtom2[]>
@@ -127,10 +128,13 @@ async function parseAtoms(
   ctx: IcCtx,
 ) {
 
+  const myCtx = checker.getMyContext()
+  if(!myCtx) return
+
   console.time("start to parse")
   for(let i=0; i<atoms.length; i++) {
     const v = atoms[i]
-    parseOurJson(v)
+    parseOurJson(v, myCtx)
   }
 
   console.timeEnd("start to parse")

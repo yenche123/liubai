@@ -1,4 +1,5 @@
 import JSZip from "jszip"
+import { LiuFileStore, LiuImageStore } from "~/types"
 import type { 
   ThreadShow 
 } from "~/types/types-content"
@@ -22,4 +23,9 @@ export interface ImportedAtom2 {
 export interface ImportedAsset {
   arrayBuffer: ArrayBuffer
   name: string
+}
+
+export interface ImgsFiles {
+  images: LiuImageStore[]
+  files: LiuFileStore[]
 }

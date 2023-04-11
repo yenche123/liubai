@@ -172,7 +172,8 @@
     "to_leave": " 退出",
     "to_navigate": " 切换",
     "to_open": " 确认",
-    "delete_banner": "垃圾桶仅保留最近 30 天所删除的动态，30 天后将自动彻底删除。"
+    "delete_banner": "垃圾桶仅保留最近 30 天所删除的动态，30 天后将自动彻底删除。",
+    "no_context": "没有工作区基本信息，请重新登录"
   },
   "card_bubble": {
     "copy": "复制",

@@ -1,6 +1,7 @@
 import type { 
   ImportedAtom,
   ImportedAsset,
+  ImgsFiles,
 } from "./types";
 import type {
   LiuFileStore,
@@ -9,8 +10,14 @@ import type {
 import valTool from "~/utils/basic/val-tool";
 import type { LiuExportContentJSON } from "~/types/other/types-export"
 import JSZip from "jszip"
+import { db } from "~/utils/db";
+import type { LiuMyContext } from "~/types/types-context";
 
-export async function parseOurJson(atom: ImportedAtom) {
+
+export async function parseOurJson(
+  atom: ImportedAtom,
+  myCtx: LiuMyContext,
+) {
   const { cardJSON, dateStr, assets } = atom
   if(!cardJSON || !dateStr) return
 
@@ -19,7 +26,8 @@ export async function parseOurJson(atom: ImportedAtom) {
   if(!d._id || !d.spaceId || !d.spaceType || !d.infoType) return
 
   let liuAssets = await parseAssets(dateStr, assets)
-  const { images, files } = getImagesAndFiles(d, liuAssets)
+  const imgsFiles = getImagesAndFiles(d, liuAssets)
+  getImportedAtom2(d, imgsFiles, myCtx)
 
 }
 
@@ -49,7 +57,7 @@ async function parseAssets(
 function getImagesAndFiles(
   d: LiuExportContentJSON,
   liuAssets: ImportedAsset[],
-) {
+): ImgsFiles {
   const images: LiuImageStore[] = []
   const files: LiuFileStore[] = []
   
@@ -82,4 +90,22 @@ function getImagesAndFiles(
 
   return { images, files }
 }
+
+
+// 开始生成 ImportedAtom2
+async function getImportedAtom2(
+  d: LiuExportContentJSON,
+  imgsFiles: ImgsFiles,
+  myCtx: LiuMyContext,
+) {
+
+
+
+
+
+
+
+}
+
+
 

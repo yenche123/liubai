@@ -3,14 +3,16 @@
 import cui from "~/components/custom-ui"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { ThreadShow } from "~/types/types-content"
+import { LiuMyContext } from "~/types/types-context"
 import localCache from "~/utils/system/local-cache"
 
-interface GetUParam {
+interface CheckerParam {
   showTip?: boolean        // 如果不存在 userId 时，是否展示弹窗提示
 }
 
+// 获取 userId
 const getUserId = (
-  opt: GetUParam = {}
+  opt: CheckerParam = {}
 ) => {
   opt.showTip = opt.showTip ?? true
 
@@ -30,14 +32,46 @@ const getUserId = (
   return { userId }
 }
 
-interface GetMParam {
-  showTip?: boolean        // 如果不存在 userId 时，是否展示弹窗提示
+// 获取我的上下文: userId / memberId / spaceId / spaceType
+const getMyContext = (
+  opt: CheckerParam = {}
+): LiuMyContext | undefined => {
+  opt.showTip = opt.showTip ?? true
+
+  const { local_id: userId } = localCache.getLocalPreference()
+  if(!userId) {
+    if(opt.showTip) {
+      const res = cui.showModal({
+        title_key: "tip.not_login_yet",
+        content_key: "tip.login_first",
+        confirm_key: "common.login"
+      })
+      return
+    }
+    return
+  }
+
+  const wStore = useWorkspaceStore()
+  const { memberId, spaceId, spaceType } = wStore
+  if(!memberId || !spaceId || !spaceType) {
+    if(opt.showTip) {
+      const res = cui.showModal({
+        title_key: "tip.tip",
+        content_key: "tip.no_context",
+        showCancel: false,
+      })
+      return
+    }
+    return
+  }
+
+  return { userId, memberId, spaceId, spaceType }
 }
 
 // 除了获取 memberId 还有一个很重要的用途是判别权限
 const getMemberId = (
   thread: ThreadShow,
-  opt: GetMParam = {}
+  opt: CheckerParam = {}
 ) => {
   opt.showTip = opt.showTip ?? true
 
@@ -89,5 +123,6 @@ const getMemberId = (
 
 export default {
   getUserId,
+  getMyContext,
   getMemberId,
 }

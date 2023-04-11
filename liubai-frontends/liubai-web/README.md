@@ -23,4 +23,5 @@ https://icons.radix-ui.com/
 
 3. 升级 tiptap 下的依赖至最新，使用 `pnpm up @tiptap/* --latest`
 
+4. 函数式获取应用个人信息（userId / memberId / spaceId / spaceType）上下文，使用 `checker.getMyContext()` 
 
