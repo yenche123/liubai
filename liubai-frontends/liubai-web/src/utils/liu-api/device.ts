@@ -116,6 +116,7 @@ function getLanguageFromSystem(): SupportedLocale {
 }
 
 // Badge API 设置小红点（当 web app 已被安装时才会生效）
+// w3c: https://www.w3.org/TR/badging/
 const setAppBadge = async (val?: number) => {
   const supported = "setAppBadge" in navigator
   if(!supported) return false
