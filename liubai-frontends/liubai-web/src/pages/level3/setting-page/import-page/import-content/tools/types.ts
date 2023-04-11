@@ -18,3 +18,8 @@ export interface ImportedAtom2 {
   threadShow: ThreadShow
   threadData: ContentLocalTable
 }
+
+export interface ImportedAsset {
+  arrayBuffer: ArrayBuffer
+  name: string
+}

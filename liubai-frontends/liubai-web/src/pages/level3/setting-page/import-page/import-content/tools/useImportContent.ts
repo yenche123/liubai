@@ -7,8 +7,7 @@ import type {
   ImportedAtom,
   ImportedAtom2,
 } from "./types"
-import valTool from "~/utils/basic/val-tool"
-import type { LiuExportContentJSON } from "~/types/other/types-export"
+import { parseOurJson } from "./our-json"
 
 interface IcCtx {
   list: Ref<ImportedAtom2[]>
@@ -131,15 +130,7 @@ async function parseAtoms(
   console.time("start to parse")
   for(let i=0; i<atoms.length; i++) {
     const v = atoms[i]
-    const { cardJSON, dateStr } = v
-    if(!cardJSON || !dateStr) continue
-    const jsonStr = await cardJSON.async("text")
-
-    const d = valTool.strToObj<LiuExportContentJSON>(jsonStr)
-
-    if(!d._id || !d.spaceId || !d.spaceType || !d.infoType) continue
-    
-
+    parseOurJson(v)
   }
 
   console.timeEnd("start to parse")
