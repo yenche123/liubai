@@ -13,7 +13,10 @@ import type {
   ContentConfig, 
 } from "./types-custom"
 import type { BaseLocalTable } from "../types-table"
+import type { LiuFileStore, LiuImageStore } from "../index"
 
+export type LiuFileExport = Omit<LiuFileStore, "arrayBuffer" | "cloud_url">
+export type LiuImageExport = Omit<LiuImageStore, "arrayBuffer" | "cloud_url">
 
 // 导出格式为 json 时的结构: 
 export interface LiuExportContentJSON extends BaseLocalTable {
@@ -26,8 +29,8 @@ export interface LiuExportContentJSON extends BaseLocalTable {
   storageState: StorageState
   title?: string
   liuDesc?: LiuContent[]
-  imageNames?: string[]
-  fileNames?: string[]
+  images?: LiuImageExport[]
+  files?: LiuFileExport[]
   calendarStamp?: number
   remindStamp?: number
   whenStamp?: number

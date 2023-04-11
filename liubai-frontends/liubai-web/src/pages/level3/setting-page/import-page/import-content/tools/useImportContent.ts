@@ -135,12 +135,11 @@ async function parseAtoms(
     if(!cardJSON || !dateStr) continue
     const jsonStr = await cardJSON.async("text")
 
-    const jsonData = valTool.strToObj<LiuExportContentJSON>(jsonStr)
+    const d = valTool.strToObj<LiuExportContentJSON>(jsonStr)
 
-    if(i < 1) {
-      console.log("jsonStr:")
-      console.log(jsonStr)
-    }
+    if(!d._id || !d.spaceId || !d.spaceType || !d.infoType) continue
+    
+
   }
 
   console.timeEnd("start to parse")

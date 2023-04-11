@@ -3,7 +3,7 @@ import type {
   GetDataOpt,
 } from "./types"
 import type {
-  LiuExportContentJSON
+  LiuExportContentJSON, LiuFileExport, LiuImageExport
 } from "~/types/other/types-export"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import cfg from "~/config";
@@ -90,23 +90,23 @@ async function insertMarkdownContent(
   contents: JSZip,
   d: ContentLocalTable,
 ) {
-  const { theFolder, imageNames, fileNames } = preInsert(contents, d)
+  const { theFolder, images, files } = preInsert(contents, d)
   if(!theFolder) return
 
   let md = transferUtil.tiptapToMarkdown(d.liuDesc ?? [], { title: d.title })
 
   // 添加图片
-  if(imageNames.length) {
+  if(images.length) {
     md += `\n`
-    imageNames.forEach(v => {
-      md += `![${v}](./assets/${v})\n`
+    images.forEach(v => {
+      md += `![${v.name}](./assets/${v.name})\n`
     })
   }
   // 添加文件链接
-  if(fileNames.length) {
+  if(files.length) {
     md += `\n`
-    fileNames.forEach(v => {
-      md += `[${v}](./assets/${v})\n`
+    files.forEach(v => {
+      md += `[${v.name}](./assets/${v.name})\n`
     })
   }
 
@@ -117,16 +117,15 @@ function preInsert(
   contents: JSZip,
   d: ContentLocalTable,
 ) {
-  
-  let imageNames: string[] = []
-  let fileNames: string[] = []
+  let images: LiuImageExport[] = []
+  let files: LiuFileExport[] = []
 
   const s = liuUtil.getLiuDate(new Date(d.createdStamp))
   const folderName = `${s.YYYY}-${s.MM}-${s.DD} ${s.hh}_${s.mm}_${s.ss}`
   const theFolder = contents.folder(folderName)
   if(!theFolder) {
     console.warn("构建 theFolder 失败..........")
-    return { theFolder, imageNames, fileNames }
+    return { theFolder, files, images }
   }
 
   if(d.images?.length) {
@@ -135,7 +134,10 @@ function preInsert(
       const { arrayBuffer, id, name, lastModified } = img
       if(!arrayBuffer) continue
       theFolder.file(`assets/${name}`, arrayBuffer, { date: new Date(lastModified) })
-      imageNames.push(name)
+
+      // 去掉 img 中的 arrayBuffer 和 cloud_url 两个属性
+      const { arrayBuffer: arrayBuffer2, cloud_url, ...img2 } = img
+      images.push(img2)
     }
   }
   if(d.files?.length) {
@@ -144,11 +146,14 @@ function preInsert(
       const { arrayBuffer, id, name, lastModified } = f
       if(!arrayBuffer) continue
       theFolder.file(`assets/${name}`, arrayBuffer, { date: new Date(lastModified) })
-      fileNames.push(name)
+
+      // 去掉 f 中的 arrayBuffer 和 cloud_url 两个属性
+      const { arrayBuffer: arrayBuffer2, cloud_url, ...f2 } = f
+      files.push(f2)
     }
   }
 
-  return { theFolder, imageNames, fileNames }
+  return { theFolder, files, images }
 }
 
 
@@ -157,7 +162,7 @@ function insertJsonContent(
   contents: JSZip,
   d: ContentLocalTable,
 ) {
-  const { theFolder, imageNames, fileNames } = preInsert(contents, d)
+  const { theFolder, files, images } = preInsert(contents, d)
   if(!theFolder) return
 
   const jsonData: LiuExportContentJSON = {
@@ -174,8 +179,8 @@ function insertJsonContent(
     storageState: d.storageState,
     title: d.title,
     liuDesc: d.liuDesc,
-    imageNames,
-    fileNames,
+    files,
+    images,
     calendarStamp: d.calendarStamp,
     remindStamp: d.remindStamp,
     whenStamp: d.whenStamp,
