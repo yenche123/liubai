@@ -16,6 +16,7 @@ import { db } from "~/utils/db";
 import type { LiuMyContext } from "~/types/types-context";
 import type { ContentLocalTable } from "~/types/types-table";
 import { equipThreads } from "~/utils/controllers/equip-content/equip-content";
+import ider from "~/utils/basic/ider";
 
 export async function parseOurJson(
   atom: ImportedAtom,
@@ -116,6 +117,11 @@ async function getImportedAtom2(
 
   // 动态本地不存在
   if(!res) {
+
+    if(c.cloud_id) {
+      c._id = ider.createThreadId()
+    }
+
     c.user = myCtx.userId
     c.member = myCtx.memberId
     c.spaceId = myCtx.spaceId
