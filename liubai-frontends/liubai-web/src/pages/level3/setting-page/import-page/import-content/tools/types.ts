@@ -13,9 +13,12 @@ export interface ImportedAtom {
   assets?: JSZip.JSZipObject[]
 }
 
+// 无需更新、需要更新、全新的
+export type ImportedStatus = "no_change" | "update_required" | "new"
+
 export interface ImportedAtom2 {
   id: string
-  status: "no_change" | "update_required" | "new"         // 无需更新、需要更新、全新的
+  status: ImportedStatus
   threadShow: ThreadShow
   threadData: ContentLocalTable
 }

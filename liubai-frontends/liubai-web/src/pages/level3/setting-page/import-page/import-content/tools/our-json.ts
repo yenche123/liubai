@@ -2,6 +2,8 @@ import type {
   ImportedAtom,
   ImportedAsset,
   ImgsFiles,
+  ImportedAtom2,
+  ImportedStatus,
 } from "./types";
 import type {
   LiuFileStore,
@@ -12,6 +14,8 @@ import type { LiuExportContentJSON } from "~/types/other/types-export"
 import JSZip from "jszip"
 import { db } from "~/utils/db";
 import type { LiuMyContext } from "~/types/types-context";
+import type { ContentLocalTable } from "~/types/types-table";
+import { equipThreads } from "~/utils/controllers/equip-content/equip-content";
 
 
 export async function parseOurJson(
@@ -27,8 +31,8 @@ export async function parseOurJson(
 
   let liuAssets = await parseAssets(dateStr, assets)
   const imgsFiles = getImagesAndFiles(d, liuAssets)
-  getImportedAtom2(d, imgsFiles, myCtx)
-
+  const ia2 = await getImportedAtom2(d, imgsFiles, myCtx)
+  return ia2
 }
 
 // 把 zip 里的 assets 转为 { name, arrayBuffer }
@@ -92,6 +96,7 @@ function getImagesAndFiles(
 }
 
 
+
 // 开始生成 ImportedAtom2
 async function getImportedAtom2(
   d: LiuExportContentJSON,
@@ -99,13 +104,56 @@ async function getImportedAtom2(
   myCtx: LiuMyContext,
 ) {
 
+  let { images, files } = imgsFiles
+  let c: ContentLocalTable = { ...d, images, files, oState: "OK" }
+
+  // 查找本地动态是否存在
+  const res = await db.contents.get(c._id)
+
+  // 动态本地不存在
+  if(!res) {
+    c.user = myCtx.userId
+    c.member = myCtx.memberId
+    c.spaceId = myCtx.spaceId
+    c.spaceType = myCtx.spaceType
+    delete c.cloud_id
+    let ia2 = await _getIa2(c, "new")
+    return ia2
+  }
 
 
+  // 动态已存在，检查是否要更新
+  // 导入的“更新时间戳” > 原有的“更新时间戳”: 需要更新
+  if(c.updatedStamp > res.updatedStamp) {
+    // 把 res 的 cloud_url / user / member / spaceId / spaceType 赋值给 c
+    // 因为这几个值是不可更改的
+    c.cloud_id = res.cloud_id
+    c.user = res.user
+    c.member = res.member
+    c.spaceId = res.spaceId
+    c.spaceType = res.spaceType
+    let ia2 = await _getIa2(c, "update_required")
+    return ia2
+  }
 
-
-
-
+  // 无需更新
+  let ia2 = await _getIa2(res, "no_change")
+  return ia2
 }
 
+
+async function _getIa2(
+  c: ContentLocalTable,
+  status: ImportedStatus,
+) {
+  let [threadShow] = await equipThreads([c])
+  let ia2: ImportedAtom2 = {
+    id: c._id,
+    status,
+    threadShow,
+    threadData: c,
+  }
+  return ia2
+}
 
 
