@@ -15,6 +15,7 @@ export default {
   getBattery: device.getBattery,
   getThemeFromSystem: device.getThemeFromSystem,
   getLanguageFromSystem: device.getLanguageFromSystem,
+  setAppBadge: device.setAppBadge,
   getStorageSync: storage.getStorageSync,
   setStorageSync: storage.setStorageSync,
   removeStorageSync: storage.removeStorageSync,

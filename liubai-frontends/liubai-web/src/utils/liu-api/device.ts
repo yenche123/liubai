@@ -115,10 +115,22 @@ function getLanguageFromSystem(): SupportedLocale {
   return "en"
 }
 
+// Badge API 设置小红点（当 web app 已被安装时才会生效）
+const setAppBadge = async (val?: number) => {
+  const supported = "setAppBadge" in navigator
+  if(!supported) return false
+
+  //@ts-ignore
+  const res = await navigator.setAppBadge(val)
+  return res
+}
+
+
 export default {
   copyToClipboard,
   vibrate,
   getBattery,
   getThemeFromSystem,
   getLanguageFromSystem,
+  setAppBadge,
 }
