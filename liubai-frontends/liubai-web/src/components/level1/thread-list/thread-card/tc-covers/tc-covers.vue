@@ -140,6 +140,17 @@ export default defineComponent({
   left: 0;
   width: 100%;
   height: 100%;
+  transition: .15s;
+
+  @media(hover: hover) {
+    &:hover {
+      opacity: .8;
+    }
+  }
+
+  &:active {
+    opacity: .72;
+  }
   
   .tcc-one-img {
     width: 100%;
@@ -165,10 +176,21 @@ export default defineComponent({
 
 .tcctb-img-box {
   flex: 1;
-  width: 10px;
+  width: 10px;   /** 随便一个正整数的值都可以，因为宽度会被 flex: 1 决定 */
   height: 100%;
   position: relative;
   flex-basis: 0;
+  transition: .15s;
+
+  @media(hover: hover) {
+    &:hover {
+      opacity: .8;
+    }
+  }
+
+  &:active {
+    opacity: .72;
+  }
 
   .tcc-two-img {
     width: 100%;
@@ -183,6 +205,10 @@ export default defineComponent({
 
 .tcctb-img-box_column {
   width: 100%;
+
+  /** 随便一个正整数的值都可以，
+  * 因为当盒子为 flex-direction: column 时，高度会被 flex: 1 决定 
+  */
   height: 10px;
 }
 
@@ -210,12 +236,12 @@ export default defineComponent({
 
     @media(hover: hover) {
       &:hover {
-        opacity: .7;
+        opacity: .8;
       }
     }
 
     &:active {
-      opacity: .6;
+      opacity: .72;
     }
 
     .cc-img {
