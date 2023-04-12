@@ -227,7 +227,7 @@ export default defineComponent({
 .kc-text {
   position: relative;
   width: 100%;
-  font-size: 17px;
+  font-size: var(--btn-font);
   line-height: 1.5;
   color: var(--main-code);
   white-space: pre-wrap;
