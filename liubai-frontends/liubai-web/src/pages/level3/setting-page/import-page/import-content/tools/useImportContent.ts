@@ -9,6 +9,7 @@ import type {
 } from "./types"
 import { parseOurJson } from "./our-json"
 import checker from "~/utils/other/checker"
+import valTool from "~/utils/basic/val-tool"
 
 interface IcCtx {
   list: Ref<ImportedAtom2[]>
@@ -111,9 +112,6 @@ async function loadZip(f: File, ctx: IcCtx) {
     tmpAtom = {}
   }
 
-  console.log("看一下整理过的动态结构: ")
-  console.log(atoms)
-
   // 没有任何符合的格式时
   if(atoms.length < 1) {
     cui.showModal({ title_key: "tip.tip", content_key: "import.t2" })
@@ -131,12 +129,29 @@ async function parseAtoms(
   const myCtx = checker.getMyContext()
   if(!myCtx) return
 
+  ctx.list.value = []
+
+  cui.showLoading({ title_key: "common.processing" })
+
   console.time("start to parse")
   for(let i=0; i<atoms.length; i++) {
     const v = atoms[i]
-    parseOurJson(v, myCtx)
+    let item = await parseOurJson(v, myCtx)
+    if(!item) continue
+
+    // 去检查是否已经添加过了
+    const id = item.id
+    const existedItem = ctx.list.value.find(v2 => v2.id === id)
+    if(existedItem) continue
+    ctx.list.value.push(item)
   }
 
   console.timeEnd("start to parse")
+
+  cui.hideLoading()
+
+  console.log("看一下 copiedList: ")
+  const copiedList = valTool.copyObject(ctx.list.value)
+  console.log(copiedList)
 
 }

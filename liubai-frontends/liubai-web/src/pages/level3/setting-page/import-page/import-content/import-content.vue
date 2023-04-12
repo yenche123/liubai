@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ImportResults from "./import-results/import-results.vue";
 import { useI18n } from "vue-i18n";
 import { useImportContent } from "./tools/useImportContent";
 import liuUtil from "~/utils/liu-util";
@@ -7,6 +8,7 @@ const { t } = useI18n()
 
 const iconColor = "var(--main-normal)"
 const { 
+  list,
   oursFileEl,
   onOursFileChange 
 } = useImportContent()
@@ -44,6 +46,10 @@ const { APP_NAME } = liuUtil.getEnv()
 
       </div>
 
+      <!-- 导入后的结果 -->
+      <div v-if="list.length" class="import-results">
+        <ImportResults :list="list"></ImportResults>
+      </div>
 
     </div>
   </div>
@@ -127,6 +133,11 @@ const { APP_NAME } = liuUtil.getEnv()
   width: 18px;
   height: 18px;
   transition: .3s;
+}
+
+.import-results {
+  width: 100%;
+  position: relative;
 }
 
 
