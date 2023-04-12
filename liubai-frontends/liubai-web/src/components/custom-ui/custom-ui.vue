@@ -25,11 +25,8 @@ const {
 } = initModal()
 
 const {
-  title: loadingTitle,
-  mask: loadingMask,
-  enable: loadingEnable,
-  show: loadingShow,
   TRANSITION_DURATION: loadingTranMs,
+  loData,
 } = initLoading()
 
 const {
@@ -137,13 +134,14 @@ const {
 
   <!-- 加载 loading 框 -->
   <div
-    v-if="loadingEnable"
+    v-if="loData.enable"
     class="cui-loading-container"
-    :class="{ 'cui-loading-container_show': loadingShow }"
+    :class="{ 'cui-loading-container_show': loData.show }"
   >
     <div class="cui-loading-box">
       <div class="cui-loading-pulsar"></div>
-      <span v-if="loadingTitle" class="cui-loading-title">{{ loadingTitle }}</span>
+      <span v-if="loData.title" class="cui-loading-title">{{ loData.title }}</span>
+      <span v-else-if="loData.title_key" class="cui-loading-title">{{ t(loData.title_key) }}</span>
     </div>
   </div>
 
@@ -398,7 +396,7 @@ const {
   justify-content: center;
   transition: v-bind("loadingTranMs + 'ms'");
   opacity: 0;
-  pointer-events: v-bind("loadingMask ? 'auto' : 'none'");
+  pointer-events: v-bind("loData.mask ? 'auto' : 'none'");
 
   &.cui-loading-container_show {
     opacity: 1;
