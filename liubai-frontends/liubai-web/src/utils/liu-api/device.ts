@@ -1,6 +1,7 @@
 import type { SupportedTheme } from "~/types"
 import type { SupportedLocale } from "~/types/types-locale"
 import { isSupportedLocale } from '~/types/types-locale'
+import time from "../basic/time"
 
 type ResolveReject = (res: boolean | undefined) => void
 export interface BatteryManager extends EventTarget {
@@ -93,6 +94,16 @@ function getThemeFromSystem(): SupportedTheme {
   return "light"
 }
 
+// 从当前时间判断要显示哪个主题
+// 目前规则: 6:00 ~ 17:59 显示浅色模式，否则显示深色模式
+function getThemeFromTime(): SupportedTheme {
+  const now = time.getTime()
+  const date = new Date(now)
+  const hr = date.getHours()
+  if(hr >= 6 && hr <= 17) return "light"
+  return "dark"
+}
+
 // 从浏览器获取当前支持的语言
 function getLanguageFromSystem(): SupportedLocale {
   const lang = navigator.language
@@ -142,6 +153,7 @@ export default {
   vibrate,
   getBattery,
   getThemeFromSystem,
+  getThemeFromTime,
   getLanguageFromSystem,
   setAppBadge,
   clearAppBadge,

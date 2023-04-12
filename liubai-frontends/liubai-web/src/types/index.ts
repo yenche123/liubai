@@ -3,7 +3,7 @@ import type { SupportedLocale } from "./types-locale"
 import type { RouteLocation } from 'vue-router'
 
 export type SupportedTheme = "light" | "dark"
-export type LocalTheme = SupportedTheme | "system"
+export type LocalTheme = SupportedTheme | "system" | "auto"   // auto 就是日夜切换
 export type LocalLanguage = SupportedLocale | "system"
 
 export interface LocalPreference {

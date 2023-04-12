@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="64px" stroke-width="2.1" viewBox="1 1 23 23" fill="none"
+  xmlns="http://www.w3.org/2000/svg">
+  <style>
+		.liu-smartphone {
+      stroke: inherit;
+      fill: inherit;
+    }
+	</style>
+  <path d="M12 16.01l.01-.011" 
+    class="liu-smartphone"
+    stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"
+  ></path>
+  <path d="M7 19.4V4.6a.6.6 0 01.6-.6h8.8a.6.6 0 01.6.6v14.8a.6.6 0 01-.6.6H7.6a.6.6 0 01-.6-.6z" 
+    class="liu-smartphone"
+    stroke-width="2.1"></path>
+</svg>

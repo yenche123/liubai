@@ -14,6 +14,7 @@ export default {
   vibrate: device.vibrate,
   getBattery: device.getBattery,
   getThemeFromSystem: device.getThemeFromSystem,
+  getThemeFromTime: device.getThemeFromTime,
   getLanguageFromSystem: device.getLanguageFromSystem,
   setAppBadge: device.setAppBadge,
   clearAppBadge: device.clearAppBadge,

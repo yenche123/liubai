@@ -116,8 +116,11 @@ async function whenTapTheme(
   localCache.setLocalPreference("theme", id)
   let newTheme: SupportedTheme
 
-  if(id !== "system") {
+  if(id === "dark" || id === "light") {
     newTheme = id
+  }
+  else if(id === "auto") {
+    newTheme = liuApi.getThemeFromTime()
   }
   else {
     newTheme = liuApi.getThemeFromSystem()

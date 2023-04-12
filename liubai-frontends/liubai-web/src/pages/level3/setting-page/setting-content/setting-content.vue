@@ -3,8 +3,21 @@ import AppLink from '~/components/common/app-link/app-link.vue';
 import { useI18n } from "vue-i18n";
 import { usePrefix } from "~/hooks/useCommon";
 import { useSettingContent } from "./tools/useSettingContent";
+import { useWindowSize } from '~/hooks/useVueUse';
+import cfg from '~/config';
+import { computed } from 'vue';
 
 const { t } = useI18n()
+const { width: windowWidth } = useWindowSize()
+
+// 判断屏幕尺寸，决定当前机型的图标
+// 若小于等于 600px，显示成手机，否则显示成浏览器窗口
+const deviceIcon = computed(() => {
+  const w = windowWidth.value
+  if(w <= cfg.max_mobile_breakpoint) return "devices-smartphone"
+  return "devices-app-window"
+})
+
 
 const {
   data,
@@ -13,6 +26,13 @@ const {
   onTapTerms,
   onTapLogout,
 } = useSettingContent()
+
+// 主题字段 i18n 的 key
+const themeTextKey = computed(() => {
+  const theme = data.theme
+  if(theme === "auto") return "setting.day_and_night"
+  return `setting.${theme}`
+})
 
 const { prefix } = usePrefix()
 
@@ -38,7 +58,7 @@ const iconColor = "var(--main-normal)"
           <div class="scb-footer">
 
             <div class="scb-footer-text">
-              <span>{{ t('setting.' + data.theme) }}</span>
+              <span>{{ t(themeTextKey) }}</span>
             </div>
             <div class="scb-footer-icon">
               <svg-icon v-if="data.theme === 'light'"
@@ -51,9 +71,15 @@ const iconColor = "var(--main-normal)"
                 name="theme-dark_mode"
                 :color="iconColor"
               ></svg-icon>
+              <svg-icon v-else-if="data.theme === 'auto'"
+                class="scbf-svg-icon" 
+                name="devices-auto-toggle"
+                :color="iconColor"
+              ></svg-icon>
+              <!-- 最后情况: 跟随系统 -->
               <svg-icon v-else
                 class="scbf-svg-icon" 
-                name="theme-system-theme"
+                :name="deviceIcon"
                 :color="iconColor"
               ></svg-icon>
             </div>

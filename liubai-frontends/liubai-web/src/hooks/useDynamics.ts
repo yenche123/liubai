@@ -40,6 +40,9 @@ function initTheme() {
   if(!_theme || _theme === "system") {
     theme.value = liuApi.getThemeFromSystem()
   }
+  else if(_theme === "auto") {
+    theme.value = liuApi.getThemeFromTime()
+  }
   else theme.value = _theme
 
   // 有必要的话为 body 添加 .theme-dark

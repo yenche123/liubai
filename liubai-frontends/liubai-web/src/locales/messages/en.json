@@ -245,6 +245,7 @@
     "system": "System",
     "dark": "Dark",
     "light": "Light",
+    "day_and_night": "Day/Night",
     "import_export": "Import & Export",    
     "import": "Import",
     "export": "Export",

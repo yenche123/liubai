@@ -4,6 +4,8 @@ import type {
   ThemeItem,
   TermsItem
 } from "./types"
+import { useWindowSize } from "~/hooks/useVueUse"
+import cfg from "~/config"
 
 const t = i18n.global.t
 
@@ -24,11 +26,19 @@ export function getTermsList() {
 }
 
 export function getThemeList() {
+  const { width } = useWindowSize()
+  const w = width.value
+  const breakpoint = cfg.max_mobile_breakpoint
   const list: ThemeItem[] = [
     {
       id: "system",
       text: t('setting.system'),
-      iconName: "theme-system-theme",
+      iconName: w <= breakpoint ? "devices-smartphone" : "devices-app-window",
+    },
+    {
+      id: "auto",
+      text: t('setting.day_and_night'),
+      iconName: "devices-auto-toggle",
     },
     {
       id: "light",
