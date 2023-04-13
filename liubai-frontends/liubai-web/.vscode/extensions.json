@@ -3,6 +3,7 @@
     "vue.volar",
     "lokalise.i18n-ally",
     "vue.vscode-typescript-vue-plugin",
-    "eamodio.gitlens"
+    "eamodio.gitlens",
+    "yoavbls.pretty-ts-errors"
   ]
 }

@@ -26,6 +26,13 @@ Extension ID: `eamodio.gitlens`
 
 能快速显示某行代码最近一次的提交时间和编辑人。
 
+### 5. Pretty TypeScript Errors
+
+Extension ID: `yoavbls.pretty-ts-errors`
+
+自动美化来自 TS 的报错信息
+
+
 ## 可选插件推荐
 
 除了 `extensions.json` 所推荐的插件，另外推荐一些我在用但可选的插件:
