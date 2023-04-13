@@ -28,6 +28,12 @@ const showMore = computed(() => {
   return true
 })
 
+const onTapClear = () => {
+
+}
+
+const iconColor = `var(--main-normal)`
+
 </script>
 <template>
 
@@ -40,6 +46,27 @@ const showMore = computed(() => {
   <div class="ir-box">
     <template v-for="(item, index) in list" :key="item.id">
       <div v-if="index < maxNum" class="ir-item">
+
+        <div class="iri-top">
+
+          <!-- 状态: 新的动态、需要更新、没有变化 -->
+          <div class="iri-status"
+            :class="{ 
+              'iri-status_new': item.status === 'new',
+              'iri-status_update': item.status === 'update_required',
+            }"
+          >
+            <span v-if="item.status === 'new'">{{ t('import.new_thread') }}</span>
+            <span v-else-if="item.status === 'update_required'">{{ t('import.update_required') }}</span>
+            <span v-else-if="item.status === 'no_change'">{{ t('import.no_change') }}</span>
+          </div>
+
+          <!-- 清除按钮 -->
+          <div class="liu-hover iri-clear-btn" @click.stop="onTapClear">
+            <svg-icon name="close" class="iricb-svg" :color="iconColor"></svg-icon>
+          </div>
+
+        </div>
 
         <div class="iri-title" v-if="item.threadShow.title">
           <span>{{ item.threadShow.title }}</span>
@@ -61,7 +88,12 @@ const showMore = computed(() => {
 
   </div>
   <div v-if="showMore" class="ir-mask" @click.stop="onTapShowMore">
-    <span>{{ t('common.checkMore') }}</span>
+    <div class="irm-inline">
+      <span>{{ t('common.checkMore') }}</span>
+      <div class="irm-icon-box">
+        <svg-icon class="irm-icon" name="arrow-right2"></svg-icon>
+      </div>
+    </div>
   </div>
 
 </template>
@@ -88,10 +120,68 @@ const showMore = computed(() => {
   position: relative;
   background-color: var(--card-bg);
   box-shadow: var(--card-shadow-2);
-  transition: border-radius .3s;
   margin-bottom: 6px;
   box-sizing: border-box;
-  padding: 16px;
+  padding: 12px 16px 16px;
+}
+
+.iri-top {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-block-end: 4px;
+}
+
+.iri-status {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: var(--mini-font);
+  color: var(--liu-state-1);
+  margin-inline-end: 6px;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+
+  &::before {
+    background-color: var(--liu-state-1);
+    opacity: .2;
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.iri-status_new {
+  color: var(--liu-state-2);
+
+  &::before {
+    background-color: var(--liu-state-2);
+  }
+}
+
+.iri-status_update {
+  color: var(--liu-state-10);
+
+  &::before {
+    background-color: var(--liu-state-10);
+  }
+}
+
+.iri-clear-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iricb-svg {
+  width: 24px;
+  height: 24px;
 }
 
 .iri-title {
@@ -123,26 +213,53 @@ const showMore = computed(() => {
 }
 
 .ir-mask {
-  font-weight: 700;
-  letter-spacing: 2px;
   width: 100%;
   height: 100px;
   margin-top: -75px;
-  color: var(--main-normal);
   background: var(--mask-bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  font-size: var(--btn-font);
-  position: relative;
   cursor: pointer;
+  position: relative;
+}
+
+.irm-inline {
+  font-weight: 700;
+  font-size: var(--btn-font);
+  letter-spacing: 2px;
+  color: var(--main-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
   transition: .15s;
 }
 
 @media(hover: hover) {
   .ir-mask:hover {
-    font-size: var(--desc-font);
+    .irm-inline {
+      transform: scale(1.15);
+    }
+  }
+}
+
+.irm-icon-box {
+  margin-inline-start: 6px;
+  overflow: hidden;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--main-normal);
+
+  .irm-icon {
+    width: 12px;
+    height: 12px;
+    transform: rotate(90deg);
   }
 
 }

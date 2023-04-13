@@ -273,6 +273,9 @@
     "t2": "没有可供导入的动态",
     "t3": "文件格式不符",
     "t4": "文件加载失败",
-    "parse_result": "解析结果"
+    "parse_result": "解析结果",
+    "new_thread": "新的动态",
+    "update_required": "需要更新",
+    "no_change": "无需更新"
   }
 }
