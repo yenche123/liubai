@@ -1,6 +1,6 @@
 # LB
 
-Happy Easter!
+A boring and sleepy day...
 
 ## 开发备注
 
