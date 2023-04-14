@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { PropType, computed, ref } from 'vue';
+import { computed, ref, inject } from 'vue';
+import type { Ref, PropType } from "vue";
 import type { ImportedAtom2 } from "../tools/types"
 import { useI18n } from 'vue-i18n';
 import TcCovers from "~/components/level1/thread-list/thread-card/tc-covers/tc-covers.vue";
+import { mainViewWidthKey } from "~/utils/provide-keys";
 
 const { t } = useI18n()
 
@@ -36,6 +38,13 @@ const showMore = computed(() => {
 
 const moreColor = `var(--main-normal)`
 const iconColor = `var(--liu-quote)`
+
+// 获取 main-view 的宽度
+const mvWidth = inject(mainViewWidthKey) as Ref<number>
+const smallView = computed(() => {
+  const w = mvWidth.value
+  return w < 450
+})
 
 </script>
 <template>
@@ -112,7 +121,7 @@ const iconColor = `var(--liu-quote)`
     <CustomBtn size="common" @click="$emit('tapconfirm')" 
       class="ir-btn"
     >
-      <span>{{ t('common.confirm') }}</span>
+      <span>{{ t('setting.import') }}</span>
     </CustomBtn>
   </div>
 
@@ -154,8 +163,8 @@ const iconColor = `var(--liu-quote)`
 }
 
 .iri-status {
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 4px 12px;
+  border-radius: 2px;
   font-size: var(--mini-font);
   color: var(--liu-state-1);
   margin-inline-end: 6px;
@@ -291,22 +300,14 @@ const iconColor = `var(--liu-quote)`
 }
 
 .ir-btns {
-  padding: 0 30px 50px 30px;
+  padding: v-bind("smallView ? '0 0 50px' : '0 30px 50px 30px'");
   display: flex;
-  justify-content: space-evenly;
+  justify-content: v-bind("smallView ? 'space-between' : 'space-evenly'");
+  position: relative;
 }
 
-@media screen and (max-width: 450px) {
-  .ir-btns {
-    justify-content: space-between;
-    padding: 0 0 30px;
-  }
-
-  .ir-btn {
-    min-width: 45%;
-  }
+.ir-btn {
+  min-width: v-bind("smallView ? '45%' : '160px'");
 }
-
-
 
 </style>
