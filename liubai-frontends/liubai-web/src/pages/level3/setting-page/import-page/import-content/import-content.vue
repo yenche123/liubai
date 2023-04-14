@@ -10,7 +10,10 @@ const iconColor = "var(--main-normal)"
 const { 
   list,
   oursFileEl,
-  onOursFileChange 
+  onOursFileChange,
+  onTapClear,
+  onTapCancel,
+  onTapConfirm,
 } = useImportContent()
 const { APP_NAME } = liuUtil.getEnv()
 
@@ -48,7 +51,11 @@ const { APP_NAME } = liuUtil.getEnv()
 
       <!-- 导入后的结果 -->
       <div v-if="list.length" class="import-results">
-        <ImportResults :list="list"></ImportResults>
+        <ImportResults :list="list"
+          @tapcancel="onTapCancel"
+          @tapclear="onTapClear"
+          @tapconfirm="onTapConfirm"
+        ></ImportResults>
       </div>
 
     </div>

@@ -33,10 +33,33 @@ export function useImportContent() {
     loadZip(firstFile, ctx)
   }
 
+  const onTapClear = (index: number) => {
+    const item = list.value[index]
+    if(!item) return
+    list.value.splice(index, 1)
+  }
+
+  const onTapCancel = () => {
+    list.value = []
+
+    // 清除 el 上的 files
+    const el = oursFileEl.value
+    if(!el) return
+    el.value = ''
+  }
+
+  const onTapConfirm = () => {
+
+  }
+
+
   return {
     list,
     oursFileEl,
     onOursFileChange,
+    onTapClear,
+    onTapCancel,
+    onTapConfirm,
   }
 }
 
@@ -74,7 +97,6 @@ async function loadZip(f: File, ctx: IcCtx) {
     // 1. 判断是否在 contents/YYYY-MM-DD/ 里头
     const isMatch = reg.test(relativePath)
     if(!isMatch) {
-      console.log("没有匹配到！！")
       return
     }
 
