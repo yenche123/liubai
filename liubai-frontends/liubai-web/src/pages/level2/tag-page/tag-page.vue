@@ -9,7 +9,6 @@ import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
 import { useTagPage } from "./tools/useTagPage";
 import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
-import FloatActionButton from "~/components/level1/float-action-button/float-action-button.vue";
 
 const { 
   hiddenScrollBar, 

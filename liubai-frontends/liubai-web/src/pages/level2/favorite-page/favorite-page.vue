@@ -7,7 +7,6 @@ import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
-import FloatActionButton from "~/components/level1/float-action-button/float-action-button.vue";
 
 const { 
   hiddenScrollBar, 

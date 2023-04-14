@@ -21,6 +21,7 @@ import LiuSwitch from "./components/common/liu-switch/liu-switch.vue"
 import LiuImg from "./components/common/liu-img/liu-img.vue"
 import LiuCheckbox from "./components/common/liu-checkbox/liu-checkbox.vue"
 import LiuMenu from "./components/common/liu-menu/liu-menu.vue"
+import FloatActionButton from "./components/level1/float-action-button/float-action-button.vue";
 import FloatingVue from 'floating-vue'
 import { plugin as Slicksort } from 'vue-slicksort';
 
@@ -33,6 +34,7 @@ app.component("LiuSwitch", LiuSwitch)
 app.component("LiuImg", LiuImg)
 app.component("LiuCheckbox", LiuCheckbox)
 app.component("LiuMenu", LiuMenu)
+app.component("FloatActionButton", FloatActionButton)
 app.use(createPinia())
 app.use(i18n)
 app.use(router)

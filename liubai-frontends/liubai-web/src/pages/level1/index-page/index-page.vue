@@ -5,7 +5,6 @@ import { useMainVice } from "~/hooks/useMainVice";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue"
 import IndexContent from "./index-content/index-content.vue"
 import NaviAuto from "~/components/common/navi-auto/navi-auto.vue";
-import FloatActionButton from "~/components/level1/float-action-button/float-action-button.vue";
 import { useIndexPage } from "./tools/useIndexPage";
 
 const { 
