@@ -1569,7 +1569,7 @@ const PDFViewerApplication = {
             styleSheet.deleteRule(i);
             return;
           }
-          const darkRules = /^@media \(prefers-color-scheme: dark\) {\n\s*([\w\s-.,:;/\\{}()]+)\n}$/.exec(rule.cssText);
+          const darkRules = /^@media \(prefers-color-scheme: dark\) {\n\s*([\w\s-.,:;/\\{}()\#]+)\n}$/.exec(rule.cssText);
           if (darkRules?.[1]) {
             styleSheet.deleteRule(i);
             styleSheet.insertRule(darkRules[1], i);
