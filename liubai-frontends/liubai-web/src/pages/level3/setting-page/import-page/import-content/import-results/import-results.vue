@@ -13,6 +13,12 @@ const props = defineProps({
   }
 })
 
+defineEmits<{
+  (event: "tapclear", index: number): void
+  (event: "tapconfirm"): void
+  (event: "tapcancel"): void
+}>()
+
 const maxNum = ref(3)
 const onTapShowMore = () => {
   let oldNum = maxNum.value
@@ -28,11 +34,8 @@ const showMore = computed(() => {
   return true
 })
 
-const onTapClear = () => {
-
-}
-
-const iconColor = `var(--main-normal)`
+const moreColor = `var(--main-normal)`
+const iconColor = `var(--liu-quote)`
 
 </script>
 <template>
@@ -62,7 +65,7 @@ const iconColor = `var(--main-normal)`
           </div>
 
           <!-- 清除按钮 -->
-          <div class="liu-hover iri-clear-btn" @click.stop="onTapClear">
+          <div class="liu-hover iri-clear-btn" @click.stop="$emit('tapclear', index)">
             <svg-icon name="close" class="iricb-svg" :color="iconColor"></svg-icon>
           </div>
 
@@ -87,13 +90,30 @@ const iconColor = `var(--main-normal)`
     </template>
 
   </div>
-  <div v-if="showMore" class="ir-mask" @click.stop="onTapShowMore">
-    <div class="irm-inline">
+  <div v-if="showMore" class="ir-mask">
+    <div class="irm-inline" @click.stop="onTapShowMore">
       <span>{{ t('common.checkMore') }}</span>
       <div class="irm-icon-box">
-        <svg-icon class="irm-icon" name="arrow-right2"></svg-icon>
+        <svg-icon class="irm-icon" name="arrow-right2" :color="moreColor"></svg-icon>
       </div>
     </div>
+  </div>
+
+  <!-- 导入动态 & 底部操作按钮们 的留白空间 -->
+  <div class="ir-virtual" />
+
+  <div class="ir-btns">
+    <CustomBtn size="common" type="transparent" @click="$emit('tapcancel')"
+      class="ir-btn"
+    >
+      <span>{{ t('common.cancel') }}</span>
+    </CustomBtn>
+
+    <CustomBtn size="common" @click="$emit('tapconfirm')" 
+      class="ir-btn"
+    >
+      <span>{{ t('common.confirm') }}</span>
+    </CustomBtn>
   </div>
 
 </template>
@@ -214,34 +234,35 @@ const iconColor = `var(--main-normal)`
 
 .ir-mask {
   width: 100%;
-  height: 100px;
-  margin-top: -75px;
+  height: 75px;
+  margin-top: -50px;
   background: var(--mask-bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   position: relative;
 }
 
 .irm-inline {
+  width: 50%;
+  height: 50px;
+  min-width: 200px;
   font-weight: 700;
   font-size: var(--btn-font);
   letter-spacing: 2px;
-  color: var(--main-normal);
+  color: v-bind("moreColor");
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   position: relative;
+  cursor: pointer;
   transition: .15s;
 }
 
 @media(hover: hover) {
-  .ir-mask:hover {
-    .irm-inline {
-      transform: scale(1.15);
-    }
+  .irm-inline:hover {
+    transform: scale(1.15);
   }
 }
 
@@ -262,6 +283,28 @@ const iconColor = `var(--main-normal)`
     transform: rotate(90deg);
   }
 
+}
+
+.ir-virtual {
+  width: 100%;
+  height: v-bind("showMore ? '10px' : '30px'");
+}
+
+.ir-btns {
+  padding: 0 30px 50px 30px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+@media screen and (max-width: 450px) {
+  .ir-btns {
+    justify-content: space-between;
+    padding: 0 0 30px;
+  }
+
+  .ir-btn {
+    min-width: 45%;
+  }
 }
 
 

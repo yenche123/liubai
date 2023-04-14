@@ -102,10 +102,12 @@ const onTapBtn = (e: Event) => {
 }
 
 .btn-transparent:hover {
+  background-color: transparent;
   opacity: .7;
 }
 
 .btn-transparent:active {
+  background-color: transparent;
   opacity: .6;
 }
 
