@@ -136,7 +136,7 @@ async function loadZip(f: File, ctx: IcCtx) {
 
   // 没有任何符合的格式时
   if(atoms.length < 1) {
-    cui.showModal({ title_key: "tip.tip", content_key: "import.t2" })
+    cui.showModal({ title_key: "tip.tip", content_key: "import.t2", showCancel: false })
     return
   }
 
