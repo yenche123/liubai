@@ -276,6 +276,10 @@
     "parse_result": "解析結果",
     "new_thread": "新的動態",
     "update_required": "需要更新",
-    "no_change": "毋須更新"
+    "no_change": "毋須更新",
+    "good_news": "好消息!",
+    "i1": "沒有需要導入或更新的動態",
+    "i2": "確定要導入嗎?",
+    "i3": "預計新增 {newNum}，更新 {updateNum}"
   }
 }

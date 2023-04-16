@@ -10,6 +10,8 @@ import type {
 import { parseOurJson } from "./our-json"
 import checker from "~/utils/other/checker"
 import valTool from "~/utils/basic/val-tool"
+import { loadIntoDB } from "./load-into-db"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
 
 interface IcCtx {
   list: Ref<ImportedAtom2[]>
@@ -17,6 +19,7 @@ interface IcCtx {
 
 export function useImportContent() {
 
+  const { router } = useRouteAndLiuRouter()
   const list = ref<ImportedAtom2[]>([])
   const oursFileEl = ref<HTMLInputElement | null>(null)
   const ctx: IcCtx = {
@@ -48,8 +51,12 @@ export function useImportContent() {
     el.value = ''
   }
 
-  const onTapConfirm = () => {
-
+  const onTapConfirm = async () => {
+    const res = await loadIntoDB(list.value)
+    if(res) {
+      list.value = []
+      router.naviBack()
+    }
   }
 
 

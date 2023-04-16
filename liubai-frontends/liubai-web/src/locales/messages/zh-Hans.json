@@ -276,6 +276,10 @@
     "parse_result": "解析结果",
     "new_thread": "新的动态",
     "update_required": "需要更新",
-    "no_change": "无需更新"
+    "no_change": "无需更新",
+    "good_news": "好消息！",
+    "i1": "没有需要导入或更新的动态",
+    "i2": "确定要导入吗？",
+    "i3": "预计新增 {newNum}，更新 {updateNum}"
   }
 }

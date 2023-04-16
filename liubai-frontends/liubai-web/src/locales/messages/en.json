@@ -276,6 +276,10 @@
     "parse_result": "Results",
     "new_thread": "NEW",
     "update_required": "Update Required",
-    "no_change": "No Change"
+    "no_change": "No Change",
+    "good_news": "Good News!",
+    "i1": "No data needs to be imported",
+    "i2": "Are you sure to import?",
+    "i3": "It is expected to add {newNum} and update {updateNum}"
   }
 }
