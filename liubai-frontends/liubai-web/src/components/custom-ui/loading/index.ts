@@ -1,6 +1,6 @@
 
-import { reactive, ref } from "vue";
-import valTool from "~/utils/basic/val-tool"
+import { reactive } from "vue";
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 
 interface LoadingParam {
   title?: string
@@ -29,22 +29,32 @@ const initLoading = () => {
   return { TRANSITION_DURATION, loData }
 }
 
+let showTimeout: LiuTimeout
+let closeTimeout: LiuTimeout
+
 const showLoading = async (opt?: LoadingParam): Promise<void> => {
   loData.title = opt?.title ?? ""
   loData.title_key = opt?.title_key ?? ""
   loData.mask = opt?.mask === false ? false : true
 
   if(loData.show) return
+  if(closeTimeout) clearTimeout(closeTimeout)
   loData.enable = true
-  await valTool.waitMilli(16)
-  if(loData.enable) loData.show = true
+  showTimeout = setTimeout(() => {
+    showTimeout = undefined
+    loData.show = true
+  }, 16)
 }
 
 const hideLoading = async (): Promise<void> => {
-  if(!loData.show) return
+  if(!loData.enable) return
+  if(showTimeout) clearTimeout(showTimeout)
+
   loData.show = false
-  await valTool.waitMilli(TRANSITION_DURATION)
-  if(!loData.show) loData.enable = false
+  closeTimeout = setTimeout(() => {
+    closeTimeout = undefined
+    loData.enable = false
+  }, TRANSITION_DURATION)
 }
 
 
