@@ -4,6 +4,7 @@ import liuUtil from "~/utils/liu-util"
 import JSZip from "jszip"
 import cui from "~/components/custom-ui"
 import type { 
+  LiuJSZip,
   ImportedAtom,
   ImportedAtom2,
 } from "./types"
@@ -85,21 +86,19 @@ async function loadZip(f: File, ctx: IcCtx) {
 
   const rStr = "^contents\\/\\d{4}\\-\\d{2}\\-\\d{2}\\s\\d{2}_\\d{2}_\\d{2}\\/"
   const reg = new RegExp(rStr)
-  const regCardDir = new RegExp(rStr + "$")
   const regCardJSON = new RegExp(rStr + "card\\.json$")
   const regAssets = new RegExp(rStr + "assets\\/")
+  const regDate = /contents\/(\d{4}\-\d{2}\-\d{2}\s\d{2}_\d{2}_\d{2})\//
 
   let tmpAtom: ImportedAtom = {}
   let atoms: ImportedAtom[] = []
 
+  let sortedResults: LiuJSZip[] = []
   results.forEach((relativePath, file) => {
-    // 第二个参数 file 为 ZipObject 类型
-    // 该类型有 async 方法，用来读取文件
-    // 详情见: https://stuk.github.io/jszip/documentation/api_zipobject/async.html
-
-    // console.log(relativePath)
-    // console.log(file)
-    // console.log(" ")
+    let obj: LiuJSZip = {
+      relativePath,
+      file
+    }
 
     // 1. 判断是否在 contents/YYYY-MM-DD/ 里头
     const isMatch = reg.test(relativePath)
@@ -107,31 +106,47 @@ async function loadZip(f: File, ctx: IcCtx) {
       return
     }
 
-    // 2. 判断当前节点是否为 contents/YYYY-MM-DD/ 文件夹
-    const isMatch2 = regCardDir.test(relativePath)
-    if(isMatch2 && file.dir) {
+    sortedResults.push(obj)
+  })
+
+  sortedResults.sort((v1, v2) => {
+    const s1 = v1.relativePath
+    const s2 = v2.relativePath
+    if(s1 < s2) return -1
+    if(s1 > s2) return 1
+    return 0
+  })
+
+  sortedResults.forEach(v => {
+    const s = v.relativePath
+    const s2 = s.match(regDate)
+    
+    if(!s2) return
+    const s3 = s2[1]
+    if(!s3) return
+
+    // 1. 判断 dateStr 是否不一致
+    if(s3 !== tmpAtom.dateStr) {
       if(tmpAtom.dateStr && tmpAtom.cardJSON) {
         atoms.push(tmpAtom)
       }
-
       tmpAtom = {
-        dateStr: relativePath
+        dateStr: s3
       }
+    }
+
+    // 2. 判断当前节点是否为 card.json
+    const isMatch3 = regCardJSON.test(s)
+    if(isMatch3 && !v.file.dir) {
+      tmpAtom.cardJSON = v.file
       return
     }
 
-    // 3. 判断当前节点是否为 card.json
-    const isMatch3 = regCardJSON.test(relativePath)
-    if(isMatch3 && !file.dir) {
-      tmpAtom.cardJSON = file
-      return
-    }
-
-    // 4. 判断当前节点是否为 assets 里的资源
-    const isMatch4 = regAssets.test(relativePath)
-    if(isMatch4 && !file.dir) {
+    // 3. 判断当前节点是否为 assets 里的资源
+    const isMatch4 = regAssets.test(s)
+    if(isMatch4 && !v.file.dir) {
       if(!tmpAtom.assets) tmpAtom.assets = []
-      tmpAtom.assets.push(file)
+      tmpAtom.assets.push(v.file)
       return
     }
   })

@@ -7,6 +7,12 @@ import type {
   ContentLocalTable
 } from "~/types/types-table"
 
+
+export interface LiuJSZip {
+  relativePath: string
+  file: JSZip.JSZipObject
+}
+
 export interface ImportedAtom {
   dateStr?: string
   cardJSON?: JSZip.JSZipObject
