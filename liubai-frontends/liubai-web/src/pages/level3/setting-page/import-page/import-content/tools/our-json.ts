@@ -118,15 +118,16 @@ async function getImportedAtom2(
   // 动态本地不存在
   if(!res) {
 
+    // 原因见: ../../../README.md
     if(c.cloud_id) {
       c._id = ider.createThreadId()
     }
 
+    delete c.cloud_id
     c.user = myCtx.userId
     c.member = myCtx.memberId
     c.spaceId = myCtx.spaceId
     c.spaceType = myCtx.spaceType
-    delete c.cloud_id
     let ia2 = await _getIa2(c, "new")
     return ia2
   }

@@ -280,6 +280,11 @@
     "good_news": "Good News!",
     "i1": "No data needs to be imported",
     "i2": "Are you sure to import?",
-    "i3": "It is expected to add {newNum} and update {updateNum}"
+    "i3": "It is expected to add {newNum} and update {updateNum}",
+    "i4": "Batch adding failed. Please try agian later.",
+    "i5": "Batch updating failed. Please try again later.",
+    "importing": "Importing",
+    "well_done": "Well Done🎉",
+    "imported": "Imported successfully"
   }
 }
