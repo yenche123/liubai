@@ -5,27 +5,8 @@ import type { ContentLocalTable } from "~/types/types-table"
 import { db } from "~/utils/db"
 import liuUtil from "~/utils/liu-util"
 import transferUtil from "~/utils/transfer-util"
-import valTool from "~/utils/basic/val-tool"
 
 export async function loadIntoDB(list: ImportedAtom2[]) {
-
-
-  cui.showLoading({ title_key: "import.importing" })
-
-  await valTool.waitMilli(10)
-
-  cui.hideLoading()
-
-  await cui.showModal({
-    title_key: "import.well_done",
-    content_key: "import.imported",
-    showCancel: false,
-    confirm_key: "common.back"
-  })
-
-  return true
-
-
   const newList: ContentLocalTable[] = []
   const updatedList: ContentLocalTable[] = []
   list.forEach(v => {
@@ -57,7 +38,7 @@ export async function loadIntoDB(list: ImportedAtom2[]) {
     console.log("去批量添加动态............")
     const addRes = await putToDB(newList)
     if(!addRes) {
-      await cui.hideLoading()
+      cui.hideLoading()
       await cui.showModal({ 
         title_key: "tip.tip", 
         content_key: "import.i4", 
@@ -71,7 +52,7 @@ export async function loadIntoDB(list: ImportedAtom2[]) {
     console.log("去批量更新动态............")
     const uRes = await putToDB(updatedList)
     if(!uRes) {
-      await cui.hideLoading()
+      cui.hideLoading()
       await cui.showModal({ 
         title_key: "tip.tip", 
         content_key: "import.i5", 
@@ -81,8 +62,7 @@ export async function loadIntoDB(list: ImportedAtom2[]) {
     }
   }
 
-  
-  await cui.hideLoading()
+  cui.hideLoading()
   await cui.showModal({
     title_key: "import.well_done",
     content_key: "import.imported",
