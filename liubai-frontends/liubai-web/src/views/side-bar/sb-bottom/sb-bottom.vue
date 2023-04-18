@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
+import liuUtil from '~/utils/liu-util';
 
 defineEmits<{
   (event: "tapclose"): void
@@ -13,6 +14,7 @@ defineProps({
 
 const { t } = useI18n()
 const color = "var(--main-note)"
+const shortcut = ` (${liuUtil.getHelpTip('Mod')} + \\)`
 
 </script>
 <template>
@@ -24,7 +26,7 @@ const color = "var(--main-note)"
     </div>
     <div class="liu-hover sbb-close"
       @click="$emit('tapclose')"
-      :aria-label="t('dnd.collapse')"
+      :aria-label="t('dnd.collapse') + shortcut"
     >
       <svg-icon 
         class="sbb-close-svg" 

@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import cfg from "../config";
 import { useWindowSize } from "../hooks/useVueUse"
+import type { Prettify } from "~/utils/basic/type-tool";
 
 export type LayoutChangeType = "window" | "sidebar" | ""
 
@@ -27,7 +28,7 @@ export const useLayoutStore = defineStore("layout", () => {
   }
 })
 
-export type LayoutStore = ReturnType<typeof useLayoutStore>
+export type LayoutStore = Prettify<ReturnType<typeof useLayoutStore>>
 export interface LayoutType {
   sidebarWidth: number
   clientWidth: number

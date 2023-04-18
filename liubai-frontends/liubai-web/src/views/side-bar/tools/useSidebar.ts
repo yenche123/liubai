@@ -5,26 +5,16 @@ import { useWindowSize } from "~/hooks/useVueUse";
 import cfg from "~/config";
 import valTool from "~/utils/basic/val-tool";
 import time from "~/utils/basic/time";
-import type { OpenType } from "~/types/types-view";
 import { storeToRefs } from "pinia";
 import liuApi from "~/utils/liu-api";
 import { sidebarWidthKey } from "~/utils/provide-keys"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
+import { useSbKeyboard } from "./useSbKeyboard"
+import type { SbData } from "./types";
 
 const LISTEN_DELAY = 300
 let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后视觉上呈现的宽度
 let lastWinResizeStamp = 0
-
-interface SbData {
-  openType: OpenType
-  minSidebarPx: number
-  sidebarWidthPx: number
-  sidebarHeightPx: number
-  maxSidebarPx: number
-  isAnimating: boolean
-  isActivate: boolean
-  showHandle: boolean
-}
 
 const sbData = reactive<SbData>({
   openType: "opened",
@@ -62,6 +52,9 @@ export function useSidebar() {
   const onTapOpenBtn = () => {
     toOpen(layoutStore)
   }
+
+  // 监听 Ctrl + \
+  useSbKeyboard(layoutStore, sbData, onTapOpenBtn, onTapCloseBtn, LISTEN_DELAY)
 
   return {
     sbData,

@@ -3,6 +3,7 @@
 
 import { useI18n } from 'vue-i18n';
 import { useSbOpen } from './tools/useSbOpen';
+import liuUtil from '~/utils/liu-util';
 
 defineEmits<{
   (event: "tapopen"): void
@@ -14,13 +15,14 @@ const {
 
 const { t } = useI18n()
 
+const shortcut = ` (${liuUtil.getHelpTip('Mod')} + \\)`
 
 </script>
 <template>
 
   <div class="liu-hover sb-open"
     @click="$emit('tapopen')"
-    :aria-label="t('dnd.sidebar')"
+    :aria-label="t('dnd.sidebar') + shortcut"
   >
     <svg-icon
       name="triangle_open"
