@@ -15,25 +15,41 @@ const {
 
 const { t } = useI18n()
 
-const shortcut = ` (${liuUtil.getHelpTip('Mod')} + \\)`
+const shortcut = `${liuUtil.getHelpTip('Mod')} + \\`
 
 </script>
 <template>
 
-  <div class="liu-hover sb-open"
-    @click="$emit('tapopen')"
-    :aria-label="t('dnd.sidebar') + shortcut"
-  >
-    <svg-icon
-      name="triangle_open"
-      color="var(--main-note)"
-      class="sb-open-svg"
-    ></svg-icon>
+  <div class="sbo-container">
+    <LiuTooltip placement="right" 
+      strategy="fixed"
+      :aria-label="t('dnd.sidebar')"
+      :shortcut="shortcut"
+    >
+      <div class="liu-hover sb-open"
+        @click="$emit('tapopen')"
+      >
+        <svg-icon
+          name="triangle_open"
+          color="var(--main-note)"
+          class="sb-open-svg"
+        ></svg-icon>
+      </div>
+    </LiuTooltip>
   </div>
 
 </template>
 <style lang="scss" scoped>
 
+.sbo-container {
+  width: 16px;
+  height: 44px;
+  position: fixed;
+  left: 0;
+  bottom: 30px;
+  z-index: 300;
+  visibility: v-bind("show ? 'visible' : 'hidden'");
+}
 
 .sb-open {
   width: 14px;
@@ -41,10 +57,6 @@ const shortcut = ` (${liuUtil.getHelpTip('Mod')} + \\)`
   display: flex;
   align-items: center;
   justify-content: center;
-  position: fixed;
-  left: 0;
-  bottom: 30px;
-  z-index: 300;
   cursor: pointer;
   border-top-right-radius: 9px;
   border-bottom-right-radius: 9px;
@@ -53,7 +65,6 @@ const shortcut = ` (${liuUtil.getHelpTip('Mod')} + \\)`
   background-color: var(--sidebar-bg);
   transition: .15s;
   transform-origin: center left;
-  visibility: v-bind("show ? 'visible' : 'hidden'");
  
   .sb-open-svg {
     position: relative;
