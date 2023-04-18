@@ -12,6 +12,8 @@ import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { tagIdsToShows } from "../system/tag-related";
 import liuUtil from "../liu-util";
 
+
+// 封装 thread 成 ThreadShow
 function packThread(
   content: ContentLocalTable,
   collections: CollectionLocalTable[] | undefined,
@@ -61,6 +63,9 @@ function packThread(
     stateShow = commonPack.getStateShow(v.stateId, wStore)
   }
 
+  // 删除于 xxxx-xx-xx
+  let removedStr = v.oState === "REMOVED" ? liuUtil.showBasicDate(v.updatedStamp) : undefined
+
   const obj: ThreadShow = {
     _id,
     cloud_id: v.cloud_id,
@@ -97,6 +102,7 @@ function packThread(
     editedStamp: v.editedStamp,
     createdStr: liuUtil.showBasicDate(v.createdStamp),
     editedStr: liuUtil.getEditedStr(v.createdStamp, v.editedStamp),
+    removedStr,
     tags,
     tagSearched: v.tagSearched,
     stateId: v.stateId,

@@ -75,6 +75,7 @@ export interface ThreadShow {
   editedStamp: number       // 动态被编辑的时间戳
   createdStr: string
   editedStr?: string
+  removedStr?: string
   tags?: TagShow[]
   tagSearched?: string[]
   stateId?: string

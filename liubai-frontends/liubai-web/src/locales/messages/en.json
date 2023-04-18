@@ -200,7 +200,8 @@
     "todo": "Todo",
     "select_state": "Select",
     "switch_to": "Switch to ",
-    "img_file": "[Image or file]"
+    "img_file": "[Image or file]",
+    "deleted_at": "Deleted {date}"
   },
   "state_related": {
     "add_state": "New State",

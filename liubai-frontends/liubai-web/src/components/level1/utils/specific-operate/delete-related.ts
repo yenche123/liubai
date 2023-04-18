@@ -5,6 +5,7 @@ import cui from "../../../custom-ui"
 import dbOp from "../db-op"
 import time from "~/utils/basic/time"
 import stateController from "~/utils/controllers/state-controller/state-controller"
+import liuUtil from "~/utils/liu-util"
 
 export async function deleteThread(
   oldThread: ThreadShow,
@@ -12,10 +13,12 @@ export async function deleteThread(
   userId: string,
 ) {
   const newThread = valTool.copyObject(oldThread)
+  const now = time.getTime()
 
   // 1. 修改数据
   newThread.oState = "REMOVED"
-  newThread.updatedStamp = time.getTime()
+  newThread.updatedStamp = now
+  newThread.removedStr = liuUtil.showBasicDate(now)
 
   // 2. 通知到全局
   const tsStore = useThreadShowStore()
@@ -40,6 +43,7 @@ export async function restoreThread(
   // 1. 修改数据
   newThread.oState = "OK"
   newThread.updatedStamp = time.getTime()
+  delete newThread.removedStr
 
   // 2. 通知到全局
   const tsStore = useThreadShowStore()

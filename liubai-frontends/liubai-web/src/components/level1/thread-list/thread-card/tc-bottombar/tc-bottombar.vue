@@ -4,6 +4,7 @@ import type { ThreadShow } from '~/types/types-content';
 import type { TlViewType } from "../../tools/types";
 import { useTcBottombar } from './tools/useTcBottombar';
 import { tcbEmits } from "./tools/types"
+import { useI18n } from 'vue-i18n';
 
 export default defineComponent({
   props: {
@@ -18,10 +19,12 @@ export default defineComponent({
   },
   emits: tcbEmits,
   setup(props, { emit }) {
+    const { t } = useI18n()
     const default_color = "var(--main-code)"
     const { footerMenu, onTapMenuItem } = useTcBottombar(props, emit)
 
     return {
+      t,
       default_color,
       footerMenu,
       onTapMenuItem,
@@ -34,7 +37,8 @@ export default defineComponent({
 
   <div class="tcb-container">
     <div class="tcb-time">
-      <span v-if="threadData.editedStr">{{ threadData.editedStr }}</span>
+      <span v-if="threadData.removedStr">{{ t('thread_related.deleted_at', { date: threadData.removedStr }) }}</span>
+      <span v-else-if="threadData.editedStr">{{ threadData.editedStr }}</span>
       <span v-else>{{ threadData.createdStr }}</span>
     </div>
 

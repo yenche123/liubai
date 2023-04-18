@@ -200,7 +200,8 @@
     "todo": "待办",
     "select_state": "选择状态",
     "switch_to": "切换至 ",
-    "img_file": "[图片或文件]"
+    "img_file": "[图片或文件]",
+    "deleted_at": "删除于 {date}"
   },
   "state_related": {
     "add_state": "添加状态",
