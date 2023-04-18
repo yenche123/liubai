@@ -14,7 +14,7 @@ defineProps({
 
 const { t } = useI18n()
 const color = "var(--main-note)"
-const shortcut = ` (${liuUtil.getHelpTip('Mod')} + \\)`
+const shortcut = `${liuUtil.getHelpTip('Mod')} + \\`
 
 </script>
 <template>
@@ -24,16 +24,23 @@ const shortcut = ` (${liuUtil.getHelpTip('Mod')} + \\)`
     <div class="sbb-main">
 
     </div>
-    <div class="liu-hover sbb-close"
-      @click="$emit('tapclose')"
-      :aria-label="t('dnd.collapse') + shortcut"
+
+    <LiuTooltip 
+      placement="left"
+      :aria-label="t('dnd.collapse')"
+      :shortcut="shortcut"
     >
-      <svg-icon 
-        class="sbb-close-svg" 
-        name="triangle_open" 
-        :color="color"
-      ></svg-icon>
-    </div>
+      <div class="liu-hover sbb-close"
+        @click="$emit('tapclose')"
+      >
+        <svg-icon 
+          class="sbb-close-svg" 
+          name="triangle_open" 
+          :color="color"
+        ></svg-icon>
+      </div>
+    </LiuTooltip>
+    
 
   </div>
 
