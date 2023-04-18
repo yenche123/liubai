@@ -50,9 +50,8 @@ const onTapSearch = () => {
   cui.showSearchEditor({ type: "search" })
 }
 
-
 const iconColor = "var(--main-normal)"
-const searchTip = ` (${liuUtil.getHelpTip('Mod')} K)`
+const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
 
 </script>
 <template>
@@ -72,14 +71,21 @@ const searchTip = ` (${liuUtil.getHelpTip('Mod')} K)`
   <div class="sc-toolbar">
 
     <!-- 搜索 -->
-    <div class="liu-hover liu-hover_first sct-box"
-      @click="onTapSearch"
-      :aria-label="t('common.search') + searchTip"
+    <LiuTooltip
+      placement="bottom-start"
+      :distance="4"
+      :aria-label="t('common.search')"
+      :shortcut="searchTip"
     >
-      <svg-icon name="search" class="sct-icon"
-        :color="iconColor"
-      ></svg-icon>
-    </div>
+      <div class="liu-hover liu-hover_first sct-box"
+        @click="onTapSearch"
+      >
+        <svg-icon name="search" class="sct-icon"
+          :color="iconColor"
+        ></svg-icon>
+      </div>
+    </LiuTooltip>
+    
 
     <!-- 通知 -->
     <NaviLink 

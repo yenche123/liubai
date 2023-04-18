@@ -66,7 +66,7 @@
   --avatar-color: #f1f1f1;
 
   /** 自定义组件: 加载框 */
-  --cui-loading: rgba(46, 46, 46, .88);
+  --cui-loading: rgba(46, 46, 46, .91);
   --on-cui-loading: #eeeeee;
   --cui-loading-shadow: 0 10px 20px 1px rgba(0,0,0,.38);
 

@@ -74,7 +74,7 @@
     opacity: 0;
     z-index: 5210;
     transition: opacity .15s;
-    transition-delay: 800ms;
+    transition-delay: 500ms;
   }
 
   .liu-hover[aria-label]:hover::after {

@@ -20,6 +20,10 @@ defineProps({
   distance: {
     type: Number,
     default: 10
+  },
+  showDelay: {
+    type: Number,
+    default: 500
   }
 })
 
@@ -30,6 +34,7 @@ defineProps({
   <VTooltip :placement="placement" 
     :strategy="strategy"
     :distance="distance"
+    :delay="{ show: showDelay, hide: 0 }"
     theme="liu-tooltip"
   >
 
@@ -60,11 +65,13 @@ defineProps({
 .lt-title {
   color: var(--on-cui-loading);
   font-size: var(--mini-font);
+  user-select: none;
 }
 
 .lt-content {
   color: var(--shortcut-text);
   font-size: var(--state-font);
+  user-select: none;
 }
 
 
