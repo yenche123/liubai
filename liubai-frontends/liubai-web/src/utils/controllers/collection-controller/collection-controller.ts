@@ -3,14 +3,9 @@ import { db } from "../../db"
 import localCache from "../../system/local-cache"
 import type { TcListOption } from "../thread-controller/type"
 import { getMemberShows } from "../equip-content/equip-content"
-import type { TagShow, ThreadShow, StateShow } from "~/types/types-content";
-import imgHelper from "../../images/img-helper"
-import type { TipTapJSONContent } from "~/types/types-editor";
-import { tagIdsToShows } from "../../system/tag-related";
+import type { ThreadShow } from "~/types/types-content";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
-import liuUtil from "../../liu-util"
-import commonPack from "../tools/common-pack"
-import transferUtil from "~/utils/transfer-util"
+import showThread from "~/utils/show/show-thread"
 interface MyCollectionOpt {
   content_ids: string[]
 }
@@ -51,9 +46,6 @@ export async function getThreadsByCollectionOrEmoji(
   let res: CollectionLocalTable[] = []
 
   const filterFunc = (item: CollectionLocalTable) => {
-    // console.log("opt::: ", opt)
-    // console.log("item:::", item)
-    // console.log(" ")
     if(item.spaceId !== spaceId) return false
     if(item.oState !== "OK") return false
     if(user_id !== item.user) return false
@@ -103,95 +95,12 @@ export async function getThreadsByCollectionOrEmoji(
     const c = res[i]
     const v = res2.find(v1 => v1._id === c.content_id)
     if(!v) continue
-    const { 
-      member: m, 
-      _id, 
-      user: u, 
-      liuDesc, 
-      spaceId,
-      title
-    } = v
 
-    let myFavorite = false
-    let myFavoriteStamp: number | undefined
-    let myEmoji = ""
-    let myEmojiStamp: number | undefined
-    if(c.infoType === "EXPRESS") {
-      myEmoji = c.emoji ?? ""
-      myEmojiStamp = c.insertedStamp
-    }
-    else if(c.infoType === "FAVORITE") {
-      myFavorite = c.oState === "OK"
-      myFavoriteStamp = c.insertedStamp
-    }
+    const { member } = v
+    let _collections = [c]
+    let creator = members.find(v2 => v2._id === member)
 
-    let creator = members.find(v2 => v2._id === m)
-    let isMine = false
-    if(u && user_id && u === user_id) isMine = true
-
-    const images = v.images?.map(v2 => {
-      return imgHelper.imageStoreToShow(v2)
-    })
-
-    const desc = transferUtil.tiptapToText(liuDesc ?? [])
-    let newDesc = commonPack.packLiuDesc(liuDesc, title)
-    let tiptapContent: TipTapJSONContent | undefined = newDesc?.length 
-      ? { type: "doc", content: newDesc } : undefined
-
-    let tags: TagShow[] = []
-    let stateShow: StateShow | undefined = undefined
-    // 判断当前工作区与当前动态是否匹配，若匹配则可展示标签和状态
-    let canTag = spaceId === wStore.spaceId
-    // 如果动态所属的工作区与当前工作区匹配
-    if(canTag) {
-      const tagData = v.tagIds ? tagIdsToShows(v.tagIds) : undefined
-      tags = tagData?.tagShows ?? []
-      stateShow = commonPack.getStateShow(v.stateId, wStore)
-    }
-
-    const obj: ThreadShow = {
-      _id,
-      cloud_id: v.cloud_id,
-      insertedStamp: v.insertedStamp,
-      updatedStamp: v.updatedStamp,
-      oState: v.oState,
-      user_id: u,
-      member_id: m,
-      spaceId,
-      spaceType: v.spaceType,
-      visScope: v.visScope,
-      storageState: v.storageState,
-      title,
-      content: tiptapContent,
-      briefing: commonPack.getBriefing(newDesc),
-      summary: commonPack.getSummary(liuDesc, v.files),
-      desc,
-      images,
-      imgLayout: imgHelper.getImgLayout(images),
-      files: v.files,
-      whenStamp: v.whenStamp,
-      remindStamp: v.remindStamp,
-      remindMe: v.remindMe,
-      creator,
-      isMine,
-      myFavorite,
-      myFavoriteStamp,
-      myEmoji,
-      myEmojiStamp,
-      commentNum: v.commentNum ?? 0,
-      emojiData: v.emojiData,
-      pinStamp: v.pinStamp,
-      createdStamp: v.createdStamp,
-      editedStamp: v.editedStamp,
-      createdStr: liuUtil.showBasicDate(v.createdStamp),
-      editedStr: liuUtil.getEditedStr(v.createdStamp, v.editedStamp),
-      tags,
-      tagSearched: v.tagSearched,
-      stateId: v.stateId,
-      stateShow,
-      config: v.config,
-    }
-
+    let obj = showThread.packThread(v, _collections, creator, user_id, wStore)
     list.push(obj)
   }
 
