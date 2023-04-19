@@ -30,7 +30,7 @@ export function resToAtoms(
 
     // 处理 commentId threadId
     let commentId: string | undefined = undefined
-    let threadId = v.underThread ?? ""
+    let threadId = v.parentThread ?? ""
     if(threadId) {
       commentId = v._id
     }

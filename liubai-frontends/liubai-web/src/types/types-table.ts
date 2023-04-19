@@ -60,8 +60,9 @@ export interface ContentLocalTable extends BaseLocalTable {
   remindMe?: LiuRemindMe
   commentNum?: number
   emojiData: EmojiData
-  underThread?: string
-  replyTo?: string
+  parentThread?: string
+  parentComment?: string
+  replyToComment?: string
   pinStamp?: number         // 被置顶时的时间戳
   createdStamp: number      // 动态被创建的时间戳
   editedStamp: number       // 动态被编辑的时间戳
@@ -81,9 +82,9 @@ export interface DraftLocalTable extends BaseLocalTable {
   spaceType: SpaceType
   threadEdited?: string
   commentEdited?: string
-  underThread?: string
-  underComment?: string
-  replyComment?: string
+  parentThread?: string
+  parentComment?: string
+  replyToComment?: string
   visScope?: VisScope
   storageState?: StorageState
   title?: string

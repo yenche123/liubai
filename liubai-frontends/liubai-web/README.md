@@ -15,7 +15,7 @@ https://www.svgrepo.com/
 
 https://icons.radix-ui.com/
 
-## 注意事项
+## 一些常用碎片
 
 1. `vc-` 开头的 css 类名，会跟 `vconsole` 库的样式冲突，请避免使用。
 
@@ -24,4 +24,29 @@ https://icons.radix-ui.com/
 3. 升级 tiptap 下的依赖至最新，使用 `pnpm up @tiptap/* --latest`
 
 4. 函数式获取应用个人信息（userId / memberId / spaceId / spaceType）上下文，使用 `checker.getMyContext()` 
+
+
+## 评论
+
+`一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
+
+`二级评论`: 严格定义为回复一级评论的评论，这种评论其 `parentComment` 和 `replyToComment` 属性值皆有值且相同
+
+`n级评论`: 严格定义为回复 `n-1` 级的评论，其中 n >= 3。这种评论，其 `replyToComment` 为其 `n-1` 级评论的 `_id`，而 `parentComment` 为其 `n-1` 级评论的 `replyToComment`
+
+`parentThread`: 所有的评论都必须有该值，用于表示该评论在哪条动态下
+
+`parentComment`: 所有直接回复动态的评论 (即一级评论) 都 **没有** 该属性值，二级即以上的评论都有该值
+
+`replyToComment`: 表示回复哪条评论，所有二级及以上的评论都必须有该值。
+
+`主评论`: 一级评论
+
+`子评论`: 二级及其以上的评论
+
+### 新增回复 / 删除回复
+
+1. 新增子评论 a 时，被回复的那一条 comment (即 a 的 `replyToComment`) 的 `commentNum` 自动 +1，同时 a 的 `parentThread` 的 `commentNum` 也自动 +1。若 a 的 `parentComment` 与 `replyToComment` 不一致时，也把 `parentComment` 的 `commentNum` 自动 +1
+2. 删除同理，当 a 被删除时，将它的 `replyToComment` 的 `commentNum` 自动 -1，同时把 a 的 `parentThread` 的 `commentNum` 也自动 -1。若 a 的 `parentComment` 与 `replyToComment` 不一致时，也把 `parentComment` 的 `commentNum` 自动 -1 
+
 
