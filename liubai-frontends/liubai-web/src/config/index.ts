@@ -33,7 +33,7 @@ export default {
   iframe_keys: ["outq", "gpt3", "pdf", "xhs", "bing", "github"],
 
   // 用侧边栏还是详情页打开的分野界限
-  vice_detail_breakpoint: 901,
+  vice_detail_breakpoint: 932,   // 值得注意的是，当侧边栏被收起来时，会 -200 变成 732
 
   max_kanban_thread: 16,   // 最多 max_kanban_thread 个动态展示在列表里
                            // 则有 max_kanban_thread+1 个 id 存到 workspace.stateList[].contentIds 中

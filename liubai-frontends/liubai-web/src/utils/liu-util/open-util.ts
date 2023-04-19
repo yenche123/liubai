@@ -4,6 +4,7 @@ import type { WhatDetail } from "~/types/other/types-custom"
 import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
 import thirdLink from "~/config/third-link"
+import { useLayoutStore } from "~/views/useLayoutStore"
 
 interface RrOpt {
   rr: RouteAndLiuRouter
@@ -15,7 +16,12 @@ export type InnerOrOutter = "inner" | "outter"
 
 function toWhatDetail(): WhatDetail {
   const { width } = useWindowSize()
-  if(width.value < cfg.vice_detail_breakpoint) return "detail-page"
+
+  let point = cfg.vice_detail_breakpoint
+  const { sidebarWidth } = useLayoutStore()
+  if(sidebarWidth <= 0) point -= 200
+  
+  if(width.value < point) return "detail-page"
   return "vice-view"
 }
 
