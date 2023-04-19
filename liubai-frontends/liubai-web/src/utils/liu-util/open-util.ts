@@ -19,7 +19,7 @@ function toWhatDetail(): WhatDetail {
 
   let point = cfg.vice_detail_breakpoint
   const { sidebarWidth } = useLayoutStore()
-  if(sidebarWidth <= 0) point -= 200
+  if(sidebarWidth <= 0) point -= 150
   
   if(width.value < point) return "detail-page"
   return "vice-view"
