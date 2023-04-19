@@ -164,7 +164,7 @@ export default defineComponent({
   background-color: var(--card-bg);
   box-shadow: var(--card-shadow-2);
   transition: border-radius .3s;
-  margin-bottom: 16px;
+  margin-block-end: 10px;
 
   @media(hover: hover) {
     &:hover {
