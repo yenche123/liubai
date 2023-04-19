@@ -263,7 +263,7 @@
   },
   "export": {
     "markdown": "导出成 markdown 文件",
-    "json": "导出成 json 文件",
+    "json": "导出成 JSON 文件",
     "json_tip": "支持再导入",
     "take_time": "这将需要一点时间，确定要继续吗？",
     "no_data": "没有可供导出的动态",
