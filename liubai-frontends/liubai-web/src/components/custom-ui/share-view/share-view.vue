@@ -290,11 +290,11 @@ const { t } = useI18n()
   .sv-app-item {
     padding: 8px;
     font-size: var(--state-font);
-    min-width: 32px;
+    min-width: 34px;
 
     .sv-app-item_svg {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
     }
 
     .sva-text {
