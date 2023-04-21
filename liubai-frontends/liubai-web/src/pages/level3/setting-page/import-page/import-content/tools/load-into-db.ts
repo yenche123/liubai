@@ -5,14 +5,22 @@ import type { ContentLocalTable } from "~/types/types-table"
 import { db } from "~/utils/db"
 import liuUtil from "~/utils/liu-util"
 import transferUtil from "~/utils/transfer-util"
+import time from "~/utils/basic/time"
 
 export async function loadIntoDB(list: ImportedAtom2[]) {
   const newList: ContentLocalTable[] = []
   const updatedList: ContentLocalTable[] = []
-  list.forEach(v => {
+
+  const now = time.getTime()
+
+  list.forEach((v, i) => {
     const s = v.status
     const data = liuUtil.toRawData(v.threadData)
-    if(s === "new") newList.push(data)
+    if(s === "new") {
+      data.insertedStamp = now + i
+      data.updatedStamp = now + i
+      newList.push(data)
+    }
     else if(s === "update_required") updatedList.push(data)
   })
 
