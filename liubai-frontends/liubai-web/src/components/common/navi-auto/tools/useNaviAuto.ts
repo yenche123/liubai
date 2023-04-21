@@ -65,7 +65,6 @@ export function useNaviAuto(
   
 
   const onTapMenu = () => {
-    console.log("onTapMenu...........")
     sideBar.showFixedSideBar()
   }
 
