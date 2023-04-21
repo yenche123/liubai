@@ -79,6 +79,7 @@ export default defineComponent({
     overflow: hidden;
     user-select: none;
     cursor: pointer;
+    transition: .15s;
 
     .tctsb-bg {
       position: absolute;
@@ -104,6 +105,13 @@ export default defineComponent({
       stroke: var(--main-tip);
       stroke-width: 60;
     }
+  }
+
+  @media(hover: hover) {
+    .tct-state-box:hover {
+      opacity: .8;
+    }
+
   }
 
 }
