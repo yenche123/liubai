@@ -4,5 +4,6 @@
   ],
   "i18n-ally.keystyle": "nested",
   "volar.inlayHints.eventArgumentInInlineHandlers": false,
-  "typescript.tsdk": "D:/research/TypeScript/built/local"
+  "typescript.tsdk": "D:/research/TypeScript/built/local",
+  "vue.features.codeActions.enable": false
 }
