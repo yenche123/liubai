@@ -19,6 +19,7 @@ export interface ShareViewData {
   icsLink: string
   twitterLink: string
   emailLink: string
+  lineLink: string
 }
 
 export type ShareViewRes = true
@@ -28,9 +29,10 @@ export type SvResolver = (res: ShareViewRes) => void
 export type IcsDateTime = [number, number, number, number, number]
 
 export interface ExportData {
-  title: string
-  desc: string
-  content: string
+  title: string          // thread 的标题
+  desc: string           // thread 的内文
+  content: string        // thread 的标题 + 内文（大于 140 字符，会修剪）
+  content2: string       // thread 的标题 + 内文（完整的，不会修剪）
   startStamp?: number
   alarms?: Alarm[]
 }

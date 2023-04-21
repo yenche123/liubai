@@ -6,6 +6,7 @@ import liuUtil from "~/utils/liu-util";
 import { createEvent } from "ics"
 import type { EventAttributes, Alarm } from "ics"
 import { i18n } from "~/locales";
+import liuApi from "~/utils/liu-api";
 
 export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
 
@@ -29,15 +30,20 @@ export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
 
   // 6. 处理 mail
   handleEmail(svData, thread, ed)
+
+  // 7. 处理 LINE
+  handleLINE(svData, thread, ed)
 }
 
 function getExportData(thread: ThreadShow) {
   let title = thread.title ?? ""
   let desc = thread.desc ?? ""
   let content = thread.title ?? ""
+  let content2 = thread.title ?? ""
 
   if(desc) {
     content += ("\n" + desc)
+    content2 += ("\n" + desc)
   }
 
   if(!title && desc) {
@@ -49,7 +55,7 @@ function getExportData(thread: ThreadShow) {
   if(title.length > 60) {
     title = title.substring(0, 60)
   }
-  // 详情字数超过 140 时
+  // 如果字数超过 140 时，desc / content 需要修剪
   if(desc.length > 140) {
     desc = desc.substring(0, 140)
   }
@@ -60,6 +66,7 @@ function getExportData(thread: ThreadShow) {
   title = title.trim()
   desc = desc.trim()
   content = content.trim()
+  content2 = content2.trim()
 
   if(desc && title === desc) {
     desc = ""
@@ -74,7 +81,7 @@ function getExportData(thread: ThreadShow) {
   }
 
   let exportData: ExportData = {
-    title, desc, startStamp, content
+    title, desc, startStamp, content, content2
   }
 
   let alarm: Alarm = {
@@ -252,4 +259,33 @@ function handleEmail(
 
   const eLink = url.toString()
   svData.emailLink = eLink
+}
+
+
+function handleLINE(
+  svData: ShareViewData, 
+  thread: ThreadShow,
+  ed: ExportData,
+) {
+
+  const cha = liuApi.getCharacteristic()
+  const { isMobile } = cha
+  if(!isMobile) {
+    console.log("不是手机啦.................")
+    svData.lineLink = ""
+    return
+  }
+
+  if(!ed.content2) {
+    svData.lineLink = ""
+    return
+  }
+
+  const url = new URL(thirdLink.LINE_SHARE_TXT)
+  const sp = url.searchParams
+
+  sp.append("text", ed.content2)
+
+  const lineLink = url.toString()
+  svData.lineLink = lineLink
 }

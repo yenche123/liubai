@@ -86,6 +86,17 @@ const { t } = useI18n()
           ></svg-icon>
         </a>
 
+        <a v-if="svData.lineLink" 
+          class="liu-hover sv-app-item" 
+          target="_blank" 
+          :href="svData.lineLink"
+          title="LINE"
+        >
+          <svg-icon name="logos-line" :coverFillStroke="false"
+            class="sv-app-item_svg"
+          ></svg-icon>
+        </a>
+
         <a 
           v-if="svData.icsLink"
           class="liu-hover sv-app-item"
