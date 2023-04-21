@@ -271,7 +271,6 @@ function handleLINE(
   const cha = liuApi.getCharacteristic()
   const { isMobile } = cha
   if(!isMobile) {
-    console.log("不是手机啦.................")
     svData.lineLink = ""
     return
   }

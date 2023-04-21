@@ -42,12 +42,10 @@ export function useTcOperation(
   }
 
   const onTapComment = () => {
-    console.log("onTapComment.........")
     handel_comment(ctx)
   }
 
   const onTapShare = () => {
-    console.log("onTapShare.........")
     handle_share(ctx)
   }
 
