@@ -11,6 +11,7 @@ const {
   show,
   seData,
   onTapMask,
+  onTapClearInput,
 } = initSearchEditor()
 
 const { t } = useI18n()
@@ -33,6 +34,13 @@ const { t } = useI18n()
           v-model="seData.inputTxt"
           autocomplete="nope"
         />
+        <div v-if="seData.trimTxt" class="se-close-box" 
+          @click.stop="onTapClearInput"
+        >
+          <svg-icon class="se-close-svg" name="close-circle"
+            color="var(--main-note)"
+          ></svg-icon>
+        </div>
       </div>
 
       <SearchResults :se-data="seData"></SearchResults>
@@ -141,6 +149,22 @@ const { t } = useI18n()
   }
 }
 
+.se-close-box {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  cursor: pointer;
+  transition: .15s;
+
+  .se-close-svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 .se-footer {
   padding-inline-start: 16px;
   padding-inline-end: 16px;
@@ -185,5 +209,10 @@ const { t } = useI18n()
   }
 }
 
+@media(hover: hover) {
+  .se-close-box:hover {
+    opacity: .8;
+  }
+}
 
 </style>

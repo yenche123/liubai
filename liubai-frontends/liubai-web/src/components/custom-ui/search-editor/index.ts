@@ -63,6 +63,7 @@ export function initSearchEditor() {
     show,
     seData,
     onTapMask,
+    onTapClearInput,
   }
 }
 
@@ -89,7 +90,7 @@ function initProvideData() {
   const provideData: SearchFuncs = {
     tapitem: onTapItem,
     mouseenteritem: onMouseEnter,
-    clearitem: onTapClear,
+    clearitem: onTapClearItem,
   }
   provide(searchFuncsKey, provideData)
 }
@@ -107,7 +108,7 @@ function onMouseEnter(newIndicator: string) {
 }
 
 // 清除某个最近搜索的记录
-async function onTapClear(listType: SearchListType, atomId: string) {
+async function onTapClearItem(listType: SearchListType, atomId: string) {
   if(listType !== "recent") return
   let idx = -1
   let txt = ""
@@ -170,7 +171,7 @@ function listenInputChange() {
     seData.suggestList = list1
 
     // 2. 携带 mode 去获取最近搜索的关键词
-    const list2 = await searchController.searchRecent(opt1)
+    const list2 = searchController.searchRecent(opt1)
     seData.recentList = list2
 
     // 3. 设置当前的 indicator
@@ -399,4 +400,28 @@ function getConfirmRes() {
 
 function onTapMask() {
   toCancel()
+}
+
+async function onTapClearInput() {
+  seData.inputTxt = ""
+  seData.trimTxt = ""
+  seData.innerList = []
+
+  // 1. 携带 mode 去获取建议
+  let opt1 = {
+    mode: seData.mode,
+    excludeThreads: seData.excludeThreads,
+  }
+  const list1 = await searchController.searchSuggest(opt1)
+  seData.suggestList = list1
+
+  // 2. 携带 mode 去获取最近搜索的关键词
+  const list2 = searchController.searchRecent(opt1)
+  seData.recentList = list2
+
+  // 3. 设置当前的 indicator
+  toSetIndicator()
+
+  if(!inputEl.value) return
+  inputEl.value.focus()
 }
