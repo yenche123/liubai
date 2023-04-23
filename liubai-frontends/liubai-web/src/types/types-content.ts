@@ -16,10 +16,11 @@ export interface EmojiData {
 }
 
 export interface MemberShow {
-  _id: string
+  _id?: string      // 指的是 memberId, 有可能会没值，因为可能由 user 表来生成 MemberShow
+  user_id?: string  // 如果是 user 表生成的，就会有该值
   name?: string
   avatar?: ImageShow
-  spaceId: string
+  spaceId?: string          // 如果是 user 表生成的，就不会有该值
   oState: MemberState
 }
 
@@ -44,8 +45,8 @@ export interface ThreadShow {
   insertedStamp: number
   updatedStamp: number
   oState: OState
-  user_id?: string
-  member_id: string
+  user_id: string
+  member_id?: string
   spaceId: string
   spaceType: SpaceType
   visScope: VisScope

@@ -19,6 +19,9 @@ export interface UserLocalTable extends BaseLocalTable {
   email?: string
   phone?: string
   workspaces: string[]
+
+  name?: string
+  avatar?: LiuImageStore
 }
 
 export interface WorkspaceLocalTable extends BaseLocalTable {
@@ -41,8 +44,8 @@ export interface MemberLocalTable extends BaseLocalTable {
 export interface ContentLocalTable extends BaseLocalTable {
 
   /** 以下 4 个属性，若赋值后，不得修改 */
-  user?: string
-  member: string
+  user: string
+  member?: string
   spaceId: string
   spaceType: SpaceType
 
@@ -99,9 +102,9 @@ export interface DraftLocalTable extends BaseLocalTable {
 }
 
 export interface CollectionLocalTable extends BaseLocalTable {
-  user?: string
   oState: "OK" | "CANCELED"
-  member: string
+  user: string
+  member?: string
   infoType: "EXPRESS" | "FAVORITE"
   forType: "THREAD" | "COMMENT"
   spaceId: string

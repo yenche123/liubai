@@ -2,8 +2,8 @@ import type { CollectionLocalTable } from "~/types/types-table"
 import { db } from "../../db"
 import localCache from "../../system/local-cache"
 import type { TcListOption } from "../thread-controller/type"
-import { getMemberShows } from "../equip-content/equip-content"
-import type { ThreadShow } from "~/types/types-content";
+import { getMemberShows, getMemberShowsFromUsers } from "../equip-content/equip-content"
+import type { MemberShow, ThreadShow } from "~/types/types-content";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import showThread from "~/utils/show/show-thread"
 interface MyCollectionOpt {
@@ -87,8 +87,23 @@ export async function getThreadsByCollectionOrEmoji(
   if(!res2 || res2.length < 1) return []
 
   // 3. 去加载 作者
-  const member_ids = [...new Set(res2.map(v => v.member))]
-  const members = await getMemberShows(member_ids)
+  let user_ids: string[] = []
+  let member_ids: string[] = []
+  res2.forEach(v => {
+    if(v.member) {
+      if(!member_ids.includes(v.member)) {
+        member_ids.push(v.member)
+      }
+    }
+    else if(v.user) {
+      if(!user_ids.includes(v.user)) {
+        user_ids.push(v.user)
+      }
+    }
+  })
+
+  const memberShows = await getMemberShows(member_ids)
+  const membersShows2 = await getMemberShowsFromUsers(user_ids)
 
   let list: ThreadShow[] = []
   for(let i=0; i<res.length; i++) {
@@ -96,9 +111,15 @@ export async function getThreadsByCollectionOrEmoji(
     const v = res2.find(v1 => v1._id === c.content_id)
     if(!v) continue
 
-    const { member } = v
+    const { member, user } = v
     let _collections = [c]
-    let creator = members.find(v2 => v2._id === member)
+    let creator: MemberShow | undefined = undefined
+    if(member) {
+      creator = memberShows.find(v2 => v2._id === member)
+    }
+    if(!creator) {
+      creator = membersShows2.find(v2 => v2.user_id === user)
+    }
 
     let obj = showThread.packThread(v, _collections, creator, user_id, wStore)
     list.push(obj)

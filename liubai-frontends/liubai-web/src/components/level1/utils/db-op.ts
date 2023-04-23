@@ -16,7 +16,7 @@ async function collect(
   
   // 操作 collection
   const g1: Partial<CollectionLocalTable> = {
-    member: memberId,
+    user: userId,
     infoType: "FAVORITE",
     forType: "THREAD",
     content_id: thread._id,

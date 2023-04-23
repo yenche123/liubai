@@ -21,8 +21,8 @@ export type LiuImageExport = Omit<LiuImageStore, "arrayBuffer" | "cloud_url">
 // 导出格式为 json 时的结构: 
 export interface LiuExportContentJSON extends BaseLocalTable {
   infoType: "THREAD" | "COMMENT"
-  user?: string
-  member: string
+  user: string
+  member?: string
   spaceId: string
   spaceType: SpaceType
   visScope: VisScope
