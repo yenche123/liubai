@@ -199,6 +199,7 @@ const {
   padding-right: 10px;
   transition: .3s;
   scrollbar-color: transparent transparent;
+  will-change: transform;
 }
 
 .sb-box-main_hidden {

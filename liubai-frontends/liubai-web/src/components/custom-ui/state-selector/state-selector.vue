@@ -110,6 +110,7 @@ const { t } = useI18n()
   max-width: 480px;
   border-radius: 20px;
   position: relative;
+  will-change: transform;
   transform: translateY(100%);
   opacity: 0;
   background-color: var(--card-bg);

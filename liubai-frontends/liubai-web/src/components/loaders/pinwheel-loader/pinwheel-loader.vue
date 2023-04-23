@@ -45,6 +45,7 @@ defineProps({
   border-radius: calc(var(--uib-line-weight) / 2);
   background-color: var(--uib-color);
   animation: rotate var(--uib-speed) ease-in-out infinite;
+  will-change: transform;
 }
 
 .pinwheel__line:nth-child(2) {

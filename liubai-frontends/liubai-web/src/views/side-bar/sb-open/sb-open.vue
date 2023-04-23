@@ -65,6 +65,7 @@ const shortcut = `${liuUtil.getHelpTip('Mod')} + \\`
   background-color: var(--sidebar-bg);
   transition: .15s;
   transform-origin: center left;
+  will-change: transform;
  
   .sb-open-svg {
     position: relative;

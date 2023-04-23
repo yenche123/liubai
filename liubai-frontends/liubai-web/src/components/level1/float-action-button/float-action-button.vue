@@ -55,6 +55,7 @@ const onTapBtn = () => {
   overflow: hidden;
   box-shadow: var(--secondary-shadow);
   background-color: var(--secondary-color);
+  will-change: transform;
   transform-origin: bottom right;
   transform: scale(0.01);
   cursor: pointer;

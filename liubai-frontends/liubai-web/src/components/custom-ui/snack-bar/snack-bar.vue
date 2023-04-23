@@ -56,6 +56,7 @@ const {
   padding-bottom: 24px;
   display: flex;
   justify-content: center;
+  will-change: transform;
   transform: translateY(100%);
   opacity: 0;
   transition: v-bind("TRANSITION_DURATION + 'ms'");

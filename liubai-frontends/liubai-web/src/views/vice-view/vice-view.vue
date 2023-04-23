@@ -113,6 +113,7 @@ const onVcStateChange = (newV: VcState) => {
   z-index: 700;
   transition: .3s;
   direction: rtl;
+  will-change: transform;
 }
 
 .vv-container_hidden {

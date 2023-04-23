@@ -207,6 +207,7 @@ export default defineComponent({
   box-shadow: var(--card-shadow-2);
   position: relative;
   user-select: none;
+  will-change: transform;
 }
 
 .kc-kanban-helper {
