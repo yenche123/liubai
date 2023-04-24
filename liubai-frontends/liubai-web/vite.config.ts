@@ -5,6 +5,8 @@ import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import mkcert from 'vite-plugin-mkcert'
 import viteCompression from 'vite-plugin-compression'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import Inspect from 'vite-plugin-inspect'
+
 const { version } = require("./package.json")
 
 const projectRoot = __dirname
@@ -19,6 +21,8 @@ export default defineConfig({
   },
 
   plugins: [
+    Inspect(),
+
     vue(),
 
     viteCompression(),
