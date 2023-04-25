@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useEditContent } from './tools/useEditContent';
 import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
-import CustomEditor from '~/components/custom-editor/custom-editor.vue';
+import CustomEditor from '~/components/editors/custom-editor/custom-editor.vue';
 import { useCustomEditorLastBar } from "~/pages/utils/useCustomEditorLastBar"
 
 const {

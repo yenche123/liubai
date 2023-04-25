@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import type { ThreadShow } from '~/types/types-content';
-import EditorCore from '../../../editor-core/editor-core.vue';
+import EditorCore from '~/components/editors/editor-core/editor-core.vue';
 import TcAttachments from './tc-attachments/tc-attachments.vue';
 import TcActionbar from './tc-actionbar/tc-actionbar.vue';
 import TcBottombar from "./tc-bottombar/tc-bottombar.vue";

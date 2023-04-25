@@ -1,5 +1,5 @@
 import { onMounted, ref, shallowRef } from 'vue';
-import EditorCore from "../../../../editor-core/editor-core.vue"
+import EditorCore from "~/components/editors/editor-core/editor-core.vue"
 import type { TipTapEditor } from "~/types/types-editor"
 import type { TcProps } from "./types"
 import liuApi from '~/utils/liu-api';
