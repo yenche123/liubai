@@ -1,12 +1,7 @@
-import { storeToRefs } from "pinia";
-import { ref, watch, computed } from "vue";
-import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
-import type { MemberShow } from "~/types/types-content";
-import { membersToShows } from "~/utils/other/member-related";
 import type { MenuItem } from "~/components/common/liu-menu/tools/types";
 import type { ScTopEmits } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
-import { useLiuWatch } from "~/hooks/useLiuWatch"
+import { usePrefix, useMyProfile } from "~/hooks/useCommon";
 
 const MORE_ITEMS: MenuItem[] = [
   {
@@ -21,26 +16,8 @@ const MORE_ITEMS: MenuItem[] = [
 
 export function useScTop(emits: ScTopEmits) {
   const rr = useRouteAndLiuRouter()
-  const memberShow = ref<MemberShow | null>(null)
-
-  const wStore = useWorkspaceStore()
-  const { myMember, isCollaborative, spaceId } = storeToRefs(wStore)
-
-  const whenMemberChange = () => {
-    const m = myMember.value
-    if(!m) {
-      return
-    }
-    let [tmp] = membersToShows([m])
-    memberShow.value = tmp
-  }
-  useLiuWatch(myMember, whenMemberChange, true)
-
-  const prefix = computed(() => {
-    const isCo = isCollaborative.value
-    if(isCo) return `/w/${spaceId.value}/`
-    return `/`
-  })
+  const { myProfile } = useMyProfile()
+  const { prefix } = usePrefix()
 
   const onTapMoreMenuItem = (item: MenuItem, index: number) => {
     let link = prefix.value
@@ -51,10 +28,9 @@ export function useScTop(emits: ScTopEmits) {
     emits("canclosepopup")
   }
 
-
   return {
     prefix,
-    memberShow,
+    myProfile,
     MORE_ITEMS,
     onTapMoreMenuItem,
   }

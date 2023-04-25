@@ -29,7 +29,7 @@ const onTapItem = () => {
 
 const {
   prefix,
-  memberShow,
+  myProfile,
   MORE_ITEMS,
   onTapMoreMenuItem,
 } = useScTop(emits)
@@ -58,13 +58,13 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
 
   <div class="sc-avatar-name">
     <LiuAvatar
-      v-if="memberShow"
-      :member-show="memberShow"
+      v-if="myProfile"
+      :member-show="myProfile"
       class="sc-avatar"
     ></LiuAvatar>
     
-    <div class="sc-title" v-if="memberShow?.name">
-      <span>{{ memberShow.name }}</span>
+    <div class="sc-title" v-if="myProfile?.name">
+      <span>{{ myProfile.name }}</span>
     </div>
   </div>
 

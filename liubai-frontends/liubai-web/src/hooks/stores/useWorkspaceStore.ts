@@ -20,7 +20,7 @@ export const useWorkspaceStore = defineStore("workspaceState", () => {
   const spaceId = ref("")
   const spaceType = ref<SpaceType | "">("")
   const memberId = ref("")
-  const workspace = ref("")    // 协作工作区时，是 spaceId；个人工作区时是 ME
+  const workspace = ref("")    // 协作工作区时，是对应的 spaceId；个人工作区时是 ME
   const isCollaborative = ref(false)
 
   const currentSpace = ref<WorkspaceLocalTable | null>(null)
