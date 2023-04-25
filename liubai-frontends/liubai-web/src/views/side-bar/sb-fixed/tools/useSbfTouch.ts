@@ -1,0 +1,100 @@
+import { SimpleFunc } from "~/utils/basic/type-tool"
+import { SbfData } from "./types"
+import { useWindowSize } from "~/hooks/useVueUse"
+import valTool from "~/utils/basic/val-tool"
+import time from "~/utils/basic/time"
+
+
+export function useSbfTouch(
+  sbfData: SbfData,
+  toOpen: SimpleFunc,
+  toClose: SimpleFunc,
+) {
+
+  let startX = 0
+  let lastX = 0
+  let startStamp = 0
+
+  const { width } = useWindowSize()
+
+  const onTouchStart = (e: TouchEvent) => {
+    if(sbfData.state !== "opened") return
+    const aTouch = e.touches[0]
+    if(!aTouch) return
+    startX = aTouch.clientX
+    lastX = startX
+    startStamp = time.getTime()
+  }
+  
+  const onTouchMove = (e: TouchEvent) => {
+    if(!startX) return
+    const aTouch = e.touches[0]
+    if(!aTouch) return
+    lastX = aTouch.clientX
+
+    if(lastX > startX) {
+      startX = lastX
+      return
+    }
+
+    const w = width.value
+    let diffPixel = startX - lastX
+    if(diffPixel > w) diffPixel = w
+    diffPixel = valTool.numToFix(diffPixel, 2)
+
+    // 先设置 透明度
+    let opacity = 1 - (diffPixel / w)
+    opacity = valTool.numToFix(opacity, 4)
+    if(opacity < 0.0001) opacity = 0
+    else if(opacity > 0.9999) opacity = 1
+    sbfData.bgOpacity = opacity
+
+    // 再设置距离
+    if(diffPixel < 0.5) {
+      sbfData.distance = '0'
+    }
+    else {
+      sbfData.distance = `-${diffPixel}px`
+    }
+  }
+
+  const _reset = () => {
+    startX = 0
+    lastX = 0
+  }
+  
+  const onTouchEnd = (e: TouchEvent) => {
+    if(!startX) return
+    const now = time.getTime()
+    const diffStamp = now - startStamp
+    if(diffStamp < 250 && Math.abs(startX - lastX) < 10) {
+      return
+    }
+
+    const aTouch = e.touches[0]
+    if(aTouch?.clientX) {
+      lastX = aTouch.clientX
+    }
+    
+    const w = width.value
+    let diffPixel = startX - lastX
+    let percentage = diffPixel / w
+
+    if(diffPixel < 10 || percentage < 0.3) {
+      toOpen()
+    }
+    else {
+      toClose()
+    }
+    _reset()
+
+  }
+
+  return {
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
+    onTouchCancel: onTouchEnd,
+  }
+}
+

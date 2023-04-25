@@ -2,6 +2,7 @@
 import { initFixedSideBar } from "./index"
 import SbContent from '../sb-content/sb-content.vue';
 import SbTags from '../sb-tags/sb-tags.vue';
+import { useSbfTouch } from "./tools/useSbfTouch";
 
 interface SbProps {
   expandState: "tags" | ""
@@ -10,28 +11,37 @@ interface SbProps {
 defineProps<SbProps>()
 
 const {
-  enable,
-  show,
   TRANSITION_DURATION,
+  sbfData,
   onTapPopup,
+  toOpen,
+  toClose,
 } = initFixedSideBar()
+
+const {
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
+  onTouchCancel,
+} = useSbfTouch(sbfData, toOpen, toClose)
 
 
 </script>
 <template>
 
-  <div v-if="enable" 
+  <div v-if="sbfData.enable" 
     class="sb-fixed"
+    @touchstart="onTouchStart"
+    @touchmove="onTouchMove"
+    @touchend="onTouchEnd"
+    @touchcancel="onTouchCancel"
   >
 
     <div class="sf-bg"
-      :class="{ 'sf-bg_show': show }"
-      @click="onTapPopup"
+      @click.stop="onTapPopup"
     ></div>
 
-    <div class="sf-container"
-      :class="{ 'sf-container_show': show }"
-    >
+    <div class="sf-container">
       <!-- 主侧边栏 -->
       <div class="sf-box"
         :class="{ 'sf-main_hidden': expandState === 'tags' }"
@@ -80,33 +90,25 @@ const {
     top: 0;
     left: 0;
     background-color: rgba(0, 0, 0, .75);
-    opacity: 0;
-    transition: v-bind("TRANSITION_DURATION + 'ms'");
-  }
-
-  .sf-bg_show {
-    opacity: 1;
+    opacity: v-bind("sbfData.bgOpacity");
+    transition: v-bind("sbfData.duration");
   }
 }
 
 .sf-container {
   display: flex;
-  width: 86vw;
+  width: 82vw;
   height: 100vh;
   height: 100dvh;
   max-width: 400px;
-  min-width: 250px;
+  min-width: 220px;
   position: relative;
   background-color: var(--bg-color);
   overflow: hidden;
   z-index: 755;
-  transition: v-bind("TRANSITION_DURATION + 'ms'");
-  transform: translateX(-110%);
-  box-shadow: 10px 0 10px rgba(0, 0, 0, .2);
-}
-
-.sf-container_show {
-  transform: translateX(0);
+  transition: v-bind("sbfData.duration");
+  transform: v-bind("'translateX(' + sbfData.distance + ')'");
+  box-shadow: 10px 0 10px rgba(0, 0, 0, .16);
 }
 
 .sf-box {
