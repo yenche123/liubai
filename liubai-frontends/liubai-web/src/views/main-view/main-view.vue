@@ -62,6 +62,7 @@ const onTapCenter = (e: MouseEvent) => {
 .mv-center {
   flex: 1;
   height: 100vh;
+  height: 100dvh;
   position: relative;
   overflow-x: hidden;
 }

@@ -81,6 +81,7 @@ const { t } = useI18n()
 .ss-container {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   position: fixed;
   top: 0;
   left: 0;

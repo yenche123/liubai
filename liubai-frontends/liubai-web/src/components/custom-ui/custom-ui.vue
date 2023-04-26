@@ -180,6 +180,7 @@ const {
 .cui-modal-container {
   width: 100%;
   height: 100vh;
+  height: 100dvh;
   position: fixed;
   z-index: 5100;
   top: 0;
