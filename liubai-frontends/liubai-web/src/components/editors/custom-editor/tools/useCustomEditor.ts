@@ -23,20 +23,7 @@ export function useCustomEditor() {
     editor.value = editorCoreRef.value.editor as TipTapEditor
   })
 
-  let lastScoll = 0
-  let hideMaskTimeout: LiuTimeout
-  const onEditorScrolling = () => {
-    const now = time.getTime()
-    const diff = now - lastScoll
-    if(diff < 1000) return
-    lastScoll = now
-    showMask.value = true
-    if(hideMaskTimeout) clearTimeout(hideMaskTimeout)
-    hideMaskTimeout = setTimeout(() => {
-      hideMaskTimeout = undefined
-      showMask.value = false
-    }, 2000)
-  }
+  const onEditorScrolling = () => handleEditorScrolling(showMask)
 
   return { 
     maxEditorHeight, 
@@ -47,6 +34,24 @@ export function useCustomEditor() {
     showMask,
   }
 }
+
+let lastScoll = 0
+let hideMaskTimeout: LiuTimeout
+function handleEditorScrolling(
+  showMask: Ref<boolean>,
+) {
+  const now = time.getTime()
+  const diff = now - lastScoll
+  if(diff < 300) return
+  lastScoll = now
+  showMask.value = true
+  if(hideMaskTimeout) clearTimeout(hideMaskTimeout)
+  hideMaskTimeout = setTimeout(() => {
+    hideMaskTimeout = undefined
+    showMask.value = false
+  }, 1500)
+}
+
 
 function listenWindowChange(
   maxEditorHeight: Ref<number>,
