@@ -80,7 +80,13 @@ export function useSbfTouch(
     let diffPixel = startX - lastX
     let percentage = diffPixel / w
 
-    if(diffPixel < 10 || percentage <= 0.25) {
+    if(diffPixel < 10) {
+      toOpen()
+    }
+    else if(diffPixel >= 120) {
+      toClose()
+    }
+    else if(percentage <= 0.25) {
       toOpen()
     }
     else {
