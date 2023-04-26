@@ -1,10 +1,23 @@
 <script setup lang="ts">
 import { useCommentEditor } from './tools/useCommentEditor';
 import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
+import EditorCore from "../editor-core/editor-core.vue"
+import { PropType } from 'vue';
+
+const props = defineProps({
+  located: {
+    type: String as PropType<"comment_area" | "popup">,
+    required: true,
+  },
+})
 
 const {
+  maxEditorHeight,
+  minEditorHeight,
+  editorCoreRef,
+  editor,
   myProfile
-} = useCommentEditor()
+} = useCommentEditor(props)
 
 </script>
 <template>
@@ -19,6 +32,12 @@ const {
 
     <!-- 编辑区域 -->
     <div class="ce-main">
+
+      <div class="cem-editor">
+        <EditorCore
+          :min-height="'' + minEditorHeight + 'px'"
+        ></EditorCore>
+      </div>
 
 
     </div>
