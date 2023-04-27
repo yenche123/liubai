@@ -35,10 +35,20 @@ const {
 
       <div class="cem-editor">
         <EditorCore
+          ref="editorCoreRef"
           :min-height="'' + minEditorHeight + 'px'"
         ></EditorCore>
       </div>
 
+      <!-- 工具栏 -->
+      <div class="cem-toolbar">
+        <div class="cemt-main">
+
+        </div>
+        <div class="cemt-footer">
+
+        </div>
+      </div>
 
     </div>
 

@@ -14,14 +14,14 @@ import { ref } from "vue";
 import CeFinishArea from "./ce-finish-area/ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 import { useCeFile } from "./tools/useCeFile";
-import CeCovers from "./ce-covers/ce-covers.vue";
+import EditingCovers from "../common/editing-covers/editing-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
 import CeTags from "./ce-tags/ce-tags.vue";
 import { initCeState } from "./tools/initCeState";
 import { useCeFinish } from "./tools/useCeFinish";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { useCeTag } from "./tools/useCeTag";
-import CeBubbleMenu from "./ce-bubble-menu/ce-bubble-menu.vue";
+import EditingBubbleMenu from "../common/editing-bubble-menu/editing-bubble-menu.vue";
 
 const props = defineProps({
   lastBar: {
@@ -102,9 +102,9 @@ const onTapCeContainer = (e: MouseEvent) => {}
 >
 
   <!-- 气泡: 放在 editor-core 外层是因为避免被 ce-editor 遮挡 -->
-  <CeBubbleMenu 
+  <EditingBubbleMenu 
     :editor="editor"
-  ></CeBubbleMenu>
+  ></EditingBubbleMenu>
 
   <div class="ce-editor"
     @scroll="onEditorScrolling"
@@ -127,11 +127,11 @@ const onTapCeContainer = (e: MouseEvent) => {}
   <!-- 留白 -->
   <div class="ce-editor-bottom-two"></div>
 
-  <CeCovers 
+  <EditingCovers 
     :model-value="covers"
     @update:model-value="onCoversSorted"
     @clear="onClearCover"
-  ></CeCovers>
+  ></EditingCovers>
 
   <CeTags
     :tag-shows="tagShows"

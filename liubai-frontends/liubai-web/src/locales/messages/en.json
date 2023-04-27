@@ -287,5 +287,9 @@
     "importing": "Importing",
     "well_done": "Well Done🎉",
     "imported": "Imported successfully"
+  },
+  "comment": {
+    "placeholder1": "Add some thoughts",
+    "submit1": "Add"
   }
 }

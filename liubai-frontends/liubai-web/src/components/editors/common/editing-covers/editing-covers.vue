@@ -2,7 +2,7 @@
 import { defineComponent } from 'vue';
 import type { ImageShow } from '~/types';
 import liuApi from "~/utils/liu-api"
-import { useCeCovers, ceCoversProps } from "./tools/useCeCovers"
+import { useEditingCovers, ceCoversProps } from "./tools/useEditingCovers"
 import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 
 export default defineComponent({
@@ -22,7 +22,7 @@ export default defineComponent({
       onDragStart,
       onDragEnd,
       onTapImage,
-    } = useCeCovers(props)
+    } = useEditingCovers(props)
 
     const onListUpdate = (newV: ImageShow[]) => {
       emit("update:modelValue", newV)

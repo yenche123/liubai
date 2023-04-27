@@ -23,7 +23,7 @@ export function useCeFile(
     whenImagesChanged(covers, newImages)
   }, { deep: true })
 
-  // ce-covers 传来用户拖动图片，调整了顺序
+  // editing-covers 传来用户拖动图片，调整了顺序
   // 开始对 "逻辑数据" 排序，这样视图数据 covers 就会在上方的 watch 响应
   const onCoversSorted = (newCovers: ImageShow[]) => {
     whenCoversSorted(newCovers, state)

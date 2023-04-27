@@ -1,6 +1,6 @@
-import { Instance, Props } from 'tippy.js'
+import type { Instance, Props } from 'tippy.js'
 
-export function useCeBubbleMenu() {
+export function useEditingBubbleMenu() {
 
   let tippy: Instance | undefined = undefined
 

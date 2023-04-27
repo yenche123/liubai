@@ -1,6 +1,6 @@
 import { useMyProfile } from "~/hooks/useCommon";
 import EditorCore from "../../editor-core/editor-core.vue"
-import { ref, shallowRef, onMounted } from "vue"
+import { ref, shallowRef, onMounted, watch } from "vue"
 import type { Ref } from "vue"
 import type { TipTapEditor } from "~/types/types-editor"
 import { CeProps } from "./types";
@@ -18,9 +18,10 @@ export function useCommentEditor(props: CeProps) {
   const editorCoreRef = ref<typeof EditorCore | null>(null)
   const editor = shallowRef<TipTapEditor>()
 
-  onMounted(() => {
-    if(!editorCoreRef.value) return
-    editor.value = editorCoreRef.value.editor as TipTapEditor
+  watch(editorCoreRef, (newV) => {
+    if(!newV) return
+    console.log("useCommentEditor editorCoreRef 发生变化.........")
+    editor.value = newV.editor as TipTapEditor
   })
 
 

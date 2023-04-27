@@ -6,7 +6,7 @@ import type { ImageShow } from '~/types';
 import cui from "~/components/custom-ui";
 import { mainViewWidthKey } from "~/utils/provide-keys"
 
-interface CeCoversProps {
+interface EditingCoversProps {
   modelValue?: ImageShow[]
 }
 
@@ -14,7 +14,7 @@ export const ceCoversProps = {
   modelValue: Array<ImageShow>
 }
 
-export function useCeCovers(props: CeCoversProps) {
+export function useEditingCovers(props: EditingCoversProps) {
 
   const globalStore = useGlobalStateStore()
   const modelValue = toRef(props, "modelValue")
@@ -24,7 +24,7 @@ export function useCeCovers(props: CeCoversProps) {
   const whenPropChange = () => {
     
     if(isItFrequently(lastTwoTriggerList)) {
-      console.warn("useCeCovers whenPropChange 太频繁触发了!!!!!!!")
+      console.warn("useEditingCovers whenPropChange 太频繁触发了!!!!!!!")
       return
     }
 
