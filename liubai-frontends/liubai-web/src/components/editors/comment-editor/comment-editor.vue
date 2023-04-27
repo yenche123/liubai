@@ -3,8 +3,8 @@ import { useCommentEditor } from './tools/useCommentEditor';
 import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
 import EditorCore from "../editor-core/editor-core.vue"
 import { PropType } from 'vue';
-import EditingBubbleMenu from "../common/editing-bubble-menu/editing-bubble-menu.vue";
-import EditingCovers from "../common/editing-covers/editing-covers.vue";
+import EditingBubbleMenu from "../shared/editing-bubble-menu/editing-bubble-menu.vue";
+import EditingCovers from "../shared/editing-covers/editing-covers.vue";
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n()
