@@ -243,6 +243,10 @@ const previewDate = computed(() => {
     }
   }
 
+  .dp__action_row {
+    padding: 10px 0px 10px 10px;
+  }
+
 
   @media screen and (max-width: 380px) {
     .dp-custom-menu {
@@ -250,7 +254,7 @@ const previewDate = computed(() => {
     }
 
     .dp__action_row {
-      padding: 5px;
+      padding: 5px 0 5px 5px;
     }
   }
 
