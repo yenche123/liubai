@@ -65,7 +65,7 @@ export default defineComponent({
 <style lang="scss">
 
 .ProseMirror {
-  padding: 3px;
+  padding: 0;
   outline: 0;
   font-size: var(--desc-font);
   line-height: 1.9;

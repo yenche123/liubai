@@ -8,7 +8,8 @@ export function useCustomEditorLastBar() {
   // custom-editor 的底部要不要多一栏，让 完成按钮 跟工具栏不同行
   const mvRef = inject(mainViewWidthKey) as Ref<number>
   const lastBar = computed(() => {
-    if(mvRef.value < 570) return true
+    const w = mvRef.value
+    if(w < 530) return true
     return false
   })
 

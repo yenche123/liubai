@@ -159,6 +159,8 @@ export default defineComponent({
 
     </div>
 
+    <div style="width: 100%; height: 8px"></div>
+
   </div>
 
 </template>
@@ -166,7 +168,9 @@ export default defineComponent({
 
 .ma-container {
   position: relative;
-  width: 100%;
+  width: calc(100% + 12px);
+  margin-inline-start: -6px;
+  margin-inline-end: 6px;
   overflow: hidden;
   transition: .3s;
   max-height: 0;
@@ -198,7 +202,7 @@ export default defineComponent({
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 48px;
+  min-height: 42px;
 
   .mai-icon {
     width: 40px;
@@ -233,7 +237,7 @@ export default defineComponent({
     align-items: center;
     justify-content: center;
     border-radius: 4px;
-    margin-inline-end: 4px;
+    margin-inline-end: 2px;
 
     .maif-icon {
       width: 16px;
@@ -258,7 +262,7 @@ export default defineComponent({
 
   .mai-switch-footer {
     margin-inline-start: 4px;
-    margin-inline-end: 4px;
+    margin-inline-end: 8px;
   }
 
 }

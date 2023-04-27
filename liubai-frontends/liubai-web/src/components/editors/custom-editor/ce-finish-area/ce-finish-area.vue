@@ -51,7 +51,7 @@ const emits = defineEmits<{
 <style scoped lang="scss">
 .ce-finish-area {
   position: absolute;
-  bottom: 20px;
+  bottom: 15px;
   right: 20px;
   display: flex;
   pointer-events: none;

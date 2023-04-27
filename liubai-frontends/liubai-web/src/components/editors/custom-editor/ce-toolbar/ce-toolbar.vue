@@ -52,7 +52,7 @@ export default defineComponent({
   <!-- 第一排工具栏 -->
   <div class="ce-toolbar">
     <!-- 图片 -->
-    <div class="liu-hover cet-item" :aria-label="t('editor.image')">
+    <div class="liu-hover liu-hover_first cet-item" :aria-label="t('editor.image')">
       <input ref="selectImagesEl" 
         type="file" 
         :accept="liuUtil.getAcceptImgTypesString()" 
@@ -110,7 +110,11 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-inline-end: 8px;
+    margin-inline-end: 4px;
+
+    &:first-child {
+      margin-inline-start: -8px;
+    }
 
     .ceti-input {
       width: 100%;

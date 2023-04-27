@@ -3,6 +3,11 @@ import { useCommentEditor } from './tools/useCommentEditor';
 import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
 import EditorCore from "../editor-core/editor-core.vue"
 import { PropType } from 'vue';
+import EditingBubbleMenu from "../common/editing-bubble-menu/editing-bubble-menu.vue";
+import EditingCovers from "../common/editing-covers/editing-covers.vue";
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n()
 
 const props = defineProps({
   located: {
@@ -16,6 +21,8 @@ const {
   minEditorHeight,
   editorCoreRef,
   editor,
+  isToolbarTranslateY,
+  canSubmit,
   myProfile
 } = useCommentEditor(props)
 
@@ -33,19 +40,33 @@ const {
     <!-- 编辑区域 -->
     <div class="ce-main">
 
+      <!-- 气泡: 放在 editor-core 外层是因为避免被 ce-editor 遮挡 -->
+      <EditingBubbleMenu 
+        :editor="editor"
+      ></EditingBubbleMenu>
+
       <div class="cem-editor">
         <EditorCore
           ref="editorCoreRef"
+          :desc-placeholder="t('comment.placeholder1')"
           :min-height="'' + minEditorHeight + 'px'"
         ></EditorCore>
       </div>
 
       <!-- 工具栏 -->
-      <div class="cem-toolbar">
+      <div class="cem-toolbar"
+        :class="{ 'cem-toolbar_translateY': isToolbarTranslateY }"
+      >
         <div class="cemt-main">
 
         </div>
         <div class="cemt-footer">
+
+          <div class="cemtf-submit-btn"
+            :class="{ 'cemtf-submit_disabled': !canSubmit }"
+          >
+            <span>{{ t('comment.submit1') }}</span>
+          </div>
 
         </div>
       </div>
@@ -64,7 +85,9 @@ const {
 }
 
 .ce-avatar {
-  margin-inline-end: 16px;
+  width: 48px;
+  height: 48px;
+  margin-inline-end: 12px;
   flex: none;
 }
 
@@ -72,6 +95,87 @@ const {
   flex: 1;
   position: relative;
 }
+
+.cem-editor {
+  width: 100%;
+  min-height: v-bind("minEditorHeight + 'px'");
+  max-height: v-bind("maxEditorHeight + 'px'");
+  position: relative;
+  overflow-y: overlay;
+  overflow-y: auto;
+  transition: .3s;
+  padding-block-start: 5px;
+}
+
+.cem-toolbar {
+  width: 100%;
+  height: 48px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  transition: .15s;
+}
+
+.cem-toolbar_translateY {
+  pointer-events: none;
+  margin-block-start: -53px;
+}
+
+.cemt-main {
+  flex: 1;
+}
+
+.cemt-footer {
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: auto;
+}
+
+.cemtf-submit-btn {
+  padding: 0 16px;
+  border-radius: 20px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  background-color: var(--primary-color);
+  color: var(--on-primary);
+  font-size: var(--mini-font);
+  transition: .15s;
+  user-select: none;
+  font-weight: 500;
+}
+
+@media(hover: hover) {
+  .cemtf-submit-btn:hover {
+    background-color: var(--primary-hover);
+  }
+}
+
+.cemtf-submit-btn:active {
+  background-color: var(--primary-active);
+}
+
+.cemtf-submit_disabled {
+  background-color: var(--primary-color);
+  opacity: .5;
+  cursor: default;
+}
+
+@media(hover: hover) {
+  .cemtf-submit_disabled:hover {
+    background-color: var(--primary-color);
+  }
+}
+
+.cemtf-submit_disabled:active {
+  background-color: var(--primary-color);
+}
+
+
+
 
 
 

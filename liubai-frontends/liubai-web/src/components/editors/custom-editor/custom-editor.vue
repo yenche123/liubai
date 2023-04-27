@@ -174,7 +174,7 @@ const onTapCeContainer = (e: MouseEvent) => {}
   width: 100%;
   background-color: var(--card-bg);
   box-sizing: border-box;
-  padding: 20px 20px;
+  padding: 20px 20px 15px;
   border-radius: 20px;
   margin-bottom: 14px;
   box-shadow: var(--card-shadow);
