@@ -99,7 +99,7 @@ function initViceView() {
   const { width, height } = useWindowSize()
   const w = width.value
   if(w > 1280) {
-    defaultPx = Math.max(defaultPx, Math.round(w / 3))
+    defaultPx = Math.max(defaultPx, Math.round(w / 3.33))
   }
   
   const cha = liuApi.getCharacteristic()

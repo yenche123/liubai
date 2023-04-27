@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import cfg from "../config";
 import { useWindowSize } from "../hooks/useVueUse"
 import type { Prettify } from "~/utils/basic/type-tool";
+import { initSidebarWidth } from "./tools/foo"
 
 export type LayoutChangeType = "window" | "sidebar" | ""
 
@@ -15,7 +15,7 @@ export const useLayoutStore = defineStore("layout", () => {
   const { width } = useWindowSize()
   
   // 需要返回的数据
-  const sidebarWidth = ref(cfg.default_sidebar_width)    // 如果侧边栏收起来时，该值为 0
+  const sidebarWidth = ref(initSidebarWidth(width.value))    // 如果侧边栏收起来时，该值为 0
   const clientWidth = ref(width.value)
   const changeType = ref<LayoutChangeType>("")
   const sidebarStatus = ref<SidebarStatus>("default")
