@@ -59,6 +59,7 @@ const {
   left: 0;
   display: flex;
   justify-content: center;
+  z-index: 540;
 
   .nb-box {
     width: 92%;
