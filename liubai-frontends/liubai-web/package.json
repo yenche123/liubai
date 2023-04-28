@@ -32,6 +32,7 @@
     "@vueuse/core": "^10.0.2",
     "another-vue3-blurhash": "^0.0.1",
     "blurhash": "^2.0.5",
+    "canvas-confetti": "^1.6.0",
     "compressorjs": "^1.2.1",
     "date-fns": "^2.29.3",
     "dexie": "^3.2.3",
@@ -53,6 +54,7 @@
     "vue-slicksort": "^2.0.5"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.6.0",
     "@types/file-saver": "^2.0.5",
     "@types/node": "^18.15.3",
     "@vitejs/plugin-vue": "^4.0.0",

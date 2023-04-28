@@ -5,6 +5,8 @@ import type {
   LocationQuery,
 } from "vue-router"
 import cfg from "~/config"
+import confetti from "canvas-confetti";
+import { useWindowSize } from "~/hooks/useVueUse"
 
 /******* 转换颜色 *******/
 
@@ -96,4 +98,57 @@ export function calibrateSidebarWidth(sidebarWidth: number) {
   let val = sidebarWidth - cfg.sidebar_spacing
   if(val < 0) val = 0
   return val
+}
+
+
+/**
+ * 发射烟花
+ */
+export function lightFireworks() {
+  const { width } = useWindowSize()
+  const w = width.value
+
+  // 碎片的数量 介于 60 ~ 180 之间
+  let particleCount = Math.round((0.08 * w) + 36)
+  if(particleCount < 60) particleCount = 60
+  else if(particleCount > 180) particleCount = 180
+
+  // 左侧烟花的角度
+  let angle = Math.round((-0.01666 * w) + 75)
+  if(angle > 70) angle = 70
+  else if(angle < 45) angle = 45
+
+  // 初速
+  let startVelocity = Math.round((0.05 * w) + 30)
+  if(startVelocity > 150) startVelocity = 150
+  else if(startVelocity < 45) startVelocity = 45
+
+
+  // 左侧的烟花
+  confetti({
+    particleCount,
+    angle,
+    spread: 27,
+    startVelocity,
+    origin: {
+      x: 0.1,
+      y: 0.9,
+    },
+    scalar: 1.1,
+    zIndex: 6000,
+  })
+
+  // 右侧的烟花
+  confetti({
+    particleCount,
+    angle: (180 - angle),
+    spread: 27,
+    startVelocity,
+    origin: {
+      x: 0.9,
+      y: 0.9,
+    },
+    scalar: 1.1,
+    zIndex: 6000,
+  })
 }

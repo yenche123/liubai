@@ -11,6 +11,7 @@ import type { TlProps, TlViewType } from "./types"
 import type { Ref } from "vue";
 import valTool from "~/utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
+import liuUtil from "~/utils/liu-util"
 
 interface ToCtx {
   router: LiuRouter
@@ -122,14 +123,19 @@ async function handle_state(ctx: ToCtx) {
     ctx.list.value.splice(ctx.position, 1)
   }
 
-  // 2. 等待 snackbar 的返回
+  // 2. 判断要不要撒花
+  if(newStateId === "FINISHED") {
+    liuUtil.lightFireworks()
+  }
+
+  // 3. 等待 snackbar 的返回
   const res2 = await tipPromise
   if(res2.result !== "tap") return
 
-  // 3. 去执行公共的取消逻辑
+  // 4. 去执行公共的取消逻辑
   await commonOperate.undoState(oldThread, memberId, userId)
 
-  // 4. 判断是否重新加回
+  // 5. 判断是否重新加回
   if(removedFromList) {
     ctx.list.value.splice(ctx.position, 0, oldThread)
   }

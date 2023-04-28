@@ -58,6 +58,9 @@ dependencies:
   blurhash:
     specifier: ^2.0.5
     version: 2.0.5
+  canvas-confetti:
+    specifier: ^1.6.0
+    version: 1.6.0
   compressorjs:
     specifier: ^1.2.1
     version: 1.2.1
@@ -117,6 +120,9 @@ dependencies:
     version: 2.0.5(vue@3.2.47)
 
 devDependencies:
+  '@types/canvas-confetti':
+    specifier: ^1.6.0
+    version: 1.6.0
   '@types/file-saver':
     specifier: ^2.0.5
     version: 2.0.5
@@ -1061,6 +1067,10 @@ packages:
     engines: {node: '>=10.13.0'}
     dev: true
 
+  /@types/canvas-confetti@1.6.0:
+    resolution: {integrity: sha512-Yq6rIccwcco0TLD5SMUrIM7Fk7Fe/C0jmNRxJJCLtAF6gebDkPuUjK5EHedxecm69Pi/aA+It39Ux4OHmFhjRw==}
+    dev: true
+
   /@types/estree@1.0.1:
     resolution: {integrity: sha512-LG4opVs2ANWZ1TJoKc937iMmNstM/d0ae1vNbnBvBhqCSezgVUOzcLCqbI5elV8Vy6WKwKjaqR+zO9VKirBBCA==}
     dev: true
@@ -1532,6 +1542,10 @@ packages:
       union-value: 1.0.1
       unset-value: 1.0.0
     dev: true
+
+  /canvas-confetti@1.6.0:
+    resolution: {integrity: sha512-ej+w/m8Jzpv9Z7W7uJZer14Ke8P2ogsjg4ZMGIuq4iqUOqY2Jq8BNW42iGmNfRwREaaEfFIczLuZZiEVSYNHAA==}
+    dev: false
 
   /case-anything@2.1.10:
     resolution: {integrity: sha512-JczJwVrCP0jPKh05McyVsuOg6AYosrB9XWZKbQzXeDAm2ClE/PJE/BcrrQrVyGYH7Jg8V/LDupmyL4kFlVsVFQ==}
