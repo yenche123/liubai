@@ -33,6 +33,14 @@
   --card-max: 800px;
 }
 
+@media screen and (min-width: 1600px) {
+  :root {
+    --card-min: 250px;
+    --card-max: 850px;
+  }
+}
+
+
 body {
   padding: 0;
   margin: 0;
