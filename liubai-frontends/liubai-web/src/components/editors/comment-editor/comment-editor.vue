@@ -17,13 +17,13 @@ const props = defineProps({
 })
 
 const {
-  maxEditorHeight,
   minEditorHeight,
   editorCoreRef,
   editor,
   isToolbarTranslateY,
   canSubmit,
-  myProfile
+  myProfile,
+  onEditorFocus,
 } = useCommentEditor(props)
 
 </script>
@@ -50,6 +50,7 @@ const {
           ref="editorCoreRef"
           :desc-placeholder="t('comment.placeholder1')"
           :min-height="'' + minEditorHeight + 'px'"
+          @focus="onEditorFocus"
         ></EditorCore>
       </div>
 
@@ -99,7 +100,6 @@ const {
 .cem-editor {
   width: 100%;
   min-height: v-bind("minEditorHeight + 'px'");
-  max-height: v-bind("maxEditorHeight + 'px'");
   position: relative;
   overflow-y: overlay;
   overflow-y: auto;

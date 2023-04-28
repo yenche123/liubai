@@ -1,6 +1,6 @@
 import { useMyProfile } from "~/hooks/useCommon";
 import EditorCore from "../../editor-core/editor-core.vue"
-import { ref, shallowRef, onMounted, watch } from "vue"
+import { ref, shallowRef, watch } from "vue"
 import type { Ref } from "vue"
 import type { TipTapEditor } from "~/types/types-editor"
 import { CeProps } from "./types";
@@ -12,7 +12,6 @@ export function useCommentEditor(props: CeProps) {
   
   // 编辑器相关
   const {
-    maxEditorHeight,
     minEditorHeight,
   } = initEditorHeight(props)
   const editorCoreRef = ref<typeof EditorCore | null>(null)
@@ -34,34 +33,40 @@ export function useCommentEditor(props: CeProps) {
   // 个人信息
   const { myProfile } = useMyProfile()
 
+
+  // 一些事件
+  const onEditorFocus = () => {
+    if(isToolbarTranslateY.value) {
+      isToolbarTranslateY.value = false
+    }
+  }
+
+
   return {
-    maxEditorHeight,
     minEditorHeight,
     editorCoreRef,
     editor,
     isToolbarTranslateY,
     canSubmit,
-    myProfile
+    myProfile,
+    onEditorFocus,
   }
 }
 
 
-// 获取 maxEditorHeight 和 minEditorHeight
+// 获取 minEditorHeight
 function initEditorHeight(props: CeProps) {
   const isCommentArea = props.located === "comment_area"
   const isPopup = props.located === "popup"
-  let tmpMax = isCommentArea ? 48 : 250
   let tmpMin = isCommentArea ? 48 : 150
 
-  const maxEditorHeight = ref(tmpMax)
   const minEditorHeight = ref(tmpMin)
   
   if(isPopup) {
-    listenWindowChange(maxEditorHeight, minEditorHeight)
+    listenWindowChange(minEditorHeight)
   }
 
   return {
-    maxEditorHeight,
     minEditorHeight,
   }
 }
@@ -69,7 +74,6 @@ function initEditorHeight(props: CeProps) {
 
 // 当前位于弹窗内时，监听窗口高度变化
 function listenWindowChange(
-  maxEditorHeight: Ref<number>,
   minEditorHeight: Ref<number>,
 ) {
   const { height } = useWindowSize()
@@ -77,11 +81,9 @@ function listenWindowChange(
   const whenWindowHeightChange = () => {
     const h = height.value
     let min = valTool.numToFix(h / 7, 0)
-    let max = valTool.numToFix(h / 3, 0)
     if(min < 100) min = 100
-    if(max < 200) max = 200
     minEditorHeight.value = min
-    maxEditorHeight.value = max
   }
+
   useLiuWatch(height, whenWindowHeightChange)
 }
