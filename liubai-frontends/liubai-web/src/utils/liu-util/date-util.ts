@@ -290,7 +290,10 @@ export function getEditedStr(
   editedStamp?: number
 ) {
   if(!editedStamp) return
-  if(createdStamp === editedStamp) return
+
+  let diff = Math.abs(createdStamp - editedStamp)
+  if(diff < 100) return
+
   return showBasicDate(editedStamp)
 }
 

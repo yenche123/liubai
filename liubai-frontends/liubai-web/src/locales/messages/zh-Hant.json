@@ -201,7 +201,9 @@
     "select_state": "選擇狀態",
     "switch_to": "切換至 ",
     "img_file": "[圖片或文件]",
-    "deleted_at": "於 {date} 刪除"
+    "deleted_at": "{date} 刪除",
+    "created_at": "{date} 新增",
+    "edited_at": "{date} 編輯"
   },
   "state_related": {
     "add_state": "新增狀態",

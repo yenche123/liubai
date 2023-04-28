@@ -38,8 +38,8 @@ export default defineComponent({
   <div class="tcb-container">
     <div class="tcb-time">
       <span v-if="threadData.removedStr">{{ t('thread_related.deleted_at', { date: threadData.removedStr }) }}</span>
-      <span v-else-if="threadData.editedStr">{{ threadData.editedStr }}</span>
-      <span v-else>{{ threadData.createdStr }}</span>
+      <span v-else-if="threadData.editedStr">{{ t('thread_related.edited_at', { date: threadData.editedStr }) }}</span>
+      <span v-else>{{ t('thread_related.created_at', { date: threadData.createdStr }) }}</span>
     </div>
 
     <!-- 更多 -->
