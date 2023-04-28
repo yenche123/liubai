@@ -93,6 +93,8 @@ function judgeShadow(
   else if(sT <= 20 && shadow.value) shadow.value = false
 }
 
+
+// 聆听 左侧边栏的变化
 let justLoad = true
 function judgeState(
   ctx: NaviAutoCtx,
