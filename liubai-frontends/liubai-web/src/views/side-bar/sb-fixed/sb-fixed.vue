@@ -14,6 +14,8 @@ const {
   TRANSITION_DURATION,
   sbfData,
   onTapPopup,
+  onPopupTouchStart,
+  onPopupTouchEnd,
   toOpen,
   toClose,
 } = initFixedSideBar()
@@ -39,6 +41,8 @@ const {
 
     <div class="sf-bg"
       @click.stop="onTapPopup"
+      @touchstart="onPopupTouchStart"
+      @touchend="onPopupTouchEnd"
     ></div>
 
     <div class="sf-container">

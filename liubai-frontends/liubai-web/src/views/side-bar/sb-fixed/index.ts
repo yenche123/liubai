@@ -2,6 +2,7 @@ import { reactive } from "vue";
 import valTool from "~/utils/basic/val-tool";
 import type { SbfData } from "./tools/types";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
+import time from "~/utils/basic/time";
 
 const TRANSITION_DURATION = 300
 const sbfData = reactive<SbfData>({
@@ -17,6 +18,8 @@ export function initFixedSideBar() {
     TRANSITION_DURATION,
     sbfData,
     onTapPopup,
+    onPopupTouchStart,
+    onPopupTouchEnd,
     toOpen,
     toClose,
   }
@@ -35,10 +38,27 @@ function onTapPopup() {
 }
 
 
+let startStamp = 0
+function onPopupTouchStart() {
+  startStamp = time.getTime()
+}
+
+function onPopupTouchEnd() {
+  let now = time.getTime()
+  let diff = now - startStamp
+  if(diff < 200 && sbfData.state === "opened") {
+    toClose()
+  }
+}
+
+
 let openTimeout: LiuTimeout
 let closeTimeout: LiuTimeout
 
 function toOpen() {
+  const s = sbfData.state
+  if(s === "opening") return
+
   sbfData.state = "opening"
   if(closeTimeout) clearInterval(closeTimeout)
 
@@ -94,6 +114,9 @@ function toOpen() {
 }
 
 function toClose() {
+  const s = sbfData.state
+  if(s === "closing") return
+
   sbfData.state = "closing"
   if(openTimeout) clearInterval(openTimeout)
 

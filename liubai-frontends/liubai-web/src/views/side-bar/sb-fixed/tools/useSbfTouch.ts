@@ -21,6 +21,13 @@ export function useSbfTouch(
     if(sbfData.state !== "opened") return
     const aTouch = e.touches[0]
     if(!aTouch) return
+
+    // 如果触碰到右侧的蒙层，则阻止浏览器默认事件，这样可以避免在手机上前往后一页
+    const target = e.target as HTMLElement
+    if(target?.className === "sf-bg") {
+      e.preventDefault()
+    }
+
     startX = aTouch.clientX
     lastX = startX
     startStamp = time.getTime()
@@ -68,6 +75,7 @@ export function useSbfTouch(
     const now = time.getTime()
     const diffStamp = now - startStamp
     if(diffStamp < 250 && Math.abs(startX - lastX) < 10) {
+      _reset()
       return
     }
 
