@@ -44,8 +44,9 @@ const { t } = useI18n()
       </div>
 
       <!-- 是否展示在首页 -->
-      <div class="se-bar">
-
+      <div class="se-bar se-bar_pointer"
+        @click="onToggleShowIndex(!reData.showInIndex)"
+      >
         <div class="seb-hd">
           <span>{{ t('state_related.state_showIndex') }}</span>
         </div>
@@ -59,7 +60,9 @@ const { t } = useI18n()
       </div>
 
       <!-- 是否喷彩带 -->
-      <div class="se-bar">
+      <div class="se-bar se-bar_pointer" 
+        @click="onToggleShowFireworks(!reData.showFireworks)"
+      >
         <div class="seb-hd">
           <span>{{ t('state_related.showFireworks') }}</span>
         </div>
@@ -169,6 +172,10 @@ const { t } = useI18n()
   padding: 0 30px 34px 34px;
   box-sizing: border-box;
   position: relative;
+}
+
+.se-bar_pointer {
+  cursor: pointer;
 }
 
 .seb-hd {
