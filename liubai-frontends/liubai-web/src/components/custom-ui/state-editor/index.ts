@@ -27,6 +27,7 @@ const reData = reactive<StateEditorData>({
   canSubmit: false,
   text: "",
   showInIndex: true,
+  showFireworks: false,
   color: "",
 })
 
@@ -41,6 +42,7 @@ export function initStateEditor() {
     reData,
     onTapColor,
     onToggleShowIndex,
+    onToggleShowFireworks,
     onTapConfirm,
     onTapCancel,
   }
@@ -51,6 +53,7 @@ export function showStateEditor(param: StateEditorParam) {
   reData.mode = param.mode
   reData.text = param.text ?? ""
   reData.showInIndex = param.showInIndex ?? true
+  reData.showFireworks = Boolean(param.showFireworks)
   reData.color = param.color ? liuUtil.colorToStorage(param.color) : ""
   reData.canSubmit = false
 
@@ -90,6 +93,7 @@ function onTapConfirm() {
       text: reData.text,
       showInIndex: reData.showInIndex,
       color: reData.color,
+      showFireworks: reData.showFireworks,
     }
   }
   _resolve && _resolve(obj)
@@ -101,6 +105,10 @@ function onTapCancel() {
   closeIt(rr, queryKey)
 }
 
+function onToggleShowFireworks(newV: boolean) {
+  reData.showFireworks = newV
+  checkCanSubmuit()
+}
 
 function onToggleShowIndex(newV: boolean) {
   reData.showInIndex = newV

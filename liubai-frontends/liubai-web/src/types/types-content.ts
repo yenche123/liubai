@@ -36,6 +36,7 @@ export interface StateShow {
   text_key?: string       // i18n 的字段，该字段跟 text 二选一
   colorShow: string         // 状态的背景色，如果是 css 变量，必须包含 var(....)
   showInIndex: boolean
+  showFireworks?: boolean     // 是否开启撒花
 }
 
 export interface ThreadShow {
@@ -88,6 +89,7 @@ export interface ThreadShow {
 export interface KanbanColumn {
   id: string
   showInIndex: boolean
+  showFireworks?: boolean
   text?: string
   text_key?: string
   colorShow: string

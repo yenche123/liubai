@@ -31,6 +31,7 @@ async function editKanban(
   let oldText = aCol.text
   let oldColor = liuUtil.colorToStorage(aCol.colorShow)
   let oldShowIndex = aCol.showInIndex
+  let oldShowFireworks = Boolean(aCol.showFireworks)
   if(!oldText) {
     if(stateId === "TODO") oldText = TODO_TXT
     else if(stateId === "FINISHED") oldText = FINISHED_TXT
@@ -41,12 +42,18 @@ async function editKanban(
     mode: "edit",
     text: oldText,
     showInIndex: oldShowIndex,
+    showFireworks: oldShowFireworks,
     color: oldColor,
   })
   if(res.action !== "confirm" || !res.data) return
   const rData = res.data
-  const { text, showInIndex, color } = rData
-  if(text === oldText && showInIndex === oldShowIndex && color === oldColor) return
+  const { text, showInIndex, color, showFireworks } = rData
+
+  let noChange = text === oldText
+  noChange = noChange && showInIndex === oldShowIndex
+  noChange = noChange && color === oldColor
+  noChange = noChange && showFireworks === oldShowFireworks
+  if(noChange) return
 
   let txtUpdated = text !== oldText
 
@@ -73,6 +80,7 @@ async function editKanban(
       v.updatedStamp = time.getTime()
       v.color = color
       v.showInIndex = showInIndex
+      v.showFireworks = showFireworks
       if(txtUpdated) v.text = text
     }
   })
@@ -100,6 +108,7 @@ async function editKanban(
       text_key: oldTxtKey,
       colorShow,
       showInIndex,
+      showFireworks,
     }
   }
   gStore.setKanbanStateChange(newData)
@@ -108,6 +117,7 @@ async function editKanban(
   if(txtUpdated) aCol.text = text
   aCol.colorShow = colorShow
   aCol.showInIndex = showInIndex
+  aCol.showFireworks = showFireworks
 
   return true
 }

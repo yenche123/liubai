@@ -10,6 +10,7 @@ const {
   reData,
   onTapColor,
   onToggleShowIndex,
+  onToggleShowFireworks,
   onTapConfirm,
   onTapCancel,
 } = initStateEditor()
@@ -55,6 +56,18 @@ const { t } = useI18n()
           ></liu-switch>
         </div>
 
+      </div>
+
+      <!-- 是否喷彩带 -->
+      <div class="se-bar">
+        <div class="seb-hd">
+          <span>{{ t('state_related.showFireworks') }}</span>
+        </div>
+        <div class="seb-footer">
+          <liu-switch :checked="reData.showFireworks" 
+            @change="onToggleShowFireworks($event.checked)"
+          ></liu-switch>
+        </div>
       </div>
 
       <div class="se-color-title">

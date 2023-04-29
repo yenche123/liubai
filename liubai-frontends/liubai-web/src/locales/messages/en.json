@@ -209,6 +209,7 @@
     "add_state": "New State",
     "state_title": "State Name",
     "state_showIndex": "Display in Index",
+    "showFireworks": "Trigger fireworks",
     "state_color": "Color",
     "state_ph": "Text state",    
     "kanban_h1": "Tip",

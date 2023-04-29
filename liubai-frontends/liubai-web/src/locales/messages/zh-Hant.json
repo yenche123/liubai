@@ -209,6 +209,7 @@
     "add_state": "新增狀態",
     "state_title": "  狀態名",
     "state_showIndex": "在首頁上顯示",
+    "showFireworks": "切換時噴彩帶",
     "state_color": "顏色",
     "state_ph": "輸入狀態名",
     "kanban_h1": "看板個數達上限",

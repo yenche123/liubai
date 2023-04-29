@@ -124,6 +124,7 @@ async function toAddState(
   let atom = {
     id: ider.createStateId(),
     showInIndex: rData.showInIndex,
+    showFireworks: rData.showFireworks,
     text: rData.text,
     color: rData.color,
     contentIds: [],
@@ -138,6 +139,7 @@ async function toAddState(
   const col: KanbanColumn = {
     id: atom.id,
     showInIndex: atom.showInIndex,
+    showFireworks: atom.showInIndex,
     text: atom.text,
     colorShow: liuUtil.colorToShow(atom.color),
     threads: [],
@@ -296,6 +298,7 @@ function transferStateListToColumns(
     const obj: KanbanColumn = {
       id: v.id,
       showInIndex: v.showInIndex,
+      showFireworks: v.showFireworks,
       text,
       text_key,
       colorShow,

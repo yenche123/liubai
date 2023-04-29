@@ -93,6 +93,7 @@ function getStateShow(
     text_key,
     colorShow: color,
     showInIndex: stateData.showInIndex,
+    showFireworks: stateData.showFireworks,
   }
 
   return obj

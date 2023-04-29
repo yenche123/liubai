@@ -124,7 +124,7 @@ async function handle_state(ctx: ToCtx) {
   }
 
   // 2. 判断要不要撒花
-  if(newStateId === "FINISHED") {
+  if(newStateShow?.showFireworks) {
     liuUtil.lightFireworks()
   }
 

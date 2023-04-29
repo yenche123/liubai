@@ -48,6 +48,7 @@ function getSystemStates() {
       showInIndex: false,
       updatedStamp: now,
       insertedStamp: now,
+      showFireworks: true,
     }
   ]
   return defaultStates

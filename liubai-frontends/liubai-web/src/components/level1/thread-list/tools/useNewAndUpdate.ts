@@ -62,7 +62,6 @@ function handleKanbanStateChange(
       v.stateId = undefined
       v.stateShow = undefined
     }
-
     else if(ksc.whyChange === "edit") {
       v.stateShow = ksc.stateShow
 
