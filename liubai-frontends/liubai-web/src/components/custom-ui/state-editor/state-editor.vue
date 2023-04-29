@@ -268,7 +268,7 @@ const { t } = useI18n()
   }
 
   .se-bar {
-    padding: 0 20px 24px 24px;
+    padding: 0 20px 24px 20px;
   }
 
   .seb-hd {
@@ -282,12 +282,13 @@ const { t } = useI18n()
 
   .se-color-title {
     font-size: var(--desc-font);
-    padding-inline-start: 24px;
+    padding-inline-start: 20px;
     padding-block-end: 5px;
   }
 
   .se-color-box {
     grid-template-rows: 50px 50px;
+    padding: 0 20px 20px 20px;
   }
 
   .se-a-color {
@@ -305,7 +306,7 @@ const { t } = useI18n()
   }
 
   .se-btns {
-    padding-block-end: 24px;
+    padding: 0 20px 24px 20px;
   }
 
 }
