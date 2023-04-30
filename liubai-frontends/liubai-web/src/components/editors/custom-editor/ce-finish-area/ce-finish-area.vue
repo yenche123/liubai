@@ -9,6 +9,7 @@ export default defineComponent({
       default: false,
     },
     inCodeBlock: Boolean,
+    focused: Boolean,
   },
 })
 </script>
@@ -33,7 +34,7 @@ const emits = defineEmits<{
 
     <div class="cefa-box">
       <span class="cefa-tip"
-        :class="{ 'cefa-tip_hidden': inCodeBlock || cha.isMobile }"
+        :class="{ 'cefa-tip_hidden': !focused || inCodeBlock || cha.isMobile }"
       >{{ liuUtil.getHelpTip('Mod_Enter') }}</span>
       <custom-btn 
         size="mini" 
