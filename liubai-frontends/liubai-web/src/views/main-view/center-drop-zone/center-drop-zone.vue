@@ -50,6 +50,7 @@ const color = "#c7c9ca"
   transition: .11s;
   opacity: 0;
   visibility: hidden;
+  z-index: 570;
 
   &::before {
     position: absolute;
