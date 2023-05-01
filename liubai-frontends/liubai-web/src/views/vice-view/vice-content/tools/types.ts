@@ -9,3 +9,7 @@ export interface VcCtx {
   vcState: Ref<VcState>
   cid: Ref<string>
 }
+
+export interface VcProps {
+  isOutterDraging: boolean
+}

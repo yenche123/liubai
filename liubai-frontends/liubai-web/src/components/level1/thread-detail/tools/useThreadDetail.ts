@@ -2,13 +2,16 @@ import { watch, reactive } from "vue";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 import threadController from "~/utils/controllers/thread-controller/thread-controller";
-import type { TdData, TdProps } from "./types"
+import type { TdData, TdProps, TdEmit } from "./types"
 
-export function useThreadDetail(props: TdProps) {
+export function useThreadDetail(props: TdProps, emit: TdEmit) {
 
   const tdData = reactive<TdData>({
     state: 0,
     threadShow: undefined,
+  })
+  watch(() => tdData.state, (newV) => {
+    emit("pagestatechange", newV)
   })
 
   const { route } = useRouteAndLiuRouter()

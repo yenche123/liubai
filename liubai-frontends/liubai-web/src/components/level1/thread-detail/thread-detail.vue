@@ -7,6 +7,7 @@ import { useThreadOperateInDetail } from './tools/useThreadOperateInDetail';
 import { subscribeUpdate } from "./tools/subscribeUpdate"
 import type { WhatDetail } from '~/types/other/types-custom';
 import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue"
+import { PageState } from '~/types/types-atom';
 
 export default defineComponent({
 
@@ -23,10 +24,14 @@ export default defineComponent({
     }
   },
 
-  setup(props) {
+  emits: {
+    pagestatechange: (state: PageState) => true
+  },
+
+  setup(props, { emit }) {
     const {
       tdData
-    } = useThreadDetail(props)
+    } = useThreadDetail(props, emit)
 
     const {
       receiveOperation

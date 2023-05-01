@@ -4,11 +4,13 @@ import VcNaviBar from './vc-navi-bar/vc-navi-bar.vue';
 import VcIframe from './vc-iframe/vc-iframe.vue';
 import ThreadDetail from "~/components/level1/thread-detail/thread-detail.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
+import RightDropZone from "./right-drop-zone/right-drop-zone.vue";
 import { useVcHeight } from "./tools/useVcHeight"
 import type { VcState } from "./tools/types"
 import { watch } from "vue";
+import { useVcDropZone } from "./tools/useVcDropZone";
 
-defineProps({
+const props = defineProps({
   isOutterDraging: {
     type: Boolean,
     default: false
@@ -26,6 +28,12 @@ const {
   onTapClose,
   onTapOpenInNew,
 } = useViceContent()
+
+const {
+  onTdStateChange,
+  contentRef,
+  showDropZone,
+} = useVcDropZone(vcState, props)
 
 watch(vcState, (newV) => {
   emits("vcstatechange", newV)
@@ -64,16 +72,24 @@ const {
   <!-- 动态 -->
   <div class="vcliu-content"
     v-show="vcState === 'thread'"
+    ref="contentRef"
   >
     <ScrollView>
       <div class="vcliu-virtual"></div>
       <div class="vcliu-box">
         <ThreadDetail
           location="vice-view"
+          @pagestatechange="onTdStateChange"
         ></ThreadDetail>
       </div>
     </ScrollView>
+
+    <!-- 文件掉落盒 -->
+    <RightDropZone
+      :show-drop-zone="showDropZone"
+    ></RightDropZone>
   </div>
+  
   
 
 </template>
