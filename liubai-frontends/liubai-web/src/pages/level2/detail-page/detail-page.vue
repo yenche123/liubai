@@ -15,7 +15,7 @@ const { t } = useI18n()
 <template>
 
   <!-- 主视图 -->
-  <main-view>
+  <main-view :drop-files="true">
     <scroll-view :hidden-scroll-bar="hiddenScrollBar">
       <navi-virtual></navi-virtual>
       <detail-content></detail-content>
