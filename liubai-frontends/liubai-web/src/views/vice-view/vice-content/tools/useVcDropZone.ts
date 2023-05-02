@@ -1,9 +1,11 @@
-import { ref, computed, Ref } from "vue"
+import { ref, computed, provide } from "vue";
+import type { Ref } from "vue";
 import type { PageState } from "~/types/types-atom";
 import type { VcState, VcCtx, VcProps } from "./types"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
 import { useDropZone } from "~/hooks/useVueUse"
+import { vcFileKey } from "~/utils/provide-keys"
 
 export function useVcDropZone(
   vcState: Ref<VcState>,
@@ -18,11 +20,12 @@ export function useVcDropZone(
 
   const gStore = useGlobalStateStore()
   const { isDragToSort } = storeToRefs(gStore)
+  const dropFiles = ref<File[]>()
+  provide(vcFileKey, dropFiles)
 
   const onDrop = (files: File[] | null) => {
-    console.log("监听到 files 掉落")
-    console.log(files)
-    console.log(" ")
+    if(gStore.isDragToSort) return
+    if(files?.length) dropFiles.value = files 
   }
 
   const { isOverDropZone } = useDropZone(contentRef, onDrop)

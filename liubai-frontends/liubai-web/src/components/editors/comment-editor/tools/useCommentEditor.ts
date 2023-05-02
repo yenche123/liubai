@@ -18,14 +18,14 @@ export function useCommentEditor(props: CeProps) {
   const editor = shallowRef<TipTapEditor>()
 
   // toolbar 是否上移、缩小空间
-  const isToolbarTranslateY = ref(props.located === "comment_area")
+  let { located } = props
+  const isToolbarTranslateY = ref(located === "main-view" || located === "vice-view")
 
   // 是否可允许点击发送
   const canSubmit = ref(false)
 
   watch(editorCoreRef, (newV) => {
     if(!newV) return
-    console.log("useCommentEditor editorCoreRef 发生变化.........")
     editor.value = newV.editor as TipTapEditor
   })
 
@@ -56,8 +56,9 @@ export function useCommentEditor(props: CeProps) {
 
 // 获取 minEditorHeight
 function initEditorHeight(props: CeProps) {
-  const isCommentArea = props.located === "comment_area"
-  const isPopup = props.located === "popup"
+  let { located } = props
+  const isCommentArea = located === "main-view" || located === "vice-view"
+  const isPopup = located === "popup"
   let tmpMin = isCommentArea ? 48 : 150
 
   const minEditorHeight = ref(tmpMin)

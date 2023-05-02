@@ -6,12 +6,14 @@ import { PropType } from 'vue';
 import EditingBubbleMenu from "../shared/editing-bubble-menu/editing-bubble-menu.vue";
 import EditingCovers from "../shared/editing-covers/editing-covers.vue";
 import { useI18n } from 'vue-i18n';
+import { useCommentFile } from './tools/useCommentFile';
+import type { CommentEditorLocated } from "~/types/other/types-custom"
 
 const { t } = useI18n()
 
 const props = defineProps({
   located: {
-    type: String as PropType<"comment_area" | "popup">,
+    type: String as PropType<CommentEditorLocated>,
     required: true,
   },
 })
@@ -25,6 +27,8 @@ const {
   myProfile,
   onEditorFocus,
 } = useCommentEditor(props)
+
+useCommentFile(props)
 
 </script>
 <template>

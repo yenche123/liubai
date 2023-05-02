@@ -18,8 +18,11 @@ export const sidebarWidthKey = Symbol() as InjectionKey<Ref<number>>
 // 在 main-view 里面，就等于 mainViewWidthKey; 在 vice-view 里面就等于 viceViewWidthKey
 export const outterWidthKey = Symbol() as InjectionKey<Ref<number>>
 
-// 用于拖动掉落文件
+// 用于 main-view 拖动掉落文件
 export const mvFileKey = Symbol() as InjectionKey<Ref<File[]>>
+
+// 用于 vice-content 拖动掉落文件
+export const vcFileKey = Symbol() as InjectionKey<Ref<File[]>>
 
 // 用于 initCeState 告知富文本编辑器 editor-core 有置入文本信息
 // 每次触发置入时，对应的 number += 1

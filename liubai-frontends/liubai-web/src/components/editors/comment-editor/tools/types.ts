@@ -1,6 +1,9 @@
-
-
+import type { CommentEditorLocated } from "~/types/other/types-custom"
 
 export interface CeProps {
-  located: "comment_area" | "popup"        // 位于评论区、位于弹窗内
+  located: CommentEditorLocated  // 位于弹窗内、main-view 或 vice-view
+}
+
+export interface CeCtx {
+  activated: boolean
 }

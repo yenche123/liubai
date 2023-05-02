@@ -7,7 +7,8 @@ import { useThreadOperateInDetail } from './tools/useThreadOperateInDetail';
 import { subscribeUpdate } from "./tools/subscribeUpdate"
 import type { WhatDetail } from '~/types/other/types-custom';
 import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue"
-import { PageState } from '~/types/types-atom';
+import type { PageState } from '~/types/types-atom';
+import type { CommentEditorLocated } from "~/types/other/types-custom"
 
 export default defineComponent({
 
@@ -33,6 +34,9 @@ export default defineComponent({
       tdData
     } = useThreadDetail(props, emit)
 
+    let commentEditorLocated: CommentEditorLocated = "vice-view"
+    if(props.location === "detail-page") commentEditorLocated = "main-view"
+
     const {
       receiveOperation
     } = useThreadOperateInDetail(tdData)
@@ -41,7 +45,8 @@ export default defineComponent({
 
     return {
       tdData,
-      receiveOperation
+      commentEditorLocated,
+      receiveOperation,
     }
   },
 })
@@ -68,7 +73,7 @@ export default defineComponent({
   >
 
     <CommentEditor
-      located="comment_area"
+      :located="commentEditorLocated"
     ></CommentEditor>
 
     <div class="td-tmp-box"></div>

@@ -1,6 +1,8 @@
 
 export type WhatDetail = "detail-page" | "vice-view"
 
+export type CommentEditorLocated = "popup" | "vice-view" | "main-view"
+
 export interface ContentConfig {
   showCountdown?: boolean
   allowComment?: boolean
