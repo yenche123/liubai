@@ -90,8 +90,8 @@ useCommentFile(props)
 }
 
 .ce-avatar {
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   margin-inline-end: 12px;
   flex: none;
 }
@@ -108,12 +108,12 @@ useCommentFile(props)
   overflow-y: overlay;
   overflow-y: auto;
   transition: .3s;
-  padding-block-start: 5px;
+  padding-block-start: 2px;
 }
 
 .cem-toolbar {
   width: 100%;
-  height: 48px;
+  height: 42px;
   position: relative;
   display: flex;
   align-items: center;
@@ -122,7 +122,7 @@ useCommentFile(props)
 
 .cem-toolbar_translateY {
   pointer-events: none;
-  margin-block-start: -53px;
+  margin-block-start: -44px;
 }
 
 .cemt-main {
