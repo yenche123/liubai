@@ -1,9 +1,15 @@
-import { inject, watch } from "vue"
+import { inject, watch, ref } from "vue"
 import { vcFileKey, mvFileKey } from "~/utils/provide-keys"
-import type { CeProps } from "./types"
+import type { CeCtx, CeProps } from "./types"
 import liuUtil from "~/utils/liu-util"
+import type { ImageShow, LiuFileStore, LiuImageStore } from "~/types"
 
-export function useCommentFile(props: CeProps) {
+export function useCommentFile(
+  props: CeProps,
+  ctx: CeCtx,
+) {
+  
+  const covers = ref<ImageShow[]>([])
 
   // 监听从 vice-content 里掉落的文件
   let located = props.located
@@ -17,6 +23,11 @@ export function useCommentFile(props: CeProps) {
     listenFilesFromPopup()
   }
 
+
+  return { 
+    covers,
+    ctx,
+  }
 }
 
 function listenFilesFromMainView() {

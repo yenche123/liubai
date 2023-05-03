@@ -8,10 +8,15 @@ import { mainViewWidthKey } from "~/utils/provide-keys"
 
 interface EditingCoversProps {
   modelValue?: ImageShow[]
+  isInComment?: boolean
 }
 
 export const ceCoversProps = {
-  modelValue: Array<ImageShow>
+  modelValue: Array<ImageShow>,
+  isInComment: {
+    type: Boolean,
+    default: false,
+  }
 }
 
 export function useEditingCovers(props: EditingCoversProps) {

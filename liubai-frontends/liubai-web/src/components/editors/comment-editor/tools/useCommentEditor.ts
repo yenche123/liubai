@@ -1,14 +1,21 @@
 import { useMyProfile } from "~/hooks/useCommon";
 import EditorCore from "../../editor-core/editor-core.vue"
-import { ref, shallowRef, watch } from "vue"
+import { reactive, ref, shallowRef, watch } from "vue"
 import type { Ref } from "vue"
-import type { TipTapEditor } from "~/types/types-editor"
-import { CeProps } from "./types";
+import type { TipTapEditor, EditorCoreContent } from "~/types/types-editor"
+import { CeCtx, CeProps } from "./types";
 import { useWindowSize } from "~/hooks/useVueUse";
 import { useLiuWatch } from "~/hooks/useLiuWatch";
 import valTool from "~/utils/basic/val-tool";
 
 export function useCommentEditor(props: CeProps) {
+
+  // 上下文
+  const ctx: CeCtx = reactive({
+    focused: false,
+    files: [],
+    images: [],
+  })
   
   // 编辑器相关
   const {
@@ -34,15 +41,21 @@ export function useCommentEditor(props: CeProps) {
   const { myProfile } = useMyProfile()
 
 
-  // 一些事件
+  /** 一些事件 */
   const onEditorFocus = () => {
     if(isToolbarTranslateY.value) {
       isToolbarTranslateY.value = false
     }
+    ctx.focused = true
+  }
+
+  const onEditorBlur = (data: EditorCoreContent) => {
+    ctx.focused = false
   }
 
 
   return {
+    ctx,
     minEditorHeight,
     editorCoreRef,
     editor,
@@ -50,6 +63,7 @@ export function useCommentEditor(props: CeProps) {
     canSubmit,
     myProfile,
     onEditorFocus,
+    onEditorBlur,
   }
 }
 

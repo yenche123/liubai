@@ -13,7 +13,7 @@ export default defineComponent({
   props: ceCoversProps,
   emits: ['update:modelValue', 'clear'],
   setup(props, { emit }) {
-    const imgWidth = 140
+    const imgWidth = props.isInComment ? 120 : 140
     
     const cha = liuApi.getCharacteristic()
     const {

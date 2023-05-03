@@ -19,6 +19,7 @@ const props = defineProps({
 })
 
 const {
+  ctx,
   minEditorHeight,
   editorCoreRef,
   editor,
@@ -26,9 +27,10 @@ const {
   canSubmit,
   myProfile,
   onEditorFocus,
+  onEditorBlur,
 } = useCommentEditor(props)
 
-useCommentFile(props)
+useCommentFile(props, ctx)
 
 </script>
 <template>
@@ -55,6 +57,7 @@ useCommentFile(props)
           :desc-placeholder="t('comment.placeholder1')"
           :min-height="'' + minEditorHeight + 'px'"
           @focus="onEditorFocus"
+          @blur="onEditorBlur"
         ></EditorCore>
       </div>
 
