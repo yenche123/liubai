@@ -30,15 +30,7 @@ export function useCeFile(
   }
 
   // 监听文件拖动掉落
-  const dropFiles = inject(mvFileKey)
-  watch(() => dropFiles?.value, async (files) => {
-    if(!files?.length) return
-    console.log("接收到掉落的文件............")
-    console.log(files)
-    await handleFiles(state, files, moreRef)
-    if(!dropFiles?.value) return
-    dropFiles.value = []
-  })
+  listenFilesDrop(state, moreRef)
 
   // 监听文件黏贴上来
   listenDocumentPaste(state, moreRef)
@@ -125,6 +117,21 @@ function whenImagesChanged(
   }
 }
 
+// 处理文件掉落
+function listenFilesDrop(
+  state: CeState,
+  moreRef: Ref<boolean>,
+) {
+  const dropFiles = inject(mvFileKey)
+  watch(() => dropFiles?.value, async (files) => {
+    if(!files?.length) return
+    console.log("listenFilesDrop 接收到掉落的文件............")
+    console.log(files)
+    await handleFiles(state, files, moreRef)
+    if(!dropFiles?.value) return
+    dropFiles.value = []
+  })
+}
 
 // 全局监听 "黏贴事件"
 function listenDocumentPaste(
