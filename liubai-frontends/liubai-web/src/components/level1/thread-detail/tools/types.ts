@@ -9,6 +9,7 @@ export interface TdData {
 
 export interface TdProps {
   location: WhatDetail
+  threadId: string
 }
 
 export interface TdEmit {

@@ -22,6 +22,10 @@ export default defineComponent({
     location: {
       type: String as PropType<WhatDetail>,
       required: true
+    },
+    threadId: {
+      type: String,
+      required: true,
     }
   },
 
@@ -74,6 +78,7 @@ export default defineComponent({
 
     <CommentEditor
       :located="commentEditorLocated"
+      :parent-thread="tdData.threadShow._id"
     ></CommentEditor>
 
     <div class="td-tmp-box"></div>

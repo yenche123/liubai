@@ -16,6 +16,12 @@ const props = defineProps({
     type: String as PropType<LocatedA>,
     required: true,
   },
+  parentThread: {
+    type: String,
+    required: true,
+  },
+  parentComment: String,
+  replyToComment: String,
 })
 
 const {

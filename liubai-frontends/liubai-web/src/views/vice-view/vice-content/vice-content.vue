@@ -22,6 +22,7 @@ const emits = defineEmits<{
 }>()
 
 const { 
+  cid,
   vcState,
   iframeSrc,
   onTapBack,
@@ -76,8 +77,9 @@ const {
   >
     <ScrollView>
       <div class="vcliu-virtual"></div>
-      <div class="vcliu-box">
+      <div class="vcliu-box" v-if="cid">
         <ThreadDetail
+          :thread-id="cid"
           location="vice-view"
           @pagestatechange="onTdStateChange"
         ></ThreadDetail>

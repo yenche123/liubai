@@ -13,7 +13,7 @@ export function useViceContent() {
   const cid = ref("")
   const { route, router } = useRouteAndLiuRouter()
 
-  const ctx = {
+  const ctx: VcCtx = {
     iframeSrc,
     route,
     vcState,
@@ -57,6 +57,7 @@ export function useViceContent() {
   }
 
   return {
+    cid,
     vcState,
     iframeSrc,
     onTapBack,

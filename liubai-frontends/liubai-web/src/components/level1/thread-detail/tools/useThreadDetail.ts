@@ -1,6 +1,4 @@
 import { watch, reactive } from "vue";
-import { useRouteAndLiuRouter } from "~/routes/liu-router";
-import type { RouteLocationNormalizedLoaded } from "vue-router";
 import threadController from "~/utils/controllers/thread-controller/thread-controller";
 import type { TdData, TdProps, TdEmit } from "./types"
 
@@ -14,9 +12,8 @@ export function useThreadDetail(props: TdProps, emit: TdEmit) {
     emit("pagestatechange", newV)
   })
 
-  const { route } = useRouteAndLiuRouter()
-  watch(route, (newV) => {
-    whenRouteChange(route, tdData, props)
+  watch(() => props.threadId, (newV) => {
+    whenThreadIdChange(newV, tdData)
   }, { immediate: true })
 
   return {
@@ -24,40 +21,16 @@ export function useThreadDetail(props: TdProps, emit: TdEmit) {
   }
 }
 
-function whenRouteChange(
-  route: RouteLocationNormalizedLoaded,
+
+function whenThreadIdChange(
+  newId: string,
   tdData: TdData,
-  props: TdProps,
 ) {
-
-  if(!route) return
-
-  const { name, params, query = {} } = route
-
-  const id = params.contentId
-  const cid = query.cid
-
-  const location = props.location
-
-  if(location === "detail-page") {
-    if(typeof id !== "string" || !id) {
-      return
-    }
-    if(name !== "detail") {
-      return
-    }
-    if(_hasLoaded(id, tdData)) return
-    
-    toLoad(id, tdData)
-  }
-  else if(location === "vice-view") {
-    if(typeof cid !== "string" || !cid) {
-      return
-    }
-    if(_hasLoaded(cid, tdData)) return
-
-    toLoad(cid, tdData)
-  }
+  console.log("whenThreadIdChange........")
+  if(_hasLoaded(newId, tdData)) return
+  console.log("toLoad..............")
+  console.log(" ")
+  toLoad(newId, tdData)
 }
 
 function _hasLoaded(

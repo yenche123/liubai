@@ -7,6 +7,9 @@ import type { EditorCoreContent } from "~/types/types-editor";
 
 export interface CeProps {
   located: LocatedA  // 位于弹窗内、main-view 或 vice-view
+  parentThread: string
+  parentComment?: string
+  replyToComment?: string
 }
 
 export interface CeCtx {
@@ -14,5 +17,12 @@ export interface CeCtx {
   files: LiuFileStore[]
   images: LiuImageStore[]
   isToolbarTranslateY: boolean
+  editorContent?: EditorCoreContent
+}
+
+export interface CommentStorageAtom {
+  parentThread: string
+  parentComment?: string
+  replyToComment?: string
   editorContent?: EditorCoreContent
 }
