@@ -13,7 +13,7 @@ export default defineComponent({
   props: ceCoversProps,
   emits: ['update:modelValue', 'clear'],
   setup(props, { emit }) {
-    const imgWidth = props.isInComment ? 120 : 140
+    const imgWidth = props.isInComment ? 100 : 140
     
     const cha = liuApi.getCharacteristic()
     const {
@@ -95,6 +95,7 @@ export default defineComponent({
 
       <!-- 右下角的拖动按钮 -->
       <span class="cec-drag"
+        v-if="sortList.length > 1"
         :class="{ 'cec-drag_mobile': cha.isMobile }"
         v-handle
       >
