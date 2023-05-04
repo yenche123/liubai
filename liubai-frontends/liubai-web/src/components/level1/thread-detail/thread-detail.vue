@@ -8,7 +8,7 @@ import { subscribeUpdate } from "./tools/subscribeUpdate"
 import type { WhatDetail } from '~/types/other/types-custom';
 import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue"
 import type { PageState } from '~/types/types-atom';
-import type { CommentEditorLocated } from "~/types/other/types-custom"
+import type { LocatedA } from "~/types/other/types-custom"
 
 export default defineComponent({
 
@@ -34,7 +34,7 @@ export default defineComponent({
       tdData
     } = useThreadDetail(props, emit)
 
-    let commentEditorLocated: CommentEditorLocated = "vice-view"
+    let commentEditorLocated: LocatedA = "vice-view"
     if(props.location === "detail-page") commentEditorLocated = "main-view"
 
     const {

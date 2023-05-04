@@ -10,11 +10,14 @@ import valTool from "~/utils/basic/val-tool";
 
 export function useCommentEditor(props: CeProps) {
 
+  let { located } = props
+
   // 上下文
   const ctx: CeCtx = reactive({
     focused: false,
     files: [],
     images: [],
+    isToolbarTranslateY: located === "main-view" || located === "vice-view"
   })
   
   // 编辑器相关
@@ -23,10 +26,6 @@ export function useCommentEditor(props: CeProps) {
   } = initEditorHeight(props)
   const editorCoreRef = ref<typeof EditorCore | null>(null)
   const editor = shallowRef<TipTapEditor>()
-
-  // toolbar 是否上移、缩小空间
-  let { located } = props
-  const isToolbarTranslateY = ref(located === "main-view" || located === "vice-view")
 
   // 是否可允许点击发送
   const canSubmit = ref(false)
@@ -43,8 +42,8 @@ export function useCommentEditor(props: CeProps) {
 
   /** 一些事件 */
   const onEditorFocus = () => {
-    if(isToolbarTranslateY.value) {
-      isToolbarTranslateY.value = false
+    if(ctx.isToolbarTranslateY) {
+      ctx.isToolbarTranslateY = false
     }
     ctx.focused = true
   }
@@ -59,7 +58,6 @@ export function useCommentEditor(props: CeProps) {
     minEditorHeight,
     editorCoreRef,
     editor,
-    isToolbarTranslateY,
     canSubmit,
     myProfile,
     onEditorFocus,

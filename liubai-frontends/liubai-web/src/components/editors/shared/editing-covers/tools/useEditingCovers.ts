@@ -1,14 +1,16 @@
-import { toRef, ref, inject } from "vue";
+import { toRef, ref, inject, PropType } from "vue";
 import { useLiuWatch } from "~/hooks/useLiuWatch";
 import time from "~/utils/basic/time";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import type { ImageShow } from '~/types';
 import cui from "~/components/custom-ui";
-import { mainViewWidthKey } from "~/utils/provide-keys"
+import { mainViewWidthKey, viceViewWidthKey } from "~/utils/provide-keys"
+import type { LocatedA } from "~/types/other/types-custom"
 
 interface EditingCoversProps {
   modelValue?: ImageShow[]
-  isInComment?: boolean
+  isInComment: boolean
+  located: LocatedA
 }
 
 export const ceCoversProps = {
@@ -16,6 +18,10 @@ export const ceCoversProps = {
   isInComment: {
     type: Boolean,
     default: false,
+  },
+  located: {
+    type: String as PropType<LocatedA>,
+    default: "main-view",
   }
 }
 
@@ -43,16 +49,7 @@ export function useEditingCovers(props: EditingCoversProps) {
   useLiuWatch(modelValue, whenPropChange, true)
 
 
-  const axis = ref<"xy" | "y">("xy")
-  const mv = inject(mainViewWidthKey)
-  if(mv) {
-    const _getAxis = () => {
-      const newV = mv.value
-      if(newV > 380) axis.value = "xy"
-      else axis.value = "y"
-    }
-    useLiuWatch(mv, _getAxis)
-  }
+  const { axis } = initAxis(props.located)
 
   const onDragStart = () => {
     globalStore.isDragToSort = true
@@ -79,6 +76,28 @@ export function useEditingCovers(props: EditingCoversProps) {
     onTapImage,
   }
 }
+
+function initAxis(
+  located: LocatedA,
+) {
+  const axis = ref<"xy" | "y">("xy")
+  if(located === "main-view" || located === "vice-view") {
+    const key = located === "main-view" ? mainViewWidthKey : viceViewWidthKey
+    const w = inject(key)
+    if(w) {
+      const _getAxis = () => {
+        const newV = w.value
+        if(newV > 380) axis.value = "xy"
+        else axis.value = "y"
+      }
+      useLiuWatch(w, _getAxis)
+    }
+  }
+
+  return { axis }
+}
+
+
 
 function isItFrequently(
   lastTwoTriggerList: number[]

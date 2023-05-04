@@ -7,13 +7,13 @@ import EditingBubbleMenu from "../shared/editing-bubble-menu/editing-bubble-menu
 import EditingCovers from "../shared/editing-covers/editing-covers.vue";
 import { useI18n } from 'vue-i18n';
 import { useCommentFile } from './tools/useCommentFile';
-import type { CommentEditorLocated } from "~/types/other/types-custom"
+import type { LocatedA } from "~/types/other/types-custom"
 
 const { t } = useI18n()
 
 const props = defineProps({
   located: {
-    type: String as PropType<CommentEditorLocated>,
+    type: String as PropType<LocatedA>,
     required: true,
   },
 })
@@ -23,14 +23,19 @@ const {
   minEditorHeight,
   editorCoreRef,
   editor,
-  isToolbarTranslateY,
   canSubmit,
   myProfile,
   onEditorFocus,
   onEditorBlur,
 } = useCommentEditor(props)
 
-useCommentFile(props, ctx)
+const {
+  covers,
+  onClearCover,
+  onCoversSorted,
+  onFileChange,
+  onImageChange,
+} = useCommentFile(props, ctx)
 
 </script>
 <template>
@@ -61,9 +66,20 @@ useCommentFile(props, ctx)
         ></EditorCore>
       </div>
 
+      <!-- 留白 -->
+      <div class="cem-bottom-two"></div>
+
+      <EditingCovers 
+        :is-in-comment="true"
+        :located="located"
+        :model-value="covers"
+        @update:model-value="onCoversSorted"
+        @clear="onClearCover"
+      ></EditingCovers>
+
       <!-- 工具栏 -->
       <div class="cem-toolbar"
-        :class="{ 'cem-toolbar_translateY': isToolbarTranslateY }"
+        :class="{ 'cem-toolbar_translateY': ctx.isToolbarTranslateY }"
       >
         <div class="cemt-main">
 
@@ -114,6 +130,11 @@ useCommentFile(props, ctx)
   padding-block-start: 2px;
 }
 
+.cem-bottom-two {
+  width: 100%;
+  height: 9px;
+}
+
 .cem-toolbar {
   width: 100%;
   height: 42px;
@@ -125,7 +146,7 @@ useCommentFile(props, ctx)
 
 .cem-toolbar_translateY {
   pointer-events: none;
-  margin-block-start: -44px;
+  margin-block-start: -53px;
 }
 
 .cemt-main {

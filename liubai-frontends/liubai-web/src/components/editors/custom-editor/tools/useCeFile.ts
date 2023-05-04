@@ -18,9 +18,15 @@ export function useCeFile(
   const selectImagesEl = ref<HTMLInputElement | null>(null)
   const covers = ref<ImageShow[]>([])
 
+  // 监听文件拖动掉落
+  listenFilesDrop(state, moreRef)
+
+  // 监听文件黏贴上来
+  listenDocumentPaste(state, moreRef)
+
   // 监听逻辑数据改变，去响应视图
   watch(() => state.images, (newImages) => {
-    whenImagesChanged(covers, newImages)
+    imgHelper.whenImagesChanged(covers, newImages)
   }, { deep: true })
 
   // editing-covers 传来用户拖动图片，调整了顺序
@@ -28,12 +34,6 @@ export function useCeFile(
   const onCoversSorted = (newCovers: ImageShow[]) => {
     whenCoversSorted(newCovers, state)
   }
-
-  // 监听文件拖动掉落
-  listenFilesDrop(state, moreRef)
-
-  // 监听文件黏贴上来
-  listenDocumentPaste(state, moreRef)
 
   const onImageChange = (files: File[]) => {
     handleFiles(state, files)
@@ -87,34 +87,6 @@ function whenCoversSorted(
     if(data) newImages.push(data)
   }
   state.images = newImages
-}
-
-function whenImagesChanged(
-  coversRef: Ref<ImageShow[]>,
-  newImages?: LiuImageStore[],
-) {
-  const newLength = newImages?.length ?? 0
-  if(newLength < 1) {
-    if(coversRef.value.length > 0) coversRef.value = []
-    return
-  }
-
-  (newImages as LiuImageStore[]).forEach((v, i) => {
-    const v2 = coversRef.value[i]
-    if(!v2) {
-      coversRef.value.push(imgHelper.imageStoreToShow(v))
-    }
-    else if(v2.id !== v.id) {
-      coversRef.value[i] = imgHelper.imageStoreToShow(v)
-    }
-  })
-
-  // 删除多余的项
-  const length2 = coversRef.value.length
-  const diffLength = length2 - newLength
-  if(diffLength > 0) {
-    coversRef.value.splice(newLength, diffLength)
-  }
 }
 
 // 处理文件掉落

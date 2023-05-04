@@ -4,6 +4,7 @@ import liuUtil from '../liu-util';
 import ider from '../basic/ider';
 import { encode as blurhashEncode } from "blurhash";
 import { getImgLayout } from "./tools/img-layout"
+import type { Ref } from "vue"
 
 type FileWithCharacteristic = { 
   file: File
@@ -218,9 +219,39 @@ function imageStoreToShow(val: LiuImageStore): ImageShow {
   return obj
 }
 
+// 当逻辑层的 images 变化时，响应到 coversRef 视图层上
+function whenImagesChanged(
+  coversRef: Ref<ImageShow[]>,
+  newImages?: LiuImageStore[],
+) {
+  const newLength = newImages?.length ?? 0
+  if(newLength < 1) {
+    if(coversRef.value.length > 0) coversRef.value = []
+    return
+  }
+
+  (newImages as LiuImageStore[]).forEach((v, i) => {
+    const v2 = coversRef.value[i]
+    if(!v2) {
+      coversRef.value.push(imageStoreToShow(v))
+    }
+    else if(v2.id !== v.id) {
+      coversRef.value[i] = imageStoreToShow(v)
+    }
+  })
+
+  // 删除多余的项
+  const length2 = coversRef.value.length
+  const diffLength = length2 - newLength
+  if(diffLength > 0) {
+    coversRef.value.splice(newLength, diffLength)
+  }
+}
+
 export default {
   compress,
   getMetaDataFromFiles,
   imageStoreToShow,
   getImgLayout,
+  whenImagesChanged,
 }
