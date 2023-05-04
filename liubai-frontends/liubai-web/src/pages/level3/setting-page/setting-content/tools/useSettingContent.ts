@@ -160,4 +160,5 @@ async function whenTapLanguage(
 
   data.language = id
   data.language_txt = new_lang_txt
+  data.termsList = getTermsList()
 }
