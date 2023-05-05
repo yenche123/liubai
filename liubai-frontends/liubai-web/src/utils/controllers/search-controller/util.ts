@@ -62,12 +62,16 @@ function _getTitleAndDesc(v: ContentLocalTable, keyword?: string) {
   if(!title) {
     let tmpTitle = _getOneLine(content)
     let tmpDesc = _getHighlight(content, keyword)
+    let fileName = _getFileName(v)
     if(tmpTitle) {
       title = tmpTitle
       if(tmpDesc !== tmpTitle) desc = tmpDesc
     }
-    else {
+    else if(tmpDesc) {
       title = tmpDesc
+    }
+    else if(fileName) {
+      title = `[${fileName}]`
     }
   }
   else {
@@ -76,6 +80,14 @@ function _getTitleAndDesc(v: ContentLocalTable, keyword?: string) {
 
   return { title, desc }
 }
+
+function _getFileName(v: ContentLocalTable) {
+  let files = v.files
+  if(!files?.length) return ""
+  const firFile = files[0]
+  return firFile.name
+}
+
 
 // 获取文本的第一行
 function _getOneLine(text: string) {
