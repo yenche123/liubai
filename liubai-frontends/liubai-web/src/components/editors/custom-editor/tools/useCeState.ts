@@ -43,6 +43,7 @@ export function useCeState(
   // 监听用户操作 files 的变化，去存储到 IndexedDB 上
   watch(() => state.files, (newV) => {
     toAutoChange(state)
+    checkCanSubmit(state, canSubmitRef)
   }, { deep: true })
 
   // 监听 tagIds 的变化

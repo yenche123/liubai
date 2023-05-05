@@ -20,7 +20,8 @@ export function useCommentEditor(props: CeProps) {
     files: [],
     images: [],
     lastInitStamp: time.getTime(),
-    isToolbarTranslateY: located === "main-view" || located === "vice-view"
+    isToolbarTranslateY: located === "main-view" || located === "vice-view",
+    canSubmit: false,
   })
   
   // 编辑器相关
@@ -29,9 +30,6 @@ export function useCommentEditor(props: CeProps) {
   } = initEditorHeight(props)
   const editorCoreRef = ref<typeof EditorCore | null>(null)
   const editor = shallowRef<TipTapEditor>()
-
-  // 是否可允许点击发送
-  const canSubmit = ref(false)
 
   watch(editorCoreRef, (newV) => {
     if(!newV) return
@@ -59,6 +57,7 @@ export function useCommentEditor(props: CeProps) {
   const onEditorUpdate = (data: EditorCoreContent) => {
     let atom = getStorageAtom(props, data)
     commentCache.toSave(atom)
+    ctx.editorContent = data
   }
 
 
@@ -67,7 +66,6 @@ export function useCommentEditor(props: CeProps) {
     minEditorHeight,
     editorCoreRef,
     editor,
-    canSubmit,
     myProfile,
     onEditorFocus,
     onEditorBlur,
@@ -106,7 +104,21 @@ function initEditorContent(
   if(!editorContent.text) return
 
   editor.commands.setContent(editorContent.json)
+  ctx.editorContent = editorContent
   ctx.isToolbarTranslateY = false
+
+  checkCanSubmit(ctx)
+}
+
+function checkCanSubmit(
+  ctx: CeCtx,
+) {
+  const imgLength = ctx.images.length
+  const fileLength = ctx.files.length
+  const text = ctx.editorContent?.text?.trim()
+
+  let newCanSubmit = Boolean(imgLength) || Boolean(text) || Boolean(fileLength)
+  ctx.canSubmit = newCanSubmit
 }
 
 

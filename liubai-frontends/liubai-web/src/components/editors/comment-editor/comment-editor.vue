@@ -29,7 +29,6 @@ const {
   minEditorHeight,
   editorCoreRef,
   editor,
-  canSubmit,
   myProfile,
   onEditorFocus,
   onEditorBlur,
@@ -95,7 +94,7 @@ const {
         <div class="cemt-footer">
 
           <div class="cemtf-submit-btn"
-            :class="{ 'cemtf-submit_disabled': !canSubmit }"
+            :class="{ 'cemtf-submit_disabled': !ctx.canSubmit }"
           >
             <span>{{ t('comment.submit1') }}</span>
           </div>

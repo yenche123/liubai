@@ -18,6 +18,7 @@ export interface CeCtx {
   images: LiuImageStore[]
   isToolbarTranslateY: boolean
   lastInitStamp: number
+  canSubmit: boolean
   editorContent?: EditorCoreContent
 }
 
