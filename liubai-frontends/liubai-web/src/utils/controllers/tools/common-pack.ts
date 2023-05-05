@@ -54,7 +54,7 @@ function getSummary(
   if(files && files.length > 0) {
     text = files[0].name
     if(text.length > 140) text = text.substring(0, 140)
-    return files[0].name
+    return `[${text}]`
   }
 
   return text
