@@ -27,4 +27,8 @@ export interface CommentStorageAtom {
   parentComment?: string
   replyToComment?: string
   editorContent?: EditorCoreContent
+  files?: LiuFileStore[]
+  images?: LiuImageStore[]
 }
+
+export type CommentStorageType = "content" | "image" | "file"

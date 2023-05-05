@@ -1,10 +1,13 @@
 import liuUtil from "~/utils/liu-util"
-import type { CommentStorageAtom } from "./types"
+import type { CommentStorageAtom, CommentStorageType } from "./types"
 import valTool from "~/utils/basic/val-tool"
 
 let list: CommentStorageAtom[] = []
 
-function toSave(atom: CommentStorageAtom) {
+function toSave(
+  atom: CommentStorageAtom,
+  saveType: CommentStorageType = "content",
+) {
   
   let _atom = liuUtil.toRawData(atom)
   let hasFound = false
@@ -14,7 +17,15 @@ function toSave(atom: CommentStorageAtom) {
       if(v.parentComment === _atom.parentComment) {
         if(v.replyToComment === _atom.replyToComment) {
           hasFound = true
-          v.editorContent = _atom.editorContent
+          if(saveType === "content") {
+            v.editorContent = _atom.editorContent
+          }
+          else if(saveType === "file") {
+            v.files = _atom.files
+          }
+          else if(saveType === "image") {
+            v.images = _atom.images
+          }
         }
       }
     }

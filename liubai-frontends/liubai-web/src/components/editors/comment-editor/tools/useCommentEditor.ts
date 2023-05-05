@@ -9,6 +9,8 @@ import { useLiuWatch } from "~/hooks/useLiuWatch";
 import valTool from "~/utils/basic/val-tool";
 import commentCache from "./comment-cache";
 import time from "~/utils/basic/time";
+import type { LiuFileStore, LiuImageStore } from "~/types";
+import liuUtil from "~/utils/liu-util";
 
 export function useCommentEditor(props: CeProps) {
 
@@ -30,13 +32,29 @@ export function useCommentEditor(props: CeProps) {
   } = initEditorHeight(props)
   const editorCoreRef = ref<typeof EditorCore | null>(null)
   const editor = shallowRef<TipTapEditor>()
-
   watch(editorCoreRef, (newV) => {
     if(!newV) return
     editor.value = newV.editor as TipTapEditor
     initEditorContent(props, ctx, editor as ShallowRef<TipTapEditor>)
   })
 
+  // 监听图片改变，以缓存它们
+  watch(() => ctx.images, (newImages) => {
+    if(isJustInit(ctx)) return
+    const _newImages = liuUtil.toRawData(newImages)
+    const atom = getStorageAtom(props, undefined, undefined, _newImages)
+    commentCache.toSave(atom, "image")
+    checkCanSubmit(ctx)
+  }, { deep: true })
+
+  // 监听文件改变，以缓存它们
+  watch(() => ctx.files, (newFiles) => {
+    if(isJustInit(ctx)) return
+    const _newFiles = liuUtil.toRawData(newFiles)
+    const atom = getStorageAtom(props, undefined, _newFiles, undefined)
+    commentCache.toSave(atom, "file")
+    checkCanSubmit(ctx)
+  }, { deep: true })
 
   // 个人信息
   const { myProfile } = useMyProfile()
@@ -77,14 +95,26 @@ export function useCommentEditor(props: CeProps) {
 function getStorageAtom(
   props: CeProps,
   editorContent?: EditorCoreContent,
+  files?: LiuFileStore[],
+  images?: LiuImageStore[],
 ) {
   let atom: CommentStorageAtom = {
     parentThread: props.parentThread,
     parentComment: props.parentComment,
     replyToComment: props.replyToComment,
     editorContent,
+    files,
+    images,
   }
   return atom
+}
+
+function isJustInit(ctx: CeCtx) {
+  const s = ctx.lastInitStamp
+  const now = time.getTime()
+  const diff = now - s
+  if(diff < 500) return true
+  return false
 }
 
 
@@ -100,14 +130,26 @@ function initEditorContent(
   let atom = getStorageAtom(props)
   const res = commentCache.toGet(atom)
   const editorContent = res?.editorContent
-  if(!editorContent) return
-  if(!editorContent.text) return
+  const images = res?.images
+  const files = res?.files
+  
+  if(editorContent?.text?.trim()) {
+    editor.commands.setContent(editorContent.json)
+    ctx.editorContent = editorContent
+    ctx.isToolbarTranslateY = false
+    ctx.canSubmit = true
+  }
 
-  editor.commands.setContent(editorContent.json)
-  ctx.editorContent = editorContent
-  ctx.isToolbarTranslateY = false
-
-  checkCanSubmit(ctx)
+  if(images?.length) {
+    ctx.images = images
+    ctx.isToolbarTranslateY = false
+    ctx.canSubmit = true
+  }
+  if(files?.length) {
+    ctx.files = files
+    ctx.isToolbarTranslateY = false
+    ctx.canSubmit = true
+  }
 }
 
 function checkCanSubmit(
