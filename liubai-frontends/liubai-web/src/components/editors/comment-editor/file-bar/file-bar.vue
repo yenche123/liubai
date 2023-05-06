@@ -8,6 +8,15 @@ defineEmits<{
   (event: "tapclear"): void
 }>()
 
+const menu = [
+  {
+    text_key: "common.view",
+  },
+  {
+    text_key: "common.remove"
+  }
+]
+
 </script>
 <template>
 
@@ -15,9 +24,17 @@ defineEmits<{
     <div class="fb-icon">
       <svg-icon class="fb-svg" name="attachment" color="var(--other-btn-text)"></svg-icon>
     </div>
-    <div class="fb-text">
-      <span>{{ fileShowName }}</span>
+
+    <div class="fb-desc">
+      <LiuMenu
+        :menu="menu"
+      >
+        <div class="fb-text">
+          <span>{{ fileShowName }}</span>
+        </div>
+      </LiuMenu>
     </div>
+    
   </div>
 
 </template>
@@ -35,6 +52,7 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-inline-start: -4px;
   margin-inline-end: 4px;
   flex: none;
 }
@@ -44,8 +62,28 @@ defineEmits<{
   height: 22px;
 }
 
-.fb-text {
+.fb-desc {
   flex: 1;
+  display: flex;
+  max-width: calc(100% - 32px);
+  overflow: hidden;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    width: 90px;
+    background: var(--inline-more);
+  }
+}
+
+.fb-text {
+  width: 100%;
+  position: relative;
   font-size: var(--btn-font);
   line-height: 32px;
   user-select: none;
@@ -54,6 +92,16 @@ defineEmits<{
   overflow: hidden;
   text-overflow: ellipsis;
   color: var(--primary-color);
+  cursor: pointer;
+}
+
+
+@media(hover: hover) {
+
+  .fb-text:hover {
+    text-decoration: underline;
+  }
+
 }
 
 

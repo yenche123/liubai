@@ -98,6 +98,7 @@
 
   /********* 导入页: 「查看更多」的背景 *******/
   --mask-bg: linear-gradient(0deg, rgba(42, 44, 46, 1) 40%, rgba(42, 44, 46, 0) 95%);
+  --inline-more: linear-gradient(90deg, rgba(42, 44, 46, .1) 10%, rgba(42, 44, 46, .96) 90%);
 
   /** drag-handle */
   --liu-drag-handle: #505359;
