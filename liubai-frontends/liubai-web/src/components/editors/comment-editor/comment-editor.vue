@@ -133,6 +133,7 @@ const {
 .ce-main {
   flex: 1;
   position: relative;
+  max-width: calc(100% - 54px);
 }
 
 .cem-editor {
