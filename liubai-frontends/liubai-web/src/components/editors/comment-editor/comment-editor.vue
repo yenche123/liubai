@@ -59,11 +59,6 @@ const {
     <!-- 编辑区域 -->
     <div class="ce-main">
 
-      <!-- 气泡: 放在 editor-core 外层是因为避免被 ce-editor 遮挡 -->
-      <EditingBubbleMenu 
-        :editor="editor"
-      ></EditingBubbleMenu>
-
       <div class="cem-editor">
         <EditorCore
           ref="editorCoreRef"

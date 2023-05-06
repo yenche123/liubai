@@ -87,7 +87,7 @@ export default defineComponent({
         @click.stop="onTapBriefing"
       >
         <EditorCore
-          :edit-mode="false"
+          :is-edit="false"
           :content="threadData.briefing"
         ></EditorCore>
         <div class="tcb-mask"></div>
@@ -108,7 +108,7 @@ export default defineComponent({
       >
         <EditorCore 
           ref="editorCoreRef"
-          :edit-mode="false"
+          :is-edit="false"
           :content="threadData.content"
         ></EditorCore>
       </div>

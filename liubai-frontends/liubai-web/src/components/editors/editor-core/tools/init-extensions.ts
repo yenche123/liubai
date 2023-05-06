@@ -156,7 +156,7 @@ export function initExtensions(
     })
   ]
 
-  if(!props.editMode) {
+  if(!props.isEdit) {
     extensions.push(CustomLink)
     extensions.push(CustomHeading)
   }

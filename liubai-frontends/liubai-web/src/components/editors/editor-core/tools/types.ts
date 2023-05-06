@@ -4,7 +4,7 @@ import type { HashTagEditorRes } from "~/types/other/types-hashtag"
 export interface EditorCoreProps {
   titlePlaceholder: string
   descPlaceholder: string
-  editMode: boolean
+  isEdit: boolean
   content?: TipTapJSONContent
   hashTrigger: boolean            // 是否允许输入 # 来激发 cui.showHashTagEditor
 }

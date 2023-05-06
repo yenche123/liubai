@@ -20,7 +20,7 @@ export default defineComponent({
       type: String,
       default: "",
     },
-    editMode: {         // 是否为编辑模式
+    isEdit: {         // 是否为编辑模式
       type: Boolean,
       default: true
     },
@@ -70,7 +70,7 @@ export default defineComponent({
   font-size: var(--desc-font);
   line-height: 1.9;
   color: var(--main-normal);
-  min-height: v-bind("editMode ? minHeight : 0");
+  min-height: v-bind("isEdit ? minHeight : 0");
   caret-color: var(--primary-color);
 
   h1 {
@@ -165,7 +165,7 @@ export default defineComponent({
     background: #121212;
     color: #FFF;
     font-family: 'JetBrainsMono', monospace;
-    padding: v-bind("editMode ? '2.5rem 1rem 0.75rem' : '1.5rem 1rem 0.75rem'");
+    padding: v-bind("isEdit ? '2.5rem 1rem 0.75rem' : '1.5rem 1rem 0.75rem'");
     border-radius: 0.5rem;
     margin: 0.75rem 0;
 

@@ -31,7 +31,7 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
   const editor = useEditor({
     content,
     extensions,
-    editable: props.editMode,
+    editable: props.isEdit,
     onUpdate({ editor }) {
       onEditorUpdate(editor, props, emits, ctx)
     },
@@ -45,7 +45,7 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
   
   useEcHashtag(editor, props, emits)
   
-  if(props.editMode) {
+  if(props.isEdit) {
     // 编辑模式时，去初始化 lastEmpty / lastText
 
     const numWhenSet = inject(editorSetKey, ref(0))
