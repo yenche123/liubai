@@ -9,6 +9,8 @@ export interface MenuItem {
   [otherKey: string]: any
 }
 
+export type MenuTrigger = "click" | "hover" | "focus" | "touch"
+
 export type MenuPlacement = "bottom" | "bottom-start" | "bottom-end" 
 | "auto" | "top" | "top-start" | "top-end"
 
@@ -19,6 +21,8 @@ export interface LiuMenuProps {
   placement: MenuPlacement
   allowMask: boolean
   maskZIndex: string
+  showTriggers: MenuTrigger[]
+  hideTriggers: MenuTrigger[]
 }
 
 export const liumenu_props = {
@@ -44,5 +48,13 @@ export const liumenu_props = {
   maskZIndex: {
     type: String,
     default: "2000"
+  },
+  showTriggers: {
+    type: Array<MenuTrigger>,
+    default: ['click'],
+  },
+  hideTriggers: {
+    type: Array<MenuTrigger>,
+    default: ['click'],
   },
 }
