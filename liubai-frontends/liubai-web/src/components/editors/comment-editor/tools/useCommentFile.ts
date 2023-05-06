@@ -62,6 +62,10 @@ export function useCommentFile(
     whenFileChange(ctx, files)
   }
 
+  const onClearFile = () => {
+    ctx.files = []
+  }
+
 
   return { 
     covers,
@@ -69,6 +73,7 @@ export function useCommentFile(
     onCoversSorted,
     onFileChange,
     onImageChange,
+    onClearFile,
   }
 }
 

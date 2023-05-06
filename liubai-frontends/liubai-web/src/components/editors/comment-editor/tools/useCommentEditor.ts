@@ -24,6 +24,7 @@ export function useCommentEditor(props: CeProps) {
     lastInitStamp: time.getTime(),
     isToolbarTranslateY: located === "main-view" || located === "vice-view",
     canSubmit: false,
+    fileShowName: "",
   })
   
   // 编辑器相关
@@ -49,6 +50,7 @@ export function useCommentEditor(props: CeProps) {
 
   // 监听文件改变，以缓存它们
   watch(() => ctx.files, (newFiles) => {
+    handleFileName(ctx, newFiles)
     if(isJustInit(ctx)) return
     const _newFiles = liuUtil.toRawData(newFiles)
     const atom = getStorageAtom(props, undefined, _newFiles, undefined)
@@ -89,6 +91,18 @@ export function useCommentEditor(props: CeProps) {
     onEditorBlur,
     onEditorUpdate,
   }
+}
+
+function handleFileName(
+  ctx: CeCtx,
+  files: LiuFileStore[]
+) {
+  let firFile = files[0]
+  if(!firFile) {
+    ctx.fileShowName = ""
+    return
+  }
+  ctx.fileShowName = firFile.name
 }
 
 

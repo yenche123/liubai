@@ -5,6 +5,7 @@ import EditorCore from "../editor-core/editor-core.vue"
 import { PropType } from 'vue';
 import EditingBubbleMenu from "../shared/editing-bubble-menu/editing-bubble-menu.vue";
 import EditingCovers from "../shared/editing-covers/editing-covers.vue";
+import FileBar from './file-bar/file-bar.vue';
 import { useI18n } from 'vue-i18n';
 import { useCommentFile } from './tools/useCommentFile';
 import type { LocatedA } from "~/types/other/types-custom"
@@ -41,6 +42,7 @@ const {
   onCoversSorted,
   onFileChange,
   onImageChange,
+  onClearFile,
 } = useCommentFile(props, ctx)
 
 </script>
@@ -83,6 +85,12 @@ const {
         @update:model-value="onCoversSorted"
         @clear="onClearCover"
       ></EditingCovers>
+
+      <!-- 文件 -->
+      <FileBar
+        :file-show-name="ctx.fileShowName"
+        @tapclear="onClearFile"
+      ></FileBar>
 
       <!-- 工具栏 -->
       <div class="cem-toolbar"

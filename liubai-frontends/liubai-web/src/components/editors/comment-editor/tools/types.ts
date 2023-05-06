@@ -19,6 +19,7 @@ export interface CeCtx {
   isToolbarTranslateY: boolean
   lastInitStamp: number
   canSubmit: boolean
+  fileShowName: string
   editorContent?: EditorCoreContent
 }
 
