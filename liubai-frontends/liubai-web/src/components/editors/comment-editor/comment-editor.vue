@@ -62,6 +62,7 @@ const {
       <div class="cem-editor">
         <EditorCore
           ref="editorCoreRef"
+          purpose="comment-edit"
           :desc-placeholder="t('comment.placeholder1')"
           :min-height="'' + minEditorHeight + 'px'"
           @focus="onEditorFocus"

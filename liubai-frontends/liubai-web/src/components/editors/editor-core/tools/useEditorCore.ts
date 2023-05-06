@@ -66,7 +66,14 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
     })
   }
 
-  return { editor }
+  const pse = props.purpose
+  const isComment = pse === "comment-browse" || pse === "comment-edit"
+  const selectBg = isComment ? `var(--select-bg-2)` : `var(--select-bg)`
+
+  return { 
+    editor,
+    selectBg,
+  }
 }
 
 function setLastData(

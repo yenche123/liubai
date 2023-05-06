@@ -6,6 +6,7 @@ import type { EditorCoreContent, TipTapJSONContent } from "~/types/types-editor"
 import cfg from "~/config"
 import { defineComponent, PropType } from 'vue'
 import type { HashTagEditorRes } from "~/types/other/types-hashtag"
+import type { EditorCorePurpose } from "./tools/types"
 
 export default defineComponent({
   components: {
@@ -35,6 +36,10 @@ export default defineComponent({
       type: String,
       default: `${cfg.min_editor_height}px`
     },
+    purpose: {
+      type: String as PropType<EditorCorePurpose>,
+      default: ""
+    }
   },
   emits: {
     update: (payload: EditorCoreContent) => true,
@@ -45,11 +50,15 @@ export default defineComponent({
   },
   expose: ['editor'],
   setup(props, { emit }) {
-    const { editor } = useEditorCore(props, emit)
+    const { 
+      editor,
+      selectBg,
+    } = useEditorCore(props, emit)
 
     return {
       editor, 
       cfg,
+      selectBg,
     }
   },
 })
@@ -158,7 +167,7 @@ export default defineComponent({
   s::selection, 
   a::selection,
   h1::selection {
-    background-color: var(--select-bg);
+    background-color: v-bind("selectBg");
   }
 
   pre {
