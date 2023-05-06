@@ -124,7 +124,7 @@ const onTapShare = () => {
 <style scoped lang="scss">
 
 .tca-container {
-  margin-inline-start: -4px;
+  margin-inline-start: -6px;
   width: 100%;
   position: relative;
   padding-block-start: 10px;

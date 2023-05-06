@@ -102,7 +102,7 @@ function handleFileName(
     ctx.fileShowName = ""
     return
   }
-  ctx.fileShowName = firFile.name
+  ctx.fileShowName = liuUtil.trim.trimFileName(firFile.name)
 }
 
 

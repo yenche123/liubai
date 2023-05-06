@@ -159,6 +159,7 @@ export default defineComponent({
   width: 100%;
   position: relative;
   padding-block-start: 10px;
+  margin-inline-start: -4px;
 
   .tcwr-item-box {
     display: flex;

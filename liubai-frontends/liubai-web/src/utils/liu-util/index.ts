@@ -44,6 +44,7 @@ import openUtil from "./open-util"
 import {
   isChildElementVisible
 } from "./element-util"
+import trimUtil from "./trim-util"
 
 export default {
   getEnv,
@@ -83,4 +84,5 @@ export default {
   calibrateSidebarWidth,
   lightFireworks,
   open: openUtil,
+  trim: trimUtil,
 }

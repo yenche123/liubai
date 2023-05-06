@@ -68,17 +68,6 @@ const menu = [
   max-width: calc(100% - 32px);
   overflow: hidden;
   position: relative;
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    height: 100%;
-    width: 90px;
-    background: var(--inline-more);
-  }
 }
 
 .fb-text {
