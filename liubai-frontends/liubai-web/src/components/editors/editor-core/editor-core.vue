@@ -80,6 +80,7 @@ export default defineComponent({
   line-height: 1.9;
   color: var(--main-normal);
   min-height: v-bind("isEdit ? minHeight : 0");
+  transition: v-bind("purpose === 'thread-edit' ? '.3s' : 0");
   caret-color: var(--primary-color);
 
   h1 {

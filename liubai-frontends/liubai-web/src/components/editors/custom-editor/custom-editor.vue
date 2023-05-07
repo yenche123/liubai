@@ -116,6 +116,7 @@ const onTapCeContainer = (e: MouseEvent) => {}
       @blur="onEditorBlur"
       @finish="onEditorFinish"
       @addhashtag="onAddHashTag"
+      purpose="thread-edit"
       :hash-trigger="true"
       :min-height="'' + minEditorHeight + 'px'"
     ></EditorCore>

@@ -2,7 +2,9 @@ import type { TipTapJSONContent, EditorCoreContent } from "~/types/types-editor"
 import type { HashTagEditorRes } from "~/types/other/types-hashtag"
 
 
-export type EditorCorePurpose = "comment-edit" | "comment-browse" | ""
+export type EditorCorePurpose = "thread-edit" | "thread-browse"
+  | "comment-edit" | "comment-browse" | ""
+
 export interface EditorCoreProps {
   titlePlaceholder: string
   descPlaceholder: string
