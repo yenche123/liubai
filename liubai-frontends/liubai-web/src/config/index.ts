@@ -27,7 +27,7 @@ export default {
   vice_navi_height: 50,
 
   // 文本编辑器最低尺寸
-  min_editor_height: 140,
+  min_editor_height: 100,
 
   // 打开 特定 iframe 的参数
   iframe_keys: ["outq", "gpt3", "pdf", "xhs", "bing", "github"],

@@ -192,7 +192,6 @@ const onTapCeContainer = (e: MouseEvent) => {}
 
 .ce-editor {
   width: 100%;
-  min-height: v-bind("minEditorHeight + 'px'");
   max-height: v-bind("maxEditorHeight + 'px'");
   position: relative;
   overflow-y: overlay;
