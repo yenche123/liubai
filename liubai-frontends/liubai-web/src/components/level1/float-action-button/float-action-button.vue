@@ -94,11 +94,13 @@ const onTapBtn = () => {
 @media(hover: hover) {
   .fab-container:hover {
     background-color: var(--secondary-hover);
+    box-shadow: var(--secondary-shadow-hover);
   }
 }
 
 .fab-container:active {
   background-color: var(--secondary-active);
+  box-shadow: var(--secondary-shadow-hover);
 }
 
 

@@ -25,7 +25,8 @@
   --secondary-color: #bfdfed;
   --secondary-hover: #afd6e7;
   --secondary-active: #a9cfdf;
-  --secondary-shadow: 0 4px 6px -1px rgba(0, 0, 0, .22);
+  --secondary-shadow: 0 10px 16px -3px rgba(42, 104, 133, .52);
+  --secondary-shadow-hover: 0 6px 11px -3px rgba(42, 104, 133, .52);
 
   --sidebar-bg: #ffffff;
   --sidebar-scrollbar-thumb: #dcd7d5;
