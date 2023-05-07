@@ -133,12 +133,29 @@ export default defineComponent({
     width: 30px;
     height: 30px;
     cursor: pointer;
-    border-radius: 4px;
-    overflow: hidden;
+    border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, .66);
+    transition: .15s;
+    transform-origin: top right;
+
+    /** 扩大删除按钮的点击范围 */
+    &::before {
+      position: absolute;
+      content: "";
+      top: -4px;
+      right: -4px;
+      bottom: 0;
+      left: 0;
+    }
+  }
+
+  @media(hover: hover) {
+    .cec-delete:hover {
+      border-radius: 5px;
+    }
   }
 
   .cec-drag {
