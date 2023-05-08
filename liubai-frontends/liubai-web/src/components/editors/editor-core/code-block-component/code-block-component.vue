@@ -10,9 +10,9 @@
         <span>{{ t("editor.leave_codeBlock", { tip: leaveTip }) }}</span>
       </div>
 
-      <select contenteditable="false" v-model="selectedLanguage">
+      <select contenteditable="false" v-model="showLanguage">
         <option :value="null">
-          auto
+          Auto
         </option>
         <option disabled>
           —
@@ -27,8 +27,8 @@
     <!-- 阅读模式 -->
     <div v-else class="cb-right-top_read">
       <div class="cbrt-tip">
-        <span v-if="selectedLanguage">{{ selectedLanguage }}</span>
-        <span v-else>AUTO</span>
+        <span v-if="showLanguage">{{ showLanguage }}</span>
+        <span v-else>Auto</span>
       </div>
     </div>
 
@@ -41,7 +41,13 @@ import { NodeViewContent, nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
 import liuUtil from '~/utils/liu-util'
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
-import { getSupportedLanguages } from "~/utils/other/lowlight-related"
+import { 
+  showProgrammingLanguages,
+  supportedToShow,
+  showToSupported,
+} from "~/utils/other/lowlight-related"
+
+type SelectedLang = string | null
 
 export default {
   components: {
@@ -54,16 +60,26 @@ export default {
   setup(props) {
     const { t } = useI18n()
     const leaveTip = liuUtil.getHelpTip("Mod_Enter")
-    const languages = getSupportedLanguages()
+    const languages = showProgrammingLanguages()
 
-    const selectedLanguage = computed({
+    const selectedLanguage = computed(() => {
+      const _lang = props.node.attrs.language as SelectedLang
+      if(!_lang) return _lang
+      const lang = showToSupported(_lang)
+      return lang
+    })
+
+    const showLanguage = computed({
       get: () => {
-        const lang = props.node.attrs.language as string
-        return lang
+        const s = selectedLanguage.value
+        if(!s) return s
+        const s2 = supportedToShow(s)
+        return s2
       },
-      set: (language: string) => {
+      set: (lang: SelectedLang) => {
+        let language = showToSupported(lang)
         props.updateAttributes({ language })
-      },
+      }
     })
 
     return { 
@@ -71,6 +87,7 @@ export default {
       languages, 
       leaveTip, 
       selectedLanguage,
+      showLanguage,
     }
   },
 }
