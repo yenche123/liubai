@@ -46,7 +46,7 @@ const {
 </template>
 <style scoped lang="scss">
 
-/** 以移动端小于 600px 先写 class，最后再用媒体查询写其他情况 */
+/** 以移动端小于 500px 先写 class，最后再用媒体查询写其他情况 */
 
 .sb-container {
   width: 100%;
@@ -135,7 +135,7 @@ const {
 
   .sb-box {
     width: auto;
-    min-width: max(20vw, 200px);
+    min-width: max(20vw, 250px);
     max-width: max(45vw, 460px);
   }
 
