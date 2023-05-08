@@ -40,6 +40,7 @@
 import { NodeViewContent, nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
 import liuUtil from '~/utils/liu-util'
 import { useI18n } from 'vue-i18n'
+import { computed } from 'vue'
 
 export default {
   components: {
@@ -49,27 +50,27 @@ export default {
 
   props: nodeViewProps,
 
-  data() {
-    return {
-      languages: this.extension.options.lowlight.listLanguages(),
-      leaveTip: liuUtil.getHelpTip("Mod_Enter"),
-    }
-  },
-
-  computed: {
-    selectedLanguage: {
-      get() {
-        return this.node.attrs.language
-      },
-      set(language: string) {
-        this.updateAttributes({ language })
-      },
-    },
-  },
-
-  setup() {
+  setup(props) {
     const { t } = useI18n()
-    return { t }
+    const leaveTip = liuUtil.getHelpTip("Mod_Enter")
+    const languages = props.extension.options.lowlight.listLanguages() as string[]
+
+    const selectedLanguage = computed({
+      get: () => {
+        const lang = props.node.attrs.language as string
+        return lang
+      },
+      set: (language: string) => {
+        props.updateAttributes({ language })
+      },
+    })
+
+    return { 
+      t, 
+      languages, 
+      leaveTip, 
+      selectedLanguage,
+    }
   },
 }
 </script>

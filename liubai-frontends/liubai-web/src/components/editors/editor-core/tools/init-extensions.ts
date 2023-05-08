@@ -16,7 +16,10 @@ import type { TipTapEditor } from "~/types/types-editor"
 import type { EditorCoreProps, EditorCoreEmits } from "./types"
 
 import { lowlight } from 'lowlight'
+import { initLowlight } from "./init-lowlight"
 import CodeBlockComponent from '../code-block-component/code-block-component.vue'
+
+initLowlight()
 
 export function initExtensions(
   props: EditorCoreProps,
