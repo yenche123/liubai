@@ -30,6 +30,13 @@
         <span v-if="showLanguage">{{ showLanguage }}</span>
         <span v-else>Auto</span>
       </div>
+      <div class="cbrt-line" />
+      <div class="cbrt-btn" @click.stop="onTapCopyCode">
+        <svg-icon name="copy" color="#a0a0a0" class="cbrt-btn-svg"></svg-icon>
+        <div class="cbrt-btn-text">
+          <span>{{ t('editor.copy_code') }}</span>
+        </div>
+      </div>
     </div>
 
     <pre><code><node-view-content /></code></pre>
@@ -46,8 +53,12 @@ import {
   supportedToShow,
   showToSupported,
 } from "~/utils/other/lowlight-related"
-
-type SelectedLang = string | null
+import type {
+  CbcLang,
+  CbcFragment,
+} from "./tools/types"
+import liuApi from '~/utils/liu-api'
+import cui from '~/components/custom-ui'
 
 export default {
   components: {
@@ -63,7 +74,7 @@ export default {
     const languages = showProgrammingLanguages()
 
     const selectedLanguage = computed(() => {
-      const _lang = props.node.attrs.language as SelectedLang
+      const _lang = props.node.attrs.language as CbcLang
       if(!_lang) return _lang
       const lang = showToSupported(_lang)
       return lang
@@ -76,11 +87,22 @@ export default {
         const s2 = supportedToShow(s)
         return s2
       },
-      set: (lang: SelectedLang) => {
+      set: (lang: CbcLang) => {
         let language = showToSupported(lang)
         props.updateAttributes({ language })
       }
     })
+
+
+    const onTapCopyCode = () => {
+      //@ts-ignore
+      const c = liuUtil.toRawData(props.node.content) as CbcFragment
+      const text = c?.content?.[0].text
+      if(!text) return
+      liuApi.copyToClipboard(text)
+      cui.showSnackBar({ text_key: "common.copied" })
+    }
+
 
     return { 
       t, 
@@ -88,6 +110,7 @@ export default {
       leaveTip, 
       selectedLanguage,
       showLanguage,
+      onTapCopyCode,
     }
   },
 }
@@ -146,7 +169,7 @@ export default {
 
   .cb-right-top_read {
     position: absolute;
-    top: 0.2rem;
+    top: 0.5rem;
     right: 0.5rem;
     width: calc(100% - 1rem);
     display: flex;
@@ -156,9 +179,59 @@ export default {
     .cbrt-tip {
       font-size: var(--mini-font);
       font-family: inherit;
-      color: #686868;
+      color: #565656;
       user-select: none;
     }
+
+    .cbrt-line {
+      width: 1px;
+      height: 15px;
+      background-color: #2f2f2f;
+      margin-inline: 14px 8px;
+      font-size: var(--mini-font);
+    }
+
+    .cbrt-btn {
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: .15s;
+      position: relative;
+
+      &::after {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        left: -2px;
+        bottom: -2px;
+        content: "";
+      }
+    }
+
+    @media(hover: hover) {
+      .cbrt-btn:hover {
+        background-color: #2f2f2f;
+      }
+    }
+
+    .cbrt-btn:active {
+      background-color: #383838;
+    }
+
+    .cbrt-btn-svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .cbrt-btn-text {
+      margin-inline-start: 4px;
+      color: #a0a0a0;
+      font-size: var(--mini-font);
+      user-select: none;
+    }
+
   }
 
 }

@@ -68,7 +68,8 @@
     "more": "More",
     "expand": "Expand",
     "restore": "Restore",
-    "tag": "Tag"
+    "tag": "Tag",
+    "copy_code": "Copy code"
   },
   "cui": {
     "plz_input_txt": "Text here"

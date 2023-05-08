@@ -68,7 +68,8 @@
     "more": "更多",
     "expand": "展开",
     "restore": "恢复",
-    "tag": "标签"
+    "tag": "标签",
+    "copy_code": "复制代码"
   },
   "cui": {
     "plz_input_txt": "请输入文字"
