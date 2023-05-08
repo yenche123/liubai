@@ -127,7 +127,7 @@ const {
 }
 
 
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 500px) {
   .sb-container {
     justify-content: flex-start;
     padding-left: 24px;
@@ -135,8 +135,8 @@ const {
 
   .sb-box {
     width: auto;
-    min-width: max(20vw, 250px);
-    max-width: max(45vw, 560px);
+    min-width: max(20vw, 200px);
+    max-width: max(45vw, 460px);
   }
 
 }
