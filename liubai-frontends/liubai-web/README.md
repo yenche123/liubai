@@ -25,6 +25,8 @@ https://icons.radix-ui.com/
 
 4. 函数式获取应用个人信息（userId / memberId / spaceId / spaceType）上下文，使用 `checker.getMyContext()` 
 
+5. 使用 `umami.is` 的网站分析服务时，若出现官网打不开关于 `net::ERR_BLOCKED_BY_CLIENT` 的错误，那说明被浏览器的 AdBlock 插件拦截了，打开插件的 `Pause on this site` 选项即可。
+
 
 ## 评论
 
