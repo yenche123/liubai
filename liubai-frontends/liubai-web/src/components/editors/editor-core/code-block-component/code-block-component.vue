@@ -41,6 +41,7 @@ import { NodeViewContent, nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
 import liuUtil from '~/utils/liu-util'
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
+import { getSupportedLanguages } from "~/utils/other/lowlight-related"
 
 export default {
   components: {
@@ -53,7 +54,7 @@ export default {
   setup(props) {
     const { t } = useI18n()
     const leaveTip = liuUtil.getHelpTip("Mod_Enter")
-    const languages = props.extension.options.lowlight.listLanguages() as string[]
+    const languages = getSupportedLanguages()
 
     const selectedLanguage = computed({
       get: () => {
