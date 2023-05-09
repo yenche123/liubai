@@ -6,6 +6,8 @@ import cui from "~/components/custom-ui"
 import liuApi from "~/utils/liu-api"
 import { useDynamics } from "~/hooks/useDynamics"
 import type { UseDynamicsType } from "~/hooks/useDynamics"
+import { useWindowSize } from "~/hooks/useVueUse"
+import valTool from "~/utils/basic/val-tool"
 
 export async function whenTapTheme(
   data: SettingContentData
@@ -52,11 +54,69 @@ export async function whenTapTheme(
   toSetTheme(dyn, newTheme)
 }
 
-function toSetTheme(
+async function toSetTheme(
   dyn: UseDynamicsType,
   theme: SupportedTheme,
 ) {
-  dyn.setTheme(theme)
+
+  const isDark = theme === "dark"
+
+  // @ts-expect-error: Transition API
+  const isAppearanceTransition: boolean = document.startViewTransition && 
+    !liuApi.isPrefersReducedMotion()
+
+  // 不使用 View Transition API
+  if(!isAppearanceTransition) {
+    dyn.setTheme(theme)
+    return
+  }
+
+  // 去使用 View Transition API
+  // 先等待若干毫秒，让 弹窗关闭
+  await valTool.waitMilli(222)
+
+  const { width, height } = useWindowSize()
+  const x = width.value / 2
+  const y = height.value / 2
+  const radius = Math.hypot(x, y)
+
+  // @ts-expect-error: Transition API
+  const transition = document.startViewTransition(() => {
+    dyn.setTheme(theme)
+  })
+
+  const whenTransitionReady = () => {
+    const clipPath = [
+      `circle(0px at ${x}px ${y}px)`,
+      `circle(${radius}px at ${x}px ${y}px)`,
+    ]
+    document.documentElement.animate(
+      {
+        clipPath: isDark ? clipPath : [...clipPath].reverse(),
+      },
+      {
+        duration: 300,
+        easing: 'ease-in',
+        pseudoElement: isDark ? '::view-transition-new(root)' : '::view-transition-old(root)',
+      },
+    )
+    // console.log("document.documentElement.animate just now.........")
+  }
+
+  transition.ready.then(() => {
+    // console.log("transition.ready.then...............")
+    whenTransitionReady()
+  })
+
+  // console.time("finished")
+  transition.finished.then(() => {
+    // console.log("transition.finished.then...............")
+    // console.timeEnd("finished")
+  })
+
+  transition.updateCallbackDone.then(() => {
+    // console.log("transition.updateCallbackDone.then...............")
+  })
 
 }
 

@@ -104,6 +104,11 @@ function getThemeFromTime(): SupportedTheme {
   return "dark"
 }
 
+function isPrefersReducedMotion() {
+  const res = window.matchMedia(`(prefers-reduced-motion: reduce)`).matches
+  return res
+}
+
 // 从浏览器获取当前支持的语言
 function getLanguageFromSystem(): SupportedLocale {
   const lang = navigator.language
@@ -154,6 +159,7 @@ export default {
   getBattery,
   getThemeFromSystem,
   getThemeFromTime,
+  isPrefersReducedMotion,
   getLanguageFromSystem,
   setAppBadge,
   clearAppBadge,

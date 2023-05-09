@@ -21,7 +21,7 @@ export const useDynamics = () => {
 
   const setTheme = (val: SupportedTheme) => {
     theme.value = val
-    setBodyClassForTheme()
+    setClassForTheme()
   }
 
   return { 
@@ -55,9 +55,12 @@ function initTheme() {
 
 // classList 的用法，见
 // https://teagan-hsu.coderbridge.io/2020/12/29/how-to-set-css-styles-using-javascript/
-function setBodyClassForTheme() {
+function setClassForTheme() {
   const t = theme.value
   const body = document.querySelector("body")
   const val = t === "light" ? false : true
   body?.classList.toggle("theme-dark", val)
+
+  // 在 document 的根目录上: 当深色模式时，添加 .liu-dark，否则移除 .liu-dark
+  document.documentElement.classList.toggle("liu-dark", val)
 }

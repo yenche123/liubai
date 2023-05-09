@@ -357,3 +357,28 @@ const iconColor = "var(--main-normal)"
 
 
 </style>
+<style>
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 9999;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+}
+
+.liu-dark::view-transition-old(root) {
+  z-index: 1;
+}
+
+.liu-dark::view-transition-new(root) {
+  z-index: 9999;
+}
+
+</style>

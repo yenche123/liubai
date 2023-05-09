@@ -15,6 +15,7 @@ export default {
   getBattery: device.getBattery,
   getThemeFromSystem: device.getThemeFromSystem,
   getThemeFromTime: device.getThemeFromTime,
+  isPrefersReducedMotion: device.isPrefersReducedMotion,
   getLanguageFromSystem: device.getLanguageFromSystem,
   setAppBadge: device.setAppBadge,
   clearAppBadge: device.clearAppBadge,
