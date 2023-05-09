@@ -111,11 +111,18 @@ async function whenTapTheme(
   if(res.result !== "option" || res.tapIndex === undefined) return
   const item = list[res.tapIndex]  
   const id = item.id
+
+  // 0. 判断是否跟原来的选择一致
   if(id === data.theme) return
-
+  
+  // 1. 切换到新的主题选择（包括切换到自动或跟随系统）
+  data.theme = id
   localCache.setLocalPreference("theme", id)
-  let newTheme: SupportedTheme
 
+
+  // 2. 判断视觉主题是否要做更换，比如当前时间是晚上，原本是自动（日夜切换）
+  //    现在切换到 dark 主题，那么视觉上就无需变化。
+  let newTheme: SupportedTheme
   if(id === "dark" || id === "light") {
     newTheme = id
   }
@@ -125,10 +132,12 @@ async function whenTapTheme(
   else {
     newTheme = liuApi.getThemeFromSystem()
   }
-  const { setTheme } = useDynamics()
-  setTheme(newTheme)
+  const { setTheme, theme: oldTheme } = useDynamics()
+  if(oldTheme.value === newTheme) {
+    return
+  }
 
-  data.theme = id
+  setTheme(newTheme)
 }
 
 async function whenTapLanguage(

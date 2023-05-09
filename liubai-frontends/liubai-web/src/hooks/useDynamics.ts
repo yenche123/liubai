@@ -32,6 +32,9 @@ export const useDynamics = () => {
   }
 }
 
+export type UseDynamicsType = ReturnType<typeof useDynamics>
+
+
 // 初始化主题
 function initTheme() {
   if(theme.value) return
