@@ -81,10 +81,11 @@ async function toSetTheme(
 
   // 以下用: I II III IV V 标注执行顺序
 
-  // I. 先更改 DOM 状态，浏览器记录快照。
-  // 注意，这里更改 DOM 状态，用户界面上不会有任何改变
-  // 因为当前在记录快照
-  const updateDOM = () => {
+  // I. 浏览器已记录 old page 的快照后，触发 startViewTransition 的回调
+  // 这个回调会返回一个 promise 所以可以在当中执行 await 
+  // 注意，这个函数里更改的 DOM 状态，会马上在 DOM 上响应
+  // 只是被伪元素 ::view-transition 挡住了，所以用户才会错觉成界面上展示的还是旧的 DOM
+  const updateDOM = async () => {
     console.log("updateDOM........")
     dyn.setTheme(theme)
   }
