@@ -20,6 +20,11 @@ export default defineComponent({
     const onTapImage = (e: MouseEvent, index: number) => {
       const c = props.covers
       if(!c || !c[index]) return
+
+      console.log("e.currentTarget:::")
+      console.log(e.currentTarget)
+
+
       cui.previewImage({
         imgs: c,
         index

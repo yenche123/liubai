@@ -71,6 +71,7 @@ export async function previewImage(opt: PiParam) {
 
   data.imgs = imgs
   data.index = idx
+  data.viewTransitionName = opt.viewTransitionName
 
   openIt(rr, queryKey)
 

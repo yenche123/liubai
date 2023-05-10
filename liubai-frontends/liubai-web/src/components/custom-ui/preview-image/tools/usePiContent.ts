@@ -7,6 +7,7 @@ import type { LiuTimeout } from '~/utils/basic/type-tool';
 interface PicProps {
   imgs: ImageShow[]
   currentIndex: number
+  viewTransitionName?: string
 }
 
 export const picProps = {
@@ -18,6 +19,9 @@ export const picProps = {
     type: Number,
     default: 0,
   },
+  viewTransitionName: {
+    type: String,
+  }
 }
 
 interface PicCover {
