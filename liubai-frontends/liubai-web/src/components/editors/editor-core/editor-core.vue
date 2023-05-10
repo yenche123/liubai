@@ -52,13 +52,13 @@ export default defineComponent({
   setup(props, { emit }) {
     const { 
       editor,
-      selectBg,
+      styles,
     } = useEditorCore(props, emit)
 
     return {
       editor, 
       cfg,
-      selectBg,
+      styles,
     }
   },
 })
@@ -76,8 +76,8 @@ export default defineComponent({
 .ProseMirror {
   padding: 0;
   outline: 0;
-  font-size: var(--desc-font);
-  line-height: 1.9;
+  font-size: v-bind("styles.fontSize");
+  line-height: v-bind("styles.lineHeight");
   color: var(--main-normal);
   min-height: v-bind("isEdit ? minHeight : 0");
   transition: v-bind("purpose === 'thread-edit' ? '.3s' : 0");
@@ -145,7 +145,7 @@ export default defineComponent({
     color: var(--main-code);
     padding: 4px 6px;
     border-radius: 4px;
-    font-size: var(--inline-code-font);
+    font-size: v-bind("styles.inlineCodeSize");
   }
 
   em {
@@ -168,7 +168,7 @@ export default defineComponent({
   s::selection, 
   a::selection,
   h1::selection {
-    background-color: v-bind("selectBg");
+    background-color: v-bind("styles.selectBg");
   }
 
   pre {

@@ -1,13 +1,19 @@
 import { useEditor } from '@tiptap/vue-3'
 import { useI18n } from 'vue-i18n'
 import type { TipTapEditor } from "~/types/types-editor"
-import { inject, onMounted, ref, toRef, watch } from 'vue'
+import { inject, onMounted, ref, toRef, watch, computed } from 'vue'
 import type { ShallowRef } from "vue"
-import type { EditorCoreProps, EditorCoreEmits } from "./types"
+import type { 
+  EditorCoreProps, 
+  EditorCoreEmits,
+  EditorCorePurpose,
+  EditorCoreStyles,
+} from "./types"
 import { initExtensions } from "./init-extensions"
 import { useEcHashtag } from "./useEcHashtag"
 import { editorSetKey } from '~/utils/provide-keys'
 import type { LiuTimeout } from '~/utils/basic/type-tool'
+import type { Ref } from "vue"
 
 interface EcContext {
   lastEmpty: boolean
@@ -15,10 +21,14 @@ interface EcContext {
   lastTriggetUpdate: LiuTimeout
 }
 
-export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
+export function useEditorCore(
+  props: EditorCoreProps, 
+  emits: EditorCoreEmits
+) {
   const { t } = useI18n()
 
   const contentRef = toRef(props, "content")
+  const purpose = toRef(props, "purpose")
   const extensions = initExtensions(props, emits, t)
   const content = props?.content ?? "<p></p>"
 
@@ -66,15 +76,42 @@ export function useEditorCore(props: EditorCoreProps, emits: EditorCoreEmits) {
     })
   }
 
-  const pse = props.purpose
-  const isComment = pse === "comment-browse" || pse === "comment-edit"
-  const selectBg = isComment ? `var(--select-bg-2)` : `var(--select-bg)`
+  const styles = getStyles(purpose)
 
   return { 
     editor,
-    selectBg,
+    styles,
   }
 }
+
+function getStyles(
+  purpose: Ref<EditorCorePurpose>
+) {
+  const styles = computed<EditorCoreStyles>(() => {
+    let pse = purpose.value
+    const isComment = pse === "comment-browse" || pse === "comment-edit"
+    if(isComment) {
+      return {
+        fontSize: "var(--comment-font)",
+        inlineCodeSize: "var(--comment-inline-code)",
+        selectBg: "var(--select-bg-2)",
+        lineHeight: 1.7,
+      }
+    }
+
+    return {
+      fontSize: "var(--desc-font)",
+      inlineCodeSize: "var(--inline-code-font)",
+      selectBg: "var(--select-bg)",
+      lineHeight: 1.9,
+    }
+  })
+
+  return styles
+}
+
+
+
 
 function setLastData(
   editor: ShallowRef<TipTapEditor | undefined>,

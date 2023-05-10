@@ -183,7 +183,7 @@ function initEditorHeight(props: CeProps) {
   let { located } = props
   const isCommentArea = located === "main-view" || located === "vice-view"
   const isPopup = located === "popup"
-  let tmpMin = isCommentArea ? 42 : 150
+  let tmpMin = isCommentArea ? 38 : 150
 
   const minEditorHeight = ref(tmpMin)
   

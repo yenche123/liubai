@@ -21,3 +21,10 @@ export interface EditorCoreEmits {
   (event: "finish", data: EditorCoreContent): void
   (event: "addhashtag", data: HashTagEditorRes): void
 }
+
+export interface EditorCoreStyles {
+  fontSize: string
+  inlineCodeSize: string
+  selectBg: string
+  lineHeight: number
+}

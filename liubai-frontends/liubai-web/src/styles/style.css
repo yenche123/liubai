@@ -28,6 +28,10 @@
   --mini-font: 15px;
   --state-font: 13px;
 
+  /** 评论的文字大小 */
+  --comment-font: 18px;
+  --comment-inline-code: 16px;
+
   /** 卡片宽度 */
   --card-min: 200px;
   --card-max: 800px;

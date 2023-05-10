@@ -120,8 +120,8 @@ const {
 }
 
 .ce-avatar {
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   margin-inline-end: 12px;
   flex: none;
 }
@@ -139,17 +139,17 @@ const {
   overflow-y: overlay;
   overflow-y: auto;
   transition: .3s;
-  padding-block-start: 2px;
+  padding-block-start: 3.7px;
 }
 
 .cem-bottom-two {
   width: 100%;
-  height: 9px;
+  height: 6px;
 }
 
 .cem-toolbar {
   width: 100%;
-  height: 42px;
+  height: 38px;
   position: relative;
   display: flex;
   align-items: center;
@@ -158,7 +158,12 @@ const {
 
 .cem-toolbar_translateY {
   pointer-events: none;
-  margin-block-start: -53px;
+
+  /** 计算方式: 
+    cem-editor(最小高度 + padding-block-start) + cem-bottom-two(高度) 
+  = 38 + 3.7 + 6
+  */
+  margin-block-start: -47.7px;
 }
 
 .cemt-main {
