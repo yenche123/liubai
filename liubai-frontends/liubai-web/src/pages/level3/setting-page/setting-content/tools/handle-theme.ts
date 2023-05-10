@@ -8,6 +8,7 @@ import { useDynamics } from "~/hooks/useDynamics"
 import type { UseDynamicsType } from "~/hooks/useDynamics"
 import { useWindowSize } from "~/hooks/useVueUse"
 import valTool from "~/utils/basic/val-tool"
+import { transitionHelper } from "~/utils/other/transition-related"
 
 export async function whenTapTheme(
   data: SettingContentData
@@ -51,8 +52,8 @@ export async function whenTapTheme(
     return
   }
 
-  dyn.setTheme(newTheme)
-  // toSetTheme(dyn, newTheme)
+  // dyn.setTheme(newTheme)
+  toSetTheme(dyn, newTheme)
 }
 
 async function toSetTheme(
@@ -81,11 +82,18 @@ async function toSetTheme(
   const y = height.value / 2
   const radius = Math.hypot(x, y)
 
-  // @ts-expect-error: Transition API
-  const transition = document.startViewTransition(() => {
-    dyn.setTheme(theme)
-  })
+  // 以下用: I II III IV V 标注执行顺序
 
+  // I. 先更改 DOM 状态，浏览器记录快照。
+  // 注意，这里更改 DOM 状态，用户界面上不会有任何改变
+  // 因为当前在记录快照
+  const updateDOM = () => {
+    console.log("updateDOM........")
+    dyn.setTheme(theme)
+  }
+  const transition = transitionHelper({ updateDOM, classNames: "liu-switching-theme" })
+
+  // III.
   const whenTransitionReady = () => {
     const clipPath = [
       `circle(0px at ${x}px ${y}px)`,
@@ -104,19 +112,21 @@ async function toSetTheme(
     // console.log("document.documentElement.animate just now.........")
   }
 
+  // III. 准备开始执行动画
   transition.ready.then(() => {
-    // console.log("transition.ready.then...............")
+    console.log("transition.ready.then...............")
     whenTransitionReady()
   })
 
-  // console.time("finished")
+  // IV. 动画执行完毕后，最后执行
   transition.finished.then(() => {
-    // console.log("transition.finished.then...............")
-    // console.timeEnd("finished")
+    console.log("transition.finished.then...............")
   })
 
+  // II. 在 updateDOM 被触发后，updateCallbackDone 这个 promise 
+  // 将立即转为 fulfilled 
   transition.updateCallbackDone.then(() => {
-    // console.log("transition.updateCallbackDone.then...............")
+    console.log("transition.updateCallbackDone.then...............")
   })
 
 }
