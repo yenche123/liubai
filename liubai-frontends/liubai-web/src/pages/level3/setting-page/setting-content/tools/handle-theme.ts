@@ -51,7 +51,8 @@ export async function whenTapTheme(
     return
   }
 
-  toSetTheme(dyn, newTheme)
+  dyn.setTheme(newTheme)
+  // toSetTheme(dyn, newTheme)
 }
 
 async function toSetTheme(
