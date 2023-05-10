@@ -179,14 +179,14 @@ export default {
     .cbrt-tip {
       font-size: var(--mini-font);
       font-family: inherit;
-      color: #565656;
+      color: #606060;
       user-select: none;
     }
 
     .cbrt-line {
       width: 1px;
       height: 15px;
-      background-color: #2f2f2f;
+      background-color: #323232;
       margin-inline: 14px 8px;
       font-size: var(--mini-font);
     }
