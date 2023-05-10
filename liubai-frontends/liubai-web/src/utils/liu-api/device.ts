@@ -89,7 +89,7 @@ const getBattery = async () => {
 // 从浏览器获取当前主题
 function getThemeFromSystem(): SupportedTheme {
   const m = window.matchMedia('(prefers-color-scheme: dark)')
-  const isDarkWhenInit: boolean = m.matches
+  const isDarkWhenInit = m.matches
   if(isDarkWhenInit) return "dark"
   return "light"
 }
@@ -104,7 +104,7 @@ function getThemeFromTime(): SupportedTheme {
   return "dark"
 }
 
-function isPrefersReducedMotion() {
+export function isPrefersReducedMotion() {
   const res = window.matchMedia(`(prefers-reduced-motion: reduce)`).matches
   return res
 }

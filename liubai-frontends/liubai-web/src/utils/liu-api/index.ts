@@ -8,6 +8,7 @@ import {
 } from "./selection"
 import liuMedia from "./media"
 import liuPermission from "./permission"
+import canIUse from "./can-i-use"
 
 export default {
   copyToClipboard: device.copyToClipboard,
@@ -36,4 +37,5 @@ export default {
   getDisplayMedia: liuMedia.getDisplayMedia,
   getSupportedConstraints: liuMedia.getSupportedConstraints,
   permissionsQuery: liuPermission.permissionsQuery,
+  canIUse,
 }

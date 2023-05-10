@@ -62,10 +62,7 @@ async function toSetTheme(
 ) {
 
   const isDark = theme === "dark"
-
-  // @ts-expect-error: Transition API
-  const isAppearanceTransition: boolean = document.startViewTransition && 
-    !liuApi.isPrefersReducedMotion()
+  const isAppearanceTransition = liuApi.canIUse.viewTransitionApi()
 
   // 不使用 View Transition API
   if(!isAppearanceTransition) {
