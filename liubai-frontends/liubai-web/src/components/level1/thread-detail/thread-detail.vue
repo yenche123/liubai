@@ -90,7 +90,8 @@ export default defineComponent({
 
 .td-comment-area {
   width: 100%;
-  padding-block-start: 10px;
+  box-sizing: border-box;
+  padding: 10px 10px 10px;
   position: relative;
 }
 
