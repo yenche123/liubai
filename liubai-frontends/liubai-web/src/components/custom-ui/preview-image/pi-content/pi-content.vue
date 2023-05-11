@@ -71,7 +71,7 @@ export default defineComponent({
     <template v-for="(item, index) in covers" :key="item.id">
       <SwiperSlide>
 
-        <!-- 先给出一个内部可以上下滚动的 slide -->
+        <!-- slide 盒子 -->
         <div class="pi-scroll-box" :class="{ 'pi-item_grab': coverLength > 1 }">
 
           <!-- 再给出这个 slide 可以上下左右自动对齐的盒子 -->
@@ -117,7 +117,7 @@ export default defineComponent({
   height: 100vh;
   height: 100dvh;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 
 .pi-item {
