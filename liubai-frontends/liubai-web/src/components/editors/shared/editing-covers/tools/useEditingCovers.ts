@@ -7,6 +7,7 @@ import cui from "~/components/custom-ui";
 import { mainViewWidthKey, viceViewWidthKey } from "~/utils/provide-keys"
 import type { LocatedA } from "~/types/other/types-custom"
 import { getViewTranNames } from "~/utils/other/transition-related";
+import liuApi from "~/utils/liu-api";
 
 interface EditingCoversProps {
   modelValue?: ImageShow[]
@@ -61,13 +62,30 @@ export function useEditingCovers(props: EditingCoversProps) {
     globalStore.isDragToSort = false
   }
 
-  const onTapImage = (index: number) => {
+  const onTapImage = async (index: number) => {
     const covers = props.modelValue
     if(!covers || !covers[index]) return
-    cui.previewImage({
+
+    const vt = liuApi.canIUse.viewTransitionApi()
+    if(vt) {
+      viewTranNames.value[index] = "preview-image"
+    }
+    let closingIdx = index
+
+    await cui.previewImage({
       imgs: covers,
       index,
+      viewTransition: vt,
+      viewTransitionCallbackWhileShowing() {
+        if(vt) viewTranNames.value[index] = ""
+      },
+      viewTransitionCallbackWhileClosing(idx: number) {
+        closingIdx = idx
+        if(vt) viewTranNames.value[closingIdx] = "preview-image"
+      },
+      viewTransitionBorderRadius: "10px",
     })
+    if(vt) viewTranNames.value[closingIdx] = ""
   }
 
   return {
