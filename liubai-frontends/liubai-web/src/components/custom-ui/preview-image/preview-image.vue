@@ -68,25 +68,34 @@ const {
   }
   
   &::view-transition-old(root) {
-    /** https://cubic-bezier.com/#.4,0,1,1  这个曲线会慢进，正常速率结束 */
-    /** 100ms 表示等待 100ms 再执行该动画 */
-    animation: 200ms cubic-bezier(0.4, 0, 1, 1) 100ms both fade-out;
+    /** https://cubic-bezier.com/#.4,0,1,1  这个曲线会慢进，正常速率结束
+    *  (已弃用该变化模式，统一用 ease-in-out )
+    */
+    /** 50ms 表示等待 50ms 再执行该动画 */
+    animation: 200ms ease-in-out 50ms both fade-out;
   }
 
   &::view-transition-new(root) {
-    /** https://cubic-bezier.com/#0,0,.2,1  这个曲线会快进，较慢结束 */
-    animation: 200ms cubic-bezier(0, 0, 0.2, 1) 100ms both fade-in;
+    /** https://cubic-bezier.com/#0,0,.2,1  这个曲线会快进，较慢结束
+    * (已弃用该变化模式，统一用 ease-in-out )
+    */
+    animation: 200ms ease-in-out 50ms both fade-in;
+  }
+
+  &::view-transition-group(preview-image) {
+    animation-duration: 250ms;
   }
   
   &::view-transition-old(preview-image),
   &::view-transition-new(preview-image) {
+    animation-duration: 250ms;
     animation: none;
     mix-blend-mode: normal;
     height: 100%;
     overflow: clip;
   }
 
-  ::view-transition-image-pair(preview-image) {
+  &::view-transition-image-pair(preview-image) {
     isolation: none;
   }
 }
