@@ -35,7 +35,7 @@ const emits = defineEmits<{
   </div>
 
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
 
 .liu-checkbox {
   width: v-bind("size + 'px'");
