@@ -68,11 +68,14 @@ const {
   }
   
   &::view-transition-old(root) {
-    animation: 250ms cubic-bezier(0.4, 0, 1, 1) both fade-out;
+    /** https://cubic-bezier.com/#.4,0,1,1  这个曲线会慢进，正常速率结束 */
+    /** 100ms 表示等待 100ms 再执行该动画 */
+    animation: 200ms cubic-bezier(0.4, 0, 1, 1) 100ms both fade-out;
   }
 
   &::view-transition-new(root) {
-    animation: 250ms cubic-bezier(0, 0, 0.2, 1) both fade-in;
+    /** https://cubic-bezier.com/#0,0,.2,1  这个曲线会快进，较慢结束 */
+    animation: 200ms cubic-bezier(0, 0, 0.2, 1) 100ms both fade-in;
   }
   
   &::view-transition-old(preview-image),
