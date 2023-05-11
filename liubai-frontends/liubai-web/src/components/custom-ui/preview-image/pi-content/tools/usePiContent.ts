@@ -3,34 +3,7 @@ import type { Ref } from "vue";
 import { useWindowSize } from '~/hooks/useVueUse';
 import type { ImageShow } from '~/types';
 import type { LiuTimeout } from '~/utils/basic/type-tool';
-
-interface PicProps {
-  imgs: ImageShow[]
-  currentIndex: number
-  viewTransitionName?: string
-}
-
-export const picProps = {
-  imgs: {
-    type: Array<ImageShow>,
-    default: [],
-  },
-  currentIndex: {
-    type: Number,
-    default: 0,
-  },
-  viewTransitionName: {
-    type: String,
-  }
-}
-
-interface PicCover {
-  src: string
-  id: string
-  width: number
-  height: number
-  blurhash?: string
-}
+import type { PicProps, PicCover } from './types';
 
 export function usePiContent(props: PicProps) {
 

@@ -3,7 +3,10 @@ import { defineComponent, PropType } from 'vue';
 import type { ImageShow } from '~/types';
 import type { ImgLayout } from "~/types/other/types-custom"
 import cui from '../../../../custom-ui';
-
+import { 
+  addViewTransitionName, 
+  removeViewTransitionName,
+} from '~/utils/other/transition-related';
 
 export default defineComponent({
   props: {
@@ -17,18 +20,27 @@ export default defineComponent({
   setup(props) {
     const imgWidth = 140
 
-    const onTapImage = (e: MouseEvent, index: number) => {
+    const onTapImage = async (e: MouseEvent, index: number) => {
       const c = props.covers
       if(!c || !c[index]) return
 
-      console.log("e.currentTarget:::")
-      console.log(e.currentTarget)
+      let viewTransition = addViewTransitionName(e, "preview-image")
 
-
-      cui.previewImage({
+      await cui.previewImage({
         imgs: c,
-        index
+        index,
+        viewTransition,
+        viewTransitionCallbackWhileShowing() {
+          console.log("viewTransitionCallbackWhileShowing............")
+          if(viewTransition) removeViewTransitionName(e)
+        },
+        viewTransitionCallbackWhileClosing() {
+          console.log("viewTransitionCallbackWhileClosing............")
+          if(viewTransition) addViewTransitionName(e, "preview-image")
+        }
       })
+      console.log("preview image 被关闭了.........")
+
     }
 
     return {

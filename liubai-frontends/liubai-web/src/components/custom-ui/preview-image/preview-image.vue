@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PiContent from "./pi-content.vue"
+import PiContent from "./pi-content/pi-content.vue"
 import { initPreviewImage } from "./index"
 
 const {
@@ -8,6 +8,7 @@ const {
   TRANSITION_DURATION,
   data,
   onTapCancel,
+  onPiSwiper,
 } = initPreviewImage()
 
 </script>
@@ -21,6 +22,8 @@ const {
     <PiContent 
       :current-index="data.index" 
       :imgs="data.imgs"
+      :view-transition-name="data.viewTransition ? 'preview-image' : undefined"
+      @swiper="onPiSwiper"
     ></PiContent>
   </div>
 
@@ -48,6 +51,79 @@ const {
 @media(hover: hover) {
   .pi-container {
     background-color: rgba(0, 0, 0, .86);
+  }
+}
+
+</style>
+
+<style lang="scss">
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes fade-out {
+  to { opacity: 0; }
+}
+
+.liu-previewing-image {
+  
+  &::view-transition-old(root) {
+    animation: 300ms cubic-bezier(0.4, 0, 1, 1) both fade-out;
+    z-index: 1;
+  }
+
+  &::view-transition-new(root) {
+    animation: 300ms cubic-bezier(0, 0, 0.2, 1) both fade-in;
+    z-index: 9999;
+  }
+  
+  &::view-transition-old(preview-image),
+  &::view-transition-new(preview-image) {
+    animation: none;
+    mix-blend-mode: normal;
+    height: 100%;
+    overflow: clip;
+  }
+
+  ::view-transition-image-pair(preview-image) {
+    isolation: none;
+  }
+}
+
+.liu-show-preview-image {
+  &::view-transition-old(root) {
+    z-index: 1;
+  }
+
+  &::view-transition-new(root) {
+    z-index: 9999;
+  }
+  
+  &::view-transition-old(preview-image) {
+    object-fit: contain;
+  }
+
+  &::view-transition-new(preview-image) {
+    object-fit: cover;
+  }
+}
+
+.liu-close-preview-image {
+  &::view-transition-old(root) {
+    z-index: 9999;
+  }
+
+  &::view-transition-new(root) {
+    z-index: 1;
+  }
+
+  &::view-transition-old(preview-image) {
+    object-fit: cover;
+  }
+
+  &::view-transition-new(preview-image) {
+    object-fit: contain;
   }
 }
 

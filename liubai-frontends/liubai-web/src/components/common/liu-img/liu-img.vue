@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { BlurHashCanvas } from "another-vue3-blurhash"
 import valTool from '~/utils/basic/val-tool';
 import liuUtil from '~/utils/liu-util';
 import type { CSSProperties, PropType } from 'vue';
+import type { LiuObjectFit, LiuImgStyles } from "./tools/types"
 
 const TRANSITION_MS = 300
 
@@ -20,7 +21,7 @@ const props = defineProps({
   width: Number,
   height: Number,
   objectFit: {
-    type: String as PropType<"fill" | "contain" | "cover" | "none" | "scale-down">,
+    type: String as PropType<LiuObjectFit>,
     default: "fill"
   },
   loading: {
@@ -41,14 +42,27 @@ const props = defineProps({
     type: Boolean,
     default: false,     // 是否关闭渐变加载
   },
+  viewTransitionName: {
+    type: String,
+    default: "",
+  }
 })
 
-const imgStyles: CSSProperties = {
+const baseStyles: LiuImgStyles = {
   objectFit: props.objectFit,
   transition: TRANSITION_MS + "ms",
   userSelect: props.userSelect ? 'auto' : 'none',
   borderRadius: props.borderRadius ? props.borderRadius : '0',
 }
+
+const imgStyles = computed<CSSProperties>(() => {
+  const vtn = props.viewTransitionName
+  if(vtn) {
+    let obj = { ...baseStyles, viewTransitionName: vtn } as CSSProperties
+    return obj
+  }
+  return { ...baseStyles } as CSSProperties
+})
 
 const canvasWH = computed(() => {
   const w = props.width

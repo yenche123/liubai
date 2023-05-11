@@ -3,7 +3,8 @@ import { Swiper } from "swiper"
 import { Swiper as VueSwiper, SwiperSlide } from 'swiper/vue';
 import { defineComponent, ref, shallowRef } from 'vue';
 import 'swiper/css';
-import { usePiContent, picProps } from "./tools/usePiContent";
+import { usePiContent } from "./tools/usePiContent";
+import { picProps, picEmits } from "./tools/types"
 
 const iconColor = "rgba(255, 255, 255, .95)"
 
@@ -13,7 +14,8 @@ export default defineComponent({
     SwiperSlide,
   },
   props: picProps,
-  setup(props) {
+  emits: picEmits,
+  setup(props, { emit }) {
     const { covers, coverLength } = usePiContent(props)
     
     let _swiper = shallowRef<Swiper | null>(null)
@@ -44,6 +46,7 @@ export default defineComponent({
     const onSwiper = (swiper: Swiper) => {
       swiper.activeIndex = props.currentIndex
       _swiper.value = swiper
+      emit("swiper", swiper)
     }
 
     return { 
@@ -82,6 +85,7 @@ export default defineComponent({
               :width="item.width"
               :height="item.height"
               :blurhash="item.blurhash"
+              :view-transition-name="currentIndex === index ? viewTransitionName : undefined"
               bg-color="#1f1f1f"
             ></liu-img>
           </div>

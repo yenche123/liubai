@@ -9,7 +9,7 @@ const requestAnimationFrame = (): Promise<boolean> => {
 }
 
 const eventTargetIsSomeTag = (
-  eventTarget: EventTarget | null,
+  eventTarget: EventTarget | Element | null,
   tagName: string
 ) => {
   if(!eventTarget) return false
