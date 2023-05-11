@@ -41,16 +41,13 @@ export function getViewTranNames(
   coversRef: Ref<ImageShow[] | undefined>,
 ) {
   const viewTranNames = ref<Array<string | undefined>>([])
-  watch(coversRef, (newV , oldV) => {
+  watch(coversRef, (newV) => {
     const newLen = newV?.length ?? 0
-    const oldLen = oldV?.length ?? 0
-    if(newLen === oldLen) return
-
     const list: string[] = []
     for(let i=0; i<newLen; i++) {
       list.push("")
     }
     viewTranNames.value = list
-  })
+  }, { immediate: true, deep: true })
   return viewTranNames
 }

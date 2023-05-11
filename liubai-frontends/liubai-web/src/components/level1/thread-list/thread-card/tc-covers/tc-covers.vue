@@ -42,7 +42,7 @@ export default defineComponent({
           border-radius="12px"
           class="tcc-one-img"
           object-fit="cover" 
-          :viewTransitionName="viewTranNames[0]"
+          :view-transition-name="viewTranNames[0]"
           @click.stop="onTapImage($event, 0, '12px')"
         ></liu-img>
       </div>
@@ -75,7 +75,7 @@ export default defineComponent({
             :blurhash="item.blurhash"
             class="tcc-two-img"
             object-fit="cover" 
-            :viewTransitionName="viewTranNames[index]"
+            :view-transition-name="viewTranNames[index]"
             @click.stop="onTapImage($event, index, '12px')"
           ></liu-img>
         </div>
@@ -93,7 +93,7 @@ export default defineComponent({
             border-radius="10px"
             class="cc-img"
             object-fit="cover" 
-            :viewTransitionName="viewTranNames[index]"
+            :view-transition-name="viewTranNames[index]"
             @click.stop="onTapImage($event, index, '10px')"
           ></liu-img>
         </div>

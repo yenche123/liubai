@@ -6,6 +6,7 @@ import type { ImageShow } from '~/types';
 import cui from "~/components/custom-ui";
 import { mainViewWidthKey, viceViewWidthKey } from "~/utils/provide-keys"
 import type { LocatedA } from "~/types/other/types-custom"
+import { getViewTranNames } from "~/utils/other/transition-related";
 
 interface EditingCoversProps {
   modelValue?: ImageShow[]
@@ -30,6 +31,7 @@ export function useEditingCovers(props: EditingCoversProps) {
   const globalStore = useGlobalStateStore()
   const modelValue = toRef(props, "modelValue")
   const sortList = ref<ImageShow[]>([])
+  const viewTranNames = getViewTranNames(sortList)
 
   let lastTwoTriggerList: number[] = []
   const whenPropChange = () => {
@@ -71,6 +73,7 @@ export function useEditingCovers(props: EditingCoversProps) {
   return {
     axis,
     sortList,
+    viewTranNames,
     onDragStart,
     onDragEnd,
     onTapImage,

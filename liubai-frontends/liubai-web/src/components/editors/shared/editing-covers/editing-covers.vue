@@ -19,6 +19,7 @@ export default defineComponent({
     const {
       axis,
       sortList,
+      viewTranNames,
       onDragStart,
       onDragEnd,
       onTapImage,
@@ -37,6 +38,7 @@ export default defineComponent({
       imgWidth, 
       cha,
       sortList,
+      viewTranNames,
       onDragStart, 
       onDragEnd,
       onTapImage,
@@ -79,6 +81,7 @@ export default defineComponent({
           'width': imgWidth + 'px',
           'height': imgWidth + 'px',
         }"
+        :view-transition-name="viewTranNames[index]"
         object-fit="cover"
         @click="onTapImage(index)"
       ></liu-img>
