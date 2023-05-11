@@ -1,24 +1,14 @@
-import { ref, watch } from "vue"
+import { toRef } from "vue"
 import type { TcCoversProps } from "./types"
 import liuApi from "~/utils/liu-api"
 import cui from "~/components/custom-ui"
+import { getViewTranNames } from "~/utils/other/transition-related"
 
 export function useTcCovers(
   props: TcCoversProps
 ) {
-
-  const viewTranNames = ref<Array<string | undefined>>([])
-  watch(() => props.covers, (newV, oldV) => {
-    const newLen = newV?.length ?? 0
-    const oldLen = oldV?.length ?? 0
-    if(newLen === oldLen) return
-
-    const list: string[] = []
-    for(let i=0; i<newLen; i++) {
-      list.push("")
-    }
-    viewTranNames.value = list
-  }, { immediate: true })
+  const coversRef = toRef(props, "covers")
+  const viewTranNames = getViewTranNames(coversRef)
 
   const onTapImage = async (
     e: MouseEvent, 
