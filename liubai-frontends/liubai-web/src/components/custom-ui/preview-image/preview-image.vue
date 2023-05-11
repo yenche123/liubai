@@ -58,24 +58,21 @@ const {
 
 <style lang="scss">
 
-@keyframes fade-in {
-  from { opacity: 0; }
-}
-
-@keyframes fade-out {
-  to { opacity: 0; }
-}
-
 .liu-previewing-image {
+  @keyframes fade-in {
+    from { opacity: 0; }
+  }
+
+  @keyframes fade-out {
+    to { opacity: 0; }
+  }
   
   &::view-transition-old(root) {
-    animation: 300ms cubic-bezier(0.4, 0, 1, 1) both fade-out;
-    z-index: 1;
+    animation: 250ms cubic-bezier(0.4, 0, 1, 1) both fade-out;
   }
 
   &::view-transition-new(root) {
-    animation: 300ms cubic-bezier(0, 0, 0.2, 1) both fade-in;
-    z-index: 9999;
+    animation: 250ms cubic-bezier(0, 0, 0.2, 1) both fade-in;
   }
   
   &::view-transition-old(preview-image),

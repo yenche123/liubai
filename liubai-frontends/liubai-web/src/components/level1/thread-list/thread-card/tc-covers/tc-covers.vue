@@ -1,50 +1,17 @@
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import type { ImageShow } from '~/types';
-import type { ImgLayout } from "~/types/other/types-custom"
-import cui from '../../../../custom-ui';
-import { 
-  addViewTransitionName, 
-  removeViewTransitionName,
-} from '~/utils/other/transition-related';
+import { defineComponent } from 'vue';
+import { tcCoversProps } from "./tools/types"
+import { useTcCovers } from './tools/useTcCovers';
 
 export default defineComponent({
-  props: {
-    covers: {
-      type: Array<ImageShow>,
-    },
-    imgLayout: {
-      type: Object as PropType<ImgLayout>,
-    }
-  },
+  props: tcCoversProps,
   setup(props) {
     const imgWidth = 140
-
-    const onTapImage = async (e: MouseEvent, index: number) => {
-      const c = props.covers
-      if(!c || !c[index]) return
-
-      let viewTransition = addViewTransitionName(e, "preview-image")
-
-      await cui.previewImage({
-        imgs: c,
-        index,
-        viewTransition,
-        viewTransitionCallbackWhileShowing() {
-          console.log("viewTransitionCallbackWhileShowing............")
-          if(viewTransition) removeViewTransitionName(e)
-        },
-        viewTransitionCallbackWhileClosing() {
-          console.log("viewTransitionCallbackWhileClosing............")
-          if(viewTransition) addViewTransitionName(e, "preview-image")
-        }
-      })
-      console.log("preview image 被关闭了.........")
-
-    }
+    const { viewTranNames, onTapImage } = useTcCovers(props)
 
     return {
       imgWidth,
+      viewTranNames,
       onTapImage,
     }
   }
@@ -75,7 +42,8 @@ export default defineComponent({
           border-radius="12px"
           class="tcc-one-img"
           object-fit="cover" 
-          @click.stop="onTapImage($event, 0)"
+          :viewTransitionName="viewTranNames[0]"
+          @click.stop="onTapImage($event, 0, '12px')"
         ></liu-img>
       </div>
     </div>
@@ -107,7 +75,8 @@ export default defineComponent({
             :blurhash="item.blurhash"
             class="tcc-two-img"
             object-fit="cover" 
-            @click.stop="onTapImage($event, index)"
+            :viewTransitionName="viewTranNames[index]"
+            @click.stop="onTapImage($event, index, '12px')"
           ></liu-img>
         </div>
       </div>
@@ -124,7 +93,8 @@ export default defineComponent({
             border-radius="10px"
             class="cc-img"
             object-fit="cover" 
-            @click.stop="onTapImage($event, index)"
+            :viewTransitionName="viewTranNames[index]"
+            @click.stop="onTapImage($event, index, '10px')"
           ></liu-img>
         </div>
       </template>

@@ -1,5 +1,4 @@
 import type { SimpleFunc } from "../basic/type-tool";
-import liuApi from "../liu-api";
 
 export interface TransitionHelperParam {
   updateDOM: SimpleFunc
@@ -33,54 +32,4 @@ export function transitionHelper(opt: TransitionHelperParam) {
   })
 
   return transition
-}
-
-
-export function addViewTransitionName(
-  e: MouseEvent,
-  viewTransitionName: string,
-) {
-  const res1 = liuApi.canIUse.viewTransitionApi()
-  if(!res1) return false
-
-  const ct = e.currentTarget
-  if(!ct) return false
-  const img = (ct as HTMLElement).querySelector("img")
-  console.log("imgggg:")
-  console.log(img)
-  console.log(" ")
-  if(!img) return false
-
-  //@ts-expect-error: viewTransitionName in CSSStyleDeclaration
-  img.style.viewTransitionName = viewTransitionName
-
-  return true
-}
-
-export function removeViewTransitionName(
-  e: MouseEvent,
-) {
-
-
-  console.log("111111111111")
-  console.log(e)
-  console.log(" ")
-  const ct = e.currentTarget
-
-  console.log("ct")
-  console.log(ct)
-  console.log(" ")
-
-  if(!ct) return false
-  console.log("222222222222")
-  const img = (ct as HTMLElement).querySelector("img")
-  
-  console.log(img)
-
-  if(!img) return false
-
-  //@ts-expect-error: viewTransitionName in CSSStyleDeclaration
-  img.style.viewTransitionName = ''
-  console.log("移除了..........")
-  return true
 }

@@ -6,7 +6,8 @@ export interface PiParam {
   index?: number
   viewTransition?: boolean
   viewTransitionCallbackWhileShowing?: SimpleFunc
-  viewTransitionCallbackWhileClosing?: SimpleFunc
+  viewTransitionCallbackWhileClosing?: (currentIdx: number) => void
+  viewTransitionBorderRadius?: string
 }
 
 export interface PreviewImageRes {
@@ -18,7 +19,7 @@ export interface PiData {
   index: number
   viewTransition?: boolean
   viewTransitionCallbackWhileShowing?: SimpleFunc
-  viewTransitionCallbackWhileClosing?: SimpleFunc
+  viewTransitionCallbackWhileClosing?: (currentIdx: number) => void
 }
 
 export type PiResolver = (res: PreviewImageRes) => void

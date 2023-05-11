@@ -12,6 +12,8 @@ import type {
 import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
 import { toListenEscKeyUp, cancelListenEscKeyUp } from "../tools/listen-keyup"
 import { transitionHelper } from "~/utils/other/transition-related"
+import { getSpecificCSSRule } from "~/utils/other/css-related"
+import { Swiper } from "swiper"
 
 let _resolve: PiResolver | undefined
 let _viewTranResolve: ViewTransitionResolver | undefined
@@ -21,6 +23,7 @@ const enable = ref(false)
 const show = ref(false)
 const queryKey = "previewimage"
 let rr: RouteAndLiuRouter | undefined
+let mSwiper: Swiper | undefined
 
 const data = reactive<PiData>({
   imgs: [],
@@ -77,6 +80,7 @@ export async function previewImage(opt: PiParam) {
   data.viewTransition = opt.viewTransition
   data.viewTransitionCallbackWhileShowing = opt.viewTransitionCallbackWhileShowing
   data.viewTransitionCallbackWhileClosing = opt.viewTransitionCallbackWhileClosing
+  initViewTransition(opt.viewTransitionBorderRadius ?? "0px")
 
   openIt(rr, queryKey)
 
@@ -86,8 +90,17 @@ export async function previewImage(opt: PiParam) {
   return new Promise(_wait)
 }
 
-async function onPiSwiper() {
-  console.log("swiper 准备好了..............")
+
+function initViewTransition(viewTransitionBorderRadius: string) {
+  if(!data.viewTransition) return
+  const s = ".liu-close-preview-image::view-transition-old(preview-image)"
+  const rule = getSpecificCSSRule(s)
+  if(!rule) return
+  rule.style.borderRadius = viewTransitionBorderRadius
+}
+
+async function onPiSwiper(swiper: Swiper) {
+  mSwiper = swiper
   await nextTick()
   _viewTranResolve && _viewTranResolve(true)
   _viewTranResolve = undefined
@@ -126,12 +139,12 @@ function _openByViewTransition() {
   })
 
   transition.ready.then(() => {
-    console.log("transition ready...............")
+    // console.log("transition ready...............")
+    // console.time("transition-finished")
   })
 
-  console.time("transition-finished")
   transition.finished.then(() => {
-    console.timeEnd("transition-finished")
+    // console.timeEnd("transition-finished")
     toListenEscKeyUp(onTapCancel)
   })
 }
@@ -152,10 +165,17 @@ async function _toClose() {
   toResolve({ hasBack: true })
 }
 
-function _closeByViewTransition() {
+async function _closeByViewTransition() {
+  let closingIdx = data.index
+  if(mSwiper) {
+    closingIdx = mSwiper.activeIndex
+  }
+  data.index = closingIdx
+  await nextTick()
+
   const updateDOM = async () => {
     if(data.viewTransitionCallbackWhileClosing) {
-      data.viewTransitionCallbackWhileClosing()
+      data.viewTransitionCallbackWhileClosing(closingIdx)
     }
     show.value = false
     enable.value = false
@@ -167,7 +187,6 @@ function _closeByViewTransition() {
   })
 
   transition.finished.then(() => {
-    console.log("关闭动画已执行完毕............")
     toResolve({ hasBack: true })
   })
 }
@@ -176,4 +195,5 @@ function toResolve(res: PreviewImageRes) {
   if(!_resolve) return
   _resolve(res)
   _resolve = undefined
+  mSwiper = undefined
 }
