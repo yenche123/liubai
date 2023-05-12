@@ -3,7 +3,7 @@ import { resolve } from "path"
 import vue from '@vitejs/plugin-vue'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import mkcert from 'vite-plugin-mkcert'
-import viteCompression from 'vite-plugin-compression'
+import { compression as viteCompression } from 'vite-plugin-compression2'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import Inspect from 'vite-plugin-inspect'
 

@@ -147,6 +147,9 @@ devDependencies:
   vite-plugin-compression:
     specifier: ^0.5.1
     version: 0.5.1(vite@4.3.5)
+  vite-plugin-compression2:
+    specifier: ^0.9.1
+    version: 0.9.1
   vite-plugin-inspect:
     specifier: ^0.7.24
     version: 0.7.24(vite@4.3.5)
@@ -1661,7 +1664,7 @@ packages:
   /@vueuse/shared@10.0.2(vue@3.3.1):
     resolution: {integrity: sha512-7W2l6qZaFvla3zAeEVo8hNHkNRKCezJa3JjZAKv3K4KsevXobHhVNr+RHaOVNK/6ETpFmtqiK+0pMIADbHjjag==}
     dependencies:
-      vue-demi: 0.14.0(vue@3.3.1)
+      vue-demi: 0.14.1(vue@3.3.1)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -3898,6 +3901,14 @@ packages:
       core-js: 3.27.2
       mutation-observer: 1.0.3
     dev: false
+
+  /vite-plugin-compression2@0.9.1:
+    resolution: {integrity: sha512-y4g9KKnXzfEldeZuRrU9K1Zo7WASrE42REh6dz5rLq6Lo5NcJPbknnoP6lk0a71MUMugBAO9hTKQ6tRa9KswTA==}
+    dependencies:
+      '@rollup/pluginutils': 5.0.2
+    transitivePeerDependencies:
+      - rollup
+    dev: true
 
   /vite-plugin-compression@0.5.1(vite@4.3.5):
     resolution: {integrity: sha512-5QJKBDc+gNYVqL/skgFAP81Yuzo9R+EAf19d+EtsMF/i8kFUpNi3J/H01QD3Oo8zBQn+NzoCIFkpPLynoOzaJg==}
