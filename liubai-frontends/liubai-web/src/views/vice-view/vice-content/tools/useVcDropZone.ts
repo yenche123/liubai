@@ -20,7 +20,7 @@ export function useVcDropZone(
 
   const gStore = useGlobalStateStore()
   const { isDragToSort } = storeToRefs(gStore)
-  const dropFiles = ref<File[]>()
+  const dropFiles = ref<File[]>([])
   provide(vcFileKey, dropFiles)
 
   const onDrop = (files: File[] | null) => {

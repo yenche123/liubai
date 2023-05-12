@@ -8,7 +8,7 @@ export function useMvDropZone(
   props: MainViewProps
 ) {
   const centerRef = ref<HTMLDivElement>()
-  const dropFiles = ref<File[]>()
+  const dropFiles = ref<File[]>([])
   provide(mvFileKey, dropFiles)
 
   const globalState = useGlobalStateStore()
