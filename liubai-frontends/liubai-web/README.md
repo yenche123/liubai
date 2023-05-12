@@ -22,7 +22,7 @@ https://icons.radix-ui.com/
 2. `Volar Takeover Mode`: Vue 的单文件组件 SFCs (即 `.vue` 文件) 与 TS 一同工作时，会开启一个 TS language service 的实例，而原本的 `.ts` 文件则由 VS Code 内置的 TS language service 实例处理。一个项目里两个实例可能会引发性能问题，因此 Volar 提供 `Takeover 模式` 以同时支持两种文件，解决性能问题。
    打开方式: `Ctrl + Shift + P`，输入 `built` 选择 `Extensions: Show Built-in Extensions`，在搜索框再输入 `typescript`（不要移除 `@builtin` 前缀），点击 `TypeScript and JavaScript Language Features` 的齿轮（设置）图标，选择 `Disable (Workspace)`，重新打开 VS Code 即完成设置。
 
-3. 开源前，记得移除 `.vscode.settings.json` 里的 `typescript.tsdk`
+3. 开源前，记得移除 `.vscode/settings.json` 里的 `typescript.tsdk`
 
 4. 升级 tiptap 下的依赖至最新，使用 `pnpm up @tiptap/* --latest`
 
