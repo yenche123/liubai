@@ -57,7 +57,7 @@
     "@types/canvas-confetti": "^1.6.0",
     "@types/file-saver": "^2.0.5",
     "@types/node": "^18.15.3",
-    "@vitejs/plugin-vue": "^4.0.0",
+    "@vitejs/plugin-vue": "^4.2.2",
     "sass": "^1.59.3",
     "typescript": "^5.0.4",
     "user-agent-data-types": "^0.3.0",

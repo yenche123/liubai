@@ -130,8 +130,8 @@ devDependencies:
     specifier: ^18.15.3
     version: 18.15.3
   '@vitejs/plugin-vue':
-    specifier: ^4.0.0
-    version: 4.0.0(vite@4.3.5)(vue@3.3.1)
+    specifier: ^4.2.2
+    version: 4.2.2(vite@4.3.5)(vue@3.3.1)
   sass:
     specifier: ^1.59.3
     version: 1.59.3
@@ -1446,8 +1446,8 @@ packages:
       vue-demi: 0.14.1(vue@3.3.1)
     dev: false
 
-  /@vitejs/plugin-vue@4.0.0(vite@4.3.5)(vue@3.3.1):
-    resolution: {integrity: sha512-e0X4jErIxAB5oLtDqbHvHpJe/uWNkdpYV83AOG2xo2tEVSzCzewgJMtREZM30wXnM5ls90hxiOtAuVU6H5JgbA==}
+  /@vitejs/plugin-vue@4.2.2(vite@4.3.5)(vue@3.3.1):
+    resolution: {integrity: sha512-kNH4wMAqs13UiZe/2If1ioO0Mjz71rr2oALTl2c5ajBIox9Vz/UGW/wGkr7GA3SC6Eb29c1HtzAtxdGfbXAkfQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^4.0.0
