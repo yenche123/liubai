@@ -1,51 +1,37 @@
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import type { PropType } from "vue"
 import { TipTapEditor } from "~/types/types-editor"
 import liuUtil from "~/utils/liu-util";
 import { useI18n } from 'vue-i18n';
-import { useCeToolbar, cetEmit } from './tools/useCeToolbar';
+import { useCeToolbar } from './tools/useCeToolbar';
+import type { CetEmit } from "./tools/useCeToolbar"
 
-export default defineComponent({
-  props: {
-    editor: Object as PropType<TipTapEditor>,
-    more: Boolean,
-  },
-  emits: cetEmit,
-  setup(props, { emit }) {
-    const icon_color = "var(--main-normal)"
-    const selectImagesEl = ref<HTMLInputElement | null>(null)
-
-    const onImageChange = () => {
-      const el = selectImagesEl.value
-      if(!el) return
-      if(!el.files || !el.files.length) return
-      const files = liuUtil.getArrayFromFileList(el.files)
-      emit("imagechange", files)
-    }
-
-    const { t } = useI18n()
-
-    const {
-      expanded,
-      onTapExpand,
-      onTapTag,
-      onTapMore,
-    } = useCeToolbar(emit)
-
-    return { 
-      t,
-      liuUtil, 
-      selectImagesEl, 
-      onImageChange, 
-      icon_color,
-      onTapTag,
-      onTapMore,
-      expanded,
-      onTapExpand,
-    }
-  },
+defineProps({
+  editor: Object as PropType<TipTapEditor>,
+  more: Boolean,
 })
+const emit = defineEmits<CetEmit>()
+
+const icon_color = "var(--main-normal)"
+const selectImagesEl = ref<HTMLInputElement | null>(null)
+
+const onImageChange = () => {
+  const el = selectImagesEl.value
+  if(!el) return
+  if(!el.files || !el.files.length) return
+  const files = liuUtil.getArrayFromFileList(el.files)
+  emit("imagechange", files)
+}
+
+const { t } = useI18n()
+
+const {
+  expanded,
+  onTapExpand,
+  onTapTag,
+  onTapMore,
+} = useCeToolbar(emit)
 
 </script>
 <template>

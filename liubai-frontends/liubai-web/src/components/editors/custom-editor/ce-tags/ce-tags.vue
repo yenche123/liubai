@@ -1,28 +1,21 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import type { PropType } from 'vue';
 import type { TagShow } from "~/types/types-content"
 
-export default defineComponent({
-  props: {
-    tagShows: {
-      type: Array as PropType<TagShow[]>,
-      default: []
-    },
-  },
-  emits: {
-    cleartag: (index: number) => true,
-  },
-  setup(props, { emit }) {
-
-    const onTapClear = (index: number) => {
-      emit("cleartag", index)
-    }
-
-    return {
-      onTapClear
-    }
+const props = defineProps({
+  tagShows: {
+    type: Array as PropType<TagShow[]>,
+    default: []
   },
 })
+
+const emit = defineEmits<{
+  "cleartag": [index: number]
+}>()
+
+const onTapClear = (index: number) => {
+  emit("cleartag", index)
+}
 
 </script>
 <template>

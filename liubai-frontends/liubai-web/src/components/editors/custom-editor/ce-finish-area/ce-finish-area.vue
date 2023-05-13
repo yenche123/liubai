@@ -1,29 +1,22 @@
-<script lang="ts">
-import { defineComponent } from 'vue'
-import liuApi from "~/utils/liu-api";
-
-export default defineComponent({
-  props: {
-    canSubmit: {
-      type: Boolean,
-      default: false,
-    },
-    inCodeBlock: Boolean,
-    focused: Boolean,
-  },
-})
-</script>
-
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import liuUtil from "~/utils/liu-util"
-const { t } = useI18n()
+import liuApi from "~/utils/liu-api";
 
-const cha = liuApi.getCharacteristic()
-
+defineProps({
+  canSubmit: {
+    type: Boolean,
+    default: false,
+  },
+  inCodeBlock: Boolean,
+  focused: Boolean,
+})
 const emits = defineEmits<{
   (event: "confirm"): void
 }>()
+
+const { t } = useI18n()
+const cha = liuApi.getCharacteristic()
 
 </script>
 <template>
