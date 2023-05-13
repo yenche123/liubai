@@ -1,6 +1,5 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
+<script setup lang="ts">
+import type { PropType } from 'vue';
 import type { StateWhichPage } from "../tools/types";
 import type { KanbanColumn } from '~/types/types-content';
 import StateNavi from '../state-navi/state-navi.vue';
@@ -11,74 +10,43 @@ import { useKanbanColumns } from '../tools/useKanbanColumns';
 import type { MenuItem } from '~/components/common/liu-menu/tools/types';
 import LpColumn from "./lp-column/lp-column.vue";
 
-export default defineComponent({
+// Vue 3.3+ 的 defineEmits 声明方式
+const emit = defineEmits<{
+  "tapnavi": [index: StateWhichPage]
+  "update:kanbanColumns": [val: KanbanColumn[]]
+}>()
 
-  components: {
-    ScrollView,
-    StateNavi,
-    SlickList,
-    SlickItem,
-    LpColumn,
+const props = defineProps({
+  current: {
+    type: Number as PropType<StateWhichPage>,
+    default: 0,
   },
-
-  emits: {
-    "tapnavi": (index: StateWhichPage) => true,
-
-    // 父组件使用 v-model:kanban-columns="" 完成双向绑定
-    "update:kanbanColumns": (val: KanbanColumn[]) => true,
+  kanbanColumns: {
+    type: Array as PropType<KanbanColumn[]>,
+    required: true
   },
-
-  props: {
-    current: {
-      type: Number as PropType<StateWhichPage>,
-      default: 0,
-    },
-    kanbanColumns: {
-      type: Array as PropType<KanbanColumn[]>,
-      required: true
-    },
-    hideScrollbar: {
-      type: Boolean,
-      default: false,
-    },
+  hideScrollbar: {
+    type: Boolean,
+    default: false,
   },
-
-  directives: {
-    handle: HandleDirective
-  },
-
-  setup(props, { emit }) {
-    const iconColor = "var(--main-note)"
-    const { t } = useI18n()
-    const indicatorData = useInjectSnIndicator()
-
-    const {
-      MORE_ITEMS,
-      columns,
-      onColumnsSorted,
-      onThreadInserted,
-      onThreadsUpdated,
-      onTapMoreMenuItem,
-      onTapThreadItem,
-      onTapAddThread,
-    } = useKanbanColumns(props, emit)
-
-    return {
-      MORE_ITEMS,
-      iconColor,
-      indicatorData,
-      t,
-      columns,
-      onColumnsSorted,
-      onThreadInserted,
-      onThreadsUpdated,
-      onTapMoreMenuItem,
-      onTapThreadItem,
-      onTapAddThread,
-    }
-  },
-
 })
+
+const vHandle = HandleDirective
+const iconColor = "var(--main-note)"
+const { t } = useI18n()
+const indicatorData = useInjectSnIndicator()
+
+const {
+  MORE_ITEMS,
+  columns,
+  onColumnsSorted,
+  onThreadInserted,
+  onThreadsUpdated,
+  onTapMoreMenuItem,
+  onTapThreadItem,
+  onTapAddThread,
+} = useKanbanColumns(props, emit)
+
 
 </script>
 <template>
