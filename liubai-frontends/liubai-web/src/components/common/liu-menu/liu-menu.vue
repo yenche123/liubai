@@ -1,69 +1,50 @@
-
-<script lang="ts">
-import { computed, defineComponent, ref } from 'vue'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { MenuItem } from "./tools/types"
 import { useLiuMenu } from './tools/useLiuMenu'
 import { liumenu_props } from "./tools/types"
 import type { SimpleFunc } from "~/utils/basic/type-tool"
-
 // 【待完善项】因为是 Menu 选单，应该可以用 Keyboard 的上下键来选择
 
-export default defineComponent({
-  props: liumenu_props,
-  emits: {
-    tapitem: (item: MenuItem, index: number) => true,
-    menushow: () => true,
-    menuhide: () => true
-  },
-  setup(props, { emit }) {
-    const showMask = ref(false)
-    const hasIcon = computed(() => props.menu.some(v => !!v.iconName))
-    const defaultColor = "var(--main-normal)"
-    const { t } = useI18n()
-    const { 
-      maskEl,
-      connectMaskEl,
-      disconnectMaskEl,
-      onTouchEndMask,
-    } = useLiuMenu(props)
+const props = defineProps(liumenu_props)
+const emit = defineEmits<{
+  "tapitem": [item: MenuItem, index: number]
+  "menushow": []
+  "menuhide": []
+}>()
 
-    const onTapBox = (e: Event) => {}
+const showMask = ref(false)
+const hasIcon = computed(() => props.menu.some(v => !!v.iconName))
+const defaultColor = "var(--main-normal)"
+const { t } = useI18n()
+const { 
+  maskEl,
+  connectMaskEl,
+  disconnectMaskEl,
+  onTouchEndMask,
+} = useLiuMenu(props)
 
-    const onTapItem = (item: MenuItem, index: number, hide: SimpleFunc) => {
-      emit("tapitem", item, index)
-      hide()
-    }
+const onTapBox = (e: Event) => {}
 
-    const onMenuShow = (e: any) => {
-      emit("menushow")
-      if(props.allowMask) showMask.value = true
-      connectMaskEl()
-    }
+const onTapItem = (item: MenuItem, index: number, hide: SimpleFunc) => {
+  emit("tapitem", item, index)
+  hide()
+}
 
-    const onMenuHide = () => {
-      emit("menuhide")
-      if(props.allowMask) showMask.value = false
-      disconnectMaskEl()
-    }
+const onMenuShow = (e: any) => {
+  emit("menushow")
+  if(props.allowMask) showMask.value = true
+  connectMaskEl()
+}
 
-    const onTapMask = (e: MouseEvent) => {}
+const onMenuHide = () => {
+  emit("menuhide")
+  if(props.allowMask) showMask.value = false
+  disconnectMaskEl()
+}
 
-    return {
-      showMask,
-      t,
-      hasIcon,
-      defaultColor,
-      onTapBox,
-      onTapItem,
-      onMenuShow,
-      onMenuHide,
-      onTapMask,
-      maskEl,
-      onTouchEndMask,
-    }
-  },
-})
+const onTapMask = (e: MouseEvent) => {}
 
 </script>
 <template>

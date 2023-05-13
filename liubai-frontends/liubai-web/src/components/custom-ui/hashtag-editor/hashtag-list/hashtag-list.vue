@@ -1,56 +1,41 @@
-<script lang="ts">
-import { defineComponent, nextTick, PropType, toRef, watch } from 'vue';
+
+<script setup lang="ts">
+import type { PropType } from 'vue';
 import liuApi from '~/utils/liu-api';
 import type { TagItem } from "../tools/types"
 import { useHashtagList } from "./tools/useHashtagList" 
 
 const default_color = "var(--main-normal)"
 
-export default defineComponent({
-  props: {
-    list: {
-      type: Array as PropType<TagItem[]>,
-      required: true
-    },
-    selectedIndex: {
-      type: Number,
-      required: true
-    },
+const props = defineProps({
+  list: {
+    type: Array as PropType<TagItem[]>,
+    required: true
   },
-
-  emits: {
-    mouseenteritem: (index: number) => true,
-    tapitem: (index: number) => true,
+  selectedIndex: {
+    type: Number,
+    required: true
   },
-
-  setup(props, { emit }) {
-    
-
-    useHashtagList(props)
-    
-    const { isPC } = liuApi.getCharacteristic()
-
-    const onMouseEnter = (index: number) => {
-      if(index === props.selectedIndex) return
-      emit("mouseenteritem", index)
-    }
-
-    const onTapItem = (index: number) => {
-      emit("tapitem", index)
-    }
-    
-    return { 
-      isPC, 
-      default_color, 
-      onMouseEnter,
-      onTapItem,
-    }
-  },
-
 })
+const emit = defineEmits<{
+  "mouseenteritem": [index: number]
+  "tapitem": [index: number]
+}>()
+
+useHashtagList(props)
+    
+const { isPC } = liuApi.getCharacteristic()
+
+const onMouseEnter = (index: number) => {
+  if(index === props.selectedIndex) return
+  emit("mouseenteritem", index)
+}
+
+const onTapItem = (index: number) => {
+  emit("tapitem", index)
+}
 
 </script>
-
 <template>
 
 <div class="ht-list">
