@@ -1,69 +1,49 @@
-<script lang="ts">
+<script setup lang="ts">
 import { Swiper } from "swiper"
 import { Swiper as VueSwiper, SwiperSlide } from 'swiper/vue';
-import { defineComponent, ref, shallowRef } from 'vue';
+import { ref, shallowRef } from 'vue';
 import 'swiper/css';
 import { usePiContent } from "./tools/usePiContent";
-import { picProps, picEmits } from "./tools/types"
+import { picProps } from "./tools/types"
+import type { PicEmits } from "./tools/types"
 
 const iconColor = "rgba(255, 255, 255, .95)"
 
-export default defineComponent({
-  components: {
-    VueSwiper,
-    SwiperSlide,
-  },
-  props: picProps,
-  emits: picEmits,
-  setup(props, { emit }) {
-    const { covers, coverLength } = usePiContent(props)
+const props = defineProps(picProps)
+const emit = defineEmits<PicEmits>()
+
+const { covers, coverLength } = usePiContent(props)
     
-    let _swiper = shallowRef<Swiper | null>(null)
-    const leftArrow = ref(false)
-    const rightArrow = ref(false)
-    const cLen = coverLength.value
-    if(cLen > 1) {
-      if(props.currentIndex > 0) leftArrow.value = true
-      if(props.currentIndex < cLen - 1) rightArrow.value = true
-    }
+let _swiper = shallowRef<Swiper | null>(null)
+const leftArrow = ref(false)
+const rightArrow = ref(false)
+const cLen = coverLength.value
+if(cLen > 1) {
+  if(props.currentIndex > 0) leftArrow.value = true
+  if(props.currentIndex < cLen - 1) rightArrow.value = true
+}
 
-    const onSlideChange = (swiper: Swiper) => {
-      const actIdx = swiper.activeIndex
-      leftArrow.value = actIdx > 0
-      rightArrow.value = actIdx < (coverLength.value - 1)
-    }
+const onSlideChange = (swiper: Swiper) => {
+  const actIdx = swiper.activeIndex
+  leftArrow.value = actIdx > 0
+  rightArrow.value = actIdx < (coverLength.value - 1)
+}
 
-    const onTapLeft = (e: MouseEvent) => {
-      if(!_swiper.value) return
-      _swiper.value.slidePrev()
-    }
+const onTapLeft = (e: MouseEvent) => {
+  if(!_swiper.value) return
+  _swiper.value.slidePrev()
+}
 
-    const onTapRight = (e: MouseEvent) => {
-      if(!_swiper.value) return
-      _swiper.value.slideNext()
-    }
+const onTapRight = (e: MouseEvent) => {
+  if(!_swiper.value) return
+  _swiper.value.slideNext()
+}
     
-    const onSwiper = (swiper: Swiper) => {
-      swiper.activeIndex = props.currentIndex
-      _swiper.value = swiper
-      emit("swiper", swiper)
-    }
-
-    return { 
-      covers, 
-      coverLength, 
-      iconColor, 
-      leftArrow,
-      rightArrow,
-      onTapLeft,
-      onTapRight,
-      onSlideChange,
-      onSwiper,
-    }
-  },
-  methods: {
-  },
-})
+const onSwiper = (swiper: Swiper) => {
+  swiper.activeIndex = props.currentIndex
+  _swiper.value = swiper
+  emit("swiper", swiper)
+}
 
 </script>
 <template>

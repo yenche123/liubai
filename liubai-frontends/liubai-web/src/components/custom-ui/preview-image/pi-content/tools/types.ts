@@ -25,10 +25,6 @@ export interface PicEmits {
   (event: "swiper", swiper: Swiper): void
 }
 
-export const picEmits = {
-  swiper: (swiper: Swiper) => true
-}
-
 export interface PicCover {
   src: string
   id: string
