@@ -67,6 +67,6 @@
     "vite-plugin-inspect": "^0.7.24",
     "vite-plugin-mkcert": "^1.13.3",
     "vite-plugin-svg-icons": "^2.0.1",
-    "vue-tsc": "^1.6.4"
+    "vue-tsc": "^1.6.5"
   }
 }
