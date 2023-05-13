@@ -1,5 +1,5 @@
 import 'virtual:svg-icons-register'
-import { createApp } from 'vue'
+import { createApp, defineAsyncComponent } from 'vue'
 
 // 引入 CSS
 // 根据加载顺序 custom-style 可以使用 theme-light/dark 里的 CSS 变量
@@ -20,10 +20,7 @@ import CustomBtn from "./components/custom-ui/custom-button.vue"
 import LiuSwitch from "./components/common/liu-switch/liu-switch.vue"
 import LiuImg from "./components/common/liu-img/liu-img.vue"
 import LiuCheckbox from "./components/common/liu-checkbox/liu-checkbox.vue"
-import LiuMenu from "./components/common/liu-menu/liu-menu.vue"
-import FloatActionButton from "./components/level1/float-action-button/float-action-button.vue";
 import FloatingVue from 'floating-vue'
-import LiuTooltip from "./components/common/liu-tooltip/liu-tooltip.vue"
 import { plugin as Slicksort } from 'vue-slicksort';
 
 
@@ -34,9 +31,16 @@ app.component("CustomBtn", CustomBtn)
 app.component("LiuSwitch", LiuSwitch)
 app.component("LiuImg", LiuImg)
 app.component("LiuCheckbox", LiuCheckbox)
-app.component("LiuMenu", LiuMenu)
-app.component("FloatActionButton", FloatActionButton)
-app.component("LiuTooltip", LiuTooltip)
+app.component("LiuMenu", defineAsyncComponent(() => 
+  import("./components/common/liu-menu/liu-menu.vue")
+))
+app.component("FloatActionButton", defineAsyncComponent(() =>
+  import("./components/level1/float-action-button/float-action-button.vue")
+))
+app.component("LiuTooltip", defineAsyncComponent(() => 
+  import("./components/common/liu-tooltip/liu-tooltip.vue")
+))
+
 app.use(createPinia())
 app.use(i18n)
 app.use(router)
