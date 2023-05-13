@@ -1,64 +1,42 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import type { PropType } from 'vue';
 import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 import type { ThreadShow } from '~/types/types-content';
 import { useKanbanThreads } from "../../tools/useKanbanThreads"
 import { useKpColumn } from './tools/useKpColumn';
 import { useI18n } from "vue-i18n"
-import type { 
-  ColumnInsertData,
-} from "../../tools/types"
+import type { ColumnInsertData } from "../../tools/types"
 
-export default defineComponent({
-
-  components: {
-    SlickList,
-    SlickItem,
+const vHandle = HandleDirective
+const props = defineProps({
+  stateId: {
+    type: String,
+    required: true,
   },
-
-  emits: {
-    "update:threads": (val: ThreadShow[]) => true,
-    "scrolling": (val: number) => true,
-    "sort-insert": (val: ColumnInsertData) => true,
-    "threadsupdated": (val: ThreadShow[]) => true,
-    "tapitem": (contentId: string) => true,
-    "tapadd": () => true,
+  threads: {
+    type: Array as PropType<ThreadShow[]>,
+    default: []
   },
-
-  props: {
-    stateId: {
-      type: String,
-      required: true,
-    },
-    threads: {
-      type: Array as PropType<ThreadShow[]>,
-      default: []
-    },
-  },
-  
-  directives: {
-    handle: HandleDirective
-  },
-
-  setup(props, { emit }) {
-    const { t } = useI18n()
-    const {
-      list,
-      showAddBox,
-    } = useKanbanThreads(props, emit)
-    const {
-      columnHeight,
-    } = useKpColumn(props, emit)
-
-    return {
-      t,
-      list,
-      showAddBox,
-      columnHeight,
-    }
-  },
-
 })
+
+// vue 3.3+ 的 defineEmits 写法
+const emit = defineEmits<{
+  "update:threads": [val: ThreadShow[]]
+  "scrolling": [val: number]
+  "sort-insert": [val: ColumnInsertData]
+  "threadsupdated": [val: ThreadShow[]]
+  "tapitem": [contentId: string]
+  "tapadd": []
+}>()
+
+const { t } = useI18n()
+const {
+  list,
+  showAddBox,
+} = useKanbanThreads(props, emit)
+const {
+  columnHeight,
+} = useKpColumn(props, emit)
 
 </script>
 <template>
