@@ -1,70 +1,58 @@
-
-<script lang="ts">
+<script setup lang="ts">
 import { EditorContent } from '@tiptap/vue-3'
 import { useEditorCore } from './tools/useEditorCore'
 import type { EditorCoreContent, TipTapJSONContent } from "~/types/types-editor"
 import cfg from "~/config"
-import { defineComponent, PropType } from 'vue'
+import type { PropType } from 'vue'
 import type { HashTagEditorRes } from "~/types/other/types-hashtag"
 import type { EditorCorePurpose } from "./tools/types"
 
-export default defineComponent({
-  components: {
-    EditorContent,
+const props = defineProps({
+  titlePlaceholder: {
+    type: String,
+    default: "",
   },
-  props: {
-    titlePlaceholder: {
-      type: String,
-      default: "",
-    },
-    descPlaceholder: {
-      type: String,
-      default: "",
-    },
-    isEdit: {         // 是否为编辑模式
-      type: Boolean,
-      default: true
-    },
-    content: {
-      type: Object as PropType<TipTapJSONContent>
-    },
-    hashTrigger: {
-      type: Boolean,
-      default: false,
-    },
-    minHeight: {
-      type: String,
-      default: `${cfg.min_editor_height}px`
-    },
-    purpose: {
-      type: String as PropType<EditorCorePurpose>,
-      default: ""
-    }
+  descPlaceholder: {
+    type: String,
+    default: "",
   },
-  emits: {
-    update: (payload: EditorCoreContent) => true,
-    focus: (payload: EditorCoreContent) => true,
-    blur: (payload: EditorCoreContent) => true,
-    finish: (payload: EditorCoreContent) => true,
-    addhashtag: (payload: HashTagEditorRes) => true
+  isEdit: {         // 是否为编辑模式
+    type: Boolean,
+    default: true
   },
-  expose: ['editor'],
-  setup(props, { emit }) {
-    const { 
-      editor,
-      styles,
-    } = useEditorCore(props, emit)
-
-    return {
-      editor, 
-      cfg,
-      styles,
-    }
+  content: {
+    type: Object as PropType<TipTapJSONContent>
   },
+  hashTrigger: {
+    type: Boolean,
+    default: false,
+  },
+  minHeight: {
+    type: String,
+    default: `${cfg.min_editor_height}px`
+  },
+  purpose: {
+    type: String as PropType<EditorCorePurpose>,
+    default: ""
+  }
 })
 
-</script>
+const emit = defineEmits<{
+  "update": [payload: EditorCoreContent]
+  "focus": [payload: EditorCoreContent]
+  "blur": [payload: EditorCoreContent]
+  "finish": [payload: EditorCoreContent]
+  "addhashtag": [payload: HashTagEditorRes]
+}>()
 
+const { 
+  editor,
+  styles,
+} = useEditorCore(props, emit)
+
+defineExpose({ editor })
+
+</script>
 <template>
 
   <editor-content :editor="editor" />
