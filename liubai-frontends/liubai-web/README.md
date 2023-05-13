@@ -30,6 +30,7 @@ https://icons.radix-ui.com/
 
 6. 使用 `umami.is` 的网站分析服务时，若出现官网打不开关于 `net::ERR_BLOCKED_BY_CLIENT` 的错误，那说明被浏览器的 AdBlock 插件拦截了，打开插件的 `Pause on this site` 选项即可。
 
+7. `props` 有属性 `a` 是 `required: true` 时，不可以把 `props` 声明在 `types.ts` 文件里，因为 `.vue` 文件在 IDE 里读取时，会把 props 的实例读成类型的形式，这时会将 `a` 看成 `required: boolean` 而非 `required: true`，导致 TS 把 `props.a` 视作有可能为 `undefined`，造成后续编写代码需要多判断空值的问题。
 
 ## 评论
 
