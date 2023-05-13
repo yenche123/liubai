@@ -1,5 +1,6 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+
+<script setup lang="ts">
+import type { PropType } from 'vue';
 import { BubbleMenu } from '@tiptap/vue-3';
 import type { TipTapEditor } from '~/types/types-editor';
 import { useI18n } from 'vue-i18n';
@@ -9,41 +10,20 @@ import liuApi from '~/utils/liu-api';
 
 const bubbleColor = "var(--bubble-menu-color)"
 
-export default defineComponent({
-  components: {
-    BubbleMenu,
-  },
-  props: {
-    editor: {
-      type: Object as PropType<TipTapEditor>,
-    }
-  },
-  setup(props) {
-    const { t } = useI18n()
-    const cha = liuApi.getCharacteristic()
-    const {
-      selectedIndex,
-      tippyOptions,
-      onTapCopy,
-      onTapSearchIn,
-      onTapSearchOut,
-      onTapBot,
-    } = useTcBubbleMenu(props)
-
-    return {
-      cha,
-      t,
-      bubbleColor,
-      shouldShow,
-      selectedIndex,
-      tippyOptions,
-      onTapCopy,
-      onTapSearchIn,
-      onTapSearchOut,
-      onTapBot,
-    }
+const props = defineProps({
+  editor: {
+    type: Object as PropType<TipTapEditor>,
   }
 })
+const { t } = useI18n()
+const cha = liuApi.getCharacteristic()
+const {
+  selectedIndex,
+  tippyOptions,
+  onTapCopy,
+  onTapSearchIn,
+  onTapSearchOut,
+} = useTcBubbleMenu(props)
 
 </script>
 <template>

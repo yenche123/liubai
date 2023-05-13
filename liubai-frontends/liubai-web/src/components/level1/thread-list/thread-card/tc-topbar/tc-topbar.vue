@@ -1,33 +1,24 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ThreadShow } from '~/types/types-content';
 import { useTcTopbar } from './tools/useTcTopbar';
-import { tctEmits } from "./tools/types"
+import type { TctEmits } from "./tools/types"
 
-export default defineComponent({
-  props: {
-    threadData: {
-      type: Object as PropType<ThreadShow>,
-      required: true
-    }
-  },
-  emits: tctEmits,
-  setup(props, { emit }) {
-    const { t } = useI18n()
-    const { showTopbar } = useTcTopbar(props)
-
-    const onTapState = () => {
-      emit('newoperate', 'state')
-    }
-
-    return {
-      t,
-      showTopbar,
-      onTapState,
-    }
+const props = defineProps({
+  threadData: {
+    type: Object as PropType<ThreadShow>,
+    required: true
   }
 })
+
+const emit = defineEmits<TctEmits>()
+const { t } = useI18n()
+const { showTopbar } = useTcTopbar(props)
+
+const onTapState = () => {
+  emit('newoperate', 'state')
+}
 
 </script>
 <template>

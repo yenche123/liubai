@@ -1,42 +1,32 @@
-<script lang="ts">
-import { computed, defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
+import type { PropType } from 'vue';
 import type { TagShow } from "~/types/types-content"
 import { RouterLink } from 'vue-router'
 import { useWorkspaceStore } from '~/hooks/stores/useWorkspaceStore';
 import { storeToRefs } from 'pinia';
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 
-export default defineComponent({
-  components: {
-    RouterLink
-  },
-  props: {
-    tagShows: {
-      type: Array as PropType<TagShow[]>,
-      default: []
-    },
-  },
-  setup(props, { emit }) {
-    const { router, route } = useRouteAndLiuRouter()
-    
-    const wStore = useWorkspaceStore()
-    const { spaceType } = storeToRefs(wStore)
-    const toPath = computed(() => {
-      const w = spaceType.value
-      if(w === "TEAM") return `/w/${w}/tag/`
-      return `/tag/`
-    })
-
-    const onTapTag = (e: MouseEvent, href: string) => {
-      router.pushNewPageWithOldQuery(route, { path: href }, true)
-    }
-
-    return {
-      toPath,
-      onTapTag,
-    }
+defineProps({
+  tagShows: {
+    type: Array as PropType<TagShow[]>,
+    default: []
   },
 })
+
+const { router, route } = useRouteAndLiuRouter()
+    
+const wStore = useWorkspaceStore()
+const { spaceType } = storeToRefs(wStore)
+const toPath = computed(() => {
+  const w = spaceType.value
+  if(w === "TEAM") return `/w/${w}/tag/`
+  return `/tag/`
+})
+
+const onTapTag = (e: MouseEvent, href: string) => {
+  router.pushNewPageWithOldQuery(route, { path: href }, true)
+}
 
 </script>
 <template>

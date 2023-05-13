@@ -20,7 +20,3 @@ export interface TcEmits {
     oldThread: ThreadShow
   ): void
 }
-
-export const tcEmits = {
-  newoperate: (operation: ThreadOutterOperation, position: number, oldThread: ThreadShow) => true
-}

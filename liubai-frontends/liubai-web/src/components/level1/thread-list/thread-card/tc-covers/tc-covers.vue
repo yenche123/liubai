@@ -1,21 +1,10 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import { tcCoversProps } from "./tools/types"
 import { useTcCovers } from './tools/useTcCovers';
 
-export default defineComponent({
-  props: tcCoversProps,
-  setup(props) {
-    const imgWidth = 140
-    const { viewTranNames, onTapImage } = useTcCovers(props)
-
-    return {
-      imgWidth,
-      viewTranNames,
-      onTapImage,
-    }
-  }
-})
+const imgWidth = 140
+const props = defineProps(tcCoversProps)
+const { viewTranNames, onTapImage } = useTcCovers(props)
 
 </script>
 <template>

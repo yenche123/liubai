@@ -1,36 +1,26 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import type { PropType } from 'vue';
 import type { ThreadShow } from '~/types/types-content';
 import type { TlViewType } from "../../tools/types";
 import { useTcBottombar } from './tools/useTcBottombar';
-import { tcbEmits } from "./tools/types"
+import type { TcbEmits } from "./tools/types"
 import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-  props: {
-    threadData: {
-      type: Object as PropType<ThreadShow>,
-      required: true
-    },
-    viewType: {
-      type: String as PropType<TlViewType>,
-      required: true
-    },
+const props = defineProps({
+  threadData: {
+    type: Object as PropType<ThreadShow>,
+    required: true
   },
-  emits: tcbEmits,
-  setup(props, { emit }) {
-    const { t } = useI18n()
-    const default_color = "var(--main-code)"
-    const { footerMenu, onTapMenuItem } = useTcBottombar(props, emit)
-
-    return {
-      t,
-      default_color,
-      footerMenu,
-      onTapMenuItem,
-    }
-  }
+  viewType: {
+    type: String as PropType<TlViewType>,
+    required: true
+  },
 })
+const emit = defineEmits<TcbEmits>()
+
+const { t } = useI18n()
+const default_color = "var(--main-code)"
+const { footerMenu, onTapMenuItem } = useTcBottombar(props, emit)
 
 </script>
 <template>

@@ -1,6 +1,4 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { useI18n } from 'vue-i18n';
+<script setup lang="ts">
 import { useTcAttachments } from "./tools/useTcAttachments"
 import type { MenuItem } from "~/components/common/liu-menu/tools/types"
 import type { PropType } from "vue"
@@ -19,50 +17,26 @@ const menu: MenuItem[] = [
   }
 ]
 
-export default defineComponent({
-
-  components: {
-    TcWhenRemind,
-  },
-
-  props: {
-    thread: {
-      type: Object as PropType<ThreadShow>,
-      required: true,
-    }
-  },
-
-  setup(props) {
-    const { t } = useI18n()
-    const {
-      onTapFile
-    } = useTcAttachments(props)
-    const {
-      whenStr,
-      remindStr,
-      countdownStr,
-      canEdit,
-      onTapWhenItem,
-      onTapRemindItem,
-    } = useWhenAndRemind(props)
-
-    return {
-      t,
-      default_color,
-      onTapFile,
-      menu,
-      whenStr,
-      remindStr,
-      countdownStr,
-      canEdit,
-      onTapWhenItem,
-      onTapRemindItem,
-    }
+const props = defineProps({
+  thread: {
+    type: Object as PropType<ThreadShow>,
+    required: true,
   }
 })
 
-</script>
+const {
+  onTapFile
+} = useTcAttachments(props)
+const {
+  whenStr,
+  remindStr,
+  countdownStr,
+  canEdit,
+  onTapWhenItem,
+  onTapRemindItem,
+} = useWhenAndRemind(props)
 
+</script>
 <template>
   <div 
     v-if="whenStr || remindStr || thread.files?.length"

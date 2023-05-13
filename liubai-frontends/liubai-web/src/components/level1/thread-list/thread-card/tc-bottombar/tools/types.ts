@@ -15,7 +15,3 @@ export interface TcbEmits {
 export interface TcbMenuItem extends MenuItem {
   operation: ThreadOperation
 }
-
-export const tcbEmits = {
-  newoperate: (operation: ThreadOperation) => true
-}

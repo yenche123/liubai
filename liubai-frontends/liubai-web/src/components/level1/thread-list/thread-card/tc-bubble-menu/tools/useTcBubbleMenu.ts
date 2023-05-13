@@ -10,14 +10,14 @@ import liuUtil from '~/utils/liu-util';
 
 
 interface TcBubbleMenuOpt {
-  editor: TipTapEditor | undefined
+  editor?: TipTapEditor
 }
 
 export function useTcBubbleMenu(
   opt: TcBubbleMenuOpt,
 ) {
   const selectedIndex = ref(-1)
-  let tippy: Instance | undefined = undefined
+  let tippy: Instance | undefined
 
   const tippyOptions: Partial<Props> = {
     hideOnClick: true,

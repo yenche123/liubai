@@ -1,5 +1,5 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import type { PropType } from 'vue';
 import type { ThreadShow } from '~/types/types-content';
 import EditorCore from '~/components/editors/editor-core/editor-core.vue';
 import TcAttachments from './tc-attachments/tc-attachments.vue';
@@ -13,61 +13,40 @@ import { useI18n } from 'vue-i18n';
 import TcBubbleMenu from './tc-bubble-menu/tc-bubble-menu.vue';
 import { useTcOperation } from "./tools/useTcOperation";
 import type { TlViewType, TlDisplayType } from "../tools/types";
-import { tcEmits } from "./tools/types"
+import type { TcEmits } from "./tools/types"
 
-export default defineComponent({
-  components: {
-    EditorCore,
-    TcTopbar,
-    TcAttachments,
-    TcActionbar,
-    TcBottombar,
-    TcTags,
-    TcCovers,
-    TcBubbleMenu,
+const props = defineProps({
+  threadData: {
+    type: Object as PropType<ThreadShow>,
+    required: true
   },
-  props: {
-    threadData: {
-      type: Object as PropType<ThreadShow>,
-      required: true
-    },
-    displayType: {
-      type: String as PropType<TlDisplayType>,
-      default: "list",
-    },
-    viewType: {
-      type: String as PropType<TlViewType>,
-      default: "",
-    },
-    position: {
-      type: Number,
-      required: true
-    },
+  displayType: {
+    type: String as PropType<TlDisplayType>,
+    default: "list",
   },
-  emits: tcEmits,
-  setup(props, { emit }) {
-    const {
-      editorCoreRef,
-      editor,
-      isBriefing,
-      onTapBriefing,
-      onTapThreadCard,
-    } = useThreadCard(props)
-    const { t } = useI18n()
-
-    const operations = useTcOperation(props, emit)
-
-    return {
-      editorCoreRef,
-      editor,
-      t,
-      isBriefing,
-      onTapBriefing,
-      onTapThreadCard,
-      ...operations,
-    }
-  }
+  viewType: {
+    type: String as PropType<TlViewType>,
+    default: "",
+  },
+  position: {
+    type: Number,
+    required: true
+  },
 })
+const emit = defineEmits<TcEmits>()
+const {
+  editorCoreRef,
+  editor,
+  isBriefing,
+  onTapBriefing,
+  onTapThreadCard,
+} = useThreadCard(props)
+const { t } = useI18n()
+const {
+  onTapComment,
+  onTapShare,
+  receiveBottomOperation,
+} = useTcOperation(props, emit)
 
 </script>
 <template>
