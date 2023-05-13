@@ -1,5 +1,5 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import type { PropType } from 'vue';
 import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
 import ThreadCard from "../thread-list/thread-card/thread-card.vue"
 import { useThreadDetail } from "./tools/useThreadDetail"
@@ -10,51 +10,33 @@ import CommentEditor from "~/components/editors/comment-editor/comment-editor.vu
 import type { PageState } from '~/types/types-atom';
 import type { LocatedA } from "~/types/other/types-custom"
 
-export default defineComponent({
-
-  components: {
-    PlaceholderView,
-    ThreadCard,
-    CommentEditor,
+const props = defineProps({
+  location: {
+    type: String as PropType<WhatDetail>,
+    required: true
   },
-
-  props: {
-    location: {
-      type: String as PropType<WhatDetail>,
-      required: true
-    },
-    threadId: {
-      type: String,
-      required: true,
-    }
-  },
-
-  emits: {
-    pagestatechange: (state: PageState) => true
-  },
-
-  setup(props, { emit }) {
-    const {
-      tdData
-    } = useThreadDetail(props, emit)
-
-    let commentEditorLocated: LocatedA = "vice-view"
-    if(props.location === "detail-page") commentEditorLocated = "main-view"
-
-    const {
-      receiveOperation
-    } = useThreadOperateInDetail(tdData)
-
-    subscribeUpdate(tdData)
-
-    return {
-      tdData,
-      commentEditorLocated,
-      receiveOperation,
-    }
-  },
+  threadId: {
+    type: String,
+    required: true,
+  }
 })
 
+const emit = defineEmits<{
+  "pagestatechange": [state: PageState]
+}>()
+
+const {
+  tdData
+} = useThreadDetail(props, emit)
+
+let commentEditorLocated: LocatedA = "vice-view"
+if(props.location === "detail-page") commentEditorLocated = "main-view"
+
+const {
+  receiveOperation
+} = useThreadOperateInDetail(tdData)
+
+subscribeUpdate(tdData)
 
 </script>
 <template>

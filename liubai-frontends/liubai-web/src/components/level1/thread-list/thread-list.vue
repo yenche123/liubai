@@ -1,53 +1,36 @@
-<script lang="ts">
+<script setup lang="ts">
 import { useThreadList } from './tools/useThreadList';
 import ThreadCard from './thread-card/thread-card.vue';
 import { useNewAndUpdate } from './tools/useNewAndUpdate';
 import ListBottom from '../list-bottom/list-bottom.vue';
 import { useThreadOperateInList } from './tools/useThreadOperateInList';
-import { defineComponent } from "vue";
 import type { PropType } from 'vue';
-import type { TlViewType } from "./tools/types"
-import { tlEmits } from "./tools/types"
+import type { TlViewType, TlEmits } from "./tools/types"
 
-export default defineComponent({
-  components: {
-    ThreadCard,
-    ListBottom,
+const props = defineProps({
+  viewType: {
+    type: String as PropType<TlViewType>,
+    default: "",
   },
-  props: {
-    viewType: {
-      type: String as PropType<TlViewType>,
-      default: "",
-    },
-    tagId: {
-      type: String,
-      default: "",
-    },
-    stateId: {
-      type: String,
-      default: "",
-    }
+  tagId: {
+    type: String,
+    default: "",
   },
-  emits: tlEmits,
-  setup(props, { emit }) {
-    const {
-      list,
-      lastItemStamp,
-    } = useThreadList(props, emit)
-    useNewAndUpdate(props, list, lastItemStamp)
-
-    const {
-      receiveOperation
-    } = useThreadOperateInList(props, list)
-
-    return {
-      list,
-      receiveOperation,
-    }
+  stateId: {
+    type: String,
+    default: "",
   }
 })
+const emit = defineEmits<TlEmits>()
+const {
+  list,
+  lastItemStamp,
+} = useThreadList(props, emit)
+useNewAndUpdate(props, list, lastItemStamp)
 
-
+const {
+  receiveOperation
+} = useThreadOperateInList(props, list)
 
 </script>
 <template>

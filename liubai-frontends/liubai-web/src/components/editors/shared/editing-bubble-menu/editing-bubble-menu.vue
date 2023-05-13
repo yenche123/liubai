@@ -1,5 +1,5 @@
-<script lang="ts">
-import { defineComponent, PropType } from 'vue';
+<script setup lang="ts">
+import type { PropType } from 'vue';
 import { BubbleMenu } from '@tiptap/vue-3'
 import type { TipTapEditor } from '~/types/types-editor';
 import { useI18n } from 'vue-i18n'
@@ -8,27 +8,14 @@ import { useEditingBubbleMenu } from "./tools/useEditingBubbleMenu"
 
 const bubbleColor = "var(--bubble-menu-color)"
 
-export default defineComponent({
-  components: {
-    BubbleMenu,
-  },
-  props: {
-    editor: {
-      type: Object as PropType<TipTapEditor>,
-    }
-  },
-  setup() {
-    const { t } = useI18n()
-    const { tippyOptions } = useEditingBubbleMenu()
-    
-    return {
-      t,
-      bubbleColor,
-      tippyOptions,
-      shouldShow,
-    }
-  },
+defineProps({
+  editor: {
+    type: Object as PropType<TipTapEditor>,
+  }
 })
+
+const { t } = useI18n()
+const { tippyOptions } = useEditingBubbleMenu()
 
 </script>
 <template>

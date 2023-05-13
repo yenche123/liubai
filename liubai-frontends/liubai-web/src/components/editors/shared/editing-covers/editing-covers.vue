@@ -1,56 +1,36 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
 import type { ImageShow } from '~/types';
 import liuApi from "~/utils/liu-api"
 import { useEditingCovers, ceCoversProps } from "./tools/useEditingCovers"
 import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 
-export default defineComponent({
-  components: {
-    SlickList,
-    SlickItem,
-  },
-  props: ceCoversProps,
-  emits: ['update:modelValue', 'clear'],
-  setup(props, { emit }) {
-    const imgWidth = props.isInComment ? 100 : 140
+const props = defineProps(ceCoversProps)
+const emit = defineEmits<{
+  'update:modelValue': [covers: ImageShow[]]
+  'clear': [index: number]
+}>()
+
+const imgWidth = props.isInComment ? 100 : 140
     
-    const cha = liuApi.getCharacteristic()
-    const {
-      axis,
-      sortList,
-      viewTranNames,
-      onDragStart,
-      onDragEnd,
-      onTapImage,
-    } = useEditingCovers(props)
+const cha = liuApi.getCharacteristic()
+const {
+  axis,
+  sortList,
+  viewTranNames,
+  onDragStart,
+  onDragEnd,
+  onTapImage,
+} = useEditingCovers(props)
 
-    const onListUpdate = (newV: ImageShow[]) => {
-      emit("update:modelValue", newV)
-    }
+const onListUpdate = (newV: ImageShow[]) => {
+  emit("update:modelValue", newV)
+}
 
-    const onTapClear = (e: MouseEvent, index: number) => {
-      emit("clear", index)
-    }
+const onTapClear = (e: MouseEvent, index: number) => {
+  emit("clear", index)
+}
 
-    return { 
-      axis,
-      imgWidth, 
-      cha,
-      sortList,
-      viewTranNames,
-      onDragStart, 
-      onDragEnd,
-      onTapImage,
-      onListUpdate,
-      onTapClear,
-    }
-  },
-
-  directives: {
-    handle: HandleDirective
-  },
-})
+const vHandle = HandleDirective
 
 </script>
 <template>
