@@ -97,6 +97,8 @@
   /** 跟随 --bg-color 的背景色 */
   --frosted-glass-3: linear-gradient(0deg, rgba(234, 236, 239, .82) 50%, rgba(234, 236, 239, .7) 90%);
   --frosted-glass-4: rgba(255, 255, 255, .66);    /** navi-auto 在有阴影状态时的背景色 */
+  /** 跟随 --vice-bg 的北京色 */
+  --frosted-glass-5: linear-gradient(0deg, rgba(241, 242, 245, .82) 50%, rgba(241, 242, 245, .7) 90%);
 
   /********* 导入页: 「查看更多」的背景 *******/
   --mask-bg: linear-gradient(0deg, rgba(234, 236, 239, 1) 40%, rgba(234, 236, 239, 0) 95%);

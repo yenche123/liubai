@@ -41,14 +41,16 @@ watch(vcState, (newV) => {
 })
 
 watch(iframeSrc, (newV) => {
-  console.log("iframeSrc 發生變化........")
-  console.log(newV)
-  console.log(" ")
+  // console.log("iframeSrc 發生變化........")
+  // console.log(newV)
+  // console.log(" ")
 })
 
 const {
   vcHeight,
+  vcHeight2,
   maskMarginTop,
+  viceNaviPx,
 } = useVcHeight()
 
 </script>
@@ -56,6 +58,7 @@ const {
 
   <!-- 导航栏 -->
   <VcNaviBar
+    :vc-state="vcState"
     @tapback="onTapBack"
     @tapclose="onTapClose"
     @tapopeninnew="onTapOpenInNew"
@@ -66,7 +69,7 @@ const {
     :show="vcState === 'iframe'"
     :is-outter-draging="isOutterDraging"
     :iframe-src="iframeSrc"
-    :vc-height="vcHeight"
+    :vc-height="vcHeight2"
     :mask-margin-top="maskMarginTop"
   ></VcIframe>
 
@@ -104,7 +107,7 @@ const {
 
   .vcliu-virtual {
     width: 100%;
-    height: 10px;
+    height: v-bind("'' + (viceNaviPx + 10) + 'px'");
   }
 
   .vcliu-box {

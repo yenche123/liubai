@@ -1,5 +1,14 @@
 <script lang="ts" setup>
-import cfg from "../../../../config"
+import cfg from "~/config"
+import type { VcState } from "../tools/types"
+import type { PropType } from "vue";
+
+defineProps({
+  vcState: {
+    type: String as PropType<VcState>,
+    required: true,
+  },
+})
 
 const emits = defineEmits<{
   (event: "tapback"): void
@@ -12,7 +21,7 @@ const iconColor = "var(--main-normal)"
 </script>
 <template>
 
-  <div class="vcliu-navi-bar">
+  <div class="liu-frosted-glass vcliu-navi-bar">
 
     <!-- 返回键 -->
     <div class="liu-hover vcliu-navi-btn" @click="emits('tapback')">
@@ -33,15 +42,30 @@ const iconColor = "var(--main-normal)"
 
   </div>
 
+  <div v-if="vcState === 'iframe'" class="vcliu-virtual"></div>
+
 </template>
 <style lang="scss" scoped>
 
 .vcliu-navi-bar {
   width: 100%;
   height: v-bind("cfg.vice_navi_height + 'px'");
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
+  z-index: 710;
+}
+
+.vcliu-navi-bar::before {
+  background: var(--frosted-glass-5);
+}
+
+.vcliu-virtual {
+  width: 100%;
+  height: v-bind("cfg.vice_navi_height + 'px'");
 }
 
 .liu-hover::before {
