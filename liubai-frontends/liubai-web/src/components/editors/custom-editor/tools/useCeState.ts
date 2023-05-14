@@ -17,6 +17,7 @@ import liuUtil from "~/utils/liu-util";
 import { storeToRefs } from "pinia";
 import type { SpaceType } from "~/types/types-basic"
 import type { LiuTimeout } from "~/utils/basic/type-tool";
+import { handleOverflow } from "./handle-overflow"
 
 let collectTimeout: LiuTimeout
 let spaceIdRef: Ref<string>
@@ -76,6 +77,7 @@ export function useCeState(
   const onEditorUpdate = (data: EditorCoreContent) => {
     state.editorContent = data
     checkCanSubmit(state, canSubmitRef)
+    handleOverflow(state)
     collectState(state)
   }
 

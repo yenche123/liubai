@@ -101,11 +101,6 @@ const onTapCeContainer = (e: MouseEvent) => {}
   @click.stop="onTapCeContainer"
 >
 
-  <!-- 气泡: 放在 editor-core 外层是因为避免被 ce-editor 遮挡 -->
-  <EditingBubbleMenu 
-    :editor="editor"
-  ></EditingBubbleMenu>
-
   <div class="ce-editor"
     @scroll="onEditorScrolling"
   >
@@ -120,6 +115,11 @@ const onTapCeContainer = (e: MouseEvent) => {}
       :hash-trigger="true"
       :min-height="'' + minEditorHeight + 'px'"
     ></EditorCore>
+
+    <!-- 气泡 -->
+    <EditingBubbleMenu 
+      :editor="editor"
+    ></EditingBubbleMenu>
   </div>
 
   <!-- 隐入隐出渐变分隔条 -->
@@ -194,8 +194,7 @@ const onTapCeContainer = (e: MouseEvent) => {}
   width: 100%;
   max-height: v-bind("maxEditorHeight + 'px'");
   position: relative;
-  overflow-y: overlay;
-  overflow-y: auto;
+  overflow-y: v-bind("state.overflowType");
   transition: .3s;
 }
 

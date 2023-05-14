@@ -16,6 +16,7 @@ import { editorSetKey } from "~/utils/provide-keys"
 import { storeToRefs } from "pinia"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
+import { handleOverflow } from "./handle-overflow"
 
 let spaceIdRef: Ref<string>
 
@@ -159,6 +160,7 @@ async function initDraftFromDraft(
 
     editor.commands.setContent(json)
     state.editorContent = { text, json }
+    handleOverflow(state)
     numWhenSet.value++
   }
 }
@@ -187,6 +189,7 @@ async function initDraftFromThread(
 
     editor.commands.setContent(json)
     state.editorContent = { text, json }
+    handleOverflow(state)
     numWhenSet.value++
   }
 }

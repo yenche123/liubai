@@ -106,6 +106,7 @@ async function toRelease(
 function _resetState(state: CeState) {
   delete state.draftId
   delete state.threadEdited
+  state.overflowType = "visible"
   state.visScope = "DEFAULT"
   state.tagIds = []
   delete state.title
