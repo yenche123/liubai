@@ -2,6 +2,7 @@
 import cfg from "~/config"
 import type { VcState } from "../tools/types"
 import type { PropType } from "vue";
+import liuApi from "~/utils/liu-api";
 
 defineProps({
   vcState: {
@@ -16,6 +17,8 @@ const emits = defineEmits<{
   (event: "tapopeninnew"): void
 }>()
 
+const { isMobile } = liuApi.getCharacteristic()
+const naviWidth = isMobile ? '100%' : 'calc(100% - 10px)'
 const iconColor = "var(--main-normal)"
 
 </script>
@@ -35,7 +38,9 @@ const iconColor = "var(--main-normal)"
 
     <div class="vcliu-navi-footer">
       <!-- 用新分页打开 -->
-      <div class="liu-hover vcliu-navi-btn" @click="emits('tapopeninnew')">
+      <div class="liu-hover vcliu-navi-btn" @click="emits('tapopeninnew')"
+        :class="{ 'vcliu-nv-open': !isMobile }"
+      >
         <svg-icon class="vcn-open-new" name="open_in_new" :color="iconColor"></svg-icon>
       </div>
     </div>
@@ -49,6 +54,7 @@ const iconColor = "var(--main-normal)"
 
 .vcliu-navi-bar {
   width: 100%;
+  width: v-bind("naviWidth"); /** 减掉 10px 是因为滚动条的宽度 */
   height: v-bind("cfg.vice_navi_height + 'px'");
   position: absolute;
   top: 0;
@@ -89,6 +95,11 @@ const iconColor = "var(--main-normal)"
     width: 40%;
     height: 40%;
   }
+}
+
+.vcliu-nv-open {
+  width: v-bind("'' + (10 + cfg.vice_navi_height) + 'px'");  /** 加 10px，是为了包含那个滚动条 */
+  margin-right: -10px;
 }
 
 .vcliu-navi-footer {
