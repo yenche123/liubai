@@ -12,7 +12,7 @@ const props = defineProps({
 })
 
 const emits = defineEmits<{
-  (event: "tapmainview"): void
+  "tapmainview": []
 }>()
 
 const { leftPx, rightPx } = useMainView()
