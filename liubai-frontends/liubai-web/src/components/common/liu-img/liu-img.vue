@@ -44,24 +44,18 @@ const props = defineProps({
   },
   viewTransitionName: {
     type: String,
-    default: "",
   }
 })
 
-const baseStyles: LiuImgStyles = {
-  objectFit: props.objectFit,
-  transition: TRANSITION_MS + "ms",
-  userSelect: props.userSelect ? 'auto' : 'none',
-  borderRadius: props.borderRadius ? props.borderRadius : '0',
-}
-
 const imgStyles = computed<CSSProperties>(() => {
-  const vtn = props.viewTransitionName
-  if(vtn) {
-    let obj = { ...baseStyles, viewTransitionName: vtn } as CSSProperties
-    return obj
+  const baseStyles: LiuImgStyles = {
+    objectFit: props.objectFit,
+    transition: TRANSITION_MS + "ms",
+    userSelect: props.userSelect ? 'auto' : 'none',
+    borderRadius: props.borderRadius ? props.borderRadius : '0',
+    viewTransitionName: props.viewTransitionName,
   }
-  return { ...baseStyles } as CSSProperties
+  return baseStyles as CSSProperties
 })
 
 const canvasWH = computed(() => {
