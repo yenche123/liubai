@@ -3,6 +3,7 @@ import CenterDropZone from "./center-drop-zone/center-drop-zone.vue"
 import { useMainView } from "./tools/useMainView"
 import { useMvDropZone } from "./tools/useMvDropZone"
 import { useMvTouchBox } from "./tools/useMvTouchBox"
+import type { MainViewEmits } from "./tools/types"
 
 const props = defineProps({
   dropFiles: {
@@ -11,9 +12,7 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits<{
-  "tapmainview": []
-}>()
+const emits = defineEmits<MainViewEmits>()
 
 const { leftPx, rightPx } = useMainView()
 const { isOverDropZone, centerRef } = useMvDropZone(props)
@@ -23,7 +22,7 @@ const {
   onTouchMove,
   onTouchEnd,
   onTouchCancel,
-} = useMvTouchBox(leftPx)
+} = useMvTouchBox(leftPx, emits)
 
 const onTapCenter = (e: MouseEvent) => {
   emits("tapmainview")

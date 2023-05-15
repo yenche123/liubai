@@ -1,14 +1,18 @@
 import { computed } from "vue"
-import { Ref } from "vue"
+import type { Ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
 import time from "~/utils/basic/time"
+import liuApi from "~/utils/liu-api";
 import sideBar from "~/views/side-bar";
+import type { MainViewEmits } from "./types";
 
 // 用于处理 mobile 设备，屏幕左侧可以从左至右滑动打开侧边栏的功能
-export function useMvTouchBox(leftPx: Ref<number>) {
+export function useMvTouchBox(leftPx: Ref<number>, emits: MainViewEmits) {
   const { width } = useWindowSize()
+  const { isPC } = liuApi.getCharacteristic()
   
   const showTouchBox = computed(() => {
+    if(isPC) return false
     const left = leftPx.value
     if(left < 10) return true
     return false
@@ -65,19 +69,21 @@ export function useMvTouchBox(leftPx: Ref<number>) {
       allowOpen = diffPixel > 80
     }
 
-    if(!allowOpen) {
-      _reset()
+    let now = time.getTime()
+    let diffStamp = now - startStamp
+
+    // 滑动打开侧边栏的情况
+    if(allowOpen && diffStamp < 1500) {
+      _toOpen()
       return
     }
 
-    let now = time.getTime()
-    let diffStamp = now - startStamp
-    if(diffStamp < 1500) {
-      _toOpen()
+    // 是点击 main-view 的情况
+    if(diffPixel < 10 && diffStamp < 200) {
+      emits("tapmainview")
     }
-    else {
-      _reset()
-    }
+
+    _reset()
   }
 
   
