@@ -69,7 +69,8 @@
     "expand": "展開",
     "restore": "恢復",
     "tag": "標籤",
-    "copy_code": "複製程式碼"
+    "copy_code": "複製程式碼",
+    "format_clear": "清除樣式"
   },
   "cui": {
     "plz_input_txt": "請輸入文字"

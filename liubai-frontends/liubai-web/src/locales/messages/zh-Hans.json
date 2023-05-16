@@ -69,7 +69,8 @@
     "expand": "展开",
     "restore": "恢复",
     "tag": "标签",
-    "copy_code": "复制代码"
+    "copy_code": "复制代码",
+    "format_clear": "清除样式"
   },
   "cui": {
     "plz_input_txt": "请输入文字"

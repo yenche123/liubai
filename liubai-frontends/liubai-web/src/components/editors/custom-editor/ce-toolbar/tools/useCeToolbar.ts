@@ -2,26 +2,24 @@ import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { useLayoutStore } from "~/views/useLayoutStore";
 import cui from "~/components/custom-ui";
-import type { HashTagEditorRes } from "~/types/other/types-hashtag"
+import type { CetEmit, CetProps } from "./types";
 
-export const cetEmit = {
-  imagechange: (files: File[]) => true,
-  addhashtag: (res: HashTagEditorRes) => true,
-  tapmore: () => true,
-}
-
-export interface CetEmit {
-  (event: "imagechange", files: File[]): void
-  (event: "addhashtag", res: HashTagEditorRes): void
-  (event: "tapmore"): void
-}
-
-export function useCeToolbar(emit: CetEmit) {
+export function useCeToolbar(props: CetProps, emit: CetEmit) {
   const layout = useLayoutStore()
   const { sidebarStatus } = storeToRefs(layout)
   const expanded = computed(() => {
     if(sidebarStatus.value === "fullscreen") return true
     return false
+  })
+  const showFormatClear = computed(() => {
+    const editor = props.editor
+    if(!editor) return false
+    const bold = editor.isActive("bold")
+    const italic = editor.isActive("italic")
+    const strike = editor.isActive("strike")
+    console.log("showFormatClear: ", bold, italic, strike)
+    console.log(" ")
+    return bold || italic || strike
   })
 
   const onTapTag = async () => {
@@ -39,10 +37,19 @@ export function useCeToolbar(emit: CetEmit) {
     layout.$patch({ sidebarStatus: newV })
   }
 
+  const onTapClearFormat = () => {
+    if(!showFormatClear.value) return
+    const editor = props.editor
+    if(!editor) return
+    editor.chain().focus().unsetBold().unsetItalic().unsetStrike().run()
+  }
+
   return { 
     expanded, 
+    showFormatClear,
     onTapExpand,
     onTapTag,
     onTapMore,
+    onTapClearFormat,
   }
 }

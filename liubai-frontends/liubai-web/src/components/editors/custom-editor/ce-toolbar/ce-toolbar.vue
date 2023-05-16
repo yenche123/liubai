@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { PropType } from "vue"
-import { TipTapEditor } from "~/types/types-editor"
 import liuUtil from "~/utils/liu-util";
 import { useI18n } from 'vue-i18n';
 import { useCeToolbar } from './tools/useCeToolbar';
-import type { CetEmit } from "./tools/useCeToolbar"
+import type { CetEmit } from "./tools/types"
+import { cetProps } from './tools/types';
 
-defineProps({
-  editor: Object as PropType<TipTapEditor>,
-  more: Boolean,
-})
+const props = defineProps(cetProps)
 const emit = defineEmits<CetEmit>()
 
 const icon_color = "var(--main-normal)"
@@ -28,10 +24,12 @@ const { t } = useI18n()
 
 const {
   expanded,
+  showFormatClear,
   onTapExpand,
   onTapTag,
   onTapMore,
-} = useCeToolbar(emit)
+  onTapClearFormat,
+} = useCeToolbar(props, emit)
 
 </script>
 <template>
@@ -75,6 +73,18 @@ const {
     >
       <svg-icon name="more" class="ceti-icon ceti-more" 
         :class="{ 'ceti-more_open': more }"
+        :color="icon_color"
+      />
+    </div>
+
+    <!-- 清除样式 -->
+    <div class="liu-hover cet-item cet-format-clear"
+      :class="{ 'cet-format-clear_show': showFormatClear }"
+      @click="onTapClearFormat"
+      :aria-label="t('editor.format_clear')"
+    >
+      <svg-icon name="editor-format_clear" 
+        class="ceti-icon" 
         :color="icon_color"
       />
     </div>
@@ -169,6 +179,19 @@ const {
       background-color: var(--primary-color);
       opacity: .12;
     }
+  }
+
+  .cet-format-clear {
+    visibility: hidden;
+    cursor: auto;
+    transition: .15s;
+    opacity: 0;
+  }
+
+  .cet-format-clear_show {
+    visibility: visible;
+    cursor: pointer;
+    opacity: 1;
   }
 
 }
