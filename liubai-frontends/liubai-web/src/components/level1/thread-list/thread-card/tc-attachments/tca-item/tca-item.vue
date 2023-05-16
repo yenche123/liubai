@@ -14,28 +14,26 @@ const { t } = useI18n()
 </script>
 <template>
 
-  <div class="tcwr-item" :class="{ 'liu-hover': canHover }">
-    <div class="tcwr-icon">
-      <svg-icon :name="iconName" class="tcwr-svgicon" :color="color"></svg-icon>
+  <div class="tca-item" :class="{ 'liu-hover': canHover }">
+    <div class="tca-icon">
+      <svg-icon :name="iconName" class="tca-svgicon" :color="color"></svg-icon>
     </div>
-    <div class="tcwr-title" :aria-label="labelKey ? t(labelKey) : ''">
+    <div class="tca-title" :aria-label="labelKey ? t(labelKey) : ''">
       <span>{{ title }}</span>
     </div>
   </div>
 
 </template>
 <style lang="scss" scoped>
-.tcwr-item {
+.tca-item {
   display: flex;
-  align-items: center;
-  width: min-content;
+  width: fit-content;
   min-width: 160px;
-  height: 36px;
   border-radius: 10px;
   padding-inline-end: 10px;
   overflow: hidden;
 
-  .tcwr-icon {
+  .tca-icon {
     width: 32px;
     height: 32px;
     display: flex;
@@ -43,22 +41,26 @@ const { t } = useI18n()
     justify-content: center;
     margin-inline-end: 4px;
     padding-block-end: 2px;
+    flex: none;
 
-    .tcwr-svgicon {
+    .tca-svgicon {
       width: 20px;
       height: 20px;
     }
   }
 
-  .tcwr-title {
+  .tca-title {
+    flex: 1;
+    flex-wrap: wrap;
     font-size: var(--btn-font);
     font-weight: 400;
     color: var(--main-code);
     user-select: none;
-    display: inline-block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 22px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    padding-block-start: 5px;
   }
 }
 

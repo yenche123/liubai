@@ -4,7 +4,7 @@ import type { MenuItem } from "~/components/common/liu-menu/tools/types"
 import type { PropType } from "vue"
 import type { ThreadShow } from '~/types/types-content';
 import { useWhenAndRemind } from './tools/useWhenAndRemind';
-import TcWhenRemind from './tc-when-remind/tc-when-remind.vue';
+import TcaItem from './tca-item/tca-item.vue';
 
 const default_color = "var(--main-code)"
 
@@ -51,31 +51,30 @@ const {
         @tapitem="onTapWhenItem"
         v-if="canEdit"
       >
-        <TcWhenRemind
+        <TcaItem
           :title="whenStr"
           icon-name="when"
           :can-hover="true"
           :color="default_color"
           label-key="editor.when"
-        ></TcWhenRemind>
+        ></TcaItem>
       </LiuMenu>
-      <TcWhenRemind
+      <TcaItem
         v-else
         :title="whenStr"
         icon-name="when"
-        :can-hover="false"
         :color="default_color"
         label-key="editor.when"
-      ></TcWhenRemind>
+      ></TcaItem>
     </div>
 
     <!-- 倒计时器 -->
-    <TcWhenRemind
+    <TcaItem
       v-if="countdownStr"
       :title="countdownStr"
       icon-name="hourglass_empty"
       :color="default_color"
-    ></TcWhenRemind>
+    ></TcaItem>
     
     <!-- 提醒我 -->
     <div class="tcwr-item-box" v-if="remindStr">
@@ -85,22 +84,22 @@ const {
         @tapitem="onTapRemindItem"
         v-if="canEdit"
       >
-        <TcWhenRemind
+        <TcaItem
           :title="remindStr"
           icon-name="notification"
           :can-hover="true"
           :color="default_color"
           label-key="editor.remind"
-        ></TcWhenRemind>
+        ></TcaItem>
       </LiuMenu>
-      <TcWhenRemind
+      <TcaItem
         v-else
         :title="remindStr"
         icon-name="notification"
         :can-hover="false"
         :color="default_color"
         label-key="editor.remind"
-      ></TcWhenRemind>
+      ></TcaItem>
 
     </div>
     
