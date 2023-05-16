@@ -6,7 +6,7 @@ import type { LiuRemindMe } from "~/types/types-atom";
 import type { CeState } from "./atom-ce"
 import type { Ref } from "vue";
 import ider from "~/utils/basic/ider";
-import { DraftLocalTable } from "~/types/types-table";
+import type { DraftLocalTable } from "~/types/types-table";
 import localCache from "~/utils/system/local-cache";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import time from "~/utils/basic/time";
