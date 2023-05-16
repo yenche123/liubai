@@ -6,7 +6,7 @@ import type { SupportedLocale } from "~/types/types-locale";
 import time from "~/utils/basic/time";
 import type { TcaProps } from "./types"
 import type { MenuItem } from "~/components/common/liu-menu/tools/types"
-import { ThreadShow } from "~/types/types-content";
+import type { ThreadShow } from "~/types/types-content";
 import valTool from "~/utils/basic/val-tool";
 import commonOperate from "../../../../utils/common-operate";
 import checker from "~/utils/other/checker";

@@ -1,5 +1,5 @@
 import type { PreCtx } from "../../utils/tools/types"
-import { ThreadShow } from "~/types/types-content"
+import type { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool"
 import commonOperate from "../../utils/common-operate"
 import { preHandle } from "../../utils/preHandle"

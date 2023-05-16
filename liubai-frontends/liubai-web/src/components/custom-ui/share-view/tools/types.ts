@@ -1,5 +1,5 @@
 import type { VisScope } from "~/types/types-basic"
-import { ThreadShow } from "~/types/types-content"
+import type { ThreadShow } from "~/types/types-content"
 import type { Alarm } from "ics"
 
 export interface ShareViewParam {
