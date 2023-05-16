@@ -14,8 +14,6 @@ export function useCeFile(
   state: CeState,
   moreRef: Ref<boolean>
 ) {
-  
-  const selectImagesEl = ref<HTMLInputElement | null>(null)
   const covers = ref<ImageShow[]>([])
 
   // 监听文件拖动掉落
@@ -54,7 +52,6 @@ export function useCeFile(
   }
 
   return { 
-    selectImagesEl, 
     onImageChange, 
     covers, 
     onClearCover,
