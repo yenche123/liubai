@@ -1,45 +1,16 @@
 <script lang="ts" setup>
-import { PropType } from 'vue';
+import type { SvEmits } from "./tools/types"
 import liuApi from '~/utils/liu-api';
 import { useScrollView } from './tools/useScrollView';
+import { svProps } from "./tools/types"
 
-const props = defineProps({
-  upperThreshold: {
-    type: Number,
-    default: 150
-  },
-  lowerThreshold: {
-    type: Number,
-    default: 150
-  },
-  direction: {
-    type: String as PropType<"vertical" | "horizontal">,
-    default: "vertical",
-  },
-  hiddenScrollBar: {
-    type: Boolean,
-    default: false,
-  },
-  goToTop: {
-    type: Number,
-    default: 0,
-  }
-})
+const props = defineProps(svProps)
+const emits = defineEmits<SvEmits>()
 
-const emits = defineEmits<{
-  // 滚动时，已做防抖节流
-  (event: "scroll", data: { scrollPosition: number }): void
-  (event: "scrolltoend", data: { scrollPosition: number }): void
-  (event: "scrolltostart", data: { scrollPosition: number }): void
-  // 下拉刷新被触发
-  (event: "refresh"): void
-}>()
-
-const { sv, scrollPosition, onScrolling } = useScrollView(props, emits)
+const { sv, onScrolling } = useScrollView(props, emits)
 const { isMobile } = liuApi.getCharacteristic()
 
 </script>
-
 <template>
 
   <div ref="sv" class="liu-scroll-view" 

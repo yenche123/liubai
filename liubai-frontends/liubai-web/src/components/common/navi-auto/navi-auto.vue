@@ -94,7 +94,6 @@ const default_color = "var(--navi-normal)"
       display: flex;
       justify-content: center;
       position: relative;
-      
 
       .na-title-inner {
         display: flex;
