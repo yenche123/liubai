@@ -121,6 +121,7 @@ export default defineComponent({
         <input ref="selectFileEl" 
           type="file" 
           class="mai-input" 
+          title=""
           @change="onFileChange"
         />
 
