@@ -68,7 +68,8 @@ async function toRelease(
   preThread._id = ider.createThreadId()
   preThread.user = user
   preThread.member = member.value
-  preThread.commentNum = 0
+  preThread.levelOne = 0
+  preThread.levelOneAndTwo = 0
   preThread.emojiData = { total: 0, system: [] }
   preThread.createdStamp = now
   preThread.insertedStamp = now
@@ -84,8 +85,7 @@ async function toRelease(
   if(state.draftId) await localReq.deleteDraftById(state.draftId)
 
   // 3. 重置编辑器的 state
-  _resetState(state)
-
+  _resetState(ctx)
  
   // 4. 重置 editor
   const editor = ctx.editor.value
@@ -103,7 +103,11 @@ async function toRelease(
   
 }
 
-function _resetState(state: CeState) {
+function _resetState(
+  ctx: CepContext
+) {
+  const state = ctx.state
+
   delete state.draftId
   delete state.threadEdited
   state.overflowType = "visible"
@@ -115,6 +119,8 @@ function _resetState(state: CeState) {
   delete state.images
   delete state.files
   delete state.editorContent
+
+  ctx.canSubmitRef.value = false
 }
 
 
