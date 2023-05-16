@@ -84,7 +84,7 @@ const {
       :aria-label="t('editor.format_clear')"
     >
       <svg-icon name="editor-format_clear" 
-        class="ceti-icon" 
+        class="ceti-format-clear" 
         :color="icon_color"
       />
     </div>
@@ -141,6 +141,11 @@ const {
     .ceti-expand {
       width: 26px;
       height: 26px;
+    }
+
+    .ceti-format-clear {
+      width: 28px;
+      height: 28px;
     }
 
     .ceti-more {

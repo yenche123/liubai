@@ -17,8 +17,6 @@ export function useCeToolbar(props: CetProps, emit: CetEmit) {
     const bold = editor.isActive("bold")
     const italic = editor.isActive("italic")
     const strike = editor.isActive("strike")
-    console.log("showFormatClear: ", bold, italic, strike)
-    console.log(" ")
     return bold || italic || strike
   })
 
@@ -41,7 +39,14 @@ export function useCeToolbar(props: CetProps, emit: CetEmit) {
     if(!showFormatClear.value) return
     const editor = props.editor
     if(!editor) return
-    editor.chain().focus().unsetBold().unsetItalic().unsetStrike().run()
+    try {
+      editor.chain().focus().unsetBold().unsetItalic().unsetStrike().run()
+    }
+    catch(err) {
+      console.warn("清除样式发生错误........")
+      console.log(err)
+      console.log(" ")
+    }
   }
 
   return { 
