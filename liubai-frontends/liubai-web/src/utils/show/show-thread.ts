@@ -95,7 +95,7 @@ function packThread(
     myFavoriteStamp,
     myEmoji,
     myEmojiStamp,
-    commentNum: v.commentNum ?? 0,
+    commentNum: v.levelOneAndTwo ?? 0,
     emojiData: v.emojiData,
     pinStamp: v.pinStamp,
     createdStamp: v.createdStamp,

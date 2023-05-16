@@ -61,7 +61,6 @@ export interface ContentLocalTable extends BaseLocalTable {
   remindStamp?: number
   whenStamp?: number
   remindMe?: LiuRemindMe
-  commentNum?: number
   emojiData: EmojiData
   parentThread?: string
   parentComment?: string
@@ -75,6 +74,8 @@ export interface ContentLocalTable extends BaseLocalTable {
   config?: ContentConfig
   search_title?: string
   search_other?: string
+  levelOne?: number         // 一级评论数
+  levelOneAndTwo?: number   // 一级 + 二级评论数
 }
 
 export interface DraftLocalTable extends BaseLocalTable {
