@@ -9,6 +9,7 @@ import { useI18n } from 'vue-i18n';
 import { useKanbanColumns } from '../tools/useKanbanColumns';
 import type { MenuItem } from '~/components/common/liu-menu/tools/types';
 import LpColumn from "./lp-column/lp-column.vue";
+import liuApi from '~/utils/liu-api';
 
 // Vue 3.3+ 的 defineEmits 声明方式
 const emit = defineEmits<{
@@ -46,7 +47,7 @@ const {
   onTapThreadItem,
   onTapAddThread,
 } = useKanbanColumns(props, emit)
-
+const { isMobile } = liuApi.getCharacteristic()
 
 </script>
 <template>
@@ -167,6 +168,10 @@ const {
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-color: var(--scrollbar-thumb) transparent;
+
+  &::-webkit-scrollbar {
+    display: v-bind("isMobile ? 'none' : 'block'");
+  }
 
   &::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);
