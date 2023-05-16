@@ -6,9 +6,10 @@ import { PropType } from 'vue';
 import EditingBubbleMenu from "../shared/editing-bubble-menu/editing-bubble-menu.vue";
 import EditingCovers from "../shared/editing-covers/editing-covers.vue";
 import FileBar from './file-bar/file-bar.vue';
+import ToolBar from './tool-bar/tool-bar.vue';
 import { useI18n } from 'vue-i18n';
 import { useCommentFile } from './tools/useCommentFile';
-import type { LocatedA } from "~/types/other/types-custom"
+import type { LocatedA } from "~/types/other/types-custom";
 
 const { t } = useI18n()
 
@@ -42,6 +43,7 @@ const {
   onCoversSorted,
   onFileChange,
   onImageChange,
+  onViewFile,
   onClearFile,
 } = useCommentFile(props, ctx)
 
@@ -85,26 +87,17 @@ const {
       <!-- 文件 -->
       <FileBar
         :file-show-name="ctx.fileShowName"
+        @tapviewfile="onViewFile"
         @tapclear="onClearFile"
       ></FileBar>
 
       <!-- 工具栏 -->
-      <div class="cem-toolbar"
-        :class="{ 'cem-toolbar_translateY': ctx.isToolbarTranslateY }"
-      >
-        <div class="cemt-main">
-
-        </div>
-        <div class="cemt-footer">
-
-          <div class="cemtf-submit-btn"
-            :class="{ 'cemtf-submit_disabled': !ctx.canSubmit }"
-          >
-            <span>{{ t('comment.submit1') }}</span>
-          </div>
-
-        </div>
-      </div>
+      <ToolBar
+        :is-toolbar-translate-y="ctx.isToolbarTranslateY"
+        :can-submit="ctx.canSubmit"
+        @imagechange="onImageChange"
+        @filechange="onFileChange"
+      ></ToolBar>
 
     </div>
 
@@ -146,82 +139,6 @@ const {
   width: 100%;
   height: 6px;
 }
-
-.cem-toolbar {
-  width: 100%;
-  height: 38px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  transition: .15s;
-}
-
-.cem-toolbar_translateY {
-  pointer-events: none;
-
-  /** 计算方式: 
-    cem-editor(最小高度 + padding-block-start) + cem-bottom-two(高度) 
-  = 38 + 3.7 + 6
-  */
-  margin-block-start: -47.7px;
-}
-
-.cemt-main {
-  flex: 1;
-}
-
-.cemt-footer {
-  display: flex;
-  justify-content: flex-end;
-  pointer-events: auto;
-}
-
-.cemtf-submit-btn {
-  padding: 0 16px;
-  border-radius: 20px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  cursor: pointer;
-  background-color: var(--primary-color);
-  color: var(--on-primary);
-  font-size: var(--mini-font);
-  transition: .15s;
-  user-select: none;
-  font-weight: 500;
-}
-
-@media(hover: hover) {
-  .cemtf-submit-btn:hover {
-    background-color: var(--primary-hover);
-  }
-}
-
-.cemtf-submit-btn:active {
-  background-color: var(--primary-active);
-}
-
-.cemtf-submit_disabled {
-  background-color: var(--primary-color);
-  opacity: .5;
-  cursor: default;
-}
-
-@media(hover: hover) {
-  .cemtf-submit_disabled:hover {
-    background-color: var(--primary-color);
-  }
-}
-
-.cemtf-submit_disabled:active {
-  background-color: var(--primary-color);
-}
-
-
-
-
 
 
 </style>

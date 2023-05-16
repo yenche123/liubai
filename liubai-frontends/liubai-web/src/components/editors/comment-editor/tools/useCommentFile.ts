@@ -58,8 +58,14 @@ export function useCommentFile(
   }
 
   // 接收 来自 more-area 用户选择/移除 文件的响应
-  const onFileChange = (files: File[] | null) => {
+  const onFileChange = (files: File[]) => {
     whenFileChange(ctx, files)
+  }
+
+  const onViewFile = () => {
+    const f = ctx.files[0]
+    if(!f) return
+    // 【待实现】查看文件...........
   }
 
   const onClearFile = () => {
@@ -67,12 +73,13 @@ export function useCommentFile(
   }
 
 
-  return { 
+  return {
     covers,
     onClearCover,
     onCoversSorted,
     onFileChange,
     onImageChange,
+    onViewFile,
     onClearFile,
   }
 }

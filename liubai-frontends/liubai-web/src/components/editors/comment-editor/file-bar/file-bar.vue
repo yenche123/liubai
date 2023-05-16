@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import type { MenuItem } from "~/components/common/liu-menu/tools/types"
 
 defineProps({
   fileShowName: String
 })
 
-defineEmits<{
+const emit = defineEmits<{
+  (evt: "tapviewfile"): void
   (event: "tapclear"): void
 }>()
 
@@ -17,6 +19,11 @@ const menu = [
   }
 ]
 
+const onTapWhenItem = (item: MenuItem, index: number) => {
+  if(index === 0) emit("tapviewfile")
+  else if(index === 1) emit("tapclear")
+}
+
 </script>
 <template>
 
@@ -28,6 +35,7 @@ const menu = [
     <div class="fb-desc">
       <LiuMenu
         :menu="menu"
+        @tapitem="onTapWhenItem"
       >
         <div class="fb-text">
           <span>{{ fileShowName }}</span>

@@ -70,7 +70,8 @@
     "restore": "恢复",
     "tag": "标签",
     "copy_code": "复制代码",
-    "format_clear": "清除样式"
+    "format_clear": "清除样式",
+    "attachment": "附件"
   },
   "cui": {
     "plz_input_txt": "请输入文字"
