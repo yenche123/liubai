@@ -96,3 +96,9 @@
 .liu-hover:active::before {
   opacity: .1;
 }
+
+/** 必须设置在 <span> 标签上，用于实现反白高亮 */
+.liu-selection::selection {
+  color: var(--on-primary);
+  background-color: var(--primary-active);
+}

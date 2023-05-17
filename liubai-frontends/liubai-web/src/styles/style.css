@@ -130,7 +130,6 @@ input {
   margin-block-end: 20px;
   overflow: hidden;
   background-color: var(--card-bg);
-  user-select: none;
 }
 
 .liu-highlight-box::before {
@@ -142,4 +141,5 @@ input {
   bottom: 0;
   background-color: var(--primary-color);
   opacity: .19;
+  pointer-events: none;
 }

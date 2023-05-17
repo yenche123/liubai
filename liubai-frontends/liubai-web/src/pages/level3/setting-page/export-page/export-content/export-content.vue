@@ -17,7 +17,7 @@ const {
     <div class="liu-mc-box">
 
       <div class="liu-highlight-box">
-        <span>{{ t('export.highlight_tip') }}</span>
+        <span class="liu-selection">{{ t('export.highlight_tip') }}</span>
       </div>
 
       <div class="sc-box">

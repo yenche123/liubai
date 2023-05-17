@@ -12,7 +12,7 @@ const { t } = useI18n()
     <div class="liu-mc-box">
 
       <div class="liu-highlight-box">
-        <span>{{ t('tip.delete_banner') }}</span>
+        <span class="liu-selection">{{ t('tip.delete_banner') }}</span>
       </div>
 
       <thread-list
