@@ -92,8 +92,8 @@
   --cui-actionsheet-bg: #fafafa;
 
   /********* 毛玻璃背景 **********/
-  --blur-radius: 10px;
-  --frosted-glass: rgba(255, 255, 255, .56);    /** 盖在 sidebar 上，让侧边栏的绚彩模糊 */
+  --blur-radius: 7.5px;                           /** 盖在 sidebar 上的模糊半径 */
+  --frosted-glass: rgba(255, 255, 255, .54);    /** 盖在 sidebar 上，让侧边栏的绚彩模糊 */
   --frosted-glass-2: rgba(255, 255, 255, .85);  /** spotlight 模态框的背景色 */
   /** 跟随 --bg-color 的背景色 */
   --frosted-glass-3: linear-gradient(0deg, rgba(234, 236, 239, .82) 50%, rgba(234, 236, 239, .7) 90%);

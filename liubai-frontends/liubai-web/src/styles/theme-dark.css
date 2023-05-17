@@ -92,7 +92,7 @@
   --cui-actionsheet-bg: #272727;
 
   /** 毛玻璃背景 */
-  --blur-radius: 0px;
+  --blur-radius: 3px;
   --frosted-glass: rgba(5, 5, 5, .75);   /** 盖在 sidebar 上，让侧边栏的绚彩模糊 */
   --frosted-glass-2: rgba(36, 38, 40, .8);  /** spotlight 模态框的背景色 */
   /** 跟随 --bg-color 的背景色 */
