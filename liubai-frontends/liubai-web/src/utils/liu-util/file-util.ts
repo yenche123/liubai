@@ -72,6 +72,16 @@ export function createURLsFromStore(
   return list
 }
 
+export function recycleURL(id: string, url: string) {
+  const inMap = fileMap.has(id)
+  if(inMap) {
+    fileMap.delete(id)
+  }
+  URL.revokeObjectURL(url)
+  return true
+}
+
+
 /**
  * 修剪 fileMap，控制 fileMap 的大小
  */
