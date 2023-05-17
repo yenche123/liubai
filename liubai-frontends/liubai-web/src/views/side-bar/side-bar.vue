@@ -162,8 +162,8 @@ const {
 }
 
 .sb-bg-mask {
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
   width: 100%;
   height: 100%;
   background-color: var(--frosted-glass);
