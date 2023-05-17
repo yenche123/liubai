@@ -3,7 +3,7 @@ import type { ImageShow } from "~/types";
 import type { ContentLocalTable } from "~/types/types-table";
 import type { ScContentAtom } from "./types"
 import time from "~/utils/basic/time";
-import imgHelper from "~/utils/images/img-helper";
+import imgHelper from "~/utils/files/img-helper";
 import transferUtil from "../../../utils/transfer-util"
 import valTool from "~/utils/basic/val-tool";
 

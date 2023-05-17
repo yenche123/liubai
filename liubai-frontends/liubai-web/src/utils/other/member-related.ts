@@ -1,6 +1,6 @@
 import type { MemberLocalTable, UserLocalTable } from "~/types/types-table";
 import type { MemberShow } from "~/types/types-content";
-import imgHelper from "../images/img-helper";
+import imgHelper from "../files/img-helper";
 
 export function membersToShows(res: MemberLocalTable[]) {
   const list = res.map(v => {

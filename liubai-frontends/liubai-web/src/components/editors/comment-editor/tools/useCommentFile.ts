@@ -7,11 +7,12 @@ import type {
   LiuFileStore, 
   LiuImageStore 
 } from "~/types"
-import imgHelper from "~/utils/images/img-helper"
+import imgHelper from "~/utils/files/img-helper"
 import cui from "~/components/custom-ui"
 import valTool from "~/utils/basic/val-tool"
 import ider from "~/utils/basic/ider"
 import limit from "~/utils/limit"
+import { viewFile } from "~/utils/other/view-file"
 
 export function useCommentFile(
   props: CeProps,
@@ -66,6 +67,7 @@ export function useCommentFile(
     const f = ctx.files[0]
     if(!f) return
     // 【待实现】查看文件...........
+    viewFile(f)
   }
 
   const onClearFile = () => {

@@ -5,7 +5,7 @@ import type {
 } from "~/types/types-table";
 import type { TipTapJSONContent } from "~/types/types-editor";
 import type { TagShow, ThreadShow, StateShow } from "~/types/types-content";
-import imgHelper from "../images/img-helper";
+import imgHelper from "../files/img-helper";
 import transferUtil from "../transfer-util";
 import commonPack from "../controllers/tools/common-pack";
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"

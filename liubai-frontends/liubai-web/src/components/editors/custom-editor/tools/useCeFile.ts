@@ -1,6 +1,6 @@
 import { inject, onActivated, onDeactivated, ref, watch } from "vue"
 import type { ImageShow, LiuFileStore, LiuImageStore } from "~/types"
-import imgHelper from "~/utils/images/img-helper"
+import imgHelper from "~/utils/files/img-helper"
 import liuUtil from "~/utils/liu-util"
 import { mvFileKey } from "~/utils/provide-keys"
 import type { CeState } from "./atom-ce"
