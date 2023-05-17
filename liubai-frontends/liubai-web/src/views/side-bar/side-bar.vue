@@ -166,7 +166,7 @@ const {
   -webkit-backdrop-filter: blur(var(--blur-radius));
   width: 100%;
   height: 100%;
-  background-color: var(--frosted-glass);
+  background: var(--frosted-glass);
 }
 
 .sb-handle-mr {
