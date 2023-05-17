@@ -71,6 +71,11 @@ const {
           @blur="onEditorBlur"
           @update="onEditorUpdate"
         ></EditorCore>
+
+        <!-- 气泡 -->
+        <EditingBubbleMenu 
+          :editor="editor"
+        ></EditingBubbleMenu>
       </div>
 
       <!-- 留白 -->
@@ -95,6 +100,7 @@ const {
       <ToolBar
         :is-toolbar-translate-y="ctx.isToolbarTranslateY"
         :can-submit="ctx.canSubmit"
+        :editor="editor"
         @imagechange="onImageChange"
         @filechange="onFileChange"
       ></ToolBar>
@@ -129,8 +135,7 @@ const {
   width: 100%;
   min-height: v-bind("minEditorHeight + 'px'");
   position: relative;
-  overflow-y: overlay;
-  overflow-y: auto;
+  overflow-y: visible;
   transition: .3s;
   padding-block-start: 3.7px;
 }

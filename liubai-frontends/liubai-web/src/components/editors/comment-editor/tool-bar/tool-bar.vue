@@ -4,9 +4,15 @@ import { useI18n } from 'vue-i18n';
 import liuUtil from '~/utils/liu-util';
 import type { ToolBarEmits } from "./tools/types"
 import { toolbarProps } from './tools/types';
+import { useToolBar } from './tools/useToolBar';
 
-defineProps(toolbarProps)
+const props = defineProps(toolbarProps)
 const emit = defineEmits<ToolBarEmits>()
+
+const {
+  showFormatClear,
+  onTapClearFormat,
+} = useToolBar(props)
 
 const icon_color = `var(--avatar-bg)`
 const { t } = useI18n()
@@ -52,9 +58,21 @@ const onFileChange = () => {
       </div>
 
       <!-- 文件 -->
-      <div class="liu-hover liu-hover_first cemt-item" :aria-label="t('editor.attachment')">
+      <div class="liu-hover cemt-item" :aria-label="t('editor.attachment')">
         <input ref="selectFileEl" type="file" class="cemt-input" @change="onFileChange" title="" />
         <svg-icon name="attachment" :color="icon_color" class="cemti-icon"></svg-icon>
+      </div>
+
+      <!-- 清除样式 -->
+      <div class="liu-hover cemt-item cemt-format-clear"
+        :class="{ 'cemt-format-clear_show': showFormatClear }"
+        @click="onTapClearFormat"
+        :aria-label="t('editor.format_clear')"
+      >
+        <svg-icon name="editor-format_clear" 
+          class="cemti-icon" 
+          :color="icon_color"
+        />
       </div>
 
     </div>
@@ -126,6 +144,20 @@ const onFileChange = () => {
   }
 
 }
+
+.cemt-format-clear {
+  visibility: hidden;
+  cursor: auto;
+  transition: .15s;
+  opacity: 0;
+}
+
+.cemt-format-clear_show {
+  visibility: visible;
+  cursor: pointer;
+  opacity: 1;
+}
+
 
 .cemt-footer {
   display: flex;
