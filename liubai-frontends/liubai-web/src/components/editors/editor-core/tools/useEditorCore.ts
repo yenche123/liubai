@@ -14,6 +14,7 @@ import { useEcHashtag } from "./useEcHashtag"
 import { editorSetKey } from '~/utils/provide-keys'
 import type { LiuTimeout } from '~/utils/basic/type-tool'
 import type { Ref } from "vue"
+import valTool from '~/utils/basic/val-tool'
 
 interface EcContext {
   lastEmpty: boolean
@@ -77,10 +78,16 @@ export function useEditorCore(
   }
 
   const styles = getStyles(purpose)
+  const transition = ref("0")
+  onMounted(async () => {
+    await valTool.waitMilli(200)
+    if(purpose.value === "thread-edit") transition.value = ".3s"
+  })
 
-  return { 
+  return {
     editor,
     styles,
+    transition,
   }
 }
 
@@ -109,9 +116,6 @@ function getStyles(
 
   return styles
 }
-
-
-
 
 function setLastData(
   editor: ShallowRef<TipTapEditor | undefined>,

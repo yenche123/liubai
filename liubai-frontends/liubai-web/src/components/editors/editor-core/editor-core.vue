@@ -48,6 +48,7 @@ const emit = defineEmits<{
 const { 
   editor,
   styles,
+  transition,
 } = useEditorCore(props, emit)
 
 defineExpose({ editor })
@@ -68,7 +69,7 @@ defineExpose({ editor })
   line-height: v-bind("styles.lineHeight");
   color: var(--main-normal);
   min-height: v-bind("isEdit ? minHeight : 0");
-  transition: v-bind("purpose === 'thread-edit' ? '.3s' : 0");
+  transition: v-bind("transition");
   caret-color: var(--primary-color);
 
   h1 {
