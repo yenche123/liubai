@@ -1,4 +1,4 @@
-import { onActivated, onDeactivated, provide, reactive, toRef, watch } from "vue";
+import { computed, onActivated, onDeactivated, provide, reactive, toRef, watch } from "vue";
 import { useLayoutStore } from "../../useLayoutStore";
 import type { LayoutStore, LayoutType } from "../../useLayoutStore";
 import { useWindowSize } from "~/hooks/useVueUse";
@@ -11,6 +11,7 @@ import { sidebarWidthKey } from "~/utils/provide-keys"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 import { useSbKeyboard } from "./useSbKeyboard"
 import type { SbData } from "./types";
+import { useImages } from "~/hooks/useImages"
 
 const LISTEN_DELAY = 300
 let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后视觉上呈现的宽度
@@ -28,6 +29,11 @@ const sbData = reactive<SbData>({
 })
 
 export function useSidebar() {
+
+  const { images } = useImages()
+  const bgSrc = computed(() => {
+    return `url(${images.value.bg1})`
+  })
 
   const layoutStore = useLayoutStore()
   initSidebar(layoutStore)
@@ -57,6 +63,7 @@ export function useSidebar() {
   useSbKeyboard(layoutStore, sbData, onTapOpenBtn, onTapCloseBtn, LISTEN_DELAY)
 
   return {
+    bgSrc,
     sbData,
     onResizing,
     onSbMouseEnter,

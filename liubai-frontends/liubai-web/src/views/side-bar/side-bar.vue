@@ -7,13 +7,11 @@ import SbContent from './sb-content/sb-content.vue';
 import SbTags from './sb-tags/sb-tags.vue';
 import SbFixed from './sb-fixed/sb-fixed.vue';
 import SbBottom from './sb-bottom/sb-bottom.vue';
-import { useImages } from '../../hooks/useImages';
 import VueDraggableResizable from "vue-draggable-resizable/src/components/vue-draggable-resizable.vue";
 import SbOpen from './sb-open/sb-open.vue';
 
-const { images } = useImages()
-
 const {
+  bgSrc,
   sbData, 
   onResizing,
   onSbMouseEnter,
@@ -158,14 +156,14 @@ const {
   position: absolute;
   top: 0;
   left: 0;
-  background-image: v-bind("'url(' + images.bg1 + ')'");
+  background-image: v-bind("bgSrc");
   background-size: cover;
   background-position: left;
 }
 
 .sb-bg-mask {
-  backdrop-filter: blur(1px);
-  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
   width: 100%;
   height: 100%;
   background-color: var(--frosted-glass);
