@@ -9,11 +9,10 @@ const emit = defineEmits<{
   'update:modelValue': [covers: ImageShow[]]
   'clear': [index: number]
 }>()
-
-const imgWidth = props.isInComment ? 100 : 140
     
 const cha = liuApi.getCharacteristic()
 const {
+  imgWidth,
   axis,
   sortList,
   viewTranNames,
@@ -193,6 +192,7 @@ const vHandle = HandleDirective
 
 .cec-item_helper {
   opacity: .6;
+  z-index: 1500;
 }
 
 </style>

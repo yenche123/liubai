@@ -29,6 +29,7 @@ export const ceCoversProps = {
 
 export function useEditingCovers(props: EditingCoversProps) {
 
+  const imgWidth = props.isInComment ? 100 : 140
   const globalStore = useGlobalStateStore()
   const modelValue = toRef(props, "modelValue")
   const sortList = ref<ImageShow[]>([])
@@ -52,7 +53,7 @@ export function useEditingCovers(props: EditingCoversProps) {
   useLiuWatch(modelValue, whenPropChange, true)
 
 
-  const { axis } = initAxis(props.located)
+  const { axis } = initAxis(props, imgWidth)
 
   const onDragStart = () => {
     globalStore.isDragToSort = true
@@ -89,6 +90,7 @@ export function useEditingCovers(props: EditingCoversProps) {
   }
 
   return {
+    imgWidth,
     axis,
     sortList,
     viewTranNames,
@@ -99,8 +101,13 @@ export function useEditingCovers(props: EditingCoversProps) {
 }
 
 function initAxis(
-  located: LocatedA,
+  props: EditingCoversProps,
+  imgWidth: number
 ) {
+  const { located } = props
+  const breakpoint = (imgWidth * 2) + 100    // 计算断点，如果宽度大于(图片的两倍 + 100)
+                                             // 就代表两张图片可以横的显示，需要 x 轴
+  
   const axis = ref<"xy" | "y">("xy")
   if(located === "main-view" || located === "vice-view") {
     const key = located === "main-view" ? mainViewWidthKey : viceViewWidthKey
@@ -108,7 +115,7 @@ function initAxis(
     if(w) {
       const _getAxis = () => {
         const newV = w.value
-        if(newV > 380) axis.value = "xy"
+        if(newV > breakpoint) axis.value = "xy"
         else axis.value = "y"
       }
       useLiuWatch(w, _getAxis)
