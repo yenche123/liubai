@@ -61,6 +61,7 @@ const {
   opacity: 0;
   transition: v-bind("TRANSITION_DURATION + 'ms'");
   z-index: 5600;
+  pointer-events: none;
 }
 
 .sb-container_show {
@@ -77,6 +78,7 @@ const {
   box-shadow: var(--cui-snackbar-shadow);
   border-radius: 6px;
   position: relative;
+  pointer-events: auto;
 }
 
 .sb-main-box {
