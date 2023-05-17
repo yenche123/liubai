@@ -151,7 +151,7 @@ const {
   display: flex;
   align-items: center;
   user-select: none;
-  z-index: 500;
+  z-index: 600;
 
   .st-navi-back {
     width: 42px;

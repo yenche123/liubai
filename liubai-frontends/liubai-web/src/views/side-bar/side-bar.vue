@@ -89,7 +89,7 @@ const {
       :draggable="false"
       :resizable="true"
       :handles="['mr']"
-      :z-index="501"
+      :z-index="601"
     >
       <template #mr>
         <div class="sb-handle-mr"></div>
@@ -121,7 +121,7 @@ const {
   bottom: 0;
   height: 100vh;
   height: 100dvh;
-  z-index: 500;
+  z-index: 600;
   transition: .3s;
   overflow: hidden;
 }
