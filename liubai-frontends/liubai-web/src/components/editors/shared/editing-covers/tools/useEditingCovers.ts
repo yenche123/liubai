@@ -1,31 +1,13 @@
-import { toRef, ref, inject, PropType } from "vue";
+import { toRef, ref, inject } from "vue";
 import { useLiuWatch } from "~/hooks/useLiuWatch";
 import time from "~/utils/basic/time";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import type { ImageShow } from '~/types';
 import cui from "~/components/custom-ui";
 import { mainViewWidthKey, viceViewWidthKey } from "~/utils/provide-keys"
-import type { LocatedA } from "~/types/other/types-custom"
 import { getViewTranNames } from "~/utils/other/transition-related";
 import liuApi from "~/utils/liu-api";
-
-interface EditingCoversProps {
-  modelValue?: ImageShow[]
-  isInComment: boolean
-  located: LocatedA
-}
-
-export const ceCoversProps = {
-  modelValue: Array<ImageShow>,
-  isInComment: {
-    type: Boolean,
-    default: false,
-  },
-  located: {
-    type: String as PropType<LocatedA>,
-    default: "main-view",
-  }
-}
+import type { EditingCoversProps } from "./types"
 
 export function useEditingCovers(props: EditingCoversProps) {
 

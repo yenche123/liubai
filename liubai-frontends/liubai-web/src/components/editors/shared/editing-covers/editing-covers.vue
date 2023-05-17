@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { ImageShow } from '~/types';
 import liuApi from "~/utils/liu-api"
-import { useEditingCovers, ceCoversProps } from "./tools/useEditingCovers"
+import { useEditingCovers } from "./tools/useEditingCovers"
 import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
+import { ceCoversProps } from "./tools/types"
 
 const props = defineProps(ceCoversProps)
 const emit = defineEmits<{
@@ -192,7 +193,16 @@ const vHandle = HandleDirective
 
 .cec-item_helper {
   opacity: .6;
-  z-index: 1500;
+}
+
+/** 下面的 z-index 不能设置在 .cec-item_helper 的原因:  
+*      .cec-item_helper 在鼠标松开后，会被 vue-slicksort 移除
+*      这时从释放鼠标时所处的位置位移到列表中的新位置时，这段过度动画是没有 z-index 的
+*      就会导致过度动画执行时被其他元素挡住的情况，故需要把 z-index 设置在 body 的直接
+*      子节点 .cec-item 里以解决这个问题。
+*/
+body > .cec-item {
+  z-index: 6500;
 }
 
 </style>
