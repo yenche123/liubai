@@ -185,7 +185,6 @@ function insertJsonContent(
     remindStamp: d.remindStamp,
     whenStamp: d.whenStamp,
     remindMe: d.remindMe,
-    commentNum: d.commentNum,
     emojiData: d.emojiData,
     parentThread: d.parentThread,
     parentComment: d.parentComment,
@@ -197,6 +196,8 @@ function insertJsonContent(
     tagSearched: d.tagSearched,
     stateId: d.stateId,
     config: d.config,
+    levelOne: d.levelOne,
+    levelOneAndTwo: d.levelOneAndTwo,
   }
   theFolder.file("card.json", JSON.stringify(jsonData, null, 2))
 }

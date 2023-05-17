@@ -35,7 +35,6 @@ export interface LiuExportContentJSON extends BaseLocalTable {
   remindStamp?: number
   whenStamp?: number
   remindMe?: LiuRemindMe
-  commentNum?: number
   emojiData: EmojiData
   parentThread?: string
   parentComment?: string
@@ -47,4 +46,6 @@ export interface LiuExportContentJSON extends BaseLocalTable {
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
   stateId?: string
   config?: ContentConfig
+  levelOne?: number         // 一级评论数
+  levelOneAndTwo?: number   // 一级 + 二级评论数
 }
