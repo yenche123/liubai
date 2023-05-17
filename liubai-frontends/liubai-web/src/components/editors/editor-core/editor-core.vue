@@ -1,49 +1,11 @@
 <script setup lang="ts">
 import { EditorContent } from '@tiptap/vue-3'
 import { useEditorCore } from './tools/useEditorCore'
-import type { EditorCoreContent, TipTapJSONContent } from "~/types/types-editor"
-import cfg from "~/config"
-import type { PropType } from 'vue'
-import type { HashTagEditorRes } from "~/types/other/types-hashtag"
-import type { EditorCorePurpose } from "./tools/types"
+import type { EditorCoreEmits } from "./tools/types"
+import { editorCoreProps } from "./tools/types"
 
-const props = defineProps({
-  titlePlaceholder: {
-    type: String,
-    default: "",
-  },
-  descPlaceholder: {
-    type: String,
-    default: "",
-  },
-  isEdit: {         // 是否为编辑模式
-    type: Boolean,
-    default: true
-  },
-  content: {
-    type: Object as PropType<TipTapJSONContent>
-  },
-  hashTrigger: {
-    type: Boolean,
-    default: false,
-  },
-  minHeight: {
-    type: String,
-    default: `${cfg.min_editor_height}px`
-  },
-  purpose: {
-    type: String as PropType<EditorCorePurpose>,
-    default: ""
-  }
-})
-
-const emit = defineEmits<{
-  "update": [payload: EditorCoreContent]
-  "focus": [payload: EditorCoreContent]
-  "blur": [payload: EditorCoreContent]
-  "finish": [payload: EditorCoreContent]
-  "addhashtag": [payload: HashTagEditorRes]
-}>()
+const props = defineProps(editorCoreProps)
+const emit = defineEmits<EditorCoreEmits>()
 
 const { 
   editor,
