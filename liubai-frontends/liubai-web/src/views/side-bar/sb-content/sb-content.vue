@@ -150,8 +150,8 @@ const color_selected = "var(--main-normal)"
 
 .sb-link {
   width: 100%;
-  height: 50px;
-  margin-bottom: 8px;
+  height: 48px;
+  margin-block-end: 8px;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -173,9 +173,9 @@ const color_selected = "var(--main-normal)"
 }
 
 .sb-icon-container {
-  width: 56px;
-  height: 56px;
-  margin-right: 4px;
+  width: 46px;
+  height: 46px;
+  margin-inline-end: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -188,8 +188,8 @@ const color_selected = "var(--main-normal)"
 }
 
 .sb-link_selected .sb-icon {
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
 }
 
 
