@@ -48,6 +48,9 @@ const {
   receiveBottomOperation,
 } = useTcOperation(props, emit)
 
+const radius = `8px`
+const hoverRadius = props.displayType === "list" ? "24px" : "8px"
+
 </script>
 <template>
 
@@ -138,22 +141,22 @@ const {
 
 .tc-container {
   width: 100%;
-  border-radius: 16px;
+  border-radius: v-bind("radius");
   position: relative;
   background-color: var(--card-bg);
   box-shadow: var(--card-shadow-2);
-  transition: border-radius .3s;
+  transition: border-radius .2s, box-shadow .3s;
   margin-block-end: 10px;
 
   @media(hover: hover) {
     &:hover {
-      border-radius: 8px;
+      border-radius: v-bind("hoverRadius");
       box-shadow: var(--card-shadow2-hover);
     }
   }
 
   &:active {
-    border-radius: 8px;
+    border-radius: v-bind("hoverRadius");
     box-shadow: var(--card-shadow2-hover);
   }
 
