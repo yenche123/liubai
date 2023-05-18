@@ -4,7 +4,7 @@ import liuUtil from '~/utils/liu-util';
 import type { ToolBarEmits } from "./tools/types"
 import { toolbarProps } from './tools/types';
 import { useFormatClear } from './tools/useFormatClear';
-import { useInputElements } from './tools/useInputElements';
+import { useTbInputElements } from './tools/useTbInputElements';
 
 const props = defineProps(toolbarProps)
 const emit = defineEmits<ToolBarEmits>()
@@ -16,10 +16,12 @@ const {
 
 const {
   selectImagesEl,
-  selectFileEl,
   onImageChange,
+  onTapImage,
+  selectFileEl,
   onFileChange,
-} = useInputElements(props, emit)
+  onTapFile,
+} = useTbInputElements(props, emit)
 
 const icon_color = `var(--avatar-bg)`
 const { t } = useI18n()
@@ -32,6 +34,7 @@ const { t } = useI18n()
       <div class="liu-hover liu-hover_first cemt-item" 
         style="margin-inline-start: -5px;" 
         :aria-label="t('editor.image')"
+        @click.stop="onTapImage"
       >
         <input ref="selectImagesEl" 
           type="file" 
@@ -45,7 +48,9 @@ const { t } = useI18n()
       </div>
 
       <!-- 文件 -->
-      <div class="liu-hover cemt-item" :aria-label="t('editor.attachment')">
+      <div class="liu-hover cemt-item" :aria-label="t('editor.attachment')"
+        @click.stop="onTapFile"
+      >
         <input ref="selectFileEl" type="file" class="cemt-input" @change="onFileChange" title="" />
         <svg-icon name="attachment" :color="icon_color" class="cemti-icon"></svg-icon>
       </div>
@@ -121,13 +126,14 @@ const { t } = useI18n()
     left: 0;
     position: absolute;
     opacity: 0;
-    cursor: pointer;
+    visibility: hidden;
     color: transparent;
   }
 
   .cemti-icon {
     width: 24px;
     height: 24px;
+    position: relative;
   }
 
 }

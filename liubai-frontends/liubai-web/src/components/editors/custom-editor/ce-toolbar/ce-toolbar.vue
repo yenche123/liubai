@@ -1,26 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import liuUtil from "~/utils/liu-util";
 import { useI18n } from 'vue-i18n';
 import { useCeToolbar } from './tools/useCeToolbar';
+import { useCetInputElement } from "./tools/useCetInputElement";
 import type { CetEmit } from "./tools/types"
 import { cetProps } from './tools/types';
 
 const props = defineProps(cetProps)
 const emit = defineEmits<CetEmit>()
 
-const icon_color = "var(--main-normal)"
-const selectImagesEl = ref<HTMLInputElement | null>(null)
-
-const onImageChange = () => {
-  const el = selectImagesEl.value
-  if(!el) return
-  if(!el.files || !el.files.length) return
-  const files = liuUtil.getArrayFromFileList(el.files)
-  emit("imagechange", files)
-}
-
-const { t } = useI18n()
+const {
+  selectImagesEl,
+  onImageChange,
+  onTapChooseImage,
+} = useCetInputElement(props, emit)
 
 const {
   expanded,
@@ -31,12 +24,17 @@ const {
   onTapClearFormat,
 } = useCeToolbar(props, emit)
 
+const { t } = useI18n()
+const icon_color = "var(--main-normal)"
+
 </script>
 <template>
   <!-- 第一排工具栏 -->
   <div class="ce-toolbar">
     <!-- 图片 -->
-    <div class="liu-hover liu-hover_first cet-item" :aria-label="t('editor.image')">
+    <div class="liu-hover liu-hover_first cet-item" :aria-label="t('editor.image')"
+      @click.stop="onTapChooseImage"
+    >
       <input ref="selectImagesEl" 
         type="file" 
         :accept="liuUtil.getAcceptImgTypesString()" 
@@ -119,13 +117,14 @@ const {
       left: 0;
       position: absolute;
       opacity: 0;
-      cursor: pointer;
+      visibility: hidden;
       color: transparent;
     }
     
     .ceti-icon {
       width: 30px;
       height: 30px;
+      position: relative;
     }
 
     .ceti-open-fullscreen {
