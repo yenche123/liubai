@@ -1,7 +1,7 @@
 import type { ToolBarProps } from "./types";
 import { computed } from "vue";
 
-export function useToolBar(props: ToolBarProps) {
+export function useFormatClear(props: ToolBarProps) {
 
   // 是否显示 "清除样式" 的按钮
   const showFormatClear = computed(() => {

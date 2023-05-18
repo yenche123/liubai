@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import liuUtil from '~/utils/liu-util';
 import type { ToolBarEmits } from "./tools/types"
 import { toolbarProps } from './tools/types';
-import { useToolBar } from './tools/useToolBar';
+import { useFormatClear } from './tools/useFormatClear';
+import { useInputElements } from './tools/useInputElements';
 
 const props = defineProps(toolbarProps)
 const emit = defineEmits<ToolBarEmits>()
@@ -12,30 +12,17 @@ const emit = defineEmits<ToolBarEmits>()
 const {
   showFormatClear,
   onTapClearFormat,
-} = useToolBar(props)
+} = useFormatClear(props)
+
+const {
+  selectImagesEl,
+  selectFileEl,
+  onImageChange,
+  onFileChange,
+} = useInputElements(props, emit)
 
 const icon_color = `var(--avatar-bg)`
 const { t } = useI18n()
-
-const selectImagesEl = ref<HTMLInputElement | null>(null)
-const selectFileEl = ref<HTMLInputElement | null>(null)
-
-const onImageChange = () => {
-  const el = selectImagesEl.value
-  if(!el) return
-  if(!el.files || !el.files.length) return
-  const files = liuUtil.getArrayFromFileList(el.files)
-  emit("imagechange", files)
-}
-
-const onFileChange = () => {
-  const el = selectFileEl.value
-  if(!el) return
-  if(!el.files || !el.files.length) return
-  const files = liuUtil.getArrayFromFileList(el.files)
-  emit("filechange", files)
-  el.blur()
-}
 
 </script>
 <template>
