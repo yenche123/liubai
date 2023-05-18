@@ -66,7 +66,6 @@ export function useCommentFile(
   const onViewFile = () => {
     const f = ctx.files[0]
     if(!f) return
-    // 【待实现】查看文件...........
     viewFile(f)
   }
 
