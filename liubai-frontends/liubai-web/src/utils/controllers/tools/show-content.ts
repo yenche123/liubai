@@ -71,6 +71,15 @@ function _innerParse(
     let mLen = mTxt.length
     const startIdx = match.index
     if(startIdx === undefined) continue
+    if(isPhone) {
+      // 判断是否为日期，如果是，则忽略
+      const regDate = /\d{4}\-\d{2}-\d{2}/
+      const isYYYYMMDD = regDate.test(mTxt)
+      if(isYYYYMMDD) {
+        continue
+      }
+    }
+
     const endIdx = startIdx + mLen
 
     let href = isPhone ? `tel:${mTxt}` : mTxt
