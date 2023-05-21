@@ -237,6 +237,21 @@ class LiuRouter {
     this.goHome()
   }
 
+  private _go(
+    route: RouteLocationNormalizedLoaded,
+    pageNum: number,
+  ) {
+    if(pageNum === 0) {
+      this.go(-1)
+      return
+    }
+    if(pageNum > 9) {
+      this.replaceWithNewQuery(route, {})
+      return
+    }
+    this.go(-pageNum)
+  }
+
   /**
    * 回退页面，直到 query 中没有 key 或者 key 跟 val 不匹配
    * @param key query 中目标的属性
@@ -248,23 +263,10 @@ class LiuRouter {
     key: string,
     val?: string,
   ) {
-    const _this = this
     const list = this.getStack()
     if(list.length <= 1) {
-      _this.goHome()
+      this.goHome()
       return
-    }
-
-    const _go = (pageNum: number) => {
-      if(pageNum === 0) {
-        _this.go(-1)
-        return
-      }
-      if(pageNum > 9) {
-        _this.replaceWithNewQuery(route, {})
-        return
-      }
-      _this.go(-pageNum)
     }
 
     let delta = 0
@@ -272,23 +274,23 @@ class LiuRouter {
       const v = list[i]
       const q = v.query
       if(!q) {
-        _go(delta)
+        this._go(route, delta)
         return
       }
       const q2 = q[key]
       if(!q2) {
-        _go(delta)
+        this._go(route, delta)
         return
       }
       if(val && q2 !== val) {
-        _go(delta)
+        this._go(route, delta)
         return
       }
 
       delta++
     }
 
-    _this.replaceWithNewQuery(route, {})
+    this.replaceWithNewQuery(route, {})
   }
 
   // 导航去首页
