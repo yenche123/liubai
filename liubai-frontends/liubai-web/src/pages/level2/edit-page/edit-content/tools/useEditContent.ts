@@ -20,7 +20,7 @@ export function useEditContent() {
   }
 
   const onUpdated = () => {
-    router.naviBack()
+    router.naviBackUtilNoSpecificName(route)
   }
 
   return {

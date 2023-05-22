@@ -293,6 +293,29 @@ class LiuRouter {
     this.replaceWithNewQuery(route, {})
   }
 
+  public naviBackUtilNoSpecificName(
+    route: RouteLocationNormalizedLoaded,
+  ) {
+    const name = route.name
+    const list = this.getStack()
+    if(list.length <= 1 || !name) {
+      this.goHome()
+      return
+    }
+
+    let delta = 0
+    for(let i = list.length - 1; i >= 0; i--) {
+      const v = list[i]
+      const n = v.name
+      if(n !== name) {
+        this._go(route, delta)
+        return
+      }
+      delta++
+    }
+    this.replaceWithNewQuery(route, {})
+  }
+
   // 导航去首页
   // 【待完善】注意区别登录态和工作区
   public goHome() {
