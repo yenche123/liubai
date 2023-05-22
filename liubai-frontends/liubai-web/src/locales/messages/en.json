@@ -11,7 +11,7 @@
     "tags": "Tags",
     "trash": "Trash",
     "connects": "Connection",
-    "setting": "Setting",
+    "setting": "Settings",
     "search": "Search",
     "notification": "Notification",
     "detail": "Detail",
@@ -240,7 +240,7 @@
     "download_ics": "Download .ics"
   },
   "whatever": {
-    "sidebar_more": "Setting & Trash"
+    "sidebar_more": "Settings & Trash"
   },
   "err": {
     "no_data": "Nothing Here",
