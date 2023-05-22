@@ -293,6 +293,11 @@ class LiuRouter {
     this.replaceWithNewQuery(route, {})
   }
 
+  /**
+   * 回退页面，直到与当前的 name 不一致
+   * @param route 当前路由
+   * @return void
+   */
   public naviBackUtilNoSpecificName(
     route: RouteLocationNormalizedLoaded,
   ) {
