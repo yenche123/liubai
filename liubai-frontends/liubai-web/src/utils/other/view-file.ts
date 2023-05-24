@@ -26,6 +26,15 @@ export async function viewFile(store: LiuFileStore) {
     liuUtil.recycleURL(imgShow.id, imgShow.src)
     return true
   }
+  
+  // pdf 直接打开; 注意 pdf 类型的文件也会使用 application 开头，所以这里的代码必须在
+  // mimeType.indexOf("application") === 0 这条判断之前
+  if(mimeType.indexOf("pdf") >= 0) {
+    let [url] = liuUtil.createURLsFromStore([store])
+    if(!url) return
+    window.open(url, store.name)
+    return true
+  }
 
   // application/... 应用
   if(mimeType.indexOf("application") === 0) {
