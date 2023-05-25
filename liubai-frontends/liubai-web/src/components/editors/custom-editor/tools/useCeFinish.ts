@@ -34,8 +34,8 @@ let member: Ref<string>
 
 export function useCeFinish(ctx: CepContext) {
 
-  const spaceStore = useWorkspaceStore()
-  const spaceRefs = storeToRefs(spaceStore)
+  const wStore = useWorkspaceStore()
+  const spaceRefs = storeToRefs(wStore)
   spaceIdRef = spaceRefs.spaceId
   spaceTypeRef = spaceRefs.spaceType as Ref<SpaceType>
   member = spaceRefs.memberId
