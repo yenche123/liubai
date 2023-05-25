@@ -78,6 +78,7 @@ export function useCommentEditor(props: CeProps) {
     let atom = getStorageAtom(props, data)
     commentCache.toSave(atom)
     ctx.editorContent = data
+    checkCanSubmit(ctx)
   }
 
 
