@@ -11,6 +11,7 @@ import commentCache from "./comment-cache";
 import time from "~/utils/basic/time";
 import type { LiuFileStore, LiuImageStore } from "~/types";
 import liuUtil from "~/utils/liu-util";
+import { handleComment } from "./handle-comment"
 
 export function useCommentEditor(props: CeProps) {
 
@@ -81,6 +82,12 @@ export function useCommentEditor(props: CeProps) {
     checkCanSubmit(ctx)
   }
 
+  const onEditorFinish = () => {
+    checkCanSubmit(ctx)
+    if(!ctx.canSubmit) return
+    handleComment(props, ctx)
+  }
+
 
   return {
     ctx,
@@ -91,6 +98,7 @@ export function useCommentEditor(props: CeProps) {
     onEditorFocus,
     onEditorBlur,
     onEditorUpdate,
+    onEditorFinish,
   }
 }
 

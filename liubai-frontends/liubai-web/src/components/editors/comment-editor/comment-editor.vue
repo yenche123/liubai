@@ -35,6 +35,7 @@ const {
   onEditorFocus,
   onEditorBlur,
   onEditorUpdate,
+  onEditorFinish,
 } = useCommentEditor(props)
 
 const {
@@ -69,6 +70,7 @@ const {
           :min-height="'' + minEditorHeight + 'px'"
           @focus="onEditorFocus"
           @blur="onEditorBlur"
+          @finish="onEditorFinish"
           @update="onEditorUpdate"
         ></EditorCore>
 
