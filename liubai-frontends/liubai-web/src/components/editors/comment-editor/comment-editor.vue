@@ -24,6 +24,7 @@ const props = defineProps({
   },
   parentComment: String,
   replyToComment: String,
+  commentId: String,
 })
 
 const {
