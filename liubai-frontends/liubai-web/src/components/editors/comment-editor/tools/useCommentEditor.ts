@@ -3,7 +3,7 @@ import EditorCore from "../../editor-core/editor-core.vue"
 import { reactive, ref, shallowRef, watch } from "vue"
 import type { Ref, ShallowRef } from "vue"
 import type { TipTapEditor, EditorCoreContent } from "~/types/types-editor"
-import { CeCtx, CeProps, CommentStorageAtom } from "./types";
+import type { CeCtx, CeProps, CommentStorageAtom } from "./types";
 import { useWindowSize } from "~/hooks/useVueUse";
 import { useLiuWatch } from "~/hooks/useLiuWatch";
 import valTool from "~/utils/basic/val-tool";
