@@ -2,7 +2,7 @@
 import { useCommentEditor } from './tools/useCommentEditor';
 import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
 import EditorCore from "../editor-core/editor-core.vue"
-import { PropType } from 'vue';
+import type { PropType } from 'vue';
 import EditingBubbleMenu from "../shared/editing-bubble-menu/editing-bubble-menu.vue";
 import EditingCovers from "../shared/editing-covers/editing-covers.vue";
 import FileBar from './file-bar/file-bar.vue';
