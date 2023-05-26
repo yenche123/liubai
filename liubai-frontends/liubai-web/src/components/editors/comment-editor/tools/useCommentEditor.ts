@@ -85,7 +85,7 @@ export function useCommentEditor(props: CeProps) {
   const onEditorFinish = () => {
     checkCanSubmit(ctx)
     if(!ctx.canSubmit) return
-    handleComment(props, ctx)
+    handleComment(props, ctx, editor)
   }
 
 

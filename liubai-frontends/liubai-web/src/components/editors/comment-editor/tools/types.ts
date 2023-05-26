@@ -4,6 +4,9 @@ import type {
   LiuImageStore,
 } from "~/types";
 import type { EditorCoreContent } from "~/types/types-editor";
+import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore";
+import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
+import type { TipTapEditor } from "~/types/types-editor"
 
 export interface CeProps {
   located: LocatedA  // 位于弹窗内、main-view 或 vice-view
@@ -34,3 +37,11 @@ export interface CommentStorageAtom {
 }
 
 export type CommentStorageType = "content" | "image" | "file"
+
+export interface HcCtx {
+  wStore: WorkspaceStore
+  tStore: ThreadShowStore
+  ceCtx: CeCtx
+  props: CeProps
+  editor: TipTapEditor
+}
