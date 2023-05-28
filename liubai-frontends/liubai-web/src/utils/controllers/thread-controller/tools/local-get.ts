@@ -34,7 +34,15 @@ async function getList(
   const statesNoInIndex = getNoShowInIndexStates(isIndex)
 
   const filterFunc = (item: ContentLocalTable) => {
-    const { tagSearched = [], pinStamp, _id, stateId: stateOnThread } = item
+    const { 
+      tagSearched = [], 
+      pinStamp, 
+      _id, 
+      stateId: stateOnThread,
+      infoType
+    } = item
+    
+    if(infoType !== "THREAD") return false
     if(ids && ids.includes(_id)) return true
     if(tagId && !tagSearched.includes(tagId)) return false
     if(stateId && stateId !== stateOnThread) return false
