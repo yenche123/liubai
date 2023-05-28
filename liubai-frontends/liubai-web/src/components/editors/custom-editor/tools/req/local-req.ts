@@ -1,5 +1,5 @@
 import { db } from "~/utils/db"
-import { DraftLocalTable, ContentLocalTable } from "~/types/types-table"
+import type { DraftLocalTable, ContentLocalTable } from "~/types/types-table"
 import localCache from "~/utils/system/local-cache"
 import ider from "~/utils/basic/ider"
 
