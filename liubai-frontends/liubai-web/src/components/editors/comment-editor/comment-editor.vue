@@ -106,6 +106,7 @@ const {
         :editor="editor"
         @imagechange="onImageChange"
         @filechange="onFileChange"
+        @tapfinish="onEditorFinish"
       ></ToolBar>
 
     </div>

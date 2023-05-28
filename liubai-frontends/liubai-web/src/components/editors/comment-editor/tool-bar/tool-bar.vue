@@ -26,6 +26,11 @@ const {
 const icon_color = `var(--avatar-bg)`
 const { t } = useI18n()
 
+const onTapFinishBtn = () => {
+  if(!props.canSubmit) return
+  emit("tapfinish")
+}
+
 </script>
 <template>
   <div class="cem-toolbar" :class="{ 'cem-toolbar_translateY': isToolbarTranslateY }">
@@ -70,7 +75,9 @@ const { t } = useI18n()
     </div>
     <div class="cemt-footer">
       <!-- 完成 -->
-      <div class="cemtf-submit-btn" :class="{ 'cemtf-submit_disabled': !canSubmit }">
+      <div class="cemtf-submit-btn" :class="{ 'cemtf-submit_disabled': !canSubmit }"
+        @click.stop="onTapFinishBtn"
+      >
         <span>{{ t('comment.submit1') }}</span>
       </div>
     </div>

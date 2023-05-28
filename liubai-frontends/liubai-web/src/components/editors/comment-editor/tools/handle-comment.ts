@@ -130,8 +130,11 @@ async function _addCommentNum(
 
 
 function _reset(ctx: HcCtx) {
-  const { editor } = ctx
+  const { editor, ceCtx } = ctx
   editor.chain().setContent('<p></p>').run()
+  ceCtx.files = []
+  ceCtx.images = []
+  ceCtx.fileShowName = ""
 }
 
 

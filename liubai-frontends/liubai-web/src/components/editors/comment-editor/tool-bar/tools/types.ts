@@ -16,4 +16,5 @@ export const toolbarProps = {
 export interface ToolBarEmits {
   (evt: "imagechange", files: File[]): void
   (evt: "filechange", files: File[]): void
+  (evt: "tapfinish"): void
 }
