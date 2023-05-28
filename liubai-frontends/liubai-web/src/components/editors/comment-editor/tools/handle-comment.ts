@@ -9,9 +9,9 @@ import localCache from "~/utils/system/local-cache";
 import time from "~/utils/basic/time";
 import transferUtil from "~/utils/transfer-util";
 import liuUtil from "~/utils/liu-util";
-import { db } from "~/utils/db";
-import type { StorageState } from "~/types/types-basic";
 import type { ContentLocalTable } from "~/types/types-table";
+import ider from "~/utils/basic/ider";
+import localReq from "./req/local-req"
 
 export function handleComment(
   props: CeProps, 
@@ -25,6 +25,9 @@ export function handleComment(
   const wStore = useWorkspaceStore()
   if(!wStore.memberId) return
 
+  const { local_id: user } = localCache.getLocalPreference()
+  if(!user) return
+
   const tStore = useThreadShowStore()
 
   const ctx: HcCtx = {
@@ -33,6 +36,7 @@ export function handleComment(
     ceCtx,
     props,
     editor,
+    user,
   }
 
   if(props.commentId) toUpdate(ctx)
@@ -47,11 +51,13 @@ function toUpdate(
 
 }
 
-function toRelease(
+async function toRelease(
   ctx: HcCtx
 ) {
-  const { local_id: user } = localCache.getLocalPreference()
-  if(!user) return
+  
+
+  const preComment = await _getCommentData(ctx)
+  
 
 
   
@@ -107,6 +113,13 @@ async function _getCommentData(
     aComment.spaceType = _spaceType ? _spaceType : undefined
     aComment.createdStamp = now
     aComment.insertedStamp = now
+
+    aComment._id = ider.createCommentId()
+    aComment.user = ctx.user
+    aComment.member = ctx.wStore.memberId
+    aComment.levelOne = 0
+    aComment.levelOneAndTwo = 0
+    aComment.emojiData = { total: 0, system: [] }
   }
 
   return aComment
@@ -126,26 +139,21 @@ async function _getSuperior(
 
   let s: ContentLocalTable | undefined
   if(commentId) {
-    s = await _toGetSuperior(commentId)
+    s = await localReq.getContent(commentId)
     if(s) return s
   }
   if(replyToComment) {
-    s = await _toGetSuperior(replyToComment)
+    s = await localReq.getContent(replyToComment)
     if(s) return s
   }
   if(parentComment) {
-    s = await _toGetSuperior(parentComment)
+    s = await localReq.getContent(parentComment)
     if(s) return s
   }
   if(parentThread) {
-    s = await _toGetSuperior(parentThread)
+    s = await localReq.getContent(parentThread)
     if(s) return s
   }
 
   return
-}
-
-async function _toGetSuperior(id: string) {
-  const res = await db.contents.get(id)
-  return res
 }

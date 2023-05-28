@@ -44,4 +44,5 @@ export interface HcCtx {
   ceCtx: CeCtx
   props: CeProps
   editor: TipTapEditor
+  user: string
 }
