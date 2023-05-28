@@ -57,11 +57,69 @@ async function toRelease(
   
 
   const preComment = await _getCommentData(ctx)
-  
+  console.log("入库前，看一下 preComment: ")
+  console.log(preComment)
+  console.log(" ")
+
+  // 1. 添加进 contents 表里
+  const res = await localReq.addContent(preComment as ContentLocalTable)
+
+  // 2. 修改 
+  _modifySuperiorCommentNum(ctx.props)
+
+  // 3. 重置
+  _reset(ctx)
+
+}
 
 
-  
+// 修改上级的 评论数量
+// 规则见 [README.md](/README.md)
+async function _modifySuperiorCommentNum(props: CeProps) {
+  const { parentThread, parentComment, replyToComment } = props
 
+  if(parentThread && !parentComment && !replyToComment) {
+    await _addCommentNum(parentThread)
+    return true
+  }
+
+  if(replyToComment) {
+    await _addCommentNum(replyToComment)
+  }
+
+  if(parentComment && parentComment !== replyToComment) {
+    await _addCommentNum(parentComment, 1, 0)
+  }
+
+  return true
+}
+
+async function _addCommentNum(
+  id: string,
+  levelOne: number = 1,
+  levelOneAndTwo: number = 1,
+) {
+  const res = await localReq.getContent(id)
+  if(!res) return false
+  let num1 = res.levelOne ?? 0
+  let num2 = res.levelOneAndTwo ?? 0
+  num1 += levelOne
+  num2 += levelOneAndTwo
+  let obj = {
+    levelOne: num1,
+    levelOneAndTwo: num2,
+  }
+  const res2 = await localReq.updateContent(id, obj)
+  console.log("看一下修改的结果.......")
+  console.log(res2)
+  console.log(" ")
+  return true
+}
+
+
+function _reset(ctx: HcCtx) {
+  const { editor } = ctx
+  editor.chain().setContent('<p></p>').run()
 }
 
 
@@ -113,6 +171,9 @@ async function _getCommentData(
     aComment.spaceType = _spaceType ? _spaceType : undefined
     aComment.createdStamp = now
     aComment.insertedStamp = now
+    aComment.parentThread = props.parentThread
+    aComment.parentComment = props.parentComment
+    aComment.replyToComment = props.replyToComment
 
     aComment._id = ider.createCommentId()
     aComment.user = ctx.user
