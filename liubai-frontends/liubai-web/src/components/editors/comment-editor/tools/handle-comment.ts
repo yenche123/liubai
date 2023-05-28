@@ -43,9 +43,20 @@ export function handleComment(
   else toRelease(ctx)
 }
 
-function toUpdate(
+async function toUpdate(
   ctx: HcCtx
 ) {
+
+  const id = ctx.props.commentId as string
+  const preComment = await _getCommentData(ctx)
+  console.log("toUpdate 入库前，看一下 preComment: ")
+  console.log(preComment)
+  console.log(" ")
+
+  const res = await localReq.updateContent(id, preComment)
+  console.log("查看 update 的结果: ")
+  console.log(res)
+  console.log(" ")
   
   
 
@@ -54,15 +65,16 @@ function toUpdate(
 async function toRelease(
   ctx: HcCtx
 ) {
-  
-
   const preComment = await _getCommentData(ctx)
-  console.log("入库前，看一下 preComment: ")
+  console.log("toRelease 入库前，看一下 preComment: ")
   console.log(preComment)
   console.log(" ")
 
   // 1. 添加进 contents 表里
   const res = await localReq.addContent(preComment as ContentLocalTable)
+  console.log("查看添加进 contents 的结果: ")
+  console.log(res)
+  console.log(" ")
 
   // 2. 修改 
   _modifySuperiorCommentNum(ctx.props)
