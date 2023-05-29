@@ -9,48 +9,48 @@ function _createId(digits: number = 21) {
 }
 
 const createUserId = () => {
-  return "u0" + _createId(19)
+  return "u0" + _createId(14)
 }
 
 /** 生成 LiuAtomState 的 id */
 const createStateId = () => {
-  return "s0" + _createId(21)
+  return "s0" + _createId(16)
 }
 
 const createWorkspaceId = () => {
-  return "w0" + _createId(21)
+  return "w0" + _createId(16)
 }
 
 const createMemberId = () => {
-  return "m0" + _createId(23)
+  return "m0" + _createId(18)
 }
 
 const createDraftId = () => {
-  return "d0" + _createId(25)
+  return "d0" + _createId(20)
 }
 
 const createThreadId = () => {
-  return "t0" + _createId(25)
+  return "t0" + _createId(20)
 }
 
 const createCommentId = () => {
-  return "c0" + _createId(25)
+  return "c0" + _createId(20)
 }
 
 const createImgId = () => {
-  return "i0" + _createId(23)
+  return "i0" + _createId(18)
 }
 
 const createFileId = () => {
-  return "f0" + _createId(23)
+  return "f0" + _createId(18)
 }
 
 const createTagId = () => {
-  return "t1" + _createId(23)
+  return "t1" + _createId(18)
 }
 
 const createCollectId = () => {
-  return "c1" + _createId(25)
+  return "c1" + _createId(20)
 }
 
 export default {

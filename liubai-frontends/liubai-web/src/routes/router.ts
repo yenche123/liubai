@@ -85,7 +85,7 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/tag/:tagId(\\w{20,})",
+    path: "/tag/:tagId(\\w{18,})",
     components: {
       default: TagPage,
       LeftSidebar,
@@ -199,7 +199,7 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/w/:workspaceId(\\w{10,})/tag/:tagId(\\w{20,})",
+    path: "/w/:workspaceId(\\w{10,})/tag/:tagId(\\w{18,})",
     components: {
       default: TagPage,
       LeftSidebar,
