@@ -35,7 +35,7 @@
     "state": "狀態",
     "restore": "復原",
     "delete_forever": "永久删除",
-    "export": "導出",
+    "export": "匯出",
     "multi_sekect": "多選",
     "editing": "編輯中",
     "pin": "釘選",
@@ -236,7 +236,7 @@
   "share_related": {
     "public_share": "公開分享",
     "allow_comment": "允許留言",
-    "export_to": "導出至",
+    "export_to": "匯出至",
     "download_ics": "下載 .ics"
   },
   "whatever": {
@@ -254,9 +254,9 @@
     "dark": "深色",
     "light": "淺色",
     "day_and_night": "日夜切換",
-    "import_export": "導入 & 導出",    
-    "import": "導入",
-    "export": "導出",
+    "import_export": "匯入 & 匯出",    
+    "import": "匯入",
+    "export": "匯出",
     "other": "其它",
     "terms": "條款",
     "service_terms": "服務條款",
@@ -269,31 +269,31 @@
     "logout_bd_3": "確定要刪除所有資料嗎?"
   },
   "export": {
-    "markdown": "導出成 markdown 文件",
-    "json": "導出成 JSON 文件",
-    "json_tip": "支援再導入",
+    "markdown": "匯出成 markdown 文件",
+    "json": "匯出成 JSON 文件",
+    "json_tip": "支援再匯入",
     "take_time": "這將需要消耗一點時間，確定要繼續嗎?",
-    "no_data": "沒有可供導出的動態",
-    "highlight_tip": "出於電腦性能考量，目前僅支援導出最近 200 條動態。我們建議您定期導出，保留各個時期你的所思所想。"
+    "no_data": "沒有可供匯出的動態",
+    "highlight_tip": "出於電腦性能考量，目前僅支援匯出最近 200 條動態。我們建議您定期匯出，保留各個時期你的所思所想。"
   },
   "import": {
-    "t1": "從 {appName}-json.zip 導入",    
-    "t2": "沒有可供導入的動態",
-    "t3": "文件格式不符",
-    "t4": "文件加載失敗",
+    "t1": "從 {appName}-json.zip 匯入",    
+    "t2": "沒有可供匯入的動態",
+    "t3": "檔案格式不符",
+    "t4": "檔案加載失敗",
     "parse_result": "解析結果",
     "new_thread": "新的動態",
     "update_required": "需要更新",
     "no_change": "毋須更新",
     "good_news": "好消息!",
-    "i1": "沒有需要導入或更新的動態",
-    "i2": "確定要導入嗎?",
+    "i1": "沒有需要匯入或更新的動態",
+    "i2": "確定要匯入嗎?",
     "i3": "預計新增 {newNum}，更新 {updateNum}",
     "i4": "批量新增動態失敗，請稍後再試。",
     "i5": "批量更新動態失敗，請稍後再試。",
-    "importing": "導入中..",
+    "importing": "匯入中..",
     "well_done": "好樣的🎉",
-    "imported": "導入成功"
+    "imported": "匯入成功"
   },
   "comment": {
     "placeholder1": "補充一點想法",
