@@ -6,7 +6,8 @@ import type {
   ScMode,
 } from "~/utils/controllers/search-controller/types"
 import type {
-  InjectionKey
+  InjectionKey,
+  Ref,
 } from "vue"
 
 export type ThirdPartyType = ScThirdPartyType
@@ -49,3 +50,12 @@ export interface SearchFuncs {
 }
 
 export const searchFuncsKey = Symbol() as InjectionKey<SearchFuncs>
+
+export interface SeKeyboardParam {
+  whenEsc: () => void
+  whenEnter: () => void
+  whenOpen: (param: SearchEditorParam) => Promise<SearchEditorRes>
+  seData: SearchEditorData
+  tranMs: number
+  show: Ref<boolean>
+}

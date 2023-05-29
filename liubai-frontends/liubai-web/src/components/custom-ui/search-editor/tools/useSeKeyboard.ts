@@ -1,25 +1,10 @@
 import { onMounted, onUnmounted, watch } from "vue"
-import type { Ref } from "vue"
-import type { 
-  SearchEditorParam,
-  SearchEditorRes,
-  SearchEditorData,
-} from "./types"
+import type { SeKeyboardParam } from "./types"
 import { handleKeyDown } from "./handle"
 import liuUtil from "~/utils/liu-util"
 import time from "~/utils/basic/time"
 import liuApi from "~/utils/liu-api"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
-
-
-interface SeKeyboardParam {
-  whenEsc: () => void
-  whenEnter: () => void
-  whenOpen: (param: SearchEditorParam) => Promise<SearchEditorRes>
-  seData: SearchEditorData
-  tranMs: number
-  show: Ref<boolean>
-}
 
 export function useSeKeyboard(param: SeKeyboardParam) {
   const {
@@ -60,7 +45,7 @@ export function useSeKeyboard(param: SeKeyboardParam) {
     const ctrlPressed = isMac ? e.metaKey : e.ctrlKey
     const shiftPressed = e.shiftKey
     const key = e.key.toLowerCase()
-    
+
     if(ctrlPressed && !shiftPressed && (key === "p" || key === "k")) {
       e.preventDefault()
       console.log("ctrl + k/p 被触发...........")
