@@ -15,7 +15,7 @@ export interface SpaceAndMemberOpt {
   myMember?: MemberLocalTable
 }
 
-export const useWorkspaceStore = defineStore("workspaceState", () => {
+export const useWorkspaceStore = defineStore("workspace", () => {
 
   const spaceId = ref("")
   const spaceType = ref<SpaceType | "">("")
