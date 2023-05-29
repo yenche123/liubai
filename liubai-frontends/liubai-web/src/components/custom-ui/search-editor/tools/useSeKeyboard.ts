@@ -58,8 +58,10 @@ export function useSeKeyboard(param: SeKeyboardParam) {
     if(diff < tranMs) return
 
     const ctrlPressed = isMac ? e.metaKey : e.ctrlKey
+    const shiftPressed = e.shiftKey
     const key = e.key.toLowerCase()
-    if(ctrlPressed && (key === "p" || key === "k")) {
+    
+    if(ctrlPressed && !shiftPressed && (key === "p" || key === "k")) {
       e.preventDefault()
       console.log("ctrl + k/p 被触发...........")
       lastEventTrigger = now
