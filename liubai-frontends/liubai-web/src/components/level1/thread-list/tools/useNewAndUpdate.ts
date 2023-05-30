@@ -1,6 +1,8 @@
 import type { Ref } from "vue";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
+import { useCommentStore } from "~/hooks/stores/useCommentStore"
+import type { CommentStoreState } from "~/hooks/stores/useCommentStore"
 import type { ThreadShow } from "~/types/types-content"
 import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
 import valTool from "~/utils/basic/val-tool";
@@ -12,7 +14,7 @@ import { watch } from "vue"
 
 export function useNewAndUpdate(
   props: TlProps,
-  list: Ref<ThreadShow[]>,
+  listRef: Ref<ThreadShow[]>,
   lastItemStamp: Ref<number>,
 ) {
   const tStore = useThreadShowStore()
@@ -29,10 +31,10 @@ export function useNewAndUpdate(
     const { newThreadShows, updatedThreadShows, whyChange } = state
 
     if(newThreadShows.length > 0) {
-      handleNewList(props, list, newThreadShows, lastItemStamp)
+      handleNewList(props, listRef, newThreadShows, lastItemStamp)
     }
     if(updatedThreadShows.length > 0) {
-      handleUpdatedList(props, list, updatedThreadShows, whyChange, lastItemStamp)
+      handleUpdatedList(props, listRef, updatedThreadShows, whyChange, lastItemStamp)
     }
   })
 
@@ -41,9 +43,50 @@ export function useNewAndUpdate(
   const { kanbanStateChange } = storeToRefs(gStore)
   watch(kanbanStateChange, (newV) => {
     if(!newV) return
-    handleKanbanStateChange(props, list, newV)
+    handleKanbanStateChange(props, listRef, newV)
+  })
+
+  // 监听 comment 发生变化
+  // 若情况符合，对 thread 的 commentNum 进行修改
+  const cStore = useCommentStore()
+  cStore.$subscribe((mutation, state) => {
+    handleCommentChange(listRef, state)
   })
 }
+
+function handleCommentChange(
+  listRef: Ref<ThreadShow[]>,
+  state: CommentStoreState,
+) {
+  const list = listRef.value
+  const {
+    commentId,
+    changeType,
+    parentThread,
+    parentComment,
+    replyToComment
+  } = state
+
+  if(!changeType || !commentId) return
+
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    if(v._id !== parentThread) continue
+    if(changeType === "edit") return
+
+    let num = v.commentNum
+
+    // 判断是否为 thread 两级内的评论
+    if(!replyToComment || parentComment === replyToComment) {
+      if(changeType === "add") num++
+      else if(changeType === "delete") num--
+    
+      if(num < 0) num = 0
+      v.commentNum = num
+    }
+  }
+}
+
 
 function handleKanbanStateChange(
   props: TlProps,
