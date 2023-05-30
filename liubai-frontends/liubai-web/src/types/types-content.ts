@@ -115,6 +115,9 @@ export interface CommentShow {
   editedStamp: number       // 评论被编辑的时间戳
   createdStr: string
   editedStr?: string
+  parentThread: string
+  parentComment?: string
+  replyToComment?: string
 }
 
 
