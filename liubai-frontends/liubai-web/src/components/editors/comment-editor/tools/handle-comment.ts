@@ -4,7 +4,6 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { CeProps, CeCtx, HcCtx } from "./types";
 import type { ShallowRef } from "vue";
 import type { TipTapEditor } from "~/types/types-editor"
-import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import localCache from "~/utils/system/local-cache";
 import time from "~/utils/basic/time";
 import transferUtil from "~/utils/transfer-util";
@@ -12,6 +11,8 @@ import liuUtil from "~/utils/liu-util";
 import type { ContentLocalTable } from "~/types/types-table";
 import ider from "~/utils/basic/ider";
 import localReq from "./req/local-req"
+import { useCommentStore } from "~/hooks/stores/useCommentStore";
+import type { CommentStoreSetDataOpt } from "~/hooks/stores/useCommentStore"
 
 export function handleComment(
   props: CeProps, 
@@ -28,11 +29,8 @@ export function handleComment(
   const { local_id: user } = localCache.getLocalPreference()
   if(!user) return
 
-  const tStore = useThreadShowStore()
-
   const ctx: HcCtx = {
     wStore,
-    tStore,
     ceCtx,
     props,
     editor,
@@ -66,15 +64,20 @@ async function toRelease(
   ctx: HcCtx
 ) {
   const preComment = await _getCommentData(ctx)
+  const newComment = preComment as ContentLocalTable
   console.log("toRelease 入库前，看一下 preComment: ")
   console.log(preComment)
   console.log(" ")
 
   // 1. 添加进 contents 表里
-  const res = await localReq.addContent(preComment as ContentLocalTable)
+  const res = await localReq.addContent(newComment)
   console.log("查看添加进 contents 的结果: ")
   console.log(res)
   console.log(" ")
+  if(!res) {
+    console.log("comment id 不存在............")
+    return false
+  }
 
   // 2. 修改 
   _modifySuperiorCommentNum(ctx.props)
@@ -82,6 +85,16 @@ async function toRelease(
   // 3. 重置
   _reset(ctx)
 
+  // 4. 通知其他组件
+  const cStore = useCommentStore()
+  const opt: CommentStoreSetDataOpt = {
+    changeType: "add",
+    commentId: newComment._id,
+    parentThread: ctx.props.parentThread,
+    parentComment: ctx.props.parentComment,
+    replyToComment: ctx.props.replyToComment,
+  }
+  cStore.setData(opt)
 }
 
 

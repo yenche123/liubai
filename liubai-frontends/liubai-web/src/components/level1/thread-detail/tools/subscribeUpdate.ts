@@ -1,5 +1,7 @@
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
+import { useCommentStore } from "~/hooks/stores/useCommentStore"
+import type { CommentStoreState } from "~/hooks/stores/useCommentStore"
 import type { TdData } from "./types"
 import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
 import type { ThreadShow } from "~/types/types-content"
@@ -27,6 +29,41 @@ export function subscribeUpdate(
     whenKanbanStateUpdated(tdData, newV)
   })
 
+  // 监听评论区发生变化
+  // 若情况符合，对 thread 的 commentNum 进行修改
+  const cStore = useCommentStore()
+  cStore.$subscribe((mutation, state) => {
+    whenCommentAddOrDelete(tdData, state)
+  })
+}
+
+function whenCommentAddOrDelete(
+  tdData: TdData,
+  state: CommentStoreState,
+) {
+  const { 
+    changeType, 
+    commentId, 
+    parentThread, 
+    parentComment,
+    replyToComment 
+  } = state
+  if(!changeType || !commentId) return
+  const thread = tdData.threadShow
+  if(!thread) return
+  if(thread._id !== parentThread) return
+  if(changeType === "edit") return
+
+  let num = thread.commentNum
+
+  // 判断是否为 thread 两级内的评论
+  if(!replyToComment || parentComment === replyToComment) {
+    if(changeType === "add") num++
+    else if(changeType === "delete") num--
+    
+    if(num < 0) num = 0
+    thread.commentNum = num
+  }
 }
 
 
