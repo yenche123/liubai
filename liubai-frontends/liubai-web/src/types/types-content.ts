@@ -85,6 +85,39 @@ export interface ThreadShow {
   config?: ContentConfig
 }
 
+// 评论的结构
+export interface CommentShow {
+  _id: string
+  cloud_id?: string
+  _old_id?: string           // 刚上传完的动态会有此字段，表示旧的 _id
+  insertedStamp: number
+  updatedStamp: number
+  oState: OState
+  user_id: string
+  member_id?: string
+  spaceId: string
+  spaceType: SpaceType
+  visScope: VisScope
+  storageState: StorageState
+  content?: TipTapJSONContent
+  summary?: string               // liuDesc 转为单行的纯文本，并且限制字数在 140 字内;
+                                 // 如果 liuDesc 不存在，看文件是否存在，若有，打印文件名
+  desc?: string                  // liuDesc 的纯文本
+  images?: ImageShow[]
+  files?: LiuFileStore[]
+  creator?: MemberShow         // 发表者本人的 memberShow
+  isMine: boolean             // 是否为我所发表的
+  myEmoji: string             // 是否点过表态，若点过则为 emoji 的 encodeURIComponent，若没有点过则为空字符串
+  myEmojiStamp?: number       // 我点赞时的时间戳
+  commentNum: number          // 评论数（即一级评论 + 二级评论数）
+  emojiData: EmojiData
+  createdStamp: number      // 评论被创建的时间戳
+  editedStamp: number       // 评论被编辑的时间戳
+  createdStr: string
+  editedStr?: string
+}
+
+
 // 状态页的结构
 export interface KanbanColumn {
   id: string
