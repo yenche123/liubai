@@ -62,7 +62,7 @@ const onTapTag = (e: MouseEvent, href: string) => {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-
+  margin-inline-start: -6px;
 
   .ce-tag-item {
     padding: 6px 14px 6px 14px;
