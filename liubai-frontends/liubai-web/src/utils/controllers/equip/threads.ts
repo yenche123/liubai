@@ -1,13 +1,12 @@
-// 给定 ContentLocalTable 返回 ThreadShow
+
 
 import type { ContentLocalTable } from "~/types/types-table";
-import { db } from "../../db";
 import collectionController from "../collection-controller/collection-controller";
 import type { MemberShow, ThreadShow } from "~/types/types-content";
 import localCache from "../../system/local-cache";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
-import { membersToShows, usersToMemberShows } from "../../other/member-related"
 import showThread from "~/utils/show/show-thread";
+import { getMemberShows, getMemberShowsFromUsers } from "./other-tool"
 
 export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
   if(contents.length < 1) return []
@@ -37,8 +36,6 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
   const content_ids = contents.map(v => v._id)
   const collections = await collectionController.getMyCollectionByIds({ content_ids })
 
-  // console.time("equip-content")
-
   let list: ThreadShow[] = []
   for(let i=0; i<contents.length; i++) {
     const v = contents[i]
@@ -58,21 +55,5 @@ export async function equipThreads(contents: ContentLocalTable[]): Promise<Threa
     list.push(obj)
   }
 
-  // console.timeEnd("equip-content")
-
-  return list
-}
-
-export async function getMemberShows(member_ids: string[]) {
-  if(member_ids.length < 1) return []
-  const res = await db.members.where("_id").anyOf(member_ids).toArray()
-  const list = membersToShows(res)
-  return list
-}
-
-export async function getMemberShowsFromUsers(user_ids: string[]) {
-  if(user_ids.length < 1) return []
-  const res = await db.users.where("_id").anyOf(user_ids).toArray()
-  const list = usersToMemberShows(res)
   return list
 }

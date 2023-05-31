@@ -12,7 +12,7 @@ import type { LiuRemindMe } from "~/types/types-atom";
 import localReq from "./req/local-req";
 import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { storeToRefs } from "pinia";
-import { equipThreads } from "~/utils/controllers/equip-content/equip-content";
+import { equipThreads } from "~/utils/controllers/equip/threads";
 import { getTagIdsParents } from "~/utils/system/tag-related";
 import type { SpaceType } from "~/types/types-basic";
 
@@ -78,8 +78,10 @@ async function toRelease(
   console.log(preThread)
   console.log(" ")
 
+  const newThread = preThread as ContentLocalTable
+
   // 1. 添加进 contents 表里
-  const res1 = await localReq.addContent(preThread as ContentLocalTable)
+  const res1 = await localReq.addContent(newThread)
   
   // 2. 删除 drafts
   if(state.draftId) await localReq.deleteDraftById(state.draftId)
@@ -98,7 +100,7 @@ async function toRelease(
   }
 
   // 5. 通知全局 需要更新 threads
-  const threadShows = await equipThreads([preThread as ContentLocalTable])
+  const threadShows = await equipThreads([newThread])
   ctx.threadShowStore.setNewThreadShows(threadShows)
   
 }

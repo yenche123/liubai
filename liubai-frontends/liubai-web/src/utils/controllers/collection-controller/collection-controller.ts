@@ -2,7 +2,7 @@ import type { CollectionLocalTable } from "~/types/types-table"
 import { db } from "../../db"
 import localCache from "../../system/local-cache"
 import type { TcListOption } from "../thread-controller/type"
-import { getMemberShows, getMemberShowsFromUsers } from "../equip-content/equip-content"
+import { getMemberShows, getMemberShowsFromUsers } from "../equip/other-tool"
 import type { MemberShow, ThreadShow } from "~/types/types-content";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import showThread from "~/utils/show/show-thread"

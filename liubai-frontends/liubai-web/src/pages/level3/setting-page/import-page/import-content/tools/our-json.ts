@@ -15,7 +15,7 @@ import JSZip from "jszip"
 import { db } from "~/utils/db";
 import type { LiuMyContext } from "~/types/types-context";
 import type { ContentLocalTable } from "~/types/types-table";
-import { equipThreads } from "~/utils/controllers/equip-content/equip-content";
+import { equipThreads } from "~/utils/controllers/equip/threads";
 import ider from "~/utils/basic/ider";
 
 export async function parseOurJson(

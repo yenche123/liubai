@@ -91,7 +91,7 @@ async function whenRouteChange(
   }
 
   // 检查 mySpaceIds 是否存在，不存在就去查找并赋值
-  // 因为 equip-content 时，判断 标签tag 时会用到
+  // 因为 equipThreads 时，判断 标签tag 时会用到
   if(store.mySpaceIds.length < 1) {
     const mySpaceIds = await getMySpaceIds(userId)
     store.setMySpaceIds(mySpaceIds)

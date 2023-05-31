@@ -1,7 +1,7 @@
 import { db } from "../../../db";
 import type { TcListOption } from "../type";
 import type { ContentLocalTable } from "~/types/types-table";
-import { equipThreads } from "../../equip-content/equip-content";
+import { equipThreads } from "../../equip/threads";
 import { getThreadsByCollectionOrEmoji } from "../../collection-controller/collection-controller"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore" 
 
