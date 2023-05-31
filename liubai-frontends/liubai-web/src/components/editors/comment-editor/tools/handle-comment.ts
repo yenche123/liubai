@@ -1,7 +1,7 @@
 // 发表或更新评论的逻辑
 
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
-import { CeProps, CeCtx, HcCtx } from "./types";
+import type { CeProps, CeCtx, HcCtx } from "./types";
 import type { ShallowRef } from "vue";
 import type { TipTapEditor } from "~/types/types-editor"
 import localCache from "~/utils/system/local-cache";
@@ -13,6 +13,8 @@ import ider from "~/utils/basic/ider";
 import localReq from "./req/local-req"
 import { useCommentStore } from "~/hooks/stores/useCommentStore";
 import type { CommentStoreSetDataOpt } from "~/hooks/stores/useCommentStore"
+import commentCache from "./comment-cache";
+import { getStorageAtom } from "./useCommentEditor"
 
 export function handleComment(
   props: CeProps, 
@@ -143,11 +145,23 @@ async function _addCommentNum(
 
 
 function _reset(ctx: HcCtx) {
-  const { editor, ceCtx } = ctx
-  editor.chain().setContent('<p></p>').run()
+  const { editor, ceCtx, props } = ctx
+
+  const atom = getStorageAtom(props)
+  commentCache.toDelete(atom)
+
+  ceCtx.lastFinishStamp = time.getTime()
   ceCtx.files = []
   ceCtx.images = []
   ceCtx.fileShowName = ""
+  ceCtx.canSubmit = false
+  delete ceCtx.editorContent
+  editor.chain().setContent('<p></p>').run()
+
+  const { located } = props
+  if(located === "main-view" || located === "vice-view") {
+    ctx.ceCtx.isToolbarTranslateY = true
+  }
 }
 
 

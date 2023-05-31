@@ -23,6 +23,7 @@ export function useCommentEditor(props: CeProps) {
     files: [],
     images: [],
     lastInitStamp: time.getTime(),
+    lastFinishStamp: 0,
     isToolbarTranslateY: located === "main-view" || located === "vice-view",
     canSubmit: false,
     fileShowName: "",
@@ -42,7 +43,7 @@ export function useCommentEditor(props: CeProps) {
 
   // 监听图片改变，以缓存它们
   watch(() => ctx.images, (newImages) => {
-    if(isJustInit(ctx)) return
+    if(isJustInitOrFinish(ctx)) return
     const _newImages = liuUtil.toRawData(newImages)
     const atom = getStorageAtom(props, undefined, undefined, _newImages)
     commentCache.toSave(atom, "image")
@@ -52,7 +53,7 @@ export function useCommentEditor(props: CeProps) {
   // 监听文件改变，以缓存它们
   watch(() => ctx.files, (newFiles) => {
     handleFileName(ctx, newFiles)
-    if(isJustInit(ctx)) return
+    if(isJustInitOrFinish(ctx)) return
     const _newFiles = liuUtil.toRawData(newFiles)
     const atom = getStorageAtom(props, undefined, _newFiles, undefined)
     commentCache.toSave(atom, "file")
@@ -115,7 +116,7 @@ function handleFileName(
 }
 
 
-function getStorageAtom(
+export function getStorageAtom(
   props: CeProps,
   editorContent?: EditorCoreContent,
   files?: LiuFileStore[],
@@ -132,11 +133,16 @@ function getStorageAtom(
   return atom
 }
 
-function isJustInit(ctx: CeCtx) {
+function isJustInitOrFinish(ctx: CeCtx) {
   const s = ctx.lastInitStamp
   const now = time.getTime()
   const diff = now - s
   if(diff < 500) return true
+
+  const s2 = ctx.lastFinishStamp
+  const diff2 = now - s2
+  if(diff2 < 300) return true
+
   return false
 }
 
