@@ -8,7 +8,9 @@ import valTool from "~/utils/basic/val-tool";
 import { addSomethingWhenBrowsing } from "./show-content"
 
 /**
- * 判断有没有 title，若有加到 content 里
+ *  进一步封装 liuDesc
+ *  1. 对 liuDesc 做一些加工，比如解析手机号等等
+ *  2. 添加 title (如果有的话)
  */
 function packLiuDesc(
   liuDesc: LiuContent[] | undefined,

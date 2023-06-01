@@ -1,32 +1,26 @@
-import type { MemberShow } from "~/types/types-content";
+import type { CommentShow, MemberShow } from "~/types/types-content";
 import type { 
   CollectionLocalTable, 
   ContentLocalTable 
 } from "~/types/types-table";
 import type { TipTapJSONContent } from "~/types/types-editor";
-import type { TagShow, ThreadShow, StateShow } from "~/types/types-content";
 import imgHelper from "../files/img-helper";
 import transferUtil from "../transfer-util";
 import commonPack from "../controllers/tools/common-pack";
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
-import { tagIdsToShows } from "../system/tag-related";
 import liuUtil from "../liu-util";
 
-
-// 封装 thread 成 ThreadShow
-function packThread(
+// 封装 content 成 CommentShow
+function packComment(
   content: ContentLocalTable,
   collections: CollectionLocalTable[] | undefined,
   creator: MemberShow | undefined,
   user_id: string | undefined,
-  wStore: WorkspaceStore,
 ) {
 
-  let v = content
-  const { member, _id, user, liuDesc, spaceId, title } = v
+  const v = content
+  const { member, _id, user, liuDesc, spaceId } = v
 
-  let myFavorite = false
-  let myFavoriteStamp: number | undefined
   let myEmoji = ""
   let myEmojiStamp: number | undefined
 
@@ -34,10 +28,6 @@ function packThread(
     if(v2.infoType === "EXPRESS" && v2.emoji) {
       myEmoji = v2.emoji
       myEmojiStamp = v2.insertedStamp
-    }
-    else if(v2.infoType === "FAVORITE") {
-      myFavorite = v2.oState === "OK"
-      myFavoriteStamp = v2.insertedStamp
     }
   })
 
@@ -49,25 +39,11 @@ function packThread(
   })
 
   const desc = transferUtil.tiptapToText(liuDesc ?? [])
-  const newDesc = commonPack.packLiuDesc(liuDesc, title)
+  const newDesc = commonPack.packLiuDesc(liuDesc)
   const tiptapContent: TipTapJSONContent | undefined = 
     newDesc?.length ? { type: "doc", content: newDesc } : undefined
 
-  let tags: TagShow[] = []
-  let stateShow: StateShow | undefined = undefined
-  // 判断当前工作区与当前动态是否匹配，若匹配则可展示标签和状态
-  let canTag = spaceId === wStore.spaceId
-  // 如果动态所属的工作区与当前工作区匹配
-  if(canTag) {
-    const tagData = v.tagIds ? tagIdsToShows(v.tagIds) : undefined
-    tags = tagData?.tagShows ?? []
-    stateShow = commonPack.getStateShow(v.stateId, wStore)
-  }
-
-  // 删除于 xxxx-xx-xx
-  let removedStr = v.oState === "REMOVED" ? liuUtil.showBasicDate(v.updatedStamp) : undefined
-
-  const obj: ThreadShow = {
+  const obj: CommentShow = {
     _id,
     cloud_id: v.cloud_id,
     insertedStamp: v.insertedStamp,
@@ -79,41 +55,29 @@ function packThread(
     spaceType: v.spaceType,
     visScope: v.visScope,
     storageState: v.storageState,
-    title,
     content: tiptapContent,
-    briefing: commonPack.getBriefing(newDesc),
     summary: commonPack.getSummary(liuDesc, v.files),
     desc,
     images,
-    imgLayout: imgHelper.getImgLayout(images),
     files: v.files,
-    whenStamp: v.whenStamp,
-    remindStamp: v.remindStamp,
-    remindMe: v.remindMe,
     creator,
     isMine,
-    myFavorite,
-    myFavoriteStamp,
     myEmoji,
     myEmojiStamp,
     commentNum: v.levelOneAndTwo ?? 0,
     emojiData: v.emojiData,
-    pinStamp: v.pinStamp,
     createdStamp: v.createdStamp,
     editedStamp: v.editedStamp,
     createdStr: liuUtil.showBasicDate(v.createdStamp),
     editedStr: liuUtil.getEditedStr(v.createdStamp, v.editedStamp),
-    removedStr,
-    tags,
-    tagSearched: v.tagSearched,
-    stateId: v.stateId,
-    stateShow,
-    config: v.config,
+    parentThread: v.parentThread ?? "",
+    parentComment: v.parentComment,
+    replyToComment: v.replyToComment,
   }
+
   return obj
 }
 
-
 export default {
-  packThread,
+  packComment,
 }

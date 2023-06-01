@@ -6,29 +6,21 @@ import type { MemberShow, ThreadShow } from "~/types/types-content";
 import localCache from "../../system/local-cache";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import showThread from "~/utils/show/show-thread";
-import { getMemberShows, getMemberShowsFromUsers } from "./other-tool"
+import { 
+  getMemberShows, 
+  getMemberShowsFromUsers,
+  getUserAndMemberIdsFromContents
+} from "./other-tool"
 
-export async function equipThreads(contents: ContentLocalTable[]): Promise<ThreadShow[]> {
+export async function equipThreads(
+  contents: ContentLocalTable[]
+): Promise<ThreadShow[]> {
   if(contents.length < 1) return []
 
   const wStore = useWorkspaceStore()
   const { local_id: user_id } = localCache.getLocalPreference()
 
-
-  let user_ids: string[] = []
-  let member_ids: string[] = []
-  contents.forEach(v => {
-    if(v.member) {
-      if(!member_ids.includes(v.member)) {
-        member_ids.push(v.member)
-      }
-    }
-    else if(v.user) {
-      if(!user_ids.includes(v.user)) {
-        user_ids.push(v.user)
-      }
-    }
-  })
+  const { user_ids, member_ids } = getUserAndMemberIdsFromContents(contents)
 
   const memberShows = await getMemberShows(member_ids)
   const membersShows2 = await getMemberShowsFromUsers(user_ids)

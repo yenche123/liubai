@@ -6,11 +6,12 @@ import { getMemberShows, getMemberShowsFromUsers } from "../equip/other-tool"
 import type { MemberShow, ThreadShow } from "~/types/types-content";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import showThread from "~/utils/show/show-thread"
+
 interface MyCollectionOpt {
   content_ids: string[]
 }
 
-// 根据 contents 的 id 来获取我的收藏或点赞
+// 根据 contents 的 id 来获取我的收藏 (fav) 或点赞 (emoji)
 async function getMyCollectionByIds(opt: MyCollectionOpt) {
 
   const { local_id: user_id } = localCache.getLocalPreference()
@@ -29,7 +30,7 @@ async function getMyCollectionByIds(opt: MyCollectionOpt) {
 /**
  * 从 collection (收藏、喜欢) 的角度来加载 contents
  */
-export async function getThreadsByCollectionOrEmoji(
+export async function getThreadsByCollection(
   opt: TcListOption
 ) {
   const { 

@@ -2,7 +2,7 @@ import { db } from "../../../db";
 import type { TcListOption } from "../type";
 import type { ContentLocalTable } from "~/types/types-table";
 import { equipThreads } from "../../equip/threads";
-import { getThreadsByCollectionOrEmoji } from "../../collection-controller/collection-controller"
+import { getThreadsByCollection } from "../../collection-controller/collection-controller"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore" 
 
 async function getList(
@@ -24,7 +24,7 @@ async function getList(
   } = opt
 
   if(collectType === "EXPRESS" || collectType === "FAVORITE") {
-    const res0 = await getThreadsByCollectionOrEmoji(opt as TcListOption)
+    const res0 = await getThreadsByCollection(opt as TcListOption)
     return res0
   }
 

@@ -9,6 +9,7 @@
 
 import { ref } from "vue";
 import { defineStore } from "pinia";
+import { CommentShow } from "~/types/types-content";
 
 export type CommentChangeType = "add" | "delete" | "edit"
 
@@ -23,6 +24,7 @@ export interface CommentStoreSetDataOpt {
 export const useCommentStore = defineStore("comment", () => {
   const changeType = ref<CommentChangeType | "">("")
   const commentId = ref("")
+  const commentShow = ref<CommentShow>()
   const parentThread = ref("")
   const parentComment = ref("")
   const replyToComment = ref("")
