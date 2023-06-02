@@ -15,6 +15,7 @@ import { useCommentStore } from "~/hooks/stores/useCommentStore";
 import type { CommentStoreSetDataOpt } from "~/hooks/stores/useCommentStore"
 import commentCache from "./comment-cache";
 import { getStorageAtom } from "./useCommentEditor"
+import { equipComments } from "~/utils/controllers/equip/comments"
 
 export function handleComment(
   props: CeProps, 
@@ -87,11 +88,19 @@ async function toRelease(
   // 3. 重置
   _reset(ctx)
 
-  // 4. 通知其他组件
+  // 4. 将 ContentLocalTable 转为 CommentShow
+  const [commentShow] = await equipComments([newComment])
+
+  // console.log("看一下 commentShow: ")
+  // console.log(commentShow)
+  // console.log(" ")
+
+  // 5. 通知其他组件
   const cStore = useCommentStore()
   const opt: CommentStoreSetDataOpt = {
     changeType: "add",
     commentId: newComment._id,
+    commentShow,
     parentThread: ctx.props.parentThread,
     parentComment: ctx.props.parentComment,
     replyToComment: ctx.props.replyToComment,

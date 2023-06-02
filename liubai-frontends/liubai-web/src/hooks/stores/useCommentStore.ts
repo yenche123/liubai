@@ -16,6 +16,7 @@ export type CommentChangeType = "add" | "delete" | "edit"
 export interface CommentStoreSetDataOpt {
   changeType: CommentChangeType
   commentId: string
+  commentShow: CommentShow
   parentThread: string
   parentComment?: string
   replyToComment?: string
@@ -32,6 +33,7 @@ export const useCommentStore = defineStore("comment", () => {
   const setData = (opt: CommentStoreSetDataOpt) => {
     changeType.value = opt.changeType
     commentId.value = opt.commentId
+    commentShow.value = opt.commentShow
     parentThread.value = opt.parentThread
     parentComment.value = opt.parentComment ?? ""
     replyToComment.value = opt.replyToComment ?? ""
