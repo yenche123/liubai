@@ -57,7 +57,6 @@ function _toCompress(file: File) {
       convertTypes: 'image/png,image/webp',
       convertSize: 1 * 1024 * 1024,   // 1mb 以上的 convertTypes 图片，都会被转成 JPEGs
       success(res: File) {
-        console.log("压缩成功...........")
         a(res)
       },
       error(err: Error) {
@@ -142,7 +141,8 @@ async function getMetaDataFromFiles(files: File[]) {
       reader.readAsDataURL(file)
       reader.onload = (e: ProgressEvent<FileReader>) => {
 
-        if(!e.target?.result) {
+        const tmpRes = e.target?.result
+        if(!tmpRes) {
           console.warn("reader onload 事件回调 不存在 e.target.result")
           console.log(e.target)
           console.log(" ")
@@ -150,7 +150,7 @@ async function getMetaDataFromFiles(files: File[]) {
           return
         }
 
-        _calc(a, e.target.result as string)
+        _calc(a, tmpRes as string)
       }
       reader.onerror = (e: ProgressEvent<FileReader>) => {
         console.warn("reader onerror 事件被触发.........")
