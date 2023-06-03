@@ -1,8 +1,8 @@
 import type { LiuLimit } from "~/types/types-atom"
-import liuUtil from "../liu-util"
+import liuEnv from "../liu-env"
 
 function getMode() {
-  const env = liuUtil.getEnv()
+  const env = liuEnv.getEnv()
   if(env.API_URL) return "online"
   return "pure_local"
 }
@@ -17,7 +17,7 @@ function getLimit(val: LiuLimit) {
   //【待完善】获取我是否付费
   const isPaid = false        // 先写死，代表还没付费
 
-  const env = liuUtil.getEnv()
+  const env = liuEnv.getEnv()
 
   if(val === "pin") {
     if(mode === "pure_local") return env.LOCAL_PIN_NUM

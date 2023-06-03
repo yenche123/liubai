@@ -12,6 +12,7 @@ import valTool from "~/utils/basic/val-tool"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
 import { handleLinks } from "./tools/handle-links"
 import liuUtil from "~/utils/liu-util"
+import liuEnv from "~/utils/liu-env"
 import { saveAs as fileSaverSaveAs } from 'file-saver';
 import time from "~/utils/basic/time"
 
@@ -67,7 +68,7 @@ export function showShareView(param: ShareViewParam) {
 function onTapIcs(e: MouseEvent) {
   if(!svData.icsLink) return
 
-  const { APP_NAME } = liuUtil.getEnv()
+  const { APP_NAME } = liuEnv.getEnv()
   const stamp = time.getTime()
   const sec = Math.round(stamp / 1000)
   fileSaverSaveAs(svData.icsLink, `${APP_NAME}-${sec}.ics`)

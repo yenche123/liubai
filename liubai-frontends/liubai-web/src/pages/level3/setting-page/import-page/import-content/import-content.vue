@@ -2,7 +2,7 @@
 import ImportResults from "./import-results/import-results.vue";
 import { useI18n } from "vue-i18n";
 import { useImportContent } from "./tools/useImportContent";
-import liuUtil from "~/utils/liu-util";
+import liuEnv from "~/utils/liu-env";
 
 const { t } = useI18n()
 
@@ -15,7 +15,7 @@ const {
   onTapCancel,
   onTapConfirm,
 } = useImportContent()
-const { APP_NAME } = liuUtil.getEnv()
+const { APP_NAME } = liuEnv.getEnv()
 
 </script>
 <template>

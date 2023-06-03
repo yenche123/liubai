@@ -1,10 +1,10 @@
 import { useGlobalLoading } from "./tools/useGlobalLoading"
-import liuApi from "../utils/liu-api"
-import liuUtil from "../utils/liu-util"
+import liuApi from "~/utils/liu-api"
 import VConsole from 'vconsole';
-import { init as initForSystem } from "../utils/system/init"
+import { init as initForSystem } from "~/utils/system/init"
 import { onMounted, onUnmounted } from "vue";
 import { useGlobalStateStore } from "./stores/useGlobalStateStore";
+import liuEnv from "~/utils/liu-env";
 
 // 监听和处理一些全局的事务，比如路由变化
 
@@ -12,7 +12,7 @@ export function useApp() {
 
   useGlobalLoading()
 
-  const env = liuUtil.getEnv()
+  const env = liuEnv.getEnv()
   const cha = liuApi.getCharacteristic()
   if(cha.isMobile) {
     if(env.DEV) {

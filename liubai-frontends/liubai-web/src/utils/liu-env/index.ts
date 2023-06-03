@@ -1,11 +1,14 @@
+// liu-env 请不要 import 任何 /src 内的文件
+// 因为它会在非常非常早期被初始化
+// 若引入其他东西，可能触发 Unaught ReferenceError
 
-
-
-export function getEnv() {
+function getEnv() {
   const DEV = import.meta.env.DEV
   const API_URL = import.meta.env.VITE_API_URL
 
   const APP_NAME = import.meta.env.VITE_APP_NAME
+
+  // SaaS 各个服务情况上限
   const LOCAL_PIN_NUM = import.meta.env.VITE_LOCAL_PIN_NUM
   const FREE_PIN_NUM = import.meta.env.VITE_FREE_PIN_NUM
   const PREMIUM_PIN_NUM = import.meta.env.VITE_PREMIUM_PIN_NUM
@@ -19,6 +22,9 @@ export function getEnv() {
   const LOCAL_COMMENT_IMG_NUM = import.meta.env.VITE_LOCAL_COMMENT_IMG_NUM
   const FREE_COMMENT_IMG_NUM = import.meta.env.VITE_FREE_COMMENT_IMG_NUM
   const PREMIUM_COMMENT_IMG_NUM = import.meta.env.VITE_PREMIUM_COMMENT_IMG_NUM
+
+  // i18n
+  const FALLBACK_LOCALE = import.meta.env.VITE_FALLBACK_LOCALE
 
   return {
     DEV,
@@ -37,12 +43,18 @@ export function getEnv() {
     LOCAL_COMMENT_IMG_NUM: Number(LOCAL_COMMENT_IMG_NUM),
     FREE_COMMENT_IMG_NUM: Number(FREE_COMMENT_IMG_NUM),
     PREMIUM_COMMENT_IMG_NUM: Number(PREMIUM_COMMENT_IMG_NUM),
+    FALLBACK_LOCALE,
   }
 }
 
 /** 从环境变量里判断，是否具备后端的配置，若无，则为纯本地应用 */
-export function getIfPurelyLocal() {
+function getIfPurelyLocal() {
   const env = getEnv()
   if(!env.API_URL) return true
   return false
+}
+
+export default {
+  getEnv,
+  getIfPurelyLocal,
 }

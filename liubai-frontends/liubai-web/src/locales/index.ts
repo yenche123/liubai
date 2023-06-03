@@ -6,6 +6,7 @@ import type { SupportedLocale } from "../types/types-locale"
 import { isSupportedLocale } from '../types/types-locale'
 import localCache from '../utils/system/local-cache'
 import liuApi from '~/utils/liu-api'
+import liuEnv from '~/utils/liu-env'
 
 // 初始化语言
 const initLocale = (): SupportedLocale => {
@@ -19,9 +20,14 @@ const initLocale = (): SupportedLocale => {
   return liuApi.getLanguageFromSystem()
 }
 
+const getFallbackLocale = (): SupportedLocale => {
+  const env = liuEnv.getEnv()
+  return env.FALLBACK_LOCALE as SupportedLocale
+}
 
 export const i18n = createI18n({
   locale: initLocale(),
+  fallbackLocale: getFallbackLocale(),
   messages: {
     "en": en,
     "zh-Hans": zhHans,

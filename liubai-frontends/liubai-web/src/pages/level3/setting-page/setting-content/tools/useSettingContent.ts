@@ -8,8 +8,8 @@ import { useDynamics } from "~/hooks/useDynamics"
 import type { SupportedLocale } from "~/types/types-locale"
 import { getLanguageList, getTermsList } from "./get-list"
 import { handleLogoutWithBackend, handleLogoutWithPurlyLocal } from "./handle-logout"
-import liuUtil from "~/utils/liu-util"
 import { whenTapTheme } from "./handle-theme"
+import liuEnv from "~/utils/liu-env"
 
 export function useSettingContent() {
   const data = reactive<SettingContentData>({
@@ -63,7 +63,7 @@ function initSettingContent(
 function whenTapLogout(
   data: SettingContentData
 ) {
-  const res0 = liuUtil.getIfPurelyLocal()
+  const res0 = liuEnv.getIfPurelyLocal()
   if(res0) askLogoutWithPurelyLocal()
   else askLogoutWithBackend()
 }

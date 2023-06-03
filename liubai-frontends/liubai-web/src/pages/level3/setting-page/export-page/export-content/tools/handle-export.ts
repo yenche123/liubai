@@ -16,6 +16,7 @@ import time from "~/utils/basic/time";
 import { membersToShows } from "~/utils/other/member-related";
 import { saveAs as fileSaverSaveAs } from 'file-saver';
 import transferUtil from "~/utils/transfer-util";
+import liuEnv from "~/utils/liu-env";
 
 export async function handleExport(
   exportType: ExportType
@@ -44,7 +45,7 @@ export async function handleExport(
   const zip = new JSZip()
 
   // 1. 生成 metadata
-  const appName = liuUtil.getEnv().APP_NAME ?? ""
+  const appName = liuEnv.getEnv().APP_NAME ?? ""
   const metadata = {
     appName,
     version: LIU_ENV.version,
