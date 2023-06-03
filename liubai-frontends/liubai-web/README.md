@@ -32,6 +32,8 @@ https://icons.radix-ui.com/
 
 7. `props` 有属性 `a` 是 `required: true` 时，不可以把 `props` 声明在 `types.ts` 文件里，因为 `.vue` 文件在 IDE 里读取时，会把 props 的实例读成类型的形式，这时会将 `a` 看成 `required: boolean` 而非 `required: true`，导致 TS 把 `props.a` 视作有可能为 `undefined`，造成后续编写代码需要多判断空值的问题。
 
+8. 定期执行 `pnpm run build` 虽然我们在开发时，运行 `pnpm run dev` 即可进行调试或预览，但是最终交给用户的代码依然需要运行前者这样的命令，若最终打包时出现大面积错误，修改起来会很痛苦，所以建议定期执行该命令，确保你所写的代码都能成功打包。
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
