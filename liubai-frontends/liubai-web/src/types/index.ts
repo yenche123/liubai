@@ -36,6 +36,21 @@ export interface FileShow {
   cloud_url?: string
 }
 
+
+/** 当前有采集的「可交换图像文件格式
+ *    注意: 其每个属性都必须是可选的，因为都不见得会存在
+*/
+export interface LiuExif {
+  gps?: {
+    latitude?: string
+    longitude?: string
+    altitude?: string
+  }
+  DateTimeOriginal?: string    // 原始拍摄时间，形如 "YYYY:MM:DD hh:mm:ss"
+  HostComputer?: string     // 宿主设备，如果图片经过软件再编辑，此值可能缺省
+  Model?: string            // 拍摄时的设备，即使图片经过软件再编辑，此值仍可能存在
+}
+
 export interface LiuImageStore {
   id: string
   name: string
@@ -47,6 +62,7 @@ export interface LiuImageStore {
   h2w?: string
   cloud_url?: string
   blurhash?: string
+  someExif?: LiuExif
 }
 
 export interface ImageShow {

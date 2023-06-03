@@ -1,10 +1,11 @@
 import Compressor from 'compressorjs';
-import type { ImageShow, LiuImageStore } from "~/types"
+import type { LiuExif, ImageShow, LiuImageStore } from "~/types"
 import liuUtil from '../liu-util';
 import ider from '../basic/ider';
 import { encode as blurhashEncode } from "blurhash";
 import { getImgLayout } from "./tools/img-layout"
 import type { Ref } from "vue"
+import ExifReader from "exifreader"
 
 type FileWithCharacteristic = { 
   file: File
@@ -29,6 +30,62 @@ const BlurhashEncoding = {
   maxHeight: 32,
 }
 
+/**
+ * 获取图片的 exif 信息
+ *   为什么不在 getMetaDataFromFiles 里一并获取呢？
+ *   因为 getMetaDataFromFiles 传入的 files 已经是压缩后的图片
+ * @param files 图片原档
+ */
+async function extractExif(files: File[]) {
+  const list: Array<LiuExif> = []
+
+  for(let i=0; i<files.length; i++) {
+    const f = files[i]
+    const mExif: LiuExif = {}
+
+    try {
+      const res = await ExifReader.load(f, { expanded: true })
+      // console.log("exif: ")
+      // console.log(res.exif)
+      // console.log("gps: ")
+      // console.log(res.gps)
+      
+      const gps = res.gps
+      const exif = res.exif
+
+      if(gps) {
+        mExif.gps = {}
+        const { Altitude, Latitude, Longitude } = gps
+        mExif.gps.altitude = Altitude?.toFixed(2)
+        mExif.gps.latitude = Latitude?.toFixed(9)
+        mExif.gps.longitude = Longitude?.toFixed(9)
+      }
+
+      if(exif) {
+        mExif.DateTimeOriginal = exif.DateTimeOriginal?.description
+        mExif.HostComputer = (exif as any).HostComputer?.description
+        mExif.Model = exif.Model?.description
+      }
+      
+    }
+    catch(err) {
+      console.log("extract exif error:::")
+      console.log(err)
+    }
+
+    // console.log("看一下 mExif: ")
+    // console.log(mExif)
+    // console.log(" ")
+
+    list.push(mExif)
+  }
+  return list
+}
+
+/**
+ * 压缩图片
+ * @param files 图片 File 类型
+ */
 async function compress(files: File[]) {
   const list: Array<File> = []
   for(let i=0; i<files.length; i++) {
@@ -73,7 +130,10 @@ function _toCompress(file: File) {
   return new Promise(_excute)
 }
 
-async function getMetaDataFromFiles(files: File[]) {
+async function getMetaDataFromFiles(
+  files: File[],
+  exifs?: LiuExif[],
+) {
   const list: LiuImageStore[] = []
 
   const _get = (file: File) => {
@@ -161,7 +221,10 @@ async function getMetaDataFromFiles(files: File[]) {
     return new Promise(_read)
   }
 
-  const _pack = async (data: FileWithCharacteristic) => {
+  const _pack = async (
+    data: FileWithCharacteristic,
+    exif?: LiuExif
+  ) => {
     const w = data.width
     const h = data.height
     let h2w = w && h ? (h / w).toFixed(2) : undefined
@@ -185,14 +248,16 @@ async function getMetaDataFromFiles(files: File[]) {
       height: h,
       h2w,
       blurhash: data.blurhash,
+      someExif: exif,
     }
     return obj
   }
 
   for(let i=0; i<files.length; i++) {
     const v = files[i]
+    const mExif = exifs?.[i]
     const res = await _get(v)
-    const res2 = await _pack(res)
+    const res2 = await _pack(res, mExif)
     if(res2) list.push(res2)
   }
   return list
@@ -249,6 +314,7 @@ function whenImagesChanged(
 }
 
 export default {
+  extractExif,
   compress,
   getMetaDataFromFiles,
   imageStoreToShow,

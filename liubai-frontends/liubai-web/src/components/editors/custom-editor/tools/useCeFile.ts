@@ -199,8 +199,9 @@ async function handleImages(
     return
   }
 
+  const res0 = await imgHelper.extractExif(imgFiles)
   const res = await imgHelper.compress(imgFiles)
-  const res2 = await imgHelper.getMetaDataFromFiles(res)
+  const res2 = await imgHelper.getMetaDataFromFiles(res, res0)
 
   res2.forEach((v, i) => {
     if(i < canPushNum) state.images?.push(v)
