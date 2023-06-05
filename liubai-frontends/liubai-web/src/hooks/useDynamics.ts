@@ -7,6 +7,7 @@ import type { SupportedLocale } from "../types/types-locale"
 import { i18n } from "~/locales"
 import localCache from "../utils/system/local-cache"
 import liuApi from "~/utils/liu-api"
+import middleBridge from "~/utils/middle-bridge"
 
 const theme = ref<SupportedTheme | "">("")
 
@@ -17,6 +18,7 @@ export const useDynamics = () => {
 
   const setLanguage = (val: SupportedLocale) => {
     language.value = val
+    middleBridge.setAppTitle()
   }
 
   const setTheme = (val: SupportedTheme) => {
