@@ -9,6 +9,7 @@ import type { WhatDetail } from '~/types/other/types-custom';
 import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue"
 import type { PageState } from '~/types/types-atom';
 import type { LocatedA } from "~/types/other/types-custom"
+import CommentArea from '~/components/level2/comment-area/comment-area.vue';
 
 const props = defineProps({
   location: {
@@ -62,6 +63,10 @@ subscribeUpdate(tdData)
       :located="commentEditorLocated"
       :parent-thread="tdData.threadShow._id"
     ></CommentEditor>
+
+    <CommentArea
+      :thread-id="tdData.threadShow._id"
+    ></CommentArea>
 
     <div class="td-tmp-box"></div>
 

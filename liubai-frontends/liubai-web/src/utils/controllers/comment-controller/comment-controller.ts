@@ -9,7 +9,7 @@ import { equipComments } from "../equip/comments"
  *    这时，不要加载出已删除的评论，因为不影响阅读
  *    加载顺序: 依时间顺序，即越早发的在越前面
  */
-export async function loadByThread(opt: LoadByThreadOpt) {
+async function loadByThread(opt: LoadByThreadOpt) {
   const { targetThread, lastItemStamp } = opt
 
   // 过滤掉 非一级的评论[和加载 lastItemStamp 以后的评论]
@@ -27,7 +27,9 @@ export async function loadByThread(opt: LoadByThreadOpt) {
     oState: "OK",
   }
 
-  const list = await db.contents.where(w).filter(filterFunc).sortBy("createdStamp")
+  let q = db.contents.where(w).filter(filterFunc)
+  q = q.limit(9)
+  const list = await q.sortBy("createdStamp")
   const comments = await equipComments(list)
 
   return comments
@@ -38,6 +40,11 @@ export async function loadByThread(opt: LoadByThreadOpt) {
  *  已知某个目标 comment 加载它的上下文
  *     向上加载时，必须加载出已删除的评论，这样才不会破坏 "上下文"
  */
-export async function loadByComment(opt: LoadByCommentOpt) {
+async function loadByComment(opt: LoadByCommentOpt) {
   
+}
+
+export default {
+  loadByThread,
+  loadByComment
 }

@@ -1,3 +1,9 @@
+import { CommentShow } from "~/types/types-content"
+
+export interface CommentAreaCtx {
+  comments: CommentShow[]
+  threadId: string
+}
 
 export interface CommentAreaProps {
   threadId: string
