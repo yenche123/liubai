@@ -9,6 +9,7 @@ import {
 import liuMedia from "./media"
 import liuPermission from "./permission"
 import canIUse from "./can-i-use"
+import liuDoc from "./document-related"
 
 export default {
   copyToClipboard: device.copyToClipboard,
@@ -38,4 +39,5 @@ export default {
   getSupportedConstraints: liuMedia.getSupportedConstraints,
   permissionsQuery: liuPermission.permissionsQuery,
   canIUse,
+  doc: liuDoc,
 }

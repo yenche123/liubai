@@ -5,11 +5,16 @@ import { init as initForSystem } from "~/utils/system/init"
 import { onMounted, onUnmounted } from "vue";
 import { useGlobalStateStore } from "./stores/useGlobalStateStore";
 import liuEnv from "~/utils/liu-env";
+import middleBridge from "~/utils/middle-bridge";
 
 // 监听和处理一些全局的事务，比如路由变化
 
 export function useApp() {
 
+  // 设置 title
+  middleBridge.setAppTitle()
+
+  // 监听路由变化，若加载过久，窗口顶部会出现加载条
   useGlobalLoading()
 
   const env = liuEnv.getEnv()
