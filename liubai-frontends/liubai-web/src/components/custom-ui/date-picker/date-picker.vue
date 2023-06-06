@@ -183,6 +183,7 @@ const previewDate = computed(() => {
 <style lang="scss">
 
 .liu-dp-container {
+  --dp-cell-padding: 0;
 
   .dp__flex_display {
     justify-content: center;
@@ -221,15 +222,20 @@ const previewDate = computed(() => {
 
   .dp-custom-calendar-wrapper {
 
+    .dp__calendar_header {
+      margin-block-start: 10px;
+    }
+
     .dp__calendar_header_item {
       width: 46px;
-      height: 46px;
+      height: 35px;
       max-width: 13vw;
       max-height: 13vw;
     }
 
     .dp__calendar_item {
       outline: none;
+      flex-grow: 0;
     }
 
     .dp-custom-cell {
@@ -252,7 +258,7 @@ const previewDate = computed(() => {
   }
 
 
-  @media screen and (max-width: 380px) {
+  @media screen and (max-width: 400px) {
     .dp-custom-menu {
       padding: 10px 10px 10px;
     }
@@ -262,10 +268,14 @@ const previewDate = computed(() => {
     }
   }
 
-  @media screen and (max-width: 350px) {
+  @media screen and (max-width: 370px) {
 
     .dp-custom-menu {
       padding: 10px 2vw 10px;
+    }
+
+    .dp__menu_inner {
+      padding: 6px 0;
     }
 
     .dp__action_row {
