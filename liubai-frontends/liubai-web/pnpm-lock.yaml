@@ -47,8 +47,8 @@ dependencies:
     specifier: 2.0.3
     version: 2.0.3(@tiptap/core@2.0.3)(@tiptap/pm@2.0.3)(vue@3.3.4)
   '@vuepic/vue-datepicker':
-    specifier: ^4.2.1
-    version: 4.2.1(vue@3.3.4)
+    specifier: ^5.2.0
+    version: 5.2.0(vue@3.3.4)
   '@vueuse/core':
     specifier: ^10.1.2
     version: 10.1.2(vue@3.3.4)
@@ -1587,8 +1587,8 @@ packages:
   /@vue/shared@3.3.4:
     resolution: {integrity: sha512-7OjdcV8vQ74eiz1TZLzZP4JwqM5fA94K6yntPS5Z25r9HDuGNzaGdgvwKYq6S+MxwF0TFRwe50fIR/MYnakdkQ==}
 
-  /@vuepic/vue-datepicker@4.2.1(vue@3.3.4):
-    resolution: {integrity: sha512-O8hy0o9jQkv/Et7G0mUFDR94NTcHHouy70ELfrTmaWOIBamS/8cRWAwwb/reOvKPX+eo1XKs/v2mj+i5WA14kw==}
+  /@vuepic/vue-datepicker@5.2.0(vue@3.3.4):
+    resolution: {integrity: sha512-rDqmDGtkWNXVucuF8jWAoniRu7YS77ea/lN458D8AErfVoBmPZSax52vEYOXXhw530qXSeZwzFbeBbTEoeS7UQ==}
     engines: {node: '>=14'}
     peerDependencies:
       vue: '>=3.2.0'

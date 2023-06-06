@@ -70,7 +70,7 @@ const previewDate = computed(() => {
       </template>
 
       <!-- 按钮区域 -->
-      <template #action-select>
+      <template #action-buttons>
         <div class="liu-dp-btns">
           <div class="liu-hover liu-dp-btn liu-dp-cancel" @click="onTapCancel">
             <span>{{ t("common.cancel") }}</span>
@@ -245,6 +245,10 @@ const previewDate = computed(() => {
 
   .dp__action_row {
     padding: 10px 0px 10px 10px;
+
+    .dp__action_buttons {
+      flex: 1; 
+    }
   }
 
 
