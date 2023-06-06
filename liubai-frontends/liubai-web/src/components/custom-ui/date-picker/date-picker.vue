@@ -183,6 +183,7 @@ const previewDate = computed(() => {
 <style lang="scss">
 
 .liu-dp-container {
+  --dp-menu-padding: 0;
   --dp-cell-padding: 0;
 
   .dp__flex_display {
@@ -231,6 +232,7 @@ const previewDate = computed(() => {
       height: 35px;
       max-width: 13vw;
       max-height: 13vw;
+      flex-grow: 0;
     }
 
     .dp__calendar_item {
@@ -250,7 +252,7 @@ const previewDate = computed(() => {
   }
 
   .dp__action_row {
-    padding: 10px 0px 10px 10px;
+    padding: 5px 0px 10px 10px;
 
     .dp__action_buttons {
       flex: 1; 
@@ -272,10 +274,6 @@ const previewDate = computed(() => {
 
     .dp-custom-menu {
       padding: 10px 2vw 10px;
-    }
-
-    .dp__menu_inner {
-      padding: 6px 0;
     }
 
     .dp__action_row {
