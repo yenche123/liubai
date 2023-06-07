@@ -25,7 +25,10 @@ export interface CommentStoreSetDataOpt {
 export const useCommentStore = defineStore("comment", () => {
   const changeType = ref<CommentChangeType | "">("")
   const commentId = ref("")
+
+  // 被删除时，该变量依然有值，只不过是干净的 commentShow，伴随着 oState 等于 DELETED
   const commentShow = ref<CommentShow>()
+
   const parentThread = ref("")
   const parentComment = ref("")
   const replyToComment = ref("")
@@ -42,6 +45,7 @@ export const useCommentStore = defineStore("comment", () => {
   return {
     changeType,
     commentId,
+    commentShow,
     parentThread,
     parentComment,
     replyToComment,
@@ -54,6 +58,7 @@ export type CommentStore = ReturnType<typeof useCommentStore>
 export interface CommentStoreState {
   changeType: CommentChangeType | ""
   commentId: string
+  commentShow?: CommentShow
   parentThread: string
   parentComment: string
   replyToComment: string
