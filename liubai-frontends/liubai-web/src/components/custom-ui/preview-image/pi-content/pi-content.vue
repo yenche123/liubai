@@ -67,7 +67,6 @@ const onSwiper = (swiper: Swiper) => {
               :blurhash="item.blurhash"
               :disableTransition="currentIndex === index && viewTransitionName ? true : false"
               :view-transition-name="currentIndex === index ? viewTransitionName : undefined"
-              bg-color="#1f1f1f"
             ></liu-img>
           </div>
 

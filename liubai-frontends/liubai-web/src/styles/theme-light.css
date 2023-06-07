@@ -88,6 +88,10 @@
   --on-cui-snackbar: #ffffff;
   --cui-snackbar-shadow: 0 6px 12px rgba(0, 0, 0, .18);
 
+  /** preview-image 预览图片 */
+  --preview-image-bg: rgba(255, 255, 255, 1);
+  --preview-image-bg-2: rgba(255, 255, 255, .93);
+
   /** 自定义组件: action-sheet，但希望这个组件的颜色是通用的 */
   --cui-actionsheet-bg: #fafafa;
 
