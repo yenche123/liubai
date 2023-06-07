@@ -7,9 +7,9 @@ import { useThreadOperateInDetail } from './tools/useThreadOperateInDetail';
 import { subscribeUpdate } from "./tools/subscribeUpdate"
 import type { WhatDetail } from '~/types/other/types-custom';
 import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue"
-import type { PageState } from '~/types/types-atom';
 import type { LocatedA } from "~/types/other/types-custom"
 import CommentArea from '~/components/level2/comment-area/comment-area.vue';
+import type { TdEmit } from "./tools/types"
 
 const props = defineProps({
   location: {
@@ -22,9 +22,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits<{
-  "pagestatechange": [state: PageState]
-}>()
+const emit = defineEmits<TdEmit>()
 
 const {
   tdData

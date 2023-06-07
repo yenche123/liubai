@@ -8,7 +8,10 @@ import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
 
-const { hiddenScrollBar, onVvWidthChange } = useMainVice()
+const { 
+  hiddenScrollBar, 
+  onVvWidthChange,
+} = useMainVice({ setDefaultTitle: false })
 const { t } = useI18n()
 
 </script>

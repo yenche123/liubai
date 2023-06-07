@@ -13,5 +13,12 @@ export interface TdProps {
 }
 
 export interface TdEmit {
-  (event: "pagestatechange", state: PageState): void
+  (evt: "pagestatechange", state: PageState): void
+  (evt: "getthreadshow", thread: ThreadShow): void
+}
+
+export interface TdCtx {
+  id: string
+  tdData: TdData
+  emit: TdEmit
 }

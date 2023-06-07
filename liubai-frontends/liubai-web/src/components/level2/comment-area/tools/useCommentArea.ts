@@ -34,8 +34,6 @@ async function loadComments(
   reload?: boolean,
 ) {
 
-  console.log("loadComments...........")
-
   let length = ctx.comments.length
 
   const opt: LoadByThreadOpt = {
@@ -45,13 +43,6 @@ async function loadComments(
     opt.lastItemStamp = ctx.comments[length - 1].createdStamp
   }
 
-  console.time("loadByThread")
   const newList = await commentCotroller.loadByThread(opt)
-  console.timeEnd("loadByThread")
-
-  console.log("查看一下加载到的 newList: ")
-  console.log(newList)
-  console.log(" ")
   
-
 }

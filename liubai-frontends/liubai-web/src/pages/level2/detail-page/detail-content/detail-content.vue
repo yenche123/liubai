@@ -3,7 +3,8 @@ import ThreadDetail from "~/components/level1/thread-detail/thread-detail.vue";
 import { useDetailContent } from "./tools/useDetailContent";
 
 const {
-  threadId
+  threadId,
+  onGetThreadShow,
 } = useDetailContent()
 
 </script>
@@ -15,6 +16,7 @@ const {
       <ThreadDetail 
         :thread-id="threadId"
         location="detail-page"
+        @getthreadshow="onGetThreadShow"
       ></ThreadDetail>
     </div>
   </div>

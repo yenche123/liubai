@@ -1,10 +1,23 @@
 
-import { provide, ref } from "vue"
+import { onActivated, provide, ref } from "vue"
 import time from "~/utils/basic/time"
 import liuUtil from "~/utils/liu-util"
+import middleBridge from "~/utils/middle-bridge"
 import { viceViewWidthKey, tapMainViewStampKey } from "~/utils/provide-keys"
 
-export function useMainVice() {
+export interface MainViceOpt {
+  setDefaultTitle?: boolean        // 是否自动设置窗口的标题，将其设置为 appName；默认为 true
+}
+
+export function useMainVice(opt?: MainViceOpt) {
+
+  const setDefaultTitle = opt?.setDefaultTitle ?? true
+  onActivated(() => {
+    if(setDefaultTitle) {
+      middleBridge.setAppTitle()
+    }
+  })
+
   const viceViewPx = ref(0)
   const hiddenScrollBar = ref(false)
   const onVvWidthChange = (val: number) => {
