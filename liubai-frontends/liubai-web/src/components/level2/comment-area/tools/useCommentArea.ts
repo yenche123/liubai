@@ -4,7 +4,7 @@ import type {
   CommentAreaEmits,
   CommentAreaData,
 } from "./types"
-import commentCotroller from "~/utils/controllers/comment-controller/comment-controller"
+import commentController from "~/utils/controllers/comment-controller/comment-controller"
 import type {
   LoadByThreadOpt
 } from "~/utils/controllers/comment-controller/tools/types"
@@ -47,21 +47,24 @@ async function loadComments(
 ) {
 
   let length = caData.comments.length
+  const lastComment = caData.comments[length - 1]
 
   const opt: LoadByThreadOpt = {
     targetThread: caData.threadId,
   }
-  if(length > 0 && !reload) {
-    opt.lastItemStamp = caData.comments[length - 1].createdStamp
+  if(lastComment && !reload) {
+    opt.lastItemStamp = lastComment.createdStamp
   }
 
-  const newList = await commentCotroller.loadByThread(opt)
+  const newList = await commentController.loadByThread(opt)
 
   if(reload || length < 1) {
+    commentController.handleRelation(newList)
     caData.comments = newList
   }
   else {
     usefulTool.filterDuplicated(caData.comments, newList)
+    commentController.handleRelation(newList, lastComment)
     caData.comments.push(...newList)
   }
   

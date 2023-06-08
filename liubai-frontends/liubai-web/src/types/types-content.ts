@@ -118,6 +118,8 @@ export interface CommentShow {
   parentThread: string
   parentComment?: string
   replyToComment?: string
+  prevIReplied?: boolean     // 「前一条评论」是否为「当前评论」的回复对象
+  nextRepliedMe?: boolean    // 「后一条评论」是否回复「当前评论」
 }
 
 

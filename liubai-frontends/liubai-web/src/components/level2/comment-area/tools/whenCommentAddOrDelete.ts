@@ -4,6 +4,7 @@ import type {
   CommentAreaData,
 } from "./types"
 import type { CommentStoreState } from "~/hooks/stores/useCommentStore"
+import commentController from "~/utils/controllers/comment-controller/comment-controller"
 
 
 /** 当 comment-area 监听到 comment-store 发生变化时
@@ -70,6 +71,12 @@ function handleAdded(
     // 找到 replyToComment，先加大它的 commentNum
     v.commentNum++
 
+    // 再将它的 nextRepliedMe 设为 true
+    v.nextRepliedMe = true
+
+    // 此时将 newComment 的 prevIReplied 也调整为 true
+    newComment.prevIReplied = true
+
     // 判断后一个 item 的 replyToComment 是否也是相同的 replyToComment
     // 若相同，则不添加进该 comments 列表里，要不然会打乱回复关系
     const nextItem = comments[i + 1]
@@ -117,6 +124,7 @@ function handleEditedOrDeleted(
     // 如果是编辑，那么直接赋值
     if(changeType === "edit") {
       comments[i] = theComment
+      commentController.handleRelation(comments)
       break
     }
 
@@ -127,11 +135,14 @@ function handleEditedOrDeleted(
     // 这样界面上就会如此呈现: "该评论已被删除"，而不会打乱上下文
     if(replyToCommentOfNextItem === commentId) {
       comments[i] = theComment
+      commentController.handleRelation(comments)
       break
     }
 
-    // 其他删除方式，都使用自列表中移除
+    // 其他删除方式，都使用【自列表中移除】
     comments.splice(i, 1)
+    // 最后，再次确保关系正确
+    commentController.handleRelation(comments)
     break
   }
 
