@@ -297,6 +297,7 @@
   },
   "comment": {
     "placeholder1": "補充一點想法",
-    "submit1": "補充"
+    "submit1": "補充",
+    "deleted_tip": "此留言已被刪除"
   }
 }

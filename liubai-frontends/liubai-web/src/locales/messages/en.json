@@ -297,6 +297,7 @@
   },
   "comment": {
     "placeholder1": "Add some thoughts",
-    "submit1": "Add"
+    "submit1": "Add",
+    "deleted_tip": "The comment has been deleted."
   }
 }
