@@ -5,13 +5,12 @@ import type { MemberShow } from "~/types/types-content"
 const props = defineProps({
   memberShow: {
     type: Object as PropType<MemberShow>,
-    required: true,
   }
 })
 
 // 头像里的文字
 const char = computed(() => {
-  const name = props.memberShow.name
+  const name = props.memberShow?.name
   if(!name) return ""
   const f = name[0]
   if(!f) return ""
@@ -30,7 +29,7 @@ const smallRequired = computed(() => {
 })
 
 const hasAvatar = computed(() => {
-  const ava = props.memberShow.avatar
+  const ava = props.memberShow?.avatar
   if(ava?.src) return true
   return false
 })
@@ -43,7 +42,7 @@ const hasAvatar = computed(() => {
     <div class="la-bg" v-if="!hasAvatar"></div>
 
     <liu-img v-if="hasAvatar" 
-      :src="(memberShow.avatar?.src as string)"
+      :src="(memberShow?.avatar?.src as string)"
       border-radius="50%"
       class="la-img"
     ></liu-img>

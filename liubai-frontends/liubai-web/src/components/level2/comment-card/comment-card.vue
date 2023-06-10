@@ -2,6 +2,8 @@
 import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { CommentShow } from '~/types/types-content';
+import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
+import CcBox from "./cc-box/cc-box.vue"
 
 const { t } = useI18n()
 
@@ -38,10 +40,69 @@ const props = defineProps({
       <!-- 当前评论为目标评论时 -->
       <div v-if="isTargetComment" class="cc-target">
 
+        <!-- 头像、姓名和日期 -->
+        <div class="cct-first-bar">
+          <LiuAvatar
+            class="cct-avatar"
+            :member-show="cs.creator"
+          ></LiuAvatar>
+          <div class="cctf-info">
+            <!-- 用户名 -->
+            <div class="cctf-account">
+              <span v-if="cs.creator?.name">{{ cs.creator?.name }}</span>
+              <span v-else>{{ t('comment.no_idea') }}</span>
+            </div>
+
+            <!-- 发表或编辑时间 -->
+            <div class="cctf-time">
+              <span v-if="cs.editedStr">{{ t('thread_related.edited_at', { date: cs.editedStr }) }}</span>
+              <span v-else>{{ t('thread_related.created_at', { date: cs.createdStr }) }}</span>
+            </div>
+
+          </div>
+
+          <!-- 更多选项: 先留空 -->
+          <!-- <div class="cctf-footer">
+            
+          </div> -->
+        </div>
+
+        <!-- 内文 + 图片 + 操作栏 -->
+        <CcBox :cs="cs"></CcBox>
+
       </div>
 
       <!-- 通用评论 -->
       <div v-else class="cc-common">
+
+        <!-- 头像 （+指向下个评论的线条）-->
+        <div class="ccc-first-column">
+          <LiuAvatar
+            class="ccc-avatar"
+            :member-show="cs.creator"
+          ></LiuAvatar>
+          <div class="cccf-line-box">
+            <div class="cccf-line"></div>
+          </div>
+        </div>
+
+        <div class="ccc-main">
+          <!-- 用户名 + 时间 -->
+          <div class="ccc-account-time">
+            <div class="ccc-account">
+              <span v-if="cs.creator?.name">{{ cs.creator?.name }}</span>
+              <span v-else>{{ t('comment.no_idea') }}</span>
+            </div>
+            <div class="ccc-time">
+              <span v-if="cs.editedStr">{{ cs.editedStr }}</span>
+              <span v-else>{{ cs.createdStr }}</span>
+            </div>
+          </div>
+
+          <!-- 内文 + 图片 + 操作栏 -->
+          <CcBox :cs="cs"></CcBox>
+
+        </div>
 
       </div>
       
@@ -70,7 +131,7 @@ const props = defineProps({
   height: 12px;
 
   .cct-prevIReplied {
-    width: 40px;
+    width: 38px;
     height: 8px;
     display: flex;
     position: relative;
@@ -88,6 +149,77 @@ const props = defineProps({
   position: relative;
 }
 
+.cc-target {
+  width: 100%;
+  position: relative;
+}
+
+.cct-first-bar {
+  width: 100%;
+  position: relative;
+  display: flex;
+}
+
+.cct-avatar {
+  width: 38px;
+  height: 38px;
+  margin-inline-end: 12px;
+  flex: none;
+}
+
+.cctf-info {
+  flex: 1;
+  position: relative;
+  margin-block-end: 2px;
+}
+
+.cctf-account {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-size: var(--comment-font);
+  color: var(--liu-quote);
+}
+
+.cctf-time {
+  font-size: var(--mini-font);
+  color: var(--main-tip);
+  user-select: none;
+}
+
+/** 通用评论的 layout */
+.cc-common {
+  width: 100%;
+  position: relative;
+  display: flex;
+}
+
+.ccc-first-column {
+  width: 38px;
+  margin-inline-end: 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.ccc-avatar {
+  width: 38px;
+  height: 38px;
+  margin-block-end: 2px;
+}
+
+.cccf-line-box {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  flex: 1;
+}
+
+.cccf-line {
+  height: 100%;
+  width: 2px;
+}
 
 
 
