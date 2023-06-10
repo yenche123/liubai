@@ -196,6 +196,7 @@ const props = defineProps({
 
 .ccc-first-column {
   width: 38px;
+  flex: none;
   margin-inline-end: 12px;
   display: flex;
   flex-direction: column;
@@ -221,7 +222,26 @@ const props = defineProps({
   width: 2px;
 }
 
+.ccc-main {
+  flex: 1;
+  position: relative;
+}
 
+.ccc-account-time {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ccc-account {
+  font-size: var(--comment-font);
+  color: var(--liu-quote);
+  margin-inline-end: 6px;
+}
+
+.ccc-time {
+  font-size: var(--comment-font);
+  color: var(--main-tip);
+}
 
 
 
