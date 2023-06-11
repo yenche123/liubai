@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // 评论区，只 loadByThread
 // 场景: 已知 thread，在该动态下展示评论
-
+import CommentCard from "../comment-card/comment-card.vue";
 import type { CommentAreaEmits } from "./tools/types"
 import { useCommentArea } from "./tools/useCommentArea";
 
@@ -24,11 +24,12 @@ const { caData } = useCommentArea(props, emit)
 <template>
 
   <div class="ca-container">
-
-
-
+    <template v-for="(item, index) in caData.comments" :key="item._id">
+      <CommentCard
+        :cs="item"
+      ></CommentCard>
+    </template>
   </div>
-
 
 </template>
 <style scoped lang="scss">

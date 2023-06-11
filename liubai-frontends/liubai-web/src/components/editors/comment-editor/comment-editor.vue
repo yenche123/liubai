@@ -120,6 +120,8 @@ const {
   width: 100%;
   position: relative;
   display: flex;
+  padding: 0 10px;
+  box-sizing: border-box;
 }
 
 .ce-avatar {

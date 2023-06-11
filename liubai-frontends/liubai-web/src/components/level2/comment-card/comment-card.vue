@@ -123,7 +123,7 @@ const props = defineProps({
 .cc-container {
   width: 100%;
   box-sizing: border-box;
-  padding: 0 16px;
+  padding: 0 10px;
 }
 
 .cc-top {
@@ -152,6 +152,7 @@ const props = defineProps({
 .cc-target {
   width: 100%;
   position: relative;
+  padding-block-end: 12px;
 }
 
 .cct-first-bar {
@@ -220,26 +221,33 @@ const props = defineProps({
 .cccf-line {
   height: 100%;
   width: 2px;
+  background: var(--line-hover);
+  border-top-left-radius: 1px;
+  border-top-right-radius: 1px;
+  overflow: hidden;
 }
 
 .ccc-main {
   flex: 1;
   position: relative;
+  padding-block-end: 12px;
 }
 
 .ccc-account-time {
   display: flex;
   flex-wrap: wrap;
+  user-select: none;
+  margin-block-end: 2px;
 }
 
 .ccc-account {
-  font-size: var(--comment-font);
+  font-size: var(--mini-font);
   color: var(--liu-quote);
   margin-inline-end: 6px;
 }
 
 .ccc-time {
-  font-size: var(--comment-font);
+  font-size: var(--mini-font);
   color: var(--main-tip);
 }
 
