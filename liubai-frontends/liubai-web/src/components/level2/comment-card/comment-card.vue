@@ -237,7 +237,7 @@ const props = defineProps({
   display: flex;
   flex-wrap: wrap;
   user-select: none;
-  margin-block-end: 2px;
+  margin-block-end: 4px;
 }
 
 .ccc-account {
@@ -248,7 +248,7 @@ const props = defineProps({
 
 .ccc-time {
   font-size: var(--mini-font);
-  color: var(--main-tip);
+  color: var(--main-note);
 }
 
 
