@@ -3,7 +3,7 @@ import { computed, ref, inject } from 'vue';
 import type { Ref, PropType } from "vue";
 import type { ImportedAtom2 } from "../tools/types"
 import { useI18n } from 'vue-i18n';
-import TcCovers from "~/components/level1/thread-list/thread-card/tc-covers/tc-covers.vue";
+import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-covers.vue";
 import { mainViewWidthKey } from "~/utils/provide-keys";
 
 const { t } = useI18n()
@@ -90,10 +90,10 @@ const smallView = computed(() => {
         </div>
 
         <!-- 图片 -->
-        <TcCovers 
+        <BrowsingCovers 
           :covers="item.threadShow.images"
           :img-layout="item.threadShow.imgLayout"
-        ></TcCovers>
+        ></BrowsingCovers>
 
       </div>
     </template>

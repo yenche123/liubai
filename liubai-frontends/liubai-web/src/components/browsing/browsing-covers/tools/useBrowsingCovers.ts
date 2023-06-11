@@ -1,11 +1,11 @@
 import { toRef } from "vue"
-import type { TcCoversProps } from "./types"
+import type { BrowsingCoversProps } from "./types"
 import liuApi from "~/utils/liu-api"
 import cui from "~/components/custom-ui"
 import { getViewTranNames } from "~/utils/other/transition-related"
 
-export function useTcCovers(
-  props: TcCoversProps
+export function useBrowsingCovers(
+  props: BrowsingCoversProps
 ) {
   const coversRef = toRef(props, "covers")
   const viewTranNames = getViewTranNames(coversRef)

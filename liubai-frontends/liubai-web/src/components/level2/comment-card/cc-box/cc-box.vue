@@ -3,7 +3,7 @@
 import type { CommentShow } from '~/types/types-content';
 import type { PropType } from 'vue';
 import EditorCore from '~/components/editors/editor-core/editor-core.vue';
-import TcCovers from "~/components/level1/thread-list/thread-card/tc-covers/tc-covers.vue"
+import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-covers.vue";
 
 const props = defineProps({
   cs: {          // cs 为 commentShow 的简写
@@ -25,9 +25,9 @@ const props = defineProps({
   </div>
 
   <!-- 图片 -->
-  <TcCovers
+  <BrowsingCovers
     :covers="cs.images"
-  ></TcCovers>
+  ></BrowsingCovers>
 
   <!-- 文件 -->
   <div class="cb-files"></div>

@@ -1,35 +1,35 @@
 <script setup lang="ts">
-import { tcCoversProps } from "./tools/types"
-import { useTcCovers } from './tools/useTcCovers';
+import { browsingCoversProps } from "./tools/types"
+import { useBrowsingCovers } from './tools/useBrowsingCovers';
 
 const imgWidth = 140
-const props = defineProps(tcCoversProps)
-const { viewTranNames, onTapImage } = useTcCovers(props)
+const props = defineProps(browsingCoversProps)
+const { viewTranNames, onTapImage } = useBrowsingCovers(props)
 
 </script>
 <template>
 
-  <div class="tcc-container"
+  <div class="bc-container"
     v-if="covers?.length"
   >
 
     <!-- 一张图片时 -->
-    <div v-if="imgLayout?.one" class="tcc-box"
+    <div v-if="imgLayout?.one" class="bc-box"
       :style="{ 
         'max-width': imgLayout.one.maxWidthPx + 'px',
       }"
     >
-      <div class="tcc-virtual" 
+      <div class="bc-virtual" 
         :style="{
           'padding-bottom': imgLayout.one.heightStr,
         }"
       ></div>
-      <div class="tcc-one-box">
+      <div class="bc-one-box">
         <liu-img :src="covers[0].src" 
           :draggable="false" 
           :blurhash="covers[0].blurhash"
           border-radius="12px"
-          class="tcc-one-img"
+          class="bc-one-img"
           object-fit="cover" 
           :view-transition-name="viewTranNames[0]"
           @click.stop="onTapImage($event, 0, '12px')"
@@ -38,31 +38,31 @@ const { viewTranNames, onTapImage } = useTcCovers(props)
     </div>
 
     <!-- 两张图片时 -->
-    <div v-else-if="imgLayout?.two" class="tcc-box"
+    <div v-else-if="imgLayout?.two" class="bc-box"
       :style="{ 
         'max-width': imgLayout.two.maxWidthPx + 'px',
       }"
     >
-      <div class="tcc-virtual" 
+      <div class="bc-virtual" 
         :style="{
           'padding-bottom': imgLayout.two.heightStr,
         }"
       ></div>
-      <div class="tcc-two-box"
+      <div class="bc-two-box"
         :class="{ 
-          'tcc-two-box_column': imgLayout.two.isColumn 
+          'bc-two-box_column': imgLayout.two.isColumn 
         }"
       >
         <div v-for="(item, index) in covers" :key="item.id"
-          class="tcctb-img-box"
+          class="bctb-img-box"
           :class="{
-            'tcctb-img-box_column': imgLayout.two.isColumn
+            'bctb-img-box_column': imgLayout.two.isColumn
           }"
         >
           <liu-img :src="item.src" 
             :draggable="false" 
             :blurhash="item.blurhash"
-            class="tcc-two-img"
+            class="bc-two-img"
             object-fit="cover" 
             :view-transition-name="viewTranNames[index]"
             @click.stop="onTapImage($event, index, '12px')"
@@ -94,23 +94,23 @@ const { viewTranNames, onTapImage } = useTcCovers(props)
 </template>
 <style lang="scss" scoped>
 
-.tcc-container {
+.bc-container {
   width: 100%;
   position: relative;
   user-select: none;
   padding-block-start: 10px;
 }
 
-.tcc-box {
+.bc-box {
   overflow: hidden;
   position: relative;
 } 
 
-.tcc-virtual {
+.bc-virtual {
   width: 100%;
 }
 
-.tcc-one-box {
+.bc-one-box {
   position: absolute;
   top: 0;
   left: 0;
@@ -128,14 +128,14 @@ const { viewTranNames, onTapImage } = useTcCovers(props)
     opacity: .72;
   }
   
-  .tcc-one-img {
+  .bc-one-img {
     width: 100%;
     height: 100%;
     cursor: pointer;
   }
 }
 
-.tcc-two-box {
+.bc-two-box {
   position: absolute;
   top: 0;
   left: 0;
@@ -146,11 +146,11 @@ const { viewTranNames, onTapImage } = useTcCovers(props)
   overflow: hidden;
 }
 
-.tcc-two-box_column {
+.bc-two-box_column {
   flex-direction: column;
 }
 
-.tcctb-img-box {
+.bctb-img-box {
   flex: 1;
   width: 10px;   /** 随便一个正整数的值都可以，因为宽度会被 flex: 1 决定 */
   height: 100%;
@@ -168,18 +168,18 @@ const { viewTranNames, onTapImage } = useTcCovers(props)
     opacity: .72;
   }
 
-  .tcc-two-img {
+  .bc-two-img {
     width: 100%;
     height: 100%;
     cursor: pointer;
   }
 }
 
-.tcctb-img-box:first-child {
+.bctb-img-box:first-child {
   margin-inline-end: 3px;
 }
 
-.tcctb-img-box_column {
+.bctb-img-box_column {
   width: 100%;
 
   /** 随便一个正整数的值都可以，
@@ -188,7 +188,7 @@ const { viewTranNames, onTapImage } = useTcCovers(props)
   height: 10px;
 }
 
-.tcctb-img-box_column:first-child {
+.bctb-img-box_column:first-child {
   margin-inline-end: 0;
   margin-block-end: 3px;
 }

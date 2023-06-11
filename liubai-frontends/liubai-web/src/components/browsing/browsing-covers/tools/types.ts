@@ -2,12 +2,12 @@ import type { ImageShow } from '~/types';
 import type { ImgLayout } from "~/types/other/types-custom"
 import type { PropType } from "vue"
 
-export interface TcCoversProps {
+export interface BrowsingCoversProps {
   covers?: ImageShow[]
   imgLayout?: ImgLayout
 }
 
-export const tcCoversProps = {
+export const browsingCoversProps = {
   covers: {
     type: Array<ImageShow>,
   },

@@ -7,7 +7,7 @@ import TcActionbar from './tc-actionbar/tc-actionbar.vue';
 import TcBottombar from "./tc-bottombar/tc-bottombar.vue";
 import TcTopbar from './tc-topbar/tc-topbar.vue';
 import TcTags from "./tc-tags/tc-tags.vue";
-import TcCovers from "./tc-covers/tc-covers.vue";
+import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-covers.vue";
 import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
 import TcBubbleMenu from './tc-bubble-menu/tc-bubble-menu.vue';
@@ -96,10 +96,10 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
       </div>
 
       <!-- 图片 -->
-      <TcCovers 
+      <BrowsingCovers 
         :covers="threadData.images"
         :img-layout="threadData.imgLayout"
-      ></TcCovers>
+      ></BrowsingCovers>
 
       <!-- 什么时候、提醒我、文件、地点、创建人、指派给 -->
       <TcAttachments
