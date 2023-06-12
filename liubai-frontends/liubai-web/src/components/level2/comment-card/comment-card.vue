@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import type { PropType } from 'vue';
+import { type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { CommentShow } from '~/types/types-content';
 import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
 import CcBox from "./cc-box/cc-box.vue"
+import type { CommentCardLocation } from "./tools/types"
+import { useCommentCard } from "./tools/useCommentCard"
 
 const { t } = useI18n()
 
@@ -15,9 +17,17 @@ const props = defineProps({
   isTargetComment: {     // 是否为目标评论
     type: Boolean,
     default: false,
+  },
+  location: {
+    type: String as PropType<CommentCardLocation>,
+    required: true,
   }
 })
 
+const { 
+  allowHover,
+  hoverColor,
+} = useCommentCard(props)
 
 </script>
 <template>
@@ -124,6 +134,14 @@ const props = defineProps({
   width: 100%;
   box-sizing: border-box;
   padding: 0 10px;
+  transition: .15s;
+}
+
+@media(hover: hover) {
+  .cc-container:hover {
+    background: v-bind("hoverColor");
+  }
+
 }
 
 .cc-top {

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 // 评论区，只 loadByThread
 // 场景: 已知 thread，在该动态下展示评论
+import type { PropType } from "vue";
 import CommentCard from "../comment-card/comment-card.vue";
 import type { CommentAreaEmits } from "./tools/types"
 import { useCommentArea } from "./tools/useCommentArea";
+import type { WhatDetail } from "~/types/other/types-custom";
 
 const props = defineProps({
   threadId: {
@@ -14,6 +16,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  location: {
+    type: String as PropType<WhatDetail>,
+    required: true,
+  }
 })
 
 const emit = defineEmits<CommentAreaEmits>()
@@ -27,6 +33,7 @@ const { caData } = useCommentArea(props, emit)
     <template v-for="(item, index) in caData.comments" :key="item._id">
       <CommentCard
         :cs="item"
+        :location="location"
       ></CommentCard>
     </template>
   </div>

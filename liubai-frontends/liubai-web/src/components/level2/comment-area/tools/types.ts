@@ -1,4 +1,5 @@
-import { CommentShow } from "~/types/types-content"
+import type { WhatDetail } from "~/types/other/types-custom"
+import type { CommentShow } from "~/types/types-content"
 
 export interface CommentAreaData {
   comments: CommentShow[]
@@ -8,6 +9,7 @@ export interface CommentAreaData {
 export interface CommentAreaProps {
   threadId: string
   reachBottomNum: number          // 外部触底时（比如滚动），该值 + 1，让
+  location: WhatDetail
 }
 
 export interface CommentAreaEmits {
