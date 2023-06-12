@@ -5,9 +5,8 @@ import ThreadCard from "../thread-list/thread-card/thread-card.vue"
 import { useThreadDetail } from "./tools/useThreadDetail"
 import { useThreadOperateInDetail } from './tools/useThreadOperateInDetail';
 import { subscribeUpdate } from "./tools/subscribeUpdate"
-import type { WhatDetail } from '~/types/other/types-custom';
+import type { WhatDetail, LocatedA } from '~/types/other/types-custom';
 import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue"
-import type { LocatedA } from "~/types/other/types-custom"
 import CommentArea from '~/components/level2/comment-area/comment-area.vue';
 import type { TdEmit } from "./tools/types"
 
