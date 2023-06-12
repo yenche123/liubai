@@ -76,13 +76,13 @@ subscribeUpdate(tdData)
 .td-comment-area {
   width: 100%;
   box-sizing: border-box;
-  padding: 10px 0;
+  padding: 16px 0;
   position: relative;
 }
 
 .td-tmp-box {
   width: 100%;
-  height: 100px;
+  height: 60px;
 }
 
 

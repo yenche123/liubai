@@ -82,7 +82,7 @@ const props = defineProps({
             :member-show="cs.creator"
           ></LiuAvatar>
           <div class="cccf-line-box">
-            <div class="cccf-line"></div>
+            <div class="cccf-line" v-if="cs.nextRepliedMe"></div>
           </div>
         </div>
 
@@ -243,7 +243,7 @@ const props = defineProps({
 .ccc-account {
   font-size: var(--mini-font);
   color: var(--liu-quote);
-  margin-inline-end: 6px;
+  margin-inline-end: 10px;
 }
 
 .ccc-time {
