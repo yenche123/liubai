@@ -27,6 +27,7 @@ const props = defineProps({
   <!-- 图片 -->
   <BrowsingCovers
     :covers="cs.images"
+    purpose="comment"
   ></BrowsingCovers>
 
   <!-- 文件 -->

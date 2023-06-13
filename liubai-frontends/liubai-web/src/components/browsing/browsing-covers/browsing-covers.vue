@@ -2,9 +2,12 @@
 import { browsingCoversProps } from "./tools/types"
 import { useBrowsingCovers } from './tools/useBrowsingCovers';
 
-const imgWidth = 140
 const props = defineProps(browsingCoversProps)
-const { viewTranNames, onTapImage } = useBrowsingCovers(props)
+const { 
+  viewTranNames, 
+  onTapImage,
+  imgWidth,
+} = useBrowsingCovers(props)
 
 </script>
 <template>

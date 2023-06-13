@@ -93,6 +93,7 @@ const smallView = computed(() => {
         <BrowsingCovers 
           :covers="item.threadShow.images"
           :img-layout="item.threadShow.imgLayout"
+          purpose="import"
         ></BrowsingCovers>
 
       </div>

@@ -9,6 +9,7 @@ export function useBrowsingCovers(
 ) {
   const coversRef = toRef(props, "covers")
   const viewTranNames = getViewTranNames(coversRef)
+  const imgWidth = props.purpose === 'comment' ? 100 : 140
 
   const onTapImage = async (
     e: MouseEvent, 
@@ -44,5 +45,6 @@ export function useBrowsingCovers(
   return {
     viewTranNames,
     onTapImage,
+    imgWidth,
   }
 }

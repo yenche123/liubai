@@ -99,6 +99,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
       <BrowsingCovers 
         :covers="threadData.images"
         :img-layout="threadData.imgLayout"
+        purpose="thread"
       ></BrowsingCovers>
 
       <!-- 什么时候、提醒我、文件、地点、创建人、指派给 -->
