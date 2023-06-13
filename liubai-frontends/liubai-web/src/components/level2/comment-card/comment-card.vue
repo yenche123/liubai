@@ -135,6 +135,9 @@ const {
   box-sizing: border-box;
   padding: 0 10px;
   transition: .15s;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: v-bind("allowHover ? 'pointer' : 'auto'");
 }
 
 @media(hover: hover) {
