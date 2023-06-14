@@ -4,6 +4,7 @@ import type { CommentShow } from '~/types/types-content';
 import type { PropType } from 'vue';
 import EditorCore from '~/components/editors/editor-core/editor-core.vue';
 import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-covers.vue";
+import PrettyFile from '~/components/browsing/pretty-file/pretty-file.vue';
 
 const props = defineProps({
   cs: {          // cs 为 commentShow 的简写
@@ -16,7 +17,7 @@ const props = defineProps({
 <template>
 
   <!-- 内文 -->
-  <div class="cb-content">
+  <div class="cb-content" v-if="cs.content">
     <EditorCore
       :is-edit="false"
       :content="cs.content"
@@ -31,7 +32,10 @@ const props = defineProps({
   ></BrowsingCovers>
 
   <!-- 文件 -->
-  <div class="cb-files"></div>
+  <PrettyFile
+    v-if="cs.files?.length"
+    :file="cs.files[0]"
+  ></PrettyFile>
 
   <!-- 工具栏 -->
   <div class="cb-actionbar">
