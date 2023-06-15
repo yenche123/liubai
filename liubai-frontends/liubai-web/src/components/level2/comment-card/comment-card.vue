@@ -27,12 +27,19 @@ const props = defineProps({
 const { 
   allowHover,
   hoverColor,
+  enableActionbar,
+  showActionbar,
+  onMouseEnterComment,
+  onMouseLeaveComment,
 } = useCommentCard(props)
 
 </script>
 <template>
 
-  <div class="cc-container">
+  <div class="cc-container"
+    @mouseenter="onMouseEnterComment"
+    @mouseleave="onMouseLeaveComment"
+  >
 
     <!-- 上部留白 （ + 指向上方评论） -->
     <div class="cc-top">
@@ -126,6 +133,9 @@ const {
 
     </div>
 
+
+    <!-- 悬浮在右上角的 actionbar -->
+
   </div>
 </template>
 <style scoped lang="scss">
@@ -133,6 +143,7 @@ const {
 .cc-container {
   width: 100%;
   box-sizing: border-box;
+  position: relative;
   padding: 0 10px;
   transition: .15s;
   border-radius: 16px;

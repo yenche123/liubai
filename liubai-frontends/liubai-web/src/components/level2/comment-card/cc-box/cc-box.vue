@@ -37,12 +37,6 @@ const props = defineProps({
     :file="cs.files[0]"
   ></PrettyFile>
 
-  <!-- 工具栏 -->
-  <div class="cb-actionbar">
-
-    
-  </div>
-
 </template>
 <style lang="scss" scoped>
 
