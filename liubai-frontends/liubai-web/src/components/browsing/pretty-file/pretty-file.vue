@@ -12,13 +12,16 @@ const props = defineProps({
 const {
   iconType,
   sizeStr,
+  onTapFile,
 } = usePrettyFile(props)
 
 
 </script>
 <template>
 
-  <div v-if="file" class="pf-container">
+  <div v-if="file" class="pf-container"
+    @click.stop="onTapFile"
+  >
     <div v-if="iconType" class="pf-icon-box">
       <svg-icon :name="'files-' + iconType"
         :cover-fill-stroke="false"

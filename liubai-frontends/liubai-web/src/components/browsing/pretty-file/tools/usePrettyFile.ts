@@ -1,7 +1,34 @@
 import { computed } from "vue"
 import type { PrettyFileProps, PrettyFileIcon } from "./types"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import { checkFile } from "~/utils/files/checkFile"
 
 export function usePrettyFile(props: PrettyFileProps) {
+
+  const rr = useRouteAndLiuRouter()
+
+  const {
+    iconType,
+    sizeStr,
+  } = initSomeVals(props)
+
+  const onTapFile = () => {
+    const f = props.file
+    if(!f) return
+    checkFile(f, rr)
+  }
+  
+
+  return {
+    iconType,
+    sizeStr,
+    onTapFile,
+  }
+}
+
+
+// 初始化一些值
+function initSomeVals(props: PrettyFileProps) {
 
   // 目前有的文件 icon: "word" / "excel" / "pdf" / "text" /  "attachment" / ""
   const iconType = computed<PrettyFileIcon>(() => {
@@ -54,8 +81,11 @@ export function usePrettyFile(props: PrettyFileProps) {
     return `${tmpStr} GB`
   })
 
+
   return {
     iconType,
     sizeStr,
   }
 }
+
+
