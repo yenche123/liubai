@@ -2,6 +2,7 @@
 // 当用户鼠标滑过 当前 comment-card 时才显示
 import { type PropType } from 'vue';
 import type { CommentCardLocation } from "../tools/types"
+import type { CommentShow } from '~/types/types-content';
 
 const props = defineProps({
   show: {
@@ -11,8 +12,15 @@ const props = defineProps({
   location: {
     type: String as PropType<CommentCardLocation>,
     required: true,
+  },
+  cs: {
+    type: Object as PropType<CommentShow>,
+    required: true,
   }
 })
+
+const default_color = "var(--main-code)"
+const onTapBlank = () => {}
 
 </script>
 <template>
@@ -20,10 +28,37 @@ const props = defineProps({
   <!-- absolute 布局 -->
   <div class="cc-actionbar"
     :class="{ 'cc-actionbar_show': show }"
+    @click.stop="onTapBlank"
   >
 
+    <!-- 表态按钮 -->
+    <div class="liu-hover cca-box">
+      <div class="cca-svg-box">
+        <svg-icon name="emoji" class="cca-svg"
+          :color="default_color"
+        ></svg-icon>
+      </div>
+      <span class="cca-text" v-if="cs.emojiData.total">{{ cs.emojiData.total }}</span>
+    </div>
 
+    <!-- 回复按钮 -->
+    <div class="liu-hover cca-box">
+      <div class="cca-svg-box">
+        <svg-icon name="comment" class="cca-svg"
+          :color="default_color"
+        ></svg-icon>
+      </div>
+      <span class="cca-text" v-if="cs.commentNum">{{ cs.commentNum }}</span>
+    </div>
 
+    <!-- 分享按钮 -->
+    <div class="liu-hover cca-box">
+      <div class="cca-svg-box">
+        <svg-icon name="share" class="cca-svg"
+          :color="default_color"
+        ></svg-icon>
+      </div>
+    </div>
 
   </div>
 
@@ -33,17 +68,53 @@ const props = defineProps({
 
 .cc-actionbar {
   position: absolute;
-  top: -10px;
-  right: 0;
+  top: -14px;
+  right: 8px;
   display: flex;
   opacity: 0;
   visibility: hidden;
   transition: .15s;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  padding: 4px 6px;
+  cursor: auto;
 }
 
 .cc-actionbar_show {
   opacity: 1;
   visibility: visible;
+}
+
+.cca-box {
+  display: flex;
+  margin-inline-end: 4px;
+}
+
+.cca-box:last-child {
+  margin-inline-end: 0;
+}
+
+.cca-svg-box {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.cca-svg {
+  width: 24px;
+  height: 24px;
+}
+
+.cca-text {
+  margin-inline-start: 2px;
+  font-size: var(--mini-font);
+  color: var(--main-code);
+  user-select: none;
 }
 
 

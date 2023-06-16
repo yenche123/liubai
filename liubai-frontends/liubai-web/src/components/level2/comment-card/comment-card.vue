@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { CommentShow } from '~/types/types-content';
 import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
 import CcBox from "./cc-box/cc-box.vue"
+import CcActionbar from './cc-actionbar/cc-actionbar.vue';
 import type { CommentCardLocation } from "./tools/types"
 import { useCommentCard } from "./tools/useCommentCard"
 
@@ -135,6 +136,12 @@ const {
 
 
     <!-- 悬浮在右上角的 actionbar -->
+    <CcActionbar
+      v-if="enableActionbar"
+      :show="showActionbar"
+      :location="location"
+      :cs="cs"
+    ></CcActionbar>
 
   </div>
 </template>
@@ -147,7 +154,6 @@ const {
   padding: 0 10px;
   transition: .15s;
   border-radius: 16px;
-  overflow: hidden;
   cursor: v-bind("allowHover ? 'pointer' : 'auto'");
 }
 

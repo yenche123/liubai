@@ -72,7 +72,7 @@ function initActionbar(
   }
 
   const onMouseLeaveComment = () => {
-
+    showActionbar.value = false
   }
 
   return {
