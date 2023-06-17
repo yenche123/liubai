@@ -121,6 +121,7 @@ const { t } = useI18n()
 
 .cca-box {
   display: flex;
+  align-items: center;
   margin-inline-end: 4px;
 }
 
@@ -129,8 +130,8 @@ const { t } = useI18n()
 }
 
 .cca-svg-box {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,8 +139,8 @@ const { t } = useI18n()
 }
 
 .cca-svg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 
 .cca-text {
@@ -147,6 +148,8 @@ const { t } = useI18n()
   font-size: var(--mini-font);
   color: var(--main-code);
   user-select: none;
+  font-weight: 400;
+  padding-inline-end: 5px;
 }
 
 
