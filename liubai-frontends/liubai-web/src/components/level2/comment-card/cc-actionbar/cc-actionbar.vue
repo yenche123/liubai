@@ -39,7 +39,7 @@ const { t } = useI18n()
       :aria-label="t('common.reaction')"
     >
       <div class="cca-svg-box">
-        <svg-icon name="emoji" class="cca-svg"
+        <svg-icon name="add_reaction_600" class="cca-svg"
           :color="default_color"
         ></svg-icon>
       </div>
@@ -64,6 +64,30 @@ const { t } = useI18n()
     >
       <div class="cca-svg-box">
         <svg-icon name="share" class="cca-svg"
+          :color="default_color"
+        ></svg-icon>
+      </div>
+    </div>
+
+    <!-- 删除按钮 -->
+    <div class="liu-hover liu-hover_last cca-box"
+      v-if="!cs.isMine"
+      :aria-label="t('common.delete')"
+    >
+      <div class="cca-svg-box">
+        <svg-icon name="delete_400" class="cca-svg"
+          :color="default_color"
+        ></svg-icon>
+      </div>
+    </div>
+
+    <!-- 举报按钮 -->
+    <div class="liu-hover liu-hover_last cca-box"
+      v-else
+      :aria-label="t('common.report')"
+    >
+      <div class="cca-svg-box">
+        <svg-icon name="report_600" class="cca-svg"
           :color="default_color"
         ></svg-icon>
       </div>
