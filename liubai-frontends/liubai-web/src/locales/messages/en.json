@@ -48,7 +48,11 @@
     "float_up": "Float up",
     "refresh": "Refresh",
     "add": "Add",
-    "view": "View"
+    "view": "View",
+    "reaction": "Reaction",
+    "reply": "Reply",
+    "share": "Share",
+    "report": "Report"
   },
   "editor": {
     "when": "When",

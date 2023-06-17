@@ -3,6 +3,7 @@
 import { type PropType } from 'vue';
 import type { CommentCardLocation } from "../tools/types"
 import type { CommentShow } from '~/types/types-content';
+import { useI18n } from "vue-i18n"
 
 const props = defineProps({
   show: {
@@ -22,6 +23,8 @@ const props = defineProps({
 const default_color = "var(--main-code)"
 const onTapBlank = () => {}
 
+const { t } = useI18n()
+
 </script>
 <template>
 
@@ -32,7 +35,9 @@ const onTapBlank = () => {}
   >
 
     <!-- 表态按钮 -->
-    <div class="liu-hover cca-box">
+    <div class="liu-hover cca-box"
+      :aria-label="t('common.reaction')"
+    >
       <div class="cca-svg-box">
         <svg-icon name="emoji" class="cca-svg"
           :color="default_color"
@@ -42,7 +47,9 @@ const onTapBlank = () => {}
     </div>
 
     <!-- 回复按钮 -->
-    <div class="liu-hover cca-box">
+    <div class="liu-hover cca-box"
+      :aria-label="t('common.reply')"
+    >
       <div class="cca-svg-box">
         <svg-icon name="comment" class="cca-svg"
           :color="default_color"
@@ -52,7 +59,9 @@ const onTapBlank = () => {}
     </div>
 
     <!-- 分享按钮 -->
-    <div class="liu-hover cca-box">
+    <div class="liu-hover cca-box"
+      :aria-label="t('common.share')"
+    >
       <div class="cca-svg-box">
         <svg-icon name="share" class="cca-svg"
           :color="default_color"
@@ -77,7 +86,6 @@ const onTapBlank = () => {}
   background-color: var(--card-bg);
   border-radius: 8px;
   box-shadow: var(--card-shadow);
-  overflow: hidden;
   padding: 4px 6px;
   cursor: auto;
 }

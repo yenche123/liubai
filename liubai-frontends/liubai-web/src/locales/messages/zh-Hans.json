@@ -48,7 +48,11 @@
     "float_up": "浮上去",
     "refresh": "刷新",
     "add": "添加",
-    "view": "查看"
+    "view": "查看",
+    "reaction": "表态",
+    "reply": "回复",
+    "share": "分享",
+    "report": "举报"
   },
   "editor": {
     "when": "什么时候",
