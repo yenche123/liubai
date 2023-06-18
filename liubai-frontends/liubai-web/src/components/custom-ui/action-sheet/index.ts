@@ -1,23 +1,9 @@
 import { reactive, ref } from "vue"
 import valTool from "~/utils/basic/val-tool"
-
-interface ActionSheetItem {
-  text?: string
-  text_key?: string
-  iconName?: string
-  color?: string
-}
-
-interface ActionSheetParam {
-  title_key?: string
-  itemList: ActionSheetItem[]
-  cancel_key?: string          // 自定义 "取消" 文案
-}
-
-interface AsSuccessRes {
-  result: "option" | "mask" | "cancel_btn"     // 点击了 "选项" / "蒙层" / "取消按钮"
-  tapIndex?: number
-}
+import type {
+  ActionSheetParam,
+  AsSuccessRes,
+} from "./tools/types"
 
 type AsResolver = (res: AsSuccessRes) => void
 
