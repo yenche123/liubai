@@ -19,4 +19,4 @@ export interface ContentPanelData {
 // 返回的 resolver 不带任何参数，只告知外部弹窗已关闭
 // 为什么不用回传组件内发生的事件呢？
 // 因为会用全局的 hook (store) 统一告知外部
-export type ContentPanelResolver = SimpleFunc
+export type ContentPanelResolver = (res: true) => void
