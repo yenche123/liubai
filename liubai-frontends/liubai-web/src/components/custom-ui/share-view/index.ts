@@ -115,7 +115,6 @@ async function _toOpen() {
   enable.value = true
   await valTool.waitMilli(16)
   show.value = true
-  await valTool.waitMilli(TRANSITION_DURATION)
 }
 
 async function _toClose() {
