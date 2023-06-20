@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import CustomModal from "./modal/custom-modal.vue"
-import TextEditor from "./text-editor/text-editor.vue";
-import DatePicker from "./date-picker/date-picker.vue"
-import PreviewImage from "./preview-image/preview-image.vue";
-import HashtagEditor from "./hashtag-editor/hashtag-editor.vue";
+import { defineAsyncComponent } from "vue"
 import SnackBar from "./snack-bar/snack-bar.vue";
-import ActionSheet from "./action-sheet/action-sheet.vue";
 import SearchEditor from "./search-editor/search-editor.vue";
-import StateSelector from "./state-selector/state-selector.vue";
 import StateEditor from "./state-editor/state-editor.vue";
-import ShareView from "./share-view/share-view.vue";
 import CustomLoading from "./loading/custom-loading.vue";
+
+const CustomModal = defineAsyncComponent(() => import("./modal/custom-modal.vue"))
+const TextEditor = defineAsyncComponent(() => import("./text-editor/text-editor.vue"))
+const DatePicker = defineAsyncComponent(() => import("./date-picker/date-picker.vue"))
+const PreviewImage = defineAsyncComponent(() => import("./preview-image/preview-image.vue"))
+const HashtagEditor = defineAsyncComponent(() => import("./hashtag-editor/hashtag-editor.vue"))
+const ActionSheet = defineAsyncComponent(() => import("./action-sheet/action-sheet.vue"))
+const StateSelector = defineAsyncComponent(() => import("./state-selector/state-selector.vue"))
+const ShareView = defineAsyncComponent(() => import("./share-view/share-view.vue"))
 
 </script>
 <template>
