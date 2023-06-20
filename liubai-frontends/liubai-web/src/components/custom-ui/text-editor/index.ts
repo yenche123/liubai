@@ -98,7 +98,16 @@ const onTapCancel = (): void => {
 }
 
 const initTextEditor = () => {
-  return { enable, show, teData, onTapConfirm, onTapCancel, inputEl, canSubmit }
+  return { 
+    enable, 
+    show, 
+    teData, 
+    onTapConfirm, 
+    onTapCancel, 
+    inputEl, 
+    canSubmit,
+    TRANSITION_DURATION,
+  }
 }
 
 const showTextEditor = async (opt: TextEditorParam): Promise<TextEditorSuccessRes> => {
