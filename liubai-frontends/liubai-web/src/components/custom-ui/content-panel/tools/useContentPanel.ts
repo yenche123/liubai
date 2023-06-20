@@ -16,6 +16,8 @@ const cpData = reactive<ContentPanelData>({
   onlyReaction: false,
   enable: false,
   show: false,
+  emojis: ["❤️", "👌", "👏", "🤣", "🥂", "🔥", "🤔", "☕"],
+  isMine: false,
 })
 
 let rr: RouteAndLiuRouter | undefined
@@ -40,11 +42,17 @@ export function showContentPanel(param: ContentPanelParam) {
     return
   }
 
-  cpData.thread = param.thread
-  cpData.comment = param.comment
   if(param.comment) {
+    cpData.comment = param.comment
     cpData.onlyReaction = param.onlyReaction ?? false
+    cpData.isMine = param.comment.isMine
   }
+  if(param.thread) {
+    cpData.thread = param.thread
+    cpData.onlyReaction = true
+    cpData.isMine = param.thread.isMine
+  } 
+  
 
   openIt(rr, queryKey)
 

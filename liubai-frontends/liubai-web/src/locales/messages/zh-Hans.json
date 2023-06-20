@@ -52,7 +52,8 @@
     "reaction": "表态",
     "reply": "回复",
     "share": "分享",
-    "report": "举报"
+    "report": "举报",
+    "view_detail": "查看详情"
   },
   "editor": {
     "when": "什么时候",

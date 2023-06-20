@@ -52,7 +52,8 @@
     "reaction": "Reaction",
     "reply": "Reply",
     "share": "Share",
-    "report": "Report"
+    "report": "Report",
+    "view_detail": "View Details"
   },
   "editor": {
     "when": "When",
