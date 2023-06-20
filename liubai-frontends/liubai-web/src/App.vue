@@ -15,10 +15,7 @@ const { route } = initLiuRouter()
 </script>
 
 <template>
-
-  <!-- theme-common 放在 theme.css 文件里 -->
-  <!-- theme-light 放在 theme-light.css 文件里 -->
-  <!-- theme-dark 放在 theme-dark.css 文件里 -->
+  
   <div 
     class="app-container"
   >

@@ -11,10 +11,8 @@ import middleBridge from "~/utils/middle-bridge"
 
 const theme = ref<SupportedTheme | "">("")
 
-export const useDynamics = () => {
+export function useDynamics() {
   const language = i18n.global.locale
-
-  initTheme()
 
   const setLanguage = (val: SupportedLocale) => {
     language.value = val
@@ -38,7 +36,7 @@ export type UseDynamicsType = ReturnType<typeof useDynamics>
 
 
 // 初始化主题
-function initTheme() {
+export function initTheme() {
   if(theme.value) return
   const localPf = localCache.getLocalPreference()
   const _theme = localPf.theme

@@ -22,7 +22,10 @@ import LiuImg from "./components/common/liu-img/liu-img.vue"
 import LiuCheckbox from "./components/common/liu-checkbox/liu-checkbox.vue"
 import FloatingVue from 'floating-vue'
 import { plugin as Slicksort } from 'vue-slicksort';
+import { initTheme } from './hooks/useDynamics'
 
+// 初始化主题
+initTheme()
 
 const app = createApp(App)
 
