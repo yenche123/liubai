@@ -71,7 +71,7 @@ const { t } = useI18n()
 
     <!-- 删除按钮 -->
     <div class="liu-hover liu-hover_last cca-box"
-      v-if="!cs.isMine"
+      v-if="cs.isMine"
       :aria-label="t('common.delete')"
     >
       <div class="cca-svg-box">
