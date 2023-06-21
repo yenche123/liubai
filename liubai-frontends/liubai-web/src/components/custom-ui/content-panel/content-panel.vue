@@ -73,7 +73,7 @@ const iconColor = `var(--other-btn-text)`
 
           <div class="cpf-detail">
             <div class="cp-icon">
-              <svg-icon name="description" class="cp-svg-icon"
+              <svg-icon name="desc_600" class="cp-svg-icon"
                 :color="iconColor"
               ></svg-icon>
             </div>
