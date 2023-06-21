@@ -32,6 +32,7 @@ const {
   showActionbar,
   onMouseEnterComment,
   onMouseLeaveComment,
+  onTapContainer,
 } = useCommentCard(props)
 
 </script>
@@ -40,6 +41,7 @@ const {
   <div class="cc-container"
     @mouseenter="onMouseEnterComment"
     @mouseleave="onMouseLeaveComment"
+    @click.stop="onTapContainer"
   >
 
     <!-- 上部留白 （ + 指向上方评论） -->

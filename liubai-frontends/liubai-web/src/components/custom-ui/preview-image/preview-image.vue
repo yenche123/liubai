@@ -17,7 +17,7 @@ const {
   <div v-if="enable" 
     class="pi-container"
     :class="{ 'pi-container_show': show }"
-    @click="onTapCancel"
+    @click.stop="onTapCancel"
   >
     <PiContent 
       :current-index="data.index" 

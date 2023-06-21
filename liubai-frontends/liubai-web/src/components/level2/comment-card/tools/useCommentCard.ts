@@ -1,6 +1,7 @@
 import liuApi from "~/utils/liu-api";
 import type { CommentCardProps } from "./types";
 import { computed, ref } from "vue";
+import cui from "~/components/custom-ui";
 
 export function useCommentCard(
   props: CommentCardProps,
@@ -17,6 +18,18 @@ export function useCommentCard(
     onMouseEnterComment,
     onMouseLeaveComment,
   } = initActionbar(props)
+
+
+  const onTapContainer = () => {
+    if(!allowHover.value) return
+    const cha = liuApi.getCharacteristic()
+
+    cui.showContentPanel({ comment: props.cs, onlyReaction: false })
+    // if(cha.isMobile) {
+    //   cui.showContentPanel({ comment: props.cs, onlyReaction: false })
+    // }
+  }
+
   
   return {
     allowHover,
@@ -25,6 +38,7 @@ export function useCommentCard(
     showActionbar,
     onMouseEnterComment,
     onMouseLeaveComment,
+    onTapContainer,
   }
 }
 

@@ -8,22 +8,26 @@ import { initContentPanel } from "./tools/useContentPanel"
 const { 
   TRANSITION_DURATION,
   cpData,
+  onTapCancel,
 } = initContentPanel()
 const { t } = useI18n()
 
-const iconColor = `var(--main-normal)`
+const iconColor = `var(--other-btn-text)`
 
 </script>
 <template>
 
   <!-- 以移动端先进行布局，最后再适配非移动端的模式 -->
-  <div class="cp-container" v-if="cpData.enable"
-    :class="{ 'cp-container_show': cpData.show }"
-  >
+  <div class="cp-container" v-if="cpData.enable">
 
-    <div class="cp-bg"></div>
+    <div class="cp-bg" 
+      :class="{ 'cp-bg_show': cpData.show }"
+      @click.stop="onTapCancel"
+    ></div>
 
-    <div class="cp-box">
+    <div class="cp-box"
+      :class="{ 'cp-box_show': cpData.show }"
+    >
 
       <div class="cp-emojis">
 
@@ -40,7 +44,7 @@ const iconColor = `var(--main-normal)`
         <!-- 回复、分享 -->
         <div class="cp-reply-share">
 
-          <div class="liu-hover cp-btn">
+          <div class="cp-btn">
             <div class="cp-icon">
               <svg-icon name="comment" class="cp-svg-icon"
                 :color="iconColor"
@@ -51,7 +55,7 @@ const iconColor = `var(--main-normal)`
             </div>
           </div>
 
-          <div class="liu-hover cp-btn">
+          <div class="cp-btn">
             <div class="cp-icon">
               <svg-icon name="share" class="cp-svg-icon"
                 :color="iconColor"
@@ -67,7 +71,7 @@ const iconColor = `var(--main-normal)`
         <!-- 查看详情、删除（or 举报） -->
         <div class="cp-footer">
 
-          <div class="liu-hover cpf-detail">
+          <div class="cpf-detail">
             <div class="cp-icon">
               <svg-icon name="description" class="cp-svg-icon"
                 :color="iconColor"
@@ -79,8 +83,9 @@ const iconColor = `var(--main-normal)`
           </div>
 
           <div class="liu-hover cpf-last">
-            <svg-icon name="cpfl-svg-icon"
+            <svg-icon name="report_600"
               :color="iconColor"
+              class="cpfl-svg-icon"
             ></svg-icon>
           </div>
           
@@ -108,14 +113,8 @@ const iconColor = `var(--main-normal)`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  transition: v-bind(TRANSITION_DURATION + 'ms');
-  opacity: 0;
   user-select: none;
   z-index: 4500;
-
-  &.cp-container_show {
-    opacity: 1;
-  }
 
   .cp-bg {
     position: absolute;
@@ -127,6 +126,12 @@ const iconColor = `var(--main-normal)`
     height: 100%;
     background: var(--popup-bg);
     z-index: 4505;
+    opacity: 0;
+    transition: v-bind("TRANSITION_DURATION + 'ms'");
+
+    &.cp-bg_show {
+      opacity: 1;
+    }
   }
 }
 
@@ -135,7 +140,10 @@ const iconColor = `var(--main-normal)`
   position: relative;
   width: 100%;
   overflow: hidden;
-  border-radius: 16px 16px 0 0;
+  border-radius: 24px 24px 0 0;
+  transition: v-bind("TRANSITION_DURATION + 'ms'");
+  transform: translateY(100%);
+  opacity: .66;
 
   &::before {
     background-color: var(--cui-modal);
@@ -147,6 +155,11 @@ const iconColor = `var(--main-normal)`
     height: 100%;
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
+  }
+
+  &.cp-box_show {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -171,7 +184,7 @@ const iconColor = `var(--main-normal)`
 
 .cp-menu {
   position: relative;
-  padding: 0 16px 16px 16px;
+  padding: 0 16px 24px 16px;
   box-sizing: border-box;
   width: 100%;
 }
@@ -189,13 +202,22 @@ const iconColor = `var(--main-normal)`
   position: relative;
   display: flex;
   align-items: center;
+  color: var(--other-btn-text);
+  background-color: var(--cui-modal-other-btn-bg);
+  cursor: pointer;
+  border-radius: 14px;
+
+  &:active {
+    background-color: var(--cui-modal-other-btn-hover);
+  }
 }
 
 .cp-btn:first-child {
-  margin-inline-end: 10px;
+  margin-inline-end: 7px;
 }
 
 .cp-icon {
+  margin-inline-start: 5px;
   width: 50px;
   height: 50px;
   position: relative;
@@ -204,26 +226,37 @@ const iconColor = `var(--main-normal)`
   justify-content: center;
 
   .cp-svg-icon {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
   }
 }
 
 .cp-title {
   font-size: var(--btn-font);
-  color: var(--main-normal);
+  color: var(--other-btn-text);
 }
 
 .cp-footer {
   width: 100%;
   position: relative;
   display: flex;
+  margin-block-start: 7px;
 }
 
 .cpf-detail {
   flex: 1;
-  margin-inline-end: 10px;
+  margin-inline-end: 7px;
   height: 50px;
+  display: flex;
+  align-items: center;
+  color: var(--other-btn-text);
+  background-color: var(--cui-modal-other-btn-bg);
+  cursor: pointer;
+  border-radius: 14px;
+
+  &:active {
+    background-color: var(--cui-modal-other-btn-hover);
+  }
 }
 
 .cpf-last {
@@ -235,8 +268,8 @@ const iconColor = `var(--main-normal)`
   justify-content: center;
 
   .cpfl-svg-icon {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
   }
 }
 
@@ -249,11 +282,20 @@ const iconColor = `var(--main-normal)`
   }
 
   .cp-box {
-    border-radius: 10px;
+    border-radius: 24px;
     width: 60%;
-    min-width: 450px;
-    max-width: 750px;
+    min-width: 430px;
+    max-width: 630px;
+    transform: translateY(11%);
+    opacity: 0;
+
+    &.cp-box_show {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
+
+
 
   .cp-emojis {
     padding: 20px;
@@ -262,12 +304,16 @@ const iconColor = `var(--main-normal)`
   .cp-emoji-item {
     font-size: var(--head-font);
   }
+
+  .cp-menu {
+    padding: 0 24px 24px 24px;
+  }
   
 }
 
 
 /** 小屏幕适配  */
-@media screen and (max-width: 330px) {
+@media screen and (max-width: 333px) {
   .cp-reply-share {
     flex-direction: column;
   }
@@ -279,7 +325,7 @@ const iconColor = `var(--main-normal)`
 
   .cp-btn:first-child {
     margin-inline-end: 0;
-    margin-block-end: 10px;
+    margin-block-end: 7px;
   }
 
   .cp-icon {
@@ -303,6 +349,11 @@ const iconColor = `var(--main-normal)`
   }
 }
 
+@media(hover: hover) {
+  .cp-btn:hover, .cpf-detail:hover {
+    background-color: var(--cui-modal-other-btn-hover);
+  }
+}
 
 
 

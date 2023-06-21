@@ -13,6 +13,7 @@ const HashtagEditor = defineAsyncComponent(() => import("./hashtag-editor/hashta
 const ActionSheet = defineAsyncComponent(() => import("./action-sheet/action-sheet.vue"))
 const StateSelector = defineAsyncComponent(() => import("./state-selector/state-selector.vue"))
 const ShareView = defineAsyncComponent(() => import("./share-view/share-view.vue"))
+const ContentPanel = defineAsyncComponent(() => import("./content-panel/content-panel.vue"))
 
 </script>
 <template>
@@ -52,6 +53,9 @@ const ShareView = defineAsyncComponent(() => import("./share-view/share-view.vue
 
   <!-- 分享管理弹窗: 公开分享、允许评论、到出至 -->
   <ShareView></ShareView>
+
+  <!-- 内容选单 -->
+  <ContentPanel></ContentPanel>
 
 </template>
 

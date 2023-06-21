@@ -10,7 +10,7 @@ import type {
 import valTool from "~/utils/basic/val-tool"
 
 let _resolve: ContentPanelResolver | undefined
-const TRANSITION_DURATION = 220
+const TRANSITION_DURATION = 250
 const queryKey = "contentpanel"
 const cpData = reactive<ContentPanelData>({
   onlyReaction: false,
@@ -28,6 +28,7 @@ export function initContentPanel() {
   return {
     TRANSITION_DURATION,
     cpData,
+    onTapCancel,
   }
 }
 
@@ -83,6 +84,9 @@ function listenRouteChange() {
   })
 }
 
+function onTapCancel() {
+  closeIt(rr, queryKey)
+}
 
 function toResolve() {
   if(!_resolve) return
