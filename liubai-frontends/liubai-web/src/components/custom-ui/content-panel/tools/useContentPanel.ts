@@ -7,6 +7,7 @@ import type {
   ContentPanelParam,
   ContentPanelResolver,
 } from "./types"
+import { emojiList } from "./emojiList"
 import valTool from "~/utils/basic/val-tool"
 
 let _resolve: ContentPanelResolver | undefined
@@ -16,7 +17,7 @@ const cpData = reactive<ContentPanelData>({
   onlyReaction: false,
   enable: false,
   show: false,
-  emojis: ["❤️", "👌", "👏", "🤣", "🥂", "🔥", "🤔", "☕"],
+  emojiList,
   isMine: false,
 })
 

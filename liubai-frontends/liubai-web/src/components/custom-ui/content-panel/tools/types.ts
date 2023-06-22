@@ -7,13 +7,18 @@ export interface ContentPanelParam {
                            // 若是 thread 有值的情况，此值会为 true
 }
 
+export interface CpEmoji {
+  emoji: string      // 无需 encode
+  iconName: string
+}
+
 export interface ContentPanelData {
   thread?: ThreadShow
   comment?: CommentShow
   onlyReaction: boolean
   enable: boolean
   show: boolean
-  emojis: string[]   // 无需 encode
+  emojiList: CpEmoji[]
   isMine: boolean    // 若为 true，展示 "删除按钮"，否则展示 "举报按钮"
 }
 

@@ -31,9 +31,12 @@ const iconColor = `var(--other-btn-text)`
 
       <div class="cp-emojis">
 
-        <template v-for="(item, index) in cpData.emojis" :key="index">
+        <template v-for="(item, index) in cpData.emojiList" :key="item.iconName">
           <div class="liu-hover cp-emoji-item">
-            <span>{{ item }}</span>
+            <svg-icon :name="item.iconName" 
+              class="cp-svg-emoji"
+              :coverFillStroke="false"
+            ></svg-icon>
           </div>
         </template>
 
@@ -179,8 +182,13 @@ const iconColor = `var(--other-btn-text)`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--title-font);
 }
+
+.cp-svg-emoji {
+  width: 36px;
+  height: 36px;
+}
+
 
 .cp-menu {
   position: relative;
@@ -295,14 +303,8 @@ const iconColor = `var(--other-btn-text)`
     }
   }
 
-
-
   .cp-emojis {
     padding: 20px;
-  }
-
-  .cp-emoji-item {
-    font-size: var(--head-font);
   }
 
   .cp-menu {
@@ -314,6 +316,12 @@ const iconColor = `var(--other-btn-text)`
 
 /** 小屏幕适配  */
 @media screen and (max-width: 333px) {
+
+  .cp-svg-emoji {
+    width: 32px;
+    height: 32px;
+  }
+
   .cp-reply-share {
     flex-direction: column;
   }
