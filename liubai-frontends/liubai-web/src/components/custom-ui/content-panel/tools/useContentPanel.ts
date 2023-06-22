@@ -30,6 +30,8 @@ export function initContentPanel() {
     TRANSITION_DURATION,
     cpData,
     onTapCancel,
+    onMouseEnterEmoji,
+    onMouseLeaveEmoji,
   }
 }
 
@@ -64,6 +66,16 @@ export function showContentPanel(param: ContentPanelParam) {
   return new Promise(_wait)
 }
 
+
+function onMouseEnterEmoji(index: number) {
+  const item = cpData.emojiList[index]
+  item.currentFilter = item.shadow
+}
+
+function onMouseLeaveEmoji(index: number) {
+  const item = cpData.emojiList[index]
+  item.currentFilter = "none"
+}
 
 function listenRouteChange() {
   if(!rr) return

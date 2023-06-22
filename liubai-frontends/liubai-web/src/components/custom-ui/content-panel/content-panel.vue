@@ -9,6 +9,8 @@ const {
   TRANSITION_DURATION,
   cpData,
   onTapCancel,
+  onMouseEnterEmoji,
+  onMouseLeaveEmoji,
 } = initContentPanel()
 const { t } = useI18n()
 
@@ -32,9 +34,13 @@ const iconColor = `var(--other-btn-text)`
       <div class="cp-emojis">
 
         <template v-for="(item, index) in cpData.emojiList" :key="item.iconName">
-          <div class="liu-hover cp-emoji-item">
+          <div class="cp-emoji-item"
+            @mouseenter="() => onMouseEnterEmoji(index)"
+            @mouseleave="() => onMouseLeaveEmoji(index)"
+          >
             <svg-icon :name="item.iconName" 
               class="cp-svg-emoji"
+              :style="{ 'filter': item.currentFilter }"
               :coverFillStroke="false"
             ></svg-icon>
           </div>
@@ -182,11 +188,15 @@ const iconColor = `var(--other-btn-text)`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  position: relative;
 }
 
 .cp-svg-emoji {
   width: 36px;
   height: 36px;
+  will-change: filter;
+  transition: filter 222ms;
 }
 
 

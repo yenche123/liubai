@@ -10,6 +10,9 @@ export interface ContentPanelParam {
 export interface CpEmoji {
   emoji: string      // 无需 encode
   iconName: string
+  shadow: string
+  currentFilter?: string   // 当前 emoji 的 filter；
+                           // 当鼠标悬浮其上时，currentFilter 会被修改成 shadow
 }
 
 export interface ContentPanelData {
