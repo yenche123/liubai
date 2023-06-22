@@ -12,7 +12,7 @@ export const emojiList: CpEmoji[] = [
   {
     emoji: "👌",
     iconName: `${pre}ok_hand_color_default`,
-    shadow: `${dsPre}#feda4d)`
+    shadow: `${dsPre}#f5ac44)`
   },
   {
     emoji: "👏",
