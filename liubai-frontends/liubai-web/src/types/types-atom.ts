@@ -137,3 +137,11 @@ export type ThreadOutterUndo = "undo_collect" | "undo_emoji" | "undo_delete"
 
 export type WhyThreadChange = ThreadInnerOperation | ThreadOutterOperation
   | ThreadInnerUndo | ThreadOutterUndo | ""
+
+export interface LinkPreview {
+  domain?: string
+  preferred_format: string
+  title: string
+  type: string
+  url: string
+}

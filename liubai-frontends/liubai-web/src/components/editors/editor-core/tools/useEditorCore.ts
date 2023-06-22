@@ -15,6 +15,7 @@ import { editorSetKey } from '~/utils/provide-keys'
 import type { LiuTimeout } from '~/utils/basic/type-tool'
 import type { Ref } from "vue"
 import valTool from '~/utils/basic/val-tool'
+import type { LinkPreview } from '~/types/types-atom'
 
 interface EcContext {
   lastEmpty: boolean
@@ -42,6 +43,44 @@ export function useEditorCore(
   const editor = useEditor({
     content,
     extensions,
+    editorProps: {
+      handlePaste: (view, evt) => {
+        // 返回 false: 使用默认行为
+        // 返回 true: 将阻止默认行为
+
+        const clipboardData = evt.clipboardData
+        if(!clipboardData) {
+          return false
+        }
+
+        const idx = clipboardData.types.indexOf("text/link-preview")
+        if(idx < 0) {
+          return false
+        }
+
+        const jsonTxt = clipboardData.getData("text/link-preview")
+
+        let linkJson: LinkPreview
+        try {
+          linkJson = JSON.parse(jsonTxt)
+        }
+        catch(err) {
+          return false
+        }
+
+        const title = linkJson.title
+        const url = linkJson.url
+        if(!title || !url) return false
+        const linkText = `[${title}](${url})`
+
+        const startPoi = view.state.selection.from
+        const endPoi = view.state.selection.to
+        const transaction = view.state.tr.insertText(linkText, startPoi, endPoi)
+        view.dispatch(transaction)
+      
+        return true
+      }
+    },
     editable: props.isEdit,
     onUpdate({ editor }) {
       onEditorUpdate(editor, props, emits, ctx)
