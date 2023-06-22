@@ -14,7 +14,11 @@ const props = defineProps({
 
 const emit = defineEmits<TctEmits>()
 const { t } = useI18n()
-const { showTopbar } = useTcTopbar(props)
+const { 
+  showTopbar,
+  stateColor,
+  theme,
+} = useTcTopbar(props)
 
 const onTapState = () => {
   emit('newoperate', 'state')
@@ -25,20 +29,32 @@ const onTapState = () => {
   <div v-if="showTopbar" class="tct-container">
 
     <!-- 状态 -->
-    <div class="tct-state-box" v-if="threadData.stateShow"
-      :style="{ 
-        'color': threadData.stateShow.colorShow,
-      }"
-      @click.stop="onTapState"
-    >
-      <div class="tctsb-bg"
+    <div class="tct-state-container" v-if="threadData.stateShow">
+
+      <div class="tct-state-shadow"
+        v-if="theme === 'dark'"
         :style="{
-          'background-color': threadData.stateShow.colorShow
+          'background-color': stateColor
         }"
       ></div>
-      <span v-if="threadData.stateShow.text">{{ threadData.stateShow.text }}</span>
-      <span v-else-if="threadData.stateShow.text_key">{{ t(threadData.stateShow.text_key) }}</span>
+
+      <div class="tct-state-box"
+        :style="{ 
+          'color': stateColor,
+        }"
+        @click.stop="onTapState"
+      >
+        <div class="tctsb-bg"
+          :style="{
+            'background-color': stateColor
+          }"
+        ></div>
+        <span v-if="threadData.stateShow.text">{{ threadData.stateShow.text }}</span>
+        <span v-else-if="threadData.stateShow.text_key">{{ t(threadData.stateShow.text_key) }}</span>
+      </div>
+
     </div>
+    
 
     
     <!-- 置顶 -->
@@ -56,32 +72,6 @@ const onTapState = () => {
   align-items: flex-start;
   justify-content: flex-end;
   position: relative;
-
-  .tct-state-box {
-    padding: 2px 8px;
-    border-radius: 2px;
-    border-top-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    min-width: 40px;
-    text-align: center;
-    font-size: var(--state-font);
-    letter-spacing: 1px;
-    position: relative;
-    overflow: hidden;
-    user-select: none;
-    cursor: pointer;
-    transition: .15s;
-
-    .tctsb-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: .2;
-    }
-
-  }
 
   .tct-pin {
     margin-inline-start: 10px;
@@ -106,6 +96,45 @@ const onTapState = () => {
   }
 
 }
+
+.tct-state-container {
+  position: relative;
+}
+
+.tct-state-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .24;
+  border-radius: 6px 30px 6px 30px;
+  filter: blur(9px);
+}
+
+.tct-state-box {
+  padding: 2px 8px;
+  border-radius: 2px 10px 2px 10px;
+  min-width: 40px;
+  text-align: center;
+  font-size: var(--state-font);
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  cursor: pointer;
+  transition: .15s;
+
+  .tctsb-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: v-bind("theme === 'dark' ? '.11' : '.19'");
+  }
+}
+
 
 
 </style>
