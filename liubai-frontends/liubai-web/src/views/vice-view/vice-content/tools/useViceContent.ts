@@ -22,7 +22,7 @@ export function useViceContent() {
 
   listenRouteChange(ctx)
   const onTapBack = () => {
-    router.back()
+    router.naviBack()
   }
 
   const onTapClose = async () => {
