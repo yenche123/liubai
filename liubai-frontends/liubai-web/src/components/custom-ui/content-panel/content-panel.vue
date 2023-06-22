@@ -223,7 +223,8 @@ const iconColor = `var(--other-btn-text)`
   color: var(--other-btn-text);
   background-color: var(--cui-modal-other-btn-bg);
   cursor: pointer;
-  border-radius: 14px;
+  border-radius: 8px;
+  transition: .2s;
 
   &:active {
     background-color: var(--cui-modal-other-btn-hover);
@@ -270,7 +271,8 @@ const iconColor = `var(--other-btn-text)`
   color: var(--other-btn-text);
   background-color: var(--cui-modal-other-btn-bg);
   cursor: pointer;
-  border-radius: 14px;
+  border-radius: 8px;
+  transition: .2s;
 
   &:active {
     background-color: var(--cui-modal-other-btn-hover);
