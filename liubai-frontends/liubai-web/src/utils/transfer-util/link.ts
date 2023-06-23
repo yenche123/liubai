@@ -3,6 +3,7 @@ import type { TipTapJSONContent } from "~/types/types-editor"
 import type { LiuContent } from "~/types/types-atom"
 import valTool from "../basic/val-tool"
 import { ALLOW_DEEP_TYPES } from "~/config/atom"
+import type { LiuMarkAtom } from "~/types/types-atom"
 
 // 装载 link
 export function equipLink(list: TipTapJSONContent[]) {
@@ -49,20 +50,29 @@ function _parseTextsForLink(content: TipTapJSONContent[]): TipTapJSONContent[] {
       continue
     }
 
+    // 解析 markdown 格式的链接
+    const regMdLink = /\[([^\]\n]+)\]\(([^)\n\s]+)\)/g
+    let list1 = _innerParse(text, regMdLink, "markdown_link")
+    if(list1) {
+      content.splice(i, 1, ...list1)
+      i--
+      continue
+    }
+
     // 解析 email
     const regEmail = /[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*/g
-    let list = _innerParse(text, regEmail, "email")
-    if(list) {
-      content.splice(i, 1, ...list)
+    let list2 = _innerParse(text, regEmail, "email")
+    if(list2) {
+      content.splice(i, 1, ...list2)
       i--
       continue
     }
 
     // 解析 一般链接
     const regUrl = /[\w\./:-]*\w{1,32}\.\w{2,6}\S*/g
-    let list2 = _innerParse(text, regUrl, "url")
-    if(list2) {
-      content.splice(i, 1, ...list2)
+    let list3 = _innerParse(text, regUrl, "url")
+    if(list3) {
+      content.splice(i, 1, ...list3)
       i--
       continue
     }
@@ -79,7 +89,7 @@ function _parseTextsForLink(content: TipTapJSONContent[]): TipTapJSONContent[] {
 function _innerParse(
   text: string, 
   reg: RegExp,
-  forType?: "url" | "email" | "social_link",
+  forType?: "url" | "email" | "social_link" | "markdown_link",
 ): TipTapJSONContent[] | undefined {
 
   const matches = text.matchAll(reg)
@@ -94,11 +104,37 @@ function _innerParse(
     if(forType === "url" && mLen < 8) continue
     if(forType === "url" && !_checkUrlMore(mTxt)) continue
 
-    let href = forType === "email" ? `mailto:${mTxt}` : mTxt
-    if(forType === "social_link") {
+    let href = mTxt
+    if(forType === "markdown_link") {
+      const mdLinkText = match[1]
+      const mdLinkUrl = match[2]
+
+      if(!mdLinkText || !mdLinkUrl) continue
+      mTxt = mdLinkText
+      href = mdLinkUrl
+
+      // console.log("mTxt: ", mTxt)
+      // console.log("href: ", href)
+      // console.log(" ")
+
+      const regEmail = /[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*/g
+      const idx1 = href.indexOf("://")
+      const idx2 = href.indexOf("mailto")
+      const emailMatch = href.match(regEmail)
+      const isEmail = Boolean(emailMatch?.length)
+
+      if(idx2 !== 0) {
+        if(isEmail) href = `mailto:` + href
+        else if(idx1 < 0) href = `https://` + href
+      }
+    }
+    else if(forType === "email") {
+      href = `mailto:${mTxt}`
+    }
+    else if(forType === "social_link") {
       href = _handleSocialLink(mTxt)
     }
-    if(forType === "url") {
+    else if(forType === "url") {
       const idx = href.indexOf("://")
       if(idx < 0) {
         href = `https://` + href
@@ -204,7 +240,7 @@ export function depriveLink(list: LiuContent[]) {
   const newList = valTool.copyObject(list)
   for(let i=0; i<newList.length; i++) {
     const v = newList[i]
-    let { type, content, marks } = v
+    let { type, content, marks, text } = v
     const canDeepTypes = [
       "paragraph", 
       "orderedList", 
@@ -217,10 +253,31 @@ export function depriveLink(list: LiuContent[]) {
       continue
     }
 
-    if(marks) {
-      marks = marks.filter(v2 => v2.type !== "link")
-      if(marks.length < 1) delete v.marks
+    if(!marks || !text) continue
+
+    let linkMark: LiuMarkAtom | undefined
+    let index = -1
+    marks.forEach((v2, i2) => {
+      if(v2.type === "link") {
+        linkMark = v2
+        index = i2
+      }
+    })
+
+    if(!linkMark || index < 0) continue
+    const href = linkMark.attrs?.href
+    if(typeof href !== "string") continue
+
+    // text 和 href 可能一致（只要 text 包含在 href 里即可）
+    // 这种时候不需要装载成 markdown 格式的链接
+    // 因为纯文本更容易阅读
+    const textInHref = href.includes(text)
+    if(!textInHref) {
+      v.text = `[${text}](${href})`
     }
+
+    marks.splice(index, 1)
+    if(marks.length < 1) delete v.marks
   }
 
   return newList
