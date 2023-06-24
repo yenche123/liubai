@@ -9,6 +9,7 @@ const {
   TRANSITION_DURATION,
   cpData,
   onTapCancel,
+  onMouseLeaveBox,
   onMouseEnterEmoji,
   onMouseLeaveEmoji,
 } = initContentPanel()
@@ -29,7 +30,12 @@ const iconColor = `var(--other-btn-text)`
 
     <div class="cp-box"
       :class="{ 'cp-box_show': cpData.show }"
+      @mouseleave="onMouseLeaveBox"
     >
+
+      <div class="cp-big-title" v-if="cpData.onlyReaction">
+        <span>{{ cpData.title }}</span>
+      </div>
 
       <div class="cp-emojis">
 
@@ -170,6 +176,17 @@ const iconColor = `var(--other-btn-text)`
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.cp-big-title {
+  width: 100%;
+  padding-block-start: 16px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--main-normal);
+  font-size: var(--head-font);
+  user-select: none;
+  position: relative;
 }
 
 .cp-emojis {

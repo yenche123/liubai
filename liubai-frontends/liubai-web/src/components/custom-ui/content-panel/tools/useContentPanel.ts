@@ -9,6 +9,7 @@ import type {
 } from "./types"
 import { emojiList } from "./emojiList"
 import valTool from "~/utils/basic/val-tool"
+import { i18n } from "~/locales"
 
 let _resolve: ContentPanelResolver | undefined
 const TRANSITION_DURATION = 250
@@ -19,6 +20,7 @@ const cpData = reactive<ContentPanelData>({
   show: false,
   emojiList,
   isMine: false,
+  title: "",
 })
 
 let rr: RouteAndLiuRouter | undefined
@@ -30,6 +32,7 @@ export function initContentPanel() {
     TRANSITION_DURATION,
     cpData,
     onTapCancel,
+    onMouseLeaveBox,
     onMouseEnterEmoji,
     onMouseLeaveEmoji,
   }
@@ -56,8 +59,8 @@ export function showContentPanel(param: ContentPanelParam) {
     cpData.onlyReaction = true
     cpData.isMine = param.thread.isMine
   } 
+  cpData.title = i18n.global.t(`common.reaction`)
   
-
   openIt(rr, queryKey)
 
   const _wait = (a: ContentPanelResolver): void => {
@@ -66,10 +69,16 @@ export function showContentPanel(param: ContentPanelParam) {
   return new Promise(_wait)
 }
 
+function onMouseLeaveBox() {
+  cpData.title = i18n.global.t(`common.reaction`)
+}
 
 function onMouseEnterEmoji(index: number) {
   const item = cpData.emojiList[index]
   item.currentFilter = item.shadow
+
+  const key = item.key
+  cpData.title = i18n.global.t(`emoji.${key}`)
 }
 
 function onMouseLeaveEmoji(index: number) {

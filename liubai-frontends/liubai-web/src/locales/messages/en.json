@@ -305,5 +305,15 @@
     "submit1": "Add",
     "deleted_tip": "The comment has been deleted.",
     "no_idea": "Unknown"
+  },
+  "emoji": {
+    "love": "Love",
+    "ok": "OK",
+    "applaud": "Applaud",
+    "lol": "LOL",
+    "cheers": "Cheers!",
+    "fire": "Fire",
+    "thinking": "Thinking",
+    "cafe": "Coffee"
   }
 }

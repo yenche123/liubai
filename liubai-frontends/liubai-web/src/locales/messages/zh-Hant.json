@@ -305,5 +305,15 @@
     "submit1": "補充",
     "deleted_tip": "此留言已被刪除",
     "no_idea": "未知"
+  },
+  "emoji": {
+    "love": "愛心",
+    "ok": "OK",
+    "applaud": "鼓掌",
+    "lol": "笑死",
+    "cheers": "乾杯!",
+    "fire": "火",
+    "thinking": "思考",
+    "cafe": "咖啡"
   }
 }

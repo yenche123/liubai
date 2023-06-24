@@ -11,6 +11,7 @@ export interface CpEmoji {
   emoji: string      // 无需 encode
   iconName: string
   shadow: string
+  key: string
   currentFilter?: string   // 当前 emoji 的 filter；
                            // 当鼠标悬浮其上时，currentFilter 会被修改成 shadow
 }
@@ -23,6 +24,7 @@ export interface ContentPanelData {
   show: boolean
   emojiList: CpEmoji[]
   isMine: boolean    // 若为 true，展示 "删除按钮"，否则展示 "举报按钮"
+  title: string
 }
 
 
