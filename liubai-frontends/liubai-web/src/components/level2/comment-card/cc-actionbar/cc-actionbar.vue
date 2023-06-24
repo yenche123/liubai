@@ -4,6 +4,7 @@ import { type PropType } from 'vue';
 import type { CommentCardLocation } from "../tools/types"
 import type { CommentShow } from '~/types/types-content';
 import { useI18n } from "vue-i18n"
+import { useCcActionbar } from "./tools/useCcActionbar"
 
 const props = defineProps({
   show: {
@@ -19,6 +20,13 @@ const props = defineProps({
     required: true,
   }
 })
+
+const {
+  onTapEmoji,
+  onTapReply,
+  onTapShare,
+} = useCcActionbar(props)
+
 
 const default_color = "var(--main-code)"
 const onTapBlank = () => {}
@@ -37,6 +45,7 @@ const { t } = useI18n()
     <!-- 表态按钮 -->
     <div class="liu-hover cca-box"
       :aria-label="t('common.reaction')"
+      @click="onTapEmoji"
     >
       <div class="cca-svg-box">
         <svg-icon name="add_reaction_600" class="cca-svg"
