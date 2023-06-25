@@ -4,6 +4,7 @@ import type { CommentShow } from "~/types/types-content"
 export interface CommentAreaData {
   comments: CommentShow[]
   threadId: string
+  hasReachedBottom: boolean
 }
 
 export interface CommentAreaProps {

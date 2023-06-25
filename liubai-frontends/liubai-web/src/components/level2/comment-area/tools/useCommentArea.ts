@@ -1,4 +1,4 @@
-import { reactive, watch, inject } from "vue"
+import { reactive, watch, inject, toRef } from "vue"
 import type {
   CommentAreaProps,
   CommentAreaEmits,
@@ -22,6 +22,7 @@ export function useCommentArea(
   const caData = reactive<CommentAreaData>({
     comments: [],
     threadId: "",
+    hasReachedBottom: false,
   })
 
   // 监听 comment store
@@ -35,8 +36,12 @@ export function useCommentArea(
   watch(() => props.threadId, (newV) => {
     let reload = newV !== caData.threadId
     caData.threadId = newV
+    caData.hasReachedBottom = false
     loadComments(caData, reload)
   }, { immediate: true })
+
+  // 监听滚动
+  listenScoll(props, caData)
 
   return {
     caData,
@@ -47,6 +52,11 @@ async function loadComments(
   caData: CommentAreaData,
   reload?: boolean,
 ) {
+
+  if(caData.hasReachedBottom) {
+    console.log("已经触底了........")
+    return
+  }
 
   let length = caData.comments.length
   const lastComment = caData.comments[length - 1]
@@ -69,17 +79,44 @@ async function loadComments(
     commentController.handleRelation(newList, lastComment)
     caData.comments.push(...newList)
   }
+
+  // 如果 newList 里的 item 太少，视为已经触底
+  if(newList.length < 5) {
+    caData.hasReachedBottom = true
+  }
   
 }
 
 
 function listenScoll(
   props: CommentAreaProps,
+  caData: CommentAreaData,
 ) {
   
 
-  // 监听触底/顶加载
+  // 监听触底加载
   const svData = inject(scrollViewKey, { type: "", triggerNum: 0 }) as SvProvideInject
+  const svTrigger = toRef(svData, "triggerNum")
+  watch(svTrigger, (newV) => {
+    const svType = svData.type
+
+    // 触底加载
+    if(svType === "to_end") {
+      loadComments(caData)
+      return
+    }
+
+    // 触顶时，若个数大于 19 （一轮9个，所以至少触底 3 次了）
+    // 允许重新加载
+    if(svType === "to_start") {
+      if(caData.comments.length > 19) {
+        caData.hasReachedBottom = false
+        loadComments(caData, true)
+        return
+      }
+    }
+
+  })
 
 }
 
