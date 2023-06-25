@@ -1,5 +1,6 @@
 import { onActivated, provide, reactive, ref, shallowRef, toRef, watch } from "vue";
-import type { SvProps, SvEmits, SvProvideInject, SvBottomUp } from "./types"
+import type { SvProps, SvEmits } from "./types"
+import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
 import { scrollViewKey, svScollingKey, svBottomUpKey } from "~/utils/provide-keys"
 import type { Ref } from "vue";
 

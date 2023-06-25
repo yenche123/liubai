@@ -1,6 +1,6 @@
 
 import type { InjectionKey, Ref, ShallowRef } from 'vue'
-import type { SvProvideInject, SvBottomUp } from "../components/common/scroll-view/tools/types"
+import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
 
 // InjectionKey 是什么? 参考: 
 // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-provide-inject

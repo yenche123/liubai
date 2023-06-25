@@ -1,4 +1,4 @@
-import { reactive, watch } from "vue"
+import { reactive, watch, inject } from "vue"
 import type {
   CommentAreaProps,
   CommentAreaEmits,
@@ -11,6 +11,8 @@ import type {
 import { useCommentStore } from "~/hooks/stores/useCommentStore"
 import usefulTool from "~/utils/basic/useful-tool"
 import { whenCommentAddOrDelete } from "./whenCommentAddOrDelete"
+import { scrollViewKey } from "~/utils/provide-keys"
+import type { SvProvideInject } from "~/types/components/types-scroll-view"
 
 export function useCommentArea(
   props: CommentAreaProps,
@@ -69,3 +71,17 @@ async function loadComments(
   }
   
 }
+
+
+function listenScoll(
+  props: CommentAreaProps,
+) {
+  
+
+  // 监听触底/顶加载
+  const svData = inject(scrollViewKey, { type: "", triggerNum: 0 }) as SvProvideInject
+
+}
+
+
+
