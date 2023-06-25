@@ -1,5 +1,5 @@
 // 在启动 app 时，触发一次
-// 用于监听全局事件
+// 用于监听全局事件，主要是全局键盘事件处理
 // 目前只有阻止用户 Tab 的用途
 import { storeToRefs } from "pinia"
 import { useGlobalStateStore } from "../stores/useGlobalStateStore"
