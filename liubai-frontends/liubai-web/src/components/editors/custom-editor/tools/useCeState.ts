@@ -60,8 +60,8 @@ export function useCeState(
     if(timeout) clearTimeout(timeout)
     timeout = setTimeout(() => {
       focused.value = newV
-      gs.$patch({ mainInputing: newV })
-    }, 100)
+      gs.$patch({ customEditorInputing: newV })
+    }, 60)
   }
 
   const onEditorFocus = (data: EditorCoreContent) => {

@@ -1,4 +1,5 @@
 import { useGlobalLoading } from "./tools/useGlobalLoading"
+import { useGlobalEvent } from "./tools/useGlobalEvent";
 import liuApi from "~/utils/liu-api"
 import VConsole from 'vconsole';
 import { init as initForSystem } from "~/utils/system/init"
@@ -12,6 +13,9 @@ export function useApp() {
 
   // 监听路由变化，若加载过久，窗口顶部会出现加载条
   useGlobalLoading()
+
+  // 监听全局事件
+  useGlobalEvent()
 
   const env = liuEnv.getEnv()
   const cha = liuApi.getCharacteristic()

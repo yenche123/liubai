@@ -11,12 +11,16 @@ export interface KanbanStateChange {
 
 export const useGlobalStateStore = defineStore("globalState", () => {
 
-  // main-view 里的输入框是否正在输入
-  const mainInputing = ref(false)
+  // custom-editor 里的输入框是否正在输入
+  const customEditorInputing = ref(false)
+
+  // comment-editor 里的输入框是否正在输入
+  const commentEditorInputing = ref(false)
 
   // 全局控制器，是否能监听键盘敲击
   const canListenKeyboard = computed(() => {
-    if(mainInputing.value) return false
+    if(customEditorInputing.value) return false
+    if(commentEditorInputing.value) return false
     return true
   })
 
@@ -49,7 +53,8 @@ export const useGlobalStateStore = defineStore("globalState", () => {
   }
 
   return { 
-    mainInputing, 
+    customEditorInputing, 
+    commentEditorInputing,
     canListenKeyboard,
     isDragToSort,
     kanbanStateChange,

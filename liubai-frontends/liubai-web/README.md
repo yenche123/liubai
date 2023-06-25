@@ -34,6 +34,8 @@ https://icons.radix-ui.com/
 
 8. 定期执行 `pnpm run build` 虽然我们在开发时，运行 `pnpm run dev` 即可进行调试或预览，但是最终交给用户的代码依然需要运行前者这样的命令，若最终打包时出现大面积错误，修改起来会很痛苦，所以建议定期执行该命令，确保你所写的代码都能成功打包。
 
+9. https://www.toptal.com/developers/keycode 可以查看键盘 keyboard 的 key
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。

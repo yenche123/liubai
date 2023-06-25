@@ -12,6 +12,7 @@ import time from "~/utils/basic/time";
 import type { LiuFileStore, LiuImageStore } from "~/types";
 import liuUtil from "~/utils/liu-util";
 import { handleComment } from "./handle-comment"
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 
 export function useCommentEditor(props: CeProps) {
 
@@ -63,6 +64,7 @@ export function useCommentEditor(props: CeProps) {
   // 个人信息
   const { myProfile } = useMyProfile()
 
+  const gs = useGlobalStateStore()
 
   /** 一些事件 */
   const onEditorFocus = () => {
@@ -70,10 +72,12 @@ export function useCommentEditor(props: CeProps) {
       ctx.isToolbarTranslateY = false
     }
     ctx.focused = true
+    gs.$patch({ commentEditorInputing: true })
   }
 
   const onEditorBlur = (data: EditorCoreContent) => {
     ctx.focused = false
+    gs.$patch({ commentEditorInputing: false })
   }
 
   const onEditorUpdate = (data: EditorCoreContent) => {
