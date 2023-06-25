@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useNaviAuto } from "./tools/useNaviAuto"
-import cfg from "../../../config"
+import cfg from "~/config"
 
 const naviHeightPx = `${cfg.navi_height}px`
 

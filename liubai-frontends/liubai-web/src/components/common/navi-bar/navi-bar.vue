@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import cfg from "../../../config"
-import { useRouteAndLiuRouter } from "../../../routes/liu-router";
+import cfg from "~/config"
+import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { useNaviBar } from "./tools/useNaviBar";
 
 const { router } = useRouteAndLiuRouter()

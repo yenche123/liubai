@@ -1,7 +1,7 @@
 <script lang="ts">
 import { RouterLink } from 'vue-router'
 import { useNaviLink } from "./tools/useNaviLink";
-import type { ToRoute } from "../../../types";
+import type { ToRoute } from "~/types";
 
 export default {
   name: "NaviLink",

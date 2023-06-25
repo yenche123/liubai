@@ -1,6 +1,6 @@
 import { onActivated, provide, reactive, ref, shallowRef, toRef, watch } from "vue";
 import type { SvProps, SvEmits, SvProvideInject, SvBottomUp } from "./types"
-import { scrollViewKey, svScollingKey, svBottomUpKey } from "../../../../utils/provide-keys"
+import { scrollViewKey, svScollingKey, svBottomUpKey } from "~/utils/provide-keys"
 import type { Ref } from "vue";
 
 const MIN_SCROLL_DURATION = 17

@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { useLink } from 'vue-router'
-import { useRouteAndLiuRouter } from '../../../../routes/liu-router'
-import valTool from '../../../../utils/basic/val-tool'
+import { useRouteAndLiuRouter } from '~/routes/liu-router'
+import valTool from '~/utils/basic/val-tool'
 
 export function useAppLink(props: any) {
   const { route: fromRoute, router } = useRouteAndLiuRouter()

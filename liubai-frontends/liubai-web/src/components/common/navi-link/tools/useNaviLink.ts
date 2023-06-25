@@ -1,6 +1,6 @@
 import { RouteLocationNormalized, RouteLocationNormalizedLoaded, useLink } from 'vue-router'
-import { useRouteAndLiuRouter } from '../../../../routes/liu-router'
-import type { ToRoute } from "../../../../types"
+import { useRouteAndLiuRouter } from '~/routes/liu-router'
+import type { ToRoute } from "~/types"
 
 interface NaviLinkEmits {
   (event: "aftertap", toRoute: ToRoute): void

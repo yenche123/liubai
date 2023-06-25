@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // 本文件仅用于在正常文档流里 占位顶部导航栏
-import cfg from "../../../config"
+import cfg from "~/config"
 
 </script>
 <template>
