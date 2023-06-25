@@ -5,6 +5,9 @@ import type { ContentLocalTable } from "~/types/types-table"
 import type { CommentShow } from "~/types/types-content"
 import { equipComments } from "../equip/comments"
 
+// 每次加载出的个数
+const LIMIT_NUM = 9
+
 /**
  * 已知 threadId 加载其下的评论
  *    这时，不要加载出已删除的评论，因为不影响阅读
@@ -18,7 +21,7 @@ async function loadByThread(opt: LoadByThreadOpt) {
     const { replyToComment, parentComment, createdStamp } = item
     if(replyToComment || parentComment) return false
     if(lastItemStamp) {
-      if(createdStamp < lastItemStamp) return false
+      if(createdStamp <= lastItemStamp) return false
     }
     return true
   }
@@ -29,8 +32,9 @@ async function loadByThread(opt: LoadByThreadOpt) {
   }
 
   let q = db.contents.where(w).filter(filterFunc)
-  q = q.limit(9)
   const list = await q.sortBy("createdStamp")
+  list.splice(LIMIT_NUM)
+
   const comments = await equipComments(list)
 
   return comments

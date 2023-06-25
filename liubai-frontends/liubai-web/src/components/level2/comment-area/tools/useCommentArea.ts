@@ -35,6 +35,7 @@ export function useCommentArea(
   // 监听 props 的 threadId 改变
   watch(() => props.threadId, (newV) => {
     let reload = newV !== caData.threadId
+    if(reload) caData.comments = []
     caData.threadId = newV
     caData.hasReachedBottom = false
     loadComments(caData, reload)
@@ -67,6 +68,10 @@ async function loadComments(
   if(lastComment && !reload) {
     opt.lastItemStamp = lastComment.createdStamp
   }
+
+  console.log("loadComments: ")
+  console.log(opt)
+  console.log(" ")
 
   const newList = await commentController.loadByThread(opt)
 
