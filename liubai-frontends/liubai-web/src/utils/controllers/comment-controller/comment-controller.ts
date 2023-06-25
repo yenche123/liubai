@@ -4,6 +4,7 @@ import type { LoadByThreadOpt, LoadByCommentOpt } from "./tools/types"
 import type { ContentLocalTable } from "~/types/types-table"
 import type { CommentShow } from "~/types/types-content"
 import { equipComments } from "../equip/comments"
+import time from "~/utils/basic/time"
 
 // 每次加载出的个数
 const LIMIT_NUM = 9
@@ -18,21 +19,30 @@ async function loadByThread(opt: LoadByThreadOpt) {
 
   // 过滤掉 非一级的评论[和加载 lastItemStamp 以后的评论]
   const filterFunc = (item: ContentLocalTable) => {
-    const { replyToComment, parentComment, createdStamp } = item
+    const { replyToComment, parentComment } = item
     if(replyToComment || parentComment) return false
-    if(lastItemStamp) {
-      if(createdStamp <= lastItemStamp) return false
-    }
     return true
   }
 
-  const w = {
-    parentThread: targetThread,
-    oState: "OK",
+
+  let list: ContentLocalTable[] = []
+  if(lastItemStamp) {
+    const now = time.getTime()
+    let w = ["parentThread", "oState", "createdStamp"]
+    let b1 = [targetThread, "OK", lastItemStamp]
+    let b2 = [targetThread, "OK", now]
+    let q = db.contents.where(w).between(b1, b2, false, true).filter(filterFunc)
+    list = await q.sortBy("createdStamp")
+  }
+  else {
+    let w = {
+      parentThread: targetThread,
+      oState: "OK",
+    }
+    let q = db.contents.where(w).filter(filterFunc)
+    list = await q.sortBy("createdStamp")
   }
 
-  let q = db.contents.where(w).filter(filterFunc)
-  const list = await q.sortBy("createdStamp")
   list.splice(LIMIT_NUM)
 
   const comments = await equipComments(list)
