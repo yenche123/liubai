@@ -83,7 +83,7 @@ function onMouseEnterEmoji(index: number) {
 
 function onMouseLeaveEmoji(index: number) {
   const item = cpData.emojiList[index]
-  item.currentFilter = "none"
+  delete item.currentFilter
 }
 
 function listenRouteChange() {

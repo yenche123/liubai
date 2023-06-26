@@ -46,6 +46,7 @@ const iconColor = `var(--other-btn-text)`
           >
             <svg-icon :name="item.iconName" 
               class="cp-svg-emoji"
+              :class="{ 'cp-svg-emoji_zoom': item.currentFilter }"
               :style="{ 'filter': item.currentFilter }"
               :coverFillStroke="false"
             ></svg-icon>
@@ -212,8 +213,12 @@ const iconColor = `var(--other-btn-text)`
 .cp-svg-emoji {
   width: 36px;
   height: 36px;
-  will-change: filter;
-  transition: filter 222ms;
+  will-change: filter, transform;
+  transition: filter 150ms, transform 150ms;
+}
+
+.cp-svg-emoji_zoom {
+  transform: scale(1.15);
 }
 
 
