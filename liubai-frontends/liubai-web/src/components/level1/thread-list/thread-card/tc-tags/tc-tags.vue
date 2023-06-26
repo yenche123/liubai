@@ -77,14 +77,32 @@ const onTapTag = (e: MouseEvent, href: string) => {
     align-items: center;
     white-space: pre-wrap;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      background: var(--tag-hover);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      content: "";
+      opacity: 0;
+      transition: .15s;
+    }
+
+    span {
+      position: relative;
+    }
     
     .ce-tag-emoji {
       margin-inline-end: 6px;
     }
 
     @media(hover: hover) {
-      &:hover {
-        background: var(--tag-hover);
+      &:hover::before {
+        opacity: 1;
       }
     }
 
