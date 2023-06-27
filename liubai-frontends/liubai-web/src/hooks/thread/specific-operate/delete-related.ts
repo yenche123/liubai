@@ -1,7 +1,7 @@
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import type { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool"
-import cui from "../../../custom-ui"
+import cui from "~/components/custom-ui"
 import dbOp from "../db-op"
 import time from "~/utils/basic/time"
 import stateController from "~/utils/controllers/state-controller/state-controller"

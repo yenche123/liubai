@@ -3,7 +3,7 @@ import type { ThreadShow } from "~/types/types-content"
 import time from "~/utils/basic/time"
 import valTool from "~/utils/basic/val-tool"
 import liuApi from "~/utils/liu-api"
-import cui from "../../../custom-ui"
+import cui from "~/components/custom-ui"
 import dbOp from "../db-op"
 
 // 处理动态 "收藏" 的公共逻辑

@@ -1,6 +1,6 @@
 
 import type { ThreadShow } from "~/types/types-content";
-import commonOperate from "~/components/level1/utils/common-operate";
+import threadOperate from "~/hooks/thread/thread-operate";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import stateController from "~/utils/controllers/state-controller/state-controller";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
@@ -25,7 +25,7 @@ export async function whenThreadInserted(
   }
   
   if(newStateId === oldStateId) return
-  const res = await commonOperate.setNewStateForThread(thread, newStateId)
+  const res = await threadOperate.setNewStateForThread(thread, newStateId)
   if(res) thread.stateId = newStateId
 }
 

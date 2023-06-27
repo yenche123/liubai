@@ -8,7 +8,7 @@ import type { TcaProps } from "./types"
 import type { MenuItem } from "~/components/common/liu-menu/tools/types"
 import type { ThreadShow } from "~/types/types-content";
 import valTool from "~/utils/basic/val-tool";
-import commonOperate from "../../../../utils/common-operate";
+import threadOperate from "~/hooks/thread/thread-operate";
 import checker from "~/utils/other/checker";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import type { SnackbarRes } from "~/types/other/types-snackbar"
@@ -247,18 +247,18 @@ async function toTapWhenItem(
   let res: { tipPromise: Promise<SnackbarRes> } | undefined
   if(index === 0) {
     // 重选
-    res = await commonOperate.setWhen(oldThread, memberId, userId)
+    res = await threadOperate.setWhen(oldThread, memberId, userId)
   }
   else if(index === 1) {
     // 清除
-    res = await commonOperate.clearWhen(oldThread, memberId, userId)
+    res = await threadOperate.clearWhen(oldThread, memberId, userId)
   }
 
   if(!res?.tipPromise) return
 
   const res2 = await res.tipPromise
   if(res2.result !== "tap") return
-  commonOperate.undoWhenRemind(oldThread, memberId, userId)
+  threadOperate.undoWhenRemind(oldThread, memberId, userId)
 
 }
 
@@ -273,16 +273,16 @@ async function toTapRemindItem(
   let res: { tipPromise: Promise<SnackbarRes> } | undefined
   if(index === 0) {
     // 重选
-    res = await commonOperate.setRemind(oldThread, memberId, userId)
+    res = await threadOperate.setRemind(oldThread, memberId, userId)
   }
   else if(index === 1) {
     // 清除
-    res = await commonOperate.clearRemind(oldThread, memberId, userId)
+    res = await threadOperate.clearRemind(oldThread, memberId, userId)
   }
 
   if(!res?.tipPromise) return
 
   const res2 = await res.tipPromise
   if(res2.result !== "tap") return
-  commonOperate.undoWhenRemind(oldThread, memberId, userId)
+  threadOperate.undoWhenRemind(oldThread, memberId, userId)
 }

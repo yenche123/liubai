@@ -1,7 +1,7 @@
 import type { PreCtx } from "../../utils/tools/types"
 import type { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool"
-import commonOperate from "../../utils/common-operate"
+import threadOperate from "~/hooks/thread/thread-operate"
 import { preHandle } from "../../utils/preHandle"
 
 // 1. 开始执行，去获取前置数据
@@ -17,7 +17,7 @@ async function handle(thread: ThreadShow, memberId: string, userId: string) {
   const oldThread = valTool.copyObject(thread)
 
   // 1. 执行公共逻辑
-  const { tipPromise } = await commonOperate.toCollect(oldThread, memberId, userId)
+  const { tipPromise } = await threadOperate.toCollect(oldThread, memberId, userId)
 
   // 2. 等待 snackbar 的 promise
   const res2 = await tipPromise
@@ -25,6 +25,6 @@ async function handle(thread: ThreadShow, memberId: string, userId: string) {
 
   // 发生撤销之后
   // 3. 去执行公共的取消逻辑
-  await commonOperate.undoCollect(oldThread, memberId, userId)
+  await threadOperate.undoCollect(oldThread, memberId, userId)
 }
 

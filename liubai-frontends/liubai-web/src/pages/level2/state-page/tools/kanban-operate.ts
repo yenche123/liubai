@@ -10,7 +10,7 @@ import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
 import { db } from "~/utils/db"
-import dbOp from "~/components/level1/utils/db-op"
+import dbOp from "~/hooks/thread/db-op"
 import threadController from "~/utils/controllers/thread-controller/thread-controller"
 
 // 编辑某一栏的看板

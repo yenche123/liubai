@@ -3,7 +3,7 @@ import type { ThreadShow } from "~/types/types-content"
 import time from "~/utils/basic/time"
 import valTool from "~/utils/basic/val-tool"
 import limit from "~/utils/limit"
-import cui from "../../../custom-ui"
+import cui from "~/components/custom-ui"
 import dbOp from "../db-op"
 
 export async function toPin(

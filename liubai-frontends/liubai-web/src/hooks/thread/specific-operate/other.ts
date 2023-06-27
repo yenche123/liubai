@@ -2,7 +2,7 @@ import type { ThreadShow } from "~/types/types-content"
 import dbOp from "../db-op"
 import valTool from "~/utils/basic/val-tool"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
-import cui from "../../../custom-ui"
+import cui from "~/components/custom-ui"
 
 export async function setShowCountdown(
   oldThread: ThreadShow,

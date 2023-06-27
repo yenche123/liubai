@@ -13,7 +13,7 @@ import liuUtil from "~/utils/liu-util"
 import valTool from "~/utils/basic/val-tool"
 import type { PreCtx } from "~/components/level1/utils/tools/types"
 import { preHandle } from "~/components/level1/utils/preHandle"
-import commonOperate from "~/components/level1/utils/common-operate"
+import threadOperate from "~/hooks/thread/thread-operate";
 import cui from "~/components/custom-ui"
 
 interface TcoCtx {
@@ -104,7 +104,7 @@ async function handle_showCountdown(
   const d = await preHandle(preCtx)
   if(!d) return
   
-  commonOperate.setShowCountdown(thread, d.memberId, d.userId)
+  threadOperate.setShowCountdown(thread, d.memberId, d.userId)
 }
 
 // 跳转到详情页

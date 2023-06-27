@@ -10,7 +10,7 @@ import localCache from "~/utils/system/local-cache"
 import type { TlProps, TlViewType } from "./types"
 import type { Ref } from "vue";
 import valTool from "~/utils/basic/val-tool"
-import commonOperate from "../../utils/common-operate"
+import threadOperate from "~/hooks/thread/thread-operate";
 import liuUtil from "~/utils/liu-util"
 
 interface ToCtx {
@@ -107,7 +107,7 @@ async function handle_state(ctx: ToCtx) {
     tipPromise, 
     newStateId, 
     newStateShow 
-  } = await commonOperate.selectState(oldThread, memberId, userId)
+  } = await threadOperate.selectState(oldThread, memberId, userId)
   if(!tipPromise) return
 
     // 1. 来判断当前列表里的该 item 是否要删除
@@ -133,7 +133,7 @@ async function handle_state(ctx: ToCtx) {
   if(res2.result !== "tap") return
 
   // 4. 去执行公共的取消逻辑
-  await commonOperate.undoState(oldThread, memberId, userId)
+  await threadOperate.undoState(oldThread, memberId, userId)
 
   // 5. 判断是否重新加回
   if(removedFromList) {
@@ -153,7 +153,7 @@ async function handle_restore(ctx: ToCtx) {
   }
 
   // 2. 执行 restore 公共逻辑
-  const res = await commonOperate.restoreThread(oldThread, memberId, userId)
+  const res = await threadOperate.restoreThread(oldThread, memberId, userId)
 }
 
 // 去删除（允许复原）
@@ -166,7 +166,7 @@ async function handle_delete(ctx: ToCtx) {
   ctx.list.value.splice(ctx.position, 1)
 
   // 1. 执行公共逻辑
-  const { tipPromise } = await commonOperate.deleteThread(oldThread, memberId, userId)
+  const { tipPromise } = await threadOperate.deleteThread(oldThread, memberId, userId)
 
   // 2. 等待 snackbar 的返回
   const res2 = await tipPromise
@@ -174,7 +174,7 @@ async function handle_delete(ctx: ToCtx) {
 
   // 发生撤销之后
   // 3. 去执行公共的取消逻辑
-  await commonOperate.undoDelete(oldThread, memberId, userId)
+  await threadOperate.undoDelete(oldThread, memberId, userId)
 
   // 4. 如果当前列表不是 PINNED, 把 item 加回 list 中
   // 因为 PINNED 列表在 useNewAndUpdate 里会自动将其加回
@@ -187,7 +187,7 @@ async function handle_delete(ctx: ToCtx) {
 async function handle_deleteForever(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx
   const oldThread = valTool.copyObject(thread)
-  const res = await commonOperate.deleteForever(oldThread, memberId, userId)
+  const res = await threadOperate.deleteForever(oldThread, memberId, userId)
   if(!res) return
 
   // 1. 从列表里删除 item
@@ -198,7 +198,7 @@ async function handle_deleteForever(ctx: ToCtx) {
 async function handle_pin(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx
   const oldThread = valTool.copyObject(thread)
-  const { newPin, tipPromise } = await commonOperate.toPin(oldThread, memberId, userId)
+  const { newPin, tipPromise } = await threadOperate.toPin(oldThread, memberId, userId)
   if(!tipPromise) return
 
   // 1. 来判断当前列表里的该 item 是否要删除
@@ -214,7 +214,7 @@ async function handle_pin(ctx: ToCtx) {
   if(res2.result !== "tap") return
 
   // 3. 去执行公共的取消逻辑
-  await commonOperate.undoPin(oldThread, memberId, userId)
+  await threadOperate.undoPin(oldThread, memberId, userId)
 
   // 4. 判断是否重新加回
   if(removedFromList) {
@@ -226,7 +226,7 @@ async function handle_pin(ctx: ToCtx) {
 async function handle_collect(ctx: ToCtx) {
   const { memberId, userId, thread } = ctx
   const oldThread = valTool.copyObject(thread)
-  const { newFavorite, tipPromise } = await commonOperate.toCollect(oldThread, memberId, userId)
+  const { newFavorite, tipPromise } = await threadOperate.toCollect(oldThread, memberId, userId)
 
   // 1. 来判断当前列表里的该 item 是否要删除
   let removedFromList = false
@@ -242,7 +242,7 @@ async function handle_collect(ctx: ToCtx) {
 
   // 发生撤销之后
   // 3. 去执行公共的取消逻辑
-  await commonOperate.undoCollect(oldThread, memberId, userId)
+  await threadOperate.undoCollect(oldThread, memberId, userId)
 
   // 4. 判断是否重新加回
   if(removedFromList) {

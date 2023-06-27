@@ -1,7 +1,7 @@
 import type { PreCtx } from "../../utils/tools/types"
 import type { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool"
-import commonOperate from "../../utils/common-operate"
+import threadOperate from "~/hooks/thread/thread-operate"
 import { preHandle } from "../../utils/preHandle"
 
 export async function handlePin(ctx: PreCtx) {
@@ -19,7 +19,7 @@ async function handle(
   const oldThread = valTool.copyObject(thread)
 
   // 1. 执行公共逻辑
-  const { tipPromise } = await commonOperate.toPin(oldThread, memberId, userId)
+  const { tipPromise } = await threadOperate.toPin(oldThread, memberId, userId)
   if(!tipPromise) return
 
   // 2. 等待 snackbar 的 promise
@@ -28,5 +28,5 @@ async function handle(
   
   // 发生撤销之后
   // 3. 去执行公共的取消逻辑
-  await commonOperate.undoPin(oldThread, memberId, userId)
+  await threadOperate.undoPin(oldThread, memberId, userId)
 }

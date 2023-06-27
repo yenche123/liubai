@@ -1,4 +1,4 @@
-import { ThreadShow } from "~/types/types-content"
+import type { ThreadShow } from "~/types/types-content"
 import time from "~/utils/basic/time"
 import liuUtil from "~/utils/liu-util"
 
