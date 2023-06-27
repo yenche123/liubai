@@ -12,6 +12,7 @@ const {
   onMouseLeaveBox,
   onMouseEnterEmoji,
   onMouseLeaveEmoji,
+  onTapEmoji,
 } = initContentPanel()
 const { t } = useI18n()
 
@@ -43,6 +44,7 @@ const iconColor = `var(--other-btn-text)`
           <div class="cp-emoji-item"
             @mouseenter="() => onMouseEnterEmoji(index)"
             @mouseleave="() => onMouseLeaveEmoji(index)"
+            @click.stop="() => onTapEmoji(index)"
           >
             <svg-icon :name="item.iconName" 
               class="cp-svg-emoji"

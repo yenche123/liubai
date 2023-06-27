@@ -10,6 +10,7 @@ import type {
 import { emojiList } from "./emojiList"
 import valTool from "~/utils/basic/val-tool"
 import { i18n } from "~/locales"
+import liuApi from "~/utils/liu-api"
 
 let _resolve: ContentPanelResolver | undefined
 const TRANSITION_DURATION = 250
@@ -35,6 +36,7 @@ export function initContentPanel() {
     onMouseLeaveBox,
     onMouseEnterEmoji,
     onMouseLeaveEmoji,
+    onTapEmoji,
   }
 }
 
@@ -85,6 +87,25 @@ function onMouseLeaveEmoji(index: number) {
   const item = cpData.emojiList[index]
   delete item.currentFilter
 }
+
+
+
+function onTapEmoji(index: number) {
+  const item = cpData.emojiList[index]
+  const emoji = item.emoji
+  if(!emoji) return
+  const encodeStr = liuApi.encode_URI_component(emoji)
+  
+  console.log("encodeStr: ")
+  console.log(encodeStr)
+  console.log(" ")
+
+
+}
+
+
+
+
 
 function listenRouteChange() {
   if(!rr) return
