@@ -115,7 +115,7 @@ const onTapClear = () => {
 
       <!-- 评论 -->
       <svg-icon v-else-if="contentAtom?.commentId"
-        class="si-search-icon"
+        class="si-search-icon si-search-icon_comment"
         name="comment_400"
         :color="iconColor"
       ></svg-icon>
@@ -224,6 +224,11 @@ const onTapClear = () => {
   height: 32px;
   border-radius: 4px;
   overflow: hidden;
+}
+
+.si-search-icon_comment {
+  width: 30px;
+  height: 30px;
 }
 
 .si-zoom-icon {
