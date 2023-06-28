@@ -51,7 +51,7 @@
   --liu-image: #2a2a2a;
 
   /** 一些比较少用到的 css 变量 */
-  --vice-bg: #2d2f32;
+  --vice-bg: #2a2c2e;
   --vice-shadow: -7px 0 14px 1px rgba(255, 255, 255, .11);
   --vice-scrollbar-thumb: #6a6a6a;
   --navi-normal: #989898;            /** 侧边栏链接 默认颜色 */
@@ -104,7 +104,7 @@
   /** 跟随 --bg-color 的背景色 */
   --frosted-glass-3: linear-gradient(0deg, rgba(41, 43, 45, .86) 50%, rgba(41, 43, 45, .75) 90%);
   --frosted-glass-4: rgba(35, 35, 35, .66);    /** navi-auto 在有阴影状态时的背景色 */
-  --frosted-glass-5: linear-gradient(0deg, rgba(45, 47, 50, .86) 50%, rgba(45, 47, 50, .75) 90%);
+  --frosted-glass-5: linear-gradient(0deg, rgba(41, 43, 45, .86) 50%, rgba(41, 43, 45, .75) 90%);
 
   /********* 导入页: 「查看更多」的背景 *******/
   --mask-bg: linear-gradient(0deg, rgba(42, 44, 46, 1) 40%, rgba(42, 44, 46, 0) 95%);

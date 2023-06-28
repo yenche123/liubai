@@ -85,7 +85,7 @@ const onVcStateChange = (newV: VcState) => {
       :draggable="false"
       :resizable="true"
       :handles="['ml']"
-      :z-index="706"
+      :z="720"
       @pointerdown="onStartDrag"
     >
       <template #ml>
@@ -101,7 +101,7 @@ const onVcStateChange = (newV: VcState) => {
   ></IframeRestriction>
 
 </template>
-<style scoped>
+<style scoped lang="scss">
 
 .vv-container {
   position: fixed;
@@ -137,9 +137,22 @@ const onVcStateChange = (newV: VcState) => {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 1px;
-  border-left: 1px solid var(--line-default);
+  left: 0px;
+  width: 3.8px;
   pointer-events: none;
+  z-index: 715;
+  background-color: var(--vice-bg);
+
+  &::before {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    content: "";
+    background-color: var(--primary-color);
+    opacity: v-bind("isDraging ? 0.12 : 0");
+  }
 }
 
 .vv-handle-ml {
@@ -148,12 +161,12 @@ const onVcStateChange = (newV: VcState) => {
   background-color: var(--liu-drag-handle);
   border-radius: 4px;
   transition: .2s;
-  opacity: v-bind("showHandle ? 1 : 0");
   position: absolute;
   left: 50%;
   top: 50%;
   margin-top: -30px;
   margin-left: -4px;
+  z-index: 720;
 }
 
 /** 真正承载侧边栏内容的盒子 */
@@ -198,6 +211,7 @@ const onVcStateChange = (newV: VcState) => {
 .liu-vv-vdr {
   direction: rtl;
   pointer-events: none;
+  position: relative;
 }
 
 .liu-vv-vdr_animating {
