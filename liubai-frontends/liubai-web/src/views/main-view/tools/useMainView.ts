@@ -39,15 +39,19 @@ function initMainView(
   // 监听左边侧边栏 + 窗口的变化
   layoutStore.$subscribe((mutation, state) => {
     leftPx.value = liuUtil.calibrateSidebarWidth(state.sidebarWidth)
+
+    const { clientWidth } = state
     
-    const tmpCenter = state.clientWidth - leftPx.value - vvRef.value
-    const centerRight = state.clientWidth - leftPx.value
+    const tmpCenter = clientWidth - leftPx.value - vvRef.value
+    const centerRight = clientWidth - leftPx.value
     // 临界值: 取 "mainview 最小宽度" & "(全宽减掉左侧边栏)的四分之一" 的最大值
-    const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 4)
+    const criticalValue = liuUtil.getMainViewCriticalValue(clientWidth, centerRight)
     // console.log("监听左边侧边栏的改变 tmpCenter: ", tmpCenter)
 
+    // 若中间区域小于临界值，重新计算右侧宽度，使得中间的卡片能露出多一点
+    // 而不是全被 vice-view 遮住
     if(tmpCenter < criticalValue) {
-      let rc = getRightAndCenterPx(state.clientWidth, leftPx.value, vvRef.value)
+      let rc = getRightAndCenterPx(clientWidth, leftPx.value, vvRef.value)
       rightPx.value = rc.right
       centerPx.value = rc.center
       return
@@ -62,7 +66,7 @@ function initMainView(
   watch(vvRef, (newV) => {
     const tmpCenter = width.value - leftPx.value - newV
     const centerRight = width.value - leftPx.value
-    const criticalValue = Math.max(cfg.min_mainview_width, centerRight / 4)
+    const criticalValue = liuUtil.getMainViewCriticalValue(width.value, centerRight)
 
     if(tmpCenter < criticalValue) {
       let rc = getRightAndCenterPx(width.value, leftPx.value, newV)

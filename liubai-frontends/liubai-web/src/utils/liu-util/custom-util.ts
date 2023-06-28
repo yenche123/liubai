@@ -100,6 +100,28 @@ export function calibrateSidebarWidth(sidebarWidth: number) {
   return val
 }
 
+/** 获取当前 main-view 里 center 区域完整显示（也就是不会被 vice-view 遮住）时的最小临界值 
+ * @param clientWidth 当前窗口宽度
+ * @param centerRight 中间加右侧的宽度，也就是窗口宽度减去左侧侧边栏宽度
+*/
+export function getMainViewCriticalValue(
+  clientWidth: number,
+  centerRight: number,
+) {
+  const default_min = cfg.min_mainview_width
+  let min = default_min
+
+  // 当屏幕宽度比较大时，也就是大约 pad 以上的宽度
+  if(clientWidth > 900) {
+    min = Math.round(clientWidth / 3)
+  }
+  if(min > default_min * 2) {
+    min = default_min * 2
+  }
+  const criticalValue = Math.max(min, centerRight / 4)
+  return criticalValue
+}
+
 
 /**
  * 发射烟花

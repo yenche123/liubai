@@ -38,6 +38,7 @@ import {
   needToOpenViceView,
   canTap,
   calibrateSidebarWidth,
+  getMainViewCriticalValue,
   lightFireworks,
 } from "./custom-util"
 import openUtil from "./open-util"
@@ -81,6 +82,7 @@ export default {
   isChildElementVisible,
   canTap,
   calibrateSidebarWidth,
+  getMainViewCriticalValue,
   lightFireworks,
   open: openUtil,
   trim: trimUtil,
