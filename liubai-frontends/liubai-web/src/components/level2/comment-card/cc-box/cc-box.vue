@@ -5,7 +5,7 @@ import type { PropType } from 'vue';
 import EditorCore from '~/components/editors/editor-core/editor-core.vue';
 import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-covers.vue";
 import PrettyFile from '~/components/browsing/pretty-file/pretty-file.vue';
-import BubbleMenu from '~/components/browsing/bubble-menu/bubble-menu.vue';
+import BwBubbleMenu from '~/components/browsing/bw-bubble-menu/bw-bubble-menu.vue';
 import { useCcBox } from './tools/useCcBox';
 
 const props = defineProps({
@@ -33,10 +33,10 @@ const {
     ></EditorCore>
 
     <!-- 评论的 bubble-menu -->
-    <BubbleMenu
+    <BwBubbleMenu
       v-if="cs.content"
       :editor="editor"
-    ></BubbleMenu>
+    ></BwBubbleMenu>
   </div>
 
   <!-- 图片 -->

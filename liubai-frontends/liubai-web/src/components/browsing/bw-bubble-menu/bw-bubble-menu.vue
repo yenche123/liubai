@@ -5,7 +5,7 @@ import { BubbleMenu } from '@tiptap/vue-3';
 import type { TipTapEditor } from '~/types/types-editor';
 import { useI18n } from 'vue-i18n';
 import { shouldShow } from '~/utils/other/bubble-menu';
-import { useBubbleMenu } from "./tools/useBubbleMenu";
+import { useBwBubbleMenu } from "./tools/useBwBubbleMenu";
 import liuApi from '~/utils/liu-api';
 
 const bubbleColor = "var(--bubble-menu-color)"
@@ -23,7 +23,7 @@ const {
   onTapCopy,
   onTapSearchIn,
   onTapSearchOut,
-} = useBubbleMenu(props)
+} = useBwBubbleMenu(props)
 
 </script>
 <template>

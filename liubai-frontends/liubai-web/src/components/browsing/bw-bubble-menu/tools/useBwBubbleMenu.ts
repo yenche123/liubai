@@ -13,7 +13,7 @@ interface TcBubbleMenuOpt {
   editor?: TipTapEditor
 }
 
-export function useBubbleMenu(
+export function useBwBubbleMenu(
   opt: TcBubbleMenuOpt,
 ) {
   const selectedIndex = ref(-1)
