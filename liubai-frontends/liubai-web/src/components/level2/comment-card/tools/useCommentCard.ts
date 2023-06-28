@@ -2,10 +2,13 @@ import liuApi from "~/utils/liu-api";
 import type { CommentCardProps } from "./types";
 import { computed, ref } from "vue";
 import cui from "~/components/custom-ui";
+import { useGlobalStateStore } from '~/hooks/stores/useGlobalStateStore';
 
 export function useCommentCard(
   props: CommentCardProps,
 ) {
+
+  const gStore = useGlobalStateStore()
 
   const {
     allowHover,
@@ -20,8 +23,12 @@ export function useCommentCard(
   } = initActionbar(props)
 
 
-  const onTapContainer = () => {
+  const onTapContainer = (e: MouseEvent) => {
+    const { target, currentTarget } = e
     if(!allowHover.value) return
+    if(liuApi.eventTargetIsSomeTag(target, "a")) return
+    if(liuApi.getSelectionText()) return
+
     const cha = liuApi.getCharacteristic()
 
     cui.showContentPanel({ comment: props.cs, onlyReaction: false })
