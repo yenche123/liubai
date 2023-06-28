@@ -34,13 +34,34 @@
 
   /** 卡片宽度 */
   --card-min: 200px;
-  --card-max: 800px;
+  --card-max: 580px;
+}
+
+@media screen and (min-width: 1000px) {
+  :root {
+    --card-min: 200px;
+    --card-max: 630px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  :root {
+    --card-min: 200px;
+    --card-max: 700px;
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  :root {
+    --card-min: 220px;
+    --card-max: 800px;
+  }
 }
 
 @media screen and (min-width: 1600px) {
   :root {
     --card-min: 250px;
-    --card-max: 850px;
+    --card-max: 880px;
   }
 }
 
