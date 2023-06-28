@@ -142,6 +142,8 @@ const onVcStateChange = (newV: VcState) => {
   pointer-events: none;
   z-index: 715;
   background-color: var(--vice-bg);
+  transition: 60ms;
+  opacity: v-bind("isDraging ? 1 : 0");
 
   &::before {
     top: 0;
