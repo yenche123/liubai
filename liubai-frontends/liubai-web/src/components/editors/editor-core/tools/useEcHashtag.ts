@@ -11,7 +11,7 @@ export function useEcHashtag(
   emits: EditorCoreEmits,
 ) {
 
-  const whenKeyUp = (e: KeyboardEvent) => {
+  const whenKeyDown = (e: KeyboardEvent) => {
     if(!props.hashTrigger) return
 
     const key = e.key
@@ -30,11 +30,11 @@ export function useEcHashtag(
   }
   
   onMounted(() => {
-    window.addEventListener("keyup", whenKeyUp)
+    window.addEventListener("keydown", whenKeyDown)
   })
 
   onUnmounted(() => {
-    window.removeEventListener("keyup", whenKeyUp)
+    window.removeEventListener("keydown", whenKeyDown)
   })
 }
 
