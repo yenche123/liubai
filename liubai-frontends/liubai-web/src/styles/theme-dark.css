@@ -66,7 +66,7 @@
   --shortcut-text: #989898;
   --avatar-bg: #a6bbc5;
   --avatar-color: #1f1f1f;
-  --comment-hover-one: #323538;  /** 在 vice-view 里的评论区的 hover 颜色  */
+  --comment-hover-one: #2f3134;  /** 在 vice-view 里的评论区的 hover 颜色  */
   --comment-hover-two: #2f3134;  /** 在 detail-page 里的评论区的 hover 颜色  */
 
   /** 自定义组件 */
