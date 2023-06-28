@@ -28,6 +28,7 @@ export function useCommentCard(
     if(!allowHover.value) return
     if(liuApi.eventTargetIsSomeTag(target, "a")) return
     if(liuApi.getSelectionText()) return
+    if(gStore.isJustSelect()) return
 
     const cha = liuApi.getCharacteristic()
 

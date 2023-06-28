@@ -4,7 +4,7 @@ import liuApi from "~/utils/liu-api"
 import type { Instance, Props } from 'tippy.js'
 import { ref } from 'vue';
 import valTool from '~/utils/basic/val-tool';
-import cui from '../../../../../custom-ui';
+import cui from '~/components/custom-ui';
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import liuUtil from '~/utils/liu-util';
 
@@ -13,7 +13,7 @@ interface TcBubbleMenuOpt {
   editor?: TipTapEditor
 }
 
-export function useTcBubbleMenu(
+export function useBubbleMenu(
   opt: TcBubbleMenuOpt,
 ) {
   const selectedIndex = ref(-1)
@@ -23,6 +23,13 @@ export function useTcBubbleMenu(
     hideOnClick: true,
     onMount(instance) {
       tippy = instance
+    },
+    onHidden() {
+      // 隐藏时，去取消所有选中......
+      const selection = window.getSelection()
+      if(!selection) return
+      const { isCollapsed } = selection
+      if(!isCollapsed) selection.removeAllRanges()
     }
   }
 

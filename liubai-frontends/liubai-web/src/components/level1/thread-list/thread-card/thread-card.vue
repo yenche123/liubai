@@ -10,7 +10,7 @@ import TcTags from "./tc-tags/tc-tags.vue";
 import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-covers.vue";
 import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
-import TcBubbleMenu from './tc-bubble-menu/tc-bubble-menu.vue';
+import BubbleMenu from '~/components/browsing/bubble-menu/bubble-menu.vue';
 import { useTcOperation } from "./tools/useTcOperation";
 import type { TlViewType, TlDisplayType } from "../tools/types";
 import type { TcEmits } from "./tools/types"
@@ -79,10 +79,10 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
       </div>
 
       <!-- 全文的 bubble-menu -->
-      <TcBubbleMenu
+      <BubbleMenu
         v-if="threadData.content && !isBriefing"
         :editor="editor"
-      ></TcBubbleMenu>
+      ></BubbleMenu>
 
       <!-- 全文 -->
       <div v-if="threadData.content" v-show="!isBriefing" 

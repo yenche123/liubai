@@ -5,6 +5,8 @@ import type { PropType } from 'vue';
 import EditorCore from '~/components/editors/editor-core/editor-core.vue';
 import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-covers.vue";
 import PrettyFile from '~/components/browsing/pretty-file/pretty-file.vue';
+import BubbleMenu from '~/components/browsing/bubble-menu/bubble-menu.vue';
+import { useCcBox } from './tools/useCcBox';
 
 const props = defineProps({
   cs: {          // cs 为 commentShow 的简写
@@ -13,16 +15,28 @@ const props = defineProps({
   },
 })
 
+const { 
+  editor,
+  editorCoreRef,
+} = useCcBox()
+
 </script>
 <template>
 
   <!-- 内文 -->
   <div class="cb-content" v-if="cs.content">
     <EditorCore
+      ref="editorCoreRef"
       :is-edit="false"
       :content="cs.content"
       purpose="comment-browse"
     ></EditorCore>
+
+    <!-- 评论的 bubble-menu -->
+    <BubbleMenu
+      v-if="cs.content"
+      :editor="editor"
+    ></BubbleMenu>
   </div>
 
   <!-- 图片 -->
