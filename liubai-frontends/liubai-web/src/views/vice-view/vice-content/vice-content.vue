@@ -111,7 +111,7 @@ const {
   }
 
   .vcliu-box {
-    width: 90%;
+    width: var(--card-percent);
     max-width: var(--card-max);
     min-width: var(--card-min);
     position: relative;

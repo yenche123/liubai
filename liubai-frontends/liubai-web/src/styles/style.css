@@ -35,7 +35,15 @@
   /** 卡片宽度 */
   --card-min: 200px;
   --card-max: 580px;
+  --card-percent: 90%;
 }
+
+@media screen and (max-width: 340px) {
+  :root {
+    --card-percent: 92%;
+  }
+}
+
 
 @media screen and (min-width: 1000px) {
   :root {
@@ -131,7 +139,7 @@ input {
 }
 
 .liu-mc-container > .liu-mc-box {
-  width: 90%;
+  width: var(--card-percent);
   max-width: var(--card-max);
   min-width: var(--card-min);
   position: relative;
