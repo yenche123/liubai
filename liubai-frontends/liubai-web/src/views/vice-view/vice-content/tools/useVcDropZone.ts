@@ -13,9 +13,9 @@ export function useVcDropZone(
 ) {
 
   const contentRef = ref<HTMLDivElement>()
-  const threadDetailState = ref<PageState>(0)
-  const onTdStateChange = (newV: PageState) => {
-    threadDetailState.value = newV
+  const viewState = ref<PageState>(0)
+  const onViewStateChange = (newV: PageState) => {
+    viewState.value = newV
   }
 
   const gStore = useGlobalStateStore()
@@ -37,7 +37,7 @@ export function useVcDropZone(
     if(props.isOutterDraging) return false
 
     // 当前 thread 不是正常状态，返回 false
-    if(threadDetailState.value !== -1) return false
+    if(viewState.value !== -1) return false
 
     // 当前全局状态是 kanban-page / list-page 里有 item 正在被拖动吗？
     if(isDragToSort.value) return false
@@ -46,7 +46,7 @@ export function useVcDropZone(
   })
 
   return {
-    onTdStateChange,
+    onViewStateChange,
     contentRef,
     showDropZone,
   }

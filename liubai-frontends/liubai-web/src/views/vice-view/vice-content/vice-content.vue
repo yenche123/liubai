@@ -31,7 +31,7 @@ const {
 } = useViceContent()
 
 const {
-  onTdStateChange,
+  onViewStateChange,
   contentRef,
   showDropZone,
 } = useVcDropZone(vcState, props)
@@ -84,7 +84,7 @@ const {
         <ThreadDetail
           :thread-id="cid"
           location="vice-view"
-          @pagestatechange="onTdStateChange"
+          @pagestatechange="onViewStateChange"
         ></ThreadDetail>
       </div>
     </ScrollView>

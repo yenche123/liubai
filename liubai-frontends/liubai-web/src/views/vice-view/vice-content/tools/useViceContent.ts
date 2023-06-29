@@ -10,7 +10,7 @@ import liuUtil from "~/utils/liu-util";
 export function useViceContent() {
   const iframeSrc = ref("")
   const vcState = ref<VcState>("")
-  const cid = ref("")
+  const cid = ref("")     // 表示 thread-id
   const { route, router } = useRouteAndLiuRouter()
 
   const ctx: VcCtx = {

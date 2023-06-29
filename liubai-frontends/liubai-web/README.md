@@ -36,6 +36,8 @@ https://icons.radix-ui.com/
 
 9. https://www.toptal.com/developers/keycode 可以查看键盘 keyboard 的 key
 
+10. 在路由里 `cid` 已经被拿来作为 `threadId` 的昵称，那么姑且就用 `rid` 作为 `commentId` 的昵称吧，其中 `r` 为 `reply` 之意。
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
