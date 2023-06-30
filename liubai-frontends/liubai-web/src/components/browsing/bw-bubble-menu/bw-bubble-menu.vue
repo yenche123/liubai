@@ -25,6 +25,8 @@ const {
   onTapSearchOut,
 } = useBwBubbleMenu(props)
 
+const onTapContainer = () => {}
+
 </script>
 <template>
 
@@ -37,7 +39,7 @@ const {
   >
 
     <!-- 浏览时: 复制、内部搜索、外部搜索 -->
-    <div class="ec-bubble-menu">
+    <div class="ec-bubble-menu" @click.stop="onTapContainer">
       <!-- 复制 -->
       <div class="ec-bb-two"
         :class="{ 'ec-bb-two_selected': selectedIndex === 0 }"
@@ -95,6 +97,7 @@ const {
   box-shadow: var(--bubble-menu-shadow);
   width: fit-content;
   flex-wrap: wrap;
+  cursor: auto;
 }
 
 .ec-bb-two {
