@@ -100,8 +100,21 @@ const iconColor = `var(--other-btn-text)`
             </div>
           </div>
 
-          <div class="liu-hover cpf-last">
+          <!-- 举报按钮 -->
+          <div class="liu-hover cpf-last" v-if="!cpData.isMine"
+            :aria-label="t('common.report')"
+          >
             <svg-icon name="report_600"
+              :color="iconColor"
+              class="cpfl-svg-icon"
+            ></svg-icon>
+          </div>
+
+          <!-- 删除按钮 -->
+          <div class="liu-hover cpf-last" v-else
+            :aria-label="t('common.delete')"
+          >
+            <svg-icon name="delete_400"
               :color="iconColor"
               class="cpfl-svg-icon"
             ></svg-icon>
@@ -396,6 +409,12 @@ const iconColor = `var(--other-btn-text)`
 @media(hover: hover) {
   .cp-btn:hover, .cpf-detail:hover {
     background-color: var(--cui-modal-other-btn-hover);
+  }
+
+  .cpf-last[aria-label]::after {
+    top: 0;
+    right: 0;
+    transform: translateY(-125%);
   }
 }
 
