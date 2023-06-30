@@ -29,6 +29,9 @@ export function useCommentTarget(
   }
 }
 
+
+
+// 1. 加载【目标评论】
 function loadTargetComment(
   ctData: CommentTargetData,
   emit: CommentTargetEmit,
@@ -37,3 +40,11 @@ function loadTargetComment(
 
 
 }
+
+// 2. 加载【向下评论】
+
+
+// 3. 加载【溯源评论】（向上）
+
+
+// 4. 加载最顶部的 thread
