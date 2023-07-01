@@ -5,6 +5,7 @@ import type { ContentLocalTable } from "~/types/types-table"
 import type { CommentShow } from "~/types/types-content"
 import { equipComments } from "../equip/comments"
 import time from "~/utils/basic/time"
+import { findTarget, findChildren, findParent } from "./tools/load-comment"
 
 // 每次加载出的个数
 const LIMIT_NUM = 9
@@ -17,7 +18,7 @@ const LIMIT_NUM = 9
 async function loadByThread(opt: LoadByThreadOpt) {
   const { targetThread, lastItemStamp } = opt
 
-  // 过滤掉 非一级的评论[和加载 lastItemStamp 以后的评论]
+  // 过滤掉 非一级的评论
   const filterFunc = (item: ContentLocalTable) => {
     const { replyToComment, parentComment } = item
     if(replyToComment || parentComment) return false
@@ -56,6 +57,36 @@ async function loadByThread(opt: LoadByThreadOpt) {
  *     向上加载时，必须加载出已删除的评论，这样才不会破坏 "上下文"
  */
 async function loadByComment(opt: LoadByCommentOpt) {
+  const {
+    commentId,
+    loadType,
+    lastItemStamp,
+    parentWeWant,
+    grandparent,
+  } = opt
+
+  if(loadType === "target") {
+    const res1 = await findTarget(commentId)
+    if(!res1) return []
+    return [res1]
+  }
+
+  if(loadType === "find_children") {
+    const res2 = await findChildren(commentId, lastItemStamp)
+    return res2
+  }
+
+  if(loadType === "find_parent") {
+    if(!parentWeWant) {
+      console.warn("loadType 为 find_parent 时，parentWeWant 必填！！")
+      return []
+    }
+    const res3 = await findParent(parentWeWant, grandparent)
+    return res3
+  }
+
+
+  return []
   
 }
 

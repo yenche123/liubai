@@ -1,4 +1,5 @@
 
+export const DB_VERSION = 39
 
 const dexieIdxs = {
   users: [
@@ -24,6 +25,7 @@ const dexieIdxs = {
     "[parentThread+oState]",
     "[parentThread+oState+createdStamp]",
     "[replyToComment+oState]",
+    "[replyToComment+oState+createdStamp]",
     "createdStamp",
     "updatedStamp",
     "pinStamp",

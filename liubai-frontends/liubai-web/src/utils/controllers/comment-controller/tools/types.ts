@@ -1,5 +1,4 @@
 
-
 export interface LoadByThreadOpt {
   targetThread: string
   lastItemStamp?: number
@@ -14,7 +13,9 @@ export interface LoadByCommentOpt {
 
   lastItemStamp?: number                    // 仅当 loadType 为 "find_children" 时有意义，
                                             // 表示最后一个 item 的创建时间戳
-  currentParent?: string                    // 仅当 loadType 为 "find_parent" 时有意义，
-                                            // 表示当前已加载到某个 parent 了，继续再往上溯源
+  parentWeWant?: string                     // 当 loadType 为 "find_parent" 时必填，
+                                            // 表示请从 parentWeWant（包含）开始往上溯源
+  grandparent?: string                      // 仅 loadType 为 "find_parent" 时有意义，选填
+                                            // 若存在，可少一次加载
 }
 

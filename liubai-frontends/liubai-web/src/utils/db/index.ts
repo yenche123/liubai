@@ -7,7 +7,7 @@ import type {
   ContentLocalTable,
   CollectionLocalTable,
 } from "../../types/types-table"
-import { dbSchema } from './db-idx';
+import { dbSchema, DB_VERSION } from './db-idx';
 
 /**
  * 注意：
@@ -28,7 +28,7 @@ export class LiuDexie extends Dexie {
 
   constructor() {
     super('LiubaiDatabase')
-    this.version(38).stores(dbSchema)
+    this.version(DB_VERSION).stores(dbSchema)
   }
 
 }
