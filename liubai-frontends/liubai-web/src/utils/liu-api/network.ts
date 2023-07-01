@@ -3,6 +3,8 @@
 // 存储 pathname 即可
 const fetchedList: string[] = []
 
+
+//【TODO】桌面端时，需要预加载外部的链接
 async function prefetchLink(e: MouseEvent) {
   const link = e.target as HTMLElement
   if(!link) return
