@@ -7,6 +7,7 @@ import type {
   ContentLocalTable,
   CollectionLocalTable,
 } from "../../types/types-table"
+import { dbSchema } from './db-idx';
 
 /**
  * 注意：
@@ -27,25 +28,7 @@ export class LiuDexie extends Dexie {
 
   constructor() {
     super('LiubaiDatabase')
-
-    let workspacesIdx = "_id, [infoType+owner]"
-
-    let membersIdx = "_id, [user+spaceId]"
-
-    let draftsIdx = "_id, [infoType+oState+user+spaceId], [infoType+oState+threadEdited], *tagIds"
-
-    let contentsIdx = "_id, [_id+infoType+oState], [parentThread+oState], [parentThread+oState+createdStamp], replyToComment, createdStamp, updatedStamp, pinStamp, *tagIds, *tagSearched, stateId, editedStamp"
-
-    let collectionsIdx = "_id, content_id, insertedStamp, [user+infoType+forType+content_id], updatedStamp"
-
-    this.version(37).stores({
-      users: "_id",
-      workspaces: workspacesIdx,
-      members: membersIdx,
-      drafts: draftsIdx,
-      contents: contentsIdx,
-      collections: collectionsIdx
-    })
+    this.version(38).stores(dbSchema)
   }
 
 }
