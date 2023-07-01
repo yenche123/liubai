@@ -6,7 +6,8 @@
 //   当向上加载到尽头时，加载 thread
 import type { PropType } from 'vue';
 import type { WhatDetail } from '~/types/other/types-custom';
-import type { CommentTargetEmit } from "./tools/types"
+import type { CommentTargetEmit } from "./tools/types";
+import { useCommentTarget } from "./tools/useCommentTarget"
 
 const props = defineProps({
   location: {
@@ -20,6 +21,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits<CommentTargetEmit>()
+const { ctData } = useCommentTarget(props, emit)
 
 
 </script>

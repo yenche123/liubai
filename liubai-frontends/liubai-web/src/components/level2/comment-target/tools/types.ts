@@ -9,6 +9,8 @@ export interface CommentTargetData {
   aboveList: CommentShow[]      // 在 targetComment 之上的评论
   belowList: CommentShow[]      // 在 targetComment 之下的评论
   thread?: ThreadShow           // 加载到最顶部就是 thread
+  hasReachedBottom: boolean
+  hasReachedTop: boolean
 }
 
 export interface CommentTargetProps {
