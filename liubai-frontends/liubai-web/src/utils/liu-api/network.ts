@@ -18,7 +18,7 @@ async function prefetchLink(e: MouseEvent) {
 
   try {
     const res = await fetch(href)
-    if(res.status === 200) {
+    if(res.ok) {
       addToFetchedList(theUrl)
     }
     
