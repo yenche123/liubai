@@ -10,6 +10,7 @@ import liuMedia from "./media"
 import liuPermission from "./permission"
 import canIUse from "./can-i-use"
 import liuDoc from "./document-related"
+import liuNetwork from "./network"
 
 export default {
   copyToClipboard: device.copyToClipboard,
@@ -40,4 +41,5 @@ export default {
   permissionsQuery: liuPermission.permissionsQuery,
   canIUse,
   doc: liuDoc,
+  network: liuNetwork,
 }
