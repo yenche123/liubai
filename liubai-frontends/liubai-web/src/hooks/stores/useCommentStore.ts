@@ -9,7 +9,7 @@
 
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import { CommentShow } from "~/types/types-content";
+import type { CommentShow } from "~/types/types-content";
 
 export type CommentChangeType = "add" | "delete" | "edit"
 

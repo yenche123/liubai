@@ -5,6 +5,7 @@ import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
 import thirdLink from "~/config/third-link"
 import { useLayoutStore } from "~/views/useLayoutStore"
+import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore"
 
 interface RrOpt {
   rr: RouteAndLiuRouter
@@ -139,6 +140,30 @@ function openExternalGithub(keyword: string) {
   window.open(url, "_blank")
 }
 
+/******** 打开外部链接 *****/
+function openLink(
+  url: string, 
+  opt: RrOpt,
+  forceVv: boolean = false,
+) {
+  const { route, router } = opt.rr
+  const w = toWhatDetail()
+  if(forceVv || w === "vice-view") {
+    const vStore = useVvLinkStore()
+    const nowLink = vStore.getCurrentLink(opt.rr.route)
+    if(nowLink === url) return "inner"
+
+    const vlink = vStore.addLink(url)
+    const newQ = { vlink }
+    if(opt.replace) router.replaceWithNewQuery(route, newQ)
+    else router.pushCurrentWithNewQuery(route, newQ)
+    return "inner"
+  }
+  
+  window.open(url, "_blank")
+  return "outter"
+}
+
 
 export default {
   toWhatDetail,
@@ -155,4 +180,5 @@ export default {
   openGithub,
   getGithubSearchLink,
   openExternalGithub,
+  openLink,
 }
