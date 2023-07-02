@@ -33,8 +33,6 @@ export const useVvLinkStore = defineStore("vvlink", () => {
     const num = tmp.length + 1
     const id = valTool.format0(num)
     tmp.push({ id, url })
-    console.log("看一下 list.value::::")
-    console.log(list.value)
     return id
   }
 

@@ -146,22 +146,30 @@ function openLink(
   opt: RrOpt,
   forceVv: boolean = false,
 ) {
-  const { route, router } = opt.rr
-  const w = toWhatDetail()
-  if(forceVv || w === "vice-view") {
-    const vStore = useVvLinkStore()
-    const nowLink = vStore.getCurrentLink(opt.rr.route)
-    if(nowLink === url) return "inner"
 
-    const vlink = vStore.addLink(url)
-    const newQ = { vlink }
-    if(opt.replace) router.replaceWithNewQuery(route, newQ)
-    else router.pushCurrentWithNewQuery(route, newQ)
-    return "inner"
+  const u = new URL(url)
+  const p = u.protocol
+  if(p !== "http:" && p !== "https:") {
+    window.open(url, "_blank")
+    return "outter"
   }
-  
-  window.open(url, "_blank")
-  return "outter"
+
+  const w = toWhatDetail()
+  if(!forceVv && w !== "vice-view") {
+    window.open(url, "_blank")
+    return "outter"
+  }
+
+  const { route, router } = opt.rr
+  const vStore = useVvLinkStore()
+  const nowLink = vStore.getCurrentLink(route)
+  if(nowLink === url) return "inner"
+
+  const vlink = vStore.addLink(url)
+  const newQ = { vlink }
+  if(opt.replace) router.replaceWithNewQuery(route, newQ)
+  else router.pushCurrentWithNewQuery(route, newQ)
+  return "inner"
 }
 
 
