@@ -3,6 +3,7 @@ import { EditorContent } from '@tiptap/vue-3'
 import { useEditorCore } from './tools/useEditorCore'
 import type { EditorCoreEmits } from "./tools/types"
 import { editorCoreProps } from "./tools/types"
+import { useEditorLink } from './tools/useEditorLink'
 
 const props = defineProps(editorCoreProps)
 const emit = defineEmits<EditorCoreEmits>()
@@ -13,12 +14,16 @@ const {
   transition,
 } = useEditorCore(props, emit)
 
+const {
+  ecRef
+} = useEditorLink(props)
+
 defineExpose({ editor })
 
 </script>
 <template>
 
-  <editor-content :editor="editor" />
+  <editor-content :editor="editor" ref="ecRef" />
   
 </template>
 

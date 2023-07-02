@@ -109,7 +109,10 @@ export function initExtensions(
   })
 
   const CustomLink = Link.configure({
-    openOnClick: false
+    openOnClick: false,
+    HTMLAttributes: {
+      class: "liu-link"
+    }
   })
 
   const CustomHeading = Heading.configure({
