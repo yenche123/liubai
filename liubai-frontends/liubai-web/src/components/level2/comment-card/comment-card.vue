@@ -271,6 +271,7 @@ const {
   flex: 1;
   position: relative;
   padding-block-end: 12px;
+  max-width: calc(100% - 50px);   // 扣掉头像的宽度 + margin
 }
 
 .ccc-account-time {
