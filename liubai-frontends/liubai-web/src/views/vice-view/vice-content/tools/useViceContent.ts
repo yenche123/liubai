@@ -6,6 +6,7 @@ import liuApi from "~/utils/liu-api";
 import type { VcState, VcCtx } from "./types"
 import thirdLink from "~/config/third-link";
 import liuUtil from "~/utils/liu-util";
+import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore";
 
 export function useViceContent() {
   const iframeSrc = ref("")
@@ -74,9 +75,7 @@ function listenRouteChange(
   const { iframeSrc, vcState, route, cid: cidRef } = ctx
 
   const setNewIframeSrc = (val: string) => {
-    if(val === iframeSrc.value) {
-      return
-    }
+    if(val === iframeSrc.value) return
     iframeSrc.value = val
   }
 
@@ -118,6 +117,8 @@ function listenRouteChange(
     setNewIframeSrc(url)
   }
 
+  
+
   const whenNoMatch = async () => {
     if(!vcState.value) return
     await valTool.waitMilli(350)
@@ -129,9 +130,19 @@ function listenRouteChange(
     }
     vcState.value = ""
   }
+
+  const tryToOpenLink = () => {
+    const vStore = useVvLinkStore()
+    const url = vStore.getCurrentLink(route)
+    if(!url) {
+      whenNoMatch()
+      return 
+    }
+    setNewIframeSrc(url)
+  }
   
   const checkRouteChange = (newQuery: LocationQuery) => {
-    const { outq, gpt3, cid, pdf, xhs, github, bing } = newQuery
+    const { outq, gpt3, cid, pdf, xhs, github, bing, vlink } = newQuery
 
     if(outq && typeof outq === "string") {
       vcState.value = "iframe"
@@ -161,6 +172,10 @@ function listenRouteChange(
     else if(cid && typeof cid === "string") {
       vcState.value = "thread"
       cidRef.value = cid
+    }
+    else if(vlink && typeof vlink === "string") {
+      vcState.value = "iframe"
+      tryToOpenLink()
     }
     else {
       whenNoMatch()

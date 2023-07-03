@@ -25,6 +25,12 @@ export const useVvLinkStore = defineStore("vvlink", () => {
     return data.url
   }
 
+  const getUrlById = (id: string) => {
+    const data = list.value.find(v => v.id === id)
+    if(!data) return
+    return data.url
+  }
+
   // 添加链接至对队列里，并返回其 id
   const addLink = (url: string) => {
     const tmp = list.value
@@ -39,6 +45,19 @@ export const useVvLinkStore = defineStore("vvlink", () => {
 
   return {
     getCurrentLink,
+    getUrlById,
     addLink,
   }
 })
+
+
+function canAdd(url: string) {
+  const u = new URL(url)
+  const p = u.protocol
+  if(p !== "http:" && p !== "https:") return false
+
+
+  return true
+}
+
+

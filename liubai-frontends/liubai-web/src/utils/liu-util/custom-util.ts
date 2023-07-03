@@ -7,6 +7,7 @@ import type {
 import cfg from "~/config"
 import confetti from "canvas-confetti";
 import { useWindowSize } from "~/hooks/useVueUse"
+import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore";
 
 /******* 转换颜色 *******/
 
@@ -59,14 +60,22 @@ export function getDefaultRouteQuery(
 /** 是否该打开侧边栏 vice-view */
 export function needToOpenViceView(query: LocationQuery) {
   if(!query) return false
-  let { cid } = query
+  let { cid, vlink } = query
   if(cid) return true
+
+  if(vlink && typeof vlink === "string") {
+    const vStore = useVvLinkStore()
+    const url = vStore.getUrlById(vlink)
+    return Boolean(url)
+  }
+
   const { iframe_keys } = cfg
   for(let key of iframe_keys) {
     if(query[key]) {
       return true
     }
   }
+
   return false
 }
 
