@@ -146,14 +146,6 @@ function openLink(
   opt: RrOpt,
   forceVv: boolean = false,
 ) {
-
-  const u = new URL(url)
-  const p = u.protocol
-  if(p !== "http:" && p !== "https:") {
-    window.open(url, "_blank")
-    return "outter"
-  }
-
   const w = toWhatDetail()
   if(!forceVv && w !== "vice-view") {
     window.open(url, "_blank")
@@ -164,6 +156,12 @@ function openLink(
   const vStore = useVvLinkStore()
   const nowLink = vStore.getCurrentLink(route)
   if(nowLink === url) return "inner"
+
+  const res = vStore.canAdd(url)
+  if(!res) {
+    window.open(url, "_blank")
+    return "outter"
+  }
 
   const vlink = vStore.addLink(url)
   const newQ = { vlink }

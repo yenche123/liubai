@@ -141,7 +141,10 @@ function listenRouteChange(
     }
 
     const iframeProxy = liuEnv.getEnv().IFRAME_PROXY
-    if(iframeProxy) {
+    const inAllowList = vStore.isInAllowedList(url)
+    console.log("直接打开: ", inAllowList)
+    console.log(" ")
+    if(iframeProxy && !inAllowList) {
       url = iframeProxy + url
     }
     setNewIframeSrc(url)

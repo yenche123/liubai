@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import valTool from "~/utils/basic/val-tool"
+import { domainAllowed, domainNotAllowed } from "~/config/domain-list"
 
 interface VvLinkAtom {
   id: string
@@ -47,17 +48,30 @@ export const useVvLinkStore = defineStore("vvlink", () => {
     getCurrentLink,
     getUrlById,
     addLink,
+    canAdd,
+    isInAllowedList,
   }
 })
 
-
+// 检查该链接是否允许在侧边栏打开
 function canAdd(url: string) {
+  const p0 = location.protocol
   const u = new URL(url)
   const p = u.protocol
   if(p !== "http:" && p !== "https:") return false
+  if(p === "http:" && p0 === "https:") return false
 
-
+  const h = u.hostname
+  const data = domainNotAllowed.find(v => h.includes(v))
+  if(data) return false
   return true
 }
 
+// 检查该链接是否可直接打开，而无需代理
+function isInAllowedList(url: string) {
+  const u = new URL(url)
+  const h = u.hostname
+  const data = domainAllowed.find(v => h.includes(v))
+  return Boolean(data)
+}
 
