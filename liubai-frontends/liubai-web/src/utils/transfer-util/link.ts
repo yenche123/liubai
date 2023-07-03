@@ -69,7 +69,7 @@ function _parseTextsForLink(content: TipTapJSONContent[]): TipTapJSONContent[] {
     }
 
     // 解析 一般链接
-    const regUrl = /[\w\./:-]*\w{1,32}\.\w{2,6}\S*/g
+    const regUrl = /[\w\./:-]*\w{1,32}\.\w{2,6}[^)(\n\s]*/g
     let list3 = _innerParse(text, regUrl, "url")
     if(list3) {
       content.splice(i, 1, ...list3)
@@ -99,6 +99,12 @@ function _innerParse(
   for(let match of matches) {
     let mTxt = match[0]
     let mLen = mTxt.length
+
+    console.log("forType: ", forType)
+    console.log(mTxt)
+    console.log(" ")
+
+
     if(forType === "email" && mLen < 6) continue
     if(forType === "social_link" && mLen < 7) continue
     if(forType === "url" && mLen < 8) continue
