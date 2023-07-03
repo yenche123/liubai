@@ -19,6 +19,7 @@ export const domainAllowed = [
   "inside.com.tw",
   "bilibili.com",
   "flowus.cn",
+  "gcores.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
@@ -31,5 +32,7 @@ export const domainNotAllowed = [
   "zhihu.com",
   "xiaohongshu.com",
   "notion.site",
-  "facebook.com"
+  "notion.so",
+  "facebook.com",
+  "every.to",
 ]
