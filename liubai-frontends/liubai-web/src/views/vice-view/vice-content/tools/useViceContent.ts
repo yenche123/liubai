@@ -7,6 +7,7 @@ import type { VcState, VcCtx } from "./types"
 import thirdLink from "~/config/third-link";
 import liuUtil from "~/utils/liu-util";
 import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore";
+import liuEnv from "~/utils/liu-env";
 
 export function useViceContent() {
   const iframeSrc = ref("")
@@ -133,10 +134,15 @@ function listenRouteChange(
 
   const tryToOpenLink = () => {
     const vStore = useVvLinkStore()
-    const url = vStore.getCurrentLink(route)
+    let url = vStore.getCurrentLink(route)
     if(!url) {
       whenNoMatch()
       return 
+    }
+
+    const iframeProxy = liuEnv.getEnv().IFRAME_PROXY
+    if(iframeProxy) {
+      url = iframeProxy + url
     }
     setNewIframeSrc(url)
   }

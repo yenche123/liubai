@@ -26,6 +26,9 @@ function getEnv() {
   // i18n
   const FALLBACK_LOCALE = import.meta.env.VITE_FALLBACK_LOCALE
 
+  // iframe proxy
+  const IFRAME_PROXY = import.meta.env.VITE_IFRAME_PROXY
+
   return {
     DEV,
     API_URL,
@@ -44,6 +47,7 @@ function getEnv() {
     FREE_COMMENT_IMG_NUM: Number(FREE_COMMENT_IMG_NUM),
     PREMIUM_COMMENT_IMG_NUM: Number(PREMIUM_COMMENT_IMG_NUM),
     FALLBACK_LOCALE,
+    IFRAME_PROXY,
   }
 }
 
