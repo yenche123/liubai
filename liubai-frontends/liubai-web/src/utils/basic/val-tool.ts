@@ -46,6 +46,18 @@ const numToFix = (num: number, fix: number): number => {
 }
 
 /**
+ * 判断一个字符串，是否能正常地转为数字
+ */
+const isStringAsNumber = (str: string) => {
+  str = str.trim()
+  if(!str) return false
+  const num = Number(str)
+  if(isNaN(num)) return false
+  return true
+}
+
+
+/**
  * 返回小于 2 位时，前面补0
  */
 const format0 = (val: string | number): string => {
@@ -148,6 +160,7 @@ export default {
   strToObj,
   getPromise,
   numToFix,
+  isStringAsNumber,
   format0,
   getChineseCharNum,
   isAllEnglishChar,

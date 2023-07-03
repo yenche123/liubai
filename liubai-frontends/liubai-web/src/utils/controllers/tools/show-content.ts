@@ -1,5 +1,6 @@
 import { ALLOW_DEEP_TYPES } from "~/config/atom";
 import type { LiuContent, LiuNodeType } from "~/types/types-atom";
+import valTool from "~/utils/basic/val-tool";
 
 type ParseType = "phone" | ""
 
@@ -41,8 +42,8 @@ function _parseTextsForLink(
     // 已经有样式，就 pass
     if(marks?.length) continue
 
-    // 解析 phoneNumber
-    const regTel = /\+{0,1}\d[\d\-]{6,15}/g
+    // 解析 phoneNumber, 其中正则末尾的 (?!\d) 表示手机号后面不要接数字
+    const regTel = /\+?\d[\d\-]{6,15}(?!\d)/g
     const listTel = _innerParse(text, regTel, "phone")
     if(listTel) {
       list.splice(i, 1, ...listTel)
@@ -53,6 +54,29 @@ function _parseTextsForLink(
   }
 
   return list
+}
+
+
+function checkPhoneNumber(
+  mTxt: string,
+  text: string,
+  startIdx: number,
+) {
+  // 检查是否为日期格式
+  const regDate = /\d{4}\-\d{2}-\d{2}/
+  const isYYYYMMDD = regDate.test(mTxt)
+  if(isYYYYMMDD) {
+    return false
+  }
+
+  // 检查前一个字符是否为数字
+  if(startIdx > 0) {
+    const prevChar = text[startIdx - 1]
+    const isNum = valTool.isStringAsNumber(prevChar)
+    if(isNum) return false
+  }
+
+  return true
 }
 
 function _innerParse(
@@ -72,12 +96,9 @@ function _innerParse(
     const startIdx = match.index
     if(startIdx === undefined) continue
     if(isPhone) {
-      // 判断是否为日期，如果是，则忽略
-      const regDate = /\d{4}\-\d{2}-\d{2}/
-      const isYYYYMMDD = regDate.test(mTxt)
-      if(isYYYYMMDD) {
-        continue
-      }
+      // 如果是手机号 做更多判断
+      const res = checkPhoneNumber(mTxt, text, startIdx)
+      if(!res) continue
     }
 
     const endIdx = startIdx + mLen
