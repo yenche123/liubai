@@ -254,6 +254,7 @@ class LiuRouter {
 
   /**
    * 回退页面，直到 query 中没有 key 或者 key 跟 val 不匹配
+   * @param route RouteLocationNormalizedLoaded
    * @param key query 中目标的属性
    * @param val query 中目标的属性值
    * @returns 

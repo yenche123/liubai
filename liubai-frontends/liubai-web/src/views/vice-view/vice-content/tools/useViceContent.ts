@@ -18,6 +18,7 @@ export function useViceContent() {
   const ctx: VcCtx = {
     iframeSrc,
     route,
+    router,
     vcState,
     cid,
   }
@@ -136,7 +137,7 @@ function listenRouteChange(
     const vStore = useVvLinkStore()
     let url = vStore.getCurrentLink(route)
     if(!url) {
-      whenNoMatch()
+      ctx.router.naviBackUntilNoSpecificQuery(route, "vlink")
       return 
     }
 
