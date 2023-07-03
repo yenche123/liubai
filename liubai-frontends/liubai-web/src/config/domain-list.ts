@@ -23,7 +23,8 @@ export const domainAllowed = [
   "sspai.com",
   "douban.com",
   "zhiy.cc",       // 背景需要调成白色
-  "hedwig.pub"
+  "hedwig.pub",
+  "beehiiv.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
