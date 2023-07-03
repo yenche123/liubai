@@ -20,6 +20,10 @@ export const domainAllowed = [
   "bilibili.com",
   "flowus.cn",
   "gcores.com",
+  "sspai.com",
+  "douban.com",
+  "zhiy.cc",       // 背景需要调成白色
+  "hedwig.pub"
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
@@ -35,4 +39,5 @@ export const domainNotAllowed = [
   "notion.so",
   "facebook.com",
   "every.to",
+  "msn.com",
 ]
