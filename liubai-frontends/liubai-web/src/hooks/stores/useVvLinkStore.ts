@@ -50,6 +50,8 @@ export const useVvLinkStore = defineStore("vvlink", () => {
     addLink,
     canAdd,
     isInAllowedList,
+    getEmbedUrl,
+    getOriginUrl,
   }
 })
 
@@ -62,7 +64,7 @@ function canAdd(url: string) {
   if(p === "http:" && p0 === "https:") return false
 
   const h = u.hostname
-  const data = domainNotAllowed.find(v => h.includes(v))
+  const data = domainNotAllowed.find(v => valTool.isInDomain(h, v))
   if(data) return false
   return true
 }
@@ -71,7 +73,18 @@ function canAdd(url: string) {
 function isInAllowedList(url: string) {
   const u = new URL(url)
   const h = u.hostname
-  const data = domainAllowed.find(v => h.includes(v))
+  const data = domainAllowed.find(v => valTool.isInDomain(h, v))
   return Boolean(data)
+}
+
+// 将原链接转为嵌入链接
+function getEmbedUrl(originUrl: string) {
+
+}
+
+
+// 将嵌入链接转为原链接
+function getOriginUrl(embedUrl: string) {
+
 }
 

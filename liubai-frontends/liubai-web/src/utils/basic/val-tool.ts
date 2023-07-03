@@ -154,6 +154,19 @@ const isSameSimpleList = (
 }
 
 
+// 检查 hostname 是否为 domain 或其下的子域名
+const isInDomain = (
+  hostname: string,
+  domain: string
+) => {
+  if(hostname === domain) return true
+  const firChar = domain[0]
+  let tmp = firChar === "." ? domain : (`.${domain}`)
+  const res = hostname.includes(tmp)
+  return res
+}
+
+
 export default {
   waitMilli,
   copyObject,
@@ -170,4 +183,5 @@ export default {
   isAIncludedInB,
   getSuffix,
   isSameSimpleList,
+  isInDomain,
 }
