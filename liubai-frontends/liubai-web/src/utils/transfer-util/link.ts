@@ -70,7 +70,7 @@ function _parseTextsForLink(content: TipTapJSONContent[]): TipTapJSONContent[] {
     }
 
     // 解析 一般链接
-    const regUrl = /[\w\./:-]*\w{1,32}\.\w{2,6}[^)(\n\s]*/g
+    const regUrl = /[\w\./:-]*\w{1,32}\.\w{2,6}[^)(\n\s\"\']*/g
     let list3 = _innerParse(text, regUrl, "url")
     if(list3) {
       content.splice(i, 1, ...list3)
