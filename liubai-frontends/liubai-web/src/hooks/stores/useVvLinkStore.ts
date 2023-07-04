@@ -5,7 +5,7 @@ import { defineStore } from "pinia";
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import valTool from "~/utils/basic/val-tool"
 import { domainAllowed, domainNotAllowed } from "~/config/domain-list"
-import { getEmbedUrl, getOriginUrl } from "./tools/embed-origin"
+import { getEmbedUrlStr, getOriginURL } from "./tools/embed-origin"
 
 interface VvLinkAtom {
   id: string
@@ -51,8 +51,8 @@ export const useVvLinkStore = defineStore("vvlink", () => {
     addLink,
     canAdd,
     isInAllowedList,
-    getEmbedUrl,
-    getOriginUrl,
+    getEmbedUrlStr,
+    getOriginURL,
   }
 })
 

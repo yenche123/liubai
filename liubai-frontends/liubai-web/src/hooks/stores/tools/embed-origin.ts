@@ -4,9 +4,10 @@
 
 import thirdLink from "~/config/third-link"
 import valTool from "~/utils/basic/val-tool"
+import liuEnv from "~/utils/liu-env"
 
 // 若无需转换，返回 undefined
-export function getEmbedUrl(originUrl: string) {
+export function getEmbedUrlStr(originUrl: string) {
   const url = new URL(originUrl)
   const h = url.hostname
   const p = url.pathname
@@ -69,7 +70,38 @@ export function getEmbedUrl(originUrl: string) {
 
 
 // 将嵌入链接转为原链接
-// 若无需转换，返回 undefined
-export function getOriginUrl(embedUrl: string) {
+// 注意: 返回的是 URL 对象
+export function getOriginURL(embedUrl: string) {
 
+  const url = new URL(embedUrl)
+  const h = url.hostname
+  const p = url.pathname
+  const s = url.searchParams
+
+  const proxy_key = "alt_url"
+  const extractFromProxy = () => {
+    const tmp = s.get(proxy_key)
+    return tmp
+  }
+
+  // 1. 检查是否在 proxy 里头
+  const env = liuEnv.getEnv()
+  const { IFRAME_PROXY } = env
+  if(IFRAME_PROXY) {
+    const hasProxy = embedUrl.includes(IFRAME_PROXY)
+    if(hasProxy) {
+      const res = extractFromProxy()
+      if(res) {
+        return new URL(res)
+      }
+    }
+  }
+
+
+  // n. 最后，检查是否存在 google 的 igu 参数
+  if(s.has("igu")) {
+    s.delete("igu")
+  }
+
+  return url
 }

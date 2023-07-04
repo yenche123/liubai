@@ -14,6 +14,7 @@ export function useViceContent() {
   const vcState = ref<VcState>("")
   const cid = ref("")     // 表示 thread-id
   const { route, router } = useRouteAndLiuRouter()
+  const vStore = useVvLinkStore()
 
   const ctx: VcCtx = {
     iframeSrc,
@@ -43,11 +44,7 @@ export function useViceContent() {
       return
     }
     else if(vs === "iframe" && iframeSrc.value) {
-      url = new URL(iframeSrc.value)
-      const query = url.searchParams
-      if(query.has("igu")) {
-        query.delete("igu")
-      }
+      url = vStore.getOriginURL(iframeSrc.value)
     }
     else if(vs === "thread" && cid.value) {
       const u = router.resolve({ name: "detail", params: { contentId: cid.value } })
@@ -141,7 +138,7 @@ function listenRouteChange(
 
     const iframeProxy = liuEnv.getEnv().IFRAME_PROXY
     const inAllowList = vStore.isInAllowedList(url)
-    const embedUrl = vStore.getEmbedUrl(url)
+    const embedUrl = vStore.getEmbedUrlStr(url)
     if(embedUrl) url = embedUrl
     else if(iframeProxy && !inAllowList) {
       url = iframeProxy + url
