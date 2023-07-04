@@ -1,11 +1,15 @@
-import { onMounted, onUnmounted, ref } from "vue"
+import { computed, onMounted, onUnmounted, ref, watch } from "vue"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import liuApi from "~/utils/liu-api"
 import localCache from "~/utils/system/local-cache"
+import type { VciProps } from "./types"
+import thirdLink from "~/config/third-link"
+import valTool from "~/utils/basic/val-tool"
 
-export function useVcIframe() {
+export function useVcIframe(props: VciProps) {
   const { route } = useRouteAndLiuRouter()
   const iframeEl = ref<HTMLIFrameElement | null>(null)
+  const { bgColor } = getBgColor(props)
 
   const whenWebViewerLoaded = () => {
     const iframeVal = iframeEl.value
@@ -52,5 +56,33 @@ export function useVcIframe() {
 
   return {
     iframeEl,
+    bgColor,
   }
+}
+
+
+function getBgColor(props: VciProps) {
+  const bgColor = computed<string | undefined>(() => {
+    const src = props.iframeSrc
+    if(!src) return
+
+    const WHITE_BG = `#fff`
+    let url: URL
+    try {
+      url = new URL(src)
+    }
+    catch(err) {
+      return
+    }
+
+    // zhiy.cc 时添加背景白色
+    const zhiycc = new URL(thirdLink.ZHIY_CC)
+    const isZhiycc = valTool.isInDomain(url.hostname, zhiycc.hostname)
+    if(isZhiycc) {
+      return WHITE_BG
+    }
+    return undefined
+  })
+
+  return { bgColor }
 }

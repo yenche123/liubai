@@ -11,4 +11,5 @@ export default {
   OUTLOOK_ADD: "https://outlook.live.com/calendar/0/deeplink/compose",
   TWITTER_ADD: "https://twitter.com/intent/tweet",
   LINE_SHARE_TXT: "https://line.me/R/share",
+  ZHIY_CC: "https://zhiy.cc/",
 }

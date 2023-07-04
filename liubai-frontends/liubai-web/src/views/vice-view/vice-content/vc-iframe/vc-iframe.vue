@@ -1,11 +1,7 @@
 <script lang="ts" setup>
 import { useVcIframe } from "./tools/useVcIframe"
 
-const {
-  iframeEl,
-} = useVcIframe()
-
-defineProps({
+const props = defineProps({
   isOutterDraging: {
     type: Boolean,
     default: false
@@ -26,6 +22,11 @@ defineProps({
     default: 0
   }
 })
+
+const {
+  iframeEl,
+  bgColor,
+} = useVcIframe(props)
 
 </script>
 <template>
@@ -48,6 +49,7 @@ defineProps({
 .vcliu-iframe {
   border: none;
   overflow: auto;
+  background-color: v-bind("bgColor");
 }
 
 .vcliu-cover {
