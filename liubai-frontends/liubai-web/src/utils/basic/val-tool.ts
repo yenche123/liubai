@@ -160,6 +160,15 @@ const isInDomain = (
   domain: string
 ) => {
   if(hostname === domain) return true
+
+  // 把 www. 去掉
+  const dList = domain.split(".")
+  if(dList.length === 3) {
+    if(dList[0] === "www") {
+      domain = dList[1] + "." + dList[2]
+    }
+  }
+
   const firChar = domain[0]
   let tmp = firChar === "." ? domain : (`.${domain}`)
   const res = hostname.includes(tmp)
