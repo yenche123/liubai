@@ -42,7 +42,8 @@ function _parseTextsForLink(content: TipTapJSONContent[]): TipTapJSONContent[] {
     if(marks && marks.length) continue
 
     // 解析 @xxx@aaa.bbb
-    const regSocialLink = /@[\w\.-]{2,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*/g
+    // 其中 (?<![\w\/\-\.]+) 为负向后行断言，表示第一个 @ 前面不能接 \w \/ \. \- \\
+    const regSocialLink = /(?<![\w\/\-\.\\]+)@[\w\.-]{2,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*(?!\S)/g
     let list0 = _innerParse(text, regSocialLink, "social_link")
     if(list0) {
       content.splice(i, 1, ...list0)
@@ -163,7 +164,11 @@ function _innerParse(
 
     if(startIdx > 0) {
       const prevLetter = text[startIdx - 1]
-      if(forType === "url" && (prevLetter === "@" || prevLetter === "#")) continue
+      if(forType === "url" || forType === "email") {
+        if(prevLetter === "@" || prevLetter === "#") continue
+        if(prevLetter === "/" || prevLetter === "?") continue
+        if(prevLetter === "!" || prevLetter === "\\") continue
+      }
 
       const frontObj = {
         type: "text",
