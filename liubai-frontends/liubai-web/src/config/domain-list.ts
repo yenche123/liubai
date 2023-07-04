@@ -25,6 +25,7 @@ export const domainAllowed = [
   "zhiy.cc",       // 背景需要调成白色
   "hedwig.pub",
   "beehiiv.com",
+  "lusun.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
