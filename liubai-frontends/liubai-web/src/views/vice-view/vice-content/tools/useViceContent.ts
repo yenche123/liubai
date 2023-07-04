@@ -119,8 +119,6 @@ function listenRouteChange(
     setNewIframeSrc(url)
   }
 
-  
-
   const whenNoMatch = async () => {
     if(!vcState.value) return
     await valTool.waitMilli(350)
@@ -143,11 +141,15 @@ function listenRouteChange(
 
     const iframeProxy = liuEnv.getEnv().IFRAME_PROXY
     const inAllowList = vStore.isInAllowedList(url)
-    console.log("直接打开: ", inAllowList)
-    console.log(" ")
-    if(iframeProxy && !inAllowList) {
+    const embedUrl = vStore.getEmbedUrl(url)
+    if(embedUrl) url = embedUrl
+    else if(iframeProxy && !inAllowList) {
       url = iframeProxy + url
     }
+
+    console.log("iframe url: ")
+    console.log(url)
+    console.log(" ")
     setNewIframeSrc(url)
   }
   

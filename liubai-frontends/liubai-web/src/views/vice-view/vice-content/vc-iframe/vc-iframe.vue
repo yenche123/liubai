@@ -39,6 +39,10 @@ const {
     :height="vcHeight"
     :src="iframeSrc"
     class="vcliu-iframe"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+    frameborder="0"
+    framespacing="0"
   ></iframe>
   
   <!-- 用于显示拖动时覆盖在 iframe 上的透明度白屏 -->

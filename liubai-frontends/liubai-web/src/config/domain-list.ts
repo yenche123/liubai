@@ -42,3 +42,10 @@ export const domainNotAllowed = [
   "every.to",
   "msn.com",
 ]
+
+// 一些需要特殊处理的 domain，比如支持 embed 的网页
+export const domainSpecial = [
+  "youtube.com",
+  "bilibili.com",
+  "loom.com",
+]

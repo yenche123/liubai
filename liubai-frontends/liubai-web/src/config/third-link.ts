@@ -12,4 +12,17 @@ export default {
   TWITTER_ADD: "https://twitter.com/intent/tweet",
   LINE_SHARE_TXT: "https://line.me/R/share",
   ZHIY_CC: "https://zhiy.cc/",
+
+  // youtube
+  YOUTUBE_EMBED: "https://www.youtube.com/embed/__XXX__?autoplay=1",
+  YOUTUBE_SHORT: "https://youtu.be/__XXX__",
+  YOUTUBE_COMMON: "https://www.youtube.com/watch?v=__XXX__",
+
+  // bilibili
+  BILIBILI_COMMON: "https://www.bilibili.com/video/__XXX__/",
+  BILIBILI_PLAYER: "https://player.bilibili.com/player.html?bvid=__XXX__",
+
+  // loom
+  LOOM_SHARE: "https://www.loom.com/share/__XXX__",
+  LOOM_EMBED: "https://www.loom.com/embed/__XXX__",
 }

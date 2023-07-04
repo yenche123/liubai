@@ -5,6 +5,7 @@ import { defineStore } from "pinia";
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import valTool from "~/utils/basic/val-tool"
 import { domainAllowed, domainNotAllowed } from "~/config/domain-list"
+import { getEmbedUrl, getOriginUrl } from "./tools/embed-origin"
 
 interface VvLinkAtom {
   id: string
@@ -75,16 +76,5 @@ function isInAllowedList(url: string) {
   const h = u.hostname
   const data = domainAllowed.find(v => valTool.isInDomain(h, v))
   return Boolean(data)
-}
-
-// 将原链接转为嵌入链接
-function getEmbedUrl(originUrl: string) {
-
-}
-
-
-// 将嵌入链接转为原链接
-function getOriginUrl(embedUrl: string) {
-
 }
 
