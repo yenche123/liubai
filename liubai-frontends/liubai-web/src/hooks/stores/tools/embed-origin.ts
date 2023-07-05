@@ -6,6 +6,8 @@ import thirdLink from "~/config/third-link"
 import valTool from "~/utils/basic/val-tool"
 import liuEnv from "~/utils/liu-env"
 
+const x = "__XXX__"
+
 // 若无需转换，返回 undefined
 export function getEmbedUrlStr(originUrl: string) {
   const url = new URL(originUrl)
@@ -14,10 +16,9 @@ export function getEmbedUrlStr(originUrl: string) {
   const pLen = p.length
   const s = url.searchParams
 
-  const x = "__XXX__"
   let tmp: string = ""
 
-  // 适配 youtube
+  // 适配 youtube /watch
   const yt = thirdLink.YOUTUBE_EMBED
   const yt1 = new URL(thirdLink.YOUTUBE_COMMON)
   let isYouTube1 = valTool.isInDomain(h, yt1.hostname) && p === "/watch"
@@ -28,7 +29,7 @@ export function getEmbedUrlStr(originUrl: string) {
     }
   }
 
-  // 适配 youtube 短链接
+  // 适配 youtube 短链接  https://youtu.be/__XXX__
   const yt2 = new URL(thirdLink.YOUTUBE_SHORT)
   const isYouTube2 = valTool.isInDomain(h, yt2.hostname) && pLen > 5
   if(isYouTube2) {
@@ -39,7 +40,19 @@ export function getEmbedUrlStr(originUrl: string) {
     return yt.replace(x, tmp)
   }
 
-  // 适配 bilibili
+  // 如果直接是 yt /embed 的话
+  const yt3 = new URL(yt)
+  const ytReg3 = /(?<=\/embed\/)\w{5,16}/g
+  const isYouTube3 = valTool.isInDomain(h, yt3.hostname)
+  const ytMatch3 = p.match(ytReg3)
+  if(isYouTube3 && ytMatch3) {
+    if(!s.has("autoplay")) {
+      s.set("autoplay", "1")
+    }
+    return url.toString()
+  }
+
+  // 适配 bilibili /video
   const b = thirdLink.BILIBILI_PLAYER
   const b1 = new URL(thirdLink.BILIBILI_COMMON)
   const bReg1 = /(?<=\/video\/)\w{5,16}/g
@@ -47,12 +60,19 @@ export function getEmbedUrlStr(originUrl: string) {
   const bMatch1 = p.match(bReg1)
   if(isBili1 && bMatch1) {
     const v = bMatch1[0]
-    if(v) {
-      return b.replace(x, v)
-    }
+    if(v) return b.replace(x, v)
   }
 
-  // 适配 loom
+  // 如果是 bilibili player.bilibili.com/player.html 的话
+  const b2 = new URL(b)
+  const isBili2 = valTool.isInDomain(h, b2.hostname) && p === "/player.html"
+  const hasBvid = s.has("bvid")
+  if(isBili2 && hasBvid) {
+    return url.toString()
+  }
+
+
+  // 适配 loom /share
   const loom = thirdLink.LOOM_EMBED
   const loom1 = new URL(thirdLink.LOOM_SHARE)
   const lReg1 = /(?<=\/share\/)\w{16,48}/g
@@ -63,6 +83,15 @@ export function getEmbedUrlStr(originUrl: string) {
     if(v) {
       return loom.replace(x, v)
     }
+  }
+
+  // 如果是 loom /embed
+  const loom2 = new URL(loom)
+  const lReg2 = /(?<=\/embed\/)\w{16,48}/g
+  const isLoom2 = valTool.isInDomain(h, loom2.hostname)
+  const lMatch2 = p.match(lReg2)
+  if(isLoom2 && lMatch2) {
+    return url.toString()
   }
 
   return
@@ -97,9 +126,41 @@ export function getOriginURL(embedUrl: string) {
     }
   }
 
+  // 2. 检查是否为 yt embed
+  const yt = thirdLink.YOUTUBE_COMMON
+  const yt1 = new URL(thirdLink.YOUTUBE_EMBED)
+  const ytReg = /(?<=\/embed\/)\w{5,16}/g 
+  const isYouTube1 = valTool.isInDomain(h, yt1.hostname)
+  const ytMatch = p.match(ytReg)
+  if(isYouTube1 && ytMatch) {
+    const v = ytMatch[0]
+    if(v) return yt.replace(x, v)
+  }
+
+  // 3. 检查是否为 bilibili embed
+  const bili = thirdLink.BILIBILI_COMMON
+  const bili1 = new URL(thirdLink.BILIBILI_PLAYER)
+  const isBili = valTool.isInDomain(h, bili1.hostname) && p === "/player.html"
+  if(isBili) {
+    const bvid = s.get("bvid")
+    if(bvid) return bili.replace(x, bvid)
+  }
+
+  // 4. 检查是否为 loom
+  const loom = thirdLink.LOOM_SHARE
+  const loom1 = new URL(thirdLink.LOOM_EMBED)
+  const loomReg = /(?<=\/embed\/)\w{16,48}/g 
+  const isLoom = valTool.isInDomain(h, loom1.hostname)
+  const loomMatch = p.match(loomReg)
+  if(isLoom && loomMatch) {
+    const v = loomMatch[0]
+    if(v) return loom.replace(x, v)
+  }
 
   // n. 最后，检查是否存在 google 的 igu 参数
-  if(s.has("igu")) {
+  const gUrl = new URL(thirdLink.GOOGLE_SEARCH)
+  const isGoogle = valTool.isInDomain(h, gUrl.hostname)
+  if(isGoogle && s.has("igu")) {
     s.delete("igu")
   }
 
