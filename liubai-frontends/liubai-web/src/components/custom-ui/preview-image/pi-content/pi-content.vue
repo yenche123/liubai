@@ -57,7 +57,7 @@ const onSwiper = (swiper: Swiper) => {
           <!-- 再给出这个 slide 可以上下左右自动对齐的盒子 -->
           <div class="pi-item">
             <liu-img :src="item.src" 
-              object-fit="contain" class="pi-image" 
+              object-fit="cover" class="pi-image" 
               :style="{
                 'width': item.width + 'px',
                 'height': item.height + 'px',
