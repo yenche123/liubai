@@ -62,6 +62,7 @@ const onSwiper = (swiper: Swiper) => {
                 'width': item.width + 'px',
                 'height': item.height + 'px',
               }"
+              bg-color="transparent"
               :width="item.width"
               :height="item.height"
               :blurhash="item.blurhash"
