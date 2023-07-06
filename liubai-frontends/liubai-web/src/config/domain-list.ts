@@ -42,6 +42,7 @@ export const domainNotAllowed = [
   "facebook.com",
   "every.to",
   "msn.com",
+  "threads.net",
 ]
 
 // 一些需要特殊处理的 domain，比如支持 embed 的网页
