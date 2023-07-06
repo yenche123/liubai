@@ -12,6 +12,7 @@ export default {
   TWITTER_ADD: "https://twitter.com/intent/tweet",
   LINE_SHARE_TXT: "https://line.me/R/share",
   ZHIY_CC: "https://zhiy.cc/",
+  PARAGRAPH_XYZ: "https://paragraph.xyz/",
 
   // youtube
   YOUTUBE_EMBED: "https://www.youtube.com/embed/__XXX__?autoplay=1",

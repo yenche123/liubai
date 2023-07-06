@@ -6,6 +6,9 @@ import type { VciProps } from "./types"
 import thirdLink from "~/config/third-link"
 import valTool from "~/utils/basic/val-tool"
 
+
+type ThirdLinkKey = keyof typeof thirdLink
+
 export function useVcIframe(props: VciProps) {
   const { route } = useRouteAndLiuRouter()
   const iframeEl = ref<HTMLIFrameElement | null>(null)
@@ -75,12 +78,18 @@ function getBgColor(props: VciProps) {
       return
     }
 
-    // zhiy.cc 时添加背景白色
-    const zhiycc = new URL(thirdLink.ZHIY_CC)
-    const isZhiycc = valTool.isInDomain(url.hostname, zhiycc.hostname)
-    if(isZhiycc) {
-      return WHITE_BG
+    const h = url.hostname
+
+    // 给以下域名 在 iframe 里添加白色背景
+    const list: ThirdLinkKey[] = ["ZHIY_CC", "PARAGRAPH_XYZ"]
+    for(let i=0; i<list.length; i++) {
+      const key = list[i]
+      const v = thirdLink[key]
+      const base = new URL(v)
+      const isBase = valTool.isInDomain(h, base.hostname)
+      if(isBase) return WHITE_BG
     }
+
     return undefined
   })
 
