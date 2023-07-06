@@ -209,7 +209,7 @@ function _handleSocialLink(text: string) {
   }
 
   if(domain === "threads.net") {
-    return `https://threads.net/@${username}`
+    return `https://www.threads.net/@${username}`
   }
 
   if(domain === "twitter.com") {
