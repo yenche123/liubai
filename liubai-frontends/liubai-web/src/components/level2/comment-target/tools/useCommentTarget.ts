@@ -56,6 +56,7 @@ async function loadTargetComment(
   const res = await commentController.loadByComment(opt)
   const c = res[0]
   if(c?.oState !== "OK") {
+    ctData.state = 50
     emit("pagestatechange", 50)
     return
   }
@@ -65,6 +66,7 @@ async function loadTargetComment(
   console.log(" ")
 
   delete ctData.thread
+  ctData.state = -1
   ctData.targetComment = c
   ctData.aboveList = []
   ctData.belowList = []
