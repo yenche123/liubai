@@ -32,7 +32,7 @@ if(props.location === "detail-page") commentEditorLocated = "main-view"
 
 const {
   receiveOperation
-} = useThreadOperateInDetail(tdData)
+} = useThreadOperateInDetail()
 
 subscribeUpdate(tdData)
 
@@ -47,7 +47,7 @@ subscribeUpdate(tdData)
     :thread-data="tdData.threadShow"
     display-type="detail"
     :position="0"
-    @newoperate="receiveOperation"
+    @newoperate="(op) => receiveOperation(op, tdData.threadShow)"
   ></ThreadCard>
 
   <!-- 评论区 -->
