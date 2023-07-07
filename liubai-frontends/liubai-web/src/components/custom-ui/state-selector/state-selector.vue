@@ -48,9 +48,15 @@ const { t } = useI18n()
           <div class="ss-item" @click="onTapItem(index)">
 
             <!-- 状态颜色 -->
-            <div class="ssi-color"
-              :style="{ 'background-color': item.colorShow }"
-            ></div>
+            <div class="ssi-color">
+              <div
+                class="ssi-color-bg"
+                :style="{ 'background-color': item.colorShow }"
+              ></div>
+              <div class="ssi-color-dot"
+                :style="{ 'background-color': item.colorShow }"
+              ></div>
+            </div>
 
             <!-- 状态文字 -->
             <div class="ssi-text">
@@ -172,11 +178,32 @@ const { t } = useI18n()
 }
 
 .ssi-color {
-  width: 12px;
-  height: 12px;
-  overflow: hidden;
+  width: 18px;
+  height: 18px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   margin-inline-end: 20px;
+}
+
+.ssi-color-bg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  opacity: .25;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ssi-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: relative;
+  opacity: .7;
 }
 
 .ssi-text {
@@ -261,8 +288,7 @@ const { t } = useI18n()
   }
 
   .ssi-color {
-    width: 10px;
-    height: 10px;
+    margin-inline-end: 14px;
   }
 
   .ssi-text {
