@@ -3,6 +3,7 @@ import {
   useNetwork as vueUseNetwork,
   useResizeObserver,
   useDropZone,
+  usePageLeave,
 } from "@vueuse/core"
 import type { NetworkState } from "@vueuse/core"
 import type { Ref } from "vue"
@@ -31,4 +32,5 @@ export {
   useResizeObserver,
   useDropZone,
   useNetwork,
+  usePageLeave,
 }

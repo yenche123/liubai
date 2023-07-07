@@ -1,12 +1,14 @@
-import { provide, ref, watch, watchEffect } from "vue";
+import { provide, ref, watch } from "vue";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
-import { useDropZone } from "~/hooks/useVueUse"
+import { useDropZone, usePageLeave } from "~/hooks/useVueUse"
 import { mvFileKey } from "~/utils/provide-keys"
 import type { MainViewProps } from "./types"
 
 export function useMvDropZone(
   props: MainViewProps
 ) {
+  const hasLeftPage = usePageLeave()
+
   const centerRef = ref<HTMLDivElement>()
   const dropFiles = ref<File[]>([])
   provide(mvFileKey, dropFiles)
@@ -30,6 +32,10 @@ export function useMvDropZone(
   const _isOverDropZone = ref(isOverDropZone.value)   
   watch(isOverDropZone, (newV) => {
     if(globalState.isDragToSort) return
+
+    // 当前鼠标是否已离开页面，若不是，则忽略
+    if(!hasLeftPage.value) return
+
     _isOverDropZone.value = newV
   })
 
