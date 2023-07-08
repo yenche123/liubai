@@ -23,6 +23,7 @@ interface TlContext {
   svBottomUp?: ShallowRef<SvBottomUp>
   reloadRequired: boolean
   emits: TlEmits
+  hasReachBottom: Ref<boolean>
 }
 
 export function useThreadList(
@@ -36,6 +37,8 @@ export function useThreadList(
   const svBottomUp = inject(svBottomUpKey)
 
   const list = ref<ThreadShow[]>([])
+  const hasReachBottom = ref(false)
+
   const lastItemStamp = ref(0)
   const ctx: TlContext = {
     list,
@@ -47,6 +50,7 @@ export function useThreadList(
     svBottomUp,
     reloadRequired: false,
     emits,
+    hasReachBottom,
   }
 
   // 监听触底/顶加载
@@ -61,6 +65,7 @@ export function useThreadList(
     // console.log(" ")
 
     if(type === "to_end") {
+      if(hasReachBottom.value) return
       loadList(ctx)
     }
     else if(type === "to_start") {
@@ -105,7 +110,11 @@ export function useThreadList(
     loadList(ctx, true)
   }
 
-  return { list, lastItemStamp }
+  return { 
+    list, 
+    lastItemStamp,
+    hasReachBottom,
+  }
 }
 
 // 滚动到最顶部，然后更新 list
@@ -151,6 +160,7 @@ async function loadList(
   const spaceId = ctx.spaceIdRef.value
   if(!spaceId) return
   if(reload) {
+    ctx.hasReachBottom.value = false
     ctx.reloadRequired = false
   }
 
@@ -191,9 +201,13 @@ async function loadList(
   }
 
   // 处理 lastItemStamp
-  if(results.length) {
+  const newLength = results.length
+  if(newLength) {
     handleLastItemStamp(viewType, results, ctx.lastItemStamp)
   }
-  
 
+  // 小于一定数量的时候 表示已经触底
+  if(newLength < 6) {
+    ctx.hasReachBottom.value = true
+  }
 }
