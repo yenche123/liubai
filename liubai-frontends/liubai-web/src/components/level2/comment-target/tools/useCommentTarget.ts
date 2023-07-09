@@ -23,8 +23,8 @@ export function useCommentTarget(
     hasReachedTop: false,
   })
 
-  const rid = toRef(props, "targetId")
-  watch(rid, (newV) => {
+  const cid2 = toRef(props, "targetId")
+  watch(cid2, (newV) => {
     ctData.targetId = newV
     loadTargetComment(ctData, emit)
   }, { immediate: true })

@@ -36,7 +36,7 @@ https://icons.radix-ui.com/
 
 9. https://www.toptal.com/developers/keycode 可以查看键盘 keyboard 的 key
 
-10. 在路由里 `cid` 已经被拿来作为 `threadId` 的昵称，那么姑且就用 `rid` 作为 `commentId` 的昵称吧，其中 `r` 为 `reply` 之意。
+10. 在路由里 `cid` 已经被拿来作为 `threadId` 的昵称，那么姑且就用 `cid2` 作为 `commentId` 的昵称
 
 ## 评论
 

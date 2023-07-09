@@ -5,6 +5,7 @@ const HomePage = () => import("../pages/level1/home-page/home-page.vue")
 const LoginPage = () => import("../pages/level1/login-page/login-page.vue")
 const IndexPage = () => import("../pages/level1/index-page/index-page.vue")
 const DetailPage = () => import("../pages/level2/detail-page/detail-page.vue")
+const CommentPage = () => import("../pages/level2/comment-page/comment-page.vue")
 const FavoritePage = () => import("../pages/level2/favorite-page/favorite-page.vue")
 const StatePage = () => import("../pages/level2/state-page/state-page.vue")
 const TrashPage = () => import("../pages/level2/trash-page/trash-page.vue")
@@ -67,6 +68,18 @@ const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "detail",
+    meta: {
+      keepAlive: true,
+      checkWorkspace: false,
+    }
+  },
+  {
+    path: "/c/:commentId(\\w{10,})",
+    components: {
+      default: CommentPage,
+      LeftSidebar,
+    },
+    name: "comment",
     meta: {
       keepAlive: true,
       checkWorkspace: false,
