@@ -21,7 +21,6 @@ import liuUtil from "~/utils/liu-util";
 import { useSeKeyboard } from "./tools/useSeKeyboard";
 import sideBar from "~/views/side-bar";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
-import liuApi from "~/utils/liu-api";
 
 const TRANSITION_DURATION = 150
 const enable = ref(false)
@@ -341,12 +340,6 @@ function toRedirectAndSave(res: SearchEditorRes) {
   
   let opt = { rr, replace: true }
 
-
-  console.log("ressss")
-  console.log(res)
-  console.log(" ")
-
-
   if(a === "bing") {
     let res = liuUtil.open.openBing(text, opt)
     if(res === "inner") hasClosed = true
@@ -361,7 +354,6 @@ function toRedirectAndSave(res: SearchEditorRes) {
   }
   else if(res.commentId && res.threadId) {
     hasClosed = true
-    console.log("openComment.............")
     liuUtil.open.openComment(res.commentId, opt)
   }
   else if(res.threadId) {
@@ -378,23 +370,15 @@ function getConfirmRes() {
   let { indicator } = seData
   let hasTxt = Boolean(seData.trimTxt)
 
-
-  console.log("seData::::")
-  console.log(liuUtil.toRawData(seData))
-  console.log(" ")
-
-
   if(hasTxt) {
     let tmp1 = seData.innerList.find(v => v.atomId === indicator)
     if(tmp1) {
-      console.log("111111111111111")
       res.commentId = tmp1.commentId
       res.threadId = tmp1.threadId
       return res
     }
     let tmp2 = seData.thirdList.find(v => v.atomId === indicator)
     if(tmp2) {
-      console.log("2222222222222")
       res.atomId = tmp2.atomId
       return res
     }
@@ -402,20 +386,16 @@ function getConfirmRes() {
   else {
     let tmp3 = seData.suggestList.find(v => v.atomId === indicator)
     if(tmp3) {
-      console.log("33333333333333333")
       res.commentId = tmp3.commentId
       res.threadId = tmp3.threadId
       return res
     }
     let tmp4 = seData.recentList.find(v => v.atomId === indicator)
     if(tmp4) {
-      console.log("44444444444444")
       seData.inputTxt = tmp4.title
       return null
     }
   }
-
-  console.log("5555555555555555")
 
   return res
 }
