@@ -29,6 +29,7 @@ const props = defineProps({
 
 const {
   ctx,
+  placeholderKey,
   minEditorHeight,
   editorCoreRef,
   editor,
@@ -67,7 +68,7 @@ const {
         <EditorCore
           ref="editorCoreRef"
           purpose="comment-edit"
-          :desc-placeholder="t('comment.placeholder1')"
+          :desc-placeholder="t(placeholderKey)"
           :min-height="'' + minEditorHeight + 'px'"
           @focus="onEditorFocus"
           @blur="onEditorBlur"

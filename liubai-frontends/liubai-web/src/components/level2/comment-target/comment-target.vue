@@ -68,8 +68,12 @@ const { receiveOperation } = useThreadOperateInDetail()
     <!-- 目标评论 -->
     <CommentCard
       :cs="ctData.targetComment"
+      is-target-comment
       :location="location"
     ></CommentCard>
+
+    <!-- 占位 -->
+    <div class="ct-virtual-one"></div>
 
     <!-- 回复框 -->
     <CommentEditor
@@ -110,6 +114,11 @@ const { receiveOperation } = useThreadOperateInDetail()
 .ct-container {
   width: 100%;
   position: relative;
+}
+
+.ct-virtual-one {
+  width: 100%;
+  height: 10px;
 }
 
 .ct-bottom {

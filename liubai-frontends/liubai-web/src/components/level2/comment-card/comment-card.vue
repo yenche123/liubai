@@ -199,6 +199,7 @@ const {
   width: 100%;
   position: relative;
   display: flex;
+  margin-block-end: 4px;
 }
 
 .cct-avatar {
@@ -211,15 +212,16 @@ const {
 .cctf-info {
   flex: 1;
   position: relative;
-  margin-block-end: 2px;
 }
 
 .cctf-account {
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  font-size: var(--comment-font);
+  font-size: var(--mini-font);
   color: var(--liu-quote);
+  user-select: none;
+  margin-block-start: -4px;
 }
 
 .cctf-time {
@@ -278,6 +280,7 @@ const {
   display: flex;
   flex-wrap: wrap;
   user-select: none;
+  margin-block-start: -4px;
   margin-block-end: 4px;
 }
 

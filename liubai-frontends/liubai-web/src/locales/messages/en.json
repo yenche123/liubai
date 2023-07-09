@@ -302,6 +302,7 @@
   },
   "comment": {
     "placeholder1": "Add some thoughts",
+    "placeholder2": "Reply",
     "submit1": "Add",
     "deleted_tip": "The comment has been deleted.",
     "no_idea": "Unknown"

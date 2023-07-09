@@ -1,6 +1,6 @@
 import { useMyProfile } from "~/hooks/useCommon";
 import EditorCore from "../../editor-core/editor-core.vue"
-import { reactive, ref, shallowRef, watch } from "vue"
+import { computed, reactive, ref, shallowRef, watch } from "vue"
 import type { Ref, ShallowRef } from "vue"
 import type { TipTapEditor, EditorCoreContent } from "~/types/types-editor"
 import type { CeCtx, CeProps, CommentStorageAtom } from "./types";
@@ -17,6 +17,12 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 export function useCommentEditor(props: CeProps) {
 
   let { located } = props
+
+  const placeholderKey = computed(() => {
+    const r = props.replyToComment
+    if(r) return `comment.placeholder2`
+    return `comment.placeholder1`
+  })
 
   // 上下文
   const ctx: CeCtx = reactive({
@@ -96,6 +102,7 @@ export function useCommentEditor(props: CeProps) {
 
   return {
     ctx,
+    placeholderKey,
     minEditorHeight,
     editorCoreRef,
     editor,
