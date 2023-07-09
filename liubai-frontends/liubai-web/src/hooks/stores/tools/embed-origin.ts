@@ -134,7 +134,7 @@ export function getOriginURL(embedUrl: string) {
   const ytMatch = p.match(ytReg)
   if(isYouTube1 && ytMatch) {
     const v = ytMatch[0]
-    if(v) return yt.replace(x, v)
+    if(v) return new URL(yt.replace(x, v))
   }
 
   // 3. 检查是否为 bilibili embed
@@ -143,7 +143,7 @@ export function getOriginURL(embedUrl: string) {
   const isBili = valTool.isInDomain(h, bili1.hostname) && p === "/player.html"
   if(isBili) {
     const bvid = s.get("bvid")
-    if(bvid) return bili.replace(x, bvid)
+    if(bvid) return new URL(bili.replace(x, bvid))
   }
 
   // 4. 检查是否为 loom
@@ -154,7 +154,7 @@ export function getOriginURL(embedUrl: string) {
   const loomMatch = p.match(loomReg)
   if(isLoom && loomMatch) {
     const v = loomMatch[0]
-    if(v) return loom.replace(x, v)
+    if(v) return new URL(loom.replace(x, v))
   }
 
   // n. 最后，检查是否存在 google 的 igu 参数
