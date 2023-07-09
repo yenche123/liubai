@@ -120,8 +120,9 @@ class LiuRouter {
     }
 
     // 如果是左侧侧边栏显示 tags 时，依然保持显示标签
-    if(reserveTags && oldQuery.tags && typeof oldQuery.tags === 'string') {
-      newQuery.tags = oldQuery.tags
+    const tags = oldQuery.tags
+    if(reserveTags && tags && typeof tags === 'string') {
+      newQuery.tags = tags
     }
 
     let res = await this.push({ name, query: newQuery, params })

@@ -60,8 +60,8 @@ export function getDefaultRouteQuery(
 /** 是否该打开侧边栏 vice-view */
 export function needToOpenViceView(query: LocationQuery) {
   if(!query) return false
-  let { cid, vlink } = query
-  if(cid) return true
+  let { cid, vlink, cid2 } = query
+  if(cid || cid2) return true
 
   if(vlink && typeof vlink === "string") {
     const vStore = useVvLinkStore()

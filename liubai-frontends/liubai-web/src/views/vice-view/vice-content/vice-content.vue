@@ -3,6 +3,7 @@ import { useViceContent } from "./tools/useViceContent";
 import VcNaviBar from './vc-navi-bar/vc-navi-bar.vue';
 import VcIframe from './vc-iframe/vc-iframe.vue';
 import ThreadDetail from "~/components/level1/thread-detail/thread-detail.vue";
+import CommentTarget from "~/components/level2/comment-target/comment-target.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
 import RightDropZone from "./right-drop-zone/right-drop-zone.vue";
 import { useVcHeight } from "./tools/useVcHeight"
@@ -23,6 +24,7 @@ const emits = defineEmits<{
 
 const { 
   cid,
+  cid2,
   vcState,
   iframeSrc,
   onTapBack,
@@ -73,9 +75,9 @@ const {
     :mask-margin-top="maskMarginTop"
   ></VcIframe>
 
-  <!-- 动态 -->
+  <!-- 动态或评论 -->
   <div class="vcliu-content"
-    v-show="vcState === 'thread'"
+    v-show="vcState === 'thread' || vcState === 'comment'"
     ref="contentRef"
   >
     <ScrollView>
@@ -86,6 +88,12 @@ const {
           location="vice-view"
           @pagestatechange="onViewStateChange"
         ></ThreadDetail>
+      </div>
+      <div class="vcliu-box" v-else-if="cid2">
+        <CommentTarget
+          location="vice-view"
+          :target-id="cid2"
+        ></CommentTarget>
       </div>
     </ScrollView>
 

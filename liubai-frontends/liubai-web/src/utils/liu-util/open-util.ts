@@ -45,6 +45,26 @@ function openDetailWithDetailPage(contentId: string, opt: RrOpt) {
   else router.pushNewPageWithOldQuery(route, newPage)
 }
 
+function openComment(cid2: string, opt: RrOpt) {
+  const w = toWhatDetail()
+  if(w === "detail-page") openCommentWithDetailPage(cid2, opt)
+  else if(w === "vice-view") openCommentWithViceView(cid2, opt)
+}
+
+function openCommentWithViceView(cid2: string, opt: RrOpt) {
+  const { route, router } = opt.rr
+  if(opt.replace) router.replaceWithNewQuery(route, { cid2 })
+  else router.pushCurrentWithNewQuery(route, { cid2 })
+}
+
+function openCommentWithDetailPage(cid2: string, opt: RrOpt) {
+  const { route, router } = opt.rr
+  let newPage = { name: "comment", params: { commentId: cid2 } }
+  if(opt.replace) router.replace(newPage)
+  else router.pushNewPageWithOldQuery(route, newPage)
+}
+
+
 // 打开外部搜索
 function openOutSearch(
   keyword: string, 
@@ -176,6 +196,9 @@ export default {
   openDetail,
   openDetailWithViceView,
   openDetailWithDetailPage,
+  openComment,
+  openCommentWithViceView,
+  openCommentWithDetailPage,
   openOutSearch,
   openBing,
   getBingSearchLink,

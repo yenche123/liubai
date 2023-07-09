@@ -12,7 +12,8 @@ import liuEnv from "~/utils/liu-env";
 export function useViceContent() {
   const iframeSrc = ref("")
   const vcState = ref<VcState>("")
-  const cid = ref("")     // 表示 thread-id
+  const cid = ref("")     // 表示 threadId
+  const cid2 = ref("")    // 表示 commentId
   const { route, router } = useRouteAndLiuRouter()
   const vStore = useVvLinkStore()
 
@@ -22,6 +23,7 @@ export function useViceContent() {
     router,
     vcState,
     cid,
+    cid2,
   }
 
   listenRouteChange(ctx)
@@ -58,6 +60,7 @@ export function useViceContent() {
 
   return {
     cid,
+    cid2,
     vcState,
     iframeSrc,
     onTapBack,
@@ -71,7 +74,13 @@ function listenRouteChange(
   ctx: VcCtx,
 ) {
   let located = ""
-  const { iframeSrc, vcState, route, cid: cidRef } = ctx
+  const { 
+    iframeSrc, 
+    vcState, 
+    route, 
+    cid: cidRef,
+    cid2: cid2Ref,
+  } = ctx
 
   const setNewIframeSrc = (val: string) => {
     if(val === iframeSrc.value) return
@@ -144,14 +153,23 @@ function listenRouteChange(
       url = iframeProxy + url
     }
 
-    console.log("iframe url: ")
-    console.log(url)
-    console.log(" ")
+    // console.log("iframe url: ")
+    // console.log(url)
+    // console.log(" ")
     setNewIframeSrc(url)
   }
   
   const checkRouteChange = (newQuery: LocationQuery) => {
-    const { outq, gpt3, cid, pdf, xhs, github, bing, vlink } = newQuery
+    const { 
+      outq,
+      cid, 
+      cid2,
+      pdf, 
+      xhs, 
+      github, 
+      bing, 
+      vlink,
+    } = newQuery
 
     if(outq && typeof outq === "string") {
       vcState.value = "iframe"
@@ -166,10 +184,6 @@ function listenRouteChange(
       vcState.value = "iframe"
       openPDF(pdf)
     }
-    else if(gpt3 && typeof gpt3 === "string") {
-      vcState.value = "iframe"
-      openChatGPT(gpt3)
-    }
     else if(xhs && typeof xhs === "string") {
       vcState.value = "iframe"
       openXhsSearch(xhs)
@@ -181,6 +195,10 @@ function listenRouteChange(
     else if(cid && typeof cid === "string") {
       vcState.value = "thread"
       cidRef.value = cid
+    }
+    else if(cid2 && typeof cid2 === "string") {
+      vcState.value = "comment"
+      cid2Ref.value = cid2
     }
     else if(vlink && typeof vlink === "string") {
       vcState.value = "iframe"
