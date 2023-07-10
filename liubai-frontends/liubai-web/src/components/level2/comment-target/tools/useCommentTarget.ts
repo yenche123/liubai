@@ -1,4 +1,4 @@
-import { reactive, toRef, watch } from "vue";
+import { computed, reactive, toRef, watch } from "vue";
 import type { 
   CommentTargetData,
   CommentTargetEmit, 
@@ -8,11 +8,15 @@ import type { LoadByCommentOpt } from "~/utils/controllers/comment-controller/to
 import commentController from "~/utils/controllers/comment-controller/comment-controller";
 import usefulTool from "~/utils/basic/useful-tool"
 import threadController from "~/utils/controllers/thread-controller/thread-controller";
+import { useWindowSize } from "~/hooks/useVueUse";
+import valTool from "~/utils/basic/val-tool";
 
 export function useCommentTarget(
   props: CommentTargetProps,
   emit: CommentTargetEmit
 ) {
+
+  const { height } = useWindowSize()
 
   const ctData = reactive<CommentTargetData>({
     targetId: "",
@@ -23,6 +27,14 @@ export function useCommentTarget(
     hasReachedTop: false,
   })
 
+  const virtualHeightPx = computed(() => {
+    const h = height.value
+    const bLength = ctData.belowList.length
+    let tmpH = h - 150 - (bLength * 100)
+    if(tmpH < 0) tmpH = 0
+    return tmpH
+  })
+
   const cid2 = toRef(props, "targetId")
   watch(cid2, (newV) => {
     ctData.targetId = newV
@@ -31,6 +43,7 @@ export function useCommentTarget(
 
   return {
     ctData,
+    virtualHeightPx,
   }
 }
 
@@ -114,6 +127,7 @@ async function loadBelowList(
 
   // 判断是否要去溯源
   if(ctData.aboveList.length < 1 && !ctData.hasReachedTop) {
+    // await valTool.waitMilli(500)
     loadAboveList(ctData, emit)
   }
 }

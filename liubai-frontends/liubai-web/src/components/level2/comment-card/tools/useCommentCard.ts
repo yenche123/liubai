@@ -3,12 +3,15 @@ import type { CommentCardProps } from "./types";
 import { computed, ref } from "vue";
 import cui from "~/components/custom-ui";
 import { useGlobalStateStore } from '~/hooks/stores/useGlobalStateStore';
+import liuUtil from "~/utils/liu-util";
+import { useRouteAndLiuRouter } from "~/routes/liu-router";
 
 export function useCommentCard(
   props: CommentCardProps,
 ) {
 
   const gStore = useGlobalStateStore()
+  const rr = useRouteAndLiuRouter()
 
   const {
     allowHover,
@@ -31,11 +34,15 @@ export function useCommentCard(
     if(gStore.isJustSelect()) return
 
     const cha = liuApi.getCharacteristic()
+    const cid2 = props.cs._id
+    let opt = { rr }
 
-    cui.showContentPanel({ comment: props.cs, onlyReaction: false })
-    // if(cha.isMobile) {
-    //   cui.showContentPanel({ comment: props.cs, onlyReaction: false })
-    // }
+    if(cha.isMobile) {
+      cui.showContentPanel({ comment: props.cs, onlyReaction: false })
+    }
+    else {
+      liuUtil.open.openComment(cid2, opt)
+    }
   }
 
   

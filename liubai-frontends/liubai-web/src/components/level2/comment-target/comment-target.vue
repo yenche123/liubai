@@ -33,7 +33,7 @@ let commentEditorLocated: LocatedA = "vice-view"
 if(props.location === "detail-page") commentEditorLocated = "main-view"
 
 const emit = defineEmits<CommentTargetEmit>()
-const { ctData } = useCommentTarget(props, emit)
+const { ctData, virtualHeightPx } = useCommentTarget(props, emit)
 
 const { receiveOperation } = useThreadOperateInDetail()
 
@@ -104,7 +104,9 @@ const { receiveOperation } = useThreadOperateInDetail()
 
     </div>
 
-
+    <div class="ct-virtual-one" 
+      :style="{ 'height': virtualHeightPx + 'px' }"
+    ></div>
 
   </div>
 
