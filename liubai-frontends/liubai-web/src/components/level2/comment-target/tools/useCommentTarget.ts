@@ -1,6 +1,7 @@
-import { computed, reactive, toRef, watch } from "vue";
+import { computed, inject, nextTick, reactive, toRef, watch } from "vue";
 import type { 
   CommentTargetData,
+  CommentTargetCtx,
   CommentTargetEmit, 
   CommentTargetProps,
 } from "./types";
@@ -10,6 +11,7 @@ import usefulTool from "~/utils/basic/useful-tool"
 import threadController from "~/utils/controllers/thread-controller/thread-controller";
 import { useWindowSize } from "~/hooks/useVueUse";
 import valTool from "~/utils/basic/val-tool";
+import { svBottomUpKey } from "~/utils/provide-keys";
 
 export function useCommentTarget(
   props: CommentTargetProps,
@@ -17,6 +19,7 @@ export function useCommentTarget(
 ) {
 
   const { height } = useWindowSize()
+  const svBottomUp = inject(svBottomUpKey)
 
   const ctData = reactive<CommentTargetData>({
     targetId: "",
@@ -25,12 +28,19 @@ export function useCommentTarget(
     belowList: [],
     hasReachedBottom: false,
     hasReachedTop: false,
+    showZeroBox: true,
   })
+
+  const ctx: CommentTargetCtx = {
+    ctData,
+    svBottomUp,
+    emit,
+  }
 
   const virtualHeightPx = computed(() => {
     const h = height.value
     const bLength = ctData.belowList.length
-    let tmpH = h - 150 - (bLength * 100)
+    let tmpH = h - 200 - (bLength * 100)
     if(tmpH < 0) tmpH = 0
     return tmpH
   })
@@ -38,7 +48,7 @@ export function useCommentTarget(
   const cid2 = toRef(props, "targetId")
   watch(cid2, (newV) => {
     ctData.targetId = newV
-    loadTargetComment(ctData, emit)
+    loadTargetComment(ctx)
   }, { immediate: true })
 
   return {
@@ -51,9 +61,10 @@ export function useCommentTarget(
 
 // 1. 加载【目标评论】
 async function loadTargetComment(
-  ctData: CommentTargetData,
-  emit: CommentTargetEmit,
+  ctx: CommentTargetCtx
 ) {
+
+  const { ctData, emit } = ctx
 
   if(ctData.targetComment) {
     ctData.state = 1
@@ -85,15 +96,19 @@ async function loadTargetComment(
   ctData.belowList = []
   ctData.hasReachedBottom = false
   ctData.hasReachedTop = false
+  ctData.showZeroBox = true
+
+  await fixCommentTarget(ctx)
   
-  loadBelowList(ctData, emit)
+  loadBelowList(ctx)
 }
 
 // 2. 加载【向下评论】
 async function loadBelowList(
-  ctData: CommentTargetData,
-  emit: CommentTargetEmit,
+  ctx: CommentTargetCtx
 ) {
+  const { ctData } = ctx
+
   const opt: LoadByCommentOpt = {
     commentId: ctData.targetId,
     loadType: "find_children",
@@ -127,17 +142,17 @@ async function loadBelowList(
 
   // 判断是否要去溯源
   if(ctData.aboveList.length < 1 && !ctData.hasReachedTop) {
-    // await valTool.waitMilli(500)
-    loadAboveList(ctData, emit)
+    loadAboveList(ctx)
   }
 }
 
 
 // 3. 加载【溯源评论】（向上）
 async function loadAboveList(
-  ctData: CommentTargetData,
-  emit: CommentTargetEmit,
+  ctx: CommentTargetCtx
 ) {
+  const { ctData } = ctx
+
   let parentWeWant = ""
   let grandparent: string | undefined
 
@@ -154,7 +169,7 @@ async function loadAboveList(
   }
 
   if(!parentWeWant) {
-    loadThread(ctData, emit)
+    loadThread(ctx)
     return
   }
 
@@ -176,6 +191,7 @@ async function loadAboveList(
     ctData.aboveList.splice(0, 0, ...newList)
   }
   else {
+    await fixCommentTarget(ctx, true)
     commentController.handleRelation(newList, undefined, ctData.targetComment)
     ctData.aboveList = newList
   }
@@ -183,25 +199,53 @@ async function loadAboveList(
   // 判断是否要去加载 thread 了
   const newRe = newList[0]?.replyToComment
   if(!newRe && !ctData.hasReachedTop) {
-    loadThread(ctData, emit)
+    loadThread(ctx)
+  }
+}
+
+// 固定 target 的位置
+async function fixCommentTarget(
+  ctx: CommentTargetCtx,
+  closeZeroBox: boolean = false
+) {
+  const svBottomUp = ctx.svBottomUp
+  if(!svBottomUp) return
+  if(!ctx.ctData.showZeroBox) return
+
+  await nextTick()
+
+  svBottomUp.value = { 
+    type: "selectors", 
+    selectors: ".ct-virtual-zero",
+    instant: true
+  }
+
+  if(closeZeroBox) {
+    await valTool.waitMilli(250)
+    ctx.ctData.showZeroBox = false
   }
 }
 
 
 // 4. 加载最顶部的 thread
 async function loadThread(
-  ctData: CommentTargetData,
-  emit: CommentTargetEmit,
+  ctx: CommentTargetCtx,
 ) {
+  const { ctData } = ctx
   const id = ctData.targetComment?.parentThread
   if(!id) return
 
   const res = await threadController.getData({ id })
 
-  console.log("loadThread 结果......")
-  console.log(res)
-  console.log(" ")
+  // console.log("loadThread 结果......")
+  // console.log(res)
+  // console.log(" ")
 
   ctData.hasReachedTop = true
   ctData.thread = res
+
+  // 当没有 aboveList 时，要固定目标评论，使它在窗口中相对位置不变
+  if(ctData.aboveList.length < 1) {
+    await fixCommentTarget(ctx, true)
+  }
 }

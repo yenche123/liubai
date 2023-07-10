@@ -16,7 +16,7 @@ import { useCommentTarget } from "./tools/useCommentTarget"
 import { 
   useThreadOperateInDetail 
 } from "../../level1/thread-detail/tools/useThreadOperateInDetail"
-
+import cfg from "~/config"
 
 const props = defineProps({
   location: {
@@ -36,6 +36,7 @@ const emit = defineEmits<CommentTargetEmit>()
 const { ctData, virtualHeightPx } = useCommentTarget(props, emit)
 
 const { receiveOperation } = useThreadOperateInDetail()
+const viceNaviPx = cfg.vice_navi_height
 
 </script>
 <template>
@@ -64,6 +65,8 @@ const { receiveOperation } = useThreadOperateInDetail()
         :location="location"
       ></CommentCard>
     </template>
+
+    <div v-show="ctData.showZeroBox" class="ct-virtual-zero"></div>
 
     <!-- 目标评论 -->
     <CommentCard
@@ -116,6 +119,11 @@ const { receiveOperation } = useThreadOperateInDetail()
 .ct-container {
   width: 100%;
   position: relative;
+}
+
+.ct-virtual-zero {
+  width: 100%;
+  height: v-bind("'' + (viceNaviPx + 10) + 'px'");
 }
 
 .ct-virtual-one {

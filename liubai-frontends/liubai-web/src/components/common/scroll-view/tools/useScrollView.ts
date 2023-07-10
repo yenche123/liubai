@@ -106,7 +106,7 @@ function whenBottomUp(
   
   const isVertical = props.direction === "vertical"
   const sop: ScrollToOptions = {
-    behavior: "smooth" 
+    behavior: bu.instant ? "instant" : "smooth"
   }
 
   // 如果是 number 类型，直接滚动到特定位置
