@@ -82,14 +82,14 @@ const {
   >
     <ScrollView>
       <div class="vcliu-virtual"></div>
-      <div class="vcliu-box" v-if="cid">
+      <div class="vcliu-box" v-if="vcState === 'thread' && cid">
         <ThreadDetail
           :thread-id="cid"
           location="vice-view"
           @pagestatechange="onViewStateChange"
         ></ThreadDetail>
       </div>
-      <div class="vcliu-box" v-else-if="cid2">
+      <div class="vcliu-box" v-else-if="vcState === 'comment' && cid2">
         <CommentTarget
           location="vice-view"
           :target-id="cid2"
