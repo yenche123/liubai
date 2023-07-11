@@ -1,18 +1,18 @@
 import { ref, computed, provide } from "vue";
 import type { Ref } from "vue";
 import type { PageState } from "~/types/types-atom";
-import type { VcState, VcCtx, VcProps } from "./types"
+import type { VcProps, VcData } from "./types"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
 import { useDropZone } from "~/hooks/useVueUse"
 import { vcFileKey } from "~/utils/provide-keys"
 
 export function useVcDropZone(
-  vcState: Ref<VcState>,
+  vcData: VcData,
   props: VcProps,
 ) {
 
-  const contentRef = ref<HTMLDivElement>()
+  const containerRef = ref<HTMLDivElement>()
   const viewState = ref<PageState>(0)
   const onViewStateChange = (newV: PageState) => {
     viewState.value = newV
@@ -28,11 +28,12 @@ export function useVcDropZone(
     if(files?.length) dropFiles.value = files 
   }
 
-  const { isOverDropZone } = useDropZone(contentRef, onDrop)
+  const { isOverDropZone } = useDropZone(containerRef, onDrop)
 
   const showDropZone = computed(() => {
     // 当前 vice-content 不是承载 thread 时，返回 false
-    if(vcState.value !== "thread") return false
+    const current = vcData.currentState
+    if(current !== "thread" && current !== "comment") return false
 
     if(props.isOutterDraging) return false
 
@@ -47,7 +48,7 @@ export function useVcDropZone(
 
   return {
     onViewStateChange,
-    contentRef,
+    containerRef,
     showDropZone,
   }
 

@@ -9,10 +9,6 @@ const props = defineProps({
   iframeSrc: {
     type: String
   },
-  show: {
-    type: Boolean,
-    required: true
-  },
   vcHeight: {
     type: Number,
     default: 0,
@@ -33,7 +29,6 @@ const {
 
   <iframe
     v-if="iframeSrc"
-    v-show="show"
     ref="iframeEl"
     width="100%" 
     :height="vcHeight"
@@ -46,7 +41,7 @@ const {
   ></iframe>
   
   <!-- 用于显示拖动时覆盖在 iframe 上的透明度白屏 -->
-  <div v-show="show" class="vcliu-cover" :class="{ 'vcliu-cover_show': isOutterDraging }"></div>
+  <div class="vcliu-cover" :class="{ 'vcliu-cover_show': isOutterDraging }"></div>
 </template>
 <style scoped>
 

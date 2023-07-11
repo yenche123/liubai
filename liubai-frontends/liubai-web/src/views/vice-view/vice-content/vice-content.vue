@@ -22,11 +22,8 @@ const emits = defineEmits<{
   (event: "vcstatechange", vcState: VcState): void
 }>()
 
-const { 
-  cid,
-  cid2,
-  vcState,
-  iframeSrc,
+const {
+  vcData,
   onTapBack,
   onTapClose,
   onTapOpenInNew,
@@ -34,18 +31,12 @@ const {
 
 const {
   onViewStateChange,
-  contentRef,
+  containerRef,
   showDropZone,
-} = useVcDropZone(vcState, props)
+} = useVcDropZone(vcData, props)
 
-watch(vcState, (newV) => {
+watch(() => vcData.currentState, (newV) => {
   emits("vcstatechange", newV)
-})
-
-watch(iframeSrc, (newV) => {
-  // console.log("iframeSrc 發生變化........")
-  // console.log(newV)
-  // console.log(" ")
 })
 
 const {
@@ -60,57 +51,80 @@ const {
 
   <!-- 导航栏 -->
   <VcNaviBar
-    :vc-state="vcState"
+    :vc-state="vcData.currentState"
     @tapback="onTapBack"
     @tapclose="onTapClose"
     @tapopeninnew="onTapOpenInNew"
   ></VcNaviBar>
 
-  <!-- iframe -->
-  <VcIframe
-    :show="vcState === 'iframe'"
-    :is-outter-draging="isOutterDraging"
-    :iframe-src="iframeSrc"
-    :vc-height="vcHeight2"
-    :mask-margin-top="maskMarginTop"
-  ></VcIframe>
+  <div class="vcliu-container" ref="containerRef">
 
-  <!-- 动态或评论 -->
-  <div class="vcliu-content"
-    v-show="vcState === 'thread' || vcState === 'comment'"
-    ref="contentRef"
-  >
-    <ScrollView>
-      <div class="vcliu-virtual"></div>
-      <div class="vcliu-box" v-if="vcState === 'thread' && cid">
-        <ThreadDetail
-          :thread-id="cid"
-          location="vice-view"
-          @pagestatechange="onViewStateChange"
-        ></ThreadDetail>
+    <template v-for="(item, index) in vcData.list" :key="item.id">
+
+      <div class="vcliu-view" v-show="item.show">
+        <!-- iframe -->
+        <VcIframe
+          v-if="item.state === 'iframe'"
+          :is-outter-draging="item.show && isOutterDraging"
+          :iframe-src="item.id"
+          :vc-height="vcHeight2"
+          :mask-margin-top="maskMarginTop"
+        ></VcIframe>
+
+        <!-- 动态或评论 -->
+        <div class="vcliu-content"
+          v-else-if="item.state === 'thread' || item.state === 'comment'"
+        >
+
+          <ScrollView>
+            <div class="vcliu-virtual"></div>
+            <div class="vcliu-box" v-if="item.state === 'thread'">
+              <ThreadDetail
+                :thread-id="item.id"
+                location="vice-view"
+                @pagestatechange="onViewStateChange"
+              ></ThreadDetail>
+            </div>
+            <div class="vcliu-box" v-else-if="item.state === 'comment'">
+              <CommentTarget
+                location="vice-view"
+                :target-id="item.id"
+              ></CommentTarget>
+            </div>
+          </ScrollView>
+        </div>
+
       </div>
-      <div class="vcliu-box" v-else-if="vcState === 'comment' && cid2">
-        <CommentTarget
-          location="vice-view"
-          :target-id="cid2"
-        ></CommentTarget>
-      </div>
-    </ScrollView>
+    
+    </template>
 
     <!-- 文件掉落盒 -->
     <RightDropZone
       :show-drop-zone="showDropZone"
     ></RightDropZone>
+
   </div>
-  
-  
 
 </template>
 <style scoped lang="scss">
 
-.vcliu-content {
+.vcliu-container {
   width: 100%;
   height: v-bind("vcHeight + 'px'");
+  position: relative;
+}
+
+.vcliu-view {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+
+
+.vcliu-content {
+  width: 100%;
+  height: 100%;
   position: relative;
 
   .vcliu-virtual {

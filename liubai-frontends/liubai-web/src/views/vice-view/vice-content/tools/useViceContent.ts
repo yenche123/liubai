@@ -1,29 +1,28 @@
-import { onActivated, ref, watch } from "vue";
+import { onActivated, watch, reactive } from "vue";
 import type { LocationQuery } from "vue-router";
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import valTool from "~/utils/basic/val-tool";
 import liuApi from "~/utils/liu-api";
-import type { VcState, VcCtx } from "./types"
+import type { VcState, VcCtx, VcData } from "./types"
 import thirdLink from "~/config/third-link";
 import liuUtil from "~/utils/liu-util";
 import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore";
 import liuEnv from "~/utils/liu-env";
 
 export function useViceContent() {
-  const iframeSrc = ref("")
-  const vcState = ref<VcState>("")
-  const cid = ref("")     // 表示 threadId
-  const cid2 = ref("")    // 表示 commentId
   const { route, router } = useRouteAndLiuRouter()
   const vStore = useVvLinkStore()
 
+  const vcData = reactive<VcData>({
+    list: [],
+    currentState: "",
+    currentId: "",
+  })
+
   const ctx: VcCtx = {
-    iframeSrc,
     route,
     router,
-    vcState,
-    cid,
-    cid2,
+    vcData,
   }
 
   listenRouteChange(ctx)
@@ -38,18 +37,19 @@ export function useViceContent() {
 
   const onTapOpenInNew = () => {
     let url: URL | undefined
-    const vs = vcState.value
+    const vs = vcData.currentState
+    const id = vcData.currentId
     const q = route.query
 
     if(q.pdf && typeof q.pdf === "string") {
       window.open(q.pdf, "_blank")
       return
     }
-    else if(vs === "iframe" && iframeSrc.value) {
-      url = vStore.getOriginURL(iframeSrc.value)
+    else if(vs === "iframe" && id) {
+      url = vStore.getOriginURL(id)
     }
-    else if(vs === "thread" && cid.value) {
-      const u = router.resolve({ name: "detail", params: { contentId: cid.value } })
+    else if(vs === "thread" && id) {
+      const u = router.resolve({ name: "detail", params: { contentId: id } })
       url = new URL(u.fullPath, location.origin)
     }
     
@@ -59,10 +59,7 @@ export function useViceContent() {
   }
 
   return {
-    cid,
-    cid2,
-    vcState,
-    iframeSrc,
+    vcData,
     onTapBack,
     onTapClose,
     onTapOpenInNew,
@@ -74,17 +71,10 @@ function listenRouteChange(
   ctx: VcCtx,
 ) {
   let located = ""
-  const { 
-    iframeSrc, 
-    vcState, 
-    route, 
-    cid: cidRef,
-    cid2: cid2Ref,
-  } = ctx
+  const { route } = ctx
 
   const setNewIframeSrc = (val: string) => {
-    if(val === iframeSrc.value) return
-    iframeSrc.value = val
+    showView(ctx, "iframe", val)
   }
 
   const openChatGPT = (q: string) => {
@@ -126,15 +116,11 @@ function listenRouteChange(
   }
 
   const whenNoMatch = async () => {
-    if(!vcState.value) return
     await valTool.waitMilli(350)
     if(liuUtil.needToOpenViceView(route.query)) {
       return
     }
-    if(iframeSrc.value) {
-      iframeSrc.value = ""
-    }
-    vcState.value = ""
+    closeAllView(ctx)
   }
 
   const tryToOpenLink = () => {
@@ -172,36 +158,28 @@ function listenRouteChange(
     } = newQuery
 
     if(outq && typeof outq === "string") {
-      vcState.value = "iframe"
       // openGoogleSerach(outq)
       openBingSearch(outq)
     }
     else if(bing && typeof bing === "string") {
-      vcState.value = "iframe"
       openBingSearch(bing)
     }
     else if(pdf && typeof pdf === "string") {
-      vcState.value = "iframe"
       openPDF(pdf)
     }
     else if(xhs && typeof xhs === "string") {
-      vcState.value = "iframe"
       openXhsSearch(xhs)
     }
     else if(github && typeof github === "string") {
-      vcState.value = "iframe"
       openGithubSearch(github)
     }
     else if(cid && typeof cid === "string") {
-      vcState.value = "thread"
-      cidRef.value = cid
+      showView(ctx, "thread", cid)
     }
     else if(cid2 && typeof cid2 === "string") {
-      vcState.value = "comment"
-      cid2Ref.value = cid2
+      showView(ctx, "comment", cid2)
     }
     else if(vlink && typeof vlink === "string") {
-      vcState.value = "iframe"
       tryToOpenLink()
     }
     else {
@@ -222,4 +200,42 @@ function listenRouteChange(
     }
     checkRouteChange(route.query)
   })
+}
+
+
+function showView(
+  ctx: VcCtx,
+  state: VcState, 
+  id: string,
+) {
+  const vcData = ctx.vcData
+  const { list } = vcData
+  let hasFound = false
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    if(v.state === state && v.id === id) {
+      hasFound = true
+      v.show = true
+    }
+    else {
+      if(v.show) v.show = false
+    }
+  }
+  vcData.currentState = state
+  vcData.currentId = id
+
+  if(hasFound) return
+  list.push({ state, id, show: true })
+  if(list.length > 10) {
+    list.splice(0, 1)
+  }
+}
+
+function closeAllView(ctx: VcCtx) {
+  const list = ctx.vcData.list
+  list.forEach(v => {
+    v.show = false
+  })
+  ctx.vcData.currentState = ""
+  ctx.vcData.currentId = ""
 }
