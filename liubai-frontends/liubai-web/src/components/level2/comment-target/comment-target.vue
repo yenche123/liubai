@@ -26,7 +26,11 @@ const props = defineProps({
   targetId: {
     type: String,
     required: true,
-  }
+  },
+  isShowing: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 let commentEditorLocated: LocatedA = "vice-view"
@@ -84,6 +88,7 @@ const viceNaviPx = cfg.vice_navi_height
       :parent-thread="ctData.targetComment.parentThread"
       :parent-comment="ctData.targetComment.replyToComment ?? ctData.targetComment._id"
       :reply-to-comment="ctData.targetComment._id"
+      :is-showing="isShowing"
     ></CommentEditor>
 
     <!-- belowList -->

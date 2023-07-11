@@ -27,7 +27,7 @@ export function useCommentFile(
     listenFilesFromMainView(ctx)
   }
   else if(located === "vice-view") {
-    listenFilesFromViceContent(ctx)
+    listenFilesFromViceContent(ctx, props)
   }
   else if(located === "popup") {
     listenFilesFromPopup(ctx)
@@ -198,9 +198,6 @@ function listenFilesFromMainView(
   const dropFiles = inject(mvFileKey)
   watch(() => dropFiles?.value, async (newV) => {
     if(!newV?.length) return
-    console.log("收到 main-view 掉落的文件.......")
-    console.log(liuUtil.toRawData(newV))
-    console.log(" ")
     await handleFiles(ctx, newV)
     if(!dropFiles?.value) return
     dropFiles.value = []
@@ -208,14 +205,14 @@ function listenFilesFromMainView(
 }
 
 function listenFilesFromViceContent(
-  ctx: CeCtx
+  ctx: CeCtx,
+  props: CeProps,
 ) {
   const dropFiles = inject(vcFileKey)
   watch(() => dropFiles?.value, async (newV) => {
     if(!newV?.length) return
-    console.log("收到 vice-content 掉落的文件.......")
-    console.log(liuUtil.toRawData(newV))
-    console.log(" ")
+    if(!props.isShowing) return
+
     await handleFiles(ctx, newV)
     if(!dropFiles?.value) return
     dropFiles.value = []

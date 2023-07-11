@@ -10,6 +10,7 @@ export interface TdData {
 export interface TdProps {
   location: WhatDetail
   threadId: string
+  isShowing: boolean
 }
 
 export interface TdEmit {

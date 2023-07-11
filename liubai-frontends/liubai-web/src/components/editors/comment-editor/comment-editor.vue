@@ -25,6 +25,10 @@ const props = defineProps({
   parentComment: String,
   replyToComment: String,
   commentId: String,
+  isShowing: {
+    type: Boolean,
+    default: true,
+  }
 })
 
 const {

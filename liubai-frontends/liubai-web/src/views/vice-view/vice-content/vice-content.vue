@@ -83,12 +83,14 @@ const {
                 :thread-id="item.id"
                 location="vice-view"
                 @pagestatechange="onViewStateChange"
+                :is-showing="item.show"
               ></ThreadDetail>
             </div>
             <div class="vcliu-box" v-else-if="item.state === 'comment'">
               <CommentTarget
                 location="vice-view"
                 :target-id="item.id"
+                :is-showing="item.show"
               ></CommentTarget>
             </div>
           </ScrollView>

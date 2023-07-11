@@ -19,6 +19,7 @@ export interface CommentTargetData {
 export interface CommentTargetProps {
   location: WhatDetail
   targetId: string
+  isShowing: boolean
 }
 
 export interface CommentTargetEmit {

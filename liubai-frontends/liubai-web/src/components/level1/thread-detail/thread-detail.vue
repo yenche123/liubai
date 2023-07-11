@@ -18,7 +18,11 @@ const props = defineProps({
   threadId: {
     type: String,
     required: true,
-  }
+  },
+  isShowing: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 const emit = defineEmits<TdEmit>()
@@ -59,6 +63,7 @@ subscribeUpdate(tdData)
     <CommentEditor
       :located="commentEditorLocated"
       :parent-thread="tdData.threadShow._id"
+      :is-showing="isShowing"
     ></CommentEditor>
 
     <CommentArea
