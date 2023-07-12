@@ -210,7 +210,7 @@ async function fixCommentDetail(
 
   svBottomUp.value = { 
     type: "selectors", 
-    selectors: ".ct-virtual-zero",
+    selectors: ".cd-virtual-zero",
     instant: true
   }
 
