@@ -23,7 +23,7 @@ export function useCommentTarget(
 
   const ctData = reactive<CommentTargetData>({
     targetId: "",
-    state: 0,
+    state: 1,       // 默认展示切换中，因为 scroll-bar 会瞬移，所以不展示 Loading 的状态
     aboveList: [],
     belowList: [],
     hasReachedBottom: false,
@@ -65,13 +65,7 @@ async function loadTargetComment(
 ) {
 
   const { ctData, emit } = ctx
-
-  if(ctData.targetComment) {
-    ctData.state = 1
-  }
-  else {
-    ctData.state = 0
-  }
+  ctData.state = 1
 
   const opt: LoadByCommentOpt = {
     commentId: ctData.targetId,
