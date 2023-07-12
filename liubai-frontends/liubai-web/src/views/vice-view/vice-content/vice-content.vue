@@ -3,7 +3,7 @@ import { useViceContent } from "./tools/useViceContent";
 import VcNaviBar from './vc-navi-bar/vc-navi-bar.vue';
 import VcIframe from './vc-iframe/vc-iframe.vue';
 import ThreadDetail from "~/components/level1/thread-detail/thread-detail.vue";
-import CommentTarget from "~/components/level2/comment-target/comment-target.vue";
+import CommentDetail from "~/components/level2/comment-detail/comment-detail.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
 import RightDropZone from "./right-drop-zone/right-drop-zone.vue";
 import { useVcHeight } from "./tools/useVcHeight"
@@ -87,11 +87,11 @@ const {
               ></ThreadDetail>
             </div>
             <div class="vcliu-box" v-else-if="item.state === 'comment'">
-              <CommentTarget
+              <CommentDetail
                 location="vice-view"
                 :target-id="item.id"
                 :is-showing="item.show"
-              ></CommentTarget>
+              ></CommentDetail>
             </div>
           </ScrollView>
         </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CommentTarget from '~/components/level2/comment-target/comment-target.vue';
+import CommentDetail from '~/components/level2/comment-detail/comment-detail.vue';
 import { useCommentContent } from './tools/useCommentContent';
 
 const {
@@ -12,10 +12,10 @@ const {
   <div class="liu-mc-container">
     <div class="liu-tc-virtual"></div>
     <div class="liu-mc-box" v-if="commentId">
-      <CommentTarget 
+      <CommentDetail 
         :target-id="commentId"
         location="detail-page"
-      ></CommentTarget>
+      ></CommentDetail>
     </div>
   </div>
 

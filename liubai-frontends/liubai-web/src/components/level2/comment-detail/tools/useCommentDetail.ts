@@ -1,9 +1,9 @@
 import { computed, inject, nextTick, reactive, toRef, watch } from "vue";
 import type { 
-  CommentTargetData,
-  CommentTargetCtx,
-  CommentTargetEmit, 
-  CommentTargetProps,
+  CommentDetailData,
+  CommentDetailCtx,
+  CommentDetailEmit, 
+  CommentDetailProps,
 } from "./types";
 import type { LoadByCommentOpt } from "~/utils/controllers/comment-controller/tools/types"
 import commentController from "~/utils/controllers/comment-controller/comment-controller";
@@ -13,15 +13,15 @@ import { useWindowSize } from "~/hooks/useVueUse";
 import valTool from "~/utils/basic/val-tool";
 import { svBottomUpKey } from "~/utils/provide-keys";
 
-export function useCommentTarget(
-  props: CommentTargetProps,
-  emit: CommentTargetEmit
+export function useCommentDetail(
+  props: CommentDetailProps,
+  emit: CommentDetailEmit
 ) {
 
   const { height } = useWindowSize()
   const svBottomUp = inject(svBottomUpKey)
 
-  const ctData = reactive<CommentTargetData>({
+  const cdData = reactive<CommentDetailData>({
     targetId: "",
     state: 1,       // 默认展示切换中，因为 scroll-bar 会瞬移，所以不展示 Loading 的状态
     aboveList: [],
@@ -31,15 +31,15 @@ export function useCommentTarget(
     showZeroBox: true,
   })
 
-  const ctx: CommentTargetCtx = {
-    ctData,
+  const ctx: CommentDetailCtx = {
+    cdData,
     svBottomUp,
     emit,
   }
 
   const virtualHeightPx = computed(() => {
     const h = height.value
-    const bLength = ctData.belowList.length
+    const bLength = cdData.belowList.length
     let tmpH = h - 200 - (bLength * 100)
     if(tmpH < 0) tmpH = 0
     return tmpH
@@ -47,12 +47,12 @@ export function useCommentTarget(
 
   const cid2 = toRef(props, "targetId")
   watch(cid2, (newV) => {
-    ctData.targetId = newV
+    cdData.targetId = newV
     loadTargetComment(ctx)
   }, { immediate: true })
 
   return {
-    ctData,
+    cdData,
     virtualHeightPx,
   }
 }
@@ -61,20 +61,20 @@ export function useCommentTarget(
 
 // 1. 加载【目标评论】
 async function loadTargetComment(
-  ctx: CommentTargetCtx
+  ctx: CommentDetailCtx
 ) {
 
-  const { ctData, emit } = ctx
-  ctData.state = 1
+  const { cdData, emit } = ctx
+  cdData.state = 1
 
   const opt: LoadByCommentOpt = {
-    commentId: ctData.targetId,
+    commentId: cdData.targetId,
     loadType: "target",
   }
   const res = await commentController.loadByComment(opt)
   const c = res[0]
   if(c?.oState !== "OK") {
-    ctData.state = 50
+    cdData.state = 50
     emit("pagestatechange", 50)
     return
   }
@@ -83,31 +83,31 @@ async function loadTargetComment(
   console.log(c)
   console.log(" ")
 
-  delete ctData.thread
-  ctData.state = -1
-  ctData.targetComment = c
-  ctData.aboveList = []
-  ctData.belowList = []
-  ctData.hasReachedBottom = false
-  ctData.hasReachedTop = false
-  ctData.showZeroBox = true
+  delete cdData.thread
+  cdData.state = -1
+  cdData.targetComment = c
+  cdData.aboveList = []
+  cdData.belowList = []
+  cdData.hasReachedBottom = false
+  cdData.hasReachedTop = false
+  cdData.showZeroBox = true
 
-  await fixCommentTarget(ctx)
+  await fixCommentDetail(ctx)
   
   loadBelowList(ctx)
 }
 
 // 2. 加载【向下评论】
 async function loadBelowList(
-  ctx: CommentTargetCtx
+  ctx: CommentDetailCtx
 ) {
-  const { ctData } = ctx
+  const { cdData } = ctx
 
   const opt: LoadByCommentOpt = {
-    commentId: ctData.targetId,
+    commentId: cdData.targetId,
     loadType: "find_children",
   }
-  const tmpList = ctData.belowList
+  const tmpList = cdData.belowList
   const tmpLength = tmpList.length
   const lastComment = tmpList[tmpLength - 1]
   if(lastComment) {
@@ -121,21 +121,21 @@ async function loadBelowList(
   console.log(" ")
 
   if(lastComment) {
-    usefulTool.filterDuplicated(ctData.belowList, newList)
+    usefulTool.filterDuplicated(cdData.belowList, newList)
     commentController.handleRelation(newList, lastComment)
-    ctData.belowList.push(...newList)
+    cdData.belowList.push(...newList)
   }
   else {
     commentController.handleRelation(newList)
-    ctData.belowList = newList
+    cdData.belowList = newList
   }
 
   if(newList.length < 5) {
-    ctData.hasReachedBottom = true
+    cdData.hasReachedBottom = true
   }
 
   // 判断是否要去溯源
-  if(ctData.aboveList.length < 1 && !ctData.hasReachedTop) {
+  if(cdData.aboveList.length < 1 && !cdData.hasReachedTop) {
     loadAboveList(ctx)
   }
 }
@@ -143,15 +143,15 @@ async function loadBelowList(
 
 // 3. 加载【溯源评论】（向上）
 async function loadAboveList(
-  ctx: CommentTargetCtx
+  ctx: CommentDetailCtx
 ) {
-  const { ctData } = ctx
+  const { cdData } = ctx
 
   let parentWeWant = ""
   let grandparent: string | undefined
 
-  const c = ctData.targetComment
-  const tmpList = ctData.aboveList
+  const c = cdData.targetComment
+  const tmpList = cdData.aboveList
   const topComment = tmpList[0]
   if(topComment) {
     parentWeWant = topComment.replyToComment ?? ""
@@ -168,13 +168,13 @@ async function loadAboveList(
   }
 
   const opt: LoadByCommentOpt = {
-    commentId: ctData.targetId,
+    commentId: cdData.targetId,
     loadType: "find_parent",
     parentWeWant,
     grandparent,
   }
   const newList = await commentController.loadByComment(opt)
-  usefulTool.filterDuplicated(ctData.aboveList, newList)
+  usefulTool.filterDuplicated(cdData.aboveList, newList)
 
   console.log("loadAboveList 结果: ")
   console.log(newList)
@@ -182,29 +182,29 @@ async function loadAboveList(
 
   if(topComment) {
     commentController.handleRelation(newList, undefined, topComment)
-    ctData.aboveList.splice(0, 0, ...newList)
+    cdData.aboveList.splice(0, 0, ...newList)
   }
   else {
-    await fixCommentTarget(ctx, true)
-    commentController.handleRelation(newList, undefined, ctData.targetComment)
-    ctData.aboveList = newList
+    await fixCommentDetail(ctx, true)
+    commentController.handleRelation(newList, undefined, cdData.targetComment)
+    cdData.aboveList = newList
   }
 
   // 判断是否要去加载 thread 了
   const newRe = newList[0]?.replyToComment
-  if(!newRe && !ctData.hasReachedTop) {
+  if(!newRe && !cdData.hasReachedTop) {
     loadThread(ctx)
   }
 }
 
 // 固定 target 的位置
-async function fixCommentTarget(
-  ctx: CommentTargetCtx,
+async function fixCommentDetail(
+  ctx: CommentDetailCtx,
   closeZeroBox: boolean = false
 ) {
   const svBottomUp = ctx.svBottomUp
   if(!svBottomUp) return
-  if(!ctx.ctData.showZeroBox) return
+  if(!ctx.cdData.showZeroBox) return
 
   await nextTick()
 
@@ -216,17 +216,17 @@ async function fixCommentTarget(
 
   if(closeZeroBox) {
     await valTool.waitMilli(250)
-    ctx.ctData.showZeroBox = false
+    ctx.cdData.showZeroBox = false
   }
 }
 
 
 // 4. 加载最顶部的 thread
 async function loadThread(
-  ctx: CommentTargetCtx,
+  ctx: CommentDetailCtx,
 ) {
-  const { ctData } = ctx
-  const id = ctData.targetComment?.parentThread
+  const { cdData } = ctx
+  const id = cdData.targetComment?.parentThread
   if(!id) return
 
   const res = await threadController.getData({ id })
@@ -235,11 +235,11 @@ async function loadThread(
   // console.log(res)
   // console.log(" ")
 
-  ctData.hasReachedTop = true
-  ctData.thread = res
+  cdData.hasReachedTop = true
+  cdData.thread = res
 
   // 当没有 aboveList 时，要固定目标评论，使它在窗口中相对位置不变
-  if(ctData.aboveList.length < 1) {
-    await fixCommentTarget(ctx, true)
+  if(cdData.aboveList.length < 1) {
+    await fixCommentDetail(ctx, true)
   }
 }

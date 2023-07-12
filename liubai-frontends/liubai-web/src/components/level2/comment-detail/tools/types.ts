@@ -4,7 +4,7 @@ import type { PageState } from '~/types/types-atom';
 import type { CommentShow, ThreadShow } from '~/types/types-content';
 import type { ShallowRef } from "vue"
 
-export interface CommentTargetData {
+export interface CommentDetailData {
   targetId: string
   state: PageState
   targetComment?: CommentShow
@@ -16,19 +16,19 @@ export interface CommentTargetData {
   showZeroBox: boolean
 }
 
-export interface CommentTargetProps {
+export interface CommentDetailProps {
   location: WhatDetail
   targetId: string
   isShowing: boolean
 }
 
-export interface CommentTargetEmit {
+export interface CommentDetailEmit {
   (evt: "pagestatechange", state: PageState): void
 }
 
-export interface CommentTargetCtx {
-  ctData: CommentTargetData
+export interface CommentDetailCtx {
+  cdData: CommentDetailData
   svBottomUp?: ShallowRef<SvBottomUp>
-  emit: CommentTargetEmit
+  emit: CommentDetailEmit
 }
 

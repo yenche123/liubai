@@ -11,8 +11,8 @@ import CommentEditor from "~/components/editors/comment-editor/comment-editor.vu
 import PinwheelLoader from "../../loaders/pinwheel-loader/pinwheel-loader.vue"
 import type { PropType } from 'vue';
 import type { WhatDetail, LocatedA } from '~/types/other/types-custom';
-import type { CommentTargetEmit } from "./tools/types";
-import { useCommentTarget } from "./tools/useCommentTarget"
+import type { CommentDetailEmit } from "./tools/types";
+import { useCommentDetail } from "./tools/useCommentDetail"
 import { 
   useThreadOperateInDetail 
 } from "../../level1/thread-detail/tools/useThreadOperateInDetail"
@@ -36,8 +36,8 @@ const props = defineProps({
 let commentEditorLocated: LocatedA = "vice-view"
 if(props.location === "detail-page") commentEditorLocated = "main-view"
 
-const emit = defineEmits<CommentTargetEmit>()
-const { ctData, virtualHeightPx } = useCommentTarget(props, emit)
+const emit = defineEmits<CommentDetailEmit>()
+const { cdData, virtualHeightPx } = useCommentDetail(props, emit)
 
 const { receiveOperation } = useThreadOperateInDetail()
 const viceNaviPx = cfg.vice_navi_height
@@ -46,22 +46,22 @@ const viceNaviPx = cfg.vice_navi_height
 <template>
 
   <PlaceholderView 
-    :p-state="ctData.state"
+    :p-state="cdData.state"
   ></PlaceholderView>
 
   <ThreadCard 
-    v-if="ctData.thread && ctData.state < 0"
-    :thread-data="ctData.thread"
+    v-if="cdData.thread && cdData.state < 0"
+    :thread-data="cdData.thread"
     display-type="detail"
     :position="0"
-    @newoperate="(op) => receiveOperation(op, ctData.thread)"
+    @newoperate="(op) => receiveOperation(op, cdData.thread)"
   ></ThreadCard>
 
   <!-- 评论区: aboveList + 目标评论 + 回复框 + belowList -->
-  <div class="ct-container" v-if="ctData.state < 0 && ctData.targetComment">
+  <div class="cd-container" v-if="cdData.state < 0 && cdData.targetComment">
 
     <!-- 上方评论 -->
-    <template v-for="(item, index) in ctData.aboveList"
+    <template v-for="(item, index) in cdData.aboveList"
       :key="item._id"
     >
       <CommentCard
@@ -70,29 +70,29 @@ const viceNaviPx = cfg.vice_navi_height
       ></CommentCard>
     </template>
 
-    <div v-show="ctData.showZeroBox" class="ct-virtual-zero"></div>
+    <div v-show="cdData.showZeroBox" class="cd-virtual-zero"></div>
 
     <!-- 目标评论 -->
     <CommentCard
-      :cs="ctData.targetComment"
+      :cs="cdData.targetComment"
       is-target-comment
       :location="location"
     ></CommentCard>
 
     <!-- 占位 -->
-    <div class="ct-virtual-one"></div>
+    <div class="cd-virtual-one"></div>
 
     <!-- 回复框 -->
     <CommentEditor
       :located="commentEditorLocated"
-      :parent-thread="ctData.targetComment.parentThread"
-      :parent-comment="ctData.targetComment.replyToComment ?? ctData.targetComment._id"
-      :reply-to-comment="ctData.targetComment._id"
+      :parent-thread="cdData.targetComment.parentThread"
+      :parent-comment="cdData.targetComment.replyToComment ?? cdData.targetComment._id"
+      :reply-to-comment="cdData.targetComment._id"
       :is-showing="isShowing"
     ></CommentEditor>
 
     <!-- belowList -->
-    <template v-for="(item, index) in ctData.belowList"
+    <template v-for="(item, index) in cdData.belowList"
       :key="item._id"
     >
       <CommentCard
@@ -102,18 +102,18 @@ const viceNaviPx = cfg.vice_navi_height
     </template>
 
     <!-- 底部加载 loading 和占位 -->
-    <div class="ct-bottom">
+    <div class="cd-bottom">
 
       <!-- 必须有 belowList 才显示，因为 PlaceholderView 本身就有加载框了 -->
       <PinwheelLoader 
-        v-if="ctData.belowList.length && !ctData.hasReachedBottom" 
+        v-if="cdData.belowList.length && !cdData.hasReachedBottom" 
         color="var(--main-tip)"
       ></PinwheelLoader>
 
     </div>
 
-    <div class="ct-virtual-one" 
-      v-if="ctData.state < 50"
+    <div class="cd-virtual-one" 
+      v-if="cdData.state < 50"
       :style="{ 'height': virtualHeightPx + 'px' }"
     ></div>
 
@@ -122,22 +122,22 @@ const viceNaviPx = cfg.vice_navi_height
 </template>
 <style lang="scss" scoped>
 
-.ct-container {
+.cd-container {
   width: 100%;
   position: relative;
 }
 
-.ct-virtual-zero {
+.cd-virtual-zero {
   width: 100%;
   height: v-bind("'' + (viceNaviPx + 10) + 'px'");
 }
 
-.ct-virtual-one {
+.cd-virtual-one {
   width: 100%;
   height: 10px;
 }
 
-.ct-bottom {
+.cd-bottom {
   width: 100%;
   height: 70px;
   display: flex;
