@@ -113,6 +113,7 @@ const viceNaviPx = cfg.vice_navi_height
     </div>
 
     <div class="ct-virtual-one" 
+      v-if="ctData.state < 50"
       :style="{ 'height': virtualHeightPx + 'px' }"
     ></div>
 
