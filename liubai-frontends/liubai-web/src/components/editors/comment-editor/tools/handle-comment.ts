@@ -123,8 +123,14 @@ async function _modifySuperiorCommentNum(props: CeProps) {
     await _addCommentNum(replyToComment)
   }
 
-  if(parentComment && parentComment !== replyToComment) {
-    await _addCommentNum(parentComment, 1, 0)
+  if(parentComment) {
+
+    if(parentComment !== replyToComment) {
+      await _addCommentNum(parentComment, 1, 0)
+    }
+    else {
+      await _addCommentNum(parentThread)
+    }
   }
 
   return true
