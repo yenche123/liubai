@@ -76,7 +76,7 @@ const {
             <!-- 发表或编辑时间 -->
             <div class="cctf-time">
               <span v-if="cs.editedStr">{{ t('thread_related.edited_at', { date: cs.editedStr }) }}</span>
-              <span v-else>{{ t('thread_related.created_at', { date: cs.createdStr }) }}</span>
+              <span v-else>{{ cs.createdStr }}</span>
             </div>
 
           </div>
@@ -175,11 +175,14 @@ const {
     height: 8px;
     display: flex;
     position: relative;
+    justify-content: center;
 
     .cct-prevIReplied-line {
       width: 2px;
       height: 100%;
-      background-color: var(--line-bottom);
+      background-color: var(--line-hover);
+      border-bottom-left-radius: 1px;
+      border-bottom-right-radius: 1px;
     }
   }
 }

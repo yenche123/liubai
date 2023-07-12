@@ -126,7 +126,7 @@ async function loadBelowList(
     ctData.belowList.push(...newList)
   }
   else {
-    commentController.handleRelation(newList, ctData.targetComment)
+    commentController.handleRelation(newList)
     ctData.belowList = newList
   }
 
