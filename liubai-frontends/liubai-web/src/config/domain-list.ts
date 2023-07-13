@@ -28,6 +28,13 @@ export const domainAllowed = [
   "lusun.com",
   "paragraph.xyz",
   "mirror.xyz",
+  "gridea.dev",
+  "typlog.io",
+  "xlog.app",
+  "xfeed.app",
+  "xchar.app",
+   "hoot.it",
+   "crossbell.io",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
