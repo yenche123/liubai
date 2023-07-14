@@ -48,6 +48,8 @@ export const domainAllowed = [
   "nuxt.com.cn",
   "latepost.com",
   "36kr.com",
+  "mailchi.mp",
+  "campaign-archive.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
