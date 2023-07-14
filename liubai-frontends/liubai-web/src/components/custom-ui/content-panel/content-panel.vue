@@ -13,6 +13,7 @@ const {
   onMouseEnterEmoji,
   onMouseLeaveEmoji,
   onTapEmoji,
+  onTapDetail,
 } = initContentPanel()
 const { t } = useI18n()
 
@@ -89,7 +90,7 @@ const iconColor = `var(--other-btn-text)`
         <!-- 查看详情、删除（or 举报） -->
         <div class="cp-footer">
 
-          <div class="cpf-detail">
+          <div class="cpf-detail" @click.stop="onTapDetail">
             <div class="cp-icon">
               <svg-icon name="desc_600" class="cp-svg-icon"
                 :color="iconColor"

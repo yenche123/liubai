@@ -11,6 +11,7 @@ import { emojiList } from "./emojiList"
 import valTool from "~/utils/basic/val-tool"
 import { i18n } from "~/locales"
 import liuApi from "~/utils/liu-api"
+import liuUtil from "~/utils/liu-util"
 
 let _resolve: ContentPanelResolver | undefined
 const TRANSITION_DURATION = 250
@@ -37,6 +38,7 @@ export function initContentPanel() {
     onMouseEnterEmoji,
     onMouseLeaveEmoji,
     onTapEmoji,
+    onTapDetail,
   }
 }
 
@@ -70,6 +72,22 @@ export function showContentPanel(param: ContentPanelParam) {
   }
   return new Promise(_wait)
 }
+
+function onTapDetail() {
+  if(!rr) return
+  let opt = { rr, replace: true }
+  const { comment, thread } = cpData
+
+  if(comment) {
+    const cid2 = comment._id
+    liuUtil.open.openComment(cid2, opt)
+  }
+  else if(thread) {
+    const cid = thread._id
+    liuUtil.open.openDetail(cid, opt)
+  }
+}
+
 
 function onMouseLeaveBox() {
   cpData.title = i18n.global.t(`common.reaction`)
