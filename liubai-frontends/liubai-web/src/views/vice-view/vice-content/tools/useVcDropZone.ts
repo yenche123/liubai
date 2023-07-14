@@ -4,13 +4,14 @@ import type { PageState } from "~/types/types-atom";
 import type { VcProps, VcData } from "./types"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
-import { useDropZone } from "~/hooks/useVueUse"
+import { useDropZone, usePageLeave } from "~/hooks/useVueUse"
 import { vcFileKey } from "~/utils/provide-keys"
 
 export function useVcDropZone(
   vcData: VcData,
   props: VcProps,
 ) {
+  const hasLeftPage = usePageLeave()
 
   const containerRef = ref<HTMLDivElement>()
   const viewState = ref<PageState>(0)
@@ -42,6 +43,9 @@ export function useVcDropZone(
 
     // 当前全局状态是 kanban-page / list-page 里有 item 正在被拖动吗？
     if(isDragToSort.value) return false
+
+    // 当前鼠标是否已离开页面，若不是，则忽略
+    if(!hasLeftPage.value) return false
 
     return isOverDropZone.value
   })
