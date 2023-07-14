@@ -33,8 +33,11 @@ export const domainAllowed = [
   "xlog.app",
   "xfeed.app",
   "xchar.app",
-   "hoot.it",
-   "crossbell.io",
+  "hoot.it",
+  "crossbell.io",
+  "indiehackers.com",
+  "hellogithub.com",
+  "appinn.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
