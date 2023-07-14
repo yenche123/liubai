@@ -38,6 +38,16 @@ export const domainAllowed = [
   "indiehackers.com",
   "hellogithub.com",
   "appinn.com",
+  "learnku.com",
+  "owwly.com",
+  "wikipedia.org",
+  "clickup.com",
+  "vuejs.org",
+  "bing.com",
+  "nuxt.com",
+  "nuxt.com.cn",
+  "latepost.com",
+  "36kr.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
