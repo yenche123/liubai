@@ -1,14 +1,12 @@
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
-import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
-import { useCommentStore } from "~/hooks/stores/useCommentStore"
-import type { CommentStoreState } from "~/hooks/stores/useCommentStore"
+import { useGlobalStateStore, type KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
+import { useCommentStore, type CommentStoreState } from "~/hooks/stores/useCommentStore"
 import type { TdData } from "./types"
-import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
 import type { ThreadShow } from "~/types/types-content"
 import { storeToRefs } from "pinia"
 import { watch } from "vue"
 
-export function subscribeUpdate(
+export function subscribeTdUpdate(
   tdData: TdData
 ) {
 
@@ -31,6 +29,7 @@ export function subscribeUpdate(
 
   // 监听评论区发生变化
   // 若情况符合，对 thread 的 commentNum 进行修改
+  // 至于评论的修改，交由 comment-area 组件处理了
   const cStore = useCommentStore()
   cStore.$subscribe((mutation, state) => {
     whenCommentAddOrDelete(tdData, state)

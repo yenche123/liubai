@@ -16,6 +16,7 @@ import { useCommentDetail } from "./tools/useCommentDetail"
 import { 
   useThreadOperateInDetail 
 } from "../../level1/thread-detail/tools/useThreadOperateInDetail"
+import { subscribeCdUpdate } from "./tools/subscribeCdUpdate"
 import cfg from "~/config"
 
 const props = defineProps({
@@ -41,6 +42,8 @@ const { cdData, virtualHeightPx } = useCommentDetail(props, emit)
 
 const { receiveOperation } = useThreadOperateInDetail()
 const viceNaviPx = cfg.vice_navi_height
+
+subscribeCdUpdate(cdData)
 
 </script>
 <template>

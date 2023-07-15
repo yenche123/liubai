@@ -10,7 +10,7 @@ import commentController from "~/utils/controllers/comment-controller/comment-co
 /** 当 comment-area 监听到 comment-store 发生变化时
  *   相应地做一些处理，比如添加 / 编辑 / 删除 item 
  */
-export function whenCommentAddOrDelete(
+export function whenCommentUpdated(
   caData: CommentAreaData,
   state: CommentStoreState,
 ) {

@@ -10,7 +10,7 @@ import type {
 } from "~/utils/controllers/comment-controller/tools/types"
 import { useCommentStore } from "~/hooks/stores/useCommentStore"
 import usefulTool from "~/utils/basic/useful-tool"
-import { whenCommentAddOrDelete } from "./whenCommentAddOrDelete"
+import { whenCommentUpdated } from "./whenCommentUpdated"
 import { scrollViewKey } from "~/utils/provide-keys"
 import type { SvProvideInject } from "~/types/components/types-scroll-view"
 
@@ -29,7 +29,7 @@ export function useCommentArea(
   // 当有新的评论时，添加在最前面
   const cStore = useCommentStore()
   cStore.$subscribe((mutation, state) => {
-    whenCommentAddOrDelete(caData, state)
+    whenCommentUpdated(caData, state)
   })
 
   // 监听 props 的 threadId 改变

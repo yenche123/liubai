@@ -4,7 +4,7 @@ import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vu
 import ThreadCard from "../thread-list/thread-card/thread-card.vue"
 import { useThreadDetail } from "./tools/useThreadDetail"
 import { useThreadOperateInDetail } from './tools/useThreadOperateInDetail';
-import { subscribeUpdate } from "./tools/subscribeUpdate"
+import { subscribeTdUpdate } from "./tools/subscribeTdUpdate"
 import type { WhatDetail, LocatedA } from '~/types/other/types-custom';
 import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue"
 import CommentArea from '~/components/level2/comment-area/comment-area.vue';
@@ -38,7 +38,7 @@ const {
   receiveOperation
 } = useThreadOperateInDetail()
 
-subscribeUpdate(tdData)
+subscribeTdUpdate(tdData)
 
 </script>
 <template>
