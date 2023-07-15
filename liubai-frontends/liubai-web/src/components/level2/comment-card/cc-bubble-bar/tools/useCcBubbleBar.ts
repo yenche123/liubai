@@ -1,9 +1,9 @@
 import cui from "~/components/custom-ui"
-import type { CcActionbarProps } from "./types"
+import type { CcBubbleBarProps } from "./types"
 
 // 响应评论卡片里工具栏的操作
-export function useCcActionbar(
-  props: CcActionbarProps
+export function useCcBubbleBar(
+  props: CcBubbleBarProps
 ) {
 
   const onTapEmoji = () => {

@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { CommentShow } from '~/types/types-content';
 import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
 import CcBox from "./cc-box/cc-box.vue"
-import CcActionbar from './cc-actionbar/cc-actionbar.vue';
+import CcBubbleBar from './cc-bubble-bar/cc-bubble-bar.vue';
 import type { CommentCardLocation } from "./tools/types"
 import { useCommentCard } from "./tools/useCommentCard"
 
@@ -28,8 +28,8 @@ const props = defineProps({
 const { 
   allowHover,
   hoverColor,
-  enableActionbar,
-  showActionbar,
+  enableBubbleBar,
+  showBubbleBar,
   onMouseEnterComment,
   onMouseLeaveComment,
   onTapContainer,
@@ -87,7 +87,7 @@ const {
           </div> -->
         </div>
 
-        <!-- 内文 + 图片 + 操作栏 -->
+        <!-- 内文 + 图片 + 文件 -->
         <CcBox :cs="cs"></CcBox>
 
       </div>
@@ -119,7 +119,7 @@ const {
             </div>
           </div>
 
-          <!-- 内文 + 图片 + 操作栏 -->
+          <!-- 内文 + 图片 + 文件 -->
           <CcBox :cs="cs"></CcBox>
 
         </div>
@@ -138,12 +138,12 @@ const {
 
 
     <!-- 悬浮在右上角的 actionbar -->
-    <CcActionbar
-      v-if="enableActionbar"
-      :show="showActionbar"
+    <CcBubbleBar
+      v-if="enableBubbleBar"
+      :show="showBubbleBar"
       :location="location"
       :cs="cs"
-    ></CcActionbar>
+    ></CcBubbleBar>
 
   </div>
 </template>

@@ -19,8 +19,8 @@ export function useCommentCard(
   } = initSomeVals(props)
 
   const {
-    enableActionbar,
-    showActionbar,
+    enableBubbleBar,
+    showBubbleBar,
     onMouseEnterComment,
     onMouseLeaveComment,
   } = initActionbar(props)
@@ -49,8 +49,8 @@ export function useCommentCard(
   return {
     allowHover,
     hoverColor,
-    enableActionbar,
-    showActionbar,
+    enableBubbleBar,
+    showBubbleBar,
     onMouseEnterComment,
     onMouseLeaveComment,
     onTapContainer,
@@ -85,28 +85,29 @@ function initActionbar(
   props: CommentCardProps,
 ) {
 
-  const enableActionbar = computed(() => {
+  const enableBubbleBar = computed(() => {
     if(props.location === 'popup') return false
+    if(props.isTargetComment) return false
     const cha = liuApi.getCharacteristic()
     if(cha.isMobile) return false
     return true
   })
 
 
-  const showActionbar = ref(false)
+  const showBubbleBar = ref(false)
 
 
   const onMouseEnterComment = () => {
-    showActionbar.value = true
+    showBubbleBar.value = true
   }
 
   const onMouseLeaveComment = () => {
-    showActionbar.value = false
+    showBubbleBar.value = false
   }
 
   return {
-    enableActionbar,
-    showActionbar,
+    enableBubbleBar,
+    showBubbleBar,
     onMouseEnterComment,
     onMouseLeaveComment,
   }

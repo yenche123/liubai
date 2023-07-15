@@ -1,10 +1,12 @@
 <script setup lang="ts">
-// 当用户鼠标滑过 当前 comment-card 时才显示
+// 当用户鼠标滑过 当前 comment-card 时
+// 才悬浮于右上角的工具栏
+
 import { type PropType } from 'vue';
 import type { CommentCardLocation } from "../tools/types"
 import type { CommentShow } from '~/types/types-content';
 import { useI18n } from "vue-i18n"
-import { useCcActionbar } from "./tools/useCcActionbar"
+import { useCcBubbleBar } from "./tools/useCcBubbleBar"
 
 const props = defineProps({
   show: {
@@ -25,7 +27,7 @@ const {
   onTapEmoji,
   onTapReply,
   onTapShare,
-} = useCcActionbar(props)
+} = useCcBubbleBar(props)
 
 
 const default_color = "var(--main-code)"
@@ -37,66 +39,66 @@ const { t } = useI18n()
 <template>
 
   <!-- absolute 布局 -->
-  <div class="cc-actionbar"
-    :class="{ 'cc-actionbar_show': show }"
+  <div class="cc-bubble-bar"
+    :class="{ 'cc-bubble-bar_show': show }"
     @click.stop="onTapBlank"
   >
 
     <!-- 表态按钮 -->
-    <div class="liu-hover cca-box"
+    <div class="liu-hover ccbb-box"
       :aria-label="t('common.reaction')"
       @click="onTapEmoji"
     >
-      <div class="cca-svg-box">
-        <svg-icon name="add_reaction_600" class="cca-svg"
+      <div class="ccbb-svg-box">
+        <svg-icon name="add_reaction_600" class="ccbb-svg"
           :color="default_color"
         ></svg-icon>
       </div>
-      <span class="cca-text" v-if="cs.emojiData.total">{{ cs.emojiData.total }}</span>
+      <span class="ccbb-text" v-if="cs.emojiData.total">{{ cs.emojiData.total }}</span>
     </div>
 
     <!-- 回复按钮 -->
-    <div class="liu-hover cca-box"
+    <div class="liu-hover ccbb-box"
       :aria-label="t('common.reply')"
     >
-      <div class="cca-svg-box">
-        <svg-icon name="comment" class="cca-svg"
+      <div class="ccbb-svg-box">
+        <svg-icon name="comment" class="ccbb-svg"
           :color="default_color"
         ></svg-icon>
       </div>
-      <span class="cca-text" v-if="cs.commentNum">{{ cs.commentNum }}</span>
+      <span class="ccbb-text" v-if="cs.commentNum">{{ cs.commentNum }}</span>
     </div>
 
     <!-- 分享按钮 -->
-    <div class="liu-hover cca-box"
+    <div class="liu-hover ccbb-box"
       :aria-label="t('common.share')"
     >
-      <div class="cca-svg-box">
-        <svg-icon name="share" class="cca-svg"
+      <div class="ccbb-svg-box">
+        <svg-icon name="share" class="ccbb-svg"
           :color="default_color"
         ></svg-icon>
       </div>
     </div>
 
     <!-- 删除按钮 -->
-    <div class="liu-hover liu-hover_last cca-box"
+    <div class="liu-hover liu-hover_last ccbb-box"
       v-if="cs.isMine"
       :aria-label="t('common.delete')"
     >
-      <div class="cca-svg-box">
-        <svg-icon name="delete_400" class="cca-svg"
+      <div class="ccbb-svg-box">
+        <svg-icon name="delete_400" class="ccbb-svg"
           :color="default_color"
         ></svg-icon>
       </div>
     </div>
 
     <!-- 举报按钮 -->
-    <div class="liu-hover liu-hover_last cca-box"
+    <div class="liu-hover liu-hover_last ccbb-box"
       v-else
       :aria-label="t('common.report')"
     >
-      <div class="cca-svg-box">
-        <svg-icon name="report_600" class="cca-svg"
+      <div class="ccbb-svg-box">
+        <svg-icon name="report_600" class="ccbb-svg"
           :color="default_color"
         ></svg-icon>
       </div>
@@ -108,7 +110,7 @@ const { t } = useI18n()
 </template>
 <style lang="scss" scoped>
 
-.cc-actionbar {
+.cc-bubble-bar {
   position: absolute;
   top: -14px;
   right: 8px;
@@ -123,22 +125,22 @@ const { t } = useI18n()
   cursor: auto;
 }
 
-.cc-actionbar_show {
+.cc-bubble-bar_show {
   opacity: 1;
   visibility: visible;
 }
 
-.cca-box {
+.ccbb-box {
   display: flex;
   align-items: center;
   margin-inline-end: 4px;
 }
 
-.cca-box:last-child {
+.ccbb-box:last-child {
   margin-inline-end: 0;
 }
 
-.cca-svg-box {
+.ccbb-svg-box {
   width: 34px;
   height: 34px;
   display: flex;
@@ -147,12 +149,12 @@ const { t } = useI18n()
   position: relative;
 }
 
-.cca-svg {
+.ccbb-svg {
   width: 22px;
   height: 22px;
 }
 
-.cca-text {
+.ccbb-text {
   margin-inline-start: 2px;
   font-size: var(--mini-font);
   color: var(--main-code);
