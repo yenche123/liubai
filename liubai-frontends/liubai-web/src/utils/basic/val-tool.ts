@@ -175,6 +175,21 @@ const isInDomain = (
   return res
 }
 
+/**
+ * 减1，但确保新值大于等于 0
+ * @param oldVal 原始值，也就是被减数
+ * @param subtrahend 减数，默认为 1
+ */
+const minusAndMinimumZero = (
+  oldVal: number | undefined,
+  subtrahend: number = 1,
+) => {
+  if(!oldVal) return 0
+  let newVal = oldVal - subtrahend
+  if(newVal < 0) return 0
+  return newVal
+}
+
 
 export default {
   waitMilli,
@@ -193,4 +208,5 @@ export default {
   getSuffix,
   isSameSimpleList,
   isInDomain,
+  minusAndMinimumZero,
 }

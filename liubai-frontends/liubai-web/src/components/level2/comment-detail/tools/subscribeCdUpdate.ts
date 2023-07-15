@@ -90,6 +90,10 @@ function whenCommentUpdate(
   if(targetId === changedId) {
     if(changeType === "delete") {
       cdData.state = 50
+      // 二级评论: replyToComment 等于 parentComment，这时 thread 的 commentNum 也要减 1
+      if(replyToComment === parentComment && thread) {
+        thread.commentNum = valTool.minusAndMinimumZero(thread.commentNum)
+      }
     }
     else if(changeType === "edit") {
       cdData.state = -1
@@ -118,10 +122,15 @@ function whenCommentUpdate(
   }
 
   let founded = _checkList(belowList)
-  // 若是被删除的评论，且上级或上上级指向当前目标评论时
+  // 若是被删除的评论
   if(founded && changeType === "delete") {
+    // 且上级或上上级指向当前目标评论时
     if(targetId === replyToComment || targetId === parentComment) {
-      targetComment.commentNum--
+      targetComment.commentNum = valTool.minusAndMinimumZero(targetComment.commentNum)
+    }
+    // 二级评论: replyToComment 等于 parentComment，这时 thread 的 commentNum 也要减 1
+    if(replyToComment === parentComment && thread) {
+      thread.commentNum = valTool.minusAndMinimumZero(thread.commentNum)
     }
   }
 
