@@ -13,6 +13,7 @@ import { useWindowSize } from "~/hooks/useVueUse";
 import valTool from "~/utils/basic/val-tool";
 import { svBottomUpKey } from "~/utils/provide-keys";
 import type { CommentShow } from "~/types/types-content";
+import { getValuedComments } from "~/utils/other/comment-related"
 
 export function useCommentDetail(
   props: CommentDetailProps,
@@ -152,25 +153,13 @@ async function loadChildrenOfBelow(
 
   if(newList.length < 1) return
 
-  console.time("loadChildrenOfBelow")
+  console.log("去 loadChildrenOfBelow: ")
+  console.log("targetId: ", ctx.cdData.targetId)
+  console.log(" ")
 
   // 找出值得加载的评论
-  let tmpList = newList.filter(v => {
-    if(v.oState !== "OK") return false
-    if(!v.commentNum) return false
-    return true
-  })
-  if(tmpList.length < 1) return
-  let tmpList2 = tmpList.map(v => {
-    let score = (5 * v.commentNum) + (3 * v.emojiData.total)
-    return {
-      _id: v._id,
-      score,
-    }
-  }).sort((v1, v2) => {
-    let diff = v2.score - v1.score
-    return diff
-  })
+  const valueComments = getValuedComments(newList)
+  if(valueComments.length < 1) return
 
   // 已新添加的评论数
   let num = 0
@@ -178,6 +167,12 @@ async function loadChildrenOfBelow(
   const _addNewComment = (prevId: string, newComment: CommentShow) => {
     newComment.prevIReplied = true
     const { belowList } = ctx.cdData
+
+    // 过滤: 若已存在，则忽略
+    const _tmpList = [newComment]
+    usefulTool.filterDuplicated(belowList, _tmpList)
+    if(_tmpList.length < 1) return
+
     for(let i=0; i<belowList.length; i++) {
       const v = belowList[i]
       if(v._id === prevId) {
@@ -197,8 +192,8 @@ async function loadChildrenOfBelow(
     return newComments[0]
   }
 
-  for(let i=0; i<tmpList2.length; i++) {
-    const v = tmpList2[i]
+  for(let i=0; i<valueComments.length; i++) {
+    const v = valueComments[i]
     const p1 = v._id
     const c1 = await _toFind(p1)
     if(!c1) continue
@@ -215,8 +210,6 @@ async function loadChildrenOfBelow(
 
     if(num >= 4) break
   }
-
-  console.timeEnd("loadChildrenOfBelow")
 }
 
 

@@ -6,13 +6,17 @@ import type {
 } from "./types"
 import commentController from "~/utils/controllers/comment-controller/comment-controller"
 import type {
-  LoadByThreadOpt
+  LoadByThreadOpt,
+  LoadByCommentOpt,
 } from "~/utils/controllers/comment-controller/tools/types"
 import { useCommentStore } from "~/hooks/stores/useCommentStore"
 import usefulTool from "~/utils/basic/useful-tool"
 import { whenCommentUpdated } from "./whenCommentUpdated"
 import { scrollViewKey } from "~/utils/provide-keys"
 import type { SvProvideInject } from "~/types/components/types-scroll-view"
+import type { CommentShow } from "~/types/types-content";
+import { getValuedComments } from "~/utils/other/comment-related"
+
 
 export function useCommentArea(
   props: CommentAreaProps,
@@ -69,10 +73,6 @@ async function loadComments(
     opt.lastItemStamp = lastComment.createdStamp
   }
 
-  console.log("loadComments: ")
-  console.log(opt)
-  console.log(" ")
-
   const newList = await commentController.loadByThread(opt)
 
   if(reload || length < 1) {
@@ -89,7 +89,69 @@ async function loadComments(
   if(newList.length < 5) {
     caData.hasReachedBottom = true
   }
+
+  await loadChildren(caData, newList)
   
+}
+
+/**
+ * 加载一级评论们的子孙评论
+ */
+async function loadChildren(
+  caData: CommentAreaData,
+  newList: CommentShow[],
+) {
+  if(newList.length < 1) return
+  const valueComments = getValuedComments(newList)
+  if(valueComments.length < 1) return
+
+  const _addNewComment = (prevId: string, newComment: CommentShow) => {
+    newComment.prevIReplied = true
+    const { comments } = caData
+
+    // 过滤: 若已存在，则忽略
+    const _tmpList = [newComment]
+    usefulTool.filterDuplicated(comments, _tmpList)
+    if(_tmpList.length < 1) return
+
+    for(let i=0; i<comments.length; i++) {
+      const v = comments[i]
+      if(v._id === prevId) {
+        v.nextRepliedMe = true
+        comments.splice(i + 1, 0, newComment)
+        break
+      }
+    }
+  }
+
+  const _toFind = async (prevId: string) => {
+    const opt: LoadByCommentOpt = {
+      commentId: prevId,
+      loadType: "find_hottest",
+    }
+    const newComments = await commentController.loadByComment(opt)
+    return newComments[0]
+  }
+
+  let num = 0
+  for(let i=0; i<valueComments.length; i++) {
+    const v = valueComments[i]
+    const p1 = v._id
+    const c1 = await _toFind(p1)
+    if(!c1) continue
+    _addNewComment(p1, c1)
+    num++
+
+    if(c1.commentNum > 0) {
+      const p2 = c1._id
+      const c2 = await _toFind(p2)
+      if(!c2) continue
+      _addNewComment(p2, c2)
+      num++
+    }
+
+    if(num >= 4) break
+  }
 }
 
 
