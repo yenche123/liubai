@@ -5,7 +5,7 @@ import type { ContentLocalTable } from "~/types/types-table"
 import type { CommentShow } from "~/types/types-content"
 import { equipComments } from "../equip/comments"
 import time from "~/utils/basic/time"
-import { findTarget, findChildren, findParent } from "./tools/load-comment"
+import { findTarget, findChildren, findParent, findHottest } from "./tools/load-comment"
 
 // 每次加载出的个数
 const LIMIT_NUM = 9
@@ -76,13 +76,18 @@ async function loadByComment(opt: LoadByCommentOpt) {
     return res2
   }
 
+  if(loadType === "find_hottest") {
+    const res3 = await findHottest(commentId)
+    return res3
+  }
+
   if(loadType === "find_parent") {
     if(!parentWeWant) {
       console.warn("loadType 为 find_parent 时，parentWeWant 必填！！")
       return []
     }
-    const res3 = await findParent(parentWeWant, grandparent)
-    return res3
+    const res4 = await findParent(parentWeWant, grandparent)
+    return res4
   }
 
 

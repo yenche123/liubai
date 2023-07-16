@@ -12,6 +12,7 @@ import threadController from "~/utils/controllers/thread-controller/thread-contr
 import { useWindowSize } from "~/hooks/useVueUse";
 import valTool from "~/utils/basic/val-tool";
 import { svBottomUpKey } from "~/utils/provide-keys";
+import type { CommentShow } from "~/types/types-content";
 
 export function useCommentDetail(
   props: CommentDetailProps,
@@ -134,11 +135,90 @@ async function loadBelowList(
     cdData.hasReachedBottom = true
   }
 
+  // 检查有无必要加载新评论里的 "溯深" 评论
+  await loadChildrenOfBelow(ctx, newList)
+
   // 判断是否要去溯源
   if(cdData.aboveList.length < 1 && !cdData.hasReachedTop) {
     loadAboveList(ctx)
   }
 }
+
+
+async function loadChildrenOfBelow(
+  ctx: CommentDetailCtx,
+  newList: CommentShow[],
+) {
+
+  if(newList.length < 1) return
+
+  console.time("loadChildrenOfBelow")
+
+  // 找出值得加载的评论
+  let tmpList = newList.filter(v => {
+    if(v.oState !== "OK") return false
+    if(!v.commentNum) return false
+    return true
+  })
+  if(tmpList.length < 1) return
+  let tmpList2 = tmpList.map(v => {
+    let score = (5 * v.commentNum) + (3 * v.emojiData.total)
+    return {
+      _id: v._id,
+      score,
+    }
+  }).sort((v1, v2) => {
+    let diff = v2.score - v1.score
+    return diff
+  })
+
+  // 已新添加的评论数
+  let num = 0
+
+  const _addNewComment = (prevId: string, newComment: CommentShow) => {
+    newComment.prevIReplied = true
+    const { belowList } = ctx.cdData
+    for(let i=0; i<belowList.length; i++) {
+      const v = belowList[i]
+      if(v._id === prevId) {
+        v.nextRepliedMe = true
+        belowList.splice(i + 1, 0, newComment)
+        break
+      }
+    }
+  }
+
+  const _toFind = async (prevId: string) => {
+    const opt: LoadByCommentOpt = {
+      commentId: prevId,
+      loadType: "find_hottest",
+    }
+    const newComments = await commentController.loadByComment(opt)
+    return newComments[0]
+  }
+
+  for(let i=0; i<tmpList2.length; i++) {
+    const v = tmpList2[i]
+    const p1 = v._id
+    const c1 = await _toFind(p1)
+    if(!c1) continue
+    _addNewComment(p1, c1)
+    num++
+
+    if(c1.commentNum > 0) {
+      const p2 = c1._id
+      const c2 = await _toFind(p2)
+      if(!c2) continue
+      _addNewComment(p2, c2)
+      num++
+    }
+
+    if(num >= 4) break
+  }
+
+  console.timeEnd("loadChildrenOfBelow")
+}
+
 
 
 // 3. 加载【溯源评论】（向上）
