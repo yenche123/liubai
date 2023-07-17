@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDynamics } from "~/hooks/useDynamics";
 import { useThirdScript } from "../tools/useThirdScript"
 import thirdLink from "~/config/third-link";
 
@@ -12,6 +13,7 @@ const props = defineProps({
   },
 })
 
+const { theme } = useDynamics()
 const { boxRef } = useThirdScript(thirdLink.TWITTER_WIDGETS)
 
 </script>
@@ -22,7 +24,7 @@ const { boxRef } = useThirdScript(thirdLink.TWITTER_WIDGETS)
     <div class="vctt-container">
 
       <div class="vctt-box" ref="boxRef">
-        <blockquote class="twitter-tweet">
+        <blockquote class="twitter-tweet" :data-theme="theme">
           <a :href="link" style="color: transparent;">Opening Twitter......</a>
         </blockquote>
       </div>
