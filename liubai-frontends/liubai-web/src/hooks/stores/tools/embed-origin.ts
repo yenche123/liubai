@@ -49,7 +49,7 @@ export function getEmbedUrlStr(originUrl: string) {
     if(!s.has("autoplay")) {
       s.set("autoplay", "1")
     }
-    return url.toString()
+    return originUrl
   }
 
   // 适配 bilibili /video
@@ -68,7 +68,7 @@ export function getEmbedUrlStr(originUrl: string) {
   const isBili2 = valTool.isInDomain(h, b2.hostname) && p === "/player.html"
   const hasBvid = s.has("bvid")
   if(isBili2 && hasBvid) {
-    return url.toString()
+    return originUrl
   }
 
 
@@ -91,7 +91,28 @@ export function getEmbedUrlStr(originUrl: string) {
   const isLoom2 = valTool.isInDomain(h, loom2.hostname)
   const lMatch2 = p.match(lReg2)
   if(isLoom2 && lMatch2) {
-    return url.toString()
+    return originUrl
+  }
+
+  // 如果是 Google Docs 的 preview 页，直接返回 原连接
+  const gDocs = thirdLink.GOOGLE_DOCS
+  const gDocs1 = new URL(gDocs)
+  const isGDocs1 = valTool.isInDomain(h, gDocs1.hostname)
+  if(isGDocs1) {
+    // document 的情况，通常其路由的 id 部分为 44 个字符
+    const gDocsReg1 = /(?<=\/document\/d\/)\w{40,48}(?=\/preview)/g
+    const gDocsMatch1 = p.match(gDocsReg1)
+    if(gDocsMatch1) return originUrl
+
+    // spreadsheets 的情况
+    const gDocsReg2 = /(?<=\/spreadsheets\/d\/)\w{40,48}(?=\/preview)/g
+    const gDocsMatch2 = p.match(gDocsReg2)
+    if(gDocsMatch2) return originUrl
+
+    // presentation 的情况
+    const gDocsReg3 = /(?<=\/presentation\/d\/)\w{40,48}(?=\/preview)/g
+    const gDocsMatch3 = p.match(gDocsReg3)
+    if(gDocsMatch3) return originUrl
   }
 
   return

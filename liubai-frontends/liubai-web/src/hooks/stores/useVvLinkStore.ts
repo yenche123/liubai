@@ -65,8 +65,14 @@ function canAdd(url: string) {
   if(p === "http:" && p0 === "https:") return false
 
   const h = u.hostname
-  const data = domainNotAllowed.find(v => valTool.isInDomain(h, v))
-  if(data) return false
+  const urlTransformed = getEmbedUrlStr(url)
+  if(urlTransformed) return true
+
+  const data1 = domainAllowed.find(v => valTool.isInDomain(h, v))
+  if(data1) return true
+
+  const data2 = domainNotAllowed.find(v => valTool.isInDomain(h, v))
+  if(data2) return false
   return true
 }
 

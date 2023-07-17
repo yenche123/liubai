@@ -26,4 +26,7 @@ export default {
   // loom
   LOOM_SHARE: "https://www.loom.com/share/__XXX__",
   LOOM_EMBED: "https://www.loom.com/embed/__XXX__",
+
+  // google docs
+  GOOGLE_DOCS: "https://docs.google.com/",
 }
