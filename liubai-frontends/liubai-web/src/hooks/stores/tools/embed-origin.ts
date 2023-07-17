@@ -115,6 +115,18 @@ export function getEmbedUrlStr(originUrl: string) {
     if(gDocsMatch3) return originUrl
   }
 
+
+  // 如果是 Google Maps 的 embed 页，直接返回原链接
+  const gMaps = thirdLink.GOOGLE_MAPS
+  const gMaps1 = new URL(gMaps)
+  const isGMaps1 = valTool.isInDomain(h, gMaps1.hostname)
+  if(isGMaps1) {
+    const gMapsReg1 = /\/maps\/embed[\/\?]+/g
+    const gMapsMatch1 = originUrl.match(gMapsReg1)
+    if(gMapsMatch1) return originUrl
+  }
+
+
   return
 }
 

@@ -29,4 +29,7 @@ export default {
 
   // google docs
   GOOGLE_DOCS: "https://docs.google.com/",
+
+  // google maps embed
+  GOOGLE_MAPS: "https://www.google.com/maps/",
 }
