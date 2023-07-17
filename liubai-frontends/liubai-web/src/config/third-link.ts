@@ -9,13 +9,18 @@ export default {
   GITHUB_SEARCH: "https://github.com/search",
   GOOGLE_CALENDAR_ADD: "https://calendar.google.com/calendar/u/0/r/eventedit",
   OUTLOOK_ADD: "https://outlook.live.com/calendar/0/deeplink/compose",
-  TWITTER_ADD: "https://twitter.com/intent/tweet",
   LINE_SHARE_TXT: "https://line.me/R/share",
   ZHIY_CC: "https://zhiy.cc/",
   PARAGRAPH_XYZ: "https://paragraph.xyz/",
   GUOKR_COM: "https://guokr.com/",
   HUPU_BBS: "https://bbs.hupu.com/",
   BENTO_ME: "https://bento.me/",
+
+
+  // twitter
+  TWITTER_COM: "https://twitter.com/",
+  TWITTER_ADD: "https://twitter.com/intent/tweet",
+  TWITTER_WIDGETS: "https://platform.twitter.com/widgets.js",
 
   // youtube
   YOUTUBE_EMBED: "https://www.youtube.com/embed/__XXX__?autoplay=1",

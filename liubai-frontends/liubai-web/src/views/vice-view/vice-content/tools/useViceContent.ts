@@ -3,11 +3,12 @@ import type { LocationQuery } from "vue-router";
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import valTool from "~/utils/basic/val-tool";
 import liuApi from "~/utils/liu-api";
-import type { VcState, VcCtx, VcData } from "./types"
+import type { VcState, VcCtx, VcData, VcThirdParty } from "./types"
 import thirdLink from "~/config/third-link";
 import liuUtil from "~/utils/liu-util";
 import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore";
 import liuEnv from "~/utils/liu-env";
+import { isSpecialLink } from "./handle-special-link"
 
 export function useViceContent() {
   const { route, router } = useRouteAndLiuRouter()
@@ -48,6 +49,9 @@ export function useViceContent() {
     else if(vs === "iframe" && id) {
       url = vStore.getOriginURL(id)
     }
+    else if(vs === "third" && id) {
+      url = vStore.getOriginURL(id)
+    }
     else if(vs === "thread" && id) {
       const u = router.resolve({ name: "detail", params: { contentId: id } })
       url = new URL(u.fullPath, location.origin)
@@ -70,11 +74,16 @@ export function useViceContent() {
 function listenRouteChange(
   ctx: VcCtx,
 ) {
+  const _env = liuEnv.getEnv()
   let located = ""
   const { route } = ctx
 
   const setNewIframeSrc = (val: string) => {
     showView(ctx, "iframe", val)
+  }
+
+  const setNewThirdParty = (id: string, thirdParty: VcThirdParty) => {
+    showView(ctx, "third", id, thirdParty)
   }
 
   const openChatGPT = (q: string) => {
@@ -131,7 +140,13 @@ function listenRouteChange(
       return 
     }
 
-    const iframeProxy = liuEnv.getEnv().IFRAME_PROXY
+    const thirdParty = isSpecialLink(url)
+    if(thirdParty) {
+      setNewThirdParty(url, thirdParty)
+      return
+    }
+
+    const iframeProxy = _env.IFRAME_PROXY
     const inAllowList = vStore.isInAllowedList(url)
     const embedUrl = vStore.getEmbedUrlStr(url)
     if(embedUrl) url = embedUrl
@@ -207,6 +222,7 @@ function showView(
   ctx: VcCtx,
   state: VcState, 
   id: string,
+  thirdParty?: VcThirdParty
 ) {
   const vcData = ctx.vcData
   const { list } = vcData
@@ -225,7 +241,7 @@ function showView(
   vcData.currentId = id
 
   if(hasFound) return
-  list.push({ state, id, show: true })
+  list.push({ state, id, show: true, thirdParty })
   if(list.length > 10) {
     list.splice(0, 1)
   }

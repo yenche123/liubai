@@ -2,6 +2,7 @@
 import { useViceContent } from "./tools/useViceContent";
 import VcNaviBar from './vc-navi-bar/vc-navi-bar.vue';
 import VcIframe from './vc-iframe/vc-iframe.vue';
+import VcThird from "./vc-third/vc-third.vue";
 import ThreadDetail from "~/components/level1/thread-detail/thread-detail.vue";
 import CommentDetail from "~/components/level2/comment-detail/comment-detail.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
@@ -71,6 +72,15 @@ const {
           :mask-margin-top="maskMarginTop"
         ></VcIframe>
 
+        <!-- third-party -->
+        <VcThird v-else-if="item.state === 'third' && item.thirdParty"
+          :third-party="item.thirdParty"
+          :link="item.id"
+          :is-outter-draging="item.show && isOutterDraging"
+          :vc-height="vcHeight2"
+          :mask-margin-top="maskMarginTop"
+        ></VcThird>
+
         <!-- 动态或评论 -->
         <div class="vcliu-content"
           v-else-if="item.state === 'thread' || item.state === 'comment'"
@@ -121,8 +131,6 @@ const {
   height: 100%;
   position: relative;
 }
-
-
 
 .vcliu-content {
   width: 100%;

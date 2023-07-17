@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import cfg from "~/config"
 import type { VcState } from "../tools/types"
-import type { PropType } from "vue";
+import { computed, type PropType } from "vue";
 import liuApi from "~/utils/liu-api";
 
-defineProps({
+const props = defineProps({
   vcState: {
     type: String as PropType<VcState>,
     required: true,
@@ -18,7 +18,12 @@ const emits = defineEmits<{
 }>()
 
 const { isMobile } = liuApi.getCharacteristic()
-const naviWidth = isMobile ? '100%' : 'calc(100% - 10px)'
+const naviWidth = computed(() => {
+  if(isMobile) return `100%`
+  const state = props.vcState
+  if(state === 'third' || state === 'iframe') return `100%`
+  return 'calc(100% - 10px)'
+})
 const iconColor = "var(--main-normal)"
 
 </script>
@@ -47,7 +52,7 @@ const iconColor = "var(--main-normal)"
 
   </div>
 
-  <div v-if="vcState === 'iframe'" class="vcliu-virtual"></div>
+  <div v-if="vcState === 'iframe' || vcState === 'third'" class="vcliu-virtual"></div>
 
 </template>
 <style lang="scss" scoped>
