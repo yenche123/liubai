@@ -52,7 +52,7 @@ const iconColor = "var(--main-normal)"
 
   </div>
 
-  <div v-if="vcState === 'iframe' || vcState === 'third'" class="vcliu-virtual"></div>
+  <div v-if="vcState === 'iframe'" class="vcliu-virtual"></div>
 
 </template>
 <style lang="scss" scoped>

@@ -14,7 +14,11 @@ const props = defineProps({
   link: {
     type: String
   },
-  vcHeight: {
+  vcHeight: {        // 窗口高度 - 导航栏高度
+    type: Number,
+    default: 0,
+  },
+  viceNaviPx: {      
     type: Number,
     default: 0,
   },
@@ -34,17 +38,53 @@ const maskMarginTop2 = computed(() => {
 </script>
 <template>
 
-  <VctTwitter 
-    v-if="thirdParty === 'TWITTER'"
-    :link="link"
-    :vc-height="vcHeight"
-  ></VctTwitter>
-  
+  <!-- 外层壳: 当溢出时，可以滚动 -->
+  <div class="vcliu-third">
+
+    <!-- 导航栏占位 -->
+    <div class="vcliu-virtual"></div>
+
+    <!-- 内层壳: 水平和垂直居中 -->
+    <div class="vct-container">
+      <VctTwitter 
+        v-if="thirdParty === 'TWITTER'"
+        :link="link"
+      ></VctTwitter>
+    </div>
+  </div>
+
   <!-- 用于显示拖动时覆盖在 iframe 上的透明度白屏 -->
   <div class="vcliu-cover" :class="{ 'vcliu-cover_show': isOutterDraging }"></div>
 
 </template>
 <style lang="scss" scoped>
+
+/** 大盒子: 垂直溢出时，可以滚动 */
+.vcliu-third {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  position: relative;
+  overflow-y: auto;
+}
+
+.vcliu-virtual {
+  width: 100%;
+  height: v-bind("viceNaviPx + 'px'");
+}
+
+.vct-container {
+  width: 90%;
+  min-width: 200px;
+  max-width: 500px;
+  margin: 0 auto;
+
+  min-height: v-bind("vcHeight + 'px'");
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
 
 .vcliu-cover {
   width: 100%;

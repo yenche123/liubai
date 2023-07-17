@@ -78,6 +78,7 @@ const {
           :link="item.id"
           :is-outter-draging="item.show && isOutterDraging"
           :vc-height="vcHeight2"
+          :vice-navi-px="viceNaviPx"
           :mask-margin-top="maskMarginTop"
         ></VcThird>
 
