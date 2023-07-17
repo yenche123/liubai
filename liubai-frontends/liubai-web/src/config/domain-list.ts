@@ -51,6 +51,7 @@ export const domainAllowed = [
   "mailchi.mp",
   "campaign-archive.com",
   "guokr.com",
+  "sina.com.cn",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
