@@ -53,6 +53,7 @@ export const domainAllowed = [
   "guokr.com",
   "sina.com.cn",
   "bento.me",
+  "cn.nytimes.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
@@ -70,5 +71,6 @@ export const domainNotAllowed = [
   "every.to",
   "msn.com",
   "threads.net",
-  "bbs.hupu.com"
+  "bbs.hupu.com",
+  "nytimes.com",
 ]
