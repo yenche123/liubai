@@ -15,6 +15,7 @@ export default {
   PARAGRAPH_XYZ: "https://paragraph.xyz/",
   GUOKR_COM: "https://guokr.com/",
   HUPU_BBS: "https://bbs.hupu.com/",
+  BENTO_ME: "https://bento.me/",
 
   // youtube
   YOUTUBE_EMBED: "https://www.youtube.com/embed/__XXX__?autoplay=1",

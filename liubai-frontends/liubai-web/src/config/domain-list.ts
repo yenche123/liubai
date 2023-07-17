@@ -52,6 +52,7 @@ export const domainAllowed = [
   "campaign-archive.com",
   "guokr.com",
   "sina.com.cn",
+  "bento.me",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
