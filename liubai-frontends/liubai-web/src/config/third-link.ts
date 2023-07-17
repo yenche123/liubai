@@ -32,4 +32,7 @@ export default {
 
   // google maps embed
   GOOGLE_MAPS: "https://www.google.com/maps/",
+
+  // figma
+  FIGMA_EMBED: "https://www.figma.com/embed?embed_host=share&url=__XXX__",
 }

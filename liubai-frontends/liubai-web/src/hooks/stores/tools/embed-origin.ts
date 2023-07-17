@@ -4,6 +4,7 @@
 
 import thirdLink from "~/config/third-link"
 import valTool from "~/utils/basic/val-tool"
+import liuApi from "~/utils/liu-api"
 import liuEnv from "~/utils/liu-env"
 
 const x = "__XXX__"
@@ -126,6 +127,32 @@ export function getEmbedUrlStr(originUrl: string) {
     if(gMapsMatch1) return originUrl
   }
 
+  // figma
+  const figma = thirdLink.FIGMA_EMBED
+  const figma1 = new URL(figma)
+  const isFigma = valTool.isInDomain(h, figma1.hostname)
+  if(isFigma) {
+    // 如果 参数里有 embed_host=share 就直接返回原链接
+    const figmaEmbedHost = s.get("embed_host")
+    if(figmaEmbedHost === "share") return originUrl
+
+    // 将 /file/xxxxxxx 放进 embed 里
+    // 通常其 id 在 22 位
+    const figmaReg1 = /(?<=\/file\/)\w{12,32}/g
+    const figmaMatch1 = p.match(figmaReg1)
+    if(figmaMatch1) {
+      const v = liuApi.encode_URI_component(originUrl)
+      return figma.replace(x, v)
+    }
+
+    // 如果直接是 embed 页
+    const figmaEmbedPath = `/embed`
+    if(p === figmaEmbedPath) {
+      return originUrl
+    }
+  }
+
+
 
   return
 }
@@ -188,6 +215,19 @@ export function getOriginURL(embedUrl: string) {
   if(isLoom && loomMatch) {
     const v = loomMatch[0]
     if(v) return new URL(loom.replace(x, v))
+  }
+
+  // 5. 检查是否为 figma
+  const figma = thirdLink.FIGMA_EMBED
+  const figma1 = new URL(figma)
+  const isFigma = valTool.isInDomain(h, figma1.hostname)
+  if(isFigma) {
+    const figmaEmbedPath = `/embed`
+    const _url = s.get("url")
+    const _uLength = _url?.length ?? 0
+    if(p === figmaEmbedPath && _url && _uLength > 20) {
+      return _url
+    }
   }
 
   // n. 最后，检查是否存在 google 的 igu 参数
