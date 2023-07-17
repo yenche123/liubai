@@ -69,4 +69,5 @@ export const domainNotAllowed = [
   "every.to",
   "msn.com",
   "threads.net",
+  "bbs.hupu.com"
 ]

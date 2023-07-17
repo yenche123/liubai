@@ -14,6 +14,7 @@ export default {
   ZHIY_CC: "https://zhiy.cc/",
   PARAGRAPH_XYZ: "https://paragraph.xyz/",
   GUOKR_COM: "https://guokr.com/",
+  HUPU_BBS: "https://bbs.hupu.com/",
 
   // youtube
   YOUTUBE_EMBED: "https://www.youtube.com/embed/__XXX__?autoplay=1",

@@ -152,6 +152,14 @@ export function getEmbedUrlStr(originUrl: string) {
     }
   }
 
+  // hupu
+  const hupu = thirdLink.HUPU_BBS
+  const hupu1 = new URL(hupu)
+  const isHupu = valTool.isInDomain(h, hupu1.hostname)
+  if(isHupu) {
+    // 路径有具备字数，就代表是详情页
+    if(p.length > 6) return originUrl
+  }
 
 
   return
