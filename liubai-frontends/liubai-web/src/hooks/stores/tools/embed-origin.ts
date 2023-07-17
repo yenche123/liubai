@@ -234,7 +234,7 @@ export function getOriginURL(embedUrl: string) {
     const _url = s.get("url")
     const _uLength = _url?.length ?? 0
     if(p === figmaEmbedPath && _url && _uLength > 20) {
-      return _url
+      return new URL(_url)
     }
   }
 
