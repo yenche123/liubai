@@ -37,12 +37,9 @@ const { boxRef } = useThirdScript(thirdLink.TWITTER_WIDGETS)
 </template>
 <style scoped lang="scss">
 
-
+/** 大盒子: 垂直溢出时，可以滚动 */
 .vct-twitter {
-  width: 90%;
-  min-width: 200px;
-  max-width: 500px;
-  margin: 0 auto;
+  width: 100%;
   position: relative;
   height: v-bind("vcHeight + 'px'");
   max-height: v-bind("vcHeight + 'px'");
@@ -50,7 +47,11 @@ const { boxRef } = useThirdScript(thirdLink.TWITTER_WIDGETS)
 }
 
 .vctt-container {
-  width: 100%;
+  width: 90%;
+  min-width: 200px;
+  max-width: 500px;
+  margin: 0 auto;
+
   min-height: v-bind("vcHeight + 'px'");
   display: flex;
   flex-direction: column;
