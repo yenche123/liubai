@@ -81,7 +81,7 @@ function getBgColor(props: VciProps) {
     const h = url.hostname
 
     // 给以下域名 在 iframe 里添加白色背景
-    const list: ThirdLinkKey[] = ["ZHIY_CC", "PARAGRAPH_XYZ"]
+    const list: ThirdLinkKey[] = ["ZHIY_CC", "PARAGRAPH_XYZ", "GUOKR_COM"]
     for(let i=0; i<list.length; i++) {
       const key = list[i]
       const v = thirdLink[key]
