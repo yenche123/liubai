@@ -181,7 +181,7 @@
     "to_leave": " to leave",
     "to_navigate": " to navigate",
     "to_open": " to confirm",
-    "delete_banner": "The threads in the trash are only reserverd in these 30 days. They will be deleted thoroughly after 30 days.",
+    "delete_banner": "The threads in the trash are only reserverd in these 30 days. They will be deleted permanently after 30 days.",
     "no_context": "There is no workspace context. Please login again."
   },
   "card_bubble": {
