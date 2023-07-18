@@ -317,6 +317,53 @@ export function getEmbedData(
   }
 
 
+  // apple music
+  const apMusic = new URL(thirdLink.APPLE_MUSIC)
+  const apMusicEmbed = new URL(thirdLink.APPLE_MUSIC_EMBED)
+  const isAppleMusic = valTool.isInDomain(h, apMusic.hostname)
+  if(isAppleMusic) {
+    const apMusicRes: EmbedDataRes = {
+      link: originUrl,
+      otherData: { isAppleMusic }
+    }
+    const hasApMusicEmbed = valTool.isInDomain(h, apMusicEmbed.hostname)
+    if(hasApMusicEmbed) return apMusicRes
+
+    // [\w\-]{2,6} 匹配地区码   
+    // [^\s\/]+ 匹配专辑名称   
+    // \d{6,16} 匹配专辑 id
+    const apMusicReg1 = /\/[\w\-]{2,6}\/album\/[^\s\/]+\/\d{6,16}/g
+    const apMusicMatch1 = p.match(apMusicReg1)
+    if(apMusicMatch1) {
+      url.hostname = apMusicEmbed.hostname
+      apMusicRes.link = url.toString()
+      return apMusicRes
+    }
+  }
+
+  // apple podcast
+  const apPodcast = new URL(thirdLink.APPLE_PODCAST)
+  const apPodcastEmbed = new URL(thirdLink.APPLE_PODCAST_EMBED)
+  const isApplePodcast = valTool.isInDomain(h, apPodcast.hostname)
+  if(isApplePodcast) {
+    const apPodcastRes: EmbedDataRes = {
+      link: originUrl,
+      otherData: { isApplePodcast }
+    }
+    const hasApPodcastEmbed = valTool.isInDomain(h, apPodcastEmbed.hostname)
+    if(hasApPodcastEmbed) return apPodcastRes
+
+    // [\w\-]{2,6} 匹配地区码
+    // [^\s\/]+ 匹配单集名称  
+    // id\d{6,16} 匹配播客id
+    const apPodcastReg1 = /\/[\w\-]{2,6}\/podcast\/[^\s\/]+\/id\d{6,16}/g
+    const apPodcastMatch1 = p.match(apPodcastReg1)
+    if(apPodcastMatch1) {
+      url.hostname = apPodcastEmbed.hostname
+      apPodcastRes.link = url.toString()
+      return apPodcastRes
+    }
+  }
 
   return
 }

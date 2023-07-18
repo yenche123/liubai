@@ -75,4 +75,5 @@ export const domainNotAllowed = [
   "threads.net",
   "bbs.hupu.com",
   "nytimes.com",
+  "music.apple.com",
 ]

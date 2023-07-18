@@ -19,6 +19,14 @@ export default {
   // spotify
   SPOTIFY_OPEN: "https://open.spotify.com/",
 
+  // apple music
+  APPLE_MUSIC: "https://music.apple.com/",
+  APPLE_MUSIC_EMBED: "https://embed.music.apple.com/",
+
+  // apple podcast
+  APPLE_PODCAST: "https://podcasts.apple.com/",
+  APPLE_PODCAST_EMBED: "https://embed.podcasts.apple.com/",
+
   // telegram
   T_ME: "https://t.me/",
   TELEGRAM_WIDGETS: "https://telegram.org/js/telegram-widget.js?22",
