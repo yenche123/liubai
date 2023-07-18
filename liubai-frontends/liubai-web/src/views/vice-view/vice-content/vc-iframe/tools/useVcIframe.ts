@@ -19,7 +19,7 @@ const add_white_bg: ThirdLinkKey[] = [
 export function useVcIframe(props: VciProps) {
   const { route } = useRouteAndLiuRouter()
   const iframeEl = ref<HTMLIFrameElement | null>(null)
-  const { bgColor } = getBgColor(props)
+  const { bgColor, isCard, styles } = getStyles(props)
 
   const whenWebViewerLoaded = () => {
     const iframeVal = iframeEl.value
@@ -67,23 +67,35 @@ export function useVcIframe(props: VciProps) {
   return {
     iframeEl,
     bgColor,
+    isCard,
+    styles,
   }
 }
 
 
-function getBgColor(props: VciProps) {
+function getStyles(
+  props: VciProps
+) {
+
+  const _getUrl = (val: string) => {
+    let url: URL
+    try {
+      url = new URL(val)
+    }
+    catch{
+      return
+    } 
+    return url
+  }
+
+
   const bgColor = computed<string | undefined>(() => {
     const src = props.iframeSrc
     if(!src) return
 
     const WHITE_BG = `#fff`
-    let url: URL
-    try {
-      url = new URL(src)
-    }
-    catch(err) {
-      return
-    }
+    let url = _getUrl(src)
+    if(!url) return
 
     const h = url.hostname
 
@@ -100,5 +112,46 @@ function getBgColor(props: VciProps) {
     return undefined
   })
 
-  return { bgColor }
+
+  const isCard = computed(() => {
+    const otherData = props.otherData
+    if(otherData?.isSpotify) return true
+    return false
+  })
+
+  const styles = computed(() => {
+    const h = props.vcHeight
+
+    if(!isCard.value) {
+      return {
+        width: "100%",
+        height: h,
+        topVirtual: 0,
+        bottomVirtual: 0,
+      }
+    }
+
+    const w = `90%`
+    if(h < 200) {
+      return {
+        width: w,
+        height: h,
+        topVirtual: 0,
+        bottomVirtual: 0,
+      }
+    }
+
+    const topVirtual = Math.round(h * 0.01)
+    const bottomVirtual = Math.round(h * 0.02)
+    const height = h - topVirtual - bottomVirtual
+    return {
+      width: w,
+      height,
+      topVirtual,
+      bottomVirtual,
+    }
+  })
+  
+
+  return { bgColor, isCard, styles }
 }

@@ -70,6 +70,7 @@ const {
           :iframe-src="item.id"
           :vc-height="vcHeight2"
           :mask-margin-top="maskMarginTop"
+          :other-data="item.otherData"
         ></VcIframe>
 
         <!-- third-party -->

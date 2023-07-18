@@ -16,6 +16,9 @@ export default {
   HUPU_BBS: "https://bbs.hupu.com/",
   BENTO_ME: "https://bento.me/",
 
+  // spotify
+  SPOTIFY_OPEN: "https://open.spotify.com/",
+
   // typeform
   TYPEFORM_TO: "https://typeform.com/to/",
 

@@ -6,4 +6,5 @@ export interface VciProps {
   iframeSrc?: string
   vcHeight: number
   maskMarginTop: number
+  otherData?: Record<string, any>
 }

@@ -3,6 +3,7 @@
 // 将原链接转为嵌入链接
 
 import thirdLink from "~/config/third-link"
+import { useDynamics } from "~/hooks/useDynamics"
 import valTool from "~/utils/basic/val-tool"
 import liuApi from "~/utils/liu-api"
 import liuEnv from "~/utils/liu-env"
@@ -26,6 +27,8 @@ export function getEmbedData(
   const pLen = p.length
   const s = url.searchParams
 
+  const { theme } = useDynamics()
+  const themeVal = theme.value
   let tmp: string = ""
 
   // 适配 youtube /watch
@@ -266,6 +269,54 @@ export function getEmbedData(
       }
     }
   }
+
+  // spotify
+  // 深色模式 theme 等于 0
+  const spotify = thirdLink.SPOTIFY_OPEN
+  const spotify1 = new URL(spotify)
+  const isSpotify = valTool.isInDomain(h, spotify1.hostname)
+  if(isSpotify) {
+    const spotifyRes: EmbedDataRes = {
+      link: "",
+      otherData: { isSpotify }
+    }
+
+    // 若已是 /embed 页面了
+    const isSpotifyEmbed = p.indexOf("/embed/") === 0
+    if(isSpotifyEmbed) {
+      if(themeVal === "dark") s.set("theme", "0")
+      else s.delete("theme")
+      spotifyRes.link = url.toString()
+      return spotifyRes
+    }
+
+    // 单曲 /track，其 id 约在 22 字符左右
+    const spotifyReg1 = /(?<=\/track\/)\w{16,32}/g
+    const spotifyMatch1 = p.match(spotifyReg1)
+    if(spotifyMatch1) {
+      const trackId = spotifyMatch1[0]
+      console.log("看一下 trackId: ", trackId)
+      spotify1.pathname = `/embed/track/${trackId}`
+      if(themeVal === "dark") spotify1.searchParams.set("theme", "0")
+      spotifyRes.link = spotify1.toString()
+      return spotifyRes
+    }
+
+
+    // 歌单 /playlist
+    const spotifyReg2 = /(?<=\/playlist\/)\w{16,32}/g
+    const spotifyMatch2 = p.match(spotifyReg2)
+    if(spotifyMatch2) {
+      const playlistId = spotifyMatch2[0]
+      console.log("看一下 playlistId: ", playlistId)
+      spotify1.pathname = `/embed/playlist/${playlistId}`
+      if(themeVal === "dark") spotify1.searchParams.set("theme", "0")
+      spotifyRes.link = spotify1.toString()
+      return spotifyRes
+    }
+  }
+
+
 
   return
 }
