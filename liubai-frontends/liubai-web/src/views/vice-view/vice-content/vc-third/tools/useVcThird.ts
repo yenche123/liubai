@@ -11,11 +11,10 @@ export function useVcThird(props: VcThirdProps) {
     return COVER_REQUIRED.includes(thirdParty)
   })
 
-  // 微调 8px，因为 8px 的误差仅在 iframe 上出现
+  // 微调 8px (不知道为何已无需微调)
   const maskMarginTop2 = computed(() => {
     const m = props.maskMarginTop
-    if(!m) return m
-    return m + 8
+    return m
   })
 
   return {

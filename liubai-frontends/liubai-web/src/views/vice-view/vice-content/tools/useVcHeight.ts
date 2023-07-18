@@ -17,7 +17,7 @@ export function useVcHeight() {
 
     vcHeight.value = h
     vcHeight2.value = tmp
-    maskMarginTop.value = (-tmp) - 8
+    maskMarginTop.value = (-tmp)
   }
 
   const whenWindowChange = () => {
