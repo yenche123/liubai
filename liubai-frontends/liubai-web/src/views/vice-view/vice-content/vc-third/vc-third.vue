@@ -66,6 +66,11 @@ const maskMarginTop2 = computed(() => {
   max-height: 100%;
   position: relative;
   overflow-y: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .vcliu-virtual {
