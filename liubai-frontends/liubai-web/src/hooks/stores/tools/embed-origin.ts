@@ -9,8 +9,17 @@ import liuEnv from "~/utils/liu-env"
 
 const x = "__XXX__"
 
+
+export interface EmbedDataRes {
+  link: string
+  otherData?: Record<string, any>
+}
+
+
 // 若无需转换，返回 undefined
-export function getEmbedUrlStr(originUrl: string) {
+export function getEmbedData(
+  originUrl: string
+): EmbedDataRes | undefined {
   const url = new URL(originUrl)
   const h = url.hostname
   const p = url.pathname
@@ -26,7 +35,10 @@ export function getEmbedUrlStr(originUrl: string) {
   if(isYouTube1) {
     const v = s.get("v")
     if(v) {
-      return yt.replace(x, v)
+      return {
+        link: yt.replace(x, v),
+        otherData: { isYouTube: true }
+      }
     }
   }
 
@@ -38,7 +50,10 @@ export function getEmbedUrlStr(originUrl: string) {
     if(tmp[tmp.length - 1] === "/") {
       tmp = tmp.substring(0, tmp.length - 1)
     }
-    return yt.replace(x, tmp)
+    return {
+      link: yt.replace(x, tmp),
+      otherData: { isYouTube: true }
+    }
   }
 
   // 如果直接是 yt /embed 的话
@@ -50,7 +65,10 @@ export function getEmbedUrlStr(originUrl: string) {
     if(!s.has("autoplay")) {
       s.set("autoplay", "1")
     }
-    return originUrl
+    return {
+      link: originUrl,
+      otherData: { isYouTube: true }
+    }
   }
 
   // 适配 bilibili /video
@@ -61,7 +79,14 @@ export function getEmbedUrlStr(originUrl: string) {
   const bMatch1 = p.match(bReg1)
   if(isBili1 && bMatch1) {
     const v = bMatch1[0]
-    if(v) return b.replace(x, v)
+    if(v) {
+      return {
+        link: b.replace(x, v),
+        otherData: {
+          isBilibili: true,
+        }
+      }
+    }
   }
 
   // 如果是 bilibili player.bilibili.com/player.html 的话
@@ -69,7 +94,12 @@ export function getEmbedUrlStr(originUrl: string) {
   const isBili2 = valTool.isInDomain(h, b2.hostname) && p === "/player.html"
   const hasBvid = s.has("bvid")
   if(isBili2 && hasBvid) {
-    return originUrl
+    return {
+      link: originUrl,
+      otherData: {
+        isBilibili: true,
+      }
+    }
   }
 
 
@@ -82,7 +112,12 @@ export function getEmbedUrlStr(originUrl: string) {
   if(isLoom1 && lMatch1) {
     const v = lMatch1[0]
     if(v) {
-      return loom.replace(x, v)
+      return {
+        link: loom.replace(x, v),
+        otherData: {
+          isLoom: true,
+        }
+      }
     }
   }
 
@@ -92,7 +127,12 @@ export function getEmbedUrlStr(originUrl: string) {
   const isLoom2 = valTool.isInDomain(h, loom2.hostname)
   const lMatch2 = p.match(lReg2)
   if(isLoom2 && lMatch2) {
-    return originUrl
+    return {
+      link: originUrl,
+      otherData: {
+        isLoom: true,
+      }
+    }
   }
 
   // 如果是 Google Docs 的 preview 页，直接返回 原连接
@@ -100,20 +140,28 @@ export function getEmbedUrlStr(originUrl: string) {
   const gDocs1 = new URL(gDocs)
   const isGDocs1 = valTool.isInDomain(h, gDocs1.hostname)
   if(isGDocs1) {
+
+    const gDocsRes: EmbedDataRes = {
+      link: originUrl,
+      otherData: {
+        isGDocs: true,
+      }
+    }
+
     // document 的情况，通常其路由的 id 部分为 44 个字符
     const gDocsReg1 = /(?<=\/document\/d\/)\w{40,48}(?=\/preview)/g
     const gDocsMatch1 = p.match(gDocsReg1)
-    if(gDocsMatch1) return originUrl
+    if(gDocsMatch1) return gDocsRes
 
     // spreadsheets 的情况
     const gDocsReg2 = /(?<=\/spreadsheets\/d\/)\w{40,48}(?=\/preview)/g
     const gDocsMatch2 = p.match(gDocsReg2)
-    if(gDocsMatch2) return originUrl
+    if(gDocsMatch2) return gDocsRes
 
     // presentation 的情况
     const gDocsReg3 = /(?<=\/presentation\/d\/)\w{40,48}(?=\/preview)/g
     const gDocsMatch3 = p.match(gDocsReg3)
-    if(gDocsMatch3) return originUrl
+    if(gDocsMatch3) return gDocsRes
   }
 
 
@@ -122,9 +170,15 @@ export function getEmbedUrlStr(originUrl: string) {
   const gMaps1 = new URL(gMaps)
   const isGMaps1 = valTool.isInDomain(h, gMaps1.hostname)
   if(isGMaps1) {
+    const gMapsRes: EmbedDataRes = {
+      link: originUrl,
+      otherData: {
+        isGMaps: true
+      }
+    }
     const gMapsReg1 = /\/maps\/embed[\/\?]+/g
     const gMapsMatch1 = originUrl.match(gMapsReg1)
-    if(gMapsMatch1) return originUrl
+    if(gMapsMatch1) return gMapsRes
   }
 
   // figma
@@ -132,9 +186,15 @@ export function getEmbedUrlStr(originUrl: string) {
   const figma1 = new URL(figma)
   const isFigma = valTool.isInDomain(h, figma1.hostname)
   if(isFigma) {
+
+    const figmaRes: EmbedDataRes = {
+      link: originUrl,
+      otherData: { isFigma }
+    }
+
     // 如果 参数里有 embed_host=share 就直接返回原链接
     const figmaEmbedHost = s.get("embed_host")
-    if(figmaEmbedHost === "share") return originUrl
+    if(figmaEmbedHost === "share") return figmaRes
 
     // 将 /file/xxxxxxx 放进 embed 里
     // 通常其 id 在 22 位
@@ -142,13 +202,14 @@ export function getEmbedUrlStr(originUrl: string) {
     const figmaMatch1 = p.match(figmaReg1)
     if(figmaMatch1) {
       const v = liuApi.encode_URI_component(originUrl)
-      return figma.replace(x, v)
+      figmaRes.link = figma.replace(x, v)
+      return figmaRes
     }
 
     // 如果直接是 embed 页
     const figmaEmbedPath = `/embed`
     if(p === figmaEmbedPath) {
-      return originUrl
+      return figmaRes
     }
   }
 
@@ -158,7 +219,12 @@ export function getEmbedUrlStr(originUrl: string) {
   const isHupu = valTool.isInDomain(h, hupu1.hostname)
   if(isHupu) {
     // 路径有具备字数，就代表是详情页
-    if(p.length > 6) return originUrl
+    if(p.length > 6) {
+      return {
+        link: originUrl,
+        otherData: { isHupu }
+      }
+    }
   }
 
 

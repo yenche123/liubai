@@ -33,6 +33,8 @@ export function useViceContent() {
   const onTapClose = async () => {
     const newQuery = liuUtil.getDefaultRouteQuery(route)
     router.replaceWithNewQuery(route, newQuery)
+    await valTool.waitMilli(300)
+    closeAllView(ctx, true)
   }
 
   const onTapOpenInNew = () => {
@@ -77,12 +79,12 @@ function listenRouteChange(
   let located = ""
   const { route } = ctx
 
-  const setNewIframeSrc = (val: string) => {
-    showView(ctx, "iframe", val)
+  const setNewIframeSrc = (val: string, otherData?: Record<string, any>) => {
+    showView(ctx, "iframe", val, undefined, otherData)
   }
 
-  const setNewThirdParty = (id: string, thirdParty: VcThirdParty) => {
-    showView(ctx, "third", id, thirdParty)
+  const setNewThirdParty = (val: string, thirdParty: VcThirdParty) => {
+    showView(ctx, "third", val, thirdParty)
   }
 
   const openChatGPT = (q: string) => {
@@ -147,8 +149,8 @@ function listenRouteChange(
 
     const iframeProxy = _env.IFRAME_PROXY
     const inAllowList = vStore.isInAllowedList(url)
-    const embedUrl = vStore.getEmbedUrlStr(url)
-    if(embedUrl) url = embedUrl
+    const embedUrl = vStore.getEmbedData(url)
+    if(embedUrl) url = embedUrl.link
     else if(iframeProxy && !inAllowList) {
       url = iframeProxy + url
     }
@@ -156,7 +158,7 @@ function listenRouteChange(
     // console.log("iframe url: ")
     // console.log(url)
     // console.log(" ")
-    setNewIframeSrc(url)
+    setNewIframeSrc(url, embedUrl?.otherData)
   }
   
   const checkRouteChange = (newQuery: LocationQuery) => {
@@ -221,7 +223,8 @@ function showView(
   ctx: VcCtx,
   state: VcState, 
   id: string,
-  thirdParty?: VcThirdParty
+  thirdParty?: VcThirdParty,
+  otherData?: Record<string, any>
 ) {
   const vcData = ctx.vcData
   const { list } = vcData
@@ -240,17 +243,40 @@ function showView(
   vcData.currentId = id
 
   if(hasFound) return
-  list.push({ state, id, show: true, thirdParty })
+  list.push({ state, id, show: true, thirdParty, otherData })
   if(list.length > 10) {
     list.splice(0, 1)
   }
 }
 
-function closeAllView(ctx: VcCtx) {
+function closeAllView(
+  ctx: VcCtx,
+  clearly: boolean = false,    // 完全清除
+) {
   const list = ctx.vcData.list
-  list.forEach(v => {
-    v.show = false
-  })
+  
+  if(clearly) {
+    ctx.vcData.list = []
+  }
+  else {
+    for(let i=0; i<list.length; i++) {
+      const v = list[i]
+
+      // 发现是 yt / bilibili 的视频时，直接销毁
+      // 要不然视频会一直在后台播放
+      let isVideo = v.otherData?.isYouTube
+      if(!isVideo) isVideo = v.otherData?.isBilibili
+
+      if(isVideo) {
+        list.splice(i, 1)
+        i--
+        continue
+      }
+      
+      v.show = false
+    }
+  }
+  
   ctx.vcData.currentState = ""
   ctx.vcData.currentId = ""
 }

@@ -16,6 +16,7 @@ export interface VcViewAtom {
                     // iframe 时对应 iframeSrc
                     // third 时对应原链接
   thirdParty?: VcThirdParty    // 只在 state 为 "third" 时有效
+  otherData?: Record<string, any>    // 存储一些辅助信息，比如 isYouTube 等等
   show: boolean
 }
 
