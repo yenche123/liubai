@@ -1,4 +1,4 @@
-import type { Ref } from "vue"
+import type { ParticularScript } from "~/types/types-third-party"
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 import type { LiuRouter } from "~/routes/liu-router"
 
@@ -7,7 +7,7 @@ export type VcState = "thread" | "comment" | "iframe" | "third" | ""
 // iframe vs. third 的区别
 //   third: 不是用 iframe 打开的，而是用了 script
 
-export type VcThirdParty = "IG" | "TWITTER"
+export type VcThirdParty = ParticularScript
 
 export interface VcViewAtom {
   state: VcState

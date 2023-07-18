@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, type PropType } from 'vue';
+import { type PropType } from 'vue';
 import type { VcThirdParty } from "../tools/types"
 import VctTwitter from "./vct-twitter/vct-twitter.vue"
+import VctCalendly from './vct-calendly/vct-calendly.vue';
+import { useVcThird } from './tools/useVcThird';
 
 const props = defineProps({
   isOutterDraging: {
@@ -28,12 +30,11 @@ const props = defineProps({
   }
 })
 
-// 微调 8px，因为 8px 的误差仅在 iframe 上出现
-const maskMarginTop2 = computed(() => {
-  const m = props.maskMarginTop
-  if(!m) return m
-  return m + 8
-})
+
+const {
+  isCoverVv,
+  maskMarginTop2,
+} = useVcThird(props)
 
 </script>
 <template>
@@ -45,11 +46,17 @@ const maskMarginTop2 = computed(() => {
     <div class="vcliu-virtual"></div>
 
     <!-- 内层壳: 水平和垂直居中 -->
-    <div class="vct-container">
+    <div class="vct-container"
+      :class="{ 'vct-container_covered': isCoverVv }"
+    >
       <VctTwitter 
-        v-if="thirdParty === 'TWITTER'"
+        v-if="thirdParty === 'twitter'"
         :link="link"
       ></VctTwitter>
+      <VctCalendly
+        v-else-if="thirdParty === 'calendly'"
+        :link="link"
+      ></VctCalendly>
     </div>
   </div>
 
@@ -81,14 +88,20 @@ const maskMarginTop2 = computed(() => {
 .vct-container {
   width: 90%;
   min-width: 200px;
-  max-width: 500px;
+  max-width: 480px;
   margin: 0 auto;
-
   min-height: v-bind("vcHeight + 'px'");
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
+}
+
+.vct-container_covered {
+  width: 100%;
+  max-width: none;
+  height: v-bind("vcHeight + 'px'");
+  display: block;
 }
 
 .vcliu-cover {

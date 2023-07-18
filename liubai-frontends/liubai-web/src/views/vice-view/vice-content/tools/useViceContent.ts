@@ -8,7 +8,6 @@ import thirdLink from "~/config/third-link";
 import liuUtil from "~/utils/liu-util";
 import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore";
 import liuEnv from "~/utils/liu-env";
-import { isSpecialLink } from "./handle-special-link"
 
 export function useViceContent() {
   const { route, router } = useRouteAndLiuRouter()
@@ -140,7 +139,7 @@ function listenRouteChange(
       return 
     }
 
-    const thirdParty = isSpecialLink(url)
+    const thirdParty = vStore.isSpecialLink(url)
     if(thirdParty) {
       setNewThirdParty(url, thirdParty)
       return

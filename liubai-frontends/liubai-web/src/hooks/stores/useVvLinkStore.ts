@@ -6,6 +6,7 @@ import type { RouteLocationNormalizedLoaded } from "vue-router"
 import valTool from "~/utils/basic/val-tool"
 import { domainAllowed, domainNotAllowed } from "~/config/domain-list"
 import { getEmbedUrlStr, getOriginURL } from "./tools/embed-origin"
+import { isSpecialLink } from "./tools/handle-special-link"
 
 interface VvLinkAtom {
   id: string
@@ -53,6 +54,7 @@ export const useVvLinkStore = defineStore("vvlink", () => {
     isInAllowedList,
     getEmbedUrlStr,
     getOriginURL,
+    isSpecialLink,
   }
 })
 
@@ -67,6 +69,9 @@ function canAdd(url: string) {
   const h = u.hostname
   const urlTransformed = getEmbedUrlStr(url)
   if(urlTransformed) return true
+
+  const res1 = isSpecialLink(url)
+  if(res1) return true
 
   const data1 = domainAllowed.find(v => valTool.isInDomain(h, v))
   if(data1) return true

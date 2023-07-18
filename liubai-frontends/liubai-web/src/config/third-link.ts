@@ -16,6 +16,9 @@ export default {
   HUPU_BBS: "https://bbs.hupu.com/",
   BENTO_ME: "https://bento.me/",
 
+  // calendly
+  CALENDLY_COM: "https://calendly.com/",
+  CALENDLY_WIDGETS: "https://assets.calendly.com/assets/external/widget.js",
 
   // twitter
   TWITTER_COM: "https://twitter.com/",
