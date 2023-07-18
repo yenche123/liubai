@@ -394,6 +394,20 @@ export function getOriginURL(embedUrl: string) {
     }
   }
 
+  // 6. 检查是否为 spotify
+  const spotify = thirdLink.SPOTIFY_OPEN
+  const spotify1 = new URL(spotify)
+  const isSpotify = valTool.isInDomain(h, spotify1.hostname)
+  if(isSpotify) {
+    const spotifyEmbedPath = "/embed"
+    const hasEmbed = p.indexOf(spotifyEmbedPath) === 0
+    if(hasEmbed) {
+      s.delete("theme")
+      url.pathname = p.substring(spotifyEmbedPath.length)
+    }
+    return url
+  }
+
   // n. 最后，检查是否存在 google 的 igu 参数
   const gUrl = new URL(thirdLink.GOOGLE_SEARCH)
   const isGoogle = valTool.isInDomain(h, gUrl.hostname)
