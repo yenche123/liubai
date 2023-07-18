@@ -55,6 +55,7 @@ export const domainAllowed = [
   "bento.me",
   "cn.nytimes.com",
   "typeform.com",
+  "forms.office.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
