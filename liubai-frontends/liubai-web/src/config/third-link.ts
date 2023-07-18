@@ -16,6 +16,9 @@ export default {
   HUPU_BBS: "https://bbs.hupu.com/",
   BENTO_ME: "https://bento.me/",
 
+  // typeform
+  TYPEFORM_TO: "https://typeform.com/to/",
+
   // producthunt card
   PRODUCTHUNT_CARD: "https://cards.producthunt.com/cards/posts/",
 

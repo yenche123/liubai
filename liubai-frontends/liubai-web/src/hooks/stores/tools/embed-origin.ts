@@ -252,7 +252,20 @@ export function getEmbedData(
     }
   }
 
-
+  // typeform
+  const typeform = thirdLink.TYPEFORM_TO
+  const typeform1 = new URL(typeform)
+  const isTypeForm1 = valTool.isInDomain(h, typeform1.hostname)
+  if(isTypeForm1) {
+    // 其 id 大小约 6~8 个字符
+    const typeformReg1 = /\/to\/\w{5,12}$/g
+    const typeformMatch1 = p.match(typeformReg1)
+    if(typeformMatch1) {
+      return {
+        link: originUrl,
+      }
+    }
+  }
 
   return
 }

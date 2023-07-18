@@ -54,6 +54,7 @@ export const domainAllowed = [
   "sina.com.cn",
   "bento.me",
   "cn.nytimes.com",
+  "typeform.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
