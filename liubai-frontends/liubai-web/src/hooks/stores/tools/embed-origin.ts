@@ -227,6 +227,21 @@ export function getEmbedData(
     }
   }
 
+  // producthunt
+  const producthunt = thirdLink.PRODUCTHUNT_CARD
+  const producthunt1 = new URL(producthunt)
+  const isProductHunt1 = valTool.isInDomain(h, producthunt1.hostname)
+  if(isProductHunt1) {
+    const idxPH1 = p.indexOf(producthunt1.pathname)
+    if(idxPH1 === 0) {
+      return {
+        link: originUrl,
+        otherData: { isProductHunt: true }
+      }
+    }
+  }
+
+
 
   return
 }

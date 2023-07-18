@@ -16,6 +16,9 @@ export default {
   HUPU_BBS: "https://bbs.hupu.com/",
   BENTO_ME: "https://bento.me/",
 
+  // producthunt card
+  PRODUCTHUNT_CARD: "https://cards.producthunt.com/cards/posts/",
+
   // calendly
   CALENDLY_COM: "https://calendly.com/",
   CALENDLY_WIDGETS: "https://assets.calendly.com/assets/external/widget.js",

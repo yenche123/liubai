@@ -13,6 +13,7 @@ const add_white_bg: ThirdLinkKey[] = [
   "PARAGRAPH_XYZ", 
   "GUOKR_COM",
   "BENTO_ME",
+  "PRODUCTHUNT_CARD",
 ]
 
 export function useVcIframe(props: VciProps) {
