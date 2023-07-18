@@ -19,6 +19,10 @@ export default {
   // spotify
   SPOTIFY_OPEN: "https://open.spotify.com/",
 
+  // telegram
+  T_ME: "https://t.me/",
+  TELEGRAM_WIDGETS: "https://telegram.org/js/telegram-widget.js?22",
+
   // typeform
   TYPEFORM_TO: "https://typeform.com/to/",
 

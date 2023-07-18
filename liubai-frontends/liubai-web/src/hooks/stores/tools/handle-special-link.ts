@@ -35,5 +35,15 @@ export function isSpecialLink(
     if(calendlyMatch1) return "calendly"
   }
 
+  // telegram
+  const telegram = thirdLink.T_ME
+  const telegram1 = new URL(telegram)
+  const isTG = valTool.isInDomain(h, telegram1.hostname)
+  if(isTG) {
+    const tgReg1 = /^\/\w{2,32}\/\d{1,10}$/g
+    const tgMatch1 = p.match(tgReg1)
+    if(tgMatch1) return "telegram"
+  }
+
   return
 }

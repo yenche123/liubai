@@ -1,9 +1,13 @@
-import { nextTick, onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 
-
+export interface ThirdScriptAttr {
+  name: string
+  value: string
+}
 
 export function useThirdScript(
   url: string,
+  attributes?: Array<ThirdScriptAttr>,
 ) {
 
   const boxRef = ref<HTMLDivElement>()
@@ -11,6 +15,12 @@ export function useThirdScript(
   const s = document.createElement("script")
   s.async = true
   s.src = url
+
+  if(attributes?.length) {
+    attributes.forEach(v => {
+      s.setAttribute(v.name, v.value)
+    })
+  }
 
   onMounted(async () => {
     await nextTick()

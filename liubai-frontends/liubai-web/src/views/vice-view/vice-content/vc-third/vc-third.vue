@@ -3,6 +3,7 @@ import { type PropType } from 'vue';
 import type { VcThirdParty } from "../tools/types"
 import VctTwitter from "./vct-twitter/vct-twitter.vue"
 import VctCalendly from './vct-calendly/vct-calendly.vue';
+import VctTelegram from "./vct-telegram/vct-telegram.vue";
 import { useVcThird } from './tools/useVcThird';
 
 const props = defineProps({
@@ -57,6 +58,11 @@ const {
         v-else-if="thirdParty === 'calendly'"
         :link="link"
       ></VctCalendly>
+      <VctTelegram
+        v-else-if="thirdParty === 'telegram'"
+        :link="link"
+      ></VctTelegram>
+      
     </div>
   </div>
 
