@@ -162,6 +162,17 @@ export function getEmbedData(
     const gDocsReg3 = /(?<=\/presentation\/d\/)\w{40,48}(?=\/preview)/g
     const gDocsMatch3 = p.match(gDocsReg3)
     if(gDocsMatch3) return gDocsRes
+
+    // form 的情况，id 通常为 56 个字符
+    const gDocsReg4 = /\/forms\/d\/e\/\w{50,60}\/viewform/g
+    const gDocsMatch4 = p.match(gDocsReg4)
+    if(gDocsMatch4) {
+      s.delete("usp")
+      s.set("embedded", "true")
+      gDocsRes.link = url.toString()
+      return gDocsRes
+    }
+
   }
 
 
