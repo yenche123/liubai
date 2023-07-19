@@ -57,6 +57,7 @@ export const domainAllowed = [
   "typeform.com",
   "forms.office.com",
   "mem.ai",
+  "val.town",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
