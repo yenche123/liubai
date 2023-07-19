@@ -52,7 +52,9 @@ export default {
   // youtube
   YOUTUBE_EMBED: "https://www.youtube.com/embed/__XXX__?autoplay=1",
   YOUTUBE_SHORT: "https://youtu.be/__XXX__",
-  YOUTUBE_COMMON: "https://www.youtube.com/watch?v=__XXX__",
+  YOUTUBE_WATCH: "https://www.youtube.com/watch?v=__XXX__",
+  YOUTUBE_PLAYLIST: "https://www.youtube.com/playlist?list=__XXX__",
+  YOUTUBE_VIDEOSERIES: "https://www.youtube.com/embed/videoseries?list=__XXX__",
 
   // bilibili
   BILIBILI_COMMON: "https://www.bilibili.com/video/__XXX__/",

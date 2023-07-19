@@ -26,15 +26,14 @@ export function getEmbedData(
 
   // 适配 youtube /watch
   const yt = thirdLink.YOUTUBE_EMBED
-  const yt1 = new URL(thirdLink.YOUTUBE_COMMON)
+  const yt1 = new URL(thirdLink.YOUTUBE_WATCH)
+  const ytRes: EmbedDataRes = { link: originUrl, otherData: { isYouTube: true } }
   let isYouTube1 = valTool.isInDomain(h, yt1.hostname) && p === "/watch"
   if(isYouTube1) {
     const v = s.get("v")
     if(v) {
-      return {
-        link: yt.replace(x, v),
-        otherData: { isYouTube: true }
-      }
+      ytRes.link = yt.replace(x, v)
+      return ytRes
     }
   }
 
@@ -46,10 +45,8 @@ export function getEmbedData(
     if(tmp[tmp.length - 1] === "/") {
       tmp = tmp.substring(0, tmp.length - 1)
     }
-    return {
-      link: yt.replace(x, tmp),
-      otherData: { isYouTube: true }
-    }
+    ytRes.link = yt.replace(x, tmp)
+    return ytRes
   }
 
   // 如果直接是 yt /embed 的话
@@ -61,9 +58,20 @@ export function getEmbedData(
     if(!s.has("autoplay")) {
       s.set("autoplay", "1")
     }
-    return {
-      link: originUrl,
-      otherData: { isYouTube: true }
+    return ytRes
+  }
+
+  // 如果是 yt 的播放清单
+  const yt4 = new URL(thirdLink.YOUTUBE_PLAYLIST)
+  const isYouTube4 = valTool.isInDomain(h, yt4.hostname) && p === "/playlist"
+  if(isYouTube4) {
+    const ytList = s.get("list")
+    const yt5 = new URL(thirdLink.YOUTUBE_VIDEOSERIES)
+    if(ytList) {
+      yt5.searchParams.set("list", ytList)
+      yt5.searchParams.set("autoplay", "1")
+      ytRes.link = yt5.toString()
+      return ytRes
     }
   }
 

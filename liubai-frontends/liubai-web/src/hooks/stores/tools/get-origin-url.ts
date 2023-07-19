@@ -33,14 +33,26 @@ export function getOriginURL(embedUrl: string) {
   }
 
   // 2. 检查是否为 yt embed
-  const yt = thirdLink.YOUTUBE_COMMON
+  const yt = thirdLink.YOUTUBE_WATCH
   const yt1 = new URL(thirdLink.YOUTUBE_EMBED)
-  const ytReg = /(?<=\/embed\/)\w{5,16}/g 
+  const yt2 = new URL(thirdLink.YOUTUBE_PLAYLIST)
   const isYouTube1 = valTool.isInDomain(h, yt1.hostname)
-  const ytMatch = p.match(ytReg)
-  if(isYouTube1 && ytMatch) {
-    const v = ytMatch[0]
-    if(v) return new URL(yt.replace(x, v))
+  if(isYouTube1) {
+
+    // 判断嵌入的是否为 播放清单
+    const ytList = s.get("list")
+    if(p === "/embed/videoseries" && ytList) {
+      yt2.searchParams.set("list", ytList)
+      return yt2
+    }
+
+    // 判断嵌入的是否为 单个视频
+    const ytReg = /(?<=\/embed\/)\w{5,16}/g 
+    const ytMatch = p.match(ytReg)
+    if(ytMatch) {
+      const v = ytMatch[0]
+      return new URL(yt.replace(x, v))
+    }
   }
 
   // 3. 检查是否为 bilibili embed
