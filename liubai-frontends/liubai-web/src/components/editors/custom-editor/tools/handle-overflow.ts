@@ -9,7 +9,7 @@ export function handleOverflow(
   const text = ec?.text
   const json = ec?.json
   if(!text || !json) {
-    state.overflowType = "visible"
+    state.overflowType = "auto"
     return
   }
 
