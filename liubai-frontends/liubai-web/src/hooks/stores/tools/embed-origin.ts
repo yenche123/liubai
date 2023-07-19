@@ -455,6 +455,24 @@ export function getOriginURL(embedUrl: string) {
     return url
   }
 
+  // 7. 检查是否为 apple music
+  const apMusic1 = new URL(thirdLink.APPLE_MUSIC_EMBED)
+  const isAppleMusic = valTool.isInDomain(h, apMusic1.hostname)
+  if(isAppleMusic) {
+    const apMusic2 = new URL(thirdLink.APPLE_MUSIC)
+    url.hostname = apMusic2.hostname
+    return url
+  }
+
+  // 8. 检查是否为 apple podcast
+  const apPodcast1 = new URL(thirdLink.APPLE_PODCAST_EMBED)
+  const isApplePodcast = valTool.isInDomain(h, apPodcast1.hostname)
+  if(isApplePodcast) {
+    const apPodcast2 = new URL(thirdLink.APPLE_PODCAST)
+    url.hostname = apPodcast2.hostname
+    return url
+  }
+
   // n. 最后，检查是否存在 google 的 igu 参数
   const gUrl = new URL(thirdLink.GOOGLE_SEARCH)
   const isGoogle = valTool.isInDomain(h, gUrl.hostname)
