@@ -13,6 +13,7 @@ import type { LiuFileStore, LiuImageStore } from "~/types";
 import liuUtil from "~/utils/liu-util";
 import { handleComment } from "./handle-comment"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 
 export function useCommentEditor(props: CeProps) {
 
@@ -73,17 +74,27 @@ export function useCommentEditor(props: CeProps) {
   const gs = useGlobalStateStore()
 
   /** 一些事件 */
+  let timeout: LiuTimeout
+
+  // 必须做防抖节流，因为黏贴事件会触发 onEditorBlur 之后又马上聚焦，触发了 onEditorFocus
+  // 所以做一层防抖节流能让 “黏贴事件” 知道理想上当前应该是何种聚焦状态
+  const _setFocus = (newV: boolean) => {
+    if(timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      ctx.focused = newV
+      gs.$patch({ commentEditorInputing: newV })
+    }, 120)
+  }
+
   const onEditorFocus = () => {
     if(ctx.isToolbarTranslateY) {
       ctx.isToolbarTranslateY = false
     }
-    ctx.focused = true
-    gs.$patch({ commentEditorInputing: true })
+    _setFocus(true)
   }
 
   const onEditorBlur = (data: EditorCoreContent) => {
-    ctx.focused = false
-    gs.$patch({ commentEditorInputing: false })
+    _setFocus(false)
   }
 
   const onEditorUpdate = (data: EditorCoreContent) => {

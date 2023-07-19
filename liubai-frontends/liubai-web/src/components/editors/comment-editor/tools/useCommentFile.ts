@@ -1,4 +1,4 @@
-import { inject, watch, ref } from "vue"
+import { inject, watch, ref, onMounted, onUnmounted } from "vue"
 import { vcFileKey, mvFileKey } from "~/utils/provide-keys"
 import type { CeCtx, CeProps } from "./types"
 import liuUtil from "~/utils/liu-util"
@@ -20,19 +20,23 @@ export function useCommentFile(
 ) {
   
   const covers = ref<ImageShow[]>([])
-
-  // 监听从 vice-content 里掉落的文件
+  
   let located = props.located
   if(located === "main-view") {
+    // 监听从 main-view 里掉落的文件
     listenFilesFromMainView(ctx)
   }
   else if(located === "vice-view") {
+    // 监听从 vice-content 里掉落的文件
     listenFilesFromViceContent(ctx, props)
   }
   else if(located === "popup") {
+    // 监听从 popup 里掉落的文件
     listenFilesFromPopup(ctx)
   }
 
+  // 监听黏贴
+  listenDocumentPaste(ctx, props)
 
   // 监听逻辑数据改变，去响应视图
   watch(() => ctx.images, (newImages) => {
@@ -191,6 +195,29 @@ function whenCoversSorted(
   }
   ctx.images = newImages
 }
+
+function listenDocumentPaste(
+  ctx: CeCtx,
+  props: CeProps,
+) {
+  const whenPaste = (e: ClipboardEvent) => {
+    if(!ctx.focused) return
+    if(!props.isShowing) return
+    const fileList = e.clipboardData?.files
+    if(!fileList || fileList.length < 1) return
+    const files = liuUtil.getArrayFromFileList(fileList)
+    handleFiles(ctx, files)
+  }
+
+  onMounted(() => {
+    document.addEventListener("paste", whenPaste)
+  })
+
+  onUnmounted(() => {
+    document.removeEventListener("paste", whenPaste)
+  })
+}
+
 
 function listenFilesFromMainView(
   ctx: CeCtx
