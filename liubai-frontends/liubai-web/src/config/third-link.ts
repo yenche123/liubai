@@ -15,6 +15,7 @@ export default {
   GUOKR_COM: "https://guokr.com/",
   HUPU_BBS: "https://bbs.hupu.com/",
   BENTO_ME: "https://bento.me/",
+  BOOKING_COM: "https://booking.com/",
 
   // spotify
   SPOTIFY_OPEN: "https://open.spotify.com/",

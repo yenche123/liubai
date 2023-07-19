@@ -58,6 +58,7 @@ export const domainAllowed = [
   "forms.office.com",
   "mem.ai",
   "val.town",
+  "booking.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
@@ -78,4 +79,5 @@ export const domainNotAllowed = [
   "bbs.hupu.com",
   "nytimes.com",
   "music.apple.com",
+  "agoda.com",
 ]
