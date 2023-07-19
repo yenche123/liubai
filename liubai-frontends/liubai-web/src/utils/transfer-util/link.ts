@@ -101,15 +101,14 @@ function _innerParse(
     let mTxt = match[0]
     let mLen = mTxt.length
 
-    console.log("forType: ", forType)
-    console.log(mTxt)
-    console.log(" ")
-
-
     if(forType === "email" && mLen < 6) continue
     if(forType === "social_link" && mLen < 7) continue
     if(forType === "url" && mLen < 8) continue
     if(forType === "url" && !_checkUrlMore(mTxt)) continue
+
+    // console.log("forType: ", forType)
+    // console.log(mTxt)
+    // console.log(" ")
 
     let href = mTxt
     if(forType === "markdown_link") {
@@ -229,8 +228,24 @@ function _handleSocialLink(text: string) {
 
 
 function _checkUrlMore(text: string) {
-  const reg = /^[\d\.-]{2,}$/   // 避免字符串里 全是: 数字 . - 的情况
-  if(reg.test(text)) return false
+
+  try {
+    const url = new URL(text)
+    // 如果 url 能正常解析，但是查无 hostname 的
+    // 视为错误的 url
+    if(!url.hostname) return false
+  }
+  catch(err) {
+    // console.log("new URL err: ")
+    // console.log(text)
+  }
+
+  const reg = /^[^a-zA-Z]{2,}$/   // 避免字符串里 全是: 数字 . - 的情况
+  if(reg.test(text)) {
+    // console.log("正则检测失败....")
+    // console.log(" ")
+    return false
+  }
   const engNum = _howManyLowerCase(text)
   if(engNum < 3) return false
   if(text.indexOf("http") === 0) return true
