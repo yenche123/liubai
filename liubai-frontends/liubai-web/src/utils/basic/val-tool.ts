@@ -170,9 +170,16 @@ const isInDomain = (
   }
 
   const firChar = domain[0]
-  let tmp = firChar === "." ? domain : (`.${domain}`)
-  const res = hostname.includes(tmp)
-  return res
+  domain = firChar === "." ? domain : (`.${domain}`)
+  hostname = `.${hostname}`
+
+  if(hostname === domain) return true
+
+  const hLen = hostname.length
+  const dLen = domain.length
+  if(hLen < dLen) return false
+  const lastOfHostname = hostname.substring(hLen - dLen)
+  return lastOfHostname === domain
 }
 
 /**
