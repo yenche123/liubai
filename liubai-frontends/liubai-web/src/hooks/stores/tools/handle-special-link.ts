@@ -12,8 +12,7 @@ export function isSpecialLink(
   const p = url.pathname
   
   // twitter
-  const twitter = thirdLink.TWITTER_COM
-  const twitter1 = new URL(twitter)
+  const twitter1 = new URL(thirdLink.TWITTER_COM)
   const isTwitter = valTool.isInDomain(h, twitter1.hostname)
   if(isTwitter) {
     // 通常其尾部的 id 为 19 位的
@@ -23,8 +22,7 @@ export function isSpecialLink(
   }
 
   // calendly
-  const calendly = thirdLink.CALENDLY_COM
-  const calendly1 = new URL(calendly)
+  const calendly1 = new URL(thirdLink.CALENDLY_COM)
   const isCalendly = valTool.isInDomain(h, calendly1.hostname)
   if(isCalendly) {
     const calendlyReg1 = /^\/[\w\-]{2,32}\/[\w\-]{2,32}(?!=\/)/g
@@ -36,13 +34,21 @@ export function isSpecialLink(
   }
 
   // telegram
-  const telegram = thirdLink.T_ME
-  const telegram1 = new URL(telegram)
+  const telegram1 = new URL(thirdLink.T_ME)
   const isTG = valTool.isInDomain(h, telegram1.hostname)
   if(isTG) {
     const tgReg1 = /^\/\w{2,32}\/\d{1,10}$/g
     const tgMatch1 = p.match(tgReg1)
     if(tgMatch1) return "telegram"
+  }
+
+  // github gist
+  const ghGist1 = new URL(thirdLink.GITHUB_GIST)
+  const isGitHubGist = valTool.isInDomain(h, ghGist1.hostname)
+  if(isGitHubGist) {
+    const ghGistReg1 = /^\/\w{3,20}\/\w{2,48}/g
+    const ghGistMatch1 = p.match(ghGistReg1)
+    if(ghGistMatch1) return "github_gist"
   }
 
   return

@@ -8,3 +8,7 @@ export interface VcThirdProps {
   viceNaviPx: number
   maskMarginTop: number
 }
+
+export interface VctCommonProps {
+  link?: string
+}

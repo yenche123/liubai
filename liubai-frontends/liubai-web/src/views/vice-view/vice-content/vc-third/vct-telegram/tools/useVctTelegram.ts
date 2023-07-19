@@ -1,10 +1,10 @@
-import type { VctTgProps } from "./types"
+import type { VctCommonProps } from "../../tools/types"
 import thirdLink from '~/config/third-link';
 import { useThirdScript, type ThirdScriptAttr } from '../../tools/useThirdScript';
 import { useDynamics } from "~/hooks/useDynamics";
 
 export function useVctTelegram(
-  props: VctTgProps,
+  props: VctCommonProps,
 ) {
 
   const { theme } = useDynamics()

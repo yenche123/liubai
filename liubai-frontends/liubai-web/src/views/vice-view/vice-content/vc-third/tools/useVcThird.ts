@@ -2,9 +2,15 @@ import type { VcThirdProps } from "./types";
 import type { VcThirdParty } from "../../tools/types";
 import { computed } from 'vue';
 
+
+const COVER_REQUIRED: VcThirdParty[] = [
+  'calendly',
+  'github_gist'
+]
+
 export function useVcThird(props: VcThirdProps) {
+
   // 是否覆盖整个 vice-view
-  const COVER_REQUIRED: VcThirdParty[] = ['calendly']
   const isCoverVv = computed(() => {
     const thirdParty = props.thirdParty
     if(!thirdParty) return false

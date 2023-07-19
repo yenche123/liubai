@@ -19,6 +19,9 @@ export default {
   // spotify
   SPOTIFY_OPEN: "https://open.spotify.com/",
 
+  // github gist
+  GITHUB_GIST: "https://gist.github.com/",
+
   // apple music
   APPLE_MUSIC: "https://music.apple.com/",
   APPLE_MUSIC_EMBED: "https://embed.music.apple.com/",
