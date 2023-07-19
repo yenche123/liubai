@@ -9,6 +9,7 @@ import cui from "~/components/custom-ui"
 import valTool from "~/utils/basic/val-tool"
 import ider from "~/utils/basic/ider"
 import limit from "~/utils/limit"
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 
 export function useCeFile(
   state: CeState,
@@ -107,7 +108,11 @@ function listenDocumentPaste(
   state: CeState,
   moreRef: Ref<boolean>,
 ) {
+  const gs = useGlobalStateStore()
   const whenPaste = (e: ClipboardEvent) => {
+    if(!gs.customEditorInputing) {
+      return
+    }
     const fileList = e.clipboardData?.files
     if(!fileList || fileList.length < 1) return
     const files = liuUtil.getArrayFromFileList(fileList)
