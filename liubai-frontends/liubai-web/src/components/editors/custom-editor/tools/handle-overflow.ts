@@ -27,5 +27,10 @@ export function handleOverflow(
     return
   }
 
+  if(text.length > 500) {
+    state.overflowType = "auto"
+    return
+  }
+
   state.overflowType = "visible"
 }
