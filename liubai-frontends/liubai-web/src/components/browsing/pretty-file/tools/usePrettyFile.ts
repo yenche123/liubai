@@ -40,7 +40,7 @@ function initSomeVals(props: PrettyFileProps) {
     if(m.indexOf("image") === 0) return "photo"
     if(m.indexOf("video") === 0) return "video"
     if(s === "doc" || s === "docx") return "word"
-    if(s === "xls" || s === "xlsx") return "excel"
+    if(s === "xls" || s === "xlsx" || s === "csv") return "excel"
     if(s === "ppt" || s === "pptx") return "ppt"
     if(s === "pdf") return "pdf"
     if(s === "txt") return "text"
