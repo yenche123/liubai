@@ -7,6 +7,7 @@ const {
   viewTranNames, 
   onTapImage,
   imgWidth,
+  paddingBlockStart,
 } = useBrowsingCovers(props)
 
 </script>
@@ -101,7 +102,7 @@ const {
   width: 100%;
   position: relative;
   user-select: none;
-  padding-block-start: 10px;
+  padding-block-start: v-bind("paddingBlockStart + 'px'");
 }
 
 .bc-box {

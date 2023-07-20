@@ -7,6 +7,7 @@ import CcBox from "./cc-box/cc-box.vue"
 import CcBubbleBar from './cc-bubble-bar/cc-bubble-bar.vue';
 import type { CommentCardLocation } from "./tools/types"
 import { useCommentCard } from "./tools/useCommentCard"
+import CcToolbar from './cc-toolbar/cc-toolbar.vue';
 
 const { t } = useI18n()
 
@@ -89,6 +90,9 @@ const {
 
         <!-- 内文 + 图片 + 文件 -->
         <CcBox :cs="cs"></CcBox>
+
+        <!-- 工具栏 -->
+        <CcToolbar :cs="cs"></CcToolbar>
 
       </div>
 
