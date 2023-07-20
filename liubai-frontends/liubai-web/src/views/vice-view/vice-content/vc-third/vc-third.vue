@@ -6,6 +6,7 @@ import VctCalendly from './vct-calendly/vct-calendly.vue';
 import VctTelegram from "./vct-telegram/vct-telegram.vue";
 import VctGithubGist from "./vct-github-gist/vct-github-gist.vue"
 import { useVcThird } from './tools/useVcThird';
+import VctInstagram from './vct-instagram/vct-instagram.vue';
 
 const props = defineProps({
   isOutterDraging: {
@@ -55,6 +56,10 @@ const {
         v-if="thirdParty === 'twitter'"
         :link="link"
       ></VctTwitter>
+      <VctInstagram
+        v-else-if="thirdParty === 'ig'"
+        :link="link"
+      ></VctInstagram>
       <VctCalendly
         v-else-if="thirdParty === 'calendly'"
         :link="link"

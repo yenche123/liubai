@@ -5,7 +5,7 @@ import { computed } from 'vue';
 
 const COVER_REQUIRED: VcThirdParty[] = [
   'calendly',
-  'github_gist'
+  'github_gist',
 ]
 
 export function useVcThird(props: VcThirdProps) {

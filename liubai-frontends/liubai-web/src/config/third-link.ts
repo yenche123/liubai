@@ -73,4 +73,10 @@ export default {
 
   // figma
   FIGMA_EMBED: "https://www.figma.com/embed?embed_host=share&url=__XXX__",
+
+
+  // instagram
+  IG_P: "https://www.instagram.com/p/__XXX__/",
+  IG_EMBED: "https://www.instagram.com/embed.js",
+
 }

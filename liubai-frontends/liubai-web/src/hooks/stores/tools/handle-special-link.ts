@@ -21,6 +21,15 @@ export function isSpecialLink(
     if(twitterMatch1) return "twitter"
   }
 
+  // instagram
+  const ig1 = new URL(thirdLink.IG_P)
+  const isInstagram = valTool.isInDomain(h, ig1.hostname)
+  if(isInstagram) {
+    const igReg1 = /\/p\/\w{6,20}/g
+    const igMatch1 = p.match(igReg1)
+    if(igMatch1) return "ig"
+  }
+
   // calendly
   const calendly1 = new URL(thirdLink.CALENDLY_COM)
   const isCalendly = valTool.isInDomain(h, calendly1.hostname)
