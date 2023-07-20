@@ -80,4 +80,7 @@ export const domainNotAllowed = [
   "nytimes.com",
   "music.apple.com",
   "agoda.com",
+  "whatsapp.com",
+  "skype.com",
+  "wa.me",
 ]
