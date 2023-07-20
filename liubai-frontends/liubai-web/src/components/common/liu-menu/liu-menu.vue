@@ -49,12 +49,14 @@ const onTapMask = (e: MouseEvent) => {}
 </script>
 <template>
 
-  <div v-if="allowMask && showMask" 
-    ref="maskEl"
-    class="lm-mask" 
-    @click.stop.prevent="onTapMask"
-    @touchend.stop.prevent="onTouchEndMask"
-  />
+  <Teleport v-if="allowMask && showMask" to="body">
+    <div 
+      ref="maskEl"
+      class="lm-mask" 
+      @click.stop.prevent="onTapMask"
+      @touchend.stop.prevent="onTouchEndMask"
+    />
+  </Teleport>
 
   <VDropdown 
     :showTriggers="showTriggers"

@@ -8,6 +8,7 @@ import CcBubbleBar from './cc-bubble-bar/cc-bubble-bar.vue';
 import type { CommentCardLocation } from "./tools/types"
 import { useCommentCard } from "./tools/useCommentCard"
 import CcToolbar from './cc-toolbar/cc-toolbar.vue';
+import { useCcMouse } from './tools/useCcMouse';
 
 const { t } = useI18n()
 
@@ -36,6 +37,12 @@ const {
   onTapContainer,
 } = useCommentCard(props)
 
+const {
+  isMouseEnterTarget,
+  onMouseEnterTarget,
+  onMouseLeaveTarget,
+} = useCcMouse(props)
+
 </script>
 <template>
 
@@ -59,7 +66,10 @@ const {
     <div v-if="cs.oState === 'OK'" class="cc-main">
 
       <!-- 当前评论为目标评论时 -->
-      <div v-if="isTargetComment" class="cc-target">
+      <div v-if="isTargetComment" class="cc-target"
+        @mouseenter="onMouseEnterTarget"
+        @mouseleave="onMouseLeaveTarget"
+      >
 
         <!-- 头像、姓名和日期 -->
         <div class="cct-first-bar">
@@ -92,7 +102,7 @@ const {
         <CcBox :cs="cs"></CcBox>
 
         <!-- 工具栏 -->
-        <CcToolbar :cs="cs"></CcToolbar>
+        <CcToolbar :cs="cs" :is-mouse-enter="isMouseEnterTarget"></CcToolbar>
 
       </div>
 
