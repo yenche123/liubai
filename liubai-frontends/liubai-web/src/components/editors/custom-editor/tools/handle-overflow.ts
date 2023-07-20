@@ -1,4 +1,5 @@
 
+import valTool from "~/utils/basic/val-tool"
 import type { CeState } from "./atom-ce"
 import { getRowNum } from "~/utils/transfer-util/text"
 
@@ -27,7 +28,8 @@ export function handleOverflow(
     return
   }
 
-  if(text.length > 500) {
+  const charNum = valTool.getTextCharNum(text)
+  if(charNum > 500) {
     state.overflowType = "auto"
     return
   }
