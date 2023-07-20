@@ -47,7 +47,8 @@ const {
 <style lang="scss" scoped>
 
 .pf-container {
-  width: 100%;
+  width: fit-content;
+  max-width: 100%;
   position: relative;
   box-sizing: border-box;
   padding: 8px 4px 8px 0px;
@@ -56,6 +57,7 @@ const {
   margin-block-end: 8px;
   display: flex;
   transition: .15s;
+  cursor: pointer;
 }
 
 .pf-icon-box {
@@ -67,6 +69,7 @@ const {
   justify-content: center;
   margin-block-start: 2px;
   margin-inline-end: 8px;
+  flex: none;
 
   .pf-svg-icon {
     width: 100%;
@@ -80,12 +83,18 @@ const {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  max-width: calc(100% - 54px);
+  position: relative;
 }
 
 .pf-title {
   font-size: var(--mini-font);
   color: var(--main-normal);
   user-select: none;
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  text-overflow: ellipsis;
 }
 
 .pf-bd {
