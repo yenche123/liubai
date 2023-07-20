@@ -12,7 +12,7 @@ export function useVctGithubGist(
   }
 
   const gistUrl = _getScript()
-  if(!gistUrl) return
+  if(!gistUrl) return {}
 
   const gistSrcDoc = `<script src="${gistUrl}"></script>`
 
