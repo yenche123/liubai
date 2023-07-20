@@ -141,10 +141,7 @@ function _innerParse(
       href = _handleSocialLink(mTxt)
     }
     else if(forType === "url") {
-      const idx = href.indexOf("://")
-      if(idx < 0) {
-        href = `https://` + href
-      }
+      href = _handleURL(href)
     }
 
     const startIdx = match.index
@@ -193,6 +190,30 @@ function _innerParse(
 
   return tmpList
 }
+
+
+// 处理通用链接
+// 1. 加上协议 https
+// 2. 处理链接里的参数，把 &amp; 全替换成 &
+function _handleURL(text: string) {
+  const idx = text.indexOf("://")
+  if(idx < 0) {
+    text = `https://` + text
+  }
+
+  try {
+    const url = new URL(text)
+    const s = url.search
+    if(s.length > 1) {
+      url.search = s.replace(/&amp;/g, "&")
+      text = url.toString()
+    }
+  }
+  catch(err) {}
+
+  return text
+}
+
 
 /**
  * 处理 @xxx@aa.com 返回 href
