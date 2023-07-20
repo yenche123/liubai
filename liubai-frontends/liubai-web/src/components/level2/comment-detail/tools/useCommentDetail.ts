@@ -42,7 +42,7 @@ export function useCommentDetail(
   const virtualHeightPx = computed(() => {
     const h = height.value
     const bLength = cdData.belowList.length
-    let tmpH = h - 200 - (bLength * 100)
+    let tmpH = h - 300 - (bLength * 100)
     if(tmpH < 0) tmpH = 0
     return tmpH
   })
