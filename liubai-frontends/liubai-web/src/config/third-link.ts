@@ -74,6 +74,8 @@ export default {
   // figma
   FIGMA_EMBED: "https://www.figma.com/embed?embed_host=share&url=__XXX__",
 
+  // one drive & office
+  ONEDRIVE_EMBED: "https://onedrive.live.com/embed",
 
   // instagram
   IG_P: "https://www.instagram.com/p/__XXX__/",

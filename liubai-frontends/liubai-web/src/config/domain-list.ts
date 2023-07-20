@@ -84,4 +84,7 @@ export const domainNotAllowed = [
   "whatsapp.com",
   "skype.com",
   "wa.me",
+  "live.com",
+  "microsoft365.com",
+  "1drv.ms",
 ]

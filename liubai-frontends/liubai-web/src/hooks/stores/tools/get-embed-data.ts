@@ -366,5 +366,17 @@ export function getEmbedData(
     }
   }
 
+  // Word 嵌入（来自 OneDrive 的域名）
+  const onedriveEmbed = new URL(thirdLink.ONEDRIVE_EMBED)
+  const isOneDrive = valTool.isInDomain(h, onedriveEmbed.hostname)
+  if(isOneDrive) {
+    const onedriveRes: EmbedDataRes = {
+      link: originUrl,
+    }
+    if(p === onedriveEmbed.pathname) {
+      return onedriveRes
+    }
+  }
+
   return
 }
