@@ -117,6 +117,7 @@ const {
             :menu="MORE_ITEMS"
             :container="'#kp-column-header_' + item.id"
             placement="bottom-end"
+            :allow-mask="false"
             @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
           >
             <div class="liu-hover kpch-btn">
