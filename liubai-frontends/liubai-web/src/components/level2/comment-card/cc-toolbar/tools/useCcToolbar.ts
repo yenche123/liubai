@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import type { CcToolbarProps, CcToolbarMenuItem } from "./types"
 import liuApi from '~/utils/liu-api';
-import { LiuTimeout } from '~/utils/basic/type-tool';
+import type { LiuTimeout } from '~/utils/basic/type-tool';
 
 
 // 编辑、删除
@@ -86,6 +86,22 @@ export function useCcToolbar(
     if(!props.isMouseEnter && !isMobile) setExpandMore(false, 400)
   }
 
+  const onTapReaction = () => {
+    
+  }
+
+  const onTapReply = () => {
+
+  }
+
+  const onTapShare = () => {
+
+  }
+
+  const onTapMenuItem = () => {
+    
+  }
+
 
   return {
     marginBlockStart,
@@ -93,5 +109,9 @@ export function useCcToolbar(
     expandMore,
     onMenuShow,
     onMenuHide,
+    onTapReaction,
+    onTapReply,
+    onTapShare,
+    onTapMenuItem,
   }
 }

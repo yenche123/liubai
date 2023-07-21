@@ -21,6 +21,10 @@ const {
   expandMore,
   onMenuShow,
   onMenuHide,
+  onTapReaction,
+  onTapReply,
+  onTapShare,
+  onTapMenuItem,
 } = useCcToolbar(props)
 
 </script>
@@ -31,6 +35,7 @@ const {
     <!-- 表态 -->
     <div class="liu-hover liu-hover_first cct-item"
       :aria-label="t('common.reaction')"
+      @click.stop="onTapReaction"
     >
       <div class="cct-svg-box">
         <svg-icon name="add_reaction_600" class="cct-svg"
@@ -43,6 +48,7 @@ const {
     <!-- 回复 -->
     <div class="liu-hover cct-item"
       :aria-label="t('common.reply')"
+      @click.stop="onTapReply"
     >
       <div class="cct-svg-box">
         <svg-icon name="comment" class="cct-svg"
@@ -55,6 +61,7 @@ const {
     <!-- 分享 -->
     <div class="liu-hover cct-item"
       :aria-label="t('common.share')"
+      @click.stop="onTapShare"
     >
       <div class="cct-svg-box">
         <svg-icon name="share" class="cct-svg"
