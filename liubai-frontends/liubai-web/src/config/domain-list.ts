@@ -88,4 +88,5 @@ export const domainNotAllowed = [
   "live.com",
   "microsoft365.com",
   "1drv.ms",
+  "coda.io",
 ]

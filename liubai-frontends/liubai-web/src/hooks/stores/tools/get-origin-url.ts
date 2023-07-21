@@ -120,6 +120,25 @@ export function getOriginURL(embedUrl: string) {
     return url
   }
 
+  // 9. 检查是否为 coda embed
+  const coda = new URL(thirdLink.CODA_IO)
+  const isCoda = valTool.isInDomain(h, coda.hostname)
+  if(isCoda) {
+    const codaReg1 = /(?<=\/embed\/)\w{5,16}\/\w{3,9}/g
+    const codaMatch1 = p.match(codaReg1)
+    if(codaMatch1) {
+      let codaId = codaMatch1[0]
+
+      // coda 嵌入链接里缺少了分享链接的 _d，所以要做一点小加工
+      const _firstTwoCodaId = codaId.substring(0, 2)
+      if(_firstTwoCodaId !== "_d") {
+        codaId = `_d${codaId}`
+      }
+      url.pathname = `/d/${codaId}`
+    }
+    return url
+  }
+
   // n. 最后，检查是否存在 google 的 igu 参数
   const gUrl = new URL(thirdLink.GOOGLE_SEARCH)
   const isGoogle = valTool.isInDomain(h, gUrl.hostname)

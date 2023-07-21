@@ -296,7 +296,6 @@ export function getEmbedData(
     const spotifyMatch1 = p.match(spotifyReg1)
     if(spotifyMatch1) {
       const trackId = spotifyMatch1[0]
-      console.log("看一下 trackId: ", trackId)
       spotify1.pathname = `/embed/track/${trackId}`
       if(themeVal === "dark") spotify1.searchParams.set("theme", "0")
       spotifyRes.link = spotify1.toString()
@@ -309,7 +308,6 @@ export function getEmbedData(
     const spotifyMatch2 = p.match(spotifyReg2)
     if(spotifyMatch2) {
       const playlistId = spotifyMatch2[0]
-      console.log("看一下 playlistId: ", playlistId)
       spotify1.pathname = `/embed/playlist/${playlistId}`
       if(themeVal === "dark") spotify1.searchParams.set("theme", "0")
       spotifyRes.link = spotify1.toString()
@@ -375,6 +373,34 @@ export function getEmbedData(
     }
     if(p === onedriveEmbed.pathname) {
       return onedriveRes
+    }
+  }
+
+  // code
+  const coda = new URL(thirdLink.CODA_IO)
+  const isCoda = valTool.isInDomain(h, coda.hostname)
+  if(isCoda) {
+    const codaRes: EmbedDataRes = {
+      link: originUrl,
+      otherData: { isCoda }
+    }
+    const codaReg1 = /(?<=\/embed\/)\w{5,16}\/\w{3,9}/g
+    const codaMatch1 = p.match(codaReg1)
+    if(codaMatch1) return codaRes
+
+    const codaReg2 = /(?<=\/d\/)\w{5,16}\/\w{3,9}/g
+    const codaMatch2 = p.match(codaReg2)
+    if(codaMatch2) {
+      let codaId = codaMatch2[0]
+
+      // coda 分享链接里的 _d 要去掉才能变成嵌入链接
+      const _firstTwoCodaId = codaId.substring(0, 2)
+      if(_firstTwoCodaId === "_d") {
+        codaId = codaId.substring(2)
+      }
+      url.pathname = `/embed/${codaId}`
+      codaRes.link = url.toString()
+      return codaRes
     }
   }
 

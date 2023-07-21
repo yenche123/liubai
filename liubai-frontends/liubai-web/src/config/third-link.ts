@@ -16,6 +16,7 @@ export default {
   HUPU_BBS: "https://bbs.hupu.com/",
   BENTO_ME: "https://bento.me/",
   BOOKING_COM: "https://booking.com/",
+  CODA_IO: "https://coda.io/",
 
   // spotify
   SPOTIFY_OPEN: "https://open.spotify.com/",
