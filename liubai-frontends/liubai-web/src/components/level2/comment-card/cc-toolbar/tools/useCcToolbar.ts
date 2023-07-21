@@ -1,6 +1,6 @@
 
 import { computed, ref, watch } from 'vue';
-import type { CcToolbarProps, CcToolbarMenuItem } from "./types"
+import type { CcToolbarProps, CcToolbarMenuItem, CcToolbarEmits } from "./types"
 import liuApi from '~/utils/liu-api';
 import type { LiuTimeout } from '~/utils/basic/type-tool';
 
@@ -32,6 +32,7 @@ const MENU_2: CcToolbarMenuItem[] = [
 
 export function useCcToolbar(
   props: CcToolbarProps,
+  emit: CcToolbarEmits,
 ) {
 
   const cha = liuApi.getCharacteristic()
@@ -86,20 +87,10 @@ export function useCcToolbar(
     if(!props.isMouseEnter && !isMobile) setExpandMore(false, 400)
   }
 
-  const onTapReaction = () => {
-    
-  }
-
-  const onTapReply = () => {
-
-  }
-
-  const onTapShare = () => {
-
-  }
-
-  const onTapMenuItem = () => {
-    
+  const onTapMenuItem = (item: CcToolbarMenuItem) => {
+    if(item.operation) {
+      emit('newoperation', item.operation)
+    }
   }
 
 
@@ -109,9 +100,6 @@ export function useCcToolbar(
     expandMore,
     onMenuShow,
     onMenuHide,
-    onTapReaction,
-    onTapReply,
-    onTapShare,
     onTapMenuItem,
   }
 }

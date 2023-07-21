@@ -3,10 +3,10 @@
 // 才悬浮于右上角的工具栏
 
 import { type PropType } from 'vue';
-import type { CommentCardLocation } from "../tools/types"
+import type { CommentCardLocation } from "../tools/types";
+import type { CcBubbleBarEmits } from "./tools/types";
 import type { CommentShow } from '~/types/types-content';
 import { useI18n } from "vue-i18n"
-import { useCcBubbleBar } from "./tools/useCcBubbleBar"
 
 const props = defineProps({
   show: {
@@ -23,12 +23,7 @@ const props = defineProps({
   }
 })
 
-const {
-  onTapEmoji,
-  onTapReply,
-  onTapShare,
-} = useCcBubbleBar(props)
-
+defineEmits<CcBubbleBarEmits>()
 
 const default_color = "var(--main-code)"
 const onTapBlank = () => {}
@@ -47,7 +42,7 @@ const { t } = useI18n()
     <!-- 表态按钮 -->
     <div class="liu-hover ccbb-box"
       :aria-label="t('common.reaction')"
-      @click="onTapEmoji"
+      @click.stop="$emit('newoperation', 'emoji')"
     >
       <div class="ccbb-svg-box">
         <svg-icon name="add_reaction_600" class="ccbb-svg"
@@ -60,6 +55,7 @@ const { t } = useI18n()
     <!-- 回复按钮 -->
     <div class="liu-hover ccbb-box"
       :aria-label="t('common.reply')"
+      @click.stop="$emit('newoperation', 'comment')"
     >
       <div class="ccbb-svg-box">
         <svg-icon name="comment" class="ccbb-svg"
@@ -72,6 +68,7 @@ const { t } = useI18n()
     <!-- 分享按钮 -->
     <div class="liu-hover ccbb-box"
       :aria-label="t('common.share')"
+      @click.stop="$emit('newoperation', 'share')"
     >
       <div class="ccbb-svg-box">
         <svg-icon name="share" class="ccbb-svg"
@@ -84,6 +81,7 @@ const { t } = useI18n()
     <div class="liu-hover liu-hover_last ccbb-box"
       v-if="cs.isMine"
       :aria-label="t('common.delete')"
+      @click.stop="$emit('newoperation', 'delete')"
     >
       <div class="ccbb-svg-box">
         <svg-icon name="delete_400" class="ccbb-svg"
@@ -96,6 +94,7 @@ const { t } = useI18n()
     <div class="liu-hover liu-hover_last ccbb-box"
       v-else
       :aria-label="t('common.report')"
+      @click.stop="$emit('newoperation', 'report')"
     >
       <div class="ccbb-svg-box">
         <svg-icon name="report_600" class="ccbb-svg"

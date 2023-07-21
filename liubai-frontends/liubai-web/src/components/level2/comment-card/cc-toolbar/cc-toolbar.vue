@@ -4,6 +4,7 @@ import { type PropType } from 'vue';
 import type { CommentShow } from '~/types/types-content';
 import { useI18n } from "vue-i18n";
 import { useCcToolbar } from './tools/useCcToolbar';
+import type { CcToolbarEmits } from "./tools/types"
 
 const props = defineProps({
   cs: {
@@ -13,6 +14,8 @@ const props = defineProps({
   isMouseEnter: Boolean,
 })
 
+const emit = defineEmits<CcToolbarEmits>()
+
 const { t } = useI18n()
 const default_color = "var(--main-normal)"
 const {
@@ -21,11 +24,8 @@ const {
   expandMore,
   onMenuShow,
   onMenuHide,
-  onTapReaction,
-  onTapReply,
-  onTapShare,
   onTapMenuItem,
-} = useCcToolbar(props)
+} = useCcToolbar(props, emit)
 
 </script>
 <template>
@@ -35,7 +35,7 @@ const {
     <!-- 表态 -->
     <div class="liu-hover liu-hover_first cct-item"
       :aria-label="t('common.reaction')"
-      @click.stop="onTapReaction"
+      @click.stop="$emit('newoperation', 'emoji')"
     >
       <div class="cct-svg-box">
         <svg-icon name="add_reaction_600" class="cct-svg"
@@ -48,7 +48,7 @@ const {
     <!-- 回复 -->
     <div class="liu-hover cct-item"
       :aria-label="t('common.reply')"
-      @click.stop="onTapReply"
+      @click.stop="$emit('newoperation', 'comment')"
     >
       <div class="cct-svg-box">
         <svg-icon name="comment" class="cct-svg"
@@ -61,7 +61,7 @@ const {
     <!-- 分享 -->
     <div class="liu-hover cct-item"
       :aria-label="t('common.share')"
-      @click.stop="onTapShare"
+      @click.stop="$emit('newoperation', 'share')"
     >
       <div class="cct-svg-box">
         <svg-icon name="share" class="cct-svg"
@@ -80,6 +80,7 @@ const {
         min-width-str="100px"
         @menushow="onMenuShow"
         @menuhide="onMenuHide"
+        @tapitem="onTapMenuItem"
       >
         <div class="cct-svg-box">
           <svg-icon name="more" class="cct-svg_more"

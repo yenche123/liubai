@@ -9,6 +9,7 @@ import type { CommentCardLocation } from "./tools/types"
 import { useCommentCard } from "./tools/useCommentCard"
 import CcToolbar from './cc-toolbar/cc-toolbar.vue';
 import { useCcMouse } from './tools/useCcMouse';
+import { useCommentOperation } from './tools/useCommentOperation';
 
 const { t } = useI18n()
 
@@ -42,6 +43,10 @@ const {
   onMouseEnterTarget,
   onMouseLeaveTarget,
 } = useCcMouse(props)
+
+const {
+  receiveOperation
+} = useCommentOperation(props)
 
 </script>
 <template>
@@ -102,7 +107,10 @@ const {
         <CcBox :cs="cs"></CcBox>
 
         <!-- 工具栏 -->
-        <CcToolbar :cs="cs" :is-mouse-enter="isMouseEnterTarget"></CcToolbar>
+        <CcToolbar :cs="cs" 
+          :is-mouse-enter="isMouseEnterTarget"
+          @newoperation="receiveOperation"
+        ></CcToolbar>
 
       </div>
 
@@ -157,6 +165,7 @@ const {
       :show="showBubbleBar"
       :location="location"
       :cs="cs"
+      @newoperation="receiveOperation"
     ></CcBubbleBar>
 
   </div>
