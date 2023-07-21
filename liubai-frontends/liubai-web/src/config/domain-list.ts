@@ -56,6 +56,7 @@ export const domainAllowed = [
   "cn.nytimes.com",
   "typeform.com",
   "forms.office.com",
+  "sway.office.com",
   "mem.ai",
   "val.town",
   "booking.com",
