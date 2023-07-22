@@ -18,6 +18,7 @@ import {
 } from "../../level1/thread-detail/tools/useThreadOperateInDetail"
 import { subscribeCdUpdate } from "./tools/subscribeCdUpdate"
 import cfg from "~/config"
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
   location: {
@@ -45,6 +46,8 @@ const viceNaviPx = cfg.vice_navi_height
 
 subscribeCdUpdate(cdData)
 
+const { t } = useI18n()
+
 </script>
 <template>
 
@@ -53,12 +56,19 @@ subscribeCdUpdate(cdData)
   ></PlaceholderView>
 
   <ThreadCard 
-    v-if="cdData.thread && cdData.state < 0"
+    v-if="cdData.thread?.oState === 'OK' && cdData.state < 0"
     :thread-data="cdData.thread"
     display-type="detail"
     :position="0"
     @newoperate="(op) => receiveOperation(op, cdData.thread)"
   ></ThreadCard>
+
+  <!-- 动态已被删除 -->
+  <div v-else-if="cdData.thread && cdData.state < 0" 
+    class="liu-highlight-box cd-thread-deleted"
+  >
+    <span>{{ t('comment.thread_deleted') }}</span>
+  </div>
 
   <!-- 评论区: aboveList + 目标评论 + 回复框 + belowList -->
   <div class="cd-container" v-if="cdData.state < 0 && cdData.targetComment">
@@ -124,6 +134,12 @@ subscribeCdUpdate(cdData)
 
 </template>
 <style lang="scss" scoped>
+
+.cd-thread-deleted {
+  margin-block-end: 10px;
+  padding: 16px 24px;
+  user-select: none;
+}
 
 .cd-container {
   width: 100%;

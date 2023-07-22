@@ -70,8 +70,7 @@ function initSomeVals(
   const hoverColor = computed(() => {
     if(props.isTargetComment) return "transparent"
     if(props.location === "popup") return "transparent"
-    if(props.location === "detail-page") return "var(--comment-hover-two)"
-    return "var(--comment-hover-two)"
+    return "var(--comment-hover-one)"
   })
 
   return {

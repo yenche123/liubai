@@ -305,7 +305,8 @@
     "placeholder2": "回覆",
     "submit1": "補充",
     "deleted_tip": "此留言已被刪除",
-    "no_idea": "未知"
+    "no_idea": "未知",
+    "thread_deleted": "此動態已被刪除"
   },
   "emoji": {
     "love": "愛心",

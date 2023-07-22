@@ -305,7 +305,8 @@
     "placeholder2": "Reply",
     "submit1": "Add",
     "deleted_tip": "The comment has been deleted.",
-    "no_idea": "Unknown"
+    "no_idea": "Unknown",
+    "thread_deleted": "The post has been deleted."
   },
   "emoji": {
     "love": "Love",

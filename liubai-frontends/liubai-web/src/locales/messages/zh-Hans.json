@@ -305,7 +305,8 @@
     "placeholder2": "回复",
     "submit1": "补充",
     "deleted_tip": "此评论已被刪除",
-    "no_idea": "未知"
+    "no_idea": "未知",
+    "thread_deleted": "此动态已被删除"
   },
   "emoji": {
     "love": "爱心",
