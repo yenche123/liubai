@@ -19,10 +19,8 @@ const {
 </script>
 <template>
 
-  <div v-if="file" class="pf-container"
-    @click.stop="onTapFile"
-  >
-    <div v-if="iconType" class="pf-icon-box">
+  <div v-if="file" class="pf-container">
+    <div v-if="iconType" class="pf-icon-box" @click.stop="onTapFile">
       <svg-icon :name="'files-' + iconType"
         :cover-fill-stroke="false"
         class="pf-svg-icon"
@@ -30,7 +28,7 @@ const {
     </div>
 
     <!-- 文件信息 -->
-    <div class="pf-info">
+    <div class="pf-info" @click.stop="onTapFile">
       <!-- 文件标题 -->
       <div class="pf-title">
         <span>{{ file.name }}</span>
@@ -47,7 +45,6 @@ const {
 <style lang="scss" scoped>
 
 .pf-container {
-  width: fit-content;
   max-width: 100%;
   position: relative;
   box-sizing: border-box;
@@ -67,8 +64,8 @@ const {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-block-start: 2px;
-  margin-inline-end: 8px;
+  padding-block-start: 2px;
+  padding-inline-end: 8px;
   flex: none;
 
   .pf-svg-icon {
@@ -78,7 +75,6 @@ const {
 }
 
 .pf-info {
-  flex: 1;
   min-height: 42px;
   display: flex;
   flex-direction: column;
@@ -104,11 +100,10 @@ const {
 }
 
 @media(hover: hover) {
-  .pf-container:hover {
+  .pf-info:hover {
     .pf-title {
       text-decoration: underline;
     }
-
   }
 }
 
