@@ -148,7 +148,9 @@ const onTapCeContainer = (e: MouseEvent) => {}
   ></ce-toolbar>
 
   <!-- 更多栏 -->
-  <ce-more-area :show="moreRef"
+  <ce-more-area 
+    :editor="editor"
+    :show="moreRef"
     :state="state"
     @whenchange="onWhenChange"
     @remindmechange="onRemindMeChange"

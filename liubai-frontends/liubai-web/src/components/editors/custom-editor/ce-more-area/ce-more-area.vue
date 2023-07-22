@@ -19,7 +19,7 @@ export default defineComponent({
     })
     const { t } = useI18n()
     const default_color = "var(--other-btn-text)"
-    const moreArea = useMoreArea(emit)
+    const moreArea = useMoreArea(props, emit)
     receiveCmaProps(props, moreArea.data)
     
     return {

@@ -2,6 +2,7 @@ import type { FileShow } from "~/types"
 import type { LiuRemindMe } from "~/types/types-atom"
 import type { CeState } from "../../tools/atom-ce"
 import type { PropType } from "vue"
+import type { TipTapEditor } from "~/types/types-editor"
 
 export type CmaRemindType = "early" | "later"
 
@@ -35,11 +36,13 @@ export interface MaContext {
 }
 
 export interface CmaProps {
+  editor?: TipTapEditor
   show: boolean
   state?: CeState
 }
 
 export const cmaProps = {
+  editor: Object as PropType<TipTapEditor>,
   show: {
     type: Boolean,
     default: false,

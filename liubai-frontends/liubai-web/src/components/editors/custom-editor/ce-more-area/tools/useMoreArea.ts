@@ -5,9 +5,12 @@ import liuUtil from "~/utils/liu-util";
 import type { MenuItem } from "~/components/common/liu-menu/tools/types"
 import { REMIND_LATER, REMIND_EARLY } from "~/config/atom"
 import type { SwitchChangeEmitOpt } from "~/components/common/liu-switch/types"
-import type { MaData, MoreAreaEmits, MaContext } from "./types-cma"
+import type { MaData, MoreAreaEmits, MaContext, CmaProps } from "./types-cma"
 
-export function useMoreArea(emits: MoreAreaEmits) {
+export function useMoreArea(
+  props: CmaProps,
+  emits: MoreAreaEmits,
+) {
   const selectFileEl = ref<HTMLInputElement | null>(null)
 
   // 仅存储 "UI" 信息即可，逻辑原子化信息会回传至 custom-editor
@@ -62,7 +65,7 @@ export function useMoreArea(emits: MoreAreaEmits) {
   }
 
   const onTapAddTitle = () => {
-    toAddTitle(ctx)
+    toAddTitle(ctx, props)
   }
 
   const onTapClearTitle = (e: MouseEvent) => {
@@ -108,7 +111,10 @@ export function useMoreArea(emits: MoreAreaEmits) {
   }
 }
 
-async function toAddTitle(ctx: MaContext) {
+async function toAddTitle(
+  ctx: MaContext,
+  props: CmaProps,
+) {
   const res = await cui.showTextEditor({
     title_key: "editor.add_title2",
     placeholder_key: "editor.title_ph",
@@ -117,6 +123,11 @@ async function toAddTitle(ctx: MaContext) {
   })
   if(!res.confirm || !res.value) return
   ctx.emits("titlechange", res.value)
+  
+  // 去聚焦
+  const editor = props.editor
+  if(!editor) return
+  editor.commands.focus()
 }
 
 function toClearTitle(ctx: MaContext) {
