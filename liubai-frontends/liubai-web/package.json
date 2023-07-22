@@ -62,11 +62,11 @@
     "sass": "^1.62.1",
     "typescript": "~5.0.4",
     "user-agent-data-types": "^0.3.1",
-    "vite": "^4.4.4",
+    "vite": "^4.4.6",
     "vite-plugin-compression2": "^0.10.2",
     "vite-plugin-inspect": "^0.7.33",
     "vite-plugin-mkcert": "^1.16.0",
     "vite-plugin-svg-icons": "^2.0.1",
-    "vue-tsc": "^1.8.5"
+    "vue-tsc": "^1.8.6"
   }
 }
