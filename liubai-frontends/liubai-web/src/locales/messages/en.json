@@ -202,8 +202,8 @@
     "delete_tip": "Also delete the threads"
   },
   "thread_related": {
-    "delete_forever_1": "Delete Completely",
-    "delete_forever_2": "Are you sure to delete the post completely? The action cannot be undone.",
+    "delete_forever_1": "Delete Forever",
+    "delete_forever_2": "Are you sure to delete the post completely? The post will not be retrieved after you delete it.",
     "delete_btn": "DELETE",    
     "finished": "Finished",
     "todo": "Todo",
