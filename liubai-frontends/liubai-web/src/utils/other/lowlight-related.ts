@@ -21,6 +21,20 @@ export function showProgrammingLanguages() {
     list.push(v2)
   })
 
+  // 添加 HTML
+  const HTML = "HTML"
+  const hasHTML = list.includes(HTML)
+  if(!hasHTML) {
+    for(let i=0; i<list.length; i++) {
+      const v = list[i]
+      const bigText = v.toUpperCase()
+      if(bigText > HTML) {
+        list.splice(i, 0, HTML)
+        break
+      }
+    }
+  }
+
   return list
 }
 
@@ -43,6 +57,9 @@ export function showToSupported(v: string | null) {
   }
 
   if(!lowlight.registered(v2)) {
+    console.warn("showToSupported 发现一个语言没有被注册...........")
+    console.log(v2)
+    console.log(" ")
     return null
   }
 
@@ -50,7 +67,7 @@ export function showToSupported(v: string | null) {
 }
 
 
-const UP_LIST = ["css", "xml", "sql", "yaml", "php", "json"]
+const UP_LIST = ["css", "xml", "html", "sql", "yaml", "php", "json"]
 const NO_CHANGE = ["cpp", "scss", "less", "php-template"]
 
 // 将 "解析时的语言" 转为 "展示语言"
