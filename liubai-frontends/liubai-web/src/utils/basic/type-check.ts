@@ -5,6 +5,8 @@ const getType = (x: any): string => Object.prototype.toString.call(x).slice(8, -
 
 const isObject = <T extends object>(x: any): x is T => getType(x) === 'object'
 
+const isUndefined = (x: any): x is undefined => typeof x === "undefined"
+
 const isString = (x: any): x is string => getType(x) === 'string'
 
 const isNumber = (x: any): x is number => getType(x) === 'number'
@@ -21,6 +23,7 @@ const isRegExp = (x: any): x is RegExp => getType(x) === 'regexp'
 
 export default {
   getType,
+  isUndefined,
   isObject,
   isString,
   isNumber,

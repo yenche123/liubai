@@ -46,6 +46,7 @@ import {
   isChildElementVisible
 } from "./element-util"
 import trimUtil from "./trim-util"
+import viewUtil from "./view-util";
 
 export default {
   getHelpTip,
@@ -86,4 +87,5 @@ export default {
   lightFireworks,
   open: openUtil,
   trim: trimUtil,
+  view: viewUtil,
 }

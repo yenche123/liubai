@@ -228,25 +228,16 @@ function showView(
 ) {
   const vcData = ctx.vcData
   const { list } = vcData
-  let hasFound = false
-  for(let i=0; i<list.length; i++) {
-    const v = list[i]
-    if(v.state === state && v.id === id) {
-      hasFound = true
-      v.show = true
-    }
-    else {
-      if(v.show) v.show = false
-    }
+  const newData = {
+    state,
+    id,
+    show: true,
+    thirdParty,
+    otherData,
   }
+  liuUtil.view.showView(list, newData, "state", state)
   vcData.currentState = state
   vcData.currentId = id
-
-  if(hasFound) return
-  list.push({ state, id, show: true, thirdParty, otherData })
-  if(list.length > 10) {
-    list.splice(0, 1)
-  }
 }
 
 function closeAllView(
