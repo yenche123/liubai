@@ -44,6 +44,7 @@ function initSomeVals(props: PrettyFileProps) {
     if(s === "ppt" || s === "pptx") return "ppt"
     if(s === "pdf") return "pdf"
     if(s === "txt") return "text"
+    if(s === "psd") return "psd"
     return "attachment"
   })
 
