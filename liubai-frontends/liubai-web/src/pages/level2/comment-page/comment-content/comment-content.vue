@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import CommentDetail from '~/components/level2/comment-detail/comment-detail.vue';
-import { useCommentContent } from './tools/useCommentContent';
 
-const {
-  commentId
-} = useCommentContent()
+defineProps({
+  commentId: {
+    type: String,
+    required: true,
+  }
+})
 
 </script>
 <template>
