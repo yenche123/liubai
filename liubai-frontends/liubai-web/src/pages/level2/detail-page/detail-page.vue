@@ -31,7 +31,7 @@ const { t } = useI18n()
       <div class="liu-view" v-show="item.show">
         <scroll-view 
           :hidden-scroll-bar="item.show && hiddenScrollBar" 
-          :showing-txt="(String(item.show) as TrueOrFalse)"
+          :show-txt="(String(item.show) as TrueOrFalse)"
         >
           <navi-virtual></navi-virtual>
           <detail-content :thread-id="item.id"></detail-content>

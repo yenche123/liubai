@@ -84,8 +84,8 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   }
 
   onActivated(async () => {
-    if(props.showingTxt === "false") {
-      // console.log("showingTxt 为 false 故忽略")
+    if(props.showTxt === "false") {
+      // console.log("showTxt 为 false 故忽略")
       return
     }
 
