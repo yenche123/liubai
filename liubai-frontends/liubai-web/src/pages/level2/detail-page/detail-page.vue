@@ -30,7 +30,7 @@ const { t } = useI18n()
     <template v-for="(item, index) in dpData.list" :key="item.id">
       <div class="liu-view" v-show="item.show">
         <scroll-view 
-          :hidden-scroll-bar="hiddenScrollBar" 
+          :hidden-scroll-bar="item.show && hiddenScrollBar" 
           :showing-txt="(String(item.show) as TrueOrFalse)"
         >
           <navi-virtual></navi-virtual>
