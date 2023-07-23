@@ -28,7 +28,7 @@ const { t } = useI18n()
   <!-- 主视图 -->
   <main-view :drop-files="true">
     <template v-for="(item, index) in dpData.list" :key="item.id">
-      <div class="vcliu-view" v-show="item.show">
+      <div class="liu-view" v-show="item.show">
         <scroll-view 
           :hidden-scroll-bar="hiddenScrollBar" 
           :showing-txt="(String(item.show) as TrueOrFalse)"
@@ -46,12 +46,5 @@ const { t } = useI18n()
 
 </template>
 <style scoped>
-
-
-.vcliu-view {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
 
 </style>

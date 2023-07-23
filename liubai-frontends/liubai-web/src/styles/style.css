@@ -176,3 +176,11 @@ input {
   opacity: .19;
   pointer-events: none;
 }
+
+
+/** 页面内的自定义 view 盒子 */
+.liu-view {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}

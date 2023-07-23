@@ -62,7 +62,7 @@ const {
 
     <template v-for="(item, index) in vcData.list" :key="item.id">
 
-      <div class="vcliu-view" v-show="item.show">
+      <div class="liu-view" v-show="item.show">
         <!-- iframe -->
         <VcIframe
           v-if="item.state === 'iframe'"
@@ -125,12 +125,6 @@ const {
 .vcliu-container {
   width: 100%;
   height: v-bind("vcHeight + 'px'");
-  position: relative;
-}
-
-.vcliu-view {
-  width: 100%;
-  height: 100%;
   position: relative;
 }
 
