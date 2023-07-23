@@ -7,42 +7,49 @@ import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
-import { useTagPage } from "./tools/useTagPage";
+import { useTagPage2 } from "./tools/useTagPage";
 import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
+import type { TrueOrFalse } from "~/types/types-basic";
 
 const { 
   hiddenScrollBar, 
-  goToTop,
   onVvWidthChange,
-  onTapFab,
-  scrollPosition,
-  onScroll,
 } = useMainVice()
 const { t } = useI18n()
 
-const { tagName, tagId, pState } = useTagPage()
+const { tpData, onTapFab, onScroll } = useTagPage2()
 
 </script>
 <template>
 
   <!-- 主视图 -->
   <main-view>
-    <scroll-view :hidden-scroll-bar="hiddenScrollBar" @scroll="onScroll"
-      :go-to-top="goToTop"
-    >
-      <navi-virtual></navi-virtual>
-      <PlaceholderView 
-        :p-state="pState"
-      ></PlaceholderView>
-      <TagContent 
-        :tag-id="tagId"
-      ></TagContent>
-    </scroll-view>
-    <navi-bar :title="tagName ? tagName : t('common.tags')"></navi-bar>
+    <template v-for="(item, index) in tpData.list" :key="item.id">
+      <div class="liu-view" v-show="item.show">
+        <scroll-view 
+          :hidden-scroll-bar="item.show && hiddenScrollBar" 
+          :show-txt="(String(item.show) as TrueOrFalse)"
+          @scroll="onScroll"
+          :go-to-top="item.goToTop"
+        >
+          <navi-virtual></navi-virtual>
+          <PlaceholderView 
+            :p-state="item.state"
+          ></PlaceholderView>
+          <TagContent 
+            :tag-id="item.id"
+            :show-txt="(String(item.show) as TrueOrFalse)"
+          ></TagContent>
+        </scroll-view>
+        <navi-bar :title="item.tagName ? item.tagName : t('common.tags')"></navi-bar>
 
-    <FloatActionButton :scroll-position="scrollPosition"
-      @tapfab="onTapFab"
-    ></FloatActionButton>
+        <FloatActionButton 
+          :scroll-position="item.scrollPosition"
+          @tapfab="onTapFab"
+        ></FloatActionButton>
+      </div>
+    </template>
+    
   </main-view>
 
   <!-- 副视图 -->

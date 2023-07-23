@@ -4,23 +4,10 @@ import ThreadCard from './thread-card/thread-card.vue';
 import { useNewAndUpdate } from './tools/useNewAndUpdate';
 import ListBottom from '../list-bottom/list-bottom.vue';
 import { useThreadOperateInList } from './tools/useThreadOperateInList';
-import type { PropType } from 'vue';
-import type { TlViewType, TlEmits } from "./tools/types"
+import type { TlEmits } from "./tools/types"
+import { tlProps } from "./tools/types"
 
-const props = defineProps({
-  viewType: {
-    type: String as PropType<TlViewType>,
-    default: "",
-  },
-  tagId: {
-    type: String,
-    default: "",
-  },
-  stateId: {
-    type: String,
-    default: "",
-  }
-})
+const props = defineProps(tlProps)
 const emit = defineEmits<TlEmits>()
 const {
   list,

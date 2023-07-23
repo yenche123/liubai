@@ -1,81 +1,175 @@
-import { ref, watch } from "vue";
-import type { Ref } from "vue";
+import { reactive, watch } from "vue";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
-import type { RouteLocationNormalizedLoaded } from "vue-router";
 import { tagIdsToShows } from "~/utils/system/tag-related";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { PageState } from "~/types/types-atom";
+import type { TpView, TpData, TpCtx2 } from "./types"
+import typeCheck from "~/utils/basic/type-check";
+import liuUtil from "~/utils/liu-util";
 
-interface TpCtx {
-  route: RouteLocationNormalizedLoaded
-  tagName: Ref<string>
-  tagId: Ref<string>
-  spaceId: Ref<string>
-  pState: Ref<PageState>
-}
 
-export function useTagPage() {
+export function useTagPage2() {
 
-  const pState = ref<PageState>(0)
-  const tagId = ref("")
-  const tagName = ref("")
+  // 获取路由
   const { route } = useRouteAndLiuRouter()
+
+  // 获取工作区
   const wStore = useWorkspaceStore()
   const { spaceId } = storeToRefs(wStore)
+
+  // 获取状态变化
   const gStore = useGlobalStateStore()
   const { tagChangedNum } = storeToRefs(gStore)
 
-  const ctx = {
+  const tpData = reactive<TpData>({
+    list: [],
+  })
+
+  const ctx: TpCtx2 = {
     route,
-    tagId,
     spaceId,
-    tagName,
-    pState,
+    tpData,
+    currentIdx: -1,
   }
 
   // 必须等 workspace 已初始化好，才能去加载 tag
   // 因为 tag 依赖于工作区
-  watch([route, spaceId, tagChangedNum], (newV) => {
-    judgeTagName(ctx)
+  watch([route, spaceId], (newV) => {
+    whenContextChange(ctx)
   }, { immediate: true })
-  
-  return { tagName, tagId, pState }
+
+  // 监听状态发生变化
+  watch(tagChangedNum, (newV, oldV) => {
+    console.log("监听到状态发生变化...........", newV, oldV)
+    if(newV > oldV) {
+      clearHiddenView(ctx)
+      whenContextChange(ctx)
+    }
+  })
+
+  const onTapFab = () => {
+    if(!liuUtil.canTap()) return
+    const item = _getCurrentItem(ctx)
+    if(!item) return
+    item.goToTop++
+  }
+
+  const onScroll = (data: { scrollPosition: number }) => {
+    const item = _getCurrentItem(ctx)
+    if(!item) return
+    item.scrollPosition = data.scrollPosition
+  }
+
+  return {
+    tpData,
+    onTapFab,
+    onScroll,
+  }
+}
+
+function _getCurrentItem(ctx: TpCtx2) {
+  const idx = ctx.currentIdx
+  if(idx < 0) return
+  const item = ctx.tpData.list[idx]
+  return item
 }
 
 
-function judgeTagName(
-  ctx: TpCtx,
-) {
-  if(!ctx.route) return
-  if(!ctx.spaceId.value) return
-  const n = ctx.route.name
-  if(!n) return
-  if(n !== "tag" && n !== "collaborative-tag") return
-  const { tagId } = ctx.route.params
-  if(typeof tagId !== "string") return
 
-  const { tagShows } = tagIdsToShows([tagId])
+function _getDefaultView(
+  id: string, 
+  tagName: string,
+  state: PageState
+): TpView {
+  return {
+    id,
+    show: true,
+    state,
+    tagName,
+    goToTop: 0,
+    scrollPosition: 0,
+  }
+}
+
+
+function whenContextChange(
+  ctx: TpCtx2,
+) {
+
+  const { route, spaceId } = ctx
+
+  if(!route) return
+  if(!spaceId.value) return
+
+  const { name, params } = route
+  if(name !== "tag" && name !== "collaborative-tag") return
+
+  const id = params.tagId
+  if(!typeCheck.isString(id)) return
+
+  const { tagShows } = tagIdsToShows([id])
   if(!tagShows.length) {
-    toLoadRemote(ctx)
+    toLoadRemote(ctx, id)
     return
   }
-  const t = tagShows[0]
-  const str = `${t.emoji ? t.emoji + ' ' : '# '}${t.text}`
-  ctx.tagId.value = tagId
-  ctx.tagName.value = str
-  ctx.pState.value = -1
+
+  const tag = tagShows[0]
+  const str = `${tag.emoji ? tag.emoji + ' ' : '# '}${tag.text}`
+  const newData = _getDefaultView(id, str, -1)
+  showView(ctx, newData)
 }
 
 async function toLoadRemote(
-  ctx: TpCtx
+  ctx: TpCtx2,
+  tagId: string
 ) {
   // TODO: 去远端加载 tag
   // 目前先直接告诉组件查无动态
-  
-  ctx.tagId.value = ""
-  ctx.pState.value = 50
+  const newData = _getDefaultView(tagId, "", 50)
+  showView(ctx, newData)
+}
 
-  
+
+function showView(
+  ctx: TpCtx2,
+  newData: TpView,
+) {
+  const { list } = ctx.tpData
+
+  let hasFound = false
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    v.show = false
+    if(v.id !== newData.id) continue
+    hasFound = true
+    v.show = true
+    v.state = newData.state
+    v.tagName = newData.tagName
+    ctx.currentIdx = i
+  }
+
+  if(!hasFound) {
+    list.push(newData)
+    if(list.length > 10) {
+      list.splice(0, 1)
+    }
+    ctx.currentIdx = list.length - 1
+  }
+}
+
+function clearHiddenView(
+  ctx: TpCtx2
+) {
+  console.log("开启清除隐藏的 tag-view")
+  const { list } = ctx.tpData
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    if(!v.show) {
+      list.splice(i, 1)
+      i--
+    }
+  }
+  ctx.currentIdx = list.length - 1
 }

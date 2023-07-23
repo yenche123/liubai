@@ -96,11 +96,20 @@ export function useThreadList(
       [oldV1, oldV2, oldV3, oldV4]
     ) => {
     if(!newV3) return
-    if(newV4 > oldV4 && !isActivated) {
-      console.log("useThreadList 监听到 tag 发生变化，但是不在显示范围内！")
-      ctx.reloadRequired = true
-      return
+
+    if(newV4 > oldV4) {
+      if(!isActivated) {
+        ctx.reloadRequired = true
+        return
+      }
+
+      if(props.showTxt === "false") {
+        // console.log("当前是 thread-list 显示状态为 false")
+        // console.log("故忽略..............")
+        return
+      }
     }
+
     scollTopAndUpdate(ctx)
   })
 

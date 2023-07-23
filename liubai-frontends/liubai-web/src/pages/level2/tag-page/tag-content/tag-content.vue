@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import type { PropType } from 'vue';
+import type { TrueOrFalse } from '~/types/types-basic';
 import ThreadList from '~/components/level1/thread-list/thread-list.vue';
 
 defineProps({
-  tagId: String
+  tagId: String,
+  showTxt: String as PropType<TrueOrFalse>,
 })
 
 const onNodata = () => {
@@ -22,6 +25,7 @@ const onHasdata = () => {
       <thread-list v-if="tagId" 
         view-type="TAG"
         :tag-id="tagId"
+        :show-txt="showTxt"
         @nodata="onNodata"
         @hasdata="onHasdata"
       ></thread-list>
