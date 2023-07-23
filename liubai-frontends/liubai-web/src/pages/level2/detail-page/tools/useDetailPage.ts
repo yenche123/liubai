@@ -31,7 +31,6 @@ function listenRouteChange(
     if(!typeCheck.isString(id)) return
 
     const newView = { show: true, id }
-    console.log("show view.id: ", newView.id)
     liuUtil.view.showView(list, newView)
   }
 
