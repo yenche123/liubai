@@ -1,4 +1,5 @@
 import type { PropType } from "vue"
+import type { TrueOrFalse } from "~/types/types-basic"
 
 export interface SvProps {
   upperThreshold: number
@@ -6,6 +7,8 @@ export interface SvProps {
   direction: "vertical" | "horizontal"
   hiddenScrollBar: boolean
   goToTop: number
+  showingTxt?: TrueOrFalse     // 当一个页面里，有多个自定义的 view 时，需传递此值
+                                    // 为什么不单纯地传递布尔值 true / false 呢？因为 undefined 时默认为 false
 }
 
 export const svProps = {
@@ -28,6 +31,9 @@ export const svProps = {
   goToTop: {
     type: Number,
     default: 0,
+  },
+  showingTxt: {
+    type: String as PropType<TrueOrFalse>,
   }
 }
 

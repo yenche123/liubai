@@ -2,8 +2,14 @@
 import ThreadDetail from "~/components/level1/thread-detail/thread-detail.vue";
 import { useDetailContent } from "./tools/useDetailContent";
 
+defineProps({
+  threadId: {
+    type: String,
+    required: true,
+  }
+})
+
 const {
-  threadId,
   onGetThreadShow,
 } = useDetailContent()
 
@@ -12,7 +18,7 @@ const {
   
   <div class="liu-mc-container">
     <div class="liu-tc-virtual"></div>
-    <div class="liu-mc-box" v-if="threadId">
+    <div class="liu-mc-box">
       <ThreadDetail 
         :thread-id="threadId"
         location="detail-page"

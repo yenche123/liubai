@@ -7,11 +7,19 @@ import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
+import { useDetailPage } from "./tools/useDetailPage";
+import type { TrueOrFalse } from "~/types/types-basic"
 
 const { 
   hiddenScrollBar, 
   onVvWidthChange,
 } = useMainVice({ setDefaultTitle: false })
+
+const {
+  dpData,
+} = useDetailPage()
+
+
 const { t } = useI18n()
 
 </script>
@@ -19,11 +27,18 @@ const { t } = useI18n()
 
   <!-- 主视图 -->
   <main-view :drop-files="true">
-    <scroll-view :hidden-scroll-bar="hiddenScrollBar">
-      <navi-virtual></navi-virtual>
-      <detail-content></detail-content>
-    </scroll-view>
-    <navi-bar :title="t('common.detail')"></navi-bar>
+    <template v-for="(item, index) in dpData.list" :key="item.id">
+      <div class="vcliu-view" v-show="item.show">
+        <scroll-view 
+          :hidden-scroll-bar="hiddenScrollBar" 
+          :showing-txt="(String(item.show) as TrueOrFalse)"
+        >
+          <navi-virtual></navi-virtual>
+          <detail-content :thread-id="item.id"></detail-content>
+        </scroll-view>
+        <navi-bar :title="t('common.detail')"></navi-bar>
+      </div>
+    </template>
   </main-view>
 
   <!-- 副视图 -->
@@ -31,5 +46,12 @@ const { t } = useI18n()
 
 </template>
 <style scoped>
+
+
+.vcliu-view {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
 
 </style>

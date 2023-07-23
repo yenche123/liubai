@@ -1,4 +1,4 @@
-import type { BasicView } from "~/types/types-view"
+import type { BasicView } from "~/types/types-view";
 import typeCheck from "~/utils/basic/type-check";
 
 /**

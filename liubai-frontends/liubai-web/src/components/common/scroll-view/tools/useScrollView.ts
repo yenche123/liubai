@@ -1,4 +1,4 @@
-import { onActivated, provide, reactive, ref, shallowRef, toRef, watch } from "vue";
+import { nextTick, onActivated, provide, reactive, ref, shallowRef, toRef, vShow, watch } from "vue";
 import type { SvProps, SvEmits } from "./types"
 import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
 import { scrollViewKey, svScollingKey, svBottomUpKey } from "~/utils/provide-keys"
@@ -75,12 +75,31 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     lastScrollPosition = sP
   }
 
-  onActivated(() => {
-    const sp = scrollPosition.value
-    if(!sv.value || !sp) return
+  const _setScollPosition = (sp: number) => {
+    const svv = sv.value
+    if(!svv) return
     const isVertical = props.direction === "vertical"
-    if(isVertical) sv.value.scrollTop = sp
-    else sv.value.scrollLeft = sp
+    if(isVertical) svv.scrollTop = sp
+    else svv.scrollLeft = sp
+  }
+
+  onActivated(async () => {
+    if(props.showingTxt === "false") {
+      // console.log("showingTxt 为 false 故忽略")
+      return
+    }
+
+    const sp = scrollPosition.value
+
+    // console.log("sp: ", sp)
+
+    if(!sp) return
+    _setScollPosition(sp)
+
+    // 由于 v-show 的切换需要时间渲染到界面上
+    // 所以加一层 nextTick 等待页面渲染完毕再恢复至上一次的位置
+    await nextTick()
+    _setScollPosition(sp)
   })
 
   watch(bottomUp, (newV) => {
