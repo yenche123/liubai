@@ -97,7 +97,7 @@ function handleOutterOperation(
 
 // 去打开状态选择面板
 async function handle_state(ctx: ToCtx) {
-  const { memberId, userId, thread, tlData } = ctx
+  const { memberId, userId, thread, tlData, position } = ctx
   const oldThread = valTool.copyObject(thread)
   
   const { 
@@ -113,11 +113,11 @@ async function handle_state(ctx: ToCtx) {
   const listStateId = ctx.props.stateId
   if(vT === "STATE" && newStateId !== listStateId) {
     removedFromList = true
-    tlData.list.splice(ctx.position, 1)
+    await _toHide(tlData, position)
   }
   else if(vT === "INDEX" && newStateShow?.showInIndex === false) {
     removedFromList = true
-    tlData.list.splice(ctx.position, 1)
+    await _toHide(tlData, position)
   }
 
   // 2. 判断要不要撒花
@@ -134,39 +134,43 @@ async function handle_state(ctx: ToCtx) {
 
   // 5. 判断是否重新加回
   if(removedFromList) {
-    tlData.list.splice(ctx.position, 0, tlUtil.threadShowToItem(oldThread))
+    tlData.list.splice(position, 0, tlUtil.threadShowToItem(oldThread))
   }
 }
 
 // 去恢复
 async function handle_restore(ctx: ToCtx) {
-  const { memberId, userId, thread, props, tlData } = ctx
+  const { memberId, userId, thread, props, tlData, position } = ctx
   const oldThread = valTool.copyObject(thread)
   const vT = props.viewType as TlViewType
 
   // 1. 如果当前是在回收桶里，先从 list 里删除是为了避免 menu 的抖动
   if(vT === "TRASH") {
-    tlData.list.splice(ctx.position, 1)
+    await _toHide(tlData, position)
   }
 
   // 2. 执行 restore 公共逻辑
   const res = await threadOperate.restoreThread(oldThread, memberId, userId)
 }
 
+// 执行隐藏动画、并删除
+async function _toHide(
+  tlData: TlData,
+  poi: number,
+) {
+  tlData.list[poi].showType = 'hiding'
+  await valTool.waitMilli(301)
+  tlData.list.splice(poi, 1)
+}
+
 // 去删除（允许复原）
 async function handle_delete(ctx: ToCtx) {
-  const { memberId, userId, thread, tlData } = ctx
-  const poi = ctx.position
+  const { memberId, userId, thread, tlData, position } = ctx
   const oldThread = valTool.copyObject(thread)
   const vT = ctx.props.viewType as TlViewType
 
-  // 0.1  先把该条动态的 showType 改为 hiding
-  tlData.list[poi].showType = 'hiding'
-
-  await valTool.waitMilli(300)
-
-  // 0.2 从列表里删除 item，先删除的原因是避免 menu 的抖动
-  tlData.list.splice(ctx.position, 1)
+  // 0. 执行消失动画、并删除 item
+  await _toHide(tlData, position)
 
   // 1. 执行公共逻辑
   const { tipPromise } = await threadOperate.deleteThread(oldThread, memberId, userId)
@@ -182,24 +186,24 @@ async function handle_delete(ctx: ToCtx) {
   // 4. 如果当前列表不是 PINNED, 把 item 加回 list 中
   // 因为 PINNED 列表在 useNewAndUpdate 里会自动将其加回
   if(vT !== "PINNED") {
-    tlData.list.splice(ctx.position, 0, tlUtil.threadShowToItem(oldThread))
+    tlData.list.splice(position, 0, tlUtil.threadShowToItem(oldThread))
   }
 }
 
 // 去彻底删除
 async function handle_deleteForever(ctx: ToCtx) {
-  const { memberId, userId, thread, tlData } = ctx
+  const { memberId, userId, thread, tlData, position } = ctx
   const oldThread = valTool.copyObject(thread)
   const res = await threadOperate.deleteForever(oldThread, memberId, userId)
   if(!res) return
 
   // 1. 从列表里删除 item
-  tlData.list.splice(ctx.position, 1)
+  await _toHide(tlData, position)
 }
 
 // 去置顶（or 取消）
 async function handle_pin(ctx: ToCtx) {
-  const { memberId, userId, thread, tlData } = ctx
+  const { memberId, userId, thread, tlData, position } = ctx
   const oldThread = valTool.copyObject(thread)
   const { newPin, tipPromise } = await threadOperate.toPin(oldThread, memberId, userId)
   if(!tipPromise) return
@@ -209,7 +213,9 @@ async function handle_pin(ctx: ToCtx) {
   const vT = ctx.props.viewType as TlViewType
   if(vT === "INDEX" && newPin) {
     removedFromList = true
-    tlData.list.splice(ctx.position, 1)
+    // 由于界面的上方会被添加进 pin 列表里
+    // 又删除又新增的，就别执行消失动画了
+    tlData.list.splice(position, 1)
   }
 
   // 2. 等待 snackbar 的返回
@@ -221,13 +227,13 @@ async function handle_pin(ctx: ToCtx) {
 
   // 4. 判断是否重新加回
   if(removedFromList) {
-    tlData.list.splice(ctx.position, 0, tlUtil.threadShowToItem(oldThread))
+    tlData.list.splice(position, 0, tlUtil.threadShowToItem(oldThread))
   }
 }
 
 // 去收藏（or 取消）
 async function handle_collect(ctx: ToCtx) {
-  const { memberId, userId, thread, tlData } = ctx
+  const { memberId, userId, thread, tlData, position } = ctx
   const oldThread = valTool.copyObject(thread)
   const { newFavorite, tipPromise } = await threadOperate.toCollect(oldThread, memberId, userId)
 
@@ -236,7 +242,7 @@ async function handle_collect(ctx: ToCtx) {
   const vT = ctx.props.viewType as TlViewType
   if(vT === "FAVORITE" && !newFavorite) {
     removedFromList = true
-    tlData.list.splice(ctx.position, 1)
+    await _toHide(tlData, position)
   }
 
   // 2. 等待 snackbar 的返回
@@ -249,7 +255,7 @@ async function handle_collect(ctx: ToCtx) {
 
   // 4. 判断是否重新加回
   if(removedFromList) {
-    tlData.list.splice(ctx.position, 0, tlUtil.threadShowToItem(oldThread))
+    tlData.list.splice(position, 0, tlUtil.threadShowToItem(oldThread))
   }
 }
 
