@@ -14,6 +14,7 @@ export interface TlAtom {
 
 export interface TlData {
   list: TlAtom[]
+  lastItemStamp: number
 }
 
 export interface TlProps {

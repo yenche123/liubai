@@ -19,7 +19,6 @@ interface TlContext {
   tagId: Ref<string>
   spaceIdRef: Ref<string>
   showNum: number
-  lastItemStamp: Ref<number>
   svBottomUp?: ShallowRef<SvBottomUp>
   reloadRequired: boolean
   emits: TlEmits
@@ -37,11 +36,9 @@ export function useThreadList(
   const svBottomUp = inject(svBottomUpKey)
 
   const hasReachBottom = ref(false)
-
-  const lastItemStamp = ref(0)
-
   const tlData = reactive<TlData>({
-    list: []
+    list: [],
+    lastItemStamp: 0,
   })
 
   const ctx: TlContext = {
@@ -50,7 +47,6 @@ export function useThreadList(
     tagId,
     spaceIdRef,
     showNum: 0,
-    lastItemStamp,
     svBottomUp,
     reloadRequired: false,
     emits,
@@ -125,7 +121,6 @@ export function useThreadList(
 
   return {
     tlData,
-    lastItemStamp,
     hasReachBottom,
   }
 }
@@ -184,7 +179,7 @@ async function loadList(
 
   let length = oldList.length
   let oState: OState = viewType === 'TRASH' ? 'REMOVED' : 'OK'
-  let lastItemStamp = reload || (length < 1) ? undefined : ctx.lastItemStamp.value
+  let lastItemStamp = reload || (length < 1) ? undefined : tlData.lastItemStamp
 
   const opt1: TcListOption = {
     viewType,
@@ -218,7 +213,7 @@ async function loadList(
 
   // 处理 lastItemStamp
   if(newLength) {
-    handleLastItemStamp(viewType, tlData, ctx.lastItemStamp)
+    handleLastItemStamp(viewType, tlData)
   }
 
   // 小于一定数量的时候 表示已经触底

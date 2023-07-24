@@ -16,7 +16,6 @@ import tlUtil from "./tl-util";
 export function useNewAndUpdate(
   props: TlProps,
   tlData: TlData,
-  lastItemStamp: Ref<number>,
 ) {
   const tStore = useThreadShowStore()
   tStore.$subscribe((mutation, state) => {
@@ -32,10 +31,10 @@ export function useNewAndUpdate(
     const { newThreadShows, updatedThreadShows, whyChange } = state
 
     if(newThreadShows.length > 0) {
-      handleNewList(props, tlData, newThreadShows, lastItemStamp)
+      handleNewList(props, tlData, newThreadShows)
     }
     if(updatedThreadShows.length > 0) {
-      handleUpdatedList(props, tlData, updatedThreadShows, whyChange, lastItemStamp)
+      handleUpdatedList(props, tlData, updatedThreadShows, whyChange)
     }
   })
 
@@ -125,7 +124,6 @@ function handleNewList(
   props: TlProps,
   tlData: TlData,
   newList: ThreadShow[],
-  lastItemStamp: Ref<number>,
 ) {
   const { tagId, stateId } = props
   const viewType = props.viewType as TlViewType
@@ -151,9 +149,9 @@ function handleNewList(
   const _myList = tlUtil.threadShowsToList(myList)
   tlData.list.splice(0, 0, ..._myList)
 
-  if(lastItemStamp.value) return
+  if(tlData.lastItemStamp) return
   // 处理 lastItemStamp 为 0 的情况
-  handleLastItemStamp(viewType, tlData, lastItemStamp)
+  handleLastItemStamp(viewType, tlData)
 }
 
 function handleUpdatedList(
@@ -161,7 +159,6 @@ function handleUpdatedList(
   tlData: TlData,
   updatedList: ThreadShow[],
   whyChange: WhyThreadChange,
-  lastItemStamp: Ref<number>,
 ) {
   const { list } = tlData
   const vT = props.viewType as TlViewType

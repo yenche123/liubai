@@ -11,10 +11,9 @@ const props = defineProps(tlProps)
 const emit = defineEmits<TlEmits>()
 const {
   tlData,
-  lastItemStamp,
   hasReachBottom,
 } = useThreadList(props, emit)
-useNewAndUpdate(props, tlData, lastItemStamp)
+useNewAndUpdate(props, tlData)
 
 const {
   receiveOperation
