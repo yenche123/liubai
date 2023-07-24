@@ -69,7 +69,9 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
   ref="cardEl"
 >
 
-  <div class="tc-container">
+  <div class="tc-container"
+    :class="{ 'tc-container_hiding': showType === 'hiding' }"
+  >
 
     <div class="tc-box" @click.stop="onTapThreadCard">
 
@@ -159,16 +161,15 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
 .tc-big-container {
   width: 100%;
   position: relative;
-  will-change: opacity, margin-block-start;
+  will-change: margin-block-start;
   transition: .3s;
   padding-block-end: 10px;
 }
 
 .tc-big-container_hiding {
-  margin-block-start: v-bind("(-cardHeightPx) + 'px'");
-  opacity: 0;
+  margin-block-start: -10px;
+  overflow: hidden;
 }
-
 
 .tc-container {
   width: 100%;
@@ -176,7 +177,13 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
   position: relative;
   background-color: var(--card-bg);
   box-shadow: var(--card-shadow-2);
-  transition: border-radius .2s, box-shadow .3s;
+  will-change: border-radius, box-shadow, opacity, margin-block-start;
+  transition: border-radius .2s, box-shadow .3s, opacity .3s, margin-block-start .3s;
+
+  &.tc-container_hiding {
+    opacity: 0;
+    margin-block-start: v-bind("(-cardHeightPx) + 'px'");
+  }
 
   @media(hover: hover) {
     &:hover {
