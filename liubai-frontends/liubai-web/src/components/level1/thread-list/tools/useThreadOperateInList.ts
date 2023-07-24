@@ -134,7 +134,7 @@ async function handle_state(ctx: ToCtx) {
 
   // 5. 判断是否重新加回
   if(removedFromList) {
-    tlData.list.splice(position, 0, tlUtil.threadShowToItem(oldThread))
+    _toShowAgain(tlData, position, oldThread)
   }
 }
 
@@ -163,6 +163,15 @@ async function _toHide(
   tlData.list.splice(poi, 1)
 }
 
+function _toShowAgain(
+  tlData: TlData,
+  poi: number,
+  oldThread: ThreadShow,
+) {
+  tlData.list.splice(poi, 0, tlUtil.threadShowToItem(oldThread))
+}
+
+
 // 去删除（允许复原）
 async function handle_delete(ctx: ToCtx) {
   const { memberId, userId, thread, tlData, position } = ctx
@@ -186,7 +195,7 @@ async function handle_delete(ctx: ToCtx) {
   // 4. 如果当前列表不是 PINNED, 把 item 加回 list 中
   // 因为 PINNED 列表在 useNewAndUpdate 里会自动将其加回
   if(vT !== "PINNED") {
-    tlData.list.splice(position, 0, tlUtil.threadShowToItem(oldThread))
+    _toShowAgain(tlData, position, oldThread)
   }
 }
 
@@ -227,7 +236,7 @@ async function handle_pin(ctx: ToCtx) {
 
   // 4. 判断是否重新加回
   if(removedFromList) {
-    tlData.list.splice(position, 0, tlUtil.threadShowToItem(oldThread))
+    _toShowAgain(tlData, position, oldThread)
   }
 }
 
@@ -255,7 +264,7 @@ async function handle_collect(ctx: ToCtx) {
 
   // 4. 判断是否重新加回
   if(removedFromList) {
-    tlData.list.splice(position, 0, tlUtil.threadShowToItem(oldThread))
+    _toShowAgain(tlData, position, oldThread)
   }
 }
 
