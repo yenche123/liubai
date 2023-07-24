@@ -7,11 +7,12 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import localCache from "~/utils/system/local-cache"
-import type { TlProps, TlViewType } from "./types"
+import type { TlData, TlProps, TlViewType } from "./types"
 import type { Ref } from "vue";
 import valTool from "~/utils/basic/val-tool"
 import threadOperate from "~/hooks/thread/thread-operate";
 import liuUtil from "~/utils/liu-util"
+import tlUtil from "./tl-util"
 
 interface ToCtx {
   router: LiuRouter
@@ -22,12 +23,12 @@ interface ToCtx {
   memberId: string
   userId: string
   props: TlProps
-  list: Ref<ThreadShow[]>
+  tlData: TlData
 }
 
 export function useThreadOperateInList(
   props: TlProps,
-  list: Ref<ThreadShow[]>
+  tlData: TlData,
 ) {
   const wStore = useWorkspaceStore()
   const { route, router } = useRouteAndLiuRouter()
@@ -56,7 +57,7 @@ export function useThreadOperateInList(
       memberId,
       userId,
       props,
-      list
+      tlData,
     }
 
     handleOutterOperation(ctx, operation)
@@ -100,7 +101,7 @@ function handleOutterOperation(
 
 // 去打开状态选择面板
 async function handle_state(ctx: ToCtx) {
-  const { memberId, userId, thread } = ctx
+  const { memberId, userId, thread, tlData } = ctx
   const oldThread = valTool.copyObject(thread)
   
   const { 
@@ -116,11 +117,11 @@ async function handle_state(ctx: ToCtx) {
   const listStateId = ctx.props.stateId
   if(vT === "STATE" && newStateId !== listStateId) {
     removedFromList = true
-    ctx.list.value.splice(ctx.position, 1)
+    tlData.list.splice(ctx.position, 1)
   }
   else if(vT === "INDEX" && newStateShow?.showInIndex === false) {
     removedFromList = true
-    ctx.list.value.splice(ctx.position, 1)
+    tlData.list.splice(ctx.position, 1)
   }
 
   // 2. 判断要不要撒花
@@ -137,19 +138,19 @@ async function handle_state(ctx: ToCtx) {
 
   // 5. 判断是否重新加回
   if(removedFromList) {
-    ctx.list.value.splice(ctx.position, 0, oldThread)
+    tlData.list.splice(ctx.position, 0, tlUtil.threadShowToItem(oldThread))
   }
 }
 
 // 去恢复
 async function handle_restore(ctx: ToCtx) {
-  const { memberId, userId, thread, props } = ctx
+  const { memberId, userId, thread, props, tlData } = ctx
   const oldThread = valTool.copyObject(thread)
   const vT = props.viewType as TlViewType
 
   // 1. 如果当前是在回收桶里，先从 list 里删除是为了避免 menu 的抖动
   if(vT === "TRASH") {
-    ctx.list.value.splice(ctx.position, 1)
+    tlData.list.splice(ctx.position, 1)
   }
 
   // 2. 执行 restore 公共逻辑
@@ -158,12 +159,12 @@ async function handle_restore(ctx: ToCtx) {
 
 // 去删除（允许复原）
 async function handle_delete(ctx: ToCtx) {
-  const { memberId, userId, thread } = ctx
+  const { memberId, userId, thread, tlData } = ctx
   const oldThread = valTool.copyObject(thread)
   const vT = ctx.props.viewType as TlViewType
 
   // 0. 从列表里删除 item，先删除的原因是避免 menu 的抖动
-  ctx.list.value.splice(ctx.position, 1)
+  tlData.list.splice(ctx.position, 1)
 
   // 1. 执行公共逻辑
   const { tipPromise } = await threadOperate.deleteThread(oldThread, memberId, userId)
@@ -179,24 +180,24 @@ async function handle_delete(ctx: ToCtx) {
   // 4. 如果当前列表不是 PINNED, 把 item 加回 list 中
   // 因为 PINNED 列表在 useNewAndUpdate 里会自动将其加回
   if(vT !== "PINNED") {
-    ctx.list.value.splice(ctx.position, 0, oldThread)
+    tlData.list.splice(ctx.position, 0, tlUtil.threadShowToItem(oldThread))
   }
 }
 
 // 去彻底删除
 async function handle_deleteForever(ctx: ToCtx) {
-  const { memberId, userId, thread } = ctx
+  const { memberId, userId, thread, tlData } = ctx
   const oldThread = valTool.copyObject(thread)
   const res = await threadOperate.deleteForever(oldThread, memberId, userId)
   if(!res) return
 
   // 1. 从列表里删除 item
-  ctx.list.value.splice(ctx.position, 1)
+  tlData.list.splice(ctx.position, 1)
 }
 
 // 去置顶（or 取消）
 async function handle_pin(ctx: ToCtx) {
-  const { memberId, userId, thread } = ctx
+  const { memberId, userId, thread, tlData } = ctx
   const oldThread = valTool.copyObject(thread)
   const { newPin, tipPromise } = await threadOperate.toPin(oldThread, memberId, userId)
   if(!tipPromise) return
@@ -206,7 +207,7 @@ async function handle_pin(ctx: ToCtx) {
   const vT = ctx.props.viewType as TlViewType
   if(vT === "INDEX" && newPin) {
     removedFromList = true
-    ctx.list.value.splice(ctx.position, 1)
+    tlData.list.splice(ctx.position, 1)
   }
 
   // 2. 等待 snackbar 的返回
@@ -218,13 +219,13 @@ async function handle_pin(ctx: ToCtx) {
 
   // 4. 判断是否重新加回
   if(removedFromList) {
-    ctx.list.value.splice(ctx.position, 0, oldThread)
+    tlData.list.splice(ctx.position, 0, tlUtil.threadShowToItem(oldThread))
   }
 }
 
 // 去收藏（or 取消）
 async function handle_collect(ctx: ToCtx) {
-  const { memberId, userId, thread } = ctx
+  const { memberId, userId, thread, tlData } = ctx
   const oldThread = valTool.copyObject(thread)
   const { newFavorite, tipPromise } = await threadOperate.toCollect(oldThread, memberId, userId)
 
@@ -233,7 +234,7 @@ async function handle_collect(ctx: ToCtx) {
   const vT = ctx.props.viewType as TlViewType
   if(vT === "FAVORITE" && !newFavorite) {
     removedFromList = true
-    ctx.list.value.splice(ctx.position, 1)
+    tlData.list.splice(ctx.position, 1)
   }
 
   // 2. 等待 snackbar 的返回
@@ -246,7 +247,7 @@ async function handle_collect(ctx: ToCtx) {
 
   // 4. 判断是否重新加回
   if(removedFromList) {
-    ctx.list.value.splice(ctx.position, 0, oldThread)
+    tlData.list.splice(ctx.position, 0, tlUtil.threadShowToItem(oldThread))
   }
 }
 

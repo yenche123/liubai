@@ -1,5 +1,4 @@
-import { inject, onActivated, onDeactivated, ref, toRef, toRefs, watch } from "vue"
-import type { ThreadShow } from "~/types/types-content"
+import { inject, onActivated, onDeactivated, reactive, ref, toRef, toRefs, watch } from "vue"
 import type { Ref, ShallowRef } from "vue"
 import threadController from "~/utils/controllers/thread-controller/thread-controller"
 import { scrollViewKey } from "~/utils/provide-keys"
@@ -7,14 +6,15 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
 import type { OState } from "~/types/types-basic"
 import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
-import type { TlProps, TlViewType, TlEmits } from "./types"
+import type { TlProps, TlViewType, TlEmits, TlData } from "./types"
 import type { TcListOption } from "~/utils/controllers/thread-controller/type"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { svBottomUpKey } from "~/utils/provide-keys";
 import { handleLastItemStamp } from "./useTLCommon"
+import tlUtil from "./tl-util"
 
 interface TlContext {
-  list: Ref<ThreadShow[]>
+  tlData: TlData,
   viewType: Ref<TlViewType>
   tagId: Ref<string>
   spaceIdRef: Ref<string>
@@ -36,12 +36,16 @@ export function useThreadList(
   let spaceIdRef = storeToRefs(wStore).spaceId
   const svBottomUp = inject(svBottomUpKey)
 
-  const list = ref<ThreadShow[]>([])
   const hasReachBottom = ref(false)
 
   const lastItemStamp = ref(0)
+
+  const tlData = reactive<TlData>({
+    list: []
+  })
+
   const ctx: TlContext = {
-    list,
+    tlData,
     viewType: viewType as Ref<TlViewType>,
     tagId,
     spaceIdRef,
@@ -119,8 +123,8 @@ export function useThreadList(
     loadList(ctx, true)
   }
 
-  return { 
-    list, 
+  return {
+    tlData,
     lastItemStamp,
     hasReachBottom,
   }
@@ -144,8 +148,8 @@ function checkList(
 ) {
   if(isViewType(ctx, "PINNED")) return
 
-  const { list } = ctx
-  if(list.value.length < 10) {
+  const { list } = ctx.tlData
+  if(list.length < 10) {
     loadList(ctx, true)
     return
   }
@@ -173,13 +177,14 @@ async function loadList(
     ctx.reloadRequired = false
   }
 
-  const oldList = ctx.list.value
+  const { tlData } = ctx
+  const oldList = tlData.list
   const viewType = ctx.viewType.value
   const tagId = ctx.tagId.value
 
   let length = oldList.length
   let oState: OState = viewType === 'TRASH' ? 'REMOVED' : 'OK'
-  let lastItemStamp = reload || length < 1 ? undefined : ctx.lastItemStamp.value
+  let lastItemStamp = reload || (length < 1) ? undefined : ctx.lastItemStamp.value
 
   const opt1: TcListOption = {
     viewType,
@@ -196,23 +201,24 @@ async function loadList(
   }
 
   const results = await threadController.getList(opt1)
+  const newList = tlUtil.threadShowsToList(results)
+  const newLength = newList.length
 
   // 赋值到 list 上
   if(length < 1 || reload || viewType === "PINNED") {
-    ctx.list.value = results
+    tlData.list = newList
 
-    if(results.length) ctx.emits("hasdata")
+    if(newLength) ctx.emits("hasdata")
     else ctx.emits("nodata")
     
   }
-  else if(results.length) {
-    ctx.list.value.push(...results)
+  else if(newLength) {
+    tlData.list.push(...newList)
   }
 
   // 处理 lastItemStamp
-  const newLength = results.length
   if(newLength) {
-    handleLastItemStamp(viewType, results, ctx.lastItemStamp)
+    handleLastItemStamp(viewType, tlData, ctx.lastItemStamp)
   }
 
   // 小于一定数量的时候 表示已经触底

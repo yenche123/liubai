@@ -10,26 +10,29 @@ import { tlProps } from "./tools/types"
 const props = defineProps(tlProps)
 const emit = defineEmits<TlEmits>()
 const {
-  list,
+  tlData,
   lastItemStamp,
   hasReachBottom,
 } = useThreadList(props, emit)
-useNewAndUpdate(props, list, lastItemStamp)
+useNewAndUpdate(props, tlData, lastItemStamp)
 
 const {
   receiveOperation
-} = useThreadOperateInList(props, list)
+} = useThreadOperateInList(props, tlData)
 
 </script>
 <template>
   <div class="tl-container">
 
-    <template v-for="(item, index) in list" :key="item._id">
+    <template v-for="(item, index) in tlData.list" 
+      :key="item.thread._id"
+    >
       
       <ThreadCard 
-        :thread-data="item"
+        :thread-data="item.thread"
         :position="index"
         :view-type="viewType"
+        :show-type="item.showType"
         @newoperate="receiveOperation"
       ></ThreadCard>
     
@@ -37,7 +40,7 @@ const {
     
     <ListBottom 
       v-if="viewType !== 'PINNED'"
-      :has-data="list.length > 0" 
+      :has-data="tlData.list.length > 0" 
       :reached="hasReachBottom"
     ></ListBottom>
 

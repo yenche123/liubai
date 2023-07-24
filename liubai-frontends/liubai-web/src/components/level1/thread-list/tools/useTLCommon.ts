@@ -1,22 +1,24 @@
-import type { ThreadShow } from "~/types/types-content";
-import type { TlViewType } from "./types";
+import type { TlData, TlViewType } from "./types";
 import type { Ref } from "vue"
 
 export function handleLastItemStamp(
   viewType: TlViewType,
-  list: ThreadShow[],
+  tlData: TlData,
   lastItemStamp: Ref<number>,
 ) {
+  const { list } = tlData
   const listLength = list.length
   const lastItem = list[listLength - 1]
   if(!lastItem) return
+  const lastThread = lastItem.thread
+
   if(viewType === "FAVORITE") {
-    lastItemStamp.value = lastItem.myFavoriteStamp ?? 0
+    lastItemStamp.value = lastThread.myFavoriteStamp ?? 0
   }
   else if(viewType === "TRASH") {
-    lastItemStamp.value = lastItem.updatedStamp
+    lastItemStamp.value = lastThread.updatedStamp
   }
   else {
-    lastItemStamp.value = lastItem.createdStamp
+    lastItemStamp.value = lastThread.createdStamp
   }
 }

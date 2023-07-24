@@ -13,7 +13,7 @@ import { useI18n } from 'vue-i18n';
 import BwBubbleMenu from '~/components/browsing/bw-bubble-menu/bw-bubble-menu.vue';
 import { useTcOperation } from "./tools/useTcOperation";
 import type { TlViewType, TlDisplayType } from "../tools/types";
-import type { TcEmits } from "./tools/types"
+import type { TcShowType, TcEmits } from "./tools/types"
 
 const props = defineProps({
   threadData: {
@@ -32,6 +32,10 @@ const props = defineProps({
     type: Number,
     required: true
   },
+  showType: {
+    type: String as PropType<TcShowType>,
+    default: "normal"
+  }
 })
 const emit = defineEmits<TcEmits>()
 const {
@@ -53,6 +57,10 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
 
 </script>
 <template>
+
+<div class="tc-big-container"
+  :class="{ 'tc-big-container_hiding': showType === 'hiding' }"
+>
 
   <div class="tc-container">
 
@@ -136,9 +144,22 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
     </div>
 
   </div>
-  
+
+</div>
 </template>
 <style scoped lang="scss">
+
+.tc-big-container {
+  width: 100%;
+  position: relative;
+  transition: .3s;
+}
+
+.tc-big-container_hiding {
+  overflow: hidden;
+  max-height: 0;
+}
+
 
 .tc-container {
   width: 100%;

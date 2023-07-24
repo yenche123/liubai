@@ -1,9 +1,20 @@
-import type { ThreadListViewType } from "~/types/types-view"
+import type { ThreadListViewType, ThreadCardShowType } from "~/types/types-view"
 import type { PropType } from "vue"
 import type { TrueOrFalse } from "~/types/types-basic"
+import type { ThreadShow } from "~/types/types-content"
+
 
 export type TlViewType = ThreadListViewType
 // 要多一个 INDEX 类型是因为，此时要过滤 pinned 的动态
+
+export interface TlAtom {
+  thread: ThreadShow
+  showType: ThreadCardShowType
+}
+
+export interface TlData {
+  list: TlAtom[]
+}
 
 export interface TlProps {
   viewType: string

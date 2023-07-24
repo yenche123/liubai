@@ -6,15 +6,16 @@ import type { CommentStoreState } from "~/hooks/stores/useCommentStore"
 import type { ThreadShow } from "~/types/types-content"
 import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
 import valTool from "~/utils/basic/val-tool";
-import type { TlProps, TlViewType } from "./types"
+import type { TlData, TlProps, TlViewType } from "./types"
 import type { WhyThreadChange } from "~/types/types-atom"
 import { handleLastItemStamp } from "./useTLCommon";
 import { storeToRefs } from "pinia"
 import { watch } from "vue"
+import tlUtil from "./tl-util";
 
 export function useNewAndUpdate(
   props: TlProps,
-  listRef: Ref<ThreadShow[]>,
+  tlData: TlData,
   lastItemStamp: Ref<number>,
 ) {
   const tStore = useThreadShowStore()
@@ -31,10 +32,10 @@ export function useNewAndUpdate(
     const { newThreadShows, updatedThreadShows, whyChange } = state
 
     if(newThreadShows.length > 0) {
-      handleNewList(props, listRef, newThreadShows, lastItemStamp)
+      handleNewList(props, tlData, newThreadShows, lastItemStamp)
     }
     if(updatedThreadShows.length > 0) {
-      handleUpdatedList(props, listRef, updatedThreadShows, whyChange, lastItemStamp)
+      handleUpdatedList(props, tlData, updatedThreadShows, whyChange, lastItemStamp)
     }
   })
 
@@ -43,22 +44,22 @@ export function useNewAndUpdate(
   const { kanbanStateChange } = storeToRefs(gStore)
   watch(kanbanStateChange, (newV) => {
     if(!newV) return
-    handleKanbanStateChange(props, listRef, newV)
+    handleKanbanStateChange(props, tlData, newV)
   })
 
   // 监听 comment 发生变化
   // 若情况符合，对 thread 的 commentNum 进行修改
   const cStore = useCommentStore()
   cStore.$subscribe((mutation, state) => {
-    handleCommentChange(listRef, state)
+    handleCommentChange(tlData, state)
   })
 }
 
 function handleCommentChange(
-  listRef: Ref<ThreadShow[]>,
+  tlData: TlData,
   state: CommentStoreState,
 ) {
-  const list = listRef.value
+  const { list } = tlData
   const {
     commentId,
     changeType,
@@ -70,7 +71,7 @@ function handleCommentChange(
   if(!changeType || !commentId) return
 
   for(let i=0; i<list.length; i++) {
-    const v = list[i]
+    const v = list[i].thread
     if(v._id !== parentThread) continue
     if(changeType === "edit") return
 
@@ -90,15 +91,15 @@ function handleCommentChange(
 
 function handleKanbanStateChange(
   props: TlProps,
-  listRef: Ref<ThreadShow[]>,
+  tlData: TlData,
   ksc: KanbanStateChange,
 ) {
-  const list = listRef.value
+  const { list } = tlData
   const vT = props.viewType as TlViewType
   const inIndex = vT === "INDEX" || vT === "PINNED"
 
   for(let i=0; i<list.length; i++) {
-    const v = list[i]
+    const v = list[i].thread
     if(v.stateId !== ksc.stateId) continue
 
     if(ksc.whyChange === "delete") {
@@ -117,13 +118,12 @@ function handleKanbanStateChange(
 
   }
 
-
 }
 
 
 function handleNewList(
   props: TlProps,
-  listRef: Ref<ThreadShow[]>,
+  tlData: TlData,
   newList: ThreadShow[],
   lastItemStamp: Ref<number>,
 ) {
@@ -148,33 +148,33 @@ function handleNewList(
     return true
   })
   if(myList.length < 1) return
-  listRef.value.splice(0, 0, ...myList)
+  const _myList = tlUtil.threadShowsToList(myList)
+  tlData.list.splice(0, 0, ..._myList)
 
   if(lastItemStamp.value) return
   // 处理 lastItemStamp 为 0 的情况
-  const listVal = listRef.value
-  handleLastItemStamp(viewType, listVal, lastItemStamp)
+  handleLastItemStamp(viewType, tlData, lastItemStamp)
 }
 
 function handleUpdatedList(
   props: TlProps,
-  listRef: Ref<ThreadShow[]>,
+  tlData: TlData,
   updatedList: ThreadShow[],
   whyChange: WhyThreadChange,
   lastItemStamp: Ref<number>,
 ) {
-  const list = listRef.value
+  const { list } = tlData
   const vT = props.viewType as TlViewType
 
   if(vT === "PINNED") {
-    handleUpdateForPinnedList(listRef, updatedList)
+    handleUpdateForPinnedList(tlData, updatedList)
     return
   }
 
   const newList = valTool.copyObject(updatedList)
   for(let i=0; i<list.length; i++) {
     let idx = -1
-    const v1 = list[i]
+    const v1 = list[i].thread
     const v2 = newList.find((v, i1) => {
       if(v._id === v1._id) {
         idx = i1
@@ -201,23 +201,23 @@ function handleUpdatedList(
       }
     }
 
-    list[i] = v2
+    list[i].thread = v2
     newList.splice(idx, 1)
   }
 
   // 如果当前为 INDEX 列表 whyChange 是 pin 事件，并且有 unpin 的 thread 
   // 设法把这些 thread 加入到列表里
   if(vT === "INDEX" && whyChange === "pin") {
-    _handleIndexListWhenPin(list, newList)
+    _handleIndexListWhenPin(tlData, newList)
   }
 
-  // handleLastItemStamp(vT, list, lastItemStamp)
 }
 
 function _handleIndexListWhenPin(
-  list: ThreadShow[],
+  tlData: TlData,
   newList: ThreadShow[],
 ) {
+  const { list } = tlData
   const unpinList = newList.filter(v => !Boolean(v.pinStamp) && Boolean(v.oState === 'OK'))
   if(unpinList.length < 1) return
 
@@ -225,11 +225,11 @@ function _handleIndexListWhenPin(
     const v0 = unpinList[i]
     for(let j=0; j<list.length; j++) {
       if(j >= (list.length - 1)) break
-      const v1 = list[j]
-      const v2 = list[j + 1]
+      const v1 = list[j].thread
+      const v2 = list[j + 1].thread
       // TODO: 列表是依照时间 "顺序" 由上至下排列的情况，当前仅实现 "逆序" 排列
       if(v1.createdStamp > v0.createdStamp && v0.createdStamp > v2.createdStamp) {
-        list.splice(j + 1, 0, v0)
+        list.splice(j + 1, 0, tlUtil.threadShowToItem(v0))
         break
       }
     }
@@ -238,16 +238,17 @@ function _handleIndexListWhenPin(
 
 // 有动态更新时，特别处理置顶列表
 function handleUpdateForPinnedList(
-  listRef: Ref<ThreadShow[]>,
-  updatedList: ThreadShow[]
+  tlData: TlData,
+  updatedList: ThreadShow[],
 ) {
-  const list = listRef.value
+  const { list } = tlData
   const newList = valTool.copyObject(updatedList)
   const pinList = newList.filter(v => Boolean(v.pinStamp) && Boolean(v.oState === "OK"))
   const unpinList = newList.filter(v => !Boolean(v.pinStamp) || Boolean(v.oState !== "OK"))
 
   for(let i=0; i<list.length; i++) {
-    const v = list[i]
+    const v = list[i].thread
+
     let idx = -1
     const inPin = pinList.find((v1, i1) => {
       if(v._id === v1._id) {
@@ -261,7 +262,7 @@ function handleUpdateForPinnedList(
       return false
     })
     if(inPin) {
-      list[i] = inPin
+      list[i].thread = inPin
       pinList.splice(idx, 1)
       continue
     }
@@ -293,16 +294,16 @@ function handleUpdateForPinnedList(
     const p1 = v1.pinStamp as number
     let hasInserted = false
     for(let j=0; j<list.length; j++) {
-      const v2 = list[j]
+      const v2 = list[j].thread
       const p2 = v2.pinStamp ?? 1
       if(p1 > p2) {
         hasInserted = true
-        list.splice(j, 0, v1)
+        list.splice(j, 0, tlUtil.threadShowToItem(v1))
         break
       }
     }
     if(!hasInserted) {
-      list.push(v1)
+      list.push(tlUtil.threadShowToItem(v1))
     }
   }
 

@@ -4,12 +4,14 @@ import type {
   TlDisplayType,  
 } from '../../tools/types';
 import type { ThreadOutterOperation } from "~/types/types-atom"
+import type { ThreadCardShowType } from "~/types/types-view"
 
 export interface TcProps {
   threadData: ThreadShow
   displayType: TlDisplayType
   viewType: TlViewType
   position: number
+  showType: ThreadCardShowType
 }
 
 export interface TcEmits {
