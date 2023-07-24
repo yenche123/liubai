@@ -13,7 +13,9 @@ import { useI18n } from 'vue-i18n';
 import BwBubbleMenu from '~/components/browsing/bw-bubble-menu/bw-bubble-menu.vue';
 import { useTcOperation } from "./tools/useTcOperation";
 import type { TlViewType, TlDisplayType } from "../tools/types";
-import type { TcShowType, TcEmits } from "./tools/types"
+import type { TcEmits } from "./tools/types"
+import type { ThreadCardShowType } from "~/types/types-view"
+import { useTcAnimate } from './tools/useTcAnimate';
 
 const props = defineProps({
   threadData: {
@@ -33,7 +35,7 @@ const props = defineProps({
     required: true
   },
   showType: {
-    type: String as PropType<TcShowType>,
+    type: String as PropType<ThreadCardShowType>,
     default: "normal"
   }
 })
@@ -51,6 +53,10 @@ const {
   onTapShare,
   receiveBottomOperation,
 } = useTcOperation(props, emit)
+const {
+  cardEl,
+  cardHeightPx,
+} = useTcAnimate(props)
 
 const radius = `8px`
 const hoverRadius = props.displayType === "list" ? "24px" : "8px"
@@ -60,6 +66,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
 
 <div class="tc-big-container"
   :class="{ 'tc-big-container_hiding': showType === 'hiding' }"
+  ref="cardEl"
 >
 
   <div class="tc-container">
@@ -152,12 +159,14 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
 .tc-big-container {
   width: 100%;
   position: relative;
+  will-change: opacity, margin-block-start;
   transition: .3s;
+  padding-block-end: 10px;
 }
 
 .tc-big-container_hiding {
-  overflow: hidden;
-  max-height: 0;
+  margin-block-start: v-bind("(-cardHeightPx) + 'px'");
+  opacity: 0;
 }
 
 
@@ -168,7 +177,6 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
   background-color: var(--card-bg);
   box-shadow: var(--card-shadow-2);
   transition: border-radius .2s, box-shadow .3s;
-  margin-block-end: 10px;
 
   @media(hover: hover) {
     &:hover {

@@ -72,10 +72,6 @@ function handleOutterOperation(
   operation: ThreadOutterOperation
 ) {
 
-  console.log("handleOutterOperation..........")
-  console.log(operation)
-  console.log(" ")
-
   if(operation === "collect") {
     handle_collect(ctx)
   }
@@ -160,10 +156,16 @@ async function handle_restore(ctx: ToCtx) {
 // 去删除（允许复原）
 async function handle_delete(ctx: ToCtx) {
   const { memberId, userId, thread, tlData } = ctx
+  const poi = ctx.position
   const oldThread = valTool.copyObject(thread)
   const vT = ctx.props.viewType as TlViewType
 
-  // 0. 从列表里删除 item，先删除的原因是避免 menu 的抖动
+  // 0.1  先把该条动态的 showType 改为 hiding
+  tlData.list[poi].showType = 'hiding'
+
+  await valTool.waitMilli(300)
+
+  // 0.2 从列表里删除 item，先删除的原因是避免 menu 的抖动
   tlData.list.splice(ctx.position, 1)
 
   // 1. 执行公共逻辑
