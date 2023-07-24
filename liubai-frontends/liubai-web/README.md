@@ -17,6 +17,8 @@ https://icons.radix-ui.com/
 
 https://www.iconfinder.com/
 
+https://iconbuddy.app/
+
 ## 一些常用碎片
 
 1. `vc-` 开头的 css 类名，会跟 `vconsole` 库的样式冲突，请避免使用。
