@@ -11,7 +11,6 @@ const props = defineProps(tlProps)
 const emit = defineEmits<TlEmits>()
 const {
   tlData,
-  hasReachBottom,
 } = useThreadList(props, emit)
 useNewAndUpdate(props, tlData)
 
@@ -40,7 +39,7 @@ const {
     <ListBottom 
       v-if="viewType !== 'PINNED'"
       :has-data="tlData.list.length > 0" 
-      :reached="hasReachBottom"
+      :reached="tlData.hasReachBottom"
     ></ListBottom>
 
   </div>

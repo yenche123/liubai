@@ -15,6 +15,7 @@ export interface TlAtom {
 export interface TlData {
   list: TlAtom[]
   lastItemStamp: number
+  hasReachBottom: boolean
 }
 
 export interface TlProps {

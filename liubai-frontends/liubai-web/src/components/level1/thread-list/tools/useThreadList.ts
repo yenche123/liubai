@@ -22,7 +22,6 @@ interface TlContext {
   svBottomUp?: ShallowRef<SvBottomUp>
   reloadRequired: boolean
   emits: TlEmits
-  hasReachBottom: Ref<boolean>
 }
 
 export function useThreadList(
@@ -35,10 +34,10 @@ export function useThreadList(
   let spaceIdRef = storeToRefs(wStore).spaceId
   const svBottomUp = inject(svBottomUpKey)
 
-  const hasReachBottom = ref(false)
   const tlData = reactive<TlData>({
     list: [],
     lastItemStamp: 0,
+    hasReachBottom: false,
   })
 
   const ctx: TlContext = {
@@ -50,7 +49,6 @@ export function useThreadList(
     svBottomUp,
     reloadRequired: false,
     emits,
-    hasReachBottom,
   }
 
   // 监听触底/顶加载
@@ -65,7 +63,7 @@ export function useThreadList(
     // console.log(" ")
 
     if(type === "to_end") {
-      if(hasReachBottom.value) return
+      if(tlData.hasReachBottom) return
       loadList(ctx)
     }
     else if(type === "to_start") {
@@ -121,7 +119,6 @@ export function useThreadList(
 
   return {
     tlData,
-    hasReachBottom,
   }
 }
 
@@ -167,12 +164,13 @@ async function loadList(
 ) {
   const spaceId = ctx.spaceIdRef.value
   if(!spaceId) return
+  
+  const { tlData } = ctx
   if(reload) {
-    ctx.hasReachBottom.value = false
+    tlData.hasReachBottom = false
     ctx.reloadRequired = false
   }
 
-  const { tlData } = ctx
   const oldList = tlData.list
   const viewType = ctx.viewType.value
   const tagId = ctx.tagId.value
@@ -218,6 +216,6 @@ async function loadList(
 
   // 小于一定数量的时候 表示已经触底
   if(newLength < 6) {
-    ctx.hasReachBottom.value = true
+    tlData.hasReachBottom = true
   }
 }
