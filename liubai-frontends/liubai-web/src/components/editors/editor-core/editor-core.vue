@@ -128,7 +128,7 @@ defineExpose({ editor })
   }
 
   pre {
-    background: #121212;
+    background: var(--code-block-bg);
     color: #eee;
     font-family: 'JetBrainsMono', monospace;
     padding: 2.5rem 1rem 0.75rem;

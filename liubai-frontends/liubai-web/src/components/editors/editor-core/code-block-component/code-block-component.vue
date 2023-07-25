@@ -31,11 +31,22 @@
         <span v-else>Auto</span>
       </div>
       <div class="cbrt-line" />
-      <div class="cbrt-btn" @click.stop="onTapCopyCode">
+      <div class="cbrt-btn" 
+        :class="{ 'cbrt-btn_no_pointer': showCopied }"
+        @click.stop="onTapCopyCode"
+      >
         <svg-icon name="copy" color="#a0a0a0" class="cbrt-btn-svg"></svg-icon>
         <div class="cbrt-btn-text">
           <span>{{ t('editor.copy_code') }}</span>
         </div>
+
+        <div class="cbrt-copied" :class="{ 'cbrt-copied_show': showCopied }">
+          <svg-icon name="check" color="#a0a0a0" class="cbrt-btn-svg"></svg-icon>
+          <div class="cbrt-btn-text">
+            <span>{{ t('common.copied') }}</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -47,7 +58,7 @@
 import { NodeViewContent, nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
 import liuUtil from '~/utils/liu-util'
 import { useI18n } from 'vue-i18n'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { 
   showProgrammingLanguages,
   supportedToShow,
@@ -58,7 +69,7 @@ import type {
   CbcFragment,
 } from "./tools/types"
 import liuApi from '~/utils/liu-api'
-import cui from '~/components/custom-ui'
+import type { LiuTimeout } from '~/utils/basic/type-tool'
 
 export default {
   components: {
@@ -94,13 +105,20 @@ export default {
     })
 
 
+    let copiedTimeout: LiuTimeout
+    const showCopied = ref(false)
     const onTapCopyCode = () => {
       //@ts-ignore
       const c = liuUtil.toRawData(props.node.content) as CbcFragment
       const text = c?.content?.[0].text
       if(!text) return
       liuApi.copyToClipboard(text)
-      cui.showSnackBar({ text_key: "common.copied" })
+      showCopied.value = true
+      if(copiedTimeout) clearInterval(copiedTimeout)
+      copiedTimeout = setTimeout(() => {
+        copiedTimeout = undefined
+        showCopied.value = false
+      }, 2000)
     }
 
 
@@ -111,6 +129,7 @@ export default {
       selectedLanguage,
       showLanguage,
       onTapCopyCode,
+      showCopied,
     }
   },
 }
@@ -210,6 +229,10 @@ export default {
       }
     }
 
+    .cbrt-btn_no_pointer {
+      cursor: default;
+    }
+
     @media(hover: hover) {
       .cbrt-btn:hover {
         background-color: #2f2f2f;
@@ -230,6 +253,27 @@ export default {
       color: #a0a0a0;
       font-size: var(--mini-font);
       user-select: none;
+    }
+
+    .cbrt-copied {
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--code-block-bg);
+      opacity: 0;
+      visibility: hidden;
+      transition: .15s;
+      will-change: opacity;
+    }
+
+    .cbrt-copied_show {
+      visibility: visible;
+      opacity: 1;
     }
 
   }

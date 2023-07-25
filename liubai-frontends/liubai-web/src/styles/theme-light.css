@@ -67,6 +67,7 @@
   --avatar-bg: #435964;
   --avatar-color: #f1f1f1;
   --comment-hover-one: #e2e5e8;  /** 评论区里的 hover 颜色  */
+  --code-block-bg: #121212;      /** 代码块的背景色，深色模式同此值，故 theme-dark.css 无需添加此值 */
 
   /** 自定义组件: 加载框 */
   --cui-loading: rgba(46, 46, 46, .91);
