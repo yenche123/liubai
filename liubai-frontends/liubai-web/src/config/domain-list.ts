@@ -62,6 +62,7 @@ export const domainAllowed = [
   "booking.com",
   "readhub.cn",
   "hackertalk.net",
+  "craft.me",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
