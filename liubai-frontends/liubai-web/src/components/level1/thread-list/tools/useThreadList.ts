@@ -95,7 +95,7 @@ export function useThreadList(
     ) => {
     if(!newV3) return
 
-    if(newV4 > oldV4) {
+    if(oldV4 && newV4 > oldV4) {
       if(!isActivated) {
         ctx.reloadRequired = true
         return
@@ -109,13 +109,7 @@ export function useThreadList(
     }
 
     scollTopAndUpdate(ctx)
-  })
-
-  // 如果 workspace 已经存在了，那么就不会触发上方的 watch
-  // 所以这里加一段 loadList
-  if(spaceIdRef.value) {
-    loadList(ctx, true)
-  }
+  }, { immediate: true })
 
   return {
     tlData,
@@ -129,7 +123,7 @@ function scollTopAndUpdate(
   if(ctx.svBottomUp && !isViewType(ctx, "PINNED")) {
     ctx.svBottomUp.value = { type: "pixel", pixel: 0 }
   }
-  // console.log(`${ctx.viewType.value} ${ctx.tagId.value} 正在执行 scollTopAndUpdate...`)
+  console.log(`${ctx.viewType.value} ${ctx.tagId.value} 正在执行 scollTopAndUpdate...`)
   loadList(ctx, true)
 }
 
