@@ -13,6 +13,14 @@ const getTime = (): number => {
   return Date.now() + diff
 }
 
+// 返回当前时间戳的后四码
+const getLastCharOfStamp = (digit: number = 4): string => {
+  const s = getTime()
+  const s1 = String(s)
+  const s2 = s1.substring(s1.length - digit)
+  return s2
+}
+
 // 返回未经过标定的时间
 const getLocalTime = (): number => {
   return Date.now()
@@ -38,6 +46,7 @@ const getLocalTimeStr = (): string => {
 
 export default {
   getTime,
+  getLastCharOfStamp,
   getLocalTime,
   getDate,
   getLocalTimeStr

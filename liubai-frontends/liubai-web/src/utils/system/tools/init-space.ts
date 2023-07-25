@@ -4,17 +4,21 @@ import type { RouteLocationNormalizedLoaded } from "vue-router"
 import { db } from "../../db"
 import localCache from "../local-cache"
 import type { SpaceAndMemberOpt, WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
+import typeCheck from "~/utils/basic/type-check"
+import time from "~/utils/basic/time"
+
+let routeChangeNum = 0
+let lastRouteChange = 0
 
 export function initSpace(
   store: WorkspaceStore
 ) {
   // 在 <App /> 的 setup 周期内 route.name 为 undefined
-  let routeChangeNum = 0
   const { route } = useRouteAndLiuRouter()
 
   watch(route, (newV) => {
     routeChangeNum++
-    whenRouteChange(store, newV, routeChangeNum)
+    whenRouteChange(store, newV)
   })
 }
 
@@ -26,22 +30,35 @@ async function getMySpaceIds(userId: string) {
   return list
 }
 
+/** 防抖节流:
+ *  目前仅判断启动时（routeChangeNum <= 2），是否多次触发 whenRouteChange
+ * @return boolean 返回 true 表示允许继续执行，反之则相反
+ */
+function _debounce() {
+  if(routeChangeNum !== 2) {
+    lastRouteChange = time.getTime()
+    return true
+  }
+  const now = time.getTime()
+  const diff = now - lastRouteChange
+  lastRouteChange = now
+  if(diff < 300) return false
+  return true
+}
+
 async function whenRouteChange(
   store: WorkspaceStore,
   newV: RouteLocationNormalizedLoaded,
-  routeChangeNum: number,
 ) {
 
   const { inApp, checkWorkspace } = newV.meta
   const pageName = newV.name
-  if(inApp === false) {
-    return
-  }
+  if(inApp === false) return
 
   // 从路由的 params 里寻找 spaceId
   let spaceId = newV.params.workspaceId
   if(spaceId) {
-    if(typeof spaceId === 'string') {
+    if(typeCheck.isString(spaceId)) {
       handleCollaborativeSpace(store, spaceId)
     }
     return
@@ -60,6 +77,7 @@ async function whenRouteChange(
   const localP = localCache.getLocalPreference()
   const userId = localP.local_id
   if(!userId) return
+  if(!_debounce()) return
 
   const g = {
     infoType: "ME",
@@ -71,9 +89,7 @@ async function whenRouteChange(
   console.timeEnd("init-space")
   
   if(!mySpace) return
-  if(store.spaceId === mySpace._id) {
-    return
-  }
+  if(store.spaceId === mySpace._id) return
 
   // 去查找我在该 workspace 的 member_id
   // 可能不存在，没有关系，就置入空字符串 "" 即可
