@@ -63,6 +63,7 @@ export const domainAllowed = [
   "readhub.cn",
   "hackertalk.net",
   "craft.me",
+  "i.ibb.co",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
@@ -93,4 +94,5 @@ export const domainNotAllowed = [
   "coda.io",
   "twitter.com",
   "skiff.com",
+  "perplexity.ai",
 ]
