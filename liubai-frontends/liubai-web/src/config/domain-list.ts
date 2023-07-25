@@ -91,4 +91,5 @@ export const domainNotAllowed = [
   "1drv.ms",
   "coda.io",
   "twitter.com",
+  "skiff.com",
 ]
