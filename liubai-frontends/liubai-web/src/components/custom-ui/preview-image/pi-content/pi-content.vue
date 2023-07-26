@@ -52,7 +52,12 @@ const onTapRight = (e: MouseEvent) => {
 }
     
 const onSwiper = (swiper: Swiper) => {
-  swiper.activeIndex = props.currentIndex
+  const idx = props.currentIndex
+  if(idx > 0) {
+    swiper.activeIndex = idx
+    swiper.update()
+  }
+
   _swiper.value = swiper
   emit("swiper", swiper)
 }
