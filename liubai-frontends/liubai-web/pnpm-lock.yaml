@@ -98,8 +98,8 @@ dependencies:
     specifier: ^2.1.4
     version: 2.1.4(typescript@5.0.4)(vue@3.3.4)
   swiper:
-    specifier: ^9.3.2
-    version: 9.3.2
+    specifier: ^10.0.4
+    version: 10.0.4
   tippy.js:
     specifier: ^6.3.7
     version: 6.3.7
@@ -817,13 +817,13 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: false
 
-  /@linaria/core@4.2.9:
-    resolution: {integrity: sha512-ELcu37VNVOT/PU0L6WDIN+aLzNFyJrqoBYT0CucGOCAmODbojUMCv8oJYRbWzA3N34w1t199dN4UFdfRWFG2rg==}
+  /@linaria/core@4.2.10:
+    resolution: {integrity: sha512-S1W01W7L4SQnGpWzp8awyCpPIYUOEJ+OLjjXqKpIXOU+ozPwBt86Mjjdas9aZccVhNBWDja74cMCUAVp8yUpDQ==}
     engines: {node: ^12.16.0 || >=13.7.0}
     dependencies:
       '@linaria/logger': 4.5.0
-      '@linaria/tags': 4.5.2
-      '@linaria/utils': 4.5.1
+      '@linaria/tags': 4.5.4
+      '@linaria/utils': 4.5.3
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -838,30 +838,33 @@ packages:
       - supports-color
     dev: false
 
-  /@linaria/tags@4.5.2:
-    resolution: {integrity: sha512-ougIJrket1Q1qBc/JlBBt63dzFZwrDxx51MsVeYQ0lagbfLLHCfdVKFrsQy2YBQkBFw5hAHDP9+0uPvBy662ng==}
+  /@linaria/tags@4.5.4:
+    resolution: {integrity: sha512-HPxLB6HlJWLi6o8+8lTLegOmDnbMbuzEE+zzunaPZEGSoIIYx8HAv5VbY/sG/zNyxDElk6laiAwEVWN8h5/zxg==}
     engines: {node: ^12.16.0 || >=13.7.0}
     dependencies:
       '@babel/generator': 7.22.9
       '@linaria/logger': 4.5.0
-      '@linaria/utils': 4.5.1
+      '@linaria/utils': 4.5.3
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@linaria/utils@4.5.1:
-    resolution: {integrity: sha512-BvVEDuwltfsia3tT72EFoqQvlkockii4rRdexBV5QOxmxVLFPo2jp+cqIybpa8aBtSpiflCdgwYvz+YlLR5ZCg==}
+  /@linaria/utils@4.5.3:
+    resolution: {integrity: sha512-tSpxA3Zn0DKJ2n/YBnYAgiDY+MNvkmzAHrD8R9PKrpGaZ+wz1jQEmE1vGn1cqh8dJyWK0NzPAA8sf1cqa+RmAg==}
     engines: {node: ^12.16.0 || >=13.7.0}
     dependencies:
       '@babel/core': 7.22.9
+      '@babel/generator': 7.22.9
       '@babel/plugin-proposal-export-namespace-from': 7.18.9(@babel/core@7.22.9)
       '@babel/plugin-syntax-dynamic-import': 7.8.3(@babel/core@7.22.9)
       '@babel/plugin-transform-modules-commonjs': 7.22.5(@babel/core@7.22.9)
+      '@babel/template': 7.22.5
       '@babel/traverse': 7.22.8
       '@babel/types': 7.22.5
       '@linaria/logger': 4.5.0
       babel-merge: 3.0.0(@babel/core@7.22.9)
       find-up: 5.0.0
+      minimatch: 9.0.3
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -1011,18 +1014,15 @@ packages:
     resolution: {integrity: sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==}
     dev: false
 
-  /@remirror/core-constants@2.0.1:
-    resolution: {integrity: sha512-ZR4aihtnnT9lMbhh5DEbsriJRlukRXmLZe7HmM+6ufJNNUDoazc75UX26xbgQlNUqgAqMcUdGFAnPc1JwgAdLQ==}
-    dependencies:
-      '@babel/runtime': 7.22.6
+  /@remirror/core-constants@2.0.2:
+    resolution: {integrity: sha512-dyHY+sMF0ihPus3O27ODd4+agdHMEmuRdyiZJ2CCWjPV5UFmn17ZbElvk6WOGVE4rdCJKZQCrPV2BcikOMLUGQ==}
     dev: false
 
-  /@remirror/core-helpers@2.0.3:
-    resolution: {integrity: sha512-LqIPF4stGG69l9qu/FFicv9d9B+YaItzgDMC5A0CEvDQfKkGD3BfabLmfpnuWbsc06oKGdTduilgWcALLZoYLg==}
+  /@remirror/core-helpers@2.0.4:
+    resolution: {integrity: sha512-aYoiJ8x/Sxc4OIZCcZI2tSa92rOufzpDkVTHtwh8+HEsGj0PumUrXbwVd3jHZRSoOUNYNG8fPnOmzuVOsO9CMQ==}
     dependencies:
-      '@babel/runtime': 7.22.6
-      '@linaria/core': 4.2.9
-      '@remirror/core-constants': 2.0.1
+      '@linaria/core': 4.2.10
+      '@remirror/core-constants': 2.0.2
       '@remirror/types': 1.0.1
       '@types/object.omit': 3.0.0
       '@types/object.pick': 1.3.2
@@ -1324,7 +1324,7 @@ packages:
       prosemirror-schema-list: 1.3.0
       prosemirror-state: 1.4.3
       prosemirror-tables: 1.3.4
-      prosemirror-trailing-node: 2.0.4(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.31.6)
+      prosemirror-trailing-node: 2.0.5(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.31.6)
       prosemirror-transform: 1.7.3
       prosemirror-view: 1.31.6
     transitivePeerDependencies:
@@ -1731,7 +1731,6 @@ packages:
 
   /balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
-    dev: true
 
   /base@0.11.2:
     resolution: {integrity: sha512-5T6P4xPgpp0YDFvSWwEZ4NoE3aM4QBQXDzmVbraCkFj8zHM+mba8SyqB5DbZWyR7mYHo6Y7BdQo3MoA4m0TeQg==}
@@ -1794,7 +1793,6 @@ packages:
     resolution: {integrity: sha512-XnAIvQ8eM+kC6aULx6wuQiwVsnzsi9d3WxzV3FpWTGA19F621kwdbsAcFKXgKUHZWsy+mY6iL1sHTxWEFCytDA==}
     dependencies:
       balanced-match: 1.0.2
-    dev: true
 
   /braces@2.3.2:
     resolution: {integrity: sha512-aNdbnj9P8PjdXU4ybaWLK2IF3jc/EoDYbC7AazW6to3TRsfXxscC9UXOB5iDiEQrkyIbWp2SLQda4+QAa7nc3w==}
@@ -1826,7 +1824,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001517
-      electron-to-chromium: 1.4.468
+      electron-to-chromium: 1.4.471
       node-releases: 2.0.13
       update-browserslist-db: 1.0.11(browserslist@4.21.9)
     dev: false
@@ -2214,8 +2212,8 @@ packages:
       helper-js: 3.1.2
     dev: false
 
-  /electron-to-chromium@1.4.468:
-    resolution: {integrity: sha512-6M1qyhaJOt7rQtNti1lBA0GwclPH+oKCmsra/hkcWs5INLxfXXD/dtdnaKUYQu/pjOBP/8Osoe4mAcNvvzoFag==}
+  /electron-to-chromium@1.4.471:
+    resolution: {integrity: sha512-GpmGRC1vTl60w/k6YpQ18pSiqnmr0j3un//5TV1idPi6aheNfkT1Ye71tMEabWyNDO6sBMgAR+95Eb0eUUr1tA==}
     dev: false
 
   /emojis-list@3.0.0:
@@ -3133,7 +3131,6 @@ packages:
     engines: {node: '>=16 || 14 >=14.17'}
     dependencies:
       brace-expansion: 2.0.1
-    dev: true
 
   /minimist@1.2.7:
     resolution: {integrity: sha512-bzfL1YUZsP41gmu/qjrEk0Q6i2ix/cVeAhbCbqH9u3zYutS1cLg00qhrD0M2MVdCcx4Sc0UpP2eBWo9rotpq6g==}
@@ -3617,16 +3614,15 @@ packages:
       prosemirror-view: 1.31.6
     dev: false
 
-  /prosemirror-trailing-node@2.0.4(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.31.6):
-    resolution: {integrity: sha512-0Yl9w7IdHkaCdqR+NE3FOucePME4OmiGcybnF1iasarEILP5U8+4xTnl53yafULjmwcg1SrSG65Hg7Zk2H2v3g==}
+  /prosemirror-trailing-node@2.0.5(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.31.6):
+    resolution: {integrity: sha512-V3CJLAmlLr73N6rLVzuM1jU0wlbKFMA+I3DG3zTlFah651A9dDTkXWFGNKAo0uhPI7ajFmQLhlLC1lie/6d9sA==}
     peerDependencies:
       prosemirror-model: ^1.19.0
       prosemirror-state: ^1.4.2
-      prosemirror-view: ^1.30.2
+      prosemirror-view: ^1.31.2
     dependencies:
-      '@babel/runtime': 7.22.6
-      '@remirror/core-constants': 2.0.1
-      '@remirror/core-helpers': 2.0.3
+      '@remirror/core-constants': 2.0.2
+      '@remirror/core-helpers': 2.0.4
       escape-string-regexp: 4.0.0
       prosemirror-model: 1.19.3
       prosemirror-state: 1.4.3
@@ -3903,10 +3899,6 @@ packages:
       extend-shallow: 3.0.2
     dev: true
 
-  /ssr-window@4.0.2:
-    resolution: {integrity: sha512-ISv/Ch+ig7SOtw7G2+qkwfVASzazUnvlDTwypdLoPoySv+6MqlOV10VwPSE6EWkGjhW50lUmghPmpYZXMu/+AQ==}
-    dev: false
-
   /stable@0.1.8:
     resolution: {integrity: sha512-ji9qxRnOVfcuLDySj9qzhGSEFVobyt1kIOSkj1qZzYLzq7Tos/oUUWvotUPQLlrsidqsK6tBH89Bc9kL5zHA6w==}
     deprecated: 'Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility'
@@ -4007,11 +3999,9 @@ packages:
       stable: 0.1.8
     dev: true
 
-  /swiper@9.3.2:
-    resolution: {integrity: sha512-Kj9Z4kXRmJR3YT/Wj+XLWj8P6IcRt+WG38uL8M3/Wny7+6sV0TlP9vnE1X+Co9c7VzNooojWGnFa+Wf/9+CUMA==}
+  /swiper@10.0.4:
+    resolution: {integrity: sha512-DlNR3KiaVkPep6RraZ2tNr7lvyuzELuR+4NZr4wO42t0UworIO3DxDlz8b5Q3uUioh7cJad99EdRJLkPF+r8Ag==}
     engines: {node: '>= 4.7.0'}
-    dependencies:
-      ssr-window: 4.0.2
     dev: false
 
   /throttle-debounce@3.0.1:

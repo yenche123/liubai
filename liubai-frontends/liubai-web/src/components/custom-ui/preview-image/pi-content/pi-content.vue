@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Swiper, Zoom } from "swiper"
+import { Swiper } from "swiper"
+import { Zoom } from "swiper/modules"
 import { Swiper as VueSwiper, SwiperSlide } from 'swiper/vue';
 
 import { ref, shallowRef } from 'vue';
