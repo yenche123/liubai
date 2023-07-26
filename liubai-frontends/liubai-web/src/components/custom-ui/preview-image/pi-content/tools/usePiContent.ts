@@ -3,9 +3,14 @@ import type { Ref } from "vue";
 import { useWindowSize } from '~/hooks/useVueUse';
 import type { ImageShow } from '~/types';
 import type { LiuTimeout } from '~/utils/basic/type-tool';
-import type { PicProps, PicCover } from './types';
+import type { PicProps, PicCover, PicEmits } from './types';
+import type { ZoomEvents } from "swiper/types"
+import time from '~/utils/basic/time';
 
-export function usePiContent(props: PicProps) {
+export function usePiContent(
+  props: PicProps,
+  emit: PicEmits
+) {
 
   const covers = ref<PicCover[]>([])
   const coverLength = computed(() => covers.value.length)
@@ -23,7 +28,47 @@ export function usePiContent(props: PicProps) {
 
   calcImages(covers, imgsRef.value, width.value, height.value)
 
-  return { covers, coverLength }
+  const onTapBox = () => {
+    handleTapBox(props, emit)
+  }
+
+  const onZoomChange: ZoomEvents['zoomChange'] = (
+    swiper,
+    scale,
+    imageEl,
+    slideEl,
+  ) => {
+    whenZoomChange()
+  }
+
+  return { 
+    covers, 
+    coverLength,
+    onTapBox,
+    onZoomChange,
+  }
+}
+
+
+let waitingToCancel: LiuTimeout
+let lastTapBox = 0
+function whenZoomChange() {
+  if(waitingToCancel) clearInterval(waitingToCancel)
+}
+
+function handleTapBox(
+  props: PicProps,
+  emit: PicEmits
+) {
+  const now = time.getTime()
+  const diff = now - lastTapBox
+  if(diff < 500) return
+  lastTapBox = now
+
+  waitingToCancel = setTimeout(() => {
+    waitingToCancel = undefined
+    emit('cancel')
+  }, 300)
 }
 
 /**

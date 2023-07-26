@@ -37,7 +37,7 @@ export function initPreviewImage() {
     enable,
     show,
     data,
-    onTapCancel,
+    toCancel,
     onPiSwiper,
   }
 }
@@ -55,10 +55,10 @@ function listenRouteChange() {
     else {
       _toClose()
     }
-  })
+  }, { immediate: true })
 }
 
-function onTapCancel() {
+function toCancel() {
   closeIt(rr, queryKey)
 }
 
@@ -117,7 +117,7 @@ async function _toOpen() {
   enable.value = true
   await valTool.waitMilli(16)
   show.value = true
-  toListenEscKeyUp(onTapCancel)
+  toListenEscKeyUp(toCancel)
 }
 
 function _openByViewTransition() {
@@ -145,7 +145,7 @@ function _openByViewTransition() {
 
   transition.finished.then(() => {
     // console.timeEnd("transition-finished")
-    toListenEscKeyUp(onTapCancel)
+    toListenEscKeyUp(toCancel)
   })
 }
 

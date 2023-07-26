@@ -7,7 +7,7 @@ const {
   show,
   TRANSITION_DURATION,
   data,
-  onTapCancel,
+  toCancel,
   onPiSwiper,
 } = initPreviewImage()
 
@@ -17,13 +17,13 @@ const {
   <div v-if="enable" 
     class="pi-container"
     :class="{ 'pi-container_show': show }"
-    @click.stop="onTapCancel"
   >
     <PiContent 
       :current-index="data.index" 
       :imgs="data.imgs"
       :view-transition-name="data.viewTransition ? 'preview-image' : undefined"
       @swiper="onPiSwiper"
+      @cancel="toCancel"
     ></PiContent>
   </div>
 

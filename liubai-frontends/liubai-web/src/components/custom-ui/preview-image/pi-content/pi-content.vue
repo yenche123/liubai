@@ -1,18 +1,28 @@
 <script setup lang="ts">
-import { Swiper } from "swiper"
+import { Swiper, Zoom } from "swiper"
 import { Swiper as VueSwiper, SwiperSlide } from 'swiper/vue';
+
 import { ref, shallowRef } from 'vue';
-import 'swiper/css';
 import { usePiContent } from "./tools/usePiContent";
 import { picProps } from "./tools/types"
 import type { PicEmits } from "./tools/types"
+
+// 引入样式
+import 'swiper/css';
+import 'swiper/css/zoom';
 
 const iconColor = "rgba(255, 255, 255, .95)"
 
 const props = defineProps(picProps)
 const emit = defineEmits<PicEmits>()
 
-const { covers, coverLength } = usePiContent(props)
+const { 
+  covers, 
+  coverLength,
+  onTapBox,
+  onZoomChange,
+} = usePiContent(props, emit)
+const modules = [Zoom]
     
 let _swiper = shallowRef<Swiper | null>(null)
 const leftArrow = ref(false)
@@ -47,15 +57,19 @@ const onSwiper = (swiper: Swiper) => {
 
 </script>
 <template>
-  <VueSwiper @swiper="onSwiper" @slideChange="onSlideChange">
+  <VueSwiper @swiper="onSwiper" 
+    @slideChange="onSlideChange"
+    :modules="modules"
+    :zoom="true"
+    @zoom-change="onZoomChange"
+  >
     <template v-for="(item, index) in covers" :key="item.id">
       <SwiperSlide>
 
         <!-- slide 盒子 -->
-        <div class="pi-scroll-box" :class="{ 'pi-item_grab': coverLength > 1 }">
-
+        <div class="pi-scroll-box" @click.stop="onTapBox">
           <!-- 再给出这个 slide 可以上下左右自动对齐的盒子 -->
-          <div class="pi-item">
+          <div class="pi-item swiper-zoom-container">
             <liu-img :src="item.src" 
               object-fit="cover" class="pi-image" 
               :style="{
@@ -77,7 +91,7 @@ const onSwiper = (swiper: Swiper) => {
   </VueSwiper>
 
   <!-- 右上角: x按钮 -->
-  <div class="pi-close">
+  <div class="pi-close" @click.stop="$emit('cancel')">
     <svg-icon name="close" class="pi-close-icon" :color="iconColor"></svg-icon>
   </div>
 
@@ -119,14 +133,6 @@ const onSwiper = (swiper: Swiper) => {
     transition: .2s;
   }
 
-}
-
-.pi-item_grab {
-  cursor: grab;
-}
-
-.pi-item_grab:active {
-  cursor: grabbing;
 }
 
 .pi-close {

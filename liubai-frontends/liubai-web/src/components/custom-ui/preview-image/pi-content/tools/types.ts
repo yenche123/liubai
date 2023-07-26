@@ -22,7 +22,8 @@ export const picProps = {
 }
 
 export interface PicEmits {
-  (event: "swiper", swiper: Swiper): void
+  (evt: "swiper", swiper: Swiper): void
+  (evt: "cancel"): void
 }
 
 export interface PicCover {
