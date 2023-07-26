@@ -3,7 +3,7 @@ import type { Ref } from "vue";
 import { useWindowSize } from '~/hooks/useVueUse';
 import type { ImageShow } from '~/types';
 import type { LiuTimeout } from '~/utils/basic/type-tool';
-import type { PicProps, PicCover, PicEmits } from './types';
+import type { PicProps, PicCover, PicEmits, PicCtx } from './types';
 import type { ZoomEvents } from "swiper/types"
 import time from '~/utils/basic/time';
 
@@ -16,6 +16,13 @@ export function usePiContent(
   const coverLength = computed(() => covers.value.length)
   const { width, height } = useWindowSize()
   const imgsRef = toRef(props, "imgs")
+  const zoomScale = ref(1)
+
+  const ctx: PicCtx = {
+    props,
+    emit,
+    zoomScale,
+  }
 
   let timeout: LiuTimeout
   watch([imgsRef, width, height], (newV) => {
@@ -28,46 +35,97 @@ export function usePiContent(
 
   calcImages(covers, imgsRef.value, width.value, height.value)
 
-  const onTapBox = () => {
-    handleTapBox(props, emit)
-  }
-
   const onZoomChange: ZoomEvents['zoomChange'] = (
     swiper,
     scale,
     imageEl,
     slideEl,
   ) => {
+    ctx.swiper = swiper
+    ctx.zoomScale.value = scale
     whenZoomChange()
+  }
+
+  const onBoxPointerDown = (evt: PointerEvent) => {
+    whenBoxPointerDown(evt)
+  }
+
+  const onBoxPointerUp = (evt: PointerEvent) => {
+    whenBoxPointerUp(ctx, evt)
   }
 
   return { 
     covers, 
     coverLength,
-    onTapBox,
     onZoomChange,
+    onBoxPointerDown,
+    onBoxPointerUp,
   }
 }
 
 
 let waitingToCancel: LiuTimeout
 let lastTapBox = 0
+let lastPointerDown = 0
+let lastClientX = 0
+let lastClientY = 0
 function whenZoomChange() {
   if(waitingToCancel) clearInterval(waitingToCancel)
 }
 
-function handleTapBox(
-  props: PicProps,
-  emit: PicEmits
+function whenBoxPointerDown(evt: PointerEvent) {
+  lastPointerDown = time.getTime()
+  const { clientX, clientY } = evt
+  lastClientX = clientX
+  lastClientY = clientY
+}
+
+function checkIfTap(
+  evt: PointerEvent,
 ) {
   const now = time.getTime()
-  const diff = now - lastTapBox
-  if(diff < 500) return
+  const diff = now - lastPointerDown
+
+  if(diff > 200) {
+    // console.log("压到弹起，超过 200 ms，不是点击事件.....")
+    return false
+  }
+
+  const { clientX, clientY } = evt
+  const x2 = (clientX - lastClientX) ** 2     // ** 表示指数计算
+  const y2 = (clientY - lastClientY) ** 2
+  const distance = Math.sqrt(x2 + y2)
+  if(distance < 16) return true
+  return false
+}
+
+function whenBoxPointerUp(
+  ctx: PicCtx,
+  evt: PointerEvent,
+) {
+  // 1. 判断是不是点击事件
+  if(!checkIfTap(evt)) return
+  
+  // 2. 判断是不是连续点击，若是忽略
+  const now = time.getTime()
+  const diff2 = now - lastTapBox
+  if(diff2 < 400) return
   lastTapBox = now
 
   waitingToCancel = setTimeout(() => {
     waitingToCancel = undefined
-    emit('cancel')
+    
+    const scale = ctx.zoomScale.value
+    const swiper = ctx.swiper
+    // console.log("当前缩放尺寸: ", scale)
+
+    if(scale > 1 && swiper) {
+      swiper.zoom.toggle()
+    }
+    else {
+      ctx.emit('cancel')
+    }
+
   }, 300)
 }
 

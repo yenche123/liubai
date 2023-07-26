@@ -19,7 +19,8 @@ const emit = defineEmits<PicEmits>()
 const { 
   covers, 
   coverLength,
-  onTapBox,
+  onBoxPointerDown,
+  onBoxPointerUp,
   onZoomChange,
 } = usePiContent(props, emit)
 const modules = [Zoom]
@@ -67,7 +68,10 @@ const onSwiper = (swiper: Swiper) => {
       <SwiperSlide>
 
         <!-- slide 盒子 -->
-        <div class="pi-scroll-box" @click.stop="onTapBox">
+        <div class="pi-scroll-box" 
+          @pointerdown="onBoxPointerDown"
+          @pointerup="onBoxPointerUp"
+        >
           <!-- 再给出这个 slide 可以上下左右自动对齐的盒子 -->
           <div class="pi-item swiper-zoom-container">
             <liu-img :src="item.src" 

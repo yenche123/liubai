@@ -1,5 +1,6 @@
 import type { ImageShow } from '~/types';
-import { Swiper } from "swiper"
+import type { Swiper } from "swiper"
+import type { Ref } from 'vue';
 
 export interface PicProps {
   imgs: ImageShow[]
@@ -32,4 +33,11 @@ export interface PicCover {
   width: number
   height: number
   blurhash?: string
+}
+
+export interface PicCtx {
+  swiper?: Swiper
+  props: PicProps
+  emit: PicEmits
+  zoomScale: Ref<number>    // 当前缩放的比例，默认为 1
 }
