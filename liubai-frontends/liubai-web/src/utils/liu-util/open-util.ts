@@ -115,21 +115,18 @@ function openXhs(
   opt: RrOpt,
   forceVv: boolean = false,
 ): InnerOrOutter {
-  const { route, router } = opt.rr
-  const w = toWhatDetail()
-  if(forceVv || w === "vice-view") {
-    const newQ = { xhs: keyword }
-    if(opt.replace) router.replaceWithNewQuery(route, newQ)
-    else router.pushCurrentWithNewQuery(route, newQ)
-    return "inner"
-  }
   openExternalXhs(keyword)
   return "outter"
 }
 
 function getXhsSearchLink(keyword: string) {
   const url = new URL(thirdLink.XHS_SEARCH)
-  url.searchParams.append("name", keyword)
+  const sp = url.searchParams
+  if(!keyword.includes("%")) {
+    keyword = encodeURIComponent(keyword)
+  }
+  sp.append("keyword", keyword)
+  sp.append("type", "51")
   return url.toString()
 }
 

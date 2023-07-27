@@ -5,7 +5,7 @@ export default {
   SOUGO_SEARCH: "https://m.sogou.com/web/searchList.jsp",
   CHAT_GPT: "https://chat.openai.com/chat",
   BING_SEARCH: "https://www.bing.com/search",
-  XHS_SEARCH: "https://www.xiaohongshu.com/mobile/tags/2301846829538365187",
+  XHS_SEARCH: "https://www.xiaohongshu.com/search_result",
   GITHUB_SEARCH: "https://github.com/search",
   GOOGLE_CALENDAR_ADD: "https://calendar.google.com/calendar/u/0/r/eventedit",
   OUTLOOK_ADD: "https://outlook.live.com/calendar/0/deeplink/compose",
