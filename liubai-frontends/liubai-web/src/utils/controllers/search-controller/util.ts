@@ -58,7 +58,7 @@ function _getTitleAndDesc(v: ContentLocalTable, keyword?: string) {
   let title = v.title ?? ""
   let desc = ""
 
-  let content = transferUtil.tiptapToText(v.liuDesc ?? [])
+  let content = transferUtil.tiptapToText(v.liuDesc ?? [], true)
   if(!title) {
     let tmpTitle = _getOneLine(content)
     let tmpDesc = _getHighlight(content, keyword)

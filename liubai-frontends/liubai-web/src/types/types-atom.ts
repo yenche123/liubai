@@ -56,10 +56,23 @@ export const isLiuMarkType = (val: string): val is LiuMarkType => {
   return liuMarkTypes.includes(val as LiuMarkType)
 }
 
-export interface LiuMarkAtom {
-  type: LiuMarkType
+export interface LiuLinkMark {
+  type: "link"
+  attrs: {
+    href: string
+    target?: string
+    class?: null
+  }
+}
+
+export interface LiuOtherMark {
+  type: Exclude<LiuMarkType, "link">
   attrs?: Record<string, any>
 }
+
+export type LiuMarkAtom = LiuLinkMark | LiuOtherMark
+
+export type LiuMarks = LiuMarkAtom[] | undefined
 
 export interface LiuContent {
   type: LiuNodeType

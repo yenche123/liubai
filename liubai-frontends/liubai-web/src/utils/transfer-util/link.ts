@@ -30,7 +30,9 @@ export function equipLink(list: TipTapJSONContent[]) {
 }
 
 
-function _parseTextsForLink(content: TipTapJSONContent[]): TipTapJSONContent[] {
+function _parseTextsForLink(
+  content: TipTapJSONContent[]
+): TipTapJSONContent[] {
   if(content.length < 1) return []
 
   for(let i=0; i<content.length; i++) {

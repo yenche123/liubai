@@ -22,8 +22,11 @@ function liuToTiptap(list: LiuContent[]) {
   return newList as TipTapJSONContent[]
 }
 
-function tiptapToText(list: TipTapJSONContent[]): string {
-  return listToText(list)
+function tiptapToText(
+  list: TipTapJSONContent[],
+  moreText?: boolean,
+): string {
+  return listToText(list, "", moreText)
 }
 
 function tiptapToMarkdown(
