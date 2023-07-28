@@ -306,7 +306,9 @@
     "submit1": "補充",
     "deleted_tip": "此留言已被刪除",
     "no_idea": "未知",
-    "thread_deleted": "此動態已被刪除"
+    "thread_deleted": "此動態已被刪除",
+    "delete_tip2": "確定要删除嗎?",
+    "delete_tip3": "注意: 留言被刪除後不支援復原"
   },
   "emoji": {
     "love": "愛心",

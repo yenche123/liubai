@@ -306,7 +306,9 @@
     "submit1": "Add",
     "deleted_tip": "The comment has been deleted.",
     "no_idea": "Unknown",
-    "thread_deleted": "The post has been deleted."
+    "thread_deleted": "The post has been deleted.",
+    "delete_tip2": "Delete this comment?",
+    "delete_tip3": "Note: It is not supported to undo the operation"
   },
   "emoji": {
     "love": "Love",
