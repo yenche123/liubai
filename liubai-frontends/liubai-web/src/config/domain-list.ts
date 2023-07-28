@@ -64,6 +64,8 @@ export const domainAllowed = [
   "hackertalk.net",
   "craft.me",
   "i.ibb.co",
+  "chainfeeds.xyz",
+  "wsj.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
