@@ -86,7 +86,7 @@ function checkIfTap(
   const now = time.getTime()
   const diff = now - lastPointerDown
 
-  console.log("间隔: ", diff)
+  // console.log("间隔: ", diff)
   // 注意: 在触控板上点击，通常会大于 200ms
   // 介于 200ms ~ 250ms 之间
   if(diff > 300) {

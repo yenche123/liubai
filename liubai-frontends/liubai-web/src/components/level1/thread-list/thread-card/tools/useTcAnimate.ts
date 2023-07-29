@@ -13,7 +13,6 @@ export function useTcAnimate(
     if(!el) return
     const info = el.getBoundingClientRect()
     const h = info.height
-    console.log("卡片元素的高度为: ", h)
     if(h) cardHeightPx.value = h
   }
 
