@@ -97,4 +97,5 @@ export const domainNotAllowed = [
   "twitter.com",
   "skiff.com",
   "perplexity.ai",
+  "remnote.com"
 ]
