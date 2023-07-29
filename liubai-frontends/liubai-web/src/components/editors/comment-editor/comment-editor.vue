@@ -10,6 +10,7 @@ import ToolBar from './tool-bar/tool-bar.vue';
 import { useI18n } from 'vue-i18n';
 import { useCommentFile } from './tools/useCommentFile';
 import type { LocatedA } from "~/types/other/types-custom";
+import type { CeEmit } from "./tools/types"
 
 const { t } = useI18n()
 
@@ -31,6 +32,8 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits<CeEmit>()
+
 const {
   ctx,
   placeholderKey,
@@ -42,7 +45,7 @@ const {
   onEditorBlur,
   onEditorUpdate,
   onEditorFinish,
-} = useCommentEditor(props)
+} = useCommentEditor(props, emit)
 
 const {
   covers,

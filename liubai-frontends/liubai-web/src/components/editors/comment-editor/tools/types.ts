@@ -16,6 +16,13 @@ export interface CeProps {
   isShowing: boolean
 }
 
+export interface CeEmit {
+  
+  // 当前位置位于弹窗内时，发表完成后需要通知给 popup
+  (evt: "finished"): void
+
+}
+
 export interface CeCtx {
   focused: boolean
   files: LiuFileStore[]
@@ -43,6 +50,7 @@ export interface HcCtx {
   wStore: WorkspaceStore
   ceCtx: CeCtx
   props: CeProps
+  emit: CeEmit
   editor: TipTapEditor
   user: string
 }

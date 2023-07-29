@@ -1,7 +1,7 @@
 // 发表或更新评论的逻辑
 
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
-import type { CeProps, CeCtx, HcCtx } from "./types";
+import type { CeProps, CeCtx, HcCtx, CeEmit } from "./types";
 import type { ShallowRef } from "vue";
 import type { TipTapEditor } from "~/types/types-editor"
 import localCache from "~/utils/system/local-cache";
@@ -16,9 +16,11 @@ import type { CommentStoreSetDataOpt } from "~/hooks/stores/useCommentStore"
 import commentCache from "./comment-cache";
 import { getStorageAtom } from "./useCommentEditor"
 import { equipComments } from "~/utils/controllers/equip/comments"
+import commentController from "~/utils/controllers/comment-controller/comment-controller";
 
 export function handleComment(
-  props: CeProps, 
+  props: CeProps,
+  emit: CeEmit, 
   ceCtx: CeCtx,
   editorRef: ShallowRef<TipTapEditor | undefined>,
 ) {
@@ -36,6 +38,7 @@ export function handleComment(
     wStore,
     ceCtx,
     props,
+    emit,
     editor,
     user,
   }
@@ -54,13 +57,33 @@ async function toUpdate(
   console.log(preComment)
   console.log(" ")
 
+  // 1. 更新到 db 里
   const res = await localReq.updateContent(id, preComment)
   console.log("查看 update 的结果: ")
   console.log(res)
   console.log(" ")
   
-  
+  // 2. 从 db 里获取最新的 CommentShow
+  const [newComment] = await commentController.loadByComment({ commentId: id, loadType: "target" })
+  if(!newComment) {
+    console.warn("没有查找到更新后的评论.............")
+    return
+  }
 
+  // 3. 通知其他组件
+  const cStore = useCommentStore()
+  const opt: CommentStoreSetDataOpt = {
+    changeType: "add",
+    commentId: newComment._id,
+    commentShow: newComment,
+    parentThread: newComment.parentThread,
+    parentComment: newComment.parentComment,
+    replyToComment: newComment.replyToComment,
+  }
+  cStore.setData(opt)
+
+  // 4. 用 emit 通知上级
+  ctx.emit("finished")
 }
 
 async function toRelease(
@@ -106,6 +129,9 @@ async function toRelease(
     replyToComment: ctx.props.replyToComment,
   }
   cStore.setData(opt)
+
+  // 6. 用 emit 通知上级
+  ctx.emit("finished")
 }
 
 

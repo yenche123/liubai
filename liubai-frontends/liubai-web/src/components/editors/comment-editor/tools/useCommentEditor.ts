@@ -3,7 +3,7 @@ import EditorCore from "../../editor-core/editor-core.vue"
 import { computed, reactive, ref, shallowRef, watch } from "vue"
 import type { Ref, ShallowRef } from "vue"
 import type { TipTapEditor, EditorCoreContent } from "~/types/types-editor"
-import type { CeCtx, CeProps, CommentStorageAtom } from "./types";
+import type { CeCtx, CeProps, CeEmit, CommentStorageAtom } from "./types";
 import { useWindowSize } from "~/hooks/useVueUse";
 import { useLiuWatch } from "~/hooks/useLiuWatch";
 import valTool from "~/utils/basic/val-tool";
@@ -15,7 +15,10 @@ import { handleComment } from "./handle-comment"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 
-export function useCommentEditor(props: CeProps) {
+export function useCommentEditor(
+  props: CeProps,
+  emit: CeEmit,
+) {
 
   let { located } = props
 
@@ -107,9 +110,8 @@ export function useCommentEditor(props: CeProps) {
   const onEditorFinish = () => {
     checkCanSubmit(ctx)
     if(!ctx.canSubmit) return
-    handleComment(props, ctx, editor)
+    handleComment(props, emit, ctx, editor)
   }
-
 
   return {
     ctx,
