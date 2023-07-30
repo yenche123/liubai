@@ -112,6 +112,7 @@ const {
         :is-toolbar-translate-y="ctx.isToolbarTranslateY"
         :can-submit="ctx.canSubmit"
         :editor="editor"
+        :located="located"
         @imagechange="onImageChange"
         @filechange="onFileChange"
         @tapfinish="onEditorFinish"
@@ -129,6 +130,7 @@ const {
   position: relative;
   display: flex;
   padding: 0 10px 16px;
+  padding-block-end: v-bind("located === 'popup' ? '0' : '16px'");
   box-sizing: border-box;
 }
 

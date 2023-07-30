@@ -14,6 +14,7 @@ const ActionSheet = defineAsyncComponent(() => import("./action-sheet/action-she
 const StateSelector = defineAsyncComponent(() => import("./state-selector/state-selector.vue"))
 const ShareView = defineAsyncComponent(() => import("./share-view/share-view.vue"))
 const ContentPanel = defineAsyncComponent(() => import("./content-panel/content-panel.vue"))
+const CommentPopup = defineAsyncComponent(() => import("./comment-popup/comment-popup.vue"))
 
 </script>
 <template>
@@ -57,6 +58,9 @@ const ContentPanel = defineAsyncComponent(() => import("./content-panel/content-
   <!-- 内容选单 -->
   <ContentPanel></ContentPanel>
 
+  <!-- 评论弹窗 -->
+  <CommentPopup></CommentPopup>
+  
 </template>
 
 <style scoped lang="scss">

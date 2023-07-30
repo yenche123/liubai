@@ -12,6 +12,7 @@ import { showStateSelector } from "./state-selector"
 import { showStateEditor } from "./state-editor"
 import { showShareView } from "./share-view"
 import { showContentPanel } from "./content-panel/tools/useContentPanel"
+import { showCommentPopup } from "./comment-popup/tools/useCommentPopup"
 
 export default {
   showModal,
@@ -28,4 +29,5 @@ export default {
   showStateEditor,
   showShareView,
   showContentPanel,
+  showCommentPopup,
 }

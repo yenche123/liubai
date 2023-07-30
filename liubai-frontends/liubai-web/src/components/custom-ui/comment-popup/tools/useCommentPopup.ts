@@ -14,7 +14,7 @@ const queryKey = "commentpopup"
 const cpData = reactive<CommentPopupData>({
   enable: false,
   show: false,
-  transDuration: 200,
+  transDuration: 300,
   operation: "edit_comment",   // 默认值，起始值不重要
   parentThread: "",
 })

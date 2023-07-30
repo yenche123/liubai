@@ -37,6 +37,7 @@ const onTapFinishBtn = () => {
     <div class="cemt-main" :class="{ 'cemt-main_show': !isToolbarTranslateY }">
       <!-- 图片 -->
       <div class="liu-hover liu-hover_first cemt-item" 
+        :class="{ 'cemt-item_first_above': located === 'popup' }"
         style="margin-inline-start: -5px;" 
         :aria-label="t('editor.image')"
         @click.stop="onTapImage"
@@ -54,6 +55,7 @@ const onTapFinishBtn = () => {
 
       <!-- 文件 -->
       <div class="liu-hover cemt-item" :aria-label="t('editor.attachment')"
+        :class="{ 'cemt-item_above': located === 'popup' }"
         @click.stop="onTapFile"
       >
         <input ref="selectFileEl" type="file" class="cemt-input" @change="onFileChange" title="" />
@@ -62,7 +64,10 @@ const onTapFinishBtn = () => {
 
       <!-- 清除样式 -->
       <div class="liu-hover cemt-item cemt-format-clear"
-        :class="{ 'cemt-format-clear_show': showFormatClear }"
+        :class="{ 
+          'cemt-format-clear_show': showFormatClear,
+          'cemt-item_above': located === 'popup'
+        }"
         @click="onTapClearFormat"
         :aria-label="t('editor.format_clear')"
       >
@@ -143,6 +148,19 @@ const onTapFinishBtn = () => {
     position: relative;
   }
 
+}
+
+.cemt-item_above[aria-label]::after {
+  top: 0;
+  margin-top: 0;
+  transform: translateX(50%) translateY(-120%);
+}
+
+.cemt-item_first_above[aria-label]::after {
+  top: 0;
+  margin-top: 0;
+  right: 100%;
+  transform: translateX(100%) translateY(-120%);
 }
 
 .cemt-format-clear {

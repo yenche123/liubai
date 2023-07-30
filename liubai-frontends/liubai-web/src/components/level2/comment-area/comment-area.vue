@@ -42,7 +42,7 @@ const { caData } = useCommentArea(props, emit)
 <style scoped lang="scss">
 
 .ca-container {
-  widows: 100%;
+  width: 100%;
   position: relative;
 }
 

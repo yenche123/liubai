@@ -14,10 +14,9 @@ export function useCommentOperation(
 
     if(op === "emoji") {
       cui.showContentPanel({ comment: cs, onlyReaction: true })
-      return
     }
     else if(op === "comment") {
-
+      cui.showCommentPopup({ operation: "reply_comment", commentShow: cs })
     }
     else if(op === "share") {
 

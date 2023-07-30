@@ -61,7 +61,7 @@ const {
     <div class="cc-top">
 
       <!-- 当前评论有指向前面的评论时 -->
-      <div v-if="cs.prevIReplied" class="cct-prevIReplied">
+      <div v-if="cs.prevIReplied && location !== 'popup'" class="cct-prevIReplied">
         <div class="cct-prevIReplied-line"></div>
       </div>
 
@@ -146,6 +146,9 @@ const {
           <CcBox :cs="cs"></CcBox>
 
         </div>
+
+        <!-- popup 遮罩，避免用户选中 -->
+        <div class="ccc-cover" v-if="location === 'popup'"></div>
 
       </div>
       
@@ -262,6 +265,15 @@ const {
   width: 100%;
   position: relative;
   display: flex;
+
+  .ccc-cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+  }
 }
 
 .ccc-first-column {

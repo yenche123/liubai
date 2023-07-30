@@ -1,21 +1,42 @@
 <script setup lang="ts">
 import { initCommentPopup } from "./tools/useCommentPopup"
 import CommentCard from "~/components/level2/comment-card/comment-card.vue";
-import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue"
+import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue";
+import liuApi from '~/utils/liu-api';
 
-const { cpData } = initCommentPopup()
+const { 
+  cpData,
+  onTapCancel,
+  onFinished,
+} = initCommentPopup()
 
+const { isMobile } = liuApi.getCharacteristic()
+const icon_color = `var(--main-normal)`
 
 </script>
 <template>
 
 <div class="cp-container" v-if="cpData.enable">
 
+  <div class="cp-bg" 
+    :class="{ 'cp-bg_show': cpData.show }"
+    @click.stop="onTapCancel"
+  ></div>
+
   <div class="cp-big-box"
     :class="{ 'cp-big-box_show': cpData.show }"
   >
 
     <div class="cp-box">
+
+      <div class="cp-first-bar">
+        <div class="liu-hover cp-close-box">
+          <svg-icon name="close" class="cp-close-svg"
+            :color="icon_color"
+          ></svg-icon>
+        </div>
+
+      </div>
 
       <CommentCard
         v-if="cpData.commentShow"
@@ -32,7 +53,10 @@ const { cpData } = initCommentPopup()
         located="popup"
         :parent-thread="cpData.parentThread"
         is-showing
+        @finished="onFinished"
       ></CommentEditor>
+
+      <div class="cp-virtual"></div>
 
     </div>
 
@@ -56,10 +80,29 @@ const { cpData } = initCommentPopup()
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 4500;
+  z-index: 2500;
+
+  .cp-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--popup-bg);
+    z-index: 2505;
+    opacity: 0;
+    transition: v-bind("cpData.transDuration + 'ms'");
+
+    &.cp-bg_show {
+      opacity: 1;
+    }
+  }
 }
 
 .cp-big-box {
+  z-index: 2510;
   width: 60%;
   min-width: 350px;
   max-width: 750px;
@@ -68,7 +111,8 @@ const { cpData } = initCommentPopup()
   background-color: var(--card-bg);
   position: relative;
   transform: translateY(100%);
-  opacity: .66;
+  opacity: 0;
+  transition: v-bind("cpData.transDuration + 'ms'");
 }
 
 .cp-big-box_show {
@@ -78,14 +122,49 @@ const { cpData } = initCommentPopup()
 
 .cp-box {
   width: 100%;
+  padding: 10px 14px 0px;
   box-sizing: border-box;
-  padding: 24px 14px;
-  height: 50vh;
-  min-height: 300px;
-  max-height: 600px;
+  max-height: min(500px, 90vh);
   overflow: auto;
+  position: relative;
+
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  scrollbar-width: v-bind("isMobile ? 'none' : 'auto'");
+
+  &::-webkit-scrollbar {
+    display: v-bind("isMobile ? 'none' : 'block'");
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+  }
 }
 
+.cp-first-bar {
+  width: 100%;
+  height: 40px;
+  position: relative;
+}
 
+.cp-close-box {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.cp-close-svg {
+  width: 26px;
+  height: 26px;
+}
+
+.cp-virtual {
+  width: 90%;
+  height: 14px;
+}
 
 </style>
