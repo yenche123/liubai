@@ -5,6 +5,7 @@ import type { WhatDetail } from "~/types/other/types-custom";
 export interface TdData {
   state: PageState
   threadShow: ThreadShow | undefined
+  focusNum: number
 }
 
 export interface TdProps {

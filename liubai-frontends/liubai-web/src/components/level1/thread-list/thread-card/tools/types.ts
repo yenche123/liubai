@@ -21,4 +21,5 @@ export interface TcEmits {
     position: number, 
     oldThread: ThreadShow
   ): void
+  (evt: "requestfocus"): void
 }

@@ -9,6 +9,7 @@ export function useThreadDetail(props: TdProps, emit: TdEmit) {
   const tdData = reactive<TdData>({
     state: 0,
     threadShow: undefined,
+    focusNum: 0,
   })
 
   const ctx: TdCtx = {
@@ -32,8 +33,14 @@ export function useThreadDetail(props: TdProps, emit: TdEmit) {
     emitThreadShow(ctx)
   })
 
+
+  const onRequestFocus = () => {
+    tdData.focusNum++
+  }
+
   return {
     tdData,
+    onRequestFocus,
   }
 }
 

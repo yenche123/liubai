@@ -28,7 +28,8 @@ const props = defineProps({
 const emit = defineEmits<TdEmit>()
 
 const {
-  tdData
+  tdData,
+  onRequestFocus,
 } = useThreadDetail(props, emit)
 
 let commentEditorLocated: LocatedA = "vice-view"
@@ -52,6 +53,7 @@ subscribeTdUpdate(tdData)
     display-type="detail"
     :position="0"
     @newoperate="(op) => receiveOperation(op, tdData.threadShow)"
+    @requestfocus="onRequestFocus"
   ></ThreadCard>
 
   <!-- 评论区 -->
@@ -64,6 +66,7 @@ subscribeTdUpdate(tdData)
       :located="commentEditorLocated"
       :parent-thread="tdData.threadShow._id"
       :is-showing="isShowing"
+      :focus-num="tdData.focusNum"
     ></CommentEditor>
 
     <CommentArea
