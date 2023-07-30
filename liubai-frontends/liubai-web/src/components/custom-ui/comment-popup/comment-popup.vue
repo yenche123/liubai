@@ -30,7 +30,7 @@ const icon_color = `var(--main-normal)`
     <div class="cp-box">
 
       <div class="cp-first-bar">
-        <div class="liu-hover cp-close-box">
+        <div class="liu-hover cp-close-box" @click="onTapCancel">
           <svg-icon name="close" class="cp-close-svg"
             :color="icon_color"
           ></svg-icon>
@@ -103,8 +103,8 @@ const icon_color = `var(--main-normal)`
 
 .cp-big-box {
   z-index: 2510;
-  width: 60%;
-  min-width: 350px;
+  width: 50%;
+  min-width: 400px;
   max-width: 750px;
   border-radius: 24px 24px 24px 24px;
   overflow: hidden;
@@ -113,11 +113,6 @@ const icon_color = `var(--main-normal)`
   transform: translateY(100%);
   opacity: 0;
   transition: v-bind("cpData.transDuration + 'ms'");
-}
-
-.cp-big-box_show {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .cp-box {
@@ -166,5 +161,25 @@ const icon_color = `var(--main-normal)`
   width: 90%;
   height: 14px;
 }
+
+@media screen and (max-width: 500px) {
+
+  .cp-container {
+    align-items: flex-end;
+  }
+
+  .cp-big-box {
+    width: 100%;
+    min-width: 250px;
+    border-radius: 24px 24px 0px 0px;
+    opacity: .56;
+  }
+}
+
+.cp-big-box_show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 
 </style>
