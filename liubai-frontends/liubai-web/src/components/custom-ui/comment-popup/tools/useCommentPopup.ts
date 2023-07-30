@@ -7,6 +7,8 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool"
+import { turnThreadIntoComment } from "~/utils/transfer-util/thread-comment"
+import { ThreadShow } from "~/types/types-content"
 
 const queryKey = "commentpopup"
 const cpData = reactive<CommentPopupData>({
@@ -44,6 +46,7 @@ export function showCommentPopup(
     cpData.parentThread = cs?.parentThread as string
     cpData.commentShow = cs
     delete cpData.threadShow
+    delete cpData.csTsPretend
     cpData.parentComment = cs?.parentComment
     cpData.replyToComment = cs?.replyToComment
     cpData.commentId = cs?._id
@@ -53,6 +56,7 @@ export function showCommentPopup(
     cpData.parentThread = cs?.parentThread as string
     cpData.commentShow = cs
     delete cpData.threadShow
+    delete cpData.csTsPretend
     cpData.parentComment = cs?.replyToComment
     cpData.replyToComment = cs?._id
     delete cpData.commentId
@@ -62,6 +66,7 @@ export function showCommentPopup(
     cpData.parentThread = ts?._id as string
     delete cpData.commentShow
     cpData.threadShow = ts
+    cpData.csTsPretend = turnThreadIntoComment(ts as ThreadShow)
     delete cpData.parentComment
     delete cpData.replyToComment
     delete cpData.commentId

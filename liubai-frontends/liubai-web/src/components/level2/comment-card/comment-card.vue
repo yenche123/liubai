@@ -71,7 +71,8 @@ const {
     <div v-if="cs.oState === 'OK'" class="cc-main">
 
       <!-- 当前评论为目标评论时 -->
-      <div v-if="isTargetComment" class="cc-target"
+      <div v-if="isTargetComment && location !== 'popup'" 
+        class="cc-target"
         @mouseenter="onMouseEnterTarget"
         @mouseleave="onMouseLeaveTarget"
       >
@@ -124,7 +125,7 @@ const {
             :member-show="cs.creator"
           ></LiuAvatar>
           <div class="cccf-line-box">
-            <div class="cccf-line" v-if="cs.nextRepliedMe"></div>
+            <div class="cccf-line" v-if="cs.nextRepliedMe || location === 'popup'"></div>
           </div>
         </div>
 
