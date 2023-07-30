@@ -52,7 +52,11 @@ const icon_color = `var(--main-normal)`
       <CommentEditor
         located="popup"
         :parent-thread="cpData.parentThread"
+        :parent-comment="cpData.parentComment"
+        :reply-to-comment="cpData.replyToComment"
+        :comment-id="cpData.commentId"
         is-showing
+        :focus-num="cpData.focusNum"
         @finished="onFinished"
       ></CommentEditor>
 

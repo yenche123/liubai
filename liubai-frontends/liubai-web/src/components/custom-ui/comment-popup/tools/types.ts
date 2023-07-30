@@ -25,4 +25,7 @@ export interface CommentPopupData {
   parentComment?: string
   replyToComment?: string
   commentId?: string
+
+  // 聚焦的次数
+  focusNum: number
 }

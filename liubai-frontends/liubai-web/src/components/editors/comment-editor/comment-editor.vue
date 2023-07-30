@@ -29,6 +29,10 @@ const props = defineProps({
   isShowing: {
     type: Boolean,
     default: true,
+  },
+  focusNum: {
+    type: Number,
+    default: 0,
   }
 })
 

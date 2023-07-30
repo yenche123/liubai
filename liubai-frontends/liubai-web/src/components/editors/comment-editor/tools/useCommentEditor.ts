@@ -52,6 +52,14 @@ export function useCommentEditor(
     initEditorContent(props, ctx, editor as ShallowRef<TipTapEditor>)
   })
 
+  // 监听上级组件要求聚焦
+  watch(() => props.focusNum, (newV) => {
+    if(newV <= 0) return
+    const eVal = editor.value
+    if(!eVal) return
+    eVal.commands.focus()
+  })
+
   // 监听图片改变，以缓存它们
   watch(() => ctx.images, (newImages) => {
     if(isJustInitOrFinish(ctx)) return

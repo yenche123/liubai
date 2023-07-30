@@ -17,6 +17,7 @@ const cpData = reactive<CommentPopupData>({
   transDuration: 300,
   operation: "edit_comment",   // 默认值，起始值不重要
   parentThread: "",
+  focusNum: 0,
 })
 
 let rr: RouteAndLiuRouter | undefined
@@ -139,6 +140,8 @@ async function _toOpen() {
   cpData.enable = true
   await valTool.waitMilli(16)
   cpData.show = true
+  await valTool.waitMilli(cpData.transDuration)
+  cpData.focusNum++
 }
 
 async function _toClose() {

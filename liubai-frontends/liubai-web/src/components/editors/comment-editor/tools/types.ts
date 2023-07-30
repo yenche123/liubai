@@ -14,6 +14,7 @@ export interface CeProps {
   replyToComment?: string
   commentId?: string   // 如果此值存在，代表是编辑，而非发表
   isShowing: boolean
+  focusNum: number
 }
 
 export interface CeEmit {
