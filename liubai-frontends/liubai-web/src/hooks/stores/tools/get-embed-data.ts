@@ -313,6 +313,19 @@ export function getEmbedData(
       spotifyRes.link = spotify1.toString()
       return spotifyRes
     }
+
+     // 专辑 /playlist
+     const spotifyReg3 = /(?<=\/album\/)\w{16,32}/g
+     const spotifyMatch3 = p.match(spotifyReg3)
+     if(spotifyMatch3) {
+       const albumId = spotifyMatch3[0]
+       spotify1.pathname = `/embed/album/${albumId}`
+       if(themeVal === "dark") spotify1.searchParams.set("theme", "0")
+       spotifyRes.link = spotify1.toString()
+       return spotifyRes
+     }
+
+
   }
 
 
