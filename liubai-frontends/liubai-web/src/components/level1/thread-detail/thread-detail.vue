@@ -69,6 +69,7 @@ subscribeTdUpdate(tdData)
     <CommentArea
       :thread-id="tdData.threadShow._id"
       :location="location"
+      :is-showing="isShowing"
     ></CommentArea>
 
     <div class="td-tmp-box"></div>

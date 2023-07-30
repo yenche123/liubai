@@ -19,6 +19,10 @@ const props = defineProps({
   location: {
     type: String as PropType<WhatDetail>,
     required: true,
+  },
+  isShowing: {
+    type: Boolean,
+    default: true,
   }
 })
 
@@ -34,6 +38,7 @@ const { caData } = useCommentArea(props, emit)
       <CommentCard
         :cs="item"
         :location="location"
+        :is-showing="isShowing"
       ></CommentCard>
     </template>
   </div>

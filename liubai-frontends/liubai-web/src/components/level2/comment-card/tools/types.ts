@@ -8,6 +8,7 @@ export interface CommentCardProps {
   cs: CommentShow
   isTargetComment: boolean
   location: CommentCardLocation
+  isShowing: boolean   // 跟随 comment-area 或 comment-detail
 }
 
 export interface CcCommonEmits {

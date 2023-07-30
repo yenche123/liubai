@@ -25,7 +25,11 @@ const props = defineProps({
   location: {
     type: String as PropType<CommentCardLocation>,
     required: true,
-  }
+  },
+  isShowing: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 const { 

@@ -1,6 +1,6 @@
 import liuApi from "~/utils/liu-api";
 import type { CommentCardProps } from "./types";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import cui from "~/components/custom-ui";
 import { useGlobalStateStore } from '~/hooks/stores/useGlobalStateStore';
 import liuUtil from "~/utils/liu-util";
@@ -95,6 +95,12 @@ function initActionbar(
 
   const showBubbleBar = ref(false)
 
+  // 当前 container 被隐藏时，去关闭 bubble-bar
+  watch(() => props.isShowing, (newV) => {
+    if(!newV && showBubbleBar.value) {
+      showBubbleBar.value = false
+    }
+  })
 
   const onMouseEnterComment = () => {
     showBubbleBar.value = true

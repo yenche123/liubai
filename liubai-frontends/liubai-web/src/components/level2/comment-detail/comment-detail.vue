@@ -80,6 +80,7 @@ const { t } = useI18n()
       <CommentCard
         :cs="item"
         :location="location"
+        :is-showing="isShowing"
       ></CommentCard>
     </template>
 
@@ -90,6 +91,7 @@ const { t } = useI18n()
       :cs="cdData.targetComment"
       is-target-comment
       :location="location"
+      :is-showing="isShowing"
     ></CommentCard>
 
     <!-- 占位 -->
@@ -111,6 +113,7 @@ const { t } = useI18n()
       <CommentCard
         :cs="item"
         :location="location"
+        :is-showing="isShowing"
       ></CommentCard>
     </template>
 
