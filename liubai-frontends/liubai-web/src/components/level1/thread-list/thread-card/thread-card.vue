@@ -132,7 +132,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
 
       <!-- 操作栏 -->
       <TcActionbar
-        v-if="viewType !== 'TRASH'"
+        v-if="threadData.oState === 'OK'"
         :space-type="threadData.spaceType"
         :is-mine="threadData.isMine"
         :comment-num="threadData.commentNum"

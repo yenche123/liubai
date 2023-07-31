@@ -188,8 +188,9 @@ function handleUpdatedList(
     })
     if(!v2 || idx < 0) continue
 
-    // 如果当前是首页列表，并且是由 复原置顶 操作所引发的更改，那么去看最新动态是否置顶，若是则移除
+    // 如果当前是首页列表，并且是由 复原置顶 操作所引发的更改
     if(vT === "INDEX" && whyChange === "undo_pin") {
+      // 那么去看最新动态是否置顶，若是则移除
       if(Boolean(v2.pinStamp)) {
         list.splice(i, 1)
         i--
