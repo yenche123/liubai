@@ -117,6 +117,7 @@ const icon_color = `var(--main-normal)`
   transform: translateY(100%);
   opacity: 0;
   transition: v-bind("cpData.transDuration + 'ms'");
+  transition-timing-function: cubic-bezier(0.32, 0.72, 0.05, 1);
 }
 
 .cp-box {
