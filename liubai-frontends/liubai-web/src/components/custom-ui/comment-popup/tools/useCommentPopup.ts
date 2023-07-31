@@ -63,7 +63,7 @@ export function showCommentPopup(
     cpData.commentShow = cs
     delete cpData.threadShow
     delete cpData.csTsPretend
-    cpData.parentComment = cs?.replyToComment
+    cpData.parentComment = cs?.replyToComment ?? cs?._id
     cpData.replyToComment = cs?._id
     delete cpData.commentId
   }
