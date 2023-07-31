@@ -7,6 +7,7 @@ export interface ToolBarProps {
   canSubmit: boolean
   editor?: TipTapEditor
   located?: LocatedA
+  showSubmitBtn: boolean
 }
 
 export const toolbarProps = {
@@ -14,6 +15,10 @@ export const toolbarProps = {
   canSubmit: Boolean,
   editor: Object as PropType<TipTapEditor>,
   located: String as PropType<LocatedA>,
+  showSubmitBtn: {
+    type: Boolean,
+    default: true,
+  }
 }
 
 export interface ToolBarEmits {

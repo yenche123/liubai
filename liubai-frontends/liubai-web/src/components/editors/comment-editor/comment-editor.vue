@@ -33,6 +33,14 @@ const props = defineProps({
   focusNum: {
     type: Number,
     default: 0,
+  },
+  submitNum: {
+    type: Number,
+    default: 0,
+  },
+  showSubmitBtn: {
+    type: Boolean,
+    default: true,
   }
 })
 
@@ -117,6 +125,7 @@ const {
         :can-submit="ctx.canSubmit"
         :editor="editor"
         :located="located"
+        :show-submit-btn="showSubmitBtn"
         @imagechange="onImageChange"
         @filechange="onFileChange"
         @tapfinish="onEditorFinish"

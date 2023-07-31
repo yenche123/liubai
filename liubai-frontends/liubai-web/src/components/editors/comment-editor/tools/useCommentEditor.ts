@@ -29,7 +29,7 @@ export function useCommentEditor(
   })
 
   // 上下文
-  const ctx: CeCtx = reactive({
+  const ctx = reactive<CeCtx>({
     focused: false,
     files: [],
     images: [],
@@ -38,6 +38,10 @@ export function useCommentEditor(
     isToolbarTranslateY: located === "main-view" || located === "vice-view",
     canSubmit: false,
     fileShowName: "",
+  })
+
+  watch(() => ctx.canSubmit, (newV) => {
+    emit("cansubmit", newV)
   })
   
   // 编辑器相关
@@ -120,6 +124,10 @@ export function useCommentEditor(
     if(!ctx.canSubmit) return
     handleComment(props, emit, ctx, editor)
   }
+
+  watch(() => props.submitNum, (newV) => {
+    if(newV) onEditorFinish()
+  })
 
   return {
     ctx,

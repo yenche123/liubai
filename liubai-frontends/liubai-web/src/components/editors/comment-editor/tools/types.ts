@@ -15,6 +15,8 @@ export interface CeProps {
   commentId?: string   // 如果此值存在，代表是编辑，而非发表
   isShowing: boolean
   focusNum: number
+  submitNum: number
+  showSubmitBtn: boolean
 }
 
 export interface CeEmit {
@@ -22,6 +24,8 @@ export interface CeEmit {
   // 当前位置位于弹窗内时，发表完成后需要通知给 popup
   (evt: "finished"): void
 
+  // 是否可以点击完成
+  (evt: "cansubmit", canSubmit: boolean): void
 }
 
 export interface CeCtx {

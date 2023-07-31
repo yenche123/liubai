@@ -80,7 +80,9 @@ const onTapFinishBtn = () => {
     </div>
     <div class="cemt-footer">
       <!-- 完成 -->
-      <div class="cemtf-submit-btn" :class="{ 'cemtf-submit_disabled': !canSubmit }"
+      <div class="cemtf-submit-btn" 
+        :class="{ 'cemtf-submit_disabled': !canSubmit }"
+        v-show="showSubmitBtn"
         @click.stop="onTapFinishBtn"
       >
         <span>{{ t('comment.submit1') }}</span>

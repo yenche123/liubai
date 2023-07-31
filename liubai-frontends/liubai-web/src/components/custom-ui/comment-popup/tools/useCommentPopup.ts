@@ -8,7 +8,7 @@ import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool"
 import { turnThreadIntoComment } from "~/utils/transfer-util/thread-comment"
-import { ThreadShow } from "~/types/types-content"
+import type { ThreadShow } from "~/types/types-content"
 
 const queryKey = "commentpopup"
 const cpData = reactive<CommentPopupData>({
@@ -18,6 +18,8 @@ const cpData = reactive<CommentPopupData>({
   operation: "edit_comment",   // 默认值，起始值不重要
   parentThread: "",
   focusNum: 0,
+  canSubmit: false,
+  submitNum: 0,
 })
 
 let rr: RouteAndLiuRouter | undefined

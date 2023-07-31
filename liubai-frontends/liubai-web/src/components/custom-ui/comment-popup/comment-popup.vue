@@ -58,6 +58,7 @@ const icon_color = `var(--main-normal)`
         is-showing
         :focus-num="cpData.focusNum"
         @finished="onFinished"
+        @cansubmit="(newV) => cpData.canSubmit = newV"
       ></CommentEditor>
 
       <div class="cp-virtual"></div>
