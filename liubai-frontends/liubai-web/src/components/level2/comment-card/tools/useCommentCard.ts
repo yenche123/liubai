@@ -45,6 +45,8 @@ export function useCommentCard(
     }
   }
 
+
+
   
   return {
     allowHover,
@@ -54,7 +56,15 @@ export function useCommentCard(
     onMouseEnterComment,
     onMouseLeaveComment,
     onTapContainer,
+    onTapCccCover,
   }
+}
+
+function onTapCccCover() {
+  cui.showSnackBar({ 
+    text_key: "comment.whatever",
+    duration: 3000,
+  })
 }
 
 

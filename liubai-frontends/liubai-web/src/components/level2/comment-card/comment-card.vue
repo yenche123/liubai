@@ -40,6 +40,7 @@ const {
   onMouseEnterComment,
   onMouseLeaveComment,
   onTapContainer,
+  onTapCccCover,
 } = useCommentCard(props)
 
 const {
@@ -152,7 +153,7 @@ const {
         </div>
 
         <!-- popup 遮罩，避免用户选中 -->
-        <div class="ccc-cover" v-if="location === 'popup'"></div>
+        <div class="ccc-cover" v-if="location === 'popup'" @click="onTapCccCover"></div>
 
       </div>
       

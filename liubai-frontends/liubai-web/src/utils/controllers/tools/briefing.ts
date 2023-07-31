@@ -100,7 +100,7 @@ function _addPoint3x(node: LiuContent) {
   const newNode = valTool.copyObject(node)
   let { type, content } = newNode
   if(type === "paragraph" && content) {
-    content.push({ type: "text", text: "..." })
+    content.push({ type: "text", text: "......" })
     newNode.content = content
   }
   else if(type === "blockquote" && content?.length) {

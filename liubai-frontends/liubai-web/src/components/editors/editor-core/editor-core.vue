@@ -40,7 +40,7 @@ defineExpose({ editor })
   caret-color: var(--primary-color);
 
   h1 {
-    font-size: var(--title-font);
+    font-size: v-bind("styles.h1Size");
     font-weight: 700;
     color: var(--main-normal);
     margin-block-start: 0;

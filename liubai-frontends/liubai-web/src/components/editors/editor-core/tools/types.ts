@@ -56,6 +56,7 @@ export interface EditorCoreEmits {
 
 export interface EditorCoreStyles {
   fontSize: string
+  h1Size: string
   inlineCodeSize: string
   selectBg: string
   lineHeight: number

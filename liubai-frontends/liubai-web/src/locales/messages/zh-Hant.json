@@ -308,7 +308,8 @@
     "no_idea": "未知",
     "thread_deleted": "此動態已被刪除",
     "delete_tip2": "確定要删除嗎?",
-    "delete_tip3": "注意: 留言被刪除後不支援復原"
+    "delete_tip3": "注意: 留言被刪除後不支援復原",
+    "whatever": "請回覆我，而非點擊我（￣︶￣）↗"
   },
   "emoji": {
     "love": "愛心",

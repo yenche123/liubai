@@ -308,7 +308,8 @@
     "no_idea": "未知",
     "thread_deleted": "此动态已被删除",
     "delete_tip2": "确定要删除吗？",
-    "delete_tip3": "注意：评论被删除后不支持撤销"
+    "delete_tip3": "注意：评论被删除后不支持撤销",
+    "whatever": "请回复我，而非点击我（￣︶￣）↗"
   },
   "emoji": {
     "love": "爱心",

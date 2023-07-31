@@ -20,7 +20,7 @@ export function turnThreadIntoComment(
     spaceType: ts.spaceType,
     visScope: ts.visScope,
     storageState: ts.storageState,
-    content: ts.content,
+    content: ts.briefing ? ts.briefing : ts.content,
     summary: ts.summary,
     desc: ts.desc,
     images: ts.images,

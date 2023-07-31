@@ -104,6 +104,7 @@ function getStyles(
     if(isComment) {
       return {
         fontSize: "var(--comment-font)",
+        h1Size: "var(--desc-font)",
         inlineCodeSize: "var(--comment-inline-code)",
         selectBg: "var(--select-bg-2)",
         lineHeight: 1.7,
@@ -112,6 +113,7 @@ function getStyles(
 
     return {
       fontSize: "var(--desc-font)",
+      h1Size: "var(--title-font)",
       inlineCodeSize: "var(--inline-code-font)",
       selectBg: "var(--select-bg)",
       lineHeight: 1.9,
