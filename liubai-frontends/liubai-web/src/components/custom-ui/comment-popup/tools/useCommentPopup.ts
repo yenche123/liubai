@@ -1,4 +1,4 @@
-import { reactive, watch } from "vue"
+import { reactive, watch, type WatchStopHandle } from "vue"
 import type {
   CommentPopupParam,
   CommentPopupData,
@@ -9,6 +9,7 @@ import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool"
 import { turnThreadIntoComment } from "~/utils/transfer-util/thread-comment"
 import type { ThreadShow } from "~/types/types-content"
+import { useWindowSize } from "~/hooks/useVueUse"
 
 const queryKey = "commentpopup"
 const cpData = reactive<CommentPopupData>({
@@ -18,11 +19,13 @@ const cpData = reactive<CommentPopupData>({
   operation: "edit_comment",   // 默认值，起始值不重要
   parentThread: "",
   focusNum: 0,
+  rightTopBtn: false,
   canSubmit: false,
   submitNum: 0,
 })
 
 let rr: RouteAndLiuRouter | undefined
+let watchStopHandle: WatchStopHandle | undefined
 
 export function initCommentPopup() {
   rr = useRouteAndLiuRouter()
@@ -76,6 +79,21 @@ export function showCommentPopup(
   }
 
   openIt(rr, queryKey)
+}
+
+function listenWindowWidth() {
+  // 监听窗口变化
+  const { width } = useWindowSize()
+  watchStopHandle = watch(width, (newV) => {
+    const showRequired = newV <= 500
+    cpData.rightTopBtn = showRequired
+  }, { immediate: true })
+}
+
+function cancelListenWindowWidth() {
+  if(watchStopHandle) {
+    watchStopHandle()
+  }
 }
 
 
@@ -139,6 +157,10 @@ function listenRouteChange() {
 
 async function _toOpen() {
   if(cpData.show) return
+
+  cancelListenWindowWidth()
+  listenWindowWidth()
+
   cpData.enable = true
   await valTool.waitMilli(16)
   cpData.show = true
@@ -151,4 +173,6 @@ async function _toClose() {
   cpData.show = false
   await valTool.waitMilli(cpData.transDuration)
   cpData.enable = false
+
+  cancelListenWindowWidth()
 }

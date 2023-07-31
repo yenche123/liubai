@@ -3,6 +3,7 @@ import { initCommentPopup } from "./tools/useCommentPopup"
 import CommentCard from "~/components/level2/comment-card/comment-card.vue";
 import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue";
 import liuApi from '~/utils/liu-api';
+import { useI18n } from "vue-i18n";
 
 const { 
   cpData,
@@ -12,6 +13,8 @@ const {
 
 const { isMobile } = liuApi.getCharacteristic()
 const icon_color = `var(--main-normal)`
+
+const { t } = useI18n()
 
 </script>
 <template>
@@ -27,16 +30,27 @@ const icon_color = `var(--main-normal)`
     :class="{ 'cp-big-box_show': cpData.show }"
   >
 
+    <div class="cp-top-bar">
+      <div class="liu-hover cp-close-box" @click="onTapCancel">
+        <svg-icon name="close" class="cp-close-svg"
+          :color="icon_color"
+        ></svg-icon>
+      </div>
+
+      <div class="cp-top-footer">
+        <div class="cemtf-submit-btn" 
+          :class="{ 'cemtf-submit_disabled': !cpData.canSubmit }"
+          v-show="cpData.rightTopBtn"
+          @click.stop="() => cpData.submitNum++"
+        >
+          <span>{{ t('common.reply') }}</span>
+        </div>
+      </div>
+    </div>
+
     <div class="cp-box">
 
-      <div class="cp-first-bar">
-        <div class="liu-hover cp-close-box" @click="onTapCancel">
-          <svg-icon name="close" class="cp-close-svg"
-            :color="icon_color"
-          ></svg-icon>
-        </div>
-
-      </div>
+      <div class="cp-virtual-top"></div>
 
       <CommentCard
         v-if="cpData.commentShow"
@@ -57,6 +71,8 @@ const icon_color = `var(--main-normal)`
         :comment-id="cpData.commentId"
         is-showing
         :focus-num="cpData.focusNum"
+        :submit-num="cpData.submitNum"
+        :show-submit-btn="!cpData.rightTopBtn"
         @finished="onFinished"
         @cansubmit="(newV) => cpData.canSubmit = newV"
       ></CommentEditor>
@@ -128,6 +144,7 @@ const icon_color = `var(--main-normal)`
   max-height: min(500px, 90vh);
   overflow: auto;
   position: relative;
+  z-index: 2511;
 
   scrollbar-color: var(--scrollbar-thumb) transparent;
   scrollbar-width: v-bind("isMobile ? 'none' : 'auto'");
@@ -141,13 +158,33 @@ const icon_color = `var(--main-normal)`
   }
 }
 
-.cp-first-bar {
+.cp-top-bar {
+  width: calc(100% - 10px);
+  height: 50px;
+  padding-block-start: 10px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2515;
+  display: flex;
+}
+
+.cp-top-bar::before {
+  background: var(--frosted-glass-4);
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 40px;
-  position: relative;
+  height: 100%;
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  overflow: hidden;
 }
 
 .cp-close-box {
+  margin-inline-start: 14px;
   width: 40px;
   height: 40px;
   display: flex;
@@ -161,6 +198,53 @@ const icon_color = `var(--main-normal)`
 .cp-close-svg {
   width: 26px;
   height: 26px;
+}
+
+.cp-top-footer {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  margin-inline-end: 4px;
+}
+
+.cemtf-submit-btn {
+  padding: 0 16px;
+  border-radius: 20px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  background-color: var(--primary-color);
+  color: var(--on-primary);
+  font-size: var(--mini-font);
+  transition: .15s;
+  user-select: none;
+  font-weight: 500;
+  position: relative;
+}
+
+@media(hover: hover) {
+  .cemtf-submit-btn:hover {
+    background-color: var(--primary-hover);
+  }
+}
+
+.cemtf-submit-btn:active {
+  background-color: var(--primary-active);
+}
+
+.cemtf-submit_disabled {
+  background-color: var(--primary-color);
+  opacity: .5;
+  cursor: default;
+}
+
+.cp-virtual-top {
+  width: 100%;
+  height: 40px;
+  position: relative;
 }
 
 .cp-virtual {

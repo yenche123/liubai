@@ -29,9 +29,13 @@ export interface CommentPopupData {
   // 聚焦的次数
   focusNum: number
 
+  // 是否显示右上角的完成按钮
+  rightTopBtn: boolean
+
   // 是否可以点击完成
   canSubmit: boolean
 
   // 请求 editor 执行完成事件
   submitNum: number
+
 }
