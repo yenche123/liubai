@@ -124,9 +124,9 @@ const { t } = useI18n()
 
 .cp-big-box {
   z-index: 2510;
-  width: 50%;
-  min-width: 400px;
-  max-width: 750px;
+  width: 60%;
+  min-width: 450px;
+  max-width: 800px;
   border-radius: 24px 24px 24px 24px;
   overflow: hidden;
   background-color: var(--card-bg);
