@@ -10,34 +10,23 @@ const {
 </script>
 <template>
 
-  <progress v-if="enable" class="gl-progress" max="100" :value="number"></progress>
+  <div class="gl-line" v-if="enable"></div>
 
 </template>
 <style scoped lang="scss">
 
-.gl-progress {
+.gl-line {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 4px;
+  max-width: v-bind("'' + number + '%'");
+  overflow: hidden;
   z-index: 4000;
-  border-radius: 0;
-  border: 0;
-  background-color: transparent;
-
-  &::-moz-progress-bar {
-    background-color: var(--primary-color);
-  }
-
-  &::-webkit-progress-bar {
-    background-color: transparent;
-  }
-
-  &::-webkit-progress-value {
-    background-color: var(--primary-color);
-    transition: v-bind("transition + 'ms'");
-  }
+  background-color: var(--primary-color);
+  transition: v-bind("transition + 'ms'");
+  will-change: width, max-width;
 }
 
 </style>
