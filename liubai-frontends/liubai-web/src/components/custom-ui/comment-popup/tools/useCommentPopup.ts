@@ -10,6 +10,10 @@ import valTool from "~/utils/basic/val-tool"
 import { turnThreadIntoComment } from "~/utils/transfer-util/thread-comment"
 import type { ThreadShow } from "~/types/types-content"
 import { useWindowSize } from "~/hooks/useVueUse"
+import { 
+  toListenEscKeyUp,
+  cancelListenEscKeyUp,
+} from "../../tools/listen-keyup"
 
 const queryKey = "commentpopup"
 const cpData = reactive<CommentPopupData>({
@@ -166,6 +170,8 @@ async function _toOpen() {
   cpData.show = true
   await valTool.waitMilli(cpData.transDuration)
   cpData.focusNum++
+
+  toListenEscKeyUp(onTapCancel)
 }
 
 async function _toClose() {
@@ -175,4 +181,5 @@ async function _toClose() {
   cpData.enable = false
 
   cancelListenWindowWidth()
+  cancelListenEscKeyUp()
 }

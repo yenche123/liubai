@@ -309,7 +309,8 @@
     "thread_deleted": "The post has been deleted.",
     "delete_tip2": "Delete this comment?",
     "delete_tip3": "Note: It is not supported to undo the operation",
-    "whatever": "Plz reply me rather then click me (￣︶￣)↗"
+    "whatever": "Plz reply me rather then click me (￣︶￣)↗",
+    "esc": "Leave"
   },
   "emoji": {
     "love": "Love",

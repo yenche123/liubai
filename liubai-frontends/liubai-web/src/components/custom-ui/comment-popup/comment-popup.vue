@@ -39,11 +39,20 @@ const { t } = useI18n()
   >
 
     <div class="cp-top-bar">
-      <div class="liu-hover cp-close-box" @click="onTapCancel">
-        <svg-icon name="close" class="cp-close-svg"
-          :color="icon_color"
-        ></svg-icon>
-      </div>
+
+      <LiuTooltip
+        placement="left"
+        :aria-label="t('comment.esc')"
+        shortcut="Esc"
+        :distance="4"
+      >
+        <div class="liu-hover cp-close-box" @click="onTapCancel">
+          <svg-icon name="close" class="cp-close-svg"
+            :color="icon_color"
+          ></svg-icon>
+        </div>
+      </LiuTooltip>
+      
 
       <div class="cp-top-footer">
         <div class="cemtf-submit-btn" 
