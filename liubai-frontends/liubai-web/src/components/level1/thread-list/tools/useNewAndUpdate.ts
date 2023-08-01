@@ -1,4 +1,3 @@
-import type { Ref } from "vue";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import { useCommentStore } from "~/hooks/stores/useCommentStore"
