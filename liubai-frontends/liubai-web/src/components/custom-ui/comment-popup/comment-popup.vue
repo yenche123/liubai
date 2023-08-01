@@ -2,8 +2,10 @@
 import { initCommentPopup } from "./tools/useCommentPopup"
 import CommentCard from "~/components/level2/comment-card/comment-card.vue";
 import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue";
+import CpDropZone from "./cp-drop-zone/cp-drop-zone.vue"
 import liuApi from '~/utils/liu-api';
 import { useI18n } from "vue-i18n";
+import { useCpDropZone } from "./tools/useCpDropZone"
 
 const { 
   cpData,
@@ -13,6 +15,11 @@ const {
 
 const { isMobile } = liuApi.getCharacteristic()
 const icon_color = `var(--main-normal)`
+
+const {
+  containerRef,
+  showDropZone,
+} = useCpDropZone(cpData)
 
 const { t } = useI18n()
 
@@ -28,6 +35,7 @@ const { t } = useI18n()
 
   <div class="cp-big-box"
     :class="{ 'cp-big-box_show': cpData.show }"
+    ref="containerRef"
   >
 
     <div class="cp-top-bar">
@@ -81,7 +89,7 @@ const { t } = useI18n()
 
     </div>
 
-
+    <CpDropZone :show-drop-zone="showDropZone"></CpDropZone>
   </div>
 
 </div>

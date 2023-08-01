@@ -1,5 +1,5 @@
 import { inject, watch, ref, onMounted, onUnmounted } from "vue"
-import { vcFileKey, mvFileKey } from "~/utils/provide-keys"
+import { vcFileKey, mvFileKey, popupFileKey } from "~/utils/provide-keys"
 import type { CeCtx, CeProps } from "./types"
 import liuUtil from "~/utils/liu-util"
 import type { 
@@ -249,5 +249,12 @@ function listenFilesFromViceContent(
 function listenFilesFromPopup(
   ctx: CeCtx
 ) {
+  const dropFiles = inject(popupFileKey)
+  watch(() => dropFiles?.value, async (newV) => {
+    if(!newV?.length) return
+    await handleFiles(ctx, newV)
+    if(!dropFiles?.value) return
+    dropFiles.value = []
+  })
 
 }
