@@ -168,7 +168,7 @@ const { t } = useI18n()
 
 .cp-top-bar {
   width: calc(100% - 10px);
-  height: 50px;
+  height: 56px;
   padding-block-start: 10px;
   box-sizing: border-box;
   position: absolute;
@@ -233,9 +233,19 @@ const { t } = useI18n()
   position: relative;
 }
 
+.cemtf-submit_disabled {
+  background-color: var(--primary-color);
+  opacity: .5;
+  cursor: default;
+}
+
 @media(hover: hover) {
   .cemtf-submit-btn:hover {
     background-color: var(--primary-hover);
+  }
+
+  .cemtf-submit_disabled:hover {
+    background-color: var(--primary-color);
   }
 }
 
@@ -243,11 +253,11 @@ const { t } = useI18n()
   background-color: var(--primary-active);
 }
 
-.cemtf-submit_disabled {
+.cemtf-submit_disabled:active {
   background-color: var(--primary-color);
-  opacity: .5;
-  cursor: default;
 }
+
+
 
 .cp-virtual-top {
   width: 100%;
