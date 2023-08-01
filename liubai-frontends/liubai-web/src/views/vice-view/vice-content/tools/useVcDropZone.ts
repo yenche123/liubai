@@ -1,5 +1,4 @@
 import { ref, computed, provide } from "vue";
-import type { Ref } from "vue";
 import type { PageState } from "~/types/types-atom";
 import type { VcProps, VcData } from "./types"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
