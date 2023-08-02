@@ -1,4 +1,4 @@
-import { onMounted, ref, shallowRef } from 'vue';
+import { onMounted, ref, shallowRef, watch } from 'vue';
 import EditorCore from "~/components/editors/editor-core/editor-core.vue"
 import type { TipTapEditor } from "~/types/types-editor"
 import type { TcProps } from "./types"
@@ -18,6 +18,7 @@ interface TcCtx {
 }
 
 export function useThreadCard(props: TcProps) {
+  const showMore = ref(false)
   const editorCoreRef = ref<typeof EditorCore | null>(null)
   const editor = shallowRef<TipTapEditor>()
   const rr = useRouteAndLiuRouter()
@@ -48,12 +49,28 @@ export function useThreadCard(props: TcProps) {
     handleTapThreadCard(e, ctx)
   }
 
+  const onMouseEnter = () => {
+    showMore.value = true
+  }
+
+  const onMouseLeave = () => {
+    showMore.value = false
+  }
+
+  watch(() => props.showTxt, (newV) => {
+    if(newV !== "false") return
+    showMore.value = false
+  })
+
   return {
     editorCoreRef,
     editor,
     isBriefing,
     onTapBriefing,
     onTapThreadCard,
+    showMore,
+    onMouseEnter,
+    onMouseLeave,
   }
 }
 

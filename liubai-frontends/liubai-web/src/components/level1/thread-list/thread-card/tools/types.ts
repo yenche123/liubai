@@ -5,6 +5,7 @@ import type {
 } from '../../tools/types';
 import type { ThreadOutterOperation } from "~/types/types-atom"
 import type { ThreadCardShowType } from "~/types/types-view"
+import type { TrueOrFalse } from '~/types/types-basic'
 
 export interface TcProps {
   threadData: ThreadShow
@@ -12,6 +13,7 @@ export interface TcProps {
   viewType: TlViewType
   position: number
   showType: ThreadCardShowType
+  showTxt?: TrueOrFalse
 }
 
 export interface TcEmits {

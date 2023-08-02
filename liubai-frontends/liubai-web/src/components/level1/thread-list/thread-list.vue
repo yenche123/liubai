@@ -31,6 +31,7 @@ const {
         :position="index"
         :view-type="viewType"
         :show-type="item.showType"
+        :show-txt="showTxt"
         @newoperate="receiveOperation"
       ></ThreadCard>
     

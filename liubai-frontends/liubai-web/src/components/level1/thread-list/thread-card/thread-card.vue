@@ -16,6 +16,7 @@ import type { TlViewType, TlDisplayType } from "../tools/types";
 import type { TcEmits } from "./tools/types"
 import type { ThreadCardShowType } from "~/types/types-view"
 import { useTcAnimate } from './tools/useTcAnimate';
+import type { TrueOrFalse } from '~/types/types-basic';
 
 const props = defineProps({
   threadData: {
@@ -34,9 +35,12 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  showType: {
+  showType: {     // 这个是用于 移除列表时的显示和移除
     type: String as PropType<ThreadCardShowType>,
     default: "normal"
+  },
+  showTxt: {      // 这个是用于 视图切换
+    type: String as PropType<TrueOrFalse>
   }
 })
 const emit = defineEmits<TcEmits>()
@@ -46,6 +50,9 @@ const {
   isBriefing,
   onTapBriefing,
   onTapThreadCard,
+  showMore,
+  onMouseEnter,
+  onMouseLeave,
 } = useThreadCard(props)
 const { t } = useI18n()
 const {
@@ -71,6 +78,8 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
 
   <div class="tc-container"
     :class="{ 'tc-container_hiding': showType === 'hiding' }"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
   >
 
     <div class="tc-box" @click.stop="onTapThreadCard">
@@ -139,9 +148,11 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
         :emoji-num="threadData.emojiData.total"
         :my-favorite="threadData.myFavorite"
         :my-emoji="threadData.myEmoji"
+        :show-more="showMore"
         @tapcollect="$emit('newoperate', 'collect', position, threadData)"
         @tapcomment="onTapComment"
         @tapshare="onTapShare"
+        @newoperate="receiveBottomOperation"
       ></TcActionbar>
 
       <!-- 底部更多、发表或编辑时间 -->

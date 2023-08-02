@@ -139,7 +139,7 @@ export type LiuLimit = "pin" // 置顶数
 export type ThreadInnerOperation = "edit" | "share" | "hourglass"
 
 export type ThreadOutterOperation = "collect" | "emoji" | "delete" | "state" 
-  | "restore" | "delete_forever" | "pin" | "float_up"
+  | "restore" | "delete_forever" | "pin" | "float_up" | "tag"
 
 export type ThreadOperation = ThreadInnerOperation | ThreadOutterOperation
 

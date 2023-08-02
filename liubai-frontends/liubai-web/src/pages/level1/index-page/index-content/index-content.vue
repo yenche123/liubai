@@ -3,6 +3,7 @@ import cfg from "~/config"
 import CustomEditor from "~/components/editors/custom-editor/custom-editor.vue"
 import ThreadList from "~/components/level1/thread-list/thread-list.vue"
 import { useCustomEditorLastBar } from "~/pages/utils/useCustomEditorLastBar"
+import { useIndexContent } from "./tools/useIndexContent"
 
 defineProps({
   showTop: {
@@ -13,6 +14,10 @@ defineProps({
 const virtualHeight = cfg.navi_height / 3
 const shortVirtual = cfg.navi_height / 9
 const { lastBar } = useCustomEditorLastBar()
+
+const {
+  showTxt
+} = useIndexContent()
 
 </script>
 <template>
@@ -29,11 +34,13 @@ const { lastBar } = useCustomEditorLastBar()
       <!-- 置顶 -->
       <ThreadList
         view-type="PINNED"
+        :show-txt="showTxt"
       ></ThreadList>
 
       <!-- 一般 -->
       <ThreadList
         view-type="INDEX"
+        :show-txt="showTxt"
       ></ThreadList>
 
     </div>

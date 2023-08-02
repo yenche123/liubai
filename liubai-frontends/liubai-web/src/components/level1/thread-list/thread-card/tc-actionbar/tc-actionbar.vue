@@ -4,6 +4,7 @@
 // 协作工作区: 点赞、评论数（、分享）
 import type { SpaceType } from "~/types/types-basic"
 import type { PropType } from "vue";
+import type { TcaEmit } from "./tools/types"
 import { computed } from 'vue';
 import liuApi from '~/utils/liu-api';
 
@@ -31,14 +32,13 @@ const props = defineProps({
   myEmoji: {
     type: String,
     required: true,
+  },
+  showMore: {
+    type: Boolean
   }
 })
 
-const emits = defineEmits<{
-  (event: "tapcollect"): void
-  (event: "tapcomment"): void
-  (event: "tapshare"): void
-}>()
+const emits = defineEmits<TcaEmit>()
 
 // decode emoji
 const theEmoji = computed(() => {
@@ -61,25 +61,13 @@ const commentShow = computed(() => {
 
 const default_color = "var(--main-code)"
 
-const onTapCollect = () => {
-  emits('tapcollect')
-}
-
-const onTapComment = () => {
-  emits('tapcomment')
-}
-
-const onTapShare = () => {
-  emits('tapshare')
-}
-
 </script>
 <template>
   <div class="tca-container">
 
     <!-- 收藏 -->
     <div v-if="spaceType === 'ME' && isMine" class="liu-hover tca-item"
-      @click.stop="onTapCollect"
+      @click.stop="$emit('tapcollect')"
     >
       <div class="tca-icon-box">
         <svg-icon v-show="!myFavorite" name="star" class="tca-icon_star" :color="default_color"></svg-icon>
@@ -100,7 +88,7 @@ const onTapShare = () => {
 
     <!-- 评论 -->
     <div class="liu-hover tca-item"
-      @click.stop="onTapComment"
+      @click.stop="$emit('tapcomment')"
     >
       <div class="tca-icon-box">
         <svg-icon name="comment" class="tca-icon_comment" :color="default_color"></svg-icon>
@@ -112,10 +100,35 @@ const onTapShare = () => {
 
     <!-- 分享 -->
     <div class="liu-hover tca-item"
-      @click.stop="onTapShare"
+      @click.stop="$emit('tapshare')"
     >
       <div class="tca-icon-box">
         <svg-icon name="share" class="tca-icon" :color="default_color"></svg-icon>
+      </div>
+    </div>
+    
+    <!-- 更多的 -->
+    <div class="tca-more-container">
+      <div class="tca-more-box" :class="{ 'tca-more-box_show': showMore }">
+
+        <!-- 标签 -->
+        <div class="liu-hover tca-item"
+          @click.stop="$emit('newoperate', 'tag')"
+        >
+          <div class="tca-icon-box">
+            <svg-icon name="tag" class="tca-icon" :color="default_color"></svg-icon>
+          </div>
+        </div>
+
+        <!-- 状态 -->
+        <div class="liu-hover tca-item"
+          @click.stop="$emit('newoperate', 'state')"
+        >
+          <div class="tca-icon-box">
+            <svg-icon name="priority_400" class="tca-icon" :color="default_color"></svg-icon>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -194,6 +207,24 @@ const onTapShare = () => {
   }
 
 }
+
+
+.tca-more-container {
+  overflow: hidden;
+}
+
+.tca-more-box {
+  display: flex;
+  opacity: 0;
+  transition: 90ms;
+  transition-delay: 180ms;
+  will-change: opacity;
+}
+
+.tca-more-box_show {
+  opacity: 1;
+}
+
 
 
 </style>
