@@ -1,6 +1,6 @@
 # LB
 
-Hi, Melbourne!
+Today is good!
 
 ## 开发备注
 
