@@ -141,6 +141,7 @@ export function useCeState(
   }
 
   //【待测试】 在 windows 上无法触发，必须确认在 Mac 上是否支持
+  // 2023.08.24 更新: 经测试应该不是 Vue 的问题，有可能是被浏览器或 windows 拦截
   const onTitleEnterAndMeta = () => {
     const { isMac } = liuApi.getCharacteristic()
     if(isMac) {
