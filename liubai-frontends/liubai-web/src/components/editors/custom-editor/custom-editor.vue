@@ -23,22 +23,12 @@ import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { useCeTag } from "./tools/useCeTag";
 import EditingBubbleMenu from "../shared/editing-bubble-menu/editing-bubble-menu.vue";
 import { useI18n } from "vue-i18n";
+import { type CeEmits, ceProps } from "./tools/atom-ce"
 
 const { t } = useI18n()
 
-const props = defineProps({
-  lastBar: {
-    type: Boolean,
-    default: false,
-  },
-  threadId: String
-})
-
-const emits = defineEmits<{
-  (event: "nodata", threadId: string): void
-  (event: "hasdata", threadId: string): void
-  (event: "updated", threadId: string): void
-}>()
+const props = defineProps(ceProps)
+const emits = defineEmits<CeEmits>()
 
 const canSubmitRef = ref(false)
 const { 
@@ -220,6 +210,7 @@ const {
   width: 100%;
   display: flex;
   align-items: center;
+  margin-block-end: 0.3rem;
 }
 
 .ce-title-input {
