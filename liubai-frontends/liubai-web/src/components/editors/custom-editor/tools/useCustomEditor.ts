@@ -63,7 +63,7 @@ function listenWindowChange(
   const { sidebarStatus } = storeToRefs(layout)
 
   const whenWindowHeightChange = () => {
-    let h = Math.max(height.value - 150, 100)
+    let h = Math.max(height.value - 147, 100)
     maxEditorHeight.value = h
     if(sidebarStatus.value === "fullscreen") {
       minEditorHeight.value = h
