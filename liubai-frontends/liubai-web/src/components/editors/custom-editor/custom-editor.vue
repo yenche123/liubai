@@ -22,6 +22,9 @@ import { useCeFinish } from "./tools/useCeFinish";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { useCeTag } from "./tools/useCeTag";
 import EditingBubbleMenu from "../shared/editing-bubble-menu/editing-bubble-menu.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n()
 
 const props = defineProps({
   lastBar: {
@@ -79,7 +82,8 @@ const ctx = {
 const { toFinish } = useCeFinish(ctx)
 
 const {
-  focused,
+  titleFocused,
+  anyFocused,
   onEditorFocus,
   onEditorBlur,
   onEditorUpdate,
@@ -89,17 +93,38 @@ const {
   onTitleChange,
   onSyncCloudChange,
   onTapFinish,
-} = useCeState(state, canSubmitRef, toFinish)
-
-const onTapCeContainer = (e: MouseEvent) => {}
+  onTapCloseTitle,
+  onTitleBarChange,
+  onTitleEnter,
+  onTitleEnterAndMeta,
+  onTitleEnterAndCtrl,
+} = useCeState(state, canSubmitRef, toFinish, editor)
 
 </script>
 <template>
 
 <div class="ce-container"
-  :class="{ 'ce-container_focused': focused }"
-  @click.stop="onTapCeContainer"
+  :class="{ 'ce-container_focused': anyFocused }"
+  @click.stop="() => {}"
 >
+
+  <div v-if="state.showTitleBar" class="ce-title-bar">
+    <input 
+      class="ce-title-input" :value="state.title"
+      :placeholder="t('editor.add_title2')"
+      @focus="() => titleFocused = true"
+      @blur="() => titleFocused = false"
+      @input="onTitleBarChange" 
+      @keyup.enter.exact="onTitleEnter"
+      @keyup.ctrl.enter.exact="onTitleEnterAndCtrl"
+      @keyup.meta.enter.exact="onTitleEnterAndMeta"
+    />
+    <div class="ce-clear-title" @click="onTapCloseTitle">
+      <svg-icon name="close-circle" class="ce-clear-svg" 
+        color="var(--main-tip)"
+      ></svg-icon>
+    </div>
+  </div>
 
   <div class="ce-editor"
     @scroll="onEditorScrolling"
@@ -166,7 +191,7 @@ const onTapCeContainer = (e: MouseEvent) => {}
   <ce-finish-area 
     :can-submit="canSubmitRef"
     :in-code-block="editor?.isActive('codeBlock') ?? false"
-    :focused="focused"
+    :focused="anyFocused"
     @confirm="onTapFinish"
   ></ce-finish-area>
 
@@ -191,6 +216,48 @@ const onTapCeContainer = (e: MouseEvent) => {}
   }
 }
 
+.ce-title-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.ce-title-input {
+  flex: 1;
+  font-size: var(--title-font);
+  font-weight: 700;
+  color: var(--main-normal);
+  line-height: 1.4;
+
+  &::-webkit-input-placeholder {
+    color: var(--main-note);
+  }
+
+  &::selection {
+    background-color: var(--select-bg);
+  }
+}
+
+.ce-clear-title {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: .15s;
+
+  .ce-clear-svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media(hover: hover) {
+  .ce-clear-title:hover {
+    opacity: .7;
+  }
+}
 
 .ce-editor {
   width: 100%;

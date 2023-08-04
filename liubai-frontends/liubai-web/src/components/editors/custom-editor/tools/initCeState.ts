@@ -148,6 +148,7 @@ async function initDraftFromDraft(
   }
 
   state.title = draft.title
+  state.showTitleBar = Boolean(draft.title)
   state.whenStamp = draft.whenStamp
   state.remindMe = draft.remindMe
   state.images = draft.images
@@ -176,6 +177,7 @@ async function initDraftFromThread(
   state.visScope = thread.visScope
   state.storageState = thread.storageState
   state.title = thread.title
+  state.showTitleBar = Boolean(thread.title)
   state.whenStamp = thread.whenStamp
   state.remindMe = _getRemindMeFromThread(thread)
   state.images = thread.images

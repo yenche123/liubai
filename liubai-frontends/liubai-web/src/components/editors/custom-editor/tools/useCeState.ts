@@ -1,10 +1,10 @@
 
-import { ref, watch, toRaw, isProxy } from "vue";
-import type { EditorCoreContent, TipTapJSONContent } from "~/types/types-editor";
+import { ref, watch, toRaw, isProxy, computed } from "vue";
+import type { EditorCoreContent, TipTapEditor, TipTapJSONContent } from "~/types/types-editor";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { LiuRemindMe } from "~/types/types-atom";
 import type { CeState } from "./atom-ce"
-import type { Ref } from "vue";
+import type { Ref, ShallowRef } from "vue";
 import ider from "~/utils/basic/ider";
 import type { DraftLocalTable } from "~/types/types-table";
 import localCache from "~/utils/system/local-cache";
@@ -18,6 +18,7 @@ import { storeToRefs } from "pinia";
 import type { SpaceType } from "~/types/types-basic"
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import { handleOverflow } from "./handle-overflow"
+import liuApi from "~/utils/liu-api";
 
 let collectTimeout: LiuTimeout
 let spaceIdRef: Ref<string>
@@ -27,6 +28,7 @@ export function useCeState(
   state: CeState,
   canSubmitRef: Ref<boolean>,
   toFinish: CepToPost,
+  editor: ShallowRef<TipTapEditor | undefined>,
 ) {
 
   const wStore = useWorkspaceStore()
@@ -52,14 +54,20 @@ export function useCeState(
     toAutoChange(state)
   }, { deep: true })
   
-  const focused = ref(false)
+  const titleFocused = ref(false)
+  const descFocused = ref(false)
   const gs = useGlobalStateStore()
   let timeout: LiuTimeout
+
+  const anyFocused = computed(() => {
+    const val = titleFocused.value || descFocused.value
+    return val
+  })
 
   const _setFocus = (newV: boolean) => {
     if(timeout) clearTimeout(timeout)
     timeout = setTimeout(() => {
-      focused.value = newV
+      descFocused.value = newV
       gs.$patch({ customEditorInputing: newV })
     }, 60)
   }
@@ -111,9 +119,47 @@ export function useCeState(
   const onTapFinish = () => {
     _prepareFinish(false)
   }
+
+  const onTapCloseTitle = () => {
+    state.showTitleBar = false
+    toTitleChange("", state)
+  }
+
+  const onTitleBarChange = (e: Event) => {
+    //@ts-expect-error
+    const val = e.target.value
+    if(typeof val !== "string") return
+    state.title = val
+    collectState(state)
+  }
+
+  const onTitleEnter = () => {
+    const e = editor.value
+    if(!e) return
+    e.commands.focus()
+    descFocused.value = true
+  }
+
+  //【待测试】 在 windows 上无法触发，必须确认在 Mac 上是否支持
+  const onTitleEnterAndMeta = () => {
+    const { isMac } = liuApi.getCharacteristic()
+    if(isMac) {
+      checkCanSubmit(state, canSubmitRef)
+      _prepareFinish(true)
+    }
+  }
+
+  const onTitleEnterAndCtrl = () => {
+    const { isMac } = liuApi.getCharacteristic()
+    if(!isMac) {
+      checkCanSubmit(state, canSubmitRef)
+      _prepareFinish(true)
+    }
+  }
   
   return {
-    focused,
+    titleFocused,
+    anyFocused,
     onEditorFocus,
     onEditorBlur,
     onEditorUpdate,
@@ -123,6 +169,11 @@ export function useCeState(
     onTitleChange,
     onSyncCloudChange,
     onTapFinish,
+    onTapCloseTitle,
+    onTitleBarChange,
+    onTitleEnter,
+    onTitleEnterAndMeta,
+    onTitleEnterAndCtrl,
   }
 }
 
@@ -149,10 +200,12 @@ function checkCanSubmit(
   state: CeState,
   canSubmitRef: Ref<boolean>,
 ) {
+  const title = state.title?.trim()
   const imgLength = state.images?.length
   const fileLength = state.files?.length
   const text = state.editorContent?.text.trim()
   let newCanSubmit = Boolean(imgLength) || Boolean(text) || Boolean(fileLength)
+  newCanSubmit = newCanSubmit || Boolean(title)
   canSubmitRef.value = newCanSubmit
 }
 
@@ -178,6 +231,9 @@ function toTitleChange(
   state: CeState,
 ) {
   state.title = val
+  if(val && !state.showTitleBar) {
+    state.showTitleBar = true
+  }
   collectState(state, true)
 }
 

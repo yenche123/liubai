@@ -19,6 +19,7 @@ export interface CeState {
   lastTagChangeStamp?: number
   lastInitStamp?: number     // 上一次重新赋值 init 的时间戳
   overflowType: "auto" | "visible"
+  showTitleBar: boolean
 }
 
 export const defaultState: CeState = {
@@ -27,6 +28,7 @@ export const defaultState: CeState = {
   storageState: "CLOUD",
   tagIds: [],
   overflowType: "visible",
+  showTitleBar: false,
 }
 
 export interface CeProps {
