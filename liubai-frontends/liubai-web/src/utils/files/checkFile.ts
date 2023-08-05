@@ -3,6 +3,7 @@ import type { LiuFileStore } from '~/types';
 import liuUtil from "../liu-util";
 import cfg from "~/config";
 import { useWindowSize } from "~/hooks/useVueUse";
+import { useVvFileStore } from "~/hooks/stores/useVvFileStore";
 
 // 查看（或下载）文件
 export function checkFile(
@@ -34,7 +35,10 @@ function _openByIframe(
 ) {
   let [url] = liuUtil.createURLsFromStore([f])
   if(!url) return
-  rr.router.pushCurrentWithNewQuery(rr.route, { pdf: url })
+  const vvFileStore = useVvFileStore()
+  const vfile = vvFileStore.addData(url, "pdf")
+  const newQ = { vfile }
+  rr.router.pushCurrentWithNewQuery(rr.route, newQ)
 }
 
 

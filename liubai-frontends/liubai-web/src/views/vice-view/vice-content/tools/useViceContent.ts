@@ -7,11 +7,13 @@ import type { VcState, VcCtx, VcData, VcThirdParty } from "./types"
 import thirdLink from "~/config/third-link";
 import liuUtil from "~/utils/liu-util";
 import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore";
+import { useVvFileStore } from "~/hooks/stores/useVvFileStore";
 import liuEnv from "~/utils/liu-env";
 
 export function useViceContent() {
   const { route, router } = useRouteAndLiuRouter()
-  const vStore = useVvLinkStore()
+  const vvLinkStore = useVvLinkStore()
+  const vvFileStore = useVvFileStore()
 
   const vcData = reactive<VcData>({
     list: [],
@@ -47,11 +49,18 @@ export function useViceContent() {
       window.open(q.pdf, "_blank")
       return
     }
+    else if(q.vfile && typeof q.vfile === "string") {
+      const vFile = vvFileStore.getUrlById(q.vfile)
+      if(vFile) {
+        window.open(vFile, "_blank")
+        return
+      }
+    }
     else if(vs === "iframe" && id) {
-      url = vStore.getOriginURL(id)
+      url = vvLinkStore.getOriginURL(id)
     }
     else if(vs === "third" && id) {
-      url = vStore.getOriginURL(id)
+      url = vvLinkStore.getOriginURL(id)
     }
     else if(vs === "thread" && id) {
       const u = router.resolve({ name: "detail", params: { contentId: id } })
@@ -133,23 +142,40 @@ function listenRouteChange(
     closeAllView(ctx)
   }
 
+  const tryToOpenFile = () => {
+    const vvFileStore = useVvFileStore()
+    const vvFile = vvFileStore.getCurrentData(route)
+    if(!vvFile) {
+      ctx.router.naviBackUntilNoSpecificQuery(route, "vfile")
+      return
+    }
+
+    // 目前仅开放 pdf 格式
+    if(vvFile.type !== "pdf") {
+      ctx.router.naviBackUntilNoSpecificQuery(route, "vfile")
+      return
+    }
+
+    openPDF(vvFile.url)
+  }
+
   const tryToOpenLink = () => {
-    const vStore = useVvLinkStore()
-    let url = vStore.getCurrentLink(route)
+    const vvLinkStore = useVvLinkStore()
+    let url = vvLinkStore.getCurrentLink(route)
     if(!url) {
       ctx.router.naviBackUntilNoSpecificQuery(route, "vlink")
       return 
     }
 
-    const thirdParty = vStore.isSpecialLink(url)
+    const thirdParty = vvLinkStore.isSpecialLink(url)
     if(thirdParty) {
       setNewThirdParty(url, thirdParty)
       return
     }
 
     const iframeProxy = _env.IFRAME_PROXY
-    const inAllowList = vStore.isInAllowedList(url)
-    const embedUrl = vStore.getEmbedData(url)
+    const inAllowList = vvLinkStore.isInAllowedList(url)
+    const embedUrl = vvLinkStore.getEmbedData(url)
     if(embedUrl) url = embedUrl.link
     else if(iframeProxy && !inAllowList) {
       url = iframeProxy + url
@@ -171,6 +197,7 @@ function listenRouteChange(
       github, 
       bing, 
       vlink,
+      vfile,
     } = newQuery
 
     if(outq && typeof outq === "string") {
@@ -182,6 +209,9 @@ function listenRouteChange(
     }
     else if(pdf && typeof pdf === "string") {
       openPDF(pdf)
+    }
+    else if(vfile && typeof vfile === "string") {
+      tryToOpenFile()
     }
     else if(xhs && typeof xhs === "string") {
       openXhsSearch(xhs)
