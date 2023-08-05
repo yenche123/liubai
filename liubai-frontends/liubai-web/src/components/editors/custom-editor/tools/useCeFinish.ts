@@ -148,7 +148,7 @@ function _getThreadData(
   const tagSearched = getTagIdsParents(tagIds)
 
   const search_title = (state.title ?? "").toLowerCase()
-  const search_other = (transferUtil.tiptapToText(liuDesc, true)).toLowerCase()
+  const search_other = transferUtil.packSearchOther(liuDesc, files)
 
   // console.log("看一下 search_title: ", search_title)
   // console.log("看一下 search_other: ", search_other)

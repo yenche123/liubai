@@ -6,6 +6,7 @@ import { filterNotLiuType } from "./filter"
 import { listToText } from "./text"
 import { listToMarkdown } from "./markdown"
 import type { ListToMdOpt } from "./markdown"
+import { LiuFileStore } from "~/types"
 
 function tiptapToLiu(list: TipTapJSONContent[]): LiuContent[] {
   list = trimJSONContent(list)
@@ -36,11 +37,27 @@ function tiptapToMarkdown(
   return listToMarkdown(list, opt)
 }
 
+// 组装 Content 里的 search_other 字段
+function packSearchOther(
+  list: TipTapJSONContent[],
+  files: LiuFileStore[],
+) {
+  let res = tiptapToText(list, true)
+  for(let i=0; i<files.length; i++) {
+    const f = files[i]
+    res += ` ${f.name}`
+  }
+  res = res.trim().toLowerCase()
+  return res
+}
+
+
 export default {
   tiptapToLiu,
   liuToTiptap,
   tiptapToText,
   tiptapToMarkdown,
+  packSearchOther,
 }
 
 

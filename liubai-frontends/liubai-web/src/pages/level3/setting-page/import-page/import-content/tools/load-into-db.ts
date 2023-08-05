@@ -88,7 +88,7 @@ async function putToDB(
   // 组装 search_title / search_other
   list = list.map(v => {
     const search_title = (v.title ?? "").toLocaleLowerCase()
-    const search_other = (transferUtil.tiptapToText(v.liuDesc ?? [])).toLowerCase()
+    const search_other = transferUtil.packSearchOther(v.liuDesc ?? [], v.files ?? [])
     v.search_title = search_title
     v.search_other = search_other
     return v

@@ -230,7 +230,7 @@ async function _getCommentData(
   const files = liuUtil.getRawList(ceCtx.files)
   
   // 4. 利于搜索
-  const search_other = (transferUtil.tiptapToText(liuDesc)).toLowerCase()
+  const search_other = transferUtil.packSearchOther(list, files)
 
   const aComment: Partial<ContentLocalTable> = {
     infoType: "COMMENT",
