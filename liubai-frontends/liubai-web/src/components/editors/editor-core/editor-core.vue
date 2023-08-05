@@ -4,6 +4,7 @@ import { useEditorCore } from './tools/useEditorCore'
 import type { EditorCoreEmits } from "./tools/types"
 import { editorCoreProps } from "./tools/types"
 import { useEditorLink } from './tools/useEditorLink'
+import './virtual-cursor.css'
 
 const props = defineProps(editorCoreProps)
 const emit = defineEmits<EditorCoreEmits>()
@@ -53,7 +54,7 @@ defineExpose({ editor })
     margin-block-end: 0;
   }
 
-  p.is-empty:first-child::before {
+  p.is-empty:nth-child(2)::before {
     content: attr(data-placeholder);
     float: left;
     color: var(--main-note);

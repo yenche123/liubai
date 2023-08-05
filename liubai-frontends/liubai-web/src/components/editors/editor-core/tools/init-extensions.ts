@@ -11,13 +11,14 @@ import Code from '@tiptap/extension-code'
 import Link from '@tiptap/extension-link'
 import Heading from '@tiptap/extension-heading'
 import type { ComposerTranslation } from 'vue-i18n'
-import { wrappingInputRule, nodeInputRule } from "@tiptap/core"
+import { wrappingInputRule, nodeInputRule, Extension } from "@tiptap/core"
 import type { TipTapEditor } from "~/types/types-editor"
 import type { EditorCoreProps, EditorCoreEmits } from "./types"
 
 import { lowlight } from 'lowlight'
 import { initLowlight } from "~/utils/other/lowlight-related"
 import CodeBlockComponent from '../code-block-component/code-block-component.vue'
+import { createVirtualCursor } from 'prosemirror-virtual-cursor'
 
 initLowlight()
 
@@ -108,17 +109,6 @@ export function initExtensions(
     },
   })
 
-  const CustomLink = Link.configure({
-    openOnClick: false,
-    HTMLAttributes: {
-      class: "liu-link"
-    }
-  })
-
-  const CustomHeading = Heading.configure({
-    levels: [1],
-  })
-
   const extensions = [
     CustomCode,
     CustomBlockQuote,
@@ -163,8 +153,33 @@ export function initExtensions(
   ]
 
   if(!props.isEdit) {
+    const CustomLink = Link.configure({
+      openOnClick: false,
+      HTMLAttributes: {
+        class: "liu-link"
+      }
+    })
+  
+    const CustomHeading = Heading.configure({
+      levels: [1],
+    })
+
     extensions.push(CustomLink)
     extensions.push(CustomHeading)
+  }
+  else {
+    
+    // 在编辑态时，才加载 virtualCursor 插件
+    const virtualCursorPlugin = createVirtualCursor()
+    const VirtualCursor = Extension.create({
+      addProseMirrorPlugins() {
+        return [
+          virtualCursorPlugin
+        ]
+      }
+    })
+
+    extensions.push(VirtualCursor)
   }
 
   return extensions
