@@ -18,6 +18,7 @@ export default {
   BOOKING_COM: "https://booking.com/",
   CODA_IO: "https://coda.io/",
   M_CNBETA: "https://m.cnbeta.com.tw/",
+  SPEAKERDECK_COM: "https://speakerdeck.com/",
 
   // spotify
   SPOTIFY_OPEN: "https://open.spotify.com/",
