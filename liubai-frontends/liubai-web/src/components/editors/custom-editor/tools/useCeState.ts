@@ -26,7 +26,6 @@ let spaceTypeRef: Ref<SpaceType>
 
 export function useCeState(
   state: CeState,
-  canSubmitRef: Ref<boolean>,
   toFinish: CepToPost,
   editor: ShallowRef<TipTapEditor | undefined>,
 ) {
@@ -40,13 +39,13 @@ export function useCeState(
   // 监听用户操作 images 的变化，去存储到 IndexedDB 上
   watch(() => state.images, (newV) => {
     toAutoChange(state)
-    checkCanSubmit(state, canSubmitRef)
+    checkCanSubmit(state)
   }, { deep: true })
 
   // 监听用户操作 files 的变化，去存储到 IndexedDB 上
   watch(() => state.files, (newV) => {
     toAutoChange(state)
-    checkCanSubmit(state, canSubmitRef)
+    checkCanSubmit(state)
   }, { deep: true })
 
   // 监听 tagIds 的变化
@@ -84,7 +83,7 @@ export function useCeState(
 
   const onEditorUpdate = (data: EditorCoreContent) => {
     state.editorContent = data
-    checkCanSubmit(state, canSubmitRef)
+    checkCanSubmit(state)
     handleOverflow(state)
     collectState(state)
   }
@@ -96,7 +95,7 @@ export function useCeState(
 
   const onEditorFinish = (data: EditorCoreContent) => {
     state.editorContent = data
-    checkCanSubmit(state, canSubmitRef)
+    checkCanSubmit(state)
     _prepareFinish(true)
   }
 
@@ -110,6 +109,7 @@ export function useCeState(
 
   const onTitleChange = (val: string) => {
     toTitleChange(val, state)
+    checkCanSubmit(state)
   }
 
   const onSyncCloudChange = (val: boolean) => {
@@ -123,6 +123,7 @@ export function useCeState(
   const onTapCloseTitle = () => {
     state.showTitleBar = false
     toTitleChange("", state)
+    checkCanSubmit(state)
   }
 
   const onTitleBarChange = (e: Event) => {
@@ -131,6 +132,7 @@ export function useCeState(
     if(typeof val !== "string") return
     state.title = val
     collectState(state)
+    checkCanSubmit(state)
   }
 
   const onTitleEnter = () => {
@@ -145,7 +147,7 @@ export function useCeState(
   const onTitleEnterAndMeta = () => {
     const { isMac } = liuApi.getCharacteristic()
     if(isMac) {
-      checkCanSubmit(state, canSubmitRef)
+      checkCanSubmit(state)
       _prepareFinish(true)
     }
   }
@@ -153,7 +155,7 @@ export function useCeState(
   const onTitleEnterAndCtrl = () => {
     const { isMac } = liuApi.getCharacteristic()
     if(!isMac) {
-      checkCanSubmit(state, canSubmitRef)
+      checkCanSubmit(state)
       _prepareFinish(true)
     }
   }
@@ -199,7 +201,6 @@ function toAutoChange(state: CeState) {
 
 function checkCanSubmit(
   state: CeState,
-  canSubmitRef: Ref<boolean>,
 ) {
   const title = state.title?.trim()
   const imgLength = state.images?.length
@@ -207,7 +208,7 @@ function checkCanSubmit(
   const text = state.editorContent?.text.trim()
   let newCanSubmit = Boolean(imgLength) || Boolean(text) || Boolean(fileLength)
   newCanSubmit = newCanSubmit || Boolean(title)
-  canSubmitRef.value = newCanSubmit
+  state.canSubmit = newCanSubmit
 }
 
 

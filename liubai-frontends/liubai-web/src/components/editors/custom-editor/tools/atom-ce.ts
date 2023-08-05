@@ -20,6 +20,7 @@ export interface CeState {
   lastInitStamp?: number     // 上一次重新赋值 init 的时间戳
   overflowType: "auto" | "visible"
   showTitleBar: boolean
+  canSubmit: boolean
 }
 
 export const defaultState: CeState = {
@@ -29,6 +30,7 @@ export const defaultState: CeState = {
   tagIds: [],
   overflowType: "visible",
   showTitleBar: false,
+  canSubmit: false,
 }
 
 export interface CeProps {

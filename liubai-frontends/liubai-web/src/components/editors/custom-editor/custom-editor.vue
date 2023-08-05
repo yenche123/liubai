@@ -10,7 +10,6 @@ import EditorCore from "../editor-core/editor-core.vue"
 import { useCustomEditor } from "./tools/useCustomEditor";
 import { useMoreItems } from "./tools/useMoreItems";
 import { useCeState } from "./tools/useCeState";
-import { ref } from "vue";
 import CeFinishArea from "./ce-finish-area/ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 import { useCeFile } from "./tools/useCeFile";
@@ -30,7 +29,6 @@ const { t } = useI18n()
 const props = defineProps(ceProps)
 const emits = defineEmits<CeEmits>()
 
-const canSubmitRef = ref(false)
 const { 
   maxEditorHeight, 
   minEditorHeight, 
@@ -63,7 +61,6 @@ const {
 
 const threadShowStore = useThreadShowStore()
 const ctx = {
-  canSubmitRef,
   editor,
   state,
   threadShowStore,
@@ -88,7 +85,7 @@ const {
   onTitleEnter,
   onTitleEnterAndMeta,
   onTitleEnterAndCtrl,
-} = useCeState(state, canSubmitRef, toFinish, editor)
+} = useCeState(state, toFinish, editor)
 
 </script>
 <template>
@@ -179,7 +176,7 @@ const {
 
   <!-- 右小角: 提示字 + 按钮 -->
   <ce-finish-area 
-    :can-submit="canSubmitRef"
+    :can-submit="state.canSubmit"
     :in-code-block="editor?.isActive('codeBlock') ?? false"
     :focused="anyFocused"
     @confirm="onTapFinish"

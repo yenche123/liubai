@@ -19,7 +19,6 @@ import type { SpaceType } from "~/types/types-basic";
 // 本文件处理发表的逻辑
 
 export interface CepContext {
-  canSubmitRef: Ref<boolean>
   editor: ShallowRef<TipTapEditor | undefined>
   state: CeState
   threadShowStore: ThreadShowStore
@@ -42,7 +41,7 @@ export function useCeFinish(ctx: CepContext) {
 
   const toFinish: CepToPost = (focusRequired: boolean) => {
     if(!member.value) return
-    if(!ctx.canSubmitRef.value) return
+    if(!ctx.state.canSubmit) return
     const { threadEdited } = ctx.state
     if(threadEdited) toUpdate(ctx)
     else toRelease(ctx, focusRequired)
@@ -122,7 +121,7 @@ function _resetState(
   delete state.files
   delete state.editorContent
 
-  ctx.canSubmitRef.value = false
+  state.canSubmit = false
 }
 
 
