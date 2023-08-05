@@ -99,9 +99,9 @@ function whenVcStateChange(
 ) {
   const enable = ctx.enable.value
   const vcState = ctx.vcStateRef.value
-  const pdfQuery = ctx.route.query?.pdf
+  const pdfQuery = ctx.route.query?.vfile
 
-  // 如果当前不是 iframe 或当前为 pdf 预览
+  // 如果当前不是 iframe 或当前为文件（比如 pdf）预览
   if(vcState !== "iframe" || pdfQuery) {
     if(enable) close(ctx)
     return

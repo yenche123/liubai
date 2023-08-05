@@ -45,11 +45,7 @@ export function useViceContent() {
     const id = vcData.currentId
     const q = route.query
 
-    if(q.pdf && typeof q.pdf === "string") {
-      window.open(q.pdf, "_blank")
-      return
-    }
-    else if(q.vfile && typeof q.vfile === "string") {
+    if(q.vfile && typeof q.vfile === "string") {
       const vFile = vvFileStore.getUrlById(q.vfile)
       if(vFile) {
         window.open(vFile, "_blank")
@@ -192,7 +188,6 @@ function listenRouteChange(
       outq,
       cid, 
       cid2,
-      pdf, 
       xhs, 
       github, 
       bing, 

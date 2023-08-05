@@ -30,8 +30,7 @@ export function useVcIframe(props: VciProps) {
     const iframeVal = iframeEl.value
     
     if(!iframeVal) return
-    if(!route.query.pdf) return
-
+    if(!route.query.vfile) return
 
     let iframeWindow: any
 
