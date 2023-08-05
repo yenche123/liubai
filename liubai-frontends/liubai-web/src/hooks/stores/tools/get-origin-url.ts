@@ -13,16 +13,17 @@ export function getOriginURL(embedUrl: string) {
   const p = url.pathname
   const s = url.searchParams
 
-  const proxy_key = "alt_url"
+  const env = liuEnv.getEnv()
+  const { IFRAME_PROXY, IFRAME_PROXY_KEY } = env
+
+  const proxy_key = IFRAME_PROXY_KEY
   const extractFromProxy = () => {
     const tmp = s.get(proxy_key)
     return tmp
   }
 
   // 1. 检查是否在 proxy 里头
-  const env = liuEnv.getEnv()
-  const { IFRAME_PROXY } = env
-  if(IFRAME_PROXY) {
+  if(IFRAME_PROXY && IFRAME_PROXY_KEY) {
     const hasProxy = embedUrl.includes(IFRAME_PROXY)
     if(hasProxy) {
       const res = extractFromProxy()

@@ -1,12 +1,14 @@
-import { computed, onMounted, onUnmounted, ref, watch } from "vue"
+import { computed, onMounted, onUnmounted, ref } from "vue"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import liuApi from "~/utils/liu-api"
 import localCache from "~/utils/system/local-cache"
 import type { VciProps } from "./types"
 import thirdLink from "~/config/third-link"
 import valTool from "~/utils/basic/val-tool"
+import liuEnv from "~/utils/liu-env"
 
 type ThirdLinkKey = keyof typeof thirdLink
+const { IFRAME_PROXY, IFRAME_PROXY_KEY } = liuEnv.getEnv()
 
 const add_white_bg: ThirdLinkKey[] = [
   "ZHIY_CC", 
@@ -14,7 +16,8 @@ const add_white_bg: ThirdLinkKey[] = [
   "GUOKR_COM",
   "BENTO_ME",
   "PRODUCTHUNT_CARD",
-  "BOOKING_COM"
+  "BOOKING_COM",
+  "M_CNBETA",
 ]
 
 export function useVcIframe(props: VciProps) {
@@ -86,6 +89,17 @@ function getStyles(
     catch{
       return
     } 
+
+    if(!IFRAME_PROXY || !IFRAME_PROXY_KEY) return url
+    const proxyUrl = new URL(IFRAME_PROXY)
+    if(proxyUrl.hostname === url.hostname) {
+      const val2 = url.searchParams.get(IFRAME_PROXY_KEY)
+      if(val2) {
+        const url2 = new URL(val2)
+        return url2
+      }
+    }
+
     return url
   }
 

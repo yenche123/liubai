@@ -28,6 +28,7 @@ function getEnv() {
 
   // iframe proxy
   const IFRAME_PROXY = import.meta.env.VITE_IFRAME_PROXY
+  const IFRAME_PROXY_KEY = import.meta.env.VITE_IFRAME_PROXY_KEY
 
   return {
     DEV,
@@ -48,6 +49,7 @@ function getEnv() {
     PREMIUM_COMMENT_IMG_NUM: Number(PREMIUM_COMMENT_IMG_NUM),
     FALLBACK_LOCALE,
     IFRAME_PROXY,
+    IFRAME_PROXY_KEY,
   }
 }
 
