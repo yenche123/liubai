@@ -217,6 +217,7 @@ const {
   font-weight: 700;
   color: var(--main-normal);
   line-height: 1.4;
+  caret-color: var(--primary-color);
 
   &::-webkit-input-placeholder {
     color: var(--main-note);
