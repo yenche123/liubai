@@ -204,21 +204,6 @@ function listenRouteChange(
       // openGoogleSerach(outq)
       openBingSearch(outq)
     }
-    else if(bing && typeof bing === "string") {
-      openBingSearch(bing)
-    }
-    else if(pdf && typeof pdf === "string") {
-      openPDF(pdf)
-    }
-    else if(vfile && typeof vfile === "string") {
-      tryToOpenFile()
-    }
-    else if(xhs && typeof xhs === "string") {
-      openXhsSearch(xhs)
-    }
-    else if(github && typeof github === "string") {
-      openGithubSearch(github)
-    }
     else if(cid && typeof cid === "string") {
       showView(ctx, "thread", cid)
     }
@@ -227,6 +212,18 @@ function listenRouteChange(
     }
     else if(vlink && typeof vlink === "string") {
       tryToOpenLink()
+    }
+    else if(vfile && typeof vfile === "string") {
+      tryToOpenFile()
+    }
+    else if(bing && typeof bing === "string") {
+      openBingSearch(bing)
+    }
+    else if(xhs && typeof xhs === "string") {
+      openXhsSearch(xhs)
+    }
+    else if(github && typeof github === "string") {
+      openGithubSearch(github)
     }
     else {
       whenNoMatch()
