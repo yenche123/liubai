@@ -205,13 +205,14 @@ const {
 
 .ce-title-bar {
   width: 100%;
+  position: relative;
   display: flex;
   align-items: center;
   margin-block-end: 0.3rem;
 }
 
 .ce-title-input {
-  flex: 1;
+  width: calc(100% - 36px);
   font-size: var(--title-font);
   font-weight: 700;
   color: var(--main-normal);
