@@ -436,7 +436,7 @@ export function getEmbedData(
     // \w 表示用户 handle，\d 为内容 id 通常为 18 位
     // 最后的 ? 表示匹配 / 字符 0 次或 1 次
     // 最后的 $ 表示匹配结尾
-    const mstnReg1 = /^\/@\w{3,32}\/\d{3,32}\/?$/g
+    const mstnReg1 = /^\/@\w{2,32}\/\d{3,32}\/?$/g
     const mstnMatch1 = p.match(mstnReg1)
     if(mstnMatch1) {
       if(!originUrl.endsWith("/")) {
