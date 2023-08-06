@@ -347,7 +347,7 @@ const PDFViewerApplication = {
             styleSheet.deleteRule(i);
             return;
           }
-          const darkRules = /^@media \(prefers-color-scheme: dark\) {\n\s*([\w\s-.,:;/\\{}()]+)\n}$/.exec(rule.cssText);
+          const darkRules = /^@media \(prefers-color-scheme: dark\) {\n\s*([\w\s-.,:;/\\{}()\#]+)\n}$/.exec(rule.cssText);
           if (darkRules?.[1]) {
             styleSheet.deleteRule(i);
             styleSheet.insertRule(darkRules[1], i);
@@ -1642,9 +1642,9 @@ exports.PDFViewerApplication = PDFViewerApplication;
         return;
       }
       const fileOrigin = new URL(file, window.location.href).origin;
-      if (fileOrigin !== viewerOrigin) {
-        throw new Error("file origin does not match viewer's");
-      }
+      // if (fileOrigin !== viewerOrigin) {
+      //   throw new Error("file origin does not match viewer's");
+      // }
     } catch (ex) {
       PDFViewerApplication.l10n.get("loading_error").then(msg => {
         PDFViewerApplication._documentError(msg, {
@@ -3187,6 +3187,28 @@ const defaultOptions = {
     kind: OptionKind.WORKER
   }
 };
+
+/*********** 由 liu 自定义片段 *************/
+// 判断应用语言，赋值到 lang0 上，再有 lang0 传递给 defaultOptions.locale.value
+let lang0 = navigator.language || "en-US"
+let s = null
+try {
+  s = localStorage.getItem("liu_local-preference")
+}
+catch(err) {
+  console.log("localStorage.getItem err: ", err)
+}
+if(s && typeof s === "string") {
+  let obj = JSON.parse(s)
+  if(obj.data && obj.data.language) {
+    const liuLang = obj.data.language
+    if(liuLang === "en") lang0 = "en-US"
+    else if(liuLang === "zh-Hant") lang0 = "zh-TW"
+    else if(liuLang === "zh-Hans") lang0 = "zh-CN"
+  }
+}
+
+
 {
   defaultOptions.defaultUrl = {
     value: "compressed.tracemonkey-pldi-09.pdf",
@@ -3197,7 +3219,7 @@ const defaultOptions = {
     kind: OptionKind.VIEWER
   };
   defaultOptions.locale = {
-    value: navigator.language || "en-US",
+    value: lang0,
     kind: OptionKind.VIEWER
   };
   defaultOptions.sandboxBundleSrc = {
