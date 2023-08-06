@@ -125,7 +125,7 @@ function _innerParse(
       // console.log("href: ", href)
       // console.log(" ")
 
-      const regEmail = /[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*/g
+      const regEmail = /^[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*$/g
       const idx1 = href.indexOf("://")
       const idx2 = href.indexOf("mailto")
       const emailMatch = href.match(regEmail)
