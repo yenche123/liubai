@@ -426,19 +426,30 @@ export function getEmbedData(
     const isMastodon = valTool.isInDomain(h, mastodon.hostname)
     if(!isMastodon) continue
 
-    // \w 表示用户 handle，\d 为内容 id 通常为 18 位
-    const mstnReg1 = /^\/@\w{3,32}\/\d{3,32}/g
-    const mstnMatch1 = p.match(mstnReg1)
-    if(!mstnMatch1) break
-
-    if(!originUrl.endsWith("/embed")) {
-      originUrl = originUrl + ("/embed")
-    }
     const mstnRes: EmbedDataRes = {
       link: originUrl,
       otherData: { isMastodon }
     }
-    return mstnRes
+
+    // 只能解析当前域名的内容，跨站点的无法在 iframe 里展示
+    // 另外，跨站点的相同内容，id 也是不一样的
+    // \w 表示用户 handle，\d 为内容 id 通常为 18 位
+    // 最后的 ? 表示匹配 / 字符 0 次或 1 次
+    // 最后的 $ 表示匹配结尾
+    const mstnReg1 = /^\/@\w{3,32}\/\d{3,32}\/?$/g
+    const mstnMatch1 = p.match(mstnReg1)
+    if(mstnMatch1) {
+      if(!originUrl.endsWith("/")) {
+        originUrl = originUrl + "/"
+      }
+      if(!originUrl.endsWith("embed")) {
+        originUrl = originUrl + ("embed")
+      }
+      mstnRes.link = originUrl
+      return mstnRes
+    }
+    
+    break
   }
 
   return
