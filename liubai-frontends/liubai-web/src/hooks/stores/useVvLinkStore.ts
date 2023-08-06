@@ -4,7 +4,7 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import valTool from "~/utils/basic/val-tool"
-import { domainAllowed, domainNotAllowed } from "~/config/domain-list"
+import { domainAllowed, domainNotAllowed, mastodonDomains } from "~/config/domain-list"
 import { getEmbedData, getOriginURL } from "./tools/embed-origin"
 import { isSpecialLink } from "./tools/handle-special-link"
 
@@ -78,6 +78,10 @@ function canAdd(url: string) {
 
   const data2 = domainNotAllowed.find(v => valTool.isInDomain(h, v))
   if(data2) return false
+
+  const data3 = mastodonDomains.find(v => valTool.isInDomain(h, v))
+  if(data3) return false
+
   return true
 }
 

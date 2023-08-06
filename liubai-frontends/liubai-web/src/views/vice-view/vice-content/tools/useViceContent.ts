@@ -171,8 +171,8 @@ function listenRouteChange(
 
     const iframeProxy = _env.IFRAME_PROXY
     const inAllowList = vvLinkStore.isInAllowedList(url)
-    const embedUrl = vvLinkStore.getEmbedData(url)
-    if(embedUrl) url = embedUrl.link
+    const embedData = vvLinkStore.getEmbedData(url)
+    if(embedData) url = embedData.link
     else if(iframeProxy && !inAllowList) {
       url = iframeProxy + url
     }
@@ -180,7 +180,7 @@ function listenRouteChange(
     // console.log("iframe url: ")
     // console.log(url)
     // console.log(" ")
-    setNewIframeSrc(url, embedUrl?.otherData)
+    setNewIframeSrc(url, embedData?.otherData)
   }
   
   const checkRouteChange = (newQuery: LocationQuery) => {

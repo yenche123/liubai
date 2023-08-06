@@ -1,6 +1,7 @@
 import thirdLink from "~/config/third-link"
 import valTool from "~/utils/basic/val-tool"
 import liuEnv from "~/utils/liu-env"
+import { mastodonDomains } from "~/config/domain-list"
 
 const x = "__XXX__"
 
@@ -137,6 +138,19 @@ export function getOriginURL(embedUrl: string) {
       }
       url.pathname = `/d/${codaId}`
     }
+    return url
+  }
+
+  // 10. 检查是否为 mastodon embed
+  for(let i=0; i<mastodonDomains.length; i++) {
+    const v = mastodonDomains[i]
+    const mastodon = new URL(`https://${v}`)
+    const isMastodon = valTool.isInDomain(h, mastodon.hostname)
+    if(!isMastodon) continue
+    const mstnReg1 = /^\/@\w{3,32}\/\d{3,32}\/embed/g
+    const mstnMatch1 = p.match(mstnReg1)
+    if(!mstnMatch1) break
+    url.pathname = p.substring(0, p.length - 6)
     return url
   }
 

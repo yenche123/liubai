@@ -2,6 +2,7 @@ import thirdLink from "~/config/third-link"
 import { useDynamics } from "~/hooks/useDynamics"
 import valTool from "~/utils/basic/val-tool"
 import liuApi from "~/utils/liu-api"
+import { mastodonDomains } from "~/config/domain-list"
 
 const x = "__XXX__"
 
@@ -415,6 +416,29 @@ export function getEmbedData(
       codaRes.link = url.toString()
       return codaRes
     }
+  }
+
+
+  // mastodon
+  for(let i=0; i<mastodonDomains.length; i++) {
+    const v = mastodonDomains[i]
+    const mastodon = new URL(`https://${v}`)
+    const isMastodon = valTool.isInDomain(h, mastodon.hostname)
+    if(!isMastodon) continue
+
+    // \w 表示用户 handle，\d 为内容 id 通常为 18 位
+    const mstnReg1 = /^\/@\w{3,32}\/\d{3,32}/g
+    const mstnMatch1 = p.match(mstnReg1)
+    if(!mstnMatch1) break
+
+    if(!originUrl.endsWith("/embed")) {
+      originUrl = originUrl + ("/embed")
+    }
+    const mstnRes: EmbedDataRes = {
+      link: originUrl,
+      otherData: { isMastodon }
+    }
+    return mstnRes
   }
 
   return
