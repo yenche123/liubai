@@ -66,7 +66,7 @@ export const domainAllowed = [
   "i.ibb.co",
   "chainfeeds.xyz",
   "wsj.com",
-  "speakerdeck.com"
+  "speakerdeck.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
@@ -100,6 +100,7 @@ export const domainNotAllowed = [
   "perplexity.ai",
   "remnote.com",
   "fedidb.org",
+  "huxiu.com",
 ]
 
 export const mastodonDomains = [
