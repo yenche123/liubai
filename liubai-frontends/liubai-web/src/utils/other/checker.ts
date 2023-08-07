@@ -7,7 +7,7 @@ import { LiuMyContext } from "~/types/types-context"
 import localCache from "~/utils/system/local-cache"
 
 interface CheckerParam {
-  showTip?: boolean        // 如果不存在 userId 时，是否展示弹窗提示
+  showTip?: boolean        // 如果不存在 登录态 时，是否展示弹窗提示
 }
 
 // 获取 userId

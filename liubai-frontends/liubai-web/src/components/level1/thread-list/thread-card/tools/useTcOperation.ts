@@ -106,7 +106,6 @@ async function handle_showCountdown(
   threadOperate.setShowCountdown(thread, d.memberId, d.userId)
 }
 
-// 跳转到详情页
 function handel_comment(ctx: TcoCtx) {
   if(ctx.props.displayType !== "list") {
     ctx.emits("requestfocus")
