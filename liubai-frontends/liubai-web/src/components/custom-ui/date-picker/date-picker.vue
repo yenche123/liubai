@@ -48,6 +48,7 @@ const previewDate = computed(() => {
     class="liu-dp-container"
     :class="{ 'liu-dp-container_show': show }"
   >
+    <div class="liu-dp-bg" @click.stop="onTapCancel"></div>
 
     <VueDatePicker :locale="locale" 
       :dayNames="dayNames" 
@@ -127,19 +128,18 @@ const previewDate = computed(() => {
   &.liu-dp-container_show {
     opacity: 1;
   }
+}
 
-  &::before {
-    position: absolute;
-    content: "";
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--popup-bg);
-  }
-
+.liu-dp-bg {
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--popup-bg);
 }
 
 .liu-dp-btns {
@@ -187,6 +187,7 @@ const previewDate = computed(() => {
   --dp-cell-padding: 0;
 
   .dp__flex_display {
+    width: min-content;
     justify-content: center;
 
     .dp__outer_menu_wrap {
