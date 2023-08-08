@@ -1,6 +1,6 @@
 # LB
 
-Today is good!
+I love it, this job!!
 
 ## 开发备注
 
