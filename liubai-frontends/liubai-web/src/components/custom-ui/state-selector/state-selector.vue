@@ -220,7 +220,7 @@ const { t } = useI18n()
 .ssi-select-box {
   width: 16px;
   height: 16px;
-  border: 2px solid var(--main-code);
+  border: 3px solid var(--main-code);
   display: flex;
   align-items: center;
   justify-content: center;
