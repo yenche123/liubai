@@ -35,7 +35,24 @@ export function useViceContent() {
   const onTapClose = async () => {
     const newQuery = liuUtil.getDefaultRouteQuery(route)
     router.replaceWithNewQuery(route, newQuery)
-    await valTool.waitMilli(300)
+
+    /**
+     * 设置 390ms 而非 300ms 的原因:
+     *     由于关闭动画执行时，会触发 prosemirror-virtual-cursor 依赖的变化
+     * 当中的 ResizeObserver 会发生响应随之进行一系列变化，这时太快清空
+     * thread-card 上的 editor，会造成诸如：
+     * index.js:461  Uncaught TypeError: Cannot read properties of null (reading 'domFromPos')
+     *   at coordsAtPos (index.js:461:47)
+     *   at EditorView.coordsAtPos (index.js:5356:16)
+     *   at getCursorRect (index.js:91:15)
+     *   at updateCursor (index.js:111:22)
+     *   at update (index.js:15:9)
+     *   at ResizeObserver.<anonymous> (index.js:18:58)
+     * 的错误，该错误约位于源码以下位置:
+     *   https://github.com/ocavue/prosemirror-virtual-cursor/blob/49773124d8f6f1d9bce19e59d94f9c3bb8cd7d07/src/index.ts#L39
+     * 所以实测，适当添加时长，能暂时解决该问题  
+    */
+    await valTool.waitMilli(390)
     closeAllView(ctx, true)
   }
 
