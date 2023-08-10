@@ -47,6 +47,7 @@
   --floating-shadow: 0 6px 24px rgba(0, 0, 0, .15);
   --kanban-header-shadow: 0 12px 6px -6px rgba(0, 0, 0, .1);
   --liu-hr: #e9e9e9;   /** 卡片里的分割线、引用的那条 bar */
+  --liu-hr2: #d3d3d3;  /** 卡片里的分割线、引用的那条 bar，for bg-color */
   --liu-quote: #868686;  /** 引用里的文字色 */
   --liu-image: #f7f7f7;
 

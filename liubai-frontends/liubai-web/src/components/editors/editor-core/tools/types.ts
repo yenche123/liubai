@@ -14,6 +14,7 @@ export interface EditorCoreProps {
   hashTrigger: boolean            // 是否允许输入 # 来激发 cui.showHashTagEditor
   minHeight: string
   purpose: EditorCorePurpose
+  isInCard: boolean              // 在浅色模式时，是否在背景为白色的卡片里
 }
 
 export const editorCoreProps = {
@@ -43,6 +44,10 @@ export const editorCoreProps = {
   purpose: {
     type: String as PropType<EditorCorePurpose>,
     default: ""
+  },
+  isInCard: {
+    type: Boolean,
+    default: true,
   }
 }
 
@@ -60,4 +65,5 @@ export interface EditorCoreStyles {
   inlineCodeSize: string
   selectBg: string
   lineHeight: number
+  hrBg: string
 }

@@ -89,6 +89,7 @@ const {
           purpose="comment-edit"
           :desc-placeholder="t(placeholderKey)"
           :min-height="'' + minEditorHeight + 'px'"
+          :is-in-card="located === 'popup'"
           @focus="onEditorFocus"
           @blur="onEditorBlur"
           @finish="onEditorFinish"

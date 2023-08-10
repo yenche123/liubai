@@ -7,10 +7,15 @@ import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-cover
 import PrettyFile from '~/components/browsing/pretty-file/pretty-file.vue';
 import BwBubbleMenu from '~/components/browsing/bw-bubble-menu/bw-bubble-menu.vue';
 import { useCcBox } from './tools/useCcBox';
+import type { CommentCardLocation } from "../tools/types"
 
 const props = defineProps({
   cs: {          // cs 为 commentShow 的简写
     type: Object as PropType<CommentShow>,
+    required: true,
+  },
+  location: {
+    type: String as PropType<CommentCardLocation>,
     required: true,
   },
 })
@@ -29,6 +34,7 @@ const {
       ref="editorCoreRef"
       :is-edit="false"
       :content="cs.content"
+      :is-in-card="location === 'popup'"
       purpose="comment-browse"
     ></EditorCore>
 

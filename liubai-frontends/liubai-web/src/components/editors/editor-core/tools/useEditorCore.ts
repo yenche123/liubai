@@ -81,7 +81,7 @@ export function useEditorCore(
     })
   }
 
-  const styles = getStyles(purpose)
+  const styles = getStyles(props)
   const transition = ref("0")
   onMounted(async () => {
     await valTool.waitMilli(200)
@@ -96,27 +96,40 @@ export function useEditorCore(
 }
 
 function getStyles(
-  purpose: Ref<EditorCorePurpose>
+  props: EditorCoreProps,
 ) {
+
   const styles = computed<EditorCoreStyles>(() => {
-    let pse = purpose.value
+    const pse = props.purpose
     const isComment = pse === "comment-browse" || pse === "comment-edit"
+    const isInCard = props.isInCard
+
+    let fontSize = "var(--desc-font)"
+    let h1Size = "var(--title-font)"
+    let inlineCodeSize = "var(--inline-code-font)"
+    let selectBg = "var(--select-bg)"
+    let lineHeight = 1.9
+    let hrBg = "var(--liu-hr)"
+
     if(isComment) {
-      return {
-        fontSize: "var(--comment-font)",
-        h1Size: "var(--desc-font)",
-        inlineCodeSize: "var(--comment-inline-code)",
-        selectBg: "var(--select-bg-2)",
-        lineHeight: 1.7,
-      }
+      fontSize = "var(--comment-font)"
+      h1Size = "var(--desc-font)"
+      inlineCodeSize = "var(--comment-inline-code)"
+      lineHeight = 1.7
+    }
+
+    if(!isInCard) {
+      selectBg = "var(--select-bg-2)"
+      hrBg = "var(--liu-hr2)"
     }
 
     return {
-      fontSize: "var(--desc-font)",
-      h1Size: "var(--title-font)",
-      inlineCodeSize: "var(--inline-code-font)",
-      selectBg: "var(--select-bg)",
-      lineHeight: 1.9,
+      fontSize,
+      h1Size,
+      inlineCodeSize,
+      selectBg,
+      hrBg,
+      lineHeight,
     }
   })
 

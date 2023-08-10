@@ -110,7 +110,7 @@ const {
         </div>
 
         <!-- 内文 + 图片 + 文件 -->
-        <CcBox :cs="cs"></CcBox>
+        <CcBox :cs="cs" :location="location"></CcBox>
 
         <!-- 工具栏 -->
         <CcToolbar :cs="cs" 
@@ -148,7 +148,7 @@ const {
           </div>
 
           <!-- 内文 + 图片 + 文件 -->
-          <CcBox :cs="cs"></CcBox>
+          <CcBox :cs="cs" :location="location"></CcBox>
 
         </div>
 

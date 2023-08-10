@@ -126,6 +126,7 @@ const {
       purpose="thread-edit"
       :hash-trigger="true"
       :min-height="'' + minEditorHeight + 'px'"
+      is-in-card
     ></EditorCore>
 
     <!-- 气泡 -->

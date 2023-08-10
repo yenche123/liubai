@@ -97,6 +97,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
         <EditorCore
           :is-edit="false"
           :content="threadData.briefing"
+          is-in-card
         ></EditorCore>
         <div class="tcb-mask"></div>
         <div class="tcb-more">
@@ -118,6 +119,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
           ref="editorCoreRef"
           :is-edit="false"
           :content="threadData.content"
+          is-in-card
         ></EditorCore>
       </div>
 
