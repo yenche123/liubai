@@ -298,9 +298,6 @@ export function getEmbedData(
     if(spotifyMatch1) {
       const trackId = spotifyMatch1[0]
       spotify1.pathname = `/embed/track/${trackId}`
-      if(themeVal === "dark") spotify1.searchParams.set("theme", "0")
-      spotifyRes.link = spotify1.toString()
-      return spotifyRes
     }
 
 
@@ -310,9 +307,6 @@ export function getEmbedData(
     if(spotifyMatch2) {
       const playlistId = spotifyMatch2[0]
       spotify1.pathname = `/embed/playlist/${playlistId}`
-      if(themeVal === "dark") spotify1.searchParams.set("theme", "0")
-      spotifyRes.link = spotify1.toString()
-      return spotifyRes
     }
 
     // 专辑 /playlist
@@ -321,11 +315,22 @@ export function getEmbedData(
     if(spotifyMatch3) {
       const albumId = spotifyMatch3[0]
       spotify1.pathname = `/embed/album/${albumId}`
-      if(themeVal === "dark") spotify1.searchParams.set("theme", "0")
+    }
+
+    // 艺人
+    const spotifyReg4 = /(?<=\/artist\/)\w{16,32}/g
+    const spotifyMatch4 = p.match(spotifyReg4)
+    if(spotifyMatch4) {
+      const artistId = spotifyMatch4[0]
+      spotify1.pathname = `/embed/artist/${artistId}`
+    }
+
+    // 当 spotify1 的 pathname 不止是 “/” 时，代表已找到目标了
+    if(spotify1.pathname.length > 10) {
+      if(themeVal === 'dark') spotify1.searchParams.set("theme", "0")
       spotifyRes.link = spotify1.toString()
       return spotifyRes
     }
-    
   }
 
 
