@@ -1,5 +1,5 @@
 import { db } from "~/utils/db";
-import type { LiuContentType } from "~/types/types-atom"
+import type { LiuContentType } from "~/types/types-atom";
 import checker from "~/utils/other/checker";
 import type { 
   ContentLocalTable,
@@ -47,6 +47,8 @@ export async function handleEmoji(
 
   // 4. 修改 contentId 上的 emojiData
   await updateContent(res0, encodeStr)
+
+  // 5. 通知其他组件
   
   return true
 }
@@ -66,10 +68,6 @@ async function updateContent(
     emojiSystem.push({ num: 1, encodeStr })
   }
   const res1 = await db.contents.update(res0._id, { emojiData })
-  console.log("查看一下 updateContent 的结果......")
-  console.log(res1)
-  console.log(" ")
-
   return true
 }
 
@@ -112,6 +110,5 @@ async function addEmoji(
     emoji: encodeStr,
   }
   const res2 = await db.collections.add(w2)
-  console.log(res2)
   return true
 }

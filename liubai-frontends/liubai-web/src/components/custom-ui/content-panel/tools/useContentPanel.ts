@@ -12,6 +12,8 @@ import valTool from "~/utils/basic/val-tool"
 import { i18n } from "~/locales"
 import liuApi from "~/utils/liu-api"
 import liuUtil from "~/utils/liu-util"
+import { handleEmoji } from "./handle-emoji";
+import type { LiuContentType } from "~/types/types-atom";
 
 let _resolve: ContentPanelResolver | undefined
 const TRANSITION_DURATION = 250
@@ -108,7 +110,7 @@ function onMouseLeaveEmoji(index: number) {
 
 
 
-function onTapEmoji(index: number) {
+async function onTapEmoji(index: number) {
   const item = cpData.emojiList[index]
   const emoji = item.emoji
   if(!emoji) return
@@ -118,7 +120,18 @@ function onTapEmoji(index: number) {
   console.log(encodeStr)
   console.log(" ")
 
+  let contentId = ""
+  let forType: LiuContentType = "COMMENT"
+  if(cpData.comment) contentId = cpData.comment._id
+  else if(cpData.thread) {
+    contentId = cpData.thread._id
+    forType = "THREAD"
+  }
 
+  await handleEmoji(contentId, forType, encodeStr)
+
+  // 去关闭弹窗
+  closeIt(rr, queryKey)
 }
 
 
