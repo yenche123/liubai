@@ -91,15 +91,6 @@ function handleTapThreadCard(
 
   const { threadData } = props
   const cid = threadData._id
-  const toWhere = liuUtil.open.toWhatDetail()
-  
-  if(toWhere === "detail-page") {
-    // 用 detail-page 打开
-    liuUtil.open.openDetailWithDetailPage(cid, ctx)
-  }
-  else if(toWhere === "vice-view") {
-    // 用侧边栏打开.......
-    liuUtil.open.openDetailWithViceView(cid, ctx)
-  }
+  liuUtil.open.openDetail(cid, ctx)
 }
 
