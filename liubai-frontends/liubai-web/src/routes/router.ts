@@ -29,6 +29,9 @@ declare module 'vue-router' {
     // 默认为 true 代表会检查
     // 目前 detail 和 edit 这两个 page 为 false 表示不必检查
     checkWorkspace?: boolean
+
+    // 是否能打开 vice-view，默认为 true; inSetting 为 true 的，此值皆为 false
+    hasViceView?: boolean
   }
 }
 
@@ -139,6 +142,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "trash",
     meta: {
       keepAlive: true,
+      hasViceView: false,
     }
   },
   {
@@ -150,6 +154,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "connect",
     meta: {
       keepAlive: true,
+      hasViceView: false,
     }
   },
   {
@@ -253,6 +258,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "collaborative-trash",
     meta: {
       keepAlive: true,
+      hasViceView: false,
     }
   },
   {
@@ -264,6 +270,7 @@ const routes: Array<RouteRecordRaw> = [
     name: "collaborative-connect",
     meta: {
       keepAlive: true,
+      hasViceView: false,
     }
   },
   {

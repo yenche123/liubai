@@ -15,7 +15,16 @@ interface RrOpt {
 
 export type InnerOrOutter = "inner" | "outter"
 
-function toWhatDetail(): WhatDetail {
+
+// 根据当前 route 判断当前页面是否可以用 vice-view 打开
+function allowOpenViceView(opt: RrOpt) {
+  const { meta: m } = opt.rr.route
+  if(m.inSetting) return false
+  if(m.hasViceView === false) return false
+  return true
+}
+
+function toWhatDetail(opt: RrOpt): WhatDetail {
   const { width } = useWindowSize()
 
   let point = cfg.vice_detail_breakpoint
@@ -23,11 +32,15 @@ function toWhatDetail(): WhatDetail {
   if(sidebarWidth <= 0) point -= 150
   
   if(width.value < point) return "detail-page"
-  return "vice-view"
+
+  const aovv = allowOpenViceView(opt)
+  if(aovv) return "vice-view"
+
+  return "detail-page"
 }
 
 function openDetail(contentId: string, opt: RrOpt) {
-  const w = toWhatDetail()
+  const w = toWhatDetail(opt)
   if(w === "detail-page") openDetailWithDetailPage(contentId, opt)
   else if(w === "vice-view") openDetailWithViceView(contentId, opt)
 }
@@ -46,7 +59,7 @@ function openDetailWithDetailPage(contentId: string, opt: RrOpt) {
 }
 
 function openComment(cid2: string, opt: RrOpt) {
-  const w = toWhatDetail()
+  const w = toWhatDetail(opt)
   if(w === "detail-page") openCommentWithDetailPage(cid2, opt)
   else if(w === "vice-view") openCommentWithViceView(cid2, opt)
 }
@@ -84,7 +97,7 @@ function openBing(
   forceVv: boolean = false
 ): InnerOrOutter {
   const { route, router } = opt.rr
-  const w = toWhatDetail()
+  const w = toWhatDetail(opt)
   if(forceVv || w === "vice-view") {
     const newQ = { bing: keyword }
     if(opt.replace) router.replaceWithNewQuery(route, newQ)
@@ -163,7 +176,7 @@ function openLink(
   opt: RrOpt,
   forceVv: boolean = false,
 ) {
-  const w = toWhatDetail()
+  const w = toWhatDetail(opt)
   if(!forceVv && w !== "vice-view") {
     window.open(url, "_blank")
     return "outter"
