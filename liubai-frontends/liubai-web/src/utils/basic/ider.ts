@@ -26,7 +26,7 @@ const createMemberId = () => {
 }
 
 const createDraftId = () => {
-  return "d0" + _createId(20)
+  return "d0" + _createId(18)
 }
 
 const createThreadId = () => {
