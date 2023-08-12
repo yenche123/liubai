@@ -56,11 +56,13 @@ export function showContentPanel(param: ContentPanelParam) {
   }
 
   if(param.comment) {
+    delete cpData.thread
     cpData.comment = param.comment
     cpData.onlyReaction = param.onlyReaction ?? false
     cpData.isMine = param.comment.isMine
   }
   if(param.thread) {
+    delete cpData.comment
     cpData.thread = param.thread
     cpData.onlyReaction = true
     cpData.isMine = param.thread.isMine
@@ -122,13 +124,14 @@ async function onTapEmoji(index: number) {
 
   let contentId = ""
   let forType: LiuContentType = "COMMENT"
-  if(cpData.comment) contentId = cpData.comment._id
-  else if(cpData.thread) {
-    contentId = cpData.thread._id
+  const { comment: c, thread: t } = cpData
+  if(c) contentId = c._id
+  else if(t) {
+    contentId = t._id
     forType = "THREAD"
   }
 
-  await handleEmoji(contentId, forType, encodeStr)
+  await handleEmoji(contentId, forType, encodeStr, t, c)
 
   // 去关闭弹窗
   closeIt(rr, queryKey)

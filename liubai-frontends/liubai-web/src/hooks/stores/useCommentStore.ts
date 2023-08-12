@@ -11,7 +11,8 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { CommentShow } from "~/types/types-content";
 
-export type CommentChangeType = "add" | "delete" | "edit"
+// 其中 operate 表示点赞、收藏之类的操作
+export type CommentChangeType = "add" | "delete" | "edit" | "operate"
 
 export interface CommentStoreSetDataOpt {
   changeType: CommentChangeType

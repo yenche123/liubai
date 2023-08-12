@@ -71,7 +71,7 @@ function handleCommentChange(
   for(let i=0; i<list.length; i++) {
     const v = list[i].thread
     if(v._id !== parentThread) continue
-    if(changeType === "edit") return
+    if(changeType === "edit" || changeType === "operate") return
 
     let num = v.commentNum
 

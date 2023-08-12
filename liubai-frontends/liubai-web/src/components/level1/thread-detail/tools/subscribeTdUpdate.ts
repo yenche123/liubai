@@ -51,7 +51,7 @@ function whenCommentAddOrDelete(
   const thread = tdData.threadShow
   if(!thread) return
   if(thread._id !== parentThread) return
-  if(changeType === "edit") return
+  if(changeType === "edit" || changeType === "operate") return
 
   let num = thread.commentNum
 

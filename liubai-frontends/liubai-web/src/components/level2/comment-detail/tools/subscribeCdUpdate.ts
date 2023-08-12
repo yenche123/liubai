@@ -95,7 +95,7 @@ function whenCommentUpdate(
         thread.commentNum = valTool.minusAndMinimumZero(thread.commentNum)
       }
     }
-    else if(changeType === "edit") {
+    else if(changeType === "edit" || changeType === "operate") {
       cdData.state = -1
       cdData.targetComment = newComment
     }

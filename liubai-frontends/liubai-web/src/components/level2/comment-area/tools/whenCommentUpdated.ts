@@ -28,8 +28,8 @@ export function whenCommentUpdated(
   if(changeType === "add") {
     handleAdded(caData, state)
   }
-  else if(changeType === "delete" || changeType === "edit") {
-    handleEditedOrDeleted(caData, state)
+  else if(changeType === "delete" || changeType === "edit" || changeType === "operate") {
+    handleNonAdded(caData, state)
   }
 }
 
@@ -88,7 +88,7 @@ function handleAdded(
 
 }
 
-function handleEditedOrDeleted(
+function handleNonAdded(
   caData: CommentAreaData,
   state: CommentStoreState,
 ) {
@@ -121,8 +121,8 @@ function handleEditedOrDeleted(
 
     // 此时，找到被操作的那条评论了
 
-    // 如果是编辑，那么直接赋值
-    if(changeType === "edit") {
+    // 如果是编辑或操作，那么直接赋值
+    if(changeType === "edit" || changeType === "operate") {
       comments[i] = theComment
       commentController.handleRelation(comments)
       break

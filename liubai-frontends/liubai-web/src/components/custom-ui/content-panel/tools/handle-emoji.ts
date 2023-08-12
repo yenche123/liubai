@@ -8,11 +8,20 @@ import type {
 import type { LiuMyContext } from "~/types/types-context";
 import time from "~/utils/basic/time";
 import ider from "~/utils/basic/ider";
+import type { CommentShow, ThreadShow, EmojiData } from "~/types/types-content";
+import valTool from "~/utils/basic/val-tool";
+import { 
+  useCommentStore,
+  type CommentStoreSetDataOpt,
+ } from "~/hooks/stores/useCommentStore";
+import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 
 export async function handleEmoji(
   contentId: string,
   forType: LiuContentType,
   encodeStr: string,
+  thread?: ThreadShow,
+  comment?: CommentShow,
 ) {
 
   // 0. 获取 userId memberId spaceType spaceId
@@ -46,11 +55,56 @@ export async function handleEmoji(
   }
 
   // 4. 修改 contentId 上的 emojiData
-  await updateContent(res0, encodeStr)
+  const newEmojiData = await updateContent(res0, encodeStr)
 
   // 5. 通知其他组件
+  if(forType === "COMMENT" && comment) {
+    notifyOtherComments(comment, encodeStr, newEmojiData)
+  }
+  else if(forType === "THREAD" && thread) {
+    notifyOtherThreads(thread, encodeStr, newEmojiData)
+  }
   
   return true
+}
+
+function notifyOtherComments(
+  comment: CommentShow,
+  encodeStr: string,
+  newEmojiData: EmojiData,
+) {
+  const now = time.getTime()
+  const newComment = valTool.copyObject(comment)
+  newComment.emojiData = newEmojiData
+  newComment.myEmoji = encodeStr
+  newComment.myEmojiStamp = now
+
+  const cStore = useCommentStore()
+  const data: CommentStoreSetDataOpt = {
+    changeType: "operate",
+    commentId: newComment._id,
+    commentShow: newComment,
+    parentThread: newComment.parentThread,
+    parentComment: newComment.parentComment,
+    replyToComment: newComment.replyToComment,
+  }
+  cStore.setData(data)
+}
+
+
+function notifyOtherThreads(
+  thread: ThreadShow,
+  encodeStr: string,
+  newEmojiData: EmojiData,
+) {
+  const now = time.getTime()
+  const newThread = valTool.copyObject(thread)
+  newThread.emojiData = newEmojiData
+  newThread.myEmoji = encodeStr
+  newThread.myEmojiStamp = now
+
+  const tStore = useThreadShowStore()
+  tStore.setUpdatedThreadShows([newThread], "emoji")
 }
 
 async function updateContent(
@@ -68,7 +122,7 @@ async function updateContent(
     emojiSystem.push({ num: 1, encodeStr })
   }
   const res1 = await db.contents.update(res0._id, { emojiData })
-  return true
+  return emojiData
 }
 
 async function updateEmoji(
