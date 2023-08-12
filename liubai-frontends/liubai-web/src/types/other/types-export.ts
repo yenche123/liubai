@@ -7,6 +7,7 @@ import type {
 import type { 
   LiuContent, 
   LiuRemindMe,
+  LiuContentType,
 } from "../types-atom"
 import type { EmojiData } from "../types-content"
 import type { 
@@ -20,7 +21,7 @@ export type LiuImageExport = Omit<LiuImageStore, "arrayBuffer" | "cloud_url">
 
 // 导出格式为 json 时的结构: 
 export interface LiuExportContentJSON extends BaseLocalTable {
-  infoType: "THREAD" | "COMMENT"
+  infoType: LiuContentType
   user: string
   member?: string
   spaceId: string

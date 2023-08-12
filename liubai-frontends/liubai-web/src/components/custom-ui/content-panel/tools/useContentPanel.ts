@@ -7,12 +7,12 @@ import type {
   ContentPanelParam,
   ContentPanelResolver,
 } from "./types"
-import { emojiList } from "./emojiList"
+import { emojiList } from "~/config/emoji-list"
 import valTool from "~/utils/basic/val-tool"
 import { i18n } from "~/locales"
 import liuApi from "~/utils/liu-api"
 import liuUtil from "~/utils/liu-util"
-import { handleEmoji } from "./handle-emoji";
+import contentOperate from "~/hooks/content/content-operate"
 import type { LiuContentType } from "~/types/types-atom";
 
 let _resolve: ContentPanelResolver | undefined
@@ -131,7 +131,7 @@ async function onTapEmoji(index: number) {
     forType = "THREAD"
   }
 
-  await handleEmoji(contentId, forType, encodeStr, t, c)
+  await contentOperate.toEmoji(contentId, forType, encodeStr, t, c)
 
   // 去关闭弹窗
   closeIt(rr, queryKey)

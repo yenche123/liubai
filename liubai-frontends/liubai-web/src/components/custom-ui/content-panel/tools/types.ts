@@ -1,4 +1,5 @@
 import type { CommentShow, ThreadShow } from "~/types/types-content";
+import type { EmojiItem } from "~/config/emoji-list";
 
 export interface ContentPanelParam {
   thread?: ThreadShow
@@ -7,22 +8,13 @@ export interface ContentPanelParam {
                            // 若是 thread 有值的情况，此值会为 true
 }
 
-export interface CpEmoji {
-  emoji: string      // 无需 encode
-  iconName: string
-  shadow: string
-  key: string
-  currentFilter?: string   // 当前 emoji 的 filter；
-                           // 当鼠标悬浮其上时，currentFilter 会被修改成 shadow
-}
-
 export interface ContentPanelData {
   thread?: ThreadShow
   comment?: CommentShow
   onlyReaction: boolean
   enable: boolean
   show: boolean
-  emojiList: CpEmoji[]
+  emojiList: EmojiItem[]
   isMine: boolean    // 若为 true，展示 "删除按钮"，否则展示 "举报按钮"
   title: string
 }

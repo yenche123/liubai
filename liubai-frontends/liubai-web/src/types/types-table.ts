@@ -1,6 +1,7 @@
 // 接口名称后缀为 LocalTable 的，代表是本地的数据表
 import type { 
   OState, 
+  OState_2,
   VisScope, 
   StorageState, 
   MemberState, 
@@ -61,7 +62,7 @@ export interface ContentLocalTable extends BaseLocalTable {
   spaceId: string
   spaceType: SpaceType
 
-  infoType: "THREAD" | "COMMENT"
+  infoType: LiuContentType
   oState: OState
   visScope: VisScope
   storageState: StorageState
@@ -91,7 +92,7 @@ export interface ContentLocalTable extends BaseLocalTable {
 }
 
 export interface DraftLocalTable extends BaseLocalTable {
-  infoType: "THREAD" | "COMMENT"
+  infoType: LiuContentType
   oState: "OK" | "POSTED" | "DELETED"
   user: string
   spaceId: string
@@ -115,7 +116,7 @@ export interface DraftLocalTable extends BaseLocalTable {
 }
 
 export interface CollectionLocalTable extends BaseLocalTable {
-  oState: "OK" | "CANCELED"
+  oState: OState_2
   user: string
   member?: string
   infoType: "EXPRESS" | "FAVORITE"
@@ -123,5 +124,5 @@ export interface CollectionLocalTable extends BaseLocalTable {
   spaceId: string
   spaceType: SpaceType
   content_id: string
-  emoji?: string
+  emoji?: string        // 经 encodeURIComponent() 的表情
 }

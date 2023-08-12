@@ -1,8 +1,10 @@
+// content-operate 用于综合处理动态或评论的公共逻辑
+// 比如 操作 emoji 两者皆有，就会交有 contentOperate 来处理
+
 import { db } from "~/utils/db";
 import type { LiuContentType } from "~/types/types-atom";
 import checker from "~/utils/other/checker";
-import type { 
-  ContentLocalTable,
+import type {
   CollectionLocalTable,
 } from "~/types/types-table";
 import type { LiuMyContext } from "~/types/types-context";
@@ -15,8 +17,12 @@ import {
   type CommentStoreSetDataOpt,
  } from "~/hooks/stores/useCommentStore";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
+import type { OState_2 } from "~/types/types-basic"
 
-export async function handleEmoji(
+
+// 添加或取消 emoji
+// 若 encodeStr 为空，代表取消
+export async function toEmoji(
   contentId: string,
   forType: LiuContentType,
   encodeStr: string,
@@ -26,7 +32,7 @@ export async function handleEmoji(
 
   // 0. 获取 userId memberId spaceType spaceId
   const authData = checker.getMyContext()
-  if(!authData) return
+  if(!authData) return false
 
   // 1. 先查看 contentId 是否存在
   const res0 = await db.contents.get(contentId)
@@ -46,23 +52,67 @@ export async function handleEmoji(
   }
   const res1 = await db.collections.get(w1)
 
-  // 3. 若已存在 collection 去修改，反之去新增
+  // 3. 操作 collection 和 emojiData
+  const emojiData = res0.emojiData
   if(res1) {
-    await updateEmoji(res1._id, encodeStr)
+    // 若存在 collection，判断意图
+
+    if(res1.oState === "OK") {
+      // 已有 emoji 的情况
+
+      if(res1.emoji === encodeStr) return true
+
+      // 先把已有的删除
+      console.log("先把 emojiData 里原先的 emoji 删除")
+      if(res1.emoji) updateEmojiData(emojiData, res1.emoji, -1)
+
+      if(!encodeStr) {
+        console.log("期望是取消 emoji，所以把这行 row 置为 CANCELED")
+        await updateCollection(res1._id, "", "CANCELED")
+      }
+      else {
+        console.log("期望是新增 emoji，所以新增 emojiData 里的 encodeStr")
+        updateEmojiData(emojiData, encodeStr, 1)
+        console.log("并把这行 row 改为 OK")
+        await updateCollection(res1._id, encodeStr, "OK")
+      }
+    }
+    else {
+      // 之前的 emoji 是取消的情况
+      console.log("之前的 emoji 是取消的情况")
+
+      // 新的动作也是取消 emoji，直接 return
+      if(!encodeStr) return true
+
+      console.log("期望是新增 emoji，所以新增 emojiData 里的 encodeStr")
+      // 新的动作是新增 emoji
+      updateEmojiData(emojiData, encodeStr, 1)
+
+      console.log("并把这行 row 改为 OK")
+      await updateCollection(res1._id, encodeStr, "OK")
+    }
   }
   else {
-    await addEmoji(contentId, forType, encodeStr, authData)
+    console.log("没有任何关于这则内容的 emoji.........")
+    if(!encodeStr) return true
+    
+    console.log("期望是新增 emoji，所以新增 emojiData 里的 encodeStr")
+    // 新的动作是新增 emoji
+    updateEmojiData(emojiData, encodeStr, 1)
+
+    console.log("因为没有 collection，所以去新增")
+    await addCollection(contentId, forType, encodeStr, authData)
   }
 
   // 4. 修改 contentId 上的 emojiData
-  const newEmojiData = await updateContent(res0, encodeStr)
+  await updateContent(res0._id, emojiData)
 
   // 5. 通知其他组件
   if(forType === "COMMENT" && comment) {
-    notifyOtherComments(comment, encodeStr, newEmojiData)
+    notifyOtherComments(comment, encodeStr, emojiData)
   }
   else if(forType === "THREAD" && thread) {
-    notifyOtherThreads(thread, encodeStr, newEmojiData)
+    notifyOtherThreads(thread, encodeStr, emojiData)
   }
   
   return true
@@ -107,41 +157,51 @@ function notifyOtherThreads(
   tStore.setUpdatedThreadShows([newThread], "emoji")
 }
 
-async function updateContent(
-  res0: ContentLocalTable,
+
+function updateEmojiData(
+  emojiData: EmojiData,
   encodeStr: string,
+  delta: number = 1,
 ) {
-  const { emojiData } = res0
-  emojiData.total++
+  emojiData.total += delta
+  if(emojiData.total < 0) emojiData.total = 0
   const emojiSystem = emojiData.system
   const theEmoji = emojiSystem.find(v => v.encodeStr === encodeStr)
   if(theEmoji) {
-    theEmoji.num++
+    theEmoji.num += delta
+    if(theEmoji.num < 0) theEmoji.num = 0
   }
-  else {
-    emojiSystem.push({ num: 1, encodeStr })
+  else if(delta > 0) {
+    emojiSystem.push({ num: delta, encodeStr })
   }
-  const res1 = await db.contents.update(res0._id, { emojiData })
+}
+
+async function updateContent(
+  id: string,
+  emojiData: EmojiData
+) {
+  const res1 = await db.contents.update(id, { emojiData })
   return emojiData
 }
 
-async function updateEmoji(
+async function updateCollection(
   collectionId: string,
   encodeStr: string,
+  oState: OState_2,
 ) {
   const now = time.getTime()
   const w1: Partial<CollectionLocalTable> = {
-    oState: "OK",
+    oState,
     emoji: encodeStr,
     updatedStamp: now,
   }
   const res1 = await db.collections.update(collectionId, w1)
-  console.log("updateEmoji......")
+  console.log("updateCollection......")
   console.log(res1)
   return true
 }
 
-async function addEmoji(
+async function addCollection(
   contentId: string,
   forType: LiuContentType,
   encodeStr: string,

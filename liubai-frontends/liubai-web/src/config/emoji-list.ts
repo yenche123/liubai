@@ -1,9 +1,18 @@
-import type { CpEmoji } from "./types"
 
 const pre = `emojis-`
 const dsPre = `drop-shadow(0 3px 15px `
 
-export const emojiList: CpEmoji[] = [
+export interface EmojiItem {
+  emoji: string      // 无需 encode
+  iconName: string
+  shadow: string
+  key: string
+  currentFilter?: string   // 当前 emoji 的 filter；
+                           // 当鼠标悬浮其上时，currentFilter 会被修改成 shadow
+}
+
+
+export const emojiList: EmojiItem[] = [
   {
     emoji: "❤️",
     iconName: `${pre}heart_suit_color`,

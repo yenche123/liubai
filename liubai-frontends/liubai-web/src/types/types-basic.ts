@@ -1,6 +1,7 @@
 
 export type TrueOrFalse = "true" | "false"
 export type OState = "OK" | "REMOVED" | "DELETED"
+export type OState_2 = "OK" | "CANCELED"
 export type VisScope = "DEFAULT" | "PUBLIC" | "LOGIN_REQUIRED"
 export type StorageState = "CLOUD" | "WAIT_UPLOAD" | "LOCAL" | "ONLY_LOCAL"
 export type SortWay = "desc" | "asc"   // 降序和升序
