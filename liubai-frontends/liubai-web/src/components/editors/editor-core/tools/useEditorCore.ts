@@ -6,14 +6,12 @@ import type { ShallowRef } from "vue"
 import type { 
   EditorCoreProps, 
   EditorCoreEmits,
-  EditorCorePurpose,
   EditorCoreStyles,
 } from "./types"
 import { initExtensions } from "./init-extensions"
 import { useEcHashtag } from "./useEcHashtag"
 import { editorSetKey } from '~/utils/provide-keys'
 import type { LiuTimeout } from '~/utils/basic/type-tool'
-import type { Ref } from "vue"
 import valTool from '~/utils/basic/val-tool'
 import { handlePaste } from './handle-paste'
 
