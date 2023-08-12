@@ -40,6 +40,9 @@ dependencies:
   '@tiptap/extension-task-list':
     specifier: 2.0.4
     version: 2.0.4(@tiptap/core@2.0.4)
+  '@tiptap/pm':
+    specifier: ^2.0.4
+    version: 2.0.4(@tiptap/core@2.0.4)
   '@tiptap/starter-kit':
     specifier: 2.0.4
     version: 2.0.4(@tiptap/pm@2.0.4)
@@ -1292,7 +1295,7 @@ packages:
   /@vueuse/shared@10.1.2(vue@3.3.4):
     resolution: {integrity: sha512-1uoUTPBlgyscK9v6ScGeVYDDzlPSFXBlxuK7SfrDGyUTBiznb3mNceqhwvZHjtDRELZEN79V5uWPTF1VDV8svA==}
     dependencies:
-      vue-demi: 0.14.0(vue@3.3.4)
+      vue-demi: 0.14.5(vue@3.3.4)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue

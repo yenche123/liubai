@@ -14,6 +14,7 @@ import type { ComposerTranslation } from 'vue-i18n'
 import { wrappingInputRule, nodeInputRule, Extension } from "@tiptap/core"
 import type { TipTapEditor } from "~/types/types-editor"
 import type { EditorCoreProps, EditorCoreEmits } from "./types"
+import { linkToTextPlugin } from "../link-to-text/link-to-text"
 
 import { lowlight } from 'lowlight'
 import { initLowlight } from "~/utils/other/lowlight-related"
@@ -171,15 +172,17 @@ export function initExtensions(
     
     // 在编辑态时，才加载 virtualCursor 插件
     const virtualCursorPlugin = createVirtualCursor()
-    const VirtualCursor = Extension.create({
+    const CustomEdit = Extension.create({
+      name: "custom-edit",
       addProseMirrorPlugins() {
         return [
-          virtualCursorPlugin
+          virtualCursorPlugin,
+          linkToTextPlugin,
         ]
       }
     })
 
-    extensions.push(VirtualCursor)
+    extensions.push(CustomEdit)
   }
 
   return extensions
