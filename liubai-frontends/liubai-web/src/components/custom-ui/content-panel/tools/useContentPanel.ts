@@ -22,7 +22,7 @@ const cpData = reactive<ContentPanelData>({
   onlyReaction: false,
   enable: false,
   show: false,
-  emojiList,
+  emojiList: [...emojiList],
   isMine: false,
   title: "",
 })
@@ -110,8 +110,6 @@ function onMouseLeaveEmoji(index: number) {
   delete item.currentFilter
 }
 
-
-
 async function onTapEmoji(index: number) {
   const item = cpData.emojiList[index]
   const emoji = item.emoji
@@ -136,9 +134,6 @@ async function onTapEmoji(index: number) {
   // 去关闭弹窗
   closeIt(rr, queryKey)
 }
-
-
-
 
 
 function listenRouteChange() {
@@ -183,5 +178,14 @@ async function _toClose() {
   cpData.show = false
   await valTool.waitMilli(TRANSITION_DURATION)
   cpData.enable = false
+  _reset()
+}
 
+function _reset() {
+  cpData.emojiList.forEach(v => {
+    if(v.currentFilter) {
+      delete v.currentFilter
+    }
+  })
+  cpData.title = i18n.global.t(`common.reaction`)
 }
