@@ -215,7 +215,7 @@ defineExpose({ editor })
 
   blockquote {
     padding-left: 1rem;
-    border-left: 4px solid v-bind("styles.hrBg");
+    border-left: 4px solid var(--liu-hr2);
     margin-inline-start: 10px;
     margin-inline-end: 0;
     margin-block-start: 10px;
