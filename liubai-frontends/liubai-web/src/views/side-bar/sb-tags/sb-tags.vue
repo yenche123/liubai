@@ -159,8 +159,8 @@ const {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 8px;
-    margin-left: 8px;
+    margin-inline-start: 8px;
+    margin-inline-end: 8px;
 
     .st-navi-back-icon {
       width: 30px;
@@ -299,6 +299,84 @@ const {
   color: var(--main-normal);
   line-height: 1.25;
 }
+
+@container sidebar (max-width: 190px) {
+
+  .st-virtual {
+    height: 40px;
+  }
+
+  .st-navibar {
+
+    .st-navi-back {
+      width: 38px;
+      height: 38px;
+      margin-inline-start: 6px;
+      margin-inline-end: 6px;
+
+      .st-navi-back-icon {
+        width: 26px;
+        height: 26px;
+      }
+    }
+
+    .st-navi-title {
+      font-size: var(--title-font);
+      line-height: 1.5;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+  }
+
+  .st-virtual-two {
+    height: 24px;
+  }
+
+  .tag-container {
+    padding: 5px 0;
+    margin-block-end: 3px;
+
+    .tag-box {
+      .tag-arrow {
+        width: 28px;
+        height: 28px;
+        margin-inline-start: 3px;
+        margin-inline-end: 0px;
+        border-radius: 6px;
+
+        .tag-arrow-icon {
+          width: 22px;
+          height: 22px;
+        }
+      }
+
+      .tag-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+    }
+
+    
+  }
+
+  .tag-more {
+    top: 7px;
+    right: 2px;
+    width: 28px;
+    height: 28px;
+
+    .tag-more-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+  }
+  
+}
+
+
 </style>
 <style>
 /** 当标签正在拖动时的 css */
