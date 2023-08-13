@@ -86,4 +86,11 @@ export default {
 
   // chrome site setting
   CHROME_SITE_SETTING: "chrome://settings/content/siteDetails?site=__XXX__",
+
+  // middle page of third-party when opening a link
+  LINK_ZHIHU: "https://link.zhihu.com/",
+  LINK_ZHUBAI: "https://link.zhubai.love/api/link",
+  LINK_SBSTCK: "https://link.sbstck.com/redirect",
+  LINK_SSPAI: "https://sspai.com/link",
+  
 }

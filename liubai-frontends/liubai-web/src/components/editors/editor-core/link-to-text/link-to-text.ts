@@ -1,5 +1,6 @@
 
 import { Plugin } from "@tiptap/pm/state"
+import liuUtil from "~/utils/liu-util"
 
 export const linkToTextPlugin = new Plugin({
   props: {
@@ -11,8 +12,15 @@ export const linkToTextPlugin = new Plugin({
       aTags.forEach(v => {
         const href = v.getAttribute("href")
         const text = v.textContent
-        if(href === text) return
-        const mdLink = `<span>[${text}](${href})</span>`
+        if(!href || href === text) return
+
+        const href2 = liuUtil.trim.removeTrack(href)
+
+        let mdLink = `<span>[${text}](${href2})</span>`
+        if(href2 === text) {
+          mdLink = `<span>${text}</span>`
+        }
+        
         v.outerHTML = mdLink
       })
 
