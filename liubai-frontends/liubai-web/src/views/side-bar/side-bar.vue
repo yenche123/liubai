@@ -223,6 +223,8 @@ const {
   max-width: 500px;
   position: relative;
   transition: .3s;
+  container-type: inline-size;
+  container-name: sidebar;
 }
 
 </style>

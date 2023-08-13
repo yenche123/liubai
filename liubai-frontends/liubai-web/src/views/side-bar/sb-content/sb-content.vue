@@ -192,5 +192,31 @@ const color_selected = "var(--main-normal)"
   height: 38px;
 }
 
+@container sidebar (max-width: 180px) {
+  .sb-link {
+    font-size: var(--btn-font);
+    height: 44px;
+    margin-block-end: 6px;
+    border-radius: 8px;
+  }
+
+  .sb-icon-container {
+    width: 42px;
+    height: 42px;
+    margin-inline-end: 8px;
+  }
+
+  .sb-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .sb-link_selected .sb-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+}
+
 
 </style>
