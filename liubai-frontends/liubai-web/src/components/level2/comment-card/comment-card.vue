@@ -41,6 +41,7 @@ const {
   onMouseLeaveComment,
   onTapContainer,
   onTapCccCover,
+  ccReaction,
 } = useCommentCard(props)
 
 const {
@@ -115,6 +116,7 @@ const {
         <!-- 工具栏 -->
         <CcToolbar :cs="cs" 
           :is-mouse-enter="isMouseEnterTarget"
+          :cc-reaction="ccReaction"
           @newoperation="receiveOperation"
         ></CcToolbar>
 
@@ -174,6 +176,7 @@ const {
       :show="showBubbleBar"
       :location="location"
       :cs="cs"
+      :cc-reaction="ccReaction"
       @newoperation="receiveOperation"
     ></CcBubbleBar>
 

@@ -1,10 +1,11 @@
 import liuApi from "~/utils/liu-api";
-import type { CommentCardProps } from "./types";
-import { computed, ref, watch } from "vue";
+import type { CommentCardProps, CommentCardReaction } from "./types";
+import { computed, reactive, ref, watch } from "vue";
 import cui from "~/components/custom-ui";
 import { useGlobalStateStore } from '~/hooks/stores/useGlobalStateStore';
 import liuUtil from "~/utils/liu-util";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
+import { emojiList } from "~/config/emoji-list"
 
 export function useCommentCard(
   props: CommentCardProps,
@@ -45,9 +46,8 @@ export function useCommentCard(
     }
   }
 
+  const { ccReaction } = getReaction(props)
 
-
-  
   return {
     allowHover,
     hoverColor,
@@ -57,8 +57,45 @@ export function useCommentCard(
     onMouseLeaveComment,
     onTapContainer,
     onTapCccCover,
+    ccReaction,
   }
 }
+
+
+function getReaction(
+  props: CommentCardProps,
+) {
+  const ccReaction = reactive<CommentCardReaction>({
+    iconName: "",
+    emoji: "",
+  })
+
+  watch(() => props.cs, (newV) => {
+    if(!newV) return
+
+    const { myEmoji } = newV
+    if(!myEmoji) {
+      ccReaction.iconName = ""
+      ccReaction.emoji = ""
+      return
+    }
+
+    const _emoji = liuApi.decode_URI_component(myEmoji)
+    const data = emojiList.find(v => v.emoji === _emoji)
+    if(!data) {
+      ccReaction.iconName = ""
+      ccReaction.emoji = _emoji
+    }
+    else {
+      ccReaction.iconName = data.iconName
+      ccReaction.emoji = data.emoji
+    }
+
+  }, { immediate: true })
+
+  return { ccReaction }
+}
+
 
 function onTapCccCover() {
   cui.showSnackBar({ 

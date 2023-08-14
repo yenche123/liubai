@@ -6,7 +6,8 @@ import { type PropType } from 'vue';
 import type { CommentCardLocation } from "../tools/types";
 import type { CcBubbleBarEmits } from "./tools/types";
 import type { CommentShow } from '~/types/types-content';
-import { useI18n } from "vue-i18n"
+import { useI18n } from "vue-i18n";
+import type { CommentCardReaction } from '../tools/types';
 
 const props = defineProps({
   show: {
@@ -20,6 +21,9 @@ const props = defineProps({
   cs: {
     type: Object as PropType<CommentShow>,
     required: true,
+  },
+  ccReaction: {
+    type: Object as PropType<CommentCardReaction>,
   }
 })
 
@@ -45,7 +49,15 @@ const { t } = useI18n()
       @click.stop="$emit('newoperation', 'emoji')"
     >
       <div class="ccbb-svg-box">
-        <svg-icon name="add_reaction_600" class="ccbb-svg"
+        <svg-icon v-if="ccReaction?.iconName" 
+          :name="ccReaction.iconName"
+          class="ccbb-svg"
+          :coverFillStroke="false"
+        ></svg-icon>
+
+        <span v-else-if="ccReaction?.emoji" class="ccbb-svg-text">{{ ccReaction.emoji }}</span>
+
+        <svg-icon v-else name="add_reaction_600" class="ccbb-svg"
           :color="default_color"
         ></svg-icon>
       </div>
@@ -58,7 +70,7 @@ const { t } = useI18n()
       @click.stop="$emit('newoperation', 'comment')"
     >
       <div class="ccbb-svg-box">
-        <svg-icon name="comment" class="ccbb-svg"
+        <svg-icon name="comment" class="ccbb-svg ccbb-svg_reply"
           :color="default_color"
         ></svg-icon>
       </div>
@@ -148,13 +160,22 @@ const { t } = useI18n()
   position: relative;
 }
 
+.ccbb-svg-text {
+  font-size: var(--desc-font);
+}
+
 .ccbb-svg {
   width: 22px;
   height: 22px;
 }
 
+.ccbb-svg_reply {
+  margin-block-start: 2px;
+}
+
 .ccbb-text {
-  margin-inline-start: 2px;
+  margin-block-start: 2px;
+  margin-inline-start: -2px;
   font-size: var(--mini-font);
   color: var(--main-code);
   user-select: none;

@@ -5,6 +5,7 @@ import type { CommentShow } from '~/types/types-content';
 import { useI18n } from "vue-i18n";
 import { useCcToolbar } from './tools/useCcToolbar';
 import type { CcToolbarEmits } from "./tools/types"
+import type { CommentCardReaction } from '../tools/types';
 
 const props = defineProps({
   cs: {
@@ -12,6 +13,9 @@ const props = defineProps({
     required: true,
   },
   isMouseEnter: Boolean,
+  ccReaction: {
+    type: Object as PropType<CommentCardReaction>,
+  }
 })
 
 const emit = defineEmits<CcToolbarEmits>()
@@ -38,7 +42,15 @@ const {
       @click.stop="$emit('newoperation', 'emoji')"
     >
       <div class="cct-svg-box">
-        <svg-icon name="add_reaction_600" class="cct-svg"
+        <svg-icon v-if="ccReaction?.iconName" 
+          :name="ccReaction.iconName"
+          class="cct-svg"
+          :coverFillStroke="false"
+        ></svg-icon>
+
+        <span v-else-if="ccReaction?.emoji" class="cct-svg-text">{{ ccReaction.emoji }}</span>
+
+        <svg-icon v-else name="add_reaction_600" class="cct-svg"
           :color="default_color"
         ></svg-icon>
       </div>
@@ -51,7 +63,7 @@ const {
       @click.stop="$emit('newoperation', 'comment')"
     >
       <div class="cct-svg-box">
-        <svg-icon name="comment" class="cct-svg"
+        <svg-icon name="comment" class="cct-svg cct-svg_reply"
           :color="default_color"
         ></svg-icon>
       </div>
@@ -141,9 +153,17 @@ const {
   position: relative;
 }
 
+.cct-svg-text {
+  font-size: var(--desc-font);
+}
+
 .cct-svg {
   width: 24px;
   height: 24px;
+}
+
+.cct-svg_reply {
+  margin-block-start: 2px;
 }
 
 .cct-svg_more {
@@ -152,7 +172,6 @@ const {
 }
 
 .cct-text {
-  margin-inline-start: 2px;
   font-size: var(--btn-font);
   color: var(--main-normal);
   user-select: none;
