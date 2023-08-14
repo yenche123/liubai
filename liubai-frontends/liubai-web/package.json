@@ -13,8 +13,8 @@
     "node": "18.x"
   },
   "dependencies": {
-    "@he-tree/vue": "^2.2.5",
-    "@intlify/unplugin-vue-i18n": "^0.11.0",
+    "@he-tree/vue": "^2.4.2",
+    "@intlify/unplugin-vue-i18n": "^0.12.2",
     "@tiptap/core": "2.0.4",
     "@tiptap/extension-blockquote": "2.0.4",
     "@tiptap/extension-code": "2.0.4",
@@ -39,7 +39,7 @@
     "dexie": "^3.2.4",
     "exifreader": "^4.13.0",
     "file-saver": "^2.0.5",
-    "floating-vue": "2.0.0-beta.20",
+    "floating-vue": "2.0.0-beta.24",
     "highlight.js": "^11.8.0",
     "ics": "^3.2.0",
     "jszip": "^3.10.1",

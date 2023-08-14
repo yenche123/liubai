@@ -29,7 +29,6 @@ const MENU_2: CcToolbarMenuItem[] = [
 ]
 
 
-
 export function useCcToolbar(
   props: CcToolbarProps,
   emit: CcToolbarEmits,
