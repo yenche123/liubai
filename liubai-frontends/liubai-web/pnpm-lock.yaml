@@ -101,8 +101,8 @@ dependencies:
     specifier: ^2.1.6
     version: 2.1.6(typescript@5.0.4)(vue@3.3.4)
   prosemirror-virtual-cursor:
-    specifier: ^0.4.0
-    version: 0.4.0(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.31.7)
+    specifier: ^0.4.1
+    version: 0.4.1(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.31.7)
   swiper:
     specifier: ^10.1.0
     version: 10.1.0
@@ -3181,8 +3181,8 @@ packages:
       prosemirror-transform: 1.7.4
     dev: false
 
-  /prosemirror-virtual-cursor@0.4.0(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.31.7):
-    resolution: {integrity: sha512-3EKhZkacMPv7V/+iwVmCvPINcXnzKK/vfB0jmZ8BIjk2Ud4TLddKCjGlg+bQCqz7G2U8TX4W0Tr6/e84Km6J0Q==}
+  /prosemirror-virtual-cursor@0.4.1(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.31.7):
+    resolution: {integrity: sha512-GooZQEXVxap58daaDV8n+urYxbADA525O2VrkXttve/xQwAi1nvFMILtzKQa6st+y3fJ6lxDtOHKIdBpSW1NOA==}
     peerDependencies:
       prosemirror-model: ^1.0.0
       prosemirror-state: ^1.0.0
