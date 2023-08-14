@@ -46,6 +46,8 @@ https://svgmix.com/
 
 11. 升级 `pdf-js` 的流程: 将分支切换到 `pdfjs` 上，删除所有 `public/lib/pdf-js` 下的文件，再黏贴最新的文件进该文件夹里，提交 `commit`；再切回 `main` 分支，运行 `git checkout -b dev-pdfjs`，然后再运行 `git merge pdfjs`，解决冲突、运行代码，确认都没问题后，再把 `dev-pdfjs` 合并进 `main`，最后再删除 `dev-pdfjs` 分支
 
+12. 运行 `pnpm outdated` 能检查项目中使用到的依赖是否有需要更新的
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
