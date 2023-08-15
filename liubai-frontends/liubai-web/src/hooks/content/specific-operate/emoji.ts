@@ -20,8 +20,15 @@ import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import type { OState_2 } from "~/types/types-basic"
 
 
-// 添加或取消 emoji
-// 若 encodeStr 为空，代表取消
+/**
+ * 添加或取消 emoji
+ * 若 encodeStr 为空，代表取消
+ * @param contentId 
+ * @param forType 
+ * @param encodeStr 
+ * @param thread 当 forType 为 THREAD 时必传，为了通知其他组件
+ * @param comment 当 forType 为 COMMENT 时必传，为了通知其他组件
+ */
 export async function toEmoji(
   contentId: string,
   forType: LiuContentType,

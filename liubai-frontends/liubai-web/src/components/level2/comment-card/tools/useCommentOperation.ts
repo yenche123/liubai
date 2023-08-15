@@ -1,7 +1,8 @@
 import type { CommentOperation } from "~/types/types-atom"
 import type { CommentCardProps } from "./types"
 import cui from "~/components/custom-ui"
-import { CommentShow } from "~/types/types-content"
+import type { CommentShow } from "~/types/types-content"
+import contentOperate from "~/hooks/content/content-operate"
 
 export function useCommentOperation(
   props: CommentCardProps
@@ -9,11 +10,9 @@ export function useCommentOperation(
 
   const receiveOperation = (op: CommentOperation) => {
     const cs = props.cs
-    
-    console.log("receiveOperation...... ", op)
 
     if(op === "emoji") {
-      cui.showContentPanel({ comment: cs, onlyReaction: true })
+      handleEmoji(cs)
     }
     else if(op === "comment") {
       cui.showCommentPopup({ operation: "reply_comment", commentShow: cs })
@@ -32,6 +31,20 @@ export function useCommentOperation(
   
   return {
     receiveOperation
+  }
+}
+
+
+function handleEmoji(
+  cs: CommentShow
+) {
+  const { myEmoji } = cs
+  if(myEmoji) {
+    // 去取消
+    contentOperate.toEmoji(cs._id, "COMMENT", "", undefined, cs)
+  }
+  else {
+    cui.showContentPanel({ comment: cs, onlyReaction: true })
   }
 }
 
