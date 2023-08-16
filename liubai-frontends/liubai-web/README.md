@@ -1,6 +1,6 @@
 # LB
 
-I love it, this job!!
+I am sorry about making SJTU disappointed
 
 ## 开发备注
 
