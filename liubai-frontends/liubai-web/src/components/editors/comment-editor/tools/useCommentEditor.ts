@@ -14,6 +14,8 @@ import liuUtil from "~/utils/liu-util";
 import { handleComment } from "./handle-comment"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
+import localReq from "./req/local-req";
+import transferUtil from "~/utils/transfer-util";
 
 export function useCommentEditor(
   props: CeProps,
@@ -201,6 +203,11 @@ function initEditorContent(
   const editorContent = res?.editorContent
   const images = res?.images
   const files = res?.files
+
+  if(!res && props.commentId) {
+    initEditorContentFromDB(props, ctx, editor)
+    return
+  }
   
   if(editorContent?.text?.trim()) {
     editor.commands.setContent(editorContent.json)
@@ -220,6 +227,42 @@ function initEditorContent(
     ctx.canSubmit = true
   }
 }
+
+
+async function initEditorContentFromDB(
+  props: CeProps,
+  ctx: CeCtx,
+  editor: TipTapEditor,
+) {
+  const commentId = props.commentId as string
+  const res = await localReq.getContent(commentId)
+  if(!res) return
+
+  const { images, files } = res
+
+  if(res.liuDesc?.length) {
+    const content = transferUtil.liuToTiptap(res.liuDesc)
+    const text = transferUtil.tiptapToText(content)
+    const json = { type: "doc", content }
+
+    editor.commands.setContent(json)
+    ctx.editorContent = { text, json }
+    ctx.isToolbarTranslateY = false
+    ctx.canSubmit = true
+  }
+
+  if(images?.length) {
+    ctx.images = images
+    ctx.isToolbarTranslateY = false
+    ctx.canSubmit = true
+  }
+  if(files?.length) {
+    ctx.files = files
+    ctx.isToolbarTranslateY = false
+    ctx.canSubmit = true
+  }
+}
+
 
 function checkCanSubmit(
   ctx: CeCtx,

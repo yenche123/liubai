@@ -10,7 +10,7 @@ import transferUtil from "~/utils/transfer-util";
 import liuUtil from "~/utils/liu-util";
 import type { ContentLocalTable } from "~/types/types-table";
 import ider from "~/utils/basic/ider";
-import localReq from "./req/local-req"
+import localReq from "./req/local-req";
 import { 
   useCommentStore, 
   type CommentStoreSetDataOpt,
