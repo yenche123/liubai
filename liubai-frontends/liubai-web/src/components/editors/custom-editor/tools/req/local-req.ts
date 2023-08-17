@@ -8,7 +8,7 @@ function _getUserId(): string {
   return local_id as string
 }
 
-async function getThreadByThreadId(threadId: string) {
+async function getContentById(threadId: string) {
   const w: Partial<ContentLocalTable> = {
     _id: threadId,
     infoType: "THREAD",
@@ -76,7 +76,7 @@ async function updateContent(id: string, data: Partial<ContentLocalTable>) {
 }
 
 export default {
-  getThreadByThreadId,
+  getContentById,
   getDraftByThreadId,
   getDraftById,
   getDraft,

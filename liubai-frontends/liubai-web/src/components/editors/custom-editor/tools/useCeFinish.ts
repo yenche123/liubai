@@ -239,7 +239,7 @@ async function toUpdate(ctx: CepContext) {
   }
 
   // 3. 查找该 thread，然后通知全局
-  const theThread = await localReq.getThreadByThreadId(threadId)
+  const theThread = await localReq.getContentById(threadId)
   if(!theThread) return
   const threadShows = await equipThreads([theThread])
   ctx.threadShowStore.setUpdatedThreadShows(threadShows)

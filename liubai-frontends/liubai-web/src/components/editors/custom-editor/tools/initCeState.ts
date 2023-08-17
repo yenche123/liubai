@@ -96,7 +96,7 @@ async function initDraft(
     // 使用 lastWin 法则，比较 thread 和 draft
 
     draft = await localReq.getDraftByThreadId(threadId)
-    let thread = await localReq.getThreadByThreadId(threadId)
+    let thread = await localReq.getContentById(threadId)
 
     if(!draft && !thread) {
       ctx.emits("nodata", threadId)
