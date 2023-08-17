@@ -53,7 +53,8 @@
     "reply": "Reply",
     "share": "Share",
     "report": "Report",
-    "view_detail": "View Details"
+    "view_detail": "View Details",
+    "update": "Update"
   },
   "editor": {
     "when": "When",

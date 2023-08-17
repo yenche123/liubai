@@ -85,7 +85,8 @@ const onTapFinishBtn = () => {
         v-show="showSubmitBtn"
         @click.stop="onTapFinishBtn"
       >
-        <span>{{ t('comment.submit1') }}</span>
+        <span v-if="commentId">{{ t('common.update') }}</span>
+        <span v-else>{{ t('comment.submit1') }}</span>
       </div>
     </div>
   </div>

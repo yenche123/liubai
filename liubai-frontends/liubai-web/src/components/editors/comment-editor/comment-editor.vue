@@ -127,6 +127,7 @@ const {
         :editor="editor"
         :located="located"
         :show-submit-btn="showSubmitBtn"
+        :comment-id="commentId"
         @imagechange="onImageChange"
         @filechange="onFileChange"
         @tapfinish="onEditorFinish"

@@ -53,7 +53,8 @@
     "reply": "回复",
     "share": "分享",
     "report": "举报",
-    "view_detail": "查看详情"
+    "view_detail": "查看详情",
+    "update": "更新"
   },
   "editor": {
     "when": "什么时候",

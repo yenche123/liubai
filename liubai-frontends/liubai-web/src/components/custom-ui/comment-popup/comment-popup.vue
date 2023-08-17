@@ -60,7 +60,8 @@ const { t } = useI18n()
           v-show="cpData.rightTopBtn"
           @click.stop="() => cpData.submitNum++"
         >
-          <span>{{ t('common.reply') }}</span>
+          <span v-if="cpData.operation === 'edit_comment'">{{ t('common.update') }}</span>
+          <span v-else>{{ t('common.reply') }}</span>
         </div>
       </div>
     </div>
@@ -70,15 +71,17 @@ const { t } = useI18n()
       <div class="cp-virtual-top"></div>
 
       <CommentCard
-        v-if="cpData.commentShow"
+        v-if="cpData.operation === 'reply_comment' && cpData.commentShow"
         :cs="cpData.commentShow"
         location="popup"
       ></CommentCard>
       <CommentCard
-        v-else-if="cpData.csTsPretend"
+        v-else-if="cpData.operation === 'reply_thread' && cpData.csTsPretend"
         :cs="cpData.csTsPretend"
         location="popup"
       ></CommentCard>
+
+      <div v-else class="cp-virtual-top2"></div>
 
       <CommentEditor
         located="popup"
@@ -277,6 +280,11 @@ const { t } = useI18n()
 .cp-virtual {
   width: 90%;
   height: 14px;
+}
+
+.cp-virtual-top2 {
+  width: 100%;
+  height: 10px;
 }
 
 @media screen and (max-width: 500px) {

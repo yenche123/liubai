@@ -21,7 +21,7 @@ export function useCommentOperation(
 
     }
     else if(op === "edit") {
-
+      cui.showCommentPopup({ operation: "edit_comment", commentShow: cs })
     }
     else if(op === "delete") {
       prepareToDelete(cs)

@@ -8,6 +8,7 @@ export interface ToolBarProps {
   editor?: TipTapEditor
   located?: LocatedA
   showSubmitBtn: boolean
+  commentId?: string
 }
 
 export const toolbarProps = {
@@ -18,7 +19,8 @@ export const toolbarProps = {
   showSubmitBtn: {
     type: Boolean,
     default: true,
-  }
+  },
+  commentId: String
 }
 
 export interface ToolBarEmits {

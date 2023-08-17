@@ -53,7 +53,8 @@
     "reply": "回覆",
     "share": "分享",
     "report": "投訴",
-    "view_detail": "檢視詳情"
+    "view_detail": "檢視詳情",
+    "update": "更新"
   },
   "editor": {
     "when": "什麼時候",
