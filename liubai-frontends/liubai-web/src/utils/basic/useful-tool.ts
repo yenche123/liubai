@@ -26,6 +26,31 @@ function filterDuplicated(
   return newList
 }
 
+
+export interface CiiBase {
+  id: string
+  [otherKey: string]: any
+}
+
+/**
+ * 检查两个 list 里的 id 排序是否一致
+ * 注意: 若两者数组长度已不同，则视为不一致
+ */
+function checkIdsInLists(
+  list1: CiiBase[],
+  list2: CiiBase[],
+) {
+  if(list1.length !== list2.length) return false
+  for(let i=0; i<list1.length; i++) {
+    const v1 = list1[i]
+    const v2 = list2[i]
+    if(v1.id !== v2.id) return false
+  }
+  return true
+}
+
+
 export default {
-  filterDuplicated
+  filterDuplicated,
+  checkIdsInLists,
 }

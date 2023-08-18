@@ -16,6 +16,7 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import localReq from "./req/local-req";
 import transferUtil from "~/utils/transfer-util";
+import usefulTool from "~/utils/basic/useful-tool";
 
 export function useCommentEditor(
   props: CeProps,
@@ -71,7 +72,7 @@ export function useCommentEditor(
     const _newImages = liuUtil.toRawData(newImages)
     const atom = getStorageAtom(props, undefined, undefined, _newImages)
     commentCache.toSave(atom, "image")
-    checkCanSubmit(ctx)
+    checkCanSubmit(props, ctx)
   }, { deep: true })
 
   // 监听文件改变，以缓存它们
@@ -81,7 +82,7 @@ export function useCommentEditor(
     const _newFiles = liuUtil.toRawData(newFiles)
     const atom = getStorageAtom(props, undefined, _newFiles, undefined)
     commentCache.toSave(atom, "file")
-    checkCanSubmit(ctx)
+    checkCanSubmit(props, ctx)
   }, { deep: true })
 
   // 个人信息
@@ -117,11 +118,11 @@ export function useCommentEditor(
     let atom = getStorageAtom(props, data)
     commentCache.toSave(atom)
     ctx.editorContent = data
-    checkCanSubmit(ctx)
+    checkCanSubmit(props, ctx)
   }
 
   const onEditorFinish = () => {
-    checkCanSubmit(ctx)
+    checkCanSubmit(props, ctx)
     if(!ctx.canSubmit) return
     handleComment(props, emit, ctx, editor)
   }
@@ -244,6 +245,8 @@ async function initEditorContentFromDB(
 
   // 由于是 "已发表后的编辑" 态，canSubmit 默认为 false
   ctx.canSubmit = false
+  ctx.releasedData = {}
+
   if(res.liuDesc?.length) {
     const content = transferUtil.liuToTiptap(res.liuDesc)
     const text = transferUtil.tiptapToText(content)
@@ -252,28 +255,64 @@ async function initEditorContentFromDB(
     editor.commands.setContent(json)
     ctx.editorContent = { text, json }
     ctx.isToolbarTranslateY = false
+    ctx.releasedData.text = text.trim()
   }
 
   if(images?.length) {
     ctx.images = images
     ctx.isToolbarTranslateY = false
+    ctx.releasedData.images = valTool.copyObject(images)
   }
   if(files?.length) {
     ctx.files = files
     ctx.isToolbarTranslateY = false
+    ctx.releasedData.files = valTool.copyObject(files)
   }
 }
 
 
 function checkCanSubmit(
+  props: CeProps,
   ctx: CeCtx,
 ) {
   const imgLength = ctx.images.length
-  const fileLength = ctx.files.length
+  const fileLength = ctx.files.length  
   const text = ctx.editorContent?.text?.trim()
 
   let newCanSubmit = Boolean(imgLength) || Boolean(text) || Boolean(fileLength)
+
+  if(props.commentId) {
+    let hasChanged = checkIfSomethingChanged(ctx)
+    if(!hasChanged) {
+      ctx.canSubmit = false
+      return
+    }
+  }
+
   ctx.canSubmit = newCanSubmit
+}
+
+
+function checkIfSomethingChanged(
+  ctx: CeCtx,
+) {
+  const { releasedData: rd } = ctx
+  const text = ctx.editorContent?.text?.trim()
+  if(rd.text !== text) {
+    return true
+  }
+
+  const areImgsTheSame = usefulTool.checkIdsInLists(ctx.images, rd.images ?? [])
+  if(!areImgsTheSame) {
+    return true
+  }
+
+  const areFilesTheSame = usefulTool.checkIdsInLists(ctx.files, rd.files ?? [])
+  if(!areFilesTheSame) {
+    return true
+  }
+
+  return false
 }
 
 
