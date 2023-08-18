@@ -61,7 +61,6 @@ const { t } = useI18n()
           :color="default_color"
         ></svg-icon>
       </div>
-      <span class="ccbb-text" v-if="cs.emojiData.total">{{ cs.emojiData.total }}</span>
     </div>
 
     <!-- 回复按钮 -->

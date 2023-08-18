@@ -54,7 +54,6 @@ const {
           :color="default_color"
         ></svg-icon>
       </div>
-      <span class="cct-text" v-if="cs.emojiData.total">{{ cs.emojiData.total }}</span>
     </div>
 
     <!-- 回复 -->
@@ -163,7 +162,7 @@ const {
 }
 
 .cct-svg_reply {
-  margin-block-start: 2px;
+  margin-block-start: 3px;
 }
 
 .cct-svg_more {
