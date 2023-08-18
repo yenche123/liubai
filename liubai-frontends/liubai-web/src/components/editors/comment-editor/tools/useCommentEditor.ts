@@ -40,6 +40,7 @@ export function useCommentEditor(
     isToolbarTranslateY: located === "main-view" || located === "vice-view",
     canSubmit: false,
     fileShowName: "",
+    releasedData: {},
   })
 
   watch(() => ctx.canSubmit, (newV) => emit("cansubmit", newV))
@@ -166,6 +167,7 @@ export function getStorageAtom(
     parentThread: props.parentThread,
     parentComment: props.parentComment,
     replyToComment: props.replyToComment,
+    commentId: props.commentId,
     editorContent,
     files,
     images,
@@ -194,8 +196,10 @@ function initEditorContent(
 ) {
   const editor = editorRef.value
   const oldText = editor.getText()
-  if(oldText.trim()) return
-
+  if(oldText.trim()) {
+    return
+  }
+  
   let atom = getStorageAtom(props)
   const res = commentCache.toGet(atom)
   const editorContent = res?.editorContent

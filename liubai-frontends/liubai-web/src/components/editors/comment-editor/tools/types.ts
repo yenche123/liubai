@@ -7,6 +7,14 @@ import type { EditorCoreContent } from "~/types/types-editor";
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import type { TipTapEditor } from "~/types/types-editor"
 
+
+
+export interface CeReleasedData {
+  text?: string
+  images?: LiuImageStore[]
+  files?: LiuFileStore[]
+}
+
 export interface CeProps {
   located: LocatedA  // 位于弹窗内、main-view 或 vice-view
   parentThread: string
@@ -38,10 +46,12 @@ export interface CeCtx {
   canSubmit: boolean
   fileShowName: string
   editorContent?: EditorCoreContent
+  releasedData: CeReleasedData     // 已发表后再编辑的原评论
 }
 
 export interface CommentStorageAtom {
   parentThread: string
+  commentId?: string
   parentComment?: string
   replyToComment?: string
   editorContent?: EditorCoreContent
