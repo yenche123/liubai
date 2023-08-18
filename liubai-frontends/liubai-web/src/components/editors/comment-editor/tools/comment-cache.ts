@@ -78,6 +78,7 @@ function toDelete(atom: CommentStorageAtom) {
     if(atom.commentId) {
       if(atom.commentId === v.commentId) {
         list.splice(i, 1)
+        i--
       }
       continue 
     }
@@ -87,6 +88,7 @@ function toDelete(atom: CommentStorageAtom) {
       if(v.parentComment === atom.parentComment) {
         if(v.replyToComment === atom.replyToComment) {
           list.splice(i, 1)
+          i--
         }
       }
     }
