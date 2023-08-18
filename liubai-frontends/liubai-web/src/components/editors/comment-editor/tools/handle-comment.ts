@@ -64,18 +64,21 @@ async function toUpdate(
   console.log("查看 update 的结果: ")
   console.log(res)
   console.log(" ")
+
+  // 2. 重置
+  _reset(ctx)
   
-  // 2. 从 db 里获取最新的 CommentShow
+  // 3. 从 db 里获取最新的 CommentShow
   const [newComment] = await commentController.loadByComment({ commentId: id, loadType: "target" })
   if(!newComment) {
     console.warn("没有查找到更新后的评论.............")
     return
   }
 
-  // 3. 通知其他组件
+  // 4. 通知其他组件
   const cStore = useCommentStore()
   const opt: CommentStoreSetDataOpt = {
-    changeType: "add",
+    changeType: "edit",
     commentId: newComment._id,
     commentShow: newComment,
     parentThread: newComment.parentThread,
@@ -84,7 +87,7 @@ async function toUpdate(
   }
   cStore.setData(opt)
 
-  // 4. 用 emit 通知上级
+  // 5. 用 emit 通知上级
   ctx.emit("finished")
 }
 
