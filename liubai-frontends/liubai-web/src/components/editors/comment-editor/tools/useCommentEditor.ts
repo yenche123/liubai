@@ -42,9 +42,7 @@ export function useCommentEditor(
     fileShowName: "",
   })
 
-  watch(() => ctx.canSubmit, (newV) => {
-    emit("cansubmit", newV)
-  })
+  watch(() => ctx.canSubmit, (newV) => emit("cansubmit", newV))
   
   // 编辑器相关
   const {
@@ -240,6 +238,8 @@ async function initEditorContentFromDB(
 
   const { images, files } = res
 
+  // 由于是 "已发表后的编辑" 态，canSubmit 默认为 false
+  ctx.canSubmit = false
   if(res.liuDesc?.length) {
     const content = transferUtil.liuToTiptap(res.liuDesc)
     const text = transferUtil.tiptapToText(content)
@@ -248,18 +248,15 @@ async function initEditorContentFromDB(
     editor.commands.setContent(json)
     ctx.editorContent = { text, json }
     ctx.isToolbarTranslateY = false
-    ctx.canSubmit = true
   }
 
   if(images?.length) {
     ctx.images = images
     ctx.isToolbarTranslateY = false
-    ctx.canSubmit = true
   }
   if(files?.length) {
     ctx.files = files
     ctx.isToolbarTranslateY = false
-    ctx.canSubmit = true
   }
 }
 
