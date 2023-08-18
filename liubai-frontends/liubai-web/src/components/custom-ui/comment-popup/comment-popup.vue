@@ -23,6 +23,11 @@ const {
 
 const { t } = useI18n()
 
+const onTapTopFooterBtn = () => {
+  if(!cpData.canSubmit) return
+  cpData.submitNum++
+}
+
 </script>
 <template>
 
@@ -58,7 +63,7 @@ const { t } = useI18n()
         <div class="cemtf-submit-btn" 
           :class="{ 'cemtf-submit_disabled': !cpData.canSubmit }"
           v-show="cpData.rightTopBtn"
-          @click.stop="() => cpData.submitNum++"
+          @click.stop="onTapTopFooterBtn"
         >
           <span v-if="cpData.operation === 'edit_comment'">{{ t('common.update') }}</span>
           <span v-else>{{ t('common.reply') }}</span>
