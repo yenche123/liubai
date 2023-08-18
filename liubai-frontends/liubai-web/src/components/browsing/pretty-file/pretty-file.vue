@@ -54,7 +54,6 @@ const {
   margin-block-end: 8px;
   display: flex;
   transition: .15s;
-  cursor: pointer;
 }
 
 .pf-icon-box {
@@ -67,6 +66,7 @@ const {
   padding-block-start: 2px;
   padding-inline-end: 8px;
   flex: none;
+  cursor: pointer;
 
   .pf-svg-icon {
     width: 100%;
@@ -81,6 +81,7 @@ const {
   justify-content: center;
   max-width: calc(100% - 54px);
   position: relative;
+  cursor: pointer;
 }
 
 .pf-title {
@@ -100,6 +101,11 @@ const {
 }
 
 @media(hover: hover) {
+
+  .pf-icon-box:hover + .pf-info .pf-title {
+   text-decoration: underline; 
+  }
+
   .pf-info:hover {
     .pf-title {
       text-decoration: underline;
