@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// 评论的 “内文 + 图片 + 操作栏”
+// 评论的 “内文 + 图片”
 import type { CommentShow } from '~/types/types-content';
 import type { PropType } from 'vue';
 import EditorCore from '~/components/editors/editor-core/editor-core.vue';

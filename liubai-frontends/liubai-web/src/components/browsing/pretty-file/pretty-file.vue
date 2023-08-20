@@ -51,7 +51,6 @@ const {
   padding: 8px 4px 8px 0px;
   border-radius: 8px;
   overflow: hidden;
-  margin-block-end: 8px;
   display: flex;
   transition: .15s;
 }

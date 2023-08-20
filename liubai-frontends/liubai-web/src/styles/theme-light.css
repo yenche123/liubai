@@ -51,6 +51,12 @@
   --liu-quote: #868686;  /** 引用里的文字色 */
   --liu-image: #f7f7f7;
 
+  /** 一些组合，在深色模式和浅色模式下，值为一样的东西
+  * 故 --always 开头的 css 变量，无需在 dark 文件中做定义
+  */
+  --always-a1: #2a6885;
+  --always-a2: #fafafa;
+
   /** 一些比较少用到的 css 变量 */
   --vice-bg: #eaecef;
   --vice-shadow: -7px 0 14px 1px rgba(0,0,0,.11);

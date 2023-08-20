@@ -8,6 +8,7 @@ import CcBubbleBar from './cc-bubble-bar/cc-bubble-bar.vue';
 import type { CommentCardLocation } from "./tools/types"
 import { useCommentCard } from "./tools/useCommentCard"
 import CcToolbar from './cc-toolbar/cc-toolbar.vue';
+import CcReactions from "./cc-reactions/cc-reactions.vue";
 import { useCcMouse } from './tools/useCcMouse';
 import { useCommentOperation } from './tools/useCommentOperation';
 
@@ -113,6 +114,12 @@ const {
         <!-- 内文 + 图片 + 文件 -->
         <CcBox :cs="cs" :location="location"></CcBox>
 
+        <!-- 已有的表态们 -->
+        <cc-reactions
+          :reactions="ccData.reactionList"
+        ></cc-reactions>
+        
+
         <!-- 工具栏 -->
         <CcToolbar :cs="cs" 
           :is-mouse-enter="isMouseEnterTarget"
@@ -151,6 +158,11 @@ const {
 
           <!-- 内文 + 图片 + 文件 -->
           <CcBox :cs="cs" :location="location"></CcBox>
+
+          <!-- 已有的表态们 -->
+          <cc-reactions
+            :reactions="ccData.reactionList"
+          ></cc-reactions>
 
         </div>
 
@@ -191,7 +203,6 @@ const {
   padding: 0 10px;
   transition: .15s;
   border-radius: 16px;
-  cursor: v-bind("allowHover ? 'pointer' : 'auto'");
 }
 
 @media(hover: hover) {
