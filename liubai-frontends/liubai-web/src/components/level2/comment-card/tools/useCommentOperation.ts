@@ -28,9 +28,24 @@ export function useCommentOperation(
     }
 
   }
+
+  const onTapReaction = (
+    encodeStr: string, chosen: boolean
+  ) => {
+    const cs = props.cs
+    if(chosen) {
+      // 去取消
+      contentOperate.toEmoji(cs._id, "COMMENT", "", undefined, cs)
+    }
+    else {
+      // 去表态
+      contentOperate.toEmoji(cs._id, "COMMENT", encodeStr, undefined, cs)
+    }
+  }
   
   return {
-    receiveOperation
+    receiveOperation,
+    onTapReaction,
   }
 }
 

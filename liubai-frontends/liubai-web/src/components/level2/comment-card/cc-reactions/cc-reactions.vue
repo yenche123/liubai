@@ -8,6 +8,10 @@ defineProps({
   }
 })
 
+defineEmits<{
+  (evt: "tapreaction", encodeStr: string, chosen: boolean): void
+}>()
+
 </script>
 <template>
 
@@ -16,6 +20,7 @@ defineProps({
     <template v-for="(item, index) in reactions" :key="item.emojiEncoded">
       <div class="ccr-item" 
         :class="{ 'ccr-item_selected': item.chosen }"
+        @click.stop="$emit('tapreaction', item.emojiEncoded, item.chosen)"
       >
 
         <div class="ccri-icon-box">
@@ -81,7 +86,7 @@ defineProps({
 
   &::before {
     opacity: 1;
-    background-color: var(--always-a1);
+    background: var(--always-a1);
   }
 }
 

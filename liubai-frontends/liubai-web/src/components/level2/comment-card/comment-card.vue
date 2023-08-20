@@ -52,7 +52,8 @@ const {
 } = useCcMouse(props)
 
 const {
-  receiveOperation
+  receiveOperation,
+  onTapReaction,
 } = useCommentOperation(props)
 
 </script>
@@ -117,6 +118,7 @@ const {
         <!-- 已有的表态们 -->
         <cc-reactions
           :reactions="ccData.reactionList"
+          @tapreaction="onTapReaction"
         ></cc-reactions>
         
 
@@ -162,6 +164,7 @@ const {
           <!-- 已有的表态们 -->
           <cc-reactions
             :reactions="ccData.reactionList"
+            @tapreaction="onTapReaction"
           ></cc-reactions>
 
         </div>
