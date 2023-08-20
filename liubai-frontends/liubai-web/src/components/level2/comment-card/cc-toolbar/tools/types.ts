@@ -7,7 +7,7 @@ import type { CommentOperation } from "~/types/types-atom";
 export interface CcToolbarProps {
   cs: CommentShow
   isMouseEnter?: boolean
-  ccReaction?: CommentCardReaction
+  myReaction?: CommentCardReaction
 }
 
 export interface CcToolbarEmits extends CcCommonEmits {}

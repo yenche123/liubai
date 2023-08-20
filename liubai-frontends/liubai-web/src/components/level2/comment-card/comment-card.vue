@@ -41,7 +41,7 @@ const {
   onMouseLeaveComment,
   onTapContainer,
   onTapCccCover,
-  ccReaction,
+  ccData,
 } = useCommentCard(props)
 
 const {
@@ -63,7 +63,7 @@ const {
     @click.stop="onTapContainer"
   >
 
-    <!-- 上部留白 （ + 指向上方评论） -->
+    <!-- 上部留白（ + 指向上方评论） -->
     <div class="cc-top">
 
       <!-- 当前评论有指向前面的评论时 -->
@@ -116,7 +116,7 @@ const {
         <!-- 工具栏 -->
         <CcToolbar :cs="cs" 
           :is-mouse-enter="isMouseEnterTarget"
-          :cc-reaction="ccReaction"
+          :my-reaction="ccData.myReaction"
           @newoperation="receiveOperation"
         ></CcToolbar>
 
@@ -176,7 +176,7 @@ const {
       :show="showBubbleBar"
       :location="location"
       :cs="cs"
-      :cc-reaction="ccReaction"
+      :my-reaction="ccData.myReaction"
       @newoperation="receiveOperation"
     ></CcBubbleBar>
 

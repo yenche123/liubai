@@ -16,6 +16,19 @@ export interface CommentCardReaction {
   emoji: string      // 直接就是表情符号，无需转码/解码
 }
 
+export interface CcReactionItem {
+  iconName: string
+  emoji: string     // 直接就是表情符号，无需转码/解码
+  emojiEncoded: string     // encodeURIComponent(emoji)，用于 v-for 的 :key
+  num: number
+  chosen: boolean
+}
+
+export interface CcData {
+  reactionList: CcReactionItem[]
+  myReaction: CommentCardReaction
+}
+
 export interface CcCommonEmits {
   (evt: "newoperation", operation: CommentOperation): void
 }

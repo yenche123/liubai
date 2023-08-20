@@ -1,5 +1,9 @@
 import liuApi from "~/utils/liu-api";
-import type { CommentCardProps, CommentCardReaction } from "./types";
+import type { 
+  CommentCardProps,
+  CcReactionItem,
+  CcData,
+} from "./types";
 import { computed, reactive, ref, watch } from "vue";
 import cui from "~/components/custom-ui";
 import { useGlobalStateStore } from '~/hooks/stores/useGlobalStateStore';
@@ -10,6 +14,16 @@ import { emojiList } from "~/config/emoji-list"
 export function useCommentCard(
   props: CommentCardProps,
 ) {
+
+  const ccData = reactive<CcData>({
+    reactionList: [],
+    myReaction: {
+      iconName: "",
+      emoji: "",
+    },
+  })
+
+  initReactions(props, ccData)
 
   const gStore = useGlobalStateStore()
   const rr = useRouteAndLiuRouter()
@@ -46,8 +60,6 @@ export function useCommentCard(
     }
   }
 
-  const { ccReaction } = getReaction(props)
-
   return {
     allowHover,
     hoverColor,
@@ -57,43 +69,64 @@ export function useCommentCard(
     onMouseLeaveComment,
     onTapContainer,
     onTapCccCover,
-    ccReaction,
+    ccData,
   }
 }
 
 
-function getReaction(
+function initReactions(
   props: CommentCardProps,
+  ccData: CcData,
 ) {
-  const ccReaction = reactive<CommentCardReaction>({
-    iconName: "",
-    emoji: "",
-  })
 
+  // 处理 ccData.reactionList
+  watch(() => props.cs, (newV) => {
+    if(!newV) return
+
+    const { myEmoji, emojiData } = newV
+    const { total, system: systemList } = emojiData
+    if(!total || systemList.length < 1) {
+      ccData.reactionList = []
+      return
+    }
+
+    const tmpList: CcReactionItem[] = []
+    for(let i=0; i<systemList.length; i++) {
+      const v = systemList[i]
+      if(!v.num) continue
+
+      const _emoji = liuApi.decode_URI_component(v.encodeStr)
+      const data = emojiList.find(v1 => v1.emoji === _emoji)
+      const item: CcReactionItem = {
+        iconName: data?.iconName ?? "",
+        emoji: data?.emoji ?? _emoji,
+        emojiEncoded: v.encodeStr,
+        num: v.num,
+        chosen: v.encodeStr === myEmoji,
+      }
+      tmpList.push(item)
+    }
+    ccData.reactionList = tmpList
+  }, { immediate: true })
+
+  // 处理 ccData.myReaction
   watch(() => props.cs, (newV) => {
     if(!newV) return
 
     const { myEmoji } = newV
     if(!myEmoji) {
-      ccReaction.iconName = ""
-      ccReaction.emoji = ""
+      ccData.myReaction = {
+        iconName: "",
+        emoji: "",
+      }
       return
     }
 
     const _emoji = liuApi.decode_URI_component(myEmoji)
     const data = emojiList.find(v => v.emoji === _emoji)
-    if(!data) {
-      ccReaction.iconName = ""
-      ccReaction.emoji = _emoji
-    }
-    else {
-      ccReaction.iconName = data.iconName
-      ccReaction.emoji = data.emoji
-    }
-
+    ccData.myReaction.iconName = data?.iconName ?? ""
+    ccData.myReaction.emoji = data?.emoji ?? _emoji
   }, { immediate: true })
-
-  return { ccReaction }
 }
 
 

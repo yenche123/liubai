@@ -22,7 +22,7 @@ const props = defineProps({
     type: Object as PropType<CommentShow>,
     required: true,
   },
-  ccReaction: {
+  myReaction: {
     type: Object as PropType<CommentCardReaction>,
   }
 })
@@ -49,13 +49,13 @@ const { t } = useI18n()
       @click.stop="$emit('newoperation', 'emoji')"
     >
       <div class="ccbb-svg-box">
-        <svg-icon v-if="ccReaction?.iconName" 
-          :name="ccReaction.iconName"
+        <svg-icon v-if="myReaction?.iconName" 
+          :name="myReaction.iconName"
           class="ccbb-svg"
           :coverFillStroke="false"
         ></svg-icon>
 
-        <span v-else-if="ccReaction?.emoji" class="ccbb-svg-text">{{ ccReaction.emoji }}</span>
+        <span v-else-if="myReaction?.emoji" class="ccbb-svg-text">{{ myReaction.emoji }}</span>
 
         <svg-icon v-else name="add_reaction_600" class="ccbb-svg"
           :color="default_color"

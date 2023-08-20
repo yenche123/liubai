@@ -13,7 +13,7 @@ const props = defineProps({
     required: true,
   },
   isMouseEnter: Boolean,
-  ccReaction: {
+  myReaction: {
     type: Object as PropType<CommentCardReaction>,
   }
 })
@@ -42,13 +42,13 @@ const {
       @click.stop="$emit('newoperation', 'emoji')"
     >
       <div class="cct-svg-box">
-        <svg-icon v-if="ccReaction?.iconName" 
-          :name="ccReaction.iconName"
+        <svg-icon v-if="myReaction?.iconName" 
+          :name="myReaction.iconName"
           class="cct-svg"
           :coverFillStroke="false"
         ></svg-icon>
 
-        <span v-else-if="ccReaction?.emoji" class="cct-svg-text">{{ ccReaction.emoji }}</span>
+        <span v-else-if="myReaction?.emoji" class="cct-svg-text">{{ myReaction.emoji }}</span>
 
         <svg-icon v-else name="add_reaction_600" class="cct-svg"
           :color="default_color"
