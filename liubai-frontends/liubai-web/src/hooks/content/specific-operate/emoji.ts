@@ -18,6 +18,7 @@ import {
  } from "~/hooks/stores/useCommentStore";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import type { OState_2 } from "~/types/types-basic"
+import liuApi from "~/utils/liu-api"
 
 
 /**
@@ -114,7 +115,10 @@ export async function toEmoji(
   // 4. 修改 contentId 上的 emojiData
   await updateContent(res0._id, emojiData)
 
-  // 5. 通知其他组件
+  // 5. 震动
+  liuApi.vibrate([50])
+
+  // 6. 通知其他组件
   if(forType === "COMMENT" && comment) {
     notifyOtherComments(comment, encodeStr, emojiData)
   }
