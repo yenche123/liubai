@@ -68,6 +68,7 @@ defineEmits<{
   overflow: hidden;
   user-select: none;
   cursor: pointer;
+  transition: .15s;
 
   &::before {
     position: absolute;
@@ -111,6 +112,14 @@ defineEmits<{
   display: flex;
   min-width: 14px;
   justify-content: center;
+}
+
+@media(hover: hover) {
+
+  .ccr-item:hover {
+    opacity: .75;
+  }
+
 }
 
 
