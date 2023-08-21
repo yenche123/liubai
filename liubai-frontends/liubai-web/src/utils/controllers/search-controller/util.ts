@@ -54,15 +54,20 @@ export function resToAtoms(
 }
 
 
-function _getTitleAndDesc(v: ContentLocalTable, keyword?: string) {
+function _getTitleAndDesc(
+  v: ContentLocalTable, 
+  keyword?: string
+) {
   let title = v.title ?? ""
   let desc = ""
 
-  let content = transferUtil.tiptapToText(v.liuDesc ?? [], true)
+  const content = transferUtil.tiptapToText(v.liuDesc ?? [], true)
+  const fileName = _getFileName(v)
+
   if(!title) {
     let tmpTitle = _getOneLine(content)
-    let tmpDesc = _getHighlight(content, keyword)
-    let fileName = _getFileName(v)
+    let tmpDesc = _getHighlight(content, fileName, keyword)
+    
     if(tmpTitle) {
       title = tmpTitle
       if(tmpDesc !== tmpTitle) desc = tmpDesc
@@ -75,7 +80,7 @@ function _getTitleAndDesc(v: ContentLocalTable, keyword?: string) {
     }
   }
   else {
-    desc = _getHighlight(content, keyword)
+    desc = _getHighlight(content, fileName, keyword)
   }
 
   return { title, desc }
@@ -96,14 +101,23 @@ function _getOneLine(text: string) {
 }
 
 // 获取关键词所在的那一段
-function _getHighlight(text: string, keyword?: string) {
-  let lowerText = text.toLowerCase()
+function _getHighlight(
+  text: string, 
+  fileName: string,
+  keyword?: string,
+) {
+  const lowerText = text.toLowerCase()
   if(keyword) {
-    let idx = lowerText.indexOf(keyword)
+    const idx1 = lowerText.indexOf(keyword)
+    const idx2 = fileName.toLowerCase().indexOf(keyword)
+
+    if(idx1 < 0 && idx2 >= 0) {
+      return `[${fileName}]`
+    }
 
     // 只有 大于 10 要向前 trim
-    if(idx >= 10) {
-      text = _trimForward(text, idx)
+    if(idx1 >= 10) {
+      text = _trimForward(text, idx1)
     }
   }
 
