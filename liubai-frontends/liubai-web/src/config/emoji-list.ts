@@ -39,8 +39,8 @@ export const emojiList: EmojiItem[] = [
   },
   {
     emoji: "🥂",
-    iconName: `${pre}clinking_glasses_color`,
-    shadow: `${dsPre}var(--primary-color))`,
+    iconName: `${pre}bottle_with_popping_cork_color`,
+    shadow: `${dsPre}#5a9137)`,
     key: "cheers",
   },
   {
