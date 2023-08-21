@@ -227,9 +227,8 @@ const iconColor = `var(--other-btn-text)`
 }
 
 .cp-svg-emoji {
-  width: 36px;
-  height: 36px;
-  will-change: filter, transform;
+  width: 40px;
+  height: 40px;
   transition: filter 150ms, transform 150ms;
 }
 
@@ -367,9 +366,13 @@ const iconColor = `var(--other-btn-text)`
 /** 小屏幕适配  */
 @media screen and (max-width: 333px) {
 
+  .cp-big-title {
+    font-size: var(--title-font);
+  }
+
   .cp-svg-emoji {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
   }
 
   .cp-reply-share {
