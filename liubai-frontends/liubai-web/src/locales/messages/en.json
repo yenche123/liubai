@@ -243,6 +243,9 @@
     "public_share": "Public",
     "allow_comment": "Allow comments",
     "export_to": "Export to",
+    "export_to_file": "Export to file",
+    "copy_to_clipboard": "Copy to clipboard",
+    "share_to": "Share to",
     "download_ics": "Download .ics"
   },
   "whatever": {

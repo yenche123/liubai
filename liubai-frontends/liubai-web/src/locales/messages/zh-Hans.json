@@ -243,6 +243,9 @@
     "public_share": "公开分享",
     "allow_comment": "允许评论",
     "export_to": "导出至",
+    "export_to_file": "导出成文件",
+    "copy_to_clipboard": "复制到剪贴板",
+    "share_to": "分享到",
     "download_ics": "下载 .ics"
   },
   "whatever": {
