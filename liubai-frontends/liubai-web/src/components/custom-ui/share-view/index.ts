@@ -31,6 +31,8 @@ const svData = reactive<ShareViewData>({
   twitterLink: "",
   emailLink: "",
   lineLink: "",
+  openCopy: false,
+  openExport: false,
 })
 const queryKey = "shareview"
 let rr: RouteAndLiuRouter | undefined
@@ -127,8 +129,9 @@ async function _toClose() {
   if(icsUrl) {
     liuUtil.revokeObjURLs([icsUrl])
     svData.icsLink = ""
-    console.log("已销毁 icsUrl.........")
   }
+  svData.openCopy = false
+  svData.openExport = false
 }
 
 function onTapMask() {

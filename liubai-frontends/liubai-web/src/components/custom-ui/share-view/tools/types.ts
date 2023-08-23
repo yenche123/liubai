@@ -20,6 +20,8 @@ export interface ShareViewData {
   twitterLink: string
   emailLink: string
   lineLink: string
+  openExport: boolean
+  openCopy: boolean
 }
 
 export type ShareViewRes = true

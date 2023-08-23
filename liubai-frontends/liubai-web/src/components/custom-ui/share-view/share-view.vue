@@ -16,6 +16,8 @@ const {
 
 const { t } = useI18n()
 
+const icon_color = `var(--main-normal)`
+
 </script>
 <template>
 
@@ -26,8 +28,57 @@ const { t } = useI18n()
     <div class="sv-bg" @click="onTapMask"></div>
     <div class="sv-box">
 
-      <!-- public share -->
+      <!-- export -->
       <div class="sv-bar"
+        @click.stop="() => svData.openExport = !svData.openExport"
+      >
+        <div class="svb-icon-box">
+          <svg-icon name="desc_600" class="svb-svg-icon"
+            :color="icon_color"
+          ></svg-icon>
+        </div>
+
+        <div class="svb-hd">
+          <span>{{ t('share_related.export_to_file') }}</span>
+        </div>
+
+        <div class="svb-footer">
+          <div class="svbf-arrow-box">
+            <svg-icon name="arrow-right2" class="svbf-arrow-svg"
+              :class="{ 'svbg-arrow-svg_rotated': svData.openExport }"
+              :color="icon_color"
+              ></svg-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- copy -->
+      <div class="sv-bar"
+        @click.stop="() => svData.openCopy = !svData.openCopy"
+      >
+        <div class="svb-icon-box">
+          <svg-icon name="copy" class="svb-svg-icon"
+            :color="icon_color"
+          ></svg-icon>
+        </div>
+
+        <div class="svb-hd">
+          <span>{{ t('share_related.copy_to_clipboard') }}</span>
+        </div>
+
+        <div class="svb-footer">
+          <div class="svbf-arrow-box">
+            <svg-icon name="arrow-right2" 
+              class="svbf-arrow-svg"
+              :class="{ 'svbg-arrow-svg_rotated': svData.openCopy }"
+              :color="icon_color"
+            ></svg-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- public share -->
+      <!-- <div class="sv-bar"
         @click.stop="onPublicChanged(!svData.public)"
       >
         <div class="svb-hd">
@@ -39,11 +90,11 @@ const { t } = useI18n()
             @change="onPublicChanged($event.checked)"
           ></liu-switch>
         </div>
-      </div>
+      </div> -->
 
 
       <!-- allow comment -->
-      <div class="sv-bar"
+      <!-- <div class="sv-bar"
         :class="{ 'sv-bar_disabled': !svData.public }"
         @click.stop="onTapAllowComment"
       >
@@ -59,12 +110,12 @@ const { t } = useI18n()
             @change="onTapAllowComment"
           ></liu-switch>
         </div>
-      </div>
+      </div> -->
 
       <!-- export to -->
       <div class="sv-bar" style="cursor: auto">
         <div class="svb-hd">
-          <span>{{ t('share_related.export_to') }}</span>
+          <span>{{ t('share_related.share_to') }}</span>
         </div>
       </div>
       <!-- third-party apps' btns -->
@@ -201,8 +252,24 @@ const { t } = useI18n()
   cursor: auto;
 }
 
+.svb-icon-box {
+  width: 40px;
+  height: 40px;
+  margin-inline-start: -4px;
+  margin-inline-end: 4px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .svb-svg-icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
 .svb-hd {
-  width: 65%;
+  width: 70%;
   line-height: 1.5;
   color: var(--main-normal);
   font-size: var(--title-font);
@@ -219,6 +286,26 @@ const { t } = useI18n()
   display: flex;
   justify-content: flex-end;
 }
+
+.svbf-arrow-box {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .svbf-arrow-svg {
+    width: 20px;
+    height: 20px;
+    will-change: transform;
+    transition: .2s;
+  }
+
+  .svbg-arrow-svg_rotated {
+    transform: rotate(90deg);
+  }
+}
+
 
 .sv-apps {
   margin-inline-start: 24px;
@@ -304,13 +391,46 @@ const { t } = useI18n()
   }
 }
 
-@media screen and (max-width: 365px) {
+@media screen and (max-width: 390px) {
   .sv-bar {
     margin-block-start: 20px;
   }
 
+  .svb-icon-box {
+    width: 36px;
+    height: 36px;
+
+    .svb-svg-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
   .svb-hd {
     font-size: var(--desc-font);
+  }
+
+  .svbf-arrow-box {
+    width: 36px;
+    height: 36px;
+  
+    .svbf-arrow-svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .sv-bar {
+    padding-inline: 20px 16px;
+  }
+
+  .sv-apps {
+    margin-inline-start: 20px;
+    margin-inline-end: 16px;
+    padding-block-start: 8px;
+    width: calc(100% - 36px);
   }
 }
 
