@@ -28,7 +28,7 @@ const { t } = useI18n()
 
       <!-- public share -->
       <div class="sv-bar"
-        @click="onPublicChanged(!svData.public)"
+        @click.stop="onPublicChanged(!svData.public)"
       >
         <div class="svb-hd">
           <span>{{ t('share_related.public_share') }}</span>
@@ -45,7 +45,7 @@ const { t } = useI18n()
       <!-- allow comment -->
       <div class="sv-bar"
         :class="{ 'sv-bar_disabled': !svData.public }"
-        @click="onTapAllowComment"
+        @click.stop="onTapAllowComment"
       >
         <div class="svb-hd"
           :class="{ 'svb-hd_disabled': !svData.public }"
