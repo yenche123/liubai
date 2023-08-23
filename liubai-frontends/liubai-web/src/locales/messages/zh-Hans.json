@@ -246,7 +246,9 @@
     "export_to_file": "导出成文件",
     "copy_to_clipboard": "复制到剪贴板",
     "share_to": "分享到",
-    "download_ics": "下载 .ics"
+    "download_ics": "下载 .ics",
+    "markdown_format": "Markdown 格式",
+    "txt_format": "Txt 格式"
   },
   "whatever": {
     "sidebar_more": "设置、垃圾桶"

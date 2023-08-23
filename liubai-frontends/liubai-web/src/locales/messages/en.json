@@ -246,7 +246,9 @@
     "export_to_file": "Export to file",
     "copy_to_clipboard": "Copy to clipboard",
     "share_to": "Share to",
-    "download_ics": "Download .ics"
+    "download_ics": "Download .ics",
+    "markdown_format": "Markdown format",
+    "txt_format": "Txt format"
   },
   "whatever": {
     "sidebar_more": "Settings & Trash"

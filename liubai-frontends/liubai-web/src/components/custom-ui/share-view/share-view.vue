@@ -29,7 +29,7 @@ const icon_color = `var(--main-normal)`
     <div class="sv-box">
 
       <!-- export -->
-      <div class="sv-bar"
+      <div class="sv-bar sv-hover"
         @click.stop="() => svData.openExport = !svData.openExport"
       >
         <div class="svb-icon-box">
@@ -47,13 +47,40 @@ const icon_color = `var(--main-normal)`
             <svg-icon name="arrow-right2" class="svbf-arrow-svg"
               :class="{ 'svbg-arrow-svg_rotated': svData.openExport }"
               :color="icon_color"
+            ></svg-icon>
+          </div>
+        </div>
+      </div>
+
+      <div class="svb-box" :class="{ 'svb-box_expaned': svData.openExport }">
+        <div class="svb-bar sv-hover">
+          <div class="svb-title">
+            <span>{{ t('share_related.markdown_format') }}</span>
+          </div>
+          <div class="svb-footer">
+            <div class="svbf-arrow-box">
+              <svg-icon name="arrow-right2" class="svbf-arrow-svg2"
+                :color="icon_color"
               ></svg-icon>
+            </div>
+          </div>
+        </div>
+        <div class="svb-bar sv-hover">
+          <div class="svb-title">
+            <span>{{ t('share_related.txt_format') }}</span>
+          </div>
+          <div class="svb-footer">
+            <div class="svbf-arrow-box">
+              <svg-icon name="arrow-right2" class="svbf-arrow-svg2"
+                :color="icon_color"
+              ></svg-icon>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- copy -->
-      <div class="sv-bar"
+      <div class="sv-bar sv-hover"
         @click.stop="() => svData.openCopy = !svData.openCopy"
       >
         <div class="svb-icon-box">
@@ -77,42 +104,34 @@ const icon_color = `var(--main-normal)`
         </div>
       </div>
 
-      <!-- public share -->
-      <!-- <div class="sv-bar"
-        @click.stop="onPublicChanged(!svData.public)"
-      >
-        <div class="svb-hd">
-          <span>{{ t('share_related.public_share') }}</span>
+      <div class="svb-box" :class="{ 'svb-box_expaned': svData.openCopy }">
+        <div class="svb-bar sv-hover">
+          <div class="svb-title">
+            <span>{{ t('share_related.markdown_format') }}</span>
+          </div>
+          <div class="svb-footer">
+            <div class="svbf-arrow-box">
+              <svg-icon name="arrow-right2" class="svbf-arrow-svg2"
+                :color="icon_color"
+              ></svg-icon>
+            </div>
+          </div>
         </div>
-
-        <div class="svb-footer">
-          <liu-switch :checked="svData.public"
-            @change="onPublicChanged($event.checked)"
-          ></liu-switch>
+        <div class="svb-bar sv-hover">
+          <div class="svb-title">
+            <span>{{ t('share_related.txt_format') }}</span>
+          </div>
+          <div class="svb-footer">
+            <div class="svbf-arrow-box">
+              <svg-icon name="arrow-right2" class="svbf-arrow-svg2"
+                :color="icon_color"
+              ></svg-icon>
+            </div>
+          </div>
         </div>
-      </div> -->
+      </div>
 
-
-      <!-- allow comment -->
-      <!-- <div class="sv-bar"
-        :class="{ 'sv-bar_disabled': !svData.public }"
-        @click.stop="onTapAllowComment"
-      >
-        <div class="svb-hd"
-          :class="{ 'svb-hd_disabled': !svData.public }"
-        >
-          <span>{{ t('share_related.allow_comment') }}</span>
-        </div>
-
-        <div class="svb-footer">
-          <liu-switch :checked="svData.allowComment"
-            :disabled="!svData.public"
-            @change="onTapAllowComment"
-          ></liu-switch>
-        </div>
-      </div> -->
-
-      <!-- export to -->
+      <!-- share to -->
       <div class="sv-bar" style="cursor: auto">
         <div class="svb-hd">
           <span>{{ t('share_related.share_to') }}</span>
@@ -288,8 +307,8 @@ const icon_color = `var(--main-normal)`
 }
 
 .svbf-arrow-box {
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -301,9 +320,48 @@ const icon_color = `var(--main-normal)`
     transition: .2s;
   }
 
+  .svbf-arrow-svg2 {
+    width: 16px;
+    height: 16px;
+  }
+
   .svbg-arrow-svg_rotated {
     transform: rotate(90deg);
   }
+}
+
+.svb-box {
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  padding-inline: 24px 20px;
+  max-height: 0;
+  opacity: 0;
+  transition: .2s;
+  position: relative;
+
+  &.svb-box_expaned {
+    opacity: 1;
+    max-height: 100px;
+  }
+}
+
+.svb-bar {
+  padding-inline-start: 40px;
+  padding-block-start: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.svb-title {
+  width: 70%;
+  line-height: 1.5;
+  color: var(--main-normal);
+  font-size: var(--desc-font);
+  font-weight: 700;
+  user-select: none;
 }
 
 
@@ -411,13 +469,22 @@ const icon_color = `var(--main-normal)`
   }
 
   .svbf-arrow-box {
-    width: 36px;
-    height: 36px;
+    width: 24px;
+    height: 24px;
   
     .svbf-arrow-svg {
       width: 18px;
       height: 18px;
     }
+  }
+
+  .svb-bar {
+    padding-inline-start: 36px;
+    padding-block-start: 6px;
+  }
+
+  .svb-title {
+    font-size: var(--comment-font);
   }
 }
 
@@ -432,8 +499,23 @@ const icon_color = `var(--main-normal)`
     padding-block-start: 8px;
     width: calc(100% - 36px);
   }
+
+  .svb-box {
+    padding-inline: 20px 16px;
+  }
 }
 
+
+@media(hover: hover) {
+  .sv-hover {
+    transition: opacity .15s;
+    cursor: pointer;
+  }
+
+  .sv-hover:hover {
+    opacity: .8;
+  }
+}
 
 
 
