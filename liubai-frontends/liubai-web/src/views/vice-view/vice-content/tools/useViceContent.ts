@@ -56,11 +56,14 @@ export function useViceContent(
         return
       }
     }
-    else if(vs === "iframe" && id) {
-      url = vvLinkStore.getOriginURL(id)
-    }
-    else if(vs === "third" && id) {
-      url = vvLinkStore.getOriginURL(id)
+    else if((vs === "iframe" || vs === "third") && id) {
+      let originUrl = vvLinkStore.getCurrentLink(route)
+      if(originUrl) {
+        url = new URL(originUrl)
+      }
+      else {
+        url = vvLinkStore.getOriginURL(id)
+      }
     }
     else if(vs === "thread" && id) {
       const u = router.resolve({ name: "detail", params: { contentId: id } })
