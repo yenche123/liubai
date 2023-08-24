@@ -86,8 +86,8 @@ dependencies:
     specifier: ^11.8.0
     version: 11.8.0
   ics:
-    specifier: ^3.2.0
-    version: 3.2.0
+    specifier: ^3.4.0
+    version: 3.4.0
   jszip:
     specifier: ^3.10.1
     version: 3.10.1
@@ -104,8 +104,8 @@ dependencies:
     specifier: ^0.4.1
     version: 0.4.1(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.31.7)
   swiper:
-    specifier: ^10.1.0
-    version: 10.1.0
+    specifier: ^10.2.0
+    version: 10.2.0
   tippy.js:
     specifier: ^6.3.7
     version: 6.3.7
@@ -139,8 +139,8 @@ devDependencies:
     specifier: ^18.16.16
     version: 18.16.16
   '@vitejs/plugin-vue':
-    specifier: ^4.2.3
-    version: 4.2.3(vite@4.4.9)(vue@3.3.4)
+    specifier: ^4.3.3
+    version: 4.3.3(vite@4.4.9)(vue@3.3.4)
   sass:
     specifier: ^1.66.1
     version: 1.66.1
@@ -1160,8 +1160,8 @@ packages:
       vue-demi: 0.14.5(vue@3.3.4)
     dev: false
 
-  /@vitejs/plugin-vue@4.2.3(vite@4.4.9)(vue@3.3.4):
-    resolution: {integrity: sha512-R6JDUfiZbJA9cMiguQ7jxALsgiprjBeHL5ikpXfJCH62pPHtI+JdJ5xWj6Ev73yXSlYl86+blXn1kZHQ7uElxw==}
+  /@vitejs/plugin-vue@4.3.3(vite@4.4.9)(vue@3.3.4):
+    resolution: {integrity: sha512-ssxyhIAZqB0TrpUg6R0cBpCuMk9jTIlO1GNSKKQD6S8VjnXi6JXKfUXjSsxey9IwQiaRGsO1WnW9Rkl1L6AJVw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^4.0.0
@@ -2294,8 +2294,8 @@ packages:
     engines: {node: '>=14.18.0'}
     dev: true
 
-  /ics@3.2.0:
-    resolution: {integrity: sha512-7YWa5LQBW7ao+9Yz+L0bdUWYXCUE/UBPMY/9w9UFU6Ho2dBz85caJKiB+Tm+qv8HN6pCpH8jaWemXJijs8+PiA==}
+  /ics@3.4.0:
+    resolution: {integrity: sha512-ewKO7nF5BKhVKas3XmjB1siXdhJ7OvojY+HmD1ik/lozuzcZdy+Wt6IbB2San2gvHZAMUZhTa4UQyCE1I8e+sw==}
     dependencies:
       nanoid: 3.3.6
       yup: 1.2.0
@@ -3543,8 +3543,8 @@ packages:
       stable: 0.1.8
     dev: true
 
-  /swiper@10.1.0:
-    resolution: {integrity: sha512-E+wh+hcSbwlRfXuwBTclcOOikOjNdSF0a2Sdg3J4cIWtHO64A7SaLRfezfrJ67CW3GEc15AduYU2YKlElsjqsQ==}
+  /swiper@10.2.0:
+    resolution: {integrity: sha512-nktQsOtBInJjr3f5DicxC8eHYGcLXDVIGPSon0QoXRaO6NjKnATCbQ8SZsD3dN1Ph1RH4EhVPwSYCcuDRFWHGQ==}
     engines: {node: '>= 4.7.0'}
     dev: false
 
