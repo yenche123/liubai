@@ -50,7 +50,8 @@ const previewDate = computed(() => {
   >
     <div class="liu-dp-bg" @click.stop="onTapCancel"></div>
 
-    <VueDatePicker :locale="locale" 
+    <VueDatePicker 
+      :locale="locale" 
       :dayNames="dayNames" 
       weekStart="0" 
       :dark="theme === 'dark'"
