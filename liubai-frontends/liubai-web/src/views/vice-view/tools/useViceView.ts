@@ -48,7 +48,7 @@ export function useViceView(emits: VvEmits) {
   // 最小尺寸从 cfg 里取值
   const onIntendedMinVvPxChange = (newV: number) => {
     if(newV <= 0) newV = cfg.min_viceview_width
-    if(vvData.intendedMinVvPx !== newV) {
+    if(vvData.intendedMinVvPx !== newV || vvData.viceViewPx < newV) {
       vvData.intendedMinVvPx = newV
       recalculatePx(vvData, emits)
     }
@@ -301,14 +301,15 @@ async function recalculatePx(
   if(vvPx < min) vvPx = min
   if(vvPx > max) vvPx = max
 
-  vvData.minVvPx = min
-  vvData.maxVvPx = max
-  vvData.lastParentResizeStamp = time.getLocalTime()
   if(vvPx !== vvData.viceViewPx) {
     vvData.isAnimating = true
     vvData.viceViewPx = vvPx
     emits("widthchange", vvPx)
   }
+  
+  vvData.lastParentResizeStamp = time.getLocalTime()
+  vvData.minVvPx = min
+  vvData.maxVvPx = max
   vvData.shadow = judgeIfShadow(vvData)
 
   if(vvData.isAnimating) {
