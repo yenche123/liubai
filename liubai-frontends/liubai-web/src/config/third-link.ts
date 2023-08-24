@@ -20,6 +20,9 @@ export default {
   M_CNBETA: "https://m.cnbeta.com.tw/",
   SPEAKERDECK_COM: "https://speakerdeck.com/",
 
+  // street voice
+  STREET_VOICE: "https://streetvoice.com/",
+
   // spotify
   SPOTIFY_OPEN: "https://open.spotify.com/",
 

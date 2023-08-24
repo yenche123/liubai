@@ -3,14 +3,16 @@ import type { LocationQuery } from "vue-router";
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import valTool from "~/utils/basic/val-tool";
 import liuApi from "~/utils/liu-api";
-import type { VcState, VcCtx, VcData, VcThirdParty } from "./types"
+import type { VcState, VcCtx, VcData, VcThirdParty, VcEmits } from "./types"
 import thirdLink from "~/config/third-link";
 import liuUtil from "~/utils/liu-util";
 import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore";
 import { useVvFileStore } from "~/hooks/stores/useVvFileStore";
 import liuEnv from "~/utils/liu-env";
 
-export function useViceContent() {
+export function useViceContent(
+  emits: VcEmits
+) {
   const { route, router } = useRouteAndLiuRouter()
   const vvLinkStore = useVvLinkStore()
   const vvFileStore = useVvFileStore()
@@ -22,6 +24,7 @@ export function useViceContent() {
   })
 
   const ctx: VcCtx = {
+    emits,
     route,
     router,
     vcData,
@@ -261,6 +264,9 @@ function showView(
   liuUtil.view.showView(list, newData, "state", state)
   vcData.currentState = state
   vcData.currentId = id
+
+  let parentMinPx = otherData?.isStreetVoice ? 500 : 0
+  ctx.emits("intendedminchange", parentMinPx)
 }
 
 function closeAllView(

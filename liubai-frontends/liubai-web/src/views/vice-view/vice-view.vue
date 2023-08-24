@@ -17,6 +17,7 @@ const {
   onResizing,
   onVvMouseEnter,
   onVvMouseLeave,
+  onIntendedMinVvPxChange,
 } = useViceView(emits)
 
 const {
@@ -65,6 +66,7 @@ const onVcStateChange = (newV: VcState) => {
       <div class="vv-inner-box">
         <ViceContent :is-outter-draging="isDraging"
           @vcstatechange="onVcStateChange"
+          @intendedminchange="onIntendedMinVvPxChange"
         ></ViceContent>
       </div>
       

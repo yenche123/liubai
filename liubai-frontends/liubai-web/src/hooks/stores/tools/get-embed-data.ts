@@ -394,7 +394,7 @@ export function getEmbedData(
     }
   }
 
-  // code
+  // coda
   const coda = new URL(thirdLink.CODA_IO)
   const isCoda = valTool.isInDomain(h, coda.hostname)
   if(isCoda) {
@@ -419,6 +419,31 @@ export function getEmbedData(
       url.pathname = `/embed/${codaId}`
       codaRes.link = url.toString()
       return codaRes
+    }
+  }
+
+  // street voice
+  const streetVoice = new URL(thirdLink.STREET_VOICE)
+  const isStreetVoice = valTool.isInDomain(h, streetVoice.hostname)
+  if(isStreetVoice) {
+    const streetVoiceRes: EmbedDataRes = {
+      link: originUrl,
+      otherData: { isStreetVoice }
+    }
+
+    const streetVoiceReg1 = /\/music\/embed\//g
+    const streetVoiceMatch1 = p.match(streetVoiceReg1)
+    if(streetVoiceMatch1) return streetVoiceRes
+
+    const streetVoiceReg2 = /(?<=\/\w{2,20}\/songs\/)\d{2,9}/g
+    const streetVoiceMatch2 = p.match(streetVoiceReg2)
+    if(streetVoiceMatch2) {
+      const songId = streetVoiceMatch2[0]
+      streetVoice.pathname = `/music/embed/`
+      streetVoice.searchParams.set("id", songId)
+      streetVoice.searchParams.set("s", "l")
+      streetVoiceRes.link = streetVoice.toString()
+      return streetVoiceRes
     }
   }
 

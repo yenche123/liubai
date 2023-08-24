@@ -8,7 +8,7 @@ import CommentDetail from "~/components/level2/comment-detail/comment-detail.vue
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
 import RightDropZone from "./right-drop-zone/right-drop-zone.vue";
 import { useVcHeight } from "./tools/useVcHeight"
-import type { VcState } from "./tools/types"
+import type { VcEmits } from "./tools/types"
 import { watch } from "vue";
 import { useVcDropZone } from "./tools/useVcDropZone";
 
@@ -19,16 +19,14 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits<{
-  (event: "vcstatechange", vcState: VcState): void
-}>()
+const emits = defineEmits<VcEmits>()
 
 const {
   vcData,
   onTapBack,
   onTapClose,
   onTapOpenInNew,
-} = useViceContent()
+} = useViceContent(emits)
 
 const {
   onViewStateChange,

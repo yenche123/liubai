@@ -27,12 +27,18 @@ export interface VcData {
   currentId: string
 }
 
+export interface VcProps {
+  isOutterDraging: boolean
+}
+
+export interface VcEmits {
+  (evt: "vcstatechange", vcState: VcState): void
+  (evt: "intendedminchange", newV: number): void
+}
+
 export interface VcCtx {
+  emits: VcEmits
   route: RouteLocationNormalizedLoaded
   router: LiuRouter
   vcData: VcData
-}
-
-export interface VcProps {
-  isOutterDraging: boolean
 }

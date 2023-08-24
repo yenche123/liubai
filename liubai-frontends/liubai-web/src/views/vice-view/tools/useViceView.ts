@@ -23,24 +23,7 @@ import { outterWidthKey, tapMainViewStampKey } from "~/utils/provide-keys"
 import liuApi from "~/utils/liu-api";
 import liuUtil from "~/utils/liu-util";
 import { LiuTimeout } from "~/utils/basic/type-tool";
-
-interface VvData {
-  openType: OpenType
-  minVvPx: number
-  viceViewPx: number
-  vvHeightPx: number
-  maxVvPx: number
-  isAnimating: boolean
-  isActivate: boolean
-  lastParentResizeStamp: number
-  lastOpenStamp: number
-  shadow: boolean
-  showHandle: boolean
-}
-
-interface VvEmits {
-  (e: "widthchange", widthPx: number): void
-}
+import type { VvData, VvEmits } from "./types";
 
 const LISTEN_DELAY = 300
 const layoutStore = useLayoutStore()
@@ -61,6 +44,16 @@ export function useViceView(emits: VvEmits) {
     onVvMouseLeave,
   } = initMouse(vvData)
 
+  // 接收来自子组件期望的最小尺寸，若最小尺寸小于等于 0，那么
+  // 最小尺寸从 cfg 里取值
+  const onIntendedMinVvPxChange = (newV: number) => {
+    if(newV <= 0) newV = cfg.min_viceview_width
+    if(vvData.intendedMinVvPx !== newV) {
+      vvData.intendedMinVvPx = newV
+      recalculatePx(vvData, emits)
+    }
+  }
+
   // 处理 main-view 被点击的情况
   handleMainViewTapped(vvData)
 
@@ -69,6 +62,7 @@ export function useViceView(emits: VvEmits) {
     onResizing,
     onVvMouseEnter,
     onVvMouseLeave,
+    onIntendedMinVvPxChange,
   }
 }
 
@@ -107,6 +101,7 @@ function initViceView() {
 
   const vvData = reactive<VvData>({
     openType: "closed_by_auto",
+    intendedMinVvPx: cfg.min_viceview_width,
     minVvPx: cfg.min_viceview_width,
     viceViewPx: defaultPx,
     vvHeightPx: height.value,
@@ -235,11 +230,13 @@ function listenRouteChange(
 }
 
 // 获取最小和最大宽度
-function getMinAndMax() {
+function getMinAndMax(
+  vvData: VvData
+) {
   const { width } = useWindowSize()
   const winW = width.value
   const max = winW - layoutStore.sidebarWidth
-  const min = Math.min(max, cfg.min_viceview_width)
+  const min = Math.min(max, vvData.intendedMinVvPx)
   return { max, min }
 }
 
@@ -248,7 +245,7 @@ function openViceView(
   vvData: VvData, 
   emits: VvEmits,
 ) {
-  const { max, min } = getMinAndMax()
+  const { max, min } = getMinAndMax(vvData)
   vvData.lastOpenStamp = time.getLocalTime()
   vvData.minVvPx = min
   vvData.maxVvPx = max
@@ -291,24 +288,33 @@ function listenParentChange(
 ) {
   layoutStore.$subscribe(async (mutation, state) => {
     if(vvData.openType !== "opened") return
+    recalculatePx(vvData, emits)
+  })
+}
 
-    let vvPx = vvData.viceViewPx
-    const { min, max } = getMinAndMax()
-    if(vvPx < min) vvPx = min
-    if(vvPx > max) vvPx = max
+async function recalculatePx(
+  vvData: VvData, 
+  emits: VvEmits,
+) {
+  let vvPx = vvData.viceViewPx
+  const { min, max } = getMinAndMax(vvData)
+  if(vvPx < min) vvPx = min
+  if(vvPx > max) vvPx = max
 
+  vvData.minVvPx = min
+  vvData.maxVvPx = max
+  vvData.lastParentResizeStamp = time.getLocalTime()
+  if(vvPx !== vvData.viceViewPx) {
     vvData.isAnimating = true
-    vvData.lastParentResizeStamp = time.getLocalTime()
     vvData.viceViewPx = vvPx
-    vvData.minVvPx = min
-    vvData.maxVvPx = max
-    vvData.shadow = judgeIfShadow(vvData)
-
     emits("widthchange", vvPx)
+  }
+  vvData.shadow = judgeIfShadow(vvData)
 
+  if(vvData.isAnimating) {
     await valTool.waitMilli(LISTEN_DELAY + 16)
     vvData.isAnimating = false
-  })
+  }
 }
 
 
