@@ -48,6 +48,8 @@ https://svgmix.com/
 
 12. 运行 `pnpm outdated` 能检查项目中使用到的依赖是否有需要更新的
 
+13. 使用 https://npmgraph.js.org/ 查看依赖关系图
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
