@@ -305,6 +305,7 @@ async function recalculatePx(
     vvData.isAnimating = true
     vvData.viceViewPx = vvPx
     emits("widthchange", vvPx)
+    await nextTick()
   }
   
   vvData.lastParentResizeStamp = time.getLocalTime()
