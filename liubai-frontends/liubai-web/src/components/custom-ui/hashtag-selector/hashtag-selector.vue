@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { initHashtagSelector } from "./tools/useHashtagSelector"
 import { useI18n } from "vue-i18n";
+import HsInputResults from "./hs-input-results/hs-input-results.vue"
 
 const {
   hsData,
@@ -17,7 +18,7 @@ const { t } = useI18n()
     :class="{ 'hs-container_show': hsData.show }"
   >
 
-    <div class="hs-bg"></div>
+    <div class="hs-bg" @click.stop="onTapCancel"></div>
 
     <div class="hs-box">
 
@@ -47,13 +48,16 @@ const { t } = useI18n()
 
       </div>
 
-      <!-- 输入框 -->
-      <div class="hs-bar">
+      <!-- 已添加的标签 -->
+      <div class="hs-bar" v-show="hsData.list.length > 0">
 
       </div>
 
+      <div class="hs-virtual"></div>
+
     </div>
 
+    <HsInputResults></HsInputResults>
 
   </div>
 
@@ -117,13 +121,12 @@ const { t } = useI18n()
   }
 }
 
-
 .hs-bar {
   width: 100%;
   padding: 10px 20px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  box-sizing: border-box;
   position: relative;
 }
 
@@ -136,5 +139,12 @@ const { t } = useI18n()
   color: var(--main-normal);
   user-select: none;
 }
+
+.hs-virtual {
+  width: 100%;
+  height: 80px;
+}
+
+
 
 </style>

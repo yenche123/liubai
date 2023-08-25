@@ -201,7 +201,8 @@
     "delete_hd": "Delete the tag",
     "delete_bd": "Are you sure to delete the tag called \"{tag}\"?",
     "delete_tip": "Also delete the threads",
-    "edit_tag": "Editing tags"
+    "edit_tag": "Editing tags",
+    "add_tag": "Add a tag"
   },
   "thread_related": {
     "delete_forever_1": "Delete Forever",
