@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
+
+type CustomBtnType = "main" | "other" | "transparent" | "pure"
+type CustomBtnSize = "normal" | "mini" | "common"
  
 defineProps({
   type: {
-    type: String,
-    default: "main",     // main: 主要的;  other: 一般的;  transparent: 透明的
+    type: String as PropType<CustomBtnType>,
+    default: "main",     // main: 主要的;  other: 一般的;  transparent: 透明的; 
+                         // pure: 纯白的（浅色模式时），或纯黑的（深色模式时）
   },
   size: {
-    type: String as PropType<"normal" | "mini" | "common">,
+    type: String as PropType<CustomBtnSize>,
     default: "normal",   // normal: 正常大小;  mini: 宽度同 slot; 
                          // common: 宽度同 slot 但是高度是 50px
   },
@@ -34,6 +38,7 @@ const onTapBtn = (e: Event) => {
       'btn-other': type === 'other',
       'btn-transparent': type === 'transparent',
       'btn-common': size === 'common',
+      'btn-pure': type === 'pure',
     }"
     :disabled="disabled"
     @click="onTapBtn"
@@ -77,6 +82,11 @@ const onTapBtn = (e: Event) => {
   font-weight: 700;
 }
 
+.btn-pure {
+  background-color: var(--card-bg);
+  color: var(--main-text);
+}
+
 .btn-other {
   background-color: var(--other-btn-bg);
   color: var(--other-btn-text);
@@ -87,37 +97,53 @@ const onTapBtn = (e: Event) => {
   color: var(--primary-color);
 }
 
-.btn-container:hover {
-  background-color: var(--primary-hover);
+@media(hover: hover) {
+
+  .btn-container:hover {
+    background-color: var(--primary-hover);
+  }
+
+  .btn-container:active {
+    background-color: var(--primary-active);
+  }
+
+  .btn-container:disabled {
+    background-color: var(--primary-color);
+    opacity: .5;
+    cursor: default;
+  }
+
+  .btn-transparent:hover {
+    background-color: transparent;
+    opacity: .7;
+  }
+
+  .btn-transparent:active {
+    background-color: transparent;
+    opacity: .6;
+  }
+
+  .btn-other:hover {
+    background-color: var(--other-btn-hover);
+  }
+
+  .btn-other:active {
+    background-color: var(--other-btn-hover);
+  }
+
+  .btn-pure:hover {
+    background-color: var(--card-bg);
+    opacity: .75;
+  }
+
+  .btn-pure:hover {
+    background-color: var(--card-bg);
+    opacity: .7;
+  }
+
 }
 
-.btn-container:active {
-  background-color: var(--primary-active);
-}
 
-.btn-container:disabled {
-  background-color: var(--primary-color);
-  opacity: .5;
-  cursor: default;
-}
-
-.btn-transparent:hover {
-  background-color: transparent;
-  opacity: .7;
-}
-
-.btn-transparent:active {
-  background-color: transparent;
-  opacity: .6;
-}
-
-.btn-other:hover {
-  background-color: var(--other-btn-hover);
-}
-
-.btn-other:active {
-  background-color: var(--other-btn-hover);
-}
 
 @media screen and (max-width: 320px) {
 

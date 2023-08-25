@@ -25,7 +25,7 @@ const { t } = useI18n()
       <div class="hs-bar">
 
         <custom-btn 
-          type="other"
+          type="pure"
           size="mini"
           @click="onTapCancel"
         >
@@ -95,8 +95,8 @@ const { t } = useI18n()
 
 .hs-box {
   z-index: 5102;
-  margin-top: 20vh;
-  margin-top: 20dvh;
+  margin-top: 16vh;
+  margin-top: 16dvh;
   width: 90%;
   max-width: 500px;
   border-radius: 16px;
