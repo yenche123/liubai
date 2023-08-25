@@ -73,6 +73,9 @@ function handleOperationFromBottomBar(
   else if(op === "hourglass") {
     handle_showCountdown(ctx, threadData)
   }
+  else if(op === "tag") {
+    handle_tag(ctx, threadData)
+  }
   else if(op === "state" || op === "delete") {
     ctx.emits("newoperate", op, position, threadData)
   }
@@ -82,6 +85,15 @@ function handleOperationFromBottomBar(
   else if(op === "pin") {
     ctx.emits("newoperate", op, position, threadData)
   }
+}
+
+
+function handle_tag(
+  ctx: TcoCtx,
+  threadData: ThreadShow,
+) {
+  const tags = valTool.copyObject(threadData.tags ?? [])
+  cui.showHashtagSelector({ tags })
 }
 
 function handle_edit(

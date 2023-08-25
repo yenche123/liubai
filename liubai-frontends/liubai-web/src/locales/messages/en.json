@@ -200,7 +200,8 @@
     "level_limit": "The maxmim of a tag level is {level}",
     "delete_hd": "Delete the tag",
     "delete_bd": "Are you sure to delete the tag called \"{tag}\"?",
-    "delete_tip": "Also delete the threads"
+    "delete_tip": "Also delete the threads",
+    "edit_tag": "Editing tags"
   },
   "thread_related": {
     "delete_forever_1": "Delete Forever",

@@ -15,6 +15,7 @@ const StateSelector = defineAsyncComponent(() => import("./state-selector/state-
 const ShareView = defineAsyncComponent(() => import("./share-view/share-view.vue"))
 const ContentPanel = defineAsyncComponent(() => import("./content-panel/content-panel.vue"))
 const CommentPopup = defineAsyncComponent(() => import("./comment-popup/comment-popup.vue"))
+const HashtagSelector = defineAsyncComponent(() => import("./hashtag-selector/hashtag-selector.vue"))
 
 </script>
 <template>
@@ -30,6 +31,9 @@ const CommentPopup = defineAsyncComponent(() => import("./comment-popup/comment-
 
   <!-- hashtag 编辑器 -->
   <HashtagEditor></HashtagEditor>
+
+  <!-- hashtag 选择器 -->
+  <HashtagSelector></HashtagSelector>
 
   <!-- 日期选择器 -->
   <DatePicker></DatePicker>

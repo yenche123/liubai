@@ -200,7 +200,8 @@
     "level_limit": "標籤層數最多 {level} 級",    
     "delete_hd": "删除標籤",
     "delete_bd": "確定要刪除 \"{tag}\" 標籤？",
-    "delete_tip": "同時删除動態"
+    "delete_tip": "同時删除動態",
+    "edit_tag": "編輯標籤"
   },
   "thread_related": {
     "delete_forever_1": "徹底刪除",

@@ -3,8 +3,7 @@ import type {
   CommentPopupParam,
   CommentPopupData,
 } from "./types"
-import { useRouteAndLiuRouter } from "~/routes/liu-router"
-import type { RouteAndLiuRouter } from "~/routes/liu-router"
+import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool"
 import { turnThreadIntoComment } from "~/utils/transfer-util/thread-comment"

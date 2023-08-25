@@ -13,6 +13,7 @@ import { showStateEditor } from "./state-editor"
 import { showShareView } from "./share-view"
 import { showContentPanel } from "./content-panel/tools/useContentPanel"
 import { showCommentPopup } from "./comment-popup/tools/useCommentPopup"
+import { showHashtagSelector } from "./hashtag-selector/tools/useHashtagSelector"
 
 export default {
   showModal,
@@ -22,6 +23,7 @@ export default {
   showDatePicker,
   previewImage,
   showHashTagEditor,
+  showHashtagSelector,
   showSnackBar,
   showActionSheet,
   showSearchEditor,
