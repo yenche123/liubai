@@ -1,5 +1,4 @@
 import { useEditor } from '@tiptap/vue-3'
-import { useI18n } from 'vue-i18n'
 import type { TipTapEditor } from "~/types/types-editor"
 import { inject, onMounted, ref, toRef, watch, computed } from 'vue'
 import type { ShallowRef } from "vue"
@@ -25,11 +24,9 @@ export function useEditorCore(
   props: EditorCoreProps, 
   emits: EditorCoreEmits
 ) {
-  const { t } = useI18n()
-
   const contentRef = toRef(props, "content")
   const purpose = toRef(props, "purpose")
-  const extensions = initExtensions(props, emits, t)
+  const extensions = initExtensions(props, emits)
   const content = props?.content ?? "<p></p>"
 
   const ctx: EcContext = {

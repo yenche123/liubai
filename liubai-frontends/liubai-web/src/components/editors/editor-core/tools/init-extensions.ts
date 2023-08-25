@@ -10,7 +10,6 @@ import HorizontalRule from "@tiptap/extension-horizontal-rule"
 import Code from '@tiptap/extension-code'
 import Link from '@tiptap/extension-link'
 import Heading from '@tiptap/extension-heading'
-import type { ComposerTranslation } from 'vue-i18n'
 import { wrappingInputRule, nodeInputRule, Extension } from "@tiptap/core"
 import type { TipTapEditor } from "~/types/types-editor"
 import type { EditorCoreProps, EditorCoreEmits } from "./types"
@@ -20,15 +19,16 @@ import { lowlight } from 'lowlight'
 import { initLowlight } from "~/utils/other/lowlight-related"
 import CodeBlockComponent from '../code-block-component/code-block-component.vue'
 import { createVirtualCursor } from 'prosemirror-virtual-cursor'
+import { useI18n } from 'vue-i18n'
 
 initLowlight()
 
 export function initExtensions(
   props: EditorCoreProps,
   emits: EditorCoreEmits,
-  t: ComposerTranslation
 ) {
 
+  const { t } = useI18n()
   const bqRegex = /^[>》]\s$/
 
   const CustomCode = Code.extend({
