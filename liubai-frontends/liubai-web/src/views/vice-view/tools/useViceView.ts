@@ -22,7 +22,7 @@ import valTool from "~/utils/basic/val-tool";
 import { outterWidthKey, tapMainViewStampKey } from "~/utils/provide-keys"
 import liuApi from "~/utils/liu-api";
 import liuUtil from "~/utils/liu-util";
-import { LiuTimeout } from "~/utils/basic/type-tool";
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 import type { VvData, VvEmits } from "./types";
 
 const LISTEN_DELAY = 300
