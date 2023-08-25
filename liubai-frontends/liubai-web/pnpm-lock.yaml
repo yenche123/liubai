@@ -31,6 +31,9 @@ dependencies:
   '@tiptap/extension-link':
     specifier: 2.1.7
     version: 2.1.7(@tiptap/core@2.1.7)(@tiptap/pm@2.1.7)
+  '@tiptap/extension-mention':
+    specifier: ^2.1.7
+    version: 2.1.7(@tiptap/core@2.1.7)(@tiptap/pm@2.1.7)(@tiptap/suggestion@2.1.7)
   '@tiptap/extension-placeholder':
     specifier: 2.1.7
     version: 2.1.7(@tiptap/core@2.1.7)(@tiptap/pm@2.1.7)
@@ -46,6 +49,9 @@ dependencies:
   '@tiptap/starter-kit':
     specifier: 2.1.7
     version: 2.1.7(@tiptap/pm@2.1.7)
+  '@tiptap/suggestion':
+    specifier: ^2.1.7
+    version: 2.1.7(@tiptap/core@2.1.7)(@tiptap/pm@2.1.7)
   '@tiptap/vue-3':
     specifier: 2.1.7
     version: 2.1.7(@tiptap/core@2.1.7)(@tiptap/pm@2.1.7)(vue@3.3.4)
@@ -970,6 +976,18 @@ packages:
       '@tiptap/core': 2.1.7(@tiptap/pm@2.1.7)
     dev: false
 
+  /@tiptap/extension-mention@2.1.7(@tiptap/core@2.1.7)(@tiptap/pm@2.1.7)(@tiptap/suggestion@2.1.7):
+    resolution: {integrity: sha512-GPVw8AiGwCozkY2TKLk/eMpo7IYfVuXnFB82yPlG3RQTGREpvf6L5Vv28HdXcgk7KMTo2IcEdH32EJDqjPYlEg==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+      '@tiptap/pm': ^2.0.0
+      '@tiptap/suggestion': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.1.7(@tiptap/pm@2.1.7)
+      '@tiptap/pm': 2.1.7
+      '@tiptap/suggestion': 2.1.7(@tiptap/core@2.1.7)(@tiptap/pm@2.1.7)
+    dev: false
+
   /@tiptap/extension-ordered-list@2.1.7(@tiptap/core@2.1.7):
     resolution: {integrity: sha512-3XIXqbZmYkNzF+8PQ2jcCOCj0lpC3y9HGM/+joPIunhiUiktrIgpbUDv2E1Gq5lJHYqthIeujniI2dB85tkwJQ==}
     peerDependencies:
@@ -1077,6 +1095,16 @@ packages:
       '@tiptap/extension-text': 2.1.7(@tiptap/core@2.1.7)
     transitivePeerDependencies:
       - '@tiptap/pm'
+    dev: false
+
+  /@tiptap/suggestion@2.1.7(@tiptap/core@2.1.7)(@tiptap/pm@2.1.7):
+    resolution: {integrity: sha512-FKlXFMWf9rCnNJQsUfeX6WpS2VUs2O98ENkyhfV8ehCB7X5+57mkkxJxl/88SMbjZL+FbWPBKLaiOvsXfIUoww==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+      '@tiptap/pm': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.1.7(@tiptap/pm@2.1.7)
+      '@tiptap/pm': 2.1.7
     dev: false
 
   /@tiptap/vue-3@2.1.7(@tiptap/core@2.1.7)(@tiptap/pm@2.1.7)(vue@3.3.4):
