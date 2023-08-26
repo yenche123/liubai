@@ -36,6 +36,7 @@ export function initHashtagSelector() {
     hsData,
     onTapCancel,
     onTapConfirm,
+    onTapClear,
   }
 }
 
@@ -46,6 +47,12 @@ export function showHashtagSelector(param: HsParam) {
   hsData.originalList = [...param.tags]
   hsData.canSubmit = false
   openIt(rr, queryKey)
+}
+
+function onTapClear(index: number) {
+  const data = hsData.list[index]
+  if(!data) return
+  hsData.list.splice(index, 1)
 }
 
 

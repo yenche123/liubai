@@ -7,6 +7,7 @@ const {
   hsData,
   onTapCancel,
   onTapConfirm,
+  onTapClear,
 } = initHashtagSelector()
 
 const { t } = useI18n()
@@ -49,7 +50,22 @@ const { t } = useI18n()
       </div>
 
       <!-- 已添加的标签 -->
-      <div class="hs-bar" v-show="hsData.list.length > 0">
+      <div class="hs-bar hs-tags" v-show="hsData.list.length > 0">
+
+        <template v-for="(item, index) in hsData.list" :key="item.text">
+          <div class="hs-tag" @click.stop="() => onTapClear(index)">
+            <span v-if="item.emoji" class="hs-tag-emoji">{{ item.emoji }}</span>
+            <span>{{ item.text }}</span>
+            <div class="hs-tag-close">
+              <div class="hstc-bg">
+                <div class="hstc-bg-dot"></div>
+              </div>
+              <svg-icon name="close" class="hs-tag-close_svg"
+                color="var(--liu-quote)"
+              ></svg-icon>
+            </div>
+          </div>
+        </template>
 
       </div>
 
@@ -103,7 +119,7 @@ const { t } = useI18n()
   margin-top: 16dvh;
   width: 90%;
   max-width: 500px;
-  border-radius: 16px;
+  border-radius: 8px;
   box-shadow: var(--card-shadow-2);
   position: relative;
   overflow: hidden;
@@ -123,11 +139,15 @@ const { t } = useI18n()
 
 .hs-bar {
   width: 100%;
-  padding: 10px 20px;
+  padding: 12px 20px 10px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   position: relative;
+}
+
+.hs-tags {
+  padding: 10px 20px 0px;
 }
 
 .hs-title {
@@ -143,6 +163,81 @@ const { t } = useI18n()
 .hs-virtual {
   width: 100%;
   height: 80px;
+}
+
+.hs-tag {
+  padding-inline-start: 14px;
+  font-size: var(--mini-font);
+  color: var(--main-normal);
+  background-color: var(--card-bg);
+  border-radius: 24px;
+  margin-inline-end: 10px;
+  margin-block-end: 10px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  white-space: pre-wrap;
+  position: relative;
+
+  span {
+    position: relative;
+  }
+
+  .hs-tag-emoji {
+    margin-inline-end: 6px;
+  }
+}
+
+.hs-tag-close {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+
+  .hs-tag-close_svg {
+    width: 20px;
+    height: 20px;
+    position: relative;
+  }
+}
+
+.hstc-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hstc-bg-dot {
+  width: 0px;
+  height: 0px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  opacity: .07;
+  transition: .2s;
+  transition-timing-function: cubic-bezier(.88, .1, 1, 1);
+  flex: none;
+}
+
+@media(hover: hover) {
+
+  .hs-tag-close:hover {
+
+    .hstc-bg-dot {
+      width: 48px;
+      height: 48px;
+      opacity: .17;
+    }
+
+  }
+
 }
 
 
