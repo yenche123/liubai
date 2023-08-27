@@ -154,7 +154,7 @@ function listenInputChange() {
   const { spaceId } = storeToRefs(wStore)
   const inputTxt = toRef(seData, "inputTxt")
   const reloadNum = toRef(seData, "reloadNum")
-  const DURATION = 200
+  const DURATION = 150
   let lastSearchStamp = 0
   let timeout: LiuTimeout
 
