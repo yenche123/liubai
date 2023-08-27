@@ -8,6 +8,8 @@ const {
   onTapCancel,
   onTapConfirm,
   onTapClear,
+  onTapPopup,
+  onFocusOrNot,
 } = initHashtagSelector()
 
 const { t } = useI18n()
@@ -19,7 +21,7 @@ const { t } = useI18n()
     :class="{ 'hs-container_show': hsData.show }"
   >
 
-    <div class="hs-bg" @click.stop="onTapCancel"></div>
+    <div class="hs-bg" @click.stop="onTapPopup"></div>
 
     <div class="hs-box">
 
@@ -73,7 +75,9 @@ const { t } = useI18n()
 
     </div>
 
-    <HsInputResults></HsInputResults>
+    <HsInputResults
+      @focusornot="onFocusOrNot"
+    ></HsInputResults>
 
   </div>
 

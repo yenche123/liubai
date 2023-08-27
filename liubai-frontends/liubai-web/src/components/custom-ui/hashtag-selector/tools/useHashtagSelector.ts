@@ -7,14 +7,13 @@ import {
 } from "../../tools/listen-keyup"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool";
-
+import time from "~/utils/basic/time";
 
 /**
  * 说明: 
  *   该组件会去 "新增" 标签到 WorkspaceLocalTable 里
  *   但不会对 content 做任何修改
  */
-
 
 const queryKey = "htselector"
 const hsData = reactive<HsData>({
@@ -25,6 +24,7 @@ const hsData = reactive<HsData>({
   list: [],
   originalList: [],
   canSubmit: false,
+  lastFocusOrBlurStamp: 0,
 })
 let rr: RouteAndLiuRouter | undefined
 
@@ -37,6 +37,8 @@ export function initHashtagSelector() {
     onTapCancel,
     onTapConfirm,
     onTapClear,
+    onTapPopup,
+    onFocusOrNot,
   }
 }
 
@@ -47,6 +49,17 @@ export function showHashtagSelector(param: HsParam) {
   hsData.originalList = [...param.tags]
   hsData.canSubmit = false
   openIt(rr, queryKey)
+}
+
+
+function onFocusOrNot(newV: boolean) {
+  hsData.lastFocusOrBlurStamp = time.getTime()
+}
+
+function onTapPopup() {
+  const diff = time.getTime() - hsData.lastFocusOrBlurStamp
+  if(diff < 150) return
+  onTapCancel()
 }
 
 function onTapClear(index: number) {

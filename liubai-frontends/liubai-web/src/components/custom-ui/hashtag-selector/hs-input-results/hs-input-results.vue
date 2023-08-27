@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
 import { useHsInputResults } from "./tools/useHsInputResults"
+import type { HsirEmit } from "./tools/types"
+
+const emit = defineEmits<HsirEmit>()
 
 const { t } = useI18n()
 const {
@@ -8,7 +11,9 @@ const {
   hsirData,
   onFocus,
   onBlur,
-} = useHsInputResults()
+  onInput,
+} = useHsInputResults(emit)
+
 
 </script>
 <template>
@@ -23,6 +28,8 @@ const {
         :placeholder="t('tag_related.add_tag')" 
         @blur="onBlur"
         @focus="onFocus"
+        @input="onInput"
+        v-model="hsirData.inputTxt"
       />
 
     </div>
