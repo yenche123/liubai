@@ -159,7 +159,8 @@ export function getOriginURL(embedUrl: string) {
   const isGoogle = valTool.isInDomain(h, gUrl.hostname)
   if(isGoogle && s.has("igu")) {
     s.delete("igu")
+    return url
   }
 
-  return url
+  return
 }

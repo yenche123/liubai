@@ -57,12 +57,15 @@ export function useViceContent(
       }
     }
     else if((vs === "iframe" || vs === "third") && id) {
-      let originUrl = vvLinkStore.getCurrentLink(route)
-      if(originUrl) {
-        url = new URL(originUrl)
+      let oUrl = vvLinkStore.getOriginURL(id)
+      if(oUrl) {
+        url = oUrl
       }
       else {
-        url = vvLinkStore.getOriginURL(id)
+        let oUrlStr = vvLinkStore.getCurrentLink(route)
+        if(oUrlStr) {
+          url = new URL(oUrlStr)
+        }
       }
     }
     else if(vs === "thread" && id) {
