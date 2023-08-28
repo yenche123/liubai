@@ -447,6 +447,25 @@ export function getEmbedData(
     }
   }
 
+  // vimeo
+  const vimeo = new URL(thirdLink.VIMEO_COM)
+  const vimeo2 = new URL(thirdLink.VIMEO_PLAYER)
+  const isVimeo2 = valTool.isInDomain(h, vimeo2.hostname)
+  if(isVimeo2) {
+    return { link: originUrl, otherData: { isVimeo: true } }
+  }
+  const isVimeo = valTool.isInDomain(h, vimeo.hostname)
+  if(isVimeo) {
+    // 通常是 9 位数的 id
+    const vimeoReg1 = /(?<=\/)\d{2,12}/g
+    const vimeoMatch1 = p.match(vimeoReg1)
+    if(vimeoMatch1) {
+      const vimeoId = vimeoMatch1[0]
+      vimeo2.pathname = `/video/${vimeoId}`
+      return { link: vimeo2.toString(), otherData: { isVimeo: true } }
+    }
+  }
+
 
   // mastodon
   for(let i=0; i<mastodonDomains.length; i++) {

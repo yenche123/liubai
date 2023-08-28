@@ -87,6 +87,10 @@ export default {
   IG_P: "https://www.instagram.com/p/__XXX__/",
   IG_EMBED: "https://www.instagram.com/embed.js",
 
+  // vimeo
+  VIMEO_PLAYER: "https://player.vimeo.com/",
+  VIMEO_COM: "https://vimeo.com/",
+
   // chrome site setting
   CHROME_SITE_SETTING: "chrome://settings/content/siteDetails?site=__XXX__",
 
