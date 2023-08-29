@@ -1,5 +1,9 @@
 import { onMounted, reactive, ref } from "vue";
 import type { HsirData, HsirEmit } from "./types";
+import { 
+  hasStrangeChar, 
+  formatTagText, 
+} from "~/utils/system/tag-related";
 
 export function useHsInputResults(emit: HsirEmit) {
 
@@ -8,6 +12,7 @@ export function useHsInputResults(emit: HsirEmit) {
   const hsirData = reactive<HsirData>({
     focus: false,
     inputTxt: "",
+    list: [],
   })
 
   const onFocus = () => {
@@ -19,11 +24,7 @@ export function useHsInputResults(emit: HsirEmit) {
     hsirData.focus = false
     emit("focusornot", false)
   }
-
-  const onInput = () => {
-    let val = hsirData.inputTxt.trim()
-    console.log("val: ", val)
-  }
+  const { onInput } = initOnInput(hsirData)
 
   onMounted(() => {
     const iEl = inputEl.value
@@ -39,4 +40,37 @@ export function useHsInputResults(emit: HsirEmit) {
     onBlur,
     onInput,
   }
+}
+
+
+function initOnInput(
+  hsirData: HsirData
+) {
+  let lastInputTxt = ""
+
+
+  const onInput = () => {
+    let val = hsirData.inputTxt.trim()
+    if(val === lastInputTxt) return
+    lastInputTxt = val
+
+    if(!val) {
+      if(hsirData.inputTxt) hsirData.inputTxt = ""
+      hsirData.list = []
+      return
+    }
+
+    const res1 = hasStrangeChar(val)
+    if(res1) {
+      hsirData.list = []
+      return
+    }
+
+    const val2 = formatTagText(val)
+    
+
+  }
+
+
+  return { onInput }
 }

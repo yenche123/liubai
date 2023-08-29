@@ -1,10 +1,10 @@
-import type { TagItem } from "./types"
+import type { TagSearchItem } from "./tools/types"
 import type { TagView } from "~/types/types-atom"
 import { getCurrentSpaceTagList } from "~/utils/system/tag-related"
 import liuApi from "~/utils/liu-api"
 
 /**
- * 从 useWorkspaceStore 里取数据，开始查找，返回 TagItem[]
+ * 从 useWorkspaceStore 里取数据，开始查找，返回 TagSearchItem[]
  * 用户可能输入 yyy/zzz 那么 xxx/yyy/zzz 的结果必须找出来
  * @param text 必须已 format 过了
  */
@@ -17,7 +17,7 @@ export function searchLocal(text: string) {
 }
 
 function _sortList(
-  list: TagItem[],
+  list: TagSearchItem[],
   texts: string[],
 ) {
   if(list.length < 2) return list
@@ -34,7 +34,7 @@ function _sortList(
     return score
   }
 
-  const _compare = (a: TagItem, b: TagItem) => {
+  const _compare = (a: TagSearchItem, b: TagSearchItem) => {
     const aText = a.textBlank
     const bText = b.textBlank
     const aScore = _getScore(aText)
@@ -54,7 +54,7 @@ function _searchInList(
   parents: string[], 
   tagViews: TagView[]
 ) {
-  let list: TagItem[] = []
+  let list: TagSearchItem[] = []
 
   for(let i=0; i<tagViews.length; i++) {
     const tagView = tagViews[i]
@@ -67,7 +67,7 @@ function _searchInList(
       if(parents.length > 1) textBlank = parents.join(" / ") + " / " + tagView.text
       else if(parents.length > 0) textBlank = parents[0] + " / " + tagView.text
 
-      const obj: TagItem = {
+      const obj: TagSearchItem = {
         tagId: tagView.tagId,
         textBlank,
         emoji: tagView.icon ? liuApi.decode_URI_component(tagView.icon) : undefined
@@ -95,7 +95,7 @@ function _pushSomeChildren(
   parents: string[],
   children: TagView[]
 ) {
-  const list: TagItem[] = []
+  const list: TagSearchItem[] = []
   for(let i=0; i<children.length; i++) {
     if(i >= 3) break
     const v = children[i]
@@ -104,7 +104,7 @@ function _pushSomeChildren(
     if(parents.length > 1) textBlank = parents.join(" / ") + " / " + v.text
     else if(parents.length > 0) textBlank = parents[0] + " / " + v.text
 
-    const obj: TagItem = {
+    const obj: TagSearchItem = {
       tagId: v.tagId,
       textBlank,
       emoji: v.icon ? liuApi.decode_URI_component(v.icon) : undefined

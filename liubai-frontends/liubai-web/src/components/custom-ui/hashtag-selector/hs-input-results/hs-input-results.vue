@@ -30,6 +30,7 @@ const {
         @focus="onFocus"
         @input="onInput"
         v-model="hsirData.inputTxt"
+        :maxlength="50" 
       />
 
     </div>

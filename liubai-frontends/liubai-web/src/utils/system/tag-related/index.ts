@@ -280,3 +280,13 @@ export function getTagIdsParents(tagIds: string[]) {
   tagSearched = [...new Set(tagSearched)]
   return tagSearched
 }
+
+export function hasStrangeChar(val: string) {
+  const strange_char = "~@#$%^*'\"{}\\"
+  for(let i=0; i<val.length; i++) {
+    const v = val[i]
+    const res = strange_char.includes(v)
+    if(res) return true
+  }
+  return false
+}

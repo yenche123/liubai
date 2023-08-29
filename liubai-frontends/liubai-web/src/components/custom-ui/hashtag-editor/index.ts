@@ -1,16 +1,14 @@
 import { ref, watch } from "vue"
 import valTool from "~/utils/basic/val-tool"
-import type {
-  HteResolver,
-  TagItem
-} from "./tools/types"
+import type { HteResolver } from "./tools/types"
+import type { TagSearchItem } from "~/utils/system/tag-related/tools/types"
 import type {
   HteMode,
   HashTagEditorParam, 
   HashTagEditorRes, 
 } from "~/types/other/types-hashtag"
-import { searchLocal } from "./tools/handle"
-import { formatTagText, findTagId } from "~/utils/system/tag-related"
+import { searchLocal } from "~/utils/system/tag-related/search"
+import { formatTagText, findTagId, hasStrangeChar } from "~/utils/system/tag-related"
 import liuApi from "~/utils/liu-api"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
@@ -28,7 +26,7 @@ const inputVal = ref("")    // 输入框里的文字
 const emoji = ref("")       // 输入框左侧的 emoji
 const errCode = ref(0)      // 错误提示. 1: 不得输入奇怪的字符; 2: 最多若干个 "/"
 const newTag = ref("")      // 可以被创建的标签，注意该文字不能回传到业务侧，因为它的结构为 "xxx / yyy / zzz"
-const list = ref<TagItem[]>([])
+const list = ref<TagSearchItem[]>([])
 const selectedIndex = ref(-1)        // 被选择的 index
 const mode = ref<HteMode | "">("")
 const queryKey = "hashtageditor"
@@ -140,16 +138,6 @@ function onInput() {
   }
 }
 
-function hasStrangeChar(val: string) {
-  const strange_char = "~@#$%^*'\"{}\\"
-  for(let i=0; i<val.length; i++) {
-    const v = val[i]
-    const res = strange_char.includes(v)
-    if(res) return true
-  }
-  return false
-}
-
 function onTapMask() {
   if(mode.value === "edit" && checkState()) {
     if(inputEl.value) inputEl.value.blur()
@@ -214,10 +202,10 @@ function toSelect() {
     return
   }
 
-  let text = idx < 0 ? newTag.value : (item as TagItem).textBlank
+  let text = idx < 0 ? newTag.value : (item as TagSearchItem).textBlank
   text = formatTagText(text)
   const tagId = findTagId(text)
-  const _emoji = idx < 0 ? undefined : (item as TagItem).emoji
+  const _emoji = idx < 0 ? undefined : (item as TagSearchItem).emoji
   const icon = _emoji ? liuApi.encode_URI_component(_emoji) : undefined
   const res: HashTagEditorRes = {
     confirm: true,
