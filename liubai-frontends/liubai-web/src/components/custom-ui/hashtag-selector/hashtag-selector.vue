@@ -75,9 +75,14 @@ const { t } = useI18n()
 
     </div>
 
-    <HsInputResults
-      @focusornot="onFocusOrNot"
-    ></HsInputResults>
+
+    <div class="hsir-container">
+      <HsInputResults
+        @focusornot="onFocusOrNot"
+      ></HsInputResults>
+    </div>
+
+    
 
   </div>
 
@@ -229,6 +234,32 @@ const { t } = useI18n()
   transition-timing-function: cubic-bezier(.88, .1, 1, 1);
   flex: none;
 }
+
+.hsir-container {
+  z-index: 5103;
+  position: relative;
+  width: 90%;
+  max-width: 500px;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  box-shadow: var(--card-shadow-2);
+  margin-block-start: -78px;
+}
+
+@media screen and (max-width: 450px) {
+
+  .hs-box {
+    margin-top: 12vh;
+    margin-top: 12dvh;
+    width: 100%;
+  }
+
+  .hsir-container {
+    width: 100%;
+  }
+
+}
+
 
 @media(hover: hover) {
 
