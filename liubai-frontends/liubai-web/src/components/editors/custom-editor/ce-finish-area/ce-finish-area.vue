@@ -80,6 +80,15 @@ const cha = liuApi.getCharacteristic()
     .cefa-btn {
       padding: 0 30px;
     }
+
+    @media screen and (max-width: 450px) {
+      .cefa-btn {
+        height: 36px;
+        line-height: 36px;
+        font-size: var(--btn-font);
+        padding: 0 20px;
+      }
+    }
   }
 
 }

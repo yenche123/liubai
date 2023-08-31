@@ -145,13 +145,14 @@ const onTapBtn = (e: Event) => {
 
 
 
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 450px) {
 
   .btn-mini {
     height: 32px;
     line-height: 32px;
     border-radius: 8px;
-    padding: 0 16px;
+    padding: 0 14px;
+    font-size: var(--mini-font);
   }
   
 }

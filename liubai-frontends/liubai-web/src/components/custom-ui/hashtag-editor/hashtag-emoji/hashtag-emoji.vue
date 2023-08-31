@@ -126,7 +126,7 @@ const { t } = useI18n()
 @media screen and (max-width: 390px) {
   .he-container {
     width: 310px;
-    padding: 0;
+    padding: 10px 0;
 
     .he-item {
       width: 60px;
