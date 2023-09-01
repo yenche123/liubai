@@ -78,6 +78,7 @@ const { t } = useI18n()
 
     <div class="hsir-container">
       <HsInputResults
+        :list-added="hsData.list"
         @focusornot="onFocusOrNot"
       ></HsInputResults>
     </div>

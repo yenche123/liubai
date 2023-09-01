@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
 import { useHsInputResults } from "./tools/useHsInputResults"
-import type { HsirEmit } from "./tools/types"
+import type { HsirEmit, HsirProps } from "./tools/types"
 
+const props = defineProps<HsirProps>()
 const emit = defineEmits<HsirEmit>()
 
 const { t } = useI18n()
@@ -12,7 +13,7 @@ const {
   onFocus,
   onBlur,
   onInput,
-} = useHsInputResults(emit)
+} = useHsInputResults(props, emit)
 
 const icon_color = `var(--main-normal)`
 

@@ -1,5 +1,5 @@
 import { onMounted, reactive, ref } from "vue";
-import type { HsirData, HsirEmit } from "./types";
+import type { HsirAtom, HsirData, HsirEmit, HsirProps } from "./types";
 import { 
   hasStrangeChar, 
   formatTagText, 
@@ -7,7 +7,10 @@ import {
 import { searchLocal } from "~/utils/system/tag-related/search";
 import type { TagSearchItem } from "~/utils/system/tag-related/tools/types";
 
-export function useHsInputResults(emit: HsirEmit) {
+export function useHsInputResults(
+  props: HsirProps,
+  emit: HsirEmit,
+) {
 
   const inputEl = ref<HTMLInputElement>()
 
@@ -27,7 +30,7 @@ export function useHsInputResults(emit: HsirEmit) {
     hsirData.focus = false
     emit("focusornot", false)
   }
-  const { onInput } = initOnInput(hsirData)
+  const { onInput } = initOnInput(props, hsirData)
 
   onMounted(() => {
     const iEl = inputEl.value
@@ -47,33 +50,10 @@ export function useHsInputResults(emit: HsirEmit) {
 
 
 function initOnInput(
-  hsirData: HsirData
+  props: HsirProps,
+  hsirData: HsirData,
 ) {
   let lastInputTxt = ""
-
-  const handleResult = (
-    text: string,
-    results: TagSearchItem[]
-  ) => {
-    const formattedTxt = text.replace(/\//g, " / ")
-    const newList = [...results]
-    const hasExisted = results.find(v => v.textBlank === formattedTxt)
-    if(!hasExisted) {
-      const newData: TagSearchItem = {
-        tagId: "",
-        textBlank: formattedTxt,
-      }
-      newList.splice(0, 0, newData)
-    }
-    hsirData.list = newList
-
-    console.log(newList)
-
-
-    if(hsirData.selectedIndex + 1 > newList.length) {
-      hsirData.selectedIndex = -1
-    }
-  }
 
   const onInput = () => {
     let val = hsirData.inputTxt.trim()
@@ -93,12 +73,48 @@ function initOnInput(
 
     const val2 = formatTagText(val)
     const res2 = searchLocal(val)
-    handleResult(val2, res2)
+    const text = val2.replace(/\//g, " / ")
+    handleAfterSearching(props, hsirData, text, res2)
   }
 
 
   return { onInput }
 }
+
+
+
+function handleAfterSearching(
+  props: HsirProps,
+  hsirData: HsirData,
+  text: string,
+  results: TagSearchItem[]
+) {
+  const addedList = props.listAdded
+  const newList: HsirAtom[] = results.map(v => {
+    let data = addedList.find(v1 => {
+      if(v1.text === v.textBlank) return true
+      if(v1.tagId && v1.tagId === v.tagId) return true
+      return false
+    })
+    const added = Boolean(data)
+    return { ...v, added }
+  })
+  const hasExisted = results.find(v => v.textBlank === text)
+  if(!hasExisted) {
+    const data2 = addedList.find(v1 => v1.text === text)
+    const newData: HsirAtom = {
+      tagId: "",
+      textBlank: text,
+      added: Boolean(data2),
+    }
+    newList.splice(0, 0, newData)
+  }
+  hsirData.list = newList
+  if(hsirData.selectedIndex + 1 > newList.length) {
+    hsirData.selectedIndex = -1
+  }
+}
+
 
 
 function reset(
