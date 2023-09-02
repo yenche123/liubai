@@ -13,6 +13,7 @@ const {
   onFocus,
   onBlur,
   onInput,
+  onMouseEnter,
 } = useHsInputResults(props, emit)
 
 const icon_color = `var(--main-normal)`
@@ -29,7 +30,9 @@ const icon_color = `var(--main-normal)`
     <div class="hsir-results" v-show="hsirData.list.length">
       <template v-for="(item, index) in hsirData.list" :key="item.tagId">
 
-        <div class="hsirr-item">
+        <div class="hsirr-item" :class="{ 'hsirr-item_selected': hsirData.selectedIndex === index }"
+          @mouseenter="() => onMouseEnter(index)"
+        >
           <div class="hsirr-icon-box">
             <span v-if="item.emoji">{{ item.emoji }}</span>
             <svg-icon v-else-if="!(item.tagId)" class="hsirr-svg-icon" name="add" :color="icon_color"></svg-icon>
@@ -90,6 +93,17 @@ const icon_color = `var(--main-normal)`
   align-items: flex-start;
   position: relative;
   user-select: none;
+}
+
+.hsirr-item_selected::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "";
+  background-color: var(--primary-color);
+  opacity: .1;
 }
 
 .hsirr-icon-box {

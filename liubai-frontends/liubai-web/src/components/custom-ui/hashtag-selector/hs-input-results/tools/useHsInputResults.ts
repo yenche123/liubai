@@ -38,6 +38,10 @@ export function useHsInputResults(
     iEl.focus()
   })
 
+  const onMouseEnter = (index: number) => {
+    hsirData.selectedIndex = index
+  }
+
 
   return {
     inputEl,
@@ -45,6 +49,7 @@ export function useHsInputResults(
     onFocus,
     onBlur,
     onInput,
+    onMouseEnter,
   }
 }
 
