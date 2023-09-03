@@ -20,4 +20,5 @@ export interface HsirProps {
 
 export interface HsirEmit {
   (evt: "focusornot", focus: boolean): void
+  (evt: "tapitem", item: TagSearchItem): void
 }

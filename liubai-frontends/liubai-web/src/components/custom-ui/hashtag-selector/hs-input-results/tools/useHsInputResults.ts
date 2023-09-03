@@ -1,4 +1,4 @@
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import type { HsirAtom, HsirData, HsirEmit, HsirProps } from "./types";
 import { 
   hasStrangeChar, 
@@ -31,6 +31,7 @@ export function useHsInputResults(
     emit("focusornot", false)
   }
   const { onInput } = initOnInput(props, hsirData)
+  watchListAdded(props, hsirData)
 
   onMounted(() => {
     const iEl = inputEl.value
@@ -42,6 +43,10 @@ export function useHsInputResults(
     hsirData.selectedIndex = index
   }
 
+  const onTapItem = (item: HsirAtom) => {
+    const { added, ...item2 } = item
+    emit("tapitem", item2)
+  }
 
   return {
     inputEl,
@@ -50,7 +55,29 @@ export function useHsInputResults(
     onBlur,
     onInput,
     onMouseEnter,
+    onTapItem,
   }
+}
+
+
+function watchListAdded(
+  props: HsirProps,
+  hsirData: HsirData,
+) {
+  watch(() => props.listAdded, (newV) => {
+    const { list } = hsirData
+    for(let i=0; i<list.length; i++) {
+      const v = list[i]
+      const data = newV.find(v2 => {
+        if(v2.tagId && v2.tagId === v.tagId) {
+          return true
+        }
+        if(v2.text === v.textBlank) return true
+        return false
+      })
+      v.added = Boolean(data)
+    }
+  }, { deep: true })
 }
 
 

@@ -10,6 +10,7 @@ const {
   onTapClear,
   onTapPopup,
   onFocusOrNot,
+  onTapItem,
 } = initHashtagSelector()
 
 const { t } = useI18n()
@@ -80,6 +81,7 @@ const { t } = useI18n()
       <HsInputResults
         :list-added="hsData.list"
         @focusornot="onFocusOrNot"
+        @tapitem="onTapItem"
       ></HsInputResults>
     </div>
 
@@ -157,6 +159,7 @@ const { t } = useI18n()
 }
 
 .hs-tags {
+  flex-wrap: wrap;
   padding: 10px 20px 0px;
 }
 

@@ -14,6 +14,7 @@ const {
   onBlur,
   onInput,
   onMouseEnter,
+  onTapItem,
 } = useHsInputResults(props, emit)
 
 const icon_color = `var(--main-normal)`
@@ -32,6 +33,7 @@ const icon_color = `var(--main-normal)`
 
         <div class="hsirr-item" :class="{ 'hsirr-item_selected': hsirData.selectedIndex === index }"
           @mouseenter="() => onMouseEnter(index)"
+          @click.stop="() => onTapItem(item)"
         >
           <div class="hsirr-icon-box">
             <span v-if="item.emoji">{{ item.emoji }}</span>
@@ -40,6 +42,9 @@ const icon_color = `var(--main-normal)`
           </div>
           <div class="hsirr-text">
             <span>{{ item.textBlank }}</span>
+          </div>
+          <div class="hsirr-footer" v-if="item.added">
+            <svg-icon name="check" class="hsirrf-svg-icon" color="var(--primary-color)"></svg-icon>
           </div>
         </div>
 
@@ -128,6 +133,24 @@ const icon_color = `var(--main-normal)`
   color: var(--main-normal);
   font-size: var(--inline-code-font);
 }
+
+.hsirr-footer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  padding-inline: 10px;
+  background: var(linear-gradient);
+  display: flex;
+  align-items: center;
+
+  .hsirrf-svg-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 
 
 @media(hover: hover) {

@@ -8,6 +8,8 @@ import {
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool";
 import time from "~/utils/basic/time";
+import type { TagSearchItem } from "~/utils/system/tag-related/tools/types";
+import type { TagShow } from "~/types/types-content";
 
 /**
  * 说明: 
@@ -39,6 +41,7 @@ export function initHashtagSelector() {
     onTapClear,
     onTapPopup,
     onFocusOrNot,
+    onTapItem,
   }
 }
 
@@ -49,6 +52,26 @@ export function showHashtagSelector(param: HsParam) {
   hsData.originalList = [...param.tags]
   hsData.canSubmit = false
   openIt(rr, queryKey)
+}
+
+
+function onTapItem(
+  item: TagSearchItem,
+) {
+  const idx = hsData.list.findIndex(v => {
+    if(v.tagId && v.tagId === item.tagId) return true
+    if(v.text === item.textBlank) return true
+    return false
+  })
+  if(idx >= 0) {
+    hsData.list.splice(idx, 1)
+    return
+  }
+  const obj: TagShow = {
+    tagId: item.tagId,
+    text: item.textBlank,
+  }
+  hsData.list.push(obj)
 }
 
 
