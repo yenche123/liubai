@@ -1,4 +1,4 @@
-import { onMounted, reactive, ref, watch } from "vue";
+import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import type { HsirAtom, HsirData, HsirEmit, HsirProps } from "./types";
 import { 
   hasStrangeChar, 
@@ -6,6 +6,7 @@ import {
 } from "~/utils/system/tag-related";
 import { searchLocal } from "~/utils/system/tag-related/search";
 import type { TagSearchItem } from "~/utils/system/tag-related/tools/types";
+import liuUtil from "~/utils/liu-util";
 
 export function useHsInputResults(
   props: HsirProps,
@@ -32,6 +33,7 @@ export function useHsInputResults(
   }
   const { onInput } = initOnInput(props, hsirData)
   watchListAdded(props, hsirData)
+  toListenKeyboard(hsirData, emit)
 
   onMounted(() => {
     const iEl = inputEl.value
@@ -59,6 +61,51 @@ export function useHsInputResults(
   }
 }
 
+
+
+function toListenKeyboard(
+  hsirData: HsirData,
+  emit: HsirEmit,
+) {
+  // 监听 Up / Down
+  const _whenKeyDown = (e: KeyboardEvent) => {
+    if(!liuUtil.canKeyUpDown()) return
+    const k = e.key
+    if(k !== "ArrowDown" && k !== "ArrowUp") return
+    const length = hsirData.list.length
+    if(length < 1) return
+
+    const diff = k === "ArrowDown" ? 1 : -1
+    let idx = hsirData.selectedIndex + diff
+    if(idx < -1) idx = length - 1
+    else if(idx >= length) idx = -1
+    hsirData.selectedIndex = idx
+  }
+
+  // 监听 Enter
+  const _whenKeyUp = (e: KeyboardEvent) => {
+    const k = e.key
+    if(k !== "Enter") return
+    const idx = hsirData.selectedIndex
+    if(idx < 0) return
+
+    const item = hsirData.list[idx]
+    if(!item) return
+    const { added, ...item2 } = item
+    emit("tapitem", item2)
+  }
+
+  onBeforeMount(() => {
+    window.addEventListener("keyup", _whenKeyUp)
+    window.addEventListener("keydown", _whenKeyDown)
+  })
+
+
+  onBeforeUnmount(() => {
+    window.removeEventListener("keyup", _whenKeyUp)
+    window.removeEventListener("keydown", _whenKeyDown)
+  })
+}
 
 function watchListAdded(
   props: HsirProps,
