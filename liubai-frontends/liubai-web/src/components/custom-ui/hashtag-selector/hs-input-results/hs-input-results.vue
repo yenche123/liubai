@@ -37,6 +37,7 @@ const icon_color = `var(--main-normal)`
         >
           <div class="hsirr-icon-box">
             <span v-if="item.emoji">{{ item.emoji }}</span>
+            <span v-else-if="item.parentEmoji">{{ item.parentEmoji }}</span>
             <svg-icon v-else-if="!(item.tagId)" class="hsirr-svg-icon" name="add" :color="icon_color"></svg-icon>
             <svg-icon v-else class="hsirr-svg-icon" name="tag" :color="icon_color"></svg-icon>
           </div>

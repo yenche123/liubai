@@ -52,34 +52,36 @@ function _sortList(
 function _searchInList(
   texts: string[], 
   parents: string[], 
-  tagViews: TagView[]
+  tagViews: TagView[],
+  parentIcon?: string,
 ) {
   let list: TagSearchItem[] = []
 
   for(let i=0; i<tagViews.length; i++) {
-    const tagView = tagViews[i]
-    if(tagView.oState !== "OK") continue
-    const newParents = [...parents, tagView.text]
+    const v = tagViews[i]
+    if(v.oState !== "OK") continue
+    const newParents = [...parents, v.text]
 
-    const res1 = _searchInTagView(texts, parents, tagView)
+    const res1 = _searchInTagView(texts, parents, v)
     if(res1) {
-      let textBlank = tagView.text
-      if(parents.length > 1) textBlank = parents.join(" / ") + " / " + tagView.text
-      else if(parents.length > 0) textBlank = parents[0] + " / " + tagView.text
+      let textBlank = v.text
+      if(parents.length > 1) textBlank = parents.join(" / ") + " / " + v.text
+      else if(parents.length > 0) textBlank = parents[0] + " / " + v.text
 
       const obj: TagSearchItem = {
-        tagId: tagView.tagId,
+        tagId: v.tagId,
         textBlank,
-        emoji: tagView.icon ? liuApi.decode_URI_component(tagView.icon) : undefined
+        emoji: v.icon ? liuApi.decode_URI_component(v.icon) : undefined,
+        parentEmoji: parentIcon ? liuApi.decode_URI_component(parentIcon) : undefined,
       }
       list.push(obj)
-      if(list.length < 10 && tagView.children) {
-        const tmpList = _pushSomeChildren(newParents, tagView.children)
+      if(list.length < 10 && v.children) {
+        const tmpList = _pushSomeChildren(newParents, v.children)
         list = list.concat(tmpList)
       }
     }
-    else if(tagView.children) {
-      const tmpList = _searchInList(texts, newParents, tagView.children)
+    else if(v.children) {
+      const tmpList = _searchInList(texts, newParents, v.children, v.icon)
       list = list.concat(tmpList)
     }
 
