@@ -81,7 +81,7 @@ function onFocusOrNot(newV: boolean) {
 
 function onTapPopup() {
   const diff = time.getTime() - hsData.lastFocusOrBlurStamp
-  if(diff < 150) return
+  if(diff < 300) return
   onTapCancel()
 }
 
