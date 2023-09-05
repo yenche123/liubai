@@ -25,7 +25,8 @@ const onTapClear = (index: number) => {
     <template v-for="(item, index) in tagShows" :key="item.tagId">
 
       <div class="ce-tag-item">
-        <span v-if="item.emoji" class="ce-tag-emoji">{{ item.emoji }} </span>
+        <span v-if="item.emoji" class="ce-tag-emoji">{{ item.emoji }}</span>
+        <span v-else-if="item.parentEmoji" class="ce-tag-emoji">{{ item.parentEmoji }}</span>
         <span>{{ item.text }}</span>
         <div class="ce-tag-delete" @click="() => onTapClear(index)">
           <svg-icon name="close" class="ce-tag-close" color="var(--main-tip)"></svg-icon>

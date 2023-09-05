@@ -51,6 +51,7 @@ const onTapItem = (index: number) => {
       <div class="hti-icon">
 
         <span v-if="item.emoji">{{ item.emoji }}</span>
+        <span v-else-if="item.parentEmoji">{{ item.parentEmoji }}</span>
         <svg-icon v-else name="tag" 
           class="hti-svg-icon" 
           :color="default_color"
