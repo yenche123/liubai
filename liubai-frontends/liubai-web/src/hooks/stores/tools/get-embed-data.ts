@@ -182,9 +182,8 @@ export function getEmbedData(
 
 
   // 如果是 Google Maps 的 embed 页，直接返回原链接
-  const gMaps = thirdLink.GOOGLE_MAPS
-  const gMaps1 = new URL(gMaps)
-  const isGMaps1 = valTool.isInDomain(h, gMaps1.hostname)
+  const gMaps1 = new URL(thirdLink.GOOGLE_MAPS)
+  const isGMaps1 = valTool.isInDomain(h, gMaps1.hostname) && p.startsWith("/maps")
   if(isGMaps1) {
     const gMapsRes: EmbedDataRes = {
       link: originUrl,

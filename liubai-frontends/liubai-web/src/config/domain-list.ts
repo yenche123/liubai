@@ -101,6 +101,7 @@ export const domainNotAllowed = [
   "remnote.com",
   "fedidb.org",
   "huxiu.com",
+  "goo.gl",
 ]
 
 export const mastodonDomains = [
