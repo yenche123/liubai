@@ -466,6 +466,30 @@ export function getEmbedData(
     }
   }
 
+  // xigua
+  const xigua = new URL(thirdLink.XIGUA_COM)
+  const isXigua = valTool.isInDomain(h, xigua.hostname)
+  if(isXigua) {
+    const xiguaRes: EmbedDataRes = {
+      link: originUrl,
+      otherData: { isXigua },
+    }
+    if(p.startsWith("/iframe/")) {
+      return xiguaRes
+    }
+    // 其 id 通常为 19 位数
+    const xiguaReg1 = /(?<=\/)\d{17,32}/g
+    const xiguaMatch1 = p.match(xiguaReg1)
+    if(xiguaMatch1) {
+      const xiguaId1 = xiguaMatch1[0]
+      const xiguaId2 = s.get("id")
+      xigua.pathname = `/iframe/` + (xiguaId2 ? xiguaId2 : xiguaId1)
+      xigua.searchParams.set("autoplay", "1")
+      xiguaRes.link = xigua.toString()
+      return xiguaRes
+    }
+  }
+
 
   // mastodon
   for(let i=0; i<mastodonDomains.length; i++) {

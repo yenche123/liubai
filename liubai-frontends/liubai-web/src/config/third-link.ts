@@ -87,6 +87,9 @@ export default {
   IG_P: "https://www.instagram.com/p/__XXX__/",
   IG_EMBED: "https://www.instagram.com/embed.js",
 
+  // xigua
+  XIGUA_COM: "https://www.ixigua.com/",
+
   // vimeo
   VIMEO_PLAYER: "https://player.vimeo.com/",
   VIMEO_COM: "https://vimeo.com/",
