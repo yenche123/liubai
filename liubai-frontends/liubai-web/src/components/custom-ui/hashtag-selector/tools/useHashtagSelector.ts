@@ -70,6 +70,8 @@ function onTapItem(
   const obj: TagShow = {
     tagId: item.tagId,
     text: item.textBlank,
+    emoji: item.emoji,
+    parentEmoji: item.parentEmoji,
   }
   hsData.list.push(obj)
 }
