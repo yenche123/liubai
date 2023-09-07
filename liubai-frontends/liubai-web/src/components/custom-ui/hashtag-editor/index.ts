@@ -82,7 +82,7 @@ function listenRouteChange() {
 }
 
 
-export async function showHashTagEditor(opt: HashTagEditorParam) {
+export function showHashTagEditor(opt: HashTagEditorParam) {
   lastInputVal = opt.text ?? ""
   inputVal.value = lastInputVal
   lastEmoji = opt.icon ? liuApi.decode_URI_component(opt.icon) : ""

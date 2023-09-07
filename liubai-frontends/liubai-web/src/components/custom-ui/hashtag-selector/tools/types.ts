@@ -19,3 +19,5 @@ export interface HsRes {
   confirm: boolean
   tags?: TagShow[]
 }
+
+export type HtsResolver = (res: HsRes) => void

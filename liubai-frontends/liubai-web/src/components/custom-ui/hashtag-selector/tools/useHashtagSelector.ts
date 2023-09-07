@@ -1,5 +1,5 @@
 import { reactive, watch } from "vue";
-import type { HsData, HsParam } from "./types"
+import type { HsData, HsParam, HsRes, HtsResolver } from "./types"
 import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router"
 import { 
   toListenEscKeyUp,
@@ -29,6 +29,7 @@ const hsData = reactive<HsData>({
   lastFocusOrBlurStamp: 0,
 })
 let rr: RouteAndLiuRouter | undefined
+let _resolve: HtsResolver | undefined
 
 export function initHashtagSelector() {
   rr = useRouteAndLiuRouter()
@@ -52,6 +53,11 @@ export function showHashtagSelector(param: HsParam) {
   hsData.originalList = [...param.tags]
   hsData.canSubmit = false
   openIt(rr, queryKey)
+
+  const _wait = (a: HtsResolver) => {
+    _resolve = a
+  }
+  return new Promise(_wait)
 }
 
 
@@ -65,6 +71,7 @@ function onTapItem(
   })
   if(idx >= 0) {
     hsData.list.splice(idx, 1)
+    checkCanSubmit()
     return
   }
   const obj: TagShow = {
@@ -74,6 +81,7 @@ function onTapItem(
     parentEmoji: item.parentEmoji,
   }
   hsData.list.push(obj)
+  checkCanSubmit()
 }
 
 
@@ -132,15 +140,25 @@ function onTapConfirm() {
   if(!hsData.canSubmit) return
 
   // 去完成......
-
-  
+  const res: HsRes = {
+    confirm: true,
+    tags: valTool.copyObject(hsData.list)
+  }
+  toResolve(res)
+  closeIt(rr, queryKey)
 }
 
 
 function onTapCancel() {
+  toResolve({ confirm: false })
   closeIt(rr, queryKey)
 }
 
+function toResolve(res: HsRes) {
+  if(!_resolve) return
+  _resolve(res)
+  _resolve = undefined
+}
 
 async function _toOpen() {
   if(hsData.show) return
