@@ -2,8 +2,8 @@ lockfileVersion: '6.0'
 
 dependencies:
   '@he-tree/vue':
-    specifier: ^2.5.0
-    version: 2.5.0(vue@3.3.4)
+    specifier: ^2.5.1
+    version: 2.5.1(vue@3.3.4)
   '@intlify/unplugin-vue-i18n':
     specifier: ^1.0.1
     version: 1.0.1(vue-i18n@9.3.0)
@@ -474,8 +474,8 @@ packages:
       helper-js: 3.1.2
     dev: false
 
-  /@he-tree/vue@2.5.0(vue@3.3.4):
-    resolution: {integrity: sha512-Tgy9hF6amiOsH+OtGszaUNcTGadKqCoEBhCTGRdb/QaePNsjMdnOZttXMM0oaNUXxZNJfn9LGrfcJkYTKXSuGw==}
+  /@he-tree/vue@2.5.1(vue@3.3.4):
+    resolution: {integrity: sha512-tHCvbC8ncMhqlm71CXhWHOStGkpxf1Rxg5iqlVxwV4XD8NlflhhbNgAiv69cPDX3YNY0jS54IBdBMylR9ds52w==}
     engines: {node: '>=12'}
     peerDependencies:
       '@vue/composition-api': ^1.4.6
@@ -1343,7 +1343,7 @@ packages:
   /@vueuse/shared@10.4.1(vue@3.3.4):
     resolution: {integrity: sha512-vz5hbAM4qA0lDKmcr2y3pPdU+2EVw/yzfRsBdu+6+USGa4PxqSQRYIUC9/NcT06y+ZgaTsyURw2I9qOFaaXHAg==}
     dependencies:
-      vue-demi: 0.14.6(vue@3.3.4)
+      vue-demi: 0.14.5(vue@3.3.4)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
