@@ -14,6 +14,7 @@ import type { PreCtx } from "~/components/level1/utils/tools/types"
 import { preHandle } from "~/components/level1/utils/preHandle"
 import threadOperate from "~/hooks/thread/thread-operate";
 import cui from "~/components/custom-ui"
+import { createTagsFromTagShows } from "~/utils/system/tag-related"
 
 interface TcoCtx {
   props: TcProps
@@ -88,12 +89,22 @@ function handleOperationFromBottomBar(
 }
 
 
-function handle_tag(
+async function handle_tag(
   ctx: TcoCtx,
   threadData: ThreadShow,
 ) {
   const tags = valTool.copyObject(threadData.tags ?? [])
-  cui.showHashtagSelector({ tags })
+  const res = await cui.showHashtagSelector({ tags })
+  if(!res.confirm || !res.tags) return
+
+  const res2 = await createTagsFromTagShows(res.tags)
+  if(!res2.isOk) return
+
+  const newTagShows = res2.tagShows
+  
+  // 去 threadOperate 修改动态.....
+
+  
 }
 
 function handle_edit(

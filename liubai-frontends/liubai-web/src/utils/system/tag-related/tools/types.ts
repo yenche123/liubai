@@ -1,4 +1,5 @@
 import type { TagView } from "~/types/types-atom"
+import { TagShow } from "~/types/types-content"
 
 export interface TagSearchItem {
   tagId: string
@@ -39,8 +40,17 @@ export interface AddATagRes extends BaseTagRes {
   id?: string
 }
 
+export interface AddATagAtom {
+  id: string
+  text: string
+}
+
 export interface AddTagsRes extends BaseTagRes {
-  ids?: string[]
+  results?: AddATagAtom[]
+}
+
+export interface CreateTagsFromTagShowsRes extends BaseTagRes {
+  tagShows: TagShow[]
 }
 
 export interface RenameTagParam {

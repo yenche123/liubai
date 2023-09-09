@@ -1,6 +1,7 @@
-import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
-import type { TagView } from "../../../types/types-atom";
-import type { TagShow } from "../../../types/types-content";
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import type { TagView } from "~/types/types-atom";
+import type { TagShow } from "~/types/types-content";
 import liuUtil from "../../liu-util";
 import { 
   findIndexInThisTagList,
@@ -22,7 +23,9 @@ import type {
   BaseTagRes,
   WhichTagChange,
   AddTagsParam,
+  AddATagAtom,
   AddTagsRes,
+  CreateTagsFromTagShowsRes,
 } from "./tools/types"
 import { 
   updateContentForTagAcross, 
@@ -147,20 +150,64 @@ export async function addTags(list: AddTagsParam): Promise<AddTagsRes> {
   const workspace = store.currentSpace
   if(!workspace) return { isOk: false, errMsg: "no workspace locally" }
   let tagList = workspace.tagList ?? []
-  const ids: string[] = []
+  const results: AddATagAtom[] = []
+
+  // 1. 一个个把 tag 塞进 tagList 中
   for(let i=0; i<list.length; i++) {
     const v = list[i]
     const texts = v.text.split("/")
     const data = addTagToTagList(texts, tagList, v.icon)
-    ids.push(data.tagId)
+    results.push({ text: v.text, id: data.tagId })
     tagList = data.tagList
   }
-  console.log("查看批量创建的新标签 id: ")
-  console.log(ids)
+  console.log("查看批量创建的新标签 results: ")
+  console.log(results)
   console.log(" ")
-  
+
+  // 2. 修改 workspace store
   const res = await store.setTagList(tagList)
-  return { isOk: true, ids }
+
+  // 3. 通知全局
+  const gStore = useGlobalStateStore()
+  gStore.addTagChangedNum()
+
+  return { isOk: true, results }
+}
+
+/**
+ * 为 TagShow[] 中没有 tagId 的元素创建标签
+ * @return 返回新的 TagShows
+ */
+export async function createTagsFromTagShows(
+  tagShows: TagShow[]
+): Promise<CreateTagsFromTagShowsRes> {
+  const tmpList: AddTagsParam = []
+  for(let i=0; i<tagShows.length; i++) {
+    const v = tagShows[i]
+    if(v.tagId) continue
+    const txt = formatTagText(v.text)
+    tmpList.push({ text: txt })
+  }
+  if(tmpList.length < 1) {
+    return { isOk: true, tagShows }
+  }
+  const addRes = await addTags(tmpList)
+  const results = addRes.results
+  if(!addRes.isOk || !results) {
+    return { isOk: false, tagShows }
+  }
+  
+  tagShows.forEach(v => {
+    if(v.tagId) return
+    const [atom] = results.splice(0, 1)
+    v.tagId = atom.id
+  })
+
+  console.log("看一下 新的 tagShows:::::")
+  console.log(tagShows)
+  console.log(" ")
+
+  return { isOk: true, tagShows }
 }
 
 
