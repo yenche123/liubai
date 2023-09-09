@@ -8,7 +8,9 @@ import {
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool";
 import time from "~/utils/basic/time";
-import type { TagSearchItem } from "~/utils/system/tag-related/tools/types";
+import type { 
+  TagSearchItem, 
+} from "~/utils/system/tag-related/tools/types";
 import type { TagShow } from "~/types/types-content";
 
 /**
@@ -135,6 +137,12 @@ function checkCanSubmit() {
   hsData.canSubmit = !isTheSame
 }
 
+/**
+ * 步骤 hashtag-selector 内部去创建新标签的原因:
+ *   创建新标签是异步的，等待标签被创建后再去往下执行其他事
+ *   浏览器可能会限制必须由 "用户点击" 所带来操作，比如复制到剪贴板等等
+ * 所以，创建新标签的逻辑放到 showHashtagSelector 之外
+ */
 function onTapConfirm() {
   checkCanSubmit()
   if(!hsData.canSubmit) return

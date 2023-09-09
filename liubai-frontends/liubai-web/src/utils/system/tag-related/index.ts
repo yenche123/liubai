@@ -21,6 +21,8 @@ import type {
   AddATagRes,
   BaseTagRes,
   WhichTagChange,
+  AddTagsParam,
+  AddTagsRes,
 } from "./tools/types"
 import { 
   updateContentForTagAcross, 
@@ -45,9 +47,14 @@ export function getCurrentSpaceTagList(): TagView[] {
   return list
 }
 
-// 转换文字成规范格式
-// 1. 全局过滤掉 \n
-// 2. 过滤掉各级前后空格以及中间多余的空格
+
+/**
+ * 转换文字成规范格式
+ * 1. 全局过滤掉 \n
+ * 2. 过滤掉各级前后空格以及中间多余的空格
+ * 也就是说，“/” 前后不会有空格
+ * @param val 过滤前的文字
+ */
 export function formatTagText(val: string) {
   if(!val) return ""
 
@@ -132,6 +139,28 @@ export async function addATag(opt: AddATagParam): Promise<AddATagRes> {
   const data = addTagToTagList(texts, tagList, opt.icon)
   const res = await store.setTagList(data.tagList)
   return { isOk: true, id: data.tagId }
+}
+
+
+export async function addTags(list: AddTagsParam): Promise<AddTagsRes> {
+  const store = useWorkspaceStore()
+  const workspace = store.currentSpace
+  if(!workspace) return { isOk: false, errMsg: "no workspace locally" }
+  let tagList = workspace.tagList ?? []
+  const ids: string[] = []
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    const texts = v.text.split("/")
+    const data = addTagToTagList(texts, tagList, v.icon)
+    ids.push(data.tagId)
+    tagList = data.tagList
+  }
+  console.log("查看批量创建的新标签 id: ")
+  console.log(ids)
+  console.log(" ")
+  
+  const res = await store.setTagList(tagList)
+  return { isOk: true, ids }
 }
 
 

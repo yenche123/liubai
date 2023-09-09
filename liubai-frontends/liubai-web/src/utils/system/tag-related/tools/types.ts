@@ -24,13 +24,23 @@ export interface BaseTagRes {
   errCode?: string     // 01: 超过 3 级了
 }
 
+/**
+ * text 参数必须是过滤后的文字，也就是必须已去掉 "/" 前后的空白
+ */
 export interface AddATagParam {
   text: string          // 必须是已 formatTagText() 过的文字
   icon?: string
 }
 
+export type AddTagsParam = AddATagParam[]
+
+
 export interface AddATagRes extends BaseTagRes {
   id?: string
+}
+
+export interface AddTagsRes extends BaseTagRes {
+  ids?: string[]
 }
 
 export interface RenameTagParam {
