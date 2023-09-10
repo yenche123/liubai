@@ -147,7 +147,7 @@ export type ThreadOperation = ThreadInnerOperation | ThreadOutterOperation
 export type ThreadInnerUndo = "undo_hourglass"
 
 export type ThreadOutterUndo = "undo_collect" | "undo_emoji" | "undo_delete"
-  | "undo_state" | "undo_pin" | "undo_state"
+  | "undo_state" | "undo_pin"
 
 export type WhyThreadChange = ThreadInnerOperation | ThreadOutterOperation
   | ThreadInnerUndo | ThreadOutterUndo | ""
