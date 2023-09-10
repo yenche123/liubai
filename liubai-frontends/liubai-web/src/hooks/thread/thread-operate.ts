@@ -15,7 +15,7 @@ import {
   restoreThread,
 } from "./specific-operate/delete-related"
 import { toPin, undoPin } from "./specific-operate/pin"
-import { setShowCountdown } from "./specific-operate/other"
+import { setShowCountdown, setTags } from "./specific-operate/other"
 import { 
   selectState, 
   undoState, 
@@ -37,6 +37,7 @@ export default {
   toPin,
   undoPin,
   setShowCountdown,
+  setTags,
   selectState,
   undoState,
   setNewStateForThread,

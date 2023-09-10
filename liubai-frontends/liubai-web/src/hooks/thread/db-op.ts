@@ -170,6 +170,21 @@ async function setContentConfig(
   return true
 }
 
+async function setTags(
+  id: string,
+  tagIds?: string[],
+  tagSearched?: string[],
+) {
+  const now1 = time.getTime()
+  const newData: Partial<ContentLocalTable> = {
+    updatedStamp: now1,
+    tagIds,
+    tagSearched,
+  } 
+  const res = await db.contents.update(id, newData)
+  return true
+}
+
 async function countPin() {
   const filterFunc = (item: ContentLocalTable) => {
     if(item.oState !== "OK") return false
@@ -207,6 +222,7 @@ export default {
   setNewOState,
   deleteForever,
   setContentConfig,
+  setTags,
   countPin,
   setStateId,
 }

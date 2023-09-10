@@ -101,6 +101,7 @@ function onTapClear(index: number) {
   const data = hsData.list[index]
   if(!data) return
   hsData.list.splice(index, 1)
+  checkCanSubmit()
 }
 
 

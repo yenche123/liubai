@@ -93,6 +93,14 @@ async function handle_tag(
   ctx: TcoCtx,
   threadData: ThreadShow,
 ) {
+  const thread = valTool.copyObject(threadData)
+  const preCtx: PreCtx = {
+    thread,
+    rr: ctx.rr,
+  }
+  const d = await preHandle(preCtx)
+  if(!d) return
+  
   const tags = valTool.copyObject(threadData.tags ?? [])
   const res = await cui.showHashtagSelector({ tags })
   if(!res.confirm || !res.tags) return
@@ -103,8 +111,7 @@ async function handle_tag(
   const newTagShows = res2.tagShows
   
   // 去 threadOperate 修改动态.....
-
-  
+  threadOperate.setTags(thread, newTagShows, d.memberId, d.userId)
 }
 
 function handle_edit(
