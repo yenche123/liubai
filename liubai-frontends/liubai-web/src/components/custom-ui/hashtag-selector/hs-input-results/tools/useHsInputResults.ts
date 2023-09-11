@@ -5,7 +5,7 @@ import {
   formatTagText, 
 } from "~/utils/system/tag-related";
 import { searchLocal } from "~/utils/system/tag-related/search";
-import type { TagSearchItem } from "~/utils/system/tag-related/tools/types";
+import type { TagShow } from "~/types/types-content"
 import liuUtil from "~/utils/liu-util";
 import { initRecent, getRecent, addRecent } from "./tag-recent"
 
@@ -120,7 +120,7 @@ function watchListAdded(
         if(v2.tagId && v2.tagId === v.tagId) {
           return true
         }
-        if(v2.text === v.textBlank) return true
+        if(v2.text === v.text) return true
         return false
       })
       v.added = Boolean(data)
@@ -167,24 +167,24 @@ function handleAfterSearching(
   props: HsirProps,
   hsirData: HsirData,
   text: string,
-  results: TagSearchItem[]
+  results: TagShow[]
 ) {
   const addedList = props.listAdded
   const newList: HsirAtom[] = results.map(v => {
     let data = addedList.find(v1 => {
-      if(v1.text === v.textBlank) return true
+      if(v1.text === v.text) return true
       if(v1.tagId && v1.tagId === v.tagId) return true
       return false
     })
     const added = Boolean(data)
     return { ...v, added }
   })
-  const hasExisted = results.find(v => v.textBlank === text)
+  const hasExisted = results.find(v => v.text === text)
   if(!hasExisted) {
     const data2 = addedList.find(v1 => v1.text === text)
     const newData: HsirAtom = {
       tagId: "",
-      textBlank: text,
+      text,
       added: Boolean(data2),
     }
     newList.splice(0, 0, newData)

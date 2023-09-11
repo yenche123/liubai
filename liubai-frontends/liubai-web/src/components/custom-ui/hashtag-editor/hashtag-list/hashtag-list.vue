@@ -60,7 +60,7 @@ const onTapItem = (index: number) => {
       </div>
 
       <div class="hti-title">
-        <span>{{ item.textBlank }}</span>
+        <span>{{ item.text }}</span>
       </div>
 
       <div v-if="isPC" class="hti-footer">

@@ -42,7 +42,7 @@ const icon_color = `var(--main-normal)`
             <svg-icon v-else class="hsirr-svg-icon" name="tag" :color="icon_color"></svg-icon>
           </div>
           <div class="hsirr-text">
-            <span>{{ item.textBlank }}</span>
+            <span>{{ item.text }}</span>
           </div>
           <div class="hsirr-footer" v-if="item.added">
             <svg-icon name="check" class="hsirrf-svg-icon" color="var(--primary-color)"></svg-icon>

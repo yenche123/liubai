@@ -8,10 +8,7 @@ import {
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool";
 import time from "~/utils/basic/time";
-import type { 
-  TagSearchItem, 
-} from "~/utils/system/tag-related/tools/types";
-import type { TagShow } from "~/types/types-content";
+import type { TagShow } from "~/types/types-content"
 
 /**
  * 说明: 
@@ -64,11 +61,11 @@ export function showHashtagSelector(param: HsParam) {
 
 
 function onTapItem(
-  item: TagSearchItem,
+  item: TagShow,
 ) {
   const idx = hsData.list.findIndex(v => {
     if(v.tagId && v.tagId === item.tagId) return true
-    if(v.text === item.textBlank) return true
+    if(v.text === item.text) return true
     return false
   })
   if(idx >= 0) {
@@ -76,12 +73,7 @@ function onTapItem(
     checkCanSubmit()
     return
   }
-  const obj: TagShow = {
-    tagId: item.tagId,
-    text: item.textBlank,
-    emoji: item.emoji,
-    parentEmoji: item.parentEmoji,
-  }
+  const obj = valTool.copyObject(item)
   hsData.list.push(obj)
   checkCanSubmit()
 }

@@ -1,9 +1,7 @@
 
 import type { TagShow } from "~/types/types-content"
-import type { TagSearchItem } from "~/utils/system/tag-related/tools/types"
 
-
-export interface HsirAtom extends TagSearchItem {
+export interface HsirAtom extends TagShow {
   added: boolean
 }
 
@@ -21,5 +19,5 @@ export interface HsirProps {
 
 export interface HsirEmit {
   (evt: "focusornot", focus: boolean): void
-  (evt: "tapitem", item: TagSearchItem): void
+  (evt: "tapitem", item: TagShow): void
 }

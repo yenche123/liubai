@@ -1,10 +1,10 @@
-import type { TagSearchItem } from "./tools/types"
+import type { TagShow } from "~/types/types-content"
 import type { TagView } from "~/types/types-atom"
 import { getCurrentSpaceTagList } from "~/utils/system/tag-related"
 import liuApi from "~/utils/liu-api"
 
 /**
- * 从 useWorkspaceStore 里取数据，开始查找，返回 TagSearchItem[]
+ * 从 useWorkspaceStore 里取数据，开始查找，返回 TagShow[]
  * 用户可能输入 yyy/zzz 那么 xxx/yyy/zzz 的结果必须找出来
  * @param text 必须已 format 过了
  */
@@ -17,7 +17,7 @@ export function searchLocal(text: string) {
 }
 
 function _sortList(
-  list: TagSearchItem[],
+  list: TagShow[],
   texts: string[],
 ) {
   if(list.length < 2) return list
@@ -34,9 +34,9 @@ function _sortList(
     return score
   }
 
-  const _compare = (a: TagSearchItem, b: TagSearchItem) => {
-    const aText = a.textBlank
-    const bText = b.textBlank
+  const _compare = (a: TagShow, b: TagShow) => {
+    const aText = a.text
+    const bText = b.text
     const aScore = _getScore(aText)
     const bScore = _getScore(bText)
     if(aScore > bScore) return 1
@@ -55,7 +55,7 @@ function _searchInList(
   tagViews: TagView[],
   parentIcon?: string,
 ) {
-  let list: TagSearchItem[] = []
+  let list: TagShow[] = []
 
   for(let i=0; i<tagViews.length; i++) {
     const v = tagViews[i]
@@ -64,13 +64,13 @@ function _searchInList(
 
     const res1 = _searchInTagView(texts, parents, v)
     if(res1) {
-      let textBlank = v.text
-      if(parents.length > 1) textBlank = parents.join(" / ") + " / " + v.text
-      else if(parents.length > 0) textBlank = parents[0] + " / " + v.text
+      let txt = v.text
+      if(parents.length > 1) txt = parents.join(" / ") + " / " + v.text
+      else if(parents.length > 0) txt = parents[0] + " / " + v.text
 
-      const obj: TagSearchItem = {
+      const obj: TagShow = {
         tagId: v.tagId,
-        textBlank,
+        text: txt,
         emoji: v.icon ? liuApi.decode_URI_component(v.icon) : undefined,
         parentEmoji: parentIcon ? liuApi.decode_URI_component(parentIcon) : undefined,
       }
@@ -97,18 +97,18 @@ function _pushSomeChildren(
   parents: string[],
   children: TagView[]
 ) {
-  const list: TagSearchItem[] = []
+  const list: TagShow[] = []
   for(let i=0; i<children.length; i++) {
     if(i >= 3) break
     const v = children[i]
     if(v.oState !== "OK") continue
-    let textBlank = v.text
-    if(parents.length > 1) textBlank = parents.join(" / ") + " / " + v.text
-    else if(parents.length > 0) textBlank = parents[0] + " / " + v.text
+    let text = v.text
+    if(parents.length > 1) text = parents.join(" / ") + " / " + v.text
+    else if(parents.length > 0) text = parents[0] + " / " + v.text
 
-    const obj: TagSearchItem = {
+    const obj: TagShow = {
       tagId: v.tagId,
-      textBlank,
+      text,
       emoji: v.icon ? liuApi.decode_URI_component(v.icon) : undefined
     }
     list.push(obj)

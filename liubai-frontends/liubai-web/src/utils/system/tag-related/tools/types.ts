@@ -1,13 +1,5 @@
 import type { TagView } from "~/types/types-atom"
-import { TagShow } from "~/types/types-content"
-
-export interface TagSearchItem {
-  tagId: string
-  textBlank: string       // 该字段的文字里， "/" 前后会有空格，变成 "xxxx / yyyy / zzzzz"
-  emoji?: string          // 直接就是 emoji 字符串，无需编解码
-  parentEmoji?: string    // 直接就是 emoji 字符串，无需编解码
-}
-
+import type { TagShow } from "~/types/types-content"
 
 export interface WhichTagChange {
   changeType?: "translate" | "across"    // 平移 / 跨级移动

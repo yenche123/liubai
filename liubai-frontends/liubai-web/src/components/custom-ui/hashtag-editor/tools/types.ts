@@ -1,8 +1,6 @@
-import type {
-  HashTagEditorRes,
-} from "~/types/other/types-hashtag"
-import type { TagSearchItem } from "~/utils/system/tag-related/tools/types"
+import type { HashTagEditorRes } from "~/types/other/types-hashtag"
+import type { TagShow } from "~/types/types-content"
 
 export type HteResolver = (res: HashTagEditorRes) => void
-export type TagItem = TagSearchItem
+export type TagItem = TagShow
 
