@@ -109,6 +109,7 @@ export function findTagId(val: string) {
   return tagId
 }
 
+/** 只会转换没有被删除的 tagId 们 */
 export function tagIdsToShows(ids: string[]) {
   const tagList = getCurrentSpaceTagList()
   if(tagList.length < 1) return { tagShows: [], newIds: [] }

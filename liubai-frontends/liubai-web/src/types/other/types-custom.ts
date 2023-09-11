@@ -24,6 +24,7 @@ export interface SearchItem {
 
 export interface MemberConfig {
   searchKeywords: string[]
+  searchTagIds?: string[]
 }
 
 export interface ImgOneLayout {

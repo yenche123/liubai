@@ -24,7 +24,10 @@ export function findIndexInThisTagList(val: string, tagList: TagView[]) {
   return -1
 }
 
-
+/**
+ * 将 tagId 转换成 TagShow
+ * 值得注意的是，当节点被删除时，会返回 null
+ */
 export function findTagShowById(
   id: string, 
   tagList: TagView[],

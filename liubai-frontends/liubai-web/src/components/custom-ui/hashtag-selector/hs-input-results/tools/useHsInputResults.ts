@@ -7,6 +7,7 @@ import {
 import { searchLocal } from "~/utils/system/tag-related/search";
 import type { TagSearchItem } from "~/utils/system/tag-related/tools/types";
 import liuUtil from "~/utils/liu-util";
+import { initRecent, getRecent, addRecent } from "./tag-recent"
 
 export function useHsInputResults(
   props: HsirProps,
@@ -20,7 +21,9 @@ export function useHsInputResults(
     inputTxt: "",
     list: [],
     selectedIndex: -1,
+    recentTagIds: [],
   })
+  initRecent(hsirData)
 
   const onFocus = () => {
     hsirData.focus = true
@@ -60,8 +63,6 @@ export function useHsInputResults(
     onTapItem,
   }
 }
-
-
 
 function toListenKeyboard(
   hsirData: HsirData,

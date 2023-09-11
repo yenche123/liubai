@@ -12,6 +12,7 @@ export interface HsirData {
   inputTxt: string
   list: HsirAtom[]
   selectedIndex: number
+  recentTagIds: string[]
 }
 
 export interface HsirProps {
