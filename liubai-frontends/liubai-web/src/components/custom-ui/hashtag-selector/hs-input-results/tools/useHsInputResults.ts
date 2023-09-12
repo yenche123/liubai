@@ -23,7 +23,7 @@ export function useHsInputResults(
     selectedIndex: -1,
     recentTagIds: [],
   })
-  initRecent(hsirData)
+  initRecent(props, hsirData)
 
   const onFocus = () => {
     hsirData.focus = true
