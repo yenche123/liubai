@@ -29,7 +29,10 @@ export function handleOverflow(
   }
 
   const charNum = valTool.getTextCharNum(text)
-  if(charNum > 500) {
+  // console.log("charNum: ", charNum)
+  // console.log(" ")
+
+  if(charNum > 300) {
     state.overflowType = "auto"
     return
   }
