@@ -49,8 +49,7 @@ export function useHsInputResults(
   }
 
   const onTapItem = (item: HsirAtom) => {
-    const { added, ...item2 } = item
-    emit("tapitem", item2)
+    toSelect(hsirData, item, emit)
   }
 
   return {
@@ -61,6 +60,20 @@ export function useHsInputResults(
     onInput,
     onMouseEnter,
     onTapItem,
+  }
+}
+
+function toSelect(
+  hsirData: HsirData,
+  item: HsirAtom,
+  emit: HsirEmit,
+) {
+  const { added, ...item2 } = item
+  emit("tapitem", item2)
+
+  // 还没有被添加，代表即将被添加，那么就写入到最近的 tagIds 中
+  if(!added) {
+    addRecent(hsirData, item2.tagId)
   }
 }
 
@@ -92,8 +105,7 @@ function toListenKeyboard(
 
     const item = hsirData.list[idx]
     if(!item) return
-    const { added, ...item2 } = item
-    emit("tapitem", item2)
+    toSelect(hsirData, item, emit)
   }
 
   onBeforeMount(() => {
@@ -141,13 +153,13 @@ function initOnInput(
     lastInputTxt = val
 
     if(!val) {
-      reset(hsirData, true)
+      reset(props, hsirData, true)
       return
     }
 
     const res1 = hasStrangeChar(val)
     if(res1) {
-      reset(hsirData)
+      reset(props, hsirData)
       return
     }
 
@@ -198,12 +210,16 @@ function handleAfterSearching(
 
 
 function reset(
+  props: HsirProps,
   hsirData: HsirData,
   clearInputTxt: boolean = false,
 ) {
   if(clearInputTxt) {
     if(hsirData.inputTxt) hsirData.inputTxt = ""
+    getRecent(props, hsirData)
   }
-  hsirData.list = []
+  else {
+    hsirData.list = []
+  }
   hsirData.selectedIndex = -1
 }
