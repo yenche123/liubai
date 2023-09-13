@@ -17,21 +17,11 @@ export function getOriginURL(embedUrl: string) {
   const env = liuEnv.getEnv()
   const { IFRAME_PROXY, IFRAME_PROXY_KEY } = env
 
-  const proxy_key = IFRAME_PROXY_KEY
-  const extractFromProxy = () => {
-    const tmp = s.get(proxy_key)
-    return tmp
-  }
-
   // 1. 检查是否在 proxy 里头
+  // 若是 直接返回 undefined 让代码用 vvLinkStore.getCurrentLink 去取原链接
   if(IFRAME_PROXY && IFRAME_PROXY_KEY) {
     const hasProxy = embedUrl.includes(IFRAME_PROXY)
-    if(hasProxy) {
-      const res = extractFromProxy()
-      if(res) {
-        return new URL(res)
-      }
-    }
+    if(hasProxy) return
   }
 
   // 2. 检查是否为 yt embed
