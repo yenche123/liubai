@@ -465,6 +465,16 @@ export function getEmbedData(
     }
   }
 
+  // simplecast
+  const simplecast = new URL(thirdLink.SIMPLECAST_PLAYER)
+  const isSimplecast = valTool.isInDomain(h, simplecast.hostname)
+  if(isSimplecast) {
+    if(themeVal === "light") s.set("dark", "false")
+    else if(themeVal === "dark") s.set("dark", "true")
+
+    return { link: url.toString(), otherData: { isSimplecast } }
+  }
+
   // xigua
   const xigua = new URL(thirdLink.XIGUA_COM)
   const isXigua = valTool.isInDomain(h, xigua.hostname)

@@ -94,6 +94,9 @@ export default {
   VIMEO_PLAYER: "https://player.vimeo.com/",
   VIMEO_COM: "https://vimeo.com/",
 
+  // simplecast
+  SIMPLECAST_PLAYER: "https://player.simplecast.com/",
+
   // chrome site setting
   CHROME_SITE_SETTING: "chrome://settings/content/siteDetails?site=__XXX__",
 
