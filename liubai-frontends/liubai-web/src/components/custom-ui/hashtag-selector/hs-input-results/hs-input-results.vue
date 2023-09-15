@@ -72,6 +72,7 @@ const icon_color = `var(--main-normal)`
   width: 100%;
   padding: 10px 20px;
   box-sizing: border-box;
+  caret-color: var(--primary-color);
 
   &::-webkit-input-placeholder {
     color: var(--main-code);
