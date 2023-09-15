@@ -23,11 +23,17 @@ export function useHsInputResults(
     selectedIndex: -1,
     recentTagIds: [],
   })
-  initRecent(props, hsirData)
+  initRecent(hsirData)
 
   const onFocus = () => {
     hsirData.focus = true
     emit("focusornot", true)
+
+    if(!hsirData.inputTxt && hsirData.list.length < 1) {
+      getRecent(props, hsirData)
+      return
+    }
+
   }
 
   const onBlur = () => {
@@ -54,6 +60,7 @@ export function useHsInputResults(
 
   const onTapItem = (item: HsirAtom) => {
     toSelect(hsirData, item, emit)
+    toFocus()
   }
 
   return {

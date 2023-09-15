@@ -4,13 +4,11 @@ import { tagIdsToShows } from "~/utils/system/tag-related";
 import memberRelated from "~/utils/system/member-related";
 
 export function initRecent(
-  props: HsirProps,
   hsirData: HsirData,
 ) {
   const wStore = useWorkspaceStore()
   const searchTagIds = wStore.myMember?.config?.searchTagIds ?? []
   hsirData.recentTagIds = [...searchTagIds]
-  getRecent(props, hsirData)
 }
 
 export function getRecent(
