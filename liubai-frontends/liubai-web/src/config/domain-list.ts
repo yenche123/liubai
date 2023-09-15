@@ -68,7 +68,6 @@ export const domainAllowed = [
   "wsj.com",
   "speakerdeck.com",
   "baike.baidu.com",
-  "cal.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
@@ -104,6 +103,7 @@ export const domainNotAllowed = [
   "fedidb.org",
   "huxiu.com",
   "goo.gl",
+  "cal.com",
 ]
 
 export const mastodonDomains = [
