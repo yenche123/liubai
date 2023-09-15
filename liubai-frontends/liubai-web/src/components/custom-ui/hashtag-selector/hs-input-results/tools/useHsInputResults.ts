@@ -38,10 +38,14 @@ export function useHsInputResults(
   watchListAdded(props, hsirData)
   toListenKeyboard(hsirData, emit)
 
-  onMounted(() => {
+  const toFocus = () => {
     const iEl = inputEl.value
     if(!iEl) return
     iEl.focus()
+  }
+  
+  onMounted(() => {
+    toFocus()
   })
 
   const onMouseEnter = (index: number) => {
