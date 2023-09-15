@@ -68,6 +68,7 @@ export const domainAllowed = [
   "wsj.com",
   "speakerdeck.com",
   "baike.baidu.com",
+  "cal.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
