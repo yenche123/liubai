@@ -8,6 +8,7 @@ import { searchLocal } from "~/utils/system/tag-related/search";
 import type { TagShow } from "~/types/types-content"
 import liuUtil from "~/utils/liu-util";
 import { initRecent, getRecent, addRecent } from "./tag-recent"
+import liuApi from "~/utils/liu-api";
 
 export function useHsInputResults(
   props: HsirProps,
@@ -92,6 +93,8 @@ function toListenKeyboard(
   hsirData: HsirData,
   emit: HsirEmit,
 ) {
+  const { isMac } = liuApi.getCharacteristic()
+
   // 监听 Up / Down
   const _whenKeyDown = (e: KeyboardEvent) => {
     if(!liuUtil.canKeyUpDown()) return
@@ -111,6 +114,9 @@ function toListenKeyboard(
   const _whenKeyUp = (e: KeyboardEvent) => {
     const k = e.key
     if(k !== "Enter") return
+    const ctrlPressed = isMac ? e.metaKey : e.ctrlKey
+    if(ctrlPressed) return
+    
     const idx = hsirData.selectedIndex
     if(idx < 0) return
 
