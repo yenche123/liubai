@@ -1,7 +1,6 @@
 import type { HsirAtom, HsirData, HsirProps } from "./types";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
-import { tagIdsToShows } from "~/utils/system/tag-related";
-import memberRelated from "~/utils/system/member-related";
+import { tagIdsToShows, addTagIdToRecents } from "~/utils/system/tag-related";
 
 export function initRecent(
   hsirData: HsirData,
@@ -47,20 +46,8 @@ export async function addRecent(
   hsirData: HsirData,
   tagId: string,
 ) {
-  if(!tagId) return
-  const wStore = useWorkspaceStore()
-  const memberCfg = wStore.myMember?.config ?? memberRelated.getDefaultMemberCfg()
-  const { searchTagIds = [] } = memberCfg
-  const idx = searchTagIds.indexOf(tagId)
-  if(idx >= 0) {
-    searchTagIds.splice(idx, 1)
+  const newSearchTagIds = await addTagIdToRecents(tagId)
+  if(newSearchTagIds) {
+    hsirData.recentTagIds = newSearchTagIds
   }
-  searchTagIds.unshift(tagId)
-  if(searchTagIds.length > 10) {
-    searchTagIds.pop()
-  }
-  memberCfg.searchTagIds = searchTagIds
-  const res = await wStore.setMemberConfig(memberCfg)
-  hsirData.recentTagIds = [...searchTagIds]
-  return res
 }

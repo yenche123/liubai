@@ -38,6 +38,7 @@ import {
   updateDraftWhenTagDeleted,
 } from "./tools/draft-util"
 import valTool from "~/utils/basic/val-tool";
+import memberRelated from "~/utils/system/member-related";
 
 // 返回当前工作区的 tags
 export function getCurrentSpaceTagList(): TagView[] {
@@ -128,8 +129,28 @@ export function tagIdsToShows(ids: string[]) {
   return { tagShows, newIds }
 }
 
-
-
+/**
+ * 将某个 tagId 添加进 wStore 并且存储到我的 member 信息中
+ * @param tagId string
+ * @return 会返回新的 searchTagIds | undefined
+ */
+export async function addTagIdToRecents(tagId: string) {
+  if(!tagId) return
+  const wStore = useWorkspaceStore()
+  const memberCfg = wStore.myMember?.config ?? memberRelated.getDefaultMemberCfg()
+  const { searchTagIds = [] } = memberCfg
+  const idx = searchTagIds.indexOf(tagId)
+  if(idx >= 0) {
+    searchTagIds.splice(idx, 1)
+  }
+  searchTagIds.unshift(tagId)
+  if(searchTagIds.length > 10) {
+    searchTagIds.pop()
+  }
+  memberCfg.searchTagIds = searchTagIds
+  await wStore.setMemberConfig(memberCfg)
+  return [...searchTagIds]
+}
 
 /**
  * 将一个标签添加到 tagList 里

@@ -5,9 +5,9 @@ import {
   formatTagText, 
 } from "~/utils/system/tag-related";
 import { searchLocal } from "~/utils/system/tag-related/search";
-import type { TagShow } from "~/types/types-content"
+import type { TagShow } from "~/types/types-content";
 import liuUtil from "~/utils/liu-util";
-import { initRecent, getRecent, addRecent } from "./tag-recent"
+import { initRecent, getRecent, addRecent } from "./tag-recent";
 import liuApi from "~/utils/liu-api";
 
 export function useHsInputResults(
