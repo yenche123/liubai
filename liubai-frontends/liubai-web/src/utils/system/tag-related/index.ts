@@ -231,15 +231,16 @@ export async function createTagsFromTagShows(
     return { isOk: false, tagShows }
   }
   
+  let newTagIds: string[] = []
   tagShows.forEach(v => {
     if(v.tagId) return
     const [atom] = results.splice(0, 1)
     v.tagId = atom.id
+    newTagIds.push(atom.id)
   })
 
-  console.log("看一下 新的 tagShows:::::")
-  console.log(tagShows)
-  console.log(" ")
+  // 把新创建的标签 塞进 recent 里
+  await addTagIdsToRecents(newTagIds)
 
   return { isOk: true, tagShows }
 }
