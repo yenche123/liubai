@@ -85,7 +85,7 @@ const { t } = useI18n()
       ></HsInputResults>
     </div>
 
-    
+    <div class="hs-virtual-two"></div>
 
   </div>
 
@@ -102,12 +102,14 @@ const { t } = useI18n()
   top: 0;
   left: 0;
   z-index: 5100;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   overflow: auto;
   opacity: 0;
   transition: v-bind("hsData.transDuration + 'ms'");
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   &.hs-container_show {
     opacity: 1;
@@ -118,14 +120,15 @@ const { t } = useI18n()
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    bottom: 0;
     background: var(--popup-bg);
   }
 }
 
 .hs-box {
   z-index: 5102;
+  margin: 0 auto;
   margin-top: 16vh;
   margin-top: 16dvh;
   width: 90%;
@@ -239,6 +242,7 @@ const { t } = useI18n()
 }
 
 .hsir-container {
+  margin: 0 auto;
   z-index: 5103;
   position: relative;
   width: 90%;
@@ -247,6 +251,11 @@ const { t } = useI18n()
   box-sizing: border-box;
   box-shadow: var(--card-shadow-2);
   margin-block-start: -78px;
+}
+
+.hs-virtual-two {
+  width: 100%;
+  height: 20px;
 }
 
 @media screen and (max-width: 450px) {
