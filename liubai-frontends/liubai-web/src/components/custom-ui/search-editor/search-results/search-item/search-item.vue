@@ -186,7 +186,7 @@ const onTapClear = () => {
 }
 
 .si-container::before {
-  transition: 80ms;
+  transition: 40ms;
   position: absolute;
   content: "";
   top: 0;
@@ -297,7 +297,7 @@ const onTapClear = () => {
   display: flex;
   justify-content: flex-end;
   opacity: 0;
-  transition: 80ms;
+  transition: 40ms;
   visibility: hidden;
 }
 

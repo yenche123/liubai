@@ -37,7 +37,7 @@ let lastKeyUpDown = 0
 export function canKeyUpDown() {
   const now = time.getTime()
   const diff = now - lastKeyUpDown
-  if(diff < 28) return false
+  if(diff < 50) return false
   lastKeyUpDown = now
   return true
 }
