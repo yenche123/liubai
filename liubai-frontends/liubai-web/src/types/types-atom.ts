@@ -157,6 +157,9 @@ export type WhyThreadChange = ThreadInnerOperation | ThreadOutterOperation
 export type CommentOperation = "emoji" | "comment" | "share" | "delete"
   | "edit" | "report"
 
+// 常见的数据被操作类型: 新增、删除和更新
+export type CommonDataChanged = "create" | "delete" | "edit" 
+
 export interface LinkPreview {
   domain?: string
   preferred_format: string

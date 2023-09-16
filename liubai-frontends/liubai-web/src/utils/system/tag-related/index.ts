@@ -203,7 +203,7 @@ export async function addTags(list: AddTagsParam): Promise<AddTagsRes> {
 
   // 3. 通知全局
   const gStore = useGlobalStateStore()
-  gStore.addTagChangedNum()
+  gStore.addTagChangedNum("create")
 
   return { isOk: true, results }
 }

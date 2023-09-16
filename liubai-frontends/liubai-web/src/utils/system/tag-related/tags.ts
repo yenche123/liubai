@@ -106,7 +106,7 @@ export async function tagMovedInTree(
 
   // 去触发全局，让其他组件得知 tag 发生了变化
   const gStore = useGlobalStateStore()
-  gStore.addTagChangedNum()
+  gStore.addTagChangedNum("edit")
 
   return { moved: true, newNewTree }
 }

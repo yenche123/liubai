@@ -40,7 +40,7 @@ export function useCeTag(
 
     // 通知全局
     state.lastTagChangeStamp = time.getTime()
-    gStore.addTagChangedNum()
+    gStore.addTagChangedNum("create")
   }
 
   return {

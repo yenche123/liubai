@@ -109,7 +109,7 @@ async function handle_create(
     return
   }
   const gStore = useGlobalStateStore()
-  gStore.addTagChangedNum()
+  gStore.addTagChangedNum("create")
 }
 
 async function handle_edit(
@@ -139,7 +139,7 @@ async function handle_edit(
     const res2 = await editTagIcon(oldTagId, res.icon)
     node.icon = res.icon
     ctx.lastTagChangeStamp.value = time.getTime()
-    gStore.addTagChangedNum()
+    gStore.addTagChangedNum("edit")
     return
   }
   
@@ -163,7 +163,7 @@ async function handle_edit(
     }
     const res2 = await editATag(param)
     if(res2.isOk) {
-      gStore.addTagChangedNum()
+      gStore.addTagChangedNum("edit")
       return
     }
     console.log("没有编辑成功.....")
@@ -223,5 +223,5 @@ async function handle_delete(
 
   console.log("已更新完标签、动态和草稿，去通知其他组件.......")
   const gStore = useGlobalStateStore()
-  gStore.addTagChangedNum()
+  gStore.addTagChangedNum("delete")
 }

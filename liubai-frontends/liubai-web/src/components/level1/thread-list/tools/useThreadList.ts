@@ -12,6 +12,7 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { svBottomUpKey } from "~/utils/provide-keys";
 import { handleLastItemStamp } from "./useTLCommon"
 import tlUtil from "./tl-util"
+import typeCheck from "~/utils/basic/type-check"
 
 interface TlContext {
   tlData: TlData,
@@ -95,7 +96,16 @@ export function useThreadList(
     ) => {
     if(!newV3) return
 
-    if(oldV4 && newV4 > oldV4) {
+    // 当 "标签系统" 发生变化时
+    if(typeCheck.isNumber(oldV4) && newV4 > oldV4) {
+      const whyTagChange = gStore.tagChangedReason
+      
+      // 若是创建新的标签，则忽略
+      // 因为已经存在的标签不会受到影响
+      if(whyTagChange === "create") {
+        return
+      }
+
       if(!isActivated) {
         ctx.reloadRequired = true
         return

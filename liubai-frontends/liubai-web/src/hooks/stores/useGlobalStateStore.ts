@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 import type { StateShow } from "~/types/types-content";
+import type { CommonDataChanged } from "~/types/types-atom";
 import time from "../../utils/basic/time";
 
 export interface KanbanStateChange {
@@ -29,7 +30,11 @@ export const useGlobalStateStore = defineStore("globalState", () => {
 
   // 如果 tag 发生移动、重命名、删除等情况
   const tagChangedNum = ref(0)
-  const addTagChangedNum = () => {
+  const tagChangedReason = ref<CommonDataChanged | undefined>()
+  const addTagChangedNum = (
+    whyChange?: CommonDataChanged
+  ) => {
+    tagChangedReason.value = whyChange
     tagChangedNum.value += 1
   }
 
@@ -57,10 +62,16 @@ export const useGlobalStateStore = defineStore("globalState", () => {
     commentEditorInputing,
     canListenKeyboard,
     isDragToSort,
+
+    // 看板（状态）变化
     kanbanStateChange,
     setKanbanStateChange,
+
+    // 标签变化
     tagChangedNum,
+    tagChangedReason,
     addTagChangedNum,
+
     setLatestSelectionChange,
     isJustSelect,
   }
