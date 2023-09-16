@@ -104,6 +104,7 @@ export const domainNotAllowed = [
   "huxiu.com",
   "goo.gl",
   "cal.com",
+  "plausible.io",
 ]
 
 export const mastodonDomains = [
