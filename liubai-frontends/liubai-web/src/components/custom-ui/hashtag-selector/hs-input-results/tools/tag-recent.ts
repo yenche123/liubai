@@ -1,6 +1,6 @@
 import type { HsirAtom, HsirData, HsirProps } from "./types";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
-import { tagIdsToShows, addTagIdToRecents } from "~/utils/system/tag-related";
+import { tagIdsToShows, addTagIdsToRecents } from "~/utils/system/tag-related";
 
 export function initRecent(
   hsirData: HsirData,
@@ -46,7 +46,7 @@ export async function addRecent(
   hsirData: HsirData,
   tagId: string,
 ) {
-  const newSearchTagIds = await addTagIdToRecents(tagId)
+  const newSearchTagIds = await addTagIdsToRecents([tagId])
   if(newSearchTagIds) {
     hsirData.recentTagIds = newSearchTagIds
   }

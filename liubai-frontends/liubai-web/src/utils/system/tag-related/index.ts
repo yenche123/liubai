@@ -130,22 +130,34 @@ export function tagIdsToShows(ids: string[]) {
 }
 
 /**
- * 将某个 tagId 添加进 wStore 并且存储到我的 member 信息中
- * @param tagId string
- * @return 会返回新的 searchTagIds | undefined
+ * 将 tagIds 们添加进 wStore 并且存储到我的 member 信息中
+ * @param tagIds 要添加进 "最近记录" 里的 tagId 们
+ * @return 会返回新的 searchTagIds 或者 undefined
  */
-export async function addTagIdToRecents(tagId: string) {
-  if(!tagId) return
+export async function addTagIdsToRecents(tagIds: string[]) {
   const wStore = useWorkspaceStore()
   const memberCfg = wStore.myMember?.config ?? memberRelated.getDefaultMemberCfg()
   const { searchTagIds = [] } = memberCfg
-  const idx = searchTagIds.indexOf(tagId)
-  if(idx >= 0) {
-    searchTagIds.splice(idx, 1)
+
+  let hasChanged = false
+  for(let i=0; i<tagIds.length; i++) {
+    const v = tagIds[i]
+
+    if(!v) continue
+    hasChanged = true
+
+    const idx = searchTagIds.indexOf(v)
+    if(idx >= 0) {
+      searchTagIds.splice(idx, 1)
+    }
+    searchTagIds.unshift(v)
   }
-  searchTagIds.unshift(tagId)
-  if(searchTagIds.length > 10) {
-    searchTagIds.pop()
+
+  if(!hasChanged) return
+
+  const len = searchTagIds.length
+  if(len > 10) {
+    searchTagIds.splice(10, len - 10)
   }
   memberCfg.searchTagIds = searchTagIds
   await wStore.setMemberConfig(memberCfg)
