@@ -1,7 +1,7 @@
-import { MenuItem } from "~/components/common/liu-menu/tools/types"
+import type { MenuItem } from "~/components/common/liu-menu/tools/types"
 import cui from "~/components/custom-ui"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
-import { TagView } from "~/types/types-atom"
+import type { TagView } from "~/types/types-atom"
 import liuApi from "~/utils/liu-api"
 import { 
   addATag, 
@@ -16,7 +16,7 @@ import type { Stat } from "./useSbTags"
 import type { Ref } from "vue"
 import { i18n } from "~/locales"
 import type { T_i18n } from "~/locales"
-import { RenameTagParam } from "~/utils/system/tag-related/tools/types"
+import type { RenameTagParam } from "~/utils/system/tag-related/tools/types"
 import { getTagViewLevel } from "~/utils/system/tag-related/tools/tag-util"
 import time from "~/utils/basic/time"
 
