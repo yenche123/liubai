@@ -87,8 +87,6 @@ const { t } = useI18n()
   width: 100%;
   height: 100vh;
   height: 100dvh;
-  max-height: 100vh;
-  max-height: 100dvh;
   top: 0;
   left: 0;
   z-index: 5100;
@@ -118,6 +116,8 @@ const { t } = useI18n()
 
 .hs-little-container {
   width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
 }
 
