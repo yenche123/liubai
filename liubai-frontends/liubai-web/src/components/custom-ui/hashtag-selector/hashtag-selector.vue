@@ -99,7 +99,6 @@ const { t } = useI18n()
   height: 100dvh;
   max-height: 100vh;
   max-height: 100dvh;
-  position: fixed;
   top: 0;
   left: 0;
   z-index: 5100;
