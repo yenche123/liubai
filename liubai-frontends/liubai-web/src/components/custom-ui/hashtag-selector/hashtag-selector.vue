@@ -17,81 +17,71 @@ const { t } = useI18n()
 
 </script>
 <template>
+  <!-- 外层壳: 当溢出时，可以滚动 -->
+  <div v-if="hsData.enable" class="hs-container" :class="{ 'hs-container_show': hsData.show }">
 
-  <div v-if="hsData.enable" class="hs-container"
-    :class="{ 'hs-container_show': hsData.show }"
-  >
+    <!-- 内层壳: 用 position: relative 使得其子元素 hs-bg 可以占满整个盒子 -->
+    <!-- 水平居中: 在子元素声明 margin: 0 auto 来实现 -->
+    <div class="hs-little-container">
+      <div class="hs-bg" @click.stop="onTapPopup"></div>
 
-    <div class="hs-bg" @click.stop="onTapPopup"></div>
+      <div class="hs-virtual-zero"></div>
 
-    <div class="hs-box">
+      <div class="hs-box">
 
-      <!-- 取消、标题、确认 -->
-      <div class="hs-bar">
+        <!-- 取消、标题、确认 -->
+        <div class="hs-bar">
 
-        <custom-btn 
-          type="pure"
-          size="mini"
-          @click="onTapCancel"
-        >
-          <span>{{ t('common.cancel') }}</span>
-        </custom-btn>
+          <custom-btn type="pure" size="mini" @click="onTapCancel">
+            <span>{{ t('common.cancel') }}</span>
+          </custom-btn>
 
-        <div class="hs-title">
-          <span>{{ t('tag_related.edit_tag') }}</span>
+          <div class="hs-title">
+            <span>{{ t('tag_related.edit_tag') }}</span>
+          </div>
+
+          <custom-btn type="main" size="mini" :disabled="!hsData.canSubmit" @click="onTapConfirm">
+            <span>{{ t('common.confirm') }}</span>
+          </custom-btn>
+
         </div>
 
-        <custom-btn 
-          type="main"
-          size="mini"
-          :disabled="!hsData.canSubmit"
-          @click="onTapConfirm"
-        >
-          <span>{{ t('common.confirm') }}</span>
-        </custom-btn>
+        <!-- 已添加的标签 -->
+        <div class="hs-bar hs-tags" v-show="hsData.list.length > 0">
 
-      </div>
-
-      <!-- 已添加的标签 -->
-      <div class="hs-bar hs-tags" v-show="hsData.list.length > 0">
-
-        <template v-for="(item, index) in hsData.list" :key="item.text">
-          <div class="hs-tag" @click.stop="() => onTapClear(index)">
-            <span v-if="item.emoji" class="hs-tag-emoji">{{ item.emoji }}</span>
-            <span>{{ item.text }}</span>
-            <div class="hs-tag-close">
-              <div class="hstc-bg">
-                <div class="hstc-bg-dot"></div>
+          <template v-for="(item, index) in hsData.list" :key="item.text">
+            <div class="hs-tag" @click.stop="() => onTapClear(index)">
+              <span v-if="item.emoji" class="hs-tag-emoji">{{ item.emoji }}</span>
+              <span>{{ item.text }}</span>
+              <div class="hs-tag-close">
+                <div class="hstc-bg">
+                  <div class="hstc-bg-dot"></div>
+                </div>
+                <svg-icon name="close" class="hs-tag-close_svg" color="var(--liu-quote)"></svg-icon>
               </div>
-              <svg-icon name="close" class="hs-tag-close_svg"
-                color="var(--liu-quote)"
-              ></svg-icon>
             </div>
-          </div>
-        </template>
+          </template>
+
+        </div>
+
+        <div class="hs-virtual"></div>
 
       </div>
 
-      <div class="hs-virtual"></div>
+      <!-- 输入框 + 搜索结果 -->
+      <div class="hsir-container">
+        <HsInputResults :list-added="hsData.list" 
+          @focusornot="onFocusOrNot" 
+          @tapitem="onTapItem"
+        ></HsInputResults>
+      </div>
 
+      <div class="hs-virtual-two"></div>
     </div>
-
-
-    <div class="hsir-container">
-      <HsInputResults
-        :list-added="hsData.list"
-        @focusornot="onFocusOrNot"
-        @tapitem="onTapItem"
-      ></HsInputResults>
-    </div>
-
-    <div class="hs-virtual-two"></div>
 
   </div>
-
 </template>
 <style scoped lang="scss">
-
 .hs-container {
   position: fixed;
   width: 100%;
@@ -126,11 +116,20 @@ const { t } = useI18n()
   }
 }
 
+.hs-little-container {
+  width: 100%;
+  position: relative;
+}
+
+.hs-virtual-zero {
+  width: 100%;
+  height: 16vh;
+  height: 16dvh;
+}
+
 .hs-box {
   z-index: 5102;
   margin: 0 auto;
-  margin-top: 16vh;
-  margin-top: 16dvh;
   width: 90%;
   max-width: 500px;
   border-radius: 8px;
@@ -286,7 +285,4 @@ const { t } = useI18n()
   }
 
 }
-
-
-
 </style>
