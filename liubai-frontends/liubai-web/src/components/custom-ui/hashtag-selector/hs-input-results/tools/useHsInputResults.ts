@@ -2,7 +2,8 @@ import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from 
 import type { HsirAtom, HsirData, HsirEmit, HsirProps } from "./types";
 import { 
   hasStrangeChar, 
-  formatTagText, 
+  formatTagText,
+  getLevelFromText, 
 } from "~/utils/system/tag-related";
 import { searchLocal } from "~/utils/system/tag-related/search";
 import type { TagShow } from "~/types/types-content";
@@ -181,6 +182,13 @@ function initOnInput(
     }
 
     const val2 = formatTagText(val)
+
+    // 判断层数是否大于 3 
+    if(getLevelFromText(val2) > 3) {
+      reset(props, hsirData)
+      return
+    }
+
     const res2 = searchLocal(val)
     const text = val2.replace(/\//g, " / ")
     handleAfterSearching(props, hsirData, text, res2)

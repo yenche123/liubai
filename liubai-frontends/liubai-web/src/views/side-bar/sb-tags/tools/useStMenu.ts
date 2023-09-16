@@ -10,6 +10,7 @@ import {
   mergeTag, 
   deleteTag,
   editTagIcon,
+  getLevelFromText,
 } from "~/utils/system/tag-related"
 import type { Stat } from "./useSbTags"
 import type { Ref } from "vue"
@@ -146,9 +147,9 @@ async function handle_edit(
   const { t } = i18n.global
 
   // 检查层级是否已大于 3
-  const texts = res.text.split("/").map(v => v.trim())
-  const level = texts.length - 1 + getTagViewLevel([node])
-  if(level > 3) {
+  const currentLevel = getLevelFromText(res.text)
+  const totalLevel = currentLevel - 1 + getTagViewLevel([node])
+  if(totalLevel > 3) {
     _showErr(t, "01")
     return
   }

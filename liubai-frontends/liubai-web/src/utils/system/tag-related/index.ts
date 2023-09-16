@@ -393,11 +393,19 @@ export function getTagIdsParents(tagIds: string[]) {
 }
 
 export function hasStrangeChar(val: string) {
-  const strange_char = "~@#$%^*'\"{}\\"
+  const strange_char = "~@#$%^*'\"{}\\`?><"
   for(let i=0; i<val.length; i++) {
     const v = val[i]
     const res = strange_char.includes(v)
     if(res) return true
   }
   return false
+}
+
+/**
+ * 从文字 val 中，获取其层级数
+ */
+export function getLevelFromText(val: string) {
+  const list = val.split("/")
+  return list.length
 }

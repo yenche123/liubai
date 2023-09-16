@@ -78,7 +78,10 @@ export function findTagViewById(
   return null
 }
 
-// 返回有多少层，从 1 开始
+/**
+ * 返回当前 tagViews 最深有几层
+ * 若是一个扁平的数组（其元素没有任何 children），那么就返回 1
+ */
 export function getTagViewLevel(
   tagViews: TagView[],
   current: number = 1,
