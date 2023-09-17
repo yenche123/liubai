@@ -37,6 +37,7 @@ const { tpData, onTapFab, onScroll } = useTagPage2()
             :p-state="item.state"
           ></PlaceholderView>
           <TagContent 
+            v-if="item.state < 0"
             :tag-id="item.id"
             :show-txt="(String(item.show) as TrueOrFalse)"
           ></TagContent>
