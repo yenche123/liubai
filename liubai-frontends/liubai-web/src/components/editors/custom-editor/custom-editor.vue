@@ -107,7 +107,7 @@ const {
       @keyup.ctrl.enter.exact="onTitleEnterAndCtrl"
       @keyup.meta.enter.exact="onTitleEnterAndMeta"
     />
-    <div class="ce-clear-title" @click="onTapCloseTitle">
+    <div class="ce-clear-title" @click.stop="onTapCloseTitle">
       <svg-icon name="close-circle" class="ce-clear-svg" 
         color="var(--main-tip)"
       ></svg-icon>

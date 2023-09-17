@@ -28,7 +28,7 @@ const onTapClear = (index: number) => {
         <span v-if="item.emoji" class="ce-tag-emoji">{{ item.emoji }}</span>
         <span v-else-if="item.parentEmoji" class="ce-tag-emoji">{{ item.parentEmoji }}</span>
         <span>{{ item.text }}</span>
-        <div class="ce-tag-delete" @click="() => onTapClear(index)">
+        <div class="ce-tag-delete" @click.stop="() => onTapClear(index)">
           <svg-icon name="close" class="ce-tag-close" color="var(--main-tip)"></svg-icon>
         </div>
 
