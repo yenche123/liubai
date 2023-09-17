@@ -54,8 +54,8 @@ const { t } = useI18n()
               <span v-if="item.emoji" class="hs-tag-emoji">{{ item.emoji }}</span>
               <span>{{ item.text }}</span>
               <div class="hs-tag-close">
-                <div class="hstc-bg">
-                  <div class="hstc-bg-dot"></div>
+                <div class="liu-flexible-dot_bg">
+                  <div class="liu-flexible-dot_circle"></div>
                 </div>
                 <svg-icon name="close" class="hs-tag-close_svg" color="var(--liu-quote)"></svg-icon>
               </div>
@@ -218,28 +218,6 @@ const { t } = useI18n()
   }
 }
 
-.hstc-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hstc-bg-dot {
-  width: 0px;
-  height: 0px;
-  border-radius: 50%;
-  background: var(--primary-color);
-  opacity: .07;
-  transition: .2s;
-  transition-timing-function: cubic-bezier(.88, .1, 1, 1);
-  flex: none;
-}
-
 .hsir-container {
   margin: 0 auto;
   z-index: 5103;
@@ -276,7 +254,7 @@ const { t } = useI18n()
 
   .hs-tag-close:hover {
 
-    .hstc-bg-dot {
+    .liu-flexible-dot_circle {
       width: 48px;
       height: 48px;
       opacity: .17;

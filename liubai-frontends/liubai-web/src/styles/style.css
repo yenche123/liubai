@@ -184,3 +184,29 @@ input {
   height: 100%;
   position: relative;
 }
+
+
+/** 伸缩圈圈: 当鼠标移动上去时，会弹出圆圈的效果 
+*     通常用于鼠标浮在 "x" 图标上时
+*/
+.liu-flexible-dot_bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.liu-flexible-dot_circle {
+  width: 0px;
+  height: 0px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  opacity: .07;
+  transition: .2s;
+  transition-timing-function: cubic-bezier(.88, .1, 1, 1);
+  flex: none;
+}
