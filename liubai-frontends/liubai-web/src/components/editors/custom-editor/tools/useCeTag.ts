@@ -3,7 +3,11 @@ import { ref, watch } from "vue"
 import type { TagShow } from "~/types/types-content"
 import type { CeState } from "./atom-ce"
 import type { Ref } from "vue"
-import { addATag, tagIdsToShows } from "~/utils/system/tag-related"
+import { 
+  addATag, 
+  tagIdsToShows, 
+  createTagsFromTagShows,
+} from "~/utils/system/tag-related"
 import type { HashTagEditorRes } from "~/types/other/types-hashtag"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
@@ -11,10 +15,18 @@ import time from "~/utils/basic/time"
 export function useCeTag(
   state: CeState
 ) {
+  let lockWatch = false    // 是否要冻结 watch
+                           // 若为 true，当 watch(() => state.tagIds
+                           // 被触发时，直接 skip
+
   const gStore = useGlobalStateStore()
   const tagShows = ref<TagShow[]>([])
   
   watch(() => state.tagIds, (newV) => {
+    if(lockWatch) {
+      lockWatch = false
+      return
+    }
     whenTagIdsChange(state, newV, tagShows)
   }, { deep: true })
 
@@ -43,10 +55,25 @@ export function useCeTag(
     gStore.addTagChangedNum("create")
   }
 
+  const onNewHashTags = async (tags: TagShow[]) => {
+    if(tags.length < 1) {
+      state.tagIds = []
+      return
+    }
+
+    const res = await createTagsFromTagShows(tags)
+    if(!res.isOk) return
+    const newTagShows = res.tagShows
+    lockWatch = true
+    tagShows.value = newTagShows
+    state.tagIds = newTagShows.map(v => v.tagId)
+  }
+
   return {
     tagShows,
     onTapClearTag,
     onAddHashTag,
+    onNewHashTags,
   }
 }
 

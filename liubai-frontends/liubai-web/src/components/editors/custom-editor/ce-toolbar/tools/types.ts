@@ -1,20 +1,29 @@
 
-import type { HashTagEditorRes } from "~/types/other/types-hashtag"
-import type { TipTapEditor } from "~/types/types-editor"
-import type { PropType } from "vue"
+import type { HashTagEditorRes } from "~/types/other/types-hashtag";
+import type { TipTapEditor } from "~/types/types-editor";
+import type { PropType } from "vue";
+import type { TagShow } from "~/types/types-content";
+
+
 
 export interface CetEmit {
-  (event: "imagechange", files: File[]): void
-  (event: "addhashtag", res: HashTagEditorRes): void
-  (event: "tapmore"): void
+  (evt: "imagechange", files: File[]): void
+  (evt: "addhashtag", res: HashTagEditorRes): void
+  (evt: "newhashtags", tagShows: TagShow[]): void
+  (evt: "tapmore"): void
 }
 
 export interface CetProps {
   editor?: TipTapEditor
   more: boolean
+  tagShows: TagShow[]
 }
 
 export const cetProps = {
   editor: Object as PropType<TipTapEditor>,
   more: Boolean,
+  tagShows: {
+    type: Array as PropType<TagShow[]>,
+    default: []
+  },
 }

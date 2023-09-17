@@ -48,8 +48,8 @@ export function initHashtagSelector() {
 
 export function showHashtagSelector(param: HsParam) {
   hsData.nonce = "whatever"
-  hsData.list = [...param.tags]
-  hsData.originalList = [...param.tags]
+  hsData.list = valTool.copyObject(param.tags)
+  hsData.originalList = valTool.copyObject(param.tags)
   hsData.canSubmit = false
   openIt(rr, queryKey)
 

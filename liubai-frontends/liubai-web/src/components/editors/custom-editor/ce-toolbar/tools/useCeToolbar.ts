@@ -21,10 +21,10 @@ export function useCeToolbar(props: CetProps, emit: CetEmit) {
   })
 
   const onTapTag = async () => {
-    const res = await cui.showHashTagEditor({ mode: "search" })
+    const res = await cui.showHashtagSelector({ tags: props.tagShows })
     if(!res.confirm) return
-    if(!res.text) return
-    emit("addhashtag", res)
+    if(!res.tags) return
+    emit("newhashtags", res.tags)
 
     // 去聚焦
     const editor = props.editor

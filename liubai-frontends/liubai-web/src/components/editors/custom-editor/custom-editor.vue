@@ -56,6 +56,7 @@ const {
   tagShows,
   onTapClearTag,
   onAddHashTag,
+  onNewHashTags,
 } = useCeTag(state)
 
 
@@ -155,9 +156,11 @@ const {
   <ce-toolbar
     :editor="editor"
     :more="moreRef"
+    :tag-shows="tagShows"
     @imagechange="onImageChange"
     @tapmore="onTapMore"
     @addhashtag="onAddHashTag"
+    @newhashtags="onNewHashTags"
   ></ce-toolbar>
 
   <!-- 更多栏 -->
