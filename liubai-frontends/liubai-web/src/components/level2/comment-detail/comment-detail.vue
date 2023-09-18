@@ -17,7 +17,6 @@ import {
   useThreadOperateInDetail 
 } from "../../level1/thread-detail/tools/useThreadOperateInDetail"
 import { subscribeCdUpdate } from "./tools/subscribeCdUpdate"
-import cfg from "~/config"
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
@@ -42,7 +41,6 @@ const emit = defineEmits<CommentDetailEmit>()
 const { cdData, virtualHeightPx } = useCommentDetail(props, emit)
 
 const { receiveOperation } = useThreadOperateInDetail()
-const viceNaviPx = cfg.vice_navi_height
 
 subscribeCdUpdate(cdData)
 
@@ -151,7 +149,7 @@ const { t } = useI18n()
 
 .cd-virtual-zero {
   width: 100%;
-  height: v-bind("'' + (viceNaviPx + 10) + 'px'");
+  height: 0px;
 }
 
 .cd-virtual-one {

@@ -149,6 +149,7 @@ function whenBottomUp(
   if(bu.initPixel) diff = diff - bu.initPixel
 
   let sP = scrollPosition + diff
+  if(bu.offset) sP += bu.offset
   if(sP < 0) sP = 0
 
   if(isVertical) sop.top = sP

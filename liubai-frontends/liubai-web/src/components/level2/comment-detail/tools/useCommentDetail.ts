@@ -14,6 +14,7 @@ import valTool from "~/utils/basic/val-tool";
 import { svBottomUpKey } from "~/utils/provide-keys";
 import type { CommentShow } from "~/types/types-content";
 import { getValuedComments } from "~/utils/other/comment-related"
+import cfg from "~/config"
 
 export function useCommentDetail(
   props: CommentDetailProps,
@@ -284,7 +285,8 @@ async function fixCommentDetail(
   svBottomUp.value = { 
     type: "selectors", 
     selectors: ".cd-virtual-zero",
-    instant: true
+    instant: true,
+    offset: -(cfg.vice_navi_height + 10),
   }
 
   if(closeZeroBox) {
