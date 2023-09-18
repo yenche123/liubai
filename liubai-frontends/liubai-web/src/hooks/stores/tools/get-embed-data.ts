@@ -499,6 +499,13 @@ export function getEmbedData(
     }
   }
 
+  // vika
+  const vika = new URL(thirdLink.VIKA_SHARE)
+  const isVika = valTool.isInDomain(h, vika.hostname) && p.startsWith(vika.pathname)
+  if(isVika) {
+    return { link: originUrl, otherData: { isVika } }
+  }
+
 
   // mastodon
   for(let i=0; i<mastodonDomains.length; i++) {

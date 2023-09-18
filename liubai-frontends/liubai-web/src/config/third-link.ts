@@ -97,6 +97,9 @@ export default {
   // simplecast
   SIMPLECAST_PLAYER: "https://player.simplecast.com/",
 
+  // vika share
+  VIKA_SHARE: "https://vika.cn/share/",
+
   // chrome site setting
   CHROME_SITE_SETTING: "chrome://settings/content/siteDetails?site=__XXX__",
 
