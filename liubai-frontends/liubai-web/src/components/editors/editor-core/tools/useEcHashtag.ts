@@ -38,12 +38,12 @@ export function useEcHashtag(
   })
 }
 
-// 激发 cui.showHashTagEditor() 
+// 激发 cui.showHashtagEditor() 
 async function triggerHashTagEditor(
   editor: TipTapEditor,
   emits: EditorCoreEmits,
 ) {
-  const res = await cui.showHashTagEditor({ mode: "search" })
+  const res = await cui.showHashtagEditor({ mode: "search" })
   if(!res.confirm) {
     editor.commands.focus()
     return

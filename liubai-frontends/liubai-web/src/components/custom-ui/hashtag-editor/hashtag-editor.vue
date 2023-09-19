@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { initHtePicker } from "./index"
+import { initHashtagEditor } from "./tools/useHashtagEditor"
 import HashtagList from "./hashtag-list/hashtag-list.vue";
 import HashtagEmoji from "./hashtag-emoji/hashtag-emoji.vue";
 
@@ -11,7 +11,7 @@ const {
   onTapItem,
   onInput,
   onEmojiChange,
-} = initHtePicker()
+} = initHashtagEditor()
 
 const { t } = useI18n()
 

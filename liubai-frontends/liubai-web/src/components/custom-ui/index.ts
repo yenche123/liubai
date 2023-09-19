@@ -4,7 +4,7 @@ import { showLoading, hideLoading } from "./loading"
 import { showTextEditor } from "./text-editor"
 import { showDatePicker } from "./date-picker"
 import { previewImage } from "./preview-image"
-import { showHashTagEditor } from "./hashtag-editor"
+import { showHashtagEditor } from "./hashtag-editor/tools/useHashtagEditor"
 import { showSnackBar } from "./snack-bar"
 import { showActionSheet } from "./action-sheet"
 import { showSearchEditor } from "./search-editor"
@@ -22,7 +22,7 @@ export default {
   showTextEditor,
   showDatePicker,
   previewImage,
-  showHashTagEditor,
+  showHashtagEditor,
   showHashtagSelector,
   showSnackBar,
   showActionSheet,

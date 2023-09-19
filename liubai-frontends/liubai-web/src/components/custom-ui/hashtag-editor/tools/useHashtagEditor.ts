@@ -1,6 +1,6 @@
 import { reactive, ref, watch } from "vue"
 import valTool from "~/utils/basic/val-tool"
-import type { HteResolver, HteData } from "./tools/types"
+import type { HteData, HteResolver } from "./types"
 import type { TagShow } from "~/types/types-content"
 import type {
   HashTagEditorParam, 
@@ -11,10 +11,8 @@ import { formatTagText, findTagId, hasStrangeChar } from "~/utils/system/tag-rel
 import liuApi from "~/utils/liu-api"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
-import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
+import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import liuUtil from "~/utils/liu-util"
-
-// 使用 element.scrollIntoView 让元素露出来 
 
 const hteData = reactive<HteData>({
   enable: false,
@@ -38,7 +36,7 @@ let lastEmoji = ""
 
 let _resolve: HteResolver | undefined
 
-export function initHtePicker() {
+export function initHashtagEditor() {
   rr = useRouteAndLiuRouter()
   listenRouteChange()
   return { 
@@ -74,7 +72,7 @@ function listenRouteChange() {
 }
 
 
-export function showHashTagEditor(opt: HashTagEditorParam) {
+export function showHashtagEditor(opt: HashTagEditorParam) {
   lastInputVal = opt.text ?? ""
   hteData.inputVal = lastInputVal
   lastEmoji = opt.icon ? liuApi.decode_URI_component(opt.icon) : ""

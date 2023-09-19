@@ -11,7 +11,7 @@ export interface EditorCoreProps {
   descPlaceholder: string
   isEdit: boolean
   content?: TipTapJSONContent
-  hashTrigger: boolean            // 是否允许输入 # 来激发 cui.showHashTagEditor
+  hashTrigger: boolean            // 是否允许输入 # 来激发 cui.showHashtagEditor
   minHeight: string
   purpose: EditorCorePurpose
   isInCard: boolean              // 在浅色模式时，是否在背景为白色的卡片里

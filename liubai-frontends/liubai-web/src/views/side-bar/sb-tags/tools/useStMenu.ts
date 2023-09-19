@@ -92,7 +92,7 @@ async function handle_create(
   if(tagShows.length < 1) return
   const { text } = tagShows[0]
   let tmp = text + " / "
-  const res = await cui.showHashTagEditor({
+  const res = await cui.showHashtagEditor({
     text: tmp,
     mode: "edit",
   })
@@ -124,7 +124,7 @@ async function handle_edit(
   const tShow = tagShows[0]
   const oldText = tShow.text
   const oldEmoji = tShow.emoji
-  const res = await cui.showHashTagEditor({
+  const res = await cui.showHashtagEditor({
     text: oldText,
     mode: "edit",
     icon: oldEmoji ? liuApi.encode_URI_component(oldEmoji) : undefined,
