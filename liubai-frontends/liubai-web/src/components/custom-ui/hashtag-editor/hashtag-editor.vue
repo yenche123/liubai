@@ -6,16 +6,7 @@ import HashtagEmoji from "./hashtag-emoji/hashtag-emoji.vue";
 
 const {
   inputEl,
-  enable,
-  show,
-  TRANSITION_DURATION: tranMs,
-  inputVal,
-  emoji,
-  errCode,
-  newTag,
-  list,
-  selectedIndex,
-  mode,
+  hteData,
   onTapMask,
   onTapItem,
   onInput,
@@ -25,13 +16,13 @@ const {
 const { t } = useI18n()
 
 const onMouseEnterItem = (index: number) => {
-  selectedIndex.value = index
+  hteData.selectedIndex = index
 }
 
 </script>
 <template>
 
-  <div v-if="enable" class="hte-container" :class="{ 'hte-container_show': show }">
+  <div v-if="hteData.enable" class="hte-container" :class="{ 'hte-container_show': hteData.show }">
 
     <div class="hte-bg" @click="onTapMask" />
 
@@ -42,7 +33,7 @@ const onMouseEnterItem = (index: number) => {
 
         <!-- search 模式，仅显示一个 # 字符 -->
         <div class="hteb-box"
-          v-if="mode === 'search'"
+          v-if="hteData.mode === 'search'"
         >
           <svg-icon name="tag" class="hteb-icon"
             color="var(--main-normal)"
@@ -51,22 +42,22 @@ const onMouseEnterItem = (index: number) => {
         <!-- edit 模式，允许被点击-->
         <HashtagEmoji v-else 
           @emojichange="onEmojiChange"
-          :has-emoji="Boolean(emoji)"
+          :has-emoji="Boolean(hteData.emoji)"
         >
           <div class="liu-hover hteb-box">
             <svg-icon 
-              v-if="!emoji"
+              v-if="!hteData.emoji"
               name="tag" class="hteb-icon"
               color="var(--main-normal)"
             ></svg-icon>
-            <span v-else>{{ emoji }}</span>
+            <span v-else>{{ hteData.emoji }}</span>
           </div>
         </HashtagEmoji>
         
 
         <input ref="inputEl" 
           class="hteb-input" 
-          v-model="inputVal" 
+          v-model="hteData.inputVal" 
           :maxlength="50" 
           :placeholder="t('tip.tag_ph')"
           @input="onInput" 
@@ -76,26 +67,26 @@ const onMouseEnterItem = (index: number) => {
       </div>
 
       <!-- 第二行: 错误提示 -->
-      <div v-if="errCode > 0" class="hte-err">
+      <div v-if="hteData.errCode > 0" class="hte-err">
         <span>*</span>
-        <span v-if="errCode === 1">{{ t('tip.no_strange_char') }}</span>
+        <span v-if="hteData.errCode === 1">{{ t('tip.no_strange_char') }}</span>
       </div>
 
       <!-- 第三行: 创建标签 -->
-      <div v-else-if="newTag" class="hte-create-box">
-        <div class="hte-create" :class="{ 'hte-create_selected': selectedIndex === -1 }" @click="() => onTapItem(-1)"
+      <div v-else-if="hteData.newTag" class="hte-create-box">
+        <div class="hte-create" :class="{ 'hte-create_selected': hteData.selectedIndex === -1 }" @click="() => onTapItem(-1)"
           @mouseenter="() => onMouseEnterItem(-1)">
           <div class="htec-icon">
             <svg-icon name="add" color="var(--main-normal)" class="htec-svgicon"></svg-icon>
           </div>
           <div class="hte-create-title">
-            <span>{{ t('tip.add_tag', { tag: newTag }) }}</span>
+            <span>{{ t('tip.add_tag', { tag: hteData.newTag }) }}</span>
           </div>
         </div>
       </div>
 
       <!-- 第四部分: 搜索结果 -->
-      <HashtagList v-if="mode === 'search' && list.length > 0" :list="list" :selected-index="selectedIndex"
+      <HashtagList v-if="hteData.mode === 'search' && hteData.list.length > 0" :list="hteData.list" :selected-index="hteData.selectedIndex"
         @mouseenteritem="onMouseEnterItem" @tapitem="onTapItem"></HashtagList>
 
     </div>
@@ -119,7 +110,7 @@ const onMouseEnterItem = (index: number) => {
   flex-direction: column;
   align-items: center;
   opacity: 0;
-  transition: v-bind("tranMs + 'ms'");
+  transition: v-bind("hteData.transDuration + 'ms'");
 
   &.hte-container_show {
     opacity: 1;

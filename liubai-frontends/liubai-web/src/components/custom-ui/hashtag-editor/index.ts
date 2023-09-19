@@ -1,9 +1,8 @@
-import { ref, watch } from "vue"
+import { reactive, ref, watch } from "vue"
 import valTool from "~/utils/basic/val-tool"
-import type { HteResolver } from "./tools/types"
+import type { HteResolver, HteData } from "./tools/types"
 import type { TagShow } from "~/types/types-content"
 import type {
-  HteMode,
   HashTagEditorParam, 
   HashTagEditorRes, 
 } from "~/types/other/types-hashtag"
@@ -17,18 +16,20 @@ import liuUtil from "~/utils/liu-util"
 
 // 使用 element.scrollIntoView 让元素露出来 
 
-const TRANSITION_DURATION = 150
-const enable = ref(false)
-const show = ref(false)
+const hteData = reactive<HteData>({
+  enable: false,
+  show: false,
+  transDuration: 150,
+  inputVal: "",
+  emoji: "",
+  errCode: 0,
+  newTag: "",
+  list: [],
+  selectedIndex: -1,
+  mode: "",
+})
 
 const inputEl = ref<HTMLInputElement | null>(null)
-const inputVal = ref("")    // 输入框里的文字
-const emoji = ref("")       // 输入框左侧的 emoji
-const errCode = ref(0)      // 错误提示. 1: 不得输入奇怪的字符; 2: 最多若干个 "/"
-const newTag = ref("")      // 可以被创建的标签，注意该文字不能回传到业务侧，因为它的结构为 "xxx / yyy / zzz"
-const list = ref<TagShow[]>([])
-const selectedIndex = ref(-1)        // 被选择的 index
-const mode = ref<HteMode | "">("")
 const queryKey = "hashtageditor"
 let rr: RouteAndLiuRouter | undefined
 
@@ -42,16 +43,7 @@ export function initHtePicker() {
   listenRouteChange()
   return { 
     inputEl,
-    enable, 
-    show,
-    TRANSITION_DURATION,
-    inputVal,
-    emoji,
-    errCode,
-    newTag,
-    list,
-    selectedIndex,
-    mode,
+    hteData,
     onTapMask,
     onTapConfirm,
     onTapItem,
@@ -67,7 +59,7 @@ function listenRouteChange() {
     if(!query) return
 
     if(query[queryKey] === "01") {
-      if(mode.value !== "") _toOpen()
+      if(hteData.mode !== "") _toOpen()
       else handleCustomUiQueryErr(rr, queryKey)
       return
     }
@@ -84,14 +76,14 @@ function listenRouteChange() {
 
 export function showHashTagEditor(opt: HashTagEditorParam) {
   lastInputVal = opt.text ?? ""
-  inputVal.value = lastInputVal
+  hteData.inputVal = lastInputVal
   lastEmoji = opt.icon ? liuApi.decode_URI_component(opt.icon) : ""
-  emoji.value = lastEmoji
-  errCode.value = 0
-  newTag.value = ""
-  list.value = []
-  selectedIndex.value = -1
-  mode.value = opt.mode
+  hteData.emoji = lastEmoji
+  hteData.errCode = 0
+  hteData.newTag = ""
+  hteData.list = []
+  hteData.selectedIndex = -1
+  hteData.mode = opt.mode
 
   openIt(rr, queryKey)
 
@@ -102,7 +94,7 @@ export function showHashTagEditor(opt: HashTagEditorParam) {
 }
 
 function onEmojiChange(newEmoji?: string) {
-  emoji.value = newEmoji ?? ""
+  hteData.emoji = newEmoji ?? ""
 }
 
 function toResolve(res: HashTagEditorRes) {
@@ -112,34 +104,34 @@ function toResolve(res: HashTagEditorRes) {
 }
 
 function onInput() {
-  let val = inputVal.value.trim()
+  let val = hteData.inputVal.trim()
   if(!val) {
-    errCode.value = 0
-    newTag.value = ""
-    list.value = []
+    hteData.errCode = 0
+    hteData.newTag = ""
+    hteData.list = []
     return
   }
   const res1 = hasStrangeChar(val)
   if(res1) {
-    errCode.value = 1
-    newTag.value = ""
+    hteData.errCode = 1
+    hteData.newTag = ""
     return
   }
-  errCode.value = 0
+  hteData.errCode = 0
 
-  if(mode.value === "edit") return
+  if(hteData.mode === "edit") return
 
   val = formatTagText(val)
   const res2 = searchLocal(val)
-  list.value = res2
-  newTag.value = val.split("/").join(" / ")
-  if(selectedIndex.value >= res2.length) {
-    selectedIndex.value = res2.length - 1
+  hteData.list = res2
+  hteData.newTag = val.split("/").join(" / ")
+  if(hteData.selectedIndex >= res2.length) {
+    hteData.selectedIndex = res2.length - 1
   }
 }
 
 function onTapMask() {
-  if(mode.value === "edit" && checkState()) {
+  if(hteData.mode === "edit" && checkState()) {
     if(inputEl.value) inputEl.value.blur()
     toEnter()
   }
@@ -164,14 +156,14 @@ function onTapConfirm() {
 }
 
 function onTapItem(index: number) {
-  if(selectedIndex.value !== index) selectedIndex.value = index
+  if(hteData.selectedIndex !== index) hteData.selectedIndex = index
   toEnter()
 }
 
 function toEnter() {
   if(inputEl.value) inputEl.value.blur()
 
-  const m = mode.value
+  const m = hteData.mode
   if(m === "edit") {
     toRename()
   }
@@ -181,9 +173,9 @@ function toEnter() {
 }
 
 function toRename() {
-  const text = formatTagText(inputVal.value)
+  const text = formatTagText(hteData.inputVal)
   const tagId = findTagId(text)
-  const icon = emoji.value ? liuApi.encode_URI_component(emoji.value) : undefined
+  const icon = hteData.emoji ? liuApi.encode_URI_component(hteData.emoji) : undefined
   const res: HashTagEditorRes = {
     confirm: true,
     text,
@@ -195,14 +187,14 @@ function toRename() {
 }
 
 function toSelect() {
-  const idx = selectedIndex.value
-  const item = idx >= 0 ? list.value[idx] : undefined
+  const idx = hteData.selectedIndex
+  const item = idx >= 0 ? hteData.list[idx] : undefined
   if(idx >= 0 && !item) {
     console.log("选择的选项，却没有任何东西")
     return
   }
 
-  let text = idx < 0 ? newTag.value : (item as TagShow).text
+  let text = idx < 0 ? hteData.newTag : (item as TagShow).text
   text = formatTagText(text)
   const tagId = findTagId(text)
   const _emoji = idx < 0 ? undefined : (item as TagShow).emoji
@@ -220,26 +212,26 @@ function toSelect() {
 // 检测 onTapConfirm
 function checkState() {
   
-  const m = mode.value
+  const m = hteData.mode
   if(m === "search") {
-    const sIdx = selectedIndex.value
-    if(newTag.value && sIdx === -1) return true
-    const item = list.value[sIdx]
+    const sIdx = hteData.selectedIndex
+    if(hteData.newTag && sIdx === -1) return true
+    const item = hteData.list[sIdx]
     if(item) return true
     return false
   }
   
   if(m === "edit") {
 
-    if(lastInputVal === inputVal.value && lastEmoji === emoji.value) {
+    if(lastInputVal === hteData.inputVal && lastEmoji === hteData.emoji) {
       return false
     }
 
-    const inputValFormatted = formatTagText(inputVal.value)
+    const inputValFormatted = formatTagText(hteData.inputVal)
     if(!inputValFormatted) {
       return false
     }
-    if(errCode.value > 0) {
+    if(hteData.errCode > 0) {
       return false
     }
   }
@@ -248,21 +240,21 @@ function checkState() {
 }
 
 async function _toOpen() {
-  if(show.value) return
-  enable.value = true
+  if(hteData.show) return
+  hteData.enable = true
   await valTool.waitMilli(16)
-  show.value = true
+  hteData.show = true
   _toListenKeyUp()
-  await valTool.waitMilli(TRANSITION_DURATION)
+  await valTool.waitMilli(hteData.transDuration)
   if(!inputEl.value) return
   inputEl.value.focus()
 }
 
 async function _toClose() {
-  if(!enable.value) return
-  show.value = false
-  await valTool.waitMilli(TRANSITION_DURATION)
-  enable.value = false
+  if(!hteData.enable) return
+  hteData.show = false
+  await valTool.waitMilli(hteData.transDuration)
+  hteData.enable = false
   _cancelListenKeyUp()
 }
 
@@ -271,7 +263,7 @@ async function _toClose() {
 function _whenKeyDown(e: KeyboardEvent) {
   const key = e.key
   if(key !== "ArrowDown" && key !== "ArrowUp") return
-  const len = list.value.length
+  const len = hteData.list.length
   if(len < 1) return
 
   e.preventDefault()
@@ -279,10 +271,10 @@ function _whenKeyDown(e: KeyboardEvent) {
   if(!liuUtil.canKeyUpDown()) return
   
   let diff = key === "ArrowDown" ? 1 : -1
-  let tmpIdx = selectedIndex.value + diff
+  let tmpIdx = hteData.selectedIndex + diff
   if(tmpIdx >= len) tmpIdx = -1
   else if(tmpIdx < -1) tmpIdx = len - 1
-  selectedIndex.value = tmpIdx
+  hteData.selectedIndex = tmpIdx
 }
 
 /*********** 监听键盘敲击 Enter、Escape 的逻辑 ***********/
