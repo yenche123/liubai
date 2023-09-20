@@ -121,8 +121,16 @@ function onInput() {
 
   val = formatTagText(val)
   const res2 = searchLocal(val)
+
+  let tagExisted = false
+  let newTag = val.split("/").join(" / ")
+  res2.forEach(v => {
+    if(v.text === newTag) tagExisted = true
+  })
+
   hteData.list = res2
-  hteData.newTag = val.split("/").join(" / ")
+  hteData.newTag = tagExisted ? "" : newTag
+  
   if(hteData.selectedIndex >= res2.length) {
     hteData.selectedIndex = res2.length - 1
   }
