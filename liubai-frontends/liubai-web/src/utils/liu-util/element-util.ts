@@ -1,6 +1,10 @@
 /** 存放一些跟操作 dom 相关的工具函数 */
 
-// 检查 child 是否在 parent 的可视区域里
+/**
+ * 检查 child 是否在 parent 的可视区域里
+ * @param parent 父元素
+ * @param child 子元素
+ */
 export function isChildElementVisible(parent: Element, child: Element) {
   const boxInfo = parent.getBoundingClientRect()
   const childInfo = child.getBoundingClientRect()
