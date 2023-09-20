@@ -221,6 +221,7 @@ const onMouseEnterItem = (index: number) => {
       padding-bottom: 20px;
       font-size: var(--btn-font);
       color: var(--main-note);
+      user-select: none;
     }
 
     .hte-create-box {
