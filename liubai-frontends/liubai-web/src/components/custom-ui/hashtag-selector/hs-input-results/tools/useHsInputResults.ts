@@ -1,4 +1,4 @@
-import { onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
+import { nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, toRef, watch } from "vue";
 import type { HsirAtom, HsirData, HsirEmit, HsirProps } from "./types";
 import { 
   hasStrangeChar, 
@@ -25,6 +25,7 @@ export function useHsInputResults(
     selectedIndex: -1,
     recentTagIds: [],
   })
+  watchSelectedIndex(hsirData)
   initRecent(hsirData)
 
   const onFocus = () => {
@@ -74,6 +75,25 @@ export function useHsInputResults(
     onMouseEnter,
     onTapItem,
   }
+}
+
+function watchSelectedIndex(
+  hsirData: HsirData
+) {
+  const selectedIndex = toRef(hsirData, "selectedIndex") 
+  watch(selectedIndex, async (newV, oldV) => {
+    if(newV < 0) return
+    await nextTick()
+    const el = document.querySelector(".hsirr-item_selected")
+    if(!el) return
+    const parent = document.querySelector(".hashtag-selector-container")
+    if(!parent) return
+    const isVis = liuUtil.isChildElementVisible(parent, el)
+    // console.log("isVis: ", isVis)
+    if(isVis) return
+    const alignToTop = newV > oldV ? false : true
+    el.scrollIntoView(alignToTop)
+  })
 }
 
 function toSelect(

@@ -19,7 +19,7 @@ export function useHashtagList(props: HtlProps) {
     const parent = document.querySelector(".ht-list")
     if(!parent) return
     if(liuUtil.isChildElementVisible(parent, el)) return
-    let alignToTop = newV > oldV ? false : true
+    const alignToTop = newV > oldV ? false : true
     el.scrollIntoView(alignToTop)
   })
 }

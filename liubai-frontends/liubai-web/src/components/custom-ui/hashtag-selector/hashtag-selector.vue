@@ -18,7 +18,9 @@ const { t } = useI18n()
 </script>
 <template>
   <!-- 外层壳: 当溢出时，可以滚动 -->
-  <div v-if="hsData.enable" class="hs-container" :class="{ 'hs-container_show': hsData.show }">
+  <div v-if="hsData.enable" class="hashtag-selector-container" 
+    :class="{ 'hs-container_show': hsData.show }"
+  >
 
     <!-- 内层壳: 用 position: relative 使得其子元素 hs-bg 可以占满整个盒子 -->
     <!-- 水平居中: 在子元素声明 margin: 0 auto 来实现 -->
@@ -82,7 +84,7 @@ const { t } = useI18n()
   </div>
 </template>
 <style scoped lang="scss">
-.hs-container {
+.hashtag-selector-container {
   position: fixed;
   width: 100%;
   height: 100vh;
