@@ -159,7 +159,6 @@ const {
     :tag-shows="tagShows"
     @imagechange="onImageChange"
     @tapmore="onTapMore"
-    @addhashtag="onAddHashTag"
     @newhashtags="onNewHashTags"
   ></ce-toolbar>
 

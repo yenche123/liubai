@@ -42,8 +42,8 @@ import memberRelated from "~/utils/system/member-related";
 
 // 返回当前工作区的 tags
 export function getCurrentSpaceTagList(): TagView[] {
-  const store = useWorkspaceStore()
-  const workspace = store.currentSpace
+  const wStore = useWorkspaceStore()
+  const workspace = wStore.currentSpace
   if(!workspace) return []
   const tagList = workspace.tagList
   if(!tagList?.length) return []
@@ -168,43 +168,54 @@ export async function addTagIdsToRecents(tagIds: string[]) {
  * 将一个标签添加到 tagList 里
  */
 export async function addATag(opt: AddATagParam): Promise<AddATagRes> {
-  const store = useWorkspaceStore()
-  const workspace = store.currentSpace
+  const wStore = useWorkspaceStore()
+  const workspace = wStore.currentSpace
   if(!workspace) return { isOk: false, errMsg: "no workspace locally" }
   let tagList = workspace.tagList ?? []
   const texts = opt.text.split("/")
   const data = addTagToTagList(texts, tagList, opt.icon)
-  const res = await store.setTagList(data.tagList)
-  return { isOk: true, id: data.tagId }
+  const newTagId = data.tagId
+  const res = await wStore.setTagList(data.tagList)
+
+  if(newTagId) {
+    await addTagIdsToRecents([newTagId])
+  }
+
+  return { isOk: true, id: newTagId }
 }
 
 
 export async function addTags(list: AddTagsParam): Promise<AddTagsRes> {
-  const store = useWorkspaceStore()
-  const workspace = store.currentSpace
+  const wStore = useWorkspaceStore()
+  const workspace = wStore.currentSpace
   if(!workspace) return { isOk: false, errMsg: "no workspace locally" }
   let tagList = workspace.tagList ?? []
   const results: AddATagAtom[] = []
+  const newTagIds: string[] = []
 
   // 1. 一个个把 tag 塞进 tagList 中
   for(let i=0; i<list.length; i++) {
     const v = list[i]
     const texts = v.text.split("/")
     const data = addTagToTagList(texts, tagList, v.icon)
-    results.push({ text: v.text, id: data.tagId })
+    const id = data.tagId
+    results.push({ text: v.text, id })
+    newTagIds.push(id)
     tagList = data.tagList
   }
-  console.log("查看批量创建的新标签 results: ")
-  console.log(results)
-  console.log(" ")
 
-  // 2. 修改 workspace store
-  const res = await store.setTagList(tagList)
+  // 2. 修改 workspace wStore
+  const res = await wStore.setTagList(tagList)
 
   // 3. 通知全局
   const gStore = useGlobalStateStore()
   gStore.addTagChangedNum("create")
 
+  // 4. 将新的 tagIds 写入到 recent 里
+  if(newTagIds.length > 0) {
+    await addTagIdsToRecents(newTagIds)
+  }
+  
   return { isOk: true, results }
 }
 
@@ -231,16 +242,11 @@ export async function createTagsFromTagShows(
     return { isOk: false, tagShows }
   }
   
-  let newTagIds: string[] = []
   tagShows.forEach(v => {
     if(v.tagId) return
     const [atom] = results.splice(0, 1)
     v.tagId = atom.id
-    newTagIds.push(atom.id)
   })
-
-  // 把新创建的标签 塞进 recent 里
-  await addTagIdsToRecents(newTagIds)
 
   return { isOk: true, tagShows }
 }
@@ -283,8 +289,8 @@ export async function mergeTag(
   fromId: string, 
   toId: string
 ): Promise<BaseTagRes> {
-  const store = useWorkspaceStore()
-  const workspace = store.currentSpace
+  const wStore = useWorkspaceStore()
+  const workspace = wStore.currentSpace
   if(!workspace) return { isOk: false, errMsg: "no workspace locally" }
   let tagList = workspace.tagList ?? []
   const toTagView = findTagViewById(toId, tagList)
@@ -306,7 +312,7 @@ export async function mergeTag(
   // console.log(res2)
   // console.log(" ")
   
-  const res3 = await store.setTagList(res2)
+  const res3 = await wStore.setTagList(res2)
 
   // 待完善，去更新 contents 和 drafts
   const param: WhichTagChange = {

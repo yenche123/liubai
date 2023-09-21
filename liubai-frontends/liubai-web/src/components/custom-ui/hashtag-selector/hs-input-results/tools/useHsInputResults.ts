@@ -105,7 +105,7 @@ function toSelect(
   emit("tapitem", item2)
 
   // 还没有被添加，代表即将被添加，那么就写入到最近的 tagIds 中
-  if(!added) {
+  if(!added && item2.tagId) {
     addRecent(hsirData, item2.tagId)
   }
 }

@@ -38,7 +38,6 @@ export function useEcHashtag(
   })
 }
 
-// 激发 cui.showHashtagEditor() 
 async function triggerHashTagEditor(
   editor: TipTapEditor,
   emits: EditorCoreEmits,

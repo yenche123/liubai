@@ -13,6 +13,7 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import liuUtil from "~/utils/liu-util"
+import { initRecent, getRecent } from "./tag-recent"
 
 const hteData = reactive<HteData>({
   enable: false,
@@ -25,14 +26,15 @@ const hteData = reactive<HteData>({
   list: [],
   selectedIndex: -1,
   mode: "",
+  recentTagIds: [],
 })
 
 const inputEl = ref<HTMLInputElement | null>(null)
 const queryKey = "hashtageditor"
 let rr: RouteAndLiuRouter | undefined
 
-let lastInputVal = ""
-let lastEmoji = ""
+let firstInputVal = ""
+let firstEmoji = ""
 
 let _resolve: HteResolver | undefined
 
@@ -46,6 +48,7 @@ export function initHashtagEditor() {
     onTapConfirm,
     onTapItem,
     onInput,
+    onFocus,
     onEmojiChange,
   }
 }
@@ -73,15 +76,19 @@ function listenRouteChange() {
 
 
 export function showHashtagEditor(opt: HashTagEditorParam) {
-  lastInputVal = opt.text ?? ""
-  hteData.inputVal = lastInputVal
-  lastEmoji = opt.icon ? liuApi.decode_URI_component(opt.icon) : ""
-  hteData.emoji = lastEmoji
+  firstInputVal = opt.text ?? ""
+  hteData.inputVal = firstInputVal
+  firstEmoji = opt.icon ? liuApi.decode_URI_component(opt.icon) : ""
+  hteData.emoji = firstEmoji
   hteData.errCode = 0
   hteData.newTag = ""
   hteData.list = []
   hteData.selectedIndex = -1
   hteData.mode = opt.mode
+
+  if(opt.mode === "search") {
+    initRecent(hteData)
+  }
 
   openIt(rr, queryKey)
 
@@ -101,18 +108,37 @@ function toResolve(res: HashTagEditorRes) {
   _resolve = undefined
 }
 
+function onFocus() {
+  if(hteData.mode !== "search") return
+  if(!hteData.inputVal && hteData.list.length < 1) {
+    getRecent(hteData)
+  }
+}
+
+function reset(
+  errCode: number
+) {
+  hteData.errCode = errCode
+  hteData.newTag = ""
+
+  if(errCode === 0 && hteData.mode === "search") {
+    getRecent(hteData)
+  }
+  else {
+    hteData.list = []
+  }
+}
+
+
 function onInput() {
   let val = hteData.inputVal.trim()
   if(!val) {
-    hteData.errCode = 0
-    hteData.newTag = ""
-    hteData.list = []
+    reset(0)
     return
   }
   const res1 = hasStrangeChar(val)
   if(res1) {
-    hteData.errCode = 1
-    hteData.newTag = ""
+    reset(1)
     return
   }
   hteData.errCode = 0
@@ -229,7 +255,7 @@ function checkState() {
   
   if(m === "edit") {
 
-    if(lastInputVal === hteData.inputVal && lastEmoji === hteData.emoji) {
+    if(firstInputVal === hteData.inputVal && firstEmoji === hteData.emoji) {
       return false
     }
 

@@ -10,6 +10,7 @@ const {
   onTapMask,
   onTapItem,
   onInput,
+  onFocus,
   onEmojiChange,
 } = initHashtagEditor()
 
@@ -61,6 +62,7 @@ const onMouseEnterItem = (index: number) => {
           :maxlength="50" 
           :placeholder="t('tip.tag_ph')"
           @input="onInput" 
+          @focus="onFocus"
           autocomplete="nope"
         />
 
@@ -220,7 +222,7 @@ const onMouseEnterItem = (index: number) => {
       margin-inline-start: 90px;
       padding-bottom: 20px;
       font-size: var(--btn-font);
-      color: var(--main-note);
+      color: var(--liu-quote);
       user-select: none;
     }
 

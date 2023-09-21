@@ -13,6 +13,7 @@ export interface HteData {
   list: TagShow[]
   selectedIndex: number    // 被选择的 index
   mode: HteMode | ""
+  recentTagIds: string[]
 }
 
 export type HteResolver = (res: HashTagEditorRes) => void

@@ -6,6 +6,7 @@ import type { Ref } from "vue"
 import { 
   addATag, 
   tagIdsToShows, 
+  addTagIdsToRecents,
   createTagsFromTagShows,
 } from "~/utils/system/tag-related"
 import type { HashTagEditorRes } from "~/types/other/types-hashtag"
@@ -40,10 +41,12 @@ export function useCeTag(
     let tagIds = state.tagIds
     let id = data.tagId
     if(id) {
+      addTagIdsToRecents([id])
       if(tagIds.includes(id)) return
       state.tagIds.push(id)
       return
     }
+
     const text = data.text as string
     const res = await addATag({ text, icon: data.icon })
     id = res.id

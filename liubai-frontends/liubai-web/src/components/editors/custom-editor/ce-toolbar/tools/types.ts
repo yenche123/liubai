@@ -1,14 +1,9 @@
-
-import type { HashTagEditorRes } from "~/types/other/types-hashtag";
 import type { TipTapEditor } from "~/types/types-editor";
 import type { PropType } from "vue";
 import type { TagShow } from "~/types/types-content";
 
-
-
 export interface CetEmit {
   (evt: "imagechange", files: File[]): void
-  (evt: "addhashtag", res: HashTagEditorRes): void
   (evt: "newhashtags", tagShows: TagShow[]): void
   (evt: "tapmore"): void
 }
