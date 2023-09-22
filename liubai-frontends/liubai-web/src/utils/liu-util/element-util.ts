@@ -41,7 +41,6 @@ export function makeBoxScrollToShowChild(
   child: Element,
   opt?: MbstscOpt
 ) {
-
   const boxInfo = parent.getBoundingClientRect()
   const childInfo = child.getBoundingClientRect()
 
@@ -50,8 +49,24 @@ export function makeBoxScrollToShowChild(
   const top = childInfo.top
   const bottom = top + childInfo.height
 
-  // 如果子元素的上部和底部都在可视范围内
-  
+  // console.log("minY: ", minY)
+  // console.log("maxY: ", maxY)
+  // console.log("top: ", top)
+  // console.log("bottom: ", bottom)
+  // console.log(" ")
 
+  // 如果子元素的上部和底部都在可视范围内，则 return
+  if(top >= minY && top <= maxY) {
+    if(bottom <= maxY) return
+  }
 
+  const offset = opt?.offset ?? 7.5
+  const newTop = top - offset
+  if(newTop <= 0) return
+
+  const sOpt: ScrollToOptions = {
+    behavior: "smooth",
+    top: newTop
+  }
+  parent.scrollTo(sOpt)
 }

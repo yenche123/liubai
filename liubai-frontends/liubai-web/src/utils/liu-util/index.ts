@@ -43,7 +43,8 @@ import {
 } from "./custom-util"
 import openUtil from "./open-util"
 import {
-  isChildElementVisible
+  isChildElementVisible,
+  makeBoxScrollToShowChild,
 } from "./element-util"
 import trimUtil from "./trim-util"
 import viewUtil from "./view-util";
@@ -81,6 +82,7 @@ export default {
   getDefaultRouteQuery,
   needToOpenViceView,
   isChildElementVisible,
+  makeBoxScrollToShowChild,
   canTap,
   calibrateSidebarWidth,
   getMainViewCriticalValue,

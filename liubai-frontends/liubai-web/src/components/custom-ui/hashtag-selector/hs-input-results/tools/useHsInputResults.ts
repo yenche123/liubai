@@ -88,11 +88,8 @@ function watchSelectedIndex(
     if(!el) return
     const parent = document.querySelector(".hashtag-selector-container")
     if(!parent) return
-    const isVis = liuUtil.isChildElementVisible(parent, el)
-    // console.log("isVis: ", isVis)
-    if(isVis) return
-    const alignToTop = newV > oldV ? false : true
-    el.scrollIntoView(alignToTop)
+    
+    liuUtil.makeBoxScrollToShowChild(parent, el)
   })
 }
 
