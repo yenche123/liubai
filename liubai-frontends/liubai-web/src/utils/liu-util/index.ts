@@ -43,7 +43,6 @@ import {
 } from "./custom-util"
 import openUtil from "./open-util"
 import {
-  isChildElementVisible,
   makeBoxScrollToShowChild,
 } from "./element-util"
 import trimUtil from "./trim-util"
@@ -81,7 +80,6 @@ export default {
   canKeyUpDown,
   getDefaultRouteQuery,
   needToOpenViceView,
-  isChildElementVisible,
   makeBoxScrollToShowChild,
   canTap,
   calibrateSidebarWidth,

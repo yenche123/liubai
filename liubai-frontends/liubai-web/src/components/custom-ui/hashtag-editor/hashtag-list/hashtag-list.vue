@@ -84,7 +84,7 @@ const onTapItem = (index: number) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-height: 40vh;
+  max-height: 50vh;
   overflow-y: auto;
   border-top: 1px solid var(--line-hover);
   transition: .2s;

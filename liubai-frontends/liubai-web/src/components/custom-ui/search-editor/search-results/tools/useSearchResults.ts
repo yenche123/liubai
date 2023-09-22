@@ -19,8 +19,6 @@ export function useSearchResults(
     if(!el) return
     const parent = document.querySelector(".sr-container")
     if(!parent) return
-    if(liuUtil.isChildElementVisible(parent, el)) return
-    let alignToTop = newV > oldV ? false : true
-    el.scrollIntoView(alignToTop)
+    liuUtil.makeBoxScrollToShowChild(parent, el)
   })
 }
