@@ -42,7 +42,16 @@ export function makeBoxScrollToShowChild(
   opt?: MbstscOpt
 ) {
 
+  const boxInfo = parent.getBoundingClientRect()
+  const childInfo = child.getBoundingClientRect()
 
+  const minY = boxInfo.y
+  const maxY = minY + boxInfo.height
+  const top = childInfo.top
+  const bottom = top + childInfo.height
+
+  // 如果子元素的上部和底部都在可视范围内
+  
 
 
 }
