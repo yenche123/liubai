@@ -69,6 +69,7 @@ export const domainAllowed = [
   "speakerdeck.com",
   "baike.baidu.com",
   "bbs.vika.cn",
+  "player.fireside.fm",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
@@ -107,6 +108,7 @@ export const domainNotAllowed = [
   "cal.com",
   "plausible.io",
   "vika.cn",
+  "share.fireside.fm",
 ]
 
 export const mastodonDomains = [

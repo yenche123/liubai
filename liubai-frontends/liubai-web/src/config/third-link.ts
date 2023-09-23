@@ -100,6 +100,10 @@ export default {
   // vika share
   VIKA_SHARE: "https://vika.cn/share/",
 
+  // fireside
+  FIRESIDE_SHARE: "https://share.fireside.fm/episode/",
+  FIRESIDE_PLAYER: "https://player.fireside.fm/v2/",
+
   // chrome site setting
   CHROME_SITE_SETTING: "chrome://settings/content/siteDetails?site=__XXX__",
 

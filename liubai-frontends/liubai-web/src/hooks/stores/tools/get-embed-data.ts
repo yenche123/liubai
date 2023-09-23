@@ -421,6 +421,21 @@ export function getEmbedData(
     }
   }
 
+  // fireside
+  const firesideShare = new URL(thirdLink.FIRESIDE_SHARE)
+  const firesidePlayer = new URL(thirdLink.FIRESIDE_PLAYER)
+  const isFireside1 = valTool.isInDomain(h, firesideShare.hostname)
+  if(isFireside1) {
+    const firesideReg1 = /(?<=\/episode\/)[\w\-\+]{16,32}/g
+    const firesideMatch1 = p.match(firesideReg1)
+    if(firesideMatch1) {
+      const firesideId = firesideMatch1[0]
+      firesidePlayer.pathname += firesideId
+      firesidePlayer.searchParams.set("theme", themeVal)
+      return { link: firesidePlayer.toString() }
+    }
+  }
+
   // street voice
   const streetVoice = new URL(thirdLink.STREET_VOICE)
   const isStreetVoice = valTool.isInDomain(h, streetVoice.hostname)
