@@ -137,10 +137,14 @@ async function handle_showCountdown(
 }
 
 function handel_comment(ctx: TcoCtx) {
-  if(ctx.props.displayType !== "list") {
+  const { isInCommentDetail, displayType } = ctx.props
+
+  // 当前动态不在列表里 并且 不在 comment-detail 里
+  if(displayType !== "list" && !isInCommentDetail) {
     ctx.emits("requestfocus")
     return
   }
+
   cui.showCommentPopup({
     operation: "reply_thread",
     threadShow: ctx.props.threadData,

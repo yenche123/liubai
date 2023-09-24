@@ -41,7 +41,10 @@ const props = defineProps({
   },
   showTxt: {      // 这个是用于 视图切换
     type: String as PropType<TrueOrFalse>
-  }
+  },
+  isInCommentDetail: {
+    type: Boolean,
+  },
 })
 const emit = defineEmits<TcEmits>()
 const {

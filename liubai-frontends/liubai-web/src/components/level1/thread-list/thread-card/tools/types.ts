@@ -14,6 +14,7 @@ export interface TcProps {
   position: number
   showType: ThreadCardShowType
   showTxt?: TrueOrFalse
+  isInCommentDetail: boolean
 }
 
 export interface TcEmits {

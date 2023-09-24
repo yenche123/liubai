@@ -58,6 +58,7 @@ const { t } = useI18n()
     :thread-data="cdData.thread"
     display-type="detail"
     :position="0"
+    is-in-comment-detail
     @newoperate="(op) => receiveOperation(op, cdData.thread)"
   ></ThreadCard>
 
