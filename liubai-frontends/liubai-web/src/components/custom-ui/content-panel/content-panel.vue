@@ -14,6 +14,7 @@ const {
   onMouseLeaveEmoji,
   onTapEmoji,
   onTapDetail,
+  onTapReply,
 } = initContentPanel()
 const { t } = useI18n()
 
@@ -63,7 +64,7 @@ const iconColor = `var(--other-btn-text)`
         <!-- 回复、分享 -->
         <div class="cp-reply-share">
 
-          <div class="cp-btn">
+          <div class="cp-btn" @click.stop="onTapReply">
             <div class="cp-icon">
               <svg-icon name="comment" class="cp-svg-icon"
                 :color="iconColor"

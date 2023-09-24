@@ -5,6 +5,7 @@ import { reactive, watch } from "vue"
 import type { 
   ContentPanelData,
   ContentPanelParam,
+  ContentPanelRes,
   ContentPanelResolver,
 } from "./types"
 import { emojiList } from "~/config/emoji-list"
@@ -41,6 +42,7 @@ export function initContentPanel() {
     onMouseLeaveEmoji,
     onTapEmoji,
     onTapDetail,
+    onTapReply,
   }
 }
 
@@ -75,6 +77,11 @@ export function showContentPanel(param: ContentPanelParam) {
     _resolve = a
   }
   return new Promise(_wait)
+}
+
+function onTapReply() {
+  console.log("onTapReply.......")
+  
 }
 
 function onTapDetail() {
@@ -149,7 +156,7 @@ function listenRouteChange() {
     }
 
     if(_resolve) {
-      toResolve()
+      toResolve({})
     }
 
     _toClose()
@@ -158,11 +165,12 @@ function listenRouteChange() {
 
 function onTapCancel() {
   closeIt(rr, queryKey)
+  toResolve({})
 }
 
-function toResolve() {
+function toResolve(res: ContentPanelRes) {
   if(!_resolve) return
-  _resolve(true)
+  _resolve(res)
   _resolve = undefined
 }
 
