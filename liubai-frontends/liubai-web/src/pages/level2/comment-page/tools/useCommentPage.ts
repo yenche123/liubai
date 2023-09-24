@@ -1,4 +1,4 @@
-import { reactive, watch } from "vue"
+import { onDeactivated, reactive, watch } from "vue"
 import type { CpData } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
@@ -21,6 +21,10 @@ function listenRouteChange(
 ) {
   const rr = useRouteAndLiuRouter()
   const { list } = dpData
+
+  onDeactivated(() => {
+    liuUtil.view.closeAllViews(list)
+  })
 
   const toCheck = (r: RouteLocationNormalizedLoaded) => {
     const { name, params } = r

@@ -14,6 +14,7 @@ export interface CommentDetailData {
   hasReachedBottom: boolean
   hasReachedTop: boolean
   showZeroBox: boolean
+  focusNum: number
 }
 
 export interface CommentDetailProps {

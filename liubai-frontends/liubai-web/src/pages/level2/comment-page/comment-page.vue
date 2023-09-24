@@ -36,6 +36,7 @@ const { t } = useI18n()
           <navi-virtual></navi-virtual>
           <CommentContent
             :comment-id="item.id"
+            :is-showing="item.show"
           ></CommentContent>
         </scroll-view>
         <navi-bar :title="t('common.detail')"></navi-bar>

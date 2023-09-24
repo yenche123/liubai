@@ -80,8 +80,8 @@ export function showContentPanel(param: ContentPanelParam) {
 }
 
 function onTapReply() {
-  console.log("onTapReply.......")
-  
+  closeIt(rr, queryKey)
+  toResolve({ toReply: true })
 }
 
 function onTapDetail() {
@@ -140,6 +140,7 @@ async function onTapEmoji(index: number) {
 
   // 去关闭弹窗
   closeIt(rr, queryKey)
+  toResolve({})
 }
 
 

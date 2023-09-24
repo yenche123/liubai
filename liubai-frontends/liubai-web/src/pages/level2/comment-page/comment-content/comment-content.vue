@@ -5,6 +5,9 @@ defineProps({
   commentId: {
     type: String,
     required: true,
+  },
+  isShowing: {
+    type: Boolean,
   }
 })
 
@@ -16,6 +19,7 @@ defineProps({
     <div class="liu-mc-box" v-if="commentId">
       <CommentDetail 
         :target-id="commentId"
+        :is-showing="isShowing"
         location="detail-page"
       ></CommentDetail>
     </div>

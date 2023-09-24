@@ -30,7 +30,6 @@ const props = defineProps({
   },
   isShowing: {
     type: Boolean,
-    default: true,
   },
 })
 
@@ -103,6 +102,7 @@ const { t } = useI18n()
       :parent-comment="cdData.targetComment.replyToComment ?? cdData.targetComment._id"
       :reply-to-comment="cdData.targetComment._id"
       :is-showing="isShowing"
+      :focus-num="cdData.focusNum"
     ></CommentEditor>
 
     <!-- belowList -->

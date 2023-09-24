@@ -40,6 +40,16 @@ function showView<T extends BasicView, K extends keyof T>(
   }
 }
 
+
+function closeAllViews<T extends BasicView>(
+  list: T[],
+) {
+  list.forEach(v => {
+    v.show = false
+  })
+}
+
 export default {
   showView,
+  closeAllViews,
 }

@@ -15,12 +15,13 @@ import { svBottomUpKey } from "~/utils/provide-keys";
 import type { CommentShow } from "~/types/types-content";
 import { getValuedComments } from "~/utils/other/comment-related"
 import cfg from "~/config"
+import { useTemporaryStore } from "~/hooks/stores/useTemporaryStore";
 
 export function useCommentDetail(
   props: CommentDetailProps,
   emit: CommentDetailEmit
 ) {
-
+  const tmpStore = useTemporaryStore()
   const { height } = useWindowSize()
   const svBottomUp = inject(svBottomUpKey)
 
@@ -32,6 +33,7 @@ export function useCommentDetail(
     hasReachedBottom: false,
     hasReachedTop: false,
     showZeroBox: true,
+    focusNum: 0,
   })
 
   const ctx: CommentDetailCtx = {
@@ -52,6 +54,14 @@ export function useCommentDetail(
   watch(cid2, (newV) => {
     cdData.targetId = newV
     loadTargetComment(ctx)
+  }, { immediate: true })
+
+  // 监听 isShowing
+  const isShowing = toRef(props, "isShowing")
+  watch(isShowing, (newV) => {
+    if(!newV) return
+    const autoFocus = tmpStore.getFocusCommentEditor()
+    if(autoFocus) cdData.focusNum++
   }, { immediate: true })
 
   return {

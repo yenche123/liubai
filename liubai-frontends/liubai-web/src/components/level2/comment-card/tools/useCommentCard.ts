@@ -10,6 +10,8 @@ import { useGlobalStateStore } from '~/hooks/stores/useGlobalStateStore';
 import liuUtil from "~/utils/liu-util";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { emojiList } from "~/config/emoji-list"
+import { useTemporaryStore } from "~/hooks/stores/useTemporaryStore";
+import valTool from "~/utils/basic/val-tool";
 
 export function useCommentCard(
   props: CommentCardProps,
@@ -40,6 +42,23 @@ export function useCommentCard(
     onMouseLeaveComment,
   } = initActionbar(props)
 
+  const toCommentDetail = () => {
+    const cid2 = props.cs._id
+    let opt = { rr }
+    liuUtil.open.openComment(cid2, opt)
+  }
+
+  const toContentPanel = async () => {
+    const res = await cui.showContentPanel({ comment: props.cs, onlyReaction: false })
+    if(res?.toReply) {
+      // 等待 content-panel 的弹窗划出
+      await valTool.waitMilli(250)
+      const tempStore = useTemporaryStore()
+      tempStore.setFocusCommentEditor()
+      toCommentDetail()
+    }
+  }
+
 
   const onTapContainer = (e: MouseEvent) => {
     const { target, currentTarget } = e
@@ -49,14 +68,12 @@ export function useCommentCard(
     if(gStore.isJustSelect()) return
 
     const cha = liuApi.getCharacteristic()
-    const cid2 = props.cs._id
-    let opt = { rr }
 
     if(cha.isMobile) {
-      cui.showContentPanel({ comment: props.cs, onlyReaction: false })
+      toContentPanel()
     }
     else {
-      liuUtil.open.openComment(cid2, opt)
+      toCommentDetail()
     }
   }
 
