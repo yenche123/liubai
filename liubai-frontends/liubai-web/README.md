@@ -1,6 +1,6 @@
 # LB
 
-I am sorry about making SJTU disappointed
+I am fucking tired!!!!!!!!!!!
 
 ## 开发备注
 
