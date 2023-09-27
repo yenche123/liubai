@@ -10,6 +10,7 @@ import time from "~/utils/basic/time"
 let routeChangeNum = 0
 let lastRouteChange = 0
 
+// 初始化工作区
 export function initSpace(
   store: WorkspaceStore
 ) {
@@ -65,7 +66,8 @@ async function whenRouteChange(
   }
 
   // 只剩 个人工作区的可能了
-  // 先检查是否已经在个人工作区里
+  // 先检查是否已经在个人工作区里，若是则 return
+  // 因为代表已经初始化了
   if(!store.isCollaborative && store.spaceId) return
 
   // 再检查是否为 "不必检查 workspace 的页面"
