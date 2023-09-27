@@ -5,12 +5,14 @@ import { initSpace } from "./tools/init-space"
 import { findSystem } from "./tools/find-sytem"
 import type { SpaceAndMemberOpt } from "~/hooks/stores/useWorkspaceStore"
 import liuEnv from "../liu-env"
+import { initCycle } from "./tools/init-cycle"
 
 export async function init() {
   const store = useWorkspaceStore()
   const env = liuEnv.getEnv()
 
   initSpace(store)
+  initCycle()
 
   // 当前为登录模式，则忽略
   if(env.API_URL) {
