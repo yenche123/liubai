@@ -16,9 +16,11 @@ import type { LiuRemindMe } from "~/types/types-atom"
 import type { ContentConfig } from "~/types/other/types-custom";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 
-const SEC = 1000
-const MIN = 60 * SEC
-const HOUR = 60 * MIN
+const { 
+  SECONED: SEC,
+  MINUTE: MIN,
+  HOUR,
+} = time
 
 // 专门显示 "什么时候" / "提醒我"
 export function useWhenAndRemind(props: TcaProps) {

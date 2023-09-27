@@ -43,11 +43,20 @@ const getLocalTimeStr = (): string => {
   return `${mon}-${date} ${hr}:${min}:${sec}`
 }
 
+// 将 "秒" / "分" / "时" / "天" 转为 毫秒数
+const SECONED = 1000
+const MINUTE = 60 * SECONED
+const HOUR = 60 * MINUTE
+const DAY = 24 * HOUR
 
 export default {
   getTime,
   getLastCharOfStamp,
   getLocalTime,
   getDate,
-  getLocalTimeStr
+  getLocalTimeStr,
+  SECONED,
+  MINUTE,
+  HOUR,
+  DAY,
 }

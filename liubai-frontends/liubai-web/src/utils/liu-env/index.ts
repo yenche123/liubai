@@ -26,6 +26,10 @@ function getEnv() {
   // i18n
   const FALLBACK_LOCALE = import.meta.env.VITE_FALLBACK_LOCALE
 
+  // 系统设置
+  const REMOVING_DAYS = import.meta.env.VITE_REMOVING_DAYS
+  const DELETING_DAYS = import.meta.env.VITE_DELETING_DAYS
+
   // iframe proxy
   const IFRAME_PROXY = import.meta.env.VITE_IFRAME_PROXY
   const IFRAME_PROXY_KEY = import.meta.env.VITE_IFRAME_PROXY_KEY
@@ -48,6 +52,8 @@ function getEnv() {
     FREE_COMMENT_IMG_NUM: Number(FREE_COMMENT_IMG_NUM),
     PREMIUM_COMMENT_IMG_NUM: Number(PREMIUM_COMMENT_IMG_NUM),
     FALLBACK_LOCALE,
+    REMOVING_DAYS: Number(REMOVING_DAYS),
+    DELETING_DAYS: Number(DELETING_DAYS),
     IFRAME_PROXY,
     IFRAME_PROXY_KEY,
   }

@@ -88,16 +88,13 @@ export function formatStamp(
 // 给定类型为 LiuRemindLater 的值，以当前时间为基准，计算出对应的时间戳
 export function getLaterStamp(val: LiuRemindLater): number {
   const now = time.getTime()
-  const MIN = 1000 * 60
-  const HOUR = 60 * MIN
-  const DAY = 24 * HOUR
 
   let diff = 0
-  if(val === "30min") diff = 30 * MIN
-  else if(val === "1hr") diff = HOUR
-  else if(val === "2hr") diff = 2 * HOUR
-  else if(val === "3hr") diff = 3 * HOUR
-  else if(val === "tomorrow_this_moment") diff = DAY
+  if(val === "30min") diff = 30 * time.MINUTE
+  else if(val === "1hr") diff = time.HOUR
+  else if(val === "2hr") diff = 2 * time.HOUR
+  else if(val === "3hr") diff = 3 * time.HOUR
+  else if(val === "tomorrow_this_moment") diff = time.DAY
 
   let laterStamp = now + diff
   return laterStamp
@@ -107,8 +104,7 @@ export function getEarlyStamp(
   whenStamp: number, 
   early_minute: LiuRemindEarly
 ) {
-  const MIN = 1000 * 60
-  const earlyStamp = whenStamp - (early_minute * MIN)
+  const earlyStamp = whenStamp - (early_minute * time.MINUTE)
   return earlyStamp
 }
 
@@ -171,10 +167,7 @@ export function getCountDownStr(
 
   const { t, locale } = i18n.global
   const lang = locale.value
-  const SEC = 1000
-  const MIN = 60 * SEC
-  const HOUR = 60 * MIN
-  const DAY = 24 * HOUR
+  const { SECONED, MINUTE, HOUR, DAY } = time
   const DAY_10 = 10 * DAY
   const DAY_31 = 31 * DAY
 
@@ -194,8 +187,8 @@ export function getCountDownStr(
 
   // 剩下一小时内
   if(diffStamp < HOUR) {
-    min_num = Math.floor(diffStamp / MIN)
-    sec_num = Math.floor((diffStamp % MIN) / SEC)
+    min_num = Math.floor(diffStamp / MINUTE)
+    sec_num = Math.floor((diffStamp % MINUTE) / SECONED)
     min = lang === "en" ? valTool.format0(min_num) : String(min_num)
     sec = lang === "en" ? valTool.format0(sec_num) : String(sec_num)
     return t("date_related.countdown_1", { min, sec })
@@ -204,7 +197,7 @@ export function getCountDownStr(
   // 剩下一天内
   if(diffStamp < DAY) {
     hr_num = Math.floor(diffStamp / HOUR)
-    min_num = Math.floor((diffStamp % HOUR) / MIN)
+    min_num = Math.floor((diffStamp % HOUR) / MINUTE)
     if(lang === "en") {
       return handleS({ hr_num, min_num })
     }
@@ -220,7 +213,7 @@ export function getCountDownStr(
     remainder = diffStamp % DAY
     hr_num = Math.floor(remainder / HOUR)
     remainder = remainder % HOUR
-    min_num = Math.floor(remainder / MIN)
+    min_num = Math.floor(remainder / MINUTE)
     if(lang === "en") {
       return handleS({ day_num, hr_num, min_num })
     }

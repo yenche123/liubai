@@ -4,6 +4,8 @@ import type { ContentLocalTable } from "~/types/types-table";
 import { equipThreads } from "../../equip/threads";
 import { getThreadsByCollection } from "../../collection-controller/collection-controller"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore" 
+import liuEnv from "~/utils/liu-env";
+import time from "~/utils/basic/time";
 
 async function getList(
   opt: TcListOption
@@ -22,6 +24,8 @@ async function getList(
     excludeIds,
     stateId,
   } = opt
+  const { REMOVING_DAYS } = liuEnv.getEnv()
+  const now = time.getTime()
 
   if(collectType === "EXPRESS" || collectType === "FAVORITE") {
     const res0 = await getThreadsByCollection(opt as TcListOption)
@@ -39,7 +43,8 @@ async function getList(
       pinStamp, 
       _id, 
       stateId: stateOnThread,
-      infoType
+      infoType,
+      updatedStamp,
     } = item
     
     if(infoType !== "THREAD") return false
@@ -55,6 +60,16 @@ async function getList(
     if(item.spaceId !== spaceId) return false
     if(item.oState !== oState) return false
     if(member && member !== item.member) return false
+
+    // 如果是已被移除的动态
+    // REMOVING_DAYS 以外的就不展示
+    if(item.oState === "REMOVED") {
+      const diff = now - updatedStamp
+      if(diff > REMOVING_DAYS * time.DAY) {
+        return false
+      }
+    }
+
     return true
   }
 
