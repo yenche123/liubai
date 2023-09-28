@@ -14,11 +14,12 @@ export async function init() {
   initSpace(store)
   initCycle()
 
-  // 当前为登录模式，则忽略
+  // 当前为 [登录模式] 则忽略
   if(env.API_URL) {
     return
   }
 
+  // 当前为 [纯本地模式]
   const localPf = localCache.getLocalPreference()
   if(localPf.local_id) {
     // 【待完善】去修改 User 表里的 lastRefresh

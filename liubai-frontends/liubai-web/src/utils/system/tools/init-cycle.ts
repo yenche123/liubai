@@ -21,6 +21,7 @@ export function initCycle() {
 }
 
 // 将超过 7 天且为 DELETED 的 contents 都给删除
+// 只加载最旧的 50 条
 async function handleDeletedContents() {
 
 }

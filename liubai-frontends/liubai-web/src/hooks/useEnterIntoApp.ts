@@ -1,4 +1,5 @@
 // 当用户进入 "应用内" 时触发
+//【待完善】并且 workspaceStore 已经完成初始化时
 import { watch, type WatchStopHandle } from "vue"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { SimpleFunc } from "~/utils/basic/type-tool"
