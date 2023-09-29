@@ -26,7 +26,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
   const currentSpace = ref<WorkspaceLocalTable | null>(null)
   const myMember = ref<MemberLocalTable | null>(null)
 
-  // 我有在的工作区 id
+  // 我有在的工作区 id 们
   const mySpaceIds = ref<string[]>([])
 
   // 获取当前工作区的状态列表
