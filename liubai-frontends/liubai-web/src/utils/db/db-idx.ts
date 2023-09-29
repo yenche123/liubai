@@ -1,5 +1,7 @@
 
-export const DB_VERSION = 39
+
+// 版本号，凡是 dexieIdxs 被修改了，这里都要累加！！！
+export const DB_VERSION = 41
 
 const dexieIdxs = {
   users: [
@@ -21,6 +23,8 @@ const dexieIdxs = {
   ],
   contents: [
     "_id",
+    "oState",
+    "[oState+updatedStamp]",
     "[_id+infoType+oState]",
     "[parentThread+oState]",
     "[parentThread+oState+createdStamp]",

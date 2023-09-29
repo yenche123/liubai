@@ -144,6 +144,8 @@ async function deleteForever(
     files: [],
     tagIds: [],
     tagSearched: [],
+    search_title: "",
+    search_other: "",
   }
   const res = await db.contents.update(id, newData)
   console.log(`db-opt deleteForever 的结果: `)
