@@ -109,7 +109,7 @@ function whenCommentUpdate(
     return
   }
 
-  // III. 检查 belowList 和 aboveList
+  // III. 检查 belowList 和 aboveList 是否存在 targetId 的被更动的评论
   const _checkList = (list: CommentShow[]) => {
     let hasFound = false
     for(let i=0; i<list.length; i++) {

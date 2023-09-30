@@ -3,6 +3,7 @@ import type { CommentCardProps } from "./types"
 import cui from "~/components/custom-ui"
 import type { CommentShow } from "~/types/types-content"
 import contentOperate from "~/hooks/content/content-operate"
+import { db } from "~/utils/db"
 
 export function useCommentOperation(
   props: CommentCardProps
@@ -93,5 +94,12 @@ async function prepareToDelete(
     modalType: "warning"
   })
   if(!res.confirm) return
+
+
+  // 1. 直接修改 db 改成 DELETED
+
+  // 2. 全局通知各组件
+
+  // 3. snackbar（不带 undo）
 
 }
