@@ -6,6 +6,7 @@ import { encode as blurhashEncode } from "blurhash";
 import { getImgLayout } from "./tools/img-layout"
 import type { Ref } from "vue"
 import ExifReader from "exifreader"
+import { useWindowSize } from "~/hooks/useVueUse"
 
 type FileWithCharacteristic = { 
   file: File
@@ -102,6 +103,15 @@ async function compress(files: File[]) {
 }
 
 function _toCompress(file: File) {
+  const { width } = useWindowSize()
+  let maxWidth = Math.floor(width.value * 2)
+  if(maxWidth < 1280) maxWidth = 1280
+  else if(maxWidth > 2560) maxWidth = 2560
+
+  let quality = 0.9
+  if(maxWidth < 1440) quality = 0.86
+  else if(maxWidth < 2000) quality = 0.8
+  else quality = 0.75
 
   const _excute = (a: CompressResolver) => {
     const checkOrientation = file.size < CHECK_ORIENTATION_POINT
@@ -109,11 +119,11 @@ function _toCompress(file: File) {
     const opt = {
       strict: true,
       checkOrientation,
-      maxWidth: 1280,
-      quality: 0.86,
+      maxWidth,
+      quality,
       convertTypes: 'image/png,image/webp',
       convertSize: 1 * 1024 * 1024,   // 1mb 以上的 convertTypes 图片，都会被转成 JPEGs
-      success(res: File) {
+      success(res: File) {        
         a(res)
       },
       error(err: Error) {
