@@ -117,6 +117,9 @@ function handleRelation(
       if(tmpFirst.prevIReplied) tmpFirst.prevIReplied = false
     }
   }
+  else {
+    if(tmpFirst.prevIReplied) tmpFirst.prevIReplied = false
+  }
 
   // 处理中间
   for(let i=1; i<length; i++) {
@@ -145,6 +148,9 @@ function handleRelation(
       if(tmpLast.nextRepliedMe) tmpLast.nextRepliedMe = false
       if(nextComment.prevIReplied) nextComment.prevIReplied = false
     }
+  }
+  else {
+    if(tmpLast.nextRepliedMe) tmpLast.nextRepliedMe = false
   }
 }
 

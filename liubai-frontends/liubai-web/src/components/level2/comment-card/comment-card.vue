@@ -373,6 +373,7 @@ const {
     font-size: var(--mini-font);
     color: var(--main-note);
     word-wrap: break-word;
+    user-select: none;
   }
 
 }

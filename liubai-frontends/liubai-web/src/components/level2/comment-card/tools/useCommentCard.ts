@@ -161,12 +161,14 @@ function initSomeVals(
   const allowHover = computed(() => {
     if(props.isTargetComment) return false
     if(props.location === "popup") return false
+    if(props.cs.oState !== "OK") return false
     return true
   })
 
   const hoverColor = computed(() => {
     if(props.isTargetComment) return "transparent"
     if(props.location === "popup") return "transparent"
+    if(props.cs.oState !== "OK") return "transparent"
     return "var(--comment-hover-one)"
   })
 
@@ -184,11 +186,11 @@ function initActionbar(
   const enableBubbleBar = computed(() => {
     if(props.location === 'popup') return false
     if(props.isTargetComment) return false
+    if(props.cs.oState !== "OK") return false
     const cha = liuApi.getCharacteristic()
     if(cha.isMobile) return false
     return true
   })
-
 
   const showBubbleBar = ref(false)
 

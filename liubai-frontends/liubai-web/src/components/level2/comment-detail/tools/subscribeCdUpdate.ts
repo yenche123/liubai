@@ -13,6 +13,7 @@ import type { CommentShow, ThreadShow } from "~/types/types-content"
 import { storeToRefs } from "pinia"
 import { watch } from "vue"
 import valTool from "~/utils/basic/val-tool";
+import commentController from "~/utils/controllers/comment-controller/comment-controller";
 
 export function subscribeCdUpdate(
   cdData: CommentDetailData
@@ -121,9 +122,10 @@ function whenCommentUpdate(
     return hasFound
   }
 
-  let founded = _checkList(belowList)
-  // 若是被删除的评论
-  if(founded && changeType === "delete") {
+  const found = _checkList(belowList)
+
+  // 若在 belowList 找到这次被删除的评论
+  if(found && changeType === "delete") {
     // 且上级或上上级指向当前目标评论时
     if(targetId === replyToComment || targetId === parentComment) {
       targetComment.commentNum = valTool.minusAndMinimumZero(targetComment.commentNum)
@@ -132,9 +134,18 @@ function whenCommentUpdate(
     if(replyToComment === parentComment && thread) {
       thread.commentNum = valTool.minusAndMinimumZero(thread.commentNum)
     }
+
+    // 重新检查 relation
+    commentController.handleRelation(belowList)
   }
 
-  _checkList(aboveList)
+  const found2 = _checkList(aboveList)
+  // 若在 aboveList 找到这次被删除的评论
+  if(found2 && changeType === "delete") {
+    // 重新检查 relation
+    commentController.handleRelation(aboveList)
+  }
+
 }
 
 
