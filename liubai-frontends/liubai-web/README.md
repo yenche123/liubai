@@ -1,6 +1,6 @@
 # LB
 
-I am fucking tired!!!!!!!!!!!
+Tomorrow Dayoff!
 
 ## 开发备注
 
