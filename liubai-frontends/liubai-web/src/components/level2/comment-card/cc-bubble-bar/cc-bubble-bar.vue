@@ -77,12 +77,25 @@ const { t } = useI18n()
     </div>
 
     <!-- 分享按钮 -->
-    <div class="liu-hover ccbb-box"
+    <!-- <div class="liu-hover ccbb-box"
       :aria-label="t('common.share')"
       @click.stop="$emit('newoperation', 'share')"
     >
       <div class="ccbb-svg-box">
         <svg-icon name="share" class="ccbb-svg"
+          :color="default_color"
+        ></svg-icon>
+      </div>
+    </div> -->
+
+    <!-- 编辑按钮 -->
+    <div class="liu-hover ccbb-box"
+      v-if="cs.isMine"
+      :aria-label="t('common.edit')"
+      @click.stop="$emit('newoperation', 'edit')"
+    >
+      <div class="ccbb-svg-box">
+        <svg-icon name="edit_400" class="ccbb-svg-edit"
           :color="default_color"
         ></svg-icon>
       </div>
@@ -166,6 +179,11 @@ const { t } = useI18n()
 .ccbb-svg {
   width: 22px;
   height: 22px;
+}
+
+.ccbb-svg-edit {
+  width: 21px;
+  height: 21px;
 }
 
 .ccbb-svg_reply {
