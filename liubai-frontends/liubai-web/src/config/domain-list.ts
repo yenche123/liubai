@@ -70,6 +70,7 @@ export const domainAllowed = [
   "baike.baidu.com",
   "bbs.vika.cn",
   "player.fireside.fm",
+  "ithome.com"
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
@@ -148,4 +149,5 @@ export const mastodonDomains = [
   "tech.lgbt",
   "c.im",
   "chaos.social",
+  "mathstodon.xyz",
 ]
