@@ -4,6 +4,7 @@ import NaviLink from "~/components/common/navi-link/navi-link.vue";
 import ScTop from './sc-top/sc-top.vue';
 import { computed, PropType } from 'vue';
 import { useSbContent } from './tools/useSbContent';
+import { useSbcCursor } from './tools/useSbcCursor';
 
 const emits = defineEmits<{
   (event: "canclosepopup"): void
@@ -36,6 +37,12 @@ const {
   prefix,
 } = useSbContent()
 
+const {
+  cursorInfo,
+  onMouseEnter,
+  onMouseLeave,
+} = useSbcCursor()
+
 const color = "var(--navi-normal)"
 const color_selected = "var(--main-normal)"
 
@@ -50,85 +57,115 @@ const color_selected = "var(--main-normal)"
     :is-fixed="mode === 'fixed'"
   ></ScTop>
 
+  <div class="sb-cursor" v-if="cursorInfo.enable"></div>
+
   <!-- 首页 -->
-  <NaviLink class="sb-link liu-hover" 
-    :class="{ 'sb-link_selected': state === 'index' }" 
-    :to="prefix"
-    :tabindex="tabindex"
-    @aftertap="toClosePopup"
+  <div class="sb-link-box sb-link-index" 
+    @mouseenter="() => onMouseEnter('index')"
+    @mouseleave="onMouseLeave"
   >
-    <div class="sb-icon-container">
-      <SvgIcon class="sb-icon" 
-        :name="state === 'index' ? 'home_selected' : 'home'" 
-        :color="state === 'index' ? color_selected : color"
-      ></SvgIcon>
-    </div>
-    <span>{{ t("common.home") }}</span>
-  </NaviLink>
+    <NaviLink class="sb-link" 
+      :class="{ 'sb-link_selected': state === 'index' }" 
+      :to="prefix"
+      :tabindex="tabindex"
+      @aftertap="toClosePopup"
+    >
+      <div class="sb-icon-container">
+        <SvgIcon class="sb-icon" 
+          :name="state === 'index' ? 'home_selected' : 'home'" 
+          :color="state === 'index' ? color_selected : color"
+        ></SvgIcon>
+      </div>
+      <span>{{ t("common.home") }}</span>
+    </NaviLink>
+  </div>
   
   <!-- 收藏 -->
-  <NaviLink class="sb-link liu-hover" 
-    :class="{ 'sb-link_selected': state === 'favorite' }" 
-    :to="prefix + 'favorite'"
-    :tabindex="tabindex"
-    @aftertap="toClosePopup"
+  <div class="sb-link-box sb-link-favorite" 
+    @mouseenter="() => onMouseEnter('favorite')"
+    @mouseleave="onMouseLeave"
   >
-    <div class="sb-icon-container">
-      <SvgIcon class="sb-icon" 
-        :name="state === 'favorite' ? 'star_selected' : 'star'" 
-        :color="state === 'favorite' ? color_selected : color"
-      ></SvgIcon>
-    </div>
-    <span>{{ t("common.favorite") }}</span>
-  </NaviLink>
+    <NaviLink class="sb-link" 
+      :class="{ 'sb-link_selected': state === 'favorite' }" 
+      :to="prefix + 'favorite'"
+      :tabindex="tabindex"
+      @aftertap="toClosePopup"
+    >
+     <div class="sb-icon-container">
+        <SvgIcon class="sb-icon" 
+          :name="state === 'favorite' ? 'star_selected' : 'star'" 
+          :color="state === 'favorite' ? color_selected : color"
+        ></SvgIcon>
+      </div>
+      <span>{{ t("common.favorite") }}</span>
+    </NaviLink>
+  </div>
+  
 
   <!-- 标签 -->
-  <AppLink class="sb-link liu-hover" 
-    to="?tags=01"
-    :class="{ 'sb-link_selected': state === 'tags' }"
-    :tabindex="tabindex"
+  <div class="sb-link-box sb-link-tags"
+    @mouseenter="() => onMouseEnter('tags')"
+    @mouseleave="onMouseLeave"
   >
-    <div class="sb-icon-container">
-      <SvgIcon class="sb-icon" 
-        name="tag" 
-        :color="state === 'tags' ? color_selected : color"
-      ></SvgIcon>
-    </div>
-    <span>{{ t("common.tags") }}</span>
-  </AppLink>
+    <AppLink class="sb-link" 
+      to="?tags=01"
+      :class="{ 'sb-link_selected': state === 'tags' }"
+      :tabindex="tabindex"
+    >
+      <div class="sb-icon-container">
+        <SvgIcon class="sb-icon" 
+          name="tag" 
+          :color="state === 'tags' ? color_selected : color"
+        ></SvgIcon>
+      </div>
+      <span>{{ t("common.tags") }}</span>
+    </AppLink>
+  </div>
+  
 
   <!-- 状态 -->
-  <NaviLink class="sb-link liu-hover" 
-    :to="prefix + 'state'"
-    :class="{ 'sb-link_selected': state === 'state' }"
-    :tabindex="tabindex"
-    @aftertap="toClosePopup"
+  <div class="sb-link-box sb-link-state"
+    @mouseenter="() => onMouseEnter('state')"
+    @mouseleave="onMouseLeave"
   >
-    <div class="sb-icon-container">
-      <SvgIcon class="sb-icon" 
-        :name="state === 'state' ? 'priority_selected' : 'priority'" 
-        :color="state === 'state' ? color_selected : color"
-      ></SvgIcon>
-    </div>
-    <span>{{ t("common.state") }}</span>
-  </NaviLink>
+    <NaviLink class="sb-link" 
+      :to="prefix + 'state'"
+      :class="{ 'sb-link_selected': state === 'state' }"
+      :tabindex="tabindex"
+      @aftertap="toClosePopup"
+    >
+      <div class="sb-icon-container">
+        <SvgIcon class="sb-icon" 
+          :name="state === 'state' ? 'priority_selected' : 'priority'" 
+          :color="state === 'state' ? color_selected : color"
+        ></SvgIcon>
+      </div>
+      <span>{{ t("common.state") }}</span>
+    </NaviLink>
+  </div>
+  
 
   <!-- 连接 -->
-  <NaviLink class="sb-link liu-hover" 
-    :to="prefix + 'connect'"
-    :class="{ 'sb-link_selected': state === 'connect' }"
-    :tabindex="tabindex"
-    @aftertap="toClosePopup"
+  <div class="sb-link-box sb-link-connect"
+    @mouseenter="() => onMouseEnter('connect')"
+    @mouseleave="onMouseLeave"
   >
-    <div class="sb-icon-container">
-      <SvgIcon class="sb-icon" 
-        :name="state === 'connect' ? 'hub_selected' : 'hub'" 
-        :color="state === 'connect' ? color_selected : color"
-      ></SvgIcon>
-    </div>
-    <span>{{ t("common.connects") }}</span>
-  </NaviLink>
-
+    <NaviLink class="sb-link" 
+      :to="prefix + 'connect'"
+      :class="{ 'sb-link_selected': state === 'connect' }"
+      :tabindex="tabindex"
+      @aftertap="toClosePopup"
+    >
+      <div class="sb-icon-container">
+        <SvgIcon class="sb-icon" 
+          :name="state === 'connect' ? 'hub_selected' : 'hub'" 
+          :color="state === 'connect' ? color_selected : color"
+        ></SvgIcon>
+      </div>
+      <span>{{ t("common.connects") }}</span>
+    </NaviLink>
+  </div>
+  
   <div class="sb-virtual"></div>
 
 </template>
@@ -145,13 +182,38 @@ const color_selected = "var(--main-normal)"
   height: 50px;
 }
 
+.sb-cursor {
+  max-width: 100%;
+  width: v-bind("cursorInfo.width + 'px'");
+  height: v-bind("cursorInfo.height + 'px'");
+  top: 0;
+  left: 0;
+  transform: v-bind("'translateY(' + cursorInfo.y + 'px)'");
+  position: absolute;
+  border-radius: 10px;
+  transition: .15s;
+  opacity: v-bind("cursorInfo.show ? '.06' : '0'");
+  background-color: var(--primary-color);
+}
+
+.sb-link-box {
+  position: relative;
+  margin-block-end: 8px;
+}
+
+@container sidebar (max-width: 180px) {
+  .sb-link-box {
+    margin-block-end: 6px;
+  }
+}
+
+
 </style>
 <style>
 
 .sb-link {
   width: 100%;
   height: 48px;
-  margin-block-end: 8px;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -196,7 +258,6 @@ const color_selected = "var(--main-normal)"
   .sb-link {
     font-size: var(--btn-font);
     height: 44px;
-    margin-block-end: 6px;
     border-radius: 8px;
   }
 
