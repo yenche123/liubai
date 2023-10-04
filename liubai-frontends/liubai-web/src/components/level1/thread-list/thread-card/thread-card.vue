@@ -110,7 +110,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
 
       <!-- 全文的 bubble-menu -->
       <BwBubbleMenu
-        v-if="threadData.content && !isBriefing"
+        v-if="viewType !== 'TRASH' && threadData.content && !isBriefing"
         :editor="editor"
       ></BwBubbleMenu>
 
