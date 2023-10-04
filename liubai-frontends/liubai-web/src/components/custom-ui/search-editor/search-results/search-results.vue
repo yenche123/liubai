@@ -13,7 +13,7 @@ const props = defineProps({
   }
 })
 
-useSearchResults(props)
+const { srContainerEl } = useSearchResults(props)
 
 const show = computed(() => {
   const { suggestList, recentList, trimTxt } = props.seData
@@ -28,7 +28,7 @@ const { t } = useI18n()
 </script>
 <template>
 
-  <div class="sr-container" v-if="show">
+  <div class="sr-container" v-if="show" ref="srContainerEl">
 
     <!-- 输入框为空时 -->
     <div class="sr-box" v-show="!seData.trimTxt">

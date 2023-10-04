@@ -22,8 +22,7 @@ const emit = defineEmits<{
   "tapitem": [index: number]
 }>()
 
-useHashtagList(props)
-    
+const { htListEl } = useHashtagList(props)
 const { isPC } = liuApi.getCharacteristic()
 
 const onMouseEnter = (index: number) => {
@@ -38,8 +37,7 @@ const onTapItem = (index: number) => {
 </script>
 <template>
 
-<div class="ht-list">
-
+<div class="ht-list" ref="htListEl">
 
   <template v-for="(item, index) in list" :key="item.tagId">
     <div class="ht-item"

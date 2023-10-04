@@ -84,10 +84,11 @@ function watchSelectedIndex(
   watch(selectedIndex, async (newV, oldV) => {
     if(newV < 0) return
     await nextTick()
-    const el = document.querySelector(".hsirr-item_selected")
-    if(!el) return
+    
     const parent = document.querySelector(".hashtag-selector-container")
     if(!parent) return
+    const el = parent.querySelector(".hsirr-item_selected")
+    if(!el) return
     
     liuUtil.makeBoxScrollToShowChild(parent, el)
   })
