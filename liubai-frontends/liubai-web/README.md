@@ -23,6 +23,8 @@ https://svgmix.com/
 
 https://yesicon.app/
 
+https://emojis.alexandru.so/  AI 生成 emoji
+
 
 ## 一些常用碎片
 
