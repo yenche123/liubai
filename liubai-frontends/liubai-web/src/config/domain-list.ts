@@ -109,6 +109,9 @@ export const domainNotAllowed = [
   "plausible.io",
   "vika.cn",
   "share.fireside.fm",
+  "coursera.org",
+  "pan.quark.cn",
+  "aliyundrive.com",
 ]
 
 export const mastodonDomains = [
