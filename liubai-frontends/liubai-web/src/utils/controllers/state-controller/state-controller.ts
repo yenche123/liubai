@@ -63,8 +63,8 @@ async function getThreadsOfAThread(
   const { stateId, excludeInKanban, lastItemStamp } = opt
   const wStore = useWorkspaceStore()
   const spaceId = wStore.spaceId
-  const nothingData = { threads: [], hasMore: false }
-  if(!spaceId) return nothingData
+  const NOTHING_DATA = { threads: [], hasMore: false }
+  if(!spaceId) return NOTHING_DATA
 
   const listOpt: TcListOption = {
     viewType: "STATE",
@@ -74,15 +74,19 @@ async function getThreadsOfAThread(
 
   const stateList = getStates()
   const stateData = stateList.find(v => v.id === stateId)
-  if(!stateData || !stateData.contentIds) return nothingData
+  if(!stateData || !stateData.contentIds) return NOTHING_DATA
   const contentIds = stateData.contentIds
 
   // 不要加载看板上已有的动态
   if(excludeInKanban) {
     const tmpContentIds = valTool.copyObject(contentIds)
-    if(tmpContentIds.length > cfg.max_kanban_thread) {
+
+    // 让当前状态（看板）里第 max_kanban_thread 个
+    // content 也被加载出来 
+    if(tmpContentIds.length >= cfg.max_kanban_thread) {
       tmpContentIds.pop()
     }
+
     const limitNum = 16
     listOpt.excludeIds = tmpContentIds
     listOpt.lastItemStamp = lastItemStamp
@@ -98,7 +102,7 @@ async function getThreadsOfAThread(
   // 去加载看板上的动态
   // 这时要注意，也可能把已删除的动态加载过来，需要进行处理
   const cLength = contentIds.length
-  if(!cLength) return nothingData  
+  if(!cLength) return NOTHING_DATA  
   listOpt.ids = contentIds
   const res2 = await threadController.getList(listOpt)
 
@@ -112,18 +116,22 @@ async function getThreadsOfAThread(
   }
 
   if(res2.length < 1) {
-    return nothingData
+    return NOTHING_DATA
   }
 
   let hasMore = true
-  if(contentIds.length < cfg.max_kanban_thread) {
+  if(cLength < cfg.max_kanban_thread) {
     hasMore = false
   }
   else {
-    // contentIds 大于 16 个元素时
-    const lastId = contentIds[cLength - 1]
-    const newLastId = res2[res2.length - 1]._id
-    if(lastId === newLastId) {
+    // 在 contentIds 的数量达到最大值的情况下
+    // 若 contentIds 的最后一个元素 与 加载出来的 res2 的最后一个元素的 id 相同
+    // 那么移除 res2 最后一个元素，以留给 "加载更多" 
+    // 再去加载出来（对应本文件的第 86、87 行）
+
+    const lastId_1 = contentIds[cLength - 1]
+    const lastId_2 = res2[res2.length - 1]._id
+    if(lastId_1 === lastId_2) {
       res2.pop()
     }
   }

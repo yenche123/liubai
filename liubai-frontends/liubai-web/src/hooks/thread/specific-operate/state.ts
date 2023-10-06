@@ -12,6 +12,7 @@ import type { LiuStateConfig, LiuAtomState } from "~/types/types-atom"
 import stateController from "~/utils/controllers/state-controller/state-controller"
 import { i18n } from "~/locales"
 import { mapStateColor } from "~/config/state-color"
+import cfg from "~/config"
 
 interface SelectStateRes {
   tipPromise?: Promise<SnackbarRes>
@@ -224,6 +225,8 @@ function _addState(
   threadId: string,
   stateId: string,
 ) {
+  const MAX_NUM = cfg.max_kanban_thread
+
   for(let i=0; i<stateList.length; i++) {
     const column = stateList[i]
     if(column.id !== stateId && column.contentIds) {
@@ -235,6 +238,12 @@ function _addState(
       tmpList = tmpList.filter(v => v !== threadId)
       tmpList.splice(0, 0, threadId)
       column.contentIds = tmpList
+    }
+
+    const cLen = column.contentIds?.length ?? 0
+    if(cLen > MAX_NUM) {
+      const deleteNum = cLen - MAX_NUM
+      column.contentIds?.splice(MAX_NUM, deleteNum)
     }
   }
 }
