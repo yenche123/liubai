@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import MainView from "~/views/main-view/main-view.vue";
 import ViceView from "~/views/vice-view/vice-view.vue";
-import KanbanPage from "./kanban-page/kanban-page.vue"
-import ListPage from "./list-page/list-page.vue"
+import KanbanView from "./kanban-view/kanban-view.vue"
+import ListView from "./list-view/list-view.vue"
 import { useMainVice } from "~/hooks/useMainVice";
 import { useStatePage } from "./tools/useStatePage"
 import { useProvideSnIndicator } from "./tools/useSnIndicator";
@@ -22,22 +22,22 @@ useProvideSnIndicator()
     <div v-show="whichPage === 1"
       class="sp-layout"
     >
-      <list-page 
+      <list-view 
         :current="whichPage"
         :hide-scrollbar="hiddenScrollBar"
         v-model:kanban-columns="kanban.columns"
         @tapnavi="onNaviChange"
-      ></list-page>
+      ></list-view>
     </div>
 
     <!-- 看板 -->
     <div v-show="whichPage === 2"
       class="sp-layout"
     >
-      <kanban-page :current="whichPage"
+      <kanban-view :current="whichPage"
         v-model:kanban-columns="kanban.columns"
         @tapnavi="onNaviChange"
-      ></kanban-page>
+      ></kanban-view>
     </div>
     
   </main-view>

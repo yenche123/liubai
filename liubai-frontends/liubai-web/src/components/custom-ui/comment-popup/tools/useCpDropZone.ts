@@ -26,7 +26,8 @@ export function useCpDropZone(
   const { isOverDropZone } = useDropZone(containerRef, onDrop)
 
   const showDropZone = computed(() => {
-    // 当前全局状态是 kanban-page / list-page 里有 item 正在被拖动吗？
+    // 当前全局状态是否存在 
+    // kanban-view / list-view 里有 item 正在被拖动吗？
     if(isDragToSort.value) return false
 
     // 当前鼠标是否已离开页面，若不是，则忽略

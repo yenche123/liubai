@@ -7,7 +7,7 @@ import { useInjectSnIndicator } from "../tools/useSnIndicator";
 import cfg from "~/config"
 import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 import { useKanbanColumns } from '../tools/useKanbanColumns';
-import KpColumn from "./kp-column/kp-column.vue"
+import KvColumn from "./kv-column/kv-column.vue"
 import { useI18n } from 'vue-i18n';
 import type { MenuItem } from '~/components/common/liu-menu/tools/types';
 
@@ -61,8 +61,8 @@ const {
   <SlickList 
     axis="x"
     lockAxis="x"
-    class="kp-column-container"
-    helper-class="kp-column-container_helper"
+    class="kv-column-container"
+    helper-class="kv-column-container_helper"
     v-model:list="columns"
     use-drag-handle
     @update:list="onColumnsSorted"
@@ -72,28 +72,28 @@ const {
       v-for="(item, index) in columns"
       :key="item.id"
       :index="index"
-      class="kp-kanban-column"
+      class="kv-kanban-column"
     >
 
       <!-- 看板每一列的标头 -->
-      <div class="kp-column-header"
-        :class="{ 'kpch-shadow': scollTops[item.id] > 10 }"
-        :id="'kp-column-header_' + item.id"
+      <div class="kv-column-header"
+        :class="{ 'kvch-shadow': scollTops[item.id] > 10 }"
+        :id="'kv-column-header_' + item.id"
       >
 
         <!-- column 的把手 -->
-        <span class="kp-handle"
+        <span class="kv-handle"
           v-handle
         >
-          <svg-icon class="kp-handle-svg"
+          <svg-icon class="kv-handle-svg"
              name="drag_handle400"
             :color="iconColor"
           ></svg-icon>
         </span>
 
         <!--状态标题 -->
-        <div class="kp-state-box">
-          <div class="kp-state"
+        <div class="kv-state-box">
+          <div class="kv-state"
             :style="{ 
               'color': item.colorShow,
             }"
@@ -110,18 +110,18 @@ const {
           
 
         <!-- 状态 // 更多 -->
-        <div class="kpch-footer">
+        <div class="kvch-footer">
 
           <!-- 更多 -->
           <LiuMenu
             :menu="MORE_ITEMS"
-            :container="'#kp-column-header_' + item.id"
+            :container="'#kv-column-header_' + item.id"
             placement="bottom-end"
             :allow-mask="false"
             @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
           >
-            <div class="liu-hover kpch-btn">
-              <svg-icon name="more" class="kpch-svg" 
+            <div class="liu-hover kvch-btn">
+              <svg-icon name="more" class="kvch-svg" 
                 :color="iconColor"
               ></svg-icon>
             </div>
@@ -129,10 +129,10 @@ const {
             
 
           <!-- 添加动态 -->
-          <div class="liu-hover kpch-btn"
+          <div class="liu-hover kvch-btn"
             @click="onTapAddThread(item.id)"
           >
-            <svg-icon name="add" class="kpch-svg" 
+            <svg-icon name="add" class="kvch-svg" 
               :color="iconColor"
             ></svg-icon>
           </div>
@@ -140,7 +140,7 @@ const {
         </div>
 
       </div>
-      <KpColumn
+      <KvColumn
         v-model:threads="item.threads"
         :state-id="item.id"
         @scrolling="setScrollTop(item.id, $event)"
@@ -148,17 +148,17 @@ const {
         @threadsupdated="onThreadsUpdated(item.id, $event)"
         @tapitem="onTapThreadItem"
         @tapadd="onTapAddThread(item.id)"
-      ></KpColumn>
+      ></KvColumn>
     </SlickItem>
 
-    <div class="kp-virtual"></div>
+    <div class="kv-virtual"></div>
 
   </SlickList>
 
 </template>
 <style scoped lang="scss">
 
-.kp-column-container {
+.kv-column-container {
   width: 100%;
   border-top: 0.6px solid var(--line-default);
   height: v-bind("kpHeightStr");
@@ -177,12 +177,12 @@ const {
   }
 }
 
-.kp-column-container_helper {
+.kv-column-container_helper {
   opacity: .5;
   cursor: grabbing;
 }
 
-.kp-kanban-column {
+.kv-kanban-column {
   width: 330px;
   padding-inline-start: 6px;
   padding-inline-end: 6px;
@@ -191,7 +191,7 @@ const {
   overflow: hidden;
 }
 
-.kp-column-header {
+.kv-column-header {
   width: 100%;
   height: v-bind("cfg.kanban_header_height + 'px'");
   position: relative;
@@ -200,11 +200,11 @@ const {
   z-index: 100;
 }
 
-.kpch-shadow {
+.kvch-shadow {
   box-shadow: var(--kanban-header-shadow);
 }
 
-.kp-handle {
+.kv-handle {
   width: 30px;
   height: 30px;
   display: flex;
@@ -218,17 +218,17 @@ const {
   cursor: grab;
 }
 
-.kp-handle-svg {
+.kv-handle-svg {
   width: 24px;
   height: 24px;
 }
 
-.kp-state-box {
+.kv-state-box {
   flex: 1;
   display: flex;
 }
 
-.kp-state {
+.kv-state {
   padding: 3px 9px;
   border-radius: 3px;
   border-top-right-radius: 10px;
@@ -252,44 +252,44 @@ const {
   }
 }
 
-.kpch-footer {
+.kvch-footer {
   flex: 1;
   display: flex;
   justify-content: flex-end;
   transition: .15s;
 }
 
-.kpch-btn {
+.kvch-btn {
   width: 36px;
   height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  .kpch-svg {
+  .kvch-svg {
     width: 24px;
     height: 24px;
   }
 }
 
 
-.kp-virtual {
+.kv-virtual {
   width: 20px;
   height: 100px;
 }
 
 @media(hover: hover) {
-  .kpch-footer {
+  .kvch-footer {
     opacity: 0;
   }
 
-  .kp-kanban-column:hover .kpch-footer {
+  .kv-kanban-column:hover .kvch-footer {
     opacity: 1;
   }
 }
 
 @media screen and (max-width: 400px) {
-  .kp-column-container {
+  .kv-column-container {
     padding-inline-start: 5px;
   }
 }

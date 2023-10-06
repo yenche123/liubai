@@ -4,7 +4,7 @@ import cfg from "~/config"
 import { useLiuWatch } from "~/hooks/useLiuWatch"
 import type { KbListEmits2, KbListProps } from "../../../tools/types"
 
-export function useKpColumn(
+export function useKvColumn(
   props: KbListProps,
   emits: KbListEmits2
 ) {

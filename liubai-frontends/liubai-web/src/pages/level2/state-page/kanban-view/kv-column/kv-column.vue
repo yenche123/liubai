@@ -3,7 +3,7 @@ import type { PropType } from 'vue';
 import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 import type { ThreadShow } from '~/types/types-content';
 import { useKanbanThreads } from "../../tools/useKanbanThreads"
-import { useKpColumn } from './tools/useKpColumn';
+import { useKvColumn } from './tools/useKvColumn';
 import { useI18n } from "vue-i18n"
 import type { ColumnInsertData } from "../../tools/types"
 
@@ -36,7 +36,7 @@ const {
 } = useKanbanThreads(props, emit)
 const {
   columnHeight,
-} = useKpColumn(props, emit)
+} = useKvColumn(props, emit)
 
 </script>
 <template>

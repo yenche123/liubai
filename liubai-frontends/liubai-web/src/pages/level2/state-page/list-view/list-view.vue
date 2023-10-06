@@ -8,7 +8,7 @@ import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 import { useI18n } from 'vue-i18n';
 import { useKanbanColumns } from '../tools/useKanbanColumns';
 import type { MenuItem } from '~/components/common/liu-menu/tools/types';
-import LpColumn from "./lp-column/lp-column.vue";
+import LvColumn from "./lv-column/lv-column.vue";
 import liuApi from '~/utils/liu-api';
 
 // Vue 3.3+ 的 defineEmits 声明方式
@@ -55,9 +55,9 @@ const { isMobile } = liuApi.getCharacteristic()
   <SlickList
     axis="y"
     lockAxis="y"
-    class="lp-container"
-    :class="{ 'lp-scroll_hidden': hideScrollbar }"
-    helper-class="lp-container_helper"
+    class="lv-container"
+    :class="{ 'lv-scroll_hidden': hideScrollbar }"
+    helper-class="lv-container_helper"
     v-model:list="columns"
     use-drag-handle
     @update:list="onColumnsSorted"
@@ -69,36 +69,36 @@ const { isMobile } = liuApi.getCharacteristic()
       @tapnavi="$emit('tapnavi', $event)"
     ></StateNavi>
 
-    <div class="lp-virtual"></div>
+    <div class="lv-virtual"></div>
 
     <SlickItem
       v-for="(item, index) in columns"
       :key="item.id"
       :index="index"
-      class="lp-column"
+      class="lv-column"
     >
 
-      <div class="lpc-box">
+      <div class="lvc-box">
 
 
         <!-- 列表的标头 -->
-        <div class="lp-column-header"
-          :id="'lp-column-header_' + item.id"
+        <div class="lv-column-header"
+          :id="'lv-column-header_' + item.id"
         >
 
           <!-- column 的把手 -->
-          <span class="lp-handle"
+          <span class="lv-handle"
             v-handle
           >
-            <svg-icon class="lp-handle-svg"
+            <svg-icon class="lv-handle-svg"
                name="drag_handle400"
               :color="iconColor"
             ></svg-icon>
           </span>
 
           <!--状态标题 -->
-          <div class="lp-state-box">
-            <div class="lp-state"
+          <div class="lv-state-box">
+            <div class="lv-state"
               :style="{ 
                 'color': item.colorShow,
               }"
@@ -114,27 +114,27 @@ const { isMobile } = liuApi.getCharacteristic()
           </div>
 
           <!-- 状态 // 更多 -->
-          <div class="lpch-footer">
+          <div class="lvch-footer">
 
             <!-- 更多 -->
             <LiuMenu
               :menu="MORE_ITEMS"
-              :container="'#lp-column-header_' + item.id"
+              :container="'#lv-column-header_' + item.id"
               placement="bottom-end"
               @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
             >
-              <div class="liu-hover lpch-btn">
-                <svg-icon name="more" class="lpch-svg" 
+              <div class="liu-hover lvch-btn">
+                <svg-icon name="more" class="lvch-svg" 
                   :color="iconColor"
                 ></svg-icon>
               </div>
             </LiuMenu>
           
             <!-- 添加动态 -->
-            <div class="liu-hover lpch-btn"
+            <div class="liu-hover lvch-btn"
               @click="onTapAddThread(item.id)"
             >
-              <svg-icon name="add" class="lpch-svg" 
+              <svg-icon name="add" class="lvch-svg" 
                 :color="iconColor"
               ></svg-icon>
             </div>
@@ -143,14 +143,14 @@ const { isMobile } = liuApi.getCharacteristic()
         
         </div>
 
-        <LpColumn
+        <LvColumn
           v-model:threads="item.threads"
           :state-id="item.id"
           @sort-insert="onThreadInserted(item.id, $event)"
           @threadsupdated="onThreadsUpdated(item.id, $event)"
           @tapitem="onTapThreadItem"
           @tapadd="onTapAddThread(item.id)"
-        ></LpColumn>
+        ></LvColumn>
 
       </div>
 
@@ -161,7 +161,7 @@ const { isMobile } = liuApi.getCharacteristic()
 </template>
 <style scoped lang="scss">
 
-.lp-container {
+.lv-container {
   width: 100%;
   height: 100%;
   position: relative;
@@ -181,7 +181,7 @@ const { isMobile } = liuApi.getCharacteristic()
   }
 }
 
-.lp-scroll_hidden {
+.lv-scroll_hidden {
   scrollbar-color: transparent transparent;
 
   &::-webkit-scrollbar {
@@ -189,17 +189,17 @@ const { isMobile } = liuApi.getCharacteristic()
   }
 }
 
-.lp-container_helper {
+.lv-container_helper {
   opacity: .5;
   cursor: grabbing;
 }
 
-.lp-virtual {
+.lv-virtual {
   width: 100%;
   height: 10px;
 }
 
-.lp-column {
+.lv-column {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -207,7 +207,7 @@ const { isMobile } = liuApi.getCharacteristic()
   position: relative;
 }
 
-.lpc-box {
+.lvc-box {
   width: 92%;
   max-width: 900px;
   position: relative;
@@ -216,7 +216,7 @@ const { isMobile } = liuApi.getCharacteristic()
   border-radius: 16px;
 }
 
-.lp-column-header {
+.lv-column-header {
   width: 100%;
   height: 50px;
   position: relative;
@@ -224,7 +224,7 @@ const { isMobile } = liuApi.getCharacteristic()
   align-items: center;
 }
 
-.lp-handle {
+.lv-handle {
   width: 30px;
   height: 30px;
   display: flex;
@@ -238,17 +238,17 @@ const { isMobile } = liuApi.getCharacteristic()
   cursor: grab;
 }
 
-.lp-handle-svg {
+.lv-handle-svg {
   width: 24px;
   height: 24px;
 }
 
-.lp-state-box {
+.lv-state-box {
   flex: 1;
   display: flex;
 }
 
-.lp-state {
+.lv-state {
   padding: 3px 9px;
   border-radius: 3px;
   border-top-right-radius: 10px;
@@ -272,7 +272,7 @@ const { isMobile } = liuApi.getCharacteristic()
   }
 }
 
-.lpch-footer {
+.lvch-footer {
   flex: 1;
   display: flex;
   justify-content: flex-end;
@@ -280,34 +280,28 @@ const { isMobile } = liuApi.getCharacteristic()
   transition: .15s;
 }
 
-.lpch-btn {
+.lvch-btn {
   width: 36px;
   height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
 
-  .lpch-svg {
+  .lvch-svg {
     width: 24px;
     height: 24px;
   }
 }
 
 @media(hover: hover) {
-  .lpch-footer {
+  .lvch-footer {
     opacity: 0;
   }
 
-  .lp-column:hover .lpch-footer {
+  .lv-column:hover .lvch-footer {
     opacity: 1;
   }
 }
-
-.lp-test {
-  width: 100%;
-  height: 100px;
-}
-
 
 
 </style>
