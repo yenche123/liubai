@@ -5,7 +5,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { PageState } from "~/types/types-atom";
-import type { TpView, TpData, TpCtx2 } from "./types"
+import type { TpView, TpData, TpCtx } from "./types"
 import typeCheck from "~/utils/basic/type-check";
 import liuUtil from "~/utils/liu-util";
 
@@ -27,7 +27,7 @@ export function useTagPage() {
     list: [],
   })
 
-  const ctx: TpCtx2 = {
+  const ctx: TpCtx = {
     route,
     spaceId,
     tpData,
@@ -69,7 +69,7 @@ export function useTagPage() {
   }
 }
 
-function _getCurrentItem(ctx: TpCtx2) {
+function _getCurrentItem(ctx: TpCtx) {
   const idx = ctx.currentIdx
   if(idx < 0) return
   const item = ctx.tpData.list[idx]
@@ -95,7 +95,7 @@ function _getDefaultView(
 
 
 function whenContextChange(
-  ctx: TpCtx2,
+  ctx: TpCtx,
 ) {
 
   const { route, spaceId } = ctx
@@ -122,7 +122,7 @@ function whenContextChange(
 }
 
 async function toLoadRemote(
-  ctx: TpCtx2,
+  ctx: TpCtx,
   tagId: string
 ) {
   // TODO: 去远端加载 tag
@@ -133,7 +133,7 @@ async function toLoadRemote(
 
 
 function showView(
-  ctx: TpCtx2,
+  ctx: TpCtx,
   newData: TpView,
 ) {
   const { list } = ctx.tpData
@@ -160,7 +160,7 @@ function showView(
 }
 
 function clearHiddenView(
-  ctx: TpCtx2
+  ctx: TpCtx
 ) {
   console.log("开启清除隐藏的 tag-view")
   const { list } = ctx.tpData

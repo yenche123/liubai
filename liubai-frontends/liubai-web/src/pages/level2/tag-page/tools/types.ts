@@ -15,7 +15,7 @@ export interface TpData {
   list: TpView[]
 }
 
-export interface TpCtx2 {
+export interface TpCtx {
   route: RouteLocationNormalizedLoaded
   spaceId: Ref<string>
   tpData: TpData
