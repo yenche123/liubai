@@ -1,29 +1,17 @@
-import { inject, onActivated, onDeactivated, reactive, ref, toRef, toRefs, watch } from "vue"
-import type { Ref, ShallowRef } from "vue"
+import { inject, onActivated, onDeactivated, reactive, toRef, toRefs, watch } from "vue"
 import threadController from "~/utils/controllers/thread-controller/thread-controller"
-import { scrollViewKey } from "~/utils/provide-keys"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
 import type { OState } from "~/types/types-basic"
-import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
-import type { TlProps, TlViewType, TlEmits, TlData } from "./types"
+import type { SvProvideInject } from "~/types/components/types-scroll-view"
+import type { TlProps, TlViewType, TlEmits, TlData, TlContext } from "./types"
 import type { TcListOption } from "~/utils/controllers/thread-controller/type"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
-import { svBottomUpKey } from "~/utils/provide-keys";
+import { svBottomUpKey, scrollViewKey } from "~/utils/provide-keys";
 import { handleLastItemStamp } from "./useTLCommon"
 import tlUtil from "./tl-util"
 import typeCheck from "~/utils/basic/type-check"
-
-interface TlContext {
-  tlData: TlData,
-  viewType: Ref<TlViewType>
-  tagId: Ref<string>
-  spaceIdRef: Ref<string>
-  showNum: number
-  svBottomUp?: ShallowRef<SvBottomUp>
-  reloadRequired: boolean
-  emits: TlEmits
-}
+import stateController from "~/utils/controllers/state-controller/state-controller"
 
 export function useThreadList(
   props: TlProps,
@@ -43,13 +31,12 @@ export function useThreadList(
 
   const ctx: TlContext = {
     tlData,
-    viewType: viewType as Ref<TlViewType>,
-    tagId,
     spaceIdRef,
     showNum: 0,
     svBottomUp,
     reloadRequired: false,
     emits,
+    props,
   }
 
   // 监听触底/顶加载
@@ -152,7 +139,7 @@ function checkList(
 }
 
 function isViewType(ctx: TlContext, val: TlViewType) {
-  const vT = ctx.viewType.value
+  const vT = ctx.props.viewType
   if(vT === val) return true
   return false
 }
@@ -176,8 +163,7 @@ async function loadList(
   }
 
   const oldList = tlData.list
-  const viewType = ctx.viewType.value
-  const tagId = ctx.tagId.value
+  const { viewType, tagId } = ctx.props
 
   let length = oldList.length
   let oState: OState = viewType === 'TRASH' ? 'REMOVED' : 'OK'

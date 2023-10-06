@@ -3,7 +3,7 @@ import type { LiuStateConfig, LiuAtomState } from "~/types/types-atom"
 import type { TcListOption } from "../thread-controller/type"
 import time from "~/utils/basic/time"
 import valTool from "~/utils/basic/val-tool"
-import { ThreadShow } from "~/types/types-content"
+import type { ThreadShow } from "~/types/types-content"
 import cfg from "~/config"
 import threadController from "../thread-controller/thread-controller"
 
