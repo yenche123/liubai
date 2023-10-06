@@ -221,6 +221,10 @@ const previewDate = computed(() => {
       border-radius: 4px;
     }
 
+    .dp--tp-wrap {
+      max-width: 100%;
+    }
+
   }
 
   .dp-custom-calendar-wrapper {

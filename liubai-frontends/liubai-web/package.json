@@ -31,7 +31,7 @@
     "@tiptap/starter-kit": "2.1.11",
     "@tiptap/suggestion": "^2.1.11",
     "@tiptap/vue-3": "2.1.11",
-    "@vuepic/vue-datepicker": "^6.0.3",
+    "@vuepic/vue-datepicker": "^7.0.0",
     "@vueuse/core": "^10.4.1",
     "another-vue3-blurhash": "^0.0.1",
     "blurhash": "^2.0.5",
