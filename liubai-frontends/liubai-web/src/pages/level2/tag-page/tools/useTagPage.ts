@@ -10,7 +10,7 @@ import typeCheck from "~/utils/basic/type-check";
 import liuUtil from "~/utils/liu-util";
 
 
-export function useTagPage2() {
+export function useTagPage() {
 
   // 获取路由
   const { route } = useRouteAndLiuRouter()

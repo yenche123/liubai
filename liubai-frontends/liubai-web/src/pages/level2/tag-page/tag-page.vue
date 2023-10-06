@@ -7,7 +7,7 @@ import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
-import { useTagPage2 } from "./tools/useTagPage";
+import { useTagPage } from "./tools/useTagPage";
 import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
 import type { TrueOrFalse } from "~/types/types-basic";
 
@@ -17,7 +17,7 @@ const {
 } = useMainVice()
 const { t } = useI18n()
 
-const { tpData, onTapFab, onScroll } = useTagPage2()
+const { tpData, onTapFab, onScroll } = useTagPage()
 
 </script>
 <template>
