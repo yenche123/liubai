@@ -39,6 +39,7 @@ const indicatorData = useInjectSnIndicator()
 
 const {
   MORE_ITEMS,
+  prefix,
   columns,
   onColumnsSorted,
   onThreadInserted,
@@ -145,7 +146,9 @@ const { isMobile } = liuApi.getCharacteristic()
 
         <LvColumn
           v-model:threads="item.threads"
+          :has-more="item.hasMore"
           :state-id="item.id"
+          :prefix="prefix"
           @sort-insert="onThreadInserted(item.id, $event)"
           @threadsupdated="onThreadsUpdated(item.id, $event)"
           @tapitem="onTapThreadItem"

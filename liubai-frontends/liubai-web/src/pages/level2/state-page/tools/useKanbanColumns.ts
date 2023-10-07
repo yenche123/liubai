@@ -13,6 +13,7 @@ import { MenuItem } from "~/components/common/liu-menu/tools/types";
 import kanbanOperate from "./kanban-operate";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import liuUtil from "~/utils/liu-util";
+import { usePrefix } from "~/hooks/useCommon";
 
 const MORE_ITEMS: MenuItem[] = [
   {
@@ -29,6 +30,7 @@ export function useKanbanColumns(
   props: KanbanProps,
   emits: KanbanEmits
 ) {
+  const { prefix } = usePrefix()
   const rr = useRouteAndLiuRouter()
   const lastInnerStampRef = inject(kanbanInnerChangeKey)
 
@@ -88,6 +90,7 @@ export function useKanbanColumns(
 
   return {
     MORE_ITEMS,
+    prefix,
     columns,
     scollTops,
     setScrollTop,

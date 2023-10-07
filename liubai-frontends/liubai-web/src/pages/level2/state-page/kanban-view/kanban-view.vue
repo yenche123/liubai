@@ -37,6 +37,7 @@ const kpHeightStr = `calc(100% - ${cfg.navi_height + 1}px)`
 
 const {
   MORE_ITEMS,
+  prefix,
   columns, 
   scollTops, 
   setScrollTop,
@@ -142,7 +143,9 @@ const {
       </div>
       <KvColumn
         v-model:threads="item.threads"
+        :has-more="item.hasMore"
         :state-id="item.id"
+        :prefix="prefix"
         @scrolling="setScrollTop(item.id, $event)"
         @sort-insert="onThreadInserted(item.id, $event)"
         @threadsupdated="onThreadsUpdated(item.id, $event)"

@@ -17,6 +17,13 @@ const props = defineProps({
     type: Array as PropType<ThreadShow[]>,
     default: []
   },
+  hasMore: {
+    type: Boolean,
+  },
+  prefix: {
+    type: String,
+    required: true,
+  }
 })
 
 // vue 3.3+ 的 defineEmits 写法

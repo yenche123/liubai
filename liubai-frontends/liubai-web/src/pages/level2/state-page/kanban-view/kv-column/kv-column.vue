@@ -6,6 +6,7 @@ import { useKanbanThreads } from "../../tools/useKanbanThreads"
 import { useKvColumn } from './tools/useKvColumn';
 import { useI18n } from "vue-i18n"
 import type { ColumnInsertData } from "../../tools/types"
+import AppLink from '~/components/common/app-link/app-link.vue';
 
 const vHandle = HandleDirective
 const props = defineProps({
@@ -17,6 +18,13 @@ const props = defineProps({
     type: Array as PropType<ThreadShow[]>,
     default: []
   },
+  hasMore: {
+    type: Boolean,
+  },
+  prefix: {
+    type: String,
+    required: true,
+  }
 })
 
 // vue 3.3+ 的 defineEmits 写法
@@ -100,6 +108,20 @@ const {
 
     </SlickItem>
 
+    <AppLink v-if="hasMore"
+      :to="prefix + 'state-more/' + stateId"
+    >
+      <div class="liu-hover kc-more">
+        <span>{{ t('common.checkMore') }}</span>
+        <div class="kcm-icon-box">
+          <svg-icon name="arrow-right2"
+            class="kcm-svg-icon"
+            color="var(--main-normal)"
+          ></svg-icon>
+        </div>
+      </div>
+    </AppLink>
+
   </SlickList>
   
 </template>
@@ -132,6 +154,42 @@ const {
 .kc-add-box_show {
   opacity: 1;
 }
+
+.kc-more {
+  width: 98%;
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin-block-start: 16px;
+  margin-block-end: 16px;
+  overflow: hidden;
+  padding: 8px 10px;
+  user-select: none;
+  font-size: var(--btn-font);
+  color: var(--main-normal);
+  font-weight: 700;
+}
+
+.kc-more::before {
+  border-radius: 8px;
+}
+
+.kcm-icon-box {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .kcm-svg-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 
 @media(hover: hover) {
   .kc-add-box:hover {

@@ -135,7 +135,7 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/state-more",
+    path: "/state-more/:stateId(\\w{4,})",
     components: {
       default: StateMorePage,
       LeftSidebar,
@@ -262,7 +262,7 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/w/:workspaceId(\\w{10,})/state-more",
+    path: "/w/:workspaceId(\\w{10,})/state-more/:stateId(\\w{4,})",
     components: {
       default: StateMorePage,
       LeftSidebar,
