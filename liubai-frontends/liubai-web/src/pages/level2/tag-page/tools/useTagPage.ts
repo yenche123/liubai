@@ -116,8 +116,8 @@ function whenContextChange(
 
   const tag = tagShows[0]
   const str = `${tag.emoji ? tag.emoji + ' ' : '# '}${tag.text}`
-  const newData = _getDefaultView(id, str, -1)
-  showView(ctx, newData)
+  const newView = _getDefaultView(id, str, -1)
+  showView(ctx, newView)
 }
 
 async function toLoadRemote(
@@ -126,34 +126,34 @@ async function toLoadRemote(
 ) {
   // TODO: 去远端加载 tag
   // 目前先直接告诉组件查无动态
-  const newData = _getDefaultView(tagId, "", 50)
-  showView(ctx, newData)
+  const newView = _getDefaultView(tagId, "", 50)
+  showView(ctx, newView)
 }
 
 
 function showView(
   ctx: TpCtx,
-  newData: TpView,
+  newView: TpView,
 ) {
   const { list } = ctx.tpData
 
   let hasFound = false
   for(let i=0; i<list.length; i++) {
     const v = list[i]
-    if(v.id !== newData.id) {
+    if(v.id !== newView.id) {
       v.show = false
       continue
     }
-    
+
     hasFound = true
     v.show = true
-    v.state = newData.state
-    v.tagName = newData.tagName
+    v.state = newView.state
+    v.tagName = newView.tagName
     ctx.currentIdx = i
   }
 
   if(!hasFound) {
-    list.push(newData)
+    list.push(newView)
     if(list.length > 10) {
       list.splice(0, 1)
     }
