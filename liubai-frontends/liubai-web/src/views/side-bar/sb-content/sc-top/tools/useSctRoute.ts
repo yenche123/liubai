@@ -2,8 +2,7 @@ import { ref, watch } from "vue";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import typeCheck from "~/utils/basic/type-check";
 import type { RouteLocationNormalizedLoaded } from "vue-router"
-
-type SctIndicator = "notification" | "setting" | "trash" | ""
+import type { SctIndicator } from "./types"
 
 export function useSctRoute() {
   const sctIndicator = ref<SctIndicator>("")

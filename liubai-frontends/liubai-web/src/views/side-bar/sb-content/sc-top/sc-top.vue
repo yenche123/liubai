@@ -9,19 +9,12 @@ import { useSctRoute } from './tools/useSctRoute';
 import cui from '~/components/custom-ui';
 import liuUtil from '~/utils/liu-util';
 import type { MenuItem } from "~/components/common/liu-menu/tools/types";
+import { type ScTopEmits, scTopProps } from "./tools/types"
 
 const { t } = useI18n()
 
-const props = defineProps({
-  isFixed: {
-    type: Boolean,
-    default: false,
-  }
-})
-
-const emits = defineEmits<{
-  (event: "canclosepopup"): void
-}>()
+const props = defineProps(scTopProps)
+const emits = defineEmits<ScTopEmits>()
 
 const onTapItem = () => {
   emits("canclosepopup")
@@ -70,28 +63,38 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
 
   <div class="sc-toolbar">
 
+
     <!-- 搜索 -->
-    <LiuTooltip
-      placement="bottom-start"
-      :distance="4"
-      :aria-label="t('common.search')"
-      :shortcut="searchTip"
+    <div class="sct-item sct-item-search"
+      @mouseenter="$emit('mouseenter', 'search')"
+      @mouseleave="$emit('mouseleave')"
     >
-      <div class="liu-hover liu-hover_first sct-box"
-        @click="onTapSearch"
+      <LiuTooltip
+        placement="bottom-start"
+        :distance="4"
+        :aria-label="t('common.search')"
+        :shortcut="searchTip"
       >
-        <svg-icon name="search" class="sct-icon"
-          :color="iconColor"
-        ></svg-icon>
-      </div>
-    </LiuTooltip>
+        <div class="liu-hover liu-hover_first sct-box"
+          @click="onTapSearch"
+        >
+          <svg-icon name="search" class="sct-icon"
+            :color="iconColor"
+          ></svg-icon>
+        </div>
+      </LiuTooltip>
+    </div>
     
 
     <!-- 通知 -->
-    <NaviLink 
-      @aftertap="onTapItem"
-      :to="prefix + 'notification'"
+    <div class="sct-item sct-item-notification"
+      @mouseenter="$emit('mouseenter', 'notification')"
+      @mouseleave="$emit('mouseleave')"
     >
+      <NaviLink 
+        @aftertap="onTapItem"
+        :to="prefix + 'notification'"
+      >
       <div class="liu-hover sct-box" :aria-label="t('common.notification')"
         :class="{'sc-selected': sctIndicator === 'notification'}"
       >
@@ -99,55 +102,69 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
           :color="iconColor"
         ></svg-icon>
       </div>
-    </NaviLink>
-
-    <!-- 更多 -->
-    <LiuMenu
-      v-if="showMore"
-      :menu="MORE_ITEMS"
-      @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(event1, event2)"
-    >
-      <div class="liu-hover liu-hover_last sct-box"
-        :aria-label="t('whatever.sidebar_more')"
-      >
-        <svg-icon name="more" class="sct-icon"
-          :color="iconColor"
-        ></svg-icon>
-      </div>
-    </LiuMenu>
+      </NaviLink>
+    </div>
     
 
-    <!-- 设置 -->
-    <NaviLink 
-      v-if="!showMore"
-      @aftertap="onTapItem"
-      :to="prefix + 'setting'"
+    <!-- 更多 -->
+    <div class="sct-item sct-item-more" v-if="showMore"
+      @mouseenter="$emit('mouseenter', 'more')"
+      @mouseleave="$emit('mouseleave')"
     >
-      <div class="liu-hover sct-box" :aria-label="t('common.setting')"
-        :class="{'sc-selected': sctIndicator === 'setting'}"
+      <LiuMenu
+        :menu="MORE_ITEMS"
+        @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(event1, event2)"
       >
-        <svg-icon name="setting" class="sct-icon"
-          :color="iconColor"
-        ></svg-icon>
-      </div>
-    </NaviLink>
+        <div class="liu-hover liu-hover_last sct-box"
+          :aria-label="t('whatever.sidebar_more')"
+        >
+          <svg-icon name="more" class="sct-icon"
+            :color="iconColor"
+          ></svg-icon>
+        </div>
+      </LiuMenu>
+    </div>
+    
+    <!-- 设置 -->
+    <div class="sct-item sct-item-setting" v-if="!showMore"
+      @mouseenter="$emit('mouseenter', 'setting')"
+      @mouseleave="$emit('mouseleave')"
+    >
+      <NaviLink 
+        @aftertap="onTapItem"
+        :to="prefix + 'setting'"
+      >
+        <div class="liu-hover sct-box" :aria-label="t('common.setting')"
+          :class="{'sc-selected': sctIndicator === 'setting'}"
+        >
+          <svg-icon name="setting" class="sct-icon"
+            :color="iconColor"
+          ></svg-icon>
+        </div>
+      </NaviLink>
+    </div>
+    
 
     <!-- 垃圾桶 -->
-    <NaviLink 
-      v-if="!showMore"
-      @aftertap="onTapItem"
-      :to="prefix + 'trash'"
+    <div class="sct-item sct-item-trash" v-if="!showMore"
+      @mouseenter="$emit('mouseenter', 'trash')"
+      @mouseleave="$emit('mouseleave')"
     >
-      <div class="liu-hover liu-hover_last sct-box"
-        :aria-label="t('common.trash')"
-        :class="{'sc-selected': sctIndicator === 'trash'}"
+      <NaviLink 
+        @aftertap="onTapItem"
+        :to="prefix + 'trash'"
       >
-        <svg-icon name="delete_400" class="sct-icon sct-icon_big"
-          :color="iconColor"
-        ></svg-icon>
-      </div>
-    </NaviLink>
-
+        <div class="liu-hover liu-hover_last sct-box"
+          :aria-label="t('common.trash')"
+          :class="{'sc-selected': sctIndicator === 'trash'}"
+        >
+          <svg-icon name="delete_400" class="sct-icon sct-icon_big"
+            :color="iconColor"
+          ></svg-icon>
+        </div>
+      </NaviLink>
+    </div>
+    
   </div>
 
 </template>
@@ -191,34 +208,48 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
   align-items: center;
   justify-content: space-between;
 
+  .sct-item {
+    position: relative;
+  }
+}
 
-  .sct-box {
-    min-width: v-bind("boxWidth");
-    height: v-bind("boxWidth");
-    max-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.sct-box {
+  min-width: v-bind("boxWidth");
+  height: v-bind("boxWidth");
+  max-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    &::before {
-      transition: .25s;
-    }
+  &::before {
+    transition: .25s;
+  }
 
-    .sct-icon {
-      width: v-bind("iconWidth");
-      height: v-bind("iconWidth");
-      flex: none;
-    }
+  .sct-icon {
+    width: v-bind("iconWidth");
+    height: v-bind("iconWidth");
+    flex: none;
+  }
 
-    .sct-icon_big {
-      transform: scale(1.05);
-    }
+  .sct-icon_big {
+    transform: scale(1.05);
   }
 }
 
 .sc-selected::before {
   opacity: .11;
 }
+
+@media(hover: hover) {
+  .sct-box:hover::before {
+    opacity: 0;
+  }
+
+  .sc-selected:hover::before {
+    opacity: .11;
+  }
+}
+
 
 
 </style>

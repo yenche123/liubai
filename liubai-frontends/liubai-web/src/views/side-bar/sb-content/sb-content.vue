@@ -39,6 +39,7 @@ const {
 
 const {
   cursorInfo,
+  onScTopMouseEnter,
   onMouseEnter,
   onMouseLeave,
 } = useSbcCursor()
@@ -50,14 +51,17 @@ const color_selected = "var(--main-normal)"
 <template>
 
   <div class="sb-virtual-first" />
+
+  <!-- 移动的光标 -->
+  <div class="sb-cursor" v-if="cursorInfo.enable"></div>
   
   <!-- 顶部区域 -->
   <ScTop
     @canclosepopup="toClosePopup"
+    @mouseenter="onScTopMouseEnter"
+    @mouseleave="onMouseLeave"
     :is-fixed="mode === 'fixed'"
   ></ScTop>
-
-  <div class="sb-cursor" v-if="cursorInfo.enable"></div>
 
   <!-- 首页 -->
   <div class="sb-link-box sb-link-index" 
@@ -188,9 +192,9 @@ const color_selected = "var(--main-normal)"
   height: v-bind("cursorInfo.height + 'px'");
   top: 0;
   left: 0;
-  transform: v-bind("'translateY(' + cursorInfo.y + 'px)'");
+  translate: v-bind("'' + cursorInfo.x + 'px' + ' ' + cursorInfo.y + 'px'");
   position: absolute;
-  border-radius: 10px;
+  border-radius: 8px;
   transition: .15s;
   opacity: v-bind("cursorInfo.show ? '.06' : '0'");
   background-color: var(--primary-color);
