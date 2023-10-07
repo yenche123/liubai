@@ -8,6 +8,7 @@ const DetailPage = () => import("../pages/level2/detail-page/detail-page.vue")
 const CommentPage = () => import("../pages/level2/comment-page/comment-page.vue")
 const FavoritePage = () => import("../pages/level2/favorite-page/favorite-page.vue")
 const StatePage = () => import("../pages/level2/state-page/state-page.vue")
+const StateMorePage = () => import("../pages/level2/state-more-page/state-more-page.vue")
 const TrashPage = () => import("../pages/level2/trash-page/trash-page.vue")
 const TagPage = () => import("../pages/level2/tag-page/tag-page.vue")
 const ConnectPage = () => import("../pages/level2/connect-page/connect-page.vue")
@@ -134,6 +135,17 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: "/state-more",
+    components: {
+      default: StateMorePage,
+      LeftSidebar,
+    },
+    name: "state-more",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
     path: "/trash",
     components: {
       default: TrashPage,
@@ -245,6 +257,17 @@ const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-state",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/state-more",
+    components: {
+      default: StateMorePage,
+      LeftSidebar,
+    },
+    name: "collaborative-state-more",
     meta: {
       keepAlive: true,
     }
