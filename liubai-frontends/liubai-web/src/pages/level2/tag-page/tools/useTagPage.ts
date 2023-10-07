@@ -140,8 +140,11 @@ function showView(
   let hasFound = false
   for(let i=0; i<list.length; i++) {
     const v = list[i]
-    v.show = false
-    if(v.id !== newData.id) continue
+    if(v.id !== newData.id) {
+      v.show = false
+      continue
+    }
+    
     hasFound = true
     v.show = true
     v.state = newData.state
