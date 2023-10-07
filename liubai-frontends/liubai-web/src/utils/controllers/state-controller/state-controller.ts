@@ -94,7 +94,7 @@ async function getThreadsOfAThread(
     const res = await threadController.getList(listOpt)
     return {
       threads: res,
-      hasMore: res.length >= limitNum,
+      hasMore: res.length >= (limitNum - 1),
     }
   }
 

@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { computed, ref, shallowRef } from "vue";
 import type { StateShow } from "~/types/types-content";
 import type { CommonDataChanged } from "~/types/types-atom";
-import time from "../../utils/basic/time";
+import time from "~/utils/basic/time";
 
 export interface KanbanStateChange {
   whyChange: "edit" | "delete"
@@ -72,6 +72,7 @@ export const useGlobalStateStore = defineStore("globalState", () => {
     tagChangedReason,
     addTagChangedNum,
 
+    // selection 划线、选中的变化
     setLatestSelectionChange,
     isJustSelect,
   }

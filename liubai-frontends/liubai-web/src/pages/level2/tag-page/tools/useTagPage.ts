@@ -40,9 +40,8 @@ export function useTagPage() {
     whenContextChange(ctx)
   }, { immediate: true })
 
-  // 监听状态发生变化
+  // 监听标签发生变化
   watch(tagChangedNum, (newV, oldV) => {
-    console.log("监听到状态发生变化...........", newV, oldV)
     if(newV > oldV) {
       clearHiddenView(ctx)
       whenContextChange(ctx)
@@ -162,7 +161,7 @@ function showView(
 function clearHiddenView(
   ctx: TpCtx
 ) {
-  console.log("开启清除隐藏的 tag-view")
+  console.log("清除隐藏的 tag-view")
   const { list } = ctx.tpData
   for(let i=0; i<list.length; i++) {
     const v = list[i]
