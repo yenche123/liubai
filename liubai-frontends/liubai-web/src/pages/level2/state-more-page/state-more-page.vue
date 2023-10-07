@@ -1,12 +1,13 @@
 <script setup lang="ts">
+// 状态更多页，用于查看某个状态下的更多动态
 import MainView from "~/views/main-view/main-view.vue";
 import ViceView from "~/views/vice-view/vice-view.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
-import TagContent from "./tag-content/tag-content.vue";
+import StateMoreContent from "./state-more-content/state-more-content.vue";
 import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
-import { useTagPage } from "./tools/useTagPage";
+import { useStateMorePage } from "./tools/useStateMorePage";
 import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
 import type { TrueOrFalse } from "~/types/types-basic";
 
@@ -15,14 +16,18 @@ const {
   onVvWidthChange,
 } = useMainVice()
 
-const { tpData, onTapFab, onScroll } = useTagPage()
+const {
+  smpData,
+  onTapFab,
+  onScroll,
+} = useStateMorePage()
 
 </script>
 <template>
 
   <!-- 主视图 -->
   <main-view>
-    <template v-for="(item, index) in tpData.list" :key="item.id">
+    <template v-for="(item, index) in smpData.list" :key="item.id">
       <div class="liu-view" v-show="item.show">
         <scroll-view 
           :hidden-scroll-bar="item.show && hiddenScrollBar" 
@@ -32,17 +37,18 @@ const { tpData, onTapFab, onScroll } = useTagPage()
         >
           <navi-virtual></navi-virtual>
           <PlaceholderView 
-            :p-state="item.state"
+            :p-state="item.pState"
           ></PlaceholderView>
-          <TagContent 
-            v-if="item.state < 0"
-            :tag-id="item.id"
+          <StateMoreContent 
+            v-if="item.pState < 0"
+            :state-id="item.id"
             :show-txt="(String(item.show) as TrueOrFalse)"
-          ></TagContent>
+          ></StateMoreContent>
         </scroll-view>
         <navi-bar 
-          :title="item.tagName"
-          placeholder-key="common.tags"
+          :title="item.stateText"
+          :title-key="item.stateTextKey"
+          placeholder-key="common.state"
         ></navi-bar>
 
         <FloatActionButton 
@@ -58,6 +64,7 @@ const { tpData, onTapFab, onScroll } = useTagPage()
   <vice-view @widthchange="onVvWidthChange"></vice-view>
 
 </template>
-<style scoped>
+<style lang="scss" scoped>
+
 
 </style>

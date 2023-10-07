@@ -12,6 +12,7 @@ import { handleLastItemStamp } from "./useTLCommon"
 import tlUtil from "./tl-util"
 import typeCheck from "~/utils/basic/type-check"
 import stateController from "~/utils/controllers/state-controller/state-controller"
+import type { ThreadShow } from "~/types/types-content"
 
 export function useThreadList(
   props: TlProps,
@@ -163,31 +164,51 @@ async function loadList(
   }
 
   const oldList = tlData.list
-  const { viewType, tagId } = ctx.props
+  const { viewType, tagId, stateId } = ctx.props
 
   let length = oldList.length
   let oState: OState = viewType === 'TRASH' ? 'REMOVED' : 'OK'
   let lastItemStamp = reload || (length < 1) ? undefined : tlData.lastItemStamp
 
-  const opt1: TcListOption = {
-    viewType,
-    spaceId,
-    tagId,
-    lastItemStamp,
-    oState,
+  let results: ThreadShow[] = []
+
+  // 1. 开始去数据库加载动态
+  if(viewType === "STATE" && stateId) {
+    // 用 stateController 去加载 某个状态下的更多动态
+    const sOpt = {
+      stateId,
+      excludeInKanban: true,
+      lastItemStamp,
+    }
+    const sData = await stateController.getThreadsOfAThread(sOpt)
+    results = sData.threads
+    if(!sData.hasMore) {
+      tlData.hasReachBottom = true
+    }
   }
-  if(viewType === "FAVORITE") {
-    opt1.collectType = "FAVORITE"
-  }
-  else if(viewType === "PINNED") {
-    delete opt1.lastItemStamp
+  else {
+    // 用 threadController 直接去加载动态们
+    const opt1: TcListOption = {
+      viewType,
+      spaceId,
+      tagId,
+      lastItemStamp,
+      oState,
+    }
+    if(viewType === "FAVORITE") {
+      opt1.collectType = "FAVORITE"
+    }
+    else if(viewType === "PINNED") {
+      delete opt1.lastItemStamp
+    }
+    results = await threadController.getList(opt1)
   }
 
-  const results = await threadController.getList(opt1)
+  // 2. 加载完数据后，开始封装
   const newList = tlUtil.threadShowsToList(results)
   const newLength = newList.length
 
-  // 赋值到 list 上
+  // 3. 赋值到 list 上
   if(length < 1 || reload || viewType === "PINNED") {
     tlData.list = newList
 
@@ -199,12 +220,12 @@ async function loadList(
     tlData.list.push(...newList)
   }
 
-  // 处理 lastItemStamp
+  // 4. 处理 lastItemStamp
   if(newLength) {
     handleLastItemStamp(viewType, tlData)
   }
 
-  // 小于一定数量的时候 表示已经触底
+  // 5. 小于一定数量的时候 表示已经触底
   if(newLength < 6) {
     tlData.hasReachBottom = true
   }

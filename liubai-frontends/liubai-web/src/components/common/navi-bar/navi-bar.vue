@@ -2,12 +2,18 @@
 import cfg from "~/config"
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { useNaviBar } from "./tools/useNaviBar";
+import { useI18n } from "vue-i18n";
 
 const { router } = useRouteAndLiuRouter()
-const props = defineProps({
+defineProps({
   title: {
     type: String,
-    default: ""
+  },
+  titleKey: {
+    type: String,
+  },
+  placeholderKey: {
+    type: String,
   }
 })
 
@@ -15,6 +21,7 @@ const onTapBack = (e: MouseEvent) => {
   router.naviBack()
 }
 
+const { t } = useI18n()
 
 const {
   showMenuBtn,
@@ -43,7 +50,9 @@ const {
       <div class="nb-title"
         :style="{ 'margin-inline-start': showMenuBtn ? '10px' : '6px' }"
       >
-        <span>{{ title }}</span>
+        <span v-if="title">{{ title }}</span>
+        <span v-else-if="titleKey">{{ t(titleKey) }}</span>
+        <span v-else-if="placeholderKey">{{ t(placeholderKey) }}</span>
       </div>
     </div>
 
