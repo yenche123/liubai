@@ -90,7 +90,7 @@ function handlePinFloatState(
     let stateObj: TcbMenuItem = {
       text_key: "common.float_up",
       operation: "float_up",
-      iconName: "pin"
+      iconName: "float_up_600"
     }
     list.splice(0, 0, stateObj)
 
