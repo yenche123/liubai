@@ -118,6 +118,8 @@ async function prepareToDelete(
     commentId: id,
     commentShow: newCs,
     parentThread: newCs.parentThread,
+    parentComment: newCs.parentComment,
+    replyToComment: newCs.replyToComment,
   }
   cStore.setData(obj)
 
