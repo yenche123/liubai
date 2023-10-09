@@ -1,8 +1,17 @@
-import { nextTick, onActivated, provide, reactive, ref, shallowRef, toRef, vShow, watch } from "vue";
+import { 
+  nextTick, 
+  onActivated, 
+  provide, 
+  reactive, 
+  ref, 
+  shallowRef, 
+  toRef, 
+  watch,
+  type Ref
+} from "vue";
 import type { SvProps, SvEmits } from "./types"
 import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
 import { scrollViewKey, svScollingKey, svBottomUpKey } from "~/utils/provide-keys"
-import type { Ref } from "vue";
 
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
@@ -90,9 +99,6 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     }
 
     const sp = scrollPosition.value
-
-    // console.log("sp: ", sp)
-
     if(!sp) return
     _setScollPosition(sp)
 
