@@ -60,10 +60,10 @@
   "devDependencies": {
     "@types/canvas-confetti": "^1.6.1",
     "@types/file-saver": "^2.0.5",
-    "@types/node": "^18.16.16",
+    "@types/node": "^18.18.4",
     "@vitejs/plugin-vue": "^4.4.0",
     "sass": "^1.69.0",
-    "typescript": "~5.0.4",
+    "typescript": "~5.2.2",
     "user-agent-data-types": "^0.4.2",
     "vite": "^4.4.11",
     "vite-plugin-compression2": "^0.10.5",
