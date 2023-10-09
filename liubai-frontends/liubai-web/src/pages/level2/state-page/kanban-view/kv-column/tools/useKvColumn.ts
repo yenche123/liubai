@@ -1,8 +1,9 @@
-import { onActivated, onMounted, onUnmounted, ref } from "vue"
+import { ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
 import { useLiuWatch } from "~/hooks/useLiuWatch"
 import type { KbListEmits2, KbListProps } from "../../../tools/types"
+import { useScrollViewElement } from "~/hooks/elements/useScrollViewElement"
 
 export function useKvColumn(
   props: KbListProps,
@@ -29,31 +30,10 @@ function handleScrollView(
   props: KbListProps,
   emits: KbListEmits2
 ) {
-  
-  let sv: HTMLElement | null = null
-  let lastScrollTop = 0
-
-  const onScrolling = () => {
-    if(!sv) return
-    lastScrollTop = sv.scrollTop
-    emits("scrolling", lastScrollTop)
+  const selectors = `#kanban-${props.stateId}`
+  const onScrolling = (sT: number) => {
+    emits("scrolling", sT)
   }
 
-  onActivated(() => {
-    if(lastScrollTop <= 1) return
-    if(!sv) return
-    sv.scrollTop = lastScrollTop
-  })
-
-  onMounted(() => {
-    sv = document.querySelector("#kanban-" + props.stateId)
-    if(!sv) return
-    sv.addEventListener("scroll", onScrolling)
-  })
-
-  onUnmounted(() => {
-    if(!sv) return
-    sv.removeEventListener("scroll", onScrolling)
-  })
-
+  useScrollViewElement(selectors, onScrolling)
 }

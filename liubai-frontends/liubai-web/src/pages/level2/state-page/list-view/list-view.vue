@@ -10,6 +10,7 @@ import { useKanbanColumns } from '../tools/useKanbanColumns';
 import type { MenuItem } from '~/components/common/liu-menu/tools/types';
 import LvColumn from "./lv-column/lv-column.vue";
 import liuApi from '~/utils/liu-api';
+import { useListView } from "./tools/useListView"
 
 // Vue 3.3+ 的 defineEmits 声明方式
 const emit = defineEmits<{
@@ -32,6 +33,7 @@ const props = defineProps({
   },
 })
 
+useListView()
 const vHandle = HandleDirective
 const iconColor = "var(--main-note)"
 const { t } = useI18n()
@@ -61,6 +63,7 @@ const { isMobile } = liuApi.getCharacteristic()
     helper-class="lv-container_helper"
     v-model:list="columns"
     use-drag-handle
+    id="state-page-lv-container"
     @update:list="onColumnsSorted"
   >
     <StateNavi 
