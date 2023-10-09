@@ -83,7 +83,7 @@ function handleOperationFromBottomBar(
   else if(op === "restore" || op === "delete_forever") {
     ctx.emits("newoperate", op, position, threadData)
   }
-  else if(op === "pin") {
+  else if(op === "pin" || op === "float_up") {
     ctx.emits("newoperate", op, position, threadData)
   }
 }

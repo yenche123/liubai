@@ -20,6 +20,10 @@ interface SelectStateRes {
   newStateShow?: StateShow
 }
 
+interface FloatUpRes {
+  tipPromise?: Promise<SnackbarRes>
+}
+
 interface StateCfgBackup {
   oldStateConfig?: LiuStateConfig
   backupStamp: number
@@ -100,7 +104,7 @@ export async function selectState(
   return { tipPromise, newStateId, newStateShow: tmpStateShow }
 }
 
-
+// 撤回状态的修改
 export async function undoState(
   oldThread: ThreadShow,
   memberId: string,
@@ -115,6 +119,47 @@ export async function undoState(
   const res2 = await dbOp.setStateId(oldThread._id, oldThread.stateId)
 
   // 3. 复原 workspace
+  const wStore = useWorkspaceStore()
+  await restoreStateCfg(wStore)
+}
+
+// 浮上去
+export async function floatUp(
+  thread: ThreadShow,
+  memberId: string,
+  userId: string,
+): Promise<FloatUpRes> {
+  const stateId = thread.stateId
+  if(!stateId) return {}
+
+  const wStore = useWorkspaceStore()
+
+  // 1. 直接处理 workspace 即可
+  await handleWorkspace(wStore, thread)
+
+  // 2. 通知全局
+  const tsStore = useThreadShowStore()
+  tsStore.setUpdatedThreadShows([thread], "float_up")
+
+  // 3. 显示 snackbar
+  const text_key = "state_related.bubbled"
+  const action_key = "tip.undo"
+  const tipPromise = cui.showSnackBar({ text_key, action_key })
+
+  return { tipPromise }
+}
+
+// 撤回冒泡
+export async function undoFloatUp(
+  thread: ThreadShow,
+  memberId: string,
+  userId: string,
+) {
+  // 1. 通知全局
+  const tsStore = useThreadShowStore()
+  tsStore.setUpdatedThreadShows([thread], "undo_float_up")
+
+  // 2. 复原 workspace
   const wStore = useWorkspaceStore()
   await restoreStateCfg(wStore)
 }

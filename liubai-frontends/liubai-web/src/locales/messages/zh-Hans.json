@@ -229,7 +229,8 @@
     "replicate_kanban_name": "已有相同名称的看板",
     "delete_h1": "确定删除状态【{name}】吗？",
     "delete_b1": "1. 该操作无法撤回\n2. 这不会删除该状态下的动态",
-    "min_kanban": "最好保留 2 个状态比较合适"
+    "min_kanban": "最好保留 2 个状态比较合适",
+    "bubbled": "已冒泡"
   },
   "search_related": {
     "suggest": "建议",

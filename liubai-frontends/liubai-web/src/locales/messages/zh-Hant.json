@@ -229,7 +229,8 @@
     "replicate_kanban_name": "已有相同名稱的看板",
     "delete_h1": "確定删除狀態【{name}】嗎？",
     "delete_b1": "1. 該操作無法撤回\n2. 這不會删除該狀態下的動態",
-    "min_kanban": "最好保留 2 個狀態會比較舒適"
+    "min_kanban": "最好保留 2 個狀態會比較舒適",
+    "bubbled": "已冒泡"
   },
   "search_related": {
     "suggest": "建議",

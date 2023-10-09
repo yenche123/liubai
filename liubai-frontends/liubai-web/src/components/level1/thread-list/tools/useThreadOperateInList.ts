@@ -93,11 +93,14 @@ function handleOutterOperation(
   else if(operation === "state") {
     handle_state(ctx)
   }
+  else if(operation === "float_up") {
+    handle_float_up(ctx)
+  }
 }
 
 // 去打开状态选择面板
 async function handle_state(ctx: ToCtx) {
-  const { memberId, userId, thread, tlData, position } = ctx
+  const { memberId, userId, thread, tlData, position, props } = ctx
   const oldThread = valTool.copyObject(thread)
   
   const { 
@@ -107,10 +110,10 @@ async function handle_state(ctx: ToCtx) {
   } = await threadOperate.selectState(oldThread, memberId, userId)
   if(!tipPromise) return
 
-    // 1. 来判断当前列表里的该 item 是否要删除
+  // 1. 来判断当前列表里的该 item 是否要删除
   let removedFromList = false
-  const vT = ctx.props.viewType as TlViewType
-  const listStateId = ctx.props.stateId
+  const vT = props.viewType
+  const listStateId = props.stateId
   if(vT === "STATE" && newStateId !== listStateId) {
     removedFromList = true
     await _toHide(tlData, position)
@@ -265,6 +268,38 @@ async function handle_collect(ctx: ToCtx) {
   // 4. 判断是否重新加回
   if(removedFromList) {
     _toShowAgain(tlData, position, oldThread)
+  }
+}
+
+// 去冒泡
+// 支持撤回，因为只是修改 wStore 里的
+async function handle_float_up(ctx: ToCtx) {
+  const { memberId, userId, thread, props, tlData, position } = ctx
+  const theThread = valTool.copyObject(thread)
+
+  const { 
+    tipPromise, 
+  } = await threadOperate.floatUp(theThread, memberId, userId)
+  if(!tipPromise) return
+
+  // 1. 来判断当前列表里的该 item 是否要删除
+  let removedFromList = false
+  const vT = props.viewType
+  if(vT === "STATE") {
+    removedFromList = true
+    await _toHide(tlData, position)
+  }
+
+  // 2. 等待 snackbar 返回
+  const res2 = await tipPromise
+  if(res2.result !== "tap") return
+
+  // 3. 去执行公共的取消逻辑
+  await threadOperate.undoFloatUp(theThread, memberId, userId)
+  
+  // 4. 判断是否要重新加回
+  if(removedFromList) {
+    _toShowAgain(tlData, position, theThread)
   }
 }
 

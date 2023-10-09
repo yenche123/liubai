@@ -188,6 +188,8 @@ function listenThreadShowChanged(
     "state",
     "undo_state",
     "restore",
+    "float_up",
+    "undo_float_up",
   ]
 
   // 内部改变的时间戳

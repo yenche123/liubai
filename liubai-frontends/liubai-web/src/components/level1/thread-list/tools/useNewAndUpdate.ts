@@ -162,6 +162,15 @@ function handleUpdatedList(
   const { list } = tlData
   const vT = props.viewType as TlViewType
 
+  // 1. 检查是否有无需监听变化的修改
+  const NO_ACTIONS: WhyThreadChange[] = [
+    "float_up", 
+    "undo_float_up"
+  ]
+  const isInNoActions = NO_ACTIONS.includes(whyChange)
+  if(isInNoActions) return
+
+  // 2. 如果当前列表为 "置顶"，另外处理
   if(vT === "PINNED") {
     handleUpdateForPinnedList(tlData, updatedList)
     return

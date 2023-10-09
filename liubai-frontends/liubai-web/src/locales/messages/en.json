@@ -229,7 +229,8 @@
     "replicate_kanban_name": "There has been the same name of Kanban",
     "delete_h1": "Delete the state [{name}]?",
     "delete_b1": "1. The operation cannot be undone\n2. Your posts under the state will not be deleted",
-    "min_kanban": "It's better to keep 2 states"
+    "min_kanban": "It's better to keep 2 states",
+    "bubbled": "Bubbled"
   },
   "search_related": {
     "suggest": "Suggestion",

@@ -19,6 +19,8 @@ import { setShowCountdown, setTags } from "./specific-operate/other"
 import { 
   selectState, 
   undoState, 
+  floatUp,
+  undoFloatUp,
   setNewStateForThread,
 } from "./specific-operate/state"
 
@@ -40,5 +42,7 @@ export default {
   setTags,
   selectState,
   undoState,
+  floatUp,
+  undoFloatUp,
   setNewStateForThread,
 }

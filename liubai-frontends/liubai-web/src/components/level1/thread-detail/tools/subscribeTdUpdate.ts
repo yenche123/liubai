@@ -5,6 +5,7 @@ import type { TdData } from "./types"
 import type { ThreadShow } from "~/types/types-content"
 import { storeToRefs } from "pinia"
 import { watch } from "vue"
+import type { WhyThreadChange } from "~/types/types-atom"
 
 export function subscribeTdUpdate(
   tdData: TdData
@@ -13,9 +14,9 @@ export function subscribeTdUpdate(
   // 监听 "动态" 发生变化
   const tStore = useThreadShowStore()
   tStore.$subscribe((mutation, state) => {
-    const { updatedThreadShows } = state
+    const { updatedThreadShows, whyChange } = state
     if(updatedThreadShows.length > 0) {
-      whenThreadsUpdated(tdData, updatedThreadShows)
+      whenThreadsUpdated(tdData, updatedThreadShows, whyChange)
     }
   })
 
@@ -88,12 +89,22 @@ function whenKanbanStateUpdated(
 
 function whenThreadsUpdated(
   tdData: TdData,
-  updatedList: ThreadShow[]
+  updatedList: ThreadShow[],
+  whyChange: WhyThreadChange,
 ) {
 
   const thread = tdData.threadShow
   if(!thread) return
 
+  // 1. 检查是否有无需监听变化的修改
+  const NO_ACTIONS: WhyThreadChange[] = [
+    "float_up", 
+    "undo_float_up",
+  ]
+  const isInNoActions = NO_ACTIONS.includes(whyChange)
+  if(isInNoActions) return
+
+  // 2. 找出与当前 detail 里承载的 thread 一致的新动态
   const newThread = updatedList.find(v => {
     if(v._id === thread._id) return true
     
