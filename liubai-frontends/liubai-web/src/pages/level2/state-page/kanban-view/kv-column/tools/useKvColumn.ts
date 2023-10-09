@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, ref } from "vue"
+import { onActivated, onMounted, onUnmounted, ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
 import { useLiuWatch } from "~/hooks/useLiuWatch"
@@ -31,12 +31,19 @@ function handleScrollView(
 ) {
   
   let sv: HTMLElement | null = null
+  let lastScrollTop = 0
 
   const onScrolling = () => {
     if(!sv) return
-    const sT = sv.scrollTop
-    emits("scrolling", sT)
+    lastScrollTop = sv.scrollTop
+    emits("scrolling", lastScrollTop)
   }
+
+  onActivated(() => {
+    if(lastScrollTop <= 1) return
+    if(!sv) return
+    sv.scrollTop = lastScrollTop
+  })
 
   onMounted(() => {
     sv = document.querySelector("#kanban-" + props.stateId)
