@@ -1,0 +1,11 @@
+{
+  "name": "liubai-laf",
+  "version": "0.0.1",
+  "description": "Liubai's backend for Laf",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yenche123",
+  "license": "ISC"
+}
