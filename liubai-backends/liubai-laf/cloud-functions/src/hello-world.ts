@@ -1,21 +1,22 @@
-import cloud from '@lafjs/cloud'
+
+const code = `0000`
+
+// 若后端关闭时，请对调上下方代码和注释
+// const code = `B0001`
 
 export async function main(ctx: FunctionContext) {
-  console.log('Hello World')
+  console.log('Hello LB')
   
-  const date = new Date()
-  const timezoneOffset = date.getTimezoneOffset()
-  const utcString = date.toUTCString()
-  const localeDateString = date.toLocaleDateString()
-  const localeTimeString = date.toLocaleTimeString()
-  const now = date.getTime()
+  if(code !== `0000`) {
+    return { code }
+  }
 
-  console.log(`timezoneOffset: `, timezoneOffset)
-  console.log(`utcString: `, utcString)
-  console.log(`localeDateString: `, localeDateString)
-  console.log(`localeTimeString: `, localeTimeString)
-  console.log(`now: `, now)
-  
-
-  return { data: 'hi, laf' }
+  const now = Date.now()
+  const res = {
+    code,
+    data: {
+      stamp: now,
+    }
+  }
+  return res
 }
