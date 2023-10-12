@@ -4,16 +4,19 @@ interface LiuAcAtom {
   lastVisitStamp: number
   lastLifeCircleStamp: number
   visitNum: number
+  recentVisitStamps: number[]
 }
 
 // 一分钟内，最多允许访问的次数
 const MAXIMUM_IN_ONE_MINUTE = 60
 
+// 收集最近多少个访问时间戳
+const VISITED_NUM = 60
+
 export async function main(ctx: FunctionContext) {
   // 0. 获取请求的实际 IP
   const ip = ctx.headers?.['x-real-ip']
   console.log("--------> 当前来源 ip: ", ip)
-
 
   // 1. 判断 ip 是否存在，是否为 string 类型
   if(!ip) return false
@@ -71,27 +74,41 @@ function checkIp(ip: string) {
   const liuAC: Map<string, LiuAcAtom> = gShared.get(`liu-access-control`) ?? new Map()
   const ipAtom = liuAC.get(ip)
 
+  // 3. 若 ip 数据不存在，初始化该 ip 后通过
   if(!ipAtom) {
     const newIpAtom = _getLiuAcAtom(now)
     liuAC.set(ip, newIpAtom)
+    gShared.set(`liu-access-control`, liuAC)
     return true
   }
 
-  const lastLifeCircleStamp = ipAtom.lastLifeCircleStamp ?? 1
+  const {
+    lastLifeCircleStamp,
+    recentVisitStamps = []
+  } = ipAtom
   const diff = now - lastLifeCircleStamp
   const MINUTE = 60 * 1000
 
-  // 上一次访问周期到现在 已经超过 1 分钟了，重置数据
+  // 4. 收集最近 VISITED_NUM 个访问时间戳
+  recentVisitStamps.push(now)
+  const diff2 = recentVisitStamps.length - VISITED_NUM
+  if(diff2 > 0) {
+    recentVisitStamps.splice(0, diff2)
+  }
+
+  // 5. 上一次访问周期到现在 已经超过 1 分钟了，重置数据
   if(diff > MINUTE) {
     const newIpAtom = _getLiuAcAtom(now)
+    newIpAtom.recentVisitStamps = recentVisitStamps
     liuAC.set(ip, newIpAtom)
     return true
   }
 
+  // 6. 多数情况下的访问
   let visitNum = ipAtom.visitNum + 1
-
   ipAtom.lastVisitStamp = now
   ipAtom.visitNum = visitNum
+  ipAtom.recentVisitStamps = recentVisitStamps
   liuAC.set(ip, ipAtom)
 
   if(visitNum > MAXIMUM_IN_ONE_MINUTE) {
@@ -107,6 +124,7 @@ function _getLiuAcAtom(now: number) {
     lastVisitStamp: now,
     lastLifeCircleStamp: now,
     visitNum: 1,
+    recentVisitStamps: [now],
   }
   return newIpAtom
 }
