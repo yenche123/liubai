@@ -13,6 +13,12 @@ const MAXIMUM_IN_ONE_MINUTE = 60
 // 收集最近多少个访问时间戳
 const VISITED_NUM = 60
 
+// 允许不带 token 访问的云函数
+const ALLOW_WITHOUT_TOKEN = [
+  "__interceptor__",
+  "hello-world",
+]
+
 export async function main(ctx: FunctionContext) {
   // 0. 获取请求的实际 IP
   const ip = ctx.headers?.['x-real-ip']
@@ -39,6 +45,10 @@ export async function main(ctx: FunctionContext) {
     ctx.response?.send({ code: "E4000" })
     return false
   }
+
+  // 4. 校验 token
+  const res3 = checkToken(ctx)
+  if(!res3) return false
 
   return true
 }
@@ -127,4 +137,30 @@ function _getLiuAcAtom(now: number) {
     recentVisitStamps: [now],
   }
   return newIpAtom
+}
+
+/** 获取目标云函数的名称 */
+function _getTargetCloudFuncName(ctx: FunctionContext) {
+  const p = ctx.request?.path
+  if(!p || p.length < 2) return ``
+  const name = p.substring(1)
+  return name
+}
+
+/** 检查 token */
+function checkToken(ctx: FunctionContext) {
+  const funcName = _getTargetCloudFuncName(ctx)
+  if(!funcName) {
+    console.warn(`获取云函数名称失败.......`)
+    ctx.response?.send({ code: "E5001" })
+    return false
+  }
+
+  const allowNoToken = ALLOW_WITHOUT_TOKEN.includes(funcName)
+  if(allowNoToken) return true
+
+  // console.log("去检查 token .....................")
+  // console.log(`暂且先都通过`)
+
+  return true
 }
