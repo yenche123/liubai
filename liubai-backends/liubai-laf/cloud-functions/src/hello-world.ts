@@ -1,3 +1,4 @@
+import geoip from "geoip-lite"
 
 const code = `0000`
 
@@ -10,6 +11,18 @@ export async function main(ctx: FunctionContext) {
   if(code !== `0000`) {
     return { code }
   }
+
+  const ip = ctx.headers?.['x-real-ip']
+  if(typeof ip === 'string') {
+    console.log(`ip: `, ip)
+    const geo = geoip.lookup(ip)
+    if(geo) {
+      console.log("IP Geo: ", geo.region, geo.country)
+      console.log("IP timezone: ", geo.timezone)
+    }
+
+  }
+
 
   const now = Date.now()
   const res = {
