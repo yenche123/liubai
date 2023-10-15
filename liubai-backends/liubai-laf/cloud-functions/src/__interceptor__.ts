@@ -1,11 +1,5 @@
 import cloud from '@lafjs/cloud'
-
-interface LiuAcAtom {
-  lastVisitStamp: number
-  lastLifeCircleStamp: number
-  visitNum: number
-  recentVisitStamps: number[]
-}
+import type { Shared_LiuAcAtom } from "@/common-types"
 
 // 一分钟内，最多允许访问的次数
 const MAXIMUM_IN_ONE_MINUTE = 60
@@ -81,7 +75,7 @@ function checkIp(ip: string) {
   const now = Date.now()
 
   // 2. 访问控制
-  const liuAC: Map<string, LiuAcAtom> = gShared.get(`liu-access-control`) ?? new Map()
+  const liuAC: Map<string, Shared_LiuAcAtom> = gShared.get(`liu-access-control`) ?? new Map()
   const ipAtom = liuAC.get(ip)
 
   // 3. 若 ip 数据不存在，初始化该 ip 后通过
@@ -130,7 +124,7 @@ function checkIp(ip: string) {
 
 /** 初始化（重置）当前 ip 的访问控制 */
 function _getLiuAcAtom(now: number) {
-  const newIpAtom: LiuAcAtom = {
+  const newIpAtom: Shared_LiuAcAtom = {
     lastVisitStamp: now,
     lastLifeCircleStamp: now,
     visitNum: 1,

@@ -15,7 +15,7 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["other/*"]
+      "@/*": ["src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "type"],
