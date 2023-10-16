@@ -11,6 +11,16 @@ const VISITED_NUM = 60
 const ALLOW_WITHOUT_TOKEN = [
   "__interceptor__",
   "hello-world",
+  "user-login",
+  "common-util",
+]
+
+const X_LIU_NORMAL = [
+  "x_liu_language",
+  "x_liu_version",
+  "x_liu_stamp",
+  "x_liu_timezone",
+  "x_liu_client",
 ]
 
 export async function main(ctx: FunctionContext) {
@@ -40,10 +50,6 @@ export async function main(ctx: FunctionContext) {
     return false
   }
 
-  // 4. 校验 token
-  const res3 = checkToken(ctx)
-  if(!res3) return false
-
   return true
 }
 
@@ -52,7 +58,32 @@ export async function main(ctx: FunctionContext) {
  * 检查入参是否正确
  */
 function checkEntry(ctx: FunctionContext) {
-  // 现在皆返回正确
+
+  // 1. 检查常规的 x_liu_
+  const body = ctx.request?.body ?? {}
+  for(let i=0; i<X_LIU_NORMAL.length; i++) {
+    const v = X_LIU_NORMAL[i]
+    const data = body[v]
+    console.log(`${v}: `, data)
+    if(!data) return false
+  }
+
+  // 2. 获取云函数名
+  const funcName = _getTargetCloudFuncName(ctx)
+  if(!funcName) {
+    console.warn(`获取云函数名称失败.......`)
+    ctx.response?.send({ code: "E5001" })
+    return false
+  }
+
+  // 3. 是否无需 token
+  const allowNoToken = ALLOW_WITHOUT_TOKEN.includes(funcName)
+  if(allowNoToken) return true
+
+  const token = body["x_liu_token"]
+  const tokenId = body["x_liu_token_id"]
+  if(!token || token.length < 32) return false
+  if(!tokenId) return false
 
   return true
 }
@@ -139,22 +170,4 @@ function _getTargetCloudFuncName(ctx: FunctionContext) {
   if(!p || p.length < 2) return ``
   const name = p.substring(1)
   return name
-}
-
-/** 检查 token */
-function checkToken(ctx: FunctionContext) {
-  const funcName = _getTargetCloudFuncName(ctx)
-  if(!funcName) {
-    console.warn(`获取云函数名称失败.......`)
-    ctx.response?.send({ code: "E5001" })
-    return false
-  }
-
-  const allowNoToken = ALLOW_WITHOUT_TOKEN.includes(funcName)
-  if(allowNoToken) return true
-
-  // console.log("去检查 token .....................")
-  // console.log(`暂且先都通过`)
-
-  return true
 }
