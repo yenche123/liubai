@@ -2,28 +2,17 @@
 import AppLink from '~/components/common/app-link/app-link.vue';
 import NaviLink from "~/components/common/navi-link/navi-link.vue";
 import ScTop from './sc-top/sc-top.vue';
-import { computed, PropType } from 'vue';
+import { computed } from 'vue';
 import { useSbContent } from './tools/useSbContent';
 import { useSbcCursor } from './tools/useSbcCursor';
+import { sbProps, type SbEmits } from "./tools/types"
 
-const emits = defineEmits<{
-  (event: "canclosepopup"): void
-}>()
-
+const emits = defineEmits<SbEmits>()
 const toClosePopup = () => {
   emits("canclosepopup")
 }
 
-const props = defineProps({
-  show: {
-    type: Boolean,
-    default: true,
-  },
-  mode: {
-    type: String as PropType<"fixed" | "common">,
-    default: "common"
-  },
-})
+const props = defineProps(sbProps)
 
 // 用于判断 用户点击 tab 键后，是否要响应该元素，小于 0 代表不要响应
 const tabindex = computed(() => {
@@ -42,7 +31,7 @@ const {
   onScTopMouseEnter,
   onMouseEnter,
   onMouseLeave,
-} = useSbcCursor()
+} = useSbcCursor(props)
 
 const color = "var(--navi-normal)"
 const color_selected = "var(--main-normal)"

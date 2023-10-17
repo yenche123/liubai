@@ -1,9 +1,11 @@
 import { reactive } from "vue"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 import valTool from "~/utils/basic/val-tool"
-import type { ScTopItemKey, SbcCursorInfo } from "./types"
+import type { ScTopItemKey, SbcCursorInfo, SbProps } from "./types"
 
-export function useSbcCursor() {
+export function useSbcCursor(
+  props: SbProps,
+) {
 
   let closeCursorStamp: LiuTimeout
   const cursorInfo = reactive<SbcCursorInfo>({
@@ -43,7 +45,10 @@ export function useSbcCursor() {
   }
 
   const _calculateRect = (q: string) => {
-    const baseEl = document.querySelector(".sb-virtual-first")
+    let baseQ = ".sb-virtual-first"
+    if(props.mode === "fixed") baseQ = `.sf-inner-box ` + baseQ
+
+    const baseEl = document.querySelector(baseQ)
     if(!baseEl) {
       console.warn("查无 .sb-virtual-first 元素")
       return
@@ -59,12 +64,16 @@ export function useSbcCursor() {
   }
 
   const onScTopMouseEnter = (key: ScTopItemKey) => {
-    const q = `.sct-item.sct-item-${key}`
+    let q = `.sct-item.sct-item-${key}`
+    if(props.mode === "fixed") q = `.sf-inner-box ` + q
+
     _calculateRect(q)
   }
 
   const onMouseEnter = (key: string) => {
-    const q = `.sb-link-box.sb-link-${key}`
+    let q = `.sb-link-box.sb-link-${key}`
+    if(props.mode === "fixed") q = `.sf-inner-box ` + q
+    
     _calculateRect(q)
   }
 
