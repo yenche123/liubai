@@ -51,7 +51,7 @@ export default {
   sidebar_close_point: 600,   // 窗口宽度小于该尺寸，就会关闭 sidebar
   sidebar_open_point: 700,    // 窗口尺寸大于等于该尺寸，并且为 closed_by_auto 状态，就会自动展开 sidebar
   
-  max_export_num: 200,        // 一次性导出时的最大条数，当加载的条数大于等于该值时，停止导出
+  max_export_num: 300,        // 一次性导出时的最大条数，当加载的条数大于等于该值时，停止导出
 
   max_mobile_breakpoint: 600,   // 有些时候，屏幕宽度小于 600，简略认为它是移动端
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { useExportContent } from "./tools/useExportContent";
+import cfg from "~/config"
 
 const { t } = useI18n()
 
@@ -10,6 +11,8 @@ const {
   onTapJSON,
 } = useExportContent()
 
+const { max_export_num } = cfg
+
 </script>
 <template>
 
@@ -17,7 +20,7 @@ const {
     <div class="liu-mc-box">
 
       <div class="liu-highlight-box">
-        <span class="liu-selection">{{ t('export.highlight_tip') }}</span>
+        <span class="liu-selection">{{ t('export.highlight_tip', { max: max_export_num }) }}</span>
       </div>
 
       <div class="sc-box">

@@ -17,6 +17,7 @@ import { membersToShows } from "~/utils/other/member-related";
 import { saveAs as fileSaverSaveAs } from 'file-saver';
 import transferUtil from "~/utils/transfer-util";
 import liuEnv from "~/utils/liu-env";
+import valTool from "~/utils/basic/val-tool";
 
 export async function handleExport(
   exportType: ExportType
@@ -27,6 +28,9 @@ export async function handleExport(
   const { spaceId, myMember } = wStore
   if(!spaceId || !myMember) return
   const [m] = membersToShows([myMember])
+
+  cui.showLoading({ title_key: `common.processing` })
+  await valTool.waitMilli(60)
   
   // 1. 先去把数据 contents 加载出来
   console.time("getContents")
@@ -34,6 +38,7 @@ export async function handleExport(
   console.timeEnd("getContents")
 
   if(list.length < 1) {
+    cui.hideLoading()
     cui.showModal({ 
       title_key: "tip.tip", 
       content_key: "export.no_data", 
@@ -60,6 +65,7 @@ export async function handleExport(
   // 2. 生成 contents 文件夹
   const contents = zip.folder("contents")
   if(!contents) {
+    cui.hideLoading()
     console.warn("构建 contents 失败..........")
     return
   }
@@ -85,6 +91,10 @@ export async function handleExport(
   console.time("fileSaverSaveAs")
   fileSaverSaveAs(resZip, fileName)
   console.timeEnd("fileSaverSaveAs")
+
+  await valTool.waitMilli(250)
+
+  cui.hideLoading()
 }
 
 async function insertMarkdownContent(
@@ -209,7 +219,8 @@ async function getContents(spaceId: string) {
 
   // 预防性的计数器，避免陷入疯狂循环
   let runTimes = 0
-  const MAX_TIMES = 10
+  const MAX_EXPORT_NUM = cfg.max_export_num
+  const MAX_TIMES = Math.min(Math.ceil(MAX_EXPORT_NUM / 16), 50)
 
   while(true) {
     let len1 = list.length
