@@ -201,7 +201,6 @@ const routes: Array<RouteRecordRaw> = [
     },
     name: "import",
     meta: {
-      keepAlive: true,
       inSetting: true,
     }
   },
@@ -328,7 +327,6 @@ const routes: Array<RouteRecordRaw> = [
     },
     name: "collaborative-import",
     meta: {
-      keepAlive: true,
       inSetting: true,
     }
   },
