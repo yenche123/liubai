@@ -14,7 +14,7 @@ const LIGHT_MAP: Record<string, string> = {
 }
 
 const DARK_MAP: Record<string, string> = {
-  "--liu-state-1": "#C6C4BE",
+  "--liu-state-1": "#C3BBB3",
   "--liu-state-2": "#C4C8A2",
   "--liu-state-3": "#D4B4AF",
   "--liu-state-4": "#AA87B0",
