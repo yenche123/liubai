@@ -80,19 +80,26 @@ const smallView = computed(() => {
 
         </div>
 
-        <div class="iri-title" v-if="item.threadShow.title">
+        <div class="iri-title" v-if="item.threadShow?.title">
           <span>{{ item.threadShow.title }}</span>
         </div>
 
         <div class="iri-text">
-          <span v-if="item.threadShow.summary">{{ item.threadShow.summary }}</span>
+          <span v-if="item.threadShow?.summary">{{ item.threadShow.summary }}</span>
+          <span v-else-if="item.commentShow?.summary">{{ item.commentShow.summary }}</span>
           <span v-else>{{ t("thread_related.img_file") }}</span>
         </div>
 
         <!-- 图片 -->
         <BrowsingCovers 
+          v-if="item.threadShow"
           :covers="item.threadShow.images"
           :img-layout="item.threadShow.imgLayout"
+          purpose="import"
+        ></BrowsingCovers>
+        <BrowsingCovers 
+          v-else-if="item.commentShow"
+          :covers="item.commentShow.images"
           purpose="import"
         ></BrowsingCovers>
 

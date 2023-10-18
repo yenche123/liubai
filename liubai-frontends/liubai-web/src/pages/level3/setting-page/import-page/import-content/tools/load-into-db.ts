@@ -15,7 +15,7 @@ export async function loadIntoDB(list: ImportedAtom2[]) {
 
   list.forEach((v, i) => {
     const s = v.status
-    const data = liuUtil.toRawData(v.threadData)
+    const data = liuUtil.toRawData(v.contentData)
     if(s === "new") {
       data.insertedStamp = now + i
       data.updatedStamp = now + i

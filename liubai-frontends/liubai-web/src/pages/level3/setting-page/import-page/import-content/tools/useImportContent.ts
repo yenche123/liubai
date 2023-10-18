@@ -13,6 +13,7 @@ import checker from "~/utils/other/checker"
 import valTool from "~/utils/basic/val-tool"
 import { loadIntoDB } from "./load-into-db"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import cfg from "~/config"
 
 interface IcCtx {
   list: Ref<ImportedAtom2[]>
@@ -117,6 +118,8 @@ async function loadZip(f: File, ctx: IcCtx) {
     return 0
   })
 
+
+  const { max_export_num } = cfg
   sortedResults.forEach(v => {
     const s = v.relativePath
     const s2 = s.match(regDate)
@@ -127,8 +130,12 @@ async function loadZip(f: File, ctx: IcCtx) {
 
     // 1. 判断 dateStr 是否不一致
     if(s3 !== tmpAtom.dateStr) {
+      // 如果日期和 cardJSON 存在才添加
       if(tmpAtom.dateStr && tmpAtom.cardJSON) {
-        atoms.push(tmpAtom)
+        // 并且每次导入有一个最大数的限制
+        if(atoms.length < max_export_num) {
+          atoms.push(tmpAtom)
+        }
       }
       tmpAtom = {
         dateStr: s3

@@ -17,6 +17,8 @@ import type { LiuMyContext } from "~/types/types-context";
 import type { ContentLocalTable } from "~/types/types-table";
 import { equipThreads } from "~/utils/controllers/equip/threads";
 import ider from "~/utils/basic/ider";
+import type { CommentShow, ThreadShow } from "~/types/types-content";
+import { equipComments } from "~/utils/controllers/equip/comments";
 
 export async function parseOurJson(
   atom: ImportedAtom,
@@ -112,7 +114,7 @@ async function getImportedAtom2(
   let { images, files } = imgsFiles
   let c: ContentLocalTable = { ...d, images, files, oState: "OK" }
 
-  // 查找本地动态是否存在
+  // 查找本地动态或评论是否存在
   const res = await db.contents.get(c._id)
 
   // 动态本地不存在
@@ -157,12 +159,22 @@ async function _getIa2(
   c: ContentLocalTable,
   status: ImportedStatus,
 ) {
-  let [threadShow] = await equipThreads([c])
+  let threadShow: ThreadShow | undefined
+  let commentShow: CommentShow | undefined
+
+  if(c.infoType === "THREAD") {
+    [threadShow] = await equipThreads([c])
+  }
+  else if(c.infoType === "COMMENT") {
+    [commentShow] = await equipComments([c])
+  }
+  
   let ia2: ImportedAtom2 = {
     id: c._id,
     status,
     threadShow,
-    threadData: c,
+    commentShow,
+    contentData: c,
   }
   return ia2
 }

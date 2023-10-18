@@ -1,6 +1,7 @@
 import JSZip from "jszip"
 import { LiuFileStore, LiuImageStore } from "~/types"
 import type { 
+  CommentShow,
   ThreadShow 
 } from "~/types/types-content"
 import type {
@@ -25,8 +26,9 @@ export type ImportedStatus = "no_change" | "update_required" | "new"
 export interface ImportedAtom2 {
   id: string
   status: ImportedStatus
-  threadShow: ThreadShow
-  threadData: ContentLocalTable
+  threadShow?: ThreadShow
+  commentShow?: CommentShow
+  contentData: ContentLocalTable
 }
 
 export interface ImportedAsset {
