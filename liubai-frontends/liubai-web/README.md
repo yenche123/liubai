@@ -1,6 +1,6 @@
 # LB
 
-Tomorrow Dayoff!
+Morning NSW!
 
 ## 开发备注
 
