@@ -48,7 +48,7 @@ async function parseAssets(
   assets?: JSZip.JSZipObject[]
 ) {
   if(!assets) return []
-  const prefix = `${dateStr}assets/`
+  const prefix = `${dateStr}/assets/`
   const preLen = prefix.length
 
   let list: ImportedAsset[] = []
