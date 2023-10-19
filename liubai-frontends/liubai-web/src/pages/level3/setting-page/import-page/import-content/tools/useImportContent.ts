@@ -113,8 +113,8 @@ async function loadZip(f: File, ctx: IcCtx) {
   sortedResults.sort((v1, v2) => {
     const s1 = v1.relativePath
     const s2 = v2.relativePath
-    if(s1 < s2) return -1
-    if(s1 > s2) return 1
+    if(s1 < s2) return 1
+    if(s1 > s2) return -1
     return 0
   })
 
