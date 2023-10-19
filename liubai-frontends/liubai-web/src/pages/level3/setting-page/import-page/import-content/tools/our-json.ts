@@ -75,7 +75,7 @@ function getImagesAndFiles(
   if(d.images?.length) {
     for(let i=0; i<d.images.length; i++) {
       const v1 = d.images[i]
-      const v2 = liuAssets.find(v3 => v1.name === v3.name)
+      const v2 = liuAssets.find(v3 => v3.name.includes(v1.id))
       if(!v2) continue
       const img: LiuImageStore = {
         ...v1,
@@ -89,7 +89,7 @@ function getImagesAndFiles(
   if(d.files?.length) {
     for(let i=0; i<d.files.length; i++) {
       const v1 = d.files[i]
-      const v2 = liuAssets.find(v3 => v1.name === v3.name)
+      const v2 = liuAssets.find(v3 => v3.name.includes(v1.id))
       if(!v2) continue
       const f: LiuFileStore = {
         ...v1,

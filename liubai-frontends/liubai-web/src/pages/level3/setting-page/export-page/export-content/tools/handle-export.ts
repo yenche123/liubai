@@ -144,7 +144,9 @@ function preInsert(
       const img = d.images[i]
       const { arrayBuffer, id, name, lastModified } = img
       if(!arrayBuffer) continue
-      theFolder.file(`assets/${name}`, arrayBuffer, { date: new Date(lastModified) })
+      const suffix = valTool.getSuffix(name)
+      const iPath = `assets/${id}.${suffix}`
+      theFolder.file(iPath, arrayBuffer, { date: new Date(lastModified) })
 
       // 去掉 img 中的 arrayBuffer 和 cloud_url 两个属性
       const { arrayBuffer: arrayBuffer2, cloud_url, ...img2 } = img
@@ -154,9 +156,10 @@ function preInsert(
   if(d.files?.length) {
     for(let i=0; i<d.files.length; i++) {
       const f = d.files[i]
-      const { arrayBuffer, id, name, lastModified } = f
+      const { arrayBuffer, id, lastModified, suffix } = f
       if(!arrayBuffer) continue
-      theFolder.file(`assets/${name}`, arrayBuffer, { date: new Date(lastModified) })
+      const fPath = `assets/${id}.${suffix}`
+      theFolder.file(fPath, arrayBuffer, { date: new Date(lastModified) })
 
       // 去掉 f 中的 arrayBuffer 和 cloud_url 两个属性
       const { arrayBuffer: arrayBuffer2, cloud_url, ...f2 } = f
