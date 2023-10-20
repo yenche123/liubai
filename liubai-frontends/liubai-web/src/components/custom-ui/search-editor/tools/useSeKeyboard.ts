@@ -24,8 +24,20 @@ export function useSeKeyboard(param: SeKeyboardParam) {
   const rr = useRouteAndLiuRouter()
   watch(rr.route, (newV) => {
     const inApp = newV.meta.inApp
-    if(inApp === false) allowSearch = false
-    else allowSearch = true
+    if(inApp === false) {
+      allowSearch = false
+      return
+    }
+
+    // 判断当前是否已经在某些 popup 内部了
+    // 若是，则不允许搜索
+    const inPopUp = liuUtil.isInAPopUp(newV, ["search", "q"])
+    if(inPopUp) {
+      allowSearch = false
+      return
+    }
+    
+    allowSearch = true
   })
 
   const _keydownDuringOpening = (e: KeyboardEvent) => {

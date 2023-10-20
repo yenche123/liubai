@@ -20,3 +20,17 @@ export const ALLOW_DEEP_TYPES = [
   "taskList",
   "taskItem",
 ]
+
+// 各个 popup 弹窗的 route.query 上的 key
+export const POPUP_KEYS = [
+  "commentpopup",
+  "contentpanel",
+  "hashtageditor",
+  "htselector",
+  "previewimage",
+  "search",
+  "q",
+  "shareview",
+  "stateeditor",
+  "stateselector",
+]

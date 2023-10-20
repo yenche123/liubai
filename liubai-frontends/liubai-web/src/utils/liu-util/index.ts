@@ -40,6 +40,7 @@ import {
   calibrateSidebarWidth,
   getMainViewCriticalValue,
   lightFireworks,
+  isInAPopUp,
 } from "./custom-util"
 import openUtil from "./open-util"
 import {
@@ -85,6 +86,7 @@ export default {
   calibrateSidebarWidth,
   getMainViewCriticalValue,
   lightFireworks,
+  isInAPopUp,
   open: openUtil,
   trim: trimUtil,
   view: viewUtil,

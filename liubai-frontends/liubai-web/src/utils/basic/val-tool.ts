@@ -34,6 +34,19 @@ const strToObj = <T = any>(str: string): T => {
   return res as T
 }
 
+/**
+ * 将对象转为 object
+ * 若转换失败，返回空字符
+ */
+const objToStr = <T = any>(obj: T): string => {
+  let str = ``
+  try {
+    str = JSON.stringify(obj)
+  }
+  catch(err) {}
+  return str
+}
+
 // 快速把入参 val 包裹在 Promise 里返回
 const getPromise = <T = any>(val: T): Promise<T> => {
   return new Promise(a => a(val)) 
@@ -202,6 +215,7 @@ export default {
   waitMilli,
   copyObject,
   strToObj,
+  objToStr,
   getPromise,
   numToFix,
   isStringAsNumber,

@@ -9,6 +9,8 @@ import confetti from "canvas-confetti";
 import { useWindowSize } from "~/hooks/useVueUse"
 import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore";
 import { useVvFileStore } from "~/hooks/stores/useVvFileStore";
+import valTool from "../basic/val-tool";
+import { POPUP_KEYS } from "~/config/atom"
 
 /******* 转换颜色 *******/
 
@@ -189,4 +191,38 @@ export function lightFireworks() {
     scalar: 1.1,
     zIndex: 6000,
   })
+}
+
+/**
+ * 根据当前 route 判断是否在某个 popup 内
+ */
+
+export function isInAPopUp(
+  route: RouteLocationNormalizedLoaded,
+  filterKeys: string[] = [],
+) {
+
+  const q = route.query
+  if(!q) return false
+
+  const strQ = valTool.objToStr(q)
+  if(!strQ || strQ === "{}") return false
+
+  const keys = [...POPUP_KEYS]
+  for(let i=0; i<filterKeys.length; i++) {
+    const v = filterKeys[i]
+    const idx = keys.indexOf(v)
+    if(idx >= 0) keys.splice(idx, 1)
+  }
+
+  console.log(`看一下 keys: `)
+  console.log(keys)
+
+  for(let i=0; i<keys.length; i++) {
+    const key = keys[i]
+    const val = q[key]
+    if(typeof val === 'string') return true
+  }
+
+  return false
 }
