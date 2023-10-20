@@ -7,6 +7,8 @@ import cfg from "~/config"
 import { SbData } from "./types"
 import type { SimpleFunc } from "~/utils/basic/type-tool"
 import time from "~/utils/basic/time"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import liuUtil from "~/utils/liu-util"
 
 export function useSbKeyboard(
   layout: LayoutStore,
@@ -16,6 +18,7 @@ export function useSbKeyboard(
   LISTEN_DELAY: number,        // 防抖节流的阈值毫秒数
 ) {
   
+  const { route } = useRouteAndLiuRouter()
   const { sidebarStatus, sidebarWidth } = storeToRefs(layout)
   const { width } = useWindowSize()
 
@@ -51,6 +54,13 @@ export function useSbKeyboard(
     const key = e.key.toLowerCase()
 
     if(ctrlPressed && key === "\\") {
+
+      // 判断是否有 popup 显示中，若有则忽略
+      const isInPopup = liuUtil.isInAPopUp(route)
+      if(isInPopup) {
+        return
+      }
+
       const now = time.getTime()
       const diff = now - lastTrigger
       if(diff < LISTEN_DELAY) return
