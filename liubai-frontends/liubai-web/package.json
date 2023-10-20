@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "engines": {
-    "node": "18.x"
+    "node": ">=18"
   },
   "dependencies": {
     "@he-tree/vue": "^2.7.0",
@@ -45,31 +45,31 @@
     "ics": "^3.5.0",
     "jszip": "^3.10.1",
     "lowlight": "^2.9.0",
-    "nanoid": "^5.0.1",
-    "pinia": "^2.1.6",
+    "nanoid": "^5.0.2",
+    "pinia": "^2.1.7",
     "prosemirror-virtual-cursor": "^0.4.1",
     "swiper": "^10.3.1",
     "tippy.js": "^6.3.7",
     "vconsole": "^3.15.1",
-    "vue": "^3.3.4",
+    "vue": "^3.3.5",
     "vue-draggable-resizable": "^2.3.0",
     "vue-i18n": "^9.5.0",
     "vue-router": "^4.2.5",
     "vue-slicksort": "^2.0.5"
   },
   "devDependencies": {
-    "@types/canvas-confetti": "^1.6.1",
-    "@types/file-saver": "^2.0.5",
+    "@types/canvas-confetti": "^1.6.2",
+    "@types/file-saver": "^2.0.6",
     "@types/node": "^18.18.4",
     "@vitejs/plugin-vue": "^4.4.0",
-    "sass": "^1.69.0",
+    "sass": "^1.69.4",
     "typescript": "~5.2.2",
     "user-agent-data-types": "^0.4.2",
-    "vite": "^4.4.11",
-    "vite-plugin-compression2": "^0.10.5",
+    "vite": "^4.5.0",
+    "vite-plugin-compression2": "^0.10.6",
     "vite-plugin-inspect": "^0.7.40",
     "vite-plugin-mkcert": "^1.16.0",
     "vite-plugin-svg-icons": "^2.0.1",
-    "vue-tsc": "^1.8.18"
+    "vue-tsc": "^1.8.19"
   }
 }
