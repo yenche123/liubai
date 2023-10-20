@@ -29,14 +29,6 @@ export function useSeKeyboard(param: SeKeyboardParam) {
       return
     }
 
-    // 判断当前是否已经在某些 popup 内部了
-    // 若是，则不允许搜索
-    const inPopUp = liuUtil.isInAPopUp(newV, ["search", "q"])
-    if(inPopUp) {
-      allowSearch = false
-      return
-    }
-    
     allowSearch = true
   })
 
@@ -59,8 +51,15 @@ export function useSeKeyboard(param: SeKeyboardParam) {
     const key = e.key.toLowerCase()
 
     if(ctrlPressed && !shiftPressed && (key === "p" || key === "k")) {
+
+      // 判断是否在其他 popup 中
+      // 若是，则忽略
+      const inPopUp = liuUtil.isInAPopUp(rr.route, ["search", "q"])
+      if(inPopUp) {
+        return
+      }
+
       e.preventDefault()
-      console.log("ctrl + k/p 被触发...........")
       lastEventTrigger = now
       whenOpen({ type: "search" })
     }
