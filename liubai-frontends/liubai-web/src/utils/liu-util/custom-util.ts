@@ -215,9 +215,6 @@ export function isInAPopUp(
     if(idx >= 0) keys.splice(idx, 1)
   }
 
-  console.log(`看一下 keys: `)
-  console.log(keys)
-
   for(let i=0; i<keys.length; i++) {
     const key = keys[i]
     const val = q[key]
