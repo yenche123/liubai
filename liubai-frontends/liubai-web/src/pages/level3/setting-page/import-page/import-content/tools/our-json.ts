@@ -19,6 +19,7 @@ import { equipThreads } from "~/utils/controllers/equip/threads";
 import ider from "~/utils/basic/ider";
 import type { CommentShow, ThreadShow } from "~/types/types-content";
 import { equipComments } from "~/utils/controllers/equip/comments";
+import liuEnv from "~/utils/liu-env";
 
 export async function parseOurJson(
   atom: ImportedAtom,
@@ -31,10 +32,13 @@ export async function parseOurJson(
   const d = valTool.strToObj<LiuExportContentJSON>(jsonStr)
   if(!d._id || !d.spaceId || !d.spaceType || !d.infoType) return
 
-  // 如果不是自己发表的动态，一律过滤掉；
+
+  // 如果当前并非纯本地模式，即当前为具备云端的模式
+  // 那么不是自己发表的动态，一律过滤掉；
   // 若是自己的动态，只是 member 不一致，那允许往下执行
-  // 因为开放把不同工作区的动态导入进当前工作区
-  if(d.user !== myCtx.userId && d.member !== myCtx.memberId) return
+  // 也就是允许把不同工作区的动态导入进当前工作区
+  const isPureLocal = liuEnv.getIfPurelyLocal()
+  if(!isPureLocal && d.user !== myCtx.userId) return
 
   let liuAssets = await parseAssets(dateStr, assets)
   const imgsFiles = getImagesAndFiles(d, liuAssets)
