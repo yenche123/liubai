@@ -68,7 +68,10 @@ const smallView = computed(() => {
               'iri-status_update': item.status === 'update_required',
             }"
           >
-            <span v-if="item.status === 'new'">{{ t('import.new_thread') }}</span>
+            <template v-if="item.status === 'new'">
+              <span v-if="item.contentData.infoType === 'THREAD'">{{ t('import.new_thread') }}</span>
+              <span v-else-if="item.contentData.infoType === 'COMMENT'">{{ t('import.new_comment') }}</span>
+            </template>
             <span v-else-if="item.status === 'update_required'">{{ t('import.update_required') }}</span>
             <span v-else-if="item.status === 'no_change'">{{ t('import.no_change') }}</span>
           </div>
