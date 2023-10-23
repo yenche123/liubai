@@ -2,6 +2,8 @@ import type { MenuItem } from "~/components/common/liu-menu/tools/types";
 import type { ScTopEmits } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { usePrefix, useMyProfile } from "~/hooks/useCommon";
+import cui from "~/components/custom-ui";
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 
 const MORE_ITEMS: MenuItem[] = [
   {
@@ -28,10 +30,28 @@ export function useScTop(emits: ScTopEmits) {
     emits("canclosepopup")
   }
 
+  const onTapName = async () => {
+    const res = await cui.showTextEditor({ 
+      title_key: "who_r_u.modify_name", 
+      placeholder_key: "who_r_u.modify_name_ph",
+      value: myProfile.value?.name,
+      maxLength: 20,
+    })
+    const { confirm, value } = res
+    if(!confirm || !value) return
+    toModifyName(value)
+  }
+
   return {
     prefix,
     myProfile,
     MORE_ITEMS,
     onTapMoreMenuItem,
+    onTapName,
   }
+}
+
+function toModifyName(val: string) {
+  const wStore = useWorkspaceStore()
+  wStore.setNickName(val)
 }

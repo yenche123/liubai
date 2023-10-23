@@ -25,6 +25,7 @@ const {
   myProfile,
   MORE_ITEMS,
   onTapMoreMenuItem,
+  onTapName,
 } = useScTop(emits)
 
 const {
@@ -56,7 +57,7 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
       class="sc-avatar"
     ></LiuAvatar>
     
-    <div class="sc-title" v-if="myProfile?.name">
+    <div class="sc-title" v-if="myProfile?.name" @click.stop="onTapName">
       <span>{{ myProfile.name }}</span>
     </div>
   </div>
@@ -194,6 +195,19 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
     overflow: hidden;
     text-overflow: ellipsis;
     letter-spacing: 1px;
+    cursor: pointer;
+    will-change: opacity;
+    transition: .12s;
+  }
+
+  @media(hover: hover) {
+    .sc-title:hover {
+      opacity: .8;
+    }
+
+    .sc-title:active {
+      opacity: .7;
+    }
   }
 
 }

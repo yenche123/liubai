@@ -143,7 +143,9 @@
     "collapse": "Collapse"
   },
   "who_r_u": {
-    "placeholder": "How to call you?"
+    "placeholder": "How to call you?",
+    "modify_name": "Modify Name",
+    "modify_name_ph": "Please enter your name"
   },
   "tip": {
     "tip": "TIP",

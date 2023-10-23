@@ -143,7 +143,9 @@
     "collapse": "收起"
   },
   "who_r_u": {
-    "placeholder": "怎麼稱呼你?"
+    "placeholder": "怎麼稱呼你?",
+    "modify_name": "修改名稱",
+    "modify_name_ph": "請輸入你的名稱"
   },
   "tip": {
     "tip": "提示",
