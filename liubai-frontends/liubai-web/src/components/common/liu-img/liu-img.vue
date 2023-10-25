@@ -25,8 +25,8 @@ const props = defineProps({
     default: "fill"
   },
   loading: {
-    type: String,
-    default: "auto",    // 使用 lazy 表示，lazy-loading
+    type: String as PropType<"eager" | "lazy">,
+    default: "eager",    // 使用 lazy 表示，lazy-loading
   },
   bgColor: String,
   borderRadius: String,

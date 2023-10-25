@@ -37,6 +37,7 @@ const {
           object-fit="cover" 
           :view-transition-name="viewTranNames[0]"
           @click.stop="onTapImage($event, 0, '12px')"
+          loading="lazy"
         ></liu-img>
       </div>
     </div>
@@ -70,6 +71,7 @@ const {
             object-fit="cover" 
             :view-transition-name="viewTranNames[index]"
             @click.stop="onTapImage($event, index, '12px')"
+            loading="lazy"
           ></liu-img>
         </div>
       </div>
@@ -88,6 +90,7 @@ const {
             object-fit="cover" 
             :view-transition-name="viewTranNames[index]"
             @click.stop="onTapImage($event, index, '10px')"
+            loading="lazy"
           ></liu-img>
         </div>
       </template>
