@@ -15,6 +15,7 @@ const props = defineProps({
 const emit = defineEmits<TctEmits>()
 const { t } = useI18n()
 const { 
+  td,
   showTopbar,
   stateColor,
   theme,
@@ -28,8 +29,17 @@ const onTapState = () => {
 <template>
   <div v-if="showTopbar" class="tct-container">
 
+    <!-- 存储位置: 本地存储时，显示图标 -->
+    <div class="tct-item-container" 
+      v-if="td.storageState === 'LOCAL' || td.storageState === 'ONLY_LOCAL'"
+    >
+      <svg-icon class="tct-local-svg" color="var(--main-tip)"
+        name="cloud_off"
+      ></svg-icon>
+    </div>
+
     <!-- 状态 -->
-    <div class="tct-state-container" v-if="threadData.stateShow">
+    <div class="tct-item-container" v-if="td.stateShow">
 
       <div class="tct-state-shadow"
         v-if="theme === 'dark'"
@@ -49,16 +59,14 @@ const onTapState = () => {
             'background-color': stateColor
           }"
         ></div>
-        <span v-if="threadData.stateShow.text">{{ threadData.stateShow.text }}</span>
-        <span v-else-if="threadData.stateShow.text_key">{{ t(threadData.stateShow.text_key) }}</span>
+        <span v-if="td.stateShow.text">{{ td.stateShow.text }}</span>
+        <span v-else-if="td.stateShow.text_key">{{ t(td.stateShow.text_key) }}</span>
       </div>
 
     </div>
     
-
-    
     <!-- 置顶 -->
-    <svg v-if="threadData.pinStamp" class="tct-pin" viewBox="-50 -50 300 300">
+    <svg v-if="td.pinStamp" class="tct-pin" viewBox="-50 -50 300 300">
       <polygon class="tct-triangle" stroke-linejoin="round" points="20,-20 220,-20 220,180"/>
     </svg>
 
@@ -97,8 +105,14 @@ const onTapState = () => {
 
 }
 
-.tct-state-container {
+.tct-item-container {
   position: relative;
+  margin-inline-start: 14px;
+}
+
+.tct-local-svg {
+  width: 20px;
+  height: 20px;
 }
 
 .tct-state-shadow {
