@@ -217,7 +217,8 @@
     "img_file": "[圖片或文件]",
     "deleted_at": "{date} 刪除",
     "created_at": "{date} 新增",
-    "edited_at": "{date} 編輯"
+    "edited_at": "{date} 編輯",
+    "saved_locally": "只保存於本機"
   },
   "state_related": {
     "add_state": "新增狀態",

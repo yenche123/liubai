@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PropType } from 'vue';
+import { type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { ThreadShow } from '~/types/types-content';
 import { useTcTopbar } from './tools/useTcTopbar';
@@ -33,9 +33,15 @@ const onTapState = () => {
     <div class="tct-item-container" 
       v-if="td.storageState === 'LOCAL' || td.storageState === 'ONLY_LOCAL'"
     >
-      <svg-icon class="tct-local-svg" color="var(--main-tip)"
-        name="cloud_off"
-      ></svg-icon>
+      <LiuTooltip
+        :aria-label="t('thread_related.saved_locally')"
+        :distance="2"
+        placement="bottom-end"
+      >
+        <svg-icon class="tct-local-svg" color="var(--main-tip)"
+          name="cloud_off"
+        ></svg-icon>
+      </LiuTooltip>
     </div>
 
     <!-- 状态 -->
@@ -96,13 +102,6 @@ const onTapState = () => {
     }
   }
 
-  @media(hover: hover) {
-    .tct-state-box:hover {
-      opacity: .8;
-    }
-
-  }
-
 }
 
 .tct-item-container {
@@ -113,6 +112,7 @@ const onTapState = () => {
 .tct-local-svg {
   width: 20px;
   height: 20px;
+  outline: 0;
 }
 
 .tct-state-shadow {
@@ -147,6 +147,14 @@ const onTapState = () => {
     height: 100%;
     opacity: v-bind("theme === 'dark' ? '.11' : '.19'");
   }
+}
+
+@media(hover: hover) {
+
+  .tct-state-box:hover {
+    opacity: .8;
+  }
+
 }
 
 

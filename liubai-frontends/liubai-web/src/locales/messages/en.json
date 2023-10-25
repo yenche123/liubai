@@ -217,7 +217,8 @@
     "img_file": "[Image or file]",
     "deleted_at": "Deleted {date}",
     "created_at": "Created {date}",
-    "edited_at": "Edited {date}"
+    "edited_at": "Edited {date}",
+    "saved_locally": "Only Saved Locally"
   },
   "state_related": {
     "add_state": "New State",
