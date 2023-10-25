@@ -51,6 +51,10 @@ export default defineConfig({
     port: 5175,
     https: true
   },
+
+  preview: {
+    port: 4175,
+  },
   
   define: {
     "LIU_ENV": {
