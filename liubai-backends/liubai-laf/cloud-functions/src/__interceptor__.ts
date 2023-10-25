@@ -1,6 +1,15 @@
 import cloud from '@lafjs/cloud'
 import type { Shared_LiuAcAtom } from "@/common-types"
 
+/***************** 总服务状态 *****************/
+
+const isCloudOpen = true
+// 若后端关闭时，请对调上下方代码和注释
+// const isCloudOpen = false
+
+
+/****************** 一些常量 *****************/
+
 // 一分钟内，最多允许访问的次数
 const MAXIMUM_IN_ONE_MINUTE = 60
 
@@ -15,6 +24,7 @@ const ALLOW_WITHOUT_TOKEN = [
   "common-util",
 ]
 
+// 每个请求里皆应存在的参数字段
 const X_LIU_NORMAL = [
   "x_liu_language",
   "x_liu_version",
@@ -23,8 +33,18 @@ const X_LIU_NORMAL = [
   "x_liu_client",
 ]
 
+
+/****************** 函数组成 *****************/
+
 export async function main(ctx: FunctionContext) {
-  // 0. 获取请求的实际 IP
+
+  // 0.1 检查服务端是否已关闭
+  if(!isCloudOpen) {
+    ctx.response?.send({ code: "B0001" })
+    return false
+  }
+
+  // 0.2 获取请求的实际 IP
   const ip = ctx.headers?.['x-real-ip']
   console.log("--------> 当前来源 ip: ", ip)
 
