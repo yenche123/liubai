@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { type PropType } from 'vue';
+import { defineAsyncComponent, type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { CommentShow } from '~/types/types-content';
 import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
 import CcBox from "./cc-box/cc-box.vue"
-import CcBubbleBar from './cc-bubble-bar/cc-bubble-bar.vue';
 import type { CommentCardLocation } from "./tools/types"
 import { useCommentCard } from "./tools/useCommentCard"
 import CcToolbar from './cc-toolbar/cc-toolbar.vue';
 import CcReactions from "./cc-reactions/cc-reactions.vue";
 import { useCcMouse } from './tools/useCcMouse';
 import { useCommentOperation } from './tools/useCommentOperation';
+
+const CcBubbleBar = defineAsyncComponent(() => import("./cc-bubble-bar/cc-bubble-bar.vue"))
 
 const { t } = useI18n()
 
