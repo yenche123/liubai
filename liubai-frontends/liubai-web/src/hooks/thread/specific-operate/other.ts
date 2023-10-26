@@ -18,23 +18,23 @@ export async function setShowCountdown(
   cCfg.showCountdown = cCfg.showCountdown === false ? true : false
   newThread.config = cCfg
 
-  // 2. 通知到全局
+  // 2. 操作 db
+  const res = await dbOp.setContentConfig(newThread._id, cCfg)
+
+  // 3. 通知到全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread], "hourglass")
-
-  // 3. 操作 db
-  const res = await dbOp.setContentConfig(newThread._id, cCfg)
 
   // 4. 展示通知，并回传 promise
   const res2 = await cui.showSnackBar({ text_key: "tip.updated", action_key: "tip.undo" })
   if(res2.result !== "tap") return
 
   // 发生撤销
-  // 5. 通知到全局
-  tsStore.setUpdatedThreadShows([oldThread], "hourglass")
-
-  // 6. 修改 db
+  // 5. 修改 db
   const res3 = await dbOp.setContentConfig(newThread._id, oldThread.config)
+
+  // 6. 通知到全局
+  tsStore.setUpdatedThreadShows([oldThread], "hourglass")
 }
 
 
@@ -56,11 +56,11 @@ export async function setTags(
   newThread.tags = newTagShows.length > 0 ? newTagShows : undefined
   newThread.tagSearched = tagSearched.length > 0 ? tagSearched : undefined
 
-  // 2. 通知到全局
+  // 2. 操作 db
+  const res = await dbOp.setTags(newThread._id, tagIds, tagSearched)
+
+  // 3. 通知到全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread], "tag")
-
-  // 3. 操作 db
-  const res = await dbOp.setTags(newThread._id, tagIds, tagSearched)
 }
 

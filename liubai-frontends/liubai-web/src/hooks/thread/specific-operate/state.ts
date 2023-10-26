@@ -71,12 +71,12 @@ export async function selectState(
     delete newThread.stateShow
   }
 
-  // 5. 通知到全局
+  // 5. 修改动态的 db
+  const res2 = await dbOp.setStateId(newThread._id, newStateId)
+
+  // 6. 通知到全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread], "state")
-
-  // 6. 修改动态的 db
-  const res2 = await dbOp.setStateId(newThread._id, newStateId)
 
   // 7. 显示 snack-bar
   const t = i18n.global.t
@@ -111,12 +111,12 @@ export async function undoState(
   userId: string,
 ) {
 
-  // 1. 通知全局
+  // 1. 修改 db
+  const res2 = await dbOp.setStateId(oldThread._id, oldThread.stateId)
+
+  // 2. 通知全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([oldThread], "undo_collect")
-
-  // 2. 修改 db
-  const res2 = await dbOp.setStateId(oldThread._id, oldThread.stateId)
 
   // 3. 复原 workspace
   const wStore = useWorkspaceStore()
@@ -191,13 +191,7 @@ async function restoreStateCfg(
 ) {
   if(!stateCfgBackup) return
   const stateCfg = valTool.copyObject(stateCfgBackup.oldStateConfig)
-  console.log("复原 stateConfig: ")
-  console.log(stateCfg)
-  console.log(" ")
   const res = await wStore.setStateConfig(stateCfg)
-  console.log("restoreStateCfg res: ")
-  console.log(res)
-  console.log(" ")
   stateCfgBackup = undefined
   return true
 }

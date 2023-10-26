@@ -27,12 +27,12 @@ export const setWhen = async (
   newThread.whenStamp = res.date.getTime()
   soTool.setEdit(newThread)
 
-  // 3. 通知到全局
+  // 3. 操作 db
+  const res2 = await dbOp.editWhenRemind(newThread, memberId, userId)
+
+  // 4. 通知到全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread])
-
-  // 4. 操作 db
-  const res2 = await dbOp.editWhenRemind(newThread, memberId, userId)
 
   // 5. 展示通知 回传 promise
   const tipPromise = cui.showSnackBar({ text_key: "tip.updated", action_key: "tip.undo" })
@@ -95,12 +95,12 @@ export const setRemind = async (
   newThread.remindStamp = newRemindStamp
   soTool.setEdit(newThread)
 
-  // 3. 通知到全局
+  // 3. 操作 db
+  const res2 = await dbOp.editWhenRemind(newThread, memberId, userId)
+
+  // 4. 通知到全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread])
-
-  // 4. 操作 db
-  const res2 = await dbOp.editWhenRemind(newThread, memberId, userId)
 
   // 5. 展示通知 回传 promise
   const tipPromise = cui.showSnackBar({ text_key: "tip.updated", action_key: "tip.undo" })
@@ -123,12 +123,12 @@ export const clearWhen = async (
   }
   soTool.setEdit(newThread)
 
-  // 2. 通知全局
+  // 2. 操作 db
+  const res = await dbOp.editWhenRemind(newThread, memberId, userId)
+
+  // 3. 通知全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread])
-
-  // 3. 操作 db
-  const res = await dbOp.editWhenRemind(newThread, memberId, userId)
 
   // 4. 展示通知 回传 promise
   const tipPromise = cui.showSnackBar({ text_key: "tip.removed", action_key: "tip.undo" })
@@ -148,12 +148,12 @@ export const clearRemind = async (
   delete newThread.remindStamp
   soTool.setEdit(newThread)
 
-  // 2. 通知全局
+  // 2. 操作 db
+  const res = await dbOp.editWhenRemind(newThread, memberId, userId)
+
+  // 3. 通知全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread])
-
-  // 3. 操作 db
-  const res = await dbOp.editWhenRemind(newThread, memberId, userId)
 
   // 4. 展示通知 回传 promise
   const tipPromise = cui.showSnackBar({ text_key: "tip.removed", action_key: "tip.undo" })
@@ -166,11 +166,10 @@ export const undoWhenRemind = async (
   memberId: string,
   userId: string,
 ) => {
-
-  // 1. 通知全局
-  const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([oldThread])
-
-  // 2. 修改 db
+  // 1. 修改 db
   const res = await dbOp.editWhenRemind(oldThread, memberId, userId)
+
+  // 2. 通知全局
+  const tsStore = useThreadShowStore()
+  tsStore.setUpdatedThreadShows([oldThread])  
 }

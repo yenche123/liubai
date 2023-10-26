@@ -19,12 +19,12 @@ export const toCollect = async (
   newThread.myFavorite = newFavorite
   newThread.myFavoriteStamp = time.getTime()
 
-  // 2. 通知全局
+  // 2. 操作 db
+  const res = await dbOp.collect(newThread, memberId, userId)
+
+  // 3. 通知全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread], "collect")
-
-  // 3. 操作 db
-  const res = await dbOp.collect(newThread, memberId, userId)
 
   // 4. 展示通知，并回传 promise
   const text_key = newFavorite ? "tip.collected" : "tip.canceled"
@@ -44,12 +44,12 @@ export const undoCollect = async (
   userId: string,
 ) => {
 
-  // 1. 通知全局
+  // 1. 修改 db
+  const res3 = await dbOp.collect(oldThread, memberId, userId)
+
+  // 2. 通知全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([oldThread], "undo_collect")
-
-  // 2. 修改 db
-  const res3 = await dbOp.collect(oldThread, memberId, userId)
 
   // 3. 【待完善】将取消操作塞入远端待同步的队列
   

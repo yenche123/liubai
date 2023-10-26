@@ -20,12 +20,12 @@ export async function deleteThread(
   newThread.updatedStamp = now
   newThread.removedStr = liuUtil.showBasicDate(now)
 
-  // 2. 通知到全局
+  // 2. 操作 db
+  const res = await dbOp.setNewOState(newThread._id, "REMOVED")
+
+  // 3. 通知到全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread], "delete")
-
-  // 3. 操作 db
-  const res = await dbOp.setNewOState(newThread._id, "REMOVED")
 
   // 4. 展示通知 回传 promise
   const tipPromise = cui.showSnackBar({ text_key: "tip.deleted", action_key: "tip.undo" })
@@ -45,12 +45,12 @@ export async function restoreThread(
   newThread.updatedStamp = time.getTime()
   delete newThread.removedStr
 
-  // 2. 通知到全局
+  // 2. 操作 db
+  const res = await dbOp.setNewOState(newThread._id, "OK")
+
+  // 3. 通知到全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread], "restore")
-
-  // 3. 操作 db
-  const res = await dbOp.setNewOState(newThread._id, "OK")
 
   // 4. 展示通知
   cui.showSnackBar({ text_key: "tip.restored" })
@@ -63,12 +63,12 @@ export async function undoDelete(
   memberId: string,
   userId: string,
 ) {
-  // 1. 通知全局
+  // 1. 修改 db
+  const res = await dbOp.setNewOState(oldThread._id, "OK")
+
+  // 2. 通知全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([oldThread], "undo_delete")
-
-  // 2. 修改 db
-  const res = await dbOp.setNewOState(oldThread._id, "OK")
 }
 
 export async function deleteForever(
@@ -94,12 +94,12 @@ export async function deleteForever(
   // 2. 检查 workspace.stateConfig
   await deleteThreadsFromWorkspaceStateCfg([newThread._id])
 
-  // 3. 通知到全局
+  // 3. 操作 db
+  const res2 = await dbOp.deleteForever(newThread._id)
+
+  // 4. 通知到全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread], "delete_forever")
-  
-  // 4. 操作 db
-  const res2 = await dbOp.deleteForever(newThread._id)
   
   return true
 }
