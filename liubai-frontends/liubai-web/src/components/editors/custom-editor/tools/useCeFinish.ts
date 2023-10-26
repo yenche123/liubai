@@ -242,7 +242,7 @@ async function toUpdate(ctx: CepContext) {
   const theThread = await localReq.getContentById(threadId)
   if(!theThread) return
   const threadShows = await equipThreads([theThread])
-  ctx.threadShowStore.setUpdatedThreadShows(threadShows)
+  ctx.threadShowStore.setUpdatedThreadShows(threadShows, "edit")
 
   // 4. emits 到页面
   ctx.emits("updated", threadId)

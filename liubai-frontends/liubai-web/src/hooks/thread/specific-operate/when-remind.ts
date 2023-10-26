@@ -32,7 +32,7 @@ export const setWhen = async (
 
   // 4. 通知到全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([newThread])
+  tsStore.setUpdatedThreadShows([newThread], "edit")
 
   // 5. 展示通知 回传 promise
   const tipPromise = cui.showSnackBar({ text_key: "tip.updated", action_key: "tip.undo" })
@@ -100,7 +100,7 @@ export const setRemind = async (
 
   // 4. 通知到全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([newThread])
+  tsStore.setUpdatedThreadShows([newThread], "edit")
 
   // 5. 展示通知 回传 promise
   const tipPromise = cui.showSnackBar({ text_key: "tip.updated", action_key: "tip.undo" })
@@ -128,7 +128,7 @@ export const clearWhen = async (
 
   // 3. 通知全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([newThread])
+  tsStore.setUpdatedThreadShows([newThread], "edit")
 
   // 4. 展示通知 回传 promise
   const tipPromise = cui.showSnackBar({ text_key: "tip.removed", action_key: "tip.undo" })
@@ -153,7 +153,7 @@ export const clearRemind = async (
 
   // 3. 通知全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([newThread])
+  tsStore.setUpdatedThreadShows([newThread], "edit")
 
   // 4. 展示通知 回传 promise
   const tipPromise = cui.showSnackBar({ text_key: "tip.removed", action_key: "tip.undo" })
@@ -171,5 +171,5 @@ export const undoWhenRemind = async (
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([oldThread])  
+  tsStore.setUpdatedThreadShows([oldThread], "edit")  
 }

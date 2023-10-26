@@ -25,7 +25,7 @@ export const useThreadShowStore = defineStore("threadShow", () => {
 
   const setUpdatedThreadShows = (
     list: ThreadShow[], 
-    whyThreadChange: WhyThreadChange = ""
+    whyThreadChange: WhyThreadChange,
   ) => {
     whyChange.value = whyThreadChange
     updatedThreadShows.value = list
