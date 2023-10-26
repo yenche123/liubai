@@ -1,6 +1,6 @@
 # LB
 
-Morning NSW!
+Long time no see, MELBOURNE!
 
 ## 开发备注
 
