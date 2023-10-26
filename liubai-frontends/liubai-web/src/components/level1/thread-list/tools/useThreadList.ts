@@ -28,6 +28,7 @@ export function useThreadList(
     list: [],
     lastItemStamp: 0,
     hasReachBottom: false,
+    requestRefreshNum: 0,
   })
 
   const ctx: TlContext = {
@@ -40,7 +41,7 @@ export function useThreadList(
     props,
   }
 
-  // 监听触底/顶加载
+  // 1. 监听触底/顶加载
   const svData = inject(scrollViewKey, { type: "", triggerNum: 0 }) as SvProvideInject
   const svTrigger = toRef(svData, "triggerNum")
   watch(svTrigger, (newV) => {
@@ -60,6 +61,8 @@ export function useThreadList(
     }
   })
 
+  // 2. 监听页面切换，使用 vue 原生的 
+  // onActivated / onDeactivated 来实现
   let isActivated = true
   onActivated(() => {
     isActivated = true
@@ -78,6 +81,7 @@ export function useThreadList(
   const gStore = useGlobalStateStore()
   const { tagChangedNum } = storeToRefs(gStore)
 
+  // 3. 监听上下文变化
   watch([viewType, tagId, spaceIdRef, tagChangedNum], (
       [newV1, newV2, newV3, newV4],
       [oldV1, oldV2, oldV3, oldV4]
@@ -108,6 +112,15 @@ export function useThreadList(
 
     scollTopAndUpdate(ctx)
   }, { immediate: true })
+
+
+  // 4. 监听来自同组件其他函数请求重新加载
+  const rfNum = toRef(tlData, "requestRefreshNum")
+  watch(rfNum, (newV, oldV) => {
+    if(newV && newV > oldV) {
+      loadList(ctx, true)
+    }
+  })
 
   return {
     tlData,

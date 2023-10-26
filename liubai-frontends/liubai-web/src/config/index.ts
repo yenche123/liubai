@@ -54,4 +54,7 @@ export default {
   max_export_num: 300,        // 一次性导出时的最大条数，当加载的条数大于等于该值时，停止导出
 
   max_mobile_breakpoint: 600,   // 有些时候，屏幕宽度小于 600，简略认为它是移动端
+
+  default_limit_num: 16,        // 默认一次加载多少个动态
+  frame_duration: 16,           // 一个经验值，表示每一帧数（刷新周期）毫秒数
 }

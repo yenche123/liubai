@@ -6,6 +6,7 @@ import { getThreadsByCollection } from "../../collection-controller/collection-c
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore" 
 import liuEnv from "~/utils/liu-env";
 import time from "~/utils/basic/time";
+import cfg from "~/config"
 
 async function getList(
   opt: TcListOption
@@ -16,7 +17,7 @@ async function getList(
     lastItemStamp,
     oState = "OK",
     member,
-    limit = 16,
+    limit = cfg.default_limit_num,
     tagId,
     collectType,
     viewType,

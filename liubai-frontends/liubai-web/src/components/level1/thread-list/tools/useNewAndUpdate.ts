@@ -11,6 +11,7 @@ import { handleLastItemStamp } from "./useTLCommon";
 import { storeToRefs } from "pinia"
 import { watch } from "vue"
 import tlUtil from "./tl-util";
+import cfg from "~/config";
 
 export function useNewAndUpdate(
   props: TlProps,
@@ -224,9 +225,21 @@ function _handleIndexListWhenPin(
   newList: ThreadShow[],
 ) {
   const { list } = tlData
+
+  // 1. 检查是否有 “被取消指定” 的动态
   const unpinList = newList.filter(v => !Boolean(v.pinStamp) && Boolean(v.oState === 'OK'))
   if(unpinList.length < 1) return
 
+  // 2. 判断是否使用 “刷新” 加载
+  // 如果当前首页列表的个数小于等于 默认动态数
+  // 直接采用加载的方式去刷新
+  if(list.length <= cfg.default_limit_num) {
+    tlData.requestRefreshNum++
+    return
+  }
+
+  // 3. 采用 “插入” 动态的方式
+  // 把 “被取消指定” 的动态加回去
   for(let i=0; i<unpinList.length; i++) {
     const v0 = unpinList[i]
     for(let j=0; j<list.length; j++) {
