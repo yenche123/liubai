@@ -268,7 +268,7 @@ async function toGetThreads(
       stateId: col.id, 
       excludeInKanban: false,
     }
-    const data = await stateController.getThreadsOfAThread(opt)
+    const data = await stateController.getThreadsOfAState(opt)
 
     col.hasMore = data.hasMore
     col.threads = data.threads

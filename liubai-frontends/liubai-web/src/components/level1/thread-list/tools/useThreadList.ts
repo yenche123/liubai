@@ -193,7 +193,7 @@ async function loadList(
       excludeInKanban: true,
       lastItemStamp,
     }
-    const sData = await stateController.getThreadsOfAThread(sOpt)
+    const sData = await stateController.getThreadsOfAState(sOpt)
     results = sData.threads
     if(!sData.hasMore) {
       tlData.hasReachBottom = true

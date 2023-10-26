@@ -314,7 +314,7 @@ async function recalculatePx(
   vvData.shadow = judgeIfShadow(vvData)
 
   if(vvData.isAnimating) {
-    await valTool.waitMilli(LISTEN_DELAY + 16)
+    await valTool.waitMilli(LISTEN_DELAY + cfg.frame_duration)
     vvData.isAnimating = false
   }
 }

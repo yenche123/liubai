@@ -196,7 +196,6 @@ export function lightFireworks() {
 /**
  * 根据当前 route 判断是否在某个 popup 内
  */
-
 export function isInAPopUp(
   route: RouteLocationNormalizedLoaded,
   filterKeys: string[] = [],
@@ -222,4 +221,11 @@ export function isInAPopUp(
   }
 
   return false
+}
+
+/**
+ * 等待一个帧数周期
+ */
+export async function waitAFrame() {
+  await valTool.waitMilli(cfg.frame_duration)
 }

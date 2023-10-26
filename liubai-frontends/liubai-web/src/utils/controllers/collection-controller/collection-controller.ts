@@ -6,6 +6,7 @@ import { getMemberShows, getMemberShowsFromUsers } from "../equip/other-tool"
 import type { MemberShow, ThreadShow } from "~/types/types-content";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import showThread from "~/utils/show/show-thread"
+import cfg from "~/config"
 
 interface MyCollectionOpt {
   content_ids: string[]
@@ -37,7 +38,7 @@ export async function getThreadsByCollection(
     spaceId, 
     sort = "desc",
     lastItemStamp,
-    limit = 16,
+    limit = cfg.default_limit_num,
     emojiSpecific,
     collectType,
   } = opt

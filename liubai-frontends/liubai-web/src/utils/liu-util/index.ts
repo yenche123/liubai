@@ -41,6 +41,7 @@ import {
   getMainViewCriticalValue,
   lightFireworks,
   isInAPopUp,
+  waitAFrame,
 } from "./custom-util"
 import openUtil from "./open-util"
 import {
@@ -87,6 +88,7 @@ export default {
   getMainViewCriticalValue,
   lightFireworks,
   isInAPopUp,
+  waitAFrame,
   open: openUtil,
   trim: trimUtil,
   view: viewUtil,

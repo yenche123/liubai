@@ -1,4 +1,5 @@
 import { ref } from "vue";
+import cfg from "~/config";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import valTool from "~/utils/basic/val-tool";
 
@@ -25,7 +26,7 @@ function _step0() {
     transition.value = 300
     number.value = 30
     _step1()
-  }, 16)
+  }, cfg.frame_duration)
 }
 
 function _step1() {

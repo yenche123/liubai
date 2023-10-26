@@ -1,5 +1,6 @@
 
 import { reactive } from "vue";
+import cfg from "~/config";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 
 interface LoadingParam {
@@ -43,7 +44,7 @@ const showLoading = async (opt?: LoadingParam): Promise<void> => {
   showTimeout = setTimeout(() => {
     showTimeout = undefined
     loData.show = true
-  }, 16)
+  }, cfg.frame_duration)
 }
 
 const hideLoading = async (): Promise<void> => {

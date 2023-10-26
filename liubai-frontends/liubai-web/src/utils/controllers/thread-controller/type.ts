@@ -16,7 +16,8 @@ export interface TcListOption {
   // 当前列表的视图类型
   viewType: ThreadListViewType
 
-  // 每次最多加载多少个，默认为 16（该值是计算过，在 1980px 的大屏上也可以触发触底加载的）
+  // 每次最多加载多少个，默认为 cfg.default_limit.num
+  //（该值是计算过，在 1980px 的大屏上也可以触发触底加载的）
   limit?: number
 
   // 加载收藏

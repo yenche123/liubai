@@ -1,7 +1,7 @@
 import { reactive } from "vue"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
-import valTool from "~/utils/basic/val-tool"
 import type { ScTopItemKey, SbcCursorInfo, SbProps } from "./types"
+import liuUtil from "~/utils/liu-util"
 
 export function useSbcCursor(
   props: SbProps,
@@ -33,7 +33,7 @@ export function useSbcCursor(
 
     if(!cursorInfo.enable) {
       cursorInfo.enable = true
-      await valTool.waitMilli(16)
+      await liuUtil.waitAFrame()
     }
     if(!cursorInfo.show) {
       if(!closeCursorStamp) cursorInfo.show = true

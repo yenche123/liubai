@@ -56,8 +56,11 @@ function getSystemStates() {
 
 
 
-// 业务层调用该函数，该函数会再去调用 thread-controller
-async function getThreadsOfAThread(
+/**
+ * 去加载出某个状态下的动态
+ * 业务层调用该函数，该函数会再去调用 thread-controller
+ */
+async function getThreadsOfAState(
   opt: GetThreadsOfAStateOpt
 ): Promise<GetThreadsOfAStateRes> {
   const { stateId, excludeInKanban, lastItemStamp } = opt
@@ -87,7 +90,7 @@ async function getThreadsOfAThread(
       tmpContentIds.pop()
     }
 
-    const limitNum = 16
+    const limitNum = cfg.default_limit_num
     listOpt.excludeIds = tmpContentIds
     listOpt.lastItemStamp = lastItemStamp
     listOpt.limit = limitNum
@@ -189,7 +192,7 @@ function getDefaultStateCfg() {
 
 export default {
   getStates,
-  getThreadsOfAThread,
+  getThreadsOfAState,
   getSystemStates,
   stateListSorted,
   setNewStateList,

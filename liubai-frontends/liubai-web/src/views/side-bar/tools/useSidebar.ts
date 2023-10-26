@@ -105,7 +105,7 @@ async function toOpen(
   layoutStore.$patch(newState)
 
   // 等待 316ms 执行动画
-  await valTool.waitMilli(LISTEN_DELAY + 16)
+  await valTool.waitMilli(LISTEN_DELAY + cfg.frame_duration)
   sbData.isAnimating = false
 }
 
@@ -286,7 +286,7 @@ async function recalculate(
   layoutStore.$patch(newState)
 
   // 等待 316ms 执行动画
-  await valTool.waitMilli(LISTEN_DELAY + 16)
+  await valTool.waitMilli(LISTEN_DELAY + cfg.frame_duration)
   sbData.isAnimating = false
 }
 

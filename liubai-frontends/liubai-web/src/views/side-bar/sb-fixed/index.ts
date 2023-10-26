@@ -3,6 +3,7 @@ import valTool from "~/utils/basic/val-tool";
 import type { SbfData } from "./tools/types";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import time from "~/utils/basic/time";
+import cfg from "~/config"
 
 const TRANSITION_DURATION = 300
 const sbfData = reactive<SbfData>({
@@ -73,7 +74,7 @@ function toOpen() {
       // 再次重置，避免其他函数捣乱
       sbfData.bgOpacity = 1
       sbfData.distance = "0"
-    }, newDuration + 16)
+    }, newDuration + cfg.frame_duration)
   }
 
   // 第 2 步: 判别过渡时长
@@ -90,7 +91,7 @@ function toOpen() {
       sbfData.duration = `${newDuration}ms`
       openTimeout = setTimeout(() => {
         foo3(newDuration)
-      }, 16)
+      }, cfg.frame_duration)
     }
     else {
       foo3(newDuration)
@@ -103,7 +104,7 @@ function toOpen() {
       sbfData.enable = true
       openTimeout = setTimeout(() => {
         foo2()
-      }, 16)
+      }, cfg.frame_duration)
     }
     else {
       foo2()
@@ -134,7 +135,7 @@ function toClose() {
       // 再次重置，避免其他函数捣乱
       sbfData.bgOpacity = 0
       sbfData.distance = "-110%"
-    }, newDuration + 16)
+    }, newDuration + cfg.frame_duration)
   }
 
 
@@ -148,7 +149,7 @@ function toClose() {
     sbfData.duration = `${newDuration}ms`
     closeTimeout = setTimeout(() => {
       foo2(newDuration)
-    }, 16)
+    }, cfg.frame_duration)
   }
 
   foo1()
