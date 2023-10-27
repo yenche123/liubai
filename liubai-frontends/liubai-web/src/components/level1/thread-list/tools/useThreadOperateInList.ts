@@ -8,7 +8,6 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import localCache from "~/utils/system/local-cache"
 import type { TlData, TlProps, TlViewType } from "./types"
-import type { Ref } from "vue";
 import valTool from "~/utils/basic/val-tool"
 import threadOperate from "~/hooks/thread/thread-operate";
 import liuUtil from "~/utils/liu-util"
