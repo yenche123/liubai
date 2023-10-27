@@ -19,7 +19,7 @@ async function handle(
   const oldThread = valTool.copyObject(thread)
 
   // 1. 执行公共逻辑
-  const { tipPromise } = await threadOperate.toPin(oldThread, memberId, userId)
+  const { tipPromise } = await threadOperate.toPin(oldThread, memberId, userId, { from: "detail" })
   if(!tipPromise) return
 
   // 2. 等待 snackbar 的 promise

@@ -152,6 +152,12 @@ export type ThreadOutterUndo = "undo_collect" | "undo_emoji" | "undo_delete"
 export type WhyThreadChange = ThreadInnerOperation | ThreadOutterOperation
   | ThreadInnerUndo | ThreadOutterUndo | ""
 
+// 当动态被“更新”时，使用 changeFrom 变量得知从哪里发起的改变
+export type ThreadChangedFrom = "list" | "detail"
+export interface ThreadChangedOpt {
+  from?: ThreadChangedFrom
+}
+
 // comment-card 没有复原操作，所以无需记忆当前位置，
 // 统一交由 comment-area 和 comment-detail 里的 store 监听
 export type CommentOperation = "emoji" | "comment" | "share" | "delete"

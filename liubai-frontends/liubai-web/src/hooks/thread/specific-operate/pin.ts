@@ -5,6 +5,7 @@ import valTool from "~/utils/basic/val-tool"
 import limit from "~/utils/limit"
 import cui from "~/components/custom-ui"
 import dbOp from "../db-op"
+import { type ThreadChangedOpt } from "~/types/types-atom"
 
 //【重要】
 // 应该先 “修改 db”，再去 “通知全局”
@@ -15,6 +16,7 @@ export async function toPin(
   oldThread: ThreadShow,
   memberId: string,
   userId: string,
+  opt?: ThreadChangedOpt,
 ) {
 
   const newThread = valTool.copyObject(oldThread)
@@ -40,7 +42,7 @@ export async function toPin(
 
   // 4. 通知全局
   const tsStore = useThreadShowStore()
-  tsStore.setUpdatedThreadShows([newThread], "pin")
+  tsStore.setUpdatedThreadShows([newThread], "pin", opt)
 
   // 5. 展示通知，并回传 promise
   const text_key = newPin ? "tip.pinned" : "tip.canceled"

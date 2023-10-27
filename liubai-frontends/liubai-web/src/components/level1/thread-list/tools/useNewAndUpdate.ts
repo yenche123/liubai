@@ -6,7 +6,7 @@ import type { ThreadShow } from "~/types/types-content"
 import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
 import valTool from "~/utils/basic/val-tool";
 import type { TlData, TlProps, TlViewType } from "./types"
-import type { WhyThreadChange } from "~/types/types-atom"
+import type { ThreadChangedFrom, WhyThreadChange } from "~/types/types-atom"
 import { handleLastItemStamp } from "./useTLCommon";
 import { storeToRefs } from "pinia"
 import { watch } from "vue"
@@ -28,13 +28,18 @@ export function useNewAndUpdate(
     // console.log("updatedList: ")
     // console.log(state.updatedThreadShows)
     // console.log(" ")
-    const { newThreadShows, updatedThreadShows, whyChange } = state
+    const { 
+      newThreadShows, 
+      updatedThreadShows, 
+      whyChange, 
+      changeFrom 
+    } = state
 
     if(newThreadShows.length > 0) {
       handleNewList(props, tlData, newThreadShows)
     }
     if(updatedThreadShows.length > 0) {
-      handleUpdatedList(props, tlData, updatedThreadShows, whyChange)
+      handleUpdatedList(props, tlData, updatedThreadShows, whyChange, changeFrom)
     }
   })
 
@@ -159,6 +164,7 @@ function handleUpdatedList(
   tlData: TlData,
   updatedList: ThreadShow[],
   whyChange: WhyThreadChange,
+  changeFrom?: ThreadChangedFrom,
 ) {
   const { list } = tlData
   const vT = props.viewType as TlViewType
@@ -215,7 +221,7 @@ function handleUpdatedList(
   // 如果当前为 INDEX 列表 whyChange 是 pin 事件，并且有 unpin 的 thread 
   // 设法把这些 thread 加入到列表里
   if(vT === "INDEX" && whyChange === "pin") {
-    _handleIndexListWhenPin(tlData, newList)
+    _handleIndexListWhenPin(tlData, newList, changeFrom)
   }
 
 }
@@ -223,12 +229,29 @@ function handleUpdatedList(
 function _handleIndexListWhenPin(
   tlData: TlData,
   newList: ThreadShow[],
+  changeFrom?: ThreadChangedFrom,
+) {
+
+  // 检查是否有 “被取消指定” 的动态
+  const unpinList = newList.filter(v => !Boolean(v.pinStamp) && Boolean(v.oState === 'OK'))
+  if(unpinList.length >= 1) {
+    _handleIndexListForUnpin(tlData, unpinList)
+    return
+  }
+  
+  // TODO: 当用户在 detail 里置顶动态，检查 INDEX 列表
+  //   从中把被置顶的动态移除
+  // 难点: 如果用户 “撤销了置顶”，如何再把动态加回 INDEX 中？
+}
+
+/**
+ * 当 “取消置顶” 发生时，处理 index 列表
+ */
+function _handleIndexListForUnpin(
+  tlData: TlData,
+  unpinList: ThreadShow[],
 ) {
   const { list } = tlData
-
-  // 1. 检查是否有 “被取消指定” 的动态
-  const unpinList = newList.filter(v => !Boolean(v.pinStamp) && Boolean(v.oState === 'OK'))
-  if(unpinList.length < 1) return
 
   // 2. 判断是否使用 “刷新” 加载
   // 如果当前首页列表的个数小于等于 默认动态数
