@@ -1,5 +1,5 @@
 import cloud from '@lafjs/cloud'
-import type { Shared_LiuAcAtom } from "@/common-types"
+import type { Shared_AccessControl } from "@/common-types"
 
 /***************** 总服务状态 *****************/
 
@@ -101,7 +101,7 @@ function checkEntry(ctx: FunctionContext) {
   if(allowNoToken) return true
 
   const token = body["x_liu_token"]
-  const tokenId = body["x_liu_token_id"]
+  const tokenId = body["x_liu_serial"]
   if(!token || token.length < 32) return false
   if(!tokenId) return false
 
@@ -126,7 +126,7 @@ function checkIp(ip: string) {
   const now = Date.now()
 
   // 2. 访问控制
-  const liuAC: Map<string, Shared_LiuAcAtom> = gShared.get(`liu-access-control`) ?? new Map()
+  const liuAC: Map<string, Shared_AccessControl> = gShared.get(`liu-access-control`) ?? new Map()
   const ipAtom = liuAC.get(ip)
 
   // 3. 若 ip 数据不存在，初始化该 ip 后通过
@@ -175,7 +175,7 @@ function checkIp(ip: string) {
 
 /** 初始化（重置）当前 ip 的访问控制 */
 function _getLiuAcAtom(now: number) {
-  const newIpAtom: Shared_LiuAcAtom = {
+  const newIpAtom: Shared_AccessControl = {
     lastVisitStamp: now,
     lastLifeCircleStamp: now,
     visitNum: 1,
