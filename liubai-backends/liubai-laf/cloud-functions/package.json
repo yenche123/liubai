@@ -13,7 +13,7 @@
     "geoip-lite": "^1.4.7"
   },
   "devDependencies": {
-    "@types/geoip-lite": "^1.4.2",
+    "@types/geoip-lite": "^1.4.3",
     "@types/node": "18"
   }
 }
