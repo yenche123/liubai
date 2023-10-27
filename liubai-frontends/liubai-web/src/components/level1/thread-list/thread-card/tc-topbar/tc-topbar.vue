@@ -18,6 +18,7 @@ const {
   td,
   showTopbar,
   stateColor,
+  cloudOffPlacement,
   theme,
 } = useTcTopbar(props)
 
@@ -36,7 +37,7 @@ const onTapState = () => {
       <LiuTooltip
         :aria-label="t('thread_related.saved_locally')"
         :distance="2"
-        placement="bottom-end"
+        :placement="cloudOffPlacement"
       >
         <svg-icon class="tct-local-svg" color="var(--main-tip)"
           name="cloud_off"

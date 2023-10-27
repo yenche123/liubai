@@ -1,6 +1,9 @@
 import { computed } from "vue"
 import type { TctProps } from "./types"
 import { useDynamics } from "~/hooks/useDynamics"
+import type { 
+  TooltipPlacement 
+} from "~/components/common/liu-tooltip/tools/types"
 
 export function useTcTopbar(
   props: TctProps,
@@ -21,12 +24,19 @@ export function useTcTopbar(
     return s
   })
 
+  const cloudOffPlacement = computed<TooltipPlacement>(() => {
+    const t = td.value
+    if(t.stateShow) return `bottom`
+    return `bottom-end`
+  })
+
   const { theme } = useDynamics()
 
   return {
     td,
     showTopbar,
     stateColor,
+    cloudOffPlacement,
     theme,
   }
 }
