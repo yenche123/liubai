@@ -80,8 +80,8 @@ dependencies:
     specifier: ^3.2.4
     version: 3.2.4
   exifreader:
-    specifier: ^4.14.1
-    version: 4.14.1
+    specifier: ^4.15.0
+    version: 4.15.0
   file-saver:
     specifier: ^2.0.5
     version: 2.0.5
@@ -157,8 +157,8 @@ devDependencies:
     specifier: ^4.5.0
     version: 4.5.0(@types/node@18.18.4)(sass@1.69.5)
   vite-plugin-compression2:
-    specifier: ^0.10.6
-    version: 0.10.6
+    specifier: ^0.11.0
+    version: 0.11.0
   vite-plugin-inspect:
     specifier: ^0.7.41
     version: 0.7.41(vite@4.5.0)
@@ -736,20 +736,6 @@ packages:
     dependencies:
       type-fest: 2.19.0
     dev: false
-
-  /@rollup/pluginutils@5.0.2:
-    resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      rollup: ^1.20.0||^2.0.0||^3.0.0
-    peerDependenciesMeta:
-      rollup:
-        optional: true
-    dependencies:
-      '@types/estree': 1.0.2
-      estree-walker: 2.0.2
-      picomatch: 2.3.1
-    dev: true
 
   /@rollup/pluginutils@5.0.5:
     resolution: {integrity: sha512-6aEYR910NyP73oHiJglti74iRyOwgFU4x3meH/H8OJx6Ry0j6cOVZ5X/wTvub7G7Ao6qaHBEaNsV3GLJkSsF+Q==}
@@ -2045,8 +2031,8 @@ packages:
       strip-final-newline: 3.0.0
     dev: true
 
-  /exifreader@4.14.1:
-    resolution: {integrity: sha512-fHtnNeAgD2OaqkoEAoo4znXOOPs5EByem5RkmWIYYnZnNL2dnpyJZqHEAv0WJAwbKs8lX0sM1N/6/Er95UNiPQ==}
+  /exifreader@4.15.0:
+    resolution: {integrity: sha512-2GvKkmCSAL7AVnCjcnj9oOahIDt3WQig5NDPvVXx88T18iudMmDjYXiNupb9v0u+WX5ngwdMhgw9zG+k2Qi1fg==}
     requiresBuild: true
     optionalDependencies:
       '@xmldom/xmldom': 0.8.10
@@ -3734,10 +3720,10 @@ packages:
       mutation-observer: 1.0.3
     dev: false
 
-  /vite-plugin-compression2@0.10.6:
-    resolution: {integrity: sha512-R6jQNVeutoJAcxbTCiRqH1ESmKdQYQOUlAMJhy2YaTMsmZYjspy0KoVL9DKAJcprRIYG2Z9MlvfY7nX+ADTXmQ==}
+  /vite-plugin-compression2@0.11.0:
+    resolution: {integrity: sha512-U6oEyRXZD26BynOgD/tStNTbQOLPt96aQNj/gdJTicKVYCQCdlV7QdmSF7VEhSyjiS59pQRhiMBu/uajprxWLA==}
     dependencies:
-      '@rollup/pluginutils': 5.0.2
+      '@rollup/pluginutils': 5.0.5
     transitivePeerDependencies:
       - rollup
     dev: true
