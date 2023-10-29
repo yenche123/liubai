@@ -42,7 +42,7 @@ export interface WorkspaceLocalTable extends BaseLocalTable {
   stateConfig?: LiuStateConfig
   tagList?: TagView[]
   oState: OState
-  owner?: string
+  owner: string
 }
 
 export interface MemberLocalTable extends BaseLocalTable {
