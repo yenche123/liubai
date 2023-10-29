@@ -57,6 +57,8 @@ https://www.bing.com/images/create  用 DALL-E 3 生成插图
 
 13. 使用 https://npmgraph.js.org/ 查看依赖关系图
 
+14. 使用 `where node` 得知 `node` 的安装路径
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
