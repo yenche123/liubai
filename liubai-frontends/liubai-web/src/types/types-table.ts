@@ -49,7 +49,7 @@ export interface MemberLocalTable extends BaseLocalTable {
   name?: string
   avatar?: LiuImageStore
   spaceId: string
-  user?: string
+  user: string
   oState: MemberState
   config?: MemberConfig
 }

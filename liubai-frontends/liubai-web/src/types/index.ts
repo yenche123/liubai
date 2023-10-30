@@ -37,7 +37,7 @@ export interface FileShow {
 }
 
 
-/** 当前有采集的「可交换图像文件格式
+/** 当前有采集的「可交换图像文件格式」
  *    注意: 其每个属性都必须是可选的，因为都不见得会存在
 */
 export interface LiuExif {
