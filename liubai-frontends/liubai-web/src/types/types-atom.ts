@@ -12,7 +12,7 @@ export interface LiuRemindMe {
   // 提前多少分钟，若提前一天则为 1440
   early_minute?: LiuRemindEarly   
 
-  // 30分钟后、1小时候、2小时后、3小时后、明天此刻
+  // 30分钟后、1小时后、2小时后、3小时后、明天此刻
   later?: LiuRemindLater
 
   // 具体时间的时间戳

@@ -78,7 +78,7 @@ export interface ContentLocalTable extends BaseLocalTable {
   parentThread?: string
   parentComment?: string
   replyToComment?: string
-  pinStamp?: number         // 被置顶时的时间戳
+  pinStamp?: number         // 被置顶时的时间戳，被取消置顶时为 0
   createdStamp: number      // 动态被创建的时间戳
   editedStamp: number       // 动态被编辑的时间戳
   tagIds?: string[]         // 用于显示的 tagId
