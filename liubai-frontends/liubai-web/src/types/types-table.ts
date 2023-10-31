@@ -12,7 +12,7 @@ import type {
   LiuRemindMe, 
   TagView, 
   LiuStateConfig,
-  LiuContentType,
+  LiuInfoType,
 } from "./types-atom"
 import type { LiuFileStore, LiuImageStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
@@ -62,7 +62,7 @@ export interface ContentLocalTable extends BaseLocalTable {
   spaceId: string
   spaceType: SpaceType
 
-  infoType: LiuContentType
+  infoType: LiuInfoType
   oState: OState
   visScope: VisScope
   storageState: StorageState
@@ -92,7 +92,7 @@ export interface ContentLocalTable extends BaseLocalTable {
 }
 
 export interface DraftLocalTable extends BaseLocalTable {
-  infoType: LiuContentType
+  infoType: LiuInfoType
   oState: "OK" | "POSTED" | "DELETED"
   user: string
   spaceId: string
@@ -120,7 +120,7 @@ export interface CollectionLocalTable extends BaseLocalTable {
   user: string
   member?: string
   infoType: "EXPRESS" | "FAVORITE"
-  forType: LiuContentType
+  forType: LiuInfoType
   spaceId: string
   spaceType: SpaceType
   content_id: string

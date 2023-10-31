@@ -19,7 +19,7 @@ export interface LiuRemindMe {
   specific_stamp?: number
 }
 
-export type LiuContentType = "THREAD" | "COMMENT"
+export type LiuInfoType = "THREAD" | "COMMENT"
 
 export const liuNodeTypes = [
   "heading",          // 标题（只有 h1）
