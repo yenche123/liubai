@@ -133,7 +133,7 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
     >
       <NaviLink 
         @aftertap="onTapItem"
-        :to="prefix + 'setting'"
+        :to="prefix + 'settings'"
       >
         <div class="liu-hover sct-box" :aria-label="t('common.setting')"
           :class="{'sc-selected': sctIndicator === 'setting'}"

@@ -23,7 +23,7 @@ export function useScTop(emits: ScTopEmits) {
 
   const onTapMoreMenuItem = (item: MenuItem, index: number) => {
     let link = prefix.value
-    if(index === 0) link += "setting"
+    if(index === 0) link += "settings"
     else if(index === 1) link += "trash"
 
     rr.router.push(link)

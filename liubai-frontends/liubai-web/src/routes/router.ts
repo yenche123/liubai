@@ -170,7 +170,7 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/setting",
+    path: "/settings",
     components: {
       default: SettingPage,
       LeftSidebar,
@@ -296,7 +296,7 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/w/:workspaceId(\\w{10,})/setting",
+    path: "/w/:workspaceId(\\w{10,})/settings",
     components: {
       default: SettingPage,
       LeftSidebar,
