@@ -125,6 +125,9 @@ const {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 30%;
+  min-width: 150px;
+  max-width: 250px;
   font-size: var(--btn-font);
   color: var(--main-code);
   font-weight: 700;
