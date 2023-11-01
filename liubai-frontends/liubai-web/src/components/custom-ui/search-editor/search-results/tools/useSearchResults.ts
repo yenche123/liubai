@@ -1,6 +1,7 @@
 import { nextTick, toRef, watch, ref } from "vue";
 import liuUtil from "~/utils/liu-util";
 import type { SearchEditorData } from "../../tools/types";
+import time from "~/utils/basic/time"
 
 interface SearchResultsProps {
   seData: SearchEditorData
@@ -12,9 +13,15 @@ export function useSearchResults(
   const srContainerEl = ref<HTMLElement>()
   const seData = props.seData
   const indicator = toRef(seData, "indicator")
+  const initStamp = time.getTime()
 
   watch(indicator, async (newV, oldV) => {
     if(!newV) return
+
+    // 避免打开时的快速滚动，故做一个防抖节流
+    const diff = time.getTime() - initStamp
+    if(diff < 500) return
+
     await nextTick()
 
     const parent = srContainerEl.value
