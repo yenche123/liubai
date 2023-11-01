@@ -46,6 +46,7 @@ import {
 import openUtil from "./open-util"
 import {
   makeBoxScrollToShowChild,
+  getIndicatorLeftAndWidth,
 } from "./element-util"
 import trimUtil from "./trim-util"
 import viewUtil from "./view-util";
@@ -83,6 +84,7 @@ export default {
   getDefaultRouteQuery,
   needToOpenViceView,
   makeBoxScrollToShowChild,
+  getIndicatorLeftAndWidth,
   canTap,
   calibrateSidebarWidth,
   getMainViewCriticalValue,

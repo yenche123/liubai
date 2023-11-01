@@ -129,16 +129,7 @@ async function whenWhichPageChange(
   const childEl = childRef.value
   if(!childEl) return
 
-  const parentClient = parentEl.getBoundingClientRect()
-  const childClient = childEl.getBoundingClientRect()
-
-  if(!parentClient.width || !parentClient.height) return
-
-  const left = childClient.left - parentClient.left
-  const width = childClient.width
-
-  ctx._indicatorData.value = {
-    left: `${left}px`,
-    width: `${width}px`
-  }
+  const info = liuUtil.getIndicatorLeftAndWidth(parentEl, childEl)
+  if(!info) return
+  ctx._indicatorData.value = info
 }

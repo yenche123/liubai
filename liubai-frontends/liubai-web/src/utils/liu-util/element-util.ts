@@ -44,3 +44,22 @@ export function makeBoxScrollToShowChild(
   }
   parent.scrollTo(sOpt)
 }
+
+/** 计算指示器的左侧位置和宽度 */
+export function getIndicatorLeftAndWidth(
+  parentEl: Element, 
+  childEl: Element,
+) {
+  const parentClient = parentEl.getBoundingClientRect()
+  const childClient = childEl.getBoundingClientRect()
+
+  if(!parentClient.width || !parentClient.height) return
+
+  const left = childClient.left - parentClient.left
+  const width = childClient.width
+
+  return {
+    left: `${left}px`,
+    width: `${width}px`
+  }
+}
