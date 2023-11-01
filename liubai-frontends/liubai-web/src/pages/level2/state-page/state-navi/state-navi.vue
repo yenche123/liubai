@@ -209,7 +209,6 @@ const iconColor = "var(--main-normal)"
     opacity: .08;
     border-radius: 15px;
     z-index: 90;
-    box-shadow: var(--tab-shadow);
   }
 
 }
