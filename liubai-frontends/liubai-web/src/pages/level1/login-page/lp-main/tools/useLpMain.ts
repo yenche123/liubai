@@ -1,12 +1,14 @@
 import { onMounted, reactive, ref, watch } from "vue";
 import type { LpmData } from "./types"
 import liuUtil from '~/utils/liu-util';
+import { useWindowSize } from "~/hooks/useVueUse";
+import { LiuTimeout } from "~/utils/basic/type-tool";
 
 export function useLpMain() {
 
   const lpSelectsEl = ref<HTMLElement>()
   const lpmData = reactive<LpmData>({
-    current: 1,
+    current: 2,
     showEmailSubmit: false,
     indicatorData: {
       width: "0px",
@@ -37,6 +39,16 @@ export function useLpMain() {
   })
   onMounted(() => {
     calculateIndicator()
+  })
+
+  let widthTimeout: LiuTimeout
+  const { width } = useWindowSize()
+  watch(width, (newV) => {
+    if(widthTimeout) clearTimeout(widthTimeout)
+    widthTimeout = setTimeout(() => {
+      widthTimeout = undefined
+      calculateIndicator()
+    }, 200)
   })
 
   

@@ -26,7 +26,7 @@ const {
     </div>
 
     <!-- 指示器 -->
-    <div class="lp-indicator"></div>
+    <div v-if="lpmData.indicatorData.width !== '0px'" class="lp-indicator"></div>
 
   </div>
 
@@ -38,9 +38,47 @@ const {
 
   <!-- third-party view -->
   <div class="lp-view" v-show="lpmData.current === 2">
-  
-  
-</div>
+
+    <!-- google -->
+    <div class="liu-hover lpv-btn">
+      <div class="lpv-icon">
+        <svg-icon name="logos-google-color" 
+          :cover-fill-stroke="false"
+          class="lpv-svg-icon"
+        ></svg-icon>
+      </div>
+      <div class="lpv-text">
+        <span>{{ t('login.continue_with_google') }}</span>
+      </div>
+    </div>
+
+    <!-- github -->
+    <div class="liu-hover lpv-btn">
+      <div class="lpv-icon">
+        <svg-icon name="logos-github" 
+          color="var(--main-text)"
+          class="lpv-svg-icon"
+        ></svg-icon>
+      </div>
+      <div class="lpv-text">
+        <span>{{ t('login.continue_with_github') }}</span>
+      </div>
+    </div>
+
+    <!-- Apple -->
+    <div class="liu-hover lpv-btn">
+      <div class="lpv-icon">
+        <svg-icon name="logos-apple" 
+          color="var(--main-text)"
+          class="lpv-svg-icon"
+        ></svg-icon>
+      </div>
+      <div class="lpv-text">
+        <span>{{ t('login.continue_with_apple') }}</span>
+      </div>
+    </div>
+
+  </div>
 
 
 </template>
@@ -70,6 +108,7 @@ const {
   transition: .15s;
   z-index: 90;
   cursor: pointer;
+  user-select: none;
 }
 
 .lp-indicator {
@@ -81,7 +120,7 @@ const {
   z-index: 80;
   background-color: var(--primary-hover);
   opacity: .08;
-  border-radius: 4px;
+  border-radius: 20px;
   transition: .3s;
 }
 
@@ -90,11 +129,51 @@ const {
   width: 100%;
   padding-block-start: 10px;
   padding-block-end: 20px;
+  height: 50dvh;
   min-height: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+.lpv-btn {
+  width: 100%;
+  max-width: 450px;
+  padding: 4px 16px;
+  box-sizing: border-box;
+  height: 48px;
+  border-radius: 8px;
+  border: 1.4px solid var(--line-bottom);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--card-bg);
+  margin-block-end: 12px;
+  user-select: none;
+}
+
+.lpv-icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: 10px;
+
+  .lpv-svg-icon {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+.lpv-text {
+  font-size: var(--btn-font);
+  color: var(--main-normal);
+  min-width: 180px;
+  text-align: center;
 }
 
 
