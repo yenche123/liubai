@@ -147,6 +147,14 @@
     "modify_name": "修改名稱",
     "modify_name_ph": "請輸入你的名稱"
   },
+  "login": {
+    "email": "Email",
+    "email_ph": "你的 Email 地址",
+    "third_party": "第三方",
+    "continue_with_google": "使用 Google 登入",
+    "continue_with_github": "使用 GitHub 登入",
+    "continue_with_apple": "使用 Apple 登入"
+  },
   "tip": {
     "tip": "提示",
     "file_exceed_title": "文件最大存取大小為 10 MB",

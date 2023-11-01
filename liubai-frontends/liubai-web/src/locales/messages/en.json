@@ -147,6 +147,14 @@
     "modify_name": "Modify Name",
     "modify_name_ph": "Please enter your name"
   },
+  "login": {
+    "email": "Email",
+    "email_ph": "Enter your email address",
+    "third_party": "Third Party",
+    "continue_with_google": "Continue with Google",
+    "continue_with_github": "Continue with GitHub",
+    "continue_with_apple": "Continue with Apple"
+  },
   "tip": {
     "tip": "TIP",
     "file_exceed_title": "The maxmium size is 10 MB",

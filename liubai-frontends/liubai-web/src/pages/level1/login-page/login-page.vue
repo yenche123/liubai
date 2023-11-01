@@ -1,38 +1,128 @@
 <script setup lang="ts">
-import { useRouteAndLiuRouter } from "~/routes/liu-router";
-const { router } = useRouteAndLiuRouter()
-const onBack = () => {
-  router.back()
-}
+import LpMain from "./lp-main/lp-main.vue"
+import LpCode from "./lp-code/lp-code.vue"
+import { useLoginPage } from "./tools/useLoginPage"
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n()
+const { lpData } = useLoginPage()
 
 </script>
 <template>
 
-  <div class="lp-test">这里是登录页</div>
-  <div @click="onBack">返回</div>
+  <!-- 顶部: 返回导航栏 -->
+  <div class="lp-navi-bar">
+
+
+    <div class="lpn-box">
+
+      <!-- 返回按钮 -->
+      <div class="liu-hover lpn-back">
+        <div class="lpn-back-icon">
+          <svg-icon name="arrow-back700" class="lpn-back-svg" 
+            color="var(--main-normal)"
+          ></svg-icon>
+        </div>
+        <span>{{ t('common.back') }}</span>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- 主体 -->
+  <div class="lp-body">
+
+    <!-- 顶部占位 -->
+    <div class="lp-virtual"></div>
+
+    <!-- 主页 -->
+    <div class="lp-container" v-show="lpData.view === 'main'">
+      <LpMain></LpMain>
+    </div>
+
+    <!-- 输入验证码页 -->
+    <div class="lp-container" v-show="lpData.view === 'code'">
+      <LpCode></LpCode>
+    </div>
+    
+    <!-- 底部占位，形成上下对称 -->
+    <div class="lp-virtual"></div>
+
+  </div>
+
 </template>
-<style scoped>
+<style scoped lang="scss">
 
-.lp-test {
-  width: 50%;
-  height: 300px;
-  margin-bottom: 20px;
-  background-color: darkblue;
-  color: white;
-}
-
-.lp-back {
-  width: 50%;
-  height: 50px;
-  border-radius: 10px;
-  background-color: #00696d;
-  color: white;
-  font-size: 20px;
-  font-weight: 700;
+.lp-navi-bar {
+  width: 100%;
+  height: 100px;
+  position: fixed;
+  top: 0;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  z-index: 100;
 }
+
+.lpn-box {
+  height: 100%;
+  width: 92%;
+  max-width: 1500px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.lpn-back {
+  display: flex;
+  align-items: center;
+  font-size: var(--desc-font);
+  color: var(--main-normal);
+  font-weight: 700;
+  padding: 4px 16px 4px 10px;
+  user-select: none;
+}
+
+.lpn-back-icon {
+  width: 34px;
+  height: 34px;
+  margin-inline-end: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .lpn-back-svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.lp-body {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  z-index: 50;
+  background-color: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.lp-virtual {
+  width: 100%;
+  height: 100px;
+}
+
+.lp-container {
+  position: relative;
+  width: 92%;
+  max-width: 600px;
+}
+
 
 </style>

@@ -147,6 +147,14 @@
     "modify_name": "修改名称",
     "modify_name_ph": "请输入你的名称"
   },
+  "login": {
+    "email": "Email",
+    "email_ph": "你的邮箱地址",
+    "third_party": "第三方",
+    "continue_with_google": "使用 Google 登录",
+    "continue_with_github": "使用 GitHub 登录",
+    "continue_with_apple": "使用 Apple 登录"
+  },
   "tip": {
     "tip": "提示",
     "file_exceed_title": "文件最大存储尺寸为 10 MB",
