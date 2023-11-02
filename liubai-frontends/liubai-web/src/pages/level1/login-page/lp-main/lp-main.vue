@@ -7,6 +7,7 @@ const {
   lpSelectsEl,
   lpmData,
   onTapSelect,
+  onEmailEnter,
 } = useLpMain()
 
 </script>
@@ -35,6 +36,8 @@ const {
 
     <input class="lp-email-input" type="email" 
       :placeholder="t('login.email_ph')" 
+      v-model="lpmData.emailVal"
+      @keyup.enter.exact="onEmailEnter"
     />
   
   
@@ -162,6 +165,7 @@ const {
   **/
   &:-webkit-autofill, &:-webkit-autofill:focus {
     transition: background-color 0s 600000s, color 0s 600000s;
+    -webkit-box-shadow: 0 0 0px 1000px var(--card-bg) inset;
   }
 }
 

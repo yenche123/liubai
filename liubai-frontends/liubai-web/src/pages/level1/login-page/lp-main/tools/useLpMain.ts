@@ -10,6 +10,7 @@ export function useLpMain() {
   const lpmData = reactive<LpmData>({
     current: 2,
     showEmailSubmit: false,
+    emailVal: "",
     indicatorData: {
       width: "0px",
       left: "0px",
@@ -50,10 +51,18 @@ export function useLpMain() {
     }, 200)
   })
 
+
+  const onEmailEnter = () => {
+    console.log(`enter 了: `)
+    console.log(lpmData.emailVal)
+    console.log(` `)
+  }
+
   
   return {
     lpSelectsEl,
     lpmData,
     onTapSelect,
+    onEmailEnter,
   }
 }
