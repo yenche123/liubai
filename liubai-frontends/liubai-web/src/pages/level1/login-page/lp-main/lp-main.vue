@@ -32,6 +32,10 @@ const {
 
   <!-- email view -->
   <div class="lp-view" v-show="lpmData.current === 1">
+
+    <input class="lp-email-input" type="email" 
+      :placeholder="t('login.email_ph')" 
+    />
   
   
   </div>
@@ -137,6 +141,30 @@ const {
   justify-content: center;
   position: relative;
 }
+
+.lp-email-input {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 450px;
+  padding: 16px 24px;
+  font-size: var(--desc-font);
+  color: var(--main-normal);
+  background-color: var(--card-bg);
+  border: 1.4px solid var(--line-bottom);
+  border-radius: 8px;
+
+  &::placeholder {
+    color: var(--main-note);
+  }
+
+  /** 消除自动填入时的样式，参考 
+  * https://stackoverflow.com/questions/61083813/how-to-avoid-internal-autofill-selected-style-to-be-applied
+  **/
+  &:-webkit-autofill, &:-webkit-autofill:focus {
+    transition: background-color 0s 600000s, color 0s 600000s;
+  }
+}
+
 
 .lpv-btn {
   width: 100%;
