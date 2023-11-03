@@ -4,6 +4,7 @@ import type { LiuContent } from "~/types/types-atom"
 import valTool from "../basic/val-tool"
 import { ALLOW_DEEP_TYPES } from "~/config/atom"
 import type { LiuMarkAtom } from "~/types/types-atom"
+import reg_exp from "~/config/regular-expressions"
 
 // 装载 link
 export function equipLink(list: TipTapJSONContent[]) {
@@ -44,8 +45,7 @@ function _parseTextsForLink(
     if(marks && marks.length) continue
 
     // 解析 @xxx@aaa.bbb
-    // 其中 (?<![\w\/\-\.]+) 为负向后行断言，表示第一个 @ 前面不能接 \w \/ \. \- \\
-    const regSocialLink = /(?<![\w\/\-\.\\]+)@[\w\.-]{2,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*(?!\S)/g
+    const regSocialLink = reg_exp.social_link
     let list0 = _innerParse(text, regSocialLink, "social_link")
     if(list0) {
       content.splice(i, 1, ...list0)
@@ -54,7 +54,7 @@ function _parseTextsForLink(
     }
 
     // 解析 markdown 格式的链接
-    const regMdLink = /\[([^\]\n]+)\]\(([^)\n\s]+)\)/g
+    const regMdLink = reg_exp.md_link
     let list1 = _innerParse(text, regMdLink, "markdown_link")
     if(list1) {
       content.splice(i, 1, ...list1)
@@ -63,7 +63,7 @@ function _parseTextsForLink(
     }
 
     // 解析 email
-    const regEmail = /[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*/g
+    const regEmail = reg_exp.email
     let list2 = _innerParse(text, regEmail, "email")
     if(list2) {
       content.splice(i, 1, ...list2)
@@ -72,7 +72,7 @@ function _parseTextsForLink(
     }
 
     // 解析 一般链接
-    const regUrl = /[\w\./:-]*\w{1,32}\.\w{2,6}[^)(\n\s\"\']*/g
+    const regUrl = reg_exp.url
     let list3 = _innerParse(text, regUrl, "url")
     if(list3) {
       content.splice(i, 1, ...list3)
@@ -125,7 +125,7 @@ function _innerParse(
       // console.log("href: ", href)
       // console.log(" ")
 
-      const regEmail = /^[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*$/g
+      const regEmail = reg_exp.email_completed
       const idx1 = href.indexOf("://")
       const idx2 = href.indexOf("mailto")
       const emailMatch = href.match(regEmail)
