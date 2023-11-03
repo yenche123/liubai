@@ -1,7 +1,7 @@
 import { onMounted, ref, shallowRef, watch } from 'vue';
 import EditorCore from "~/components/editors/editor-core/editor-core.vue"
 import type { TipTapEditor } from "~/types/types-editor"
-import type { TcProps } from "./types"
+import type { TcEmits, TcProps } from "./types"
 import liuApi from '~/utils/liu-api';
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import type { RouteAndLiuRouter } from '~/routes/liu-router';
@@ -17,7 +17,10 @@ interface TcCtx {
   gStore: GlobalStateStore
 }
 
-export function useThreadCard(props: TcProps) {
+export function useThreadCard(
+  props: TcProps,
+  emit: TcEmits,
+) {
   const showMore = ref(false)
   const editorCoreRef = ref<typeof EditorCore | null>(null)
   const editor = shallowRef<TipTapEditor>()
@@ -42,6 +45,7 @@ export function useThreadCard(props: TcProps) {
   const onTapBriefing = (e: MouseEvent) => {
     const { target, currentTarget } = e
     if(liuApi.eventTargetIsSomeTag(target, "a")) return
+    emit("tapbriefing")
     isBriefing.value = false
   }
 

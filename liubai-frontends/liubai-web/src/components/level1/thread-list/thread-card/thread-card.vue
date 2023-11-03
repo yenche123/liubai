@@ -56,7 +56,7 @@ const {
   showMore,
   onMouseEnter,
   onMouseLeave,
-} = useThreadCard(props)
+} = useThreadCard(props, emit)
 const { t } = useI18n()
 const {
   onTapComment,

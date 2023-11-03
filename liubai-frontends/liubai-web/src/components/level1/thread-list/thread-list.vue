@@ -11,6 +11,7 @@ const props = defineProps(tlProps)
 const emit = defineEmits<TlEmits>()
 const {
   tlData,
+  whenTapBriefing,
 } = useThreadList(props, emit)
 useNewAndUpdate(props, tlData)
 
@@ -33,6 +34,7 @@ const {
         :show-type="item.showType"
         :show-txt="showTxt"
         @newoperate="receiveOperation"
+        @tapbriefing="whenTapBriefing"
       ></ThreadCard>
     
     </template>

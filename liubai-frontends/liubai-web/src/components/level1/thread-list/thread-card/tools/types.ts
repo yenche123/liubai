@@ -25,4 +25,5 @@ export interface TcEmits {
     oldThread: ThreadShow
   ): void
   (evt: "requestfocus"): void
+  (evt: "tapbriefing"): void
 }

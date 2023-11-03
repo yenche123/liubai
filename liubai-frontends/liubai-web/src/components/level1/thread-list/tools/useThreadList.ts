@@ -7,12 +7,13 @@ import type { SvProvideInject } from "~/types/components/types-scroll-view"
 import type { TlProps, TlViewType, TlEmits, TlData, TlContext } from "./types"
 import type { TcListOption } from "~/utils/controllers/thread-controller/type"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
-import { svBottomUpKey, scrollViewKey } from "~/utils/provide-keys";
+import { svBottomUpKey, scrollViewKey, svScollingKey } from "~/utils/provide-keys";
 import { handleLastItemStamp } from "./useTLCommon"
 import tlUtil from "./tl-util"
 import typeCheck from "~/utils/basic/type-check"
 import stateController from "~/utils/controllers/state-controller/state-controller"
 import type { ThreadShow } from "~/types/types-content"
+import valTool from "~/utils/basic/val-tool"
 
 export function useThreadList(
   props: TlProps,
@@ -22,6 +23,8 @@ export function useThreadList(
 
   const wStore = useWorkspaceStore()
   let spaceIdRef = storeToRefs(wStore).spaceId
+
+  // 获取命令 scroll-view 滚动到期望位置的控制器
   const svBottomUp = inject(svBottomUpKey)
 
   const tlData = reactive<TlData>({
@@ -122,8 +125,25 @@ export function useThreadList(
     }
   })
 
+
+  // 5. 获取滚动位置，当卡片被点击展开全文时
+  // 恢复定位
+  const scrollPosition = inject(svScollingKey)
+  const whenTapBriefing = async () => {
+    if(!scrollPosition) return
+    const sP1 = scrollPosition.value
+    await valTool.waitMilli(60)
+    const sP2 = scrollPosition.value
+    const diff = sP2 - sP1
+    if(diff < 60) return
+    if(!svBottomUp) return
+    const expectedPixel = Math.max(sP1 - 30, 0)
+    svBottomUp.value = { type: "pixel", pixel: expectedPixel }
+  }
+
   return {
     tlData,
+    whenTapBriefing,
   }
 }
 
