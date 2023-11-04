@@ -31,7 +31,7 @@ const liuShowDirective = {
     const val = binding.value as Boolean
     
     // 初始化
-    el.style.transitionDuration = "250ms"
+    el.style.transitionDuration = "200ms"
 
     if(val) {
       el.style.visibility = "visible"
