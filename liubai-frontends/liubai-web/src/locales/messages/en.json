@@ -153,7 +153,10 @@
     "third_party": "Third Party",
     "continue_with_google": "Continue with Google",
     "continue_with_github": "Continue with GitHub",
-    "continue_with_apple": "Continue with Apple"
+    "continue_with_apple": "Continue with Apple",    
+    "email_verification": "Email Verification",
+    "email_verification_tip": "Verification code has been sent to {email}\n Please check out your inbox or junk/spam folder.",
+    "verification_code": "Verification Code"
   },
   "tip": {
     "tip": "TIP",

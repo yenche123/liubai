@@ -153,7 +153,10 @@
     "third_party": "第三方",
     "continue_with_google": "使用 Google 登录",
     "continue_with_github": "使用 GitHub 登录",
-    "continue_with_apple": "使用 Apple 登录"
+    "continue_with_apple": "使用 Apple 登录",
+    "email_verification": "邮箱验证",
+    "email_verification_tip": "已发送验证码至 {email}\n 请检查你的收件箱或垃圾邮箱。",
+    "verification_code": "验证码"
   },
   "tip": {
     "tip": "提示",
