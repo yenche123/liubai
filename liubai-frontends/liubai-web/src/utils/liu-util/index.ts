@@ -50,6 +50,7 @@ import {
 } from "./element-util"
 import trimUtil from "./trim-util"
 import viewUtil from "./view-util";
+import checkUtil from "./check-util";
 
 export default {
   getHelpTip,
@@ -94,4 +95,5 @@ export default {
   open: openUtil,
   trim: trimUtil,
   view: viewUtil,
+  check: checkUtil,
 }

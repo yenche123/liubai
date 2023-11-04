@@ -1,10 +1,10 @@
 
 import type { TipTapJSONContent } from "~/types/types-editor"
-import type { LiuContent } from "~/types/types-atom"
+import type { LiuContent, LiuMarkAtom } from "~/types/types-atom"
 import valTool from "../basic/val-tool"
 import { ALLOW_DEEP_TYPES } from "~/config/atom"
-import type { LiuMarkAtom } from "~/types/types-atom"
 import reg_exp from "~/config/regular-expressions"
+import liuUtil from "../liu-util"
 
 // 装载 link
 export function equipLink(list: TipTapJSONContent[]) {
@@ -125,11 +125,9 @@ function _innerParse(
       // console.log("href: ", href)
       // console.log(" ")
 
-      const regEmail = reg_exp.email_completed
       const idx1 = href.indexOf("://")
       const idx2 = href.indexOf("mailto")
-      const emailMatch = href.match(regEmail)
-      const isEmail = Boolean(emailMatch?.length)
+      const isEmail = liuUtil.check.isEmail(href)
 
       if(idx2 !== 0) {
         if(isEmail) href = `mailto:` + href

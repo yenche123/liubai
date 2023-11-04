@@ -39,7 +39,14 @@ const {
       v-model="lpmData.emailVal"
       @keyup.enter.exact="onEmailEnter"
     />
-  
+
+    <CustomBtn
+      :disabled="!lpmData.showEmailSubmit"
+      class="lp-email-btn"
+      @click="onEmailEnter"
+    >
+      <span>{{ t('common.confirm') + ' ↵' }}</span>
+    </CustomBtn>
   
   </div>
 
@@ -155,6 +162,7 @@ const {
   background-color: var(--card-bg);
   border: 1.4px solid var(--line-bottom);
   border-radius: 8px;
+  margin-block-end: 24px;
 
   &::placeholder {
     color: var(--main-note);
@@ -167,6 +175,11 @@ const {
     transition: background-color 0s 600000s, color 0s 600000s;
     -webkit-box-shadow: 0 0 0px 1000px var(--card-bg) inset;
   }
+}
+
+.lp-email-btn {
+  width: 100%;
+  max-width: 450px;
 }
 
 

@@ -1,8 +1,8 @@
 import { onMounted, reactive, ref, watch } from "vue";
-import type { LpmData } from "./types"
+import { type LpmData } from "./types"
 import liuUtil from '~/utils/liu-util';
 import { useWindowSize } from "~/hooks/useVueUse";
-import { LiuTimeout } from "~/utils/basic/type-tool";
+import { type LiuTimeout } from "~/utils/basic/type-tool";
 
 export function useLpMain() {
 
@@ -51,6 +51,10 @@ export function useLpMain() {
     }, 200)
   })
 
+  // 监听输入是否符合
+  watch(() => lpmData.emailVal, (newV) => {
+    checkEmailInput(lpmData)
+  })
 
   const onEmailEnter = () => {
     console.log(`enter 了: `)
@@ -64,5 +68,18 @@ export function useLpMain() {
     lpmData,
     onTapSelect,
     onEmailEnter,
+  }
+}
+
+function checkEmailInput(
+  lpmData: LpmData,
+) {
+  const oldSubmit = lpmData.showEmailSubmit
+  const emailVal = lpmData.emailVal
+  const val = emailVal.trim()
+  
+  const newSubmit = liuUtil.check.isEmail(val)
+  if(oldSubmit !== newSubmit) {
+    lpmData.showEmailSubmit = newSubmit
   }
 }
