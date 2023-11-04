@@ -23,6 +23,7 @@ import LiuCheckbox from "./components/common/liu-checkbox/liu-checkbox.vue"
 import FloatingVue from 'floating-vue'
 import { plugin as Slicksort } from 'vue-slicksort';
 import { initTheme } from './hooks/useDynamics'
+import { liuShowDirective } from "~/utils/directives/v-liu-show"
 
 // 初始化主题
 initTheme()
@@ -63,6 +64,9 @@ app.use(FloatingVue, {
   }
 })
 app.use(Slicksort)
+
+// 注册全局指令
+app.directive('liu-show', liuShowDirective)
 
 // app.config.unwrapInjectedRef = true    
 // vue 3.2.x 仍需要有上方这一行

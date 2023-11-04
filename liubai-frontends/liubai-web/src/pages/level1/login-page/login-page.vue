@@ -38,12 +38,12 @@ const { lpData } = useLoginPage()
     <div class="lp-virtual"></div>
 
     <!-- 主页 -->
-    <div class="lp-container" v-show="lpData.view === 'main'">
+    <div class="lp-container" v-liu-show="lpData.view === 'main'">
       <LpMain></LpMain>
     </div>
 
     <!-- 输入验证码页 -->
-    <div class="lp-container" v-show="lpData.view === 'code'">
+    <div class="lp-container" v-liu-show="lpData.view === 'code'">
       <LpCode></LpCode>
     </div>
     

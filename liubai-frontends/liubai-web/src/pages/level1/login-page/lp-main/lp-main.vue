@@ -32,7 +32,7 @@ const {
   </div>
 
   <!-- email view -->
-  <div class="lp-view" v-show="lpmData.current === 1">
+  <div class="lp-view" v-liu-show="lpmData.current === 1">
 
     <input class="lp-email-input" type="email" 
       :placeholder="t('login.email_ph')" 
@@ -51,7 +51,7 @@ const {
   </div>
 
   <!-- third-party view -->
-  <div class="lp-view" v-show="lpmData.current === 2">
+  <div class="lp-view" v-liu-show="lpmData.current === 2">
 
     <!-- google -->
     <div class="liu-hover lpv-btn">
