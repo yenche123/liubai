@@ -175,6 +175,10 @@ const {
     transition: background-color 0s 600000s, color 0s 600000s;
     -webkit-box-shadow: 0 0 0px 1000px var(--card-bg) inset;
   }
+
+  &::selection {
+    background-color: var(--select-bg);
+  }
 }
 
 .lp-email-btn {
