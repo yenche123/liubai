@@ -128,5 +128,14 @@ const { t } = useI18n()
   margin-block-end: 0;
 }
 
+@media screen and (min-height: 700px) {
+  
+  .lpc-tip, .lp-code-input {
+    margin-block-end: 96px;
+  }
+  
+}
+
+
 
 </style>
