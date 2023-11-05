@@ -1,12 +1,15 @@
 import { onMounted, reactive, ref, watch } from "vue";
-import { type LpmData } from "./types"
+import { type LpmData, type LpmEmit } from "./types"
 import liuUtil from '~/utils/liu-util';
 import { useWindowSize } from "~/hooks/useVueUse";
 import { type LiuTimeout } from "~/utils/basic/type-tool";
 
-export function useLpMain() {
+export function useLpMain(
+  emit: LpmEmit,
+) {
 
   const lpSelectsEl = ref<HTMLElement>()
+  const lpEmailInput = ref<HTMLInputElement>()
   const lpmData = reactive<LpmData>({
     current: 2,
     showEmailSubmit: false,
@@ -57,14 +60,19 @@ export function useLpMain() {
   })
 
   const onEmailEnter = () => {
-    console.log(`enter 了: `)
-    console.log(lpmData.emailVal)
-    console.log(` `)
+    if(!lpmData.showEmailSubmit) return
+    const email = lpmData.emailVal.trim()
+    emit("submitemail", email)
+
+    const el = lpEmailInput.value
+    if(!el) return
+    el.blur()
   }
 
   
   return {
     lpSelectsEl,
+    lpEmailInput,
     lpmData,
     onTapSelect,
     onEmailEnter,

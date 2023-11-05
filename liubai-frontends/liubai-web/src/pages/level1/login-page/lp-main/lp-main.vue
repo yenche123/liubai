@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { useLpMain } from "./tools/useLpMain";
+import type { LpmEmit } from "./tools/types"
+
+const emit = defineEmits<LpmEmit>()
 
 const { t } = useI18n()
 const {
   lpSelectsEl,
+  lpEmailInput,
   lpmData,
   onTapSelect,
   onEmailEnter,
-} = useLpMain()
+} = useLpMain(emit)
 
 </script>
 <template>
@@ -37,6 +41,7 @@ const {
     <input class="lp-email-input" type="email" 
       :placeholder="t('login.email_ph')" 
       v-model="lpmData.emailVal"
+      ref="lpEmailInput"
       @keyup.enter.exact="onEmailEnter"
     />
 

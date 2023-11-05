@@ -5,7 +5,10 @@ import { useLoginPage } from "./tools/useLoginPage"
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n()
-const { lpData } = useLoginPage()
+const { 
+  lpData,
+  onEmailSubmitted,
+} = useLoginPage()
 
 </script>
 <template>
@@ -39,7 +42,9 @@ const { lpData } = useLoginPage()
 
     <!-- 主页 -->
     <div class="lp-container" v-liu-show="lpData.view === 'main'">
-      <LpMain></LpMain>
+      <LpMain
+        @submitemail="onEmailSubmitted"
+      ></LpMain>
     </div>
 
     <!-- 输入验证码页 -->

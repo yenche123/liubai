@@ -7,7 +7,12 @@ export function useLoginPage() {
     view: "main",
   })
 
+  const onEmailSubmitted = (email: string) => {
+    console.log(email)
+  }
+
   return {
-    lpData
+    lpData,
+    onEmailSubmitted,
   }
 }

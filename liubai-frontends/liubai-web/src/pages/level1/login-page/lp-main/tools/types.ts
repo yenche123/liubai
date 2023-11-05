@@ -10,3 +10,7 @@ export interface LpmData {
     left: string
   }
 }
+
+export interface LpmEmit {
+  (evt: "submitemail", email: string): void
+}
