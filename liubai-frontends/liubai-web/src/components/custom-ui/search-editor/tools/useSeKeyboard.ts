@@ -48,7 +48,7 @@ export function useSeKeyboard(param: SeKeyboardParam) {
 
     const ctrlPressed = isMac ? e.metaKey : e.ctrlKey
     const shiftPressed = e.shiftKey
-    const key = e.key.toLowerCase()
+    const key = e.key?.toLowerCase()
 
     if(ctrlPressed && !shiftPressed && (key === "p" || key === "k")) {
 
