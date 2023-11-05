@@ -156,7 +156,7 @@
     "continue_with_apple": "Continue with Apple",    
     "email_verification": "Email Verification",
     "email_verification_tip": "Verification code has been sent to {email}\n Please check out your inbox or junk/spam folder.",
-    "verification_code": "Verification Code"
+    "verification_code": "Code"
   },
   "tip": {
     "tip": "TIP",

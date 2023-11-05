@@ -8,6 +8,7 @@ const { t } = useI18n()
 const { 
   lpData,
   onEmailSubmitted,
+  onBackFromCode,
 } = useLoginPage()
 
 </script>
@@ -49,7 +50,9 @@ const {
 
     <!-- 输入验证码页 -->
     <div class="lp-container" v-liu-show="lpData.view === 'code'">
-      <LpCode></LpCode>
+      <LpCode :email="lpData.email"
+        @back="onBackFromCode"
+      ></LpCode>
     </div>
     
     <!-- 底部占位，形成上下对称 -->
