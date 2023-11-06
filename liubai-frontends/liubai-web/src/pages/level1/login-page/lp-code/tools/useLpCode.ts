@@ -1,5 +1,11 @@
-import { reactive, ref, watch } from "vue"
+import { reactive, ref, watch, type Ref } from "vue"
 import type { LpcProps, LpcEmits, LpcData } from "./types"
+
+interface LpcCtx {
+  lpCodeInput: Ref<HTMLInputElement| undefined>
+  lpcData: LpcData
+  emit: LpcEmits
+}
 
 export function useLpCode(
   props: LpcProps,
@@ -11,12 +17,19 @@ export function useLpCode(
     canSubmit: false,
   })
 
+  const ctx: LpcCtx = {
+    lpCodeInput,
+    lpcData,
+    emit,
+  }
+
   watch(() => lpcData.code, (newV, oldV) => {
-    whenCodeChange(newV, oldV, lpcData)
+    whenCodeChange(newV, oldV, ctx)
   })
   
   const onEnterCode = () => {
-
+    if(!lpcData.canSubmit) return
+    toSubmitCode(ctx)
   }
 
   return {
@@ -26,11 +39,22 @@ export function useLpCode(
   }
 }
 
+function toSubmitCode(
+  ctx: LpcCtx,
+) {
+  ctx.emit("submitcode", ctx.lpcData.code)
+
+  const el = ctx.lpCodeInput.value
+  if(!el) return
+  el.blur()
+}
+
 function whenCodeChange(
   newV: string,
   oldV: string,
-  lpcData: LpcData,
+  ctx: LpcCtx,
 ) {
+  const { lpcData } = ctx
   const code = newV.trim()
 
   const len0 = code.length
@@ -72,8 +96,14 @@ function whenCodeChange(
     return
   }
   
-  const canSubmit = code.length >= 9
+  const canSubmit = len0 >= 9
   if(lpcData.canSubmit !== canSubmit) {
     lpcData.canSubmit = canSubmit
+  }
+
+  // 判断是否可能为赋值黏贴上
+  // 当条件为可提交 并且前一次的输入字符数小于 2（很小即可）
+  if(canSubmit && len2 < 2) {
+    toSubmitCode(ctx)
   }
 }
