@@ -54,7 +54,8 @@
     "share": "Share",
     "report": "Report",
     "view_detail": "View Details",
-    "update": "Update"
+    "update": "Update",
+    "unknown": "Unknown"
   },
   "editor": {
     "when": "When",
@@ -156,7 +157,8 @@
     "continue_with_apple": "Continue with Apple",    
     "email_verification": "Email Verification",
     "email_verification_tip": "Verification code has been sent to {email}\n Please check out your inbox or junk/spam folder.",
-    "verification_code": "Code"
+    "verification_code": "Code",
+    "choosing_account": "Choosing an Account"
   },
   "tip": {
     "tip": "TIP",

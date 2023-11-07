@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import LpMain from "./lp-main/lp-main.vue"
 import LpCode from "./lp-code/lp-code.vue"
+import LpAccounts from "./lp-accounts/lp-accounts.vue";
 import { useLoginPage } from "./tools/useLoginPage"
 import { useI18n } from 'vue-i18n';
 
@@ -53,6 +54,14 @@ const {
       <LpCode :email="lpData.email"
         @back="onBackFromCode"
       ></LpCode>
+    </div>
+
+    <!-- 选择账号页 -->
+    <div class="lp-container" v-liu-show="lpData.view === 'accounts'">
+      <LpAccounts 
+        :accounts="lpData.accounts"
+        
+      ></LpAccounts>
     </div>
     
     <!-- 底部占位，形成上下对称 -->

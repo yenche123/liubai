@@ -54,7 +54,8 @@
     "share": "分享",
     "report": "投訴",
     "view_detail": "檢視詳情",
-    "update": "更新"
+    "update": "更新",
+    "unknown": "未命名"
   },
   "editor": {
     "when": "什麼時候",
@@ -156,7 +157,8 @@
     "continue_with_apple": "使用 Apple 登入",    
     "email_verification": "Email 驗證",
     "email_verification_tip": "驗證碼已被發送至 {email}\n請檢查你的收件箱或垃圾信箱。",
-    "verification_code": "驗證碼"
+    "verification_code": "驗證碼",
+    "choosing_account": "選擇帳號"
   },
   "tip": {
     "tip": "提示",

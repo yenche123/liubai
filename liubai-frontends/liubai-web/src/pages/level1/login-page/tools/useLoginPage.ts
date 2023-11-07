@@ -6,6 +6,7 @@ export function useLoginPage() {
   const lpData = reactive<LpData>({
     view: "main",
     email: "",
+    accounts: [],
   })
 
   const onEmailSubmitted = (email: string) => {
