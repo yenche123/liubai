@@ -1,10 +1,11 @@
-import { onMounted, onUnmounted, watch } from "vue"
+import { watch } from "vue"
 import type { SeKeyboardParam } from "./types"
 import { handleKeyDown } from "./handle"
 import liuUtil from "~/utils/liu-util"
 import time from "~/utils/basic/time"
 import liuApi from "~/utils/liu-api"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import { useKeyboard } from "~/hooks/useKeyboard"
 
 export function useSeKeyboard(param: SeKeyboardParam) {
   const {
@@ -65,13 +66,13 @@ export function useSeKeyboard(param: SeKeyboardParam) {
     }
   }
 
-  const _whenKeyDown = (e: KeyboardEvent) => {
+  const whenKeyDown = (e: KeyboardEvent) => {
     if(!allowSearch) return
     if(show.value) _keydownDuringOpening(e)
     else _keydownDuringClosing(e)
   }
   
-  const _whenKeyUp = (e: KeyboardEvent) => {
+  const whenKeyUp = (e: KeyboardEvent) => {
     if(!allowSearch) return
     if(!show.value) return
     
@@ -86,15 +87,7 @@ export function useSeKeyboard(param: SeKeyboardParam) {
     }
   }
 
-  onMounted(() => {
-    window.addEventListener("keydown", _whenKeyDown)
-    window.addEventListener("keyup", _whenKeyUp)
-  })
-
-  onUnmounted(() => {
-    window.removeEventListener("keydown", _whenKeyDown)
-    window.removeEventListener("keyup", _whenKeyUp)
-  })
+  useKeyboard({ whenKeyDown, whenKeyUp })
 }
 
 

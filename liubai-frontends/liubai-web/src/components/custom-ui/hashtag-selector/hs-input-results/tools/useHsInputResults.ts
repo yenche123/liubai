@@ -10,6 +10,7 @@ import type { TagShow } from "~/types/types-content";
 import liuUtil from "~/utils/liu-util";
 import { initRecent, getRecent, addRecent } from "./tag-recent";
 import liuApi from "~/utils/liu-api";
+import { useKeyboard } from "~/hooks/useKeyboard";
 
 export function useHsInputResults(
   props: HsirProps,
@@ -115,7 +116,7 @@ function toListenKeyboard(
   const { isMac } = liuApi.getCharacteristic()
 
   // 监听 Up / Down
-  const _whenKeyDown = (e: KeyboardEvent) => {
+  const whenKeyDown = (e: KeyboardEvent) => {
     if(!liuUtil.canKeyUpDown()) return
     const k = e.key
     if(k !== "ArrowDown" && k !== "ArrowUp") return
@@ -130,7 +131,7 @@ function toListenKeyboard(
   }
 
   // 监听 Enter
-  const _whenKeyUp = (e: KeyboardEvent) => {
+  const whenKeyUp = (e: KeyboardEvent) => {
     const k = e.key
     if(k !== "Enter") return
     const ctrlPressed = isMac ? e.metaKey : e.ctrlKey
@@ -144,16 +145,7 @@ function toListenKeyboard(
     toSelect(hsirData, item, emit)
   }
 
-  onBeforeMount(() => {
-    window.addEventListener("keyup", _whenKeyUp)
-    window.addEventListener("keydown", _whenKeyDown)
-  })
-
-
-  onBeforeUnmount(() => {
-    window.removeEventListener("keyup", _whenKeyUp)
-    window.removeEventListener("keydown", _whenKeyDown)
-  })
+  useKeyboard({ whenKeyDown, whenKeyUp })
 }
 
 function watchListAdded(

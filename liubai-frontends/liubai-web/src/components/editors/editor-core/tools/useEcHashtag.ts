@@ -1,9 +1,9 @@
-import { onMounted, onUnmounted } from "vue";
 import type { ShallowRef } from "vue";
 import type { TipTapEditor } from "~/types/types-editor"
 import type { EditorCoreProps, EditorCoreEmits } from "./types"
 import cui from '~/components/custom-ui'
 import time from "~/utils/basic/time";
+import { useKeyboard } from "~/hooks/useKeyboard";
 
 // 监听 # 被点击
 export function useEcHashtag(
@@ -75,16 +75,8 @@ export function useEcHashtag(
     lastTriggerStamp = time.getTime()
     triggerHashTagEditor(editor, emits)
   }
-  
-  onMounted(() => {
-    window.addEventListener("keydown", whenKeyDown)
-    window.addEventListener("keyup", whenKeyUp)
-  })
 
-  onUnmounted(() => {
-    window.removeEventListener("keydown", whenKeyDown)
-    window.removeEventListener("keyup", whenKeyUp)
-  })
+  useKeyboard({ whenKeyDown, whenKeyUp })
 }
 
 async function triggerHashTagEditor(

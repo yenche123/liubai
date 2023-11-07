@@ -3,14 +3,14 @@
 // 目前只有阻止用户 Tab 的用途
 import { storeToRefs } from "pinia"
 import { useGlobalStateStore } from "../stores/useGlobalStateStore"
-import { onMounted } from "vue"
+import { useKeyboard } from "../useKeyboard"
 
 export function useGlobalEvent() {
 
   const gs = useGlobalStateStore()
   const { canListenKeyboard } = storeToRefs(gs)
 
-  const _whenKeyDown = (e: KeyboardEvent) => {
+  const whenKeyDown = (e: KeyboardEvent) => {
     const key = e.key
 
     // 判断是否为 Tab，若是的话再判断是否可监听键盘
@@ -22,8 +22,5 @@ export function useGlobalEvent() {
     }
   }
 
-  onMounted(() => {
-    window.addEventListener("keydown", _whenKeyDown)
-  }) 
-
+  useKeyboard({ whenKeyDown })
 }

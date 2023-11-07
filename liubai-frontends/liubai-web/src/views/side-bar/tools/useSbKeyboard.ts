@@ -1,7 +1,6 @@
 import { useWindowSize } from "~/hooks/useVueUse"
 import type { LayoutStore } from "../../useLayoutStore"
 import { storeToRefs } from "pinia"
-import { onMounted, onUnmounted } from "vue"
 import liuApi from "~/utils/liu-api"
 import cfg from "~/config"
 import { SbData } from "./types"
@@ -9,6 +8,7 @@ import type { SimpleFunc } from "~/utils/basic/type-tool"
 import time from "~/utils/basic/time"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import liuUtil from "~/utils/liu-util"
+import { useKeyboard } from "~/hooks/useKeyboard"
 
 export function useSbKeyboard(
   layout: LayoutStore,
@@ -48,7 +48,7 @@ export function useSbKeyboard(
 
   }
 
-  const _whenKeyDown = (e: KeyboardEvent) => {
+  const whenKeyDown = (e: KeyboardEvent) => {
     if(width.value <= cfg.sidebar_close_point) return
     const ctrlPressed = isMac ? e.metaKey : e.ctrlKey
     const key = e.key?.toLowerCase()
@@ -71,11 +71,5 @@ export function useSbKeyboard(
     }
   }
 
-  onMounted(() => {
-    window.addEventListener("keydown", _whenKeyDown)
-  })
-
-  onUnmounted(() => {
-    window.removeEventListener("keydown", _whenKeyDown)
-  })
+  useKeyboard({ whenKeyDown })
 }
