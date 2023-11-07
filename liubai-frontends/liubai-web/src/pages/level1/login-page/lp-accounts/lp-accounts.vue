@@ -89,7 +89,7 @@ const {
 .lpa-box {
   width: 100%;
   max-width: 450px;
-  border-radius: 20px;
+  border-radius: 8px;
   padding: 20px 10px;
   background-color: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -104,7 +104,7 @@ const {
   position: relative;
   box-sizing: border-box;
   padding: 10px 10px;
-  border-radius: 10px;
+  border-radius: 16px;
   margin-block-end: 5px;
   cursor: pointer;
   transition: 90ms;
