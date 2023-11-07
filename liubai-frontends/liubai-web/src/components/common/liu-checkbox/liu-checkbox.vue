@@ -23,14 +23,14 @@ defineProps({
   }
 })
 
-const emits = defineEmits<{
+defineEmits<{
   (event: "tapcheckbox"): void
 }>()
 
 </script>
 <template>
 
-  <div class="liu-checkbox" @click="emits('tapcheckbox')">
+  <div class="liu-checkbox" @click="$emit('tapcheckbox')">
     <div class="liu-checked" v-show="checked"></div>
   </div>
 
