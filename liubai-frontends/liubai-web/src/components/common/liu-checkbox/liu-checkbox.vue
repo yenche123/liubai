@@ -54,7 +54,7 @@ defineEmits<{
     height: v-bind("circleSize + 'px'");
     border-radius: 50%;
     overflow: hidden;
-    background-color: var(--primary-color);
+    background: var(--cool-bg);
   }
 }
 

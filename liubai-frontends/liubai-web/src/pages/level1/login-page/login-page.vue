@@ -9,6 +9,7 @@ const { t } = useI18n()
 const { 
   lpData,
   onEmailSubmitted,
+  onSubmitCode,
   onBackFromCode,
 } = useLoginPage()
 
@@ -52,6 +53,7 @@ const {
     <!-- 输入验证码页 -->
     <div class="lp-container" v-liu-show="lpData.view === 'code'">
       <LpCode :email="lpData.email"
+        @submitcode="onSubmitCode"
         @back="onBackFromCode"
       ></LpCode>
     </div>

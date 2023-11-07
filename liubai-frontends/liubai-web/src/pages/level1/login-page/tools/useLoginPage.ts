@@ -1,7 +1,9 @@
 import { reactive } from "vue";
 import type { LpData } from "./types";
+import { useMyProfile } from "~/hooks/useCommon";
 
 export function useLoginPage() {
+  const { myProfile } = useMyProfile()
 
   const lpData = reactive<LpData>({
     view: "main",
@@ -15,6 +17,17 @@ export function useLoginPage() {
     lpData.view = "code"
   }
 
+  const onSubmitCode = (code: string) => {
+    // TODO: 先直接去打开 "accounts"
+    const me = myProfile.value
+    if(!me) {
+      console.log("打不开我")
+      return
+    }
+    lpData.accounts = [me]
+    lpData.view = "accounts"
+  }
+
   const onBackFromCode = () => {
     lpData.view = "main"
   }
@@ -22,6 +35,7 @@ export function useLoginPage() {
   return {
     lpData,
     onEmailSubmitted,
+    onSubmitCode,
     onBackFromCode,
   }
 }

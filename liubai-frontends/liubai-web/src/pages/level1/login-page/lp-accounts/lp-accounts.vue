@@ -54,7 +54,7 @@ const {
       class="lp-btn"
       @click="onTapConfirm"
     >
-      <span>{{ t('common.confirm') + ' ↵' }}</span>
+      <span>{{ t('common.confirm') }}</span>
     </CustomBtn>
 
   </div>
@@ -64,7 +64,7 @@ const {
 
 .lp-view {
   width: 100%;
-  min-height: 450px;
+  min-height: 350px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -76,7 +76,7 @@ const {
   text-align: center;
   width: 100%;
   max-width: 450px;
-  margin-block-end: 24px;
+  margin-block-end: 48px;
   font-size: var(--title-font);
   color: var(--main-normal);
   font-weight: 700;
@@ -95,7 +95,7 @@ const {
   box-shadow: var(--card-shadow);
   position: relative;
   box-sizing: border-box;
-  margin-block-end: 24px;
+  margin-block-end: 48px;
 }
 
 .lpa-item {
@@ -104,13 +104,16 @@ const {
   position: relative;
   box-sizing: border-box;
   padding: 10px 10px;
+  border-radius: 10px;
   margin-block-end: 5px;
+  cursor: pointer;
+  transition: 90ms;
 }
 
 .lpa-avatar {
   width: 38px;
   height: 38px;
-  margin-inline-end: 12px;
+  margin-inline-end: 16px;
   flex: none;
 }
 
@@ -120,6 +123,7 @@ const {
   color: var(--main-normal);
   line-height: 1.5;
   padding-block-start: 5px;
+  user-select: none;
 }
 
 .lpa-footer {
@@ -134,6 +138,14 @@ const {
 .lp-btn {
   width: 100%;
   max-width: 450px;
+}
+
+@media(hover: hover) {
+
+  .lpa-item:hover {
+    background-color: var(--card-hover);
+  }
+
 }
 
 

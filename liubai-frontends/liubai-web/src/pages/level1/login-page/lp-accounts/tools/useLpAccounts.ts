@@ -11,6 +11,7 @@ export function useLpAccounts(
   })
 
   const onTapItem = (idx: number) => {
+    if(idx === lpaData.selectedIndex) idx = -1
     lpaData.selectedIndex = idx
   }
 
