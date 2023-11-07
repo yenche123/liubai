@@ -1,12 +1,6 @@
 import cloud from '@lafjs/cloud'
 import type { Shared_AccessControl } from "@/common-types"
 
-/***************** 总服务状态 *****************/
-
-const isCloudOpen = true
-// 若后端关闭时，请对调上下方代码和注释
-// const isCloudOpen = false
-
 
 /****************** 一些常量 *****************/
 
@@ -39,7 +33,8 @@ const X_LIU_NORMAL = [
 export async function main(ctx: FunctionContext) {
 
   // 0.1 检查服务端是否已关闭
-  if(!isCloudOpen) {
+  const env = process.env
+  if(env.LIU_CLOUD_ON === "02") {
     ctx.response?.send({ code: "B0001" })
     return false
   }
