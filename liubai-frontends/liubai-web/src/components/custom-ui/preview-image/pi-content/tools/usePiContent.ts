@@ -83,6 +83,10 @@ function whenBoxPointerDown(evt: PointerEvent) {
 function checkIfTap(
   evt: PointerEvent,
 ) {
+
+  // 确保是鼠标左键触发的
+  if(evt.button !== 0) return false
+
   const now = time.getTime()
   const diff = now - lastPointerDown
 
