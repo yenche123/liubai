@@ -54,7 +54,7 @@ const {
       class="lp-btn"
       @click="onTapConfirm"
     >
-      <span>{{ t('common.confirm') }}</span>
+      <span>{{ t('common.confirm') + ' ↵' }}</span>
     </CustomBtn>
 
   </div>

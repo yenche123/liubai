@@ -62,7 +62,7 @@ const {
     <div class="lp-container" v-liu-show="lpData.view === 'accounts'">
       <LpAccounts 
         :accounts="lpData.accounts"
-        
+        :is-shown="lpData.view === 'accounts'"
       ></LpAccounts>
     </div>
     

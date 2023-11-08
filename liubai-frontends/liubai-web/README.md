@@ -61,6 +61,8 @@ https://www.bing.com/images/create  用 DALL-E 3 生成插图
 
 15. 只要 `云端` 和 `前端` 的数据结构（类型）有一丁点不一样，就必须使用不同的名称，以避免混淆。
 
+16. `Enter` 的符号: ↵
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
