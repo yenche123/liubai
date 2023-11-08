@@ -75,7 +75,7 @@ const { t } = useI18n()
   font-weight: 700;
 
   span::selection {
-    background-color: var(--select-bg);
+    background-color: var(--select-bg-2);
   }
 }
 
@@ -90,7 +90,7 @@ const { t } = useI18n()
   white-space: pre;
 
   span::selection {
-    background-color: var(--select-bg);
+    background-color: var(--select-bg-2);
   }
 }
 

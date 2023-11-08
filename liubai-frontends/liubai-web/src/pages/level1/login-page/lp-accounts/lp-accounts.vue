@@ -82,7 +82,7 @@ const {
   font-weight: 700;
 
   span::selection {
-    background-color: var(--select-bg);
+    background-color: var(--select-bg-2);
   }
 }
 
