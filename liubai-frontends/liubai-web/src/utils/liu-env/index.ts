@@ -1,11 +1,16 @@
 // liu-env 请不要 import 任何 /src 内的文件
 // 因为它会在非常非常早期被初始化
 // 若引入其他东西，可能触发 Unaught ReferenceError
+import { type LiuSystemEnv } from "./types"
 
-function getEnv() {
+let _env: LiuSystemEnv | undefined
+
+function getEnv(): LiuSystemEnv {
+  if(_env) return _env
+
   const DEV = import.meta.env.DEV
   const API_URL = import.meta.env.VITE_API_URL
-
+  const API_DOMAIN = import.meta.env.VITE_API_DOMAIN
   const APP_NAME = import.meta.env.VITE_APP_NAME
 
   // SaaS 各个服务情况上限
@@ -34,9 +39,10 @@ function getEnv() {
   const IFRAME_PROXY = import.meta.env.VITE_IFRAME_PROXY
   const IFRAME_PROXY_KEY = import.meta.env.VITE_IFRAME_PROXY_KEY
 
-  return {
+  _env = {
     DEV,
     API_URL,
+    API_DOMAIN,
     APP_NAME,
     LOCAL_PIN_NUM: Number(LOCAL_PIN_NUM),
     FREE_PIN_NUM: Number(FREE_PIN_NUM),
@@ -57,6 +63,7 @@ function getEnv() {
     IFRAME_PROXY,
     IFRAME_PROXY_KEY,
   }
+  return _env
 }
 
 /** 从环境变量里判断，是否具备后端的配置，若无，则为纯本地应用 */
@@ -66,7 +73,14 @@ function getIfPurelyLocal() {
   return false
 }
 
+function hasBackend() {
+  const env = getEnv()
+  if(env.API_DOMAIN) return true
+  return false
+}
+
 export default {
   getEnv,
   getIfPurelyLocal,
+  hasBackend,
 }
