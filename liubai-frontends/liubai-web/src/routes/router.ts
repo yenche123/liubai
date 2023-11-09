@@ -3,6 +3,7 @@ import { RouteRecordRaw, createRouter, createWebHistory } from "vue-router"
 const LeftSidebar = () => import("../views/side-bar/side-bar.vue")
 const HomePage = () => import("../pages/level1/home-page/home-page.vue")
 const LoginPage = () => import("../pages/level1/login-page/login-page.vue")
+const OAuthPage = () => import("../pages/level1/oauth-page/oauth-page.vue")
 const IndexPage = () => import("../pages/level1/index-page/index-page.vue")
 const DetailPage = () => import("../pages/level2/detail-page/detail-page.vue")
 const CommentPage = () => import("../pages/level2/comment-page/comment-page.vue")
@@ -52,6 +53,23 @@ const routes: Array<RouteRecordRaw> = [
     name: "login",
     meta: {
       keepAlive: true,
+      inApp: false,
+    }
+  },
+  {
+    path: "/login-github",
+    component: OAuthPage,
+    name: "login-github",
+    meta: {
+      inApp: false,
+    }
+  },
+  {
+    path: "/login-google",
+    component: OAuthPage,
+    name: "login-google",
+    meta: {
+      inApp: false,
     }
   },
   {

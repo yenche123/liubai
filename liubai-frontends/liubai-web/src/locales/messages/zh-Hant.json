@@ -158,7 +158,8 @@
     "email_verification": "Email 驗證",
     "email_verification_tip": "驗證碼已被發送至 {email}\n請檢查你的收件箱或垃圾信箱。",
     "verification_code": "驗證碼",
-    "choosing_account": "選擇帳號"
+    "choosing_account": "選擇帳號",
+    "logging": "正在登入.."
   },
   "tip": {
     "tip": "提示",

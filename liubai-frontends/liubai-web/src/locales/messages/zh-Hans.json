@@ -158,7 +158,8 @@
     "email_verification": "邮箱验证",
     "email_verification_tip": "已发送验证码至 {email}\n 请检查你的收件箱或垃圾邮箱。",
     "verification_code": "验证码",
-    "choosing_account": "选择账号"
+    "choosing_account": "选择账号",
+    "logging": "正在登录.."
   },
   "tip": {
     "tip": "提示",

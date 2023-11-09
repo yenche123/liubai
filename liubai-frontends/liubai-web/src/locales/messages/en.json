@@ -158,7 +158,8 @@
     "email_verification": "Email Verification",
     "email_verification_tip": "Verification code has been sent to {email}\n Please check out your inbox or junk/spam folder.",
     "verification_code": "Code",
-    "choosing_account": "Choosing an Account"
+    "choosing_account": "Choosing an Account",
+    "logging": "Logging in.."
   },
   "tip": {
     "tip": "TIP",
