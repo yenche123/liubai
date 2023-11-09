@@ -43,6 +43,14 @@ const getLocalTimeStr = (): string => {
   return `${mon}-${date} ${hr}:${min}:${sec}`
 }
 
+function getTimezone() {
+  const d = new Date()
+  const t = d.getTimezoneOffset()
+  const t2 = -t / 60
+  return t2
+}
+
+
 // 将 "秒" / "分" / "时" / "天" 转为 毫秒数
 const SECONED = 1000
 const MINUTE = 60 * SECONED
@@ -55,6 +63,7 @@ export default {
   getLocalTime,
   getDate,
   getLocalTimeStr,
+  getTimezone,
   SECONED,
   MINUTE,
   HOUR,

@@ -11,6 +11,7 @@ export interface LocalPreference {
   language?: LocalLanguage
   local_id?: string
   token?: string
+  serial?: string     // token 所在的序列号
 }
 
 export interface LocalOnceData {

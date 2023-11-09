@@ -1,7 +1,13 @@
 import valTool from "../basic/val-tool"
 
+
+interface StorageMapParam2 {
+  data: any
+  stamp: number
+}
+
 let hasListenStorageChange = false
-let storageMap = new Map()   // { key1: { data: 元数据, stamp: 时间戳 } }
+let storageMap = new Map<string, StorageMapParam2>()   // { key1: { data: 元数据, stamp: 时间戳 } }
 const TAG = "liu_"
 
 // 去监听其他标签页 
@@ -52,7 +58,7 @@ const getStorageSync = <T = any>(key: string): T | undefined | null => {
   const _key = TAG + key
 
   if(storageMap.has(_key)) {
-    let s1 = storageMap.get(_key)
+    let s1 = storageMap.get(_key) as StorageMapParam2
     return valTool.copyObject(s1.data)
   }
 
