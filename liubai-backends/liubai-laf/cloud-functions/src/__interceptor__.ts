@@ -74,7 +74,20 @@ export async function main(ctx: FunctionContext) {
  */
 function checkEntry(ctx: FunctionContext) {
 
-  // 1. 检查常规的 x_liu_
+  // 1. 获取云函数名
+  const funcName = _getTargetCloudFuncName(ctx)
+  if(!funcName) {
+    console.warn(`获取云函数名称失败.......`)
+    ctx.response?.send({ code: "E5001" })
+    return false
+  }
+
+  // 2. 如果是 __init__ 函数，直接通过
+  if(funcName === `__init__`) {
+    return true
+  }
+
+  // 3. 检查常规的 x_liu_
   const body = ctx.request?.body ?? {}
   for(let i=0; i<X_LIU_NORMAL.length; i++) {
     const v = X_LIU_NORMAL[i]
@@ -83,15 +96,7 @@ function checkEntry(ctx: FunctionContext) {
     if(!data) return false
   }
 
-  // 2. 获取云函数名
-  const funcName = _getTargetCloudFuncName(ctx)
-  if(!funcName) {
-    console.warn(`获取云函数名称失败.......`)
-    ctx.response?.send({ code: "E5001" })
-    return false
-  }
-
-  // 3. 是否无需 token
+  // 4. 是否无需 token
   const allowNoToken = ALLOW_WITHOUT_TOKEN.includes(funcName)
   if(allowNoToken) return true
 

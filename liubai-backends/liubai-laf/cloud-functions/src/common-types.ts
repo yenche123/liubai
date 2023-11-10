@@ -8,6 +8,17 @@ export async function main(ctx: FunctionContext) {
 }
 
 
+/*********************** 一些工具类型 **********************/
+/**
+ * 把类型 T 中 特定的属性 K们 设置为可选的
+ */
+export type PartialSth<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+
+/**
+ * 把类型 T 中 特定的属性 K们 设置为必选的
+ */
+export type RequireSth<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
+
 /*********************** 基类型、原子化类型 **********************/
 
 export type BaseIsOn = "Y" | "N"
@@ -327,7 +338,18 @@ export interface Table_Collection extends BaseTable {
 }
 
 
+export interface Table_Config extends BaseTable {
+  publicKey: string
+  privateKey: string
+}
+
+
 /*********************** 缓存类型 **********************/
+
+export interface Shared_RSA_Key_Pair {
+  publicKey: string
+  privateKey: string
+}
 
 /** 缓存 token 和 user 信息 */
 export interface Shared_TokenUser {
