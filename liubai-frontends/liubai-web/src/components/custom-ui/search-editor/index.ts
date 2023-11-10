@@ -127,8 +127,9 @@ async function onTapClearItem(listType: SearchListType, atomId: string) {
 function listenRouteChange() {
   rr = useRouteAndLiuRouter()
   watch(rr.route, (newV) => {
-    const { query } = newV
+    const { query, meta } = newV
     if(!query) return
+    if(meta.inApp === false) return
 
     const { q, search } = query
     if(search === "01" || q) {
@@ -146,7 +147,7 @@ function listenRouteChange() {
     }
 
     _toClose()
-  })
+  }, { immediate: true })
 }
 
 function listenInputChange() {
