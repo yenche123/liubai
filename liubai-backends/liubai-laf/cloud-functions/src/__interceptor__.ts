@@ -1,5 +1,8 @@
 import cloud from '@lafjs/cloud'
-import type { Shared_AccessControl } from "@/common-types"
+import type { 
+  Shared_AccessControl,
+  LiuRqReturn,
+} from "@/common-types"
 
 
 /****************** 一些常量 *****************/
@@ -30,7 +33,9 @@ const X_LIU_NORMAL = [
 
 /****************** 函数组成 *****************/
 
-export async function main(ctx: FunctionContext) {
+export async function main(
+  ctx: FunctionContext, next: any
+) {
 
   // 0.1 检查服务端是否已关闭
   const env = process.env
@@ -65,7 +70,20 @@ export async function main(ctx: FunctionContext) {
     return false
   }
 
-  return true
+  let nextRes: LiuRqReturn<any> | null = null
+  try {
+    nextRes = await next(ctx)
+  }
+  catch(err: any) {
+    console.error(`next 异常`)
+    console.log(err)
+    return { code: `E5002` }
+  }
+
+  console.log(`nextRes: `)
+  console.log(nextRes)
+
+  return nextRes 
 }
 
 

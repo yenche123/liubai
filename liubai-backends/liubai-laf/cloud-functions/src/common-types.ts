@@ -19,6 +19,15 @@ export type PartialSth<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
  */
 export type RequireSth<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
 
+/*********************** 回调类型 **********************/
+export interface LiuRqReturn<T> {
+  code: string
+  errMsg?: string
+  showMsg?: string
+  data?: T
+}
+
+
 /*********************** 基类型、原子化类型 **********************/
 
 export type BaseIsOn = "Y" | "N"
