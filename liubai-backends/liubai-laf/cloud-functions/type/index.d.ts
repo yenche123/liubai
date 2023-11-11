@@ -18,8 +18,14 @@ declare global {
       /** 总服务状态，默认开启，仅当值为 `02` 时关闭 */
       LIU_CLOUD_ON: LiuSwitch
 
-      /** 是否开放登录，默认开启，仅当值为 `02` 时关闭 */
-      LIU_CLOUD_LOGIN: LiuSwitch
+      /** 是否开放登录，默认开启，仅当值为 `02` 时关闭，`03` 时表示仅开放 
+       *  登录，不开放注册
+      */
+      LIU_CLOUD_LOGIN: LiuSwitch | "03"
+
+      /** GitHub OAuth */
+      LIU_GITHUB_OAUTH_CLIENT_ID?: string
+      LIU_GITHUB_OAUTH_CLIENT_SECRET?: string
 
     }
   }
