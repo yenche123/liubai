@@ -11,6 +11,7 @@ const {
   onEmailSubmitted,
   onSubmitCode,
   onBackFromCode,
+  onTapLoginViaThirdParty,
 } = useLoginPage()
 
 </script>
@@ -47,6 +48,7 @@ const {
     <div class="lp-container" v-liu-show="lpData.view === 'main'">
       <LpMain
         @submitemail="onEmailSubmitted"
+        @tapthirdparty="onTapLoginViaThirdParty"
       ></LpMain>
     </div>
 

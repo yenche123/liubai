@@ -1,5 +1,4 @@
-
-
+import type { LoginByThirdParty } from "../../tools/types"
 
 export interface LpmData {
   current: number
@@ -13,4 +12,5 @@ export interface LpmData {
 
 export interface LpmEmit {
   (evt: "submitemail", email: string): void
+  (evt: "tapthirdparty", thirdParty: LoginByThirdParty): void
 }

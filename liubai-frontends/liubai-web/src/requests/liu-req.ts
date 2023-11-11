@@ -4,9 +4,10 @@ import type { LiuRqOpt, LiuRqReturn } from "./tools/types"
 import valTool from "~/utils/basic/val-tool"
 import time from "~/utils/basic/time"
 
-function _getBody(
-  body: Record<string, any> = {},
+function _getBody<U extends Record<string, any>>(
+  body?: U,
 ) {
+  
   const p = localCache.getLocalPreference()
   const b: Record<string, any> = {
     x_liu_language: navigator.language,
@@ -29,12 +30,17 @@ function _getBody(
 
 /**
  * 向后端发起网络请求
+ * T: 出参的 data 类型
+ * U: 入参类型
  * @param url 请求地址
  * @param body 请求的 body
  */
-async function request<T = Record<string, any>>(
+async function request<
+  T extends Record<string, any>,
+  U extends Record<string, any> = Record<string, any>,
+>(
   url: string,
-  body?: Record<string, any>,
+  body?: U,
   opt?: LiuRqOpt,
 ): Promise<LiuRqReturn<T>> {
 

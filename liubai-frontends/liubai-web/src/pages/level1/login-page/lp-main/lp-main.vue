@@ -59,7 +59,7 @@ const {
   <div class="lp-view" v-liu-show="lpmData.current === 2">
 
     <!-- google -->
-    <div class="liu-hover lpv-btn">
+    <div class="liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'google')">
       <div class="lpv-icon">
         <svg-icon name="logos-google-color" 
           :cover-fill-stroke="false"
@@ -72,7 +72,7 @@ const {
     </div>
 
     <!-- github -->
-    <div class="liu-hover lpv-btn">
+    <div class="liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'github')">
       <div class="lpv-icon">
         <svg-icon name="logos-github" 
           color="var(--main-text)"
@@ -85,7 +85,7 @@ const {
     </div>
 
     <!-- Apple -->
-    <div class="liu-hover lpv-btn">
+    <div class="liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'apple')">
       <div class="lpv-icon">
         <svg-icon name="logos-apple" 
           color="var(--main-text)"

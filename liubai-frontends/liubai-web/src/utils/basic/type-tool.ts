@@ -12,6 +12,8 @@ export type AnyFunc = (...args: any[]) => any
 
 export type SimpleFunc = () => void
 
+export type BoolFunc = (val: boolean) => void
+
 export type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {}
