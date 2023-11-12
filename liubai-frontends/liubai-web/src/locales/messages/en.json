@@ -199,7 +199,9 @@
     "to_navigate": " to navigate",
     "to_open": " to confirm",
     "delete_banner": "The threads in the trash are only reserverd in these 30 days. They will be deleted permanently after 30 days.",
-    "no_context": "There is no workspace context. Please login again."
+    "no_context": "There is no workspace context. Please login again.",
+    "maintaining_1": "The backend service is currnetly under maintenance. Please try again later.",
+    "err_1": "An unknown error occurred. Please try again later.\n(Code: {code})"
   },
   "card_bubble": {
     "copy": "Copy",

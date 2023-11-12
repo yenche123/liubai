@@ -5,6 +5,7 @@ import type { BoolFunc } from "~/utils/basic/type-tool";
 import APIs from "~/requests/APIs"
 import liuReq from "~/requests/liu-req"
 import type { Res_UserLoginInit } from "~/requests/data-types"
+import cui from "~/components/custom-ui";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -21,6 +22,8 @@ export function useLoginPage() {
   toGetLoginInitData(lpData)
 
   const onEmailSubmitted = (email: string) => {
+    if(!isEverythingOkay(lpData.initCode)) return
+
     // TODO: 先直接跳到 lp-code 界面
     lpData.email = email
     lpData.view = "code"
@@ -42,9 +45,8 @@ export function useLoginPage() {
   }
 
   const onTapLoginViaThirdParty = async (tp: LoginByThirdParty) => {
-    console.log("1111111111")
     const res1 = await initPromise
-    console.log("2222222222")
+    whenTapLoginViaThirdParty(lpData)
   }
 
 
@@ -55,6 +57,44 @@ export function useLoginPage() {
     onBackFromCode,
     onTapLoginViaThirdParty,
   }
+}
+
+function isEverythingOkay(
+  initCode?: string
+) {
+  if(initCode === "B0001") {
+    cui.showModal({
+      title: "🧑‍🌾",
+      content_key: "tip.maintaining_1",
+      showCancel: false,
+    })
+    return false
+  }
+  if(initCode && initCode !== "0000") {
+    cui.showModal({
+      title: "🥲",
+      content_key: "tip.err_1",
+      content_opt: { code: initCode },
+      showCancel: false,
+    })
+    return false
+  }
+  return true
+}
+
+
+function whenTapLoginViaThirdParty(
+  lpData: LpData,
+) {
+  const { 
+    initCode, 
+    ghOAuthClientId,
+  } = lpData
+
+  const isOkay = isEverythingOkay(initCode)
+  if(!isOkay) return
+  
+  
 }
 
 
