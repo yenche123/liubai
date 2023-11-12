@@ -3,6 +3,7 @@ import localCache from "~/utils/system/local-cache"
 import type { LiuRqOpt, LiuRqReturn } from "./tools/types"
 import valTool from "~/utils/basic/val-tool"
 import time from "~/utils/basic/time"
+import typeCheck from "~/utils/basic/type-check"
 
 function _getBody<U extends Record<string, any>>(
   body?: U,
@@ -62,13 +63,35 @@ async function request<
     console.log(err)
     console.log(" ")
 
-    if(err.name === "TimeoutError") {
+    const errMsg: unknown = err.toString?.()
+    const errName = err.name
+    let errMsg2 = ""  // 转成小写的 errMsg
+
+    if(typeCheck.isString(errMsg)) {
+      errMsg2 = errMsg.toLowerCase()
+    }
+
+    if(errName === "TimeoutError") {
       return { code: "F0002" }
     }
-    if(err.name === "AbortError") {
+    if(errName === "AbortError") {
       return { code: "F0003" }
     }
-    return { code: "F0004" }
+    if(errName === "TypeError") {
+
+      // 当后端整个 Shut Down 时，可能抛出这个错误
+      if(errMsg2.includes("failed to fetch")) {
+        return { code: "B0001" }
+      }
+      
+    }
+
+    return { code: "C0001" }
+  }
+
+  const status = res.status
+  if(status === 503) {
+    return { code: `B0001` }
   }
 
   let res2 = await res.json() as LiuRqReturn<T>
