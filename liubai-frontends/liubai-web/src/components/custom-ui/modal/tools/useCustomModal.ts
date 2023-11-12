@@ -1,4 +1,3 @@
-
 import { reactive, ref } from "vue"
 import valTool from "~/utils/basic/val-tool"
 import { 
@@ -6,50 +5,13 @@ import {
   cancelListenEnterKeyUp, 
   toListenEscKeyUp, 
   cancelListenEscKeyUp
-} from "../tools/listen-keyup"
-
-interface ModalSuccessRes {
-  confirm: boolean
-  cancel: boolean
-  tipToggle?: boolean
-  tapType: "confirm" | "cancel" | "mask"     // 目前不会有 mask 选项
-}
-
-interface ModalParam {
-  title?: string
-  content?: string
-  title_key?: string      // 用于 i18n
-  content_key?: string    // 用于 i18n
-  title_opt?: Record<string, any>    // 用于 i18n t() 函数的第二个参数
-  content_opt?: Record<string, any>  // 用于 i18n t() 函数的第二个参数
-  tip_key?: string        // content 下方一排小字让用户勾选
-  showCancel?: boolean
-  cancelText?: string
-  confirmText?: string
-  confirm_key?: string
-  cancel_key?: string
-  modalType?: "normal" | "warning"
-  success?: (res: ModalSuccessRes) => void
-}
-
-interface ModalData {
-  title: string
-  title_key: string
-  title_opt?: Record<string, any>
-  content: string
-  content_key: string
-  content_opt?: Record<string, any>
-  tip_key?: string
-  showCancel: boolean
-  cancelText: string
-  confirmText: string
-  confirm_key?: string
-  cancel_key?: string
-  modalType?: "normal" | "warning"
-  tipSelected: boolean
-}
-
-type ModalResolver = (res: ModalSuccessRes) => void
+} from "../../tools/listen-keyup"
+import type {
+  ModalSuccessRes,
+  ModalParam,
+  ModalData,
+  ModalResolver,
+} from "./types"
 
 let _success: ModalResolver | undefined
 let _resolve: ModalResolver | undefined
@@ -123,7 +85,7 @@ const onTapTip = () => {
   modalData.tipSelected = !modalData.tipSelected
 }
 
-const initModal = () => {
+export function initModal() {
   return { 
     enable, 
     show, 
@@ -135,7 +97,9 @@ const initModal = () => {
   }
 }
 
-const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
+export async function showModal(
+  opt: ModalParam
+): Promise<ModalSuccessRes> {
 
   modalData.title = opt.title ?? ""
   modalData.content = opt.content ?? ""
@@ -150,6 +114,7 @@ const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
   modalData.tip_key = opt.tip_key
   modalData.tipSelected = false
   modalData.modalType = opt.modalType ?? "normal"
+  modalData.isTitleEqualToEmoji = opt.isTitleEqualToEmoji ?? false
 
   if(typeof opt.showCancel === "boolean") {
     modalData.showCancel = opt.showCancel
@@ -172,9 +137,4 @@ const showModal = async (opt: ModalParam): Promise<ModalSuccessRes> => {
   }
 
   return new Promise(_wait)
-}
-
-export {
-  initModal,
-  showModal,
 }

@@ -64,9 +64,10 @@ function isEverythingOkay(
 ) {
   if(initCode === "B0001") {
     cui.showModal({
-      title: "🧑‍🌾",
+      title: "🧑‍🔧",
       content_key: "tip.maintaining_1",
       showCancel: false,
+      isTitleEqualToEmoji: true,
     })
     return false
   }
@@ -76,6 +77,7 @@ function isEverythingOkay(
       content_key: "tip.err_1",
       content_opt: { code: initCode },
       showCancel: false,
+      isTitleEqualToEmoji: true,
     })
     return false
   }

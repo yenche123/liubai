@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { initModal } from "./index"
+import { initModal } from "./tools/useCustomModal"
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n()
@@ -22,7 +22,9 @@ const {
     :class="{ 'cui-modal-container_show': modalShow }"
   >
     <div class="cui-modal-bg"></div>
-    <div class="cui-modal-box">
+    <div class="cui-modal-box"
+      :class="{ 'cui-model-box_emoji': modalData.isTitleEqualToEmoji }"
+    >
 
       <h1 v-if="modalData.title">{{ modalData.title }}</h1>
       <h1 v-else-if="modalData.title_key && modalData.title_opt">{{ t(modalData.title_key, modalData.title_opt) }}</h1>
@@ -253,6 +255,13 @@ const {
         }
       }
 
+    }
+  }
+
+  .cui-model-box_emoji {
+    h1 {
+      font-size: 42px;
+      margin-block-end: 10px;
     }
   }
 
