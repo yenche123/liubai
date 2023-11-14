@@ -51,6 +51,7 @@ import {
 import trimUtil from "./trim-util"
 import viewUtil from "./view-util";
 import checkUtil from "./check-util";
+import cryptoUtil from "./crypto-util"
 
 export default {
   getHelpTip,
@@ -96,4 +97,5 @@ export default {
   trim: trimUtil,
   view: viewUtil,
   check: checkUtil,
+  crypto: cryptoUtil,
 }
