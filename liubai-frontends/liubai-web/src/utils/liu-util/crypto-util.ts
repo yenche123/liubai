@@ -75,6 +75,10 @@ async function importRsaPublicKey(pem: string) {
     return null
   }
 
+  console.log("binaryDer: ")
+  console.log(binaryDer)
+  console.log(" ")
+
   let key: CryptoKey
   try {
     key = await window.crypto.subtle.importKey(
@@ -98,6 +102,34 @@ async function importRsaPublicKey(pem: string) {
   return key
 }
 
+/**
+ * 使用 RSA 的公钥对明文进行加密
+ * 返回 base64 格式的密文
+ */
+async function encryptWithRSA(
+  publicKey: CryptoKey,
+  plainText: string,
+) {
+  const enc = new TextEncoder()
+  const encoded = enc.encode(plainText)
+
+  const cipherBuffer = await window.crypto.subtle.encrypt(
+    { name: "RSA-OAEP" }, 
+    publicKey, 
+    encoded
+  )
+
+  const decoder = new TextDecoder('utf-8')
+  const decodedString = decoder.decode(cipherBuffer)
+
+  console.log("decodedString: ")
+  console.log(decodedString)
+  console.log(" ")
+
+  return decodedString
+}
+
 export default {
   importRsaPublicKey,
+  encryptWithRSA,
 }

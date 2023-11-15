@@ -6,6 +6,7 @@ import APIs from "~/requests/APIs"
 import liuReq from "~/requests/liu-req"
 import type { Res_UserLoginInit } from "~/requests/data-types"
 import cui from "~/components/custom-ui";
+import liuUtil from "~/utils/liu-util";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -85,17 +86,33 @@ function isEverythingOkay(
 }
 
 
-function whenTapLoginViaThirdParty(
+async function whenTapLoginViaThirdParty(
   lpData: LpData,
 ) {
   const { 
     initCode, 
+    publicKey,
     ghOAuthClientId,
   } = lpData
 
   const isOkay = isEverythingOkay(initCode)
   if(!isOkay) return
-  
+  if(!publicKey) return
+
+  const key = await liuUtil.crypto.importRsaPublicKey(publicKey)
+  if(!key) return
+
+  const text = `你好，很高兴认识你，我是 lb 这里是 laf 吗？加一点 emoji 🍫🤖🥱`
+  const encryptedText = await liuUtil.crypto.encryptWithRSA(key, text)
+  console.log("encryptedText: ")
+  console.log(encryptedText)
+  console.log(" ")
+
+  const url = APIs.LOGIN
+  const res = await liuReq.request(url, { operateType: "test", encryptedText })
+  console.log("看一下 res: ")
+  console.log(res)
+  console.log(" ")
   
 }
 
