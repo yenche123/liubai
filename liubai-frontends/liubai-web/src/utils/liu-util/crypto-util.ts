@@ -156,10 +156,12 @@ async function createKeyWithAES() {
  * 返回 base64 格式的密文
  * @param plainText 明文
  * @param key 经过 raw 导出并转成 base64 的密钥
+ * @param iv 初始向量，选填
  */
 async function encryptWithAES(
   plainText: string,
   key: string,
+  iv?: string,
 ): Promise<CryptoCipherAndIV> {
   const enc = new TextEncoder()
   const encoded = enc.encode(plainText)
@@ -175,11 +177,14 @@ async function encryptWithAES(
   )
 
   // 1. 生成一次性的初始向量
-  const iv = window.crypto.getRandomValues(new Uint8Array(16))
+  let ivArr = window.crypto.getRandomValues(new Uint8Array(16))
+  if(iv) {
+    ivArr = new Uint8Array(base64ToArrayBuffer(iv))
+  }
 
   // 2. 开始加密
   const res = await window.crypto.subtle.encrypt(
-    { name: "AES-GCM", iv },
+    { name: "AES-GCM", iv: ivArr },
     cryptoKey,
     encoded
   )
@@ -188,7 +193,7 @@ async function encryptWithAES(
   const cipherStr = arrayBufferToBase64(res)
 
   // 4. 把 iv 转成 base64
-  const iv2 = uint8ArrayToBase64(iv)
+  const iv2 = uint8ArrayToBase64(ivArr)
 
   return {
     cipherText: cipherStr,
