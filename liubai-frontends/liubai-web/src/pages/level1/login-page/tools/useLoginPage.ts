@@ -47,7 +47,8 @@ export function useLoginPage() {
 
   const onTapLoginViaThirdParty = async (tp: LoginByThirdParty) => {
     const res1 = await initPromise
-    whenTapLoginViaThirdParty(lpData)
+    testAES()
+    // whenTapLoginViaThirdParty(lpData)
   }
 
 
@@ -115,6 +116,27 @@ async function whenTapLoginViaThirdParty(
   console.log(" ")
   
 }
+
+async function testAES() {
+  const key = await liuUtil.crypto.createKeyWithAES()
+  console.log("key: ")
+  console.log(key)
+  console.log(" ")
+
+  const plainText = "你好，很高兴认识你，我真的很荣幸能在这里遇见你🔓🎊🧑‍💻"
+  const res = await liuUtil.crypto.encryptWithAES(plainText, key)
+  console.log("res: ")
+  console.log(res)
+  console.log(" ")
+
+  const res2 = await liuUtil.crypto.decryptWithAES(res, key)
+  console.log("plainText: ")
+  console.log(res2)
+  console.log(" ")
+
+}
+
+
 
 
 function toGetLoginInitData(

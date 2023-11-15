@@ -1,4 +1,5 @@
 // 加解密相关的函数
+import type { CryptoCipherAndIV } from "~/types/other/types-custom"
 
 
 /** 将字符串转换为 ArrayBuffer */
@@ -102,12 +103,132 @@ async function importRsaPublicKey(pem: string) {
   return key
 }
 
-
-function arrayBufferToBase64(arrayBuffer: ArrayBuffer) {
-  const byteArr = new Uint8Array(arrayBuffer)
+/**
+ * 将 uint8Array 转成 base64
+ */
+function uint8ArrayToBase64(byteArr: Uint8Array) {
   const byteStr = String.fromCharCode(...byteArr)
   const b64 = window.btoa(byteStr)
   return b64
+}
+
+/**
+ * 将 arrayBuffer 转成 base64
+ */
+function arrayBufferToBase64(arrayBuffer: ArrayBuffer) {
+  const byteArr = new Uint8Array(arrayBuffer)
+  const b64 = uint8ArrayToBase64(byteArr)
+  return b64
+}
+
+/**
+ * 将 base64 转成 arrayBuffer
+ */
+function base64ToArrayBuffer(b64: string) {
+  const byteStr = window.atob(b64)
+  const length = byteStr.length
+  const buffer = new ArrayBuffer(length)
+  const byteArr = new Uint8Array(buffer)
+  for (let i = 0; i < length; i++) {
+    byteArr[i] = byteStr.charCodeAt(i);
+  }
+  return buffer
+}
+
+/** 生成 AES-GCM 的密钥 */
+async function createKeyWithAES() {
+  const key = await window.crypto.subtle.generateKey(
+    {
+      name: "AES-GCM",
+      length: 256,
+    },
+    true,
+    ["encrypt", "decrypt"],
+  )
+  const res = await window.crypto.subtle.exportKey("raw", key)
+  const str = arrayBufferToBase64(res)
+  return str
+}
+
+
+/**
+ * 使用 AES 的密钥对明文进行加密
+ * 返回 base64 格式的密文
+ * @param plainText 明文
+ * @param key 经过 raw 导出并转成 base64 的密钥
+ */
+async function encryptWithAES(
+  plainText: string,
+  key: string,
+): Promise<CryptoCipherAndIV> {
+  const enc = new TextEncoder()
+  const encoded = enc.encode(plainText)
+
+  // 0. 导入公钥
+  const buffer = base64ToArrayBuffer(key)
+  const cryptoKey = await window.crypto.subtle.importKey(
+    "raw", 
+    buffer, 
+    "AES-GCM",
+    true,
+    ["encrypt", "decrypt"],
+  )
+
+  // 1. 生成一次性的初始向量
+  const iv = window.crypto.getRandomValues(new Uint8Array(16))
+
+  // 2. 开始加密
+  const res = await window.crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    cryptoKey,
+    encoded
+  )
+
+  // 3. 把密文转成 base64
+  const cipherStr = arrayBufferToBase64(res)
+
+  // 4. 把 iv 转成 base64
+  const iv2 = uint8ArrayToBase64(iv)
+
+  return {
+    cipherText: cipherStr,
+    iv: iv2,
+  }
+}
+
+async function decryptWithAES(
+  data: CryptoCipherAndIV,
+  key: string,
+) {
+
+  // 0. 导入密钥
+  const buffer = base64ToArrayBuffer(key)
+  const cryptoKey = await window.crypto.subtle.importKey(
+    "raw", 
+    buffer, 
+    "AES-GCM",
+    true,
+    ["encrypt", "decrypt"],
+  )
+
+  // 1. 导入 iv
+  const iv_buffer = base64ToArrayBuffer(data.iv)
+
+  // 2. 将密文转成 buffer
+  const cipherBuffer = base64ToArrayBuffer(data.cipherText)
+
+  // 3. 开始解密
+  const res = await window.crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: iv_buffer },
+    cryptoKey,
+    cipherBuffer,
+  )
+
+  // 4. 解码
+  const dec = new TextDecoder()
+  const plainText = dec.decode(res)
+  
+  return plainText
 }
 
 
@@ -134,5 +255,8 @@ async function encryptWithRSA(
 
 export default {
   importRsaPublicKey,
+  createKeyWithAES,
+  encryptWithAES,
+  decryptWithAES,
   encryptWithRSA,
 }

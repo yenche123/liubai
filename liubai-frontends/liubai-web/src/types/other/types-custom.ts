@@ -40,3 +40,8 @@ export interface ImgLayout {
   one?: ImgOneLayout
   two?: ImgTwoLayout
 }
+
+export interface CryptoCipherAndIV {
+  cipherText: string
+  iv: string
+}
