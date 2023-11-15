@@ -102,6 +102,15 @@ async function importRsaPublicKey(pem: string) {
   return key
 }
 
+
+function arrayBufferToBase64(arrayBuffer: ArrayBuffer) {
+  const byteArr = new Uint8Array(arrayBuffer)
+  const byteStr = String.fromCharCode(...byteArr)
+  const b64 = window.btoa(byteStr)
+  return b64
+}
+
+
 /**
  * 使用 RSA 的公钥对明文进行加密
  * 返回 base64 格式的密文
@@ -118,15 +127,9 @@ async function encryptWithRSA(
     publicKey, 
     encoded
   )
-
-  const decoder = new TextDecoder('utf-8')
-  const decodedString = decoder.decode(cipherBuffer)
-
-  console.log("decodedString: ")
-  console.log(decodedString)
-  console.log(" ")
-
-  return decodedString
+  
+  const cipherStr = arrayBufferToBase64(cipherBuffer)
+  return cipherStr
 }
 
 export default {

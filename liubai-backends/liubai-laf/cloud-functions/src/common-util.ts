@@ -23,15 +23,8 @@ export function decryptWithRSA(encryptedText: string) {
     type: 'pkcs8',
   })
 
-  console.log("encryptedText: ")
-  console.log(encryptedText)
-  console.log(" ")
-
-  const buffer = Buffer.from(encryptedText, "utf-8")
-  console.log("buffer: ")
-  console.log(buffer)
-  console.log(" ")
-
+  const buffer = Buffer.from(encryptedText, "base64")
+  
   try {
     const decryptedData = crypto.privateDecrypt(
       {
@@ -40,6 +33,9 @@ export function decryptWithRSA(encryptedText: string) {
       },
       buffer
     )
+    console.log("解密出来的结果: ")
+    console.log(decryptedData)
+    console.log(" ")
     const plainText = decryptedData.toString('utf8')
     console.log("plainText: ")
     console.log(plainText)

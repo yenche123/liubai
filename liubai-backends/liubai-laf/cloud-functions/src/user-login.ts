@@ -24,7 +24,7 @@ export async function main(ctx: FunctionContext) {
     res = handle_test(body)
   }
   else if(oT === "github_oauth") {
-    
+
   }
 
   return res
