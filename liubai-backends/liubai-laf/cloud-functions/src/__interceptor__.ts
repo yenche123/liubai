@@ -80,9 +80,6 @@ export async function main(
     return { code: `E5002` }
   }
 
-  console.log(`nextRes: `)
-  console.log(nextRes)
-
   return nextRes 
 }
 
