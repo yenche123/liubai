@@ -102,6 +102,11 @@ function checkEntry(ctx: FunctionContext) {
     return true
   }
 
+  // [WARNING] debug 系统，暂时通过
+  if(funcName.startsWith("debug-")) {
+    return true
+  }
+
   // 3. 检查常规的 x_liu_
   const body = ctx.request?.body ?? {}
   for(let i=0; i<X_LIU_NORMAL.length; i++) {
