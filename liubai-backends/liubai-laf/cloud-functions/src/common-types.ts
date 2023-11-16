@@ -348,8 +348,17 @@ export interface Table_Collection extends BaseTable {
 
 
 export interface Table_Config extends BaseTable {
+
+  // RSA Key Pair in PEM format
   publicKey: string
   privateKey: string
+
+  // AES-GCM Key in base64 format
+  aesKey?: string
+  // AES-GCM IV in base64 format
+  aesIV?: string
+
+
 }
 
 
@@ -358,6 +367,11 @@ export interface Table_Config extends BaseTable {
 export interface Shared_RSA_Key_Pair {
   publicKey: string
   privateKey: string
+}
+
+export interface Shared_ARS_Key_IV {
+  aesKey: string
+  aesIV: string
 }
 
 /** 缓存 token 和 user 信息 */

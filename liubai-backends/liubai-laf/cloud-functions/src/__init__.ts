@@ -1,6 +1,12 @@
 import cloud from '@lafjs/cloud'
 import * as crypto from "crypto"
-import type { Table_BlockList, Table_Config, PartialSth } from "@/common-types"
+import type { 
+  Table_BlockList, 
+  Table_Config, 
+  PartialSth,
+  Shared_RSA_Key_Pair,
+  Shared_ARS_Key_IV,
+} from "@/common-types"
 
 export async function main(ctx: FunctionContext) {
   console.log("__init__ 开始运行............")
@@ -67,21 +73,29 @@ async function initConfig() {
     console.warn(`[异常] 配置中私钥不存在 !!!!!!`)
   }
 
+  if(!c.aesKey || !c.aesIV) {
+    c = await createConfig(c)
+  }
+
 
   /** 检查完毕，开始填数据到 shared 里 */
+  // 1. RSA Key-Pair
   if(c.publicKey && c.privateKey) {
-    const pair = {
+    const pair: Shared_RSA_Key_Pair = {
       publicKey: c.publicKey,
       privateKey: c.privateKey,
     }
     cloud.shared.set("liu-rsa-key-pair", pair)
   }
 
-  /** 查询当前 pair */
-  const pair2 = cloud.shared.get("liu-rsa-key-pair")
-  console.log(`查询到当前持久缓存的 pair2.......`)
-  console.log(pair2)
-  console.log(" ")
+  // 2. AES Key & IV
+  if(c.aesKey && c.aesIV) {
+    const aesData: Shared_ARS_Key_IV = {
+      aesKey: c.aesKey,
+      aesIV: c.aesIV,
+    }
+    cloud.shared.set("liu-aes-key-iv", aesData)
+  }
   
 }
 
@@ -89,6 +103,8 @@ async function initConfig() {
 async function createConfig(
   oldCfg?: Table_Config,
 ) {
+
+  // 1. 生成 RSA keyPair
   const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
     modulusLength: 2048,
     publicKeyEncoding: {
@@ -101,12 +117,20 @@ async function createConfig(
     },
   })
 
+  // 2. 生成 AES-GCM key & iv
+  const aesKeyBuffer = crypto.randomBytes(32)
+  const aesIVBuffer = crypto.randomBytes(16)
+  const aesKey = aesKeyBuffer.toString("base64")
+  const aesIV = aesIVBuffer.toString("base64")
+  
   const now = Date.now()
   let newCfg: PartialSth<Table_Config, "_id"> = {
     publicKey,
     privateKey,
     insertedStamp: now,
     updatedStamp: now,
+    aesKey,
+    aesIV,
   }
   if(oldCfg) {
     newCfg = { ...newCfg, ...oldCfg }
