@@ -157,11 +157,23 @@ function handle_init() {
   }
 
   const _env = process.env
-  const ghOAuthClientId = _env.LIU_GITHUB_OAUTH_CLIENT_ID
+  const githubOAuthClientId = _env.LIU_GITHUB_OAUTH_CLIENT_ID
+  const githubOAuthClientSecret = _env.LIU_GITHUB_OAUTH_CLIENT_SECRET
+  const googleOAuthClientId = _env.LIU_GOOGLE_OAUTH_CLIENT_ID
+  const googleOAuthClientSecret = _env.LIU_GOOGLE_OAUTH_CLIENT_SECRET
 
   const data: Record<string, string | undefined> = {
     publicKey,
-    ghOAuthClientId,
+  }
+
+  // 如果 GitHub OAuth 有存在的话
+  if(githubOAuthClientId && githubOAuthClientSecret) {
+    data.githubOAuthClientId = githubOAuthClientId
+  }
+
+  // 如果 Google OAuth 有存在的话
+  if(googleOAuthClientId && googleOAuthClientSecret) {
+    data.googleOAuthClientId = googleOAuthClientId
   }
 
   return { code: `0000`, data }

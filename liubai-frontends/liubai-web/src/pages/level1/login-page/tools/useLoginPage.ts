@@ -112,7 +112,7 @@ function whenTapLoginViaThirdParty(
 function handle_github(
   lpData: LpData,
 ) {
-  const client_id = lpData.ghOAuthClientId
+  const client_id = lpData.githubOAuthClientId
   if(!client_id) return
 
   const state = ider.createRandom()
@@ -167,7 +167,7 @@ function toGetLoginInitData(
     lpData.initCode = code
     if(data) {
       lpData.publicKey = data.publicKey
-      lpData.ghOAuthClientId = data.ghOAuthClientId
+      lpData.githubOAuthClientId = data.githubOAuthClientId
     }
 
     a(true)

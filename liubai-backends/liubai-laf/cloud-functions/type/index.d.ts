@@ -27,6 +27,10 @@ declare global {
       LIU_GITHUB_OAUTH_CLIENT_ID?: string
       LIU_GITHUB_OAUTH_CLIENT_SECRET?: string
 
+      /** Google OAuth Web 端 */
+      LIU_GOOGLE_OAUTH_CLIENT_ID?: string
+      LIU_GOOGLE_OAUTH_CLIENT_SECRET?: string
+
     }
   }
 }

@@ -10,7 +10,7 @@ export interface LpData {
 
   // 从后端获取
   publicKey?: string
-  ghOAuthClientId?: string
+  githubOAuthClientId?: string
   initCode?: string           // 调用 login 接口 init 时，返回的 code
 
 }
