@@ -6,4 +6,5 @@
 export interface Res_UserLoginInit {
   publicKey?: string
   githubOAuthClientId?: string
+  googleOAuthClientId?: string
 }

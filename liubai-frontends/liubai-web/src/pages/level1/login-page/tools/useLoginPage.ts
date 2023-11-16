@@ -168,9 +168,22 @@ function toGetLoginInitData(
     if(data) {
       lpData.publicKey = data.publicKey
       lpData.githubOAuthClientId = data.githubOAuthClientId
+      lpData.googleOAuthClientId = data.googleOAuthClientId
     }
 
     a(true)
   }
   initPromise = new Promise(_request)
+}
+
+/** 加载 Google Identity Service 脚本 */
+async function loadGoogleIdentityService(
+  lpData: LpData,
+) {
+
+  const { googleOAuthClientId } = lpData
+  if(!googleOAuthClientId) return
+
+
+
 }
