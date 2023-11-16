@@ -64,6 +64,8 @@ https://www.bing.com/images/create  用 DALL-E 3 生成插图
 
 16. `Enter` 的符号: ↵
 
+17. 一大坑点，关于密文的生成和解密，在 Node.JS 环境里请在 `Buffer` 域进行操作，比如 `Buffer` 域的加法为 `Buffer.concat(Buffer.from(bufferA, 'base64'), Buffer.from(bufferB))`。它与 `base64` 域的字符串的加减乘除运算，完全不等价！！！
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
