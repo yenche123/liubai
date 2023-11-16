@@ -7,6 +7,9 @@ import liuReq from "~/requests/liu-req"
 import type { Res_UserLoginInit } from "~/requests/data-types"
 import cui from "~/components/custom-ui";
 import liuUtil from "~/utils/liu-util";
+import ider from "~/utils/basic/ider"
+import localCache from "~/utils/system/local-cache";
+import thirdLink from "~/config/third-link";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -46,9 +49,8 @@ export function useLoginPage() {
   }
 
   const onTapLoginViaThirdParty = async (tp: LoginByThirdParty) => {
-    const res1 = await initPromise
-    testAES()
-    // whenTapLoginViaThirdParty(lpData)
+    let res = await initPromise
+    if(res) whenTapLoginViaThirdParty(tp, lpData)
   }
 
 
@@ -87,34 +89,42 @@ function isEverythingOkay(
 }
 
 
-async function whenTapLoginViaThirdParty(
+function whenTapLoginViaThirdParty(
+  tp: LoginByThirdParty,
   lpData: LpData,
 ) {
-  const { 
-    initCode, 
-    publicKey,
-    ghOAuthClientId,
-  } = lpData
-
+  const { initCode } = lpData
   const isOkay = isEverythingOkay(initCode)
   if(!isOkay) return
-  if(!publicKey) return
 
-  const key = await liuUtil.crypto.importRsaPublicKey(publicKey)
-  if(!key) return
+  if(tp === "github") {
+    handle_github(lpData)
+  }
+  else if(tp === "google") {
 
-  const text = `你好，很高兴认识你，我是 lb 这里是 laf 吗？加一点 emoji 🍫🤖🥱`
-  const encryptedText = await liuUtil.crypto.encryptWithRSA(key, text)
-  console.log("encryptedText: ")
-  console.log(encryptedText)
-  console.log(" ")
+  }
+  else if(tp === "apple") {
 
-  const url = APIs.LOGIN
-  const res = await liuReq.request(url, { operateType: "test", encryptedText })
-  console.log("看一下 res: ")
-  console.log(res)
-  console.log(" ")
+  }
   
+}
+
+function handle_github(
+  lpData: LpData,
+) {
+  const client_id = lpData.ghOAuthClientId
+  if(!client_id) return
+
+  const state = ider.createRandom()
+  localCache.setLocalOnceData("githubOAuthState", state)
+
+  const url = new URL(thirdLink.GITHUB_OAUTH)
+  const sp = url.searchParams
+  sp.append("client_id", client_id)
+  sp.append("scope", "user:email")
+  sp.append("state", state)
+  const link = url.toString()
+  location.href = link
 }
 
 async function testAES() {

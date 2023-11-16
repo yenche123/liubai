@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { useOAuthPage } from './tools/useOAuthPage';
 import PulsarLoader from '~/components/loaders/pulsar-loader/pulsar-loader.vue';
 
-const { opData } = useOAuthPage()
+const { opData, onTapBack } = useOAuthPage()
 const { t } = useI18n()
 
 </script>
@@ -15,7 +15,7 @@ const { t } = useI18n()
     <div class="lpn-box">
 
       <!-- 返回按钮 -->
-      <div class="liu-hover lpn-back">
+      <div class="liu-hover lpn-back" @click.stop="onTapBack">
         <div class="lpn-back-icon">
           <svg-icon name="arrow-back700" class="lpn-back-svg" color="var(--main-normal)"></svg-icon>
         </div>

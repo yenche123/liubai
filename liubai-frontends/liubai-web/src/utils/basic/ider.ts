@@ -53,6 +53,10 @@ const createCollectId = () => {
   return "c1" + _createId(20)
 }
 
+const createRandom = (digits: number = 7) => {
+  return _createId(digits)
+}
+
 export default {
   createUserId,
   createStateId,
@@ -65,4 +69,5 @@ export default {
   createFileId,
   createTagId,
   createCollectId,
+  createRandom,
 }

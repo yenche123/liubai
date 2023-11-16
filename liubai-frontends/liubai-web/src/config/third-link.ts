@@ -6,7 +6,6 @@ export default {
   CHAT_GPT: "https://chat.openai.com/chat",
   BING_SEARCH: "https://www.bing.com/search",
   XHS_SEARCH: "https://www.xiaohongshu.com/search_result",
-  GITHUB_SEARCH: "https://github.com/search",
   GOOGLE_CALENDAR_ADD: "https://calendar.google.com/calendar/u/0/r/eventedit",
   OUTLOOK_ADD: "https://outlook.live.com/calendar/0/deeplink/compose",
   LINE_SHARE_TXT: "https://line.me/R/share",
@@ -26,8 +25,10 @@ export default {
   // spotify
   SPOTIFY_OPEN: "https://open.spotify.com/",
 
-  // github gist
+  // github
   GITHUB_GIST: "https://gist.github.com/",
+  GITHUB_OAUTH: "https://github.com/login/oauth/authorize",
+  GITHUB_SEARCH: "https://github.com/search",
 
   // apple music
   APPLE_MUSIC: "https://music.apple.com/",
