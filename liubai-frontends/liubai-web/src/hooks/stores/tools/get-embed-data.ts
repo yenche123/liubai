@@ -27,13 +27,23 @@ export function getEmbedData(
 
   // 适配 youtube /watch
   const yt = thirdLink.YOUTUBE_EMBED
+  const yt0 = new URL(yt)
   const yt1 = new URL(thirdLink.YOUTUBE_WATCH)
   const ytRes: EmbedDataRes = { link: originUrl, otherData: { isYouTube: true } }
   let isYouTube1 = valTool.isInDomain(h, yt1.hostname) && p === "/watch"
   if(isYouTube1) {
     const v = s.get("v")
+    let sec = s.get("t")
+    if(sec && sec.length > 0) {
+      // 把尾巴的 s 字符拿掉
+      if(sec[sec.length - 1] === "s") {
+        sec = sec.substring(0, sec.length - 1)
+      }
+      yt0.searchParams.set("start", sec)
+    }
     if(v) {
-      ytRes.link = yt.replace(x, v)
+      yt0.pathname = `/embed/${v}`
+      ytRes.link = yt0.toString()
       return ytRes
     }
   }
