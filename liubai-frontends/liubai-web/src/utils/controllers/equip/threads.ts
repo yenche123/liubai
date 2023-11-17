@@ -18,7 +18,7 @@ export async function equipThreads(
   if(contents.length < 1) return []
 
   const wStore = useWorkspaceStore()
-  const { local_id: user_id } = localCache.getLocalPreference()
+  const { local_id: user_id } = localCache.getPreference()
 
   const { user_ids, member_ids } = getUserAndMemberIdsFromContents(contents)
 

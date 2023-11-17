@@ -1,5 +1,6 @@
 import type { LocalLanguage } from "~/types"
 import type { LocalTheme } from "~/types/types-atom"
+import type { Res_UserLoginInit } from "~/requests/data-types"
 
 export interface LocalPreference {
   theme?: LocalTheme
@@ -21,4 +22,8 @@ export interface LocalOnceData {
 // 存储一些配置信息
 export interface LocalConfigData {
 
+  // 登录时的 配置信息
+  userLoginInitStamp?: number
+  userloginInitCfg?: Res_UserLoginInit
+  
 }

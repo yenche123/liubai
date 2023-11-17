@@ -50,7 +50,7 @@ export function useVcIframe(props: VciProps) {
       console.log(" ")
     })
 
-    const localPf = localCache.getLocalPreference()
+    const localPf = localCache.getPreference()
     const localTheme = localPf.theme
     if(!localTheme || localTheme === "system") return
     const newTheme = localTheme === "auto" ? liuApi.getThemeFromTime() : localTheme

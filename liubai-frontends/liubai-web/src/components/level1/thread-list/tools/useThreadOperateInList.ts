@@ -40,7 +40,7 @@ export function useThreadOperateInList(
     thread: ThreadShow
   ) => {
     const { memberId } = wStore
-    const { local_id: userId } = localCache.getLocalPreference()
+    const { local_id: userId } = localCache.getPreference()
 
     // 因为是列表页，是登录的情况下才能查看得到，故 memberId / userId 不存在，直接走异常逻辑
     if(!memberId || !userId) {

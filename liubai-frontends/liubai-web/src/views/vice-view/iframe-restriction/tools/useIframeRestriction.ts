@@ -54,7 +54,7 @@ export function useIframeRestriction(props: IframeRestrictionProps) {
   const onTapConfirm = () => {
 
     // TODO: 操作缓存
-    localCache.setLocalOnceData("iframeRestriction", time.getTime())
+    localCache.setOnceData("iframeRestriction", time.getTime())
 
     close(ctx)
   }
@@ -108,7 +108,7 @@ function whenVcStateChange(
   }
 
   // 检查缓存
-  const res = localCache.getLocalOnceData()
+  const res = localCache.getOnceData()
   if(res.iframeRestriction) return
 
   // 当前 是 iframe 页并且 enable 是关闭的

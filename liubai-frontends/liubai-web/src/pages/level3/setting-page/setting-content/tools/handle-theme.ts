@@ -31,7 +31,7 @@ export async function whenTapTheme(
   
   // 1. 切换到新的主题选择（包括切换到自动或跟随系统）
   data.theme = id
-  localCache.setLocalPreference("theme", id)
+  localCache.setPreference("theme", id)
 
 
   // 2. 判断视觉主题是否要做更换，比如当前时间是晚上，原本是自动（日夜切换）

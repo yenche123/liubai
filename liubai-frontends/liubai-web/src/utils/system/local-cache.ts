@@ -1,33 +1,56 @@
-import type { LocalPreference, LocalOnceData } from "./tools/types";
+import type { 
+  LocalPreference, 
+  LocalOnceData, 
+  LocalConfigData,
+} from "./tools/types";
 import liuApi from "../liu-api";
 
-function getLocalPreference(): LocalPreference {
+function getPreference(): LocalPreference {
   const res = liuApi.getStorageSync<LocalPreference>("local-preference") || {}
   return res
 }
 
-function setLocalPreference<T extends keyof LocalPreference>(
+function setPreference<T extends keyof LocalPreference>(
   key: T, data: LocalPreference[T]
 ) {
-  const localP = getLocalPreference()
+  const localP = getPreference()
   localP[key] = data
   const res = liuApi.setStorageSync("local-preference", localP)
 }
 
-function getLocalOnceData(): LocalOnceData {
+
+/********** 一些性、不依赖登录态的数据 ********/
+function getOnceData(): LocalOnceData {
   const res = liuApi.getStorageSync<LocalOnceData>("local-once-data") || {}
   return res
 }
 
-function setLocalOnceData(key: keyof LocalOnceData, data: any) {
-  const localData = getLocalOnceData()
+function setOnceData(key: keyof LocalOnceData, data: any) {
+  const localData = getOnceData()
   localData[key] = data
   const res = liuApi.setStorageSync("local-once-data", localData)
 }
 
+/********** 配置数据、同样不依赖登录态 ********/
+function getConfigData() {
+  const res = liuApi.getStorageSync<LocalConfigData>("local-config-data") || {}
+  return res
+}
+
+function setConfigData(data?: LocalConfigData) {
+  if(!data) {
+    liuApi.removeStorageSync("local-config-data")
+    return
+  }
+  liuApi.setStorageSync("local-config-data", data)
+}
+
+
 export default {
-  getLocalPreference,
-  setLocalPreference,
-  getLocalOnceData,
-  setLocalOnceData,
+  getPreference,
+  setPreference,
+  getOnceData,
+  setOnceData,
+  getConfigData,
+  setConfigData,
 }

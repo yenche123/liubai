@@ -33,7 +33,7 @@ export function useMyProfile() {
   const { myMember } = storeToRefs(wStore)
 
   const whenMemberChange = async () => {
-    const { local_id: userId } = localCache.getLocalPreference()
+    const { local_id: userId } = localCache.getPreference()
     if(!userId) {
       myProfile.value = null
       return

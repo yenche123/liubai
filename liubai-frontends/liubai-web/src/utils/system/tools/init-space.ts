@@ -76,7 +76,7 @@ async function whenRouteChange(
   if(checkWorkspace === false && store.spaceId) return
 
   // 从 IndexedDB 里查找 个人工作区的 spaceId
-  const localP = localCache.getLocalPreference()
+  const localP = localCache.getPreference()
   const userId = localP.local_id
   if(!userId) return
   if(!_debounce()) return
@@ -123,7 +123,7 @@ async function handleCollaborativeSpace(
   newSpaceId: string,
 ) {
   if(store.spaceId === newSpaceId) return
-  const localP = localCache.getLocalPreference()
+  const localP = localCache.getPreference()
   const userId = localP.local_id
   if(!userId) return
 

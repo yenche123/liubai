@@ -11,7 +11,7 @@ import liuEnv from '~/utils/liu-env'
 // 初始化语言
 const initLocale = (): SupportedLocale => {
   // 从缓存里取
-  const localPf = localCache.getLocalPreference()
+  const localPf = localCache.getPreference()
   const lang0 = localPf.language
   // return "en"
   if(lang0 && isSupportedLocale(lang0)) return lang0

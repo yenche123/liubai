@@ -16,7 +16,7 @@ export async function equipComments(
 ) {
   if(contents.length < 1) return []
 
-  const { local_id: user_id } = localCache.getLocalPreference()
+  const { local_id: user_id } = localCache.getPreference()
   const { user_ids, member_ids } = getUserAndMemberIdsFromContents(contents)
 
   const memberShows = await getMemberShows(member_ids)

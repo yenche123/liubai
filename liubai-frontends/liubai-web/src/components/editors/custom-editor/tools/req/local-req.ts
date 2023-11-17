@@ -4,7 +4,7 @@ import localCache from "~/utils/system/local-cache"
 import ider from "~/utils/basic/ider"
 
 function _getUserId(): string {
-  const { local_id } = localCache.getLocalPreference()
+  const { local_id } = localCache.getPreference()
   return local_id as string
 }
 

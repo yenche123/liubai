@@ -16,7 +16,7 @@ const getUserId = (
 ) => {
   opt.showTip = opt.showTip ?? true
 
-  const { local_id: userId } = localCache.getLocalPreference()
+  const { local_id: userId } = localCache.getPreference()
   if(!userId) {
     if(opt.showTip) {
       const res = cui.showModal({
@@ -38,7 +38,7 @@ const getMyContext = (
 ): LiuMyContext | undefined => {
   opt.showTip = opt.showTip ?? true
 
-  const { local_id: userId } = localCache.getLocalPreference()
+  const { local_id: userId } = localCache.getPreference()
   if(!userId) {
     if(opt.showTip) {
       const res = cui.showModal({

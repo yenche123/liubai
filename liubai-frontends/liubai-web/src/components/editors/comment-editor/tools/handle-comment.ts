@@ -33,7 +33,7 @@ export function handleComment(
   const wStore = useWorkspaceStore()
   if(!wStore.memberId) return
 
-  const { local_id: user } = localCache.getLocalPreference()
+  const { local_id: user } = localCache.getPreference()
   if(!user) return
 
   const ctx: HcCtx = {

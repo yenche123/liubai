@@ -56,7 +56,7 @@ async function toRelease(
   focusRequired: boolean
 ) {
   
-  const { local_id: user } = localCache.getLocalPreference()
+  const { local_id: user } = localCache.getPreference()
   if(!user) return
 
   const state = ctx.state

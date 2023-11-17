@@ -117,7 +117,7 @@ function handle_github(
   }
 
   const state = ider.createRandom()
-  localCache.setLocalOnceData("githubOAuthState", state)
+  localCache.setOnceData("githubOAuthState", state)
 
   const url = new URL(thirdLink.GITHUB_OAUTH)
   const sp = url.searchParams

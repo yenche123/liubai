@@ -20,7 +20,7 @@ export async function init() {
   }
 
   // 当前为 [纯本地模式]
-  const localPf = localCache.getLocalPreference()
+  const localPf = localCache.getPreference()
   if(localPf.local_id) {
     // 【待完善】去修改 User 表里的 lastRefresh
     const isOk = await findSystem(localPf.local_id)
@@ -34,7 +34,7 @@ export async function init() {
   let createData = await firstCreate()
   if(!createData) return
   const { workspace, member, user } = createData
-  localCache.setLocalPreference("local_id", user._id)
+  localCache.setPreference("local_id", user._id)
   
   const opt: SpaceAndMemberOpt = {
     spaceId: workspace._id,

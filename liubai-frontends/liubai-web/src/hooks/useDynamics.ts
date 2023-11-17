@@ -38,7 +38,7 @@ export type UseDynamicsType = ReturnType<typeof useDynamics>
 // 初始化主题
 export function initTheme() {
   if(theme.value) return
-  const localPf = localCache.getLocalPreference()
+  const localPf = localCache.getPreference()
   const _theme = localPf.theme
   if(!_theme || _theme === "system") {
     theme.value = liuApi.getThemeFromSystem()

@@ -9,7 +9,7 @@ function _getBody<U extends Record<string, any>>(
   body?: U,
 ) {
   
-  const p = localCache.getLocalPreference()
+  const p = localCache.getPreference()
   const b: Record<string, any> = {
     x_liu_language: navigator.language,
     x_liu_version: LIU_ENV.version,

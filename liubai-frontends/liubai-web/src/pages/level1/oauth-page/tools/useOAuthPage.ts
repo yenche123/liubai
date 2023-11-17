@@ -77,7 +77,7 @@ async function enterFromGitHub(
   opData.via = "github"
 
   // 2. 匹配 state 是否一致
-  const onceData = localCache.getLocalOnceData()
+  const onceData = localCache.getOnceData()
   const oldState = onceData.githubOAuthState
   if(oldState !== state) {
     console.warn("state 与 oldState 不匹配！！")

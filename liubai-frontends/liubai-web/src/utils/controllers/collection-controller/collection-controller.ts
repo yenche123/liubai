@@ -15,7 +15,7 @@ interface MyCollectionOpt {
 // 根据 contents 的 id 来获取我的收藏 (fav) 或点赞 (emoji)
 async function getMyCollectionByIds(opt: MyCollectionOpt) {
 
-  const { local_id: user_id } = localCache.getLocalPreference()
+  const { local_id: user_id } = localCache.getPreference()
   if(!user_id) return []
 
   let tmp = db.collections.where("content_id").anyOf(opt.content_ids)
@@ -44,7 +44,7 @@ export async function getThreadsByCollection(
   } = opt
 
   const wStore = useWorkspaceStore()
-  const { local_id: user_id } = localCache.getLocalPreference()
+  const { local_id: user_id } = localCache.getPreference()
   let res: CollectionLocalTable[] = []
 
   const filterFunc = (item: CollectionLocalTable) => {

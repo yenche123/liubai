@@ -41,7 +41,7 @@ function initSettingContent(
   data: SettingContentData
 ) {
 
-  const localP = localCache.getLocalPreference()
+  const localP = localCache.getPreference()
 
   /** 初始化主题 */
   const theme = localP.theme
@@ -107,7 +107,7 @@ async function whenTapLanguage(
   const id = item.id
   if(id === data.language) return
 
-  localCache.setLocalPreference("language", id)
+  localCache.setPreference("language", id)
 
   let newLang: SupportedLocale
   let new_lang_txt = item.text

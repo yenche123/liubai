@@ -278,7 +278,7 @@ async function toSave(state: CeState) {
   }
 
   const draftId = state.draftId ?? ider.createDraftId()
-  const { local_id: userId } = localCache.getLocalPreference()
+  const { local_id: userId } = localCache.getPreference()
   let liuDesc: TipTapJSONContent[] | undefined = undefined
   if(state.editorContent?.json) {
     const { type, content } = state.editorContent.json
