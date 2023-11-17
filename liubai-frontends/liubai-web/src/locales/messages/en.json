@@ -159,7 +159,8 @@
     "email_verification_tip": "Verification code has been sent to {email}\n Please check out your inbox or junk/spam folder.",
     "verification_code": "Code",
     "choosing_account": "Choosing an Account",
-    "logging": "Logging in.."
+    "logging": "Logging in..",
+    "cannot_login_via": "\"Continue with {thirdParty}\" has been temporarily disabled. Please use other methods."
   },
   "tip": {
     "tip": "TIP",

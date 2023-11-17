@@ -116,7 +116,10 @@ function handle_github(
   lpData: LpData,
 ) {
   const client_id = lpData.githubOAuthClientId
-  if(!client_id) return
+  if(!client_id) {
+    showDisableTip("GitHub")
+    return
+  }
 
   const state = ider.createRandom()
   localCache.setLocalOnceData("githubOAuthState", state)
@@ -130,27 +133,14 @@ function handle_github(
   location.href = link
 }
 
-async function testAES() {
-  const key = await liuUtil.crypto.createKeyWithAES()
-  console.log("key: ")
-  console.log(key)
-  console.log(" ")
-
-  const plainText = "你好，很高兴认识你，我真的很荣幸能在这里遇见你🔓🎊🧑‍💻"
-  const res = await liuUtil.crypto.encryptWithAES(plainText, key)
-  console.log("res: ")
-  console.log(res)
-  console.log(" ")
-
-  const res2 = await liuUtil.crypto.decryptWithAES(res, key)
-  console.log("plainText: ")
-  console.log(res2)
-  console.log(" ")
-
+function showDisableTip(thirdParty: string) {
+  cui.showModal({
+    title_key: "tip.tip",
+    content_key: "login.cannot_login_via",
+    content_opt: { thirdParty },
+    showCancel: false,
+  })
 }
-
-
-
 
 function toGetLoginInitData(
   lpData: LpData,
@@ -172,7 +162,7 @@ function toGetLoginInitData(
       lpData.publicKey = data.publicKey
       lpData.githubOAuthClientId = data.githubOAuthClientId
       lpData.googleOAuthClientId = data.googleOAuthClientId
-      loadGoogleIdentityService(lpData)
+      // loadGoogleIdentityService(lpData)
     }
 
     a(true)

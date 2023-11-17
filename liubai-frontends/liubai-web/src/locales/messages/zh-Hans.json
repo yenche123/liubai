@@ -159,7 +159,8 @@
     "email_verification_tip": "已发送验证码至 {email}\n 请检查你的收件箱或垃圾邮箱。",
     "verification_code": "验证码",
     "choosing_account": "选择账号",
-    "logging": "正在登录.."
+    "logging": "正在登录..",
+    "cannot_login_via": "当前暂不支持「使用 {thirdParty} 登录」，请使用其他登录方式。"
   },
   "tip": {
     "tip": "提示",

@@ -159,7 +159,8 @@
     "email_verification_tip": "驗證碼已被發送至 {email}\n請檢查你的收件箱或垃圾信箱。",
     "verification_code": "驗證碼",
     "choosing_account": "選擇帳號",
-    "logging": "正在登入.."
+    "logging": "正在登入..",
+    "cannot_login_via": "目前暫不支援「使用 {thirdParty} 登入」，請使用其他登入方式。"
   },
   "tip": {
     "tip": "提示",
