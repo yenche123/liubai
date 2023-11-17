@@ -14,7 +14,8 @@
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
     "types": [
-      "./node_modules/user-agent-data-types"
+      "./node_modules/user-agent-data-types",
+      "google.accounts"
     ],
     "paths": {
       "~/*": ["src/*"]

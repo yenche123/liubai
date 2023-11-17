@@ -60,6 +60,7 @@
   "devDependencies": {
     "@types/canvas-confetti": "^1.6.3",
     "@types/file-saver": "^2.0.7",
+    "@types/google.accounts": "^0.0.14",
     "@types/node": "^20.9.0",
     "@vitejs/plugin-vue": "^4.4.1",
     "sass": "^1.69.5",

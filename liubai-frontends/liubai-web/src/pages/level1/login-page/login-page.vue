@@ -39,10 +39,12 @@ const {
 
 
   <!-- 主体 -->
-  <div class="lp-body">
+  <div class="lp-body" 
+    :class="{ 'lp-body_google-one-tap': lpData.googleOneTapShown }"
+  >
 
     <!-- 顶部占位 -->
-    <div class="lp-virtual"></div>
+    <div class="lp-virtual lp-virtual-first"></div>
 
     <!-- 主页 -->
     <div class="lp-container" v-liu-show="lpData.view === 'main'">
@@ -137,12 +139,25 @@ const {
 .lp-virtual {
   width: 100%;
   height: 100px;
+  transition: .3s;
+}
+
+.lp-virtual-first {
+  min-height: 100px;
 }
 
 .lp-container {
   position: relative;
   width: 92%;
   max-width: 600px;
+}
+
+@media screen and (min-width: 530px) and (max-width: 1420px) {
+
+  .lp-body_google-one-tap .lp-virtual-first {
+    min-height: 220px;
+  }
+  
 }
 
 

@@ -148,8 +148,9 @@ const {
   width: 100%;
   padding-block-start: 10px;
   padding-block-end: 20px;
-  height: 50dvh;
+  height: 45dvh;
   min-height: 300px;
+  max-height: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
