@@ -153,7 +153,7 @@ async function enterFromGoogle(
   console.log(body)
   console.log(" ")
   const res = await liuReq.request(url, body)
-  console.log(`enterFromGitHub res: `)
+  console.log(`enterFromGoogle res: `)
   console.log(res)
   console.log(" ")
 
