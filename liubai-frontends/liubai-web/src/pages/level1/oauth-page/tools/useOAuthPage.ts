@@ -107,4 +107,41 @@ function enterFromGoogle(
   rr: RouteAndLiuRouter,
 ) {
 
+  const { 
+    code, 
+    state, 
+    error_description, 
+    error,
+  } = rr.route.query
+
+  if(error_description || error) {
+    console.warn("Google 授权失败.......")
+    console.log(error_description)
+    console.log(error)
+    console.log(" ")
+    rr.router.replace({ name: "login" })
+    return
+  }
+
+  if(!code || !typeCheck.isString(code)) return
+  if(!state || !typeCheck.isString(state)) return
+
+  // 1. 先把 via 切换到 google
+  opData.via = "google"
+
+  // 2. 匹配 state 是否一致
+  const onceData = localCache.getOnceData()
+  const oldState = onceData.googleOAuthState
+  if(oldState !== state) {
+    console.warn("state 与 oldState 不匹配！！")
+    console.log("oldState: ", oldState)
+    console.log(" ")
+    return
+  }
+
+  // 3. 清除 query
+  rr.router.replace({ name: "login-google" })
+
+
+
 }

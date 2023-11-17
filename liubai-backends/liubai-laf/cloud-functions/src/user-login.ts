@@ -41,6 +41,13 @@ export async function main(ctx: FunctionContext) {
 }
 
 
+async function handle_google_oauth(
+  body: Record<string, string>,
+) {
+  
+}
+
+
 async function handle_github_oauth(
   body: Record<string, string>,
 ) {

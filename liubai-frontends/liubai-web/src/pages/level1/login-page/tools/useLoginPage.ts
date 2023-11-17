@@ -99,12 +99,43 @@ function whenTapLoginViaThirdParty(
     handle_github(lpData)
   }
   else if(tp === "google") {
-
+    handle_google(lpData)
   }
   else if(tp === "apple") {
 
   }
   
+}
+
+function handle_google(
+  lpData: LpData,
+) {
+  const client_id = lpData.googleOAuthClientId
+  if(!client_id) {
+    showDisableTip("Google")
+    return
+  }
+  
+  // 30 个左右字符，来自于 google 的文档
+  // https://developers.google.com/identity/openid-connect/openid-connect#createxsrftoken
+  const state = ider.createRandom(30)
+  localCache.setOnceData("googleOAuthState", state)
+  
+  const redirect_uri = window.location.origin + "/login-google"
+
+  const url = new URL(thirdLink.GOOGLE_OAUTH2)
+  let scope = "https://www.googleapis.com/auth/userinfo.email "
+  scope += "https://www.googleapis.com/auth/userinfo.profile "
+  scope += "openid"
+  const sp = url.searchParams
+  sp.append("scope", scope)
+  sp.append("include_granted_scopes", "true")
+  sp.append("response_type", "code")
+  sp.append("state", state)
+  sp.append("redirect_uri", redirect_uri)
+  sp.append("client_id", client_id)
+  const link = url.toString()
+  location.href = link
 }
 
 function handle_github(
@@ -116,7 +147,7 @@ function handle_github(
     return
   }
 
-  const state = ider.createRandom()
+  const state = ider.createRandom(30)
   localCache.setOnceData("githubOAuthState", state)
 
   const url = new URL(thirdLink.GITHUB_OAUTH)

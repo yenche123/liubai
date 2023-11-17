@@ -71,6 +71,7 @@ export default {
   GOOGLE_CALENDAR_ADD: "https://calendar.google.com/calendar/u/0/r/eventedit",
   GOOGLE_SEARCH: "https://www.google.com/?igu=1",
   GOOGLE_GIS_SCRIPT: "https://accounts.google.com/gsi/client",
+  GOOGLE_OAUTH2: "https://accounts.google.com/o/oauth2/v2/auth",
 
   // youtube
   YOUTUBE_EMBED: "https://www.youtube.com/embed/__XXX__?autoplay=1",
