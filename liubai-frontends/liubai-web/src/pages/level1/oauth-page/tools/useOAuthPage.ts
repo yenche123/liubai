@@ -102,7 +102,7 @@ async function enterFromGitHub(
 
 }
 
-function enterFromGoogle(
+async function enterFromGoogle(
   opData: OpData,
   rr: RouteAndLiuRouter,
 ) {
@@ -142,6 +142,19 @@ function enterFromGoogle(
   // 3. 清除 query
   rr.router.replace({ name: "login-google" })
 
-
+  // 4. 去请求后端登录
+  const url = APIs.LOGIN
+  const body = {
+    operateType: "google_oauth",
+    oauth_code: code,
+    oauth_redirect_uri: location.origin + "/login-google",
+  }
+  console.log("body: ")
+  console.log(body)
+  console.log(" ")
+  const res = await liuReq.request(url, body)
+  console.log(`enterFromGitHub res: `)
+  console.log(res)
+  console.log(" ")
 
 }
