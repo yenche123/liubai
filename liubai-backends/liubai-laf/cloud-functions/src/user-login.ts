@@ -1,5 +1,6 @@
 // 用户登录、注册、进入
 import cloud from '@lafjs/cloud'
+import jsonwebtoken from "jsonwebtoken"
 import type { LiuRqReturn } from "@/common-types"
 import { decryptWithRSA } from "@/common-util"
 
@@ -104,6 +105,22 @@ async function handle_google_oauth(
     return { code: "E5004", errMsg: "no access_token from GitHub" }
   }
   console.log(" ")
+
+  const id_token = res1_data?.id_token
+  if(id_token) {
+    try {
+      const id_res = jsonwebtoken.decode(id_token)
+      console.log("id_res: ")
+      console.log(id_res)
+      console.log(" ")
+    }
+    catch(err) {
+      console.warn("id_token 解析失败.........")
+      console.log(err)
+      console.log(" ")
+    }
+  }
+
 
   return { code: "0000", msg: "先这样", data: res1_data }
 }
