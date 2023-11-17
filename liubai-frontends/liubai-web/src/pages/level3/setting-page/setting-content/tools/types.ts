@@ -1,5 +1,6 @@
 
-import type { LocalLanguage, LocalTheme } from "~/types"
+import type { LocalLanguage } from "~/types"
+import type { LocalTheme } from "~/types/types-atom"
 
 export interface LanguageItem {
   text: string

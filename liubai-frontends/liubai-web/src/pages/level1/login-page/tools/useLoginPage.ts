@@ -2,17 +2,12 @@ import { reactive } from "vue";
 import type { LpData, LoginByThirdParty } from "./types";
 import { useMyProfile } from "~/hooks/useCommon";
 import type { BoolFunc } from "~/utils/basic/type-tool";
-import APIs from "~/requests/APIs"
-import liuReq from "~/requests/liu-req"
-import type { Res_UserLoginInit } from "~/requests/data-types"
 import cui from "~/components/custom-ui";
-import liuUtil from "~/utils/liu-util";
+import { fetchInitLogin } from "../../tools/requests";
 import ider from "~/utils/basic/ider"
 import localCache from "~/utils/system/local-cache";
 import thirdLink from "~/config/third-link";
-import {
-  loadGoogleIdentityService
-} from "./handle-gis"
+import { loadGoogleIdentityService } from "./handle-gis"
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -146,14 +141,7 @@ function toGetLoginInitData(
   lpData: LpData,
 ) {
   const _request = async (a: BoolFunc) => {
-
-    const url = APIs.LOGIN
-    const res = await liuReq.request<Res_UserLoginInit>(url, { operateType: "init" })
-
-    console.log(`toGetLoginInitData res: `)
-    console.log(res)
-    console.log(" ")
-
+    const res = await fetchInitLogin()
     const code = res?.code
     const data = res?.data
 

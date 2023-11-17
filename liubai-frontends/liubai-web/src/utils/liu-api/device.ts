@@ -1,4 +1,4 @@
-import type { SupportedTheme } from "~/types"
+import type { SupportedTheme } from "~/types/types-atom"
 import type { SupportedLocale } from "~/types/types-locale"
 import { isSupportedLocale } from '~/types/types-locale'
 import time from "../basic/time"

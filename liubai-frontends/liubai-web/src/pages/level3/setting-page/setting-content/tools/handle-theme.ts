@@ -1,5 +1,5 @@
 import type { SettingContentData } from "./types"
-import type { SupportedTheme } from "~/types"
+import type { SupportedTheme } from "~/types/types-atom"
 import localCache from "~/utils/system/local-cache"
 import { getThemeList } from "./get-list"
 import cui from "~/components/custom-ui"

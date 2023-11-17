@@ -1,5 +1,8 @@
 // 一些最基础的原子类型
 
+export type SupportedTheme = "light" | "dark"
+export type LocalTheme = SupportedTheme | "system" | "auto"   // auto 就是日夜切换
+
 export type LiuRemindLater = "30min" | "1hr" | "2hr" | "3hr" | "tomorrow_this_moment"
 
 // 必须是 number 因为可能跟其他系统对接，会有不同的提前时间（单位为 minute）

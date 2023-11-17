@@ -1,9 +1,8 @@
 
 import type { SupportedLocale } from "./types-locale"
+import type { LocalTheme } from "./types-atom"
 import type { RouteLocation } from 'vue-router'
 
-export type SupportedTheme = "light" | "dark"
-export type LocalTheme = SupportedTheme | "system" | "auto"   // auto 就是日夜切换
 export type LocalLanguage = SupportedLocale | "system"
 
 export interface LocalPreference {
@@ -21,8 +20,6 @@ export interface LocalOnceData {
 
   // 使用 GitHub 登录时，一次性的 state，用于防止无关的第三方请求该界面
   githubOAuthState?: string
-
-  
 }
 
 export interface LiuFileStore {

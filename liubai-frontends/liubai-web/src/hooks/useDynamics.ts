@@ -2,7 +2,7 @@
 
 import { ref } from "vue"
 import type { Ref } from "vue"
-import type { SupportedTheme } from "../types"
+import type { SupportedTheme } from "../types/types-atom"
 import type { SupportedLocale } from "../types/types-locale"
 import { i18n } from "~/locales"
 import localCache from "../utils/system/local-cache"
