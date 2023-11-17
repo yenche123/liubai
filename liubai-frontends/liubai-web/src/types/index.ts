@@ -1,26 +1,8 @@
 
 import type { SupportedLocale } from "./types-locale"
-import type { LocalTheme } from "./types-atom"
 import type { RouteLocation } from 'vue-router'
 
 export type LocalLanguage = SupportedLocale | "system"
-
-export interface LocalPreference {
-  theme?: LocalTheme
-  language?: LocalLanguage
-  local_id?: string
-  token?: string
-  serial?: string     // token 所在的序列号
-}
-
-export interface LocalOnceData {
-  // 读取 iframe-restriction 提示界面后，点击确认时的时间戳
-  // 当此值为 undefined 代表从未读过该提示，就去显示提示界面，否则不显示 
-  iframeRestriction?: number
-
-  // 使用 GitHub 登录时，一次性的 state，用于防止无关的第三方请求该界面
-  githubOAuthState?: string
-}
 
 export interface LiuFileStore {
   id: string

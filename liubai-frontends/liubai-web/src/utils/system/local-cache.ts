@@ -1,4 +1,4 @@
-import type { LocalPreference, LocalOnceData } from "~/types";
+import type { LocalPreference, LocalOnceData } from "./tools/types";
 import liuApi from "../liu-api";
 
 function getLocalPreference(): LocalPreference {
