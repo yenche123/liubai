@@ -10,6 +10,9 @@ const GH_OAUTH_ACCESS_TOKEN = "https://github.com/login/oauth/access_token"
 // GitHub 使用 accessToken 去获取用户信息
 const GH_API_USER = "https://api.github.com/user"
 
+// Google 使用 code 去换 accessToken
+const GOOGLE_OAUTH_ACCESS_TOKEN = "https://oauth2.googleapis.com/token"
+
 
 /************************ 函数们 *************************/
 
@@ -36,6 +39,9 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "github_oauth") {
     res = await handle_github_oauth(body)
   }
+  else if(oT === "google_oauth") {
+    res = await handle_google_oauth(body)
+  }
 
   return res
 }
@@ -44,7 +50,62 @@ export async function main(ctx: FunctionContext) {
 async function handle_google_oauth(
   body: Record<string, string>,
 ) {
-  
+  const oauth_code = body.oauth_code
+  if(!oauth_code) {
+    return { code: "E4000", errMsg: "no oauth_code" }
+  }
+  const redirect_uri = body.oauth_redirect_uri
+  if(!redirect_uri) {
+    return { code: "E4000", errMsg: "no oauth_redirect_uri" }
+  }
+
+  const _env = process.env
+  const client_id = _env.LIU_GOOGLE_OAUTH_CLIENT_ID
+  const client_secret = _env.LIU_GOOGLE_OAUTH_CLIENT_SECRET
+  if(!client_id || !client_secret) {
+    return { code: "E5001", errMsg: "no client_id or client_secret on backend" }
+  }
+
+  // 1. 使用 code 去换 access_token
+  const body1 = {
+    client_id,
+    client_secret,
+    code: oauth_code,
+    redirect_uri,
+    grant_type: "authorization_code",
+  }
+  let access_token = ""
+  let res1: any
+  try {
+    res1 = await cloud.fetch.post(GOOGLE_OAUTH_ACCESS_TOKEN, body1)
+  }
+  catch(err) {
+    console.warn("使用 Google code 去换取用户 access_token 失败")
+    console.log(err)
+    console.log(" ")
+    return { 
+      code: "E5003", 
+      errMsg: "network err while getting google access_token with code",
+    }
+  }
+
+  // 2. 解析出 access_token
+  const res1_data = res1?.data ?? {}
+  console.log("google oauth res1_data: ")
+  console.log(res1_data)
+  access_token = res1_data?.access_token
+  if(!access_token) {
+    console.warn("没有获得 google access_token")
+    console.log(" ")
+    if(res1_data?.error === undefined) {
+      console.log(res1)
+      console.log(" ")
+    }
+    return { code: "E5004", errMsg: "no access_token from GitHub" }
+  }
+  console.log(" ")
+
+  return { code: "0000", msg: "先这样", data: res1_data }
 }
 
 
@@ -76,7 +137,7 @@ async function handle_github_oauth(
       url: GH_OAUTH_ACCESS_TOKEN,
       method: "post",
       data: body1,
-      timeout: 1000,
+      timeout: 3000,
       responseType: "json",
       headers: {
         "Accept": "application/json",
@@ -95,7 +156,7 @@ async function handle_github_oauth(
 
   // 2. 解析出 access_token
   const res1_data = res1?.data ?? {}
-  console.log("res1_data: ")
+  console.log("github res1_data: ")
   console.log(res1_data)
   access_token = res1_data?.access_token
   if(!access_token) {
@@ -132,7 +193,7 @@ async function handle_github_oauth(
 
   // 4. 解析出有用的 user data from GitHub
   const res2_data = res2?.data ?? {}
-  console.log("res2_data: ")
+  console.log("github res2_data: ")
   console.log(res2_data)
   console.log(" ")
 
