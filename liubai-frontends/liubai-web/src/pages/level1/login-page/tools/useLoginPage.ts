@@ -10,6 +10,9 @@ import liuUtil from "~/utils/liu-util";
 import ider from "~/utils/basic/ider"
 import localCache from "~/utils/system/local-cache";
 import thirdLink from "~/config/third-link";
+import {
+  loadGoogleIdentityService
+} from "./handle-gis"
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -169,21 +172,10 @@ function toGetLoginInitData(
       lpData.publicKey = data.publicKey
       lpData.githubOAuthClientId = data.githubOAuthClientId
       lpData.googleOAuthClientId = data.googleOAuthClientId
+      loadGoogleIdentityService(lpData)
     }
 
     a(true)
   }
   initPromise = new Promise(_request)
-}
-
-/** 加载 Google Identity Service 脚本 */
-async function loadGoogleIdentityService(
-  lpData: LpData,
-) {
-
-  const { googleOAuthClientId } = lpData
-  if(!googleOAuthClientId) return
-
-
-
 }
