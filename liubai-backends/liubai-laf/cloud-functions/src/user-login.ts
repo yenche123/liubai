@@ -14,6 +14,9 @@ const GH_API_USER = "https://api.github.com/user"
 // Google 使用 code 去换 accessToken
 const GOOGLE_OAUTH_ACCESS_TOKEN = "https://oauth2.googleapis.com/token"
 
+// Google 使用 accessToken 去获取用户信息
+const GOOGLE_API_USER = "https://www.googleapis.com/oauth2/v3/userinfo"
+
 
 /************************ 函数们 *************************/
 
@@ -106,23 +109,59 @@ async function handle_google_oauth(
   }
   console.log(" ")
 
-  const id_token = res1_data?.id_token
-  if(id_token) {
-    try {
-      const id_res = jsonwebtoken.decode(id_token)
-      console.log("id_res: ")
-      console.log(id_res)
-      console.log(" ")
-    }
-    catch(err) {
-      console.warn("id_token 解析失败.........")
-      console.log(err)
-      console.log(" ")
+  // 可以直接从 id_token 中获取用户基本信息
+  // const id_token = res1_data?.id_token
+  // if(id_token) {
+  //   try {
+  //     const id_res = jsonwebtoken.decode(id_token)
+  //     console.log("id_res: ")
+  //     console.log(id_res)
+  //     console.log(" ")
+  //   }
+  //   catch(err) {
+  //     console.warn("id_token 解析失败.........")
+  //     console.log(err)
+  //     console.log(" ")
+  //   }
+  // }
+
+
+  // 3. 使用 access_token 去换用户信息
+  let res2: any
+  try {
+    res2 = await cloud.fetch({
+      url: GOOGLE_API_USER,
+      method: "get",
+      headers: {
+        "Authorization": `Bearer ${access_token}`,
+      }
+    })
+  }
+  catch(err) {
+    console.warn("使用 Google access_token 去换取用户信息 失败")
+    console.log(err)
+    console.log(" ")
+    return { 
+      code: "E5003", 
+      errMsg: "network err while getting google user data with access_token",
     }
   }
 
+  // 4. 解析出有用的 user data from Google
+  const res2_data = res2?.data ?? {}
+  console.log("google res2_data: ")
+  console.log(res2_data)
+  console.log(" ")
 
-  return { code: "0000", msg: "先这样", data: res1_data }
+  const { email, email_verified } = res2_data
+  if(!email) {
+    return { code: "U0002" }
+  }
+  if(!email_verified) {
+    return { code: "U0001", data: { email } }
+  }
+
+  return { code: "0000", msg: "先这样", data: res2_data }
 }
 
 
