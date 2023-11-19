@@ -20,7 +20,7 @@ export type PartialSth<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 export type RequireSth<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
 
 /*********************** 回调类型 **********************/
-export interface LiuRqReturn<T = Record<string, string | undefined>> {
+export interface LiuRqReturn<T = Record<string, any>> {
   code: string
   errMsg?: string
   showMsg?: string

@@ -2,7 +2,8 @@
 import cloud from '@lafjs/cloud'
 import jsonwebtoken from "jsonwebtoken"
 import type { LiuRqReturn } from "@/common-types"
-import { decryptWithRSA } from "@/common-util"
+import { decryptWithRSA, isEmailAndNormalize } from "@/common-util"
+import { Resend } from 'resend'
 
 /************************ 一些常量 *************************/
 // GitHub 使用 code 去换 accessToken
@@ -46,8 +47,53 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "google_oauth") {
     res = await handle_google_oauth(body)
   }
+  else if(oT === "email") {
+    res = await handle_email(body)
+  }
 
   return res
+}
+
+
+async function handle_email(
+  body: Record<string, string>,
+) {
+  const tmpEmail = body.email
+  if(!tmpEmail) {
+    return { code: "E4000", errMsg: "no email" }
+  }
+
+  const email = isEmailAndNormalize(tmpEmail)
+  if(!email) {
+    return { code: "E4000", errMsg: "the format of email is wrong" }
+  }
+
+  const _env = process.env
+  const appName = _env.LIU_APP_NAME
+  const resendApiKey = _env.LIU_RESEND_API_KEY
+  const fromEmail = _env.LIU_RESEND_FROM_EMAIL
+  if(!resendApiKey || !fromEmail) {
+    return { code: "E5001", errMsg: "no resendApiKey or fromEmail on backend" } 
+  }
+  
+  const resend = new Resend(resendApiKey)
+  const res = await resend.emails.send({
+    from: `${appName} <${fromEmail}>`,
+    to: email,
+    subject: "Hello World!",
+    text: `this is from ${appName}!`,
+    tags: [
+      {
+        name: 'category',
+        value: 'confirm_email',
+      },
+    ],
+  })
+  console.log("查看 resend 发送结果: ")
+  console.log(res)
+  console.log(" ")
+   
+  return { code: "0000", data: res }
 }
 
 

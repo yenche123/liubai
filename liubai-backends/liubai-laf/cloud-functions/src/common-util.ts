@@ -2,10 +2,21 @@
 import cloud from '@lafjs/cloud'
 import * as crypto from "crypto"
 
+
+/********************* 常量 ****************/
+export const reg_exp = {
+  // 捕捉 整个字符串都是 email
+  email_completed: /^[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*$/g,
+}
+
+
+/********************* 空函数 ****************/
 export async function main(ctx: FunctionContext) {
   console.log("do nothing with common-util")
   return true
 }
+
+/********************* 工具函数们 ****************/
 
 /**
  * 使用 RSA 的密钥解密数据
@@ -50,11 +61,35 @@ export function decryptWithRSA(encryptedText: string) {
   return { msg: "先这样" }
 }
 
-
+/** 获取 RSA private key */
 function getPrivateKey() {
   const keyPair = cloud.shared.get(`liu-rsa-key-pair`)
   const privateKey = keyPair?.privateKey
   if(!privateKey) return undefined
   return privateKey as string
 }
+
+/** 检测 val 是否为 email，若是则全转为小写 */
+export function isEmailAndNormalize(val: any) {
+  if(!val || typeof val !== "string") return false
+
+  // 最短的 email 应该长这样 a@b.cn 至少有 6 个字符
+  if(val.length < 6)  return false
+
+  // 使用正则判断是否为 email
+  const m = val.match(reg_exp.email_completed)
+  let isEmail = Boolean(m?.length)
+  if(!isEmail) return false
+
+  // 确保第一个字符和最后一个字符 不会是 \. 和 -
+  const tmps = [".", "-"]
+  const firstChar = val[0]
+  if(tmps.includes(firstChar)) return false
+  const lastChar = val[val.length - 1]
+  if(tmps.includes(lastChar)) return false
+
+  const newVal = val.toLowerCase()
+  return newVal
+}
+
 

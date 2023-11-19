@@ -15,6 +15,9 @@ declare global {
       /** 由 Laf 所定义的字段 */
       APPID: string
 
+      /** 应用名称，请以英文字母开头，并且为 \w */
+      LIU_APP_NAME: string
+
       /** 总服务状态，默认开启，仅当值为 `02` 时关闭 */
       LIU_CLOUD_ON: LiuSwitch
 
@@ -33,6 +36,7 @@ declare global {
 
       /** Resend */
       LIU_RESEND_API_KEY?: string
+      LIU_RESEND_FROM_EMAIL?: string     // 发送的 email 地址
 
     }
   }
