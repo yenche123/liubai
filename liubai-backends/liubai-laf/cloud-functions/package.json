@@ -11,7 +11,8 @@
   "dependencies": {
     "@lafjs/cloud": "1.0.0-beta.7",
     "geoip-lite": "^1.4.7",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "resend": "^2.0.0"
   },
   "devDependencies": {
     "@types/geoip-lite": "^1.4.3",

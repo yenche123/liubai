@@ -31,6 +31,9 @@ declare global {
       LIU_GOOGLE_OAUTH_CLIENT_ID?: string
       LIU_GOOGLE_OAUTH_CLIENT_SECRET?: string
 
+      /** Resend */
+      LIU_RESEND_API_KEY?: string
+
     }
   }
 }
