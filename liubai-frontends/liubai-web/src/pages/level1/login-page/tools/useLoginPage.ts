@@ -7,6 +7,7 @@ import { fetchInitLogin } from "../../tools/requests";
 import ider from "~/utils/basic/ider"
 import localCache from "~/utils/system/local-cache";
 import thirdLink from "~/config/third-link";
+import time from "~/utils/basic/time"
 import { loadGoogleIdentityService } from "./handle-gis"
 
 // 等待向后端调用 init 的结果
@@ -118,7 +119,11 @@ function handle_google(
   
   // 30 个左右字符，来自于 google 的文档
   // https://developers.google.com/identity/openid-connect/openid-connect#createxsrftoken
-  const state = ider.createRandom(30)
+  const state = lpData.state
+  if(!state) {
+    showOtherTip("login.err_1")
+    return
+  }
   localCache.setOnceData("googleOAuthState", state)
   
   const redirect_uri = window.location.origin + "/login-google"
@@ -147,7 +152,11 @@ function handle_github(
     return
   }
 
-  const state = ider.createRandom(30)
+  const state = lpData.state
+  if(!state) {
+    showOtherTip("login.err_1")
+    return
+  }
   localCache.setOnceData("githubOAuthState", state)
 
   const url = new URL(thirdLink.GITHUB_OAUTH)
@@ -168,6 +177,14 @@ function showDisableTip(thirdParty: string) {
   })
 }
 
+function showOtherTip(content_key: string) {
+  cui.showModal({
+    title_key: "login.err_login",
+    content_key,
+    showCancel: false,
+  })
+}
+
 function toGetLoginInitData(
   lpData: LpData,
 ) {
@@ -181,6 +198,9 @@ function toGetLoginInitData(
       lpData.publicKey = data.publicKey
       lpData.githubOAuthClientId = data.githubOAuthClientId
       lpData.googleOAuthClientId = data.googleOAuthClientId
+      lpData.state = data.state
+      lpData.initStamp = time.getTime()
+
       // loadGoogleIdentityService(lpData)
     }
 

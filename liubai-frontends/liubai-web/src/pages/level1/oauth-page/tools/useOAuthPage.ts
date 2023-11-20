@@ -94,7 +94,11 @@ async function enterFromGitHub(
   const body = {
     operateType: "github_oauth",
     oauth_code: code,
+    state,
   }
+  console.log("to github body: ")
+  console.log(body)
+  console.log(" ")
   const res = await liuReq.request(url, body)
   console.log(`enterFromGitHub res: `)
   console.log(res)
@@ -148,8 +152,9 @@ async function enterFromGoogle(
     operateType: "google_oauth",
     oauth_code: code,
     oauth_redirect_uri: location.origin + "/login-google",
+    state,
   }
-  console.log("body: ")
+  console.log("to google body: ")
   console.log(body)
   console.log(" ")
   const res = await liuReq.request(url, body)
