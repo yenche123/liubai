@@ -1,4 +1,5 @@
 import geoip from "geoip-lite"
+import { getNowStamp } from "@/common-time"
 
 export async function main(ctx: FunctionContext) {
 
@@ -12,7 +13,7 @@ export async function main(ctx: FunctionContext) {
     }
   }
 
-  const now = Date.now()
+  const now = getNowStamp()
   const res = {
     code: `0000`,
     data: {

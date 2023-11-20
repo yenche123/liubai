@@ -3,6 +3,7 @@ import type {
   Shared_AccessControl,
   LiuRqReturn,
 } from "@/common-types"
+import { getNowStamp } from "@/common-time"
 
 
 /****************** 一些常量 *****************/
@@ -143,7 +144,7 @@ function checkIp(ip: string) {
   const hasBlocked = blockedIps.includes(ip)
   if(hasBlocked) return false
 
-  const now = Date.now()
+  const now = getNowStamp()
 
   // 2. 访问控制
   const liuAC: Map<string, Shared_AccessControl> = gShared.get(`liu-access-control`) ?? new Map()

@@ -7,6 +7,7 @@ import type {
   Shared_RSA_Key_Pair,
   Shared_ARS_Key_IV,
 } from "@/common-types"
+import { getNowStamp } from "@/common-time"
 
 export async function main(ctx: FunctionContext) {
   console.log("__init__ 开始运行............")
@@ -123,7 +124,7 @@ async function createConfig(
   const aesKey = aesKeyBuffer.toString("base64")
   const aesIV = aesIVBuffer.toString("base64")
   
-  const now = Date.now()
+  const now = getNowStamp()
   let newCfg: PartialSth<Table_Config, "_id"> = {
     publicKey,
     privateKey,
