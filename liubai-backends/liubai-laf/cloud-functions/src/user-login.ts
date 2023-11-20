@@ -393,7 +393,7 @@ function checkIfStateIsErr(state: any): LiuRqReturn | null {
   let { createdStamp, num } = res
   num++
 
-  if(num > 5) {
+  if(num > 3) {
     liuLoginState.delete(state)
     return { code: "U0004", errMsg: "the state has been used too many times" }
   }
