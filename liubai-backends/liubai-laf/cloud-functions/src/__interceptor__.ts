@@ -16,7 +16,6 @@ const VISITED_NUM = 60
 
 // 允许不带 token 访问的云函数
 const ALLOW_WITHOUT_TOKEN = [
-  "__interceptor__",
   "hello-world",
   "user-login",
   "common-util",
@@ -38,16 +37,30 @@ export async function main(
   ctx: FunctionContext, next: any
 ) {
 
-  // 0.1 检查服务端是否已关闭
-  const env = process.env
-  if(env.LIU_CLOUD_ON === "02") {
-    ctx.response?.send({ code: "B0001" })
+  // 0.1 获取云函数名
+  const funcName = _getTargetCloudFuncName(ctx)
+  if(!funcName) {
+    console.warn(`获取云函数名称失败.......`)
+    ctx.response?.send({ code: "E5001" })
     return false
   }
 
   // 0.2 获取请求的实际 IP
   const ip = ctx.headers?.['x-real-ip']
-  console.log("--------> 当前来源 ip: ", ip)
+
+  // 0.3 是否直接通过
+  const pass = isDirectlyPass(ctx, funcName, ip)
+  if(pass) {
+    const nextRes1 = await toNext(ctx, next)
+    return nextRes1
+  }
+
+  // 0.4 检查服务端是否已关闭
+  const env = process.env
+  if(env.LIU_CLOUD_ON === "02") {
+    ctx.response?.send({ code: "B0001" })
+    return false
+  }
 
   // 1. 判断 ip 是否存在，是否为 string 类型
   if(!ip) return false
@@ -65,12 +78,21 @@ export async function main(
   }
 
   // 3. 初步检查参数是否正确
-  const res2 = checkEntry(ctx)
+  const res2 = checkEntry(ctx, funcName)
   if(!res2) {
     ctx.response?.send({ code: "E4000" })
     return false
   }
 
+  const nextRes2 = await toNext(ctx, next)
+  return nextRes2
+}
+
+
+async function toNext(
+  ctx: FunctionContext,
+  next: any,
+) {
   let nextRes: LiuRqReturn<any> | null = null
   try {
     nextRes = await next(ctx)
@@ -81,43 +103,76 @@ export async function main(
     return { code: `E5002` }
   }
 
-  return nextRes 
+  return nextRes
 }
+
+
+// [TODO]: 正式上线时，务必进行修改！！！！！！！！
+function isDirectlyPass(
+  ctx: FunctionContext, 
+  funcName: string,
+  ip: string | string[] | undefined
+) {
+  const theHeaders = ctx.headers ?? {}
+  const xLafTriggerToken = theHeaders['x-laf-trigger-token']
+
+  console.log(" ")
+  console.log("=========== 当前入参特征信息 ===========")
+  console.log("目标函数: ", funcName)
+  console.log("当前 ip: ", ip)
+  console.log("x-laf-trigger-token: ", xLafTriggerToken)
+  console.log("=========== ============== ===========")
+
+  // 1. 如果是 __init__ 函数，直接通过
+  if(funcName === `__init__`) {
+    return true
+  }
+
+  // 2. 如果是 __interceptor__
+  if(funcName === "__interceptor__") {
+    return true
+  }
+
+  // 3. debug 系统，暂时通过
+  if(funcName.startsWith("debug-")) {
+    return true
+  }
+
+  // 4. 定时系统，暂时通过
+  if(funcName.startsWith("clock-")) {
+    if(xLafTriggerToken) return true
+  }
+  
+  return false
+}
+
 
 
 /**
  * 检查入参是否正确
  */
-function checkEntry(ctx: FunctionContext) {
+function checkEntry(ctx: FunctionContext, funcName: string) {
 
-  // 1. 获取云函数名
-  const funcName = _getTargetCloudFuncName(ctx)
-  if(!funcName) {
-    console.warn(`获取云函数名称失败.......`)
-    ctx.response?.send({ code: "E5001" })
+  // 1. 检查常规的 x_liu_
+  const body = ctx.request?.body ?? {}
+
+  try {
+    for(let i=0; i<X_LIU_NORMAL.length; i++) {
+      const v = X_LIU_NORMAL[i]
+      const data = body[v]
+      console.log(`${v}: `, data)
+      if(!data) return false
+    }
+  }
+  catch(err) {
+    console.warn("获取 body 中的字段时，报错了.......")
+    console.log(err)
+    console.log(" ")
     return false
   }
+  console.log(" ")
 
-  // 2. 如果是 __init__ 函数，直接通过
-  if(funcName === `__init__`) {
-    return true
-  }
-
-  // [WARNING] debug 系统，暂时通过
-  if(funcName.startsWith("debug-")) {
-    return true
-  }
-
-  // 3. 检查常规的 x_liu_
-  const body = ctx.request?.body ?? {}
-  for(let i=0; i<X_LIU_NORMAL.length; i++) {
-    const v = X_LIU_NORMAL[i]
-    const data = body[v]
-    console.log(`${v}: `, data)
-    if(!data) return false
-  }
-
-  // 4. 是否无需 token
+  // 2. 是否无需 token
   const allowNoToken = ALLOW_WITHOUT_TOKEN.includes(funcName)
   if(allowNoToken) return true
 
