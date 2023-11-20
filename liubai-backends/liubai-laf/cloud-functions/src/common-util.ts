@@ -18,12 +18,6 @@ export async function main(ctx: FunctionContext) {
 
 /********************* 工具函数们 ****************/
 
-/** 获取当前时间戳 */
-export function getNowStamp() {
-  return Date.now()
-}
-
-
 /**
  * 使用 RSA 的密钥解密数据
  * @param encryptedText base64 格式的密文

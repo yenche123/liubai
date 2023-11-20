@@ -1,7 +1,8 @@
 // 用户登录、注册、进入
 import cloud from '@lafjs/cloud'
 import type { LiuRqReturn, Shared_LoginState } from "@/common-types"
-import { getNowStamp, decryptWithRSA, isEmailAndNormalize } from "@/common-util"
+import { decryptWithRSA, isEmailAndNormalize } from "@/common-util"
+import { getNowStamp, MINUTE } from "@/common-time"
 import { createLoginState } from "@/common-ids"
 import { Resend } from 'resend'
 
@@ -65,6 +66,10 @@ async function handle_email(
     return { code: "E4000", errMsg: "the format of email is wrong" }
   }
 
+  const state = body.state
+  const res0 = checkIfStateIsErr(state)
+  if(res0) return res0
+
   const _env = process.env
   const appName = _env.LIU_APP_NAME
   const resendApiKey = _env.LIU_RESEND_API_KEY
@@ -105,6 +110,9 @@ async function handle_google_oauth(
   if(!redirect_uri) {
     return { code: "E4000", errMsg: "no oauth_redirect_uri" }
   }
+  const state = body.state
+  const res0 = checkIfStateIsErr(state)
+  if(res0) return res0
 
   const _env = process.env
   const client_id = _env.LIU_GOOGLE_OAUTH_CLIENT_ID
@@ -215,6 +223,10 @@ async function handle_github_oauth(
   if(!oauth_code) {
     return { code: "E4000", errMsg: "no oauth_code" }
   }
+
+  const state = body.state
+  const res0 = checkIfStateIsErr(state)
+  if(res0) return res0
 
   const _env = process.env
   const client_id = _env.LIU_GITHUB_OAUTH_CLIENT_ID
@@ -341,8 +353,7 @@ function handle_init() {
 
 /** 去制造 state 并存到全局缓存里，再返回 */
 function generateState() {
-  const gShared = cloud.shared
-  const liuLoginState: Map<string, Shared_LoginState> = gShared.get('liu-login-state') ?? new Map()
+  const liuLoginState = getLiuLoginState()
 
   let state = ""
   let times = 0
@@ -353,6 +364,7 @@ function generateState() {
     if(!existed) {
       const now = getNowStamp()
       liuLoginState.set(state, { num: 0, createdStamp: now })
+      cloud.shared.set("liu-login-state", liuLoginState)
       break
     }
   }
@@ -360,7 +372,44 @@ function generateState() {
   return state
 }
 
+function getLiuLoginState() {
+  const gShared = cloud.shared
+  const map: Map<string, Shared_LoginState> = gShared.get('liu-login-state') ?? new Map()
+  return map
+}
 
+
+/** 检测 state 是否正常，若正常返回 null，若不正常返回 LiuRqReturn */
+function checkIfStateIsErr(state: any): LiuRqReturn | null {
+  const liuLoginState = getLiuLoginState()
+  if(!state || typeof state !== "string") {
+    return { code: "U0004" }
+  }
+  const res = liuLoginState.get(state)
+  if(!res) {
+    return { code: "U0004", errMsg: "the state is required" }
+  }
+
+  let { createdStamp, num } = res
+  num++
+
+  if(num > 5) {
+    liuLoginState.delete(state)
+    return { code: "U0004", errMsg: "the state has been used too many times" }
+  }
+
+  const now = getNowStamp()
+  const diff = now - createdStamp
+  const isMoreThan10Mins = diff > (10 * MINUTE)
+  if(isMoreThan10Mins) {
+    liuLoginState.delete(state)
+    return { code: "U0003", errMsg: "the state has been expired" }
+  }
+
+  
+  liuLoginState.set(state, { createdStamp, num })
+  return null
+}
 
 
 
