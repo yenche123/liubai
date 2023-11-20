@@ -3,7 +3,7 @@ import type {
   Shared_AccessControl,
   LiuRqReturn,
 } from "@/common-types"
-import { getNowStamp } from "@/common-time"
+import { getNowStamp, MINUTE } from "@/common-time"
 
 
 /****************** 一些常量 *****************/
@@ -163,7 +163,6 @@ function checkIp(ip: string) {
     recentVisitStamps = []
   } = ipAtom
   const diff = now - lastLifeCircleStamp
-  const MINUTE = 60 * 1000
 
   // 4. 收集最近 VISITED_NUM 个访问时间戳
   recentVisitStamps.push(now)
