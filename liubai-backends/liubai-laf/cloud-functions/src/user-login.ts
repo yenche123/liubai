@@ -1,8 +1,8 @@
 // 用户登录、注册、进入
 import cloud from '@lafjs/cloud'
-import jsonwebtoken from "jsonwebtoken"
-import type { LiuRqReturn } from "@/common-types"
-import { decryptWithRSA, isEmailAndNormalize } from "@/common-util"
+import type { LiuRqReturn, Shared_LoginState } from "@/common-types"
+import { getNowStamp, decryptWithRSA, isEmailAndNormalize } from "@/common-util"
+import { createLoginState } from "@/common-ids"
 import { Resend } from 'resend'
 
 /************************ 一些常量 *************************/
@@ -37,9 +37,6 @@ export async function main(ctx: FunctionContext) {
   let res: LiuRqReturn = { code: "E4000" }
   if(oT === "init") {
     res = handle_init()
-  }
-  else if(oT === "test") {
-    res = handle_test(body)
   }
   else if(oT === "github_oauth") {
     res = await handle_github_oauth(body)
@@ -302,16 +299,6 @@ async function handle_github_oauth(
   return { code: "0000", data: res2_data }
 }
 
-function handle_test(
-  body: any,
-) {
-  const encryptedText = body.encryptedText
-  if(!encryptedText) {
-    return { code: "E4000", errMsg: "no encryptedText" }
-  }
-  const data = decryptWithRSA(encryptedText)
-  return { code: "0000", data }
-}
 
 function getPublicKey() {
   const keyPair = cloud.shared.get(`liu-rsa-key-pair`)
@@ -332,8 +319,11 @@ function handle_init() {
   const googleOAuthClientId = _env.LIU_GOOGLE_OAUTH_CLIENT_ID
   const googleOAuthClientSecret = _env.LIU_GOOGLE_OAUTH_CLIENT_SECRET
 
+
+  const state = generateState()
   const data: Record<string, string | undefined> = {
     publicKey,
+    state,
   }
 
   // 如果 GitHub OAuth 有存在的话
@@ -347,6 +337,27 @@ function handle_init() {
   }
 
   return { code: `0000`, data }
+}
+
+/** 去制造 state 并存到全局缓存里，再返回 */
+function generateState() {
+  const gShared = cloud.shared
+  const liuLoginState: Map<string, Shared_LoginState> = gShared.get('liu-login-state') ?? new Map()
+
+  let state = ""
+  let times = 0
+  while(true) {
+    if(times++ > 10) break
+    state = createLoginState()
+    const existed = liuLoginState.has(state)
+    if(!existed) {
+      const now = getNowStamp()
+      liuLoginState.set(state, { num: 0, createdStamp: now })
+      break
+    }
+  }
+
+  return state
 }
 
 

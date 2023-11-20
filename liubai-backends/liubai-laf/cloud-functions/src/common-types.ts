@@ -390,3 +390,9 @@ export interface Shared_AccessControl {
   visitNum: number
   recentVisitStamps: number[]
 }
+
+/** 登录接口的访问控制之一 */
+export interface Shared_LoginState {
+  createdStamp: number
+  num: number
+}
