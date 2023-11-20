@@ -26,6 +26,9 @@ declare global {
       */
       LIU_CLOUD_LOGIN: LiuSwitch | "03"
 
+      /** 内部 debug 时，通行码 */
+      LIU_DEBUG_KEY?: string
+
       /** GitHub OAuth */
       LIU_GITHUB_OAUTH_CLIENT_ID?: string
       LIU_GITHUB_OAUTH_CLIENT_SECRET?: string

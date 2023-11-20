@@ -1,5 +1,6 @@
 import cloud from '@lafjs/cloud'
 import type { 
+  BaseIsOn,
   Shared_AccessControl,
   LiuRqReturn,
 } from "@/common-types"
@@ -49,39 +50,43 @@ export async function main(
   const ip = ctx.headers?.['x-real-ip']
 
   // 0.3 是否直接通过
-  const pass = isDirectlyPass(ctx, funcName, ip)
-  if(pass) {
+  const preRes = preCheck(ctx, funcName, ip)
+  if(preRes === "Y") {
     const nextRes1 = await toNext(ctx, next)
     return nextRes1
   }
+  if(preRes === "N") {
+    console.warn("非法访问.............")
+    return { code: "E4003" }
+  }
+  
 
   // 0.4 检查服务端是否已关闭
   const env = process.env
   if(env.LIU_CLOUD_ON === "02") {
-    ctx.response?.send({ code: "B0001" })
-    return false
+    return { code: "B0001" }
   }
 
   // 1. 判断 ip 是否存在，是否为 string 类型
-  if(!ip) return false
+  if(!ip) {
+    console.warn(`当前 ip 不存在.......`)
+    return { code: "E5001" }
+  }
   if(typeof ip !== "string") {
     console.warn(`当前 ip 不是 string 属性.......`)
-    ctx.response?.send({ code: "E5001" })
-    return false
+    return { code: "E5001" }
   }
 
   // 2. 检查 ip
   const res = checkIp(ip)
   if(!res) {
-    ctx.response?.send({ code: "E4003" })
-    return false
+    return { code: "E4003" }
   }
 
-  // 3. 初步检查参数是否正确
+  // 3. 检查参数是否正确
   const res2 = checkEntry(ctx, funcName)
   if(!res2) {
-    ctx.response?.send({ code: "E4000" })
-    return false
+    return { code: "E4000" }
   }
 
   const nextRes2 = await toNext(ctx, next)
@@ -107,43 +112,56 @@ async function toNext(
 }
 
 
-// [TODO]: 正式上线时，务必进行修改！！！！！！！！
-function isDirectlyPass(
+function preCheck(
   ctx: FunctionContext, 
   funcName: string,
   ip: string | string[] | undefined
-) {
+): BaseIsOn | null {
   const theHeaders = ctx.headers ?? {}
   const xLafTriggerToken = theHeaders['x-laf-trigger-token']
+  const debugKey = theHeaders['x-liu-debug-key']
+
+  const _env = process.env
+  let isDebugging = false
+  if(debugKey && debugKey === _env.LIU_DEBUG_KEY) {
+    isDebugging = true
+  }
 
   console.log(" ")
   console.log("=========== 当前入参特征信息 ===========")
+  console.log("debugKey: ", debugKey)
+  console.log("isDebugging: ", isDebugging)
   console.log("目标函数: ", funcName)
   console.log("当前 ip: ", ip)
   console.log("x-laf-trigger-token: ", xLafTriggerToken)
   console.log("=========== ============== ===========")
 
+
   // 1. 如果是 __init__ 函数，直接通过
   if(funcName === `__init__`) {
-    return true
+    if(isDebugging) return "Y"
+    return "N"
   }
 
   // 2. 如果是 __interceptor__
   if(funcName === "__interceptor__") {
-    return true
+    if(isDebugging) return "Y"
+    return "N"
   }
 
   // 3. debug 系统，暂时通过
   if(funcName.startsWith("debug-")) {
-    return true
+    if(isDebugging) return "Y"
+    return "N"
   }
 
   // 4. 定时系统，暂时通过
   if(funcName.startsWith("clock-")) {
-    if(xLafTriggerToken) return true
+    if(xLafTriggerToken) return "Y"
+    return "N"
   }
   
-  return false
+  return null
 }
 
 
