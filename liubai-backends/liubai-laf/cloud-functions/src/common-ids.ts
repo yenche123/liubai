@@ -10,13 +10,20 @@ export async function main(ctx: FunctionContext) {
 /********************* 工具函数们 ****************/
 
 // 创建随机字符串
-export function createRandom(digits: number = 30) {
-  const ABC = "123456789abcdefghijkmnopqrstuvwxyz"
-  const charset = ABC.length
+export function createRandom(
+  digits: number = 30,
+  allowUppercase: boolean = false,
+) {
+  let abc = "123456789abcdefghijkmnopqrstuvwxyz"
+  if(allowUppercase) {
+    abc += "ABCDEFGHJKLMNPQRSTUVWXYZ"
+  }
+
+  const charset = abc.length
   let randomString = ""
   for(let i=0; i<digits; i++) {
     const r = crypto.randomInt(0, charset)
-    randomString += ABC[r]
+    randomString += abc[r]
   }
   return randomString
 }
@@ -24,4 +31,11 @@ export function createRandom(digits: number = 30) {
 // 创建用于 user-login 接口的 "state"
 export function createLoginState() {
   return "s0" + createRandom()
+}
+
+// 创建 token 
+export function createToken() {
+  let token = "tk_" + createRandom(17, true) + "-" + createRandom(17, true)
+  token += ("-" + createRandom(17, true) + "-" + createRandom(17, true))
+  return token
 }

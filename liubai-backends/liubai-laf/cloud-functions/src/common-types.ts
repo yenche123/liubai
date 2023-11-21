@@ -221,6 +221,16 @@ export interface Cloud_ImageStore {
 }
 
 
+/*********************** 杂七杂八的 **********************/
+// 新增类型前，记得全局搜索一下，避免冲突
+
+// User 表里的 thirdData 字段的类型
+export interface UserThirdData {
+  google?: any
+  github?: any
+}
+
+
 /*********************** 数据表类型 **********************/
 
 /** Token表 */
@@ -240,6 +250,7 @@ export interface Table_User extends BaseTable {
   createdStamp: number
   email?: string
   phone?: string
+  thirdData?: UserThirdData
   theme: "system" | "light" | "dark" | "auto"
   systemTheme?: "light" | "dark"
   language: "en" | "zh-Hans" | "zh-Hant"

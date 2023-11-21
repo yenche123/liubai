@@ -1,6 +1,11 @@
 // 用户登录、注册、进入
 import cloud from '@lafjs/cloud'
-import type { LiuRqReturn, Shared_LoginState } from "@/common-types"
+import type { 
+  LiuRqReturn, 
+  Shared_LoginState, 
+  Table_User, 
+  UserThirdData 
+} from "@/common-types"
 import { decryptWithRSA, isEmailAndNormalize } from "@/common-util"
 import { getNowStamp, MINUTE } from "@/common-time"
 import { createLoginState } from "@/common-ids"
@@ -204,7 +209,8 @@ async function handle_google_oauth(
   console.log(res2_data)
   console.log(" ")
 
-  const { email, email_verified } = res2_data
+  let { email, email_verified } = res2_data
+  email = isEmailAndNormalize(email)
   if(!email) {
     return { code: "U0002" }
   }
@@ -308,7 +314,127 @@ async function handle_github_oauth(
   console.log(res2_data)
   console.log(" ")
 
+  // login: 为 github 的用户名，可以用来初始化 name
+  // email: 正如其名
+  let { login, email } = res2_data
+  email = isEmailAndNormalize(email)
+  if(!login) {
+    return {
+      code: "E5004",
+      errMsg: "there is no login from github api user"
+    }
+  }
+  if(!email) {
+    return {
+      code: "U0002",
+      errMsg: "there is no email from github api user"
+    }
+  }
+
+  const res3 = await findUserByEmail(email)
+
+  // 拒绝登录、或遭遇异常
+  if(res3.type === 1) {
+    return res3.rqReturn
+  }
+
+  // 去登录
+  if(res3.type === 2) {
+
+  }
+
+  // 去注册
+
+
   return { code: "0000", data: res2_data }
+}
+
+
+async function sign_in(
+  body: Record<string, string>,
+  user: Table_User,
+  thirdData?: UserThirdData,
+) {
+  
+}
+
+
+// 关键的登录 id，比如 email 或 phone 或其他平台的 openid
+interface SignUpParam2 {
+  email?: string
+  phone?: string
+}
+
+async function sign_up(
+  body: Record<string, string>,
+  param2: SignUpParam2,
+  thirdData?: UserThirdData,
+) {
+
+  const { email, phone } = param2
+  if(!email && !phone) {
+    return { code: "E5001", errMsg: "there is no required data in sign_up" }
+  }
+
+
+
+  
+
+  
+}
+
+
+
+type FUBERes = {
+  type: 1
+  rqReturn: LiuRqReturn
+} | {
+  type: 2
+  user: Table_User
+} | {
+  type: 3
+}
+
+/**
+ * 使用 email 去查找用户
+ * @param email 邮箱地址
+ */
+async function findUserByEmail(
+  email: string
+): Promise<FUBERes> {
+  email = email.toLowerCase()
+
+  const db = cloud.database()
+  const w = {
+    email,
+  }
+  const res = await db.collection("User").where(w).get<Table_User>()
+  console.log("findUserByEmail res ----->")
+  console.log("res.code: ", res.code)
+  console.log("res.data: ", res.data)
+  console.log("res.ok: ", res.ok)
+  console.log(" ")
+  const list = res.data
+  if(list.length < 1) return { type: 3 }
+  const u = list[0]
+  
+  if(u.oState === "DELETED") {
+    return {
+      type: 1,
+      rqReturn: {
+        code: "E5001", 
+        errMsg: "getting a DELETED user while calling findUserByEmail",
+      }
+    }
+  }
+  if(u.oState === "LOCK") {
+    return {
+      type: 1,
+      rqReturn: { code: "E4007" }
+    }
+  }
+
+  return { type: 2, user: u }
 }
 
 
