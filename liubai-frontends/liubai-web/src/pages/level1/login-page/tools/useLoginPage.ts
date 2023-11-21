@@ -13,6 +13,9 @@ import { loadGoogleIdentityService } from "./handle-gis"
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
 
+// 避免 initPromise 还没 resolve 时，用户多次点击多次触发
+let hasTap = false
+
 export function useLoginPage() {
   const { myProfile } = useMyProfile()
 
@@ -48,7 +51,11 @@ export function useLoginPage() {
   }
 
   const onTapLoginViaThirdParty = async (tp: LoginByThirdParty) => {
+    if(hasTap) return
+    hasTap = true
     let res = await initPromise
+    hasTap = false
+
     if(res) whenTapLoginViaThirdParty(tp, lpData)
   }
 
