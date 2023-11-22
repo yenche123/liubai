@@ -1,7 +1,9 @@
 // 用户登录、注册、进入
 import cloud from '@lafjs/cloud'
 import type { 
+  PartialSth,
   LiuRqReturn, 
+  SupportedTheme,
   Shared_LoginState, 
   Table_User, 
   UserThirdData 
@@ -370,17 +372,96 @@ async function sign_up(
   param2: SignUpParam2,
   thirdData?: UserThirdData,
 ) {
-
   const { email, phone } = param2
   if(!email && !phone) {
     return { code: "E5001", errMsg: "there is no required data in sign_up" }
   }
 
+  const now = getNowStamp()
 
+  let systemTheme = body["x_liu_theme"] as SupportedTheme
+  if(systemTheme !== "light" && systemTheme !== "dark") {
+    systemTheme = "light"
+  }
+
+  let systemLanguage = body["x_liu_language"]
+
+
+  // 1. 构造 User
+  const user: PartialSth<Table_User, "_id"> = {
+    insertedStamp: now,
+    updatedStamp: now,
+    oState: "NORMAL",
+    email,
+    phone,
+    thirdData,
+    theme: "system",
+    systemTheme,
+    language: "system",
+    systemLanguage,
+  }
+
+  // 2. 去创造 User
+  const db = cloud.database()
+  let res1 = await db.collection("User").add(user)
+  if(!res1 || !res1.id) {
+    return { code: "E5001", errMsg: "fail to add" }
+  }
+  const userId = res1.id
+  const newUser: Table_User = {
+    ...user,
+    _id: userId,
+  }
+
+  // 3. 去创造 workspace
+
+
+  // 4. 去创造 member
+
+
+  // 5. 然后去登录
 
   
+}
 
-  
+interface _CancelSignUpParam {
+  userId: string
+  workspaceId?: string
+  memberId?: string
+}
+
+async function _cancelSignUp(
+  param: _CancelSignUpParam,
+) {
+  const db = cloud.database()
+
+  console.log("_cancelSignUp::")
+  console.log(param)
+  console.log(" ")
+
+  const q1 = db.collection("User").where({ _id: param.userId })
+  const res1 = await q1.remove()
+  console.log("删除 user 的结果......")
+  console.log(res1)
+  console.log(" ")
+
+  if(param.workspaceId) {
+    const q2 = db.collection("Workspace").where({ _id: param.workspaceId })
+    const res2 = await q2.remove()
+    console.log("删除 workspace 的结果......")
+    console.log(res1)
+    console.log(" ")
+  }
+
+  if(param.memberId) {
+    const q3 = db.collection("Member").where({ _id: param.memberId })
+    const res3 = await q3.remove()
+    console.log("删除 member 的结果......")
+    console.log(res3)
+    console.log(" ")
+  }
+
+  return true
 }
 
 

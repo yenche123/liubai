@@ -1,6 +1,7 @@
 // 存放一些公共函数
 import cloud from '@lafjs/cloud'
 import * as crypto from "crypto"
+import type { SupportedLocale } from './common-types'
 
 
 /********************* 常量 ****************/
@@ -16,7 +17,7 @@ export async function main(ctx: FunctionContext) {
   return true
 }
 
-/********************* 工具函数们 ****************/
+/********************* Crypto 加解密相关的函数 ****************/
 
 /**
  * 使用 RSA 的密钥解密数据
@@ -69,6 +70,9 @@ function getPrivateKey() {
   return privateKey as string
 }
 
+
+/********************* 一些 “归一化” 相关的函数 *****************/
+
 /** 检测 val 是否为 email，若是则全转为小写 */
 export function isEmailAndNormalize(val: any) {
   if(!val || typeof val !== "string") return false
@@ -90,6 +94,18 @@ export function isEmailAndNormalize(val: any) {
 
   const newVal = val.toLowerCase()
   return newVal
+}
+
+export function normalizeLanguage(val: string): SupportedLocale {
+  val = val.toLowerCase()
+  if(!val) return "en"
+
+  if(val === "zh-tw") return "zh-Hant"
+  if(val === "zh-hk") return "zh-Hant"
+  if(val === "zh-cn") return "zh-Hans"
+  if(val.startsWith("zh")) return "zh-Hans"
+
+  return "en"
 }
 
 

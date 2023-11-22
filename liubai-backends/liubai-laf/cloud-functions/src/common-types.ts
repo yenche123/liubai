@@ -34,8 +34,19 @@ export type BaseIsOn = "Y" | "N"
 export type OState = "OK" | "REMOVED" | "DELETED"
 export type OState_2 = "OK" | "CANCELED"
 
+export type SupportedTheme = "light" | "dark"
+export type LocalTheme = SupportedTheme | "system" | "auto"   // auto 就是日夜切换
+
+export const supportedLocales = [
+  "en",
+  "zh-Hans",
+  "zh-Hant"
+] as const
+
+export type SupportedLocale = typeof supportedLocales[number]
+
 interface BaseTable {
-  _id: string
+  _id: string | number
   insertedStamp: number
   updatedStamp: number
 }
@@ -247,13 +258,12 @@ export interface Table_Token extends BaseTable {
 /** User表 */
 export interface Table_User extends BaseTable {
   oState: "NORMAL" | "DEACTIVATED" | "LOCK" | "REMOVED" | "DELETED"
-  createdStamp: number
   email?: string
   phone?: string
   thirdData?: UserThirdData
-  theme: "system" | "light" | "dark" | "auto"
-  systemTheme?: "light" | "dark"
-  language: "en" | "zh-Hans" | "zh-Hant"
+  theme: LocalTheme
+  systemTheme?: SupportedTheme
+  language: "system" | SupportedLocale
   systemLanguage?: string
 }
 
