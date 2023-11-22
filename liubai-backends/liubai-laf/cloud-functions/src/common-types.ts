@@ -46,7 +46,7 @@ export const supportedLocales = [
 export type SupportedLocale = typeof supportedLocales[number]
 
 interface BaseTable {
-  _id: string | number
+  _id: string
   insertedStamp: number
   updatedStamp: number
 }

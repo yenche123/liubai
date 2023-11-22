@@ -6,9 +6,11 @@ import type {
   SupportedTheme,
   Shared_LoginState, 
   Table_User, 
-  UserThirdData 
+  UserThirdData, 
+  Table_Workspace,
+  Table_Member,
 } from "@/common-types"
-import { decryptWithRSA, isEmailAndNormalize } from "@/common-util"
+import { decryptWithRSA, isEmailAndNormalize, getDocAddId } from "@/common-util"
 import { getNowStamp, MINUTE } from "@/common-time"
 import { createLoginState } from "@/common-ids"
 import { Resend } from 'resend'
@@ -377,8 +379,6 @@ async function sign_up(
     return { code: "E5001", errMsg: "there is no required data in sign_up" }
   }
 
-  const now = getNowStamp()
-
   let systemTheme = body["x_liu_theme"] as SupportedTheme
   if(systemTheme !== "light" && systemTheme !== "dark") {
     systemTheme = "light"
@@ -388,6 +388,7 @@ async function sign_up(
 
 
   // 1. 构造 User
+  const now = getNowStamp()
   const user: PartialSth<Table_User, "_id"> = {
     insertedStamp: now,
     updatedStamp: now,
@@ -403,24 +404,38 @@ async function sign_up(
 
   // 2. 去创造 User
   const db = cloud.database()
-  let res1 = await db.collection("User").add(user)
-  if(!res1 || !res1.id) {
-    return { code: "E5001", errMsg: "fail to add" }
+  const res1 = await db.collection("User").add(user)
+  const userId = getDocAddId(res1)
+  if(!userId) {
+    return { code: "E5001", errMsg: "fail to add an user" }
   }
-  const userId = res1.id
   const newUser: Table_User = {
     ...user,
     _id: userId,
   }
 
   // 3. 去创造 workspace
-
+  const now2 = getNowStamp()
+  const workspace: PartialSth<Table_Workspace, "_id"> = {
+    insertedStamp: now,
+    updatedStamp: now,
+    infoType: "ME",
+    oState: "OK",
+    owner: userId,
+  }
+  const res2 = await db.collection("Workspace").add(workspace)
+  const spaceId = getDocAddId(res2)
+  if(!spaceId) {
+    _cancelSignUp({ userId })
+    return { code: "E5001", errMsg: "fail to add an workspace" }
+  }
 
   // 4. 去创造 member
+  const now3 = getNowStamp()
 
 
   // 5. 然后去登录
-
+  await sign_in(body, newUser, thirdData)
   
 }
 

@@ -71,6 +71,35 @@ function getPrivateKey() {
 }
 
 
+/********************* 一些工具函数 *****************/
+
+
+/**
+ * 获取新增的数据的 _id
+ * @param res 运行 await collection(表名).add() 后的返回数据
+ */
+export function getDocAddId(res: any) {
+  if(!res) {
+    console.log("getDocAddId() the res has not existed")
+    return null
+  }
+
+  const _id = res.id
+  if(!_id) {
+    console.log("getDocAddId() _id has not existed")
+    return null
+  }
+
+  if(typeof _id !== "string") {
+    console.log("getDocAddId() _id is not string")
+    return null
+  }
+
+  return _id
+}
+
+
+
 /********************* 一些 “归一化” 相关的函数 *****************/
 
 /** 检测 val 是否为 email，若是则全转为小写 */
