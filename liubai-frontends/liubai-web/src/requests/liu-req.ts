@@ -4,6 +4,7 @@ import type { LiuRqOpt, LiuRqReturn } from "./tools/types"
 import valTool from "~/utils/basic/val-tool"
 import time from "~/utils/basic/time"
 import typeCheck from "~/utils/basic/type-check"
+import liuApi from "~/utils/liu-api"
 
 function _getBody<U extends Record<string, any>>(
   body?: U,
@@ -12,6 +13,7 @@ function _getBody<U extends Record<string, any>>(
   const p = localCache.getPreference()
   const b: Record<string, any> = {
     x_liu_language: navigator.language,
+    x_liu_theme: liuApi.getThemeFromSystem(),
     x_liu_version: LIU_ENV.version,
     x_liu_stamp: time.getTime(),
     x_liu_timezone: time.getTimezone().toFixed(1),
