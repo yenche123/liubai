@@ -61,7 +61,7 @@ export function useLpMain(
 
   const onEmailEnter = () => {
     if(!lpmData.showEmailSubmit) return
-    const email = lpmData.emailVal.trim()
+    const email = lpmData.emailVal.trim().toLowerCase()
     emit("submitemail", email)
 
     const el = lpEmailInput.value

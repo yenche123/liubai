@@ -1,10 +1,9 @@
 import { reactive } from "vue";
 import type { LpData, LoginByThirdParty } from "./types";
-import { useMyProfile } from "~/hooks/useCommon";
 import type { BoolFunc } from "~/utils/basic/type-tool";
 import cui from "~/components/custom-ui";
 import { fetchInitLogin } from "../../tools/requests";
-import ider from "~/utils/basic/ider"
+import { getClientKeyEncrypted } from "../../tools/common-utils"
 import localCache from "~/utils/system/local-cache";
 import thirdLink from "~/config/third-link";
 import time from "~/utils/basic/time"
@@ -17,8 +16,6 @@ let initPromise: Promise<boolean>
 let hasTap = false
 
 export function useLoginPage() {
-  const { myProfile } = useMyProfile()
-
   const lpData = reactive<LpData>({
     view: "main",
     email: "",
@@ -29,21 +26,11 @@ export function useLoginPage() {
 
   const onEmailSubmitted = (email: string) => {
     if(!isEverythingOkay(lpData.initCode)) return
-
-    // TODO: 先直接跳到 lp-code 界面
-    lpData.email = email
-    lpData.view = "code"
+    toSubmitEmailAddress(email, lpData)
   }
 
   const onSubmitCode = (code: string) => {
-    // TODO: 先直接去打开 "accounts"
-    const me = myProfile.value
-    if(!me) {
-      console.log("打不开我")
-      return
-    }
-    lpData.accounts = [me]
-    lpData.view = "accounts"
+    toSubmitEmailAndCode(code, lpData)
   }
 
   const onBackFromCode = () => {
@@ -68,6 +55,34 @@ export function useLoginPage() {
     onTapLoginViaThirdParty,
   }
 }
+
+async function toSubmitEmailAddress(
+  email: string,
+  lpData: LpData,
+) {
+
+  // TODO: 先直接跳到 lp-code 界面
+  lpData.email = email
+  lpData.view = "code"
+
+}
+
+/** 记得做防抖节流，避免多次点击 */
+async function toSubmitEmailAndCode(
+  code: string,
+  lpData: LpData,
+) {
+  const pem = lpData.publicKey
+  if(!pem) return
+
+  const client_key = await getClientKeyEncrypted(pem)
+  console.log("client_key: ")
+  console.log(client_key)
+
+  // TODO: 去打开 "accounts"，如果要选择账号的话
+
+}
+
 
 function isEverythingOkay(
   initCode?: string
