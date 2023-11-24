@@ -3,7 +3,6 @@ import type { LpData, LoginByThirdParty } from "./types";
 import type { BoolFunc } from "~/utils/basic/type-tool";
 import cui from "~/components/custom-ui";
 import { fetchInitLogin } from "../../tools/requests";
-import { getClientKeyEncrypted } from "../../tools/common-utils"
 import localCache from "~/utils/system/local-cache";
 import thirdLink from "~/config/third-link";
 import time from "~/utils/basic/time"
@@ -75,9 +74,6 @@ async function toSubmitEmailAndCode(
   const pem = lpData.publicKey
   if(!pem) return
 
-  const client_key = await getClientKeyEncrypted(pem)
-  console.log("client_key: ")
-  console.log(client_key)
 
   // TODO: 去打开 "accounts"，如果要选择账号的话
 
@@ -216,16 +212,18 @@ function toGetLoginInitData(
     const data = res?.data
 
     lpData.initCode = code
-    if(data) {
-      lpData.publicKey = data.publicKey
-      lpData.githubOAuthClientId = data.githubOAuthClientId
-      lpData.googleOAuthClientId = data.googleOAuthClientId
-      lpData.state = data.state
-      lpData.initStamp = time.getTime()
-
-      // loadGoogleIdentityService(lpData)
+    if(!data || !data.publicKey) {
+      a(false)
+      return
     }
 
+    lpData.publicKey = data.publicKey
+    lpData.githubOAuthClientId = data.githubOAuthClientId
+    lpData.googleOAuthClientId = data.googleOAuthClientId
+    lpData.state = data.state
+    lpData.initStamp = time.getTime()
+
+    // loadGoogleIdentityService(lpData)
     a(true)
   }
   initPromise = new Promise(_request)

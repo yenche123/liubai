@@ -86,6 +86,14 @@ async function enterFromGitHub(
     return
   }
 
+  // 2.5 获取 enc_client_key
+  const enc_client_key = onceData.enc_client_key
+  if(!enc_client_key) {
+    console.warn("enc_client_key is required")
+    console.log(" ")
+    return
+  }
+
   // 3. 清除 query
   rr.router.replace({ name: "login-github" })
 
@@ -95,6 +103,7 @@ async function enterFromGitHub(
     operateType: "github_oauth",
     oauth_code: code,
     state,
+    enc_client_key,
   }
   console.log("to github body: ")
   console.log(body)
@@ -143,6 +152,14 @@ async function enterFromGoogle(
     return
   }
 
+  // 2.5 获取 enc_client_key
+  const enc_client_key = onceData.enc_client_key
+  if(!enc_client_key) {
+    console.warn("enc_client_key is required")
+    console.log(" ")
+    return
+  }
+
   // 3. 清除 query
   rr.router.replace({ name: "login-google" })
 
@@ -153,6 +170,7 @@ async function enterFromGoogle(
     oauth_code: code,
     oauth_redirect_uri: location.origin + "/login-google",
     state,
+    enc_client_key,
   }
   console.log("to google body: ")
   console.log(body)

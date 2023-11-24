@@ -21,6 +21,9 @@ export interface LocalOnceData {
   // 使用 Google 登录时，一次性 state
   googleOAuthState?: string
 
+  // 前端用后端公钥解密前端的 aes 的结果
+  enc_client_key?: string
+
 
 }
 

@@ -8,8 +8,7 @@ export async function getClientKeyEncrypted(
   const client_key = `client_key_${aesKey}`
   const pk = await liuUtil.crypto.importRsaPublicKey(pem_public_key)
   if(!pk) {
-    console.log("创建 rsa 密钥失败")
-    
+    console.warn("导入 rsa 密钥失败")
     return ""
   }
   const cipherStr = await liuUtil.crypto.encryptWithRSA(pk, client_key)
