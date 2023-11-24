@@ -113,17 +113,29 @@ async function handle_email(
 async function handle_google_oauth(
   body: Record<string, string>,
 ) {
+
+  // 检查 oauth_code
   const oauth_code = body.oauth_code
   if(!oauth_code) {
     return { code: "E4000", errMsg: "no oauth_code" }
   }
+
+  // 检查 redirect_uri
   const redirect_uri = body.oauth_redirect_uri
   if(!redirect_uri) {
     return { code: "E4000", errMsg: "no oauth_redirect_uri" }
   }
+
+  // 检查 state
   const state = body.state
   const res0 = checkIfStateIsErr(state)
   if(res0) return res0
+
+  // 检查 client_key
+  const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
+  if(!client_key || code1) {
+    return { code: code1 ?? "E5001", errMsg: errMsg1 }
+  }
 
   const _env = process.env
   const client_id = _env.LIU_GOOGLE_OAUTH_CLIENT_ID
@@ -243,16 +255,11 @@ async function handle_github_oauth(
   const res0 = checkIfStateIsErr(state)
   if(res0) return res0
 
-
   // 检查 client_key
   const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
   if(!client_key || code1) {
     return { code: code1 ?? "E5001", errMsg: errMsg1 }
   }
-
-  console.log("获取到 client_key: ")
-  console.log(client_key)
-  console.log(" ")
 
   const _env = process.env
   const client_id = _env.LIU_GITHUB_OAUTH_CLIENT_ID
