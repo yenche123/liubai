@@ -127,14 +127,14 @@ function preCheck(
     isDebugging = true
   }
 
-  console.log(" ")
-  console.log("=========== 当前入参特征信息 ===========")
-  console.log("debugKey: ", debugKey)
-  console.log("isDebugging: ", isDebugging)
-  console.log("目标函数: ", funcName)
-  console.log("当前 ip: ", ip)
-  console.log("x-laf-trigger-token: ", xLafTriggerToken)
-  console.log("=========== ============== ===========")
+  // console.log(" ")
+  // console.log("=========== 当前入参特征信息 ===========")
+  // console.log("debugKey: ", debugKey)
+  // console.log("isDebugging: ", isDebugging)
+  // console.log("目标函数: ", funcName)
+  // console.log("当前 ip: ", ip)
+  // console.log("x-laf-trigger-token: ", xLafTriggerToken)
+  // console.log("=========== ============== ===========")
 
 
   // 1. 如果是 __init__ 函数，直接通过
