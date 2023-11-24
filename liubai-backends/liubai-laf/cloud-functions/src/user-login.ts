@@ -28,6 +28,8 @@ const GOOGLE_OAUTH_ACCESS_TOKEN = "https://oauth2.googleapis.com/token"
 // Google 使用 accessToken 去获取用户信息
 const GOOGLE_API_USER = "https://www.googleapis.com/oauth2/v3/userinfo"
 
+const PREFIX_CLIENT_KEY = "client_key_"
+
 
 /************************ 函数们 *************************/
 
@@ -229,14 +231,28 @@ async function handle_google_oauth(
 async function handle_github_oauth(
   body: Record<string, string>,
 ) {
+
+  // 检查 oauth_code
   const oauth_code = body.oauth_code
   if(!oauth_code) {
     return { code: "E4000", errMsg: "no oauth_code" }
   }
 
+  // 检查 state
   const state = body.state
   const res0 = checkIfStateIsErr(state)
   if(res0) return res0
+
+
+  // 检查 client_key
+  const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
+  if(!client_key || code1) {
+    return { code: code1 ?? "E5001", errMsg: errMsg1 }
+  }
+
+  console.log("获取到 client_key: ")
+  console.log(client_key)
+  console.log(" ")
 
   const _env = process.env
   const client_id = _env.LIU_GITHUB_OAUTH_CLIENT_ID
@@ -631,6 +647,26 @@ function checkIfStateIsErr(state: any): LiuRqReturn | null {
   
   liuLoginState.set(state, { createdStamp, num })
   return null
+}
+
+// 解密出 clientKey
+function getClientKey(enc_client_key: any) {
+  if(!enc_client_key || typeof enc_client_key !== "string") {
+    return { code: "E4000", errMsg: "enc_client_key is required" }
+  }
+
+  const { plainText, errMsg, code } = decryptWithRSA(enc_client_key)
+  if(errMsg || !plainText || plainText.length < 20) {
+    return { code: code ?? "E5001", errMsg }
+  }
+
+  const idx = plainText.indexOf(PREFIX_CLIENT_KEY)
+  const client_key = plainText.substring(PREFIX_CLIENT_KEY.length)
+  if(idx !== 0 || !client_key) {
+    return { code: "E4003", errMsg: "the prefix of client_key is not correct" }
+  }
+  
+  return { client_key }
 }
 
 

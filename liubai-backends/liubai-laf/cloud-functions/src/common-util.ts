@@ -26,7 +26,7 @@ export async function main(ctx: FunctionContext) {
 export function decryptWithRSA(encryptedText: string) {
   const pk = getPrivateKey()
   if(!pk) {
-    return { err: "no private key" }
+    return { code: "E5001", errMsg: "no private key" }
   }
 
   const privateKeyObj = crypto.createPrivateKey({
@@ -37,6 +37,7 @@ export function decryptWithRSA(encryptedText: string) {
 
   const buffer = Buffer.from(encryptedText, "base64")
   
+  let plainText = ""
   try {
     const decryptedData = crypto.privateDecrypt(
       {
@@ -45,21 +46,16 @@ export function decryptWithRSA(encryptedText: string) {
       },
       buffer
     )
-    console.log("解密出来的结果: ")
-    console.log(decryptedData)
-    console.log(" ")
-    const plainText = decryptedData.toString('utf8')
-    console.log("plainText: ")
-    console.log(plainText)
-    console.log(" ")
+    plainText = decryptedData.toString('utf8')
   }
   catch(err1) {
     console.warn("解密失败........")
     console.log(err1)
     console.log(" ")
+    return { code: "E4003", errMsg: "fail to decrypt" }
   }
 
-  return { msg: "先这样" }
+  return { plainText }
 }
 
 /** 获取 RSA private key */
