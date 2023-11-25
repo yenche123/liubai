@@ -8,11 +8,27 @@ import type {
   Table_User, 
   UserThirdData, 
   Table_Workspace,
-  Table_Member,
+  LiuUserInfo,
+  Table_Token,
+  Table_Credential,
+  Shared_TokenUser,
+  Res_ULN_User,
+  Res_UserLoginNormal,
 } from "@/common-types"
-import { decryptWithRSA, isEmailAndNormalize, getDocAddId } from "@/common-util"
-import { getNowStamp, MINUTE } from "@/common-time"
-import { createLoginState } from "@/common-ids"
+import { 
+  decryptWithRSA, 
+  getPublicKey, 
+  isEmailAndNormalize, 
+  getDocAddId,
+  turnMemberAggsIntoLSAMs,
+} from "@/common-util"
+import { getNowStamp, MINUTE, DAY } from "@/common-time"
+import { 
+  createCredentialForUserSelect, 
+  createLoginState, 
+  createToken,
+  createImgId,
+} from "@/common-ids"
 import { Resend } from 'resend'
 
 /************************ 一些常量 *************************/
@@ -29,6 +45,9 @@ const GOOGLE_OAUTH_ACCESS_TOKEN = "https://oauth2.googleapis.com/token"
 const GOOGLE_API_USER = "https://www.googleapis.com/oauth2/v3/userinfo"
 
 const PREFIX_CLIENT_KEY = "client_key_"
+
+const db = cloud.database()
+const _ = db.command
 
 
 /************************ 函数们 *************************/
@@ -379,11 +398,206 @@ async function handle_github_oauth(
 
 async function sign_in(
   body: Record<string, string>,
+  userInfos: LiuUserInfo[],
+  client_key?: string,
+  thirdData?: UserThirdData,
+): Promise<LiuRqReturn> {
+
+  // 1. 判断是否为多个 userInfo
+  const uLength = userInfos.length
+  if(uLength === 0) {
+    return { code: "E5001", errMsg: "there is no userInfo to sign in" }
+  }
+  if(uLength > 1) {
+    const res0 = await sign_multi_in(body, userInfos, client_key, thirdData)
+    return res0
+  }
+
+  // 2. 以下为只有一个 userInfo 的情况
+  const now = getNowStamp()
+  const theUserInfo = userInfos[0]
+  let { user, spaceMemberList } = theUserInfo
+
+  // 3. 检查 member 是否 "DEACTIVATED"，若是，恢复至 "OK"
+  spaceMemberList = await turnMembersIntoOkWhileSigningIn(theUserInfo)
+  
+  // 4. 检查 user 是否 "DEACTIVATED" 或 "REMOVED"，若是，恢复至 "NORMAL"
+  user = await turnUserIntoNormal(user)
+
+  // 5. 去创建 token
+  const token = createToken()
+  const expireStamp = now + (30 * DAY)
+  const userId = user._id
+  const obj1: PartialSth<Table_Token, "_id"> = {
+    insertedStamp: now,
+    updatedStamp: now,
+    token,
+    expireStamp,
+    userId,
+    isOn: "Y",
+    platform: "web",
+    client_key,
+    lastRead: now,
+    lastSet: now,
+  }
+  const res1 = await db.collection("Token").add(obj1)
+  const serial_id = getDocAddId(res1)
+  if(!serial_id) {
+    return { code: "E5001", errMsg: "cannot get serial_id" }
+  }
+  
+  // 6. 存到 cloud.shared 中
+  const tokenData: Table_Token = { _id: serial_id, ...obj1 }
+  const workspaces = spaceMemberList.map(v => v.spaceId)
+  const obj2: Shared_TokenUser = {
+    token,
+    tokenData,
+    userData: user,
+    workspaces,
+    lastSet: now,
+  }
+  const gShared = cloud.shared
+  const tokenUser: Map<string, Shared_TokenUser> = gShared.get('liu-token-user')
+  tokenUser.set(serial_id, obj2)
+  gShared.set("liu-token-user", tokenUser)
+  
+
+  // 7. 构造返回数据
+  const obj3: Res_UserLoginNormal = {
+    token,
+    serial_id,
+    spaceMemberList,
+  }
+
+  return { code: "0000", data: obj3 }
+}
+
+async function turnUserIntoNormal(
   user: Table_User,
+) {
+  const { oState, _id } = user
+
+  // 既不是 “不活跃” 也不是 “已移除”（注销保留期）
+  if(oState !== "DEACTIVATED" && oState !== "REMOVED") return user
+
+  const q = db.collection("User").where({ _id })
+  const res = await q.update({ oState: "NORMAL" })
+  console.log("turnUserIntoNormal res.........")
+  console.log(res)
+  console.log(" ")
+  user.oState = "NORMAL"
+
+  return user
+}
+
+
+/** 将 DEACTIVATED 的 member  */
+async function turnMembersIntoOkWhileSigningIn(
+  userInfo: LiuUserInfo,
+) {
+  const { spaceMemberList, user} = userInfo
+
+  // 1. 检查是否有 DEACTIVATED 的
+  const list = spaceMemberList.filter(v => v.member_oState === "DEACTIVATED")
+  if(list.length < 1) {
+    return spaceMemberList
+  }
+  
+  // 2. 去更新
+  const w = { user: user._id, oState: "DEACTIVATED" }
+  const u = { oState: "OK" }
+  const q = db.collection("Member").where(w)
+  const res = await q.update(u, { multi: true })
+  console.log("turnMembersIntoOkWhileSigningIn res.......")
+  console.log(res)
+  console.log(" ")
+
+  spaceMemberList.forEach(v => {
+    if(v.member_oState === "DEACTIVATED") {
+      v.member_oState = "OK"
+    }
+  })
+
+  return spaceMemberList
+}
+
+
+async function sign_multi_in(
+  body: Record<string, string>,
+  userInfos: LiuUserInfo[],
+  client_key?: string,
   thirdData?: UserThirdData,
 ) {
-  
+  if(userInfos.length < 2) {
+    return { 
+      code: "E5001", 
+      errMsg: "userInfos.length > 1 is required in sign_multi_in"
+    }
+  }
+
+  const user_ids = userInfos.map(v => v.user._id)
+  const multi_credential = createCredentialForUserSelect()
+  const now = getNowStamp()
+  const expireStamp = now + (30 * MINUTE)
+
+  const obj1: PartialSth<Table_Credential, "_id"> = {
+    credential: multi_credential,
+    infoType: "users-select",
+    expireStamp,
+    user_ids,
+    client_key,
+    thirdData,
+    insertedStamp: now,
+    updatedStamp: now,
+  }
+  const res = await db.collection("Credential").add(obj1)
+  const multi_credential_id = getDocAddId(res)
+  if(!multi_credential_id) {
+    return { code: "E5001", errMsg: "multi_credential_id cannot be got" }
+  }
+
+  const multi_users = getRes_ULN_User(userInfos)
+
+  const obj2: Res_UserLoginNormal = {
+    multi_users,
+    multi_credential,
+    multi_credential_id,
+  }
+
+  return { code: "0000", data: obj2 }
 }
+
+/** 将 userInfos 转成 Res_ULN_User */
+function getRes_ULN_User(
+  userInfos: LiuUserInfo[],
+) {
+  const list: Res_ULN_User[] = []
+  for(let i=0; i<userInfos.length; i++) {
+    const v = userInfos[i]
+    const { user, spaceMemberList } = v
+
+    const userId = user._id
+    const createdStamp = user.insertedStamp
+
+    let lsam = spaceMemberList.find(v2 => v2.spaceType === "ME")
+    if(!lsam) {
+      lsam = spaceMemberList.find(v2 => v2.space_owner === userId)
+    }
+    if(!lsam) {
+      lsam = spaceMemberList[0]
+    }
+    
+    const obj: Res_ULN_User = {
+      ...lsam,
+      userId,
+      createdStamp,
+    }
+    list.push(obj)
+  }
+
+  return list
+}
+
 
 
 // 关键的登录 id，比如 email 或 phone 或其他平台的 openid
@@ -409,7 +623,6 @@ async function sign_up(
 
   let systemLanguage = body["x_liu_language"]
 
-
   // 1. 构造 User
   const now = getNowStamp()
   const user: PartialSth<Table_User, "_id"> = {
@@ -426,7 +639,6 @@ async function sign_up(
   }
 
   // 2. 去创造 User
-  const db = cloud.database()
   const res1 = await db.collection("User").add(user)
   const userId = getDocAddId(res1)
   if(!userId) {
@@ -456,11 +668,27 @@ async function sign_up(
   // 4. 去创造 member
   const now3 = getNowStamp()
 
-
-  // 5. 然后去登录
-  await sign_in(body, newUser, thirdData)
   
 }
+
+
+function constructMemberAvatarFromThirdData(
+  thirdData?: UserThirdData,
+) {
+  if(!thirdData) return
+  const { google: googleData, github: githubData } = thirdData
+
+  const _generateAvatar = (url: string) => {
+    
+  }
+
+  const pic1 = googleData?.picture
+  if(pic1 && typeof pic1 === "string") {
+    
+  }
+
+}
+
 
 interface _CancelSignUpParam {
   userId: string
@@ -471,8 +699,6 @@ interface _CancelSignUpParam {
 async function _cancelSignUp(
   param: _CancelSignUpParam,
 ) {
-  const db = cloud.database()
-
   console.log("_cancelSignUp::")
   console.log(param)
   console.log(" ")
@@ -504,12 +730,19 @@ async function _cancelSignUp(
 
 
 
+
+/**
+ * type 的数值含义
+ * 1: 出错
+ * 2: 正常
+ * 3: 查无任何用户
+ */
 type FUBERes = {
   type: 1
   rqReturn: LiuRqReturn
 } | {
   type: 2
-  user: Table_User
+  userInfos: LiuUserInfo[]
 } | {
   type: 3
 }
@@ -523,7 +756,6 @@ async function findUserByEmail(
 ): Promise<FUBERes> {
   email = email.toLowerCase()
 
-  const db = cloud.database()
   const w = {
     email,
   }
@@ -535,8 +767,25 @@ async function findUserByEmail(
   console.log(" ")
   const list = res.data
   if(list.length < 1) return { type: 3 }
+
+  const users = list.filter(v => {
+    const oS = v.oState
+    if(oS === "NORMAL" || oS === "DEACTIVATED" || oS === "REMOVED") return true
+    return false
+  })
+
+  // 1. 如果有可登录的 user 们
+  // 去查找 member 和 workspace
+  if(users.length > 0) {
+    const userInfos = await getUserInfos(users)
+    if(userInfos.length > 0) {
+      return { type: 2, userInfos }
+    }
+    return { type: 3 }
+  }
+
+  // 2. 仅看第一个查出的 user 是什么情况
   const u = list[0]
-  
   if(u.oState === "DELETED") {
     return {
       type: 1,
@@ -553,15 +802,53 @@ async function findUserByEmail(
     }
   }
 
-  return { type: 2, user: u }
+  return { type: 3 }
 }
 
 
-function getPublicKey() {
-  const keyPair = cloud.shared.get(`liu-rsa-key-pair`)
-  const publicKey = keyPair?.publicKey
-  if(!publicKey) return undefined
-  return publicKey as string
+/** 查找每个 user 下有哪些 member 和 workspace */
+async function getUserInfos(
+  users: Table_User[],
+  filterMemberLeft: boolean = true,
+) {
+  const userInfos: LiuUserInfo[] = []
+
+  for(let i=0; i<users.length; i++) {
+    const v = users[i]
+    const userId = v._id
+
+    let m_oState = _.or(_.eq("OK"), _.eq("DEACTIVATED"))
+    if(!filterMemberLeft) {
+      m_oState = _.or(_.eq("OK"), _.eq("DEACTIVATED"), _.eq("LEFT"))
+    }
+
+    // 1. 用 lookup 去查找 member 和 workspace
+    const res = await db.collection("Member").aggregate()
+      .match({
+        user: userId,
+        oState: m_oState,
+      })
+      .sort({
+        insertedStamp: 1,
+      })
+      .lookup({
+        from: "Workspace",
+        localField: "spaceId",
+        foreignField: "_id",
+        as: "spaceList",
+      })
+      .end()
+    
+    console.log("看一下 getUserInfos 中聚合搜索的结果: ")
+    console.log(res)
+    console.log(" ")
+
+    const lsams = turnMemberAggsIntoLSAMs(res.data, filterMemberLeft)
+    if(lsams.length) {
+      userInfos.push({ user: v, spaceMemberList: lsams })
+    }
+  }
+  return userInfos
 }
 
 function handle_init() {

@@ -39,3 +39,15 @@ export function createToken() {
   token += ("-" + createRandom(17, true) + "-" + createRandom(17, true))
   return token
 }
+
+// 创建 credential for user-select
+export function createCredentialForUserSelect() {
+  const c = "cfus_" + createRandom(17, true) + "-" + createRandom(17, true)
+  return c
+}
+
+// 创建 image id
+export function createImgId() {
+  return "i0" + createRandom(27)
+}
+

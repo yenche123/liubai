@@ -31,8 +31,14 @@ export interface LiuRqReturn<T = Record<string, any>> {
 /*********************** 基类型、原子化类型 **********************/
 
 export type BaseIsOn = "Y" | "N"
+
 export type OState = "OK" | "REMOVED" | "DELETED"
+// 表态、收藏 的 oState
 export type OState_2 = "OK" | "CANCELED"
+// member 的 oState
+export type OState_3 = "OK" | "LEFT" | "DEACTIVATED" | "DELETED"
+// user 的 oState
+export type OState_User = "NORMAL" | "DEACTIVATED" | "LOCK" | "REMOVED" | "DELETED"
 
 export type SupportedTheme = "light" | "dark"
 export type LocalTheme = SupportedTheme | "system" | "auto"   // auto 就是日夜切换
@@ -241,6 +247,18 @@ export interface UserThirdData {
   github?: any
 }
 
+export interface LiuSpaceAndMember {
+  spaceId: string
+  memberId: string
+  member_name?: string
+  member_avatar?: Cloud_ImageStore
+  member_oState: OState_3
+  spaceType: SpaceType
+  space_oState: OState
+  space_owner: string
+}
+
+
 
 /*********************** 数据表类型 **********************/
 
@@ -251,13 +269,14 @@ export interface Table_Token extends BaseTable {
   userId: string
   isOn: BaseIsOn
   platform: "web"
+  client_key?: string
   lastRead: number
   lastSet: number
 }
 
 /** User表 */
 export interface Table_User extends BaseTable {
-  oState: "NORMAL" | "DEACTIVATED" | "LOCK" | "REMOVED" | "DELETED"
+  oState: OState_User
   email?: string
   phone?: string
   thirdData?: UserThirdData
@@ -282,7 +301,7 @@ export interface Table_Member extends BaseTable {
   avatar?: Cloud_ImageStore
   spaceId: string
   user: string
-  oState: "OK" | "LEFT" | "DEACTIVATED" | "DELETED"
+  oState: OState_3
   config?: MemberConfig
 }
 
@@ -380,6 +399,51 @@ export interface Table_Config extends BaseTable {
   aesIV?: string
 
 
+}
+
+
+// 临时凭证表
+export interface Table_Credential extends BaseTable {
+  credential: string
+  infoType: "sms-code" | "email-code" | "scan-code" | "users-select"
+  expireStamp: number
+
+  user_ids?: string[]
+  userId?: string
+  email?: string
+  client_key?: string
+  thirdData?: UserThirdData
+}
+
+
+/*********************** 基于 Table 的扩展类型 ***********************/
+
+export interface LiuUserInfo {
+  user: Table_User
+  spaceMemberList: LiuSpaceAndMember[]
+}
+
+
+/** 聚合搜素 member 表后的 data 结构 */
+export interface MemberAggSpaces extends Table_Member {
+  spaceList?: Table_Workspace[]
+}
+
+
+/*********************** 一些回调信息 ***********************/
+
+export interface Res_ULN_User extends LiuSpaceAndMember {
+  userId: string
+  createdStamp: number
+}
+
+export interface Res_UserLoginNormal {
+  token?: string
+  serial_id?: string
+  spaceMemberList?: LiuSpaceAndMember[]
+  multi_users?: Res_ULN_User[]
+  multi_credential?: string
+  multi_credential_id?: string
 }
 
 

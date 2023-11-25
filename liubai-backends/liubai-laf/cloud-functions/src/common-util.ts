@@ -1,7 +1,11 @@
 // 存放一些公共函数
 import cloud from '@lafjs/cloud'
 import * as crypto from "crypto"
-import type { SupportedLocale } from './common-types'
+import type { 
+  SupportedLocale,
+  LiuSpaceAndMember,
+  MemberAggSpaces,
+} from './common-types'
 
 
 /********************* 常量 ****************/
@@ -66,6 +70,14 @@ function getPrivateKey() {
   return privateKey as string
 }
 
+/** 获取 RSA public key */
+export function getPublicKey() {
+  const keyPair = cloud.shared.get(`liu-rsa-key-pair`)
+  const publicKey = keyPair?.publicKey
+  if(!publicKey) return undefined
+  return publicKey as string
+}
+
 
 /********************* 一些工具函数 *****************/
 
@@ -92,6 +104,57 @@ export function getDocAddId(res: any) {
   }
 
   return _id
+}
+
+
+
+/********************* 封装函数 *****************/
+
+/** 将聚合搜索（联表查询）到的 member 和 workspace 信息打包装 
+ * 成 LiuSpaceAndMember(LSAM)
+ * @param data 聚合搜素后的 res.data
+ * @param filterMemberLeft 是否过滤掉成员已退出，默认为 true
+*/
+export function turnMemberAggsIntoLSAMs(
+  data: any,
+  filterMemberLeft: boolean = true,
+) {
+
+  const len1 = data?.length
+  const isDataExisted = Boolean(len1)
+  if(!isDataExisted) {
+    return []
+  }
+
+  const list: LiuSpaceAndMember[] = []
+
+  for(let i=0; i<len1; i++) {
+    const v = data[i] as MemberAggSpaces
+    const member_oState = v.oState
+    if(member_oState === "LEFT" && filterMemberLeft) continue
+
+    const { spaceList } = v
+    const len2 = spaceList?.length
+    if(!len2) continue
+    const theSpace = spaceList[0]
+    const space_oState = theSpace.oState
+    if(space_oState !== "OK") continue
+
+    const obj: LiuSpaceAndMember = {
+      spaceId: theSpace._id,
+      memberId: v._id,
+      member_name: v.name,
+      member_avatar: v.avatar,
+      member_oState,
+      spaceType: theSpace.infoType,
+      space_oState,
+      space_owner: theSpace.owner,
+    }
+
+    list.push(obj)
+  }
+
+  return list
 }
 
 
