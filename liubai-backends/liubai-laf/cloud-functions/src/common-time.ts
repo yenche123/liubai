@@ -13,8 +13,20 @@ export function getNowStamp() {
   return Date.now()
 }
 
+/**
+ * 返回 insertedStamp 和 updatedStamp
+ */
+export function getBasicStampWhileAdding() {
+ const now = getNowStamp()
+ return {
+  insertedStamp: now,
+  updatedStamp: now,
+ }
+}
+
 // 将 "秒" / "分" / "时" / "天" 转为 毫秒数
 export const SECONED = 1000
 export const MINUTE = 60 * SECONED
 export const HOUR = 60 * MINUTE
 export const DAY = 24 * HOUR
+

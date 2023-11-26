@@ -106,6 +106,17 @@ export function getDocAddId(res: any) {
   return _id
 }
 
+/** 给定文件名或含后缀的文件路径 获取后缀（不含.） 
+ *  会将后缀转为小写
+ *  若提取失败 则返回空的字符串
+*/
+export function getSuffix(name: string) {
+  const arr = /\.([^.]*)$/.exec(name)
+  if(!arr) return ""
+  const format = arr[1].toLowerCase()
+  return format
+}
+
 
 
 /********************* 封装函数 *****************/

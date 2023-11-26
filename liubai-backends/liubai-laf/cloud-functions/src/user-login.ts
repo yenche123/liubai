@@ -6,6 +6,7 @@ import type {
   SupportedTheme,
   Shared_LoginState, 
   Table_User, 
+  Table_Member,
   UserThirdData, 
   Table_Workspace,
   LiuUserInfo,
@@ -14,6 +15,7 @@ import type {
   Shared_TokenUser,
   Res_ULN_User,
   Res_UserLoginNormal,
+  Cloud_ImageStore,
 } from "@/common-types"
 import { 
   decryptWithRSA, 
@@ -21,8 +23,9 @@ import {
   isEmailAndNormalize, 
   getDocAddId,
   turnMemberAggsIntoLSAMs,
+  getSuffix,
 } from "@/common-util"
-import { getNowStamp, MINUTE, DAY } from "@/common-time"
+import { getNowStamp, MINUTE, DAY, getBasicStampWhileAdding } from "@/common-time"
 import { 
   createCredentialForUserSelect, 
   createLoginState, 
@@ -414,7 +417,6 @@ async function sign_in(
   }
 
   // 2. 以下为只有一个 userInfo 的情况
-  const now = getNowStamp()
   const theUserInfo = userInfos[0]
   let { user, spaceMemberList } = theUserInfo
 
@@ -426,11 +428,12 @@ async function sign_in(
 
   // 5. 去创建 token
   const token = createToken()
+  const now = getNowStamp()
   const expireStamp = now + (30 * DAY)
   const userId = user._id
+  const basic1 = getBasicStampWhileAdding()
   const obj1: PartialSth<Table_Token, "_id"> = {
-    insertedStamp: now,
-    updatedStamp: now,
+    ...basic1,
     token,
     expireStamp,
     userId,
@@ -539,6 +542,7 @@ async function sign_multi_in(
   const multi_credential = createCredentialForUserSelect()
   const now = getNowStamp()
   const expireStamp = now + (30 * MINUTE)
+  const basic1 = getBasicStampWhileAdding()
 
   const obj1: PartialSth<Table_Credential, "_id"> = {
     credential: multi_credential,
@@ -547,8 +551,7 @@ async function sign_multi_in(
     user_ids,
     client_key,
     thirdData,
-    insertedStamp: now,
-    updatedStamp: now,
+    ...basic1,
   }
   const res = await db.collection("Credential").add(obj1)
   const multi_credential_id = getDocAddId(res)
@@ -624,10 +627,9 @@ async function sign_up(
   let systemLanguage = body["x_liu_language"]
 
   // 1. 构造 User
-  const now = getNowStamp()
+  const basic1 = getBasicStampWhileAdding()
   const user: PartialSth<Table_User, "_id"> = {
-    insertedStamp: now,
-    updatedStamp: now,
+    ...basic1,
     oState: "NORMAL",
     email,
     phone,
@@ -650,10 +652,9 @@ async function sign_up(
   }
 
   // 3. 去创造 workspace
-  const now2 = getNowStamp()
+  const basic2 = getBasicStampWhileAdding()
   const workspace: PartialSth<Table_Workspace, "_id"> = {
-    insertedStamp: now,
-    updatedStamp: now,
+    ...basic2,
     infoType: "ME",
     oState: "OK",
     owner: userId,
@@ -666,9 +667,39 @@ async function sign_up(
   }
 
   // 4. 去创造 member
-  const now3 = getNowStamp()
+  const name = getNameFromThirdData(thirdData)
+  const avatar = constructMemberAvatarFromThirdData(thirdData)
+  const basic3 = getBasicStampWhileAdding()
+  const member: PartialSth<Table_Member, "_id"> = {
+    name,
+    avatar,
+    spaceId,
+    user: userId,
+    oState: "OK",
+    ...basic3,
+  }
+  const res3 = await db.collection("Member").add(member)
+  const memberId = getDocAddId(res3)
+  
 
   
+}
+
+function getNameFromThirdData(
+  thirdData?: UserThirdData,
+) {
+  if(!thirdData) return
+  const { google: googleData, github: githubData } = thirdData
+
+  const n1 = googleData?.given_name
+  if(n1 && typeof n1 === "string") return n1
+
+  const n2 = googleData?.name
+  if(n2 && typeof n2 === "string") return n2
+
+  const n3 = githubData?.login
+  if(n3 && typeof n3 === "string") return n3
+
 }
 
 
@@ -678,13 +709,29 @@ function constructMemberAvatarFromThirdData(
   if(!thirdData) return
   const { google: googleData, github: githubData } = thirdData
 
+  const now = getNowStamp()
+
   const _generateAvatar = (url: string) => {
-    
+    const imgId = createImgId()
+    const suffix = getSuffix(url)
+    const name = suffix ? `${imgId}.${suffix}` : imgId
+    const obj: Cloud_ImageStore = {
+      id: imgId,
+      name,
+      lastModified: now,
+      url,
+    }
+    return obj
   }
 
   const pic1 = googleData?.picture
   if(pic1 && typeof pic1 === "string") {
-    
+    return _generateAvatar(pic1)
+  }
+
+  const pic2 = githubData?.avatar_url
+  if(pic2 && typeof pic2 === "string") {
+    return _generateAvatar(pic2)
   }
 
 }

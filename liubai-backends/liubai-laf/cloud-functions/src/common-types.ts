@@ -227,7 +227,7 @@ export interface Cloud_ImageStore {
   id: string
   name: string
   lastModified: number       // 文件最后修改的时间戳，精确到 ms
-  mimeType: string
+  mimeType?: string
   width?: number
   height?: number
   h2w?: string
