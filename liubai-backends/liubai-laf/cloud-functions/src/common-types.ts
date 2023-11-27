@@ -49,6 +49,12 @@ export const supportedClients = [
 ] as const
 export type SupportedClient = typeof supportedClients[number]
 
+// 各个客户端的最大 token 数
+export const clientMaximum: Record<SupportedClient, number> = {
+  "web": 9,
+  "desktop": 3,
+}
+
 export const supportedLocales = [
   "en",
   "zh-Hans",

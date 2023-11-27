@@ -19,6 +19,7 @@ import type {
   LiuSpaceAndMember,
   SupportedClient,
 } from "@/common-types"
+import { clientMaximum } from "@/common-types"
 import { 
   decryptWithRSA, 
   getPublicKey, 
@@ -388,7 +389,7 @@ async function signInUpViaEmail(
 
   // 去登录
   if(res1.type === 2) {
-    const res2 = await sign_in(body, res1.userInfos, client_key, thirdData)
+    const res2 = await sign_in(body, res1.userInfos, { client_key, thirdData })
     return res2
   }
 
@@ -398,11 +399,16 @@ async function signInUpViaEmail(
 }
 
 /*************************** 登录 ************************/
+interface SignInOpt {
+  client_key?: string
+  thirdData?: UserThirdData
+  justSignUp?: boolean           // 若为 undefined 当 false 处理
+}
+
 async function sign_in(
   body: Record<string, string>,
   userInfos: LiuUserInfo[],
-  client_key?: string,
-  thirdData?: UserThirdData,
+  opt: SignInOpt,
 ): Promise<LiuRqReturn> {
 
   // 1. 判断是否为多个 userInfo
@@ -411,7 +417,7 @@ async function sign_in(
     return { code: "E5001", errMsg: "there is no userInfo to sign in" }
   }
   if(uLength > 1) {
-    const res0 = await sign_multi_in(body, userInfos, client_key, thirdData)
+    const res0 = await sign_multi_in(body, userInfos, opt.client_key, opt.thirdData)
     return res0
   }
 
@@ -439,7 +445,7 @@ async function sign_in(
     userId,
     isOn: "Y",
     platform,
-    client_key,
+    client_key: opt.client_key,
     lastRead: now,
     lastSet: now,
   }
@@ -462,9 +468,13 @@ async function sign_in(
   const tokenUser = getLiuTokenUser()
   tokenUser.set(serial_id, obj2)
   cloud.shared.set("liu-token-user", tokenUser)
-  
 
-  // 7. 构造返回数据
+  // 7. 检查是否存在过多 token
+  if(!opt.justSignUp) {
+    await checkIfTooManyTokens(user._id, platform)
+  }
+
+  // 8. 构造返回数据
   const obj3: Res_UserLoginNormal = {
     token,
     serial_id,
@@ -472,6 +482,23 @@ async function sign_in(
   }
 
   return { code: "0000", data: obj3 }
+}
+
+/** 登录后，检查 token 是否过多，过多的拿去销毁 */
+async function checkIfTooManyTokens(
+  userId: string,
+  platform: SupportedClient,
+) {
+  const max = clientMaximum[platform]
+  if(!max) return
+
+  const w = { userId, platform }
+  const u = { isOn: "N", updatedStamp: getNowStamp() }
+  const q = db.collection("Token").where(w).orderBy("expireStamp", "desc")
+  const res = await q.skip(max).update(u, { multi: true })
+  console.log("checkIfTooManyTokens res: ")
+  console.log(res)
+  console.log(" ")
 }
 
 /** 将 DEACTIVATED 或 REMOVED 的 user 切换成 NORMAL */
@@ -484,7 +511,7 @@ async function turnUserIntoNormal(
   if(oState !== "DEACTIVATED" && oState !== "REMOVED") return user
 
   const q = db.collection("User").where({ _id })
-  const res = await q.update({ oState: "NORMAL" })
+  const res = await q.update({ oState: "NORMAL", updatedStamp: getNowStamp() })
   console.log("turnUserIntoNormal res.........")
   console.log(res)
   console.log(" ")
@@ -508,7 +535,7 @@ async function turnMembersIntoOkWhileSigningIn(
   
   // 2. 去更新
   const w = { user: user._id, oState: "DEACTIVATED" }
-  const u = { oState: "OK" }
+  const u = { oState: "OK", updatedStamp: getNowStamp() }
   const q = db.collection("Member").where(w)
   const res = await q.update(u, { multi: true })
   console.log("turnMembersIntoOkWhileSigningIn res.......")
@@ -704,7 +731,7 @@ async function sign_up(
   ]
 
   // 7. 最后去登录
-  const res4 = await sign_in(body, userInfos, client_key, thirdData)
+  const res4 = await sign_in(body, userInfos, { client_key, thirdData, justSignUp: true })
   return res4
 }
 
