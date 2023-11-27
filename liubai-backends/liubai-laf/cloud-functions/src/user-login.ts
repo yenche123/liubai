@@ -457,10 +457,9 @@ async function sign_in(
     workspaces,
     lastSet: now,
   }
-  const gShared = cloud.shared
-  const tokenUser: Map<string, Shared_TokenUser> = gShared.get('liu-token-user')
+  const tokenUser = getLiuTokenUser()
   tokenUser.set(serial_id, obj2)
-  gShared.set("liu-token-user", tokenUser)
+  cloud.shared.set("liu-token-user", tokenUser)
   
 
   // 7. 构造返回数据
@@ -599,7 +598,6 @@ function getRes_ULN_User(
 
   return list
 }
-
 
 
 // 关键的登录 id，比如 email 或 phone 或其他平台的 openid
@@ -979,6 +977,12 @@ function generateState() {
 function getLiuLoginState() {
   const gShared = cloud.shared
   const map: Map<string, Shared_LoginState> = gShared.get('liu-login-state') ?? new Map()
+  return map
+}
+
+function getLiuTokenUser() {
+  const gShared = cloud.shared
+  const map: Map<string, Shared_TokenUser> = gShared.get('liu-token-user') ?? new Map()
   return map
 }
 
