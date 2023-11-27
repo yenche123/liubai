@@ -3,7 +3,9 @@ import type {
   BaseIsOn,
   Shared_AccessControl,
   LiuRqReturn,
+  SupportedClient,
 } from "@/common-types"
+import { supportedClients } from '@/common-types'
 import { getNowStamp, MINUTE } from "@/common-time"
 
 
@@ -174,6 +176,10 @@ function checkEntry(ctx: FunctionContext, funcName: string) {
   // 1. 检查常规的 x_liu_
   const body = ctx.request?.body ?? {}
 
+  // 2. 检查 client 字段
+  const isSupportedClient = checkClient(body['x_liu_client'])
+  if(!isSupportedClient) return false
+
   try {
     for(let i=0; i<X_LIU_NORMAL.length; i++) {
       const v = X_LIU_NORMAL[i]
@@ -190,7 +196,7 @@ function checkEntry(ctx: FunctionContext, funcName: string) {
   }
   console.log(" ")
 
-  // 2. 是否无需 token
+  // 3. 是否无需 token
   const allowNoToken = ALLOW_WITHOUT_TOKEN.includes(funcName)
   if(allowNoToken) return true
 
@@ -200,6 +206,12 @@ function checkEntry(ctx: FunctionContext, funcName: string) {
   if(!tokenId) return false
 
   return true
+}
+
+function checkClient(client: any) {
+  if(!client || typeof client !== "string") return false
+  const hasExisted = supportedClients.includes(client as SupportedClient)
+  return hasExisted
 }
 
 

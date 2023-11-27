@@ -17,6 +17,7 @@ import type {
   Res_UserLoginNormal,
   Cloud_ImageStore,
   LiuSpaceAndMember,
+  SupportedClient,
 } from "@/common-types"
 import { 
   decryptWithRSA, 
@@ -430,13 +431,14 @@ async function sign_in(
   const expireStamp = now + (30 * DAY)
   const userId = user._id
   const basic1 = getBasicStampWhileAdding()
+  const platform = body['x_liu_client'] as SupportedClient
   const obj1: PartialSth<Table_Token, "_id"> = {
     ...basic1,
     token,
     expireStamp,
     userId,
     isOn: "Y",
-    platform: "web",
+    platform,
     client_key,
     lastRead: now,
     lastSet: now,

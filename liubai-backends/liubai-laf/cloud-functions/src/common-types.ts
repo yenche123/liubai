@@ -43,6 +43,12 @@ export type OState_User = "NORMAL" | "DEACTIVATED" | "LOCK" | "REMOVED" | "DELET
 export type SupportedTheme = "light" | "dark"
 export type LocalTheme = SupportedTheme | "system" | "auto"   // auto 就是日夜切换
 
+export const supportedClients = [
+  "web",
+  "desktop",
+] as const
+export type SupportedClient = typeof supportedClients[number]
+
 export const supportedLocales = [
   "en",
   "zh-Hans",
@@ -268,7 +274,7 @@ export interface Table_Token extends BaseTable {
   expireStamp: number
   userId: string
   isOn: BaseIsOn
-  platform: "web"
+  platform: SupportedClient
   client_key?: string
   lastRead: number
   lastSet: number
