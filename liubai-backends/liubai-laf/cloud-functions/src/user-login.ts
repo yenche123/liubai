@@ -493,11 +493,21 @@ async function checkIfTooManyTokens(
   if(!max) return
 
   const w = { userId, platform }
-  const u = { isOn: "N", updatedStamp: getNowStamp() }
   const q = db.collection("Token").where(w).orderBy("expireStamp", "desc")
-  const res = await q.skip(max).update(u, { multi: true })
-  console.log("checkIfTooManyTokens res: ")
-  console.log(res)
+  const res1 = await q.skip(max).get<Table_Token>()
+  console.log("checkIfTooManyTokens res1: ")
+  console.log(res1)
+  console.log(" ")
+
+  const list = res1.data
+  if(list.length < 1) return
+  const id = list[0]._id
+  if(!id) return
+
+  const u = { isOn: "N", updatedStamp: getNowStamp() }
+  const res2 = await db.collection("Token").where({ _id: id }).update(u)
+  console.log("res2: ")
+  console.log(res2)
   console.log(" ")
 }
 
