@@ -450,7 +450,7 @@ async function sign_in(
   spaceMemberList = await turnMembersIntoOkWhileSigningIn(theUserInfo)
   
   // 4. 检查 user 是否 "DEACTIVATED" 或 "REMOVED"，若是，恢复至 "NORMAL"
-  user = await handleUserWhileSigningIn(user)
+  user = await handleUserWhileSigningIn(user, opt.thirdData)
 
   // 5. 去创建 token
   const token = createToken()
