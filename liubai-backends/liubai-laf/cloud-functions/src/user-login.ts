@@ -16,6 +16,7 @@ import type {
   Res_ULN_User,
   Res_UserLoginNormal,
   Cloud_ImageStore,
+  LiuSpaceAndMember,
 } from "@/common-types"
 import { 
   decryptWithRSA, 
@@ -205,23 +206,6 @@ async function handle_google_oauth(
   }
   console.log(" ")
 
-  // 可以直接从 id_token 中获取用户基本信息
-  // const id_token = res1_data?.id_token
-  // if(id_token) {
-  //   try {
-  //     const id_res = jsonwebtoken.decode(id_token)
-  //     console.log("id_res: ")
-  //     console.log(id_res)
-  //     console.log(" ")
-  //   }
-  //   catch(err) {
-  //     console.warn("id_token 解析失败.........")
-  //     console.log(err)
-  //     console.log(" ")
-  //   }
-  // }
-
-
   // 3. 使用 access_token 去换用户信息
   let res2: any
   try {
@@ -258,7 +242,9 @@ async function handle_google_oauth(
     return { code: "U0001", data: { email } }
   }
 
-  return { code: "0000", msg: "先这样", data: res2_data }
+  const opt: UserThirdData = { google: res2_data }
+  const res3 = await signInUpViaEmail(body, email, client_key, opt)
+  return res3
 }
 
 
@@ -380,25 +366,37 @@ async function handle_github_oauth(
     }
   }
 
-  const res3 = await findUserByEmail(email)
+  const opt: UserThirdData = { github: res2_data }
+  const res3 = await signInUpViaEmail(body, email, client_key, opt)
+  return res3
+}
+
+/** 使用 email 进行登录或注册 */
+async function signInUpViaEmail(
+  body: Record<string, string>,
+  email: string,
+  client_key?: string,
+  thirdData?: UserThirdData,
+) {
+  const res1 = await findUserByEmail(email)
 
   // 拒绝登录、或遭遇异常
-  if(res3.type === 1) {
-    return res3.rqReturn
+  if(res1.type === 1) {
+    return res1.rqReturn
   }
 
   // 去登录
-  if(res3.type === 2) {
-
+  if(res1.type === 2) {
+    const res2 = await sign_in(body, res1.userInfos, client_key, thirdData)
+    return res2
   }
 
   // 去注册
-
-
-  return { code: "0000", data: res2_data }
+  const res3 = await sign_up(body, { email }, client_key, thirdData)
+  return res3
 }
 
-
+/*************************** 登录 ************************/
 async function sign_in(
   body: Record<string, string>,
   userInfos: LiuUserInfo[],
@@ -475,6 +473,7 @@ async function sign_in(
   return { code: "0000", data: obj3 }
 }
 
+/** 将 DEACTIVATED 或 REMOVED 的 user 切换成 NORMAL */
 async function turnUserIntoNormal(
   user: Table_User,
 ) {
@@ -494,7 +493,7 @@ async function turnUserIntoNormal(
 }
 
 
-/** 将 DEACTIVATED 的 member  */
+/** 将 DEACTIVATED 的 member 切换成 OK */
 async function turnMembersIntoOkWhileSigningIn(
   userInfo: LiuUserInfo,
 ) {
@@ -524,7 +523,7 @@ async function turnMembersIntoOkWhileSigningIn(
   return spaceMemberList
 }
 
-
+/********************* 有多个账号，供用户登录 **********************/
 async function sign_multi_in(
   body: Record<string, string>,
   userInfos: LiuUserInfo[],
@@ -609,9 +608,11 @@ interface SignUpParam2 {
   phone?: string
 }
 
+/*************************** 注册 ************************/
 async function sign_up(
   body: Record<string, string>,
   param2: SignUpParam2,
+  client_key?: string,
   thirdData?: UserThirdData,
 ) {
   const { email, phone } = param2
@@ -646,10 +647,7 @@ async function sign_up(
   if(!userId) {
     return { code: "E5001", errMsg: "fail to add an user" }
   }
-  const newUser: Table_User = {
-    ...user,
-    _id: userId,
-  }
+  const newUser: Table_User = { ...user, _id: userId }
 
   // 3. 去创造 workspace
   const basic2 = getBasicStampWhileAdding()
@@ -680,9 +678,34 @@ async function sign_up(
   }
   const res3 = await db.collection("Member").add(member)
   const memberId = getDocAddId(res3)
-  
+  if(!memberId) {
+    _cancelSignUp({ userId, spaceId })
+    return { code: "E5001", errMsg: "fail to add an member" }
+  }
 
-  
+  // 5. 去构造 LiuSpaceAndMember
+  const liuSpaceAndMember: LiuSpaceAndMember = {
+    spaceId,
+    memberId,
+    member_name: name,
+    member_avatar: avatar,
+    member_oState: "OK",
+    spaceType: "ME",
+    space_oState: "OK",
+    space_owner: userId,
+  }
+
+  // 6. 去构造 userInfo
+  const userInfos: LiuUserInfo[] = [
+    {
+      user: newUser,
+      spaceMemberList: [liuSpaceAndMember]
+    }
+  ]
+
+  // 7. 最后去登录
+  const res4 = await sign_in(body, userInfos, client_key, thirdData)
+  return res4
 }
 
 function getNameFromThirdData(
@@ -739,7 +762,7 @@ function constructMemberAvatarFromThirdData(
 
 interface _CancelSignUpParam {
   userId: string
-  workspaceId?: string
+  spaceId?: string
   memberId?: string
 }
 
@@ -756,8 +779,8 @@ async function _cancelSignUp(
   console.log(res1)
   console.log(" ")
 
-  if(param.workspaceId) {
-    const q2 = db.collection("Workspace").where({ _id: param.workspaceId })
+  if(param.spaceId) {
+    const q2 = db.collection("Workspace").where({ _id: param.spaceId })
     const res2 = await q2.remove()
     console.log("删除 workspace 的结果......")
     console.log(res1)
@@ -898,6 +921,7 @@ async function getUserInfos(
   return userInfos
 }
 
+/********************** 初始化 ********************/
 function handle_init() {
   const publicKey = getPublicKey()
   if(!publicKey) {
@@ -951,6 +975,7 @@ function generateState() {
   return state
 }
 
+/************ 从 cloud.shared 中获取 liu-login-state 这个 map ************8*/
 function getLiuLoginState() {
   const gShared = cloud.shared
   const map: Map<string, Shared_LoginState> = gShared.get('liu-login-state') ?? new Map()
