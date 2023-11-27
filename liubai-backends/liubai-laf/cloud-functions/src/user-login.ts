@@ -666,6 +666,7 @@ async function sign_up(
 
   // 1. 构造 User
   const basic1 = getBasicStampWhileAdding()
+  const github_id = thirdData?.github?.id
   const user: PartialSth<Table_User, "_id"> = {
     ...basic1,
     oState: "NORMAL",
@@ -676,6 +677,9 @@ async function sign_up(
     systemTheme,
     language: "system",
     systemLanguage,
+  }
+  if(typeof github_id === "number" && github_id > 0) {
+    user.github_id = github_id
   }
 
   // 2. 去创造 User
@@ -836,8 +840,6 @@ async function _cancelSignUp(
 }
 
 
-
-
 /**
  * type 的数值含义
  * 1: 出错
@@ -854,6 +856,23 @@ type FUBERes = {
   type: 3
 }
 
+/** 使用 github_id 去寻找用户 */
+async function findUserByGitHubId(
+  github_id: number,
+) {
+  const w = { github_id }
+  const res = await db.collection("User").where(w).get<Table_User>()
+  console.log("findUserByGitHubId res ----->")
+  console.log("res.code: ", res.code)
+  console.log("res.data: ", res.data)
+  console.log("res.ok: ", res.ok)
+  console.log(" ")
+  const list = res.data
+  const res2 = await handleUsersFound(list)
+  return res2
+}
+
+
 /**
  * 使用 email 去查找用户
  * @param email 邮箱地址
@@ -863,9 +882,7 @@ async function findUserByEmail(
 ): Promise<FUBERes> {
   email = email.toLowerCase()
 
-  const w = {
-    email,
-  }
+  const w = { email }
   const res = await db.collection("User").where(w).get<Table_User>()
   console.log("findUserByEmail res ----->")
   console.log("res.code: ", res.code)
@@ -873,6 +890,17 @@ async function findUserByEmail(
   console.log("res.ok: ", res.ok)
   console.log(" ")
   const list = res.data
+  const res2 = await handleUsersFound(list)
+  return res2
+}
+
+/** 查找出匹配的 user 后
+ * 去检查该用户是否异常，若都正常，去查找他们的 userInfos
+*/
+async function handleUsersFound(
+  list: Table_User[],
+): Promise<FUBERes> {
+
   if(list.length < 1) return { type: 3 }
 
   const users = list.filter(v => {
@@ -898,7 +926,7 @@ async function findUserByEmail(
       type: 1,
       rqReturn: {
         code: "E5001", 
-        errMsg: "getting a DELETED user while calling findUserByEmail",
+        errMsg: "getting a DELETED user while calling handleUsersFound",
       }
     }
   }

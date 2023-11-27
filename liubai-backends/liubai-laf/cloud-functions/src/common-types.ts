@@ -291,6 +291,7 @@ export interface Table_User extends BaseTable {
   oState: OState_User
   email?: string
   phone?: string
+  github_id?: number
   thirdData?: UserThirdData
   theme: LocalTheme
   systemTheme?: SupportedTheme
