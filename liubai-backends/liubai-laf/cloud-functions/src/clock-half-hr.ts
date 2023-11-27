@@ -12,10 +12,10 @@ const MIN_15 = 15 * MINUTE
 
 export async function main(ctx: FunctionContext) {
 
-  console.log("---------- Start 清理缓存程序 ----------")
+  // console.log("---------- Start 清理缓存程序 ----------")
   clearLoginState()
   clearTokenUser()
-  console.log("---------- End 清理缓存程序 ----------")
+  // console.log("---------- End 清理缓存程序 ----------")
 
   return true
 }
@@ -26,13 +26,13 @@ function clearLoginState() {
   const gShared = cloud.shared
   const loginState: Map<string, Shared_LoginState> = gShared.get('liu-login-state')
   if(!loginState) {
-    console.log("liu-login-state 不存在，无需清理")
-    console.log(" ")
+    // console.log("liu-login-state 不存在，无需清理")
+    // console.log(" ")
     return true
   }
 
   const size1 = loginState.size
-  console.log(`清理 loginState 前的 size: ${size1}`)
+  // console.log(`清理 loginState 前的 size: ${size1}`)
 
   const now = getNowStamp()
   loginState.forEach((val, key) => {
@@ -42,8 +42,8 @@ function clearLoginState() {
   })
 
   const size2 = loginState.size
-  console.log(`清理 loginState 后的 size: ${size2}`)
-  console.log(" ")
+  // console.log(`清理 loginState 后的 size: ${size2}`)
+  // console.log(" ")
 
   return true
 }
@@ -54,13 +54,13 @@ function clearTokenUser() {
   const gShared = cloud.shared
   const tokenUser: Map<string, Shared_TokenUser> = gShared.get('liu-token-user')
   if(!tokenUser) {
-    console.log("liu-token-user 不存在，无需清理")
-    console.log(" ")
+    // console.log("liu-token-user 不存在，无需清理")
+    // console.log(" ")
     return true
   }
 
   const size1 = tokenUser.size
-  console.log(`清理 tokenUser 前的 size: ${size1}`)
+  // console.log(`清理 tokenUser 前的 size: ${size1}`)
 
   const now = getNowStamp()
   tokenUser.forEach((val, key) => {
@@ -70,8 +70,8 @@ function clearTokenUser() {
   })
 
   const size2 = tokenUser.size
-  console.log(`清理 tokenUser 后的 size: ${size2}`)
-  console.log(" ")
+  // console.log(`清理 tokenUser 后的 size: ${size2}`)
+  // console.log(" ")
 
   return true
 }
