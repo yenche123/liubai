@@ -353,7 +353,7 @@ async function handle_github_oauth(
 
   // login: 为 github 的用户名，可以用来初始化 name
   // email: 正如其名
-  let { login, email } = res2_data
+  let { login, email, id: github_id } = res2_data
   email = isEmailAndNormalize(email)
   if(!login) {
     return {
@@ -367,10 +367,31 @@ async function handle_github_oauth(
       errMsg: "there is no email from github api user"
     }
   }
+  if(!github_id || typeof github_id !== "number") {
+    return {
+      code: "E5004",
+      errMsg: "github_id is supposed to number"
+    }
+  }
 
-  const opt: UserThirdData = { github: res2_data }
-  const res3 = await signInUpViaEmail(body, email, client_key, opt)
-  return res3
+  const thirdData: UserThirdData = { github: res2_data }
+
+  // 5. 使用 github_id 去找用户
+  const res3 = await findUserByGitHubId(github_id)
+
+  // 5.1. 使用 github_id 查找后，发现拒绝登录或异常
+  if(res3.type === 1) {
+    return res3.rqReturn
+  }
+  // 5.2. 使用 github_id 查找后，找到可供登录的用户们
+  if(res3.type === 2) {
+    const res3_1 = await sign_in(body, res3.userInfos, { client_key, thirdData })
+    return res3_1
+  }
+  
+  // 6. 使用 email 去找用户
+  const res4 = await signInUpViaEmail(body, email, client_key, thirdData)
+  return res4
 }
 
 /** 使用 email 进行登录或注册 */
@@ -429,7 +450,7 @@ async function sign_in(
   spaceMemberList = await turnMembersIntoOkWhileSigningIn(theUserInfo)
   
   // 4. 检查 user 是否 "DEACTIVATED" 或 "REMOVED"，若是，恢复至 "NORMAL"
-  user = await turnUserIntoNormal(user)
+  user = await handleUserWhileSigningIn(user)
 
   // 5. 去创建 token
   const token = createToken()
@@ -512,21 +533,45 @@ async function checkIfTooManyTokens(
 }
 
 /** 将 DEACTIVATED 或 REMOVED 的 user 切换成 NORMAL */
-async function turnUserIntoNormal(
+async function handleUserWhileSigningIn(
   user: Table_User,
+  thirdData?: UserThirdData,
 ) {
+  let updateRequired = false
+  const u: Partial<Table_User> = {}
   const { oState, _id } = user
 
-  // 既不是 “不活跃” 也不是 “已移除”（注销保留期）
-  if(oState !== "DEACTIVATED" && oState !== "REMOVED") return user
+  if(oState === "DEACTIVATED" || oState === "REMOVED") {
+    updateRequired = true
+    u.oState = "NORMAL"
+  }
+
+  const oldThirdData = user.thirdData ?? {}
+  const oldGoogle = oldThirdData?.google
+  const oldGitHub = oldThirdData?.github
+  const newGoogle = thirdData?.google
+  const newGitHub = thirdData?.github
+  if(!oldGoogle && newGoogle) {
+    updateRequired = true
+    oldThirdData.google = newGoogle
+    u.thirdData = oldThirdData
+  }
+  if(!oldGitHub && newGitHub) {
+    updateRequired = true
+    oldThirdData.github = newGitHub
+    u.thirdData = oldThirdData
+  }
+
+  if(!updateRequired) return user
+  u.updatedStamp = getNowStamp()
 
   const q = db.collection("User").where({ _id })
-  const res = await q.update({ oState: "NORMAL", updatedStamp: getNowStamp() })
-  console.log("turnUserIntoNormal res.........")
+  const res = await q.update(u)
+  console.log("handleUserWhileSigningIn res.........")
   console.log(res)
   console.log(" ")
-  user.oState = "NORMAL"
-
+  user = { ...user, ...u }
+  
   return user
 }
 
@@ -846,7 +891,7 @@ async function _cancelSignUp(
  * 2: 正常
  * 3: 查无任何用户
  */
-type FUBERes = {
+type FindUserRes = {
   type: 1
   rqReturn: LiuRqReturn
 } | {
@@ -879,7 +924,7 @@ async function findUserByGitHubId(
  */
 async function findUserByEmail(
   email: string
-): Promise<FUBERes> {
+): Promise<FindUserRes> {
   email = email.toLowerCase()
 
   const w = { email }
@@ -899,7 +944,7 @@ async function findUserByEmail(
 */
 async function handleUsersFound(
   list: Table_User[],
-): Promise<FUBERes> {
+): Promise<FindUserRes> {
 
   if(list.length < 1) return { type: 3 }
 
