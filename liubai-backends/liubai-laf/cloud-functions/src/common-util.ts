@@ -5,7 +5,7 @@ import type {
   SupportedLocale,
   LiuSpaceAndMember,
   MemberAggSpaces,
-} from './common-types'
+} from '@/common-types'
 
 
 /********************* 常量 ****************/

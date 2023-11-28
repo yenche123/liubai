@@ -10,7 +10,7 @@ import {
   MINUTE, 
 } from "@/common-time"
 import type { Table_Credential } from "@/common-types"
-import { createEmailCode } from './common-ids'
+import { createEmailCode } from '@/common-ids'
 
 const db = cloud.database()
 const _ = db.command

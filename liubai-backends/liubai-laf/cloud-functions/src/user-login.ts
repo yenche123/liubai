@@ -37,7 +37,7 @@ import {
   createImgId,
 } from "@/common-ids"
 import { checkIfEmailSentTooMuch, getActiveEmailCode, sendEmails } from "@/service-send"
-import { userLoginLang, useI18n, getAppName } from './common-i18n'
+import { userLoginLang, useI18n, getAppName } from '@/common-i18n'
 
 /************************ 一些常量 *************************/
 // GitHub 使用 code 去换 accessToken
