@@ -139,7 +139,7 @@ async function handle_email(
   }
 
   // 6. 构造邮件内容、去发送
-  const appName = getAppName()
+  const appName = getAppName({ body })
   const { t } = useI18n(userLoginLang, { body })
   const subject = t('confirmation_subject')
   let text = t('confirmation_text_1', { appName, code: emailCode })

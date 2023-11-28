@@ -34,17 +34,17 @@ export const commonLang: LangAtom = {
 export const userLoginLang: LangAtom = {
   "zh-Hans": {
     "confirmation_subject": "确认信",
-    "confirmation_text_1": "你正在登录{appName}，以下是你的验证码:\n{code}",
+    "confirmation_text_1": "你正在登录{appName}，以下是你的验证码:\n\n{code}",
     "confirmation_text_2": "\n\n该验证码十分钟内有效。"
   },
   "zh-Hant": {
     "confirmation_subject": "確認信",
-    "confirmation_text_1": "你正在登入{appName}，以下是你的驗證代號:\n{code}",
+    "confirmation_text_1": "你正在登入{appName}，以下是你的驗證代號:\n\n{code}",
     "confirmation_text_2": "\n\n該驗證代號十分鐘內有效。"
   },
   "en": {
     "confirmation_subject": "Confirmation",
-    "confirmation_text_1": "You are logging into {appName}. The following is your Vertification Code:\n{code}",
+    "confirmation_text_1": "You are logging into {appName}. The following is your Vertification Code:\n\n{code}",
     "confirmation_text_2": "\n\nIt is valid within 10 minutes."
   }
 }
