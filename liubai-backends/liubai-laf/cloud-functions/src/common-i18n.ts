@@ -17,6 +17,40 @@ export async function main(ctx: FunctionContext) {
   return true
 }
 
+/********************* 各单元 ****************/
+
+export const commonLang: LangAtom = {
+  "zh-Hans": {
+    "appName": "留白记事",
+  },
+  "zh-Hant": {
+    "appName": "留白記事",
+  },
+  "en": {
+    "appName": "Liubai"
+  }
+}
+
+export const userLoginLang: LangAtom = {
+  "zh-Hans": {
+    "confirmation_subject": "确认信",
+    "confirmation_text_1": "你正在登录{appName}，以下是你的验证码:\n{code}",
+    "confirmation_text_2": "\n\n该验证码十分钟内有效。"
+  },
+  "zh-Hant": {
+    "confirmation_subject": "確認信",
+    "confirmation_text_1": "你正在登入{appName}，以下是你的驗證代號:\n{code}",
+    "confirmation_text_2": "\n\n該驗證代號十分鐘內有效。"
+  },
+  "en": {
+    "confirmation_subject": "Confirmation",
+    "confirmation_text_1": "You are logging into {appName}. The following is your Vertification Code:\n{code}",
+    "confirmation_text_2": "\n\nIt is valid within 10 minutes."
+  }
+}
+
+
+
 
 /********************* 映射函数 ****************/
 
@@ -75,35 +109,50 @@ function getCurrentLocale(
   return getFallbackLocale()
 }
 
-
-// 获取某个 i18n 所对应的值
-export function getLangVal(
+/** 返回一个翻译函数 t */
+export function useI18n(
   langAtom: LangAtom,
-  key: string,
-  opt?: GetLangValOpt,
+  opt1?: GetLangValOpt,
 ) {
-  let locale = getCurrentLocale(opt)
-  let val = langAtom[locale]?.[key]
-  if(val) return val
 
-  const fLocale = getFallbackLocale()
-  if(fLocale !== locale) {
-    val = langAtom[fLocale]?.[key]
+  const _getVal = (key: string) => {
+    let locale = getCurrentLocale(opt1)
+    let val = langAtom[locale]?.[key]
     if(val) return val
+    const fLocale = getFallbackLocale()
+    if(fLocale !== locale) {
+      val = langAtom[fLocale]?.[key]
+      if(val) return val
+    }
   }
 
-  return ""
+  const t = (key: string, opt2?: Record<string, string>) => {
+    let res = _getVal(key)
+    if(!res) return ""
+    if(!opt2) return res
+
+    // 处理 opt2
+    const keys = Object.keys(opt2)
+    for(let i=0; i<keys.length; i++) {
+      const v = keys[i]
+      const theVal = opt2[v]
+      const dynamicPattern = `{${v}}`
+      const escapedPattern = dynamicPattern.replace(/[{}]/g, '\\$&')
+      const regexPattern = new RegExp(escapedPattern, 'g')
+      res = res.replace(regexPattern, theVal) 
+    }
+    return res
+  }
+
+  return { t }
 }
 
-/********************* 各单元 ****************/
-export const userLoginLang: LangAtom = {
-  "zh-Hans": {
-    "st": "asd"
-  },
-  "zh-Hant": {
-
-  },
-  "en": {
-
-  }
+/** 获取应用名称 */
+export function getAppName(
+  opt1?: GetLangValOpt,
+) {
+  const { t } = useI18n(commonLang, opt1)
+  const res = t('appName')
+  if(res) return res
+  return "xxx"
 }

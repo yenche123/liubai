@@ -18,6 +18,7 @@ import type {
   Cloud_ImageStore,
   LiuSpaceAndMember,
   SupportedClient,
+  ServiceSendEmailsParam,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -35,7 +36,8 @@ import {
   createToken,
   createImgId,
 } from "@/common-ids"
-import { checkIfEmailSentTooMuch, getActiveEmailCode } from "@/service-send"
+import { checkIfEmailSentTooMuch, getActiveEmailCode, sendEmails } from "@/service-send"
+import { userLoginLang, useI18n, getAppName } from './common-i18n'
 
 /************************ 一些常量 *************************/
 // GitHub 使用 code 去换 accessToken
@@ -82,7 +84,7 @@ export async function main(ctx: FunctionContext) {
     res = await handle_google_oauth(body)
   }
   else if(oT === "email") {
-    // res = await handle_email(body)
+    res = await handle_email(body)
   }
 
   return res
@@ -136,9 +138,27 @@ async function handle_email(
     return { code: "E5001", errMsg: "cannot insert email-code into Credential" }
   }
 
-  // 6. 构造邮件内容
-  
-  
+  // 6. 构造邮件内容、去发送
+  const appName = getAppName()
+  const { t } = useI18n(userLoginLang, { body })
+  const subject = t('confirmation_subject')
+  let text = t('confirmation_text_1', { appName, code: emailCode })
+  text += t('confirmation_text_2')
+
+  console.log("去发送邮件..................")
+  console.log("subject: ")
+  console.log(subject)
+  console.log("text: ")
+  console.log(text)
+  console.log(" ")
+
+  const dataSent: ServiceSendEmailsParam = {
+    to: [email],
+    subject,
+    text,
+  }
+  const res4 = await sendEmails(dataSent)
+  return res4
 }
 
 

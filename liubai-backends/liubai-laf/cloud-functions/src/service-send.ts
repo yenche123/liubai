@@ -31,6 +31,9 @@ export async function sendEmails(
   if(!text && !html) {
     return { code: "E5001", errMsg: "no text or html of param in sendEmails" }
   }
+  if(param.to.length < 1) {
+    return { code: "E5001", errMsg: "to.length of param is meant to be bigger than 0" }
+  }
 
   const newText = text as string
   const newHtml = html as string
