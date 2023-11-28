@@ -28,6 +28,7 @@ export function useLoginPage() {
     toSubmitEmailAddress(email, lpData)
   }
 
+  // code 由 9 个字符组成，中间是一个 "-"
   const onSubmitCode = (code: string) => {
     toSubmitEmailAndCode(code, lpData)
   }
@@ -210,6 +211,9 @@ function toGetLoginInitData(
     const res = await fetchInitLogin()
     const code = res?.code
     const data = res?.data
+
+    // console.log("code: ", code)
+    // console.log(" ")
 
     lpData.initCode = code
     if(!data || !data.publicKey) {

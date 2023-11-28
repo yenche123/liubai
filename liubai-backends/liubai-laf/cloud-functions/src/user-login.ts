@@ -35,7 +35,7 @@ import {
   createToken,
   createImgId,
 } from "@/common-ids"
-import { Resend } from 'resend'
+import { checkIfEmailSentTooMuch, getActiveEmailCode } from "@/service-send"
 
 /************************ 一些常量 *************************/
 // GitHub 使用 code 去换 accessToken
@@ -82,13 +82,14 @@ export async function main(ctx: FunctionContext) {
     res = await handle_google_oauth(body)
   }
   else if(oT === "email") {
-    res = await handle_email(body)
+    // res = await handle_email(body)
   }
 
   return res
 }
 
 
+/******************************** 向邮箱发送验证码 *************************/
 async function handle_email(
   body: Record<string, string>,
 ) {
@@ -97,44 +98,53 @@ async function handle_email(
     return { code: "E4000", errMsg: "no email" }
   }
 
+  // 1. 检查 email
   const email = isEmailAndNormalize(tmpEmail)
   if(!email) {
     return { code: "E4000", errMsg: "the format of email is wrong" }
   }
 
+  // 2. 检查 state
   const state = body.state
   const res0 = checkIfStateIsErr(state)
   if(res0) return res0
 
-  const _env = process.env
-  const appName = _env.LIU_APP_NAME
-  const resendApiKey = _env.LIU_RESEND_API_KEY
-  const fromEmail = _env.LIU_RESEND_FROM_EMAIL
-  if(!resendApiKey || !fromEmail) {
-    return { code: "E5001", errMsg: "no resendApiKey or fromEmail on backend" } 
+  // 3. 检查 email 是否发送过于频繁
+  const res1 = await checkIfEmailSentTooMuch(email)
+  if(res1) return res1
+
+  // 4. 获取有效的验证码
+  const res2 = await getActiveEmailCode()
+  const emailCode = res2.data?.code
+  if(!emailCode || typeof emailCode !== "string") {
+    return res2
   }
+
+  // 5. 存入 email code 进 Table_Credential 中
+  const basic1 = getBasicStampWhileAdding()
+  const expireStamp = getNowStamp() + 10 * MINUTE
+  const obj1: PartialSth<Table_Credential, "_id"> = {
+    ...basic1,
+    credential: emailCode,
+    infoType: "email-code",
+    expireStamp,
+    email,
+  }
+  const res3 = await db.collection("Credential").add(obj1)
+  const cId = getDocAddId(res3)
+  if(!cId) {
+    return { code: "E5001", errMsg: "cannot insert email-code into Credential" }
+  }
+
+  // 6. 构造邮件内容
   
-  const resend = new Resend(resendApiKey)
-  const res = await resend.emails.send({
-    from: `${appName} <${fromEmail}>`,
-    to: email,
-    subject: "Hello World!",
-    text: `this is from ${appName}!`,
-    tags: [
-      {
-        name: 'category',
-        value: 'confirm_email',
-      },
-    ],
-  })
-  console.log("查看 resend 发送结果: ")
-  console.log(res)
-  console.log(" ")
-   
-  return { code: "0000", data: res }
+  
 }
 
 
+
+
+/******************************** Google OAuth 2.0 *************************/
 async function handle_google_oauth(
   body: Record<string, string>,
 ) {
