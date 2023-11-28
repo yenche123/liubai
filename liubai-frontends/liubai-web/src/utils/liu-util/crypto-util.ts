@@ -76,10 +76,6 @@ async function importRsaPublicKey(pem: string) {
     return null
   }
 
-  console.log("binaryDer: ")
-  console.log(binaryDer)
-  console.log(" ")
-
   let key: CryptoKey
   try {
     key = await window.crypto.subtle.importKey(

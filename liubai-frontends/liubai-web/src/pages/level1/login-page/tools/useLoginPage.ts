@@ -29,9 +29,9 @@ export function useLoginPage() {
   const _waitInitLogin = async () => {
     if(hasTap) return false
     hasTap = true
-    const res = await initPromise
+    await initPromise
     hasTap = false
-    return res
+    return true
   }
 
   const onEmailSubmitted = async (email: string) => {
@@ -246,8 +246,8 @@ function toGetLoginInitData(
     const code = res?.code
     const data = res?.data
 
-    // console.log("code: ", code)
-    // console.log(" ")
+    console.log("code: ", code)
+    console.log(" ")
 
     lpData.initCode = code
     if(!data || !data.publicKey) {

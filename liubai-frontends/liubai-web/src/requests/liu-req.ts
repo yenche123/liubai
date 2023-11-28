@@ -91,8 +91,18 @@ async function request<
     return { code: "C0001" }
   }
 
+  // console.log("liu-req res: ")
+  // console.log(res)
+  // console.log(" ")
+
   const status = res.status
-  if(status === 503) {
+
+  // Laf 底层异常
+  if(status === 500) {
+    return { code: "B0500" }
+  }
+  // 其他错误皆视为后端在维护中
+  if(status > 500 && status < 600) {
     return { code: `B0001` }
   }
 
