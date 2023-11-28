@@ -1,27 +1,10 @@
 <script setup lang="ts">
-import type { PropType } from "vue";
-
-type CustomBtnType = "main" | "other" | "transparent" | "pure"
-type CustomBtnSize = "normal" | "mini" | "common"
+import { customBtnProps } from "./tools/types"
+import { useCustomButton } from "./tools/useCustomButton"
+import RingLoader from "../../loaders/ring-loader/ring-loader.vue"
  
-defineProps({
-  type: {
-    type: String as PropType<CustomBtnType>,
-    default: "main",     // main: 主要的;  other: 一般的;  transparent: 透明的; 
-                         // pure: 纯白的（浅色模式时），或纯黑的（深色模式时）
-  },
-  size: {
-    type: String as PropType<CustomBtnSize>,
-    default: "normal",   // normal: 正常大小;  mini: 宽度同 slot; 
-                         // common: 宽度同 slot 但是高度是 50px
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  zIndex: Number,
-  width: String,
-})
+const props = defineProps(customBtnProps)
+const { cbData } = useCustomButton(props)
 
 const emit = defineEmits(["click"])
 const onTapBtn = (e: Event) => {
@@ -44,10 +27,15 @@ const onTapBtn = (e: Event) => {
     @click="onTapBtn"
   >
     <slot />
+    <div v-if="cbData.enableLoading" class="btn-loading-box"
+      :class="{ 'btn-loading-box_show': cbData.showLoading }"
+    >
+      <RingLoader :size="24"></RingLoader>
+    </div>
   </button>
 
 </template>
-<style scoped>
+<style scoped lang="scss">
 
 .btn-container {
   height: 50px;
@@ -61,6 +49,9 @@ const onTapBtn = (e: Event) => {
   font-size: var(--btn-font);
   transition: .15s;
   user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn-mini {
@@ -96,6 +87,24 @@ const onTapBtn = (e: Event) => {
   background-color: transparent;
   color: var(--primary-color);
 }
+
+.btn-loading-box {
+  width: 40px;
+  height: 40px;
+  max-width: 0;
+  opacity: 0;
+  transition: .2s;
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.btn-loading-box_show {
+  max-width: 40px;
+  opacity: 1;
+}
+
 
 @media(hover: hover) {
 

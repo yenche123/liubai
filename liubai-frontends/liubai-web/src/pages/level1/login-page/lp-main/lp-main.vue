@@ -48,6 +48,7 @@ const {
     <CustomBtn
       :disabled="!lpmData.showEmailSubmit"
       class="lp-email-btn"
+      :is-loading="true"
       @click="onEmailEnter"
     >
       <span>{{ t('common.confirm') + ' ↵' }}</span>
@@ -188,7 +189,6 @@ const {
 }
 
 .lp-email-btn {
-  width: 100%;
   max-width: 450px;
 }
 

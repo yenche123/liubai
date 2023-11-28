@@ -16,7 +16,7 @@ import { i18n } from './locales'
 import { createPinia } from 'pinia'
 import { router } from './routes/router'
 import SvgIcon from "./assets/svg-icon.vue"
-import CustomBtn from "./components/custom-ui/custom-button.vue"
+import CustomBtn from "./components/custom-ui/custom-button/custom-button.vue"
 import LiuSwitch from "./components/common/liu-switch/liu-switch.vue"
 import LiuImg from "./components/common/liu-img/liu-img.vue"
 import LiuCheckbox from "./components/common/liu-checkbox/liu-checkbox.vue"
