@@ -19,6 +19,7 @@ export function useLoginPage() {
     view: "main",
     email: "",
     accounts: [],
+    isSendingEmail: false,
   })
 
   toGetLoginInitData(lpData)
@@ -61,9 +62,11 @@ async function toSubmitEmailAddress(
   lpData: LpData,
 ) {
 
+  lpData.isSendingEmail = true
+
   // TODO: 先直接跳到 lp-code 界面
-  lpData.email = email
-  lpData.view = "code"
+  // lpData.email = email
+  // lpData.view = "code"
 
 }
 

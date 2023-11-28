@@ -51,6 +51,7 @@ const {
       <LpMain
         @submitemail="onEmailSubmitted"
         @tapthirdparty="onTapLoginViaThirdParty"
+        :is-sending-email="lpData.isSendingEmail"
       ></LpMain>
     </div>
 

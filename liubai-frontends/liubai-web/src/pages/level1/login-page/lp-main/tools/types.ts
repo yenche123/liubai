@@ -10,6 +10,17 @@ export interface LpmData {
   }
 }
 
+export interface LpmProps {
+  isSendingEmail: boolean
+}
+
+export const lpmProps = {
+  isSendingEmail: {
+    type: Boolean,
+    default: false,
+  }
+}
+
 export interface LpmEmit {
   (evt: "submitemail", email: string): void
   (evt: "tapthirdparty", thirdParty: LoginByThirdParty): void

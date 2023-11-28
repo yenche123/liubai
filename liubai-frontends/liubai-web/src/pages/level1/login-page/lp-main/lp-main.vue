@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { useLpMain } from "./tools/useLpMain";
-import type { LpmEmit } from "./tools/types"
+import { type LpmEmit, lpmProps } from "./tools/types"
 
+defineProps(lpmProps)
 const emit = defineEmits<LpmEmit>()
 
 const { t } = useI18n()
@@ -46,12 +47,13 @@ const {
     />
 
     <CustomBtn
-      :disabled="!lpmData.showEmailSubmit"
+      :disabled="!lpmData.showEmailSubmit || isSendingEmail"
       class="lp-email-btn"
-      :is-loading="true"
+      :is-loading="isSendingEmail"
       @click="onEmailEnter"
     >
-      <span>{{ t('common.confirm') + ' ↵' }}</span>
+      <span>{{ t('common.confirm') }}</span>
+      <span v-show="!isSendingEmail"> ↵</span>
     </CustomBtn>
   
   </div>
@@ -190,6 +192,7 @@ const {
 
 .lp-email-btn {
   max-width: 450px;
+  white-space: pre-wrap;
 }
 
 
