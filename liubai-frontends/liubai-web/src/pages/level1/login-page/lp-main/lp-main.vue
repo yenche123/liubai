@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { useLpMain } from "./tools/useLpMain";
 import { type LpmEmit, lpmProps } from "./tools/types"
 
-defineProps(lpmProps)
+const props = defineProps(lpmProps)
 const emit = defineEmits<LpmEmit>()
 
 const { t } = useI18n()
@@ -13,7 +13,7 @@ const {
   lpmData,
   onTapSelect,
   onEmailEnter,
-} = useLpMain(emit)
+} = useLpMain(props, emit)
 
 </script>
 <template>

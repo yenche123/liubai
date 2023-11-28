@@ -5,9 +5,12 @@ export type LoginByThirdParty = "google" | "github" | "apple"
 
 export interface LpData {
   view: "main" | "code" | "accounts"     // 主页、填写验证码、选择账号
-  email: string
   accounts: MemberShow[]
+
+  // email 相关
+  email: string
   isSendingEmail: boolean
+  lastSendEmail?: number         // 最近一次发送 email 验证码的时间戳
 
   // 从后端获取
   publicKey?: string

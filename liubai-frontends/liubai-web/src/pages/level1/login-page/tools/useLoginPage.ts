@@ -2,7 +2,7 @@ import { reactive } from "vue";
 import type { LpData, LoginByThirdParty } from "./types";
 import type { BoolFunc } from "~/utils/basic/type-tool";
 import cui from "~/components/custom-ui";
-import { fetchInitLogin } from "../../tools/requests";
+import { fetchInitLogin, fetchSubmitEmail } from "../../tools/requests";
 import localCache from "~/utils/system/local-cache";
 import thirdLink from "~/config/third-link";
 import time from "~/utils/basic/time"
@@ -24,8 +24,20 @@ export function useLoginPage() {
 
   toGetLoginInitData(lpData)
 
-  const onEmailSubmitted = (email: string) => {
-    if(!isEverythingOkay(lpData.initCode)) return
+
+  // 等待 init 返回结果，并作简单的防抖节流
+  const _waitInitLogin = async () => {
+    if(hasTap) return false
+    hasTap = true
+    const res = await initPromise
+    hasTap = false
+    return res
+  }
+
+  const onEmailSubmitted = async (email: string) => {
+    const pass = await _waitInitLogin()
+    if(!pass) return
+    
     toSubmitEmailAddress(email, lpData)
   }
 
@@ -39,12 +51,10 @@ export function useLoginPage() {
   }
 
   const onTapLoginViaThirdParty = async (tp: LoginByThirdParty) => {
-    if(hasTap) return
-    hasTap = true
-    let res = await initPromise
-    hasTap = false
+    const pass = await _waitInitLogin()
+    if(!pass) return
 
-    if(res) whenTapLoginViaThirdParty(tp, lpData)
+    whenTapLoginViaThirdParty(tp, lpData)
   }
 
 
@@ -61,13 +71,34 @@ async function toSubmitEmailAddress(
   email: string,
   lpData: LpData,
 ) {
+  if(!isEverythingOkay(lpData.initCode)) return
+  const { state, lastSendEmail = 1 } = lpData
+  if(!state) return
+
+  const now = time.getTime()
+  const sec = (now - lastSendEmail) / time.MINUTE
+  
+  let canSubmit = false
+  if(email !== lpData.email) canSubmit = true
+  else if(sec > 60) canSubmit = true
+
+  // 如果不允许提交，直接切换到 "code" view
+  if(!canSubmit) {
+    lpData.view = "code"
+    return
+  }
 
   lpData.isSendingEmail = true
+  const res = await fetchSubmitEmail(email, state)
 
-  // TODO: 先直接跳到 lp-code 界面
-  // lpData.email = email
-  // lpData.view = "code"
+  console.log("fetchSubmitEmail res: ")
+  console.log(res)
+  console.log(" ")
 
+  lpData.isSendingEmail = false
+  lpData.email = email
+  lpData.view = "code"
+  lpData.lastSendEmail = time.getTime()
 }
 
 /** 记得做防抖节流，避免多次点击 */

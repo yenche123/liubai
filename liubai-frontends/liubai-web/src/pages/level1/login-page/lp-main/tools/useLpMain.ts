@@ -1,10 +1,11 @@
 import { onMounted, reactive, ref, watch } from "vue";
-import { type LpmData, type LpmEmit } from "./types"
+import type { LpmProps, LpmData, LpmEmit } from "./types"
 import liuUtil from '~/utils/liu-util';
 import { useWindowSize } from "~/hooks/useVueUse";
 import { type LiuTimeout } from "~/utils/basic/type-tool";
 
 export function useLpMain(
+  props: LpmProps,
   emit: LpmEmit,
 ) {
 
@@ -60,6 +61,7 @@ export function useLpMain(
   })
 
   const onEmailEnter = () => {
+    if(props.isSendingEmail) return
     if(!lpmData.showEmailSubmit) return
     const email = lpmData.emailVal.trim().toLowerCase()
     emit("submitemail", email)
