@@ -195,16 +195,6 @@ export function isEmailAndNormalize(val: any) {
   return newVal
 }
 
-export function normalizeLanguage(val: string): SupportedLocale {
-  val = val.toLowerCase()
-  if(!val) return "en"
 
-  if(val === "zh-tw") return "zh-Hant"
-  if(val === "zh-hk") return "zh-Hant"
-  if(val === "zh-cn") return "zh-Hans"
-  if(val.startsWith("zh")) return "zh-Hans"
-
-  return "en"
-}
 
 

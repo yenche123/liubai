@@ -2,8 +2,6 @@ import {
   FunctionContext as _FunctionContext
 } from "@lafjs/cloud"
 
-
-
 type LiuSwitch = "01" | "02" | undefined
 
 declare global {
@@ -28,6 +26,9 @@ declare global {
 
       /** 内部 debug 时，通行码 */
       LIU_DEBUG_KEY?: string
+
+      /** 兜底的语言信息，若该字段不存在，系统会使用 'en' 做兜底 */
+      LIU_FALLBACK_LOCALE?: string
 
       /** GitHub OAuth */
       LIU_GITHUB_OAUTH_CLIENT_ID?: string
