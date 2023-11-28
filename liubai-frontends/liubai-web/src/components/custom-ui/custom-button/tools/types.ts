@@ -18,6 +18,7 @@ export interface CustomBtnData {
   showLoading: boolean
   showingTimeout: LiuTimeout
   closingTimeout: LiuTimeout
+  loadingColor?: string
 }
 
 export const customBtnProps = {

@@ -30,7 +30,7 @@ const onTapBtn = (e: Event) => {
     <div v-if="cbData.enableLoading" class="btn-loading-box"
       :class="{ 'btn-loading-box_show': cbData.showLoading }"
     >
-      <RingLoader :size="24"></RingLoader>
+      <RingLoader :size="20" :color="cbData.loadingColor"></RingLoader>
     </div>
   </button>
 

@@ -12,15 +12,34 @@ export function useCustomButton(props: CustomBtnProps) {
     showLoading: false,
     showingTimeout: undefined,
     closingTimeout: undefined,
+    loadingColor: "var(--on-primary)",
   })
 
   watch(() => props.isLoading, (newV) => {
     whenIsLoadingChange(props, cbData)
   }, { immediate: true })
 
+  watch(() => props.type, (newV) => {
+    whenTypeChange(props, cbData)
+  }, { immediate: true })
+
   return {
     cbData,
   }
+}
+
+function whenTypeChange(
+  props: CustomBtnProps,
+  cbData: CustomBtnData,
+) {
+  const newV = props.type
+  const oldColor = cbData.loadingColor
+  let newColor = oldColor
+  if(newV === "other") newColor = `var(--other-btn-text)`
+  else if(newV === "transparent") newColor = `var(--primary-color)`
+  else if(newV === "pure") newColor = `var(--main-text)`
+
+  if(oldColor !== newColor) cbData.loadingColor = newColor
 }
 
 
