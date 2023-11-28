@@ -270,7 +270,16 @@ export interface LiuSpaceAndMember {
   space_owner: string
 }
 
-
+export interface ServiceSendEmailsParam {
+  to: string[]        // 目标邮箱地址们
+  subject: string     // 标题
+  html?: string       // html 格式的内文
+  text?: string       // 纯文本 格式的内文
+  tags?: {
+    name: string
+    value: string
+  }[]
+}
 
 /*********************** 数据表类型 **********************/
 
