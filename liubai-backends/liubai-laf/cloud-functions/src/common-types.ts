@@ -432,7 +432,11 @@ export interface Table_Credential extends BaseTable {
 
   user_ids?: string[]
   userId?: string
+
   email?: string
+  send_channel?: string
+  email_id?: string
+
   client_key?: string
   thirdData?: UserThirdData
 }
@@ -468,6 +472,9 @@ export interface Res_UserLoginNormal {
   multi_credential_id?: string
 }
 
+export interface Res_UserLoginEmail {
+  last_event?: string
+}
 
 /*********************** 缓存类型 **********************/
 

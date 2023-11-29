@@ -145,22 +145,50 @@ async function handle_email(
   let text = t('confirmation_text_1', { appName, code: emailCode })
   text += t('confirmation_text_2')
 
-  console.log("去发送邮件..................")
-  console.log("subject: ")
-  console.log(subject)
-  console.log("text: ")
-  console.log(text)
-  console.log(" ")
-
+  // 7. 去发送
   const dataSent: ServiceSendEmailsParam = {
     to: [email],
     subject,
     text,
   }
   const res4 = await sendEmails(dataSent)
+
+  // 8. 处理发送后的结果
+  handleEmailSent(cId, "resend", res4)
+
+  // 9. 如果发送成功，去掉 data
+  if(res4.code === "0000") {
+    delete res4.data
+  }
+
+
   return res4
 }
 
+function handleEmailSent(
+  cId: string,
+  send_channel: string,
+  res4: LiuRqReturn<Record<string, any>>,
+) {
+  const u: Partial<Table_Credential> = {}
+  const { code, data } = res4
+  const now = getNowStamp()
+
+  const q = db.collection("Credential").where({ _id: cId })
+
+  if(code === "0000" && typeof (data?.id) === "string") {
+    u.send_channel = send_channel
+    u.email_id = data.id
+    u.updatedStamp = now
+    q.update(u)
+  }
+
+  if(code === "U0005") {
+    console.warn('邮件发送失败')
+    console.log('删除该 Credential')
+    q.remove()
+  }
+}
 
 
 

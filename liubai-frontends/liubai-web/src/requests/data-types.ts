@@ -24,3 +24,7 @@ export interface Res_UserLoginNormal {
   multi_credential?: string
   multi_credential_id?: string
 }
+
+export interface Res_UserLoginEmail {
+  last_event?: string
+}

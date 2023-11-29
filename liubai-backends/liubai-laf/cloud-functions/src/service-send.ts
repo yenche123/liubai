@@ -64,7 +64,19 @@ export async function sendEmails(
     tags,
   })
 
-  return { code: "0000", data: res }
+  console.log("查看 resend 的发送结果>>>")
+  console.log(res)
+  console.log(" ")
+
+  if(res.error) {
+    return { code: "U0005", data: res.error }
+  }
+
+  if(res.data) {
+    return { code: "0000", data: res.data }
+  }
+
+  return { code: "0000" }
 }
 
 /** 检查是否发送过于频繁 */
