@@ -162,7 +162,9 @@
     "logging": "Logging in..",
     "cannot_login_via": "\"Continue with {thirdParty}\" has been temporarily disabled. Please use other methods.",
     "err_login": "Login Error",
-    "err_1": "State is missing. Please try again later."
+    "err_1": "State is missing. Please try again later.",
+    "err_2": "The email has been marked as spam, so look for it in the spam/promotion mailboxes.",
+    "err_3": "The email has been rejected. Please replace your email address."
   },
   "tip": {
     "tip": "TIP",

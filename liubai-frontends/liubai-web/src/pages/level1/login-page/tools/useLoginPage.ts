@@ -76,11 +76,11 @@ async function toSubmitEmailAddress(
   if(!state) return
 
   const now = time.getTime()
-  const sec = (now - lastSendEmail) / time.MINUTE
+  const sec = (now - lastSendEmail) / time.SECONED
   
   let canSubmit = false
   if(email !== lpData.email) canSubmit = true
-  else if(sec > 60) canSubmit = true
+  else if(sec > 20) canSubmit = true    // 等 20s 就好，21~60s 去检查状态
 
   // 如果不允许提交，直接切换到 "code" view
   if(!canSubmit) {
@@ -90,12 +90,21 @@ async function toSubmitEmailAddress(
 
   lpData.isSendingEmail = true
   const res = await fetchSubmitEmail(email, state)
+  lpData.isSendingEmail = false
 
   console.log("fetchSubmitEmail res: ")
   console.log(res)
   console.log(" ")
 
-  lpData.isSendingEmail = false
+  const { code, errMsg } = res
+  if(code === "E4003" && errMsg === "last_event: bounced") {
+    showEmailTip("login.err_3", "😭")
+    return
+  }
+  else if(code === "E4003" && errMsg === "last_event: complained") {
+    showEmailTip("login.err_2", "🥲")
+  }
+
   lpData.email = email
   lpData.view = "code"
   lpData.lastSendEmail = time.getTime()
@@ -235,6 +244,18 @@ function showOtherTip(content_key: string) {
     title_key: "login.err_login",
     content_key,
     showCancel: false,
+  })
+}
+
+function showEmailTip(
+  content_key: string,
+  title: string,
+) {
+  cui.showModal({
+    title,
+    content_key,
+    showCancel: false,
+    isTitleEqualToEmoji: true,
   })
 }
 

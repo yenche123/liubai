@@ -162,7 +162,9 @@
     "logging": "正在登入..",
     "cannot_login_via": "目前暫不支援「使用 {thirdParty} 登入」，請使用其他登入方式。",
     "err_login": "登入異常",
-    "err_1": "state 缺失，請稍後再試。"
+    "err_1": "state 缺失，請稍後再試。",
+    "err_2": "Email 被視為垃圾信件，請至垃圾或推廣信箱中尋找。",
+    "err_3": "Email 已被拒收，請更換你的 email 地址。"
   },
   "tip": {
     "tip": "提示",

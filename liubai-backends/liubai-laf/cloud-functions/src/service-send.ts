@@ -90,6 +90,10 @@ async function retrieveEmail(
   }
   const resend = new Resend(resendApiKey)
   const res = await resend.emails.get(email_id)
+  console.log("retrieveEmail res: ")
+  console.log(res)
+  console.log(" ")
+  
   if(res.error) {
     return { code: "E5004", data: res.error }
   }

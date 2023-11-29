@@ -1171,15 +1171,15 @@ function checkIfStateIsErr(state: any): LiuRqReturn | null {
   let { createdStamp, num } = res
   num++
 
-  if(num > 3) {
+  if(num > 6) {
     liuLoginState.delete(state)
     return { code: "U0004", errMsg: "the state has been used too many times" }
   }
 
   const now = getNowStamp()
   const diff = now - createdStamp
-  const isMoreThan10Mins = diff > (10 * MINUTE)
-  if(isMoreThan10Mins) {
+  const isMoreThan15Mins = diff > (15 * MINUTE)
+  if(isMoreThan15Mins) {
     liuLoginState.delete(state)
     return { code: "U0003", errMsg: "the state has been expired" }
   }

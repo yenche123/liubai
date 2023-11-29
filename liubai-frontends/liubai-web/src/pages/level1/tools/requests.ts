@@ -27,9 +27,6 @@ export async function fetchSubmitEmail(
     state,
     email,
   }
-  console.log("featchSubmitEmail opt: ")
-  console.log(opt)
-  console.log(" ")
 
   const res = await liuReq.request(url, opt)
   return res
