@@ -6,6 +6,7 @@ import { fetchInitLogin, fetchSubmitEmail } from "../../tools/requests";
 import localCache from "~/utils/system/local-cache";
 import thirdLink from "~/config/third-link";
 import time from "~/utils/basic/time"
+import { encryptTextWithRSA } from "../../tools/common-utils"
 import { loadGoogleIdentityService } from "./handle-gis"
 
 // 等待向后端调用 init 的结果
@@ -72,8 +73,8 @@ async function toSubmitEmailAddress(
   lpData: LpData,
 ) {
   if(!isEverythingOkay(lpData.initCode)) return
-  const { state, lastSendEmail = 1 } = lpData
-  if(!state) return
+  const { state, lastSendEmail = 1, publicKey } = lpData
+  if(!state || !publicKey) return
 
   const now = time.getTime()
   const sec = (now - lastSendEmail) / time.SECONED
@@ -88,8 +89,14 @@ async function toSubmitEmailAddress(
     return
   }
 
+  const enc_email = await encryptTextWithRSA(publicKey, email)
+  if(!enc_email) {
+    console.warn("加密 email 失败......")
+    return
+  }
+
   lpData.isSendingEmail = true
-  const res = await fetchSubmitEmail(email, state)
+  const res = await fetchSubmitEmail(enc_email, state)
   lpData.isSendingEmail = false
 
   console.log("fetchSubmitEmail res: ")

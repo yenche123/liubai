@@ -14,3 +14,10 @@ export async function getClientKeyEncrypted(
   const cipherStr = await liuUtil.crypto.encryptWithRSA(pk, client_key)
   return cipherStr
 }
+
+export async function encryptTextWithRSA(pem: string, text: string) {
+  const pk = await liuUtil.crypto.importRsaPublicKey(pem)
+  if(!pk) return
+  const cipherStr = await liuUtil.crypto.encryptWithRSA(pk, text)
+  return cipherStr 
+}

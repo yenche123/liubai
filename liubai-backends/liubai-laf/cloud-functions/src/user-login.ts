@@ -95,9 +95,23 @@ export async function main(ctx: FunctionContext) {
 async function handle_email(
   body: Record<string, string>,
 ) {
-  const tmpEmail = body.email
-  if(!tmpEmail) {
+  let tmpEmail = body.email
+  const enc_email = body.enc_email
+  if(!tmpEmail && !enc_email) {
     return { code: "E4000", errMsg: "no email" }
+  }
+
+  // 0. 解密 enc_email
+  if(enc_email) {
+    const { 
+      plainText: dec_email,
+      code: dec_code,
+      errMsg: dec_errMsg,
+    } = decryptWithRSA(enc_email)
+    if(dec_code || !dec_email) {
+      return { code: dec_code ?? "E5001", errMsg: dec_errMsg }
+    }
+    tmpEmail = dec_email
   }
 
   // 1. 检查 email

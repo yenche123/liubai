@@ -18,14 +18,14 @@ export async function fetchInitLogin() {
 } 
 
 export async function fetchSubmitEmail(
-  email: string,
+  enc_email: string,
   state: string,
 ) {
   const url = APIs.LOGIN
   const opt = {
     operateType: "email",
     state,
-    email,
+    enc_email,
   }
 
   const res = await liuReq.request(url, opt)
