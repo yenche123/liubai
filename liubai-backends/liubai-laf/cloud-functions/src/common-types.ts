@@ -472,10 +472,6 @@ export interface Res_UserLoginNormal {
   multi_credential_id?: string
 }
 
-export interface Res_UserLoginEmail {
-  last_event?: string
-}
-
 /*********************** 缓存类型 **********************/
 
 export interface Shared_RSA_Key_Pair {

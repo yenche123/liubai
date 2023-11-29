@@ -79,6 +79,28 @@ export async function sendEmails(
   return { code: "0000" }
 }
 
+/** 去检索邮件发送结果 */
+async function retrieveEmail(
+  email_id: string,
+): Promise<LiuRqReturn> {
+  const _env = process.env
+  const resendApiKey = _env.LIU_RESEND_API_KEY
+  if(!resendApiKey) {
+    return { code: "E5001", errMsg: "no resendApiKey in retrieveEmail" } 
+  }
+  const resend = new Resend(resendApiKey)
+  const res = await resend.emails.get(email_id)
+  if(res.error) {
+    return { code: "E5004", data: res.error }
+  }
+  if(res.data) {
+    return { code: "0000", data: res.data }
+  }
+
+  return { code: "E5001", errMsg: "it's not as expected in retrieveEmail" }
+}
+
+
 /** 检查是否发送过于频繁 */
 export async function checkIfEmailSentTooMuch(
   email: string,
@@ -91,10 +113,24 @@ export async function checkIfEmailSentTooMuch(
     insertedStamp: _.gte(ONE_MIN_AGO),
   }
   const res1 = await db.collection("Credential").where(w1).get<Table_Credential>()
-  const list1 = res1.data
-  if(list1.length > 0) {
-    return { code: "E4003", errMsg: "sending to the email address too much" }
+  const list1 = res1.data ?? []
+  const firRes = list1[0]
+  if(!firRes) return
+
+  // 检索邮件
+  const rData: LiuRqReturn = {
+    code: "E4003",
+    errMsg: "sending to the email address too much"
   }
+  if(firRes.email_id && firRes.send_channel === "resend") {
+    const res2 = await retrieveEmail(firRes.email_id)
+    const last_event = res2?.data?.last_event
+    if(res2.code === "0000" && typeof last_event === "string") {
+      rData.errMsg = `last_event: ${last_event}`
+    }
+  }
+  
+  return rData
 }
 
 /** 获取有效的 email code */
