@@ -33,7 +33,7 @@ export async function fetchSubmitEmail(
 }
 
 export async function fetchEmailCode(
-  email: string,
+  enc_email: string,
   code: string,
   state: string,
 ) {
