@@ -431,6 +431,7 @@ export interface Table_Credential extends BaseTable {
   infoType: "sms-code" | "email-code" | "scan-code" | "users-select"
   expireStamp: number
 
+  verifyNum?: number
   user_ids?: string[]
   userId?: string
 

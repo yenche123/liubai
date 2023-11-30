@@ -29,6 +29,7 @@ import {
   turnMemberAggsIntoLSAMs,
   getSuffix,
   getIp,
+  canPassByExponentialDoor,
 } from "@/common-util"
 import { getNowStamp, MINUTE, DAY, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -87,8 +88,122 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "email") {
     res = await handle_email(ctx, body)
   }
+  else if(oT === "email_code") {
+    await handle_email_code(ctx, body)
+  }
 
   return res
+}
+
+
+async function handle_email_code(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+) {
+
+  // to check email
+  let tmpEmail = body.email
+  const enc_email = body.enc_email
+  if(!tmpEmail && !enc_email) {
+    return { code: "E4000", errMsg: "no email" }
+  }
+  
+  // to decrypt email
+  if(enc_email) {
+    const { 
+      plainText: dec_email,
+      code: dec_code,
+      errMsg: dec_errMsg,
+    } = decryptWithRSA(enc_email)
+    if(dec_code || !dec_email) {
+      return { code: dec_code ?? "E5001", errMsg: dec_errMsg }
+    }
+    tmpEmail = dec_email
+  }
+
+  // to check email again
+  const email = isEmailAndNormalize(tmpEmail)
+  if(!email) {
+    return { code: "E4000", errMsg: "the format of email is wrong" }
+  }
+
+  // to check email_code
+  const email_code = body.email_code
+  if(!email_code && email_code.length < 5) {
+    return { code: "E4000", errMsg: "no email_code" }
+  }
+
+  // to check client_key
+  const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
+  if(!client_key || code1) {
+    return { code: code1 ?? "E5001", errMsg: errMsg1 }
+  }
+
+  const errReturnData = {
+    code: "E4003",
+    errMsg: "the email_code is wrong or expired, or checking is too much"
+  }
+
+  // 1. to check credential
+  const w = { infoType: "email-code", email }
+  const col = db.collection("Credential")
+  const q = col.where(w)
+  const res = await q.orderBy("insertedStamp", "desc").get<Table_Credential>()
+  const list = res.data
+  const firstCre = list[0]
+  if(!firstCre) {
+    console.log("查无任何 Credential")
+    return errReturnData
+  }
+
+  // 2. to check verifyNum
+  const { verifyNum, insertedStamp, credential, expireStamp } = firstCre
+  const verifyData = canPassByExponentialDoor(insertedStamp, verifyNum)
+  if(!verifyData.pass) {
+    console.warn("checking credential too much")
+    return errReturnData
+  }
+
+  // 3. to check credential
+  if(email_code !== credential) {
+    console.warn("the email_code is not equal to credential")
+    await addVerifyNum(firstCre._id, verifyData.verifiedNum)
+    return errReturnData
+  }
+
+  // 4. to check expireStamp
+  const now1 = getNowStamp()
+  if(now1 > expireStamp) {
+    console.warn("credential has been expired")
+    return errReturnData
+  }
+
+  // the following has been pass
+  // 5. to remove credential
+  const res2 = await col.where({ _id: firstCre._id }).remove()
+  console.log("删除 credential 的结果........")
+  console.log(res2)
+  console.log(" ")
+
+  // 6. 去注册或登录
+  const res3 = await signInUpViaEmail(ctx, body, email, client_key)
+  return res3
+}
+
+/** 修改 Credential 的 verifyNum */
+async function addVerifyNum(
+  id: string,
+  verifyNum: number,
+) {
+  const u1 = { 
+    updatedStamp: getNowStamp(),
+    verifyNum,
+  }
+  const col = db.collection("Credential")
+  const res1 = await col.where({ _id: id }).update(u1)
+  console.log("addVerifyNum res1: ")
+  console.log(res1)
+  console.log(" ")
 }
 
 

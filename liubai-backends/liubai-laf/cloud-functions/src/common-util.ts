@@ -2,11 +2,10 @@
 import cloud from '@lafjs/cloud'
 import * as crypto from "crypto"
 import type { 
-  SupportedLocale,
   LiuSpaceAndMember,
   MemberAggSpaces,
 } from '@/common-types'
-
+import { getNowStamp, SECONED } from "@/common-time"
 
 /********************* 常量 ****************/
 export const reg_exp = {
@@ -200,6 +199,26 @@ export function isEmailAndNormalize(val: any) {
   return newVal
 }
 
+/********************* 一些验证、检查函数 *****************/
 
+/** 指数级访问的检查: 
+ * 第 x 次访问，必须与 startedStamp 相差 x^2 秒
+ * @param startedStamp 待验证的数据被创建的时间戳
+ * @param verifiedNum 不包含本次，已被检查的次数
+*/
+export function canPassByExponentialDoor(
+  startedStamp: number,
+  verifiedNum?: number,
+) {
+  if(!verifiedNum) {
+    return { verifiedNum: 1, pass: true }
+  }
 
+  verifiedNum++
+  const requiredSec = verifiedNum ** 2
+  const now = getNowStamp()
+  const diffSec = (now - startedStamp) / SECONED
+  const pass = diffSec > requiredSec
+  return { verifiedNum, pass }
+}
 
