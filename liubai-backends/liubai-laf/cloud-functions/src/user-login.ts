@@ -95,7 +95,7 @@ export async function main(ctx: FunctionContext) {
   return res
 }
 
-
+/******************************** 用 验证码+email 试图登录 *************************/
 async function handle_email_code(
   ctx: FunctionContext,
   body: Record<string, string>,
