@@ -293,6 +293,7 @@ export interface Table_Token extends BaseTable {
   client_key?: string
   lastRead: number
   lastSet: number
+  ip?: string
 }
 
 /** User表 */

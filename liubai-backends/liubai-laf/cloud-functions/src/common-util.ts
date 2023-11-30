@@ -81,6 +81,11 @@ export function getPublicKey() {
 
 /********************* 一些工具函数 *****************/
 
+export function getIp(ctx: FunctionContext) {
+  const ip = ctx?.headers?.['x-real-ip']
+  if(ip && typeof ip === "string") return ip
+}
+
 
 /**
  * 获取新增的数据的 _id

@@ -28,6 +28,7 @@ import {
   getDocAddId,
   turnMemberAggsIntoLSAMs,
   getSuffix,
+  getIp,
 } from "@/common-util"
 import { getNowStamp, MINUTE, DAY, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -78,13 +79,13 @@ export async function main(ctx: FunctionContext) {
     res = handle_init()
   }
   else if(oT === "github_oauth") {
-    res = await handle_github_oauth(body)
+    res = await handle_github_oauth(ctx, body)
   }
   else if(oT === "google_oauth") {
-    res = await handle_google_oauth(body)
+    res = await handle_google_oauth(ctx, body)
   }
   else if(oT === "email") {
-    res = await handle_email(body)
+    res = await handle_email(ctx, body)
   }
 
   return res
@@ -93,6 +94,7 @@ export async function main(ctx: FunctionContext) {
 
 /******************************** 向邮箱发送验证码 *************************/
 async function handle_email(
+  ctx: FunctionContext,
   body: Record<string, string>,
 ) {
   let tmpEmail = body.email
@@ -208,6 +210,7 @@ function handleEmailSent(
 
 /******************************** Google OAuth 2.0 *************************/
 async function handle_google_oauth(
+  ctx: FunctionContext,
   body: Record<string, string>,
 ) {
 
@@ -317,12 +320,13 @@ async function handle_google_oauth(
   }
 
   const opt: UserThirdData = { google: res2_data }
-  const res3 = await signInUpViaEmail(body, email, client_key, opt)
+  const res3 = await signInUpViaEmail(ctx, body, email, client_key, opt)
   return res3
 }
 
 
 async function handle_github_oauth(
+  ctx: FunctionContext,
   body: Record<string, string>,
 ) {
 
@@ -457,17 +461,18 @@ async function handle_github_oauth(
   }
   // 5.2. 使用 github_id 查找后，找到可供登录的用户们
   if(res3.type === 2) {
-    const res3_1 = await sign_in(body, res3.userInfos, { client_key, thirdData })
+    const res3_1 = await sign_in(ctx, body, res3.userInfos, { client_key, thirdData })
     return res3_1
   }
   
   // 6. 使用 email 去找用户
-  const res4 = await signInUpViaEmail(body, email, client_key, thirdData)
+  const res4 = await signInUpViaEmail(ctx, body, email, client_key, thirdData)
   return res4
 }
 
 /** 使用 email 进行登录或注册 */
 async function signInUpViaEmail(
+  ctx: FunctionContext,
   body: Record<string, string>,
   email: string,
   client_key?: string,
@@ -482,12 +487,12 @@ async function signInUpViaEmail(
 
   // 去登录
   if(res1.type === 2) {
-    const res2 = await sign_in(body, res1.userInfos, { client_key, thirdData })
+    const res2 = await sign_in(ctx, body, res1.userInfos, { client_key, thirdData })
     return res2
   }
 
   // 去注册
-  const res3 = await sign_up(body, { email }, client_key, thirdData)
+  const res3 = await sign_up(ctx, body, { email }, client_key, thirdData)
   return res3
 }
 
@@ -499,6 +504,7 @@ interface SignInOpt {
 }
 
 async function sign_in(
+  ctx: FunctionContext,
   body: Record<string, string>,
   userInfos: LiuUserInfo[],
   opt: SignInOpt,
@@ -531,6 +537,7 @@ async function sign_in(
   const userId = user._id
   const basic1 = getBasicStampWhileAdding()
   const platform = body['x_liu_client'] as SupportedClient
+  const ip = getIp(ctx)
   const obj1: PartialSth<Table_Token, "_id"> = {
     ...basic1,
     token,
@@ -541,6 +548,7 @@ async function sign_in(
     client_key: opt.client_key,
     lastRead: now,
     lastSet: now,
+    ip,
   }
   const res1 = await db.collection("Token").add(obj1)
   const serial_id = getDocAddId(res1)
@@ -764,6 +772,7 @@ interface SignUpParam2 {
 
 /*************************** 注册 ************************/
 async function sign_up(
+  ctx: FunctionContext,
   body: Record<string, string>,
   param2: SignUpParam2,
   client_key?: string,
@@ -862,7 +871,8 @@ async function sign_up(
   ]
 
   // 7. 最后去登录
-  const res4 = await sign_in(body, userInfos, { client_key, thirdData, justSignUp: true })
+  const signInOpt = { client_key, thirdData, justSignUp: true }
+  const res4 = await sign_in(ctx, body, userInfos, signInOpt)
   return res4
 }
 
