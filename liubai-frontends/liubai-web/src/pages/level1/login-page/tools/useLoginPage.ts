@@ -2,7 +2,7 @@ import { reactive } from "vue";
 import type { LpData, LoginByThirdParty } from "./types";
 import type { BoolFunc } from "~/utils/basic/type-tool";
 import cui from "~/components/custom-ui";
-import { fetchInitLogin, fetchSubmitEmail } from "../../tools/requests";
+import { fetchInitLogin, fetchSubmitEmail, fetchEmailCode } from "../../tools/requests";
 import localCache from "~/utils/system/local-cache";
 import thirdLink from "~/config/third-link";
 import time from "~/utils/basic/time"
@@ -21,6 +21,7 @@ export function useLoginPage() {
     email: "",
     accounts: [],
     isSendingEmail: false,
+    isSubmittingEmailCode: false,
   })
 
   toGetLoginInitData(lpData)
@@ -75,6 +76,7 @@ async function toSubmitEmailAddress(
   if(!isEverythingOkay(lpData.initCode)) return
   const { state, lastSendEmail = 1, publicKey } = lpData
   if(!state || !publicKey) return
+  if(lpData.isSendingEmail) return
 
   const now = time.getTime()
   const sec = (now - lastSendEmail) / time.SECONED
@@ -122,11 +124,42 @@ async function toSubmitEmailAndCode(
   code: string,
   lpData: LpData,
 ) {
-  const pem = lpData.publicKey
-  if(!pem) return
+  const { email, state, lastSubmitEmailCode = 1, publicKey } = lpData
+  if(!state || !publicKey || !email) return
+  if(lpData.isSubmittingEmailCode) return
 
+  const now = time.getTime()
+  const milli = (now - lastSubmitEmailCode)
+  if(milli < 1000) {
+    cui.showSnackBar({ text_key: "login.err_4" })
+    return
+  }
 
-  // TODO: 去打开 "accounts"，如果要选择账号的话
+  // 1. 获取加密的 email
+  const enc_email = await encryptTextWithRSA(publicKey, email)
+  if(!enc_email) {
+    console.warn("加密 email 失败......")
+    return
+  }
+
+  // 2. 获取 enc_client_key
+  const onceData = localCache.getOnceData()
+  const enc_client_key = onceData.enc_client_key
+  if(!enc_client_key) {
+    console.warn("enc_client_key is required")
+    console.log(" ")
+    return
+  }
+
+  // 3. 去登录
+  lpData.lastSubmitEmailCode = now
+  lpData.isSubmittingEmailCode = true
+  const res = await fetchEmailCode(enc_email, code, state, enc_client_key)
+  lpData.isSubmittingEmailCode = false
+
+  console.log("登录后的结果.......")
+  console.log(res)
+  console.log(" ")
 
 }
 

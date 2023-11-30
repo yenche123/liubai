@@ -11,6 +11,8 @@ export interface LpData {
   email: string
   isSendingEmail: boolean
   lastSendEmail?: number         // 最近一次发送 email 验证码的时间戳
+  isSubmittingEmailCode: boolean
+  lastSubmitEmailCode?: number   // 最近一次提交 email 和 验证码的时间戳
 
   // 从后端获取
   publicKey?: string

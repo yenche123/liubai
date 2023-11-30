@@ -36,6 +36,17 @@ export async function fetchEmailCode(
   enc_email: string,
   code: string,
   state: string,
+  enc_client_key: string,
 ) {
-  
+  const url = APIs.LOGIN
+  const opt = {
+    operateType: "email_code",
+    state,
+    enc_email,
+    email_code: code,
+    enc_client_key,
+  }
+
+  const res = await liuReq.request(url, opt)
+  return res
 }

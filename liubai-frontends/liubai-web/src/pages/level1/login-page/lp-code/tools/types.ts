@@ -3,6 +3,7 @@
 
 export interface LpcProps {
   email: string
+  isSubmittingCode: boolean
 }
 
 export interface LpcEmits {

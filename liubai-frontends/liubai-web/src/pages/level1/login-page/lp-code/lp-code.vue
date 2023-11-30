@@ -35,11 +35,13 @@ const { t } = useI18n()
     />
 
     <CustomBtn
-      :disabled="!lpcData.canSubmit"
+      :disabled="!lpcData.canSubmit || isSubmittingCode"
+      :is-loading="isSubmittingCode"
       class="lp-btn"
       @click="onEnterCode"
     >
-      <span>{{ t('common.confirm') + ' ↵' }}</span>
+      <span>{{ t('common.confirm') }}</span>
+      <span v-show="!isSubmittingCode"> ↵</span>
     </CustomBtn>
 
     <CustomBtn
@@ -122,6 +124,7 @@ const { t } = useI18n()
   width: 100%;
   max-width: 450px;
   margin-block-end: 12px;
+  white-space: pre-wrap;
 }
 
 .lp-btn-back {

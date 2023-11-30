@@ -164,7 +164,8 @@
     "err_login": "Login Error",
     "err_1": "State is missing. Please try again later.",
     "err_2": "The email has been marked as spam, so look for it in the spam/promotion mailboxes.",
-    "err_3": "The email has been rejected. Please replace your email address."
+    "err_3": "The email has been rejected. Please replace your email address.",
+    "err_4": "Submitting too frequently"
   },
   "tip": {
     "tip": "TIP",

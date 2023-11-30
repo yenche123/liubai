@@ -60,6 +60,7 @@ const {
       <LpCode :email="lpData.email"
         @submitcode="onSubmitCode"
         @back="onBackFromCode"
+        :is-submitting-code="lpData.isSubmittingEmailCode"
       ></LpCode>
     </div>
 
