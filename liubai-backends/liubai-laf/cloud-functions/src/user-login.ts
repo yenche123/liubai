@@ -89,7 +89,7 @@ export async function main(ctx: FunctionContext) {
     res = await handle_email(ctx, body)
   }
   else if(oT === "email_code") {
-    await handle_email_code(ctx, body)
+    res = await handle_email_code(ctx, body)
   }
 
   return res
