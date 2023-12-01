@@ -6,13 +6,16 @@ import type {
   SupportedClient,
 } from "@/common-types"
 import { supportedClients } from '@/common-types'
-import { getNowStamp, MINUTE } from "@/common-time"
+import { getNowStamp, SECONED, MINUTE } from "@/common-time"
 
 
 /****************** 一些常量 *****************/
 
 // 一分钟内，最多允许访问的次数
 const MAXIMUM_IN_ONE_MINUTE = 60
+
+// 1s 内，最大访问次数
+const MAXIMUM_IN_ONE_SEC = 6
 
 // 收集最近多少个访问时间戳
 const VISITED_NUM = 60
@@ -82,7 +85,7 @@ export async function main(
   // 2. 检查 ip
   const res = checkIp(ip)
   if(!res) {
-    return { code: "E4003" }
+    return { code: "E4003", errMsg: "sorry, we cannot serve you" }
   }
 
   // 3. 检查参数是否正确
@@ -271,6 +274,21 @@ function checkIp(ip: string) {
   ipAtom.recentVisitStamps = recentVisitStamps
   liuAC.set(ip, ipAtom)
 
+  
+  // 7. 检查 1s 内的访问次数
+  // 即查看 recentVisitStamps 里倒数第 7（MAXIMUM_IN_ONE_SEC + 1）个，是否在 1s 以内
+  const rLen = recentVisitStamps.length
+  if(rLen > MAXIMUM_IN_ONE_SEC) {
+    const idx = rLen - (MAXIMUM_IN_ONE_SEC + 1)
+    const item = recentVisitStamps[idx]
+    const diff3 = now - item
+    if(diff3 < SECONED) {
+      console.warn(`当前 ip ${ip} 在 1s 内访问过于频繁`)
+      return false
+    }
+  }
+
+  // 8. 检查 1 分钟内的访问次数
   if(visitNum > MAXIMUM_IN_ONE_MINUTE) {
     return false
   }
