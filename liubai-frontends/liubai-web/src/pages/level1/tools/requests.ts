@@ -47,6 +47,6 @@ export async function fetchEmailCode(
     enc_client_key,
   }
 
-  const res = await liuReq.request(url, opt)
+  const res = await liuReq.request<Res_UserLoginNormal>(url, opt)
   return res
 }

@@ -110,6 +110,13 @@ async function toSubmitEmailAddress(
     showEmailTip("login.err_3", "😭")
     return
   }
+  else if(code === "U0004" || code === "U0003") {
+    console.warn("发送 email 出现关于 state 的异常")
+    console.log(code)
+    console.log(" ")
+    showOtherTip("login.err_5")
+    return
+  }
   else if(code === "E4003" && errMsg === "last_event: complained") {
     showEmailTip("login.err_2", "🥲")
   }
