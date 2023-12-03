@@ -166,7 +166,8 @@
     "err_2": "The email has been marked as spam, so look for it in the spam/promotion mailboxes.",
     "err_3": "The email has been rejected. Please replace your email address.",
     "err_4": "Submitting too frequently",
-    "err_5": "The error of state has occurred. Try to reload later."
+    "err_5": "The error of state has occurred. Try to reload later.",
+    "err_6": "The verification code is wrong or has been expired."
   },
   "tip": {
     "tip": "TIP",

@@ -8,6 +8,7 @@ import thirdLink from "~/config/third-link";
 import time from "~/utils/basic/time"
 import { encryptTextWithRSA } from "../../tools/common-utils"
 import { loadGoogleIdentityService } from "./handle-gis"
+import liuApi from "~/utils/liu-api";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -114,7 +115,7 @@ async function toSubmitEmailAddress(
     console.warn("发送 email 出现关于 state 的异常")
     console.log(code)
     console.log(" ")
-    showOtherTip("login.err_5")
+    showOtherTip("login.err_5", true)
     return
   }
   else if(code === "E4003" && errMsg === "last_event: complained") {
@@ -167,6 +168,12 @@ async function toSubmitEmailAndCode(
   console.log("登录后的结果.......")
   console.log(res)
   console.log(" ")
+  const rCode = res.code
+  if(rCode === "E4003") {
+    showEmailTip("login.err_6", "🙅")
+  }
+
+
 
 }
 
@@ -286,12 +293,18 @@ function showDisableTip(thirdParty: string) {
   })
 }
 
-function showOtherTip(content_key: string) {
-  cui.showModal({
+async function showOtherTip(
+  content_key: string,
+  reload: boolean = false
+) {
+  await cui.showModal({
     title_key: "login.err_login",
     content_key,
     showCancel: false,
   })
+  if(reload) {
+    liuApi.route.reload()
+  }
 }
 
 function showEmailTip(

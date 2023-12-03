@@ -215,7 +215,13 @@ export function canPassByExponentialDoor(
   }
 
   verifiedNum++
-  const requiredSec = verifiedNum ** 2
+  
+  if(verifiedNum > 8) {
+    console.log("try too much. bye bye~")
+    return { verifiedNum, pass: false }
+  }
+
+  const requiredSec = 3 ** verifiedNum
   const now = getNowStamp()
   const diffSec = (now - startedStamp) / SECONED
   const pass = diffSec > requiredSec

@@ -11,6 +11,7 @@ import liuPermission from "./permission"
 import canIUse from "./can-i-use"
 import liuDoc from "./document-related"
 import liuNetwork from "./network"
+import liuRoute from "./route"
 
 export default {
   copyToClipboard: device.copyToClipboard,
@@ -42,4 +43,5 @@ export default {
   canIUse,
   doc: liuDoc,
   network: liuNetwork,
+  route: liuRoute,
 }
