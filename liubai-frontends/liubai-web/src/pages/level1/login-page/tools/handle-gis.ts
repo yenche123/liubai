@@ -1,6 +1,8 @@
 import type { LpData } from "./types";
 import thirdLink from "~/config/third-link"
 
+type GIS_CredentialResponse = google.accounts.id.CredentialResponse
+
 /** 加载 Google Identity Service 脚本 */
 export async function loadGoogleIdentityService(
   lpData: LpData,
@@ -10,6 +12,10 @@ export async function loadGoogleIdentityService(
   if(!googleOAuthClientId) return
   
   if(window.google) return
+
+  const handleCredentialResponse = (res: GIS_CredentialResponse) => {
+    
+  }
   
 
   const s = document.createElement("script")
