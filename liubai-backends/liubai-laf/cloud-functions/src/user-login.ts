@@ -692,6 +692,7 @@ async function sign_in(
 
   // 8. 构造返回数据
   const obj3: Res_UserLoginNormal = {
+    userId: user._id,
     token,
     serial_id,
     spaceMemberList,

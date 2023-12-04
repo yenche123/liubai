@@ -466,6 +466,8 @@ export interface Res_ULN_User extends LiuSpaceAndMember {
 }
 
 export interface Res_UserLoginNormal {
+  email?: string
+  userId?: string
   token?: string
   serial_id?: string
   spaceMemberList?: LiuSpaceAndMember[]
