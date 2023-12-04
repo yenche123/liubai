@@ -6,7 +6,7 @@ import { fetchInitLogin, fetchSubmitEmail, fetchEmailCode } from "../../tools/re
 import localCache from "~/utils/system/local-cache";
 import thirdLink from "~/config/third-link";
 import time from "~/utils/basic/time"
-import { encryptTextWithRSA } from "../../tools/common-utils"
+import { encryptTextWithRSA, showLoginErrMsg } from "../../tools/common-utils"
 import { loadGoogleIdentityService } from "./handle-gis"
 import liuApi from "~/utils/liu-api";
 
@@ -169,10 +169,23 @@ async function toSubmitEmailAndCode(
   console.log(res)
   console.log(" ")
   const rCode = res.code
+  const rData = res.data
   if(rCode === "E4003") {
     showEmailTip("login.err_6", "🙅")
   }
+  else if(rCode !== "0000") {
+    showLoginErrMsg(rCode, res.errMsg, res.showMsg)
+  }
 
+  // 正常时
+  if(rCode === "0000") {
+
+    // 1. 选择账户
+
+
+    // 2. or 直接登录
+
+  }
 
 
 }

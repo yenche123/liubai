@@ -17,11 +17,17 @@ export interface Res_ULN_User extends LiuSpaceAndMember {
 }
 
 export interface Res_UserLoginNormal {
+
+  // 需要验证 email 时
   email?: string
+
+  // 只有一个 user 符合时
   userId?: string
   token?: string
   serial_id?: string
   spaceMemberList?: LiuSpaceAndMember[]
+
+  // 有多个 user 符合时
   multi_users?: Res_ULN_User[]
   multi_credential?: string
   multi_credential_id?: string

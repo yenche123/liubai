@@ -3,13 +3,11 @@ import { type OpData } from "./types"
 import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router"
 import typeCheck from "~/utils/basic/type-check"
 import localCache from "~/utils/system/local-cache"
-import APIs from "~/requests/APIs"
-import liuReq from "~/requests/liu-req"
+import { fetchOAuth, type Fetch_UserLoginNormal } from "../../tools/requests"
 
 export function useOAuthPage() {
 
   const rr = useRouteAndLiuRouter()
-
   const opData = reactive<OpData>({
     via: "",
     code: "",
@@ -98,21 +96,8 @@ async function enterFromGitHub(
   rr.router.replace({ name: "login-github" })
 
   // 4. 去请求后端登录
-  const url = APIs.LOGIN
-  const body = {
-    operateType: "github_oauth",
-    oauth_code: code,
-    state,
-    enc_client_key,
-  }
-  console.log("to github body: ")
-  console.log(body)
-  console.log(" ")
-  const res = await liuReq.request(url, body)
-  console.log(`enterFromGitHub res: `)
-  console.log(res)
-  console.log(" ")
-
+  const res = await fetchOAuth("github_oauth", code, state, enc_client_key)
+  afterFetching(opData, rr, res)
 }
 
 async function enterFromGoogle(
@@ -164,20 +149,27 @@ async function enterFromGoogle(
   rr.router.replace({ name: "login-google" })
 
   // 4. 去请求后端登录
-  const url = APIs.LOGIN
-  const body = {
-    operateType: "google_oauth",
-    oauth_code: code,
-    oauth_redirect_uri: location.origin + "/login-google",
-    state,
-    enc_client_key,
-  }
-  console.log("to google body: ")
-  console.log(body)
-  console.log(" ")
-  const res = await liuReq.request(url, body)
-  console.log(`enterFromGoogle res: `)
+  const redirect_uri = location.origin + "/login-google"
+  const res = await fetchOAuth("google_oauth", code, state, enc_client_key, redirect_uri)
+  afterFetching(opData, rr, res)
+}
+
+function afterFetching(
+  opData: OpData,
+  rr: RouteAndLiuRouter,
+  res: Fetch_UserLoginNormal,
+) {
+  console.log("afterFetching.........")
   console.log(res)
   console.log(" ")
 
+
+  // 1. 如果需要验证 email，路由切换到输入验证码的页面
+
+  // 2. 其他异常，弹提示；提示完回到 login 页
+
+  // 3. 走登录流程
+
+
 }
+

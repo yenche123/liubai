@@ -1,3 +1,4 @@
+import cui from "~/components/custom-ui";
 import liuUtil from "~/utils/liu-util";
 
 /** 拿到 RSA Public Key 之后，去生成的 AES key，并对其加密 */
@@ -20,4 +21,36 @@ export async function encryptTextWithRSA(pem: string, text: string) {
   if(!pk) return
   const cipherStr = await liuUtil.crypto.encryptWithRSA(pk, text)
   return cipherStr 
+}
+
+// 处理未知的登录异常
+export async function showLoginErrMsg(
+  code: string,
+  errMsg?: string,
+  showMsg?: string,
+) {
+  let content_key = "tip.try_again_later"
+  let content_opt: Record<string, string> | undefined
+  if(showMsg) {
+    content_key = "login.err_7"
+    content_opt = { errMsg: showMsg, code }
+  }
+  else if(errMsg) {
+    content_key = "login.err_7"
+    content_opt = { errMsg, code }
+  }
+  else {
+    console.warn("没有 errMsg 和 showMsg 的错误")
+    console.log(code)
+    console.log(" ")
+    return false
+  }
+
+  await cui.showModal({
+    title_key: "login.err_login",
+    content_key,
+    content_opt,
+    showCancel: false,
+  })
+  return true
 }

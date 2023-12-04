@@ -3,6 +3,7 @@ import liuReq from "~/requests/liu-req"
 import type { Res_UserLoginInit, Res_UserLoginNormal } from "~/requests/data-types"
 import localCache from "~/utils/system/local-cache";
 import { getClientKeyEncrypted } from "./common-utils"
+import { type LiuRqReturn } from "~/requests/tools/types";
 
 export async function fetchInitLogin() {
   const url = APIs.LOGIN
@@ -50,3 +51,24 @@ export async function fetchEmailCode(
   const res = await liuReq.request<Res_UserLoginNormal>(url, opt)
   return res
 }
+
+export async function fetchOAuth(
+  operateType: string,
+  oauth_code: string,
+  state: string,
+  enc_client_key: string,
+  oauth_redirect_uri?: string,
+) {
+  const url = APIs.LOGIN
+  const opt = {
+    operateType,
+    oauth_code,
+    state,
+    enc_client_key,
+    oauth_redirect_uri,
+  }
+  const res = await liuReq.request<Res_UserLoginNormal>(url, opt)
+  return res
+}
+
+export type Fetch_UserLoginNormal = LiuRqReturn<Res_UserLoginNormal>
