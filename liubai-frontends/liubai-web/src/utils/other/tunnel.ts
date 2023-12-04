@@ -4,7 +4,10 @@ let _tunnelData: any = undefined
 
 function setData<T = any>(data: T) {
   const tp = typeof data
-  if(tp === "boolean" || tp === "number" || tp === "undefined") {
+  if(tp === "boolean" || tp === "number") {
+    _tunnelData = data
+  }
+  else if(tp === "string" || tp === "undefined") {
     _tunnelData = data
   }
   else if(tp === "object") {
@@ -20,15 +23,20 @@ function setData<T = any>(data: T) {
 
 function getData<T = any>(): T | undefined {
   const tp = typeof _tunnelData
-  if(tp === "boolean" || tp === "number" || tp === "undefined") {
+  if(tp === "boolean" || tp === "number") {
     const res = _tunnelData
     _tunnelData = undefined
     return res
   }
-  if(tp === "object") {
-    const res2 = valTool.copyObject(_tunnelData)
+  else if(tp === "string" || tp === "undefined") {
+    const res2 = _tunnelData
     _tunnelData = undefined
     return res2
+  }
+  if(tp === "object") {
+    const res3 = valTool.copyObject(_tunnelData)
+    _tunnelData = undefined
+    return res3
   }
 }
 
