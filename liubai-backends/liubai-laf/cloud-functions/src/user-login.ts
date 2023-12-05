@@ -40,6 +40,7 @@ import {
 } from "@/common-ids"
 import { checkIfEmailSentTooMuch, getActiveEmailCode, sendEmails } from "@/service-send"
 import { userLoginLang, useI18n, getAppName } from '@/common-i18n'
+import { OAuth2Client, type TokenPayload } from "google-auth-library"
 
 /************************ 一些常量 *************************/
 // GitHub 使用 code 去换 accessToken
@@ -91,9 +92,92 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "email_code") {
     res = await handle_email_code(ctx, body)
   }
+  else if(oT === "google_credential") {
+    res = await handle_google_one_tap(ctx, body)
+  }
 
   return res
 }
+
+/******************************** 用 google one-tap 登录 *************************/
+async function handle_google_one_tap(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+) {
+
+  // 1. to check google_id_token
+  const google_id_token = body.google_id_token
+  if(!google_id_token) {
+    return { code: "E4000", errMsg: "no google_id_token" }
+  }
+
+  // 2. to check state
+  const state = body.state
+  const res0 = checkIfStateIsErr(state)
+  if(res0) return res0
+
+  // 3. to check client_key
+  const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
+  if(!client_key || code1) {
+    return { code: code1 ?? "E5001", errMsg: errMsg1 }
+  }
+
+  // 4. to check LIU_GOOGLE_OAUTH_CLIENT_ID
+  const _env = process.env
+  const client_id = _env.LIU_GOOGLE_OAUTH_CLIENT_ID
+  const client_secret = _env.LIU_GOOGLE_OAUTH_CLIENT_SECRET
+  if(!client_id || !client_secret) {
+    return { code: "E5001", errMsg: "no google's client_id or client_secret on backend" }
+  }
+
+  let googlePayload: TokenPayload | undefined
+  const googleClient = new OAuth2Client()
+  try {
+    console.log("去验证 google idToken...........")
+    const diff1 = getNowStamp()
+    const ticket = await googleClient.verifyIdToken({
+      idToken: google_id_token,
+      audience: client_id,
+    })
+    const diff2 = getNowStamp()
+    console.log(`验证时长: ${ diff2 - diff1 }ms`)
+
+    const tUserId = ticket.getUserId()
+    const envo = ticket.getEnvelope()
+    console.log("getUserId: ", tUserId)
+    console.log("getEnvelope: ", envo)
+    googlePayload = ticket.getPayload()
+  }
+  catch(err) {
+    console.warn("google verifyIdToken err: ")
+    console.log(err)
+    console.log(" ")
+    return { code: "E4003", errMsg: "verifyIdToken failed" }
+  }
+
+  console.log("googlePayload: ")
+  console.log(googlePayload)
+  console.log(" ")
+
+  if(!googlePayload) {
+    return { code: "E4003", errMsg: "googlePayload is nothing" }
+  }
+
+  let { email: tmpEmail, email_verified } = googlePayload
+  let email = isEmailAndNormalize(tmpEmail)
+  if(!email) {
+    return { code: "U0002" }
+  }
+  if(!email_verified) {
+    return { code: "U0001", data: { email } }
+  }
+  
+  const opt: UserThirdData = { google: googlePayload }
+  const res3 = await signInUpViaEmail(ctx, body, email, client_key, opt)
+  return res3
+}
+
+
 
 /******************************** 用 验证码+email 试图登录 *************************/
 async function handle_email_code(
