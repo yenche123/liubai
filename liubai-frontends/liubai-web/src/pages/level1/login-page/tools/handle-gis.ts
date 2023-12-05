@@ -1,5 +1,8 @@
+import localCache from "~/utils/system/local-cache";
 import type { LpData } from "./types";
 import thirdLink from "~/config/third-link"
+import cui from "~/components/custom-ui";
+import { fetchGoogleCredential } from "../../tools/requests";
 
 type GIS_CredentialResponse = google.accounts.id.CredentialResponse
 
@@ -8,15 +11,11 @@ export async function loadGoogleIdentityService(
   lpData: LpData,
 ) {
 
-  const { googleOAuthClientId } = lpData
+  const { googleOAuthClientId, initCode } = lpData
   if(!googleOAuthClientId) return
+  if(initCode !== "0000") return
   
   if(window.google) return
-
-  const handleCredentialResponse = (res: GIS_CredentialResponse) => {
-    
-  }
-  
 
   const s = document.createElement("script")
   s.async = true
@@ -34,6 +33,7 @@ export async function loadGoogleIdentityService(
         console.log("initialize callback..........")
         console.log(res)
         console.log(" ")
+        handleCredentialResponse(lpData, res)
       }
     })
 
@@ -69,3 +69,29 @@ export async function loadGoogleIdentityService(
   document.head.appendChild(s)
 }
 
+async function handleCredentialResponse(
+  lpData: LpData,
+  res: GIS_CredentialResponse,
+) {
+
+  // 1. 获取 google_id_token 和 state
+  const google_id_token = res.credential
+  const state = lpData.state
+  if(!state) return
+
+  // 2. 获取 enc_client_key
+  const onceData = localCache.getOnceData()
+  const enc_client_key = onceData.enc_client_key
+  if(!enc_client_key) {
+    console.warn("enc_client_key is required")
+    console.log(" ")
+    return
+  }
+
+  cui.showLoading({ title_key: "login.logging2" })
+  const res2 = await fetchGoogleCredential(google_id_token, state, enc_client_key)
+  cui.hideLoading()
+  console.log("fetchGoogleCredential: ")
+  console.log(res2)
+  console.log(" ")
+}

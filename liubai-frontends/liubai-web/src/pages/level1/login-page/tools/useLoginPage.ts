@@ -8,7 +8,7 @@ import thirdLink from "~/config/third-link";
 import time from "~/utils/basic/time"
 import { encryptTextWithRSA, showLoginErrMsg } from "../../tools/common-utils"
 import { loadGoogleIdentityService } from "./handle-gis"
-import liuApi from "~/utils/liu-api";
+import { isEverythingOkay, showDisableTip, showEmailTip, showOtherTip } from "./show-msg"
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -190,33 +190,6 @@ async function toSubmitEmailAndCode(
 
 }
 
-
-function isEverythingOkay(
-  initCode?: string
-) {
-  if(initCode === "B0001") {
-    cui.showModal({
-      title: "🧑‍🔧",
-      content_key: "tip.maintaining_1",
-      showCancel: false,
-      isTitleEqualToEmoji: true,
-    })
-    return false
-  }
-  if(initCode && initCode !== "0000") {
-    cui.showModal({
-      title: "🥲",
-      content_key: "tip.err_1",
-      content_opt: { code: initCode },
-      showCancel: false,
-      isTitleEqualToEmoji: true,
-    })
-    return false
-  }
-  return true
-}
-
-
 function whenTapLoginViaThirdParty(
   tp: LoginByThirdParty,
   lpData: LpData,
@@ -297,40 +270,6 @@ function handle_github(
   location.href = link
 }
 
-function showDisableTip(thirdParty: string) {
-  cui.showModal({
-    title_key: "tip.tip",
-    content_key: "login.cannot_login_via",
-    content_opt: { thirdParty },
-    showCancel: false,
-  })
-}
-
-async function showOtherTip(
-  content_key: string,
-  reload: boolean = false
-) {
-  await cui.showModal({
-    title_key: "login.err_login",
-    content_key,
-    showCancel: false,
-  })
-  if(reload) {
-    liuApi.route.reload()
-  }
-}
-
-function showEmailTip(
-  content_key: string,
-  title: string,
-) {
-  cui.showModal({
-    title,
-    content_key,
-    showCancel: false,
-    isTitleEqualToEmoji: true,
-  })
-}
 
 function toGetLoginInitData(
   lpData: LpData,
@@ -355,7 +294,7 @@ function toGetLoginInitData(
     lpData.state = data.state
     lpData.initStamp = time.getTime()
 
-    // loadGoogleIdentityService(lpData)
+    loadGoogleIdentityService(lpData)
     a(true)
   }
   initPromise = new Promise(_request)

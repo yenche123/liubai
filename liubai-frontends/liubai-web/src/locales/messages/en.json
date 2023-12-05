@@ -160,6 +160,7 @@
     "verification_code": "Code",
     "choosing_account": "Choosing an Account",
     "logging": "Logging in..",
+    "logging2": "Logging..",
     "cannot_login_via": "\"Continue with {thirdParty}\" has been temporarily disabled. Please use other methods.",
     "err_login": "Login Error",
     "err_1": "State is missing. Please try again later.",

@@ -71,4 +71,20 @@ export async function fetchOAuth(
   return res
 }
 
+export async function fetchGoogleCredential(
+  google_id_token: string,
+  state: string,
+  enc_client_key: string,
+) {
+  const url = APIs.LOGIN
+  const opt = {
+    operateType: "google_credential",
+    google_id_token,
+    state,
+    enc_client_key,
+  }
+  const res = await liuReq.request<Res_UserLoginNormal>(url, opt)
+  return res
+}
+
 export type Fetch_UserLoginNormal = LiuRqReturn<Res_UserLoginNormal>
