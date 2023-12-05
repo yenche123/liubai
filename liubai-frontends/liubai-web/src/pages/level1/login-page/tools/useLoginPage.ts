@@ -294,7 +294,8 @@ function toGetLoginInitData(
     lpData.state = data.state
     lpData.initStamp = time.getTime()
 
-    loadGoogleIdentityService(lpData)
+    // google one-tap 登录后端流程已跑通
+    // loadGoogleIdentityService(lpData)
     a(true)
   }
   initPromise = new Promise(_request)

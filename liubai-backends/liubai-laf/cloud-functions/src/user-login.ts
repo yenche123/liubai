@@ -141,11 +141,6 @@ async function handle_google_one_tap(
     })
     const diff2 = getNowStamp()
     console.log(`验证时长: ${ diff2 - diff1 }ms`)
-
-    const tUserId = ticket.getUserId()
-    const envo = ticket.getEnvelope()
-    console.log("getUserId: ", tUserId)
-    console.log("getEnvelope: ", envo)
     googlePayload = ticket.getPayload()
   }
   catch(err) {
