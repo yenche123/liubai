@@ -3,11 +3,14 @@ import type { LpData } from "./types";
 import thirdLink from "~/config/third-link"
 import cui from "~/components/custom-ui";
 import { fetchGoogleCredential } from "../../tools/requests";
+import { afterFetchingLogin } from "../../tools/common-utils";
+import { type RouteAndLiuRouter } from "~/routes/liu-router";
 
 type GIS_CredentialResponse = google.accounts.id.CredentialResponse
 
 /** 加载 Google Identity Service 脚本 */
 export async function loadGoogleIdentityService(
+  rr: RouteAndLiuRouter,
   lpData: LpData,
 ) {
 
@@ -33,7 +36,7 @@ export async function loadGoogleIdentityService(
         console.log("initialize callback..........")
         console.log(res)
         console.log(" ")
-        handleCredentialResponse(lpData, res)
+        handleCredentialResponse(rr, lpData, res)
       }
     })
 
@@ -70,6 +73,7 @@ export async function loadGoogleIdentityService(
 }
 
 async function handleCredentialResponse(
+  rr: RouteAndLiuRouter,
   lpData: LpData,
   res: GIS_CredentialResponse,
 ) {
@@ -91,7 +95,5 @@ async function handleCredentialResponse(
   cui.showLoading({ title_key: "login.logging2" })
   const res2 = await fetchGoogleCredential(google_id_token, state, enc_client_key)
   cui.hideLoading()
-  console.log("fetchGoogleCredential: ")
-  console.log(res2)
-  console.log(" ")
+  afterFetchingLogin(rr, res2)
 }

@@ -1,5 +1,9 @@
-import cui from "~/components/custom-ui";
 import liuUtil from "~/utils/liu-util";
+import { type RouteAndLiuRouter } from "~/routes/liu-router"
+import { type Fetch_UserLoginNormal } from "./requests"
+import { useLoginStore } from "../login-page/tools/useLoginStore"
+import { showEmojiTip, showLoginErrMsg } from "./show-msg"
+import loginer from "./loginer";
 
 /** 拿到 RSA Public Key 之后，去生成的 AES key，并对其加密 */
 export async function getClientKeyEncrypted(
@@ -10,10 +14,10 @@ export async function getClientKeyEncrypted(
   const pk = await liuUtil.crypto.importRsaPublicKey(pem_public_key)
   if(!pk) {
     console.warn("导入 rsa 密钥失败")
-    return ""
+    return {}
   }
-  const cipherStr = await liuUtil.crypto.encryptWithRSA(pk, client_key)
-  return cipherStr
+  const cipher = await liuUtil.crypto.encryptWithRSA(pk, client_key)
+  return { aesKey, cipher }
 }
 
 export async function encryptTextWithRSA(pem: string, text: string) {
@@ -23,34 +27,49 @@ export async function encryptTextWithRSA(pem: string, text: string) {
   return cipherStr 
 }
 
-// 处理未知的登录异常
-export async function showLoginErrMsg(
-  code: string,
-  errMsg?: string,
-  showMsg?: string,
+// 调用登录函数之后的，统一处理函数
+export async function afterFetchingLogin(
+  rr: RouteAndLiuRouter,
+  res: Fetch_UserLoginNormal,
 ) {
-  let content_key = "tip.try_again_later"
-  let content_opt: Record<string, string> | undefined
-  if(showMsg) {
-    content_key = "login.err_7"
-    content_opt = { errMsg: showMsg, code }
-  }
-  else if(errMsg) {
-    content_key = "login.err_7"
-    content_opt = { errMsg, code }
-  }
-  else {
-    console.warn("没有 errMsg 和 showMsg 的错误")
-    console.log(code)
-    console.log(" ")
+  console.log("afterFetching.........")
+  console.log(res)
+  console.log(" ")
+
+  const { code, data } = res
+  const loginStore = useLoginStore()
+
+  // 1. 如果需要验证 email，路由切换到输入验证码的页面
+  if(code === "U0001" && data?.email) {
+    loginStore.goToCodeView(data.email)
+    redirectToLoginPage(rr)
     return false
   }
 
-  await cui.showModal({
-    title_key: "login.err_login",
-    content_key,
-    content_opt,
-    showCancel: false,
-  })
+  // 2. email 不存在，无法使用 OAuth2.0 进行登录
+  if(code === "U0002") {
+    await showEmojiTip("login.err_8", "🫠")
+    redirectToLoginPage(rr)
+    return false
+  }
+
+  // 3. 其他异常，弹提示；提示完回到 login 页
+  if(code !== "0000" || !data) {
+    await showLoginErrMsg(code, res.errMsg, res.showMsg)
+    redirectToLoginPage(rr)
+    return false
+  }
+
+  // 4. 去走登录流程
+  loginer.toLogin(rr, data)
   return true
 }
+
+function redirectToLoginPage(
+  rr: RouteAndLiuRouter,
+) {
+  const n = rr.route.name
+  if(n === "login") return
+  rr.router.replace({ name: "login" })
+}
+

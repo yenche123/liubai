@@ -18,8 +18,8 @@ export const useLoginStore = defineStore("login", () => {
   const multi_credential_id = ref("")
 
   const goToCodeView = (email_val: string) => {
-    view.value = "code"
     email.value = email_val
+    view.value = "code"
   }
 
   const goToAccountsView = (
@@ -40,10 +40,10 @@ export const useLoginStore = defineStore("login", () => {
       return v2
     })
 
-    view.value = "accounts"
     accounts.value = memberShows
     multi_credential.value = multiCredential
     multi_credential_id.value = multiCredentialId
+    view.value = "accounts"
   }
 
   const getData = () => {

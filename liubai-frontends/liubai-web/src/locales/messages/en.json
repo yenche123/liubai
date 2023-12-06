@@ -169,7 +169,8 @@
     "err_4": "Submitting too frequently",
     "err_5": "The error of state has occurred. Try to reload later.",
     "err_6": "The verification code is wrong or has been expired.",
-    "err_7": "{errMsg}\n(Code: {code})"
+    "err_7": "{errMsg}\n(Code: {code})",
+    "err_8": "There is no email address through the current login way."
   },
   "tip": {
     "tip": "TIP",

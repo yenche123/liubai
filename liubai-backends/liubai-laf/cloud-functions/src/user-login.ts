@@ -710,7 +710,7 @@ async function sign_in(
     return { code: "E5001", errMsg: "there is no userInfo to sign in" }
   }
   if(uLength > 1) {
-    const res0 = await sign_multi_in(body, userInfos, opt.client_key, opt.thirdData)
+    const res0 = await sign_multi_in(body, userInfos, opt.thirdData)
     return res0
   }
 
@@ -885,7 +885,6 @@ async function turnMembersIntoOkWhileSigningIn(
 async function sign_multi_in(
   body: Record<string, string>,
   userInfos: LiuUserInfo[],
-  client_key?: string,
   thirdData?: UserThirdData,
 ) {
   if(userInfos.length < 2) {
@@ -906,7 +905,6 @@ async function sign_multi_in(
     infoType: "users-select",
     expireStamp,
     user_ids,
-    client_key,
     thirdData,
     ...basic1,
   }

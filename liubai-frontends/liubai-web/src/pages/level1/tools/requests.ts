@@ -11,8 +11,12 @@ export async function fetchInitLogin() {
 
   const pk = res?.data?.publicKey
   if(pk) {
-    const enc_client_key = await getClientKeyEncrypted(pk)
-    localCache.setOnceData("enc_client_key", enc_client_key)
+    const { cipher, aesKey } = await getClientKeyEncrypted(pk)
+    if(cipher && aesKey) {
+      localCache.setOnceData("client_key", aesKey)
+      localCache.setOnceData("enc_client_key", cipher)
+    }
+    
   }
 
   return res

@@ -3,7 +3,8 @@ import { type OpData } from "./types"
 import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router"
 import typeCheck from "~/utils/basic/type-check"
 import localCache from "~/utils/system/local-cache"
-import { fetchOAuth, type Fetch_UserLoginNormal } from "../../tools/requests"
+import { fetchOAuth } from "../../tools/requests"
+import { afterFetchingLogin } from "../../tools/common-utils"
 
 export function useOAuthPage() {
 
@@ -97,7 +98,7 @@ async function enterFromGitHub(
 
   // 4. 去请求后端登录
   const res = await fetchOAuth("github_oauth", code, state, enc_client_key)
-  afterFetching(opData, rr, res)
+  afterFetchingLogin(rr, res)
 }
 
 async function enterFromGoogle(
@@ -151,25 +152,6 @@ async function enterFromGoogle(
   // 4. 去请求后端登录
   const redirect_uri = location.origin + "/login-google"
   const res = await fetchOAuth("google_oauth", code, state, enc_client_key, redirect_uri)
-  afterFetching(opData, rr, res)
-}
-
-function afterFetching(
-  opData: OpData,
-  rr: RouteAndLiuRouter,
-  res: Fetch_UserLoginNormal,
-) {
-  console.log("afterFetching.........")
-  console.log(res)
-  console.log(" ")
-
-
-  // 1. 如果需要验证 email，路由切换到输入验证码的页面
-
-  // 2. 其他异常，弹提示；提示完回到 login 页
-
-  // 3. 走登录流程
-
-
+  afterFetchingLogin(rr, res)
 }
 

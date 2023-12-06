@@ -49,14 +49,47 @@ export async function showOtherTip(
   }
 }
 
-export function showEmailTip(
+export async function showEmojiTip(
   content_key: string,
   title: string,
 ) {
-  cui.showModal({
+  await cui.showModal({
     title,
     content_key,
     showCancel: false,
     isTitleEqualToEmoji: true,
   })
+  return true
+}
+
+// 处理未知的登录异常
+export async function showLoginErrMsg(
+  code: string,
+  errMsg?: string,
+  showMsg?: string,
+) {
+  let content_key = "tip.try_again_later"
+  let content_opt: Record<string, string> | undefined
+  if(showMsg) {
+    content_key = "login.err_7"
+    content_opt = { errMsg: showMsg, code }
+  }
+  else if(errMsg) {
+    content_key = "login.err_7"
+    content_opt = { errMsg, code }
+  }
+  else {
+    console.warn("没有 errMsg 和 showMsg 的错误")
+    console.log(code)
+    console.log(" ")
+    return false
+  }
+
+  await cui.showModal({
+    title_key: "login.err_login",
+    content_key,
+    content_opt,
+    showCancel: false,
+  })
+  return true
 }

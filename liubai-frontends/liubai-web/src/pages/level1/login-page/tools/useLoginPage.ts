@@ -6,12 +6,13 @@ import { fetchInitLogin, fetchSubmitEmail, fetchEmailCode } from "../../tools/re
 import localCache from "~/utils/system/local-cache";
 import { handle_google, handle_github } from "./handle-tap-oauth";
 import time from "~/utils/basic/time"
-import { encryptTextWithRSA, showLoginErrMsg } from "../../tools/common-utils"
+import { encryptTextWithRSA } from "../../tools/common-utils"
 import { loadGoogleIdentityService } from "./handle-gis"
-import { isEverythingOkay, showEmailTip, showOtherTip } from "./show-msg"
+import { isEverythingOkay, showEmojiTip, showOtherTip, showLoginErrMsg } from "../../tools/show-msg"
 import { useLoginStore } from "./useLoginStore";
 import { storeToRefs } from "pinia";
 import { useLiuWatch } from "~/hooks/useLiuWatch";
+import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -20,6 +21,9 @@ let initPromise: Promise<boolean>
 let hasTap = false
 
 export function useLoginPage() {
+
+  const rr = useRouteAndLiuRouter()
+
   const lpData = reactive<LpData>({
     view: "main",
     email: "",
@@ -32,7 +36,7 @@ export function useLoginPage() {
   listenLoginStore(lpData)
 
   // 2. 去获取 init 时的数据，比如 state / publicKey
-  toGetLoginInitData(lpData)
+  toGetLoginInitData(rr, lpData)
 
 
   // 等待 init 返回结果，并作简单的防抖节流
@@ -115,7 +119,7 @@ async function toSubmitEmailAddress(
 
   const { code, errMsg } = res
   if(code === "E4003" && errMsg === "last_event: bounced") {
-    showEmailTip("login.err_3", "😭")
+    showEmojiTip("login.err_3", "😭")
     return
   }
   else if(code === "U0004" || code === "U0003") {
@@ -126,7 +130,7 @@ async function toSubmitEmailAddress(
     return
   }
   else if(code === "E4003" && errMsg === "last_event: complained") {
-    showEmailTip("login.err_2", "🥲")
+    showEmojiTip("login.err_2", "🥲")
   }
 
   lpData.email = email
@@ -178,7 +182,7 @@ async function toSubmitEmailAndCode(
   const rCode = res.code
   const rData = res.data
   if(rCode === "E4003") {
-    showEmailTip("login.err_6", "🙅")
+    showEmojiTip("login.err_6", "🙅")
   }
   else if(rCode !== "0000") {
     showLoginErrMsg(rCode, res.errMsg, res.showMsg)
@@ -251,6 +255,7 @@ function whenTapLoginViaThirdParty(
 
 
 function toGetLoginInitData(
+  rr: RouteAndLiuRouter,
   lpData: LpData,
 ) {
   const _request = async (a: BoolFunc) => {
@@ -274,7 +279,7 @@ function toGetLoginInitData(
     lpData.initStamp = time.getTime()
 
     // google one-tap 登录后端流程已跑通
-    // loadGoogleIdentityService(lpData)
+    loadGoogleIdentityService(rr, lpData)
     a(true)
   }
   initPromise = new Promise(_request)

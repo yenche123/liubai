@@ -439,7 +439,6 @@ export interface Table_Credential extends BaseTable {
   send_channel?: string
   email_id?: string
 
-  client_key?: string
   thirdData?: UserThirdData
 }
 
