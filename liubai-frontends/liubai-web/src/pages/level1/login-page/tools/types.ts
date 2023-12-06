@@ -3,8 +3,10 @@ import type { MemberShow } from "~/types/types-content"
 
 export type LoginByThirdParty = "google" | "github" | "apple"
 
+export type LpView = "main" | "code" | "accounts"     // 主页、填写验证码、选择账号
+
 export interface LpData {
-  view: "main" | "code" | "accounts"     // 主页、填写验证码、选择账号
+  view: LpView
   accounts: MemberShow[]
 
   // email 相关
