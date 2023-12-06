@@ -12,7 +12,7 @@ export interface LpData {
   // email 相关
   email: string
   isSendingEmail: boolean
-  lastSendEmail?: number         // 最近一次发送 email 验证码的时间戳
+  lastSendEmail?: number         // 最近一次请求后端去发送 email 验证码的时间戳
   isSubmittingEmailCode: boolean
   lastSubmitEmailCode?: number   // 最近一次提交 email 和 验证码的时间戳
 
@@ -25,5 +25,9 @@ export interface LpData {
   initStamp?: number          // 调用 login 接口 init 后的时间戳
 
   googleOneTapShown?: boolean  // 是否当前 google one tap 被展示着
+
+  // 有多个用户要选择时，需要用到的凭证
+  multi_credential?: string
+  multi_credential_id?: string
 
 }

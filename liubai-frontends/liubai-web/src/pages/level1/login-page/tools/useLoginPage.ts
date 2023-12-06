@@ -4,11 +4,14 @@ import type { BoolFunc } from "~/utils/basic/type-tool";
 import cui from "~/components/custom-ui";
 import { fetchInitLogin, fetchSubmitEmail, fetchEmailCode } from "../../tools/requests";
 import localCache from "~/utils/system/local-cache";
-import thirdLink from "~/config/third-link";
+import { handle_google, handle_github } from "./handle-tap-oauth";
 import time from "~/utils/basic/time"
 import { encryptTextWithRSA, showLoginErrMsg } from "../../tools/common-utils"
 import { loadGoogleIdentityService } from "./handle-gis"
-import { isEverythingOkay, showDisableTip, showEmailTip, showOtherTip } from "./show-msg"
+import { isEverythingOkay, showEmailTip, showOtherTip } from "./show-msg"
+import { useLoginStore } from "./useLoginStore";
+import { storeToRefs } from "pinia";
+import { useLiuWatch } from "~/hooks/useLiuWatch";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -25,6 +28,10 @@ export function useLoginPage() {
     isSubmittingEmailCode: false,
   })
 
+  // 1. 去监听 loginStore 的变化
+  listenLoginStore(lpData)
+
+  // 2. 去获取 init 时的数据，比如 state / publicKey
   toGetLoginInitData(lpData)
 
 
@@ -190,6 +197,38 @@ async function toSubmitEmailAndCode(
 
 }
 
+
+function listenLoginStore(lpData: LpData) {
+  const loginStore = useLoginStore()
+  const { view } = storeToRefs(loginStore)
+
+  const whenViewChange = () => {
+    const _v = view.value
+    if(!_v) return
+
+    const data = loginStore.getData()
+
+    console.log("loginStore.getData(): ")
+    console.log(data)
+    console.log(" ")
+
+    lpData.view = _v
+
+    if(_v === "code") {
+      lpData.email = data.email
+      lpData.lastSendEmail = time.getTime()
+    }
+    else if(_v === "accounts") {
+      lpData.accounts = data.accounts
+      lpData.multi_credential = data.multi_credential
+      lpData.multi_credential_id = data.multi_credential_id
+    }
+    loginStore.reset()
+  }
+
+  useLiuWatch(view, whenViewChange)
+}
+
 function whenTapLoginViaThirdParty(
   tp: LoginByThirdParty,
   lpData: LpData,
@@ -207,68 +246,8 @@ function whenTapLoginViaThirdParty(
   else if(tp === "apple") {
 
   }
-  
 }
 
-function handle_google(
-  lpData: LpData,
-) {
-  const client_id = lpData.googleOAuthClientId
-  if(!client_id) {
-    showDisableTip("Google")
-    return
-  }
-  
-  // 30 个左右字符，来自于 google 的文档
-  // https://developers.google.com/identity/openid-connect/openid-connect#createxsrftoken
-  const state = lpData.state
-  if(!state) {
-    showOtherTip("login.err_1")
-    return
-  }
-  localCache.setOnceData("googleOAuthState", state)
-  
-  const redirect_uri = window.location.origin + "/login-google"
-
-  const url = new URL(thirdLink.GOOGLE_OAUTH2)
-  let scope = "https://www.googleapis.com/auth/userinfo.email "
-  scope += "https://www.googleapis.com/auth/userinfo.profile "
-  scope += "openid"
-  const sp = url.searchParams
-  sp.append("scope", scope)
-  sp.append("include_granted_scopes", "true")
-  sp.append("response_type", "code")
-  sp.append("state", state)
-  sp.append("redirect_uri", redirect_uri)
-  sp.append("client_id", client_id)
-  const link = url.toString()
-  location.href = link
-}
-
-function handle_github(
-  lpData: LpData,
-) {
-  const client_id = lpData.githubOAuthClientId
-  if(!client_id) {
-    showDisableTip("GitHub")
-    return
-  }
-
-  const state = lpData.state
-  if(!state) {
-    showOtherTip("login.err_1")
-    return
-  }
-  localCache.setOnceData("githubOAuthState", state)
-
-  const url = new URL(thirdLink.GITHUB_OAUTH)
-  const sp = url.searchParams
-  sp.append("client_id", client_id)
-  sp.append("scope", "user:email")
-  sp.append("state", state)
-  const link = url.toString()
-  location.href = link
-}
 
 
 function toGetLoginInitData(
