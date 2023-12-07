@@ -53,14 +53,21 @@ export async function afterFetchingLogin(
     return false
   }
 
-  // 3. 其他异常，弹提示；提示完回到 login 页
+  // 3. E4003
+  if(code === "E4003") {
+    await showEmojiTip("login.err_6", "🙅")
+    redirectToLoginPage(rr)
+    return false
+  }
+
+  // 4. 其他异常，弹提示；提示完回到 login 页
   if(code !== "0000" || !data) {
     await showLoginErrMsg(code, res.errMsg, res.showMsg)
     redirectToLoginPage(rr)
     return false
   }
 
-  // 4. 去走登录流程
+  // 5. 去走登录流程
   loginer.toLogin(rr, data)
   return true
 }

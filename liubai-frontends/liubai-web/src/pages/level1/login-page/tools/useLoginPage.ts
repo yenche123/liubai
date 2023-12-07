@@ -6,7 +6,7 @@ import { fetchInitLogin, fetchSubmitEmail, fetchEmailCode } from "../../tools/re
 import localCache from "~/utils/system/local-cache";
 import { handle_google, handle_github } from "./handle-tap-oauth";
 import time from "~/utils/basic/time"
-import { encryptTextWithRSA } from "../../tools/common-utils"
+import { encryptTextWithRSA, afterFetchingLogin } from "../../tools/common-utils"
 import { loadGoogleIdentityService } from "./handle-gis"
 import { isEverythingOkay, showEmojiTip, showOtherTip, showLoginErrMsg } from "../../tools/show-msg"
 import { useLoginStore } from "./useLoginStore";
@@ -57,7 +57,7 @@ export function useLoginPage() {
 
   // code 由 9 个字符组成，中间是一个 "-"
   const onSubmitCode = (code: string) => {
-    toSubmitEmailAndCode(code, lpData)
+    toSubmitEmailAndCode(rr, code, lpData)
   }
 
   const onBackFromCode = () => {
@@ -140,6 +140,7 @@ async function toSubmitEmailAddress(
 
 /** 记得做防抖节流，避免多次点击 */
 async function toSubmitEmailAndCode(
+  rr: RouteAndLiuRouter,
   code: string,
   lpData: LpData,
 ) {
@@ -175,30 +176,7 @@ async function toSubmitEmailAndCode(
   lpData.isSubmittingEmailCode = true
   const res = await fetchEmailCode(enc_email, code, state, enc_client_key)
   lpData.isSubmittingEmailCode = false
-
-  console.log("登录后的结果.......")
-  console.log(res)
-  console.log(" ")
-  const rCode = res.code
-  const rData = res.data
-  if(rCode === "E4003") {
-    showEmojiTip("login.err_6", "🙅")
-  }
-  else if(rCode !== "0000") {
-    showLoginErrMsg(rCode, res.errMsg, res.showMsg)
-  }
-
-  // 正常时
-  if(rCode === "0000") {
-
-    // 1. 选择账户
-
-
-    // 2. or 直接登录
-
-  }
-
-
+  afterFetchingLogin(rr, res)
 }
 
 
@@ -211,11 +189,6 @@ function listenLoginStore(lpData: LpData) {
     if(!_v) return
 
     const data = loginStore.getData()
-
-    console.log("loginStore.getData(): ")
-    console.log(data)
-    console.log(" ")
-
     lpData.view = _v
 
     if(_v === "code") {
