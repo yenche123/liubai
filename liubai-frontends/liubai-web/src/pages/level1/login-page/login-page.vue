@@ -21,7 +21,7 @@ const {
   <div class="lp-navi-bar">
 
 
-    <div class="lpn-box">
+    <div class="lpn-box" v-liu-show="lpData.view !== 'accounts'">
 
       <!-- 返回按钮 -->
       <div class="liu-hover lpn-back">
