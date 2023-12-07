@@ -16,7 +16,7 @@ export function useLpAccounts(
     lpaData.selectedIndex = idx
   }
 
-  const onTapConfirm = () => toEnter(emit, lpaData)
+  const onTapConfirm = () => toEnter(props, emit, lpaData)
 
   listenKeyboard(props, emit, lpaData)
 
@@ -30,12 +30,13 @@ export function useLpAccounts(
 
 
 function toEnter(
+  props: LpaProps,
   emit: LpaEmit,
   lpaData: LpaData,
 ) {
   const idx = lpaData.selectedIndex
   if(idx < 0) return
-  console.log("去提交........")
+  if(props.isSelectingAccount) return
   emit("confirm", idx)
 }
 
@@ -70,7 +71,7 @@ function listenKeyboard(
       _upSideDown(-1)
     }
     else if(key === "Enter") {
-      toEnter(emit, lpaData)
+      toEnter(props, emit, lpaData)
     }
   }
 

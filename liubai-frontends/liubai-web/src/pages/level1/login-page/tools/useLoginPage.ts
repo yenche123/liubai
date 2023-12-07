@@ -2,7 +2,12 @@ import { reactive } from "vue";
 import type { LpData, LoginByThirdParty } from "./types";
 import type { BoolFunc } from "~/utils/basic/type-tool";
 import cui from "~/components/custom-ui";
-import { fetchInitLogin, fetchSubmitEmail, fetchEmailCode } from "../../tools/requests";
+import { 
+  fetchInitLogin, 
+  fetchSubmitEmail, 
+  fetchEmailCode, 
+  fetchUsersSelect,
+} from "../../tools/requests";
 import { getClientKey } from "../../tools/common-tools"
 import { handle_google, handle_github } from "./handle-tap-oauth";
 import time from "~/utils/basic/time"
@@ -30,6 +35,7 @@ export function useLoginPage() {
     accounts: [],
     isSendingEmail: false,
     isSubmittingEmailCode: false,
+    isSelectingAccount: false,
   })
 
   // 1. 去监听 loginStore 的变化
@@ -93,14 +99,29 @@ async function toSelectAnAccount(
   idx: number,
   lpData: LpData,
 ) {
+
+  // 1. 获取 userId
   const item = lpData.accounts[idx]
   if(!item) return
   const userId = item.user_id
   if(!userId) return
 
+  // 2. 获取 multi 相关的参数
+  const { 
+    multi_credential: m1, 
+    multi_credential_id: m2,
+    state,
+  } = lpData
+  if(!m1 || !m2 || !state) return
 
+  // 3. 获取 enc_client_key
+  const { enc_client_key } = getClientKey()
+  if(!enc_client_key) return
 
-  
+  lpData.isSelectingAccount = true
+  const res = await fetchUsersSelect(userId, m1, m2, state, enc_client_key)
+  lpData.isSelectingAccount = false
+  afterFetchingLogin(rr, res)
 }
 
 

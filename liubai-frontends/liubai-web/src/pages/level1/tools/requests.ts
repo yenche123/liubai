@@ -75,6 +75,27 @@ export async function fetchOAuth(
   return res
 }
 
+export async function fetchUsersSelect(
+  userId: string,
+  multi_credential: string,
+  multi_credential_id: string,
+  state: string,
+  enc_client_key: string,
+) {
+  const url = APIs.LOGIN
+  const opt = {
+    operateType: "users_select",
+    userId,
+    multi_credential,
+    multi_credential_id,
+    state,
+    enc_client_key,
+  }
+  const res = await liuReq.request<Res_UserLoginNormal>(url, opt)
+  return res
+  
+}
+
 export async function fetchGoogleCredential(
   google_id_token: string,
   state: string,

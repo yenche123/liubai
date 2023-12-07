@@ -26,8 +26,9 @@ export interface LpData {
 
   googleOneTapShown?: boolean  // 是否当前 google one tap 被展示着
 
-  // 有多个用户要选择时，需要用到的凭证
+  // 多用户选择 相关
   multi_credential?: string
   multi_credential_id?: string
+  isSelectingAccount: boolean     // 是否已选择用户，并在等待后端响应
 
 }

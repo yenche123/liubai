@@ -70,6 +70,7 @@ const {
       <LpAccounts 
         :accounts="lpData.accounts"
         :is-shown="lpData.view === 'accounts'"
+        :is-selecting-account="lpData.isSelectingAccount"
         @confirm="onSelectedAnAccount"
       ></LpAccounts>
     </div>

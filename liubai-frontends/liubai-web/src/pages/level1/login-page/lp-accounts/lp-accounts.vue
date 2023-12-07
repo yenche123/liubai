@@ -50,11 +50,13 @@ const {
 
     <!-- 确定按钮 -->
     <CustomBtn
-      :disabled="lpaData.selectedIndex < 0"
+      :disabled="lpaData.selectedIndex < 0 || isSelectingAccount"
+      :is-loading="isSelectingAccount"
       class="lp-btn"
       @click="onTapConfirm"
     >
-      <span>{{ t('common.confirm') + ' ↵' }}</span>
+      <span>{{ t('common.confirm') }}</span>
+      <span v-show="!isSelectingAccount"> ↵</span>
     </CustomBtn>
 
   </div>
@@ -138,6 +140,7 @@ const {
 .lp-btn {
   width: 100%;
   max-width: 450px;
+  white-space: pre-wrap;
 }
 
 @media(hover: hover) {
