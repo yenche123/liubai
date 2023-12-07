@@ -1,4 +1,3 @@
-import localCache from "~/utils/system/local-cache";
 import type { LpData } from "./types";
 import thirdLink from "~/config/third-link"
 import cui from "~/components/custom-ui";
@@ -6,6 +5,8 @@ import { fetchGoogleCredential } from "../../tools/requests";
 import { afterFetchingLogin } from "../../tools/common-utils";
 import { type RouteAndLiuRouter } from "~/routes/liu-router";
 import { getClientKey } from "../../tools/common-tools";
+
+// 本文件负责 Google One-Tap 登录流程
 
 type GIS_CredentialResponse = google.accounts.id.CredentialResponse
 

@@ -1,7 +1,3 @@
-
-
-// 拿到 token / serial / userId 之后
-
 import { type Res_UserLoginNormal } from "~/requests/data-types";
 import { type RouteAndLiuRouter } from "~/routes/liu-router";
 import { useLoginStore } from "../login-page/tools/useLoginStore";

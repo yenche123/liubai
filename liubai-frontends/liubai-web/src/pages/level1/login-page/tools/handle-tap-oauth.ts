@@ -1,6 +1,6 @@
 
 import type { LpData } from "./types";
-import { showDisableTip, showEmojiTip, showOtherTip } from "../../tools/show-msg"
+import { showDisableTip, showOtherTip } from "../../tools/show-msg"
 import localCache from "~/utils/system/local-cache";
 import thirdLink from "~/config/third-link";
 
