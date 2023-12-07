@@ -3,7 +3,7 @@ import type { LpData, LoginByThirdParty } from "./types";
 import type { BoolFunc } from "~/utils/basic/type-tool";
 import cui from "~/components/custom-ui";
 import { fetchInitLogin, fetchSubmitEmail, fetchEmailCode } from "../../tools/requests";
-import localCache from "~/utils/system/local-cache";
+import { getClientKey } from "../../tools/common-tools"
 import { handle_google, handle_github } from "./handle-tap-oauth";
 import time from "~/utils/basic/time"
 import { encryptTextWithRSA, afterFetchingLogin } from "../../tools/common-utils"
@@ -71,6 +71,11 @@ export function useLoginPage() {
     whenTapLoginViaThirdParty(tp, lpData)
   }
 
+  // 选择了某个用户之后
+  const onSelectedAnAccount = (idx: number) => {
+    toSelectAnAccount(rr, idx, lpData)
+  }
+
 
   return {
     lpData,
@@ -78,9 +83,28 @@ export function useLoginPage() {
     onSubmitCode,
     onBackFromCode,
     onTapLoginViaThirdParty,
+    onSelectedAnAccount,
   }
 }
 
+// 选定某一个用户
+async function toSelectAnAccount(
+  rr: RouteAndLiuRouter,
+  idx: number,
+  lpData: LpData,
+) {
+  const item = lpData.accounts[idx]
+  if(!item) return
+  const userId = item.user_id
+  if(!userId) return
+
+
+
+  
+}
+
+
+// 去提交 email 地址以发送验证码
 async function toSubmitEmailAddress(
   email: string,
   lpData: LpData,
@@ -163,13 +187,8 @@ async function toSubmitEmailAndCode(
   }
 
   // 2. 获取 enc_client_key
-  const onceData = localCache.getOnceData()
-  const enc_client_key = onceData.enc_client_key
-  if(!enc_client_key) {
-    console.warn("enc_client_key is required")
-    console.log(" ")
-    return
-  }
+  const { enc_client_key } = getClientKey()
+  if(!enc_client_key) return
 
   // 3. 去登录
   lpData.lastSubmitEmailCode = now

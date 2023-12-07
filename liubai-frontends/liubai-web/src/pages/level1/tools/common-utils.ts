@@ -4,9 +4,10 @@ import { type Fetch_UserLoginNormal } from "./requests"
 import { useLoginStore } from "../login-page/tools/useLoginStore"
 import { showEmojiTip, showLoginErrMsg } from "./show-msg"
 import loginer from "./loginer";
+import { redirectToLoginPage } from "./common-tools"
 
 /** 拿到 RSA Public Key 之后，去生成的 AES key，并对其加密 */
-export async function getClientKeyEncrypted(
+export async function createClientKey(
   pem_public_key: string
 ) {
   const aesKey = await liuUtil.crypto.createKeyWithAES()
@@ -70,13 +71,5 @@ export async function afterFetchingLogin(
   // 5. 去走登录流程
   loginer.toLogin(rr, data)
   return true
-}
-
-function redirectToLoginPage(
-  rr: RouteAndLiuRouter,
-) {
-  const n = rr.route.name
-  if(n === "login") return
-  rr.router.replace({ name: "login" })
 }
 

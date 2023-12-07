@@ -12,6 +12,7 @@ const {
   onSubmitCode,
   onBackFromCode,
   onTapLoginViaThirdParty,
+  onSelectedAnAccount,
 } = useLoginPage()
 
 </script>
@@ -69,6 +70,7 @@ const {
       <LpAccounts 
         :accounts="lpData.accounts"
         :is-shown="lpData.view === 'accounts'"
+        @confirm="onSelectedAnAccount"
       ></LpAccounts>
     </div>
     

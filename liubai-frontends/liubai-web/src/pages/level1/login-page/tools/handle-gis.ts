@@ -5,6 +5,7 @@ import cui from "~/components/custom-ui";
 import { fetchGoogleCredential } from "../../tools/requests";
 import { afterFetchingLogin } from "../../tools/common-utils";
 import { type RouteAndLiuRouter } from "~/routes/liu-router";
+import { getClientKey } from "../../tools/common-tools";
 
 type GIS_CredentialResponse = google.accounts.id.CredentialResponse
 
@@ -84,13 +85,8 @@ async function handleCredentialResponse(
   if(!state) return
 
   // 2. 获取 enc_client_key
-  const onceData = localCache.getOnceData()
-  const enc_client_key = onceData.enc_client_key
-  if(!enc_client_key) {
-    console.warn("enc_client_key is required")
-    console.log(" ")
-    return
-  }
+  const { enc_client_key } = getClientKey()
+  if(!enc_client_key) return
 
   cui.showLoading({ title_key: "login.logging2" })
   const res2 = await fetchGoogleCredential(google_id_token, state, enc_client_key)

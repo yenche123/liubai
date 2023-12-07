@@ -3,6 +3,7 @@ import { type OpData } from "./types"
 import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router"
 import typeCheck from "~/utils/basic/type-check"
 import localCache from "~/utils/system/local-cache"
+import { getClientKey } from "../../tools/common-tools"
 import { fetchOAuth } from "../../tools/requests"
 import { afterFetchingLogin } from "../../tools/common-utils"
 
@@ -86,12 +87,8 @@ async function enterFromGitHub(
   }
 
   // 2.5 获取 enc_client_key
-  const enc_client_key = onceData.enc_client_key
-  if(!enc_client_key) {
-    console.warn("enc_client_key is required")
-    console.log(" ")
-    return
-  }
+  const { enc_client_key } = getClientKey()
+  if(!enc_client_key) return
 
   // 3. 清除 query
   rr.router.replace({ name: "login-github" })
@@ -139,12 +136,8 @@ async function enterFromGoogle(
   }
 
   // 2.5 获取 enc_client_key
-  const enc_client_key = onceData.enc_client_key
-  if(!enc_client_key) {
-    console.warn("enc_client_key is required")
-    console.log(" ")
-    return
-  }
+  const { enc_client_key } = getClientKey()
+  if(!enc_client_key) return
 
   // 3. 清除 query
   rr.router.replace({ name: "login-google" })

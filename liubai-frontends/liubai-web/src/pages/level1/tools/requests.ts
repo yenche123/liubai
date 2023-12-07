@@ -2,7 +2,7 @@ import APIs from "~/requests/APIs"
 import liuReq from "~/requests/liu-req"
 import type { Res_UserLoginInit, Res_UserLoginNormal } from "~/requests/data-types"
 import localCache from "~/utils/system/local-cache";
-import { getClientKeyEncrypted } from "./common-utils"
+import { createClientKey } from "./common-utils"
 import { type LiuRqReturn } from "~/requests/tools/types";
 
 export async function fetchInitLogin() {
@@ -11,7 +11,7 @@ export async function fetchInitLogin() {
 
   const pk = res?.data?.publicKey
   if(pk) {
-    const { cipher, aesKey } = await getClientKeyEncrypted(pk)
+    const { cipher, aesKey } = await createClientKey(pk)
     if(cipher && aesKey) {
       localCache.setOnceData("client_key", aesKey)
       localCache.setOnceData("enc_client_key", cipher)

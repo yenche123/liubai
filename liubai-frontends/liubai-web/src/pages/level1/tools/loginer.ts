@@ -6,6 +6,7 @@ import { type Res_UserLoginNormal } from "~/requests/data-types";
 import { type RouteAndLiuRouter } from "~/routes/liu-router";
 import { useLoginStore } from "../login-page/tools/useLoginStore";
 import localCache from "~/utils/system/local-cache";
+import { redirectToLoginPage } from "./common-tools";
 
 // 开始去初始化本地数据
 function toLogin(
@@ -60,10 +61,7 @@ function checkIfChooseAccounts(
   const loginStore = useLoginStore()
   loginStore.goToAccountsView(multi_users, multi_credential, multi_credential_id)
 
-  const n = rr.route.name
-  if(n !== "login") {
-    rr.router.replace({ name: "login" })
-  }
+  redirectToLoginPage(rr)
 
   return true
 }
