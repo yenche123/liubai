@@ -13,6 +13,7 @@ const {
   onBackFromCode,
   onTapLoginViaThirdParty,
   onSelectedAnAccount,
+  onTapBack,
 } = useLoginPage()
 
 </script>
@@ -25,7 +26,7 @@ const {
     <div class="lpn-box" v-liu-show="lpData.view !== 'accounts'">
 
       <!-- 返回按钮 -->
-      <div class="liu-hover lpn-back">
+      <div class="liu-hover lpn-back" @click.stop="onTapBack">
         <div class="lpn-back-icon">
           <svg-icon name="arrow-back700" class="lpn-back-svg" 
             color="var(--main-normal)"

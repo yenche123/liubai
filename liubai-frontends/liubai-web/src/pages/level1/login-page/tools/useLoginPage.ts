@@ -82,6 +82,10 @@ export function useLoginPage() {
     toSelectAnAccount(rr, idx, lpData)
   }
 
+  const onTapBack = () => {
+    handleBack(rr, lpData)
+  }
+
 
   return {
     lpData,
@@ -90,8 +94,30 @@ export function useLoginPage() {
     onBackFromCode,
     onTapLoginViaThirdParty,
     onSelectedAnAccount,
+    onTapBack,
   }
 }
+
+function handleBack(
+  rr: RouteAndLiuRouter,
+  lpData: LpData,
+) {
+  const vi = lpData.view
+
+  // 已在选择账号了，不支持返回
+  if(vi === "accounts") return
+
+  // 在输入 email 验证码页，返回到 main
+  if(vi === "code") {
+    lpData.view = "main"
+    return
+  }
+
+  // [TODO] 剩下的，返回到 home
+  
+}
+
+
 
 // 选定某一个用户
 async function toSelectAnAccount(
