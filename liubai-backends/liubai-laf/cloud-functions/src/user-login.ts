@@ -95,8 +95,108 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "google_credential") {
     res = await handle_google_one_tap(ctx, body)
   }
+  else if(oT === "users_select") {
+    res = await handle_users_select(ctx, body)
+  }
 
   return res
+}
+
+/******************************** 选定某个账号登录 *************************/
+async function handle_users_select(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+): Promise<LiuRqReturn> {
+
+  // 1. getting some params
+  const userId = body.userId
+  const m1 = body.multi_credential
+  const m2 = body.multi_credential_id
+  if(!userId || !m1 || !m2) {
+    return { 
+      code: "E4000", 
+      errMsg: "userId, multi_credential and multi_credential_id are required", 
+    }
+  }
+
+  // 2. to check state
+  const state = body.state
+  const res0 = checkIfStateIsErr(state)
+  if(res0) return res0
+
+  // 3. to check client_key
+  const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
+  if(!client_key || code1) {
+    return { code: code1 ?? "E5001", errMsg: errMsg1 }
+  }
+
+  // 4. to get credential
+  const errReturnData = {
+    code: "E4003",
+    errMsg: "the credential is wrong"
+  }
+  const col = db.collection("Credential")
+  const res1 = await col.doc(m2).get<Table_Credential>()
+  const c = res1.data
+
+  // 5. to check if the credential is existed
+  if(!c) {
+    console.warn("the credential is not existed")
+    return errReturnData
+  }
+
+  // 6. to check if the credential is matched
+  if(c.credential !== m1) {
+    console.warn("the credential is not matched")
+    return errReturnData
+  }
+
+  // 7. to check infoType
+  if(c.infoType !== "users-select") {
+    console.warn("infoType of c is not users-select")
+    return errReturnData
+  }
+
+  // 8. to check userId
+  const user_ids = c.user_ids ?? []
+  const inIt = user_ids.includes(userId)
+  if(!inIt) {
+    console.warn("the userId is not matched")
+    return errReturnData
+  }
+
+  // 9. to check expireStamp
+  const now = getNowStamp()
+  if(now > c.expireStamp) {
+    console.warn("credential has been expired")
+    return errReturnData
+  }
+
+  // 10. to login
+  const res2 = await findUserById(userId)
+
+  // 拒绝登录、或异常
+  if(res2.type === 1) {
+    return res2.rqReturn
+  }
+
+  // 去登录
+  if(res2.type === 2) {
+    const opt1 = {
+      client_key, thirdData: c.thirdData
+    }
+    const res3 = await sign_in(ctx, body, res2.userInfos, opt1)
+
+    // to delete credential
+    col.where({ _id: c._id }).remove()
+
+    return res3
+  }
+
+  return { 
+    code: "E5001", 
+    errMsg: "it is impossible to sign up because userId is given",
+  }
 }
 
 /******************************** 用 google one-tap 登录 *************************/
@@ -1214,6 +1314,18 @@ async function findUserByEmail(
   return res2
 }
 
+/** 使用 userId 查找用户信息 */
+async function findUserById(
+  userId: string
+): Promise<FindUserRes> {
+  const res = await db.collection("User").doc(userId).get<Table_User>()
+  const rData = res.data
+  if(!rData) return { type: 3 }
+  const res2 = await handleUsersFound([rData])
+  return res2
+}
+
+
 /** 查找出匹配的 user 后
  * 去检查该用户是否异常，若都正常，去查找他们的 userInfos
 */
@@ -1294,9 +1406,9 @@ async function getUserInfos(
       })
       .end()
     
-    console.log("看一下 getUserInfos 中聚合搜索的结果: ")
-    console.log(res)
-    console.log(" ")
+    // console.log("看一下 getUserInfos 中聚合搜索的结果: ")
+    // console.log(res)
+    // console.log(" ")
 
     const lsams = turnMemberAggsIntoLSAMs(res.data, filterMemberLeft)
     if(lsams.length) {
