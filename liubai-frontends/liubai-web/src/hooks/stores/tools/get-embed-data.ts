@@ -524,6 +524,30 @@ export function getEmbedData(
     }
   }
 
+  // LinkedIn
+  const linkedin = new URL(thirdLink.LINKEDIN_EMBED)
+  const isLinkedIn = valTool.isInDomain(h, linkedin.hostname)
+  if(isLinkedIn) {
+    const linkedinRes: EmbedDataRes = {
+      link: originUrl,
+      otherData: { isLinkedIn }
+    }
+
+    // 是否已经为 embed 的链接
+    const isLinkedInEmbed = p.startsWith(linkedin.pathname)
+    if(isLinkedInEmbed) return linkedinRes
+
+    // 将路径为 /feed/update 转为 /embed/feed/update
+    const isFeedUpdate = p.startsWith("/feed/update")
+    if(isFeedUpdate) {
+      url.pathname = `/embed` + p
+      linkedinRes.link = url.toString()
+      return linkedinRes
+    }
+    
+  }
+
+
   // vika
   const vika = new URL(thirdLink.VIKA_SHARE)
   const isVika = valTool.isInDomain(h, vika.hostname) && p.startsWith(vika.pathname)

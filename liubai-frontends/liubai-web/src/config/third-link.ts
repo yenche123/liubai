@@ -107,6 +107,9 @@ export default {
   FIRESIDE_SHARE: "https://share.fireside.fm/episode/",
   FIRESIDE_PLAYER: "https://player.fireside.fm/v2/",
 
+  // linkedin
+  LINKEDIN_EMBED: "https://www.linkedin.com/embed/",
+
   // chrome site setting
   CHROME_SITE_SETTING: "chrome://settings/content/siteDetails?site=__XXX__",
 
