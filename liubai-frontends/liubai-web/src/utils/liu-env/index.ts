@@ -73,10 +73,12 @@ function getIfPurelyLocal() {
   return false
 }
 
+let backendExisted: boolean | undefined
 function hasBackend() {
+  if(typeof backendExisted === "boolean") return backendExisted
   const env = getEnv()
-  if(env.API_DOMAIN) return true
-  return false
+  backendExisted = Boolean(env.API_DOMAIN)
+  return backendExisted
 }
 
 export default {

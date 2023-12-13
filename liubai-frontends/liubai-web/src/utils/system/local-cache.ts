@@ -4,8 +4,18 @@ import type {
   LocalConfigData,
 } from "./tools/types";
 import liuApi from "../liu-api";
+import liuEnv from "../liu-env";
 
 function getPreference(): LocalPreference {
+  const hasBackend = liuEnv.hasBackend()
+
+  // 云模式
+  if(hasBackend) {
+    const res0 = liuApi.getStorageSync<LocalPreference>("cloud-preference") || {}
+    return res0
+  }
+
+  // 纯本地模式
   const res = liuApi.getStorageSync<LocalPreference>("local-preference") || {}
   return res
 }
@@ -15,7 +25,14 @@ function setPreference<T extends keyof LocalPreference>(
 ) {
   const localP = getPreference()
   localP[key] = data
-  const res = liuApi.setStorageSync("local-preference", localP)
+
+  const hasBackend = liuEnv.hasBackend()
+  if(hasBackend) {
+    liuApi.setStorageSync("cloud-preference", localP)
+  }
+  else {
+    liuApi.setStorageSync("local-preference", localP)
+  }
 }
 
 
