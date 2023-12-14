@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
 import { routes } from "./initRoutes"
+import liuEnv from "~/utils/liu-env"
+import localCache from "~/utils/system/local-cache"
 
 // 扩展 vue-router 下的 RouteMeta 接口
 // inApp 为 false 表示不在应用内（可能在落地页 / share 分享内等等）
@@ -29,6 +31,22 @@ router.beforeEach((to, from) => {
   console.log("to: ", to)
   console.log("from: ", from)
   console.log(" ")
+
+  const backend = liuEnv.hasBackend()
+  if(!backend) return
+
+  console.log("后端存在..........")
+  const hasLogin = localCache.hasLoginWithBackend()
+  const toName = to.name
+  const toInApp = to.meta.inApp
+
+  // 1. 如果没有登录 
+  // 2. 并且 打开应用内的页面（需要登录） 
+  // 3. 并且 不是 login 页
+  // 则路由至 login 页
+  if(!hasLogin && toInApp !== false && toName !== "login") {
+    return { name: "login" }
+  }
 })
 
 export { router }

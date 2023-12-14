@@ -62,6 +62,17 @@ function setConfigData(data?: LocalConfigData) {
   liuApi.setStorageSync("local-config-data", data)
 }
 
+/*********** 是否具备后端并且已登录 */
+function hasLoginWithBackend() {
+  const {
+    local_id,
+    serial,
+    token,
+  } = getPreference()
+  if(local_id && serial && token) return true
+  return false
+}
+
 
 export default {
   getPreference,
@@ -70,4 +81,5 @@ export default {
   setOnceData,
   getConfigData,
   setConfigData,
+  hasLoginWithBackend,
 }
