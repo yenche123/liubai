@@ -39,6 +39,9 @@ function toLogin(
 
   console.log("去登录当前用户 userId: ", userId)
 
+  // 3. 创建 user
+  
+
 }
 
 function checkIfChooseAccounts(

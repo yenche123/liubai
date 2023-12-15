@@ -25,6 +25,7 @@ export interface Res_UserLoginNormal {
   userId?: string
   token?: string
   serial_id?: string
+  // 返回的 space 和 member 信息都是当前用户有加入的，已退出的不会返回
   spaceMemberList?: LiuSpaceAndMember[]
 
   // 有多个 user 符合时
