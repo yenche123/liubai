@@ -12,21 +12,21 @@ export async function findSystem(user_id: string) {
   // console.timeEnd("fs user")
 
   if(!res1) return false
-  if(res1.workspaces.length < 1) {
+
+  console.time("fs workspaces")
+  const w2 = {
+    owner: user_id,
+    infoType: "ME",
+  }
+  const res2 = await db.workspaces.where(w2).toArray()
+  console.timeEnd("fs workspaces")
+
+  if(!res2 || res2.length < 1) {
     await localReq.deleteUser(res1._id)
     return false
   }
-
-  const workspace_local = res1.workspaces[0]
-
-  // console.time("fs workspaces")
-  const res2 = await db.workspaces.get({ _id: workspace_local })
-  // console.timeEnd("fs workspaces")
-
-  if(!res2) {
-    await localReq.deleteUser(res1._id)
-    return false
-  }
+  const space = res2[0]
+  const workspace_local = space._id
 
   const g = {
     user: user_id,
@@ -39,7 +39,7 @@ export async function findSystem(user_id: string) {
 
   if(!res3) {
     await localReq.deleteUser(res1._id)
-    await localReq.deleteWorkspace(res2._id)
+    await localReq.deleteWorkspace(workspace_local)
     return false
   }
 

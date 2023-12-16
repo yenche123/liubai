@@ -54,7 +54,6 @@ async function createUser(
     insertedStamp: t,
     updatedStamp: t,
     lastRefresh: t,
-    workspaces: [workspace_local]
   }
 
   try {

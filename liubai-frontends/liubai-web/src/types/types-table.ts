@@ -31,7 +31,6 @@ export interface UserLocalTable extends BaseLocalTable {
   lastRefresh: number
   email?: string
   phone?: string
-  workspaces: string[]
 
   name?: string
   avatar?: LiuImageStore
