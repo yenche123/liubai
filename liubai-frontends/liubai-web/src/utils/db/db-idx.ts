@@ -1,28 +1,33 @@
 
 
 // 版本号，凡是 dexieIdxs 被修改了，这里都要累加！！！
-export const DB_VERSION = 41
+export const DB_VERSION = 42
 
 const dexieIdxs = {
   users: [
-    "_id"
+    "_id",
+    "cloud_id",
   ],
   workspaces: [
     "_id",
+    "cloud_id",
     "[infoType+owner]",
   ],
   members: [
     "_id",
+    "cloud_id",
     "[user+spaceId]",
   ],
   drafts: [
     "_id",
+    "cloud_id",
     "[infoType+oState+user+spaceId]",
     "[infoType+oState+threadEdited]",
     "*tagIds",
   ],
   contents: [
     "_id",
+    "cloud_id",
     "oState",
     "[oState+updatedStamp]",
     "[_id+infoType+oState]",
@@ -40,6 +45,7 @@ const dexieIdxs = {
   ],
   collections: [
     "_id",
+    "cloud_id",
     "content_id",
     "insertedStamp",
     "[user+infoType+forType+content_id]",

@@ -2,14 +2,14 @@
 // 把远端信息 LiuSpaceAndMember 分别存入 users workspaces members 中
 
 import type { LiuSpaceAndMember } from "~/types/types-cloud";
-import { UserLocalTable } from "~/types/types-table";
+import type { UserLocalTable } from "~/types/types-table";
 import { db } from "~/utils/db";
 
-async function handleUser(
+export async function handleUser(
   userId: string,
   spaceMemberList: LiuSpaceAndMember,
 ) {
-  const res1 = await db.users.get({ _id: userId })
+  const res1 = await db.users.get({ cloud_id: userId })
   if(res1?._id) {
     updateUser(res1, spaceMemberList)
   }
@@ -30,6 +30,7 @@ async function updateUser(
   user: UserLocalTable,
   spaceMemberList: LiuSpaceAndMember,
 ) {
+  
 
   
 }
