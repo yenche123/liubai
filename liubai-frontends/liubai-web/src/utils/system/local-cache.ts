@@ -1,22 +1,21 @@
 import type { 
   LocalPreference, 
   LocalOnceData, 
+  KeyOfLocalOnceData,
   LocalConfigData,
 } from "./tools/types";
 import liuApi from "../liu-api";
 import liuEnv from "../liu-env";
 
-function getPreference(): LocalPreference {
+function _getPreKey() {
   const hasBackend = liuEnv.hasBackend()
+  const key = hasBackend ? "cloud-preference" : "local-preference"
+  return key
+}
 
-  // 云模式
-  if(hasBackend) {
-    const res0 = liuApi.getStorageSync<LocalPreference>("cloud-preference") || {}
-    return res0
-  }
-
-  // 纯本地模式
-  const res = liuApi.getStorageSync<LocalPreference>("local-preference") || {}
+function getPreference(): LocalPreference {
+  const key = _getPreKey()
+  const res = liuApi.getStorageSync<LocalPreference>(key) || {}
   return res
 }
 
@@ -26,13 +25,18 @@ function setPreference<T extends keyof LocalPreference>(
   const localP = getPreference()
   localP[key] = data
 
-  const hasBackend = liuEnv.hasBackend()
-  if(hasBackend) {
-    liuApi.setStorageSync("cloud-preference", localP)
-  }
-  else {
-    liuApi.setStorageSync("local-preference", localP)
-  }
+  const key2 = _getPreKey()
+  liuApi.setStorageSync(key2, localP)
+}
+
+function setAllPreference(obj: LocalPreference) {
+  const key = _getPreKey()
+  liuApi.setStorageSync(key, obj)
+}
+
+function clearPreference() {
+  const key = _getPreKey()
+  liuApi.removeStorageSync(key)
 }
 
 
@@ -42,10 +46,22 @@ function getOnceData(): LocalOnceData {
   return res
 }
 
-function setOnceData(key: keyof LocalOnceData, data: any) {
+function setOnceData(key: KeyOfLocalOnceData, data: any) {
   const localData = getOnceData()
   localData[key] = data
   const res = liuApi.setStorageSync("local-once-data", localData)
+}
+
+function removeOnceDataWhileLogging() {
+  const localData = getOnceData()
+  const keys: KeyOfLocalOnceData[] = [
+    "client_key", "enc_client_key", "githubOAuthState", "googleOAuthState"
+  ]
+  for(let i=0; i<keys.length; i++) {
+    const k = keys[i]
+    localData[k] = undefined
+  }
+  liuApi.setStorageSync("local-once-data", localData)
 }
 
 /********** 配置数据、同样不依赖登录态 ********/
@@ -77,8 +93,11 @@ function hasLoginWithBackend() {
 export default {
   getPreference,
   setPreference,
+  setAllPreference,
+  clearPreference,
   getOnceData,
   setOnceData,
+  removeOnceDataWhileLogging,
   getConfigData,
   setConfigData,
   hasLoginWithBackend,

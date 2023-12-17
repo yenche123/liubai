@@ -26,6 +26,8 @@ export async function handleSpaceAndMembers(
 
     // 1. 查找 workspace
     const res1 = await db.workspaces.get({ cloud_id: v.spaceId })
+
+    // 1.2 若查无 workspace 就去创建；若存在，无需修改，修改流程交给 enter
     if(!res1 || !res1._id) {
       const res1_2 = await createSpace(v)
       if(!res1_2) {
@@ -36,11 +38,14 @@ export async function handleSpaceAndMembers(
     // 2. 查找 member
     const res2 = await db.members.get({ cloud_id: v.memberId })
     if(!res2 || !res2._id) {
-      createMember(userId, v)
+      const res2_2 = await createMember(userId, v)
+      if(!res2_2) {
+        return false
+      }
     }
-
   }
   
+  return true
 }
 
 // 先不去管 "云端文件" 转换为 "本地文件" 的问题
@@ -61,7 +66,7 @@ async function createSpace(
     await db.workspaces.put(data)
   }
   catch(err) {
-    console.warn("在本地置入工作区失败.......")
+    console.warn("在本地置入 workspace 失败.......")
     console.log(err)
     console.log(" ")
     return false
@@ -87,10 +92,13 @@ async function createMember(
     const res = await db.members.add(data)
   }
   catch(err) {
-    return
+    console.warn("在本地置入 member 失败.......")
+    console.log(err)
+    console.log(" ")
+    return false
   }
   
-  return data
+  return true
 }
 
 
@@ -111,7 +119,7 @@ async function createUser(
     const res = await db.users.put(data)
   }
   catch(err) {
-    console.warn("在本地置入用户失败.......")
+    console.warn("在本地置入 user 失败.......")
     console.log(err)
     console.log(" ")
     return false

@@ -7,7 +7,8 @@ export interface LocalPreference {
   language?: LocalLanguage
   local_id?: string
   token?: string
-  serial?: string     // token 所在的序列号
+  serial?: string       // token 所在的序列号
+  client_key?: string   // 前端生成的 aes 密钥
 }
 
 export interface LocalOnceData {
@@ -27,8 +28,9 @@ export interface LocalOnceData {
   // 前端用后端公钥加密前端的 aes 的结果
   enc_client_key?: string
 
-
 }
+
+export type KeyOfLocalOnceData = keyof LocalOnceData
 
 // 存储一些配置信息
 export interface LocalConfigData {

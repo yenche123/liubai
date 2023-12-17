@@ -1,4 +1,6 @@
 // 存放所有接口返回的 data 类型
+import type { LocalTheme } from "~/types/types-atom"
+import type { LocalLanguage } from "~/types"
 import type { LiuSpaceAndMember } from "~/types/types-cloud"
 
 
@@ -25,6 +27,8 @@ export interface Res_UserLoginNormal {
   userId?: string
   token?: string
   serial_id?: string
+  theme?: LocalTheme
+  language?: LocalLanguage
   // 返回的 space 和 member 信息都是当前用户有加入的，已退出的不会返回
   spaceMemberList?: LiuSpaceAndMember[]
 

@@ -18,6 +18,7 @@ import {
 export function initCycle() {
 
   useEnterIntoApp(async () => {
+    console.log("useEnterIntoApp fn.........")
 
     // 等个 2500 ms 再去处理这些背景操作
     await valTool.waitMilli(2500)

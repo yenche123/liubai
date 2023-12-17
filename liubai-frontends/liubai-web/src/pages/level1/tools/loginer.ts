@@ -4,6 +4,7 @@ import { useLoginStore } from "../login-page/tools/useLoginStore";
 import localCache from "~/utils/system/local-cache";
 import { redirectToLoginPage } from "./common-tools";
 import { handleUser, handleSpaceAndMembers } from "./cloud-into-db";
+import { LocalPreference } from "~/utils/system/tools/types";
 
 // 开始去初始化本地数据
 async function toLogin(
@@ -42,15 +43,28 @@ async function toLogin(
 
   // 3. 创建 user
   const res2 = await handleUser(userId)
-  if(!res2) {
-    return
-  }
+  if(!res2) return
 
   // 4. 创建 member 和 workspace
-  handleSpaceAndMembers(userId, spaceMemberList)
+  const res3 = await handleSpaceAndMembers(userId, spaceMemberList)
+  if(!res3) return
 
+  // 5. 存入 localStorage
+  const obj1: LocalPreference = {
+    theme: d.theme,
+    language: d.language,
+    local_id: userId,
+    token,
+    serial: serial_id,
+    client_key: ck,
+  }
+  localCache.setAllPreference(obj1)
+
+  // 6. 删除 onceData
+  localCache.removeOnceDataWhileLogging()
   
-
+  // 7. router 切换，先不读 goto 参数，直接跳转到 首页
+  rr.router.replace({ name: "index" })
 }
 
 function checkIfChooseAccounts(
