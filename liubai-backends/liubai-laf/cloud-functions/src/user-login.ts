@@ -874,6 +874,8 @@ async function sign_in(
     userId: user._id,
     token,
     serial_id,
+    language: user.language,
+    theme: user.theme,
     spaceMemberList,
   }
 

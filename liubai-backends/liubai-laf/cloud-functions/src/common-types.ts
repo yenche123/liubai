@@ -62,6 +62,7 @@ export const supportedLocales = [
 ] as const
 
 export type SupportedLocale = typeof supportedLocales[number]
+export type LocalLanguage = SupportedLocale | "system"
 
 interface BaseTable {
   _id: string
@@ -305,7 +306,7 @@ export interface Table_User extends BaseTable {
   thirdData?: UserThirdData
   theme: LocalTheme
   systemTheme?: SupportedTheme
-  language: "system" | SupportedLocale
+  language: LocalLanguage
   systemLanguage?: string
 }
 
@@ -469,6 +470,8 @@ export interface Res_UserLoginNormal {
   userId?: string
   token?: string
   serial_id?: string
+  theme?: LocalTheme
+  language?: LocalLanguage
   spaceMemberList?: LiuSpaceAndMember[]
   multi_users?: Res_ULN_User[]
   multi_credential?: string
