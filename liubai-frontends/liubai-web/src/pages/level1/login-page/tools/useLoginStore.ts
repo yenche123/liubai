@@ -3,8 +3,8 @@ import { ref } from "vue";
 import { type MemberShow } from "~/types/types-content";
 import { type LpView } from "./types"
 import { type Res_ULN_User } from "~/requests/data-types"
-import transferUtil from "~/utils/transfer-util";
 import valTool from "~/utils/basic/val-tool";
+import { CloudToLocal } from "~/utils/cloud/CloudToLocal";
 
 // 控制 login 页怎么显示
 export const useLoginStore = defineStore("login", () => {
@@ -33,7 +33,7 @@ export const useLoginStore = defineStore("login", () => {
         _id: v.memberId,
         user_id: v.userId,
         name: v.member_name,
-        avatar: transferUtil.imageFromCloudToShow(v.member_avatar),
+        avatar: CloudToLocal.imageFromCloudToShow(v.member_avatar),
         spaceId: v.spaceId,
         oState: v.member_oState,
       }

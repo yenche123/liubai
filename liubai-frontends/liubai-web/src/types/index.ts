@@ -48,6 +48,7 @@ export interface LiuImageStore {
   height?: number
   h2w?: string
   cloud_url?: string
+  cloud_url_2?: string       // 云端低分辨率的图片
   blurhash?: string
   someExif?: LiuExif
 }

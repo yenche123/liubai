@@ -3,9 +3,10 @@ import { type RouteAndLiuRouter } from "~/routes/liu-router";
 import { useLoginStore } from "../login-page/tools/useLoginStore";
 import localCache from "~/utils/system/local-cache";
 import { redirectToLoginPage } from "./common-tools";
+import { handleUser, handleSpaceAndMembers } from "./cloud-into-db";
 
 // 开始去初始化本地数据
-function toLogin(
+async function toLogin(
   rr: RouteAndLiuRouter,
   d: Res_UserLoginNormal,
 ) {
@@ -40,6 +41,14 @@ function toLogin(
   console.log("去登录当前用户 userId: ", userId)
 
   // 3. 创建 user
+  const res2 = await handleUser(userId)
+  if(!res2) {
+    return
+  }
+
+  // 4. 创建 member 和 workspace
+  handleSpaceAndMembers(userId, spaceMemberList)
+
   
 
 }

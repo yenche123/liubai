@@ -7,7 +7,6 @@ import { listToText } from "./text"
 import { listToMarkdown } from "./markdown"
 import type { ListToMdOpt } from "./markdown"
 import { LiuFileStore } from "~/types"
-import { imageFromCloudToShow, fileFromCloudToShow } from "./cloud-to-local"
 
 function tiptapToLiu(list: TipTapJSONContent[]): LiuContent[] {
   list = trimJSONContent(list)
@@ -59,8 +58,6 @@ export default {
   tiptapToText,
   tiptapToMarkdown,
   packSearchOther,
-  imageFromCloudToShow,
-  fileFromCloudToShow,
 }
 
 
