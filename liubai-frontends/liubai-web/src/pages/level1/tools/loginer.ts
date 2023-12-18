@@ -14,7 +14,7 @@ async function toLogin(
 
   // 1. 是否要选择用户
   const res1 = checkIfChooseAccounts(rr, d)
-  if(res1) return
+  if(res1) return false
 
   // 2. 已经确定用户（userId）开始登录流程
   // 2.1 检查参数是否存在
@@ -25,17 +25,17 @@ async function toLogin(
     spaceMemberList,
   } = d
 
-  if(!userId) return
-  if(!token) return
-  if(!serial_id) return
-  if(!spaceMemberList) return
+  if(!userId) return false
+  if(!token) return false
+  if(!serial_id) return false
+  if(!spaceMemberList) return false
 
   // 2.2 检查密钥是否存在
   const onceData = localCache.getOnceData()
   const ck = onceData.client_key
   if(!ck) {
     console.warn("本地密钥不存在.......")
-    return
+    return false
   }
 
 
@@ -43,11 +43,11 @@ async function toLogin(
 
   // 3. 创建 user
   const res2 = await handleUser(userId)
-  if(!res2) return
+  if(!res2) return false
 
   // 4. 创建 member 和 workspace
   const res3 = await handleSpaceAndMembers(userId, spaceMemberList)
-  if(!res3) return
+  if(!res3) return false
 
   // 5. 存入 localStorage
   const obj1: LocalPreference = {
@@ -65,6 +65,8 @@ async function toLogin(
   
   // 7. router 切换，先不读 goto 参数，直接跳转到 首页
   rr.router.replace({ name: "index" })
+
+  return true
 }
 
 function checkIfChooseAccounts(

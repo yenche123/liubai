@@ -26,6 +26,16 @@ class CloudToLocal {
   static init() {
     
   }
+
+
+  /** 告知 CloudToLocal 哪个表、哪一行 
+   * 需要从网络下载文件（图片），存到 IndexedDB 中
+   * */
+  static notify() {
+
+  }
+
+
   
 
   /** 判断云端图片如何快速转换成本地存储格式 

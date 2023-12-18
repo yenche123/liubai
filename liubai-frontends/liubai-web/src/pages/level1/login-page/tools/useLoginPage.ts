@@ -132,6 +132,9 @@ async function toSelectAnAccount(
   const userId = item.user_id
   if(!userId) return
 
+  // 1.5 判断是否可再登录
+  if(!canLoginUsingLastLogged(lpData)) return
+
   // 2. 获取 multi 相关的参数
   const { 
     multi_credential: m1, 
@@ -147,7 +150,22 @@ async function toSelectAnAccount(
   lpData.isSelectingAccount = true
   const res = await fetchUsersSelect(userId, m1, m2, state, enc_client_key)
   lpData.isSelectingAccount = false
-  afterFetchingLogin(rr, res)
+  const res2 = await afterFetchingLogin(rr, res)
+  if(res2) {
+    console.log("设置 lastLogged...........")
+    lpData.lastLogged = time.getTime()
+  }
+}
+
+// 使用 lastLogged 参数判断是否可登录
+function canLoginUsingLastLogged(
+  lpData: LpData,
+) {
+  const s = lpData.lastLogged
+  if(!s) return true
+  const diff = (time.getTime() - s) / time.SECONED
+  if(diff < 5) return false
+  return true
 }
 
 
@@ -219,6 +237,9 @@ async function toSubmitEmailAndCode(
   if(!state || !publicKey || !email) return
   if(lpData.isSubmittingEmailCode) return
 
+  // 0. 判断是否可再登录
+  if(!canLoginUsingLastLogged(lpData)) return
+
   const now = time.getTime()
   const milli = (now - lastSubmitEmailCode)
   if(milli < 1000) {
@@ -242,7 +263,11 @@ async function toSubmitEmailAndCode(
   lpData.isSubmittingEmailCode = true
   const res = await fetchEmailCode(enc_email, code, state, enc_client_key)
   lpData.isSubmittingEmailCode = false
-  afterFetchingLogin(rr, res)
+  const res2 = await afterFetchingLogin(rr, res)
+  if(res2) {
+    console.log("设置 lastLogged...........")
+    lpData.lastLogged = time.getTime()
+  }
 }
 
 

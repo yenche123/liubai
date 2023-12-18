@@ -69,7 +69,7 @@ export async function afterFetchingLogin(
   }
 
   // 5. 去走登录流程
-  loginer.toLogin(rr, data)
-  return true
+  const res2 = await loginer.toLogin(rr, data)
+  return res2
 }
 

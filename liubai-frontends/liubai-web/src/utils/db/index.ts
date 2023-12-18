@@ -34,3 +34,6 @@ export class LiuDexie extends Dexie {
 }
 
 export const db = new LiuDexie()
+
+export type LiuTable = "users" | "workspaces" | "members" | "drafts" | "contents"
+  | "collections"
