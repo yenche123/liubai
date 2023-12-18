@@ -5,6 +5,7 @@ import type { LiuSpaceAndMember } from "~/types/types-cloud";
 import type { UserLocalTable, WorkspaceLocalTable, MemberLocalTable } from "~/types/types-table";
 import { db } from "~/utils/db";
 import time from "~/utils/basic/time"
+import { CloudToLocal } from "~/utils/cloud/CloudToLocal";
 
 export async function handleUser(
   userId: string,
@@ -48,7 +49,6 @@ export async function handleSpaceAndMembers(
   return true
 }
 
-// 先不去管 "云端文件" 转换为 "本地文件" 的问题
 async function createSpace(
   v: LiuSpaceAndMember,
 ) {
@@ -74,11 +74,13 @@ async function createSpace(
   return true
 }
 
+// 先不去管 "云端文件" 转换为 "本地文件" 的问题
 async function createMember(
   userId: string,
   v: LiuSpaceAndMember,
 ) {
   const t = time.getTime()
+  const { image: avatar } = CloudToLocal.imageFromCloudToStore(v.member_avatar)
   const data: MemberLocalTable = {
     _id: v.memberId,
     spaceId: v.spaceId,
@@ -87,6 +89,7 @@ async function createMember(
     user: userId,
     oState: v.member_oState,
     name: v.member_name,
+    avatar,
   }
   try {
     const res = await db.members.add(data)
