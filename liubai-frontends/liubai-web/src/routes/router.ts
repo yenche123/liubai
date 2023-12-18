@@ -28,14 +28,9 @@ const router = createRouter({
 
 // 创建全局守卫导航
 router.beforeEach((to, from) => {
-  console.log("to: ", to)
-  console.log("from: ", from)
-  console.log(" ")
-
   const backend = liuEnv.hasBackend()
   if(!backend) return
-
-  console.log("后端存在..........")
+  
   const hasLogin = localCache.hasLoginWithBackend()
   const toName = to.name
   const toInApp = to.meta.inApp
