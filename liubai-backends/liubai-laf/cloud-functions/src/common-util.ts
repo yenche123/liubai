@@ -4,7 +4,11 @@ import * as crypto from "crypto"
 import type { 
   LiuSpaceAndMember,
   MemberAggSpaces,
+  LocalTheme,
+  LocalLanguage,
+  SupportedLocale,
 } from '@/common-types'
+import { supportedLocales } from "@/common-types"
 import { getNowStamp, SECONED } from "@/common-time"
 
 /********************* 常量 ****************/
@@ -198,6 +202,24 @@ export function isEmailAndNormalize(val: any) {
   const newVal = val.toLowerCase()
   return newVal
 }
+
+/** 归一化主题至 LocalTheme */
+export function normalizeToLocalTheme(str: any): LocalTheme {
+  if(!str || typeof str !== "string") return "system"
+  const tmpList: LocalTheme[] = ["light", "dark", "auto", "system"]
+  const isInIt = tmpList.includes(str as LocalTheme)
+  if(isInIt) return str as LocalTheme
+  return "system"
+}
+
+/** 归一化语言至 LocalLanguage  */
+export function normalizeToLocalLanguage(str: any): LocalLanguage {
+  if(!str || typeof str !== "string") return "system"
+  const isInIt = supportedLocales.includes(str as SupportedLocale)
+  if(isInIt) return str as LocalLanguage
+  return "system"
+}
+
 
 /********************* 一些验证、检查函数 *****************/
 

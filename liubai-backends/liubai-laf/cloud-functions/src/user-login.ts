@@ -30,6 +30,8 @@ import {
   getSuffix,
   getIp,
   canPassByExponentialDoor,
+  normalizeToLocalTheme,
+  normalizeToLocalLanguage,
 } from "@/common-util"
 import { getNowStamp, MINUTE, DAY, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -822,7 +824,8 @@ async function sign_in(
   spaceMemberList = await turnMembersIntoOkWhileSigningIn(theUserInfo)
   
   // 4. 检查 user 是否 "DEACTIVATED" 或 "REMOVED"，若是，恢复至 "NORMAL"
-  user = await handleUserWhileSigningIn(user, opt.thirdData)
+  //    检查 是否要用当前用户本地传来的 theme 或 language
+  user = await handleUserWhileSigningIn(user, body, opt.thirdData)
 
   // 5. 去创建 token
   const token = createToken()
@@ -912,6 +915,7 @@ async function checkIfTooManyTokens(
 /** 将 DEACTIVATED 或 REMOVED 的 user 切换成 NORMAL */
 async function handleUserWhileSigningIn(
   user: Table_User,
+  body: Record<string, any>,
   thirdData?: UserThirdData,
 ) {
   let updateRequired = false
@@ -937,6 +941,17 @@ async function handleUserWhileSigningIn(
     updateRequired = true
     oldThirdData.github = newGitHub
     u.thirdData = oldThirdData
+  }
+  
+  const bTheme = normalizeToLocalTheme(body.theme)
+  const bLang = normalizeToLocalLanguage(body.language)
+  if(bTheme !== user.theme) {
+    updateRequired = true
+    u.theme = bTheme
+  }
+  if(bLang !== user.language) {
+    updateRequired = true
+    u.language = bLang
   }
 
   if(!updateRequired) return user
@@ -1306,11 +1321,11 @@ async function findUserByEmail(
 
   const w = { email }
   const res = await db.collection("User").where(w).get<Table_User>()
-  console.log("findUserByEmail res ----->")
-  console.log("res.code: ", res.code)
-  console.log("res.data: ", res.data)
-  console.log("res.ok: ", res.ok)
-  console.log(" ")
+  // console.log("findUserByEmail res ----->")
+  // console.log("res.code: ", res.code)
+  // console.log("res.data: ", res.data)
+  // console.log("res.ok: ", res.ok)
+  // console.log(" ")
   const list = res.data
   const res2 = await handleUsersFound(list)
   return res2
