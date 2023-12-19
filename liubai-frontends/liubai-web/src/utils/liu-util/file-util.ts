@@ -60,6 +60,10 @@ export function createURLsFromStore(
       }
       fileMap.set(v.id, newData)
     }
+    else if(v.cloud_url) {
+      // 使用云端图片
+      list.push(v.cloud_url)
+    }
     else {
       list.push("")
     }
