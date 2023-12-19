@@ -1,6 +1,6 @@
 import { reactive } from "vue";
 import type { LpData, LoginByThirdParty } from "./types";
-import type { BoolFunc } from "~/utils/basic/type-tool";
+import type { BoolFunc, LiuTimeout } from "~/utils/basic/type-tool";
 import cui from "~/components/custom-ui";
 import { 
   fetchInitLogin, 
@@ -13,11 +13,12 @@ import { handle_google, handle_github } from "./handle-tap-oauth";
 import time from "~/utils/basic/time"
 import { encryptTextWithRSA, afterFetchingLogin } from "../../tools/common-utils"
 import { loadGoogleIdentityService } from "./handle-gis"
-import { isEverythingOkay, showEmojiTip, showOtherTip, showLoginErrMsg } from "../../tools/show-msg"
+import { isEverythingOkay, showEmojiTip, showOtherTip } from "../../tools/show-msg"
 import { useLoginStore } from "./useLoginStore";
 import { storeToRefs } from "pinia";
 import { useLiuWatch } from "~/hooks/useLiuWatch";
 import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router";
+import { onActivated, onDeactivated, toRef, watch, type WatchStopHandle } from "vue";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -37,6 +38,9 @@ export function useLoginPage() {
     isSubmittingEmailCode: false,
     isSelectingAccount: false,
   })
+
+  // 0. 去监听登录成功后的 路由切换
+  listenRouteAndLastLogged(rr, lpData)
 
   // 1. 去监听 loginStore 的变化
   listenLoginStore(lpData)
@@ -98,6 +102,65 @@ export function useLoginPage() {
   }
 }
 
+// 登录完成后，会进行路由切换
+// 这个时候用户会等比较久，所以做一个变量（lastLogged）和路由监听
+function listenRouteAndLastLogged(
+  rr: RouteAndLiuRouter,
+  lpData: LpData,
+) {
+  let watchStop: WatchStopHandle | undefined
+  let timeout: LiuTimeout
+  const lastLogged = toRef(lpData, "lastLogged")
+
+  const _close = () => {
+    cui.hideLoading()
+    lpData.lastLogged = 0
+    if(timeout) {
+      clearTimeout(timeout)
+      timeout = undefined
+    }
+  }
+
+  const _setTimeout = () => {
+    if(timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      // console.log("3s 到期............")
+      timeout = undefined
+      _close()
+    }, 3000)
+  }
+
+  const _toListen = () => {
+    watchStop = watch([lastLogged, rr.route], (
+      [newLastLogged, newRoute]
+    ) => {
+      const newName = newRoute.name
+      if(!newName || typeof newName !== "string") return
+      if(!newLastLogged || newLastLogged <= 0) return
+
+      const isInLoginPage = newName.startsWith("login")
+      if(isInLoginPage) {
+        // console.log("当前还在 login 相关页中，去新增三秒延迟以避免卡死")
+        _setTimeout()
+      }
+      else {
+        // console.log("路由已变化，去关闭 loading 弹窗")
+        _close()
+      }
+
+    })
+  }
+
+  onActivated(() => {
+    _toListen()
+  })
+
+  onDeactivated(() => {
+    watchStop?.()
+  })
+}
+
+
 function handleBack(
   rr: RouteAndLiuRouter,
   lpData: LpData,
@@ -152,7 +215,7 @@ async function toSelectAnAccount(
   lpData.isSelectingAccount = false
   const res2 = await afterFetchingLogin(rr, res)
   if(res2) {
-    console.log("设置 lastLogged...........")
+    cui.showLoading({ title_key: "login.logging2" })
     lpData.lastLogged = time.getTime()
   }
 }
@@ -265,7 +328,7 @@ async function toSubmitEmailAndCode(
   lpData.isSubmittingEmailCode = false
   const res2 = await afterFetchingLogin(rr, res)
   if(res2) {
-    console.log("设置 lastLogged...........")
+    cui.showLoading({ title_key: "login.logging2" })
     lpData.lastLogged = time.getTime()
   }
 }

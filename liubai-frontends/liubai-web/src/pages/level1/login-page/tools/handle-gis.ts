@@ -5,6 +5,7 @@ import { fetchGoogleCredential } from "../../tools/requests";
 import { afterFetchingLogin } from "../../tools/common-utils";
 import { type RouteAndLiuRouter } from "~/routes/liu-router";
 import { getClientKey } from "../../tools/common-tools";
+import time from "~/utils/basic/time";
 
 // 本文件负责 Google One-Tap 登录流程
 
@@ -91,6 +92,10 @@ async function handleCredentialResponse(
 
   cui.showLoading({ title_key: "login.logging2" })
   const res2 = await fetchGoogleCredential(google_id_token, state, enc_client_key)
-  cui.hideLoading()
-  afterFetchingLogin(rr, res2)
+  const res3 = await afterFetchingLogin(rr, res2)
+  if(!res3) {
+    cui.hideLoading()
+    return
+  }
+  lpData.lastLogged = time.getTime()
 }
