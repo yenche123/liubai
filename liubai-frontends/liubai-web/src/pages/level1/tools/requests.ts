@@ -5,6 +5,28 @@ import localCache from "~/utils/system/local-cache";
 import { createClientKey } from "./common-utils"
 import { type LiuRqReturn } from "~/requests/tools/types";
 
+function _getThemeAndLang() {
+  const { theme, language } = localCache.getPreference()
+  let theme2: string | undefined
+  let lang2: string | undefined
+  if(theme === "dark" || theme === "light") {
+    theme2 = theme
+  }
+  if(language !== "system") {
+    lang2 = language
+  }
+  return { theme: theme2, language: lang2 }
+}
+
+function _getDefaultOpt() {
+  const { theme, language } = _getThemeAndLang()
+  let opt = {
+    theme,
+    language,
+  }
+  return opt
+}
+
 export async function fetchInitLogin() {
   const url = APIs.LOGIN
   const res = await liuReq.request<Res_UserLoginInit>(url, { operateType: "init" })
@@ -44,7 +66,9 @@ export async function fetchEmailCode(
   enc_client_key: string,
 ) {
   const url = APIs.LOGIN
+  const default_opt = _getDefaultOpt()
   const opt = {
+    ...default_opt,
     operateType: "email_code",
     state,
     enc_email,
@@ -64,7 +88,9 @@ export async function fetchOAuth(
   oauth_redirect_uri?: string,
 ) {
   const url = APIs.LOGIN
+  const default_opt = _getDefaultOpt()
   const opt = {
+    ...default_opt,
     operateType,
     oauth_code,
     state,
@@ -83,7 +109,9 @@ export async function fetchUsersSelect(
   enc_client_key: string,
 ) {
   const url = APIs.LOGIN
+  const default_opt = _getDefaultOpt()
   const opt = {
+    ...default_opt,
     operateType: "users_select",
     userId,
     multi_credential,
@@ -93,7 +121,6 @@ export async function fetchUsersSelect(
   }
   const res = await liuReq.request<Res_UserLoginNormal>(url, opt)
   return res
-  
 }
 
 export async function fetchGoogleCredential(
@@ -102,7 +129,9 @@ export async function fetchGoogleCredential(
   enc_client_key: string,
 ) {
   const url = APIs.LOGIN
+  const default_opt = _getDefaultOpt()
   const opt = {
+    ...default_opt,
     operateType: "google_credential",
     google_id_token,
     state,

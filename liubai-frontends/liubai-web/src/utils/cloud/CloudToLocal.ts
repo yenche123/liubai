@@ -5,7 +5,7 @@ import type {
   FileShow, 
   ImageShow,
 } from "~/types";
-
+import { type LiuTable } from "~/utils/db"
 
 interface ImageTransferedRes {
   useCloud: boolean
@@ -31,7 +31,7 @@ class CloudToLocal {
   /** 告知 CloudToLocal 哪个表、哪一行 
    * 需要从网络下载文件（图片），存到 IndexedDB 中
    * */
-  static notify() {
+  static notify(table: LiuTable, id: string) {
 
   }
 
