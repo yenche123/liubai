@@ -5,21 +5,8 @@ import localCache from "~/utils/system/local-cache";
 import { createClientKey } from "./common-utils"
 import { type LiuRqReturn } from "~/requests/tools/types";
 
-function _getThemeAndLang() {
-  const { theme, language } = localCache.getPreference()
-  let theme2: string | undefined
-  let lang2: string | undefined
-  if(theme === "dark" || theme === "light") {
-    theme2 = theme
-  }
-  if(language !== "system") {
-    lang2 = language
-  }
-  return { theme: theme2, language: lang2 }
-}
-
 function _getDefaultOpt() {
-  const { theme, language } = _getThemeAndLang()
+  const { theme, language } = localCache.getPreference()
   let opt = {
     theme,
     language,
