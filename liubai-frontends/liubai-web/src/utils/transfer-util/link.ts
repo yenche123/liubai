@@ -106,7 +106,7 @@ function _innerParse(
     if(forType === "email" && mLen < 6) continue
     if(forType === "social_link" && mLen < 7) continue
     if(forType === "url" && mLen < 8) continue
-    if(forType === "url" && !_checkUrlMore(mTxt)) continue
+    if(forType === "url" && !_checkUrl_1(mTxt)) continue
 
     // console.log("forType: ", forType)
     // console.log(mTxt)
@@ -142,6 +142,7 @@ function _innerParse(
     }
     else if(forType === "url") {
       href = _handleURL(href)
+      if(!_checkUrl_2(href)) continue
     }
 
     const startIdx = match.index
@@ -247,8 +248,8 @@ function _handleSocialLink(text: string) {
   return `https://elk.zone/${domain}/@${username}`
 }
 
-
-function _checkUrlMore(text: string) {
+// 自定义检查 text 是否为一个链接
+function _checkUrl_1(text: string) {
 
   try {
     const url = new URL(text)
@@ -274,6 +275,17 @@ function _checkUrlMore(text: string) {
   if(manNum > 2 && !text.includes("/")) return false
   return true
 }
+
+// 当链接经 _handleURL() 处理后
+// 使用 URL.canParse 对 _handleURL 的结果 href 再次进行链接检查
+function _checkUrl_2(href: string) {
+  if(typeof URL.canParse !== "undefined") {
+    const res = URL.canParse(href)
+    return res
+  }
+  return true
+}
+
 
 function _howManyLowerCase(text: string) {
   if(!text || text.length < 1) return 0
