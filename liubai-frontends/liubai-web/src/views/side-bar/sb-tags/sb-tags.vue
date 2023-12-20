@@ -298,6 +298,7 @@ const {
   font-size: var(--mini-font);
   color: var(--main-normal);
   line-height: 1.25;
+  user-select: none;
 }
 
 @container sidebar (max-width: 190px) {
