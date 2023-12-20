@@ -29,19 +29,30 @@ const router = createRouter({
 // 创建全局守卫导航
 router.beforeEach((to, from) => {
   const backend = liuEnv.hasBackend()
-  if(!backend) return
-  
   const hasLogin = localCache.hasLoginWithBackend()
   const toName = to.name
   const toInApp = to.meta.inApp
 
-  // 1. 如果没有登录 
-  // 2. 并且 打开应用内的页面（需要登录） 
+  // 0. 如果存在后端
+  // 1. 并且 没有登录 
+  // 2. 并且 打开应用内的页面（需要登录），即 toInApp 不等于 false
   // 3. 并且 不是 login 页
   // 则路由至 login 页
-  if(!hasLogin && toInApp !== false && toName !== "login") {
-    return { name: "login" }
+  if(backend && !hasLogin) {
+    if(toInApp !== false && toName !== "login") {
+      return { name: "login" }
+    }
   }
+
+  // 0. 如果已经登录或者没有后端
+  // 1. 但正在前往登录相关的页面（login / login-xxxx）
+  // 全部路由至 index
+  if(hasLogin || !backend) {
+    if(typeof toName === "string" && toName.startsWith("login")) {
+      return { name: "index" }
+    }
+  }
+  
 })
 
 export { router }
