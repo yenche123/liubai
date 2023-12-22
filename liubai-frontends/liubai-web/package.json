@@ -37,7 +37,7 @@
     "blurhash": "^2.0.5",
     "canvas-confetti": "^1.9.2",
     "compressorjs": "^1.2.1",
-    "date-fns": "^3.0.1",
+    "date-fns": "^3.0.6",
     "dexie": "^3.2.4",
     "exifreader": "^4.19.1",
     "file-saver": "^2.0.5",
@@ -71,6 +71,6 @@
     "vite-plugin-inspect": "^0.8.1",
     "vite-plugin-mkcert": "^1.17.1",
     "vite-plugin-svg-icons": "^2.0.1",
-    "vue-tsc": "^1.8.25"
+    "vue-tsc": "^1.8.26"
   }
 }
