@@ -7,16 +7,33 @@ import type {
   LocalTheme,
   LocalLanguage,
   SupportedLocale,
+  Shared_TokenUser,
+  VerifyTokenOpt,
+  VerifyTokenRes,
+  Table_Token,
+  Table_User,
+  LiuUserInfo,
+  SupportedClient,
+  PartialSth,
+  LiuRqReturn,
 } from '@/common-types'
 import { supportedLocales } from "@/common-types"
-import { getNowStamp, SECONED } from "@/common-time"
+import { createToken } from "@/common-ids"
+import { 
+  getNowStamp, 
+  getBasicStampWhileAdding, 
+  SECONED, DAY, MINUTE, 
+} from "@/common-time"
+
+const db = cloud.database()
+const _ = db.command
+
 
 /********************* 常量 ****************/
 export const reg_exp = {
   // 捕捉 整个字符串都是 email
   email_completed: /^[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*$/g,
 }
-
 
 /********************* 空函数 ****************/
 export async function main(ctx: FunctionContext) {
@@ -250,3 +267,273 @@ export function canPassByExponentialDoor(
   return { verifiedNum, pass }
 }
 
+/******************************** 用户验证相关 ******************************/
+
+/** 给定多个 userData 给出其 userInfos 
+ * @param filterMemberLeft 是否过滤掉成员已离开
+*/
+export async function getUserInfos(
+  users: Table_User[],
+  filterMemberLeft: boolean = true,
+) {
+  const userInfos: LiuUserInfo[] = []
+
+  for(let i=0; i<users.length; i++) {
+    const v = users[i]
+    const userId = v._id
+
+    let m_oState = _.or(_.eq("OK"), _.eq("DEACTIVATED"))
+    if(!filterMemberLeft) {
+      m_oState = _.or(_.eq("OK"), _.eq("DEACTIVATED"), _.eq("LEFT"))
+    }
+
+    // 1. 用 lookup 去查找 member 和 workspace
+    const res = await db.collection("Member").aggregate()
+      .match({
+        user: userId,
+        oState: m_oState,
+      })
+      .sort({
+        insertedStamp: 1,
+      })
+      .lookup({
+        from: "Workspace",
+        localField: "spaceId",
+        foreignField: "_id",
+        as: "spaceList",
+      })
+      .end()
+    
+    // console.log("看一下 getUserInfos 中聚合搜索的结果: ")
+    // console.log(res)
+    // console.log(" ")
+
+    const lsams = turnMemberAggsIntoLSAMs(res.data, filterMemberLeft)
+    if(lsams.length) {
+      userInfos.push({ user: v, spaceMemberList: lsams })
+    }
+  }
+  return userInfos
+}
+
+
+/** 获取 token 数据 */
+async function _getTokenData(
+  token: string,
+  serial_id: string,
+) {
+  const col = db.collection("Token")
+  const res = await col.doc(serial_id).get<Table_Token>()
+  const d = res.data
+  if(!d) return
+
+  // 检查是否过期
+  const now = getNowStamp()
+  if(now > d.expireStamp) return
+
+  // 检查 token 是否一致
+  const _token = d.token
+  if(_token !== token) return
+
+  return d 
+}
+
+/** 获取 user 数据 */
+async function _getUserData(userId: string) {
+  const col = db.collection("User")
+  const res = await col.doc(userId).get<Table_User>()
+  const d = res.data
+  if(!d) return
+  return d
+}
+
+function getLiuTokenUser() {
+  const gShared = cloud.shared
+  const map: Map<string, Shared_TokenUser> = gShared.get('liu-token-user') ?? new Map()
+  return map
+}
+
+/** 更新 token 数据至 Token 表中 
+ *  注意：该函数不会更新缓存
+*/
+export function updateToken(
+  id: string,
+  partialTokenData: Partial<Table_Token>,
+) {
+  partialTokenData.updatedStamp = getNowStamp()
+  const col = db.collection("Token")
+  col.where({ _id: id }).update(partialTokenData)
+  return partialTokenData
+}
+
+/** 插入 token 数据至 Token 表中 */
+export async function insertToken(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+  user: Table_User,
+  workspaces: string[],
+  client_key?: string,
+) {
+  // 1. 先存到 Token 表中
+  const token = createToken()
+  const now = getNowStamp()
+  const expireStamp = now + (30 * DAY)
+  const basic1 = getBasicStampWhileAdding()
+  const platform = body['x_liu_client'] as SupportedClient
+  const ip = getIp(ctx)
+  const obj1: PartialSth<Table_Token, "_id"> = {
+    ...basic1,
+    token,
+    expireStamp,
+    userId: user._id,
+    isOn: "Y",
+    platform,
+    client_key,
+    lastRead: now,
+    lastSet: now,
+    ip,
+  }
+  const res1 = await db.collection("Token").add(obj1)
+  const serial_id = getDocAddId(res1)
+  if(!serial_id) return
+  const tokenData: Table_Token = { _id: serial_id, ...obj1 }
+
+  // 2. 再存到 shared 中
+  const obj2: Shared_TokenUser = {
+    token,
+    tokenData,
+    userData: user,
+    workspaces,
+    lastSet: now,
+  }
+  const map = getLiuTokenUser()
+  map.set(serial_id, obj2)
+  cloud.shared.set("liu-token-user", map) 
+
+  return tokenData
+}
+
+
+/** 验证 token serial_id
+ *   若过程中，发现 user 的 oState 不为 NORMAL，则不通过
+ *   一切正常，返回 token 和 user 数据
+ */
+export async function verifyToken(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+  opt?: VerifyTokenOpt,
+): Promise<VerifyTokenRes> {
+  const token = body["x_liu_token"]
+  const serial_id = body["x_liu_serial"]
+
+  if(!token || !serial_id) {
+    return {
+      pass: false,
+      rqReturn: {
+        code: "E4000",
+        errMsg: "token, serial_id are required while entering", 
+      },
+    }
+  }
+
+  const gShared = cloud.shared
+  const map = getLiuTokenUser()
+
+  const errReturn: LiuRqReturn = { 
+    code: "E4003", 
+    errMsg: "the verification of token failed",
+  }
+  const errRes = { pass: false, rqReturn: errReturn }
+
+  let data = map.get(serial_id)
+  let tokenData = data?.tokenData
+  let userData = data?.userData
+  let workspaces = data?.workspaces
+  if(!data) {
+    tokenData = await _getTokenData(token, serial_id)
+    if(!tokenData) return errRes
+    userData = await _getUserData(tokenData.userId)
+    if(!userData) return errRes
+    const userInfos = await getUserInfos([userData])
+    if(userInfos.length < 1) return errRes
+    const uInfo = userInfos[0]
+    workspaces = uInfo.spaceMemberList.map(v => v.spaceId)
+    data = {
+      token,
+      tokenData,
+      userData,
+      workspaces,
+      lastSet: getNowStamp(),
+    }
+    map.set(serial_id, data)
+    gShared.set("liu-token-user", map)
+  }
+  else {
+    if(data.token !== token) return errRes
+    const now1 = getNowStamp()
+    if(now1 > data.tokenData.expireStamp) return errRes
+  }
+  
+  if(!data || !tokenData || !userData || !workspaces) return errRes
+  if(tokenData.isOn !== "Y") return errRes
+  if(userData.oState !== "NORMAL") return errRes
+
+  // 如果当前是 user-login 的 enter 流程
+  // 判断要不要刷新 token 和 serial
+  let new_token: string | undefined
+  let new_serial: string | undefined
+  if(opt?.entering) {
+
+    const DAY_90 = DAY * 90
+    const DAY_28 = DAY * 28
+    const DAY_7 = DAY * 7
+    const now2 = getNowStamp()
+
+    // 该 token 已经生成多久了
+    const diff_1 = now2 - tokenData.insertedStamp
+
+    // 该 token 还有多久过期
+    const diff_2 = tokenData.expireStamp - now2
+
+    if(diff_1 > DAY_90) {
+      // 若生成时间已大于 90 天，去生成新的 token
+
+      const newTokenData = await insertToken(ctx, body, userData, workspaces, tokenData.client_key)
+      if(newTokenData) {
+
+        // 把旧的 token 改成 1 分钟后过期
+        const tmpExpireStamp = now2 + MINUTE
+        let pTokenData = updateToken(tokenData._id, { expireStamp: tmpExpireStamp })
+        tokenData = { ...tokenData, ...pTokenData }
+        data.tokenData = tokenData
+        data.lastSet = now2
+        map.set(serial_id, data)
+        gShared.set("liu-token-user", map)
+
+        // 取出新的 token 和 serial
+        new_token = newTokenData.token
+        new_serial = newTokenData._id
+      }
+    }
+    else if(diff_2 < DAY_28) {
+      // 若在 28 天内过期，则去延长 7 天
+
+      const tmpExpireStamp = tokenData.expireStamp + DAY_7
+      let pTokenData = updateToken(tokenData._id, { expireStamp: tmpExpireStamp })
+      tokenData = { ...tokenData, ...pTokenData }
+      data.tokenData = tokenData
+      data.lastSet = now2
+      map.set(serial_id, data)
+      gShared.set("liu-token-user", map)
+    }
+
+  }
+
+  // TODO: 检查 lastSet / lastRead
+
+  return { 
+    pass: true,
+    new_token,
+    new_serial,
+  }
+}

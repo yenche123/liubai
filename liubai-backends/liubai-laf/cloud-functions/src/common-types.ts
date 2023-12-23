@@ -478,6 +478,27 @@ export interface Res_UserLoginNormal {
   multi_credential_id?: string
 }
 
+/** 一些函数间的入参和出参类型 */
+
+export interface VerifyTokenOpt {
+  entering?: boolean         // 当前调用是否为 `user-login` 的 enter
+  isRead?: boolean           // 当前调用为读取操作
+  isSet?: boolean            // 当前调用为写入操作
+}
+
+export interface VerifyTokenRes {
+  pass: boolean
+  rqReturn?: LiuRqReturn            // 若不通过时的回调
+  
+  tokenData?: Table_Token
+  userData?: Table_User
+  workspaces?: string[]
+
+  new_token?: string         // 新的 token
+  new_serial?: string        // 新的 serial
+}
+
+
 /*********************** 缓存类型 **********************/
 
 export interface Shared_RSA_Key_Pair {

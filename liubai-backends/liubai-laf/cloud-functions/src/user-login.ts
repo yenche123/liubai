@@ -12,7 +12,6 @@ import type {
   LiuUserInfo,
   Table_Token,
   Table_Credential,
-  Shared_TokenUser,
   Res_ULN_User,
   Res_UserLoginNormal,
   Cloud_ImageStore,
@@ -26,12 +25,13 @@ import {
   getPublicKey, 
   isEmailAndNormalize, 
   getDocAddId,
-  turnMemberAggsIntoLSAMs,
   getSuffix,
-  getIp,
   canPassByExponentialDoor,
   normalizeToLocalTheme,
   normalizeToLocalLanguage,
+  getUserInfos,
+  insertToken,
+  verifyToken,
 } from "@/common-util"
 import { getNowStamp, MINUTE, DAY, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -100,9 +100,27 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "users_select") {
     res = await handle_users_select(ctx, body)
   }
+  else if(oT === "enter") {
+    handle_enter(ctx, body)
+  }
 
   return res
 }
+
+/*********************** 登录后，用户每次打开应用时调用 ***********************/
+async function handle_enter(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+) {
+  const res = await verifyToken(ctx, body, { entering: true })
+  if(!res.pass) {
+    return res.rqReturn ?? { code: "E5001" }
+  }
+
+  
+}
+
+
 
 /******************************** 选定某个账号登录 *************************/
 async function handle_users_select(
@@ -827,47 +845,18 @@ async function sign_in(
   //    检查 是否要用当前用户本地传来的 theme 或 language
   user = await handleUserWhileSigningIn(user, body, opt.thirdData)
 
-  // 5. 去创建 token
-  const token = createToken()
-  const now = getNowStamp()
-  const expireStamp = now + (30 * DAY)
-  const userId = user._id
-  const basic1 = getBasicStampWhileAdding()
-  const platform = body['x_liu_client'] as SupportedClient
-  const ip = getIp(ctx)
-  const obj1: PartialSth<Table_Token, "_id"> = {
-    ...basic1,
-    token,
-    expireStamp,
-    userId,
-    isOn: "Y",
-    platform,
-    client_key: opt.client_key,
-    lastRead: now,
-    lastSet: now,
-    ip,
-  }
-  const res1 = await db.collection("Token").add(obj1)
-  const serial_id = getDocAddId(res1)
-  if(!serial_id) {
+  // 5. 去创建 token，并存到缓存里
+  const workspaces = spaceMemberList.map(v => v.spaceId)
+  const tokenData = await insertToken(ctx, body, user, workspaces, opt.client_key)
+  if(!tokenData) {
     return { code: "E5001", errMsg: "cannot get serial_id" }
   }
-  
-  // 6. 存到 cloud.shared 中
-  const tokenData: Table_Token = { _id: serial_id, ...obj1 }
-  const workspaces = spaceMemberList.map(v => v.spaceId)
-  const obj2: Shared_TokenUser = {
-    token,
-    tokenData,
-    userData: user,
-    workspaces,
-    lastSet: now,
-  }
-  const tokenUser = getLiuTokenUser()
-  tokenUser.set(serial_id, obj2)
-  cloud.shared.set("liu-token-user", tokenUser)
 
-  // 7. 检查是否存在过多 token
+  const token = tokenData.token
+  const serial_id = tokenData._id
+  const platform = tokenData.platform
+
+  // 6. 检查是否存在过多 token
   if(!opt.justSignUp) {
     await checkIfTooManyTokens(user._id, platform)
   }
@@ -1389,52 +1378,6 @@ async function handleUsersFound(
   return { type: 3 }
 }
 
-
-/** 查找每个 user 下有哪些 member 和 workspace */
-async function getUserInfos(
-  users: Table_User[],
-  filterMemberLeft: boolean = true,
-) {
-  const userInfos: LiuUserInfo[] = []
-
-  for(let i=0; i<users.length; i++) {
-    const v = users[i]
-    const userId = v._id
-
-    let m_oState = _.or(_.eq("OK"), _.eq("DEACTIVATED"))
-    if(!filterMemberLeft) {
-      m_oState = _.or(_.eq("OK"), _.eq("DEACTIVATED"), _.eq("LEFT"))
-    }
-
-    // 1. 用 lookup 去查找 member 和 workspace
-    const res = await db.collection("Member").aggregate()
-      .match({
-        user: userId,
-        oState: m_oState,
-      })
-      .sort({
-        insertedStamp: 1,
-      })
-      .lookup({
-        from: "Workspace",
-        localField: "spaceId",
-        foreignField: "_id",
-        as: "spaceList",
-      })
-      .end()
-    
-    // console.log("看一下 getUserInfos 中聚合搜索的结果: ")
-    // console.log(res)
-    // console.log(" ")
-
-    const lsams = turnMemberAggsIntoLSAMs(res.data, filterMemberLeft)
-    if(lsams.length) {
-      userInfos.push({ user: v, spaceMemberList: lsams })
-    }
-  }
-  return userInfos
-}
-
 /********************** 初始化 ********************/
 function handle_init() {
   const publicKey = getPublicKey()
@@ -1489,19 +1432,12 @@ function generateState() {
   return state
 }
 
-/************ 从 cloud.shared 中获取 liu-login-state 这个 map ************8*/
+/** 从 cloud.shared 中获取 liu-login-state 这个 map */
 function getLiuLoginState() {
   const gShared = cloud.shared
   const map: Map<string, Shared_LoginState> = gShared.get('liu-login-state') ?? new Map()
   return map
 }
-
-function getLiuTokenUser() {
-  const gShared = cloud.shared
-  const map: Map<string, Shared_TokenUser> = gShared.get('liu-token-user') ?? new Map()
-  return map
-}
-
 
 /** 检测 state 是否正常，若正常返回 null，若不正常返回 LiuRqReturn */
 function checkIfStateIsErr(state: any): LiuRqReturn | null {
