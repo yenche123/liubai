@@ -6,20 +6,9 @@ import type { VciProps } from "./types"
 import thirdLink from "~/config/third-link"
 import valTool from "~/utils/basic/val-tool"
 import liuEnv from "~/utils/liu-env"
+import { add_white_bg } from "~/config/add-white-bgs"
 
-type ThirdLinkKey = keyof typeof thirdLink
 const { IFRAME_PROXY, IFRAME_PROXY_KEY } = liuEnv.getEnv()
-
-const add_white_bg: ThirdLinkKey[] = [
-  "ZHIY_CC", 
-  "PARAGRAPH_XYZ", 
-  "GUOKR_COM",
-  "BENTO_ME",
-  "PRODUCTHUNT_CARD",
-  "BOOKING_COM",
-  "M_CNBETA",
-  "SPEAKERDECK_COM",
-]
 
 export function useVcIframe(props: VciProps) {
   const { route } = useRouteAndLiuRouter()
