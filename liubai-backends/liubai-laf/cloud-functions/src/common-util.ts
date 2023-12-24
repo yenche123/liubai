@@ -356,7 +356,7 @@ function getLiuTokenUser() {
 /** 更新 token 数据至 Token 表中 
  *  注意：该函数不会更新缓存
 */
-export function updateToken(
+function updateTokenRow(
   id: string,
   partialTokenData: Partial<Table_Token>,
 ) {
@@ -366,7 +366,23 @@ export function updateToken(
   return partialTokenData
 }
 
-/** 插入 token 数据至 Token 表中 */
+/** 更新 token 数据至全局缓存中 */
+function updateTokenCache(
+  data: Shared_TokenUser,
+  map: Map<string, Shared_TokenUser>,
+  gShared: Map<string, any>,
+  newTokenData: Table_Token,
+) {
+  const now = getNowStamp()
+  data.tokenData = newTokenData
+  data.lastSet = now
+  map.set(newTokenData._id, data)
+  gShared.set("liu-token-user", map)
+}
+
+/** 插入 token 数据至 Token 表中
+ *  并且存到缓存里
+ */
 export async function insertToken(
   ctx: FunctionContext,
   body: Record<string, string>,
@@ -503,12 +519,9 @@ export async function verifyToken(
 
         // 把旧的 token 改成 1 分钟后过期
         const tmpExpireStamp = now2 + MINUTE
-        let pTokenData = updateToken(tokenData._id, { expireStamp: tmpExpireStamp })
+        let pTokenData = updateTokenRow(tokenData._id, { expireStamp: tmpExpireStamp })
         tokenData = { ...tokenData, ...pTokenData }
-        data.tokenData = tokenData
-        data.lastSet = now2
-        map.set(serial_id, data)
-        gShared.set("liu-token-user", map)
+        updateTokenCache(data, map, gShared, tokenData)
 
         // 取出新的 token 和 serial
         new_token = newTokenData.token
@@ -519,21 +532,69 @@ export async function verifyToken(
       // 若在 28 天内过期，则去延长 7 天
 
       const tmpExpireStamp = tokenData.expireStamp + DAY_7
-      let pTokenData = updateToken(tokenData._id, { expireStamp: tmpExpireStamp })
+      let pTokenData = updateTokenRow(tokenData._id, { expireStamp: tmpExpireStamp })
       tokenData = { ...tokenData, ...pTokenData }
-      data.tokenData = tokenData
-      data.lastSet = now2
-      map.set(serial_id, data)
-      gShared.set("liu-token-user", map)
+      updateTokenCache(data, map, gShared, tokenData)
     }
 
   }
 
-  // TODO: 检查 lastSet / lastRead
+  // 检查 tokenData 的 lastSet / lastRead
+  tokenData = checkTokenDataLastStamp(data, map, gShared, opt)
 
   return { 
     pass: true,
+    tokenData,
+    userData,
+    workspaces,
     new_token,
     new_serial,
   }
 }
+
+
+/** 检查 Token 的 isRead isSet 
+ * 若超过 10 分钟，就去更新
+*/
+function checkTokenDataLastStamp(
+  data: Shared_TokenUser,
+  map: Map<string, Shared_TokenUser>,
+  gShared: Map<string, any>,
+  opt?: VerifyTokenOpt,
+) {
+  const entering = opt?.entering
+  let isRead = opt?.isRead
+  let isSet = opt?.isSet
+  if(entering) {
+    isRead = true
+    isSet = true
+  }
+
+  let tokenData = data.tokenData
+  if(!isRead && !isSet) return tokenData
+  const { lastRead, lastSet } = tokenData
+  const now = getNowStamp()
+  const MIN_10 = MINUTE * 10
+  const diff_read = now - lastRead
+  const diff_set = now - lastSet
+
+  let updateRead = false
+  let updateSet = false
+  if(isRead && diff_read > MIN_10) updateRead = true
+  if(isSet && diff_set > MIN_10) updateSet = true
+  
+  if(!updateRead && !updateSet) return tokenData
+  const u: Partial<Table_Token> = {}
+  if(updateRead) u.lastRead = now
+  if(updateSet) u.lastSet = now
+
+  const serial_id = tokenData._id
+  let pTokenData = updateTokenRow(serial_id, u)
+  tokenData = { ...tokenData, ...pTokenData }
+
+  // 更新缓存
+  updateTokenCache(data, map, gShared, tokenData)
+
+  return tokenData
+}
+
