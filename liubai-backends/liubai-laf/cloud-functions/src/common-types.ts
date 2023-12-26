@@ -263,12 +263,16 @@ export interface UserThirdData {
 export interface LiuSpaceAndMember {
   spaceId: string
   memberId: string
+
   member_name?: string
   member_avatar?: Cloud_ImageStore
   member_oState: OState_3
+
   spaceType: SpaceType
   space_oState: OState
   space_owner: string
+  space_name?: string
+  space_avatar?: Cloud_ImageStore
 }
 
 export interface ServiceSendEmailsParam {
@@ -317,6 +321,8 @@ export interface Table_Workspace extends BaseTable {
   tagList?: TagView[]
   oState: OState
   owner: string
+  name?: string
+  avatar?: Cloud_ImageStore
 }
 
 /** Member 表 */
@@ -477,6 +483,15 @@ export interface Res_UserLoginNormal {
   multi_credential?: string
   multi_credential_id?: string
 }
+
+export interface Res_UserSetting {
+
+  emails?: string[]    // 已经绑定的邮箱
+  github_id?: string   // 已经绑定的 GitHub ID
+
+}
+
+
 
 /** 一些函数间的入参和出参类型 */
 

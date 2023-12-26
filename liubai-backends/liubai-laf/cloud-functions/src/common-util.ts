@@ -430,9 +430,9 @@ export async function insertToken(
 }
 
 
-/** 验证 token serial_id
- *   若过程中，发现 user 的 oState 不为 NORMAL，则不通过
- *   一切正常，返回 token 和 user 数据
+/** 验证 token / serial_id
+ *   若过程中，发现 user 的 `oState` 不为 `NORMAL`，则不通过；
+ *   一切正常，返回 token 和 user 数据。
  */
 export async function verifyToken(
   ctx: FunctionContext,
