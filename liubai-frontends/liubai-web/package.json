@@ -13,7 +13,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@he-tree/vue": "^2.7.3",
+    "@he-tree/vue": "^2.7.6",
     "@intlify/unplugin-vue-i18n": "^2.0.0",
     "@tiptap/core": "2.1.13",
     "@tiptap/extension-blockquote": "2.1.13",
@@ -62,7 +62,7 @@
     "@types/file-saver": "^2.0.7",
     "@types/google.accounts": "^0.0.14",
     "@types/node": "^20.10.5",
-    "@vitejs/plugin-vue": "^4.5.2",
+    "@vitejs/plugin-vue": "^5.0.0",
     "sass": "^1.69.5",
     "typescript": "~5.3.3",
     "user-agent-data-types": "^0.4.2",
@@ -72,6 +72,6 @@
     "vite-plugin-mkcert": "^1.17.1",
     "vite-plugin-svg-icons": "^2.0.1",
     "vite-plugin-vue-devtools": "1.0.0-rc.8",
-    "vue-tsc": "^1.8.26"
+    "vue-tsc": "^1.8.27"
   }
 }
