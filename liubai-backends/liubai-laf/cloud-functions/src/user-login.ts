@@ -843,6 +843,7 @@ async function sign_in(
   
   // 4. 检查 user 是否 "DEACTIVATED" 或 "REMOVED"，若是，恢复至 "NORMAL"
   //    检查 是否要用当前用户本地传来的 theme 或 language
+  //    更新 lastEnterStamp
   user = await handleUserWhileSigningIn(user, body, opt.thirdData)
 
   // 5. 去创建 token，并存到缓存里
@@ -901,18 +902,16 @@ async function checkIfTooManyTokens(
   console.log(" ")
 }
 
-/** 将 DEACTIVATED 或 REMOVED 的 user 切换成 NORMAL */
+/** 当用户登录时，去修改 user 上的必要信息 */
 async function handleUserWhileSigningIn(
   user: Table_User,
   body: Record<string, any>,
   thirdData?: UserThirdData,
 ) {
-  let updateRequired = false
   const u: Partial<Table_User> = {}
   const { oState, _id } = user
 
   if(oState === "DEACTIVATED" || oState === "REMOVED") {
-    updateRequired = true
     u.oState = "NORMAL"
   }
 
@@ -922,12 +921,10 @@ async function handleUserWhileSigningIn(
   const newGoogle = thirdData?.google
   const newGitHub = thirdData?.github
   if(!oldGoogle && newGoogle) {
-    updateRequired = true
     oldThirdData.google = newGoogle
     u.thirdData = oldThirdData
   }
   if(!oldGitHub && newGitHub) {
-    updateRequired = true
     oldThirdData.github = newGitHub
     u.thirdData = oldThirdData
   }
@@ -935,22 +932,18 @@ async function handleUserWhileSigningIn(
   const bTheme = normalizeToLocalTheme(body.theme)
   const bLang = normalizeToLocalLanguage(body.language)
   if(bTheme !== user.theme) {
-    updateRequired = true
     u.theme = bTheme
   }
   if(bLang !== user.language) {
-    updateRequired = true
     u.language = bLang
   }
 
-  if(!updateRequired) return user
-  u.updatedStamp = getNowStamp()
+  const now = getNowStamp()
+  u.lastEnterStamp = now
+  u.updatedStamp = now
 
   const q = db.collection("User").where({ _id })
   const res = await q.update(u)
-  console.log("handleUserWhileSigningIn res.........")
-  console.log(res)
-  console.log(" ")
   user = { ...user, ...u }
   
   return user

@@ -313,6 +313,7 @@ export interface Table_User extends BaseTable {
   systemTheme?: SupportedTheme
   language: LocalLanguage
   systemLanguage?: string
+  lastEnterStamp?: number
 }
 
 /** Workspace 表 */
