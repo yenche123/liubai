@@ -4,6 +4,7 @@ import {
   useResizeObserver,
   useDropZone,
   usePageLeave,
+  useThrottleFn,
 } from "@vueuse/core"
 import type { NetworkState } from "@vueuse/core"
 import type { Ref } from "vue"
@@ -33,4 +34,9 @@ export {
   useDropZone,
   useNetwork,
   usePageLeave,
+
+  // 在特定周期（毫秒内）只触发一次
+  // 若该周期内没有触发过，则马上去触发
+  // 否则直接忽略调用
+  useThrottleFn,
 }

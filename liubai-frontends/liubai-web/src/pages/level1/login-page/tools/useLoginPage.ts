@@ -104,6 +104,8 @@ export function useLoginPage() {
 
 // 登录完成后，会进行路由切换
 // 这个时候用户会等比较久，所以做一个变量（lastLogged）和路由监听
+// 当监听到路由真的变化出去了（离开 login-）相关页面了
+// 就关闭 loading 弹窗，否则 3s 后自动关闭
 function listenRouteAndLastLogged(
   rr: RouteAndLiuRouter,
   lpData: LpData,
