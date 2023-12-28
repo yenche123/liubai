@@ -42,6 +42,8 @@ export interface WorkspaceLocalTable extends BaseLocalTable {
   tagList?: TagView[]
   oState: OState
   owner: string
+  name?: string
+  avatar?: LiuImageStore
 }
 
 export interface MemberLocalTable extends BaseLocalTable {

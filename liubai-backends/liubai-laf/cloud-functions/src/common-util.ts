@@ -177,14 +177,17 @@ export function turnMemberAggsIntoLSAMs(
     if(space_oState !== "OK") continue
 
     const obj: LiuSpaceAndMember = {
-      spaceId: theSpace._id,
       memberId: v._id,
       member_name: v.name,
       member_avatar: v.avatar,
       member_oState,
+      
+      spaceId: theSpace._id,
       spaceType: theSpace.infoType,
       space_oState,
       space_owner: theSpace.owner,
+      space_name: theSpace.name,
+      space_avatar: theSpace.avatar,
     }
 
     list.push(obj)

@@ -1149,13 +1149,14 @@ async function sign_up(
     return { code: "E5001", errMsg: "fail to add an member" }
   }
 
-  // 5. 去构造 LiuSpaceAndMember
+  // 5. 去构造 LiuSpaceAndMember （个人工作区以及自己这个成员）
   const liuSpaceAndMember: LiuSpaceAndMember = {
-    spaceId,
     memberId,
     member_name: name,
     member_avatar: avatar,
     member_oState: "OK",
+
+    spaceId,
     spaceType: "ME",
     space_oState: "OK",
     space_owner: userId,

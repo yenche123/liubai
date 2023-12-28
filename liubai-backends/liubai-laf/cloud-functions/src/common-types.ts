@@ -261,13 +261,14 @@ export interface UserThirdData {
 }
 
 export interface LiuSpaceAndMember {
-  spaceId: string
+  // 关于 member 的信息
   memberId: string
-
   member_name?: string
   member_avatar?: Cloud_ImageStore
   member_oState: OState_3
 
+  // 关于 workspace 的信息
+  spaceId: string
   spaceType: SpaceType
   space_oState: OState
   space_owner: string
@@ -483,14 +484,6 @@ export interface Res_UserLoginNormal {
   multi_credential?: string
   multi_credential_id?: string
 }
-
-export interface Res_UserSetting {
-
-  emails?: string[]    // 已经绑定的邮箱
-  github_id?: string   // 已经绑定的 GitHub ID
-
-}
-
 
 
 /** 一些函数间的入参和出参类型 */

@@ -48,4 +48,6 @@ export interface LiuSpaceAndMember {
   spaceType: SpaceType
   space_oState: OState
   space_owner: string
+  space_name?: string
+  space_avatar?: Cloud_ImageStore
 }
