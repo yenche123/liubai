@@ -5,8 +5,9 @@ import { ref, watch, reactive } from "vue";
 import { defineStore } from "pinia";
 import { useNetwork, useThrottleFn } from "../../useVueUse";
 import time from "~/utils/basic/time";
-import liuConsole from "~/utils/debug/liu-console";
 import localCache from "~/utils/system/local-cache";
+import { fetchUserEnter } from "./tools/requests"
+import liuUtil from "~/utils/liu-util";
 
 export const useUserEnterStore = defineStore("userEnter", () => {
 
@@ -18,20 +19,28 @@ export const useUserEnterStore = defineStore("userEnter", () => {
   const toUserEnter = useThrottleFn(async () => {
 
     // 1. 检查有没有登录态
-    const { local_id, serial, token } = localCache.getPreference()
-    if(!local_id || !serial || !token) return
+    const res0 = localCache.hasLoginWithBackend()
+    if(!res0) return
 
     // 2. 去调用 user-enter
-    console.log("去调用 user-enter............")
+    const res1 = await fetchUserEnter()
 
+    if(res1.code === "0000") {
+      setLatestUserEnterStamp()
+    }
     
-  }, 3000)
+  }, 5000)
 
-  const networkState = reactive(useNetwork())
-  watch(networkState, (newV) => {
-    liuConsole.showNowStamp()
-    const { isOnline, isSupported } = newV
-    
+  const networkState1 = useNetwork()
+  const networkState2 = reactive(networkState1)
+  watch(networkState2, (newV) => {
+    const { 
+      isOnline, 
+    } = newV
+    const newV2 = liuUtil.unToRefs(newV)
+    console.log(newV2)
+    console.log(" ")
+
     if(!isOnline) return
     const lues = lastUserEnterStamp.value
     const diffS = time.getTime() - (lues ?? 0)
@@ -40,8 +49,6 @@ export const useUserEnterStore = defineStore("userEnter", () => {
       toUserEnter()
     }
   })
-  liuConsole.showNowStamp()
-  toUserEnter()
 
   return {
     lastUserEnterStamp,

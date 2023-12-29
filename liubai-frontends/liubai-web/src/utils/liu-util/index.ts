@@ -28,7 +28,8 @@ import {
 } from "./file-util"
 import {
   toRawData,
-  getRawList
+  getRawList,
+  unToRefs,
 } from "./vue-util"
 import {
   colorToShow,
@@ -80,6 +81,7 @@ export default {
   constraintWidthHeight,
   toRawData,
   getRawList,
+  unToRefs,
   colorToShow,
   colorToStorage,
   canKeyUpDown,

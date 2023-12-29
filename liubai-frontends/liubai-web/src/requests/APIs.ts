@@ -4,6 +4,7 @@ const env = liuEnv.getEnv()
 const d = env.API_DOMAIN ?? ""
 
 export default {
+  TIME: d + `hello-world`,
   LOGIN: d + `user-login`,
-  USER_ENTER: d + `user-setting`,
+  USER_ENTER: d + `user-settings`,
 }

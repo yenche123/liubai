@@ -13,6 +13,8 @@ export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}
   const oT = body.operateType
 
+  const stamp1 = getNowStamp()
+
   const vRes = await verifyToken(ctx, body, { entering: true })
   const user = vRes.userData
   if(!vRes.pass || !user) {
@@ -24,6 +26,11 @@ export async function main(ctx: FunctionContext) {
     // 获取用户设置并记录用户访问
     res = await handle_enter(user)
   }
+
+
+  const stamp2 = getNowStamp()
+  const diffS = stamp2 - stamp1
+  console.log(`调用 user-settings 耗时: ${diffS}ms`)
 
   return res
 }
