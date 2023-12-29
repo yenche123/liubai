@@ -37,3 +37,11 @@ export interface Res_UserLoginNormal {
   multi_credential?: string
   multi_credential_id?: string
 }
+
+export interface Res_UserSettings_Enter {
+  email?: string
+  github_id?: number
+  theme: LocalTheme
+  language: LocalLanguage
+  spaceMemberList: LiuSpaceAndMember[]
+}

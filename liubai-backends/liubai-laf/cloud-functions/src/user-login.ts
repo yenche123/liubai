@@ -31,7 +31,6 @@ import {
   normalizeToLocalLanguage,
   getUserInfos,
   insertToken,
-  verifyToken,
 } from "@/common-util"
 import { getNowStamp, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -42,7 +41,6 @@ import {
 import { checkIfEmailSentTooMuch, getActiveEmailCode, sendEmails } from "@/service-send"
 import { userLoginLang, useI18n, getAppName } from '@/common-i18n'
 import { OAuth2Client, type TokenPayload } from "google-auth-library"
-import { getUserSettings } from "@/user-settings"
 
 /************************ 一些常量 *************************/
 // GitHub 使用 code 去换 accessToken
@@ -100,43 +98,9 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "users_select") {
     res = await handle_users_select(ctx, body)
   }
-  else if(oT === "enter") {
-    res = await handle_enter(ctx, body)
-  }
 
   return res
 }
-
-/*********************** 登录后，用户每次打开应用时调用 ***********************/
-async function handle_enter(
-  ctx: FunctionContext,
-  body: Record<string, string>,
-) {
-
-  // 1. 去验证 token 并获取 user 数据
-  const res = await verifyToken(ctx, body, { entering: true })
-  const user = res.userData
-  if(!res.pass || !user) {
-    return res.rqReturn ?? { code: "E5001" }
-  }
-
-  // 2. 从 user 获取 user-settings
-  const res2 = await getUserSettings(user)
-  if(res2.code !== "0000") return res2
-
-  // 3. 去设置 user 里的 lastEnterStamp
-  const now = getNowStamp()
-  const u: Partial<Table_User> = {
-    lastEnterStamp: now,
-    updatedStamp: now,
-  }
-
-  // 【待测试】 是否可以使用 .doc().update()
-  db.collection("User").doc(user._id).update(u)
-
-  return res2
-}
-
 
 
 /******************************** 选定某个账号登录 *************************/
