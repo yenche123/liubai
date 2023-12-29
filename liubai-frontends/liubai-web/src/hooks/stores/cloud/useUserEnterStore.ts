@@ -1,10 +1,11 @@
 // 当用户联网时 或 进入当前分页时，去调用 user-enter
 // 若用户还未登录，则在 toUserEnter 内忽略调用
+// 若用户刚登录完成，也无需调用，因为 user-login 已完成了这方面的工作
 import { ref, watch, reactive } from "vue";
 import { defineStore } from "pinia";
-import { useNetwork, useThrottleFn } from "../../useVueUse"
+import { useNetwork, useThrottleFn } from "../../useVueUse";
 import time from "~/utils/basic/time";
-import liuConsole from "~/utils/debug/liu-console"
+import liuConsole from "~/utils/debug/liu-console";
 import localCache from "~/utils/system/local-cache";
 
 export const useUserEnterStore = defineStore("userEnter", () => {

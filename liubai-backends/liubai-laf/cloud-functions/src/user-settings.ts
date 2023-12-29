@@ -1,8 +1,9 @@
 import cloud from '@lafjs/cloud'
-import { verifyToken } from '@/common-util'
+import { getUserInfos, verifyToken } from '@/common-util'
 import type { 
   Table_User, 
   LiuRqReturn,
+  Res_UserSettings_Get,
 } from './common-types'
 
 export async function main(ctx: FunctionContext) {
@@ -20,23 +21,32 @@ export async function main(ctx: FunctionContext) {
     // 获取用户设置
     // 1. 登录方式，比如 email / GitHub ID 等等
     // 2. 已经加入哪些工作区，这些工作区的名称和头像
-    getUserSettings(user)
+    res = await getUserSettings(user)
   }
-
-  
 
 
   return true
 }
 
 
-/** 已知 user (Table_User) 的情况下，去获取用户设置 */
-async function getUserSettings(
+export async function getUserSettings(
   user: Table_User,
-) {
+): Promise<LiuRqReturn<Res_UserSettings_Get>> {
+  const [ui] = await getUserInfos([user])
+  if(!ui) {
+    return { code: "E4004", errMsg: "it cannot find an userinfo" }
+  }
 
+  const { email, github_id, theme, language } = user
+  const spaceMemberList = ui.spaceMemberList
+  const data: Res_UserSettings_Get = {
+    email,
+    github_id,
+    theme,
+    language,
+    spaceMemberList,
+  }
 
-
-
+  return { code: "0000", data }
 }
 

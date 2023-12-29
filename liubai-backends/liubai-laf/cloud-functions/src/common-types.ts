@@ -486,6 +486,14 @@ export interface Res_UserLoginNormal {
   multi_credential_id?: string
 }
 
+export interface Res_UserSettings_Get {
+  email?: string
+  github_id?: number
+  theme: LocalTheme
+  language: LocalLanguage
+  spaceMemberList: LiuSpaceAndMember[]
+}
+
 
 /** 一些函数间的入参和出参类型 */
 
