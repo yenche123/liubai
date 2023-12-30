@@ -10,7 +10,7 @@ let isFeishu: boolean = false;
 let isInWebView: boolean = false;   // 是否在桌面应用 App 的 Webview 中，小程序也算
 let isFirefox: boolean = false;
 
-interface GetChaRes {
+export interface GetChaRes {
   isPC: boolean
   isMobile: boolean
   isWeChat: boolean
@@ -22,7 +22,7 @@ interface GetChaRes {
   isFirefox: boolean
 }
 
-const getCharacteristic = (): GetChaRes => {
+export const getCharacteristic = (): GetChaRes => {
   if(isPC !== undefined) {
     return _returnData()
   }
@@ -107,9 +107,4 @@ function _returnData(): GetChaRes {
     isInWebView,
     isFirefox,
   }
-}
-
-
-export default {
-  getCharacteristic
 }

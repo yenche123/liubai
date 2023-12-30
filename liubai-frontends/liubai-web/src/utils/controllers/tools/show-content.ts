@@ -1,13 +1,19 @@
 import { ALLOW_DEEP_TYPES } from "~/config/atom";
 import type { LiuContent, LiuNodeType } from "~/types/types-atom";
 import valTool from "~/utils/basic/val-tool";
+import liuApi from "~/utils/liu-api";
+import type { GetChaRes } from "~/utils/liu-api/characteristic"
+import reg_exp from "~/config/regular-expressions";
 
 type ParseType = "phone" | ""
+let cha: GetChaRes | undefined
 
 export function addSomethingWhenBrowsing(
   list: LiuContent[],
   parentType?: LiuNodeType
 ) {
+
+  cha = liuApi.getCharacteristic()
 
   for(let i=0; i<list.length; i++) {
     const v = list[i]
@@ -18,6 +24,7 @@ export function addSomethingWhenBrowsing(
       continue
     }
     
+    // 检查当前节点是否允许再嵌套其他节点
     const allowDeep = ALLOW_DEEP_TYPES.includes(type)
     if(allowDeep && content) {
       v.content = addSomethingWhenBrowsing(content, type)
@@ -43,12 +50,13 @@ function _parseTextsForLink(
     if(marks?.length) continue
 
     // 解析 phoneNumber, 其中正则末尾的 (?!\d) 表示手机号后面不要接数字
-    const regTel = /\+?\d[\d\-]{6,15}(?!\d)/g
-    const listTel = _innerParse(text, regTel, "phone")
-    if(listTel) {
-      list.splice(i, 1, ...listTel)
-      i--
-      continue
+    if(cha?.isMobile) {
+      const listTel = _innerParse(text, reg_exp.phone, "phone")
+      if(listTel) {
+        list.splice(i, 1, ...listTel)
+        i--
+        continue
+      }
     }
 
   }
