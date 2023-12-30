@@ -57,6 +57,10 @@ const createRandom = (digits: number = 7) => {
   return _createId(digits)
 }
 
+const createDownloadTaskId = () => {
+  return "d1" + _createId(20)
+}
+
 export default {
   createUserId,
   createStateId,
@@ -70,4 +74,5 @@ export default {
   createTagId,
   createCollectId,
   createRandom,
+  createDownloadTaskId,
 }

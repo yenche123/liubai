@@ -6,6 +6,7 @@ import type {
   DraftLocalTable,
   ContentLocalTable,
   CollectionLocalTable,
+  DowloadTaskLocalTable,
 } from "../../types/types-table"
 import { dbSchema, DB_VERSION } from './db-idx';
 
@@ -25,6 +26,7 @@ export class LiuDexie extends Dexie {
   drafts!: Table<DraftLocalTable>
   contents!: Table<ContentLocalTable>
   collections!: Table<CollectionLocalTable>
+  download_tasks!: Table<DowloadTaskLocalTable>
 
   constructor() {
     super('LiubaiDatabase')
@@ -34,6 +36,3 @@ export class LiuDexie extends Dexie {
 }
 
 export const db = new LiuDexie()
-
-export type LiuTable = "users" | "workspaces" | "members" | "drafts" | "contents"
-  | "collections"

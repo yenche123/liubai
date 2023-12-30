@@ -13,6 +13,7 @@ import type {
   TagView, 
   LiuStateConfig,
   LiuInfoType,
+  LiuTable,
 } from "./types-atom"
 import type { LiuFileStore, LiuImageStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
@@ -126,4 +127,13 @@ export interface CollectionLocalTable extends BaseLocalTable {
   spaceType: SpaceType
   content_id: string
   emoji?: string        // 经 encodeURIComponent() 的表情
+}
+
+
+/** 本地下载任务表 */
+export interface DowloadTaskLocalTable {
+  _id: string
+  insertedStamp: number
+  target_id: string
+  target_table: LiuTable
 }

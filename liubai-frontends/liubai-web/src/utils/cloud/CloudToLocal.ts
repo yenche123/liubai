@@ -5,7 +5,10 @@ import type {
   FileShow, 
   ImageShow,
 } from "~/types";
-import { type LiuTable } from "~/utils/db"
+import { type LiuTable } from "~/types/types-atom"
+import { useNetwork, useDebounceFn } from "~/hooks/useVueUse";
+import { reactive, watch } from "vue";
+import type { LiuTimeout } from "../basic/type-tool";
 
 interface ImageTransferedRes {
   useCloud: boolean
@@ -18,25 +21,84 @@ interface FileTransferedRes {
 }
 
 
+// 下载任务的结构，其中 C2L 为 CloudToLocal 的简称
+interface TaskOfC2L {
+  table: LiuTable
+  id: string
+}
+
+type TaskState = "available" | "working"
+
 class CloudToLocal {
 
+  
+  static state: TaskState = "available"
   static isOnline: boolean | undefined
+
+  // 暂存任务至临时变量中，当存到 IndexedDB 中后，就删掉
+  static tmp_tasks: TaskOfC2L[] = []
 
   // 放在 App.ts 中去监听网络变化
   static init() {
+    let _this = this
+    const networkState = useNetwork()
+    const networkState2 = reactive(networkState)
+
+    const _checkCurrentState = useDebounceFn(() => {
+      if(!_this.isOnline && networkState2.isOnline) {
+        _this.triggerDownload()
+      }
+    }, 500)
+
+    watch(networkState2, (newV) => {
+      _checkCurrentState()
+    }, { immediate: true })
+  }
+
+  /** 触发下载 */
+  private static triggerDownload() {
+    if(!this.isOnline) return
+    if(this.state === "working") return
+    
     
   }
 
+
+  
+  private static timeoutOfNotify: LiuTimeout
+
+  /** 批量将任务存到 IndexedDB 中 */
+  private static putTasksIntoIndexedDB() {
+    let list = this.tmp_tasks
+    const len = list.length
+    if(len < 1) return
+
+    // 1. 去检查 IndexedDB 是否已存在了
+
+    // 2. 若不存在，存到 IndexedDB
+
+    // 3. 删掉 this.tmp_tasks 前面 len 项
+
+    // 4. 触发 triggerDownload
+
+  }
 
   /** 告知 CloudToLocal 哪个表、哪一行 
    * 需要从网络下载文件（图片），存到 IndexedDB 中
    * */
   static notify(table: LiuTable, id: string) {
+    const data = this.tmp_tasks.find(v => (v.id === id && v.table === table))
+    if(data) return
 
+    let _this = this
+    this.tmp_tasks.push({ id, table })
+    if(this.timeoutOfNotify) return
+    this.timeoutOfNotify = setTimeout(() => {
+      _this.timeoutOfNotify = undefined
+      _this.putTasksIntoIndexedDB()
+    }, 50)
   }
 
-
-  
 
   /** 判断云端图片如何快速转换成本地存储格式 
    * 注意: 该方法不会真的将云端图片存成 arrayBuffer 格式

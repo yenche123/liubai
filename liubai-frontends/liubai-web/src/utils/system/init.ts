@@ -6,6 +6,7 @@ import { initCycle } from "./tools/init-cycle"
 import { initForCloudMode } from "./tools/init-for-cloud-mode"
 import { initForPureLocalMode } from "./tools/init-for-pure-local-mode"
 import { useUserEnterStore } from "~/hooks/stores/cloud/useUserEnterStore"
+import { CloudToLocal } from "../cloud/CloudToLocal"
 
 export async function init() {
   const store = useWorkspaceStore()
@@ -13,6 +14,7 @@ export async function init() {
   
   initSpace(store)
   initCycle()
+  CloudToLocal.init()
 
   if(backend) {
     // 当前为 [登录模式]

@@ -176,3 +176,6 @@ export interface LinkPreview {
   type: string
   url: string
 }
+
+export type LiuTable = "users" | "workspaces" | "members" | "drafts" | "contents"
+  | "collections"
