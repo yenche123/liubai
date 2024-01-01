@@ -347,6 +347,7 @@ export interface Table_BlockList extends BaseTable {
 
 /** 内容表: 动态 + 评论 */
 export interface Table_Content extends BaseTable {
+  first_id: string
   user: string
   member?: string
   spaceId: string
@@ -382,6 +383,7 @@ export interface Table_Content extends BaseTable {
 
 /** 草稿表 */
 export interface Table_Draft extends BaseTable {
+  first_id: string
   infoType: LiuInfoType
   oState: "OK" | "POSTED" | "DELETED"
   user: string
@@ -407,6 +409,7 @@ export interface Table_Draft extends BaseTable {
 
 /** 表态和收藏表 */
 export interface Table_Collection extends BaseTable {
+  first_id: string
   oState: OState_2
   user: string
   member?: string
