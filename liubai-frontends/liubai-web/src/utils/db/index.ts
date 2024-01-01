@@ -26,7 +26,7 @@ export class LiuDexie extends Dexie {
   drafts!: Table<DraftLocalTable>
   contents!: Table<ContentLocalTable>
   collections!: Table<CollectionLocalTable>
-  download_tasks!: Table<DowloadTaskLocalTable>
+  download_task!: Table<DowloadTaskLocalTable>
 
   constructor() {
     super('LiubaiDatabase')

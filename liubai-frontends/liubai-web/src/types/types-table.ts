@@ -22,7 +22,6 @@ import type { ContentConfig, MemberConfig } from "./other/types-custom"
 
 export interface BaseLocalTable {
   _id: string
-  cloud_id?: string
   insertedStamp: number
   updatedStamp: number
 }
@@ -57,6 +56,7 @@ export interface MemberLocalTable extends BaseLocalTable {
 }
 
 export interface ContentLocalTable extends BaseLocalTable {
+  cloud_id?: string
 
   /** 以下 4 个属性，若赋值后，不得修改 */
   user: string
@@ -94,6 +94,7 @@ export interface ContentLocalTable extends BaseLocalTable {
 }
 
 export interface DraftLocalTable extends BaseLocalTable {
+  cloud_id?: string
   infoType: LiuInfoType
   oState: "OK" | "POSTED" | "DELETED"
   user: string
@@ -118,6 +119,7 @@ export interface DraftLocalTable extends BaseLocalTable {
 }
 
 export interface CollectionLocalTable extends BaseLocalTable {
+  cloud_id?: string
   oState: OState_2
   user: string
   member?: string

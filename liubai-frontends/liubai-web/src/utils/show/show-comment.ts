@@ -7,7 +7,6 @@ import type { TipTapJSONContent } from "~/types/types-editor";
 import imgHelper from "../files/img-helper";
 import transferUtil from "../transfer-util";
 import commonPack from "../controllers/tools/common-pack";
-import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import liuUtil from "../liu-util";
 
 // 封装 content 成 CommentShow

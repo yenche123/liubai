@@ -10,7 +10,7 @@ import { CloudToLocal } from "~/utils/cloud/CloudToLocal";
 export async function handleUser(
   userId: string,
 ) {
-  const res1 = await db.users.get({ cloud_id: userId })
+  const res1 = await db.users.get(userId)
   if(!res1 || !res1._id) {
     let res2 = await createUser(userId)
     return res2
@@ -26,7 +26,7 @@ export async function handleSpaceAndMembers(
     const v = spaceMemberList[i]
 
     // 1. 查找 workspace
-    const res1 = await db.workspaces.get({ cloud_id: v.spaceId })
+    const res1 = await db.workspaces.get(v.spaceId)
 
     // 1.2 若查无 workspace 就去创建；若存在，无需修改，修改流程交给 enter
     if(!res1 || !res1._id) {
@@ -37,7 +37,7 @@ export async function handleSpaceAndMembers(
     }
 
     // 2. 查找 member
-    const res2 = await db.members.get({ cloud_id: v.memberId })
+    const res2 = await db.members.get(v.memberId)
     if(!res2 || !res2._id) {
       const res2_2 = await createMember(userId, v)
       if(!res2_2) {
@@ -55,7 +55,6 @@ async function createSpace(
   const t = time.getTime()
   const data: WorkspaceLocalTable = {
     _id: v.spaceId,
-    cloud_id: v.spaceId,
     infoType: v.spaceType,
     oState: v.space_oState,
     owner: v.space_owner,
@@ -111,7 +110,6 @@ async function createUser(
   const t = time.getTime()
   const data: UserLocalTable = {
     _id: userId,
-    cloud_id: userId,
     oState: "NORMAL",
     insertedStamp: t,
     updatedStamp: t,
