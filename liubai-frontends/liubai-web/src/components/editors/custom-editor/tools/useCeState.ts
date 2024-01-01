@@ -294,6 +294,7 @@ async function toSave(state: CeState) {
 
   const draft: DraftLocalTable = {
     _id: draftId,
+    first_id: draftId,
     infoType: "THREAD",
     oState: "OK",
     user: userId as string,

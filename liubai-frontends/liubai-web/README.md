@@ -68,6 +68,8 @@ https://www.bing.com/images/create  用 DALL-E 3 生成插图
 
 17. 一大坑点，关于密文的生成和解密，在 Node.JS 环境里请在 `Buffer` 域进行操作，比如 `Buffer` 域的加法为 `Buffer.concat(Buffer.from(bufferA, 'base64'), Buffer.from(bufferB))`。它与 `base64` 域的字符串的加减乘除运算，完全不等价！！！
 
+18. 同步问题: 考虑放弃 `cloud_id` 改用 `first_id`，用后者表示本地创建时用的 `id`。若动态是在云端被创建的，比如第三方传递过来的，就将 `first_id` 设为与 `_id` 同值即可。视图层上 `v-for` 的 :key 全部使用 `first_id` 这样就不会有 `_id` 发生变化 `thread-card` 组件被销毁重建的问题了。
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。

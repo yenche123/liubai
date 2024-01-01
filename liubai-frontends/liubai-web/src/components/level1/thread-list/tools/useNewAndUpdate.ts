@@ -193,12 +193,12 @@ function handleUpdatedList(
         return true
       }
 
-      // 如果 此时刚上传完动态至远端，那么会有一个短暂的字段 _old_id
-      // 若其与 _id 相同，代表是相同的动态
-      if(v._old_id && v._old_id === v1._id) {
+      // 若现有的动态两个 id 一致，并且发生变化的动态的 first_id 也与其一致
+      if(v1._id === v1.first_id && v.first_id === v1.first_id) {
         idx = i1
         return true
       }
+
       return false
     })
     if(!v2 || idx < 0) continue
@@ -297,7 +297,9 @@ function handleUpdateForPinnedList(
         idx = i1
         return true
       }
-      if(v1._old_id && v1._old_id === v._id) {
+
+      // 若现有的动态两个 id 一致，并且发生变化的动态的 first_id 也与其一致
+      if(v._id === v.first_id && v1.first_id === v.first_id) {
         idx = i1
         return true
       }
@@ -314,7 +316,9 @@ function handleUpdateForPinnedList(
         idx = i1
         return true
       }
-      if(v1._old_id && v1._old_id === v._id) {
+
+      // 若现有的动态两个 id 一致，并且发生变化的动态的 first_id 也与其一致
+      if(v._id === v.first_id && v1.first_id === v.first_id) {
         idx = i1
         return true
       }

@@ -37,6 +37,7 @@ export interface UserLocalTable extends BaseLocalTable {
 }
 
 export interface WorkspaceLocalTable extends BaseLocalTable {
+  first_id: string
   infoType: "ME" | "TEAM"
   stateConfig?: LiuStateConfig
   tagList?: TagView[]
@@ -47,6 +48,7 @@ export interface WorkspaceLocalTable extends BaseLocalTable {
 }
 
 export interface MemberLocalTable extends BaseLocalTable {
+  first_id: string
   name?: string
   avatar?: LiuImageStore
   spaceId: string
@@ -56,7 +58,7 @@ export interface MemberLocalTable extends BaseLocalTable {
 }
 
 export interface ContentLocalTable extends BaseLocalTable {
-  cloud_id?: string
+  first_id: string
 
   /** 以下 4 个属性，若赋值后，不得修改 */
   user: string
@@ -94,7 +96,7 @@ export interface ContentLocalTable extends BaseLocalTable {
 }
 
 export interface DraftLocalTable extends BaseLocalTable {
-  cloud_id?: string
+  first_id: string
   infoType: LiuInfoType
   oState: "OK" | "POSTED" | "DELETED"
   user: string
@@ -119,7 +121,7 @@ export interface DraftLocalTable extends BaseLocalTable {
 }
 
 export interface CollectionLocalTable extends BaseLocalTable {
-  cloud_id?: string
+  first_id: string
   oState: OState_2
   user: string
   member?: string

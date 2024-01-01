@@ -222,6 +222,7 @@ async function addCollection(
   const newId = ider.createCollectId()
   const w2: CollectionLocalTable = {
     _id: newId,
+    first_id: newId,
     insertedStamp: now,
     updatedStamp: now,
     oState: "OK",

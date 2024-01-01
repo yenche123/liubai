@@ -9,8 +9,7 @@ export function turnThreadIntoComment(
 ) {
   const cs: CommentShow = {
     _id: ts._id,
-    cloud_id: ts.cloud_id,
-    _old_id: ts._old_id,
+    first_id: ts.first_id,
     insertedStamp: ts.insertedStamp,
     updatedStamp: ts.updatedStamp,
     oState: ts.oState,

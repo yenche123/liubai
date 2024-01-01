@@ -126,6 +126,9 @@ async function getImportedAtom2(
   imgsFiles: ImgsFiles,
   myCtx: LiuMyContext,
 ) {
+  if(!d.first_id) {
+    d.first_id = d._id
+  }
 
   let { images, files } = imgsFiles
   let c: ContentLocalTable = { ...d, images, files, oState: "OK" }
@@ -135,13 +138,6 @@ async function getImportedAtom2(
 
   // 动态本地不存在
   if(!res) {
-
-    // 原因见: ../../../README.md
-    if(c.cloud_id) {
-      c._id = ider.createThreadId()
-    }
-
-    delete c.cloud_id
     c.user = myCtx.userId
     c.member = myCtx.memberId
     c.spaceId = myCtx.spaceId
@@ -154,9 +150,9 @@ async function getImportedAtom2(
   // 动态已存在，检查是否要更新
   // 导入的“更新时间戳” > 原有的“更新时间戳”: 需要更新
   if(c.updatedStamp > res.updatedStamp) {
-    // 把 res 的 cloud_url / user / member / spaceId / spaceType 赋值给 c
+    // 把 res 的 first_id / user / member / spaceId / spaceType 赋值给 c
     // 因为这几个值是不可更改的
-    c.cloud_id = res.cloud_id
+    c.first_id = res.first_id
     c.user = res.user
     c.member = res.member
     c.spaceId = res.spaceId

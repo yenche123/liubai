@@ -24,7 +24,7 @@ const {
   <div class="tl-container">
 
     <template v-for="(item, index) in tlData.list" 
-      :key="item.thread._id"
+      :key="item.thread.first_id"
     >
       
       <ThreadCard 

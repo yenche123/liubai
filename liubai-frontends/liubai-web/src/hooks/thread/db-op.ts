@@ -29,8 +29,10 @@ async function collect(
   const now1 = time.getTime()
   if(newState && !res0) {
     // add 数据
+    const newId = ider.createCollectId()
     const data0: CollectionLocalTable = {
-      _id: ider.createCollectId(),
+      _id: newId,
+      first_id: newId,
       insertedStamp: stamp ?? now1,
       updatedStamp: stamp ?? now1,
       user: userId,

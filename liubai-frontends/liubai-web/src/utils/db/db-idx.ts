@@ -1,7 +1,7 @@
 
 
 // 版本号，凡是 dexieIdxs 被修改了，这里都要累加！！！
-export const DB_VERSION = 45
+export const DB_VERSION = 46
 
 const dexieIdxs = {
   users: [
@@ -17,14 +17,14 @@ const dexieIdxs = {
   ],
   drafts: [
     "_id",
-    "cloud_id",
+    "first_id",
     "[infoType+oState+user+spaceId]",
     "[infoType+oState+threadEdited]",
     "*tagIds",
   ],
   contents: [
     "_id",
-    "cloud_id",
+    "first_id",
     "oState",
     "[oState+updatedStamp]",
     "[_id+infoType+oState]",
@@ -42,7 +42,7 @@ const dexieIdxs = {
   ],
   collections: [
     "_id",
-    "cloud_id",
+    "first_id",
     "content_id",
     "insertedStamp",
     "[user+infoType+forType+content_id]",

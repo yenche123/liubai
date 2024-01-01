@@ -115,7 +115,7 @@
   --frosted-glass-5: linear-gradient(0deg, rgba(234, 236, 239, .82) 50%, rgba(234, 236, 239, .7) 90%);
 
   /********* 导入页: 「查看更多」的背景 *******/
-  --mask-bg: linear-gradient(0deg, rgba(234, 236, 239, 1) 40%, rgba(234, 236, 239, 0) 95%);
+  --mask-bg: linear-gradient(0deg, rgba(234, 236, 239, 1) 50%, rgba(234, 236, 239, 0) 85%);
   
   /** drag-handle */
   --liu-drag-handle: #c3c6cc;

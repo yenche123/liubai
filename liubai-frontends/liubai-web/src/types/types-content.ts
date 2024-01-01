@@ -41,8 +41,7 @@ export interface StateShow {
 
 export interface ThreadShow {
   _id: string
-  cloud_id?: string
-  _old_id?: string           // 刚上传完的动态会有此字段，表示旧的 _id
+  first_id: string
   insertedStamp: number
   updatedStamp: number
   oState: OState
@@ -88,8 +87,7 @@ export interface ThreadShow {
 // 评论的结构
 export interface CommentShow {
   _id: string
-  cloud_id?: string
-  _old_id?: string           // 刚上传完的动态会有此字段，表示旧的 _id
+  first_id: string
   insertedStamp: number
   updatedStamp: number
   oState: OState

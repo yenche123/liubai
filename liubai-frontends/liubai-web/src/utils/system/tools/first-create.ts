@@ -73,6 +73,7 @@ async function createWorkspace(
   const t = time.getTime()
   const data: WorkspaceLocalTable = {
     _id: workspace_local,
+    first_id: workspace_local,
     infoType: "ME",
     oState: "OK",
     owner: user_local,
@@ -97,6 +98,7 @@ async function createMember(
   const t = time.getTime()
   const data: MemberLocalTable = {
     _id: member_local,
+    first_id: member_local,
     spaceId: workspace_local,
     insertedStamp: t,
     updatedStamp: t,

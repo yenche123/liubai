@@ -108,9 +108,9 @@ function whenThreadsUpdated(
   const newThread = updatedList.find(v => {
     if(v._id === thread._id) return true
     
-    // 如果 此时刚上传完动态至远端，那么会有一个短暂的字段 _old_id
-    // 若其与 _id 相同，代表是相同的动态
-    if(v._old_id && v._old_id === thread._id) return true
+    // 若旧动态 thread 的 _id 同 first_id，并且新的动态 v 的 first_id 也与此一致，
+    // 则视为同一个动态
+    if(thread._id === thread.first_id && v.first_id === thread.first_id) return true
 
     return false
   })

@@ -262,7 +262,9 @@ async function _getCommentData(
     aComment.parentComment = props.parentComment
     aComment.replyToComment = props.replyToComment
 
-    aComment._id = ider.createCommentId()
+    const newId = ider.createCommentId()
+    aComment._id = newId
+    aComment.first_id = newId
     aComment.user = ctx.user
     aComment.member = ctx.wStore.memberId
     aComment.levelOne = 0

@@ -64,7 +64,9 @@ async function toRelease(
   if(!preThread) return
 
   const now = time.getTime()
-  preThread._id = ider.createThreadId()
+  const newId = ider.createThreadId()
+  preThread._id = newId
+  preThread.first_id = newId
   preThread.user = user
   preThread.member = member.value
   preThread.levelOne = 0

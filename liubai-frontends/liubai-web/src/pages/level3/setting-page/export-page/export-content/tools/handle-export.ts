@@ -181,7 +181,7 @@ function insertJsonContent(
 
   const jsonData: LiuExportContentJSON = {
     _id: d._id,
-    cloud_id: d.cloud_id,
+    first_id: d.first_id,
     insertedStamp: d.insertedStamp,
     updatedStamp: d.updatedStamp,
     infoType: d.infoType,

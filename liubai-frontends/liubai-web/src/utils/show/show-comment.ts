@@ -44,7 +44,7 @@ function packComment(
 
   const obj: CommentShow = {
     _id,
-    cloud_id: v.cloud_id,
+    first_id: v.first_id,
     insertedStamp: v.insertedStamp,
     updatedStamp: v.updatedStamp,
     oState: v.oState,
