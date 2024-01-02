@@ -1,6 +1,6 @@
 import { db } from "~/utils/db"
 import type { TaskOfC2L } from "../tools/types"
-import type { DowloadTaskLocalTable } from "~/types/types-table"
+import type { DownloadTaskLocalTable } from "~/types/types-table"
 import ider from "~/utils/basic/ider"
 import time from "~/utils/basic/time"
 
@@ -16,7 +16,7 @@ onmessage = async (e) => {
       target_id: v.id,
       target_table: v.table,
     }
-    const res = await db.download_task.get(g)
+    const res = await db.download_tasks.get(g)
     if(res?._id) {
       // 已存在，略过
       continue
@@ -24,13 +24,13 @@ onmessage = async (e) => {
 
     // 把数据加进 IndexedDB 中
     const newId = ider.createDownloadTaskId()
-    const newData: DowloadTaskLocalTable = {
+    const newData: DownloadTaskLocalTable = {
       _id: newId,
       insertedStamp: now + i,
       target_id: v.id,
       target_table: v.table,
     }
-    const res2 = await db.download_task.add(newData)
+    const res2 = await db.download_tasks.add(newData)
     console.log("res2: ")
     console.log(res2)
     console.log(" ")

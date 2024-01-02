@@ -14,8 +14,10 @@ import type {
   FileTransferedRes,
   TaskOfC2L,
   TaskState,
+  DownloadRes,
 } from "./tools/types"
 import CheckDbWorker from "./workers/check-task-existed?worker"
+import DownloadWorker from "./workers/task-to-download?worker"
 
 class CloudToLocal {
 
@@ -57,7 +59,19 @@ class CloudToLocal {
     if(!this.isOnline) return
     if(this.state === "working") return
     
-    
+    let _this = this
+    const worker = new DownloadWorker()
+    worker.onmessage = (e) => {
+      _this.state = "available"
+      
+      const txt = e.data as DownloadRes
+      if(txt === "bad_network") {
+        _this.isOnline = false
+      }
+    }
+
+    _this.state = "working"
+    worker.postMessage("start")
   }
 
 

@@ -69,6 +69,7 @@ async function toLogin(
   return true
 }
 
+/** 跳转到去选择用户 */
 function checkIfChooseAccounts(
   rr: RouteAndLiuRouter,
   d: Res_UserLoginNormal,

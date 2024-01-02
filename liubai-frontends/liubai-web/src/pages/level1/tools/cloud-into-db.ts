@@ -102,6 +102,7 @@ async function createMember(
     return false
   }
   
+  CloudToLocal.notify("members", data._id)
   return true
 }
 

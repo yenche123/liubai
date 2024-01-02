@@ -26,6 +26,10 @@ export interface BaseLocalTable {
   updatedStamp: number
 }
 
+/** 为什么 User 表需要 name 和头像？ 
+ *   User 表的 name 和头像是用户的主昵称和头像，
+ *   之后被创建的 member 都是从 User 表中授权过去的关系
+*/
 export interface UserLocalTable extends BaseLocalTable {
   oState: "NORMAL"
   lastRefresh: number
@@ -135,9 +139,11 @@ export interface CollectionLocalTable extends BaseLocalTable {
 
 
 /** 本地下载任务表 */
-export interface DowloadTaskLocalTable {
+export interface DownloadTaskLocalTable {
   _id: string
   insertedStamp: number
   target_id: string
   target_table: LiuTable
+  tryTimes?: number           // 下载失败的次数，若大于某个阈值，就放弃
+  failedStamp?: number        // 最近一次下载失败的时间戳
 }
