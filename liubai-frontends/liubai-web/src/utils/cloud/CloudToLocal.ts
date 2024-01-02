@@ -9,25 +9,13 @@ import { type LiuTable } from "~/types/types-atom"
 import { useNetwork, useDebounceFn } from "~/hooks/useVueUse";
 import { reactive, watch } from "vue";
 import type { LiuTimeout } from "../basic/type-tool";
-
-interface ImageTransferedRes {
-  useCloud: boolean
-  image?: LiuImageStore
-}
-
-interface FileTransferedRes {
-  useCloud: boolean
-  file?: LiuFileStore
-}
-
-
-// 下载任务的结构，其中 C2L 为 CloudToLocal 的简称
-interface TaskOfC2L {
-  table: LiuTable
-  id: string
-}
-
-type TaskState = "available" | "working"
+import type {
+  ImageTransferedRes,
+  FileTransferedRes,
+  TaskOfC2L,
+  TaskState,
+} from "./tools/types"
+import CheckDbWorker from "./workers/check-task-existed?worker"
 
 class CloudToLocal {
 
@@ -45,9 +33,18 @@ class CloudToLocal {
     const networkState2 = reactive(networkState)
 
     const _checkCurrentState = useDebounceFn(() => {
-      if(!_this.isOnline && networkState2.isOnline) {
+      const oldV = _this.isOnline
+      const newV = networkState2.isOnline
+      
+      if(!oldV && newV) {
+        // 原先是离线中，当前状态是联网时，去触发下载
+        _this.isOnline = true
         _this.triggerDownload()
       }
+      else if(oldV && !newV) {
+        _this.isOnline = false
+      }
+
     }, 500)
 
     watch(networkState2, (newV) => {
@@ -73,14 +70,22 @@ class CloudToLocal {
     const len = list.length
     if(len < 1) return
 
+    let _this = this
+    const worker = new CheckDbWorker()
+    worker.onmessage = (e) => {
+      const txt = e.data
+      console.log("worker.onmessage: ", txt)
+
+      // 3. 删掉 this.tmp_tasks 前面 len 项
+      _this.tmp_tasks.splice(0, len)
+
+      // 4. 触发 triggerDownload
+      _this.triggerDownload()
+    }
+
     // 1. 去检查 IndexedDB 是否已存在了
-
     // 2. 若不存在，存到 IndexedDB
-
-    // 3. 删掉 this.tmp_tasks 前面 len 项
-
-    // 4. 触发 triggerDownload
-
+    worker.postMessage(list)
   }
 
   /** 告知 CloudToLocal 哪个表、哪一行 
@@ -96,7 +101,7 @@ class CloudToLocal {
     this.timeoutOfNotify = setTimeout(() => {
       _this.timeoutOfNotify = undefined
       _this.putTasksIntoIndexedDB()
-    }, 50)
+    }, 150)
   }
 
 
