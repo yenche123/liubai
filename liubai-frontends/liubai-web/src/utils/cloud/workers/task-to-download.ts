@@ -1,10 +1,13 @@
-import { DownloadTaskLocalTable, MemberLocalTable, UserLocalTable } from "~/types/types-table"
 import { db } from "~/utils/db"
 import time from "~/utils/basic/time"
 import type { DownloadRes } from "../tools/types"
 import type { LiuFileStore, LiuImageStore } from "~/types"
-import { LiuTable } from "~/types/types-atom"
-import { WorkspaceLocalTable } from "~/types/types-table"
+import type { 
+  DownloadTaskLocalTable, 
+  MemberLocalTable, 
+  UserLocalTable, 
+  WorkspaceLocalTable,
+} from "~/types/types-table"
 
 interface HanTaskRes {
   hasEverUnknown?: boolean
@@ -119,8 +122,48 @@ const add_fail_time = async (task: DownloadTaskLocalTable) => {
 }
 
 // 给定一组 LiuFileStore，下载完成后返回一组新的 LiuFileStore
-const handle_files = async (files: LiuFileStore[]) => {
+const handle_files = async (files: LiuFileStore[]): Promise<HanFilesRes> => {
+  const files2 = files.filter(v => {
+    if(v.cloud_url && !v.arrayBuffer) {
+      return true
+    }
+    return false
+  })
+  if(files2.length < 1) return { hasEverSuccess: true, files }
 
+  let hasEverUnknown = false
+  let hasEverBadNetwork = false
+  let hasEverSuccess = false
+  for(let i=0; i<files2.length; i++) {
+    const v = files2[i]
+    const url = v.cloud_url as string
+    const res = await toDownload(url)
+    console.log("看一下文件, 下载结果: ")
+    console.log(res)
+    console.log(" ")
+
+    const ret = res.result
+    if(ret === "success" && !hasEverSuccess) hasEverSuccess = true
+    else if(ret === "bad_network" && !hasEverBadNetwork) hasEverBadNetwork = true
+    else if(ret === "unknown" && !hasEverUnknown) hasEverUnknown = true
+
+    if(ret !== "success") continue
+    files.forEach(v2 => {
+      const url2 = v2.cloud_url
+      if(!url2 || url2 !== url) return
+
+      v2.arrayBuffer = res.arrayBuffer
+      if(res.size) v2.size = res.size
+      if(res.mimeType) v2.mimeType = res.mimeType
+    })
+  }
+  
+  return {
+    hasEverUnknown,
+    hasEverBadNetwork,
+    hasEverSuccess,
+    files,
+  }
 }
 
 const handle_images = async (imgs: LiuImageStore[]): Promise<HanImgsRes> => {
@@ -139,11 +182,7 @@ const handle_images = async (imgs: LiuImageStore[]): Promise<HanImgsRes> => {
     const v = imgs2[i]
     const url = v.cloud_url as string
     const res = await toDownload(url)
-    console.log("看一下, 下载结果: ")
-    console.log(res)
-    console.log(" ")
-
-
+    
     const ret = res.result
     if(ret === "success" && !hasEverSuccess) hasEverSuccess = true
     else if(ret === "bad_network" && !hasEverBadNetwork) hasEverBadNetwork = true
@@ -291,8 +330,12 @@ const handle_task = async (task: DownloadTaskLocalTable) => {
   return res ? res : {}
 }
 
+
+/** worker 入口函数 */
 onmessage = async (e) => {
   let times = 0
+
+  // 每次查询出 LIMIT 个 download_tasks
   const LIMIT = 10
 
   // 去轮询，查找 DownloadTaskLocalTable 是否有任务存在
@@ -311,6 +354,8 @@ onmessage = async (e) => {
     const results = await col.limit(LIMIT).toArray()
     const len = results.length
 
+    if(len < 1) break
+
     for(let i=0; i<results.length; i++) {
       const v = results[i]
       const res = await handle_task(v)
@@ -320,9 +365,6 @@ onmessage = async (e) => {
       }
     }
 
-    if(len < LIMIT) {
-      break
-    }
   }
 
   postMessage("success")

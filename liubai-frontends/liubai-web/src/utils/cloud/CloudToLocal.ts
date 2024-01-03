@@ -74,10 +74,6 @@ class CloudToLocal {
     worker.postMessage("start")
   }
 
-
-  
-  private static timeoutOfNotify: LiuTimeout
-
   /** 批量将任务存到 IndexedDB 中 */
   private static putTasksIntoIndexedDB() {
     let list = this.tmp_tasks
@@ -101,6 +97,9 @@ class CloudToLocal {
     // 2. 若不存在，存到 IndexedDB
     worker.postMessage(list)
   }
+
+  /** 通知函数里调用 putTasksIntoIndexedDB 的延时 */
+  private static timeoutOfNotify: LiuTimeout
 
   /** 告知 CloudToLocal 哪个表、哪一行 
    * 需要从网络下载文件（图片），存到 IndexedDB 中
