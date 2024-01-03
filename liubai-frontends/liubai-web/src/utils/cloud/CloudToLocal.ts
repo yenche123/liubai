@@ -13,17 +13,21 @@ import type {
   ImageTransferedRes,
   FileTransferedRes,
   TaskOfC2L,
-  TaskState,
   DownloadRes,
 } from "./tools/types"
 import CheckDbWorker from "./workers/check-task-existed?worker"
 import DownloadWorker from "./workers/task-to-download?worker"
+import time from "../basic/time";
+import valTool from "../basic/val-tool";
+
+
+const MIN_5 = 5 * time.MINUTE
 
 class CloudToLocal {
 
-  
-  static state: TaskState = "available"
   static isOnline: boolean | undefined
+  static downloadWorker: Worker | undefined
+  static lastStartToDownload: number | undefined
 
   // 暂存任务至临时变量中，当存到 IndexedDB 中后，就删掉
   static tmp_tasks: TaskOfC2L[] = []
@@ -56,22 +60,40 @@ class CloudToLocal {
 
   /** 触发下载 */
   private static triggerDownload() {
-    if(!this.isOnline) return
-    if(this.state === "working") return
-    
     let _this = this
-    const worker = new DownloadWorker()
-    worker.onmessage = (e) => {
-      _this.state = "available"
+    if(!this.isOnline) return
+
+    const lstd = this.lastStartToDownload
+    const now = time.getTime()
+    if(lstd) {
+      const diffS = now - lstd
       
+      // 若小于 5mins，继续等待
+      // WARNMING: 大文件可能大于 5min 的下载......
+      if(diffS < MIN_5) return
+      _this.closeDownloadWorker()
+    }
+    
+    _this.downloadWorker = new DownloadWorker()
+    _this.downloadWorker.onmessage = (e) => {
       const txt = e.data as DownloadRes
       if(txt === "bad_network") {
         _this.isOnline = false
       }
+
+      _this.lastStartToDownload = undefined
+      _this.closeDownloadWorker()
     }
 
-    _this.state = "working"
-    worker.postMessage("start")
+    _this.lastStartToDownload = now
+    _this.downloadWorker.postMessage("start")
+  }
+
+  private static closeDownloadWorker() {
+    console.log("去关闭 worker.............")
+    this.downloadWorker?.terminate?.()
+    this.downloadWorker = undefined
+    console.log("应该已关闭 worker 了...........")
   }
 
   /** 批量将任务存到 IndexedDB 中 */
@@ -84,18 +106,22 @@ class CloudToLocal {
     const worker = new CheckDbWorker()
     worker.onmessage = (e) => {
       const txt = e.data
-      console.log("worker.onmessage: ", txt)
+      console.log("CheckDbWorker worker.onmessage: ", txt)
 
       // 3. 删掉 this.tmp_tasks 前面 len 项
       _this.tmp_tasks.splice(0, len)
 
       // 4. 触发 triggerDownload
       _this.triggerDownload()
+
+      // 5. 关闭此 worker
+      worker.terminate()
     }
 
     // 1. 去检查 IndexedDB 是否已存在了
     // 2. 若不存在，存到 IndexedDB
-    worker.postMessage(list)
+    const tmpList = valTool.copyObject(list)
+    worker.postMessage(tmpList)
   }
 
   /** 通知函数里调用 putTasksIntoIndexedDB 的延时 */
@@ -117,6 +143,8 @@ class CloudToLocal {
     }, 150)
   }
 
+
+  /************************ 以下仅涉及格式转换，不涉及存储 ***************************/
 
   /** 判断云端图片如何快速转换成本地存储格式 
    * 注意: 该方法不会真的将云端图片存成 arrayBuffer 格式
@@ -205,7 +233,6 @@ class CloudToLocal {
     }
     return f2
   }
-
 
   
 }

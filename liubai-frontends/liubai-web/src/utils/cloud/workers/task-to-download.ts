@@ -7,6 +7,7 @@ import type {
   MemberLocalTable, 
   UserLocalTable, 
   WorkspaceLocalTable,
+  ContentLocalTable,
 } from "~/types/types-table"
 
 interface HanTaskRes {
@@ -26,6 +27,12 @@ interface HanImgsRes {
   hasEverBadNetwork?: boolean
   hasEverSuccess?: boolean
   imgs: LiuImageStore[]
+}
+
+interface HanWhateverRes {
+  hasEverUnknown?: boolean
+  hasEverBadNetwork?: boolean
+  [key: string]: any
 }
 
 interface FetchRes {
@@ -129,7 +136,11 @@ const handle_files = async (files: LiuFileStore[]): Promise<HanFilesRes> => {
     }
     return false
   })
-  if(files2.length < 1) return { hasEverSuccess: true, files }
+
+  if(files2.length < 1) {
+    // 不要返回 hasEverSuccess 为 true，要不然会消耗一次修改数据库
+    return { files }
+  }
 
   let hasEverUnknown = false
   let hasEverBadNetwork = false
@@ -157,7 +168,7 @@ const handle_files = async (files: LiuFileStore[]): Promise<HanFilesRes> => {
       if(res.mimeType) v2.mimeType = res.mimeType
     })
   }
-  
+
   return {
     hasEverUnknown,
     hasEverBadNetwork,
@@ -173,7 +184,10 @@ const handle_images = async (imgs: LiuImageStore[]): Promise<HanImgsRes> => {
     }
     return false
   })
-  if(imgs2.length < 1) return { hasEverSuccess: true, imgs }
+  if(imgs2.length < 1) {
+    // 不要返回 hasEverSuccess 为 true，要不然会消耗一次修改数据库
+    return { imgs }
+  }
 
   let hasEverUnknown = false
   let hasEverBadNetwork = false
@@ -206,6 +220,11 @@ const handle_images = async (imgs: LiuImageStore[]): Promise<HanImgsRes> => {
   }
 }
 
+/** 只要有任何一个结果为 true，该字段的总结果就为 true */
+const judgeHanTaskRes = (taskRes: HanTaskRes, newRes: HanWhateverRes) => {
+  if(newRes.hasEverBadNetwork) taskRes.hasEverBadNetwork = true
+  if(newRes.hasEverUnknown) taskRes.hasEverUnknown = true
+}
 
 
 const handle_member = async (task: DownloadTaskLocalTable) => {
@@ -269,7 +288,39 @@ const handle_workspace = async (task: DownloadTaskLocalTable) => {
 }
 
 const handle_content = async (task: DownloadTaskLocalTable) => {
+  const id = task.target_id
+  const res = await db.contents.get(id)
+  if(!res) return {}
+  const { images = [], files = [] } = res
 
+  let u: Partial<ContentLocalTable> = {}
+  let targetUpdated = false
+  const res0: HanTaskRes = {}
+
+  if(images.length > 0) {
+    const res2 = await handle_images(images)
+    if(res2.hasEverSuccess) {
+      targetUpdated = true
+      u.images = res2.imgs
+    }
+    judgeHanTaskRes(res0, res2)
+  }
+
+  if(files.length > 0) {
+    const res3 = await handle_files(files)
+    if(res3.hasEverSuccess) {
+      targetUpdated = true
+      u.files = res3.files
+    }
+    judgeHanTaskRes(res0, res3)
+  }
+
+  if(targetUpdated) {
+    u.updatedStamp = time.getTime()
+    await db.contents.update(id, u)
+  }
+
+  return res0
 }
 
 const handle_user = async (task: DownloadTaskLocalTable): Promise<HanTaskRes> => {
@@ -316,6 +367,9 @@ const handle_task = async (task: DownloadTaskLocalTable) => {
   }
   else if(table === "members") {
     res = await handle_member(task)
+  }
+  else if(table === "contents") {
+    res = await handle_content(task)
   }
 
   const u = res?.hasEverUnknown

@@ -21,7 +21,4 @@ export interface TaskOfC2L {
   id: string
 }
 
-export type TaskState = "available" | "working"
-
-
 export type DownloadRes = "success" | "bad_network" | "unknown"
