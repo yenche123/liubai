@@ -27,6 +27,7 @@ class CloudToLocal {
 
   static isOnline: boolean | undefined
   static downloadWorker: Worker | undefined
+  static checkWorker: Worker | undefined
   static lastStartToDownload: number | undefined
 
   // 暂存任务至临时变量中，当存到 IndexedDB 中后，就删掉
@@ -99,29 +100,48 @@ class CloudToLocal {
   /** 批量将任务存到 IndexedDB 中 */
   private static putTasksIntoIndexedDB() {
     let list = this.tmp_tasks
-    const len = list.length
+    let len = list.length
     if(len < 1) return
+    if(this.checkWorker) {
+      console.log("checkWorker 已存在，阻挡............")
+      return
+    }
 
     let _this = this
-    const worker = new CheckDbWorker()
-    worker.onmessage = (e) => {
+    _this.checkWorker = new CheckDbWorker()
+    _this.checkWorker.onmessage = (e) => {
       const txt = e.data
       console.log("CheckDbWorker worker.onmessage: ", txt)
 
       // 3. 删掉 this.tmp_tasks 前面 len 项
-      _this.tmp_tasks.splice(0, len)
+      const list2 = _this.tmp_tasks
+      list2.splice(0, len)
 
       // 4. 触发 triggerDownload
       _this.triggerDownload()
 
-      // 5. 关闭此 worker
-      worker.terminate()
+      // 5. 判断是否关闭此 worker
+      len = list2.length
+      if(len > 0) {
+        console.log("有新任务需要存到 IndexedDB..............")
+        const tmpList2 = valTool.copyObject(list2)
+        _this.checkWorker?.postMessage?.(tmpList2)
+      }
+      else {
+        console.log("去关闭 checkWorker................")
+        _this.closeCheckWorker()
+      }
     }
 
     // 1. 去检查 IndexedDB 是否已存在了
     // 2. 若不存在，存到 IndexedDB
     const tmpList = valTool.copyObject(list)
-    worker.postMessage(tmpList)
+    _this.checkWorker.postMessage(tmpList)
+  }
+
+  private static closeCheckWorker() {
+    this.checkWorker?.terminate?.()
+    this.checkWorker = undefined
   }
 
   /** 通知函数里调用 putTasksIntoIndexedDB 的延时 */
