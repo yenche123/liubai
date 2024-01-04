@@ -128,55 +128,6 @@ const add_fail_time = async (task: DownloadTaskLocalTable) => {
   console.log(" ")
 }
 
-// 给定一组 LiuFileStore，下载完成后返回一组新的 LiuFileStore
-const handle_files = async (files: LiuFileStore[]): Promise<HanFilesRes> => {
-  const files2 = files.filter(v => {
-    if(v.cloud_url && !v.arrayBuffer) {
-      return true
-    }
-    return false
-  })
-
-  if(files2.length < 1) {
-    // 不要返回 hasEverSuccess 为 true，要不然会消耗一次修改数据库
-    return { files }
-  }
-
-  let hasEverUnknown = false
-  let hasEverBadNetwork = false
-  let hasEverSuccess = false
-  for(let i=0; i<files2.length; i++) {
-    const v = files2[i]
-    const url = v.cloud_url as string
-    const res = await toDownload(url)
-    console.log("看一下文件, 下载结果: ")
-    console.log(res)
-    console.log(" ")
-
-    const ret = res.result
-    if(ret === "success" && !hasEverSuccess) hasEverSuccess = true
-    else if(ret === "bad_network" && !hasEverBadNetwork) hasEverBadNetwork = true
-    else if(ret === "unknown" && !hasEverUnknown) hasEverUnknown = true
-
-    if(ret !== "success") continue
-    files.forEach(v2 => {
-      const url2 = v2.cloud_url
-      if(!url2 || url2 !== url) return
-
-      v2.arrayBuffer = res.arrayBuffer
-      if(res.size) v2.size = res.size
-      if(res.mimeType) v2.mimeType = res.mimeType
-    })
-  }
-
-  return {
-    hasEverUnknown,
-    hasEverBadNetwork,
-    hasEverSuccess,
-    files,
-  }
-}
-
 const handle_images = async (imgs: LiuImageStore[]): Promise<HanImgsRes> => {
   const imgs2 = imgs.filter(v => {
     if(v.cloud_url && !v.arrayBuffer) {
@@ -291,7 +242,7 @@ const handle_content = async (task: DownloadTaskLocalTable) => {
   const id = task.target_id
   const res = await db.contents.get(id)
   if(!res) return {}
-  const { images = [], files = [] } = res
+  const { images = [] } = res
 
   let u: Partial<ContentLocalTable> = {}
   let targetUpdated = false
@@ -304,15 +255,6 @@ const handle_content = async (task: DownloadTaskLocalTable) => {
       u.images = res2.imgs
     }
     judgeHanTaskRes(res0, res2)
-  }
-
-  if(files.length > 0) {
-    const res3 = await handle_files(files)
-    if(res3.hasEverSuccess) {
-      targetUpdated = true
-      u.files = res3.files
-    }
-    judgeHanTaskRes(res0, res3)
   }
 
   if(targetUpdated) {
