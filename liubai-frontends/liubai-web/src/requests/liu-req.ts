@@ -61,9 +61,9 @@ async function request<
     res = await fetch(url, init)
   }
   catch(err: any) {
-    console.warn("fetch err...........")
-    console.log(err)
-    console.log(" ")
+    // console.warn("fetch err...........")
+    // console.log(err)
+    // console.log(" ")
 
     const errMsg: unknown = err.toString?.()
     const errName = err.name

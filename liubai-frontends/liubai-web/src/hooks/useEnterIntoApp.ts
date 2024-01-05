@@ -40,8 +40,6 @@ export function useEnterIntoApp(
     const { inApp } = newV1.meta
     if(inApp === false) return
 
-    console.log("hhhhhhhhhhhh")
-
     status = 2
     list.forEach(v => {
       v()

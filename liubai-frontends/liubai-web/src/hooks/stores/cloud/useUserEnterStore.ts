@@ -11,6 +11,8 @@ import liuUtil from "~/utils/liu-util";
 
 export const useUserEnterStore = defineStore("userEnter", () => {
 
+  console.log("这里只执行一次..............")
+
   const lastUserEnterStamp = ref<number | null>(null)
   const setLatestUserEnterStamp = () => {
     lastUserEnterStamp.value = time.getTime()
@@ -48,7 +50,7 @@ export const useUserEnterStore = defineStore("userEnter", () => {
     if(diffS > 30 * time.MINUTE) {
       toUserEnter()
     }
-  })
+  }, { immediate: true })
 
   return {
     lastUserEnterStamp,
