@@ -13,7 +13,8 @@
     "geoip-lite": "^1.4.9",
     "google-auth-library": "^9.4.1",
     "jsonwebtoken": "^9.0.2",
-    "resend": "^2.0.0"
+    "resend": "^2.0.0",
+    "stripe": "^14.11.0"
   },
   "devDependencies": {
     "@types/geoip-lite": "^1.4.4",
