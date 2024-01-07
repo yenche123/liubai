@@ -24,7 +24,6 @@ const VISITED_NUM = 60
 const ALLOW_WITHOUT_TOKEN = [
   "hello-world",
   "user-login",
-  "common-util",
 ]
 
 // 每个请求里皆应存在的参数字段
@@ -88,14 +87,22 @@ export async function main(
     return { code: "E4003", errMsg: "sorry, we cannot serve you" }
   }
 
-  // 3. 检查参数是否正确
+  // 3. 检查是否为第三方服务访问我方 webhook
+  const isWebhook = funcName.startsWith("webhook-")
+  if(isWebhook) {
+    const nextRes2 = await toNext(ctx, next)
+    return nextRes2
+  }
+  
+
+  // 4. 最后检查参数是否正确
   const res2 = checkEntry(ctx, funcName)
   if(!res2) {
     return { code: "E4000" }
   }
 
-  const nextRes2 = await toNext(ctx, next)
-  return nextRes2
+  const nextRes3 = await toNext(ctx, next)
+  return nextRes3
 }
 
 

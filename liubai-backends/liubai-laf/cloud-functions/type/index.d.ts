@@ -24,6 +24,9 @@ declare global {
       */
       LIU_CLOUD_LOGIN: LiuSwitch | "03"
 
+      /** 当前应用的域名 */
+      LIU_DOMAIN?: string
+
       /** 内部 debug 时，通行码 */
       LIU_DEBUG_KEY?: string
 
@@ -41,6 +44,10 @@ declare global {
       /** Resend */
       LIU_RESEND_API_KEY?: string
       LIU_RESEND_FROM_EMAIL?: string     // 发送的 email 地址
+
+      /** Stripe */
+      LIU_STRIPE_API_KEY?: string        // stripe 的 api key
+      LIU_STRIPE_ENDPOINT_SECRET?: string  // stripe 的 webhook secret
 
     }
   }

@@ -287,6 +287,11 @@ export interface ServiceSendEmailsParam {
   }[]
 }
 
+export interface SubscriptionStripe {
+  isOn: BaseIsOn
+  price_id: string
+}
+
 /*********************** 数据表类型 **********************/
 
 /** Token表 */
@@ -436,8 +441,7 @@ export interface Table_Config extends BaseTable {
 
 }
 
-
-// 临时凭证表
+/** 临时凭证表 */
 export interface Table_Credential extends BaseTable {
   credential: string
   infoType: "sms-code" | "email-code" | "scan-code" | "users-select"
@@ -452,6 +456,23 @@ export interface Table_Credential extends BaseTable {
   email_id?: string
 
   thirdData?: UserThirdData
+}
+
+/** 订阅方案表 */
+export interface Table_Subscription extends BaseTable {
+  isOn: BaseIsOn
+  payment_circle: "monthly" | "yearly"
+  badge: string
+  title: string
+  desc: string
+  stripe?: SubscriptionStripe
+  price_CNY: string
+  price_USD: string
+  price_EUR: string
+  price_HKD: string
+  price_JPY: string
+  price_NZD: string
+  price_TWD: string
 }
 
 
