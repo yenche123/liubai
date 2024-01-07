@@ -362,5 +362,12 @@
     "fire": "Fire",
     "thinking": "Thinking",
     "cafe": "Coffee"
+  },
+  "payment": {
+    "success_title": "Paid",
+    "cancel_title": "Cancel to Pay",
+    "cancel_desc": "You seem to have canceled the payment",
+    "think_again": "Reconsider",
+    "member_subscribe": "Subscription"
   }
 }

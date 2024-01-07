@@ -16,7 +16,7 @@ declare module 'vue-router' {
     // 目前 detail 和 edit 这两个 page 为 false 表示不必检查
     checkWorkspace?: boolean
 
-    // 是否能打开 vice-view，默认为 true; inSetting 为 true 的，此值皆为 false
+    // 是否能打开 vice-view，默认为 true; inSetting 为 true 的页面，此值皆为 false
     hasViceView?: boolean
   }
 }

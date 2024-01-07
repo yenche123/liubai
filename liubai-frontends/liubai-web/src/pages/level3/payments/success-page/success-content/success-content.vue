@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n"
+
+const { t } = useI18n()
 
 </script>
 <template>
@@ -7,10 +10,10 @@
     <svg-icon 
       class="cc-img"
       :cover-fill-stroke="false"
-      name="emojis-face_with_peeking_eye_color"
+      name="emojis-smiling_face_with_heart-eyes_color"
     ></svg-icon>
     <div class="cc-text">
-      <span class="liu-selection">这可能需要一点时间。外部应用众多，通信格式也各异，我们会试图寻找优雅的方式让人们可以很轻松的连接各个应用，同时免除琐碎配置的烦恼。这需要我们花大量的时间去研究交互，希望能得到你的理解。</span>
+      <span class="liu-selection">{{ t('payment.success_title') }}</span>
     </div>
   </div>
 

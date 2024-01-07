@@ -19,7 +19,9 @@ const SettingPage = () => import("../pages/level3/setting-page/setting-page.vue"
 const NotificationPage = () => import("../pages/level3/notification-page/notification-page.vue")
 const ExportPage = () => import("../pages/level3/setting-page/export-page/export-page.vue")
 const ImportPage = () => import("../pages/level3/setting-page/import-page/import-page.vue")
-
+const SubscribePage = () => import("../pages/level3/payments/subscribe-page/subscribe-page.vue")
+const PaymentSuccessPage = () => import("../pages/level3/payments/success-page/success-page.vue")
+const PaymentCancelPage = () => import("../pages/level3/payments/cancel-page/cancel-page.vue")
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -216,6 +218,42 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       keepAlive: true,
     }
+  },
+  {
+    path: "/subscription",
+    components: {
+      default: SubscribePage,
+      LeftSidebar,
+    },
+    name: "subscription",
+    meta: {
+      keepAlive: true,
+      checkWorkspace: false,
+    },
+  },
+  {
+    path: "/payment-success",
+    components: {
+      default: PaymentSuccessPage,
+      LeftSidebar,
+    },
+    name: "payment-success",
+    meta: {
+      keepAlive: true,
+      checkWorkspace: false,
+    },
+  },
+  {
+    path: "/payment-cancel",
+    components: {
+      default: PaymentCancelPage,
+      LeftSidebar,
+    },
+    name: "payment-cancel",
+    meta: {
+      keepAlive: true,
+      checkWorkspace: false,
+    },
   },
   /************************** 协作工作区 ***********************/
   {
