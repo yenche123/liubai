@@ -6,6 +6,7 @@ import {
   usePageLeave,
   useThrottleFn,
   useDebounceFn,
+  useDocumentVisibility,
 } from "@vueuse/core"
 import type { NetworkState } from "@vueuse/core"
 import type { Ref } from "vue"
@@ -43,4 +44,7 @@ export {
 
   // 【防抖函数】短时间多次触发，只在最后一次等待若干 ms 后触发
   useDebounceFn,
+
+  // 监听浏览器分页当前是否可见
+  useDocumentVisibility,
 }

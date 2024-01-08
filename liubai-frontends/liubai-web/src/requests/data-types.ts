@@ -4,6 +4,12 @@ import type { LocalLanguage } from "~/types"
 import type { LiuSpaceAndMember } from "~/types/types-cloud"
 
 
+/********************** Hello World *******************/
+export interface Res_HelloWorld {
+  stamp: number
+}
+
+
 /************************ 登录相关 ********************/
 
 export interface Res_UserLoginInit {
@@ -44,4 +50,6 @@ export interface Res_UserSettings_Enter {
   theme: LocalTheme
   language: LocalLanguage
   spaceMemberList: LiuSpaceAndMember[]
+  new_serial?: string
+  new_token?: string
 }

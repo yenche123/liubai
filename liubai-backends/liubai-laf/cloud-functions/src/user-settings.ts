@@ -4,6 +4,7 @@ import type {
   Table_User, 
   LiuRqReturn,
   Res_UserSettings_Enter,
+  VerifyTokenRes,
 } from './common-types'
 import { getNowStamp } from "@/common-time"
 
@@ -15,7 +16,8 @@ export async function main(ctx: FunctionContext) {
 
   const stamp1 = getNowStamp()
 
-  const vRes = await verifyToken(ctx, body, { entering: true })
+  const entering = oT === "enter"
+  const vRes = await verifyToken(ctx, body, { entering })
   const user = vRes.userData
   if(!vRes.pass || !user) {
     return vRes.rqReturn ?? { code: "E5001" }
@@ -24,7 +26,7 @@ export async function main(ctx: FunctionContext) {
   let res: LiuRqReturn = { code: "E4000" }
   if(oT === "enter") {
     // 获取用户设置并记录用户访问
-    res = await handle_enter(user)
+    res = await handle_enter(vRes)
   }
 
 
@@ -37,12 +39,13 @@ export async function main(ctx: FunctionContext) {
 
 
 export async function handle_enter(
-  user: Table_User,
+  vRes: VerifyTokenRes,
 ) {
+  const user = vRes.userData as Table_User
 
   // 1. 去获取用户基础设置
   const res1 = await getUserSettings(user)
-  if(res1.code !== "0000") {
+  if(res1.code !== "0000" || !res1.data) {
     return res1
   }
 
@@ -53,7 +56,13 @@ export async function handle_enter(
     updatedStamp: now,
   }
 
-  // 【待测试】 是否可以使用 .doc().update()
+  // 3. 查看 verifyToken 时，是否有生成新的 token serial
+  // 若有，送进回调里
+  if(vRes.new_serial && vRes.new_token) {
+    res1.data.new_serial = vRes.new_serial
+    res1.data.new_token = vRes.new_token
+  }
+  
   db.collection("User").doc(user._id).update(u)
 
   return res1

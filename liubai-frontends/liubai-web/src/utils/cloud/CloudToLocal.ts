@@ -91,10 +91,8 @@ class CloudToLocal {
   }
 
   private static closeDownloadWorker() {
-    console.log("去关闭 worker.............")
     this.downloadWorker?.terminate?.()
     this.downloadWorker = undefined
-    console.log("应该已关闭 worker 了...........")
   }
 
   /** 批量将任务存到 IndexedDB 中 */
@@ -103,7 +101,6 @@ class CloudToLocal {
     let len = list.length
     if(len < 1) return
     if(this.checkWorker) {
-      console.log("checkWorker 已存在，阻挡............")
       return
     }
 
@@ -111,7 +108,6 @@ class CloudToLocal {
     _this.checkWorker = new CheckDbWorker()
     _this.checkWorker.onmessage = (e) => {
       const txt = e.data
-      console.log("CheckDbWorker worker.onmessage: ", txt)
 
       // 3. 删掉 this.tmp_tasks 前面 len 项
       const list2 = _this.tmp_tasks
@@ -128,7 +124,6 @@ class CloudToLocal {
         _this.checkWorker?.postMessage?.(tmpList2)
       }
       else {
-        console.log("去关闭 checkWorker................")
         _this.closeCheckWorker()
       }
     }

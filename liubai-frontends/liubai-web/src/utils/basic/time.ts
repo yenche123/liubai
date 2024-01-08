@@ -2,11 +2,10 @@ import valTool from "./val-tool"
 
 let diff = 0
 
-const _init = async (): Promise<void> => {
-  
+// 设置时间差，由 CloudEventBus 调用
+const setDiff = (val: number) => {
+  diff = val
 }
-
-_init()
 
 // 经过标定的时间
 const getTime = (): number => {
@@ -58,6 +57,7 @@ const HOUR = 60 * MINUTE
 const DAY = 24 * HOUR
 
 export default {
+  setDiff,
   getTime,
   getLastCharOfStamp,
   getLocalTime,

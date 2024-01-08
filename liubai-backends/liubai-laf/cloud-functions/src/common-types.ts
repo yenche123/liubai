@@ -516,6 +516,8 @@ export interface Res_UserSettings_Enter {
   theme: LocalTheme
   language: LocalLanguage
   spaceMemberList: LiuSpaceAndMember[]
+  new_serial?: string
+  new_token?: string
 }
 
 

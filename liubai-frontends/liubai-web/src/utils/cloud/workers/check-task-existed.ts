@@ -31,9 +31,6 @@ onmessage = async (e) => {
       target_table: v.table,
     }
     const res2 = await db.download_tasks.add(newData)
-    console.log("res2: ")
-    console.log(res2)
-    console.log(" ")
   }
 
   postMessage("checked")
