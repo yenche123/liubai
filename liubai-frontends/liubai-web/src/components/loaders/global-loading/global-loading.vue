@@ -10,7 +10,9 @@ const {
 </script>
 <template>
 
-  <div class="gl-line" v-if="enable"></div>
+  <div class="gl-line" v-if="enable">
+    <div class="gl-shadow"></div>
+  </div>
 
 </template>
 <style scoped lang="scss">
@@ -22,11 +24,20 @@ const {
   width: 100%;
   height: 4px;
   max-width: v-bind("'' + number + '%'");
-  overflow: hidden;
   z-index: 4000;
   background-color: var(--primary-color);
   transition: v-bind("transition + 'ms'");
   will-change: width, max-width;
+}
+
+.gl-shadow {
+  position: absolute;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  box-shadow: 0 0 12px var(--primary-color), 0 0 6px var(--primary-color);
+  opacity: 1;
+  transform: rotate(3deg) translateY(-4px);
 }
 
 </style>
