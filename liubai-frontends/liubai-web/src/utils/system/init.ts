@@ -15,10 +15,13 @@ export async function init() {
   initSpace(store)
   initCycle()
   CloudEventBus.init()
+
+  // 初始化，云端文件存储到本地
   CloudToLocal.init()
 
   if(backend) {
     // 当前为 [登录模式]
+    // 初始化，上传到云端
     LocalToCloud.init()
   }
   else {

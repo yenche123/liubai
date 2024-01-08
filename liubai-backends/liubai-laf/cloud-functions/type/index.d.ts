@@ -48,6 +48,7 @@ declare global {
       /** Stripe */
       LIU_STRIPE_API_KEY?: string        // stripe 的 api key
       LIU_STRIPE_ENDPOINT_SECRET?: string  // stripe 的 webhook secret
+      LIU_STRIPE_TEST_PRICE_ID?: string    // stripe 测试用的 price id
 
     }
   }

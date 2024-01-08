@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { useI18n } from "vue-i18n"
+import { useSubscribeContent } from "./tools/useSubscribeContent"
 
-const { t } = useI18n()
+const {
+  onTapBtn
+} = useSubscribeContent()
 
 </script>
 <template>
 
-  <span>待完善</span>
+  <span>去测试 stripe</span>
+  <CustomBtn @click="onTapBtn">
+    <span>走你</span>
+  </CustomBtn>
 
 </template>
 <style scoped>

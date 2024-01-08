@@ -7,4 +7,5 @@ export default {
   TIME: d + `hello-world`,
   LOGIN: d + `user-login`,
   USER_ENTER: d + `user-settings`,
+  STRIPE_TEST: d + `test-stripe`,
 }
