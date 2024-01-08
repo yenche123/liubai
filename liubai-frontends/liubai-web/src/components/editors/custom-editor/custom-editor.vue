@@ -104,8 +104,8 @@ const {
       @blur="() => titleFocused = false"
       @input="onTitleBarChange" 
       @keyup.enter.exact="onTitleEnter"
-      @keyup.ctrl.enter.exact="onTitleEnterAndCtrl"
-      @keyup.meta.enter.exact="onTitleEnterAndMeta"
+      @keydown.ctrl.enter.exact="onTitleEnterAndCtrl"
+      @keydown.meta.enter.exact="onTitleEnterAndMeta"
     />
     <div class="ce-clear-title" @click.stop="onTapCloseTitle">
       <svg-icon name="close-circle" class="ce-clear-svg" 
