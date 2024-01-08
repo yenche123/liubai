@@ -88,7 +88,9 @@ export function useCeState(
     collectState(state)
   }
 
+  let lastPreFinish = 0
   const _prepareFinish = (focusRequired: boolean) => {
+    lastPreFinish = time.getTime()
     if(collectTimeout) clearTimeout(collectTimeout)
     toFinish(focusRequired)
   }
@@ -136,6 +138,10 @@ export function useCeState(
   }
 
   const onTitleEnter = () => {
+    // 若前一刻准备去执行 “完成” 的流程，就阻断
+    const diff = time.getTime() - lastPreFinish
+    if(diff < 500) return
+    
     const e = editor.value
     if(!e) return
     e.commands.focus()
