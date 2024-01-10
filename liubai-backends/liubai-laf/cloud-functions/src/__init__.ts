@@ -9,6 +9,8 @@ import type {
 } from "@/common-types"
 import { getNowStamp } from "@/common-time"
 
+const db = cloud.mongo.db
+
 export async function main(ctx: FunctionContext) {
   console.log("__init__ 开始运行............")
   await initBlockedIPs()
@@ -20,16 +22,19 @@ export async function main(ctx: FunctionContext) {
 
 /** 初始化被屏蔽的 ip */
 async function initBlockedIPs() {
-  const db = cloud.database()
-  const w = {
+  const w: Partial<Table_BlockList> = {
     type: "ip",
     isOn: "Y",
   }
-  const res = await db.collection("BlockList").where(w).get<Table_BlockList>()
+  const list = await db.collection<Table_BlockList>("BlockList").find(w).toArray()
   console.log("查看获取被屏蔽 ip 的结果: ")
-  console.log(res)
-  const list = res.data
+  console.log(list)
 
+  const firRes = list[0]
+  const ccc = firRes._id
+  console.log("看一下 ccc: ")
+  console.log(ccc)
+  console.log(" ")
 
   if(list.length < 1) {
     console.log("没有 ip 需要屏蔽.....")
@@ -51,14 +56,12 @@ async function initBlockedIPs() {
  *  比如检查 publicKey 和 privateKey
 */
 async function initConfig() {
-  const db = cloud.database()
-  const res = await db.collection("Config").get<Table_Config>()
+  const list = await db.collection<Table_Config>("Config").find().toArray()
 
   console.log("查询 Config 表的结果......")
-  console.log(res)
+  console.log(list)
   console.log(" ")
 
-  const list = res.data
   let c = list[0]
 
   // 若不存在任何配置
@@ -137,14 +140,12 @@ async function createConfig(
     newCfg = { ...newCfg, ...oldCfg }
   }
   const oldId = newCfg._id
-
-  const db = cloud.database()
   const col = db.collection("Config")
 
   if(oldId) {
     // 使用 set 修改数据
     delete newCfg._id
-    const res1 = await col.doc(oldId).set(newCfg)
+    const res1 = await col.replaceOne({ _id: oldId }, newCfg)
     console.log(`createConfig 使用 doc.set 去修改数据的结果.......`)
     console.log(res1)
     console.log(" ")
@@ -152,11 +153,14 @@ async function createConfig(
   }
   else {
     // 使用 add 去新增数据
-    const res2 = await col.add(newCfg)
+    const res2 = await col.insertOne(newCfg as Omit<Table_Config, "_id">)
     console.log(`createConfig 使用col.add 去新增数据的结果.......`)
     console.log(res2)
+    const newObjectId = res2.insertedId
+    const newId = newObjectId.toString()
+    console.log("newId: ", newId)
     console.log(" ")
-    newCfg._id = res2.id as string
+    newCfg._id = newId
   }
 
   return newCfg as Table_Config
