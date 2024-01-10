@@ -8,6 +8,7 @@ import { fetchHelloWorld, fetchUserEnter } from "./tools/requests";
 import time from "../basic/time";
 import localCache from "../system/local-cache";
 import liuEnv from "../liu-env";
+import { logout } from "./tools/logout";
 
 // 事件总线，对云同步任务进行调度
 class CloudEventBus {
@@ -162,7 +163,7 @@ class CloudEventBus {
     // 检查是否要退出登录
     if(code === "E4003") {
       // 去退出登录
-
+      logout(this.rr)
       return false
     }
 

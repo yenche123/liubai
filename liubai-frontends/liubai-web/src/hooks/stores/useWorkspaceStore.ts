@@ -105,6 +105,17 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     mySpaceIds.value = list
   }
 
+  const logout = () => {
+    spaceId.value = ""
+    spaceType.value = ""
+    memberId.value = ""
+    workspace.value = ""
+    isCollaborative.value = false
+    currentSpace.value = null
+    myMember.value = null
+    mySpaceIds.value = []
+  }
+
   return { 
     spaceType,
     spaceId, 
@@ -122,6 +133,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     setMemberConfig,
     setStateConfig,
     setMySpaceIds,
+    logout,
   }
 })
 

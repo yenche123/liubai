@@ -392,9 +392,6 @@ function toGetLoginInitData(
     const code = res?.code
     const data = res?.data
 
-    console.log("code: ", code)
-    console.log(" ")
-
     lpData.initCode = code
     if(!data || !data.publicKey) {
       a(false)

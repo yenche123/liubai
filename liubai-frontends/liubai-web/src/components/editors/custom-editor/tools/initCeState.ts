@@ -79,7 +79,7 @@ export function initCeState(
     if(diff < 500) return
     const ctx = getCtx()
     if(!ctx) return
-    // console.log("再次 initDraft.........")
+    console.log("再次 initDraft.........")
     initDraft(ctx, tVal.value)
   })
 
@@ -121,7 +121,11 @@ async function initDraft(
     if(draft) localReq.deleteDraftById(draft._id)
   }
   else {
+    // console.log("看一下什么情况.................")
     draft = await localReq.getDraft(spaceIdRef.value)
+    // console.log(draft)
+    // console.log(" ")
+
     if(draft) initDraftFromDraft(ctx, draft)
     else ctx.state.draftId = ""
   }
