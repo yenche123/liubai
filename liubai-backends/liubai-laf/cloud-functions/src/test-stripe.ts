@@ -22,11 +22,11 @@ export async function main(ctx: FunctionContext) {
       line_items: [
         {
           // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-          price: '{{PRICE_ID}}',
+          price: LIU_STRIPE_TEST_PRICE_ID,
           quantity: 1,
         },
       ],
-      mode: 'payment',
+      mode: 'subscription',
       success_url: `${YOUR_DOMAIN}/payment-success`,
       cancel_url: `${YOUR_DOMAIN}/payment-cancel`,
       automatic_tax: {enabled: true},
