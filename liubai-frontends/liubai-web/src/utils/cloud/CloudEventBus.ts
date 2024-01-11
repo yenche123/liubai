@@ -50,7 +50,9 @@ class CloudEventBus {
       [newV1, newV2],
       [oldV1, oldV2]
     ) => {
-      if(newV2 === "hidden") return
+
+      // 当前分页被隐藏，并且非刚启动时（刚启动时，oldV2 为 undefined）
+      if(newV2 === "hidden" && oldV2) return
       if(!newV1.isOnline) return
 
       if(!_this.isTimeCalibrated) {
