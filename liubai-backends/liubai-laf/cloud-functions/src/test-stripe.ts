@@ -39,6 +39,9 @@ export async function main(ctx: FunctionContext) {
     return { code: "E5001", errMsg: "create session err", err }
   }
 
+  console.log("看一下 session: ")
+  console.log(session)
+  console.log(" ")
 
   return { code: "0000", data: { session } }
 }

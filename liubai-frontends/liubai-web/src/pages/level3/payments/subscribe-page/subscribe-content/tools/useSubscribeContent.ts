@@ -12,7 +12,11 @@ export function useSubscribeContent() {
     const res = await liuReq.request(url)
     console.log("res: ")
     console.log(res)
-
+    if(res.code !== "0000") return
+    const stripeUrl = res.data?.session?.url
+    if(stripeUrl) {
+      location.href = stripeUrl
+    }
   }
 
 

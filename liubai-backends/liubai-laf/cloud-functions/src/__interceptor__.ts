@@ -194,7 +194,7 @@ function checkEntry(ctx: FunctionContext, funcName: string) {
     for(let i=0; i<X_LIU_NORMAL.length; i++) {
       const v = X_LIU_NORMAL[i]
       const data = body[v]
-      console.log(`${v}: `, data)
+      // console.log(`${v}: `, data)
       if(!data) return false
     }
   }
@@ -204,7 +204,7 @@ function checkEntry(ctx: FunctionContext, funcName: string) {
     console.log(" ")
     return false
   }
-  console.log(" ")
+  // console.log(" ")
 
   // 3. 是否无需 token
   const allowNoToken = ALLOW_WITHOUT_TOKEN.includes(funcName)
