@@ -9,12 +9,12 @@
   "author": "yenche123",
   "license": "ISC",
   "dependencies": {
-    "@lafjs/cloud": "1.0.0-beta.7",
+    "@lafjs/cloud": "1.0.0-beta.14",
     "geoip-lite": "^1.4.9",
-    "google-auth-library": "^9.4.1",
+    "google-auth-library": "^9.4.2",
     "jsonwebtoken": "^9.0.2",
-    "resend": "^2.0.0",
-    "stripe": "^14.11.0"
+    "resend": "^2.1.0",
+    "stripe": "^14.12.0"
   },
   "devDependencies": {
     "@types/geoip-lite": "^1.4.4",
