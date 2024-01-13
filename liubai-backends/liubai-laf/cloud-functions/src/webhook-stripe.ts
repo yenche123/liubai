@@ -9,13 +9,8 @@ export async function main(ctx: FunctionContext) {
   const body = ctx.body
   const sig = ctx.headers?.['stripe-signature']
 
-  //@ts-expect-error: rawBody
-  const rawBody = ctx.request.rawBody
-
   console.log("看一下 body:")
   console.log(body)
-  console.log("看一下 rawBody: ")
-  console.log(rawBody)
   console.log("看一下 sig:")
   console.log(sig)
 
@@ -27,7 +22,8 @@ export async function main(ctx: FunctionContext) {
   return res
 }
 
-
+// 【重要】
+// 由于 Laf 获取不到 rawBody 所以直接凭 event id 去询问 stripe event 是什么
 async function handle_stripe(
   ctx: FunctionContext,
   body: Record<string, any>,
