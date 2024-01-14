@@ -1,6 +1,7 @@
 // 全局类型
 // Table_ 开头，表示为数据表结构
 // Shared_ 开头，表示为全局缓存 cloud.shared 所涉及的结构
+import Stripe from "stripe"
 
 export async function main(ctx: FunctionContext) {
   console.log("do nothing")
@@ -18,6 +19,11 @@ export type PartialSth<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
  * 把类型 T 中 特定的属性 K们 设置为必选的
  */
 export type RequireSth<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
+
+/** 在 mongodb 的 findOne 查询中，把一个 Table 类型的 _id 属性去除掉，
+ * 并且把其他所有属性设置为 partial
+ */
+export type MongoFilter<T> = Partial<Omit<T, "_id">>
 
 /*********************** 回调类型 **********************/
 export interface LiuRqReturn<T = Record<string, any>> {
@@ -441,10 +447,14 @@ export interface Table_Config extends BaseTable {
 
 }
 
+/** 临时凭证表的类型 */
+export type Table_Credential_Type =  "sms-code" | "email-code" | "scan-code"
+  | "users-select" | "stripe-checkout-session"
+
 /** 临时凭证表 */
 export interface Table_Credential extends BaseTable {
   credential: string
-  infoType: "sms-code" | "email-code" | "scan-code" | "users-select"
+  infoType: Table_Credential_Type
   expireStamp: number
 
   verifyNum?: number
@@ -456,6 +466,8 @@ export interface Table_Credential extends BaseTable {
   email_id?: string
 
   thirdData?: UserThirdData
+
+  stripeCheckoutSession?: Stripe.Checkout.Session
 }
 
 /** 订阅方案表 */
