@@ -478,13 +478,34 @@ export interface Table_Subscription extends BaseTable {
   title: string
   desc: string
   stripe?: SubscriptionStripe
-  price_CNY: string
-  price_USD: string
-  price_EUR: string
-  price_HKD: string
-  price_JPY: string
-  price_NZD: string
-  price_TWD: string
+
+  // 以下价格是向用户在前端展示的价格，请使用用户能理解的常用单位
+  // 而非最终收费的单位
+  price_AUD?: string        // 比如 "$9.5"
+  price_CNY?: string        // 比如 "￥5"
+  price_USD?: string        // 比如 "$5.75"
+  price_EUR?: string        // 比如 "€5.50"
+  price_HKD?: string        // 比如 "$4.00"
+  price_JPY?: string        // 比如 "¥550"
+  price_NZD?: string        // 比如 "$5.75"
+  price_TWD?: string        // 比如 "150"
+}
+
+/** 订单表 */
+export interface Table_Order extends BaseTable {
+  order_id: string
+  user_id: string
+  oState: "OK" | "DEL_BY_USER"
+  orderStatus: "INIT" | "PAID" | "PAYING" | "CLOSED"
+  orderAmount: number
+  refundedAmount: number
+  currency: string         // 小写的货币代码
+  payChannel: "stripe" | "wechat" | "alipay"
+  orderType: "subscription" | "product"
+  subscription_id?: string
+  product_id?: string
+  expireStamp?: number
+  tradedStamp?: number
 }
 
 
