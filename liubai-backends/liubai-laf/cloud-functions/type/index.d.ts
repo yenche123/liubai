@@ -8,7 +8,7 @@ type LiuSwitch = "01" | "02" | undefined
 declare global {
   type FunctionContext = _FunctionContext
 
-  type ObjectId = _ObjectId
+  class ObjectId extends _ObjectId {}
   
   namespace NodeJS {
     interface ProcessEnv {
