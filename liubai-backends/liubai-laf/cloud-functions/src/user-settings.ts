@@ -1,6 +1,7 @@
 import cloud from '@lafjs/cloud'
 import { getUserInfos, verifyToken } from '@/common-util'
 import type { 
+  MongoFilter,
   Table_User, 
   LiuRqReturn,
   Res_UserSettings_Enter,
@@ -8,7 +9,7 @@ import type {
 } from './common-types'
 import { getNowStamp } from "@/common-time"
 
-const db = cloud.database()
+const db = cloud.mongo.db
 
 export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}
@@ -51,7 +52,7 @@ export async function handle_enter(
 
   // 2. 去记录用户访问了应用
   const now = getNowStamp()
-  const u: Partial<Table_User> = {
+  const u: MongoFilter<Table_User> = {
     lastEnterStamp: now,
     updatedStamp: now,
   }
@@ -62,9 +63,13 @@ export async function handle_enter(
     res1.data.new_serial = vRes.new_serial
     res1.data.new_token = vRes.new_token
   }
-  
-  db.collection("User").doc(user._id).update(u)
 
+  const col = db.collection<Table_User>("User")
+  col.updateOne(
+    { _id: user._id },
+    { $set: u },
+  )
+  
   return res1
 }
 
