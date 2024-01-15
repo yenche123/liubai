@@ -1,9 +1,10 @@
 import cloud from '@lafjs/cloud'
 import * as crypto from "crypto"
 import type { 
+  Partial_Id,
+  MongoFilter,
   Table_BlockList, 
   Table_Config, 
-  PartialSth,
   Shared_RSA_Key_Pair,
   Shared_ARS_Key_IV,
 } from "@/common-types"
@@ -27,25 +28,12 @@ async function initBlockedIPs() {
     isOn: "Y",
   }
   const list = await db.collection<Table_BlockList>("BlockList").find(w).toArray()
-  console.log("查看获取被屏蔽 ip 的结果: ")
-  console.log(list)
-
-  const firRes = list[0]
-  const ccc = firRes._id
-  console.log("看一下 ccc: ")
-  console.log(ccc)
-  console.log(" ")
-
   if(list.length < 1) {
     console.log("没有 ip 需要屏蔽.....")
     return true
   }
 
-  const ips = list.map(v => {
-    return v.value
-  })
-
-  console.log("去屏蔽这些 ips: ", ips)
+  const ips = list.map(v => v.value)
   cloud.shared.set(`liu-blocked-ips`, ips)
 
   return true
@@ -56,13 +44,13 @@ async function initBlockedIPs() {
  *  比如检查 publicKey 和 privateKey
 */
 async function initConfig() {
-  const list = await db.collection<Table_Config>("Config").find().toArray()
-
-  console.log("查询 Config 表的结果......")
+  const cursor = db.collection<Table_Config>("Config").find()
+  const list = await cursor.toArray()
+  console.log("看一下 list~~~~~~")
   console.log(list)
-  console.log(" ")
-
   let c = list[0]
+  const _id = c?._id
+  console.log("在这里看一下 _id: ", _id)
 
   // 若不存在任何配置
   if(!c) {
@@ -128,7 +116,7 @@ async function createConfig(
   const aesIV = aesIVBuffer.toString("base64")
   
   const now = getNowStamp()
-  let newCfg: PartialSth<Table_Config, "_id"> = {
+  let newCfg: Partial_Id<Table_Config> = {
     publicKey,
     privateKey,
     insertedStamp: now,
@@ -137,29 +125,31 @@ async function createConfig(
     aesIV,
   }
   if(oldCfg) {
-    newCfg = { ...newCfg, ...oldCfg }
+    newCfg = { ...newCfg, ...oldCfg, updatedStamp: now }
   }
   const oldId = newCfg._id
-  const col = db.collection("Config")
 
   if(oldId) {
     // 使用 set 修改数据
     delete newCfg._id
-    const res1 = await col.replaceOne({ _id: oldId }, newCfg)
-    console.log(`createConfig 使用 doc.set 去修改数据的结果.......`)
+    console.log("看一下 newCfg 到底是个啥鬼")
+    console.log(JSON.parse(JSON.stringify(newCfg)))
+    console.log("oldId: ", oldId)
+
+    const col_1 = db.collection<Table_Config>("Config")
+    const res1 = await col_1.replaceOne({ _id: oldId }, newCfg)
+    console.log(`createConfig 使用 replaceOne 去修改数据的结果.......`)
     console.log(res1)
     console.log(" ")
     newCfg._id = oldId
   }
   else {
     // 使用 add 去新增数据
-    const res2 = await col.insertOne(newCfg as Omit<Table_Config, "_id">)
-    console.log(`createConfig 使用col.add 去新增数据的结果.......`)
-    console.log(res2)
+    const col_2 = db.collection("Config")
+    const res2 = await col_2.insertOne(newCfg as MongoFilter<Table_Config>)
     const newObjectId = res2.insertedId
     const newId = newObjectId.toString()
-    console.log("newId: ", newId)
-    console.log(" ")
+    console.log("Config newId: ", newId)
     newCfg._id = newId
   }
 

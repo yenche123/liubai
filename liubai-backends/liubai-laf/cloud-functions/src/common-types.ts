@@ -25,6 +25,9 @@ export type RequireSth<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
  */
 export type MongoFilter<T> = Partial<Omit<T, "_id">>
 
+/** 在 mongodb 中，定义一个 _id 为可选属性的 Table (Collection) */
+export type Partial_Id<T extends BaseTable> = PartialSth<T, "_id">
+
 /*********************** 回调类型 **********************/
 export interface LiuRqReturn<T = Record<string, any>> {
   code: string
