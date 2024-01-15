@@ -1,12 +1,15 @@
 import { 
   FunctionContext as _FunctionContext
 } from "@lafjs/cloud"
+import { ObjectId as _ObjectId } from "mongodb"
 
 type LiuSwitch = "01" | "02" | undefined
 
 declare global {
   type FunctionContext = _FunctionContext
 
+  type ObjectId = _ObjectId
+  
   namespace NodeJS {
     interface ProcessEnv {
 

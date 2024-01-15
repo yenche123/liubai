@@ -13,6 +13,7 @@
     "geoip-lite": "^1.4.9",
     "google-auth-library": "^9.4.2",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.3.0",
     "resend": "^2.1.0",
     "stripe": "^14.12.0"
   },
