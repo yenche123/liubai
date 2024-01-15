@@ -266,6 +266,15 @@ export interface UserThirdData {
   github?: any
 }
 
+/** 用户的订阅方案 */
+export interface UserSubscription {
+  isOn: BaseIsOn
+  plan: string
+  isLifelong: boolean
+  createdStamp: number
+  expireStamp?: number
+}
+
 export interface LiuSpaceAndMember {
   // 关于 member 的信息
   memberId: string
@@ -325,6 +334,7 @@ export interface Table_User extends BaseTable {
   language: LocalLanguage
   systemLanguage?: string
   lastEnterStamp?: number
+  subscription?: UserSubscription
 }
 
 /** Workspace 表 */
