@@ -6,20 +6,10 @@
 
 ## 碎片记录
 
-### 如何生成后端 RSA 加解密密钥对（测试用）
 
-1. 请先安装 `node.js`
+### cloud.mongo.db vs cloud.database()
 
-2. 全局安装 `typescript` 和 `ts-node`
-
-3. 由于直接在 Laf 的网站后台的 `集合` 面板里新建数据时，新建出来的数据并非 ObjectId 的，为确保统一，在云函数里新建数据依然使用旧版而非 mongodb 原生的 api
-
-```
-pnpm i -g typescript
-pnpm i -g ts-node
-```
-
-4. 安装依赖 `pnpm i`，再运行命令 `ts-node create-rsa`
+由于直接在 Laf 的网站后台的 `集合` 面板里新建数据时，新建出来的数据并非 ObjectId 的，为确保统一，在云函数里新建数据依然使用旧版而非 mongodb 原生的 api
 
 
 ### Laf
