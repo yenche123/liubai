@@ -1,11 +1,12 @@
 import cloud from "@lafjs/cloud"
+
 const db = cloud.mongo.db
+const gShared = cloud.shared
+
+function isObjectId(id: string | ObjectId): boolean {
+  return id instanceof ObjectId;
+}
 
 export async function main(ctx: FunctionContext) {
-
-  const res = await db.collection("Book").find().toArray()
-  console.log(res)
-
-  return true
-
+  return "nothing"
 }

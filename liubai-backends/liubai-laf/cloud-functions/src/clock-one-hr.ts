@@ -3,8 +3,7 @@
 import cloud from '@lafjs/cloud'
 import { getNowStamp, HOUR } from "@/common-time"
 
-const db = cloud.database()
-const _ = db.command
+const db = cloud.mongo.db
 
 export async function main(ctx: FunctionContext) {
 
@@ -20,10 +19,13 @@ export async function main(ctx: FunctionContext) {
 // 去清除已经过期超过 1hr 的凭证
 async function clearExpiredCredentials() {
   const ONE_HR_AGO = getNowStamp() - HOUR
-  const w = {
-    expireStamp: _.lte(ONE_HR_AGO),
+  const q = {
+    expireStamp: {
+      $lte: ONE_HR_AGO
+    }
   }
-  const res = await db.collection("Credential").where(w).remove({ multi: true })
+  const col = db.collection("Credential")
+  const res = await col.deleteMany(q)
   // console.log("clearExpiredCredentials res:")
   // console.log(res)
 
