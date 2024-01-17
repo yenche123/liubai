@@ -9,8 +9,9 @@ import type {
   Shared_ARS_Key_IV,
 } from "@/common-types"
 import { getNowStamp } from "@/common-time"
+import { getDocAddId } from '@/common-util'
 
-const db = cloud.mongo.db
+const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
   console.log("__init__ 开始运行............")
@@ -27,7 +28,10 @@ async function initBlockedIPs() {
     type: "ip",
     isOn: "Y",
   }
-  const list = await db.collection<Table_BlockList>("BlockList").find(w).toArray()
+  const col = db.collection("BlockList")
+  const q = col.where(w)
+  const res = await q.get<Table_BlockList>()
+  const list = res.data
   if(list.length < 1) {
     console.log("没有 ip 需要屏蔽.....")
     return true
@@ -44,13 +48,10 @@ async function initBlockedIPs() {
  *  比如检查 publicKey 和 privateKey
 */
 async function initConfig() {
-  const cursor = db.collection<Table_Config>("Config").find()
-  const list = await cursor.toArray()
-  console.log("看一下 list~~~~~~")
-  console.log(list)
+  const col = db.collection("Config")
+  const res = await col.get<Table_Config>()
+  const list = res.data
   let c = list[0]
-  const _id = c?._id
-  console.log("在这里看一下 _id: ", _id)
 
   // 若不存在任何配置
   if(!c) {
@@ -132,24 +133,16 @@ async function createConfig(
   if(oldId) {
     // 使用 set 修改数据
     delete newCfg._id
-    console.log("看一下 newCfg 到底是个啥鬼")
-    console.log(JSON.parse(JSON.stringify(newCfg)))
-    console.log("oldId: ", oldId)
-
-    const col_1 = db.collection<Table_Config>("Config")
-    const res1 = await col_1.replaceOne({ _id: oldId }, newCfg)
-    console.log(`createConfig 使用 replaceOne 去修改数据的结果.......`)
-    console.log(res1)
-    console.log(" ")
+    const col_1 = db.collection("Config")
+    const q = col_1.where({ _id: oldId })
+    const res1 = await q.update(newCfg)
     newCfg._id = oldId
   }
   else {
     // 使用 add 去新增数据
     const col_2 = db.collection("Config")
-    const res2 = await col_2.insertOne(newCfg as MongoFilter<Table_Config>)
-    const newObjectId = res2.insertedId
-    const newId = newObjectId.toString()
-    console.log("Config newId: ", newId)
+    const res2 = await col_2.add(newCfg)
+    const newId = getDocAddId(res2)
     newCfg._id = newId
   }
 

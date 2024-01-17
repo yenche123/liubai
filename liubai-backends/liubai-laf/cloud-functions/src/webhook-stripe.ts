@@ -6,7 +6,7 @@ import type {
 } from "@/common-types"
 import cloud from "@lafjs/cloud"
 
-const db = cloud.mongo.db
+const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
 
@@ -150,18 +150,19 @@ async function handleCheckoutSessionExpired(
     credential: obj.id,
   }
 
-  const col = db.collection<Table_Credential>("Credential")
-  const res = await col.findOne(w)
-  console.log("handleCheckoutSessionExpired findOne 查询结果.........")
+  const col = db.collection("Credential")
+  const q = col.where(w)
+  const res = await q.getOne<Table_Credential>()
+  console.log("handleCheckoutSessionExpired q.getOne 查询结果.........")
   console.log(res)
-
-  const _id = res?._id
+  const _id = res.data?._id
   if(!_id) {
     return { code: "0000" }
   }
 
-  const res2 = await col.deleteOne({ _id })
-  console.log("查看 Credential 被删除的结果.....")
+  const q2 = col.where({ _id })
+  const res2 = await q2.remove()
+  console.log("查看 Credential 被删除的结果 用旧版写法.....")
   console.log(res2)
 
   return { code: "0000" }

@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { verifyToken } from '@/common-util';
 import type { Table_User } from "@/common-types";
 
-const db = cloud.mongo.db
+const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}

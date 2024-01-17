@@ -114,18 +114,18 @@ export function getIp(ctx: FunctionContext) {
 export function getDocAddId(res: any) {
   if(!res) {
     console.log("getDocAddId() the res has not existed")
-    return null
+    return
   }
 
   const _id = res.id
   if(!_id) {
     console.log("getDocAddId() _id has not existed")
-    return null
+    return
   }
 
   if(typeof _id !== "string") {
     console.log("getDocAddId() _id is not string")
-    return null
+    return
   }
 
   return _id

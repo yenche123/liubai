@@ -6,10 +6,10 @@ import type {
   LiuRqReturn,
   Res_UserSettings_Enter,
   VerifyTokenRes,
-} from './common-types'
+} from '@/common-types'
 import { getNowStamp } from "@/common-time"
 
-const db = cloud.mongo.db
+const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}
@@ -64,11 +64,8 @@ export async function handle_enter(
     res1.data.new_token = vRes.new_token
   }
 
-  const col = db.collection<Table_User>("User")
-  col.updateOne(
-    { _id: user._id },
-    { $set: u },
-  )
+  const q = db.collection("User").where({ _id: user._id })
+  q.update(u)
   
   return res1
 }
