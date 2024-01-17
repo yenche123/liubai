@@ -10,7 +10,8 @@ export function useFormatClear(props: ToolBarProps) {
     const bold = editor.isActive("bold")
     const italic = editor.isActive("italic")
     const strike = editor.isActive("strike")
-    return bold || italic || strike
+    const code = editor.isActive("code")
+    return bold || italic || strike || code
   })
 
   // 点击清除样式
@@ -19,7 +20,7 @@ export function useFormatClear(props: ToolBarProps) {
     const editor = props.editor
     if(!editor) return
     try {
-      editor.chain().focus().unsetBold().unsetItalic().unsetStrike().run()
+      editor.chain().focus().unsetBold().unsetItalic().unsetStrike().unsetCode().run()
     }
     catch(err) {
       console.warn("清除样式发生错误........")
