@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@lafjs/cloud": "1.0.0-beta.14",
+    "date-fns": "^3.2.0",
     "geoip-lite": "^1.4.9",
     "google-auth-library": "^9.4.2",
     "jsonwebtoken": "^9.0.2",

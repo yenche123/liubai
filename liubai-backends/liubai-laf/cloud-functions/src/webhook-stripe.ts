@@ -3,8 +3,12 @@ import type {
   LiuRqReturn,
   Table_Credential,
   MongoFilter,
+  Table_User,
+  SubscriptionPaymentCircle,
 } from "@/common-types"
 import cloud from "@lafjs/cloud"
+import { getNowStamp, getServerTimezone, formatTimezone } from "@/common-time"
+import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
 
 const db = cloud.database()
 
@@ -112,10 +116,31 @@ async function handleStripeEvent(
     res = await handleCheckoutSessionExpired(obj)
   }
   else if(tp === "checkout.session.async_payment_succeeded") {
-
+    const obj = evt.data.object
   }
   else if(tp === "checkout.session.async_payment_failed") {
-    
+    const obj = evt.data.object
+  }
+  else if(tp === "invoice.payment_succeeded") {
+    const obj = evt.data.object
+  }
+  else if(tp === "charge.succeeded") {
+    const obj = evt.data.object
+  }
+  else if(tp === "customer.subscription.created") {
+    const obj = evt.data.object
+  }
+  else if(tp === "customer.subscription.deleted") {
+    const obj = evt.data.object
+  }
+  else if(tp === "customer.subscription.paused") {
+    const obj = evt.data.object
+  }
+  else if(tp === "customer.subscription.resumed") {
+    const obj = evt.data.object
+  }
+  else if(tp === "customer.subscription.trial_will_end") {
+    const obj = evt.data.object
   }
   else {
     console.warn("出现未定义处理函数的事件")
@@ -128,18 +153,130 @@ async function handleStripeEvent(
 }
 
 
-/** 处理 checkout.session.completed 结账会话已完成 */
+
+
+
+/** 处理 checkout.session.completed 结账会话已完成 
+ * 创建订单可能不会在这个周期里，而是在 invoice.payment_succeeded 周期里
+*/
 async function handleCheckoutSessionCompleted(
   obj: Stripe.Checkout.Session
 ) {
-
-  console.log("查看当前 obj: ")
   console.log(obj)
+  const session_id = obj.id
+
+  // 0. 查看 session 是否已支付
+  const { payment_status, status, subscription } = obj
+  if(payment_status === "unpaid" || status !== "complete") {
+    console.log("当前 payment_status 或 status 不符合预期.........")
+    return { code: "0000" }
+  }
+
+  // 1. 去查询 Credential 
+  const w: Partial<Table_Credential> = {
+    infoType: "stripe-checkout-session",
+    credential: session_id,
+  }
+  const col = db.collection("Credential")
+  const q = col.where(w)
+  const res = await q.getOne<Table_Credential>()
+  console.log("handleCheckoutSessionCompleted q.getOne 查询结果.........")
+  console.log(res)
+  const cred = res.data
+  const c_id = cred?._id
+  const userId = cred?.userId
+  const meta_data = cred?.meta_data
+  const payment_circle = meta_data?.payment_circle
+  const payment_timezone = meta_data?.payment_timezone
+  if(!cred || !c_id) {
+    // 订单已被创建，无需再执行其他操作
+    return { code: "0000" }
+  }
+  if(!userId) {
+    console.warn("there is no userId in the credential")
+    return { code: "E5001" }
+  }
+  if(!payment_circle) {
+    console.warn("there is no meta_data.payment_circle in the credential")
+    return { code: "E5001" }
+  }
+  
+
+  // 2. to query the user to make sure that 
+  // there is no doubule charged during short term
+  const col_2 = db.collection("User")
+  const res2 = await col_2.doc(userId).get<Table_User>()
+  const user = res2.data
+  if(!user) {
+    console.warn("the user does not exist.......")
+    return { code: "E5001" }
+  }
+  const oldSubscription = user.subscription
+  const chargedStamp = oldSubscription?.chargedStamp ?? 1
+  const now = getNowStamp()
+  const diff_1 = now - chargedStamp
+  if(diff_1 < 5000) {
+    console.warn("5s 内被重复充值，拒绝继续执行........")
+    return { code: "E4003", errMsg: "pay too much" }
+  }
+
+  // 3. to update user
+
+  // 4. to create a order
+
+  // 5. to delete the credential
 
   
 }
 
-/** 处理 checkout.session.expired 结账会话已完成 */
+
+/** to calculate a new expireStamp */
+function getNewExpireStamp(
+  payment_circle: SubscriptionPaymentCircle,
+  payment_timezone?: string,
+  oldExpireStamp?: number,
+) {
+  const now = getNowStamp()
+  let startStamp = oldExpireStamp ? oldExpireStamp : now
+  if(startStamp < now) {
+    startStamp = now
+  }
+
+  const startDate = new Date(startStamp)
+  let endDate = new Date(startStamp)
+  if(payment_circle === "monthly") {
+    endDate = addMonths(startDate, 1)
+  }
+  else if(payment_circle === "yearly") {
+    endDate = addYears(startDate, 1)
+  }
+
+  // set endDate to 23:59:59 for user's timezone
+  const userTimezone = formatTimezone(payment_timezone)
+  // get what o'clock for user's timezone
+  const userHrs = getHoursOfSpecificTimezone(userTimezone)
+  const diffHrs = 23 - userHrs
+  if(diffHrs !== 0) {
+    endDate = addHours(endDate, diffHrs)
+  }
+  // turn the minutes & seconds into 59 and 59
+  endDate = date_fn_set(endDate, { minutes: 59, seconds: 59, milliseconds: 0 })
+  
+  const endStamp = endDate.getTime()
+  return endStamp
+}
+
+/** to get the current hours of a specific timezone */
+function getHoursOfSpecificTimezone(timezone: number) {
+  const serverTimezone = getServerTimezone() 
+  const serverHrs = (new Date()).getHours()
+  const diffTimezone = timezone - serverTimezone
+  const hrs = (serverHrs + diffTimezone) % 24 
+  return hrs
+}
+
+
+/** 处理 checkout.session.expired 结账会话已过期 */
 async function handleCheckoutSessionExpired(
   obj: Stripe.Checkout.Session
 ) {

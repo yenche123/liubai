@@ -4,6 +4,9 @@ dependencies:
   '@lafjs/cloud':
     specifier: 1.0.0-beta.14
     version: 1.0.0-beta.14
+  date-fns:
+    specifier: ^3.2.0
+    version: 3.2.0
   geoip-lite:
     specifier: ^1.4.9
     version: 1.4.9
@@ -1483,6 +1486,10 @@ packages:
       lodash.clonedeep: 4.5.0
       lodash.set: 4.3.2
       lodash.unset: 4.5.2
+    dev: false
+
+  /date-fns@3.2.0:
+    resolution: {integrity: sha512-E4KWKavANzeuusPi0jUjpuI22SURAznGkx7eZV+4i6x2A+IZxAMcajgkvuDAU1bg40+xuhW1zRdVIIM/4khuIg==}
     dev: false
 
   /debug@4.3.4:

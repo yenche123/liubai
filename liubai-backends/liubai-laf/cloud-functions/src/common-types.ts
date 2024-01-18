@@ -274,7 +274,8 @@ export interface UserSubscription {
   isOn: BaseIsOn
   plan: string
   isLifelong: boolean
-  createdStamp: number
+  createdStamp: number     // 第一次创建订阅的时间戳
+  chargedStamp?: number    // 最近一次付费的时间戳，不排除免费开启订阅，所以此项选填
   expireStamp?: number
 }
 
@@ -308,6 +309,13 @@ export interface ServiceSendEmailsParam {
 export interface SubscriptionStripe {
   isOn: BaseIsOn
   price_id: string
+}
+
+export type SubscriptionPaymentCircle = "monthly" | "yearly"
+
+export interface CredentialMetaData {
+  payment_circle?: SubscriptionPaymentCircle
+  payment_timezone?: string
 }
 
 /*********************** 数据表类型 **********************/
@@ -481,12 +489,13 @@ export interface Table_Credential extends BaseTable {
   thirdData?: UserThirdData
 
   stripeCheckoutSession?: Stripe.Checkout.Session
+  meta_data?: CredentialMetaData
 }
 
 /** 订阅方案表 */
 export interface Table_Subscription extends BaseTable {
   isOn: BaseIsOn
-  payment_circle: "monthly" | "yearly"
+  payment_circle: SubscriptionPaymentCircle
   badge: string
   title: string
   desc: string
