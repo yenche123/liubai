@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import liuUtil from '~/utils/liu-util';
 import type { ToolBarEmits } from "./tools/types"
 import { toolbarProps } from './tools/types';
-import { useFormatClear } from './tools/useFormatClear';
+import { useFormatClear } from '../../tools/useFormatClear';
 import { useTbInputElements } from './tools/useTbInputElements';
 
 const props = defineProps(toolbarProps)

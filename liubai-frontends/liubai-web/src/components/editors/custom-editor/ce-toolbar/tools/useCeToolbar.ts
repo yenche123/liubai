@@ -5,6 +5,7 @@ import cui from "~/components/custom-ui";
 import type { CetEmit, CetProps } from "./types";
 import { svBottomUpKey, svScollingKey } from "~/utils/provide-keys";
 import valTool from "~/utils/basic/val-tool";
+import { useFormatClear } from "../../../tools/useFormatClear"
 
 export function useCeToolbar(props: CetProps, emit: CetEmit) {
   const svBottomUp = inject(svBottomUpKey)
@@ -15,16 +16,6 @@ export function useCeToolbar(props: CetProps, emit: CetEmit) {
   const expanded = computed(() => {
     if(sidebarStatus.value === "fullscreen") return true
     return false
-  })
-  const showFormatClear = computed(() => {
-    const editor = props.editor
-    if(!editor) return false
-    const bold = editor.isActive("bold")
-    const italic = editor.isActive("italic")
-    const strike = editor.isActive("strike")
-    const code = editor.isActive("code")
-    
-    return bold || italic || strike || code
   })
 
   const onTapTag = async () => {
@@ -69,19 +60,10 @@ export function useCeToolbar(props: CetProps, emit: CetEmit) {
     layout.$patch({ sidebarStatus: newV })
   }
 
-  const onTapClearFormat = () => {
-    if(!showFormatClear.value) return
-    const editor = props.editor
-    if(!editor) return
-    try {
-      editor.chain().focus().unsetBold().unsetItalic().unsetStrike().unsetCode().run()
-    }
-    catch(err) {
-      console.warn("清除样式发生错误........")
-      console.log(err)
-      console.log(" ")
-    }
-  }
+  const {
+    showFormatClear,
+    onTapClearFormat
+  } = useFormatClear(props)
 
   return { 
     expanded, 
