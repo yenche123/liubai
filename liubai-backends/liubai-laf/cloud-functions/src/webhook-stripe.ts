@@ -109,38 +109,47 @@ async function handleStripeEvent(
   let res: LiuRqReturn = { code: "E4000" }
   if(evt.type === "checkout.session.completed") {
     const obj = evt.data.object
-    await handleCheckoutSessionCompleted(obj)
+    await handle_session_completed(obj)
   }
   else if(tp === "checkout.session.expired") {
     const obj = evt.data.object
-    res = await handleCheckoutSessionExpired(obj)
+    res = await handle_session_expired(obj)
   }
   else if(tp === "checkout.session.async_payment_succeeded") {
     const obj = evt.data.object
+    handle_session_async_py_succeeded(obj)
   }
   else if(tp === "checkout.session.async_payment_failed") {
     const obj = evt.data.object
+    handle_session_async_py_failed(obj)
   }
   else if(tp === "invoice.payment_succeeded") {
     const obj = evt.data.object
+    handle_invoice_py_succeeded(obj)
   }
   else if(tp === "charge.succeeded") {
     const obj = evt.data.object
+    handle_charge_succeeded(obj)
   }
   else if(tp === "customer.subscription.created") {
     const obj = evt.data.object
+    handle_subscription_created(obj)
   }
   else if(tp === "customer.subscription.deleted") {
     const obj = evt.data.object
+    handle_subscription_deleted(obj)
   }
   else if(tp === "customer.subscription.paused") {
     const obj = evt.data.object
+    handle_subscription_paused(obj)
   }
   else if(tp === "customer.subscription.resumed") {
     const obj = evt.data.object
+    handle_subscription_resumed(obj)
   }
   else if(tp === "customer.subscription.trial_will_end") {
     const obj = evt.data.object
+    handle_subscription_twe(obj)
   }
   else {
     console.warn("出现未定义处理函数的事件")
@@ -152,14 +161,71 @@ async function handleStripeEvent(
   return res
 }
 
+async function handle_session_async_py_succeeded(
+  obj: Stripe.Checkout.Session,
+) {
+  console.log(obj)
+}
 
 
+async function handle_session_async_py_failed(
+  obj: Stripe.Checkout.Session,
+) {
+  console.log(obj)
+}
+
+async function handle_invoice_py_succeeded(
+  obj: Stripe.Invoice
+) {
+  console.log(obj)
+}
+
+
+async function handle_charge_succeeded(
+  obj: Stripe.Charge,
+) {
+  console.log(obj)
+}
+
+async function handle_subscription_created(
+  obj: Stripe.Subscription,
+) {
+  console.log(obj)
+}
+
+async function handle_subscription_paused(
+  obj: Stripe.Subscription,
+) {
+  console.log(obj)
+}
+
+async function handle_subscription_resumed(
+  obj: Stripe.Subscription,
+) {
+  console.log(obj)
+  
+}
+
+async function handle_subscription_deleted(
+  obj: Stripe.Subscription,
+) {
+  console.log(obj)
+  
+}
+
+/** trail will end */
+async function handle_subscription_twe(
+  obj: Stripe.Subscription,
+) {
+  console.log(obj)
+  
+}
 
 
 /** 处理 checkout.session.completed 结账会话已完成 
  * 创建订单可能不会在这个周期里，而是在 invoice.payment_succeeded 周期里
 */
-async function handleCheckoutSessionCompleted(
+async function handle_session_completed(
   obj: Stripe.Checkout.Session
 ) {
   console.log(obj)
@@ -180,7 +246,7 @@ async function handleCheckoutSessionCompleted(
   const col = db.collection("Credential")
   const q = col.where(w)
   const res = await q.getOne<Table_Credential>()
-  console.log("handleCheckoutSessionCompleted q.getOne 查询结果.........")
+  console.log("handle_session_completed q.getOne 查询结果.........")
   console.log(res)
   const cred = res.data
   const c_id = cred?._id
@@ -277,7 +343,7 @@ function getHoursOfSpecificTimezone(timezone: number) {
 
 
 /** 处理 checkout.session.expired 结账会话已过期 */
-async function handleCheckoutSessionExpired(
+async function handle_session_expired(
   obj: Stripe.Checkout.Session
 ) {
 
@@ -290,7 +356,7 @@ async function handleCheckoutSessionExpired(
   const col = db.collection("Credential")
   const q = col.where(w)
   const res = await q.getOne<Table_Credential>()
-  console.log("handleCheckoutSessionExpired q.getOne 查询结果.........")
+  console.log("handle_session_expired q.getOne 查询结果.........")
   console.log(res)
   const _id = res.data?._id
   if(!_id) {
