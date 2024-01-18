@@ -107,6 +107,12 @@ function toSelect(
   if(!added && item2.tagId) {
     addRecent(hsirData, item2.tagId)
   }
+
+  // 若还没被添加，并且输入框的文字与其相同，那么清空输入框
+  if(!added && item2.text === hsirData.inputTxt) {
+    hsirData.inputTxt = ""
+  }
+
 }
 
 function toListenKeyboard(
