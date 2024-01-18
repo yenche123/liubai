@@ -118,7 +118,7 @@ const { t } = useI18n()
   border-radius: 20px;
   position: relative;
   will-change: transform;
-  transform: translateY(100%);
+  transform: translateY(50%);
   opacity: 0;
   background-color: var(--card-bg);
   overflow: hidden;
