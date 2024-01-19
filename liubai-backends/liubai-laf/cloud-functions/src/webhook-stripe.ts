@@ -127,6 +127,14 @@ async function handleStripeEvent(
     const obj = evt.data.object
     handle_invoice_py_succeeded(obj)
   }
+  else if(tp === "charge.refund.updated") {
+    const obj = evt.data.object
+    handle_charge_refund_updated(obj)
+  }
+  else if(tp === "charge.refunded") {
+    const obj = evt.data.object
+    handle_charge_refunded(obj)
+  }
   else if(tp === "charge.succeeded") {
     const obj = evt.data.object
     handle_charge_succeeded(obj)
@@ -151,6 +159,10 @@ async function handleStripeEvent(
     const obj = evt.data.object
     handle_subscription_twe(obj)
   }
+  else if(tp === "customer.subscription.updated") {
+    const obj = evt.data.object
+    handle_subscription_updated(obj)
+  }
   else {
     console.warn("出现未定义处理函数的事件")
     console.log(evt)
@@ -164,6 +176,7 @@ async function handleStripeEvent(
 async function handle_session_async_py_succeeded(
   obj: Stripe.Checkout.Session,
 ) {
+  console.warn("似乎 session 异步支付成功了")
   console.log(obj)
 }
 
@@ -171,12 +184,30 @@ async function handle_session_async_py_succeeded(
 async function handle_session_async_py_failed(
   obj: Stripe.Checkout.Session,
 ) {
+  console.warn("似乎 session 异步支付失败了")
   console.log(obj)
 }
 
 async function handle_invoice_py_succeeded(
   obj: Stripe.Invoice
 ) {
+  console.warn("似乎 发票 付款成功了")
+  console.log(obj)
+}
+
+
+async function handle_charge_refund_updated(
+  obj: Stripe.Refund,
+) {
+  console.warn("似乎 有退款信息 被更新......")
+  console.log(obj)
+  
+}
+
+async function handle_charge_refunded(
+  obj: Stripe.Charge,
+) {
+  console.warn("似乎 有收款 被退款（即使是部分退款，也会触发）")
   console.log(obj)
 }
 
@@ -184,24 +215,28 @@ async function handle_invoice_py_succeeded(
 async function handle_charge_succeeded(
   obj: Stripe.Charge,
 ) {
+  console.warn("似乎 索取费用 成功了")
   console.log(obj)
 }
 
 async function handle_subscription_created(
   obj: Stripe.Subscription,
 ) {
+  console.warn("似乎 订阅 被创建了")
   console.log(obj)
 }
 
 async function handle_subscription_paused(
   obj: Stripe.Subscription,
 ) {
+  console.warn("似乎 订阅 被暂停了")
   console.log(obj)
 }
 
 async function handle_subscription_resumed(
   obj: Stripe.Subscription,
 ) {
+  console.warn("似乎 订阅 被恢复了")
   console.log(obj)
   
 }
@@ -209,14 +244,30 @@ async function handle_subscription_resumed(
 async function handle_subscription_deleted(
   obj: Stripe.Subscription,
 ) {
+  console.warn("似乎 订阅 被删除了")
   console.log(obj)
   
 }
 
-/** trail will end */
+/** trial will end 
+ * 在订阅试用期计划结束前三天发生，或者在试用立即结束时发生（使用 trial_end=now ）。
+*/
 async function handle_subscription_twe(
   obj: Stripe.Subscription,
 ) {
+  console.warn("似乎 订阅 试用即将到期")
+  console.log(obj)
+  
+}
+
+
+/** trial will end 
+ * 当订阅信息被更新时
+*/
+async function handle_subscription_updated(
+  obj: Stripe.Subscription,
+) {
+  console.warn("似乎 订阅 发生更新")
   console.log(obj)
   
 }
@@ -228,6 +279,7 @@ async function handle_subscription_twe(
 async function handle_session_completed(
   obj: Stripe.Checkout.Session
 ) {
+  console.warn("似乎 session 被完成了!")
   console.log(obj)
   const session_id = obj.id
 
@@ -346,6 +398,8 @@ function getHoursOfSpecificTimezone(timezone: number) {
 async function handle_session_expired(
   obj: Stripe.Checkout.Session
 ) {
+  console.warn("似乎 session 被过期了!")
+  console.log(obj)
 
   // 1. 去把 Credential 里寻找该行数据
   const w: MongoFilter<Table_Credential> = {
