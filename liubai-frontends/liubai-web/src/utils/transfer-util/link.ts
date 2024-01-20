@@ -147,6 +147,7 @@ function _innerParse(
 
     const startIdx = match.index
     if(startIdx === undefined) continue
+    if(!mTxt) continue
     const endIdx = startIdx + mLen
     const obj: TipTapJSONContent = {
       type: "text",
@@ -159,7 +160,7 @@ function _innerParse(
       ]
     }
 
-    if(startIdx > 0) {
+    if(startIdx > 0 && tmpEndIdx < startIdx) {
       const prevLetter = text[startIdx - 1]
       if(forType === "url" || forType === "email") {
         if(prevLetter === "@" || prevLetter === "#") continue

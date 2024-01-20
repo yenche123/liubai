@@ -7,11 +7,16 @@ import { listToText } from "./text"
 import { listToMarkdown } from "./markdown"
 import type { ListToMdOpt } from "./markdown"
 import { LiuFileStore } from "~/types"
+import valTool from "../basic/val-tool"
 
 function tiptapToLiu(list: TipTapJSONContent[]): LiuContent[] {
   list = trimJSONContent(list)
   
+  // console.log("list 1: ")
+  // console.log(valTool.copyObject(list))
   list = equipLink(list)
+  // console.log("list 2: ")
+  // console.log(valTool.copyObject(list))
 
   // 开始过滤掉未定义的标签
   const newList = filterNotLiuType(list)
