@@ -274,6 +274,7 @@ export interface UserSubscription {
   isOn: BaseIsOn
   plan: string
   isLifelong: boolean
+  autoRecharge?: boolean   // 是否开启自动续费，当为 undefined 表示不得而知
   createdStamp: number     // 第一次创建订阅的时间戳
   chargedStamp?: number    // 最近一次付费的时间戳，不排除免费开启订阅，所以此项选填
   expireStamp?: number
