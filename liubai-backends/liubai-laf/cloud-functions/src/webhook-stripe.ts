@@ -86,8 +86,6 @@ async function retrieveEvent(
   const id = ctx.body?.id as string
   try {
     const event = await stripe.events.retrieve(id)
-    console.log("看一下 retrieveEvent 的查询结果......")
-    console.log(event)
     return { event }
   }
   catch(err) {
@@ -163,6 +161,36 @@ async function handleStripeEvent(
     const obj = evt.data.object
     handle_subscription_updated(obj)
   }
+  else if(tp === "payment_intent.amount_capturable_updated") {
+    // PaymentIntent 可捕获的金额发生更新
+    const obj = evt.data.object
+    handle_pi_amount_capturable_updated(obj)
+  }
+  else if(tp === "payment_intent.canceled") {
+    // PaymentIntent 已取消
+    const obj = evt.data.object
+    handle_pi_canceled(obj)
+  }
+  else if(tp === "payment_intent.processing") {
+    // PaymentIntent 开始进行处理
+    const obj = evt.data.object
+    handle_pi_processing(obj)
+  }
+  else if(tp === "payment_intent.requires_action") {
+    // PaymentIntent 过渡到 requires_action 状态时
+    const obj = evt.data.object
+    handle_pi_requires_action(obj)
+  }
+  else if(tp === "payment_intent.succeeded") {
+    // PaymentIntent 已被完成支付
+    const obj = evt.data.object
+    handle_pi_succeeded(obj)
+  }
+  else if(tp === "payment_intent.payment_failed") {
+    // PaymentIntent 尝试 "创建支付方法或支付" 失败时
+    const obj = evt.data.object
+    handle_pi_payment_failed(obj)
+  }
   else {
     console.warn("出现未定义处理函数的事件")
     console.log(evt)
@@ -173,13 +201,57 @@ async function handleStripeEvent(
   return res
 }
 
+
+async function handle_pi_amount_capturable_updated(
+  obj: Stripe.PaymentIntent,
+) {
+  console.warn("PaymentIntent 可捕获的金额发生更新")
+  console.log(obj)
+}
+
+async function handle_pi_canceled(
+  obj: Stripe.PaymentIntent,
+) {
+  console.warn("PaymentIntent 已取消")
+  console.log(obj)
+}
+
+async function handle_pi_processing(
+  obj: Stripe.PaymentIntent,
+) {
+  console.warn("PaymentIntent 开始进行处理")
+  console.log(obj)
+}
+
+async function handle_pi_requires_action(
+  obj: Stripe.PaymentIntent,
+) {
+  console.warn("PaymentIntent 过渡到 requires_action 状态时")
+  console.log(obj)
+}
+
+async function handle_pi_succeeded(
+  obj: Stripe.PaymentIntent,
+) {
+  console.warn("PaymentIntent 已被完成支付")
+  console.log(obj)
+}
+
+
+async function handle_pi_payment_failed(
+  obj: Stripe.PaymentIntent,
+) {
+  console.warn("PaymentIntent 似乎创建失败或支付失败")
+  console.log(obj)
+}
+
+
 async function handle_session_async_py_succeeded(
   obj: Stripe.Checkout.Session,
 ) {
   console.warn("似乎 session 异步支付成功了")
   console.log(obj)
 }
-
 
 async function handle_session_async_py_failed(
   obj: Stripe.Checkout.Session,
