@@ -45,7 +45,7 @@ export function useEnterIntoApp(
       v()
     })
     list = []
-    watchStop()
+    watchStop?.()
 
   }, { immediate: true })
 }
