@@ -3,7 +3,7 @@ import type {
   TipTapEditorView,
 } from "~/types/types-editor"
 import type { LinkPreview } from '~/types/types-atom'
-
+import usefulTool from "~/utils/basic/useful-tool";
 
 /**
  * 主要作用:
@@ -38,8 +38,12 @@ function _handleLinkPreview(
   }
 
   const title = linkJson.title
-  const url = linkJson.url
+  let url = linkJson.url
   if(!title || !url) return false
+  let url_2 = usefulTool.encodeBraces(url)
+  if(url_2 !== url) {
+    url = url_2
+  }
   const linkText = `[${title}](${url})`
 
   const startPoi = view.state.selection.from

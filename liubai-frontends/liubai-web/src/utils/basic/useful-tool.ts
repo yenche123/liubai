@@ -49,8 +49,41 @@ function checkIdsInLists(
   return true
 }
 
+/** 编码括号
+ *  由于 encodeURIComponent 不会对 `()` 这两个字符进行编码
+ *  所以手动进行编码成 %28 和 %29
+ */
+function encodeBraces(str: string) {
+  let url: URL
+  try {
+    url = new URL(str)
+  }
+  catch(err) {
+    return str
+  }
+
+  let s = url.search
+  if(s) {
+    s = s.replace("(", "%28")
+    s = s.replace(")", "%29")
+    url.search = s
+  }
+  
+  let p = url.pathname
+  // 因为第一个字符肯定是 `/`，所以判断字符数是否大于 1
+  if(p && p.length > 1) {
+    p = p.replace("(", "%28")
+    p = p.replace(")", "%29")
+    url.pathname = p
+  }
+
+  let newStr = url.toString()
+  return newStr
+}
+
 
 export default {
   filterDuplicated,
   checkIdsInLists,
+  encodeBraces,
 }
