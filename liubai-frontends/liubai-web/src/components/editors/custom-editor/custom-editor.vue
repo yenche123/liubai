@@ -114,6 +114,9 @@ const {
     </div>
   </div>
 
+  <!-- 隐入隐出渐变上半部分隔条 -->
+  <div class="ce-editor-gradient ce-editor-gradient_up"></div>
+
   <div class="ce-editor"
     @scroll="onEditorScrolling"
   >
@@ -137,10 +140,10 @@ const {
   </div>
 
   <!-- 隐入隐出渐变分隔条 -->
-  <div class="ce-editor-bottom"></div>
+  <div class="ce-editor-gradient"></div>
 
   <!-- 留白 -->
-  <div class="ce-editor-bottom-two"></div>
+  <div class="ce-editor-spacing"></div>
 
   <EditingCovers 
     :model-value="covers"
@@ -252,18 +255,9 @@ const {
   }
 }
 
-.ce-editor {
-  width: 100%;
-  max-height: v-bind("maxEditorHeight + 'px'");
-  position: relative;
-  overflow-y: v-bind("state.overflowType");
-  transition: .3s;
-}
-
-.ce-editor-bottom {
+.ce-editor-up {
   width: 100%;
   height: 20px;
-  margin-top: -20px;
   transition: .6s;
   background: var(--gradient-two);
   opacity: v-bind("showMask ? 1 : 0");
@@ -271,7 +265,33 @@ const {
   pointer-events: none;
 }
 
-.ce-editor-bottom-two {
+.ce-editor {
+  margin-top: -20px;
+  width: 100%;
+  max-height: v-bind("maxEditorHeight + 'px'");
+  position: relative;
+  overflow-y: v-bind("state.overflowType");
+  transition: .3s;
+}
+
+.ce-editor-gradient {
+  width: 100%;
+  height: 20px;
+  margin-top: -20px;
+  transition: .5s;
+  background: var(--gradient-two);
+  opacity: v-bind("showMask ? 1 : 0");
+  position: relative;
+  pointer-events: none;
+}
+
+.ce-editor-gradient_up {
+  margin-top: 0;
+  transform: rotate(180deg);
+  z-index: 50;
+}
+
+.ce-editor-spacing {
   width: 100%;
   height: 15px;
 }
