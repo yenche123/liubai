@@ -5,6 +5,7 @@ import valTool from "../basic/val-tool"
 import { ALLOW_DEEP_TYPES } from "~/config/atom"
 import reg_exp from "~/config/regular-expressions"
 import liuUtil from "../liu-util"
+import usefulTool from "../basic/useful-tool"
 
 // 装载 link
 export function equipLink(list: TipTapJSONContent[]) {
@@ -55,7 +56,8 @@ function _parseTextsForLink(
 
     // 解析 markdown 格式的链接
     const regMdLink = reg_exp.md_link
-    let list1 = _innerParse(text, regMdLink, "markdown_link")
+    const newText = _encodeBraces(text)
+    let list1 = _innerParse(newText, regMdLink, "markdown_link")
     if(list1) {
       content.splice(i, 1, ...list1)
       i--
@@ -82,6 +84,43 @@ function _parseTextsForLink(
   }
 
   return content
+}
+
+
+function _encodeBraces(text: string) {
+  if(!text) return ""
+  const matches = text.matchAll(reg_exp.exact_url)
+  let result = ""
+  for(let match of matches) {
+    const startIdx = match.index
+    if(startIdx === undefined) continue
+
+    let link = match[0]
+
+    const length = link.length
+    let endIdx = startIdx + length
+    
+    if(startIdx > 0) {
+      result += text.substring(0, startIdx)
+    }
+
+    const b = usefulTool.encodeBraces(link)
+    
+    if(b.str !== link) {
+      link = b.str
+      if(b.lastCharDeleted) endIdx -= 1
+    }
+    
+    result += link
+    let rest_text = text.substring(endIdx)
+    rest_text = _encodeBraces(rest_text)
+    result += rest_text
+    break
+  }
+  if(!result) {
+    result = text
+  }
+  return result
 }
 
 
