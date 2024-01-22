@@ -11,9 +11,7 @@ import usefulTool from "../basic/useful-tool"
 export function equipLink(list: TipTapJSONContent[]) {
   if(list.length < 1) return []
 
-
   for(let i=0; i<list.length; i++) {
-    
     const v = list[i]
     const type = v.type
     if(!type) continue
@@ -86,10 +84,17 @@ function _parseTextsForLink(
   return content
 }
 
-
+/** 对 `(` 和 `)` 进行编码，返回新的文本 
+ *  本方法采用递归的方法，从前方开始匹配，若发现链接，
+ *  则把文本拆解成 链接 和 剩余文本 两个部分，剩余文本再重新传进本函数
+ *  进行递归
+*/
 function _encodeBraces(text: string) {
   if(!text) return ""
+
+  // 匹配精确的链接
   const matches = text.matchAll(reg_exp.exact_url)
+
   let result = ""
   for(let match of matches) {
     const startIdx = match.index

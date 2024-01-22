@@ -50,7 +50,7 @@ function checkIdsInLists(
 }
 
 /** 统计某个字符出现的次数 
- * 注意: regChar 是要放在 new RegExp 里头的，所以比如转义字符 `\` 就必须打成 `\\`
+ *  注意: regChar 是要放在 new RegExp 里头的，所以比如转义字符 `\` 就必须打成 `\\`
  *   要寻找 `(` 就必须达成 `\\(`
 */
 function countCharOccurrences(text: string, regChar: string) {
@@ -114,6 +114,7 @@ function encodeBraces(str: string): EncodeBracesRes {
   if(p && p.length > 1) {
 
     // 判断 路径 是否在 url 的最尾部
+    // 即后方不存在 “参数” 也不存在 “哈希”
     if(!s && !h) {
       const b2 = _handleBracePair(p)
       p = b2.str
