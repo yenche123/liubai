@@ -53,7 +53,7 @@ async function request<
       "Content-Type": "application/json"
     },
     body: _getBody(body),
-    signal: opt?.signal ?? AbortSignal.timeout(opt?.timeout ?? 5000),
+    signal: opt?.signal ?? AbortSignal.timeout(opt?.timeout ?? 10000),
   }
   
   let res: Response
