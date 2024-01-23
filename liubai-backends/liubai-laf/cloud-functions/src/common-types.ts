@@ -332,6 +332,7 @@ export interface Table_Token extends BaseTable {
   lastRead: number
   lastSet: number
   ip?: string
+  ipGeo?: string
 }
 
 /** User表 */
@@ -347,6 +348,7 @@ export interface Table_User extends BaseTable {
   systemLanguage?: string
   lastEnterStamp?: number
   subscription?: UserSubscription
+  ipArea?: string
 }
 
 /** Workspace 表 */
