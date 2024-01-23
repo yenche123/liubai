@@ -24,12 +24,17 @@ import {
   getBasicStampWhileAdding, 
   SECONED, DAY, MINUTE, 
 } from "@/common-time"
+import geoip from "geoip-lite"
 
 const db = cloud.database()
 const _ = db.command
 
 
 /********************* 常量 ****************/
+const DAY_90 = DAY * 90
+const DAY_28 = DAY * 28
+const DAY_7 = DAY * 7
+
 export const reg_exp = {
   // 捕捉 整个字符串都是 email
   email_completed: /^[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*$/g,
@@ -450,7 +455,7 @@ export async function verifyToken(
       pass: false,
       rqReturn: {
         code: "E4000",
-        errMsg: "token, serial_id are required while entering", 
+        errMsg: "token, serial_id are required", 
       },
     }
   }
@@ -501,11 +506,14 @@ export async function verifyToken(
   // 判断要不要刷新 token 和 serial
   let new_token: string | undefined
   let new_serial: string | undefined
+
+  let partialTokenData: Partial<Table_Token> = {}
+  let updateRequired = false
+
   if(opt?.entering) {
 
-    const DAY_90 = DAY * 90
-    const DAY_28 = DAY * 28
-    const DAY_7 = DAY * 7
+    // --------------> 1. 检验 token 的有效期，若快过期去自动延长
+    
     const now2 = getNowStamp()
 
     // 该 token 已经生成多久了
@@ -516,15 +524,13 @@ export async function verifyToken(
 
     if(diff_1 > DAY_90) {
       // 若生成时间已大于 90 天，去生成新的 token
-
       const newTokenData = await insertToken(ctx, body, userData, workspaces, tokenData.client_key)
       if(newTokenData) {
 
         // 把旧的 token 改成 1 分钟后过期
         const tmpExpireStamp = now2 + MINUTE
-        let pTokenData = updateTokenRow(tokenData._id, { expireStamp: tmpExpireStamp })
-        tokenData = { ...tokenData, ...pTokenData }
-        updateTokenCache(data, map, gShared, tokenData)
+        partialTokenData = { expireStamp: tmpExpireStamp }
+        updateRequired = true
 
         // 取出新的 token 和 serial
         new_token = newTokenData.token
@@ -533,10 +539,22 @@ export async function verifyToken(
     }
     else if(diff_2 < DAY_28) {
       // 若在 28 天内过期，则去延长 7 天
-
       const tmpExpireStamp = tokenData.expireStamp + DAY_7
-      let pTokenData = updateTokenRow(tokenData._id, { expireStamp: tmpExpireStamp })
-      tokenData = { ...tokenData, ...pTokenData }
+      partialTokenData = { expireStamp: tmpExpireStamp }
+      updateRequired = true
+    }
+
+    // --------------> 2. 判断 ip 是否不一致
+    const ipGeo = getIpGeo(ctx)
+    if(ipGeo && ipGeo !== tokenData.ipGeo) {
+      partialTokenData = { ...partialTokenData, ipGeo }
+      updateRequired = true
+    }
+
+    // --------------> 3. 最后去更新 token
+    if(updateRequired) {
+      partialTokenData = updateTokenRow(tokenData._id, partialTokenData)
+      tokenData = { ...tokenData, ...partialTokenData }
       updateTokenCache(data, map, gShared, tokenData)
     }
 
@@ -553,6 +571,29 @@ export async function verifyToken(
     new_token,
     new_serial,
   }
+}
+
+
+/** 获取 ip 的 ISO 3166-1 代码 */
+export function getIpArea(ctx: FunctionContext) {
+  const ip = ctx.headers?.['x-real-ip']
+  if(!ip || typeof ip !== "string") return
+  const geo = geoip.lookup(ip)
+  return geo?.country
+}
+
+/** 获取 ip 的 ISO 3166-1 & 3166-2 代码 
+ *  以 `-` 减号字符进行连接
+*/
+export function getIpGeo(ctx: FunctionContext) {
+  const ip = ctx.headers?.['x-real-ip']
+  if(!ip || typeof ip !== "string") return
+  const geo = geoip.lookup(ip)
+  const c = geo?.country
+  if(!c) return
+  const r = geo?.region
+  if(!r) return c
+  return `${c}-${r}`
 }
 
 
