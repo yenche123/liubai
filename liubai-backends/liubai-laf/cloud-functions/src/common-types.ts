@@ -578,6 +578,20 @@ export interface Res_UserSettings_Enter {
   new_token?: string
 }
 
+export interface Res_SubPlan_Info {
+  id: string
+  payment_circle: SubscriptionPaymentCircle
+  badge: string
+  title: string
+  desc: string
+  stripe?: SubscriptionStripe
+
+  // 以下价格是向用户在前端展示的价格，请使用用户能理解的常用单位
+  // 而非最终收费的单位
+  price: string
+  currency: string   // 三位英文大写字符组成
+}
+
 
 /** 一些函数间的入参和出参类型 */
 
