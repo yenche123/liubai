@@ -272,7 +272,7 @@ export interface UserThirdData {
 /** 用户的订阅方案 */
 export interface UserSubscription {
   isOn: BaseIsOn
-  plan: string
+  plan: string             // 订阅计划 Subscription 表的 _id
   isLifelong: boolean
   autoRecharge?: boolean   // 是否开启自动续费，当为 undefined 表示不得而知
   createdStamp: number     // 第一次创建订阅的时间戳
@@ -348,6 +348,7 @@ export interface Table_User extends BaseTable {
   systemLanguage?: string
   lastEnterStamp?: number
   subscription?: UserSubscription
+  stripe_subscription_id?: string      // stripe 的 Subscription id
   ipArea?: string
 }
 
@@ -590,6 +591,10 @@ export interface Res_SubPlan_Info {
   // 而非最终收费的单位
   price: string
   currency: string   // 三位英文大写字符组成
+}
+
+export interface Res_SubPlan_StripeCheckout {
+  checkout_url: string   // stripe 托管的结账地址
 }
 
 

@@ -27,7 +27,9 @@ declare global {
       */
       LIU_CLOUD_LOGIN: LiuSwitch | "03"
 
-      /** 当前应用的域名 */
+      /** 当前应用的域名 
+       *  其结尾请不要添加路径的开头 `/`
+      */
       LIU_DOMAIN?: string
 
       /** 内部 debug 时，通行码 */

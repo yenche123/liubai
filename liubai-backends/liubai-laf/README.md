@@ -2,7 +2,11 @@
 
 这里是 `liubai` 基于 `laf` 的后端根目录
 
+## 开发日记
 
+### 2024-01-25
+记得更新 `common-types` 和 `subscribe-plan`
+确保 env 中 `LIU_DOMAIN` 存在
 
 ## 碎片记录
 
