@@ -575,9 +575,13 @@ export interface Res_UserSettings_Enter {
   theme: LocalTheme
   language: LocalLanguage
   spaceMemberList: LiuSpaceAndMember[]
+  subscription?: UserSubscription
   new_serial?: string
   new_token?: string
 }
+
+export type Res_UserSettings_Latest = 
+  Omit<Res_UserSettings_Enter, "new_serial" | "new_token">
 
 export interface Res_SubPlan_Info {
   id: string

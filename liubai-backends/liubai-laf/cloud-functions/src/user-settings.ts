@@ -5,6 +5,7 @@ import type {
   Table_User, 
   LiuRqReturn,
   Res_UserSettings_Enter,
+  Res_UserSettings_Latest,
   VerifyTokenRes,
 } from '@/common-types'
 import { getNowStamp } from "@/common-time"
@@ -29,7 +30,9 @@ export async function main(ctx: FunctionContext) {
     // 获取用户设置并记录用户访问
     res = await handle_enter(vRes)
   }
-
+  else if(oT === "latest") {
+    res = await handle_latest(vRes)
+  }
 
   const stamp2 = getNowStamp()
   const diffS = stamp2 - stamp1
@@ -39,7 +42,7 @@ export async function main(ctx: FunctionContext) {
 }
 
 
-export async function handle_enter(
+async function handle_enter(
   vRes: VerifyTokenRes,
 ) {
   const user = vRes.userData as Table_User
@@ -70,12 +73,31 @@ export async function handle_enter(
   return res1
 }
 
+/** get user's latest status */
+async function handle_latest(
+  vRes: VerifyTokenRes,
+) {
+  const user = vRes.userData as Table_User
+  const res1 = await getUserSettings(user)
+  const data = res1.data
+  if(res1.code !== "0000" || !data) {
+    return res1 as LiuRqReturn
+  }
+  const newData: Res_UserSettings_Latest = { ...data }
+  const newRes: LiuRqReturn<Res_UserSettings_Latest> = {
+    code: "0000",
+    data: newData
+  }
+  return newRes
+}
+
+
 /**
  * 获取用户基础设置
  * 1. 登录方式，比如 email / GitHub ID 等等
  * 2. 已经加入哪些工作区，这些工作区的名称和头像
  */
-export async function getUserSettings(
+async function getUserSettings(
   user: Table_User,
 ): Promise<LiuRqReturn<Res_UserSettings_Enter>> {
   const [ui] = await getUserInfos([user])
@@ -83,7 +105,7 @@ export async function getUserSettings(
     return { code: "E4004", errMsg: "it cannot find an userinfo" }
   }
 
-  const { email, github_id, theme, language } = user
+  const { email, github_id, theme, language, subscription } = user
   const spaceMemberList = ui.spaceMemberList
   const data: Res_UserSettings_Enter = {
     email,
@@ -91,6 +113,7 @@ export async function getUserSettings(
     theme,
     language,
     spaceMemberList,
+    subscription,
   }
 
   return { code: "0000", data }

@@ -4,6 +4,9 @@
 
 ## 开发日记
 
+### 2024-01-26
+更新 `user-settings` 和 `common-types`
+
 ### 2024-01-25
 记得更新 `common-types` 和 `subscribe-plan`
 确保 env 中 `LIU_DOMAIN` 存在
