@@ -44,6 +44,8 @@ export interface Res_UserLoginNormal {
   multi_credential_id?: string
 }
 
+/************************ 用户信息 ********************/
+
 export interface Res_UserSettings_Enter {
   email?: string
   github_id?: number
@@ -53,3 +55,6 @@ export interface Res_UserSettings_Enter {
   new_serial?: string
   new_token?: string
 }
+
+export type Res_UserSettings_Latest = 
+  Omit<Res_UserSettings_Enter, "new_serial" | "new_token">
