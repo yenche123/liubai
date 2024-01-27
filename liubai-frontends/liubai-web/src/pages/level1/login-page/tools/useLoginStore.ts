@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { type MemberShow } from "~/types/types-content";
 import { type LpView } from "./types"
-import { type Res_ULN_User } from "~/requests/data-types"
+import { type Res_ULN_User } from "~/requests/req-types"
 import valTool from "~/utils/basic/val-tool";
 import { CloudToLocal } from "~/utils/cloud/CloudToLocal";
 

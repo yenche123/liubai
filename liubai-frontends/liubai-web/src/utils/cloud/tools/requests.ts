@@ -1,6 +1,6 @@
 import APIs from "~/requests/APIs"
 import liuReq from "~/requests/liu-req"
-import type { Res_UserSettings_Enter, Res_HelloWorld } from "~/requests/data-types"
+import type { Res_UserSettings_Enter, Res_HelloWorld } from "~/requests/req-types"
 
 export async function fetchHelloWorld() {
   const url = APIs.TIME

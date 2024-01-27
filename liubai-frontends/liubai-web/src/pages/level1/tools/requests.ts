@@ -1,6 +1,6 @@
 import APIs from "~/requests/APIs"
 import liuReq from "~/requests/liu-req"
-import type { Res_UserLoginInit, Res_UserLoginNormal } from "~/requests/data-types"
+import type { Res_UserLoginInit, Res_UserLoginNormal } from "~/requests/req-types"
 import localCache from "~/utils/system/local-cache";
 import { createClientKey } from "./common-utils"
 import { type LiuRqReturn } from "~/requests/tools/types";

@@ -1,6 +1,6 @@
 import type { LocalLanguage } from "~/types"
 import type { LocalTheme } from "~/types/types-atom"
-import type { Res_UserLoginInit } from "~/requests/data-types"
+import type { Res_UserLoginInit } from "~/requests/req-types"
 
 export interface LocalPreference {
   theme?: LocalTheme
