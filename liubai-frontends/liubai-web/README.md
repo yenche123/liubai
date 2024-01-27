@@ -96,3 +96,34 @@ https://svgl.vercel.app/    聚焦各大 Logo 的 SVG
 2. 删除同理，当 a 被删除时，将它的 `replyToComment` 的 `commentNum` 自动 -1，同时把 a 的 `parentThread` 的 `commentNum` 也自动 -1。若 a 的 `parentComment` 与 `replyToComment` 不一致时，也把 `parentComment` 的 `commentNum` 自动 -1 
 
 
+## 第一次配置 MacOS
+
+1. 安装 `node.js`，里头含了 `npm`。运行 `node -v` 和 `npm -v` 检查。
+https://nodejs.org/en
+
+2. 安装 `vs-code`
+https://code.visualstudio.com
+
+3. 安装 `homebrew`，为了后续安装 `pnpm`
+
+4. 安装 `pnpm`，安装完运行 `pnpm -v` 检查
+https://brew.sh/
+
+5. 安装 `cdto`，用于在 Finder 里，打开某个文件夹后，快速启动 Terminal
+教程: https://blog.csdn.net/Jason_WangYing/article/details/115400785
+安装: https://github.com/jbtule/cdto/releases
+
+6. MacOS 出厂时即安装了 `Git`，但仍然可运行 `brew install git` 升级 `Git`。装完后重新启动 Terminal 再运行 `git --version` 查看是否更新到最新版
+
+7. 打开 `VS-Code`，点击 `Command + Shift + P` 输入 `shell`，点击 `Install 'code' command in PATH`，之后重新启动电脑。
+
+8. 检查是否有 ssh: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/checking-for-existing-ssh-keys
+若没有，在本地生成 ssh: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+把本地的 ssh 公钥填入 GitHub 中: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
+
+9. 在 Finder 合适的位置中，比如 `/Users/你的用户名` 中，创建一个文件夹 `Dev`。之后点击右上角由第 5 步安装的 `cdto` 打开 Terminal，此时再运行 `git clone 你的仓库地址`。代码下载完成后，`cd 你的项目名`，再运行 `code .` 即可开始编写代码啦！
+
+
+### MacOS 中的注意事项
+
+只有在 Eng 输入法时（中文无效），敲击 Control + ` 才会打开 vs-code 中的终端
