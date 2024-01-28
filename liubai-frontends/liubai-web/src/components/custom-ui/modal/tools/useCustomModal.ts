@@ -1,7 +1,7 @@
 import { reactive, ref } from "vue"
 import valTool from "~/utils/basic/val-tool"
 import { 
-  toListenEnterKeyUp, 
+  toListenEnterKey, 
   cancelListenEnterKeyUp, 
   toListenEscKeyUp, 
   cancelListenEscKeyUp
@@ -32,16 +32,16 @@ const modalData = reactive<ModalData>({
   modalType: "normal"
 })
 
-const _openModal = async (): Promise<void> => {
+async function _openModal() {
   if(show.value) return
   enable.value = true
   await valTool.waitMilli(16)
   show.value = true
-  toListenEnterKeyUp(onTapConfirm)
+  toListenEnterKey(onTapConfirm)
   toListenEscKeyUp(onTapCancel)
 }
 
-const _closeModal = async (): Promise<void> => {
+async function _closeModal() {
   if(!show.value) return
   show.value = false
 
@@ -53,7 +53,7 @@ const _closeModal = async (): Promise<void> => {
   enable.value = false
 }
 
-const onTapConfirm = (): void => {
+async function onTapConfirm() {
   const res: ModalSuccessRes = {
     confirm: true, 
     cancel: false, 
@@ -67,7 +67,7 @@ const onTapConfirm = (): void => {
   _closeModal()
 }
 
-const onTapCancel = (): void => {
+async function onTapCancel() {
   const res: ModalSuccessRes = {
     confirm: false, 
     cancel: true, 

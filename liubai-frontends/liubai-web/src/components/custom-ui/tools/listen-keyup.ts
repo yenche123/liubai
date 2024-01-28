@@ -4,22 +4,42 @@ import type { SimpleFunc } from "~/utils/basic/type-tool"
 
 /********* 监听 Enter 键的相关逻辑 *********/
 
+let funWhileEnter: SimpleFunc | undefined
 let funAfterEnter: SimpleFunc | undefined
 
-const _onListenEnter = (e: KeyboardEvent) => {
-  if(e.key === "Enter") {
-    funAfterEnter && funAfterEnter()
+const _onListenEnterUp = (
+  e: KeyboardEvent,
+) => {
+  if(e.key !== "Enter") return
+  funAfterEnter && funAfterEnter()
+}
+
+const _onListenEnterDown = (
+  e: KeyboardEvent,
+) => {
+  if(e.key !== "Enter") return
+  funWhileEnter && funWhileEnter()
+}
+
+const toListenEnterKey = (
+  fooUp: SimpleFunc,
+  fooDown?: SimpleFunc,
+) => {
+  window.addEventListener("keyup", _onListenEnterUp)
+  funAfterEnter = fooUp
+  if(fooDown) {
+    window.addEventListener("keydown", _onListenEnterDown)
+    funWhileEnter = fooDown
   }
 }
 
-const toListenEnterKeyUp = (foo: SimpleFunc): void => {
-  window.addEventListener("keyup", _onListenEnter)
-  funAfterEnter = foo
-}
-
 const cancelListenEnterKeyUp = () => {
-  window.removeEventListener("keyup", _onListenEnter)
+  window.removeEventListener("keyup", _onListenEnterUp)
   funAfterEnter = undefined
+  if(funWhileEnter) {
+    window.removeEventListener("keydown", _onListenEnterDown)
+    funWhileEnter = undefined
+  }
 }
 
 /********* 监听 Esc 键的相关逻辑 *********/
@@ -42,7 +62,7 @@ const cancelListenEscKeyUp = () => {
 }
 
 export {
-  toListenEnterKeyUp,
+  toListenEnterKey,
   cancelListenEnterKeyUp,
   toListenEscKeyUp,
   cancelListenEscKeyUp,

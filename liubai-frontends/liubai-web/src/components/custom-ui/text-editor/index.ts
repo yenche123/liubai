@@ -2,7 +2,7 @@
 import { computed, reactive, ref } from "vue"
 import valTool from "~/utils/basic/val-tool"
 import { 
-  toListenEnterKeyUp, 
+  toListenEnterKey, 
   cancelListenEnterKeyUp,
   toListenEscKeyUp,
   cancelListenEscKeyUp,
@@ -62,7 +62,7 @@ const _openTextEditor = async (): Promise<void> => {
   enable.value = true
   await valTool.waitMilli(16)
   show.value = true
-  toListenEnterKeyUp(onTapConfirm)
+  toListenEnterKey(whenEnterUp, whenEnterDown)
   toListenEscKeyUp(onTapCancel)
 }
 
@@ -76,6 +76,22 @@ const _closeTextEditor = async (): Promise<void> => {
   await valTool.waitMilli(TRANSITION_DURATION)
   if(show.value) return
   enable.value = false
+}
+
+
+let oldValWhileEnterDown = ""
+async function whenEnterDown() {
+  oldValWhileEnterDown = teData.value
+}
+
+async function whenEnterUp() {
+  const newV = teData.value
+
+  // MacOS 注音輸入法時 在選字時按 Enter 鍵會觸發回調 故去判斷
+  // Enter 鍵按下去和彈起來時文字是否一致 若一致才代表當前不在選字
+  // 用戶是真的想「確認」
+  if(newV !== oldValWhileEnterDown) return
+  onTapConfirm()
 }
 
 const onTapConfirm = (): void => {
