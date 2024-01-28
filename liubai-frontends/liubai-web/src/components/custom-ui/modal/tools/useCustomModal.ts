@@ -81,7 +81,7 @@ async function onTapCancel() {
   _closeModal()
 }
 
-const onTapTip = () => {
+function onTapTip() {
   modalData.tipSelected = !modalData.tipSelected
 }
 
