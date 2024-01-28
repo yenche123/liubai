@@ -251,7 +251,7 @@ const {
   top: 50%;
   margin-top: -50px;
   right: 0px;
-  cursor: e-resize;
+  cursor: ew-resize;
   transform-origin: center;
 }
 

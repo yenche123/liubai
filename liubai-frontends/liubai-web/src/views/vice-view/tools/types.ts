@@ -12,7 +12,6 @@ export interface VvData {
   lastParentResizeStamp: number
   lastOpenStamp: number
   shadow: boolean
-  showHandle: boolean
 }
 
 export interface VvEmits {

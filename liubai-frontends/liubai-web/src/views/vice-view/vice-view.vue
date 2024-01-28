@@ -28,7 +28,6 @@ const {
   maxVvPx,
   isAnimating,
   shadow,
-  showHandle,
 } = toRefs(vvData)
 
 const {
@@ -237,7 +236,7 @@ const onVcStateChange = (newV: VcState) => {
   margin-top: -50px;
   left: 0;
   margin-left: -9px;
-  cursor: e-resize;
+  cursor: ew-resize;
   transform-origin: center;
 }
 

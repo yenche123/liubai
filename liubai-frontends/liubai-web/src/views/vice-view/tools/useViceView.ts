@@ -97,7 +97,6 @@ function initViceView() {
   }
   
   const cha = liuApi.getCharacteristic()
-  let showHandle = cha.isMobile
 
   const vvData = reactive<VvData>({
     openType: "closed_by_auto",
@@ -111,7 +110,6 @@ function initViceView() {
     lastParentResizeStamp: 0,
     lastOpenStamp: 0,
     shadow: false,
-    showHandle,
   })
 
   watch(height, (newV) => {
@@ -127,7 +125,6 @@ function initMouse(
   let lastLeave: LiuTimeout
   const onVvMouseEnter = () => {
     if(lastLeave) clearTimeout(lastLeave)
-    vvData.showHandle = true
   }
 
   const onVvMouseLeave = () => {
@@ -139,7 +136,6 @@ function initMouse(
       const diff = time.getLocalTime() - vvData.lastOpenStamp
       if(diff < 900) return
       
-      vvData.showHandle = false
     }, 600)
   }
 
@@ -255,7 +251,6 @@ function openViceView(
   vvData.shadow = judgeIfShadow(vvData)
 
   const cha = liuApi.getCharacteristic()
-  if(cha.isMobile) vvData.showHandle = true
 
   emits("widthchange", vvData.viceViewPx)
 }
