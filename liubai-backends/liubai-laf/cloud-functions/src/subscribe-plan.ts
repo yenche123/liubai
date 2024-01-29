@@ -38,8 +38,31 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "create_stripe") {
     res = await handle_create_stripe(body, user)
   }
+  else if(oT === "cancel_subscription") {
+    handle_cancel_subscription(body, user)
+  }
 
   return res
+}
+
+/** 取消订阅 
+ * 超过 7 天（鉴赏期）时，由于不需要退款，所以
+ * 引导用户到 stripe 托管的页面去取消（管理）订阅
+ * 在鉴赏期内，才引导用户在应用内点击 “取消订阅” 再向该接口发起请求
+*/
+async function handle_cancel_subscription(
+  body: Record<string, string>,
+  user: Table_User, 
+) {
+
+  // 1. check user's subscription
+  const hasSubscribed = checkIfUserSubscribed(user)
+  if(!hasSubscribed) {
+    return { code: "SP006", errMsg: "the user has not subscribed currently" }
+  }
+
+
+  
 }
 
 
@@ -108,6 +131,21 @@ function getSupportedCurrency(
   return c
 }
 
+/** check if the user's subscription is currently active */
+function checkIfUserSubscribed(
+  user: Table_User,
+) {
+  const s = user.subscription
+  const isOn = s?.isOn
+  if(!s || !isOn) return false
+  const isLifelong = s.isLifelong
+  if(isLifelong) return true
+  const expireStamp = s.expireStamp ?? 1
+  const now = getNowStamp()
+  const diff = expireStamp - now
+  if(diff > 0) return true
+  return false
+}
 
 
 /** 创建 stripe checkout session */
@@ -131,15 +169,10 @@ async function handle_create_stripe(
     return { code: "E5001", errMsg: "no stripe api key" }
   }
 
-  // 2. 去查看 user 是否已经订阅
-  const s1 = user.subscription
-  const isOn = s1?.isOn
-  const autoRecharge = s1?.autoRecharge
-  const isLifelong = s1?.isLifelong
-  if(isOn) {
-    if(autoRecharge || isLifelong) {
-      return { code: "SP001", errMsg: "the user has subscribed" }
-    }
+  // 2. 去查看 user 是否已经订阅，并且有效
+  const hasSubscribed = checkIfUserSubscribed(user)
+  if(hasSubscribed) {
+    return { code: "SP001", errMsg: "the user has subscribed" }
   }
 
   // 3. check Credential for old session
