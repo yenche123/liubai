@@ -5,6 +5,7 @@ import type {
   MongoFilter,
   Table_User,
   SubscriptionPaymentCircle,
+  UserSubscription,
 } from "@/common-types"
 import cloud from "@lafjs/cloud"
 import { getNowStamp, getServerTimezone, formatTimezone } from "@/common-time"
@@ -70,6 +71,16 @@ function preCheck(
   }
 }
 
+
+/** to get stripe's instance */
+function getStripeInstance() {
+  const _env = process.env
+  const sk = _env.LIU_STRIPE_API_KEY as string
+  const stripe = new Stripe(sk)
+  return stripe
+}
+
+
 interface RetrieveEventRes {
   rqReturn?: LiuRqReturn<undefined>
   event?: Stripe.Event
@@ -79,9 +90,7 @@ interface RetrieveEventRes {
 async function retrieveEvent(
   ctx: FunctionContext
 ): Promise<RetrieveEventRes> {
-  const _env = process.env
-  const sk = _env.LIU_STRIPE_API_KEY as string
-  const stripe = new Stripe(sk)
+  const stripe = getStripeInstance()
 
   const id = ctx.body?.id as string
   try {
@@ -356,10 +365,18 @@ async function handle_session_completed(
   const session_id = obj.id
 
   // 0. 查看 session 是否已支付
-  const { payment_status, status, subscription } = obj
+  const { 
+    payment_status, 
+    status, 
+    subscription: stripe_subscription_id,
+  } = obj
   if(payment_status === "unpaid" || status !== "complete") {
     console.log("当前 payment_status 或 status 不符合预期.........")
     return { code: "0000" }
+  }
+  if(!stripe_subscription_id || typeof stripe_subscription_id !== "string") {
+    console.log("Checkout.Session 中 subscription 不存在......")
+    return { code: "E4000", errMsg: "there is no subscription in Checkout.Session" }
   }
 
   // 1. 去查询 Credential 
@@ -370,25 +387,28 @@ async function handle_session_completed(
   const col = db.collection("Credential")
   const q = col.where(w)
   const res = await q.getOne<Table_Credential>()
-  console.log("handle_session_completed q.getOne 查询结果.........")
-  console.log(res)
   const cred = res.data
   const c_id = cred?._id
   const userId = cred?.userId
   const meta_data = cred?.meta_data
   const payment_circle = meta_data?.payment_circle
   const payment_timezone = meta_data?.payment_timezone
+  const plan = meta_data?.plan
   if(!cred || !c_id) {
     // 订单已被创建，无需再执行其他操作
     return { code: "0000" }
   }
   if(!userId) {
     console.warn("there is no userId in the credential")
-    return { code: "E5001" }
+    return { code: "E5001", errMsg: "there is no user_id in the credential" }
   }
   if(!payment_circle) {
     console.warn("there is no meta_data.payment_circle in the credential")
-    return { code: "E5001" }
+    return { code: "E5001", errMsg: "there is no meta_data.payment_circle in the credential" }
+  }
+  if(!plan) {
+    console.warn("there is no meta_data.plan in the credential")
+    return { code: "E5001", errMsg: "there is no meta_data.plan in the credential" }
   }
   
 
@@ -401,8 +421,8 @@ async function handle_session_completed(
     console.warn("the user does not exist.......")
     return { code: "E5001" }
   }
-  const oldSubscription = user.subscription
-  const chargedStamp = oldSubscription?.chargedStamp ?? 1
+  const oldUserSub = user.subscription
+  const chargedStamp = oldUserSub?.chargedStamp ?? 1
   const now = getNowStamp()
   const diff_1 = now - chargedStamp
   if(diff_1 < 5000) {
@@ -410,11 +430,74 @@ async function handle_session_completed(
     return { code: "E4003", errMsg: "pay too much" }
   }
 
-  // 3. to update user
+  // 3. to get Subscription from Stripe
+  const stripe = getStripeInstance()
+  let sub: Stripe.Subscription
+  try {
+    sub = await stripe.subscriptions.retrieve(stripe_subscription_id)
+  }
+  catch(err) {
+    console.warn("stripe.subscriptions.retrieve: ")
+    console.log(err)
+    return { code: "E4004", errMsg: "we cannot retrieve subscription" }
+  }
+  const invoice_id = sub.latest_invoice
+  if(!invoice_id || typeof invoice_id !== "string") {
+    console.warn("latest_invoice is not existed in Subscription of Stripe")
+    console.log(sub)
+    return { code: "E5001", errMsg: "latest_invoice is not existed in Subscription of Stripe" }
+  }
 
-  // 4. to create a order
+  // 4. to get stripe's invoice
+  let invoice: Stripe.Invoice
+  try {
+    invoice = await stripe.invoices.retrieve(invoice_id)
+  }
+  catch(err) {
+    console.warn("stripe.invoices.retrieve: ")
+    console.log(err)
+    return { code: "E4004", errMsg: "we cannot retrieve invoice" }
+  }
+  
+  // 5. generate a new subscription in user
+  const newUserSub: UserSubscription = {
+    isOn: sub.status === "active" ? "Y" : "N",
+    plan,
+    isLifelong: false,
+    createdStamp: sub.start_date * 1000,
+    expireStamp: sub.current_period_end * 1000,
+  }
+  if(oldUserSub?.isLifelong) {
+    newUserSub.isLifelong = true
+    delete newUserSub.expireStamp
+  }
+  if(!Boolean(sub.canceled_at) && sub.collection_method === "charge_automatically") {
+    newUserSub.autoRecharge = true
+  }
+  if(oldUserSub?.createdStamp) {
+    if(oldUserSub.createdStamp < newUserSub.createdStamp) {
+      newUserSub.createdStamp = oldUserSub.createdStamp
+    }
+  }
+  if(invoice.paid && invoice.created) {
+    newUserSub.chargedStamp = invoice.created * 1000
+  }
+  
+  
 
-  // 5. to delete the credential
+
+
+  // 6. to update user
+  const uUser: Partial<Table_User> = {
+    stripe_subscription_id,
+    subscription: newUserSub,
+    updatedStamp: getNowStamp(),
+  }
+
+  // 7. to create a order
+
+
+  // 8. to delete the credential
 
   
 }

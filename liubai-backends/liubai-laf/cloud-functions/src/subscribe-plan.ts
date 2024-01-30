@@ -263,6 +263,7 @@ async function handle_create_stripe(
     meta_data: {
       payment_circle: data_2.payment_circle,
       payment_timezone: useTimezone,
+      plan: subscription_id,
     },
   }
   const res3 = await col_cred.add(cred)
