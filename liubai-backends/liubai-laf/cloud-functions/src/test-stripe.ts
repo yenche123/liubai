@@ -1,4 +1,7 @@
 import Stripe from "stripe";
+import { getNowStamp, DAY } from "@/common-time";
+
+const DAY_10 = DAY * 10
 
 export async function main(ctx: FunctionContext) {
   const _env = process.env
@@ -16,6 +19,7 @@ export async function main(ctx: FunctionContext) {
 
   const stripe = new Stripe(LIU_STRIPE_API_KEY)
   const YOUR_DOMAIN = `https://localhost:5175`
+  const billing_cycle_anchor = Math.round((getNowStamp() + DAY_10) / 1000)
   let session: any
   try {
     session = await stripe.checkout.sessions.create({
@@ -30,6 +34,9 @@ export async function main(ctx: FunctionContext) {
       success_url: `${YOUR_DOMAIN}/payment-success`,
       cancel_url: `${YOUR_DOMAIN}/payment-cancel`,
       automatic_tax: {enabled: true},
+      subscription_data: {
+        billing_cycle_anchor,
+      },
     })
   }
   catch(err) {
