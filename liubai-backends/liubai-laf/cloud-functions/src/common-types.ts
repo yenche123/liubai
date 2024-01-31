@@ -524,15 +524,26 @@ export interface Table_Order extends BaseTable {
   user_id: string
   oState: "OK" | "DEL_BY_USER"
   orderStatus: "INIT" | "PAID" | "PAYING" | "CLOSED"
-  orderAmount: number
+  orderAmount: number      // 订单总金额，以 “分” 为单位
+  paidAmount: number       // 已支付的总金额，以 “分” 为单位
   refundedAmount: number
   currency: string         // 小写的货币代码
   payChannel: "stripe" | "wechat" | "alipay"
   orderType: "subscription" | "product"
-  subscription_id?: string
+  plan_id?: string
   product_id?: string
   expireStamp?: number
   tradedStamp?: number
+
+  // 一些 stripe 的信息
+  stripe_subscription_id?: string
+  stripe_invoice_id?: string
+  stripe_charge_id?: string
+  stripe_other_data?: {
+    hosted_invoice_url?: string   // 发票地址
+    receipt_url?: string          // 收据地址
+  }
+
 }
 
 

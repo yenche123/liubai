@@ -7,23 +7,36 @@ export async function main(ctx: FunctionContext) {
   return true
 }
 
+/******************** constants ***************/
+const NUMS = "123456789"
+const ABC = "ABCDEFGHJKLMNPQRSTUVWXYZ"
+const abc = "abcdefghijkmnopqrstuvwxyz"
+
 /********************* 工具函数们 ****************/
 
+type LimitType = "allowUppercase" | "onlyUppercase" | "onlyNumber"
+
 // 创建随机字符串
-export function createRandom(
+function createRandom(
   digits: number = 30,
-  allowUppercase: boolean = false,
+  limitType?: LimitType,
 ) {
-  let abc = "123456789abcdefghijkmnopqrstuvwxyz"
-  if(allowUppercase) {
-    abc += "ABCDEFGHJKLMNPQRSTUVWXYZ"
+  let alphabet = NUMS + abc
+  if(limitType === "allowUppercase") {
+    alphabet += ABC
+  }
+  else if(limitType === "onlyNumber") {
+    alphabet = NUMS
+  }
+  else if(limitType === "onlyUppercase") {
+    alphabet = ABC
   }
 
-  const charset = abc.length
+  const charset = alphabet.length
   let randomString = ""
   for(let i=0; i<digits; i++) {
     const r = crypto.randomInt(0, charset)
-    randomString += abc[r]
+    randomString += alphabet[r]
   }
   return randomString
 }
@@ -35,14 +48,17 @@ export function createLoginState() {
 
 // 创建 token 
 export function createToken() {
-  let token = "tk_" + createRandom(17, true) + "-" + createRandom(17, true)
-  token += ("-" + createRandom(17, true) + "-" + createRandom(17, true))
+  let token = "tk_" + createRandom(17, "allowUppercase")
+  token += ("-" + createRandom(17, "allowUppercase"))
+  token += ("-" + createRandom(17, "allowUppercase"))
+  token += ("-" + createRandom(17, "allowUppercase"))
   return token
 }
 
 // 创建 credential for user-select
 export function createCredentialForUserSelect() {
-  const c = "cfus_" + createRandom(17, true) + "-" + createRandom(17, true)
+  let c = "cfus_" + createRandom(17, "allowUppercase")
+  c += ("-" + createRandom(17, "allowUppercase"))
   return c
 }
 
@@ -54,26 +70,26 @@ export function createImgId() {
 // 创建邮箱验证码
 // 结构: 四个英文字母-四个数字
 export function createEmailCode() {
-  let randomString = ""
+  
+  // 先四个大写的英文字母
+  let randomString = createRandom(4, "onlyUppercase")
 
-  // 四个英文字母
-  const ABC = "ABCDEFGHJKLMNPQRSTUVWXYZ"
-  const charset = ABC.length
-  for(let i=0; i<4; i++) {
-    const r = crypto.randomInt(0, charset)
-    randomString += ABC[r]
-  }
-
+  // 用 "-" 衔接
   randomString += "-"
 
-  // 四个数字
-  const NUMS = "123456789"
-  const len = NUMS.length
-  for(let i=0; i<4; i++) {
-    const r = crypto.randomInt(0, len)
-    randomString += NUMS[r]
-  }
+  // 再四个数字
+  randomString = createRandom(4, "onlyNumber")
 
+  return randomString
+}
+
+
+/** 创建 order 单号 */
+export function createOrderId() {
+  // LD + 4 位数字 + 4 位大写字母 + 4 位数字
+  let randomString = "LD" + createRandom(4, "onlyNumber")
+  randomString += createRandom(4, "onlyUppercase")
+  randomString += createRandom(4, "onlyNumber")
   return randomString
 }
 

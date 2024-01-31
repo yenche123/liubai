@@ -6,10 +6,17 @@ import type {
   Table_User,
   SubscriptionPaymentCircle,
   UserSubscription,
+  Table_Order,
 } from "@/common-types"
 import cloud from "@lafjs/cloud"
-import { getNowStamp, getServerTimezone, formatTimezone } from "@/common-time"
+import { 
+  getNowStamp, 
+  getServerTimezone, 
+  formatTimezone, 
+  getBasicStampWhileAdding,
+} from "@/common-time"
 import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
+import { createOrderId } from "@/common-ids"
 
 const db = cloud.database()
 
@@ -384,8 +391,8 @@ async function handle_session_completed(
     infoType: "stripe-checkout-session",
     credential: session_id,
   }
-  const col = db.collection("Credential")
-  const q = col.where(w)
+  const col_cred = db.collection("Credential")
+  const q = col_cred.where(w)
   const res = await q.getOne<Table_Credential>()
   const cred = res.data
   const c_id = cred?._id
@@ -414,8 +421,8 @@ async function handle_session_completed(
 
   // 2. to query the user to make sure that 
   // there is no doubule charged during short term
-  const col_2 = db.collection("User")
-  const res2 = await col_2.doc(userId).get<Table_User>()
+  const col_user = db.collection("User")
+  const res2 = await col_user.doc(userId).get<Table_User>()
   const user = res2.data
   if(!user) {
     console.warn("the user does not exist.......")
@@ -445,18 +452,25 @@ async function handle_session_completed(
   if(!invoice_id || typeof invoice_id !== "string") {
     console.warn("latest_invoice is not existed in Subscription of Stripe")
     console.log(sub)
-    return { code: "E5001", errMsg: "latest_invoice is not existed in Subscription of Stripe" }
+    return { code: "E4004", errMsg: "latest_invoice is not existed in Subscription of Stripe" }
   }
 
   // 4. to get stripe's invoice
   let invoice: Stripe.Invoice
   try {
-    invoice = await stripe.invoices.retrieve(invoice_id)
+    invoice = await stripe.invoices.retrieve(invoice_id, { expand: ["charge"] })
   }
   catch(err) {
     console.warn("stripe.invoices.retrieve: ")
     console.log(err)
-    return { code: "E4004", errMsg: "we cannot retrieve invoice" }
+    return { code: "E4004", errMsg: "the invoice cannot be retrieved" }
+  }
+  if(!invoice.paid) {
+    return { code: "WS001", errMsg: "the invoice has not been paid" }
+  }
+  const charge = invoice.charge as Stripe.Charge
+  if(!charge || !charge.id) {
+    return { code: "E5001", errMsg: "there is no charge expanded in invoice" }
   }
   
   // 5. generate a new subscription in user
@@ -466,6 +480,7 @@ async function handle_session_completed(
     isLifelong: false,
     createdStamp: sub.start_date * 1000,
     expireStamp: sub.current_period_end * 1000,
+    chargedStamp: invoice.created * 1000,
   }
   if(oldUserSub?.isLifelong) {
     newUserSub.isLifelong = true
@@ -479,12 +494,6 @@ async function handle_session_completed(
       newUserSub.createdStamp = oldUserSub.createdStamp
     }
   }
-  if(invoice.paid && invoice.created) {
-    newUserSub.chargedStamp = invoice.created * 1000
-  }
-  
-  
-
 
 
   // 6. to update user
@@ -494,10 +503,49 @@ async function handle_session_completed(
     updatedStamp: getNowStamp(),
   }
 
-  // 7. to create a order
+  const res6 = await col_user.where({ _id: user._id }).update(uUser)
+  console.log("这 handle_session_completed 中看一下更新 user 的结果........")
+  console.log(res6)
+  
+  // 7. create an order
+  const orderId = await createAvailableOrderId()
+  if(!orderId) {
+    console.warn("fail to create an orderId")
+    return { code: "WS002", errMsg: "fail to create an orderId" }
+  }
+  console.log("take a look of a new orderId: ")
+  console.log(orderId)
+  const basic1 = getBasicStampWhileAdding()
+  const hosted_invoice_url = invoice.hosted_invoice_url ?? ""
+  const receipt_url = charge.receipt_url ?? ""
+  const anOrder: Omit<Table_Order, "_id"> = {
+    ...basic1,
+    order_id: orderId,
+    user_id: user._id,
+    oState: "OK",
+    orderStatus: "PAID",
+    orderAmount: invoice.total,
+    paidAmount: invoice.amount_paid,
+    refundedAmount: 0,
+    currency: invoice.currency,
+    payChannel: "stripe",
+    orderType: "subscription",
+    plan_id: plan,
+    tradedStamp: invoice.created * 1000,
+    stripe_subscription_id,
+    stripe_invoice_id: invoice.id,
+    stripe_charge_id: charge.id,
+    stripe_other_data: {
+      hosted_invoice_url,
+      receipt_url,
+    },
+  }
+  const col_order = db.collection("Order")
+  const res7 = await col_order.add(anOrder)
+  console.log("看一下订单被创建的结果.......")
+  console.log(res7)
 
-
-  // 8. to delete the credential
+  // 9. to delete the credential
 
   
 }
@@ -579,3 +627,27 @@ async function handle_session_expired(
 
   return { code: "0000" }
 }
+
+/** create an available orderId */
+async function createAvailableOrderId() {
+  let num = 0
+  let orderId = ""
+  const col_order = db.collection("Order")
+  while(true) {
+    if(num > 3) break
+
+    let tmpId = createOrderId()
+    const res = await col_order.where({ order_id: tmpId }).getOne<Table_Order>()
+    const rData = res.data
+    
+    if(!rData) {
+      orderId = tmpId
+      break
+    }
+
+    num++
+  }
+
+  return orderId
+}
+

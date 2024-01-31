@@ -5,6 +5,17 @@
 ## 开发日记
 
 
+### 2024-01-31
+
+有更改的文件：
+common-types / common-ids / webhook-stripe
+
+### 2024-01-30
+
+有更改的文件：
+common-types / subscribe-plan / webhook-stripe
+
+
 ## 碎片记录
 
 
