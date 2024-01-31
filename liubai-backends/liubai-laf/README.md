@@ -10,6 +10,8 @@
 有更改的文件：
 common-types / common-ids / webhook-stripe
 
+待测试 billing_cycle_anchor
+
 ### 2024-01-30
 
 有更改的文件：
