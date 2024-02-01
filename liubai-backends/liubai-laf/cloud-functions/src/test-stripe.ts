@@ -36,6 +36,7 @@ export async function main(ctx: FunctionContext) {
       automatic_tax: {enabled: true},
       subscription_data: {
         billing_cycle_anchor,
+        proration_behavior: "none",
       },
     })
   }

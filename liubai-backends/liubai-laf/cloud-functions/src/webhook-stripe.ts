@@ -377,6 +377,9 @@ async function handle_session_completed(
     status, 
     subscription: stripe_subscription_id,
   } = obj
+
+  // payment_status 可能为 no_payment_required 表示未来才需要付款
+  // 因为可能是用户当前就已经在订阅期内了（比如免费送会员等等）
   if(payment_status === "unpaid" || status !== "complete") {
     console.log("当前 payment_status 或 status 不符合预期.........")
     return { code: "0000" }
@@ -420,7 +423,7 @@ async function handle_session_completed(
   
 
   // 2. to query the user to make sure that 
-  // there is no doubule charged during short term
+  // there is no double charged during a short term
   const col_user = db.collection("User")
   const res2 = await col_user.doc(userId).get<Table_User>()
   const user = res2.data
@@ -448,29 +451,20 @@ async function handle_session_completed(
     console.log(err)
     return { code: "E4004", errMsg: "we cannot retrieve subscription" }
   }
-  const invoice_id = sub.latest_invoice
-  if(!invoice_id || typeof invoice_id !== "string") {
-    console.warn("latest_invoice is not existed in Subscription of Stripe")
-    console.log(sub)
-    return { code: "E4004", errMsg: "latest_invoice is not existed in Subscription of Stripe" }
-  }
 
-  // 4. to get stripe's invoice
-  let invoice: Stripe.Invoice
-  try {
-    invoice = await stripe.invoices.retrieve(invoice_id, { expand: ["charge"] })
-  }
-  catch(err) {
-    console.warn("stripe.invoices.retrieve: ")
-    console.log(err)
-    return { code: "E4004", errMsg: "the invoice cannot be retrieved" }
-  }
-  if(!invoice.paid) {
-    return { code: "WS001", errMsg: "the invoice has not been paid" }
-  }
-  const charge = invoice.charge as Stripe.Charge
-  if(!charge || !charge.id) {
-    return { code: "E5001", errMsg: "there is no charge expanded in invoice" }
+  // 重写！！！！
+  // latest_invoice 有可能不存在！！因为还不需要付款！
+  // 可能当前还没到期嘛！
+  let invoice: Stripe.Invoice | undefined
+  let charge: Stripe.Charge | undefined
+  
+
+  const invoice_id = sub.latest_invoice
+
+  if(typeof invoice_id === "string") {
+    const inv_cha = await getInvoiceAndCharge(invoice_id)
+    invoice = inv_cha.invoice
+    charge = inv_cha.charge
   }
   
   // 5. generate a new subscription in user
@@ -480,7 +474,7 @@ async function handle_session_completed(
     isLifelong: false,
     createdStamp: sub.start_date * 1000,
     expireStamp: sub.current_period_end * 1000,
-    chargedStamp: invoice.created * 1000,
+    chargedStamp: invoice ? invoice.created * 1000 : undefined,
   }
   if(oldUserSub?.isLifelong) {
     newUserSub.isLifelong = true
@@ -489,9 +483,17 @@ async function handle_session_completed(
   if(!Boolean(sub.canceled_at) && sub.collection_method === "charge_automatically") {
     newUserSub.autoRecharge = true
   }
+  else {
+    newUserSub.autoRecharge = false
+  }
   if(oldUserSub?.createdStamp) {
     if(oldUserSub.createdStamp < newUserSub.createdStamp) {
       newUserSub.createdStamp = oldUserSub.createdStamp
+    }
+  }
+  if(oldUserSub?.expireStamp && newUserSub.expireStamp) {
+    if(oldUserSub.expireStamp > newUserSub.expireStamp) {
+      newUserSub.expireStamp = oldUserSub.expireStamp
     }
   }
 
@@ -508,6 +510,22 @@ async function handle_session_completed(
   console.log(res6)
   
   // 7. create an order
+  if(invoice) {
+    createOrderFromInvoiceAndCharge(invoice, charge)
+  }
+  
+
+  // 9. to delete the credential
+
+  
+}
+
+
+/** to create order */
+async function createOrderFromInvoiceAndCharge(
+  invoice: Stripe.Invoice,
+  charge?: Stripe.Charge,
+) {
   const orderId = await createAvailableOrderId()
   if(!orderId) {
     console.warn("fail to create an orderId")
@@ -515,40 +533,65 @@ async function handle_session_completed(
   }
   console.log("take a look of a new orderId: ")
   console.log(orderId)
-  const basic1 = getBasicStampWhileAdding()
-  const hosted_invoice_url = invoice.hosted_invoice_url ?? ""
-  const receipt_url = charge.receipt_url ?? ""
-  const anOrder: Omit<Table_Order, "_id"> = {
-    ...basic1,
-    order_id: orderId,
-    user_id: user._id,
-    oState: "OK",
-    orderStatus: "PAID",
-    orderAmount: invoice.total,
-    paidAmount: invoice.amount_paid,
-    refundedAmount: 0,
-    currency: invoice.currency,
-    payChannel: "stripe",
-    orderType: "subscription",
-    plan_id: plan,
-    tradedStamp: invoice.created * 1000,
-    stripe_subscription_id,
-    stripe_invoice_id: invoice.id,
-    stripe_charge_id: charge.id,
-    stripe_other_data: {
-      hosted_invoice_url,
-      receipt_url,
-    },
-  }
-  const col_order = db.collection("Order")
-  const res7 = await col_order.add(anOrder)
-  console.log("看一下订单被创建的结果.......")
-  console.log(res7)
+  // const basic1 = getBasicStampWhileAdding()
+  // const hosted_invoice_url = invoice.hosted_invoice_url ?? ""
+  // const receipt_url = charge?.receipt_url ?? ""
+  // const anOrder: Omit<Table_Order, "_id"> = {
+  //   ...basic1,
+  //   order_id: orderId,
+  //   user_id: user._id,
+  //   oState: "OK",
+  //   orderStatus: "PAID",
+  //   orderAmount: invoice.total,
+  //   paidAmount: invoice.amount_paid,
+  //   refundedAmount: 0,
+  //   currency: invoice.currency,
+  //   payChannel: "stripe",
+  //   orderType: "subscription",
+  //   plan_id: plan,
+  //   tradedStamp: invoice.created * 1000,
+  //   stripe_subscription_id,
+  //   stripe_invoice_id: invoice.id,
+  //   stripe_charge_id: charge.id,
+  //   stripe_other_data: {
+  //     hosted_invoice_url,
+  //     receipt_url,
+  //   },
+  // }
+  // const col_order = db.collection("Order")
+  // const res7 = await col_order.add(anOrder)
+  // console.log("看一下订单被创建的结果.......")
+  // console.log(res7)
 
-  // 9. to delete the credential
 
-  
+
 }
+
+
+interface GetInvoiceAndChargeRes {
+  invoice?: Stripe.Invoice
+  charge?: Stripe.Charge
+}
+
+/** to get invoice and charge */
+async function getInvoiceAndCharge(
+  invoice_id: string
+): Promise<GetInvoiceAndChargeRes> {
+  if(!invoice_id) return {}
+  const stripe = getStripeInstance()
+  let invoice: Stripe.Invoice | undefined
+  try {
+    invoice = await stripe.invoices.retrieve(invoice_id, { expand: ["charge"] })
+  }
+  catch(err) {
+    console.warn("stripe.invoices.retrieve: ")
+    console.log(err)
+    return {}
+  }
+  const charge = invoice.charge as Stripe.Charge
+  return { invoice, charge }
+}
+
 
 
 /** to calculate a new expireStamp */
