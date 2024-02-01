@@ -17,8 +17,20 @@ import {
 } from "@/common-time"
 import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
 import { createOrderId } from "@/common-ids"
+import { getDocAddId } from "./common-util"
 
 const db = cloud.database()
+
+/*************** some types in webhook-stripe ****************/
+interface CofiacParam {
+  invoice: Stripe.Invoice
+  charge?: Stripe.Charge
+  plan: string
+  user: Table_User
+  stripe_subscription_id: string
+}
+
+
 
 export async function main(ctx: FunctionContext) {
 
@@ -123,7 +135,7 @@ async function handleStripeEvent(
   let res: LiuRqReturn = { code: "E4000" }
   if(evt.type === "checkout.session.completed") {
     const obj = evt.data.object
-    await handle_session_completed(obj)
+    res = await handle_session_completed(obj)
   }
   else if(tp === "checkout.session.expired") {
     const obj = evt.data.object
@@ -398,15 +410,15 @@ async function handle_session_completed(
   const q = col_cred.where(w)
   const res = await q.getOne<Table_Credential>()
   const cred = res.data
-  const c_id = cred?._id
+  const cred_id = cred?._id
   const userId = cred?.userId
   const meta_data = cred?.meta_data
   const payment_circle = meta_data?.payment_circle
   const payment_timezone = meta_data?.payment_timezone
   const plan = meta_data?.plan
-  if(!cred || !c_id) {
-    // 订单已被创建，无需再执行其他操作
-    return { code: "0000" }
+  if(!cred || !cred_id) {
+    // 查无 credential
+    return { code: "E4004", errMsg: "there is no credential" }
   }
   if(!userId) {
     console.warn("there is no userId in the credential")
@@ -452,15 +464,11 @@ async function handle_session_completed(
     return { code: "E4004", errMsg: "we cannot retrieve subscription" }
   }
 
-  // 重写！！！！
-  // latest_invoice 有可能不存在！！因为还不需要付款！
-  // 可能当前还没到期嘛！
+  // 4. get invoice or charge if allowed
   let invoice: Stripe.Invoice | undefined
   let charge: Stripe.Charge | undefined
   
-
   const invoice_id = sub.latest_invoice
-
   if(typeof invoice_id === "string") {
     const inv_cha = await getInvoiceAndCharge(invoice_id)
     invoice = inv_cha.invoice
@@ -497,74 +505,85 @@ async function handle_session_completed(
     }
   }
 
-
   // 6. to update user
   const uUser: Partial<Table_User> = {
     stripe_subscription_id,
     subscription: newUserSub,
     updatedStamp: getNowStamp(),
   }
-
   const res6 = await col_user.where({ _id: user._id }).update(uUser)
-  console.log("这 handle_session_completed 中看一下更新 user 的结果........")
+  console.log("在 handle_session_completed 中看一下更新 user 的结果........")
   console.log(res6)
   
   // 7. create an order
   if(invoice) {
-    createOrderFromInvoiceAndCharge(invoice, charge)
+    const cofiac: CofiacParam = { 
+      invoice,
+      charge,
+      plan,
+      user,
+      stripe_subscription_id,
+    }
+    await createOrderFromInvoiceAndCharge(cofiac)
   }
   
-
   // 9. to delete the credential
+  const res9 = await col_cred.where({ _id: cred_id }).remove()
+  console.log("take a look of removing a credential")
+  console.log(res9)
 
-  
+  return { code: "0000" }
 }
 
 
 /** to create order */
 async function createOrderFromInvoiceAndCharge(
-  invoice: Stripe.Invoice,
-  charge?: Stripe.Charge,
+  param: CofiacParam,
 ) {
+  const {
+    invoice,
+    charge,
+    plan,
+    user,
+    stripe_subscription_id,
+  } = param
   const orderId = await createAvailableOrderId()
   if(!orderId) {
     console.warn("fail to create an orderId")
-    return { code: "WS002", errMsg: "fail to create an orderId" }
+    return
   }
   console.log("take a look of a new orderId: ")
   console.log(orderId)
-  // const basic1 = getBasicStampWhileAdding()
-  // const hosted_invoice_url = invoice.hosted_invoice_url ?? ""
-  // const receipt_url = charge?.receipt_url ?? ""
-  // const anOrder: Omit<Table_Order, "_id"> = {
-  //   ...basic1,
-  //   order_id: orderId,
-  //   user_id: user._id,
-  //   oState: "OK",
-  //   orderStatus: "PAID",
-  //   orderAmount: invoice.total,
-  //   paidAmount: invoice.amount_paid,
-  //   refundedAmount: 0,
-  //   currency: invoice.currency,
-  //   payChannel: "stripe",
-  //   orderType: "subscription",
-  //   plan_id: plan,
-  //   tradedStamp: invoice.created * 1000,
-  //   stripe_subscription_id,
-  //   stripe_invoice_id: invoice.id,
-  //   stripe_charge_id: charge.id,
-  //   stripe_other_data: {
-  //     hosted_invoice_url,
-  //     receipt_url,
-  //   },
-  // }
-  // const col_order = db.collection("Order")
-  // const res7 = await col_order.add(anOrder)
-  // console.log("看一下订单被创建的结果.......")
-  // console.log(res7)
-
-
-
+  const basic1 = getBasicStampWhileAdding()
+  const hosted_invoice_url = invoice.hosted_invoice_url ?? ""
+  const receipt_url = charge?.receipt_url ?? ""
+  const anOrder: Omit<Table_Order, "_id"> = {
+    ...basic1,
+    order_id: orderId,
+    user_id: user._id,
+    oState: "OK",
+    orderStatus: "PAID",
+    orderAmount: invoice.total,
+    paidAmount: invoice.amount_paid,
+    refundedAmount: 0,
+    currency: invoice.currency,
+    payChannel: "stripe",
+    orderType: "subscription",
+    plan_id: plan,
+    tradedStamp: invoice.created * 1000,
+    stripe_subscription_id,
+    stripe_invoice_id: invoice.id,
+    stripe_charge_id: charge?.id,
+    stripe_other_data: {
+      hosted_invoice_url,
+      receipt_url,
+    },
+  }
+  const col_order = db.collection("Order")
+  const res7 = await col_order.add(anOrder)
+  console.log("看一下订单被创建的结果.......")
+  console.log(res7)
+  return orderId
 }
 
 
