@@ -17,7 +17,7 @@ import {
 } from "@/common-time"
 import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
 import { createOrderId } from "@/common-ids"
-import { getDocAddId } from "./common-util"
+import { updateUserInCache } from "@/common-util"
 
 const db = cloud.database()
 
@@ -438,7 +438,7 @@ async function handle_session_completed(
   // there is no double charged during a short term
   const col_user = db.collection("User")
   const res2 = await col_user.doc(userId).get<Table_User>()
-  const user = res2.data
+  let user = res2.data
   if(!user) {
     console.warn("the user does not exist.......")
     return { code: "E5001" }
@@ -512,6 +512,9 @@ async function handle_session_completed(
     updatedStamp: getNowStamp(),
   }
   const res6 = await col_user.where({ _id: user._id }).update(uUser)
+  user = { ...user, ...uUser }
+  updateUserInCache(user._id, user)
+
   console.log("在 handle_session_completed 中看一下更新 user 的结果........")
   console.log(res6)
   

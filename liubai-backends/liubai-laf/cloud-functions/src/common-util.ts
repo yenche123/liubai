@@ -642,3 +642,36 @@ function checkTokenDataLastStamp(
   return tokenData
 }
 
+
+export function updateUserInCache(
+  userId: string,
+  user?: Table_User
+) {
+  const map = getLiuTokenUser()
+  let num = 0
+
+  map.forEach((val, key) => {
+    const _user_id = val.userData._id
+    if(userId !== _user_id) return
+
+    // avoid running in the loop
+    if(num > 16) return
+    num++
+
+    if(user) {
+      val.lastSet = getNowStamp()
+      val.userData = user
+      console.log("找到要更新的 cache........")
+      console.log(val)
+      map.set(key, val)
+    }
+    else {
+      map.delete(key)
+    }
+
+  })
+
+  // 最后不需要再对 cloud.shared 进行 set
+  // 因为引用存在时，修改里头的值时，外部的 shared 也会更改
+  // 若引用不存在时，代表为空的 map 也不需要更新
+}
