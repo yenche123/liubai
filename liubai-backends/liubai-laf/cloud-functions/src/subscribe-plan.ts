@@ -9,13 +9,19 @@ import type {
   LiuRqReturn,
   Table_Credential,
 } from "@/common-types";
-import { getBasicStampWhileAdding, getNowStamp, MINUTE } from "@/common-time";
+import { 
+  getBasicStampWhileAdding, 
+  getNowStamp, 
+  MINUTE,
+  HOUR,
+} from "@/common-time";
 
 
 const db = cloud.database()
 
 /** some constants */
 const MIN_30 = MINUTE * 30
+const HOUR_3 = HOUR * 3
 
 // stripe 的取消订阅，交由 stripe 托管的收据页面去管理
 // 应用负责接收 webhook 再去修改订阅信息
@@ -147,6 +153,24 @@ function checkIfUserSubscribed(
   return false
 }
 
+function checkIfUserCanBindStripe(
+  user: Table_User,
+) {
+  const s = user.subscription
+  const isOn = s?.isOn
+  if(!s || !isOn) return true
+  const isLifelong = s.isLifelong
+  if(isLifelong) return false
+  const { autoRecharge, expireStamp = 0 } = s
+  if(!autoRecharge) return true
+
+  // if the expiration has not been reached
+  const diff = expireStamp - getNowStamp()
+  if(diff > 0) return false
+
+  return true
+}
+
 
 /** 创建 stripe checkout session */
 async function handle_create_stripe(
@@ -170,9 +194,9 @@ async function handle_create_stripe(
   }
 
   // 2. 去查看 user 是否已经订阅，并且有效
-  const hasSubscribed = checkIfUserSubscribed(user)
-  if(hasSubscribed) {
-    return { code: "SP001", errMsg: "the user has subscribed" }
+  const canBind = checkIfUserCanBindStripe(user)
+  if(!canBind) {
+    return { code: "SP001", errMsg: "there is no need to bing stripe" }
   }
 
   // 3. check Credential for old session
@@ -220,6 +244,19 @@ async function handle_create_stripe(
     return { code: "E5001", errMsg: "there is no price_id of stripe" }
   }
   
+  // set expires_at as 3 hours later
+  const expires_at = Math.round((getNowStamp() + HOUR_3) / 1000)
+
+  // set billing_cycle_anchor
+  let subscription_data: Stripe.Checkout.SessionCreateParams.SubscriptionData | undefined
+  const billing_cycle_anchor = getBillingCycleAnchor(user)
+  if(billing_cycle_anchor) {
+    subscription_data = {
+      billing_cycle_anchor,
+      proration_behavior: "none"
+    }
+  }
+
   const stripe = new Stripe(LIU_STRIPE_API_KEY)
   let session: Stripe.Response<Stripe.Checkout.Session>
   try {
@@ -234,6 +271,8 @@ async function handle_create_stripe(
       success_url: `${LIU_DOMAIN}/payment-success`,
       cancel_url: `${LIU_DOMAIN}/payment-cancel`,
       automatic_tax: { enabled: true },
+      expires_at,
+      subscription_data,
     })
   }
   catch(err) {
@@ -277,5 +316,28 @@ async function handle_create_stripe(
   }
 
   return { code: "0000", data: r1 }
+}
+
+/** get the active expireStamp of the user's subscription 
+ *  return undefined if the expireStamp is within 3 hrs
+ *  return undefined if the expireStamp is in the past
+ *  return undefined if the subscription's isOn is "N"
+ *  return undefined if isLifelong is true
+ *  otherwise return billing_cycle_anchor (second)
+*/
+function getBillingCycleAnchor(
+  user: Table_User,
+) {
+  const s = user.subscription
+  const isOn = s?.isOn
+  if(!isOn || isOn === "N") return
+  const isLifelong = s?.isLifelong
+  if(isLifelong) return
+  const now = getNowStamp()
+  const e = s?.expireStamp ?? 1
+  const diff = e - now
+  if(diff < HOUR_3) return
+  const b = Math.round(e / 1000)
+  return b
 }
 
