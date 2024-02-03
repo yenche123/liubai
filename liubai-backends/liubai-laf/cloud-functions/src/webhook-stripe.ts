@@ -385,7 +385,7 @@ async function handle_session_completed(
   const { 
     payment_status, 
     status, 
-    subscription: stripe_subscription_id,
+    subscription: stripe_sub,
   } = obj
 
   // payment_status 可能为 no_payment_required 表示未来才需要付款
@@ -394,7 +394,8 @@ async function handle_session_completed(
     console.log("当前 payment_status 或 status 不符合预期.........")
     return { code: "0000" }
   }
-  if(!stripe_subscription_id || typeof stripe_subscription_id !== "string") {
+  const stripe_subscription_id = getIdFromStripeObj(stripe_sub)
+  if(!stripe_subscription_id) {
     console.log("Checkout.Session 中 subscription 不存在......")
     return { code: "E4000", errMsg: "there is no subscription in Checkout.Session" }
   }
@@ -510,11 +511,11 @@ async function handle_session_completed(
     updatedStamp: getNowStamp(),
   }
   const res6 = await col_user.where({ _id: user._id }).update(uUser)
-  user = { ...user, ...uUser }
-  updateUserInCache(user._id, user)
-
   console.log("在 handle_session_completed 中看一下更新 user 的结果........")
   console.log(res6)
+
+  user = { ...user, ...uUser }
+  updateUserInCache(user._id, user)
   
   // 7. create an order
   if(invoice) {
