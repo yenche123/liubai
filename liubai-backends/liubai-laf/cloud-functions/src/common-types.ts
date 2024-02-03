@@ -539,6 +539,7 @@ export interface Table_Order extends BaseTable {
   stripe_subscription_id?: string
   stripe_invoice_id?: string
   stripe_charge_id?: string
+  stripe_payment_intent_id?: string
   stripe_other_data?: {
     hosted_invoice_url?: string   // 发票地址
     receipt_url?: string          // 收据地址

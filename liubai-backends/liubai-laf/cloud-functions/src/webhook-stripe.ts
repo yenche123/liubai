@@ -17,7 +17,7 @@ import {
 } from "@/common-time"
 import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
 import { createOrderId } from "@/common-ids"
-import { updateUserInCache } from "@/common-util"
+import { updateUserInCache, getIdFromStripeObj } from "@/common-util"
 
 const db = cloud.database()
 
@@ -30,7 +30,7 @@ interface CofiacParam {
   stripe_subscription_id: string
 }
 
-
+/**************** some functions ******************/
 
 export async function main(ctx: FunctionContext) {
 
@@ -357,7 +357,6 @@ async function handle_subscription_twe(
 ) {
   console.warn("似乎 订阅 试用即将到期")
   console.log(obj)
-  
 }
 
 
@@ -369,7 +368,6 @@ async function handle_subscription_updated(
 ) {
   console.warn("似乎 订阅 发生更新")
   console.log(obj)
-  
 }
 
 
@@ -383,7 +381,7 @@ async function handle_session_completed(
   console.log(obj)
   const session_id = obj.id
 
-  // 0. 查看 session 是否已支付
+  // 0. check the session
   const { 
     payment_status, 
     status, 
@@ -401,7 +399,7 @@ async function handle_session_completed(
     return { code: "E4000", errMsg: "there is no subscription in Checkout.Session" }
   }
 
-  // 1. 去查询 Credential 
+  // 1. query Credential 
   const w: Partial<Table_Credential> = {
     infoType: "stripe-checkout-session",
     credential: session_id,
@@ -560,6 +558,9 @@ async function createOrderFromInvoiceAndCharge(
   const basic1 = getBasicStampWhileAdding()
   const hosted_invoice_url = invoice.hosted_invoice_url ?? ""
   const receipt_url = charge?.receipt_url ?? ""
+  const payment_intent = invoice.payment_intent
+  const stripe_payment_intent_id = getIdFromStripeObj(payment_intent)
+
   const anOrder: Omit<Table_Order, "_id"> = {
     ...basic1,
     order_id: orderId,
@@ -577,6 +578,7 @@ async function createOrderFromInvoiceAndCharge(
     stripe_subscription_id,
     stripe_invoice_id: invoice.id,
     stripe_charge_id: charge?.id,
+    stripe_payment_intent_id,
     stripe_other_data: {
       hosted_invoice_url,
       receipt_url,
@@ -616,7 +618,7 @@ async function getInvoiceAndCharge(
 
 
 
-/** to calculate a new expireStamp */
+/** the func is for one-off trade, which is not developed */
 function getNewExpireStamp(
   payment_circle: SubscriptionPaymentCircle,
   payment_timezone?: string,

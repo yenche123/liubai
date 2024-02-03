@@ -675,3 +675,20 @@ export function updateUserInCache(
   // 因为引用存在时，修改里头的值时，外部的 shared 也会更改
   // 若引用不存在时，代表为空的 map 也不需要更新
 }
+
+/**
+ * stripe 的一些对象中的属性，有时候是 string 的 id 值
+ * 有时候则是该属性对象，所以做一个嵌套的方法专门获取其 id
+ * @param data 某对象下的属性“值”
+ * @return 返回该对象的 id
+ */
+export function getIdFromStripeObj(data: any) {
+  if(!data) return undefined
+  if(typeof data === "string") {
+    return data
+  }
+  const id = data?.id
+  if(typeof id === "string") {
+    return id
+  }
+}
