@@ -13,7 +13,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@he-tree/vue": "^2.7.8",
+    "@he-tree/vue": "^2.8.1",
     "@intlify/unplugin-vue-i18n": "^2.0.0",
     "@tiptap/core": "2.2.1",
     "@tiptap/extension-blockquote": "2.2.1",
@@ -31,7 +31,7 @@
     "@tiptap/starter-kit": "2.2.1",
     "@tiptap/suggestion": "2.2.1",
     "@tiptap/vue-3": "2.2.1",
-    "@vuepic/vue-datepicker": "^7.4.1",
+    "@vuepic/vue-datepicker": "^8.0.0",
     "@vueuse/core": "^10.7.2",
     "another-vue3-blurhash": "^0.0.1",
     "blurhash": "^2.0.5",
@@ -52,7 +52,7 @@
     "tippy.js": "^6.3.7",
     "vconsole": "^3.15.1",
     "vue": "^3.4.15",
-    "vue-draggable-resizable": "^2.3.0",
+    "vue-draggable-resizable": "^3.0.0",
     "vue-i18n": "^9.9.1",
     "vue-router": "^4.2.5",
     "vue-slicksort": "^2.0.5"
@@ -67,7 +67,7 @@
     "typescript": "~5.3.3",
     "user-agent-data-types": "^0.4.2",
     "vite": "^5.0.12",
-    "vite-plugin-compression2": "^0.11.0",
+    "vite-plugin-compression2": "^0.12.0",
     "vite-plugin-inspect": "^0.8.3",
     "vite-plugin-mkcert": "^1.17.3",
     "vite-plugin-svg-icons": "^2.0.1",

@@ -6,6 +6,8 @@ declare module '*.vue' {
   export default component
 }
 
+declare module 'vue-draggable-resizable'
+
 interface LiuEnv {
   version: string
   client: string

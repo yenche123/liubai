@@ -7,7 +7,6 @@ import SbContent from './sb-content/sb-content.vue';
 import SbTags from './sb-tags/sb-tags.vue';
 import SbFixed from './sb-fixed/sb-fixed.vue';
 import SbBottom from './sb-bottom/sb-bottom.vue';
-import VueDraggableResizable from "vue-draggable-resizable/src/components/vue-draggable-resizable.vue";
 import SbOpen from './sb-open/sb-open.vue';
 
 const {

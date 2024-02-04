@@ -9,7 +9,7 @@ import './styles/theme-light.css'
 import './styles/theme-dark.css'
 import './styles/custom-style.css'
 import 'floating-vue/dist/style.css'
-import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
+import 'vue-draggable-resizable/style.css'
 
 import App from './App.vue'
 import { i18n } from './locales'
@@ -24,6 +24,7 @@ import FloatingVue from 'floating-vue'
 import { plugin as Slicksort } from 'vue-slicksort';
 import { initTheme } from './hooks/useDynamics'
 import { liuShowDirective } from "~/utils/directives/v-liu-show"
+import VueDraggableResizable from 'vue-draggable-resizable'
 
 // 初始化主题
 initTheme()
@@ -44,6 +45,7 @@ app.component("FloatActionButton", defineAsyncComponent(() =>
 app.component("LiuTooltip", defineAsyncComponent(() => 
   import("./components/common/liu-tooltip/liu-tooltip.vue")
 ))
+app.component("vue-draggable-resizable", VueDraggableResizable)
 
 app.use(createPinia())
 app.use(i18n)
