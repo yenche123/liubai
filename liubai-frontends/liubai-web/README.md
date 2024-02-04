@@ -42,7 +42,7 @@ https://svgl.vercel.app/    聚焦各大 Logo 的 SVG
 
 3. 开源前，记得移除 `.vscode/settings.json` 里的 `typescript.tsdk`
 
-4. 升级 tiptap 下的依赖至最新，使用 `pnpm up @tiptap/* --latest`
+4. 升级 tiptap 下的依赖至最新，使用 `pnpm up "@tiptap/*" --latest`
 
 5. 函数式获取应用个人信息（userId / memberId / spaceId / spaceType）上下文，使用 `checker.getMyContext()` 
 
