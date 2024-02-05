@@ -7,6 +7,7 @@ import type {
   SubscriptionPaymentCircle,
   UserSubscription,
   Table_Order,
+  BaseIsOn,
 } from "@/common-types"
 import cloud from "@lafjs/cloud"
 import { 
@@ -14,12 +15,16 @@ import {
   getServerTimezone, 
   formatTimezone, 
   getBasicStampWhileAdding,
+  SECONED,
 } from "@/common-time"
 import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
 import { createOrderId } from "@/common-ids"
 import { updateUserInCache, getIdFromStripeObj } from "@/common-util"
 
 const db = cloud.database()
+
+/*************** some constants **********************/
+const SEC_5 = 5 * SECONED
 
 /*************** some types in webhook-stripe ****************/
 interface CofiacParam {
@@ -368,6 +373,48 @@ async function handle_subscription_updated(
 ) {
   console.warn("似乎 订阅 发生更新")
   console.log(obj)
+
+  // 1. query user
+  const col_user = db.collection("User")
+  const q = col_user.where({ stripe_subscription_id: obj.id })
+  const res = await q.getOne<Table_User>()
+  const user = res.data
+  if(!user) {
+    console.log("handle_subscription_updated 查无该用户")
+    return { code: "0000" }
+  }
+  const s = user.subscription
+  if(!s) {
+    console.log("there is no subscription in the user")
+    return { code: "E5001", errMsg: "there is no subscription in the user" }
+  }
+
+  // 2. try to update user.subscription
+  const s1 = s.createdStamp
+  const now = getNowStamp()
+  const diff_1 = now - s1
+  console.log("距离订阅被创建的时间: ", diff_1)
+  if(diff_1 < SEC_5) {
+    return { code: "0000" }
+  }
+  const newUserSub: UserSubscription = {
+    ...s,
+    isOn: getUserSubIsOn(obj.status),
+    autoRecharge: getUserSubAutoRecharge(obj),
+    expireStamp: obj.current_period_end * 1000,
+  }
+  if(s?.isLifelong) {
+    delete newUserSub.expireStamp
+  }
+  const u2: Partial<Table_User> = {
+    updatedStamp: now,
+    subscription: newUserSub,
+  }
+  const q2 = col_user.where({ _id: user._id })
+  const res2 = await q2.update(u2)
+  console.log("handle_subscription_updated 更新用户的结果: ")
+  console.log(res2)
+  return { code: "0000" }
 }
 
 
@@ -446,7 +493,7 @@ async function handle_session_completed(
   const chargedStamp = oldUserSub?.chargedStamp ?? 1
   const now = getNowStamp()
   const diff_1 = now - chargedStamp
-  if(diff_1 < 5000) {
+  if(diff_1 < SEC_5) {
     console.warn("5s 内被重复充值，拒绝继续执行........")
     return { code: "E4003", errMsg: "pay too much" }
   }
@@ -476,9 +523,10 @@ async function handle_session_completed(
   
   // 5. generate a new subscription in user
   const newUserSub: UserSubscription = {
-    isOn: sub.status === "active" ? "Y" : "N",
+    isOn: getUserSubIsOn(sub.status),
     plan,
     isLifelong: false,
+    autoRecharge: getUserSubAutoRecharge(sub),
     createdStamp: sub.start_date * 1000,
     expireStamp: sub.current_period_end * 1000,
     chargedStamp: invoice ? invoice.created * 1000 : undefined,
@@ -487,20 +535,14 @@ async function handle_session_completed(
     newUserSub.isLifelong = true
     delete newUserSub.expireStamp
   }
-  if(!Boolean(sub.canceled_at) && sub.collection_method === "charge_automatically") {
-    newUserSub.autoRecharge = true
-  }
-  else {
-    newUserSub.autoRecharge = false
+  else if(oldUserSub?.expireStamp && newUserSub.expireStamp) {
+    if(oldUserSub.expireStamp > newUserSub.expireStamp) {
+      newUserSub.expireStamp = oldUserSub.expireStamp
+    }
   }
   if(oldUserSub?.createdStamp) {
     if(oldUserSub.createdStamp < newUserSub.createdStamp) {
       newUserSub.createdStamp = oldUserSub.createdStamp
-    }
-  }
-  if(oldUserSub?.expireStamp && newUserSub.expireStamp) {
-    if(oldUserSub.expireStamp > newUserSub.expireStamp) {
-      newUserSub.expireStamp = oldUserSub.expireStamp
     }
   }
 
@@ -535,6 +577,22 @@ async function handle_session_completed(
   console.log(res9)
 
   return { code: "0000" }
+}
+
+function getUserSubIsOn(
+  s: Stripe.Subscription.Status,
+): BaseIsOn {
+  if(s === "active" || s === "trialing") return "Y"
+  return "N"
+}
+
+function getUserSubAutoRecharge(
+  sub: Stripe.Subscription,
+) {
+  if(!Boolean(sub.canceled_at) && sub.collection_method === "charge_automatically") {
+    return true
+  }
+  return false
 }
 
 
