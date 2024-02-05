@@ -1,6 +1,7 @@
 import type { ImageShow } from '~/types';
 import type { Swiper } from "swiper"
 import type { Ref } from 'vue';
+import type { SwiperModule, MousewheelOptions } from 'swiper/types';
 
 export interface PicProps {
   imgs: ImageShow[]
@@ -33,6 +34,14 @@ export interface PicCover {
   width: number
   height: number
   blurhash?: string
+}
+
+export interface PicSwiperParams {
+  modules: SwiperModule[]
+  zoom: boolean
+  cssMode: boolean
+  mousewheel: boolean | MousewheelOptions
+  keyboard: boolean
 }
 
 export interface PicCtx {

@@ -3,15 +3,18 @@ import type { Ref } from "vue";
 import { useWindowSize } from '~/hooks/useVueUse';
 import type { ImageShow } from '~/types';
 import type { LiuTimeout } from '~/utils/basic/type-tool';
-import type { PicProps, PicCover, PicEmits, PicCtx } from './types';
+import type { PicProps, PicCover, PicEmits, PicCtx, PicSwiperParams } from './types';
 import type { ZoomEvents } from "swiper/types"
+import { Zoom, Mousewheel, Keyboard } from "swiper/modules"
 import time from '~/utils/basic/time';
+import liuApi from '~/utils/liu-api';
 
 export function usePiContent(
   props: PicProps,
   emit: PicEmits
 ) {
 
+  const swiperParams = initSwiperParams()
   const covers = ref<PicCover[]>([])
   const coverLength = computed(() => covers.value.length)
   const { width, height } = useWindowSize()
@@ -55,12 +58,34 @@ export function usePiContent(
   }
 
   return { 
+    swiperParams,
     covers, 
     coverLength,
     onZoomChange,
     onBoxPointerDown,
     onBoxPointerUp,
   }
+}
+
+
+function initSwiperParams() {
+  const cha = liuApi.getCharacteristic()
+  const swiperParams: PicSwiperParams = {
+    modules: [Zoom],
+    zoom: true,
+    cssMode: false,
+    mousewheel: false,
+    keyboard: false,
+  }
+
+  if(cha.isPC) {
+    swiperParams.modules.push(Mousewheel, Keyboard)
+    swiperParams.cssMode = true
+    swiperParams.mousewheel = { forceToAxis: true }
+    swiperParams.keyboard = true
+  }
+
+  return swiperParams
 }
 
 

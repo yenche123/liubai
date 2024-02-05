@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { Swiper } from "swiper"
-import { Zoom } from "swiper/modules"
 import { Swiper as VueSwiper, SwiperSlide } from 'swiper/vue';
-
 import { ref, shallowRef } from 'vue';
 import { usePiContent } from "./tools/usePiContent";
 import { picProps } from "./tools/types"
@@ -18,13 +16,13 @@ const props = defineProps(picProps)
 const emit = defineEmits<PicEmits>()
 
 const { 
+  swiperParams,
   covers, 
   coverLength,
   onBoxPointerDown,
   onBoxPointerUp,
   onZoomChange,
 } = usePiContent(props, emit)
-const modules = [Zoom]
     
 let _swiper = shallowRef<Swiper | null>(null)
 const leftArrow = ref(false)
@@ -66,8 +64,11 @@ const onSwiper = (swiper: Swiper) => {
 <template>
   <VueSwiper @swiper="onSwiper" 
     @slideChange="onSlideChange"
-    :modules="modules"
-    :zoom="true"
+    :modules="swiperParams.modules"
+    :zoom="swiperParams.zoom"
+    :css-mode="swiperParams.cssMode"
+    :mousewheel="swiperParams.mousewheel"
+    :keyboard="swiperParams.keyboard"
     @zoom-change="onZoomChange"
   >
     <template v-for="(item, index) in covers" :key="item.id">
