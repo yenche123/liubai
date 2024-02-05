@@ -39,7 +39,7 @@ const { isMobile } = liuApi.getCharacteristic()
   scrollbar-width: v-bind("isMobile ? 'none' : 'auto'");
 
   &::-webkit-scrollbar {
-    display: v-bind("isMobile ? 'none' : 'block'");
+    display: v-bind("isMobile || hiddenScrollBar ? 'none' : 'block'");
   }
 
   &::-webkit-scrollbar-thumb {
@@ -49,10 +49,6 @@ const { isMobile } = liuApi.getCharacteristic()
 
 .liu-scollbar_hidden {
   scrollbar-color: transparent transparent;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
 
 </style>
