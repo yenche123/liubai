@@ -6,6 +6,7 @@ import mkcert from 'vite-plugin-mkcert'
 import { compression as viteCompression } from 'vite-plugin-compression2'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import Inspect from 'vite-plugin-inspect'
+import { qrcode } from 'vite-plugin-qrcode';
 
 const { version } = require("./package.json")
 
@@ -43,7 +44,10 @@ export default defineConfig({
     createSvgIconsPlugin({
       iconDirs: [resolve(process.cwd(), 'src/assets/icons')],
       symbolId: 'icon-[dir]-[name]',
-    })
+    }),
+
+    // show qrcode in dev mode
+    qrcode(),
   ],
 
   server: {

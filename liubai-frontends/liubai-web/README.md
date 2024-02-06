@@ -123,6 +123,8 @@ https://brew.sh/
 
 9. 在 Finder 合适的位置中，比如 `/Users/你的用户名` 中，创建一个文件夹 `Dev`。之后点击右上角由第 5 步安装的 `cdto` 打开 Terminal，此时再运行 `git clone 你的仓库地址`。代码下载完成后，`cd 你的项目名`，再运行 `code .` 即可开始编写代码啦！
 
+10. 开启 vite dev server 时，当要用手机调试时，必须现在电脑上开启 Network 的地址，手机才打得开同一个地址。
+
 
 ### MacOS 中的注意事项
 
