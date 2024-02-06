@@ -277,6 +277,7 @@ export interface UserSubscription {
   autoRecharge?: boolean   // 是否开启自动续费，当为 undefined 表示不得而知
   createdStamp: number     // 第一次创建订阅的时间戳
   chargedStamp?: number    // 最近一次付费的时间戳，不排除免费开启订阅，所以此项选填
+  firstChargedStamp?: number    // 第一次付费的时间戳，用于判断是否支持退款
   expireStamp?: number
 }
 

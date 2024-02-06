@@ -531,6 +531,7 @@ async function handle_session_completed(
     expireStamp: sub.current_period_end * 1000,
     chargedStamp: invoice ? invoice.created * 1000 : undefined,
   }
+  // 判断会员有效期和终身会员
   if(oldUserSub?.isLifelong) {
     newUserSub.isLifelong = true
     delete newUserSub.expireStamp
@@ -540,10 +541,18 @@ async function handle_session_completed(
       newUserSub.expireStamp = oldUserSub.expireStamp
     }
   }
+  // 判断创建时间
   if(oldUserSub?.createdStamp) {
     if(oldUserSub.createdStamp < newUserSub.createdStamp) {
       newUserSub.createdStamp = oldUserSub.createdStamp
     }
+  }
+  // 判断第一次付款的时间戳
+  if(oldUserSub?.firstChargedStamp) {
+    newUserSub.firstChargedStamp = oldUserSub.firstChargedStamp
+  }
+  else if(invoice?.created) {
+    newUserSub.firstChargedStamp = invoice.created * 1000
   }
 
   // 6. to update user
