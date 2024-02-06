@@ -116,12 +116,6 @@ const onTapBtn = (e: Event) => {
     background-color: var(--primary-active);
   }
 
-  .btn-container:disabled {
-    background-color: var(--primary-color);
-    opacity: .5;
-    cursor: default;
-  }
-
   .btn-transparent:hover {
     background-color: transparent;
     opacity: .7;
@@ -152,6 +146,11 @@ const onTapBtn = (e: Event) => {
 
 }
 
+.btn-container:disabled {
+  background-color: var(--primary-color);
+  opacity: .5;
+  cursor: default;
+}
 
 
 @media screen and (max-width: 450px) {
