@@ -11,7 +11,7 @@ defineProps({
   inCodeBlock: Boolean,
   focused: Boolean,
 })
-const emits = defineEmits<{
+defineEmits<{
   (event: "confirm"): void
 }>()
 
@@ -33,7 +33,7 @@ const cha = liuApi.getCharacteristic()
         size="mini" 
         class="cefa-btn" 
         :disabled="!canSubmit"
-        @click="emits('confirm')"
+        @click="$emit('confirm')"
       >
         <span>{{ t("common.finish") }}</span>
       </custom-btn>

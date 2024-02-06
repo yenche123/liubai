@@ -11,7 +11,7 @@ const props = defineProps({
   },
 })
 
-const emits = defineEmits<{
+defineEmits<{
   (event: "tapback"): void
   (event: "tapclose"): void
   (event: "tapopeninnew"): void
@@ -32,18 +32,18 @@ const iconColor = "var(--main-normal)"
   <div class="liu-frosted-glass vcliu-navi-bar">
 
     <!-- 返回键 -->
-    <div class="liu-hover vcliu-navi-btn" @click="emits('tapback')">
+    <div class="liu-hover vcliu-navi-btn" @click="$emit('tapback')">
       <svg-icon class="vcliu-navi-icon" name="arrow-back" :color="iconColor"></svg-icon>
     </div>
 
     <!-- 关闭按钮 -->
-    <div class="liu-hover vcliu-navi-btn" @click="emits('tapclose')">
+    <div class="liu-hover vcliu-navi-btn" @click="$emit('tapclose')">
       <svg-icon class="vcliu-navi-icon" name="close" :color="iconColor"></svg-icon>
     </div>
 
     <div class="vcliu-navi-footer">
       <!-- 用新分页打开 -->
-      <div class="liu-hover vcliu-navi-btn" @click="emits('tapopeninnew')"
+      <div class="liu-hover vcliu-navi-btn" @click="$emit('tapopeninnew')"
         :class="{ 'vcliu-nv-open': !isMobile }"
       >
         <svg-icon class="vcn-open-new" name="open_in_new" :color="iconColor"></svg-icon>
