@@ -509,6 +509,7 @@ async function handle_session_completed(
     console.log(err)
     return { code: "E4004", errMsg: "we cannot retrieve subscription" }
   }
+  const stripe_customer_id = getIdFromStripeObj(sub.customer)
 
   // 4. get invoice or charge if allowed
   let invoice: Stripe.Invoice | undefined
@@ -558,6 +559,7 @@ async function handle_session_completed(
   // 6. to update user
   const uUser: Partial<Table_User> = {
     stripe_subscription_id,
+    stripe_customer_id,
     subscription: newUserSub,
     updatedStamp: getNowStamp(),
   }
