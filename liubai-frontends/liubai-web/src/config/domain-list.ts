@@ -22,7 +22,7 @@ export const domainAllowed = [
   "gcores.com",
   "sspai.com",
   "douban.com",
-  "zhiy.cc",       // 背景需要调成白色
+  "zhiy.cc",
   "hedwig.pub",
   "beehiiv.com",
   "lusun.com",

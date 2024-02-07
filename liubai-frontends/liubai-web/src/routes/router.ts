@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router"
-import { routes } from "./initRoutes"
+import { routes } from "./init-routes"
 import liuEnv from "~/utils/liu-env"
 import localCache from "~/utils/system/local-cache"
 

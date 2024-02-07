@@ -23,7 +23,7 @@ const SubscribePage = () => import("../pages/level3/payments/subscribe-page/subs
 const PaymentSuccessPage = () => import("../pages/level3/payments/success-page/success-page.vue")
 const PaymentCancelPage = () => import("../pages/level3/payments/cancel-page/cancel-page.vue")
 
-const routes: Array<RouteRecordRaw> = [
+export const routes: Array<RouteRecordRaw> = [
   {
     path: "/home",
     component: HomePage,
@@ -382,7 +382,3 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
 ]
-
-export {
-  routes,
-}
