@@ -31,6 +31,9 @@ export const popupFileKey = Symbol() as InjectionKey<Ref<File[]>>
 // 每次触发置入时，对应的 number += 1
 export const editorSetKey = Symbol() as InjectionKey<Ref<number>>
 
+// 用于确认在浏览态时，editor 是否可交互
+export const editorCanInteractKey = Symbol() as InjectionKey<Ref<boolean>>
+
 // 用于跨级传递 scroll-view 的事件 (触底和触顶) 被触发
 export const scrollViewKey = Symbol() as InjectionKey<SvProvideInject>
 

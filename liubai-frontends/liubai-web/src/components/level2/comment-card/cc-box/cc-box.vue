@@ -9,7 +9,7 @@ import BwBubbleMenu from '~/components/browsing/bw-bubble-menu/bw-bubble-menu.vu
 import { useCcBox } from './tools/useCcBox';
 import type { CommentCardLocation } from "../tools/types"
 
-const props = defineProps({
+defineProps({
   cs: {          // cs 为 commentShow 的简写
     type: Object as PropType<CommentShow>,
     required: true,

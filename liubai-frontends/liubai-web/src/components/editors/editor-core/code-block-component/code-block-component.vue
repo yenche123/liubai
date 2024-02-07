@@ -30,8 +30,9 @@
         <span v-if="showLanguage">{{ showLanguage }}</span>
         <span v-else>Auto</span>
       </div>
-      <div class="cbrt-line" />
-      <div class="cbrt-btn" 
+      <div v-if="canInteract" class="cbrt-line" />
+      <div v-if="canInteract"
+        class="cbrt-btn" 
         :class="{ 'cbrt-btn_no_pointer': showCopied }"
         @click.stop="onTapCopyCode"
       >
@@ -58,7 +59,7 @@
 import { NodeViewContent, nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
 import liuUtil from '~/utils/liu-util'
 import { useI18n } from 'vue-i18n'
-import { computed, ref } from 'vue'
+import { computed, ref, inject } from 'vue'
 import { 
   showProgrammingLanguages,
   supportedToShow,
@@ -70,6 +71,7 @@ import type {
 } from "./tools/types"
 import liuApi from '~/utils/liu-api'
 import type { LiuTimeout } from '~/utils/basic/type-tool'
+import { editorCanInteractKey } from "~/utils/provide-keys"
 
 export default {
   components: {
@@ -121,6 +123,7 @@ export default {
       }, 2000)
     }
 
+    const canInteract = inject(editorCanInteractKey, ref(true))
 
     return { 
       t, 
@@ -130,6 +133,7 @@ export default {
       showLanguage,
       onTapCopyCode,
       showCopied,
+      canInteract,
     }
   },
 }
@@ -200,13 +204,14 @@ export default {
       font-family: inherit;
       color: #606060;
       user-select: none;
+      margin-inline-end: 12px;
     }
 
     .cbrt-line {
       width: 1px;
       height: 15px;
       background-color: #323232;
-      margin-inline: 14px 8px;
+      margin-inline-end: 8px;
       font-size: var(--mini-font);
     }
 

@@ -1,4 +1,4 @@
-import { reactive, watch, type WatchStopHandle } from "vue"
+import { provide, reactive, watch, ref, type WatchStopHandle } from "vue"
 import type {
   CommentPopupParam,
   CommentPopupData,
@@ -13,6 +13,7 @@ import {
   toListenEscKeyUp,
   cancelListenEscKeyUp,
 } from "../../tools/listen-keyup"
+import { editorCanInteractKey } from "~/utils/provide-keys"
 
 const queryKey = "commentpopup"
 const cpData = reactive<CommentPopupData>({
@@ -33,6 +34,10 @@ let watchStopHandle: WatchStopHandle | undefined
 export function initCommentPopup() {
   rr = useRouteAndLiuRouter()
   listenRouteChange()
+
+  // 告知 editor 当前浏览态的卡片不可交互
+  provide(editorCanInteractKey, ref(false))
+
   return {
     cpData,
     onTapCancel,
