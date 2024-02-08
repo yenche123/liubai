@@ -39,10 +39,14 @@ export async function sendEmails(
   const newHtml = html as string
 
   const _env = process.env
-  const resendApiKey = _env.LIU_RESEND_API_KEY
   const fromEmail = _env.LIU_RESEND_FROM_EMAIL
-  if(!resendApiKey || !fromEmail) {
-    return { code: "E5001", errMsg: "no resendApiKey or fromEmail in sendEmails" } 
+  if(!fromEmail) {
+    return { code: "E5001", errMsg: "no fromEmail in sendEmails" } 
+  }
+
+  const resend = getResendInstance()
+  if(!resend) {
+    return { code: "E5001", errMsg: "no resendApiKey in sendEmails" }
   }
 
   const appName = _env.LIU_APP_NAME
@@ -54,7 +58,6 @@ export async function sendEmails(
     tags = [{ name: "category", value: "confirm_email" }]
   }
 
-  const resend = new Resend(resendApiKey)
   const res = await resend.emails.send({
     from: `${appName} <${fromEmail}>`,
     to: param.to,
@@ -83,12 +86,10 @@ export async function sendEmails(
 async function retrieveEmail(
   email_id: string,
 ): Promise<LiuRqReturn> {
-  const _env = process.env
-  const resendApiKey = _env.LIU_RESEND_API_KEY
-  if(!resendApiKey) {
+  const resend = getResendInstance()
+  if(!resend) {
     return { code: "E5001", errMsg: "no resendApiKey in retrieveEmail" } 
   }
-  const resend = new Resend(resendApiKey)
   const res = await resend.emails.get(email_id)
   console.log("retrieveEmail res: ")
   console.log(res)
@@ -158,4 +159,13 @@ export async function getActiveEmailCode(): Promise<LiuRqReturn> {
   }
 
   return { code: "E5001", errMsg: "cannot get an active email code" }
+}
+
+
+function getResendInstance() {
+  const _env = process.env
+  const resendApiKey = _env.LIU_RESEND_API_KEY
+  if(!resendApiKey) return
+  const resend = new Resend(resendApiKey)
+  return resend
 }
