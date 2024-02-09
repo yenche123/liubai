@@ -20,7 +20,7 @@
 .cc-box {
   width: 60%;
   padding-inline: 20%;
-  height: 85%;
+  min-height: 85%;
   display: flex;
   flex-direction: column;
   align-items: center;
