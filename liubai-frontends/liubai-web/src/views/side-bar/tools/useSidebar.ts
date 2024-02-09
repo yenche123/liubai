@@ -12,6 +12,7 @@ import type { LiuTimeout } from "~/utils/basic/type-tool"
 import { useSbKeyboard } from "./useSbKeyboard"
 import type { SbData } from "./types";
 import { useImages } from "~/hooks/useImages"
+import { type CursorHorizontalResize } from "~/types/types-view";
 
 const LISTEN_DELAY = 300
 let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后视觉上呈现的宽度
@@ -26,6 +27,7 @@ const sbData = reactive<SbData>({
   isAnimating: false,
   isActivate: true,
   showHandle: false,
+  cursor: "ew-resize",
 })
 
 export function useSidebar() {
@@ -167,6 +169,9 @@ function initResizing(
 
     if(isJustWindowResize()) return
     if(!sbData.isActivate) return
+
+    handleCursor()
+
     if(lastResizeTimeout) clearTimeout(lastResizeTimeout)
     lastResizeTimeout = window.setTimeout(() => {
       lastResizeTimeout = 0
@@ -376,6 +381,22 @@ function initSidebar(
     lastWinResizeStamp = time.getLocalTime()
     layoutStore.$patch(newState)
   }
+}
+
+function handleCursor() {
+  const {
+    maxSidebarPx: max,
+    minSidebarPx: min,
+    sidebarWidthPx: w,
+    cursor: oldV,
+  } = sbData
+  let newV: CursorHorizontalResize = "ew-resize"
+  const diff = Math.abs(max - min)
+  if(diff <= 10) newV = "ew-resize"
+  else if(w - min <= 8) newV = "e-resize"
+  else if(max - w <= 8) newV = "w-resize"
+  if(newV === oldV) return
+  sbData.cursor = newV
 }
 
 // 监听来自其他组件的变化

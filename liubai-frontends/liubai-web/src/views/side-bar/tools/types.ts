@@ -1,4 +1,4 @@
-import type { OpenType } from "~/types/types-view";
+import type { CursorHorizontalResize, OpenType } from "~/types/types-view";
 
 export interface SbData {
   openType: OpenType
@@ -9,4 +9,5 @@ export interface SbData {
   isAnimating: boolean
   isActivate: boolean
   showHandle: boolean
+  cursor: CursorHorizontalResize
 } 

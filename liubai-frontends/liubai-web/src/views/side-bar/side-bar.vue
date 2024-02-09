@@ -33,6 +33,7 @@ const {
   isAnimating,
   sidebarHeightPx,
   showHandle,
+  cursor,
 } = toRefs(sbData)
 
 </script>
@@ -250,7 +251,7 @@ const {
   top: 50%;
   margin-top: -50px;
   right: 0px;
-  cursor: ew-resize;
+  cursor: v-bind("cursor");
   transform-origin: center;
 }
 
