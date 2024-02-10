@@ -15,6 +15,10 @@ const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
   console.log("__init__ 开始运行............")
+
+  const nodeVersion = process.version
+  console.log("当前 node 版本号: ", nodeVersion)
+
   await initBlockedIPs()
   await initConfig()
 
