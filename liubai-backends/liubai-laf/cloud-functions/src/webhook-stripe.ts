@@ -300,7 +300,8 @@ async function handle_invoice_py_succeeded(
   console.log(obj)
 }
 
-
+// TODO: 去下发通知
+// 告知用户有退款: "你收到一笔 x 元的退款，退款预计将从原路返回。"
 async function handle_charge_refund_updated(
   obj: Stripe.Refund,
 ) {
@@ -309,11 +310,43 @@ async function handle_charge_refund_updated(
   
 }
 
+// 收到退款信息时，去修改订单信息
 async function handle_charge_refunded(
   obj: Stripe.Charge,
 ) {
   console.warn("似乎 有收款 被退款（即使是部分退款，也会触发）")
   console.log(obj)
+
+  // 1. 根据 charge id 去查询订单
+  const stripe_charge_id = obj.id
+  const col_order = db.collection("Order")
+  const q1 = col_order.where({ stripe_charge_id })
+  const res1 = await q1.getOne<Table_Order>()
+  const theOrder = res1.data
+  if(!theOrder) {
+    console.warn("there is no order info")
+    return { code: "E4004", errMsg: "there is no order info" }
+  }
+
+  // 2. 去修改订单信息
+  const newOrder: Partial<Table_Order> = {
+    orderAmount: obj.amount,
+    paidAmount: obj.amount_captured,
+    refundedAmount: obj.amount_refunded,
+    updatedStamp: getNowStamp(),
+  }
+  const receipt_url = obj.receipt_url
+  const stripe_other_data = theOrder.stripe_other_data ?? {}
+  if(receipt_url) {
+    stripe_other_data.receipt_url = receipt_url
+    newOrder.stripe_other_data = stripe_other_data
+  }
+  const q2 = col_order.where({ _id: theOrder._id })
+  const res2 = await q2.update(newOrder)
+  console.log("收到退款时，更新订单的结果::::")
+  console.log(res2)
+
+  return { code: "0000" }
 }
 
 
@@ -639,7 +672,7 @@ async function createOrderFromInvoiceAndCharge(
     orderStatus: "PAID",
     orderAmount: invoice.total,
     paidAmount: invoice.amount_paid,
-    refundedAmount: 0,
+    refundedAmount: charge?.amount_refunded ?? 0,
     currency: invoice.currency,
     payChannel: "stripe",
     orderType: "subscription",
