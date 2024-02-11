@@ -564,6 +564,7 @@ async function handle_session_completed(
     createdStamp: sub.start_date * 1000,
     expireStamp: sub.current_period_end * 1000,
     chargedStamp: invoice ? invoice.created * 1000 : undefined,
+    chargeTimes: oldUserSub?.chargeTimes,
   }
   // 判断会员有效期和终身会员
   if(oldUserSub?.isLifelong) {
@@ -587,6 +588,11 @@ async function handle_session_completed(
   }
   else if(invoice?.created) {
     newUserSub.firstChargedStamp = invoice.created * 1000
+  }
+  // 判断索取费用的次数
+  if(invoice) {
+    if(newUserSub.chargeTimes) newUserSub.chargeTimes += 1
+    else newUserSub.chargeTimes = 1
   }
 
   // 6. to update user
