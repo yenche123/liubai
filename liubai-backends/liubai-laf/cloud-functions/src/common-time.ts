@@ -45,4 +45,4 @@ export const SECONED = 1000
 export const MINUTE = 60 * SECONED
 export const HOUR = 60 * MINUTE
 export const DAY = 24 * HOUR
-
+export const WEEK = 7 * DAY

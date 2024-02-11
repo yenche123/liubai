@@ -279,6 +279,7 @@ export interface UserSubscription {
   chargedStamp?: number    // 最近一次付费的时间戳，不排除免费开启订阅，所以此项选填
   firstChargedStamp?: number    // 第一次付费的时间戳，用于判断是否支持退款
   expireStamp?: number
+  chargeTimes?: number    // 被索取费用的次数
 }
 
 export interface LiuSpaceAndMember {

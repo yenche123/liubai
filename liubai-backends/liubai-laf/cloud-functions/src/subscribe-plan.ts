@@ -8,12 +8,14 @@ import type {
   Res_SubPlan_StripeCheckout,
   LiuRqReturn,
   Table_Credential,
+  Table_Order,
 } from "@/common-types";
 import { 
   getBasicStampWhileAdding, 
   getNowStamp, 
   MINUTE,
   HOUR,
+  WEEK,
 } from "@/common-time";
 
 
@@ -63,12 +65,70 @@ async function handle_cancel_subscription(
 
   // 1. check user's subscription
   const hasSubscribed = checkIfUserSubscribed(user)
-  if(!hasSubscribed) {
+  const sub = user.subscription
+  if(!hasSubscribed || !sub) {
     return { code: "SP006", errMsg: "the user has not subscribed currently" }
   }
 
+  // 2. check if subscription is within 7 days
+  const s1 = sub.firstChargedStamp ?? 1
+  const now = getNowStamp()
+  const isInAWeek = (now - s1) < WEEK
+  const chargeTimes = sub.chargeTimes ?? 1
+  if(isInAWeek && chargeTimes <= 1) {
+    await toRefundAndCancel(user)
+  }
 
+  await toCancelWhenThePeriodEnd(user)
+}
+
+/** 只去取消订阅 */
+async function toCancelWhenThePeriodEnd(
+  user: Table_User,
+) {
   
+}
+
+
+/** 退款再取消
+ *  1. 查找订单
+ *  2. 发起退款
+ *  3. 发起立即取消订阅
+ */
+async function toRefundAndCancel(
+  user: Table_User,
+) {
+  const w: Partial<Table_Order> = {
+    user_id: user._id,
+    oState: "OK",
+    orderType: "subscription",
+  }
+  const col_order = db.collection("Order")
+  const q1 = col_order.where(w).orderBy("insertedStamp", "desc")
+  const res1 = await q1.getOne<Table_Order>()
+  const theOrder = res1.data
+
+  // to cancel while the period ends if no order
+  if(!theOrder) {
+    toCancelWhenThePeriodEnd(user)
+    return
+  }
+  const { payChannel, paidAmount, refundedAmount, stripe_charge_id } = theOrder
+  if(refundedAmount < paidAmount) {
+    const refundAmt = paidAmount - refundedAmount
+    if(payChannel === "stripe" && stripe_charge_id) {
+      requestStripeToRefund(refundAmt, stripe_charge_id)
+    }
+  }
+
+}
+
+async function requestStripeToRefund(
+  refundAmt: number,
+  stripe_charge_id: string,
+) {
+
+
 }
 
 
