@@ -14,6 +14,7 @@ import type {
   LiuStateConfig,
   LiuInfoType,
   LiuTable,
+  LiuUploadTask,
 } from "./types-atom"
 import type { LiuFileStore, LiuImageStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
@@ -146,4 +147,13 @@ export interface DownloadTaskLocalTable {
   target_table: LiuTable
   tryTimes?: number           // 下载失败的次数，若大于某个阈值，就放弃
   failedStamp?: number        // 最近一次下载失败的时间戳
+}
+
+/** 本地上传任务表 */
+export interface UploadTaskLocalTable {
+  _id: string
+  insertedStamp: number
+  uploadTask: LiuUploadTask
+  ids?: string[]
+  target_id?: string
 }

@@ -179,3 +179,8 @@ export interface LinkPreview {
 
 export type LiuTable = "users" | "workspaces" | "members" | "drafts" | "contents"
   | "collections"
+
+// 上传类型：
+// 1. 发表（不区分动态或评论）
+// 
+export type LiuUploadTask = "posts" | "edit"
