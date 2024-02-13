@@ -1,6 +1,6 @@
 import cloud from "@lafjs/cloud";
 import Stripe from "stripe";
-import { verifyToken, getIpArea, getDocAddId } from '@/common-util';
+import { verifyToken, getIpArea, getDocAddId, getStripeInstance } from '@/common-util';
 import type { 
   Table_Subscription, 
   Table_User,
@@ -9,14 +9,18 @@ import type {
   LiuRqReturn,
   Table_Credential,
   Table_Order,
+  SubscriptionPaymentCircle,
 } from "@/common-types";
 import { 
   getBasicStampWhileAdding, 
-  getNowStamp, 
+  getServerTimezone,
+  getNowStamp,
+  formatTimezone,
   MINUTE,
   HOUR,
   WEEK,
 } from "@/common-time";
+import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
 
 
 const db = cloud.database()
@@ -47,7 +51,7 @@ export async function main(ctx: FunctionContext) {
     res = await handle_create_stripe(body, user)
   }
   else if(oT === "cancel_subscription") {
-    handle_cancel_subscription(body, user)
+    res = await handle_cancel_subscription(body, user)
   }
 
   return res
@@ -61,7 +65,7 @@ export async function main(ctx: FunctionContext) {
 async function handle_cancel_subscription(
   body: Record<string, string>,
   user: Table_User, 
-) {
+): Promise<LiuRqReturn> {
 
   // 1. check user's subscription
   const hasSubscribed = checkIfUserSubscribed(user)
@@ -76,19 +80,12 @@ async function handle_cancel_subscription(
   const isInAWeek = (now - s1) < WEEK
   const chargeTimes = sub.chargeTimes ?? 1
   if(isInAWeek && chargeTimes <= 1) {
-    await toRefundAndCancel(user)
+    const res2 = await toRefundAndCancel(body, user)
+    return res2
   }
 
-  await toCancelWhenThePeriodEnd(user)
+  return { code: "0000" }
 }
-
-/** 只去取消订阅 */
-async function toCancelWhenThePeriodEnd(
-  user: Table_User,
-) {
-  
-}
-
 
 /** 退款再取消
  *  1. 查找订单
@@ -96,8 +93,9 @@ async function toCancelWhenThePeriodEnd(
  *  3. 发起立即取消订阅
  */
 async function toRefundAndCancel(
+  body: Record<string, string>,
   user: Table_User,
-) {
+): Promise<LiuRqReturn> {
   const w: Partial<Table_Order> = {
     user_id: user._id,
     oState: "OK",
@@ -108,27 +106,83 @@ async function toRefundAndCancel(
   const res1 = await q1.getOne<Table_Order>()
   const theOrder = res1.data
 
-  // to cancel while the period ends if no order
+  // return ok if no order
   if(!theOrder) {
-    toCancelWhenThePeriodEnd(user)
-    return
-  }
-  const { payChannel, paidAmount, refundedAmount, stripe_charge_id } = theOrder
-  if(refundedAmount < paidAmount) {
-    const refundAmt = paidAmount - refundedAmount
-    if(payChannel === "stripe" && stripe_charge_id) {
-      requestStripeToRefund(refundAmt, stripe_charge_id)
-    }
+    return { code: "0000" }
   }
 
+  const sub_id = user.stripe_subscription_id
+  const { payChannel } = theOrder
+
+  // decide which channel to refund and cancel
+  let res2: LiuRqReturn = { 
+    code: "E5001", errMsg: "no channel to refund and cancel"
+  }
+  if(payChannel === "stripe" && sub_id) {
+    res2 = await toRefundAndCancelThroughStripe(user, theOrder)
+  }
+
+  return res2
 }
 
+async function toRefundAndCancelThroughStripe(
+  user: Table_User,
+  order: Table_Order,
+): Promise<LiuRqReturn> {
+  const stripe = getStripeInstance()
+  if(!stripe) {
+    return { 
+      code: "E5001", 
+      errMsg: "no stripe instance during requestStripeToRefund",
+    }
+  }
+  const sub_id = user.stripe_subscription_id as string
+  const { paidAmount, refundedAmount, stripe_charge_id } = order
+
+  // refund
+  if(refundedAmount < paidAmount && stripe_charge_id) {
+    const refundAmt = paidAmount - refundedAmount
+    const res1 = await requestStripeToRefund(stripe, refundAmt, stripe_charge_id)
+    if(!res1) return { code: "SP007", errMsg: "fail to refund" }
+  }
+
+  // cancel immediately
+  let res2: Stripe.Subscription
+  try {
+    res2 = await stripe.subscriptions.cancel(sub_id)
+    console.log("res of stripe.subscriptions.cancel: ")
+    console.log(res2)
+  }
+  catch(err) {
+    console.warn("err during stripe.subscriptions.cancel")
+    console.log(err)
+    return { code: "SP008" }
+  }
+
+  return { code: "0000" }
+}
+
+/** interact with Stripe */
 async function requestStripeToRefund(
+  stripe: Stripe,
   refundAmt: number,
   stripe_charge_id: string,
 ) {
-
-
+  try {
+    const res1 = await stripe.refunds.create({
+      charge: stripe_charge_id,
+      amount: refundAmt,
+      reason: "requested_by_customer",
+    })
+    console.log("result of stripe.refunds.create: ")
+    console.log(res1)
+    return true
+  }
+  catch(err) {
+    console.warn("err of stripe.refunds.create: ")
+    console.log(err)
+  }
+  return false
 }
 
 
@@ -401,3 +455,48 @@ function getBillingCycleAnchor(
   return b
 }
 
+
+/** the func is for one-off trade, which is not developed */
+function getNewExpireStamp(
+  payment_circle: SubscriptionPaymentCircle,
+  payment_timezone?: string,
+  oldExpireStamp?: number,
+) {
+  const now = getNowStamp()
+  let startStamp = oldExpireStamp ? oldExpireStamp : now
+  if(startStamp < now) {
+    startStamp = now
+  }
+
+  const startDate = new Date(startStamp)
+  let endDate = new Date(startStamp)
+  if(payment_circle === "monthly") {
+    endDate = addMonths(startDate, 1)
+  }
+  else if(payment_circle === "yearly") {
+    endDate = addYears(startDate, 1)
+  }
+
+  // set endDate to 23:59:59 for user's timezone
+  const userTimezone = formatTimezone(payment_timezone)
+  // get what o'clock for user's timezone
+  const userHrs = getHoursOfSpecificTimezone(userTimezone)
+  const diffHrs = 23 - userHrs
+  if(diffHrs !== 0) {
+    endDate = addHours(endDate, diffHrs)
+  }
+  // turn the minutes & seconds into 59 and 59
+  endDate = date_fn_set(endDate, { minutes: 59, seconds: 59, milliseconds: 0 })
+  
+  const endStamp = endDate.getTime()
+  return endStamp
+}
+
+/** to get the current hours of a specific timezone */
+function getHoursOfSpecificTimezone(timezone: number) {
+  const serverTimezone = getServerTimezone() 
+  const serverHrs = (new Date()).getHours()
+  const diffTimezone = timezone - serverTimezone
+  const hrs = (serverHrs + diffTimezone) % 24 
+  return hrs
+}

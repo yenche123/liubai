@@ -4,22 +4,22 @@ import type {
   Table_Credential,
   MongoFilter,
   Table_User,
-  SubscriptionPaymentCircle,
   UserSubscription,
   Table_Order,
   BaseIsOn,
 } from "@/common-types"
 import cloud from "@lafjs/cloud"
 import { 
-  getNowStamp, 
-  getServerTimezone, 
-  formatTimezone, 
+  getNowStamp,
   getBasicStampWhileAdding,
   SECONED,
 } from "@/common-time"
-import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
 import { createOrderId } from "@/common-ids"
-import { updateUserInCache, getIdFromStripeObj } from "@/common-util"
+import { 
+  updateUserInCache, 
+  getIdFromStripeObj, 
+  getStripeInstance,
+} from "@/common-util"
 
 const db = cloud.database()
 
@@ -95,16 +95,6 @@ function preCheck(
   }
 }
 
-
-/** to get stripe's instance */
-function getStripeInstance() {
-  const _env = process.env
-  const sk = _env.LIU_STRIPE_API_KEY as string
-  const stripe = new Stripe(sk)
-  return stripe
-}
-
-
 interface RetrieveEventRes {
   rqReturn?: LiuRqReturn<undefined>
   event?: Stripe.Event
@@ -115,6 +105,7 @@ async function retrieveEvent(
   ctx: FunctionContext
 ): Promise<RetrieveEventRes> {
   const stripe = getStripeInstance()
+  if(!stripe) return { rqReturn: { code: "E5001", errMsg: "no stripe instance" } }
 
   const id = ctx.body?.id as string
   try {
@@ -533,6 +524,8 @@ async function handle_session_completed(
 
   // 3. to get Subscription from Stripe
   const stripe = getStripeInstance()
+  if(!stripe) return { code: "E5001", errMsg: "no stripe instance" }
+
   let sub: Stripe.Subscription
   try {
     sub = await stripe.subscriptions.retrieve(stripe_subscription_id)
@@ -712,6 +705,8 @@ async function getInvoiceAndCharge(
 ): Promise<GetInvoiceAndChargeRes> {
   if(!invoice_id) return {}
   const stripe = getStripeInstance()
+  if(!stripe) return {}
+
   let invoice: Stripe.Invoice | undefined
   try {
     invoice = await stripe.invoices.retrieve(invoice_id, { expand: ["charge"] })
@@ -723,53 +718,6 @@ async function getInvoiceAndCharge(
   }
   const charge = invoice.charge as Stripe.Charge
   return { invoice, charge }
-}
-
-
-
-/** the func is for one-off trade, which is not developed */
-function getNewExpireStamp(
-  payment_circle: SubscriptionPaymentCircle,
-  payment_timezone?: string,
-  oldExpireStamp?: number,
-) {
-  const now = getNowStamp()
-  let startStamp = oldExpireStamp ? oldExpireStamp : now
-  if(startStamp < now) {
-    startStamp = now
-  }
-
-  const startDate = new Date(startStamp)
-  let endDate = new Date(startStamp)
-  if(payment_circle === "monthly") {
-    endDate = addMonths(startDate, 1)
-  }
-  else if(payment_circle === "yearly") {
-    endDate = addYears(startDate, 1)
-  }
-
-  // set endDate to 23:59:59 for user's timezone
-  const userTimezone = formatTimezone(payment_timezone)
-  // get what o'clock for user's timezone
-  const userHrs = getHoursOfSpecificTimezone(userTimezone)
-  const diffHrs = 23 - userHrs
-  if(diffHrs !== 0) {
-    endDate = addHours(endDate, diffHrs)
-  }
-  // turn the minutes & seconds into 59 and 59
-  endDate = date_fn_set(endDate, { minutes: 59, seconds: 59, milliseconds: 0 })
-  
-  const endStamp = endDate.getTime()
-  return endStamp
-}
-
-/** to get the current hours of a specific timezone */
-function getHoursOfSpecificTimezone(timezone: number) {
-  const serverTimezone = getServerTimezone() 
-  const serverHrs = (new Date()).getHours()
-  const diffTimezone = timezone - serverTimezone
-  const hrs = (serverHrs + diffTimezone) % 24 
-  return hrs
 }
 
 

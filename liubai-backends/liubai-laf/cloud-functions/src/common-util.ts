@@ -25,6 +25,7 @@ import {
   SECONED, DAY, MINUTE, 
 } from "@/common-time"
 import geoip from "geoip-lite"
+import Stripe from "stripe"
 
 const db = cloud.database()
 const _ = db.command
@@ -691,4 +692,12 @@ export function getIdFromStripeObj(data: any) {
   if(typeof id === "string") {
     return id
   }
+}
+
+export function getStripeInstance() {
+  const _env = process.env
+  const sk = _env.LIU_STRIPE_API_KEY
+  if(!sk) return
+  const stripe = new Stripe(sk)
+  return stripe
 }
