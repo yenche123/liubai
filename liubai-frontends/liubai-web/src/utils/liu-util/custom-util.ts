@@ -35,6 +35,7 @@ export function colorToStorage(val: string) {
 }
 
 /***** 一些防抖节流相关的函数 */
+/** 在连续压着上（下）键时，能防抖截流一下  */
 let lastKeyUpDown = 0
 export function canKeyUpDown() {
   const now = time.getTime()

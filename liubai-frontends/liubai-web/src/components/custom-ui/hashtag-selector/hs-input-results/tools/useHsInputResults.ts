@@ -151,7 +151,7 @@ function toListenKeyboard(
     toSelect(hsirData, item, emit)
   }
 
-  useKeyboard({ whenKeyDown, whenKeyUp })
+  useKeyboard({ whenKeyDown, whenKeyUp, data: hsirData })
 }
 
 function watchListAdded(
