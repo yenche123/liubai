@@ -299,11 +299,12 @@ async function handle_create_stripe(
     return { code: "E4000", errMsg: "subscription_id is required" }
   }
   const _env = process.env
-  const { LIU_DOMAIN, LIU_STRIPE_API_KEY } = _env
+  const { LIU_DOMAIN } = _env
   if(!LIU_DOMAIN) {
     return { code: "E5001", errMsg: "there is no domain in env" }
   }
-  if(!LIU_STRIPE_API_KEY) {
+  const stripe = getStripeInstance()
+  if(!stripe) {
     return { code: "E5001", errMsg: "no stripe api key" }
   }
 
@@ -371,7 +372,6 @@ async function handle_create_stripe(
     }
   }
 
-  const stripe = new Stripe(LIU_STRIPE_API_KEY)
   let session: Stripe.Response<Stripe.Checkout.Session>
   try {
     session = await stripe.checkout.sessions.create({
