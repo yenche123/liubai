@@ -154,6 +154,10 @@ export interface UploadTaskLocalTable {
   _id: string
   insertedStamp: number
   uploadTask: LiuUploadTask
-  ids?: string[]
-  target_id?: string
+  ids?: string[]        // 多个 content ids
+  target_id?: string    // 单个 content id
+  newBool?: boolean     // 一些开关值，表示最新状态是 true 还是 false
+  newStr?: string       // 若 uploadTask 为 emoji 时，此值为 encodeURIComponent() 的表情
+                        // 若为取消 emoji，此字段为空字符串
+
 }

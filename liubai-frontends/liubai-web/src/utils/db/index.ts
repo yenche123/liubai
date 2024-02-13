@@ -7,7 +7,8 @@ import type {
   ContentLocalTable,
   CollectionLocalTable,
   DownloadTaskLocalTable,
-} from "../../types/types-table"
+  UploadTaskLocalTable,
+} from "~/types/types-table"
 import { dbSchema, DB_VERSION } from './db-idx';
 
 /**
@@ -27,6 +28,7 @@ export class LiuDexie extends Dexie {
   contents!: Table<ContentLocalTable>
   collections!: Table<CollectionLocalTable>
   download_tasks!: Table<DownloadTaskLocalTable>
+  upload_tasks!: Table<UploadTaskLocalTable>
 
   constructor() {
     super('LiubaiDatabase')
