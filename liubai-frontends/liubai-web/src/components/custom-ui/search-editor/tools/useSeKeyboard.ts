@@ -66,21 +66,15 @@ export function useSeKeyboard(param: SeKeyboardParam) {
     }
   }
 
-  let oldVal = ""
   const whenKeyDown = (e: KeyboardEvent) => {
     if(!allowSearch) return
     if(show.value) _keydownDuringOpening(e)
     else _keydownDuringClosing(e)
-
-    if(!show.value) return
-    oldVal = seData.inputTxt
   }
   
   const whenKeyUp = (e: KeyboardEvent) => {
     if(!allowSearch) return
     if(!show.value) return
-    const newVal = seData.inputTxt
-    if(newVal !== oldVal) return
     
     const key = e.key
     if(key === "Escape") {
@@ -93,7 +87,7 @@ export function useSeKeyboard(param: SeKeyboardParam) {
     }
   }
 
-  useKeyboard({ whenKeyDown, whenKeyUp })
+  useKeyboard({ whenKeyDown, whenKeyUp, data: seData })
 }
 
 
