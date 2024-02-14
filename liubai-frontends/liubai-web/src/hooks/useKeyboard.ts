@@ -1,7 +1,8 @@
 import { onBeforeUnmount, onBeforeMount } from "vue"
 
 interface DataWithInputTxt {
-  inputTxt: string
+  inputTxt: string              // 由 vue 的 v-model 来实现的 value
+  nativeInputTxt?: string       // 从 document 原生 input 事件获取的 value
   [key: string]: any
 }
 
@@ -15,25 +16,55 @@ export function useKeyboard(opt: KeyboardOpt) {
 
   let oldInputTxt = ""
   const _handleKeyDown = (e: KeyboardEvent) => {
-    if(opt.whenKeyUp && opt.data) {
+    const d = opt.data
+
+    if(opt.whenKeyUp && d) {
       const key = e.key
       if(key === "Enter") {
-        oldInputTxt = opt.data.inputTxt
+        oldInputTxt = d.inputTxt
       }
     }
+    
+    if(d && typeof d.nativeInputTxt === "string") {
+      if(d.nativeInputTxt !== d.inputTxt) {
+        return
+      }
+    }
+
     opt.whenKeyDown?.(e)
   }
 
+  let oldNativeTxt = ""
   const _handleKeyUp = (e: KeyboardEvent) => {
-    if(opt.whenKeyDown && opt.data) {
-      const key = e.key
+    const d = opt.data
+    const key = e.key
+
+    if(opt.whenKeyDown && d) {
       if(key === "Enter") {
-        const newInputTxt = opt.data.inputTxt
+        const newInputTxt = d.inputTxt
         if(newInputTxt !== oldInputTxt) {
           return
         }
       }
     }
+
+    const newNativeTxt = d?.nativeInputTxt
+    if(d && typeof newNativeTxt === "string") {
+      if(newNativeTxt !== d.inputTxt) {
+        oldNativeTxt = newNativeTxt
+        return
+      }
+
+      if(key === "Escape") {
+        if(newNativeTxt !== oldNativeTxt) {
+          oldNativeTxt = newNativeTxt
+          return
+        }
+      }
+
+      oldNativeTxt = newNativeTxt
+    }
+
     opt.whenKeyUp?.(e)
   }
 

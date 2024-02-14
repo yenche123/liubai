@@ -1,4 +1,4 @@
-import { nextTick, onBeforeMount, onBeforeUnmount, onMounted, reactive, ref, toRef, watch } from "vue";
+import { nextTick, onMounted, reactive, ref, toRef, watch } from "vue";
 import type { HsirAtom, HsirData, HsirEmit, HsirProps } from "./types";
 import { 
   hasStrangeChar, 
@@ -22,6 +22,7 @@ export function useHsInputResults(
   const hsirData = reactive<HsirData>({
     focus: false,
     inputTxt: "",
+    nativeInputTxt: "",
     list: [],
     selectedIndex: -1,
     recentTagIds: [],
@@ -139,9 +140,13 @@ function toListenKeyboard(
   // 监听 Enter
   const whenKeyUp = (e: KeyboardEvent) => {
     const k = e.key
-    if(k !== "Enter") return
     const ctrlPressed = isMac ? e.metaKey : e.ctrlKey
     if(ctrlPressed) return
+    if(k === "Escape") {
+      emit("toclose")
+      return
+    }
+    if(k !== "Enter") return
     
     const idx = hsirData.selectedIndex
     if(idx < 0) return
@@ -181,7 +186,10 @@ function initOnInput(
 ) {
   let lastInputTxt = ""
 
-  const onInput = () => {
+  const onInput = (e: Event) => {
+    //@ts-ignore
+    hsirData.nativeInputTxt = e.target.value
+
     let val = hsirData.inputTxt.trim()
     if(val === lastInputTxt) return
     lastInputTxt = val

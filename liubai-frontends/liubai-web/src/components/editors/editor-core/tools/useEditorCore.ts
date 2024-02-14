@@ -53,10 +53,11 @@ export function useEditorCore(
     }
   })
   
-  useEcHashtag(editor, props, emits)
   
   if(props.isEdit) {
     // 编辑模式时，去初始化 lastEmpty / lastText
+
+    useEcHashtag(editor, props, emits)
 
     const numWhenSet = inject(editorSetKey, ref(0))
     watch(numWhenSet, (newV) => {

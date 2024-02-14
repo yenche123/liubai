@@ -75,6 +75,7 @@ const { t } = useI18n()
         <HsInputResults :list-added="hsData.list" 
           @focusornot="onFocusOrNot" 
           @tapitem="onTapItem"
+          @toclose="onTapCancel"
         ></HsInputResults>
       </div>
 

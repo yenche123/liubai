@@ -1,10 +1,6 @@
 import { reactive, watch } from "vue";
 import type { HsData, HsParam, HsRes, HtsResolver } from "./types"
 import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router"
-import { 
-  toListenEscKeyUp,
-  cancelListenEscKeyUp,
-} from "../../tools/listen-keyup"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool";
 import time from "~/utils/basic/time";
@@ -168,8 +164,6 @@ async function _toOpen() {
   await valTool.waitMilli(16)
   hsData.show = true
   await valTool.waitMilli(hsData.transDuration)
-
-  toListenEscKeyUp(onTapCancel)
 }
 
 async function _toClose() {
@@ -177,6 +171,4 @@ async function _toClose() {
   hsData.show = false
   await valTool.waitMilli(hsData.transDuration)
   hsData.enable = false
-
-  cancelListenEscKeyUp()
 }

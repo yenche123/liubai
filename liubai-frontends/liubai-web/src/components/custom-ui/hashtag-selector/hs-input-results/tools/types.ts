@@ -8,6 +8,7 @@ export interface HsirAtom extends TagShow {
 export interface HsirData {
   focus: boolean
   inputTxt: string
+  nativeInputTxt?: string
   list: HsirAtom[]
   selectedIndex: number
   recentTagIds: string[]
@@ -20,4 +21,5 @@ export interface HsirProps {
 export interface HsirEmit {
   (evt: "focusornot", focus: boolean): void
   (evt: "tapitem", item: TagShow): void
+  (evt: "toclose"): void
 }
