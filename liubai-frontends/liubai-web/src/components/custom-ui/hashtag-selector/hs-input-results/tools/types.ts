@@ -8,7 +8,7 @@ export interface HsirAtom extends TagShow {
 export interface HsirData {
   focus: boolean
   inputTxt: string
-  nativeInputTxt?: string
+  nativeInputTxt: string
   list: HsirAtom[]
   selectedIndex: number
   recentTagIds: string[]

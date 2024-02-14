@@ -30,6 +30,7 @@ const seData = reactive<SearchEditorData>({
   reloadNum: 0,
   mode: "search",
   inputTxt: "",
+  nativeInputTxt: "",
   trimTxt: "",
   excludeThreads: [],
   indicator: "",
@@ -56,6 +57,11 @@ export function initSearchEditor() {
   }
   useSeKeyboard(opt)
 
+  const onInput = (e: Event) => {
+    //@ts-expect-error
+    seData.nativeInputTxt = e.target.value
+  }
+
   return {
     TRANSITION_DURATION,
     inputEl,
@@ -64,6 +70,7 @@ export function initSearchEditor() {
     seData,
     onTapMask,
     onTapClearInput,
+    onInput,
   }
 }
 

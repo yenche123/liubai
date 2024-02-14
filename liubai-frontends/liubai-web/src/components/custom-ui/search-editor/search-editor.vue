@@ -12,6 +12,7 @@ const {
   seData,
   onTapMask,
   onTapClearInput,
+  onInput,
 } = initSearchEditor()
 
 const { t } = useI18n()
@@ -33,6 +34,7 @@ const { t } = useI18n()
         <input class="se-input" :placeholder="t('common.search')" ref="inputEl"
           v-model="seData.inputTxt"
           autocomplete="nope"
+          @input="onInput"
         />
         <div v-if="seData.trimTxt" class="se-close-box" 
           @click.stop="onTapClearInput"
