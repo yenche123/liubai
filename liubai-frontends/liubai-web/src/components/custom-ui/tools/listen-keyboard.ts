@@ -34,7 +34,7 @@ const _handleKeyUp = (e: KeyboardEvent) => {
   const d = opt.data
   const key = e.key
 
-  if(opt.whenKeyDown && d) {
+  if(d) {
     if(key === "Enter") {
       const newInputTxt = d.inputTxt
       if(newInputTxt !== oldInputTxt) {
@@ -73,7 +73,7 @@ export function toListenKeyboard(
     oldNativeTxt = opt.data.nativeInputTxt ?? ""
   }
   
-  if(_opt.whenKeyDown) {
+  if(_opt.whenKeyDown || _opt.data) {
     window.addEventListener("keydown", _handleKeyDown)
   }
 
@@ -84,7 +84,7 @@ export function toListenKeyboard(
 
 export function cancelListenKeyboard() {
 
-  if(_opt?.whenKeyDown) {
+  if(_opt?.whenKeyDown || _opt?.data) {
     window.removeEventListener("keydown", _handleKeyDown)
   }
 

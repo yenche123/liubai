@@ -21,6 +21,10 @@ import liuUtil from "~/utils/liu-util";
 import { useSeKeyboard } from "./tools/useSeKeyboard";
 import sideBar from "~/views/side-bar";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
+import { 
+  toListenKeyboard, 
+  cancelListenKeyboard,
+} from "../tools/listen-keyboard"
 
 const TRANSITION_DURATION = 150
 const enable = ref(false)
@@ -48,8 +52,6 @@ export function initSearchEditor() {
   listenInputChange()
 
   let opt = {
-    whenEsc: toCancel,
-    whenEnter: toConfirm,
     whenOpen: showSearchEditor,
     seData,
     tranMs: TRANSITION_DURATION,
@@ -79,6 +81,7 @@ export function showSearchEditor(param: SearchEditorParam) {
   let initTxt = param.initText ?? ""
   seData.mode = param.type
   seData.inputTxt = initTxt
+  seData.nativeInputTxt = initTxt
   seData.excludeThreads = param.excludeThreads ?? []
   seData.innerList = []
   seData.reloadNum++
@@ -306,6 +309,12 @@ async function _toOpen() {
   await valTool.waitMilli(16)
   show.value = true
   await valTool.waitMilli(TRANSITION_DURATION)
+
+  toListenKeyboard({ 
+    whenKeyUp, 
+    data: seData,
+  })
+
   if(!inputEl.value) return
   inputEl.value.focus()
 }
@@ -313,8 +322,21 @@ async function _toOpen() {
 async function _toClose() {
   if(!enable.value) return
   show.value = false
+
+  cancelListenKeyboard()
+
   await valTool.waitMilli(TRANSITION_DURATION)
   enable.value = false
+}
+
+function whenKeyUp(e: KeyboardEvent) {
+  const k = e.key
+  if(k === "Enter") {
+    toConfirm()
+  }
+  else if(k === "Escape") {
+    toCancel()
+  }
 }
 
 

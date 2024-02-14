@@ -9,8 +9,6 @@ import { useKeyboard } from "~/hooks/useKeyboard"
 
 export function useSeKeyboard(param: SeKeyboardParam) {
   const {
-    whenEsc,
-    whenEnter,
     whenOpen,
     seData,
     tranMs,
@@ -71,23 +69,8 @@ export function useSeKeyboard(param: SeKeyboardParam) {
     if(show.value) _keydownDuringOpening(e)
     else _keydownDuringClosing(e)
   }
-  
-  const whenKeyUp = (e: KeyboardEvent) => {
-    if(!allowSearch) return
-    if(!show.value) return
-    
-    const key = e.key
-    if(key === "Escape") {
-      whenEsc()
-      return
-    }
-    if(key === "Enter") {
-      whenEnter()
-      return
-    }
-  }
 
-  useKeyboard({ whenKeyDown, whenKeyUp, data: seData })
+  useKeyboard({ whenKeyDown, data: seData })
 }
 
 

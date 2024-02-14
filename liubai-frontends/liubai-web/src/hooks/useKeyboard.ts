@@ -28,7 +28,7 @@ export function useKeyboard(opt: KeyboardOpt) {
     const d = opt.data
     const key = e.key
 
-    if(opt.whenKeyDown && d) {
+    if(d) {
       if(key === "Enter") {
         const newInputTxt = d.inputTxt
         if(newInputTxt !== oldInputTxt) {
@@ -59,7 +59,7 @@ export function useKeyboard(opt: KeyboardOpt) {
 
 
   onBeforeMount(() => {
-    if(opt.whenKeyDown) {
+    if(opt.whenKeyDown || opt.data) {
       window.addEventListener("keydown", _handleKeyDown)
     }
 
@@ -69,7 +69,7 @@ export function useKeyboard(opt: KeyboardOpt) {
   })
 
   onBeforeUnmount(() => {
-    if(opt.whenKeyDown) {
+    if(opt.whenKeyDown || opt.data) {
       window.removeEventListener("keydown", _handleKeyDown)
     }
 
