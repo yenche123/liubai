@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
-import { initTextEditor } from "./index";
+import { initTextEditor } from "./tools/useTextEditor";
 
 const { t } = useI18n()
 
@@ -10,6 +10,7 @@ const {
   teData,
   onTapConfirm: onTapTeConfirm,
   onTapCancel: onTapTeCancel,
+  onInput,
   inputEl: textEditorInputEl,
   canSubmit: canTextEditorSubmit,
   TRANSITION_DURATION: modalTranMs,
@@ -28,12 +29,13 @@ const {
       <h1 v-if="teData.title">{{ teData.title }}</h1>
       <h1 v-else-if="teData.title_key">{{ t(teData.title_key) }}</h1>
       <input class="cui-text-editor-input" 
-        v-model="teData.value" 
+        v-model="teData.inputTxt" 
         ref="textEditorInputEl" 
         :placeholder="teData.placeholder ? teData.placeholder: teData.placeholder_key ? 
           t(teData.placeholder_key) : t('cui.plz_input_txt')"
         :maxlength="teData.maxLength"
         autocomplete="nope"
+        @input="onInput"
       />
       <div class="cui-modal-btns">
         <div 

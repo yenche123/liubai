@@ -1,16 +1,5 @@
 import { onBeforeUnmount, onBeforeMount } from "vue"
-
-interface DataWithInputTxt {
-  inputTxt: string              // 由 vue 的 v-model 来实现的 value
-  nativeInputTxt?: string       // 从 document 原生 input 事件获取的 value
-  [key: string]: any
-}
-
-interface KeyboardOpt {
-  whenKeyDown?: (e: KeyboardEvent) => void
-  whenKeyUp?: (e: KeyboardEvent) => void
-  data?: DataWithInputTxt
-}
+import type { KeyboardOpt } from "~/types/other/types-keyboard"
 
 export function useKeyboard(opt: KeyboardOpt) {
 

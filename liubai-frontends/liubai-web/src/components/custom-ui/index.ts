@@ -1,7 +1,7 @@
 
 import { showModal } from "./modal/tools/useCustomModal"
 import { showLoading, hideLoading } from "./loading"
-import { showTextEditor } from "./text-editor"
+import { showTextEditor } from "./text-editor/tools/useTextEditor"
 import { showDatePicker } from "./date-picker"
 import { previewImage } from "./preview-image"
 import { showHashtagEditor } from "./hashtag-editor/tools/useHashtagEditor"
