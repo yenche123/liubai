@@ -150,10 +150,12 @@ async function handleStripeEvent(
     handle_invoice_py_succeeded(obj)
   }
   else if(tp === "charge.refund.updated") {
+    // 收到退款 通知用户
     const obj = evt.data.object
     handle_charge_refund_updated(obj)
   }
   else if(tp === "charge.refunded") {
+    // 收到退款 修改订单信息
     const obj = evt.data.object
     handle_charge_refunded(obj)
   }
@@ -629,6 +631,7 @@ function getUserSubIsOn(
   return "N"
 }
 
+/** check if autoRecharge is available */
 function getUserSubAutoRecharge(
   sub: Stripe.Subscription,
 ) {

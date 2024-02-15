@@ -50,8 +50,8 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "create_stripe") {
     res = await handle_create_stripe(body, user)
   }
-  else if(oT === "cancel_subscription") {
-    res = await handle_cancel_subscription(body, user)
+  else if(oT === "cancel_and_refund") {
+    res = await handle_cancel_and_refund(body, user)
   }
 
   return res
@@ -62,7 +62,7 @@ export async function main(ctx: FunctionContext) {
  * 引导用户到 stripe 托管的页面去取消（管理）订阅
  * 在鉴赏期内，才引导用户在应用内点击 “取消订阅” 再向该接口发起请求
 */
-async function handle_cancel_subscription(
+async function handle_cancel_and_refund(
   body: Record<string, string>,
   user: Table_User, 
 ): Promise<LiuRqReturn> {
@@ -84,7 +84,7 @@ async function handle_cancel_subscription(
     return res2
   }
 
-  return { code: "0000" }
+  return { code: "SP009" }
 }
 
 /** 退款再取消
@@ -120,6 +120,12 @@ async function toRefundAndCancel(
   }
   if(payChannel === "stripe" && sub_id) {
     res2 = await toRefundAndCancelThroughStripe(user, theOrder)
+  }
+  else if(payChannel === "alipay") {
+    
+  }
+  else if(payChannel === "wechat") {
+
   }
 
   return res2
