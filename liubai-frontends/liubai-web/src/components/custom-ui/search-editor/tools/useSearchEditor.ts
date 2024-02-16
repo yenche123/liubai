@@ -7,8 +7,8 @@ import type {
   SearchFuncs,
   SearchListType,
   ThirdPartyType,
-} from "./tools/types"
-import { searchFuncsKey } from "./tools/types"
+} from "./types"
+import { searchFuncsKey } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import typeCheck from "~/utils/basic/type-check";
@@ -18,13 +18,13 @@ import searchController from "~/utils/controllers/search-controller";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import liuUtil from "~/utils/liu-util";
-import { useSeKeyboard } from "./tools/useSeKeyboard";
+import { useSeKeyboard } from "./useSeKeyboard";
 import sideBar from "~/views/side-bar";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import { 
   toListenKeyboard, 
   cancelListenKeyboard,
-} from "../tools/listen-keyboard"
+} from "../../tools/listen-keyboard"
 
 const TRANSITION_DURATION = 150
 const enable = ref(false)
@@ -461,3 +461,4 @@ function setInputTxt(text: string) {
   seData.inputTxt = text
   seData.nativeInputTxt = text
 }
+

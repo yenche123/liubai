@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { initSearchEditor } from "./index"
+import { initSearchEditor } from "./tools/useSearchEditor"
 import SearchResults from "./search-results/search-results.vue";
 import { useI18n } from "vue-i18n";
 import liuUtil from "~/utils/liu-util";
