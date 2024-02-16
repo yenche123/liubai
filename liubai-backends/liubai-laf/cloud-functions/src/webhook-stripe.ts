@@ -157,7 +157,7 @@ async function handleStripeEvent(
   else if(tp === "charge.refunded") {
     // 收到退款 修改订单信息
     const obj = evt.data.object
-    handle_charge_refunded(obj)
+    res = await handle_charge_refunded(obj)
   }
   else if(tp === "charge.succeeded") {
     const obj = evt.data.object
@@ -306,7 +306,7 @@ async function handle_charge_refund_updated(
 // 收到退款信息时，去修改订单信息
 async function handle_charge_refunded(
   obj: Stripe.Charge,
-) {
+): Promise<LiuRqReturn> {
   console.warn("似乎 有收款 被退款（即使是部分退款，也会触发）")
   console.log(obj)
 
@@ -449,7 +449,7 @@ async function handle_subscription_updated(
 */
 async function handle_session_completed(
   obj: Stripe.Checkout.Session
-) {
+): Promise<LiuRqReturn> {
   console.warn("似乎 session 被完成了!")
   console.log(obj)
   const session_id = obj.id

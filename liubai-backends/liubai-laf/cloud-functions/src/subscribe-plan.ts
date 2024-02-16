@@ -317,7 +317,7 @@ async function handle_create_stripe(
   // 2. 去查看 user 是否已经订阅，并且有效
   const canBind = checkIfUserCanBindStripe(user)
   if(!canBind) {
-    return { code: "SP001", errMsg: "there is no need to bing stripe" }
+    return { code: "SP001", errMsg: "there is no need to bind stripe" }
   }
 
   // 3. check Credential for old session
@@ -368,32 +368,40 @@ async function handle_create_stripe(
   // set expires_at as 3 hours later
   const expires_at = Math.round((getNowStamp() + HOUR_3) / 1000)
 
+  const param: Stripe.Checkout.SessionCreateParams = {
+    line_items: [
+      {
+        price: stripePriceId,
+        quantity: 1,
+      }
+    ],
+    mode: "subscription",
+    success_url: `${LIU_DOMAIN}/payment-success`,
+    cancel_url: `${LIU_DOMAIN}/payment-cancel`,
+    automatic_tax: { enabled: true },
+    expires_at,
+  }
+
   // set billing_cycle_anchor
-  let subscription_data: Stripe.Checkout.SessionCreateParams.SubscriptionData | undefined
   const billing_cycle_anchor = getBillingCycleAnchor(user)
   if(billing_cycle_anchor) {
-    subscription_data = {
+    param.subscription_data = {
       billing_cycle_anchor,
       proration_behavior: "none"
     }
   }
 
+  // set either customer or email
+  if(user.stripe_customer_id) {
+    param.customer = user.stripe_customer_id
+  }
+  else if(user.email) {
+    param.customer_email = user.email
+  }
+
   let session: Stripe.Response<Stripe.Checkout.Session>
   try {
-    session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: stripePriceId,
-          quantity: 1,
-        }
-      ],
-      mode: 'subscription',
-      success_url: `${LIU_DOMAIN}/payment-success`,
-      cancel_url: `${LIU_DOMAIN}/payment-cancel`,
-      automatic_tax: { enabled: true },
-      expires_at,
-      subscription_data,
-    })
+    session = await stripe.checkout.sessions.create(param)
   }
   catch(err) {
     console.warn("Err while creating checkout session on stripe......")
