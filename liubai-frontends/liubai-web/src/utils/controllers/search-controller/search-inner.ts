@@ -69,8 +69,8 @@ export async function searchInner(param: SearchOpt) {
     return -1
   })
 
-  console.log("searchInner 看一下 list: ")
-  console.log(list)
+  // console.log("searchInner 看一下 list: ")
+  // console.log(list)
 
   const list2 = list.map(v => v.data)
   const list3 = resToAtoms("inner", list2, text)

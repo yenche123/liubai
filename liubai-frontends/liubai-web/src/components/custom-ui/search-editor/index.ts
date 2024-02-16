@@ -145,6 +145,7 @@ function listenRouteChange() {
     if(search === "01" || q) {
       if(q && typeCheck.isString(q) && q !== seData.inputTxt) {
         seData.inputTxt = q
+        seData.nativeInputTxt = q
       }
       if(seData.reloadNum < 1) seData.reloadNum = 1
       _toOpen()
@@ -422,7 +423,9 @@ function getConfirmRes() {
     }
     let tmp4 = seData.recentList.find(v => v.atomId === indicator)
     if(tmp4) {
+      console.log("被设置了.....")
       seData.inputTxt = tmp4.title
+      seData.nativeInputTxt = tmp4.title
       return null
     }
   }
@@ -436,6 +439,7 @@ function onTapMask() {
 
 async function onTapClearInput() {
   seData.inputTxt = ""
+  seData.nativeInputTxt = ""
   seData.trimTxt = ""
   seData.innerList = []
 
