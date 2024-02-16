@@ -111,7 +111,7 @@ function toSelect(
 
   // 若还没被添加，并且输入框的文字与其相同，那么清空输入框
   if(!added && item2.text === hsirData.inputTxt) {
-    hsirData.inputTxt = ""
+    setInputTxt(hsirData, "")
   }
 
 }
@@ -264,11 +264,22 @@ function reset(
   clearInputTxt: boolean = false,
 ) {
   if(clearInputTxt) {
-    if(hsirData.inputTxt) hsirData.inputTxt = ""
+    if(hsirData.inputTxt) {
+      setInputTxt(hsirData, "")
+    }
     getRecent(props, hsirData)
   }
   else {
     hsirData.list = []
   }
   hsirData.selectedIndex = -1
+}
+
+
+function setInputTxt(
+  hsirData: HsirData,
+  text: string,
+) {
+  hsirData.inputTxt = text
+  hsirData.nativeInputTxt = text
 }

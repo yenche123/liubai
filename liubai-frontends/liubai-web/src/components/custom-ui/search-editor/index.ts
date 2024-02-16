@@ -80,8 +80,7 @@ export function initSearchEditor() {
 export function showSearchEditor(param: SearchEditorParam) {
   let initTxt = param.initText ?? ""
   seData.mode = param.type
-  seData.inputTxt = initTxt
-  seData.nativeInputTxt = initTxt
+  setInputTxt(initTxt)
   seData.excludeThreads = param.excludeThreads ?? []
   seData.innerList = []
   seData.reloadNum++
@@ -144,8 +143,7 @@ function listenRouteChange() {
     const { q, search } = query
     if(search === "01" || q) {
       if(q && typeCheck.isString(q) && q !== seData.inputTxt) {
-        seData.inputTxt = q
-        seData.nativeInputTxt = q
+        setInputTxt(q)
       }
       if(seData.reloadNum < 1) seData.reloadNum = 1
       _toOpen()
@@ -423,9 +421,7 @@ function getConfirmRes() {
     }
     let tmp4 = seData.recentList.find(v => v.atomId === indicator)
     if(tmp4) {
-      console.log("被设置了.....")
-      seData.inputTxt = tmp4.title
-      seData.nativeInputTxt = tmp4.title
+      setInputTxt(tmp4.title)
       return null
     }
   }
@@ -438,8 +434,7 @@ function onTapMask() {
 }
 
 async function onTapClearInput() {
-  seData.inputTxt = ""
-  seData.nativeInputTxt = ""
+  setInputTxt("")
   seData.trimTxt = ""
   seData.innerList = []
 
@@ -460,4 +455,9 @@ async function onTapClearInput() {
 
   if(!inputEl.value) return
   inputEl.value.focus()
+}
+
+function setInputTxt(text: string) {
+  seData.inputTxt = text
+  seData.nativeInputTxt = text
 }

@@ -114,8 +114,7 @@ export async function showTextEditor(
   teData.title_key = opt.title_key ?? ""
   teData.placeholder = opt.placeholder ?? ""
   teData.placeholder_key = opt.placeholder_key ?? ""
-  teData.inputTxt = opt.value ?? ""
-  teData.nativeInputTxt = opt.value ?? ""
+  setInputTxt(opt.value ?? "")
 
   if(typeof opt.minLength === "number") teData.minLength = opt.minLength
   else teData.minLength = DEFAULT_MIN_LENGTH
@@ -147,5 +146,9 @@ export async function showTextEditor(
   return new Promise(_wait)
 }
 
+function setInputTxt(text: string) {
+  teData.inputTxt = text
+  teData.nativeInputTxt = text
+}
 
 
