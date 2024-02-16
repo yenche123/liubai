@@ -255,16 +255,6 @@ const {
   }
 }
 
-.ce-editor-up {
-  width: 100%;
-  height: 20px;
-  transition: .6s;
-  background: var(--gradient-two);
-  opacity: v-bind("showMask ? 1 : 0");
-  position: relative;
-  pointer-events: none;
-}
-
 .ce-editor {
   margin-top: -20px;
   width: 100%;
