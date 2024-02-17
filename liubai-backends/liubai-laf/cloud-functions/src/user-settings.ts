@@ -1,14 +1,20 @@
 import cloud from '@lafjs/cloud'
-import { getUserInfos, verifyToken } from '@/common-util'
+import { 
+  getStripeInstance, 
+  getUserInfos, 
+  updateUserInCache, 
+  verifyToken,
+} from '@/common-util'
 import type { 
   MongoFilter,
   Table_User, 
   LiuRqReturn,
   Res_UserSettings_Enter,
   Res_UserSettings_Latest,
+  Res_UserSettings_Membership,
   VerifyTokenRes,
 } from '@/common-types'
-import { getNowStamp } from "@/common-time"
+import { getNowStamp, DAY } from "@/common-time"
 
 const db = cloud.database()
 
@@ -33,6 +39,9 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "latest") {
     res = await handle_latest(vRes)
   }
+  else if(oT === "membership") {
+    res = await handle_membership(vRes)
+  }
 
   const stamp2 = getNowStamp()
   const diffS = stamp2 - stamp1
@@ -40,6 +49,79 @@ export async function main(ctx: FunctionContext) {
 
   return res
 }
+
+/** get the status of membership 
+ *  so return UserSubscription
+*/
+async function handle_membership(
+  vRes: VerifyTokenRes,
+): Promise<LiuRqReturn<Res_UserSettings_Membership>> {
+  let user = vRes.userData as Table_User
+  const sub = user.subscription
+
+  if(!sub || sub.isOn === "N") {
+    return { code: "0000", data: {} }
+  }
+
+  const { stripe_customer_id } = user
+  let update_user = false
+  const uUser: Partial<Table_User> = {}
+  
+  // 1. check data related to stripe
+  if(stripe_customer_id) {
+    const cpc = sub.stripe?.customer_portal_created ?? 1
+    const cpu = sub.stripe?.customer_portal_url
+    const diff = getNowStamp() - (cpc * 1000)
+
+    // if customer_portal_url is not existed
+    // or customer_portal_created is over 24 hrs
+    if(!cpu || diff >= DAY) {
+      const cPortal = await getStripeCustomerPortal(stripe_customer_id)
+      if(!cPortal) {
+        return { code: "E5001", errMsg: "err happened during getStripeCustomerPortal" }
+      }
+      sub.stripe = {
+        ...sub.stripe,
+        customer_portal_created: cPortal.created,
+        customer_portal_url: cPortal.url,
+      }
+      user.subscription = sub
+      uUser.subscription = sub
+      update_user = true
+    }
+  }
+
+  // n. update user if needed
+  if(update_user) {
+    const user_id = user._id
+    const col_user = db.collection("User")
+    await col_user.where({ _id: user_id }).update(uUser)
+    updateUserInCache(user_id, user)
+  }
+
+  return { code: "0000", data: { subscription: sub } }
+}
+
+async function getStripeCustomerPortal(
+  customer: string
+) {
+  const stripe = getStripeInstance()
+  if(!stripe) return
+
+  const return_url = process.env.LIU_DOMAIN
+  try {
+    const res = await stripe.billingPortal.sessions.create({
+      customer,
+      return_url,
+    })
+    return res
+  }
+  catch(err) {
+    console.warn("stripe.billingPortal.sessions.create err:")
+    console.log(err)
+  }
+}
+
 
 
 async function handle_enter(

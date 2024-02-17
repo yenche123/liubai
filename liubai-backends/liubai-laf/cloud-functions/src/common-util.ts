@@ -475,6 +475,7 @@ export async function verifyToken(
   let userData = data?.userData
   let workspaces = data?.workspaces
   if(!data) {
+    // if the cache is not existed
     tokenData = await _getTokenData(token, serial_id)
     if(!tokenData) return errRes
     userData = await _getUserData(tokenData.userId)
@@ -494,6 +495,7 @@ export async function verifyToken(
     gShared.set("liu-token-user", map)
   }
   else {
+    // if the cache is existed
     if(data.token !== token) return errRes
     const now1 = getNowStamp()
     if(now1 > data.tokenData.expireStamp) return errRes
@@ -646,7 +648,7 @@ function checkTokenDataLastStamp(
 
 export function updateUserInCache(
   userId: string,
-  user?: Table_User
+  user?: Table_User,
 ) {
   const map = getLiuTokenUser()
   let num = 0

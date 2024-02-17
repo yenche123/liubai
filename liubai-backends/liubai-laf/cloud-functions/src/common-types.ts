@@ -280,6 +280,10 @@ export interface UserSubscription {
   firstChargedStamp?: number    // 第一次付费的时间戳，用于判断是否支持退款
   expireStamp?: number
   chargeTimes?: number    // 被索取费用的次数
+  stripe?: {              // 存储一些有关于 stripe 的信息
+    customer_portal_url?: string        // stripe 的订阅管理网址，供用户去管理订阅
+    customer_portal_created?: number    // 注意: 以秒为单位
+  }
 }
 
 export interface LiuSpaceAndMember {
@@ -598,6 +602,10 @@ export interface Res_UserSettings_Enter {
 
 export type Res_UserSettings_Latest = 
   Omit<Res_UserSettings_Enter, "new_serial" | "new_token">
+
+export interface Res_UserSettings_Membership {
+  subscription?: UserSubscription
+}
 
 export interface Res_SubPlan_Info {
   id: string
