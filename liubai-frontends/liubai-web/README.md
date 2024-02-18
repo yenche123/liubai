@@ -1,6 +1,6 @@
 # LB
 
-Happy Lunar New Year!
+You're muddled!
 
 使用 `API_DOMAIN` 环境变量，代表后端应用的访问地址
 重新审视，`API_URL` / `getIfPurelyLocal` / `limit.getMode` 的作用
