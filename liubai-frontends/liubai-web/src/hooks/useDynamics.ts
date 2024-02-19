@@ -5,7 +5,7 @@ import type { Ref } from "vue"
 import type { SupportedTheme } from "../types/types-atom"
 import type { SupportedLocale } from "../types/types-locale"
 import { i18n } from "~/locales"
-import localCache from "../utils/system/local-cache"
+import localCache from "~/utils/system/local-cache"
 import liuApi from "~/utils/liu-api"
 import middleBridge from "~/utils/middle-bridge"
 
@@ -35,7 +35,7 @@ export function useDynamics() {
 export type UseDynamicsType = ReturnType<typeof useDynamics>
 
 
-// 初始化主题
+// 初始化主题，将在 main.ts 中被调用
 export function initTheme() {
   if(theme.value) return
   const localPf = localCache.getPreference()

@@ -1,10 +1,10 @@
-import type { LocalLanguage } from "~/types"
 import type { LocalTheme } from "~/types/types-atom"
 import type { Res_UserLoginInit } from "~/requests/req-types"
+import type { LocalLocale } from "~/types/types-locale"
 
 export interface LocalPreference {
   theme?: LocalTheme
-  language?: LocalLanguage
+  language?: LocalLocale
   local_id?: string
   token?: string
   serial?: string       // token 所在的序列号

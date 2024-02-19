@@ -7,6 +7,8 @@ export const supportedLocales = [
 
 export type SupportedLocale = typeof supportedLocales[number]
 
+export type LocalLocale = SupportedLocale | "system"
+
 export const isSupportedLocale = (val: string): val is SupportedLocale => {
   return supportedLocales.includes(val as SupportedLocale)
 }
