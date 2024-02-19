@@ -43,7 +43,7 @@ async function toLogin(
   console.log("去登录当前用户 userId: ", userId)
 
   // 3. 创建 user
-  const res2 = await handleUser(userId)
+  const res2 = await handleUser(userId, d)
   if(!res2) return false
 
   // 4. 创建 member 和 workspace

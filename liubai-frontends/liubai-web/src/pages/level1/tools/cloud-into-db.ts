@@ -6,15 +6,32 @@ import type { UserLocalTable, WorkspaceLocalTable, MemberLocalTable } from "~/ty
 import { db } from "~/utils/db";
 import time from "~/utils/basic/time"
 import { CloudToLocal } from "~/utils/cloud/CloudToLocal";
+import type { Res_UserLoginNormal } from "~/requests/req-types";
 
 export async function handleUser(
   userId: string,
+  d: Res_UserLoginNormal,
 ) {
+
+  // 1. get user
   const res1 = await db.users.get(userId)
+
+  // 2. create user if not exist
   if(!res1 || !res1._id) {
-    let res2 = await createUser(userId)
+    let res2 = await createUser(userId, d)
     return res2
   }
+
+  // 3. update user
+  const u: Partial<UserLocalTable> = {
+    subscription: d.subscription,
+    updatedStamp: time.getTime(),
+  }
+  const res3 = await db.users.update(userId, u)
+  console.log("update user res3: ")
+  console.log(res3)
+  console.log(" ")
+
   return true
 }
 
@@ -109,6 +126,7 @@ async function createMember(
 
 async function createUser(
   userId: string,
+  d: Res_UserLoginNormal,
 ) {
   const t = time.getTime()
   const data: UserLocalTable = {
@@ -117,6 +135,7 @@ async function createUser(
     insertedStamp: t,
     updatedStamp: t,
     lastRefresh: t,
+    subscription: d.subscription,
   }
 
   try {

@@ -160,6 +160,7 @@ class CloudEventBus {
         localCache.setPreference("serial", d.new_serial)
         localCache.setPreference("token", d.new_token)
       }
+      
     }
 
     // 检查是否要退出登录

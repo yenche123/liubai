@@ -38,9 +38,9 @@ export interface UserLocalTable extends BaseLocalTable {
   email?: string
   phone?: string
 
-  name?: string
-  avatar?: LiuImageStore
-
+  name?: string             // 存储其他非工作区成员时，需要用到（因为可能出现
+  avatar?: LiuImageStore    // 用户不在当前工作区内，没有 memberId，所以就要用 userId 来检索
+                            // 该成员的信息，比如昵称和头像
   subscription?: UserSubscription
 }
 
