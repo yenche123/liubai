@@ -1,4 +1,5 @@
 
+export type BaseIsOn = "Y" | "N"
 export type TrueOrFalse = "true" | "false"
 export type OState = "OK" | "REMOVED" | "DELETED"
 export type OState_2 = "OK" | "CANCELED"

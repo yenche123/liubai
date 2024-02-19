@@ -20,6 +20,7 @@ import type { LiuFileStore, LiuImageStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
 import type { EmojiData } from "./types-content"
 import type { ContentConfig, MemberConfig } from "./other/types-custom"
+import type { UserSubscription } from "./types-cloud"
 
 export interface BaseLocalTable {
   _id: string
@@ -39,6 +40,8 @@ export interface UserLocalTable extends BaseLocalTable {
 
   name?: string
   avatar?: LiuImageStore
+
+  subscription?: UserSubscription
 }
 
 export interface WorkspaceLocalTable extends BaseLocalTable {

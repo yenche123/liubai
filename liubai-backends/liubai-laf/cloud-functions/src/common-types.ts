@@ -584,6 +584,7 @@ export interface Res_UserLoginNormal {
   theme?: LocalTheme
   language?: LocalLanguage
   spaceMemberList?: LiuSpaceAndMember[]
+  subscription?: UserSubscription
   multi_users?: Res_ULN_User[]
   multi_credential?: string
   multi_credential_id?: string

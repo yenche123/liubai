@@ -1,5 +1,10 @@
 import type { LiuExif } from "./index"
-import type { MemberState, SpaceType, OState } from "./types-basic"
+import type { 
+  BaseIsOn, 
+  MemberState, 
+  SpaceType, 
+  OState,
+} from "./types-basic"
 import type { LiuAtomState } from "./types-atom"
 
 export interface Cloud_FileStore {
@@ -50,4 +55,21 @@ export interface LiuSpaceAndMember {
   space_owner: string
   space_name?: string
   space_avatar?: Cloud_ImageStore
+}
+
+/** 用户的订阅方案 */
+export interface UserSubscription {
+  isOn: BaseIsOn
+  plan: string             // 订阅计划应用内 Subscription 表的 _id
+  isLifelong: boolean
+  autoRecharge?: boolean   // 是否开启自动续费，当为 undefined 表示不得而知
+  createdStamp: number     // 第一次创建订阅的时间戳
+  chargedStamp?: number    // 最近一次付费的时间戳，不排除免费开启订阅，所以此项选填
+  firstChargedStamp?: number    // 第一次付费的时间戳，用于判断是否支持退款
+  expireStamp?: number
+  chargeTimes?: number    // 被索取费用的次数
+  stripe?: {              // 存储一些有关于 stripe 的信息
+    customer_portal_url?: string        // stripe 的订阅管理网址，供用户去管理订阅
+    customer_portal_created?: number    // 注意: 以秒为单位
+  }
 }

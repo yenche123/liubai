@@ -1,7 +1,10 @@
 // 存放所有接口返回的 data 类型
 import type { LocalTheme } from "~/types/types-atom"
 import type { LocalLanguage } from "~/types"
-import type { LiuSpaceAndMember } from "~/types/types-cloud"
+import type { 
+  UserSubscription, 
+  LiuSpaceAndMember, 
+} from "~/types/types-cloud"
 
 
 /********************** Hello World *******************/
@@ -37,6 +40,7 @@ export interface Res_UserLoginNormal {
   language?: LocalLanguage
   // 返回的 space 和 member 信息都是当前用户有加入的，已退出的不会返回
   spaceMemberList?: LiuSpaceAndMember[]
+  subscription?: UserSubscription
 
   // 有多个 user 符合时
   multi_users?: Res_ULN_User[]
@@ -44,7 +48,7 @@ export interface Res_UserLoginNormal {
   multi_credential_id?: string
 }
 
-/************************ 用户信息 ********************/
+/************************ 用户信息 (包含会员信息) ********************/
 
 export interface Res_UserSettings_Enter {
   email?: string
@@ -52,9 +56,14 @@ export interface Res_UserSettings_Enter {
   theme: LocalTheme
   language: LocalLanguage
   spaceMemberList: LiuSpaceAndMember[]
+  subscription?: UserSubscription
   new_serial?: string
   new_token?: string
 }
 
 export type Res_UserSettings_Latest = 
   Omit<Res_UserSettings_Enter, "new_serial" | "new_token">
+
+export interface Res_UserSettings_Membership {
+  subscription?: UserSubscription
+}

@@ -843,13 +843,14 @@ async function sign_in(
     await checkIfTooManyTokens(user._id, platform)
   }
 
-  // 8. 构造返回数据
+  // 7. 构造返回数据
   const obj3: Res_UserLoginNormal = {
     userId: user._id,
     token,
     serial_id,
     language: user.language,
     theme: user.theme,
+    subscription: user.subscription,
     spaceMemberList,
   }
 
