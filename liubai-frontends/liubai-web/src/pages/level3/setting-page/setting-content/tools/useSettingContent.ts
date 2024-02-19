@@ -1,15 +1,14 @@
 
-import { reactive } from "vue"
+import { reactive, watch } from "vue"
 import type { SettingContentData } from "./types"
-import localCache from "~/utils/system/local-cache"
 import cui from "~/components/custom-ui"
-import liuApi from "~/utils/liu-api"
-import { useDynamics } from "~/hooks/useDynamics"
-import type { SupportedLocale } from "~/types/types-locale"
 import { getLanguageList, getTermsList } from "./get-list"
 import { handleLogoutWithBackend, handleLogoutWithPurlyLocal } from "./handle-logout"
 import { whenTapTheme } from "./handle-theme"
+import { whenTapLanguage } from "./handle-lang"
 import liuEnv from "~/utils/liu-env"
+import { useSystemStore } from "~/hooks/stores/useSystemStore"
+import { storeToRefs } from "pinia"
 
 export function useSettingContent() {
   const data = reactive<SettingContentData>({
@@ -20,13 +19,12 @@ export function useSettingContent() {
     termsList: getTermsList(),
   })
 
-  initSettingContent(data)
+  listenSystemStore(data)
 
   const onTapTheme = () => whenTapTheme(data)
   const onTapLanguage = () => whenTapLanguage(data)
   const onTapTerms = () => data.openTerms = !data.openTerms
   const onTapLogout = () => whenTapLogout(data)
-
 
   return {
     data,
@@ -37,27 +35,27 @@ export function useSettingContent() {
   }
 }
 
-function initSettingContent(
+function listenSystemStore(
   data: SettingContentData
 ) {
+  const systemStore = useSystemStore()
+  const { local_theme, local_lang } = storeToRefs(systemStore)
 
-  const localP = localCache.getPreference()
+  watch([local_theme, local_lang], (newV) => {
+    const [theme, lang] = newV
 
-  /** 初始化主题 */
-  const theme = localP.theme
-  if(theme) {
-    data.theme = theme
-  }
+    if(data.theme !== theme) {
+      data.theme = theme
+    }
 
-  /** 初始化语言 */
-  let lang = localP.language
-  if(!lang) lang = "system"
-  data.language = lang
-  const langList = getLanguageList()
-  const langItem = langList.find(v => v.id === lang)
-  if(langItem) {
-    data.language_txt = langItem.text
-  }
+    if(!data.language_txt || data.language !== lang) {
+      data.language = lang
+      const langList = getLanguageList()
+      const langItem = langList.find(v => v.id === lang)
+      if(langItem) data.language_txt = langItem.text
+    }
+
+  }, { immediate: true })
 }
 
 function whenTapLogout(
@@ -92,36 +90,4 @@ async function askLogoutWithBackend() {
 
   if(!res.confirm) return
   handleLogoutWithBackend(res.tipToggle ?? false)
-}
-
-async function whenTapLanguage(
-  data: SettingContentData
-) {
-  const list = getLanguageList()
-  const itemList = list.map(v => ({ text: v.text }))
-
-  const res = await cui.showActionSheet({ itemList })
-  if(res.result !== "option" || res.tapIndex === undefined) return
-
-  const item = list[res.tapIndex]
-  const id = item.id
-  if(id === data.language) return
-
-  localCache.setPreference("language", id)
-
-  let newLang: SupportedLocale
-  let new_lang_txt = item.text
-  if(id !== "system") {
-    newLang = id
-  }
-  else {
-    newLang = liuApi.getLanguageFromSystem()
-  }
-  
-  const { setLanguage } = useDynamics()
-  setLanguage(newLang)
-
-  data.language = id
-  data.language_txt = new_lang_txt
-  data.termsList = getTermsList()
 }

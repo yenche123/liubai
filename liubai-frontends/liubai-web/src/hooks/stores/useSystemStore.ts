@@ -9,6 +9,7 @@ import type { LocalLocale, SupportedLocale } from "~/types/types-locale";
 import liuApi from "~/utils/liu-api";
 import localCache from "~/utils/system/local-cache";
 import { i18n } from "~/locales";
+import middleBridge from "~/utils/middle-bridge";
 
 export const useSystemStore = defineStore("system", () => {
 
@@ -22,15 +23,19 @@ export const useSystemStore = defineStore("system", () => {
   initLang(local_lang)
 
   const setTheme = (theme: LocalTheme) => {
+    if(theme === local_theme.value) return
     localCache.setPreference("theme", theme)
     local_theme.value = theme
     toSetSupportedTheme(theme, supported_theme)
+    setClassForTheme(supported_theme)
   }
 
   const setLanguage = (lang: LocalLocale) => {
+    if(lang === local_lang.value) return
     localCache.setPreference("language", lang)
     local_lang.value = lang
     toSetSupportedLang(lang, supported_lang)
+    middleBridge.setAppTitle()
   }
 
   return {
@@ -44,6 +49,7 @@ export const useSystemStore = defineStore("system", () => {
 
 })
 
+export type UseSystemType = ReturnType<typeof useSystemStore>
 
 function toSetSupportedTheme(
   theme: LocalTheme,
@@ -58,6 +64,20 @@ function toSetSupportedTheme(
   else {
     supported_theme.value = theme
   }
+}
+
+// classList 的用法，见
+// https://teagan-hsu.coderbridge.io/2020/12/29/how-to-set-css-styles-using-javascript/
+function setClassForTheme(
+  supported_theme: Ref<SupportedTheme>,
+) {
+  const t = supported_theme.value
+  const body = document.querySelector("body")
+  const val = t === "light" ? false : true
+  body?.classList.toggle("theme-dark", val)
+
+  // 在 document 的根目录上: 当深色模式时，添加 .liu-dark，否则移除 .liu-dark
+  document.documentElement.classList.toggle("liu-dark", val)
 }
 
 function toSetSupportedLang(
