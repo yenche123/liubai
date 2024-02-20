@@ -26,6 +26,8 @@ export async function handleUser(
   const u: Partial<UserLocalTable> = {
     subscription: d.subscription,
     updatedStamp: time.getTime(),
+    email: d.email,
+    github_id: d.github_id,
   }
   const res3 = await db.users.update(userId, u)
   console.log("update user res3: ")
@@ -136,6 +138,8 @@ async function createUser(
     updatedStamp: t,
     lastRefresh: t,
     subscription: d.subscription,
+    email: d.email,
+    github_id: d.github_id,
   }
 
   try {

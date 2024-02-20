@@ -36,6 +36,7 @@ export interface UserLocalTable extends BaseLocalTable {
   oState: "NORMAL"
   lastRefresh: number
   email?: string
+  github_id?: number
   phone?: string
 
   name?: string             // 存储其他非工作区成员时，需要用到（因为可能出现
