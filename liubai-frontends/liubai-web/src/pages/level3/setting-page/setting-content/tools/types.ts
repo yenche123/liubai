@@ -1,10 +1,9 @@
-
-import type { LocalLanguage } from "~/types"
 import type { LocalTheme } from "~/types/types-atom"
+import type { LocalLocale } from "~/types/types-locale"
 
 export interface LanguageItem {
   text: string
-  id: LocalLanguage
+  id: LocalLocale
 }
 
 export interface ThemeItem {
@@ -19,7 +18,7 @@ export interface TermsItem {
 }
 
 export interface SettingContentData {
-  language: LocalLanguage
+  language: LocalLocale
   language_txt: string
   theme: LocalTheme
   openTerms: boolean

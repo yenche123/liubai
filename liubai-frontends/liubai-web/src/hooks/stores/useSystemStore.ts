@@ -13,7 +13,7 @@ import middleBridge from "~/utils/middle-bridge";
 
 export const useSystemStore = defineStore("system", () => {
 
-  const local_theme = ref<LocalTheme>("auto")
+  const local_theme = ref<LocalTheme>("system")
   const supported_theme = ref<SupportedTheme>("light")
 
   const local_lang = ref<LocalLocale>("system")
@@ -22,7 +22,8 @@ export const useSystemStore = defineStore("system", () => {
   initTheme(local_theme, supported_theme)
   initLang(local_lang)
 
-  const setTheme = (theme: LocalTheme) => {
+  const setTheme = (theme?: LocalTheme) => {
+    if(!theme) theme = "system"
     if(theme === local_theme.value) return
     localCache.setPreference("theme", theme)
     local_theme.value = theme
@@ -30,7 +31,8 @@ export const useSystemStore = defineStore("system", () => {
     setClassForTheme(supported_theme)
   }
 
-  const setLanguage = (lang: LocalLocale) => {
+  const setLanguage = (lang?: LocalLocale) => {
+    if(!lang) lang = "system"
     if(lang === local_lang.value) return
     localCache.setPreference("language", lang)
     local_lang.value = lang

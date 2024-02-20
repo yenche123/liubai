@@ -1,8 +1,4 @@
-
-import type { SupportedLocale } from "./types-locale"
 import type { RouteLocation } from 'vue-router'
-
-export type LocalLanguage = SupportedLocale | "system"
 
 export interface LiuFileStore {
   id: string

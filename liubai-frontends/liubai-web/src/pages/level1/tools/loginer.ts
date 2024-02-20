@@ -6,6 +6,7 @@ import { redirectToLoginPage } from "./common-tools";
 import { handleUser, handleSpaceAndMembers } from "./cloud-into-db";
 import { LocalPreference } from "~/utils/system/tools/types";
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus";
+import { useSystemStore } from "~/hooks/stores/useSystemStore";
 
 // 开始去初始化本地数据
 async function toLogin(
@@ -66,8 +67,13 @@ async function toLogin(
 
   // 7. 把用户最近一次进入应用的时间戳设置为刚刚
   CloudEventBus.justLogged()
+
+  // 8. 存入新的语言和主题
+  const systemStore = useSystemStore()
+  systemStore.setTheme(d.theme)
+  systemStore.setLanguage(d.language)
   
-  // 7. router 切换，先不读 goto 参数，直接跳转到 首页
+  // 9. router 切换，先不读 goto 参数，直接跳转到 首页
   rr.router.replace({ name: "index" })
 
   return true
