@@ -5,7 +5,7 @@ import type {
   LiuSpaceAndMember,
   MemberAggSpaces,
   LocalTheme,
-  LocalLanguage,
+  LocalLocale,
   SupportedLocale,
   Shared_TokenUser,
   VerifyTokenOpt,
@@ -238,11 +238,11 @@ export function normalizeToLocalTheme(str: any): LocalTheme {
   return "system"
 }
 
-/** 归一化语言至 LocalLanguage  */
-export function normalizeToLocalLanguage(str: any): LocalLanguage {
+/** 归一化语言至 LocalLocale  */
+export function normalizeToLocalLocale(str: any): LocalLocale {
   if(!str || typeof str !== "string") return "system"
   const isInIt = supportedLocales.includes(str as SupportedLocale)
-  if(isInIt) return str as LocalLanguage
+  if(isInIt) return str as LocalLocale
   return "system"
 }
 

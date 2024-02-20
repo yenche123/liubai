@@ -29,18 +29,19 @@ export interface Res_ULN_User extends LiuSpaceAndMember {
 
 export interface Res_UserLoginNormal {
 
-  // 需要验证 email 时
+  // 需要验证 email 时或只有一个 user 符合时
   email?: string
 
   // 只有一个 user 符合时
-  userId?: string
-  token?: string
-  serial_id?: string
+  github_id?: number
   theme?: LocalTheme
   language?: LocalLocale
   // 返回的 space 和 member 信息都是当前用户有加入的，已退出的不会返回
   spaceMemberList?: LiuSpaceAndMember[]
   subscription?: UserSubscription
+  serial_id?: string
+  token?: string
+  userId?: string
 
   // 有多个 user 符合时
   multi_users?: Res_ULN_User[]

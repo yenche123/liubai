@@ -71,7 +71,7 @@ export const supportedLocales = [
 ] as const
 
 export type SupportedLocale = typeof supportedLocales[number]
-export type LocalLanguage = SupportedLocale | "system"
+export type LocalLocale = SupportedLocale | "system"
 
 interface BaseTable {
   _id: string
@@ -351,7 +351,7 @@ export interface Table_User extends BaseTable {
   thirdData?: UserThirdData
   theme: LocalTheme
   systemTheme?: SupportedTheme
-  language: LocalLanguage
+  language: LocalLocale
   systemLanguage?: string
   lastEnterStamp?: number
   subscription?: UserSubscription
@@ -577,14 +577,21 @@ export interface Res_ULN_User extends LiuSpaceAndMember {
 }
 
 export interface Res_UserLoginNormal {
+  // 需要验证 email 时或只有一个 user 符合时
   email?: string
-  userId?: string
-  token?: string
-  serial_id?: string
+
+  // 只有一个 user 符合时
+  github_id?: number
   theme?: LocalTheme
-  language?: LocalLanguage
+  language?: LocalLocale
+  // 返回的 space 和 member 信息都是当前用户有加入的，已退出的不会返回
   spaceMemberList?: LiuSpaceAndMember[]
   subscription?: UserSubscription
+  serial_id?: string
+  token?: string
+  userId?: string
+
+  // 有多个 user 符合时
   multi_users?: Res_ULN_User[]
   multi_credential?: string
   multi_credential_id?: string
@@ -594,7 +601,7 @@ export interface Res_UserSettings_Enter {
   email?: string
   github_id?: number
   theme: LocalTheme
-  language: LocalLanguage
+  language: LocalLocale
   spaceMemberList: LiuSpaceAndMember[]
   subscription?: UserSubscription
   new_serial?: string

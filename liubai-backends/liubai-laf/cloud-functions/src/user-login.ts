@@ -28,7 +28,7 @@ import {
   getSuffix,
   canPassByExponentialDoor,
   normalizeToLocalTheme,
-  normalizeToLocalLanguage,
+  normalizeToLocalLocale,
   getUserInfos,
   insertToken,
 } from "@/common-util"
@@ -265,7 +265,8 @@ async function handle_google_one_tap(
     return { code: "U0002" }
   }
   if(!email_verified) {
-    return { code: "U0001", data: { email } }
+    const rData: Res_UserLoginNormal = { email }
+    return { code: "U0001", data: rData }
   }
   
   const opt: UserThirdData = { google: googlePayload }
@@ -611,7 +612,8 @@ async function handle_google_oauth(
     return { code: "U0002" }
   }
   if(!email_verified) {
-    return { code: "U0001", data: { email } }
+    const rData: Res_UserLoginNormal = { email }
+    return { code: "U0001", data: rData }
   }
 
   const opt: UserThirdData = { google: res2_data }
@@ -845,13 +847,15 @@ async function sign_in(
 
   // 7. 构造返回数据
   const obj3: Res_UserLoginNormal = {
-    userId: user._id,
-    token,
-    serial_id,
-    language: user.language,
+    email: user.email,
+    github_id: user.github_id,
     theme: user.theme,
-    subscription: user.subscription,
+    language: user.language,
     spaceMemberList,
+    subscription: user.subscription,
+    serial_id,
+    token,
+    userId: user._id,
   }
 
   return { code: "0000", data: obj3 }
@@ -912,7 +916,7 @@ async function handleUserWhileSigningIn(
   }
   
   const bTheme = normalizeToLocalTheme(body.theme)
-  const bLang = normalizeToLocalLanguage(body.language)
+  const bLang = normalizeToLocalLocale(body.language)
   if(bTheme !== user.theme) {
     u.theme = bTheme
   }

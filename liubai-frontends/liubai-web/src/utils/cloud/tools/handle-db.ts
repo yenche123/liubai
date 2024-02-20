@@ -1,4 +1,5 @@
 
+import { useSystemStore } from "~/hooks/stores/useSystemStore";
 import type { 
   Res_UserSettings_Enter, 
   Res_UserSettings_Latest,
@@ -12,20 +13,13 @@ export function afterGettingUserData(
   console.log("afterGettingUserData.......")
   console.log(d)
   console.log(" ")
-  const {
-    local_id,
-    theme,
-    language,
-  } = localCache.getPreference()
-  if(!local_id) return false
+  const { local_id: userId } = localCache.getPreference()
+  if(!userId) return false
 
   // 1. update theme & language
-  if(theme !== d.theme) {
-    localCache.setPreference("theme", d.theme)
-  }
-  if(language !== d.language) {
-    localCache.setPreference("language", d.language)
-  }
+  const systemStore = useSystemStore()
+  systemStore.setTheme(d.theme)
+  systemStore.setLanguage(d.language)
 
 
 
