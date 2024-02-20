@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useDynamics } from "~/hooks/useDynamics";
+import { useSystemStore } from "~/hooks/stores/useSystemStore";
+import { storeToRefs } from "pinia";
 import { useThirdScript } from "../tools/useThirdScript"
 import thirdLink from "~/config/third-link";
 import { ref } from "vue"
@@ -10,7 +11,8 @@ defineProps({
   },
 })
 
-const { theme } = useDynamics()
+const systemStore = useSystemStore()
+const { supported_theme } = storeToRefs(systemStore)
 const { boxRef } = useThirdScript(thirdLink.IG_EMBED)
 const showData = ref(false)
 setTimeout(() => {
@@ -27,7 +29,7 @@ setTimeout(() => {
       data-instgrm-captioned
       :data-instgrm-permalink="link"
       data-instgrm-version="14"
-      :data-theme="theme"
+      :data-theme="supported_theme"
     >
     </blockquote>
   </div>

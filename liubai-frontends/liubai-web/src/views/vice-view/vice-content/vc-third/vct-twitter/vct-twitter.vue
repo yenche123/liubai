@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { useDynamics } from "~/hooks/useDynamics";
 import { useThirdScript } from "../tools/useThirdScript"
 import thirdLink from "~/config/third-link";
+import { useSystemStore } from "~/hooks/stores/useSystemStore";
+import { storeToRefs } from "pinia";
 
 const props = defineProps({
   link: {
@@ -9,7 +10,8 @@ const props = defineProps({
   },
 })
 
-const { theme } = useDynamics()
+const systemStore = useSystemStore()
+const { supported_theme: theme } = storeToRefs(systemStore)
 const { boxRef } = useThirdScript(thirdLink.TWITTER_WIDGETS)
 
 </script>

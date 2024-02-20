@@ -3,12 +3,14 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useDynamics } from '~/hooks/useDynamics';
-import { SupportedLocale } from '~/types/types-locale';
+import { type SupportedLocale } from '~/types/types-locale';
 import liuUtil from "~/utils/liu-util";
 import { initDatePicker } from "./index"
+import { useSystemStore } from '~/hooks/stores/useSystemStore';
+import { storeToRefs } from 'pinia';
 
-const { theme } = useDynamics()
+const systemStore = useSystemStore()
+const { supported_theme } = storeToRefs(systemStore)
 const { locale, t } = useI18n()
 const dayNames = liuUtil.getDayNames()
 
@@ -54,7 +56,7 @@ const previewDate = computed(() => {
       :locale="locale" 
       :dayNames="dayNames" 
       weekStart="0" 
-      :dark="theme === 'dark'"
+      :dark="supported_theme === 'dark'"
       inline
       arrowNavigation
       v-model="date"

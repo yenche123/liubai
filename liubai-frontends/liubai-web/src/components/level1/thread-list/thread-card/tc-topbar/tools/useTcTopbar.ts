@@ -1,9 +1,8 @@
 import { computed } from "vue"
 import type { TctProps } from "./types"
-import { useDynamics } from "~/hooks/useDynamics"
-import type { 
-  TooltipPlacement 
-} from "~/components/common/liu-tooltip/tools/types"
+import { useSystemStore } from "~/hooks/stores/useSystemStore"
+import type { TooltipPlacement } from "~/components/common/liu-tooltip/tools/types"
+import { storeToRefs } from "pinia"
 
 export function useTcTopbar(
   props: TctProps,
@@ -30,13 +29,14 @@ export function useTcTopbar(
     return `bottom-end`
   })
 
-  const { theme } = useDynamics()
+  const systemStore = useSystemStore()
+  const { supported_theme } = storeToRefs(systemStore)
 
   return {
     td,
     showTopbar,
     stateColor,
     cloudOffPlacement,
-    theme,
+    theme: supported_theme,
   }
 }

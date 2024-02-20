@@ -22,12 +22,9 @@ import LiuImg from "./components/common/liu-img/liu-img.vue"
 import LiuCheckbox from "./components/common/liu-checkbox/liu-checkbox.vue"
 import FloatingVue from 'floating-vue'
 import { plugin as Slicksort } from 'vue-slicksort';
-import { initTheme } from './hooks/useDynamics'
 import { liuShowDirective } from "~/utils/directives/v-liu-show"
 import VueDraggableResizable from 'vue-draggable-resizable'
-
-// 初始化主题
-initTheme()
+import { useSystemStore } from './hooks/stores/useSystemStore'
 
 const app = createApp(App)
 
@@ -75,5 +72,8 @@ app.directive('liu-show', liuShowDirective)
 // 来自 tiptap 解析 `codeBlock` 时的警告
 // 详情请见: https://cn.vuejs.org/guide/components/provide-inject.html#working-with-reactivity
 // 上述链接记得将 API 风格切换至: 选项式
+
+// 初始化主题，要在 pinia 之后
+useSystemStore()
 
 app.mount('#app')

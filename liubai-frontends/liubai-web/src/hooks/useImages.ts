@@ -1,5 +1,6 @@
 import { computed } from "vue"
-import { useDynamics } from "./useDynamics"
+import { useSystemStore } from "./stores/useSystemStore"
+import { storeToRefs } from "pinia"
 
 const lightMap = {
   "bg1": "/bg/bg1.svg",
@@ -10,9 +11,11 @@ const darkMap: typeof lightMap = {
 }
 
 export const useImages = () => {
-  const { theme } = useDynamics()
+  const systemStore = useSystemStore()
+  const { supported_theme } = storeToRefs(systemStore)
+
   const images = computed<typeof lightMap>(() => {
-    const t = theme.value
+    const t = supported_theme.value
     if(t === "light") return lightMap
     return darkMap
   })

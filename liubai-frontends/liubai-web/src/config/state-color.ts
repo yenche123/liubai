@@ -1,4 +1,4 @@
-import { useDynamics } from "~/hooks/useDynamics"
+import { useSystemStore } from "~/hooks/stores/useSystemStore"
 
 const LIGHT_MAP: Record<string, string> = {
   "--liu-state-1": "#BAAEA2",
@@ -36,7 +36,7 @@ export function mapStateColor(
   useTo: "dot_color" | "",
   colorKey: string
 ) {
-  const { theme } = useDynamics()
+  const { supported_theme } = useSystemStore()
 
   const idx = colorKey.indexOf("#")
   if(idx === 0) return colorKey
@@ -52,7 +52,7 @@ export function mapStateColor(
   if(useTo === "dot_color") {
     res = LIGHT_MAP[colorKey]
   }
-  else if(theme.value === "light") {
+  else if(supported_theme === "light") {
     res = LIGHT_MAP[colorKey]
   }
   else {

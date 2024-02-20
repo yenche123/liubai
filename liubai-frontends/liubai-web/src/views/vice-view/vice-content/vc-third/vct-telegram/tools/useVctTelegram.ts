@@ -1,13 +1,15 @@
 import type { VctCommonProps } from "../../tools/types"
 import thirdLink from '~/config/third-link';
 import { useThirdScript, type ThirdScriptAttr } from '../../tools/useThirdScript';
-import { useDynamics } from "~/hooks/useDynamics";
+import { useSystemStore } from "~/hooks/stores/useSystemStore";
+import { storeToRefs } from "pinia";
 
 export function useVctTelegram(
   props: VctCommonProps,
 ) {
 
-  const { theme } = useDynamics()
+  const systemStore = useSystemStore()
+  const { supported_theme: theme } = storeToRefs(systemStore)
 
   // 从 path 里获取 postId
   const _getPostId = () => {

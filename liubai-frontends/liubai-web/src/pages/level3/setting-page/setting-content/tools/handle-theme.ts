@@ -27,8 +27,6 @@ export async function whenTapTheme(
   // 0. 判断是否跟原来的选择一致
   if(id === data.theme) return
   
-
-  console.log("用新的方法设置啦........")
   const systemStore = useSystemStore()
   systemStore.setTheme(id)
 }

@@ -1,8 +1,8 @@
 import thirdLink from "~/config/third-link"
-import { useDynamics } from "~/hooks/useDynamics"
 import valTool from "~/utils/basic/val-tool"
 import liuApi from "~/utils/liu-api"
 import { mastodonDomains } from "~/config/domain-list"
+import { useSystemStore } from "../useSystemStore"
 
 const x = "__XXX__"
 
@@ -21,8 +21,7 @@ export function getEmbedData(
   const pLen = p.length
   const s = url.searchParams
 
-  const { theme } = useDynamics()
-  const themeVal = theme.value
+  const { supported_theme: themeVal } = useSystemStore()
   let tmp: string = ""
 
   // 适配 youtube /watch
