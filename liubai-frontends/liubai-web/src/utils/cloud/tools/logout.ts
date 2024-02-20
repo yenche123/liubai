@@ -3,6 +3,7 @@ import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import time from "~/utils/basic/time"
 import localCache from "~/utils/system/local-cache";
 
+const SEC_3 = 3 * time.SECONED
 let lastLogoutStamp = 0
 
 interface LogoutOpt {
@@ -17,7 +18,7 @@ export function logout(
   // 0. 防抖节流，3s内进来过，忽略
   const now = time.getTime()
   const diffS = now - lastLogoutStamp
-  if(diffS < 3000) return
+  if(diffS < SEC_3) return
 
   // 1. 去判断是否远端退出
   if(opt?.cloud) {
