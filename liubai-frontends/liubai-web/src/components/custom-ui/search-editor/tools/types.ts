@@ -22,10 +22,10 @@ export interface SearchEditorData {
   trimTxt: string
   excludeThreads: string[]
   indicator: string               // 指示器，表示现在选中的是哪一个
-  suggestList: ScContentAtom[]
-  recentList: ScRecentAtom[]
-  thirdList: ScThirdPartyAtom[]
-  innerList: ScContentAtom[]
+  suggestList: ScContentAtom[]   // 建议的结果
+  recentList: ScRecentAtom[]     // 最近的关键词
+  thirdList: ScThirdPartyAtom[]  // 第三方
+  innerList: ScContentAtom[]     // 搜索结果
 }
 
 export interface SearchEditorParam {

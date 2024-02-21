@@ -80,9 +80,11 @@ export function initSearchEditor() {
 export function showSearchEditor(param: SearchEditorParam) {
   let initTxt = param.initText ?? ""
   seData.mode = param.type
-  setInputTxt(initTxt)
+  if(initTxt || param.type === "select_thread") {
+    setInputTxt(initTxt)
+    seData.innerList = []
+  }
   seData.excludeThreads = param.excludeThreads ?? []
-  seData.innerList = []
   seData.reloadNum++
 
   openIt()
