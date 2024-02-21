@@ -5,7 +5,8 @@ import type {
 import { type LiuTable } from "~/types/types-atom"
 
 export interface ImageTransferedRes {
-  useCloud: boolean
+  useCloud: boolean       // check if using cloud image 
+                          // which represents that downloading is required
   image?: LiuImageStore
 }
 

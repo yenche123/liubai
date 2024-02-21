@@ -93,7 +93,6 @@ async function createSpace(
   return true
 }
 
-// 先不去管 "云端文件" 转换为 "本地文件" 的问题
 async function createMember(
   userId: string,
   v: LiuSpaceAndMember,
@@ -121,6 +120,7 @@ async function createMember(
     return false
   }
   
+  // notify CloudToLocal to download images
   CloudToLocal.notify("members", data._id)
   return true
 }
