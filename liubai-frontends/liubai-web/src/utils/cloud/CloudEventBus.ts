@@ -4,7 +4,11 @@ import {
   type RouteAndLiuRouter
 } from "~/routes/liu-router"
 import { useNetwork, useDocumentVisibility, useThrottleFn } from "~/hooks/useVueUse";
-import { fetchHelloWorld, fetchUserEnter } from "./tools/requests";
+import { 
+  fetchHelloWorld, 
+  fetchUserEnter, 
+  fetchLatestUser,
+} from "./tools/requests";
 import time from "../basic/time";
 import localCache from "../system/local-cache";
 import liuEnv from "../liu-env";
@@ -159,7 +163,7 @@ class CloudEventBus {
         localCache.setPreference("serial", d.new_serial)
         localCache.setPreference("token", d.new_token)
       }
-      await afterGettingUserData(d, this.rr)
+      await afterGettingUserData(d, this.rr, { isRefresh: true })
     }
 
     // 检查是否要退出登录
@@ -172,8 +176,11 @@ class CloudEventBus {
     return true
   }
   
-
-  // 等待若干秒确认状态已经 ok (由 syncNum 来确认状态)
+  /**
+   * 等待若干秒确认状态已经 ok (由 syncNum 来确认状态)
+   * @param ms 超时阈值，单位毫秒
+   * @returns 
+   */
   private static checkEverythingOk(
     ms: number = 5000
   ): Promise<boolean> {
@@ -203,12 +210,24 @@ class CloudEventBus {
     return new Promise(_wait)
   }
 
-  // 手动获取用户基础信息
+  // manually getting latest user info
   static async getLatestUserInfo() {
     const isOk = await this.checkEverythingOk()
-    if(!isOk) return false
+    if(!isOk) return
 
+    // to fetch
+    const res = await fetchLatestUser()
+    const { code, data: d } = res
+    if(code === "0000" && d) {
+      await afterGettingUserData(d, this.rr)
+      return d
+    }
 
+    // check if need to logout
+    if(code === "E4003") {
+      // to logout
+      logout(this.rr)
+    }
 
   }
 

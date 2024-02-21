@@ -19,7 +19,7 @@ import type { LiuSpaceAndMember } from "~/types/types-cloud";
 import { CloudToLocal } from "../CloudToLocal";
 
 interface AgudOpt {
-  isRefresh?: boolean
+  isRefresh?: boolean   // `false` is default
 }
 
 export async function afterGettingUserData(
