@@ -73,7 +73,7 @@ export function showContentPanel(param: ContentPanelParam) {
   
   openIt(rr, queryKey)
 
-  const _wait = (a: ContentPanelResolver): void => {
+  const _wait = (a: ContentPanelResolver) => {
     _resolve = a
   }
   return new Promise(_wait)

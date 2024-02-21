@@ -39,10 +39,26 @@ export async function afterGettingUserData(
   systemStore.setTheme(d.theme)
   systemStore.setLanguage(d.language)
 
-
   // 2. get user data and construct new data
-  const res2 = await db.users.get(userId)
+  const res2 = await handleUser(userId, d, opt)
   if(!res2) return false
+
+  // 3. update name and avatar with space and member
+  const res3 = await handleSpaceAndMember(d.spaceMemberList, rr)
+  if(!res3) return false
+
+  
+  return true
+}
+
+
+async function handleUser(
+  userId: string,
+  d: Res_UserSettings_Enter | Res_UserSettings_Latest,
+  opt?: AgudOpt,
+) {
+  const res1 = await db.users.get(userId)
+  if(!res1) return false
   const now = time.getTime()
   const u: Partial<UserLocalTable> = {
     subscription: d.subscription,
@@ -54,19 +70,12 @@ export async function afterGettingUserData(
     u.lastRefresh = now
   }
   
-  // 3. update user
-  const res3 = await db.users.update(userId, u)
-
-  // 4. update name and avatar
-  const res4 = await handleSpaceAndMember(d.spaceMemberList, rr)
-  if(!res4) return res4
-  
-  
-
-
+  const res2 = await db.users.update(userId, u)
+  return true
 }
 
-export async function handleSpaceAndMember(
+
+async function handleSpaceAndMember(
   spaceMemberList: LiuSpaceAndMember[],
   rr: RouteAndLiuRouter,
 ) {

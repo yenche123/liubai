@@ -1,4 +1,4 @@
-import { ref, reactive, watch } from "vue"
+import { ref, reactive, watch, type WatchStopHandle } from "vue"
 import { 
   useRouteAndLiuRouter,
   type RouteAndLiuRouter
@@ -9,6 +9,12 @@ import time from "../basic/time";
 import localCache from "../system/local-cache";
 import liuEnv from "../liu-env";
 import { logout } from "./tools/logout";
+import { afterGettingUserData } from "./tools/after-fetch";
+import type { BoolFunc, LiuTimeout } from "~/utils/basic/type-tool"
+import valTool from "../basic/val-tool";
+
+const SEC_10 = 10 * time.SECONED
+const MIN_30 = 30 * time.MINUTE
 
 // 事件总线，对云同步任务进行调度
 class CloudEventBus {
@@ -81,7 +87,7 @@ class CloudEventBus {
     // 0.1 判断是否 10s 内已经请求过了
     const lms = this.lastFinishMainStamp
     const diff1 = time.getTime() - lms
-    if(diff1 < 10 * time.SECONED) return
+    if(diff1 < SEC_10) return
 
     // 0.2 判断是否正在执行 main()
     if(this.isMaining) return
@@ -143,16 +149,9 @@ class CloudEventBus {
     // 30 分钟内已经进入过了直接返回 true，视为已同后端交互过
     const lues = this.lastUserEnterStamp
     const diff = time.getTime() - lues
-    if(diff < 30 * time.MINUTE) return true
+    if(diff < MIN_30) return true
 
     const res = await fetchUserEnter()
-
-    
-    // console.log("fetchUserEnter.......")
-    // console.log(res)
-    // console.log(" ")
-
-
     const { code, data: d } = res
     if(code === "0000" && d) {
       this.lastUserEnterStamp = time.getTime()
@@ -160,7 +159,7 @@ class CloudEventBus {
         localCache.setPreference("serial", d.new_serial)
         localCache.setPreference("token", d.new_token)
       }
-      
+      await afterGettingUserData(d, this.rr)
     }
 
     // 检查是否要退出登录
@@ -172,6 +171,47 @@ class CloudEventBus {
 
     return true
   }
+  
+
+  // 等待若干秒确认状态已经 ok (由 syncNum 来确认状态)
+  private static checkEverythingOk(
+    ms: number = 5000
+  ): Promise<boolean> {
+    const syncNum = this.syncNum
+    if(syncNum.value > 0) return valTool.getPromise(true)
+
+    let _resolve: BoolFunc
+    const _wait = (a: BoolFunc) => {
+      _resolve = a
+    }
+
+    let timeout: LiuTimeout
+    let stop: WatchStopHandle
+
+    stop = watch(syncNum, (newV) => {
+      if(timeout) clearTimeout(timeout)
+      stop?.()
+      _resolve(true)
+    })
+
+    timeout = setTimeout(() => {
+      stop?.()
+      timeout = undefined
+      _resolve(false)
+    }, ms)
+
+    return new Promise(_wait)
+  }
+
+  // 手动获取用户基础信息
+  static async getLatestUserInfo() {
+    const isOk = await this.checkEverythingOk()
+    if(!isOk) return false
+
+
+
+  }
+
 
 
   static getSyncNum() {
