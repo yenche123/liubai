@@ -1,13 +1,12 @@
 // 当用户进入 "应用内" 时触发
-//【待完善】并且 workspaceStore 已经完成初始化时
 import { toRef, watch, type WatchStopHandle } from "vue"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
-import type { SimpleFunc } from "~/utils/basic/type-tool"
+import type { SimpleFunc, BoolFunc } from "~/utils/basic/type-tool"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 
 // 0: 尚未开始监听
 // 1: 正在监听中
-// 2: 已经进入了
+// 2: 已经进入了，并且 workspace 已经完成初始化
 let status: number = 0
 let list: SimpleFunc[] = []
 let watchStop: WatchStopHandle
@@ -48,4 +47,14 @@ export function useEnterIntoApp(
     watchStop?.()
 
   }, { immediate: true })
+}
+
+// 同 useEnterIntoApp 只是改成 promise 的形式
+export function waitEnterIntoApp() {
+  const _wait = (a: BoolFunc) => {
+    useEnterIntoApp(() => {
+      a(true)
+    })
+  }
+  return new Promise(_wait)
 }

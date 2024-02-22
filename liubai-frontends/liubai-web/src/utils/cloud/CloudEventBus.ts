@@ -3,7 +3,11 @@ import {
   useRouteAndLiuRouter,
   type RouteAndLiuRouter
 } from "~/routes/liu-router"
-import { useNetwork, useDocumentVisibility, useThrottleFn } from "~/hooks/useVueUse";
+import { 
+  useNetwork, 
+  useDocumentVisibility, 
+  useThrottleFn,
+} from "~/hooks/useVueUse";
 import { 
   fetchHelloWorld, 
   fetchUserEnter, 
@@ -16,6 +20,7 @@ import { logout } from "./tools/logout";
 import { afterGettingUserData } from "./tools/after-fetch";
 import type { BoolFunc, LiuTimeout } from "~/utils/basic/type-tool"
 import valTool from "../basic/val-tool";
+import { waitEnterIntoApp } from "~/hooks/useEnterIntoApp";
 
 const SEC_10 = 10 * time.SECONED
 const MIN_30 = 30 * time.MINUTE
@@ -113,7 +118,10 @@ class CloudEventBus {
       return
     }
 
-    // 3. 用户进入事件
+    // 3. 等待 workspace 就位
+    const res3 = await waitEnterIntoApp()
+
+    // 4. 用户进入时间
     const hasEntered = await this.userEnter()
     if(hasEntered) {
       this.syncNum.value += 1

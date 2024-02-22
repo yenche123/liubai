@@ -28,9 +28,6 @@ export async function afterGettingUserData(
   opt?: AgudOpt,
 ) {
 
-  console.log("afterGettingUserData.......")
-  console.log(d)
-  console.log(" ")
   const { local_id: userId } = localCache.getPreference()
   if(!userId) return false
 
@@ -133,9 +130,9 @@ async function handleSpaceAndMember(
   const space_ids = spaceMemberList.map(v => v.spaceId)
   const wClause4 = db.workspaces.where("_id")
   const local_spaces = await wClause4.anyOf(space_ids).toArray()
-  console.log("local_spaces: ")
-  console.log(local_spaces)
-  console.log(" ")
+  // console.log("local_spaces: ")
+  // console.log(local_spaces)
+  // console.log(" ")
 
   // 5. update workspaces
   for(let i=0; i<local_spaces.length; i++) {
@@ -181,7 +178,7 @@ async function handleSpaceAndMember(
       await db.workspaces.update(v1._id, u5)
     }
     else {
-      console.log("no need to update workspace: " + v1._id)
+      // console.log("no need to update workspace: " + v1._id)
     }
 
     if(avatarRes.useCloud) {
@@ -193,9 +190,9 @@ async function handleSpaceAndMember(
   const member_ids = spaceMemberList.map(v => v.memberId)
   const wClause6 = db.members.where("_id")
   const local_members = await wClause6.anyOf(member_ids).toArray()
-  console.log("local_members: ")
-  console.log(local_members)
-  console.log(" ")
+  // console.log("local_members: ")
+  // console.log(local_members)
+  // console.log(" ")
 
   // 7. update members
   for(let i=0; i<local_members.length; i++) {
@@ -229,7 +226,7 @@ async function handleSpaceAndMember(
       await db.members.update(v1._id, u7)
     }
     else {
-      console.log("no need to update member: " + v1._id)
+      // console.log("no need to update member: " + v1._id)
     }
 
     if(avatarRes.useCloud) {
