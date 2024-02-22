@@ -88,7 +88,7 @@ const {
     </div>
 
     <!-- Apple -->
-    <div class="liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'apple')">
+    <!-- <div class="liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'apple')">
       <div class="lpv-icon">
         <svg-icon name="logos-apple" 
           color="var(--main-text)"
@@ -98,7 +98,7 @@ const {
       <div class="lpv-text">
         <span>{{ t('login.continue_with_apple') }}</span>
       </div>
-    </div>
+    </div> -->
 
   </div>
 
