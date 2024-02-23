@@ -171,7 +171,10 @@ class CloudEventBus {
         localCache.setPreference("serial", d.new_serial)
         localCache.setPreference("token", d.new_token)
       }
-      await afterGettingUserData(d, this.rr, { isRefresh: true })
+      const res2 = await afterGettingUserData(d, this.rr, {
+        isRefresh: true 
+      })
+      return res2
     }
 
     // 检查是否要退出登录
@@ -227,8 +230,8 @@ class CloudEventBus {
     const res = await fetchLatestUser()
     const { code, data: d } = res
     if(code === "0000" && d) {
-      await afterGettingUserData(d, this.rr)
-      return d
+      const res2 = await afterGettingUserData(d, this.rr)
+      if(res2) return d
     }
 
     // check if need to logout
