@@ -21,6 +21,7 @@ import { afterGettingUserData } from "./tools/after-fetch";
 import type { BoolFunc, LiuTimeout } from "~/utils/basic/type-tool"
 import valTool from "../basic/val-tool";
 import { waitEnterIntoApp } from "~/hooks/useEnterIntoApp";
+import { getUser } from "./tools/some-funcs";
 
 const SEC_10 = 10 * time.SECONED
 const MIN_30 = 30 * time.MINUTE
@@ -243,11 +244,19 @@ class CloudEventBus {
   }
 
 
+  /** get UserLocalTable from DB directly */
+  static async getUserFromDB() {
+    const res = await getUser()
+    return res
+  }
 
+  // syncNum.value >= 1 as soon as everything has been ok and
+  // has fetched the latest user info
   static getSyncNum() {
     return this.syncNum
   }
 
+  /** call it after just logging in */
   static justLogged() {
     this.syncNum.value += 1
     this.lastFinishMainStamp = time.getTime()
