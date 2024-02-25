@@ -8,5 +8,6 @@ export default {
   LOGIN: d + `user-login`,
   USER_ENTER: d + `user-settings`,
   USER_LATEST: d + `user-settings`,
+  USER_MEMBERSHIP: d + `user-settings`,
   STRIPE_TEST: d + `test-stripe`,
 }
