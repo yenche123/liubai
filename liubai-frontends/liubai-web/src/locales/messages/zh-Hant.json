@@ -292,6 +292,7 @@
   "err": {
     "no_data": "這裡什麼都沒有",
     "no_auth": "沒有訪問權限",
+    "network": "目前頁面需要網絡才能查看",
     "unknown_err": "未知的異常"
   },
   "setting": {

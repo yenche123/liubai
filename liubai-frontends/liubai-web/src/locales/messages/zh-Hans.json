@@ -292,6 +292,7 @@
   "err": {
     "no_data": "这里什么都没有",
     "no_auth": "没有访问权限",
+    "network": "当前页面需要联网才能查看",
     "unknown_err": "未知的异常"
   },
   "setting": {

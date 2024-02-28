@@ -14,6 +14,7 @@ const props = defineProps({
     // 1: 切换中
     // 50: 404   
     // 51: 没有访问权限
+    // 52: 当前操作需要联网才能查看
     type: Number as PropType<PageState>,
     default: -1
   },
@@ -48,7 +49,15 @@ const { enable, show } = usePlaceholderView(props)
 
     <div v-else-if="pState >= 50" class="pv-err-box">
       <div class="pv-emoji-box">
-        <svg-icon name="emojis-face_vomiting_color" 
+        <svg-icon 
+          v-if="pState === 52"
+          name="emojis-crying_face_color" 
+          class="pv-emoji"
+          :cover-fill-stroke="false"
+        ></svg-icon>
+        <svg-icon 
+          v-else
+          name="emojis-face_vomiting_color" 
           class="pv-emoji"
           :cover-fill-stroke="false"
         ></svg-icon>
@@ -56,6 +65,7 @@ const { enable, show } = usePlaceholderView(props)
       <div class="pv-err-title">
         <span v-if="errTitle">{{ errTitle }}</span>
         <span v-else-if="pState === 51">{{ t('err.no_auth') }}</span>
+        <span v-else-if="pState === 52">{{ t('err.network') }}</span>
         <span v-else>{{ t('err.no_data') }}</span>
       </div>
       <div class="pv-err-msg" v-if="errMsg">

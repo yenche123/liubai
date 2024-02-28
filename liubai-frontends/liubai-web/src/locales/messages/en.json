@@ -292,6 +292,7 @@
   "err": {
     "no_data": "Nothing Here",
     "no_auth": "No Access",
+    "network": "The page needs network to view",
     "unknown_err": "Unknown Error"
   },
   "setting": {
