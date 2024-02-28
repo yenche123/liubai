@@ -11,6 +11,7 @@ import type { LiuTimeout } from "~/utils/basic/type-tool"
 import type { 
   UserSubscription,
 } from "~/types/types-cloud"
+import type { PageState } from "~/types/types-atom"
 
 let timeout: LiuTimeout
 
@@ -19,8 +20,7 @@ export function useSubscribeContent() {
   const hasBackend = liuEnv.hasBackend()
   const now = time.getTime()
   const scData = reactive<ScData>({
-    status: hasBackend ? 1 : 0,
-    loading: hasBackend,
+    state: hasBackend ? 53 : 0,
     initStamp: now,
   })
 
@@ -36,7 +36,7 @@ function initSubscribeContent(
   scData: ScData,
 ) {
 
-  if(scData.status === 1) return
+  if(scData.state === 53) return
 
   const isActivated = ref(false)
   onActivated(() => isActivated.value = true)
@@ -54,9 +54,8 @@ function initSubscribeContent(
 
   // set delay to check if the status is greater than 0
   timeout = setTimeout(() => {
-    if(scData.status > 0) return
-    scData.status = 4
-    closeLoading(scData)
+    if(scData.state !== 0) return
+    setDataState(scData, 52)
   }, 5000)
 }
 
@@ -74,7 +73,6 @@ async function checkState(
   const diff = time.getTime() - (c1 * 1000)
   if(sub?.isOn === "Y" && diff < time.DAY && c2) {
     checkSubscription(scData, sub)
-    closeLoading(scData)
     return
   }
 
@@ -102,19 +100,17 @@ async function getLatestSubscription(
     console.log("getLatestSubscription err: ")
     console.log(err)
     console.log(" ")
-    scData.status = 4
-    closeLoading(scData)
+    setDataState(scData, 52)
     return
   }
 
   if(!sub || sub.isOn === "N") {
-    scData.status = 2
-    closeLoading(scData)
+    scData.state = -1
+    setDataState(scData, -1)
     return
   }
 
   checkSubscription(scData, sub)
-  closeLoading(scData)
 }
 
 
@@ -128,8 +124,9 @@ function checkSubscription(
 
 
 
-async function closeLoading(
+async function setDataState(
   scData: ScData,
+  state: PageState,
 ) {
   if(timeout) {
     clearTimeout(timeout)
@@ -139,10 +136,10 @@ async function closeLoading(
   const now = time.getTime()
   const diff = now - scData.initStamp
   if(diff > 300) {
-    scData.loading = false
+    scData.state = state
     return
   }
   const ms = 400 - diff
   await valTool.waitMilli(ms)
-  scData.loading = true
+  scData.state = state
 }
