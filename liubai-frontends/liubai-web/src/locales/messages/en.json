@@ -293,6 +293,7 @@
     "no_data": "Nothing Here",
     "no_auth": "No Access",
     "network": "The page needs network to view",
+    "backend_required": "The page needs backend to view",
     "unknown_err": "Unknown Error"
   },
   "setting": {

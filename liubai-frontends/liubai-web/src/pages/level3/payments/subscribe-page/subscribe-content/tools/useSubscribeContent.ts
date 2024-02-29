@@ -20,7 +20,7 @@ export function useSubscribeContent() {
   const hasBackend = liuEnv.hasBackend()
   const now = time.getTime()
   const scData = reactive<ScData>({
-    state: hasBackend ? 53 : 0,
+    state: hasBackend ? 0 : 53,
     initStamp: now,
   })
 
@@ -36,6 +36,7 @@ function initSubscribeContent(
   scData: ScData,
 ) {
 
+  console.log("state: ", scData.state)
   if(scData.state === 53) return
 
   const isActivated = ref(false)
@@ -56,7 +57,7 @@ function initSubscribeContent(
   timeout = setTimeout(() => {
     if(scData.state !== 0) return
     setDataState(scData, 52)
-  }, 5000)
+  }, 5 * time.SECONED)
 }
 
 async function checkState(

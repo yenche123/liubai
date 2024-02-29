@@ -15,6 +15,7 @@ const props = defineProps({
     // 50: 404   
     // 51: 没有访问权限
     // 52: 当前操作需要联网才能查看
+    // 53: 该页面需要后端方可访问
     type: Number as PropType<PageState>,
     default: -1
   },
@@ -56,6 +57,12 @@ const { enable, show } = usePlaceholderView(props)
           :cover-fill-stroke="false"
         ></svg-icon>
         <svg-icon 
+          v-else-if="pState === 53"
+          name="emojis-face_with_peeking_eye_color" 
+          class="pv-emoji"
+          :cover-fill-stroke="false"
+        ></svg-icon>
+        <svg-icon
           v-else
           name="emojis-face_vomiting_color" 
           class="pv-emoji"
@@ -66,6 +73,7 @@ const { enable, show } = usePlaceholderView(props)
         <span v-if="errTitle">{{ errTitle }}</span>
         <span v-else-if="pState === 51">{{ t('err.no_auth') }}</span>
         <span v-else-if="pState === 52">{{ t('err.network') }}</span>
+        <span v-else-if="pState === 53">{{ t('err.backend_required') }}</span>
         <span v-else>{{ t('err.no_data') }}</span>
       </div>
       <div class="pv-err-msg" v-if="errMsg">
@@ -110,6 +118,8 @@ const { enable, show } = usePlaceholderView(props)
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    position: relative;
 
     .pv-emoji-box {
       width: 100px;
@@ -130,9 +140,10 @@ const { enable, show } = usePlaceholderView(props)
       color: var(--main-normal);
       font-weight: 700;
       font-size: var(--title-font);
-      line-height: 2;
+      line-height: 1.5;
       text-align: center;
       user-select: none;
+      width: 75%;
     }
 
     .pv-err-msg {
