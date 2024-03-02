@@ -6,7 +6,10 @@ import liuEnv from "~/utils/liu-env"
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 import time from "~/utils/basic/time"
 import valTool from "~/utils/basic/val-tool"
-import { type Res_UserSettings_Membership } from "~/requests/req-types"
+import type {
+  Res_UserSettings_Membership,
+  Res_SubPlan_Info,
+} from "~/requests/req-types"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 import type { 
   UserSubscription,
@@ -83,14 +86,15 @@ async function checkState(
     return
   }
 
-  // 2. get latest my membership
-  getLatestMembership(scData)
+  // 2. get subscription plan
+  getSubscriptionPlan(scData)
+
 }
 
+// get my membership
 async function getLatestMembership(
   scData: ScData,
 ) {
-  // get latest subscription remotely
   const url = APIs.USER_MEMBERSHIP
   const param = { operateType: "membership" }
   let sub: UserSubscription | undefined
@@ -120,8 +124,32 @@ async function getLatestMembership(
   checkSubscription(scData, sub)
 }
 
-// get latest subscription plan
-async function getSubscriptionPlan() {
+// get subscription plan
+async function getSubscriptionPlan(
+  scData: ScData,
+) {
+  const url = APIs.SUBSCRIBE_PLAN
+  const param = { operateType: "info" }
+  try {
+    const res = await liuReq.request<Res_SubPlan_Info>(url, param)
+    console.log("getSubscriptionPlan res:")
+    console.log(res)
+    console.log(" ")
+
+    if(res.code === "0000" && res.data) {
+      scData.subPlanInfo = res.data
+    }
+    else {
+      setDataState(scData, 50)
+    }
+  }
+  catch(err) {
+    console.log("getSubscriptionPlan err: ")
+    console.log(err)
+    console.log(" ")
+    setDataState(scData, 52)
+    return
+  }
   
 }
 
