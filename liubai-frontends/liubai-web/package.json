@@ -31,7 +31,7 @@
     "@tiptap/starter-kit": "2.2.4",
     "@tiptap/suggestion": "2.2.4",
     "@tiptap/vue-3": "2.2.4",
-    "@vuepic/vue-datepicker": "^8.1.1",
+    "@vuepic/vue-datepicker": "^8.2.0",
     "@vueuse/core": "^10.9.0",
     "another-vue3-blurhash": "^0.0.1",
     "blurhash": "^2.0.5",
@@ -72,6 +72,6 @@
     "vite-plugin-mkcert": "^1.17.4",
     "vite-plugin-qrcode": "^0.2.3",
     "vite-plugin-svg-icons": "^2.0.1",
-    "vue-tsc": "^1.8.27"
+    "vue-tsc": "^2.0.1"
   }
 }
