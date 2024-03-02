@@ -57,6 +57,10 @@ export interface LiuSpaceAndMember {
   space_avatar?: Cloud_ImageStore
 }
 
+
+
+/*************************** 订阅相关 **********************/
+
 /** 用户的订阅方案 */
 export interface UserSubscription {
   isOn: BaseIsOn
@@ -73,3 +77,10 @@ export interface UserSubscription {
     customer_portal_created?: number    // 注意: 以秒为单位
   }
 }
+
+export interface SubscriptionStripe {
+  isOn: BaseIsOn
+  price_id: string
+}
+
+export type SubscriptionPaymentCircle = "monthly" | "yearly"

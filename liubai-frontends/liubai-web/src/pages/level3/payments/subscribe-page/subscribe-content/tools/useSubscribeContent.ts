@@ -12,6 +12,7 @@ import type {
   UserSubscription,
 } from "~/types/types-cloud"
 import type { PageState } from "~/types/types-atom"
+import { useNetwork } from "~/hooks/useVueUse"
 
 let timeout: LiuTimeout
 
@@ -36,14 +37,13 @@ function initSubscribeContent(
   scData: ScData,
 ) {
 
-  console.log("state: ", scData.state)
   if(scData.state === 53) return
 
   const isActivated = ref(false)
   onActivated(() => isActivated.value = true)
   onDeactivated(() => isActivated.value = false)
 
-  // listen to syncNum
+  // 1. listen to syncNum
   const syncNum = CloudEventBus.getSyncNum()
   watch([syncNum, isActivated], (
     [newV1, newV2]
@@ -52,6 +52,12 @@ function initSubscribeContent(
     if(!newV2) return
     checkState(scData)
   }, { immediate: true })
+
+  // 2. if no network while init
+  const { isOnline } = useNetwork()
+  if(!isOnline.value) {
+    setDataState(scData, 52)
+  }
 
   // set delay to check if the status is greater than 0
   timeout = setTimeout(() => {
@@ -77,11 +83,11 @@ async function checkState(
     return
   }
 
-  // 2. get latest subscription
-  getLatestSubscription(scData)
+  // 2. get latest my membership
+  getLatestMembership(scData)
 }
 
-async function getLatestSubscription(
+async function getLatestMembership(
   scData: ScData,
 ) {
   // get latest subscription remotely
@@ -98,7 +104,7 @@ async function getLatestSubscription(
     }
   }
   catch(err) {
-    console.log("getLatestSubscription err: ")
+    console.log("getLatestMembership err: ")
     console.log(err)
     console.log(" ")
     setDataState(scData, 52)
@@ -112,6 +118,11 @@ async function getLatestSubscription(
   }
 
   checkSubscription(scData, sub)
+}
+
+// get latest subscription plan
+async function getSubscriptionPlan() {
+  
 }
 
 
