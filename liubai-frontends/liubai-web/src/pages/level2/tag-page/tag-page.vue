@@ -7,7 +7,6 @@ import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
 import { useTagPage } from "./tools/useTagPage";
-import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
 import type { TrueOrFalse } from "~/types/types-basic";
 
 const { 

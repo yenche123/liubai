@@ -4,7 +4,6 @@
 //   向上加载: find_parent
 //   向下加载: find_children
 //   当向上加载到尽头时，加载 thread
-import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
 import ThreadCard from "../../level1/thread-list/thread-card/thread-card.vue";
 import CommentCard from "../comment-card/comment-card.vue";
 import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue";

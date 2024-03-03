@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import PlaceholderView from "~/views/common/placeholder-view/placeholder-view.vue";
 import { useSubscribeContent } from "./tools/useSubscribeContent"
+import { toRef } from "vue";
 
 const { scData } = useSubscribeContent()
+const pi = toRef(scData, "subPlanInfo")
 
 </script>
 <template>
@@ -11,12 +12,15 @@ const { scData } = useSubscribeContent()
     :p-state="scData.state"
   ></PlaceholderView>
 
-  
+  <div v-if="pi" class="sc-container">
+    
+  </div>
 
 
 
 </template>
 <style scoped lang="scss">
+
 
 
 

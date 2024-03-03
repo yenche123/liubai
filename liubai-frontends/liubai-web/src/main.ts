@@ -20,6 +20,7 @@ import CustomBtn from "./components/custom-ui/custom-button/custom-button.vue"
 import LiuSwitch from "./components/common/liu-switch/liu-switch.vue"
 import LiuImg from "./components/common/liu-img/liu-img.vue"
 import LiuCheckbox from "./components/common/liu-checkbox/liu-checkbox.vue"
+import PlaceholderView from "./views/common/placeholder-view/placeholder-view.vue";
 import FloatingVue from 'floating-vue'
 import { plugin as Slicksort } from 'vue-slicksort';
 import { liuShowDirective } from "~/utils/directives/v-liu-show"
@@ -33,6 +34,7 @@ app.component("CustomBtn", CustomBtn)
 app.component("LiuSwitch", LiuSwitch)
 app.component("LiuImg", LiuImg)
 app.component("LiuCheckbox", LiuCheckbox)
+app.component("PlaceholderView", PlaceholderView)
 app.component("LiuMenu", defineAsyncComponent(() => 
   import("./components/common/liu-menu/liu-menu.vue")
 ))

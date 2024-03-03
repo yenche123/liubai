@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
-import PlaceholderView from '~/views/common/placeholder-view/placeholder-view.vue';
 import ThreadCard from "../thread-list/thread-card/thread-card.vue"
 import { useThreadDetail } from "./tools/useThreadDetail"
 import { useThreadOperateInDetail } from './tools/useThreadOperateInDetail';
