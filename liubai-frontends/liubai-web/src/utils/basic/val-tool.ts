@@ -10,6 +10,9 @@ const waitMilli = (milli: number = 0): Promise<true> => {
   return new Promise(_t)
 }
 
+
+// 不要使用 js runtime 的 structuredClone() 进行复制
+// 因为 reactive（Proxy）“响应性” 复制后依然存在，但理应不该存在
 const copyObject = <T = any>(obj: T): T => {
   let type = typeof obj
   if(type !== "object") return obj
