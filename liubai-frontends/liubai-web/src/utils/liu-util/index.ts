@@ -3,7 +3,7 @@ import { getDayNames } from "./locale-util";
 import { 
   getDefaultDate, 
   areTheDatesEqual,
-  showBasicDate,
+  showBasicTime,
   formatStamp,
   getLaterStamp,
   getEarlyStamp,
@@ -59,7 +59,7 @@ export default {
   getDayNames,
   getDefaultDate,
   areTheDatesEqual,
-  showBasicDate,
+  showBasicTime,
   formatStamp,
   getLaterStamp,
   getEarlyStamp,

@@ -44,7 +44,7 @@ function stateChanged(
   // 开始一个个字段判断
 
   // 什么时候
-  const newWhen = whenStamp ? liuUtil.showBasicDate(whenStamp) : ""
+  const newWhen = whenStamp ? liuUtil.showBasicTime(whenStamp) : ""
   if(newWhen !== data.whenStr) {
     data.whenStr = newWhen
     if(whenStamp) data.whenDate = new Date(whenStamp)

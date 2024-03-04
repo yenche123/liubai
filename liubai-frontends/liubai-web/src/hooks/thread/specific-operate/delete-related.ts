@@ -18,7 +18,7 @@ export async function deleteThread(
   // 1. 修改数据
   newThread.oState = "REMOVED"
   newThread.updatedStamp = now
-  newThread.removedStr = liuUtil.showBasicDate(now)
+  newThread.removedStr = liuUtil.showBasicTime(now)
 
   // 2. 操作 db
   const res = await dbOp.setNewOState(newThread._id, "REMOVED")

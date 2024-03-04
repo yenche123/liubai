@@ -65,7 +65,7 @@ function packThread(
   }
 
   // 删除于 xxxx-xx-xx
-  let removedStr = v.oState === "REMOVED" ? liuUtil.showBasicDate(v.updatedStamp) : undefined
+  let removedStr = v.oState === "REMOVED" ? liuUtil.showBasicTime(v.updatedStamp) : undefined
 
   const obj: ThreadShow = {
     _id,
@@ -101,7 +101,7 @@ function packThread(
     pinStamp: v.pinStamp,
     createdStamp: v.createdStamp,
     editedStamp: v.editedStamp,
-    createdStr: liuUtil.showBasicDate(v.createdStamp),
+    createdStr: liuUtil.showBasicTime(v.createdStamp),
     editedStr: liuUtil.getEditedStr(v.createdStamp, v.editedStamp),
     removedStr,
     tags,

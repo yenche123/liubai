@@ -24,7 +24,7 @@ export function areTheDatesEqual(d1: Date, d2: Date) {
 }
 
 // 给定时间（戳），展示时间，用于 "什么时候" / "提醒我"
-export function showBasicDate(val: Date | number, lang?: SupportedLocale) {
+export function showBasicTime(val: Date | number, lang?: SupportedLocale) {
   let d = typeof val === "number" ? new Date(val) : val
   const curDate = time.getDate()
   const { t, locale } = i18n.global
@@ -125,7 +125,7 @@ export function getRemindMeStr(
     if(idx >= 0) return t(`date_related.remind_later[${idx}]`)
   }
   else if(type === "specific_time" && specific_stamp) {
-    return showBasicDate(specific_stamp)
+    return showBasicTime(specific_stamp)
   }
   return ""
 }
@@ -148,13 +148,13 @@ export function getRemindMeStrAfterPost(
   }
   else if(type === "later" && later) {
     if(diff < 1000) {
-      return showBasicDate(remindStamp)
+      return showBasicTime(remindStamp)
     }
     const idx = REMIND_LATER.indexOf(later)
     if(idx >= 0) return t(`date_related.remind_later[${idx}]`)
   }
   else if(type === "specific_time" && specific_stamp) {
-    return showBasicDate(specific_stamp)
+    return showBasicTime(specific_stamp)
   }
 
   return ""
@@ -287,7 +287,7 @@ export function getEditedStr(
   let diff = Math.abs(createdStamp - editedStamp)
   if(diff < 100) return
 
-  return showBasicDate(editedStamp)
+  return showBasicTime(editedStamp)
 }
 
 

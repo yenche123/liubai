@@ -67,7 +67,7 @@ function packComment(
     emojiData: v.emojiData,
     createdStamp: v.createdStamp,
     editedStamp: v.editedStamp,
-    createdStr: liuUtil.showBasicDate(v.createdStamp),
+    createdStr: liuUtil.showBasicTime(v.createdStamp),
     editedStr: liuUtil.getEditedStr(v.createdStamp, v.editedStamp),
     parentThread: v.parentThread ?? "",
     parentComment: v.parentComment,

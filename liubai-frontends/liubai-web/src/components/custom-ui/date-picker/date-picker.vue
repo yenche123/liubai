@@ -40,7 +40,7 @@ const previewDate = computed(() => {
   const lang = locale.value as SupportedLocale
   const d = date.value
   if(!d) return ""
-  return liuUtil.showBasicDate(d, lang)
+  return liuUtil.showBasicTime(d, lang)
 })
 
 </script>

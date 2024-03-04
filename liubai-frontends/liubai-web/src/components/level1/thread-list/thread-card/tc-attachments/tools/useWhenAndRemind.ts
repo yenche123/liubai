@@ -47,7 +47,7 @@ export function useWhenAndRemind(props: TcaProps) {
     let nowLocale = locale.value
     let whenStampVal = whenStamp.value
     if(!whenStampVal) return ""
-    return liuUtil.showBasicDate(whenStampVal, nowLocale as SupportedLocale)
+    return liuUtil.showBasicTime(whenStampVal, nowLocale as SupportedLocale)
   })
   const remindStr = ref("")
   const countdownStr = ref("")
