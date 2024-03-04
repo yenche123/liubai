@@ -116,6 +116,8 @@
     "day_5": "五",
     "day_6": "六",
     "show_1": "{mm}/{dd} ({day}) {hr}:{min}",
+    "show_2": "{mm} 月 {dd} 日",
+    "show_3": "{yyyy} 年 {mm} 月 {dd} 日",
     "countdown_1": "倒计时 {min} 分 {sec} 秒",
     "countdown_2": "倒计时 {hr} 小时 {min} 分钟",
     "countdown_3": "倒计时 {day} 天 {hr} 小时 {min} 分",

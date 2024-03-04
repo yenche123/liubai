@@ -1,4 +1,10 @@
-import { isEqual, isToday, isTomorrow, isYesterday } from 'date-fns'
+import { 
+  isEqual, 
+  isToday, 
+  isTomorrow, 
+  isYesterday, 
+  isThisYear, 
+} from 'date-fns'
 import { i18n } from '~/locales'
 import type { LiuRemindEarly, LiuRemindLater, LiuRemindMe } from '~/types/types-atom'
 import { REMIND_LATER, REMIND_EARLY } from "~/config/atom"
@@ -23,10 +29,12 @@ export function areTheDatesEqual(d1: Date, d2: Date) {
   return isEqual(d1, d2)
 }
 
-// 给定时间（戳），展示时间，用于 "什么时候" / "提醒我"
-export function showBasicTime(val: Date | number, lang?: SupportedLocale) {
+// 给定时间（戳），展示时间，比如用于 "什么时候" / "提醒我"
+export function showBasicTime(
+  val: Date | number, 
+  lang?: SupportedLocale
+) {
   let d = typeof val === "number" ? new Date(val) : val
-  const curDate = time.getDate()
   const { t, locale } = i18n.global
   if(!lang) {
     lang = locale.value as SupportedLocale
@@ -51,18 +59,38 @@ export function showBasicTime(val: Date | number, lang?: SupportedLocale) {
   }
 
   // 在今年
-  if(yy === curDate.getFullYear()) {
+  if(isThisYear(d)) {
     let mm2 = lang === "en" ? MON : (d.getMonth() + 1)
     let dd2 = d.getDate()
     return t("date_related.show_1", { mm: mm2, dd: dd2, day: DAY, hr, min })
   }
 
-  // 中文时 yyyy/mm/dd hr:min
+  // 中文时 yyyy-mm-dd hr:min
   if(lang === "zh-Hans" || lang === "zh-Hant") {
     return `${yy}-${mm}-${dd} ${hr}:${min}`
   }
 
   return `${MON} ${dd} ${yy}, ${hr}:${min}`
+}
+
+export function showBasicDate(
+  stamp: number,
+) {
+  const { t, locale } = i18n.global
+  const lang = locale.value as SupportedLocale
+  const d = new Date(stamp)
+
+  const yy = d.getFullYear()
+  const mm = valTool.format0(d.getMonth() + 1)
+  const dd = d.getDate()
+  const MON = t("date_related.m_" + mm)
+  const mm2 = lang === "en" ? MON : (d.getMonth() + 1)
+
+  if(isThisYear(d)) {
+    return t("date_related.show_2", { mm: mm2, dd })
+  }
+
+  return t("date_related.show_3", { mm: mm2, dd, yyyy: yy })
 }
 
 
