@@ -6,4 +6,7 @@ export interface ScData {
   initStamp: number
   stripe_portal_url?: string
   subPlanInfo?: Res_SubPlan_Info
+  isLifelong?: boolean
+  autoRecharge?: boolean
+  expireStr?: string
 }

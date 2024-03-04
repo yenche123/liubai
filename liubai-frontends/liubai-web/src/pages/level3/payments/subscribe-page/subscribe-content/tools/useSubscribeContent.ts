@@ -5,7 +5,6 @@ import { onActivated, onDeactivated, reactive, ref, watch } from "vue"
 import liuEnv from "~/utils/liu-env"
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 import time from "~/utils/basic/time"
-import valTool from "~/utils/basic/val-tool"
 import type {
   Res_UserSettings_Membership,
   Res_SubPlan_Info,
@@ -17,7 +16,8 @@ import type {
 import type { PageState } from "~/types/types-atom"
 import { useNetwork } from "~/hooks/useVueUse"
 
-let timeout: LiuTimeout
+let timeout1: LiuTimeout  // in order to avoid the view from always loading
+let timeout2: LiuTimeout  // for setDataState
 
 export function useSubscribeContent() {
 
@@ -62,8 +62,8 @@ function initSubscribeContent(
     setDataState(scData, 52)
   }
 
-  // set delay to check if the status is greater than 0
-  timeout = setTimeout(() => {
+  // 3. set delay to check if the status is not equal to 0
+  timeout1 = setTimeout(() => {
     if(scData.state !== 0) return
     setDataState(scData, 52)
   }, 5 * time.SECONED)
@@ -83,7 +83,6 @@ async function checkState(
   const diff = time.getTime() - (c1 * 1000)
   if(sub?.isOn === "Y" && diff < time.DAY && c2) {
     checkSubscription(scData, sub)
-    return
   }
 
   // 2. get subscription plan
@@ -91,8 +90,7 @@ async function checkState(
 
 }
 
-// get my membership
-async function getLatestMembership(
+async function getMembershipRemotely(
   scData: ScData,
 ) {
   const url = APIs.USER_MEMBERSHIP
@@ -102,9 +100,6 @@ async function getLatestMembership(
     const res = await liuReq.request<Res_UserSettings_Membership>(url, param)
     if(res.code === "0000" && res.data) {
       sub = res.data.subscription
-    }
-    else {
-
     }
   }
   catch(err) {
@@ -116,12 +111,11 @@ async function getLatestMembership(
   }
 
   if(!sub || sub.isOn === "N") {
-    scData.state = -1
     setDataState(scData, -1)
     return
   }
 
-  checkSubscription(scData, sub)
+  checkSubscription(scData, sub, { writeIntoDB: true })
 }
 
 // get subscription plan
@@ -141,6 +135,7 @@ async function getSubscriptionPlan(
     }
     else {
       setDataState(scData, 50)
+      return
     }
   }
   catch(err) {
@@ -150,27 +145,40 @@ async function getSubscriptionPlan(
     setDataState(scData, 52)
     return
   }
-  
+
+  getMembershipRemotely(scData)
 }
 
+interface CheckSubOpt {
+  writeIntoDB?: boolean   // @default: false
+}
 
 function checkSubscription(
   scData: ScData,
   sub: UserSubscription,
+  opt?: CheckSubOpt,
 ) {
+  scData.isLifelong = sub.isLifelong
+  scData.stripe_portal_url = sub.stripe?.customer_portal_url
+  scData.autoRecharge = sub.autoRecharge
+  
+
+  setDataState(scData, -1)
 
 }
 
 
-
-
-async function setDataState(
+function setDataState(
   scData: ScData,
   state: PageState,
 ) {
-  if(timeout) {
-    clearTimeout(timeout)
-    timeout = undefined
+  if(timeout1) {
+    clearTimeout(timeout1)
+    timeout1 = undefined
+  }
+  if(timeout2) {
+    clearTimeout(timeout2)
+    timeout2 = undefined
   }
 
   const now = time.getTime()
@@ -180,6 +188,8 @@ async function setDataState(
     return
   }
   const ms = 400 - diff
-  await valTool.waitMilli(ms)
-  scData.state = state
+  timeout2 = setTimeout(() => {
+    scData.state = state
+    timeout2 = undefined
+  }, ms)
 }
