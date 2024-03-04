@@ -375,6 +375,9 @@
     "cancel_title": "已取消支付",
     "cancel_desc": "你似乎取消了支付",
     "think_again": "再想想",
-    "member_subscribe": "会员订阅"
+    "member_subscribe": "会员订阅",
+    "expire_date": "{date} 过期",
+    "recharge_date": "预计 {date} 自动续费",
+    "lifetime": "终身会员"
   }
 }

@@ -375,6 +375,9 @@
     "cancel_title": "Cancel to Pay",
     "cancel_desc": "You seem to have canceled the payment",
     "think_again": "Reconsider",
-    "member_subscribe": "Subscription"
+    "member_subscribe": "Subscription",
+    "expire_date": "{date} Expired",
+    "recharge_date": "Will be charged on {date}",
+    "lifetime": "Lifetime"
   }
 }

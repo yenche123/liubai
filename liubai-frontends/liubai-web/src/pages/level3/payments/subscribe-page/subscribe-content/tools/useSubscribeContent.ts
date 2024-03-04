@@ -176,6 +176,7 @@ function packSubscription(
 
   // to write into db
   if(!opt?.writeIntoDB) return
+  console.log("writeIntoDB................")
   const { local_id } = localCache.getPreference()
   if(!local_id) return
   const u: Partial<UserLocalTable> = {
