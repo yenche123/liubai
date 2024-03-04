@@ -15,6 +15,10 @@ import type {
 } from "~/types/types-cloud"
 import type { PageState } from "~/types/types-atom"
 import { useNetwork } from "~/hooks/useVueUse"
+import liuUtil from "~/utils/liu-util"
+import { db } from "~/utils/db"
+import localCache from "~/utils/system/local-cache"
+import type { UserLocalTable } from "~/types/types-table"
 
 let timeout1: LiuTimeout  // in order to avoid the view from always loading
 let timeout2: LiuTimeout  // for setDataState
@@ -82,7 +86,7 @@ async function checkState(
   const c2 = sub?.stripe?.customer_portal_url
   const diff = time.getTime() - (c1 * 1000)
   if(sub?.isOn === "Y" && diff < time.DAY && c2) {
-    checkSubscription(scData, sub)
+    packSubscription(scData, sub)
   }
 
   // 2. get subscription plan
@@ -115,7 +119,7 @@ async function getMembershipRemotely(
     return
   }
 
-  checkSubscription(scData, sub, { writeIntoDB: true })
+  packSubscription(scData, sub, { writeIntoDB: true })
 }
 
 // get subscription plan
@@ -153,18 +157,32 @@ interface CheckSubOpt {
   writeIntoDB?: boolean   // @default: false
 }
 
-function checkSubscription(
+function packSubscription(
   scData: ScData,
   sub: UserSubscription,
   opt?: CheckSubOpt,
 ) {
-  scData.isLifelong = sub.isLifelong
   scData.stripe_portal_url = sub.stripe?.customer_portal_url
+  scData.isLifelong = sub.isLifelong
   scData.autoRecharge = sub.autoRecharge
+  if(sub.expireStamp) {
+    scData.expireStr = liuUtil.showBasicDate(sub.expireStamp)
+  }
+  else {
+    scData.expireStr = undefined
+  }
   
-
   setDataState(scData, -1)
 
+  // to write into db
+  if(!opt?.writeIntoDB) return
+  const { local_id } = localCache.getPreference()
+  if(!local_id) return
+  const u: Partial<UserLocalTable> = {
+    subscription: sub,
+    updatedStamp: time.getTime(),
+  }
+  db.users.update(local_id, u)
 }
 
 
