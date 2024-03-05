@@ -53,6 +53,47 @@ const { t } = useI18n()
 </template>
 <style scoped lang="scss">
 
+.sc-title {
+  font-size: var(--big-word-style);
+  color: var(--main-text);
+  line-height: 1.5;
+  font-weight: 700;
+  margin-block-end: 20px;
+}
+
+.sc-box {
+  margin-block-end: 20px;
+}
+
+.sc-badge {
+  position: relative;
+  font-size: var(--mini-font);
+  color: var(--primary-color);
+  border-radius: 4px;
+  padding: 4px 12px;
+  overflow: hidden;
+  display: inline-block;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--primary-color);
+    opacity: .2;
+  }
+}
+
+.scb-footer {
+  font-size: var(--mini-font);
+  color: var(--main-note);
+  margin-block-start: 7.5px;
+}
+
+
+
 
 
 
