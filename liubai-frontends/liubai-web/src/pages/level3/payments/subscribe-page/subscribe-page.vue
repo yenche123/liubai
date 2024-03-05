@@ -7,9 +7,17 @@ import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
+import { ref } from "vue";
+import { type PageState } from "~/types/types-atom";
 
 const { onVvWidthChange } = useMainVice()
 const { t } = useI18n()
+
+const showTitle = ref(true)
+const whenStateChanged = (state: PageState) => {
+  showTitle.value = state >= 0
+}
+
 
 </script>
 <template>
@@ -18,9 +26,9 @@ const { t } = useI18n()
   <main-view>
     <scroll-view>
       <navi-virtual></navi-virtual>
-      <SubscribeContent></SubscribeContent>
+      <SubscribeContent @statechanged="whenStateChanged"></SubscribeContent>
     </scroll-view>
-    <navi-bar :title="t('payment.member_subscribe')"></navi-bar>
+    <navi-bar :title="showTitle ? t('payment.member_subscribe') : ''"></navi-bar>
   </main-view>
 
   <!-- 副视图 -->

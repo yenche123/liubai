@@ -1,6 +1,11 @@
 import type { PageState } from "~/types/types-atom";
 import type { Res_SubPlan_Info } from "~/requests/req-types";
 
+
+export interface ScEmits {
+  (evt: "statechanged", state: PageState): void
+}
+
 export interface ScData {
   state: PageState
   initStamp: number

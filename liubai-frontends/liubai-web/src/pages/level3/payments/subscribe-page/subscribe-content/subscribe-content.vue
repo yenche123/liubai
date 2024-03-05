@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { useSubscribeContent } from "./tools/useSubscribeContent"
-import { toRef } from "vue";
+import { toRef, watch } from "vue";
+import type { ScEmits } from "./tools/types"
+
+const emits = defineEmits<ScEmits>()
 
 const { scData } = useSubscribeContent()
 const pi = toRef(scData, "subPlanInfo")
 
 const { t } = useI18n()
+
+watch(() => scData.state, (newV) => {
+  emits("statechanged", newV)
+})
 
 </script>
 <template>
@@ -59,6 +66,7 @@ const { t } = useI18n()
   line-height: 1.5;
   font-weight: 700;
   margin-block-end: 20px;
+  user-select: none;
 }
 
 .sc-box {
@@ -73,6 +81,7 @@ const { t } = useI18n()
   padding: 4px 12px;
   overflow: hidden;
   display: inline-block;
+  user-select: none;
 
   &::before {
     content: "";

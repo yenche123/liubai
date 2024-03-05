@@ -202,11 +202,11 @@ function setDataState(
 
   const now = time.getTime()
   const diff = now - scData.initStamp
-  if(diff > 300) {
+  if(diff > 250) {
     scData.state = state
     return
   }
-  const ms = 400 - diff
+  const ms = 300 - diff
   timeout2 = setTimeout(() => {
     scData.state = state
     timeout2 = undefined
