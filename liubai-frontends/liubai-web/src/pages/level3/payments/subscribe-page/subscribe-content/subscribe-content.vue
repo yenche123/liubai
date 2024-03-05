@@ -24,7 +24,7 @@ watch(() => scData.state, (newV) => {
 
   <div class="liu-mc-container">
     <div class="liu-tc-virtual"></div>
-    <div class="liu-mc-box" v-if="pi">
+    <div class="liu-mc-box" v-if="pi && scData.state < 0">
 
       <!-- 方案标题 -->
       <div class="sc-title">
@@ -47,6 +47,9 @@ watch(() => scData.state, (newV) => {
       </div>
 
       <!-- 方案内文 -->
+      <div class="sc-content">
+        <span>{{ pi.desc }}</span>
+      </div>
       
       
     </div>
@@ -99,6 +102,18 @@ watch(() => scData.state, (newV) => {
   font-size: var(--mini-font);
   color: var(--main-note);
   margin-block-start: 7.5px;
+}
+
+.sc-content {
+  width: 100%;
+  font-size: var(--desc-font);
+  color: var(--main-code);
+  line-height: 1.75;
+  white-space: pre-wrap;
+
+  span::selection {
+    background-color: var(--select-bg-2);
+  }
 }
 
 
