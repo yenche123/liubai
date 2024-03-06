@@ -72,6 +72,6 @@
     "vite-plugin-mkcert": "^1.17.4",
     "vite-plugin-qrcode": "^0.2.3",
     "vite-plugin-svg-icons": "^2.0.1",
-    "vue-tsc": "^2.0.4"
+    "vue-tsc": "^2.0.5"
   }
 }
