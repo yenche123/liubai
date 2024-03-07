@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@he-tree/vue": "^2.8.1",
-    "@intlify/unplugin-vue-i18n": "^2.0.0",
+    "@intlify/unplugin-vue-i18n": "^3.0.0",
     "@tiptap/core": "2.2.4",
     "@tiptap/extension-blockquote": "2.2.4",
     "@tiptap/extension-code": "2.2.4",
@@ -61,10 +61,10 @@
     "@types/canvas-confetti": "^1.6.4",
     "@types/file-saver": "^2.0.7",
     "@types/google.accounts": "^0.0.14",
-    "@types/node": "^20.11.24",
+    "@types/node": "^20.11.25",
     "@vitejs/plugin-vue": "^5.0.4",
     "sass": "^1.71.1",
-    "typescript": "~5.3.3",
+    "typescript": "~5.4.2",
     "user-agent-data-types": "^0.4.2",
     "vite": "^5.1.5",
     "vite-plugin-compression2": "^1.0.0",
@@ -72,6 +72,6 @@
     "vite-plugin-mkcert": "^1.17.4",
     "vite-plugin-qrcode": "^0.2.3",
     "vite-plugin-svg-icons": "^2.0.1",
-    "vue-tsc": "^2.0.5"
+    "vue-tsc": "^2.0.6"
   }
 }
