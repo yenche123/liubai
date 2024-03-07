@@ -378,6 +378,8 @@
     "member_subscribe": "Subscription",
     "expire_date": "{date} Expired",
     "recharge_date": "Will be charged on {date}",
-    "lifetime": "Lifetime"
+    "lifetime": "Lifetime",
+    "buy": "Buy",
+    "manage_sub": "Manage Subscription"
   }
 }

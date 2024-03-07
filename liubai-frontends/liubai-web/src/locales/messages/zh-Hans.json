@@ -378,6 +378,8 @@
     "member_subscribe": "会员订阅",
     "expire_date": "{date} 过期",
     "recharge_date": "预计 {date} 自动续费",
-    "lifetime": "终身会员"
+    "lifetime": "终身会员",
+    "buy": "购买",
+    "manage_sub": "管理订阅"
   }
 }

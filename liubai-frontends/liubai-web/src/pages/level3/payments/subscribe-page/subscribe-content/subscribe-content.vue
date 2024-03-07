@@ -50,6 +50,25 @@ watch(() => scData.state, (newV) => {
       <div class="sc-content">
         <span>{{ pi.desc }}</span>
       </div>
+
+      <!-- 按钮 -->
+      <div class="sc-btns" v-if="!scData.isLifelong">
+
+        <!-- 购买 -->
+        <custom-btn v-if="!scData.stripe_portal_url" class="sc-btn">
+          <span>{{ t('payment.buy') }}</span>
+        </custom-btn>
+
+        <!-- 管理订单 -->
+        <custom-btn v-else-if="pi.stripe?.isOn === 'Y'" class="sc-btn"
+          type="other"
+        >
+          <span>{{ t('payment.manage_sub') }}</span>
+        </custom-btn>
+        
+
+      </div>
+      
       
       
     </div>
@@ -94,7 +113,7 @@ watch(() => scData.state, (newV) => {
     width: 100%;
     height: 100%;
     background-color: var(--primary-color);
-    opacity: .2;
+    opacity: .16;
   }
 }
 
@@ -113,6 +132,21 @@ watch(() => scData.state, (newV) => {
 
   span::selection {
     background-color: var(--select-bg-2);
+  }
+}
+
+.sc-btns {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-block-start: 50px;
+  padding-block-end: 30px;
+  position: relative;
+
+  .sc-btn {
+    width: 60%;
+    max-width: 300px;
   }
 }
 
