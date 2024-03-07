@@ -32,6 +32,7 @@ const _ = db.command
 
 
 /********************* 常量 ****************/
+const MIN_5 = MINUTE * 5
 const DAY_90 = DAY * 90
 const DAY_28 = DAY * 28
 const DAY_7 = DAY * 7
@@ -474,7 +475,11 @@ export async function verifyToken(
   let tokenData = data?.tokenData
   let userData = data?.userData
   let workspaces = data?.workspaces
-  if(!data) {
+
+  const now1 = getNowStamp()
+  const diff1 = now1 - (data?.lastSet ?? 1)
+
+  if(!data || diff1 > MIN_5) {
     // if the cache is not existed
     tokenData = await _getTokenData(token, serial_id)
     if(!tokenData) return errRes
@@ -497,7 +502,6 @@ export async function verifyToken(
   else {
     // if the cache is existed
     if(data.token !== token) return errRes
-    const now1 = getNowStamp()
     if(now1 > data.tokenData.expireStamp) return errRes
   }
   
