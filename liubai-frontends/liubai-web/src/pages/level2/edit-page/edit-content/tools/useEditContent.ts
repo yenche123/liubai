@@ -3,20 +3,21 @@ import { ref, watch } from "vue"
 import type { Ref } from "vue"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import { PageState } from "~/types/types-atom";
+import { pageStates } from "~/utils/atom"
 
 export function useEditContent() {
   const threadId = ref("")
-  const state = ref<PageState>(0)
+  const state = ref<PageState>(pageStates.LOADING)
   const { route, router } = useRouteAndLiuRouter()
   watch(route, (newV) => {
     whenRouteChange(threadId, state, newV)
   }, { immediate: true })
 
   const onNodata = () => {
-    state.value = 50
+    state.value = pageStates.NO_DATA
   }
   const onHasdata = () => {
-    state.value = -1
+    state.value = pageStates.OK
   }
 
   const onUpdated = () => {
@@ -42,7 +43,7 @@ function whenRouteChange(
   const { contentId } = params
   if(!contentId || typeof contentId !== "string") return
   if(threadId.value === contentId) return
-  state.value = 0
+  state.value = pageStates.LOADING
   threadId.value = contentId
 }
 

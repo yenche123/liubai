@@ -2,6 +2,7 @@ import { ref, toRef, watch } from "vue"
 import type { PageState } from "~/types/types-atom"
 import type { Ref } from "vue"
 import valTool from "~/utils/basic/val-tool"
+import { pageStates } from "~/utils/atom"
 
 interface PvProps {
   pState: PageState
@@ -30,7 +31,7 @@ function whenPStateChange(
   enable: Ref<boolean>,
   show: Ref<boolean>,
 ) {
-  let needOpen = newV === 0 || newV >= 2
+  let needOpen = newV === pageStates.LOADING || newV >= pageStates.NO_DATA
   
   if(needOpen && enable.value === false) {
     open(enable, show)

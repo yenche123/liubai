@@ -5,6 +5,7 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
 import { useDropZone, usePageLeave } from "~/hooks/useVueUse"
 import { vcFileKey } from "~/utils/provide-keys"
+import { pageStates } from "~/utils/atom";
 
 export function useVcDropZone(
   vcData: VcData,
@@ -13,7 +14,7 @@ export function useVcDropZone(
   const hasLeftPage = usePageLeave()
 
   const containerRef = ref<HTMLDivElement>()
-  const viewState = ref<PageState>(0)
+  const viewState = ref<PageState>(pageStates.LOADING)
   const onViewStateChange = (newV: PageState) => {
     viewState.value = newV
   }
@@ -38,7 +39,7 @@ export function useVcDropZone(
     if(props.isOutterDraging) return false
 
     // 当前 thread 不是正常状态，返回 false
-    if(viewState.value !== -1) return false
+    if(viewState.value !== pageStates.OK) return false
 
     // 当前全局状态是否存在 状态页中 
     // kanban-view / list-view 里有 item 正在被拖动吗？

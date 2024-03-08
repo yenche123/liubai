@@ -14,6 +14,7 @@ import type {
   UserSubscription,
 } from "~/types/types-cloud"
 import type { PageState } from "~/types/types-atom"
+import { pageStates } from "~/utils/atom"
 import { useNetwork } from "~/hooks/useVueUse"
 import liuUtil from "~/utils/liu-util"
 import { db } from "~/utils/db"
@@ -63,13 +64,13 @@ function initSubscribeContent(
   // 2. if no network while init
   const { isOnline } = useNetwork()
   if(!isOnline.value) {
-    setDataState(scData, 52)
+    setDataState(scData, pageStates.NETWORK_ERR)
   }
 
   // 3. set delay to check if the status is not equal to 0
   timeout1 = setTimeout(() => {
     if(scData.state !== 0) return
-    setDataState(scData, 52)
+    setDataState(scData, pageStates.NETWORK_ERR)
   }, 5 * time.SECONED)
 }
 
@@ -110,12 +111,12 @@ async function getMembershipRemotely(
     console.log("getLatestMembership err: ")
     console.log(err)
     console.log(" ")
-    setDataState(scData, 52)
+    setDataState(scData, pageStates.NETWORK_ERR)
     return
   }
 
   if(!sub || sub.isOn === "N") {
-    setDataState(scData, -1)
+    setDataState(scData, pageStates.OK)
     return
   }
 
@@ -138,7 +139,7 @@ async function getSubscriptionPlan(
       scData.subPlanInfo = res.data
     }
     else {
-      setDataState(scData, 50)
+      setDataState(scData, pageStates.NO_DATA)
       return
     }
   }
@@ -146,7 +147,7 @@ async function getSubscriptionPlan(
     console.log("getSubscriptionPlan err: ")
     console.log(err)
     console.log(" ")
-    setDataState(scData, 52)
+    setDataState(scData, pageStates.NETWORK_ERR)
     return
   }
 
@@ -172,7 +173,7 @@ function packSubscription(
     scData.expireStr = undefined
   }
   
-  setDataState(scData, -1)
+  setDataState(scData, pageStates.OK)
 
   // to write into db
   if(!opt?.writeIntoDB) return
