@@ -6,7 +6,11 @@ import type { ScEmits } from "./tools/types"
 
 const emits = defineEmits<ScEmits>()
 
-const { scData } = useSubscribeContent()
+const { 
+  scData,
+  onTapBuyViaStripe,
+  onTapManage,
+} = useSubscribeContent()
 const pi = toRef(scData, "subPlanInfo")
 
 const { t } = useI18n()
@@ -55,13 +59,15 @@ watch(() => scData.state, (newV) => {
       <div class="sc-btns" v-if="!scData.isLifelong">
 
         <!-- 购买 -->
-        <custom-btn v-if="!scData.stripe_portal_url" class="sc-btn">
+        <custom-btn v-if="!scData.stripe_portal_url" class="sc-btn"
+          @click="onTapBuyViaStripe"
+        >
           <span>{{ t('payment.buy') }}</span>
         </custom-btn>
 
         <!-- 管理订单 -->
         <custom-btn v-else-if="pi.stripe?.isOn === 'Y'" class="sc-btn"
-          type="other"
+          type="other" @click="onTapManage"
         >
           <span>{{ t('payment.manage_sub') }}</span>
         </custom-btn>

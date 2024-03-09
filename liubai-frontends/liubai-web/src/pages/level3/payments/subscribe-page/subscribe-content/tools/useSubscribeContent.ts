@@ -35,8 +35,35 @@ export function useSubscribeContent() {
 
   initSubscribeContent(scData)
 
+  const onTapBuyViaStripe = async () => {
+    const { subPlanInfo } = scData
+    if(!subPlanInfo) {
+      console.warn("there is no subPlanInfo")
+      return
+    }
+    const stripeData = subPlanInfo.stripe
+    if(!stripeData) {
+      console.warn("subPlanInfo.stripe is required")
+      return
+    }
+
+    
+
+  }
+
+  const onTapManage = () => {
+    const url = scData.stripe_portal_url
+    if(!url) {
+      console.warn("there is no stripe_portal_url")
+      return
+    }
+    window.open(url, "_blank")
+  }
+
   return {
-    scData  
+    scData,
+    onTapBuyViaStripe,
+    onTapManage,
   }
 }
 
