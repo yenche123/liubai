@@ -84,3 +84,7 @@ export interface Res_SubPlan_Info {
   price: string
   currency: string   // 三位英文大写字符组成
 }
+
+export interface Res_SubPlan_StripeCheckout {
+  checkout_url: string
+}

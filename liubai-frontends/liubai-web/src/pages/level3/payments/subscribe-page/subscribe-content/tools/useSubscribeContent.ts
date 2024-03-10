@@ -8,6 +8,7 @@ import time from "~/utils/basic/time"
 import type {
   Res_UserSettings_Membership,
   Res_SubPlan_Info,
+  Res_SubPlan_StripeCheckout,
 } from "~/requests/req-types"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 import type { 
@@ -48,6 +49,7 @@ export function useSubscribeContent() {
     }
 
     
+    toBuyViaStripe(scData)
 
   }
 
@@ -65,6 +67,29 @@ export function useSubscribeContent() {
     onTapBuyViaStripe,
     onTapManage,
   }
+}
+
+
+async function toBuyViaStripe(
+  scData: ScData,
+) {
+  const id = scData.subPlanInfo?.id
+  if(!id) return
+  const parma = {
+    operateType: "create_stripe",
+    subscription_id: id,
+  }
+
+  console.log("toBuyViaStripe......")
+  
+  const res = await liuReq.request<Res_SubPlan_StripeCheckout>(
+    APIs.SUBSCRIBE_PLAN,
+    parma,
+  )
+
+  console.log(res)
+  console.log(" ")
+  
 }
 
 
