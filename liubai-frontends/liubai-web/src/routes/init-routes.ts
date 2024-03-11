@@ -21,7 +21,6 @@ const ExportPage = () => import("../pages/level3/setting-page/export-page/export
 const ImportPage = () => import("../pages/level3/setting-page/import-page/import-page.vue")
 const SubscribePage = () => import("../pages/level3/payments/subscribe-page/subscribe-page.vue")
 const PaymentSuccessPage = () => import("../pages/level3/payments/success-page/success-page.vue")
-const PaymentCancelPage = () => import("../pages/level3/payments/cancel-page/cancel-page.vue")
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -238,18 +237,6 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "payment-success",
-    meta: {
-      keepAlive: true,
-      checkWorkspace: false,
-    },
-  },
-  {
-    path: "/payment-cancel",
-    components: {
-      default: PaymentCancelPage,
-      LeftSidebar,
-    },
-    name: "payment-cancel",
     meta: {
       keepAlive: true,
       checkWorkspace: false,
