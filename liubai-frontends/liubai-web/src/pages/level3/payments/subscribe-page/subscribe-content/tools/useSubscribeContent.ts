@@ -21,6 +21,7 @@ import liuUtil from "~/utils/liu-util"
 import { db } from "~/utils/db"
 import localCache from "~/utils/system/local-cache"
 import type { UserLocalTable } from "~/types/types-table"
+import cui from "~/components/custom-ui"
 
 let timeout1: LiuTimeout  // in order to avoid the view from always loading
 let timeout2: LiuTimeout  // for setDataState
@@ -81,14 +82,20 @@ async function toBuyViaStripe(
   }
 
   console.log("toBuyViaStripe......")
+
+  cui.showLoading({ title_key: "tip.hold_on" })
   
   const res = await liuReq.request<Res_SubPlan_StripeCheckout>(
     APIs.SUBSCRIBE_PLAN,
     parma,
   )
 
-  console.log(res)
-  console.log(" ")
+  cui.hideLoading()
+
+  const rData = res.data
+  if(rData?.checkout_url) {
+    location.href = rData.checkout_url
+  }
   
 }
 

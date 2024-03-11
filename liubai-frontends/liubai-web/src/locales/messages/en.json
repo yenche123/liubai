@@ -217,7 +217,8 @@
     "err_1": "An unknown error occurred. Please try again later.\n(Code: {code})",
     "workspace_1": "You have left from the workspace or the current workspace does not exist.",
     "workspace_2": "You have left from the workspace.",
-    "workspace_3": "The current workspace does not exist."
+    "workspace_3": "The current workspace does not exist.",
+    "hold_on": "Loading.."
   },
   "card_bubble": {
     "copy": "Copy",

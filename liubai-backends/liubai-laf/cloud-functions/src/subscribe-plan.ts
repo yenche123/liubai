@@ -377,7 +377,7 @@ async function handle_create_stripe(
     ],
     mode: "subscription",
     success_url: `${LIU_DOMAIN}/payment-success`,
-    cancel_url: `${LIU_DOMAIN}/payment-cancel`,
+    cancel_url: `${LIU_DOMAIN}/subscription`,
     automatic_tax: { enabled: true },
     expires_at,
   }

@@ -217,7 +217,8 @@
     "err_1": "出現未知的錯誤，請稍後再試\n(狀態碼: {code})",
     "workspace_1": "你已退出該工作區 或 當前工作區不存在",
     "workspace_2": "你已退出該工作區",
-    "workspace_3": "當前工作區不存在"
+    "workspace_3": "當前工作區不存在",
+    "hold_on": "請稍後"
   },
   "card_bubble": {
     "copy": "複製",
