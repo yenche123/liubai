@@ -426,6 +426,7 @@ async function handle_create_stripe(
     credential: session_id,
     infoType: "stripe-checkout-session",
     expireStamp,
+    userId: user._id,
     stripeCheckoutSession: session,
     meta_data: {
       payment_circle: data_2.payment_circle,
