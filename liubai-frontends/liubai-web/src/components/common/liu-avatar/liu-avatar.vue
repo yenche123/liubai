@@ -5,6 +5,10 @@ import type { MemberShow } from "~/types/types-content"
 const props = defineProps({
   memberShow: {
     type: Object as PropType<MemberShow>,
+  },
+  borderRadius: {
+    type: String,
+    default: "50%",
   }
 })
 
@@ -43,7 +47,7 @@ const hasAvatar = computed(() => {
 
     <liu-img v-if="hasAvatar" 
       :src="(memberShow?.avatar?.src as string)"
-      border-radius="50%"
+      :border-radius="borderRadius"
       class="la-img"
     ></liu-img>
 
@@ -61,7 +65,7 @@ const hasAvatar = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: v-bind("borderRadius");
   overflow: hidden;
   position: relative;
   user-select: none;

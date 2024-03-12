@@ -55,7 +55,8 @@
     "report": "举报",
     "view_detail": "查看详情",
     "update": "更新",
-    "unknown": "未命名"
+    "unknown": "未命名",
+    "under_construction": "施工中"
   },
   "editor": {
     "when": "什么时候",
@@ -300,6 +301,8 @@
     "unknown_err": "未知的异常"
   },
   "setting": {
+    "membership": "会员",
+    "accounts": "账号",
     "preference": "个人偏好",
     "theme": "主题",
     "language": "语言",

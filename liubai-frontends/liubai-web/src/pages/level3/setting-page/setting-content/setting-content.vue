@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLink from '~/components/common/app-link/app-link.vue';
+import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
 import { useI18n } from "vue-i18n";
-import { usePrefix } from "~/hooks/useCommon";
 import { useSettingContent } from "./tools/useSettingContent";
 import { useWindowSize } from '~/hooks/useVueUse';
 import cfg from '~/config';
@@ -20,11 +20,14 @@ const deviceIcon = computed(() => {
 
 
 const {
+  myProfile,
+  prefix,
   data,
   onTapTheme,
   onTapLanguage,
   onTapTerms,
   onTapLogout,
+  onTapAccounts,
 } = useSettingContent()
 
 // 主题字段 i18n 的 key
@@ -34,8 +37,6 @@ const themeTextKey = computed(() => {
   return `setting.${theme}`
 })
 
-const { prefix } = usePrefix()
-
 const iconColor = "var(--main-normal)"
 
 </script>
@@ -44,6 +45,65 @@ const iconColor = "var(--main-normal)"
   <div class="liu-mc-container">
     <div class="liu-mc-box">
       <div class="liu-mc-spacing"></div>
+      
+      <!-- profile + membership + accounts -->
+      <div class="sc-box">
+
+        <!-- avatar + nickname -->
+        <div class="sc-avatar-nickname" v-if="myProfile">
+          <div class="liu-hover sc-avatar-box">
+            <LiuAvatar 
+              :member-show="myProfile" 
+              class="sc-avatar"
+            ></LiuAvatar>
+          </div>
+          <div class="liu-hover sc-nickname-box">
+            <div class="sc-nickname">
+              <span v-if="myProfile.name">{{ myProfile.name }}</span>
+              <span v-else>{{ t('common.unknown') }}</span>
+            </div>
+            <div class="scb-footer-icon">
+              <svg-icon class="scbf-back"
+                name="arrow-right2"
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- membership -->
+        <AppLink to="/subscription">
+          <div class="liu-hover sc-bar">
+            <div class="scb-hd">
+              <span>{{ t('setting.membership') }}</span>
+            </div>
+            <div class="scb-footer">
+              <div class="scb-footer-icon">
+                <svg-icon class="scbf-back"
+                  name="arrow-right2"
+                  :color="iconColor"
+                ></svg-icon>
+              </div>
+            </div>
+          </div>
+        </AppLink>
+
+        <!-- accounts -->
+        <div class="liu-hover sc-bar" @click="onTapAccounts">
+          <div class="scb-hd">
+            <span>{{ t('setting.accounts') }}</span>
+          </div>
+          <div class="scb-footer">
+            <div class="scb-footer-icon">
+              <svg-icon class="scbf-back"
+                name="arrow-right2"
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+          </div>
+        </div>
+
+      </div>
 
       <!-- 个人偏好 -->
       <div class="sc-title">
@@ -234,6 +294,44 @@ const iconColor = "var(--main-normal)"
   box-shadow: var(--card-shadow-2);
   margin-block-end: 32px;
 }
+
+.sc-avatar-nickname {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-block-end: 6px;
+}
+
+.sc-avatar-box {
+  flex: 1;
+  margin-inline-end: 6px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 10px 10px;
+}
+
+.sc-avatar {
+  width: 48px;
+  height: 48px;
+}
+
+.sc-nickname-box {
+  flex: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 10px 10px;
+  user-select: none;
+}
+
+.sc-nickname {
+  font-size: var(--btn-font);
+  color: var(--main-note);
+  letter-spacing: 1px;
+}
+
 
 .sc-bar {
   width: 100%;

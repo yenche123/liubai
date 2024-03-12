@@ -9,8 +9,13 @@ import { whenTapLanguage } from "./handle-lang"
 import liuEnv from "~/utils/liu-env"
 import { useSystemStore } from "~/hooks/stores/useSystemStore"
 import { storeToRefs } from "pinia"
+import { useMyProfile, usePrefix } from "~/hooks/useCommon"
 
 export function useSettingContent() {
+
+  const { myProfile } = useMyProfile()
+  const { prefix } = usePrefix()
+
   const data = reactive<SettingContentData>({
     language: "system",
     language_txt: "",
@@ -25,13 +30,19 @@ export function useSettingContent() {
   const onTapLanguage = () => whenTapLanguage(data)
   const onTapTerms = () => data.openTerms = !data.openTerms
   const onTapLogout = () => whenTapLogout(data)
+  const onTapAccounts = () => {
+    
+  }
 
   return {
+    myProfile,
+    prefix,
     data,
     onTapTheme,
     onTapLanguage,
     onTapTerms,
     onTapLogout,
+    onTapAccounts,
   }
 }
 

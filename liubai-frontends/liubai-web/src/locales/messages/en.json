@@ -55,7 +55,8 @@
     "report": "Report",
     "view_detail": "View Details",
     "update": "Update",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "under_construction": "Under Construction"
   },
   "editor": {
     "when": "When",
@@ -300,6 +301,8 @@
     "unknown_err": "Unknown Error"
   },
   "setting": {
+    "membership": "Membership",
+    "accounts": "Accounts",
     "preference": "Preferences",
     "theme": "Theme",
     "language": "Language",
