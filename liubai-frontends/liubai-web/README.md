@@ -20,6 +20,8 @@ Jiexiu is wild!
 
 ## 图标库
 
+https://github.com/microsoft/fluentui-emoji/tree/main
+
 https://fonts.google.com/icons
 
 https://www.svgrepo.com/
