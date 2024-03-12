@@ -115,6 +115,7 @@ export async function showModal(
   modalData.tipSelected = false
   modalData.modalType = opt.modalType ?? "normal"
   modalData.isTitleEqualToEmoji = opt.isTitleEqualToEmoji ?? false
+  modalData.iconName = opt.iconName
 
   if(typeof opt.showCancel === "boolean") {
     modalData.showCancel = opt.showCancel

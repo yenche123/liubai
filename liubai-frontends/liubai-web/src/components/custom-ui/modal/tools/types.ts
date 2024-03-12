@@ -24,6 +24,7 @@ export interface ModalParam {
   cancel_key?: string
   modalType?: "normal" | "warning"
   isTitleEqualToEmoji?: boolean
+  iconName?: string
   success?: (res: ModalSuccessRes) => void
 }
 
@@ -42,6 +43,7 @@ export interface ModalData {
   cancel_key?: string
   modalType?: "normal" | "warning"
   isTitleEqualToEmoji?: boolean
+  iconName?: string
   tipSelected: boolean
 }
 

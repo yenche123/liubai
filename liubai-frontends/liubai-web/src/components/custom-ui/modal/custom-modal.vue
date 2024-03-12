@@ -29,6 +29,10 @@ const {
       <h1 v-if="modalData.title">{{ modalData.title }}</h1>
       <h1 v-else-if="modalData.title_key && modalData.title_opt">{{ t(modalData.title_key, modalData.title_opt) }}</h1>
       <h1 v-else-if="modalData.title_key">{{ t(modalData.title_key) }}</h1>
+      <svg-icon v-else-if="modalData.iconName" :name="modalData.iconName"
+        :coverFillStroke="false"
+        class="cui-modal-icon"
+      ></svg-icon>
 
       <p v-if="modalData.content">{{ modalData.content }}</p>
       <p v-else-if="modalData.content_key && modalData.content_opt">{{ t(modalData.content_key, modalData.content_opt) }}</p>
@@ -131,13 +135,20 @@ const {
       backdrop-filter: blur(2px);
       -webkit-backdrop-filter: blur(2px);
     }
+    
+    .cui-modal-icon {
+      widows: 60px;
+      height: 60px;
+      margin-block-end: 20px;
+      z-index: 5112;
+    }
+
 
     h1 {
       font-size: var(--title-font);
       font-weight: 700;
       color: var(--main-text);
       line-height: 1.5;
-      margin-bottom: 10px;
       margin-block-start: 0;
       margin-block-end: 20px;
       z-index: 5112;

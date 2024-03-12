@@ -31,7 +31,11 @@ export function useSettingContent() {
   const onTapTerms = () => data.openTerms = !data.openTerms
   const onTapLogout = () => whenTapLogout(data)
   const onTapAccounts = () => {
-    
+    cui.showModal({ 
+      iconName: "emojis-construction_color", 
+      content_key: "common.under_construction",
+      showCancel: false,
+    })
   }
 
   return {
