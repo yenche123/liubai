@@ -36,15 +36,26 @@ watch(() => scData.state, (newV) => {
       </div>
 
       <!-- price -->
-      <div class="sc-price">
+      <div class="sc-price" v-if="scData.price_1">
         <span class="scp-tag">$</span>
-        <span>{{ spi.price }}</span>
+
+        <!-- integral -->
+        <span>{{ scData.price_1 }}</span>
+
+        <!-- point -->
+        <span v-if="scData.price_2" class="scp-point">.</span>
+
+        <!-- decimal -->
+        <span v-if="scData.price_2" class="scp-decimal">{{ scData.price_2 }}</span>
+
+        <!-- per ... -->
         <span v-if="spi.payment_circle === 'monthly'" 
           class="scp-footer"
         >{{ t('payment.per_month', { currency: spi.currency }) }}</span>
         <span v-else-if="spi.payment_circle === 'yearly'" 
           class="scp-footer"
         >{{ t('payment.per_year', { currency: spi.currency }) }}</span>
+        
       </div>
 
       <!-- 徽章 或 终身会员 -->
@@ -101,7 +112,6 @@ watch(() => scData.state, (newV) => {
 }
 
 .sc-price {
-  vertical-align: text-bottom;
   font-size: var(--big-word-style);
   margin-block-end: 20px;
   color: rgb(225, 81, 65);
@@ -109,12 +119,26 @@ watch(() => scData.state, (newV) => {
 }
 
 .scp-tag {
+  vertical-align: middle;
   font-weight: 700;
   font-size: var(--inline-code-font);
   margin-inline-end: 3px;
 }
 
+.scp-point {
+  vertical-align: text-bottom;
+  letter-spacing: 1px;
+}
+
+.scp-decimal {
+  vertical-align: middle;
+  font-weight: 700;
+  font-size: var(--inline-code-font);
+  letter-spacing: 1px;
+}
+
 .scp-footer {
+  vertical-align: middle;
   font-weight: 700;
   margin-inline-start: 10px;
   font-size: var(--inline-code-font);

@@ -11,6 +11,8 @@ export interface ScData {
   initStamp: number
   stripe_portal_url?: string
   subPlanInfo?: Res_SubPlan_Info
+  price_1?: string    // Integral part of price
+  price_2?: string    // Decimal part of price
   isLifelong?: boolean
   autoRecharge?: boolean
   expireStr?: string

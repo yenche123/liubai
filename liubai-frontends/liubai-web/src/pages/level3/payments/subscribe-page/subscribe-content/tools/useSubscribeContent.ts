@@ -196,6 +196,7 @@ async function getSubscriptionPlan(
 
     if(res.code === "0000" && res.data) {
       scData.subPlanInfo = res.data
+      parsePrice(scData, res.data)
     }
     else {
       setDataState(scData, pageStates.NO_DATA)
@@ -211,6 +212,22 @@ async function getSubscriptionPlan(
   }
 
   getMembershipRemotely(scData)
+}
+
+
+function parsePrice(
+  scData: ScData,
+  res: Res_SubPlan_Info,
+) {
+  const p = res.price
+  if(!p) {
+    scData.price_1 = undefined
+    scData.price_2 = undefined
+    return
+  }
+  const list = p.split(".")
+  scData.price_1 = list[0]
+  scData.price_2 = list[1]
 }
 
 interface CheckSubOpt {
