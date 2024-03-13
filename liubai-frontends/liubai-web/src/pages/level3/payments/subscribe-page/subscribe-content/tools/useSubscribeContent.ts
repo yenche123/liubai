@@ -146,7 +146,7 @@ async function checkState(
   const c2 = sub?.stripe?.customer_portal_url
   const diff = time.getTime() - (c1 * 1000)
   if(sub?.isOn === "Y" && diff < time.DAY && c2) {
-    packSubscription(scData, sub)
+    packUserSubscription(scData, sub)
   }
 
   // 2. get subscription plan
@@ -179,7 +179,7 @@ async function getMembershipRemotely(
     return
   }
 
-  packSubscription(scData, sub, { writeIntoDB: true })
+  packUserSubscription(scData, sub, { writeIntoDB: true })
 }
 
 // get subscription plan
@@ -234,7 +234,7 @@ interface CheckSubOpt {
   writeIntoDB?: boolean   // @default: false
 }
 
-function packSubscription(
+function packUserSubscription(
   scData: ScData,
   sub: UserSubscription,
   opt?: CheckSubOpt,
