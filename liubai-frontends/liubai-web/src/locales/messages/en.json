@@ -382,6 +382,8 @@
     "recharge_date": "Will be charged on {date}",
     "lifetime": "Lifetime",
     "buy": "Buy",
-    "manage_sub": "Manage Subscription"
+    "manage_sub": "Manage Subscription",
+    "per_month": "{currency} per month",
+    "per_year": "{currency} per year"
   }
 }

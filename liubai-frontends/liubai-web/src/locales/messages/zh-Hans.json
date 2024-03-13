@@ -382,6 +382,8 @@
     "recharge_date": "预计 {date} 自动续费",
     "lifetime": "终身会员",
     "buy": "购买",
-    "manage_sub": "管理订阅"
+    "manage_sub": "管理订阅",
+    "per_month": "{currency} / 月",
+    "per_year": "{currency} / 年"
   }
 }

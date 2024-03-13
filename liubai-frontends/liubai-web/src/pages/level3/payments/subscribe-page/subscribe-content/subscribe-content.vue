@@ -11,7 +11,7 @@ const {
   onTapBuyViaStripe,
   onTapManage,
 } = useSubscribeContent()
-const pi = toRef(scData, "subPlanInfo")
+const spi = toRef(scData, "subPlanInfo")
 
 const { t } = useI18n()
 
@@ -28,31 +28,40 @@ watch(() => scData.state, (newV) => {
 
   <div class="liu-mc-container">
     <div class="liu-tc-virtual"></div>
-    <div class="liu-mc-box" v-if="pi && scData.state < 0">
+    <div class="liu-mc-box" v-if="spi && scData.state < 0">
 
       <!-- 方案标题 -->
       <div class="sc-title">
-        <span>{{ pi.title }}</span>
+        <span>{{ spi.title }}</span>
       </div>
 
-      <div class="sc-box">
+      <!-- price -->
+      <div class="sc-price">
+        <span class="scp-tag">$</span>
+        <span>{{ spi.price }}</span>
+        <span v-if="spi.payment_circle === 'monthly'" 
+          class="scp-footer"
+        >{{ t('payment.per_month', { currency: spi.currency }) }}</span>
+        <span v-else-if="spi.payment_circle === 'yearly'" 
+          class="scp-footer"
+        >{{ t('payment.per_year', { currency: spi.currency }) }}</span>
+      </div>
 
-        <!-- 徽章 或 终身会员 -->
-        <div class="sc-badge">
-          <span v-if="scData.isLifelong">{{ t('payment.lifetime') }}</span>
-          <span v-else>{{ pi.badge }}</span>
-        </div>
+      <!-- 徽章 或 终身会员 -->
+      <div class="sc-badge">
+        <span v-if="scData.isLifelong">{{ t('payment.lifetime') }}</span>
+        <span v-else>{{ spi.badge }}</span>
+      </div>
 
-        <!-- 什么时候过期 或 什么时候续费 -->
-        <div class="scb-footer" v-if="!scData.isLifelong && scData.expireStr">
-          <span v-if="scData.autoRecharge">{{ t('payment.recharge_date', { date: scData.expireStr }) }}</span>
-          <span v-else>{{ t('payment.expire_date', { date: scData.expireStr }) }}</span>
-        </div>
+      <!-- 什么时候过期 或 什么时候续费 -->
+      <div class="scb-footer" v-if="!scData.isLifelong && scData.expireStr">
+        <span v-if="scData.autoRecharge">{{ t('payment.recharge_date', { date: scData.expireStr }) }}</span>
+        <span v-else>{{ t('payment.expire_date', { date: scData.expireStr }) }}</span>
       </div>
 
       <!-- 方案内文 -->
       <div class="sc-content">
-        <span>{{ pi.desc }}</span>
+        <span>{{ spi.desc }}</span>
       </div>
 
       <!-- 按钮 -->
@@ -66,7 +75,7 @@ watch(() => scData.state, (newV) => {
         </custom-btn>
 
         <!-- 管理订单 -->
-        <custom-btn v-else-if="pi.stripe?.isOn === 'Y'" class="sc-btn"
+        <custom-btn v-else-if="spi.stripe?.isOn === 'Y'" class="sc-btn"
           type="other" @click="onTapManage"
         >
           <span>{{ t('payment.manage_sub') }}</span>
@@ -75,15 +84,9 @@ watch(() => scData.state, (newV) => {
 
       </div>
       
-      
-      
     </div>
 
-
-
   </div>
-
-
 
 </template>
 <style scoped lang="scss">
@@ -93,13 +96,31 @@ watch(() => scData.state, (newV) => {
   color: var(--main-text);
   line-height: 1.5;
   font-weight: 700;
-  margin-block-end: 20px;
+  margin-block-end: 2.5px;
   user-select: none;
 }
 
-.sc-box {
+.sc-price {
+  vertical-align: text-bottom;
+  font-size: var(--big-word-style);
   margin-block-end: 20px;
+  color: rgb(225, 81, 65);
+  user-select: none;
 }
+
+.scp-tag {
+  font-weight: 700;
+  font-size: var(--inline-code-font);
+  margin-inline-end: 3px;
+}
+
+.scp-footer {
+  font-weight: 700;
+  margin-inline-start: 10px;
+  font-size: var(--inline-code-font);
+  color: var(--main-text);
+}
+
 
 .sc-badge {
   position: relative;
@@ -108,7 +129,7 @@ watch(() => scData.state, (newV) => {
   border-radius: 4px;
   padding: 4px 12px;
   overflow: hidden;
-  display: inline-block;
+  display: inline-flex;
   user-select: none;
 
   &::before {
@@ -125,11 +146,13 @@ watch(() => scData.state, (newV) => {
 
 .scb-footer {
   font-size: var(--mini-font);
-  color: var(--main-note);
   margin-block-start: 7.5px;
+  color: var(--primary-color);
+  user-select: none;
 }
 
 .sc-content {
+  margin-block-start: 20px;
   width: 100%;
   font-size: var(--desc-font);
   color: var(--main-code);
