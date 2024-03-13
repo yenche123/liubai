@@ -384,6 +384,7 @@
     "buy": "购买",
     "manage_sub": "管理订阅",
     "per_month": "{currency} / 月",
-    "per_year": "{currency} / 年"
+    "per_year": "{currency} / 年",
+    "check_out": "去看看"
   }
 }

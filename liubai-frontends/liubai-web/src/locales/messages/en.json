@@ -384,6 +384,7 @@
     "buy": "Buy",
     "manage_sub": "Manage Subscription",
     "per_month": "{currency} per month",
-    "per_year": "{currency} per year"
+    "per_year": "{currency} per year",
+    "check_out": "Check it out"
   }
 }

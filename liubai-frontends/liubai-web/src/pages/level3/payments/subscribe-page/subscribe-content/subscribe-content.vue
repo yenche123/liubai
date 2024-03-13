@@ -72,7 +72,7 @@ watch(() => scData.state, (newV) => {
 
       <!-- 方案内文 -->
       <div class="sc-content">
-        <span>{{ spi.desc }}</span>
+        <span class="liu-selection">{{ spi.desc }}</span>
       </div>
 
       <!-- 按钮 -->
@@ -182,10 +182,6 @@ watch(() => scData.state, (newV) => {
   color: var(--main-code);
   line-height: 1.75;
   white-space: pre-wrap;
-
-  span::selection {
-    background-color: var(--select-bg-2);
-  }
 }
 
 .sc-btns {
@@ -199,7 +195,7 @@ watch(() => scData.state, (newV) => {
 
   .sc-btn {
     width: 60%;
-    max-width: 300px;
+    max-width: var(--btn-max);
   }
 }
 

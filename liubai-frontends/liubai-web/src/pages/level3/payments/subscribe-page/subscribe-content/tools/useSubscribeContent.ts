@@ -81,8 +81,6 @@ async function toBuyViaStripe(
     subscription_id: id,
   }
 
-  console.log("toBuyViaStripe......")
-
   cui.showLoading({ title_key: "tip.hold_on" })
   
   const res = await liuReq.request<Res_SubPlan_StripeCheckout>(
@@ -162,6 +160,10 @@ async function getMembershipRemotely(
   let sub: UserSubscription | undefined
   try {
     const res = await liuReq.request<Res_UserSettings_Membership>(url, param)
+    console.log("getMembershipRemotely res: ")
+    console.log(res)
+    console.log(" ")
+    
     if(res.code === "0000" && res.data) {
       sub = res.data.subscription
     }

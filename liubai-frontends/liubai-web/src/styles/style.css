@@ -36,6 +36,9 @@
   --card-min: 200px;
   --card-max: 580px;
   --card-percent: 90%;
+
+  /** 常用按钮尺寸 */
+  --btn-max: 250px;
 }
 
 @media screen and (max-width: 340px) {

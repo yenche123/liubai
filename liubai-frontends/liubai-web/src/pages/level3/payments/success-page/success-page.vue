@@ -20,7 +20,7 @@ const { t } = useI18n()
       <navi-virtual></navi-virtual>
       <SuccessContent></SuccessContent>
     </scroll-view>
-    <navi-bar :title="t('payment.success_title')"></navi-bar>
+    <navi-bar></navi-bar>
   </main-view>
 
   <!-- 副视图 -->

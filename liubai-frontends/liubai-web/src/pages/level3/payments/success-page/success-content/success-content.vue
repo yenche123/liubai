@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
+import { useRouteAndLiuRouter } from "~/routes/liu-router";
 
 const { t } = useI18n()
+
+const rr = useRouteAndLiuRouter()
+const onTapBtn = () => {
+  rr.router.push({ name: "subscription" })
+}
 
 </script>
 <template>
@@ -15,6 +21,12 @@ const { t } = useI18n()
     <div class="cc-text">
       <span class="liu-selection">{{ t('payment.success_title') }}</span>
     </div>
+    <div class="cc-btn-box">
+      <custom-btn class="cc-btn" @click="onTapBtn">
+        <span>{{ t('payment.check_out') }}</span>
+      </custom-btn>
+    </div>
+
   </div>
 
 </template>
@@ -23,7 +35,7 @@ const { t } = useI18n()
 .cc-box {
   width: 60%;
   padding-inline: 20%;
-  height: 85%;
+  min-height: 85%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,15 +46,30 @@ const { t } = useI18n()
 .cc-img {
   width: 100px;
   height: 100px;
-  margin-block-end: min(20%, 100px);
+  flex: none;
+  margin-block-end: 5dvh;
   user-select: none;
 }
 
 .cc-text {
   text-align: center;
   line-height: 1.9;
-  padding-block-end: min(15%, 75px);
+  font-size: var(--head-font);
+  font-weight: 700;
+  margin-block-end: 20dvh;
   color: var(--main-text);
+}
+
+.cc-btn-box {
+  width: 100%;
+  padding-block-end: 30px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.cc-btn {
+  max-width: var(--btn-max);
 }
 
 </style>
