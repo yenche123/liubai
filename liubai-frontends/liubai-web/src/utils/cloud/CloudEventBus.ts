@@ -7,6 +7,7 @@ import {
   useNetwork, 
   useDocumentVisibility, 
   useThrottleFn,
+  usePageLeave,
 } from "~/hooks/useVueUse";
 import { 
   fetchHelloWorld, 
@@ -58,13 +59,14 @@ class CloudEventBus {
     }, 3500)
 
 
-    // 监听网络、窗口是否可视等变化
+    // 监听网络、窗口是否可视、鼠标是否已经离开当前窗口......等变化
     const visibility = useDocumentVisibility()
+    const hasLeftPage = usePageLeave()
     const networkState0 = useNetwork()
     const networkState = reactive(networkState0)
-    watch([networkState, visibility], (
-      [newV1, newV2],
-      [oldV1, oldV2]
+    watch([networkState, visibility, hasLeftPage], (
+      [newV1, newV2, newV3],
+      [oldV1, oldV2, oldV3],
     ) => {
 
       // 当前分页被隐藏，并且非刚启动时（刚启动时，oldV2 为 undefined）
@@ -82,6 +84,12 @@ class CloudEventBus {
       }
 
       if(newV2 === "visible" && oldV2 === "hidden") {
+        preMain()
+        return
+      }
+
+      // had left the window and now it's back
+      if(!newV3 && oldV3) {
         preMain()
         return
       }
