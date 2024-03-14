@@ -108,7 +108,11 @@ async function getStripeCustomerPortal(
   const stripe = getStripeInstance()
   if(!stripe) return
 
-  const return_url = process.env.LIU_DOMAIN
+  let return_url = process.env.LIU_DOMAIN
+  if(return_url) {
+    return_url += `/subscription`
+  }
+
   try {
     const res = await stripe.billingPortal.sessions.create({
       customer,
