@@ -385,6 +385,7 @@
     "manage_sub": "Manage Subscription",
     "per_month": "{currency} per month",
     "per_year": "{currency} per year",
-    "check_out": "Check it out"
+    "check_out": "Check it out",
+    "cancel_refund": "Cancel & Refund"
   }
 }

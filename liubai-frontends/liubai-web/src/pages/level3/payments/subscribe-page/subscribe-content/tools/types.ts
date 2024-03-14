@@ -16,4 +16,5 @@ export interface ScData {
   isLifelong?: boolean
   autoRecharge?: boolean
   expireStr?: string
+  showRefundBtn?: boolean
 }

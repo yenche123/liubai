@@ -63,10 +63,15 @@ export function useSubscribeContent() {
     window.open(url, "_blank")
   }
 
+  const onTapRefund = () => {
+
+  }
+
   return {
     scData,
     onTapBuyViaStripe,
     onTapManage,
+    onTapRefund,
   }
 }
 
@@ -250,6 +255,16 @@ function packUserSubscription(
   else {
     scData.expireStr = undefined
   }
+
+  // check if should show refund btn
+  const now = time.getTime()
+  const diff = now - (sub.firstChargedStamp ?? 1)
+  if(diff < time.WEEK && sub.chargeTimes === 1) {
+    scData.showRefundBtn = true
+  }
+  else {
+    scData.showRefundBtn = false
+  }
   
   setDataState(scData, pageStates.OK)
 
@@ -260,7 +275,7 @@ function packUserSubscription(
   if(!local_id) return
   const u: Partial<UserLocalTable> = {
     subscription: sub,
-    updatedStamp: time.getTime(),
+    updatedStamp: now,
   }
   db.users.update(local_id, u)
 }

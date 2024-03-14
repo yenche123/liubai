@@ -55,6 +55,7 @@ const SECONED = 1000
 const MINUTE = 60 * SECONED
 const HOUR = 60 * MINUTE
 const DAY = 24 * HOUR
+const WEEK = 7 * DAY
 
 export default {
   setDiff,
@@ -68,4 +69,5 @@ export default {
   MINUTE,
   HOUR,
   DAY,
+  WEEK,
 }

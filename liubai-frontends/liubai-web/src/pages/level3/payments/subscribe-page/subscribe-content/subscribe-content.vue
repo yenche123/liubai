@@ -10,6 +10,7 @@ const {
   scData,
   onTapBuyViaStripe,
   onTapManage,
+  onTapRefund,
 } = useSubscribeContent()
 const spi = toRef(scData, "subPlanInfo")
 
@@ -87,10 +88,15 @@ watch(() => scData.state, (newV) => {
 
         <!-- 管理订单 -->
         <custom-btn v-else-if="spi.stripe?.isOn === 'Y'" class="sc-btn"
-          type="other" @click="onTapManage"
+          type="pure" @click="onTapManage"
         >
           <span>{{ t('payment.manage_sub') }}</span>
         </custom-btn>
+
+        <!-- 取消订阅并退款 -->
+        <div v-if="scData.showRefundBtn" class="liu-hover sc-refund">
+          <span>{{ t('payment.cancel_refund') }}</span>
+        </div>
         
 
       </div>
@@ -190,13 +196,25 @@ watch(() => scData.state, (newV) => {
   flex-direction: column;
   align-items: center;
   margin-block-start: 50px;
-  padding-block-end: 30px;
+  padding-block-end: 50px;
   position: relative;
 
   .sc-btn {
     width: 60%;
     max-width: var(--btn-max);
   }
+}
+
+.sc-refund {
+  font-size: var(--mini-font);
+  color: var(--main-code);
+  margin-block-start: 8px;
+  line-height: 2.5;
+  width: 60%;
+  max-width: var(--btn-max);
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
 }
 
 
