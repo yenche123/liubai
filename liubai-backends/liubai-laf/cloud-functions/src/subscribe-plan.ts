@@ -214,6 +214,7 @@ async function handle_info(
     currency = "USD"
   }
 
+  const sym = getCurrencySymbol(currency)
   const r: Res_SubPlan_Info = {
     id: d._id,
     payment_circle: d.payment_circle,
@@ -223,6 +224,7 @@ async function handle_info(
     stripe: d.stripe,
     price,
     currency,
+    symbol: sym,
   }
   
   return { code: "0000", data: r }
@@ -256,6 +258,17 @@ function getSupportedCurrency(
 
   return c
 }
+
+function getCurrencySymbol(c: string) {
+  const list1 = ["JPY", "CNY"]
+  if(list1.includes(c)) return "¥"
+
+  const list2 = ["EUR"]
+  if(list2.includes(c)) return "€"
+
+  return "$"
+}
+
 
 /** check if the user's subscription is currently active */
 function checkIfUserSubscribed(

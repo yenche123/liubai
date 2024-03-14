@@ -627,6 +627,7 @@ export interface Res_SubPlan_Info {
   // 而非最终收费的单位
   price: string
   currency: string   // 三位英文大写字符组成
+  symbol: string     // 货币符号，比如 "¥"
 }
 
 export interface Res_SubPlan_StripeCheckout {

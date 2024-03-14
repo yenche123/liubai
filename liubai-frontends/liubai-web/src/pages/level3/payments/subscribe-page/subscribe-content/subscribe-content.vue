@@ -37,7 +37,7 @@ watch(() => scData.state, (newV) => {
 
       <!-- price -->
       <div class="sc-price" v-if="scData.price_1">
-        <span class="scp-tag">$</span>
+        <span class="scp-tag">{{ spi.symbol }}</span>
 
         <!-- integral -->
         <span>{{ scData.price_1 }}</span>
