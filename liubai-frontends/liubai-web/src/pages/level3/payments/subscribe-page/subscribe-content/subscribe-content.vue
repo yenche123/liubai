@@ -94,7 +94,9 @@ watch(() => scData.state, (newV) => {
         </custom-btn>
 
         <!-- 取消订阅并退款 -->
-        <div v-if="scData.showRefundBtn" class="liu-hover sc-refund">
+        <div v-if="scData.showRefundBtn" class="liu-hover sc-refund"
+          @click.stop="onTapRefund"
+        >
           <span>{{ t('payment.cancel_refund') }}</span>
         </div>
         

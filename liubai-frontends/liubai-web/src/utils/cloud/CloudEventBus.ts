@@ -23,7 +23,7 @@ import valTool from "../basic/val-tool";
 import { waitEnterIntoApp } from "~/hooks/useEnterIntoApp";
 import { getUser } from "./tools/some-funcs";
 
-const SEC_15 = 15 * time.SECONED
+const SEC_30 = 30 * time.SECONED
 const MIN_30 = 30 * time.MINUTE
 
 // 事件总线，对云同步任务进行调度
@@ -94,10 +94,13 @@ class CloudEventBus {
   private static async main() {
 
     // 0. 避免频繁请求的阻断
-    // 0.1 判断是否 10s 内已经请求过了
+    // 0.1 判断是否 30s 内已经请求过了
     const lms = this.lastFinishMainStamp
     const diff1 = time.getTime() - lms
-    if(diff1 < SEC_15) return
+    if(diff1 < SEC_30) {
+      // console.log("30 s 内进来过了......")
+      return
+    }
 
     // 0.2 判断是否正在执行 main()
     if(this.isMaining) return

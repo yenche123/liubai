@@ -31,7 +31,7 @@ export function useSubscribeContent() {
   const hasBackend = liuEnv.hasBackend()
   const now = time.getTime()
   const scData = reactive<ScData>({
-    state: hasBackend ? 0 : 53,
+    state: hasBackend ? pageStates.LOADING : pageStates.NEED_BACKEND,
     initStamp: now,
   })
 
@@ -49,9 +49,7 @@ export function useSubscribeContent() {
       return
     }
 
-    
     toBuyViaStripe(scData)
-
   }
 
   const onTapManage = () => {
@@ -64,7 +62,7 @@ export function useSubscribeContent() {
   }
 
   const onTapRefund = () => {
-
+    toRefund(scData)
   }
 
   return {
@@ -73,6 +71,28 @@ export function useSubscribeContent() {
     onTapManage,
     onTapRefund,
   }
+}
+
+async function toRefund(
+  scData: ScData
+) {
+  const { showRefundBtn } = scData
+  if(!showRefundBtn) return
+
+  const res1 = await cui.showModal({
+    iconName: "emojis-crying_face_color",
+    content_key: "payment.refund_content",
+    confirm_key: "payment.to_refund",
+    cancel_key: "common.back"
+  })
+  if(!res1.confirm) return
+  
+  // cui.showLoading({ title_key: "tip.hold_on" })
+  // const url = APIs.REQUEST_REFUND
+  // const param = { operateType: "cancel_and_refund" }
+  // const res2 = await liuReq.request(url, param)
+
+  
 }
 
 
@@ -88,10 +108,8 @@ async function toBuyViaStripe(
 
   cui.showLoading({ title_key: "tip.hold_on" })
   
-  const res = await liuReq.request<Res_SubPlan_StripeCheckout>(
-    APIs.SUBSCRIBE_PLAN,
-    parma,
-  )
+  const url = APIs.SUBSCRIBE_PLAN
+  const res = await liuReq.request<Res_SubPlan_StripeCheckout>(url, parma)
 
   cui.hideLoading()
 
@@ -139,7 +157,6 @@ function initSubscribeContent(
 async function checkState(
   scData: ScData,
 ) {
-  console.log("checkState.........")
   const user = await CloudEventBus.getUserFromDB()
   if(!user) return
 
@@ -270,7 +287,6 @@ function packUserSubscription(
 
   // to write into db
   if(!opt?.writeIntoDB) return
-  console.log("writeIntoDB................")
   const { local_id } = localCache.getPreference()
   if(!local_id) return
   const u: Partial<UserLocalTable> = {

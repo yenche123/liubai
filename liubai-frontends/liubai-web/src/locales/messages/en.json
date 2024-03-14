@@ -386,6 +386,8 @@
     "per_month": "{currency} per month",
     "per_year": "{currency} per year",
     "check_out": "Check it out",
-    "cancel_refund": "Cancel & Refund"
+    "cancel_refund": "Cancel & Refund",
+    "refund_content": "You have only one chane to refund within 7 days after the first purchase. Are you sure to cancel the subscription and get the refund?",
+    "to_refund": "Yes"
   }
 }

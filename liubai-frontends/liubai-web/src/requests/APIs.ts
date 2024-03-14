@@ -10,5 +10,5 @@ export default {
   USER_LATEST: d + `user-settings`,
   USER_MEMBERSHIP: d + `user-settings`,
   SUBSCRIBE_PLAN: d + `subscribe-plan`,
-  STRIPE_TEST: d + `test-stripe`,
+  REQUEST_REFUND: d + `subscribe-plan`,
 }
