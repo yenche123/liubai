@@ -45,7 +45,7 @@ export async function main(ctx: FunctionContext) {
 
   const stamp2 = getNowStamp()
   const diffS = stamp2 - stamp1
-  console.log(`调用 user-settings 耗时: ${diffS}ms`)
+  // console.log(`调用 user-settings 耗时: ${diffS}ms`)
 
   return res
 }
