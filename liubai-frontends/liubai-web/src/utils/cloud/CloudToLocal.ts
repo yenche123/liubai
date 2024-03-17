@@ -15,7 +15,7 @@ import type {
   TaskOfC2L,
   DownloadRes,
 } from "./tools/types"
-import CheckDbWorker from "./workers/check-task-existed?worker"
+import CheckDbWorker from "./workers/check-download-task?worker"
 import DownloadWorker from "./workers/task-to-download?worker"
 import time from "../basic/time";
 import valTool from "../basic/val-tool";
