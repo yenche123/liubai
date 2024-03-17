@@ -112,13 +112,9 @@ function checkIfTap(
   // 确保是鼠标左键触发的
   if(evt.button !== 0) return false
 
-  const now = time.getTime()
-  const diff = now - lastPointerDown
-
-  // console.log("间隔: ", diff)
   // 注意: 在触控板上点击，通常会大于 200ms
-  // 介于 200ms ~ 250ms 之间
-  if(diff > 300) {
+  // 介于 200ms ~ 250ms 之间，所以取 300ms 比较保险
+  if(!time.isWithinMillis(lastPointerDown, 300)) {
     return false
   }
 
@@ -138,10 +134,8 @@ function whenBoxPointerUp(
   if(!checkIfTap(evt)) return
   
   // 2. 判断是不是连续点击，若是忽略
-  const now = time.getTime()
-  const diff2 = now - lastTapBox
-  if(diff2 < 400) return
-  lastTapBox = now
+  if(time.isWithinMillis(lastTapBox, 400)) return
+  lastTapBox = time.getTime()
 
   waitingToCancel = setTimeout(() => {
     waitingToCancel = undefined

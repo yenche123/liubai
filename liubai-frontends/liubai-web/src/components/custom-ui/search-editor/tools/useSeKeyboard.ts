@@ -41,9 +41,7 @@ export function useSeKeyboard(param: SeKeyboardParam) {
   }
 
   const _keydownDuringClosing = (e: KeyboardEvent) => {
-    const now = time.getTime()
-    const diff = now - lastEventTrigger
-    if(diff < tranMs) return
+    if(time.isWithinMillis(lastEventTrigger, tranMs)) return
 
     const ctrlPressed = isMac ? e.metaKey : e.ctrlKey
     const shiftPressed = e.shiftKey
@@ -59,7 +57,7 @@ export function useSeKeyboard(param: SeKeyboardParam) {
       }
 
       e.preventDefault()
-      lastEventTrigger = now
+      lastEventTrigger = time.getTime()
       whenOpen({ type: "search" })
     }
   }

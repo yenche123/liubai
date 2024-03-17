@@ -45,9 +45,7 @@ function onPopupTouchStart() {
 }
 
 function onPopupTouchEnd() {
-  let now = time.getTime()
-  let diff = now - startStamp
-  if(diff < 200 && sbfData.state === "opened") {
+  if(time.isWithinMillis(startStamp, 200) && sbfData.state === "opened") {
     toClose()
   }
 }

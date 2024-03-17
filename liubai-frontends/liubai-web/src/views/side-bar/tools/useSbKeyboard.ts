@@ -61,10 +61,8 @@ export function useSbKeyboard(
         return
       }
 
-      const now = time.getTime()
-      const diff = now - lastTrigger
-      if(diff < LISTEN_DELAY) return
-      lastTrigger = now
+      if(time.isWithinMillis(lastTrigger, LISTEN_DELAY)) return
+      lastTrigger = time.getTime()
 
       e.preventDefault()
       _judge()

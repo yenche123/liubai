@@ -53,8 +53,7 @@ export function useSbTags(emits: SbtEmits) {
 
   // 监听 tag 从外部发生变化
   watch(tagChangedNum, (newV) => {
-    const diff = time.getTime() - lastTagChangeStamp.value
-    if(diff < 500) {
+    if(time.isWithinMillis(lastTagChangeStamp.value, 500)) {
       console.log("tagChangedNum 才刚内部发生变化 忽略")
       return
     }

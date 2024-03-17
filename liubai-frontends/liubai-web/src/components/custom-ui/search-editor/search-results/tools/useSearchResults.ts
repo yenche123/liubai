@@ -19,8 +19,7 @@ export function useSearchResults(
     if(!newV) return
 
     // 避免打开时的快速滚动，故做一个防抖节流
-    const diff = time.getTime() - initStamp
-    if(diff < 500) return
+    if(time.isWithinMillis(initStamp, 500)) return
 
     await nextTick()
 

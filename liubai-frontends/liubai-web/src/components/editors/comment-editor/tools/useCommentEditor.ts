@@ -178,13 +178,10 @@ export function getStorageAtom(
 
 function isJustInitOrFinish(ctx: CeCtx) {
   const s = ctx.lastInitStamp
-  const now = time.getTime()
-  const diff = now - s
-  if(diff < 500) return true
+  if(time.isWithinMillis(s, 500)) return true
 
   const s2 = ctx.lastFinishStamp
-  const diff2 = now - s2
-  if(diff2 < 300) return true
+  if(time.isWithinMillis(s2, 300)) return true
 
   return false
 }

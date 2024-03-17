@@ -68,8 +68,7 @@ export function showStateEditor(param: StateEditorParam) {
 function listenText() {
   const text = toRef(reData, "text")
   watch(text, () => {
-    const diff = time.getTime() - lastShowEditorStamp
-    if(diff > TRANSITION_DURATION) {
+    if(!time.isWithinMillis(lastShowEditorStamp, TRANSITION_DURATION)) {
       checkCanSubmuit()
     }
   })

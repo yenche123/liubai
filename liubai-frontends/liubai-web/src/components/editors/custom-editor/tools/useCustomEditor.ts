@@ -40,10 +40,8 @@ let hideMaskTimeout: LiuTimeout
 function handleEditorScrolling(
   showMask: Ref<boolean>,
 ) {
-  const now = time.getTime()
-  const diff = now - lastScoll
-  if(diff < 300) return
-  lastScoll = now
+  if(time.isWithinMillis(lastScoll, 300)) return
+  lastScoll = time.getTime()
   showMask.value = true
   if(hideMaskTimeout) clearTimeout(hideMaskTimeout)
   hideMaskTimeout = setTimeout(() => {

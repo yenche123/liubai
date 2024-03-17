@@ -8,12 +8,12 @@ const setDiff = (val: number) => {
 }
 
 // 经过标定的时间
-const getTime = (): number => {
+const getTime = () => {
   return Date.now() + diff
 }
 
 // 返回当前时间戳的后四码
-const getLastCharOfStamp = (digit: number = 4): string => {
+const getLastCharOfStamp = (digit: number = 4) => {
   const s = getTime()
   const s1 = String(s)
   const s2 = s1.substring(s1.length - digit)
@@ -21,7 +21,7 @@ const getLastCharOfStamp = (digit: number = 4): string => {
 }
 
 // 返回未经过标定的时间
-const getLocalTime = (): number => {
+const getLocalTime = () => {
   return Date.now()
 }
 
@@ -31,7 +31,7 @@ const getDate = () => {
 }
 
 // 返回当前时间的字符串
-const getLocalTimeStr = (): string => {
+const getLocalTimeStr = () => {
   let t = getTime()
   const d = new Date(t)
   const mon = valTool.format0(d.getMonth()+1)
@@ -42,11 +42,23 @@ const getLocalTimeStr = (): string => {
   return `${mon}-${date} ${hr}:${min}:${sec}`
 }
 
-function getTimezone() {
+const getTimezone = () => {
   const d = new Date()
   const t = d.getTimezoneOffset()
   const t2 = -t / 60
   return t2
+}
+
+/**
+ * check if the stamp is within a range of milliseconds
+ * @param stamp some last stamp
+ * @param range 
+ */
+const isWithinMillis = (stamp: number, ms: number) => {
+  const now = getTime()
+  const diff = now - stamp
+  if(diff < ms) return true
+  return false
 }
 
 
@@ -65,6 +77,7 @@ export default {
   getDate,
   getLocalTimeStr,
   getTimezone,
+  isWithinMillis,
   SECONED,
   MINUTE,
   HOUR,

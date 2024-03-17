@@ -75,8 +75,7 @@ export function initCeState(
   const gStore = useGlobalStateStore()
   const { tagChangedNum } = storeToRefs(gStore)
   watch(tagChangedNum, (newV) => {
-    const diff = time.getTime() - (state.lastTagChangeStamp ?? 1)
-    if(diff < 500) return
+    if(time.isWithinMillis(state.lastTagChangeStamp ?? 1, 500)) return
     const ctx = getCtx()
     if(!ctx) return
     console.log("再次 initDraft.........")

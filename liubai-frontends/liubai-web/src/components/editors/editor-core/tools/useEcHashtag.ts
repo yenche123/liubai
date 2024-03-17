@@ -27,8 +27,7 @@ export function useEcHashtag(
     const isPara = editor.isActive("paragraph")
     if(!isPara) return
 
-    const diff = time.getTime() - lastTriggerStamp
-    if(diff < 500) return
+    if(time.isWithinMillis(lastTriggerStamp, 500)) return
     
     return editor
   }
