@@ -104,11 +104,7 @@ class CloudEventBus {
     // 0. 避免频繁请求的阻断
     // 0.1 判断是否 30s 内已经请求过了
     const lms = this.lastFinishMainStamp
-    const diff1 = time.getTime() - lms
-    if(diff1 < SEC_30) {
-      // console.log("30 s 内进来过了......")
-      return
-    }
+    if(time.isWithinMillis(lms, SEC_30)) return
 
     // 0.2 判断是否正在执行 main()
     if(this.isMaining) return
@@ -172,8 +168,7 @@ class CloudEventBus {
 
     // 30 分钟内已经进入过了直接返回 true，视为已同后端交互过
     const lues = this.lastUserEnterStamp
-    const diff = time.getTime() - lues
-    if(diff < MIN_30) return true
+    if(time.isWithinMillis(lues, MIN_30)) return true
 
     const res = await fetchUserEnter()
     const { code, data: d } = res

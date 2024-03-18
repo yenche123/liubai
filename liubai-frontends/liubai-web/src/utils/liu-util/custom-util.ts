@@ -38,10 +38,8 @@ export function colorToStorage(val: string) {
 /** 在连续压着上（下）键时，能防抖截流一下  */
 let lastKeyUpDown = 0
 export function canKeyUpDown() {
-  const now = time.getTime()
-  const diff = now - lastKeyUpDown
-  if(diff < 50) return false
-  lastKeyUpDown = now
+  if(time.isWithinMillis(lastKeyUpDown, 50)) return false
+  lastKeyUpDown = time.getTime()
   return true
 }
 
@@ -101,11 +99,9 @@ export function canTap(opt?: CanTapOpt) {
       duration: 600
     }
   }
-
-  const now = time.getTime()
-  const diff = now - lastTapBtn
-  if(diff < opt.duration) return false
-  lastTapBtn = now
+  
+  if(time.isWithinMillis(lastTapBtn, opt.duration)) return false
+  lastTapBtn = time.getTime()
   return true
 }
 

@@ -1,6 +1,8 @@
 import type { LiuFileStore, LiuImageStore } from "~/types"
 import time from "../basic/time"
 
+const MIN_3 = 3 * time.MINUTE
+
 // 获取允许的图片类型 由 , 拼接而成的字符串
 export function getAcceptImgTypesString() {
   return "image/png,image/jpg,image/jpeg,image/gif,image/webp"
@@ -93,16 +95,12 @@ function _trimFileMap() {
 
   const MAX_SIZE = 100
   if(size < MAX_SIZE) return
-
-  const now = time.getTime()
-  const MIN_3 = 1000 * 60 * 3
-
+  
   const keys = fileMap.keys()
   for(let key of keys) {
     const data = fileMap.get(key)
     if(!data) continue
-    const diff = now - data.usedStamp
-    if(diff < MIN_3) continue
+    if(time.isWithinMillis(data.usedStamp, MIN_3)) continue
     
     fileMap.delete(key)
 

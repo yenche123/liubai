@@ -198,13 +198,8 @@ function listenThreadShowChanged(
 
   const tStore = useThreadShowStore()
   tStore.$subscribe((mutation, state) => {
-    const now = time.getTime()
-    const diff = now - lastInnerStampRef.value
-    if(diff < 600) {
-      // console.log("刚刚 600ms 内，kanban 内有触发变化，故阻断！！！！")
-      return
-    }
-
+    if(time.isWithinMillis(lastInnerStampRef.value, 600)) return
+    
     const tmp = followEvents.includes(state.whyChange)
     if(!tmp) return
 

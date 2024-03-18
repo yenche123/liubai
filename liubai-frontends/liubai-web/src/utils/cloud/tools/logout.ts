@@ -16,9 +16,7 @@ export function logout(
 ) {
 
   // 0. 防抖节流，3s内进来过，忽略
-  const now = time.getTime()
-  const diffS = now - lastLogoutStamp
-  if(diffS < SEC_3) return
+  if(time.isWithinMillis(lastLogoutStamp, SEC_3)) return
 
   // 1. 去判断是否远端退出
   if(opt?.cloud) {

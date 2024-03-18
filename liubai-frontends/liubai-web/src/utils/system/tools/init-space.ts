@@ -36,11 +36,11 @@ async function getMySpaceIds(userId: string) {
  * @return boolean 返回 true 表示允许继续执行，反之则相反
  */
 function _debounce() {
+  const now = time.getTime()
   if(routeChangeNum !== 2) {
-    lastRouteChange = time.getTime()
+    lastRouteChange = now
     return true
   }
-  const now = time.getTime()
   const diff = now - lastRouteChange
   lastRouteChange = now
   if(diff < 300) return false

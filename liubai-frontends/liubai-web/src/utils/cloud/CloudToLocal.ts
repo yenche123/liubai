@@ -65,13 +65,10 @@ class CloudToLocal {
     if(!this.isOnline) return
 
     const lstd = this.lastStartToDownload
-    const now = time.getTime()
     if(lstd) {
-      const diffS = now - lstd
-      
       // 若小于 5mins，继续等待
       // WARNMING: 大文件可能大于 5min 的下载......
-      if(diffS < MIN_5) return
+      if(time.isWithinMillis(lstd, MIN_5)) return
       _this.closeDownloadWorker()
     }
     
@@ -86,7 +83,7 @@ class CloudToLocal {
       _this.closeDownloadWorker()
     }
 
-    _this.lastStartToDownload = now
+    _this.lastStartToDownload = time.getTime()
     _this.downloadWorker.postMessage("start")
   }
 

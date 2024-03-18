@@ -139,8 +139,7 @@ export function useCeState(
 
   const onTitleEnter = () => {
     // 若前一刻准备去执行 “完成” 的流程，就阻断
-    const diff = time.getTime() - lastPreFinish
-    if(diff < 500) return
+    if(time.isWithinMillis(lastPreFinish, 500)) return
     
     const e = editor.value
     if(!e) return
@@ -187,13 +186,11 @@ export function useCeState(
 }
 
 function _isRequiredChange(state: CeState) {
-  const now = time.getTime()
-  const diff = now - (state.lastInitStamp ?? 1)
-
   // 刚刚才 setup，拒绝缓存图片、文件、tagIds
-  if(diff < 900) {
+  if(time.isWithinMillis(state.lastInitStamp ?? 1, 900)) {
     return false
   }
+
   return true
 }
 

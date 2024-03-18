@@ -1,5 +1,6 @@
 import { watch } from "vue";
 import { CloudEventBus } from "./CloudEventBus";
+import time from "../basic/time";
 
 class LocalToCloud {
 
@@ -17,7 +18,10 @@ class LocalToCloud {
   }
 
   static preTrigger() {
-    let { lastTriggerStamp } = this
+    let { lastTriggerStamp = 1 } = this
+    
+
+
     
   }
 

@@ -53,10 +53,8 @@ export function useMvTouchBox(leftPx: Ref<number>, emits: MainViewEmits) {
       allowOpen = diffPixel > 80
     }
     if(!allowOpen) return
-
-    let now = time.getTime()
-    let diffStamp = now - startStamp
-    if(diffStamp < 1000) {
+    
+    if(time.isWithinMillis(startStamp, time.SECONED)) {
       _toOpen()
     }
   }

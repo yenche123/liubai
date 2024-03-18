@@ -51,9 +51,7 @@ export const useGlobalStateStore = defineStore("globalState", () => {
     lastSelectionChange.value = time.getTime()
   }
   const isJustSelect = () => {
-    const now = time.getTime()
-    const diff = now - lastSelectionChange.value
-    if(diff < 300) return true
+    if(time.isWithinMillis(lastSelectionChange.value, 300)) return true
     return false
   }
 
