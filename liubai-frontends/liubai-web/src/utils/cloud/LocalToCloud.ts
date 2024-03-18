@@ -19,6 +19,9 @@ class LocalToCloud {
 
   static preTrigger() {
     let { lastTriggerStamp = 1 } = this
+    if(time.isWithinMillis(lastTriggerStamp, time.SECONED)) return
+    this.lastTriggerStamp = time.getTime()
+
     
 
 

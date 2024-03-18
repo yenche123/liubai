@@ -56,7 +56,7 @@ const dexieIdxs = {
   upload_tasks: [
     "_id",
     "insertedStamp",
-    "[uploadTask+target_id]",
+    "[user+uploadTask+target_id]",
     "uploadTask",
     "*ids",
   ]

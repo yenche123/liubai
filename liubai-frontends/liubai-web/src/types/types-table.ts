@@ -157,6 +157,7 @@ export interface DownloadTaskLocalTable {
 export interface UploadTaskLocalTable {
   _id: string
   insertedStamp: number
+  user: string
   uploadTask: LiuUploadTask
   ids?: string[]        // 多个 content ids
   target_id?: string    // 单个 content id
