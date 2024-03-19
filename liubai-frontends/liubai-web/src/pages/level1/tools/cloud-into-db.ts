@@ -97,14 +97,13 @@ async function createMember(
   userId: string,
   v: LiuSpaceAndMember,
 ) {
-  const t = time.getTime()
   const { image: avatar } = CloudToLocal.imageFromCloudToStore(v.member_avatar)
+  const b1 = time.getBasicStampWhileAdding()
   const data: MemberLocalTable = {
+    ...b1,
     _id: v.memberId,
     first_id: v.memberId,
     spaceId: v.spaceId,
-    insertedStamp: t,
-    updatedStamp: t,
     user: userId,
     oState: v.member_oState,
     name: v.member_name,

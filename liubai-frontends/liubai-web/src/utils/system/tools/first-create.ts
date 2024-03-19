@@ -70,15 +70,14 @@ async function createWorkspace(
   workspace_local: string,
   user_local: string,
 ): Promise<WorkspaceLocalTable | void> {
-  const t = time.getTime()
+  const b1 = time.getBasicStampWhileAdding()
   const data: WorkspaceLocalTable = {
+    ...b1,
     _id: workspace_local,
     first_id: workspace_local,
     infoType: "ME",
     oState: "OK",
     owner: user_local,
-    insertedStamp: t,
-    updatedStamp: t,
   }
   try {
     const res = await db.workspaces.add(data)
@@ -95,13 +94,12 @@ async function createMember(
   workspace_local: string,
   user_local: string,
 ): Promise<MemberLocalTable | void> {
-  const t = time.getTime()
+  const b1 = time.getBasicStampWhileAdding()
   const data: MemberLocalTable = {
+    ...b1,
     _id: member_local,
     first_id: member_local,
     spaceId: workspace_local,
-    insertedStamp: t,
-    updatedStamp: t,
     user: user_local,
     oState: "OK",
   }

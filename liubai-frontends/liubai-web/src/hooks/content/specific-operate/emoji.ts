@@ -218,13 +218,12 @@ async function addCollection(
   encodeStr: string,
   authData: LiuMyContext,
 ) {
-  const now = time.getTime()
+  const b1 = time.getBasicStampWhileAdding()
   const newId = ider.createCollectId()
-  const w2: CollectionLocalTable = {
+  const w: CollectionLocalTable = {
+    ...b1,
     _id: newId,
     first_id: newId,
-    insertedStamp: now,
-    updatedStamp: now,
     oState: "OK",
     user: authData.userId,
     member: authData.memberId,
@@ -235,6 +234,6 @@ async function addCollection(
     content_id: contentId,
     emoji: encodeStr,
   }
-  const res2 = await db.collections.add(w2)
+  const res = await db.collections.add(w)
   return true
 }

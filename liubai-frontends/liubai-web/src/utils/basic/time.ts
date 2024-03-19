@@ -61,6 +61,15 @@ const isWithinMillis = (stamp: number, ms: number) => {
   return false
 }
 
+/** get current stamp while adding */
+const getBasicStampWhileAdding = () => {
+  const now = getTime()
+  return {
+    insertedStamp: now,
+    updatedStamp: now,
+  }
+}
+
 
 // 将 "秒" / "分" / "时" / "天" 转为 毫秒数
 const SECONED = 1000
@@ -78,6 +87,7 @@ export default {
   getLocalTimeStr,
   getTimezone,
   isWithinMillis,
+  getBasicStampWhileAdding,
   SECONED,
   MINUTE,
   HOUR,
