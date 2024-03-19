@@ -35,7 +35,7 @@ class CloudToLocal {
 
   // 放在 App.ts 中去监听网络变化
   static init() {
-    let _this = this
+    const _this = this
     const networkState = useNetwork()
     const networkState2 = reactive(networkState)
 
@@ -61,7 +61,7 @@ class CloudToLocal {
 
   /** 触发下载 */
   private static triggerDownload() {
-    let _this = this
+    const _this = this
     if(!this.isOnline) return
 
     const lstd = this.lastStartToDownload
@@ -101,7 +101,7 @@ class CloudToLocal {
       return
     }
 
-    let _this = this
+    const _this = this
     _this.checkWorker = new CheckDbWorker()
     _this.checkWorker.onmessage = (e) => {
       const txt = e.data
@@ -146,7 +146,7 @@ class CloudToLocal {
     const data = this.tmp_tasks.find(v => (v.id === id && v.table === table))
     if(data) return
 
-    let _this = this
+    const _this = this
     this.tmp_tasks.push({ id, table })
     if(this.timeoutOfNotify) return
     this.timeoutOfNotify = setTimeout(() => {
