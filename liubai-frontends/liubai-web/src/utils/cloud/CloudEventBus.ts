@@ -18,7 +18,7 @@ import time from "../basic/time";
 import localCache from "../system/local-cache";
 import liuEnv from "../liu-env";
 import { logout } from "./tools/logout";
-import { afterGettingUserData } from "./tools/after-fetch";
+import { afterGettingUserData } from "./tools/after-getting-user-data";
 import type { BoolFunc, LiuTimeout } from "~/utils/basic/type-tool"
 import valTool from "../basic/val-tool";
 import { waitEnterIntoApp } from "~/hooks/useEnterIntoApp";

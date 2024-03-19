@@ -2,7 +2,10 @@ import type {
   LiuImageStore,
   LiuFileStore,
 } from "~/types";
-import { type LiuTable } from "~/types/types-atom"
+import type { 
+  LiuTable, 
+  LiuUploadTask,
+} from "~/types/types-atom";
 
 export interface ImageTransferedRes {
   useCloud: boolean       // check if using cloud image 
@@ -23,3 +26,11 @@ export interface TaskOfC2L {
 }
 
 export type DownloadRes = "success" | "bad_network" | "unknown"
+
+
+export interface UploadTaskParam {
+  uploadTask: LiuUploadTask
+  target_id: string
+  newBool?: boolean      // 同 UploadTaskLocalTable.newBool
+  newStr?: string        // 同 UploadTaskLocalTable.newStr
+}

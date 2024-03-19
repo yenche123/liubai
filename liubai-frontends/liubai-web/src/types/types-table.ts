@@ -164,5 +164,5 @@ export interface UploadTaskLocalTable {
   newBool?: boolean     // 一些开关值，表示最新状态是 true 还是 false
   newStr?: string       // 若 uploadTask 为 emoji 时，此值为 encodeURIComponent() 的表情
                         // 若为取消 emoji，此字段为空字符串
-
+  uploading?: boolean   // 只有在 task-to-upload 中正在被处理时，才标识为 true
 }

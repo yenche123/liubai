@@ -1,10 +1,11 @@
 import { watch } from "vue";
 import { CloudEventBus } from "./CloudEventBus";
 import time from "../basic/time";
-import { type UploadTaskLocalTable } from "~/types/types-table"
 import { type LiuTimeout } from "../basic/type-tool";
 import UploadWorker from "./workers/task-to-upload?worker"
-
+import localCache from "../system/local-cache";
+import type { UploadTaskParam } from "./tools/types";
+import { addUploadTask } from "./tools/add-upload-task";
 
 const MIN_5 = 5 * time.MINUTE
 
@@ -56,8 +57,11 @@ class LocalToCloud {
   }
 
   /** add a task into local db */
-  static async addTask(task: Partial<UploadTaskLocalTable>) {
+  static async addTask(param: UploadTaskParam) {
+    const { local_id: user, token } = localCache.getPreference()
+    if(!user || !token) return false
 
+    addUploadTask(param, user)
   }
 
 
