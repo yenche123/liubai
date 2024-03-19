@@ -1,7 +1,7 @@
 
 
 // 版本号，凡是 dexieIdxs 被修改了，这里都要累加！！！
-export const DB_VERSION = 50
+export const DB_VERSION = 52
 
 const dexieIdxs = {
   users: [
@@ -56,9 +56,7 @@ const dexieIdxs = {
   upload_tasks: [
     "_id",
     "insertedStamp",
-    "[user+uploadTask+target_id]",
-    "uploadTask",
-    "*ids",
+    "[user+uploadTask+content_id+uploading]",
   ]
 }
 

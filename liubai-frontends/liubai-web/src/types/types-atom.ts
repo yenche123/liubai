@@ -182,19 +182,34 @@ export interface LinkPreview {
 export type LiuTable = "users" | "workspaces" | "members" | "drafts" | "contents"
   | "collections"
 
-// 上传类型：
-export type LiuUploadTask = 
-  "content-posts" // 发表（不区分动态或评论）
-  | "thread-edit"          // 编辑动态
-  | "thread-hourglass"     // 倒计时器，使用 newBool 去表示最新状态
-  | "thread-collect"       // 收藏动态，使用 newBool 去表示最新状态
-  | "content-emoji"        // 对 动态、评论 reaction
-  | "thread-delete"        // 删除动态
-  | "thread-state"         // 修改动态的状态
-  | "thread-restore"       // 恢复回收桶里的动态
-  | "thread-delete_forever"  // 彻底删除动态
-  | "thread-pin"           // 是否置顶，使用 newBool 表示最新状态
-  | "thread-float_up"      // 浮上去，使用 newBool 表示最新状态
-  | "thread-tag"           // 修改动态的标签
-  | "comment-delete"       // 删除评论
-  | "comment-edit"         // 编辑评论
+
+/** 
+ * 上传的类型
+ * 注意！所有撤销的操作，一定要得是 "undo_xxx" 的格式，其中 
+ *  xxx 必须就是原操作的名称，否则在 add-upload-task.ts 会运行错误！！ 
+ */
+export const liuUploadTasks = [
+  "content-post",             // 发表（不区分动态或评论）
+  "thread-edit",              // 编辑动态
+  "thread-hourglass",         // 倒计时器，使用 newBool 去表示最新状态
+  "undo_thread-hourglass",    // 【撤销】倒计时
+  "thread-collect",           // 收藏动态，使用 newBool 去表示最新状态
+  "undo_thread-collect",      // 【撤销】收藏
+  "content-emoji",            // 对 动态、评论 reaction
+  "undo_content-emoji",       // 【撤销】reaction
+  "thread-delete",            // 删除动态
+  "undo_thread-delete",       // 【撤销】删除动态
+  "thread-state",             // 修改动态的状态
+  "undo_thread-state",        // 【撤销】修改动态的状态
+  "thread-restore",           // 恢复回收桶里的动态
+  "thread-delete_forever",    // 彻底删除动态
+  "thread-pin",               // 是否置顶，使用 newBool 表示最新状态
+  "undo_thread-pin",          // 【撤销】是否置顶
+  "thread-float_up",          // 浮上去，使用 newBool 表示最新状态
+  "undo_thread-float_up",     // 【撤销】浮上去
+  "thread-tag",               // 修改动态的标签
+  "comment-delete",           // 删除评论
+  "comment-edit",             // 编辑评论
+] as const
+
+export type LiuUploadTask = typeof liuUploadTasks[number]

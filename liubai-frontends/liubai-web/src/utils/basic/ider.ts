@@ -61,6 +61,10 @@ const createDownloadTaskId = () => {
   return "d1" + _createId(20)
 }
 
+const createUploadTaskId = () => {
+  return "u1" + _createId(20)
+}
+
 export default {
   createUserId,
   createStateId,
@@ -75,4 +79,5 @@ export default {
   createCollectId,
   createRandom,
   createDownloadTaskId,
+  createUploadTaskId,
 }
