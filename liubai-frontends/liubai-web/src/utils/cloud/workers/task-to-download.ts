@@ -1,6 +1,6 @@
 import { db } from "~/utils/db"
 import time from "~/utils/basic/time"
-import type { DownloadRes } from "../tools/types"
+import type { SyncRes } from "../tools/types"
 import type { LiuFileStore, LiuImageStore } from "~/types"
 import type { 
   DownloadTaskLocalTable, 
@@ -36,7 +36,7 @@ interface HanWhateverRes {
 }
 
 interface FetchRes {
-  result: DownloadRes
+  result: SyncRes
   arrayBuffer?: ArrayBuffer
   size?: number
   mimeType?: string

@@ -25,7 +25,7 @@ export interface TaskOfC2L {
   id: string
 }
 
-export type DownloadRes = "success" | "bad_network" | "unknown"
+export type SyncRes = "success" | "bad_network" | "unknown"
 
 
 export interface UploadTaskParam {

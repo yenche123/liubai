@@ -50,6 +50,9 @@ class LocalToCloud {
     _this.uploadWorker.onmessage = (e) => {
       const txt = e.data
       
+
+      _this.lastStartToUpload = undefined
+      _this.closeUploadWorker()
     }
 
     _this.lastStartToUpload = time.getTime()

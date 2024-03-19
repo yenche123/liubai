@@ -13,7 +13,7 @@ import type {
   ImageTransferedRes,
   FileTransferedRes,
   TaskOfC2L,
-  DownloadRes,
+  SyncRes,
 } from "./tools/types"
 import CheckDbWorker from "./workers/check-download-task?worker"
 import DownloadWorker from "./workers/task-to-download?worker"
@@ -74,7 +74,7 @@ class CloudToLocal {
     
     _this.downloadWorker = new DownloadWorker()
     _this.downloadWorker.onmessage = (e) => {
-      const txt = e.data as DownloadRes
+      const txt = e.data as SyncRes
       if(txt === "bad_network") {
         _this.isOnline = false
       }
