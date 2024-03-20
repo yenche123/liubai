@@ -64,7 +64,10 @@ class LocalToCloud {
     const { local_id: user, token } = localCache.getPreference()
     if(!user || !token) return false
 
-    addUploadTask(param, user)
+    const res = await addUploadTask(param, user)
+    if(res) {
+      this.preTrigger(true)
+    }
   }
 
 

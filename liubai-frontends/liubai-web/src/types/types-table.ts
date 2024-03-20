@@ -164,4 +164,6 @@ export interface UploadTaskLocalTable {
   newStr?: string       // 若 uploadTask 为 emoji 时，此值为 encodeURIComponent() 的表情
                         // 若为取消 emoji，此字段为空字符串
   uploading: boolean   // 当该条数据正在被 task-to-upload 处理时，标识为 true
+  tryTimes?: number           // 上传失败的次数，若大于某个阈值，就放弃
+  failedStamp?: number        // 最近一次上传失败的时间戳
 }

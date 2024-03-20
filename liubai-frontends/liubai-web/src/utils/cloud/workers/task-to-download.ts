@@ -327,12 +327,12 @@ const handle_task = async (task: DownloadTaskLocalTable) => {
 }
 
 
+// 每次查询出 LIMIT 个 download_tasks
+const LIMIT = 10
+
 /** worker 入口函数 */
 onmessage = async (e) => {
   let times = 0
-
-  // 每次查询出 LIMIT 个 download_tasks
-  const LIMIT = 10
 
   // 去轮询，查找 DownloadTaskLocalTable 是否有任务存在
   while(true) {
