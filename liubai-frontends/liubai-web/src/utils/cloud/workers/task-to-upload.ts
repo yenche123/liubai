@@ -4,15 +4,13 @@ import type {
 } from "~/types/types-table"
 import { db } from "~/utils/db"
 import localCache from "~/utils/system/local-cache"
-
-
+import { handleFiles } from "./tools/handle-files"
 
 
 /** check 10 tasks */
 async function handle10Tasks(tasks: UploadTaskLocalTable[]) {
 
-
-  // 1. check out the files in the tasks
+  await handleFiles(tasks)
 
 
 
@@ -45,7 +43,7 @@ onmessage = async (e) => {
       return true      
     }
 
-    const col = db.upload_tasks.orderBy("insertedStamp")
+    const col = db.upload_tasks.orderBy("insertedStamp").filter(filterFunc)
     const results = await col.limit(LIMIT).toArray()
     const len = results.length
     if(len < 1) break
