@@ -10,7 +10,10 @@ import { handleFiles } from "./tools/handle-files"
 /** check 10 tasks */
 async function handle10Tasks(tasks: UploadTaskLocalTable[]) {
 
-  await handleFiles(tasks)
+  const res1 = await handleFiles(tasks)
+  if(!res1) {
+    return false
+  }
 
 
 
