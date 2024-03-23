@@ -15,7 +15,11 @@ const props = defineProps({
 const emits = defineEmits<MainViewEmits>()
 
 const { leftPx, rightPx } = useMainView()
-const { isOverDropZone, centerRef } = useMvDropZone(props)
+const { 
+  isOverDropZone, 
+  centerRef,
+  onTapCenterDropZone,
+} = useMvDropZone(props)
 const { 
   showTouchBox,
   onTouchStart,
@@ -40,6 +44,7 @@ const onTapCenter = (e: MouseEvent) => {
         :is-over-drop-zone="isOverDropZone"
         :left-px="leftPx"
         :right-px="rightPx"
+        @tap="onTapCenterDropZone"
       ></center-drop-zone>
 
     </div>

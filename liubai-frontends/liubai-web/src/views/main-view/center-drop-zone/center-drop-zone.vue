@@ -16,6 +16,10 @@ defineProps({
   }
 })
 
+defineEmits<{
+  (evt: "tap"): void
+}>()
+
 const { t } = useI18n()
 const color = "#c7c9ca"
 
@@ -23,6 +27,7 @@ const color = "#c7c9ca"
 <template>
   <div class="cdz-container"
     :class="{ 'cdz-container_show': isOverDropZone }"
+    @click="$emit('tap')"
   >
 
     <div class="cdz-add">
