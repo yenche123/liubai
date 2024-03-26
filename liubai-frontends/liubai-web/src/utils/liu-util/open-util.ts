@@ -6,6 +6,7 @@ import cfg from "~/config"
 import thirdLink from "~/config/third-link"
 import { useLayoutStore } from "~/views/useLayoutStore"
 import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore"
+import liuEnv from "../liu-env"
 
 interface RrOpt {
   rr: RouteAndLiuRouter
@@ -191,6 +192,15 @@ function openLink(
   if(!res) {
     window.open(url, "_blank")
     return "outter"
+  }
+
+  const _env = liuEnv.getEnv()
+  if(!_env.IFRAME_PROXY) {
+    const inAllowed = vStore.isInAllowedList(url)
+    if(!inAllowed) {
+      window.open(url, "_blank")
+      return "outter"
+    }
   }
 
   const vlink = vStore.addLink(url)
