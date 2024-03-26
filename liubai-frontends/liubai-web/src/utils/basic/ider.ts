@@ -65,6 +65,10 @@ const createUploadTaskId = () => {
   return "u1" + _createId(20)
 }
 
+const createEncNonce = () => {
+  return _createId(10)
+}
+
 export default {
   createUserId,
   createStateId,
@@ -80,4 +84,5 @@ export default {
   createRandom,
   createDownloadTaskId,
   createUploadTaskId,
+  createEncNonce,
 }

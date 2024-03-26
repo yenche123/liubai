@@ -59,7 +59,8 @@ export interface LiuSpaceAndMember {
 
 
 /*************************** 加解密 **********************/
-export interface LiuEnc<T> {
+export interface LiuPlainText<T = any> {
+  pre: string        // client_key 的前五码
   nonce: string
   data: T
 }

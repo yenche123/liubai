@@ -326,6 +326,13 @@ export interface CredentialMetaData {
   plan?: string
 }
 
+// 加解密相关
+export interface CryptoCipherAndIV {
+  cipherText: string
+  iv: string
+}
+
+
 /*********************** 数据表类型 **********************/
 
 /** Token表 */

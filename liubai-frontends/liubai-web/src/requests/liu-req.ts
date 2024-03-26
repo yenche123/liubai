@@ -5,12 +5,20 @@ import valTool from "~/utils/basic/val-tool"
 import time from "~/utils/basic/time"
 import typeCheck from "~/utils/basic/type-check"
 import liuApi from "~/utils/liu-api"
+import { toEncrypt, toDecrypt } from "./tools/req-funcs"
 
-function _getBody<U extends Record<string, any>>(
+async function _getBody<U extends Record<string, any>>(
   body?: U,
 ) {
   
   const p = localCache.getPreference()
+
+  // 1. encrypt some data in body
+  if(body && p.client_key) {
+    await handleBeforeFetching(body, p.client_key)
+  }
+
+  // 2. add some common data
   const b: Record<string, any> = {
     x_liu_language: navigator.language,
     x_liu_theme: liuApi.getThemeFromSystem(),
@@ -47,12 +55,13 @@ async function request<
   opt?: LiuRqOpt,
 ): Promise<LiuRqReturn<T>> {
 
+  const b = await _getBody(body)
   let init: RequestInit = {
     method: opt?.method ?? "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: _getBody(body),
+    body: b,
     signal: opt?.signal ?? AbortSignal.timeout(opt?.timeout ?? 10000),
   }
   
@@ -107,8 +116,62 @@ async function request<
   }
 
   let res2 = await res.json() as LiuRqReturn<T>
+
+  if(res2.data) {
+    const newData = await handleAfterFetching(res2.data)
+    if(!newData) {
+      return { code: "E4009", errMsg: "decrypt error on local client" }
+    }
+    res2.data = newData
+  }
+
   return res2
 }
+
+
+async function handleBeforeFetching(
+  body: any,
+  client_key: string,
+) {
+  const keys = Object.keys(body)
+  for(let i=0; i<keys.length; i++) {
+    const k = keys[i]
+    if(!k.startsWith("plz_enc_")) continue
+    const newK = k.replace("plz_enc_", "liu_enc_")
+    const data = body[k]
+    const res = await toEncrypt(data, client_key)
+    body[newK] = res as any
+    delete body[k]
+  }
+}
+
+async function handleAfterFetching(
+  data: any,
+) {
+
+  if(typeof data !== "object") return data
+
+  const p = localCache.getPreference()
+  const client_key = p.client_key
+  if(!client_key) return
+
+  const keys = Object.keys(data)
+  for(let i=0; i<keys.length; i++) {
+    const k = keys[i]
+    const v = data[k]
+    if(!k.startsWith("liu_enc_")) continue
+    const newK = k.replace("liu_enc_", "")
+    const res = await toDecrypt(v, client_key)
+    if(res === undefined) {
+      return
+    }
+    data[newK] = res
+    delete data[k]
+  }
+
+  return data
+}
+
 
 
 export default {
