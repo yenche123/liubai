@@ -1,12 +1,37 @@
 import * as crypto from "crypto"
+import type { CryptoCipherAndIV } from "@/common-types"
+import { verifyToken } from '@/common-util'
 
 export async function main(ctx: FunctionContext) {
-  console.log("welcome to debug-aes hahaha")
-  
-  // const key = crypto.randomBytes(32)    // 32 字节 = 256 位
-  // const iv = crypto.randomBytes(16)    // 16 字节 = 128 位
 
-  return true
+  const body = ctx.request?.body ?? {}
+  const vRes = await verifyToken(ctx, body)
+  const user = vRes.userData
+  if(!vRes.pass || !user) {
+    return vRes.rqReturn ?? { code: "E5001" }
+  }
+
+  const client_key = vRes.tokenData?.client_key
+  console.log("client_key: ", client_key)
+  
+  if(!client_key) {
+    return { code: "E4004", errMsg: "there is no client_key on cloud" }
+  }
+
+  const civ = body.liu_enc_test as CryptoCipherAndIV
+  if(!civ) {
+    return { code: "E4004", errMsg: "there is no civ" }
+  }
+
+  console.log("civ: ")
+  console.log(civ)
+
+  const plainText = decryptWithAES(civ.cipherText, client_key, civ.iv)
+  if(!plainText) {
+    return { code: "E5001", errMsg: "decryptWithAES 失败" }
+  }
+
+  return { code: "0000", data: { plainText } }
 }
 
 
