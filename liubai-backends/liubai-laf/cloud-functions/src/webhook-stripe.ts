@@ -64,7 +64,7 @@ function preCheck(
     return { code: "E5001", errMsg: "stripe api key is not existed in process.env" }
   }
 
-  const body = ctx.body ?? {}
+  const body = ctx.request?.body ?? {}
   const sig = ctx.headers?.['stripe-signature']
   
   if(!sig) {
@@ -107,7 +107,7 @@ async function retrieveEvent(
   const stripe = getStripeInstance()
   if(!stripe) return { rqReturn: { code: "E5001", errMsg: "no stripe instance" } }
 
-  const id = ctx.body?.id as string
+  const id = ctx.request?.body?.id as string
   try {
     const event = await stripe.events.retrieve(id)
     return { event }
@@ -185,7 +185,7 @@ async function handleStripeEvent(
   }
   else if(tp === "customer.subscription.updated") {
     const obj = evt.data.object
-    handle_subscription_updated(obj)
+    res = await handle_subscription_updated(obj)
   }
   else if(tp === "payment_intent.amount_capturable_updated") {
     // PaymentIntent 可捕获的金额发生更新
