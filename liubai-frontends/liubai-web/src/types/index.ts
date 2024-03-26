@@ -1,4 +1,5 @@
 import type { RouteLocation } from 'vue-router'
+import type { SpaceType } from "./types-basic"
 
 export interface LiuFileStore {
   id: string
@@ -64,6 +65,13 @@ export interface LiuUser {
   token?: string
   createdStamp: number
   lastRefresh: number
+}
+
+export interface LiuMyContext {
+  userId: string
+  memberId: string
+  spaceId: string
+  spaceType: SpaceType
 }
 
 export type ToRoute = RouteLocation & { href: string }

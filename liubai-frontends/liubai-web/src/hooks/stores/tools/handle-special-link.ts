@@ -1,5 +1,5 @@
 import valTool from "~/utils/basic/val-tool";
-import type { ParticularScript } from "~/types/types-third-party";
+import type { ParticularScript } from "~/types/types-atom";
 import thirdLink from "~/config/third-link";
 
 // 判断给定的链接，是否需要注入第三方 script 才能在应用内打开的

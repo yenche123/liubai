@@ -1,4 +1,4 @@
-import type { ParticularScript } from "~/types/types-third-party"
+import type { ParticularScript } from "~/types/types-atom"
 import type { RouteLocationNormalizedLoaded } from "vue-router";
 import type { LiuRouter } from "~/routes/liu-router"
 import type { BasicView } from "~/types/types-view"

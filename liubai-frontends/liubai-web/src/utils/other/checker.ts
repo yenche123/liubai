@@ -3,7 +3,7 @@
 import cui from "~/components/custom-ui"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { ThreadShow } from "~/types/types-content"
-import type { LiuMyContext } from "~/types/types-context"
+import type { LiuMyContext } from "~/types"
 import localCache from "~/utils/system/local-cache"
 
 interface CheckerParam {

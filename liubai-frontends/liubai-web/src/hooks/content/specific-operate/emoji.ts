@@ -7,7 +7,7 @@ import checker from "~/utils/other/checker";
 import type {
   CollectionLocalTable,
 } from "~/types/types-table";
-import type { LiuMyContext } from "~/types/types-context";
+import type { LiuMyContext } from "~/types";
 import time from "~/utils/basic/time";
 import ider from "~/utils/basic/ider";
 import type { CommentShow, ThreadShow, EmojiData } from "~/types/types-content";

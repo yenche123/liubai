@@ -58,6 +58,12 @@ export interface LiuSpaceAndMember {
 }
 
 
+/*************************** 加解密 **********************/
+export interface LiuEnc<T> {
+  nonce: string
+  data: T
+}
+
 
 /*************************** 订阅相关 **********************/
 
