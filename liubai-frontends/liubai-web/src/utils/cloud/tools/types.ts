@@ -34,3 +34,10 @@ export interface UploadTaskParam {
   newBool?: boolean      // 同 UploadTaskLocalTable.newBool
   newStr?: string        // 同 UploadTaskLocalTable.newStr
 }
+
+
+/** 主进程向每个子进程发消息时，会传入的数据包 */
+export interface MainToChildMessage {
+  userId?: string
+  timeDiff: number
+}

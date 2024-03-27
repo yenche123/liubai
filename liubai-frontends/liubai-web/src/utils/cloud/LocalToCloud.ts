@@ -6,6 +6,7 @@ import UploadWorker from "./workers/task-to-upload?worker"
 import localCache from "../system/local-cache";
 import type { UploadTaskParam } from "./tools/types";
 import { addUploadTask } from "./tools/add-upload-task";
+import { getMainToChildMessage } from "./tools/some-funcs"
 
 const MIN_5 = 5 * time.MINUTE
 
@@ -55,8 +56,9 @@ class LocalToCloud {
       _this.closeUploadWorker()
     }
 
+    const msg = getMainToChildMessage()
     _this.lastStartToUpload = time.getTime()
-    _this.uploadWorker.postMessage("start")
+    _this.uploadWorker.postMessage(msg)
   }
 
   /** add a task into local db */

@@ -1,5 +1,7 @@
+import time from "~/utils/basic/time";
 import { db } from "~/utils/db";
 import localCache from "~/utils/system/local-cache";
+import type { MainToChildMessage } from "./types";
 
 /** put some useful funcs here to let CloudEventBus invoke */
 
@@ -8,4 +10,15 @@ export async function getUser() {
   if(!local_id) return
   const user = await db.users.get(local_id)
   return user
+}
+
+
+export function getMainToChildMessage() {
+  const { local_id: userId } = localCache.getPreference()
+  const timeDiff = time.getDiff()
+  const data: MainToChildMessage = {
+    userId,
+    timeDiff,
+  }
+  return data
 }

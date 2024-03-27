@@ -12,6 +12,8 @@ const TAG = "liu_"
 
 // 去监听其他标签页 
 const _listenStorageChange = () => {
+  if(typeof window === "undefined") return
+
   hasListenStorageChange = true
 
   // 只有在不同标签页或窗口才监听得到
@@ -66,7 +68,10 @@ const getStorageSync = <T = any>(key: string): T | undefined | null => {
   try {
     s = localStorage.getItem(_key)
   }
-  catch(err) {}
+  catch(err) {
+    console.warn("localStorage error......")
+    console.log(err)
+  }
   
   if(s && typeof s === "string") {
     let obj = JSON.parse(s)

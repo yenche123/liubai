@@ -7,6 +7,8 @@ const setDiff = (val: number) => {
   diff = val
 }
 
+const getDiff = () => diff
+
 // 经过标定的时间
 const getTime = () => {
   return Date.now() + diff
@@ -80,6 +82,7 @@ const WEEK = 7 * DAY
 
 export default {
   setDiff,
+  getDiff,
   getTime,
   getLastCharOfStamp,
   getLocalTime,
