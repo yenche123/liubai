@@ -1,6 +1,6 @@
 import { db } from "~/utils/db"
 import time from "~/utils/basic/time"
-import type { SyncRes } from "../tools/types"
+import type { MainToChildMessage, SyncRes } from "../tools/types"
 import type { LiuFileStore, LiuImageStore } from "~/types"
 import type { 
   DownloadTaskLocalTable, 
@@ -9,6 +9,7 @@ import type {
   WorkspaceLocalTable,
   ContentLocalTable,
 } from "~/types/types-table"
+import { initWorker } from "./tools/worker-funcs"
 
 interface HanTaskRes {
   hasEverUnknown?: boolean
@@ -332,6 +333,10 @@ const LIMIT = 10
 
 /** worker 入口函数 */
 onmessage = async (e) => {
+
+  const msg = e.data as MainToChildMessage
+  initWorker(msg)
+
   let times = 0
 
   // 去轮询，查找 DownloadTaskLocalTable 是否有任务存在

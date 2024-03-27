@@ -5,6 +5,7 @@ import type {
 import { db } from "~/utils/db"
 import { handleFiles } from "./tools/handle-files"
 import type { MainToChildMessage } from "../tools/types"
+import { initWorker } from "./tools/worker-funcs"
 
 
 /** check 10 tasks */
@@ -33,7 +34,7 @@ onmessage = async (e) => {
 
   // 1. init context
   const msg = e.data as MainToChildMessage
-  time.setDiff(msg.timeDiff)
+  initWorker(msg)
 
   // 2. check if userId is existed
   if(!msg.userId) {

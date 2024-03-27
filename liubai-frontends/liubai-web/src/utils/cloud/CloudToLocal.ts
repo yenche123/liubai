@@ -14,11 +14,13 @@ import type {
   FileTransferedRes,
   TaskOfC2L,
   SyncRes,
+  CheckDownloadTaskParam,
 } from "./tools/types"
 import CheckDbWorker from "./workers/check-download-task?worker"
 import DownloadWorker from "./workers/task-to-download?worker"
 import time from "../basic/time";
 import valTool from "../basic/val-tool";
+import { getMainToChildMessage } from "./tools/some-funcs";
 
 
 const MIN_5 = 5 * time.MINUTE
@@ -83,8 +85,9 @@ class CloudToLocal {
       _this.closeDownloadWorker()
     }
 
+    const msg = getMainToChildMessage()
     _this.lastStartToDownload = time.getTime()
-    _this.downloadWorker.postMessage("start")
+    _this.downloadWorker.postMessage(msg)
   }
 
   private static closeDownloadWorker() {
@@ -118,7 +121,11 @@ class CloudToLocal {
       if(len > 0) {
         console.log("有新任务需要存到 IndexedDB..............")
         const tmpList2 = valTool.copyObject(list2)
-        _this.checkWorker?.postMessage?.(tmpList2)
+        const param2: CheckDownloadTaskParam = {
+          tasks: tmpList2,
+          msg: getMainToChildMessage(),
+        }
+        _this.checkWorker?.postMessage?.(param2)
       }
       else {
         _this.closeCheckWorker()
@@ -128,7 +135,11 @@ class CloudToLocal {
     // 1. 去检查 IndexedDB 是否已存在了
     // 2. 若不存在，存到 IndexedDB
     const tmpList = valTool.copyObject(list)
-    _this.checkWorker.postMessage(tmpList)
+    const param: CheckDownloadTaskParam = {
+      tasks: tmpList,
+      msg: getMainToChildMessage(),
+    }
+    _this.checkWorker.postMessage(param)
   }
 
   private static closeCheckWorker() {

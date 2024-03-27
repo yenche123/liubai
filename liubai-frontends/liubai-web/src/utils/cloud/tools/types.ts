@@ -41,3 +41,8 @@ export interface MainToChildMessage {
   userId?: string
   timeDiff: number
 }
+
+export interface CheckDownloadTaskParam {
+  tasks: TaskOfC2L[]
+  msg: MainToChildMessage
+}
