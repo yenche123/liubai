@@ -5,7 +5,10 @@ import valTool from "~/utils/basic/val-tool"
 import time from "~/utils/basic/time"
 import typeCheck from "~/utils/basic/type-check"
 import liuApi from "~/utils/liu-api"
-import { toEncrypt, toDecrypt } from "./tools/req-funcs"
+import { 
+  handleBeforeFetching,
+  handleAfterFetching,
+} from "./tools/req-funcs"
 
 async function _getBody<U extends Record<string, any>>(
   body?: U,
@@ -126,50 +129,6 @@ async function request<
   }
 
   return res2
-}
-
-
-async function handleBeforeFetching(
-  body: any,
-  client_key: string,
-) {
-  const keys = Object.keys(body)
-  for(let i=0; i<keys.length; i++) {
-    const k = keys[i]
-    if(!k.startsWith("plz_enc_")) continue
-    const newK = k.replace("plz_enc_", "liu_enc_")
-    const data = body[k]
-    const res = await toEncrypt(data, client_key)
-    body[newK] = res as any
-    delete body[k]
-  }
-}
-
-async function handleAfterFetching(
-  data: any,
-) {
-
-  if(typeof data !== "object") return data
-
-  const p = localCache.getPreference()
-  const client_key = p.client_key
-  if(!client_key) return
-
-  const keys = Object.keys(data)
-  for(let i=0; i<keys.length; i++) {
-    const k = keys[i]
-    const v = data[k]
-    if(!k.startsWith("liu_enc_")) continue
-    const newK = k.replace("liu_enc_", "")
-    const res = await toDecrypt(v, client_key)
-    if(res === undefined) {
-      return
-    }
-    data[newK] = res
-    delete data[k]
-  }
-
-  return data
 }
 
 
