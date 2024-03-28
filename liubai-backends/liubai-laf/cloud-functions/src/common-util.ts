@@ -16,6 +16,8 @@ import type {
   SupportedClient,
   PartialSth,
   LiuRqReturn,
+  CryptoCipherAndIV,
+  LiuPlainText,
 } from '@/common-types'
 import { supportedLocales } from "@/common-types"
 import { createToken } from "@/common-ids"
@@ -581,6 +583,116 @@ export async function verifyToken(
 }
 
 
+interface GetDecryptedBodyRes {
+  rqReturn?: LiuRqReturn
+  newBody?: Record<string, any>
+}
+
+/** 获取解密后的 body */
+export function getDecryptedBody(
+  oldBody: Record<string, any>,
+  vRes: VerifyTokenRes,
+): GetDecryptedBodyRes {
+
+  const client_key = vRes?.tokenData?.client_key
+  if(!client_key) {
+    return {
+      rqReturn: { 
+        code: "E5001", 
+        errMsg: "there is no client_key on cloud"
+      }
+    }
+  }
+
+  const keys = Object.keys(oldBody)
+  const newBody: Record<string, any> = {}
+  for(let i=0; i<keys.length; i++) {
+    const k = keys[i]
+    if(!k.startsWith("liu_enc_")) {
+      newBody[k] = oldBody[k]
+      continue
+    }
+    const newK = k.replace("liu_enc_", "")
+    const data = oldBody[k] as CryptoCipherAndIV
+    const plainText = decryptWithAES(data, client_key)
+    if(!plainText) {
+      return {
+        rqReturn: {
+          code: "E4009",
+          errMsg: "decryptWithAES failed",
+        }
+      }
+    }
+
+    const obj = strToObj(plainText) as LiuPlainText
+    if(!obj) {
+      return {
+        rqReturn: {
+          code: "E4009",
+          errMsg: "we cannot parse plain text",
+        }
+      }
+    }
+    if(obj.pre !== client_key.substring(0, 5)) {
+      return {
+        rqReturn: {
+          code: "E4009",
+          errMsg: "pre is not equal to client_key's first 5 characters",
+        }
+      }
+    }
+    newBody[newK] = obj.data
+  }
+
+  return { newBody }
+}
+
+
+
+function decryptWithAES(
+  civ: CryptoCipherAndIV,
+  key: string,
+) {
+  const { iv, cipherText } = civ
+  const keyBuffer = Buffer.from(key, "base64")
+  const ivBuffer = Buffer.from(iv, "base64")
+
+  const decipher = crypto.createDecipheriv('aes-256-gcm', keyBuffer, ivBuffer)
+
+  // 分割 tag 和 data(密文)
+  const tagLength = 16; // 16 字节的 tag 长度
+  const encryptedBuffer = Buffer.from(cipherText, 'base64')
+  const tag = encryptedBuffer.subarray(encryptedBuffer.length - tagLength)
+  const data = encryptedBuffer.subarray(0, encryptedBuffer.length - tagLength)
+
+  try {
+    decipher.setAuthTag(tag)
+  }
+  catch(err) {
+    console.warn("setAuthTag 异常......")
+    console.log(err)
+    console.log(" ")
+    return null
+  }
+
+  let decrypted = ""
+  try {
+    decrypted = decipher.update(data, undefined, 'utf8')
+    const lastWord = decipher.final('utf-8')
+    decrypted += lastWord
+  }
+  catch(err) {
+    console.warn("AES 解密失败.....")
+    console.log(err)
+    console.log(" ")
+    return null
+  }
+
+  return decrypted
+}
+
+
+
 /** 获取 ip 的 ISO 3166-1 代码 */
 export function getIpArea(ctx: FunctionContext) {
   const ip = ctx.headers?.['x-real-ip']
@@ -682,6 +794,31 @@ export function updateUserInCache(
   // 因为引用存在时，修改里头的值时，外部的 shared 也会更改
   // 若引用不存在时，代表为空的 map 也不需要更新
 }
+
+/********************* 工具函数 ****************/
+
+// 字符串转对象
+function strToObj<T = any>(str: string): T {
+  let res = {}
+  try {
+    res = JSON.parse(str)
+  }
+  catch(err) {}
+  return res as T
+}
+
+// 对象转字符串
+function objToStr<T = any>(obj: T): string {
+  let str = ``
+  try {
+    str = JSON.stringify(obj)
+  }
+  catch(err) {}
+  return str
+}
+
+
+/********************* stripe 相关 ****************/
 
 /**
  * stripe 的一些对象中的属性，有时候是 string 的 id 值

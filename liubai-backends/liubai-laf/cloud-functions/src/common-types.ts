@@ -326,10 +326,16 @@ export interface CredentialMetaData {
   plan?: string
 }
 
-// 加解密相关
+/*********************** 加解密相关 **********************/
 export interface CryptoCipherAndIV {
   cipherText: string
   iv: string
+}
+
+export interface LiuPlainText<T = any> {
+  pre: string        // client_key 的前五码
+  nonce: string
+  data: T
 }
 
 
