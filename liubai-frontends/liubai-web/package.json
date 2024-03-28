@@ -48,6 +48,7 @@
     "nanoid": "^5.0.6",
     "pinia": "^2.1.7",
     "prosemirror-virtual-cursor": "^0.4.2",
+    "qiniu-js": "^3.4.2",
     "swiper": "^11.0.7",
     "tippy.js": "^6.3.7",
     "vconsole": "^3.15.1",
