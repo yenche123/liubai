@@ -20,7 +20,7 @@ import type {
   LiuPlainText,
 } from '@/common-types'
 import { supportedLocales } from "@/common-types"
-import { createToken } from "@/common-ids"
+import { createToken, createEncNonce } from "@/common-ids"
 import { 
   getNowStamp, 
   getBasicStampWhileAdding, 
@@ -583,6 +583,94 @@ export async function verifyToken(
 }
 
 
+
+/************************** 加解密相关 **********************/
+
+interface GetEncryptedDataRes {
+  rqReturn?: LiuRqReturn
+  newData?: Record<string, any>
+}
+
+/** 获取加密后的返回数据 */
+export function getEncryptedData(
+  oldData: Record<string, any>,
+  vRes: VerifyTokenRes,
+): GetEncryptedDataRes {
+  const client_key = vRes?.tokenData?.client_key
+  if(!client_key) {
+    return {
+      rqReturn: { 
+        code: "E5001", 
+        errMsg: "there is no client_key in getEncryptedData"
+      }
+    }
+  }
+
+  const keys = Object.keys(oldData)
+  const newData: Record<string, any> = {}
+  for(let i=0; i<keys.length; i++) {
+    const k = keys[i]
+    if(!k.startsWith("plz_enc_")) {
+      newData[k] = oldData[k]
+      continue
+    }
+    const newK = k.replace("plz_enc_", "liu_enc_")
+    const val = oldData[k] as CryptoCipherAndIV
+    const p1: LiuPlainText = {
+      pre: client_key.substring(0, 5),
+      nonce: createEncNonce(),
+      data: val,
+    }
+    const p2 = objToStr(p1)
+    const newVal = encryptWithAES(p2, client_key)
+    if(!newVal) {
+      return {
+        rqReturn: { 
+          code: "E4009", 
+          errMsg: "encryptWithAES failed"
+        }
+      }
+    }
+    newData[newK] = newVal
+  }
+
+  return { newData }
+}
+
+
+function encryptWithAES(
+  plainText: string,
+  key: string,
+) {
+  const keyBuffer = Buffer.from(key, "base64")
+  const ivBuffer = crypto.randomBytes(16)
+  const iv = ivBuffer.toString("base64")
+
+  const cipher = crypto.createCipheriv('aes-256-gcm', keyBuffer, ivBuffer)
+  let encrypted = cipher.update(plainText, 'utf8', 'base64')
+  encrypted += cipher.final('base64')
+  
+  let tag: Buffer
+  try {
+    tag = cipher.getAuthTag()
+  }
+  catch(err) {
+    console.warn("获取 tag 失败.......")
+    console.log(err)
+    return null
+  }
+  const encryptedDataWithTag = Buffer.concat([Buffer.from(encrypted, 'base64'), Buffer.from(tag)])
+  const cipherText = encryptedDataWithTag.toString("base64")
+
+  const res: CryptoCipherAndIV = {
+    cipherText,
+    iv,
+  }
+
+  return res
+}
+
+
 interface GetDecryptedBodyRes {
   rqReturn?: LiuRqReturn
   newBody?: Record<string, any>
@@ -593,13 +681,12 @@ export function getDecryptedBody(
   oldBody: Record<string, any>,
   vRes: VerifyTokenRes,
 ): GetDecryptedBodyRes {
-
   const client_key = vRes?.tokenData?.client_key
   if(!client_key) {
     return {
       rqReturn: { 
         code: "E5001", 
-        errMsg: "there is no client_key on cloud"
+        errMsg: "there is no client_key in getDecryptedBody"
       }
     }
   }

@@ -93,3 +93,8 @@ export function createOrderId() {
   return randomString
 }
 
+/** 创建加密数据里的 nonce */
+export function createEncNonce() {
+  return createRandom(10)
+}
+
