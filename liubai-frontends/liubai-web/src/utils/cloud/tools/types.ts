@@ -5,6 +5,7 @@ import type {
 import type { 
   LiuTable, 
   LiuUploadTask,
+  SupportedTheme,
 } from "~/types/types-atom";
 
 export interface ImageTransferedRes {
@@ -39,7 +40,12 @@ export interface UploadTaskParam {
 /** 主进程向每个子进程发消息时，会传入的数据包 */
 export interface MainToChildMessage {
   userId?: string
+  token?: string
+  serial?: string       // token 所在的序列号
+  client_key?: string   // 前端生成的 aes 密钥
   timeDiff: number
+  system_language: string
+  system_theme: SupportedTheme
 }
 
 export interface CheckDownloadTaskParam {
