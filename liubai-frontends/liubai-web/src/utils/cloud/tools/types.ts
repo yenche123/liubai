@@ -39,6 +39,7 @@ export interface UploadTaskParam {
 
 /** 主进程向每个子进程发消息时，会传入的数据包 */
 export interface MainToChildMessage {
+  event: string         // 事件名称
   userId?: string
   token?: string
   serial?: string       // token 所在的序列号

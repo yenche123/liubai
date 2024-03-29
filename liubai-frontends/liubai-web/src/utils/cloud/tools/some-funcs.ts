@@ -14,7 +14,9 @@ export async function getUser() {
 }
 
 
-export function getMainToChildMessage() {
+export function getMainToChildMessage(
+  event: string,
+) {
   const { 
     local_id: userId, 
     token,
@@ -23,6 +25,7 @@ export function getMainToChildMessage() {
   } = localCache.getPreference()
   const timeDiff = time.getDiff()
   const data: MainToChildMessage = {
+    event,
     userId,
     timeDiff,
     token,

@@ -85,7 +85,7 @@ class CloudToLocal {
       _this.closeDownloadWorker()
     }
 
-    const msg = getMainToChildMessage()
+    const msg = getMainToChildMessage("start")
     _this.lastStartToDownload = time.getTime()
     _this.downloadWorker.postMessage(msg)
   }
@@ -123,7 +123,7 @@ class CloudToLocal {
         const tmpList2 = valTool.copyObject(list2)
         const param2: CheckDownloadTaskParam = {
           tasks: tmpList2,
-          msg: getMainToChildMessage(),
+          msg: getMainToChildMessage("start"),
         }
         _this.checkWorker?.postMessage?.(param2)
       }
@@ -137,7 +137,7 @@ class CloudToLocal {
     const tmpList = valTool.copyObject(list)
     const param: CheckDownloadTaskParam = {
       tasks: tmpList,
-      msg: getMainToChildMessage(),
+      msg: getMainToChildMessage("start"),
     }
     _this.checkWorker.postMessage(param)
   }

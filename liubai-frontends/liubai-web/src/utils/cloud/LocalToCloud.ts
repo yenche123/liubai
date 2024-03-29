@@ -56,7 +56,7 @@ class LocalToCloud {
       _this.closeUploadWorker()
     }
 
-    const msg = getMainToChildMessage()
+    const msg = getMainToChildMessage("start")
     _this.lastStartToUpload = time.getTime()
     _this.uploadWorker.postMessage(msg)
   }
