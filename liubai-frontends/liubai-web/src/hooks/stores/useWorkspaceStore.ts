@@ -8,6 +8,11 @@ import type { SpaceType } from "~/types/types-basic"
 import type { MemberConfig } from "~/types/other/types-custom";
 
 export interface SpaceAndMemberOpt {
+
+  userId: string
+  serial?: string
+  token?: string
+
   spaceId: string
   memberId: string
   isCollaborative: boolean
@@ -16,6 +21,10 @@ export interface SpaceAndMemberOpt {
 }
 
 export const useWorkspaceStore = defineStore("workspace", () => {
+
+  const userId = ref("")
+  const serial = ref<string | undefined>()
+  const token = ref<string | undefined>()
 
   const spaceId = ref("")
   const spaceType = ref<SpaceType | "">("")
@@ -50,6 +59,9 @@ export const useWorkspaceStore = defineStore("workspace", () => {
   }
 
   const setSpaceAndMember = (opt: SpaceAndMemberOpt) => {
+    userId.value = opt.userId
+    token.value = opt.token
+    serial.value = opt.serial
     spaceType.value = opt.isCollaborative ? "TEAM" : "ME"
     spaceId.value = opt.spaceId
     memberId.value = opt.memberId
@@ -57,6 +69,11 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     workspace.value = opt.isCollaborative ? opt.spaceId : "ME"
     currentSpace.value = opt.currentSpace ?? null
     myMember.value = opt.myMember ?? null
+  }
+
+  const updateSerialAndToken = (newSerial: string, newToken: string) => {
+    serial.value = newSerial
+    token.value = newToken
   }
 
   const setNickName = async (val: string) => {
@@ -106,6 +123,9 @@ export const useWorkspaceStore = defineStore("workspace", () => {
   }
 
   const logout = () => {
+    userId.value = ""
+    token.value = undefined
+    serial.value = undefined
     spaceId.value = ""
     spaceType.value = ""
     memberId.value = ""
@@ -117,6 +137,9 @@ export const useWorkspaceStore = defineStore("workspace", () => {
   }
 
   return { 
+    userId,
+    token,
+    serial,
     spaceType,
     spaceId, 
     memberId,
@@ -133,6 +156,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     setMemberConfig,
     setStateConfig,
     setMySpaceIds,
+    updateSerialAndToken,
     logout,
   }
 })

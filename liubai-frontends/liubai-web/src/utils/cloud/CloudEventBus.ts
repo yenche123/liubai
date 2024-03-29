@@ -23,6 +23,7 @@ import type { BoolFunc, LiuTimeout } from "~/utils/basic/type-tool"
 import valTool from "../basic/val-tool";
 import { waitEnterIntoApp } from "~/hooks/useEnterIntoApp";
 import { getUser } from "./tools/some-funcs";
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 
 const SEC_30 = 30 * time.SECONED
 const MIN_30 = 30 * time.MINUTE
@@ -177,6 +178,8 @@ class CloudEventBus {
       if(d.new_serial && d.new_token) {
         localCache.setPreference("serial", d.new_serial)
         localCache.setPreference("token", d.new_token)
+        const wStore = useWorkspaceStore()
+        wStore.updateSerialAndToken(d.new_serial, d.new_token)
       }
       const res2 = await afterGettingUserData(d, this.rr, {
         isRefresh: true 

@@ -101,6 +101,9 @@ async function whenRouteChange(
   }
   const myMember = await db.members.get(g2)
   const opt: SpaceAndMemberOpt = {
+    userId,
+    token: localP.token,
+    serial: localP.serial,
     spaceId: mySpace._id,
     memberId: myMember?._id ?? "",
     isCollaborative: false,
@@ -128,6 +131,9 @@ async function handleCollaborativeSpace(
   if(!userId) return
 
   const opt: SpaceAndMemberOpt = {
+    userId,
+    token: localP.token,
+    serial: localP.serial,
     spaceId: newSpaceId,
     memberId: "",
     isCollaborative: true,

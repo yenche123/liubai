@@ -27,13 +27,9 @@ async function handle10Tasks(tasks: UploadTaskLocalTable[]) {
 // 每次查询出 LIMIT 个 upload_tasks
 const LIMIT = 10
 
-/** worker 入口函数 */
-onmessage = async (e) => {
+async function start(msg: MainToChildMessage) {
 
-  let times = 0
-
-  // 1. init context
-  const msg = e.data as MainToChildMessage
+  // 1. init
   initWorker(msg)
 
   // 2. check if userId is existed
@@ -43,6 +39,7 @@ onmessage = async (e) => {
     return
   }
 
+  let times = 0
   while(true) {
     times++
     if(times > 10) return
@@ -66,5 +63,25 @@ onmessage = async (e) => {
   }
 
   postMessage("success")
+}
+
+function updateToken(msg: MainToChildMessage) {
+  initWorker(msg)
+}
+
+/** worker 入口函数 */
+onmessage = (e) => {
+  const msg = e.data as MainToChildMessage
   
+  const evt = msg.event
+  if(evt === "start") {
+    start(msg)
+  }
+  else if(evt === "update_token") {
+    updateToken(msg)
+  }
+  else {
+    console.warn("unknown event in task-to-upload worker")
+  }
+
 }

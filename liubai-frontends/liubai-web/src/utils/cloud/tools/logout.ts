@@ -35,7 +35,7 @@ export function logout(
   const wStore = useWorkspaceStore()
   wStore.logout()
 
-  // 3. 路由到 login
+  // 4. 路由到 login
   rr.router.replace({ name: "login" })
 
   // n. 赋值

@@ -7,6 +7,8 @@ import localCache from "../system/local-cache";
 import type { UploadTaskParam } from "./tools/types";
 import { addUploadTask } from "./tools/add-upload-task";
 import { getMainToChildMessage } from "./tools/some-funcs"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
+import { storeToRefs } from "pinia";
 
 const MIN_5 = 5 * time.MINUTE
 
@@ -24,6 +26,32 @@ class LocalToCloud {
       if(!newV) return
       _this.preTrigger()
     }, { immediate: true })
+
+    const wStore = useWorkspaceStore()
+    const { token } = storeToRefs(wStore)
+    watch(token, (newV, oldV) => {
+
+      // 以前没值，表示之前未登录，或者尚未初始化，这时直接忽略
+      if(!oldV) return
+
+      
+      if(!newV) {
+        // 退出登录了
+        _this.closeUploadWorker()
+      }
+      else if(newV !== oldV) {
+        // token 被更新了
+        _this.updateToken()
+      }
+      
+    })
+  }
+
+  private static updateToken() {
+    const worker = this.uploadWorker
+    if(!worker) return
+    const msg = getMainToChildMessage("update_token")
+    worker.postMessage(msg)
   }
 
   static preTrigger(instant: boolean = false) {

@@ -25,6 +25,7 @@ export async function initForPureLocalMode(
   localCache.setPreference("local_id", user._id)
   
   const opt: SpaceAndMemberOpt = {
+    userId: user._id,
     spaceId: workspace._id,
     memberId: member._id,
     isCollaborative: false,
