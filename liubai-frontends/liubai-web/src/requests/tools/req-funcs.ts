@@ -23,14 +23,17 @@ export async function handleBeforeFetching(
 
 export async function handleAfterFetching(
   data: any,
+  client_key?: string,
 ) {
 
   if(typeof data !== "object") return data
 
-  const p = localCache.getPreference()
-  const client_key = p.client_key
-  if(!client_key) return
-
+  if(!client_key) {
+    const p = localCache.getPreference()
+    client_key = p.client_key
+    if(!client_key) return data
+  }
+  
   const keys = Object.keys(data)
   for(let i=0; i<keys.length; i++) {
     const k = keys[i]
