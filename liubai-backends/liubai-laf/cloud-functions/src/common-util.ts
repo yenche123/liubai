@@ -279,7 +279,7 @@ export function canPassByExponentialDoor(
   return { verifiedNum, pass }
 }
 
-/******************************** 用户验证相关 ******************************/
+/******************************** 用户相关 ******************************/
 
 /** 给定多个 userData 给出其 userInfos 
  * @param filterMemberLeft 是否过滤掉成员已离开
@@ -390,6 +390,22 @@ function updateTokenCache(
   data.lastSet = now
   map.set(newTokenData._id, data)
   gShared.set("liu-token-user", map)
+}
+
+/** check if the user's subscription is currently active */
+export function checkIfUserSubscribed(
+  user: Table_User,
+) {
+  const s = user.subscription
+  const isOn = s?.isOn
+  if(!s || !isOn) return false
+  const isLifelong = s.isLifelong
+  if(isLifelong) return true
+  const expireStamp = s.expireStamp ?? 1
+  const now = getNowStamp()
+  const diff = expireStamp - now
+  if(diff > 0) return true
+  return false
 }
 
 /** 插入 token 数据至 Token 表中

@@ -58,6 +58,8 @@ declare global {
       /** 七牛 */
       LIU_QINIU_ACCESS_KEY?: string
       LIU_QINIU_SECRET_KEY?: string
+      LIU_QINIU_BUCKET?: string           // 七牛云的目标桶名称
+      LIU_QINIU_CALLBACK_URL?: string
 
     }
   }

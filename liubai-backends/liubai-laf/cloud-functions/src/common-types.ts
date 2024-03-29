@@ -263,6 +263,8 @@ export interface Cloud_ImageStore {
 /*********************** 杂七杂八的 **********************/
 // 新增类型前，记得全局搜索一下，避免冲突
 
+export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
+
 // User 表里的 thirdData 字段的类型
 export interface UserThirdData {
   google?: any
@@ -647,6 +649,11 @@ export interface Res_SubPlan_StripeCheckout {
   checkout_url: string   // stripe 托管的结账地址
 }
 
+export interface Res_FileSet_UploadToken {
+  cloudService: CloudStorageService
+  uploadToken: string
+  prefix: string
+}
 
 /** 一些函数间的入参和出参类型 */
 

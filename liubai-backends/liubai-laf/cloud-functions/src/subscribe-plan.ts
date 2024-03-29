@@ -1,6 +1,12 @@
 import cloud from "@lafjs/cloud";
 import Stripe from "stripe";
-import { verifyToken, getIpArea, getDocAddId, getStripeInstance } from '@/common-util';
+import { 
+  verifyToken, 
+  getIpArea, 
+  getDocAddId, 
+  getStripeInstance,
+  checkIfUserSubscribed,
+} from '@/common-util';
 import type { 
   Table_Subscription, 
   Table_User,
@@ -267,23 +273,6 @@ function getCurrencySymbol(c: string) {
   if(list2.includes(c)) return "€"
 
   return "$"
-}
-
-
-/** check if the user's subscription is currently active */
-function checkIfUserSubscribed(
-  user: Table_User,
-) {
-  const s = user.subscription
-  const isOn = s?.isOn
-  if(!s || !isOn) return false
-  const isLifelong = s.isLifelong
-  if(isLifelong) return true
-  const expireStamp = s.expireStamp ?? 1
-  const now = getNowStamp()
-  const diff = expireStamp - now
-  if(diff > 0) return true
-  return false
 }
 
 function checkIfUserCanBindStripe(

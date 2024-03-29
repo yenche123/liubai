@@ -98,3 +98,7 @@ export function createEncNonce() {
   return createRandom(10)
 }
 
+export function createFileRandom() {
+  return createRandom(4, "onlyUppercase")
+}
+
