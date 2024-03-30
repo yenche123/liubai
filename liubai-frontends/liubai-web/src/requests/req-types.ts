@@ -1,11 +1,15 @@
 // 存放所有接口返回的 data 类型
-import type { LiuUploadTask, LocalTheme } from "~/types/types-atom"
+import type { 
+  LiuUploadTask, 
+  LocalTheme, 
+} from "~/types/types-atom"
 import type { LocalLocale } from "~/types/types-locale"
 import type { 
   UserSubscription, 
   LiuSpaceAndMember, 
   SubscriptionStripe,
   SubscriptionPaymentCircle,
+  CloudStorageService,
 } from "~/types/types-cloud"
 
 
@@ -88,6 +92,12 @@ export interface Res_SubPlan_Info {
 
 export interface Res_SubPlan_StripeCheckout {
   checkout_url: string
+}
+
+export interface Res_FileSet_UploadToken {
+  cloudService: CloudStorageService
+  uploadToken: string
+  prefix: string
 }
 
 

@@ -91,3 +91,7 @@ export interface SubscriptionStripe {
 }
 
 export type SubscriptionPaymentCircle = "monthly" | "yearly"
+
+
+// 云存储服务
+export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
