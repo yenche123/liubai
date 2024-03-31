@@ -11,4 +11,5 @@ export default {
   USER_MEMBERSHIP: d + `user-settings`,
   SUBSCRIBE_PLAN: d + `subscribe-plan`,
   REQUEST_REFUND: d + `subscribe-plan`,
+  UPLOAD_FILE: d + `file-set`,
 }

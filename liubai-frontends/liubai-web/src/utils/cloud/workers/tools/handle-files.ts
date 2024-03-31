@@ -35,6 +35,11 @@ function checkImages(
 }
 
 
+export async function getUploadToken() {
+  
+}
+
+
 /** checking out files and images in contents */
 export async function handleFiles(tasks: UploadTaskLocalTable[]) {
   
