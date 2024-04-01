@@ -15,6 +15,7 @@ import { storeToRefs } from "pinia";
 import { equipThreads } from "~/utils/controllers/equip/threads";
 import { getTagIdsParents } from "~/utils/system/tag-related";
 import type { SpaceType } from "~/types/types-basic";
+import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 
 // 本文件处理发表的逻辑
 
@@ -103,6 +104,12 @@ async function toRelease(
   // 5. 通知全局 需要更新 threads
   const threadShows = await equipThreads([newThread])
   ctx.threadShowStore.setNewThreadShows(threadShows)
+
+  // 6. 如果有后端，添加到
+  const res6 = localCache.hasLoginWithBackend()
+  if(res6) {
+    LocalToCloud.addTask({ uploadTask: "content-post", target_id: newId })
+  }
   
 }
 

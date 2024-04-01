@@ -97,12 +97,14 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
 
   const needToUpload = imgStores.length > 0 || fileStores.length > 0
   if(needToUpload) {
+    console.log("去获取 upload token............")
     const res3 = await getUploadToken()
     if(!res3) return false
   }
 
   // 4. upload imgStores
   if(imgStores.length) {
+    console.log("去上传图片............")
     await uploadFilesAndImages(imgStores)
   }
 
