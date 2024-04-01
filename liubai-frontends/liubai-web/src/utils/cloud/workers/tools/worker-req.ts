@@ -15,7 +15,7 @@ function init(msg: MainToChildMessage) {
     x_liu_language: msg.system_language,
     x_liu_theme: msg.system_theme,
     x_liu_version: LIU_ENV.version,
-    x_liu_timezone: time.getTimezone(),
+    x_liu_timezone: time.getTimezone().toFixed(1),
     x_liu_client: LIU_ENV.client,
     x_liu_token: msg.token,
     x_liu_serial: msg.serial,
