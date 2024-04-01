@@ -98,7 +98,7 @@ export async function main(
   // 4. 最后检查参数是否正确
   const res2 = checkEntry(ctx, funcName)
   if(!res2) {
-    return { code: "E4000" }
+    return { code: "E4000", errMsg: "checkEntry error......" }
   }
 
   const nextRes3 = await toNext(ctx, next)

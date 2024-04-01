@@ -3,7 +3,10 @@ import { db } from "~/utils/db"
 import type { LiuImageStore, LiuFileStore } from "~/types"
 import APIs from "~/requests/APIs"
 import workerReq from "./worker-req"
-import type { Res_FileSet_UploadToken } from "~/requests/req-types"
+import type { 
+  Res_FileSet_UploadToken,
+  Res_HelloWorld,
+} from "~/requests/req-types"
 
 async function uploadFilesAndImages(
   files: LiuFileStore[] | LiuImageStore[],
@@ -41,7 +44,7 @@ export async function getUploadToken() {
   const url = APIs.UPLOAD_FILE
   const param = { operateType: "get-upload-token" }
   const res = await workerReq.request<Res_FileSet_UploadToken>(url, param)
-  console.log("getUploadToken res: ")
+  console.log("get-upload-token res: ")
   console.log(res)
   console.log(" ")
   if(res.code === "0000" && res.data) {

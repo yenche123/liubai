@@ -1,7 +1,4 @@
-import {
-  handleBeforeFetching,
-  handleAfterFetching,
-} from "~/requests/tools/req-funcs"
+import { handleBeforeFetching, handleAfterFetching } from "./req-funcs"
 import type { MainToChildMessage } from "../../tools/types"
 import type { LiuRqOpt, LiuRqReturn } from "~/requests/tools/types"
 import time from "~/utils/basic/time"
@@ -33,6 +30,7 @@ async function _getBody<U extends Record<string, any>>(
   }
   const b1 = {
     ...default_body,
+    x_liu_stamp: time.getTime(),
     ...body,
   }
   const b2 = valTool.objToStr(b1)
