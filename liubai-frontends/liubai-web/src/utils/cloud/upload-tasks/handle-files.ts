@@ -2,11 +2,11 @@ import type { UploadTaskLocalTable } from "~/types/types-table"
 import { db } from "~/utils/db"
 import type { LiuImageStore, LiuFileStore } from "~/types"
 import APIs from "~/requests/APIs"
-import workerReq from "./worker-req"
 import type { 
   Res_FileSet_UploadToken,
 } from "~/requests/req-types"
-import { uploadViaQiniu } from "./upload-via-qiniu"
+import { uploadViaQiniu } from "./tools/upload-via-qiniu"
+import liuReq from "~/requests/liu-req"
 
 let resUploadToken: Res_FileSet_UploadToken | undefined
 
@@ -21,6 +21,12 @@ async function uploadFilesAndImages(
   const cs = resUploadToken.cloudService
   if(cs === "qiniu") {
     await uploadViaQiniu(resUploadToken, files)
+  }
+  else if(cs === "aliyun_oss") {
+
+  }
+  else if(cs === "tecent_cos") {
+    
   }
   
 }
@@ -53,7 +59,7 @@ function checkImages(
 async function getUploadToken() {
   const url = APIs.UPLOAD_FILE
   const param = { operateType: "get-upload-token" }
-  const res = await workerReq.request<Res_FileSet_UploadToken>(url, param)
+  const res = await liuReq.request<Res_FileSet_UploadToken>(url, param)
   if(res.code === "0000" && res.data) {
     resUploadToken = res.data
     return true
@@ -104,13 +110,13 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
 
   // 4. upload imgStores
   if(imgStores.length) {
-    console.log("去上传图片............")
-    await uploadFilesAndImages(imgStores)
+    console.log("暂时关闭上传图片.....")
+    // await uploadFilesAndImages(imgStores)
   }
 
   // 5. upload fileStores
   if(fileStores.length) {
-    await uploadFilesAndImages(fileStores)
+    // await uploadFilesAndImages(fileStores)
   }
 
 

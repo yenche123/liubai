@@ -1,7 +1,10 @@
 // 文件系统
 // 这里会使用到第三方依赖 qiniu 进行七牛云到凭证管理
 import qiniu from "qiniu"
-import { checkIfUserSubscribed, verifyToken } from "@/common-util"
+import { 
+  checkIfUserSubscribed, 
+  verifyToken,
+} from "@/common-util"
 import type { 
   LiuRqReturn,
   CloudStorageService,
@@ -78,19 +81,24 @@ function getUploadTokenViaQiniu(
   const prefix = `users/${user._id}-${r}`
 
   // 2. 构造上传凭证
+  let callbackBody = "bucket=$(bucket)&key=$(key)&hash=$(etag)&fname=$(fname)"
+  callbackBody += "&fsize=$(fsize)&mimeType=$(mimeType)&endUser=$(endUser)"
+
   const opt = {
     scope: `${qiniu_bucket}:${prefix}`,
     isPrefixalScope: 1,
     insertOnly: 1,
+    endUser: user._id,
     expires: 3600,   // 一小时后过期
     detectMime: 1,
     fsizeLimit: hasSubscribed ? MB_100 : MB_10,
     callbackUrl: qiniu_callback_url,
-    callbackBodyType: "application/json",
+    callbackBody,
   }
 
   const putPolicy = new qiniu.rs.PutPolicy(opt)
   const uploadToken = putPolicy.uploadToken(mac)
+
   return {
     code: "0000",
     data: {

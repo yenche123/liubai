@@ -901,7 +901,7 @@ export function updateUserInCache(
 /********************* 工具函数 ****************/
 
 // 字符串转对象
-function strToObj<T = any>(str: string): T {
+export function strToObj<T = any>(str: string): T {
   let res = {}
   try {
     res = JSON.parse(str)
@@ -911,7 +911,7 @@ function strToObj<T = any>(str: string): T {
 }
 
 // 对象转字符串
-function objToStr<T = any>(obj: T): string {
+export function objToStr<T = any>(obj: T): string {
   let str = ``
   try {
     str = JSON.stringify(obj)

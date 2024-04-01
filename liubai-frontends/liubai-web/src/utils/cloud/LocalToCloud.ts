@@ -2,13 +2,12 @@ import { watch } from "vue";
 import { CloudEventBus } from "./CloudEventBus";
 import time from "../basic/time";
 import { type LiuTimeout } from "../basic/type-tool";
-import UploadWorker from "./workers/task-to-upload?worker"
 import localCache from "../system/local-cache";
 import type { UploadTaskParam } from "./tools/types";
 import { addUploadTask } from "./tools/add-upload-task";
-import { getMainToChildMessage } from "./tools/some-funcs"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
+import { handleUploadTasks } from "./upload-tasks"
 
 const MIN_5 = 5 * time.MINUTE
 
@@ -33,25 +32,14 @@ class LocalToCloud {
 
       // 以前没值，表示之前未登录，或者尚未初始化，这时直接忽略
       if(!oldV) return
-
       
       if(!newV) {
         // 退出登录了
-        _this.closeUploadWorker()
-      }
-      else if(newV !== oldV) {
-        // token 被更新了
-        _this.updateToken()
+        _this.stopUploadTasks()
       }
       
+      
     })
-  }
-
-  private static updateToken() {
-    const worker = this.uploadWorker
-    if(!worker) return
-    const msg = getMainToChildMessage("update_token")
-    worker.postMessage(msg)
   }
 
   static preTrigger(instant: boolean = false) {
@@ -66,26 +54,17 @@ class LocalToCloud {
     }, delay)
   }
 
-  static toTrigger() {
-    const _this = this
+  static async toTrigger() {
 
     const lstu = this.lastStartToUpload
     if(lstu) {
       if(time.isWithinMillis(lstu, MIN_5)) return
-      _this.closeUploadWorker()
+      this.stopUploadTasks()
     }
 
-    _this.uploadWorker = new UploadWorker()
-    _this.uploadWorker.onmessage = (e) => {
-      const txt = e.data
-      
-      _this.lastStartToUpload = undefined
-      _this.closeUploadWorker()
-    }
-
-    const msg = getMainToChildMessage("start")
-    _this.lastStartToUpload = time.getTime()
-    _this.uploadWorker.postMessage(msg)
+    this.lastStartToUpload = time.getTime()
+    const res = await handleUploadTasks()
+    this.lastStartToUpload = undefined
   }
 
   /** add a task into local db */
@@ -99,10 +78,9 @@ class LocalToCloud {
     }
   }
 
+  // TODO: 立即停止所有上传任务
+  private static stopUploadTasks() {
 
-  private static closeUploadWorker() {
-    this.uploadWorker?.terminate?.()
-    this.uploadWorker = undefined
   }
 
 

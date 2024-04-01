@@ -655,6 +655,17 @@ export interface Res_FileSet_UploadToken {
   prefix: string
 }
 
+// webhook-qiniu 的入参
+export interface Param_WebhookQiniu {
+  bucket: string
+  key: string
+  hash: string
+  fsize: string
+  fname: string
+  mimeType: string
+  endUser: string
+}
+
 /** 一些函数间的入参和出参类型 */
 
 export interface VerifyTokenOpt {
