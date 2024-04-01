@@ -3,7 +3,7 @@ import type {
   UploadTaskLocalTable,
 } from "~/types/types-table"
 import { db } from "~/utils/db"
-import { getUploadToken, handleFiles } from "./tools/handle-files"
+import { handleFiles } from "./tools/handle-files"
 import type { MainToChildMessage } from "../tools/types"
 import { initWorker } from "./tools/worker-funcs"
 
@@ -39,32 +39,26 @@ async function start(msg: MainToChildMessage) {
     return
   }
 
-  // let times = 0
-  // while(true) {
-  //   times++
-  //   if(times > 10) return
+  let times = 0
+  while(true) {
+    times++
+    if(times > 10) return
     
-  //   const now = time.getTime()
-  //   const filterFunc = (task: UploadTaskLocalTable) => {
-  //     const t1 = task.failedStamp
-  //     if(t1 && (now - t1) < time.MINUTE) return false
-  //     if(task.user !== msg.userId) return false
-  //     return true      
-  //   }
+    const now = time.getTime()
+    const filterFunc = (task: UploadTaskLocalTable) => {
+      const t1 = task.failedStamp
+      if(t1 && (now - t1) < time.MINUTE) return false
+      if(task.user !== msg.userId) return false
+      return true      
+    }
 
-  //   const col = db.upload_tasks.orderBy("insertedStamp").filter(filterFunc)
-  //   const results = await col.limit(LIMIT).toArray()
-  //   const len = results.length
-  //   if(len < 1) break
+    const col = db.upload_tasks.orderBy("insertedStamp").filter(filterFunc)
+    const results = await col.limit(LIMIT).toArray()
+    const len = results.length
+    if(len < 1) break
 
-
-  //   await handle10Tasks(results)
-
-  // }
-
-
-  console.log("去看看 uploadToken 是啥......")
-  await getUploadToken()
+    await handle10Tasks(results)
+  }
   
   postMessage("success")
 }

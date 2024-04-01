@@ -69,6 +69,10 @@ const createEncNonce = () => {
   return _createId(10)
 }
 
+const createFileNonce = () => {
+  return _createId(4)
+}
+
 export default {
   createUserId,
   createStateId,
@@ -85,4 +89,5 @@ export default {
   createDownloadTaskId,
   createUploadTaskId,
   createEncNonce,
+  createFileNonce,
 }

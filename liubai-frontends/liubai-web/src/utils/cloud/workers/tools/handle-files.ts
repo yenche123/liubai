@@ -5,13 +5,23 @@ import APIs from "~/requests/APIs"
 import workerReq from "./worker-req"
 import type { 
   Res_FileSet_UploadToken,
-  Res_HelloWorld,
 } from "~/requests/req-types"
+import { uploadViaQiniu } from "./upload-via-qiniu"
+
+let resUploadToken: Res_FileSet_UploadToken | undefined
 
 async function uploadFilesAndImages(
   files: LiuFileStore[] | LiuImageStore[],
 ) {
+  
+  if(!resUploadToken) {
+    return false
+  }
 
+  const cs = resUploadToken.cloudService
+  if(cs === "qiniu") {
+    await uploadViaQiniu(resUploadToken, files)
+  }
   
 }
 
@@ -40,16 +50,19 @@ function checkImages(
 }
 
 
-export async function getUploadToken() {
+async function getUploadToken() {
   const url = APIs.UPLOAD_FILE
   const param = { operateType: "get-upload-token" }
   const res = await workerReq.request<Res_FileSet_UploadToken>(url, param)
-  console.log("get-upload-token res: ")
+  if(res.code === "0000" && res.data) {
+    resUploadToken = res.data
+    return true
+  }
+
+  console.warn("failed to get upload token")
   console.log(res)
   console.log(" ")
-  if(res.code === "0000" && res.data) {
-    return res.data
-  }
+  return false
 }
 
 
@@ -84,7 +97,8 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
 
   const needToUpload = imgStores.length > 0 || fileStores.length > 0
   if(needToUpload) {
-    await getUploadToken()
+    const res3 = await getUploadToken()
+    if(!res3) return false
   }
 
   // 4. upload imgStores
