@@ -46,11 +46,21 @@ export async function main(ctx: FunctionContext) {
   return res4
 }
 
-// TODO
 function checkCallbackIsFromQiniu(
   ctx: FunctionContext,
 ) {
-  // always true currently
+
+  const _env = process.env
+  const qiniu_custom_key = _env.LIU_QINIU_CUSTOM_KEY
+  const body = ctx.request?.body ?? {}
+  const customKey = body.customKey
+
+  if(customKey !== qiniu_custom_key) {
+    console.warn("customKey is not equal to qiniu_custom_key")
+    console.log(customKey)
+    return false
+  }
+  
   return true
 }
 
@@ -59,9 +69,9 @@ function checkBody(
 ) {
 
   const keys = Object.keys(body)
-  for(let i=0; i<keys.length; i++) {
-    const k = keys[i] as keyof Param_WebhookQiniu
-    if(!qiniu_keys.includes(k)) {
+  for(let i=0; i<qiniu_keys.length; i++) {
+    const k = qiniu_keys[i] as keyof Param_WebhookQiniu
+    if(!keys.includes(k)) {
       return false
     }
     const v = body[k]

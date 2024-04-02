@@ -71,6 +71,7 @@ function getUploadTokenViaQiniu(
   const qiniu_secret_key = _env.LIU_QINIU_SECRET_KEY ?? ""
   const qiniu_bucket = _env.LIU_QINIU_BUCKET ?? ""
   const qiniu_callback_url = _env.LIU_QINIU_CALLBACK_URL ?? ""
+  const qiniu_custom_key = _env.LIU_QINIU_CUSTOM_KEY ?? ""
   const mac = new qiniu.auth.digest.Mac(qiniu_access_key, qiniu_secret_key)
 
   const MB = 1024 * 1024
@@ -83,6 +84,7 @@ function getUploadTokenViaQiniu(
   // 2. 构造上传凭证
   let callbackBody = "bucket=$(bucket)&key=$(key)&hash=$(etag)&fname=$(fname)"
   callbackBody += "&fsize=$(fsize)&mimeType=$(mimeType)&endUser=$(endUser)"
+  callbackBody += `&customKey=${qiniu_custom_key}`
 
   const opt = {
     scope: `${qiniu_bucket}:${prefix}`,
@@ -134,6 +136,14 @@ function preCheckForUploadToken(): LiuRqReturn | undefined {
     return { 
       code: "E5001", 
       errMsg: "qiniu_cdn_domain is required", 
+    }
+  }
+
+  const qiniu_custom_key = _env.LIU_QINIU_CUSTOM_KEY
+  if(!qiniu_custom_key) {
+    return { 
+      code: "E5001", 
+      errMsg: "qiniu_custom_key is required", 
     }
   }
   
