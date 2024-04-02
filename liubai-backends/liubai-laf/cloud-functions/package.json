@@ -10,18 +10,16 @@
   "license": "ISC",
   "dependencies": {
     "@lafjs/cloud": "1.0.0-beta.14",
-    "date-fns": "^3.3.1",
-    "geoip-lite": "^1.4.9",
-    "google-auth-library": "^9.6.3",
-    "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.3.0",
+    "date-fns": "^3.6.0",
+    "geoip-lite": "^1.4.10",
+    "google-auth-library": "^9.7.0",
+    "mongodb": "^6.5.0",
     "qiniu": "^7.11.1",
-    "resend": "^3.1.0",
-    "stripe": "^14.15.0"
+    "resend": "^3.2.0",
+    "stripe": "^14.23.0"
   },
   "devDependencies": {
     "@types/geoip-lite": "^1.4.4",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/node": "^20.11.16"
+    "@types/node": "^20.12.2"
   }
 }
