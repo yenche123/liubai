@@ -373,6 +373,8 @@ export interface Table_User extends BaseTable {
   stripe_subscription_id?: string      // stripe 的 Subscription id
   stripe_customer_id?: string          // Customer id on Stripe
   ipArea?: string
+  total_size?: number                 // 用户的总存储空间，单位为 kB
+  upload_size?: number                // 用户的总历史上传空间，单位为 kB
 }
 
 /** Workspace 表 */
@@ -585,6 +587,8 @@ export interface MemberAggSpaces extends Table_Member {
 
 
 /*********************** 一些回调信息 ***********************/
+// Res_ 开头表示回传的数据
+// Param_ 开头表示入参数据
 
 export interface Res_ULN_User extends LiuSpaceAndMember {
   userId: string
@@ -666,7 +670,12 @@ export interface Param_WebhookQiniu {
   endUser: string
 }
 
-/** 一些函数间的入参和出参类型 */
+export interface Res_WebhookQiniu {
+  cloud_url: string
+}
+
+
+/******************** 一些云函数间内部的入参和出参类型 **********/
 
 export interface VerifyTokenOpt {
   entering?: boolean         // 当前调用是否为 `user-login` 的 enter

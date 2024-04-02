@@ -111,6 +111,7 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
   // 4. upload imgStores
   if(imgStores.length) {
     console.log("暂时关闭上传图片.....")
+    // console.log("去上传图片............")
     // await uploadFilesAndImages(imgStores)
   }
 

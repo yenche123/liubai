@@ -50,7 +50,8 @@ export async function handleUploadTasks() {
     if(len < 1) break
 
 
-    await handle10Tasks(results)
+    const res = await handle10Tasks(results)
+    if(!res) break
   }
 
 

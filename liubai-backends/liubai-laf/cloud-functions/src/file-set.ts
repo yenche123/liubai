@@ -128,6 +128,14 @@ function preCheckForUploadToken(): LiuRqReturn | undefined {
       errMsg: "qiniu_callback_url is required", 
     }
   }
+
+  const qiniu_cdn_domain = _env.LIU_QINIU_CDN_DOMAIN
+  if(!qiniu_cdn_domain) {
+    return { 
+      code: "E5001", 
+      errMsg: "qiniu_cdn_domain is required", 
+    }
+  }
   
 }
 
