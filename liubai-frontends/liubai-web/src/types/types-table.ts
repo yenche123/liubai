@@ -154,9 +154,7 @@ export interface DownloadTaskLocalTable {
 }
 
 /** 本地上传任务表 */
-export interface UploadTaskLocalTable {
-  _id: string
-  insertedStamp: number
+export interface UploadTaskLocalTable extends BaseLocalTable {
   user: string
   uploadTask: LiuUploadTask
   content_id?: string

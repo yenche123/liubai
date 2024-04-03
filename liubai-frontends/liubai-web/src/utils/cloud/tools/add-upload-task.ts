@@ -54,9 +54,11 @@ export async function addUploadTask(
   }
 
   // 3. 组装 task
+  const now3 = time.getTime()
   const newTask: UploadTaskLocalTable = {
     _id: ider.createUploadTaskId(),
-    insertedStamp: time.getTime(),
+    insertedStamp: now3,
+    updatedStamp: now3,
     user,
     uploadTask: taskType,
     content_id,

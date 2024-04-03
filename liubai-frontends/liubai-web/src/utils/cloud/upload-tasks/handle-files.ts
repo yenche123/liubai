@@ -1,11 +1,13 @@
 import type { UploadTaskLocalTable } from "~/types/types-table"
 import { db } from "~/utils/db"
-import type { LiuImageStore, LiuFileStore } from "~/types"
+import type { LiuImageStore, LiuFileStore, LiuFileAndImage } from "~/types"
 import APIs from "~/requests/APIs"
 import type { Res_FileSet_UploadToken } from "~/requests/req-types"
 import type { LiuUploadTask } from "~/types/types-atom"
 import { uploadViaQiniu } from "./tools/upload-via-qiniu"
 import liuReq from "~/requests/liu-req"
+import type { UploadFileAtom } from "./tools/types"
+import time from "~/utils/basic/time"
 
 let resUploadToken: Res_FileSet_UploadToken | undefined
 
@@ -30,26 +32,37 @@ async function uploadFilesAndImages(
   
 }
 
-function checkFiles(
-  fileStores: LiuFileStore[],
-  files: LiuFileStore[],
+
+async function handleUploadFileAtoms(
+  list: UploadFileAtom[],
+) {
+  if(!resUploadToken) return false
+
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+
+    // 1. update task's progressType to "file_uploading"
+    const opt1: Partial<UploadTaskLocalTable> = {
+      progressType: "file_uploading",
+      updatedStamp: time.getTime(),
+    }
+    await db.upload_tasks.update(v.taskId, opt1)
+
+    // 2. upload files and images
+    const res2 = await uploadFilesAndImages(v.files)
+  }
+  
+}
+
+
+function packFiles(
+  atom: UploadFileAtom,
+  files: LiuFileAndImage[],
 ) {
   files.forEach(v => {
     if(v.cloud_url) return
     if(v.arrayBuffer) {
-      fileStores.push(v)
-    }
-  })
-}
-
-function checkImages(
-  imageStores: LiuImageStore[],
-  images: LiuImageStore[],
-) {
-  images.forEach(v => {
-    if(v.cloud_url) return
-    if(v.arrayBuffer) {
-      imageStores.push(v)
+      atom.files.push(v)
     }
   })
 }
@@ -83,6 +96,8 @@ const photo_events: LiuUploadTask[] = [
 export async function handleFiles(tasks: UploadTaskLocalTable[]) {
   
   // 1. get content ids
+  // TODO: 也可能图片或文件不是存在 content 里
+  let list: UploadFileAtom[] = []
   const contentIds: string[] = []
   tasks.forEach(v => {
     const uT = v.uploadTask
@@ -90,6 +105,11 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
     if(!isPhotoEvt || !v.content_id) return
     if(contentIds.includes(v.content_id)) return
     contentIds.push(v.content_id)
+    list.push({
+      taskId: v._id,
+      contentId: v.content_id,
+      files: [],
+    })
   })
 
   if(contentIds.length < 1) {
@@ -101,38 +121,26 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
   const contents = await col.toArray()
   if(contents.length < 1) return true
 
-  // 3. get local images and files from contents
-  const imgStores: LiuImageStore[] = []
-  const fileStores: LiuFileStore[] = []
-  contents.forEach(v => {
-    const { oState, storageState } = v
-    if(oState !== "OK") return
-    if(storageState === "LOCAL" || storageState === "ONLY_LOCAL") return
-    if(v.files?.length) checkFiles(fileStores, v.files)
-    if(v.images?.length) checkImages(imgStores, v.images)
-  })
 
-  const needToUpload = imgStores.length > 0 || fileStores.length > 0
-  if(needToUpload) {
-    console.log("去获取 upload token............")
-
-    // 4. get upload token
-    const res3 = await getUploadToken()
-    if(!res3) return false
+  for(let i1=0; i1<contents.length; i1++) {
+    const v1 = contents[i1]
+    const item = list.find(v2 => v2.contentId === v1._id)
+    if(!item) continue
+    if(v1.files?.length) packFiles(item, v1.files)
+    if(v1.images?.length) packFiles(item, v1.images)
   }
 
-  // 5. upload imgStores
-  if(imgStores.length) {
-    console.log("暂时关闭上传图片.....")
-    // console.log("去上传图片............")
-    // await uploadFilesAndImages(imgStores)
-  }
+  // 3. 删掉 files 为空的项
+  list = list.filter(v => v.files.length > 0)
+  if(list.length < 1) return true
 
-  // 6. upload fileStores
-  if(fileStores.length) {
-    // await uploadFilesAndImages(fileStores)
-  }
+  // 4. get upload token
+  const res4 = await getUploadToken()
+  if(!res4) return false
 
+  // 5. handle atoms
+  const res5 = await handleUploadFileAtoms(list)
+  if(!res5) return false
 
 
 }

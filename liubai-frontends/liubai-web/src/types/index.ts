@@ -74,4 +74,6 @@ export interface LiuMyContext {
   spaceType: SpaceType
 }
 
+export type LiuFileAndImage = LiuFileStore | LiuImageStore
+
 export type ToRoute = RouteLocation & { href: string }
