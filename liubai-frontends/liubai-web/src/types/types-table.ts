@@ -160,10 +160,11 @@ export interface UploadTaskLocalTable {
   user: string
   uploadTask: LiuUploadTask
   content_id?: string
+  workspace_id?: string
   newBool?: boolean     // 一些开关值，表示最新状态是 true 还是 false
   newStr?: string       // 若 uploadTask 为 emoji 时，此值为 encodeURIComponent() 的表情
                         // 若为取消 emoji，此字段为空字符串
-  uploading: boolean   // 当该条数据正在被 task-to-upload 处理时，标识为 true
   tryTimes?: number           // 上传失败的次数，若大于某个阈值，就放弃
   failedStamp?: number        // 最近一次上传失败的时间戳
+  progressType: "waiting" | "file_uploading" | "sync"
 }

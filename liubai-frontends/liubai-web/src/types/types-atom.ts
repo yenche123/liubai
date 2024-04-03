@@ -210,6 +210,7 @@ export const liuUploadTasks = [
   "thread-tag",               // 修改动态的标签
   "comment-delete",           // 删除评论
   "comment-edit",             // 编辑评论
+  "workspace-tag",            // 编辑工作空间的标签，这时 target_id 为 workspace id
 ] as const
 
 export type LiuUploadTask = typeof liuUploadTasks[number]

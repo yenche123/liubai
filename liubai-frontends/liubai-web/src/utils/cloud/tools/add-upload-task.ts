@@ -23,6 +23,7 @@ export async function addUploadTask(
 
   let addRequired = true
 
+  // 1. 检查是否要添加
   if(isUndo) {
     addRequired = await whenUndo(param.target_id, user, taskType)
   }
@@ -32,23 +33,61 @@ export async function addUploadTask(
   else if(taskType === "comment-edit") {
     addRequired = await whenContentEdit(param.target_id, user)
   }
+  else if(taskType === "workspace-tag") {
+    addRequired = await checkForWorkspace(param.target_id, user, taskType)
+  }
 
   if(!addRequired) {
     return false
   }
 
+
+  // 2. 把 target_id 转换成对应的 id
+  let content_id: string | undefined
+  let workspace_id: string | undefined
+
+  if(taskType === "workspace-tag") {
+    workspace_id = param.target_id
+  }
+  else {
+    content_id = param.target_id
+  }
+
+  // 3. 组装 task
   const newTask: UploadTaskLocalTable = {
     _id: ider.createUploadTaskId(),
     insertedStamp: time.getTime(),
     user,
     uploadTask: taskType,
-    content_id: param.target_id,   // TODO: 目前都是 content_id 罢了
-                                   // 后期可能会有操作其他的东西
+    content_id,
+    workspace_id,
     newBool: param.newBool,
     newStr: param.newStr,
-    uploading: false,
+    progressType: "waiting",
   }
   const res = await db.upload_tasks.add(newTask)
+  return true
+}
+
+/** 检查关于 workspace 的更新，是否已存在了
+ * 若存在，返回 false，表示无需再重复添加
+ */
+async function checkForWorkspace(
+  workspace_id: string,
+  user: string,
+  taskType: LiuUploadTask,
+) {
+
+  const w: Partial<UploadTaskLocalTable> = {
+    user,
+    uploadTask: taskType,
+    workspace_id,
+    progressType: "waiting",
+  }
+  const res = await db.upload_tasks.where(w).toArray()
+  if(res.length > 0) {
+    return false
+  }
   return true
 }
 
@@ -75,7 +114,7 @@ async function whenUndo(
     user,
     uploadTask: originType,
     content_id,
-    uploading: false,
+    progressType: "waiting",
   }
   const res = await db.upload_tasks.where(w).toArray()
 
@@ -106,7 +145,7 @@ async function whenContentEdit(
     user,
     uploadTask: "content-post",
     content_id,
-    uploading: false,
+    progressType: "waiting",
   }
 
   const res = await db.upload_tasks.where(w).toArray()

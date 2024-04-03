@@ -105,9 +105,13 @@ async function toRelease(
   const threadShows = await equipThreads([newThread])
   ctx.threadShowStore.setNewThreadShows(threadShows)
 
-  // 6. 如果有后端，添加到
-  const res6 = localCache.hasLoginWithBackend()
-  if(res6) {
+  // 6. 如果是本地的动态，忽略去同步后端
+  const storageState = preThread.storageState
+  if(storageState === "LOCAL" || storageState === "ONLY_LOCAL") return
+
+  // 7. 去同步后端
+  const res7 = localCache.hasLoginWithBackend()
+  if(res7) {
     LocalToCloud.addTask({ uploadTask: "content-post", target_id: newId })
   }
   
@@ -255,5 +259,15 @@ async function toUpdate(ctx: CepContext) {
 
   // 4. emits 到页面
   ctx.emits("updated", threadId)
+
+  // 5. 如果是本地的动态，忽略去同步后端
+  const storageState = preThread.storageState
+  if(storageState === "LOCAL" || storageState === "ONLY_LOCAL") return
+
+  // 6. 去同步后端
+  const res6 = localCache.hasLoginWithBackend()
+  if(res6) {
+    LocalToCloud.addTask({ uploadTask: "thread-edit", target_id: threadId })
+  }
 }
 

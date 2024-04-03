@@ -2,9 +2,8 @@ import type { UploadTaskLocalTable } from "~/types/types-table"
 import { db } from "~/utils/db"
 import type { LiuImageStore, LiuFileStore } from "~/types"
 import APIs from "~/requests/APIs"
-import type { 
-  Res_FileSet_UploadToken,
-} from "~/requests/req-types"
+import type { Res_FileSet_UploadToken } from "~/requests/req-types"
+import type { LiuUploadTask } from "~/types/types-atom"
 import { uploadViaQiniu } from "./tools/upload-via-qiniu"
 import liuReq from "~/requests/liu-req"
 
@@ -72,13 +71,25 @@ async function getUploadToken() {
 }
 
 
+/** 会更新图片的事件 */
+const photo_events: LiuUploadTask[] = [
+  "content-post",
+  "thread-edit",
+  "comment-edit",
+  "thread-restore",
+]
+
 /** checking out files and images in contents */
 export async function handleFiles(tasks: UploadTaskLocalTable[]) {
   
   // 1. get content ids
   const contentIds: string[] = []
   tasks.forEach(v => {
-    if(v.content_id) contentIds.push(v.content_id)
+    const uT = v.uploadTask
+    const isPhotoEvt = photo_events.includes(uT)
+    if(!isPhotoEvt || !v.content_id) return
+    if(contentIds.includes(v.content_id)) return
+    contentIds.push(v.content_id)
   })
 
   if(contentIds.length < 1) {
@@ -104,18 +115,20 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
   const needToUpload = imgStores.length > 0 || fileStores.length > 0
   if(needToUpload) {
     console.log("去获取 upload token............")
+
+    // 4. get upload token
     const res3 = await getUploadToken()
     if(!res3) return false
   }
 
-  // 4. upload imgStores
+  // 5. upload imgStores
   if(imgStores.length) {
     console.log("暂时关闭上传图片.....")
     // console.log("去上传图片............")
     // await uploadFilesAndImages(imgStores)
   }
 
-  // 5. upload fileStores
+  // 6. upload fileStores
   if(fileStores.length) {
     // await uploadFilesAndImages(fileStores)
   }
