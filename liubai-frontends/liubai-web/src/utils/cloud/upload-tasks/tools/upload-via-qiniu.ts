@@ -3,7 +3,7 @@ import time from "~/utils/basic/time"
 import valTool from "~/utils/basic/val-tool"
 import fileHelper from "~/utils/files/file-helper"
 import type { Res_FileSet_UploadToken } from "~/requests/req-types"
-import type { LiuImageStore, LiuFileStore } from "~/types"
+import type { LiuFileAndImage } from "~/types"
 import * as qiniu from "qiniu-js"
 import type { UploadProgress } from "qiniu-js/esm/upload"
 import type { UploadResolver } from "./types"
@@ -40,7 +40,7 @@ function _upload(
 
 export async function uploadViaQiniu(
   resUploadToken: Res_FileSet_UploadToken,
-  files: LiuFileStore[] | LiuImageStore[],
+  files: LiuFileAndImage[],
 ) {
   const prefix = resUploadToken?.prefix ?? ""
   const token = resUploadToken?.uploadToken ?? ""

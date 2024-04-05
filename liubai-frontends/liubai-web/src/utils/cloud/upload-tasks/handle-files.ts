@@ -1,6 +1,6 @@
 import type { UploadTaskLocalTable } from "~/types/types-table"
 import { db } from "~/utils/db"
-import type { LiuImageStore, LiuFileStore, LiuFileAndImage } from "~/types"
+import type { LiuFileAndImage } from "~/types"
 import APIs from "~/requests/APIs"
 import type { Res_FileSet_UploadToken } from "~/requests/req-types"
 import type { LiuUploadTask } from "~/types/types-atom"
@@ -12,7 +12,7 @@ import time from "~/utils/basic/time"
 let resUploadToken: Res_FileSet_UploadToken | undefined
 
 async function uploadFilesAndImages(
-  files: LiuFileStore[] | LiuImageStore[],
+  files: LiuFileAndImage[],
 ) {
   
   if(!resUploadToken) {
