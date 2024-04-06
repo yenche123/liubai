@@ -89,6 +89,8 @@ https://openmoji.org/
 
 18. 同步问题: 考虑放弃 `cloud_id` 改用 `first_id`，用后者表示本地创建时用的 `id`。若动态是在云端被创建的，比如第三方传递过来的，就将 `first_id` 设为与 `_id` 同值即可。视图层上 `v-for` 的 :key 全部使用 `first_id` 这样就不会有 `_id` 发生变化 `thread-card` 组件被销毁重建的问题了。
 
+19. 运行 `pnpm` 遭遇 `WARN GET https://registry.npmjs.org/依赖名称 error (ERR_SOCKET_TIMEOUT). Will retry in 10 seconds. 2 retries left` 的错误，这时可以打开 `WiFi-设置`，`详细资讯 - TCP/IP`，把设定 IPv6 切换成 `仅本地连接`，确定后再改回 `自动`，再重新运行一次 `pnpm` 看是否恢复，详见 https://github.com/pnpm/pnpm/issues/6434#issuecomment-1937315051
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
