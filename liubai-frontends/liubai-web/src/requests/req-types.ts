@@ -100,6 +100,10 @@ export interface Res_FileSet_UploadToken {
   prefix: string
 }
 
+export interface Res_WebhookQiniu {
+  cloud_url: string
+}
+
 
 /************** 同步笔记 *****************/
 export interface Param_Note_Sync {

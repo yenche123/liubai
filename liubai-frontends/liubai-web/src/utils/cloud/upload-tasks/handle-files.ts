@@ -6,13 +6,14 @@ import type { Res_FileSet_UploadToken } from "~/requests/req-types"
 import type { LiuUploadTask } from "~/types/types-atom"
 import { uploadViaQiniu } from "./tools/upload-via-qiniu"
 import liuReq from "~/requests/liu-req"
-import type { UploadFileAtom } from "./tools/types"
+import type { FileReqReturn, UploadFileAtom, WhenAFileCompleted } from "./tools/types"
 import time from "~/utils/basic/time"
 
 let resUploadToken: Res_FileSet_UploadToken | undefined
 
 async function uploadFilesAndImages(
   files: LiuFileAndImage[],
+  aFileCompleted: WhenAFileCompleted,
 ) {
   
   if(!resUploadToken) {
@@ -21,7 +22,7 @@ async function uploadFilesAndImages(
 
   const cs = resUploadToken.cloudService
   if(cs === "qiniu") {
-    await uploadViaQiniu(resUploadToken, files)
+    await uploadViaQiniu(resUploadToken, files, aFileCompleted)
   }
   else if(cs === "aliyun_oss") {
 
@@ -38,6 +39,10 @@ async function handleUploadFileAtoms(
 ) {
   if(!resUploadToken) return false
 
+  const _whenAFileCompleted: WhenAFileCompleted = (f, res) => {
+    
+  }
+
   for(let i=0; i<list.length; i++) {
     const v = list[i]
 
@@ -49,7 +54,7 @@ async function handleUploadFileAtoms(
     await db.upload_tasks.update(v.taskId, opt1)
 
     // 2. upload files and images
-    const res2 = await uploadFilesAndImages(v.files)
+    const res2 = await uploadFilesAndImages(v.files, _whenAFileCompleted)
   }
   
 }
@@ -120,7 +125,6 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
   const col = db.contents.where("_id").anyOf(contentIds)
   const contents = await col.toArray()
   if(contents.length < 1) return true
-
 
   for(let i1=0; i1<contents.length; i1++) {
     const v1 = contents[i1]

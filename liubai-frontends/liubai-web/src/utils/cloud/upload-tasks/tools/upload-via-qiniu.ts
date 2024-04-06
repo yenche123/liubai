@@ -6,7 +6,11 @@ import type { Res_FileSet_UploadToken } from "~/requests/req-types"
 import type { LiuFileAndImage } from "~/types"
 import * as qiniu from "qiniu-js"
 import type { UploadProgress } from "qiniu-js/esm/upload"
-import type { UploadResolver } from "./types"
+import type { 
+  UploadResolver, 
+  FileReqReturn, 
+  WhenAFileCompleted,
+} from "./types"
 
 function _upload(
   f: File,
@@ -23,10 +27,12 @@ function _upload(
       error(err: qiniu.QiniuError | qiniu.QiniuRequestError | qiniu.QiniuNetworkError) {
         console.log("error.........")
         console.log(err)
+        a(null)
       },
-      complete(res: any) {
+      complete(res: FileReqReturn) {
         console.log("complete.........")
         console.log(res)
+        a(res)
       }
     }
 
@@ -41,6 +47,7 @@ function _upload(
 export async function uploadViaQiniu(
   resUploadToken: Res_FileSet_UploadToken,
   files: LiuFileAndImage[],
+  aFileCompleted: WhenAFileCompleted,
 ) {
   const prefix = resUploadToken?.prefix ?? ""
   const token = resUploadToken?.uploadToken ?? ""
