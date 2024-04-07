@@ -164,5 +164,5 @@ export interface UploadTaskLocalTable extends BaseLocalTable {
                         // 若为取消 emoji，此字段为空字符串
   tryTimes?: number           // 上传失败的次数，若大于某个阈值，就放弃
   failedStamp?: number        // 最近一次上传失败的时间戳
-  progressType: "waiting" | "file_uploading" | "sync"
+  progressType: "waiting" | "file_uploading" | "syncing"
 }

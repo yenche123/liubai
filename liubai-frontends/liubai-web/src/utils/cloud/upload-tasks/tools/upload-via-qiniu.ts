@@ -52,6 +52,7 @@ export async function uploadViaQiniu(
   const prefix = resUploadToken?.prefix ?? ""
   const token = resUploadToken?.uploadToken ?? ""
 
+  let tryTimes = 0
   for(let i=0; i<files.length; i++) {
     const v = files[i]
     const f = fileHelper.storeToFile(v)
@@ -65,11 +66,22 @@ export async function uploadViaQiniu(
     const nonce = ider.createFileNonce()
     const key = `${prefix}-${now}-${nonce}.${suffix}`
     const res = await _upload(f, key, token)
+
+    // 1. capture all err of network
     if(!res) {
-      console.warn("failed to upload via qiniu")
-      return false
+      tryTimes++
+      if(tryTimes >= 3) return false
+      i--
+      continue
+    }
+
+    aFileCompleted(v.id, res)
+
+    const cloud_url = res.data?.cloud_url
+    if(cloud_url) {
+      v.cloud_url = cloud_url
     }
   }
 
-
+  return files
 }

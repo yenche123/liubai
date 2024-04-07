@@ -12,4 +12,8 @@ export interface UploadFileAtom {
   files: LiuFileAndImage[]
 }
 
-export type WhenAFileCompleted = (f: LiuFileAndImage, res: FileReqReturn) => void
+export type WhenAFileCompleted = (
+  fileId: string, res: FileReqReturn
+) => void
+
+export type UploadFileRes = "completed" | "partial_success" | "failed"

@@ -1,4 +1,7 @@
-import type { UploadTaskLocalTable } from "~/types/types-table"
+import type {
+  ContentLocalTable,
+  UploadTaskLocalTable,
+} from "~/types/types-table"
 import { db } from "~/utils/db"
 import type { LiuFileAndImage } from "~/types"
 import APIs from "~/requests/APIs"
@@ -6,23 +9,87 @@ import type { Res_FileSet_UploadToken } from "~/requests/req-types"
 import type { LiuUploadTask } from "~/types/types-atom"
 import { uploadViaQiniu } from "./tools/upload-via-qiniu"
 import liuReq from "~/requests/liu-req"
-import type { FileReqReturn, UploadFileAtom, WhenAFileCompleted } from "./tools/types"
+import type { UploadFileAtom, WhenAFileCompleted } from "./tools/types"
 import time from "~/utils/basic/time"
+import type { BoolFunc } from "~/utils/basic/type-tool"
 
 let resUploadToken: Res_FileSet_UploadToken | undefined
 
-async function uploadFilesAndImages(
-  files: LiuFileAndImage[],
-  aFileCompleted: WhenAFileCompleted,
+async function handleAnAtom(
+  atom: UploadFileAtom,
 ) {
-  
-  if(!resUploadToken) {
-    return false
+  const rut = resUploadToken as Res_FileSet_UploadToken
+  const cs = rut.cloudService
+
+  const files = atom.files
+  const cId = atom.contentId
+
+  let fileStoragePromise: Promise<boolean> | undefined
+
+  const _storageContent = async (
+    content_id: string,
+    file_id: string,
+    cloud_url: string,
+  ) => {
+    // 1. find the content
+    const content = await db.contents.get(content_id)
+    if(!content) {
+      return false
+    }
+
+    // 2. put cloud_url into the file
+    let foundInImages = false
+    let foundInFiles = false
+    const { images, files } = content
+    images?.forEach(v => {
+      if(v.id === file_id) {
+        foundInImages = true
+        v.cloud_url = cloud_url
+      }
+    })
+    files?.forEach(v => {
+      if(v.id === file_id) {
+        foundInFiles = true
+        v.cloud_url = cloud_url
+      }
+    })
+    if(!foundInImages && !foundInFiles) {
+      return false
+    }
+
+    // 3. write to db
+    const opt: Partial<ContentLocalTable> = {
+      updatedStamp: time.getTime(),
+    }
+    if(foundInImages) opt.images = images
+    if(foundInFiles) opt.files = files
+    const res3 = await db.contents.update(content_id, opt)
+    console.log("res3: ", res3)
+    console.log(" ")
+    return true
   }
 
-  const cs = resUploadToken.cloudService
+  const _whenAFileCompleted: WhenAFileCompleted = (fileId, res) => {
+    if(res.code !== "0000") return
+    const cloud_url = res.data?.cloud_url
+    if(!cloud_url) return
+
+    const _wait = async (a: BoolFunc) => {
+      if(cId) {
+        await _storageContent(cId, fileId, cloud_url)
+      }
+      else {
+        console.warn("there is no content id")
+        console.log("please adapt a new way to write cloud_url into db")
+      }
+      a(true)
+    }
+    fileStoragePromise = new Promise(_wait)
+  }
+
+  let uploadRes: LiuFileAndImage[] | false = false
   if(cs === "qiniu") {
-    await uploadViaQiniu(resUploadToken, files, aFileCompleted)
+    uploadRes = await uploadViaQiniu(rut, files, _whenAFileCompleted)
   }
   else if(cs === "aliyun_oss") {
 
@@ -30,7 +97,19 @@ async function uploadFilesAndImages(
   else if(cs === "tecent_cos") {
     
   }
-  
+  else {
+    console.warn("unknown cloud service: ", cs)
+  }
+
+  if(fileStoragePromise) {
+    await fileStoragePromise
+  }
+
+  console.log("看一下 uploadRes")
+  console.log(uploadRes)
+  console.log(" ")
+
+  return uploadRes
 }
 
 
@@ -39,9 +118,6 @@ async function handleUploadFileAtoms(
 ) {
   if(!resUploadToken) return false
 
-  const _whenAFileCompleted: WhenAFileCompleted = (f, res) => {
-    
-  }
 
   for(let i=0; i<list.length; i++) {
     const v = list[i]
@@ -54,7 +130,7 @@ async function handleUploadFileAtoms(
     await db.upload_tasks.update(v.taskId, opt1)
 
     // 2. upload files and images
-    const res2 = await uploadFilesAndImages(v.files, _whenAFileCompleted)
+    const res2 = await handleAnAtom(v)
   }
   
 }
