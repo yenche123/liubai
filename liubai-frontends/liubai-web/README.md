@@ -95,6 +95,8 @@ https://openmoji.org/
 
 21. 运行 `curl cip.cc` 查看当前命令行设置的代理
 
+22. 一个使用 Rust 编写的 node.js 版本管理工具 `fnm`，安装好后在项目根目录下运行 `eval "$(fnm env --use-on-cd)"` （以 MacOS 为例）开始使用，运行 `fnm current` 查看当前项目使用的 node.js 版本号。若全局电脑只想使用 LTS 的 node.js，那么是不需要使用 `fnm` 的，只要在 node.js 官网下载（升级时亦然）并安装即可。
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
