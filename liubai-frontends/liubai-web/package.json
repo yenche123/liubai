@@ -38,7 +38,7 @@
     "canvas-confetti": "^1.9.2",
     "compressorjs": "^1.2.1",
     "date-fns": "^3.6.0",
-    "dexie": "^3.2.7",
+    "dexie": "^4.0.1",
     "exifreader": "^4.22.0",
     "file-saver": "^2.0.5",
     "floating-vue": "^5.2.2",
