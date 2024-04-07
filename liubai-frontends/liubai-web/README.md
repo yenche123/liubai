@@ -91,6 +91,10 @@ https://openmoji.org/
 
 19. 运行 `pnpm` 遭遇 `WARN GET https://registry.npmjs.org/依赖名称 error (ERR_SOCKET_TIMEOUT). Will retry in 10 seconds. 2 retries left` 的错误，这时可以打开 `WiFi-设置`，`详细资讯 - TCP/IP`，把设定 IPv6 切换成 `仅本地连接`，确定后再改回 `自动`，再重新运行一次 `pnpm` 看是否恢复，详见 https://github.com/pnpm/pnpm/issues/6434#issuecomment-1937315051
 
+20. 配置命令行的代理，以 MacOS 为例参考: https://fortune-sneeze-ade.notion.site/62baeed105624c6097f8983b4e462a9d?pvs=4
+
+21. 运行 `curl cip.cc` 查看当前命令行设置的代理
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
