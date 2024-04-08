@@ -5,6 +5,7 @@ import liuUtil from "~/utils/liu-util";
 import { useI18n } from "vue-i18n"
 import type { ComposerTranslation } from "vue-i18n"
 import type { FileShow, LiuFileStore } from "~/types";
+import liuEnv from "~/utils/liu-env";
 
 export function receiveCmaProps(props: CmaProps, data: MaData) {
   const { t, locale } = useI18n()
@@ -69,9 +70,10 @@ function stateChanged(
   checkAttachment(data, newFiles)
 
   // 云同步
+  const be = liuEnv.hasBackend()
   const newSyncCloud = storageState === "CLOUD" || storageState === "WAIT_UPLOAD"
   if(newSyncCloud !== data.syncCloud) data.syncCloud = newSyncCloud
-  const newDisabled = storageState === "ONLY_LOCAL"
+  const newDisabled = !be || storageState === "ONLY_LOCAL"
   if(newDisabled !== data.scDisabled) data.scDisabled = newDisabled
   
 }

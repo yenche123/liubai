@@ -17,6 +17,7 @@ import { storeToRefs } from "pinia"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
 import { handleOverflow } from "./handle-overflow"
+import liuEnv from "~/utils/liu-env"
 
 let spaceIdRef: Ref<string>
 
@@ -145,8 +146,12 @@ async function initDraftFromDraft(
   if(draft.visScope) {
     state.visScope = draft.visScope
   }
-
-  if(draft.storageState) {
+  
+  const be = liuEnv.hasBackend()
+  if(!be) {
+    state.storageState = "LOCAL"
+  }
+  else if(draft.storageState) {
     state.storageState = draft.storageState
   }
 
@@ -174,11 +179,12 @@ async function initDraftFromThread(
   thread: ContentLocalTable,
 ) {
   let { state, editor, numWhenSet } = ctx
+  const be = liuEnv.hasBackend()
 
   state.lastInitStamp = time.getTime()
   state.draftId = ""
   state.visScope = thread.visScope
-  state.storageState = thread.storageState
+  state.storageState = be ? thread.storageState : "LOCAL"
   state.title = thread.title
   state.showTitleBar = Boolean(thread.title)
   state.whenStamp = thread.whenStamp

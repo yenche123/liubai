@@ -79,7 +79,8 @@
     "tag": "Tag",
     "copy_code": "Copy code",
     "format_clear": "Clear format",
-    "attachment": "File"
+    "attachment": "File",
+    "cannot_sync": "It's not supported to sync with cloud on the pure local mode."
   },
   "cui": {
     "plz_input_txt": "Text here"

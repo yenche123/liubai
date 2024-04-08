@@ -6,6 +6,7 @@ import type { MenuItem } from "~/components/common/liu-menu/tools/types"
 import { REMIND_LATER, REMIND_EARLY } from "~/config/atom"
 import type { SwitchChangeEmitOpt } from "~/components/common/liu-switch/types"
 import type { MaData, MoreAreaEmits, MaContext, CmaProps } from "./types-cma"
+import liuEnv from "~/utils/liu-env";
 
 export function useMoreArea(
   props: CmaProps,
@@ -55,6 +56,18 @@ export function useMoreArea(
 
   const onTapSyncToCloud = () => {
     const newV = !data.syncCloud
+
+    const be = liuEnv.hasBackend()
+    if(!be) {
+      cui.showModal({
+        title_key: "tip.tip",
+        content_key: "editor.cannot_sync",
+        showCancel: false,
+      })
+      return
+    }
+
+    if(data.scDisabled) return
     emits("synccloudchange", newV)
   }
 
