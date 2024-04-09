@@ -16,4 +16,9 @@ export type WhenAFileCompleted = (
   fileId: string, res: FileReqReturn
 ) => void
 
-export type UploadFileRes = "completed" | "partial_success" | "failed"
+export type UploadFileRes = "completed" | 
+  "partial_success" | 
+  "no_space" |
+  "too_frequent" |
+  "network_err" |
+  "other_err"

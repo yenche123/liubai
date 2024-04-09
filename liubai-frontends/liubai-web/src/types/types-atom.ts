@@ -218,3 +218,6 @@ export type LiuUploadTask = typeof liuUploadTasks[number]
 // 需要 script 注入才能嵌入的应用方
 export type ParticularScript = "ig" | "twitter" | 
   "calendly" | "telegram" | "github_gist"
+
+// UploadTaskLocalTable.progressType
+export type UploadTaskProgressType = "waiting" | "file_uploading" | "syncing"

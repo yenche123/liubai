@@ -6,10 +6,14 @@ import { db } from "~/utils/db"
 import type { LiuFileAndImage } from "~/types"
 import APIs from "~/requests/APIs"
 import type { Res_FileSet_UploadToken } from "~/requests/req-types"
-import type { LiuUploadTask } from "~/types/types-atom"
+import type { LiuUploadTask, UploadTaskProgressType } from "~/types/types-atom"
 import { uploadViaQiniu } from "./tools/upload-via-qiniu"
 import liuReq from "~/requests/liu-req"
-import type { UploadFileAtom, WhenAFileCompleted } from "./tools/types"
+import type { 
+  UploadFileAtom, 
+  WhenAFileCompleted, 
+  UploadFileRes,
+} from "./tools/types"
 import time from "~/utils/basic/time"
 import type { BoolFunc } from "~/utils/basic/type-tool"
 
@@ -17,7 +21,7 @@ let resUploadToken: Res_FileSet_UploadToken | undefined
 
 async function handleAnAtom(
   atom: UploadFileAtom,
-) {
+): Promise<UploadFileRes> {
   const rut = resUploadToken as Res_FileSet_UploadToken
   const cs = rut.cloudService
 
@@ -64,13 +68,12 @@ async function handleAnAtom(
     if(foundInImages) opt.images = images
     if(foundInFiles) opt.files = files
     const res3 = await db.contents.update(content_id, opt)
-    console.log("res3: ", res3)
+    console.log("_storageContent res3: ", res3)
     console.log(" ")
     return true
   }
 
   const _whenAFileCompleted: WhenAFileCompleted = (fileId, res) => {
-    if(res.code !== "0000") return
     const cloud_url = res.data?.cloud_url
     if(!cloud_url) return
 
@@ -87,7 +90,7 @@ async function handleAnAtom(
     fileStoragePromise = new Promise(_wait)
   }
 
-  let uploadRes: LiuFileAndImage[] | false = false
+  let uploadRes: UploadFileRes | undefined
   if(cs === "qiniu") {
     uploadRes = await uploadViaQiniu(rut, files, _whenAFileCompleted)
   }
@@ -105,34 +108,69 @@ async function handleAnAtom(
     await fileStoragePromise
   }
 
-  console.log("看一下 uploadRes")
-  console.log(uploadRes)
-  console.log(" ")
-
+  if(!uploadRes) return "other_err"
   return uploadRes
 }
 
+
+// Exit Event
+// if one of type in exit_list occurs, then stop all tasks
+const exit_list: UploadFileRes[] = [
+  "no_space",
+  "too_frequent",
+]
 
 async function handleUploadFileAtoms(
   list: UploadFileAtom[],
 ) {
   if(!resUploadToken) return false
 
-
   for(let i=0; i<list.length; i++) {
     const v = list[i]
 
     // 1. update task's progressType to "file_uploading"
-    const opt1: Partial<UploadTaskLocalTable> = {
-      progressType: "file_uploading",
-      updatedStamp: time.getTime(),
-    }
-    await db.upload_tasks.update(v.taskId, opt1)
+    await changeProgressType(v.taskId, "file_uploading")
 
     // 2. upload files and images
     const res2 = await handleAnAtom(v)
+    console.log("当前任务文件处理结果: ", res2)
+    console.log(" ")
+
+    // 3. update task's progressType after handleAnAtom
+    const addTryTimes = res2 !== "completed"
+    await changeProgressType(v.taskId, "waiting", addTryTimes)
+
+    // 4. if res2 is one of type in exit_list, then stop all tasks
+    if(exit_list.includes(res2)) {
+      return false
+    }
   }
-  
+
+  return true
+}
+
+
+async function changeProgressType(
+  taskId: string, 
+  progressType: UploadTaskProgressType,
+  addTryTimes: boolean = false,
+) {
+  let tryTimes = 0
+  if(addTryTimes) {
+    const task = await db.upload_tasks.get(taskId)
+    if(task) {
+      tryTimes = task.tryTimes ?? 0
+      tryTimes++
+    }
+  }
+
+  const opt1: Partial<UploadTaskLocalTable> = {
+    progressType,
+    updatedStamp: time.getTime(),
+  }
+  if(tryTimes) opt1.tryTimes = tryTimes
+  const res = await db.upload_tasks.update(taskId, opt1)
+  return res
 }
 
 

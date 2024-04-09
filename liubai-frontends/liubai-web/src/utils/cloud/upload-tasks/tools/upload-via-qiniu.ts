@@ -10,6 +10,7 @@ import type {
   UploadResolver, 
   FileReqReturn, 
   WhenAFileCompleted,
+  UploadFileRes,
 } from "./types"
 
 function _upload(
@@ -48,17 +49,19 @@ export async function uploadViaQiniu(
   resUploadToken: Res_FileSet_UploadToken,
   files: LiuFileAndImage[],
   aFileCompleted: WhenAFileCompleted,
-) {
+): Promise<UploadFileRes> {
   const prefix = resUploadToken?.prefix ?? ""
   const token = resUploadToken?.uploadToken ?? ""
 
   let tryTimes = 0
+  let allHasCloudUrl = false
+
   for(let i=0; i<files.length; i++) {
     const v = files[i]
     const f = fileHelper.storeToFile(v)
     if(!f) {
       console.warn("failed to convert store to file")
-      return false
+      return "other_err"
     }
     
     const suffix = valTool.getSuffix(f.name)
@@ -70,18 +73,24 @@ export async function uploadViaQiniu(
     // 1. capture all err of network
     if(!res) {
       tryTimes++
-      if(tryTimes >= 3) return false
+      if(tryTimes >= 3) return "network_err"
       i--
       continue
     }
 
     aFileCompleted(v.id, res)
 
-    const cloud_url = res.data?.cloud_url
-    if(cloud_url) {
-      v.cloud_url = cloud_url
+    const { code } = res
+    if(code === "E4003") {
+      return "too_frequent"
     }
+    else if(code === "E4010") {
+      return "no_space"
+    }
+    
+    const cloud_url = res.data?.cloud_url
+    if(!cloud_url) allHasCloudUrl = false
   }
 
-  return files
+  return allHasCloudUrl ? "completed" : "partial_success"
 }
