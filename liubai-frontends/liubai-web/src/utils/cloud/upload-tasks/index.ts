@@ -14,11 +14,9 @@ async function handle10Tasks(tasks: UploadTaskLocalTable[]) {
 
   // 1. uploading related files
   const res1 = await handleFiles(tasks)
-  if(!res1) {
-    return false
-  }
+  if(!res1) return false
 
-  // 2. 
+  // 2. package tasks to prepare for syncing
 
 
 

@@ -1,5 +1,6 @@
 import type {
   ContentLocalTable,
+  MemberLocalTable,
   UploadTaskLocalTable,
 } from "~/types/types-table"
 import { db } from "~/utils/db"
@@ -27,9 +28,7 @@ async function _storageContent(
 ) {
   // 1. find the content
   const content = await db.contents.get(content_id)
-  if(!content) {
-    return false
-  }
+  if(!content) return false
 
   // 2. put cloud_url into the file
   let foundInImages = false
@@ -51,7 +50,7 @@ async function _storageContent(
     return false
   }
 
-  // 3. write to db
+  // 3. write into db
   const opt: Partial<ContentLocalTable> = {
     updatedStamp: time.getTime(),
   }
@@ -63,7 +62,36 @@ async function _storageContent(
   return true  
 }
 
-async function _deleteFile(
+async function _storageMember(
+  member_id: string,
+  file_id: string,
+  cloud_url: string,
+) {
+  // 1. find the member
+  const member = await db.members.get(member_id)
+  if(!member) return false
+
+  // 2. put cloud_url into the file
+  let foundInAvatar = false
+  const { avatar } = member
+  if(avatar?.id === file_id) {
+    foundInAvatar = true
+    avatar.cloud_url = cloud_url
+  }
+  if(!foundInAvatar) return false
+
+  // 3. write into db
+  const opt: Partial<MemberLocalTable> = {
+    updatedStamp: time.getTime(),
+  }
+  if(foundInAvatar) opt.avatar = avatar
+  const res3 = await db.members.update(member_id, opt)
+  console.log("_storageMember res3: ", res3)
+  console.log(" ")
+  return true
+}
+
+async function _deleteFileFromContent(
   content_id: string,
   file_id: string,
 ) {
@@ -104,10 +132,39 @@ async function _deleteFile(
   if(foundInImages) opt.images = images
   if(foundInFiles) opt.files = files
   const res3 = await db.contents.update(content_id, opt)
-  console.log("_deleteFile res3: ", res3)
+  console.log("_deleteFileFromContent res3: ", res3)
   console.log(" ")
-  return true  
+  return res3 > 0  
 }
+
+
+async function _deleteFileFromMember(
+  member_id: string,
+  file_id: string,
+) {
+  // 1. find the member
+  const member = await db.members.get(member_id)
+  if(!member) return false
+
+  // 2. to check if avatar is the file
+  let foundInAvatar = false
+  const { avatar } = member
+  if(avatar?.id === file_id) {
+   foundInAvatar = true 
+  }
+
+  if(!foundInAvatar) return false
+
+  // 3. delete the avatar via modifying
+  const res3 = await db.members.where("_id").equals(member_id).modify(val => {
+    console.log("using modify to delete the avatar property........")
+    delete val.avatar
+  })
+  console.log("_deleteFileFromMember modify res3: ", res3)
+  console.log(" ")
+  return res3 > 0
+}
+
 
 async function handleAnAtom(
   atom: UploadFileAtom,
@@ -117,6 +174,7 @@ async function handleAnAtom(
 
   const files = atom.files
   const cId = atom.contentId
+  const mId = atom.memberId
 
   const promises: Array<Promise<boolean>> = []
 
@@ -131,10 +189,21 @@ async function handleAnAtom(
         await _storageContent(cId, fileId, cloud_url)
       }
 
-      // 2. delete the file from the content 
+      // 2. store cloud_url into files or images in the member
+      if(mId && code === "0000" && cloud_url) {
+        await _storageMember(mId, fileId, cloud_url)
+      }
+
+      // 3. delete the file from the content 
       // when the file format is not supported
       if(cId && code === "E4012") {
-        await _deleteFile(cId, fileId)
+        await _deleteFileFromContent(cId, fileId)
+      }
+
+      // 4. delete the file from member
+      // when the file format is not supported
+      if(mId && code === "E4012") {
+        await _deleteFileFromMember(mId, fileId)
       }
       
       a(true)
@@ -256,39 +325,11 @@ async function getUploadToken() {
 }
 
 
-/** 会更新图片的事件 */
-const photo_events: LiuUploadTask[] = [
-  "content-post",
-  "thread-edit",
-  "comment-edit",
-  "thread-restore",
-]
-
-/** checking out files and images in contents */
-export async function handleFiles(tasks: UploadTaskLocalTable[]) {
-  
-  // 1. get content ids
-  // TODO: 也可能图片或文件不是存在 content 里
-  let list: UploadFileAtom[] = []
-  const contentIds: string[] = []
-  tasks.forEach(v => {
-    const uT = v.uploadTask
-    const isPhotoEvt = photo_events.includes(uT)
-    if(!isPhotoEvt || !v.content_id) return
-    if(contentIds.includes(v.content_id)) return
-    contentIds.push(v.content_id)
-    list.push({
-      taskId: v._id,
-      contentId: v.content_id,
-      files: [],
-    })
-  })
-
-  if(contentIds.length < 1) {
-    return true
-  }
-
-  // 2. get contents from db
+async function extractFilesFromContents(
+  contentIds: string[],
+  list: UploadFileAtom[],
+) {
+  if(contentIds.length < 1) return true
   const col = db.contents.where("_id").anyOf(contentIds)
   const contents = await col.toArray()
   if(contents.length < 1) return true
@@ -300,18 +341,91 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
     if(v1.files?.length) packFiles(item, v1.files)
     if(v1.images?.length) packFiles(item, v1.images)
   }
+  return true
+}
 
-  // 3. 删掉 files 为空的项
+async function extractFilesFromMembers(
+  memberIds: string[],
+  list: UploadFileAtom[],
+) {
+  if(memberIds.length < 1) return true
+  const col = db.members.where("_id").anyOf(memberIds)
+  const members = await col.toArray()
+  if(members.length < 1) return true
+  
+  for(let i1=0; i1<members.length; i1++) {
+    const v1 = members[i1]
+    const item = list.find(v2 => v2.memberId === v1._id)
+    if(!item) continue
+    if(v1.avatar) packFiles(item, [v1.avatar])
+  }
+  return true
+}
+
+
+/** 会更新图片的事件 */
+const photo_events: LiuUploadTask[] = [
+  "content-post",
+  "thread-edit",
+  "comment-edit",
+  "thread-restore",
+  "member-avatar",
+]
+
+/** checking out files and images in contents */
+export async function handleFiles(tasks: UploadTaskLocalTable[]) {
+  
+  // 1. get content ids
+  // TODO: 也可能图片或文件不是存在 content 里
+  let list: UploadFileAtom[] = []
+  const contentIds: string[] = []
+  const memberIds: string[] = []
+  tasks.forEach(v => {
+    const uT = v.uploadTask
+    const isPhotoEvt = photo_events.includes(uT)
+    if(!isPhotoEvt) return
+
+    if(v.content_id) {
+      if(contentIds.includes(v.content_id)) return
+      contentIds.push(v.content_id)
+    }
+    
+    if(v.member_id) {
+      if(memberIds.includes(v.member_id)) return
+      memberIds.push(v.member_id)
+    }
+    
+    list.push({
+      taskId: v._id,
+      contentId: v.content_id,
+      memberId: v.member_id,
+      files: [],
+    })
+  })
+
+  const needUploadFile = contentIds.length > 0 || memberIds.length > 0
+  if(!needUploadFile) {
+    console.log("there is no need to upload files cause needUploadFile is false")
+    return true
+  }
+
+  // 2. extract files from contents and put into list
+  await extractFilesFromContents(contentIds, list)
+
+  // 3. extract files from members and put into list
+  await extractFilesFromMembers(memberIds, list)
+
+  // 4. 删掉 files 为空的项
   list = list.filter(v => v.files.length > 0)
   if(list.length < 1) return true
 
-  // 4. get upload token
+  // 5. get upload token
   const res4 = await getUploadToken()
   if(!res4) return false
 
-  // 5. handle atoms
+  // 6. handle atoms
   const res5 = await handleUploadFileAtoms(list)
   if(!res5) return false
 
-
+  return true
 }

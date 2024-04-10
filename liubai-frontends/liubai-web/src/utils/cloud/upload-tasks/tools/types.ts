@@ -9,6 +9,7 @@ export type UploadResolver = (res: FileReqReturn | null) => void
 export interface UploadFileAtom {
   taskId: string
   contentId?: string
+  memberId?: string    // for example, the user updates his or her avatar
   files: LiuFileAndImage[]
 }
 

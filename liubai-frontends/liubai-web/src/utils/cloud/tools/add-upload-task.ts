@@ -33,36 +33,42 @@ export async function addUploadTask(
   else if(taskType === "comment-edit") {
     addRequired = await whenContentEdit(param.target_id, user)
   }
-  else if(taskType === "workspace-tag") {
-    addRequired = await checkForWorkspace(param.target_id, user, taskType)
+  if(!addRequired) return
+  
+  // 2. 检查是否已存在，若存在去删除旧的任务
+  if(taskType === "workspace-tag") {
+    await checkForWorkspace(param.target_id, user, taskType)
+  }
+  else if(taskType === "member-avatar" || taskType === "member-nickname") {
+    await checkForMember(param.target_id, user, taskType)
   }
 
-  if(!addRequired) {
-    return false
-  }
-
-
-  // 2. 把 target_id 转换成对应的 id
+  // 3. 把 target_id 转换成对应的 id
   let content_id: string | undefined
   let workspace_id: string | undefined
+  let member_id: string | undefined
 
   if(taskType === "workspace-tag") {
     workspace_id = param.target_id
+  }
+  else if(taskType === "member-avatar" || taskType === "member-nickname") {
+    member_id = param.target_id
   }
   else {
     content_id = param.target_id
   }
 
-  // 3. 组装 task
-  const now3 = time.getTime()
+  // 4. 组装 task
+  const now4 = time.getTime()
   const newTask: UploadTaskLocalTable = {
     _id: ider.createUploadTaskId(),
-    insertedStamp: now3,
-    updatedStamp: now3,
+    insertedStamp: now4,
+    updatedStamp: now4,
     user,
     uploadTask: taskType,
     content_id,
     workspace_id,
+    member_id,
     newBool: param.newBool,
     newStr: param.newStr,
     progressType: "waiting",
@@ -71,15 +77,31 @@ export async function addUploadTask(
   return true
 }
 
-/** 检查关于 workspace 的更新，是否已存在了
- * 若存在，返回 false，表示无需再重复添加
- */
+/** checking out if the task related to member has already been added */
+async function checkForMember(
+  member_id: string,
+  user: string,
+  taskType: LiuUploadTask,
+) {
+  const w: Partial<UploadTaskLocalTable> = {
+    user,
+    uploadTask: taskType,
+    member_id,
+    progressType: "waiting",
+  }
+  const res = await db.upload_tasks.where(w).toArray()
+  if(res.length < 1) return
+  
+  const origin_id = res[0]._id
+  await deleteTheTask(origin_id)
+}
+
+/** checking out if the task related to workspace has already been added */
 async function checkForWorkspace(
   workspace_id: string,
   user: string,
   taskType: LiuUploadTask,
 ) {
-
   const w: Partial<UploadTaskLocalTable> = {
     user,
     uploadTask: taskType,
@@ -87,13 +109,16 @@ async function checkForWorkspace(
     progressType: "waiting",
   }
   const res = await db.upload_tasks.where(w).toArray()
-  if(res.length > 0) {
-    return false
-  }
-  return true
+  if(res.length < 1) return
+
+  const origin_id = res[0]._id
+  await deleteTheTask(origin_id)
 }
 
-
+/** checking out if the original task of undo has already been added 
+ * if yes, then delete it, and return false to represent that 
+ * there is no need to add
+*/
 async function whenUndo(
   content_id: string,
   user: string,
@@ -129,11 +154,10 @@ async function whenUndo(
     return true
   }
 
-  await db.upload_tasks.delete(origin_id)
+  await deleteTheTask(origin_id)
 
   return false
 }
-
 
 /**
  * 去查找是否有 content-post 的任务
@@ -152,4 +176,11 @@ async function whenContentEdit(
 
   const res = await db.upload_tasks.where(w).toArray()
   return res.length < 1
+}
+
+async function deleteTheTask(
+  taskId: string,
+) {
+  await db.upload_tasks.delete(taskId)
+  return true
 }
