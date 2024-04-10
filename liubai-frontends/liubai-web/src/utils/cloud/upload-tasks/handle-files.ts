@@ -19,6 +19,96 @@ import type { BoolFunc } from "~/utils/basic/type-tool"
 
 let resUploadToken: Res_FileSet_UploadToken | undefined
 
+
+async function _storageContent(
+  content_id: string,
+  file_id: string,
+  cloud_url: string,
+) {
+  // 1. find the content
+  const content = await db.contents.get(content_id)
+  if(!content) {
+    return false
+  }
+
+  // 2. put cloud_url into the file
+  let foundInImages = false
+  let foundInFiles = false
+  const { images, files } = content
+  images?.forEach(v => {
+    if(v.id === file_id) {
+      foundInImages = true
+      v.cloud_url = cloud_url
+    }
+  })
+  files?.forEach(v => {
+    if(v.id === file_id) {
+      foundInFiles = true
+      v.cloud_url = cloud_url
+    }
+  })
+  if(!foundInImages && !foundInFiles) {
+    return false
+  }
+
+  // 3. write to db
+  const opt: Partial<ContentLocalTable> = {
+    updatedStamp: time.getTime(),
+  }
+  if(foundInImages) opt.images = images
+  if(foundInFiles) opt.files = files
+  const res3 = await db.contents.update(content_id, opt)
+  console.log("_storageContent res3: ", res3)
+  console.log(" ")
+  return true  
+}
+
+async function _deleteFile(
+  content_id: string,
+  file_id: string,
+) {
+  // 1. find the content
+  const content = await db.contents.get(content_id)
+  if(!content) {
+    return false
+  }
+
+  // 2. define the function to seek and delete the file
+  // from images or files
+  const _toSeekAndDelete = (list?: LiuFileAndImage[]) =>  {
+    if(!list) return false
+    let hasFound = false
+    for(let i=0; i<list.length; i++) {
+      const v = list[i]
+      if(v.id === file_id) {
+        hasFound = true
+        list.splice(i, 1)
+        i--
+      }
+    }
+    return hasFound
+  }
+
+  // 3. to seek and delete from images or files
+  const { images, files } = content
+  let foundInImages = _toSeekAndDelete(images)
+  let foundInFiles = _toSeekAndDelete(files)
+  if(!foundInImages && !foundInFiles) {
+    return false
+  }
+
+  // 4. write to db
+  const opt: Partial<ContentLocalTable> = {
+    updatedStamp: time.getTime(),
+  }
+  if(foundInImages) opt.images = images
+  if(foundInFiles) opt.files = files
+  const res3 = await db.contents.update(content_id, opt)
+  console.log("_deleteFile res3: ", res3)
+  console.log(" ")
+  return true  
+}
+
 async function handleAnAtom(
   atom: UploadFileAtom,
 ): Promise<UploadFileRes> {
@@ -30,61 +120,23 @@ async function handleAnAtom(
 
   let fileStoragePromise: Promise<boolean> | undefined
 
-  const _storageContent = async (
-    content_id: string,
-    file_id: string,
-    cloud_url: string,
-  ) => {
-    // 1. find the content
-    const content = await db.contents.get(content_id)
-    if(!content) {
-      return false
-    }
-
-    // 2. put cloud_url into the file
-    let foundInImages = false
-    let foundInFiles = false
-    const { images, files } = content
-    images?.forEach(v => {
-      if(v.id === file_id) {
-        foundInImages = true
-        v.cloud_url = cloud_url
-      }
-    })
-    files?.forEach(v => {
-      if(v.id === file_id) {
-        foundInFiles = true
-        v.cloud_url = cloud_url
-      }
-    })
-    if(!foundInImages && !foundInFiles) {
-      return false
-    }
-
-    // 3. write to db
-    const opt: Partial<ContentLocalTable> = {
-      updatedStamp: time.getTime(),
-    }
-    if(foundInImages) opt.images = images
-    if(foundInFiles) opt.files = files
-    const res3 = await db.contents.update(content_id, opt)
-    console.log("_storageContent res3: ", res3)
-    console.log(" ")
-    return true
-  }
-
   const _whenAFileCompleted: WhenAFileCompleted = (fileId, res) => {
+    const code = res.code
     const cloud_url = res.data?.cloud_url
-    if(!cloud_url) return
 
     const _wait = async (a: BoolFunc) => {
-      if(cId) {
+
+      // 1. store cloud_url into files or images in the content
+      if(cId && code === "0000" && cloud_url) {
         await _storageContent(cId, fileId, cloud_url)
       }
-      else {
-        console.warn("there is no content id")
-        console.log("please adapt a new way to write cloud_url into db")
+
+      // 2. delete the file from the content 
+      // when the file format is not supported
+      if(cId && code === "E4012") {
+        await _deleteFile(cId, fileId)
       }
+      
       a(true)
     }
     fileStoragePromise = new Promise(_wait)
