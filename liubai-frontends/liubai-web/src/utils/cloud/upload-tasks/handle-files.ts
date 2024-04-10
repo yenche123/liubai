@@ -118,7 +118,7 @@ async function handleAnAtom(
   const files = atom.files
   const cId = atom.contentId
 
-  let fileStoragePromise: Promise<boolean> | undefined
+  const promises: Array<Promise<boolean>> = []
 
   const _whenAFileCompleted: WhenAFileCompleted = (fileId, res) => {
     const code = res.code
@@ -139,7 +139,8 @@ async function handleAnAtom(
       
       a(true)
     }
-    fileStoragePromise = new Promise(_wait)
+    const pro = new Promise(_wait)
+    promises.push(pro)
   }
 
   let uploadRes: UploadFileRes | undefined
@@ -156,8 +157,8 @@ async function handleAnAtom(
     console.warn("unknown cloud service: ", cs)
   }
 
-  if(fileStoragePromise) {
-    await fileStoragePromise
+  if(promises.length > 0) {
+    await Promise.all(promises)
   }
 
   if(!uploadRes) return "other_err"
