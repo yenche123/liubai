@@ -41,20 +41,20 @@ function _handleOneImg(
     // 第 1 段
     // 高宽比小于等于 1 时，此时图片是横宽版式的
 
-    maxWidthPx = -200 * h2w + 600
+    maxWidthPx = -200 * h2w + 550
   }
   else {
     // 第 2 段
     // 此时图片是竖直版式的
 
-    maxWidthPx = -120 * h2w + 470
+    maxWidthPx = -120 * h2w + 430
   }
 
   // 最后限制 maxWidthPx
   if(imgWidthPx) {
     if(maxWidthPx > imgWidthPx) maxWidthPx = imgWidthPx
   }
-  if(maxWidthPx > 700) maxWidthPx = 700
+  if(maxWidthPx > 600) maxWidthPx = 600
   if(maxWidthPx < 100) maxWidthPx = 100
   
 
