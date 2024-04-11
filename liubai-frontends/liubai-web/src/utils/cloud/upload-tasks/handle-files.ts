@@ -175,6 +175,7 @@ async function handleAnAtom(
   const files = atom.files
   const cId = atom.contentId
   const mId = atom.memberId
+  const dId = atom.draftId
 
   const promises: Array<Promise<boolean>> = []
 
@@ -367,6 +368,25 @@ async function extractFilesFromMembers(
   return true
 }
 
+async function extractFilesFromDrafts(
+  draftIds: string[],
+  list: UploadFileAtom[],
+) {
+  if(draftIds.length < 1 ) return true
+  const col = db.drafts.where("_id").anyOf(draftIds)
+  const drafts = await col.toArray()
+  if(drafts.length < 1) return true
+
+  for(let i1=0; i1<drafts.length; i1++) {
+    const v1 = drafts[i1]
+    const item = list.find(v2 => v2.draftId === v1._id)
+    if(!item) continue
+    if(v1.files?.length) packFiles(item, v1.files)
+    if(v1.images?.length) packFiles(item, v1.images)
+  }
+  return true
+}
+
 
 /** 会更新图片的事件 */
 const photo_events: LiuUploadTask[] = [
@@ -375,16 +395,17 @@ const photo_events: LiuUploadTask[] = [
   "comment-edit",
   "thread-restore",
   "member-avatar",
+  "draft-set",
 ]
 
 /** checking out files and images in contents */
 export async function handleFiles(tasks: UploadTaskLocalTable[]) {
   
-  // 1. get content ids
-  // TODO: 也可能图片或文件不是存在 content 里
+  // 1. get a variety of ids
   let list: UploadFileAtom[] = []
   const contentIds: string[] = []
   const memberIds: string[] = []
+  const draftIds: string[] = []
   tasks.forEach(v => {
     const uT = v.uploadTask
     const isPhotoEvt = photo_events.includes(uT)
@@ -399,16 +420,23 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
       if(memberIds.includes(v.member_id)) return
       memberIds.push(v.member_id)
     }
+
+    if(v.draft_id) {
+      if(draftIds.includes(v.draft_id)) return
+      draftIds.push(v.draft_id)
+    }
     
     list.push({
       taskId: v._id,
       contentId: v.content_id,
       memberId: v.member_id,
+      draftId: v.draft_id,
       files: [],
     })
   })
 
-  const needUploadFile = contentIds.length > 0 || memberIds.length > 0
+  let needUploadFile = contentIds.length > 0 || memberIds.length > 0
+  needUploadFile = needUploadFile || draftIds.length > 0
   if(!needUploadFile) {
     console.log("there is no need to upload files cause needUploadFile is false")
     return true
@@ -420,15 +448,18 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
   // 3. extract files from members and put into list
   await extractFilesFromMembers(memberIds, list)
 
-  // 4. 删掉 files 为空的项
+  // 4. extract files from drafts and put into list
+  await extractFilesFromDrafts(draftIds, list)
+
+  // 5. 删掉 files 为空的项
   list = list.filter(v => v.files.length > 0)
   if(list.length < 1) return true
 
-  // 5. get upload token
+  // 6. get upload token
   const res4 = await getUploadToken()
   if(!res4) return false
 
-  // 6. handle atoms
+  // 7. handle atoms
   const res5 = await handleUploadFileAtoms(list)
   if(!res5) return false
 

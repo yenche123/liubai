@@ -161,6 +161,7 @@ export interface UploadTaskLocalTable extends BaseLocalTable {
   content_id?: string
   workspace_id?: string
   member_id?: string
+  draft_id?: string
   newBool?: boolean     // 一些开关值，表示最新状态是 true 还是 false
   newStr?: string       // 若 uploadTask 为 emoji 时，此值为 encodeURIComponent() 的表情
                         // 若为取消 emoji，此字段为空字符串

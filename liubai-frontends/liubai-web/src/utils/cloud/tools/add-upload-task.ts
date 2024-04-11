@@ -2,7 +2,9 @@
 // 处理一些可抵消的操作，比如
 // 动态被编辑，若动态被新建的任务还在 local db 中，则不需要再有编辑任务
 
-import type { UploadTaskLocalTable } from "~/types/types-table";
+import type { 
+  UploadTaskLocalTable,
+} from "~/types/types-table";
 import type { UploadTaskParam } from "./types";
 import { db } from "~/utils/db";
 import { type LiuUploadTask, liuUploadTasks } from "~/types/types-atom";
@@ -42,17 +44,24 @@ export async function addUploadTask(
   else if(taskType === "member-avatar" || taskType === "member-nickname") {
     await checkForMember(param.target_id, user, taskType)
   }
+  else if(taskType === "draft-clear" || taskType === "draft-set") {
+    await checkDraft(param.target_id, user)
+  }
 
   // 3. 把 target_id 转换成对应的 id
   let content_id: string | undefined
   let workspace_id: string | undefined
   let member_id: string | undefined
+  let draft_id: string | undefined
 
   if(taskType === "workspace-tag") {
     workspace_id = param.target_id
   }
   else if(taskType === "member-avatar" || taskType === "member-nickname") {
     member_id = param.target_id
+  }
+  else if(taskType === "draft-clear" || taskType === "draft-set") {
+    draft_id = param.target_id
   }
   else {
     content_id = param.target_id
@@ -69,6 +78,7 @@ export async function addUploadTask(
     content_id,
     workspace_id,
     member_id,
+    draft_id,
     newBool: param.newBool,
     newStr: param.newStr,
     progressType: "waiting",
@@ -76,6 +86,32 @@ export async function addUploadTask(
   const res = await db.upload_tasks.add(newTask)
   return true
 }
+
+
+/** check out if there are draft-clear and draft-clear in upload_tasks 
+ *  when new task about draft is triggered 
+ */
+async function checkDraft(
+  draft_id: string,
+  user: string,
+) {
+  const filterTasks: LiuUploadTask[] = ["draft-clear", "draft-set"]
+  const filterFunc = (item: UploadTaskLocalTable) => {
+    return filterTasks.includes(item.uploadTask)
+  }
+  const w: Partial<UploadTaskLocalTable> = {
+    user,
+    draft_id,
+    progressType: "waiting",
+  }
+  const res = await db.upload_tasks.where(w).filter(filterFunc).toArray()
+  if(res.length < 1) return
+
+  const task_ids = res.map(v => v._id)
+  console.log("to delete these tasks: ", task_ids)
+  await db.upload_tasks.bulkDelete(task_ids)
+}
+
 
 /** checking out if the task related to member has already been added */
 async function checkForMember(

@@ -213,6 +213,10 @@ export const liuUploadTasks = [
   "workspace-tag",            // 编辑工作空间的标签，这时 target_id 为 workspace id
   "member-avatar",            // 修改当前工作区自己的头像
   "member-nickname",          // 修改当前工作区自己的昵称
+  "draft-clear",              // 删除某个 draft_id 的草稿
+  "draft-set",                // 设置草稿，注意这时 UploadTaskLocalTable 的 content_id
+                              // 必须为空（否则会被当作 content-xxx 的事件处理），而是
+                              // 用 draft_id 来查询本地的哪个操作
 ] as const
 
 export type LiuUploadTask = typeof liuUploadTasks[number]

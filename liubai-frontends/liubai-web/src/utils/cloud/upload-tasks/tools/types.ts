@@ -10,6 +10,7 @@ export interface UploadFileAtom {
   taskId: string
   contentId?: string
   memberId?: string    // for example, the user updates his or her avatar
+  draftId?: string     // for example, a draft including files has been updated
   files: LiuFileAndImage[]
 }
 
