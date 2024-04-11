@@ -1,5 +1,6 @@
 import type {
   ContentLocalTable,
+  DraftLocalTable,
   MemberLocalTable,
   UploadTaskLocalTable,
 } from "~/types/types-table"
@@ -95,6 +96,35 @@ async function _storageMember(
   return true
 }
 
+async function _storageDraft(
+  draft_id: string,
+  file_id: string,
+  cloud_url: string,
+) {
+  // 1. find the draft
+  const draft = await db.drafts.get(draft_id)
+  if(!draft) return false
+
+  // 2. put cloud_url into the file
+  const { images, files } = draft
+  let foundInImages = _seekFileInStores(file_id, cloud_url, images)
+  let foundInFiles = _seekFileInStores(file_id, cloud_url, files)
+  if(!foundInImages && !foundInFiles) {
+    return false
+  }
+
+  // 3. write into db
+  const opt: Partial<DraftLocalTable> = {
+    updatedStamp: time.getTime(),
+  }
+  if(foundInImages) opt.images = images
+  if(foundInFiles) opt.files = files
+  const res3 = await db.drafts.update(draft_id, opt)
+  console.log("_storageDraft res3: ", res3)
+  console.log(" ")
+  return true
+}
+
 // define the function to seek and delete the file
 // from images or files
 function _toSeekAndDelete(
@@ -142,6 +172,34 @@ async function _deleteFileFromContent(
   console.log("_deleteFileFromContent res3: ", res3)
   console.log(" ")
   return res3 > 0  
+}
+
+async function _deleteFileFromDraft(
+  draft_id: string,
+  file_id: string,
+) {
+  // 1. find the draft
+  const draft = await db.drafts.get(draft_id)
+  if(!draft) return false
+
+  // 2. to seek and delete from images or files
+  const { images, files } = draft
+  let foundInImages = _toSeekAndDelete(file_id, images)
+  let foundInFiles = _toSeekAndDelete(file_id, files)
+  if(!foundInImages && !foundInFiles) {
+    return false
+  }
+
+  // 3. write to db
+  const opt: Partial<DraftLocalTable> = {
+    updatedStamp: time.getTime(),
+  }
+  if(foundInImages) opt.images = images
+  if(foundInFiles) opt.files = files
+  const res3 = await db.drafts.update(draft_id, opt)
+  console.log("_deleteFileFromDraft res3: ", res3)
+  console.log(" ")
+  return res3 > 0
 }
 
 
@@ -203,18 +261,26 @@ async function handleAnAtom(
       }
 
       // 3. store cloud_url into files or images in the draft
+      if(dId && code === "0000" && cloud_url) {
+        await _storageDraft(dId, fileId, cloud_url)
+      }
 
-
-      // 3. delete the file from the content 
+      // 4. delete the file from the content 
       // when the file format is not supported
       if(cId && code === "E4012") {
         await _deleteFileFromContent(cId, fileId)
       }
 
-      // 4. delete the file from member
+      // 5. delete the file from member
       // when the file format is not supported
       if(mId && code === "E4012") {
         await _deleteFileFromMember(mId, fileId)
+      }
+
+      // 6. delete the file from draft
+      // when the file format is not supported
+      if(dId && code === "E4012") {
+        await _deleteFileFromDraft(dId, fileId)
       }
       
       a(true)
