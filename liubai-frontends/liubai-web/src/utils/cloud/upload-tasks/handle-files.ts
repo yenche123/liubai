@@ -278,19 +278,24 @@ async function changeProgressType(
   addTryTimes: boolean = false,
 ) {
   let tryTimes = 0
+  let failedStamp: number | undefined
+
+  const now = time.getTime()
   if(addTryTimes) {
     const task = await db.upload_tasks.get(taskId)
     if(task) {
       tryTimes = task.tryTimes ?? 0
       tryTimes++
+      failedStamp = now
     }
   }
 
   const opt1: Partial<UploadTaskLocalTable> = {
     progressType,
-    updatedStamp: time.getTime(),
+    updatedStamp: now,
   }
   if(tryTimes) opt1.tryTimes = tryTimes
+  if(failedStamp) opt1.failedStamp = failedStamp
   const res = await db.upload_tasks.update(taskId, opt1)
   return res
 }
