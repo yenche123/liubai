@@ -21,6 +21,22 @@ import type { BoolFunc } from "~/utils/basic/type-tool"
 let resUploadToken: Res_FileSet_UploadToken | undefined
 
 
+function _seekFileInStores(
+  file_id: string,
+  cloud_url: string,
+  stores?: LiuFileAndImage[],
+) {
+  if(!stores) return false
+  let found = false
+  stores.forEach(v => {
+    if(v.id === file_id) {
+      found = true
+      v.cloud_url = cloud_url
+    }
+  })
+  return found
+}
+
 async function _storageContent(
   content_id: string,
   file_id: string,
@@ -31,21 +47,9 @@ async function _storageContent(
   if(!content) return false
 
   // 2. put cloud_url into the file
-  let foundInImages = false
-  let foundInFiles = false
   const { images, files } = content
-  images?.forEach(v => {
-    if(v.id === file_id) {
-      foundInImages = true
-      v.cloud_url = cloud_url
-    }
-  })
-  files?.forEach(v => {
-    if(v.id === file_id) {
-      foundInFiles = true
-      v.cloud_url = cloud_url
-    }
-  })
+  let foundInImages = _seekFileInStores(file_id, cloud_url, images)
+  let foundInFiles = _seekFileInStores(file_id, cloud_url, files)
   if(!foundInImages && !foundInFiles) {
     return false
   }
@@ -91,6 +95,25 @@ async function _storageMember(
   return true
 }
 
+// define the function to seek and delete the file
+// from images or files
+function _toSeekAndDelete(
+  file_id: string, 
+  list?: LiuFileAndImage[],
+) {
+  if(!list) return false
+  let hasFound = false
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    if(v.id === file_id) {
+      hasFound = true
+      list.splice(i, 1)
+      i--
+    }
+  }
+  return hasFound
+}
+
 async function _deleteFileFromContent(
   content_id: string,
   file_id: string,
@@ -101,31 +124,15 @@ async function _deleteFileFromContent(
     return false
   }
 
-  // 2. define the function to seek and delete the file
-  // from images or files
-  const _toSeekAndDelete = (list?: LiuFileAndImage[]) =>  {
-    if(!list) return false
-    let hasFound = false
-    for(let i=0; i<list.length; i++) {
-      const v = list[i]
-      if(v.id === file_id) {
-        hasFound = true
-        list.splice(i, 1)
-        i--
-      }
-    }
-    return hasFound
-  }
-
-  // 3. to seek and delete from images or files
+  // 2. to seek and delete from images or files
   const { images, files } = content
-  let foundInImages = _toSeekAndDelete(images)
-  let foundInFiles = _toSeekAndDelete(files)
+  let foundInImages = _toSeekAndDelete(file_id, images)
+  let foundInFiles = _toSeekAndDelete(file_id, files)
   if(!foundInImages && !foundInFiles) {
     return false
   }
 
-  // 4. write to db
+  // 3. write to db
   const opt: Partial<ContentLocalTable> = {
     updatedStamp: time.getTime(),
   }
@@ -194,6 +201,9 @@ async function handleAnAtom(
       if(mId && code === "0000" && cloud_url) {
         await _storageMember(mId, fileId, cloud_url)
       }
+
+      // 3. store cloud_url into files or images in the draft
+
 
       // 3. delete the file from the content 
       // when the file format is not supported
