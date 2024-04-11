@@ -134,6 +134,8 @@ input {
   flex-direction: column;
   align-items: center;
   position: relative;
+  container-type: inline-size;
+  container-name: liu-mc-container;
 }
 
 .liu-mc-container > .liu-tc-virtual {
@@ -146,7 +148,45 @@ input {
   max-width: var(--card-max);
   min-width: var(--card-min);
   position: relative;
+  transition: .175s;
 }
+
+@container liu-mc-container (min-width: 300px) {
+  .liu-mc-container > .liu-mc-box {
+    width: 93%;
+  }
+}
+
+@container liu-mc-container (min-width: 420px) {
+  .liu-mc-container > .liu-mc-box {
+    width: 92%;
+  }
+}
+
+@container liu-mc-container (min-width: 460px) {
+  .liu-mc-container > .liu-mc-box {
+    width: 90%;
+  }
+}
+
+@container liu-mc-container (min-width: 500px) {
+  .liu-mc-container > .liu-mc-box {
+    width: 88%;
+  }
+}
+
+@container liu-mc-container (min-width: 560px) {
+  .liu-mc-container > .liu-mc-box {
+    width: 85%;
+  }
+}
+
+@container liu-mc-container (min-width: 610px) {
+  .liu-mc-container > .liu-mc-box {
+    width: 80%;
+  }
+}
+
 
 .liu-mc-box > .liu-mc-spacing {
   width: 100%;

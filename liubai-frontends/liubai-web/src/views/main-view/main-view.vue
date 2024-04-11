@@ -75,7 +75,7 @@ const onTapCenter = (e: MouseEvent) => {
 .mv-left, .mv-right {
   flex-shrink: 0;
   height: 100%;
-  transition: .25s;
+  transition: .28s;
   background-color: #e6e4bf;
 }
 
