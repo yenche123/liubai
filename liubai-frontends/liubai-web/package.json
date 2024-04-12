@@ -54,7 +54,7 @@
     "vconsole": "^3.15.1",
     "vue": "^3.4.21",
     "vue-draggable-resizable": "^3.0.0",
-    "vue-i18n": "^9.11.1",
+    "vue-i18n": "^9.12.0",
     "vue-router": "^4.3.0",
     "vue-slicksort": "^2.0.5"
   },
@@ -64,7 +64,7 @@
     "@types/google.accounts": "^0.0.14",
     "@types/node": "^20.12.7",
     "@vitejs/plugin-vue": "^5.0.4",
-    "sass": "^1.74.1",
+    "sass": "^1.75.0",
     "typescript": "~5.4.5",
     "user-agent-data-types": "^0.4.2",
     "vite": "^5.2.8",
