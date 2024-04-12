@@ -36,4 +36,8 @@ export interface LiuSystemEnv {
   // sentry
   SENTRY_DSN?: string
   SENTRY_ENVIRONMENT?: string
+
+  // umami
+  UMAMI_SCRIPT?: string
+  UMAMI_ID?: string
 }

@@ -43,6 +43,10 @@ function getEnv(): LiuSystemEnv {
   const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN
   const SENTRY_ENVIRONMENT = import.meta.env.VITE_SENTRY_ENVIRONMENT
 
+  // umami
+  const UMAMI_SCRIPT = import.meta.env.VITE_UMAMI_SCRIPT
+  const UMAMI_ID = import.meta.env.VITE_UMAMI_ID
+  
   _env = {
     DEV,
     API_URL,
@@ -68,6 +72,8 @@ function getEnv(): LiuSystemEnv {
     IFRAME_PROXY_KEY,
     SENTRY_DSN,
     SENTRY_ENVIRONMENT,
+    UMAMI_SCRIPT,
+    UMAMI_ID,
   }
   return _env
 }

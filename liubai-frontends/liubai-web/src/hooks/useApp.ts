@@ -17,14 +17,11 @@ export function useApp() {
   // 监听全局事件
   useGlobalEvent()
 
-  const env = liuEnv.getEnv()
-  const cha = liuApi.getCharacteristic()
-  if(cha.isMobile) {
-    if(env.DEV) {
-      new VConsole()
-    }
-    import("~/styles/mobile-style.css")
-  }
+  // init analytics
+  initAnalytics()
+  
+  // init mobile
+  initMobile()
 
   initForSystem()
   initListenSelection()
@@ -51,4 +48,33 @@ function initListenSelection() {
   onUnmounted(() => {
     document.removeEventListener("selectionchange", whenSelect)
   })
+}
+
+function initMobile() {
+  const cha = liuApi.getCharacteristic()
+  if(cha.isMobile) {
+    const _env = liuEnv.getEnv()
+    if(_env.DEV) {
+      new VConsole()
+    }
+    import("~/styles/mobile-style.css")
+  }
+}
+
+function initAnalytics() {
+  const _env = liuEnv.getEnv()
+  const { UMAMI_ID, UMAMI_SCRIPT } = _env
+  if(!UMAMI_ID || !UMAMI_SCRIPT) return
+
+  const scriptEl = document.createElement('script')
+  scriptEl.type = "text/javascript"
+  scriptEl.src = UMAMI_SCRIPT
+  scriptEl.setAttribute("data-website-id", UMAMI_ID)
+  scriptEl.defer = true
+  scriptEl.async = true
+  
+  const headEl = document.querySelector("head")
+  if(!headEl) return
+
+  headEl.appendChild(scriptEl)
 }
