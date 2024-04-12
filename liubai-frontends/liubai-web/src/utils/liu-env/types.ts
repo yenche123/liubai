@@ -1,6 +1,5 @@
 
 
-
 export interface LiuSystemEnv {
   DEV: boolean
 
@@ -33,4 +32,8 @@ export interface LiuSystemEnv {
 
   IFRAME_PROXY?: string
   IFRAME_PROXY_KEY?: string
+
+  // sentry
+  SENTRY_DSN?: string
+  SENTRY_ENVIRONMENT?: string
 }
