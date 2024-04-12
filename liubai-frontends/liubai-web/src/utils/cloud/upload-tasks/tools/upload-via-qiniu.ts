@@ -64,7 +64,7 @@ export async function uploadViaQiniu(
   const token = resUploadToken?.uploadToken ?? ""
 
   let tryTimes = 0
-  let allHasCloudUrl = false
+  let allHasCloudUrl = true
 
   for(let i=0; i<files.length; i++) {
     const v = files[i]
