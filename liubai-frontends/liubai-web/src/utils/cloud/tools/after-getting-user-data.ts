@@ -17,6 +17,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import cui from "~/components/custom-ui";
 import type { LiuSpaceAndMember } from "~/types/types-cloud";
 import { CloudToLocal } from "../CloudToLocal";
+import liuConsole from "~/utils/debug/liu-console";
 
 interface AgudOpt {
   isRefresh?: boolean   // `false` is default
@@ -44,6 +45,8 @@ export async function afterGettingUserData(
   const res3 = await handleSpaceAndMember(d.spaceMemberList, rr)
   if(!res3) return false
 
+  // 4. update liuConsole's context
+  await liuConsole.setUserTagsCtx()
   
   return true
 }

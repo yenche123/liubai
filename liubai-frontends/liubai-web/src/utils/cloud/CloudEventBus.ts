@@ -24,6 +24,7 @@ import valTool from "../basic/val-tool";
 import { waitEnterIntoApp } from "~/hooks/useEnterIntoApp";
 import { getUser } from "./tools/some-funcs";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
+import liuConsole from "../debug/liu-console";
 
 const SEC_30 = 30 * time.SECONED
 const MIN_30 = 30 * time.MINUTE
@@ -184,6 +185,11 @@ class CloudEventBus {
       const res2 = await afterGettingUserData(d, this.rr, {
         isRefresh: true 
       })
+
+      if(res2) {
+        liuConsole.sendMessage("User entered successfully")
+      }
+
       return res2
     }
 
@@ -191,6 +197,7 @@ class CloudEventBus {
     if(code === "E4003") {
       // 去退出登录
       logout(this.rr)
+      liuConsole.sendMessage("User's token has expired")
       return false
     }
 

@@ -6,6 +6,8 @@ export function getSentryInitConfig() {
   const dsn = _env.SENTRY_DSN
   if(!dsn) return
 
+  const isDev = _env.DEV
+
   // 1. setup tracePropagationTargets
   const apiDomain = _env.API_DOMAIN
   const tracePropagationTargets = ["localhost"]
@@ -16,13 +18,17 @@ export function getSentryInitConfig() {
   // 2. setup environment
   let environment = _env.SENTRY_ENVIRONMENT
   if(!environment) {
-    if(_env.DEV) environment = "dev"
+    if(isDev) environment = "dev"
     else environment = "production"
   }
+
+  // 3. setup release
+  const release = LIU_ENV.version
 
   const cfg = {
     dsn,
     environment,
+    release,
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration(),

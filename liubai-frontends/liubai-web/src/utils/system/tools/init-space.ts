@@ -6,6 +6,7 @@ import localCache from "../local-cache"
 import type { SpaceAndMemberOpt, WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import typeCheck from "~/utils/basic/type-check"
 import time from "~/utils/basic/time"
+import liuConsole from "~/utils/debug/liu-console"
 
 let routeChangeNum = 0
 let lastRouteChange = 0
@@ -119,6 +120,7 @@ async function whenRouteChange(
   }
 
   store.setSpaceAndMember(opt)
+  liuConsole.setUserTagsCtx()
 }
 
 async function handleCollaborativeSpace(
@@ -164,4 +166,5 @@ async function handleCollaborativeSpace(
   }
 
   store.setSpaceAndMember(opt)
+  liuConsole.setUserTagsCtx()
 }

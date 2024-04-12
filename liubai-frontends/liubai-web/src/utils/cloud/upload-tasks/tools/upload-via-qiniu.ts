@@ -12,6 +12,7 @@ import type {
   WhenAFileCompleted,
   UploadFileRes,
 } from "./types"
+import liuConsole from "~/utils/debug/liu-console"
 
 function _upload(
   f: File,
@@ -28,6 +29,15 @@ function _upload(
       error(err: qiniu.QiniuError | qiniu.QiniuRequestError | qiniu.QiniuNetworkError) {
         console.log("error.........")
         console.log(err)
+
+        // logger
+        liuConsole.addBreadcrumb({ 
+          category: "qiniu.upload",
+          message: "upload file to qiniu error",
+          level: "error",
+        })
+        liuConsole.sendException(err)
+
         a(null)
       },
       complete(res: FileReqReturn) {
@@ -89,7 +99,18 @@ export async function uploadViaQiniu(
     }
     
     const cloud_url = res.data?.cloud_url
-    if(!cloud_url) allHasCloudUrl = false
+    if(!cloud_url) {
+      allHasCloudUrl = false
+
+      // logger
+      liuConsole.addBreadcrumb({
+        category: "upload.file",
+        message: "there is no cloud_url in uploadViaQiniu",
+        level: "warning",
+        data: res,
+      })
+      liuConsole.sendMessage("No cloud_url in uploadViaQiniu")
+    }
   }
 
   return allHasCloudUrl ? "completed" : "partial_success"

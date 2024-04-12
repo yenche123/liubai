@@ -16,6 +16,7 @@ import { equipThreads } from "~/utils/controllers/equip/threads";
 import { getTagIdsParents } from "~/utils/system/tag-related";
 import type { SpaceType } from "~/types/types-basic";
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
+import liuConsole from "~/utils/debug/liu-console";
 
 // 本文件处理发表的逻辑
 
@@ -105,13 +106,16 @@ async function toRelease(
   const threadShows = await equipThreads([newThread])
   ctx.threadShowStore.setNewThreadShows(threadShows)
 
-  // 6. 如果是本地的动态，忽略去同步后端
+  // 6. logger
+  liuConsole.sendMessage("User released a thread")
+
+  // 7. 如果是本地的动态，忽略去同步后端
   const storageState = preThread.storageState
   if(storageState === "LOCAL" || storageState === "ONLY_LOCAL") return
 
-  // 7. 去同步后端
-  const res7 = localCache.hasLoginWithBackend()
-  if(res7) {
+  // 8. 去同步后端
+  const res8 = localCache.hasLoginWithBackend()
+  if(res8) {
     LocalToCloud.addTask({ uploadTask: "content-post", target_id: newId })
   }
   
@@ -260,13 +264,16 @@ async function toUpdate(ctx: CepContext) {
   // 4. emits 到页面
   ctx.emits("updated", threadId)
 
-  // 5. 如果是本地的动态，忽略去同步后端
+  // 5. logger
+  liuConsole.sendMessage("User edited a thread")
+
+  // 6. 如果是本地的动态，忽略去同步后端
   const storageState = preThread.storageState
   if(storageState === "LOCAL" || storageState === "ONLY_LOCAL") return
 
-  // 6. 去同步后端
-  const res6 = localCache.hasLoginWithBackend()
-  if(res6) {
+  // 7. 去同步后端
+  const res7 = localCache.hasLoginWithBackend()
+  if(res7) {
     LocalToCloud.addTask({ uploadTask: "thread-edit", target_id: threadId })
   }
 }
