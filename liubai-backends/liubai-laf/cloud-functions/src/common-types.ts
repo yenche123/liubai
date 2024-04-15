@@ -41,6 +41,7 @@ export interface LiuRqReturn<T = Record<string, any>> {
 
 export type BaseIsOn = "Y" | "N"
 
+// 内容的 oState
 export type OState = "OK" | "REMOVED" | "DELETED"
 // 表态、收藏 的 oState
 export type OState_2 = "OK" | "CANCELED"
@@ -48,6 +49,9 @@ export type OState_2 = "OK" | "CANCELED"
 export type OState_3 = "OK" | "LEFT" | "DEACTIVATED" | "DELETED"
 // user 的 oState
 export type OState_User = "NORMAL" | "DEACTIVATED" | "LOCK" | "REMOVED" | "DELETED"
+// draft 的 oState
+export type OState_Draft = "OK" | "POSTED" | "DELETED"
+
 
 export type SupportedTheme = "light" | "dark"
 export type LocalTheme = SupportedTheme | "system" | "auto"   // auto 就是日夜切换
@@ -341,6 +345,123 @@ export interface LiuPlainText<T = any> {
 }
 
 
+/*********************** 关于上传同步 ********************/
+/** 
+ * 上传（同步）的类型
+ */
+export const liuUploadTasks = [
+  "content-post",             // 发表（不区分动态或评论）
+  "thread-edit",              // 编辑动态
+  "thread-hourglass",         // 倒计时器，使用 newBool 去表示最新状态
+  "undo_thread-hourglass",    // 【撤销】倒计时
+  "thread-collect",           // 收藏动态，使用 newBool 去表示最新状态
+  "undo_thread-collect",      // 【撤销】收藏
+  "content-emoji",            // 对 动态、评论 reaction
+  "undo_content-emoji",       // 【撤销】reaction
+  "thread-delete",            // 删除动态
+  "undo_thread-delete",       // 【撤销】删除动态
+  "thread-state",             // 修改动态的状态
+  "undo_thread-state",        // 【撤销】修改动态的状态
+  "thread-restore",           // 恢复回收桶里的动态
+  "thread-delete_forever",    // 彻底删除动态
+  "thread-pin",               // 是否置顶，使用 newBool 表示最新状态
+  "undo_thread-pin",          // 【撤销】是否置顶
+  "thread-float_up",          // 浮上去，使用 newBool 表示最新状态
+  "undo_thread-float_up",     // 【撤销】浮上去
+  "thread-tag",               // 修改动态的标签
+  "comment-delete",           // 删除评论
+  "comment-edit",             // 编辑评论
+  "workspace-tag",            // 编辑工作空间的标签，这时 target_id 为 workspace id
+  "member-avatar",            // 修改当前工作区自己的头像
+  "member-nickname",          // 修改当前工作区自己的昵称
+  "draft-clear",              // 删除某个 draft_id 的草稿
+  "draft-set",                // 设置草稿，注意这时 UploadTaskLocalTable 的 content_id
+                              // 必须为空（否则会被当作 content-xxx 的事件处理），而是
+                              // 用 draft_id 来查询本地的哪个操作
+] as const
+
+export type LiuUploadTask = typeof liuUploadTasks[number]
+
+
+/** 设置 “动态、评论和草稿” 都有的字段 */
+export interface LiuUploadBase {
+  id?: string          // 如果是已上传过的内容，必须有此值，这是后端的 _id
+  first_id?: string    // 发表时，必填
+  spaceId?: string     // 发表时，必填，表示存到哪个工作区
+
+  storageState?: Cloud_StorageState
+
+  liuDesc?: LiuContent[]
+  images?: Cloud_ImageStore[]
+  files?: Cloud_FileStore[]
+
+  editedStamp?: number
+}
+
+/** 存一些 动态 与评论和草稿相比独有的字段 */
+export interface LiuUploadThread extends LiuUploadBase {
+
+  // oState 的操作，在 taskType 上就定义了
+
+  title?: string
+  calendarStamp?: number
+  remindStamp?: number
+  whenStamp?: number
+  remindMe?: LiuRemindMe
+  pinStamp?: number
+  createdStamp?: number
+  tagIds?: string[]
+  tagSearched?: string[]
+  stateId?: string
+  config?: ContentConfig
+}
+
+/** 存一些 评论 与动态和草稿相比独有的字段 */
+export interface LiuUploadComment extends LiuUploadBase {
+  parentThread?: string
+  parentComment?: string
+  replyToComment?: string
+  createdStamp?: number
+}
+
+/** 存一些 草稿 与评论和动态相比独有的字段 */
+export interface LiuUploadDraft extends LiuUploadBase {
+  infoType?: LiuInfoType      // 新建 draft 时，必填
+  
+  threadEdited?: string
+  commentEdited?: string
+  parentThread?: string
+  parentComment?: string
+  replyToComment?: string
+  
+  title?: string
+  whenStamp?: number
+  remindMe?: LiuRemindMe
+  tagIds?: string[]
+  config?: ContentConfig
+}
+
+export interface LiuUploadMember {
+
+}
+
+export interface LiuUploadWorkspace {
+
+}
+
+export interface SyncSetAtom {
+  taskType: LiuUploadTask
+
+  thread?: LiuUploadThread
+  comment?: LiuUploadComment
+  member?: LiuUploadMember
+  workspace?: LiuUploadWorkspace
+  draft?: LiuUploadDraft
+
+}
+
+
+
 /*********************** 数据表类型 **********************/
 
 /** Token表 */
@@ -446,7 +567,7 @@ export interface Table_Content extends BaseTable {
 export interface Table_Draft extends BaseTable {
   first_id: string
   infoType: LiuInfoType
-  oState: "OK" | "POSTED" | "DELETED"
+  oState: OState_Draft
   user: string
   spaceId: string
   spaceType: SpaceType
