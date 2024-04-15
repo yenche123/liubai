@@ -15,6 +15,7 @@ export function useSettingContent() {
 
   const { myProfile } = useMyProfile()
   const { prefix } = usePrefix()
+  const hasBackend = liuEnv.hasBackend()
 
   const data = reactive<SettingContentData>({
     language: "system",
@@ -22,6 +23,7 @@ export function useSettingContent() {
     theme: "system",
     openTerms: false,
     termsList: getTermsList(),
+    hasBackend,
   })
 
   listenSystemStore(data)

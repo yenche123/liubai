@@ -47,7 +47,7 @@ const iconColor = "var(--main-normal)"
       <div class="liu-mc-spacing"></div>
       
       <!-- profile + membership + accounts -->
-      <div class="sc-box">
+      <div class="sc-box" v-if="data.hasBackend">
 
         <!-- avatar + nickname -->
         <div class="sc-avatar-nickname" v-if="myProfile">

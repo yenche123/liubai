@@ -23,4 +23,5 @@ export interface SettingContentData {
   theme: LocalTheme
   openTerms: boolean
   termsList: TermsItem[]
+  hasBackend: boolean
 }
