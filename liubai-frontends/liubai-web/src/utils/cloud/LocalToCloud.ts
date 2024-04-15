@@ -13,9 +13,8 @@ const MIN_5 = 5 * time.MINUTE
 
 class LocalToCloud {
 
-  static triggerTimeout: LiuTimeout
-  static uploadWorker: Worker | undefined
-  static lastStartToUpload: number | undefined
+  private static triggerTimeout: LiuTimeout
+  private static lastStartToUpload: number | undefined
 
   static init() {
     const _this = this
@@ -42,7 +41,7 @@ class LocalToCloud {
     })
   }
 
-  static preTrigger(instant: boolean = false) {
+  private static preTrigger(instant: boolean = false) {
     const _this = this
     if(_this.triggerTimeout) {
       clearTimeout(_this.triggerTimeout)
@@ -54,7 +53,7 @@ class LocalToCloud {
     }, delay)
   }
 
-  static async toTrigger() {
+  private static async toTrigger() {
 
     const lstu = this.lastStartToUpload
     if(lstu) {

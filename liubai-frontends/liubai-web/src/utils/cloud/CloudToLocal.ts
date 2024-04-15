@@ -27,13 +27,13 @@ const MIN_5 = 5 * time.MINUTE
 
 class CloudToLocal {
 
-  static isOnline: boolean | undefined
-  static downloadWorker: Worker | undefined
-  static checkWorker: Worker | undefined
-  static lastStartToDownload: number | undefined
+  private static isOnline: boolean | undefined
+  private static downloadWorker: Worker | undefined
+  private static checkWorker: Worker | undefined
+  private static lastStartToDownload: number | undefined
 
   // 暂存任务至临时变量中，当存到 IndexedDB 中后，就删掉
-  static tmp_tasks: TaskOfC2L[] = []
+  private static tmp_tasks: TaskOfC2L[] = []
 
   // 放在 App.ts 中去监听网络变化
   static init() {
