@@ -75,7 +75,7 @@ https://openmoji.org/
 
 11. 升级 `pdf-js` 的流程: 将分支切换到 `pdfjs` 上，删除所有 `public/lib/pdf-js` 下的文件，再黏贴最新的文件进该文件夹里，提交 `commit`；再切回 `main` 分支，运行 `git checkout -b dev-pdfjs`，然后再运行 `git merge pdfjs`，解决冲突、运行代码，确认都没问题后，再把 `dev-pdfjs` 合并进 `main`，最后再删除 `dev-pdfjs` 分支
 
-12. 运行 `pnpm outdated` 能检查项目中使用到的依赖是否有需要更新的
+12. “新建工作区” 的操作，不要使用 sync-set 同步接口，因为这个操作影响太大了，若联网后云端拒绝创建，存在里头的动态和评论怎么办？会非常难处理。
 
 13. 使用 https://npmgraph.js.org/ 查看依赖关系图
 
