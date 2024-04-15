@@ -26,7 +26,9 @@ export default defineConfig({
 
     vue(),
 
-    viteCompression(),
+    viteCompression({
+      threshold: 2048,
+    }),
 
     // vue-i18n 插件
     VueI18n({
