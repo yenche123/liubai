@@ -57,4 +57,8 @@ export default {
 
   default_limit_num: 16,        // 默认一次加载多少个动态
   frame_duration: 16,           // 一个经验值，表示每一帧数（刷新周期）毫秒数
+
+  fail_to_upload_max: 5,       // 上传失败的最大次数，若大于等于该次数
+                               // 确定是否为新增动态，若是，把该动态改为本地存储
+                               // 否则直接删除该任务
 }

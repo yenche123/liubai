@@ -8,7 +8,7 @@ import { db } from "~/utils/db"
 import type { LiuFileAndImage } from "~/types"
 import APIs from "~/requests/APIs"
 import type { Res_FileSet_UploadToken } from "~/requests/req-types"
-import type { LiuUploadTask, UploadTaskProgressType } from "~/types/types-atom"
+import type { LiuUploadTask } from "~/types/types-atom"
 import { uploadViaQiniu } from "./tools/upload-via-qiniu"
 import liuReq from "~/requests/liu-req"
 import type { 
@@ -18,6 +18,7 @@ import type {
 } from "./tools/types"
 import time from "~/utils/basic/time"
 import type { BoolFunc } from "~/utils/basic/type-tool"
+import uut from "../tools/update-upload-task"
 
 let resUploadToken: Res_FileSet_UploadToken | undefined
 
@@ -328,7 +329,7 @@ async function handleUploadFileAtoms(
     const v = list[i]
 
     // 1. update task's progressType to "file_uploading"
-    await changeProgressType(v.taskId, "file_uploading")
+    await uut.changeProgressType(v.taskId, "file_uploading")
 
     // 2. upload files and images
     const res2 = await handleAnAtom(v)
@@ -337,7 +338,7 @@ async function handleUploadFileAtoms(
 
     // 3. update task's progressType after handleAnAtom
     const addTryTimes = res2 !== "completed"
-    await changeProgressType(v.taskId, "waiting", addTryTimes)
+    await uut.changeProgressType(v.taskId, "waiting", addTryTimes)
 
     // 4. if res2 is one of type in exit_list, then stop all tasks
     if(exit_list.includes(res2)) {
@@ -349,33 +350,6 @@ async function handleUploadFileAtoms(
 }
 
 
-async function changeProgressType(
-  taskId: string, 
-  progressType: UploadTaskProgressType,
-  addTryTimes: boolean = false,
-) {
-  let tryTimes = 0
-  let failedStamp: number | undefined
-
-  const now = time.getTime()
-  if(addTryTimes) {
-    const task = await db.upload_tasks.get(taskId)
-    if(task) {
-      tryTimes = task.tryTimes ?? 0
-      tryTimes++
-      failedStamp = now
-    }
-  }
-
-  const opt1: Partial<UploadTaskLocalTable> = {
-    progressType,
-    updatedStamp: now,
-  }
-  if(tryTimes) opt1.tryTimes = tryTimes
-  if(failedStamp) opt1.failedStamp = failedStamp
-  const res = await db.upload_tasks.update(taskId, opt1)
-  return res
-}
 
 
 function packFiles(
