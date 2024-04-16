@@ -13,6 +13,9 @@ import type {
   Table_Workspace,
   SyncSetCtxAtom,
   SyncSetCtx,
+  LiuUploadThread,
+  LiuUploadComment,
+  SyncSetAtomRes,
 } from "@/common-types"
 import { liuUploadTasks } from "@/common-types"
 import { getNowStamp, SECONED, MINUTE } from "@/common-time"
@@ -75,6 +78,10 @@ function preCheck(
     const taskType = v?.taskType
     if(!taskType) {
       return { code: "E4000", errMsg: `one of taskType is empty` }
+    }
+    const taskId = v?.taskId
+    if(!taskId) {
+      return { code: "E4000", errMsg: `one of taskId is empty` }
     }
     const existed = liuUploadTasks.includes(taskType)
     if(!existed) {
@@ -143,14 +150,78 @@ function preCheck(
 // 这样队列里的操作，如果有获取重复的数据时，不需要查询多次了
 // 更新时同理，若有更新一条数据多次时，只需要更新一次
 
-function toExecute(
+async function toExecute(
   body: Record<string, any>,
   ssCtx: SyncSetCtx,
 ) {
+  const results: SyncSetAtomRes[] = []
+  const list = body.atoms as SyncSetAtom[]
+
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    const { taskType, taskId } = v
+    const { thread, comment, member, workspace } = v
+    if(taskType === "content-post") {
+      if(thread) {
+        await toPostThread(ssCtx, taskId, thread)
+      }
+      else if(comment) {
+        await toPostComment(ssCtx, taskId, comment)
+      }
+      else {
+        results.push({ code: "E5001", taskId, errMsg: "no thread or comment" })
+      }
+    }
+    else if(taskType === "thread-edit") {
+
+    }
+    else if(taskType === "thread-hourglass") {
+
+    }
+    
+  }
 
 
 
 }
+
+
+async function toPostThread(
+  ssCtx: SyncSetCtx,
+  taskId: string,
+  thread: LiuUploadThread,
+) {
+
+  // 1. get some important parameters
+  const { spaceId, first_id } = thread
+  if(!spaceId || !first_id) {
+    return { code: "E4000", errMsg: "spaceId and first_id are required" }
+  }
+
+  // 2. check if the user is in the space
+  const isInTheSpace = _amIInTheSpace(ssCtx, spaceId)
+  if(!isInTheSpace) {
+    return { code: "E4004", errMsg: "you are not in the workspace" }
+  }
+
+}
+
+async function toPostComment(
+  ssCtx: SyncSetCtx,
+  taskId: string,
+  comment: LiuUploadComment,
+) {
+  
+}
+
+function _amIInTheSpace(
+  ssCtx: SyncSetCtx,
+  spaceId: string,
+) {
+  const space_ids = ssCtx.space_ids
+  return space_ids.includes(spaceId)
+}
+
 
 function initSyncSetCtx(
   user: Table_User,

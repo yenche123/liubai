@@ -55,6 +55,7 @@ export interface WorkspaceLocalTable extends BaseLocalTable {
   owner: string
   name?: string
   avatar?: LiuImageStore
+  editedStamp?: number       // 同步时，用来比大小的
 }
 
 export interface MemberLocalTable extends BaseLocalTable {
@@ -65,6 +66,7 @@ export interface MemberLocalTable extends BaseLocalTable {
   user: string
   oState: MemberState
   config?: MemberConfig
+  editedStamp?: number     // 同步时，用来比大小的
 }
 
 export interface ContentLocalTable extends BaseLocalTable {

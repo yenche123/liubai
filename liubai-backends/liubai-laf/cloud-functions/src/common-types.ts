@@ -458,6 +458,7 @@ export interface LiuUploadWorkspace {
 }
 
 export interface SyncSetAtom {
+  taskId: string
   taskType: LiuUploadTask
 
   thread?: LiuUploadThread
@@ -467,7 +468,6 @@ export interface SyncSetAtom {
   workspace?: LiuUploadWorkspace
 
 }
-
 
 // 这个上下文的 map 的结构会是 Map<SyncSetCtxKey, Map<string, SyncSetAtom>>
 // 其中 string 为数据表某一行数据的 id
@@ -492,6 +492,17 @@ export interface SyncSetCtx {
   space_ids: string[],
 }
 
+export interface SyncSetAtomRes {
+  code: string
+  taskId: string
+  errMsg?: string
+  first_id?: string  // the first id of either content or draft
+  new_id?: string    // the new id of either content or draft
+}
+
+export interface Res_SyncSet {
+  results: SyncSetAtomRes[]
+}
 
 
 /*********************** 数据表类型 **********************/
@@ -539,6 +550,7 @@ export interface Table_Workspace extends BaseTable {
   owner: string
   name?: string
   avatar?: Cloud_ImageStore
+  editedStamp?: number       // 同步时，用来比大小的
 }
 
 /** Member 表 */
@@ -549,6 +561,7 @@ export interface Table_Member extends BaseTable {
   user: string
   oState: OState_3
   config?: MemberConfig
+  editedStamp?: number      // 同步时，用来比大小的
 }
 
 
