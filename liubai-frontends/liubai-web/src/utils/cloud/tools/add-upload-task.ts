@@ -20,32 +20,39 @@ export async function addUploadTask(
   param: UploadTaskParam,
   user: string,
 ) {
+  const target_id = param.target_id
   const taskType = param.uploadTask
-  const isUndo = taskType.includes("undo_")
+  const isUndo = taskType.startsWith("undo_")
 
   let addRequired = true
 
   // 1. 检查是否要添加
   if(isUndo) {
-    addRequired = await whenUndo(param.target_id, user, taskType)
+    addRequired = await whenUndo(target_id, user, taskType)
   }
   else if(taskType === "thread-edit") {
-    addRequired = await whenContentEdit(param.target_id, user)
+    addRequired = await whenContentEdit(target_id, user)
   }
   else if(taskType === "comment-edit") {
-    addRequired = await whenContentEdit(param.target_id, user)
+    addRequired = await whenContentEdit(target_id, user)
   }
   if(!addRequired) return
   
   // 2. 检查是否已存在，若存在去删除旧的任务
+  const isThread = taskType.startsWith("thread-")
+  const isComment = taskType.startsWith("comment-")
+
+  if(isThread || isComment) {
+    await checkContent(target_id, user, taskType)
+  }
   if(taskType === "workspace-tag") {
-    await checkForWorkspace(param.target_id, user, taskType)
+    await checkWorkspace(target_id, user, taskType)
   }
   else if(taskType === "member-avatar" || taskType === "member-nickname") {
-    await checkForMember(param.target_id, user, taskType)
+    await checkMember(target_id, user, taskType)
   }
   else if(taskType === "draft-clear" || taskType === "draft-set") {
-    await checkDraft(param.target_id, user)
+    await checkDraft(target_id, user)
   }
 
   // 3. 把 target_id 转换成对应的 id
@@ -55,16 +62,16 @@ export async function addUploadTask(
   let draft_id: string | undefined
 
   if(taskType === "workspace-tag") {
-    workspace_id = param.target_id
+    workspace_id = target_id
   }
   else if(taskType === "member-avatar" || taskType === "member-nickname") {
-    member_id = param.target_id
+    member_id = target_id
   }
   else if(taskType === "draft-clear" || taskType === "draft-set") {
-    draft_id = param.target_id
+    draft_id = target_id
   }
   else {
-    content_id = param.target_id
+    content_id = target_id
   }
 
   // 4. 组装 task
@@ -79,8 +86,6 @@ export async function addUploadTask(
     workspace_id,
     member_id,
     draft_id,
-    newBool: param.newBool,
-    newStr: param.newStr,
     progressType: "waiting",
   }
   const res = await db.upload_tasks.add(newTask)
@@ -112,9 +117,28 @@ async function checkDraft(
   await db.upload_tasks.bulkDelete(task_ids)
 }
 
+/** checking out if the task related to content has already been added */
+async function checkContent(
+  content_id: string,
+  user: string,
+  taskType: LiuUploadTask,
+) {
+  const w: Partial<UploadTaskLocalTable> = {
+    user,
+    uploadTask: taskType,
+    content_id,
+    progressType: "waiting",
+  }
+  const res = await db.upload_tasks.where(w).toArray()
+  if(res.length < 1) return
+  
+  const origin_id = res[0]._id
+  await deleteTheTask(origin_id)
+}
+
 
 /** checking out if the task related to member has already been added */
-async function checkForMember(
+async function checkMember(
   member_id: string,
   user: string,
   taskType: LiuUploadTask,
@@ -133,7 +157,7 @@ async function checkForMember(
 }
 
 /** checking out if the task related to workspace has already been added */
-async function checkForWorkspace(
+async function checkWorkspace(
   workspace_id: string,
   user: string,
   taskType: LiuUploadTask,
@@ -160,12 +184,6 @@ async function whenUndo(
   user: string,
   undoType: LiuUploadTask,
 ) {
-  const idx = undoType.indexOf("undo_")
-  if(idx !== 0) {
-    console.warn("undoType is not started with 'undo_'")
-    return false
-  }
-
   const originType = undoType.substring(5) as LiuUploadTask
   const hasType = liuUploadTasks.includes(originType)
   if(!hasType) {

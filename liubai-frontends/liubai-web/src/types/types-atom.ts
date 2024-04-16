@@ -191,9 +191,9 @@ export type LiuTable = "users" | "workspaces" | "members" | "drafts" | "contents
 export const liuUploadTasks = [
   "content-post",             // 发表（不区分动态或评论）
   "thread-edit",              // 编辑动态
-  "thread-hourglass",         // 倒计时器，使用 newBool 去表示最新状态
+  "thread-hourglass",         // 倒计时器
   "undo_thread-hourglass",    // 【撤销】倒计时
-  "thread-collect",           // 收藏动态，使用 newBool 去表示最新状态
+  "thread-collect",           // 收藏动态
   "undo_thread-collect",      // 【撤销】收藏
   "content-emoji",            // 对 动态、评论 reaction
   "undo_content-emoji",       // 【撤销】reaction
@@ -203,10 +203,10 @@ export const liuUploadTasks = [
   "undo_thread-state",        // 【撤销】修改动态的状态
   "thread-restore",           // 恢复回收桶里的动态
   "thread-delete_forever",    // 彻底删除动态
-  "thread-pin",               // 是否置顶，使用 newBool 表示最新状态
+  "thread-pin",               // 置顶、取消置顶
   "undo_thread-pin",          // 【撤销】是否置顶
-  "thread-float_up",          // 浮上去，使用 newBool 表示最新状态
-  "undo_thread-float_up",     // 【撤销】浮上去
+  "thread-float_up",          // 浮上去、取消上浮
+  "undo_thread-float_up",     // 【撤销】浮上去、取消上浮
   "thread-tag",               // 修改动态的标签
   "comment-delete",           // 删除评论
   "comment-edit",             // 编辑评论

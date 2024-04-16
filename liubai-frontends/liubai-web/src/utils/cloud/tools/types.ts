@@ -32,8 +32,6 @@ export type SyncRes = "success" | "bad_network" | "unknown"
 export interface UploadTaskParam {
   uploadTask: LiuUploadTask
   target_id: string
-  newBool?: boolean      // 同 UploadTaskLocalTable.newBool
-  newStr?: string        // 同 UploadTaskLocalTable.newStr
 }
 
 

@@ -53,15 +53,47 @@ function preCheck(
   const list = atoms as SyncSetAtom[]
   for(let i=0; i<list.length; i++) {
     const v = list[i]
-    if(!v.taskType) {
+    const taskType = v?.taskType
+    if(!taskType) {
       return { code: "E4000", errMsg: `one of taskType is empty` }
     }
-    const existed = liuUploadTasks.includes(v.taskType)
+    const existed = liuUploadTasks.includes(taskType)
     if(!existed) {
       return { code: "E4000", errMsg: "one of taskType is not in liuUploadTasks" }
     }
 
-    // TODO
+    const thread = v?.thread
+    const comment = v?.comment
+    const draft = v?.draft
+    const member = v?.member
+    const workspace = v?.workspace
+
+    if(taskType === "content-post" && (!thread && !comment)) {
+      return { 
+        code: "E4000", 
+        errMsg: "thread or comment is required when taskType is content-post", 
+      }
+    }
+
+    const isThread = taskType.startsWith("thread-")
+    if(isThread && !thread) {
+      return { 
+        code: "E4000", 
+        errMsg: "thread is required when taskType starts with thread-",
+      }
+    }
+
+    const isComment = taskType.startsWith("comment-")
+    if(isComment && !comment) {
+      return { 
+        code: "E4000", 
+        errMsg: "comment is required when taskType starts with comment-",
+      }
+    }
+
+    const isWorkspace = taskType.startsWith("workspace-")
+    
+    
 
   }
 
