@@ -442,11 +442,19 @@ export interface LiuUploadDraft extends LiuUploadBase {
 }
 
 export interface LiuUploadMember {
-
+  id: string
+  operateStamp: number     // 操作的时间戳
+  name?: string
+  avatar?: Cloud_ImageStore
 }
 
 export interface LiuUploadWorkspace {
-
+  id: string
+  operateStamp: number     // 操作的时间戳
+  name?: string
+  avatar?: Cloud_ImageStore
+  stateConfig?: Cloud_StateConfig
+  tagList?: TagView[]
 }
 
 export interface SyncSetAtom {
@@ -458,6 +466,30 @@ export interface SyncSetAtom {
   member?: LiuUploadMember
   workspace?: LiuUploadWorkspace
 
+}
+
+
+// 这个上下文的 map 的结构会是 Map<SyncSetCtxKey, Map<string, SyncSetAtom>>
+// 其中 string 为数据表某一行数据的 id
+export type SyncSetCtxKey = "content" | "draft" | "member" | "workspace"
+export interface SyncSetCtxAtom<T> {  // 这里的 T 必须是 Table 类型
+  data: T
+  updateData?: Partial<T>
+}
+
+export interface SyncSetCtx {
+
+  // 下面四个属性，其首字母大写后，要直接对应数据表的表名
+  content: Map<string, SyncSetCtxAtom<Table_Content>>
+  draft: Map<string, SyncSetCtxAtom<Table_Draft>>
+  member: Map<string, SyncSetCtxAtom<Table_Member>>
+  workspace: Map<string, SyncSetCtxAtom<Table_Workspace>>
+
+  // my data
+  me: Table_User,
+
+  // the list of workspace ids that the user is in
+  space_ids: string[],
 }
 
 
