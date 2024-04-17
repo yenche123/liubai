@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx test/index.ts"
   },
   "author": "yenche123",
   "license": "ISC",
@@ -16,10 +17,12 @@
     "mongodb": "^6.5.0",
     "qiniu": "^7.11.1",
     "resend": "^3.2.0",
-    "stripe": "^14.23.0"
+    "stripe": "^14.23.0",
+    "valibot": "^0.30.0"
   },
   "devDependencies": {
     "@types/geoip-lite": "^1.4.4",
-    "@types/node": "^20.12.2"
+    "@types/node": "^20.12.2",
+    "tsx": "^4.7.2"
   }
 }
