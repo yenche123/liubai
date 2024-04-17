@@ -42,11 +42,23 @@ class LocalToCloud {
   }
 
   private static preTrigger(instant: boolean = false) {
+    const delay = 250
     const _this = this
-    if(_this.triggerTimeout) {
-      clearTimeout(_this.triggerTimeout)
+
+    // if instant is true, then trigger immediately
+    if(instant) {
+      if(_this.triggerTimeout) {
+        clearTimeout(_this.triggerTimeout)
+        _this.triggerTimeout = undefined
+      }
+      _this.toTrigger()
+      return
     }
-    const delay = instant ? 1 : 1500
+
+    // otherwise, trigger after 250ms
+    // or trigger with the previous call
+    if(_this.triggerTimeout) return
+
     _this.triggerTimeout = setTimeout(() => {
       _this.triggerTimeout = undefined
       _this.toTrigger()
@@ -55,6 +67,7 @@ class LocalToCloud {
 
   private static async toTrigger() {
 
+    // lastStartToUpload 只是避免队列正在执行、重复触发队列的问题
     const lstu = this.lastStartToUpload
     if(lstu) {
       if(time.isWithinMillis(lstu, MIN_5)) return
@@ -67,13 +80,16 @@ class LocalToCloud {
   }
 
   /** add a task into local db */
-  static async addTask(param: UploadTaskParam) {
+  static async addTask(
+    param: UploadTaskParam,
+    triggerInstantly: boolean = false,
+  ) {
     const { local_id: user, token } = localCache.getPreference()
     if(!user || !token) return false
 
     const res = await addUploadTask(param, user)
     if(res) {
-      this.preTrigger(true)
+      this.preTrigger(triggerInstantly)
     }
   }
 
