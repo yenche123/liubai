@@ -18,6 +18,7 @@ import type {
   LiuRqReturn,
   CryptoCipherAndIV,
   LiuPlainText,
+  Cloud_ImageStore,
 } from '@/common-types'
 import { supportedLocales } from "@/common-types"
 import { createToken, createEncNonce } from "@/common-ids"
@@ -278,6 +279,29 @@ export function canPassByExponentialDoor(
   const pass = diffSec > requiredSec
   return { verifiedNum, pass }
 }
+
+
+/** 
+ * TODO: 使用 valibot 或 zod 来进行检查
+ * 
+ * 检测是否为 images 属于 Cloud_ImageStore[] 类型 
+ *  注意: 若 images 是 undefined 返回 true
+*/
+function isImagesLegal(images?: Cloud_ImageStore[]) {
+  if(typeof images === "undefined") return true
+  if(!Array.isArray(images)) return false
+  for(let i=0; i<images.length; i++) {
+    const v = images[i]
+    
+  }
+  
+  return true
+}
+
+export const checker = {
+  isImagesLegal,
+}
+
 
 /******************************** 用户相关 ******************************/
 
