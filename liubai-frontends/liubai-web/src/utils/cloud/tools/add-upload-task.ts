@@ -11,6 +11,18 @@ import { type LiuUploadTask, liuUploadTasks } from "~/types/types-atom";
 import time from "~/utils/basic/time";
 import ider from "~/utils/basic/ider";
 
+// 属于再编辑的操作，只会修改 Content 表，不会影响其他表的操作
+// 这些操作，若在队列里发现 content-post 存在，就不需要额外再去触发这些事件了
+// 因为它们的状态会跟着 content-post 一起被上传
+const content_edit_events: LiuUploadTask[] = [
+  "thread-edit",
+  "comment-edit",
+  "thread-hourglass",
+  "thread-state",
+  "thread-pin",
+  "thread-tag",
+]
+
 /**
  * 去检查是否要添加任务到 db 中
  * @param task 
@@ -23,6 +35,7 @@ export async function addUploadTask(
   const target_id = param.target_id
   const taskType = param.uploadTask
   const isUndo = taskType.startsWith("undo_")
+  const isContentEdited = content_edit_events.includes(taskType)
 
   let addRequired = true
 
@@ -30,10 +43,7 @@ export async function addUploadTask(
   if(isUndo) {
     addRequired = await whenUndo(target_id, user, taskType)
   }
-  else if(taskType === "thread-edit") {
-    addRequired = await whenContentEdit(target_id, user)
-  }
-  else if(taskType === "comment-edit") {
+  else if(isContentEdited) {
     addRequired = await whenContentEdit(target_id, user)
   }
   if(!addRequired) return
@@ -41,17 +51,20 @@ export async function addUploadTask(
   // 2. 检查是否已存在，若存在去删除旧的任务
   const isThread = taskType.startsWith("thread-")
   const isComment = taskType.startsWith("comment-")
+  const isWorkspace = taskType.startsWith("workspace-")
+  const isMember = taskType.startsWith("member-")
+  const isDraft = taskType.startsWith("draft-")
 
   if(isThread || isComment) {
     await checkContent(target_id, user, taskType)
   }
-  if(taskType === "workspace-tag") {
+  if(isWorkspace) {
     await checkWorkspace(target_id, user, taskType)
   }
-  else if(taskType === "member-avatar" || taskType === "member-nickname") {
+  else if(isMember) {
     await checkMember(target_id, user, taskType)
   }
-  else if(taskType === "draft-clear" || taskType === "draft-set") {
+  else if(isDraft) {
     await checkDraft(target_id, user)
   }
 
@@ -61,13 +74,13 @@ export async function addUploadTask(
   let member_id: string | undefined
   let draft_id: string | undefined
 
-  if(taskType === "workspace-tag") {
+  if(isWorkspace) {
     workspace_id = target_id
   }
-  else if(taskType === "member-avatar" || taskType === "member-nickname") {
+  else if(isMember) {
     member_id = target_id
   }
-  else if(taskType === "draft-clear" || taskType === "draft-set") {
+  else if(isDraft) {
     draft_id = target_id
   }
   else {

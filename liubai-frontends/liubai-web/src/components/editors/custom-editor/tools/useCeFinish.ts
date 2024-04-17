@@ -116,7 +116,10 @@ async function toRelease(
   // 8. 去同步后端
   const res8 = localCache.hasLoginWithBackend()
   if(res8) {
-    LocalToCloud.addTask({ uploadTask: "content-post", target_id: newId })
+    LocalToCloud.addTask({ 
+      uploadTask: "content-post", 
+      target_id: newId,
+    }, true)
   }
   
 }
@@ -274,7 +277,10 @@ async function toUpdate(ctx: CepContext) {
   // 7. 去同步后端
   const res7 = localCache.hasLoginWithBackend()
   if(res7) {
-    LocalToCloud.addTask({ uploadTask: "thread-edit", target_id: threadId })
+    LocalToCloud.addTask({ 
+      uploadTask: "thread-edit", 
+      target_id: threadId,
+    }, true)
   }
 }
 
