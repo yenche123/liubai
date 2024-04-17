@@ -130,6 +130,11 @@ export interface ContentConfig {
   allowComment?: boolean
 }
 
+export const Sch_ContentConfig = vbot.object({
+  showCountdown: vbot.optional(vbot.boolean()),
+  allowComment: vbot.optional(vbot.boolean()),
+}, vbot.never())
+
 /** Member 表对象的配置结构 */
 export interface MemberConfig {
   searchKeywords: string[]
@@ -216,7 +221,7 @@ export const liuMarkTypes = [
 ] as const
 
 export type LiuMarkType = typeof liuMarkTypes[number]
-
+export const Sch_LiuMarkType = vbot.picklist(liuMarkTypes)
 export const isLiuMarkType = (val: string): val is LiuMarkType => {
   return liuMarkTypes.includes(val as LiuMarkType)
 }
@@ -226,16 +231,30 @@ export interface LiuLinkMark {
   attrs: {
     href: string
     target?: string
-    class?: null
+    class?: string
   }
 }
+export const Sch_LiuLinkMark = vbot.object({
+  type: vbot.literal("link"),
+  attrs: vbot.object({
+    href: vbot.string(),
+    target: vbot.optional(vbot.string()),
+    class: vbot.optional(vbot.string()),
+  })
+})
 
 export interface LiuOtherMark {
   type: Exclude<LiuMarkType, "link">
   attrs?: Record<string, any>
 }
 
+export const Sch_LiuOtherMark = vbot.object({
+  type: vbot.picklist(liuMarkTypes.filter(v => v !== "link")),
+  attrs: vbot.optional(vbot.record(vbot.any())),
+})
+
 export type LiuMarkAtom = LiuLinkMark | LiuOtherMark
+export const Sch_LiuMarkAtom = vbot.union([Sch_LiuLinkMark, Sch_LiuOtherMark])
 
 export interface LiuContent {
   type: LiuNodeType
@@ -250,6 +269,13 @@ export interface LiuContent {
 
   text?: string
 }
+
+export const Sch_Simple_LiuContent = vbot.object({
+  type: Sch_LiuNodeType,
+  marks: vbot.optional(vbot.array(Sch_LiuMarkAtom)),
+  attrs: vbot.optional(vbot.record(vbot.any())),
+  text: vbot.optional(vbot.string()),
+})
 
 /*********************** 文件图片相关 **********************/
 

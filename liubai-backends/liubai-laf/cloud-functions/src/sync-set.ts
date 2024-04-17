@@ -18,7 +18,13 @@ import type {
   LiuUploadComment,
   SyncSetAtomRes,
 } from "@/common-types"
-import { Sch_Simple_SyncSetAtom } from "@/common-types"
+import { 
+  Sch_Simple_SyncSetAtom,
+  Sch_Cloud_ImageStore,
+  Sch_Cloud_FileStore,
+  Sch_ContentConfig,
+  Sch_LiuRemindMe,
+} from "@/common-types"
 import { getNowStamp, SECONED, MINUTE } from "@/common-time"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -184,14 +190,57 @@ async function toPostThread(
   // 1. get some important parameters
   const { spaceId, first_id } = thread
   if(!spaceId || !first_id) {
-    return { code: "E4000", errMsg: "spaceId and first_id are required" }
+    return { code: "E4000", taskId, errMsg: "spaceId and first_id are required" }
   }
 
   // 2. check if the user is in the space
   const isInTheSpace = _amIInTheSpace(ssCtx, spaceId)
   if(!isInTheSpace) {
-    return { code: "E4004", errMsg: "you are not in the workspace" }
+    return { code: "E4004", taskId, errMsg: "you are not in the workspace" }
   }
+
+  // 3. inspect data technically
+  const Sch_PostThread = vbot.object({
+    first_id: vbot.string([vbot.minLength(20)]),
+    spaceId: vbot.string(),
+
+    liuDesc: vbot.optional(vbot.array(vbot.any())),
+    images: vbot.optional(vbot.array(Sch_Cloud_ImageStore)),
+    files: vbot.optional(vbot.array(Sch_Cloud_FileStore)),
+
+    editedStamp: vbot.optional(vbot.number()),
+
+    title: vbot.optional(vbot.string()),
+    calendarStamp: vbot.optional(vbot.number()),
+    remindStamp: vbot.optional(vbot.number()),
+    whenStamp: vbot.optional(vbot.number()),
+    remindMe: vbot.optional(Sch_LiuRemindMe),
+    pinStamp: vbot.optional(vbot.number()),
+
+    createdStamp: vbot.number(),
+
+    tagIds: vbot.optional(vbot.array(vbot.string())),
+    tagSearched: vbot.optional(vbot.array(vbot.string())),
+    stateId: vbot.optional(vbot.string()),
+    config: vbot.optional(Sch_ContentConfig),
+  }, vbot.never())     // open strict mode
+  const res3 = vbot.safeParse(Sch_PostThread, thread)
+  if(!res3.success) {
+    console.warn("inspecting data failed")
+    console.log(res3)
+    const err3 = checker.getErrMsgFromIssues(res3.issues)
+    return { code: "E4000", taskId, errMsg: err3 }
+  }
+
+  // 4. inspect liuDesc
+  if(thread.liuDesc) {
+    const res4 = checker.isLiuContentArr(thread.liuDesc)
+    if(!res4) {
+      return { code: "E4000", taskId, errMsg: "liuDesc is illegal" }
+    }
+  }
+
+  
 
 }
 

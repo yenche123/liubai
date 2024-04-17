@@ -20,11 +20,13 @@ import type {
   LiuPlainText,
   Cloud_ImageStore,
   Cloud_FileStore,
+  LiuContent,
 } from '@/common-types'
 import { 
   supportedLocales,
   Sch_Cloud_FileStore,
   Sch_Cloud_ImageStore,
+  Sch_Simple_LiuContent,
 } from "@/common-types"
 import { createToken, createEncNonce } from "@/common-ids"
 import { 
@@ -312,10 +314,37 @@ function isFilesLegal(files?: Cloud_FileStore[]) {
   return res.success
 }
 
+
+// LiuContent 最大嵌套层数
+const LIU_CONTENT_NESTING_MAX = 6
+
+/** 检测 liuDesc 是否合法 */
+function isLiuContentArr(
+  list?: LiuContent[],
+  level?: number
+) {
+  if(!level) level = 1
+
+  if(typeof list === "undefined") return true
+  if(!Array.isArray(list)) return false
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    const res1 = vbot.safeParse(Sch_Simple_LiuContent, v)
+    if(!res1.success) return false
+    if(v.content) {
+      if(level >= LIU_CONTENT_NESTING_MAX) return false
+      const res2 = isLiuContentArr(v.content, level + 1)
+      if(!res2) return false
+    }
+  }
+  return true
+}
+
 export const checker = {
   getErrMsgFromIssues,
   isImagesLegal,
   isFilesLegal,
+  isLiuContentArr,
 }
 
 
