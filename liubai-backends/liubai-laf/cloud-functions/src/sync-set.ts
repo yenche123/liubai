@@ -2,6 +2,7 @@ import {
   checkIfUserSubscribed, 
   verifyToken,
   getDocAddId,
+  checker,
 } from "@/common-util"
 import type { 
   LiuRqReturn,
@@ -17,9 +18,10 @@ import type {
   LiuUploadComment,
   SyncSetAtomRes,
 } from "@/common-types"
-import { liuUploadTasks } from "@/common-types"
+import { Sch_Simple_SyncSetAtom } from "@/common-types"
 import { getNowStamp, SECONED, MINUTE } from "@/common-time"
 import cloud from '@lafjs/cloud'
+import * as vbot from "valibot"
 
 const db = cloud.database()
 
@@ -57,42 +59,27 @@ function preCheck(
     return { code: "E4000", errMsg: "operateType is not equal to general_sync" }
   }
 
-  if(!atoms || !Array.isArray(atoms)) {
-    return { code: "E4000", errMsg: "no atoms in body" }
-  }
-
-  if(atoms.length < 1) {
-    return { code: "E4000" , errMsg: "atoms.length is meant to be bigger than 0" }
-  }
-
-  if(atoms.length > 10) {
-    return { 
-      code: "E4000" , 
-      errMsg: "atoms.length is meant to be smaller than or equal to 10", 
-    }
+  const Sch_Atoms = vbot.array(Sch_Simple_SyncSetAtom, [
+    vbot.minLength(1),
+    vbot.maxLength(10),
+  ])
+  const res1 = vbot.safeParse(Sch_Atoms, atoms)
+  if(!res1.success) {
+    const errMsg = checker.getErrMsgFromIssues(res1.issues)
+    return { code: "E4000", errMsg }
   }
 
   const list = atoms as SyncSetAtom[]
   for(let i=0; i<list.length; i++) {
     const v = list[i]
-    const taskType = v?.taskType
-    if(!taskType) {
-      return { code: "E4000", errMsg: `one of taskType is empty` }
-    }
-    const taskId = v?.taskId
-    if(!taskId) {
-      return { code: "E4000", errMsg: `one of taskId is empty` }
-    }
-    const existed = liuUploadTasks.includes(taskType)
-    if(!existed) {
-      return { code: "E4000", errMsg: "one of taskType is not in liuUploadTasks" }
-    }
-
-    const thread = v?.thread
-    const comment = v?.comment
-    const draft = v?.draft
-    const member = v?.member
-    const workspace = v?.workspace
+    const {
+      taskType,
+      thread,
+      comment,
+      draft,
+      member,
+      workspace,
+    } = v
 
     if(taskType === "content-post" && (!thread && !comment)) {
       return { 
@@ -161,15 +148,14 @@ async function toExecute(
     const v = list[i]
     const { taskType, taskId } = v
     const { thread, comment, member, workspace } = v
+
+    let res1: SyncSetAtomRes | undefined
     if(taskType === "content-post") {
       if(thread) {
         await toPostThread(ssCtx, taskId, thread)
       }
       else if(comment) {
         await toPostComment(ssCtx, taskId, comment)
-      }
-      else {
-        results.push({ code: "E5001", taskId, errMsg: "no thread or comment" })
       }
     }
     else if(taskType === "thread-edit") {
@@ -178,9 +164,12 @@ async function toExecute(
     else if(taskType === "thread-hourglass") {
 
     }
-    
-  }
 
+    if(!res1) {
+      res1 = { code: "E5001", taskId, errMsg: "the taskType cannot match" }
+    }
+    results.push(res1)
+  }
 
 
 }

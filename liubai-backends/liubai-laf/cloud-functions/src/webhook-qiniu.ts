@@ -4,14 +4,12 @@ import type {
   Res_WebhookQiniu, 
   Table_User, 
 } from "@/common-types"
-import qiniu from "qiniu"
+import { Sch_Param_WebhookQiniu } from "@/common-types"
 import cloud from '@lafjs/cloud'
 import { getNowStamp } from "@/common-time"
+import * as vbot from "valibot"
 
 const db = cloud.database()
-const qiniu_keys = [
-  "bucket", "key", "hash", "fname", "fsize", "mimeType", "endUser"
-]
 
 export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body as Param_WebhookQiniu
@@ -32,9 +30,6 @@ export async function main(ctx: FunctionContext) {
     return { code: "E4000", errMsg: "some keys in body are not existed" }
   }
 
-  console.log("打印一下 ctx.request........")
-  console.log(ctx.request)
-
   // 3. record quota into user
   recordQuota(body)
 
@@ -49,7 +44,6 @@ export async function main(ctx: FunctionContext) {
 function checkCallbackIsFromQiniu(
   ctx: FunctionContext,
 ) {
-
   const _env = process.env
   const qiniu_custom_key = _env.LIU_QINIU_CUSTOM_KEY
   const body = ctx.request?.body ?? {}
@@ -67,22 +61,12 @@ function checkCallbackIsFromQiniu(
 function checkBody(
   body: Param_WebhookQiniu,
 ) {
-
-  const keys = Object.keys(body)
-  for(let i=0; i<qiniu_keys.length; i++) {
-    const k = qiniu_keys[i] as keyof Param_WebhookQiniu
-    if(!keys.includes(k)) {
-      return false
-    }
-    const v = body[k]
-    if(typeof v !== "string") {
-      console.warn(`the value of ${k} is not string`)
-      console.log(v)
-      return false
-    }
+  const res = vbot.safeParse(Sch_Param_WebhookQiniu, body)
+  if(!res.success) {
+    console.warn("vbot checkBody failed")
+    console.log(res.issues)
   }
-  
-  return true
+  return res.success
 }
 
 function getReturnData(

@@ -19,8 +19,13 @@ import type {
   CryptoCipherAndIV,
   LiuPlainText,
   Cloud_ImageStore,
+  Cloud_FileStore,
 } from '@/common-types'
-import { supportedLocales } from "@/common-types"
+import { 
+  supportedLocales,
+  Sch_Cloud_FileStore,
+  Sch_Cloud_ImageStore,
+} from "@/common-types"
 import { createToken, createEncNonce } from "@/common-ids"
 import { 
   getNowStamp, 
@@ -29,6 +34,7 @@ import {
 } from "@/common-time"
 import geoip from "geoip-lite"
 import Stripe from "stripe"
+import * as vbot from "valibot"
 
 const db = cloud.database()
 const _ = db.command
@@ -280,26 +286,36 @@ export function canPassByExponentialDoor(
   return { verifiedNum, pass }
 }
 
+function getErrMsgFromIssues(issues: vbot.SchemaIssues) {
+  const issue = issues?.[0]
+  const msg = issue?.message
+  return msg ?? "get error from valibot"
+}
 
 /** 
- * TODO: 使用 valibot 或 zod 来进行检查
- * 
  * 检测是否为 images 属于 Cloud_ImageStore[] 类型 
  *  注意: 若 images 是 undefined 返回 true
 */
 function isImagesLegal(images?: Cloud_ImageStore[]) {
-  if(typeof images === "undefined") return true
-  if(!Array.isArray(images)) return false
-  for(let i=0; i<images.length; i++) {
-    const v = images[i]
-    
-  }
-  
-  return true
+  const Sch = vbot.optional(vbot.array(Sch_Cloud_ImageStore))
+  const res = vbot.safeParse(Sch, images)
+  return res.success
+}
+
+/** 
+ * 检测是否为 files 属于 Cloud_FileStore[] 类型 
+ *  注意: 若 files 是 undefined 返回 true
+*/
+function isFilesLegal(files?: Cloud_FileStore[]) {
+  const Sch = vbot.optional(vbot.array(Sch_Cloud_FileStore))
+  const res = vbot.safeParse(Sch, files)
+  return res.success
 }
 
 export const checker = {
+  getErrMsgFromIssues,
   isImagesLegal,
+  isFilesLegal,
 }
 
 

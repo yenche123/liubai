@@ -2,6 +2,12 @@
 // Table_ 开头，表示为数据表结构
 // Shared_ 开头，表示为全局缓存 cloud.shared 所涉及的结构
 import Stripe from "stripe"
+import * as vbot from "valibot"
+import type { BaseSchema } from "valibot"
+
+// Sch_ 开头的，表示类型的 Schema，用于 valibot
+// Res_ 开头的，表示返回至前端的类型
+// Param_ 开头的，表示传入云函数的类型
 
 export async function main(ctx: FunctionContext) {
   console.log("do nothing")
@@ -61,6 +67,7 @@ export const supportedClients = [
   "desktop",
 ] as const
 export type SupportedClient = typeof supportedClients[number]
+export const Sch_SupportedClient = vbot.picklist(supportedClients)
 
 // 各个客户端的最大 token 数
 export const clientMaximum: Record<SupportedClient, number> = {
@@ -73,8 +80,8 @@ export const supportedLocales = [
   "zh-Hans",
   "zh-Hant"
 ] as const
-
 export type SupportedLocale = typeof supportedLocales[number]
+export const Sch_SupportedLocale = vbot.picklist(supportedLocales)
 export type LocalLocale = SupportedLocale | "system"
 
 interface BaseTable {
@@ -142,7 +149,15 @@ export interface EmojiData {
 
 /*********************** 编辑器相关 **********************/
 // “提醒我” 有哪些合法值
-export type LiuRemindLater = "30min" | "1hr" | "2hr" | "3hr" | "tomorrow_this_moment"
+export const liuRemindLaters = [
+  "30min",
+  "1hr",
+  "2hr",
+  "3hr",
+  "tomorrow_this_moment",
+] as const
+export type LiuRemindLater = typeof liuRemindLaters[number]
+export const Sch_LiuRemindLater = vbot.picklist(liuRemindLaters)
 
 // "提醒我" 的结构
 export interface LiuRemindMe {
@@ -157,6 +172,17 @@ export interface LiuRemindMe {
   // 具体时间的时间戳
   specific_stamp?: number
 }
+
+export const Sch_LiuRemindMe = vbot.object(
+  {
+    type: vbot.picklist(["early", "later", "specific_time"]),
+    early_minute: vbot.optional(vbot.number()),
+    later: vbot.optional(Sch_LiuRemindLater),
+    specific_stamp: vbot.optional(vbot.number()),
+  },
+  vbot.never()
+)
+
 
 export const liuNodeTypes = [
   "heading",          // 标题（只有 h1）
@@ -175,6 +201,7 @@ export const liuNodeTypes = [
 // 目前支持的内容格式; array[number] 的写法来自
 // https://segmentfault.com/q/1010000037769845
 export type LiuNodeType = typeof liuNodeTypes[number]
+export const Sch_LiuNodeType = vbot.picklist(liuNodeTypes)
 
 export const isLiuNodeType = (val: string): val is LiuNodeType => {
   return liuNodeTypes.includes(val as LiuNodeType)
@@ -236,6 +263,16 @@ export interface Cloud_FileStore {
   url: string
 }
 
+export const Sch_Cloud_FileStore: BaseSchema<Cloud_FileStore> = vbot.object({
+  id: vbot.string(),
+  name: vbot.string(),
+  lastModified: vbot.number(),
+  suffix: vbot.string(),
+  size: vbot.number(),
+  mimeType: vbot.string(),
+  url: vbot.string(),
+}, vbot.never())
+
 /** 图像的 exif 信息 */
 export interface LiuExif {
   gps?: {
@@ -247,6 +284,17 @@ export interface LiuExif {
   HostComputer?: string     // 宿主设备，如果图片经过软件再编辑，此值可能缺省
   Model?: string            // 拍摄时的设备，即使图片经过软件再编辑，此值仍可能存在
 }
+
+export const Sch_LiuExif = vbot.object({
+  gps: vbot.optional(vbot.object({
+    latitude: vbot.optional(vbot.string()),
+    longitude: vbot.optional(vbot.string()),
+    altitude: vbot.optional(vbot.string()),
+  })),
+  DateTimeOriginal: vbot.optional(vbot.string()),
+  HostComputer: vbot.optional(vbot.string()),
+  Model: vbot.optional(vbot.string()),
+})
 
 /** 图片于云端数据库内的存储结构 */
 export interface Cloud_ImageStore {
@@ -262,6 +310,23 @@ export interface Cloud_ImageStore {
   blurhash?: string
   someExif?: LiuExif
 }
+
+export const Sch_Cloud_ImageStore: BaseSchema<Cloud_ImageStore> = vbot.object(
+  {
+    id: vbot.string(),
+    name: vbot.string(),
+    lastModified: vbot.number(),
+    mimeType: vbot.optional(vbot.string()),
+    width: vbot.optional(vbot.number()),
+    height: vbot.optional(vbot.number()),
+    h2w: vbot.optional(vbot.string()),
+    url: vbot.string(),
+    url_2: vbot.optional(vbot.string()),
+    blurhash: vbot.optional(vbot.string()),
+    someExif: vbot.optional(Sch_LiuExif),
+  },
+  vbot.never(),
+)
 
 
 /*********************** 杂七杂八的 **********************/
@@ -381,7 +446,7 @@ export const liuUploadTasks = [
 ] as const
 
 export type LiuUploadTask = typeof liuUploadTasks[number]
-
+export const Sch_LiuUploadTask = vbot.picklist(liuUploadTasks)
 
 /** 设置 “动态、评论和草稿” 都有的字段 */
 export interface LiuUploadBase {
@@ -458,16 +523,21 @@ export interface LiuUploadWorkspace {
 }
 
 export interface SyncSetAtom {
-  taskId: string
   taskType: LiuUploadTask
+  taskId: string
 
   thread?: LiuUploadThread
   comment?: LiuUploadComment
   draft?: LiuUploadDraft
   member?: LiuUploadMember
   workspace?: LiuUploadWorkspace
-
 }
+
+export const Sch_Simple_SyncSetAtom = vbot.object({
+  taskType: Sch_LiuUploadTask,
+  taskId: vbot.string(),
+})
+
 
 // 这个上下文的 map 的结构会是 Map<SyncSetCtxKey, Map<string, SyncSetAtom>>
 // 其中 string 为数据表某一行数据的 id
@@ -751,8 +821,30 @@ export interface MemberAggSpaces extends Table_Member {
   spaceList?: Table_Workspace[]
 }
 
+/*********************** 云函数入参信息 ***********************/
+// webhook-qiniu 的入参
+export interface Param_WebhookQiniu {
+  bucket: string
+  key: string
+  hash: string
+  fsize: string
+  fname: string
+  mimeType: string
+  endUser: string
+}
 
-/*********************** 一些回调信息 ***********************/
+export const Sch_Param_WebhookQiniu = vbot.object({
+  bucket: vbot.string(),
+  key: vbot.string(),
+  hash: vbot.string(),
+  fsize: vbot.string(),
+  fname: vbot.string(),
+  mimeType: vbot.string(),
+  endUser: vbot.string(),
+})
+
+
+/*********************** 回调信息(云函数出参信息) ***********************/
 // Res_ 开头表示回传的数据
 // Param_ 开头表示入参数据
 
@@ -823,17 +915,6 @@ export interface Res_FileSet_UploadToken {
   cloudService: CloudStorageService
   uploadToken: string
   prefix: string
-}
-
-// webhook-qiniu 的入参
-export interface Param_WebhookQiniu {
-  bucket: string
-  key: string
-  hash: string
-  fsize: string
-  fname: string
-  mimeType: string
-  endUser: string
 }
 
 export interface Res_WebhookQiniu {
