@@ -3,11 +3,10 @@ import type {
   BaseIsOn,
   Shared_AccessControl,
   LiuRqReturn,
-  SupportedClient,
 } from "@/common-types"
-import { supportedClients } from '@/common-types'
+import { Sch_X_Liu, Sch_IP } from "@/common-types"
 import { getNowStamp, SECONED, MINUTE } from "@/common-time"
-
+import * as vbot from "valibot"
 
 /****************** 一些常量 *****************/
 
@@ -25,16 +24,6 @@ const ALLOW_WITHOUT_TOKEN = [
   "hello-world",
   "user-login",
 ]
-
-// 每个请求里皆应存在的参数字段
-const X_LIU_NORMAL = [
-  "x_liu_language",
-  "x_liu_version",
-  "x_liu_stamp",
-  "x_liu_timezone",
-  "x_liu_client",
-]
-
 
 /****************** 函数组成 *****************/
 
@@ -71,19 +60,18 @@ export async function main(
     return { code: "B0001" }
   }
 
-  // 1. 判断 ip 是否存在，是否为 string 类型
-  if(!ip) {
-    console.warn(`当前 ip 不存在.......`)
-    return { code: "E5001" }
-  }
-  if(typeof ip !== "string") {
-    console.warn(`当前 ip 不是 string 属性.......`)
-    return { code: "E5001" }
+  // 1. 判断 ip 是否存在，是否为 string 类型，是否为 ip 的格式
+  const res1 = vbot.safeParse(Sch_IP, ip)
+  if(!res1.success) {
+    console.warn("the ip format is wrong")
+    console.log(ip)
+    console.log(res1.success)
+    return { code: "E5001", errMsg: "the ip format is wrong" }
   }
 
   // 2. 检查 ip
-  const res = checkIp(ip)
-  if(!res) {
+  const res2 = checkIp(res1.output)
+  if(!res2) {
     return { code: "E4003", errMsg: "sorry, we cannot serve you" }
   }
 
@@ -96,13 +84,14 @@ export async function main(
   
 
   // 4. 最后检查参数是否正确
-  const res2 = checkEntry(ctx, funcName)
-  if(!res2) {
+  const res4 = checkEntry(ctx, funcName)
+  if(!res4) {
     return { code: "E4000", errMsg: "checkEntry error......" }
   }
 
-  const nextRes3 = await toNext(ctx, next)
-  return nextRes3
+  // 5. toNext
+  const res5 = await toNext(ctx, next)
+  return res5
 }
 
 
@@ -185,28 +174,14 @@ function checkEntry(ctx: FunctionContext, funcName: string) {
 
   // 1. 检查常规的 x_liu_
   const body = ctx.request?.body ?? {}
-
-  // 2. 检查 client 字段
-  const isSupportedClient = checkClient(body['x_liu_client'])
-  if(!isSupportedClient) return false
-
-  try {
-    for(let i=0; i<X_LIU_NORMAL.length; i++) {
-      const v = X_LIU_NORMAL[i]
-      const data = body[v]
-      // console.log(`${v}: `, data)
-      if(!data) return false
-    }
-  }
-  catch(err) {
-    console.warn("获取 body 中的字段时，报错了.......")
-    console.log(err)
-    console.log(" ")
+  const res1 = vbot.safeParse(Sch_X_Liu, body)
+  if(!res1.success) {
+    console.warn("checking out x_liu_ fields failed.......")
+    console.log(res1.issues)
     return false
   }
-  // console.log(" ")
 
-  // 3. 是否无需 token
+  // 2. 是否无需 token
   const allowNoToken = ALLOW_WITHOUT_TOKEN.includes(funcName)
   if(allowNoToken) return true
 
@@ -217,13 +192,6 @@ function checkEntry(ctx: FunctionContext, funcName: string) {
 
   return true
 }
-
-function checkClient(client: any) {
-  if(!client || typeof client !== "string") return false
-  const hasExisted = supportedClients.includes(client as SupportedClient)
-  return hasExisted
-}
-
 
 /**
  * 检查 ip 是否被允许访问

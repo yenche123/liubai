@@ -358,6 +358,37 @@ export const Sch_Cloud_ImageStore: BaseSchema<Cloud_ImageStore> = vbot.object(
 /*********************** 杂七杂八的 **********************/
 // 新增类型前，记得全局搜索一下，避免冲突
 
+
+/** 一些常用的 Schema for valibot */
+
+// trim 后有字符串的 string
+export const Sch_String_WithLength = vbot.string([
+  vbot.toTrimmed(), 
+  vbot.minLength(1)
+])
+
+// trim 后有字符串的 string
+export const sch_string_length = (length: number = 1) => {
+  return vbot.string([
+    vbot.toTrimmed(), 
+    vbot.minLength(length)
+  ])
+}
+
+// 每个请求里皆应存在的参数字段
+export const Sch_X_Liu = vbot.object({
+  x_liu_language: sch_string_length(2),
+  x_liu_version: sch_string_length(3),     // 比如 "2.0" 最少有三个字符
+
+  // 最小要大于 2024-04-06，这个日期没有意义，只是已读罢了
+  x_liu_stamp: vbot.number([vbot.minValue(1712345670000)]),
+
+  x_liu_timezone: sch_string_length(),
+  x_liu_client: Sch_SupportedClient,
+})
+
+export const Sch_IP = vbot.string([vbot.ip()])
+
 export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
 
 // User 表里的 thirdData 字段的类型
