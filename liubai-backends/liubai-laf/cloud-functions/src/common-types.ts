@@ -713,10 +713,12 @@ export interface Table_Content extends BaseTable {
   visScope: VisScope
   storageState: Cloud_StorageState
 
-  title?: string
-  liuDesc?: LiuContent[]
-  images?: Cloud_ImageStore[]
-  files?: Cloud_FileStore[]
+  enc_title?: string
+  enc_desc?: string
+  enc_images?: string
+  enc_files?: string
+  enc_search_text?: string
+
   calendarStamp?: number
   remindStamp?: number
   whenStamp?: number
