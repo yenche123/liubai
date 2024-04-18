@@ -48,11 +48,6 @@ const DAY_90 = DAY * 90
 const DAY_28 = DAY * 28
 const DAY_7 = DAY * 7
 
-export const reg_exp = {
-  // 捕捉 整个字符串都是 email
-  email_completed: /^[\w\.-]{1,32}@[\w-]{1,32}\.\w{2,32}[\w\.-]*$/g,
-}
-
 /********************* 空函数 ****************/
 export async function main(ctx: FunctionContext) {
   console.log("do nothing with common-util")
@@ -220,25 +215,14 @@ export function turnMemberAggsIntoLSAMs(
 
 /** 检测 val 是否为 email，若是则全转为小写 */
 export function isEmailAndNormalize(val: any) {
-  if(!val || typeof val !== "string") return false
-
-  // 最短的 email 应该长这样 a@b.cn 至少有 6 个字符
-  if(val.length < 6)  return false
-
-  // 使用正则判断是否为 email
-  const m = val.match(reg_exp.email_completed)
-  let isEmail = Boolean(m?.length)
-  if(!isEmail) return false
-
-  // 确保第一个字符和最后一个字符 不会是 \. 和 -
-  const tmps = [".", "-"]
-  const firstChar = val[0]
-  if(tmps.includes(firstChar)) return false
-  const lastChar = val[val.length - 1]
-  if(tmps.includes(lastChar)) return false
-
-  const newVal = val.toLowerCase()
-  return newVal
+  const Sch = vbot.string([
+    vbot.toTrimmed(),
+    vbot.email(),
+    vbot.toLowerCase(),
+  ])
+  const res = vbot.safeParse(Sch, val)
+  if(!res.success) return false
+  return res.output
 }
 
 /** 归一化主题至 LocalTheme */
