@@ -54,63 +54,6 @@ export async function main(ctx: FunctionContext) {
   return true
 }
 
-/********************* Crypto 加解密相关的函数 ****************/
-
-/**
- * 使用 RSA 的密钥解密数据
- * @param encryptedText base64 格式的密文
- */
-export function decryptWithRSA(encryptedText: string) {
-  const pk = getPrivateKey()
-  if(!pk) {
-    return { code: "E5001", errMsg: "no private key" }
-  }
-
-  const privateKeyObj = crypto.createPrivateKey({
-    key: pk,
-    format: 'pem',
-    type: 'pkcs8',
-  })
-
-  const buffer = Buffer.from(encryptedText, "base64")
-  
-  let plainText = ""
-  try {
-    const decryptedData = crypto.privateDecrypt(
-      {
-        key: privateKeyObj,
-        oaepHash: "SHA256"
-      },
-      buffer
-    )
-    plainText = decryptedData.toString('utf8')
-  }
-  catch(err1) {
-    console.warn("解密失败........")
-    console.log(err1)
-    console.log(" ")
-    return { code: "E4003", errMsg: "fail to decrypt" }
-  }
-
-  return { plainText }
-}
-
-/** 获取 RSA private key */
-function getPrivateKey() {
-  const keyPair = cloud.shared.get(`liu-rsa-key-pair`)
-  const privateKey = keyPair?.privateKey
-  if(!privateKey) return undefined
-  return privateKey as string
-}
-
-/** 获取 RSA public key */
-export function getPublicKey() {
-  const keyPair = cloud.shared.get(`liu-rsa-key-pair`)
-  const publicKey = keyPair?.publicKey
-  if(!publicKey) return undefined
-  return publicKey as string
-}
-
 
 /********************* 一些工具函数 *****************/
 
@@ -731,6 +674,72 @@ export function updateUserInCache(
 }
 
 
+/********************* Crypto 加解密相关的函数 ****************/
+
+/**
+ * 使用 RSA 的密钥解密数据
+ * @param encryptedText base64 格式的密文
+ */
+export function decryptWithRSA(encryptedText: string) {
+  const pk = getPrivateKey()
+  if(!pk) {
+    return { code: "E5001", errMsg: "no private key" }
+  }
+
+  const privateKeyObj = crypto.createPrivateKey({
+    key: pk,
+    format: 'pem',
+    type: 'pkcs8',
+  })
+
+  const buffer = Buffer.from(encryptedText, "base64")
+  
+  let plainText = ""
+  try {
+    const decryptedData = crypto.privateDecrypt(
+      {
+        key: privateKeyObj,
+        oaepHash: "SHA256"
+      },
+      buffer
+    )
+    plainText = decryptedData.toString('utf8')
+  }
+  catch(err1) {
+    console.warn("解密失败........")
+    console.log(err1)
+    console.log(" ")
+    return { code: "E4003", errMsg: "fail to decrypt" }
+  }
+
+  return { plainText }
+}
+
+/** 获取 RSA private key */
+function getPrivateKey() {
+  const keyPair = cloud.shared.get(`liu-rsa-key-pair`)
+  const privateKey = keyPair?.privateKey
+  if(!privateKey) return undefined
+  return privateKey as string
+}
+
+/** 获取 RSA public key */
+export function getPublicKey() {
+  const keyPair = cloud.shared.get(`liu-rsa-key-pair`)
+  const publicKey = keyPair?.publicKey
+  if(!publicKey) return undefined
+  return publicKey as string
+}
+
+/** 获取 AES key */
+export function getAESKey() {
+  const keyPair = cloud.shared.get(`liu-aes-key-iv`)
+  const aesKey = keyPair?.aesKey
+  if(!aesKey) return undefined
+  return aesKey as string
+}
+
+
 /************************** 加解密相关 **********************/
 
 interface GetEncryptedDataRes {
@@ -769,12 +778,12 @@ export function getEncryptedData(
       data: val,
     }
     const p2 = objToStr(p1)
-    const newVal = encryptWithAES(p2, client_key)
+    const newVal = encryptTextWithAES(p2, client_key)
     if(!newVal) {
       return {
         rqReturn: { 
           code: "E4009", 
-          errMsg: "encryptWithAES failed"
+          errMsg: "encryptTextWithAES failed"
         }
       }
     }
@@ -785,7 +794,8 @@ export function getEncryptedData(
 }
 
 
-function encryptWithAES(
+/** 把纯文本用 AES 加密，返回 CryptoCipherAndIV  */
+function encryptTextWithAES(
   plainText: string,
   key: string,
 ) {
@@ -804,7 +814,7 @@ function encryptWithAES(
   catch(err) {
     console.warn("获取 tag 失败.......")
     console.log(err)
-    return null
+    return
   }
   const encryptedDataWithTag = Buffer.concat([Buffer.from(encrypted, 'base64'), Buffer.from(tag)])
   const cipherText = encryptedDataWithTag.toString("base64")
@@ -814,6 +824,24 @@ function encryptWithAES(
     iv,
   }
 
+  return res
+}
+
+
+/** 把任何数据 data 丢进 LiuPlainText，然后转成字符串
+ * 再 encryptTextWithAES()
+ */
+export function encryptDataWithAES(
+  data: any,
+  key: string,
+) {
+  const p1: LiuPlainText = {
+    pre: key.substring(0, 5),
+    nonce: createEncNonce(),
+    data,
+  }
+  const str = objToStr(p1)
+  const res = encryptTextWithAES(str, key)
   return res
 }
 

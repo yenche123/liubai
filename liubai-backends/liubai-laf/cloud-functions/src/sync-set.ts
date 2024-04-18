@@ -3,6 +3,7 @@ import {
   verifyToken,
   getDocAddId,
   checker,
+  getAESKey,
 } from "@/common-util"
 import type { 
   LiuRqReturn,
@@ -60,6 +61,13 @@ function preCheck(
   body: Record<string, any>,
 ): LiuRqReturn | null {
 
+  // 1. checking out the AES key of backend
+  const backendAESKey = getAESKey()
+  if(!backendAESKey) {
+    return { code: "E5001", errMsg: "no backend AES key" }
+  }
+
+  // 2. other
   const { operateType, atoms } = body
   if(operateType !== "general_sync") {
     return { code: "E4000", errMsg: "operateType is not equal to general_sync" }

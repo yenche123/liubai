@@ -270,6 +270,7 @@ export interface LiuContent {
   text?: string
 }
 
+// TODO: 使用 vbot's lazy
 export const Sch_Simple_LiuContent = vbot.object({
   type: Sch_LiuNodeType,
   marks: vbot.optional(vbot.array(Sch_LiuMarkAtom)),
@@ -461,7 +462,7 @@ export interface CryptoCipherAndIV {
 }
 
 export interface LiuPlainText<T = any> {
-  pre: string        // client_key 的前五码
+  pre: string        // AES key 的前五码
   nonce: string
   data: T
 }
@@ -713,11 +714,11 @@ export interface Table_Content extends BaseTable {
   visScope: VisScope
   storageState: Cloud_StorageState
 
-  enc_title?: string
-  enc_desc?: string
-  enc_images?: string
-  enc_files?: string
-  enc_search_text?: string
+  enc_title?: CryptoCipherAndIV
+  enc_desc?: CryptoCipherAndIV
+  enc_images?: CryptoCipherAndIV
+  enc_files?: CryptoCipherAndIV
+  enc_search_text?: CryptoCipherAndIV
 
   calendarStamp?: number
   remindStamp?: number
