@@ -651,6 +651,84 @@ export async function verifyToken(
   }
 }
 
+/** 检查 Token 的 isRead isSet 
+ * 若超过 10 分钟，就去更新
+*/
+function checkTokenDataLastStamp(
+  data: Shared_TokenUser,
+  map: Map<string, Shared_TokenUser>,
+  gShared: Map<string, any>,
+  opt?: VerifyTokenOpt,
+) {
+  const entering = opt?.entering
+  let isRead = opt?.isRead
+  let isSet = opt?.isSet
+  if(entering) {
+    isRead = true
+    isSet = true
+  }
+
+  let tokenData = data.tokenData
+  if(!isRead && !isSet) return tokenData
+  const { lastRead, lastSet } = tokenData
+  const now = getNowStamp()
+  const MIN_10 = MINUTE * 10
+  const diff_read = now - lastRead
+  const diff_set = now - lastSet
+
+  let updateRead = false
+  let updateSet = false
+  if(isRead && diff_read > MIN_10) updateRead = true
+  if(isSet && diff_set > MIN_10) updateSet = true
+  
+  if(!updateRead && !updateSet) return tokenData
+  const u: Partial<Table_Token> = {}
+  if(updateRead) u.lastRead = now
+  if(updateSet) u.lastSet = now
+
+  const serial_id = tokenData._id
+  let pTokenData = updateTokenRow(serial_id, u)
+  tokenData = { ...tokenData, ...pTokenData }
+
+  // 更新缓存
+  updateTokenCache(data, map, gShared, tokenData)
+
+  return tokenData
+}
+
+
+export function updateUserInCache(
+  userId: string,
+  user?: Table_User,
+) {
+  const map = getLiuTokenUser()
+  let num = 0
+
+  map.forEach((val, key) => {
+    const _user_id = val.userData._id
+    if(userId !== _user_id) return
+
+    // avoid running in the loop
+    if(num > 16) return
+    num++
+
+    if(user) {
+      val.lastSet = getNowStamp()
+      val.userData = user
+      console.log("找到要更新的 cache........")
+      console.log(val)
+      map.set(key, val)
+    }
+    else {
+      map.delete(key)
+    }
+
+  })
+
+  // 最后不需要再对 cloud.shared 进行 set
+  // 因为引用存在时，修改里头的值时，外部的 shared 也会更改
+  // 若引用不存在时，代表为空的 map 也不需要更新
+}
 
 
 /************************** 加解密相关 **********************/
@@ -849,6 +927,8 @@ function decryptWithAES(
 
 
 
+/************************** ip 查询相关 **********************/
+
 /** 获取 ip 的 ISO 3166-1 代码 */
 export function getIpArea(ctx: FunctionContext) {
   const ip = ctx.headers?.['x-real-ip']
@@ -871,85 +951,6 @@ export function getIpGeo(ctx: FunctionContext) {
   return `${c}-${r}`
 }
 
-
-/** 检查 Token 的 isRead isSet 
- * 若超过 10 分钟，就去更新
-*/
-function checkTokenDataLastStamp(
-  data: Shared_TokenUser,
-  map: Map<string, Shared_TokenUser>,
-  gShared: Map<string, any>,
-  opt?: VerifyTokenOpt,
-) {
-  const entering = opt?.entering
-  let isRead = opt?.isRead
-  let isSet = opt?.isSet
-  if(entering) {
-    isRead = true
-    isSet = true
-  }
-
-  let tokenData = data.tokenData
-  if(!isRead && !isSet) return tokenData
-  const { lastRead, lastSet } = tokenData
-  const now = getNowStamp()
-  const MIN_10 = MINUTE * 10
-  const diff_read = now - lastRead
-  const diff_set = now - lastSet
-
-  let updateRead = false
-  let updateSet = false
-  if(isRead && diff_read > MIN_10) updateRead = true
-  if(isSet && diff_set > MIN_10) updateSet = true
-  
-  if(!updateRead && !updateSet) return tokenData
-  const u: Partial<Table_Token> = {}
-  if(updateRead) u.lastRead = now
-  if(updateSet) u.lastSet = now
-
-  const serial_id = tokenData._id
-  let pTokenData = updateTokenRow(serial_id, u)
-  tokenData = { ...tokenData, ...pTokenData }
-
-  // 更新缓存
-  updateTokenCache(data, map, gShared, tokenData)
-
-  return tokenData
-}
-
-
-export function updateUserInCache(
-  userId: string,
-  user?: Table_User,
-) {
-  const map = getLiuTokenUser()
-  let num = 0
-
-  map.forEach((val, key) => {
-    const _user_id = val.userData._id
-    if(userId !== _user_id) return
-
-    // avoid running in the loop
-    if(num > 16) return
-    num++
-
-    if(user) {
-      val.lastSet = getNowStamp()
-      val.userData = user
-      console.log("找到要更新的 cache........")
-      console.log(val)
-      map.set(key, val)
-    }
-    else {
-      map.delete(key)
-    }
-
-  })
-
-  // 最后不需要再对 cloud.shared 进行 set
-  // 因为引用存在时，修改里头的值时，外部的 shared 也会更改
-  // 若引用不存在时，代表为空的 map 也不需要更新
-}
 
 /********************* 工具函数 ****************/
 
