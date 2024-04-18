@@ -270,7 +270,9 @@ export interface LiuContent {
   text?: string
 }
 
-// TODO: 使用 vbot's lazy
+// LiuContent 里头会嵌套 LiuContent[]
+// 但为了检测级数，避免嵌套过深，所以 Sch_Simple_LiuContent 不添加 content 字段
+// 而是放在 common-util isLiuContentArr() 进行递归检查
 export const Sch_Simple_LiuContent = vbot.object({
   type: Sch_LiuNodeType,
   marks: vbot.optional(vbot.array(Sch_LiuMarkAtom)),
