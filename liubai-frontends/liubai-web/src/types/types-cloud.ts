@@ -32,7 +32,7 @@ export interface Cloud_ImageStore {
 }
 
 /** 工作区内，存储 “状态” 的结构  */
-interface Cloud_StateConfig {
+export interface Cloud_StateConfig {
   stateList?: LiuAtomState[]
   updatedStamp: number
 }

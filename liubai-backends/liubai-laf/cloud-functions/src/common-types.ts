@@ -515,8 +515,6 @@ export interface LiuUploadBase {
   first_id?: string    // 发表时，必填
   spaceId?: string     // 发表时，必填，表示存到哪个工作区
 
-  storageState?: Cloud_StorageState
-
   liuDesc?: LiuContent[]
   images?: Cloud_ImageStore[]
   files?: Cloud_FileStore[]
@@ -756,7 +754,6 @@ export interface Table_Draft extends BaseTable {
   parentComment?: string
   replyToComment?: string
   visScope?: VisScope
-  storageState?: Cloud_StorageState
   title?: string
   liuDesc?: LiuContent[]
   images?: Cloud_ImageStore[]
