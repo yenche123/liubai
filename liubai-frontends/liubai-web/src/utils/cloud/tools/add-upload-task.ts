@@ -43,6 +43,9 @@ export async function addUploadTask(
   if(isUndo) {
     addRequired = await whenUndo(target_id, user, taskType)
   }
+  else if(taskType === "thread-restore") {
+    addRequired = await whenRestoreThread(target_id, user)
+  }
   else if(isContentEdited) {
     addRequired = await whenContentEdit(target_id, user)
   }
@@ -244,6 +247,31 @@ async function whenContentEdit(
   const res = await db.upload_tasks.where(w).toArray()
   return res.length < 1
 }
+
+
+/** checking out if the delete task has already been added 
+ * if yes, then delete it and return false
+ * otherwise return true
+*/
+async function whenRestoreThread(
+  content_id: string,
+  user: string,
+) {
+  const w: Partial<UploadTaskLocalTable> = {
+    user,
+    uploadTask: "thread-delete",
+    content_id,
+    progressType: "waiting",
+  }
+  const res = await db.upload_tasks.where(w).toArray()
+  if(res.length > 0) {
+    const origin_id = res[0]._id
+    await deleteTheTask(origin_id)
+    return false
+  }
+  return true
+}
+
 
 async function deleteTheTask(
   taskId: string,
