@@ -527,7 +527,8 @@ export interface LiuUploadBase {
 /** 存一些 动态 与评论和草稿相比独有的字段 */
 export interface LiuUploadThread extends LiuUploadBase {
 
-  // oState 的操作，在 taskType 上就定义了
+  // 仅在 content-post 时有效且此时必填
+  oState?: Exclude<OState, "DELETED">
 
   title?: string
   calendarStamp?: number

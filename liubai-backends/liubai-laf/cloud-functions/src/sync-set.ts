@@ -4,6 +4,7 @@ import {
   getDocAddId,
   checker,
   getAESKey,
+  encryptDataWithAES,
 } from "@/common-util"
 import type { 
   LiuRqReturn,
@@ -18,6 +19,8 @@ import type {
   LiuUploadThread,
   LiuUploadComment,
   SyncSetAtomRes,
+  CryptoCipherAndIV,
+  OState,
 } from "@/common-types"
 import { 
   Sch_Simple_SyncSetAtom,
@@ -26,7 +29,12 @@ import {
   Sch_ContentConfig,
   Sch_LiuRemindMe,
 } from "@/common-types"
-import { getNowStamp, SECONED, MINUTE } from "@/common-time"
+import { 
+  getNowStamp, 
+  getBasicStampWhileAdding,
+  SECONED, 
+  MINUTE, 
+} from "@/common-time"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
 
@@ -197,6 +205,7 @@ async function toPostThread(
 
   // 1. get some important parameters
   const { spaceId, first_id } = thread
+  const { _id: userId } = ssCtx.me
   if(!spaceId || !first_id) {
     return { code: "E4000", taskId, errMsg: "spaceId and first_id are required" }
   }
@@ -204,10 +213,11 @@ async function toPostThread(
   // 2. check if the user is in the space
   const isInTheSpace = _amIInTheSpace(ssCtx, spaceId)
   if(!isInTheSpace) {
-    return { code: "E4004", taskId, errMsg: "you are not in the workspace" }
+    return { code: "E4003", taskId, errMsg: "you are not in the workspace" }
   }
 
   // 3. inspect data technically
+  const ostate_list: OState[] = ["OK", "REMOVED"]
   const Sch_PostThread = vbot.object({
     first_id: vbot.string([vbot.minLength(20)]),
     spaceId: vbot.string(),
@@ -217,6 +227,7 @@ async function toPostThread(
     files: vbot.optional(vbot.array(Sch_Cloud_FileStore)),
 
     editedStamp: vbot.optional(vbot.number()),
+    oState: vbot.picklist(ostate_list),
 
     title: vbot.optional(vbot.string()),
     calendarStamp: vbot.optional(vbot.number()),
@@ -240,16 +251,85 @@ async function toPostThread(
     return { code: "E4000", taskId, errMsg: err3 }
   }
 
-  // 4. inspect liuDesc
-  if(thread.liuDesc) {
-    const res4 = checker.isLiuContentArr(thread.liuDesc)
+  // 4. inspect liuDesc and encrypt
+  const { liuDesc } = thread
+  const aesKey = getAESKey() ?? ""
+  let enc_desc: CryptoCipherAndIV | undefined
+  if(liuDesc) {
+    const res4 = checker.isLiuContentArr(liuDesc)
     if(!res4) {
       return { code: "E4000", taskId, errMsg: "liuDesc is illegal" }
     }
+    enc_desc = encryptDataWithAES(liuDesc, aesKey)
+    console.log("看一下加密后的 liuDesc: ")
+    console.log(enc_desc)
+  }
+  
+  // 5. get memberId which is required
+  // because it's posting a thread instead of comment
+  const memberId = await getMyMemberId(ssCtx, userId, spaceId)
+  if(!memberId) {
+    return { 
+      code: "E4003", taskId, 
+      errMsg: "you do not have a memberId in the workspace", 
+    }
   }
 
-  
+  // 6. get the workspace
+  const workspace = await getData<Table_Workspace>(ssCtx, "workspace", spaceId)
+  if(!workspace) {
+    return { 
+      code: "E4004", taskId,
+      errMsg: "workspace not found",
+    }
+  }
+  const spaceType = workspace.infoType
 
+  // 7. construct a new row of Table_Content
+  const { title, images, files } = thread
+  const enc_title = encryptDataWithAES(title, aesKey)
+  const enc_images = images?.length ? encryptDataWithAES(images, aesKey) : undefined
+  const enc_files = files?.length ? encryptDataWithAES(files, aesKey) : undefined
+  // TODO: enc_search_text
+
+  const b6 = getBasicStampWhileAdding()
+  const newRow: Partial<Table_Content> = {
+    ...b6,
+    first_id,
+    user: userId,
+    member: memberId,
+    spaceId,
+    spaceType,
+    infoType: "THREAD",
+    oState: thread.oState ?? "OK",
+    visScope: "DEFAULT",
+    storageState: "CLOUD", 
+    enc_title,
+    enc_desc,
+    enc_images,
+    enc_files,
+    calendarStamp: thread.calendarStamp,
+    remindStamp: thread.remindStamp,
+    whenStamp: thread.whenStamp,
+    remindMe: thread.remindMe,
+    emojiData: { total: 0, system: [] },
+    pinStamp: thread.pinStamp,
+    createdStamp: thread.createdStamp,
+    editedStamp: thread.editedStamp,
+    tagIds: thread.tagIds,
+    tagSearched: thread.tagSearched,
+    stateId: thread.stateId,
+    config: thread.config,
+    levelOne: 0,
+    levelOneAndTwo: 0,
+  }
+
+  const new_id = await insertData(ssCtx, "content", newRow)
+  if(!new_id) {
+    return { code: "E5001", taskId, errMsg: "insert data failed" }
+  }
+
+  return { code: "0000", taskId, first_id, new_id }
 }
 
 async function toPostComment(
@@ -284,6 +364,43 @@ function initSyncSetCtx(
   return ssCtx
 }
 
+
+
+
+
+/***************** 跟数据库打交道，同时使用 ssCtx 来暂存已读取的数据 *************/
+
+async function getMyMemberId(
+  ssCtx: SyncSetCtx,
+  userId: string,
+  spaceId: string,
+) {
+  let memberId: string | undefined
+
+  // 1. get memberId from ssCtx
+  ssCtx.member.forEach((atom, id) => {
+    const m = atom.data
+    if(m.spaceId === spaceId && m.user === userId) {
+      memberId = id
+    }
+  })
+  if(memberId) return memberId
+
+  // 2. get memberId from database
+  const col = db.collection("Member")
+  const q2 = col.where({ user: userId, spaceId })
+  const res = await q2.get<Table_Member>()
+  const list = res.data
+  if(list.length < 1) return
+  
+  // 3. update ssCtx
+  const m3 = list[0]
+  memberId = m3._id
+  ssCtx.member.set(memberId, { data: m3 })
+  return memberId
+}
+
+
 // get a row data from map or database
 async function getData<T>(
   ssCtx: SyncSetCtx,
@@ -304,7 +421,7 @@ async function getData<T>(
   const col_name = key[0].toUpperCase() + key.substring(1)
   const res = await db.collection(col_name).doc(id).get<T>()
   const d = res.data
-  if(!d) return null
+  if(!d) return
 
   const atom: SyncSetCtxAtom<T> = { data: d }
   map.set(id, atom)

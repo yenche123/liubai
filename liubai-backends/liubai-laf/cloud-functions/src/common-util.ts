@@ -835,6 +835,7 @@ export function encryptDataWithAES(
   data: any,
   key: string,
 ) {
+  if(typeof data === "undefined") return
   const p1: LiuPlainText = {
     pre: key.substring(0, 5),
     nonce: createEncNonce(),
