@@ -35,18 +35,18 @@ export async function handleUploadTasks() {
     if(!userId) break
 
     const now = time.getTime()
-    const filterFunc = (task: UploadTaskLocalTable) => {
+    const _filterFunc = (task: UploadTaskLocalTable) => {
       const t1 = task.failedStamp
       if(t1 && (now - t1) < time.MINUTE) return false
       if(task.user !== userId) return false
       return true      
     }
     
-    const col = db.upload_tasks.orderBy("insertedStamp").filter(filterFunc)
-    const results = await col.limit(LIMIT).toArray()
+    const col_1 = db.upload_tasks.orderBy("insertedStamp")
+    const col_2 = col_1.filter(_filterFunc)
+    const results = await col_2.limit(LIMIT).toArray()
     const len = results.length
     if(len < 1) break
-
 
     const res = await handle10Tasks(results)
     if(!res) break
