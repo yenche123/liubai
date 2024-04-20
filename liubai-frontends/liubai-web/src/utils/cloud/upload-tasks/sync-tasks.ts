@@ -5,11 +5,6 @@ import type {
 import time from "~/utils/basic/time";
 import { db } from "~/utils/db";
 
-
-function _filterFunc(item: UploadTaskLocalTable) {
-
-}
-
 export async function syncTasks(tasks: UploadTaskLocalTable[]) {
 
   // 0. define the filter function

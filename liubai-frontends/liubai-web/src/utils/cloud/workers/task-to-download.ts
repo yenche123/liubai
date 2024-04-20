@@ -345,14 +345,15 @@ onmessage = async (e) => {
     if(times > 10) break
 
     const now = time.getTime()
-    const filterFunc = (task: DownloadTaskLocalTable) => {
+    const _filterFunc = (task: DownloadTaskLocalTable) => {
       const t1 = task.failedStamp
       if(t1 && (now - t1) < time.MINUTE) return false
       return true      
     }
 
-    const col = db.download_tasks.orderBy("insertedStamp").filter(filterFunc)
-    const results = await col.limit(LIMIT).toArray()
+    const col_1 = db.download_tasks.orderBy("insertedStamp")
+    const col_2 = col_1.filter(_filterFunc)
+    const results = await col_2.limit(LIMIT).toArray()
     const len = results.length
 
     if(len < 1) break

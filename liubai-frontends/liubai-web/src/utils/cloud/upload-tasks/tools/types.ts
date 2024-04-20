@@ -122,5 +122,7 @@ export interface SyncSetAtom {
   draft?: LiuUploadDraft
   member?: LiuUploadMember
   workspace?: LiuUploadWorkspace
+
+  operateStamp: number // 表示这个操作被发起的时间戳，非常重要，用于校时用
 }
 
