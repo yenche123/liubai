@@ -99,14 +99,12 @@ export interface LiuUploadDraft extends LiuUploadBase {
 
 export interface LiuUploadMember {
   id: string
-  operateStamp: number     // 操作的时间戳
   name?: string
   avatar?: Cloud_ImageStore
 }
 
 export interface LiuUploadWorkspace {
   id: string
-  operateStamp: number     // 操作的时间戳
   name?: string
   avatar?: Cloud_ImageStore
   stateConfig?: Cloud_StateConfig
