@@ -12,7 +12,8 @@ import type {
   LiuRemindMe, 
   TagView, 
   LiuStateConfig,
-  LiuInfoType,
+  CollectionInfoType,
+  ContentInfoType,
   LiuTable,
   LiuUploadTask,
   UploadTaskProgressType,
@@ -78,7 +79,7 @@ export interface ContentLocalTable extends BaseLocalTable {
   spaceId: string
   spaceType: SpaceType
 
-  infoType: LiuInfoType
+  infoType: ContentInfoType
   oState: OState
   visScope: VisScope
   storageState: StorageState
@@ -109,7 +110,7 @@ export interface ContentLocalTable extends BaseLocalTable {
 
 export interface DraftLocalTable extends BaseLocalTable {
   first_id: string
-  infoType: LiuInfoType
+  infoType: ContentInfoType
   oState: "OK" | "POSTED" | "DELETED"
   user: string
   spaceId: string
@@ -137,8 +138,8 @@ export interface CollectionLocalTable extends BaseLocalTable {
   oState: OState_2
   user: string
   member?: string
-  infoType: "EXPRESS" | "FAVORITE"
-  forType: LiuInfoType
+  infoType: CollectionInfoType
+  forType: ContentInfoType
   spaceId: string
   spaceType: SpaceType
   content_id: string
@@ -164,6 +165,7 @@ export interface UploadTaskLocalTable extends BaseLocalTable {
   workspace_id?: string
   member_id?: string
   draft_id?: string
+  collection_id?: string
   tryTimes?: number           // 上传失败的次数，若大于某个阈值，就放弃
   failedStamp?: number        // 最近一次上传失败的时间戳
   progressType: UploadTaskProgressType

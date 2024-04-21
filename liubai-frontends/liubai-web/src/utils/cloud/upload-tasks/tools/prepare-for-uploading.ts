@@ -1,4 +1,5 @@
 import type { 
+  CollectionLocalTable,
   ContentLocalTable,
   DraftLocalTable,
   UploadTaskLocalTable,
@@ -43,6 +44,7 @@ async function getRawData(task: UploadTaskLocalTable) {
   let workspace: WorkspaceLocalTable | undefined
   let member: WorkspaceLocalTable | undefined
   let draft: DraftLocalTable | undefined
+  let collection: CollectionLocalTable | undefined
 
   // 2. get content
   
@@ -53,6 +55,7 @@ async function getRawData(task: UploadTaskLocalTable) {
     workspace,
     member,
     draft,
+    collection,
   }
 }
 
@@ -69,6 +72,6 @@ export function packSyncSetAtoms(tasks: UploadTaskLocalTable[]) {
   const atoms: SyncSetAtom[] = []
   for(let i=0; i<tasks.length; i++) {
     const v = tasks[i]
-    
+    organizeAtom(v)
   }
 }

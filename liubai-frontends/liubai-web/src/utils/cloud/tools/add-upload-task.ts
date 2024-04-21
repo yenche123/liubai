@@ -5,7 +5,10 @@
 import type { 
   UploadTaskLocalTable,
 } from "~/types/types-table";
-import type { UploadTaskParam } from "./types";
+import type { 
+  UploadTaskParam,
+  UploadTaskLocalTable_ID,
+} from "./types";
 import { db } from "~/utils/db";
 import { type LiuUploadTask, liuUploadTasks } from "~/types/types-atom";
 import time from "~/utils/basic/time";
@@ -53,32 +56,41 @@ export async function addUploadTask(
   
   // 2. 检查是否已存在，若存在去删除旧的任务
   const isThread = taskType.startsWith("thread-")
+  const isCollection = taskType.startsWith("collection-")
   const isComment = taskType.startsWith("comment-")
   const isWorkspace = taskType.startsWith("workspace-")
   const isMember = taskType.startsWith("member-")
   const isDraft = taskType.startsWith("draft-")
 
   if(isThread || isComment) {
-    await checkContent(target_id, user, taskType)
+    await checkDuplicated("content_id", target_id, user, taskType)
   }
-  if(isWorkspace) {
-    await checkWorkspace(target_id, user, taskType)
+  else if(isCollection) {
+    await checkDuplicated("collection_id", target_id, user, taskType)
+  }
+  else if(isWorkspace) {
+    await checkDuplicated("workspace_id", target_id, user, taskType)
   }
   else if(isMember) {
-    await checkMember(target_id, user, taskType)
+    await checkDuplicated("member_id", target_id, user, taskType)
   }
   else if(isDraft) {
+    // draft is special, so do not use checkDuplicated
     await checkDraft(target_id, user)
   }
 
   // 3. 把 target_id 转换成对应的 id
   let content_id: string | undefined
+  let collection_id: string | undefined
   let workspace_id: string | undefined
   let member_id: string | undefined
   let draft_id: string | undefined
 
   if(isWorkspace) {
     workspace_id = target_id
+  }
+  else if(isCollection) {
+    collection_id = target_id
   }
   else if(isMember) {
     member_id = target_id
@@ -99,6 +111,7 @@ export async function addUploadTask(
     user,
     uploadTask: taskType,
     content_id,
+    collection_id,
     workspace_id,
     member_id,
     draft_id,
@@ -133,18 +146,18 @@ async function checkDraft(
   await db.upload_tasks.bulkDelete(task_ids)
 }
 
-/** checking out if the task related to content has already been added */
-async function checkContent(
-  content_id: string,
+async function checkDuplicated(
+  the_key: UploadTaskLocalTable_ID,
+  the_id: string,
   user: string,
   taskType: LiuUploadTask,
 ) {
   const w: Partial<UploadTaskLocalTable> = {
     user,
     uploadTask: taskType,
-    content_id,
     progressType: "waiting",
   }
+  w[the_key] = the_id
   const res = await db.upload_tasks.where(w).toArray()
   if(res.length < 1) return
   
@@ -152,44 +165,6 @@ async function checkContent(
   await deleteTheTask(origin_id)
 }
 
-
-/** checking out if the task related to member has already been added */
-async function checkMember(
-  member_id: string,
-  user: string,
-  taskType: LiuUploadTask,
-) {
-  const w: Partial<UploadTaskLocalTable> = {
-    user,
-    uploadTask: taskType,
-    member_id,
-    progressType: "waiting",
-  }
-  const res = await db.upload_tasks.where(w).toArray()
-  if(res.length < 1) return
-  
-  const origin_id = res[0]._id
-  await deleteTheTask(origin_id)
-}
-
-/** checking out if the task related to workspace has already been added */
-async function checkWorkspace(
-  workspace_id: string,
-  user: string,
-  taskType: LiuUploadTask,
-) {
-  const w: Partial<UploadTaskLocalTable> = {
-    user,
-    uploadTask: taskType,
-    workspace_id,
-    progressType: "waiting",
-  }
-  const res = await db.upload_tasks.where(w).toArray()
-  if(res.length < 1) return
-
-  const origin_id = res[0]._id
-  await deleteTheTask(origin_id)
-}
 
 /** checking out if the original task of undo has already been added 
  * if yes, then delete it, and return false to represent that 

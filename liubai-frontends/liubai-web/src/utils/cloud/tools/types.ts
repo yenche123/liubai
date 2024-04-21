@@ -51,3 +51,9 @@ export interface CheckDownloadTaskParam {
   tasks: TaskOfC2L[]
   msg: MainToChildMessage
 }
+
+
+export type UploadTaskLocalTable_ID = "content_id" |
+  "workspace_id" |
+  "member_id" |
+  "collection_id"

@@ -4,7 +4,7 @@ import type { Res_WebhookQiniu } from "~/requests/req-types"
 import type { 
   LiuContent, 
   LiuRemindMe,
-  LiuInfoType,
+  ContentInfoType,
   TagView,
   LiuUploadTask,
 } from "~/types/types-atom"
@@ -82,7 +82,7 @@ export interface LiuUploadComment extends LiuUploadBase {
 
 /** 存一些 草稿 与评论和动态相比独有的字段 */
 export interface LiuUploadDraft extends LiuUploadBase {
-  infoType?: LiuInfoType      // 新建 draft 时，必填
+  infoType?: ContentInfoType      // 新建 draft 时，必填
   
   threadEdited?: string
   commentEdited?: string
@@ -109,6 +109,13 @@ export interface LiuUploadWorkspace {
   avatar?: Cloud_ImageStore
   stateConfig?: Cloud_StateConfig
   tagList?: TagView[]
+}
+
+export interface LiuUploadCollection {
+  id?: string          // 如果是已上传必须有此值，这是后端的 _id
+  first_id?: string    // 新增时，必填
+  content_id: string
+  emoji?: string
 }
 
 export interface SyncSetAtom {

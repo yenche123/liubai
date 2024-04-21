@@ -2,7 +2,7 @@
 // 比如 操作 emoji 两者皆有，就会交有 contentOperate 来处理
 
 import { db } from "~/utils/db";
-import type { LiuInfoType } from "~/types/types-atom";
+import type { ContentInfoType } from "~/types/types-atom";
 import checker from "~/utils/other/checker";
 import type {
   CollectionLocalTable,
@@ -32,7 +32,7 @@ import liuApi from "~/utils/liu-api"
  */
 export async function toEmoji(
   contentId: string,
-  forType: LiuInfoType,
+  forType: ContentInfoType,
   encodeStr: string,
   thread?: ThreadShow,
   comment?: CommentShow,
@@ -214,7 +214,7 @@ async function updateCollection(
 
 async function addCollection(
   contentId: string,
-  forType: LiuInfoType,
+  forType: ContentInfoType,
   encodeStr: string,
   authData: LiuMyContext,
 ) {

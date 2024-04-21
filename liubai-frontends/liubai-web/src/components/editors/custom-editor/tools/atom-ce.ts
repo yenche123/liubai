@@ -1,11 +1,11 @@
-import type { LiuRemindMe, LiuInfoType } from "~/types/types-atom";
+import type { LiuRemindMe, ContentInfoType } from "~/types/types-atom";
 import type { StorageState, VisScope } from "~/types/types-basic";
 import type { LiuFileStore, LiuImageStore } from "~/types"
 import type { EditorCoreContent } from "~/types/types-editor";
 
 export interface CeState {
   draftId?: string
-  infoType: LiuInfoType
+  infoType: ContentInfoType
   threadEdited?: string     // 已发表的动态的 id (可能是 local_id)，表示是编辑该动态
   visScope: VisScope
   storageState: StorageState

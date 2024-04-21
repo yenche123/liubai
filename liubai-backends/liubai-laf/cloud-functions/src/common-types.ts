@@ -109,7 +109,8 @@ interface Cloud_StateConfig {
 }
 
 export type SpaceType = "ME" | "TEAM"
-export type LiuInfoType = "THREAD" | "COMMENT"
+export type ContentInfoType = "THREAD" | "COMMENT"
+export type CollectionInfoType = "EXPRESS" | "FAVORITE"
 export type VisScope = "DEFAULT" | "PUBLIC" | "LOGIN_REQUIRED"
 export type Cloud_StorageState = "CLOUD" | "ONLY_LOCAL"
 
@@ -551,7 +552,7 @@ export interface LiuUploadComment extends LiuUploadBase {
 
 /** 存一些 草稿 与评论和动态相比独有的字段 */
 export interface LiuUploadDraft extends LiuUploadBase {
-  infoType?: LiuInfoType      // 新建 draft 时，必填
+  infoType?: ContentInfoType      // 新建 draft 时，必填
   
   threadEdited?: string
   commentEdited?: string
@@ -710,7 +711,7 @@ export interface Table_Content extends BaseTable {
   spaceId: string
   spaceType: SpaceType
 
-  infoType: LiuInfoType
+  infoType: ContentInfoType
   oState: OState
   visScope: VisScope
   storageState: Cloud_StorageState
@@ -743,7 +744,7 @@ export interface Table_Content extends BaseTable {
 /** 草稿表 */
 export interface Table_Draft extends BaseTable {
   first_id: string
-  infoType: LiuInfoType
+  infoType: ContentInfoType
   oState: OState_Draft
   user: string
   spaceId: string
@@ -772,7 +773,7 @@ export interface Table_Collection extends BaseTable {
   user: string
   member?: string
   infoType: "EXPRESS" | "FAVORITE"
-  forType: LiuInfoType
+  forType: ContentInfoType
   spaceId: string
   spaceType: SpaceType
   content_id: string

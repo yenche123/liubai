@@ -22,7 +22,8 @@ export interface LiuRemindMe {
   specific_stamp?: number
 }
 
-export type LiuInfoType = "THREAD" | "COMMENT"
+export type ContentInfoType = "THREAD" | "COMMENT"
+export type CollectionInfoType = "EXPRESS" | "FAVORITE"
 
 export const liuNodeTypes = [
   "heading",          // 标题（只有 h1）
@@ -193,10 +194,10 @@ export const liuUploadTasks = [
   "thread-edit",              // 编辑动态
   "thread-hourglass",         // 倒计时器
   "undo_thread-hourglass",    // 【撤销】倒计时
-  "thread-collect",           // 收藏动态
-  "undo_thread-collect",      // 【撤销】收藏
-  "content-emoji",            // 对 动态、评论 reaction
-  "undo_content-emoji",       // 【撤销】reaction
+  "collection-favorite",           // 收藏动态
+  "undo_collection-favorite",      // 【撤销】收藏
+  "collection-react",            // 对 动态、评论 reaction
+  "undo_collection-react",       // 【撤销】reaction
   "thread-delete",            // 删除动态
   "undo_thread-delete",       // 【撤销】删除动态
   "thread-state",             // 修改动态的状态

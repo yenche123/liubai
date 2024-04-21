@@ -14,7 +14,7 @@ import { i18n } from "~/locales"
 import liuApi from "~/utils/liu-api"
 import liuUtil from "~/utils/liu-util"
 import contentOperate from "~/hooks/content/content-operate"
-import type { LiuInfoType } from "~/types/types-atom";
+import type { ContentInfoType } from "~/types/types-atom";
 
 let _resolve: ContentPanelResolver | undefined
 const TRANSITION_DURATION = 250
@@ -128,7 +128,7 @@ async function onTapEmoji(index: number) {
   console.log(" ")
 
   let contentId = ""
-  let forType: LiuInfoType = "COMMENT"
+  let forType: ContentInfoType = "COMMENT"
   const { comment: c, thread: t } = cpData
   if(c) contentId = c._id
   else if(t) {
