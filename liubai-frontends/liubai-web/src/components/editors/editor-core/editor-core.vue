@@ -67,6 +67,10 @@ defineExpose({ editor })
       margin-block-end: 8px;
     }
 
+    li {
+      line-height: 1.7;
+    }
+
     .liu-tasklist {
       padding: 0 0 0 6px;
       margin-block-start: 8px;

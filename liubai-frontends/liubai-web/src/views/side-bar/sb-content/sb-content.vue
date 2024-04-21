@@ -191,12 +191,12 @@ const color_selected = "var(--main-normal)"
 
 .sb-link-box {
   position: relative;
-  margin-block-end: 8px;
+  margin-block-end: 6px;
 }
 
 @container sidebar (max-width: 180px) {
   .sb-link-box {
-    margin-block-end: 6px;
+    margin-block-end: 3px;
   }
 }
 
@@ -206,7 +206,7 @@ const color_selected = "var(--main-normal)"
 
 .sb-link {
   width: 100%;
-  height: 48px;
+  height: 46px;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -243,8 +243,8 @@ const color_selected = "var(--main-normal)"
 }
 
 .sb-link_selected .sb-icon {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
 }
 
 @container sidebar (max-width: 180px) {
