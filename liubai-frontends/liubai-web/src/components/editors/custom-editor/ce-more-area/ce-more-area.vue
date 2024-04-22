@@ -142,7 +142,7 @@ export default defineComponent({
       </div>
 
       <!-- 同步到云端 -->
-      <div class="liu-hover ma-item" @click="onTapSyncToCloud">
+      <div class="liu-hover ma-item ma-sync" @click="onTapSyncToCloud">
         <div class="mai-icon">
           <svg-icon name="cloud" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
@@ -190,12 +190,6 @@ export default defineComponent({
   /** 然而这样写，代表每个单元格已有确切的宽度了 */
   grid-template-columns: calc(50% - 3px) calc(50% - 3px);
   gap: 10px 5px;    /** <grid-row-gap> <grid-column-gap> */
-}
-
-.ma-grid-one-column {
-  /** 如果下方写成 1fr，那么 .mai-title 里的内容过长会撑爆单元格 */
-  grid-template-columns: 100%;
-  gap: 4px;
 }
 
 .ma-item {
@@ -266,6 +260,17 @@ export default defineComponent({
     margin-inline-end: 8px;
   }
 
+}
+
+.ma-grid-one-column {
+  /** 如果下方写成 1fr，那么 .mai-title 里的内容过长会撑爆单元格 */
+  grid-template-columns: 100%;
+  gap: 4px;
+
+  /** 在一栏布局时，如果 scDisabled 为 true，则隐藏同步按钮 */
+  .ma-sync {
+    display: v-bind("data.scDisabled ? 'none' : 'flex'");
+  }
 }
 
 
