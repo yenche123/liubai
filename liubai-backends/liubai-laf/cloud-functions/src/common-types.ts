@@ -480,10 +480,10 @@ export const liuUploadTasks = [
   "thread-edit",              // 编辑动态
   "thread-hourglass",         // 倒计时器
   "undo_thread-hourglass",    // 【撤销】倒计时
-  "thread-collect",           // 收藏动态
-  "undo_thread-collect",      // 【撤销】收藏
-  "content-emoji",            // 对 动态、评论 reaction
-  "undo_content-emoji",       // 【撤销】reaction
+  "collection-favorite",           // 收藏动态
+  "undo_collection-favorite",      // 【撤销】收藏
+  "collection-react",            // 对 动态、评论 reaction
+  "undo_collection-react",       // 【撤销】reaction
   "thread-delete",            // 删除动态
   "undo_thread-delete",       // 【撤销】删除动态
   "thread-state",             // 修改动态的状态
@@ -497,8 +497,8 @@ export const liuUploadTasks = [
   "thread-tag",               // 修改动态的标签
   "comment-delete",           // 删除评论
   "comment-edit",             // 编辑评论
-  "workspace-tag",            // 编辑工作空间的标签，这时 target_id 为 workspace id
-  "workspace-state_config",    // 编辑工作区的 “状态” 结构
+  "workspace-tag",            // 编辑工作区的标签，这时 target_id 为 workspace id
+  "workspace-state_config",    // 编辑工作区的“状态”结构
   "member-avatar",            // 修改当前工作区自己的头像
   "member-nickname",          // 修改当前工作区自己的昵称
   "draft-clear",              // 删除某个 draft_id 的草稿
@@ -510,16 +510,16 @@ export const liuUploadTasks = [
 export type LiuUploadTask = typeof liuUploadTasks[number]
 export const Sch_LiuUploadTask = vbot.picklist(liuUploadTasks)
 
-/** 设置 “动态、评论和草稿” 都有的字段 */
+/** 上传数据的基类型 */
 export interface LiuUploadBase {
   id?: string          // 如果是已上传过的内容，必须有此值，这是后端的 _id
-  first_id?: string    // 发表时，必填
+  first_id: string     // 必填
   spaceId?: string     // 发表时，必填，表示存到哪个工作区
 
   liuDesc?: LiuContent[]
   images?: Cloud_ImageStore[]
   files?: Cloud_FileStore[]
-
+  
   editedStamp?: number
 }
 
@@ -581,6 +581,13 @@ export interface LiuUploadWorkspace {
   tagList?: TagView[]
 }
 
+export interface LiuUploadCollection {
+  id?: string          // 如果是已上传必须有此值，这是后端的 _id
+  first_id?: string    // 新增时，必填
+  content_id: string
+  emoji?: string
+}
+
 export interface SyncSetAtom {
   taskType: LiuUploadTask
   taskId: string
@@ -590,6 +597,7 @@ export interface SyncSetAtom {
   draft?: LiuUploadDraft
   member?: LiuUploadMember
   workspace?: LiuUploadWorkspace
+  collection?: LiuUploadCollection
 
   operateStamp: number // 表示这个操作被发起的时间戳，非常重要，用于校时用
 }
@@ -597,6 +605,7 @@ export interface SyncSetAtom {
 export const Sch_Simple_SyncSetAtom = vbot.object({
   taskType: Sch_LiuUploadTask,
   taskId: vbot.string(),
+  operateStamp: vbot.number(),
 })
 
 

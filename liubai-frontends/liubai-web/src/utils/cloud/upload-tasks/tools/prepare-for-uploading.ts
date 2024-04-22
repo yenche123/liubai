@@ -151,6 +151,25 @@ function whenCommentPost(c: ContentLocalTable) {
   return uploadComment
 }
 
+function whenThreadEdit(c: ContentLocalTable) {
+  let uploadThread: LiuUploadThread = {
+    id: c._id,
+    first_id: c.first_id,
+    liuDesc: c.liuDesc,
+    images: transferUtil.imagesFromStoreToCloud(c.images),
+    files: transferUtil.filesFromStoreToCloud(c.files),
+    editedStamp: c.editedStamp,
+    title: c.title,
+    calendarStamp: c.calendarStamp,
+    remindStamp: c.remindStamp,
+    whenStamp: c.whenStamp,
+    remindMe: c.remindMe,
+    tagIds: c.tagIds,
+    tagSearched: c.tagSearched,
+  }
+  return uploadThread
+}
+
 
 async function organizeAtom(task: UploadTaskLocalTable) {
   const { 
@@ -181,7 +200,19 @@ async function organizeAtom(task: UploadTaskLocalTable) {
       if(atom.comment) isOK = true
     }
   }
-
+  else if(ut === "thread-edit" && content) {
+    atom.thread = whenThreadEdit(content)
+    isOK = true
+  }
+  else if((ut === "thread-hourglass" || ut === "undo_thread-hourglass") && content) {
+    atom.thread = {
+      id: content._id,
+      first_id: content.first_id,
+      config: content.config,
+    }
+    isOK = true
+  }
+  
 
   return isOK ? atom : undefined
 }

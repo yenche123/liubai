@@ -43,7 +43,7 @@ export type UploadFileRes = "completed" |
 /** 上传数据的基类型 */
 export interface LiuUploadBase {
   id?: string          // 如果是已上传过的内容，必须有此值，这是后端的 _id
-  first_id?: string    // 发表时，必填
+  first_id: string     // 必填
   spaceId?: string     // 发表时，必填，表示存到哪个工作区
 
   liuDesc?: LiuContent[]
@@ -127,6 +127,7 @@ export interface SyncSetAtom {
   draft?: LiuUploadDraft
   member?: LiuUploadMember
   workspace?: LiuUploadWorkspace
+  collection?: LiuUploadCollection
 
   operateStamp: number // 表示这个操作被发起的时间戳，非常重要，用于校时用
 }

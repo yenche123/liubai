@@ -101,6 +101,7 @@ function preCheck(
       draft,
       member,
       workspace,
+      collection,
     } = v
 
     if(taskType === "content-post" && (!thread && !comment)) {
@@ -147,6 +148,14 @@ function preCheck(
       return { 
         code: "E4000", 
         errMsg: "member is required when taskType starts with member-",
+      }
+    }
+
+    const isCollection = taskType.startsWith("collection-")
+    if(isCollection && !collection) {
+      return {
+        code: "E4000", 
+        errMsg: "collection is required when taskType starts with collection-",
       }
     }
 
