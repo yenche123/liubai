@@ -7,10 +7,13 @@ import type {
   WorkspaceLocalTable,
 } from "~/types/types-table";
 import type {
+  LiuUploadComment,
+  LiuUploadThread,
   SyncSetAtom,
 } from "./types"
 import type { LiuUploadTask } from "~/types/types-atom";
 import { db } from "~/utils/db";
+import transferUtil from "~/utils/transfer-util";
 
 // getting content from db when these events occur 
 const need_content_evts: LiuUploadTask[] = [
@@ -106,6 +109,49 @@ async function getRawData(task: UploadTaskLocalTable) {
 }
 
 
+function whenThreadPost(c: ContentLocalTable) {
+  if(c.oState === "DELETED") return
+
+  let uploadThread: LiuUploadThread = {
+    first_id: c.first_id,
+    spaceId: c.spaceId,
+    liuDesc: c.liuDesc,
+    images: transferUtil.imagesFromStoreToCloud(c.images),
+    files: transferUtil.filesFromStoreToCloud(c.files),
+    editedStamp: c.editedStamp,
+    oState: c.oState,
+    title: c.title,
+    calendarStamp: c.calendarStamp,
+    remindStamp: c.remindStamp,
+    whenStamp: c.whenStamp,
+    remindMe: c.remindMe,
+    pinStamp: c.pinStamp,
+    createdStamp: c.createdStamp,
+    tagIds: c.tagIds,
+    tagSearched: c.tagSearched,
+    stateId: c.stateId,
+    config: c.config,
+  }
+  return uploadThread
+}
+
+function whenCommentPost(c: ContentLocalTable) {
+  let uploadComment: LiuUploadComment = {
+    first_id: c.first_id,
+    spaceId: c.spaceId,
+    liuDesc: c.liuDesc,
+    images: transferUtil.imagesFromStoreToCloud(c.images),
+    files: transferUtil.filesFromStoreToCloud(c.files),
+    editedStamp: c.editedStamp,
+    parentThread: c.parentThread,
+    parentComment: c.parentComment,
+    replyToComment: c.replyToComment,
+    createdStamp: c.createdStamp,
+  }
+  return uploadComment
+}
+
+
 async function organizeAtom(task: UploadTaskLocalTable) {
   const { 
     content, 
@@ -115,16 +161,29 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     collection,
   } = await getRawData(task)
 
-  const { uploadTask: ut } = task
+  
+  const { uploadTask: ut, _id: taskId } = task
+  let isOK = false
+  const atom: SyncSetAtom = { 
+    taskType: ut,
+    taskId,
+    operateStamp: task.insertedStamp,
+  }
 
   // start to package atom based on uploadTask
   if(ut === "content-post" && content) {
-
+    if(content.infoType === "THREAD") {
+      atom.thread = whenThreadPost(content)
+      if(atom.thread) isOK = true
+    }
+    else if(content.infoType === "COMMENT") {
+      atom.comment = whenCommentPost(content)
+      if(atom.comment) isOK = true
+    }
   }
 
 
-
-
+  return isOK ? atom : undefined
 }
 
 

@@ -5,9 +5,9 @@ import { equipLink, depriveLink } from "./link"
 import { filterNotLiuType } from "./filter"
 import { listToText } from "./text"
 import { listToMarkdown } from "./markdown"
+import { imagesFromStoreToCloud, filesFromStoreToCloud } from "./file"
 import type { ListToMdOpt } from "./markdown"
-import { LiuFileStore } from "~/types"
-import valTool from "../basic/val-tool"
+import type { LiuFileStore } from "~/types"
 
 function tiptapToLiu(list: TipTapJSONContent[]): LiuContent[] {
   list = trimJSONContent(list)
@@ -63,6 +63,8 @@ export default {
   tiptapToText,
   tiptapToMarkdown,
   packSearchOther,
+  imagesFromStoreToCloud,
+  filesFromStoreToCloud,
 }
 
 
