@@ -45,33 +45,22 @@ async function collect(
       content_id: thread._id,
     }
     const res1 = await db.collections.add(data0)
-    // console.log("add collection 的结果.......")
-    // console.log(res1)
-    // console.log(" ")
   }
   else if(newState && res0?.oState === "CANCELED") {
-    // 目标状态: 已收藏、逻辑数据: 已取消 ——> 更新数据
-    const data0: Partial<CollectionLocalTable> = { oState: "OK", updatedStamp: stamp ?? now1 }
+    // 将 “已取消” 改成 “正常” 收藏的状态
+    const data0: Partial<CollectionLocalTable> = { 
+      oState: "OK", 
+      updatedStamp: stamp ?? now1,
+    }
     const res1 = await db.collections.update(res0._id, data0)
-    // console.log("update collection to OK 的结果.......")
-    // console.log(res1)
-    // console.log(" ")
   }
   else if(!newState && res0?.oState === "OK") {
-    // update 或者 delete
-    if(stamp) {
-      const data0: Partial<CollectionLocalTable> = { oState: "CANCELED", updatedStamp: stamp }
-      const res1 = await db.collections.update(res0._id, data0)
-      // console.log("update collection to CANCELED 的结果.......")
-      // console.log(res1)
-      // console.log(" ")
+    // update
+    const data0: Partial<CollectionLocalTable> = { 
+      oState: "CANCELED", 
+      updatedStamp: stamp ?? now1,
     }
-    else {
-      const res1 = await db.collections.delete(res0._id)
-      // console.log("delete collection 的结果.......")
-      // console.log(res1)
-      // console.log(" ")
-    }
+    const res1 = await db.collections.update(res0._id, data0)
   }
 
   return true
