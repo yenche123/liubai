@@ -4,6 +4,7 @@ import type {
 } from "~/types/types-table";
 import time from "~/utils/basic/time";
 import { db } from "~/utils/db";
+import { packSyncSetAtoms } from "./tools/prepare-for-uploading";
 
 export async function syncTasks(tasks: UploadTaskLocalTable[]) {
 
@@ -22,6 +23,8 @@ export async function syncTasks(tasks: UploadTaskLocalTable[]) {
   const col_2 = col_1.filter(_filterFunc)
   const res1 = await col_2.toArray()
   if(res1.length < 1) return true
+
+  packSyncSetAtoms(res1)
 
   
 }

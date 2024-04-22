@@ -32,6 +32,7 @@ export type SyncRes = "success" | "bad_network" | "unknown"
 export interface UploadTaskParam {
   uploadTask: LiuUploadTask
   target_id: string
+  operateStamp: number
 }
 
 

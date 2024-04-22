@@ -119,6 +119,7 @@ async function toRelease(
     LocalToCloud.addTask({ 
       uploadTask: "content-post", 
       target_id: newId,
+      operateStamp: now,
     }, true)
   }
   
@@ -280,6 +281,7 @@ async function toUpdate(ctx: CepContext) {
     LocalToCloud.addTask({ 
       uploadTask: "thread-edit", 
       target_id: threadId,
+      operateStamp: theThread.updatedStamp,
     }, true)
   }
 }
