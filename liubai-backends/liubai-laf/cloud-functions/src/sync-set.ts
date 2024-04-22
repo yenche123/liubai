@@ -16,6 +16,7 @@ import type {
   Table_Workspace,
   SyncSetCtxAtom,
   SyncSetCtx,
+  LiuUploadTask,
   LiuUploadThread,
   LiuUploadComment,
   SyncSetAtomRes,
@@ -65,6 +66,48 @@ export async function main(ctx: FunctionContext) {
 }
 
 
+const need_thread_evts: LiuUploadTask[] = [
+  "thread-edit",
+  "thread-hourglass",
+  "undo_thread-hourglass",
+  "thread-state",
+  "undo_thread-state",
+  "thread-pin",
+  "undo_thread-pin",
+  "thread-tag",
+  "thread-delete",
+  "thread-restore",
+  "thread-delete_forever",
+]
+
+const need_comment_evts: LiuUploadTask[] = [
+  "comment-edit",
+  "comment-delete",
+]
+
+const need_workspace_evts: LiuUploadTask[] = [
+  "workspace-tag",
+  "workspace-state_config",
+  "thread-float_up",
+  "undo_thread-float_up",
+]
+
+const need_member_evts: LiuUploadTask[] = [
+  "member-avatar",
+  "member-nickname",
+]
+
+const need_draft_evts: LiuUploadTask[] = [
+  "draft-set",
+]
+
+const need_collection_evts: LiuUploadTask[] = [
+  "collection-favorite",
+  "undo_collection-favorite",
+  "collection-react",
+  "undo_collection-react",
+]
+
 function preCheck(
   body: Record<string, any>,
 ): LiuRqReturn | null {
@@ -111,51 +154,51 @@ function preCheck(
       }
     }
 
-    const isThread = taskType.startsWith("thread-")
+    const isThread = need_thread_evts.includes(taskType)
     if(isThread && !thread) {
       return { 
         code: "E4000", 
-        errMsg: "thread is required when taskType starts with thread-",
+        errMsg: "thread is required when taskType is in need_thread_evts",
       }
     }
 
-    const isComment = taskType.startsWith("comment-")
+    const isComment = need_comment_evts.includes(taskType)
     if(isComment && !comment) {
       return { 
         code: "E4000", 
-        errMsg: "comment is required when taskType starts with comment-",
+        errMsg: "comment is required when taskType is in need_comment_evts",
       }
     }
 
-    const isDraft = taskType.startsWith("draft-")
+    const isDraft = need_draft_evts.includes(taskType)
     if(isDraft && !draft) {
       return { 
         code: "E4000", 
-        errMsg: "draft is required when taskType starts with draft-",
+        errMsg: "draft is required when taskType is in need_draft_evts",
       }
     }
 
-    const isWorkspace = taskType.startsWith("workspace-")
+    const isWorkspace = need_workspace_evts.includes(taskType)
     if(isWorkspace && !workspace) {
       return { 
         code: "E4000", 
-        errMsg: "workspace is required when taskType starts with workspace-",
+        errMsg: "workspace is required when taskType is in need_workspace_evts",
       }
     }
 
-    const isMember = taskType.startsWith("member-")
+    const isMember = need_member_evts.includes(taskType)
     if(isMember && !member) {
       return { 
         code: "E4000", 
-        errMsg: "member is required when taskType starts with member-",
+        errMsg: "member is required when taskType is in need_member_evts",
       }
     }
 
-    const isCollection = taskType.startsWith("collection-")
+    const isCollection = need_collection_evts.includes(taskType)
     if(isCollection && !collection) {
       return {
         code: "E4000", 
-        errMsg: "collection is required when taskType starts with collection-",
+        errMsg: "collection is required when taskType is in need_collection_evts",
       }
     }
 

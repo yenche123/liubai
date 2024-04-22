@@ -513,7 +513,7 @@ export const Sch_LiuUploadTask = vbot.picklist(liuUploadTasks)
 /** 上传数据的基类型 */
 export interface LiuUploadBase {
   id?: string          // 如果是已上传过的内容，必须有此值，这是后端的 _id
-  first_id: string     // 必填
+  first_id?: string    // 在删除、恢复、彻底删除动态时，此值为 undefined
   spaceId?: string     // 发表时，必填，表示存到哪个工作区
 
   liuDesc?: LiuContent[]

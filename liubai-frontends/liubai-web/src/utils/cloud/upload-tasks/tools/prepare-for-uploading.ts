@@ -23,7 +23,6 @@ const need_content_evts: LiuUploadTask[] = [
   "undo_thread-hourglass",
   "thread-state",
   "undo_thread-state",
-  "thread-restore",
   "thread-pin",
   "undo_thread-pin",
   "thread-tag",
@@ -33,6 +32,8 @@ const need_content_evts: LiuUploadTask[] = [
 const need_workspace_evts: LiuUploadTask[] = [
   "workspace-tag",
   "workspace-state_config",
+  "thread-float_up",
+  "undo_thread-float_up",
 ]
 
 const need_member_evts: LiuUploadTask[] = [
@@ -233,6 +234,42 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     }
     isOK = true
   }
+  else if(ut === "thread-delete" || ut === "undo_thread-delete") {
+    if(!task.content_id) return
+    atom.thread = {
+      id: task.content_id,
+    }
+    isOK = true
+  }
+  else if(ut === "thread-delete_forever" || ut === "thread-restore") {
+    if(!task.content_id) return
+    atom.thread = {
+      id: task.content_id,
+    }
+    isOK = true
+  }
+  else if(ut === "thread-state" || ut === "undo_thread-state") {
+    if(!content) return
+    atom.thread = {
+      id: content._id,
+      first_id: content.first_id,
+      stateId: content.stateId,
+    }
+    isOK = true
+  }
+  else if(ut === "thread-pin" || ut === "undo_thread-pin") {
+    if(!content) return
+    atom.thread = {
+      id: content._id,
+      first_id: content.first_id,
+      pinStamp: content.pinStamp,
+    }
+    isOK = true
+  }
+  else if(ut === "thread-float_up") {
+
+  }
+
   
 
   return isOK ? atom : undefined
