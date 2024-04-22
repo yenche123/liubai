@@ -15,7 +15,7 @@
   "dependencies": {
     "@he-tree/vue": "^2.8.2",
     "@intlify/unplugin-vue-i18n": "^4.0.0",
-    "@sentry/vue": "^7.110.0",
+    "@sentry/vue": "^7.111.0",
     "@tiptap/core": "2.3.0",
     "@tiptap/extension-blockquote": "2.3.0",
     "@tiptap/extension-code": "2.3.0",
@@ -32,7 +32,7 @@
     "@tiptap/starter-kit": "2.3.0",
     "@tiptap/suggestion": "2.3.0",
     "@tiptap/vue-3": "2.3.0",
-    "@vuepic/vue-datepicker": "^8.4.0",
+    "@vuepic/vue-datepicker": "^8.5.0",
     "@vueuse/core": "^10.9.0",
     "another-vue3-blurhash": "^0.0.1",
     "blurhash": "^2.0.5",
@@ -53,10 +53,10 @@
     "swiper": "^11.1.1",
     "tippy.js": "^6.3.7",
     "vconsole": "^3.15.1",
-    "vue": "^3.4.21",
+    "vue": "^3.4.23",
     "vue-draggable-resizable": "^3.0.0",
-    "vue-i18n": "^9.12.1",
-    "vue-router": "^4.3.0",
+    "vue-i18n": "^9.13.1",
+    "vue-router": "^4.3.2",
     "vue-slicksort": "^2.0.5"
   },
   "devDependencies": {
@@ -68,12 +68,12 @@
     "sass": "^1.75.0",
     "typescript": "~5.4.5",
     "user-agent-data-types": "^0.4.2",
-    "vite": "^5.2.8",
-    "vite-plugin-compression2": "^1.0.0",
-    "vite-plugin-inspect": "^0.8.3",
+    "vite": "^5.2.10",
+    "vite-plugin-compression2": "^1.1.0",
+    "vite-plugin-inspect": "^0.8.4",
     "vite-plugin-mkcert": "^1.17.5",
     "vite-plugin-qrcode": "^0.2.3",
     "vite-plugin-svg-icons": "^2.0.1",
-    "vue-tsc": "^2.0.13"
+    "vue-tsc": "^2.0.14"
   }
 }
