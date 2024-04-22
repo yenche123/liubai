@@ -8,7 +8,7 @@ import type {
   TagView,
   LiuUploadTask,
 } from "~/types/types-atom"
-import type { OState } from "~/types/types-basic"
+import type { OState, OState_2 } from "~/types/types-basic"
 import type { 
   Cloud_ImageStore,
   Cloud_FileStore,
@@ -113,7 +113,8 @@ export interface LiuUploadWorkspace {
 
 export interface LiuUploadCollection {
   id?: string          // 如果是已上传必须有此值，这是后端的 _id
-  first_id?: string    // 新增时，必填
+  first_id: string
+  oState: OState_2
   content_id: string
   emoji?: string
 }

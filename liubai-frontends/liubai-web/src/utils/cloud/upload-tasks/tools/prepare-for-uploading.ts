@@ -212,6 +212,27 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     }
     isOK = true
   }
+  else if(ut === "collection-favorite" || ut === "undo_collection-favorite") {
+    if(!collection) return
+    atom.collection = {
+      id: collection._id,
+      first_id: collection.first_id,
+      oState: collection.oState,
+      content_id: collection.content_id,
+    }
+    isOK = true
+  }
+  else if(ut === "collection-react" || ut === "undo_collection-react") {
+    if(!collection) return
+    atom.collection = {
+      id: collection._id,
+      first_id: collection.first_id,
+      oState: collection.oState,
+      content_id: collection.content_id,
+      emoji: collection.emoji,
+    }
+    isOK = true
+  }
   
 
   return isOK ? atom : undefined
