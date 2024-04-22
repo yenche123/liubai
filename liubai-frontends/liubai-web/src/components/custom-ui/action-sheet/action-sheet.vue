@@ -110,7 +110,7 @@ const iconColor = "var(--main-normal)"
   z-index: 5055;
   transition: v-bind("TRANSITION_DURATION + 'ms'");
   will-change: transform;
-  transform: translateY(50%);
+  transform: translateY(30%);
   opacity: 0;
 
   .as-main-box {
