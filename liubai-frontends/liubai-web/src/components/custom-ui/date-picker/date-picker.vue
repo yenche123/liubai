@@ -58,7 +58,6 @@ const previewDate = computed(() => {
       weekStart="0" 
       :dark="supported_theme === 'dark'"
       inline
-      arrowNavigation
       v-model="date"
       :min-date="minDate"
       :max-date="maxDate"
