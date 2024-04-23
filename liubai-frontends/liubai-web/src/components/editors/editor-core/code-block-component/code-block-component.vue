@@ -5,7 +5,10 @@
     <div v-if="editor.isEditable" class="cb-right-top">
 
       <div class="code-block-tip"
-        :class="{ 'code-block-tip_hidden': !editor.isActive('codeBlock') }"
+        v-if="!isMobile"
+        :class="{ 
+          'code-block-tip_hidden': !editor.isActive('codeBlock') || !editor.isFocused
+        }"
       >
         <span>{{ t("editor.leave_codeBlock", { tip: leaveTip }) }}</span>
       </div>
@@ -85,6 +88,8 @@ export default {
     const { t } = useI18n()
     const leaveTip = liuUtil.getHelpTip("Mod_Enter")
     const languages = showProgrammingLanguages()
+    const { isMobile } = liuApi.getCharacteristic()
+    
 
     const selectedLanguage = computed(() => {
       const _lang = props.node.attrs.language as CbcLang
@@ -128,6 +133,7 @@ export default {
     return { 
       t, 
       languages, 
+      isMobile,
       leaveTip, 
       selectedLanguage,
       showLanguage,
