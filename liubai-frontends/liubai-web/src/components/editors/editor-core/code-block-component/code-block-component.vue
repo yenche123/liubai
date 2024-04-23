@@ -88,7 +88,10 @@ export default {
     const { t } = useI18n()
     const leaveTip = liuUtil.getHelpTip("Mod_Enter")
     const languages = showProgrammingLanguages()
-    const { isMobile } = liuApi.getCharacteristic()
+    const { 
+      isMobile,
+      isSafari,
+    } = liuApi.getCharacteristic()
     
 
     const selectedLanguage = computed(() => {
@@ -134,6 +137,7 @@ export default {
       t, 
       languages, 
       isMobile,
+      isSafari,
       leaveTip, 
       selectedLanguage,
       showLanguage,
@@ -187,6 +191,7 @@ export default {
       background: var(--card-bg);
       accent-color: var(--main-text);
       cursor: pointer;
+      appearance: v-bind("isSafari ? 'none' : 'auto'");
 
       &[disabled] {
         opacity: 0.8;

@@ -9,6 +9,7 @@ let isMac: boolean = false;
 let isFeishu: boolean = false;
 let isInWebView: boolean = false;   // 是否在桌面应用 App 的 Webview 中，小程序也算
 let isFirefox: boolean = false;
+let isSafari: boolean = false;
 
 export interface GetChaRes {
   isPC: boolean
@@ -20,6 +21,7 @@ export interface GetChaRes {
   isFeishu: boolean
   isInWebView: boolean
   isFirefox: boolean
+  isSafari: boolean
 }
 
 export const getCharacteristic = (): GetChaRes => {
@@ -31,9 +33,9 @@ export const getCharacteristic = (): GetChaRes => {
   const ua = userAgent.toLowerCase()
   const mobileMatch = userAgent.match(/AppleWebKit.*Mobile.*/)
 
-  // console.log("userAgentData: ", userAgentData)
-  // console.log("ua: ", ua)
-  // console.log("mobileMatch: ", mobileMatch)
+  console.log("userAgentData: ", userAgentData)
+  console.log("ua: ", ua)
+  console.log("mobileMatch: ", mobileMatch)
 
   // 判断是否为微信环境
   if(ua.includes("micromessenger")) {
@@ -78,7 +80,11 @@ export const getCharacteristic = (): GetChaRes => {
     isFeishu = true
     isInWebView = true
   }
+
+  // 判别浏览器
   if(ua.includes("firefox")) isFirefox = true
+  else if(ua.includes("chrome")) {}
+  else if(ua.includes("safari")) isSafari = true
 
   // 处理 iOS 13 之后的 iPad 的 userAgent 里没有 ipad 字段的问题
   // maxTouchPoints 表示设备最多支持一次有多少个 touch 点击
@@ -106,5 +112,6 @@ function _returnData(): GetChaRes {
     isFeishu, 
     isInWebView,
     isFirefox,
+    isSafari,
   }
 }
