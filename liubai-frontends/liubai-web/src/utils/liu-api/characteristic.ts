@@ -33,9 +33,9 @@ export const getCharacteristic = (): GetChaRes => {
   const ua = userAgent.toLowerCase()
   const mobileMatch = userAgent.match(/AppleWebKit.*Mobile.*/)
 
-  console.log("userAgentData: ", userAgentData)
-  console.log("ua: ", ua)
-  console.log("mobileMatch: ", mobileMatch)
+  // console.log("userAgentData: ", userAgentData)
+  // console.log("ua: ", ua)
+  // console.log("mobileMatch: ", mobileMatch)
 
   // 判断是否为微信环境
   if(ua.includes("micromessenger")) {
