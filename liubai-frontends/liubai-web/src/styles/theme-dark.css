@@ -17,9 +17,14 @@
   --on-main-code: rgba(171, 171, 171, .1);
   --scrollbar-thumb: #484848;
   --popup-bg: rgba(98, 100, 102, 0.8);
-  --select-bg: #3d5259;
-  --select-bg-2: #4d6269;
-  --select-code: #264f78;
+
+  /** we have to set opacity to 0.99
+  * https://stackoverflow.com/questions/71567352/how-do-you-fix-the-darkened-text-selection-color-in-safari-css
+  */
+  --select-bg: rgba(61, 82, 89, 0.99);
+  --select-bg-2: rgba(77, 98, 105, 0.99);
+  --select-code: rgba(38, 79, 120, 0.99);
+  
   --card-hover: #25272a;
 
   --secondary-color: #3f5c68;

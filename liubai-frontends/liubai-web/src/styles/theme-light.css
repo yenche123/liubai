@@ -17,9 +17,11 @@
   --on-main-code: rgba(104, 104, 104, .1);
   --scrollbar-thumb: #c3c3c3;
   --popup-bg: rgba(0, 0, 0, .8);
-  --select-bg: #ddf2f9;
-  --select-bg-2: #bce0eb;
-  --select-code: #264f78;
+
+  --select-bg: rgba(221, 242, 249, 0.99);
+  --select-bg-2: rgba(188, 224, 235, 0.99);
+  --select-code: rgba(38, 79, 120, 0.99);
+  
   --card-hover: #f5f7fa;
 
   --secondary-color: #bfdfed;
