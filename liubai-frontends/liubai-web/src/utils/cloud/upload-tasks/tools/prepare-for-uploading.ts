@@ -8,6 +8,8 @@ import type {
 } from "~/types/types-table";
 import type {
   LiuUploadComment,
+  LiuUploadDraft,
+  LiuUploadMember,
   LiuUploadThread,
   SyncSetAtom,
 } from "./types"
@@ -149,6 +151,26 @@ function whenCommentEdit(c: ContentLocalTable) {
   return uploadComment
 }
 
+function whenMemberAvatar(m: MemberLocalTable) {
+  const uploadMember: LiuUploadMember = {
+    id: m._id,
+  }
+  if(!m.avatar) return uploadMember
+  const list = transferUtil.imagesFromStoreToCloud([m.avatar])
+  if(list?.length) {
+    uploadMember.avatar = list[0]
+  }
+  return uploadMember
+}
+
+function whenDraftSet(d: DraftLocalTable) {
+  const uploadDraft: LiuUploadDraft = {
+    id: d._id,
+    first_id: d.first_id,
+    spaceId: d.spaceId,
+
+  }
+}
 
 async function organizeAtom(task: UploadTaskLocalTable) {
   const { 
@@ -253,8 +275,7 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     }
     isOK = true
   }
-  else if(ut === "comment-delete") {
-    if(!task.content_id) return
+  else if(ut === "comment-delete" && task.content_id) {
     atom.comment = {
       id: task.content_id,
     }
@@ -264,7 +285,40 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     atom.comment = whenCommentEdit(content)
     isOK = true
   }
-  
+  else if(ut === "workspace-tag" && workspace) {
+    atom.workspace = {
+      id: workspace._id,
+      tagList: workspace.tagList,
+    }
+    isOK = true
+  }
+  else if(ut === "workspace-state_config" && workspace) {
+    atom.workspace = {
+      id: workspace._id,
+      stateConfig: workspace.stateConfig,
+    }
+    isOK = true
+  }
+  else if(ut === "member-avatar" && member) {
+    atom.member = whenMemberAvatar(member)
+    isOK = true
+  }
+  else if(ut === "member-nickname" && member) {
+    atom.member = {
+      id: member._id,
+      name: member.name,
+    }
+    isOK = true
+  }
+  else if(ut === "draft-clear" && task.draft_id) {
+    atom.draft = {
+      id: task.draft_id,
+    }
+    isOK = true
+  }
+  else if(ut === "draft-set" && draft) {
+
+  }
 
   
 
