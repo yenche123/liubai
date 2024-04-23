@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <pre><code><node-view-content /></code></pre>
+    <pre spellcheck="false"><code><node-view-content /></code></pre>
   </node-view-wrapper>
 </template>
 
@@ -174,6 +174,8 @@ export default {
       max-width: 48%;
       transition: .15s;
       opacity: 1;
+      user-select: none;
+      cursor: default;
     }
 
     .code-block-tip_hidden {
@@ -190,6 +192,7 @@ export default {
       padding: 0.1rem 0.4rem;
       background: var(--card-bg);
       accent-color: var(--main-text);
+      user-select: none;
       cursor: pointer;
       appearance: v-bind("isSafari ? 'none' : 'auto'");
 
