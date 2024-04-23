@@ -23,7 +23,7 @@ export function handleOverflow(
 
   const list = json.content ?? []
   const num = getRowNum(list)
-  if(num > 6) {
+  if(num > 3) {
     state.overflowType = "auto"
     return
   }
