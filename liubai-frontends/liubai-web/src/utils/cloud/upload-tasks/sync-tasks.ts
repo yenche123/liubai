@@ -24,7 +24,8 @@ export async function syncTasks(tasks: UploadTaskLocalTable[]) {
   const res1 = await col_2.toArray()
   if(res1.length < 1) return true
 
-  packSyncSetAtoms(res1)
-
+  // 2. package atoms
+  const atoms = await packSyncSetAtoms(res1)
+  if(atoms.length < 1) return true
   
 }

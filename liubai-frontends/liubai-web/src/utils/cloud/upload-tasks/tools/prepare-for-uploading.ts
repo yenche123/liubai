@@ -168,8 +168,25 @@ function whenDraftSet(d: DraftLocalTable) {
     id: d._id,
     first_id: d.first_id,
     spaceId: d.spaceId,
-
+    images: transferUtil.imagesFromStoreToCloud(d.images),
+    files: transferUtil.filesFromStoreToCloud(d.files),
+    editedStamp: d.editedStamp,
+    infoType: d.infoType,
+    threadEdited: d.threadEdited,
+    commentEdited: d.commentEdited,
+    parentThread: d.parentThread,
+    parentComment: d.parentComment,
+    replyToComment: d.replyToComment,
+    title: d.title,
+    whenStamp: d.whenStamp,
+    remindMe: d.remindMe,
+    tagIds: d.tagIds,
+    config: d.config,
   }
+  if(d.liuDesc) {
+    uploadDraft.liuDesc = transferUtil.tiptapToLiu(d.liuDesc)
+  }
+  return uploadDraft
 }
 
 async function organizeAtom(task: UploadTaskLocalTable) {
@@ -317,20 +334,21 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     isOK = true
   }
   else if(ut === "draft-set" && draft) {
-
+    atom.draft = whenDraftSet(draft)
+    isOK = true
   }
-
-  
 
   return isOK ? atom : undefined
 }
 
 
 
-export function packSyncSetAtoms(tasks: UploadTaskLocalTable[]) {
+export async function packSyncSetAtoms(tasks: UploadTaskLocalTable[]) {
   const atoms: SyncSetAtom[] = []
   for(let i=0; i<tasks.length; i++) {
     const v = tasks[i]
-    organizeAtom(v)
+    const atom = await organizeAtom(v)
+    if(atom) atoms.push(atom)
   }
+  return atoms
 }
