@@ -11,6 +11,7 @@ import type {
 } from "./types";
 import { db } from "~/utils/db";
 import { type LiuUploadTask, liuUploadTasks } from "~/types/types-atom";
+import { classifyUploadTask } from "./upload-event-classification"
 import time from "~/utils/basic/time";
 import ider from "~/utils/basic/ider";
 
@@ -55,14 +56,15 @@ export async function addUploadTask(
   if(!addRequired) return
   
   // 2. 检查是否已存在，若存在去删除旧的任务
-  const isThread = taskType.startsWith("thread-")
-  const isCollection = taskType.startsWith("collection-")
-  const isComment = taskType.startsWith("comment-")
-  const isWorkspace = taskType.startsWith("workspace-")
-  const isMember = taskType.startsWith("member-")
-  const isDraft = taskType.startsWith("draft-")
+  const { 
+    isContent,
+    isWorkspace,
+    isMember,
+    isDraft,
+    isCollection,
+  } = classifyUploadTask(taskType)
 
-  if(isThread || isComment) {
+  if(isContent) {
     await checkDuplicated("content_id", target_id, user, taskType)
   }
   else if(isCollection) {

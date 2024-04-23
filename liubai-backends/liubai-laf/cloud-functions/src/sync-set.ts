@@ -76,8 +76,9 @@ const need_thread_evts: LiuUploadTask[] = [
   "undo_thread-pin",
   "thread-tag",
   "thread-delete",
-  "thread-restore",
+  "undo_thread-delete",
   "thread-delete_forever",
+  "thread-restore",
 ]
 
 const need_comment_evts: LiuUploadTask[] = [
@@ -88,8 +89,6 @@ const need_comment_evts: LiuUploadTask[] = [
 const need_workspace_evts: LiuUploadTask[] = [
   "workspace-tag",
   "workspace-state_config",
-  "thread-float_up",
-  "undo_thread-float_up",
 ]
 
 const need_member_evts: LiuUploadTask[] = [
@@ -99,6 +98,7 @@ const need_member_evts: LiuUploadTask[] = [
 
 const need_draft_evts: LiuUploadTask[] = [
   "draft-set",
+  "draft-clear",
 ]
 
 const need_collection_evts: LiuUploadTask[] = [

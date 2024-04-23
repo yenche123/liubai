@@ -206,13 +206,11 @@ export const liuUploadTasks = [
   "thread-delete_forever",    // 彻底删除动态
   "thread-pin",               // 置顶、取消置顶
   "undo_thread-pin",          // 【撤销】是否置顶
-  "thread-float_up",          // 浮上去、取消上浮
-  "undo_thread-float_up",     // 【撤销】浮上去、取消上浮
   "thread-tag",               // 修改动态的标签
   "comment-delete",           // 删除评论
   "comment-edit",             // 编辑评论
   "workspace-tag",            // 编辑工作区的标签，这时 target_id 为 workspace id
-  "workspace-state_config",    // 编辑工作区的“状态”结构
+  "workspace-state_config",   // 编辑工作区的“状态”结构，动态上浮时，也会用到这个事件
   "member-avatar",            // 修改当前工作区自己的头像
   "member-nickname",          // 修改当前工作区自己的昵称
   "draft-clear",              // 删除某个 draft_id 的草稿

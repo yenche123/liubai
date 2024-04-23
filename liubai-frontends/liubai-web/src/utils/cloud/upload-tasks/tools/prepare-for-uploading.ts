@@ -11,47 +11,9 @@ import type {
   LiuUploadThread,
   SyncSetAtom,
 } from "./types"
-import type { LiuUploadTask } from "~/types/types-atom";
+import { classifyUploadTask } from "../../tools/upload-event-classification"
 import { db } from "~/utils/db";
 import transferUtil from "~/utils/transfer-util";
-
-// getting content from db when these events occur 
-const need_content_evts: LiuUploadTask[] = [
-  "content-post",
-  "thread-edit",
-  "thread-hourglass",
-  "undo_thread-hourglass",
-  "thread-state",
-  "undo_thread-state",
-  "thread-pin",
-  "undo_thread-pin",
-  "thread-tag",
-  "comment-edit",
-]
-
-const need_workspace_evts: LiuUploadTask[] = [
-  "workspace-tag",
-  "workspace-state_config",
-  "thread-float_up",
-  "undo_thread-float_up",
-]
-
-const need_member_evts: LiuUploadTask[] = [
-  "member-avatar",
-  "member-nickname",
-]
-
-const need_draft_evts: LiuUploadTask[] = [
-  "draft-set",
-]
-
-const need_collection_evts: LiuUploadTask[] = [
-  "collection-favorite",
-  "undo_collection-favorite",
-  "collection-react",
-  "undo_collection-react",
-]
-
 
 async function getRawData(task: UploadTaskLocalTable) {
   const { 
@@ -71,32 +33,36 @@ async function getRawData(task: UploadTaskLocalTable) {
   let collection: CollectionLocalTable | undefined
 
   // 2.1 get content
-  const needContent = need_content_evts.includes(ut)
-  if(needContent && content_id) {
+  const {
+    isContent,
+    isWorkspace,
+    isMember,
+    isDraft,
+    isCollection,
+    isOStateChange,
+  } = classifyUploadTask(ut)
+  
+  if(isContent && !isOStateChange && content_id) {
     content = await db.contents.get(content_id)
   }
 
   // 2.2 get workspace
-  const needWorkspace = need_workspace_evts.includes(ut)
-  if(needWorkspace && workspace_id) {
+  if(isWorkspace && !isOStateChange && workspace_id) {
     workspace = await db.workspaces.get(workspace_id)
   }
 
   // 2.3 get member
-  const needMember = need_member_evts.includes(ut)
-  if(needMember && member_id) {
+  if(isMember && !isOStateChange && member_id) {
     member = await db.members.get(member_id)
   }
 
   // 2.4 get draft
-  const needDraft = need_draft_evts.includes(ut)
-  if(needDraft && draft_id) {
+  if(isDraft && !isOStateChange && draft_id) {
     draft = await db.drafts.get(draft_id)
   }
 
   // 2.5 get collection
-  const needCollection = need_collection_evts.includes(ut)
-  if(needCollection && collection_id) {
+  if(isCollection && collection_id) {
     collection = await db.collections.get(collection_id)
   }
 
@@ -171,6 +137,18 @@ function whenThreadEdit(c: ContentLocalTable) {
   return uploadThread
 }
 
+function whenCommentEdit(c: ContentLocalTable) {
+  let uploadComment: LiuUploadComment = {
+    id: c._id,
+    first_id: c.first_id,
+    liuDesc: c.liuDesc,
+    images: transferUtil.imagesFromStoreToCloud(c.images),
+    files: transferUtil.filesFromStoreToCloud(c.files),
+    editedStamp: c.editedStamp,
+  }
+  return uploadComment
+}
+
 
 async function organizeAtom(task: UploadTaskLocalTable) {
   const { 
@@ -198,7 +176,7 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     }
     else if(content.infoType === "COMMENT") {
       atom.comment = whenCommentPost(content)
-      if(atom.comment) isOK = true
+      isOK = true
     }
   }
   else if(ut === "thread-edit" && content) {
@@ -266,9 +244,27 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     }
     isOK = true
   }
-  else if(ut === "thread-float_up") {
-
+  else if(ut === "thread-tag" && content) {
+    atom.thread = {
+      id: content._id,
+      first_id: content.first_id,
+      tagIds: content.tagIds,
+      tagSearched: content.tagSearched,
+    }
+    isOK = true
   }
+  else if(ut === "comment-delete") {
+    if(!task.content_id) return
+    atom.comment = {
+      id: task.content_id,
+    }
+    isOK = true
+  }
+  else if(ut === "comment-edit" && content) {
+    atom.comment = whenCommentEdit(content)
+    isOK = true
+  }
+  
 
   
 
