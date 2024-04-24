@@ -373,13 +373,36 @@ async function handle_subscription_resumed(
 }
 
 
-// TODO: we have to handle with the event
+// TODO: we have to tackle the event
 // just because admins would delete someone subscription on the portal of Stripe
 async function handle_subscription_deleted(
   obj: Stripe.Subscription,
 ) {
   console.warn("似乎 订阅 被删除了")
   console.log(obj)
+  let user = await getUserByStripeSubscriptionId(obj.id)
+  if(!user) {
+    return { code: "E4004", errMsg: "there is no user having the subscription id" }
+  }
+  const s = user.subscription
+  if(!s) {
+    return { code: "E5001", errMsg: "there is no subscription in the user" }
+  }
+
+  // just set isOn to "N"
+  s.isOn = "N"
+  const u: Partial<Table_User> = {
+    subscription: s,
+    updatedStamp: getNowStamp(),
+  }
+  const res = await updateUserInDB(user._id, u)
+  console.log("handle_subscription_deleted 更新结果")
+  console.log(res)
+
+  user = { ...user, ...u }
+  updateUserInCache(user._id, user)
+
+  return { code: "0000" }
   
 }
 
@@ -393,6 +416,28 @@ async function handle_subscription_twe(
   console.log(obj)
 }
 
+/** get user by stripe_subscription_id */
+async function getUserByStripeSubscriptionId(
+  stripe_subscription_id: string
+) {
+  const col_user = db.collection("User")
+  const q = col_user.where({ stripe_subscription_id })
+  const res = await q.getOne<Table_User>()
+  const user = res.data
+  return user
+}
+
+/** update user data */
+async function updateUserInDB(
+  userId: string,
+  data: Partial<Table_User>,
+) {
+  const col_user = db.collection("User")
+  const q = col_user.where({ _id: userId })
+  const res = await q.update(data)
+  return res
+}
+
 
 /** trial will end 
  * 当订阅信息被更新时
@@ -404,17 +449,12 @@ async function handle_subscription_updated(
   console.log(obj)
 
   // 1. query user
-  const col_user = db.collection("User")
-  const q = col_user.where({ stripe_subscription_id: obj.id })
-  const res = await q.getOne<Table_User>()
-  const user = res.data
+  let user = await getUserByStripeSubscriptionId(obj.id)
   if(!user) {
-    console.log("handle_subscription_updated 查无该用户")
-    return { code: "0000" }
+    return { code: "E4004", errMsg: "there is no user having the subscription id" }
   }
   const s = user.subscription
   if(!s) {
-    console.log("there is no subscription in the user")
     return { code: "E5001", errMsg: "there is no subscription in the user" }
   }
 
@@ -439,10 +479,13 @@ async function handle_subscription_updated(
     updatedStamp: now,
     subscription: newUserSub,
   }
-  const q2 = col_user.where({ _id: user._id })
-  const res2 = await q2.update(u2)
-  console.log("handle_subscription_updated 更新用户的结果: ")
+  const res2 = await updateUserInDB(user._id, u2)
+  console.log("handle_subscription_updated 更新结果: ")
   console.log(res2)
+
+  user = { ...user, ...u2 }
+  updateUserInCache(user._id, user)
+
   return { code: "0000" }
 }
 
@@ -600,12 +643,12 @@ async function handle_session_completed(
     subscription: newUserSub,
     updatedStamp: getNowStamp(),
   }
-  const res6 = await col_user.where({ _id: user._id }).update(uUser)
-  console.log("在 handle_session_completed 中看一下更新 user 的结果........")
+  const res6 = await updateUserInDB(userId, uUser)
+  console.log("handle_session_completed 更新 user 的结果........")
   console.log(res6)
 
   user = { ...user, ...uUser }
-  updateUserInCache(user._id, user)
+  updateUserInCache(userId, user)
   
   // 7. create an order
   if(invoice) {

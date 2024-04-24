@@ -404,7 +404,7 @@ export interface UserThirdData {
 /** 用户的订阅方案 */
 export interface UserSubscription {
   isOn: BaseIsOn
-  plan: string             // 订阅计划应用内 Subscription 表的 _id
+  plan: string             // 订阅计划 “应用内 Subscription 表” 的 _id
   isLifelong: boolean
   autoRecharge?: boolean   // 是否开启自动续费，当为 undefined 表示不得而知
   createdStamp: number     // 第一次创建订阅的时间戳
