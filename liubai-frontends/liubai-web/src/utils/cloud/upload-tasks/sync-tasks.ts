@@ -5,6 +5,7 @@ import type {
 import time from "~/utils/basic/time";
 import { db } from "~/utils/db";
 import { packSyncSetAtoms } from "./tools/prepare-for-uploading";
+import uut from "../tools/update-upload-task"
 
 export async function syncTasks(tasks: UploadTaskLocalTable[]) {
 
@@ -18,8 +19,8 @@ export async function syncTasks(tasks: UploadTaskLocalTable[]) {
   }
 
   // 1. get tasks again
-  const taskIds = tasks.map(v => v._id)
-  const col_1 = db.upload_tasks.where("_id").anyOf(taskIds)
+  const taskIds_1 = tasks.map(v => v._id)
+  const col_1 = db.upload_tasks.where("_id").anyOf(taskIds_1)
   const col_2 = col_1.filter(_filterFunc)
   const res1 = await col_2.toArray()
   if(res1.length < 1) return true
@@ -28,4 +29,11 @@ export async function syncTasks(tasks: UploadTaskLocalTable[]) {
   const atoms = await packSyncSetAtoms(res1)
   if(atoms.length < 1) return true
   
+  // 3. update tasks' progressType to "syncing"
+  const taskIds_3 = atoms.map(v => v.taskId)
+  await uut.bulkChangeProgressType(taskIds_3, "syncing")
+
+  
 }
+
+

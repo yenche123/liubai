@@ -8,6 +8,7 @@ import { addUploadTask } from "./tools/add-upload-task";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import { handleUploadTasks } from "./upload-tasks"
+import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
 
 const MIN_5 = 5 * time.MINUTE
 
@@ -87,11 +88,27 @@ class LocalToCloud {
     const { local_id: user, token } = localCache.getPreference()
     if(!user || !token) return false
 
+    // 1. add upload task into db
     const res = await addUploadTask(param, user)
-    if(res) {
-      this.preTrigger(triggerInstantly)
-    }
+    if(!res) return
+
+    // 2. check out if I can trigger immediately
+    if(!this.canIPreTigger()) return
+
+    // 3. let's go to trigger
+    this.preTrigger(triggerInstantly)
   }
+
+
+  private static canIPreTigger() {
+    const syncNum = CloudEventBus.getSyncNum()
+    if(syncNum.value < 1) return false
+    const { level } = useNetworkStore()
+    console.log("当前网络等级: " + level)
+    if(level <= 1) return false
+    return true
+  }
+
 
   // TODO: 立即停止所有上传任务
   private static stopUploadTasks() {

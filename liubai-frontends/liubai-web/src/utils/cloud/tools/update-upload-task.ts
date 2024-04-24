@@ -6,11 +6,13 @@ import type {
   ContentLocalTable,
   UploadTaskLocalTable,
 } from "~/types/types-table"
+import type { DexieBulkUpdateAtom } from "~/types/other/types-dexie"
 import { db } from "~/utils/db"
 import type { UploadTaskProgressType } from "~/types/types-atom"
 import time from "~/utils/basic/time"
 import cfg from "~/config"
 
+type BulkUpdateAtom_UploadTask = DexieBulkUpdateAtom<UploadTaskLocalTable>
 
 async function toDeleteTask(
   taskId: string,
@@ -48,7 +50,7 @@ interface AddTryTimesRes {
  *  if the task is not in db, then return { keepGoing: true }
  *  if the task is in db, add tryTimes
  *  if tryTimes is bigger than fail_to_upload_max, check its content
- *  and delete the task
+ *  and delete the task, then return { keepGoing: false }
 */
 async function toAddTryTimes(
   taskId: string
@@ -98,7 +100,35 @@ async function changeProgressType(
   return res
 }
 
+async function bulkChangeProgressType(
+  taskIds: string[],
+  progressType: UploadTaskProgressType,
+) {
+  let list: BulkUpdateAtom_UploadTask[] = []
+  if(taskIds.length < 1) return
+  const now = time.getTime()
+  for(let i=0; i<taskIds.length; i++) {
+    const id = taskIds[i]
+    const updatedStamp = now + i
+    const obj: BulkUpdateAtom_UploadTask = {
+      key: id,
+      changes: {
+        progressType,
+        updatedStamp,
+      }
+    }
+    list.push(obj)
+  }
+
+  const res = await db.upload_tasks.bulkUpdate(list)
+  console.log("db.upload_tasks.bulkUpdate: ")
+  console.log(res)
+  console.log(" ")
+  return true
+}
+
 
 export default {
   changeProgressType,
+  bulkChangeProgressType,
 }
