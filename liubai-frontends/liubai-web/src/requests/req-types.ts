@@ -106,7 +106,17 @@ export interface Res_WebhookQiniu {
 
 
 /************** 同步笔记 *****************/
-export interface Param_Note_Sync {
-  taskType: LiuUploadTask
-  
+
+
+// an atom which is returned by `sync-set` cloud function
+export interface SyncSetAtomRes {
+  code: string
+  taskId: string
+  errMsg?: string
+  first_id?: string  // the first id of either content or draft
+  new_id?: string    // the new id of either content or draft
+}
+
+export interface Res_SyncSet {
+  results: SyncSetAtomRes[]
 }
