@@ -40,4 +40,8 @@ export interface LiuSystemEnv {
   // umami
   UMAMI_SCRIPT?: string
   UMAMI_ID?: string
+
+  // clarity
+  MS_CLARITY_SCRIPT?: string
+  MS_CLARITY_PROJECT_ID?: string
 }

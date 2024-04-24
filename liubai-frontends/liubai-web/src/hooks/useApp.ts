@@ -63,18 +63,52 @@ function initMobile() {
 
 function initAnalytics() {
   const _env = liuEnv.getEnv()
-  const { UMAMI_ID, UMAMI_SCRIPT } = _env
-  if(!UMAMI_ID || !UMAMI_SCRIPT) return
+  const { 
+    UMAMI_ID, 
+    UMAMI_SCRIPT,
+    MS_CLARITY_SCRIPT,
+    MS_CLARITY_PROJECT_ID,
+  } = _env
 
+  if(UMAMI_ID && UMAMI_SCRIPT) {
+    initUmami(UMAMI_SCRIPT, UMAMI_ID)
+  }
+
+  if(MS_CLARITY_PROJECT_ID && MS_CLARITY_SCRIPT) {
+    initClarity(MS_CLARITY_SCRIPT, MS_CLARITY_PROJECT_ID)
+  }
+
+}
+
+function initUmami(script: string, umami_id: string) {
   const scriptEl = document.createElement('script')
   scriptEl.type = "text/javascript"
-  scriptEl.src = UMAMI_SCRIPT
-  scriptEl.setAttribute("data-website-id", UMAMI_ID)
+  scriptEl.src = script
+  scriptEl.setAttribute("data-website-id", umami_id)
   scriptEl.defer = true
   scriptEl.async = true
+  const headEl = document.querySelector("head")
+  if(!headEl) return
+  headEl.appendChild(scriptEl)
+}
+
+
+function initClarity(script: string, project_id: string) {
+  const scriptEl = document.createElement('script')
+  scriptEl.type = "text/javascript"
+  scriptEl.defer = true
+  scriptEl.async = true
+
+  let text = `(function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="uuuuu"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "xxxxx");`
+  text = text.replace("xxxxx", project_id);
+  text = text.replace("uuuuu", script);
+  scriptEl.innerHTML = text
   
   const headEl = document.querySelector("head")
   if(!headEl) return
-
   headEl.appendChild(scriptEl)
 }

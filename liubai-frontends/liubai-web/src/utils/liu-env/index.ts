@@ -46,6 +46,10 @@ function getEnv(): LiuSystemEnv {
   // umami
   const UMAMI_SCRIPT = import.meta.env.VITE_UMAMI_SCRIPT
   const UMAMI_ID = import.meta.env.VITE_UMAMI_ID
+
+  // clarity
+  const MS_CLARITY_SCRIPT = import.meta.env.VITE_MS_CLARITY_SCRIPT
+  const MS_CLARITY_PROJECT_ID = import.meta.env.VITE_MS_CLARITY_PROJECT_ID
   
   _env = {
     DEV,
@@ -74,6 +78,8 @@ function getEnv(): LiuSystemEnv {
     SENTRY_ENVIRONMENT,
     UMAMI_SCRIPT,
     UMAMI_ID,
+    MS_CLARITY_SCRIPT,
+    MS_CLARITY_PROJECT_ID,
   }
   return _env
 }

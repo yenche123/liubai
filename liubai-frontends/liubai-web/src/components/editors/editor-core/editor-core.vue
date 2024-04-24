@@ -23,7 +23,11 @@ defineExpose({ editor })
 
 </script>
 <template>
-  <editor-content class="editor-core" :editor="editor" ref="ecRef" />
+  <editor-content class="editor-core" 
+    :editor="editor" 
+    ref="ecRef" 
+    data-clarity-mask="true"
+  />
 </template>
 
 <style lang="scss">
