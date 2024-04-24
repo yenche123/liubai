@@ -625,10 +625,10 @@ export interface SyncSetCtx {
   workspace: Map<string, SyncSetCtxAtom<Table_Workspace>>
 
   // my data
-  me: Table_User,
+  me: Table_User
 
   // the list of workspace ids that the user is in
-  space_ids: string[],
+  space_ids: string[]
 }
 
 export interface SyncSetAtomRes {
