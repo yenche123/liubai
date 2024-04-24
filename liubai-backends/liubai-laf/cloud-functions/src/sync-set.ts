@@ -226,7 +226,8 @@ async function toExecute(
     let res1: SyncSetAtomRes | undefined
     if(taskType === "content-post") {
       if(thread) {
-        await toPostThread(ssCtx, taskId, thread)
+        res1 = await toPostThread(ssCtx, taskId, thread)
+        if(res1) updateListAfterPosting(list, res1, "content")
       }
       else if(comment) {
         await toPostComment(ssCtx, taskId, comment)
@@ -249,11 +250,81 @@ async function toExecute(
 }
 
 
+function updateListAfterPosting(
+  list: SyncSetAtom[],
+  res: SyncSetAtomRes,
+  whichType: "content" | "draft" | "collection",
+) {
+  const { first_id, new_id } = res
+  const w = whichType
+  if(!first_id || !new_id) return
+
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    const { thread, comment, draft, collection } = v
+
+    // update thread's id
+    if(thread && w === "content") {
+      if(thread.first_id === first_id) {
+        thread.id = new_id
+      }
+    }
+
+    // update comment's id
+    if(comment && w === "content") {
+      if(comment.first_id === first_id) {
+        comment.id = new_id
+      }
+      if(comment.parentThread === first_id) {
+        comment.parentThread = new_id
+      }
+      if(comment.parentComment === first_id) {
+        comment.parentComment = new_id
+      }
+      if(comment.replyToComment === first_id) {
+        comment.replyToComment = new_id
+      }
+    }
+
+    // update draft's id
+    if(draft) {
+      if(draft.first_id === first_id && w === "draft") {
+        draft.id = new_id
+      }
+      if(draft.threadEdited === first_id && w === "content") {
+        draft.threadEdited = new_id
+      }
+      if(draft.parentThread === first_id && w === "content") {
+        draft.parentThread = new_id
+      }
+      if(draft.parentComment === first_id && w === "content") {
+        draft.parentComment = new_id
+      }
+      if(draft.replyToComment === first_id && w === "content") {
+        draft.replyToComment = new_id
+      }
+    }
+
+    // update collection's id
+    if(collection) {
+      if(collection.first_id === first_id && w === "collection") {
+        collection.id = new_id
+      }
+      if(collection.content_id === first_id && w === "content") {
+        collection.content_id = first_id
+      }
+    }
+
+  }
+
+}
+
+
 async function toPostThread(
   ssCtx: SyncSetCtx,
   taskId: string,
   thread: LiuUploadThread,
-) {
+): Promise<SyncSetAtomRes> {
 
   // 1. get some important parameters
   const { spaceId, first_id } = thread
