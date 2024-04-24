@@ -372,6 +372,9 @@ async function handle_subscription_resumed(
   
 }
 
+
+// TODO: we have to handle with the event
+// just because admins would delete someone subscription on the portal of Stripe
 async function handle_subscription_deleted(
   obj: Stripe.Subscription,
 ) {
