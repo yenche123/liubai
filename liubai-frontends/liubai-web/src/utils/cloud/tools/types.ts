@@ -7,6 +7,8 @@ import type {
   LiuUploadTask,
   SupportedTheme,
 } from "~/types/types-atom";
+import type { DexieBulkUpdateAtom } from "~/types/other/types-dexie"
+import type { UploadTaskLocalTable } from "~/types/types-table"
 
 export interface ImageTransferedRes {
   useCloud: boolean       // check if using cloud image 
@@ -58,3 +60,5 @@ export type UploadTaskLocalTable_ID = "content_id" |
   "workspace_id" |
   "member_id" |
   "collection_id"
+
+export type BulkUpdateAtom_UploadTask = DexieBulkUpdateAtom<UploadTaskLocalTable>

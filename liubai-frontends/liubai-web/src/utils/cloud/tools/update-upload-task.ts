@@ -6,13 +6,12 @@ import type {
   ContentLocalTable,
   UploadTaskLocalTable,
 } from "~/types/types-table"
-import type { DexieBulkUpdateAtom } from "~/types/other/types-dexie"
 import { db } from "~/utils/db"
 import type { UploadTaskProgressType } from "~/types/types-atom"
+import type { BulkUpdateAtom_UploadTask } from "./types"
 import time from "~/utils/basic/time"
 import cfg from "~/config"
 
-type BulkUpdateAtom_UploadTask = DexieBulkUpdateAtom<UploadTaskLocalTable>
 
 async function toDeleteTask(
   taskId: string,

@@ -6,7 +6,12 @@ import time from "~/utils/basic/time";
 import { db } from "~/utils/db";
 import { packSyncSetAtoms } from "./tools/prepare-for-uploading";
 import uut from "../tools/update-upload-task"
-import type { Res_SyncSet_Client } from "~/requests/req-types"
+import type { 
+  Res_SyncSet_Client, 
+  SyncSetAtomRes,
+} from "~/requests/req-types"
+import type { SyncSetAtom } from "./tools/types"
+import type { BulkUpdateAtom_UploadTask } from "../tools/types"
 import liuReq from "~/requests/liu-req";
 
 export async function syncTasks(tasks: UploadTaskLocalTable[]) {
@@ -41,10 +46,32 @@ export async function syncTasks(tasks: UploadTaskLocalTable[]) {
     operateType: "general_sync",
     plz_enc_atoms: atoms,
   }
-  // const res4 = await liuReq.request<Res_SyncSet_Client>(url, opt)
-  // console.log("查看 sync-set 的结果: ")
-  // console.log(res4)
+  const res4 = await liuReq.request<Res_SyncSet_Client>(url, opt)
+  console.log("查看 sync-set 的结果: ")
+  console.log(res4)
+  const results = res4.data?.results ?? []
+  afterSyncSet(results, atoms)
 
+}
+
+async function afterSyncSet(
+  results: SyncSetAtomRes[],
+  atoms: SyncSetAtom[],
+) {
+  const delete_list: string[] = []
+  const update_list: BulkUpdateAtom_UploadTask[] = []
+  
+  for(let i=0; i<results.length; i++) {
+    const v = results[i]
+    const { code, taskId, first_id, new_id } = v
+    const atom = atoms.find(v => v.taskId === taskId)
+    if(!atom) continue
+    const { taskType } = atom
+    
+
+
+
+  }
 
 }
 
