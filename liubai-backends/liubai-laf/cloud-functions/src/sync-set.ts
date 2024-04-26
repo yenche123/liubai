@@ -79,6 +79,7 @@ export async function main(ctx: FunctionContext) {
 
 
 const need_thread_evts: LiuUploadTask[] = [
+  "thread-post",
   "thread-edit",
   "thread-hourglass",
   "undo_thread-hourglass",
@@ -94,6 +95,7 @@ const need_thread_evts: LiuUploadTask[] = [
 ]
 
 const need_comment_evts: LiuUploadTask[] = [
+  "comment-post",
   "comment-edit",
   "comment-delete",
 ]
@@ -158,13 +160,6 @@ function preCheck(
       workspace,
       collection,
     } = v
-
-    if(taskType === "content-post" && (!thread && !comment)) {
-      return { 
-        code: "E4000", 
-        errMsg: "thread or comment is required when taskType is content-post", 
-      }
-    }
 
     const isThread = need_thread_evts.includes(taskType)
     if(isThread && !thread) {
@@ -236,14 +231,12 @@ async function toExecute(
     const { thread, comment, member, workspace } = v
 
     let res1: SyncSetAtomRes | undefined
-    if(taskType === "content-post") {
-      if(thread) {
-        res1 = await toPostThread(ssCtx, taskId, thread)
-        if(res1) updateAtomsAfterPosting(list, res1, "content")
-      }
-      else if(comment) {
-        await toPostComment(ssCtx, taskId, comment)
-      }
+    if(taskType === "thread-post" && thread) {
+      res1 = await toPostThread(ssCtx, taskId, thread)
+      if(res1) updateAtomsAfterPosting(list, res1, "content")
+    }
+    else if(taskType === "comment-post" && comment) {
+      await toPostComment(ssCtx, taskId, comment)
     }
     else if(taskType === "thread-edit") {
 

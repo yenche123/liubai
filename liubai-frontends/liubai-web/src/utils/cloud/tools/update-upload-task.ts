@@ -57,10 +57,11 @@ async function toAddTryTimes(
   const task = await db.upload_tasks.get(taskId)
   if(!task) return { keepGoing: true }
 
+  const ut = task.uploadTask
   let tryTimes = task.tryTimes ?? 0
   tryTimes++
   if(tryTimes > cfg.fail_to_upload_max) {
-    if(task.uploadTask === "content-post" && task.content_id) {
+    if((ut === "thread-post" || ut === "comment-post") && task.content_id) {
       await tryToChangeStorageState(task.content_id)
     }
     await toDeleteTask(taskId)

@@ -190,7 +190,8 @@ export type LiuTable = "users" | "workspaces" | "members" | "drafts" | "contents
  *  xxx 必须就是原操作的名称，否则在 add-upload-task.ts 会运行错误！！ 
  */
 export const liuUploadTasks = [
-  "content-post",             // 发表（不区分动态或评论）
+  "thread-post",
+  "comment-post",
   "thread-edit",              // 编辑动态
   "thread-hourglass",         // 倒计时器
   "undo_thread-hourglass",    // 【撤销】倒计时

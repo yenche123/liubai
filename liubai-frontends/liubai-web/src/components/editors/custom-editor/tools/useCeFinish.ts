@@ -117,7 +117,7 @@ async function toRelease(
   const res8 = localCache.hasLoginWithBackend()
   if(res8) {
     LocalToCloud.addTask({ 
-      uploadTask: "content-post", 
+      uploadTask: "thread-post", 
       target_id: newId,
       operateStamp: now,
     }, true)

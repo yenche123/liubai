@@ -16,11 +16,8 @@ import time from "~/utils/basic/time";
 import ider from "~/utils/basic/ider";
 
 // 属于再编辑的操作，只会修改 Content 表，不会影响其他表的操作
-// 这些操作，若在队列里发现 content-post 存在，就不需要额外再去触发这些事件了
-// 因为它们的状态会跟着 content-post 一起被上传
 const content_edit_events: LiuUploadTask[] = [
   "thread-edit",
-  "comment-edit",
   "thread-hourglass",
   "thread-state",
   "thread-pin",
@@ -39,7 +36,8 @@ export async function addUploadTask(
   const target_id = param.target_id
   const taskType = param.uploadTask
   const isUndo = taskType.startsWith("undo_")
-  const isContentEdited = content_edit_events.includes(taskType)
+  const isThreadEdited = content_edit_events.includes(taskType)
+  const isCommentEdited = taskType === "comment-edit"
 
   let addRequired = true
 
@@ -50,8 +48,11 @@ export async function addUploadTask(
   else if(taskType === "thread-restore") {
     addRequired = await whenRestoreThread(target_id, user)
   }
-  else if(isContentEdited) {
-    addRequired = await whenContentEdit(target_id, user)
+  else if(isThreadEdited) {
+    addRequired = await whenContentEdit(target_id, user, "thread-post")
+  }
+  else if(isCommentEdited) {
+    addRequired = await whenContentEdit(target_id, user, "comment-post")
   }
   if(!addRequired) return
   
@@ -206,16 +207,17 @@ async function whenUndo(
 }
 
 /**
- * 去查找是否有 content-post 的任务
+ * 去查找是否有 thread-post 或 comment-post 的任务
  * 若有，则返回 false，表示无需再添加【编辑任务】至 local db
  */
 async function whenContentEdit(
   content_id: string,
   user: string,
+  uploadTask: "thread-post" | "comment-post",
 ) {
   const w: Partial<UploadTaskLocalTable> = {
     user,
-    uploadTask: "content-post",
+    uploadTask,
     content_id,
     progressType: "waiting",
   }

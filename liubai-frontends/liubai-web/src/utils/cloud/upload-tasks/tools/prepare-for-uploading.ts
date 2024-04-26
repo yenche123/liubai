@@ -208,15 +208,13 @@ async function organizeAtom(task: UploadTaskLocalTable) {
   }
 
   // start to package atom based on uploadTask
-  if(ut === "content-post" && content) {
-    if(content.infoType === "THREAD") {
-      atom.thread = whenThreadPost(content)
-      if(atom.thread) isOK = true
-    }
-    else if(content.infoType === "COMMENT") {
-      atom.comment = whenCommentPost(content)
-      isOK = true
-    }
+  if(ut === "thread-post" && content) {
+    atom.thread = whenThreadPost(content)
+    if(atom.thread) isOK = true
+  }
+  else if(ut === "comment-post" && content) {
+    atom.comment = whenCommentPost(content)
+    isOK = true
   }
   else if(ut === "thread-edit" && content) {
     atom.thread = whenThreadEdit(content)

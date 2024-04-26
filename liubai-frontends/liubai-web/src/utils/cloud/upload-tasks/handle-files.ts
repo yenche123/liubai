@@ -440,7 +440,8 @@ async function extractFilesFromDrafts(
 
 /** 会更新图片的事件 */
 const photo_events: LiuUploadTask[] = [
-  "content-post",
+  "thread-post",
+  "comment-post",
   "thread-edit",
   "comment-edit",
   "thread-restore",

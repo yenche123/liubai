@@ -476,7 +476,8 @@ export interface LiuPlainText<T = any> {
  * 上传（同步）的类型
  */
 export const liuUploadTasks = [
-  "content-post",             // 发表（不区分动态或评论）
+  "thread-post",
+  "comment-post",
   "thread-edit",              // 编辑动态
   "thread-hourglass",         // 倒计时器
   "undo_thread-hourglass",    // 【撤销】倒计时
