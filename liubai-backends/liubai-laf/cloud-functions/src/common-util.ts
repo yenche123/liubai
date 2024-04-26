@@ -744,7 +744,7 @@ export function getAESKey() {
 
 interface GetEncryptedDataRes {
   rqReturn?: LiuRqReturn
-  newData?: Record<string, any>
+  data?: Record<string, any>
 }
 
 /** 获取加密后的返回数据 */
@@ -753,23 +753,26 @@ export function getEncryptedData(
   vRes: VerifyTokenRes,
 ): GetEncryptedDataRes {
   const client_key = vRes?.tokenData?.client_key
-  if(!client_key) {
-    return {
-      rqReturn: { 
-        code: "E5001", 
-        errMsg: "there is no client_key in getEncryptedData"
-      }
-    }
-  }
-
   const keys = Object.keys(oldData)
   const newData: Record<string, any> = {}
+
   for(let i=0; i<keys.length; i++) {
     const k = keys[i]
     if(!k.startsWith("plz_enc_")) {
+
+      // if plz_enc_${k} exists, ignore
+      const tmpK = `plz_enc_${k}`
+      if(newData[tmpK]) continue
+
       newData[k] = oldData[k]
       continue
     }
+
+    // if client_key is undefined, ignore
+    if(!client_key) {
+      continue
+    }
+
     const newK = k.replace("plz_enc_", "liu_enc_")
     const val = oldData[k] as CryptoCipherAndIV
     const p1: LiuPlainText = {
@@ -788,9 +791,16 @@ export function getEncryptedData(
       }
     }
     newData[newK] = newVal
+
+    // delete originK
+    const originK = newK.replace("liu_enc_", "")
+    if(newData[originK]) {
+      delete newData[originK]
+    }
+    
   }
 
-  return { newData }
+  return { data: newData }
 }
 
 

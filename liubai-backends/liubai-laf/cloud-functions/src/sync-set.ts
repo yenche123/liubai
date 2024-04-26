@@ -5,6 +5,7 @@ import {
   checker,
   getAESKey,
   encryptDataWithAES,
+  getEncryptedData,
 } from "@/common-util"
 import type { 
   LiuRqReturn,
@@ -22,6 +23,7 @@ import type {
   SyncSetAtomRes,
   CryptoCipherAndIV,
   OState,
+  Res_SyncSet_Cloud,
 } from "@/common-types"
 import { 
   Sch_Simple_SyncSetAtom,
@@ -60,9 +62,19 @@ export async function main(ctx: FunctionContext) {
   const ssCtx = initSyncSetCtx(user, workspaces)
 
   // 4. to execute
-  toExecute(body, ssCtx)
+  const results = await toExecute(body, ssCtx)
+
+  // 5. construct response
+  const res5: Res_SyncSet_Cloud = {
+    results,
+    plz_enc_results: results,
+  }
+  const encRes = getEncryptedData(res5, vRes)
+  if(!encRes.data || encRes.rqReturn) {
+    return encRes.rqReturn ?? { code: "E5001", errMsg: "getEncryptedData failed" }
+  }
   
-  
+  return { code: "0000", data: encRes.data }
 }
 
 
@@ -227,7 +239,7 @@ async function toExecute(
     if(taskType === "content-post") {
       if(thread) {
         res1 = await toPostThread(ssCtx, taskId, thread)
-        if(res1) updateListAfterPosting(list, res1, "content")
+        if(res1) updateAtomsAfterPosting(list, res1, "content")
       }
       else if(comment) {
         await toPostComment(ssCtx, taskId, comment)
@@ -246,11 +258,11 @@ async function toExecute(
     results.push(res1)
   }
 
-
+  return results
 }
 
 
-function updateListAfterPosting(
+function updateAtomsAfterPosting(
   list: SyncSetAtom[],
   res: SyncSetAtomRes,
   whichType: "content" | "draft" | "collection",

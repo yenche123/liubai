@@ -117,6 +117,7 @@ export interface SyncSetAtomRes {
   new_id?: string    // the new id of either content or draft
 }
 
-export interface Res_SyncSet {
+/** Res_SyncSet on client end */
+export interface Res_SyncSet_Client {
   results: SyncSetAtomRes[]
 }

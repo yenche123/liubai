@@ -6,7 +6,7 @@ import time from "~/utils/basic/time";
 import { db } from "~/utils/db";
 import { packSyncSetAtoms } from "./tools/prepare-for-uploading";
 import uut from "../tools/update-upload-task"
-import type { Res_SyncSet } from "~/requests/req-types"
+import type { Res_SyncSet_Client } from "~/requests/req-types"
 import liuReq from "~/requests/liu-req";
 
 export async function syncTasks(tasks: UploadTaskLocalTable[]) {
@@ -41,7 +41,7 @@ export async function syncTasks(tasks: UploadTaskLocalTable[]) {
     operateType: "general_sync",
     plz_enc_atoms: atoms,
   }
-  // const res4 = await liuReq.request<Res_SyncSet>(url, opt)
+  // const res4 = await liuReq.request<Res_SyncSet_Client>(url, opt)
   // console.log("查看 sync-set 的结果: ")
   // console.log(res4)
 
