@@ -1,10 +1,10 @@
 
 import { ref, watch, toRaw, isProxy, computed } from "vue";
+import type { Ref, ShallowRef } from "vue";
 import type { EditorCoreContent, TipTapEditor, TipTapJSONContent } from "~/types/types-editor";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { LiuRemindMe } from "~/types/types-atom";
-import type { CeState } from "./atom-ce"
-import type { Ref, ShallowRef } from "vue";
+import type { CeState } from "./atom-ce";
 import ider from "~/utils/basic/ider";
 import type { DraftLocalTable } from "~/types/types-table";
 import localCache from "~/utils/system/local-cache";

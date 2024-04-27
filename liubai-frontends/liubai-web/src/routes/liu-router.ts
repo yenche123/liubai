@@ -1,4 +1,4 @@
-import { onUnmounted, ref, Ref } from "vue"
+import { onUnmounted, ref, type Ref } from "vue"
 import { 
   useRouter as useVueRouter, 
   useRoute as useVueRoute,

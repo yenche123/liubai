@@ -1,6 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, inject } from 'vue';
-import type { Ref } from "vue";
+import { computed, defineComponent, inject, type Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { outterWidthKey } from "~/utils/provide-keys"
 import { useMoreArea } from "./tools/useMoreArea";

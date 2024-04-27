@@ -8,9 +8,9 @@ import {
   reactive,
   ref, 
   toRef, 
-  watch 
+  watch,
+  type Ref,
 } from "vue";
-import type { Ref } from "vue";
 import type { OpenType } from "~/types/types-view";
 import { useLayoutStore } from "../../useLayoutStore";
 import cfg from "~/config";

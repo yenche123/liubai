@@ -1,5 +1,4 @@
-import { onMounted, ref, shallowRef, watch } from "vue"
-import type { Ref } from "vue"
+import { onMounted, ref, shallowRef, watch, type Ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
 import EditorCore from "../../editor-core/editor-core.vue"
 import type { TipTapEditor } from "~/types/types-editor"

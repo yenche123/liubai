@@ -1,5 +1,4 @@
-import { computed, ref, watch } from "vue";
-import type { Ref } from "vue";
+import { computed, ref, watch, type Ref } from "vue";
 import { Draggable } from "@he-tree/vue";
 import type { TagView } from "~/types/types-atom";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";

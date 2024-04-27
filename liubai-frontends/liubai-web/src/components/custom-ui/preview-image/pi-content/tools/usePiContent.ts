@@ -1,5 +1,4 @@
-import { toRef, watch, ref, computed } from 'vue';
-import type { Ref } from "vue";
+import { toRef, watch, ref, computed, type Ref } from 'vue';
 import { useWindowSize } from '~/hooks/useVueUse';
 import type { ImageShow } from '~/types';
 import type { LiuTimeout } from '~/utils/basic/type-tool';

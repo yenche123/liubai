@@ -1,6 +1,5 @@
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
-import { ref, watch } from "vue"
-import type { Ref } from "vue"
+import { ref, watch, type Ref } from "vue"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import { PageState } from "~/types/types-atom";
 import { pageStates } from "~/utils/atom"

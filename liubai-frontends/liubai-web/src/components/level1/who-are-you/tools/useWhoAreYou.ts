@@ -1,5 +1,4 @@
-import { computed, ref } from "vue";
-import type { Ref } from "vue";
+import { computed, ref, type Ref } from "vue";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 
 export function useWhoAreYou() {

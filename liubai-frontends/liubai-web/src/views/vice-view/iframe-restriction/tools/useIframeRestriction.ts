@@ -1,6 +1,5 @@
 import type { VcState } from "../../vice-content/tools/types"
-import { ref, toRef, watch } from "vue"
-import type { Ref } from "vue"
+import { ref, toRef, watch, type Ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
 import valTool from "~/utils/basic/val-tool"
 import localCache from "~/utils/system/local-cache"

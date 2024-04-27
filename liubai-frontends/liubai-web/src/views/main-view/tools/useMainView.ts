@@ -1,6 +1,6 @@
 // 主视图 宽度控制器
 
-import { inject, provide, ref, Ref, watch } from "vue"
+import { inject, provide, ref, type Ref, watch } from "vue"
 import { useLayoutStore, LayoutStore } from "../../useLayoutStore"
 import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"

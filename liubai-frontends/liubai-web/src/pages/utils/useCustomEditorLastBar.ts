@@ -1,7 +1,7 @@
 // 判断 custom-editor 的 "完成" 按钮，是否要跟工具栏同一行
 // 目前仅 index-content 和 edit-content 会用到
 
-import { computed, inject, Ref } from "vue";
+import { computed, inject, type Ref } from "vue";
 import { mainViewWidthKey } from "~/utils/provide-keys";
 
 export function useCustomEditorLastBar() {

@@ -1,8 +1,7 @@
 import type { ThreadListViewType, ThreadCardShowType } from "~/types/types-view"
-import type { PropType } from "vue"
 import type { TrueOrFalse } from "~/types/types-basic"
 import type { ThreadShow } from "~/types/types-content"
-import type { Ref, ShallowRef } from "vue"
+import type { Ref, ShallowRef, PropType } from "vue"
 import type { SvBottomUp } from "~/types/components/types-scroll-view"
 
 export type TlViewType = ThreadListViewType
