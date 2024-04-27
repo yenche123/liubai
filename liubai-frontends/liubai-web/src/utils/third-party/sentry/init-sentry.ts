@@ -1,8 +1,7 @@
 import liuEnv from "~/utils/liu-env";
 import { type App } from "vue"
-import * as Sentry from "@sentry/vue";
 
-function getSentryInitConfig() {
+async function getSentryInitConfig() {
   const _env = liuEnv.getEnv()
   const dsn = _env.SENTRY_DSN
   if(!dsn) return
@@ -26,6 +25,8 @@ function getSentryInitConfig() {
   // 3. setup release
   const release = LIU_ENV.version
 
+  const Sentry = await import("@sentry/vue")
+
   const cfg = {
     dsn,
     environment,
@@ -43,15 +44,15 @@ function getSentryInitConfig() {
 }
 
 
-export function initSentry(
+export async function initSentry(
   vueApp: App<Element>,
 ) {
-  const cfg = getSentryInitConfig()
+  const cfg = await getSentryInitConfig()
   if(!cfg) return
   const sentryCfg = {
     app: vueApp,
     ...cfg,
   }
-  console.log("去初始化 sentry...........")
+  const Sentry = await import("@sentry/vue")
   Sentry.init(sentryCfg)
 }

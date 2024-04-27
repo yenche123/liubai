@@ -73,7 +73,12 @@ app.directive('liu-show', liuShowDirective)
 // 初始化主题，要在 pinia 之后
 useSystemStore()
 
-// 初始化 sentry
-initSentry(app)
+const asyncMain = async () => {
+  // 初始化 sentry
+  await initSentry(app)
 
-app.mount('#app')
+  // 挂载 app
+  app.mount('#app')
+}
+
+asyncMain()
