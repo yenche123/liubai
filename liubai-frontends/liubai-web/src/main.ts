@@ -26,8 +26,7 @@ import { plugin as Slicksort } from 'vue-slicksort';
 import { liuShowDirective } from "~/utils/directives/v-liu-show"
 import VueDraggableResizable from 'vue-draggable-resizable'
 import { useSystemStore } from './hooks/stores/useSystemStore'
-import { getSentryInitConfig } from "~/utils/third-party/sentry/init-sentry"
-import * as Sentry from "@sentry/vue";
+import { initSentry } from "~/utils/third-party/sentry/init-sentry"
 
 const app = createApp(App)
 
@@ -75,13 +74,6 @@ app.directive('liu-show', liuShowDirective)
 useSystemStore()
 
 // 初始化 sentry
-const tmpSentryCfg = getSentryInitConfig()
-if(tmpSentryCfg) {
-  const sentryCfg = {
-    app,
-    ...tmpSentryCfg,
-  }
-  Sentry.init(sentryCfg)
-}
+initSentry(app)
 
 app.mount('#app')
