@@ -1,14 +1,19 @@
 
 import time from "../basic/time"
-import * as Sentry from "@sentry/vue";
 import liuEnv from "../liu-env";
 import localCache from "../system/local-cache";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { db } from "../db";
+import type { Sentry_Breadcrumb } from "./types"
 
 const showNowStamp = () => {
   const s = time.getTime()
   console.log(`%c当前时间戳: %c${s}`, "color: #666;", "color: #8888cc;")
+}
+
+const _getSentry = async () => {
+  const Sentry = await import("@sentry/vue")
+  return Sentry
 }
 
 const _isSentryExisted = () => {
@@ -17,34 +22,37 @@ const _isSentryExisted = () => {
   return Boolean(dsn)
 }
 
-const sendException = (err: any) => {
+const sendException = async (err: any) => {
   const hasSentry = _isSentryExisted()
   if(!hasSentry) return
 
+  const Sentry = await _getSentry()
   Sentry.captureException(err)
 }
 
-const sendMessage = (message: string) => {
+const sendMessage = async (message: string) => {
   const hasSentry = _isSentryExisted()
   if(!hasSentry) return
 
+  const Sentry = await _getSentry()
   Sentry.captureMessage(message)
 }
 
 // 打点，记录面包屑
 // Only when an error occurs and it will be captured by Sentry,
 // the breadcrumb will be recorded
-const addBreadcrumb = (breadcrumb: Sentry.Breadcrumb) => {
+const addBreadcrumb = async (breadcrumb: Sentry_Breadcrumb) => {
   // 1. check if sentry has been existed
   const hasSentry = _isSentryExisted()
   if(!hasSentry) return
 
   // 2. add breadcrumb
-  const bc: Sentry.Breadcrumb = {
+  const bc: Sentry_Breadcrumb = {
     type: "default",
     level: "info",
     ...breadcrumb,
   }
+  const Sentry = await _getSentry()
   Sentry.addBreadcrumb(bc)
 }
 
@@ -59,6 +67,8 @@ const setUserTagsCtx = async () => {
     theme,
     language,
   } = localCache.getPreference()
+
+  const Sentry = await _getSentry()
 
   // 1. set tags
   Sentry.setTag("liu-theme", theme)
