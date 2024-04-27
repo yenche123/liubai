@@ -5,7 +5,6 @@ import ider from '../basic/ider';
 import { encode as blurhashEncode } from "blurhash";
 import { getImgLayout } from "./tools/img-layout"
 import type { Ref } from "vue"
-import ExifReader from "exifreader"
 import { useWindowSize } from "~/hooks/useVueUse"
 
 type FileWithCharacteristic = { 
@@ -31,6 +30,13 @@ const BlurhashEncoding = {
   maxHeight: 32,
 }
 
+
+async function _getExifReader() {
+  const ExifReader = await import("exifreader")
+  return ExifReader
+}
+
+
 /**
  * 获取图片的 exif 信息
  *   为什么不在 getMetaDataFromFiles 里一并获取呢？
@@ -39,6 +45,8 @@ const BlurhashEncoding = {
  */
 async function extractExif(files: File[]) {
   const list: Array<LiuExif> = []
+
+  const ExifReader = await _getExifReader()
 
   for(let i=0; i<files.length; i++) {
     const f = files[i]
