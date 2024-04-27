@@ -232,7 +232,7 @@ export interface LiuLinkMark {
   attrs: {
     href: string
     target?: string
-    class?: string
+    class?: string | null
   }
 }
 export const Sch_LiuLinkMark = vbot.object({
@@ -240,7 +240,7 @@ export const Sch_LiuLinkMark = vbot.object({
   attrs: vbot.object({
     href: vbot.string(),
     target: vbot.optional(vbot.string()),
-    class: vbot.optional(vbot.string()),
+    class: vbot.nullish(vbot.string()),
   })
 })
 

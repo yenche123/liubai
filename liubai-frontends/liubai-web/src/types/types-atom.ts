@@ -66,7 +66,7 @@ export interface LiuLinkMark {
   attrs: {
     href: string
     target?: string
-    class?: string
+    class?: string | null
   }
 }
 
