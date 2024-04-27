@@ -44,4 +44,10 @@ export interface LiuSystemEnv {
   // clarity
   MS_CLARITY_SCRIPT?: string
   MS_CLARITY_PROJECT_ID?: string
+
+  // bugfender
+  BUGFENDER_APIURL?: string
+  BUGFENDER_BASEURL?: string
+  BUGFENDER_APPKEY?: string
+
 }

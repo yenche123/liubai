@@ -27,6 +27,7 @@ defineExpose({ editor })
     :editor="editor" 
     ref="ecRef" 
     data-clarity-mask="true"
+    data-bf-ignore-keypress
   />
 </template>
 

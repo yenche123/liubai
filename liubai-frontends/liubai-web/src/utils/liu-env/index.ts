@@ -50,7 +50,12 @@ function getEnv(): LiuSystemEnv {
   // clarity
   const MS_CLARITY_SCRIPT = import.meta.env.VITE_MS_CLARITY_SCRIPT
   const MS_CLARITY_PROJECT_ID = import.meta.env.VITE_MS_CLARITY_PROJECT_ID
-  
+
+  // bugfender
+  const BUGFENDER_APIURL = import.meta.env.VITE_BUGFENDER_APIURL
+  const BUGFENDER_BASEURL = import.meta.env.VITE_BUGFENDER_BASEURL
+  const BUGFENDER_APPKEY = import.meta.env.VITE_BUGFENDER_APPKEY
+
   _env = {
     DEV,
     API_URL,
@@ -80,6 +85,9 @@ function getEnv(): LiuSystemEnv {
     UMAMI_ID,
     MS_CLARITY_SCRIPT,
     MS_CLARITY_PROJECT_ID,
+    BUGFENDER_APIURL,
+    BUGFENDER_BASEURL,
+    BUGFENDER_APPKEY,
   }
   return _env
 }

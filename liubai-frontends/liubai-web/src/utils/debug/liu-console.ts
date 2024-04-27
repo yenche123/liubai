@@ -1,41 +1,41 @@
 
 import time from "../basic/time"
-import liuEnv from "../liu-env";
 import localCache from "../system/local-cache";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { db } from "../db";
-import type { Sentry_Breadcrumb } from "./types"
+import {
+  getSentry,
+  getBugfender,
+  isSentryExisted,
+  isBugfenderExisted,
+} from "./tools/some-funcs"
+import type { Sentry_Breadcrumb } from "./tools/types"
 
 const showNowStamp = () => {
   const s = time.getTime()
   console.log(`%c当前时间戳: %c${s}`, "color: #666;", "color: #8888cc;")
 }
 
-const _getSentry = async () => {
-  const Sentry = await import("@sentry/vue")
-  return Sentry
-}
-
-const _isSentryExisted = () => {
-  const _env = liuEnv.getEnv()
-  const dsn = _env.SENTRY_DSN
-  return Boolean(dsn)
-}
-
 const sendException = async (err: any) => {
-  const hasSentry = _isSentryExisted()
+  const hasSentry = isSentryExisted()
   if(!hasSentry) return
 
-  const Sentry = await _getSentry()
+  const Sentry = await getSentry()
   Sentry.captureException(err)
 }
 
 const sendMessage = async (message: string) => {
-  const hasSentry = _isSentryExisted()
-  if(!hasSentry) return
+  const hasSentry = isSentryExisted()
+  if(hasSentry) {
+    const Sentry = await getSentry()
+    Sentry.captureMessage(message)
+  }
 
-  const Sentry = await _getSentry()
-  Sentry.captureMessage(message)
+  const hasBugfender = isBugfenderExisted()
+  if(hasBugfender) {
+    const { Bugfender } = await getBugfender()
+    Bugfender.log(message)
+  }
 }
 
 // 打点，记录面包屑
@@ -43,7 +43,7 @@ const sendMessage = async (message: string) => {
 // the breadcrumb will be recorded
 const addBreadcrumb = async (breadcrumb: Sentry_Breadcrumb) => {
   // 1. check if sentry has been existed
-  const hasSentry = _isSentryExisted()
+  const hasSentry = isSentryExisted()
   if(!hasSentry) return
 
   // 2. add breadcrumb
@@ -52,13 +52,13 @@ const addBreadcrumb = async (breadcrumb: Sentry_Breadcrumb) => {
     level: "info",
     ...breadcrumb,
   }
-  const Sentry = await _getSentry()
+  const Sentry = await getSentry()
   Sentry.addBreadcrumb(bc)
 }
 
 // when workspace state is changed, please trigger the function
 const setUserTagsCtx = async () => {
-  const hasSentry = _isSentryExisted()
+  const hasSentry = isSentryExisted()
   if(!hasSentry) return
 
   const { 
@@ -68,7 +68,7 @@ const setUserTagsCtx = async () => {
     language,
   } = localCache.getPreference()
 
-  const Sentry = await _getSentry()
+  const Sentry = await getSentry()
 
   // 1. set tags
   Sentry.setTag("liu-theme", theme)

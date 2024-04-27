@@ -27,6 +27,7 @@ import { liuShowDirective } from "~/utils/directives/v-liu-show"
 import VueDraggableResizable from 'vue-draggable-resizable'
 import { useSystemStore } from './hooks/stores/useSystemStore'
 import { initSentry } from "~/utils/third-party/sentry/init-sentry"
+import { initBugFender } from './utils/third-party/bugfender/init-bugfender'
 
 const app = createApp(App)
 
@@ -74,10 +75,13 @@ app.directive('liu-show', liuShowDirective)
 useSystemStore()
 
 const asyncMain = async () => {
-  // 初始化 sentry
+  // initialize sentry
   await initSentry(app)
 
-  // 挂载 app
+  // initialize bugfender
+  await initBugFender()
+
+  // mount app of Vue
   app.mount('#app')
 }
 
