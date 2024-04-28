@@ -3,8 +3,7 @@ import type { ShareViewData, ExportData, IcsDateTime } from "./types"
 import thirdLink from "~/config/third-link"
 import { add } from "date-fns"
 import liuUtil from "~/utils/liu-util";
-import { createEvent } from "ics"
-import type { EventAttributes, Alarm } from "ics"
+import type { EventAttributes, Alarm } from "ics";
 import { i18n } from "~/locales";
 import liuApi from "~/utils/liu-api";
 
@@ -186,8 +185,12 @@ function handleTwitter(
   svData.twitterLink = tLink
 }
 
+async function getIcs() {
+  const ics = await import("ics")
+  return ics
+}
 
-function handleIcs(
+async function handleIcs(
   svData: ShareViewData, 
   thread: ThreadShow,
   ed: ExportData,
@@ -218,10 +221,13 @@ function handleIcs(
   const receiveIcs = (plainText: string) => {
     const file = new File([plainText], "liubai.ics", { type: "text/calendar" })
     const [url] = liuUtil.createObjURLs([file])
+    console.log("receiveIcs:   ")
+    console.log(url)
     svData.icsLink = url
   }
 
-  createEvent(event, (err, val) => {
+  const ics = await getIcs()
+  ics.createEvent(event, (err, val) => {
     if(err) {
       console.warn("createEvent err: ")
       console.log(err)
