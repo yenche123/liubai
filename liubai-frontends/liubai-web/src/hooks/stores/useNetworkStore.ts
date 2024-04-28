@@ -46,6 +46,13 @@ export const useNetworkStore = defineStore("network", () => {
       return
     }
 
+    if(effectiveType === "4g") {
+      if(rtt && rtt < 400) {
+        level.value = 3
+        return
+      }
+    }
+
     if(downlink) {
       if(downlink <= 0.66) {
         level.value = 1
