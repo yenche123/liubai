@@ -8,6 +8,7 @@ import type {
 import { db } from "~/utils/db"
 import localCache from "~/utils/system/local-cache"
 import { handleFiles } from "./handle-files"
+import { syncTasks } from "./sync-tasks"
 
 /** check 10 tasks */
 async function handle10Tasks(tasks: UploadTaskLocalTable[]) {
@@ -17,19 +18,19 @@ async function handle10Tasks(tasks: UploadTaskLocalTable[]) {
   if(!res1) return false
 
   // 2. package tasks to prepare for syncing
+  const res2 = await syncTasks(tasks)
 
-
-
-
+  return res2
 }
 
-const LIMIT = 10
+const MAX_NUM = 10
+const MAX_TIMES = 3
 export async function handleUploadTasks() {
 
   let times = 0
   while(true) {
     times++
-    if(times > 10) break
+    if(times > MAX_TIMES) break
 
     const { local_id: userId } = localCache.getPreference()
     if(!userId) break
@@ -44,7 +45,7 @@ export async function handleUploadTasks() {
     
     const col_1 = db.upload_tasks.orderBy("insertedStamp")
     const col_2 = col_1.filter(_filterFunc)
-    const results = await col_2.limit(LIMIT).toArray()
+    const results = await col_2.limit(MAX_NUM).toArray()
     const len = results.length
     if(len < 1) break
 

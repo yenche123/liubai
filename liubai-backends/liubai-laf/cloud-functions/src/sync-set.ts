@@ -5,6 +5,7 @@ import {
   checker,
   getAESKey,
   encryptDataWithAES,
+  getDecryptedBody,
   getEncryptedData,
 } from "@/common-util"
 import type { 
@@ -47,7 +48,7 @@ export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}
 
   // 1. pre-check
-  const res1 = preCheck(body)
+  const res1 = preCheck()
   if(res1) return res1
   
   // 2. verify token
@@ -58,18 +59,31 @@ export async function main(ctx: FunctionContext) {
     return vRes.rqReturn ?? { code: "E5001" }
   }
 
-  // 3. to init ctx
+  // 3. decrypt body
+  const res3 = getDecryptedBody(body, vRes)
+  if(!res3.newBody || res3.rqReturn) {
+    return res3.rqReturn ?? { code: "E5001" }
+  }
+
+  console.log("new body:::")
+  console.log(res3.newBody)
+
+  // 4. check body
+  const res4 = checkBody(res3.newBody)
+  if(res4) return res4
+
+  // 5. to init ctx
   const ssCtx = initSyncSetCtx(user, workspaces)
 
-  // 4. to execute
-  const results = await toExecute(body, ssCtx)
+  // 6. to execute
+  const results = await toExecute(res3.newBody, ssCtx)
 
-  // 5. construct response
-  const res5: Res_SyncSet_Cloud = {
+  // 7. construct response
+  const res7: Res_SyncSet_Cloud = {
     results,
     plz_enc_results: results,
   }
-  const encRes = getEncryptedData(res5, vRes)
+  const encRes = getEncryptedData(res7, vRes)
   if(!encRes.data || encRes.rqReturn) {
     return encRes.rqReturn ?? { code: "E5001", errMsg: "getEncryptedData failed" }
   }
@@ -122,9 +136,8 @@ const need_collection_evts: LiuUploadTask[] = [
   "undo_collection-react",
 ]
 
-function preCheck(
-  body: Record<string, any>,
-): LiuRqReturn | null {
+
+function preCheck() {
 
   // 1. checking out the AES key of backend
   const backendAESKey = getAESKey()
@@ -132,7 +145,14 @@ function preCheck(
     return { code: "E5001", errMsg: "no backend AES key" }
   }
 
-  // 2. other
+}
+
+
+
+function checkBody(
+  body: Record<string, any>,
+): LiuRqReturn | null {
+
   const { operateType, atoms } = body
   if(operateType !== "general_sync") {
     return { code: "E4000", errMsg: "operateType is not equal to general_sync" }
@@ -389,8 +409,6 @@ async function toPostThread(
       return { code: "E4000", taskId, errMsg: "liuDesc is illegal" }
     }
     enc_desc = encryptDataWithAES(liuDesc, aesKey)
-    console.log("看一下加密后的 liuDesc: ")
-    console.log(enc_desc)
   }
   
   // 5. get memberId which is required

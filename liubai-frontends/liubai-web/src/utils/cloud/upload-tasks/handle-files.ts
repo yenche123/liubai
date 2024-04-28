@@ -489,7 +489,6 @@ export async function handleFiles(tasks: UploadTaskLocalTable[]) {
   let needUploadFile = contentIds.length > 0 || memberIds.length > 0
   needUploadFile = needUploadFile || draftIds.length > 0
   if(!needUploadFile) {
-    console.log("there is no need to upload files cause needUploadFile is false")
     return true
   }
 

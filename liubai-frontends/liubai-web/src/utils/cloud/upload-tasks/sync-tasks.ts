@@ -54,12 +54,13 @@ export async function syncTasks(tasks: UploadTaskLocalTable[]) {
   // 5. if ok, call afterSyncSet
   const results = res4.data?.results ?? []
   if(res4.code === "0000") {
-    await afterSyncSet(results, atoms)
-    return
+    const res5 = await afterSyncSet(results, atoms)
+    return res5
   }
 
   // 6. otherwise, just update tasks' progressType to "waiting"
-  uut.bulkChangeProgressType(taskIds_3, "waiting")
+  await uut.bulkChangeProgressType(taskIds_3, "waiting")
+  return false
 }
 
 /** the function will be triggered after fetching sync-set */
@@ -117,6 +118,7 @@ async function afterSyncSet(
   dataHasNewIds(list)
   await deleteUploadTasks(delete_list)
   await tackleFailedUploadTasks(waiting_list)
+  return true
 }
 
 
@@ -126,7 +128,7 @@ async function tackleFailedUploadTasks(
   const len = waiting_list.length
   if(len < 1) return
 
-  console.log(`共有 ${len} 个任务上传失败`)
+  console.warn(`共有 ${len} 个任务上传失败`)
   console.log(`现在去修改为 "waiting"`)
   console.log(" ")
 
@@ -140,10 +142,7 @@ async function deleteUploadTasks(
   delete_list: string[]
 ) {
   if(delete_list.length < 1) return
-
-  const res = await db.upload_tasks.bulkDelete(delete_list)
-  console.log("deleteUploadTasks res: ")
-  console.log(res)
+  await db.upload_tasks.bulkDelete(delete_list)
 }
 
 async function dataHasNewIds(
@@ -181,15 +180,9 @@ async function dataHasNewIds(
 
   // 3. put new data into db
   const res3 = await db.contents.bulkPut(list2)
-  console.log("bulkPut results from dataHasNewIds: ")
-  console.log(res3)
-  console.log(" ")
 
   // 4. delete those old data
-  const res4 = await db.contents.bulkDelete(delete_ids)
-  console.log("bulkDelete results from dataHasNewIds: ")
-  console.log(res4)
-  console.log(" ")
+  await db.contents.bulkDelete(delete_ids)
 
   // 5. notify via useSyncStore()
   console.log("go to notify useSyncStore..........")
