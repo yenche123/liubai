@@ -1,7 +1,6 @@
 import { useGlobalLoading } from "./tools/useGlobalLoading"
 import { useGlobalEvent } from "./tools/useGlobalEvent";
 import liuApi from "~/utils/liu-api"
-import VConsole from 'vconsole';
 import { init as initForSystem } from "~/utils/system/init"
 import { onMounted, onUnmounted } from "vue";
 import { useGlobalStateStore } from "./stores/useGlobalStateStore";
@@ -50,12 +49,19 @@ function initListenSelection() {
   })
 }
 
-function initMobile() {
+
+async function getVConsole() {
+  const VConsole = await import("vconsole")
+  return VConsole
+}
+
+async function initMobile() {
   const cha = liuApi.getCharacteristic()
   if(cha.isMobile) {
     const _env = liuEnv.getEnv()
     if(_env.DEV) {
-      new VConsole()
+      const VConsole = await getVConsole()
+      new VConsole.default()
     }
     import("~/styles/mobile-style.css")
   }
