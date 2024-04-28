@@ -4,8 +4,12 @@ import valTool from "~/utils/basic/val-tool"
 import fileHelper from "~/utils/files/file-helper"
 import type { Res_FileSet_UploadToken } from "~/requests/req-types"
 import type { LiuFileAndImage } from "~/types"
-import * as qiniu from "qiniu-js"
 import type { UploadProgress } from "qiniu-js/esm/upload"
+import type { 
+  QiniuError, 
+  QiniuRequestError, 
+  QiniuNetworkError, 
+} from "qiniu-js"
 import type { 
   UploadResolver, 
   FileReqReturn, 
@@ -14,19 +18,26 @@ import type {
 } from "./types"
 import liuConsole from "~/utils/debug/liu-console"
 
+
+async function _getQiniu() {
+  const qiniu = await import("qiniu-js")
+  return qiniu
+}
+
+
 function _upload(
   f: File,
   key: string,
   token: string,
 ) {
 
-  const _wait = (a: UploadResolver) => {
+  const _wait = async (a: UploadResolver) => {
     const observer = {
       next(res: UploadProgress) {
         console.log("next.........")
         console.log(res)
       },
-      error(err: qiniu.QiniuError | qiniu.QiniuRequestError | qiniu.QiniuNetworkError) {
+      error(err: QiniuError | QiniuRequestError | QiniuNetworkError) {
         console.log("error.........")
         console.log(err)
 
@@ -47,6 +58,7 @@ function _upload(
       }
     }
 
+    const qiniu = await _getQiniu()
     const observable = qiniu.upload(f, key, token)
     const subscription = observable.subscribe(observer)
   }
