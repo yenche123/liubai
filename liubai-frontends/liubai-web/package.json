@@ -76,5 +76,6 @@
     "vite-plugin-qrcode": "^0.2.3",
     "vite-plugin-svg-icons": "^2.0.1",
     "vue-tsc": "^2.0.14"
-  }
+  },
+  "packageManager": "pnpm@9.0.6"
 }
