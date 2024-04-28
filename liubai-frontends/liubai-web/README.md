@@ -101,6 +101,8 @@ https://openmoji.org/
 
 24. 若使用 homebrew 安装 pnpm，后续升级时也请使用 homebrew 的命令 `brew upgrade pnpm`；使用 `brew outdated` 可以查看 homebrew 安装的软件有哪些需要升级。
 
+25. 使用 css 作画 https://css-shape.com/
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
