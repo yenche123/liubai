@@ -12,7 +12,7 @@ import type {
 } from "~/types";
 import valTool from "~/utils/basic/val-tool";
 import type { LiuExportContentJSON } from "~/types/other/types-export"
-import JSZip from "jszip"
+import type { JSZipObject } from "jszip"
 import { db } from "~/utils/db";
 import type { ContentLocalTable } from "~/types/types-table";
 import { equipThreads } from "~/utils/controllers/equip/threads";
@@ -49,7 +49,7 @@ export async function parseOurJson(
 // 把 zip 里的 assets 转为 { name, arrayBuffer }
 async function parseAssets(
   dateStr: string,
-  assets?: JSZip.JSZipObject[]
+  assets?: JSZipObject[]
 ) {
   if(!assets) return []
   const prefix = `${dateStr}/assets/`

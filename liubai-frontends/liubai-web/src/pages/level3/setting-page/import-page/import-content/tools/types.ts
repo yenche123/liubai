@@ -1,5 +1,5 @@
-import JSZip from "jszip"
-import { LiuFileStore, LiuImageStore } from "~/types"
+import type { JSZipObject } from "jszip"
+import type { LiuFileStore, LiuImageStore } from "~/types"
 import type { 
   CommentShow,
   ThreadShow 
@@ -11,13 +11,13 @@ import type {
 
 export interface LiuJSZip {
   relativePath: string
-  file: JSZip.JSZipObject
+  file: JSZipObject
 }
 
 export interface ImportedAtom {
   dateStr?: string
-  cardJSON?: JSZip.JSZipObject
-  assets?: JSZip.JSZipObject[]
+  cardJSON?: JSZipObject
+  assets?: JSZipObject[]
 }
 
 // 无需更新、需要更新、全新的

@@ -1,7 +1,7 @@
 import { ref } from "vue"
 import type { Ref } from "vue"
 import liuUtil from "~/utils/liu-util"
-import JSZip from "jszip"
+import type JSZip from "jszip"
 import cui from "~/components/custom-ui"
 import type { 
   LiuJSZip,
@@ -14,6 +14,7 @@ import valTool from "~/utils/basic/val-tool"
 import { loadIntoDB } from "./load-into-db"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import cfg from "~/config"
+import { getJSZip } from "../../../tools/get-jszip"
 
 interface IcCtx {
   list: Ref<ImportedAtom2[]>
@@ -75,8 +76,9 @@ export function useImportContent() {
 async function loadZip(f: File, ctx: IcCtx) {
 
   let results: JSZip
+  const TheJSZip = await getJSZip()
   try {
-    results = await JSZip.loadAsync(f)
+    results = await TheJSZip.loadAsync(f)
   }
   catch(err) {
     console.warn("loadAsync err: ")

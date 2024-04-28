@@ -9,7 +9,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import cfg from "~/config";
 import { getData } from "./get-data"
 import type { ContentLocalTable } from "~/types/types-table";
-import JSZip from "jszip";
+import type JSZip from "jszip";
 import cui from "~/components/custom-ui";
 import liuUtil from "~/utils/liu-util";
 import time from "~/utils/basic/time";
@@ -18,6 +18,7 @@ import { saveAs as fileSaverSaveAs } from 'file-saver';
 import transferUtil from "~/utils/transfer-util";
 import liuEnv from "~/utils/liu-env";
 import valTool from "~/utils/basic/val-tool";
+import { getJSZip } from "../../../tools/get-jszip";
 
 export async function handleExport(
   exportType: ExportType
@@ -47,7 +48,8 @@ export async function handleExport(
     return
   }
 
-  const zip = new JSZip()
+  const TheJSZip = await getJSZip()
+  const zip = new TheJSZip.default()
 
   // 1. 生成 metadata
   const appName = liuEnv.getEnv().APP_NAME ?? ""
