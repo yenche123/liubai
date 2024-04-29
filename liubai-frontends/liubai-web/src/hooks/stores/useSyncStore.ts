@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 import { shallowRef } from "vue";
 
 export interface SyncStoreAtom {
-  whichType: "thread" | "comment"
+  whichType: "thread" | "comment" | "collection"
   first_id: string
   new_id: string
 }

@@ -38,3 +38,4 @@ export class LiuDexie extends Dexie {
 }
 
 export const db = new LiuDexie()
+export type DexieTable<T> = Table<T>

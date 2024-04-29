@@ -1,10 +1,11 @@
 import APIs from "~/requests/APIs";
 import type { 
   ContentLocalTable,
+  CollectionLocalTable,
   UploadTaskLocalTable,
 } from "~/types/types-table";
 import time from "~/utils/basic/time";
-import { db } from "~/utils/db";
+import { db, type DexieTable } from "~/utils/db";
 import { packSyncSetAtoms } from "./tools/prepare-for-uploading";
 import uut from "../tools/update-upload-task"
 import type { 
@@ -93,15 +94,18 @@ async function afterSyncSet(
     if(!completed) continue
 
     const { taskType } = atom
-    if(taskType === "thread-post") {
-      if(first_id && new_id) {
+    if(first_id && new_id && first_id !== new_id) {
+      if(taskType === "thread-post") {
         list.push({ whichType: "thread", first_id, new_id })
       }
-    }
-
-    if(taskType === "comment-post") {
-      if(first_id && new_id) {
+      else if(taskType === "comment-post") {
         list.push({ whichType: "comment", first_id, new_id })
+      }
+      else if(taskType === "collection-favorite") {
+        list.push({ whichType: "collection", first_id, new_id })
+      }
+      else if(taskType === "collection-react") {
+        list.push({ whichType: "collection", first_id, new_id })
       }
     }
 
@@ -145,26 +149,28 @@ async function deleteUploadTasks(
   await db.upload_tasks.bulkDelete(delete_list)
 }
 
-async function dataHasNewIds(
+type ReplaceTable = ContentLocalTable | CollectionLocalTable
+
+async function replaceInSpecificTable<T extends ReplaceTable>(
+  tableName: "contents" | "collections",
   list: SyncStoreAtom[],
 ) {
   if(list.length < 1) return
-
   const first_ids = list.map(v => v.first_id)
 
-  // 1. change data in db
-  // now we only have to update in contents
-  const res1 = await db.contents.where("_id").anyOf(first_ids).toArray()
+  // 1. seek data from db
+  const table = db[tableName] as DexieTable<T>
+  const res1 = await table.where("_id").anyOf(first_ids).toArray()
   if(res1.length < 1) return
-  
+
   // 2. get new data and delete_ids
   const delete_ids: string[] = []
-  const list2: ContentLocalTable[] = []
+  const list2: T[] = []
   for(let i=0; i<res1.length; i++) {
     const v = res1[i]
     const d2 = list.find(v2 => v2.first_id === v._id)
     if(!d2) continue
-    const obj: ContentLocalTable = { ...v }
+    const obj = { ...v }
     obj._id = d2.new_id
     list2.push(obj)
     delete_ids.push(d2.first_id)
@@ -179,17 +185,37 @@ async function dataHasNewIds(
   }
 
   // 3. put new data into db
-  const res3 = await db.contents.bulkPut(list2)
+  const res3 = await table.bulkPut(list2)
+  console.log("replaceInSpecificTable res3: ")
+  console.log(res3)
+  console.log(" ")
 
-  // 4. delete those old data
-  await db.contents.bulkDelete(delete_ids)
+  // 4. delete these old data
+  await table.bulkDelete(delete_ids)
+}
 
-  // 5. notify via useSyncStore()
+
+
+async function dataHasNewIds(
+  list: SyncStoreAtom[],
+) {
+  if(list.length < 1) return
+
+  console.log("dataHasNewIds.......")
+
+  const list_content = list.filter(v => {
+    return v.whichType === "comment" || v.whichType === "thread"
+  })
+  const list_collection = list.filter(v => v.whichType === "collection")
+
+  await replaceInSpecificTable("contents", list_content)
+  await replaceInSpecificTable("collections", list_collection)
+
+  // notify via useSyncStore()
   console.log("go to notify useSyncStore..........")
   console.log(" ")
   const sStore = useSyncStore()
   sStore.afterSync(list)
-
 }
 
 
