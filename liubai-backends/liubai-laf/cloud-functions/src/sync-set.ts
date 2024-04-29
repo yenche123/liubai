@@ -271,6 +271,8 @@ async function toExecute(
     results.push(res1)
   }
 
+  await updateAllData(ssCtx)
+
   return results
 }
 
@@ -345,6 +347,7 @@ function updateAtomsAfterPosting(
 }
 
 
+/******************************** Add a thread ***************************/
 async function toPostThread(
   ssCtx: SyncSetCtx,
   taskId: string,
@@ -478,6 +481,8 @@ async function toPostThread(
   return { code: "0000", taskId, first_id, new_id }
 }
 
+
+/******************************** Add a comment ***************************/
 async function toPostComment(
   ssCtx: SyncSetCtx,
   taskId: string,
@@ -495,6 +500,10 @@ function _amIInTheSpace(
 }
 
 
+
+
+
+/******************************** init ssCtx ***************************/
 function initSyncSetCtx(
   user: Table_User,
   space_ids: string[],
@@ -609,6 +618,43 @@ async function updatePartData<T>(
     updateData: partData,
   }
   map.set(id, newRow)
+}
+
+
+// to update all data
+async function updateAllData(
+  ssCtx: SyncSetCtx,
+) {
+  const { content, draft, member, workspace } = ssCtx
+  await toUpdateTable(content, "Content")
+  await toUpdateTable(draft, "Draft")
+  await toUpdateTable(workspace, "workspace")
+  await toUpdateTable(member, "Member")
+}
+
+
+interface ToUpdateItem<T> {
+  id: string
+  updateData: Partial<T>
+}
+
+async function toUpdateTable<T>(
+  map: Map<string, SyncSetCtxAtom<T>>,
+  tableName: string,
+) {
+  const list: ToUpdateItem<T>[] = []
+  map.forEach((atom, id) => {
+    atom.updateData && list.push({ id, updateData: atom.updateData })
+  })
+  if(list.length < 1) return true
+  const col = db.collection(tableName)
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    const { id, updateData } = v
+    const res = await col.doc(id).update(updateData)
+    console.log(`update ${tableName} ${id} result: `, res)
+  }
+  return true
 }
 
 
