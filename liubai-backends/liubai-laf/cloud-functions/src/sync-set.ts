@@ -256,7 +256,8 @@ async function toExecute(
       if(res1) updateAtomsAfterPosting(list, res1, "content")
     }
     else if(taskType === "comment-post" && comment) {
-      await toPostComment(ssCtx, taskId, comment)
+      res1 = await toPostComment(ssCtx, taskId, comment)
+      if(res1) updateAtomsAfterPosting(list, res1, "content")
     }
     else if(taskType === "thread-edit") {
 
@@ -396,8 +397,6 @@ async function toPostThread(
   }, vbot.never())     // open strict mode
   const res3 = vbot.safeParse(Sch_PostThread, thread)
   if(!res3.success) {
-    console.warn("inspecting data failed")
-    console.log(res3)
     const err3 = checker.getErrMsgFromIssues(res3.issues)
     return { code: "E4000", taskId, errMsg: err3 }
   }
@@ -441,9 +440,9 @@ async function toPostThread(
   const enc_files = files?.length ? encryptDataWithAES(files, aesKey) : undefined
   // TODO: enc_search_text
 
-  const b6 = getBasicStampWhileAdding()
+  const b7 = getBasicStampWhileAdding()
   const newRow: Partial<Table_Content> = {
-    ...b6,
+    ...b7,
     first_id,
     user: userId,
     member: memberId,
@@ -487,8 +486,115 @@ async function toPostComment(
   ssCtx: SyncSetCtx,
   taskId: string,
   comment: LiuUploadComment,
-) {
-  
+): Promise<SyncSetAtomRes> {
+  // 1. get some important parameters
+  const { spaceId, first_id } = comment
+  const { _id: userId } = ssCtx.me
+  if(!spaceId || !first_id) {
+    return { code: "E4000", taskId, errMsg: "spaceId or first_id is missing" }
+  }
+
+  // 2. check if the user is in the space
+  // TODO: other ppl outside the space can comment
+  const isInTheSpace = _amIInTheSpace(ssCtx, spaceId)
+  if(!isInTheSpace) {
+    return { code: "E4003", taskId, errMsg: "you are not in the space" }
+  }
+
+  // 3. inspect data technically
+  const Sch_PostComment = vbot.object({
+    first_id: vbot.string([vbot.minLength(20)]),
+    spaceId: vbot.string(),
+    
+    liuDesc: vbot.optional(vbot.array(vbot.any())),
+    images: vbot.optional(vbot.array(Sch_Cloud_ImageStore)),
+    files: vbot.optional(vbot.array(Sch_Cloud_FileStore)),
+    
+    editedStamp: vbot.optional(vbot.number()),
+
+    parentThread: vbot.optional(vbot.string()),
+    parentComment: vbot.optional(vbot.string()),
+    replyToComment: vbot.optional(vbot.string()),
+    createdStamp: vbot.number(),
+  }, vbot.never())
+  const res3 = vbot.safeParse(Sch_PostComment, comment)
+  if(!res3.success) {
+    const err3 = checker.getErrMsgFromIssues(res3.issues)
+    return { code: "E4000", taskId, errMsg: err3 }
+  }
+
+  // 4. inspect liuDesc and encrypt it
+  const { liuDesc } = comment
+  const aesKey = getAESKey() ?? ""
+  let enc_desc: CryptoCipherAndIV | undefined
+  if(liuDesc) {
+    const res4 = checker.isLiuContentArr(liuDesc)
+    if(!res4) {
+      return { code: "E4000", taskId, errMsg: "liuDesc is illegal" }
+    }
+    enc_desc = encryptDataWithAES(liuDesc, aesKey)
+  }
+
+  // 5. get memberId
+  // TODO: other ppl outside the space can comment
+  const memberId = await getMyMemberId(ssCtx, userId, spaceId)
+  if(!memberId) {
+    return { 
+      code: "E4003", taskId, 
+      errMsg: "you do not have a memberId in the workspace", 
+    }
+  }
+
+  // 6. get the workspace
+  const workspace = await getData<Table_Workspace>(ssCtx, "workspace", spaceId)
+  if(!workspace) {
+    return { 
+      code: "E4004", taskId,
+      errMsg: "workspace not found",
+    }
+  }
+  const spaceType = workspace.infoType
+
+  // 7. construct a new row of Table_Content
+  const { images, files } = comment
+  const enc_images = images?.length ? encryptDataWithAES(images, aesKey) : undefined
+  const enc_files = files?.length ? encryptDataWithAES(files, aesKey) : undefined 
+  // TODO: enc_search_text
+
+  const b7 = getBasicStampWhileAdding()
+  const newRow: Partial<Table_Content> = {
+    ...b7,
+    first_id,
+    user: userId,
+    member: memberId,
+    spaceId,
+    spaceType,
+    infoType: "COMMENT",
+    oState: "OK",
+    visScope: "DEFAULT",
+    storageState: "CLOUD",
+    enc_desc,
+    enc_images,
+    enc_files,
+    emojiData: { total: 0, system: [] },
+    createdStamp: comment.createdStamp,
+    editedStamp: comment.editedStamp,
+    parentThread: comment.parentThread,
+    parentComment: comment.parentComment,
+    replyToComment: comment.replyToComment,
+    levelOne: 0,
+    levelOneAndTwo: 0,
+  }
+
+  const new_id = await insertData(ssCtx, "content", newRow)
+  if(!new_id) {
+    return { 
+      code: "E5001", taskId, 
+      errMsg: "inserting data failed",
+    }
+  }
+
+  return { code: "0000", taskId, first_id, new_id }
 }
 
 function _amIInTheSpace(

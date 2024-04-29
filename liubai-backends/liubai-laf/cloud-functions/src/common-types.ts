@@ -525,7 +525,7 @@ export interface LiuUploadBase {
 /** 存一些 动态 与评论和草稿相比独有的字段 */
 export interface LiuUploadThread extends LiuUploadBase {
 
-  // 仅在 content-post 时有效且此时必填
+  // 仅在 thread-post 时有效且此时必填
   oState?: Exclude<OState, "DELETED">
 
   title?: string
