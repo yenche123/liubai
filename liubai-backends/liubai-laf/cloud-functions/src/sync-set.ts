@@ -576,8 +576,7 @@ async function toThreadEdit(
 
     tagIds: vbot.optional(vbot.array(vbot.string())),
     tagSearched: vbot.optional(vbot.array(vbot.string())),
-    config: vbot.optional(Sch_ContentConfig),
-  })
+  }, vbot.never())
   const res1 = vbot.safeParse(Sch_EditThread, thread)
   if(!res1.success) {
     const err1 = checker.getErrMsgFromIssues(res1.issues)
@@ -588,13 +587,28 @@ async function toThreadEdit(
   const sharedData = await getSharedData_2(ssCtx, taskId, thread)
   if(!sharedData.pass) return sharedData.result
   
-  // 3. construct a new row of Table_Content
-  const new_data: Partial<Table_Content> = {
-    
-  }
+  // 3. enc_title
+  const { title } = thread
+  const aesKey = getAESKey() ?? ""
+  const enc_title = encryptDataWithAES(title, aesKey)
 
-  
-  
+  // 4. construct a new row of Table_Content
+  const new_data: Partial<Table_Content> = {
+    enc_title,
+    enc_desc: sharedData.enc_desc,
+    enc_images: sharedData.enc_images,
+    enc_files: sharedData.enc_files,
+    calendarStamp: thread.calendarStamp,
+    remindStamp: thread.remindStamp,
+    whenStamp: thread.whenStamp,
+    remindMe: thread.remindMe,
+    editedStamp: thread.editedStamp,
+    tagIds: thread.tagIds,
+    tagSearched: thread.tagSearched,
+    updatedStamp: getNowStamp(),
+  }
+  await updatePartData(ssCtx, "content", sharedData.content_id, new_data)
+  return { code: "0000", taskId }
 }
 
 
@@ -637,6 +651,7 @@ interface Gsdr_1_B {
 interface Gsdr_2_B {
   pass: true
   content_id: string
+  oldContent: Table_Content
   enc_desc?: CryptoCipherAndIV
   enc_images?: CryptoCipherAndIV
   enc_files?: CryptoCipherAndIV
@@ -708,6 +723,7 @@ async function getSharedData_2(
   return {
     pass: true,
     content_id,
+    oldContent: res1,
     enc_desc,
     enc_images,
     enc_files
