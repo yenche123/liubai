@@ -65,7 +65,7 @@ export async function main(ctx: FunctionContext) {
     return res3.rqReturn ?? { code: "E5001" }
   }
 
-  console.log("new body:::")
+  console.log("new body::")
   console.log(res3.newBody)
 
   // 4. check body
@@ -348,27 +348,29 @@ function updateAtomsAfterPosting(
 }
 
 
-/******************************** Add a thread ***************************/
+/************************** Operation: Add a thread ************************/
 async function toPostThread(
   ssCtx: SyncSetCtx,
   taskId: string,
   thread: LiuUploadThread,
 ): Promise<SyncSetAtomRes> {
 
-  // 1. get some important parameters
-  const { spaceId, first_id } = thread
-  const { _id: userId } = ssCtx.me
-  if(!spaceId || !first_id) {
-    return { code: "E4000", taskId, errMsg: "spaceId and first_id are required" }
+  // 1. get shared data
+  const sharedData = await getSharedData_1(ssCtx, taskId, thread)
+  if(!sharedData.pass) {
+    return sharedData.result
   }
+  const { 
+    spaceId,
+    first_id,
+    userId,
+    memberId,
+    enc_desc,
+    enc_images,
+    enc_files,
+  } = sharedData
 
-  // 2. check if the user is in the space
-  const isInTheSpace = _amIInTheSpace(ssCtx, spaceId)
-  if(!isInTheSpace) {
-    return { code: "E4003", taskId, errMsg: "you are not in the workspace" }
-  }
-
-  // 3. inspect data technically
+  // 2. inspect data technically
   const ostate_list: OState[] = ["OK", "REMOVED"]
   const Sch_PostThread = vbot.object({
     first_id: vbot.string([vbot.minLength(20)]),
@@ -395,35 +397,16 @@ async function toPostThread(
     stateId: vbot.optional(vbot.string()),
     config: vbot.optional(Sch_ContentConfig),
   }, vbot.never())     // open strict mode
-  const res3 = vbot.safeParse(Sch_PostThread, thread)
-  if(!res3.success) {
-    const err3 = checker.getErrMsgFromIssues(res3.issues)
-    return { code: "E4000", taskId, errMsg: err3 }
+  const res2 = vbot.safeParse(Sch_PostThread, thread)
+  if(!res2.success) {
+    const err2 = checker.getErrMsgFromIssues(res2.issues)
+    return { code: "E4000", taskId, errMsg: err2 }
   }
 
-  // 4. inspect liuDesc and encrypt
-  const { liuDesc } = thread
+  // 3. inspect liuDesc and encrypt
   const aesKey = getAESKey() ?? ""
-  let enc_desc: CryptoCipherAndIV | undefined
-  if(liuDesc) {
-    const res4 = checker.isLiuContentArr(liuDesc)
-    if(!res4) {
-      return { code: "E4000", taskId, errMsg: "liuDesc is illegal" }
-    }
-    enc_desc = encryptDataWithAES(liuDesc, aesKey)
-  }
-  
-  // 5. get memberId which is required
-  // because it's posting a thread instead of comment
-  const memberId = await getMyMemberId(ssCtx, userId, spaceId)
-  if(!memberId) {
-    return { 
-      code: "E4003", taskId, 
-      errMsg: "you do not have a memberId in the workspace", 
-    }
-  }
 
-  // 6. get the workspace
+  // 4. get the workspace
   const workspace = await getData<Table_Workspace>(ssCtx, "workspace", spaceId)
   if(!workspace) {
     return { 
@@ -433,16 +416,14 @@ async function toPostThread(
   }
   const spaceType = workspace.infoType
 
-  // 7. construct a new row of Table_Content
-  const { title, images, files } = thread
+  // 5. construct a new row of Table_Content
+  const { title } = thread
   const enc_title = encryptDataWithAES(title, aesKey)
-  const enc_images = images?.length ? encryptDataWithAES(images, aesKey) : undefined
-  const enc_files = files?.length ? encryptDataWithAES(files, aesKey) : undefined
-  // TODO: enc_search_text
 
-  const b7 = getBasicStampWhileAdding()
+  // 6. construct a new row of Table_Content
+  const b6 = getBasicStampWhileAdding()
   const newRow: Partial<Table_Content> = {
-    ...b7,
+    ...b6,
     first_id,
     user: userId,
     member: memberId,
@@ -474,34 +455,36 @@ async function toPostThread(
 
   const new_id = await insertData(ssCtx, "content", newRow)
   if(!new_id) {
-    return { code: "E5001", taskId, errMsg: "insert data failed" }
+    return { code: "E5001", taskId, errMsg: "inserting data failed" }
   }
 
   return { code: "0000", taskId, first_id, new_id }
 }
 
-
-/******************************** Add a comment ***************************/
+/************************** Operation: Add a comment ************************/
 async function toPostComment(
   ssCtx: SyncSetCtx,
   taskId: string,
   comment: LiuUploadComment,
 ): Promise<SyncSetAtomRes> {
-  // 1. get some important parameters
-  const { spaceId, first_id } = comment
-  const { _id: userId } = ssCtx.me
-  if(!spaceId || !first_id) {
-    return { code: "E4000", taskId, errMsg: "spaceId or first_id is missing" }
+
+  // 1. get shared data
+  const sharedData = await getSharedData_1(ssCtx, taskId, comment)
+  if(!sharedData.pass) {
+    return sharedData.result
   }
 
-  // 2. check if the user is in the space
-  // TODO: other ppl outside the space can comment
-  const isInTheSpace = _amIInTheSpace(ssCtx, spaceId)
-  if(!isInTheSpace) {
-    return { code: "E4003", taskId, errMsg: "you are not in the space" }
-  }
+  const {
+    spaceId, 
+    first_id, 
+    userId, 
+    memberId, 
+    enc_desc, 
+    enc_images, 
+    enc_files, 
+  } = sharedData
 
-  // 3. inspect data technically
+  // 2. inspect data technically
   const Sch_PostComment = vbot.object({
     first_id: vbot.string([vbot.minLength(20)]),
     spaceId: vbot.string(),
@@ -517,35 +500,13 @@ async function toPostComment(
     replyToComment: vbot.optional(vbot.string()),
     createdStamp: vbot.number(),
   }, vbot.never())
-  const res3 = vbot.safeParse(Sch_PostComment, comment)
-  if(!res3.success) {
-    const err3 = checker.getErrMsgFromIssues(res3.issues)
-    return { code: "E4000", taskId, errMsg: err3 }
+  const res2 = vbot.safeParse(Sch_PostComment, comment)
+  if(!res2.success) {
+    const err2 = checker.getErrMsgFromIssues(res2.issues)
+    return { code: "E4000", taskId, errMsg: err2 }
   }
 
-  // 4. inspect liuDesc and encrypt it
-  const { liuDesc } = comment
-  const aesKey = getAESKey() ?? ""
-  let enc_desc: CryptoCipherAndIV | undefined
-  if(liuDesc) {
-    const res4 = checker.isLiuContentArr(liuDesc)
-    if(!res4) {
-      return { code: "E4000", taskId, errMsg: "liuDesc is illegal" }
-    }
-    enc_desc = encryptDataWithAES(liuDesc, aesKey)
-  }
-
-  // 5. get memberId
-  // TODO: other ppl outside the space can comment
-  const memberId = await getMyMemberId(ssCtx, userId, spaceId)
-  if(!memberId) {
-    return { 
-      code: "E4003", taskId, 
-      errMsg: "you do not have a memberId in the workspace", 
-    }
-  }
-
-  // 6. get the workspace
+  // 3. get the workspace
   const workspace = await getData<Table_Workspace>(ssCtx, "workspace", spaceId)
   if(!workspace) {
     return { 
@@ -555,15 +516,10 @@ async function toPostComment(
   }
   const spaceType = workspace.infoType
 
-  // 7. construct a new row of Table_Content
-  const { images, files } = comment
-  const enc_images = images?.length ? encryptDataWithAES(images, aesKey) : undefined
-  const enc_files = files?.length ? encryptDataWithAES(files, aesKey) : undefined 
-  // TODO: enc_search_text
-
-  const b7 = getBasicStampWhileAdding()
+  // 4. construct a new row of Table_Content
+  const b4 = getBasicStampWhileAdding()
   const newRow: Partial<Table_Content> = {
-    ...b7,
+    ...b4,
     first_id,
     user: userId,
     member: memberId,
@@ -597,6 +553,116 @@ async function toPostComment(
   return { code: "0000", taskId, first_id, new_id }
 }
 
+/************************** Operation: Edit a thread ************************/
+async function toThreadEdit(
+  ssCtx: SyncSetCtx,
+  taskId: string,
+  thread: LiuUploadThread,
+) {
+
+  
+}
+
+
+/***************************** helper functions ************************ */
+
+interface Gsdr_1_A {
+  pass: false
+  result: SyncSetAtomRes
+}
+
+interface Gsdr_1_B {
+  pass: true
+  spaceId: string
+  first_id: string
+  userId: string
+  memberId: string
+  enc_desc?: CryptoCipherAndIV
+  enc_images?: CryptoCipherAndIV
+  enc_files?: CryptoCipherAndIV
+}
+
+type GetShareDataRes_1 = Gsdr_1_A | Gsdr_1_B
+
+/** get shared data for thread or comment */
+async function getSharedData_1(
+  ssCtx: SyncSetCtx,
+  taskId: string,
+  content: LiuUploadThread | LiuUploadComment,
+): Promise<GetShareDataRes_1> {
+  
+  // 1. get some important parameters
+  const { spaceId, first_id } = content
+  const { _id: userId } = ssCtx.me
+  if(!spaceId || !first_id) {
+    return { 
+      pass: false,
+      result: {
+        code: "E4000", taskId, 
+        errMsg: "spaceId and first_id are required",
+      }
+    }
+  }
+
+  // 2. check if the user is in the space
+  const isInTheSpace = _amIInTheSpace(ssCtx, spaceId)
+  if(!isInTheSpace) {
+    return { 
+      pass: false,
+      result: {
+        code: "E4003", taskId, errMsg: "you are not in the workspace"
+      }
+    }
+  }
+
+  // 3. inspect liuDesc and encrypt
+  const { liuDesc } = content
+  const aesKey = getAESKey() ?? ""
+  let enc_desc: CryptoCipherAndIV | undefined
+  if(liuDesc) {
+    const res3 = checker.isLiuContentArr(liuDesc)
+    if(!res3) {
+      return {
+        pass: false,
+        result: {
+          code: "E4000", taskId, errMsg: "liuDesc is illegal"
+        }
+      }
+    }
+    enc_desc = encryptDataWithAES(liuDesc, aesKey)
+  }
+
+  // 4. get memberId
+  // TODO: the operation might not be required to post a comment
+  const memberId = await getMyMemberId(ssCtx, userId, spaceId)
+  if(!memberId) {
+    return {
+      pass: false,
+      result: {
+        code: "E4003", taskId,
+        errMsg: "you do not have a memberId in the workspace"
+      }
+    }
+  }
+
+  // 5. get enc_images enc_files
+  const { images, files } = content
+  const enc_images = images?.length ? encryptDataWithAES(images, aesKey) : undefined
+  const enc_files = files?.length ? encryptDataWithAES(files, aesKey) : undefined
+  // TODO: enc_search_text
+
+  return { 
+    pass: true, 
+    spaceId, first_id, userId,
+    memberId,
+    enc_desc,
+    enc_images,
+    enc_files,
+  }
+}
+
+
+
 function _amIInTheSpace(
   ssCtx: SyncSetCtx,
   spaceId: string,
@@ -604,10 +670,6 @@ function _amIInTheSpace(
   const space_ids = ssCtx.space_ids
   return space_ids.includes(spaceId)
 }
-
-
-
-
 
 /******************************** init ssCtx ***************************/
 function initSyncSetCtx(
