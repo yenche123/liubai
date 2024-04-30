@@ -69,7 +69,14 @@ export interface LiuUploadThread extends LiuUploadBase {
   tagIds?: string[]
   tagSearched?: string[]
   stateId?: string
+
+  // 只在 thread-post 时有效
   config?: ContentConfig
+
+  // 只在 thread-hourglass 时有效，且为必填
+  showCountdown?: boolean
+
+  
 }
 
 /** 存一些 评论 与动态和草稿相比独有的字段 */

@@ -259,11 +259,14 @@ async function toExecute(
       res1 = await toPostComment(ssCtx, taskId, comment)
       if(res1) updateAtomsAfterPosting(list, res1, "content")
     }
-    else if(taskType === "thread-edit") {
-
+    else if(taskType === "thread-edit" && thread) {
+      res1 = await toThreadEdit(ssCtx, taskId, thread)
     }
-    else if(taskType === "thread-hourglass") {
-
+    else if(taskType === "thread-hourglass" && thread) {
+      toThreadHourglass(ssCtx, taskId, thread)
+    }
+    else if(taskType === "undo_thread-hourglass" && thread) {
+      toThreadHourglass(ssCtx, taskId, thread)
     }
 
     if(!res1) {
@@ -557,7 +560,7 @@ async function toThreadEdit(
   ssCtx: SyncSetCtx,
   taskId: string,
   thread: LiuUploadThread,
-) {
+): Promise<SyncSetAtomRes> {
 
   // 1. inspect data technically
   const Sch_EditThread = vbot.object({
@@ -609,6 +612,15 @@ async function toThreadEdit(
   }
   await updatePartData(ssCtx, "content", sharedData.content_id, new_data)
   return { code: "0000", taskId }
+}
+
+/********************* Operation: Edit hourglass / showCountdown ********************/
+async function toThreadHourglass(
+  ssCtx: SyncSetCtx,
+  taskId: string,
+  thread: LiuUploadThread,
+) {
+  
 }
 
 
