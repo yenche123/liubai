@@ -565,6 +565,7 @@ async function toThreadEdit(
   // 1. inspect data technically
   const Sch_EditThread = vbot.object({
     id: vbot.string([vbot.minLength(8)]),
+    first_id: vbot.optional(vbot.string()),
 
     liuDesc: vbot.optional(vbot.array(vbot.any())),
     images: vbot.optional(vbot.array(Sch_Cloud_ImageStore)),
