@@ -355,22 +355,7 @@ async function toPostThread(
   thread: LiuUploadThread,
 ): Promise<SyncSetAtomRes> {
 
-  // 1. get shared data
-  const sharedData = await getSharedData_1(ssCtx, taskId, thread)
-  if(!sharedData.pass) {
-    return sharedData.result
-  }
-  const { 
-    spaceId,
-    first_id,
-    userId,
-    memberId,
-    enc_desc,
-    enc_images,
-    enc_files,
-  } = sharedData
-
-  // 2. inspect data technically
+  // 1. inspect data technically
   const ostate_list: OState[] = ["OK", "REMOVED"]
   const Sch_PostThread = vbot.object({
     first_id: vbot.string([vbot.minLength(20)]),
@@ -380,7 +365,7 @@ async function toPostThread(
     images: vbot.optional(vbot.array(Sch_Cloud_ImageStore)),
     files: vbot.optional(vbot.array(Sch_Cloud_FileStore)),
 
-    editedStamp: vbot.optional(vbot.number()),
+    editedStamp: vbot.number(),
     oState: vbot.picklist(ostate_list),
 
     title: vbot.optional(vbot.string()),
@@ -397,11 +382,26 @@ async function toPostThread(
     stateId: vbot.optional(vbot.string()),
     config: vbot.optional(Sch_ContentConfig),
   }, vbot.never())     // open strict mode
-  const res2 = vbot.safeParse(Sch_PostThread, thread)
-  if(!res2.success) {
-    const err2 = checker.getErrMsgFromIssues(res2.issues)
-    return { code: "E4000", taskId, errMsg: err2 }
+  const res1 = vbot.safeParse(Sch_PostThread, thread)
+  if(!res1.success) {
+    const err1 = checker.getErrMsgFromIssues(res1.issues)
+    return { code: "E4000", taskId, errMsg: err1 }
   }
+
+  // 2. get shared data
+  const sharedData = await getSharedData_1(ssCtx, taskId, thread)
+  if(!sharedData.pass) {
+    return sharedData.result
+  }
+  const { 
+    spaceId,
+    first_id,
+    userId,
+    memberId,
+    enc_desc,
+    enc_images,
+    enc_files,
+  } = sharedData
 
   // 3. inspect liuDesc and encrypt
   const aesKey = getAESKey() ?? ""
@@ -467,8 +467,29 @@ async function toPostComment(
   taskId: string,
   comment: LiuUploadComment,
 ): Promise<SyncSetAtomRes> {
+  // 1. inspect data technically
+  const Sch_PostComment = vbot.object({
+    first_id: vbot.string([vbot.minLength(20)]),
+    spaceId: vbot.string(),
+    
+    liuDesc: vbot.optional(vbot.array(vbot.any())),
+    images: vbot.optional(vbot.array(Sch_Cloud_ImageStore)),
+    files: vbot.optional(vbot.array(Sch_Cloud_FileStore)),
+    
+    editedStamp: vbot.number(),
 
-  // 1. get shared data
+    parentThread: vbot.optional(vbot.string()),
+    parentComment: vbot.optional(vbot.string()),
+    replyToComment: vbot.optional(vbot.string()),
+    createdStamp: vbot.number(),
+  }, vbot.never())
+  const res1 = vbot.safeParse(Sch_PostComment, comment)
+  if(!res1.success) {
+    const err1 = checker.getErrMsgFromIssues(res1.issues)
+    return { code: "E4000", taskId, errMsg: err1 }
+  }
+
+  // 2. get shared data
   const sharedData = await getSharedData_1(ssCtx, taskId, comment)
   if(!sharedData.pass) {
     return sharedData.result
@@ -483,28 +504,6 @@ async function toPostComment(
     enc_images, 
     enc_files, 
   } = sharedData
-
-  // 2. inspect data technically
-  const Sch_PostComment = vbot.object({
-    first_id: vbot.string([vbot.minLength(20)]),
-    spaceId: vbot.string(),
-    
-    liuDesc: vbot.optional(vbot.array(vbot.any())),
-    images: vbot.optional(vbot.array(Sch_Cloud_ImageStore)),
-    files: vbot.optional(vbot.array(Sch_Cloud_FileStore)),
-    
-    editedStamp: vbot.optional(vbot.number()),
-
-    parentThread: vbot.optional(vbot.string()),
-    parentComment: vbot.optional(vbot.string()),
-    replyToComment: vbot.optional(vbot.string()),
-    createdStamp: vbot.number(),
-  }, vbot.never())
-  const res2 = vbot.safeParse(Sch_PostComment, comment)
-  if(!res2.success) {
-    const err2 = checker.getErrMsgFromIssues(res2.issues)
-    return { code: "E4000", taskId, errMsg: err2 }
-  }
 
   // 3. get the workspace
   const workspace = await getData<Table_Workspace>(ssCtx, "workspace", spaceId)
@@ -560,13 +559,66 @@ async function toThreadEdit(
   thread: LiuUploadThread,
 ) {
 
+  // 1. inspect data technically
+  const Sch_EditThread = vbot.object({
+    id: vbot.string([vbot.minLength(8)]),
+
+    liuDesc: vbot.optional(vbot.array(vbot.any())),
+    images: vbot.optional(vbot.array(Sch_Cloud_ImageStore)),
+    files: vbot.optional(vbot.array(Sch_Cloud_FileStore)),
+
+    editedStamp: vbot.number(),
+    title: vbot.optional(vbot.string()),
+    calendarStamp: vbot.optional(vbot.number()),
+    remindStamp: vbot.optional(vbot.number()),
+    whenStamp: vbot.optional(vbot.number()),
+    remindMe: vbot.optional(Sch_LiuRemindMe),
+
+    tagIds: vbot.optional(vbot.array(vbot.string())),
+    tagSearched: vbot.optional(vbot.array(vbot.string())),
+    config: vbot.optional(Sch_ContentConfig),
+  })
+  const res1 = vbot.safeParse(Sch_EditThread, thread)
+  if(!res1.success) {
+    const err1 = checker.getErrMsgFromIssues(res1.issues)
+    return { code: "E4000", taskId, errMsg: err1 }
+  }
+
+  // 2. find the thread
+  const sharedData = await getSharedData_2(ssCtx, taskId, thread)
+  if(!sharedData.pass) return sharedData.result
+  
+  // 3. construct a new row of Table_Content
+  const new_data: Partial<Table_Content> = {
+    
+  }
+
+  
   
 }
 
 
 /***************************** helper functions ************************ */
 
-interface Gsdr_1_A {
+function canIEditTheContent(
+  ssCtx: SyncSetCtx,
+  content: Table_Content,
+) {
+
+  const { oState, infoType } = content
+  if(oState === "DELETED") return false
+  if(infoType === "COMMENT" && oState === "REMOVED") return false
+
+  const userId = ssCtx.me._id
+  if(content.user === userId) return true
+  if(infoType === "COMMENT") return false
+  const res = _amIInTheSpace(ssCtx, content.spaceId)
+  return res
+}
+
+
+
+interface Gsdr_A {
   pass: false
   result: SyncSetAtomRes
 }
@@ -582,7 +634,87 @@ interface Gsdr_1_B {
   enc_files?: CryptoCipherAndIV
 }
 
-type GetShareDataRes_1 = Gsdr_1_A | Gsdr_1_B
+interface Gsdr_2_B {
+  pass: true
+  content_id: string
+  enc_desc?: CryptoCipherAndIV
+  enc_images?: CryptoCipherAndIV
+  enc_files?: CryptoCipherAndIV
+}
+
+type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
+type GetShareDataRes_2 = Gsdr_A | Gsdr_2_B
+
+async function getSharedData_2(
+  ssCtx: SyncSetCtx,
+  taskId: string,
+  content: LiuUploadThread | LiuUploadComment,
+): Promise<GetShareDataRes_2> {
+  const content_id = content.id as string
+  const res1 = await getData<Table_Content>(ssCtx, "content", content_id)
+  if(!res1) {
+    return {
+      pass: false,
+      result: {
+        code: "E4004", taskId, errMsg: "the content cannot be found"
+      }
+    }
+  }
+
+  // 2. check permission
+  const res2 = canIEditTheContent(ssCtx, res1)
+  if(!res2) {
+    return {
+      pass: false,
+      result: {
+        code: "E4003", taskId, errMsg: "no permission to edit the thread"
+      }
+    }
+  }
+
+  // 3. check editedStamp
+  const editedStamp = content.editedStamp as number
+  if(res1.editedStamp > editedStamp) {
+    console.log("the content is newer than the thread")
+    return {
+      pass: false,
+      result: { code: "0001", taskId }
+    }
+  }
+  
+  // 4. inspect liuDesc and encrypt
+  const { liuDesc } = content
+  const aesKey = getAESKey() ?? ""
+  let enc_desc: CryptoCipherAndIV | undefined
+  if(liuDesc) {
+    const res4 = checker.isLiuContentArr(liuDesc)
+    if(!res4) {
+      return {
+        pass: false,
+        result: {
+          code: "E4000", taskId, errMsg: "liuDesc is illegal"
+        }
+      }
+    }
+    enc_desc = encryptDataWithAES(liuDesc, aesKey)
+  }
+
+  // 5. get enc_images enc_files
+  const { images, files } = content
+  const enc_images = images?.length ? encryptDataWithAES(images, aesKey) : undefined
+  const enc_files = files?.length ? encryptDataWithAES(files, aesKey) : undefined
+  // TODO: enc_search_text
+
+  return {
+    pass: true,
+    content_id,
+    enc_desc,
+    enc_images,
+    enc_files
+  }
+}
+
+
 
 /** get shared data for thread or comment */
 async function getSharedData_1(
