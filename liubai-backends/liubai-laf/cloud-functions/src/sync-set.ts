@@ -248,7 +248,14 @@ async function toExecute(
   for(let i=0; i<list.length; i++) {
     const v = list[i]
     const { taskType, taskId } = v
-    const { thread, comment, member, workspace } = v
+    const { 
+      thread, 
+      comment, 
+      member, 
+      workspace, 
+      collection,
+      draft,
+    } = v
 
     let res1: SyncSetAtomRes | undefined
     if(taskType === "thread-post" && thread) {
@@ -267,6 +274,69 @@ async function toExecute(
     }
     else if(taskType === "undo_thread-hourglass" && thread) {
       toThreadHourglass(ssCtx, taskId, thread)
+    }
+    else if(taskType === "collection-favorite" && collection) {
+
+    }
+    else if(taskType === "undo_collection-favorite" && collection) {
+
+    }
+    else if(taskType === "collection-react" && collection) {
+
+    }
+    else if(taskType === "undo_collection-react" && collection) {
+
+    }
+    else if(taskType === "thread-delete" && thread) {
+
+    }
+    else if(taskType === "undo_thread-delete" && thread) {
+
+    }
+    else if(taskType === "thread-state" && thread) {
+
+    }
+    else if(taskType === "undo_thread-state" && thread) {
+
+    }
+    else if(taskType === "thread-restore" && thread) {
+
+    }
+    else if(taskType === "thread-delete_forever" && thread) {
+
+    }
+    else if(taskType === "thread-pin" && thread) {
+
+    }
+    else if(taskType === "undo_thread-pin" && thread) {
+
+    }
+    else if(taskType === "thread-tag" && thread) {
+
+    }
+    else if(taskType === "comment-delete" && comment) {
+
+    }
+    else if(taskType === "comment-edit" && comment) {
+
+    }
+    else if(taskType === "workspace-tag" && workspace) {
+
+    }
+    else if(taskType === "workspace-state_config" && workspace) {
+
+    }
+    else if(taskType === "member-avatar" && member) {
+
+    }
+    else if(taskType === "member-nickname" && member) {
+
+    }
+    else if(taskType === "draft-set" && draft) {
+
+    }
+    else if(taskType === "draft-clear" && draft) {
+      
     }
 
     if(!res1) {
