@@ -14,6 +14,7 @@ import typeCheck from "~/utils/basic/type-check"
 import stateController from "~/utils/controllers/state-controller/state-controller"
 import type { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool"
+import liuApi from "~/utils/liu-api"
 
 export function useThreadList(
   props: TlProps,
@@ -27,11 +28,13 @@ export function useThreadList(
   // 获取命令 scroll-view 滚动到期望位置的控制器
   const svBottomUp = inject(svBottomUpKey)
 
+  const cssDetectOverflow = liuApi.canIUse.cssDetectTextOverflow()
   const tlData = reactive<TlData>({
     list: [],
     lastItemStamp: 0,
     hasReachBottom: false,
     requestRefreshNum: 0,
+    cssDetectOverflow,
   })
 
   const ctx: TlContext = {

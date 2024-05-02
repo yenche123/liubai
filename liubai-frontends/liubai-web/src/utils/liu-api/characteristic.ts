@@ -1,3 +1,5 @@
+import reg_exp from "~/config/regular-expressions"
+
 // 判断各种特征
 
 let isPC: boolean;
@@ -10,6 +12,8 @@ let isFeishu: boolean = false;
 let isInWebView: boolean = false;   // 是否在桌面应用 App 的 Webview 中，小程序也算
 let isFirefox: boolean = false;
 let isSafari: boolean = false;
+let isChrome: boolean = false;
+let chromeVersion: string | undefined;
 
 export interface GetChaRes {
   isPC: boolean
@@ -22,6 +26,8 @@ export interface GetChaRes {
   isInWebView: boolean
   isFirefox: boolean
   isSafari: boolean
+  isChrome: boolean
+  chromeVersion?: string
 }
 
 export const getCharacteristic = (): GetChaRes => {
@@ -83,7 +89,13 @@ export const getCharacteristic = (): GetChaRes => {
 
   // 判别浏览器
   if(ua.includes("firefox")) isFirefox = true
-  else if(ua.includes("chrome")) {}
+  else if(ua.includes("chrome")) {
+    isChrome = true
+
+    // get version of chrome
+    const c_version_m = ua.match(reg_exp.chrome_version)
+    chromeVersion = c_version_m ? c_version_m[1] : undefined
+  }
   else if(ua.includes("safari")) isSafari = true
 
   // 处理 iOS 13 之后的 iPad 的 userAgent 里没有 ipad 字段的问题
@@ -113,5 +125,7 @@ function _returnData(): GetChaRes {
     isInWebView,
     isFirefox,
     isSafari,
+    isChrome,
+    chromeVersion,
   }
 }

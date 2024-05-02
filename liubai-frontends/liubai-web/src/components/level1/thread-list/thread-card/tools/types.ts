@@ -15,6 +15,7 @@ export interface TcProps {
   showType: ThreadCardShowType
   showTxt?: TrueOrFalse
   isInCommentDetail: boolean
+  cssDetectOverflow: boolean
 }
 
 export interface TcEmits {

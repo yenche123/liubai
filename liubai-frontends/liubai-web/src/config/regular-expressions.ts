@@ -23,5 +23,7 @@ export default {
   url: /[\w\./:-]*\w{1,32}\.\w{2,6}[^\n\s\"\'\[\]，。！,\.]*/g,
 
   phone: /\+?\d[\d\-]{6,15}(?!\d)/g,
+
+  chrome_version: /chrome\/([\d\.]+)/,
   
 }

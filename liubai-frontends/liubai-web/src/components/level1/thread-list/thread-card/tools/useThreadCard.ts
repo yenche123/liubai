@@ -43,10 +43,21 @@ export function useThreadCard(
   if(displayType === "detail") isBriefing.value = false
 
   const onTapBriefing = (e: MouseEvent) => {
-    const { target, currentTarget } = e
+    const { target } = e
     if(liuApi.eventTargetIsSomeTag(target, "a")) return
     emit("tapbriefing")
     isBriefing.value = false
+  }
+
+  const onTapAll = (e: MouseEvent) => {
+    const { target } = e
+    if(liuApi.eventTargetIsSomeTag(target, "a")) return
+    
+    if(isBriefing.value) {
+      isBriefing.value = false
+      return
+    }
+    handleTapThreadCard(e, ctx)
   }
 
   const onTapThreadCard = (e: MouseEvent) => {
@@ -71,6 +82,7 @@ export function useThreadCard(
     editor,
     isBriefing,
     onTapBriefing,
+    onTapAll,
     onTapThreadCard,
     showMore,
     onMouseEnter,

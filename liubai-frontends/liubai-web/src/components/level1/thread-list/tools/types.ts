@@ -17,6 +17,7 @@ export interface TlData {
   lastItemStamp: number
   hasReachBottom: boolean
   requestRefreshNum: number    // 非 useThreadList 的函数，请求 useThreadList 去 loadList
+  cssDetectOverflow: boolean
 }
 
 export interface TlProps {

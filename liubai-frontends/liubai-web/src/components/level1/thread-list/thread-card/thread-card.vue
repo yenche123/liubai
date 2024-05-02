@@ -45,6 +45,10 @@ const props = defineProps({
   isInCommentDetail: {
     type: Boolean,
   },
+  cssDetectOverflow: {
+    type: Boolean,
+    default: false,
+  }
 })
 const emit = defineEmits<TcEmits>()
 const {
@@ -52,6 +56,7 @@ const {
   editor,
   isBriefing,
   onTapBriefing,
+  onTapAll,
   onTapThreadCard,
   showMore,
   onMouseEnter,
@@ -93,7 +98,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
       ></TcTopbar>
 
       <!-- 摘要 -->
-      <div v-if="threadData.briefing" v-show="isBriefing" 
+      <div v-if="!cssDetectOverflow && threadData.briefing" v-show="isBriefing" 
         class="tc-briefing"
         @click.stop="onTapBriefing"
       >
@@ -115,8 +120,14 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
       ></BwBubbleMenu>
 
       <!-- 全文 -->
-      <div v-if="threadData.content" v-show="!isBriefing" 
+      <div v-if="threadData.content" 
+        v-show="cssDetectOverflow || !isBriefing" 
         class="tc-content"
+        :class="{ 
+          'tc-content_briefing': cssDetectOverflow,
+          'tc-content_all': cssDetectOverflow && !isBriefing,
+        }"
+        @click.stop="onTapAll"
       >
         <EditorCore 
           ref="editorCoreRef"
@@ -124,6 +135,15 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
           :content="threadData.content"
           is-in-card
         ></EditorCore>
+
+        <!-- 支持 css overflow text 的 tcc-expand -->
+        <div class="tcc-expand" v-if="cssDetectOverflow && isBriefing">
+          <div class="tcc-mask"></div>
+          <div class="tcc-more">
+            <span>{{ t('common.checkMore') }}</span>
+          </div>
+        </div>
+        
       </div>
 
       <!-- 图片 -->
@@ -244,6 +264,65 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
     .tc-content {
       position: relative;
       cursor: auto;
+    }
+
+    .tc-content_briefing {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      overflow: hidden;
+      --trunc: false;
+      animation: check 1s;
+      animation-timeline: scroll(self);
+      padding-block-end: 20px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tc-content_all {
+      -webkit-line-clamp: 999;
+      padding-block-end: 0;
+      cursor: auto;
+      user-select: auto;
+    }
+
+    @keyframes check {
+      from, to {
+        --trunc: true;
+      }
+    }
+
+    .tcc-expand {
+      display: none;
+      width: 100%;
+      height: 70px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+
+      .tcc-mask {
+        width: 100%;
+        height: 70px;
+        position: relative;
+        background: var(--gradient-two);
+      }
+
+      .tcc-more {
+        font-size: var(--mini-font);
+        line-height: 1.5;
+        color: var(--main-note);
+        text-align: right;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+      }
+    }
+
+    @container style(--trunc: true) {
+      .tcc-expand {
+        display: initial;
+      }
     }
 
   }

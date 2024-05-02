@@ -33,6 +33,7 @@ const {
         :view-type="viewType"
         :show-type="item.showType"
         :show-txt="showTxt"
+        :css-detect-overflow="tlData.cssDetectOverflow"
         @newoperate="receiveOperation"
         @tapbriefing="whenTapBriefing"
       ></ThreadCard>
