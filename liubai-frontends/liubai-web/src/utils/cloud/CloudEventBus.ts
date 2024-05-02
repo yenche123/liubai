@@ -1,4 +1,4 @@
-import { ref, reactive, watch, type WatchStopHandle } from "vue"
+import { ref, reactive, watch, type WatchStopHandle, readonly } from "vue"
 import { 
   useRouteAndLiuRouter,
   type RouteAndLiuRouter
@@ -269,7 +269,7 @@ class CloudEventBus {
   // syncNum.value >= 1 as soon as everything has been ok and
   // has fetched the latest user info
   static getSyncNum() {
-    return this.syncNum
+    return readonly(this.syncNum)
   }
 
   /** call it after just logging in */
