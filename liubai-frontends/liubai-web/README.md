@@ -53,55 +53,49 @@ https://openmoji.org/
 
 1. `vc-` 开头的 css 类名，会跟 `vconsole` 库的样式冲突，请避免使用。
 
-2. `Volar Takeover Mode`: Vue 的单文件组件 SFCs (即 `.vue` 文件) 与 TS 一同工作时，会开启一个 TS language service 的实例，而原本的 `.ts` 文件则由 VS Code 内置的 TS language service 实例处理。一个项目里两个实例可能会引发性能问题，因此 Volar 提供 `Takeover 模式` 以同时支持两种文件，解决性能问题。
-   打开方式: `Ctrl + Shift + P`，输入 `built` 选择 `Extensions: Show Built-in Extensions`，在搜索框再输入 `typescript`（不要移除 `@builtin` 前缀），点击 `TypeScript and JavaScript Language Features` 的齿轮（设置）图标，选择 `Disable (Workspace)`，重新打开 VS Code 即完成设置。
-   2024-03-02 注: volar `2.0.0` 开始，弃用了 takeover 模式，所以请依照上述步骤确认 `TypeScript and JavaScript Language Features` 已经 Enable
+2. 升级 tiptap 下的依赖至最新，使用 `pnpm up "@tiptap/*" --latest`
 
-3. 开源前，记得移除 `.vscode/settings.json` 里的 `typescript.tsdk`
+3. 函数式获取应用个人信息（userId / memberId / spaceId / spaceType）上下文，使用 `checker.getMyContext()` 
 
-4. 升级 tiptap 下的依赖至最新，使用 `pnpm up "@tiptap/*" --latest`
+4. 使用 `umami.is` 的网站分析服务时，若出现官网打不开关于 `net::ERR_BLOCKED_BY_CLIENT` 的错误，那说明被浏览器的 AdBlock 插件拦截了，打开插件的 `Pause on this site` 选项即可。
 
-5. 函数式获取应用个人信息（userId / memberId / spaceId / spaceType）上下文，使用 `checker.getMyContext()` 
+5. `props` 有属性 `a` 是 `required: true` 时，不可以把 `props` 声明在 `types.ts` 文件里，因为 `.vue` 文件在 IDE 里读取时，会把 props 的实例读成类型的形式，这时会将 `a` 看成 `required: boolean` 而非 `required: true`，导致 TS 把 `props.a` 视作有可能为 `undefined`，造成后续编写代码需要多判断空值的问题。
 
-6. 使用 `umami.is` 的网站分析服务时，若出现官网打不开关于 `net::ERR_BLOCKED_BY_CLIENT` 的错误，那说明被浏览器的 AdBlock 插件拦截了，打开插件的 `Pause on this site` 选项即可。
+6. 定期执行 `pnpm run build` 虽然我们在开发时，运行 `pnpm run dev` 即可进行调试或预览，但是最终交给用户的代码依然需要运行前者这样的命令，若最终打包时出现大面积错误，修改起来会很痛苦，所以建议定期执行该命令，确保你所写的代码都能成功打包。
 
-7. `props` 有属性 `a` 是 `required: true` 时，不可以把 `props` 声明在 `types.ts` 文件里，因为 `.vue` 文件在 IDE 里读取时，会把 props 的实例读成类型的形式，这时会将 `a` 看成 `required: boolean` 而非 `required: true`，导致 TS 把 `props.a` 视作有可能为 `undefined`，造成后续编写代码需要多判断空值的问题。
+7. Keyboard Info: https://www.toptal.com/developers/keycode 可以查看键盘 keyboard 的 key
 
-8. 定期执行 `pnpm run build` 虽然我们在开发时，运行 `pnpm run dev` 即可进行调试或预览，但是最终交给用户的代码依然需要运行前者这样的命令，若最终打包时出现大面积错误，修改起来会很痛苦，所以建议定期执行该命令，确保你所写的代码都能成功打包。
+8.  在路由里 `cid` 已经被拿来作为 `threadId` 的昵称，那么姑且就用 `cid2` 作为 `commentId` 的昵称
 
-9. Keyboard Info: https://www.toptal.com/developers/keycode 可以查看键盘 keyboard 的 key
+9.  升级 `pdf-js` 的流程: 将分支切换到 `pdfjs` 上，删除所有 `public/lib/pdf-js` 下的文件，再黏贴最新的文件进该文件夹里，提交 `commit`；再切回 `main` 分支，运行 `git checkout -b dev-pdfjs`，然后再运行 `git merge pdfjs`，解决冲突、运行代码，确认都没问题后，再把 `dev-pdfjs` 合并进 `main`，最后再删除 `dev-pdfjs` 分支
 
-10. 在路由里 `cid` 已经被拿来作为 `threadId` 的昵称，那么姑且就用 `cid2` 作为 `commentId` 的昵称
+10. “新建工作区”“加入工作区”“退出工作区”“会修改到 User 表” 的操作，不要使用 sync-set 同步接口，因为这个操作影响太大了，若联网后云端拒绝创建，存在里头的动态和评论怎么办？会非常难处理。
 
-11. 升级 `pdf-js` 的流程: 将分支切换到 `pdfjs` 上，删除所有 `public/lib/pdf-js` 下的文件，再黏贴最新的文件进该文件夹里，提交 `commit`；再切回 `main` 分支，运行 `git checkout -b dev-pdfjs`，然后再运行 `git merge pdfjs`，解决冲突、运行代码，确认都没问题后，再把 `dev-pdfjs` 合并进 `main`，最后再删除 `dev-pdfjs` 分支
+11. 使用 https://npmgraph.js.org/ 查看依赖关系图
 
-12. “新建工作区”“加入工作区”“退出工作区”“会修改到 User 表” 的操作，不要使用 sync-set 同步接口，因为这个操作影响太大了，若联网后云端拒绝创建，存在里头的动态和评论怎么办？会非常难处理。
+12. 使用 `where node` 得知 `node` 的安装路径
 
-13. 使用 https://npmgraph.js.org/ 查看依赖关系图
+13. 只要 `云端` 和 `前端` 的数据结构（类型）有一丁点不一样，就必须使用不同的名称，以避免混淆。
 
-14. 使用 `where node` 得知 `node` 的安装路径
+14. `Enter` 的符号: ↵
 
-15. 只要 `云端` 和 `前端` 的数据结构（类型）有一丁点不一样，就必须使用不同的名称，以避免混淆。
+15. 一大坑点，关于密文的生成和解密，在 Node.JS 环境里请在 `Buffer` 域进行操作，比如 `Buffer` 域的加法为 `Buffer.concat(Buffer.from(bufferA, 'base64'), Buffer.from(bufferB))`。它与 `base64` 域的字符串的加减乘除运算，完全不等价！！！
 
-16. `Enter` 的符号: ↵
+16. 同步问题: 考虑放弃 `cloud_id` 改用 `first_id`，用后者表示本地创建时用的 `id`。若动态是在云端被创建的，比如第三方传递过来的，就将 `first_id` 设为与 `_id` 同值即可。视图层上 `v-for` 的 :key 全部使用 `first_id` 这样就不会有 `_id` 发生变化 `thread-card` 组件被销毁重建的问题了。
 
-17. 一大坑点，关于密文的生成和解密，在 Node.JS 环境里请在 `Buffer` 域进行操作，比如 `Buffer` 域的加法为 `Buffer.concat(Buffer.from(bufferA, 'base64'), Buffer.from(bufferB))`。它与 `base64` 域的字符串的加减乘除运算，完全不等价！！！
+17. 运行 `pnpm` 遭遇 `WARN GET https://registry.npmjs.org/依赖名称 error (ERR_SOCKET_TIMEOUT). Will retry in 10 seconds. 2 retries left` 的错误，这时可以打开 `WiFi-设置`，`详细资讯 - TCP/IP`，把设定 IPv6 切换成 `仅本地连接`，确定后再改回 `自动`，再重新运行一次 `pnpm` 看是否恢复，详见 https://github.com/pnpm/pnpm/issues/6434#issuecomment-1937315051
 
-18. 同步问题: 考虑放弃 `cloud_id` 改用 `first_id`，用后者表示本地创建时用的 `id`。若动态是在云端被创建的，比如第三方传递过来的，就将 `first_id` 设为与 `_id` 同值即可。视图层上 `v-for` 的 :key 全部使用 `first_id` 这样就不会有 `_id` 发生变化 `thread-card` 组件被销毁重建的问题了。
+18. 配置命令行的代理，以 MacOS 为例参考: https://fortune-sneeze-ade.notion.site/62baeed105624c6097f8983b4e462a9d?pvs=4
 
-19. 运行 `pnpm` 遭遇 `WARN GET https://registry.npmjs.org/依赖名称 error (ERR_SOCKET_TIMEOUT). Will retry in 10 seconds. 2 retries left` 的错误，这时可以打开 `WiFi-设置`，`详细资讯 - TCP/IP`，把设定 IPv6 切换成 `仅本地连接`，确定后再改回 `自动`，再重新运行一次 `pnpm` 看是否恢复，详见 https://github.com/pnpm/pnpm/issues/6434#issuecomment-1937315051
+19. 运行 `curl cip.cc` 查看当前命令行设置的代理
 
-20. 配置命令行的代理，以 MacOS 为例参考: https://fortune-sneeze-ade.notion.site/62baeed105624c6097f8983b4e462a9d?pvs=4
+20. 一个使用 Rust 编写的 node.js 版本管理工具 `fnm`，安装好后在项目根目录下运行 `eval "$(fnm env --use-on-cd)"` （以 MacOS 为例）开始使用，运行 `fnm current` 查看当前项目使用的 node.js 版本号。若全局电脑只想使用 LTS 的 node.js，那么是不需要使用 `fnm` 的，只要在 node.js 官网下载（升级时亦然）并安装即可。
 
-21. 运行 `curl cip.cc` 查看当前命令行设置的代理
+21. pnpm v9 起，可使用 `pnpm licenses list` 打印当前目录下所有第三方依赖的许可证信息
 
-22. 一个使用 Rust 编写的 node.js 版本管理工具 `fnm`，安装好后在项目根目录下运行 `eval "$(fnm env --use-on-cd)"` （以 MacOS 为例）开始使用，运行 `fnm current` 查看当前项目使用的 node.js 版本号。若全局电脑只想使用 LTS 的 node.js，那么是不需要使用 `fnm` 的，只要在 node.js 官网下载（升级时亦然）并安装即可。
+22. 若使用 homebrew 安装 pnpm，后续升级时也请使用 homebrew 的命令 `brew upgrade pnpm`；使用 `brew outdated` 可以查看 homebrew 安装的软件有哪些需要升级。
 
-23. pnpm v9 起，可使用 `pnpm licenses list` 打印当前目录下所有第三方依赖的许可证信息
-
-24. 若使用 homebrew 安装 pnpm，后续升级时也请使用 homebrew 的命令 `brew upgrade pnpm`；使用 `brew outdated` 可以查看 homebrew 安装的软件有哪些需要升级。
-
-25. 使用 css 作画 https://css-shape.com/
+23. 使用 css 作画 https://css-shape.com/
 
 ## 评论
 
