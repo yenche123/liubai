@@ -7,6 +7,7 @@ import { compression as viteCompression } from 'vite-plugin-compression2'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import Inspect from 'vite-plugin-inspect'
 import { qrcode } from 'vite-plugin-qrcode';
+import { visualizer } from "rollup-plugin-visualizer";
 
 const { version } = require("./package.json")
 
@@ -50,6 +51,12 @@ export default defineConfig({
 
     // show qrcode in dev mode
     qrcode(),
+
+    // visualize the result of building
+    visualizer({
+      filename: "analysis.html", // 文件名称
+      title: "Project Building Analysis",
+    }),
   ],
 
   server: {
