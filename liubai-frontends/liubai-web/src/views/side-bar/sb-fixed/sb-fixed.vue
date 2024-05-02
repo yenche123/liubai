@@ -3,12 +3,9 @@ import { initFixedSideBar } from "./index"
 import SbContent from '../sb-content/sb-content.vue';
 import SbTags from '../sb-tags/sb-tags.vue';
 import { useSbfTouch } from "./tools/useSbfTouch";
+import { type SbfProps } from "./tools/types"
 
-interface SbProps {
-  expandState: "tags" | ""
-}
-
-defineProps<SbProps>()
+defineProps<SbfProps>()
 
 const {
   TRANSITION_DURATION,
@@ -46,6 +43,12 @@ const {
     ></div>
 
     <div class="sf-container">
+
+      <!-- background image -->
+      <div class="sfc-bg">
+        <div class="sfc-bg-mask"></div>
+      </div>
+
       <!-- 主侧边栏 -->
       <div class="sf-box"
         :class="{ 'sf-main_hidden': expandState === 'tags' }"
@@ -161,6 +164,38 @@ const {
 .sf-other_show {
   opacity: 1;
   transform: translateX(-100%);
+}
+
+
+.sfc-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background-color: var(--sidebar-bg);
+  width: 100%;
+  height: 100%;
+}
+
+.sfc-bg::before {
+  width: 100%;
+  height: 100%;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: v-bind("bgSrc");
+  background-size: cover;
+  background-position: left;
+}
+
+.sfc-bg-mask {
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+  width: 100%;
+  height: 100%;
+  background: var(--frosted-glass);
 }
 
 

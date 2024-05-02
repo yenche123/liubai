@@ -1,4 +1,8 @@
 
+export interface SbfProps {
+  expandState: "tags" | ""
+  bgSrc: string
+}
 
 export interface SbfData {
   state: "closed" | "opening" | "opened" | "closing"

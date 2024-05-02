@@ -102,7 +102,10 @@ const {
   </div>
 
   <!-- fixed 布局、底部有黑色蒙层的 side-bar -->
-  <SbFixed :expand-state="expandState"></SbFixed>
+  <SbFixed 
+    :expand-state="expandState"
+    :bg-src="bgSrc"
+  ></SbFixed>
 
   <!-- 侧边栏关闭后，会显示在屏幕左下角的 open 按钮 -->
   <SbOpen
