@@ -33,8 +33,8 @@ export default {
   iframe_keys: ["outq", "gpt3", "xhs", "bing", "github"],
 
   // 用侧边栏还是详情页打开的分野界限
-  vice_detail_breakpoint: 932,   // 值得注意的是，当侧边栏被收起来时，会 -150 
-                                 // 变成 782，这个尺寸会大于 iPad Mini 的短边 768，使得其
+  vice_detail_breakpoint: 982,   // 值得注意的是，当侧边栏被收起来时，会 -150 
+                                 // 变成 832，这个尺寸会大于 iPad Mini 的短边 768，使得其
                                  // 短边为宽时，能点击跳转到 detail-page 而非打开 vice-view
                                  // 见 open-util.ts toWhatDetail()
 
@@ -48,7 +48,7 @@ export default {
                             // 由于 vice-view 不是 overflow: hidden，所以其不需要留太多间距
                             // drag-handle 可以超出 container 也没关系
 
-  sidebar_close_point: 600,   // 窗口宽度小于该尺寸，就会关闭 sidebar
+  sidebar_close_point: 650,   // 窗口宽度小于该尺寸，就会关闭 sidebar
   sidebar_open_point: 700,    // 窗口尺寸大于等于该尺寸，并且为 closed_by_auto 状态，就会自动展开 sidebar
   
   max_export_num: 300,        // 一次性导出时的最大条数，当加载的条数大于等于该值时，停止导出
