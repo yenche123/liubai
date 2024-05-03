@@ -25,5 +25,7 @@ export default {
   phone: /\+?\d[\d\-]{6,15}(?!\d)/g,
 
   chrome_version: /chrome\/([\d\.]+)/,
+
+  firefox_version: /firefox\/([\d\.]+)/,
   
 }
