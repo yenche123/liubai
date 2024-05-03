@@ -12,7 +12,12 @@ function viewTransitionApi() {
   return hasViewTransition
 }
 
-// reference: https://juejin.cn/post/7347221074704777226
+/** Using CSS to detect text overflow
+ *  https://juejin.cn/post/7347221074704777226
+ *  tech stacks:
+ *    CSS at-rule: @container: Style queries
+ *    CSS property: animation-timeline: scroll()
+ */
 function cssDetectTextOverflow() {
   const cha = getCharacteristic()
   if(!cha.isChrome || !cha.chromeVersion) return false
