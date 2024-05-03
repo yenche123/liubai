@@ -6,6 +6,7 @@ export type LocatedA = "popup" | "vice-view" | "main-view"
 export interface ContentConfig {
   showCountdown?: boolean
   allowComment?: boolean
+  lastToggleCountdown?: number
 }
 
 export type SearchType = "thread" | "comment" | "other"

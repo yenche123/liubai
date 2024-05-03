@@ -21,6 +21,10 @@ import type {
   LiuUploadTask,
   LiuUploadThread,
   LiuUploadComment,
+  LiuUploadCollection,
+  LiuUploadWorkspace,
+  LiuUploadMember,
+  LiuUploadDraft,
   SyncSetAtomRes,
   CryptoCipherAndIV,
   OState,
@@ -238,6 +242,11 @@ function checkBody(
 // 这样队列里的操作，如果有获取重复的数据时，不需要查询多次了
 // 更新时同理，若有更新一条数据多次时，只需要更新一次
 
+interface OperationOpt {
+  taskId: string
+  operateStamp: number
+}
+
 async function toExecute(
   body: Record<string, any>,
   ssCtx: SyncSetCtx,
@@ -247,7 +256,8 @@ async function toExecute(
 
   for(let i=0; i<list.length; i++) {
     const v = list[i]
-    const { taskType, taskId } = v
+    const { taskType, taskId, operateStamp } = v
+    const opt: OperationOpt = { taskId, operateStamp }
     const { 
       thread, 
       comment, 
@@ -259,84 +269,84 @@ async function toExecute(
 
     let res1: SyncSetAtomRes | undefined
     if(taskType === "thread-post" && thread) {
-      res1 = await toPostThread(ssCtx, taskId, thread)
+      res1 = await toPostThread(ssCtx, thread, opt)
       if(res1) updateAtomsAfterPosting(list, res1, "content")
     }
     else if(taskType === "comment-post" && comment) {
-      res1 = await toPostComment(ssCtx, taskId, comment)
+      res1 = await toPostComment(ssCtx, comment, opt)
       if(res1) updateAtomsAfterPosting(list, res1, "content")
     }
     else if(taskType === "thread-edit" && thread) {
-      res1 = await toThreadEdit(ssCtx, taskId, thread)
+      res1 = await toThreadEdit(ssCtx, thread, opt)
     }
     else if(taskType === "thread-hourglass" && thread) {
-      toThreadHourglass(ssCtx, taskId, thread)
+      toThreadHourglass(ssCtx, thread, opt)
     }
     else if(taskType === "undo_thread-hourglass" && thread) {
-      toThreadHourglass(ssCtx, taskId, thread)
+      toThreadHourglass(ssCtx, thread, opt)
     }
     else if(taskType === "collection-favorite" && collection) {
-
+      toCollectionFavorite(ssCtx, collection, opt)
     }
     else if(taskType === "undo_collection-favorite" && collection) {
-
+      toCollectionFavorite(ssCtx, collection, opt)
     }
     else if(taskType === "collection-react" && collection) {
-
+      toCollectionReact(ssCtx, collection, opt)
     }
     else if(taskType === "undo_collection-react" && collection) {
-
+      toCollectionReact(ssCtx, collection, opt)
     }
     else if(taskType === "thread-delete" && thread) {
-
+      toThread_OState(ssCtx, thread, opt)
     }
     else if(taskType === "undo_thread-delete" && thread) {
-
+      toThread_OState(ssCtx, thread, opt)
     }
     else if(taskType === "thread-state" && thread) {
-
+      toThreadState(ssCtx, thread, opt)
     }
     else if(taskType === "undo_thread-state" && thread) {
-
+      toThreadState(ssCtx, thread, opt)
     }
     else if(taskType === "thread-restore" && thread) {
-
+      toThread_OState(ssCtx, thread, opt)
     }
     else if(taskType === "thread-delete_forever" && thread) {
-
+      toThread_OState(ssCtx, thread, opt)
     }
     else if(taskType === "thread-pin" && thread) {
-
+      toThreadPin(ssCtx, thread, opt)
     }
     else if(taskType === "undo_thread-pin" && thread) {
-
+      toThreadPin(ssCtx, thread, opt)
     }
     else if(taskType === "thread-tag" && thread) {
-
+      toThreadTag(ssCtx, thread, opt)
     }
     else if(taskType === "comment-delete" && comment) {
-
+      toComment_OState(ssCtx, comment, opt)
     }
     else if(taskType === "comment-edit" && comment) {
-
+      toCommentEdit(ssCtx, comment, opt)
     }
     else if(taskType === "workspace-tag" && workspace) {
-
+      toWorkspaceTag(ssCtx, workspace, opt)
     }
     else if(taskType === "workspace-state_config" && workspace) {
-
+      toWorkspaceStateConfig(ssCtx, workspace, opt)
     }
     else if(taskType === "member-avatar" && member) {
-
+      toMemberAvatar(ssCtx, member, opt)
     }
     else if(taskType === "member-nickname" && member) {
-
+      toMemberNickname(ssCtx, member, opt)
     }
     else if(taskType === "draft-set" && draft) {
-
+      toDraftSet(ssCtx, draft, opt)
     }
     else if(taskType === "draft-clear" && draft) {
-      
+      toDraftClear(ssCtx, draft, opt)
     }
 
     if(!res1) {
@@ -424,9 +434,10 @@ function updateAtomsAfterPosting(
 /************************** Operation: Add a thread ************************/
 async function toPostThread(
   ssCtx: SyncSetCtx,
-  taskId: string,
   thread: LiuUploadThread,
+  opt: OperationOpt,
 ): Promise<SyncSetAtomRes> {
+  const { taskId } = opt
 
   // 1. inspect data technically
   const ostate_list: OState[] = ["OK", "REMOVED"]
@@ -537,9 +548,11 @@ async function toPostThread(
 /************************** Operation: Add a comment ************************/
 async function toPostComment(
   ssCtx: SyncSetCtx,
-  taskId: string,
   comment: LiuUploadComment,
+  opt: OperationOpt,
 ): Promise<SyncSetAtomRes> {
+  const { taskId } = opt
+
   // 1. inspect data technically
   const Sch_PostComment = vbot.object({
     first_id: vbot.string([vbot.minLength(20)]),
@@ -628,9 +641,10 @@ async function toPostComment(
 /************************** Operation: Edit a thread ************************/
 async function toThreadEdit(
   ssCtx: SyncSetCtx,
-  taskId: string,
   thread: LiuUploadThread,
+  opt: OperationOpt,
 ): Promise<SyncSetAtomRes> {
+  const { taskId } = opt
 
   // 1. inspect data technically
   const Sch_EditThread = vbot.object({
@@ -688,11 +702,153 @@ async function toThreadEdit(
 /********************* Operation: Edit hourglass / showCountdown ********************/
 async function toThreadHourglass(
   ssCtx: SyncSetCtx,
-  taskId: string,
   thread: LiuUploadThread,
+  opt: OperationOpt,
 ) {
+  const { taskId, operateStamp } = opt
   
 }
+
+/********************* Operation: favorite ********************/
+async function toCollectionFavorite(
+  ssCtx: SyncSetCtx,
+  collection: LiuUploadCollection,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
+/********************* Operation: add or delete emoji ********************/
+async function toCollectionReact(
+  ssCtx: SyncSetCtx,
+  collection: LiuUploadCollection,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
+/***************** Operation: operate oState of a thread *************/
+async function toThread_OState(
+  ssCtx: SyncSetCtx,
+  thread: LiuUploadThread,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
+/***************** Operation: set a state of a thread (including undo) ***********/
+async function toThreadState(
+  ssCtx: SyncSetCtx,
+  thread: LiuUploadThread,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
+/***************** Operation: pin a thread (including undo) ***********/
+async function toThreadPin(
+  ssCtx: SyncSetCtx,
+  thread: LiuUploadThread,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
+/***************** Operation: edit tags of a thread ***********/
+async function toThreadTag(
+  ssCtx: SyncSetCtx,
+  thread: LiuUploadThread,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
+/***************** Operation: update comment's oState ***********/
+async function toComment_OState(
+  ssCtx: SyncSetCtx,
+  comment: LiuUploadComment,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
+/***************** Operation: edit a comment ***********/
+async function toCommentEdit(
+  ssCtx: SyncSetCtx,
+  comment: LiuUploadComment,
+  opt: OperationOpt,
+) {
+  const { taskId } = opt
+  
+}
+
+/***************** Operation: update workspace's tag ***********/
+async function toWorkspaceTag(
+  ssCtx: SyncSetCtx,
+  workspace: LiuUploadWorkspace,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
+/*********** Operation: update workspace's state_config ****/
+async function toWorkspaceStateConfig(
+  ssCtx: SyncSetCtx,
+  workspace: LiuUploadWorkspace,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
+/*********** Operation: update member's avatar ****/
+async function toMemberAvatar(
+  ssCtx: SyncSetCtx,
+  member: LiuUploadMember,
+  opt: OperationOpt,
+) {
+  const { taskId } = opt
+  
+}
+
+/*********** Operation: update member's nickname ****/
+async function toMemberNickname(
+  ssCtx: SyncSetCtx,
+  member: LiuUploadMember,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
+/*********** Operation: set draft ****/
+async function toDraftSet(
+  ssCtx: SyncSetCtx,
+  member: LiuUploadDraft,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
+/*********** Operation: clear draft ****/
+async function toDraftClear(
+  ssCtx: SyncSetCtx,
+  member: LiuUploadDraft,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  
+}
+
 
 
 /***************************** helper functions ************************ */

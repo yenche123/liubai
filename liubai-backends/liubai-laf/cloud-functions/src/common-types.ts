@@ -129,6 +129,7 @@ interface TagView {
 export interface ContentConfig {
   showCountdown?: boolean
   allowComment?: boolean
+  lastToggleCountdown?: number    // last stamp when user toggle showCountdown
 }
 
 export const Sch_ContentConfig = vbot.object({
