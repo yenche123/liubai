@@ -638,6 +638,8 @@ export interface SyncSetCtx {
   space_ids: string[]
 }
 
+export type SyncSetTable = Table_Content | Table_Draft | Table_Member | Table_Workspace
+
 export interface SyncSetAtomRes {
   code: string
   taskId: string

@@ -29,6 +29,7 @@ import type {
   CryptoCipherAndIV,
   OState,
   Res_SyncSet_Cloud,
+  SyncSetTable,
 } from "@/common-types"
 import { 
   Sch_Simple_SyncSetAtom,
@@ -280,10 +281,10 @@ async function toExecute(
       res1 = await toThreadEdit(ssCtx, thread, opt)
     }
     else if(taskType === "thread-hourglass" && thread) {
-      toThreadHourglass(ssCtx, thread, opt)
+      res1 = await toThreadHourglass(ssCtx, thread, opt)
     }
     else if(taskType === "undo_thread-hourglass" && thread) {
-      toThreadHourglass(ssCtx, thread, opt)
+      res1 = await toThreadHourglass(ssCtx, thread, opt)
     }
     else if(taskType === "collection-favorite" && collection) {
       toCollectionFavorite(ssCtx, collection, opt)
@@ -704,9 +705,39 @@ async function toThreadHourglass(
   ssCtx: SyncSetCtx,
   thread: LiuUploadThread,
   opt: OperationOpt,
-) {
+): Promise<SyncSetAtomRes> {
   const { taskId, operateStamp } = opt
-  
+
+  // 1. inspect data technically
+  const Sch_Hourglass = vbot.object({
+    id: vbot.string([vbot.minLength(8)]),
+    first_id: vbot.optional(vbot.string()),
+    showCountdown: vbot.boolean(),
+  })
+  const res1 = vbot.safeParse(Sch_Hourglass, thread)
+  if(!res1.success) {
+    const err1 = checker.getErrMsgFromIssues(res1.issues)
+    return { code: "E4000", taskId, errMsg: err1 }
+  }
+
+  // 2. find the thread & check permission
+  const res2 = await getSharedData_3(ssCtx, taskId, thread)
+  if(!res2.pass) return res2.result
+
+  // 3. check if operateStamp is greater than lastToggleCountdown
+  const { content_id: id, oldContent } = res2
+  const cfg = oldContent.config ?? {}
+  const stamp = cfg.lastToggleCountdown ?? 1
+  if(stamp >= operateStamp) {
+    return { code: "0001", taskId }
+  }
+
+  cfg.showCountdown = thread.showCountdown as boolean
+  cfg.lastToggleCountdown = operateStamp
+
+  await updatePartData<Table_Content>(ssCtx, "content", id, { config: cfg })
+
+  return { code: "0000", taskId }
 }
 
 /********************* Operation: favorite ********************/
@@ -896,14 +927,22 @@ interface Gsdr_2_B {
   enc_files?: CryptoCipherAndIV
 }
 
+interface Gsdr_3_B {
+  pass: true
+  content_id: string
+  oldContent: Table_Content
+}
+
 type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
 type GetShareDataRes_2 = Gsdr_A | Gsdr_2_B
+type GetShareDataRes_3 = Gsdr_A | Gsdr_3_B
 
-async function getSharedData_2(
+async function getSharedData_3(
   ssCtx: SyncSetCtx,
   taskId: string,
   content: LiuUploadThread | LiuUploadComment,
-): Promise<GetShareDataRes_2> {
+): Promise<GetShareDataRes_3> {
+  // 1. find the content
   const content_id = content.id as string
   const res1 = await getData<Table_Content>(ssCtx, "content", content_id)
   if(!res1) {
@@ -926,9 +965,29 @@ async function getSharedData_2(
     }
   }
 
-  // 3. check editedStamp
+  return {
+    pass: true,
+    content_id,
+    oldContent: res1,
+  }
+}
+
+async function getSharedData_2(
+  ssCtx: SyncSetCtx,
+  taskId: string,
+  content: LiuUploadThread | LiuUploadComment,
+): Promise<GetShareDataRes_2> {
+
+  // 1. get oldContent & content_id
+  const res1 = await getSharedData_3(ssCtx, taskId, content)
+  if(!res1.pass) {
+    return res1
+  }
+  const { content_id, oldContent } = res1
+
+  // 2. check editedStamp
   const editedStamp = content.editedStamp as number
-  if(res1.editedStamp > editedStamp) {
+  if(oldContent.editedStamp > editedStamp) {
     console.log("the content is newer than the thread")
     return {
       pass: false,
@@ -936,13 +995,13 @@ async function getSharedData_2(
     }
   }
   
-  // 4. inspect liuDesc and encrypt
+  // 3. inspect liuDesc and encrypt
   const { liuDesc } = content
   const aesKey = getAESKey() ?? ""
   let enc_desc: CryptoCipherAndIV | undefined
   if(liuDesc) {
-    const res4 = checker.isLiuContentArr(liuDesc)
-    if(!res4) {
+    const res3 = checker.isLiuContentArr(liuDesc)
+    if(!res3) {
       return {
         pass: false,
         result: {
@@ -953,7 +1012,7 @@ async function getSharedData_2(
     enc_desc = encryptDataWithAES(liuDesc, aesKey)
   }
 
-  // 5. get enc_images enc_files
+  // 4. get enc_images enc_files
   const { images, files } = content
   const enc_images = images?.length ? encryptDataWithAES(images, aesKey) : undefined
   const enc_files = files?.length ? encryptDataWithAES(files, aesKey) : undefined
@@ -962,7 +1021,7 @@ async function getSharedData_2(
   return {
     pass: true,
     content_id,
-    oldContent: res1,
+    oldContent,
     enc_desc,
     enc_images,
     enc_files
@@ -1139,17 +1198,19 @@ async function getData<T>(
 }
 
 // update part data
-async function updatePartData<T>(
+async function updatePartData<T extends SyncSetTable>(
   ssCtx: SyncSetCtx,
   key: keyof SyncSetCtx,
   id: string,
   partData: Partial<T>,
 ) {
-
   if(typeof key !== "string") {
     throw new Error("key must be string")
   }
-
+  if(!partData.updatedStamp) {
+    partData.updatedStamp = getNowStamp()
+  }
+  
   const map = ssCtx[key] as Map<string, SyncSetCtxAtom<T>>
   const row = map.get(id)
   if(row) {

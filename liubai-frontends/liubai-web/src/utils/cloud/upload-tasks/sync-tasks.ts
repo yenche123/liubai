@@ -69,10 +69,10 @@ async function afterSyncSet(
   results: SyncSetAtomRes[],
   atoms: SyncSetAtom[],
 ) {
+
+  // 1. those results have new ids
   const list: SyncStoreAtom[] = []
 
-  // the ids of upload_tasks that need to be deleted
-  const delete_list: string[] = []
   for(let i=0; i<results.length; i++) {
     const v = results[i]
     const { code, taskId, first_id, new_id } = v
@@ -108,38 +108,14 @@ async function afterSyncSet(
         list.push({ whichType: "collection", first_id, new_id })
       }
     }
-
-    // push taskId into delete_list
-    delete_list.push(taskId)
-
-    // remove the item from atoms
-    atoms.splice(idx, 1)
   }
 
-  // the ids of upload_tasks that need to be updated into "waiting"
-  const waiting_list = atoms.map(v => v.taskId)
+
+  const delete_list = atoms.map(v => v.taskId)
 
   dataHasNewIds(list)
   await deleteUploadTasks(delete_list)
-  await tackleFailedUploadTasks(waiting_list)
   return true
-}
-
-
-async function tackleFailedUploadTasks(
-  waiting_list: string[]
-) {
-  const len = waiting_list.length
-  if(len < 1) return
-
-  console.warn(`共有 ${len} 个任务上传失败`)
-  console.log(`现在去修改为 "waiting"`)
-  console.log(" ")
-
-  for(let i=0; i<waiting_list.length; i++) {
-    const id = waiting_list[i]
-    await uut.changeProgressType(id, "waiting", true)
-  }
 }
 
 async function deleteUploadTasks(
@@ -193,8 +169,6 @@ async function replaceInSpecificTable<T extends ReplaceTable>(
   // 4. delete these old data
   await table.bulkDelete(delete_ids)
 }
-
-
 
 async function dataHasNewIds(
   list: SyncStoreAtom[],
