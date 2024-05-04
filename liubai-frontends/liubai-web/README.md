@@ -48,6 +48,8 @@ https://svgl.vercel.app/    聚焦各大 Logo 的 SVG
 
 https://openmoji.org/
 
+https://svgl.app/   收录各品牌的 logo
+
 
 ## 一些常用碎片
 
