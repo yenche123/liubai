@@ -144,6 +144,7 @@ export interface CollectionLocalTable extends BaseLocalTable {
   spaceType: SpaceType
   content_id: string
   emoji?: string        // 经 encodeURIComponent() 的表情
+  operateStamp?: number
 }
 
 

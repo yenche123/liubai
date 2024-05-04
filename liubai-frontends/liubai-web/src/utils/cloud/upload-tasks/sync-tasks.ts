@@ -90,7 +90,7 @@ async function afterSyncSet(
       return false
     }
 
-    const completed = code === "0000" || code === "0001"
+    const completed = code === "0000" || code === "0001" || code === "0002"
     if(!completed) continue
 
     const { taskType } = atom

@@ -49,12 +49,18 @@ export type BaseIsOn = "Y" | "N"
 
 // 内容的 oState
 export type OState = "OK" | "REMOVED" | "DELETED"
+
 // 表态、收藏 的 oState
-export type OState_2 = "OK" | "CANCELED"
+export const oState_2s = ["OK", "CANCELED"] as const
+export type OState_2 = typeof oState_2s[number]
+export const Sch_OState_2 = vbot.picklist(oState_2s)
+
 // member 的 oState
 export type OState_3 = "OK" | "LEFT" | "DEACTIVATED" | "DELETED"
+
 // user 的 oState
 export type OState_User = "NORMAL" | "DEACTIVATED" | "LOCK" | "REMOVED" | "DELETED"
+
 // draft 的 oState
 export type OState_Draft = "OK" | "POSTED" | "DELETED"
 
@@ -83,6 +89,9 @@ export const supportedLocales = [
 export type SupportedLocale = typeof supportedLocales[number]
 export const Sch_SupportedLocale = vbot.picklist(supportedLocales)
 export type LocalLocale = SupportedLocale | "system"
+
+// validate id's min length
+export const Sch_Id = vbot.string([vbot.minLength(8)])
 
 interface BaseTable {
   _id: string
@@ -630,6 +639,7 @@ export interface SyncSetCtx {
   draft: Map<string, SyncSetCtxAtom<Table_Draft>>
   member: Map<string, SyncSetCtxAtom<Table_Member>>
   workspace: Map<string, SyncSetCtxAtom<Table_Workspace>>
+  collection: Map<string, SyncSetCtxAtom<Table_Collection>>
 
   // my data
   me: Table_User
@@ -638,7 +648,8 @@ export interface SyncSetCtx {
   space_ids: string[]
 }
 
-export type SyncSetTable = Table_Content | Table_Draft | Table_Member | Table_Workspace
+export type SyncSetTable = Table_Content | 
+  Table_Draft | Table_Member | Table_Workspace | Table_Collection
 
 export interface SyncSetAtomRes {
   code: string
@@ -796,6 +807,7 @@ export interface Table_Collection extends BaseTable {
   spaceId: string
   spaceType: SpaceType
   content_id: string
+  operateStamp?: number
   emoji?: string        // 经 encodeURIComponent() 的表情
 }
 

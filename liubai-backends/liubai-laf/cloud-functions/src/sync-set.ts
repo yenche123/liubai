@@ -30,6 +30,7 @@ import type {
   OState,
   Res_SyncSet_Cloud,
   SyncSetTable,
+  Table_Collection,
 } from "@/common-types"
 import { 
   Sch_Simple_SyncSetAtom,
@@ -37,6 +38,8 @@ import {
   Sch_Cloud_FileStore,
   Sch_ContentConfig,
   Sch_LiuRemindMe,
+  Sch_OState_2,
+  Sch_Id,
 } from "@/common-types"
 import { 
   getNowStamp, 
@@ -287,10 +290,10 @@ async function toExecute(
       res1 = await toThreadHourglass(ssCtx, thread, opt)
     }
     else if(taskType === "collection-favorite" && collection) {
-      toCollectionFavorite(ssCtx, collection, opt)
+      res1 = await toCollectionFavorite(ssCtx, collection, opt)
     }
     else if(taskType === "undo_collection-favorite" && collection) {
-      toCollectionFavorite(ssCtx, collection, opt)
+      res1 = await toCollectionFavorite(ssCtx, collection, opt)
     }
     else if(taskType === "collection-react" && collection) {
       toCollectionReact(ssCtx, collection, opt)
@@ -649,7 +652,7 @@ async function toThreadEdit(
 
   // 1. inspect data technically
   const Sch_EditThread = vbot.object({
-    id: vbot.string([vbot.minLength(8)]),
+    id: Sch_Id,
     first_id: vbot.optional(vbot.string()),
 
     liuDesc: vbot.optional(vbot.array(vbot.any())),
@@ -710,10 +713,10 @@ async function toThreadHourglass(
 
   // 1. inspect data technically
   const Sch_Hourglass = vbot.object({
-    id: vbot.string([vbot.minLength(8)]),
+    id: Sch_Id,
     first_id: vbot.optional(vbot.string()),
     showCountdown: vbot.boolean(),
-  })
+  }, vbot.never())
   const res1 = vbot.safeParse(Sch_Hourglass, thread)
   if(!res1.success) {
     const err1 = checker.getErrMsgFromIssues(res1.issues)
@@ -729,7 +732,7 @@ async function toThreadHourglass(
   const cfg = oldContent.config ?? {}
   const stamp = cfg.lastToggleCountdown ?? 1
   if(stamp >= operateStamp) {
-    return { code: "0001", taskId }
+    return { code: "0002", taskId }
   }
 
   cfg.showCountdown = thread.showCountdown as boolean
@@ -747,7 +750,68 @@ async function toCollectionFavorite(
   opt: OperationOpt,
 ) {
   const { taskId, operateStamp } = opt
-  
+
+  // 1. inspect data technically
+  const Sch_Favorite = vbot.object({
+    id: vbot.optional(Sch_Id),
+    first_id: Sch_Id,
+    oState: Sch_OState_2,
+    content_id: Sch_Id,
+  }, vbot.never())
+  const res1 = vbot.safeParse(Sch_Favorite, collection)
+  if(!res1.success) {
+    const err1 = checker.getErrMsgFromIssues(res1.issues)
+    return { code: "E4000", taskId, errMsg: err1 }
+  }
+
+  // 2. if collection.id exists
+  const id = collection.id
+  const newOState = collection.oState
+  if(id) {
+    const res2 = await getSharedData_4(ssCtx, taskId, id)
+    if(!res2.pass) return res2.result
+    const { oldCollection } = res2
+    if(oldCollection.oState === newOState) {
+      return { code: "0001", taskId }
+    }
+    const oldStamp = oldCollection.operateStamp ?? 1
+    if(oldStamp >= operateStamp) {
+      return { code: "0002", taskId }
+    }
+
+    const u = { oState: newOState, operateStamp }
+    await updatePartData<Table_Collection>(ssCtx, "collection", id, u)
+    return { code: "0000", taskId }
+  }
+
+  // 3. check permission of content
+  const { first_id, content_id } = collection
+  const res3 = await getSharedData_5(ssCtx, taskId, content_id)
+  if(!res3.pass) return res3.result
+
+  const { infoType, spaceId, spaceType } = res3.oldContent
+
+  // 4. construct a new row of Table_Collection
+  const b4 = getBasicStampWhileAdding()
+  const newRow: Partial<Table_Collection> = {
+    ...b4,
+    first_id,
+    oState: newOState,
+    user: res3.userId,
+    member: res3.memberId,
+    infoType: "FAVORITE",
+    forType: infoType,
+    spaceId: spaceId,
+    spaceType,
+    content_id,
+    operateStamp,
+  }
+  const new_id = await insertData(ssCtx, "collection", newRow)
+  if(!new_id) {
+    return { code: "E5001", taskId, errMsg: "inserting data failed" }
+  }
+
+  return { code: "0000", taskId, first_id, new_id }
 }
 
 /********************* Operation: add or delete emoji ********************/
@@ -757,6 +821,10 @@ async function toCollectionReact(
   opt: OperationOpt,
 ) {
   const { taskId, operateStamp } = opt
+  const Sch_React = vbot.object({
+
+  }, vbot.never())
+  
   
 }
 
@@ -933,10 +1001,102 @@ interface Gsdr_3_B {
   oldContent: Table_Content
 }
 
+interface Gsdr_4_B {
+  pass: true
+  oldCollection: Table_Collection
+}
+
+interface Gsdr_5_B {
+  pass: true
+  oldContent: Table_Content
+  userId: string
+  memberId?: string
+}
+
 type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
 type GetShareDataRes_2 = Gsdr_A | Gsdr_2_B
 type GetShareDataRes_3 = Gsdr_A | Gsdr_3_B
+type GetShareDataRes_4 = Gsdr_A | Gsdr_4_B
+type GetShareDataRes_5 = Gsdr_A | Gsdr_5_B
 
+// check out content for reaction or favorite
+async function getSharedData_5(
+  ssCtx: SyncSetCtx,
+  taskId: string,
+  content_id: string,
+): Promise<GetShareDataRes_5> {
+
+  // 1. get content
+  const oldContent = await getData<Table_Content>(ssCtx, "content", content_id)
+  if(!oldContent) {
+    return {
+      pass: false,
+      result: {
+        code: "E4004", taskId, errMsg: "the content cannot be found"
+      }
+    } 
+  }
+
+  // 2. check out permission & get memberId
+  const userId = ssCtx.me._id
+  if(userId === oldContent.user) {
+    const mId = oldContent.member
+    return { pass: true, oldContent, userId, memberId: mId }
+  }
+
+  const res = _amIInTheSpace(ssCtx, oldContent.spaceId)
+  if(!res) {
+    if(oldContent.visScope === "PUBLIC") {
+      return { pass: true, oldContent, userId }
+    }
+    return {
+      pass: false,
+      result: {
+        code: "E4003", taskId, 
+        errMsg: "no permission to collect or react the content",
+      }
+    }
+  }
+
+  const memberId = await getMyMemberId(ssCtx, userId, oldContent.spaceId)
+  return { pass: true, oldContent, userId, memberId }
+}
+
+// get old collection
+async function getSharedData_4(
+  ssCtx: SyncSetCtx,
+  taskId: string,
+  collection_id: string,
+): Promise<GetShareDataRes_4> {
+
+  // 1. get data
+  const oldCollection = await getData<Table_Collection>(
+    ssCtx, "collection", collection_id
+  )
+  if(!oldCollection) {
+    return {
+      pass: false,
+      result: {
+        code: "E4004", taskId, errMsg: "the collection cannot be found"
+      }
+    }
+  }
+
+  // 2. check permission
+  const userId = ssCtx.me._id
+  if(userId !== oldCollection.user) {
+    return {
+      pass: false,
+      result: {
+        code: "E4003", taskId, errMsg: "no permission to edit the collection"
+      }
+    }
+  }
+  
+  return { pass: true, oldCollection }
+}
+
+// get old content
 async function getSharedData_3(
   ssCtx: SyncSetCtx,
   taskId: string,
@@ -991,7 +1151,7 @@ async function getSharedData_2(
     console.log("the content is newer than the thread")
     return {
       pass: false,
-      result: { code: "0001", taskId }
+      result: { code: "0002", taskId }
     }
   }
   
@@ -1127,6 +1287,7 @@ function initSyncSetCtx(
     draft: new Map<string, SyncSetCtxAtom<Table_Draft>>(),
     member: new Map<string, SyncSetCtxAtom<Table_Member>>(),
     workspace: new Map<string, SyncSetCtxAtom<Table_Workspace>>(),
+    collection: new Map<string, SyncSetCtxAtom<Table_Collection>>(),
     me: user,
     space_ids,
   }
@@ -1276,23 +1437,18 @@ async function toUpdateTable<T>(
 
 // insert data
 // if ok, return a new id
-async function insertData<T extends Table_Content | Table_Draft>(
+type T_InsertData = Table_Content | Table_Draft | Table_Collection
+async function insertData<T extends T_InsertData>(
   ssCtx: SyncSetCtx,
-  key: "content" | "draft",
+  key: "content" | "draft" | "collection",
   data: Partial<T>,
 ) {
-  const now = getNowStamp()
-  const newData: Partial<T> = {
-    insertedStamp: now,
-    updatedStamp: now,
-    ...data,
-  }
   const col_name = key[0].toUpperCase() + key.substring(1)
-  const res = await db.collection(col_name).add(newData)
+  const res = await db.collection(col_name).add(data)
   const id = getDocAddId(res)
   if(!id) return
 
-  const completedData = { ...newData, _id: id } as T
+  const completedData = { ...data, _id: id } as T
   const map = ssCtx[key] as Map<string, SyncSetCtxAtom<T>>
   const atom: SyncSetCtxAtom<T> = { data: completedData }
   map.set(id, atom)
