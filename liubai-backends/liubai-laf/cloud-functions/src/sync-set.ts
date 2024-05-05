@@ -296,10 +296,10 @@ async function toExecute(
       res1 = await toCollectionFavorite(ssCtx, collection, opt)
     }
     else if(taskType === "collection-react" && collection) {
-      toCollectionReact(ssCtx, collection, opt)
+      res1 = await toCollectionReact(ssCtx, collection, opt)
     }
     else if(taskType === "undo_collection-react" && collection) {
-      toCollectionReact(ssCtx, collection, opt)
+      res1 = await toCollectionReact(ssCtx, collection, opt)
     }
     else if(taskType === "thread-delete" && thread) {
       toThread_OState(ssCtx, thread, opt)
@@ -748,7 +748,7 @@ async function toCollectionFavorite(
   ssCtx: SyncSetCtx,
   collection: LiuUploadCollection,
   opt: OperationOpt,
-) {
+): Promise<SyncSetAtomRes> {
   const { taskId, operateStamp } = opt
 
   // 1. inspect data technically
@@ -784,27 +784,96 @@ async function toCollectionFavorite(
     return { code: "0000", taskId }
   }
 
-  // 3. check permission of content
-  const { first_id, content_id } = collection
-  const res3 = await getSharedData_5(ssCtx, taskId, content_id)
-  if(!res3.pass) return res3.result
+  // 3. handle shared logic
+  const res3 = await toCollectionShared(ssCtx, collection, opt, "FAVORITE")
+  return res3
+}
 
-  const { infoType, spaceId, spaceType } = res3.oldContent
+/********************* Operation: add or delete emoji ********************/
+async function toCollectionReact(
+  ssCtx: SyncSetCtx,
+  collection: LiuUploadCollection,
+  opt: OperationOpt,
+): Promise<SyncSetAtomRes> {
+  const { taskId, operateStamp } = opt
 
-  // 4. construct a new row of Table_Collection
+  // 1. inspect data technically
+  const Sch_React = vbot.object({
+    id: vbot.optional(Sch_Id),
+    first_id: Sch_Id,
+    oState: Sch_OState_2,
+    content_id: Sch_Id,
+    emoji: vbot.string(), // 存储 emoji 的 encodeURIComponent()
+  }, vbot.never())
+  const res1 = vbot.safeParse(Sch_React, collection)
+  if(!res1.success) {
+    const err1 = checker.getErrMsgFromIssues(res1.issues)
+    return { code: "E4000", taskId, errMsg: err1 }
+  }
+
+  // 2. if collection.id exists
+  const id = collection.id
+  const newOState = collection.oState
+  const newEmoji = collection.emoji as string
+  if(id) {
+    const res2 = await getSharedData_4(ssCtx, taskId, id)
+    if(!res2.pass) return res2.result
+    const { oldCollection } = res2
+    const oldEmoji = oldCollection.emoji
+    const oldOState = oldCollection.oState
+    if(oldEmoji === newEmoji && oldOState === newOState) {
+      return { code: "0001", taskId }
+    }
+    const oldStamp = oldCollection.operateStamp ?? 1
+    if(oldStamp >= operateStamp) {
+      return { code: "0002", taskId }
+    }
+    const u = {
+      oState: newOState,
+      emoji: newEmoji,
+      operateStamp,
+    }
+    await updatePartData<Table_Collection>(ssCtx, "collection", id, u)
+    return { code: "0000", taskId }
+  }
+
+  // 3. handle shared logic
+  const res3 = await toCollectionShared(ssCtx, collection, opt, "EXPRESS")
+  return res3
+}
+
+
+// shared logic if conllection.id doesn't exist in
+// toCollectionFavorite & toCollectionReact
+async function toCollectionShared(
+  ssCtx: SyncSetCtx,
+  collection: LiuUploadCollection,
+  opt: OperationOpt,
+  infoType: "EXPRESS" | "FAVORITE",
+): Promise<SyncSetAtomRes> {
+  const { taskId, operateStamp } = opt
+  const { first_id, content_id, emoji } = collection
+
+  // 1. get shared data
+  const res1 = await getSharedData_5(ssCtx, taskId, content_id)
+  if(!res1.pass) return res1.result
+  const { infoType: forType, spaceId, spaceType } = res1.oldContent
+  
+  // 2. construct a new row of Table_Collection
   const b4 = getBasicStampWhileAdding()
   const newRow: Partial<Table_Collection> = {
     ...b4,
     first_id,
-    oState: newOState,
-    user: res3.userId,
-    member: res3.memberId,
-    infoType: "FAVORITE",
-    forType: infoType,
-    spaceId: spaceId,
+    oState: collection.oState,
+    user: res1.userId,
+    member: res1.memberId,
+    infoType,
+    forType,
+    spaceId,
     spaceType,
     content_id,
     operateStamp,
+    emoji,
   }
   const new_id = await insertData(ssCtx, "collection", newRow)
   if(!new_id) {
@@ -814,19 +883,6 @@ async function toCollectionFavorite(
   return { code: "0000", taskId, first_id, new_id }
 }
 
-/********************* Operation: add or delete emoji ********************/
-async function toCollectionReact(
-  ssCtx: SyncSetCtx,
-  collection: LiuUploadCollection,
-  opt: OperationOpt,
-) {
-  const { taskId, operateStamp } = opt
-  const Sch_React = vbot.object({
-
-  }, vbot.never())
-  
-  
-}
 
 /***************** Operation: operate oState of a thread *************/
 async function toThread_OState(
