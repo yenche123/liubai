@@ -139,6 +139,7 @@ export interface ContentConfig {
   showCountdown?: boolean
   allowComment?: boolean
   lastToggleCountdown?: number    // last stamp when user toggle showCountdown
+  lastOStateStamp?: number         // last stamp when user edited oState
 }
 
 export const Sch_ContentConfig = vbot.object({

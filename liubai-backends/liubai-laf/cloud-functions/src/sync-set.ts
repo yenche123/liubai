@@ -302,10 +302,10 @@ async function toExecute(
       res1 = await toCollectionReact(ssCtx, collection, opt)
     }
     else if(taskType === "thread-delete" && thread) {
-      toThread_OState(ssCtx, thread, opt)
+      res1 = await toThread_OState(ssCtx, thread, opt, "REMOVED")
     }
     else if(taskType === "undo_thread-delete" && thread) {
-      toThread_OState(ssCtx, thread, opt)
+      res1 = await toThread_OState(ssCtx, thread, opt, "OK")
     }
     else if(taskType === "thread-state" && thread) {
       toThreadState(ssCtx, thread, opt)
@@ -314,10 +314,10 @@ async function toExecute(
       toThreadState(ssCtx, thread, opt)
     }
     else if(taskType === "thread-restore" && thread) {
-      toThread_OState(ssCtx, thread, opt)
+      res1 = await toThread_OState(ssCtx, thread, opt, "OK")
     }
     else if(taskType === "thread-delete_forever" && thread) {
-      toThread_OState(ssCtx, thread, opt)
+      res1 = await toThread_OState(ssCtx, thread, opt, "DELETED")
     }
     else if(taskType === "thread-pin" && thread) {
       toThreadPin(ssCtx, thread, opt)
@@ -470,11 +470,8 @@ async function toPostThread(
     stateId: vbot.optional(vbot.string()),
     config: vbot.optional(Sch_ContentConfig),
   }, vbot.never())     // open strict mode
-  const res1 = vbot.safeParse(Sch_PostThread, thread)
-  if(!res1.success) {
-    const err1 = checker.getErrMsgFromIssues(res1.issues)
-    return { code: "E4000", taskId, errMsg: err1 }
-  }
+  const res1 = checkoutInput(Sch_PostThread, thread, taskId)
+  if(res1) return res1
 
   // 2. get shared data
   const sharedData = await getSharedData_1(ssCtx, taskId, thread)
@@ -573,11 +570,8 @@ async function toPostComment(
     replyToComment: vbot.optional(vbot.string()),
     createdStamp: vbot.number(),
   }, vbot.never())
-  const res1 = vbot.safeParse(Sch_PostComment, comment)
-  if(!res1.success) {
-    const err1 = checker.getErrMsgFromIssues(res1.issues)
-    return { code: "E4000", taskId, errMsg: err1 }
-  }
+  const res1 = checkoutInput(Sch_PostComment, comment, taskId)
+  if(res1) return res1
 
   // 2. get shared data
   const sharedData = await getSharedData_1(ssCtx, taskId, comment)
@@ -669,11 +663,8 @@ async function toThreadEdit(
     tagIds: vbot.optional(vbot.array(vbot.string())),
     tagSearched: vbot.optional(vbot.array(vbot.string())),
   }, vbot.never())
-  const res1 = vbot.safeParse(Sch_EditThread, thread)
-  if(!res1.success) {
-    const err1 = checker.getErrMsgFromIssues(res1.issues)
-    return { code: "E4000", taskId, errMsg: err1 }
-  }
+  const res1 = checkoutInput(Sch_EditThread, thread, taskId)
+  if(res1) return res1
 
   // 2. find the thread
   const sharedData = await getSharedData_2(ssCtx, taskId, thread)
@@ -717,11 +708,8 @@ async function toThreadHourglass(
     first_id: vbot.optional(vbot.string()),
     showCountdown: vbot.boolean(),
   }, vbot.never())
-  const res1 = vbot.safeParse(Sch_Hourglass, thread)
-  if(!res1.success) {
-    const err1 = checker.getErrMsgFromIssues(res1.issues)
-    return { code: "E4000", taskId, errMsg: err1 }
-  }
+  const res1 = checkoutInput(Sch_Hourglass, thread, taskId)
+  if(res1) return res1
 
   // 2. find the thread & check permission
   const res2 = await getSharedData_3(ssCtx, taskId, thread)
@@ -758,11 +746,8 @@ async function toCollectionFavorite(
     oState: Sch_OState_2,
     content_id: Sch_Id,
   }, vbot.never())
-  const res1 = vbot.safeParse(Sch_Favorite, collection)
-  if(!res1.success) {
-    const err1 = checker.getErrMsgFromIssues(res1.issues)
-    return { code: "E4000", taskId, errMsg: err1 }
-  }
+  const res1 = checkoutInput(Sch_Favorite, collection, taskId)
+  if(res1) return res1
 
   // 2. if collection.id exists
   const id = collection.id
@@ -805,11 +790,8 @@ async function toCollectionReact(
     content_id: Sch_Id,
     emoji: vbot.string(), // 存储 emoji 的 encodeURIComponent()
   }, vbot.never())
-  const res1 = vbot.safeParse(Sch_React, collection)
-  if(!res1.success) {
-    const err1 = checker.getErrMsgFromIssues(res1.issues)
-    return { code: "E4000", taskId, errMsg: err1 }
-  }
+  const res1 = checkoutInput(Sch_React, collection, taskId)
+  if(res1) return res1
 
   // 2. if collection.id exists
   const id = collection.id
@@ -889,9 +871,48 @@ async function toThread_OState(
   ssCtx: SyncSetCtx,
   thread: LiuUploadThread,
   opt: OperationOpt,
+  newOState: OState,
 ) {
   const { taskId, operateStamp } = opt
   
+  // 1. inspect data technically
+  const Sch_OState = vbot.object({
+    id: Sch_Id,
+    first_id: vbot.optional(vbot.string()),
+  }, vbot.never())
+  const res1 = checkoutInput(Sch_OState, thread, taskId)
+  if(res1) return res1
+
+  // 2. get content and check permission
+  const res2 = await getSharedData_3(ssCtx, taskId, thread)
+  if(!res2.pass) return res2.result
+
+  // 3. start to check out every data
+  const { oState, config: cfg = {} } = res2.oldContent
+  if(oState === newOState) {
+    return { code: "0001", taskId }
+  }
+  const lastOStateStamp = cfg.lastOStateStamp ?? 1
+  if(lastOStateStamp >= operateStamp) {
+    return { code: "0002", taskId }
+  }
+
+  // 4. update data
+  cfg.lastOStateStamp = operateStamp
+  const u: Partial<Table_Content> = {
+    oState: newOState,
+    config: cfg,
+  }
+  if(newOState === "DELETED") {
+    u.enc_title = undefined
+    u.enc_desc = undefined
+    u.enc_images = undefined
+    u.enc_files = undefined
+  }
+
+  const id = thread.id as string
+  await updatePartData<Table_Content>(ssCtx, "content", id, u)
+  return { code: "0000", taskId }
 }
 
 /***************** Operation: set a state of a thread (including undo) ***********/
@@ -901,6 +922,17 @@ async function toThreadState(
   opt: OperationOpt,
 ) {
   const { taskId, operateStamp } = opt
+
+  // when user operated a state of thread, don't check out the conflict using stamp
+  // just because the operation would also change the workspace
+  // So just accept it!
+
+  // 1. inspect data technically
+  const Sch_State = vbot.object({
+    id: Sch_Id,
+    first_id: vbot.optional(vbot.string()),
+    stateId: vbot.optional(vbot.string()),
+  })
   
 }
 
@@ -911,6 +943,11 @@ async function toThreadPin(
   opt: OperationOpt,
 ) {
   const { taskId, operateStamp } = opt
+
+  // 1. inspect data technically
+  const Sch_Pin = vbot.object({
+
+  })
   
 }
 
@@ -1024,7 +1061,17 @@ function canIEditTheContent(
   return res
 }
 
-
+function checkoutInput<T extends vbot.BaseSchema>(
+  sch: T,
+  val: any,
+  taskId: string,
+): SyncSetAtomRes | undefined {
+  const res = vbot.safeParse(sch, val)
+  if(!res.success) {
+    const err1 = checker.getErrMsgFromIssues(res.issues)
+    return { code: "E4000", taskId, errMsg: err1 }
+  }
+}
 
 interface Gsdr_A {
   pass: false
