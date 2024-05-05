@@ -42,6 +42,25 @@ export interface LiuRqReturn<T = Record<string, any>> {
   data?: T
 }
 
+/***************** 基础 Schema 用于 valibot *************/
+// validate id's min length
+export const Sch_Id = vbot.string([vbot.minLength(8)])
+export const Sch_Opt_Str = vbot.optional(vbot.string())
+
+// trim 后有字符串的 string
+export const Sch_String_WithLength = vbot.string([
+  vbot.toTrimmed(), 
+  vbot.minLength(1)
+])
+
+// trim 后有字符串的 string
+export const sch_string_length = (length: number = 1) => {
+  return vbot.string([
+    vbot.toTrimmed(), 
+    vbot.minLength(length)
+  ])
+}
+
 
 /*********************** 基类型、原子化类型 **********************/
 
@@ -90,9 +109,6 @@ export type SupportedLocale = typeof supportedLocales[number]
 export const Sch_SupportedLocale = vbot.picklist(supportedLocales)
 export type LocalLocale = SupportedLocale | "system"
 
-// validate id's min length
-export const Sch_Id = vbot.string([vbot.minLength(8)])
-
 interface BaseTable {
   _id: string
   insertedStamp: number
@@ -140,7 +156,9 @@ export interface ContentConfig {
   allowComment?: boolean
   lastToggleCountdown?: number    // last stamp when user toggle showCountdown
   lastOStateStamp?: number         // last stamp when user edited oState
+  lastOperateStateId?: number     // last stamp when user edited stateId
   lastOperatePin?: number        // last stamp when user edited pin
+  lastOperateTag?: number        // last stamp when user edited tag
 }
 
 export const Sch_ContentConfig = vbot.object({
@@ -251,7 +269,7 @@ export const Sch_LiuLinkMark = vbot.object({
   type: vbot.literal("link"),
   attrs: vbot.object({
     href: vbot.string(),
-    target: vbot.optional(vbot.string()),
+    target: Sch_Opt_Str,
     class: vbot.nullish(vbot.string()),
   })
 })
@@ -290,7 +308,7 @@ export const Sch_Simple_LiuContent = vbot.object({
   type: Sch_LiuNodeType,
   marks: vbot.optional(vbot.array(Sch_LiuMarkAtom)),
   attrs: vbot.optional(vbot.record(vbot.any())),
-  text: vbot.optional(vbot.string()),
+  text: Sch_Opt_Str,
 })
 
 /*********************** 文件图片相关 **********************/
@@ -329,13 +347,13 @@ export interface LiuExif {
 
 export const Sch_LiuExif = vbot.object({
   gps: vbot.optional(vbot.object({
-    latitude: vbot.optional(vbot.string()),
-    longitude: vbot.optional(vbot.string()),
-    altitude: vbot.optional(vbot.string()),
+    latitude: Sch_Opt_Str,
+    longitude: Sch_Opt_Str,
+    altitude: Sch_Opt_Str,
   })),
-  DateTimeOriginal: vbot.optional(vbot.string()),
-  HostComputer: vbot.optional(vbot.string()),
-  Model: vbot.optional(vbot.string()),
+  DateTimeOriginal: Sch_Opt_Str,
+  HostComputer: Sch_Opt_Str,
+  Model: Sch_Opt_Str,
 })
 
 /** 图片于云端数据库内的存储结构 */
@@ -358,13 +376,13 @@ export const Sch_Cloud_ImageStore: BaseSchema<Cloud_ImageStore> = vbot.object(
     id: vbot.string(),
     name: vbot.string(),
     lastModified: vbot.number(),
-    mimeType: vbot.optional(vbot.string()),
+    mimeType: Sch_Opt_Str,
     width: vbot.optional(vbot.number()),
     height: vbot.optional(vbot.number()),
-    h2w: vbot.optional(vbot.string()),
+    h2w: Sch_Opt_Str,
     url: vbot.string(),
-    url_2: vbot.optional(vbot.string()),
-    blurhash: vbot.optional(vbot.string()),
+    url_2: Sch_Opt_Str,
+    blurhash: Sch_Opt_Str,
     someExif: vbot.optional(Sch_LiuExif),
   },
   vbot.never(),
@@ -373,23 +391,6 @@ export const Sch_Cloud_ImageStore: BaseSchema<Cloud_ImageStore> = vbot.object(
 
 /*********************** 杂七杂八的 **********************/
 // 新增类型前，记得全局搜索一下，避免冲突
-
-
-/** 一些常用的 Schema for valibot */
-
-// trim 后有字符串的 string
-export const Sch_String_WithLength = vbot.string([
-  vbot.toTrimmed(), 
-  vbot.minLength(1)
-])
-
-// trim 后有字符串的 string
-export const sch_string_length = (length: number = 1) => {
-  return vbot.string([
-    vbot.toTrimmed(), 
-    vbot.minLength(length)
-  ])
-}
 
 // 每个请求里皆应存在的参数字段
 export const Sch_X_Liu = vbot.object({

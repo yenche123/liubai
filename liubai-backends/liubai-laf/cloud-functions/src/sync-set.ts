@@ -40,6 +40,7 @@ import {
   Sch_LiuRemindMe,
   Sch_OState_2,
   Sch_Id,
+  Sch_Opt_Str,
 } from "@/common-types"
 import { 
   getNowStamp, 
@@ -456,7 +457,7 @@ async function toPostThread(
     editedStamp: vbot.number(),
     oState: vbot.picklist(ostate_list),
 
-    title: vbot.optional(vbot.string()),
+    title: Sch_Opt_Str,
     calendarStamp: vbot.optional(vbot.number()),
     remindStamp: vbot.optional(vbot.number()),
     whenStamp: vbot.optional(vbot.number()),
@@ -467,7 +468,7 @@ async function toPostThread(
 
     tagIds: vbot.optional(vbot.array(vbot.string())),
     tagSearched: vbot.optional(vbot.array(vbot.string())),
-    stateId: vbot.optional(vbot.string()),
+    stateId: Sch_Opt_Str,
     config: vbot.optional(Sch_ContentConfig),
   }, vbot.never())     // open strict mode
   const res1 = checkoutInput(Sch_PostThread, thread, taskId)
@@ -565,9 +566,9 @@ async function toPostComment(
     
     editedStamp: vbot.number(),
 
-    parentThread: vbot.optional(vbot.string()),
-    parentComment: vbot.optional(vbot.string()),
-    replyToComment: vbot.optional(vbot.string()),
+    parentThread: Sch_Opt_Str,
+    parentComment: Sch_Opt_Str,
+    replyToComment: Sch_Opt_Str,
     createdStamp: vbot.number(),
   }, vbot.never())
   const res1 = checkoutInput(Sch_PostComment, comment, taskId)
@@ -647,14 +648,14 @@ async function toThreadEdit(
   // 1. inspect data technically
   const Sch_EditThread = vbot.object({
     id: Sch_Id,
-    first_id: vbot.optional(vbot.string()),
+    first_id: Sch_Opt_Str,
 
     liuDesc: vbot.optional(vbot.array(vbot.any())),
     images: vbot.optional(vbot.array(Sch_Cloud_ImageStore)),
     files: vbot.optional(vbot.array(Sch_Cloud_FileStore)),
 
     editedStamp: vbot.number(),
-    title: vbot.optional(vbot.string()),
+    title: Sch_Opt_Str,
     calendarStamp: vbot.optional(vbot.number()),
     remindStamp: vbot.optional(vbot.number()),
     whenStamp: vbot.optional(vbot.number()),
@@ -705,7 +706,7 @@ async function toThreadHourglass(
   // 1. inspect data technically
   const Sch_Hourglass = vbot.object({
     id: Sch_Id,
-    first_id: vbot.optional(vbot.string()),
+    first_id: Sch_Opt_Str,
     showCountdown: vbot.boolean(),
   }, vbot.never())
   const res1 = checkoutInput(Sch_Hourglass, thread, taskId)
@@ -878,7 +879,7 @@ async function toThread_OState(
   // 1. inspect data technically
   const Sch_OState = vbot.object({
     id: Sch_Id,
-    first_id: vbot.optional(vbot.string()),
+    first_id: Sch_Opt_Str,
   }, vbot.never())
   const res1 = checkoutInput(Sch_OState, thread, taskId)
   if(res1) return res1
@@ -921,17 +922,13 @@ async function toThreadState(
   thread: LiuUploadThread,
   opt: OperationOpt,
 ): Promise<SyncSetAtomRes> {
-  const { taskId } = opt
-
-  // when user operated a state of thread, don't check out the conflict using stamp
-  // just because the operation would also change the workspace
-  // So just accept it!
+  const { taskId, operateStamp } = opt
 
   // 1. inspect data technically
   const Sch_State = vbot.object({
     id: Sch_Id,
-    first_id: vbot.optional(vbot.string()),
-    stateId: vbot.optional(vbot.string()),
+    first_id: Sch_Opt_Str,
+    stateId: Sch_Opt_Str,
   })
   const res1 = checkoutInput(Sch_State, thread, taskId)
   if(res1) return res1
@@ -941,14 +938,23 @@ async function toThreadState(
   if(!res2.pass) return res2.result
   const { oldContent } = res2
 
+  //  3. check out every data
   const id = thread.id as string
   const stateId = thread.stateId
   if(oldContent.stateId === stateId) {
     return { code: "0001", taskId }
   }
+  const { config: cfg = {} } = oldContent
+  const oldStamp = cfg.lastOperateStateId ?? 1
+  if(oldStamp >= operateStamp) {
+    return { code: "0002", taskId }
+  }
   
+  // 4. update data
+  cfg.lastOperateStateId = operateStamp
   const u: Partial<Table_Content> = {
     stateId,
+    config: cfg,
   }
   await updatePartData(ssCtx, "content", id, u)
   return { code: "0000", taskId }
@@ -965,7 +971,7 @@ async function toThreadPin(
   // 1. inspect data technically
   const Sch_Pin = vbot.object({
     id: Sch_Id,
-    first_id: vbot.optional(vbot.string()),
+    first_id: Sch_Opt_Str,
     pinStamp: vbot.optional(vbot.number()),
   })
   const res1 = checkoutInput(Sch_Pin, thread, taskId)
@@ -1003,6 +1009,11 @@ async function toThreadTag(
   opt: OperationOpt,
 ) {
   const { taskId } = opt
+  const Sch_Tag = vbot.object({
+    id: Sch_Id,
+    first_id: Sch_Opt_Str,
+    
+  })
   
 }
 
