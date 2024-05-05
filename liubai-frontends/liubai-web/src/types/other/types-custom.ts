@@ -8,6 +8,7 @@ export interface ContentConfig {
   allowComment?: boolean
   lastToggleCountdown?: number  // last stamp when user toggle showCountdown
   lastOStateStamp?: number           // last stamp when user edited oState
+  lastOperatePin?: number        // last stamp when user edited pin
 }
 
 export type SearchType = "thread" | "comment" | "other"

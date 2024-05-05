@@ -308,10 +308,10 @@ async function toExecute(
       res1 = await toThread_OState(ssCtx, thread, opt, "OK")
     }
     else if(taskType === "thread-state" && thread) {
-      toThreadState(ssCtx, thread, opt)
+      res1 = await toThreadState(ssCtx, thread, opt)
     }
     else if(taskType === "undo_thread-state" && thread) {
-      toThreadState(ssCtx, thread, opt)
+      res1 = await toThreadState(ssCtx, thread, opt)
     }
     else if(taskType === "thread-restore" && thread) {
       res1 = await toThread_OState(ssCtx, thread, opt, "OK")
@@ -320,10 +320,10 @@ async function toExecute(
       res1 = await toThread_OState(ssCtx, thread, opt, "DELETED")
     }
     else if(taskType === "thread-pin" && thread) {
-      toThreadPin(ssCtx, thread, opt)
+      res1 = await toThreadPin(ssCtx, thread, opt)
     }
     else if(taskType === "undo_thread-pin" && thread) {
-      toThreadPin(ssCtx, thread, opt)
+      res1 = await toThreadPin(ssCtx, thread, opt)
     }
     else if(taskType === "thread-tag" && thread) {
       toThreadTag(ssCtx, thread, opt)
@@ -920,8 +920,8 @@ async function toThreadState(
   ssCtx: SyncSetCtx,
   thread: LiuUploadThread,
   opt: OperationOpt,
-) {
-  const { taskId, operateStamp } = opt
+): Promise<SyncSetAtomRes> {
+  const { taskId } = opt
 
   // when user operated a state of thread, don't check out the conflict using stamp
   // just because the operation would also change the workspace
@@ -933,7 +933,25 @@ async function toThreadState(
     first_id: vbot.optional(vbot.string()),
     stateId: vbot.optional(vbot.string()),
   })
+  const res1 = checkoutInput(Sch_State, thread, taskId)
+  if(res1) return res1
+
+  // 2. get shared data
+  const res2 = await getSharedData_3(ssCtx, taskId, thread)
+  if(!res2.pass) return res2.result
+  const { oldContent } = res2
+
+  const id = thread.id as string
+  const stateId = thread.stateId
+  if(oldContent.stateId === stateId) {
+    return { code: "0001", taskId }
+  }
   
+  const u: Partial<Table_Content> = {
+    stateId,
+  }
+  await updatePartData(ssCtx, "content", id, u)
+  return { code: "0000", taskId }
 }
 
 /***************** Operation: pin a thread (including undo) ***********/
@@ -941,14 +959,41 @@ async function toThreadPin(
   ssCtx: SyncSetCtx,
   thread: LiuUploadThread,
   opt: OperationOpt,
-) {
+): Promise<SyncSetAtomRes> {
   const { taskId, operateStamp } = opt
 
   // 1. inspect data technically
   const Sch_Pin = vbot.object({
-
+    id: Sch_Id,
+    first_id: vbot.optional(vbot.string()),
+    pinStamp: vbot.optional(vbot.number()),
   })
-  
+  const res1 = checkoutInput(Sch_Pin, thread, taskId)
+  if(res1) return res1
+
+  // 2. get shared data
+  const res2 = await getSharedData_3(ssCtx, taskId, thread)
+  if(!res2.pass) return res2.result
+  const { oldContent } = res2
+
+  // 3. check out every data
+  const id = thread.id as string
+  const { pinStamp, config: cfg = {} } = thread
+  if(oldContent.pinStamp === pinStamp) {
+    return { code: "0001", taskId }
+  }
+  const lastStamp = cfg.lastOperatePin ?? 1
+  if(lastStamp >= operateStamp) {
+    return { code: "0002", taskId }
+  }
+
+  cfg.lastOperatePin = operateStamp
+  const u: Partial<Table_Content> = {
+    pinStamp,
+    config: cfg,
+  }
+  await updatePartData(ssCtx, "content", id, u)
+  return { code: "0000", taskId }
 }
 
 /***************** Operation: edit tags of a thread ***********/
@@ -957,7 +1002,7 @@ async function toThreadTag(
   thread: LiuUploadThread,
   opt: OperationOpt,
 ) {
-  const { taskId, operateStamp } = opt
+  const { taskId } = opt
   
 }
 
