@@ -875,46 +875,8 @@ async function toThread_OState(
   opt: OperationOpt,
   newOState: OState,
 ) {
-  const { taskId, operateStamp } = opt
-  
-  // 1. inspect data technically
-  const Sch_OState = vbot.object({
-    id: Sch_Id,
-    first_id: Sch_Opt_Str,
-  }, vbot.never())
-  const res1 = checkoutInput(Sch_OState, thread, taskId)
-  if(res1) return res1
-
-  // 2. get content and check permission
-  const res2 = await getSharedData_3(ssCtx, taskId, thread)
-  if(!res2.pass) return res2.result
-
-  // 3. start to check out every data
-  const { oState, config: cfg = {} } = res2.oldContent
-  if(oState === newOState) {
-    return { code: "0001", taskId }
-  }
-  const lastOStateStamp = cfg.lastOStateStamp ?? 1
-  if(lastOStateStamp >= operateStamp) {
-    return { code: "0002", taskId }
-  }
-
-  // 4. update data
-  cfg.lastOStateStamp = operateStamp
-  const u: Partial<Table_Content> = {
-    oState: newOState,
-    config: cfg,
-  }
-  if(newOState === "DELETED") {
-    u.enc_title = undefined
-    u.enc_desc = undefined
-    u.enc_images = undefined
-    u.enc_files = undefined
-  }
-
-  const id = thread.id as string
-  await updatePartData<Table_Content>(ssCtx, "content", id, u)
-  return { code: "0000", taskId }
+  const res1 = await getSharedData_6(ssCtx, thread, opt, newOState)
+  return res1.result
 }
 
 /***************** Operation: set a state of a thread (including undo) ***********/
@@ -1200,11 +1162,68 @@ interface Gsdr_5_B {
   memberId?: string
 }
 
+interface Gsdr_6_B {
+  pass: true
+  result: SyncSetAtomRes
+  oldContent: Table_Content
+}
+
 type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
 type GetShareDataRes_2 = Gsdr_A | Gsdr_2_B
 type GetShareDataRes_3 = Gsdr_A | Gsdr_3_B
 type GetShareDataRes_4 = Gsdr_A | Gsdr_4_B
 type GetShareDataRes_5 = Gsdr_A | Gsdr_5_B
+type GetShareDataRes_6 = Gsdr_A | Gsdr_6_B
+
+// tackle changing oState of a content
+async function getSharedData_6(
+  ssCtx: SyncSetCtx,
+  content: LiuUploadThread | LiuUploadComment,
+  opt: OperationOpt,
+  newOState: OState,
+): Promise<GetShareDataRes_6> {
+  const { taskId, operateStamp } = opt
+  
+  // 1. inspect data technically
+  const Sch_OState = vbot.object({
+    id: Sch_Id,
+    first_id: Sch_Opt_Str,
+  }, vbot.never())
+  const res1 = checkoutInput(Sch_OState, content, taskId)
+  if(res1) return { pass: false, result: res1 }
+
+  // 2. get content and check permission
+  const res2 = await getSharedData_3(ssCtx, taskId, content)
+  if(!res2.pass) return res2
+
+  // 3. start to check out every data
+  const { oldContent } = res2
+  const { oState, config: cfg = {} } = oldContent
+  if(oState === newOState) {
+    return { pass: true, result: { code: "0001", taskId }, oldContent }
+  }
+  const lastOStateStamp = cfg.lastOStateStamp ?? 1
+  if(lastOStateStamp >= operateStamp) {
+    return { pass: true, result: { code: "0002", taskId }, oldContent }
+  }
+
+  // 4. update data
+  cfg.lastOStateStamp = operateStamp
+  const u: Partial<Table_Content> = {
+    oState: newOState,
+    config: cfg,
+  }
+  if(newOState === "DELETED") {
+    u.enc_title = undefined
+    u.enc_desc = undefined
+    u.enc_images = undefined
+    u.enc_files = undefined
+  }
+
+  const id = content.id as string
+  await updatePartData<Table_Content>(ssCtx, "content", id, u)
+  return { pass: true, result: { code: "0000", taskId }, oldContent }
+}
 
 // check out content for reaction or favorite
 async function getSharedData_5(
