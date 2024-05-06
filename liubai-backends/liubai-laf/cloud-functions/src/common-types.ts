@@ -171,10 +171,17 @@ export const Sch_ContentConfig = vbot.object({
   allowComment: vbot.optional(vbot.boolean()),
 }, vbot.never())
 
-/** Member 表对象的配置结构 */
+/** The config of Workspace */
+export interface WorkspaceConfig {
+  // last stamp when user edited tagList of workspace
+  lastOperateTag?: number
+}
+
+/** The config of Member */
 export interface MemberConfig {
-  searchKeywords: string[]
+  searchKeywords?: string[]
   searchTagIds?: string[]
+  lastOperateName?: number     // last stamp when user edited name
 }
 
 /** 附着在 content 上的 emoji 表态信息 */
@@ -720,6 +727,7 @@ export interface Table_Workspace extends BaseTable {
   name?: string
   avatar?: Cloud_ImageStore
   editedStamp?: number       // 同步时，用来比大小的
+  config?: WorkspaceConfig
 }
 
 /** Member 表 */

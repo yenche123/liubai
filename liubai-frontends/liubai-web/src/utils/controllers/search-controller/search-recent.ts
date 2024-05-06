@@ -4,7 +4,6 @@ import type {
 } from "./types"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import time from "~/utils/basic/time"
-import memberRelated from "~/utils/system/member-related"
 
 export function searchRecent(param: SearchOpt) {
   const wStore = useWorkspaceStore()
@@ -25,8 +24,8 @@ export function searchRecent(param: SearchOpt) {
 export async function addKeywordToRecent(text: string) {
   if(!text) return true
   const wStore = useWorkspaceStore()
-  const memberCfg = wStore.myMember?.config ?? memberRelated.getDefaultMemberCfg()
-  const { searchKeywords } = memberCfg
+  const memberCfg = wStore.myMember?.config ?? {}
+  const { searchKeywords = [] } = memberCfg
   const idx = searchKeywords.indexOf(text)
   if(idx >= 0) {
     searchKeywords.splice(idx, 1)
@@ -42,8 +41,8 @@ export async function addKeywordToRecent(text: string) {
 
 export async function deleteKeyword(text: string) {
   const wStore = useWorkspaceStore()
-  const memberCfg = wStore.myMember?.config ?? memberRelated.getDefaultMemberCfg()
-  const { searchKeywords } = memberCfg
+  const memberCfg = wStore.myMember?.config ?? {}
+  const { searchKeywords = [] } = memberCfg
   const idx = searchKeywords.indexOf(text)
   if(idx >= 0) {
     searchKeywords.splice(idx, 1)

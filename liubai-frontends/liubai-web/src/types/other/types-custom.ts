@@ -27,9 +27,15 @@ export interface SearchItem {
   outterLink?: string  // 外部链接
 }
 
+export interface WorkspaceConfig {
+  // last stamp when user edited tagList of workspace
+  lastOperateTag?: number
+}
+
 export interface MemberConfig {
-  searchKeywords: string[]
+  searchKeywords?: string[]
   searchTagIds?: string[]
+  lastOperateName?: number     // last stamp when user edited name
 }
 
 export interface ImgOneLayout {

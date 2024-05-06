@@ -21,7 +21,9 @@ import type {
 import type { LiuFileStore, LiuImageStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
 import type { EmojiData } from "./types-content"
-import type { ContentConfig, MemberConfig } from "./other/types-custom"
+import type { 
+  ContentConfig, MemberConfig, WorkspaceConfig
+} from "./other/types-custom"
 import type { UserSubscription } from "./types-cloud"
 
 export interface BaseLocalTable {
@@ -56,7 +58,7 @@ export interface WorkspaceLocalTable extends BaseLocalTable {
   owner: string
   name?: string
   avatar?: LiuImageStore
-  editedStamp?: number       // 同步时，用来比大小的
+  config?: WorkspaceConfig
 }
 
 export interface MemberLocalTable extends BaseLocalTable {
@@ -67,7 +69,6 @@ export interface MemberLocalTable extends BaseLocalTable {
   user: string
   oState: MemberState
   config?: MemberConfig
-  editedStamp?: number     // 同步时，用来比大小的
 }
 
 export interface ContentLocalTable extends BaseLocalTable {

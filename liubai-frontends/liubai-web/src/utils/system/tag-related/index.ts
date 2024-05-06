@@ -38,7 +38,6 @@ import {
   updateDraftWhenTagDeleted,
 } from "./tools/draft-util"
 import valTool from "~/utils/basic/val-tool";
-import memberRelated from "~/utils/system/member-related";
 
 // 返回当前工作区的 tags
 export function getCurrentSpaceTagList(): TagView[] {
@@ -136,7 +135,7 @@ export function tagIdsToShows(ids: string[]) {
  */
 export async function addTagIdsToRecents(tagIds: string[]) {
   const wStore = useWorkspaceStore()
-  const memberCfg = wStore.myMember?.config ?? memberRelated.getDefaultMemberCfg()
+  const memberCfg = wStore.myMember?.config ?? {}
   const { searchTagIds = [] } = memberCfg
 
   let hasChanged = false
