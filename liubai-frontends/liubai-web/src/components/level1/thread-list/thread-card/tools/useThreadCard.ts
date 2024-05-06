@@ -54,6 +54,7 @@ export function useThreadCard(
     if(liuApi.eventTargetIsSomeTag(target, "a")) return
     
     if(isBriefing.value) {
+      emit("tapbriefing")
       isBriefing.value = false
       return
     }

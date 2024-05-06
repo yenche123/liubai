@@ -97,7 +97,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
         @newoperate="receiveBottomOperation"
       ></TcTopbar>
 
-      <!-- 摘要 -->
+      <!-- 摘要 (不支持 css text overflow 检测的时候) -->
       <div v-if="!cssDetectOverflow && threadData.briefing" v-show="isBriefing" 
         class="tc-briefing"
         @click.stop="onTapBriefing"
