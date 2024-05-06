@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PropType } from 'vue';
+import { type PropType, defineAsyncComponent } from 'vue';
 import type { ThreadShow } from '~/types/types-content';
 import EditorCore from '~/components/editors/editor-core/editor-core.vue';
 import TcAttachments from './tc-attachments/tc-attachments.vue';
@@ -10,13 +10,16 @@ import TcTags from "./tc-tags/tc-tags.vue";
 import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-covers.vue";
 import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
-import BwBubbleMenu from '~/components/browsing/bw-bubble-menu/bw-bubble-menu.vue';
 import { useTcOperation } from "./tools/useTcOperation";
 import type { TlViewType, TlDisplayType } from "../tools/types";
 import type { TcEmits } from "./tools/types"
 import type { ThreadCardShowType } from "~/types/types-view"
 import { useTcAnimate } from './tools/useTcAnimate';
 import type { TrueOrFalse } from '~/types/types-basic';
+
+const BwBubbleMenu = defineAsyncComponent(() => {
+  return import("~/components/browsing/bw-bubble-menu/bw-bubble-menu.vue")
+})
 
 const props = defineProps({
   threadData: {

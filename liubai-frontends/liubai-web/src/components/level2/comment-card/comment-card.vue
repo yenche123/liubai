@@ -11,7 +11,9 @@ import CcReactions from "./cc-reactions/cc-reactions.vue";
 import { useCcMouse } from './tools/useCcMouse';
 import { useCommentOperation } from './tools/useCommentOperation';
 
-const CcBubbleBar = defineAsyncComponent(() => import("./cc-bubble-bar/cc-bubble-bar.vue"))
+const CcBubbleBar = defineAsyncComponent(() => {
+  return import("./cc-bubble-bar/cc-bubble-bar.vue")
+})
 
 const { t } = useI18n()
 

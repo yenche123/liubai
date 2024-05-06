@@ -1,13 +1,16 @@
 <script setup lang="ts">
 // 评论的 “内文 + 图片”
 import type { CommentShow } from '~/types/types-content';
-import type { PropType } from 'vue';
+import { defineAsyncComponent, type PropType } from 'vue';
 import EditorCore from '~/components/editors/editor-core/editor-core.vue';
 import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-covers.vue";
 import PrettyFile from '~/components/browsing/pretty-file/pretty-file.vue';
-import BwBubbleMenu from '~/components/browsing/bw-bubble-menu/bw-bubble-menu.vue';
 import { useCcBox } from './tools/useCcBox';
 import type { CommentCardLocation } from "../tools/types"
+
+const BwBubbleMenu = defineAsyncComponent(() => {
+  return import("~/components/browsing/bw-bubble-menu/bw-bubble-menu.vue")
+})
 
 defineProps({
   cs: {          // cs 为 commentShow 的简写
