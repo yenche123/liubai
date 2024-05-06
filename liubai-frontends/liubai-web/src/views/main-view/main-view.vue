@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import CenterDropZone from "./center-drop-zone/center-drop-zone.vue"
+import { defineAsyncComponent } from "vue"
 import { useMainView } from "./tools/useMainView"
 import { useMvDropZone } from "./tools/useMvDropZone"
 import { useMvTouchBox } from "./tools/useMvTouchBox"
 import type { MainViewEmits } from "./tools/types"
+
+const CenterDropZone = defineAsyncComponent(() => {
+  return import("./center-drop-zone/center-drop-zone.vue")
+})
 
 const props = defineProps({
   dropFiles: {

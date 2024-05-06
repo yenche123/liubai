@@ -2,10 +2,14 @@
 import { initCommentPopup } from "./tools/useCommentPopup"
 import CommentCard from "~/components/level2/comment-card/comment-card.vue";
 import CommentEditor from "~/components/editors/comment-editor/comment-editor.vue";
-import CpDropZone from "./cp-drop-zone/cp-drop-zone.vue"
 import liuApi from '~/utils/liu-api';
 import { useI18n } from "vue-i18n";
 import { useCpDropZone } from "./tools/useCpDropZone"
+import { defineAsyncComponent } from "vue"
+
+const CpDropZone = defineAsyncComponent(() => {
+  return import("./cp-drop-zone/cp-drop-zone.vue")
+})
 
 const { 
   cpData,

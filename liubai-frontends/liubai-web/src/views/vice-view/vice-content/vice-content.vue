@@ -6,11 +6,14 @@ import VcThird from "./vc-third/vc-third.vue";
 import ThreadDetail from "~/components/level1/thread-detail/thread-detail.vue";
 import CommentDetail from "~/components/level2/comment-detail/comment-detail.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
-import RightDropZone from "./right-drop-zone/right-drop-zone.vue";
 import { useVcHeight } from "./tools/useVcHeight"
 import type { VcEmits } from "./tools/types"
-import { watch } from "vue";
+import { watch, defineAsyncComponent } from "vue";
 import { useVcDropZone } from "./tools/useVcDropZone";
+
+const RightDropZone = defineAsyncComponent(() => {
+  return import("./right-drop-zone/right-drop-zone.vue")
+})
 
 const props = defineProps({
   isOutterDraging: {
