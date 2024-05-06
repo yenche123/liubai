@@ -156,7 +156,7 @@ const onTapTopFooterBtn = () => {
   overflow: hidden;
   background-color: var(--card-bg);
   position: relative;
-  transform: translateY(100%);
+  transform: translateY(11%);
   opacity: 0;
   transition: v-bind("cpData.transDuration + 'ms'");
   transition-timing-function: cubic-bezier(0.32, 0.72, 0.05, 1);
@@ -302,7 +302,8 @@ const onTapTopFooterBtn = () => {
     width: 100%;
     min-width: 250px;
     border-radius: 24px 24px 0px 0px;
-    opacity: .56;
+    transform: translateY(100%);
+    opacity: .48;
   }
 }
 
