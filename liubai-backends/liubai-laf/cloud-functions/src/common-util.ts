@@ -23,6 +23,7 @@ import type {
   LiuContent,
 } from '@/common-types'
 import { 
+  sch_opt_arr,
   supportedLocales,
   Sch_Cloud_FileStore,
   Sch_Cloud_ImageStore,
@@ -226,7 +227,7 @@ function getErrMsgFromIssues(issues: vbot.SchemaIssues) {
  *  注意: 若 images 是 undefined 返回 true
 */
 function isImagesLegal(images?: Cloud_ImageStore[]) {
-  const Sch = vbot.optional(vbot.array(Sch_Cloud_ImageStore))
+  const Sch = sch_opt_arr(Sch_Cloud_ImageStore)
   const res = vbot.safeParse(Sch, images)
   return res.success
 }
@@ -236,7 +237,7 @@ function isImagesLegal(images?: Cloud_ImageStore[]) {
  *  注意: 若 files 是 undefined 返回 true
 */
 function isFilesLegal(files?: Cloud_FileStore[]) {
-  const Sch = vbot.optional(vbot.array(Sch_Cloud_FileStore))
+  const Sch = sch_opt_arr(Sch_Cloud_FileStore)
   const res = vbot.safeParse(Sch, files)
   return res.success
 }

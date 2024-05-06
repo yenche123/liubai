@@ -61,6 +61,11 @@ export const sch_string_length = (length: number = 1) => {
   ])
 }
 
+// optional array something
+export const sch_opt_arr = (sch: BaseSchema) => {
+  return vbot.optional(vbot.array(sch))
+}
+
 
 /*********************** 基类型、原子化类型 **********************/
 
@@ -306,7 +311,7 @@ export interface LiuContent {
 // 而是放在 common-util isLiuContentArr() 进行递归检查
 export const Sch_Simple_LiuContent = vbot.object({
   type: Sch_LiuNodeType,
-  marks: vbot.optional(vbot.array(Sch_LiuMarkAtom)),
+  marks: sch_opt_arr(Sch_LiuMarkAtom),
   attrs: vbot.optional(vbot.record(vbot.any())),
   text: Sch_Opt_Str,
 })

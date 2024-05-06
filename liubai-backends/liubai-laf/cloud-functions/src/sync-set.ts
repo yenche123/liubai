@@ -41,6 +41,7 @@ import {
   Sch_OState_2,
   Sch_Id,
   Sch_Opt_Str,
+  sch_opt_arr,
 } from "@/common-types"
 import { 
   getNowStamp, 
@@ -450,9 +451,9 @@ async function toPostThread(
     first_id: vbot.string([vbot.minLength(20)]),
     spaceId: vbot.string(),
 
-    liuDesc: vbot.optional(vbot.array(vbot.any())),
-    images: vbot.optional(vbot.array(Sch_Cloud_ImageStore)),
-    files: vbot.optional(vbot.array(Sch_Cloud_FileStore)),
+    liuDesc: sch_opt_arr(vbot.any()),
+    images: sch_opt_arr(Sch_Cloud_ImageStore),
+    files: sch_opt_arr(Sch_Cloud_FileStore),
 
     editedStamp: vbot.number(),
     oState: vbot.picklist(ostate_list),
@@ -466,8 +467,8 @@ async function toPostThread(
 
     createdStamp: vbot.number(),
 
-    tagIds: vbot.optional(vbot.array(vbot.string())),
-    tagSearched: vbot.optional(vbot.array(vbot.string())),
+    tagIds: sch_opt_arr(vbot.string()),
+    tagSearched: sch_opt_arr(vbot.string()),
     stateId: Sch_Opt_Str,
     config: vbot.optional(Sch_ContentConfig),
   }, vbot.never())     // open strict mode
@@ -559,10 +560,10 @@ async function toPostComment(
   const Sch_PostComment = vbot.object({
     first_id: vbot.string([vbot.minLength(20)]),
     spaceId: vbot.string(),
-    
-    liuDesc: vbot.optional(vbot.array(vbot.any())),
-    images: vbot.optional(vbot.array(Sch_Cloud_ImageStore)),
-    files: vbot.optional(vbot.array(Sch_Cloud_FileStore)),
+
+    liuDesc: sch_opt_arr(vbot.any()),
+    images: sch_opt_arr(Sch_Cloud_ImageStore),
+    files: sch_opt_arr(Sch_Cloud_FileStore),
     
     editedStamp: vbot.number(),
 
@@ -650,9 +651,9 @@ async function toThreadEdit(
     id: Sch_Id,
     first_id: Sch_Opt_Str,
 
-    liuDesc: vbot.optional(vbot.array(vbot.any())),
-    images: vbot.optional(vbot.array(Sch_Cloud_ImageStore)),
-    files: vbot.optional(vbot.array(Sch_Cloud_FileStore)),
+    liuDesc: sch_opt_arr(vbot.any()),
+    images: sch_opt_arr(Sch_Cloud_ImageStore),
+    files: sch_opt_arr(Sch_Cloud_FileStore),
 
     editedStamp: vbot.number(),
     title: Sch_Opt_Str,
@@ -661,8 +662,8 @@ async function toThreadEdit(
     whenStamp: vbot.optional(vbot.number()),
     remindMe: vbot.optional(Sch_LiuRemindMe),
 
-    tagIds: vbot.optional(vbot.array(vbot.string())),
-    tagSearched: vbot.optional(vbot.array(vbot.string())),
+    tagIds: sch_opt_arr(vbot.string()),
+    tagSearched: sch_opt_arr(vbot.string()),
   }, vbot.never())
   const res1 = checkoutInput(Sch_EditThread, thread, taskId)
   if(res1) return res1
@@ -1008,11 +1009,11 @@ async function toThreadTag(
   thread: LiuUploadThread,
   opt: OperationOpt,
 ) {
-  const { taskId } = opt
+  const { taskId, operateStamp } = opt
   const Sch_Tag = vbot.object({
     id: Sch_Id,
     first_id: Sch_Opt_Str,
-    
+    tagIds: sch_opt_arr(vbot.string()),
   })
   
 }
