@@ -287,6 +287,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
       padding-block-end: 0;
       cursor: auto;
       user-select: auto;
+      overflow: visible;
     }
 
     @keyframes check {
