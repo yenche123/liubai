@@ -345,7 +345,7 @@ const {
   flex-wrap: wrap;
   user-select: none;
   margin-block-start: -4px;
-  margin-block-end: 4px;
+  margin-block-end: 6px;
 }
 
 .ccc-account {
