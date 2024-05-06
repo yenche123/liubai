@@ -36,6 +36,8 @@ const onTapWhenItem = (item: MenuItem, index: number) => {
       <LiuMenu
         :menu="menu"
         @tapitem="onTapWhenItem"
+        min-width-str="70px"
+        mask-z-index="2600"
       >
         <div class="fb-text">
           <span>{{ fileShowName }}</span>
