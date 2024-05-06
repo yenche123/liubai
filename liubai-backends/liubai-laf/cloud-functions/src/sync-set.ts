@@ -335,7 +335,7 @@ async function toExecute(
       res1 = await toComment_OState(ssCtx, comment, opt, "DELETED")
     }
     else if(taskType === "comment-edit" && comment) {
-      toCommentEdit(ssCtx, comment, opt)
+      res1 = await toCommentEdit(ssCtx, comment, opt)
     }
     else if(taskType === "workspace-tag" && workspace) {
       toWorkspaceTag(ssCtx, workspace, opt)
@@ -691,7 +691,6 @@ async function toThreadEdit(
     editedStamp: thread.editedStamp,
     tagIds: thread.tagIds,
     tagSearched: thread.tagSearched,
-    updatedStamp: getNowStamp(),
   }
   await updatePartData(ssCtx, "content", sharedData.content_id, new_data)
   return { code: "0000", taskId }
@@ -893,7 +892,7 @@ async function toThreadState(
     id: Sch_Id,
     first_id: Sch_Opt_Str,
     stateId: Sch_Opt_Str,
-  })
+  }, vbot.never())
   const res1 = checkoutInput(Sch_State, thread, taskId)
   if(res1) return res1
 
@@ -937,7 +936,7 @@ async function toThreadPin(
     id: Sch_Id,
     first_id: Sch_Opt_Str,
     pinStamp: vbot.optional(vbot.number()),
-  })
+  }, vbot.never())
   const res1 = checkoutInput(Sch_Pin, thread, taskId)
   if(res1) return res1
 
@@ -979,7 +978,7 @@ async function toThreadTag(
     first_id: Sch_Opt_Str,
     tagIds: sch_opt_arr(vbot.string()),
     tagSearched: sch_opt_arr(vbot.string()),
-  })
+  }, vbot.never())
   const res = checkoutInput(Sch_Tag, thread, taskId)
   if(res) return res
 
@@ -1075,7 +1074,31 @@ async function toCommentEdit(
   opt: OperationOpt,
 ) {
   const { taskId } = opt
-  
+  const Sch_EditComment = vbot.object({
+    id: Sch_Id,
+    first_id: Sch_Opt_Str,
+
+    liuDesc: sch_opt_arr(vbot.any()),
+    images: sch_opt_arr(Sch_Cloud_ImageStore),
+    files: sch_opt_arr(Sch_Cloud_FileStore),
+    
+    editedStamp: vbot.number(),
+  }, vbot.never())
+  const res = checkoutInput(Sch_EditComment, comment, taskId)
+  if(res) return res
+
+  const sharedData = await getSharedData_2(ssCtx, taskId, comment)
+  if(!sharedData.pass) return sharedData.result
+
+  const u: Partial<Table_Content> = {
+    enc_desc: sharedData.enc_desc,
+    enc_images: sharedData.enc_images,
+    enc_files: sharedData.enc_files,
+    editedStamp: comment.editedStamp,
+  }
+  const id = sharedData.content_id
+  await updatePartData(ssCtx, "content", id, u)
+  return { code: "0000", taskId }
 }
 
 /***************** Operation: update workspace's tag ***********/
@@ -1395,24 +1418,7 @@ async function getSharedData_2(
   content: LiuUploadThread | LiuUploadComment,
 ): Promise<GetShareDataRes_2> {
 
-  // 1. get oldContent & content_id
-  const res1 = await getSharedData_3(ssCtx, taskId, content)
-  if(!res1.pass) {
-    return res1
-  }
-  const { content_id, oldContent } = res1
-
-  // 2. check editedStamp
-  const editedStamp = content.editedStamp as number
-  if(oldContent.editedStamp > editedStamp) {
-    console.log("the content is newer than the thread")
-    return {
-      pass: false,
-      result: { code: "0002", taskId }
-    }
-  }
-  
-  // 3. inspect liuDesc and encrypt
+  // 1. inspect liuDesc and encrypt
   const { liuDesc } = content
   const aesKey = getAESKey() ?? ""
   let enc_desc: CryptoCipherAndIV | undefined
@@ -1427,6 +1433,23 @@ async function getSharedData_2(
       }
     }
     enc_desc = encryptDataWithAES(liuDesc, aesKey)
+  }
+
+  // 2. get oldContent & content_id
+  const res2 = await getSharedData_3(ssCtx, taskId, content)
+  if(!res2.pass) {
+    return res2
+  }
+  const { content_id, oldContent } = res2
+
+  // 3. check editedStamp
+  const editedStamp = content.editedStamp as number
+  if(oldContent.editedStamp > editedStamp) {
+    console.log("the content is newer than the thread")
+    return {
+      pass: false,
+      result: { code: "0002", taskId }
+    }
   }
 
   // 4. get enc_images enc_files
