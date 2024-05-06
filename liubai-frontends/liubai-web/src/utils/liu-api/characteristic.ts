@@ -13,8 +13,8 @@ let isInWebView: boolean = false;   // 是否在桌面应用 App 的 Webview 中
 let isFirefox: boolean = false;
 let isSafari: boolean = false;
 let isChrome: boolean = false;
-let chromeVersion: string | undefined;
-let firefoxVersion: string | undefined;
+let isEdge: boolean = false;    // if true, isChrome is true as well
+let browserVersion: string | undefined;
 
 export interface GetChaRes {
   isPC: boolean
@@ -28,8 +28,8 @@ export interface GetChaRes {
   isFirefox: boolean
   isSafari: boolean
   isChrome: boolean
-  chromeVersion?: string
-  firefoxVersion?: string
+  isEdge: boolean
+  browserVersion?: string
 }
 
 export const getCharacteristic = (): GetChaRes => {
@@ -90,19 +90,24 @@ export const getCharacteristic = (): GetChaRes => {
   }
 
   // 判别浏览器
-  if(ua.includes("firefox")) {
+  const edg_version_m = ua.match(reg_exp.edge_version)
+  if(edg_version_m) {
+    // edge browser
+    isEdge = true
+    isChrome = true
+    browserVersion = edg_version_m[1]
+  }
+  else if(ua.includes("firefox")) {
     isFirefox = true
 
-    // get the version of firefox
     const f_version_m = ua.match(reg_exp.firefox_version)
-    firefoxVersion = f_version_m ? f_version_m[1] : undefined
+    browserVersion = f_version_m ? f_version_m[1] : undefined
   }
   else if(ua.includes("chrome")) {
     isChrome = true
 
-    // get the version of chrome
     const c_version_m = ua.match(reg_exp.chrome_version)
-    chromeVersion = c_version_m ? c_version_m[1] : undefined
+    browserVersion = c_version_m ? c_version_m[1] : undefined
   }
   else if(ua.includes("safari")) isSafari = true
 
@@ -134,7 +139,7 @@ function _returnData(): GetChaRes {
     isFirefox,
     isSafari,
     isChrome,
-    chromeVersion,
-    firefoxVersion,
+    isEdge,
+    browserVersion,
   }
 }

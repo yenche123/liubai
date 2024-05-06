@@ -26,6 +26,8 @@ export default {
 
   chrome_version: /chrome\/([\d\.]+)/,
 
+  edge_version: /edg\/([\d\.]+)/,
+
   firefox_version: /firefox\/([\d\.]+)/,
   
 }

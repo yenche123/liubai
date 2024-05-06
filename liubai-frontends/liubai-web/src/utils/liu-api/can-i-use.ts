@@ -20,8 +20,8 @@ function viewTransitionApi() {
  */
 function cssDetectTextOverflow() {
   const cha = getCharacteristic()
-  if(!cha.isChrome || !cha.chromeVersion) return false
-  const res = valTool.compareVersion(cha.chromeVersion, "115.0.0")
+  if(!cha.isChrome || !cha.browserVersion) return false
+  const res = valTool.compareVersion(cha.browserVersion, "115.0.0")
   return res >= 0
 }
 
