@@ -7,6 +7,7 @@ import {
   encryptDataWithAES,
   getDecryptedBody,
   getEncryptedData,
+  valTool,
 } from "@/common-util"
 import type { 
   LiuRqReturn,
@@ -331,7 +332,7 @@ async function toExecute(
       res1 = await toThreadTag(ssCtx, thread, opt)
     }
     else if(taskType === "comment-delete" && comment) {
-      toComment_OState(ssCtx, comment, opt)
+      res1 = await toComment_OState(ssCtx, comment, opt, "DELETED")
     }
     else if(taskType === "comment-edit" && comment) {
       toCommentEdit(ssCtx, comment, opt)
@@ -1012,10 +1013,60 @@ async function toComment_OState(
   ssCtx: SyncSetCtx,
   comment: LiuUploadComment,
   opt: OperationOpt,
-) {
-  const { taskId, operateStamp } = opt
+  newOState: OState,
+): Promise<SyncSetAtomRes> {
+  // 1. change comment's oState using getSharedData_6
+  const res1 = await getSharedData_6(ssCtx, comment, opt, newOState)
+  const pass = res1.pass
+  const code = res1.result.code
+  if(!pass || code !== "0000") return res1.result
+  if(newOState !== "DELETED") return res1.result
+
+  // 2. update parent's levelOne and levelOneAndTwo
+  const { oldContent } = res1
+  const { parentThread, parentComment, replyToComment } = oldContent
   
+  if(parentThread && !parentComment && !replyToComment) {
+    await _deleteCommentNum(ssCtx, parentThread)
+    return res1.result
+  }
+
+  if(replyToComment) {
+    await _deleteCommentNum(ssCtx, replyToComment)
+  }
+
+  if(parentComment) {
+    if(parentComment !== replyToComment) {
+      await _deleteCommentNum(ssCtx, parentComment, 0, 1)
+    }
+    else if(parentThread) {
+      await _deleteCommentNum(ssCtx, parentThread, 0, 1)
+    }
+  }
+
+  return res1.result
 }
+
+// minus one from levelOne or levelTwo of a content
+async function _deleteCommentNum(
+  ssCtx: SyncSetCtx,
+  id: string,
+  levelOne: number = 1,
+  levelOneAndTwo: number = 1,
+) {
+  const res = await getData<Table_Content>(ssCtx, "content", id)
+  if(!res) return false
+  
+  let num1 = valTool.minusAndMinimumZero(res.levelOne, levelOne)
+  let num2 = valTool.minusAndMinimumZero(res.levelOneAndTwo, levelOneAndTwo)
+  const u: Partial<Table_Content> = {
+    levelOne: num1,
+    levelOneAndTwo: num2,
+  }
+  await updatePartData(ssCtx, "content", id, u)
+  return true
+}
+
 
 /***************** Operation: edit a comment ***********/
 async function toCommentEdit(

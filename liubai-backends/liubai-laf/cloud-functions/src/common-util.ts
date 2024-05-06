@@ -995,7 +995,7 @@ export function getIpGeo(ctx: FunctionContext) {
 /********************* 工具函数 ****************/
 
 // 字符串转对象
-export function strToObj<T = any>(str: string): T {
+function strToObj<T = any>(str: string): T {
   let res = {}
   try {
     res = JSON.parse(str)
@@ -1005,13 +1005,35 @@ export function strToObj<T = any>(str: string): T {
 }
 
 // 对象转字符串
-export function objToStr<T = any>(obj: T): string {
+function objToStr<T = any>(obj: T): string {
   let str = ``
   try {
     str = JSON.stringify(obj)
   }
   catch(err) {}
   return str
+}
+
+/**
+ * minus one and make sure that
+ * the new value is greater than or equal to 0
+ * @param oldVal original value, which is minuend
+ * @param subtrahend subtrahend, whose default value is 1
+ */
+function minusAndMinimumZero(
+  oldVal: number | undefined,
+  subtrahend: number = 1,
+) {
+  if(!oldVal) return 0
+  let newVal = oldVal - subtrahend
+  if(newVal < 0) return 0
+  return newVal
+}
+
+export const valTool = {
+  strToObj,
+  objToStr,
+  minusAndMinimumZero,
 }
 
 
