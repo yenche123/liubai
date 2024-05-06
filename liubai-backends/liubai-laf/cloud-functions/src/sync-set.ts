@@ -328,7 +328,7 @@ async function toExecute(
       res1 = await toThreadPin(ssCtx, thread, opt)
     }
     else if(taskType === "thread-tag" && thread) {
-      toThreadTag(ssCtx, thread, opt)
+      res1 = await toThreadTag(ssCtx, thread, opt)
     }
     else if(taskType === "comment-delete" && comment) {
       toComment_OState(ssCtx, comment, opt)
@@ -1008,14 +1008,41 @@ async function toThreadTag(
   ssCtx: SyncSetCtx,
   thread: LiuUploadThread,
   opt: OperationOpt,
-) {
+): Promise<SyncSetAtomRes> {
   const { taskId, operateStamp } = opt
+  // 1. inspect data technically
   const Sch_Tag = vbot.object({
     id: Sch_Id,
     first_id: Sch_Opt_Str,
     tagIds: sch_opt_arr(vbot.string()),
+    tagSearched: sch_opt_arr(vbot.string()),
   })
-  
+  const res = checkoutInput(Sch_Tag, thread, taskId)
+  if(res) return res
+
+  // 2. get shared data
+  const res2 = await getSharedData_3(ssCtx, taskId, thread)
+  if(!res2.pass) return res2.result
+  const { oldContent } = res2
+
+  const id = thread.id as string
+  const { tagIds, tagSearched } = thread
+  const { config: cfg = {} } = oldContent
+  const lastStamp = cfg.lastOperateTag ?? 1
+  if(lastStamp >= operateStamp) {
+    return { code: "0002", taskId }
+  }
+
+  // 3. update data
+  cfg.lastOperateTag = operateStamp
+  const u: Partial<Table_Content> = {
+    tagIds,
+    tagSearched,
+    config: cfg,
+  }
+  await updatePartData(ssCtx, "content", id, u)
+
+  return { code: "0000", taskId } 
 }
 
 /***************** Operation: update comment's oState ***********/
