@@ -40,6 +40,8 @@ import {
   Sch_ContentConfig,
   Sch_LiuRemindMe,
   Sch_OState_2,
+  Sch_Cloud_StateConfig,
+  Sch_TagView,
   Sch_Id,
   Sch_Opt_Str,
   sch_opt_arr,
@@ -338,10 +340,10 @@ async function toExecute(
       res1 = await toCommentEdit(ssCtx, comment, opt)
     }
     else if(taskType === "workspace-tag" && workspace) {
-      toWorkspaceTag(ssCtx, workspace, opt)
+      res1 = await toWorkspaceTag(ssCtx, workspace, opt)
     }
     else if(taskType === "workspace-state_config" && workspace) {
-      toWorkspaceStateConfig(ssCtx, workspace, opt)
+      res1 = await toWorkspaceStateConfig(ssCtx, workspace, opt)
     }
     else if(taskType === "member-avatar" && member) {
       toMemberAvatar(ssCtx, member, opt)
@@ -1106,9 +1108,41 @@ async function toWorkspaceTag(
   ssCtx: SyncSetCtx,
   workspace: LiuUploadWorkspace,
   opt: OperationOpt,
-) {
+): Promise<SyncSetAtomRes> {
   const { taskId, operateStamp } = opt
-  
+
+  // 1. inspect data technically
+  const Sch_WorkspaceTag = vbot.object({
+    id: Sch_Id,
+    tagList: vbot.array(Sch_TagView),
+  })
+  const res1 = checkoutInput(Sch_WorkspaceTag, workspace, taskId)
+  if(res1) return res1
+
+  // 2. check permission
+  const id = workspace.id
+  const res2 = _amIInTheSpace(ssCtx, id)
+  if(!res2) return { code: "E4003", taskId, errMsg: "no permission of the workspace" }
+
+  // 3. get workspace
+  const oldSpace = await getData<Table_Workspace>(ssCtx, "workspace", id)
+  if(!oldSpace) return { code: "E4004", taskId, errMsg: "the workspace cannot be found" }
+
+  // 4. check conflict
+  const cfg = oldSpace.config ?? {}
+  const oldStamp = cfg.lastOperateTag ?? 1
+  if(oldStamp >= operateStamp) {
+    return { code: "0002", taskId }
+  }
+
+  // 5. update
+  cfg.lastOperateTag = operateStamp
+  const u: Partial<Table_Workspace> = {
+    tagList: workspace.tagList,
+    config: cfg,
+  }
+  await updatePartData(ssCtx, "workspace", id, u)
+  return { code: "0000", taskId }
 }
 
 /*********** Operation: update workspace's state_config ****/
@@ -1117,8 +1151,38 @@ async function toWorkspaceStateConfig(
   workspace: LiuUploadWorkspace,
   opt: OperationOpt,
 ) {
-  const { taskId, operateStamp } = opt
-  
+  const { taskId } = opt
+
+  // 1. inspect data technically
+  const Sch_WorkspaceStateConfig = vbot.object({
+    id: Sch_Id,
+    stateConfig: Sch_Cloud_StateConfig,
+  })
+  const res1 = checkoutInput(Sch_WorkspaceStateConfig, workspace, taskId)
+  if(res1) return res1
+
+  // 2. check permission
+  const id = workspace.id
+  const res2 = _amIInTheSpace(ssCtx, id)
+  if(!res2) return { code: "E4003", taskId, errMsg: "no permission of the workspace" }
+
+  // 3. get workspace
+  const oldSpace = await getData<Table_Workspace>(ssCtx, "workspace", id)
+  if(!oldSpace) return { code: "E4004", taskId, errMsg: "the workspace cannot be found" }
+
+  // 4. check conflict
+  const newStamp = workspace?.stateConfig?.updatedStamp as number
+  const oldStamp = oldSpace?.stateConfig?.updatedStamp ?? 1
+  if(oldStamp >= newStamp) {
+    return { code: "0002", taskId }
+  }
+
+  // 5. update
+  const u: Partial<Table_Workspace> = {
+    stateConfig: workspace.stateConfig,
+  }
+  await updatePartData(ssCtx, "workspace", id, u)
+  return { code: "0000", taskId }
 }
 
 /*********** Operation: update member's avatar ****/
@@ -1128,6 +1192,7 @@ async function toMemberAvatar(
   opt: OperationOpt,
 ) {
   const { taskId } = opt
+  
   
 }
 

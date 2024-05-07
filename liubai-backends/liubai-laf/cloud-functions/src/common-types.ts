@@ -132,11 +132,27 @@ interface LiuAtomState {
   insertedStamp: number
 }
 
+const Sch_LiuAtomState: BaseSchema<LiuAtomState> = vbot.object({
+  id: Sch_Id,
+  text: Sch_Opt_Str,
+  color: Sch_Opt_Str,
+  showInIndex: vbot.boolean(),
+  contentIds: vbot.array(Sch_Id),
+  showFireworks: vbot.optional(vbot.boolean()),
+  updatedStamp: vbot.number(),
+  insertedStamp: vbot.number()
+})
+
 /** 表示数据表里，存储 “状态” 的结构  */
 interface Cloud_StateConfig {
   stateList?: LiuAtomState[]
   updatedStamp: number
 }
+
+export const Sch_Cloud_StateConfig: BaseSchema<Cloud_StateConfig> = vbot.object({
+  stateList: sch_opt_arr(Sch_LiuAtomState),
+  updatedStamp: vbot.number(),
+})
 
 export type SpaceType = "ME" | "TEAM"
 export type ContentInfoType = "THREAD" | "COMMENT"
@@ -154,6 +170,16 @@ interface TagView {
   updatedStamp: number
   children?: TagView[]
 }
+
+export const Sch_TagView: BaseSchema<TagView> = vbot.object({
+  tagId: Sch_Id,
+  text: vbot.string(),
+  icon: Sch_Opt_Str,
+  oState: vbot.union([vbot.literal("OK"), vbot.literal("REMOVED")]),
+  createdStamp: vbot.number(),
+  updatedStamp: vbot.number(),
+  children: sch_opt_arr(vbot.lazy(() => Sch_TagView)),
+})
 
 /** Content 表对象的配置结构 */
 export interface ContentConfig {
