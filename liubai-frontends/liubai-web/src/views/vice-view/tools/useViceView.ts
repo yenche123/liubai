@@ -25,7 +25,7 @@ import liuUtil from "~/utils/liu-util";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import type { VvData, VvEmits } from "./types";
 
-const LISTEN_DELAY = 300
+const LISTEN_DELAY = 450
 const layoutStore = useLayoutStore()
 
 export function useViceView(emits: VvEmits) {  
@@ -180,7 +180,7 @@ function initResizing(
     lastResizeTimeout = setTimeout(() => {
       lastResizeTimeout = undefined
       collectState()
-    }, LISTEN_DELAY)
+    }, 300)
   }
 
   return { onResizing }

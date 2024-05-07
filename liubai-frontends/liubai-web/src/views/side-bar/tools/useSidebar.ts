@@ -14,7 +14,7 @@ import type { SbData } from "./types";
 import { useImages } from "~/hooks/useImages"
 import { type CursorHorizontalResize } from "~/types/types-view";
 
-const LISTEN_DELAY = 300
+const LISTEN_DELAY = 450
 let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后视觉上呈现的宽度
 let lastWinResizeStamp = 0
 
@@ -176,7 +176,7 @@ function initResizing(
     lastResizeTimeout = window.setTimeout(() => {
       lastResizeTimeout = 0
       collectState()
-    }, LISTEN_DELAY)
+    }, 300)
   }
 
   return { onResizing }
@@ -290,7 +290,7 @@ async function recalculate(
   // 广播数据
   layoutStore.$patch(newState)
 
-  // 等待 316ms 执行动画
+  // 等待 450 + 16ms 执行动画
   await valTool.waitMilli(LISTEN_DELAY + cfg.frame_duration)
   sbData.isAnimating = false
 }

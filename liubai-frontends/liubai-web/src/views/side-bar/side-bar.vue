@@ -198,7 +198,7 @@ const {
   overflow-x: hidden;
   overflow-y: auto;
   padding-right: 10px;
-  transition: .3s;
+  transition: .4s;
   scrollbar-color: transparent transparent;
   will-change: transform;
 }
@@ -239,7 +239,7 @@ const {
 
 .liu-vdr_animating {
   pointer-events: none;
-  transition: .3s;
+  transition: .45s;
 }
 
 .liu-vdr-handle {

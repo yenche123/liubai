@@ -148,7 +148,7 @@ input {
   max-width: var(--card-max);
   min-width: var(--card-min);
   position: relative;
-  transition: .15s;
+  transition: .3s;
 }
 
 @container liu-mc-container (min-width: 300px) {

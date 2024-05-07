@@ -110,7 +110,7 @@ const onVcStateChange = (newV: VcState) => {
   height: 100vh;
   height: 100dvh;
   z-index: 700;
-  transition: .3s;
+  transition: .45s;
   direction: rtl;
   will-change: transform;
 }

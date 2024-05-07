@@ -81,7 +81,7 @@ export function useEditorCore(
   const transition = ref("0")
   onMounted(async () => {
     await valTool.waitMilli(200)
-    if(purpose.value === "thread-edit") transition.value = ".3s"
+    if(purpose.value === "thread-edit") transition.value = ".45s"
   })
 
   return {
