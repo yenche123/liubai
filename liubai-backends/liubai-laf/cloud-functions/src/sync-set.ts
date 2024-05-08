@@ -346,10 +346,10 @@ async function toExecute(
       res1 = await toWorkspaceStateConfig(ssCtx, workspace, opt)
     }
     else if(taskType === "member-avatar" && member) {
-      toMemberAvatar(ssCtx, member, opt)
+      res1 = await toMemberAvatar(ssCtx, member, opt)
     }
     else if(taskType === "member-nickname" && member) {
-      toMemberNickname(ssCtx, member, opt)
+      res1 = await toMemberNickname(ssCtx, member, opt)
     }
     else if(taskType === "draft-set" && draft) {
       toDraftSet(ssCtx, draft, opt)
@@ -1192,8 +1192,26 @@ async function toMemberAvatar(
   opt: OperationOpt,
 ) {
   const { taskId } = opt
-  
-  
+
+  // 1. inspect data technically
+  const Sch_Ma = vbot.object({
+    id: Sch_Id,
+    avatar: vbot.optional(Sch_Cloud_ImageStore),
+  })
+  const res = checkoutInput(Sch_Ma, member, taskId)
+  if(res) return res
+
+  // 2. check permission
+  const res2 = await getSharedData_7(ssCtx, member, opt)
+  if(!res2.pass) return res2.result
+
+  // 3. update
+  const u: Partial<Table_Member> = {
+    avatar: member.avatar,
+  }
+  const memberId = member.id
+  await updatePartData(ssCtx, "member", memberId, u)
+  return { code: "0000", taskId }
 }
 
 /*********** Operation: update member's nickname ****/
@@ -1203,6 +1221,33 @@ async function toMemberNickname(
   opt: OperationOpt,
 ) {
   const { taskId, operateStamp } = opt
+
+  // 1. inspect data technically
+  const Sch_Mn = vbot.object({
+    id: Sch_Id,
+    name: Sch_Opt_Str,
+  })
+  const res = checkoutInput(Sch_Mn, member, taskId)
+  if(res) return res
+
+  // 2. check permission
+  const res2 = await getSharedData_7(ssCtx, member, opt)
+  if(!res2.pass) return res2.result
+
+  // 3. check out the conflict
+  const cfg = res2.oldMember.config ?? {}
+  const oldStamp = cfg.lastOperateName ?? 1
+  if(oldStamp >= operateStamp) {
+    return { code: "0002", taskId }
+  }
+  
+  // 4. update
+  const u: Partial<Table_Member> = {
+    name: member.name,
+  }
+  const memberId = member.id
+  await updatePartData(ssCtx, "member", memberId, u)
+  return { code: "0000", taskId }
   
 }
 
@@ -1307,12 +1352,46 @@ interface Gsdr_6_B {
   oldContent: Table_Content
 }
 
+interface Gsdr_7_B {
+  pass: true
+  oldMember: Table_Member
+}
+
 type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
 type GetShareDataRes_2 = Gsdr_A | Gsdr_2_B
 type GetShareDataRes_3 = Gsdr_A | Gsdr_3_B
 type GetShareDataRes_4 = Gsdr_A | Gsdr_4_B
 type GetShareDataRes_5 = Gsdr_A | Gsdr_5_B
 type GetShareDataRes_6 = Gsdr_A | Gsdr_6_B
+type GetShareDataRes_7 = Gsdr_A | Gsdr_7_B
+
+// checking out the permission to edit member
+async function getSharedData_7(
+  ssCtx: SyncSetCtx,
+  member: LiuUploadMember,
+  opt: OperationOpt,
+): Promise<GetShareDataRes_7> {
+  const { taskId } = opt
+
+  const id = member.id as string
+  const _m = await getData<Table_Member>(ssCtx, "member", id)
+  if(!_m) {
+    return {
+      pass: false,
+      result: { code: "E4004", taskId, errMsg: "the member cannot be found" },
+    }
+  }
+  const userId = ssCtx.me._id
+  const _userId = _m.user
+  if(userId !== _userId) {
+    return {
+      pass: false,
+      result: { code: "E4003", taskId, errMsg: "no permission of the member" },
+    }
+  }
+  
+  return { pass: true, oldMember: _m }
+}
 
 // tackle changing oState of a content
 async function getSharedData_6(
