@@ -181,7 +181,6 @@ function whenDraftSet(d: DraftLocalTable) {
     whenStamp: d.whenStamp,
     remindMe: d.remindMe,
     tagIds: d.tagIds,
-    config: d.config,
   }
   if(d.liuDesc) {
     uploadDraft.liuDesc = transferUtil.tiptapToLiu(d.liuDesc)

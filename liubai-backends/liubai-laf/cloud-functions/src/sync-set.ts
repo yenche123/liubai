@@ -32,6 +32,7 @@ import type {
   Res_SyncSet_Cloud,
   SyncSetTable,
   Table_Collection,
+  SpaceType,
 } from "@/common-types"
 import { 
   Sch_Simple_SyncSetAtom,
@@ -40,6 +41,7 @@ import {
   Sch_ContentConfig,
   Sch_LiuRemindMe,
   Sch_OState_2,
+  Sch_ContentInfoType,
   Sch_Cloud_StateConfig,
   Sch_TagView,
   Sch_Id,
@@ -497,14 +499,9 @@ async function toPostThread(
   const aesKey = getAESKey() ?? ""
 
   // 4. get the workspace
-  const workspace = await getData<Table_Workspace>(ssCtx, "workspace", spaceId)
-  if(!workspace) {
-    return { 
-      code: "E4004", taskId,
-      errMsg: "workspace not found",
-    }
-  }
-  const spaceType = workspace.infoType
+  const res4 = await getSharedData_8(ssCtx, spaceId, opt)
+  if(!res4.pass) return res4.result
+  const { spaceType } = res4
 
   // 5. construct a new row of Table_Content
   const { title } = thread
@@ -595,14 +592,9 @@ async function toPostComment(
   } = sharedData
 
   // 3. get the workspace
-  const workspace = await getData<Table_Workspace>(ssCtx, "workspace", spaceId)
-  if(!workspace) {
-    return { 
-      code: "E4004", taskId,
-      errMsg: "workspace not found",
-    }
-  }
-  const spaceType = workspace.infoType
+  const res3 = await getSharedData_8(ssCtx, spaceId, opt)
+  if(!res3.pass) return res3.result
+  const { spaceType } = res3
 
   // 4. construct a new row of Table_Content
   const b4 = getBasicStampWhileAdding()
@@ -1115,7 +1107,7 @@ async function toWorkspaceTag(
   const Sch_WorkspaceTag = vbot.object({
     id: Sch_Id,
     tagList: vbot.array(Sch_TagView),
-  })
+  }, vbot.never())
   const res1 = checkoutInput(Sch_WorkspaceTag, workspace, taskId)
   if(res1) return res1
 
@@ -1157,7 +1149,7 @@ async function toWorkspaceStateConfig(
   const Sch_WorkspaceStateConfig = vbot.object({
     id: Sch_Id,
     stateConfig: Sch_Cloud_StateConfig,
-  })
+  }, vbot.never())
   const res1 = checkoutInput(Sch_WorkspaceStateConfig, workspace, taskId)
   if(res1) return res1
 
@@ -1197,7 +1189,7 @@ async function toMemberAvatar(
   const Sch_Ma = vbot.object({
     id: Sch_Id,
     avatar: vbot.optional(Sch_Cloud_ImageStore),
-  })
+  }, vbot.never())
   const res = checkoutInput(Sch_Ma, member, taskId)
   if(res) return res
 
@@ -1226,7 +1218,7 @@ async function toMemberNickname(
   const Sch_Mn = vbot.object({
     id: Sch_Id,
     name: Sch_Opt_Str,
-  })
+  },vbot.never())
   const res = checkoutInput(Sch_Mn, member, taskId)
   if(res) return res
 
@@ -1254,12 +1246,126 @@ async function toMemberNickname(
 /*********** Operation: set draft ****/
 async function toDraftSet(
   ssCtx: SyncSetCtx,
-  member: LiuUploadDraft,
+  draft: LiuUploadDraft,
   opt: OperationOpt,
 ) {
-  const { taskId, operateStamp } = opt
+  const { taskId } = opt
+
+  // 1. inspect data technically
+  const Sch_DraftSet = vbot.object({
+    id: vbot.optional(Sch_Id),
+    first_id: vbot.optional(Sch_Id),
+    spaceId: vbot.optional(Sch_Id),
+
+    liuDesc: sch_opt_arr(vbot.any()),
+    images: sch_opt_arr(Sch_Cloud_ImageStore),
+    files: sch_opt_arr(Sch_Cloud_FileStore),
+
+    editedStamp: vbot.number(),
+    infoType: vbot.optional(Sch_ContentInfoType),
+
+    threadEdited: Sch_Opt_Str,
+    commentEdited: Sch_Opt_Str,
+    parentThread: Sch_Opt_Str,
+    parentComment: Sch_Opt_Str,
+    replyToComment: Sch_Opt_Str,
+
+    title: Sch_Opt_Str,
+    whenStamp: vbot.optional(vbot.number()),
+    remindMe: vbot.optional(Sch_LiuRemindMe),
+    tagIds: sch_opt_arr(Sch_Id),
+  }, vbot.never())
+  const res1 = checkoutInput(Sch_DraftSet, draft, taskId)
+  if(res1) return res1
+
+  // 2. inspect more
+  if(!draft.id && !draft.first_id) {
+    return { code: "E4000", errMsg: "id or first is required", taskId }
+  }
+
+  // 3. inspect more if the operation is creating draft
+  if(!draft.id) {
+    const Sch_DraftCreate = vbot.object({
+      first_id: Sch_Id,
+      spaceId: Sch_Id,
+      infoType: Sch_ContentInfoType,
+    })
+    const res3 = checkoutInput(Sch_DraftCreate, draft, taskId)
+    if(res3) return res3
+    const res3_2 = await toDraftCreate(ssCtx, draft, opt)
+    return res3_2
+  }
   
 }
+
+// to create a draft
+async function toDraftCreate(
+  ssCtx: SyncSetCtx,
+  draft: LiuUploadDraft,
+  opt: OperationOpt,
+) {
+  const { taskId } = opt
+
+  // 1. check out permission to edit the content
+  let theId = draft.threadEdited ?? draft.commentEdited
+  if(theId) {
+    const content = await getData<Table_Content>(ssCtx, "content", theId)
+    if(!content) {
+      return { code: "E4004", errMsg: "content not found", taskId  }
+    }
+    const res1 = canIEditTheContent(ssCtx, content)
+    if(!res1) {
+      return { code: "E4003", errMsg: "permission denied", taskId }
+    }
+  }
+
+  // 2. get spaceType
+  const spaceId = draft.spaceId as string
+  const res2 = await getSharedData_8(ssCtx, spaceId, opt)
+  if(!res2.pass) return res2.result
+  const { spaceType } = res2
+
+  // 3. encrypt
+  const res3 = await getSharedData_9(ssCtx, draft, opt)
+  if(!res3.pass) return res3.result
+
+  // 4. create
+  const userId = ssCtx.me._id
+  const first_id = draft.first_id as string
+  const b4 = getBasicStampWhileAdding()
+  const u: Partial<Table_Draft> = {
+    ...b4,
+    first_id,
+    infoType: draft.infoType,
+    oState: "OK",
+    user: userId,
+    spaceId,
+    spaceType,
+
+    threadEdited: draft.threadEdited,
+    commentEdited: draft.commentEdited,
+    parentThread: draft.parentThread,
+    parentComment: draft.parentComment,
+    replyToComment: draft.replyToComment,
+
+    enc_title: res3.enc_title,
+    enc_desc: res3.enc_desc,
+    enc_images: res3.enc_images,
+    enc_files: res3.enc_files,
+    
+    whenStamp: draft.whenStamp,
+    remindMe: draft.remindMe,
+    tagIds: draft.tagIds,
+    editedStamp: draft.editedStamp,
+  }
+  const new_id = await insertData(ssCtx, "draft", u)
+  if(!new_id) {
+    return { code: "E5001", taskId, errMsg: "inserting data failed" }
+  }
+
+  return { code: "0000", taskId, first_id, new_id }
+}
+
 
 /*********** Operation: clear draft ****/
 async function toDraftClear(
@@ -1356,6 +1462,19 @@ interface Gsdr_7_B {
   oldMember: Table_Member
 }
 
+interface Gsdr_8_B {
+  pass: true
+  spaceType: SpaceType
+}
+
+interface Gsdr_9_B {
+  pass: true
+  enc_title?: CryptoCipherAndIV
+  enc_desc?: CryptoCipherAndIV
+  enc_images?: CryptoCipherAndIV
+  enc_files?: CryptoCipherAndIV
+}
+
 type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
 type GetShareDataRes_2 = Gsdr_A | Gsdr_2_B
 type GetShareDataRes_3 = Gsdr_A | Gsdr_3_B
@@ -1363,6 +1482,76 @@ type GetShareDataRes_4 = Gsdr_A | Gsdr_4_B
 type GetShareDataRes_5 = Gsdr_A | Gsdr_5_B
 type GetShareDataRes_6 = Gsdr_A | Gsdr_6_B
 type GetShareDataRes_7 = Gsdr_A | Gsdr_7_B
+type GetShareDataRes_8 = Gsdr_A | Gsdr_8_B
+type GetShareDataRes_9 = Gsdr_A | Gsdr_9_B
+
+// to encrypt draft
+async function getSharedData_9(
+  ssCtx: SyncSetCtx,
+  draft: LiuUploadDraft,
+  opt: OperationOpt,
+): Promise<GetShareDataRes_9> {
+  const { taskId } = opt
+  const { title, liuDesc, images, files } = draft
+  
+  const aesKey = getAESKey() ?? ""
+
+  // 1. handle desc
+  let enc_desc: CryptoCipherAndIV | undefined
+  if(liuDesc) {
+    const res3 = checker.isLiuContentArr(liuDesc)
+    if(!res3) {
+      return {
+        pass: false,
+        result: {
+          code: "E4000", taskId, errMsg: "liuDesc is illegal"
+        }
+      }
+    }
+    enc_desc = encryptDataWithAES(liuDesc, aesKey)
+  }
+
+  const enc_title = encryptDataWithAES(title, aesKey)
+  const enc_images = images?.length ? encryptDataWithAES(images, aesKey) : undefined
+  const enc_files = files?.length ? encryptDataWithAES(files, aesKey) : undefined
+  
+  return {
+    pass: true,
+    enc_title,
+    enc_desc,
+    enc_images,
+    enc_files,
+  }
+}
+
+// to get spaceType
+async function getSharedData_8(
+  ssCtx: SyncSetCtx,
+  spaceId: string,
+  opt: OperationOpt,
+): Promise<GetShareDataRes_8> {
+  const { taskId } = opt
+  const theSpace = await getData<Table_Workspace>(ssCtx, "workspace", spaceId)
+  if(!theSpace) {
+    return {
+      pass: false,
+      result: { code: "E4004", errMsg: "workspace not found", taskId },
+    }
+  }
+
+  const { oState } = theSpace
+  if(oState === "REMOVED" || oState === "DELETED") {
+    return {
+      pass: false,
+      result: {
+        code: "E4003", errMsg: "workspace is removed or deleted", taskId
+      }
+    }
+  }
+
+  const spaceType = theSpace.infoType
+  return { pass: true, spaceType }
+}
 
 // checking out the permission to edit member
 async function getSharedData_7(

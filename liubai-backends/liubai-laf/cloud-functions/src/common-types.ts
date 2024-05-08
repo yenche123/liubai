@@ -82,6 +82,10 @@ export const Sch_OState_2 = vbot.picklist(oState_2s)
 // member 的 oState
 export type OState_3 = "OK" | "LEFT" | "DEACTIVATED" | "DELETED"
 
+export const oState_4s = ["OK", "REMOVED"] as const
+export type OState_4 = typeof oState_4s[number]
+export const Sch_OState_4 = vbot.picklist(oState_4s)
+
 // user 的 oState
 export type OState_User = "NORMAL" | "DEACTIVATED" | "LOCK" | "REMOVED" | "DELETED"
 
@@ -155,7 +159,11 @@ export const Sch_Cloud_StateConfig: BaseSchema<Cloud_StateConfig> = vbot.object(
 })
 
 export type SpaceType = "ME" | "TEAM"
-export type ContentInfoType = "THREAD" | "COMMENT"
+
+export const contentInfoTypes = ["THREAD", "COMMENT"] as const
+export type ContentInfoType = typeof contentInfoTypes[number]
+export const Sch_ContentInfoType = vbot.picklist(contentInfoTypes)
+
 export type CollectionInfoType = "EXPRESS" | "FAVORITE"
 export type VisScope = "DEFAULT" | "PUBLIC" | "LOGIN_REQUIRED"
 export type Cloud_StorageState = "CLOUD" | "ONLY_LOCAL"
@@ -165,7 +173,7 @@ interface TagView {
   tagId: string
   text: string
   icon?: string
-  oState: "OK" | "REMOVED"
+  oState: OState_4
   createdStamp: number
   updatedStamp: number
   children?: TagView[]
@@ -175,7 +183,7 @@ export const Sch_TagView: BaseSchema<TagView> = vbot.object({
   tagId: Sch_Id,
   text: vbot.string(),
   icon: Sch_Opt_Str,
-  oState: vbot.union([vbot.literal("OK"), vbot.literal("REMOVED")]),
+  oState: Sch_OState_4,
   createdStamp: vbot.number(),
   updatedStamp: vbot.number(),
   children: sch_opt_arr(vbot.lazy(() => Sch_TagView)),
@@ -619,7 +627,6 @@ export interface LiuUploadDraft extends LiuUploadBase {
   whenStamp?: number
   remindMe?: LiuRemindMe
   tagIds?: string[]
-  config?: ContentConfig
 }
 
 export interface LiuUploadMember {
@@ -827,15 +834,16 @@ export interface Table_Draft extends BaseTable {
   parentComment?: string
   replyToComment?: string
   visScope?: VisScope
-  title?: string
-  liuDesc?: LiuContent[]
-  images?: Cloud_ImageStore[]
-  files?: Cloud_FileStore[]
+
+  enc_title?: CryptoCipherAndIV
+  enc_desc?: CryptoCipherAndIV
+  enc_images?: CryptoCipherAndIV
+  enc_files?: CryptoCipherAndIV
+
   whenStamp?: number
   remindMe?: LiuRemindMe
   tagIds?: string[]
   editedStamp: number       // 草稿被用户实际编辑的时间戳
-  config?: ContentConfig
 }
 
 /** 表态和收藏表 */

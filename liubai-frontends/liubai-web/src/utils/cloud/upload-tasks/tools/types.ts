@@ -101,7 +101,6 @@ export interface LiuUploadDraft extends LiuUploadBase {
   whenStamp?: number
   remindMe?: LiuRemindMe
   tagIds?: string[]
-  config?: ContentConfig
 }
 
 export interface LiuUploadMember {
