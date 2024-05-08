@@ -1279,7 +1279,6 @@ function canIEditTheContent(
   ssCtx: SyncSetCtx,
   content: Table_Content,
 ) {
-
   const { oState, infoType } = content
   if(oState === "DELETED") return false
   if(infoType === "COMMENT" && oState === "REMOVED") return false
@@ -1373,6 +1372,7 @@ async function getSharedData_7(
 ): Promise<GetShareDataRes_7> {
   const { taskId } = opt
 
+  // 1. get the member
   const id = member.id as string
   const _m = await getData<Table_Member>(ssCtx, "member", id)
   if(!_m) {
@@ -1381,12 +1381,23 @@ async function getSharedData_7(
       result: { code: "E4004", taskId, errMsg: "the member cannot be found" },
     }
   }
+
+  // 2. check out userId
   const userId = ssCtx.me._id
   const _userId = _m.user
   if(userId !== _userId) {
     return {
       pass: false,
       result: { code: "E4003", taskId, errMsg: "no permission of the member" },
+    }
+  }
+
+  // 3. check out oState
+  const oState = _m.oState
+  if(oState === "DEACTIVATED" || oState === "DELETED") {
+    return {
+      pass: false,
+      result: { code: "E4003", taskId, errMsg: "the member is deactivated or deleted" },
     }
   }
   
