@@ -6,9 +6,11 @@ import { useCustomEditorLastBar } from "~/pages/utils/useCustomEditorLastBar"
 const {
   threadId,
   state,
+  forceUpdateNum,
   onNodata,
   onHasdata,
   onUpdated,
+  onEditing,
 } = useEditContent()
 
 const { lastBar } = useCustomEditorLastBar()
@@ -31,8 +33,10 @@ const { lastBar } = useCustomEditorLastBar()
           @hasdata="onHasdata"
           @nodata="onNodata"
           @updated="onUpdated"
+          @editing="onEditing"
           class="ec-custom-editor"
           :class="{ 'ec-custom-editor_show': state === -1 }"
+          :force-update-num="forceUpdateNum"
         ></CustomEditor>
       </div>
       

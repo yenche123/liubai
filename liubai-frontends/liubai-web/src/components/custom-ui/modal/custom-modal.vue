@@ -1,4 +1,8 @@
 <script setup lang="ts">
+// 该组件不得改成用路由参数来控制 展示或隐藏 该组件
+// 因为可能会放在导航守卫里去触发 showModal 这就会产生冲突
+// 比如：导航守卫里阻断了本次的路由跳转然后展示 modal，结果 showModal 又触发路由变化
+// 就会进入死循环
 import { initModal } from "./tools/useCustomModal"
 import { useI18n } from "vue-i18n";
 

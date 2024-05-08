@@ -6,7 +6,7 @@ import type { EditorCoreContent } from "~/types/types-editor";
 export interface CeState {
   draftId?: string
   infoType: ContentInfoType
-  threadEdited?: string     // 已发表的动态的 id (可能是 local_id)，表示是编辑该动态
+  threadEdited?: string     // 已发表的动态的 id，表示是编辑该动态
   visScope: VisScope
   storageState: StorageState
   title?: string
@@ -35,6 +35,7 @@ export const defaultState: CeState = {
 
 export interface CeProps {
   lastBar: boolean
+  forceUpdateNum: number  // let edit-content force me to update
   threadId?: string
 }
 
@@ -42,6 +43,10 @@ export const ceProps = {
   lastBar: {
     type: Boolean,
     default: false,
+  },
+  forceUpdateNum: {
+    type: Number,
+    default: 0,
   },
   threadId: String
 }
@@ -55,4 +60,7 @@ export interface CeEmits {
 
   // 动态已更新
   (event: "updated", threadId: string): void
+
+  // 当用户开始打字发生编辑时
+  (event: "editing"): void
 }

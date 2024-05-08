@@ -86,7 +86,7 @@ const {
   onTitleEnter,
   onTitleEnterAndMeta,
   onTitleEnterAndCtrl,
-} = useCeState(state, toFinish, editor)
+} = useCeState(props, emits, state, toFinish, editor)
 
 </script>
 <template>

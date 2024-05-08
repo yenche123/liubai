@@ -1,10 +1,14 @@
 
-import { ref, watch, toRaw, isProxy, computed } from "vue";
+import { ref, watch, toRaw, isProxy, computed, toRef } from "vue";
 import type { Ref, ShallowRef } from "vue";
-import type { EditorCoreContent, TipTapEditor, TipTapJSONContent } from "~/types/types-editor";
+import type { 
+  EditorCoreContent, 
+  TipTapEditor, 
+  TipTapJSONContent,
+} from "~/types/types-editor";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { LiuRemindMe } from "~/types/types-atom";
-import type { CeState } from "./atom-ce";
+import type { CeState, CeProps, CeEmits } from "./atom-ce";
 import ider from "~/utils/basic/ider";
 import type { DraftLocalTable } from "~/types/types-table";
 import localCache from "~/utils/system/local-cache";
@@ -17,40 +21,47 @@ import liuUtil from "~/utils/liu-util";
 import { storeToRefs } from "pinia";
 import type { SpaceType } from "~/types/types-basic"
 import type { LiuTimeout } from "~/utils/basic/type-tool";
-import { handleOverflow } from "./handle-overflow"
+import { handleOverflow } from "./handle-overflow";
 import liuApi from "~/utils/liu-api";
 
 let collectTimeout: LiuTimeout
 let spaceIdRef: Ref<string>
 let spaceTypeRef: Ref<SpaceType>
 
+interface CesCtx {
+  state: CeState
+  emits: CeEmits
+}
+
 export function useCeState(
+  props: CeProps,
+  emits: CeEmits,
   state: CeState,
   toFinish: CepToPost,
   editor: ShallowRef<TipTapEditor | undefined>,
 ) {
 
+  const ctx: CesCtx = { state, emits }
   const wStore = useWorkspaceStore()
   const wRefs = storeToRefs(wStore)
   spaceIdRef = wRefs.spaceId
   spaceTypeRef = wRefs.spaceType as Ref<SpaceType>
- 
 
   // 监听用户操作 images 的变化，去存储到 IndexedDB 上
   watch(() => state.images, (newV) => {
-    toAutoChange(state)
+    toAutoChange(ctx)
     checkCanSubmit(state)
   }, { deep: true })
 
   // 监听用户操作 files 的变化，去存储到 IndexedDB 上
   watch(() => state.files, (newV) => {
-    toAutoChange(state)
+    toAutoChange(ctx)
     checkCanSubmit(state)
   }, { deep: true })
 
   // 监听 tagIds 的变化
   watch(() => state.tagIds, (newV) => {
-    toAutoChange(state)
+    toAutoChange(ctx)
   }, { deep: true })
   
   const titleFocused = ref(false)
@@ -85,7 +96,7 @@ export function useCeState(
     state.editorContent = data
     checkCanSubmit(state)
     handleOverflow(state)
-    collectState(state)
+    collectState(ctx)
   }
 
   let lastPreFinish = 0
@@ -102,20 +113,20 @@ export function useCeState(
   }
 
   const onWhenChange = (date: Date | null) => {
-    toWhenChange(date, state)
+    toWhenChange(date, ctx)
   }
 
   const onRemindMeChange = (val: LiuRemindMe | null) => {
-    toRemindMeChange(val, state)
+    toRemindMeChange(val, ctx)
   }
 
   const onTitleChange = (val: string) => {
-    toTitleChange(val, state)
+    toTitleChange(val, ctx)
     checkCanSubmit(state)
   }
 
   const onSyncCloudChange = (val: boolean) => {
-    toSyncCloudChange(val, state)
+    toSyncCloudChange(val, ctx)
   }
 
   const onTapFinish = () => {
@@ -124,7 +135,7 @@ export function useCeState(
 
   const onTapCloseTitle = () => {
     state.showTitleBar = false
-    toTitleChange("", state)
+    toTitleChange("", ctx)
     checkCanSubmit(state)
   }
 
@@ -133,7 +144,7 @@ export function useCeState(
     const val = e.target.value
     if(typeof val !== "string") return
     state.title = val
-    collectState(state)
+    collectState(ctx)
     checkCanSubmit(state)
   }
 
@@ -164,6 +175,16 @@ export function useCeState(
       _prepareFinish(true)
     }
   }
+
+  // 监听 props.forceUpdateNum
+  const forceUpdateNum = toRef(props, "forceUpdateNum")
+  watch(forceUpdateNum, (newV, oldV) => {
+    if(!newV) return
+    if(newV > oldV) {
+      checkCanSubmit(state)
+      _prepareFinish(false)
+    }
+  })
   
   return {
     titleFocused,
@@ -195,9 +216,9 @@ function _isRequiredChange(state: CeState) {
 }
 
 // 图片、文件、tagIds 发生变化时，去保存
-function toAutoChange(state: CeState) {
-  if(_isRequiredChange(state)) {
-    collectState(state)
+function toAutoChange(ctx: CesCtx) {
+  if(_isRequiredChange(ctx.state)) {
+    collectState(ctx)
   }
 }
 
@@ -217,46 +238,53 @@ function checkCanSubmit(
 
 function toWhenChange(
   date: Date | null,
-  state: CeState,
+  ctx: CesCtx,
 ) {
-  state.whenStamp = date ? date.getTime() : undefined
-  collectState(state)
+  const newWhenStamp = date ? date.getTime() : undefined
+  if(newWhenStamp === ctx.state.whenStamp) {
+    return
+  }
+
+  ctx.state.whenStamp = newWhenStamp
+  collectState(ctx)
 }
 
 function toRemindMeChange(
   val: LiuRemindMe | null,
-  state: CeState,
+  ctx: CesCtx,
 ) {
-  state.remindMe = val ? val : undefined
-  collectState(state)
+  ctx.state.remindMe = val ? val : undefined
+  collectState(ctx)
 }
 
 function toTitleChange(
   val: string,
-  state: CeState,
+  ctx: CesCtx,
 ) {
-  state.title = val
-  if(val && !state.showTitleBar) {
-    state.showTitleBar = true
+  const oldVal = ctx.state.title
+  if(val === oldVal) return
+  ctx.state.title = val
+  if(val && !ctx.state.showTitleBar) {
+    ctx.state.showTitleBar = true
   }
-  collectState(state, true)
+  collectState(ctx, true)
 }
 
 function toSyncCloudChange(
   val: boolean,
-  state: CeState,
+  ctx: CesCtx,
 ) {
-  state.storageState = val ? "CLOUD" : "LOCAL"
-  collectState(state, true)
+  ctx.state.storageState = val ? "CLOUD" : "LOCAL"
+  collectState(ctx, true)
 }
 
 
 let lastSaveStamp = 0
 /****************** 收集信息、缓存 ***************/
-function collectState(state: CeState, instant: boolean = false) {
+function collectState(ctx: CesCtx, instant: boolean = false) {
   if(collectTimeout) clearTimeout(collectTimeout)
   if(instant) {
-    toSave(state)
+    toSave(ctx)
     return
   }
 
@@ -266,11 +294,12 @@ function collectState(state: CeState, instant: boolean = false) {
   const diff = now - lastSaveStamp
   let duration = diff > 3000 ? 250 : 1000
   collectTimeout = setTimeout(() => {
-    toSave(state)
+    toSave(ctx)
   }, duration)
 }
 
-async function toSave(state: CeState) {
+async function toSave(ctx: CesCtx) {
+  const { state } = ctx
   const now = time.getTime()
   lastSaveStamp = now
 
@@ -324,6 +353,9 @@ async function toSave(state: CeState) {
 
   const res = await localReq.setDraft(draft)
   if(!state.draftId && res) state.draftId = res as string
+
+  // make parent component aware that user has been editing the editor
+  ctx.emits("editing")
 }
 
 
