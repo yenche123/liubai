@@ -130,7 +130,7 @@ async function getStripeCustomerPortal(
 
 async function handle_enter(
   vRes: VerifyTokenRes,
-) {
+): Promise<LiuRqReturn<Res_UserSettings_Enter>> {
   const user = vRes.userData as Table_User
 
   // 1. 去获取用户基础设置
@@ -167,7 +167,7 @@ async function handle_latest(
   const res1 = await getUserSettings(user)
   const data = res1.data
   if(res1.code !== "0000" || !data) {
-    return res1 as LiuRqReturn
+    return res1 as LiuRqReturn<Res_UserSettings_Latest>
   }
   const newData: Res_UserSettings_Latest = { ...data }
   const newRes: LiuRqReturn<Res_UserSettings_Latest> = {
