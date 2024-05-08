@@ -354,7 +354,7 @@ async function toExecute(
       res1 = await toMemberNickname(ssCtx, member, opt)
     }
     else if(taskType === "draft-set" && draft) {
-      toDraftSet(ssCtx, draft, opt)
+      res1 = await toDraftSet(ssCtx, draft, opt)
     }
     else if(taskType === "draft-clear" && draft) {
       toDraftClear(ssCtx, draft, opt)
@@ -1248,7 +1248,7 @@ async function toDraftSet(
   ssCtx: SyncSetCtx,
   draft: LiuUploadDraft,
   opt: OperationOpt,
-) {
+): Promise<SyncSetAtomRes> {
   const { taskId } = opt
 
   // 1. inspect data technically
@@ -1283,7 +1283,7 @@ async function toDraftSet(
     return { code: "E4000", errMsg: "id or first is required", taskId }
   }
 
-  // 3. inspect more if the operation is creating draft
+  // 3. if the operation is creating draft
   if(!draft.id) {
     const Sch_DraftCreate = vbot.object({
       first_id: Sch_Id,
@@ -1295,7 +1295,60 @@ async function toDraftSet(
     const res3_2 = await toDraftCreate(ssCtx, draft, opt)
     return res3_2
   }
-  
+
+  // 4. otherwise the operation is editing draft
+  const res4 = await toDraftEdit(ssCtx, draft, opt)
+  return res4
+}
+
+
+// to edit a draft
+async function toDraftEdit(
+  ssCtx: SyncSetCtx,
+  draft: LiuUploadDraft,
+  opt: OperationOpt,
+): Promise<SyncSetAtomRes> {
+  const { taskId } = opt
+
+  // 1. get the old draft
+  const draft_id = draft.id as string
+  const oldDraft = await getData<Table_Draft>(ssCtx, "draft", draft_id)
+  if(!oldDraft) {
+    return { code: "E4004", errMsg: "draft not found", taskId  }
+  }
+
+  // 2. check out permission to edit the draft
+  const userId = ssCtx.me._id
+  const oState = oldDraft.oState
+  if(oldDraft.user !== userId) {
+    return { code: "E4003", errMsg: "no permission to edit the draft", taskId }
+  }
+  if(oState !== "OK") {
+    return { code: "E4004", errMsg: "draft has been deleted", taskId }
+  }
+  const oldStamp = oldDraft.editedStamp
+  const editedStamp = draft.editedStamp as number
+  if(oldStamp >= editedStamp) {
+    return { code: "0002", taskId }
+  }
+
+  // 3. encrypt
+  const res3 = await getSharedData_9(ssCtx, draft, opt)
+  if(!res3.pass) return res3.result
+
+  // 4. update
+  const u: Partial<Table_Draft> = {
+    enc_title: res3.enc_title,
+    enc_desc: res3.enc_desc,
+    enc_images: res3.enc_images,
+    enc_files: res3.enc_files,
+    whenStamp: draft.whenStamp,
+    remindMe: draft.remindMe,
+    tagIds: draft.tagIds,
+    editedStamp,
+  }
+  await updatePartData(ssCtx, "draft", draft_id, u)
+  return { code: "0000", taskId }
 }
 
 // to create a draft
@@ -1303,7 +1356,7 @@ async function toDraftCreate(
   ssCtx: SyncSetCtx,
   draft: LiuUploadDraft,
   opt: OperationOpt,
-) {
+): Promise<SyncSetAtomRes> {
   const { taskId } = opt
 
   // 1. check out permission to edit the content
