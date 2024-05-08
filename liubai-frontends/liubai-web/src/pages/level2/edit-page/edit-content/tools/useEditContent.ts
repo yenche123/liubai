@@ -7,6 +7,8 @@ import type { RouteLocationNormalizedLoaded } from "vue-router"
 import type { PageState } from "~/types/types-atom";
 import { pageStates } from "~/utils/atom";
 import cui from "~/components/custom-ui";
+import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
+import valTool from "~/utils/basic/val-tool";
 
 export function useEditContent() {
   const threadId = ref("")
@@ -41,6 +43,7 @@ export function useEditContent() {
     editorChanged.value = true
   }
 
+  // listening to the route when it prepare to leave
   onBeforeRouteLeave((to, from) => {
 
     if(alwaysAllowBack.value || !editorChanged.value) {
@@ -66,6 +69,19 @@ export function useEditContent() {
     return false
   })
 
+  // listening to`tag` changed on this thread
+  const tStore = useThreadShowStore()
+  tStore.$subscribe((mutation, tState) => {
+    const { whyChange, updatedThreadShows } = tState
+    
+    const theThread = updatedThreadShows.find(v => v._id === threadId.value)
+    if(!theThread) return
+
+    if(whyChange === "tag") {
+      refresh(threadId, state)
+    }
+  })
+
   return {
     threadId,
     state,
@@ -76,6 +92,18 @@ export function useEditContent() {
     onEditing,
   }
 }
+
+async function refresh(
+  threadId: Ref<string>,
+  state: Ref<PageState>,
+) {
+  const id = threadId.value
+  state.value = pageStates.LOADING
+  threadId.value = ""
+  await valTool.waitMilli(16)
+  threadId.value = id
+}
+
 
 function whenRouteChange(
   threadId: Ref<string>,
