@@ -139,7 +139,7 @@ const color_selected = "var(--main-normal)"
   
 
   <!-- 连接 -->
-  <div class="sb-link-box sb-link-connect"
+  <!-- <div class="sb-link-box sb-link-connect"
     @mouseenter="() => onMouseEnter('connect')"
     @mouseleave="onMouseLeave"
   >
@@ -157,7 +157,7 @@ const color_selected = "var(--main-normal)"
       </div>
       <span>{{ t("common.connects") }}</span>
     </NaviLink>
-  </div>
+  </div> -->
   
   <div class="sb-virtual"></div>
 
