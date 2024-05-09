@@ -69,7 +69,7 @@ const onTapTag = (e: MouseEvent, href: string) => {
     font-size: var(--mini-font);
     color: var(--liu-quote);
     background: var(--tag-bg);
-    border-radius: 24px;
+    border-radius: 6px;
     margin-inline-end: 10px;
     margin-block-start: 10px;
     user-select: none;
