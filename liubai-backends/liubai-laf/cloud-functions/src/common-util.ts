@@ -21,6 +21,8 @@ import type {
   Cloud_ImageStore,
   Cloud_FileStore,
   LiuContent,
+  VerifyTokenRes_A,
+  VerifyTokenRes_B,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -484,7 +486,7 @@ export async function verifyToken(
     code: "E4003", 
     errMsg: "the verification of token failed",
   }
-  const errRes = { pass: false, rqReturn: errReturn }
+  const errRes: VerifyTokenRes_A = { pass: false, rqReturn: errReturn }
 
   let data = map.get(serial_id)
   let tokenData = data?.tokenData
@@ -751,9 +753,9 @@ interface GetEncryptedDataRes {
 /** 获取加密后的返回数据 */
 export function getEncryptedData(
   oldData: Record<string, any>,
-  vRes: VerifyTokenRes,
+  vRes: VerifyTokenRes_B,
 ): GetEncryptedDataRes {
-  const client_key = vRes?.tokenData?.client_key
+  const client_key = vRes.tokenData?.client_key
   const keys = Object.keys(oldData)
   const newData: Record<string, any> = {}
 
@@ -866,9 +868,9 @@ interface GetDecryptedBodyRes {
 /** 获取解密后的 body */
 export function getDecryptedBody(
   oldBody: Record<string, any>,
-  vRes: VerifyTokenRes,
+  vRes: VerifyTokenRes_B,
 ): GetDecryptedBodyRes {
-  const client_key = vRes?.tokenData?.client_key
+  const client_key = vRes.tokenData?.client_key
   if(!client_key) {
     return {
       rqReturn: { 

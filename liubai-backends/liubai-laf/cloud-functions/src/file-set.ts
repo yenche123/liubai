@@ -37,10 +37,8 @@ async function getUploadToken(
 
   // 2. 验证 token
   const vRes = await verifyToken(ctx, body)
+  if(!vRes.pass) return vRes.rqReturn
   const user = vRes.userData
-  if(!vRes.pass || !user) {
-    return vRes.rqReturn ?? { code: "E5001" }
-  }
 
   // 3. 选择使用哪个云存储服务
   const res2 = getTheRightService()

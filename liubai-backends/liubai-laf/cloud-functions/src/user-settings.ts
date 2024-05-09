@@ -12,7 +12,7 @@ import type {
   Res_UserSettings_Enter,
   Res_UserSettings_Latest,
   Res_UserSettings_Membership,
-  VerifyTokenRes,
+  VerifyTokenRes_B,
 } from '@/common-types'
 import { getNowStamp, DAY } from "@/common-time"
 
@@ -26,10 +26,7 @@ export async function main(ctx: FunctionContext) {
 
   const entering = oT === "enter"
   const vRes = await verifyToken(ctx, body, { entering })
-  const user = vRes.userData
-  if(!vRes.pass || !user) {
-    return vRes.rqReturn ?? { code: "E5001" }
-  }
+  if(!vRes.pass) return vRes.rqReturn
 
   let res: LiuRqReturn = { code: "E4000" }
   if(oT === "enter") {
@@ -54,9 +51,9 @@ export async function main(ctx: FunctionContext) {
  *  so return UserSubscription
 */
 async function handle_membership(
-  vRes: VerifyTokenRes,
+  vRes: VerifyTokenRes_B,
 ): Promise<LiuRqReturn<Res_UserSettings_Membership>> {
-  let user = vRes.userData as Table_User
+  let user = vRes.userData
   const sub = user.subscription
 
   if(!sub || sub.isOn === "N") {
@@ -129,9 +126,9 @@ async function getStripeCustomerPortal(
 
 
 async function handle_enter(
-  vRes: VerifyTokenRes,
+  vRes: VerifyTokenRes_B,
 ): Promise<LiuRqReturn<Res_UserSettings_Enter>> {
-  const user = vRes.userData as Table_User
+  const user = vRes.userData
 
   // 1. 去获取用户基础设置
   const res1 = await getUserSettings(user)
@@ -161,9 +158,9 @@ async function handle_enter(
 
 /** get user's latest status */
 async function handle_latest(
-  vRes: VerifyTokenRes,
+  vRes: VerifyTokenRes_B,
 ) {
-  const user = vRes.userData as Table_User
+  const user = vRes.userData
   const res1 = await getUserSettings(user)
   const data = res1.data
   if(res1.code !== "0000" || !data) {

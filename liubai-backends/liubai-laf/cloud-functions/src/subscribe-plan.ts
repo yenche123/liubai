@@ -42,11 +42,10 @@ export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}
 
   // 1. 验证 token
+
   const vRes = await verifyToken(ctx, body)
+  if(!vRes.pass) return vRes.rqReturn
   const user = vRes.userData
-  if(!vRes.pass || !user) {
-    return vRes.rqReturn ?? { code: "E5001" }
-  }
 
   const oT = body.operateType
   let res: LiuRqReturn = { code: "E4000" }

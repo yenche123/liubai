@@ -68,11 +68,9 @@ export async function main(ctx: FunctionContext) {
   
   // 2. verify token
   const vRes = await verifyToken(ctx, body)
+  if(!vRes.pass) return vRes.rqReturn
   const user = vRes.userData
   const workspaces = vRes.workspaces ?? []
-  if(!vRes.pass || !user) {
-    return vRes.rqReturn ?? { code: "E5001" }
-  }
 
   // 3. decrypt body
   const res3 = getDecryptedBody(body, vRes)

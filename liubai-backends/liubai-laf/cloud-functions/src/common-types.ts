@@ -1074,18 +1074,22 @@ export interface VerifyTokenOpt {
   isSet?: boolean            // 当前调用为写入操作
 }
 
-export interface VerifyTokenRes {
-  pass: boolean
-  rqReturn?: LiuRqReturn            // 若不通过时的回调
-  
-  tokenData?: Table_Token
-  userData?: Table_User
-  workspaces?: string[]
-
-  new_token?: string         // 新的 token
-  new_serial?: string        // 新的 serial
+export interface VerifyTokenRes_A {
+  pass: false
+  rqReturn: LiuRqReturn
 }
 
+export interface VerifyTokenRes_B {
+  pass: true
+  tokenData: Table_Token
+  userData: Table_User
+  workspaces: string[]
+
+  new_token?: string
+  new_serial?: string
+}
+
+export type VerifyTokenRes = VerifyTokenRes_A | VerifyTokenRes_B
 
 /*********************** 缓存类型 **********************/
 
