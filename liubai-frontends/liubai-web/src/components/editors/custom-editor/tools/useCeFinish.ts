@@ -272,17 +272,18 @@ async function toUpdate(ctx: CepContext) {
   liuConsole.sendMessage("User edited a thread")
 
   // 6. 如果是本地的动态，忽略去同步后端
-  const storageState = preThread.storageState
-  if(storageState === "LOCAL" || storageState === "ONLY_LOCAL") return
+  const s6 = preThread.storageState
+  if(s6 === "LOCAL" || s6 === "ONLY_LOCAL") return
 
   // 7. 去同步后端
   const res7 = localCache.hasLoginWithBackend()
-  if(res7) {
-    LocalToCloud.addTask({ 
-      uploadTask: "thread-edit", 
-      target_id: threadId,
-      operateStamp: theThread.updatedStamp,
-    }, true)
-  }
+  if(!res7) return
+
+  const uploadTask = s6 === "WAIT_UPLOAD" ? "thread-post" : "thread-edit"
+  LocalToCloud.addTask({ 
+    uploadTask, 
+    target_id: threadId,
+    operateStamp: theThread.updatedStamp,
+  }, true)
 }
 

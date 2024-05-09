@@ -3,6 +3,7 @@ import type {
   ContentLocalTable,
   CollectionLocalTable,
   UploadTaskLocalTable,
+  DraftLocalTable,
 } from "~/types/types-table";
 import time from "~/utils/basic/time";
 import { db, type DexieTable } from "~/utils/db";
@@ -107,6 +108,9 @@ async function afterSyncSet(
       else if(taskType === "collection-react") {
         list.push({ whichType: "collection", first_id, new_id })
       }
+      else if(taskType === "draft-set") {
+        list.push({ whichType: "draft", first_id, new_id })
+      }
     }
   }
 
@@ -125,10 +129,10 @@ async function deleteUploadTasks(
   await db.upload_tasks.bulkDelete(delete_list)
 }
 
-type ReplaceTable = ContentLocalTable | CollectionLocalTable
+type ReplaceTable = ContentLocalTable | CollectionLocalTable | DraftLocalTable
 
 async function replaceInSpecificTable<T extends ReplaceTable>(
-  tableName: "contents" | "collections",
+  tableName: "contents" | "collections" | "drafts",
   list: SyncStoreAtom[],
 ) {
   if(list.length < 1) return
@@ -140,14 +144,25 @@ async function replaceInSpecificTable<T extends ReplaceTable>(
   if(res1.length < 1) return
 
   // 2. get new data and delete_ids
+  const now = time.getTime()
   const delete_ids: string[] = []
   const list2: T[] = []
   for(let i=0; i<res1.length; i++) {
     const v = res1[i]
     const d2 = list.find(v2 => v2.first_id === v._id)
     if(!d2) continue
-    const obj = { ...v }
+    let obj = { ...v }
     obj._id = d2.new_id
+    obj.firstSyncStamp = now
+
+    if(tableName === "contents") {
+      const obj2 = obj as ContentLocalTable
+      if(obj2.storageState === "WAIT_UPLOAD") {
+        obj2.storageState = "CLOUD"
+        obj = obj2 as T
+      }
+    }
+
     list2.push(obj)
     delete_ids.push(d2.first_id)
   }

@@ -107,6 +107,7 @@ export interface ContentLocalTable extends BaseLocalTable {
   search_other?: string
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
+  firstSyncStamp?: number   // the stamp when the content is first synced
 }
 
 export interface DraftLocalTable extends BaseLocalTable {
@@ -131,6 +132,7 @@ export interface DraftLocalTable extends BaseLocalTable {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   editedStamp: number       // 草稿被用户实际编辑的时间戳
+  firstSyncStamp?: number   // the stamp when the content is first synced
 }
 
 export interface CollectionLocalTable extends BaseLocalTable {
@@ -145,6 +147,7 @@ export interface CollectionLocalTable extends BaseLocalTable {
   content_id: string
   emoji?: string        // 经 encodeURIComponent() 的表情
   operateStamp?: number
+  firstSyncStamp?: number   // the stamp when the content is first synced
 }
 
 
