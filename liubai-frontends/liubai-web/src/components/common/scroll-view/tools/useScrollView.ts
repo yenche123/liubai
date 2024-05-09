@@ -12,6 +12,7 @@ import {
 import type { SvProps, SvEmits } from "./types"
 import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
 import { scrollViewKey, svScollingKey, svBottomUpKey } from "~/utils/provide-keys"
+import { useResizeObserver } from "~/hooks/useVueUse"
 
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
@@ -35,7 +36,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   let lastScrollStamp = 0
   let lastInvokeStamp = 0
 
-  const onScrolling = (e: Event) => {
+  const onScrolling = () => {
     const _sv = sv.value
     if(!_sv) return
 
@@ -117,6 +118,11 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     if(newV > 0) {
       whenBottomUp(sv, { type: "pixel", pixel: 0 }, props)
     }
+  })
+
+  // listen sv width change
+  useResizeObserver(sv, (entries) => {
+    onScrolling()
   })
 
   return { sv, scrollPosition, onScrolling }
