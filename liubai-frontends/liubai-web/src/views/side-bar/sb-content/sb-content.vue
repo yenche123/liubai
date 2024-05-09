@@ -122,8 +122,8 @@ const color_selected = "var(--main-normal)"
     @mouseleave="onMouseLeave"
   >
     <NaviLink class="sb-link" 
-      :to="prefix + 'state'"
       :class="{ 'sb-link_selected': state === 'state' }"
+      :to="prefix + 'state'"
       :tabindex="tabindex"
       @aftertap="toClosePopup"
     >
