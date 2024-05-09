@@ -1,8 +1,9 @@
 import type { LiuUploadTask } from "~/types/types-atom";
 
-const content_evts: LiuUploadTask[] = [
+export const content_evts: LiuUploadTask[] = [
   "thread-post",
   "comment-post",
+  "thread-only_local",
   "thread-edit",
   "thread-hourglass",
   "undo_thread-hourglass",

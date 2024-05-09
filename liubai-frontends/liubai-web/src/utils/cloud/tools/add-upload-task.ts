@@ -11,7 +11,7 @@ import type {
 } from "./types";
 import { db } from "~/utils/db";
 import { type LiuUploadTask, liuUploadTasks } from "~/types/types-atom";
-import { classifyUploadTask } from "./upload-event-classification"
+import { classifyUploadTask, content_evts } from "./upload-event-classification"
 import ider from "~/utils/basic/ider";
 
 // 属于再编辑的操作，只会修改 Content 表，不会影响其他表的操作
@@ -64,7 +64,10 @@ export async function addUploadTask(
     isCollection,
   } = classifyUploadTask(taskType)
 
-  if(isContent) {
+  if(taskType === "thread-only_local") {
+    await checkThreadOnlyLocal(target_id, user)
+  }
+  else if(isContent) {
     await checkDuplicated("content_id", target_id, user, taskType)
   }
   else if(isCollection) {
@@ -143,7 +146,28 @@ async function checkDraft(
   if(res.length < 1) return
 
   const task_ids = res.map(v => v._id)
-  console.log("to delete these tasks: ", task_ids)
+  console.log("checkDraft to delete these tasks: ", task_ids)
+  await db.upload_tasks.bulkDelete(task_ids)
+}
+
+async function checkThreadOnlyLocal(
+  content_id: string,
+  user: string,
+) {
+  const filterTasks = content_evts
+  const filterFunc = (item: UploadTaskLocalTable) => {
+    return filterTasks.includes(item.uploadTask)
+  }
+  const w: Partial<UploadTaskLocalTable> = {
+    user,
+    content_id,
+    progressType: "waiting",
+  }
+  const res = await db.upload_tasks.where(w).filter(filterFunc).toArray()
+  if(res.length < 1) return
+
+  const task_ids = res.map(v => v._id)
+  console.log("checkThreadOnlyLocal to delete these tasks: ", task_ids)
   await db.upload_tasks.bulkDelete(task_ids)
 }
 
