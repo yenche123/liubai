@@ -69,8 +69,8 @@
   --gradient-one: linear-gradient(90deg, rgba(255, 255, 255, 0) 10%, rgba(255, 255, 255, 1) 96%);
   --gradient-two: linear-gradient(0deg, rgba(255, 255, 255, 1) 28%, rgba(255, 255, 255, 0) 76%);
   --cool-bg: linear-gradient(30deg, #ACB6E5, #70ded9);
-  --tag-bg: #f2f4f7;
-  --tag-hover: linear-gradient(60deg, #eaeaea, #f2f4f7);
+  --tag-bg: #f3f5f8;
+  --tag-hover: linear-gradient(60deg, #ececec, #f3f5f8);
   --tooltip-shadow: 0 8px 18px 1px rgba(0,0,0,.28);
   --shortcut-text: #9e9e9e;
   --avatar-bg: #435964;
@@ -123,16 +123,16 @@
   --liu-drag-handle: #c3c6cc;
 
   /** 状态色 */
-  --liu-state-1: #978e86;
-  --liu-state-2: #909871;
-  --liu-state-3: #BC7F79;
-  --liu-state-4: #9786B1;
-  --liu-state-5: #9D7867;
+  --liu-state-1: #7f766f;
+  --liu-state-2: #7a8d2b;
+  --liu-state-3: #b93d32;
+  --liu-state-4: #6f5892;
+  --liu-state-5: #825e4d;
   --liu-state-6: #5E7B87;
   --liu-state-7: #51816B;
-  --liu-state-8: #8F5B77;
+  --liu-state-8: #804c68;
   --liu-state-9: #5976BA;
-  --liu-state-10: #ECB165;
+  --liu-state-10: #c18e19;
 
   /** 再最后给 body 添加背景色 */
   background-color: var(--bg-color);
