@@ -16,6 +16,7 @@ import type {
 import type { SyncSetAtom } from "./tools/types"
 import liuReq from "~/requests/liu-req";
 import { useSyncStore, type SyncStoreAtom } from "~/hooks/stores/useSyncStore"
+import newIds from "./tools/handle-new-ids"
 
 export async function syncTasks(tasks: UploadTaskLocalTable[]) {
 
@@ -117,8 +118,9 @@ async function afterSyncSet(
 
   const delete_list = atoms.map(v => v.taskId)
 
-  dataHasNewIds(list)
   await deleteUploadTasks(delete_list)
+  dataHasNewIds(list)
+
   return true
 }
 
@@ -137,6 +139,7 @@ async function replaceInSpecificTable<T extends ReplaceTable>(
 ) {
   if(list.length < 1) return
   const first_ids = list.map(v => v.first_id)
+  const new_ids = list.map(v => v.new_id)
 
   // 1. seek data from db
   const table = db[tableName] as DexieTable<T>
@@ -149,11 +152,15 @@ async function replaceInSpecificTable<T extends ReplaceTable>(
   const list2: T[] = []
   for(let i=0; i<res1.length; i++) {
     const v = res1[i]
-    const d2 = list.find(v2 => v2.first_id === v._id)
-    if(!d2) continue
-    let obj = { ...v }
-    obj._id = d2.new_id
-    obj.firstSyncStamp = now
+    const idx = first_ids.indexOf(v._id)
+    if(idx < 0) continue
+    const oldId = first_ids[idx]
+    const newId = new_ids[idx]
+    let obj = { 
+      ...v,
+      _id: newId,
+      firstSyncStamp: now
+    } as T
 
     if(tableName === "contents") {
       const obj2 = obj as ContentLocalTable
@@ -164,7 +171,7 @@ async function replaceInSpecificTable<T extends ReplaceTable>(
     }
 
     list2.push(obj)
-    delete_ids.push(d2.first_id)
+    delete_ids.push(oldId)
   }
 
   if(delete_ids.length < 1 || list2.length < 1) {
@@ -183,6 +190,17 @@ async function replaceInSpecificTable<T extends ReplaceTable>(
 
   // 4. delete these old data
   await table.bulkDelete(delete_ids)
+
+  // 5. check all table to update
+  if(tableName === "contents") {
+    await newIds.handle_new_contentIds(first_ids, new_ids)
+  }
+  else if(tableName === "collections") {
+    await newIds.handle_new_collectionIds(first_ids, new_ids)
+  }
+  else if(tableName === "drafts") {
+    await newIds.handle_new_draftIds(first_ids, new_ids)
+  }
 }
 
 async function dataHasNewIds(
@@ -196,9 +214,11 @@ async function dataHasNewIds(
     return v.whichType === "comment" || v.whichType === "thread"
   })
   const list_collection = list.filter(v => v.whichType === "collection")
+  const list_draft = list.filter(v => v.whichType === "draft")
 
   await replaceInSpecificTable("contents", list_content)
   await replaceInSpecificTable("collections", list_collection)
+  await replaceInSpecificTable("drafts", list_draft)
 
   // notify via useSyncStore()
   console.log("go to notify useSyncStore..........")
