@@ -538,6 +538,7 @@ export const liuUploadTasks = [
   "thread-post",
   "comment-post",
   "thread-edit",              // 编辑动态
+  "thread-only_local",        // 将动态切换为 ONLY_LOCAL
   "thread-hourglass",         // 倒计时器
   "undo_thread-hourglass",    // 【撤销】倒计时
   "collection-favorite",           // 收藏动态

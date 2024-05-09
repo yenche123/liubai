@@ -226,9 +226,6 @@ async function _getCommentData(
   // 2. 处理 storageState
   const superior = await _getSuperior(props)
   let storageState = superior?.storageState ?? "WAIT_UPLOAD"
-  if(storageState === "CLOUD") {
-    storageState = "WAIT_UPLOAD"
-  }
 
   // 3. 图片、文件
   const images = liuUtil.getRawList(ceCtx.images)
@@ -270,6 +267,10 @@ async function _getCommentData(
     aComment.levelOne = 0
     aComment.levelOneAndTwo = 0
     aComment.emojiData = { total: 0, system: [] }
+
+    if(storageState === "CLOUD") {
+      aComment.storageState = "WAIT_UPLOAD"
+    }
   }
 
   return aComment

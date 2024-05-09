@@ -158,7 +158,7 @@ function _getThreadData(
   const liuList = list.length > 0 ? transferUtil.tiptapToLiu(list) : undefined
   const liuDesc = liuUtil.getRawList(liuList)
 
-  const storageState = state.storageState === 'CLOUD' ? 'WAIT_UPLOAD' : state.storageState
+  const storageState = state.storageState
   const images = liuUtil.getRawList(state.images)
   const files = liuUtil.getRawList(state.files)
   const remindMe = liuUtil.toRawData(state.remindMe)
@@ -199,6 +199,10 @@ function _getThreadData(
   if(!state.threadEdited) {
     aThread.spaceId = spaceIdRef.value
     aThread.spaceType = spaceTypeRef.value
+
+    if(storageState === "CLOUD") {
+      aThread.storageState = "WAIT_UPLOAD"
+    }
   }
 
   return aThread
@@ -250,40 +254,70 @@ async function toUpdate(ctx: CepContext) {
 
   const threadId = state.threadEdited as string
 
-  // 1. 更新进 contents 表里
-  const res1 = await localReq.updateContent(threadId, preThread)
+  // 0. get old content
+  const oldContent = await localReq.getContentById(threadId)
+  if(!oldContent) return
+
+  // 1. recheck storageState
+  const oldSs = oldContent.storageState
+  if(oldSs === "LOCAL" && preThread.storageState === "CLOUD") {
+    preThread.storageState = "WAIT_UPLOAD"
+  }
+  const newSs = preThread.storageState
+  let goThreadOnlyLocal = false
+  if(oldSs === "CLOUD" && newSs === "LOCAL") {
+    goThreadOnlyLocal = true
+    preThread.storageState = "ONLY_LOCAL"
+  }
+  else if(oldSs === "WAIT_UPLOAD" && newSs === "LOCAL") {
+    goThreadOnlyLocal = true
+  }
+
+  // 2. 更新进 contents 表里
+  await localReq.updateContent(threadId, preThread)
   
-  // 2. 删除 drafts
+  // 3. 删除 drafts
   if(state.draftId) {
     await localReq.deleteDraftById(state.draftId)
     delete state.draftId
   }
 
-  // 3. 查找该 thread，然后通知全局
+  // 4. 查找该 thread，然后通知全局
   const theThread = await localReq.getContentById(threadId)
   if(!theThread) return
   const threadShows = await equipThreads([theThread])
   ctx.threadShowStore.setUpdatedThreadShows(threadShows, "edit")
 
-  // 4. emits 到页面
+  // 5. emits 到页面
   ctx.emits("updated", threadId)
 
-  // 5. logger
+  // 6. logger
   liuConsole.sendMessage("User edited a thread")
 
-  // 6. 如果是本地的动态，忽略去同步后端
-  const s6 = preThread.storageState
-  if(s6 === "LOCAL" || s6 === "ONLY_LOCAL") return
-
-  // 7. 去同步后端
+  // 7. 检查是否有后端，若无 return
   const res7 = localCache.hasLoginWithBackend()
   if(!res7) return
 
-  const uploadTask = s6 === "WAIT_UPLOAD" ? "thread-post" : "thread-edit"
+  // 8. 如果是本地的动态，检查是否要 go to thread-only_local
+  const target_id = threadId
+  const operateStamp = theThread.updatedStamp
+  if(newSs === "LOCAL" || newSs === "ONLY_LOCAL") {
+    if(goThreadOnlyLocal) {
+      LocalToCloud.addTask({ 
+        uploadTask: "thread-only_local", 
+        target_id,
+        operateStamp,
+      }, true)
+    }
+    return
+  }
+
+  // 9. 否则，去发表或上传
+  const uploadTask = newSs === "WAIT_UPLOAD" ? "thread-post" : "thread-edit"
   LocalToCloud.addTask({ 
     uploadTask, 
-    target_id: threadId,
-    operateStamp: theThread.updatedStamp,
+    target_id,
+    operateStamp,
   }, true)
 }
 
