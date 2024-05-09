@@ -357,7 +357,7 @@ async function toExecute(
       res1 = await toDraftSet(ssCtx, draft, opt)
     }
     else if(taskType === "draft-clear" && draft) {
-      toDraftClear(ssCtx, draft, opt)
+      res1 = await toDraftClear(ssCtx, draft, opt)
     }
 
     if(!res1) {
@@ -1423,11 +1423,39 @@ async function toDraftCreate(
 /*********** Operation: clear draft ****/
 async function toDraftClear(
   ssCtx: SyncSetCtx,
-  member: LiuUploadDraft,
+  draft: LiuUploadDraft,
   opt: OperationOpt,
 ) {
   const { taskId, operateStamp } = opt
-  
+  const Sch_DraftClear = vbot.object({
+    id: Sch_Id,
+  }, vbot.never())
+  const res1 = checkoutInput(Sch_DraftClear, draft, taskId)
+  if(res1) return res1
+
+  // 1. get the old draft
+  const draft_id = draft.id as string
+  const oldDraft = await getData<Table_Draft>(ssCtx, "draft", draft_id)
+  if(!oldDraft) {
+    return { code: "E4004", errMsg: "draft not found", taskId  }
+  }
+
+  // 2. check out permission to edit the draft
+  const userId = ssCtx.me._id
+  const oState = oldDraft.oState
+  if(oldDraft.user !== userId) {
+    return { code: "E4003", errMsg: "no permission to edit the draft", taskId }
+  }
+  if(oState !== "OK") {
+    return { code: "0001", taskId }
+  }
+
+  // 3. update
+  const u: Partial<Table_Draft> = {
+    oState: "DELETED",
+  }
+  await updatePartData(ssCtx, "draft", draft_id, u)
+  return { code: "0000", taskId }
 }
 
 
