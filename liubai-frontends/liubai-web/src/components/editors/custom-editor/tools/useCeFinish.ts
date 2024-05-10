@@ -114,14 +114,11 @@ async function toRelease(
   if(storageState === "LOCAL" || storageState === "ONLY_LOCAL") return
 
   // 8. 去同步后端
-  const res8 = localCache.hasLoginWithBackend()
-  if(res8) {
-    LocalToCloud.addTask({ 
-      uploadTask: "thread-post", 
-      target_id: newId,
-      operateStamp: now,
-    }, true)
-  }
+  LocalToCloud.addTask({ 
+    uploadTask: "thread-post", 
+    target_id: newId,
+    operateStamp: now,
+  }, true)
   
 }
 
@@ -294,11 +291,7 @@ async function toUpdate(ctx: CepContext) {
   // 6. logger
   liuConsole.sendMessage("User edited a thread")
 
-  // 7. 检查是否有后端，若无 return
-  const res7 = localCache.hasLoginWithBackend()
-  if(!res7) return
-
-  // 8. 如果是本地的动态，检查是否要 go to thread-only_local
+  // 7. 如果是本地的动态，检查是否要 go to thread-only_local
   const target_id = threadId
   const operateStamp = theThread.updatedStamp
   if(newSs === "LOCAL" || newSs === "ONLY_LOCAL") {
@@ -312,7 +305,7 @@ async function toUpdate(ctx: CepContext) {
     return
   }
 
-  // 9. 否则，去发表或上传
+  // 8. 否则，去发表或上传
   const uploadTask = newSs === "WAIT_UPLOAD" ? "thread-post" : "thread-edit"
   LocalToCloud.addTask({ 
     uploadTask, 

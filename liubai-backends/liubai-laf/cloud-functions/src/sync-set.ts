@@ -52,8 +52,6 @@ import {
 import { 
   getNowStamp, 
   getBasicStampWhileAdding,
-  SECONED, 
-  MINUTE, 
 } from "@/common-time"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -112,6 +110,8 @@ const need_thread_evts: LiuUploadTask[] = [
   "thread-only_local",
   "thread-hourglass",
   "undo_thread-hourglass",
+  "thread-when-remind",
+  "undo_thread-when-remind",
   "thread-state",
   "undo_thread-state",
   "thread-pin",
@@ -298,6 +298,12 @@ async function toExecute(
     }
     else if(taskType === "undo_thread-hourglass" && thread) {
       res1 = await toThreadHourglass(ssCtx, thread, opt)
+    }
+    else if(taskType === "thread-when-remind" && thread) {
+      res1 = await toThreadWhenRemind(ssCtx, thread, opt)
+    }
+    else if(taskType === "undo_thread-when-remind" && thread) {
+      res1 = await toThreadWhenRemind(ssCtx, thread, opt)
     }
     else if(taskType === "collection-favorite" && collection) {
       res1 = await toCollectionFavorite(ssCtx, collection, opt)
@@ -764,6 +770,49 @@ async function toThreadHourglass(
 
   await updatePartData<Table_Content>(ssCtx, "content", id, { config: cfg })
 
+  return { code: "0000", taskId }
+}
+
+/********************* Operation: Edit when or remind ********************/
+async function toThreadWhenRemind(
+  ssCtx: SyncSetCtx,
+  thread: LiuUploadThread,
+  opt: OperationOpt,
+): Promise<SyncSetAtomRes> {
+  const { taskId, operateStamp } = opt
+
+  // 1. inspect data technically
+  const Sch_Hourglass = vbot.object({
+    id: Sch_Id,
+    first_id: Sch_Opt_Str,
+    whenStamp: Sch_Opt_Num,
+    remindStamp: Sch_Opt_Num,
+    remindMe: vbot.optional(Sch_LiuRemindMe),
+  }, vbot.never())
+  const res1 = checkoutInput(Sch_Hourglass, thread, taskId)
+  if(res1) return res1
+
+  // 2. find the thread & check permission
+  const res2 = await getSharedData_3(ssCtx, taskId, thread)
+  if(!res2.pass) return res2.result
+
+  // 3. check if operateStamp is greater than lastOperateWhenRemind
+  const { content_id: id, oldContent } = res2
+  const cfg = oldContent.config ?? {}
+  const stamp = cfg.lastOperateWhenRemind ?? 1
+  if(stamp >= operateStamp) {
+    return { code: "0002", taskId }
+  }
+
+  // 4. update
+  cfg.lastOperateWhenRemind = operateStamp
+  const u: Partial<Table_Content> = {
+    whenStamp: thread.whenStamp,
+    remindStamp: thread.remindStamp,
+    remindMe: thread.remindMe,
+    config: cfg
+  }
+  await updatePartData(ssCtx, "content", id, u)
   return { code: "0000", taskId }
 }
 

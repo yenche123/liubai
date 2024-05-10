@@ -21,7 +21,7 @@ export async function deleteThread(
   newThread.removedStr = liuUtil.showBasicTime(now)
 
   // 2. 操作 db
-  const res = await dbOp.setNewOState(newThread._id, "REMOVED")
+  const res = await dbOp.setNewOState(newThread._id, "REMOVED", "thread-delete")
 
   // 3. 通知到全局
   const tsStore = useThreadShowStore()
@@ -46,7 +46,7 @@ export async function restoreThread(
   delete newThread.removedStr
 
   // 2. 操作 db
-  const res = await dbOp.setNewOState(newThread._id, "OK")
+  const res = await dbOp.setNewOState(newThread._id, "OK", "thread-restore")
 
   // 3. 通知到全局
   const tsStore = useThreadShowStore()
@@ -64,7 +64,7 @@ export async function undoDelete(
   userId: string,
 ) {
   // 1. 修改 db
-  const res = await dbOp.setNewOState(oldThread._id, "OK")
+  const res = await dbOp.setNewOState(oldThread._id, "OK", "undo_thread-delete")
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()

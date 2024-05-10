@@ -19,6 +19,7 @@ const content_edit_events: LiuUploadTask[] = [
   "thread-edit",
   "thread-only_local",
   "thread-hourglass",
+  "thread-when-remind",
   "thread-state",
   "thread-pin",
   "thread-tag",

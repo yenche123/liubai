@@ -7,6 +7,8 @@ export const content_evts: LiuUploadTask[] = [
   "thread-edit",
   "thread-hourglass",
   "undo_thread-hourglass",
+  "thread-when-remind",
+  "undo_thread-when-remind",
   "thread-state",
   "undo_thread-state",
   "thread-pin",

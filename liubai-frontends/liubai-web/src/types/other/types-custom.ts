@@ -11,6 +11,8 @@ export interface ContentConfig {
   lastOperateStateId?: number     // last stamp when user edited stateId
   lastOperatePin?: number        // last stamp when user edited pin
   lastOperateTag?: number        // last stamp when user edited tag
+  lastOperateWhenRemind?: number   // last stamp when user 
+                                   // edited whenStamp / remindStamp / remind
 }
 
 export type SearchType = "thread" | "comment" | "other"

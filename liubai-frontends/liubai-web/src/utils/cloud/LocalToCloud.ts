@@ -85,8 +85,9 @@ class LocalToCloud {
     param: UploadTaskParam,
     triggerInstantly: boolean = false,
   ) {
-    const { local_id: user, token } = localCache.getPreference()
-    if(!user || !token) return false
+    // 0. check out if I have login
+    const { local_id: user, token, serial } = localCache.getPreference()
+    if(!user || !token || !serial) return false
 
     // 1. add upload task into db
     const res = await addUploadTask(param, user)

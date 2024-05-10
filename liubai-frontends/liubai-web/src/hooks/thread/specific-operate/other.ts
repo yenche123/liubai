@@ -4,7 +4,6 @@ import valTool from "~/utils/basic/val-tool"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import cui from "~/components/custom-ui"
 import { getTagIdsParents } from "~/utils/system/tag-related";
-import time from "~/utils/basic/time"
 
 /** 切换是否展示 倒计时 */
 export async function setShowCountdown(
@@ -16,12 +15,12 @@ export async function setShowCountdown(
 
   // 1. 修改数据
   const cCfg = newThread.config ?? {}
-  cCfg.showCountdown = cCfg.showCountdown === false ? true : false
-  cCfg.lastToggleCountdown = time.getTime()
+  const newShowCountdown = cCfg.showCountdown === false ? true : false
+  cCfg.showCountdown = newShowCountdown
   newThread.config = cCfg
 
   // 2. 操作 db
-  const res = await dbOp.setContentConfig(newThread._id, cCfg)
+  const res = await dbOp.setShowCountdown(newThread._id, newShowCountdown)
 
   // 3. 通知到全局
   const tsStore = useThreadShowStore()
@@ -33,7 +32,7 @@ export async function setShowCountdown(
 
   // 发生撤销
   // 5. 修改 db
-  const res3 = await dbOp.setContentConfig(newThread._id, oldThread.config)
+  const res3 = await dbOp.setShowCountdown(newThread._id, !newShowCountdown, true)
 
   // 6. 通知到全局
   tsStore.setUpdatedThreadShows([oldThread], "hourglass")

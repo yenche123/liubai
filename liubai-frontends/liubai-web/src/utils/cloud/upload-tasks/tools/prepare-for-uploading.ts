@@ -249,6 +249,17 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     }
     isOK = true
   }
+  else if(ut === "thread-when-remind" || ut === "undo_thread-when-remind") {
+    if(!content) return
+    atom.thread = {
+      id: content._id,
+      first_id: content.first_id,
+      whenStamp: content.whenStamp,
+      remindStamp: content.remindStamp,
+      remindMe: content.remindMe,
+    }
+    isOK = true
+  }
   else if(ut === "collection-favorite" || ut === "undo_collection-favorite") {
     if(!collection) return
     atom.collection = {

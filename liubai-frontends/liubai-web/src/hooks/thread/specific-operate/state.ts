@@ -112,7 +112,7 @@ export async function undoState(
 ) {
 
   // 1. 修改 db
-  const res2 = await dbOp.setStateId(oldThread._id, oldThread.stateId)
+  const res2 = await dbOp.setStateId(oldThread._id, oldThread.stateId, true)
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()

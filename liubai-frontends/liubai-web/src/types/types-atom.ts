@@ -194,6 +194,8 @@ export const liuUploadTasks = [
   "thread-only_local",        // 将动态切换为 ONLY_LOCAL
   "thread-hourglass",         // 倒计时器
   "undo_thread-hourglass",    // 【撤销】倒计时
+  "thread-when-remind",       // 修改 "什么时候" 和 "提醒我"
+  "undo_thread-when-remind",  // 【撤销】修改 "什么时候" 和 "提醒我"
   "collection-favorite",           // 收藏动态
   "undo_collection-favorite",      // 【撤销】收藏
   "collection-react",            // 对 动态、评论 reaction

@@ -57,7 +57,7 @@ export async function undoPin(
   userId: string,
 ) {
   // 1. 修改 db
-  const res3 = await dbOp.pin(oldThread, memberId, userId)
+  const res3 = await dbOp.pin(oldThread, memberId, userId, true)
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()

@@ -19,7 +19,7 @@ export const toCollect = async (
   newThread.myFavorite = newFavorite
   newThread.myFavoriteStamp = time.getTime()
 
-  // 2. 操作 db
+  // 2. 操作 db & cloud
   const res = await dbOp.collect(newThread, memberId, userId)
 
   // 3. 通知全局
@@ -44,8 +44,8 @@ export const undoCollect = async (
   userId: string,
 ) => {
 
-  // 1. 修改 db
-  const res3 = await dbOp.collect(oldThread, memberId, userId)
+  // 1. 修改 db & cloud
+  const res3 = await dbOp.collect(oldThread, memberId, userId, true)
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()
