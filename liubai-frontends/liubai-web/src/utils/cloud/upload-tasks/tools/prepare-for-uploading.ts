@@ -16,6 +16,7 @@ import type {
 import { classifyUploadTask } from "../../tools/upload-event-classification"
 import { db } from "~/utils/db";
 import transferUtil from "~/utils/transfer-util";
+import uut from "../../tools/update-upload-task"
 
 async function getRawData(task: UploadTaskLocalTable) {
   const { 
@@ -108,10 +109,13 @@ function whenCommentPost(c: ContentLocalTable) {
   let uploadComment: LiuUploadComment = {
     first_id: c.first_id,
     spaceId: c.spaceId,
+
     liuDesc: c.liuDesc,
     images: transferUtil.imagesFromStoreToCloud(c.images),
     files: transferUtil.filesFromStoreToCloud(c.files),
+
     editedStamp: c.editedStamp,
+
     parentThread: c.parentThread,
     parentComment: c.parentComment,
     replyToComment: c.replyToComment,
@@ -124,15 +128,18 @@ function whenThreadEdit(c: ContentLocalTable) {
   let uploadThread: LiuUploadThread = {
     id: c._id,
     first_id: c.first_id,
+
     liuDesc: c.liuDesc,
     images: transferUtil.imagesFromStoreToCloud(c.images),
     files: transferUtil.filesFromStoreToCloud(c.files),
+
     editedStamp: c.editedStamp,
     title: c.title,
     calendarStamp: c.calendarStamp,
     remindStamp: c.remindStamp,
     whenStamp: c.whenStamp,
     remindMe: c.remindMe,
+
     tagIds: c.tagIds,
     tagSearched: c.tagSearched,
   }
@@ -143,9 +150,11 @@ function whenCommentEdit(c: ContentLocalTable) {
   let uploadComment: LiuUploadComment = {
     id: c._id,
     first_id: c.first_id,
+
     liuDesc: c.liuDesc,
     images: transferUtil.imagesFromStoreToCloud(c.images),
     files: transferUtil.filesFromStoreToCloud(c.files),
+
     editedStamp: c.editedStamp,
   }
   return uploadComment
@@ -168,15 +177,20 @@ function whenDraftSet(d: DraftLocalTable) {
     id: d._id,
     first_id: d.first_id,
     spaceId: d.spaceId,
+
+    // liuDesc is put below
     images: transferUtil.imagesFromStoreToCloud(d.images),
     files: transferUtil.filesFromStoreToCloud(d.files),
+
     editedStamp: d.editedStamp,
     infoType: d.infoType,
+
     threadEdited: d.threadEdited,
     commentEdited: d.commentEdited,
     parentThread: d.parentThread,
     parentComment: d.parentComment,
     replyToComment: d.replyToComment,
+    
     title: d.title,
     whenStamp: d.whenStamp,
     remindMe: d.remindMe,
@@ -220,10 +234,11 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     isOK = true
   }
   else if((ut === "thread-hourglass" || ut === "undo_thread-hourglass") && content) {
+    const showCountdown = content.config?.showCountdown ?? false
     atom.thread = {
       id: content._id,
       first_id: content.first_id,
-      config: content.config,
+      showCountdown,
     }
     isOK = true
   }
@@ -345,7 +360,13 @@ export async function packSyncSetAtoms(tasks: UploadTaskLocalTable[]) {
   for(let i=0; i<tasks.length; i++) {
     const v = tasks[i]
     const atom = await organizeAtom(v)
-    if(atom) atoms.push(atom)
+    if(atom) {
+      atoms.push(atom)
+    }
+    else {
+      console.warn("failed to organizeAtom, so delete it")
+      uut.toDeleteTask(v._id)
+    }
   }
   return atoms
 }

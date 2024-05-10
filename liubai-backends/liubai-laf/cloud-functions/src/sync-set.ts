@@ -46,6 +46,7 @@ import {
   Sch_TagView,
   Sch_Id,
   Sch_Opt_Str,
+  Sch_Opt_Num,
   sch_opt_arr,
 } from "@/common-types"
 import { 
@@ -462,11 +463,11 @@ async function toPostThread(
     oState: vbot.picklist(ostate_list),
 
     title: Sch_Opt_Str,
-    calendarStamp: vbot.optional(vbot.number()),
-    remindStamp: vbot.optional(vbot.number()),
-    whenStamp: vbot.optional(vbot.number()),
+    calendarStamp: Sch_Opt_Num,
+    remindStamp: Sch_Opt_Num,
+    whenStamp: Sch_Opt_Num,
     remindMe: vbot.optional(Sch_LiuRemindMe),
-    pinStamp: vbot.optional(vbot.number()),
+    pinStamp: Sch_Opt_Num,
 
     createdStamp: vbot.number(),
 
@@ -650,9 +651,9 @@ async function toThreadEdit(
 
     editedStamp: vbot.number(),
     title: Sch_Opt_Str,
-    calendarStamp: vbot.optional(vbot.number()),
-    remindStamp: vbot.optional(vbot.number()),
-    whenStamp: vbot.optional(vbot.number()),
+    calendarStamp: Sch_Opt_Num,
+    remindStamp: Sch_Opt_Num,
+    whenStamp: Sch_Opt_Num,
     remindMe: vbot.optional(Sch_LiuRemindMe),
 
     tagIds: sch_opt_arr(vbot.string()),
@@ -927,7 +928,7 @@ async function toThreadPin(
   const Sch_Pin = vbot.object({
     id: Sch_Id,
     first_id: Sch_Opt_Str,
-    pinStamp: vbot.optional(vbot.number()),
+    pinStamp: Sch_Opt_Num,
   }, vbot.never())
   const res1 = checkoutInput(Sch_Pin, thread, taskId)
   if(res1) return res1
@@ -1104,7 +1105,7 @@ async function toWorkspaceTag(
   // 1. inspect data technically
   const Sch_WorkspaceTag = vbot.object({
     id: Sch_Id,
-    tagList: vbot.array(Sch_TagView),
+    tagList: sch_opt_arr(Sch_TagView),
   }, vbot.never())
   const res1 = checkoutInput(Sch_WorkspaceTag, workspace, taskId)
   if(res1) return res1
@@ -1269,7 +1270,7 @@ async function toDraftSet(
     replyToComment: Sch_Opt_Str,
 
     title: Sch_Opt_Str,
-    whenStamp: vbot.optional(vbot.number()),
+    whenStamp: Sch_Opt_Num,
     remindMe: vbot.optional(Sch_LiuRemindMe),
     tagIds: sch_opt_arr(Sch_Id),
   }, vbot.never())

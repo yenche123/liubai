@@ -46,6 +46,7 @@ export interface LiuRqReturn<T = Record<string, any>> {
 // validate id's min length
 export const Sch_Id = vbot.string([vbot.minLength(8)])
 export const Sch_Opt_Str = vbot.optional(vbot.string())
+export const Sch_Opt_Num = vbot.optional(vbot.number())
 
 // trim 后有字符串的 string
 export const Sch_String_WithLength = vbot.string([
@@ -149,12 +150,12 @@ const Sch_LiuAtomState: BaseSchema<LiuAtomState> = vbot.object({
 
 /** 表示数据表里，存储 “状态” 的结构  */
 interface Cloud_StateConfig {
-  stateList?: LiuAtomState[]
+  stateList: LiuAtomState[]
   updatedStamp: number
 }
 
 export const Sch_Cloud_StateConfig: BaseSchema<Cloud_StateConfig> = vbot.object({
-  stateList: sch_opt_arr(Sch_LiuAtomState),
+  stateList: vbot.array(Sch_LiuAtomState),
   updatedStamp: vbot.number(),
 })
 

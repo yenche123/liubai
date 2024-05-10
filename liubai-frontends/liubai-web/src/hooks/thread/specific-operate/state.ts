@@ -226,21 +226,15 @@ async function handleWorkspace(
   // 3. 修改 newStateConfig
   const threadId = newThread._id
   const stateId = newThread.stateId
-  const { stateList, cloudStateList } = newStateCfg
+  const { stateList } = newStateCfg
   
   if(stateId) {
     // 添加到 stateList 某个 column 中
     _addState(stateList, threadId, stateId)
-    if(_isUpdateCloudRequired(newThread)) {
-      _addState(cloudStateList, threadId, stateId)
-    }
   }
   else {
     // 凡是在 stateList[].contentIds 中看到 threadId，都把它移除掉
     _deleteState(stateList, threadId)
-    if(_isUpdateCloudRequired(newThread)) {
-      _deleteState(cloudStateList, threadId)
-    }
   }
   newStateCfg.updatedStamp = time.getTime()
 

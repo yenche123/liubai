@@ -73,7 +73,7 @@ export interface LiuUploadThread extends LiuUploadBase {
   // 只在 thread-post 时有效
   config?: ContentConfig
 
-  // 只在 thread-hourglass 时有效，且为必填
+  // 只在 thread-hourglass 时有效，且为必填，不得为 undefined
   showCountdown?: boolean
 
   

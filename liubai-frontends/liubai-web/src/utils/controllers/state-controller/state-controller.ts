@@ -169,7 +169,6 @@ async function setNewStateList(newList: LiuAtomState[]) {
     stateCfg = getDefaultStateCfg()
   }
   stateCfg.stateList = newList
-  stateCfg.cloudStateList = newList
   stateCfg.updatedStamp = time.getTime()
 
   const res = await wStore.setStateConfig(stateCfg)
@@ -182,9 +181,7 @@ function getDefaultStateCfg() {
   let stateList = getSystemStates()
   const obj: LiuStateConfig = {
     stateList,
-    cloudStateList: valTool.copyObject(stateList),
     updatedStamp: now,
-    cloudUpdatedStamp: now,
   }
   return obj
 }

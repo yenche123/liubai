@@ -106,9 +106,7 @@ export interface LiuAtomState {
 
 export interface LiuStateConfig {
   stateList: LiuAtomState[]
-  cloudStateList: LiuAtomState[]        // 远端最新存储的 stateList
-  updatedStamp: number
-  cloudUpdatedStamp?: number             // cloudStateList 被修改的时间戳    
+  updatedStamp: number 
 }
 
 export interface TagView {

@@ -129,6 +129,7 @@ async function bulkChangeProgressType(
 
 
 export default {
+  toDeleteTask,
   changeProgressType,
   bulkChangeProgressType,
 }
