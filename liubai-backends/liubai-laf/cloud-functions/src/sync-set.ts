@@ -835,9 +835,9 @@ async function toCollectionFavorite(
   if(res1) return res1
 
   // 2. if collection.id exists
-  const id = collection.id
+  const { id, first_id } = collection
   const newOState = collection.oState
-  if(id) {
+  if(id && id !== first_id) {
     const res2 = await getSharedData_4(ssCtx, taskId, id)
     if(!res2.pass) return res2.result
     const { oldCollection } = res2
@@ -879,10 +879,10 @@ async function toCollectionReact(
   if(res1) return res1
 
   // 2. if collection.id exists
-  const id = collection.id
+  const { id, first_id } = collection
   const newOState = collection.oState
   const newEmoji = collection.emoji as string
-  if(id) {
+  if(id && id !== first_id) {
     const res2 = await getSharedData_4(ssCtx, taskId, id)
     if(!res2.pass) return res2.result
     const { oldCollection } = res2
@@ -1368,12 +1368,13 @@ async function toDraftSet(
   if(res1) return res1
 
   // 2. inspect more
-  if(!draft.id && !draft.first_id) {
+  const { id, first_id } = draft
+  if(!id && !first_id) {
     return { code: "E4000", errMsg: "id or first is required", taskId }
   }
 
   // 3. if the operation is creating draft
-  if(!draft.id) {
+  if(!id || id === first_id) {
     const Sch_DraftCreate = vbot.object({
       first_id: Sch_Id,
       spaceId: Sch_Id,

@@ -26,7 +26,7 @@ async function _handle_shared(
   }
   const col1 = db.download_tasks.filter(_filterDownloadTasks)
   const res1 = await col1.modify(_modifyDownloadTasks)
-  console.log(`_handle_shared ${tableName} download_tasks res5: `, res1)
+  console.log(`_handle_shared ${tableName} download_tasks res1: `, res1)
 
   // 2. checking out upload_tasks
   const _filterUploadTasks = (item: UploadTaskLocalTable) => {

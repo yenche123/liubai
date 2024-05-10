@@ -1,7 +1,7 @@
 
 
 // 版本号，凡是 dexieIdxs 被修改了，这里都要累加！！！
-export const DB_VERSION = 54
+export const DB_VERSION = 55
 
 const dexieIdxs = {
   users: [
@@ -59,6 +59,8 @@ const dexieIdxs = {
     "[user+draft_id+progressType]",
     "[user+uploadTask+content_id+progressType]",
     "[user+uploadTask+workspace_id+progressType]",
+    "[user+uploadTask+member_id+progressType]",
+    "[user+uploadTask+collection_id+progressType]",
   ]
 }
 
