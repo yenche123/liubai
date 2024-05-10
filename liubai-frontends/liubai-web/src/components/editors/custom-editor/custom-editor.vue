@@ -298,5 +298,11 @@ const {
   max-height: 55px;
 }
 
+@container liu-mc-container (max-width: 480px) {
+  .ce-virtual {
+    max-height: 55px;
+  }
+}
+
 
 </style>

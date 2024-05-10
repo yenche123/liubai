@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useEditContent } from './tools/useEditContent';
 import CustomEditor from '~/components/editors/custom-editor/custom-editor.vue';
-import { useCustomEditorLastBar } from "~/pages/utils/useCustomEditorLastBar"
 
 const {
   threadId,
@@ -12,8 +11,6 @@ const {
   onUpdated,
   onEditing,
 } = useEditContent()
-
-const { lastBar } = useCustomEditorLastBar()
 
 </script>
 <template>
@@ -29,7 +26,6 @@ const { lastBar } = useCustomEditorLastBar()
       >
         <CustomEditor
           :thread-id="threadId"
-          :last-bar="lastBar"
           @hasdata="onHasdata"
           @nodata="onNodata"
           @updated="onUpdated"

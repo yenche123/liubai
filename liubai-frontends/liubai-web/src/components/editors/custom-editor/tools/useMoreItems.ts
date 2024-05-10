@@ -9,7 +9,6 @@ export function useMoreItems(props: CeProps) {
   }
 
   const showVirtualBar = computed(() => {
-    if(props.lastBar) return true
     if(moreRef.value) return true
     return false
   })

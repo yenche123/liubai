@@ -34,16 +34,11 @@ export const defaultState: CeState = {
 }
 
 export interface CeProps {
-  lastBar: boolean
   forceUpdateNum: number  // let edit-content force me to update
   threadId?: string
 }
 
 export const ceProps = {
-  lastBar: {
-    type: Boolean,
-    default: false,
-  },
   forceUpdateNum: {
     type: Number,
     default: 0,

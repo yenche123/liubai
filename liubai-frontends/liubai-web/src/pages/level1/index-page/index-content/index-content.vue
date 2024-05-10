@@ -2,7 +2,6 @@
 import cfg from "~/config"
 import CustomEditor from "~/components/editors/custom-editor/custom-editor.vue"
 import ThreadList from "~/components/level1/thread-list/thread-list.vue"
-import { useCustomEditorLastBar } from "~/pages/utils/useCustomEditorLastBar"
 import { useIndexContent } from "./tools/useIndexContent"
 
 defineProps({
@@ -13,7 +12,6 @@ defineProps({
 
 const virtualHeight = cfg.navi_height / 3
 const shortVirtual = cfg.navi_height / 9
-const { lastBar } = useCustomEditorLastBar()
 
 const {
   showTxt
@@ -28,7 +26,7 @@ const {
     ></div>
     <div class="liu-mc-box">
       
-      <CustomEditor :last-bar="lastBar"></CustomEditor>
+      <CustomEditor></CustomEditor>
       <div class="liu-mc-spacing"></div>
 
       <!-- 置顶 -->
