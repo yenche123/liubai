@@ -233,6 +233,13 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     atom.thread = whenThreadEdit(content)
     isOK = true
   }
+  else if(ut === "thread-only_local") {
+    if(!task.content_id) return
+    atom.thread = {
+      id: task.content_id,
+    }
+    isOK = true
+  }
   else if((ut === "thread-hourglass" || ut === "undo_thread-hourglass") && content) {
     const showCountdown = content.config?.showCountdown ?? false
     atom.thread = {

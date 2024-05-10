@@ -17,6 +17,7 @@ import ider from "~/utils/basic/ider";
 // 属于再编辑的操作，只会修改 Content 表，不会影响其他表的操作
 const content_edit_events: LiuUploadTask[] = [
   "thread-edit",
+  "thread-only_local",
   "thread-hourglass",
   "thread-state",
   "thread-pin",

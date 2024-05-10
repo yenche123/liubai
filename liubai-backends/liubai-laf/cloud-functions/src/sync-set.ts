@@ -109,6 +109,7 @@ export async function main(ctx: FunctionContext) {
 const need_thread_evts: LiuUploadTask[] = [
   "thread-post",
   "thread-edit",
+  "thread-only_local",
   "thread-hourglass",
   "undo_thread-hourglass",
   "thread-state",
@@ -288,6 +289,9 @@ async function toExecute(
     }
     else if(taskType === "thread-edit" && thread) {
       res1 = await toThreadEdit(ssCtx, thread, opt)
+    }
+    else if(taskType === "thread-only_local" && thread) {
+      res1 = await toThreadOnlyLocal(ssCtx, thread, opt)
     }
     else if(taskType === "thread-hourglass" && thread) {
       res1 = await toThreadHourglass(ssCtx, thread, opt)
@@ -686,6 +690,43 @@ async function toThreadEdit(
     tagSearched: thread.tagSearched,
   }
   await updatePartData(ssCtx, "content", sharedData.content_id, new_data)
+  return { code: "0000", taskId }
+}
+
+/********************* Operation: only local ********************/
+async function toThreadOnlyLocal(
+  ssCtx: SyncSetCtx,
+  thread: LiuUploadThread,
+  opt: OperationOpt,
+) {
+  const { taskId } = opt
+
+  // 1. inspect data technically
+  const Sch_OnlyLocal = vbot.object({
+    id: Sch_Id,
+  }, vbot.never())
+  const res = checkoutInput(Sch_OnlyLocal, thread, taskId)
+  if(res) return res
+
+  // 2. find the thread & check permission
+  const res2 = await getSharedData_3(ssCtx, taskId, thread)
+  if(!res2.pass) return res2.result
+
+  // 3. check storageState out
+  const { content_id: id, oldContent } = res2
+  if(oldContent.storageState === "ONLY_LOCAL") {
+    return { code: "0001", taskId }
+  }
+
+  const u: Partial<Table_Content> = {
+    storageState: "ONLY_LOCAL",
+    enc_title: undefined,
+    enc_desc: undefined,
+    enc_images: undefined,
+    enc_files: undefined,
+    enc_search_text: undefined,
+  }
+  await updatePartData(ssCtx, "content", id, u)
   return { code: "0000", taskId }
 }
 
