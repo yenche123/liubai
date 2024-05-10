@@ -55,7 +55,7 @@ const onTapCenter = (e: MouseEvent) => {
     <div class="mv-right" :style="{ width: rightPx + 'px' }"></div>
   </div>
 
-  <!-- 监听滑动打开侧边栏的盒子 -->
+  <!-- 监听滑动打开左边侧边栏的盒子 -->
   <div v-if="showTouchBox" class="mv-touch-box"
     @touchstart="onTouchStart"
     @touchmove="onTouchMove"

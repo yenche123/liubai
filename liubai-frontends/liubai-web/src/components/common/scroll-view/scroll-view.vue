@@ -34,9 +34,8 @@ const { isMobile } = liuApi.getCharacteristic()
   align-items: flex-start;
   flex-wrap: nowrap;
 
-  /** 下面两个属性限定 Firefox */
   scrollbar-color: var(--scrollbar-thumb) transparent;
-  scrollbar-width: v-bind("isMobile ? 'none' : 'auto'");
+  scrollbar-width: v-bind("isMobile || hiddenScrollBar ? 'none' : 'auto'");
 
   &::-webkit-scrollbar {
     display: v-bind("isMobile || hiddenScrollBar ? 'none' : 'block'");

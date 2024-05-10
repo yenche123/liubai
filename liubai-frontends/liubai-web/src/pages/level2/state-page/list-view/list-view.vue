@@ -174,7 +174,6 @@ const { isMobile } = liuApi.getCharacteristic()
   overflow-y: auto;
   overflow-x: hidden;
 
-  /** 下面两个属性限定 Firefox */
   scrollbar-color: var(--scrollbar-thumb) transparent;
   scrollbar-width: v-bind("isMobile ? 'none' : 'auto'"); 
 
