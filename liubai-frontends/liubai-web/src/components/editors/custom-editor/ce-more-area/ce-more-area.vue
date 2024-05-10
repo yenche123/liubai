@@ -1,7 +1,6 @@
 <script lang="ts">
-import { computed, defineComponent, inject, type Ref } from 'vue';
+import { defineComponent } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { outterWidthKey } from "~/utils/provide-keys"
 import { useMoreArea } from "./tools/useMoreArea";
 import { receiveCmaProps } from "./tools/receiveCmaProps"
 import { cmaProps, cmaEmits } from "./tools/types-cma"
@@ -10,21 +9,12 @@ export default defineComponent({
   props: cmaProps,
   emits: cmaEmits,
   setup(props, { emit }){
-    const critialPoint = 600
-    const mvRef = inject(outterWidthKey) as Ref<number>
-    const containerMaxHeightPx = computed(() => {
-      if(mvRef.value < critialPoint) return 400
-      return 200
-    })
     const { t } = useI18n()
     const default_color = "var(--other-btn-text)"
     const moreArea = useMoreArea(props, emit)
     receiveCmaProps(props, moreArea.data)
     
     return {
-      critialPoint,
-      mvRef,
-      containerMaxHeightPx,
       t,
       default_color,
       ...moreArea
@@ -40,9 +30,7 @@ export default defineComponent({
 
     <div style="width: 100%; height: 10px"></div>
 
-    <div class="ma-grid"
-      :class="{ 'ma-grid-one-column': mvRef < critialPoint }"
-    >
+    <div class="ma-grid">
       <!-- 什么时候 -->
       <div class="liu-hover ma-item" @click="onTapWhen">
         <div class="mai-icon">
@@ -178,7 +166,7 @@ export default defineComponent({
 }
 
 .ma-container_expand {
-  max-height: v-bind("containerMaxHeightPx + 'px'");
+  max-height: 200px;
   opacity: 1;
 }
 
@@ -261,15 +249,21 @@ export default defineComponent({
 
 }
 
-.ma-grid-one-column {
-  /** 如果下方写成 1fr，那么 .mai-title 里的内容过长会撑爆单元格 */
-  grid-template-columns: 100%;
-  gap: 4px;
+@container liu-mc-container (max-width: 590px) {
 
-  /** 在一栏布局时，如果 scDisabled 为 true，则隐藏同步按钮 */
-  .ma-sync {
-    display: v-bind("data.scDisabled ? 'none' : 'flex'");
+  .ma-container_expand {
+    max-height: 400px;
   }
+
+  .ma-grid {
+    grid-template-columns: 100%;
+    gap: 4px;
+
+    .ma-sync {
+      display: v-bind("data.scDisabled ? 'none' : 'flex'");
+    }
+  }
+
 }
 
 
