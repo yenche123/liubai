@@ -304,12 +304,17 @@ async function toSave(ctx: CesCtx) {
   lastSaveStamp = now
 
   let insertedStamp = now
+  let _id = ider.createDraftId()
+  let first_id = _id
   if(state.draftId) {
     const tmp = await localReq.getDraftById(state.draftId)
-    if(tmp) insertedStamp = tmp.insertedStamp
+    if(tmp) {
+      insertedStamp = tmp.insertedStamp
+      _id = tmp._id
+      first_id = tmp.first_id
+    }
   }
 
-  const draftId = state.draftId ?? ider.createDraftId()
   const { local_id: userId } = localCache.getPreference()
   let liuDesc: TipTapJSONContent[] | undefined = undefined
   if(state.editorContent?.json) {
@@ -325,8 +330,8 @@ async function toSave(ctx: CesCtx) {
   let tagIds = isProxy(state.tagIds) ? toRaw(state.tagIds) : state.tagIds
 
   const draft: DraftLocalTable = {
-    _id: draftId,
-    first_id: draftId,
+    _id,
+    first_id,
     infoType: "THREAD",
     oState: "OK",
     user: userId as string,
@@ -347,9 +352,9 @@ async function toSave(ctx: CesCtx) {
     tagIds,
   }
 
-  // console.log("去本地存储 draft.........")
-  // console.log(draft)
-  // console.log(" ")
+  console.log("去本地存储 draft.........")
+  console.log(draft)
+  console.log(" ")
 
   const res = await localReq.setDraft(draft)
   if(!state.draftId && res) state.draftId = res as string

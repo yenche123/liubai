@@ -26,6 +26,22 @@ function isEmail(val: string) {
   return true
 }
 
+
+interface HasEverSyncedData {
+  _id: string
+  first_id: string
+  [key: string]: any
+}
+
+// if thw row has ever synced with cloud
+function hasEverSynced(row: HasEverSyncedData) {
+  const { _id, first_id } = row
+  if(_id !== first_id) return true
+  return false
+}
+
+
 export default {
   isEmail,
+  hasEverSynced,
 }

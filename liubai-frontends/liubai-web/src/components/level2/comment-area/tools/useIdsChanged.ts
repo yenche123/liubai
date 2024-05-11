@@ -2,13 +2,18 @@ import { useSyncStore, type SyncStoreItem } from "~/hooks/stores/useSyncStore";
 import type { CommentAreaData } from "./types"
 import { storeToRefs } from "pinia";
 import { watch } from "vue";
+import liuEnv from "~/utils/liu-env";
 
 export function useIdsChanged(
   caData: CommentAreaData,
 ) {
+  const backend = liuEnv.hasBackend()
+  if(!backend) return
+
   const syncStore = useSyncStore()
   const { comments } = storeToRefs(syncStore)
   watch(comments, (newV) => {
+    if(newV.length < 1) return
     handleIdsChanged(caData, newV)
   })
 }

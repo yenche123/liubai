@@ -118,7 +118,7 @@ async function initDraft(
     console.log("####### thread 编辑时间比较大的情况 ########")
 
     if(thread) initDraftFromThread(ctx, thread)
-    if(draft) localReq.deleteDraftById(draft._id)
+    if(draft) localReq.deleteDraftById(draft._id, draft)
   }
   else {
     // console.log("看一下什么情况.................")

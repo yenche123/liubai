@@ -87,7 +87,9 @@ async function toRelease(
   const res1 = await localReq.addContent(newThread)
   
   // 2. 删除 drafts
-  if(state.draftId) await localReq.deleteDraftById(state.draftId)
+  if(state.draftId) {
+    await localReq.deleteDraftById(state.draftId)
+  }
 
   // 3. 重置编辑器的 state
   _resetState(ctx)

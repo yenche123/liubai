@@ -1,7 +1,9 @@
 import { db } from "~/utils/db"
 import type { DraftLocalTable, ContentLocalTable } from "~/types/types-table"
 import localCache from "~/utils/system/local-cache"
-import ider from "~/utils/basic/ider"
+import { LocalToCloud } from "~/utils/cloud/LocalToCloud"
+import time from "~/utils/basic/time"
+import liuUtil from "~/utils/liu-util"
 
 function _getUserId(): string {
   const { local_id } = localCache.getPreference()
@@ -49,14 +51,57 @@ async function getDraft(spaceId: string) {
   return res[0]
 }
 
-async function deleteDraftById(id: string) {
+async function deleteDraftById(
+  id: string, 
+  originDraft?: DraftLocalTable
+) {
+
+  if(!originDraft) {
+    const res = await db.drafts.get(id)
+    if(!res) return
+    originDraft = res
+  }
+
   await db.drafts.delete(id)
+
+  const synced = liuUtil.check.hasEverSynced(originDraft)
+  if(synced) {
+    console.log("clear draft on cloud......")
+    LocalToCloud.addTask({
+      uploadTask: "draft-clear",
+      target_id: id,
+      operateStamp: time.getTime(),
+    })
+  }
+
 }
 
-async function setDraft(data: Partial<DraftLocalTable>) {
-  if(!data._id) data._id = ider.createDraftId()
-  const res = await db.drafts.put(data as DraftLocalTable)
+async function setDraft(data: DraftLocalTable) {
+  const res = await db.drafts.put(data)
+  saveDraftToCloud(data)
   return res
+}
+
+function saveDraftToCloud(d: DraftLocalTable) {
+  const s = d.storageState
+  if(s === "LOCAL" || s === "ONLY_LOCAL") {
+    const synced = liuUtil.check.hasEverSynced(d)
+    if(synced) {
+      console.log("去清除 draft on cloud ~~~~")
+      LocalToCloud.addTask({
+        uploadTask: "draft-clear",
+        target_id: d._id,
+        operateStamp: d.editedStamp,
+      })
+    }
+    return
+  }
+  console.log("去上传 draft........")
+  LocalToCloud.addTask({
+    uploadTask: "draft-set",
+    target_id: d._id,
+    operateStamp: d.editedStamp,
+  })
 }
 
 async function addContent(data: ContentLocalTable) {
