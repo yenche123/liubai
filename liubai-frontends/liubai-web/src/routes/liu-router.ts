@@ -348,7 +348,10 @@ const _changeLastHasPrev = (val: boolean) => {
 
 // 判断前端代码触发跳转成功与否，并操作堆栈
 // 如果是浏览器导航栏的操作，则存储 to 和 from，再触发 _judgeBrowserJump
-const _judgeInitiativeJump = (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
+const _judgeInitiativeJump = (
+  to: RouteLocationNormalized, 
+  from: RouteLocationNormalized
+) => {
   let { operation, delta = 0 } = routeChangeTmpData
   if(operation) {
     if(delta === 1) stack.push(to)

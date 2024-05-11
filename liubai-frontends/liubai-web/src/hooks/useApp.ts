@@ -5,6 +5,7 @@ import { init as initForSystem } from "~/utils/system/init"
 import { onMounted, onUnmounted } from "vue";
 import { useGlobalStateStore } from "./stores/useGlobalStateStore";
 import liuEnv from "~/utils/liu-env";
+import { useIdsChanged } from "./tools/useIdsChanged";
 
 // 监听和处理一些全局的事务，比如路由变化
 
@@ -22,8 +23,14 @@ export function useApp() {
   // init mobile
   initMobile()
 
+  // init space & CloudToLocal & LocalToCloud or initForPureLocalMode
   initForSystem()
+
+  // init text selection
   initListenSelection()
+
+  // init useIdsChanged
+  useIdsChanged()
 }
 
 
