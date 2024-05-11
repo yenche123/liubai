@@ -1543,6 +1543,10 @@ async function toDraftClear(
   // 3. update
   const u: Partial<Table_Draft> = {
     oState: "DELETED",
+    enc_title: undefined,
+    enc_desc: undefined,
+    enc_images: undefined,
+    enc_files: undefined,
   }
   await updatePartData(ssCtx, "draft", draft_id, u)
   return { code: "0000", taskId }
