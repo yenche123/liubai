@@ -8,7 +8,7 @@ import type {
   TagView,
   LiuUploadTask,
 } from "~/types/types-atom"
-import type { OState, OState_2 } from "~/types/types-basic"
+import type { OState, OState_2, OState_Draft } from "~/types/types-basic"
 import type { 
   Cloud_ImageStore,
   Cloud_FileStore,
@@ -91,6 +91,7 @@ export interface LiuUploadComment extends LiuUploadBase {
 
 /** 存一些 草稿 与评论和动态相比独有的字段 */
 export interface LiuUploadDraft extends LiuUploadBase {
+  oState?: OState_Draft
   infoType?: ContentInfoType      // 新建 draft 时，必填
   
   threadEdited?: string

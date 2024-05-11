@@ -6,6 +6,7 @@ import type {
   StorageState, 
   MemberState, 
   SpaceType,
+  OState_Draft,
 } from "./types-basic"
 import type { 
   LiuContent, 
@@ -113,7 +114,7 @@ export interface ContentLocalTable extends BaseLocalTable {
 export interface DraftLocalTable extends BaseLocalTable {
   first_id: string
   infoType: ContentInfoType
-  oState: "OK" | "POSTED" | "DELETED"
+  oState: OState_Draft
   user: string
   spaceId: string
   spaceType: SpaceType

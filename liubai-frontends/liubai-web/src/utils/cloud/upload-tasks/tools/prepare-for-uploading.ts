@@ -60,7 +60,7 @@ async function getRawData(task: UploadTaskLocalTable) {
   }
 
   // 2.4 get draft
-  if(isDraft && !isOStateChange && draft_id) {
+  if(isDraft && draft_id) {
     draft = await db.drafts.get(draft_id)
   }
 
@@ -360,6 +360,10 @@ async function organizeAtom(task: UploadTaskLocalTable) {
   else if(ut === "draft-clear" && task.draft_id) {
     atom.draft = {
       id: task.draft_id,
+      oState: "POSTED",
+    }
+    if(draft) {
+      atom.draft.oState = draft.oState
     }
     isOK = true
   }

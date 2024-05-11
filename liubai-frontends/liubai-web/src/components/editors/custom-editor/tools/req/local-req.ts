@@ -78,30 +78,7 @@ async function deleteDraftById(
 
 async function setDraft(data: DraftLocalTable) {
   const res = await db.drafts.put(data)
-  saveDraftToCloud(data)
   return res
-}
-
-function saveDraftToCloud(d: DraftLocalTable) {
-  const s = d.storageState
-  if(s === "LOCAL" || s === "ONLY_LOCAL") {
-    const synced = liuUtil.check.hasEverSynced(d)
-    if(synced) {
-      console.log("去清除 draft on cloud ~~~~")
-      LocalToCloud.addTask({
-        uploadTask: "draft-clear",
-        target_id: d._id,
-        operateStamp: d.editedStamp,
-      })
-    }
-    return
-  }
-  console.log("去上传 draft........")
-  LocalToCloud.addTask({
-    uploadTask: "draft-set",
-    target_id: d._id,
-    operateStamp: d.editedStamp,
-  })
 }
 
 async function addContent(data: ContentLocalTable) {

@@ -51,7 +51,6 @@ const oState_evts: LiuUploadTask[] = [
   "thread-delete_forever",
   "thread-restore",
   "comment-delete",
-  "draft-clear",
 ]
 
 export function classifyUploadTask(ut: LiuUploadTask) {

@@ -19,10 +19,11 @@ import type { LiuFileStore, LiuImageStore } from "~/types";
 import type { CepToPost } from "./useCeFinish"
 import liuUtil from "~/utils/liu-util";
 import { storeToRefs } from "pinia";
-import type { SpaceType } from "~/types/types-basic"
+import type { OState_Draft, SpaceType } from "~/types/types-basic"
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import { handleOverflow } from "./handle-overflow";
 import liuApi from "~/utils/liu-api";
+import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 
 let collectTimeout: LiuTimeout
 let spaceIdRef: Ref<string>
@@ -306,12 +307,16 @@ async function toSave(ctx: CesCtx) {
   let insertedStamp = now
   let _id = ider.createDraftId()
   let first_id = _id
+  let oState: OState_Draft = "OK"
+  let oldOState: OState_Draft | undefined
   if(state.draftId) {
     const tmp = await localReq.getDraftById(state.draftId)
     if(tmp) {
       insertedStamp = tmp.insertedStamp
       _id = tmp._id
       first_id = tmp.first_id
+      oState = tmp.oState
+      oldOState = tmp.oState
     }
   }
 
@@ -329,17 +334,24 @@ async function toSave(ctx: CesCtx) {
   let remindMe = isProxy(state.remindMe) ? toRaw(state.remindMe) : state.remindMe
   let tagIds = isProxy(state.tagIds) ? toRaw(state.tagIds) : state.tagIds
 
+  // checking out oState for local situation
+  const ss = state.storageState
+  const needLocal = ss === "LOCAL" || ss === "ONLY_LOCAL"
+  if(oState === "OK" && needLocal) {
+    oState = "LOCAL"  
+  }
+
   const draft: DraftLocalTable = {
     _id,
     first_id,
     infoType: "THREAD",
-    oState: "OK",
+    oState,
     user: userId as string,
     spaceId: spaceIdRef.value,
     spaceType: spaceTypeRef.value,
     threadEdited: state.threadEdited,
     visScope: state.visScope,
-    storageState: state.storageState,
+    storageState: ss,
     title: state.title,
     liuDesc,
     images,
@@ -358,10 +370,42 @@ async function toSave(ctx: CesCtx) {
 
   const res = await localReq.setDraft(draft)
   if(!state.draftId && res) state.draftId = res as string
+  saveDraftToCloud(oldOState, draft)
 
   // make parent component aware that user has been editing the editor
   ctx.emits("editing")
 }
+
+function saveDraftToCloud(
+  oldOState: OState_Draft | undefined,
+  d: DraftLocalTable,
+) {
+  const newOState = d.oState
+
+  // 1. draft-set if oState is OK
+  if(newOState === "OK") {
+    console.log("upload draft to cloud.......")
+    LocalToCloud.addTask({
+      uploadTask: "draft-set",
+      target_id: d._id,
+      operateStamp: d.editedStamp,
+    })
+    return
+  }
+
+  // 2. check out if the draft need to be cleared
+  const synced = liuUtil.check.hasEverSynced(d)
+  if(!synced) return
+  if(oldOState !== "LOCAL" && newOState === "LOCAL") {
+    console.log("clear draft on cloud......")
+    LocalToCloud.addTask({
+      uploadTask: "draft-clear",
+      target_id: d._id,
+      operateStamp: d.editedStamp,
+    })
+  }
+}
+
 
 
 function _getStoragedFiles<T = LiuImageStore>(

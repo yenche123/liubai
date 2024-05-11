@@ -33,6 +33,7 @@ import type {
   SyncSetTable,
   Table_Collection,
   SpaceType,
+  OState_Draft,
 } from "@/common-types"
 import { 
   Sch_Simple_SyncSetAtom,
@@ -48,6 +49,7 @@ import {
   Sch_Opt_Str,
   Sch_Opt_Num,
   sch_opt_arr,
+  Sch_OState_Draft,
 } from "@/common-types"
 import { 
   getNowStamp, 
@@ -1413,9 +1415,13 @@ async function toDraftEdit(
   if(oldDraft.user !== userId) {
     return { code: "E4003", errMsg: "no permission to edit the draft", taskId }
   }
-  if(oState !== "OK") {
-    return { code: "E4004", errMsg: "draft has been deleted", taskId }
+  if(oState === "POSTED") {
+    return { code: "E4003", errMsg: "draft has been posted", taskId }
   }
+  if(oState === "DELETED") {
+    return { code: "E4003", errMsg: "draft has been deleted", taskId }
+  }
+
   const oldStamp = oldDraft.editedStamp
   const editedStamp = draft.editedStamp as number
   if(oldStamp >= editedStamp) {
@@ -1428,6 +1434,7 @@ async function toDraftEdit(
 
   // 4. update
   const u: Partial<Table_Draft> = {
+    oState: "OK",
     enc_title: res3.enc_title,
     enc_desc: res3.enc_desc,
     enc_images: res3.enc_images,
@@ -1519,10 +1526,17 @@ async function toDraftClear(
   const { taskId, operateStamp } = opt
   const Sch_DraftClear = vbot.object({
     id: Sch_Id,
+    oState: Sch_OState_Draft,
   }, vbot.never())
   const res1 = checkoutInput(Sch_DraftClear, draft, taskId)
   if(res1) return res1
 
+  // 0. check out draft.oState
+  const newOState = draft.oState as OState_Draft
+  if(newOState === "OK") {
+    return { code: "E4000", errMsg: "oState cannot be OK", taskId }
+  }
+  
   // 1. get the old draft
   const draft_id = draft.id as string
   const oldDraft = await getData<Table_Draft>(ssCtx, "draft", draft_id)
@@ -1536,17 +1550,18 @@ async function toDraftClear(
   if(oldDraft.user !== userId) {
     return { code: "E4003", errMsg: "no permission to edit the draft", taskId }
   }
-  if(oState !== "OK") {
+  if(oState === newOState) {
     return { code: "0001", taskId }
   }
 
   // 3. update
   const u: Partial<Table_Draft> = {
-    oState: "DELETED",
+    oState: newOState,
     enc_title: undefined,
     enc_desc: undefined,
     enc_images: undefined,
     enc_files: undefined,
+    editedStamp: operateStamp,
   }
   await updatePartData(ssCtx, "draft", draft_id, u)
   return { code: "0000", taskId }

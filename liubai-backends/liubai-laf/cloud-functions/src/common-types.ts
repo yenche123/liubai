@@ -91,8 +91,9 @@ export const Sch_OState_4 = vbot.picklist(oState_4s)
 export type OState_User = "NORMAL" | "DEACTIVATED" | "LOCK" | "REMOVED" | "DELETED"
 
 // draft 的 oState
-export type OState_Draft = "OK" | "POSTED" | "DELETED"
-
+export const oState_Drafts = ["OK", "POSTED", "DELETED", "LOCAL"] as const
+export type OState_Draft = typeof oState_Drafts[number]
+export const Sch_OState_Draft = vbot.picklist(oState_Drafts)
 
 export type SupportedTheme = "light" | "dark"
 export type LocalTheme = SupportedTheme | "system" | "auto"   // auto 就是日夜切换
@@ -621,6 +622,7 @@ export interface LiuUploadComment extends LiuUploadBase {
 
 /** 存一些 草稿 与评论和动态相比独有的字段 */
 export interface LiuUploadDraft extends LiuUploadBase {
+  oState?: OState_Draft
   infoType?: ContentInfoType      // 新建 draft 时，必填
   
   threadEdited?: string
