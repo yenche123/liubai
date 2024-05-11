@@ -33,7 +33,7 @@ function handleIdsChanged(
     })
   }
 
-  console.log(`看一下 handleIdsChanged 后的 list: `)
+  console.log(`看一下 thread-list handleIdsChanged 后的 list: `)
   console.log(list)
   console.log(" ")
 }
