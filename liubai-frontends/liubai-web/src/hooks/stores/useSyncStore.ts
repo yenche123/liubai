@@ -9,15 +9,19 @@ export interface SyncStoreAtom {
   new_id: string
 }
 
-type SyncStoreItem = Omit<SyncStoreAtom, "whichType">
+export type SyncStoreItem = Omit<SyncStoreAtom, "whichType">
 
 export const useSyncStore = defineStore("sync", () => {
   const threads = shallowRef<SyncStoreItem[]>([])
   const comments = shallowRef<SyncStoreItem[]>([])
+  const drafts = shallowRef<SyncStoreItem[]>([])
+  const collections = shallowRef<SyncStoreItem[]>([])
 
   const afterSync = (list: SyncStoreAtom[]) => {
     const tmpThreads: SyncStoreItem[] = []
     const tmpComments: SyncStoreItem[] = []
+    const tmpDrafts: SyncStoreItem[] = []
+    const tmpCollections: SyncStoreItem[] = []
 
     list.forEach(v => {
       const item: SyncStoreItem = {
@@ -27,15 +31,21 @@ export const useSyncStore = defineStore("sync", () => {
       const wt = v.whichType
       if(wt === "thread") tmpThreads.push(item)
       else if(wt === "comment") tmpComments.push(item)
+      else if(wt === "draft") tmpDrafts.push(item)
+      else if(wt === "collection") tmpCollections.push(item)
     })
     
     threads.value = tmpThreads
     comments.value = tmpComments
+    drafts.value = tmpDrafts
+    collections.value = tmpCollections
   }
 
   return {
     threads,
     comments,
+    drafts,
+    collections,
     afterSync,
   }
 })

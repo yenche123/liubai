@@ -4,6 +4,7 @@ import ThreadCard from './thread-card/thread-card.vue';
 import { useNewAndUpdate } from './tools/useNewAndUpdate';
 import ListBottom from '../list-bottom/list-bottom.vue';
 import { useThreadOperateInList } from './tools/useThreadOperateInList';
+import { useIdsChanged } from "./tools/useIdsChanged";
 import type { TlEmits } from "./tools/types"
 import { tlProps } from "./tools/types"
 
@@ -18,6 +19,8 @@ useNewAndUpdate(props, tlData)
 const {
   receiveOperation
 } = useThreadOperateInList(props, tlData)
+
+useIdsChanged(tlData)
 
 </script>
 <template>

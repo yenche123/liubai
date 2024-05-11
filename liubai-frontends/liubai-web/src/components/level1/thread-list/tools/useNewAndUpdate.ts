@@ -17,6 +17,8 @@ export function useNewAndUpdate(
   props: TlProps,
   tlData: TlData,
 ) {
+
+  // listen to threadShow changing
   const tStore = useThreadShowStore()
   tStore.$subscribe((mutation, state) => {
     // console.log(`${props.viewType} thread-list 收到有 threadShow 发生变化!`)
