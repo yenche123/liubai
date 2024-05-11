@@ -18,7 +18,7 @@ import type {
 } from "./tools/types"
 import time from "~/utils/basic/time"
 import type { BoolFunc } from "~/utils/basic/type-tool"
-import uut from "../tools/update-upload-task"
+import uut from "./tools/update-upload-task"
 
 let resUploadToken: Res_FileSet_UploadToken | undefined
 

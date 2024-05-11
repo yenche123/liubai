@@ -8,7 +8,7 @@ import type {
 import time from "~/utils/basic/time";
 import { db, type DexieTable } from "~/utils/db";
 import { packSyncSetAtoms } from "./tools/prepare-for-uploading";
-import uut from "../tools/update-upload-task"
+import uut from "./tools/update-upload-task"
 import type { 
   Res_SyncSet_Client, 
   SyncSetAtomRes,

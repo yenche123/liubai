@@ -14,7 +14,9 @@ import type {
   Cloud_FileStore,
   Cloud_StateConfig,
 } from "~/types/types-cloud"
-import type { ContentConfig } from "~/types/other/types-custom"
+import type { ContentConfig } from "~/types/other/types-custom";
+import type { DexieBulkUpdateAtom } from "~/types/other/types-dexie";
+import type { UploadTaskLocalTable } from "~/types/types-table";
 
 export type FileReqReturn = LiuRqReturn<Res_WebhookQiniu>
 
@@ -139,3 +141,4 @@ export interface SyncSetAtom {
   operateStamp: number // 表示这个操作被发起的时间戳，非常重要，用于校时用
 }
 
+export type BulkUpdateAtom_UploadTask = DexieBulkUpdateAtom<UploadTaskLocalTable>

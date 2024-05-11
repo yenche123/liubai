@@ -16,7 +16,7 @@ import type {
 import { classifyUploadTask } from "../../tools/upload-event-classification"
 import { db } from "~/utils/db";
 import transferUtil from "~/utils/transfer-util";
-import uut from "../../tools/update-upload-task"
+import uut from "../tools/update-upload-task"
 
 async function getRawData(task: UploadTaskLocalTable) {
   const { 
