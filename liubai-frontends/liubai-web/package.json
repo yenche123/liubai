@@ -67,7 +67,7 @@
     "@types/node": "^20.12.11",
     "@vitejs/plugin-vue": "^5.0.4",
     "rollup-plugin-visualizer": "^5.12.0",
-    "sass": "^1.77.0",
+    "sass": "^1.77.1",
     "typescript": "~5.4.5",
     "user-agent-data-types": "^0.4.2",
     "vite": "^5.2.11",
@@ -76,7 +76,7 @@
     "vite-plugin-mkcert": "^1.17.5",
     "vite-plugin-qrcode": "^0.2.3",
     "vite-plugin-svg-icons": "^2.0.1",
-    "vue-tsc": "^2.0.16"
+    "vue-tsc": "^2.0.17"
   },
   "packageManager": "pnpm@9.0.6"
 }
