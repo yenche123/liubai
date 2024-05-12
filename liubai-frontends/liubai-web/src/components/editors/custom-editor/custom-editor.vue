@@ -84,9 +84,8 @@ const {
   onTapFinish,
   onTapCloseTitle,
   onTitleBarChange,
-  onTitleEnter,
-  onTitleEnterAndMeta,
-  onTitleEnterAndCtrl,
+  onTitleEnterUp,
+  onTitleEnterDown,
 } = useCeState(props, emits, state, toFinish, editor)
 
 useDraftIdChanged(state)
@@ -106,9 +105,8 @@ useDraftIdChanged(state)
       @focus="() => titleFocused = true"
       @blur="() => titleFocused = false"
       @input="onTitleBarChange" 
-      @keyup.enter.exact="onTitleEnter"
-      @keydown.ctrl.enter.exact="onTitleEnterAndCtrl"
-      @keydown.meta.enter.exact="onTitleEnterAndMeta"
+      @keyup.enter.exact="onTitleEnterUp"
+      @keydown.enter="onTitleEnterDown"
     />
     <div class="ce-clear-title" @click.stop="onTapCloseTitle">
       <svg-icon name="close-circle" class="ce-clear-svg" 
