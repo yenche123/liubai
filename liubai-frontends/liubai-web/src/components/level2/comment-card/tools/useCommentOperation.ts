@@ -9,6 +9,10 @@ import {
   type CommentStoreSetDataOpt 
 } from "~/hooks/stores/useCommentStore"
 import valTool from "~/utils/basic/val-tool"
+import time from "~/utils/basic/time"
+import type { ContentLocalTable } from "~/types/types-table"
+import liuUtil from "~/utils/liu-util"
+import { LocalToCloud } from "~/utils/cloud/LocalToCloud"
 
 export function useCommentOperation(
   props: CommentCardProps
@@ -69,25 +73,6 @@ function handleEmoji(
   }
 }
 
-function handleComment(
-  cs: CommentShow,
-) {
-
-
-}
-
-function handleShare(
-  cs: CommentShow,
-) {
-
-}
-
-function handleEdit(
-  cs: CommentShow,
-) {
-
-}
-
 
 async function prepareToDelete(
   cs: CommentShow,
@@ -100,18 +85,31 @@ async function prepareToDelete(
   })
   if(!res.confirm) return
 
-  // 0. 修改 CommentShow
+  // 0. get old content
+  const id = cs._id
+  const oldContent = await db.contents.get(id)
+  if(!oldContent) return
+
+  // 1. update CommentShow
+  const now = time.getTime()
   const newCs = valTool.copyObject(cs)
   newCs.oState = "DELETED"
+  newCs.updatedStamp = now
 
-  // 1. 直接修改 db 改成 DELETED
-  const id = cs._id
-  const res2 = await db.contents.update(id, { "oState": "DELETED" })
+  // 2. update data
+  const cfg = oldContent.config ?? {}
+  cfg.lastOStateStamp = now
+  const u: Partial<ContentLocalTable> = { 
+    oState: "DELETED",
+    updatedStamp: now,
+    config: cfg,
+  }
+  const res2 = await db.contents.update(id, u)
 
-  // 2. 修改上级的评论数
+  // 3. 修改上级的评论数
   await _modifySuperiorCommentNum(newCs)
 
-  // 3. 全局通知各组件
+  // 4. 全局通知各组件
   const cStore = useCommentStore()
   const obj: CommentStoreSetDataOpt = {
     changeType: "delete",
@@ -123,9 +121,19 @@ async function prepareToDelete(
   }
   cStore.setData(obj)
 
-  // 4. snackbar（不带 undo）
+  // 5. snackbar（不带 undo）
   cui.showSnackBar({ text_key: "tip.deleted" })
 
+  // 6. upload
+  const isLocal = liuUtil.check.isLocalContent(newCs.storageState)
+  if(isLocal) return
+  const everSync = liuUtil.check.hasEverSynced(newCs)
+  if(!everSync) return
+  LocalToCloud.addTask({
+    uploadTask: "comment-delete",
+    target_id: id,
+    operateStamp: now,
+  })
 }
 
 /**
