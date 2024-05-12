@@ -50,7 +50,7 @@ async function getRawData(task: UploadTaskLocalTable) {
   }
 
   // 2.2 get workspace
-  if(isWorkspace && !isOStateChange && workspace_id) {
+  if(isWorkspace && workspace_id) {
     workspace = await db.workspaces.get(workspace_id)
   }
 
@@ -340,6 +340,13 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     isOK = true
   }
   else if(ut === "workspace-state_config" && workspace) {
+    atom.workspace = {
+      id: workspace._id,
+      stateConfig: workspace.stateConfig,
+    }
+    isOK = true
+  }
+  else if(ut === "undo_workspace-state_config" && workspace) {
     atom.workspace = {
       id: workspace._id,
       stateConfig: workspace.stateConfig,

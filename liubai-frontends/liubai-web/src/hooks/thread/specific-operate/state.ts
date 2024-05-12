@@ -8,11 +8,13 @@ import commonPack from "~/utils/controllers/tools/common-pack"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { SnackbarRes, SnackbarParam } from "~/types/other/types-snackbar"
-import type { LiuStateConfig, LiuAtomState } from "~/types/types-atom"
+import type { LiuStateConfig, LiuAtomState, LiuUploadTask } from "~/types/types-atom"
 import stateController from "~/utils/controllers/state-controller/state-controller"
 import { i18n } from "~/locales"
 import { mapStateColor } from "~/config/state-color"
 import cfg from "~/config"
+import liuUtil from "~/utils/liu-util"
+import { LocalToCloud } from "~/utils/cloud/LocalToCloud"
 
 interface SelectStateRes {
   tipPromise?: Promise<SnackbarRes>
@@ -59,7 +61,8 @@ export async function selectState(
   }
 
   // 3. 处理 workspace
-  await handleWorkspace(wStore, newThread)
+  const workspace_id = await handleWorkspace(wStore, newThread)
+  if(!workspace_id) return {}
 
   // 4. 操作 thread.stateShow 字段
   let tmpStateShow: StateShow | undefined = undefined
@@ -72,13 +75,17 @@ export async function selectState(
   }
 
   // 5. 修改动态的 db
-  const res2 = await dbOp.setStateId(newThread._id, newStateId)
+  const operateStamp = await dbOp.setStateId(newThread._id, newStateId)
 
   // 6. 通知到全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread], "state")
 
-  // 7. 显示 snack-bar
+  // 7. upload
+  _saveContentToCloud(newThread, operateStamp)
+  _saveWorkspaceToCloud(workspace_id)
+
+  // 8. 显示 snack-bar
   const t = i18n.global.t
   let snackParam: SnackbarParam = {
     action_key: "tip.undo"
@@ -112,7 +119,7 @@ export async function undoState(
 ) {
 
   // 1. 修改 db
-  const res2 = await dbOp.setStateId(oldThread._id, oldThread.stateId, true)
+  const operateStamp = await dbOp.setStateId(oldThread._id, oldThread.stateId)
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()
@@ -120,7 +127,12 @@ export async function undoState(
 
   // 3. 复原 workspace
   const wStore = useWorkspaceStore()
-  await restoreStateCfg(wStore)
+  const workspace_id = await restoreStateCfg(wStore)
+  if(!workspace_id) return
+
+  // 4. upload
+  _saveContentToCloud(oldThread, operateStamp, true)
+  _saveWorkspaceToCloud(workspace_id, true)
 }
 
 // 浮上去
@@ -135,13 +147,17 @@ export async function floatUp(
   const wStore = useWorkspaceStore()
 
   // 1. 直接处理 workspace 即可
-  await handleWorkspace(wStore, thread)
+  const workspace_id = await handleWorkspace(wStore, thread)
+  if(!workspace_id) return {}
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([thread], "float_up")
 
-  // 3. 显示 snackbar
+  // 3. upload
+  _saveWorkspaceToCloud(workspace_id)
+
+  // 4. 显示 snackbar
   const text_key = "state_related.bubbled"
   const action_key = "tip.undo"
   const tipPromise = cui.showSnackBar({ text_key, action_key })
@@ -161,7 +177,11 @@ export async function undoFloatUp(
 
   // 2. 复原 workspace
   const wStore = useWorkspaceStore()
-  await restoreStateCfg(wStore)
+  const workspace_id = await restoreStateCfg(wStore)
+  if(!workspace_id) return
+
+  // 3. upload
+  _saveWorkspaceToCloud(workspace_id, true)
 }
 
 
@@ -176,11 +196,14 @@ export async function setNewStateForThread(
   newThread.stateShow = commonPack.getStateShow(newStateId, wStore)
 
   // 1. 修改 db
-  const res = await dbOp.setStateId(newThread._id, newStateId)
+  const operateStamp = await dbOp.setStateId(newThread._id, newStateId)
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([newThread], "state")
+
+  // 3. upload
+  _saveContentToCloud(newThread, operateStamp)
   
   return true
 }
@@ -189,11 +212,12 @@ export async function setNewStateForThread(
 async function restoreStateCfg(
   wStore: WorkspaceStore,
 ) {
-  if(!stateCfgBackup) return
+  const spaceId = wStore.spaceId
+  if(!spaceId || !stateCfgBackup) return
   const stateCfg = valTool.copyObject(stateCfgBackup.oldStateConfig)
   const res = await wStore.setStateConfig(stateCfg)
   stateCfgBackup = undefined
-  return true
+  return spaceId
 }
 
 async function handleWorkspace(
@@ -241,15 +265,38 @@ async function handleWorkspace(
   // 4. 写入到 wStore 中
   const res = await wStore.setStateConfig(newStateCfg)
   
-  return true
+  return currentSpace._id
 }
 
-function _isUpdateCloudRequired(
-  newThread: ThreadShow,
+
+function _saveContentToCloud(
+  thread: ThreadShow,
+  stamp: number,
+  isUndo: boolean = false,
 ) {
-  const { storageState: s } = newThread
-  if(s === "CLOUD" || s === "WAIT_UPLOAD") return true
-  return false
+  const ss = thread.storageState
+  const isLocal = liuUtil.check.isLocalContent(ss)
+  if(isLocal) return
+
+  LocalToCloud.addTask({
+    uploadTask: isUndo ? "undo_thread-state" : "thread-state",
+    target_id: thread._id,
+    operateStamp: stamp,
+  })
+
+}
+
+function _saveWorkspaceToCloud(
+  workspace_id: string,
+  isUndo: boolean = false,
+) {
+  let uploadTask: LiuUploadTask = "workspace-state_config"
+  if(isUndo) uploadTask = "undo_workspace-state_config"
+  LocalToCloud.addTask({
+    uploadTask,
+    target_id: workspace_id,
+    operateStamp: time.getTime(),
+  })
 }
 
 

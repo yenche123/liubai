@@ -134,6 +134,7 @@ const need_comment_evts: LiuUploadTask[] = [
 const need_workspace_evts: LiuUploadTask[] = [
   "workspace-tag",
   "workspace-state_config",
+  "undo_workspace-state_config",
 ]
 
 const need_member_evts: LiuUploadTask[] = [
@@ -356,6 +357,9 @@ async function toExecute(
       res1 = await toWorkspaceTag(ssCtx, workspace, opt)
     }
     else if(taskType === "workspace-state_config" && workspace) {
+      res1 = await toWorkspaceStateConfig(ssCtx, workspace, opt)
+    }
+    else if(taskType === "undo_workspace-state_config" && workspace) {
       res1 = await toWorkspaceStateConfig(ssCtx, workspace, opt)
     }
     else if(taskType === "member-avatar" && member) {

@@ -212,7 +212,8 @@ export const liuUploadTasks = [
   "comment-delete",           // 删除评论
   "comment-edit",             // 编辑评论
   "workspace-tag",            // 编辑工作区的标签，这时 target_id 为 workspace id
-  "workspace-state_config",   // 编辑工作区的“状态”结构，动态上浮时，也会用到这个事件
+  "workspace-state_config",   // 编辑工作区的“状态”结构，动态添加标签或上浮时，也会用到这个事件
+  "undo_workspace-state_config",  //【撤销】工作区的状态结构之变更
   "member-avatar",            // 修改当前工作区自己的头像
   "member-nickname",          // 修改当前工作区自己的昵称
   "draft-clear",              // 删除某个 draft_id 的草稿

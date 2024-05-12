@@ -261,10 +261,8 @@ async function countPin() {
 async function setStateId(
   id: string,
   newStateId?: string,
-  isUndo?: boolean,
 ) {
   const oldCfg = await getOldCfg(id)
-
   const now1 = time.getTime()
   const newCfg = getNewCfg("lastOperateStateId", now1, oldCfg)
   const newData: Partial<ContentLocalTable> = {
@@ -273,14 +271,7 @@ async function setStateId(
     config: newCfg,
   }
   const res = await db.contents.update(id, newData)
-
-  LocalToCloud.addTask({
-    uploadTask: isUndo ? "undo_thread-state" : "thread-state",
-    target_id: id,
-    operateStamp: now1,
-  })
-
-  return true
+  return now1
 }
 
 

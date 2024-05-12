@@ -330,7 +330,7 @@ async function toSave(ctx: CesCtx) {
 
   // checking out oState for local situation
   const ss = state.storageState
-  const needLocal = ss === "LOCAL" || ss === "ONLY_LOCAL"
+  const needLocal = liuUtil.check.isLocalContent(ss)
   if(oState === "OK" && needLocal) {
     oState = "LOCAL"  
   }

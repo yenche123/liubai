@@ -40,11 +40,21 @@ export async function addUploadTask(
   const isThreadEdited = content_edit_events.includes(taskType)
   const isCommentEdited = taskType === "comment-edit"
 
-  let addRequired = true
+  // 0. classify
+  const { 
+    isContent,
+    isWorkspace,
+    isMember,
+    isDraft,
+    isCollection,
+  } = classifyUploadTask(taskType)
 
-  // 1. 检查是否要添加
+  // 1. checking out if the task is required to add
+  let addRequired = true
   if(isUndo) {
-    addRequired = await whenUndo(target_id, user, taskType)
+    let key: UploadTaskLocalTable_ID = "content_id"
+    if(isWorkspace) key = "workspace_id"
+    addRequired = await whenUndo(key, target_id, user, taskType)
   }
   else if(taskType === "thread-restore") {
     addRequired = await whenRestoreThread(target_id, user)
@@ -58,14 +68,6 @@ export async function addUploadTask(
   if(!addRequired) return
   
   // 2. 检查是否已存在，若存在去删除旧的任务
-  const { 
-    isContent,
-    isWorkspace,
-    isMember,
-    isDraft,
-    isCollection,
-  } = classifyUploadTask(taskType)
-
   if(taskType === "thread-only_local") {
     await checkThreadOnlyLocal(target_id, user)
   }
@@ -197,8 +199,9 @@ async function checkDuplicated(
  * if yes, then delete it, and return false to represent that 
  * there is no need to add
 */
-async function whenUndo(
-  content_id: string,
+async function whenUndo<T extends UploadTaskLocalTable_ID>(
+  key: T,
+  val: UploadTaskLocalTable[T],
   user: string,
   undoType: LiuUploadTask,
 ) {
@@ -212,9 +215,9 @@ async function whenUndo(
   const w: Partial<UploadTaskLocalTable> = {
     user,
     uploadTask: originType,
-    content_id,
     progressType: "waiting",
   }
+  w[key] = val
   const res = await db.upload_tasks.where(w).toArray()
 
   if(res.length < 1) {

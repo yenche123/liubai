@@ -1,4 +1,5 @@
 import reg_exp from "~/config/regular-expressions";
+import type { StorageState } from "~/types/types-basic";
 
 
 /**
@@ -40,8 +41,14 @@ function hasEverSynced(row: HasEverSyncedData) {
   return false
 }
 
+function isLocalContent(storageState: StorageState) {
+  const isLocal = storageState === "LOCAL" || storageState === "ONLY_LOCAL"
+  return isLocal
+}
+
 
 export default {
   isEmail,
   hasEverSynced,
+  isLocalContent,
 }
