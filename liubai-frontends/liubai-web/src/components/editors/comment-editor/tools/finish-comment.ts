@@ -19,6 +19,7 @@ import commentCache from "./comment-cache";
 import { getStorageAtom } from "./useCommentEditor"
 import { equipComments } from "~/utils/controllers/equip/comments"
 import commentController from "~/utils/controllers/comment-controller/comment-controller";
+import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 
 export function finishComment(
   props: CeProps,
@@ -52,15 +53,14 @@ export function finishComment(
 async function toUpdate(
   ctx: HcCtx
 ) {
-
-  const id = ctx.props.commentId as string
+  const commentId = ctx.props.commentId as string
   const preComment = await _getCommentData(ctx)
   console.log("toUpdate 入库前，看一下 preComment: ")
   console.log(preComment)
   console.log(" ")
 
   // 1. 更新到 db 里
-  const res = await localReq.updateContent(id, preComment)
+  const res = await localReq.updateContent(commentId, preComment)
   console.log("查看 update 的结果: ")
   console.log(res)
   console.log(" ")
@@ -69,7 +69,10 @@ async function toUpdate(
   _reset(ctx)
   
   // 3. 从 db 里获取最新的 CommentShow
-  const [newComment] = await commentController.loadByComment({ commentId: id, loadType: "target" })
+  const [newComment] = await commentController.loadByComment({ 
+    commentId, 
+    loadType: "target",
+  })
   if(!newComment) {
     console.warn("没有查找到更新后的评论.............")
     return
@@ -79,7 +82,7 @@ async function toUpdate(
   const cStore = useCommentStore()
   const opt: CommentStoreSetDataOpt = {
     changeType: "edit",
-    commentId: newComment._id,
+    commentId,
     commentShow: newComment,
     parentThread: newComment.parentThread,
     parentComment: newComment.parentComment,
@@ -89,6 +92,17 @@ async function toUpdate(
 
   // 5. 用 emit 通知上级
   ctx.emit("finished")
+
+  // 6. upload
+  const isLocal = liuUtil.check.isLocalContent(newComment.storageState)
+  if(isLocal) return
+  const everSynced = liuUtil.check.hasEverSynced(newComment)
+  LocalToCloud.addTask({
+    uploadTask: everSynced ? "comment-edit" : "comment-post",
+    target_id: commentId,
+    operateStamp: newComment.editedStamp,
+  })
+
 }
 
 async function toRelease(
@@ -125,9 +139,10 @@ async function toRelease(
 
   // 5. 通知其他组件
   const cStore = useCommentStore()
+  const commentId = newComment._id
   const opt: CommentStoreSetDataOpt = {
     changeType: "add",
-    commentId: newComment._id,
+    commentId,
     commentShow,
     parentThread: ctx.props.parentThread,
     parentComment: ctx.props.parentComment,
@@ -137,6 +152,16 @@ async function toRelease(
 
   // 6. 用 emit 通知上级
   ctx.emit("finished")
+
+  // 7. upload
+  const isLocal = liuUtil.check.isLocalContent(newComment.storageState)
+  if(isLocal) return
+  LocalToCloud.addTask({
+    uploadTask: "comment-post",
+    target_id: commentId,
+    operateStamp: newComment.editedStamp,
+  })
+
 }
 
 
