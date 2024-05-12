@@ -20,7 +20,7 @@ import { getStorageAtom } from "./useCommentEditor"
 import { equipComments } from "~/utils/controllers/equip/comments"
 import commentController from "~/utils/controllers/comment-controller/comment-controller";
 
-export function handleComment(
+export function finishComment(
   props: CeProps,
   emit: CeEmit, 
   ceCtx: CeCtx,

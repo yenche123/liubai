@@ -11,7 +11,7 @@ import commentCache from "./comment-cache";
 import time from "~/utils/basic/time";
 import type { LiuFileStore, LiuImageStore } from "~/types";
 import liuUtil from "~/utils/liu-util";
-import { handleComment } from "./handle-comment"
+import { finishComment } from "./finish-comment"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import localReq from "./req/local-req";
@@ -124,7 +124,7 @@ export function useCommentEditor(
   const onEditorFinish = () => {
     checkCanSubmit(props, ctx)
     if(!ctx.canSubmit) return
-    handleComment(props, emit, ctx, editor)
+    finishComment(props, emit, ctx, editor)
   }
 
   watch(() => props.submitNum, (newV) => {
