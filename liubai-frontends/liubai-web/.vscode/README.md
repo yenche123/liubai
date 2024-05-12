@@ -2,7 +2,7 @@
 
 ## 尽可能安装的插件
 
-### 1. Volar
+### 1. Vue - Official
 
 Extension ID: `vue.volar`
 
@@ -25,6 +25,8 @@ Extension ID: `eamodio.gitlens`
 Extension ID: `yoavbls.pretty-ts-errors`
 
 自动美化来自 TS 的报错信息
+
+---
 
 
 ## 可选插件推荐
@@ -54,3 +56,9 @@ Extension ID: `kisstkondoros.vscode-gutter-preview`
 Extension ID: `ambar.bundle-size`
 
 在编辑器上展示被引入的第三方依赖之体积
+
+### 5. Codeium
+
+Extension ID: `Codeium.codeium`
+
+基于 AI 的代码自动补全插件，辅助你写代码。
