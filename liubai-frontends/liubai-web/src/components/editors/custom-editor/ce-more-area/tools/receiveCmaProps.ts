@@ -1,6 +1,6 @@
 import { toRef, watchEffect } from "vue";
 import type { CmaProps, MaData } from "./types-cma";
-import type { CeState } from "../../tools/atom-ce";
+import type { CeState } from "../../tools/types";
 import liuUtil from "~/utils/liu-util";
 import { useI18n } from "vue-i18n"
 import type { ComposerTranslation } from "vue-i18n"

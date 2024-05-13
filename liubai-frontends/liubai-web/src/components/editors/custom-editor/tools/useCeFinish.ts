@@ -4,7 +4,7 @@ import type { TipTapEditor } from "~/types/types-editor"
 import type { ContentLocalTable } from "~/types/types-table";
 import ider from "~/utils/basic/ider";
 import localCache from "~/utils/system/local-cache";
-import type { CeState, CeEmits } from "./atom-ce"
+import type { CeState, CeEmits } from "./types"
 import time from "~/utils/basic/time";
 import transferUtil from "~/utils/transfer-util";
 import liuUtil from "~/utils/liu-util";

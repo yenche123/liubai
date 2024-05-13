@@ -1,6 +1,6 @@
 
 import valTool from "~/utils/basic/val-tool"
-import type { CeState } from "./atom-ce"
+import type { CeState } from "./types"
 import { getRowNum } from "~/utils/transfer-util/text"
 
 export function handleOverflow(

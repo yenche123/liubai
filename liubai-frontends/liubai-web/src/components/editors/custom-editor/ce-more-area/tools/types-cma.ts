@@ -1,6 +1,6 @@
 import type { FileShow } from "~/types"
 import type { LiuRemindMe } from "~/types/types-atom"
-import type { CeState } from "../../tools/atom-ce"
+import type { CeState } from "../../tools/types"
 import type { PropType } from "vue"
 import type { TipTapEditor } from "~/types/types-editor"
 

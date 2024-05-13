@@ -22,7 +22,7 @@ import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { useCeTag } from "./tools/useCeTag";
 import EditingBubbleMenu from "../shared/editing-bubble-menu/editing-bubble-menu.vue";
 import { useI18n } from "vue-i18n";
-import { type CeEmits, ceProps } from "./tools/atom-ce";
+import { type CeEmits, ceProps } from "./tools/types";
 import { useDraftIdChanged } from "./tools/useDraftIdChanged";
 
 const { t } = useI18n()

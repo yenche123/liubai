@@ -1,5 +1,5 @@
 import { useSyncStore, type SyncStoreItem } from "~/hooks/stores/useSyncStore";
-import type { CeState } from "./atom-ce"
+import type { CeState } from "./types"
 import { storeToRefs } from "pinia";
 import { watch } from "vue";
 import liuEnv from "~/utils/liu-env";

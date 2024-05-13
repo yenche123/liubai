@@ -8,7 +8,7 @@ import type {
 } from "~/types/types-editor";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { LiuRemindMe } from "~/types/types-atom";
-import type { CeState, CeProps, CeEmits } from "./atom-ce";
+import type { CeState, CeProps, CeEmits } from "./types";
 import ider from "~/utils/basic/ider";
 import type { DraftLocalTable } from "~/types/types-table";
 import localCache from "~/utils/system/local-cache";
