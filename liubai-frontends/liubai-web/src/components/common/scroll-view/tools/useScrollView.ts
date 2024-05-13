@@ -1,6 +1,7 @@
 import { 
   nextTick, 
   onActivated, 
+  onDeactivated, 
   provide, 
   reactive, 
   ref, 
@@ -12,7 +13,8 @@ import {
 import type { SvProps, SvEmits } from "./types"
 import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
 import { scrollViewKey, svScollingKey, svBottomUpKey } from "~/utils/provide-keys"
-import { useResizeObserver } from "~/hooks/useVueUse"
+import { useDebounceFn, useResizeObserver } from "~/hooks/useVueUse"
+import time from "~/utils/basic/time";
 
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
@@ -35,6 +37,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   let lastScrollPosition = 0
   let lastScrollStamp = 0
   let lastInvokeStamp = 0
+  let lastToggleViewStamp = time.getTime()
 
   const onScrolling = () => {
     const _sv = sv.value
@@ -94,8 +97,8 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   }
 
   onActivated(async () => {
+    lastToggleViewStamp = time.getTime()
     if(props.showTxt === "false") {
-      // console.log("showTxt 为 false 故忽略")
       return
     }
 
@@ -107,6 +110,10 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     // 所以加一层 nextTick 等待页面渲染完毕再恢复至上一次的位置
     await nextTick()
     _setScollPosition(sp)
+  })
+
+  onDeactivated(() => {
+    lastToggleViewStamp = time.getTime()
   })
 
   watch(bottomUp, (newV) => {
@@ -121,9 +128,11 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   })
 
   // listen sv width change
-  useResizeObserver(sv, (entries) => {
+  const _resize = useDebounceFn((entries) => {
+    if(time.isWithinMillis(lastToggleViewStamp, 300)) return
     onScrolling()
-  })
+  }, 60)
+  useResizeObserver(sv, _resize)
 
   return { sv, scrollPosition, onScrolling }
 }
