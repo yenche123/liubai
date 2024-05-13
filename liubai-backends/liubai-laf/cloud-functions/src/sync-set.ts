@@ -59,6 +59,7 @@ import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
 
 const db = cloud.database()
+const _ = db.command
 
 export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}
@@ -79,8 +80,8 @@ export async function main(ctx: FunctionContext) {
     return res3.rqReturn ?? { code: "E5001" }
   }
 
-  console.log("new body::")
-  console.log(res3.newBody)
+  // console.log("new body::")
+  // console.log(res3.newBody)
 
   // 4. check body
   const res4 = checkBody(res3.newBody)
@@ -1983,7 +1984,6 @@ async function getSharedData_2(
   // 3. check editedStamp
   const editedStamp = content.editedStamp as number
   if(oldContent.editedStamp > editedStamp) {
-    console.log("the content is newer than the thread")
     return {
       pass: false,
       result: { code: "0002", taskId }
@@ -2246,8 +2246,26 @@ async function toUpdateTable<T>(
   for(let i=0; i<list.length; i++) {
     const v = list[i]
     const { id, updateData } = v
-    const res = await col.doc(id).update(updateData)
-    console.log(`update ${tableName} ${id} result: `, res)
+
+    // using _.remove() or _.set() to update
+    // to avoid MongoServerError: 
+    // Cannot create field 'cipherText' in element {enc_desc: null}
+    const _u: Record<string, any> = {}
+    const keys = Object.keys(updateData) as (keyof T)[]
+    for(let j=0; j<keys.length; j++) {
+      const key = keys[j]
+      const val = updateData[key]
+      let newVal: any
+      if(typeof val === "undefined") {
+        newVal = _.remove()
+      }
+      else {
+        newVal = _.set(val)
+      }
+      _u[key as string] = newVal
+    }
+    
+    const res = await col.doc(id).update(_u)
   }
   return true
 }

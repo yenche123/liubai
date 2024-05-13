@@ -22,9 +22,10 @@ async function getContentById(threadId: string) {
 }
 
 async function getDraftByThreadId(threadId: string) {
+  const user = _getUserId()
   const w: Partial<DraftLocalTable> = {
     infoType: "THREAD",
-    oState: "OK",
+    user,
     threadEdited: threadId,
   }
   const res = await db.drafts.get(w)
@@ -42,39 +43,48 @@ async function getDraft(spaceId: string) {
   const user = _getUserId()
   const w: Partial<DraftLocalTable> = {
     infoType: "THREAD",
-    oState: "OK",
     user,
     spaceId,
   }
-  const res = await db.drafts.where(w).filter(v => !Boolean(v.threadEdited)).toArray()
+
+  const _filter = (v: DraftLocalTable) => {
+    if(v.threadEdited) return false
+    if(v.commentEdited) return false
+    return true
+  }
+
+  const res = await db.drafts.where(w).filter(_filter).toArray()
   if(!res || res.length < 1) return null
   return res[0]
 }
 
 async function deleteDraftById(
-  id: string, 
-  originDraft?: DraftLocalTable
+  id: string,
 ) {
+  await db.drafts.delete(id)
+}
 
+async function clearDraftOnCloud(
+  id: string,
+  originDraft?: DraftLocalTable,
+) {
   if(!originDraft) {
     const res = await db.drafts.get(id)
     if(!res) return
     originDraft = res
   }
 
-  await db.drafts.delete(id)
-
   const synced = liuUtil.check.hasEverSynced(originDraft)
-  if(synced) {
-    console.log("clear draft on cloud......")
-    LocalToCloud.addTask({
-      uploadTask: "draft-clear",
-      target_id: id,
-      operateStamp: time.getTime(),
-    })
-  }
+  if(!synced) return
 
+  console.log("clear draft on cloud......")
+  LocalToCloud.addTask({
+    uploadTask: "draft-clear",
+    target_id: id,
+    operateStamp: time.getTime(),
+  })
 }
+
 
 async function setDraft(data: DraftLocalTable) {
   const res = await db.drafts.put(data)
@@ -103,6 +113,7 @@ export default {
   getDraftById,
   getDraft,
   deleteDraftById,
+  clearDraftOnCloud,
   setDraft,
   addContent,
   updateContent,

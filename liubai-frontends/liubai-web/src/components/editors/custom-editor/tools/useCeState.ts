@@ -29,6 +29,8 @@ let collectTimeout: LiuTimeout
 let spaceIdRef: Ref<string>
 let spaceTypeRef: Ref<SpaceType>
 
+const SEC_5 = time.SECONED * 5
+
 interface CesCtx {
   state: CeState
   emits: CeEmits
@@ -283,11 +285,11 @@ function collectState(ctx: CesCtx, instant: boolean = false) {
     return
   }
 
-  // 判断缓存间隔，超过 3s 没有存储过，就缩短防抖节流的阈值
+  // 判断缓存间隔，超过 5s 没有存储过，就缩短防抖节流的阈值
   if(!lastSaveStamp) lastSaveStamp = time.getTime()
   const now = time.getTime()
   const diff = now - lastSaveStamp
-  let duration = diff > 3000 ? 250 : 1000
+  const duration = diff > SEC_5 ? 250 : 2500
   collectTimeout = setTimeout(() => {
     toSave(ctx)
   }, duration)
@@ -334,6 +336,9 @@ async function toSave(ctx: CesCtx) {
   if(oState === "OK" && needLocal) {
     oState = "LOCAL"  
   }
+  else if(oState === "LOCAL" && !needLocal) {
+    oState = "OK"
+  }
 
   const draft: DraftLocalTable = {
     _id,
@@ -375,6 +380,8 @@ function saveDraftToCloud(
   d: DraftLocalTable,
 ) {
   const newOState = d.oState
+
+  console.log("newOState: ", newOState)
 
   // 1. draft-set if oState is OK
   if(newOState === "OK") {

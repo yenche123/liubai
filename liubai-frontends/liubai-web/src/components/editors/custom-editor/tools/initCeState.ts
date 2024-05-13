@@ -91,45 +91,56 @@ async function initDraft(
   ctx: IcsContext,
   threadId?: string,
 ) {
-  let draft: DraftLocalTable | null = null
+
+  // if threadId exists, initDraftWithThreadId()
   if(threadId) {
     // 使用 lastWin 法则，比较 thread 和 draft
-
-    draft = await localReq.getDraftByThreadId(threadId)
-    let thread = await localReq.getContentById(threadId)
-
-    if(!draft && !thread) {
-      ctx.emits("nodata", threadId)
-      return
-    }
-    ctx.emits("hasdata", threadId)
-    
-    let e1 = draft?.editedStamp ?? 1
-    let e2 = thread?.editedStamp ?? 1
-
-    // draft 编辑时间比较大的情况
-    if(e1 > e2) {
-      console.log("####### draft 编辑时间比较大的情况 ########")
-      if(draft) initDraftFromDraft(ctx, draft)
-      return
-    }
-
-    // thread 编辑时间比较大的情况
-    console.log("####### thread 编辑时间比较大的情况 ########")
-
-    if(thread) initDraftFromThread(ctx, thread)
-    if(draft) localReq.deleteDraftById(draft._id, draft)
+    initDraftWithThreadId(ctx, threadId)
+    return
   }
-  else {
-    // console.log("看一下什么情况.................")
-    draft = await localReq.getDraft(spaceIdRef.value)
-    // console.log(draft)
-    // console.log(" ")
 
-    if(draft) initDraftFromDraft(ctx, draft)
-    else ctx.state.draftId = ""
+
+  let draft = await localReq.getDraft(spaceIdRef.value)
+  const _id = draft?._id
+  const oState = draft?.oState
+  if(_id && (oState === "POSTED" || oState === "DELETED")) {
+    localReq.deleteDraftById(_id)
+    draft = null
   }
   
+  if(draft) initDraftFromDraft(ctx, draft)
+  else ctx.state.draftId = ""
+}
+
+
+async function initDraftWithThreadId(
+  ctx: IcsContext,
+  threadId: string,
+) {
+  let draft = await localReq.getDraftByThreadId(threadId)
+  let thread = await localReq.getContentById(threadId)
+
+  if(!draft && !thread) {
+    ctx.emits("nodata", threadId)
+    return
+  }
+  ctx.emits("hasdata", threadId)
+  
+  let e1 = draft?.editedStamp ?? 1
+  let e2 = thread?.editedStamp ?? 1
+
+  // draft 编辑时间比较大的情况
+  if(e1 > e2) {
+    console.log("####### draft 编辑时间比较大的情况 ########")
+    if(draft) initDraftFromDraft(ctx, draft)
+    return
+  }
+
+  // thread 编辑时间比较大的情况
+  console.log("####### thread 编辑时间比较大的情况 ########")
+
+  if(thread) initDraftFromThread(ctx, thread)
+  if(draft) localReq.deleteDraftById(draft._id)
 }
 
 // 尚未发表

@@ -88,6 +88,7 @@ async function toRelease(
   
   // 2. 删除 drafts
   if(state.draftId) {
+    await localReq.clearDraftOnCloud(state.draftId)
     await localReq.deleteDraftById(state.draftId)
   }
 
@@ -277,6 +278,7 @@ async function toUpdate(ctx: CepContext) {
   
   // 3. 删除 drafts
   if(state.draftId) {
+    await localReq.clearDraftOnCloud(state.draftId)
     await localReq.deleteDraftById(state.draftId)
     delete state.draftId
   }
