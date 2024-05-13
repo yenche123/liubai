@@ -28,6 +28,8 @@ const {
   onTapTerms,
   onTapLogout,
   onTapAccounts,
+  version,
+  appName,
 } = useSettingContent()
 
 // 主题字段 i18n 的 key
@@ -270,10 +272,32 @@ const iconColor = "var(--main-normal)"
       </div>
 
     </div>
+
+    <div class="sc-footer">
+      <span>Powered by {{appName}} @ {{ version }}</span>
+    </div>
+
   </div>
 
 </template>
 <style scoped lang="scss">
+
+.liu-mc-box {
+  min-height: calc(100dvh - 60px);
+}
+
+.sc-footer {
+  width: 100%;
+  padding-block-start: 10px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  font-size: var(--mini-font);
+  font-weight: 200;
+  color: var(--main-note);
+  user-select: none;
+}
+
 
 .sc-title {
   font-size: var(--title-font);

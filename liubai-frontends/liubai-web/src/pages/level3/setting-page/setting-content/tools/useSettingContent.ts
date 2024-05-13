@@ -40,6 +40,12 @@ export function useSettingContent() {
     })
   }
 
+  const version = LIU_ENV.version
+  let appName = liuEnv.getEnv().APP_NAME ?? ""
+  if(appName && appName[0]) {
+    appName = appName[0].toUpperCase() + appName.substring(1)
+  }
+
   return {
     myProfile,
     prefix,
@@ -49,6 +55,8 @@ export function useSettingContent() {
     onTapTerms,
     onTapLogout,
     onTapAccounts,
+    version,
+    appName,
   }
 }
 
