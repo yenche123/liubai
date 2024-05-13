@@ -1,5 +1,4 @@
-import { 
-  checkIfUserSubscribed, 
+import {  
   verifyToken,
   getDocAddId,
   checker,
@@ -63,13 +62,12 @@ const db = cloud.database()
 const _ = db.command
 
 export async function main(ctx: FunctionContext) {
-  const body = ctx.request?.body ?? {}
-
   // 1. pre-check
   const res1 = preCheck()
   if(res1) return res1
   
   // 2. verify token
+  const body = ctx.request?.body ?? {}
   const vRes = await verifyToken(ctx, body)
   if(!vRes.pass) return vRes.rqReturn
   const user = vRes.userData
