@@ -222,7 +222,9 @@
     "workspace_3": "當前工作區不存在",
     "hold_on": "請稍後",
     "editing_hd": "是否更新動態？",
-    "editing_bd": "即使取消更新，系統也會為你保存草稿。"
+    "editing_bd": "即使取消更新，系統也會為你保存草稿。",
+    "coming_soon": "即將到來",
+    "stay_tuned": "敬請期待！"
   },
   "card_bubble": {
     "copy": "複製",

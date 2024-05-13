@@ -222,7 +222,9 @@
     "workspace_3": "The current workspace does not exist.",
     "hold_on": "Loading..",
     "editing_hd": "Update the post?",
-    "editing_bd": "The system will also save the draft even if you cancel the update."
+    "editing_bd": "The system will also save the draft even if you cancel the update.",
+    "coming_soon": "Coming Soon",
+    "stay_tuned": "Stay tuned!"
   },
   "card_bubble": {
     "copy": "Copy",

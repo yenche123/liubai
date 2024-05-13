@@ -87,8 +87,8 @@ export function useMoreArea(
 
   const onTapAddSite = (e: MouseEvent) => {
     cui.showModal({
-      title_key: "tip.tip",
-      content: "Coming Soon!",
+      title_key: "tip.coming_soon",
+      content_key: "tip.stay_tuned",
       showCancel: false,
     })
   }
