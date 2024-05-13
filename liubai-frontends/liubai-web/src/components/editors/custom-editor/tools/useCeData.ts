@@ -8,7 +8,7 @@ import type {
 } from "~/types/types-editor";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import type { LiuRemindMe } from "~/types/types-atom";
-import type { CeState, CeProps, CeEmits } from "./types";
+import type { CeData, CeProps, CeEmits } from "./types";
 import ider from "~/utils/basic/ider";
 import type { DraftLocalTable } from "~/types/types-table";
 import localCache from "~/utils/system/local-cache";
@@ -32,38 +32,38 @@ let spaceTypeRef: Ref<SpaceType>
 const SEC_5 = time.SECONED * 5
 
 interface CesCtx {
-  state: CeState
+  ceData: CeData
   emits: CeEmits
 }
 
-export function useCeState(
+export function useCeData(
   props: CeProps,
   emits: CeEmits,
-  state: CeState,
+  ceData: CeData,
   toFinish: CepToPost,
   editor: ShallowRef<TipTapEditor | undefined>,
 ) {
 
-  const ctx: CesCtx = { state, emits }
+  const ctx: CesCtx = { ceData, emits }
   const wStore = useWorkspaceStore()
   const wRefs = storeToRefs(wStore)
   spaceIdRef = wRefs.spaceId
   spaceTypeRef = wRefs.spaceType as Ref<SpaceType>
 
   // 监听用户操作 images 的变化，去存储到 IndexedDB 上
-  watch(() => state.images, (newV) => {
+  watch(() => ceData.images, (newV) => {
     toAutoChange(ctx)
-    checkCanSubmit(state)
+    checkCanSubmit(ceData)
   }, { deep: true })
 
   // 监听用户操作 files 的变化，去存储到 IndexedDB 上
-  watch(() => state.files, (newV) => {
+  watch(() => ceData.files, (newV) => {
     toAutoChange(ctx)
-    checkCanSubmit(state)
+    checkCanSubmit(ceData)
   }, { deep: true })
 
   // 监听 tagIds 的变化
-  watch(() => state.tagIds, (newV) => {
+  watch(() => ceData.tagIds, (newV) => {
     toAutoChange(ctx)
   }, { deep: true })
   
@@ -86,19 +86,19 @@ export function useCeState(
   }
 
   const onEditorFocus = (data: EditorCoreContent) => {
-    state.editorContent = data
+    ceData.editorContent = data
     _setFocus(true)
   }
 
   const onEditorBlur = (data: EditorCoreContent) => {
-    state.editorContent = data
+    ceData.editorContent = data
     _setFocus(false)
   } 
 
   const onEditorUpdate = (data: EditorCoreContent) => {
-    state.editorContent = data
-    checkCanSubmit(state)
-    handleOverflow(state)
+    ceData.editorContent = data
+    checkCanSubmit(ceData)
+    handleOverflow(ceData)
     collectState(ctx)
   }
 
@@ -110,8 +110,8 @@ export function useCeState(
   }
 
   const onEditorFinish = (data: EditorCoreContent) => {
-    state.editorContent = data
-    checkCanSubmit(state)
+    ceData.editorContent = data
+    checkCanSubmit(ceData)
     _prepareFinish(true)
   }
 
@@ -125,7 +125,7 @@ export function useCeState(
 
   const onTitleChange = (val: string) => {
     toTitleChange(val, ctx)
-    checkCanSubmit(state)
+    checkCanSubmit(ceData)
   }
 
   const onSyncCloudChange = (val: boolean) => {
@@ -137,18 +137,18 @@ export function useCeState(
   }
 
   const onTapCloseTitle = () => {
-    state.showTitleBar = false
+    ceData.showTitleBar = false
     toTitleChange("", ctx)
-    checkCanSubmit(state)
+    checkCanSubmit(ceData)
   }
 
   const onTitleBarChange = (e: Event) => {
     //@ts-expect-error
     const val = e.target.value
     if(typeof val !== "string") return
-    state.title = val
+    ceData.title = val
     collectState(ctx)
-    checkCanSubmit(state)
+    checkCanSubmit(ceData)
   }
 
   const onTitleEnterUp = () => {
@@ -169,7 +169,7 @@ export function useCeState(
     else if(metaKey && isMac) res = true
     
     if(res) {
-      checkCanSubmit(state)
+      checkCanSubmit(ceData)
       _prepareFinish(true)
     }
   }
@@ -179,7 +179,7 @@ export function useCeState(
   watch(forceUpdateNum, (newV, oldV) => {
     if(!newV) return
     if(newV > oldV) {
-      checkCanSubmit(state)
+      checkCanSubmit(ceData)
       _prepareFinish(false)
     }
   })
@@ -203,9 +203,9 @@ export function useCeState(
   }
 }
 
-function _isRequiredChange(state: CeState) {
+function _isRequiredChange(ceData: CeData) {
   // 刚刚才 setup，拒绝缓存图片、文件、tagIds
-  if(time.isWithinMillis(state.lastInitStamp ?? 1, 900)) {
+  if(time.isWithinMillis(ceData.lastInitStamp ?? 1, 900)) {
     return false
   }
 
@@ -214,22 +214,22 @@ function _isRequiredChange(state: CeState) {
 
 // 图片、文件、tagIds 发生变化时，去保存
 function toAutoChange(ctx: CesCtx) {
-  if(_isRequiredChange(ctx.state)) {
+  if(_isRequiredChange(ctx.ceData)) {
     collectState(ctx)
   }
 }
 
 
 function checkCanSubmit(
-  state: CeState,
+  ceData: CeData,
 ) {
-  const title = state.title?.trim()
-  const imgLength = state.images?.length
-  const fileLength = state.files?.length
-  const text = state.editorContent?.text.trim()
+  const title = ceData.title?.trim()
+  const imgLength = ceData.images?.length
+  const fileLength = ceData.files?.length
+  const text = ceData.editorContent?.text.trim()
   let newCanSubmit = Boolean(imgLength) || Boolean(text) || Boolean(fileLength)
   newCanSubmit = newCanSubmit || Boolean(title)
-  state.canSubmit = newCanSubmit
+  ceData.canSubmit = newCanSubmit
 }
 
 
@@ -238,11 +238,11 @@ function toWhenChange(
   ctx: CesCtx,
 ) {
   const newWhenStamp = date ? date.getTime() : undefined
-  if(newWhenStamp === ctx.state.whenStamp) {
+  if(newWhenStamp === ctx.ceData.whenStamp) {
     return
   }
 
-  ctx.state.whenStamp = newWhenStamp
+  ctx.ceData.whenStamp = newWhenStamp
   collectState(ctx)
 }
 
@@ -250,7 +250,7 @@ function toRemindMeChange(
   val: LiuRemindMe | null,
   ctx: CesCtx,
 ) {
-  ctx.state.remindMe = val ? val : undefined
+  ctx.ceData.remindMe = val ? val : undefined
   collectState(ctx)
 }
 
@@ -258,11 +258,11 @@ function toTitleChange(
   val: string,
   ctx: CesCtx,
 ) {
-  const oldVal = ctx.state.title
+  const oldVal = ctx.ceData.title
   if(val === oldVal) return
-  ctx.state.title = val
-  if(val && !ctx.state.showTitleBar) {
-    ctx.state.showTitleBar = true
+  ctx.ceData.title = val
+  if(val && !ctx.ceData.showTitleBar) {
+    ctx.ceData.showTitleBar = true
   }
   collectState(ctx, true)
 }
@@ -271,7 +271,7 @@ function toSyncCloudChange(
   val: boolean,
   ctx: CesCtx,
 ) {
-  ctx.state.storageState = val ? "CLOUD" : "LOCAL"
+  ctx.ceData.storageState = val ? "CLOUD" : "LOCAL"
   collectState(ctx, true)
 }
 
@@ -296,7 +296,7 @@ function collectState(ctx: CesCtx, instant: boolean = false) {
 }
 
 async function toSave(ctx: CesCtx) {
-  const { state } = ctx
+  const { ceData } = ctx
   const now = time.getTime()
   lastSaveStamp = now
 
@@ -305,8 +305,8 @@ async function toSave(ctx: CesCtx) {
   let first_id = _id
   let oState: OState_Draft = "OK"
   let oldOState: OState_Draft | undefined
-  if(state.draftId) {
-    const tmp = await localReq.getDraftById(state.draftId)
+  if(ceData.draftId) {
+    const tmp = await localReq.getDraftById(ceData.draftId)
     if(tmp) {
       insertedStamp = tmp.insertedStamp
       _id = tmp._id
@@ -318,20 +318,20 @@ async function toSave(ctx: CesCtx) {
 
   const { local_id: userId } = localCache.getPreference()
   let liuDesc: TipTapJSONContent[] | undefined = undefined
-  if(state.editorContent?.json) {
-    const { type, content } = state.editorContent.json
+  if(ceData.editorContent?.json) {
+    const { type, content } = ceData.editorContent.json
     if(type === "doc" && content) liuDesc = content
   }
 
   // 响应式对象 转为普通对象
   if(isProxy(liuDesc)) liuDesc = toRaw(liuDesc)
-  let images = _getStoragedFiles(state)
-  let files = _getStoragedFiles<LiuFileStore>(state, "files")
-  let remindMe = isProxy(state.remindMe) ? toRaw(state.remindMe) : state.remindMe
-  let tagIds = isProxy(state.tagIds) ? toRaw(state.tagIds) : state.tagIds
+  let images = _getStoragedFiles(ceData)
+  let files = _getStoragedFiles<LiuFileStore>(ceData, "files")
+  let remindMe = isProxy(ceData.remindMe) ? toRaw(ceData.remindMe) : ceData.remindMe
+  let tagIds = isProxy(ceData.tagIds) ? toRaw(ceData.tagIds) : ceData.tagIds
 
   // checking out oState for local situation
-  const ss = state.storageState
+  const ss = ceData.storageState
   const needLocal = liuUtil.check.isLocalContent(ss)
   if(oState === "OK" && needLocal) {
     oState = "LOCAL"  
@@ -348,14 +348,14 @@ async function toSave(ctx: CesCtx) {
     user: userId as string,
     spaceId: spaceIdRef.value,
     spaceType: spaceTypeRef.value,
-    threadEdited: state.threadEdited,
-    visScope: state.visScope,
+    threadEdited: ceData.threadEdited,
+    visScope: ceData.visScope,
     storageState: ss,
-    title: state.title,
+    title: ceData.title,
     liuDesc,
     images,
     files,
-    whenStamp: state.whenStamp,
+    whenStamp: ceData.whenStamp,
     remindMe,
     insertedStamp: insertedStamp,
     updatedStamp: now,
@@ -368,7 +368,7 @@ async function toSave(ctx: CesCtx) {
   console.log(" ")
 
   const res = await localReq.setDraft(draft)
-  if(!state.draftId && res) state.draftId = res as string
+  if(!ceData.draftId && res) ceData.draftId = res as string
   saveDraftToCloud(oldOState, draft)
 
   // make parent component aware that user has been editing the editor
@@ -410,10 +410,10 @@ function saveDraftToCloud(
 
 
 function _getStoragedFiles<T = LiuImageStore>(
-  state: CeState, 
-  key: keyof CeState = "images"
+  ceData: CeData, 
+  key: keyof CeData = "images"
 ): T[] | undefined {
-  const files = state[key] as (T[] | undefined)
+  const files = ceData[key] as (T[] | undefined)
   if(!files) return
   const newList = liuUtil.getRawList(files)
   return newList

@@ -3,7 +3,7 @@ import type { StorageState, VisScope } from "~/types/types-basic";
 import type { LiuFileStore, LiuImageStore } from "~/types"
 import type { EditorCoreContent } from "~/types/types-editor";
 
-export interface CeState {
+export interface CeData {
   draftId?: string
   infoType: ContentInfoType
   threadEdited?: string     // 已发表的动态的 id，表示是编辑该动态
@@ -23,7 +23,7 @@ export interface CeState {
   canSubmit: boolean
 }
 
-export const defaultState: CeState = {
+export const defaultData: CeData = {
   infoType: "THREAD",
   visScope: "DEFAULT",
   storageState: "CLOUD",

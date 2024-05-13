@@ -3,7 +3,7 @@ import type { ImageShow, LiuFileStore, LiuImageStore } from "~/types"
 import imgHelper from "~/utils/files/img-helper"
 import liuUtil from "~/utils/liu-util"
 import { mvFileKey } from "~/utils/provide-keys"
-import type { CeState } from "./types"
+import type { CeData } from "./types"
 import cui from "~/components/custom-ui"
 import valTool from "~/utils/basic/val-tool"
 import ider from "~/utils/basic/ider"
@@ -11,34 +11,34 @@ import limit from "~/utils/limit"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 
 export function useCeFile(
-  state: CeState,
+  ceData: CeData,
   moreRef: Ref<boolean>
 ) {
   const covers = ref<ImageShow[]>([])
 
   // 监听文件拖动掉落
-  listenFilesDrop(state, moreRef)
+  listenFilesDrop(ceData, moreRef)
 
   // 监听文件黏贴上来
-  listenDocumentPaste(state, moreRef)
+  listenDocumentPaste(ceData, moreRef)
 
   // 监听逻辑数据改变，去响应视图
-  watch(() => state.images, (newImages) => {
+  watch(() => ceData.images, (newImages) => {
     imgHelper.whenImagesChanged(covers, newImages)
   }, { deep: true })
 
   // editing-covers 传来用户拖动图片，调整了顺序
   // 开始对 "逻辑数据" 排序，这样视图数据 covers 就会在上方的 watch 响应
   const onCoversSorted = (newCovers: ImageShow[]) => {
-    whenCoversSorted(newCovers, state)
+    whenCoversSorted(newCovers, ceData)
   }
 
   const onImageChange = (files: File[]) => {
-    handleFiles(state, files)
+    handleFiles(ceData, files)
   }
 
   const onClearCover = (index: number) => {
-    const list = state.images
+    const list = ceData.images
     if(!list) return
     const item = list[index]
 
@@ -48,7 +48,7 @@ export function useCeFile(
 
   // 接收 来自 more-area 用户选择/移除 文件的响应
   const onFileChange = (files: File[] | null) => {
-    whenFileChange(state, files)
+    whenFileChange(ceData, files)
   }
 
   return { 
@@ -61,34 +61,34 @@ export function useCeFile(
 }
 
 function whenFileChange(
-  state: CeState,
+  ceData: CeData,
   files: File[] | null
 ) {
   if(!files || files.length < 1) {
-    if(state.files) delete state.files
+    if(ceData.files) delete ceData.files
     return
   }
 
-  handleOtherFiles(state, files)
+  handleOtherFiles(ceData, files)
 }
 
 function whenCoversSorted(
   newCovers: ImageShow[],
-  state: CeState,
+  ceData: CeData,
 ) {
-  const oldImages = state.images ?? []
+  const oldImages = ceData.images ?? []
   const newImages: LiuImageStore[] = []
   for(let i=0; i<newCovers.length; i++) {
     const id = newCovers[i].id
     const data = oldImages.find(v => v.id === id)
     if(data) newImages.push(data)
   }
-  state.images = newImages
+  ceData.images = newImages
 }
 
 // 处理文件掉落
 function listenFilesDrop(
-  state: CeState,
+  ceData: CeData,
   moreRef: Ref<boolean>,
 ) {
   const dropFiles = inject(mvFileKey)
@@ -96,7 +96,7 @@ function listenFilesDrop(
     if(!files?.length) return
     console.log("listenFilesDrop 接收到掉落的文件............")
     console.log(files)
-    await handleFiles(state, files, moreRef)
+    await handleFiles(ceData, files, moreRef)
     if(!dropFiles?.value) return
     dropFiles.value = []
   })
@@ -104,7 +104,7 @@ function listenFilesDrop(
 
 // 全局监听 "黏贴事件"
 function listenDocumentPaste(
-  state: CeState,
+  ceData: CeData,
   moreRef: Ref<boolean>,
 ) {
   const gs = useGlobalStateStore()
@@ -115,7 +115,7 @@ function listenDocumentPaste(
     const fileList = e.clipboardData?.files
     if(!fileList || fileList.length < 1) return
     const files = liuUtil.getArrayFromFileList(fileList)
-    handleFiles(state, files, moreRef)
+    handleFiles(ceData, files, moreRef)
   }
   
   onActivated(() => {
@@ -129,23 +129,23 @@ function listenDocumentPaste(
 
 
 async function handleFiles(
-  state: CeState,
+  ceData: CeData,
   files: File[],
   moreRef?: Ref<boolean>,
 ) {
   const imgFiles = liuUtil.getOnlyImageFiles(files)
   if(imgFiles.length > 0) {
-    handleImages(state, imgFiles)
+    handleImages(ceData, imgFiles)
   }
 
   const otherFiles = liuUtil.getNotImageFiles(files)
   if(otherFiles.length > 0) {
-    handleOtherFiles(state, files, moreRef)
+    handleOtherFiles(ceData, files, moreRef)
   }
 }
 
 async function handleOtherFiles(
-  state: CeState,
+  ceData: CeData,
   files: File[],
   moreRef?: Ref<boolean>,
 ) {
@@ -179,17 +179,17 @@ async function handleOtherFiles(
     return
   }
 
-  state.files = fileList
+  ceData.files = fileList
   if(moreRef) moreRef.value = true
 }
 
 async function handleImages(
-  state: CeState,
+  ceData: CeData,
   imgFiles: File[],
 ) {
 
-  state.images = state.images ?? []
-  const hasLength = state.images.length
+  ceData.images = ceData.images ?? []
+  const hasLength = ceData.images.length
   let max_pic_num = limit.getLimit("thread_img")
   if(max_pic_num <= 0) max_pic_num = 9
   const canPushNum = max_pic_num - hasLength
@@ -208,7 +208,7 @@ async function handleImages(
   const res2 = await imgHelper.getMetaDataFromFiles(res, res0)
 
   res2.forEach((v, i) => {
-    if(i < canPushNum) state.images?.push(v)
+    if(i < canPushNum) ceData.images?.push(v)
   })
 
 }

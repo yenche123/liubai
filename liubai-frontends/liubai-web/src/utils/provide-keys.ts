@@ -27,7 +27,7 @@ export const vcFileKey = Symbol() as InjectionKey<Ref<File[]>>
 // 用于 popup 拖动掉落文件
 export const popupFileKey = Symbol() as InjectionKey<Ref<File[]>>
 
-// 用于 initCeState 告知富文本编辑器 editor-core 有置入文本信息
+// 用于 initCeData 告知富文本编辑器 editor-core 有置入文本信息
 // 每次触发置入时，对应的 number += 1
 export const editorSetKey = Symbol() as InjectionKey<Ref<number>>
 

@@ -4,7 +4,7 @@ import type { TipTapEditor } from "~/types/types-editor"
 import type { ContentLocalTable } from "~/types/types-table";
 import ider from "~/utils/basic/ider";
 import localCache from "~/utils/system/local-cache";
-import type { CeState, CeEmits } from "./types"
+import type { CeData, CeEmits } from "./types"
 import time from "~/utils/basic/time";
 import transferUtil from "~/utils/transfer-util";
 import liuUtil from "~/utils/liu-util";
@@ -22,7 +22,7 @@ import liuConsole from "~/utils/debug/liu-console";
 
 export interface CepContext {
   editor: ShallowRef<TipTapEditor | undefined>
-  state: CeState
+  ceData: CeData
   threadShowStore: ThreadShowStore
   emits: CeEmits
 }
@@ -43,8 +43,8 @@ export function useCeFinish(ctx: CepContext) {
 
   const toFinish: CepToPost = (focusRequired: boolean) => {
     if(!member.value) return
-    if(!ctx.state.canSubmit) return
-    const { threadEdited } = ctx.state
+    if(!ctx.ceData.canSubmit) return
+    const { threadEdited } = ctx.ceData
     if(threadEdited) toUpdate(ctx)
     else toRelease(ctx, focusRequired)
   }
@@ -61,8 +61,8 @@ async function toRelease(
   const { local_id: user } = localCache.getPreference()
   if(!user) return
 
-  const state = ctx.state
-  const preThread = _getThreadData(state)
+  const { ceData } = ctx
+  const preThread = _getThreadData(ceData)
   if(!preThread) return
 
   const now = time.getTime()
@@ -87,12 +87,12 @@ async function toRelease(
   const res1 = await localReq.addContent(newThread)
   
   // 2. 删除 drafts
-  if(state.draftId) {
-    await localReq.clearDraftOnCloud(state.draftId)
-    await localReq.deleteDraftById(state.draftId)
+  if(ceData.draftId) {
+    await localReq.clearDraftOnCloud(ceData.draftId)
+    await localReq.deleteDraftById(ceData.draftId)
   }
 
-  // 3. 重置编辑器的 state
+  // 3. 重置编辑器的 ceData
   _resetState(ctx)
  
   // 4. 重置 editor
@@ -128,47 +128,47 @@ async function toRelease(
 function _resetState(
   ctx: CepContext
 ) {
-  const state = ctx.state
+  const { ceData } = ctx
 
-  delete state.draftId
-  delete state.threadEdited
-  state.overflowType = "visible"
-  state.visScope = "DEFAULT"
-  state.tagIds = []
-  delete state.title
-  delete state.whenStamp
-  delete state.remindMe
-  delete state.images
-  delete state.files
-  delete state.editorContent
+  delete ceData.draftId
+  delete ceData.threadEdited
+  ceData.overflowType = "visible"
+  ceData.visScope = "DEFAULT"
+  ceData.tagIds = []
+  delete ceData.title
+  delete ceData.whenStamp
+  delete ceData.remindMe
+  delete ceData.images
+  delete ceData.files
+  delete ceData.editorContent
 
-  state.canSubmit = false
+  ceData.canSubmit = false
 }
 
 
 // _id / createdStamp / insertedStamp / user / member / commentNum / emojiData
-// 没有被添加进 state
+// 没有被添加进 ceData
 function _getThreadData(
-  state: CeState,
+  ceData: CeData,
 ) {
   const now = time.getTime()
-  const { editorContent } = state
+  const { editorContent } = ceData
   const contentJSON = editorContent?.json
   const list = contentJSON?.type === "doc" && contentJSON.content ? contentJSON.content : []
   const liuList = list.length > 0 ? transferUtil.tiptapToLiu(list) : undefined
   const liuDesc = liuUtil.getRawList(liuList)
 
-  const storageState = state.storageState
-  const images = liuUtil.getRawList(state.images)
-  const files = liuUtil.getRawList(state.files)
-  const remindMe = liuUtil.toRawData(state.remindMe)
-  const calendarStamp = _getCalendarStamp(state.whenStamp, remindMe)
-  const whenStamp = state.whenStamp ? liuUtil.formatStamp(state.whenStamp) : undefined
+  const { storageState } = ceData
+  const images = liuUtil.getRawList(ceData.images)
+  const files = liuUtil.getRawList(ceData.files)
+  const remindMe = liuUtil.toRawData(ceData.remindMe)
+  const calendarStamp = _getCalendarStamp(ceData.whenStamp, remindMe)
+  const whenStamp = ceData.whenStamp ? liuUtil.formatStamp(ceData.whenStamp) : undefined
   const remindStamp = _getRemindStamp(remindMe, whenStamp)
-  const tagIds = liuUtil.getRawList(state.tagIds)
+  const tagIds = liuUtil.getRawList(ceData.tagIds)
   const tagSearched = getTagIdsParents(tagIds)
 
-  const search_title = (state.title ?? "").toLowerCase()
+  const search_title = (ceData.title ?? "").toLowerCase()
   const search_other = transferUtil.packSearchOther(liuDesc, files)
 
   // console.log("看一下 search_title: ", search_title)
@@ -177,9 +177,9 @@ function _getThreadData(
   const aThread: Partial<ContentLocalTable> = {
     infoType: "THREAD",
     oState: "OK",
-    visScope: state.visScope,
+    visScope: ceData.visScope,
     storageState,
-    title: state.title,
+    title: ceData.title,
     liuDesc,
     images,
     files,
@@ -196,7 +196,7 @@ function _getThreadData(
   }
 
   // 没有 threadEdited 代表当前是发表模式，必须设置 workspace
-  if(!state.threadEdited) {
+  if(!ceData.threadEdited) {
     aThread.spaceId = spaceIdRef.value
     aThread.spaceType = spaceTypeRef.value
 
@@ -244,15 +244,15 @@ function _getRemindStamp(
 
 // 去更新
 async function toUpdate(ctx: CepContext) {
-  const state = ctx.state
-  const preThread = _getThreadData(state)
+  const { ceData } = ctx
+  const preThread = _getThreadData(ceData)
   if(!preThread) return
 
   console.log("看一下 preThread.........")
   console.log(preThread)
   console.log(" ")
 
-  const threadId = state.threadEdited as string
+  const threadId = ceData.threadEdited as string
 
   // 0. get old content
   const oldContent = await localReq.getContentById(threadId)
@@ -277,10 +277,10 @@ async function toUpdate(ctx: CepContext) {
   await localReq.updateContent(threadId, preThread)
   
   // 3. 删除 drafts
-  if(state.draftId) {
-    await localReq.clearDraftOnCloud(state.draftId)
-    await localReq.deleteDraftById(state.draftId)
-    delete state.draftId
+  if(ceData.draftId) {
+    await localReq.clearDraftOnCloud(ceData.draftId)
+    await localReq.deleteDraftById(ceData.draftId)
+    delete ceData.draftId
   }
 
   // 4. 查找该 thread，然后通知全局

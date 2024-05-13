@@ -1,30 +1,30 @@
 
 import valTool from "~/utils/basic/val-tool"
-import type { CeState } from "./types"
+import type { CeData } from "./types"
 import { getRowNum } from "~/utils/transfer-util/text"
 
 export function handleOverflow(
-  state: CeState,
+  ceData: CeData,
 ) {
-  const ec = state?.editorContent
+  const ec = ceData?.editorContent
   const text = ec?.text
   const json = ec?.json
   if(!text || !json) {
-    state.overflowType = "auto"
+    ceData.overflowType = "auto"
     return
   }
 
   const textList = text.split("\n")
   const len1 = textList.length
   if(len1 > 10) {
-    state.overflowType = "auto"
+    ceData.overflowType = "auto"
     return
   }
 
   const list = json.content ?? []
   const num = getRowNum(list)
   if(num > 3) {
-    state.overflowType = "auto"
+    ceData.overflowType = "auto"
     return
   }
 
@@ -33,9 +33,9 @@ export function handleOverflow(
   // console.log(" ")
 
   if(charNum > 300) {
-    state.overflowType = "auto"
+    ceData.overflowType = "auto"
     return
   }
 
-  state.overflowType = "visible"
+  ceData.overflowType = "visible"
 }

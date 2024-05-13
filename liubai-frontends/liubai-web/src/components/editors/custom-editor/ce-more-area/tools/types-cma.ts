@@ -1,6 +1,6 @@
 import type { FileShow } from "~/types"
 import type { LiuRemindMe } from "~/types/types-atom"
-import type { CeState } from "../../tools/types"
+import type { CeData } from "../../tools/types"
 import type { PropType } from "vue"
 import type { TipTapEditor } from "~/types/types-editor"
 
@@ -38,7 +38,7 @@ export interface MaContext {
 export interface CmaProps {
   editor?: TipTapEditor
   show: boolean
-  state?: CeState
+  ceData?: CeData
 }
 
 export const cmaProps = {
@@ -47,7 +47,7 @@ export const cmaProps = {
     type: Boolean,
     default: false,
   },
-  state: Object as PropType<CeState>,
+  ceData: Object as PropType<CeData>,
 }
 
 export const cmaEmits = {

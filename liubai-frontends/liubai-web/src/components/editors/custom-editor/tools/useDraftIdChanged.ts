@@ -1,11 +1,11 @@
 import { useSyncStore, type SyncStoreItem } from "~/hooks/stores/useSyncStore";
-import type { CeState } from "./types"
+import type { CeData } from "./types"
 import { storeToRefs } from "pinia";
 import { watch } from "vue";
 import liuEnv from "~/utils/liu-env";
 
 export function useDraftIdChanged(
-  state: CeState,
+  ceData: CeData,
 ) {
   const backend = liuEnv.hasBackend()
   if(!backend) return
@@ -14,22 +14,22 @@ export function useDraftIdChanged(
   const { drafts } = storeToRefs(syncStore)
   watch(drafts, (newV) => {
     if(newV.length < 1) return
-    handleIdsChanged(state, newV)
+    handleIdsChanged(ceData, newV)
   })
 }
 
 
 function handleIdsChanged(
-  state: CeState,
+  ceData: CeData,
   items: SyncStoreItem[],
 ) {
-  const { draftId } = state
+  const { draftId } = ceData
   if(!draftId) return
 
   for(let i1=0; i1<items.length; i1++) {
     const v1 = items[i1]
     if(v1.first_id === draftId) {
-      state.draftId = v1.new_id
+      ceData.draftId = v1.new_id
     }
   }
 }

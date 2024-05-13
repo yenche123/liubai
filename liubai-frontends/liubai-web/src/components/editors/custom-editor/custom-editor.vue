@@ -9,14 +9,14 @@
 import EditorCore from "../editor-core/editor-core.vue"
 import { useCustomEditor } from "./tools/useCustomEditor";
 import { useMoreItems } from "./tools/useMoreItems";
-import { useCeState } from "./tools/useCeState";
+import { useCeData } from "./tools/useCeData";
 import CeFinishArea from "./ce-finish-area/ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 import { useCeFile } from "./tools/useCeFile";
 import EditingCovers from "../shared/editing-covers/editing-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
 import CeTags from "./ce-tags/ce-tags.vue";
-import { initCeState } from "./tools/initCeState";
+import { initCeData } from "./tools/initCeData";
 import { useCeFinish } from "./tools/useCeFinish";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { useCeTag } from "./tools/useCeTag";
@@ -38,7 +38,7 @@ const {
   onEditorScrolling,
   showMask,
 } = useCustomEditor()
-const { state } = initCeState(props, emits, editor)
+const { ceData } = initCeData(props, emits, editor)
 
 const {
   moreRef,
@@ -52,19 +52,19 @@ const {
   onClearCover,
   onCoversSorted,
   onFileChange,
-} = useCeFile(state, moreRef)
+} = useCeFile(ceData, moreRef)
 const {
   tagShows,
   onTapClearTag,
   onAddHashTag,
   onNewHashTags,
-} = useCeTag(state)
+} = useCeTag(ceData)
 
 
 const threadShowStore = useThreadShowStore()
 const ctx = {
   editor,
-  state,
+  ceData,
   threadShowStore,
   emits,
 }
@@ -86,9 +86,9 @@ const {
   onTitleBarChange,
   onTitleEnterUp,
   onTitleEnterDown,
-} = useCeState(props, emits, state, toFinish, editor)
+} = useCeData(props, emits, ceData, toFinish, editor)
 
-useDraftIdChanged(state)
+useDraftIdChanged(ceData)
 
 </script>
 <template>
@@ -98,9 +98,9 @@ useDraftIdChanged(state)
   @click.stop="() => {}"
 >
 
-  <div v-if="state.showTitleBar" class="ce-title-bar">
+  <div v-if="ceData.showTitleBar" class="ce-title-bar">
     <input 
-      class="ce-title-input" :value="state.title"
+      class="ce-title-input" :value="ceData.title"
       :placeholder="t('editor.add_title2')"
       @focus="() => titleFocused = true"
       @blur="() => titleFocused = false"
@@ -170,7 +170,7 @@ useDraftIdChanged(state)
   <ce-more-area 
     :editor="editor"
     :show="moreRef"
-    :state="state"
+    :ce-data="ceData"
     @whenchange="onWhenChange"
     @remindmechange="onRemindMeChange"
     @titlechange="onTitleChange"
@@ -183,7 +183,7 @@ useDraftIdChanged(state)
 
   <!-- 右小角: 提示字 + 按钮 -->
   <ce-finish-area 
-    :can-submit="state.canSubmit"
+    :can-submit="ceData.canSubmit"
     :in-code-block="editor?.isActive('codeBlock') ?? false"
     :focused="anyFocused"
     @confirm="onTapFinish"
@@ -261,7 +261,7 @@ useDraftIdChanged(state)
   width: 100%;
   max-height: v-bind("maxEditorHeight + 'px'");
   position: relative;
-  overflow-y: v-bind("state.overflowType");
+  overflow-y: v-bind("ceData.overflowType");
   transition: .3s;
 }
 

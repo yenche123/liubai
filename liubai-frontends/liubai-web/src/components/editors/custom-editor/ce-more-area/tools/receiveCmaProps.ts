@@ -1,6 +1,6 @@
 import { toRef, watchEffect } from "vue";
 import type { CmaProps, MaData } from "./types-cma";
-import type { CeState } from "../../tools/types";
+import type { CeData } from "../../tools/types";
 import liuUtil from "~/utils/liu-util";
 import { useI18n } from "vue-i18n"
 import type { ComposerTranslation } from "vue-i18n"
@@ -9,29 +9,29 @@ import liuEnv from "~/utils/liu-env";
 
 export function receiveCmaProps(props: CmaProps, data: MaData) {
   const { t, locale } = useI18n()
-  const stateRef = toRef(props, "state")
+  const stateRef = toRef(props, "ceData")
 
   // 在外部 的一个同步周期内连续的使用 
-  //   state.x1 = "xxxxx"
-  //   state.x2 = "yyyyy"
-  // 比如: useCeState.ts 文件里，toWhenChange 和 toRemindMeChange 同时被触发了
-  // 同时更改了 state.whenStamp 和 state.remindMe
+  //   ceData.x1 = "xxxxx"
+  //   ceData.x2 = "yyyyy"
+  // 比如: useCeData.ts 文件里，toWhenChange 和 toRemindMeChange 同时被触发了
+  // 同时更改了 ceData.whenStamp 和 ceData.remindMe
   // 这里的 watchEffect 只会被触发一次
   watchEffect(() => {
-    const state = stateRef.value
+    const ceData = stateRef.value
     const lang = locale.value
-    if(state && lang) stateChanged(data, state, t)
+    if(ceData && lang) stateChanged(data, ceData, t)
   })
 }
 
 function stateChanged(
   data: MaData, 
-  state: CeState,
+  ceData: CeData,
   t: ComposerTranslation,
 ) {
   
   // console.log("stateChanged，看此值有没有疯狂触发........")
-  // console.log(JSON.stringify(toRaw(state)))
+  // console.log(JSON.stringify(toRaw(ceData)))
   // console.log(" ")
 
   const { 
@@ -40,7 +40,7 @@ function stateChanged(
     title: newTitle = "",
     remindMe,
     files: newFiles,
-  } = state
+  } = ceData
 
   // 开始一个个字段判断
 

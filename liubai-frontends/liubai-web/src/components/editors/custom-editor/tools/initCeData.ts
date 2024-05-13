@@ -5,8 +5,8 @@
 import type { TipTapEditor } from "~/types/types-editor"
 import { reactive, watchEffect, ref, provide, watch, toRef } from "vue"
 import type { ShallowRef, Ref } from "vue"
-import type { CeState, CeEmits, CeProps } from "./types"
-import { defaultState } from "./types"
+import type { CeData, CeEmits, CeProps } from "./types"
+import { defaultData } from "./types"
 import type { ContentLocalTable, DraftLocalTable } from "~/types/types-table"
 import { LiuRemindMe } from "~/types/types-atom"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
@@ -22,13 +22,13 @@ import liuEnv from "~/utils/liu-env"
 let spaceIdRef: Ref<string>
 
 interface IcsContext {
-  state: CeState
+  ceData: CeData
   editor: TipTapEditor
   numWhenSet: Ref<number>
   emits: CeEmits
 }
 
-export function initCeState(
+export function initCeData(
   props: CeProps,
   emits: CeEmits,
   editor: ShallowRef<TipTapEditor | undefined>,
@@ -42,8 +42,8 @@ export function initCeState(
   
   // 不能用 shallowReactive 
   // 因为 images 属性必须监听内部数据的变化
-  let state = reactive<CeState>({
-    ...defaultState,
+  let ceData = reactive<CeData>({
+    ...defaultData,
     threadEdited: tVal.value,
     lastInitStamp: time.getTime(),
   })
@@ -56,7 +56,7 @@ export function initCeState(
     const spaceId = spaceIdRef.value
     if(!editorVal || !spaceId) return
     const ctx: IcsContext = {
-      state,
+      ceData,
       editor: editorVal,
       numWhenSet,
       emits,
@@ -68,7 +68,7 @@ export function initCeState(
     const ctx = getCtx()
     if(!ctx) return
     // console.log("去 initDraft.........")
-    state.threadEdited = tVal.value
+    ceData.threadEdited = tVal.value
     initDraft(ctx, tVal.value)
   })
 
@@ -76,14 +76,14 @@ export function initCeState(
   const gStore = useGlobalStateStore()
   const { tagChangedNum } = storeToRefs(gStore)
   watch(tagChangedNum, (newV) => {
-    if(time.isWithinMillis(state.lastTagChangeStamp ?? 1, 500)) return
+    if(time.isWithinMillis(ceData.lastTagChangeStamp ?? 1, 500)) return
     const ctx = getCtx()
     if(!ctx) return
     console.log("再次 initDraft.........")
     initDraft(ctx, tVal.value)
   })
 
-  return { state }
+  return { ceData }
 }
 
 // spaceId 有值的周期内，本地的 user_id 肯定存在了
@@ -109,7 +109,7 @@ async function initDraft(
   }
   
   if(draft) initDraftFromDraft(ctx, draft)
-  else ctx.state.draftId = ""
+  else ctx.ceData.draftId = ""
 }
 
 
@@ -148,39 +148,39 @@ async function initDraftFromDraft(
   ctx: IcsContext,
   draft: DraftLocalTable,
 ) {
-  let { state, editor, numWhenSet } = ctx
+  let { ceData, editor, numWhenSet } = ctx
 
   // 开始处理 draft 有值的情况
-  state.lastInitStamp = time.getTime()
-  state.draftId = draft._id
+  ceData.lastInitStamp = time.getTime()
+  ceData.draftId = draft._id
 
   if(draft.visScope) {
-    state.visScope = draft.visScope
+    ceData.visScope = draft.visScope
   }
   
   const be = liuEnv.hasBackend()
   if(!be) {
-    state.storageState = "LOCAL"
+    ceData.storageState = "LOCAL"
   }
   else if(draft.storageState) {
-    state.storageState = draft.storageState
+    ceData.storageState = draft.storageState
   }
 
-  state.title = draft.title
-  state.showTitleBar = Boolean(draft.title)
-  state.whenStamp = draft.whenStamp
-  state.remindMe = draft.remindMe
-  state.images = draft.images
-  state.files = draft.files
-  state.tagIds = draft.tagIds ?? []
+  ceData.title = draft.title
+  ceData.showTitleBar = Boolean(draft.title)
+  ceData.whenStamp = draft.whenStamp
+  ceData.remindMe = draft.remindMe
+  ceData.images = draft.images
+  ceData.files = draft.files
+  ceData.tagIds = draft.tagIds ?? []
   
   if(draft.liuDesc) {
     let text = transferUtil.tiptapToText(draft.liuDesc)
     let json = { type: "doc", content: draft.liuDesc }
 
     editor.commands.setContent(json)
-    state.editorContent = { text, json }
-    handleOverflow(state)
+    ceData.editorContent = { text, json }
+    handleOverflow(ceData)
     numWhenSet.value++
   }
 }
@@ -189,20 +189,20 @@ async function initDraftFromThread(
   ctx: IcsContext,
   thread: ContentLocalTable,
 ) {
-  let { state, editor, numWhenSet } = ctx
+  let { ceData, editor, numWhenSet } = ctx
   const be = liuEnv.hasBackend()
 
-  state.lastInitStamp = time.getTime()
-  state.draftId = ""
-  state.visScope = thread.visScope
-  state.storageState = be ? thread.storageState : "LOCAL"
-  state.title = thread.title
-  state.showTitleBar = Boolean(thread.title)
-  state.whenStamp = thread.whenStamp
-  state.remindMe = _getRemindMeFromThread(thread)
-  state.images = thread.images
-  state.files = thread.files
-  state.tagIds = thread.tagIds ?? []
+  ceData.lastInitStamp = time.getTime()
+  ceData.draftId = ""
+  ceData.visScope = thread.visScope
+  ceData.storageState = be ? thread.storageState : "LOCAL"
+  ceData.title = thread.title
+  ceData.showTitleBar = Boolean(thread.title)
+  ceData.whenStamp = thread.whenStamp
+  ceData.remindMe = _getRemindMeFromThread(thread)
+  ceData.images = thread.images
+  ceData.files = thread.files
+  ceData.tagIds = thread.tagIds ?? []
 
   if(thread.liuDesc) {
     let draftDescJSON = transferUtil.liuToTiptap(thread.liuDesc)
@@ -210,8 +210,8 @@ async function initDraftFromThread(
     let json = { type: "doc", content: draftDescJSON }
 
     editor.commands.setContent(json)
-    state.editorContent = { text, json }
-    handleOverflow(state)
+    ceData.editorContent = { text, json }
+    handleOverflow(ceData)
     numWhenSet.value++
   }
 }
