@@ -8,6 +8,7 @@ import type {
   UserLocalTable, 
   WorkspaceLocalTable,
   ContentLocalTable,
+  DraftLocalTable,
 } from "~/types/types-table"
 import { initWorker } from "./tools/worker-funcs"
 
@@ -266,6 +267,32 @@ const handle_content = async (task: DownloadTaskLocalTable) => {
   return res0
 }
 
+const handle_draft = async (task: DownloadTaskLocalTable) => {
+  const id = task.target_id
+  const res = await db.drafts.get(id)
+  if(!res) return {}
+  const { images = [] } = res
+
+  let u: Partial<DraftLocalTable> = {}
+  let targetUpdated = false
+  const res0: HanTaskRes = {}
+
+  if(images.length > 0) {
+    const res2 = await handle_images(images)
+    if(res2.hasEverSuccess) {
+      targetUpdated = true
+      u.images = res2.imgs
+    }
+    judgeHanTaskRes(res0, res2)
+  }
+
+  if(targetUpdated) {
+    u.updatedStamp = time.getTime()
+    await db.drafts.update(id, u)
+  }
+  return res0
+}
+
 const handle_user = async (task: DownloadTaskLocalTable): Promise<HanTaskRes> => {
   const id = task.target_id
   const res = await db.users.get(id)
@@ -313,6 +340,9 @@ const handle_task = async (task: DownloadTaskLocalTable) => {
   }
   else if(table === "contents") {
     res = await handle_content(task)
+  }
+  else if(table === "drafts") {
+    res = await handle_draft(task)
   }
 
   const u = res?.hasEverUnknown
