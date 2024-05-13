@@ -16,7 +16,7 @@ import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import cui from "~/components/custom-ui";
 import type { LiuSpaceAndMember } from "~/types/types-cloud";
-import { CloudToLocal } from "../CloudToLocal";
+import { CloudFiler } from "../CloudFiler";
 import liuConsole from "~/utils/debug/liu-console";
 
 interface AgudOpt {
@@ -171,7 +171,7 @@ async function handleSpaceAndMember(
     }
 
     // check avatar
-    const avatarRes = CloudToLocal.imageFromCloudToStore(v2.space_avatar, v1.avatar)
+    const avatarRes = CloudFiler.imageFromCloudToStore(v2.space_avatar, v1.avatar)
     if(avatarRes.useCloud) {
       u5.avatar = avatarRes.image
       updated = true
@@ -185,7 +185,7 @@ async function handleSpaceAndMember(
     }
 
     if(avatarRes.useCloud) {
-      CloudToLocal.notify("workspaces", v1._id)
+      CloudFiler.notify("workspaces", v1._id)
     }
   }
 
@@ -219,7 +219,7 @@ async function handleSpaceAndMember(
     }
 
     // check avatar
-    const avatarRes = CloudToLocal.imageFromCloudToStore(v2.member_avatar, v1.avatar)
+    const avatarRes = CloudFiler.imageFromCloudToStore(v2.member_avatar, v1.avatar)
     if(avatarRes.useCloud) {
       u7.avatar = avatarRes.image
       updated = true
@@ -233,7 +233,7 @@ async function handleSpaceAndMember(
     }
 
     if(avatarRes.useCloud) {
-      CloudToLocal.notify("members", v1._id)
+      CloudFiler.notify("members", v1._id)
     }
   }
 

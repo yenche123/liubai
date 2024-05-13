@@ -5,7 +5,7 @@ import type { LiuSpaceAndMember } from "~/types/types-cloud";
 import type { UserLocalTable, WorkspaceLocalTable, MemberLocalTable } from "~/types/types-table";
 import { db } from "~/utils/db";
 import time from "~/utils/basic/time"
-import { CloudToLocal } from "~/utils/cloud/CloudToLocal";
+import { CloudFiler } from "~/utils/cloud/CloudFiler";
 import type { Res_UserLoginNormal } from "~/requests/req-types";
 
 export async function handleUser(
@@ -97,7 +97,7 @@ async function createMember(
   userId: string,
   v: LiuSpaceAndMember,
 ) {
-  const { image: avatar } = CloudToLocal.imageFromCloudToStore(v.member_avatar)
+  const { image: avatar } = CloudFiler.imageFromCloudToStore(v.member_avatar)
   const b1 = time.getBasicStampWhileAdding()
   const data: MemberLocalTable = {
     ...b1,
@@ -119,8 +119,8 @@ async function createMember(
     return false
   }
   
-  // notify CloudToLocal to download images
-  CloudToLocal.notify("members", data._id)
+  // notify CloudFiler to download images
+  CloudFiler.notify("members", data._id)
   return true
 }
 

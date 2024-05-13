@@ -23,7 +23,7 @@ export function useApp() {
   // init mobile
   initMobile()
 
-  // init space & CloudToLocal & LocalToCloud or initForPureLocalMode
+  // init space & CloudFiler & LocalToCloud or initForPureLocalMode
   initForSystem()
 
   // init text selection

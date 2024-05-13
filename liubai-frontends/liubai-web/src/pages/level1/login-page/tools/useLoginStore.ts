@@ -4,7 +4,7 @@ import { type MemberShow } from "~/types/types-content";
 import { type LpView } from "./types"
 import { type Res_ULN_User } from "~/requests/req-types"
 import valTool from "~/utils/basic/val-tool";
-import { CloudToLocal } from "~/utils/cloud/CloudToLocal";
+import { CloudFiler } from "~/utils/cloud/CloudFiler";
 
 // 控制 login 页怎么显示
 export const useLoginStore = defineStore("login", () => {
@@ -33,7 +33,7 @@ export const useLoginStore = defineStore("login", () => {
         _id: v.memberId,
         user_id: v.userId,
         name: v.member_name,
-        avatar: CloudToLocal.imageFromCloudToShow(v.member_avatar),
+        avatar: CloudFiler.imageFromCloudToShow(v.member_avatar),
         spaceId: v.spaceId,
         oState: v.member_oState,
       }

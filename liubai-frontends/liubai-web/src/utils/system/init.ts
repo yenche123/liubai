@@ -4,7 +4,7 @@ import { initSpace } from "./tools/init-space"
 import liuEnv from "../liu-env"
 import { initCycle } from "./tools/init-cycle"
 import { initForPureLocalMode } from "./tools/init-for-pure-local-mode"
-import { CloudToLocal } from "../cloud/CloudToLocal"
+import { CloudFiler } from "../cloud/CloudFiler"
 import { LocalToCloud } from "../cloud/LocalToCloud"
 import { CloudEventBus } from "../cloud/CloudEventBus"
 
@@ -17,7 +17,7 @@ export async function init() {
   CloudEventBus.init()
 
   // 初始化，云端文件存储到本地
-  CloudToLocal.init()
+  CloudFiler.init()
 
   if(backend) {
     // 当前为 [登录模式]

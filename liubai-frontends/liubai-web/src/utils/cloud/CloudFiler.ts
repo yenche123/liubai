@@ -25,7 +25,7 @@ import { getMainToChildMessage } from "./tools/some-funcs";
 
 const MIN_5 = 5 * time.MINUTE
 
-class CloudToLocal {
+class CloudFiler {
 
   private static isOnline: boolean | undefined
   private static downloadWorker: Worker | undefined
@@ -150,7 +150,7 @@ class CloudToLocal {
   /** 通知函数里调用 putTasksIntoIndexedDB 的延时 */
   private static timeoutOfNotify: LiuTimeout
 
-  /** 告知 CloudToLocal 哪个表、哪一行 
+  /** 告知 CloudFiler 哪个表、哪一行 
    * 需要从网络下载文件（图片），存到 IndexedDB 中
    * */
   static notify(table: LiuTable, id: string) {
@@ -260,4 +260,4 @@ class CloudToLocal {
   
 }
 
-export { CloudToLocal }
+export { CloudFiler }

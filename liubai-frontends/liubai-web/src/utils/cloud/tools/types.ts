@@ -20,7 +20,7 @@ export interface FileTransferedRes {
 }
 
 
-// 下载任务的结构，其中 C2L 为 CloudToLocal 的简称
+// 下载任务的结构，其中 C2L 为 CloudFiler 的简称
 export interface TaskOfC2L {
   table: LiuTable
   id: string
