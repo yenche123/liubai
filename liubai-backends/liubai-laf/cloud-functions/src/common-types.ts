@@ -47,6 +47,7 @@ export interface LiuRqReturn<T = Record<string, any>> {
 export const Sch_Id = vbot.string([vbot.minLength(8)])
 export const Sch_Opt_Str = vbot.optional(vbot.string())
 export const Sch_Opt_Num = vbot.optional(vbot.number())
+export const Sch_Opt_Bool = vbot.optional(vbot.boolean())
 
 // trim 后有字符串的 string
 export const Sch_String_WithLength = vbot.string([
@@ -202,11 +203,19 @@ export interface ContentConfig {
   lastOperateTag?: number        // last stamp when user edited tag
   lastOperateWhenRemind?: number   // last stamp when user 
                                    // edited whenStamp / remindStamp / remind
+  lastUpdateEmojiData?: number      // last stamp when emojiData is updated
 }
 
 export const Sch_ContentConfig = vbot.object({
-  showCountdown: vbot.optional(vbot.boolean()),
-  allowComment: vbot.optional(vbot.boolean()),
+  showCountdown: Sch_Opt_Bool,
+  allowComment: Sch_Opt_Bool,
+  lastToggleCountdown: Sch_Opt_Num,
+  lastOStateStamp: Sch_Opt_Num,
+  lastOperateStateId: Sch_Opt_Num,
+  lastOperatePin: Sch_Opt_Num,
+  lastOperateTag: Sch_Opt_Num,
+  lastOperateWhenRemind: Sch_Opt_Num,
+  lastUpdateEmojiData: Sch_Opt_Num
 }, vbot.never())
 
 /** The config of Workspace */

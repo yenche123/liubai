@@ -64,6 +64,7 @@ export async function toEmoji(
   const res1 = await db.collections.get(w1)
 
   // 3. 操作 collection 和 emojiData
+  const now = time.getTime()
   const emojiData = res0.emojiData
   if(res1) {
     // 若存在 collection，判断意图
@@ -79,13 +80,13 @@ export async function toEmoji(
 
       if(!encodeStr) {
         console.log("期望是取消 emoji，所以把这行 row 置为 CANCELED")
-        await updateCollection(res1._id, "", "CANCELED", res0)
+        await updateCollection(res1._id, "", "CANCELED", res0, now)
       }
       else {
         console.log("期望是新增 emoji，所以新增 emojiData 里的 encodeStr")
         updateEmojiData(emojiData, encodeStr, 1)
         console.log("并把这行 row 改为 OK")
-        await updateCollection(res1._id, encodeStr, "OK", res0)
+        await updateCollection(res1._id, encodeStr, "OK", res0, now)
       }
     }
     else {
@@ -100,7 +101,7 @@ export async function toEmoji(
       updateEmojiData(emojiData, encodeStr, 1)
 
       console.log("并把这行 row 改为 OK")
-      await updateCollection(res1._id, encodeStr, "OK", res0)
+      await updateCollection(res1._id, encodeStr, "OK", res0, now)
     }
   }
   else {
@@ -112,11 +113,11 @@ export async function toEmoji(
     updateEmojiData(emojiData, encodeStr, 1)
 
     console.log("因为没有 collection，所以去新增")
-    await addCollection(res0, forType, encodeStr, authData)
+    await addCollection(res0, forType, encodeStr, authData, now)
   }
 
   // 4. 修改 contentId 上的 emojiData
-  await updateContent(contentId, emojiData)
+  await updateContent(res0, emojiData, now)
 
   // 5. 震动
   liuApi.vibrate([50])
@@ -191,11 +192,15 @@ function updateEmojiData(
 }
 
 async function updateContent(
-  id: string,
-  emojiData: EmojiData
+  content: ContentLocalTable,
+  emojiData: EmojiData,
+  stamp: number,
 ) {
-  const res1 = await db.contents.update(id, { emojiData })
-  return emojiData
+  const id = content._id
+  const cfg = content.config ?? {}
+  cfg.lastUpdateEmojiData = stamp
+  const u = { emojiData, config: cfg }
+  const res1 = await db.contents.update(id, u)
 }
 
 async function updateCollection(
@@ -203,12 +208,12 @@ async function updateCollection(
   encodeStr: string,
   oState: OState_2,
   content: ContentLocalTable,
+  updatedStamp: number,
 ) {
-  const now = time.getTime()
   const w1: Partial<CollectionLocalTable> = {
     oState,
     emoji: encodeStr,
-    updatedStamp: now,
+    updatedStamp,
   }
   const res1 = await db.collections.update(collectionId, w1)
 
@@ -218,7 +223,7 @@ async function updateCollection(
   LocalToCloud.addTask({
     uploadTask: "collection-react",
     target_id: collectionId,
-    operateStamp: now,
+    operateStamp: updatedStamp,
   })
   
   return true
@@ -229,12 +234,13 @@ async function addCollection(
   forType: ContentInfoType,
   encodeStr: string,
   authData: LiuMyContext,
+  stamp: number,
 ) {
   const content_id = content._id
-  const b1 = time.getBasicStampWhileAdding()
   const newId = ider.createCollectId()
   const w: CollectionLocalTable = {
-    ...b1,
+    insertedStamp: stamp,
+    updatedStamp: stamp,
     _id: newId,
     first_id: newId,
     oState: "OK",
@@ -255,7 +261,7 @@ async function addCollection(
   LocalToCloud.addTask({
     uploadTask: "collection-react",
     target_id: newId,
-    operateStamp: b1.updatedStamp,
+    operateStamp: stamp,
   })
 
   return true

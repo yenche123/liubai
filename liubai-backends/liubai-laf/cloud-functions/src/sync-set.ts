@@ -930,7 +930,7 @@ async function toCollectionReactWithId(
 
   // 2. minus 1 from old content if old emoji is OK
   if(oldOState === "OK" && oldEmoji) {
-    await updateParentEmojiData(ssCtx, parentId, oldEmoji, -1)
+    await updateParentEmojiData(ssCtx, parentId, oldEmoji, operateStamp, -1)
   }
 
   // 3. update new emoji in collection
@@ -943,7 +943,7 @@ async function toCollectionReactWithId(
 
   // 4. add 1 to emojiData if new emoji is OK
   if(newOState === "OK" && newEmoji) {
-    await updateParentEmojiData(ssCtx, parentId, newEmoji, 1)
+    await updateParentEmojiData(ssCtx, parentId, newEmoji, operateStamp, 1)
   }
 
   return { code: "0000", taskId }
@@ -988,7 +988,7 @@ async function toCollectionShared(
   }
 
   if(infoType === "EXPRESS" && emoji) {
-    await updateParentEmojiData(ssCtx, content_id, emoji, 1)
+    await updateParentEmojiData(ssCtx, content_id, emoji, operateStamp, 1)
   }
 
   return { code: "0000", taskId, first_id, new_id }
@@ -1000,11 +1000,12 @@ async function updateParentEmojiData(
   ssCtx: SyncSetCtx,
   contentId: string,
   encodeStr: string,
+  stamp: number,
   delta: number = 1,
 ) {
   const content = await getData<Table_Content>(ssCtx, "content", contentId)
   if(!content) return false
-  const { emojiData } = content
+  const { emojiData, config: cfg = {} } = content
   emojiData.total += delta
   if(emojiData.total < 0) emojiData.total = 0
   const emojiSystem = emojiData.system
@@ -1016,8 +1017,16 @@ async function updateParentEmojiData(
   else if(delta > 0) {
     emojiSystem.push({ num: delta, encodeStr })
   }
+
+  const oldStamp = cfg.lastUpdateEmojiData ?? 1
+  if(oldStamp > stamp) {
+    stamp = oldStamp + 1
+  }
+
+  cfg.lastUpdateEmojiData = stamp
   emojiData.system = emojiSystem
-  await updatePartData(ssCtx, "content", contentId, { emojiData })
+  const u: Partial<Table_Content> = { emojiData, config: cfg }
+  await updatePartData(ssCtx, "content", contentId, u)
   return true
 }
 

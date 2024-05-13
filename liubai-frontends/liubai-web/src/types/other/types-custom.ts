@@ -13,6 +13,7 @@ export interface ContentConfig {
   lastOperateTag?: number        // last stamp when user edited tag
   lastOperateWhenRemind?: number   // last stamp when user 
                                    // edited whenStamp / remindStamp / remind
+  lastUpdateEmojiData?: number      // last stamp when emojiData is updated
 }
 
 export type SearchType = "thread" | "comment" | "other"
