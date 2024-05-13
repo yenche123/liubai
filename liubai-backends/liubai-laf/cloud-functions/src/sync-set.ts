@@ -50,6 +50,7 @@ import {
   Sch_Opt_Num,
   sch_opt_arr,
   Sch_OState_Draft,
+  Sch_EmojiData,
 } from "@/common-types"
 import { 
   getNowStamp, 
@@ -491,6 +492,8 @@ async function toPostThread(
     tagIds: sch_opt_arr(vbot.string()),
     tagSearched: sch_opt_arr(vbot.string()),
     stateId: Sch_Opt_Str,
+
+    emojiData: Sch_EmojiData,
     config: vbot.optional(Sch_ContentConfig),
   }, vbot.never())     // open strict mode
   const res1 = checkoutInput(Sch_PostThread, thread, taskId)
@@ -544,7 +547,7 @@ async function toPostThread(
     remindStamp: thread.remindStamp,
     whenStamp: thread.whenStamp,
     remindMe: thread.remindMe,
-    emojiData: { total: 0, system: [] },
+    emojiData: thread.emojiData,
     pinStamp: thread.pinStamp,
     createdStamp: thread.createdStamp,
     editedStamp: thread.editedStamp,
@@ -587,6 +590,8 @@ async function toPostComment(
     parentComment: Sch_Opt_Str,
     replyToComment: Sch_Opt_Str,
     createdStamp: vbot.number(),
+
+    emojiData: Sch_EmojiData,
   }, vbot.never())
   const res1 = checkoutInput(Sch_PostComment, comment, taskId)
   if(res1) return res1
@@ -628,7 +633,7 @@ async function toPostComment(
     enc_desc,
     enc_images,
     enc_files,
-    emojiData: { total: 0, system: [] },
+    emojiData: comment.emojiData,
     createdStamp: comment.createdStamp,
     editedStamp: comment.editedStamp,
     parentThread: comment.parentThread,
@@ -872,7 +877,7 @@ async function toCollectionReact(
   collection: LiuUploadCollection,
   opt: OperationOpt,
 ): Promise<SyncSetAtomRes> {
-  const { taskId, operateStamp } = opt
+  const { taskId } = opt
 
   // 1. inspect data technically
   const Sch_React = vbot.object({
@@ -887,33 +892,61 @@ async function toCollectionReact(
 
   // 2. if collection.id exists
   const { id, first_id } = collection
-  const newOState = collection.oState
-  const newEmoji = collection.emoji as string
   if(id && id !== first_id) {
-    const res2 = await getSharedData_4(ssCtx, taskId, id)
-    if(!res2.pass) return res2.result
-    const { oldCollection } = res2
-    const oldEmoji = oldCollection.emoji
-    const oldOState = oldCollection.oState
-    if(oldEmoji === newEmoji && oldOState === newOState) {
-      return { code: "0001", taskId }
-    }
-    const oldStamp = oldCollection.operateStamp ?? 1
-    if(oldStamp >= operateStamp) {
-      return { code: "0002", taskId }
-    }
-    const u = {
-      oState: newOState,
-      emoji: newEmoji,
-      operateStamp,
-    }
-    await updatePartData<Table_Collection>(ssCtx, "collection", id, u)
-    return { code: "0000", taskId }
+    const res2 = await toCollectionReactWithId(ssCtx, collection, opt)
+    return res2
   }
 
   // 3. handle shared logic
   const res3 = await toCollectionShared(ssCtx, collection, opt, "EXPRESS")
   return res3
+}
+
+// to edit collection for reaction
+async function toCollectionReactWithId(
+  ssCtx: SyncSetCtx,
+  collection: LiuUploadCollection,
+  opt: OperationOpt,
+) {
+  const { taskId, operateStamp } = opt
+  const id = collection.id as string
+  const newOState = collection.oState
+  const newEmoji = collection.emoji as string
+
+  // 1. get old collection
+  const res1 = await getSharedData_4(ssCtx, taskId, id)
+  if(!res1.pass) return res1.result
+  const { oldCollection } = res1
+  const oldEmoji = oldCollection.emoji
+  const oldOState = oldCollection.oState
+  const parentId = oldCollection.content_id
+  if(oldEmoji === newEmoji && oldOState === newOState) {
+    return { code: "0001", taskId }
+  }
+  const oldStamp = oldCollection.operateStamp ?? 1
+  if(oldStamp >= operateStamp) {
+    return { code: "0002", taskId }
+  }
+
+  // 2. minus 1 from old content if old emoji is OK
+  if(oldOState === "OK" && oldEmoji) {
+    await updateParentEmojiData(ssCtx, parentId, oldEmoji, -1)
+  }
+
+  // 3. update new emoji in collection
+  const u = {
+    oState: newOState,
+    emoji: newEmoji,
+    operateStamp,
+  }
+  await updatePartData<Table_Collection>(ssCtx, "collection", id, u)
+
+  // 4. add 1 to emojiData if new emoji is OK
+  if(newOState === "OK" && newEmoji) {
+    await updateParentEmojiData(ssCtx, parentId, newEmoji, 1)
+  }
+
+  return { code: "0000", taskId }
 }
 
 
@@ -954,7 +987,38 @@ async function toCollectionShared(
     return { code: "E5001", taskId, errMsg: "inserting data failed" }
   }
 
+  if(infoType === "EXPRESS" && emoji) {
+    await updateParentEmojiData(ssCtx, content_id, emoji, 1)
+  }
+
   return { code: "0000", taskId, first_id, new_id }
+}
+
+
+// update parent content's emojiData
+async function updateParentEmojiData(
+  ssCtx: SyncSetCtx,
+  contentId: string,
+  encodeStr: string,
+  delta: number = 1,
+) {
+  const content = await getData<Table_Content>(ssCtx, "content", contentId)
+  if(!content) return false
+  const { emojiData } = content
+  emojiData.total += delta
+  if(emojiData.total < 0) emojiData.total = 0
+  const emojiSystem = emojiData.system
+  const theEmoji = emojiSystem.find(v => v.encodeStr === encodeStr)
+  if(theEmoji) {
+    theEmoji.num += delta
+    if(theEmoji.num < 0) theEmoji.num = 0
+  }
+  else if(delta > 0) {
+    emojiSystem.push({ num: delta, encodeStr })
+  }
+  emojiData.system = emojiSystem
+  await updatePartData(ssCtx, "content", contentId, { emojiData })
+  return true
 }
 
 

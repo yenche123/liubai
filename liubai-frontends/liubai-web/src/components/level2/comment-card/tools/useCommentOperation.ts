@@ -125,10 +125,9 @@ async function prepareToDelete(
   cui.showSnackBar({ text_key: "tip.deleted" })
 
   // 6. upload
-  const isLocal = liuUtil.check.isLocalContent(newCs.storageState)
-  if(isLocal) return
-  const everSync = liuUtil.check.hasEverSynced(newCs)
-  if(!everSync) return
+  const res6 = liuUtil.check.canUpload(newCs)
+  if(!res6) return
+  
   LocalToCloud.addTask({
     uploadTask: "comment-delete",
     target_id: id,

@@ -1,5 +1,7 @@
 import reg_exp from "~/config/regular-expressions";
 import type { StorageState } from "~/types/types-basic";
+import type { CommentShow, ThreadShow } from "~/types/types-content";
+import type { ContentLocalTable } from "~/types/types-table";
 
 
 /**
@@ -46,9 +48,20 @@ function isLocalContent(storageState: StorageState) {
   return isLocal
 }
 
+function canUpload(
+  row: ContentLocalTable | CommentShow | ThreadShow
+) {
+  const everSynced = hasEverSynced(row)
+  if(!everSynced) return false
+  const isLocal = isLocalContent(row.storageState)
+  if(isLocal) return false
+  return true
+}
+
 
 export default {
   isEmail,
   hasEverSynced,
   isLocalContent,
+  canUpload,
 }

@@ -228,10 +228,20 @@ export interface EmojiSystem {
   encodeStr: string
 }
 
+export const Sch_EmojiSystem = vbot.object({
+  num: vbot.number(),
+  encodeStr: vbot.string(),
+}, vbot.never())
+
 export interface EmojiData {
   total: number
   system: EmojiSystem[]
 }
+
+export const Sch_EmojiData = vbot.object({
+  total: vbot.number(),
+  system: vbot.array(Sch_EmojiSystem),
+}, vbot.never())
 
 /*********************** 编辑器相关 **********************/
 // “提醒我” 有哪些合法值
@@ -606,7 +616,8 @@ export interface LiuUploadThread extends LiuUploadBase {
   tagSearched?: string[]
   stateId?: string
   
-  // 只在 thread-post 时有效
+  // 只在 thread-post 时有效，且此时必填
+  emojiData?: EmojiData
   config?: ContentConfig
 
   // 只在 thread-hourglass 时有效，且为必填
@@ -619,6 +630,9 @@ export interface LiuUploadComment extends LiuUploadBase {
   parentComment?: string
   replyToComment?: string
   createdStamp?: number
+
+  // 只在 comment-post 时有效，且此时必填
+  emojiData?: EmojiData
 }
 
 /** 存一些 草稿 与评论和动态相比独有的字段 */

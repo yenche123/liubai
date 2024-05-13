@@ -90,6 +90,7 @@ function whenThreadPost(c: ContentLocalTable) {
     files: transferUtil.filesFromStoreToCloud(c.files),
     editedStamp: c.editedStamp,
     oState: c.oState,
+    
     title: c.title,
     calendarStamp: c.calendarStamp,
     remindStamp: c.remindStamp,
@@ -100,6 +101,8 @@ function whenThreadPost(c: ContentLocalTable) {
     tagIds: c.tagIds,
     tagSearched: c.tagSearched,
     stateId: c.stateId,
+
+    emojiData: c.emojiData,
     config: c.config,
   }
   return uploadThread
@@ -120,6 +123,8 @@ function whenCommentPost(c: ContentLocalTable) {
     parentComment: c.parentComment,
     replyToComment: c.replyToComment,
     createdStamp: c.createdStamp,
+
+    emojiData: c.emojiData,
   }
   return uploadComment
 }

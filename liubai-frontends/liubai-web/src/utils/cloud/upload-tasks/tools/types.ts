@@ -17,6 +17,7 @@ import type {
 import type { ContentConfig } from "~/types/other/types-custom";
 import type { DexieBulkUpdateAtom } from "~/types/other/types-dexie";
 import type { UploadTaskLocalTable } from "~/types/types-table";
+import type { EmojiData } from "~/types/types-content"
 
 export type FileReqReturn = LiuRqReturn<Res_WebhookQiniu>
 
@@ -72,7 +73,8 @@ export interface LiuUploadThread extends LiuUploadBase {
   tagSearched?: string[]
   stateId?: string
 
-  // 只在 thread-post 时有效
+  // 只在 thread-post 时有效，且此时必填
+  emojiData?: EmojiData
   config?: ContentConfig
 
   // 只在 thread-hourglass 时有效，且为必填，不得为 undefined
@@ -87,6 +89,9 @@ export interface LiuUploadComment extends LiuUploadBase {
   parentComment?: string
   replyToComment?: string
   createdStamp?: number
+
+  // 只在 comment-post 时有效，且此时必填
+  emojiData?: EmojiData
 }
 
 /** 存一些 草稿 与评论和动态相比独有的字段 */

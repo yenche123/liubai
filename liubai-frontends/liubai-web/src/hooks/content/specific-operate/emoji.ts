@@ -6,6 +6,7 @@ import type { ContentInfoType } from "~/types/types-atom";
 import checker from "~/utils/other/checker";
 import type {
   CollectionLocalTable,
+  ContentLocalTable,
 } from "~/types/types-table";
 import type { LiuMyContext } from "~/types";
 import time from "~/utils/basic/time";
@@ -19,6 +20,8 @@ import {
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import type { OState_2 } from "~/types/types-basic"
 import liuApi from "~/utils/liu-api"
+import liuUtil from "~/utils/liu-util";
+import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 
 
 /**
@@ -76,13 +79,13 @@ export async function toEmoji(
 
       if(!encodeStr) {
         console.log("期望是取消 emoji，所以把这行 row 置为 CANCELED")
-        await updateCollection(res1._id, "", "CANCELED")
+        await updateCollection(res1._id, "", "CANCELED", res0)
       }
       else {
         console.log("期望是新增 emoji，所以新增 emojiData 里的 encodeStr")
         updateEmojiData(emojiData, encodeStr, 1)
         console.log("并把这行 row 改为 OK")
-        await updateCollection(res1._id, encodeStr, "OK")
+        await updateCollection(res1._id, encodeStr, "OK", res0)
       }
     }
     else {
@@ -97,7 +100,7 @@ export async function toEmoji(
       updateEmojiData(emojiData, encodeStr, 1)
 
       console.log("并把这行 row 改为 OK")
-      await updateCollection(res1._id, encodeStr, "OK")
+      await updateCollection(res1._id, encodeStr, "OK", res0)
     }
   }
   else {
@@ -109,11 +112,11 @@ export async function toEmoji(
     updateEmojiData(emojiData, encodeStr, 1)
 
     console.log("因为没有 collection，所以去新增")
-    await addCollection(contentId, forType, encodeStr, authData)
+    await addCollection(res0, forType, encodeStr, authData)
   }
 
   // 4. 修改 contentId 上的 emojiData
-  await updateContent(res0._id, emojiData)
+  await updateContent(contentId, emojiData)
 
   // 5. 震动
   liuApi.vibrate([50])
@@ -199,6 +202,7 @@ async function updateCollection(
   collectionId: string,
   encodeStr: string,
   oState: OState_2,
+  content: ContentLocalTable,
 ) {
   const now = time.getTime()
   const w1: Partial<CollectionLocalTable> = {
@@ -207,17 +211,26 @@ async function updateCollection(
     updatedStamp: now,
   }
   const res1 = await db.collections.update(collectionId, w1)
-  console.log("updateCollection......")
-  console.log(res1)
+
+  // to upload
+  const res2 = liuUtil.check.canUpload(content)
+  if(!res2) return
+  LocalToCloud.addTask({
+    uploadTask: "collection-react",
+    target_id: collectionId,
+    operateStamp: now,
+  })
+  
   return true
 }
 
 async function addCollection(
-  contentId: string,
+  content: ContentLocalTable,
   forType: ContentInfoType,
   encodeStr: string,
   authData: LiuMyContext,
 ) {
+  const content_id = content._id
   const b1 = time.getBasicStampWhileAdding()
   const newId = ider.createCollectId()
   const w: CollectionLocalTable = {
@@ -231,9 +244,19 @@ async function addCollection(
     forType,
     spaceId: authData.spaceId,
     spaceType: authData.spaceType,
-    content_id: contentId,
+    content_id,
     emoji: encodeStr,
   }
   const res = await db.collections.add(w)
+
+  // to upload
+  const res2 = liuUtil.check.canUpload(content)
+  if(!res2) return true
+  LocalToCloud.addTask({
+    uploadTask: "collection-react",
+    target_id: newId,
+    operateStamp: b1.updatedStamp,
+  })
+
   return true
 }
