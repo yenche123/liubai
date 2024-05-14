@@ -33,7 +33,7 @@ const initLoading = () => {
 let showTimeout: LiuTimeout
 let closeTimeout: LiuTimeout
 
-const showLoading = async (opt?: LoadingParam): Promise<void> => {
+const showLoading = (opt?: LoadingParam) => {
   loData.title = opt?.title ?? ""
   loData.title_key = opt?.title_key ?? ""
   loData.mask = opt?.mask === false ? false : true
@@ -47,7 +47,7 @@ const showLoading = async (opt?: LoadingParam): Promise<void> => {
   }, cfg.frame_duration)
 }
 
-const hideLoading = async (): Promise<void> => {
+const hideLoading = () => {
   if(!loData.enable) return
   if(showTimeout) clearTimeout(showTimeout)
 

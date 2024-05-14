@@ -1,9 +1,9 @@
 import { reactive, ref } from "vue"
-import valTool from "~/utils/basic/val-tool"
 import type {
   ActionSheetParam,
   AsSuccessRes,
 } from "./tools/types"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 type AsResolver = (res: AsSuccessRes) => void
 
@@ -29,12 +29,12 @@ export function initActionSheet() {
   }
 }
 
-export async function showActionSheet(opt: ActionSheetParam) {
+export function showActionSheet(opt: ActionSheetParam) {
   asData.title_key = opt.title_key ?? ""
   asData.itemList = opt.itemList
   asData.cancel_key = opt.cancel_key ?? ""
 
-  await _open()
+  _open()
 
   const _wait = (a: AsResolver): void => {
     _resolve = a
@@ -58,17 +58,23 @@ function onTapItem(index: number) {
   _close()
 }
 
-
-async function _open() {
+let toggleTimeout: LiuTimeout
+function _open() {
   if(show.value) return
+  if(toggleTimeout) clearTimeout(toggleTimeout)
   enable.value = true
-  await valTool.waitMilli(16)
-  show.value = true
+  toggleTimeout = setTimeout(() => {
+    show.value = true
+  }, 16)
 }
 
-async function _close() {
-  if(!show.value) return
+function _close() {
+  if(!enable.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   show.value = false
-  await valTool.waitMilli(TRANSITION_DURATION)
-  enable.value = false
+  toggleTimeout = setTimeout(() => {
+    enable.value = false
+  }, TRANSITION_DURATION)
 }

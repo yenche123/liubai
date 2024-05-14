@@ -10,6 +10,7 @@ import {
   toListenKeyboard, 
   cancelListenKeyboard 
 } from "../../tools/listen-keyboard"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 let _success: TextEditorResolver | undefined
 let _resolve: TextEditorResolver | undefined
@@ -51,22 +52,32 @@ function whenKeyUp(e: KeyboardEvent) {
   }
 }
 
-const _openTextEditor = async () => {
+let toggleTimeout: LiuTimeout
+const _open = () => {
   if(show.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   enable.value = true
-  await valTool.waitMilli(16)
-  show.value = true
-  toListenKeyboard({ whenKeyUp, data: teData })
+
+  toggleTimeout = setTimeout(() => {
+    show.value = true
+    toListenKeyboard({ whenKeyUp, data: teData })
+  }, 16)
 }
 
-const _closeTextEditor = async () => {
-  if(!show.value) return
+const _close = () => {
+  if(!enable.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   show.value = false
   cancelListenKeyboard()
 
-  await valTool.waitMilli(TRANSITION_DURATION)
-  if(show.value) return
-  enable.value = false
+  toggleTimeout = setTimeout(() => {
+    if(show.value) return
+    enable.value = false
+  }, TRANSITION_DURATION)
 }
 
 const onTapConfirm = () => {
@@ -76,7 +87,7 @@ const onTapConfirm = () => {
   _resolve = undefined
   _success && _success({ confirm: true, cancel: false, value: v })
   _success = undefined
-  _closeTextEditor()
+  _close()
 }
 
 const onTapCancel = () => {
@@ -85,7 +96,7 @@ const onTapCancel = () => {
   _resolve = undefined
   _success && _success({ confirm: false, cancel: true, value: v })
   _success = undefined
-  _closeTextEditor()
+  _close()
 }
 
 const onInput = (e: Event) => {
@@ -131,7 +142,7 @@ export async function showTextEditor(
     _success = undefined
   }
 
-  await _openTextEditor()
+  _open()
 
   const _toFocus = async() => {
     await valTool.waitMilli(200)

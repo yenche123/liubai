@@ -1,5 +1,4 @@
 import { reactive, ref } from "vue"
-import valTool from "~/utils/basic/val-tool"
 import { 
   toListenEnterKey, 
   cancelListenEnterKeyUp, 
@@ -12,6 +11,7 @@ import type {
   ModalData,
   ModalResolver,
 } from "./types"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 let _success: ModalResolver | undefined
 let _resolve: ModalResolver | undefined
@@ -32,28 +32,39 @@ const modalData = reactive<ModalData>({
   modalType: "normal"
 })
 
-async function _openModal() {
+
+let toggleTimeout: LiuTimeout
+function _open() {
   if(show.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   enable.value = true
-  await valTool.waitMilli(16)
-  show.value = true
-  toListenEnterKey(onTapConfirm)
-  toListenEscKeyUp(onTapCancel)
+  toggleTimeout = setTimeout(() => {
+    show.value = true
+    toListenEnterKey(onTapConfirm)
+    toListenEscKeyUp(onTapCancel)
+  }, 16)
+  
 }
 
-async function _closeModal() {
-  if(!show.value) return
+function _close() {
+  if(!enable.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   show.value = false
 
   cancelListenEnterKeyUp()
   cancelListenEscKeyUp()
 
-  await valTool.waitMilli(TRANSITION_DURATION)
-  if(show.value) return
-  enable.value = false
+  toggleTimeout = setTimeout(() => {
+    if(show.value) return
+    enable.value = false
+  }, TRANSITION_DURATION)
 }
 
-async function onTapConfirm() {
+function onTapConfirm() {
   const res: ModalSuccessRes = {
     confirm: true, 
     cancel: false, 
@@ -64,10 +75,10 @@ async function onTapConfirm() {
   _resolve = undefined
   _success && _success(res)
   _success = undefined
-  _closeModal()
+  _close()
 }
 
-async function onTapCancel() {
+function onTapCancel() {
   const res: ModalSuccessRes = {
     confirm: false, 
     cancel: true, 
@@ -78,7 +89,7 @@ async function onTapCancel() {
   _resolve = undefined
   _success && _success(res)
   _success = undefined
-  _closeModal()
+  _close()
 }
 
 function onTapTip() {
@@ -131,7 +142,7 @@ export async function showModal(
     _success = undefined
   }
 
-  await _openModal()
+  _open()
 
   const _wait = (a: ModalResolver): void => {
     _resolve = a

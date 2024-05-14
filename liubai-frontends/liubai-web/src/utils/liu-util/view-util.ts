@@ -1,4 +1,5 @@
 import type { BasicView } from "~/types/types-view";
+import type { Ref } from "vue";
 import typeCheck from "~/utils/basic/type-check";
 
 /**
@@ -49,7 +50,20 @@ function closeAllViews<T extends BasicView>(
   })
 }
 
+function getOpeningClosing(
+  enable: boolean | Ref<boolean>,
+  show: boolean | Ref<boolean>,
+) {
+  const _enable = typeCheck.isBoolean(enable) ? enable : enable.value
+  const _show = typeCheck.isBoolean(show) ? show : show.value
+  const isOpening = _enable && _show
+  const isClosing = !_enable && !_show
+  return { isOpening, isClosing }
+}
+
+
 export default {
   showView,
   closeAllViews,
+  getOpeningClosing,
 }

@@ -20,6 +20,7 @@ export interface CommentPopupData {
   commentShow?: CommentShow
   threadShow?: ThreadShow
   csTsPretend?: CommentShow     // 假装成 CommentShow 的 threadShow
+                                // ThreadShow pretends to be CommentShow
 
   // 传递给 comment-editor 组件的字段
   parentComment?: string

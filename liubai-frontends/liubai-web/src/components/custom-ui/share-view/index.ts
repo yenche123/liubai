@@ -8,13 +8,13 @@ import type {
 } from "./tools/types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
-import valTool from "~/utils/basic/val-tool"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
 import { handleLinks } from "./tools/handle-links"
 import liuUtil from "~/utils/liu-util"
 import liuEnv from "~/utils/liu-env"
 import { saveAs as fileSaverSaveAs } from 'file-saver';
 import time from "~/utils/basic/time"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 let _resolve: SvResolver | undefined
 const TRANSITION_DURATION = 150
@@ -112,26 +112,37 @@ function toResolve(res: ShareViewRes) {
   _resolve = undefined
 }
 
-async function _toOpen() {
+let toggleTimeout: LiuTimeout
+function _toOpen() {
   if(show.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   enable.value = true
-  await valTool.waitMilli(16)
-  show.value = true
+  
+  toggleTimeout = setTimeout(() => {
+    show.value = true
+  }, 16)
 }
 
-async function _toClose() {
+function _toClose() {
   if(!enable.value) return
-  show.value = false
-  await valTool.waitMilli(TRANSITION_DURATION)
-  enable.value = false
-
-  const icsUrl = svData.icsLink
-  if(icsUrl) {
-    liuUtil.revokeObjURLs([icsUrl])
-    svData.icsLink = ""
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
   }
-  svData.openCopy = false
-  svData.openExport = false
+  show.value = false
+
+  toggleTimeout = setTimeout(() => {
+    enable.value = false
+
+    const icsUrl = svData.icsLink
+    if(icsUrl) {
+      liuUtil.revokeObjURLs([icsUrl])
+      svData.icsLink = ""
+    }
+    svData.openCopy = false
+    svData.openExport = false
+  }, TRANSITION_DURATION)
 }
 
 function onTapMask() {

@@ -1,12 +1,12 @@
 import type { VcState } from "../../vice-content/tools/types"
 import { ref, toRef, watch, type Ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
-import valTool from "~/utils/basic/val-tool"
 import localCache from "~/utils/system/local-cache"
 import time from "~/utils/basic/time"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
+import liuUtil from "~/utils/liu-util"
 
 interface IframeRestrictionProps {
   viceViewPx: number
@@ -97,12 +97,17 @@ function whenVcStateChange(
   ctx: IrCtx,
 ) {
   const enable = ctx.enable.value
+  const show = ctx.show.value
+  const { 
+    isOpening, 
+    isClosing,
+  } = liuUtil.view.getOpeningClosing(enable, show)
   const vcState = ctx.vcStateRef.value
   const pdfQuery = ctx.route.query?.vfile
 
   // 如果当前不是 iframe 或当前为文件（比如 pdf）预览
   if(vcState !== "iframe" || pdfQuery) {
-    if(enable) close(ctx)
+    if(!isClosing) close(ctx)
     return
   }
 
@@ -110,22 +115,35 @@ function whenVcStateChange(
   const res = localCache.getOnceData()
   if(res.iframeRestriction) return
 
-  // 当前 是 iframe 页并且 enable 是关闭的
-  if(!enable) open(ctx)
+  // 当前 是 iframe 页并且不是开启的状态
+  if(!isOpening) open(ctx)
 }
 
+let toggleTimeout: LiuTimeout
 async function open(
   ctx: IrCtx,
 ) {
+  if(ctx.show.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   ctx.enable.value = true
-  await valTool.waitMilli(16)
-  ctx.show.value = true
+
+  toggleTimeout = setTimeout(() => {
+    ctx.show.value = true
+  }, 16)
 }
 
 async function close(
   ctx: IrCtx,
 ) {
+  if(!ctx.enable.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   ctx.show.value = false
-  await valTool.waitMilli(TRANSITION_MS)
-  ctx.enable.value = false
+
+  toggleTimeout = setTimeout(() => {
+    ctx.enable.value = false
+  }, TRANSITION_MS)
 }

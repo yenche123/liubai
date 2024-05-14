@@ -1,6 +1,5 @@
 
 import { reactive, ref } from "vue"
-import valTool from "~/utils/basic/val-tool"
 import { SnackbarParam } from "~/types/other/types-snackbar"
 import { SbResolver } from "./tools/types"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
@@ -32,7 +31,7 @@ export function initSnackBar() {
   }
 }
 
-export async function showSnackBar(opt: SnackbarParam) {
+export function showSnackBar(opt: SnackbarParam) {
   if(!opt.text && !opt.text_key) {
     console.error("showSnackBar 必须含有参数 text 或 text_key")
   }
@@ -45,7 +44,7 @@ export async function showSnackBar(opt: SnackbarParam) {
   sbData.duration = opt.duration ?? 0
   sbData.dot_color = opt.dot_color ?? ""
 
-  await _open()
+  _open()
 
   const _wait = (a: SbResolver): void => {
     _resolve = a
@@ -76,17 +75,26 @@ function onTapAction() {
   _close()
 }
 
-async function _open() {
+let toggleTimeout: LiuTimeout
+function _open() {
   if(show.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   enable.value = true
-  await valTool.waitMilli(16)
-  show.value = true
+  toggleTimeout = setTimeout(() => {
+    show.value = true
+  }, 16)
 }
 
-async function _close() {
+function _close() {
   if(!enable.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   show.value = false
-  await valTool.waitMilli(TRANSITION_DURATION)
-  if(!show.value) enable.value = false
+  toggleTimeout = setTimeout(() => {
+    if(!show.value) enable.value = false
+  }, TRANSITION_DURATION)
 }
 

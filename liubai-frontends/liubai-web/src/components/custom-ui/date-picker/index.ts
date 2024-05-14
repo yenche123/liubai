@@ -1,4 +1,5 @@
 import { computed, ref } from "vue"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 import valTool from "~/utils/basic/val-tool"
 import liuUtil from "~/utils/liu-util"
 
@@ -46,7 +47,7 @@ export function initDatePicker() {
   }
 }
 
-export async function showDatePicker(opt?: DatePickerParam): Promise<DpSuccessRes> {
+export function showDatePicker(opt?: DatePickerParam): Promise<DpSuccessRes> {
   if(!opt) opt = {}
 
   // 处理 date
@@ -59,7 +60,7 @@ export async function showDatePicker(opt?: DatePickerParam): Promise<DpSuccessRe
   if(opt.maxDate) maxDate.value = opt.maxDate
   else maxDate.value = undefined
 
-  await _openDatePicker()
+  _open()
 
   const _wait = (a: DpResolver): void => {
     _resolve = a
@@ -70,25 +71,33 @@ export async function showDatePicker(opt?: DatePickerParam): Promise<DpSuccessRe
 
 function onTapConfirm() {
   _resolve && _resolve({ confirm: true, date: date.value })
-  _closeDatePicker()
+  _close()
 }
 
 function onTapCancel() {
   _resolve && _resolve({ confirm: false, date: date.value })
-  _closeDatePicker()
+  _close()
 }
 
-async function _openDatePicker() {
+let toggleTimeout: LiuTimeout
+function _open() {
   if(show.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   enable.value = true
-  await valTool.waitMilli(16)
-  show.value = true
+  toggleTimeout = setTimeout(() => {
+    show.value = true
+  }, 16)
 }
 
-async function _closeDatePicker() {
-  if(!show.value) return
+function _close() {
+  if(!enable.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   show.value = false
-
-  await valTool.waitMilli(TRANSITION_DURATION)
-  enable.value = false
+  toggleTimeout = setTimeout(() => {
+    enable.value = false
+  }, TRANSITION_DURATION)
 }

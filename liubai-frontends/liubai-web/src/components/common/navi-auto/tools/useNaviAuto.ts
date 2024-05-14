@@ -9,6 +9,7 @@ import sideBar from "~/views/side-bar";
 import { useWindowSize } from "~/hooks/useVueUse";
 import cfg from "~/config";
 import type { NaviAutoEmits } from "./types"
+import liuUtil from "~/utils/liu-util";
 
 const TRANSITION_DURATION = 300
 
@@ -130,11 +131,15 @@ function listenWindowChange(
     if(sidebarWidth > 0 || sidebarStatus === "fullscreen") return
 
     const { enable, show } = ctx
+    const {
+      isOpening,
+      isClosing,
+    } = liuUtil.view.getOpeningClosing(enable, show)
 
-    if(winWidthPx < cfg.sidebar_close_point && !enable.value) {
+    if(winWidthPx < cfg.sidebar_close_point && !isOpening) {
       _open(ctx)
     }
-    else if(winWidthPx >= cfg.sidebar_open_point && show.value) {
+    else if(winWidthPx >= cfg.sidebar_open_point && !isClosing) {
       _close(ctx)
     }
   }

@@ -5,6 +5,7 @@ import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import valTool from "~/utils/basic/val-tool";
 import time from "~/utils/basic/time";
 import type { TagShow } from "~/types/types-content"
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 
 /**
  * 说明: 
@@ -156,18 +157,25 @@ function toResolve(res: HsRes) {
   _resolve = undefined
 }
 
-async function _toOpen() {
+let toggleTimeout: LiuTimeout
+function _toOpen() {
   if(hsData.show) return
-
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   hsData.enable = true
-  await valTool.waitMilli(16)
-  hsData.show = true
-  await valTool.waitMilli(hsData.transDuration)
+  toggleTimeout = setTimeout(() => {
+    hsData.show = true
+  }, 16)
 }
 
-async function _toClose() {
+function _toClose() {
   if(!hsData.enable) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   hsData.show = false
-  await valTool.waitMilli(hsData.transDuration)
-  hsData.enable = false
+  toggleTimeout = setTimeout(() => {
+    hsData.enable = false
+  }, hsData.transDuration)
 }

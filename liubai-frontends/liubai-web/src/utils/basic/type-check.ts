@@ -21,6 +21,8 @@ const isDate = (x: any): x is Date => getType(x) === 'date'
 
 const isRegExp = (x: any): x is RegExp => getType(x) === 'regexp'
 
+const isBoolean = (x: any): x is boolean => typeof x === 'boolean'
+
 export default {
   getType,
   isUndefined,
@@ -31,6 +33,7 @@ export default {
   isFunction,
   isArray,
   isDate,
-  isRegExp
+  isRegExp,
+  isBoolean,
 }
 

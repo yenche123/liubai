@@ -1,6 +1,6 @@
 import { ref, toRef, watch } from "vue"
-import valTool from "~/utils/basic/val-tool"
 import type { FabCtx, FabProps } from "./types"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 export function useFAB(props: FabProps) {
 
@@ -40,18 +40,29 @@ function listenScrollPositionChange(
   watch(ctx.scrollPosition, onScroll)
 }
 
+let toggleTimeout: LiuTimeout
 async function toOpen(ctx: FabCtx) {
   const { show, enable } = ctx
   if(show.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   enable.value = true
-  await valTool.waitMilli(16)
-  if(enable.value) show.value = true
+
+  toggleTimeout = setTimeout(() => {
+    if(enable.value) show.value = true
+  }, 16)
 }
 
 async function toClose(ctx: FabCtx) {
   const { show, enable } = ctx
   if(!enable.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   show.value = false
-  await valTool.waitMilli(310)
-  if(!show.value) enable.value = false
+
+  toggleTimeout = setTimeout(() => {
+    if(!show.value) enable.value = false
+  }, 310)
 }

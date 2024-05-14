@@ -8,9 +8,9 @@ import { ref, reactive, watch, toRef } from "vue"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
-import valTool from "~/utils/basic/val-tool"
 import liuUtil from "~/utils/liu-util"
 import time from "~/utils/basic/time"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 let _resolve: SeResolver | undefined
 
@@ -140,17 +140,25 @@ function listenRouteChange() {
   })
 }
 
-
-async function _toOpen() {
+let toggleTimeout: LiuTimeout
+function _toOpen() {
   if(show.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   enable.value = true
-  await valTool.waitMilli(16)
-  show.value = true
+  toggleTimeout = setTimeout(() => {
+    show.value = true
+  }, 16)
 }
 
 async function _toClose() {
   if(!enable.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   show.value = false
-  await valTool.waitMilli(TRANSITION_DURATION)
-  enable.value = false
+  toggleTimeout = setTimeout(() => {
+    enable.value = false
+  }, TRANSITION_DURATION)
 }

@@ -9,12 +9,12 @@ import type {
   ContentPanelResolver,
 } from "./types"
 import { emojiList } from "~/config/emoji-list"
-import valTool from "~/utils/basic/val-tool"
 import { i18n } from "~/locales"
 import liuApi from "~/utils/liu-api"
 import liuUtil from "~/utils/liu-util"
 import contentOperate from "~/hooks/content/content-operate"
 import type { ContentInfoType } from "~/types/types-atom";
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 let _resolve: ContentPanelResolver | undefined
 const TRANSITION_DURATION = 250
@@ -175,19 +175,28 @@ function toResolve(res: ContentPanelRes) {
   _resolve = undefined
 }
 
-async function _toOpen() {
+let toggleTimeout: LiuTimeout
+function _toOpen() {
   if(cpData.show) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   cpData.enable = true
-  await valTool.waitMilli(16)
-  cpData.show = true
+  toggleTimeout = setTimeout(() => {
+    cpData.show = true
+  }, 16)
 }
 
-async function _toClose() {
+function _toClose() {
   if(!cpData.enable) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   cpData.show = false
-  await valTool.waitMilli(TRANSITION_DURATION)
-  cpData.enable = false
-  _reset()
+  toggleTimeout = setTimeout(() => {
+    cpData.enable = false
+    _reset()
+  }, TRANSITION_DURATION)
 }
 
 function _reset() {

@@ -1,5 +1,4 @@
 import { nextTick, reactive, ref, watch } from "vue"
-import valTool from "~/utils/basic/val-tool"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import type {
@@ -14,6 +13,7 @@ import { toListenEscKeyUp, cancelListenEscKeyUp } from "../tools/listen-keyup"
 import { transitionHelper } from "~/utils/other/transition-related"
 import { getSpecificCSSRule } from "~/utils/other/css-related"
 import { Swiper } from "swiper"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 let _resolve: PiResolver | undefined
 let _viewTranResolve: ViewTransitionResolver | undefined
@@ -106,7 +106,9 @@ async function onPiSwiper(swiper: Swiper) {
   _viewTranResolve = undefined
 }
 
-async function _toOpen() {
+
+let toggleTimeout: LiuTimeout
+function _toOpen() {
   if(show.value) return
 
   if(data.viewTransition) {
@@ -114,10 +116,15 @@ async function _toOpen() {
     return
   }
 
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
+
   enable.value = true
-  await valTool.waitMilli(16)
-  show.value = true
-  toListenEscKeyUp(toCancel)
+  toggleTimeout = setTimeout(() => {
+    show.value = true
+    toListenEscKeyUp(toCancel)
+  }, 16)
 }
 
 function _openByViewTransition() {
@@ -150,7 +157,7 @@ function _openByViewTransition() {
 }
 
 
-async function _toClose() {
+function _toClose() {
   if(!enable.value) return
 
   if(data.viewTransition) {
@@ -158,11 +165,15 @@ async function _toClose() {
     return
   }
 
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   show.value = false
-  await valTool.waitMilli(TRANSITION_DURATION)
-  enable.value = false
-  cancelListenEscKeyUp()
-  toResolve({ hasBack: true })
+  toggleTimeout = setTimeout(() => {
+    enable.value = false
+    cancelListenEscKeyUp()
+    toResolve({ hasBack: true })
+  }, TRANSITION_DURATION)
 }
 
 async function _closeByViewTransition() {

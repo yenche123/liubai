@@ -3,6 +3,7 @@ import type { PageState } from "~/types/types-atom"
 import type { Ref } from "vue"
 import valTool from "~/utils/basic/val-tool"
 import { pageStates } from "~/utils/atom"
+import liuUtil from "~/utils/liu-util"
 
 interface PvProps {
   pState: PageState
@@ -32,11 +33,12 @@ function whenPStateChange(
   show: Ref<boolean>,
 ) {
   let needOpen = newV === pageStates.LOADING || newV >= pageStates.NO_DATA
+  const { isOpening, isClosing } = liuUtil.view.getOpeningClosing(enable, show)
   
-  if(needOpen && enable.value === false) {
+  if(needOpen && !isOpening) {
     open(enable, show)
   }
-  else if(!needOpen && enable.value === true) {
+  else if(!needOpen && !isClosing) {
     close(enable, show)
   }
 }
@@ -45,8 +47,12 @@ async function open(
   enable: Ref<boolean>,
   show: Ref<boolean>,
 ) {
+  if(show.value) return
   enable.value = true
+
   await valTool.waitMilli(16)
+
+  if(!enable.value) return
   show.value = true
 }
 
@@ -54,7 +60,11 @@ async function close(
   enable: Ref<boolean>,
   show: Ref<boolean>,
 ) {
+  if(!enable.value) return
   show.value = false
+  
   await valTool.waitMilli(TRANSITION_MS)
+
+  if(show.value) return
   enable.value = false
 }
