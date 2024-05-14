@@ -10,7 +10,7 @@ import type { TrueOrFalse } from '~/types/types-basic'
 export interface TcProps {
   threadData: ThreadShow
   displayType: TlDisplayType
-  viewType: TlViewType
+  viewType?: TlViewType
   position: number
   showType: ThreadCardShowType
   showTxt?: TrueOrFalse

@@ -5,7 +5,7 @@ import type { TlViewType } from "../../../tools/types";
 
 export interface TcbProps {
   threadData: ThreadShow
-  viewType: TlViewType
+  viewType?: TlViewType
 }
 
 export interface TcbEmits {

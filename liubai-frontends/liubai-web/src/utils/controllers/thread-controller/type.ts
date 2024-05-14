@@ -1,7 +1,8 @@
 
 
-import type { OState, SortWay } from "~/types/types-basic"
+import type { SortWay } from "~/types/types-basic"
 import type { ThreadListViewType } from "~/types/types-view"
+import type { CollectionInfoType } from "~/types/types-atom"
 
 export interface TcListOption {
 
@@ -16,7 +17,7 @@ export interface TcListOption {
   limit?: number
 
   // 加载收藏
-  collectType?: "EXPRESS" | "FAVORITE"
+  collectType?: CollectionInfoType
 
   // 加载某个 emoji
   emojiSpecific?: string
@@ -30,9 +31,6 @@ export interface TcListOption {
   // 已加载出来的最后一个 id 的 createdStamp 或 updatedStamp 或 myFavoriteStamp 或 myEmojiStamp
   // 根据 collectType 和 viewType 的不同，用不同 item 的属性值
   lastItemStamp?: number
-
-  // 指定某个 member 的动态，若有值填 member_id
-  member?: string
 
   // 加载特定的动态
   specific_ids?: string[]

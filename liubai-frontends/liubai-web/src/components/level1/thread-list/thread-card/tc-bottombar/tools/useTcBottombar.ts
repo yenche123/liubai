@@ -57,7 +57,7 @@ export function useTcBottombar(
     const list = [...MENU_1]
 
     // 动态添加置顶/取消置顶 或 浮上去
-    handlePinFloatState(t, viewType, list)
+    handlePinFloatState(t, list, viewType)
 
     // 动态添加（倒计时器）开关
     handleCountdown(t, list)
@@ -80,8 +80,8 @@ export function useTcBottombar(
 
 function handlePinFloatState(
   t: ThreadShow,
-  viewType: TlViewType,
   list: TcbMenuItem[],
+  viewType?: TlViewType,
 ) {
 
   // 当前在 状态栏 更多里

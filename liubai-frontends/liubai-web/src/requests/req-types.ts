@@ -105,7 +105,7 @@ export interface Res_WebhookQiniu {
 }
 
 
-/************** 同步笔记 *****************/
+/************** Sync System: upload data *****************/
 
 
 // an atom which is returned by `sync-set` cloud function
@@ -121,3 +121,5 @@ export interface SyncSetAtomRes {
 export interface Res_SyncSet_Client {
   results: SyncSetAtomRes[]
 }
+
+/************** Sync System: download data *****************/

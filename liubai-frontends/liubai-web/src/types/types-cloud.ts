@@ -4,8 +4,10 @@ import type {
   MemberState, 
   SpaceType, 
   OState,
+  SortWay,
 } from "./types-basic"
-import type { LiuAtomState } from "./types-atom"
+import type { LiuAtomState, CollectionInfoType } from "./types-atom"
+import type { ThreadListViewType } from "~/types/types-view"
 
 export interface Cloud_FileStore {
   id: string
@@ -92,6 +94,65 @@ export interface SubscriptionStripe {
 
 export type SubscriptionPaymentCircle = "monthly" | "yearly"
 
-
+/*************************** 云存储 **********************/
 // 云存储服务
 export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
+
+/********************** 同步系统: 下载内容 ********************/
+export interface Param_SyncGet_ThreadList {
+  operateType: "thread_list"
+  spaceId: string
+  viewType: ThreadListViewType
+
+  // 每次最多加载多少个，默认为 cfg.default_limit.num
+  //（该值是计算过，在 1980px 的大屏上也可以触发触底加载的）
+  limit?: number
+
+  // 加载收藏
+  collectType?: CollectionInfoType
+
+  // 加载某个 emoji
+  emojiSpecific?: string
+
+  // 默认为降序，desc
+  sort?: SortWay
+
+  // 已加载出来的最后一个 id 的 createdStamp 或 updatedStamp 或 myFavoriteStamp 或 myEmojiStamp
+  // 根据 collectType 和 oState 的不同，用不同 item 的属性
+  lastItemStamp?: number
+
+  // 加载特定的动态
+  specific_ids?: string[]
+
+  // 排除某些动态
+  excluded_ids?: string[]
+
+  // 加载特定状态的动态
+  stateId?: string
+}
+
+export interface Param_SyncGet_ThreadData {
+  operateType: "thread_data"
+  id: string
+}
+
+export interface Param_SyncGet_CommentList {
+  operateType: "comment_list"
+
+}
+
+export interface Param_SyncSet_CommentData {
+  operateType: "comment_data"
+  id: string
+}
+
+
+export interface Param_SyncGet_CheckIds {
+  operateType: "check_ids"
+  ids: string[]
+}
+
+
+export interface Param_SyncGet {
+
+}

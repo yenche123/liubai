@@ -32,7 +32,6 @@ const props = defineProps({
   },
   viewType: {
     type: String as PropType<TlViewType>,
-    default: "",
   },
   position: {
     type: Number,

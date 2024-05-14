@@ -144,7 +144,7 @@ async function handle_state(ctx: ToCtx) {
 async function handle_restore(ctx: ToCtx) {
   const { memberId, userId, thread, props, tlData, position } = ctx
   const oldThread = valTool.copyObject(thread)
-  const vT = props.viewType as TlViewType
+  const vT = props.viewType
 
   // 1. 如果当前是在回收桶里，先从 list 里删除是为了避免 menu 的抖动
   if(vT === "TRASH") {
@@ -178,7 +178,7 @@ function _toShowAgain(
 async function handle_delete(ctx: ToCtx) {
   const { memberId, userId, thread, tlData, position } = ctx
   const oldThread = valTool.copyObject(thread)
-  const vT = ctx.props.viewType as TlViewType
+  const vT = ctx.props.viewType
 
   // 0. 执行消失动画、并删除 item
   await _toHide(tlData, position)
@@ -221,7 +221,7 @@ async function handle_pin(ctx: ToCtx) {
 
   // 1. 来判断当前列表里的该 item 是否要删除
   let removedFromList = false
-  const vT = ctx.props.viewType as TlViewType
+  const vT = ctx.props.viewType
   if(vT === "INDEX" && newPin) {
     removedFromList = true
     // 由于界面的上方会被添加进 pin 列表里
@@ -250,7 +250,7 @@ async function handle_collect(ctx: ToCtx) {
 
   // 1. 来判断当前列表里的该 item 是否要删除
   let removedFromList = false
-  const vT = ctx.props.viewType as TlViewType
+  const vT = ctx.props.viewType
   if(vT === "FAVORITE" && !newFavorite) {
     removedFromList = true
     await _toHide(tlData, position)

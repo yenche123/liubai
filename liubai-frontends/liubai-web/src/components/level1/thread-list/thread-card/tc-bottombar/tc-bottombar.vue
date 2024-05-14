@@ -13,7 +13,6 @@ const props = defineProps({
   },
   viewType: {
     type: String as PropType<TlViewType>,
-    required: true
   },
 })
 const emit = defineEmits<TcbEmits>()

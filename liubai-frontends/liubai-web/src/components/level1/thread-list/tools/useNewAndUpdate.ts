@@ -101,7 +101,7 @@ function handleKanbanStateChange(
   ksc: KanbanStateChange,
 ) {
   const { list } = tlData
-  const vT = props.viewType as TlViewType
+  const vT = props.viewType
   const inIndex = vT === "INDEX" || vT === "PINNED"
 
   for(let i=0; i<list.length; i++) {
@@ -133,7 +133,7 @@ function handleNewList(
   newList: ThreadShow[],
 ) {
   const { tagId, stateId } = props
-  const viewType = props.viewType as TlViewType
+  const viewType = props.viewType
   const myList = newList.filter(v => {
     const { tagSearched = [] } = v
     // 垃圾桶时
@@ -169,7 +169,7 @@ function handleUpdatedList(
   changeFrom?: ThreadChangedFrom,
 ) {
   const { list } = tlData
-  const vT = props.viewType as TlViewType
+  const vT = props.viewType
 
   // 1. 检查是否有无需监听变化的修改
   const NO_ACTIONS: WhyThreadChange[] = [
