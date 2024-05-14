@@ -7,6 +7,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import liuEnv from "~/utils/liu-env";
 import time from "~/utils/basic/time";
 import cfg from "~/config"
+import type { OState } from "~/types/types-basic";
 
 async function getList(
   opt: TcListOption
@@ -15,7 +16,6 @@ async function getList(
     spaceId,
     sort = "desc",
     lastItemStamp,
-    oState = "OK",
     member,
     limit = cfg.default_limit_num,
     tagId,
@@ -25,6 +25,8 @@ async function getList(
     excludeIds,
     stateId,
   } = opt
+
+  const oState: OState = viewType === "TRASH" ? "REMOVED" : "OK"
   const { REMOVING_DAYS } = liuEnv.getEnv()
   const now = time.getTime()
 

@@ -33,11 +33,8 @@ export interface TcListOption {
   sort?: SortWay
 
   // 已加载出来的最后一个 id 的 createdStamp 或 updatedStamp 或 myFavoriteStamp 或 myEmojiStamp
-  // 根据 collectType 和 oState 的不同，用不同 item 的属性
+  // 根据 collectType 和 viewType 的不同，用不同 item 的属性值
   lastItemStamp?: number
-
-  // 加载正常 / 已移除 / 已删除的哪一种，默认为正常
-  oState?: OState
 
   // 指定某个 member 的动态，若有值填 member_id
   member?: string

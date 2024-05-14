@@ -203,7 +203,6 @@ async function loadList(
   const { viewType, tagId, stateId } = ctx.props
 
   let length = oldList.length
-  let oState: OState = viewType === 'TRASH' ? 'REMOVED' : 'OK'
   let lastItemStamp = reload || (length < 1) ? undefined : tlData.lastItemStamp
 
   let results: ThreadShow[] = []
@@ -229,7 +228,6 @@ async function loadList(
       spaceId,
       tagId,
       lastItemStamp,
-      oState,
     }
     if(viewType === "FAVORITE") {
       opt1.collectType = "FAVORITE"
