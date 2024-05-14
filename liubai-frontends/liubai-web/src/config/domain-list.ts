@@ -71,7 +71,8 @@ export const domainAllowed = [
   "bbs.vika.cn",
   "player.fireside.fm",
   "ithome.com",
-  "suno.ai"
+  "suno.ai",
+  "jsoncrack.com",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
