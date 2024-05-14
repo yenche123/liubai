@@ -19,6 +19,7 @@ import type {
 import time from "~/utils/basic/time"
 import type { BoolFunc } from "~/utils/basic/type-tool"
 import uut from "./tools/update-upload-task"
+import { useSyncStore } from "~/hooks/stores/useSyncStore"
 
 let resUploadToken: Res_FileSet_UploadToken | undefined
 
@@ -248,40 +249,23 @@ async function handleAnAtom(
   const _whenAFileCompleted: WhenAFileCompleted = (fileId, res) => {
     const code = res.code
     const cloud_url = res.data?.cloud_url
+    const syncStore = useSyncStore()
 
     const _wait = async (a: BoolFunc) => {
 
-      // 1. store cloud_url into files or images in the content
-      if(cId && code === "0000" && cloud_url) {
-        await _storageContent(cId, fileId, cloud_url)
+      // 1. storage cloud_url to the corresponded table
+      if(code === "0000" && cloud_url) {
+        if(cId) await _storageContent(cId, fileId, cloud_url)
+        if(mId) await _storageMember(mId, fileId, cloud_url)
+        if(dId) await _storageDraft(dId, fileId, cloud_url)
+        syncStore.afterUploadFile(fileId, cloud_url)
       }
 
-      // 2. store cloud_url into files or images in the member
-      if(mId && code === "0000" && cloud_url) {
-        await _storageMember(mId, fileId, cloud_url)
-      }
-
-      // 3. store cloud_url into files or images in the draft
-      if(dId && code === "0000" && cloud_url) {
-        await _storageDraft(dId, fileId, cloud_url)
-      }
-
-      // 4. delete the file from the content 
-      // when the file format is not supported
-      if(cId && code === "E4012") {
-        await _deleteFileFromContent(cId, fileId)
-      }
-
-      // 5. delete the file from member
-      // when the file format is not supported
-      if(mId && code === "E4012") {
-        await _deleteFileFromMember(mId, fileId)
-      }
-
-      // 6. delete the file from draft
-      // when the file format is not supported
-      if(dId && code === "E4012") {
-        await _deleteFileFromDraft(dId, fileId)
+      // 2. delete file from the corresponded table
+      if(code === "E4012") {
+        if(cId) await _deleteFileFromContent(cId, fileId)
+        if(mId) await _deleteFileFromMember(mId, fileId)
+        if(dId) await _deleteFileFromDraft(dId, fileId)
       }
       
       a(true)

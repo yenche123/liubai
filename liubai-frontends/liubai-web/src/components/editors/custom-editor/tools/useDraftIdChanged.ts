@@ -1,8 +1,14 @@
-import { useSyncStore, type SyncStoreItem } from "~/hooks/stores/useSyncStore";
+import { 
+  useSyncStore, 
+  type SyncStoreItem, 
+  type NewFileItem,
+} from "~/hooks/stores/useSyncStore";
 import type { CeData } from "./types"
 import { storeToRefs } from "pinia";
 import { watch } from "vue";
 import liuEnv from "~/utils/liu-env";
+import type { LiuFileStore, LiuImageStore } from "~/types";
+import time from "~/utils/basic/time";
 
 export function useDraftIdChanged(
   ceData: CeData,
@@ -11,13 +17,38 @@ export function useDraftIdChanged(
   if(!backend) return
 
   const syncStore = useSyncStore()
-  const { drafts } = storeToRefs(syncStore)
+  const { drafts, files } = storeToRefs(syncStore)
   watch(drafts, (newV) => {
     if(newV.length < 1) return
     handleIdsChanged(ceData, newV)
   })
+
+  watch(files, (newV) => {
+    if(newV.length < 1) return
+    handleCloudUrls(ceData, newV)
+  })
 }
 
+function handleCloudUrls(
+  ceData: CeData,
+  items: NewFileItem[],
+) {
+  const { files = [], images = [] } = ceData
+
+  // 1. using lastInitStamp to lock toSave
+  ceData.lastInitStamp = time.getTime()
+
+  // 2. to find
+  const _find = (v1: LiuFileStore | LiuImageStore) => {
+    const id = v1.id
+    const d = items.find(v2 => v2.file_id === id)
+    if(!d) return
+    v1.cloud_url = d.cloud_url
+  }
+
+  files.forEach(_find)
+  images.forEach(_find)
+}
 
 function handleIdsChanged(
   ceData: CeData,

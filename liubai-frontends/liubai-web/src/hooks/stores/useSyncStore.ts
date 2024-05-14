@@ -11,11 +11,17 @@ export interface SyncStoreAtom {
 
 export type SyncStoreItem = Omit<SyncStoreAtom, "whichType">
 
+export interface NewFileItem {
+  file_id: string
+  cloud_url: string
+}
+
 export const useSyncStore = defineStore("sync", () => {
   const threads = shallowRef<SyncStoreItem[]>([])
   const comments = shallowRef<SyncStoreItem[]>([])
   const drafts = shallowRef<SyncStoreItem[]>([])
   const collections = shallowRef<SyncStoreItem[]>([])
+  const files = shallowRef<NewFileItem[]>([])
 
   const afterSync = (list: SyncStoreAtom[]) => {
     const tmpThreads: SyncStoreItem[] = []
@@ -41,11 +47,17 @@ export const useSyncStore = defineStore("sync", () => {
     collections.value = tmpCollections
   }
 
+  const afterUploadFile = (file_id: string, cloud_url: string) => {
+    files.value = [{ file_id, cloud_url }]
+  }
+
   return {
     threads,
     comments,
     drafts,
     collections,
+    files,
     afterSync,
+    afterUploadFile,
   }
 })
