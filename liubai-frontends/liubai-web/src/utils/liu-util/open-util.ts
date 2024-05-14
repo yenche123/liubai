@@ -30,7 +30,11 @@ function toWhatDetail(opt: RrOpt): WhatDetail {
 
   let point = cfg.vice_detail_breakpoint
   const { sidebarWidth } = useLayoutStore()
-  if(sidebarWidth <= 0) point -= 150
+  if(sidebarWidth <= 0) point -= cfg.min_sidebar_width
+  else if(sidebarWidth <= 100) {
+    const diff = cfg.min_sidebar_width - sidebarWidth
+    point -= diff
+  }
   
   if(width.value < point) return "detail-page"
 
