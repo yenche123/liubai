@@ -13,6 +13,8 @@ Build! Anyway
 
 3. `mobile-kanban` 分支，对于移动设备，看板里的卡片是整个可以拖动的，而不像原来只能触摸右小角 6 点点来拖动；但由于没有 ipad 在身边，未经测试，故没有合并到 `main` 分支中。
 
+4. 切换 enable / show 时，若该组件全局只有一个，那么可以使用 toggleTimeout，否则多个实例共用同一个 toggleTimeout，状态就乱了。
+
 ## 前后端同步原则
 
 ### 要求实时联网
