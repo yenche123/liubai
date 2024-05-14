@@ -402,5 +402,9 @@ export async function packSyncSetAtoms(tasks: UploadTaskLocalTable[]) {
       uut.toDeleteTask(v._id)
     }
   }
+
+  console.log("看一下 atoms: ")
+  console.log(atoms)
+
   return atoms
 }
