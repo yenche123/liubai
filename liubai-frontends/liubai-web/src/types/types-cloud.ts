@@ -99,7 +99,12 @@ export type SubscriptionPaymentCircle = "monthly" | "yearly"
 export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
 
 /********************** 同步系统: 下载内容 ********************/
-export interface Param_SyncGet_ThreadList {
+
+export interface SyncGet_Base {
+  taskId: string
+}
+
+export interface SyncGet_ThreadList {
   operateType: "thread_list"
   spaceId: string
   viewType: ThreadListViewType
@@ -131,28 +136,53 @@ export interface Param_SyncGet_ThreadList {
   stateId?: string
 }
 
-export interface Param_SyncGet_ThreadData {
+export interface SyncGet_ThreadData {
   operateType: "thread_data"
   id: string
 }
 
-export interface Param_SyncGet_CommentList {
+export interface SyncGet_CommentList_A {
   operateType: "comment_list"
-
+  loadType: "under_thread"
+  targetThread: string
+  lastItemStamp?: number
 }
 
-export interface Param_SyncSet_CommentData {
+export interface SyncGet_CommentList_B {
+  operateType: "comment_list"
+  loadType: "find_children"
+  commentId: string
+  lastItemStamp?: number
+}
+
+export interface SyncGet_CommentList_C {
+  operateType: "comment_list"
+  loadType: "find_parent"
+  parentWeWant: string
+  grandparent?: string
+}
+
+export interface SyncGet_CommentList_D {
+  operateType: "comment_list"
+  loadType: "find_hottest"
+  commentId: string
+}
+
+export type SyncGet_CommentList = SyncGet_CommentList_A | 
+  SyncGet_CommentList_B | SyncGet_CommentList_C | SyncGet_CommentList_D
+
+export interface SyncSet_CommentData {
   operateType: "comment_data"
   id: string
 }
 
 
-export interface Param_SyncGet_CheckIds {
+export interface SyncGet_CheckIds {
   operateType: "check_ids"
   ids: string[]
 }
 
+export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |
+SyncGet_CommentList | SyncGet_CheckIds
 
-export interface Param_SyncGet {
-
-}
+export type Param_SyncGet = CloudMergerOpt & SyncGet_Base

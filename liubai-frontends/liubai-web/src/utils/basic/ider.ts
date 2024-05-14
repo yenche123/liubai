@@ -65,6 +65,10 @@ const createUploadTaskId = () => {
   return "u1" + _createId(20)
 }
 
+const createSyncGetTaskId = () => {
+  return "sg0" + _createId(20)
+}
+
 const createEncNonce = () => {
   return _createId(10)
 }
@@ -88,6 +92,7 @@ export default {
   createRandom,
   createDownloadTaskId,
   createUploadTaskId,
+  createSyncGetTaskId,
   createEncNonce,
   createFileNonce,
 }
