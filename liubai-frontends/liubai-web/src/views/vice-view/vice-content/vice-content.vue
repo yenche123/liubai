@@ -103,6 +103,7 @@ const {
               <CommentDetail
                 location="vice-view"
                 :target-id="item.id"
+                @pagestatechange="onViewStateChange"
                 :is-showing="item.show"
               ></CommentDetail>
             </div>

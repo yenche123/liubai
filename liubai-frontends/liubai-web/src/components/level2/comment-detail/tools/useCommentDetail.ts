@@ -86,7 +86,7 @@ async function loadTargetComment(
   }
   const res = await commentController.loadByComment(opt)
   const c = res[0]
-  if(c?.oState !== "OK") {
+  if(!c || c.oState !== "OK") {
     cdData.state = 50
     emit("pagestatechange", 50)
     return

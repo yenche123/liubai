@@ -28,7 +28,8 @@ export async function equipComments(
   let list: CommentShow[] = []
   for(let i=0; i<contents.length; i++) {
     const v = contents[i]
-    const { member, user, _id } = v
+    const { member, user, _id, infoType } = v
+    if(infoType !== "COMMENT") continue
 
     const _collections = collections.filter(v2 => v2.content_id === _id)
     let creator: MemberShow | undefined = undefined
