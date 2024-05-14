@@ -8,11 +8,6 @@ export interface TcListOption {
   // 加载哪个工作区的动态
   spaceId: string
 
-  // 是否为仅本地获取，默认为 ture
-  // 若为 false 则从云端获取，获取过程中会把更新融进 IndexedDB 里
-  // 再把包含 LOCAL / ONLY_LOCAL 的数据返回给调用者，让业务侧能批量绑定到视图上，无需过滤
-  onlyLocal?: boolean
-
   // 当前列表的视图类型
   viewType: ThreadListViewType
 
@@ -52,5 +47,4 @@ export interface TcListOption {
 
 export interface TcDataOption {
   id: string
-  local?: boolean    // 默认为 true
 }

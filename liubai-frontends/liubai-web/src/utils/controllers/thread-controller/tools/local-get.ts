@@ -120,12 +120,8 @@ async function getList(
     // console.timeEnd("查询非首页")
   }
 
-  // console.log(" ")
 
-  // console.time("equipThreads")
   let threads = await equipThreads(list)
-  // console.timeEnd("equipThreads")
-  // console.log(" ")
   
   return threads
 }
@@ -141,7 +137,7 @@ async function getData(
   id: string
 ) {
   const data = await db.contents.get(id)
-  if(!data) return data
+  if(!data) return
   const threads = await equipThreads([data])
   return threads[0]
 }
