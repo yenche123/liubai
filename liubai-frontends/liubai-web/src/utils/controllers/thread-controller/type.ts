@@ -35,10 +35,10 @@ export interface TcListOption {
   member?: string
 
   // 加载特定的动态
-  ids?: string[]
+  specific_ids?: string[]
 
   // 排除某些动态
-  excludeIds?: string[]
+  excluded_ids?: string[]
 
   // 加载特定状态的动态
   stateId?: string

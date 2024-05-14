@@ -91,7 +91,7 @@ async function getThreadsOfAState(
     }
 
     const limitNum = cfg.default_limit_num
-    listOpt.excludeIds = tmpContentIds
+    listOpt.excluded_ids = tmpContentIds
     listOpt.lastItemStamp = lastItemStamp
     listOpt.limit = limitNum
     const res = await threadController.getList(listOpt)
@@ -106,7 +106,7 @@ async function getThreadsOfAState(
   // 这时要注意，也可能把已删除的动态加载过来，需要进行处理
   const cLength = contentIds.length
   if(!cLength) return NOTHING_DATA  
-  listOpt.ids = contentIds
+  listOpt.specific_ids = contentIds
   const res2 = await threadController.getList(listOpt)
 
   for(let i=0; i<res2.length; i++) {

@@ -21,8 +21,8 @@ async function getList(
     tagId,
     collectType,
     viewType,
-    ids,
-    excludeIds,
+    specific_ids,
+    excluded_ids,
     stateId,
   } = opt
 
@@ -51,7 +51,7 @@ async function getList(
     } = item
     
     if(infoType !== "THREAD") return false
-    if(ids && ids.includes(_id)) return true
+    if(specific_ids && specific_ids.includes(_id)) return true
     if(tagId && !tagSearched.includes(tagId)) return false
     if(stateId && stateId !== stateOnThread) return false
     if(isIndex) {
@@ -59,7 +59,7 @@ async function getList(
       if(stateOnThread && statesNoInIndex.includes(stateOnThread)) return false
     }
     if(isPin && !pinStamp) return false
-    if(excludeIds && excludeIds.includes(_id)) return false
+    if(excluded_ids && excluded_ids.includes(_id)) return false
     if(item.spaceId !== spaceId) return false
     if(item.oState !== oState) return false
     if(member && member !== item.member) return false
@@ -79,15 +79,15 @@ async function getList(
   let key = oState === 'OK' ? "createdStamp" : "updatedStamp"
   if(isPin) key = "pinStamp"
 
-  if(ids?.length) {
+  if(specific_ids?.length) {
     // I. 加载特定 ids
-    let tmp = db.contents.where("_id").anyOf(ids)
+    let tmp = db.contents.where("_id").anyOf(specific_ids)
     tmp = tmp.filter(filterFunc)
     let tmpList = await tmp.toArray()
 
     // 排序成 ids 的顺序
     if(tmpList.length > 1) {
-      ids.forEach(id => {
+      specific_ids.forEach(id => {
         let data = tmpList.find(v => v._id === id)
         if(data) list.push(data)
       })
