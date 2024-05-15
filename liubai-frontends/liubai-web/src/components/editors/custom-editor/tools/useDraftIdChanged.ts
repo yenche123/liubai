@@ -35,8 +35,8 @@ function handleCloudUrls(
 ) {
   const { files = [], images = [] } = ceData
 
-  // 1. using lastInitStamp to lock toSave
-  ceData.lastInitStamp = time.getTime()
+  // 1. using lastLockStamp to lock toSave
+  ceData.lastLockStamp = time.getTime()
 
   // 2. to find
   const _find = (v1: LiuFileStore | LiuImageStore) => {

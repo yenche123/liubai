@@ -45,7 +45,7 @@ export function initCeData(
   let ceData = reactive<CeData>({
     ...defaultData,
     threadEdited: tVal.value,
-    lastInitStamp: time.getTime(),
+    lastLockStamp: time.getTime(),
   })
   
   const numWhenSet = ref(0)
@@ -151,7 +151,7 @@ async function initDraftFromDraft(
   let { ceData, editor, numWhenSet } = ctx
 
   // 开始处理 draft 有值的情况
-  ceData.lastInitStamp = time.getTime()
+  ceData.lastLockStamp = time.getTime()
   ceData.draftId = draft._id
 
   if(draft.visScope) {
@@ -192,7 +192,7 @@ async function initDraftFromThread(
   let { ceData, editor, numWhenSet } = ctx
   const be = liuEnv.hasBackend()
 
-  ceData.lastInitStamp = time.getTime()
+  ceData.lastLockStamp = time.getTime()
   ceData.draftId = ""
   ceData.visScope = thread.visScope
   ceData.storageState = be ? thread.storageState : "LOCAL"

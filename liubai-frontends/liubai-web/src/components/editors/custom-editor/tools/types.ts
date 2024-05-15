@@ -17,7 +17,7 @@ export interface CeData {
   tagIds: string[]
   editorContent?: EditorCoreContent
   lastTagChangeStamp?: number
-  lastInitStamp?: number     // 上一次重新赋值 init 的时间戳
+  lastLockStamp?: number     // 上一次重新赋值 init 的时间戳
   overflowType: "auto" | "visible"
   showTitleBar: boolean
   canSubmit: boolean

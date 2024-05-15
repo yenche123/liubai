@@ -205,7 +205,7 @@ export function useCeData(
 
 function _isRequiredChange(ceData: CeData) {
   // 刚刚才 setup，拒绝缓存图片、文件、tagIds
-  if(time.isWithinMillis(ceData.lastInitStamp ?? 1, 900)) {
+  if(time.isWithinMillis(ceData.lastLockStamp ?? 1, 900)) {
     return false
   }
 
