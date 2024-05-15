@@ -1,5 +1,8 @@
 // 存放所有接口返回的 data 类型
 import type { 
+  ContentInfoType,
+  LiuContent,
+  LiuRemindMe,
   LocalTheme, 
 } from "~/types/types-atom"
 import type { LocalLocale } from "~/types/types-locale"
@@ -10,8 +13,11 @@ import type {
   SubscriptionPaymentCircle,
   CloudStorageService,
   Cloud_ImageStore,
+  Cloud_FileStore,
 } from "~/types/types-cloud"
-import { OState_3, SpaceType } from "~/types/types-basic"
+import { OState, OState_2, OState_3, SpaceType, StorageState, VisScope } from "~/types/types-basic"
+import { EmojiData } from "~/types/types-content"
+import { ContentConfig } from "~/types/other/types-custom"
 
 
 /********************** Hello World *******************/
@@ -131,7 +137,11 @@ export type LiuDownloadStatus = "ok" | "not_found" | "deleted" | "only_local"
 
 
 export interface LiuDownloadCollection {
-
+  _id: string
+  first_id: string
+  oState: OState_2
+  operateStamp?: number
+  emoji?: string   // the emoji through encodeURIComponent()
 }
 
 export interface LiuDownloadAuthor {
@@ -146,9 +156,6 @@ export interface LiuDownloadAuthor {
 
 export interface LiuDownloadContent {
   _id: string
-  insertedStamp: number
-  updatedStamp: number
-
   first_id: string
 
   isMine: boolean
@@ -156,12 +163,39 @@ export interface LiuDownloadContent {
   spaceId: string
   spaceType: SpaceType
 
+  infoType: ContentInfoType
+  oState: OState
+  visScope: VisScope
+  storageState: StorageState
 
+  title?: string
+  liuDesc?: LiuContent[]
+  images?: Cloud_ImageStore[]
+  files?: Cloud_FileStore[]
+
+  calendarStamp?: number
+  remindStamp?: number
+  whenStamp?: number
+  remindMe?: LiuRemindMe
+  emojiData: EmojiData
+  parentThread?: string
+  parentComment?: string
+  replyToComment?: string
+  pinStamp?: number         // 被置顶时的时间戳，被取消置顶时为 0
+
+  createdStamp: number      // 动态被创建的时间戳
+  editedStamp: number       // 动态被编辑的时间戳
+
+  tagIds?: string[]         // 用于显示的 tagId
+  tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
+  stateId?: string
+  config?: ContentConfig
+
+  levelOne?: number         // 一级评论数
+  levelOneAndTwo?: number   // 一级 + 二级评论数
 
   myFavorite?: LiuDownloadCollection
   myEmoji?: LiuDownloadCollection
-
-
 }
 
 export interface LiuDownloadParcel {

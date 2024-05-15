@@ -82,10 +82,12 @@ export interface ContentLocalTable extends BaseLocalTable {
   oState: OState
   visScope: VisScope
   storageState: StorageState
+
   title?: string
   liuDesc?: LiuContent[]
   images?: LiuImageStore[]
   files?: LiuFileStore[]
+
   calendarStamp?: number
   remindStamp?: number
   whenStamp?: number
@@ -95,16 +97,20 @@ export interface ContentLocalTable extends BaseLocalTable {
   parentComment?: string
   replyToComment?: string
   pinStamp?: number         // 被置顶时的时间戳，被取消置顶时为 0
+
   createdStamp: number      // 动态被创建的时间戳
   editedStamp: number       // 动态被编辑的时间戳
+
   tagIds?: string[]         // 用于显示的 tagId
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
   stateId?: string
   config?: ContentConfig
   search_title?: string
   search_other?: string
+
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
+
   firstSyncStamp?: number   // the stamp when the content is first synced
 }
 
@@ -146,6 +152,8 @@ export interface CollectionLocalTable extends BaseLocalTable {
   emoji?: string        // 经 encodeURIComponent() 的表情
   operateStamp?: number
   firstSyncStamp?: number   // the stamp when the content is first synced
+                           // set it after the sync process is done and
+                           // you get new_id
 }
 
 
