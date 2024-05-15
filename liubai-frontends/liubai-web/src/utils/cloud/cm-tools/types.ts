@@ -1,7 +1,7 @@
 import type { SyncGetAtom } from "~/types/types-cloud"
-import type { BoolFunc } from "~/utils/basic/type-tool"
+import type { LiuDownloadParcel } from "~/requests/req-types"
 
-export type CmResolver = BoolFunc
+export type CmResolver = (list?: LiuDownloadParcel[]) => void
 
 export interface CmTask {
   data: SyncGetAtom

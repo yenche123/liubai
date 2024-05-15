@@ -132,8 +132,7 @@ export interface Res_SyncSet_Client {
 /************** Sync System: download data *****************/
 
 
-export type LiuDownloadStatus = "ok" | "not_found" | "deleted" | "only_local"
-  | "user_deleted"
+export type LiuDownloadStatus = "has_data" | "not_found"
 
 
 export interface LiuDownloadCollection {
@@ -198,16 +197,35 @@ export interface LiuDownloadContent {
   myEmoji?: LiuDownloadCollection
 }
 
-export interface LiuDownloadParcel {
-  id: string
-  status: LiuDownloadParcel
-  data?: LiuDownloadContent
+export interface LiuDownloadDraft {
+  _id: string
+  first_id: string
 }
 
+interface LDP_Base {
+  id: string
+  status: LiuDownloadStatus
+}
+
+export interface LiuDownloadParcel_A extends LDP_Base {
+  parcelType: "content"
+  content?: LiuDownloadContent
+}
+
+export interface LiuDownloadParcel_B extends LDP_Base {
+  parcelType: "draft"
+  draft?: LiuDownloadDraft
+}
+
+export type LiuDownloadParcel = LiuDownloadParcel_A | LiuDownloadParcel_B
 
 export interface SyncGetAtomRes {
   code: string
   taskId: string
   errMsg?: string
   list?: LiuDownloadParcel[]
+}
+
+export interface Res_SyncGet_Client {
+  results: SyncGetAtomRes[]
 }

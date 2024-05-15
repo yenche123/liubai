@@ -235,6 +235,13 @@ const compareVersion = (v1: string, v2: string) => {
   return 0
 }
 
+// removing duplicates from an array
+const uniqueArray = (arr: string[]) => {
+  const uniqueSet = new Set(arr)
+  const uniqueArr = [...uniqueSet]
+  return uniqueArr
+}
+
 
 export default {
   waitMilli,
@@ -256,4 +263,5 @@ export default {
   isInDomain,
   minusAndMinimumZero,
   compareVersion,
+  uniqueArray,
 }

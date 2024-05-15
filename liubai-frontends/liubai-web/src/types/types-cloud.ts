@@ -100,7 +100,7 @@ export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
 
 /********************** 同步系统: 下载内容 ********************/
 
-export interface SyncGet_Base {
+interface SyncGet_Base {
   taskId: string
 }
 
@@ -176,13 +176,17 @@ export interface SyncSet_CommentData {
   id: string
 }
 
-
-export interface SyncGet_CheckIds {
-  operateType: "check_ids"
+export interface SyncGet_CheckContents {
+  operateType: "check_contents"
   ids: string[]
 }
 
+export interface SyncGet_Draft {
+  operateType: "draft_data"
+  id: string
+}
+
 export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |
-SyncGet_CommentList | SyncGet_CheckIds
+SyncGet_CommentList | SyncGet_CheckContents
 
 export type SyncGetAtom = CloudMergerOpt & SyncGet_Base
