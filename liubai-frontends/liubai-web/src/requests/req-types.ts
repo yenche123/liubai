@@ -10,7 +10,9 @@ import type {
   SubscriptionStripe,
   SubscriptionPaymentCircle,
   CloudStorageService,
+  Cloud_ImageStore,
 } from "~/types/types-cloud"
+import { SpaceType } from "~/types/types-basic"
 
 
 /********************** Hello World *******************/
@@ -123,3 +125,54 @@ export interface Res_SyncSet_Client {
 }
 
 /************** Sync System: download data *****************/
+
+
+export type LiuDownloadStatus = "ok" | "not_found" | "deleted" | "only_local"
+  | "user_deleted"
+
+
+export interface LiuDownloadCollection {
+
+}
+
+export interface LiuDownloadAuthor {
+  user_id: string
+  user_name?: string
+  user_avatar?: Cloud_ImageStore
+  member_id?: string
+
+}
+
+export interface LiuDownloadContent {
+  _id: string
+  insertedStamp: number
+  updatedStamp: number
+
+  first_id: string
+
+  isMine: boolean
+  author: LiuDownloadAuthor
+  spaceId: string
+  spaceType: SpaceType
+
+
+
+  myFavorite?: LiuDownloadCollection
+  myEmoji?: LiuDownloadCollection
+
+
+}
+
+export interface LiuDownloadParcel {
+  id: string
+  status: LiuDownloadParcel
+  data?: LiuDownloadContent
+}
+
+
+export interface SyncGetAtomRes {
+  code: string
+  taskId: string
+  errMsg?: string
+  list?: LiuDownloadParcel[]
+}

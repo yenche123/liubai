@@ -38,7 +38,6 @@ export interface BaseLocalTable {
  *   之后被创建的 member 都是从 User 表中授权过去的关系
 */
 export interface UserLocalTable extends BaseLocalTable {
-  oState: "NORMAL"
   lastRefresh: number
   email?: string
   github_id?: number
@@ -51,7 +50,6 @@ export interface UserLocalTable extends BaseLocalTable {
 }
 
 export interface WorkspaceLocalTable extends BaseLocalTable {
-  first_id: string
   infoType: "ME" | "TEAM"
   stateConfig?: LiuStateConfig
   tagList?: TagView[]
@@ -63,7 +61,6 @@ export interface WorkspaceLocalTable extends BaseLocalTable {
 }
 
 export interface MemberLocalTable extends BaseLocalTable {
-  first_id: string
   name?: string
   avatar?: LiuImageStore
   spaceId: string

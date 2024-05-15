@@ -74,7 +74,6 @@ async function createSpace(
   const t = time.getTime()
   const data: WorkspaceLocalTable = {
     _id: v.spaceId,
-    first_id: v.spaceId,
     infoType: v.spaceType,
     oState: v.space_oState,
     owner: v.space_owner,
@@ -102,7 +101,6 @@ async function createMember(
   const data: MemberLocalTable = {
     ...b1,
     _id: v.memberId,
-    first_id: v.memberId,
     spaceId: v.spaceId,
     user: userId,
     oState: v.member_oState,
@@ -132,7 +130,6 @@ async function createUser(
   const t = time.getTime()
   const data: UserLocalTable = {
     _id: userId,
-    oState: "NORMAL",
     insertedStamp: t,
     updatedStamp: t,
     lastRefresh: t,

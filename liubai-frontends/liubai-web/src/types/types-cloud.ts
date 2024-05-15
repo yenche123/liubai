@@ -185,4 +185,4 @@ export interface SyncGet_CheckIds {
 export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |
 SyncGet_CommentList | SyncGet_CheckIds
 
-export type Param_SyncGet = CloudMergerOpt & SyncGet_Base
+export type SyncGetAtom = CloudMergerOpt & SyncGet_Base

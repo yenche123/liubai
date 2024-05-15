@@ -13,5 +13,5 @@ export default {
   REQUEST_REFUND: d + `subscribe-plan`,
   UPLOAD_FILE: d + `file-set`,
   SYNC_SET: d + `sync-set`,
-  SYNC_READ: d + `sync-read`,
+  SYNC_GET: d + `sync-get`,
 }
