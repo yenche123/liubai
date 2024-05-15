@@ -144,7 +144,9 @@ async function handleSpaceAndMember(
     if(!v2) continue
 
     let updated = false
-    const u5: Partial<WorkspaceLocalTable> = {}
+    const u5: Partial<WorkspaceLocalTable> = {
+      updatedStamp: time.getTime(),
+    }
 
     // check oState
     if(v1.oState !== v2.space_oState) {
