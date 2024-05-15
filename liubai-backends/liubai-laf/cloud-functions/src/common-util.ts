@@ -763,7 +763,7 @@ export function getEncryptedData(
     const k = keys[i]
     if(!k.startsWith("plz_enc_")) {
 
-      // if plz_enc_${k} exists, ignore
+      // if newData[plz_enc_${k}] exists, ignore
       const tmpK = `plz_enc_${k}`
       if(newData[tmpK]) continue
 
@@ -771,12 +771,17 @@ export function getEncryptedData(
       continue
     }
 
-    // if client_key is undefined, ignore
+    // if client_key is undefined
+    const newK = k.replace("plz_enc_", "liu_enc_")
+    const originK = newK.replace("liu_enc_", "")
+
     if(!client_key) {
+      // if newData[originK] exists, ignore
+      if(newData[originK]) continue
+      newData[originK] = oldData[k]
       continue
     }
-
-    const newK = k.replace("plz_enc_", "liu_enc_")
+    
     const val = oldData[k] as CryptoCipherAndIV
     const p1: LiuPlainText = {
       pre: client_key.substring(0, 5),
@@ -796,7 +801,6 @@ export function getEncryptedData(
     newData[newK] = newVal
 
     // delete originK
-    const originK = newK.replace("liu_enc_", "")
     if(newData[originK]) {
       delete newData[originK]
     }
