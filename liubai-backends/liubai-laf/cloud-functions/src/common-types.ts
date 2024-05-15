@@ -884,7 +884,7 @@ export interface Table_Collection extends BaseTable {
   oState: OState_2
   user: string
   member?: string
-  infoType: "EXPRESS" | "FAVORITE"
+  infoType: CollectionInfoType
   forType: ContentInfoType
   spaceId: string
   spaceType: SpaceType
