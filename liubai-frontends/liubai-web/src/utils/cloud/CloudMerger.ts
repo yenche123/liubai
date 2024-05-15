@@ -51,6 +51,7 @@ class CloudMerger {
     const list = this.tasks.splice(0, num)
     const atoms = list.map(v => v.data)
 
+    // 1. fetch
     const url = APIs.SYNC_GET
     const opt = {
       operateType: "general_sync",
@@ -59,11 +60,14 @@ class CloudMerger {
     const res1 = await liuReq.request<Res_SyncGet_Client>(url, opt)
     const code1 = res1.code
     const results = res1.data?.results
+
+    // 2. if error happens
     if(code1 !== "0000" || !results) {
       list.forEach(v => v.resolver())
       return
     }
 
+    // 3. handle results
     for(let i1=0; i1<results.length; i1++) {
       const v1 = results[i1]
       const taskId = v1.taskId
