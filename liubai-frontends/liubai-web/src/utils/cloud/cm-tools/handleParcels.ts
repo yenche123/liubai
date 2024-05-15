@@ -1,11 +1,17 @@
 import type { 
+  LiuDownloadAuthor,
+  LiuDownloadCollection,
   LiuDownloadContent, 
   LiuDownloadDraft, 
   LiuDownloadParcel, 
   LiuDownloadParcel_A, 
   LiuDownloadParcel_B,
 } from "~/requests/req-types";
-import type { LiuTable } from "~/types/types-atom";
+import type { 
+  CollectionInfoType, 
+  ContentInfoType, 
+  LiuTable,
+} from "~/types/types-atom";
 import type {
   CollectionLocalTable, 
   ContentLocalTable, 
@@ -13,8 +19,11 @@ import type {
   MemberLocalTable,
   UserLocalTable,
 } from "~/types/types-table";
+import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
 import { db } from "~/utils/db";
+import { CloudFiler } from "../CloudFiler";
+import type { SpaceType } from "~/types/types-basic";
 
 
 let merged_content_ids: string[] = []
@@ -43,7 +52,15 @@ export async function handleLiuDownloadParcels(
     await handleDraftParcels(parcels_2)
   }
 
+  reset()
   
+}
+
+function reset() {
+  merged_content_ids = []
+  merged_collection_ids = []
+  merged_member_ids = []
+  merged_user_ids = []
 }
 
 async function handleContentParcels(
@@ -172,7 +189,236 @@ async function mergeContent(
   d: LiuDownloadContent,
   opt: MergeContentOpt,
 ) {
+  const content_id = d._id
+  const { author, spaceId, spaceType, infoType, myEmoji, myFavorite } = d
+  const userId = author.user_id
+  
+  if(!d.isMine) {
+    // 1. it's not data I've ever posted,  go get to merge member & user
+    await mergeMember(author, spaceId, opt.oldMember)
+    await mergeUser(author, opt.oldUser)
+  }
+  else {
+    // 2. it's mine! Go to merge emoji & favorite
+    const mcOpt: MergeCollectionOpt = {
+      collectionType: "FAVORITE",
+      contentType: infoType,
+      spaceId,
+      spaceType,
+      content_id,
+      oldCollection: opt.oldFavorite,
+    }
 
+    if(myFavorite) {
+      await mergeCollection(myFavorite, mcOpt)
+    }
+    if(myEmoji) {
+      mcOpt.collectionType = "EXPRESS"
+      mcOpt.oldCollection = opt.oldEmoji
+      await mergeCollection(myEmoji, mcOpt)
+    }
+
+  }
+
+}
+
+interface MergeCollectionOpt {
+  collectionType: CollectionInfoType
+  contentType: ContentInfoType
+  spaceId: string
+  spaceType: SpaceType
+  content_id: string
+  oldCollection?: CollectionLocalTable
+}
+
+async function mergeCollection(
+  d: LiuDownloadCollection,
+  opt: MergeCollectionOpt,
+) {
+  const collection_id = d._id
+  if(!collection_id) return
+  const handled = merged_collection_ids.includes(collection_id)
+  if(handled) return
+  merged_collection_ids.push(collection_id)
+
+  const { 
+    collectionType,
+    contentType,
+    spaceId,
+    spaceType,
+    content_id,
+    oldCollection,
+  } = opt
+  const now = time.getTime()
+
+  // 1. create collection if no oldCollection
+  if(!oldCollection) {
+    const b1 = time.getBasicStampWhileAdding()
+    const u1: CollectionLocalTable = {
+      _id: collection_id,
+      ...b1,
+      first_id: d.first_id,
+      oState: d.oState,
+      user: d.user,
+      member: d.member,
+      infoType: collectionType,
+      forType: contentType,
+      spaceId,
+      spaceType,
+      content_id,
+      emoji: d.emoji,
+      operateStamp: d.operateStamp,
+      firstSyncStamp: now,
+    }
+    await db.collections.put(u1)
+    return
+  }
+
+  // 2. compare operateStamp
+  const oldStamp = oldCollection.operateStamp ?? 2
+  const newStamp = d.operateStamp ?? 1
+  if(newStamp <= oldStamp) return
+
+  // 3. update collection
+  const u3: Partial<CollectionLocalTable> = {
+    oState: d.oState,
+    emoji: d.emoji,
+    infoType: collectionType,
+    operateStamp: now,
+    updatedStamp: now,
+  }
+  await db.collections.update(collection_id, u3)
+}
+
+
+async function mergeUser(
+  d: LiuDownloadAuthor,
+  oldUser?: UserLocalTable,
+) {
+  const userId = d.user_id
+  if(!userId) return
+  const handled = merged_user_ids.includes(userId)
+  if(handled) return
+  merged_user_ids.push(userId)
+
+  const now = time.getTime()
+  const u_name = d.user_name
+  const u_avatar = d.user_avatar
+
+  // 1. create user if no oldUser
+  if(!oldUser) {
+    const b1 = time.getBasicStampWhileAdding()
+    const { image: avatar, useCloud } = CloudFiler.imageFromCloudToStore(u_avatar)
+    const u1: UserLocalTable = {
+      _id: userId,
+      ...b1,
+      lastRefresh: now,
+      name: u_name,
+      avatar,
+    }
+    await db.users.put(u1)
+    if(useCloud) CloudFiler.notify("users", userId)
+    return
+  }
+
+  // 2. update user
+  let updated = false
+  const u2: Partial<UserLocalTable> = {
+    updatedStamp: now,
+  }
+
+  // 2.1 checking out name
+  if(oldUser.name !== u_name) {
+    u2.name = u_name
+    updated = true
+  }
+
+  // 2.2 checking out avatar
+  const avatarRes = CloudFiler.imageFromCloudToStore(u_avatar, oldUser.avatar)
+  if(avatarRes.useCloud) {
+    u2.avatar = avatarRes.image
+    updated = true
+  }
+
+  // 2.3 get to update
+  if(updated) {
+    await db.users.update(userId, u2)
+  }
+
+  if(avatarRes.useCloud) {
+    CloudFiler.notify("users", userId)
+  }
+}
+
+
+async function mergeMember(
+  d: LiuDownloadAuthor,
+  spaceId: string,
+  oldMember?: MemberLocalTable,
+) {
+  const userId = d.user_id
+  const m_id = d.member_id
+  const m_oState = d.member_oState
+  if(!m_id || !m_oState) return
+  const handled = merged_member_ids.includes(m_id)
+  if(handled) return
+  merged_member_ids.push(m_id)
+
+  const m_name = d.member_name
+  const m_avatar = d.member_avatar
+  
+  // 1. create member if no oldMember
+  if(!oldMember) {
+    const b1 = time.getBasicStampWhileAdding()
+    const { image: avatar, useCloud } = CloudFiler.imageFromCloudToStore(m_avatar)
+    const u1: MemberLocalTable = {
+      _id: m_id,
+      ...b1,
+      user: userId,
+      spaceId,
+      name: m_name,
+      avatar,
+      oState: m_oState,
+    }
+    await db.members.put(u1)
+    if(useCloud) CloudFiler.notify("members", m_id)
+    return
+  }
+  
+  // 2. update member
+  let updated = false
+  const now = time.getTime()
+  const u2: Partial<MemberLocalTable> = {
+    updatedStamp: now,
+  }
+
+  // 2.1 check out oState
+  if(oldMember.oState !== m_oState) {
+    u2.oState = m_oState
+    updated = true
+  }
+
+  // 2.2 check out name
+  if(oldMember.name !== m_name) {
+    u2.name = m_name
+    updated = true
+  }
+
+  // 2.3 check out avatar
+  const avatarRes = CloudFiler.imageFromCloudToStore(m_avatar, oldMember.avatar)
+  if(avatarRes.useCloud) {
+    u2.avatar = avatarRes.image
+    updated = true
+  }
+
+  // 2.4 get to update
+  if(updated) {
+    await db.members.update(m_id, u2)
+  }
+
+  if(avatarRes.useCloud) {
+    CloudFiler.notify("members", m_id)
+  }
 }
 
 

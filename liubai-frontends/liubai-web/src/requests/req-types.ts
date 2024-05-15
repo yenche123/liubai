@@ -15,7 +15,7 @@ import type {
   Cloud_ImageStore,
   Cloud_FileStore,
 } from "~/types/types-cloud"
-import { OState, OState_2, OState_3, SpaceType, StorageState, VisScope } from "~/types/types-basic"
+import { OState, OState_2, OState_3, OState_Draft, SpaceType, StorageState, VisScope } from "~/types/types-basic"
 import { EmojiData } from "~/types/types-content"
 import { ContentConfig } from "~/types/other/types-custom"
 
@@ -138,6 +138,8 @@ export type LiuDownloadStatus = "has_data" | "not_found"
 export interface LiuDownloadCollection {
   _id: string
   first_id: string
+  user: string
+  member?: string
   oState: OState_2
   operateStamp?: number
   emoji?: string   // the emoji through encodeURIComponent()
@@ -200,6 +202,28 @@ export interface LiuDownloadContent {
 export interface LiuDownloadDraft {
   _id: string
   first_id: string
+
+  infoType: ContentInfoType
+  oState: OState_Draft
+  user: string
+  spaceId: string
+  spaceType: SpaceType
+  threadEdited?: string
+  commentEdited?: string
+  parentThread?: string
+  parentComment?: string
+  replyToComment?: string
+  visScope?: VisScope
+
+  title?: string
+  liuDesc?: LiuContent[]
+  images?: Cloud_ImageStore[]
+  files?: Cloud_FileStore[]
+
+  whenStamp?: number
+  remindMe?: LiuRemindMe
+  tagIds?: string[]
+  editedStamp: number
 }
 
 interface LDP_Base {
