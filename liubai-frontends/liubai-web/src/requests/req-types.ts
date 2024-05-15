@@ -1,6 +1,5 @@
 // 存放所有接口返回的 data 类型
 import type { 
-  LiuUploadTask, 
   LocalTheme, 
 } from "~/types/types-atom"
 import type { LocalLocale } from "~/types/types-locale"
@@ -12,7 +11,7 @@ import type {
   CloudStorageService,
   Cloud_ImageStore,
 } from "~/types/types-cloud"
-import { SpaceType } from "~/types/types-basic"
+import { OState_3, SpaceType } from "~/types/types-basic"
 
 
 /********************** Hello World *******************/
@@ -140,7 +139,9 @@ export interface LiuDownloadAuthor {
   user_name?: string
   user_avatar?: Cloud_ImageStore
   member_id?: string
-
+  member_name?: string
+  member_avatar?: Cloud_ImageStore
+  member_oState?: OState_3
 }
 
 export interface LiuDownloadContent {

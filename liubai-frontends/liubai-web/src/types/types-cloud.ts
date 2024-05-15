@@ -1,7 +1,7 @@
 import type { LiuExif } from "./index"
 import type { 
   BaseIsOn, 
-  MemberState, 
+  OState_3, 
   SpaceType, 
   OState,
   SortWay,
@@ -48,7 +48,7 @@ export interface LiuSpaceAndMember {
   memberId: string
   member_name?: string
   member_avatar?: Cloud_ImageStore
-  member_oState: MemberState
+  member_oState: OState_3
 
   // 关于 workspace 的信息
   spaceId: string

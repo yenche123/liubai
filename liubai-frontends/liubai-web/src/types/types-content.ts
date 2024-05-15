@@ -1,5 +1,5 @@
 
-import type { OState, VisScope, StorageState, MemberState, SpaceType } from "./types-basic"
+import type { OState, VisScope, StorageState, OState_3, SpaceType } from "./types-basic"
 import type { LiuRemindMe } from "./types-atom"
 import type { ImageShow, LiuFileStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
@@ -21,7 +21,7 @@ export interface MemberShow {
   name?: string
   avatar?: ImageShow
   spaceId?: string          // 如果是 user 表生成的，就不会有该值
-  oState: MemberState
+  oState: OState_3 | "EXTERNAL"
 }
 
 export interface TagShow {

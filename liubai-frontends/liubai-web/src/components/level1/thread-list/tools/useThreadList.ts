@@ -2,7 +2,6 @@ import { inject, onActivated, onDeactivated, reactive, toRef, toRefs, watch } fr
 import threadController from "~/utils/controllers/thread-controller/thread-controller"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
-import type { OState } from "~/types/types-basic"
 import type { SvProvideInject } from "~/types/components/types-scroll-view"
 import type { TlProps, TlViewType, TlEmits, TlData, TlContext } from "./types"
 import type { TcListOption } from "~/utils/controllers/thread-controller/type"

@@ -4,7 +4,7 @@ import type {
   OState_2,
   VisScope, 
   StorageState, 
-  MemberState, 
+  OState_3, 
   SpaceType,
   OState_Draft,
 } from "./types-basic"
@@ -65,7 +65,7 @@ export interface MemberLocalTable extends BaseLocalTable {
   avatar?: LiuImageStore
   spaceId: string
   user: string
-  oState: MemberState
+  oState: OState_3
   config?: MemberConfig
 }
 
