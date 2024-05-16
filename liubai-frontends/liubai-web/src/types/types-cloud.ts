@@ -4,10 +4,8 @@ import type {
   OState_3, 
   SpaceType, 
   OState,
-  SortWay,
 } from "./types-basic"
-import type { LiuAtomState, CollectionInfoType } from "./types-atom"
-import type { ThreadListViewType } from "~/types/types-view"
+import type { LiuAtomState } from "./types-atom"
 
 export interface Cloud_FileStore {
   id: string
@@ -98,95 +96,3 @@ export type SubscriptionPaymentCircle = "monthly" | "yearly"
 // 云存储服务
 export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
 
-/********************** 同步系统: 下载内容 ********************/
-
-interface SyncGet_Base {
-  taskId: string
-}
-
-export interface SyncGet_ThreadList {
-  operateType: "thread_list"
-  spaceId: string
-  viewType: ThreadListViewType
-
-  // 每次最多加载多少个，默认为 cfg.default_limit.num
-  //（该值是计算过，在 1980px 的大屏上也可以触发触底加载的）
-  limit?: number
-
-  // 加载收藏
-  collectType?: CollectionInfoType
-
-  // 加载某个 emoji
-  emojiSpecific?: string
-
-  // 默认为降序，desc
-  sort?: SortWay
-
-  // 已加载出来的最后一个 id 的 createdStamp 或 updatedStamp 或 myFavoriteStamp 或 myEmojiStamp
-  // 根据 collectType 和 oState 的不同，用不同 item 的属性
-  lastItemStamp?: number
-
-  // 加载特定的动态
-  specific_ids?: string[]
-
-  // 排除某些动态
-  excluded_ids?: string[]
-
-  // 加载特定状态的动态
-  stateId?: string
-}
-
-export interface SyncGet_ThreadData {
-  operateType: "thread_data"
-  id: string
-}
-
-export interface SyncGet_CommentList_A {
-  operateType: "comment_list"
-  loadType: "under_thread"
-  targetThread: string
-  lastItemStamp?: number
-}
-
-export interface SyncGet_CommentList_B {
-  operateType: "comment_list"
-  loadType: "find_children"
-  commentId: string
-  lastItemStamp?: number
-}
-
-export interface SyncGet_CommentList_C {
-  operateType: "comment_list"
-  loadType: "find_parent"
-  parentWeWant: string
-  grandparent?: string
-}
-
-export interface SyncGet_CommentList_D {
-  operateType: "comment_list"
-  loadType: "find_hottest"
-  commentId: string
-}
-
-export type SyncGet_CommentList = SyncGet_CommentList_A | 
-  SyncGet_CommentList_B | SyncGet_CommentList_C | SyncGet_CommentList_D
-
-export interface SyncSet_CommentData {
-  operateType: "comment_data"
-  id: string
-}
-
-export interface SyncGet_CheckContents {
-  operateType: "check_contents"
-  ids: string[]
-}
-
-export interface SyncGet_Draft {
-  operateType: "draft_data"
-  id: string
-}
-
-export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |
-SyncGet_CommentList | SyncGet_CheckContents
-
-export type SyncGetAtom = CloudMergerOpt & SyncGet_Base

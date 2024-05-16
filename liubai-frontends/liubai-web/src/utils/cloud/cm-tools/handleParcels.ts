@@ -6,7 +6,7 @@ import type {
   LiuDownloadParcel, 
   LiuDownloadParcel_A, 
   LiuDownloadParcel_B,
-} from "~/requests/req-types";
+} from "~/types/cloud/sync-get/types";
 import type { 
   CollectionInfoType, 
   ContentInfoType, 

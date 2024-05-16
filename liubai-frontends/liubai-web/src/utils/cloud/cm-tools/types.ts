@@ -1,5 +1,7 @@
-import type { SyncGetAtom } from "~/types/types-cloud"
-import type { LiuDownloadParcel } from "~/requests/req-types"
+import type { 
+  SyncGetAtom, 
+  LiuDownloadParcel,
+} from "~/types/cloud/sync-get/types"
 
 export type CmResolver = (list?: LiuDownloadParcel[]) => void
 

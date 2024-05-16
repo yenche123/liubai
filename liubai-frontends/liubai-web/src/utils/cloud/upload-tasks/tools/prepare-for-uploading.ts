@@ -12,7 +12,7 @@ import type {
   LiuUploadMember,
   LiuUploadThread,
   SyncSetAtom,
-} from "./types"
+} from "~/types/cloud/sync-set/types"
 import { classifyUploadTask } from "../../tools/upload-event-classification"
 import { db } from "~/utils/db";
 import transferUtil from "~/utils/transfer-util";

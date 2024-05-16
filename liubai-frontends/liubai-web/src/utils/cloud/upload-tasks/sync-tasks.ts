@@ -10,10 +10,10 @@ import { db, type DexieTable } from "~/utils/db";
 import { packSyncSetAtoms } from "./tools/prepare-for-uploading";
 import uut from "./tools/update-upload-task"
 import type { 
+  SyncSetAtom,
   Res_SyncSet_Client, 
   SyncSetAtomRes,
-} from "~/requests/req-types"
-import type { SyncSetAtom } from "./tools/types"
+} from "~/types/cloud/sync-set/types"
 import liuReq from "~/requests/liu-req";
 import { useSyncStore, type SyncStoreAtom } from "~/hooks/stores/useSyncStore"
 import newIds from "./tools/handle-new-ids"
