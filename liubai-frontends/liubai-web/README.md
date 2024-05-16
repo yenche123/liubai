@@ -101,6 +101,8 @@ https://svgl.app/   收录各品牌的 logo
 
 23. 使用 css 作画 https://css-shape.com/
 
+24. The CHANGELOG of Bugfender is on https://bugfender.releasenotes.io/
+
 ## 评论
 
 `一级评论`: 严格定义为直接回复动态的评论，也就是其 `parentComment` 和 `replyToComment` 属性值皆为空。
