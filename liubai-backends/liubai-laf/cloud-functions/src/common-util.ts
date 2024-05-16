@@ -889,9 +889,14 @@ export function getDecryptedBody(
   for(let i=0; i<keys.length; i++) {
     const k = keys[i]
     if(!k.startsWith("liu_enc_")) {
+      
+      // if newBody[k] exists, ignore
+      if(newBody[k]) continue
+
       newBody[k] = oldBody[k]
       continue
     }
+
     const newK = k.replace("liu_enc_", "")
     const data = oldBody[k] as CryptoCipherAndIV
     const plainText = decryptWithAES(data, client_key)

@@ -112,7 +112,7 @@ export interface SyncGet_Draft {
 }
 
 export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |
-SyncGet_CommentList | SyncGet_CheckContents
+SyncGet_CommentList | SyncSet_CommentData | SyncGet_CheckContents | SyncGet_Draft
 
 export type SyncGetAtom = CloudMergerOpt & SyncGet_Base
 

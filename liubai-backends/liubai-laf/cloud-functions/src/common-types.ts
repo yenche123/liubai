@@ -99,8 +99,16 @@ export const Sch_OState_Draft = vbot.picklist(oState_Drafts)
 export type SupportedTheme = "light" | "dark"
 export type LocalTheme = SupportedTheme | "system" | "auto"   // auto 就是日夜切换
 
-export type ThreadListViewType = "TRASH" | "TAG" | "FAVORITE"
-  | "PINNED" | "INDEX" | "STATE"
+export const threadListViewTypes = [
+  "TRASH", 
+  "TAG", 
+  "FAVORITE", 
+  "PINNED",
+  "INDEX",
+  "STATE",
+] as const
+export type ThreadListViewType = typeof threadListViewTypes[number]
+export const Sch_ThreadListViewType = vbot.picklist(threadListViewTypes)
 
 export const supportedClients = [
   "web",
@@ -165,13 +173,23 @@ export const Sch_Cloud_StateConfig: BaseSchema<Cloud_StateConfig> = vbot.object(
 })
 
 export type SpaceType = "ME" | "TEAM"
-export type SortWay = "desc" | "asc"   // 降序和升序
+
+export const sortWays = ["desc", "asc"] as const
+export type SortWay = typeof sortWays[number]
+export const Sch_SortWay = vbot.picklist(sortWays)
 
 export const contentInfoTypes = ["THREAD", "COMMENT"] as const
 export type ContentInfoType = typeof contentInfoTypes[number]
 export const Sch_ContentInfoType = vbot.picklist(contentInfoTypes)
 
-export type CollectionInfoType = "EXPRESS" | "FAVORITE"
+export const collectionInfoTypes = [
+  "EXPRESS",
+  "FAVORITE"
+] as const
+export type CollectionInfoType = typeof collectionInfoTypes[number]
+export const Sch_CollectionInfoType = vbot.picklist(collectionInfoTypes)
+
+
 export type VisScope = "DEFAULT" | "PUBLIC" | "LOGIN_REQUIRED"
 export type Cloud_StorageState = "CLOUD" | "ONLY_LOCAL"
 
@@ -1103,6 +1121,10 @@ interface SyncGet_Base {
   taskId: string
 }
 
+const Sch_SyncGet_Base = vbot.object({
+  taskId: Sch_Id,
+})
+
 export interface SyncGet_ThreadList {
   operateType: "thread_list"
   spaceId: string
@@ -1135,10 +1157,29 @@ export interface SyncGet_ThreadList {
   stateId?: string
 }
 
+export const Sch_SyncGet_ThreadList = vbot.object({
+  operateType: vbot.literal("thread_list"),
+  spaceId: Sch_Id,
+  viewType: Sch_ThreadListViewType,
+  limit: Sch_Opt_Num,
+  collectType: vbot.optional(Sch_CollectionInfoType),
+  emojiSpecific: Sch_Opt_Str,
+  sort: vbot.optional(Sch_SortWay),
+  lastItemStamp: Sch_Opt_Num,
+  specific_ids: sch_opt_arr(Sch_Id),
+  excluded_ids: sch_opt_arr(Sch_Id),
+  stateId: Sch_Opt_Str,
+})
+
 export interface SyncGet_ThreadData {
   operateType: "thread_data"
   id: string
 }
+
+export const Sch_SyncGet_ThreadData = vbot.object({
+  operateType: vbot.literal("thread_data"),
+  id: Sch_Id,
+})
 
 export interface SyncGet_CommentList_A {
   operateType: "comment_list"
@@ -1147,12 +1188,26 @@ export interface SyncGet_CommentList_A {
   lastItemStamp?: number
 }
 
+export const Sch_SyncGet_CommentList_A = vbot.object({
+  operateType: vbot.literal("comment_list"),
+  loadType: vbot.literal("under_thread"),
+  targetThread: Sch_Id,
+  lastItemStamp: Sch_Opt_Num,
+})
+
 export interface SyncGet_CommentList_B {
   operateType: "comment_list"
   loadType: "find_children"
   commentId: string
   lastItemStamp?: number
 }
+
+export const Sch_SyncGet_CommentList_B = vbot.object({
+  operateType: vbot.literal("comment_list"),
+  loadType: vbot.literal("find_children"),
+  commentId: Sch_Id,
+  lastItemStamp: Sch_Opt_Num,
+})
 
 export interface SyncGet_CommentList_C {
   operateType: "comment_list"
@@ -1161,34 +1216,82 @@ export interface SyncGet_CommentList_C {
   grandparent?: string
 }
 
+export const Sch_SyncGet_CommentList_C = vbot.object({
+  operateType: vbot.literal("comment_list"),
+  loadType: vbot.literal("find_parent"),
+  parentWeWant: Sch_Id,
+  grandparent: vbot.optional(Sch_Id),
+})
+
 export interface SyncGet_CommentList_D {
   operateType: "comment_list"
   loadType: "find_hottest"
   commentId: string
 }
 
+export const Sch_SyncGet_CommentList_D = vbot.object({
+  operateType: vbot.literal("comment_list"),
+  loadType: vbot.literal("find_hottest"),
+  commentId: Sch_Id,
+})
+
 export type SyncGet_CommentList = SyncGet_CommentList_A | 
   SyncGet_CommentList_B | SyncGet_CommentList_C | SyncGet_CommentList_D
+
+export const Sch_SyncGet_CommentList = vbot.variant("loadType", [
+  Sch_SyncGet_CommentList_A,
+  Sch_SyncGet_CommentList_B,
+  Sch_SyncGet_CommentList_C,
+  Sch_SyncGet_CommentList_D,
+])
 
 export interface SyncSet_CommentData {
   operateType: "comment_data"
   id: string
 }
 
+export const Sch_SyncSet_CommentData = vbot.object({
+  operateType: vbot.literal("comment_data"),
+  id: Sch_Id,
+})
+
 export interface SyncGet_CheckContents {
   operateType: "check_contents"
   ids: string[]
 }
+
+export const Sch_SyncGet_CheckContents = vbot.object({
+  operateType: vbot.literal("check_contents"),
+  ids: vbot.array(Sch_Id),
+})
 
 export interface SyncGet_Draft {
   operateType: "draft_data"
   id: string
 }
 
+export const Sch_SyncGet_Draft = vbot.object({
+  operateType: vbot.literal("draft_data"),
+  id: Sch_Id,
+})
+
 export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |
-SyncGet_CommentList | SyncGet_CheckContents
+SyncGet_CommentList | SyncSet_CommentData | SyncGet_CheckContents | SyncGet_Draft
+
+export const Sch_CloudMergerOpt = vbot.variant("operateType", [
+  Sch_SyncGet_ThreadList,
+  Sch_SyncGet_ThreadData,
+  Sch_SyncGet_CommentList,
+  Sch_SyncSet_CommentData,
+  Sch_SyncGet_CheckContents,
+  Sch_SyncGet_Draft,
+])
 
 export type SyncGetAtom = CloudMergerOpt & SyncGet_Base
+export const Sch_SyncGetAtom = vbot.intersect([
+  Sch_CloudMergerOpt,
+  Sch_SyncGet_Base,
+])
 
 /****************** sync-get: response ***************/
 export type LiuDownloadStatus = "has_data" | "not_found"
