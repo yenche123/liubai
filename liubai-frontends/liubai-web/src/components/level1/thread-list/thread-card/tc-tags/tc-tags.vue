@@ -36,7 +36,7 @@ const onTapTag = (e: MouseEvent, href: string) => {
     <template v-for="(item, index) in tagShows" :key="item.tagId">
       <RouterLink
         :to="toPath + item.tagId"
-        custom
+        :custom="true"
       >
         <a
           :href="toPath + item.tagId"

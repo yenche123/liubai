@@ -155,7 +155,7 @@ const { isMobile } = liuApi.getCharacteristic()
           @sort-insert="onThreadInserted(item.id, $event)"
           @threadsupdated="onThreadsUpdated(item.id, $event)"
           @tapitem="onTapThreadItem"
-          @tapadd="onTapAddThread(item.id)"
+          @tapadd="() => onTapAddThread(item.id)"
         ></LvColumn>
 
       </div>
