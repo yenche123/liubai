@@ -242,6 +242,24 @@ const uniqueArray = (arr: string[]) => {
   return uniqueArr
 }
 
+const hasValue = <T>(
+  val: any, 
+  type: string,
+  checkLength: boolean = true,
+): val is T => {
+  if(val && typeof val === type) {
+    if(checkLength && Array.isArray(val)) {
+      if(val.length < 1) return false
+    }
+    return true
+  }
+  return false
+}
+
+const isStringWithVal = (val: any): val is string => {
+  return hasValue<string>(val, "string")
+}
+
 
 export default {
   waitMilli,
@@ -264,4 +282,6 @@ export default {
   minusAndMinimumZero,
   compareVersion,
   uniqueArray,
+  hasValue,
+  isStringWithVal,
 }

@@ -3,6 +3,7 @@ import cfg from "~/config"
 import type { VcState } from "../tools/types"
 import { computed, type PropType } from "vue";
 import liuApi from "~/utils/liu-api";
+import { useVcNaviBar } from "./tools/useVcNaviBar"
 
 const props = defineProps({
   vcState: {
@@ -26,6 +27,10 @@ const naviWidth = computed(() => {
 })
 const iconColor = "var(--main-normal)"
 
+const {
+  vnbData,
+} = useVcNaviBar()
+
 </script>
 <template>
 
@@ -37,7 +42,9 @@ const iconColor = "var(--main-normal)"
     </div>
 
     <!-- 关闭按钮 -->
-    <div class="liu-hover vcliu-navi-btn" @click="$emit('tapclose')">
+    <div class="liu-hover vcliu-navi-btn" @click="$emit('tapclose')"
+      v-show="vnbData.showCloseBtn"
+    >
       <svg-icon class="vcliu-navi-icon" name="close" :color="iconColor"></svg-icon>
     </div>
 

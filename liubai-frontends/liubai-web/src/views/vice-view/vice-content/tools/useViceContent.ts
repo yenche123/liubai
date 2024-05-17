@@ -10,6 +10,8 @@ import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore";
 import { useVvFileStore } from "~/hooks/stores/useVvFileStore";
 import liuEnv from "~/utils/liu-env";
 
+const _hasVal = valTool.isStringWithVal
+
 export function useViceContent(
   emits: VcEmits
 ) {
@@ -199,29 +201,29 @@ function listenRouteChange(
       vfile,
     } = newQuery
 
-    if(outq && typeof outq === "string") {
+    if(_hasVal(outq)) {
       // openGoogleSerach(outq)
       openBingSearch(outq)
     }
-    else if(cid && typeof cid === "string") {
+    else if(_hasVal(cid)) {
       showView(ctx, "thread", cid)
     }
-    else if(cid2 && typeof cid2 === "string") {
+    else if(_hasVal(cid2)) {
       showView(ctx, "comment", cid2)
     }
-    else if(vlink && typeof vlink === "string") {
+    else if(_hasVal(vlink)) {
       tryToOpenLink()
     }
-    else if(vfile && typeof vfile === "string") {
+    else if(_hasVal(vfile)) {
       tryToOpenFile()
     }
-    else if(bing && typeof bing === "string") {
+    else if(_hasVal(bing)) {
       openBingSearch(bing)
     }
-    else if(xhs && typeof xhs === "string") {
+    else if(_hasVal(xhs)) {
       openXhsSearch(xhs)
     }
-    else if(github && typeof github === "string") {
+    else if(_hasVal(github)) {
       openGithubSearch(github)
     }
     else {
@@ -237,7 +239,7 @@ function listenRouteChange(
 
   onActivated(() => {
     if(located) return
-    if(typeof route.name === "string") {
+    if(_hasVal(route.name)) {
       located = route.name
     }
     checkRouteChange(route.query)
