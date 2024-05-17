@@ -20,7 +20,7 @@ export const useVvFileStore = defineStore("vvfile", () => {
     route: RouteLocationNormalizedLoaded
   ): VvFileAtom | undefined => {
     const { vfile } = route.query
-    if(!vfile || typeof vfile !== "string") return
+    if(!valTool.isStringWithVal(vfile)) return
     const data = list.value.find(v => v.id === vfile)
     return data
   }

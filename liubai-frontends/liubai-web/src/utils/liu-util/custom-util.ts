@@ -52,7 +52,7 @@ export function getDefaultRouteQuery(
 
   const { tags } = q
 
-  if(tags && typeof tags === "string") {
+  if(valTool.isStringWithVal(tags)) {
     newQuery.tags = tags
   }
 
@@ -65,13 +65,13 @@ export function needToOpenViceView(query: LocationQuery) {
   let { cid, vlink, cid2, vfile } = query
   if(cid || cid2) return true
 
-  if(vlink && typeof vlink === "string") {
+  if(valTool.isStringWithVal(vlink)) {
     const vvLinkStore = useVvLinkStore()
     const url = vvLinkStore.getUrlById(vlink)
     return Boolean(url)
   }
 
-  if(vfile && typeof vfile === "string") {
+  if(valTool.isStringWithVal(vfile)) {
     const vvFileStore = useVvFileStore()
     const url = vvFileStore.getUrlById(vfile)
     return Boolean(url)

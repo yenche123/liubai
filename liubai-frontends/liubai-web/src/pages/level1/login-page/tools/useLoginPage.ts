@@ -26,6 +26,7 @@ import {
   type WatchStopHandle,
 } from "vue";
 import middleBridge from "~/utils/middle-bridge";
+import valTool from "~/utils/basic/val-tool";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -152,7 +153,7 @@ function listenRouteAndLastLogged(
       [newLastLogged, newRoute]
     ) => {
       const newName = newRoute.name
-      if(!newName || typeof newName !== "string") return
+      if(!valTool.isStringWithVal(newName)) return
       if(!newLastLogged || newLastLogged <= 0) return
 
       const isInLoginPage = newName.startsWith("login")

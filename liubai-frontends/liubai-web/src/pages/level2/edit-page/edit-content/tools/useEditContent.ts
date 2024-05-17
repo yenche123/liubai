@@ -113,7 +113,7 @@ function whenRouteChange(
   const { name, params } = route
   if(name !== "edit") return
   const { contentId } = params
-  if(!contentId || typeof contentId !== "string") return
+  if(!valTool.isStringWithVal(contentId)) return
   if(threadId.value === contentId) return
   state.value = pageStates.LOADING
   threadId.value = contentId

@@ -121,7 +121,7 @@ class LiuRouter {
 
     // 如果是左侧侧边栏显示 tags 时，依然保持显示标签
     const tags = oldQuery.tags
-    if(reserveTags && tags && typeof tags === 'string') {
+    if(reserveTags && valTool.isStringWithVal(tags)) {
       newQuery.tags = tags
     }
 

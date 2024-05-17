@@ -73,7 +73,7 @@ const getStorageSync = <T = any>(key: string): T | undefined | null => {
     console.log(err)
   }
   
-  if(s && typeof s === "string") {
+  if(valTool.isStringWithVal(s)) {
     let obj = JSON.parse(s)
     storageMap.set(_key, obj)
     return valTool.copyObject(obj.data)

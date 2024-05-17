@@ -2,6 +2,7 @@ import liuEnv from "~/utils/liu-env";
 import { useSyncStore, type SyncStoreItem } from "../stores/useSyncStore";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { type RouteLocationNormalized } from "vue-router";
+import valTool from "~/utils/basic/val-tool";
 
 export function useIdsChanged() {
   const backend = liuEnv.hasBackend()
@@ -19,7 +20,7 @@ export function useIdsChanged() {
     const threadId = params.contentId
     const commentId = params.commentId
 
-    if(threadId && typeof threadId === "string") {
+    if(valTool.isStringWithVal(threadId)) {
       const newThreadId = getNewId(threadId, all_threads)
       if(newThreadId) {
         console.log("new thread id in params is found: ", newThreadId)
@@ -28,7 +29,7 @@ export function useIdsChanged() {
         newRoute = addNewParam(to, newRoute, "contentId", newThreadId)
       }
     }
-    if(commentId && typeof commentId === "string") {
+    if(valTool.isStringWithVal(commentId)) {
       const newCommentId = getNewId(commentId, all_comments)
       if(newCommentId) {
         console.log("new thread id is in params found: ", newCommentId)
@@ -40,7 +41,7 @@ export function useIdsChanged() {
 
     const cid = query.cid
     const cid2 = query.cid2
-    if(cid && typeof cid === "string") {
+    if(valTool.isStringWithVal(cid)) {
       const newCid = getNewId(cid, all_threads)
       if(newCid) {
         console.log("new thread id in query is found: ", newCid)
@@ -49,7 +50,7 @@ export function useIdsChanged() {
         newRoute = addNewQuery(to, newRoute, "cid", newCid)
       }
     }
-    if(cid2 && typeof cid2 === "string") {
+    if(valTool.isStringWithVal(cid2)) {
       const newCid2 = getNewId(cid2, all_comments)
       if(newCid2) {
         console.log("new comment id in query is found: ", newCid2)

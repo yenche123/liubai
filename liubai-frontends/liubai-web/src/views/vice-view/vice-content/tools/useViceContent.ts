@@ -51,7 +51,7 @@ export function useViceContent(
     const id = vcData.currentId
     const q = route.query
 
-    if(q.vfile && typeof q.vfile === "string") {
+    if(valTool.isStringWithVal(q.vfile)) {
       const vFile = vvFileStore.getUrlById(q.vfile)
       if(vFile) {
         window.open(vFile, "_blank")

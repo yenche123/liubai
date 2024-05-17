@@ -297,7 +297,7 @@ function closeIt() {
   const query = rr.route.query
   const { q } = query
   let key = "search"
-  if(q && typeof q === "string") {
+  if(valTool.isStringWithVal(q)) {
     key = "q"
   }
   rr.router.naviBackUntilNoSpecificQuery(rr.route, key)

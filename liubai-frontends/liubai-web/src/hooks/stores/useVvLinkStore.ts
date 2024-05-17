@@ -22,7 +22,7 @@ export const useVvLinkStore = defineStore("vvlink", () => {
     route: RouteLocationNormalizedLoaded
   ) => {
     const { vlink } = route.query
-    if(!vlink || typeof vlink !== "string") return
+    if(!valTool.isStringWithVal(vlink)) return
     const data = list.value.find(v => v.id === vlink)
     if(!data) return
     return data.url
