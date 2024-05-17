@@ -1,7 +1,7 @@
 {
   "hello": {
-    "world": "Hello, World!",
-    "appName": "Liubai"
+    "appName": "Liubai",
+    "login_title": "Login - Liubai"
   },
   "common": {
     "confirm": "Confirm",

@@ -1,4 +1,3 @@
-import { reactive } from "vue";
 import type { LpData, LoginByThirdParty } from "./types";
 import type { BoolFunc, LiuTimeout } from "~/utils/basic/type-tool";
 import cui from "~/components/custom-ui";
@@ -18,7 +17,15 @@ import { useLoginStore } from "./useLoginStore";
 import { storeToRefs } from "pinia";
 import { useLiuWatch } from "~/hooks/useLiuWatch";
 import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router";
-import { onActivated, onDeactivated, toRef, watch, type WatchStopHandle } from "vue";
+import { 
+  onActivated, 
+  onDeactivated, 
+  toRef, 
+  watch, 
+  reactive,
+  type WatchStopHandle,
+} from "vue";
+import middleBridge from "~/utils/middle-bridge";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -90,6 +97,7 @@ export function useLoginPage() {
     handleBack(rr, lpData)
   }
 
+  useTitle()
 
   return {
     lpData,
@@ -101,6 +109,13 @@ export function useLoginPage() {
     onTapBack,
   }
 }
+
+function useTitle() {
+  onActivated(() => {
+    middleBridge.setAppTitle({ val_key: "hello.login_title" })
+  })
+}
+
 
 // 登录完成后，会进行路由切换
 // 这个时候用户会等比较久，所以做一个变量（lastLogged）和路由监听
