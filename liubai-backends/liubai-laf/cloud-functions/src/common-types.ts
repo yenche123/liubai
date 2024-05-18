@@ -751,6 +751,9 @@ export interface SyncSetCtx {
 
   // the list of workspace ids that the user is in
   space_ids: string[]
+
+  // to avoid duplicating updatedStamp or insertedStamp
+  lastUsedStamp: number
 }
 
 export type SyncSetTable = Table_Content | 
@@ -772,13 +775,29 @@ export interface Res_SyncSet_Cloud {
 
 
 /*********************** 关于下载同步 **********************/
+
+export type SyncGetCtxKey = "users" | "members" | "contents" | "collections"
+
 export interface SyncGetCtx {
+
+  // collections
+  users: Table_User[],
+  members: Table_Member[],
+  contents: Table_Content[],
+  collections: Table_Collection[],
+
+  // authors
+  authors: LiuDownloadAuthor[],
+
   // my data
   me: Table_User    // TODO: it might be optional for visitors
 
   // the list of workspace ids that the user is in
   space_ids: string[]     // TODO: it might be optional for visitors
 }
+
+export type SyncGetTable = Table_User | Table_Content | 
+  Table_Member | Table_Collection
 
 
 /*********************** 数据表类型 **********************/
@@ -1324,9 +1343,8 @@ export interface LiuDownloadCollection {
 }
 
 export interface LiuDownloadAuthor {
+  space_id: string  // 注意！这个字段的值，可能与 LiuDownloadContent.spaceId 不一致
   user_id: string
-  user_name?: string
-  user_avatar?: Cloud_ImageStore
   member_id?: string
   member_name?: string
   member_avatar?: Cloud_ImageStore

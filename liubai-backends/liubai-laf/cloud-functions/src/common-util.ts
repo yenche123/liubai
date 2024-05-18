@@ -1041,10 +1041,18 @@ function minusAndMinimumZero(
   return newVal
 }
 
+// removing duplicates from an array
+const uniqueArray = (arr: string[]) => {
+  const uniqueSet = new Set(arr)
+  const uniqueArr = [...uniqueSet]
+  return uniqueArr
+}
+
 export const valTool = {
   strToObj,
   objToStr,
   minusAndMinimumZero,
+  uniqueArray,
 }
 
 

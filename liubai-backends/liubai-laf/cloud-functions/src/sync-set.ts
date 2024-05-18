@@ -53,8 +53,7 @@ import {
   Sch_EmojiData,
 } from "@/common-types"
 import { 
-  getNowStamp, 
-  getBasicStampWhileAdding,
+  getNowStamp,
 } from "@/common-time"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -526,7 +525,7 @@ async function toPostThread(
   const enc_title = encryptDataWithAES(title, aesKey)
 
   // 6. construct a new row of Table_Content
-  const b6 = getBasicStampWhileAdding()
+  const b6 = getBasicStampWhileAdding(ssCtx)
   const newRow: Partial<Table_Content> = {
     ...b6,
     first_id,
@@ -617,7 +616,7 @@ async function toPostComment(
   const { spaceType } = res3
 
   // 4. construct a new row of Table_Content
-  const b4 = getBasicStampWhileAdding()
+  const b4 = getBasicStampWhileAdding(ssCtx)
   const newRow: Partial<Table_Content> = {
     ...b4,
     first_id,
@@ -966,7 +965,7 @@ async function toCollectionShared(
   const { infoType: forType, spaceId, spaceType } = res1.oldContent
   
   // 2. construct a new row of Table_Collection
-  const b4 = getBasicStampWhileAdding()
+  const b4 = getBasicStampWhileAdding(ssCtx)
   const newRow: Partial<Table_Collection> = {
     ...b4,
     first_id,
@@ -1559,7 +1558,7 @@ async function toDraftCreate(
   // 4. create
   const userId = ssCtx.me._id
   const first_id = draft.first_id as string
-  const b4 = getBasicStampWhileAdding()
+  const b4 = getBasicStampWhileAdding(ssCtx)
   const u: Partial<Table_Draft> = {
     ...b4,
     first_id,
@@ -2180,6 +2179,7 @@ function initSyncSetCtx(
     collection: new Map<string, SyncSetCtxAtom<Table_Collection>>(),
     me: user,
     space_ids,
+    lastUsedStamp: 0,
   }
   return ssCtx
 }
@@ -2248,6 +2248,28 @@ async function getData<T>(
   return d
 }
 
+
+// get current stamp which is unused
+function getUnusedStamp(ssCtx: SyncSetCtx) {
+  const oldStamp = ssCtx.lastUsedStamp
+  const now = getNowStamp()
+  if(now > oldStamp) {
+    ssCtx.lastUsedStamp = now
+    return now
+  }
+  const res = oldStamp + 1
+  ssCtx.lastUsedStamp = res
+  return res
+}
+
+function getBasicStampWhileAdding(ssCtx: SyncSetCtx) {
+  const now = getUnusedStamp(ssCtx)
+  return {
+    insertedStamp: now,
+    updatedStamp: now,
+  }
+}
+
 // update part data
 async function updatePartData<T extends SyncSetTable>(
   ssCtx: SyncSetCtx,
@@ -2259,7 +2281,7 @@ async function updatePartData<T extends SyncSetTable>(
     throw new Error("key must be string")
   }
   if(!partData.updatedStamp) {
-    partData.updatedStamp = getNowStamp()
+    partData.updatedStamp = getUnusedStamp(ssCtx)
   }
   
   const map = ssCtx[key] as Map<string, SyncSetCtxAtom<T>>

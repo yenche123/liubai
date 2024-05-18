@@ -191,12 +191,10 @@ async function mergeContent(
 ) {
   const content_id = d._id
   const { author, spaceId, spaceType, infoType, myEmoji, myFavorite } = d
-  const userId = author.user_id
   
   if(!d.isMine) {
     // 1. it's not data I've ever posted,  go get to merge member & user
-    await mergeMember(author, spaceId, opt.oldMember)
-    await mergeUser(author, opt.oldUser)
+    await mergeMember(author, opt.oldMember)
   }
   else {
     // 2. it's mine! Go to merge emoji & favorite
@@ -290,70 +288,8 @@ async function mergeCollection(
   await db.collections.update(collection_id, u3)
 }
 
-
-async function mergeUser(
-  d: LiuDownloadAuthor,
-  oldUser?: UserLocalTable,
-) {
-  const userId = d.user_id
-  if(!userId) return
-  const handled = merged_user_ids.includes(userId)
-  if(handled) return
-  merged_user_ids.push(userId)
-
-  const now = time.getTime()
-  const u_name = d.user_name
-  const u_avatar = d.user_avatar
-
-  // 1. create user if no oldUser
-  if(!oldUser) {
-    const b1 = time.getBasicStampWhileAdding()
-    const { image: avatar, useCloud } = CloudFiler.imageFromCloudToStore(u_avatar)
-    const u1: UserLocalTable = {
-      _id: userId,
-      ...b1,
-      lastRefresh: now,
-      name: u_name,
-      avatar,
-    }
-    await db.users.put(u1)
-    if(useCloud) CloudFiler.notify("users", userId)
-    return
-  }
-
-  // 2. update user
-  let updated = false
-  const u2: Partial<UserLocalTable> = {
-    updatedStamp: now,
-  }
-
-  // 2.1 checking out name
-  if(oldUser.name !== u_name) {
-    u2.name = u_name
-    updated = true
-  }
-
-  // 2.2 checking out avatar
-  const avatarRes = CloudFiler.imageFromCloudToStore(u_avatar, oldUser.avatar)
-  if(avatarRes.useCloud) {
-    u2.avatar = avatarRes.image
-    updated = true
-  }
-
-  // 2.3 get to update
-  if(updated) {
-    await db.users.update(userId, u2)
-  }
-
-  if(avatarRes.useCloud) {
-    CloudFiler.notify("users", userId)
-  }
-}
-
-
 async function mergeMember(
   d: LiuDownloadAuthor,
-  spaceId: string,
   oldMember?: MemberLocalTable,
 ) {
   const userId = d.user_id
@@ -375,7 +311,7 @@ async function mergeMember(
       _id: m_id,
       ...b1,
       user: userId,
-      spaceId,
+      spaceId: d.space_id,
       name: m_name,
       avatar,
       oState: m_oState,

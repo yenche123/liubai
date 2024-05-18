@@ -30,7 +30,7 @@ interface SyncGet_Base {
 }
 
 export interface SyncGet_ThreadList {
-  operateType: "thread_list"
+  taskType: "thread_list"
   spaceId: string
   viewType: ThreadListViewType
 
@@ -62,33 +62,33 @@ export interface SyncGet_ThreadList {
 }
 
 export interface SyncGet_ThreadData {
-  operateType: "thread_data"
+  taskType: "thread_data"
   id: string
 }
 
 export interface SyncGet_CommentList_A {
-  operateType: "comment_list"
+  taskType: "comment_list"
   loadType: "under_thread"
   targetThread: string
   lastItemStamp?: number
 }
 
 export interface SyncGet_CommentList_B {
-  operateType: "comment_list"
+  taskType: "comment_list"
   loadType: "find_children"
   commentId: string
   lastItemStamp?: number
 }
 
 export interface SyncGet_CommentList_C {
-  operateType: "comment_list"
+  taskType: "comment_list"
   loadType: "find_parent"
   parentWeWant: string
   grandparent?: string
 }
 
 export interface SyncGet_CommentList_D {
-  operateType: "comment_list"
+  taskType: "comment_list"
   loadType: "find_hottest"
   commentId: string
 }
@@ -97,17 +97,17 @@ export type SyncGet_CommentList = SyncGet_CommentList_A |
   SyncGet_CommentList_B | SyncGet_CommentList_C | SyncGet_CommentList_D
 
 export interface SyncSet_CommentData {
-  operateType: "comment_data"
+  taskType: "comment_data"
   id: string
 }
 
 export interface SyncGet_CheckContents {
-  operateType: "check_contents"
+  taskType: "check_contents"
   ids: string[]
 }
 
 export interface SyncGet_Draft {
-  operateType: "draft_data"
+  taskType: "draft_data"
   id: string
 }
 
@@ -133,9 +133,10 @@ export interface LiuDownloadCollection {
 }
 
 export interface LiuDownloadAuthor {
+  // 注意！这个字段的值，可能与 LiuDownloadContent.spaceId 不一致
+  space_id: string 
+
   user_id: string
-  user_name?: string
-  user_avatar?: Cloud_ImageStore
   member_id?: string
   member_name?: string
   member_avatar?: Cloud_ImageStore
