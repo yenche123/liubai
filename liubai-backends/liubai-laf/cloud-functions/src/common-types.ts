@@ -64,8 +64,11 @@ export const sch_string_length = (length: number = 1) => {
 }
 
 // optional array something
-export const sch_opt_arr = (sch: BaseSchema) => {
-  return vbot.optional(vbot.array(sch))
+export const sch_opt_arr = (
+  sch: BaseSchema, 
+  pipe?: vbot.Pipe<any>,
+) => {
+  return vbot.optional(vbot.array(sch, pipe))
 }
 
 
@@ -768,7 +771,20 @@ export interface Res_SyncSet_Cloud {
 }
 
 
+/*********************** 关于下载同步 **********************/
+export interface SyncGetCtx {
+  // my data
+  me: Table_User    // TODO: it might be optional for visitors
+
+  // the list of workspace ids that the user is in
+  space_ids: string[]     // TODO: it might be optional for visitors
+}
+
+
 /*********************** 数据表类型 **********************/
+
+export type TableName = "User" | "Workspace" | "Member" | "Content"
+  | "Draft" | "Collection"
 
 /** Token表 */
 export interface Table_Token extends BaseTable {
@@ -1126,12 +1142,13 @@ const Sch_SyncGet_Base = vbot.object({
 })
 
 export interface SyncGet_ThreadList {
-  operateType: "thread_list"
+  taskType: "thread_list"
   spaceId: string
   viewType: ThreadListViewType
 
   // 每次最多加载多少个，默认为 cfg.default_limit.num
   //（该值是计算过，在 1980px 的大屏上也可以触发触底加载的）
+  // 限制在 1 到 32 之间，默认 16
   limit?: number
 
   // 加载收藏
@@ -1147,10 +1164,10 @@ export interface SyncGet_ThreadList {
   // 根据 collectType 和 oState 的不同，用不同 item 的属性
   lastItemStamp?: number
 
-  // 加载特定的动态
+  // 加载特定的动态，限制在 0 ～ 32 个元素
   specific_ids?: string[]
 
-  // 排除某些动态
+  // 排除某些动态，限制在 0 ～ 32 个元素
   excluded_ids?: string[]
 
   // 加载特定状态的动态
@@ -1158,79 +1175,79 @@ export interface SyncGet_ThreadList {
 }
 
 export const Sch_SyncGet_ThreadList = vbot.object({
-  operateType: vbot.literal("thread_list"),
+  taskType: vbot.literal("thread_list"),
   spaceId: Sch_Id,
   viewType: Sch_ThreadListViewType,
-  limit: Sch_Opt_Num,
+  limit: vbot.optional(vbot.number([vbot.minValue(1), vbot.maxValue(32)])),
   collectType: vbot.optional(Sch_CollectionInfoType),
   emojiSpecific: Sch_Opt_Str,
   sort: vbot.optional(Sch_SortWay),
   lastItemStamp: Sch_Opt_Num,
-  specific_ids: sch_opt_arr(Sch_Id),
-  excluded_ids: sch_opt_arr(Sch_Id),
+  specific_ids: sch_opt_arr(Sch_Id, [vbot.maxLength(32)]),
+  excluded_ids: sch_opt_arr(Sch_Id, [vbot.maxLength(32)]),
   stateId: Sch_Opt_Str,
 })
 
 export interface SyncGet_ThreadData {
-  operateType: "thread_data"
+  taskType: "thread_data"
   id: string
 }
 
 export const Sch_SyncGet_ThreadData = vbot.object({
-  operateType: vbot.literal("thread_data"),
+  taskType: vbot.literal("thread_data"),
   id: Sch_Id,
 })
 
 export interface SyncGet_CommentList_A {
-  operateType: "comment_list"
+  taskType: "comment_list"
   loadType: "under_thread"
   targetThread: string
   lastItemStamp?: number
 }
 
 export const Sch_SyncGet_CommentList_A = vbot.object({
-  operateType: vbot.literal("comment_list"),
+  taskType: vbot.literal("comment_list"),
   loadType: vbot.literal("under_thread"),
   targetThread: Sch_Id,
   lastItemStamp: Sch_Opt_Num,
 })
 
 export interface SyncGet_CommentList_B {
-  operateType: "comment_list"
+  taskType: "comment_list"
   loadType: "find_children"
   commentId: string
   lastItemStamp?: number
 }
 
 export const Sch_SyncGet_CommentList_B = vbot.object({
-  operateType: vbot.literal("comment_list"),
+  taskType: vbot.literal("comment_list"),
   loadType: vbot.literal("find_children"),
   commentId: Sch_Id,
   lastItemStamp: Sch_Opt_Num,
 })
 
 export interface SyncGet_CommentList_C {
-  operateType: "comment_list"
+  taskType: "comment_list"
   loadType: "find_parent"
   parentWeWant: string
   grandparent?: string
 }
 
 export const Sch_SyncGet_CommentList_C = vbot.object({
-  operateType: vbot.literal("comment_list"),
+  taskType: vbot.literal("comment_list"),
   loadType: vbot.literal("find_parent"),
   parentWeWant: Sch_Id,
   grandparent: vbot.optional(Sch_Id),
 })
 
 export interface SyncGet_CommentList_D {
-  operateType: "comment_list"
+  taskType: "comment_list"
   loadType: "find_hottest"
   commentId: string
 }
 
 export const Sch_SyncGet_CommentList_D = vbot.object({
-  operateType: vbot.literal("comment_list"),
+  taskType: vbot.literal("comment_list"),
   loadType: vbot.literal("find_hottest"),
   commentId: Sch_Id,
 })
@@ -1245,44 +1262,44 @@ export const Sch_SyncGet_CommentList = vbot.variant("loadType", [
   Sch_SyncGet_CommentList_D,
 ])
 
-export interface SyncSet_CommentData {
-  operateType: "comment_data"
+export interface SyncGet_CommentData {
+  taskType: "comment_data"
   id: string
 }
 
-export const Sch_SyncSet_CommentData = vbot.object({
-  operateType: vbot.literal("comment_data"),
+export const Sch_SyncGet_CommentData = vbot.object({
+  taskType: vbot.literal("comment_data"),
   id: Sch_Id,
 })
 
 export interface SyncGet_CheckContents {
-  operateType: "check_contents"
+  taskType: "check_contents"
   ids: string[]
 }
 
 export const Sch_SyncGet_CheckContents = vbot.object({
-  operateType: vbot.literal("check_contents"),
+  taskType: vbot.literal("check_contents"),
   ids: vbot.array(Sch_Id),
 })
 
 export interface SyncGet_Draft {
-  operateType: "draft_data"
+  taskType: "draft_data"
   id: string
 }
 
 export const Sch_SyncGet_Draft = vbot.object({
-  operateType: vbot.literal("draft_data"),
+  taskType: vbot.literal("draft_data"),
   id: Sch_Id,
 })
 
 export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |
-SyncGet_CommentList | SyncSet_CommentData | SyncGet_CheckContents | SyncGet_Draft
+SyncGet_CommentList | SyncGet_CommentData | SyncGet_CheckContents | SyncGet_Draft
 
-export const Sch_CloudMergerOpt = vbot.variant("operateType", [
+export const Sch_CloudMergerOpt = vbot.variant("taskType", [
   Sch_SyncGet_ThreadList,
   Sch_SyncGet_ThreadData,
   Sch_SyncGet_CommentList,
-  Sch_SyncSet_CommentData,
+  Sch_SyncGet_CommentData,
   Sch_SyncGet_CheckContents,
   Sch_SyncGet_Draft,
 ])

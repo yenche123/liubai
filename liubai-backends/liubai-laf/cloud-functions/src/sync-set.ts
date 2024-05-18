@@ -33,6 +33,7 @@ import type {
   Table_Collection,
   SpaceType,
   OState_Draft,
+  TableName,
 } from "@/common-types"
 import { 
   Sch_Simple_SyncSetAtom,
@@ -2294,7 +2295,7 @@ async function updateAllData(
   const { content, draft, member, workspace } = ssCtx
   await toUpdateTable(content, "Content")
   await toUpdateTable(draft, "Draft")
-  await toUpdateTable(workspace, "workspace")
+  await toUpdateTable(workspace, "Workspace")
   await toUpdateTable(member, "Member")
 }
 
@@ -2306,7 +2307,7 @@ interface ToUpdateItem<T> {
 
 async function toUpdateTable<T>(
   map: Map<string, SyncSetCtxAtom<T>>,
-  tableName: string,
+  tableName: TableName,
 ) {
   const list: ToUpdateItem<T>[] = []
   map.forEach((atom, id) => {
