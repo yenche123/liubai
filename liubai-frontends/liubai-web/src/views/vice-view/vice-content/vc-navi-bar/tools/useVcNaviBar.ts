@@ -26,7 +26,6 @@ export function useVcNaviBar() {
     let showCloseBtn = true
     const stacks = rr.router.getStack()
     const len = stacks.length
-    console.log("len: ", len)
     if(len <= 2) showCloseBtn = false
     data.showCloseBtn = showCloseBtn
   })
