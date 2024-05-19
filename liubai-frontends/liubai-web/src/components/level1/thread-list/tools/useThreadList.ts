@@ -189,6 +189,10 @@ async function loadList(
   ctx: TlContext,
   reload: boolean = false
 ) {
+
+  console.log("load thread list........")
+
+
   const spaceId = ctx.spaceIdRef.value
   if(!spaceId) return
   
