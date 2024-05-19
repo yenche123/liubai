@@ -13,13 +13,11 @@ export async function findSystem(user_id: string) {
 
   if(!res1) return false
 
-  console.time("fs workspaces")
   const w2 = {
     owner: user_id,
     infoType: "ME",
   }
   const res2 = await db.workspaces.where(w2).toArray()
-  console.timeEnd("fs workspaces")
 
   if(!res2 || res2.length < 1) {
     await localReq.deleteUser(res1._id)

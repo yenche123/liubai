@@ -3,6 +3,7 @@ import type { LpmProps, LpmData, LpmEmit } from "./types"
 import liuUtil from '~/utils/liu-util';
 import { useWindowSize } from "~/hooks/useVueUse";
 import { type LiuTimeout } from "~/utils/basic/type-tool";
+import valTool from "~/utils/basic/val-tool";
 
 export function useLpMain(
   props: LpmProps,
@@ -34,6 +35,7 @@ export function useLpMain(
     const childEl = parentEl.querySelector(q)
     if(!childEl) return
     const info = liuUtil.getIndicatorLeftAndWidth(parentEl, childEl)
+    console.log("info: ", info)
     if(!info) return
     lpmData.indicatorData = info
   }
@@ -41,7 +43,10 @@ export function useLpMain(
   watch(() => lpmData.current, (newV) => {
     calculateIndicator()
   })
-  onMounted(() => {
+  onMounted(async () => {
+    calculateIndicator()
+    await valTool.waitMilli(500)
+    console.log("再去重新计算一次......")
     calculateIndicator()
   })
 
@@ -50,6 +55,7 @@ export function useLpMain(
   watch(width, (newV) => {
     if(widthTimeout) clearTimeout(widthTimeout)
     widthTimeout = setTimeout(() => {
+      console.log("width changed in useLpMain......")
       widthTimeout = undefined
       calculateIndicator()
     }, 200)

@@ -18,7 +18,7 @@ const {
 </script>
 <template>
 
-  <!-- Email / 第三方 等选项-->
+  <!-- Email / 第三方 等选项卡-->
   <div class="lp-selects" ref="lpSelectsEl">
 
     <!-- Email -->

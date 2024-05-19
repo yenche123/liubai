@@ -9,10 +9,10 @@ import { useIdsChanged } from "./tools/useIdsChanged";
 
 // 监听和处理一些全局的事务，比如路由变化
 
-export function useApp() {
+export function useApp() {  
 
-  // 打印版本信息
-  printInit()
+  // init mobile
+  initMobile()
 
   // 监听路由变化，若加载过久，窗口顶部会出现加载条
   useGlobalLoading()
@@ -22,9 +22,6 @@ export function useApp() {
 
   // init analytics
   initAnalytics()
-  
-  // init mobile
-  initMobile()
 
   // init space & CloudFiler & LocalToCloud or initForPureLocalMode
   initForSystem()
@@ -42,7 +39,6 @@ function printInit() {
   console.log(`You are using ${appName} v${version}`)
   console.log(" ")
 }
-
 
 function initListenSelection() {
   const gStore = useGlobalStateStore()
@@ -74,15 +70,23 @@ async function getVConsole() {
 
 async function initMobile() {
   const cha = liuApi.getCharacteristic()
-  if(cha.isMobile) {
-    const _env = liuEnv.getEnv()
-    if(_env.DEV) {
-      
-    }
-    const VConsole = await getVConsole()
-    new VConsole.default()
-    import("~/styles/mobile-style.css")
+
+  if(!cha.isMobile) {
+    printInit()
+    return
   }
+
+  const _env = liuEnv.getEnv()
+  if(_env.DEV) {
+    
+  }
+  const VConsole = await getVConsole()
+  new VConsole.default({
+    onReady() {
+      printInit()
+    }
+  })
+  import("~/styles/mobile-style.css")
 }
 
 function initAnalytics() {

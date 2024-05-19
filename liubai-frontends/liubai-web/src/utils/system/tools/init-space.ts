@@ -7,6 +7,7 @@ import type { SpaceAndMemberOpt, WorkspaceStore } from "~/hooks/stores/useWorksp
 import typeCheck from "~/utils/basic/type-check"
 import time from "~/utils/basic/time"
 import liuConsole from "~/utils/debug/liu-console"
+import liuUtil from "~/utils/liu-util"
 
 let routeChangeNum = 0
 let lastRouteChange = 0
@@ -20,6 +21,7 @@ export function initSpace(
 
   watch(route, (newV) => {
     routeChangeNum++
+    console.log("routeChangeNum: ", routeChangeNum)
     whenRouteChange(store, newV)
   })
 }
@@ -43,6 +45,7 @@ function _debounce() {
     return true
   }
   const diff = now - lastRouteChange
+  console.log("diff: ", diff)
   lastRouteChange = now
   if(diff < 300) return false
   return true
@@ -52,6 +55,8 @@ async function whenRouteChange(
   store: WorkspaceStore,
   newV: RouteLocationNormalizedLoaded,
 ) {
+  const newV2 = liuUtil.toRawData(newV)
+  console.log(newV2)
 
   const { inApp, checkWorkspace } = newV.meta
   const pageName = newV.name
@@ -66,10 +71,14 @@ async function whenRouteChange(
     return
   }
 
+  console.log("whenRouteChange 2222222")
+
   // 只剩 个人工作区的可能了
   // 先检查是否已经在个人工作区里，若是则 return
   // 因为代表已经初始化了
   if(!store.isCollaborative && store.spaceId) return
+
+  console.log("whenRouteChange 3333333")
 
   // 再检查是否为 "不必检查 workspace 的页面"
   // 并且 store 中已有 spaceId，那么就忽略
@@ -79,17 +88,27 @@ async function whenRouteChange(
   // 从 IndexedDB 里查找 个人工作区的 spaceId
   const localP = localCache.getPreference()
   const userId = localP.local_id
+  console.log("userId: ", userId)
   if(!userId) return
+
+  console.log("whenRouteChange 55555")
+
   if(!_debounce()) return
+
+
+  console.log("whenRouteChange 66666")
 
   const g = {
     infoType: "ME",
     owner: userId
   }
 
+
+  console.log("开始加载 space ..........")
   console.time("init-space")
   const mySpace = await db.workspaces.get(g)
   console.timeEnd("init-space")
+  console.log(mySpace)
   
   if(!mySpace) return
   if(store.spaceId === mySpace._id) return

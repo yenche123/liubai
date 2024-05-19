@@ -12,7 +12,6 @@ import {
 export const toRawData = <T = any>(obj: T): T => {
   if(!obj) return obj
   if(!isReactive(obj)) return obj
-  console.log("去转换 raw data...........")
   return toRaw(obj)
 }
 
