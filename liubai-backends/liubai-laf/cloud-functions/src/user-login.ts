@@ -1433,10 +1433,12 @@ function getLiuLoginState() {
 function checkIfStateIsErr(state: any): LiuRqReturn | null {
   const liuLoginState = getLiuLoginState()
   if(!state || typeof state !== "string") {
+    console.warn("the state is required")
     return { code: "U0004" }
   }
   const res = liuLoginState.get(state)
   if(!res) {
+    console.warn("the state is required.......")
     return { code: "U0004", errMsg: "the state is required" }
   }
 
@@ -1444,6 +1446,7 @@ function checkIfStateIsErr(state: any): LiuRqReturn | null {
   num++
 
   if(num > 6) {
+    console.warn("the state has been used too many times.......")
     liuLoginState.delete(state)
     return { code: "U0004", errMsg: "the state has been used too many times" }
   }
@@ -1452,6 +1455,7 @@ function checkIfStateIsErr(state: any): LiuRqReturn | null {
   const diff = now - createdStamp
   const isMoreThan15Mins = diff > (15 * MINUTE)
   if(isMoreThan15Mins) {
+    console.warn("the state has been expired........")
     liuLoginState.delete(state)
     return { code: "U0003", errMsg: "the state has been expired" }
   }
