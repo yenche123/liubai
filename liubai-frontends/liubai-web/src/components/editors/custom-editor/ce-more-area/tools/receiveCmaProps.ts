@@ -70,10 +70,11 @@ function stateChanged(
   checkAttachment(data, newFiles)
 
   // 云同步
-  const be = liuEnv.hasBackend()
+  const canSync = liuEnv.canISync()
+  
   const newSyncCloud = storageState === "CLOUD" || storageState === "WAIT_UPLOAD"
   if(newSyncCloud !== data.syncCloud) data.syncCloud = newSyncCloud
-  const newDisabled = !be || storageState === "ONLY_LOCAL"
+  const newDisabled = !canSync || storageState === "ONLY_LOCAL"
   if(newDisabled !== data.scDisabled) data.scDisabled = newDisabled
   
 }

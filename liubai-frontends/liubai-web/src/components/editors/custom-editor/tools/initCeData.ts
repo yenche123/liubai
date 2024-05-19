@@ -158,8 +158,8 @@ async function initDraftFromDraft(
     ceData.visScope = draft.visScope
   }
   
-  const be = liuEnv.hasBackend()
-  if(!be) {
+  const canSync = liuEnv.canISync()
+  if(!canSync) {
     ceData.storageState = "LOCAL"
   }
   else if(draft.storageState) {
@@ -190,12 +190,11 @@ async function initDraftFromThread(
   thread: ContentLocalTable,
 ) {
   let { ceData, editor, numWhenSet } = ctx
-  const be = liuEnv.hasBackend()
-
+  const canSync = liuEnv.canISync()
   ceData.lastLockStamp = time.getTime()
   ceData.draftId = ""
   ceData.visScope = thread.visScope
-  ceData.storageState = be ? thread.storageState : "LOCAL"
+  ceData.storageState = !canSync ? "LOCAL" : thread.storageState
   ceData.title = thread.title
   ceData.showTitleBar = Boolean(thread.title)
   ceData.whenStamp = thread.whenStamp

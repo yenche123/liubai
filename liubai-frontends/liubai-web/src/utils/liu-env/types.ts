@@ -50,4 +50,7 @@ export interface LiuSystemEnv {
   BUGFENDER_BASEURL?: string
   BUGFENDER_APPKEY?: string
 
+  // don't use sync-system
+  DONOT_USE_SYNC?: boolean
+
 }

@@ -57,8 +57,9 @@ export function useMoreArea(
   const onTapSyncToCloud = () => {
     const newV = !data.syncCloud
 
-    const be = liuEnv.hasBackend()
-    if(!be) {
+    const canISync = liuEnv.canISync()
+    
+    if(!canISync) {
       cui.showModal({
         title_key: "tip.tip",
         content_key: "editor.cannot_sync",

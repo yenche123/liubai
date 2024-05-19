@@ -9,6 +9,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import { handleUploadTasks } from "./upload-tasks"
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
+import liuEnv from "../liu-env";
 
 const MIN_5 = 5 * time.MINUTE
 
@@ -88,6 +89,10 @@ class LocalToCloud {
     // 0. check out if I have login
     const { local_id: user, token, serial } = localCache.getPreference()
     if(!user || !token || !serial) return false
+
+    // 0.1 check out if I can sync with cloud
+    const canSync = liuEnv.canISync()
+    if(!canSync) return false
 
     // 1. add upload task into db
     const res = await addUploadTask(param, user)

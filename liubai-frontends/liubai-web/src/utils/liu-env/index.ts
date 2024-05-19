@@ -56,6 +56,10 @@ function getEnv(): LiuSystemEnv {
   const BUGFENDER_BASEURL = import.meta.env.VITE_BUGFENDER_BASEURL
   const BUGFENDER_APPKEY = import.meta.env.VITE_BUGFENDER_APPKEY
 
+  // do not use sync system even if API_DOMAIN is set
+  const donotUseSync = import.meta.env.VITE_DONOT_USE_SYNC
+  const DONOT_USE_SYNC = donotUseSync === "01"
+
   _env = {
     DEV,
     API_URL,
@@ -88,6 +92,7 @@ function getEnv(): LiuSystemEnv {
     BUGFENDER_APIURL,
     BUGFENDER_BASEURL,
     BUGFENDER_APPKEY,
+    DONOT_USE_SYNC,
   }
   return _env
 }
@@ -107,8 +112,19 @@ function hasBackend() {
   return backendExisted
 }
 
+function canISync() {
+  const be = hasBackend()
+  if(!be) return false
+  const env = getEnv()
+  if(env.DONOT_USE_SYNC) return false
+  return true
+}
+
+
+
 export default {
   getEnv,
   getIfPurelyLocal,
   hasBackend,
+  canISync,
 }
