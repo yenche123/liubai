@@ -112,14 +112,15 @@ export function getSuffix(name: string) {
  * @param data 聚合搜素后的 res.data
  * @param filterMemberLeft 是否过滤掉成员已退出，默认为 true
 */
-export function turnMemberAggsIntoLSAMs(
-  data: any,
+function turnMemberAggsIntoLSAMs(
+  user: Table_User,
+  data: MemberAggSpaces[] | null,
   filterMemberLeft: boolean = true,
 ) {
 
   const len1 = data?.length
   const isDataExisted = Boolean(len1)
-  if(!isDataExisted) {
+  if(!len1 || !isDataExisted) {
     return []
   }
 
@@ -137,9 +138,10 @@ export function turnMemberAggsIntoLSAMs(
     const space_oState = theSpace.oState
     if(space_oState !== "OK") continue
 
+    const member_name = getUserName(user, v)
     const obj: LiuSpaceAndMember = {
       memberId: v._id,
-      member_name: v.name,
+      member_name,
       member_avatar: v.avatar,
       member_oState,
       
@@ -155,6 +157,18 @@ export function turnMemberAggsIntoLSAMs(
   }
 
   return list
+}
+
+
+function getUserName(
+  user: Table_User,
+  mas: MemberAggSpaces,
+) {
+  if(mas.name) return mas.name
+  const email = user.email ?? ""
+  const idx = email.indexOf("@")
+  if(idx < 2) return
+  return email.substring(0, idx)
 }
 
 
@@ -321,7 +335,7 @@ export async function getUserInfos(
     // console.log(res)
     // console.log(" ")
 
-    const lsams = turnMemberAggsIntoLSAMs(res.data, filterMemberLeft)
+    const lsams = turnMemberAggsIntoLSAMs(v, res.data, filterMemberLeft)
     if(lsams.length) {
       userInfos.push({ user: v, spaceMemberList: lsams })
     }
