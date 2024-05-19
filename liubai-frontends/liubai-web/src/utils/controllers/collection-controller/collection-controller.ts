@@ -2,7 +2,7 @@ import type { CollectionLocalTable } from "~/types/types-table"
 import { db } from "../../db"
 import localCache from "../../system/local-cache"
 import type { TcListOption } from "../thread-controller/type"
-import { getMemberShows, getMemberShowsFromUsers } from "../equip/other-tool"
+import { getMemberShows } from "../equip/other-tool"
 import type { MemberShow, ThreadShow } from "~/types/types-content";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import showThread from "~/utils/show/show-thread"
@@ -89,7 +89,6 @@ export async function getThreadsByCollection(
   if(!res2 || res2.length < 1) return []
 
   // 3. 去加载 作者
-  let user_ids: string[] = []
   let member_ids: string[] = []
   res2.forEach(v => {
     if(v.member) {
@@ -97,15 +96,9 @@ export async function getThreadsByCollection(
         member_ids.push(v.member)
       }
     }
-    else if(v.user) {
-      if(!user_ids.includes(v.user)) {
-        user_ids.push(v.user)
-      }
-    }
   })
 
   const memberShows = await getMemberShows(member_ids)
-  const membersShows2 = await getMemberShowsFromUsers(user_ids)
 
   let list: ThreadShow[] = []
   for(let i=0; i<res.length; i++) {
@@ -118,9 +111,6 @@ export async function getThreadsByCollection(
     let creator: MemberShow | undefined = undefined
     if(member) {
       creator = memberShows.find(v2 => v2._id === member)
-    }
-    if(!creator) {
-      creator = membersShows2.find(v2 => v2.user_id === user)
     }
 
     let obj = showThread.packThread(v, _collections, creator, user_id, wStore)

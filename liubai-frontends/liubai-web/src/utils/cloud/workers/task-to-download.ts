@@ -4,8 +4,7 @@ import type { MainToChildMessage, SyncRes } from "../tools/types"
 import type { LiuFileStore, LiuImageStore } from "~/types"
 import type { 
   DownloadTaskLocalTable, 
-  MemberLocalTable, 
-  UserLocalTable, 
+  MemberLocalTable,
   WorkspaceLocalTable,
   ContentLocalTable,
   DraftLocalTable,
@@ -293,46 +292,11 @@ const handle_draft = async (task: DownloadTaskLocalTable) => {
   return res0
 }
 
-const handle_user = async (task: DownloadTaskLocalTable): Promise<HanTaskRes> => {
-  const id = task.target_id
-  const res = await db.users.get(id)
-  if(!res) return {}
-
-  const avatar = res.avatar
-  if(!avatar || avatar.arrayBuffer) {
-    return {}
-  }
-
-  let u: Partial<UserLocalTable> = {}
-  let targetUpdated = false
-
-  const res2 = await handle_images([avatar])
-  if(res2.hasEverSuccess) {
-    targetUpdated = true
-    u.avatar = res2.imgs[0]
-  }
-
-
-  if(targetUpdated) {
-    u.updatedStamp = time.getTime()
-    const res3 = await db.users.update(id, u)
-  }
-
-  return {
-    hasEverUnknown: res2.hasEverUnknown,
-    hasEverBadNetwork: res2.hasEverBadNetwork,
-  }
-}
-
-
 const handle_task = async (task: DownloadTaskLocalTable) => {
   const table = task.target_table
 
   let res: HanTaskRes | undefined
-  if(table === "users") {
-    res = await handle_user(task)
-  }
-  else if(table === "workspaces") {
+  if(table === "workspaces") {
     res = await handle_workspace(task)
   }
   else if(table === "members") {

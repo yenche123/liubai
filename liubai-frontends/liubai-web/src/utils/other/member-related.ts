@@ -22,8 +22,6 @@ export function usersToMemberShows(
   const list = res.map(v => {
     const obj: MemberShow = {
       user_id: v._id,
-      name: v.name,
-      avatar: v.avatar ? imgHelper.imageStoreToShow(v.avatar) : undefined,
       spaceId: "",
       oState: "EXTERNAL",
     }

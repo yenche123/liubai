@@ -33,19 +33,11 @@ export interface BaseLocalTable {
   updatedStamp: number
 }
 
-/** 为什么 User 表需要 name 和头像？ 
- *   User 表的 name 和头像是用户的主昵称和头像，
- *   之后被创建的 member 都是从 User 表中授权过去的关系
-*/
 export interface UserLocalTable extends BaseLocalTable {
   lastRefresh: number
   email?: string
   github_id?: number
   phone?: string
-
-  name?: string             // 存储其他非工作区成员时，需要用到（因为可能出现
-  avatar?: LiuImageStore    // 用户不在当前工作区内，没有 memberId，所以就要用 userId 来检索
-                            // 该成员的信息，比如昵称和头像
   subscription?: UserSubscription
 }
 

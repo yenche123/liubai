@@ -2,8 +2,7 @@
 import type { ContentLocalTable } from "~/types/types-table";
 import type { CommentShow, MemberShow } from "~/types/types-content";
 import { 
-  getMemberShows, 
-  getMemberShowsFromUsers,
+  getMemberShows,
   getUserAndMemberIdsFromContents,
 } from "./other-tool";
 import localCache from "~/utils/system/local-cache";
@@ -17,11 +16,9 @@ export async function equipComments(
   if(contents.length < 1) return []
 
   const { local_id: user_id } = localCache.getPreference()
-  const { user_ids, member_ids } = getUserAndMemberIdsFromContents(contents)
+  const { member_ids } = getUserAndMemberIdsFromContents(contents)
 
   const memberShows = await getMemberShows(member_ids)
-  const membersShows2 = await getMemberShowsFromUsers(user_ids)
-
   const content_ids = contents.map(v => v._id)
   const collections = await collectionController.getMyCollectionByIds({ content_ids })
 
@@ -36,9 +33,7 @@ export async function equipComments(
     if(member) {
       creator = memberShows.find(v2 => v2._id === member)
     }
-    if(!creator) {
-      creator = membersShows2.find(v2 => v2.user_id === user)
-    }
+
     const obj = showComment.packComment(v, _collections, creator, user_id)
     list.push(obj)
   }
