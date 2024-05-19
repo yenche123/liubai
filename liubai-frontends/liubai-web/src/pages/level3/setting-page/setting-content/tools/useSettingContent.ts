@@ -86,8 +86,8 @@ function listenSystemStore(
 function whenTapLogout(
   data: SettingContentData
 ) {
-  const res0 = liuEnv.getIfPurelyLocal()
-  if(res0) askLogoutWithPurelyLocal()
+  const res0 = liuEnv.hasBackend()
+  if(!res0) askLogoutWithPurelyLocal()
   else askLogoutWithBackend()
 }
 
