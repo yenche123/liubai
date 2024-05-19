@@ -854,6 +854,7 @@ export interface Table_Workspace extends BaseTable {
 
 /** Member 表 */
 export interface Table_Member extends BaseTable {
+  spaceType: SpaceType
   name?: string
   avatar?: Cloud_ImageStore
   spaceId: string

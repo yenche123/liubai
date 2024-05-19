@@ -1121,6 +1121,7 @@ async function sign_up(
   const avatar = constructMemberAvatarFromThirdData(thirdData)
   const basic3 = getBasicStampWhileAdding()
   const member: PartialSth<Table_Member, "_id"> = {
+    spaceType: "ME",
     name,
     avatar,
     spaceId,

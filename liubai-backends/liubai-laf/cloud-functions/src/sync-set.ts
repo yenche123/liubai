@@ -34,6 +34,9 @@ import type {
   SpaceType,
   OState_Draft,
   TableName,
+  EmojiData,
+  PartialSth,
+  ContentInfoType,
 } from "@/common-types"
 import { 
   Sch_Simple_SyncSetAtom,
@@ -526,7 +529,7 @@ async function toPostThread(
 
   // 6. construct a new row of Table_Content
   const b6 = getBasicStampWhileAdding(ssCtx)
-  const newRow: Partial<Table_Content> = {
+  const newRow: PartialSth<Table_Content, "_id"> = {
     ...b6,
     first_id,
     user: userId,
@@ -545,10 +548,10 @@ async function toPostThread(
     remindStamp: thread.remindStamp,
     whenStamp: thread.whenStamp,
     remindMe: thread.remindMe,
-    emojiData: thread.emojiData,
+    emojiData: thread.emojiData as EmojiData,
     pinStamp: thread.pinStamp,
-    createdStamp: thread.createdStamp,
-    editedStamp: thread.editedStamp,
+    createdStamp: thread.createdStamp as number,
+    editedStamp: thread.editedStamp as number,
     tagIds: thread.tagIds,
     tagSearched: thread.tagSearched,
     stateId: thread.stateId,
@@ -617,7 +620,7 @@ async function toPostComment(
 
   // 4. construct a new row of Table_Content
   const b4 = getBasicStampWhileAdding(ssCtx)
-  const newRow: Partial<Table_Content> = {
+  const newRow: PartialSth<Table_Content, "_id"> = {
     ...b4,
     first_id,
     user: userId,
@@ -631,9 +634,9 @@ async function toPostComment(
     enc_desc,
     enc_images,
     enc_files,
-    emojiData: comment.emojiData,
-    createdStamp: comment.createdStamp,
-    editedStamp: comment.editedStamp,
+    emojiData: comment.emojiData as EmojiData,
+    createdStamp: comment.createdStamp as number,
+    editedStamp: comment.editedStamp as number,
     parentThread: comment.parentThread,
     parentComment: comment.parentComment,
     replyToComment: comment.replyToComment,
@@ -966,7 +969,7 @@ async function toCollectionShared(
   
   // 2. construct a new row of Table_Collection
   const b4 = getBasicStampWhileAdding(ssCtx)
-  const newRow: Partial<Table_Collection> = {
+  const newRow: PartialSth<Table_Collection, "_id"> = {
     ...b4,
     first_id,
     oState: collection.oState,
@@ -1559,10 +1562,10 @@ async function toDraftCreate(
   const userId = ssCtx.me._id
   const first_id = draft.first_id as string
   const b4 = getBasicStampWhileAdding(ssCtx)
-  const u: Partial<Table_Draft> = {
+  const u: PartialSth<Table_Draft, "_id"> = {
     ...b4,
     first_id,
-    infoType: draft.infoType,
+    infoType: draft.infoType as ContentInfoType,
     oState: "OK",
     user: userId,
     spaceId,
@@ -1582,7 +1585,7 @@ async function toDraftCreate(
     whenStamp: draft.whenStamp,
     remindMe: draft.remindMe,
     tagIds: draft.tagIds,
-    editedStamp: draft.editedStamp,
+    editedStamp: draft.editedStamp as number,
   }
   const new_id = await insertData(ssCtx, "draft", u)
   if(!new_id) {
