@@ -78,7 +78,7 @@ export function createEmailCode() {
   randomString += "-"
 
   // 再四个数字
-  randomString = createRandom(4, "onlyNumber")
+  randomString += createRandom(4, "onlyNumber")
 
   return randomString
 }
