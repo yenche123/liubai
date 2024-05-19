@@ -11,7 +11,7 @@ const sbfData = reactive<SbfData>({
   enable: false,
   bgOpacity: 0,
   distance: "-110%",
-  duration: `${TRANSITION_DURATION}ms`,
+  duration: "0",
 })
 
 export function initFixedSideBar() {
@@ -127,7 +127,7 @@ function toClose() {
 
     closeTimeout = setTimeout(() => {
       sbfData.state = "closed"
-      sbfData.duration = `${TRANSITION_DURATION}ms`
+      sbfData.duration = "0"
       sbfData.enable = false
       
       // 再次重置，避免其他函数捣乱
