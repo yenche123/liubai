@@ -23,7 +23,7 @@ export function initSpace(
     routeChangeNum++
     console.log("routeChangeNum: ", routeChangeNum)
     whenRouteChange(store, newV)
-  })
+  }, { immediate: true })
 }
 
 

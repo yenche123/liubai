@@ -24,7 +24,7 @@ export function useMvDropZone(
 
   // 不直接回传 isOverDropZone，而是套一层 _isOverDropZone
   // 为了考量 全局状态 isDragToSort (内部是否正在拖动以排序图片)
-  const _isOverDropZone = ref(isOverDropZone.value)   
+  const _isOverDropZone = ref(false)   
   watch(isOverDropZone, (newV) => {
     if(globalState.isDragToSort) return
     _isOverDropZone.value = newV

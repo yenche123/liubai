@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
 import { useI18n } from 'vue-i18n';
+import valTool from "~/utils/basic/val-tool";
 
 defineProps({
   isOverDropZone: {
@@ -22,6 +24,13 @@ defineEmits<{
 
 const { t } = useI18n()
 const color = "#c7c9ca"
+
+const transDuration = ref("0")
+onMounted(async () => {
+  await valTool.waitMilli(200)
+  console.log("切换成 0.11s")
+  transDuration.value = "0.11s"
+})
 
 </script>
 <template>
@@ -52,7 +61,7 @@ const color = "#c7c9ca"
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: .11s;
+  transition: v-bind("transDuration");
   opacity: 0;
   visibility: hidden;
   z-index: 570;
