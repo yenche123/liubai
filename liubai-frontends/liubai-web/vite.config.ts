@@ -41,7 +41,7 @@ export default defineConfig({
     }),
 
     // 使用 SSL
-    mkcert(),
+    // mkcert(),
 
     // 使用 svg 雪碧图
     createSvgIconsPlugin({

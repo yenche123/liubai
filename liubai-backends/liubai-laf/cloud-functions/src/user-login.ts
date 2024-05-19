@@ -1434,12 +1434,13 @@ function checkIfStateIsErr(state: any): LiuRqReturn | null {
   const liuLoginState = getLiuLoginState()
   if(!state || typeof state !== "string") {
     console.warn("the state is required")
-    return { code: "U0004" }
+    return { code: "U0004", errMsg: "the state is required" }
   }
+  
   const res = liuLoginState.get(state)
   if(!res) {
-    console.warn("the state is required.......")
-    return { code: "U0004", errMsg: "the state is required" }
+    console.warn("the state is not in the cache.......")
+    return { code: "U0004", errMsg: "the state is not in the cache" }
   }
 
   let { createdStamp, num } = res

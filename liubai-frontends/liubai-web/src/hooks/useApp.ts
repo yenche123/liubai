@@ -11,6 +11,9 @@ import { useIdsChanged } from "./tools/useIdsChanged";
 
 export function useApp() {
 
+  // 打印版本信息
+  printInit()
+
   // 监听路由变化，若加载过久，窗口顶部会出现加载条
   useGlobalLoading()
 
@@ -31,6 +34,13 @@ export function useApp() {
 
   // init useIdsChanged
   useIdsChanged()
+}
+
+function printInit() {
+  const version = LIU_ENV.version
+  const appName = liuEnv.getEnv().APP_NAME
+  console.log(`You are using ${appName} v${version}`)
+  console.log(" ")
 }
 
 
@@ -67,9 +77,10 @@ async function initMobile() {
   if(cha.isMobile) {
     const _env = liuEnv.getEnv()
     if(_env.DEV) {
-      const VConsole = await getVConsole()
-      new VConsole.default()
+      
     }
+    const VConsole = await getVConsole()
+    new VConsole.default()
     import("~/styles/mobile-style.css")
   }
 }
