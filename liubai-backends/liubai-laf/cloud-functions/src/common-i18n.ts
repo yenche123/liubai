@@ -1,3 +1,4 @@
+// Function Name: common-i18n
 import type {
   SupportedLocale,
   Table_User,

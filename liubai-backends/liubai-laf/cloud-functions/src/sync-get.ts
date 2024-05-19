@@ -1,3 +1,5 @@
+// Function Name: sync-get
+
 import { 
   verifyToken,
   getDocAddId,

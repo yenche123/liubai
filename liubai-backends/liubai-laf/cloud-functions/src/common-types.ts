@@ -1,10 +1,11 @@
-// 全局类型
-// Table_ 开头，表示为数据表结构
-// Shared_ 开头，表示为全局缓存 cloud.shared 所涉及的结构
+// Function Name: common-types
 import Stripe from "stripe"
 import * as vbot from "valibot"
 import type { BaseSchema } from "valibot"
 
+// 全局类型
+// Table_ 开头，表示为数据表结构
+// Shared_ 开头，表示为全局缓存 cloud.shared 所涉及的结构
 // Sch_ 开头的，表示类型的 Schema，用于 valibot
 // Res_ 开头的，表示返回至前端的类型
 // Param_ 开头的，表示传入云函数的类型

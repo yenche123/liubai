@@ -1,3 +1,5 @@
+// Function Name: common-ids
+
 // 专门创建 id 们的工具函数
 import * as crypto from "crypto"
 

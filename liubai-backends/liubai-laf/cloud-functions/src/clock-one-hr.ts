@@ -1,3 +1,4 @@
+// Function Name: clock-one-hr
 // 定时系统: 每 60 分钟执行一次
 // 清理过期的 Credential
 import cloud from '@lafjs/cloud'

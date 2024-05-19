@@ -1,3 +1,5 @@
+// Function Name: service-send
+
 // 发送短信、邮件
 import cloud from '@lafjs/cloud'
 import { Resend } from 'resend'

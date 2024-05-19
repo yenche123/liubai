@@ -1,3 +1,5 @@
+// Function Name: hello-world
+
 import { getNowStamp } from "@/common-time"
 
 export async function main(ctx: FunctionContext) {

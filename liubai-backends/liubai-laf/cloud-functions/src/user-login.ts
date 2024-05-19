@@ -1,3 +1,5 @@
+// Function Name: user-login
+
 // 用户登录、注册、进入
 import cloud from '@lafjs/cloud'
 import type { 

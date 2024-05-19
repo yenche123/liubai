@@ -1,3 +1,4 @@
+// Function Name: __interceptor__
 import cloud from '@lafjs/cloud'
 import type { 
   BaseIsOn,

@@ -1,3 +1,5 @@
+// Function Name: common-util
+
 // 存放一些公共函数
 import cloud from '@lafjs/cloud'
 import * as crypto from "crypto"

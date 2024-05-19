@@ -1,3 +1,4 @@
+// Function Name: __init__
 import cloud from '@lafjs/cloud'
 import * as crypto from "crypto"
 import type { 

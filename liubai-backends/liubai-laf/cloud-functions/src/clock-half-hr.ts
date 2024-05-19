@@ -1,3 +1,4 @@
+// Function Name: clock-half-hr
 // 定时系统: 每 30 分钟执行一次
 // 清理过期的 cloud.shared 全局缓存
 import cloud from '@lafjs/cloud'

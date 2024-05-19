@@ -1,3 +1,5 @@
+// Function Name: user-settings
+
 import cloud from '@lafjs/cloud'
 import { 
   getStripeInstance, 

@@ -1,3 +1,5 @@
+// Function Name: sync-set
+
 import {  
   verifyToken,
   getDocAddId,
