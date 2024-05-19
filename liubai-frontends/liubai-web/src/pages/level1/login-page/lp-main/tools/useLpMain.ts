@@ -12,7 +12,7 @@ export function useLpMain(
   const lpSelectsEl = ref<HTMLElement>()
   const lpEmailInput = ref<HTMLInputElement>()
   const lpmData = reactive<LpmData>({
-    current: 2,
+    current: 1,
     showEmailSubmit: false,
     emailVal: "",
     indicatorData: {

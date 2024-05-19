@@ -18,6 +18,7 @@ import type {
   LiuSpaceAndMember,
   SupportedClient,
   ServiceSendEmailsParam,
+  Table_AllowList,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -422,6 +423,12 @@ async function handle_email(
   const state = body.state
   const res0 = checkIfStateIsErr(state)
   if(res0) return res0
+
+  // 2.1 检测邮箱是否在许可名单内
+  const res0_1 = await checkAllowList("email", email)
+  if(!res0_1) {
+    return { code: "U0006", errMsg: "the email is not in allow-list" }
+  }
 
   // 3. 检查 email 是否发送过于频繁
   const res1 = await checkIfEmailSentTooMuch(email)
@@ -1469,6 +1476,20 @@ function getClientKey(enc_client_key: any) {
   }
   
   return { client_key }
+}
+
+// 检测许可名单
+async function checkAllowList(
+  type: "email",
+  value: string,
+) {
+  const w: Partial<Table_AllowList> = {
+    type,
+    isOn: "Y",
+    value,
+  }
+  const res = await db.collection("AllowList").where(w).getOne()
+  return Boolean(res.data)
 }
 
 

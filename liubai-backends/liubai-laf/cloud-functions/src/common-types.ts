@@ -863,6 +863,13 @@ export interface Table_Member extends BaseTable {
   editedStamp?: number      // 同步时，用来比大小的
 }
 
+/** 屏蔽表: 目前用于许可特定 email */
+export interface Table_AllowList extends BaseTable {
+  type: "email"
+  isOn: BaseIsOn
+  value: string
+}
+
 
 /** 屏蔽表: 目前用于屏蔽特定 ip */
 export interface Table_BlockList extends BaseTable {

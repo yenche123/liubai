@@ -24,6 +24,7 @@ import {
   watch, 
   reactive,
   type WatchStopHandle,
+  computed,
 } from "vue";
 import middleBridge from "~/utils/middle-bridge";
 import valTool from "~/utils/basic/val-tool";
@@ -100,8 +101,16 @@ export function useLoginPage() {
 
   useTitle()
 
+  const showBackBtn = computed(() => {
+    const v = lpData.view
+    if(v === "main") return false
+    if(v === "accounts") return false
+    return true
+  })
+
   return {
     lpData,
+    showBackBtn,
     onEmailSubmitted,
     onSubmitCode,
     onBackFromCode,
@@ -288,7 +297,12 @@ async function toSubmitEmailAddress(
   console.log(" ")
 
   const { code, errMsg } = res
-  if(code === "E4003" && errMsg === "last_event: bounced") {
+
+  if(code === "U0006") {
+    showEmojiTip("login.err_9", "👾")
+    return
+  }
+  else if(code === "E4003" && errMsg === "last_event: bounced") {
     showEmojiTip("login.err_3", "😭")
     return
   }

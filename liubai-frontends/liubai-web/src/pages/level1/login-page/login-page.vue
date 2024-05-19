@@ -8,6 +8,7 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n()
 const { 
   lpData,
+  showBackBtn,
   onEmailSubmitted,
   onSubmitCode,
   onBackFromCode,
@@ -23,7 +24,7 @@ const {
   <div class="lp-navi-bar">
 
 
-    <div class="lpn-box" v-liu-show="lpData.view !== 'accounts'">
+    <div class="lpn-box" v-liu-show="showBackBtn">
 
       <!-- 返回按钮 -->
       <div class="liu-hover lpn-back" @click.stop="onTapBack">
