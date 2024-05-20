@@ -43,6 +43,11 @@ export interface LiuRqReturn<T = Record<string, any>> {
   data?: T
 }
 
+export interface LiuErrReturn {
+  code: string
+  errMsg?: string
+}
+
 /***************** 基础 Schema 用于 valibot *************/
 // validate id's min length
 export const Sch_Id = vbot.string([vbot.minLength(8)])

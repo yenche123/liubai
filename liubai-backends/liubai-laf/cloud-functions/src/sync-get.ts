@@ -9,6 +9,7 @@ import {
   getDecryptedBody,
   getEncryptedData,
   valTool,
+  decryptCloudData,
 } from "@/common-util"
 import {
   Sch_SyncGetAtom,
@@ -27,6 +28,14 @@ import type {
   Table_Member,
   SyncGetCtxKey,
   TableName,
+  LiuDownloadCollection,
+  LiuDownloadContent,
+  CollectionInfoType,
+  LiuContent,
+  Cloud_ImageStore,
+  Cloud_FileStore,
+  LiuErrReturn,
+  LiuDownloadParcel_A,
 } from "@/common-types"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -103,26 +112,24 @@ async function toThreadList(
   opt: OperationOpt,
 ) {
   const vT = atom.viewType
+
+  let res1: SyncGetAtomRes | undefined
   if(vT === "FAVORITE") {
 
   }
   else {
-    toThreadListFromContent(sgCtx, atom, opt)
+    res1 = await toThreadListFromContent(sgCtx, atom, opt)
   }
-
+  return res1
 }
 
-
-interface Content_With_Collection extends Table_Content {
-
-}
 
 /** load threads from Content table */
 async function toThreadListFromContent(
   sgCtx: SyncGetCtx,
   atom: SyncGet_ThreadList,
   opt: OperationOpt,
-) {
+): Promise<SyncGetAtomRes> {
   const { taskId } = opt
   const { 
     spaceId, 
@@ -142,7 +149,7 @@ async function toThreadListFromContent(
 
   // 1. checking out logged in and spaceId
   const res1 = getSharedData_1(sgCtx, spaceId, opt)
-  if(!res1.pass) return res1
+  if(!res1.pass) return res1.result
 
   // 2. handle w
   const isIndex = vT === "INDEX"
@@ -191,16 +198,26 @@ async function toThreadListFromContent(
   if(results.length < 1) {
     return { code: "0000", taskId, list: [] }
   }
-  mergeList(sgCtx, "contents", results)
+  mergeListIntoCtx(sgCtx, "contents", results)
 
+  // 4. get authors
+  const authors = await getAuthors(sgCtx, results)
+
+  // 5. get my collections related to these contents
+  const content_ids = results.map(v => v._id)
+  const myCollections = await getMyCollectionsFromContentIds(sgCtx, content_ids)
+
+  // 6. package contents into LiuDownloadContent[]
+  const res6 = packContents(sgCtx, results, myCollections, authors)
+  if(!res6.pass) {
+    const result_6 = { ...res6.result, taskId }
+    return result_6
+  }
+
+  // 7. turn into parcels
+  const res7 = turnDownloadContentsIntoParcels(res6.list)
   
-
-
-
-
-
-
-  
+  return { code: "0000", taskId, list: res7 }
 }
 
 /** load threads from Collection table first */
@@ -219,6 +236,216 @@ async function toThreadListFromCollection(
 
 /***************************** helper functions *************************/
 
+
+interface Gsdr_A {
+  pass: false
+  result: SyncGetAtomRes
+}
+
+interface Gsdr_1_B {
+  pass: true
+}
+
+type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
+
+interface PackContent_A {
+  pass: false
+  result: LiuErrReturn
+}
+
+interface PackContent_B {
+  pass: true
+  list: LiuDownloadContent[]
+}
+
+type PackContents_Res = PackContent_A | PackContent_B
+
+
+function turnDownloadContentsIntoParcels(
+  list: LiuDownloadContent[],
+) {
+  const results = list.map(v => {
+    const obj: LiuDownloadParcel_A = {
+      id: v._id,
+      status: "has_data",
+      parcelType: "content",
+      content: v,
+    }
+    return obj
+  })
+  return results
+}
+
+
+function packContents(
+  sgCtx: SyncGetCtx,
+  contents: Table_Content[],
+  myCollections: Table_Collection[],
+  authors: LiuDownloadAuthor[],
+): PackContents_Res {
+  const myUserId = sgCtx.me?._id
+
+  const list: LiuDownloadContent[] = []
+  for(let i=0; i<contents.length; i++) {
+    const v = contents[i]
+    const author = findMatchedAuthor(v, authors)
+    if(!author) continue
+
+    const isMine = Boolean(myUserId && author.user_id === myUserId)
+    const myFavorite = findCollection(v, myCollections, "FAVORITE")
+    const myEmoji = findCollection(v, myCollections, "EXPRESS")
+
+    // title
+    const d_title = decryptCloudData<string>(v.enc_title)
+    if(!d_title.pass) return d_title
+    const title = d_title.data
+
+    // desc
+    const d_desc = decryptCloudData<LiuContent[]>(v.enc_desc)
+    if(!d_desc.pass) return d_desc
+    const liuDesc = d_desc.data
+
+    // images
+    const d_images = decryptCloudData<Cloud_ImageStore[]>(v.enc_images)
+    if(!d_images.pass) return d_images
+    const images = d_images.data
+
+    // files
+    const d_files = decryptCloudData<Cloud_FileStore[]>(v.enc_files)
+    if(!d_files.pass) return d_files
+    const files = d_files.data
+    
+    const obj: LiuDownloadContent = {
+      _id: v._id,
+      first_id: v._id,
+
+      isMine,
+      author,
+      spaceId: v.spaceId,
+      spaceType: v.spaceType,
+
+      infoType: v.infoType,
+      oState: v.oState,
+      visScope: v.visScope,
+      storageState: v.storageState,
+
+      title,
+      liuDesc,
+      images,
+      files,
+
+      calendarStamp: v.calendarStamp,
+      remindStamp: v.remindStamp,
+      whenStamp: v.whenStamp,
+      remindMe: v.remindMe,
+      emojiData: v.emojiData,
+      parentThread: v.parentThread,
+      parentComment: v.parentComment,
+      replyToComment: v.replyToComment,
+      pinStamp: v.pinStamp,
+
+      createdStamp: v.createdStamp,
+      editedStamp: v.editedStamp,
+
+      tagIds: v.tagIds,
+      tagSearched: v.tagSearched,
+      stateId: v.stateId,
+      config: v.config,
+
+      levelOne: v.levelOne,
+      levelOneAndTwo: v.levelOneAndTwo,
+
+      myFavorite,
+      myEmoji,
+    }
+    list.push(obj)
+  }
+
+  return { pass: true, list }
+}
+
+/** search my collection for content */
+function findCollection(
+  c: Table_Content,
+  myCollections: Table_Collection[],
+  collectionType: CollectionInfoType,
+) {
+  const content_id = c._id
+  const c1 = myCollections.find(v => {
+    if(v.content_id !== content_id) return false
+    return v.infoType === collectionType
+  })
+  if(!c1) return
+  const [c2] = turnCollectionsIntoDownloadOnes([c1])
+  return c2
+}
+
+
+/** search author for content */
+function findMatchedAuthor(
+  c: Table_Content,
+  authors: LiuDownloadAuthor[],
+) {
+
+  const isMemberInContent = Boolean(c.member)
+
+  // 1. find matched author
+  const a1 = authors.find(v => {
+    if(isMemberInContent) {
+      return v.member_id === c.member
+    }
+    return v.user_id === c.user
+  })
+  if(a1 || !isMemberInContent) return a1
+
+  // 2. find again
+  const a2 = authors.find(v => v.user_id === c.user)
+  return a2
+}
+
+
+function turnCollectionsIntoDownloadOnes(
+  collections: Table_Collection[],
+) {
+  const list: LiuDownloadCollection[] = []
+  for(let i=0; i<collections.length; i++) {
+    const v = collections[i]
+    const obj: LiuDownloadCollection = {
+      _id: v._id,
+      first_id: v.first_id,
+      user: v.user,
+      member: v.member,
+      oState: v.oState,
+      operateStamp: v.operateStamp,
+      emoji: v.emoji,
+    }
+    list.push(obj)
+  }
+  return list
+}
+
+
+async function getMyCollectionsFromContentIds(
+  sgCtx: SyncGetCtx,
+  content_ids: string[],
+) {
+  const user_id = sgCtx.me._id
+  if(!user_id) return []
+
+  // 1. query
+  const w1 = {
+    user: user_id,
+    content_id: _.in(content_ids),
+  }
+  const col_1 = db.collection("Collection")
+  const res1 = await col_1.where(w1).get<Table_Collection>()
+  const results = res1.data ?? []
+  mergeListIntoCtx(sgCtx, "collections", results)
+
+  return results
+}
+
+
 interface TmpGetAuthor_1 {
   user_id: string
   space_id: string
@@ -236,10 +463,14 @@ async function getAuthors(
   for(let i=0; i<results.length; i++) {
     const v = results[i]
     const { user, member, spaceId } = v
+
+    // 1.1 checking out if the user & spaceId is in list1
     const tmp1 = list1.find(v1 => {
       return v1.user_id === user && v1.space_id === spaceId
     })
     if(tmp1) continue
+
+    // 1.2 if not, push into list1
     list1.push({ 
       user_id: user, 
       space_id: spaceId, 
@@ -275,7 +506,7 @@ async function getAuthors(
   // 5. get members first
   let members: Table_Member[] = []
   if(member_ids.length > 0) {
-    members = await getList(sgCtx, member_ids, "Member", "members")
+    members = await getListViaIds(sgCtx, member_ids, "Member", "members")
     let tmpAuthors = generateAuthorsFromMembers(sgCtx, members, list1)
     authors.push(...tmpAuthors)
   }
@@ -291,15 +522,17 @@ async function getAuthors(
   })
   user_ids = valTool.uniqueArray(user_ids)
 
-  // 7. get personal workspaces by user_ids
+  // 7. construct query for Member
   const w7 = {
-    infoType: "ME",
-    owner: _.in(user_ids),
+    user: _.in(user_ids),
+    spaceType: "ME",
   }
-  const workspaces = await db.collection("Workspace").where(w7).get()
-  
-
-
+  const col_7 = db.collection("Member")
+  const res7 = await col_7.where(w7).get<Table_Member>()
+  members = res7.data ?? []
+  const tmpAuthors_7 = generateAuthorsFromMembers(sgCtx, members, list1)
+  authors.push(...tmpAuthors_7)
+  return authors
 }
 
 
@@ -334,7 +567,7 @@ function generateAuthorsFromMembers(
   return authors
 }
 
-async function getList<T extends SyncGetTable>(
+async function getListViaIds<T extends SyncGetTable>(
   sgCtx: SyncGetCtx,
   ids: string[],
   tableName: TableName,
@@ -357,22 +590,10 @@ async function getList<T extends SyncGetTable>(
   const res = await q.get<T>()
   const newList = res.data ?? []
   if(newList.length < 1) return list
-  mergeList(sgCtx, key, newList)
+  mergeListIntoCtx(sgCtx, key, newList)
   list.push(...newList)
   return list
 }
-
-
-interface Gsdr_A {
-  pass: false
-  result: SyncGetAtomRes
-}
-
-interface Gsdr_1_B {
-  pass: true
-}
-
-type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
 
 /** checking out if i logged in and space ids */
 function getSharedData_1(
@@ -419,7 +640,7 @@ function initSgCtx(
 }
 
 
-function mergeList<T extends SyncGetTable>(
+function mergeListIntoCtx<T extends SyncGetTable>(
   sgCtx: SyncGetCtx,
   key: SyncGetCtxKey,
   results: T[],

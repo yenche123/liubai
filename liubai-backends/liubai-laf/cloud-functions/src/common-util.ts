@@ -25,6 +25,7 @@ import type {
   LiuContent,
   VerifyTokenRes_A,
   VerifyTokenRes_B,
+  LiuErrReturn,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -992,6 +993,61 @@ function decryptWithAES(
   return decrypted
 }
 
+
+interface DecryptCloudRes_A {
+  pass: false
+  result: LiuErrReturn
+}
+
+interface DecryptCloudRes_B<T> {
+  pass: true
+  data?: T
+}
+
+type DecryptCloudRes<T> = DecryptCloudRes_A | DecryptCloudRes_B<T>
+
+/** decrypt cloud data with AES */
+export function decryptCloudData<T>(
+  civ?: CryptoCipherAndIV,
+): DecryptCloudRes<T> {
+  if(!civ) return { pass: true }
+
+  const aesKey = getAESKey()
+  if(!aesKey) {
+    console.warn("aesKey is empty in decryptCloudData")
+    return {
+      pass: false,
+      result: {
+        code: "E5001",
+        errMsg: "aesKey is empty in decryptCloudData",
+      }
+    }
+  }
+
+  const res = decryptWithAES(civ, aesKey)
+  if(!res) {
+    console.warn("err occurs in decryptCloudData")
+    return {
+      pass: false,
+      result: {
+        code: "E5001",
+        errMsg: "decryptWithAES failed in decryptCloudData",
+      }
+    }
+  }
+  const res2 = strToObj(res) as LiuPlainText<T>
+  const pre = res2.pre
+  if(pre !== aesKey.substring(0, 5)) {
+    return {
+      pass: false,
+      result: {
+        code: "E5001",
+        errMsg: "pre is not matched",
+      }
+    }
+  }
+  return { pass: true, data: res2.data }
+}
 
 
 /************************** ip 查询相关 **********************/
