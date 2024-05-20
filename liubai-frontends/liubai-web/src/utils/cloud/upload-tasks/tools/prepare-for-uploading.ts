@@ -272,6 +272,7 @@ async function organizeAtom(task: UploadTaskLocalTable) {
       first_id: collection.first_id,
       oState: collection.oState,
       content_id: collection.content_id,
+      sortStamp: collection.sortStamp,
     }
     isOK = true
   }
@@ -283,6 +284,7 @@ async function organizeAtom(task: UploadTaskLocalTable) {
       oState: collection.oState,
       content_id: collection.content_id,
       emoji: collection.emoji,
+      sortStamp: collection.sortStamp,
     }
     isOK = true
   }

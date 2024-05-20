@@ -33,11 +33,11 @@ function packThread(
   collections?.forEach(v2 => {
     if(v2.infoType === "EXPRESS" && v2.emoji) {
       myEmoji = v2.emoji
-      myEmojiStamp = v2.insertedStamp
+      myEmojiStamp = v2.sortStamp ?? v2.insertedStamp
     }
     else if(v2.infoType === "FAVORITE") {
       myFavorite = v2.oState === "OK"
-      myFavoriteStamp = v2.insertedStamp
+      myFavoriteStamp = v2.sortStamp ?? v2.insertedStamp
     }
   })
 

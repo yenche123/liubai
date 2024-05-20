@@ -96,7 +96,7 @@ async function toExecute(
 
     let res1: SyncGetAtomRes | undefined
     if(taskType === "thread_list") {
-      toThreadList(sgCtx, v, opt)
+      res1 = await toThreadList(sgCtx, v, opt)
     }
 
   }
@@ -115,7 +115,7 @@ async function toThreadList(
 
   let res1: SyncGetAtomRes | undefined
   if(vT === "FAVORITE") {
-
+    toThreadListFromCollection(sgCtx, atom, opt)
   }
   else {
     res1 = await toThreadListFromContent(sgCtx, atom, opt)
@@ -226,6 +226,7 @@ async function toThreadListFromCollection(
   atom: SyncGet_ThreadList,
   opt: OperationOpt,
 ) {
+
 
   
 }
@@ -416,8 +417,9 @@ function turnCollectionsIntoDownloadOnes(
       user: v.user,
       member: v.member,
       oState: v.oState,
-      operateStamp: v.operateStamp,
       emoji: v.emoji,
+      operateStamp: v.operateStamp,
+      sortStamp: v.sortStamp,
     }
     list.push(obj)
   }

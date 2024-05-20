@@ -49,6 +49,8 @@ async function collect(
       spaceId: thread.spaceId,
       spaceType: thread.spaceType,
       content_id: thread._id,
+      operateStamp: newStamp,
+      sortStamp: newStamp,
     }
     const res1 = await db.collections.add(data0)
     collection_id = newId
@@ -57,7 +59,9 @@ async function collect(
     // 将 “已取消” 改成 “正常” 收藏的状态
     const data0: Partial<CollectionLocalTable> = { 
       oState: "OK", 
-      updatedStamp: newStamp,
+      updatedStamp: now1,
+      sortStamp: newStamp,
+      operateStamp: now1,
     }
     const res1 = await db.collections.update(res0._id, data0)
     collection_id = res0._id
@@ -66,7 +70,9 @@ async function collect(
     // update
     const data0: Partial<CollectionLocalTable> = { 
       oState: "CANCELED", 
-      updatedStamp: newStamp,
+      updatedStamp: now1,
+      sortStamp: newStamp,
+      operateStamp: now1,
     }
     const res1 = await db.collections.update(res0._id, data0)
     collection_id = res0._id
@@ -76,7 +82,7 @@ async function collect(
     LocalToCloud.addTask({
       uploadTask: isUndo ? "undo_collection-favorite" : "collection-favorite",
       target_id: collection_id,
-      operateStamp: newStamp,
+      operateStamp: now1,
     })
   }
 

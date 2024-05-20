@@ -142,7 +142,8 @@ export interface CollectionLocalTable extends BaseLocalTable {
   spaceType: SpaceType
   content_id: string
   emoji?: string        // 经 encodeURIComponent() 的表情
-  operateStamp?: number
+  operateStamp: number
+  sortStamp: number
   firstSyncStamp?: number   // the stamp when the content is first synced
                            // set it after the sync process is done and
                            // you get new_id

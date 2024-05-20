@@ -128,8 +128,9 @@ export interface LiuDownloadCollection {
   user: string
   member?: string
   oState: OState_2
-  operateStamp?: number
   emoji?: string   // the emoji through encodeURIComponent()
+  operateStamp: number     // 比对前后端冲突时所用
+  sortStamp: number        // 用于收藏列表中的排序
 }
 
 export interface LiuDownloadAuthor {

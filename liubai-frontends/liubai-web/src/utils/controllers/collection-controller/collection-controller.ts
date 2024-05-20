@@ -61,7 +61,7 @@ export async function getThreadsByCollection(
   // 1. 先去加载 collections
   if(!lastItemStamp) {
     // 首次加载
-    let tmp = db.collections.orderBy("updatedStamp")
+    let tmp = db.collections.orderBy("sortStamp")
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)
     tmp = tmp.limit(limit)
@@ -70,7 +70,7 @@ export async function getThreadsByCollection(
   }
   else {
     // 分页加载
-    let w = db.collections.where("updatedStamp")
+    let w = db.collections.where("sortStamp")
     let tmp = sort === "desc" ? w.below(lastItemStamp) :  w.above(lastItemStamp)
     if(sort === "desc") tmp = tmp.reverse()
     tmp = tmp.filter(filterFunc)

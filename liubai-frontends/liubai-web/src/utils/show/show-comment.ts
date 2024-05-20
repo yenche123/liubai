@@ -26,7 +26,7 @@ function packComment(
   collections?.forEach(v2 => {
     if(v2.infoType === "EXPRESS" && v2.emoji) {
       myEmoji = v2.emoji
-      myEmojiStamp = v2.insertedStamp
+      myEmojiStamp = v2.sortStamp ?? v2.insertedStamp
     }
   })
 

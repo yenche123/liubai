@@ -124,10 +124,10 @@ export async function toEmoji(
 
   // 6. 通知其他组件
   if(forType === "COMMENT" && comment) {
-    notifyOtherComments(comment, encodeStr, emojiData)
+    notifyOtherComments(comment, encodeStr, emojiData, now)
   }
   else if(forType === "THREAD" && thread) {
-    notifyOtherThreads(thread, encodeStr, emojiData)
+    notifyOtherThreads(thread, encodeStr, emojiData, now)
   }
   
   return true
@@ -137,8 +137,8 @@ function notifyOtherComments(
   comment: CommentShow,
   encodeStr: string,
   newEmojiData: EmojiData,
+  now: number,
 ) {
-  const now = time.getTime()
   const newComment = valTool.copyObject(comment)
   newComment.emojiData = newEmojiData
   newComment.myEmoji = encodeStr
@@ -161,8 +161,8 @@ function notifyOtherThreads(
   thread: ThreadShow,
   encodeStr: string,
   newEmojiData: EmojiData,
+  now: number
 ) {
-  const now = time.getTime()
   const newThread = valTool.copyObject(thread)
   newThread.emojiData = newEmojiData
   newThread.myEmoji = encodeStr
@@ -214,6 +214,8 @@ async function updateCollection(
     oState,
     emoji: encodeStr,
     updatedStamp,
+    operateStamp: updatedStamp,
+    sortStamp: updatedStamp,
   }
   const res1 = await db.collections.update(collectionId, w1)
 
@@ -241,6 +243,8 @@ async function addCollection(
   const w: CollectionLocalTable = {
     insertedStamp: stamp,
     updatedStamp: stamp,
+    sortStamp: stamp,
+    operateStamp: stamp,
     _id: newId,
     first_id: newId,
     oState: "OK",

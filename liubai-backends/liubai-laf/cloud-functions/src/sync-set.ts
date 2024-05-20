@@ -845,6 +845,7 @@ async function toCollectionFavorite(
     first_id: Sch_Id,
     oState: Sch_OState_2,
     content_id: Sch_Id,
+    sortStamp: vbot.number(),
   }, vbot.never())
   const res1 = checkoutInput(Sch_Favorite, collection, taskId)
   if(res1) return res1
@@ -864,7 +865,11 @@ async function toCollectionFavorite(
       return { code: "0002", taskId }
     }
 
-    const u = { oState: newOState, operateStamp }
+    const u: Partial<Table_Collection> = { 
+      oState: newOState, 
+      operateStamp,
+      sortStamp: collection.sortStamp,
+    }
     await updatePartData<Table_Collection>(ssCtx, "collection", id, u)
     return { code: "0000", taskId }
   }
@@ -937,10 +942,11 @@ async function toCollectionReactWithId(
   }
 
   // 3. update new emoji in collection
-  const u = {
+  const u: Partial<Table_Collection> = {
     oState: newOState,
     emoji: newEmoji,
     operateStamp,
+    sortStamp: collection.sortStamp,
   }
   await updatePartData<Table_Collection>(ssCtx, "collection", id, u)
 
@@ -962,7 +968,7 @@ async function toCollectionShared(
   infoType: "EXPRESS" | "FAVORITE",
 ): Promise<SyncSetAtomRes> {
   const { taskId, operateStamp } = opt
-  const { first_id, content_id, emoji } = collection
+  const { first_id, content_id, emoji, sortStamp } = collection
 
   // 1. get shared data
   const res1 = await getSharedData_5(ssCtx, taskId, content_id)
@@ -983,6 +989,7 @@ async function toCollectionShared(
     spaceType,
     content_id,
     operateStamp,
+    sortStamp,
     emoji,
   }
   const new_id = await insertData(ssCtx, "collection", newRow)

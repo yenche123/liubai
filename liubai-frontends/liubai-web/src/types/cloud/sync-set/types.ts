@@ -104,6 +104,7 @@ export interface LiuUploadCollection {
   oState: OState_2
   content_id: string
   emoji?: string
+  sortStamp: number
 }
 
 export interface SyncSetAtom {

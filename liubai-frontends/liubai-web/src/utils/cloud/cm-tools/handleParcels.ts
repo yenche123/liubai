@@ -265,8 +265,9 @@ async function mergeCollection(
       spaceType,
       content_id,
       emoji: d.emoji,
-      operateStamp: d.operateStamp,
       firstSyncStamp: now,
+      operateStamp: d.operateStamp,
+      sortStamp: d.sortStamp,
     }
     await db.collections.put(u1)
     return
