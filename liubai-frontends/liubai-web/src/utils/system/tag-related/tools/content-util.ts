@@ -5,6 +5,7 @@ import type { ContentLocalTable } from "~/types/types-table";
 import { findParentOfTag } from "./tag-util";
 import type { TagView } from "~/types/types-atom";
 import time from "../../../basic/time";
+import valTool from "~/utils/basic/val-tool";
 
 export async function updateContentForTagAcross(
   whichTagChange: WhichTagChange,
@@ -32,7 +33,7 @@ export async function updateContentForTagAcross(
         tagIds.splice(j, 1, newId)
       }
     }
-    tagIds = [...new Set(tagIds)]
+    tagIds = valTool.uniqueArray(tagIds)
     const newTagSearched = getTagIdsParents(tagIds)
     v.tagIds = tagIds
     v.tagSearched = newTagSearched
@@ -75,7 +76,7 @@ export async function updateContentForTagRename(
       if(tmpList.length < 1) continue
       tagSearched = tagSearched.concat(tmpList)
     }
-    tagSearched = [...new Set(tagSearched)]
+    tagSearched = valTool.uniqueArray(tagSearched)
     v.tagSearched = tagSearched
     newList.push(v)
   }
@@ -114,7 +115,7 @@ export async function updateContentForTagDeleted(
       if(tmpList.length < 1) continue
       tagSearched = tagSearched.concat(tmpList)
     }
-    tagSearched = [...new Set(tagSearched)]
+    tagSearched = valTool.uniqueArray(tagSearched)
     v.tagIds = tagIds
     v.tagSearched = tagSearched
     newList.push(v)
@@ -145,7 +146,7 @@ export async function deleteContentsForTagDeleted(
       const tmpList = findParentOfTag(_tagId, [], tagList)
       tagSearched = tagSearched.concat(tmpList)
     }
-    tagSearched = [...new Set(tagSearched)]
+    tagSearched = valTool.uniqueArray(tagSearched)
     v.tagSearched = tagSearched
     v.oState = "REMOVED"
     v.updatedStamp = now + i

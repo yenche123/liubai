@@ -4,6 +4,7 @@ import threadOperate from "~/hooks/thread/thread-operate";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import stateController from "~/utils/controllers/state-controller/state-controller";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
+import valTool from "~/utils/basic/val-tool";
 
 interface CrossData {
   stateId: string
@@ -110,7 +111,7 @@ async function updateStateList() {
     if(newContentIds.length > 0) {
       contentIds = contentIds.concat(newContentIds)
     }
-    contentIds = [...new Set(contentIds)]
+    contentIds = valTool.uniqueArray(contentIds)
     
     v1.contentIds = contentIds
   }

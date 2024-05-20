@@ -7,6 +7,7 @@ import type { MemberShow, ThreadShow } from "~/types/types-content";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import showThread from "~/utils/show/show-thread"
 import cfg from "~/config"
+import valTool from "~/utils/basic/val-tool"
 
 interface MyCollectionOpt {
   content_ids: string[]
@@ -82,7 +83,7 @@ export async function getThreadsByCollection(
   if(!res || res.length < 1) return []
 
   // 2. 去加载 threads
-  const content_ids = [...new Set(res.map(v => v.content_id))]
+  const content_ids = valTool.uniqueArray(res.map(v => v.content_id))
   let tmp2 = db.contents.where("_id").anyOf(content_ids)
   tmp2 = tmp2.filter(v => v.oState === 'OK')
   const res2 = await tmp2.toArray()

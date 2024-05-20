@@ -1,3 +1,4 @@
+import valTool from "~/utils/basic/val-tool";
 import { db } from "../../../db";
 import type { WhichTagChange } from "./types";
 import type { DraftLocalTable } from "~/types/types-table";
@@ -24,7 +25,7 @@ export async function updateDraftForTagAcross(
       const newId = to_ids[idx]
       tagIds.splice(j, 1, newId)
     }
-    tagIds = [...new Set(tagIds)]
+    tagIds = valTool.uniqueArray(tagIds)
     v.tagIds = tagIds
     newList.push(v)
   }
@@ -58,7 +59,7 @@ export async function updateDraftWhenTagDeleted(
         j--
       }
     }
-    tagIds = [...new Set(tagIds)]
+    tagIds = valTool.uniqueArray(tagIds)
     v.tagIds = tagIds
     newList.push(v)
   }

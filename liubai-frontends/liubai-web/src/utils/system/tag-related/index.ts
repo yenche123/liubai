@@ -393,7 +393,7 @@ export function getTagIdsParents(tagIds: string[]) {
     if(tmpList.length < 1) continue
     tagSearched = tagSearched.concat(tmpList)
   }
-  tagSearched = [...new Set(tagSearched)]
+  tagSearched = valTool.uniqueArray(tagSearched)
   return tagSearched
 }
 
