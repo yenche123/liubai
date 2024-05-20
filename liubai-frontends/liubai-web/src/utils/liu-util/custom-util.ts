@@ -223,6 +223,7 @@ export function isInAPopUp(
 /**
  * 等待一个帧数周期
  */
-export async function waitAFrame() {
-  await valTool.waitMilli(cfg.frame_duration)
+export async function waitAFrame(more: boolean = false) {
+  const duration = more ? cfg.frame_duration_2 : cfg.frame_duration
+  await valTool.waitMilli(duration)
 }

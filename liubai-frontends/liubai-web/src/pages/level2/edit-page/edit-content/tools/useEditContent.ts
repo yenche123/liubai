@@ -9,6 +9,7 @@ import { pageStates } from "~/utils/atom";
 import cui from "~/components/custom-ui";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import valTool from "~/utils/basic/val-tool";
+import liuUtil from "~/utils/liu-util";
 
 export function useEditContent() {
   const threadId = ref("")
@@ -100,7 +101,7 @@ async function refresh(
   const id = threadId.value
   state.value = pageStates.LOADING
   threadId.value = ""
-  await valTool.waitMilli(16)
+  await liuUtil.waitAFrame()
   threadId.value = id
 }
 

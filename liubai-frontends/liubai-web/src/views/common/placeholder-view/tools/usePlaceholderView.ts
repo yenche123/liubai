@@ -50,7 +50,7 @@ async function open(
   if(show.value) return
   enable.value = true
 
-  await valTool.waitMilli(16)
+  await liuUtil.waitAFrame()
 
   if(!enable.value) return
   show.value = true

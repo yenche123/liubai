@@ -307,7 +307,7 @@ function closeIt() {
 async function _toOpen() {
   if(show.value) return
   enable.value = true
-  await valTool.waitMilli(16)
+  await liuUtil.waitAFrame()
   show.value = true
   await valTool.waitMilli(TRANSITION_DURATION)
 

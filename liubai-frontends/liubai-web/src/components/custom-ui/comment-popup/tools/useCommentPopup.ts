@@ -14,6 +14,7 @@ import {
   cancelListenEscKeyUp,
 } from "../../tools/listen-keyup"
 import { editorCanInteractKey } from "~/utils/provide-keys"
+import liuUtil from "~/utils/liu-util"
 
 const queryKey = "commentpopup"
 const cpData = reactive<CommentPopupData>({
@@ -170,7 +171,7 @@ async function _toOpen() {
   listenWindowWidth()
 
   cpData.enable = true
-  await valTool.waitMilli(16)
+  await liuUtil.waitAFrame()
   cpData.show = true
   await valTool.waitMilli(cpData.transDuration)
   cpData.focusNum++

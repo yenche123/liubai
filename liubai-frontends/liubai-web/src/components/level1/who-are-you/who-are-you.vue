@@ -3,8 +3,8 @@
 
 import { nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import valTool from '~/utils/basic/val-tool';
 import { useWhoAreYou } from './tools/useWhoAreYou';
+import liuUtil from '~/utils/liu-util';
 
 const inputEl = ref<HTMLInputElement | null>(null) 
 
@@ -15,7 +15,7 @@ watch(show, async (newV) => {
   if(!newV) return
 
   await nextTick()
-  await valTool.waitMilli(60)
+  await liuUtil.waitAFrame(true)
   
   if(!inputEl.value) return
   inputEl.value.focus()

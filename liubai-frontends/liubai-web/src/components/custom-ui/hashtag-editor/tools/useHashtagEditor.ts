@@ -274,7 +274,7 @@ function checkState() {
 async function _toOpen() {
   if(hteData.show) return
   hteData.enable = true
-  await valTool.waitMilli(16)
+  await liuUtil.waitAFrame()
   hteData.show = true
   _toListenKeyUp()
   await valTool.waitMilli(hteData.transDuration)

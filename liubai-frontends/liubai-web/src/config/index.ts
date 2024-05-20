@@ -57,6 +57,8 @@ export default {
 
   default_limit_num: 16,        // 默认一次加载多少个动态
   frame_duration: 16,           // 一个经验值，表示每一帧数（刷新周期）毫秒数
+  frame_duration_2: 60,         // 一个经验值，等待 css 响应的毫秒数
+                                // 通常用于某个组件刚启动时
 
   fail_to_upload_max: 5,       // 上传失败的最大次数，若大于等于该次数
                                // 确定是否为新增动态，若是，把该动态改为本地存储

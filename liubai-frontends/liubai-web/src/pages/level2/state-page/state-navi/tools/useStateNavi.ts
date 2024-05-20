@@ -117,7 +117,6 @@ async function whenWhichPageChange(
   ctx: SnCtx,
 ) {
 
-  // await valTool.waitMilli(16)
   await nextTick()
 
   const parentEl = ctx.indicatorParentEl.value
