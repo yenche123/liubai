@@ -136,6 +136,19 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     mySpaceIds.value = []
   }
 
+
+  const setWorkspaceAfterUpdatingDB = (w: WorkspaceLocalTable) => {
+    if(spaceId.value !== w._id) return
+    currentSpace.value = w
+  }
+
+  const setMemberAfterUpdatingDB = (m: MemberLocalTable) => {
+    if(memberId.value !== m._id) return
+    myMember.value = m
+  }
+
+
+
   return { 
     userId,
     token,
@@ -158,6 +171,8 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     setMySpaceIds,
     updateSerialAndToken,
     logout,
+    setWorkspaceAfterUpdatingDB,
+    setMemberAfterUpdatingDB,
   }
 })
 
