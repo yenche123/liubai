@@ -162,7 +162,7 @@ function _getThreadData(
   const images = liuUtil.getRawList(ceData.images)
   const files = liuUtil.getRawList(ceData.files)
   const remindMe = liuUtil.toRawData(ceData.remindMe)
-  const calendarStamp = _getCalendarStamp(ceData.whenStamp, remindMe)
+  const calendarStamp = liuUtil.getCalendarStamp(ceData.whenStamp, remindMe)
   const whenStamp = ceData.whenStamp ? liuUtil.formatStamp(ceData.whenStamp) : undefined
   const remindStamp = _getRemindStamp(remindMe, whenStamp)
   const tagIds = liuUtil.getRawList(ceData.tagIds)
@@ -206,22 +206,6 @@ function _getThreadData(
   }
 
   return aThread
-}
-
-function _getCalendarStamp(
-  whenStamp: number | undefined,
-  remindMe: LiuRemindMe | undefined
-): number | undefined {
-  if(whenStamp) return liuUtil.formatStamp(whenStamp)
-  if(!remindMe) return
-  const { type, later, specific_stamp } = remindMe
-  if(type === "specific_time" && specific_stamp) {
-    return liuUtil.formatStamp(specific_stamp)
-  }
-
-  if(type === "later" && later) {
-    return liuUtil.getLaterStamp(later)
-  }
 }
 
 function _getRemindStamp(

@@ -800,6 +800,7 @@ async function toThreadWhenRemind(
   const Sch_Hourglass = vbot.object({
     id: Sch_Id,
     first_id: Sch_Opt_Str,
+    calendarStamp: Sch_Opt_Num,
     whenStamp: Sch_Opt_Num,
     remindStamp: Sch_Opt_Num,
     remindMe: vbot.optional(Sch_LiuRemindMe),
@@ -822,6 +823,7 @@ async function toThreadWhenRemind(
   // 4. update
   cfg.lastOperateWhenRemind = operateStamp
   const u: Partial<Table_Content> = {
+    calendarStamp: thread.calendarStamp,
     whenStamp: thread.whenStamp,
     remindStamp: thread.remindStamp,
     remindMe: thread.remindMe,

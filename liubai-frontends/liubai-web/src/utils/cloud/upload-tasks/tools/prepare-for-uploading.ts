@@ -259,6 +259,7 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     atom.thread = {
       id: content._id,
       first_id: content.first_id,
+      calendarStamp: content.calendarStamp,
       whenStamp: content.whenStamp,
       remindStamp: content.remindStamp,
       remindMe: content.remindMe,

@@ -7,6 +7,7 @@ import { db } from "~/utils/db";
 import type { ContentConfig } from "~/types/other/types-custom"
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 import { type LiuUploadTask } from "~/types/types-atom";
+import liuUtil from "~/utils/liu-util";
 
 async function collect(
   thread: ThreadShow, 
@@ -130,7 +131,9 @@ async function editWhenRemind(
 
   const now1 = time.getTime()
   const newCfg = getNewCfg("lastOperateWhenRemind", now1, oldCfg)
+  const calendarStamp = liuUtil.getCalendarStamp(thread.whenStamp, thread.remindMe)
   const newData: Partial<ContentLocalTable> = {
+    calendarStamp,
     whenStamp: thread.whenStamp,
     remindStamp: thread.remindStamp,
     remindMe: thread.remindMe,
