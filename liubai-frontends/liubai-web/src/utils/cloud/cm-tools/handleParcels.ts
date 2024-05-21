@@ -24,12 +24,18 @@ import valTool from "~/utils/basic/val-tool";
 import { db } from "~/utils/db";
 import { CloudFiler } from "../CloudFiler";
 import type { SpaceType } from "~/types/types-basic";
+import type { Cloud_FileStore, Cloud_ImageStore } from "~/types/types-cloud";
+import type { LiuFileStore, LiuImageStore } from "~/types";
+import type { Bulk_Content } from "./types";
 
 
 let merged_content_ids: string[] = []
 let merged_collection_ids: string[] = []
 let merged_member_ids: string[] = []
 let merged_user_ids: string[] = []
+
+let new_contents: ContentLocalTable[] = []
+let update_contents: Bulk_Content[] = []
 
 export async function handleLiuDownloadParcels(
   list: LiuDownloadParcel[]
@@ -52,15 +58,53 @@ export async function handleLiuDownloadParcels(
     await handleDraftParcels(parcels_2)
   }
 
+  await operateAll()
   reset()
-  
+
 }
+
+
+async function operateAll() {
+  if(new_contents.length > 0) {
+    await db.contents.bulkPut(new_contents)
+
+    // notify CloudFiler
+    new_contents.forEach(v => {
+      const len1 = v.images?.length ?? 0
+      const len2 = v.files?.length ?? 0
+      if(len1 || len2) {
+        CloudFiler.notify("contents", v._id)
+      }
+    })
+
+  }
+  if(update_contents.length > 0) {
+    await db.contents.bulkUpdate(update_contents)
+    
+    // notify CloudFiler
+    update_contents.forEach(v => {
+      const bool1 = Boolean(v.changes.images)
+      const bool2 = Boolean(v.changes.files)
+      if(bool1 || bool2) {
+        CloudFiler.notify("contents", v.key)
+      }
+    })
+  }
+
+}
+
+
+
+
 
 function reset() {
   merged_content_ids = []
   merged_collection_ids = []
   merged_member_ids = []
   merged_user_ids = []
+
+  new_contents = []
+  update_contents = []
 }
 
 async function handleContentParcels(
@@ -193,7 +237,7 @@ async function mergeContent(
   const { author, spaceId, spaceType, infoType, myEmoji, myFavorite } = d
   
   if(!d.isMine) {
-    // 1. it's not data I've ever posted,  go get to merge member & user
+    // 1. it's not data I've ever posted, go get to merge member & user
     await mergeMember(author, opt.oldMember)
   }
   else {
@@ -215,10 +259,113 @@ async function mergeContent(
       mcOpt.oldCollection = opt.oldEmoji
       await mergeCollection(myEmoji, mcOpt)
     }
-
   }
 
+  // 3. create content if oldContent is undefined
+  const { oldContent: oc } = opt
+  if(!oc) {
+    createContent(d)
+    return
+  }
+
+  // 4. update content if oldContent exists
+  const u: Bulk_Content = {
+    key: content_id,
+    changes: {},
+  }
+  const edited = d.editedStamp > oc.editedStamp
+  const nCfg = d.config ?? {}
+  const oCfg = oc.config ?? {}
+
+  if(edited) {
+    
+  }
+
+
+
 }
+
+
+function createContent(
+  d: LiuDownloadContent,
+) {
+  if(d.storageState === "ONLY_LOCAL") return
+  const b = time.getBasicStampWhileAdding()
+
+
+  const images = getNewImages(d.images)
+  const files = getNewFiles(d.files)
+
+  const c: ContentLocalTable = {
+    _id: d._id,
+    ...b,
+    first_id: d.first_id,
+    user: d.author.user_id,
+    member: d.author.member_id,
+    spaceId: d.spaceId,
+    spaceType: d.spaceType,
+
+    infoType: d.infoType,
+    oState: d.oState,
+    visScope: d.visScope,
+    storageState: d.storageState,
+
+    title: d.title,
+    liuDesc: d.liuDesc,
+    images,
+    files,
+
+    calendarStamp: d.calendarStamp,
+    remindStamp: d.remindStamp,
+    whenStamp: d.whenStamp,
+    remindMe: d.remindMe,
+    emojiData: d.emojiData,
+    parentThread: d.parentThread,
+    parentComment: d.parentComment,
+    replyToComment: d.replyToComment,
+    pinStamp: d.pinStamp,
+
+    createdStamp: d.createdStamp,
+    editedStamp: d.editedStamp,
+
+    tagIds: d.tagIds,
+    tagSearched: d.tagSearched,
+    stateId: d.stateId,
+    config: d.config,
+  }
+  
+  new_contents.push(c)
+}
+
+function getNewImages(
+  cloud_images?: Cloud_ImageStore[],
+) {
+  if(!cloud_images) return
+  const new_images: LiuImageStore[] = []
+  cloud_images.forEach(v => {
+    const { image } = CloudFiler.imageFromCloudToStore(v)
+    if(image) {
+      new_images.push(image)
+    }
+  })
+  return new_images
+}
+
+function getNewFiles(
+  cloud_files?: Cloud_FileStore[],
+) {
+  if(!cloud_files) return
+  const new_files: LiuFileStore[] = []
+  cloud_files.forEach(v => {
+    const { file } = CloudFiler.fileFromCloudToStore(v)
+    if(file) {
+      new_files.push(file)
+    }
+  })
+  return new_files
+}
+
+
 
 interface MergeCollectionOpt {
   collectionType: CollectionInfoType

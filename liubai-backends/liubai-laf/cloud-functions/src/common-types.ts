@@ -1404,6 +1404,8 @@ export interface LiuDownloadContent {
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
   stateId?: string
   config?: ContentConfig
+  search_title?: string
+  search_other?: string
 
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
