@@ -2,10 +2,8 @@
 
 import { 
   verifyToken,
-  getDocAddId,
   checker,
   getAESKey,
-  encryptDataWithAES,
   getDecryptedBody,
   getEncryptedData,
   valTool,
@@ -36,6 +34,7 @@ import type {
   Cloud_FileStore,
   LiuErrReturn,
   LiuDownloadParcel_A,
+  Res_SyncGet_Cloud,
 } from "@/common-types"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -71,10 +70,17 @@ export async function main(ctx: FunctionContext) {
   // 6. to execute
   const results = await toExecute(sgCtx, res3.newBody)
   
+  // 7. construct response
+  const res7: Res_SyncGet_Cloud = {
+    results,
+    plz_enc_results: results,
+  }
+  const encRes = getEncryptedData(res7, vRes)
+  if(!encRes.data || encRes.rqReturn) {
+    return encRes.rqReturn ?? { code: "E5001", errMsg: "getEncryptedData failed" }
+  }
 
-
-
-  
+  return { code: "0000", data: encRes.data }
 }
 
 
@@ -99,9 +105,14 @@ async function toExecute(
       res1 = await toThreadList(sgCtx, v, opt)
     }
 
+    if(!res1) {
+      res1 = { code: "E5001", taskId, errMsg: "the taskType cannot match"  }
+    }
+
+    results.push(res1)
   }
 
-
+  return results
 }
 
 
@@ -115,7 +126,7 @@ async function toThreadList(
 
   let res1: SyncGetAtomRes | undefined
   if(vT === "FAVORITE") {
-    toThreadListFromCollection(sgCtx, atom, opt)
+    res1 = await toThreadListFromCollection(sgCtx, atom, opt)
   }
   else {
     res1 = await toThreadListFromContent(sgCtx, atom, opt)
@@ -226,9 +237,81 @@ async function toThreadListFromCollection(
   atom: SyncGet_ThreadList,
   opt: OperationOpt,
 ) {
+  const { taskId } = opt
+  const {
+    spaceId,
+    limit = 16,
+    collectType = "FAVORITE",
+    emojiSpecific,
+    sort = "desc",
+    lastItemStamp,
+  } = atom
 
+  // 1. get shared data
+  const res1 = getSharedData_1(sgCtx, spaceId, opt)
+  if(!res1.pass) return res1.result
 
-  
+  // 2. construct query
+  const w2: Record<string, any> = {
+    oState: "OK",
+    user: res1.myUserId,
+    infoType: collectType,
+    forType: "THREAD",
+    spaceId,
+  }
+  if(collectType === "EXPRESS" && emojiSpecific) {
+    w2.emoji = emojiSpecific
+  }
+  if(lastItemStamp) {
+    if(sort === "desc") {
+      w2.sortStamp = _.lt(lastItemStamp)
+    }
+    else {
+      w2.sortStamp = _.gt(lastItemStamp)
+    }
+  }
+
+  // 3. to query
+  let q3 = db.collection("Collection").where(w2)
+  q3 = q3.orderBy("sortStamp", sort).limit(limit)
+  const res3 = await q3.get<Table_Collection>()
+  const collections = res3.data ?? []
+
+  if(collections.length < 1) {
+    return { code: "0000", taskId, list: [] }
+  }
+  mergeListIntoCtx(sgCtx, "collections", collections)
+
+  // 4. get corresponding contents
+  const content_ids = collections.map(v => v.content_id)
+  let contents = await getListViaIds<Table_Content>(
+    sgCtx,
+    content_ids,
+    "Content",
+    "contents",
+  )
+  contents = contents.filter(v => {
+    const oState = v.oState
+    return oState === "OK"
+  })
+  if(contents.length < 1) {
+    return { code: "0000", taskId, list: [] }
+  }
+  contents = sortListWithIds(contents, content_ids)
+
+  // 5. get authors
+  const authors = await getAuthors(sgCtx, contents)
+
+  // 6. package contents into LiuDownloadContent[]
+  const res6 = packContents(sgCtx, contents, collections, authors)
+  if(!res6.pass) {
+    const result_6 = { ...res6.result, taskId }
+    return result_6 
+  }
+
+  // 7. turn into parcels
+  const res7 = turnDownloadContentsIntoParcels(res6.list)
+  return { code: "0000", taskId, list: res7 }  
 }
 
 
@@ -245,6 +328,7 @@ interface Gsdr_A {
 
 interface Gsdr_1_B {
   pass: true
+  myUserId: string
 }
 
 type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
@@ -597,6 +681,23 @@ async function getListViaIds<T extends SyncGetTable>(
   return list
 }
 
+
+function sortListWithIds<T extends SyncGetTable>(
+  list: T[],
+  ids: string[],
+) {
+  const newList: T[] = []
+  for(let i=0; i<ids.length; i++) {
+    const id = ids[i]
+    const index = list.findIndex(v => v._id === id)
+    if(index >= 0) {
+      newList.push(list[index])
+    }
+  }
+  return newList
+}
+
+
 /** checking out if i logged in and space ids */
 function getSharedData_1(
   sgCtx: Partial<SyncGetCtx>,
@@ -620,7 +721,7 @@ function getSharedData_1(
     }
   }
 
-  return { pass: true }
+  return { pass: true, myUserId: me._id }
 }
 
 
