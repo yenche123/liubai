@@ -164,7 +164,7 @@ async function _open(
   ctx.enable.value = true
   ctx.emits("naviautochangeed", true)
   await liuUtil.waitAFrame()
-  ctx.show.value = true
+  if(ctx.enable.value) ctx.show.value = true
 }
 
 async function _close(
@@ -174,7 +174,7 @@ async function _close(
   ctx.show.value = false
   ctx.emits("naviautochangeed", false)
   await valTool.waitMilli(TRANSITION_DURATION)
-  ctx.enable.value = false
+  if(!ctx.show.value) ctx.enable.value = false
 }
 
 
