@@ -268,17 +268,48 @@ async function mergeContent(
     return
   }
 
+  
   // 4. update content if oldContent exists
   const u: Bulk_Content = {
     key: content_id,
     changes: {},
   }
+  const g = u.changes
   const edited = d.editedStamp > oc.editedStamp
   const nCfg = d.config ?? {}
   const oCfg = oc.config ?? {}
 
+  // 5. when content has been turned into ONLY_LOCAL
+  if(d.storageState === "ONLY_LOCAL") {
+    if(oc.storageState === "ONLY_LOCAL") return
+    g.storageState = "ONLY_LOCAL"
+    if(edited) {
+      g.editedStamp = d.editedStamp
+    }
+    u.changes = g
+    update_contents.push(u)
+    return
+  }
+
+  // 6. other situations
   if(edited) {
+    g.editedStamp = d.editedStamp
+
+    g.visScope = d.visScope
+    g.title = d.title
+    g.liuDesc = d.liuDesc 
+
+    const imgRes = getUpdatedImages(d.images, oc.images)
+    if(imgRes.updated) {
+      g.images = imgRes.images
+    }
+    const fileRes = getUpdatedFiles(d.files, oc.files)
+    if(imgRes.updated) {
+      g.files = fileRes.files
+    }
+
     
+
   }
 
 
@@ -336,6 +367,74 @@ function createContent(
   
   new_contents.push(c)
 }
+
+interface GufRes {
+  updated: boolean
+  files?: LiuFileStore[]
+}
+
+function getUpdatedFiles(
+  new_files?: Cloud_FileStore[],
+  old_files?: LiuFileStore[],
+): GufRes {
+  const len1 = new_files?.length ?? 0
+  const len2 = old_files?.length ?? 0
+
+  let updated = false
+  if(!len1) {
+    if(len2) updated = true
+    return { updated }
+  }
+
+  const new_files2 = new_files as Cloud_FileStore[]
+  const old_files2 = old_files ?? []
+
+  const list: LiuFileStore[] = []
+  for(let i=0; i<len1; i++) {
+    const v1 = new_files2[i]
+    const v2 = old_files2[i]
+    const { useCloud, file } = CloudFiler.fileFromCloudToStore(v1, v2)
+    if(useCloud) updated = true
+    if(file) list.push(file)
+  }
+
+  return { updated, files: list }
+}
+
+
+interface GuiRes {
+  updated: boolean
+  images?: LiuImageStore[]
+}
+
+function getUpdatedImages(
+  new_images?: Cloud_ImageStore[],
+  old_images?: LiuImageStore[],
+): GuiRes {
+  const len1 = new_images?.length ?? 0
+  const len2 = old_images?.length ?? 0
+
+  let updated = false
+  if(!len1) {
+    if(len2) updated = true
+    return { updated }
+  }
+
+  const new_images2 = new_images as Cloud_ImageStore[]
+  const old_images2 = old_images ?? []
+
+  const list: LiuImageStore[] = []
+  for(let i=0; i<len1; i++) {
+    const v1 = new_images2[i]
+    const v2 = old_images2[i]
+    const { useCloud, image } = CloudFiler.imageFromCloudToStore(v1, v2)
+    if(useCloud) updated = true
+    if(image) list.push(image)
+  }
+
+  return { updated, images: list }
+}
+
 
 function getNewImages(
   cloud_images?: Cloud_ImageStore[],
