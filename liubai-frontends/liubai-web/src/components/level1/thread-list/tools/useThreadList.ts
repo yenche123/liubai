@@ -15,7 +15,11 @@ import type { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool"
 import liuApi from "~/utils/liu-api"
 import { CloudMerger } from "~/utils/cloud/CloudMerger"
-import type { SyncGet_ThreadList } from "~/types/cloud/sync-get/types"
+import type { 
+  LiuDownloadParcel, 
+  SyncGet_ThreadList,
+  SyncGet_CheckContents,
+} from "~/types/cloud/sync-get/types"
 import localCache from "~/utils/system/local-cache"
 
 export function useThreadList(
@@ -209,7 +213,7 @@ async function loadList(
   const isInit = Boolean(reload || oldLength < 1)
   let lastItemStamp = isInit ? undefined : tlData.lastItemStamp
 
-  const cloudOpt: LoadCloudOpt = { startIndex: 0 }
+  const cloudOpt: LoadCloudOpt = { startIndex: 0, threadShows: [] }
   let results: ThreadShow[] = []
 
   const opt1: TcListOption = {
@@ -254,6 +258,7 @@ async function loadList(
   }
 
   // 2. 加载完数据后，开始封装
+  cloudOpt.threadShows = results
   const newList = tlUtil.threadShowsToList(results)
   const newLength = newList.length
 
@@ -286,6 +291,7 @@ async function loadList(
 
 interface LoadCloudOpt {
   startIndex: number
+  threadShows: ThreadShow[]
 }
 
 async function loadCloud(
@@ -296,17 +302,165 @@ async function loadCloud(
   const hasLogin = localCache.hasLoginWithBackend()
   if(!hasLogin) return
 
-  const param: SyncGet_ThreadList = {
+  // 1. request
+  const param1: SyncGet_ThreadList = {
     taskType: "thread_list",
     ...opt1,
   }
-
-  const res1 = await CloudMerger.request(param)
+  const res1 = await CloudMerger.request(param1)
   // console.log("CloudMerger res1: ")
   // console.log(res1)
   // console.log(" ")
   if(!res1) return
 
+  // 2. get ids for checking contents
+  const cLastItemStamp = getCloudLastItemStamp(res1, opt1)
+  const ids = getIdsForCheckingContents(cLastItemStamp, res1, opt1, opt2)
+  if(ids.length < 1) return
+
+  console.log("ids for checking contents: ")
+  console.log(ids)
+  console.log(" ")
+  const param3: SyncGet_CheckContents = {
+    taskType: "check_contents",
+    ids,
+  }
+  const res3 = await CloudMerger.request(param3)
+
+  // 3. load content locally again
+  loadAgain(ctx, opt1, opt2)
+}
+
+async function loadAgain(
+  ctx: TlContext,
+  opt1: TcListOption,
+  opt2: LoadCloudOpt,
+) {
+  // 1. ignore if the item of startIndex doesn't exist and startIndex > 0
+  const { tlData, props } = ctx
+  const { startIndex } = opt2
+  const theOne = tlData.list[startIndex]
+  if(startIndex && !theOne) return
+
+  // 2. ignore if viewType is not matched
+  const vT = props.viewType
+  if(opt1.viewType !== vT) return
+
+  let results: ThreadShow[] = []
+  if(vT === "STATE") {
+    if(!opt1.stateId) return
+    const sOpt = {
+      stateId: opt1.stateId,
+      excludeInKanban: true,
+      lastItemStamp: opt1.lastItemStamp,
+    }
+    const sData = await stateController.getThreadsOfAState(sOpt)
+    results = sData.threads
+    if(sData.hasMore) {
+      tlData.hasReachBottom = true
+    }
+  }
+  else {
+    results = await threadController.getList(opt1)
+  }
+
+  const newList = tlUtil.threadShowsToList(results)
+  const newLength = newList.length + startIndex
+  const oldLength = tlData.list.length
+  if(oldLength > newLength) {
+    tlData.list.splice(newLength, oldLength - newLength)
+  }
+  for(let i=startIndex; i<newLength; i++) {
+    tlData.list[i] = newList[i - startIndex]
+  }
+
+  if(newLength) {
+    handleLastItemStamp(vT, tlData)
+  }
+
+  if(newLength < 6) {
+    tlData.hasReachBottom = true
+  }
+  else {
+    tlData.hasReachBottom = false
+  }
+  
+  
+
+}
 
 
+
+function getIdsForCheckingContents(
+  cloudLastItemStamp: number,
+  res1: LiuDownloadParcel[],
+  opt1: TcListOption,
+  opt2: LoadCloudOpt,
+) {
+  const ids: string[] = []
+  const { threadShows } = opt2
+  if(threadShows.length < 1) {
+    return ids
+  }
+
+  const vT = opt1.viewType
+
+  threadShows.forEach(v => {
+    const data = res1.find(v1 => v1.id === v._id)
+    if(data) return
+
+    let stamp = v.createdStamp
+    if(vT === "FAVORITE") {
+      stamp = v.myFavoriteStamp ?? 0
+    }
+    else if(vT === "TRASH") {
+      // TODO: we're going to turn createdStamp into removedStamp
+      
+    }
+
+    if(opt1.sort === "asc") {
+      if(stamp < cloudLastItemStamp) {
+        ids.push(v._id)
+      }
+    }
+    else {
+      if(stamp > cloudLastItemStamp) {
+        ids.push(v._id)
+      }
+    }
+
+  })
+
+  return ids
+}
+
+
+function getCloudLastItemStamp(
+  res1: LiuDownloadParcel[],
+  opt1: TcListOption,
+) {
+
+  let cloudLastItemStamp = 0
+  const cloudLength = res1.length
+  if(!cloudLength) return cloudLastItemStamp
+
+  const cloudLastOne = res1[cloudLength - 1]
+  if(cloudLastOne.parcelType !== "content") return cloudLastItemStamp
+
+  const c = cloudLastOne.content
+  if(!c) return cloudLastItemStamp
+
+  const vT = opt1.viewType
+  if(vT === "FAVORITE") {
+    cloudLastItemStamp = c.myFavorite?.sortStamp ?? 0
+  }
+  else if(vT === "TRASH") {
+    // TODO: we're going to turn updatedStamp into removedStamp
+    cloudLastItemStamp = c.createdStamp ?? 0
+  }
+  else {
+    cloudLastItemStamp = c.createdStamp
+  }
+
+  return cloudLastItemStamp
 }

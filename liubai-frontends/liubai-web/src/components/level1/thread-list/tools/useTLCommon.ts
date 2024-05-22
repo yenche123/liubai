@@ -1,7 +1,7 @@
 import type { TlData, TlViewType } from "./types";
 
 export function handleLastItemStamp(
-  viewType: TlViewType,
+  vT: TlViewType,
   tlData: TlData,
 ) {
   const { list } = tlData
@@ -10,10 +10,10 @@ export function handleLastItemStamp(
   if(!lastItem) return
   const lastThread = lastItem.thread
 
-  if(viewType === "FAVORITE") {
+  if(vT === "FAVORITE") {
     tlData.lastItemStamp = lastThread.myFavoriteStamp ?? 0
   }
-  else if(viewType === "TRASH") {
+  else if(vT === "TRASH") {
     tlData.lastItemStamp = lastThread.updatedStamp
   }
   else {
