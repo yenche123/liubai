@@ -28,7 +28,6 @@ const color = "#c7c9ca"
 const transDuration = ref("0")
 onMounted(async () => {
   await valTool.waitMilli(200)
-  console.log("切换成 0.11s")
   transDuration.value = "0.11s"
 })
 

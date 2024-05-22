@@ -203,19 +203,25 @@ async function loadList(
   }
 
   const oldList = tlData.list
-  const { viewType, tagId, stateId } = ctx.props
+  const { viewType: vT, tagId, stateId } = ctx.props
 
-  let length = oldList.length
-  let lastItemStamp = reload || (length < 1) ? undefined : tlData.lastItemStamp
+  const oldLength = oldList.length
+  const isInit = Boolean(reload || oldLength < 1)
+  let lastItemStamp = isInit ? undefined : tlData.lastItemStamp
 
-  const cloudOpt: LoadCloudOpt = {
-    startIndex: 0,
-    lastItemStamp,
-  }
+  const cloudOpt: LoadCloudOpt = { startIndex: 0 }
   let results: ThreadShow[] = []
 
+  const opt1: TcListOption = {
+    spaceId,
+    viewType: vT,
+    lastItemStamp,
+  }
+
   // 1. 开始去数据库加载动态
-  if(viewType === "STATE" && stateId) {
+  if(vT === "STATE") {
+    if(!stateId) return
+
     // 用 stateController 去加载 某个状态下的更多动态
     const sOpt = {
       stateId,
@@ -224,26 +230,26 @@ async function loadList(
     }
     const sData = await stateController.getThreadsOfAState(sOpt)
     results = sData.threads
-    cloudOpt.excluded_ids = sData.excluded_ids
+    opt1.stateId = stateId
+    opt1.excluded_ids = sData.excluded_ids
     if(!sData.hasMore) {
       tlData.hasReachBottom = true
     }
   }
   else {
     // 用 threadController 直接去加载动态们
-    const opt1: TcListOption = {
-      viewType,
-      spaceId,
-      tagId,
-      lastItemStamp,
-    }
-    if(viewType === "FAVORITE") {
+
+    if(vT === "FAVORITE") {
       opt1.collectType = "FAVORITE"
     }
-    else if(viewType === "PINNED") {
+    else if(vT === "PINNED") {
       delete opt1.lastItemStamp
-      delete cloudOpt.lastItemStamp
     }
+    else if(vT === "TAG") {
+      if(!tagId) return
+      opt1.tagId = tagId
+    }
+
     results = await threadController.getList(opt1)
   }
 
@@ -252,7 +258,7 @@ async function loadList(
   const newLength = newList.length
 
   // 3. 赋值到 list 上
-  if(length < 1 || reload || viewType === "PINNED") {
+  if(isInit || vT === "PINNED") {
     tlData.list = newList
 
     if(newLength) ctx.emits("hasdata")
@@ -266,7 +272,7 @@ async function loadList(
 
   // 4. 处理 lastItemStamp
   if(newLength) {
-    handleLastItemStamp(viewType, tlData)
+    handleLastItemStamp(vT, tlData)
   }
 
   // 5. 小于一定数量的时候 表示已经触底
@@ -275,49 +281,30 @@ async function loadList(
   }
 
   // 6. load cloud
+  loadCloud(ctx, opt1, cloudOpt)
 }
 
 interface LoadCloudOpt {
-  startIndex: number,
-  lastItemStamp?: number,
-  excluded_ids?: string[]
+  startIndex: number
 }
 
 async function loadCloud(
   ctx: TlContext,
-  opt: LoadCloudOpt,
+  opt1: TcListOption,
+  opt2: LoadCloudOpt,
 ) {
   const hasLogin = localCache.hasLoginWithBackend()
   if(!hasLogin) return
 
-  const { startIndex, lastItemStamp, excluded_ids } = opt
-  const spaceId = ctx.spaceIdRef.value
-  const { tlData } = ctx
-  const { viewType, tagId, stateId } = ctx.props
-
   const param: SyncGet_ThreadList = {
     taskType: "thread_list",
-    spaceId,
-    viewType,
-    lastItemStamp,
-  }
-  if(viewType === "STATE") {
-    if(!stateId) return
-    param.stateId = stateId
-    param.excluded_ids = excluded_ids
-  }
-  else if(viewType === "FAVORITE") {
-    param.collectType = "FAVORITE"
-  }
-  else if(viewType === "TAG") {
-    if(!tagId) return
-    param.tagId = tagId
+    ...opt1,
   }
 
   const res1 = await CloudMerger.request(param)
-  console.log("CloudMerger res1: ")
-  console.log(res1)
-  console.log(" ")
+  // console.log("CloudMerger res1: ")
+  // console.log(res1)
+  // console.log(" ")
   if(!res1) return
 
 

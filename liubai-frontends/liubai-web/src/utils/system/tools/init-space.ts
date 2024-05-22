@@ -21,7 +21,7 @@ export function initSpace(
 
   watch(route, (newV) => {
     routeChangeNum++
-    console.log("routeChangeNum: ", routeChangeNum)
+    // console.log("routeChangeNum: ", routeChangeNum)
     whenRouteChange(store, newV)
   }, { immediate: true })
 }
@@ -45,7 +45,7 @@ function _debounce() {
     return true
   }
   const diff = now - lastRouteChange
-  console.log("diff: ", diff)
+  // console.log("diff: ", diff)
   lastRouteChange = now
   if(diff < 300) return false
   return true
@@ -59,7 +59,6 @@ async function whenRouteChange(
   console.log(newV2)
 
   const { inApp, checkWorkspace } = newV.meta
-  const pageName = newV.name
   if(inApp === false) return
 
   // 从路由的 params 里寻找 spaceId
@@ -71,14 +70,14 @@ async function whenRouteChange(
     return
   }
 
-  console.log("whenRouteChange 2222222")
+  // console.log("whenRouteChange 2222222")
 
   // 只剩 个人工作区的可能了
   // 先检查是否已经在个人工作区里，若是则 return
   // 因为代表已经初始化了
   if(!store.isCollaborative && store.spaceId) return
 
-  console.log("whenRouteChange 3333333")
+  // console.log("whenRouteChange 3333333")
 
   // 再检查是否为 "不必检查 workspace 的页面"
   // 并且 store 中已有 spaceId，那么就忽略
@@ -88,15 +87,15 @@ async function whenRouteChange(
   // 从 IndexedDB 里查找 个人工作区的 spaceId
   const localP = localCache.getPreference()
   const userId = localP.local_id
-  console.log("userId: ", userId)
+  // console.log("userId: ", userId)
   if(!userId) return
 
-  console.log("whenRouteChange 55555")
+  // console.log("whenRouteChange 55555")
 
   if(!_debounce()) return
 
 
-  console.log("whenRouteChange 66666")
+  // console.log("whenRouteChange 66666")
 
   const g = {
     infoType: "ME",
@@ -104,7 +103,7 @@ async function whenRouteChange(
   }
 
 
-  console.log("开始加载 space ..........")
+  // console.log("开始加载 space ..........")
   console.time("init-space")
   const mySpace = await db.workspaces.get(g)
   console.timeEnd("init-space")
