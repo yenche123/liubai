@@ -79,6 +79,9 @@ async function operateAll() {
 
   }
   if(update_contents.length > 0) {
+    console.log("let me see update_contents: ")
+    console.log(update_contents)
+    console.log(" ")
     await db.contents.bulkUpdate(update_contents)
     
     // notify CloudFiler
@@ -308,8 +311,84 @@ async function mergeContent(
       g.files = fileRes.files
     }
 
-    
+    g.search_title = d.search_title
+    g.search_other = d.search_other
+  }
 
+  const now = time.getTime()
+  const gCfg = oCfg
+
+  // 1. showCountdown
+  const n1 = nCfg.lastToggleCountdown ?? 1
+  const o1 = oCfg.lastToggleCountdown ?? now
+  if(n1 > o1) {
+    gCfg.lastToggleCountdown = n1
+    gCfg.showCountdown = nCfg.showCountdown
+    g.config = gCfg
+  }
+
+  // 2. oState
+  const n2 = nCfg.lastOStateStamp ?? 1
+  const o2 = oCfg.lastOStateStamp ?? now
+  if(n2 > o2 || edited) {
+    gCfg.lastOStateStamp = n2
+    g.oState = d.oState
+    g.config = gCfg
+  }
+
+  // 3. stateId
+  const n3 = nCfg.lastOperateStateId ?? 1
+  const o3 = oCfg.lastOperateStateId ?? now
+  if(n3 > o3) {
+    gCfg.lastOperateStateId = n3
+    g.stateId = d.stateId
+    g.config = gCfg
+  }
+
+  // 4. pin
+  const n4 = nCfg.lastOperatePin ?? 1
+  const o4 = oCfg.lastOperatePin ?? now
+  if(n4 > o4) {
+    gCfg.lastOperatePin = n4
+    g.pinStamp = d.pinStamp
+    g.config = gCfg
+  }
+
+  // 5. tag
+  const n5 = nCfg.lastOperateTag ?? 1
+  const o5 = oCfg.lastOperateTag ?? now
+  if(n5 > o5 || edited) {
+    gCfg.lastOperateTag = n5
+    g.tagIds = d.tagIds
+    g.tagSearched = d.tagSearched
+    g.config = gCfg
+  }
+
+  // 6. remind
+  const n6 = nCfg.lastOperateWhenRemind ?? 1
+  const o6 = oCfg.lastOperateWhenRemind ?? now
+  if(n6 > o6 || edited) {
+    gCfg.lastOperateWhenRemind = n6
+    g.whenStamp = d.whenStamp
+    g.calendarStamp = d.calendarStamp
+    g.remindStamp = d.remindStamp
+    g.remindMe = d.remindMe
+    g.config = gCfg
+  }
+
+  // 7. emoji
+  const n7 = nCfg.lastUpdateEmojiData ?? 1
+  const o7 = oCfg.lastUpdateEmojiData ?? now
+  if(n7 > o7) {
+    gCfg.lastUpdateEmojiData = n7
+    g.emojiData = d.emojiData
+    g.config = gCfg
+  }
+
+  const keys = Object.keys(g)
+  if(keys.length) {
+    u.changes = g
+    update_contents.push(u)
   }
 
 
