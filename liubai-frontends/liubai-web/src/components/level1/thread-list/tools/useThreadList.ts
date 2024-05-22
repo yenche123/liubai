@@ -416,8 +416,7 @@ function getIdsForCheckingContents(
       stamp = v.myFavoriteStamp ?? 0
     }
     else if(vT === "TRASH") {
-      // TODO: we're going to turn createdStamp into removedStamp
-      
+      stamp = v.removedStamp ?? 0
     }
 
     if(opt1.sort === "asc") {
@@ -457,8 +456,7 @@ function getCloudLastItemStamp(
     cloudLastItemStamp = c.myFavorite?.sortStamp ?? 0
   }
   else if(vT === "TRASH") {
-    // TODO: we're going to turn updatedStamp into removedStamp
-    cloudLastItemStamp = c.createdStamp ?? 0
+    cloudLastItemStamp = c.removedStamp ?? 0
   }
   else {
     cloudLastItemStamp = c.createdStamp

@@ -14,7 +14,7 @@ export function handleLastItemStamp(
     tlData.lastItemStamp = lastThread.myFavoriteStamp ?? 0
   }
   else if(vT === "TRASH") {
-    tlData.lastItemStamp = lastThread.updatedStamp
+    tlData.lastItemStamp = lastThread.removedStamp ?? 0
   }
   else {
     tlData.lastItemStamp = lastThread.createdStamp

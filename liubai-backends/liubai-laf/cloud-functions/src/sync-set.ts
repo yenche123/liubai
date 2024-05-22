@@ -491,6 +491,7 @@ async function toPostThread(
     pinStamp: Sch_Opt_Num,
 
     createdStamp: vbot.number(),
+    removedStamp: Sch_Opt_Num,
 
     tagIds: sch_opt_arr(vbot.string()),
     tagSearched: sch_opt_arr(vbot.string()),
@@ -552,8 +553,11 @@ async function toPostThread(
     remindMe: thread.remindMe,
     emojiData: thread.emojiData as EmojiData,
     pinStamp: thread.pinStamp,
+
     createdStamp: thread.createdStamp as number,
     editedStamp: thread.editedStamp as number,
+    removedStamp: thread.removedStamp,
+
     tagIds: thread.tagIds,
     tagSearched: thread.tagSearched,
     stateId: thread.stateId,
@@ -1886,6 +1890,7 @@ async function getSharedData_6(
   const Sch_OState = vbot.object({
     id: Sch_Id,
     first_id: Sch_Opt_Str,
+    removedStamp: Sch_Opt_Num,
   }, vbot.never())
   const res1 = checkoutInput(Sch_OState, content, taskId)
   if(res1) return { pass: false, result: res1 }
@@ -1897,6 +1902,8 @@ async function getSharedData_6(
   // 3. start to check out every data
   const { oldContent } = res2
   const { oState, config: cfg = {} } = oldContent
+  const newRemovedStamp = (content as LiuUploadThread).removedStamp
+
   if(oState === newOState) {
     return { pass: true, result: { code: "0001", taskId }, oldContent }
   }
@@ -1910,6 +1917,7 @@ async function getSharedData_6(
   const u: Partial<Table_Content> = {
     oState: newOState,
     config: cfg,
+    removedStamp: newRemovedStamp,
   }
   if(newOState === "DELETED") {
     u.enc_title = undefined

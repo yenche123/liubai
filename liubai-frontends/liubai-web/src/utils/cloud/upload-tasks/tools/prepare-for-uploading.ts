@@ -45,7 +45,7 @@ async function getRawData(task: UploadTaskLocalTable) {
     isOStateChange,
   } = classifyUploadTask(ut)
   
-  if(isContent && !isOStateChange && content_id) {
+  if(isContent && content_id) {
     content = await db.contents.get(content_id)
   }
 
@@ -97,7 +97,10 @@ function whenThreadPost(c: ContentLocalTable) {
     whenStamp: c.whenStamp,
     remindMe: c.remindMe,
     pinStamp: c.pinStamp,
+
     createdStamp: c.createdStamp,
+    removedStamp: c.removedStamp,
+
     tagIds: c.tagIds,
     tagSearched: c.tagSearched,
     stateId: c.stateId,
@@ -291,8 +294,10 @@ async function organizeAtom(task: UploadTaskLocalTable) {
   }
   else if(ut === "thread-delete" || ut === "undo_thread-delete") {
     if(!task.content_id) return
+    if(!content) return
     atom.thread = {
       id: task.content_id,
+      removedStamp: content.removedStamp,
     }
     isOK = true
   }

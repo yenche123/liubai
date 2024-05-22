@@ -99,8 +99,11 @@ function packThread(
     commentNum: v.levelOneAndTwo ?? 0,
     emojiData: v.emojiData,
     pinStamp: v.pinStamp,
+
     createdStamp: v.createdStamp,
     editedStamp: v.editedStamp,
+    removedStamp: v.removedStamp,
+
     createdStr: liuUtil.showBasicTime(v.createdStamp),
     editedStr: liuUtil.getEditedStr(v.createdStamp, v.editedStamp),
     removedStr,

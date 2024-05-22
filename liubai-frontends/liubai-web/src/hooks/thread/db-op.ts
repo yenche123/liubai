@@ -152,17 +152,18 @@ async function editWhenRemind(
 }
 
 /** 向 content 设置新的 oState */
-async function setNewOState(
-  id: string,
-  oState: OState,
+async function setOState(
+  thread: ThreadShow, 
   uploadTask: LiuUploadTask,
 ) {
-  const oldCfg = await getOldCfg(id)
-
+  const id = thread._id
   const now1 = time.getTime()
+  const oldCfg = await getOldCfg(id)
   const newCfg = getNewCfg("lastOStateStamp", now1, oldCfg)
+
   const newData: Partial<ContentLocalTable> = {
-    oState,
+    removedStamp: thread.removedStamp,
+    oState: thread.oState,
     updatedStamp: now1,
     config: newCfg,
   }
@@ -304,7 +305,7 @@ export default {
   collect,
   pin,
   editWhenRemind,
-  setNewOState,
+  setOState,
   deleteForever,
   setShowCountdown,
   setTags,

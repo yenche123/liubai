@@ -651,7 +651,10 @@ export interface LiuUploadThread extends LiuUploadBase {
   whenStamp?: number
   remindMe?: LiuRemindMe
   pinStamp?: number
+
   createdStamp?: number
+  removedStamp?: number
+
   tagIds?: string[]
   tagSearched?: string[]
   stateId?: string
@@ -914,8 +917,11 @@ export interface Table_Content extends BaseTable {
   parentComment?: string
   replyToComment?: string
   pinStamp?: number         // 被置顶时的时间戳，被取消置顶时为 0
+
   createdStamp: number      // 动态被创建的时间戳
   editedStamp: number       // 动态被编辑的时间戳
+  removedStamp?: number
+
   tagIds?: string[]         // 用于显示的 tagId
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
   stateId?: string
@@ -1403,6 +1409,7 @@ export interface LiuDownloadContent {
 
   createdStamp: number      // 动态被创建的时间戳
   editedStamp: number       // 动态被编辑的时间戳
+  removedStamp?: number
 
   tagIds?: string[]         // 用于显示的 tagId
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来

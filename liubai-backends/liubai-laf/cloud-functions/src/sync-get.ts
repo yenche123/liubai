@@ -524,6 +524,7 @@ function packContents(
 
       createdStamp: v.createdStamp,
       editedStamp: v.editedStamp,
+      removedStamp: v.removedStamp,
 
       tagIds: v.tagIds,
       tagSearched: v.tagSearched,

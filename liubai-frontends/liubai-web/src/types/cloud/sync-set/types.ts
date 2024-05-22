@@ -41,7 +41,10 @@ export interface LiuUploadThread extends LiuUploadBase {
   whenStamp?: number
   remindMe?: LiuRemindMe
   pinStamp?: number
+
   createdStamp?: number
+  removedStamp?: number
+
   tagIds?: string[]
   tagSearched?: string[]
   stateId?: string
