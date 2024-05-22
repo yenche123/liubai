@@ -406,6 +406,8 @@ function getIdsForCheckingContents(
   const vT = opt1.viewType
 
   threadShows.forEach(v => {
+    const s = v.storageState
+    if(s !== "CLOUD") return
     const data = res1.find(v1 => v1.id === v._id)
     if(data) return
 
