@@ -10,6 +10,7 @@ import {
   decryptCloudData,
 } from "@/common-util"
 import {
+  Sch_Id,
   Sch_SyncGetAtom,
 } from "@/common-types"
 import type {
@@ -35,6 +36,7 @@ import type {
   LiuErrReturn,
   LiuDownloadParcel_A,
   Res_SyncGet_Cloud,
+  SyncGet_CheckContents,
 } from "@/common-types"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -104,6 +106,9 @@ async function toExecute(
     if(taskType === "thread_list") {
       res1 = await toThreadList(sgCtx, v, opt)
     }
+    else if(taskType === "check_contents") {
+      toCheckContents(sgCtx, v, opt)
+    }
 
     if(!res1) {
       res1 = { code: "E5001", taskId, errMsg: "the taskType cannot match"  }
@@ -116,12 +121,72 @@ async function toExecute(
 }
 
 
+async function toCheckContents(
+  sgCtx: SyncGetCtx,
+  atom: SyncGet_CheckContents,
+  opt: OperationOpt,
+) {
+  const { taskId } = opt
+
+  // 1. checking out input
+  const ids = atom.ids
+  const Sch_Ids = vbot.array(Sch_Id, [
+    vbot.minLength(1),
+    vbot.maxLength(32),
+  ])
+  const res1 = vbot.safeParse(Sch_Ids, ids)
+  if(!res1.success) {
+    const errMsg = checker.getErrMsgFromIssues(res1.issues)
+    return { code: "E4000", errMsg, taskId }
+  }
+
+  // 2. get contents
+  const contents = await getListViaIds<Table_Content>(sgCtx, ids, "Content", "contents")
+
+  // 3. construct list
+  const list = ids.map(v => {
+    const d3 = contents.find(v2 => v2._id === v)
+    const obj3: LiuDownloadParcel_A = {
+      id: v,
+      status: d3 ? "has_data" : "not_found",
+      parcelType: "content",
+    }
+    return obj3
+  })
+
+  // 4. checking auth
+  for(let i=0; i<contents.length; i++) {
+    const v = contents[i]
+    const content_id = v._id
+    const res4 = getSharedData_1(sgCtx, v.spaceId, opt)
+    if(!res4.pass) {
+      list.forEach(v2 => {
+        if(v2.id === content_id) v2.status = "no_auth"
+      })
+      contents.splice(i, 1)
+      i--
+    }
+  }
+
+  // 5. if nothing
+  if(contents.length < 1) {
+    return { code: "0000", taskId, list }
+  }
+
+  
+
+  
+
+
+  
+}
+
 
 async function toThreadList(
   sgCtx: SyncGetCtx,
   atom: SyncGet_ThreadList,
   opt: OperationOpt,
-) {
+): Promise<SyncGetAtomRes> {
   const vT = atom.viewType
 
   let res1: SyncGetAtomRes | undefined

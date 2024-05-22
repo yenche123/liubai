@@ -1219,6 +1219,7 @@ export const Sch_SyncGet_ThreadList = vbot.object({
   limit: vbot.optional(vbot.number([vbot.minValue(1), vbot.maxValue(32)])),
   collectType: vbot.optional(Sch_CollectionInfoType),
   emojiSpecific: Sch_Opt_Str,
+  tagId: Sch_Opt_Str,
   sort: vbot.optional(Sch_SortWay),
   lastItemStamp: Sch_Opt_Num,
   specific_ids: sch_opt_arr(Sch_Id, [vbot.maxLength(32)]),
@@ -1349,7 +1350,7 @@ export const Sch_SyncGetAtom = vbot.intersect([
 ])
 
 /****************** sync-get: response ***************/
-export type LiuDownloadStatus = "has_data" | "not_found"
+export type LiuDownloadStatus = "has_data" | "not_found" | "no_auth"
 
 export interface LiuDownloadCollection {
   _id: string

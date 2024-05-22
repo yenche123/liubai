@@ -122,7 +122,7 @@ export type SyncGetAtom = CloudMergerOpt & SyncGet_Base
 
 /********************* Response types **********************/
 
-export type LiuDownloadStatus = "has_data" | "not_found"
+export type LiuDownloadStatus = "has_data" | "not_found" | "no_auth"
 
 
 export interface LiuDownloadCollection {
