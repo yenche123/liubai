@@ -107,7 +107,7 @@ async function toExecute(
       res1 = await toThreadList(sgCtx, v, opt)
     }
     else if(taskType === "check_contents") {
-      toCheckContents(sgCtx, v, opt)
+      res1 = await toCheckContents(sgCtx, v, opt)
     }
 
     if(!res1) {
@@ -125,7 +125,7 @@ async function toCheckContents(
   sgCtx: SyncGetCtx,
   atom: SyncGet_CheckContents,
   opt: OperationOpt,
-) {
+): Promise<SyncGetAtomRes> {
   const { taskId } = opt
 
   // 1. checking out input
@@ -144,7 +144,7 @@ async function toCheckContents(
   const contents = await getListViaIds<Table_Content>(sgCtx, ids, "Content", "contents")
 
   // 3. construct list
-  const list = ids.map(v => {
+  let list = ids.map(v => {
     const d3 = contents.find(v2 => v2._id === v)
     const obj3: LiuDownloadParcel_A = {
       id: v,
@@ -173,14 +173,35 @@ async function toCheckContents(
     return { code: "0000", taskId, list }
   }
 
-  
+  // 6. get authors
+  const authors = await getAuthors(sgCtx, contents)
 
-  
+  // 7. get my collections related to these contents
+  const content_ids = contents.map(v => v._id)
+  const myCollections = await getMyCollectionsFromContentIds(sgCtx, content_ids)
 
-
+  // 8. package contents into LiuDownloadContent[]
+  const res8 = packContents(sgCtx, contents, myCollections, authors)
+  if(!res8.pass) {
+    const result_8 = { ...res8.result, taskId }
+    return result_8
+  }
   
+  // 9. package liuDownloadContents into list
+  const res9 = res8.list
+  list = list.map(v => {
+    if(v.status !== "has_data") return v
+    const d9 = res9.find(v1 => v1._id === v.id)
+    if(!d9) {
+      v.status = "not_found"
+    }
+    else {
+      v.content = d9
+    }
+    return v
+  })
+  return { code: "0000", taskId, list }  
 }
-
 
 async function toThreadList(
   sgCtx: SyncGetCtx,
