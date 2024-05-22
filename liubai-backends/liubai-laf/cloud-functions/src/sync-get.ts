@@ -150,12 +150,16 @@ async function toThreadListFromContent(
     lastItemStamp,
     specific_ids,
     excluded_ids,
+    tagId,
     stateId,
   } = atom
 
   // 0. checking out more
   if(vT === "STATE" && !stateId) {
     return { code: "E4000", errMsg: "stateId is required", taskId }
+  }
+  if(vT === "TAG" && !tagId) {
+    return { code: "E4000", errMsg: "tagId is required", taskId }
   }
 
   // 1. checking out logged in and spaceId
@@ -191,6 +195,9 @@ async function toThreadListFromContent(
   }
   else if(vT === "STATE") {
     w.stateId = stateId
+  }
+  else if(vT === "TAG") {
+    w.tagSearched = _.in([tagId])
   }
 
   if(specific_ids?.length) {

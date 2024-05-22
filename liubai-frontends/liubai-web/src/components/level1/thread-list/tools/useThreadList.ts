@@ -14,6 +14,9 @@ import stateController from "~/utils/controllers/state-controller/state-controll
 import type { ThreadShow } from "~/types/types-content"
 import valTool from "~/utils/basic/val-tool"
 import liuApi from "~/utils/liu-api"
+import { CloudMerger } from "~/utils/cloud/CloudMerger"
+import type { SyncGet_ThreadList } from "~/types/cloud/sync-get/types"
+import localCache from "~/utils/system/local-cache"
 
 export function useThreadList(
   props: TlProps,
@@ -190,9 +193,6 @@ async function loadList(
   reload: boolean = false
 ) {
 
-  console.log("load thread list........")
-
-
   const spaceId = ctx.spaceIdRef.value
   if(!spaceId) return
   
@@ -208,6 +208,10 @@ async function loadList(
   let length = oldList.length
   let lastItemStamp = reload || (length < 1) ? undefined : tlData.lastItemStamp
 
+  const cloudOpt: LoadCloudOpt = {
+    startIndex: 0,
+    lastItemStamp,
+  }
   let results: ThreadShow[] = []
 
   // 1. 开始去数据库加载动态
@@ -220,6 +224,7 @@ async function loadList(
     }
     const sData = await stateController.getThreadsOfAState(sOpt)
     results = sData.threads
+    cloudOpt.excluded_ids = sData.excluded_ids
     if(!sData.hasMore) {
       tlData.hasReachBottom = true
     }
@@ -237,6 +242,7 @@ async function loadList(
     }
     else if(viewType === "PINNED") {
       delete opt1.lastItemStamp
+      delete cloudOpt.lastItemStamp
     }
     results = await threadController.getList(opt1)
   }
@@ -254,6 +260,7 @@ async function loadList(
     
   }
   else if(newLength) {
+    cloudOpt.startIndex = tlData.list.length
     tlData.list.push(...newList)
   }
 
@@ -266,4 +273,53 @@ async function loadList(
   if(newLength < 6) {
     tlData.hasReachBottom = true
   }
+
+  // 6. load cloud
+}
+
+interface LoadCloudOpt {
+  startIndex: number,
+  lastItemStamp?: number,
+  excluded_ids?: string[]
+}
+
+async function loadCloud(
+  ctx: TlContext,
+  opt: LoadCloudOpt,
+) {
+  const hasLogin = localCache.hasLoginWithBackend()
+  if(!hasLogin) return
+
+  const { startIndex, lastItemStamp, excluded_ids } = opt
+  const spaceId = ctx.spaceIdRef.value
+  const { tlData } = ctx
+  const { viewType, tagId, stateId } = ctx.props
+
+  const param: SyncGet_ThreadList = {
+    taskType: "thread_list",
+    spaceId,
+    viewType,
+    lastItemStamp,
+  }
+  if(viewType === "STATE") {
+    if(!stateId) return
+    param.stateId = stateId
+    param.excluded_ids = excluded_ids
+  }
+  else if(viewType === "FAVORITE") {
+    param.collectType = "FAVORITE"
+  }
+  else if(viewType === "TAG") {
+    if(!tagId) return
+    param.tagId = tagId
+  }
+
+  const res1 = await CloudMerger.request(param)
+  console.log("CloudMerger res1: ")
+  console.log(res1)
+  console.log(" ")
+  if(!res1) return
+
+
+
 }

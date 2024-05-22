@@ -16,6 +16,7 @@ export interface GetThreadsOfAStateOpt {
 export interface GetThreadsOfAStateRes {
   threads: ThreadShow[]
   hasMore: boolean
+  excluded_ids?: string[]
 }
 
 
@@ -98,6 +99,7 @@ async function getThreadsOfAState(
     return {
       threads: res,
       hasMore: res.length >= (limitNum - 1),
+      excluded_ids: tmpContentIds,
     }
   }
 

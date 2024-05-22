@@ -1192,6 +1192,9 @@ export interface SyncGet_ThreadList {
   // 加载某个 emoji
   emojiSpecific?: string
 
+  // 加载某个标签
+  tagId?: string
+
   // 默认为降序，desc
   sort?: SortWay
 
