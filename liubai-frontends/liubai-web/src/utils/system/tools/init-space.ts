@@ -56,8 +56,6 @@ async function whenRouteChange(
   newV: RouteLocationNormalizedLoaded,
 ) {
   const newV2 = liuUtil.toRawData(newV)
-  console.log(newV2)
-
   const { inApp, checkWorkspace } = newV.meta
   if(inApp === false) return
 

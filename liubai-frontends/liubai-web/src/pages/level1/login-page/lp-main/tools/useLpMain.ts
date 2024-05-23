@@ -46,7 +46,6 @@ export function useLpMain(
   onMounted(async () => {
     calculateIndicator()
     await valTool.waitMilli(500)
-    console.log("再去重新计算一次......")
     calculateIndicator()
   })
 
