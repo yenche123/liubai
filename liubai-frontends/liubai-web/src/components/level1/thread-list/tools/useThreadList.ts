@@ -213,7 +213,10 @@ async function loadList(
   const isInit = Boolean(reload || oldLength < 1)
   let lastItemStamp = isInit ? undefined : tlData.lastItemStamp
 
-  const cloudOpt: LoadCloudOpt = { startIndex: 0, threadShows: [] }
+  const cloudOpt: LoadCloudOpt = { 
+    startIndex: oldLength, 
+    threadShows: [],
+  }
   let results: ThreadShow[] = []
 
   const opt1: TcListOption = {
@@ -264,6 +267,7 @@ async function loadList(
 
   // 3. 赋值到 list 上
   if(isInit || vT === "PINNED") {
+    cloudOpt.startIndex = 0
     tlData.list = newList
 
     if(newLength) ctx.emits("hasdata")
@@ -271,7 +275,6 @@ async function loadList(
     
   }
   else if(newLength) {
-    cloudOpt.startIndex = tlData.list.length
     tlData.list.push(...newList)
   }
 
@@ -308,15 +311,15 @@ async function loadCloud(
     ...opt1,
   }
   const res1 = await CloudMerger.request(param1)
-  // console.log("CloudMerger res1: ")
-  // console.log(res1)
-  // console.log(" ")
   if(!res1) return
 
   // 2. get ids for checking contents
   const cLastItemStamp = getCloudLastItemStamp(res1, opt1)
   const ids = getIdsForCheckingContents(cLastItemStamp, res1, opt1, opt2)
-  if(ids.length < 1) return
+  if(ids.length < 1) {
+    loadAgain(ctx, opt1, opt2)
+    return
+  }
 
   console.log("ids for checking contents: ")
   console.log(ids)
@@ -346,6 +349,7 @@ async function loadAgain(
   const vT = props.viewType
   if(opt1.viewType !== vT) return
 
+  let hasMore = false
   let results: ThreadShow[] = []
   if(vT === "STATE") {
     if(!opt1.stateId) return
@@ -356,16 +360,18 @@ async function loadAgain(
     }
     const sData = await stateController.getThreadsOfAState(sOpt)
     results = sData.threads
-    if(sData.hasMore) {
-      tlData.hasReachBottom = true
-    }
+    if(sData.hasMore) hasMore = true
   }
   else {
     results = await threadController.getList(opt1)
   }
 
+  console.log("loadAgain results: ")
+  console.log(results)
+
   const newList = tlUtil.threadShowsToList(results)
-  const newLength = newList.length + startIndex
+  const deltaLength = newList.length
+  const newLength = deltaLength + startIndex
   const oldLength = tlData.list.length
   if(oldLength > newLength) {
     tlData.list.splice(newLength, oldLength - newLength)
@@ -374,21 +380,16 @@ async function loadAgain(
     tlData.list[i] = newList[i - startIndex]
   }
 
-  if(newLength) {
-    handleLastItemStamp(vT, tlData)
-  }
+  handleLastItemStamp(vT, tlData)
 
-  if(newLength < 6) {
-    tlData.hasReachBottom = true
-  }
-  else {
+  if(hasMore || deltaLength >= 6) {
     tlData.hasReachBottom = false
   }
+  else {
+    tlData.hasReachBottom = true
+  }
   
-  
-
 }
-
 
 
 function getIdsForCheckingContents(

@@ -261,6 +261,7 @@ async function toThreadListFromContent(
 
   const w: Record<string, any> = {
     oState,
+    infoType: "THREAD",
     spaceId,
   }
 

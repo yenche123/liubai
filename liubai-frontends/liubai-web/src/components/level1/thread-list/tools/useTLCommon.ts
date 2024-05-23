@@ -7,7 +7,10 @@ export function handleLastItemStamp(
   const { list } = tlData
   const listLength = list.length
   const lastItem = list[listLength - 1]
-  if(!lastItem) return
+  if(!lastItem) {
+    if(tlData.lastItemStamp) tlData.lastItemStamp = 0
+    return
+  }
   const lastThread = lastItem.thread
 
   if(vT === "FAVORITE") {
