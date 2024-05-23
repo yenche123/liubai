@@ -26,7 +26,10 @@ import { CloudFiler } from "../CloudFiler";
 import type { SpaceType } from "~/types/types-basic";
 import type { Cloud_FileStore, Cloud_ImageStore } from "~/types/types-cloud";
 import type { LiuFileStore, LiuImageStore } from "~/types";
-import type { Bulk_Content } from "./types";
+import type { 
+  Bulk_Content,
+  Bulk_Collection,
+} from "./types";
 
 
 let merged_content_ids: string[] = []
@@ -36,6 +39,8 @@ let merged_user_ids: string[] = []
 
 let new_contents: ContentLocalTable[] = []
 let update_contents: Bulk_Content[] = []
+let new_collections: CollectionLocalTable[] = []
+let update_collections: Bulk_Collection[] = []
 
 export async function handleLiuDownloadParcels(
   list: LiuDownloadParcel[]
@@ -76,11 +81,11 @@ async function operateAll() {
         CloudFiler.notify("contents", v._id)
       }
     })
-
   }
+
   if(update_contents.length > 0) {
-    console.log("let me see update_contents: ")
-    console.log(update_contents)
+    console.log("update_contents: ")
+    console.log(valTool.copyObject(update_contents))
     console.log(" ")
     await db.contents.bulkUpdate(update_contents)
     
@@ -94,9 +99,21 @@ async function operateAll() {
     })
   }
 
+  if(new_collections.length > 0) {
+    console.log("new_collections: ")
+    console.log(valTool.copyObject(new_collections))
+    console.log(" ")
+    await db.collections.bulkPut(new_collections)
+  }
+
+  if(update_collections.length > 0) {
+    console.log("update_collections: ")
+    console.log(valTool.copyObject(update_collections))
+    console.log(" ")
+    await db.collections.bulkUpdate(update_collections) 
+  }
+
 }
-
-
 
 
 
@@ -108,6 +125,8 @@ function reset() {
 
   new_contents = []
   update_contents = []
+  new_collections = []
+  update_collections = []
 }
 
 async function handleContentParcels(
@@ -137,7 +156,9 @@ async function handleContentParcels(
   member_ids = valTool.uniqueArray(member_ids)
   user_ids = valTool.uniqueArray(user_ids)
 
-  const local_contents = await getLocalRows<ContentLocalTable>(content_ids, "contents")
+  const local_contents = await getLocalRows<ContentLocalTable>(
+    content_ids, "contents"
+  )
   const local_collections = await getLocalRows<CollectionLocalTable>(
     collection_ids, "collections"
   )
@@ -183,9 +204,9 @@ async function handleContentParcels(
     }
     await mergeContent(c1, opt)
   }
-
   
 }
+
 
 async function handleDraftParcels(
   list: LiuDownloadParcel_B[],
@@ -255,12 +276,12 @@ async function mergeContent(
     }
 
     if(myFavorite) {
-      await mergeCollection(myFavorite, mcOpt)
+      mergeCollection(myFavorite, mcOpt)
     }
     if(myEmoji) {
       mcOpt.collectionType = "EXPRESS"
       mcOpt.oldCollection = opt.oldEmoji
-      await mergeCollection(myEmoji, mcOpt)
+      mergeCollection(myEmoji, mcOpt)
     }
   }
 
@@ -594,7 +615,7 @@ async function mergeCollection(
       operateStamp: d.operateStamp,
       sortStamp: d.sortStamp,
     }
-    await db.collections.put(u1)
+    new_collections.push(u1)
     return
   }
 
@@ -611,7 +632,13 @@ async function mergeCollection(
     operateStamp: now,
     updatedStamp: now,
   }
-  await db.collections.update(collection_id, u3)
+  
+  // 4. construct Bulk_Collection
+  const obj4: Bulk_Collection = {
+    key: collection_id,
+    changes: u3,
+  }
+  update_collections.push(obj4)
 }
 
 async function mergeMember(
