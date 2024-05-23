@@ -14,12 +14,14 @@ import { initWorker } from "./tools/worker-funcs"
 interface HanTaskRes {
   hasEverUnknown?: boolean
   hasEverBadNetwork?: boolean
+  hasEverKnownErr?: boolean
 }
 
 interface HanFilesRes {
   hasEverUnknown?: boolean
   hasEverBadNetwork?: boolean
   hasEverSuccess?: boolean
+  hasEverKnownErr?: boolean
   files: LiuFileStore[]
 }
 
@@ -27,12 +29,14 @@ interface HanImgsRes {
   hasEverUnknown?: boolean
   hasEverBadNetwork?: boolean
   hasEverSuccess?: boolean
+  hasEverKnownErr?: boolean
   imgs: LiuImageStore[]
 }
 
 interface HanWhateverRes {
   hasEverUnknown?: boolean
   hasEverBadNetwork?: boolean
+  hasEverKnownErr?: boolean
   [key: string]: any
 }
 
@@ -52,6 +56,7 @@ const toDownload = async (url: string): Promise<FetchRes> => {
   }
   catch(err: any) {
     console.log("toDownload fail........")
+    console.log(url)
     console.log(err)
     console.log(" ")
     const errMsg: unknown = err.toString?.()
@@ -67,13 +72,17 @@ const toDownload = async (url: string): Promise<FetchRes> => {
     return { result: "unknown" }
   }
 
-  if(!res.ok) {
-    return { result: "bad_network" }
+  const status = res.status
+  if(status === 403 || status === 404) {
+    return { result: "known_err" }
   }
 
-  const status = res.status
   if(status >= 400 && status < 500) {
     return { result: "unknown" }
+  }
+
+  if(!res.ok) {
+    return { result: "bad_network" }
   }
 
   const contentLength = res.headers.get("Content-Length")
@@ -104,9 +113,6 @@ const toDownload = async (url: string): Promise<FetchRes> => {
 
 const delete_task = async (task: DownloadTaskLocalTable) => {
   const res = await db.download_tasks.delete(task._id)
-  console.log("任务删除结果: ")
-  console.log(res)
-  console.log(" ")
 }
 
 const add_fail_time = async (task: DownloadTaskLocalTable) => {
@@ -124,12 +130,11 @@ const add_fail_time = async (task: DownloadTaskLocalTable) => {
     failedStamp: time.getTime(),
   }
   const res = await db.download_tasks.update(task._id, u)
-  console.log("add_fail_time res: ")
-  console.log(res)
-  console.log(" ")
 }
 
-const handle_images = async (imgs: LiuImageStore[]): Promise<HanImgsRes> => {
+const handle_images = async (
+  imgs: LiuImageStore[]
+): Promise<HanImgsRes> => {
   const imgs2 = imgs.filter(v => {
     if(v.cloud_url && !v.arrayBuffer) {
       return true
@@ -144,6 +149,7 @@ const handle_images = async (imgs: LiuImageStore[]): Promise<HanImgsRes> => {
   let hasEverUnknown = false
   let hasEverBadNetwork = false
   let hasEverSuccess = false
+  let hasEverKnownErr = false
   for(let i=0; i<imgs2.length; i++) {
     const v = imgs2[i]
     const url = v.cloud_url as string
@@ -151,6 +157,7 @@ const handle_images = async (imgs: LiuImageStore[]): Promise<HanImgsRes> => {
     
     const ret = res.result
     if(ret === "success" && !hasEverSuccess) hasEverSuccess = true
+    else if(ret === "known_err" && !hasEverKnownErr) hasEverKnownErr = true
     else if(ret === "bad_network" && !hasEverBadNetwork) hasEverBadNetwork = true
     else if(ret === "unknown" && !hasEverUnknown) hasEverUnknown = true
 
@@ -168,6 +175,7 @@ const handle_images = async (imgs: LiuImageStore[]): Promise<HanImgsRes> => {
     hasEverUnknown,
     hasEverBadNetwork,
     hasEverSuccess,
+    hasEverKnownErr,
     imgs,
   }
 }
@@ -176,6 +184,7 @@ const handle_images = async (imgs: LiuImageStore[]): Promise<HanImgsRes> => {
 const judgeHanTaskRes = (taskRes: HanTaskRes, newRes: HanWhateverRes) => {
   if(newRes.hasEverBadNetwork) taskRes.hasEverBadNetwork = true
   if(newRes.hasEverUnknown) taskRes.hasEverUnknown = true
+  if(newRes.hasEverKnownErr) taskRes.hasEverKnownErr = true
 }
 
 
@@ -309,12 +318,30 @@ const handle_task = async (task: DownloadTaskLocalTable) => {
     res = await handle_draft(task)
   }
 
-  const u = res?.hasEverUnknown
-  const b = res?.hasEverBadNetwork
-  if(u) {
+  const ever_unknown = res?.hasEverUnknown
+  const bad_network = res?.hasEverBadNetwork
+  const known_err = res?.hasEverKnownErr
+
+  const onlyKnownErr = Boolean(known_err && !ever_unknown && !bad_network)
+  const hasErr = Boolean(ever_unknown || known_err)
+  const onlySuccess = Boolean(!bad_network && !ever_unknown && !known_err)
+
+  // console.log("handle_task res: ", res)
+  // console.log("onlyKnownErr: ", onlyKnownErr)
+  // console.log("hasErr: ", hasErr)
+  // console.log("onlySuccess: ", onlySuccess)
+  // console.log(" ")
+
+  if(onlyKnownErr) {
+    // 1. 如果只有已知错误，没有其他错误，那么直接去删除
+    await delete_task(task)
+  }
+  else if(hasErr) {
+    // 2. 如果有未知或已知的错误，那么尝试次数加 1
     await add_fail_time(task)
   }
-  if(!b && !u) {
+  else if(onlySuccess) {
+    // 3. 如果没有任何错误（包括网络请求失败）
     await delete_task(task)
   }
 
