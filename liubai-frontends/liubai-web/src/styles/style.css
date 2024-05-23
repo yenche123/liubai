@@ -250,6 +250,6 @@ input {
   background: var(--primary-color);
   opacity: .07;
   transition: .2s;
-  transition-timing-function: cubic-bezier(.88, .1, 1, 1);
+  transition-timing-function: cubic-bezier(0.05, 1, 1, 1);
   flex: none;
 }
