@@ -12,4 +12,5 @@ export const add_white_bg: ThirdLinkKey[] = [
   "BOOKING_COM",
   "M_CNBETA",
   "SPEAKERDECK_COM",
+  "NETEASE_MAIN",
 ]

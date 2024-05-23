@@ -73,6 +73,18 @@ export const domainAllowed = [
   "ithome.com",
   "suno.ai",
   "jsoncrack.com",
+  "supertechfans.com",
+  "thinkany.ai",
+  "kimi.moonshot.cn",
+  "chatglm.cn",
+  "hailuoai.com",
+  "stepchat.cn",
+  "tiangong.cn",
+  "wanzhi.com",
+  "163.com",
+  "chinaz.com",
+  "sohu.com",
+  "csdn.net",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
@@ -116,6 +128,14 @@ export const domainNotAllowed = [
   "pan.quark.cn",
   "aliyundrive.com",
   "omnivore.app",
+  "dub.co",
+  "d.to",
+  "yiyan.baidu.com",
+  "baichuan-ai.com",
+  "tongyi.aliyun.com",
+  "yuewen.cn",
+  "metaso.cn",
+  "chat.deepseek.com",
 ]
 
 export const mastodonDomains = [

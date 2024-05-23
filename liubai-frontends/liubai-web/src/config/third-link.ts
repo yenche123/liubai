@@ -118,5 +118,8 @@ export default {
   LINK_ZHUBAI: "https://link.zhubai.love/api/link",
   LINK_SBSTCK: "https://link.sbstck.com/redirect",
   LINK_SSPAI: "https://sspai.com/link",
+
+  // 163 netease main site
+  NETEASE_MAIN: "https://www.163.com/",
   
 }
