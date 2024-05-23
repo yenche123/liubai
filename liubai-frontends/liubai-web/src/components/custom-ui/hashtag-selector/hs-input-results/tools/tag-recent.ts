@@ -15,7 +15,11 @@ export function getRecent(
   hsirData: HsirData,
 ) {
   const { recentTagIds } = hsirData
-  if(recentTagIds.length < 1) return
+  if(recentTagIds.length < 1) {
+    hsirData.recentTagIds = []
+    hsirData.list = []
+    return
+  }
 
   const data = tagIdsToShows(recentTagIds)
   const { newIds, tagShows } = data
