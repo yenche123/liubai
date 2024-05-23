@@ -198,15 +198,6 @@ function openLink(
     return "outter"
   }
 
-  const _env = liuEnv.getEnv()
-  if(!_env.IFRAME_PROXY) {
-    const inAllowed = vStore.isInAllowedList(url)
-    if(!inAllowed) {
-      window.open(url, "_blank")
-      return "outter"
-    }
-  }
-
   const vlink = vStore.addLink(url)
   const newQ = { vlink }
   if(opt.replace) router.replaceWithNewQuery(route, newQ)

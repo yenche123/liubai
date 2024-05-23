@@ -7,6 +7,7 @@ import valTool from "~/utils/basic/val-tool"
 import { domainAllowed, domainNotAllowed, mastodonDomains } from "~/config/domain-list"
 import { getEmbedData } from "./tools/embed-origin"
 import { isSpecialLink } from "./tools/handle-special-link"
+import liuEnv from "~/utils/liu-env";
 
 interface VvLinkAtom {
   id: string
@@ -72,8 +73,13 @@ function canAdd(url: string) {
   const res1 = isSpecialLink(url)
   if(res1) return true
 
-  const data1 = domainAllowed.find(v => valTool.isInDomain(h, v))
+  const data1 = isInAllowedList(url)
   if(data1) return true
+
+  const _env = liuEnv.getEnv()
+  if(!_env.IFRAME_PROXY) {
+    return false
+  }
 
   const data2 = domainNotAllowed.find(v => valTool.isInDomain(h, v))
   if(data2) return false

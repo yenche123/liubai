@@ -8,7 +8,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import showThread from "~/utils/show/show-thread";
 import { 
   getMemberShows,
-  getUserAndMemberIdsFromContents
+  getUserAndMemberIdsFromContents,
 } from "./other-tool"
 
 export async function equipThreads(
