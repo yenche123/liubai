@@ -128,6 +128,7 @@ const { t } = useI18n()
   width: 100%;
   height: 16vh;
   height: 16dvh;
+  transition: .3s;
 }
 
 .hs-box {
@@ -238,11 +239,22 @@ const { t } = useI18n()
   height: 20px;
 }
 
+@media screen and (max-width: 600px) {
+  .hs-virtual-zero {
+    height: 12vh;
+    height: 12dvh;
+  }
+}
+
 @media screen and (max-width: 450px) {
 
+  .hs-virtual-zero {
+    height: 8vh;
+    height: 8dvh;
+  }
+
+
   .hs-box {
-    margin-top: 12vh;
-    margin-top: 12dvh;
     width: 100%;
   }
 
