@@ -13,16 +13,16 @@
     "@lafjs/cloud": "1.0.0",
     "date-fns": "^3.6.0",
     "geoip-lite": "^1.4.10",
-    "google-auth-library": "^9.8.0",
-    "mongodb": "^6.5.0",
-    "qiniu": "^7.11.1",
+    "google-auth-library": "^9.10.0",
+    "mongodb": "^6.6.2",
+    "qiniu": "^7.12.0",
     "resend": "^3.2.0",
-    "stripe": "^15.3.0",
+    "stripe": "^15.8.0",
     "valibot": "^0.30.0"
   },
   "devDependencies": {
     "@types/geoip-lite": "^1.4.4",
-    "@types/node": "^20.12.7",
-    "tsx": "^4.7.2"
+    "@types/node": "^20.12.12",
+    "tsx": "^4.11.0"
   }
 }
