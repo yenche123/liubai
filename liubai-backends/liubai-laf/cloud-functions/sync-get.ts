@@ -16,7 +16,6 @@ import {
 import type {
   SyncGetAtom,
   SyncGetCtx,
-  LiuRqReturn,
   SyncGetAtomRes,
   SyncGet_ThreadList,
   Table_User,
@@ -37,6 +36,7 @@ import type {
   LiuDownloadParcel_A,
   Res_SyncGet_Cloud,
   SyncGet_CheckContents,
+  SyncGet_ThreadData,
 } from "@/common-types"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -109,6 +109,18 @@ async function toExecute(
     else if(taskType === "check_contents") {
       res1 = await toCheckContents(sgCtx, v, opt)
     }
+    else if(taskType === "thread_data") {
+      res1 = await toThreadData(sgCtx, v, opt)
+    }
+    else if(taskType === "draft_data") {
+
+    }
+    else if(taskType === "comment_list") {
+
+    }
+    else if(taskType === "comment_data") {
+
+    }
 
     if(!res1) {
       res1 = { code: "E5001", taskId, errMsg: "the taskType cannot match"  }
@@ -118,6 +130,28 @@ async function toExecute(
   }
 
   return results
+}
+
+
+
+async function toThreadData(
+  sgCtx: SyncGetCtx,
+  atom: SyncGet_ThreadData,
+  opt: OperationOpt,
+): Promise<SyncGetAtomRes> {
+  const { taskId } = opt
+
+  // 1. checking out input
+  const content_id = atom.id
+  const res1 = vbot.safeParse(Sch_Id, content_id)
+  if(!res1.success) {
+    const errMsg = checker.getErrMsgFromIssues(res1.issues)
+    return { code: "E4000", errMsg, taskId }
+  }
+
+  // 2. get shared data
+  const res2 = await getSharedData_2(sgCtx, [content_id], opt)
+  return res2
 }
 
 
@@ -140,67 +174,9 @@ async function toCheckContents(
     return { code: "E4000", errMsg, taskId }
   }
 
-  // 2. get contents
-  const contents = await getListViaIds<Table_Content>(sgCtx, ids, "Content", "contents")
-
-  // 3. construct list
-  let list = ids.map(v => {
-    const d3 = contents.find(v2 => v2._id === v)
-    const obj3: LiuDownloadParcel_A = {
-      id: v,
-      status: d3 ? "has_data" : "not_found",
-      parcelType: "content",
-    }
-    return obj3
-  })
-
-  // 4. checking auth
-  for(let i=0; i<contents.length; i++) {
-    const v = contents[i]
-    const content_id = v._id
-    const res4 = getSharedData_1(sgCtx, v.spaceId, opt)
-    if(!res4.pass) {
-      list.forEach(v2 => {
-        if(v2.id === content_id) v2.status = "no_auth"
-      })
-      contents.splice(i, 1)
-      i--
-    }
-  }
-
-  // 5. if nothing
-  if(contents.length < 1) {
-    return { code: "0000", taskId, list }
-  }
-
-  // 6. get authors
-  const authors = await getAuthors(sgCtx, contents)
-
-  // 7. get my collections related to these contents
-  const content_ids = contents.map(v => v._id)
-  const myCollections = await getMyCollectionsFromContentIds(sgCtx, content_ids)
-
-  // 8. package contents into LiuDownloadContent[]
-  const res8 = packContents(sgCtx, contents, myCollections, authors)
-  if(!res8.pass) {
-    const result_8 = { ...res8.result, taskId }
-    return result_8
-  }
-  
-  // 9. package liuDownloadContents into list
-  const res9 = res8.list
-  list = list.map(v => {
-    if(v.status !== "has_data") return v
-    const d9 = res9.find(v1 => v1._id === v.id)
-    if(!d9) {
-      v.status = "not_found"
-    }
-    else {
-      v.content = d9
-    }
-    return v
-  })
-  return { code: "0000", taskId, list }  
+  // 2. get shared data
+  const res2 = await getSharedData_2(sgCtx, ids, opt)
+  return res2
 }
 
 async function toThreadList(
@@ -426,6 +402,85 @@ interface Gsdr_1_B {
 }
 
 type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
+type GetShareDataRes_2 = SyncGetAtomRes
+
+
+// get contents via ids
+async function getSharedData_2(
+  sgCtx: SyncGetCtx,
+  ids: string[],
+  opt: OperationOpt,
+): Promise<GetShareDataRes_2> {
+  // 1. get taskId
+  const { taskId } = opt
+
+  // 2. get contents
+  const contents = await getListViaIds<Table_Content>(sgCtx, ids, "Content", "contents")
+
+  // 3. construct list
+  let list = ids.map(v => {
+    const d3 = contents.find(v2 => v2._id === v)
+    const obj3: LiuDownloadParcel_A = {
+      id: v,
+      status: d3 ? "has_data" : "not_found",
+      parcelType: "content",
+    }
+    return obj3
+  })
+
+  // 4. checking auth
+  for(let i=0; i<contents.length; i++) {
+    const v = contents[i]
+    const content_id = v._id
+    const res4 = getSharedData_1(sgCtx, v.spaceId, opt)
+    if(!res4.pass) {
+      list.forEach(v2 => {
+        if(v2.id === content_id) v2.status = "no_auth"
+      })
+      contents.splice(i, 1)
+      i--
+    }
+  }
+
+  // 5. if nothing
+  if(contents.length < 1) {
+    return { code: "0000", taskId, list }
+  }
+
+  // 6. get authors
+  const authors = await getAuthors(sgCtx, contents)
+
+  // 7. get my collections related to these contents
+  const content_ids = contents.map(v => v._id)
+  const myCollections = await getMyCollectionsFromContentIds(sgCtx, content_ids)
+
+  // 8. package contents into LiuDownloadContent[]
+  const res8 = packContents(sgCtx, contents, myCollections, authors)
+  if(!res8.pass) {
+    const result_8 = { ...res8.result, taskId }
+    return result_8
+  }
+  
+  // 9. package liuDownloadContents into list
+  const res9 = res8.list
+  list = list.map(v => {
+    if(v.status !== "has_data") return v
+    const d9 = res9.find(v1 => v1._id === v.id)
+    if(!d9) {
+      v.status = "not_found"
+    }
+    else {
+      v.content = d9
+    }
+    return v
+  })
+  return { code: "0000", taskId, list }  
+}
+
+
+
+
+
 
 interface PackContent_A {
   pass: false
