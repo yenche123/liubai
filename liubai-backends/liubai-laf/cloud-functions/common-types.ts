@@ -583,6 +583,18 @@ export interface LiuPlainText<T = any> {
   data: T
 }
 
+export interface DecryptCloudRes_A {
+  pass: false
+  result: LiuErrReturn
+}
+
+export interface DecryptCloudRes_B<T> {
+  pass: true
+  data?: T
+}
+
+export type DecryptCloudRes<T> = DecryptCloudRes_A | DecryptCloudRes_B<T>
+
 
 /*********************** 关于上传同步 ********************/
 /** 

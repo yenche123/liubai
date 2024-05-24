@@ -37,6 +37,12 @@ import type {
   Res_SyncGet_Cloud,
   SyncGet_CheckContents,
   SyncGet_ThreadData,
+  SyncGet_Draft,
+  Table_Draft,
+  LiuDownloadParcel_B,
+  LiuDownloadDraft,
+  CryptoCipherAndIV,
+  DecryptCloudRes_A,
 } from "@/common-types"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -113,7 +119,7 @@ async function toExecute(
       res1 = await toThreadData(sgCtx, v, opt)
     }
     else if(taskType === "draft_data") {
-
+      res1 = await toDraftData(sgCtx, v, opt)
     }
     else if(taskType === "comment_list") {
 
@@ -130,6 +136,82 @@ async function toExecute(
   }
 
   return results
+}
+
+async function toDraftData(
+  sgCtx: SyncGetCtx,
+  atom: SyncGet_Draft,
+  opt: OperationOpt,
+): Promise<SyncGetAtomRes> {
+  const { taskId } = opt
+
+  // 1. checking out input
+  const draft_id = atom.id
+  const res1 = vbot.safeParse(Sch_Id, draft_id)
+  if(!res1.success) {
+    const errMsg = checker.getErrMsgFromIssues(res1.issues)
+    return { code: "E4000", errMsg, taskId }
+  }
+
+  // 2. get draft data
+  const col = db.collection("Draft")
+  const res2 = await col.doc(draft_id).get<Table_Draft>()
+  const d2 = res2.data
+
+  // 3. construct parcel
+  const parcel: LiuDownloadParcel_B = {
+    id: draft_id,
+    status: "not_found",
+    parcelType: "draft"
+  }
+
+  // 4. if no data
+  if(!d2) {
+    return { code: "0000", taskId, list: [parcel]  }
+  }
+
+  // 5. checking auth out
+  const myUserId = sgCtx.me._id
+  if(d2.user !== myUserId) {
+    parcel.status = "no_auth"
+    return { code: "0000", taskId, list: [parcel] }
+  }
+
+  // 6. construct result
+  const res6 = decryptEncData(d2)
+  if(!res6.pass) {
+    const result_6 = { ...res6.result, taskId }
+    return result_6
+  }
+  const draft: LiuDownloadDraft = {
+    _id: d2._id,
+    first_id: d2.first_id,
+
+    infoType: d2.infoType,
+    oState: d2.oState,
+    user: d2.user,
+    spaceId: d2.spaceId,
+    spaceType: d2.spaceType,
+    threadEdited: d2.threadEdited,
+    commentEdited: d2.commentEdited,
+    parentThread: d2.parentThread,
+    parentComment: d2.parentComment,
+    replyToComment: d2.replyToComment,
+    visScope: d2.visScope,
+
+    title: res6.title,
+    liuDesc: res6.liuDesc,
+    images: res6.images,
+    files: res6.files,
+
+    whenStamp: d2.whenStamp,
+    remindMe: d2.remindMe,
+    tagIds: d2.tagIds,
+    editedStamp: d2.editedStamp,
+  }
+
+  parcel.draft = draft
+  return { code: "0000", taskId, list: [parcel] }
 }
 
 
@@ -510,6 +592,50 @@ function turnDownloadContentsIntoParcels(
   return results
 }
 
+interface EncData {
+  enc_title?: CryptoCipherAndIV
+  enc_desc?: CryptoCipherAndIV
+  enc_images?: CryptoCipherAndIV
+  enc_files?: CryptoCipherAndIV
+  [key: string]: any
+}
+
+interface DecryptEncData_B {
+  pass: true
+  title?: string
+  liuDesc?: LiuContent[]
+  images?: Cloud_ImageStore[]
+  files?: Cloud_FileStore[]
+}
+
+type DecryptEncDataRes = DecryptCloudRes_A | DecryptEncData_B
+
+function decryptEncData(e: EncData): DecryptEncDataRes {
+
+  // title
+  const d_title = decryptCloudData<string>(e.enc_title)
+  if(!d_title.pass) return d_title
+  const title = d_title.data
+
+  // desc
+  const d_desc = decryptCloudData<LiuContent[]>(e.enc_desc)
+  if(!d_desc.pass) return d_desc
+  const liuDesc = d_desc.data
+
+  // images
+  const d_images = decryptCloudData<Cloud_ImageStore[]>(e.enc_images)
+  if(!d_images.pass) return d_images
+  const images = d_images.data
+
+  // files
+  const d_files = decryptCloudData<Cloud_FileStore[]>(e.enc_files)
+  if(!d_files.pass) return d_files
+  const files = d_files.data
+
+  return { pass: true, title, liuDesc, images, files }
+}
+
+
 
 function packContents(
   sgCtx: SyncGetCtx,
@@ -529,25 +655,15 @@ function packContents(
     const myFavorite = findCollection(v, myCollections, "FAVORITE")
     const myEmoji = findCollection(v, myCollections, "EXPRESS")
 
-    // title
-    const d_title = decryptCloudData<string>(v.enc_title)
-    if(!d_title.pass) return d_title
-    const title = d_title.data
-
-    // desc
-    const d_desc = decryptCloudData<LiuContent[]>(v.enc_desc)
-    if(!d_desc.pass) return d_desc
-    const liuDesc = d_desc.data
-
-    // images
-    const d_images = decryptCloudData<Cloud_ImageStore[]>(v.enc_images)
-    if(!d_images.pass) return d_images
-    const images = d_images.data
-
-    // files
-    const d_files = decryptCloudData<Cloud_FileStore[]>(v.enc_files)
-    if(!d_files.pass) return d_files
-    const files = d_files.data
+    // decrypt title, liuDesc, images, files
+    const res = decryptEncData(v)
+    if(!res.pass) return res
+    const {
+      title,
+      images,
+      liuDesc,
+      files,
+    } = res
     
     const obj: LiuDownloadContent = {
       _id: v._id,

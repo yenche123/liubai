@@ -25,7 +25,7 @@ import type {
   LiuContent,
   VerifyTokenRes_A,
   VerifyTokenRes_B,
-  LiuErrReturn,
+  DecryptCloudRes,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -992,19 +992,6 @@ function decryptWithAES(
 
   return decrypted
 }
-
-
-interface DecryptCloudRes_A {
-  pass: false
-  result: LiuErrReturn
-}
-
-interface DecryptCloudRes_B<T> {
-  pass: true
-  data?: T
-}
-
-type DecryptCloudRes<T> = DecryptCloudRes_A | DecryptCloudRes_B<T>
 
 /** decrypt cloud data with AES */
 export function decryptCloudData<T>(
