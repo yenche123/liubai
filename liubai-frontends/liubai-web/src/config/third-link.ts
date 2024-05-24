@@ -54,8 +54,8 @@ export default {
   TWITTER_COM: "https://twitter.com/",
   TWITTER_ADD: "https://twitter.com/intent/tweet",
   TWITTER_WIDGETS: "https://platform.twitter.com/widgets.js",
+  X_COM: "https://x.com/",
 
-  
 
   // bilibili
   BILIBILI_COMMON: "https://www.bilibili.com/video/__XXX__/",

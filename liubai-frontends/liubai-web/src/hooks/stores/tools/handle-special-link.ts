@@ -21,6 +21,15 @@ export function isSpecialLink(
     if(twitterMatch1) return "twitter"
   }
 
+  // x.com
+  const twitter2 = new URL(thirdLink.X_COM)
+  const isTwitter2 = valTool.isInDomain(h, twitter2.hostname)
+  if(isTwitter2) {
+    const twitterReg2 = /\/\w{1,32}\/status\/\d{16,32}/g
+    const twitterMatch2 = p.match(twitterReg2)
+    if(twitterMatch2) return "twitter"
+  }
+
   // instagram
   const ig1 = new URL(thirdLink.IG_P)
   const isInstagram = valTool.isInDomain(h, ig1.hostname)
