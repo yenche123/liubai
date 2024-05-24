@@ -4,14 +4,25 @@
   "description": "Liubai's backend for Laf",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx test/index.ts"
   },
   "author": "yenche123",
   "license": "ISC",
+  "dependencies": {
+    "@lafjs/cloud": "1.0.0",
+    "date-fns": "^3.6.0",
+    "geoip-lite": "^1.4.10",
+    "google-auth-library": "^9.8.0",
+    "mongodb": "^6.5.0",
+    "qiniu": "^7.11.1",
+    "resend": "^3.2.0",
+    "stripe": "^15.3.0",
+    "valibot": "^0.30.0"
+  },
   "devDependencies": {
-    "@swc/core": "^1.3.96",
-    "@swc/helpers": "^0.5.3",
-    "@types/node": "^20.9.0",
-    "regenerator-runtime": "^0.14.0"
+    "@types/geoip-lite": "^1.4.4",
+    "@types/node": "^20.12.7",
+    "tsx": "^4.7.2"
   }
 }

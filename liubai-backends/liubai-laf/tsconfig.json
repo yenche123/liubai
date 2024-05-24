@@ -1,5 +1,22 @@
 {
-  "ts-node": {
-    "swc": true
-  }
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "esModuleInterop": true,
+    "lib": ["ESNext", "DOM"],
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["cloud-functions/*"]
+    }
+  },
+  "include": ["cloud-functions/**/*.ts", "cloud-functions/**/*.d.ts", "types"],
 }
