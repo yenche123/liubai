@@ -136,6 +136,7 @@ export const domainNotAllowed = [
   "yuewen.cn",
   "metaso.cn",
   "chat.deepseek.com",
+  "xueqiu.com",
 ]
 
 export const mastodonDomains = [
