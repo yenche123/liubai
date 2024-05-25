@@ -89,7 +89,7 @@ export async function findHottest(
 export async function findParent(
   parentWeWant: string,
   grandparent?: string,
-  limitNum: number = 2,
+  batchNum: number = 2,
 ) {
 
   let all_ids = []
@@ -98,7 +98,7 @@ export async function findParent(
 
   let list: ContentLocalTable[] = []
 
-  for(let i=0; i<limitNum; i++) {
+  for(let i=0; i<batchNum; i++) {
     const res = await db.contents.where("_id").anyOf(ids).sortBy("createdStamp")
     if(res.length < 1) break
     list.splice(0, 0, ...res)
@@ -111,8 +111,8 @@ export async function findParent(
     if(!all_ids.includes(replyToComment)) {
       ids.push(replyToComment)
     }
-    if(parentComment && parentComment !== replyToComment && !all_ids.includes(parentComment)) {
-      ids.push(parentComment)
+    if(parentComment && parentComment !== replyToComment) {
+      if(!all_ids.includes(parentComment)) ids.push(parentComment)
     }
   }
 

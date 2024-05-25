@@ -1309,6 +1309,7 @@ export interface SyncGet_CommentList_C {
   loadType: "find_parent"
   parentWeWant: string
   grandparent?: string
+  batchNum?: number   // 2 is default
 }
 
 export const Sch_SyncGet_CommentList_C = vbot.object({
@@ -1316,6 +1317,7 @@ export const Sch_SyncGet_CommentList_C = vbot.object({
   loadType: vbot.literal("find_parent"),
   parentWeWant: Sch_Id,
   grandparent: vbot.optional(Sch_Id),
+  batchNum: sch_opt_num(1, 4),
 })
 
 export interface SyncGet_CommentList_D {

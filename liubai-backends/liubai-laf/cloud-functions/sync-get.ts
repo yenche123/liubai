@@ -46,6 +46,7 @@ import type {
   SyncGet_CommentList,
   SyncGet_CommentList_A,
   SyncGet_CommentList_B,
+  SyncGet_CommentList_C,
 } from "@/common-types"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -157,13 +158,62 @@ async function toCommentList(
     res1 = await findChildrenComments(sgCtx, atom, opt)
   }
   else if(loadType === "find_parent") {
-
+    res1 = await findParentComments(sgCtx, atom, opt)
   }
   else if(loadType === "find_hottest") {
 
   }
  
   return res1
+}
+
+
+async function findParentComments(
+  sgCtx: SyncGetCtx,
+  atom: SyncGet_CommentList_C,
+  opt: OperationOpt,
+) {
+  const {
+    parentWeWant,
+    grandparent,
+    batchNum = 2,
+  } = atom
+
+  let all_ids = []
+  let ids = [parentWeWant]
+  if(grandparent && grandparent !== parentWeWant) {
+    ids.push(grandparent)
+  }
+
+  const _sort = (v1: Table_Content, v2: Table_Content) => {
+    return v1.createdStamp - v2.createdStamp
+  }
+
+  let list: Table_Content[] = []
+  for(let i=0; i<batchNum; i++) {
+
+    const res1 = await getListViaIds<Table_Content>(sgCtx, ids, "Content", "contents")
+    if(res1.length < 1) break
+
+    res1.sort(_sort)
+    list.splice(0, 0, ...res1)
+
+    const firstComment = list[0]
+    const { replyToComment, parentComment } = firstComment
+    if(!replyToComment) break
+
+    all_ids.push(...ids)
+    ids = []
+    if(!all_ids.includes(replyToComment)) {
+      ids.push(replyToComment)
+    }
+    if(parentComment && parentComment !== replyToComment) {
+      if(!all_ids.includes(parentComment)) ids.push(parentComment)
+    }
+  }
+
+  const res3 = await getSharedData_3(sgCtx, list, opt)
+  return res3
 }
 
 async function findChildrenComments(
