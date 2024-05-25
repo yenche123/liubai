@@ -27,7 +27,13 @@ export function useVcDropZone(
     if(files?.length) dropFiles.value = files 
   }
 
-  const { isOverDropZone } = useDropZone(containerRef, onDrop)
+  const { isOverDropZone } = useDropZone(containerRef, {
+    dataTypes: (types) => {
+      const len = types.length ?? 0
+      return len > 0
+    },
+    onDrop
+  })
 
   const showDropZone = computed(() => {
     // 当前 vice-content 不是承载 thread 时，返回 false

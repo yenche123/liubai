@@ -20,7 +20,13 @@ export function useCpDropZone(
     if(files?.length) dropFiles.value = files 
   }
 
-  const { isOverDropZone } = useDropZone(containerRef, onDrop)
+  const { isOverDropZone } = useDropZone(containerRef, {
+    dataTypes: (types) => {
+      const len = types.length ?? 0
+      return len > 0
+    },
+    onDrop
+  })
 
   const showDropZone = computed(() => {
     // 当前全局状态是否存在 
