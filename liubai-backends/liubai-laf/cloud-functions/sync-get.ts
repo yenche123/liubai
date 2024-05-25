@@ -45,6 +45,7 @@ import type {
   DecryptCloudRes_A,
   SyncGet_CommentList,
   SyncGet_CommentList_A,
+  SyncGet_CommentList_B,
 } from "@/common-types"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -153,7 +154,7 @@ async function toCommentList(
     res1 = await commentsUnderThread(sgCtx, atom, opt)
   }
   else if(loadType === "find_children") {
-
+    res1 = await findChildrenComments(sgCtx, atom, opt)
   }
   else if(loadType === "find_parent") {
 
@@ -163,6 +164,44 @@ async function toCommentList(
   }
  
   return res1
+}
+
+async function findChildrenComments(
+  sgCtx: SyncGetCtx,
+  atom: SyncGet_CommentList_B,
+  opt: OperationOpt,
+) {
+  const {
+    commentId,
+    lastItemStamp,
+    sort = "asc",
+    limit = 9,
+  } = atom
+
+  // 1. construct query
+  const w1: Record<string, any> = {
+    replyToComment: commentId,
+    oState: "OK",
+    infoType: "COMMENT",
+  }
+  if(lastItemStamp) {
+    if(sort === "desc") {
+      w1.createdStamp = _.lt(lastItemStamp)
+    }
+    else {
+      w1.createdStamp = _.gt(lastItemStamp)
+    }
+  }
+
+  // 2. to query
+  let q2 = db.collection("Content").where(w1)
+  q2 = q2.orderBy("createdStamp", sort).limit(limit)
+  const res2 = await q2.get<Table_Content>()
+  const contents = res2.data ?? []
+
+  // 3. get shared data
+  const res4 = await getSharedData_3(sgCtx, contents, opt)
+  return res4
 }
 
 async function commentsUnderThread(
@@ -183,6 +222,7 @@ async function commentsUnderThread(
     parentComment: _.exists(false),
     replyToComment: _.exists(false),
     oState: "OK",
+    infoType: "COMMENT",
   }
 
   if(lastItemStamp) {

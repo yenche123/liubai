@@ -20,16 +20,17 @@ export async function findChildren(
   let list: ContentLocalTable[] = []
   if(lastItemStamp) {
     const now = time.getTime()
-    let w = ["replyToComment", "oState", "createdStamp"]
-    let b1 = [parentId, "OK", lastItemStamp]
-    let b2 = [parentId, "OK", now]
+    let w = ["replyToComment", "oState", "infoType", "createdStamp"]
+    let b1 = [parentId, "OK", "COMMENT", lastItemStamp]
+    let b2 = [parentId, "OK", "COMMENT", now]
     let q = db.contents.where(w).between(b1, b2, false, true)
     list = await q.sortBy("createdStamp")
   }
   else {
-    let w = {
+    let w: Partial<ContentLocalTable> = {
       replyToComment: parentId,
       oState: "OK",
+      infoType: "COMMENT",
     }
     let q = db.contents.where(w)
     list = await q.sortBy("createdStamp")
@@ -60,9 +61,10 @@ function _getScore(c: ContentLocalTable) {
 export async function findHottest(
   parentId: string
 ) {
-  const w = {
+  const w: Partial<ContentLocalTable> = {
     replyToComment: parentId,
     oState: "OK",
+    infoType: "COMMENT",
   }
   const q = db.contents.where(w)
   const list = await q.sortBy("createdStamp")

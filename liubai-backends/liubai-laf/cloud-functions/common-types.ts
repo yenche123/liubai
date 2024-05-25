@@ -1291,6 +1291,8 @@ export interface SyncGet_CommentList_B {
   loadType: "find_children"
   commentId: string
   lastItemStamp?: number
+  sort?: SortWay    // asc is default
+  limit?: number    // 9 is default
 }
 
 export const Sch_SyncGet_CommentList_B = vbot.object({
@@ -1298,6 +1300,8 @@ export const Sch_SyncGet_CommentList_B = vbot.object({
   loadType: vbot.literal("find_children"),
   commentId: Sch_Id,
   lastItemStamp: Sch_Opt_Num,
+  sort: vbot.optional(Sch_SortWay),
+  limit: sch_opt_num(1, 32),
 })
 
 export interface SyncGet_CommentList_C {
