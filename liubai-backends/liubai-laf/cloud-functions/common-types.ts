@@ -1359,7 +1359,10 @@ export interface SyncGet_CheckContents {
 
 export const Sch_SyncGet_CheckContents = vbot.object({
   taskType: vbot.literal("check_contents"),
-  ids: vbot.array(Sch_Id),
+  ids: vbot.array(Sch_Id, [
+    vbot.minLength(1),
+    vbot.maxLength(32),
+  ]),
 })
 
 export interface SyncGet_Draft {

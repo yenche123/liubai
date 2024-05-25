@@ -47,6 +47,8 @@ import type {
   SyncGet_CommentList_A,
   SyncGet_CommentList_B,
   SyncGet_CommentList_C,
+  SyncGet_CommentList_D,
+  SyncGet_CommentData,
 } from "@/common-types"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -129,7 +131,7 @@ async function toExecute(
       res1 = await toCommentList(sgCtx, v, opt)
     }
     else if(taskType === "comment_data") {
-
+      res1 = await toCommentData(sgCtx, v, opt)
     }
 
     if(!res1) {
@@ -140,6 +142,19 @@ async function toExecute(
   }
 
   return results
+}
+
+
+async function toCommentData(
+  sgCtx: SyncGetCtx,
+  atom: SyncGet_CommentData,
+  opt: OperationOpt,
+) {
+  const { id } = atom
+  
+  // 1. get shared data
+  const res2 = await getSharedData_2(sgCtx, [id], opt)
+  return res2
 }
 
 
@@ -161,10 +176,53 @@ async function toCommentList(
     res1 = await findParentComments(sgCtx, atom, opt)
   }
   else if(loadType === "find_hottest") {
-
+    res1 = await findHottestComments(sgCtx, atom, opt)
   }
  
   return res1
+}
+
+function _getScore(c: Table_Content) {
+  const commentNum = c.levelOneAndTwo ?? 0
+  const reactionNum = c.emojiData.total
+  const score = (5 * commentNum) + (3 * reactionNum)
+  return score
+}
+
+async function findHottestComments(
+  sgCtx: SyncGetCtx,
+  atom: SyncGet_CommentList_D,
+  opt: OperationOpt,
+) {
+  const {
+    commentId,
+  } = atom
+
+  // 1. construct query
+  const LIMIT = 10
+  const w1: Record<string, any> = {
+    replyToComment: commentId,
+    oState: "OK",
+    infoType: "COMMENT",
+  }
+
+  // 2. to query
+  let q2 = db.collection("Content").where(w1)
+  q2 = q2.orderBy("createdStamp", "asc").limit(LIMIT)
+  const res2 = await q2.get<Table_Content>()
+  const contents = res2.data ?? []
+
+  // 3. sort
+  const _sort = (v1: Table_Content, v2: Table_Content) => {
+    const score1 = _getScore(v1)
+    const score2 = _getScore(v2)
+    return score2 - score1
+  }
+  contents.sort(_sort)
+  
+  // 4. get shared data
+  const res4 = await getSharedData_3(sgCtx, contents, opt)
+  return res4
 }
 
 
@@ -379,17 +437,9 @@ async function toThreadData(
   atom: SyncGet_ThreadData,
   opt: OperationOpt,
 ): Promise<SyncGetAtomRes> {
-  const { taskId } = opt
-
-  // 1. checking out input
   const content_id = atom.id
-  const res1 = vbot.safeParse(Sch_Id, content_id)
-  if(!res1.success) {
-    const errMsg = checker.getErrMsgFromIssues(res1.issues)
-    return { code: "E4000", errMsg, taskId }
-  }
 
-  // 2. get shared data
+  // 1. get shared data
   const res2 = await getSharedData_2(sgCtx, [content_id], opt)
   return res2
 }
@@ -400,21 +450,9 @@ async function toCheckContents(
   atom: SyncGet_CheckContents,
   opt: OperationOpt,
 ): Promise<SyncGetAtomRes> {
-  const { taskId } = opt
-
-  // 1. checking out input
   const ids = atom.ids
-  const Sch_Ids = vbot.array(Sch_Id, [
-    vbot.minLength(1),
-    vbot.maxLength(32),
-  ])
-  const res1 = vbot.safeParse(Sch_Ids, ids)
-  if(!res1.success) {
-    const errMsg = checker.getErrMsgFromIssues(res1.issues)
-    return { code: "E4000", errMsg, taskId }
-  }
 
-  // 2. get shared data
+  // 1. get shared data
   const res2 = await getSharedData_2(sgCtx, ids, opt)
   return res2
 }

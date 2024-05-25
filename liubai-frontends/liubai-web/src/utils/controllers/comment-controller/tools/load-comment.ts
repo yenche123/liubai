@@ -66,7 +66,7 @@ export async function findHottest(
     oState: "OK",
     infoType: "COMMENT",
   }
-  const q = db.contents.where(w)
+  const q = db.contents.where(w).limit(10)
   const list = await q.sortBy("createdStamp")
 
   if(list.length < 2) {
