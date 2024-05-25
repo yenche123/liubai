@@ -25,17 +25,19 @@ async function getList(
     stateId,
   } = opt
 
-  const oState: OState = viewType === "TRASH" ? "REMOVED" : "OK"
-  const { REMOVING_DAYS } = liuEnv.getEnv()
-  const now = time.getTime()
-
   if(collectType === "EXPRESS" || collectType === "FAVORITE") {
     const res0 = await getThreadsByCollection(opt as TcListOption)
     return res0
   }
-
+  
   const isIndex= viewType === "INDEX"
   const isPin = viewType === "PINNED"
+  const isTrash = viewType === "TRASH"
+
+  const oState: OState = isTrash ? "REMOVED" : "OK"
+  const { REMOVING_DAYS } = liuEnv.getEnv()
+  const now = time.getTime()
+
   let list: ContentLocalTable[] = []
   const statesNoInIndex = getNoShowInIndexStates(isIndex)
 
@@ -76,6 +78,7 @@ async function getList(
 
   let key = oState === 'OK' ? "createdStamp" : "updatedStamp"
   if(isPin) key = "pinStamp"
+  else if(isTrash) key = "removedStamp"
 
   if(specific_ids?.length) {
     // I. 加载特定 ids

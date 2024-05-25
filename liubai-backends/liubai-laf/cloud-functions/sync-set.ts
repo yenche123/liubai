@@ -1917,9 +1917,15 @@ async function getSharedData_6(
   const u: Partial<Table_Content> = {
     oState: newOState,
     config: cfg,
-    removedStamp: newRemovedStamp,
   }
-  if(newOState === "DELETED") {
+
+  if(newOState === "OK") {
+    u.removedStamp = undefined
+  }
+  else if(newOState === "REMOVED") {
+    u.removedStamp = newRemovedStamp
+  }
+  else if(newOState === "DELETED") {
     u.enc_title = undefined
     u.enc_desc = undefined
     u.enc_images = undefined

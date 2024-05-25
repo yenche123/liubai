@@ -471,9 +471,11 @@ async function toThreadListFromContent(
   // 2. handle w
   const isIndex = vT === "INDEX"
   const isPin = vT === "PINNED"
-  const oState = vT === "TRASH" ? "REMOVED" : "OK"
+  const isTrash = vT === "TRASH"
+  const oState = isTrash ? "REMOVED" : "OK"
   let key = oState === "OK" ? "createdStamp" : "updatedStamp"
   if(isPin) key = "pinStamp"
+  else if(isTrash) key = "removedStamp"
 
   const w: Record<string, any> = {
     oState,
@@ -495,6 +497,9 @@ async function toThreadListFromContent(
   }
   else if(isIndex) {
     w.pinStamp = _.or(_.eq(0), _.exists(false))
+  }
+  else if(isTrash) {
+    w.removedStamp = _.gt(0)
   }
   else if(vT === "STATE") {
     w.stateId = stateId
