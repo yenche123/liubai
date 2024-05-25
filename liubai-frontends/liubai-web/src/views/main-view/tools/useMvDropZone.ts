@@ -20,7 +20,13 @@ export function useMvDropZone(
     if(files?.length) dropFiles.value = files 
   }
 
-  const { isOverDropZone } = useDropZone(centerRef, onDrop)
+  const { isOverDropZone } = useDropZone(centerRef, {
+    dataTypes: (types) => {
+      const len = types.length ?? 0
+      return len > 0
+    },
+    onDrop,
+  })
 
   // 不直接回传 isOverDropZone，而是套一层 _isOverDropZone
   // 为了考量 全局状态 isDragToSort (内部是否正在拖动以排序图片)
