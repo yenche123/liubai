@@ -77,6 +77,19 @@ export const sch_opt_arr = (
   return vbot.optional(vbot.array(sch, pipe))
 }
 
+export const sch_opt_num = (
+  min?: number,
+  max?: number,
+) => {
+  let pipe: vbot.Pipe<any> | undefined
+  if(min) pipe = [vbot.minValue(min)]
+  if(max) {
+    const m = vbot.maxValue(max)
+    pipe = pipe ? [...pipe, m] : [m]
+  }
+  return vbot.optional(vbot.number(pipe))
+}
+
 
 /*********************** 基类型、原子化类型 **********************/
 
@@ -312,9 +325,9 @@ export interface LiuRemindMe {
 export const Sch_LiuRemindMe = vbot.object(
   {
     type: vbot.picklist(["early", "later", "specific_time"]),
-    early_minute: vbot.optional(vbot.number()),
+    early_minute: Sch_Opt_Num,
     later: vbot.optional(Sch_LiuRemindLater),
-    specific_stamp: vbot.optional(vbot.number()),
+    specific_stamp: Sch_Opt_Num,
   },
   vbot.never()
 )
@@ -477,8 +490,8 @@ export const Sch_Cloud_ImageStore: BaseSchema<Cloud_ImageStore> = vbot.object(
     name: vbot.string(),
     lastModified: vbot.number(),
     mimeType: Sch_Opt_Str,
-    width: vbot.optional(vbot.number()),
-    height: vbot.optional(vbot.number()),
+    width: Sch_Opt_Num,
+    height: Sch_Opt_Num,
     h2w: Sch_Opt_Str,
     url: vbot.string(),
     url_2: Sch_Opt_Str,
@@ -1234,7 +1247,7 @@ export const Sch_SyncGet_ThreadList = vbot.object({
   taskType: vbot.literal("thread_list"),
   spaceId: Sch_Id,
   viewType: Sch_ThreadListViewType,
-  limit: vbot.optional(vbot.number([vbot.minValue(1), vbot.maxValue(32)])),
+  limit: sch_opt_num(1, 32),
   collectType: vbot.optional(Sch_CollectionInfoType),
   emojiSpecific: Sch_Opt_Str,
   tagId: Sch_Opt_Str,
@@ -1260,6 +1273,8 @@ export interface SyncGet_CommentList_A {
   loadType: "under_thread"
   targetThread: string
   lastItemStamp?: number
+  sort?: SortWay    // asc is default
+  limit?: number    // 9 is default
 }
 
 export const Sch_SyncGet_CommentList_A = vbot.object({
@@ -1267,6 +1282,8 @@ export const Sch_SyncGet_CommentList_A = vbot.object({
   loadType: vbot.literal("under_thread"),
   targetThread: Sch_Id,
   lastItemStamp: Sch_Opt_Num,
+  sort: vbot.optional(Sch_SortWay),
+  limit: sch_opt_num(1, 32),
 })
 
 export interface SyncGet_CommentList_B {

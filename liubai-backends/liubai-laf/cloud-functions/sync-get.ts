@@ -43,6 +43,8 @@ import type {
   LiuDownloadDraft,
   CryptoCipherAndIV,
   DecryptCloudRes_A,
+  SyncGet_CommentList,
+  SyncGet_CommentList_A,
 } from "@/common-types"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -122,7 +124,7 @@ async function toExecute(
       res1 = await toDraftData(sgCtx, v, opt)
     }
     else if(taskType === "comment_list") {
-
+      res1 = await toCommentList(sgCtx, v, opt)
     }
     else if(taskType === "comment_data") {
 
@@ -137,6 +139,72 @@ async function toExecute(
 
   return results
 }
+
+
+async function toCommentList(
+  sgCtx: SyncGetCtx,
+  atom: SyncGet_CommentList,
+  opt: OperationOpt,
+) {
+  const { loadType } = atom
+
+  let res1: SyncGetAtomRes | undefined
+  if(loadType === "under_thread") {
+    res1 = await commentsUnderThread(sgCtx, atom, opt)
+  }
+  else if(loadType === "find_children") {
+
+  }
+  else if(loadType === "find_parent") {
+
+  }
+  else if(loadType === "find_hottest") {
+
+  }
+ 
+  return res1
+}
+
+async function commentsUnderThread(
+  sgCtx: SyncGetCtx,
+  atom: SyncGet_CommentList_A,
+  opt: OperationOpt,
+) {
+  const { 
+    targetThread, 
+    lastItemStamp, 
+    sort = "asc",
+    limit = 9,
+  } = atom
+
+  // 1. construct query
+  const w1: Record<string, any> = {
+    parentThread: targetThread,
+    parentComment: _.exists(false),
+    replyToComment: _.exists(false),
+    oState: "OK",
+  }
+
+  if(lastItemStamp) {
+    if(sort === "desc") {
+      w1.createdStamp = _.lt(lastItemStamp)
+    }
+    else {
+      w1.createdStamp = _.gt(lastItemStamp)
+    }
+  }
+
+  // 2. to query
+  let q2 = db.collection("Content").where(w1)
+  q2 = q2.orderBy("createdStamp", sort).limit(limit)
+  const res2 = await q2.get<Table_Content>()
+  const contents = res2.data ?? []
+
+  // 3. get shared data
+  const res4 = await getSharedData_3(sgCtx, contents, opt)
+  return res4
+}
+
 
 async function toDraftData(
   sgCtx: SyncGetCtx,
@@ -358,29 +426,9 @@ async function toThreadListFromContent(
   const res3 = await q3.get<Table_Content>()
   const results = res3.data ?? []
 
-  if(results.length < 1) {
-    return { code: "0000", taskId, list: [] }
-  }
-  mergeListIntoCtx(sgCtx, "contents", results)
-
-  // 4. get authors
-  const authors = await getAuthors(sgCtx, results)
-
-  // 5. get my collections related to these contents
-  const content_ids = results.map(v => v._id)
-  const myCollections = await getMyCollectionsFromContentIds(sgCtx, content_ids)
-
-  // 6. package contents into LiuDownloadContent[]
-  const res6 = packContents(sgCtx, results, myCollections, authors)
-  if(!res6.pass) {
-    const result_6 = { ...res6.result, taskId }
-    return result_6
-  }
-
-  // 7. turn into parcels
-  const res7 = turnDownloadContentsIntoParcels(res6.list)
-  
-  return { code: "0000", taskId, list: res7 }
+  // 4. get shared data
+  const res4 = await getSharedData_3(sgCtx, results, opt)
+  return res4
 }
 
 /** load threads from Collection table first */
@@ -485,6 +533,38 @@ interface Gsdr_1_B {
 
 type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
 type GetShareDataRes_2 = SyncGetAtomRes
+type GetShareDataRes_3 = SyncGetAtomRes
+
+async function getSharedData_3(
+  sgCtx: SyncGetCtx,
+  contents: Table_Content[],
+  opt: OperationOpt,
+): Promise<GetShareDataRes_3> {
+  const { taskId } = opt
+  if(contents.length < 1) {
+    return { code: "0000", taskId, list: [] }
+  }
+  mergeListIntoCtx(sgCtx, "contents", contents)
+
+  // 1. get authors
+  const authors = await getAuthors(sgCtx, contents)
+
+  // 2. get my collections related to these contents
+  const content_ids = contents.map(v => v._id)
+  const myCollections = await getMyCollectionsFromContentIds(sgCtx, content_ids)
+
+  // 3. package contents into LiuDownloadContent[]
+  const res3 = packContents(sgCtx, contents, myCollections, authors)
+  if(!res3.pass) {
+    const result_3 = { ...res3.result, taskId }
+    return result_3
+  }
+
+  // 4. turn into parcels
+  const res4 = turnDownloadContentsIntoParcels(res3.list)
+  
+  return { code: "0000", taskId, list: res4 }
+}
 
 
 // get contents via ids
@@ -558,10 +638,6 @@ async function getSharedData_2(
   })
   return { code: "0000", taskId, list }  
 }
-
-
-
-
 
 
 interface PackContent_A {
