@@ -310,7 +310,8 @@ async function loadCloud(
     taskType: "thread_list",
     ...opt1,
   }
-  const res1 = await CloudMerger.request(param1)
+  const delay = Boolean(opt1.lastItemStamp) ? 0 : 250
+  const res1 = await CloudMerger.request(param1, delay)
   if(!res1) return
 
   // 2. get ids for checking contents

@@ -18,7 +18,11 @@ class CloudMerger {
   private static triggerTimeout: LiuTimeout
   private static tasks: CmTask[] = []
 
-  static request(opt: CloudMergerOpt, delay: number = 250) {
+  static request(
+    opt: CloudMergerOpt, 
+    delay: number = 250,
+    maxStackNum: number = 3,
+  ) {
     const _this = this
     const param: SyncGetAtom = {
       ...opt,
@@ -33,10 +37,18 @@ class CloudMerger {
       }
       _this.tasks.push(task)
 
-      // 2. prepare to trigger
+      // 2. clear timeout
       if(_this.triggerTimeout) {
         clearTimeout(_this.triggerTimeout)
       }
+
+      // 3. trigger instantly if allowed
+      if(_this.tasks.length >= maxStackNum || delay === 0) {
+        _this.triggerTimeout = undefined
+        _this.trigger()
+        return
+      }
+
       _this.triggerTimeout = setTimeout(() => {
         _this.triggerTimeout = undefined
         _this.trigger()
