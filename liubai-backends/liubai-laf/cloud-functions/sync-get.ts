@@ -876,7 +876,7 @@ function packContents(
     
     const obj: LiuDownloadContent = {
       _id: v._id,
-      first_id: v._id,
+      first_id: v.first_id,
 
       isMine,
       author,
