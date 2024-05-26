@@ -15,6 +15,8 @@ import type {
   TaskOfC2L,
   SyncRes,
   CheckDownloadTaskParam,
+  UpdateImagesRes,
+  UpdateFilesRes,
 } from "./tools/types"
 import CheckDbWorker from "./workers/check-download-task?worker"
 import DownloadWorker from "./workers/task-to-download?worker"
@@ -255,6 +257,66 @@ class CloudFiler {
       cloud_url: f1.url,
     }
     return f2
+  }
+
+  /** 转换多张云端图片至本地格式 */
+  static updateImages(
+    new_images?: Cloud_ImageStore[],
+    old_images?: LiuImageStore[],
+  ): UpdateImagesRes {
+    const _this = this
+    const len1 = new_images?.length ?? 0
+    const len2 = old_images?.length ?? 0
+  
+    let updated = false
+    if(!len1) {
+      if(len2) updated = true
+      return { updated }
+    }
+  
+    const new_images2 = new_images as Cloud_ImageStore[]
+    const old_images2 = old_images ?? []
+  
+    const list: LiuImageStore[] = []
+    for(let i=0; i<len1; i++) {
+      const v1 = new_images2[i]
+      const v2 = old_images2[i]
+      const { useCloud, image } = _this.imageFromCloudToStore(v1, v2)
+      if(useCloud) updated = true
+      if(image) list.push(image)
+    }
+  
+    return { updated, images: list }
+  }
+
+  /** 转换多个文件至本地格式 */
+  static updateFiles(
+    new_files?: Cloud_FileStore[],
+    old_files?: LiuFileStore[],
+  ): UpdateFilesRes {
+    const _this = this
+    const len1 = new_files?.length ?? 0
+    const len2 = old_files?.length ?? 0
+  
+    let updated = false
+    if(!len1) {
+      if(len2) updated = true
+      return { updated }
+    }
+  
+    const new_files2 = new_files as Cloud_FileStore[]
+    const old_files2 = old_files ?? []
+  
+    const list: LiuFileStore[] = []
+    for(let i=0; i<len1; i++) {
+      const v1 = new_files2[i]
+      const v2 = old_files2[i]
+      const { useCloud, file } = _this.fileFromCloudToStore(v1, v2)
+      if(useCloud) updated = true
+      if(file) list.push(file)
+    }
+  
+    return { updated, files: list }
   }
 
   

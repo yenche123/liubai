@@ -58,3 +58,14 @@ export type UploadTaskLocalTable_ID = "content_id" |
   "workspace_id" |
   "member_id" |
   "collection_id"
+
+
+export interface UpdateImagesRes {
+  updated: boolean
+  images?: LiuImageStore[]
+}
+
+export interface UpdateFilesRes {
+  updated: boolean
+  files?: LiuFileStore[]
+}
