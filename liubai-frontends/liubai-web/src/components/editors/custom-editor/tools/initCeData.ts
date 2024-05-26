@@ -8,7 +8,7 @@ import type { ShallowRef, Ref } from "vue"
 import type { CeData, CeEmits, CeProps } from "./types"
 import { defaultData } from "./types"
 import type { ContentLocalTable, DraftLocalTable } from "~/types/types-table"
-import { LiuRemindMe } from "~/types/types-atom"
+import type { LiuRemindMe } from "~/types/types-atom"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import localReq from "./req/local-req"
 import transferUtil from "~/utils/transfer-util"
@@ -18,6 +18,9 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
 import { handleOverflow } from "./handle-overflow"
 import liuEnv from "~/utils/liu-env"
+import type { SyncGet_Draft } from "~/types/cloud/sync-get/types"
+import liuUtil from "~/utils/liu-util"
+import { CloudMerger } from "~/utils/cloud/CloudMerger"
 
 let spaceIdRef: Ref<string>
 
@@ -113,6 +116,7 @@ async function initDraft(
   }
   else {
     ctx.ceData.draftId = ""
+    initDraftFromCloud(ctx)
   }
 }
 
@@ -187,12 +191,44 @@ async function initDraftFromDraft(
     handleOverflow(ceData)
     numWhenSet.value++
   }
+
+  initDraftFromCloud(ctx, draft)
 }
 
 async function initDraftFromCloud(
   ctx: IcsContext,
-  draft: DraftLocalTable,
+  draft?: DraftLocalTable,
+  thread?: ContentLocalTable,
 ) {
+  const canSync = liuEnv.canISync()
+  if(!canSync) return
+
+  // 1. construct opt for cloud
+  const opt: SyncGet_Draft = {
+    taskType: "draft_data",
+  }
+
+  if(draft) {
+    const res1 = liuUtil.check.hasEverSynced(draft)
+    if(!res1) return
+    opt.draft_id = draft._id
+  }
+  else if(thread) {
+    const res2 = liuUtil.check.canUpload(thread)
+    if(!res2) return
+    opt.threadEdited = thread._id
+  }
+  else {
+    opt.spaceId = spaceIdRef.value
+  }
+
+  // 2. to merge
+  console.log("initDraftFromCloud opt: ")
+  console.log(opt)
+  const res = await CloudMerger.request(opt)
+  console.log("initDraftFromCloud res: ")
+  console.log(res)
+  console.log(" ")
   
 }
 
@@ -226,6 +262,8 @@ async function initDraftFromThread(
     handleOverflow(ceData)
     numWhenSet.value++
   }
+
+  initDraftFromCloud(ctx, undefined, thread)
 }
 
 

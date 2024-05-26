@@ -15,6 +15,8 @@ Build! Anyway
 
 4. 切换 enable / show 时，若该组件全局只有一个，那么可以使用 toggleTimeout，否则多个实例共用同一个 toggleTimeout，状态就乱了。
 
+5. `liuUtil.check.hasEverSynced` 很实用，能检测该数据是否同步过
+
 ## 前后端同步原则
 
 ### 要求实时联网
