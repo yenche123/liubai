@@ -54,6 +54,7 @@ export const Sch_Id = vbot.string([vbot.minLength(8)])
 export const Sch_Opt_Str = vbot.optional(vbot.string())
 export const Sch_Opt_Num = vbot.optional(vbot.number())
 export const Sch_Opt_Bool = vbot.optional(vbot.boolean())
+export const Sch_Opt_Id = vbot.optional(Sch_Id)
 
 // trim 后有字符串的 string
 export const Sch_String_WithLength = vbot.string([
@@ -1316,7 +1317,7 @@ export const Sch_SyncGet_CommentList_C = vbot.object({
   taskType: vbot.literal("comment_list"),
   loadType: vbot.literal("find_parent"),
   parentWeWant: Sch_Id,
-  grandparent: vbot.optional(Sch_Id),
+  grandparent: Sch_Opt_Id,
   batchNum: sch_opt_num(1, 4),
 })
 
@@ -1367,12 +1368,18 @@ export const Sch_SyncGet_CheckContents = vbot.object({
 
 export interface SyncGet_Draft {
   taskType: "draft_data"
-  id: string
+  draft_id?: string
+  threadEdited?: string
+  commentEdited?: string
+  spaceId?: string
 }
 
 export const Sch_SyncGet_Draft = vbot.object({
   taskType: vbot.literal("draft_data"),
-  id: Sch_Id,
+  draft_id: Sch_Opt_Id,
+  threadEdited: Sch_Opt_Id,
+  commentEdited: Sch_Opt_Id,
+  spaceId: Sch_Opt_Id,
 })
 
 export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |

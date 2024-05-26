@@ -108,8 +108,12 @@ async function initDraft(
     draft = null
   }
   
-  if(draft) initDraftFromDraft(ctx, draft)
-  else ctx.ceData.draftId = ""
+  if(draft) {
+    initDraftFromDraft(ctx, draft)
+  }
+  else {
+    ctx.ceData.draftId = ""
+  }
 }
 
 
@@ -184,6 +188,15 @@ async function initDraftFromDraft(
     numWhenSet.value++
   }
 }
+
+async function initDraftFromCloud(
+  ctx: IcsContext,
+  draft: DraftLocalTable,
+) {
+  
+}
+
+
 
 async function initDraftFromThread(
   ctx: IcsContext,

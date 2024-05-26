@@ -111,7 +111,10 @@ export interface SyncGet_CheckContents {
 
 export interface SyncGet_Draft {
   taskType: "draft_data"
-  id: string
+  draft_id?: string
+  threadEdited?: string
+  commentEdited?: string
+  spaceId?: string
 }
 
 export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |

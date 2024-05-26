@@ -51,6 +51,7 @@ import {
   Sch_Cloud_StateConfig,
   Sch_TagView,
   Sch_Id,
+  Sch_Opt_Id,
   Sch_Opt_Str,
   Sch_Opt_Num,
   sch_opt_arr,
@@ -847,7 +848,7 @@ async function toCollectionFavorite(
 
   // 1. inspect data technically
   const Sch_Favorite = vbot.object({
-    id: vbot.optional(Sch_Id),
+    id: Sch_Opt_Id,
     first_id: Sch_Id,
     oState: Sch_OState_2,
     content_id: Sch_Id,
@@ -895,7 +896,7 @@ async function toCollectionReact(
 
   // 1. inspect data technically
   const Sch_React = vbot.object({
-    id: vbot.optional(Sch_Id),
+    id: Sch_Opt_Id,
     first_id: Sch_Id,
     oState: Sch_OState_2,
     content_id: Sch_Id,
@@ -1438,9 +1439,9 @@ async function toDraftSet(
 
   // 1. inspect data technically
   const Sch_DraftSet = vbot.object({
-    id: vbot.optional(Sch_Id),
-    first_id: vbot.optional(Sch_Id),
-    spaceId: vbot.optional(Sch_Id),
+    id: Sch_Opt_Id,
+    first_id: Sch_Opt_Id,
+    spaceId: Sch_Opt_Id,
 
     liuDesc: sch_opt_arr(vbot.any()),
     images: sch_opt_arr(Sch_Cloud_ImageStore),

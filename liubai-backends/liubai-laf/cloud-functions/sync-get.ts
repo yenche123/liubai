@@ -165,7 +165,12 @@ async function toCommentList(
 ) {
   const { loadType } = atom
 
-  let res1: SyncGetAtomRes | undefined
+  let res1: SyncGetAtomRes = { 
+    code: "E5001", 
+    taskId: opt.taskId, 
+    errMsg: "the loadType of SyncGet_CommentList cannot match",
+  }
+
   if(loadType === "under_thread") {
     res1 = await commentsUnderThread(sgCtx, atom, opt)
   }
@@ -358,76 +363,115 @@ async function toDraftData(
   sgCtx: SyncGetCtx,
   atom: SyncGet_Draft,
   opt: OperationOpt,
-): Promise<SyncGetAtomRes> {
+) {
   const { taskId } = opt
 
   // 1. checking out input
-  const draft_id = atom.id
-  const res1 = vbot.safeParse(Sch_Id, draft_id)
-  if(!res1.success) {
-    const errMsg = checker.getErrMsgFromIssues(res1.issues)
-    return { code: "E4000", errMsg, taskId }
+  const {
+    draft_id,
+    threadEdited,
+    commentEdited,
+    spaceId
+  } = atom
+  if(!draft_id && !threadEdited && !commentEdited && !spaceId) {
+    return { 
+      code: "E4000", 
+      taskId, 
+      errMsg: "some parameters are required",
+    }
   }
 
-  // 2. get draft data
-  const col = db.collection("Draft")
-  const res2 = await col.doc(draft_id).get<Table_Draft>()
-  const d2 = res2.data
-
-  // 3. construct parcel
-  const parcel: LiuDownloadParcel_B = {
-    id: draft_id,
-    status: "not_found",
-    parcelType: "draft"
+  // 2. get data using different methods
+  let res2: SyncGetAtomRes = {
+    code: "E5001",
+    taskId,
+    errMsg: "toDraftData failed",
   }
-
-  // 4. if no data
-  if(!d2) {
-    return { code: "0000", taskId, list: [parcel]  }
+  if(draft_id) {
+    res2 = await toGetDraftById(sgCtx, draft_id, opt)
   }
+  else if(threadEdited) {
+    res2 = await toGetDraftByThreadId(sgCtx, threadEdited, opt)
+  }
+  else if(commentEdited) {
+    res2 = await toGetDraftByCommentId(sgCtx, commentEdited, opt)
+  }
+  else if(spaceId) {
+    res2 = await toGetDraftBySpaceId(sgCtx, spaceId, opt)
+  }
+  
+  return res2
+}
 
-  // 5. checking auth out
+async function toGetDraftBySpaceId(
+  sgCtx: SyncGetCtx,
+  spaceId: string,
+  opt: OperationOpt,
+) {
   const myUserId = sgCtx.me._id
-  if(d2.user !== myUserId) {
-    parcel.status = "no_auth"
-    return { code: "0000", taskId, list: [parcel] }
+
+  // 1. construct query
+  const w: Partial<Table_Draft> = {
+    user: myUserId,
+    infoType: "THREAD",
+    oState: "OK",
+    spaceId,
   }
 
-  // 6. construct result
-  const res6 = decryptEncData(d2)
-  if(!res6.pass) {
-    const result_6 = { ...res6.result, taskId }
-    return result_6
-  }
-  const draft: LiuDownloadDraft = {
-    _id: d2._id,
-    first_id: d2.first_id,
+  // 2. get shared data
+  const res2 = await getSharedData_5(sgCtx, w, opt)
+  return res2
+}
 
-    infoType: d2.infoType,
-    oState: d2.oState,
-    user: d2.user,
-    spaceId: d2.spaceId,
-    spaceType: d2.spaceType,
-    threadEdited: d2.threadEdited,
-    commentEdited: d2.commentEdited,
-    parentThread: d2.parentThread,
-    parentComment: d2.parentComment,
-    replyToComment: d2.replyToComment,
-    visScope: d2.visScope,
+async function toGetDraftByThreadId(
+  sgCtx: SyncGetCtx,
+  threadEdited: string,
+  opt: OperationOpt,
+) {
+  const myUserId = sgCtx.me._id
 
-    title: res6.title,
-    liuDesc: res6.liuDesc,
-    images: res6.images,
-    files: res6.files,
-
-    whenStamp: d2.whenStamp,
-    remindMe: d2.remindMe,
-    tagIds: d2.tagIds,
-    editedStamp: d2.editedStamp,
+  // 1. construct query
+  const w: Partial<Table_Draft> = {
+    threadEdited,
+    user: myUserId,
   }
 
-  parcel.draft = draft
-  return { code: "0000", taskId, list: [parcel] }
+  // 2. get shared data
+  const res2 = await getSharedData_5(sgCtx, w, opt)
+  return res2
+}
+
+async function toGetDraftByCommentId(
+  sgCtx: SyncGetCtx,
+  commentEdited: string,
+  opt: OperationOpt,
+) {
+  const myUserId = sgCtx.me._id
+
+  // 1. construct query
+  const w: Partial<Table_Draft> = {
+    commentEdited,
+    user: myUserId,
+  }
+
+  // 2. get shared data
+  const res2 = await getSharedData_5(sgCtx, w, opt)
+  return res2
+}
+
+async function toGetDraftById(
+  sgCtx: SyncGetCtx,
+  draft_id: string,
+  opt: OperationOpt,
+) {
+  // 1. get draft data
+  const col = db.collection("Draft")
+  const res1 = await col.doc(draft_id).get<Table_Draft>()
+  const d = res1.data
+
+  // 2. get shared data
+  const res2 = await getSharedData_4(sgCtx, draft_id, d, opt)
+  return res2
 }
 
 
@@ -665,14 +709,119 @@ interface Gsdr_1_B {
 }
 
 type GetShareDataRes_1 = Gsdr_A | Gsdr_1_B
-type GetShareDataRes_2 = SyncGetAtomRes
-type GetShareDataRes_3 = SyncGetAtomRes
+
+// package draft
+function getSharedData_6(
+  parcel: LiuDownloadParcel_B,
+  d: Table_Draft,
+  opt: OperationOpt,
+): SyncGetAtomRes {
+  const { taskId } = opt
+
+  const res6 = decryptEncData(d)
+  if(!res6.pass) {
+    const result_6 = { ...res6.result, taskId }
+    return result_6
+  }
+  const draft: LiuDownloadDraft = {
+    _id: d._id,
+    first_id: d.first_id,
+
+    infoType: d.infoType,
+    oState: d.oState,
+    user: d.user,
+    spaceId: d.spaceId,
+    spaceType: d.spaceType,
+    threadEdited: d.threadEdited,
+    commentEdited: d.commentEdited,
+    parentThread: d.parentThread,
+    parentComment: d.parentComment,
+    replyToComment: d.replyToComment,
+    visScope: d.visScope,
+
+    title: res6.title,
+    liuDesc: res6.liuDesc,
+    images: res6.images,
+    files: res6.files,
+
+    whenStamp: d.whenStamp,
+    remindMe: d.remindMe,
+    tagIds: d.tagIds,
+    editedStamp: d.editedStamp,
+  }
+
+  parcel.status = "has_data"
+  parcel.draft = draft
+  return { code: "0000", taskId, list: [parcel] }
+}
+
+// handle draft without draft_id
+async function getSharedData_5(
+  sgCtx: SyncGetCtx,
+  w: Partial<Table_Draft>,
+  opt: OperationOpt,
+): Promise<SyncGetAtomRes> {
+  const { taskId } = opt
+
+  // 1. get draft data
+  const col = db.collection("Draft")
+  const q = col.where(w).orderBy("editedStamp", "desc")
+  const res1 = await q.getOne<Table_Draft>()
+  const d = res1.data
+
+  // 2. if no data
+  if(!d) {
+    return { code: "E4004", taskId, errMsg: "draft not found" }
+  }
+
+  // 3. construct parcel and get shared data
+  const parcel: LiuDownloadParcel_B = {
+    id: d._id,
+    status: "has_data",
+    parcelType: "draft",
+  }
+  const res3 = getSharedData_6(parcel, d, opt)
+  return res3
+}
+
+
+// handle draft with draft_id
+async function getSharedData_4(
+  sgCtx: SyncGetCtx,
+  draft_id: string,
+  d: Table_Draft | null,
+  opt: OperationOpt,
+): Promise<SyncGetAtomRes> {
+  const { taskId } = opt
+  // 1. construct parcel
+  const parcel: LiuDownloadParcel_B = {
+    id: draft_id,
+    status: "not_found",
+    parcelType: "draft"
+  }
+
+  // 2. if no data
+  if(!d) {
+    return { code: "0000", taskId, list: [parcel]  }
+  }
+
+  // 3. checking auth out
+  const myUserId = sgCtx.me._id
+  if(d.user !== myUserId) {
+    parcel.status = "no_auth"
+    return { code: "0000", taskId, list: [parcel] }
+  }
+
+  // 4. get shared data
+  const res = getSharedData_6(parcel, d, opt)
+  return res
+}
 
 async function getSharedData_3(
   sgCtx: SyncGetCtx,
   contents: Table_Content[],
   opt: OperationOpt,
-): Promise<GetShareDataRes_3> {
+): Promise<SyncGetAtomRes> {
   const { taskId } = opt
   if(contents.length < 1) {
     return { code: "0000", taskId, list: [] }
@@ -705,7 +854,7 @@ async function getSharedData_2(
   sgCtx: SyncGetCtx,
   ids: string[],
   opt: OperationOpt,
-): Promise<GetShareDataRes_2> {
+): Promise<SyncGetAtomRes> {
   // 1. get taskId
   const { taskId } = opt
 
