@@ -40,15 +40,14 @@ export const useNetworkStore = defineStore("network", () => {
       level.value = 1
       return
     }
-
-    if(rtt && rtt > 2500) {
-      level.value = 1
-      return
-    }
-
-    if(effectiveType === "4g") {
-      if(typeof rtt === "number" && rtt < 400) {
+    
+    if(typeof rtt === "number") {
+      if(rtt <= 400) {
         level.value = 3
+        return
+      }
+      if(rtt > 2500) {
+        level.value = 1
         return
       }
     }
