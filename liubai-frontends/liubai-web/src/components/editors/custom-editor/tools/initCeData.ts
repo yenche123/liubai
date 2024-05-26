@@ -264,7 +264,7 @@ async function initFromCloudDraft(
 
 
   // 4. get latest local thread & draft
-  const { ceData } = ctx
+  const { ceData, numWhenSet, editor } = ctx
   if(ceData.draftId) {
     local_draft = await localReq.getDraftById(ceData.draftId)
   }
@@ -291,7 +291,6 @@ async function initFromCloudDraft(
     return
   }
 
-
   // 7. check out the diff between local and cloud
   const e1 = cloud_draft.editedStamp
   const e2 = local_draft?.editedStamp ?? 1
@@ -299,18 +298,48 @@ async function initFromCloudDraft(
   if(diff > SEC_30) return
 
   ceData.draftId = cloud_draft._id
-  if(cloud_draft.visScope) {
-    ceData.visScope = cloud_draft.visScope
-  }
+  ceData.visScope = cloud_draft.visScope ?? defaultData.visScope
   ceData.title = cloud_draft.title
   ceData.showTitleBar = Boolean(cloud_draft.title)
   ceData.whenStamp = cloud_draft.whenStamp
   ceData.remindMe = cloud_draft.remindMe
   
-  // TODO: files images
+  const {
+    updated: updated_1,
+    images,
+  } = CloudFiler.updateImages(cloud_draft.images, ceData.images)
+  if(updated_1) {
+    ceData.images = images
+  }
 
+  const {
+    updated: updated_2,
+    files,
+  } = CloudFiler.updateFiles(cloud_draft.files, ceData.files)
+  if(updated_2) {
+    ceData.files = files
+  }
 
-  
+  ceData.tagIds = cloud_draft.tagIds ?? []
+
+  if(cloud_draft.liuDesc) {
+    let text = transferUtil.tiptapToText(cloud_draft.liuDesc)
+    let json = { type: "doc", content: cloud_draft.liuDesc }
+
+    editor.commands.setContent(json)
+    ceData.editorContent = { text, json }
+    handleOverflow(ceData)
+    numWhenSet.value++
+  }
+  else {
+    editor.commands.setContent("<p></p>")
+    ceData.overflowType = defaultData.overflowType
+    delete ceData.editorContent
+  }
+
+  if(updated_1 || updated_2) {
+    CloudFiler.notify("drafts", cloud_draft._id)
+  }
   
 }
 
@@ -355,8 +384,8 @@ async function resetFromCloud(
 
   // 4. reset all
   console.warn("reset all")
-  ceData.overflowType = "visible"
-  ceData.visScope = "DEFAULT"
+  ceData.overflowType = defaultData.overflowType
+  ceData.visScope = defaultData.visScope
   ceData.tagIds = []
   delete ceData.title
   delete ceData.whenStamp

@@ -4,7 +4,7 @@ import type { TipTapEditor } from "~/types/types-editor"
 import type { ContentLocalTable } from "~/types/types-table";
 import ider from "~/utils/basic/ider";
 import localCache from "~/utils/system/local-cache";
-import type { CeData, CeEmits } from "./types"
+import { defaultData, type CeData, type CeEmits } from "./types"
 import time from "~/utils/basic/time";
 import transferUtil from "~/utils/transfer-util";
 import liuUtil from "~/utils/liu-util";
@@ -132,8 +132,8 @@ function _resetState(
 
   delete ceData.draftId
   delete ceData.threadEdited
-  ceData.overflowType = "visible"
-  ceData.visScope = "DEFAULT"
+  ceData.overflowType = defaultData.overflowType
+  ceData.visScope = defaultData.visScope
   ceData.tagIds = []
   delete ceData.title
   delete ceData.whenStamp
