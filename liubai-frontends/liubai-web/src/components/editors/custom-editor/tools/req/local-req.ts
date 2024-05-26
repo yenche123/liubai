@@ -17,7 +17,6 @@ async function getContentById(threadId: string) {
     oState: "OK",
   }
   const res = await db.contents.get(w)
-  if(!res) return null
   return res
 }
 

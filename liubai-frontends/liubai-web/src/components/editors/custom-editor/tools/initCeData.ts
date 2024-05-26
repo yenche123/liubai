@@ -18,10 +18,13 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
 import { handleOverflow } from "./handle-overflow"
 import liuEnv from "~/utils/liu-env"
-import type { SyncGet_Draft } from "~/types/cloud/sync-get/types"
+import type { LiuDownloadDraft, SyncGet_CheckContents, SyncGet_Draft } from "~/types/cloud/sync-get/types"
 import liuUtil from "~/utils/liu-util"
 import { CloudMerger } from "~/utils/cloud/CloudMerger"
+import ider from "~/utils/basic/ider"
+import { CloudFiler } from "~/utils/cloud/CloudFiler"
 
+const SEC_30 = 30 * time.SECONED
 let spaceIdRef: Ref<string>
 
 interface IcsContext {
@@ -116,7 +119,7 @@ async function initDraft(
   }
   else {
     ctx.ceData.draftId = ""
-    initDraftFromCloud(ctx)
+    initFromCloudDraft(ctx)
   }
 }
 
@@ -129,7 +132,7 @@ async function initDraftWithThreadId(
   let thread = await localReq.getContentById(threadId)
 
   if(!draft && !thread) {
-    ctx.emits("nodata", threadId)
+    initFromCloudThread(ctx, threadId)
     return
   }
   ctx.emits("hasdata", threadId)
@@ -192,13 +195,38 @@ async function initDraftFromDraft(
     numWhenSet.value++
   }
 
-  initDraftFromCloud(ctx, draft)
+  initFromCloudDraft(ctx, draft)
 }
 
-async function initDraftFromCloud(
+
+async function initFromCloudThread(
   ctx: IcsContext,
-  draft?: DraftLocalTable,
-  thread?: ContentLocalTable,
+  threadId: string,
+) {
+  const canSync = liuEnv.canISync()
+  if(!canSync) {
+    ctx.emits("nodata", threadId)
+    return
+  }
+  const opt: SyncGet_CheckContents = {
+    taskType: "check_contents",
+    ids: [threadId],
+  }
+  await CloudMerger.request(opt)
+  let thread = await localReq.getContentById(threadId)
+  if(!thread) {
+    ctx.emits("nodata", threadId)
+    return
+  }
+  ctx.emits("hasdata", threadId)
+  initDraftFromThread(ctx, thread)
+}
+
+
+async function initFromCloudDraft(
+  ctx: IcsContext,
+  local_draft?: DraftLocalTable,
+  local_thread?: ContentLocalTable,
 ) {
   const canSync = liuEnv.canISync()
   if(!canSync) return
@@ -208,35 +236,142 @@ async function initDraftFromCloud(
     taskType: "draft_data",
   }
 
-  if(draft) {
-    const res1 = liuUtil.check.hasEverSynced(draft)
+  if(local_draft) {
+    const res1 = liuUtil.check.hasEverSynced(local_draft)
     if(!res1) return
-    opt.draft_id = draft._id
+    opt.draft_id = local_draft._id
   }
-  else if(thread) {
-    const res2 = liuUtil.check.canUpload(thread)
+  else if(local_thread) {
+    const res2 = liuUtil.check.canUpload(local_thread)
     if(!res2) return
-    opt.threadEdited = thread._id
+    opt.threadEdited = local_thread._id
   }
   else {
     opt.spaceId = spaceIdRef.value
   }
 
   // 2. to merge
-  console.log("initDraftFromCloud opt: ")
-  console.log(opt)
   const res = await CloudMerger.request(opt)
-  console.log("initDraftFromCloud res: ")
-  console.log(res)
-  console.log(" ")
+
+  // 3. filter nothing
+  if(!res) return
+  const firRes = res[0]
+  if(!firRes) return
+  if(firRes.parcelType !== "draft") return
+  if(firRes.status !== "has_data") return
+  const cloud_draft = firRes.draft
+  if(!cloud_draft) return
+
+
+  // 4. get latest local thread & draft
+  const { ceData } = ctx
+  if(ceData.draftId) {
+    local_draft = await localReq.getDraftById(ceData.draftId)
+  }
+  if(ceData.threadEdited) {
+    local_thread = await localReq.getContentById(ceData.threadEdited)
+  }
+
+  const oState = cloud_draft.oState
+  
+
+  // 5. if it is posted or deleted
+  if(oState === "POSTED" || oState === "DELETED") {
+    console.log("the draft has been deleted or posted")
+    resetFromCloud(ctx, cloud_draft, local_draft, local_thread)
+    return
+  }
+  
+  // 6. if it has been turned into LOCAL
+  if(oState === "LOCAL") {
+    if(local_draft?.oState === "LOCAL") return
+    const s6 = ceData.storageState
+    if(s6 === "LOCAL" || s6 === "ONLY_LOCAL") return
+    ceData.storageState = "LOCAL"
+    return
+  }
+
+
+  // 7. check out the diff between local and cloud
+  const e1 = cloud_draft.editedStamp
+  const e2 = local_draft?.editedStamp ?? 1
+  const diff = e2 - e1
+  if(diff > SEC_30) return
+
+  ceData.draftId = cloud_draft._id
+  if(cloud_draft.visScope) {
+    ceData.visScope = cloud_draft.visScope
+  }
+  ceData.title = cloud_draft.title
+  ceData.showTitleBar = Boolean(cloud_draft.title)
+  ceData.whenStamp = cloud_draft.whenStamp
+  ceData.remindMe = cloud_draft.remindMe
+  
+  // TODO: files images
+
+
+  
   
 }
 
 
 
+async function resetFromCloud(
+  ctx: IcsContext,
+  cloud_draft: LiuDownloadDraft,
+  local_draft?: DraftLocalTable,
+  local_thread?: ContentLocalTable,
+) {
+  const { ceData } = ctx
+
+  // 1. calculate diff
+  const e1 = cloud_draft.editedStamp
+  const e2 = local_draft?.editedStamp ?? 1
+  const diff = e2 - e1
+
+  // 2. reserve current input
+  if(local_draft && diff > SEC_30) {
+    console.warn("reserve the current draft but change its id")
+    // 保留当前输入框里的内容
+    let newId = ider.createDraftId()
+    local_draft._id = newId
+    local_draft.first_id = newId
+    await localReq.setDraft(local_draft)
+    await localReq.deleteDraftById(cloud_draft._id)
+    ceData.draftId = newId
+    return
+  }
+
+  delete ceData.draftId
+
+  // 3. initDraftFromThread if threadEdited exists
+  if(ceData.threadEdited) {
+    console.warn("initDraftFromThread if threadEdited exists")
+    if(local_thread) {
+      initDraftFromThread(ctx, local_thread, false)
+    }
+    return
+  }
+
+  // 4. reset all
+  console.warn("reset all")
+  ceData.overflowType = "visible"
+  ceData.visScope = "DEFAULT"
+  ceData.tagIds = []
+  delete ceData.title
+  delete ceData.whenStamp
+  delete ceData.remindMe
+  delete ceData.images
+  delete ceData.files
+  delete ceData.editorContent
+  ceData.canSubmit = false
+}
+
+
 async function initDraftFromThread(
   ctx: IcsContext,
   thread: ContentLocalTable,
+  loadCloud: boolean = true,
 ) {
   let { ceData, editor, numWhenSet } = ctx
   const canSync = liuEnv.canISync()
@@ -263,7 +398,9 @@ async function initDraftFromThread(
     numWhenSet.value++
   }
 
-  initDraftFromCloud(ctx, undefined, thread)
+  if(loadCloud) {
+    initFromCloudDraft(ctx, undefined, thread)
+  }
 }
 
 
