@@ -5,13 +5,13 @@ import cloud from '@lafjs/cloud'
 import { Resend } from 'resend'
 import type {
   LiuRqReturn,
-  ServiceSendEmailsParam
+  ServiceSendEmailsParam,
+  Table_Credential,
 } from "@/common-types"
 import { 
   getNowStamp, 
   MINUTE, 
 } from "@/common-time"
-import type { Table_Credential } from "@/common-types"
 import { createEmailCode } from '@/common-ids'
 
 const db = cloud.database()
