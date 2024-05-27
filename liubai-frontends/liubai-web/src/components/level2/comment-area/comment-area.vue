@@ -5,6 +5,7 @@ import type { PropType } from "vue";
 import CommentCard from "../comment-card/comment-card.vue";
 import type { CommentAreaEmits } from "./tools/types"
 import { useCommentArea } from "./tools/useCommentArea";
+import { useIdsChanged } from "./tools/useIdsChanged";
 import type { WhatDetail } from "~/types/other/types-custom";
 
 const props = defineProps({
@@ -29,6 +30,7 @@ const props = defineProps({
 const emit = defineEmits<CommentAreaEmits>()
 
 const { caData } = useCommentArea(props, emit)
+useIdsChanged(caData)
 
 </script>
 <template>

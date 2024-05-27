@@ -15,6 +15,7 @@ import { useCommentDetail } from "./tools/useCommentDetail"
 import { 
   useThreadOperateInDetail 
 } from "../../level1/thread-detail/tools/useThreadOperateInDetail"
+import { useIdsChanged } from "./tools/useIdsChanged"
 import { subscribeCdUpdate } from "./tools/subscribeCdUpdate"
 import { useI18n } from 'vue-i18n';
 
@@ -41,6 +42,7 @@ const { cdData, virtualHeightPx } = useCommentDetail(props, emit)
 const { receiveOperation } = useThreadOperateInDetail()
 
 subscribeCdUpdate(cdData)
+useIdsChanged(cdData)
 
 const { t } = useI18n()
 
