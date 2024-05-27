@@ -212,7 +212,7 @@ async function initFromCloudThread(
     taskType: "check_contents",
     ids: [threadId],
   }
-  await CloudMerger.request(opt)
+  const res = await CloudMerger.request(opt, 0)
   let thread = await localReq.getContentById(threadId)
   if(!thread) {
     ctx.emits("nodata", threadId)
@@ -235,6 +235,7 @@ async function initFromCloudDraft(
   const opt: SyncGet_Draft = {
     taskType: "draft_data",
   }
+  let delay = 250
 
   if(local_draft) {
     const res1 = liuUtil.check.hasEverSynced(local_draft)
@@ -245,13 +246,14 @@ async function initFromCloudDraft(
     const res2 = liuUtil.check.canUpload(local_thread)
     if(!res2) return
     opt.threadEdited = local_thread._id
+    delay = 0
   }
   else {
     opt.spaceId = spaceIdRef.value
   }
 
   // 2. to merge
-  const res = await CloudMerger.request(opt)
+  const res = await CloudMerger.request(opt, delay)
 
   // 3. filter nothing
   if(!res) return
@@ -323,8 +325,9 @@ async function initFromCloudDraft(
   ceData.tagIds = cloud_draft.tagIds ?? []
 
   if(cloud_draft.liuDesc) {
-    let text = transferUtil.tiptapToText(cloud_draft.liuDesc)
-    let json = { type: "doc", content: cloud_draft.liuDesc }
+    const draftDescJSON = transferUtil.liuToTiptap(cloud_draft.liuDesc)
+    let text = transferUtil.tiptapToText(draftDescJSON)
+    let json = { type: "doc", content: draftDescJSON }
 
     editor.commands.setContent(json)
     ceData.editorContent = { text, json }
