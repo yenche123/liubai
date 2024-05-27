@@ -173,7 +173,7 @@ function listenScoll(
       return
     }
 
-    // 触顶时，若个数大于 19 （一轮9个，所以至少触底 3 次了）
+    // 触顶时，若个数大于 19 （一轮9个，所以至少触底 3 次过）
     // 允许重新加载
     if(svType === "to_start") {
       if(caData.comments.length > 19) {

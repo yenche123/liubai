@@ -16,6 +16,11 @@ import type { CommentShow } from "~/types/types-content";
 import { getValuedComments } from "~/utils/other/comment-related"
 import cfg from "~/config"
 import { useTemporaryStore } from "~/hooks/stores/useTemporaryStore";
+import liuEnv from "~/utils/liu-env";
+import type { 
+  SyncSet_CommentData,
+} from "~/types/cloud/sync-get/types"
+import { CloudMerger } from "~/utils/cloud/CloudMerger";
 
 export function useCommentDetail(
   props: CommentDetailProps,
@@ -87,8 +92,7 @@ async function loadTargetComment(
   const res = await commentController.loadByComment(opt)
   const c = res[0]
   if(!c || c.oState !== "OK") {
-    cdData.state = 50
-    emit("pagestatechange", 50)
+    remoteLoadTargetComment(ctx)
     return
   }
 
@@ -108,7 +112,54 @@ async function loadTargetComment(
   await fixCommentDetail(ctx)
   
   loadBelowList(ctx)
+  remoteLoadTargetComment(ctx)
 }
+
+// 1.1 远程加载【目标评论】
+async function remoteLoadTargetComment(
+  ctx: CommentDetailCtx
+) {
+  const { cdData, emit } = ctx
+  const id = cdData.targetId
+
+  // 1. can I sync
+  const canSync = liuEnv.canISync()
+  if(!canSync) {
+    if(cdData.state !== -1) {
+      cdData.state = 50
+      emit("pagestatechange", 50)
+    }
+    return
+  }
+
+  // 2. load target comment remotely
+  const opt2: SyncSet_CommentData = {
+    taskType: "comment_data",
+    id: cdData.targetId,
+  }
+  const res2 = await CloudMerger.request(opt2)
+  console.log("remoteLoadTargetComment res2: ")
+  console.log(res2)
+  console.log(" ")
+
+  // 3. load locally again
+  const opt: LoadByCommentOpt = {
+    commentId: id,
+    loadType: "target",
+  }
+  const res = await commentController.loadByComment(opt)
+  const c = res[0]
+  if(!c || c.oState !== "OK") {
+    cdData.state = 50
+    emit("pagestatechange", 50)
+    return
+  }
+
+  delete cdData.thread
+  cdData.state = -1
+  cdData.targetComment = c
+}
+
 
 // 2. 加载【向下评论】
 async function loadBelowList(
