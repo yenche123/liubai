@@ -22,6 +22,7 @@ import type {
   SyncSet_CommentData,
 } from "~/types/cloud/sync-get/types"
 import { CloudMerger } from "~/utils/cloud/CloudMerger";
+import time from "~/utils/basic/time";
 
 export function useCommentDetail(
   props: CommentDetailProps,
@@ -40,6 +41,7 @@ export function useCommentDetail(
     hasReachedTop: false,
     showZeroBox: true,
     focusNum: 0,
+    lastLockStamp: time.getTime(),
   })
 
   const ctx: CommentDetailCtx = {
@@ -59,6 +61,7 @@ export function useCommentDetail(
   const cid2 = toRef(props, "targetId")
   watch(cid2, (newV) => {
     cdData.targetId = newV
+    cdData.lastLockStamp = time.getTime()
     loadTargetComment(ctx)
   }, { immediate: true })
 
@@ -70,7 +73,7 @@ export function useCommentDetail(
     if(autoFocus) cdData.focusNum++
   }, { immediate: true })
 
-  listenScoll(cdData)
+  listenScoll(ctx)
 
   return {
     cdData,
@@ -80,15 +83,28 @@ export function useCommentDetail(
 
 
 function listenScoll(
-  cdData: CommentDetailData
+  ctx: CommentDetailCtx
 ) {
+  const { cdData } = ctx
   const svData = inject(scrollViewKey, { type: "", triggerNum: 0 }) as SvProvideInject
   const svTrigger = toRef(svData, "triggerNum")
   watch(svTrigger, (newV) => {
+    const res1 = time.isWithinMillis(cdData.lastLockStamp, 300)
+    if(res1) return
+    if(cdData.state !== -1) return
+
     const svType = svData.type
     console.log("comment detail listenScroll .........")
     console.log(svType)
     console.log(" ")
+
+    if(svType === "to_end") {
+      loadBelowList(ctx)
+    }
+    else if(svType === "to_start") {
+      loadAboveList(ctx)
+    }
+
   })
 }
 
@@ -108,28 +124,29 @@ async function loadTargetComment(
   }
   const res = await commentController.loadByComment(opt)
   const c = res[0]
-  if(!c || c.oState !== "OK") {
-    remoteLoadTargetComment(ctx)
-    return
-  }
 
-  console.log("加载到目标评论: ")
-  console.log(c)
-  console.log(" ")
 
+  // reset some properties
   delete cdData.thread
-  cdData.state = -1
-  cdData.targetComment = c
   cdData.aboveList = []
   cdData.belowList = []
   cdData.hasReachedBottom = false
   cdData.hasReachedTop = false
   cdData.showZeroBox = true
 
-  await fixCommentDetail(ctx)
-  
-  loadBelowList(ctx)
+  if(!c || c.oState !== "OK") {
+    remoteLoadTargetComment(ctx)
+    return
+  }
+
+  cdData.state = -1
+  cdData.targetComment = c
+
   remoteLoadTargetComment(ctx)
+
+  await fixCommentDetail(ctx)
+  await loadBelowList(ctx, true)
+  await loadAboveList(ctx, true)
 }
 
 // 1.1 远程加载【目标评论】
@@ -172,17 +189,21 @@ async function remoteLoadTargetComment(
     return
   }
 
-  delete cdData.thread
   cdData.state = -1
   cdData.targetComment = c
+  fixCommentDetail(ctx)
 }
 
 
 // 2. 加载【向下评论】
 async function loadBelowList(
-  ctx: CommentDetailCtx
+  ctx: CommentDetailCtx,
+  reload: boolean = false,
 ) {
   const { cdData } = ctx
+  if(!reload && cdData.hasReachedBottom) {
+    return
+  }
 
   const opt: LoadByCommentOpt = {
     commentId: cdData.targetId,
@@ -218,10 +239,6 @@ async function loadBelowList(
   // 检查有无必要加载新评论里的 "溯深" 评论
   await loadChildrenOfBelow(ctx, newList)
 
-  // 判断是否要去溯源
-  if(cdData.aboveList.length < 1 && !cdData.hasReachedTop) {
-    loadAboveList(ctx)
-  }
 }
 
 
@@ -295,9 +312,13 @@ async function loadChildrenOfBelow(
 
 // 3. 加载【溯源评论】（向上）
 async function loadAboveList(
-  ctx: CommentDetailCtx
+  ctx: CommentDetailCtx,
+  reload: boolean = false,
 ) {
   const { cdData } = ctx
+  if(!reload && cdData.hasReachedTop) {
+    return
+  }
 
   let parentWeWant = ""
   let grandparent: string | undefined
@@ -305,7 +326,7 @@ async function loadAboveList(
   const c = cdData.targetComment
   const tmpList = cdData.aboveList
   const topComment = tmpList[0]
-  if(topComment) {
+  if(!reload && topComment) {
     parentWeWant = topComment.replyToComment ?? ""
     grandparent = topComment.parentComment
   }
@@ -332,7 +353,7 @@ async function loadAboveList(
   console.log(newList)
   console.log(" ")
 
-  if(topComment) {
+  if(!reload && topComment) {
     commentController.handleRelation(newList, undefined, topComment)
     cdData.aboveList.splice(0, 0, ...newList)
   }
@@ -356,9 +377,12 @@ async function fixCommentDetail(
 ) {
   const svBottomUp = ctx.svBottomUp
   if(!svBottomUp) return
-  if(!ctx.cdData.showZeroBox) return
+
+  const { cdData } = ctx
+  if(!cdData.showZeroBox) return
 
   await nextTick()
+  cdData.lastLockStamp = time.getTime()  
 
   svBottomUp.value = { 
     type: "selectors", 
@@ -369,7 +393,7 @@ async function fixCommentDetail(
 
   if(closeZeroBox) {
     await valTool.waitMilli(250)
-    ctx.cdData.showZeroBox = false
+    cdData.showZeroBox = false
   }
 }
 
@@ -383,10 +407,6 @@ async function loadThread(
   if(!id) return
 
   const res = await threadController.getData({ id })
-
-  // console.log("loadThread 结果......")
-  // console.log(res)
-  // console.log(" ")
 
   cdData.hasReachedTop = true
   cdData.thread = res

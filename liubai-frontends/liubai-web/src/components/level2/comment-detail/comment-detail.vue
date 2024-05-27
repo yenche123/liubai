@@ -63,7 +63,7 @@ const { t } = useI18n()
   ></ThreadCard>
 
   <!-- 动态已被删除 -->
-  <div v-else-if="cdData.thread && cdData.state < 0" 
+  <div v-else-if="cdData.hasReachedTop && cdData.state < 0" 
     class="liu-highlight-box cd-thread-deleted"
   >
     <span>{{ t('comment.thread_deleted') }}</span>

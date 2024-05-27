@@ -15,6 +15,7 @@ export interface CommentDetailData {
   hasReachedTop: boolean
   showZeroBox: boolean
   focusNum: number
+  lastLockStamp: number
 }
 
 export interface CommentDetailProps {
