@@ -18,7 +18,7 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
 import { handleOverflow } from "./handle-overflow"
 import liuEnv from "~/utils/liu-env"
-import type { LiuDownloadDraft, SyncGet_CheckContents, SyncGet_Draft } from "~/types/cloud/sync-get/types"
+import type { LiuDownloadDraft, SyncGet_Draft, SyncGet_ThreadData } from "~/types/cloud/sync-get/types"
 import liuUtil from "~/utils/liu-util"
 import { CloudMerger } from "~/utils/cloud/CloudMerger"
 import ider from "~/utils/basic/ider"
@@ -208,9 +208,9 @@ async function initFromCloudThread(
     ctx.emits("nodata", threadId)
     return
   }
-  const opt: SyncGet_CheckContents = {
-    taskType: "check_contents",
-    ids: [threadId],
+  const opt: SyncGet_ThreadData = {
+    taskType: "thread_data",
+    id: threadId,
   }
   const res = await CloudMerger.request(opt, 0)
   let thread = await localReq.getContentById(threadId)

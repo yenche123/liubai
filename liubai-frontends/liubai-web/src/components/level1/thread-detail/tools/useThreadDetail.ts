@@ -3,6 +3,9 @@ import threadController from "~/utils/controllers/thread-controller/thread-contr
 import type { TdData, TdProps, TdEmit, TdCtx } from "./types"
 import valTool from "~/utils/basic/val-tool";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
+import liuEnv from "~/utils/liu-env";
+import { CloudMerger } from "~/utils/cloud/CloudMerger";
+import type { SyncGet_ThreadData } from "~/types/cloud/sync-get/types";
 
 export function useThreadDetail(props: TdProps, emit: TdEmit) {
 
@@ -99,19 +102,14 @@ function toLoad(
  * 本地加载 thread
  */
 async function loadLocal(
-  ctx: TdCtx
+  ctx: TdCtx,
 ) {
   const { id, tdData } = ctx
   const res = await threadController.getData({ id })
-  // await valTool.waitMilli(1500)
   if(res && res.oState === "OK") {
     tdData.state = -1
     tdData.threadShow = res
     emitThreadShow(ctx, true)
-  }
-  else {
-    // 这个 else 分支，loadRemote 实现后，必须删掉
-    tdData.state = 50
   }
 
   loadRemote(ctx)
@@ -123,13 +121,33 @@ async function loadLocal(
 async function loadRemote(
   ctx: TdCtx
 ) {
-  // 待完善
-
   const { id, tdData } = ctx
-  const tShow = tdData.threadShow
-  const tState = tdData.state
 
-  
-  
+  // 1. can i sync
+  const res1 = liuEnv.canISync()
+  if(!res1) {
+    if(tdData.state !== -1) {
+      tdData.state = 50
+    }
+    return
+  }
+
+  // 2. sync
+  const opt: SyncGet_ThreadData = {
+    taskType: "thread_data",
+    id,
+  }
+  const res2 = await CloudMerger.request(opt, undefined, 2)
+
+  // 3. load locally again
+  const res3 = await threadController.getData({ id })
+  if(res3 && res3.oState === "OK") {
+    tdData.state = -1
+    tdData.threadShow = res3
+    emitThreadShow(ctx, true)
+  }
+  else {
+    tdData.state = 50
+  }
   
 }
