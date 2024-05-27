@@ -55,6 +55,10 @@ export interface LiuSystemEnv {
   OPENPANEL_CLIENT_ID?: string
   OPENPANEL_CLIENT_SECRET?: string
 
+  // posthog
+  POSTHOG_APIHOST?: string
+  POSTHOG_APIKEY?: string
+
   // don't use sync-system
   DONOT_USE_SYNC?: boolean
 

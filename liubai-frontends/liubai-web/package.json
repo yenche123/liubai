@@ -50,6 +50,7 @@
     "lowlight": "^2.9.0",
     "nanoid": "^5.0.7",
     "pinia": "^2.1.7",
+    "posthog-js": "^1.135.2",
     "prosemirror-virtual-cursor": "^0.4.2",
     "qiniu-js": "^3.4.2",
     "swiper": "^11.1.3",

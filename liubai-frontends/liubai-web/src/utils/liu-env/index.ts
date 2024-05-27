@@ -61,6 +61,10 @@ function getEnv(): LiuSystemEnv {
   const OPENPANEL_CLIENT_ID = import.meta.env.VITE_OPENPANEL_CLIENT_ID
   const OPENPANEL_CLIENT_SECRET = import.meta.env.VITE_OPENPANEL_CLIENT_SECRET
 
+  // posthog
+  const POSTHOG_APIHOST = import.meta.env.VITE_POSTHOG_APIHOST
+  const POSTHOG_APIKEY = import.meta.env.VITE_POSTHOG_APIKEY
+
   // do not use sync system even if API_DOMAIN is set
   const donotUseSync = import.meta.env.VITE_DONOT_USE_SYNC
   const DONOT_USE_SYNC = donotUseSync === "01"
@@ -100,6 +104,8 @@ function getEnv(): LiuSystemEnv {
     OPENPANEL_API,
     OPENPANEL_CLIENT_ID,
     OPENPANEL_CLIENT_SECRET,
+    POSTHOG_APIHOST,
+    POSTHOG_APIKEY,
     DONOT_USE_SYNC,
   }
   return _env

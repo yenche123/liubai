@@ -11,6 +11,8 @@ export function initAnalytics() {
     OPENPANEL_API,
     OPENPANEL_CLIENT_ID,
     OPENPANEL_CLIENT_SECRET,
+    POSTHOG_APIHOST,
+    POSTHOG_APIKEY,
   } = _env
 
   if(UMAMI_ID && UMAMI_SCRIPT) {
@@ -25,6 +27,15 @@ export function initAnalytics() {
     initOpenPanel(OPENPANEL_API, OPENPANEL_CLIENT_ID, OPENPANEL_CLIENT_SECRET)
   }
 
+  if(POSTHOG_APIHOST && POSTHOG_APIKEY) {
+    initPostHog(POSTHOG_APIHOST, POSTHOG_APIKEY)
+  }
+
+}
+
+async function initPostHog(api_host: string, api_key: string) {
+  const { posthog } = await import("posthog-js")
+  posthog.init(api_key, { api_host })
 }
 
 async function initOpenPanel(
