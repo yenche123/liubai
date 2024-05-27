@@ -121,5 +121,8 @@ export default {
 
   // 163 netease main site
   NETEASE_MAIN: "https://www.163.com/",
+
+  // psyche.co
+  PSYCHE_CO: "https://psyche.co/",
   
 }

@@ -85,6 +85,8 @@ export const domainAllowed = [
   "chinaz.com",
   "sohu.com",
   "csdn.net",
+  "utgd.net",
+  "psyche.co"
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
