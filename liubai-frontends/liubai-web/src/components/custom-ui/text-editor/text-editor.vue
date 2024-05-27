@@ -28,7 +28,7 @@ const {
     <div class="cui-modal-box">
       <h1 v-if="teData.title">{{ teData.title }}</h1>
       <h1 v-else-if="teData.title_key">{{ t(teData.title_key) }}</h1>
-      <input class="cui-text-editor-input" 
+      <input class="cui-text-editor-input ph-no-capture" 
         v-model="teData.inputTxt" 
         ref="textEditorInputEl" 
         :placeholder="teData.placeholder ? teData.placeholder: teData.placeholder_key ? 
@@ -36,6 +36,8 @@ const {
         :maxlength="teData.maxLength"
         autocomplete="nope"
         @input="onInput"
+        data-clarity-mask="true"
+        data-bf-ignore-keypress
       />
       <div class="cui-modal-btns">
         <div 

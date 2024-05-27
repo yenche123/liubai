@@ -100,13 +100,15 @@ useDraftIdChanged(ceData)
 
   <div v-if="ceData.showTitleBar" class="ce-title-bar">
     <input 
-      class="ce-title-input" :value="ceData.title"
+      class="ce-title-input ph-no-capture" :value="ceData.title"
       :placeholder="t('editor.add_title2')"
       @focus="() => titleFocused = true"
       @blur="() => titleFocused = false"
       @input="onTitleBarChange" 
       @keyup.enter.exact="onTitleEnterUp"
       @keydown.enter="onTitleEnterDown"
+      data-clarity-mask="true"
+      data-bf-ignore-keypress
     />
     <div class="ce-clear-title" @click.stop="onTapCloseTitle">
       <svg-icon name="close-circle" class="ce-clear-svg" 

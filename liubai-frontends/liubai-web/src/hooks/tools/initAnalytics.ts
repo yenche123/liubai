@@ -35,7 +35,7 @@ export function initAnalytics() {
 
 async function initPostHog(api_host: string, api_key: string) {
   const { posthog } = await import("posthog-js")
-  posthog.init(api_key, { api_host })
+  posthog.init(api_key, { api_host, enable_heatmaps: true })
 }
 
 async function initOpenPanel(

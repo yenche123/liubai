@@ -23,7 +23,21 @@ defineExpose({ editor })
 
 </script>
 <template>
-  <editor-content class="editor-core" 
+
+<!-- 
+  ph-no-capture is for PostHog mask
+  see https://posthog.com/docs/session-replay/privacy
+-->
+<!--
+  data-bf-ignore-keypress is for BugFender
+  see https://docs.bugfender.com/docs/platforms/web-apps/bugfender-for-javascript-on-browsers/#ignore-keypress-value-for-sensitive-fields
+-->
+<!--
+  data-clarity-mask is for microsoft clarity
+  see https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-masking#using-the-clarity-data-clarity-mask-api
+-->
+
+  <editor-content class="editor-core ph-no-capture" 
     :editor="editor" 
     ref="ecRef" 
     data-clarity-mask="true"
