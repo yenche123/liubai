@@ -46,6 +46,10 @@ export const useNetworkStore = defineStore("network", () => {
         level.value = 3
         return
       }
+      if(rtt <= 1200) {
+        level.value = 2
+        return
+      }
       if(rtt > 2500) {
         level.value = 1
         return
@@ -53,7 +57,7 @@ export const useNetworkStore = defineStore("network", () => {
     }
 
     if(downlink) {
-      if(downlink <= 0.66) {
+      if(downlink <= 0.5) {
         level.value = 1
         return
       }
