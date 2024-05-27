@@ -56,6 +56,11 @@ function getEnv(): LiuSystemEnv {
   const BUGFENDER_BASEURL = import.meta.env.VITE_BUGFENDER_BASEURL
   const BUGFENDER_APPKEY = import.meta.env.VITE_BUGFENDER_APPKEY
 
+  // openpanel
+  const OPENPANEL_API = import.meta.env.VITE_OPENPANEL_API
+  const OPENPANEL_CLIENT_ID = import.meta.env.VITE_OPENPANEL_CLIENT_ID
+  const OPENPANEL_CLIENT_SECRET = import.meta.env.VITE_OPENPANEL_CLIENT_SECRET
+
   // do not use sync system even if API_DOMAIN is set
   const donotUseSync = import.meta.env.VITE_DONOT_USE_SYNC
   const DONOT_USE_SYNC = donotUseSync === "01"
@@ -92,6 +97,9 @@ function getEnv(): LiuSystemEnv {
     BUGFENDER_APIURL,
     BUGFENDER_BASEURL,
     BUGFENDER_APPKEY,
+    OPENPANEL_API,
+    OPENPANEL_CLIENT_ID,
+    OPENPANEL_CLIENT_SECRET,
     DONOT_USE_SYNC,
   }
   return _env

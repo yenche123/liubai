@@ -50,6 +50,11 @@ export interface LiuSystemEnv {
   BUGFENDER_BASEURL?: string
   BUGFENDER_APPKEY?: string
 
+  // OpenPanel
+  OPENPANEL_API?: string
+  OPENPANEL_CLIENT_ID?: string
+  OPENPANEL_CLIENT_SECRET?: string
+
   // don't use sync-system
   DONOT_USE_SYNC?: boolean
 
