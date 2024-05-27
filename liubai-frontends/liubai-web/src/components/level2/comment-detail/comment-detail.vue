@@ -74,7 +74,7 @@ const { t } = useI18n()
 
     <!-- 上方评论 -->
     <template v-for="(item, index) in cdData.aboveList"
-      :key="item._id"
+      :key="item.first_id"
     >
       <CommentCard
         :cs="item"
@@ -108,7 +108,7 @@ const { t } = useI18n()
 
     <!-- belowList -->
     <template v-for="(item, index) in cdData.belowList"
-      :key="item._id"
+      :key="item.first_id"
     >
       <CommentCard
         :cs="item"

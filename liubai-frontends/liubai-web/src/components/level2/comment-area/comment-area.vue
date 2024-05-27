@@ -36,7 +36,7 @@ useIdsChanged(caData)
 <template>
 
   <div class="ca-container">
-    <template v-for="(item, index) in caData.comments" :key="item._id">
+    <template v-for="(item, index) in caData.comments" :key="item.first_id">
       <CommentCard
         :cs="item"
         :location="location"
