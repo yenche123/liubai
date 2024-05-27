@@ -411,8 +411,5 @@ export async function packSyncSetAtoms(tasks: UploadTaskLocalTable[]) {
     }
   }
 
-  console.log("看一下 atoms: ")
-  console.log(atoms)
-
   return atoms
 }

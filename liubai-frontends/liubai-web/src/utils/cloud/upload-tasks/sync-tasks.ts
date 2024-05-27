@@ -50,9 +50,12 @@ export async function syncTasks(tasks: UploadTaskLocalTable[]) {
     operateType: "general_sync",
     plz_enc_atoms: atoms,
   }
+  console.log("sync-set opt atoms: ")
+  console.log(atoms)
   const res4 = await liuReq.request<Res_SyncSet_Client>(url, opt)
   console.log("查看 sync-set 的结果: ")
   console.log(res4)
+  console.log(" ")
 
   // 5. if ok, call afterSyncSet
   const results = res4.data?.results ?? []

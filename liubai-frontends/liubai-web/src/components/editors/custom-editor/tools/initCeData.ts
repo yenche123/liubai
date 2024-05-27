@@ -299,6 +299,7 @@ async function initFromCloudDraft(
   const diff = e2 - e1
   if(diff > SEC_30) return
 
+  ceData.lastLockStamp = time.getTime()
   ceData.draftId = cloud_draft._id
   ceData.visScope = cloud_draft.visScope ?? defaultData.visScope
   ceData.title = cloud_draft.title
