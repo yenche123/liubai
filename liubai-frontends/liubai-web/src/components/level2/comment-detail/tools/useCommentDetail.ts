@@ -11,7 +11,8 @@ import usefulTool from "~/utils/basic/useful-tool"
 import threadController from "~/utils/controllers/thread-controller/thread-controller";
 import { useWindowSize } from "~/hooks/useVueUse";
 import valTool from "~/utils/basic/val-tool";
-import { svBottomUpKey } from "~/utils/provide-keys";
+import { scrollViewKey, svBottomUpKey } from "~/utils/provide-keys";
+import type { SvProvideInject } from "~/types/components/types-scroll-view";
 import type { CommentShow } from "~/types/types-content";
 import { getValuedComments } from "~/utils/other/comment-related"
 import cfg from "~/config"
@@ -69,10 +70,26 @@ export function useCommentDetail(
     if(autoFocus) cdData.focusNum++
   }, { immediate: true })
 
+  listenScoll(cdData)
+
   return {
     cdData,
     virtualHeightPx,
   }
+}
+
+
+function listenScoll(
+  cdData: CommentDetailData
+) {
+  const svData = inject(scrollViewKey, { type: "", triggerNum: 0 }) as SvProvideInject
+  const svTrigger = toRef(svData, "triggerNum")
+  watch(svTrigger, (newV) => {
+    const svType = svData.type
+    console.log("comment detail listenScroll .........")
+    console.log(svType)
+    console.log(" ")
+  })
 }
 
 

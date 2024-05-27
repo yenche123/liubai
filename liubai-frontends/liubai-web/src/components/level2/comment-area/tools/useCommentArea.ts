@@ -58,7 +58,7 @@ async function loadComments(
   reload?: boolean,
 ) {
 
-  if(caData.hasReachedBottom) {
+  if(!reload && caData.hasReachedBottom) {
     console.log("已经触底了........")
     return
   }
@@ -159,9 +159,6 @@ function listenScoll(
   props: CommentAreaProps,
   caData: CommentAreaData,
 ) {
-  
-
-  // 监听触底加载
   const svData = inject(scrollViewKey, { type: "", triggerNum: 0 }) as SvProvideInject
   const svTrigger = toRef(svData, "triggerNum")
   watch(svTrigger, (newV) => {
