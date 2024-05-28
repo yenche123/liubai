@@ -408,6 +408,7 @@ async function mergeContent(
     gCfg.lastUpdateLevelNum = n8
     g.levelOne = d.levelOne
     g.levelOneAndTwo = d.levelOneAndTwo
+    g.config = gCfg
   }
 
   const keys = Object.keys(g)
