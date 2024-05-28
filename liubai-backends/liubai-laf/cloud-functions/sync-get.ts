@@ -411,11 +411,13 @@ async function toGetDraftBySpaceId(
   const myUserId = sgCtx.me._id
 
   // 1. construct query
-  const w: Partial<Table_Draft> = {
+  const w: Record<string, any> = {
     user: myUserId,
     infoType: "THREAD",
     oState: "OK",
     spaceId,
+    threadEdited: _.exists(false),
+    commentEdited: _.exists(false),
   }
 
   // 2. get shared data
