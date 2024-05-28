@@ -38,7 +38,7 @@ export function useThreadList(
   const tlData = reactive<TlData>({
     list: [],
     lastItemStamp: 0,
-    hasReachBottom: false,
+    hasReachedBottom: false,
     requestRefreshNum: 0,
     cssDetectOverflow,
   })
@@ -65,7 +65,7 @@ export function useThreadList(
     // console.log(" ")
 
     if(type === "to_end") {
-      if(tlData.hasReachBottom) return
+      if(tlData.hasReachedBottom) return
       loadList(ctx)
     }
     else if(type === "to_start") {
@@ -202,7 +202,7 @@ async function loadList(
   
   const { tlData } = ctx
   if(reload) {
-    tlData.hasReachBottom = false
+    tlData.hasReachedBottom = false
     ctx.reloadRequired = false
   }
 
@@ -240,7 +240,7 @@ async function loadList(
     opt1.stateId = stateId
     opt1.excluded_ids = sData.excluded_ids
     if(!sData.hasMore) {
-      tlData.hasReachBottom = true
+      tlData.hasReachedBottom = true
     }
   }
   else {
@@ -285,7 +285,7 @@ async function loadList(
 
   // 5. 小于一定数量的时候 表示已经触底
   if(newLength < 6) {
-    tlData.hasReachBottom = true
+    tlData.hasReachedBottom = true
   }
 
   // 6. load cloud
@@ -387,10 +387,10 @@ async function loadAgain(
   handleLastItemStamp(vT, tlData)
 
   if(hasMore || deltaLength >= 6) {
-    tlData.hasReachBottom = false
+    tlData.hasReachedBottom = false
   }
   else {
-    tlData.hasReachBottom = true
+    tlData.hasReachedBottom = true
   }
   
 }

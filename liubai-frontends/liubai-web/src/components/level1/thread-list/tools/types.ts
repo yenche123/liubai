@@ -15,7 +15,7 @@ export interface TlAtom {
 export interface TlData {
   list: TlAtom[]
   lastItemStamp: number
-  hasReachBottom: boolean
+  hasReachedBottom: boolean
   requestRefreshNum: number    // 非 useThreadList 的函数，请求 useThreadList 去 loadList
   cssDetectOverflow: boolean
 }

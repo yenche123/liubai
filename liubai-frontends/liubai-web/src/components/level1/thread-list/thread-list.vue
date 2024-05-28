@@ -46,7 +46,7 @@ useIdsChanged(tlData)
     <ListBottom 
       v-if="viewType !== 'PINNED'"
       :has-data="tlData.list.length > 0" 
-      :reached="tlData.hasReachBottom"
+      :reached="tlData.hasReachedBottom"
     ></ListBottom>
 
   </div>
