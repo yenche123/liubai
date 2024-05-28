@@ -7,12 +7,14 @@ import type {
   CollectionLocalTable, 
   ContentLocalTable,
 } from "~/types/types-table"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 export type CmResolver = (list?: LiuDownloadParcel[]) => void
 
 export interface CmTask {
   data: SyncGetAtom
   resolver: CmResolver
+  timeout: LiuTimeout
 }
 
 export type Bulk_Content = DexieBulkUpdateAtom<ContentLocalTable>

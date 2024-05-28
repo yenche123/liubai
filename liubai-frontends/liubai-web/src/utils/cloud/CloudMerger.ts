@@ -26,11 +26,13 @@ class CloudMerger {
     opt: CloudMergerOpt, 
     delay: number = 250,
     maxStackNum: number = 3,
+    waitMilli: number = 5000,
   ) {
     const _this = this
+    const taskId = ider.createSyncGetTaskId()
     const param: SyncGetAtom = {
       ...opt,
-      taskId: ider.createSyncGetTaskId(),
+      taskId,
     }
 
     const _foo = (a: CmResolver) => {
@@ -38,15 +40,25 @@ class CloudMerger {
       const task: CmTask = {
         data: param,
         resolver: a,
+        timeout: undefined,
       }
       _this.tasks.push(task)
 
-      // 2. clear timeout
+      // 2. wait for milli
+      let waitTimeout = setTimeout(() => {
+        if(!task.timeout) return
+        console.log("去触发超时.......")
+        task.timeout = undefined
+        task.resolver()
+      }, waitMilli)
+      task.timeout = waitTimeout
+
+      // 3. clear timeout
       if(_this.triggerTimeout) {
         clearTimeout(_this.triggerTimeout)
       }
 
-      // 3. trigger instantly if allowed
+      // 4. trigger instantly if allowed
       if(_this.tasks.length >= maxStackNum || delay === 0) {
         _this.triggerTimeout = undefined
         _this.trigger()
@@ -86,7 +98,12 @@ class CloudMerger {
 
     // 2. if error happens
     if(code1 !== "0000" || !results) {
-      list.forEach(v => v.resolver())
+      list.forEach(v => {
+        if(!v.timeout) return
+        clearTimeout(v.timeout)
+        v.timeout = undefined
+        v.resolver()
+      })
       return
     }
 
@@ -97,13 +114,19 @@ class CloudMerger {
       const code2 = v1.code
       const list2 = v1.list
       const task = list.find(v => v.data.taskId === taskId)
+      if(!task) continue
+
+      if(!task.timeout) continue
+      clearTimeout(task.timeout)
+      task.timeout = undefined
+
       if(code2 !== "0000" || !list2) {
-        task?.resolver()
+        task.resolver()
         continue
       }
 
       await handleLiuDownloadParcels(list2)
-      task?.resolver(list2)
+      task.resolver(list2)
     }
     
   }
