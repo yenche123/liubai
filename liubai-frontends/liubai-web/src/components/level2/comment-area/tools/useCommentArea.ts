@@ -17,8 +17,12 @@ import type { SvProvideInject } from "~/types/components/types-scroll-view"
 import type { CommentShow } from "~/types/types-content";
 import { getValuedComments } from "~/utils/other/comment-related"
 import liuEnv from "~/utils/liu-env"
-import type { SyncGet_CommentList_A } from "~/types/cloud/sync-get/types"
+import type { 
+  SyncGet_CheckContents, 
+  SyncGet_CommentList_A,
+} from "~/types/cloud/sync-get/types"
 import { CloudMerger } from "~/utils/cloud/CloudMerger"
+import time from "~/utils/basic/time"
 
 
 export function useCommentArea(
@@ -121,15 +125,77 @@ async function remoteLoadComments(
   // 2. get ids for checking contents
   const ids = CloudMerger.getIdsForCheckingContents(res1, currentList)
   if(ids.length < 1) {
+    loadCommentsAgain(caData, opt1, currentList)
     return
   }
 
+  // 3. check contents out
+  const param3: SyncGet_CheckContents = {
+    taskType: "check_contents",
+    ids,
+  }
+  const res3 = await CloudMerger.request(param3)
+  loadCommentsAgain(caData, opt1, currentList)
 }
 
-function loadCommentsAgain(
-  
+async function loadCommentsAgain(
+  caData: CommentAreaData,
+  opt: LoadByThreadOpt,
+  oldList: CommentShow[],
 ) {
+  const newList = await commentController.loadByThread(opt)
 
+  const breakpoint = getLastItemStamp(newList)
+  const deleted_first_ids = getDeletedFirstIds(oldList, newList, breakpoint)
+
+  const list = caData.comments
+  
+
+  for(let i=0; i<list.length; i++) {
+    const v = list[0]
+
+    const idx1 = deleted_first_ids.indexOf(v.first_id)
+    if(idx1 >= 0) {
+      v.oState = "DELETED"
+      deleted_first_ids.splice(idx1, 1)
+      continue
+    }
+
+
+
+  }
+
+
+}
+
+function getLastItemStamp(
+  list: CommentShow[],
+) {
+  const len = list.length
+  if(len < 1) {
+    // get the biggest stamp because sort is "ascending"
+    const now = time.getTime()
+    return now
+  }
+  const c = list[len - 1]
+  return c.createdStamp
+}
+
+function getDeletedFirstIds(
+  oldList: CommentShow[],
+  newList: CommentShow[],
+  breakpoint: number
+) {
+  const deleted_first_ids = []
+  for(let i=0; i<oldList.length; i++) {
+    const v1 = oldList[i]
+    const v3 = newList.find(v2 => v2.first_id === v1.first_id)
+    if(v3) continue
+    if(v1.createdStamp <= breakpoint) {
+      deleted_first_ids.push(v1.first_id)
+    }
+  }
+  return deleted_first_ids
 }
 
 
