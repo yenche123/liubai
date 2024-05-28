@@ -26,7 +26,7 @@ async function _handle_shared(
   }
   const col1 = db.download_tasks.filter(_filterDownloadTasks)
   const res1 = await col1.modify(_modifyDownloadTasks)
-  console.log(`_handle_shared ${tableName} download_tasks res1: `, res1)
+  // console.log(`_handle_shared ${tableName} download_tasks res1: `, res1)
 
   // 2. checking out upload_tasks
   const _filterUploadTasks = (item: UploadTaskLocalTable) => {
@@ -70,7 +70,7 @@ async function _handle_shared(
   }
   const col2 = db.upload_tasks.filter(_filterUploadTasks)
   const res2 = await col2.modify(_modifyUploadTasks)
-  console.log(`_handle_shared ${tableName} upload_tasks res2: `, res2)
+  // console.log(`_handle_shared ${tableName} upload_tasks res2: `, res2)
 }
 
 
@@ -111,7 +111,7 @@ async function handle_new_contentIds(
     sc.stateList = tmpList
     item.stateConfig = sc
   })
-  console.log("handle_new_contentIds workspace res1: ", res1)
+  // console.log("handle_new_contentIds workspace res1: ", res1)
 
   // 2. checking out content
   const _filterContentDraft = (item: ContentLocalTable | DraftLocalTable) => {
@@ -148,12 +148,12 @@ async function handle_new_contentIds(
   }
   const col2 = db.contents.filter(_filterContentDraft)
   const res2 = await col2.modify(_modifyContentDraft)
-  console.log("handle_new_contentIds content res2: ", res2)
+  // console.log("handle_new_contentIds content res2: ", res2)
 
   // 3. checking out draft
   const col3 = db.drafts.filter(_filterContentDraft)
   const res3 = await col3.modify(_modifyContentDraft)
-  console.log("handle_new_contentIds draft res3: ", res3)
+  // console.log("handle_new_contentIds draft res3: ", res3)
 
   // 4. checking out collection
   const _filterCollection = (item: CollectionLocalTable) => {
@@ -163,7 +163,7 @@ async function handle_new_contentIds(
     const idx = first_ids.indexOf(item.content_id)
     if(idx >= 0) item.content_id = new_ids[idx]
   })
-  console.log("handle_new_contentIds collection res4: ", res4)
+  // console.log("handle_new_contentIds collection res4: ", res4)
 
   // 5. checking out shared func
   await _handle_shared(first_ids, new_ids, "contents")

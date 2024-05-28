@@ -42,11 +42,11 @@ export const useNetworkStore = defineStore("network", () => {
     }
     
     if(typeof rtt === "number") {
-      if(rtt <= 400) {
+      if(rtt <= 500) {
         level.value = 3
         return
       }
-      if(rtt <= 1200) {
+      if(rtt <= 1500) {
         level.value = 2
         return
       }
@@ -57,7 +57,7 @@ export const useNetworkStore = defineStore("network", () => {
     }
 
     if(downlink) {
-      if(downlink <= 0.5) {
+      if(downlink <= 0.33) {
         level.value = 1
         return
       }

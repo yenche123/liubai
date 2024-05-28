@@ -99,7 +99,7 @@ export function useCeData(
     ceData.editorContent = data
     checkCanSubmit(ceData)
     handleOverflow(ceData)
-    collectState(ctx)
+    toAutoChange(ctx)
   }
 
   let lastPreFinish = 0
@@ -212,10 +212,13 @@ function _isRequiredChange(ceData: CeData) {
   return true
 }
 
-// 图片、文件、tagIds 发生变化时，去保存
-function toAutoChange(ctx: CesCtx) {
+// 内文、图片、文件、tagIds 发生变化时，去保存
+function toAutoChange(
+  ctx: CesCtx, 
+  instant: boolean = false,
+) {
   if(_isRequiredChange(ctx.ceData)) {
-    collectState(ctx)
+    collectState(ctx, instant)
   }
 }
 

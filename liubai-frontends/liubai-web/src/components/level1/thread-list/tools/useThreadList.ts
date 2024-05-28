@@ -367,8 +367,8 @@ async function loadAgain(
     results = await threadController.getList(opt1)
   }
 
-  console.log("loadAgain results: ")
-  console.log(results)
+  // console.log("loadAgain results: ")
+  // console.log(results)
 
   const newList = tlUtil.threadShowsToList(results)
   const deltaLength = newList.length

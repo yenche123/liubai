@@ -130,6 +130,7 @@ function _resetState(
 ) {
   const { ceData } = ctx
 
+  ceData.lastLockStamp = time.getTime()
   delete ceData.draftId
   delete ceData.threadEdited
   ceData.overflowType = defaultData.overflowType
