@@ -212,7 +212,7 @@ async function initFromCloudThread(
     taskType: "thread_data",
     id: threadId,
   }
-  const res = await CloudMerger.request(opt, 0)
+  const res = await CloudMerger.request(opt, { delay: 0 })
   let thread = await localReq.getContentById(threadId)
   if(!thread) {
     ctx.emits("nodata", threadId)
@@ -253,7 +253,7 @@ async function initFromCloudDraft(
   }
 
   // 2. to merge
-  const res = await CloudMerger.request(opt, delay)
+  const res = await CloudMerger.request(opt, { delay })
 
   // 3. filter nothing
   if(!res) return

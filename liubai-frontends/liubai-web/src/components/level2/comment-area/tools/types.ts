@@ -5,6 +5,7 @@ export interface CommentAreaData {
   comments: CommentShow[]
   threadId: string
   hasReachedBottom: boolean
+  networkLevel: number
 }
 
 export interface CommentAreaProps {

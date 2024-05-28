@@ -1,7 +1,7 @@
 // 处理 sync-get 的工具类
 // 处理从云端加载动态、评论（含点赞和表态）至本地
 // 再融合进本地的 db 中
-import type { CmResolver, CmTask } from "./cm-tools/types"
+import type { CmResolver, CmTask, CmOpt } from "./cm-tools/types"
 import type { LiuTimeout } from "../basic/type-tool";
 import ider from "../basic/ider";
 import APIs from "~/requests/APIs";
@@ -24,10 +24,12 @@ class CloudMerger {
 
   static request(
     opt: CloudMergerOpt, 
-    delay: number = 250,
-    maxStackNum: number = 3,
-    waitMilli: number = 5000,
+    opt2?: CmOpt,
   ) {
+    const delay = opt2?.delay ?? 250
+    const maxStackNum = opt2?.maxStackNum ?? 3
+    const waitMilli = opt2?.waitMilli ?? 5000
+
     const _this = this
     const taskId = ider.createSyncGetTaskId()
     const param: SyncGetAtom = {

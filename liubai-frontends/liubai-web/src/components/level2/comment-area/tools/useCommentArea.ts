@@ -22,18 +22,27 @@ import type {
   SyncGet_CommentList_A,
 } from "~/types/cloud/sync-get/types"
 import { CloudMerger } from "~/utils/cloud/CloudMerger"
-import time from "~/utils/basic/time"
+import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
+import { storeToRefs } from "pinia"
 
 
 export function useCommentArea(
   props: CommentAreaProps,
   emit: CommentAreaEmits,
 ) {
+  
+  const nStore = useNetworkStore()
+  const { level } = storeToRefs(nStore)
 
   const caData = reactive<CommentAreaData>({
     comments: [],
     threadId: "",
     hasReachedBottom: false,
+    networkLevel: level.value,
+  })
+
+  watch(level, (newV) => {
+    caData.networkLevel = newV
   })
 
   // 监听 comment store
@@ -49,7 +58,7 @@ export function useCommentArea(
     if(reload) caData.comments = []
     caData.threadId = newV
     caData.hasReachedBottom = false
-    loadComments(caData, reload)
+    preloadComments(caData, reload)
   }, { immediate: true })
 
   // 监听滚动
@@ -60,143 +69,109 @@ export function useCommentArea(
   }
 }
 
-async function loadComments(
+
+async function preloadComments(
   caData: CommentAreaData,
   reload?: boolean,
 ) {
 
+  // 1. if it's reached bottom
   if(!reload && caData.hasReachedBottom) {
-    console.log("已经触底了........")
+    console.log("已经触底........")
     return
   }
 
-  let length = caData.comments.length
-  const lastComment = caData.comments[length - 1]
+  const oldLength = caData.comments.length
+  const lastComment = caData.comments[oldLength - 1]
   const isInit = Boolean(reload || length < 1)
 
+  // 2. construct query
   const opt: LoadByThreadOpt = {
     targetThread: caData.threadId,
-  }
-  if(!isInit) {
-    opt.lastItemStamp = lastComment.createdStamp
+    lastItemStamp: isInit ? undefined : lastComment.createdStamp,
   }
 
-  const newList = await commentController.loadByThread(opt)
+  // 3. get local comments first
+  const currentList = await commentController.loadByThread(opt)
 
-  if(isInit) {
-    commentController.handleRelation(newList)
-    caData.comments = newList
+  // 4. check out if get to sync
+  const canSync = liuEnv.canISync()
+  if(!canSync || caData.networkLevel < 1) {
+    toLoadComments(caData, opt, currentList)
+    return
   }
-  else {
+
+  // 5. construct param for sync
+  const param5: SyncGet_CommentList_A = {
+    taskType: "comment_list",
+    loadType: "under_thread",
+    targetThread: opt.targetThread,
+    lastItemStamp: opt.lastItemStamp,
+  }
+  const res5 = await CloudMerger.request(param5, { waitMilli: 3000 })
+  if(!res5) {
+    toLoadComments(caData, opt, currentList)
+    return
+  }
+
+  // 6. get ids
+  const ids = CloudMerger.getIdsForCheckingContents(res5, currentList)
+  if(ids.length < 1) {
+    toLoadComments(caData, opt)
+    return
+  }
+
+  // 7. check contents out
+  const param7: SyncGet_CheckContents = {
+    taskType: "check_contents",
+    ids,
+  }
+  await CloudMerger.request(param7, { waitMilli: 3000, delay: 0 })
+  toLoadComments(caData, opt)
+}
+
+
+async function toLoadComments(
+  caData: CommentAreaData,
+  opt: LoadByThreadOpt,
+  newList?: CommentShow[],
+) {
+  if(!newList) {
+    newList = await commentController.loadByThread(opt)
+  }
+
+  const oldLength = caData.comments.length
+  const lastComment = caData.comments[oldLength - 1]
+  
+  if(opt.lastItemStamp) {
     usefulTool.filterDuplicated(caData.comments, newList)
     commentController.handleRelation(newList, lastComment)
     caData.comments.push(...newList)
   }
+  else {
+    commentController.handleRelation(newList)
+    caData.comments = newList
+  }
 
-  // 如果 newList 里的 item 太少，视为已经触底
   if(newList.length < 5) {
     caData.hasReachedBottom = true
   }
 
-  await loadChildren(caData, newList)
-  remoteLoadComments(caData, opt, newList)
+  preloadChildren(caData, newList)
 }
 
-async function remoteLoadComments(
+function preloadChildren(
   caData: CommentAreaData,
-  opt1: LoadByThreadOpt,
-  currentList: CommentShow[],
-) {
-  const canSync = liuEnv.canISync()
-  if(!canSync) {
-    return
-  }
-
-  // 1. request
-  const param: SyncGet_CommentList_A = {
-    taskType: "comment_list",
-    loadType: "under_thread",
-    targetThread: opt1.targetThread,
-    lastItemStamp: opt1.lastItemStamp,
-  }
-  const res1 = await CloudMerger.request(param)
-  if(!res1) return
-
-  // 2. get ids for checking contents
-  const ids = CloudMerger.getIdsForCheckingContents(res1, currentList)
-  if(ids.length < 1) {
-    loadCommentsAgain(caData, opt1, currentList)
-    return
-  }
-
-  // 3. check contents out
-  const param3: SyncGet_CheckContents = {
-    taskType: "check_contents",
-    ids,
-  }
-  const res3 = await CloudMerger.request(param3)
-  loadCommentsAgain(caData, opt1, currentList)
-}
-
-async function loadCommentsAgain(
-  caData: CommentAreaData,
-  opt: LoadByThreadOpt,
-  oldList: CommentShow[],
-) {
-  const newList = await commentController.loadByThread(opt)
-
-  const breakpoint = getLastItemStamp(newList)
-  const deleted_first_ids = getDeletedFirstIds(oldList, newList, breakpoint)
-
-  const list = caData.comments
-  
-
-  for(let i=0; i<list.length; i++) {
-    const v = list[0]
-
-    const idx1 = deleted_first_ids.indexOf(v.first_id)
-    if(idx1 >= 0) {
-      v.oState = "DELETED"
-      deleted_first_ids.splice(idx1, 1)
-      continue
-    }
-
-
-
-  }
-
-
-}
-
-function getLastItemStamp(
-  list: CommentShow[],
-) {
-  const len = list.length
-  if(len < 1) {
-    // get the biggest stamp because sort is "ascending"
-    const now = time.getTime()
-    return now
-  }
-  const c = list[len - 1]
-  return c.createdStamp
-}
-
-function getDeletedFirstIds(
-  oldList: CommentShow[],
   newList: CommentShow[],
-  breakpoint: number
 ) {
-  const deleted_first_ids = []
-  for(let i=0; i<oldList.length; i++) {
-    const v1 = oldList[i]
-    const v3 = newList.find(v2 => v2.first_id === v1.first_id)
-    if(v3) continue
-    if(v1.createdStamp <= breakpoint) {
-      deleted_first_ids.push(v1.first_id)
-    }
-  }
-  return deleted_first_ids
+  if(newList.length < 1) return
+  console.log("TODO: preloadChildren..........")
+
 }
+
+
+
+
 
 
 
@@ -274,7 +249,7 @@ function listenScoll(
 
     // 触底加载
     if(svType === "to_end") {
-      loadComments(caData)
+      preloadComments(caData)
       return
     }
 
@@ -283,7 +258,7 @@ function listenScoll(
     if(svType === "to_start") {
       if(caData.comments.length > 19) {
         caData.hasReachedBottom = false
-        loadComments(caData, true)
+        preloadComments(caData, true)
         return
       }
     }

@@ -17,5 +17,11 @@ export interface CmTask {
   timeout: LiuTimeout
 }
 
+export interface CmOpt {
+  delay?: number
+  maxStackNum?: number
+  waitMilli?: number
+}
+
 export type Bulk_Content = DexieBulkUpdateAtom<ContentLocalTable>
 export type Bulk_Collection = DexieBulkUpdateAtom<CollectionLocalTable>

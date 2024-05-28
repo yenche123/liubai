@@ -137,7 +137,7 @@ async function loadRemote(
     taskType: "thread_data",
     id,
   }
-  const res2 = await CloudMerger.request(opt, undefined, 2)
+  const res2 = await CloudMerger.request(opt, { maxStackNum: 2 })
 
   // 3. load locally again
   const res3 = await threadController.getData({ id })
