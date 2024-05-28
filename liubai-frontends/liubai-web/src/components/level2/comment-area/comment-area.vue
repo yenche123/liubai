@@ -3,6 +3,7 @@
 // 场景: 已知 thread，在该动态下展示评论
 import type { PropType } from "vue";
 import CommentCard from "../comment-card/comment-card.vue";
+import ListBottom from "../../common/list-bottom/list-bottom.vue";
 import type { CommentAreaEmits } from "./tools/types"
 import { useCommentArea } from "./tools/useCommentArea";
 import { useIdsChanged } from "./tools/useIdsChanged";
@@ -43,6 +44,12 @@ useIdsChanged(caData)
         :is-showing="isShowing"
       ></CommentCard>
     </template>
+
+    <ListBottom 
+      v-if="viewType !== 'PINNED'"
+      :has-data="caData.comments.length > 0" 
+      :reached="caData.hasReachedBottom"
+    ></ListBottom>
   </div>
 
 </template>
