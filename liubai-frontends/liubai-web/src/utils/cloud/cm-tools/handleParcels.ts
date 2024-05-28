@@ -82,9 +82,6 @@ async function operateAll() {
   }
 
   if(update_contents.length > 0) {
-    console.log("update_contents: ")
-    console.log(valTool.copyObject(update_contents))
-    console.log(" ")
     await db.contents.bulkUpdate(update_contents)
     
     // notify CloudFiler
@@ -334,12 +331,11 @@ async function mergeContent(
     g.search_other = d.search_other
   }
 
-  const now = time.getTime()
   const gCfg = oCfg
 
   // 1. showCountdown
   const n1 = nCfg.lastToggleCountdown ?? 1
-  const o1 = oCfg.lastToggleCountdown ?? now
+  const o1 = oCfg.lastToggleCountdown ?? 1
   if(n1 > o1) {
     gCfg.lastToggleCountdown = n1
     gCfg.showCountdown = nCfg.showCountdown
@@ -348,7 +344,7 @@ async function mergeContent(
 
   // 2. oState
   const n2 = nCfg.lastOStateStamp ?? 1
-  const o2 = oCfg.lastOStateStamp ?? now
+  const o2 = oCfg.lastOStateStamp ?? 1
   if(n2 > o2 || edited) {
     gCfg.lastOStateStamp = n2
     g.oState = d.oState
@@ -357,7 +353,7 @@ async function mergeContent(
 
   // 3. stateId
   const n3 = nCfg.lastOperateStateId ?? 1
-  const o3 = oCfg.lastOperateStateId ?? now
+  const o3 = oCfg.lastOperateStateId ?? 1
   if(n3 > o3) {
     gCfg.lastOperateStateId = n3
     g.stateId = d.stateId
@@ -366,7 +362,7 @@ async function mergeContent(
 
   // 4. pin
   const n4 = nCfg.lastOperatePin ?? 1
-  const o4 = oCfg.lastOperatePin ?? now
+  const o4 = oCfg.lastOperatePin ?? 1
   if(n4 > o4) {
     gCfg.lastOperatePin = n4
     g.pinStamp = d.pinStamp
@@ -375,7 +371,7 @@ async function mergeContent(
 
   // 5. tag
   const n5 = nCfg.lastOperateTag ?? 1
-  const o5 = oCfg.lastOperateTag ?? now
+  const o5 = oCfg.lastOperateTag ?? 1
   if(n5 > o5 || edited) {
     gCfg.lastOperateTag = n5
     g.tagIds = d.tagIds
@@ -385,7 +381,7 @@ async function mergeContent(
 
   // 6. remind
   const n6 = nCfg.lastOperateWhenRemind ?? 1
-  const o6 = oCfg.lastOperateWhenRemind ?? now
+  const o6 = oCfg.lastOperateWhenRemind ?? 1
   if(n6 > o6 || edited) {
     gCfg.lastOperateWhenRemind = n6
     g.whenStamp = d.whenStamp
@@ -397,15 +393,30 @@ async function mergeContent(
 
   // 7. emoji
   const n7 = nCfg.lastUpdateEmojiData ?? 1
-  const o7 = oCfg.lastUpdateEmojiData ?? now
+  const o7 = oCfg.lastUpdateEmojiData ?? 1
   if(n7 > o7) {
     gCfg.lastUpdateEmojiData = n7
     g.emojiData = d.emojiData
     g.config = gCfg
   }
 
+  // 8. levelOne levelOneAndTwo
+  const n8 = nCfg.lastUpdateLevelNum ?? 1
+  const o8 = oCfg.lastUpdateLevelNum ?? 1
+  if(n8 > o8) {
+    gCfg.lastUpdateLevelNum = n8
+    g.levelOne = d.levelOne
+    g.levelOneAndTwo = d.levelOneAndTwo
+  }
+
   const keys = Object.keys(g)
   if(keys.length) {
+
+    console.warn("figure out new update!")
+    console.log("ID: ", content_id)
+    console.log(g)
+    console.log(" ")
+
     u.changes = g
     update_contents.push(u)
   }

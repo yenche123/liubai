@@ -655,11 +655,74 @@ async function toPostComment(
   if(!new_id) {
     return { 
       code: "E5001", taskId, 
-      errMsg: "inserting data failed",
+      errMsg: "inserting a comment failed",
+    }
+  }
+  const newRow2 = { ...newRow, _id: new_id } as Table_Content
+  await _modifySuperiorCommentNum(ssCtx, newRow2)
+
+  return { code: "0000", taskId, first_id, new_id }
+}
+
+async function _modifySuperiorCommentNum(
+  ssCtx: SyncSetCtx,
+  newComment: Table_Content,
+) {
+  const { 
+    parentThread, 
+    parentComment, 
+    replyToComment,
+    createdStamp: stamp,
+  } = newComment
+
+  if(parentThread && !parentComment && !replyToComment) {
+    await _addCommentNum(ssCtx, parentThread, stamp)
+    return true
+  }
+
+  if(replyToComment) {
+    await _addCommentNum(ssCtx, replyToComment, stamp)
+  }
+
+  if(parentComment) {
+    if(parentComment !== replyToComment) {
+      await _addCommentNum(ssCtx, parentComment, stamp, 0, 1)
+    }
+    else if(parentThread) {
+      await _addCommentNum(ssCtx, parentThread, stamp, 0, 1)
     }
   }
 
-  return { code: "0000", taskId, first_id, new_id }
+}
+
+async function _addCommentNum(
+  ssCtx: SyncSetCtx,
+  id: string,
+  stamp: number,
+  levelOne: number = 1,
+  levelOneAndTwo: number = 1,
+) {
+  const res = await getData<Table_Content>(ssCtx, "content", id)
+  if(!res) return
+
+  const cfg = res.config ?? {}
+  const oldStamp = cfg.lastUpdateLevelNum ?? 1
+  if(stamp > oldStamp) {
+    cfg.lastUpdateLevelNum = stamp
+  }
+
+  let num1 = res.levelOne ?? 0
+  let num2 = res.levelOneAndTwo ?? 0
+  num1 += levelOne
+  num2 += levelOneAndTwo
+
+  let obj: Partial<Table_Content> = {
+    levelOne: num1,
+    levelOneAndTwo: num2,
+    config: cfg,
+  }
+
+  await updatePartData(ssCtx, "content", id, obj)
 }
 
 /************************** Operation: Edit a thread ************************/

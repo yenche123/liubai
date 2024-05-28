@@ -198,13 +198,22 @@ async function _addCommentNum(
 ) {
   const res = await localReq.getContent(id)
   if(!res) return false
+
+  const now = time.getTime()
+  const cfg = res.config ?? {}
+  const oldStamp = cfg.lastUpdateLevelNum ?? 0
+  if(now > oldStamp) {
+    cfg.lastUpdateLevelNum = now
+  }
+
   let num1 = res.levelOne ?? 0
   let num2 = res.levelOneAndTwo ?? 0
   num1 += levelOne
   num2 += levelOneAndTwo
-  let obj = {
+  let obj: Partial<ContentLocalTable> = {
     levelOne: num1,
     levelOneAndTwo: num2,
+    config: cfg,
   }
   const res2 = await localReq.updateContent(id, obj)
   console.log("看一下修改的结果.......")

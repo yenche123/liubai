@@ -2,7 +2,7 @@ import type { SvBottomUp } from '~/types/components/types-scroll-view';
 import type { WhatDetail } from '~/types/other/types-custom';
 import type { PageState } from '~/types/types-atom';
 import type { CommentShow, ThreadShow } from '~/types/types-content';
-import type { ShallowRef } from "vue"
+import type { ShallowRef, Ref } from "vue"
 
 export interface CommentDetailData {
   targetId: string
@@ -31,6 +31,7 @@ export interface CommentDetailEmit {
 export interface CommentDetailCtx {
   cdData: CommentDetailData
   svBottomUp?: ShallowRef<SvBottomUp>
+  scrollPosition: Ref<number>
   emit: CommentDetailEmit
 }
 

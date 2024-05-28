@@ -249,6 +249,8 @@ export interface ContentConfig {
   lastOperateWhenRemind?: number   // last stamp when user 
                                    // edited whenStamp / remindStamp / remind
   lastUpdateEmojiData?: number      // last stamp when emojiData is updated
+  lastUpdateLevelNum?: number   // last stamp when levelOne or 
+                                // levelOneAndTwo is updated
 }
 
 export const Sch_ContentConfig = vbot.object({
@@ -260,7 +262,8 @@ export const Sch_ContentConfig = vbot.object({
   lastOperatePin: Sch_Opt_Num,
   lastOperateTag: Sch_Opt_Num,
   lastOperateWhenRemind: Sch_Opt_Num,
-  lastUpdateEmojiData: Sch_Opt_Num
+  lastUpdateEmojiData: Sch_Opt_Num,
+  lastUpdateLevelNum: Sch_Opt_Num,
 }, vbot.never())
 
 /** The config of Workspace */

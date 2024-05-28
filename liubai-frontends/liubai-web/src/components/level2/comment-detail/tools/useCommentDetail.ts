@@ -1,4 +1,4 @@
-import { computed, inject, nextTick, reactive, toRef, watch } from "vue";
+import { computed, inject, nextTick, reactive, ref, toRef, watch } from "vue";
 import type { 
   CommentDetailData,
   CommentDetailCtx,
@@ -11,7 +11,11 @@ import usefulTool from "~/utils/basic/useful-tool"
 import threadController from "~/utils/controllers/thread-controller/thread-controller";
 import { useWindowSize } from "~/hooks/useVueUse";
 import valTool from "~/utils/basic/val-tool";
-import { scrollViewKey, svBottomUpKey } from "~/utils/provide-keys";
+import { 
+  scrollViewKey, 
+  svBottomUpKey, 
+  svScollingKey,
+} from "~/utils/provide-keys";
 import type { SvProvideInject } from "~/types/components/types-scroll-view";
 import type { CommentShow } from "~/types/types-content";
 import { getValuedComments } from "~/utils/other/comment-related"
@@ -31,6 +35,7 @@ export function useCommentDetail(
   const tmpStore = useTemporaryStore()
   const { height } = useWindowSize()
   const svBottomUp = inject(svBottomUpKey)
+  const scrollPosition = inject(svScollingKey, ref(0))
 
   const cdData = reactive<CommentDetailData>({
     targetId: "",
@@ -47,6 +52,7 @@ export function useCommentDetail(
   const ctx: CommentDetailCtx = {
     cdData,
     svBottomUp,
+    scrollPosition,
     emit,
   }
 
@@ -358,10 +364,10 @@ async function loadAboveList(
     cdData.aboveList.splice(0, 0, ...newList)
   }
   else {
-    await fixCommentDetail(ctx, true)
     commentController.handleRelation(newList, undefined, cdData.targetComment)
     cdData.aboveList = newList
   }
+  await fixCommentDetail(ctx, true)
 
   // 判断是否要去加载 thread 了
   const newRe = newList[0]?.replyToComment
