@@ -347,6 +347,7 @@ async function mergeContent(
   const o2 = oCfg.lastOStateStamp ?? 1
   if(n2 > o2 || edited) {
     gCfg.lastOStateStamp = n2
+    g.removedStamp = d.removedStamp
     g.oState = d.oState
     g.config = gCfg
   }
@@ -464,11 +465,19 @@ function createContent(
 
     createdStamp: d.createdStamp,
     editedStamp: d.editedStamp,
+    removedStamp: d.removedStamp,
 
     tagIds: d.tagIds,
     tagSearched: d.tagSearched,
     stateId: d.stateId,
     config: d.config,
+    search_title: d.search_title,
+    search_other: d.search_other,
+    
+    levelOne: d.levelOne,
+    levelOneAndTwo: d.levelOneAndTwo,
+
+    firstSyncStamp: b.insertedStamp,
   }
   
   new_contents.push(c)
