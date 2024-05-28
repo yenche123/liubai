@@ -16,6 +16,9 @@ import { scrollViewKey } from "~/utils/provide-keys"
 import type { SvProvideInject } from "~/types/components/types-scroll-view"
 import type { CommentShow } from "~/types/types-content";
 import { getValuedComments } from "~/utils/other/comment-related"
+import liuEnv from "~/utils/liu-env"
+import type { SyncGet_CommentList_A } from "~/types/cloud/sync-get/types"
+import { CloudMerger } from "~/utils/cloud/CloudMerger"
 
 
 export function useCommentArea(
@@ -65,17 +68,18 @@ async function loadComments(
 
   let length = caData.comments.length
   const lastComment = caData.comments[length - 1]
+  const isInit = Boolean(reload || length < 1)
 
   const opt: LoadByThreadOpt = {
     targetThread: caData.threadId,
   }
-  if(lastComment && !reload) {
+  if(!isInit) {
     opt.lastItemStamp = lastComment.createdStamp
   }
 
   const newList = await commentController.loadByThread(opt)
 
-  if(reload || length < 1) {
+  if(isInit) {
     commentController.handleRelation(newList)
     caData.comments = newList
   }
@@ -91,8 +95,46 @@ async function loadComments(
   }
 
   await loadChildren(caData, newList)
-  
+  remoteLoadComments(caData, opt, newList)
 }
+
+async function remoteLoadComments(
+  caData: CommentAreaData,
+  opt1: LoadByThreadOpt,
+  currentList: CommentShow[],
+) {
+  const canSync = liuEnv.canISync()
+  if(!canSync) {
+    return
+  }
+
+  // 1. request
+  const param: SyncGet_CommentList_A = {
+    taskType: "comment_list",
+    loadType: "under_thread",
+    targetThread: opt1.targetThread,
+    lastItemStamp: opt1.lastItemStamp,
+  }
+  const res1 = await CloudMerger.request(param)
+  if(!res1) return
+
+  // 2. get ids for checking contents
+  const ids = CloudMerger.getIdsForCheckingContents(res1, currentList)
+  if(ids.length < 1) {
+    return
+  }
+
+}
+
+function loadCommentsAgain(
+  
+) {
+
+}
+
+
+
+
 
 /**
  * 加载一级评论们的子孙评论

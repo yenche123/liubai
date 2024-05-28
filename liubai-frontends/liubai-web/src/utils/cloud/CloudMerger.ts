@@ -10,8 +10,12 @@ import type {
   Res_SyncGet_Client, 
   SyncGetAtom,
   CloudMergerOpt,
+  LiuDownloadParcel,
 } from "~/types/cloud/sync-get/types";
 import { handleLiuDownloadParcels } from "./cm-tools/handleParcels";
+import someFuncs from "./cm-tools/some-funcs"
+import type { CommentShow, ThreadShow } from "~/types/types-content";
+import type { ThreadListViewType } from "~/types/types-view";
 
 class CloudMerger {
 
@@ -102,6 +106,15 @@ class CloudMerger {
       task?.resolver(list2)
     }
     
+  }
+
+  static getIdsForCheckingContents(
+    res1: LiuDownloadParcel[],
+    showList: CommentShow[] | ThreadShow[],
+    viewType?: ThreadListViewType,
+  ) {
+    const res = someFuncs.getIdsForCheckingContents(res1, showList, viewType)
+    return res
   }
 
 }

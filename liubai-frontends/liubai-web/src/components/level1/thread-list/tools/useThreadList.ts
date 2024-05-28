@@ -315,8 +315,11 @@ async function loadCloud(
   if(!res1) return
 
   // 2. get ids for checking contents
-  const cLastItemStamp = getCloudLastItemStamp(res1, opt1)
-  const ids = getIdsForCheckingContents(cLastItemStamp, res1, opt1, opt2)
+  const ids = CloudMerger.getIdsForCheckingContents(
+    res1,
+    opt2.threadShows,
+    opt1.viewType
+  )
   if(ids.length < 1) {
     loadAgain(ctx, opt1, opt2)
     return
@@ -390,79 +393,4 @@ async function loadAgain(
     tlData.hasReachBottom = true
   }
   
-}
-
-
-function getIdsForCheckingContents(
-  cloudLastItemStamp: number,
-  res1: LiuDownloadParcel[],
-  opt1: TcListOption,
-  opt2: LoadCloudOpt,
-) {
-  const ids: string[] = []
-  const { threadShows } = opt2
-  if(threadShows.length < 1) {
-    return ids
-  }
-
-  const vT = opt1.viewType
-
-  threadShows.forEach(v => {
-    const s = v.storageState
-    if(s !== "CLOUD") return
-    const data = res1.find(v1 => v1.id === v._id)
-    if(data) return
-
-    let stamp = v.createdStamp
-    if(vT === "FAVORITE") {
-      stamp = v.myFavoriteStamp ?? 0
-    }
-    else if(vT === "TRASH") {
-      stamp = v.removedStamp ?? 0
-    }
-
-    if(opt1.sort === "asc") {
-      if(stamp < cloudLastItemStamp) {
-        ids.push(v._id)
-      }
-    }
-    else {
-      if(stamp > cloudLastItemStamp) {
-        ids.push(v._id)
-      }
-    }
-
-  })
-
-  return ids
-}
-
-
-function getCloudLastItemStamp(
-  res1: LiuDownloadParcel[],
-  opt1: TcListOption,
-) {
-
-  let cloudLastItemStamp = 0
-  const cloudLength = res1.length
-  if(!cloudLength) return cloudLastItemStamp
-
-  const cloudLastOne = res1[cloudLength - 1]
-  if(cloudLastOne.parcelType !== "content") return cloudLastItemStamp
-
-  const c = cloudLastOne.content
-  if(!c) return cloudLastItemStamp
-
-  const vT = opt1.viewType
-  if(vT === "FAVORITE") {
-    cloudLastItemStamp = c.myFavorite?.sortStamp ?? 0
-  }
-  else if(vT === "TRASH") {
-    cloudLastItemStamp = c.removedStamp ?? 0
-  }
-  else {
-    cloudLastItemStamp = c.createdStamp
-  }
-
-  return cloudLastItemStamp
 }
