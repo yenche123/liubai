@@ -43,6 +43,7 @@ export const domainAllowed = [
   "clickup.com",
 
   // dev
+  "caniuse.com",
   "vuejs.org",
   "vitejs.dev",
   "vueuse.org",
@@ -53,14 +54,26 @@ export const domainAllowed = [
   "flutter.dev",
   "flutter.cn",
   "flutterchina.club",
+  "guoshuyu.cn",
+  "dart.cn",
+  "dartcn.com",
+  "dartpad.cn",
+  "dartpad.dev",
   "nodejs.org",
   "bun.sh",
+  "electronjs.org",
+  "tauri.app",
+  "reactnative.dev",
+  "react.dev",
+  "ionicframework.com",
+  "svelte.dev",
 
   // blogs
   "ruanyifeng.com",
   "lutaonan.com",
   "mt.cd",
   "chi.miantiao.me",
+  "cnworkshop.xyz",
   
   "latepost.com",
   "36kr.com",
@@ -157,6 +170,8 @@ export const domainNotAllowed = [
   "chat.deepseek.com",
   "xueqiu.com",
   "rust-lang.org",
+  "v2.tauri.app",
+  "mozilla.org",
 ]
 
 export const mastodonDomains = [

@@ -127,5 +127,8 @@ export default {
 
   // some blogs
   LUTAONAN_COM: "https://lutaonan.com/",
+
+  // some dev
+  REACT_NATIVE: "https://reactnative.dev/",
   
 }

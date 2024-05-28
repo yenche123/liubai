@@ -94,6 +94,10 @@ function canAdd(url: string) {
 function isInAllowedList(url: string) {
   const u = new URL(url)
   const h = u.hostname
+
+  const res = domainNotAllowed.find(v => v === h)
+  if(res) return false
+
   const data = domainAllowed.find(v => valTool.isInDomain(h, v))
   return Boolean(data)
 }
