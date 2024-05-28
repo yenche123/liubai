@@ -124,5 +124,8 @@ export default {
 
   // psyche.co
   PSYCHE_CO: "https://psyche.co/",
+
+  // some blogs
+  LUTAONAN_COM: "https://lutaonan.com/",
   
 }

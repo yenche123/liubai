@@ -4,7 +4,6 @@
 export const domainAllowed = [
   "u1s1.site",
   "podcastogether.com",
-  "ruanyifeng.com",
   "ghost.io",
   "cubox.pro",
   "pod.link",
@@ -42,12 +41,30 @@ export const domainAllowed = [
   "owwly.com",
   "wikipedia.org",
   "clickup.com",
+
+  // dev
   "vuejs.org",
-  "bing.com",
+  "vitejs.dev",
+  "vueuse.org",
+  "typescriptlang.org",
   "nuxt.com",
   "nuxt.com.cn",
+  "rustwiki.org",
+  "flutter.dev",
+  "flutter.cn",
+  "flutterchina.club",
+  "nodejs.org",
+  "bun.sh",
+
+  // blogs
+  "ruanyifeng.com",
+  "lutaonan.com",
+  "mt.cd",
+  "chi.miantiao.me",
+  
   "latepost.com",
   "36kr.com",
+  "bing.com",
   "mailchi.mp",
   "campaign-archive.com",
   "guokr.com",
@@ -139,6 +156,7 @@ export const domainNotAllowed = [
   "metaso.cn",
   "chat.deepseek.com",
   "xueqiu.com",
+  "rust-lang.org",
 ]
 
 export const mastodonDomains = [
