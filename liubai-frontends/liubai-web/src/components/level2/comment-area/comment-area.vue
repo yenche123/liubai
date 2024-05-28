@@ -46,7 +46,6 @@ useIdsChanged(caData)
     </template>
 
     <ListBottom 
-      v-if="viewType !== 'PINNED'"
       :has-data="caData.comments.length > 0" 
       :reached="caData.hasReachedBottom"
     ></ListBottom>
