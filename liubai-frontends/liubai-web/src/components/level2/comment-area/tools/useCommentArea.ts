@@ -15,15 +15,20 @@ import { whenCommentUpdated } from "./whenCommentUpdated"
 import { scrollViewKey } from "~/utils/provide-keys"
 import type { SvProvideInject } from "~/types/components/types-scroll-view"
 import type { CommentShow } from "~/types/types-content";
-import { getValuedComments } from "~/utils/other/comment-related"
+import { 
+  type ValueComment,
+  getValuedComments,
+} from "~/utils/other/comment-related"
 import liuEnv from "~/utils/liu-env"
 import type { 
   SyncGet_CheckContents, 
   SyncGet_CommentList_A,
+  SyncGet_CommentList_D,
 } from "~/types/cloud/sync-get/types"
 import { CloudMerger } from "~/utils/cloud/CloudMerger"
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
 import { storeToRefs } from "pinia"
+import liuUtil from "~/utils/liu-util"
 
 
 export function useCommentArea(
@@ -160,33 +165,71 @@ async function toLoadComments(
   preloadChildren(caData, newList)
 }
 
-function preloadChildren(
-  caData: CommentAreaData,
-  newList: CommentShow[],
-) {
-  if(newList.length < 1) return
-  console.log("TODO: preloadChildren..........")
-
-}
-
-
-
-
-
-
-
-
-
-/**
- * 加载一级评论们的子孙评论
- */
-async function loadChildren(
+async function preloadChildren(
   caData: CommentAreaData,
   newList: CommentShow[],
 ) {
   if(newList.length < 1) return
   const valueComments = getValuedComments(newList)
   if(valueComments.length < 1) return
+
+  // 1. delete items where their index is
+  // equal to or more than 3
+  const len = valueComments.length
+  if(len > 3) {
+    valueComments.splice(3, len - 3)
+  }
+
+  // 2. check out if get to sync
+  const canSync = liuEnv.canISync()
+  if(!canSync || caData.networkLevel < 1) {
+    toLoadChildren(caData, valueComments)
+    return
+  }
+
+
+  // 3. get ids for querying cloud
+  const ids: string[] = []
+  valueComments.forEach(v => {
+    const res3_1 = liuUtil.check.hasEverSynced(v)
+    if(!res3_1) return
+    const res3_2 = liuUtil.check.isLocalContent(v.storageState)
+    if(res3_2) return
+    ids.push(v._id)
+  })
+
+  // 4. to query
+  const len4 = ids.length
+  const promises: Promise<any>[] = []
+  for(let i=0; i<ids.length; i++) {
+    const _id = ids[i]
+    const param4: SyncGet_CommentList_D = {
+      taskType: "comment_list",
+      loadType: "find_hottest",
+      commentId: _id,
+    }
+    const delay = i === (len4 - 1) ? 0 : 250
+    const pro = CloudMerger.request(param4, { delay })
+    promises.push(pro)
+  }
+
+  // 5. wait promises
+  const res5 = await Promise.all(promises)
+  // console.log("check out promises: ")
+  // console.log(res5)
+  // console.log(" ")
+
+  toLoadChildren(caData, valueComments)
+}
+
+
+/**
+ * 加载一级评论们的子孙评论
+ */
+async function toLoadChildren(
+  caData: CommentAreaData,
+  valueComments: ValueComment[],
+) {
 
   const _addNewComment = (prevId: string, newComment: CommentShow) => {
     newComment.prevIReplied = true
@@ -200,6 +243,10 @@ async function loadChildren(
     for(let i=0; i<comments.length; i++) {
       const v = comments[i]
       if(v._id === prevId) {
+        // console.warn(`add new comment at ${i + 1}`)
+        // console.log(newComment)
+        // console.log(" ")
+
         v.nextRepliedMe = true
         comments.splice(i + 1, 0, newComment)
         break
