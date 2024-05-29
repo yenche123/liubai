@@ -337,15 +337,53 @@ async function handleUploadFileAtoms(
 
 
 function packFiles(
-  atom: UploadFileAtom,
-  files: LiuFileAndImage[],
+  atoms: UploadFileAtom[],
+  currentAtom: UploadFileAtom,
+  file_stores: LiuFileAndImage[],
+  id_key: "contentId" | "memberId" | "draftId",
 ) {
-  files.forEach(v => {
+
+  let need_to_upload: LiuFileAndImage[] = []
+  file_stores.forEach(v => {
     if(v.cloud_url) return
     if(v.arrayBuffer) {
-      atom.files.push(v)
+      need_to_upload.push(v)
     }
   })
+  if(need_to_upload.length < 1) return
+
+  const target_id = currentAtom[id_key]
+
+  for(let i=0; i<need_to_upload.length; i++) {
+    const v1 = need_to_upload[i]
+    const file_id = v1.id
+
+    for(let j=0; j<atoms.length; j++) {
+      const v2 = atoms[j]
+      if(v2.files.length < 1) continue
+
+      const f = v2.files.findIndex(v3 => v3.id === file_id)
+      if(f < 0) continue
+
+      console.warn("在已有的任务中找到相同的文件了！！")
+      console.log("file_id: ", file_id)
+      console.log("the atom: ", v2)
+      console.log(" ")
+
+      const the_id_2 = v2[id_key]
+      if(target_id === the_id_2) {
+        need_to_upload.splice(0, 1)
+      }
+      else if(typeof the_id_2 === "undefined") {
+        v2[id_key] = target_id
+        need_to_upload.splice(0, 1)
+      }
+    }
+  }
+
+  if(need_to_upload.length > 0) {
+    currentAtom.files.push(...need_to_upload)
+  }
 }
 
 
@@ -378,8 +416,8 @@ async function extractFilesFromContents(
     const v1 = contents[i1]
     const item = list.find(v2 => v2.contentId === v1._id)
     if(!item) continue
-    if(v1.files?.length) packFiles(item, v1.files)
-    if(v1.images?.length) packFiles(item, v1.images)
+    if(v1.files?.length) packFiles(list, item, v1.files, "contentId")
+    if(v1.images?.length) packFiles(list, item, v1.images, "contentId")
   }
   return true
 }
@@ -397,7 +435,7 @@ async function extractFilesFromMembers(
     const v1 = members[i1]
     const item = list.find(v2 => v2.memberId === v1._id)
     if(!item) continue
-    if(v1.avatar) packFiles(item, [v1.avatar])
+    if(v1.avatar) packFiles(list, item, [v1.avatar], "memberId")
   }
   return true
 }
@@ -415,8 +453,8 @@ async function extractFilesFromDrafts(
     const v1 = drafts[i1]
     const item = list.find(v2 => v2.draftId === v1._id)
     if(!item) continue
-    if(v1.files?.length) packFiles(item, v1.files)
-    if(v1.images?.length) packFiles(item, v1.images)
+    if(v1.files?.length) packFiles(list, item, v1.files, "draftId")
+    if(v1.images?.length) packFiles(list, item, v1.images, "draftId")
   }
   return true
 }
