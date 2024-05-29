@@ -76,7 +76,6 @@ async function clearDraftOnCloud(
   const synced = liuUtil.check.hasEverSynced(originDraft)
   if(!synced) return
 
-  console.log("clear draft on cloud......")
   LocalToCloud.addTask({
     uploadTask: "draft-clear",
     target_id: id,

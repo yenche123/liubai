@@ -77,9 +77,9 @@ async function toRelease(
   preThread.createdStamp = now
   preThread.insertedStamp = now
 
-  console.log("看一下 preThread.........")
-  console.log(preThread)
-  console.log(" ")
+  // console.log("看一下 preThread.........")
+  // console.log(preThread)
+  // console.log(" ")
 
   const newThread = preThread as ContentLocalTable
 
@@ -233,9 +233,9 @@ async function toUpdate(ctx: CepContext) {
   const preThread = _getThreadData(ceData)
   if(!preThread) return
 
-  console.log("看一下 preThread.........")
-  console.log(preThread)
-  console.log(" ")
+  // console.log("看一下 preThread.........")
+  // console.log(preThread)
+  // console.log(" ")
 
   const threadId = ceData.threadEdited as string
 

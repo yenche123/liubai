@@ -85,7 +85,6 @@ export function initCeData(
     if(time.isWithinMillis(ceData.lastTagChangeStamp ?? 1, 500)) return
     const ctx = getCtx()
     if(!ctx) return
-    console.log("再次 initDraft.........")
     initDraft(ctx, tVal.value)
   })
 
@@ -279,7 +278,7 @@ async function initFromCloudDraft(
 
   // 5. if it is posted or deleted
   if(oState === "POSTED" || oState === "DELETED") {
-    console.log("the draft has been deleted or posted")
+    // console.log("the draft has been deleted or posted")
     resetFromCloud(ctx, cloud_draft, local_draft, local_thread)
     return
   }
@@ -379,7 +378,7 @@ async function resetFromCloud(
 
   // 3. initDraftFromThread if threadEdited exists
   if(ceData.threadEdited) {
-    console.warn("initDraftFromThread if threadEdited exists")
+    // console.warn("initDraftFromThread if threadEdited exists")
     if(local_thread) {
       initDraftFromThread(ctx, local_thread, false)
     }
