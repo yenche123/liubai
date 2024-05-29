@@ -52,7 +52,9 @@ const toDownload = async (url: string): Promise<FetchRes> => {
   
   let res: Response
   try {
-    res = await fetch(url)
+    res = await fetch(url, {
+      mode: "no-cors",
+    })
   }
   catch(err: any) {
     console.log("toDownload fail........")

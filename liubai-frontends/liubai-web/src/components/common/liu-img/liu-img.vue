@@ -114,6 +114,7 @@ const onImgLoaded = async () => {
       :loading="loading"
       :draggable="draggable"
       @load="onImgLoaded" 
+      referrerpolicy="no-referrer"
     >
     
   </div>
