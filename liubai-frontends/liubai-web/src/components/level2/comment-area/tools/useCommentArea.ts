@@ -61,6 +61,9 @@ export function useCommentArea(
   watch(() => props.threadId, (newV) => {
     let reload = newV !== caData.threadId
     if(reload) caData.comments = []
+    // console.log("newV: ", newV)
+    // console.log("caData.threadId: ", caData.threadId)
+    // console.log(" ")
     caData.threadId = newV
     caData.hasReachedBottom = false
     preloadComments(caData, reload)

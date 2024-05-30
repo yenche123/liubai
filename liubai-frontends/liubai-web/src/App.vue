@@ -4,6 +4,9 @@ import GlobalLoading from "./components/loaders/global-loading/global-loading.vu
 import { useApp } from "./hooks/useApp";
 import { initLiuRouter } from "./routes/liu-router"
 import { defineAsyncComponent } from "vue"
+import time from "~/utils/basic/time"
+
+time.whenAppSetup()
 
 const CustomUi = defineAsyncComponent(() => {
   return import("./components/custom-ui/custom-ui.vue")

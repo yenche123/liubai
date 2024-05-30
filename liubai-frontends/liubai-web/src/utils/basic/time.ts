@@ -1,6 +1,17 @@
 import valTool from "./val-tool"
 
 let diff = 0
+let appSetupStamp = 0  // App.vue setup 周期被执行的时间戳
+
+// 当 App.vue 被运行时，在 setup 周期里调用
+const whenAppSetup = () => {
+  appSetupStamp = Date.now()
+}
+
+// 让各个组件或函数获取 App.vue setup 周期被执行的时间戳
+const getAppSetupStamp = () => {
+  return appSetupStamp + diff
+}
 
 // 设置时间差，由 CloudEventBus 调用
 const setDiff = (val: number) => {
@@ -81,6 +92,8 @@ const DAY = 24 * HOUR
 const WEEK = 7 * DAY
 
 export default {
+  whenAppSetup,
+  getAppSetupStamp,
   setDiff,
   getDiff,
   getTime,
