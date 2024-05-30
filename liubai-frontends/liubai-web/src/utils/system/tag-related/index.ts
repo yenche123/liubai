@@ -38,6 +38,7 @@ import {
   updateDraftWhenTagDeleted,
 } from "./tools/draft-util"
 import valTool from "~/utils/basic/val-tool";
+import { toSetTagList } from "./tools/some-foos"
 
 // 返回当前工作区的 tags
 export function getCurrentSpaceTagList(): TagView[] {
@@ -174,7 +175,7 @@ export async function addATag(opt: AddATagParam): Promise<AddATagRes> {
   const texts = opt.text.split("/")
   const data = addTagToTagList(texts, tagList, opt.icon)
   const newTagId = data.tagId
-  const res = await wStore.setTagList(data.tagList)
+  await toSetTagList(data.tagList)
 
   if(newTagId) {
     await addTagIdsToRecents([newTagId])
@@ -204,7 +205,7 @@ export async function addTags(list: AddTagsParam): Promise<AddTagsRes> {
   }
 
   // 2. 修改 workspace wStore
-  const res = await wStore.setTagList(tagList)
+  await toSetTagList(tagList)
 
   // 3. 通知全局
   const gStore = useGlobalStateStore()
@@ -273,8 +274,7 @@ export async function editATag(opt: RenameTagParam): Promise<BaseTagRes> {
   console.log("去修改 workspaceStore:::")
   console.log(newList)
   console.log(" ")
-  const wStore = useWorkspaceStore()
-  const res = await wStore.setTagList(newList)
+  await toSetTagList(newList)
 
   // 更新 contents
   const res2 = await updateContentForTagRename(children, newList)
@@ -311,7 +311,7 @@ export async function mergeTag(
   // console.log(res2)
   // console.log(" ")
   
-  const res3 = await wStore.setTagList(res2)
+  await toSetTagList(res2)
 
   // 待完善，去更新 contents 和 drafts
   const param: WhichTagChange = {
@@ -341,8 +341,7 @@ export async function deleteTag(
   deleteTheTag(tagId, newList)
 
   // 更新 tagList
-  const wStore = useWorkspaceStore()
-  const res = await wStore.setTagList(newList)
+  await toSetTagList(newList)
   const idAndChildren = getChildrenAndMeIds(node)
 
   // 删除动态或修改动态
@@ -373,8 +372,7 @@ export async function editTagIcon(
   toEditTagIcon(tagId, newList, icon)
 
   // 更新 tagList
-  const wStore = useWorkspaceStore()
-  const res = await wStore.setTagList(newList)
+  await toSetTagList(newList)
 
   return { isOk: true }
 }

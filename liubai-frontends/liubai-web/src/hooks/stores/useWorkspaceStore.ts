@@ -78,20 +78,16 @@ export const useWorkspaceStore = defineStore("workspace", () => {
 
   const setNickName = async (val: string) => {
     if(!myMember.value) return
-    myMember.value.name = val
     const res = await db.members.update(myMember.value._id, { name: val })
-    console.log("查看修改 myMember 的结果......")
-    console.log(res)
+    myMember.value.name = val
   }
 
   const setTagList = async (list: TagView[]) => {
     const spaceVal = currentSpace.value
     if(!spaceVal) return
-    spaceVal.tagList = list
     const tmpList = valTool.copyObject(list)
     const res = await db.workspaces.update(spaceVal._id, { tagList: tmpList })
-    console.log("setTagList res: ")
-    console.log(res)
+    spaceVal.tagList = list
     return true
   }
 

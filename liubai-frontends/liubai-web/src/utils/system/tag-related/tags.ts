@@ -1,6 +1,5 @@
 
 import type { TagView } from "../../../types/types-atom";
-import { useWorkspaceStore } from "../../../hooks/stores/useWorkspaceStore";
 import { 
   findWhichTagChange,
   findTagShowById,
@@ -11,6 +10,7 @@ import { i18n } from "../../../locales"
 import { updateContentForTagAcross } from "./tools/content-util";
 import { updateDraftForTagAcross } from "./tools/draft-util";
 import { useGlobalStateStore } from "../../../hooks/stores/useGlobalStateStore";
+import { toSetTagList } from "./tools/some-foos";
 
 interface TagMovedInTreeRes {
   moved: boolean
@@ -88,9 +88,8 @@ export async function tagMovedInTree(
   }
 
   // 修改 workspaceStore
-  const wStore = useWorkspaceStore()
   const rawList = liuUtil.getRawList(newNewTree ?? newTree)
-  const res3 = await wStore.setTagList(rawList)
+  const res3 = await toSetTagList(rawList)
   if(!res3) {
     console.log("操作失败........")
     return { moved: false }
