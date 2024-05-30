@@ -234,7 +234,7 @@ async function initFromCloudDraft(
   const opt: SyncGet_Draft = {
     taskType: "draft_data",
   }
-  let delay = 250
+  let delay: number | undefined
 
   if(local_draft) {
     const res1 = liuUtil.check.hasEverSynced(local_draft)

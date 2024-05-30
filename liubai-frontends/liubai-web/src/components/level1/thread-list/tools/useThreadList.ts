@@ -309,7 +309,7 @@ async function loadCloud(
     taskType: "thread_list",
     ...opt1,
   }
-  const delay = Boolean(opt1.lastItemStamp) ? 0 : 250
+  const delay = Boolean(opt1.lastItemStamp) ? 0 : undefined
   const res1 = await CloudMerger.request(param1, { delay })
   if(!res1) return
 
