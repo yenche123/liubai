@@ -5,31 +5,27 @@ import type {
   CommentAreaData,
 } from "./types"
 import commentController from "~/utils/controllers/comment-controller/comment-controller"
-import type {
-  LoadByThreadOpt,
-  LoadByCommentOpt,
-} from "~/utils/controllers/comment-controller/tools/types"
+import type { LoadByThreadOpt } from "~/utils/controllers/comment-controller/tools/types"
 import { useCommentStore } from "~/hooks/stores/useCommentStore"
 import usefulTool from "~/utils/basic/useful-tool"
 import { whenCommentUpdated } from "./whenCommentUpdated"
 import { scrollViewKey } from "~/utils/provide-keys"
 import type { SvProvideInject } from "~/types/components/types-scroll-view"
 import type { CommentShow } from "~/types/types-content";
-import { 
-  type ValueComment,
-  getValuedComments,
-} from "~/utils/other/comment-related"
+import type { ValueComment } from "~/utils/other/comment-related"
 import liuEnv from "~/utils/liu-env"
 import type { 
   SyncGet_CheckContents, 
   SyncGet_CommentList_A,
-  SyncGet_CommentList_D,
 } from "~/types/cloud/sync-get/types"
 import { CloudMerger } from "~/utils/cloud/CloudMerger"
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
 import { storeToRefs } from "pinia"
 import liuUtil from "~/utils/liu-util"
-
+import { 
+  addChildrenIntoValueComments, 
+  fetchChildrenComments,
+} from "../../utils/tackle-comments"
 
 export function useCommentArea(
   props: CommentAreaProps,
@@ -91,7 +87,7 @@ async function preloadComments(
 
   const oldLength = caData.comments.length
   const lastComment = caData.comments[oldLength - 1]
-  const isInit = Boolean(reload || length < 1)
+  const isInit = Boolean(reload || oldLength < 1)
 
   // 2. construct query
   const opt: LoadByThreadOpt = {
@@ -116,7 +112,11 @@ async function preloadComments(
     targetThread: opt.targetThread,
     lastItemStamp: opt.lastItemStamp,
   }
-  const res5 = await CloudMerger.request(param5, { waitMilli: 3000 })
+  const delay5 = liuUtil.check.isJustAppSetup() ? undefined : 0
+  const res5 = await CloudMerger.request(param5, { 
+    waitMilli: 3000,
+    delay: delay5,
+  })
   if(!res5) {
     toLoadComments(caData, opt, currentList)
     return
@@ -172,55 +172,8 @@ async function preloadChildren(
   caData: CommentAreaData,
   newList: CommentShow[],
 ) {
-  if(newList.length < 1) return
-  const valueComments = getValuedComments(newList)
+  const valueComments = await fetchChildrenComments(newList, caData.networkLevel)
   if(valueComments.length < 1) return
-
-  // 1. delete items where their index is
-  // equal to or more than 3
-  const len = valueComments.length
-  if(len > 3) {
-    valueComments.splice(3, len - 3)
-  }
-
-  // 2. check out if get to sync
-  const canSync = liuEnv.canISync()
-  if(!canSync || caData.networkLevel < 1) {
-    toLoadChildren(caData, valueComments)
-    return
-  }
-
-
-  // 3. get ids for querying cloud
-  const ids: string[] = []
-  valueComments.forEach(v => {
-    const res3_1 = liuUtil.check.hasEverSynced(v)
-    if(!res3_1) return
-    const res3_2 = liuUtil.check.isLocalContent(v.storageState)
-    if(res3_2) return
-    ids.push(v._id)
-  })
-
-  // 4. to query
-  const len4 = ids.length
-  const promises: Promise<any>[] = []
-  for(let i=0; i<ids.length; i++) {
-    const _id = ids[i]
-    const param4: SyncGet_CommentList_D = {
-      taskType: "comment_list",
-      loadType: "find_hottest",
-      commentId: _id,
-    }
-    const delay = i === (len4 - 1) ? 0 : 250
-    const pro = CloudMerger.request(param4, { delay })
-    promises.push(pro)
-  }
-
-  // 5. wait promises
-  const res5 = await Promise.all(promises)
-  // console.log("check out promises: ")
-  // console.log(res5)
-  // console.log(" ")
 
   toLoadChildren(caData, valueComments)
 }
@@ -233,58 +186,8 @@ async function toLoadChildren(
   caData: CommentAreaData,
   valueComments: ValueComment[],
 ) {
-
-  const _addNewComment = (prevId: string, newComment: CommentShow) => {
-    newComment.prevIReplied = true
-    const { comments } = caData
-
-    // 过滤: 若已存在，则忽略
-    const _tmpList = [newComment]
-    usefulTool.filterDuplicated(comments, _tmpList)
-    if(_tmpList.length < 1) return
-
-    for(let i=0; i<comments.length; i++) {
-      const v = comments[i]
-      if(v._id === prevId) {
-        // console.warn(`add new comment at ${i + 1}`)
-        // console.log(newComment)
-        // console.log(" ")
-
-        v.nextRepliedMe = true
-        comments.splice(i + 1, 0, newComment)
-        break
-      }
-    }
-  }
-
-  const _toFind = async (prevId: string) => {
-    const opt: LoadByCommentOpt = {
-      commentId: prevId,
-      loadType: "find_hottest",
-    }
-    const newComments = await commentController.loadByComment(opt)
-    return newComments[0]
-  }
-
-  let num = 0
-  for(let i=0; i<valueComments.length; i++) {
-    const v = valueComments[i]
-    const p1 = v._id
-    const c1 = await _toFind(p1)
-    if(!c1) continue
-    _addNewComment(p1, c1)
-    num++
-
-    if(c1.commentNum > 0) {
-      const p2 = c1._id
-      const c2 = await _toFind(p2)
-      if(!c2) continue
-      _addNewComment(p2, c2)
-      num++
-    }
-
-    if(num >= 4) break
-  }
+  const { comments } = caData
+  addChildrenIntoValueComments(comments, valueComments)
 }
 
 

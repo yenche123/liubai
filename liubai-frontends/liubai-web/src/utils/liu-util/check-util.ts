@@ -2,6 +2,7 @@ import reg_exp from "~/config/regular-expressions";
 import type { StorageState } from "~/types/types-basic";
 import type { CommentShow, ThreadShow } from "~/types/types-content";
 import type { ContentLocalTable } from "~/types/types-table";
+import time from "../basic/time";
 
 
 /**
@@ -58,10 +59,20 @@ function canUpload(
   return true
 }
 
+function isJustAppSetup(
+  duration: number = 3000,
+) {
+  const now = time.getTime()
+  const stamp = time.getAppSetupStamp()
+  const diff = now - stamp
+  return diff <= duration
+}
+
 
 export default {
   isEmail,
   hasEverSynced,
   isLocalContent,
   canUpload,
+  isJustAppSetup,
 }

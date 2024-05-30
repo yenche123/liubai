@@ -16,6 +16,7 @@ export interface CommentDetailData {
   showZeroBox: boolean
   focusNum: number
   lastLockStamp: number
+  networkLevel: number
 }
 
 export interface CommentDetailProps {

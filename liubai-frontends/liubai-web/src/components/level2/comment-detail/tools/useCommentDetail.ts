@@ -18,20 +18,29 @@ import {
 } from "~/utils/provide-keys";
 import type { SvProvideInject } from "~/types/components/types-scroll-view";
 import type { CommentShow } from "~/types/types-content";
-import { getValuedComments } from "~/utils/other/comment-related"
+import { ValueComment, getValuedComments } from "~/utils/other/comment-related"
 import cfg from "~/config"
 import { useTemporaryStore } from "~/hooks/stores/useTemporaryStore";
 import liuEnv from "~/utils/liu-env";
-import type { 
+import type {
+  SyncGet_CheckContents,
+  SyncGet_CommentList_B,
   SyncSet_CommentData,
 } from "~/types/cloud/sync-get/types"
 import { CloudMerger } from "~/utils/cloud/CloudMerger";
 import time from "~/utils/basic/time";
+import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
+import { storeToRefs } from "pinia";
+import liuUtil from "~/utils/liu-util";
+import { addChildrenIntoValueComments, fetchChildrenComments } from "../../utils/tackle-comments";
 
 export function useCommentDetail(
   props: CommentDetailProps,
   emit: CommentDetailEmit
 ) {
+  const nStore = useNetworkStore()
+  const { level } = storeToRefs(nStore)
+
   const tmpStore = useTemporaryStore()
   const { height } = useWindowSize()
   const svBottomUp = inject(svBottomUpKey)
@@ -47,6 +56,10 @@ export function useCommentDetail(
     showZeroBox: true,
     focusNum: 0,
     lastLockStamp: time.getTime(),
+    networkLevel: level.value,
+  })
+  watch(level, (newV) => {
+    cdData.networkLevel = newV
   })
 
   const ctx: CommentDetailCtx = {
@@ -68,7 +81,7 @@ export function useCommentDetail(
   watch(cid2, (newV) => {
     cdData.targetId = newV
     cdData.lastLockStamp = time.getTime()
-    loadTargetComment(ctx)
+    preloadTargetComment(ctx)
   }, { immediate: true })
 
   // 监听 isShowing
@@ -86,6 +99,196 @@ export function useCommentDetail(
     virtualHeightPx,
   }
 }
+
+/****************************** target comment *************************/
+async function preloadTargetComment(
+  ctx: CommentDetailCtx,
+) {
+  const { cdData, emit } = ctx
+  cdData.state = 1
+
+  // 1. construct query
+  const id = cdData.targetId
+  const opt: LoadByCommentOpt = {
+    commentId: id,
+    loadType: "target",
+  }
+
+  // 2. check out if get to sync
+  const canSync = liuEnv.canISync()
+  if(!canSync || cdData.networkLevel < 1) {
+    await toLoadTargetComment(ctx, opt)
+    preloadBelowList(ctx, true)
+    preloadAboveList(ctx, true)
+    return
+  }
+
+  // 3. construct param for sync
+  const param3: SyncSet_CommentData = {
+    taskType: "comment_data",
+    id,
+  }
+  const delay3 = liuUtil.check.isJustAppSetup() ? undefined : 0
+  const res3 = await CloudMerger.request(param3, { 
+    waitMilli: 2500,
+    delay: delay3,
+  })
+
+  // 4. load target comment currently
+  await toLoadTargetComment(ctx, opt)
+
+  // 5. load below & above list
+  preloadBelowList(ctx, true)
+  preloadAboveList(ctx, true)
+}
+
+async function toLoadTargetComment(
+  ctx: CommentDetailCtx,
+  opt: LoadByCommentOpt,
+) {
+  const { cdData } = ctx
+  let [c] = await commentController.loadByComment(opt)
+
+  const hasData = c && c.oState === "OK"
+
+  // reset some properties
+  delete cdData.thread
+  cdData.aboveList = []
+  cdData.belowList = []
+  cdData.hasReachedBottom = false
+  cdData.hasReachedTop = false
+  cdData.showZeroBox = true
+  cdData.targetComment = c
+  cdData.state = hasData ? -1 : 50
+
+  // fix position
+  fixPosition()
+}
+
+
+/****************************** below comments *************************/
+async function preloadBelowList(
+  ctx: CommentDetailCtx,
+  reload: boolean = false,
+) {
+  const { cdData } = ctx
+  if(!reload && cdData.hasReachedBottom) {
+    return
+  }
+
+  // 1. get some required data
+  const tmpList = cdData.belowList
+  const oldLength = tmpList.length
+  const lastComment = tmpList[oldLength - 1]
+  const isInit = Boolean(reload || oldLength < 1)
+
+  // 2. construct query
+  const commentId = cdData.targetId
+  const opt: LoadByCommentOpt = {
+    commentId,
+    loadType: "find_children",
+    lastItemStamp: isInit ? undefined : lastComment.createdStamp,
+  }
+
+  // 3. get local comments first
+  const currentList = await commentController.loadByComment(opt)
+
+  // 4. check out if get to sync
+  const canSync = liuEnv.canISync()
+  if(!canSync || cdData.networkLevel < 1) {
+    toLoadBelowList(ctx, opt, currentList)
+    return
+  }
+
+  // 5. construct param for sync
+  const param5: SyncGet_CommentList_B = {
+    taskType: "comment_list",
+    loadType: "find_children",
+    commentId,
+    lastItemStamp: opt.lastItemStamp,
+  }
+  const res5 = await CloudMerger.request(param5, {
+    waitMilli: 3000,
+    maxStackNum: 2,
+  })
+  if(!res5) {
+    toLoadBelowList(ctx, opt, currentList)
+    return
+  }
+
+  // 6. get ids
+  const ids = CloudMerger.getIdsForCheckingContents(res5, currentList)
+  if(ids.length < 1) {
+    toLoadBelowList(ctx, opt)
+    return
+  }
+
+  // 7. check out contents
+  const param7: SyncGet_CheckContents = {
+    taskType: "check_contents",
+    ids,
+  }
+  await CloudMerger.request(param7, {
+    waitMilli: 2500,
+    delay: 0,
+  })
+  toLoadBelowList(ctx, opt)
+}
+
+function toLoadBelowList(
+  ctx: CommentDetailCtx,
+  opt: LoadByCommentOpt,
+  newList?: CommentShow[],
+) {
+
+
+
+  // end up
+  // preloadChildrenOfBelow
+}
+
+
+/****************************** children of below *************************/
+async function preloadChildrenOfBelow(
+  ctx: CommentDetailCtx,
+  newList: CommentShow[],
+) {
+  const { networkLevel } = ctx.cdData
+  const valueComments = await fetchChildrenComments(newList, networkLevel)
+  if(valueComments.length < 1) return
+  
+  toLoadChildrenOfBelow(ctx, valueComments)
+}
+
+async function toLoadChildrenOfBelow(
+  ctx: CommentDetailCtx,
+  valueComments: ValueComment[],
+) {
+  const { belowList } = ctx.cdData
+  addChildrenIntoValueComments(belowList, valueComments)
+}
+
+/****************************** above comments *************************/
+async function preloadAboveList(
+  ctx: CommentDetailCtx,
+  reload: boolean = false,
+) {
+  
+}
+
+async function toLoadAboveList(
+  ctx: CommentDetailCtx,
+) {
+  
+}
+
+
+/****************************** OTHER *************************/
+
+function fixPosition() {
+
+}
+
 
 
 function listenScoll(
