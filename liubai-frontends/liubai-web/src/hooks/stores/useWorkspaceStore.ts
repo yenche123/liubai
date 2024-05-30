@@ -95,12 +95,9 @@ export const useWorkspaceStore = defineStore("workspace", () => {
   const setMemberConfig = async (memberCfg: MemberConfig) => {
     const memberVal = myMember.value
     if(!memberVal) return
-    memberVal.config = memberCfg
     const copyData = valTool.copyObject(memberCfg)
     const res = await db.members.update(memberVal._id, { config: copyData })
-    console.log("setMemberConfig res: ")
-    console.log(res)
-    console.log(" ")
+    memberVal.config = memberCfg
     return true
   }
 
@@ -108,9 +105,9 @@ export const useWorkspaceStore = defineStore("workspace", () => {
   const setStateConfig = async (stateConfig?: LiuStateConfig) => {
     const spaceVal = currentSpace.value
     if(!spaceVal) return
-    spaceVal.stateConfig = stateConfig
     const copyData = valTool.copyObject(stateConfig)
     const res = await db.workspaces.update(spaceVal._id, { stateConfig: copyData })
+    spaceVal.stateConfig = stateConfig
     return true
   }
 

@@ -6,6 +6,7 @@ import valTool from "~/utils/basic/val-tool"
 import type { ThreadShow } from "~/types/types-content"
 import cfg from "~/config"
 import threadController from "../thread-controller/thread-controller"
+import { LocalToCloud } from "~/utils/cloud/LocalToCloud"
 
 export interface GetThreadsOfAStateOpt {
   stateId: string
@@ -165,15 +166,24 @@ async function setNewStateList(newList: LiuAtomState[]) {
   const wStore = useWorkspaceStore()
   const currentSpace = wStore.currentSpace
   if(!currentSpace) return false
+  const spaceId = wStore.spaceId
+  if(!spaceId) return false
 
   let stateCfg = currentSpace.stateConfig
   if(!stateCfg) {
     stateCfg = getDefaultStateCfg()
   }
+  const now = time.getTime()
   stateCfg.stateList = newList
-  stateCfg.updatedStamp = time.getTime()
+  stateCfg.updatedStamp = now
 
   const res = await wStore.setStateConfig(stateCfg)
+  LocalToCloud.addTask({
+    target_id: spaceId,
+    uploadTask: "workspace-state_config",
+    operateStamp: now,
+  })
+
   return res
 }
 
