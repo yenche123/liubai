@@ -91,9 +91,9 @@ class CloudMerger {
     }
     const res1 = await liuReq.request<Res_SyncGet_Client>(url, opt)
 
-    console.log("sync-get res1: ")
-    console.log(res1)
-    console.log(" ")
+    // console.log("sync-get res1: ")
+    // console.log(res1)
+    // console.log(" ")
 
     const code1 = res1.code
     const results = res1.data?.results

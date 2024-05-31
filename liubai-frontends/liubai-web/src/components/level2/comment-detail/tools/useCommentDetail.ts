@@ -144,7 +144,7 @@ async function preloadTargetComment(
     ids,
   }
   const delay5 = liuUtil.check.isJustAppSetup() ? undefined : 0
-  await CloudMerger.request(param5, { 
+  const res5 = await CloudMerger.request(param5, { 
     waitMilli: 2500,
     delay: delay5,
   })
@@ -219,50 +219,56 @@ async function preloadBelowList(
   // 4. check out if get to sync
   const canSync = liuEnv.canISync()
   if(!canSync || cdData.networkLevel < 1) {
-    toLoadBelowList(ctx, opt, currentList)
+    toLoadBelowList(ctx, opt, true, currentList)
     return
   }
 
-  // 5. construct param for sync
-  const param5: SyncGet_CommentList_B = {
+  // 5. if init, show currentList in advance
+  if(isInit) {
+    toLoadBelowList(ctx, opt, false, currentList)
+  }
+
+  // 6. construct param for sync
+  const param6: SyncGet_CommentList_B = {
     taskType: "comment_list",
     loadType: "find_children",
     commentId,
     lastItemStamp: opt.lastItemStamp,
   }
-  const delay = isInit ? undefined : 0
-  const res5 = await CloudMerger.request(param5, {
+  const delay = isInit ? 16 : 0
+  const res6 = await CloudMerger.request(param6, {
     waitMilli: 3000,
     maxStackNum: 2,
     delay,
   })
-  if(!res5) {
-    toLoadBelowList(ctx, opt, currentList)
+  if(!res6) {
+    toLoadBelowList(ctx, opt, true, currentList)
     return
   }
 
-  // 6. get ids
-  const ids = CloudMerger.getIdsForCheckingContents(res5, currentList)
+  // 7. get ids
+  const ids = CloudMerger.getIdsForCheckingContents(res6, currentList)
   if(ids.length < 1) {
-    toLoadBelowList(ctx, opt)
+    toLoadBelowList(ctx, opt, true)
     return
   }
 
-  // 7. check out contents
-  const param7: SyncGet_CheckContents = {
+  // 8. check out contents
+  const param8: SyncGet_CheckContents = {
     taskType: "check_contents",
     ids,
   }
-  await CloudMerger.request(param7, {
+  await CloudMerger.request(param8, {
     waitMilli: 2500,
     delay: 0,
   })
-  toLoadBelowList(ctx, opt)
+  toLoadBelowList(ctx, opt, true)
 }
 
 async function toLoadBelowList(
   ctx: CommentDetailCtx,
   opt: LoadByCommentOpt,
+  loadChildren: boolean,
   newList?: CommentShow[],
 ) {
   const { cdData } = ctx
@@ -289,7 +295,9 @@ async function toLoadBelowList(
     cdData.hasReachedBottom = true
   }
   
-  preloadChildrenOfBelow(ctx, newList)
+  if(loadChildren) {
+    preloadChildrenOfBelow(ctx, newList)
+  }
 }
 
 
@@ -366,19 +374,12 @@ async function preloadAboveList(
   }
 
   // 4. get to sync
-  console.log("preloadAboveList param.........")
-  console.log(param)
-  console.log(" ")
   const delay = isInit ? undefined : 0
   const res4 = await CloudMerger.request(param, {
     waitMilli: 3000,
     maxStackNum: 2,
     delay,
   })
-  console.log("preloadAboveList res: ")
-  console.log(res4)
-  console.log(" ")
-
   // 5. get res4.length
   const res5 = res4?.length ?? 2
   toLoadAboveList(ctx, opt, isInit, res5)  
@@ -424,7 +425,6 @@ async function toLoadAboveList(
   }
 
   if(!newRe) {
-    console.log("get to preloadThread......")
     preloadThread(ctx, 0)
   }  
 }
@@ -437,7 +437,7 @@ async function preloadThread(
 ) {
   const { cdData } = ctx
   
-  const id = cdData.targetComment?.parentComment
+  const id = cdData.targetComment?.parentThread
   if(!id) return
 
   // 1. load locally
@@ -457,6 +457,7 @@ async function preloadThread(
   }
   await CloudMerger.request(param, { 
     waitMilli: 2500,
+    maxStackNum: 2,
     delay,
   })
 
