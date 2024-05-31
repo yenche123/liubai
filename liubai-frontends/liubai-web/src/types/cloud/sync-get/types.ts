@@ -99,10 +99,6 @@ export interface SyncGet_CommentList_D {
 export type SyncGet_CommentList = SyncGet_CommentList_A | 
   SyncGet_CommentList_B | SyncGet_CommentList_C | SyncGet_CommentList_D
 
-export interface SyncSet_CommentData {
-  taskType: "comment_data"
-  id: string
-}
 
 export interface SyncGet_CheckContents {
   taskType: "check_contents"
@@ -118,7 +114,7 @@ export interface SyncGet_Draft {
 }
 
 export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |
-SyncGet_CommentList | SyncSet_CommentData | SyncGet_CheckContents | SyncGet_Draft
+SyncGet_CommentList | SyncGet_CheckContents | SyncGet_Draft
 
 export type SyncGetAtom = CloudMergerOpt & SyncGet_Base
 

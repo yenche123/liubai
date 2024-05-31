@@ -25,7 +25,6 @@ import liuEnv from "~/utils/liu-env";
 import type {
   SyncGet_CheckContents,
   SyncGet_CommentList_B,
-  SyncSet_CommentData,
 } from "~/types/cloud/sync-get/types"
 import { CloudMerger } from "~/utils/cloud/CloudMerger";
 import time from "~/utils/basic/time";
@@ -107,7 +106,7 @@ export function useCommentDetail(
 async function preloadTargetComment(
   ctx: CommentDetailCtx,
 ) {
-  const { cdData, emit } = ctx
+  const { cdData } = ctx
   cdData.state = 1
 
   // 1. construct query
@@ -117,7 +116,12 @@ async function preloadTargetComment(
     loadType: "target",
   }
 
-  // 2. check out if get to sync
+  // 2. load target comment locally for parentThread
+  // so that we can fetch parentThread in advance
+  const res2 = await commentController.loadByComment(opt)
+  const c2 = res2[0]
+
+  // 3. check out if get to sync
   const canSync = liuEnv.canISync()
   if(!canSync || cdData.networkLevel < 1) {
     await toLoadTargetComment(ctx, opt)
@@ -126,21 +130,25 @@ async function preloadTargetComment(
     return
   }
 
-  // 3. construct param for sync
-  const param3: SyncSet_CommentData = {
-    taskType: "comment_data",
-    id,
+  // 4. construct param for sync
+  const ids = [id]
+  if(c2.parentThread) {
+    ids.push(c2.parentThread)
   }
-  const delay3 = liuUtil.check.isJustAppSetup() ? undefined : 0
-  const res3 = await CloudMerger.request(param3, { 
+  const param4: SyncGet_CheckContents = {
+    taskType: "check_contents",
+    ids,
+  }
+  const delay4 = liuUtil.check.isJustAppSetup() ? undefined : 0
+  const res4 = await CloudMerger.request(param4, { 
     waitMilli: 2500,
-    delay: delay3,
+    delay: delay4,
   })
 
-  // 4. load target comment currently
+  // 5. load target comment currently
   await toLoadTargetComment(ctx, opt)
 
-  // 5. load below & above list
+  // 6. load below & above list
   preloadBelowList(ctx, true)
   preloadAboveList(ctx, true)
 }
@@ -296,6 +304,44 @@ async function preloadAboveList(
   ctx: CommentDetailCtx,
   reload: boolean = false,
 ) {
+  const { cdData } = ctx
+  if(!reload && cdData.hasReachedTop) {
+    return
+  }
+
+  // 1. get some required data
+  const c = cdData.targetComment
+  const tmpList = cdData.aboveList
+  const oldLength = tmpList.length
+  const firstComment = tmpList[0]
+  const isInit = Boolean(reload || oldLength < 1)
+
+  let parentWeWant = ""
+  let grandparent: string | undefined
+
+  if(!isInit) {
+    parentWeWant = firstComment.replyToComment ?? ""
+    grandparent = firstComment.parentComment
+  }
+  else if(c) {
+    parentWeWant = c.replyToComment ?? ""
+    grandparent = c.replyToComment
+  }
+
+  if(!parentWeWant) {
+    return
+  }
+
+  
+  // 2. construct query
+  const commentId = cdData.targetId
+  const opt: LoadByCommentOpt = {
+    commentId,
+    loadType: "find_parent",
+
+  }
+
+  
   
 }
 
@@ -304,6 +350,11 @@ async function toLoadAboveList(
 ) {
   
 }
+
+
+/*************************** load thread **********************/
+
+
 
 
 /****************************** OTHER *************************/
@@ -331,213 +382,13 @@ function listenScoll(
     console.log(" ")
 
     if(svType === "to_end") {
-      loadBelowList(ctx)
+      preloadBelowList(ctx)
     }
     else if(svType === "to_start") {
-      loadAboveList(ctx)
+      preloadAboveList(ctx)
     }
 
   })
-}
-
-
-
-// 1. 加载【目标评论】
-async function loadTargetComment(
-  ctx: CommentDetailCtx
-) {
-
-  const { cdData, emit } = ctx
-  cdData.state = 1
-
-  const opt: LoadByCommentOpt = {
-    commentId: cdData.targetId,
-    loadType: "target",
-  }
-  const res = await commentController.loadByComment(opt)
-  const c = res[0]
-
-
-  // reset some properties
-  delete cdData.thread
-  cdData.aboveList = []
-  cdData.belowList = []
-  cdData.hasReachedBottom = false
-  cdData.hasReachedTop = false
-  cdData.showZeroBox = true
-
-  if(!c || c.oState !== "OK") {
-    remoteLoadTargetComment(ctx)
-    return
-  }
-
-  cdData.state = -1
-  cdData.targetComment = c
-
-  remoteLoadTargetComment(ctx)
-
-  await fixCommentDetail(ctx)
-  await loadBelowList(ctx, true)
-  await loadAboveList(ctx, true)
-}
-
-// 1.1 远程加载【目标评论】
-async function remoteLoadTargetComment(
-  ctx: CommentDetailCtx
-) {
-  const { cdData, emit } = ctx
-  const id = cdData.targetId
-
-  // 1. can I sync
-  const canSync = liuEnv.canISync()
-  if(!canSync) {
-    if(cdData.state !== -1) {
-      cdData.state = 50
-      emit("pagestatechange", 50)
-    }
-    return
-  }
-
-  // 2. load target comment remotely
-  const opt2: SyncSet_CommentData = {
-    taskType: "comment_data",
-    id: cdData.targetId,
-  }
-  const res2 = await CloudMerger.request(opt2)
-  console.log("remoteLoadTargetComment res2: ")
-  console.log(res2)
-  console.log(" ")
-
-  // 3. load locally again
-  const opt: LoadByCommentOpt = {
-    commentId: id,
-    loadType: "target",
-  }
-  const res = await commentController.loadByComment(opt)
-  const c = res[0]
-  if(!c || c.oState !== "OK") {
-    cdData.state = 50
-    emit("pagestatechange", 50)
-    return
-  }
-
-  cdData.state = -1
-  cdData.targetComment = c
-  fixCommentDetail(ctx)
-}
-
-
-// 2. 加载【向下评论】
-async function loadBelowList(
-  ctx: CommentDetailCtx,
-  reload: boolean = false,
-) {
-  const { cdData } = ctx
-  if(!reload && cdData.hasReachedBottom) {
-    return
-  }
-
-  const opt: LoadByCommentOpt = {
-    commentId: cdData.targetId,
-    loadType: "find_children",
-  }
-  const tmpList = cdData.belowList
-  const tmpLength = tmpList.length
-  const lastComment = tmpList[tmpLength - 1]
-  if(lastComment) {
-    opt.lastItemStamp = lastComment.createdStamp
-  }
-
-  const newList = await commentController.loadByComment(opt)
-
-  console.log("loadBelowList 结果: ")
-  console.log(newList)
-  console.log(" ")
-
-  if(lastComment) {
-    usefulTool.filterDuplicated(cdData.belowList, newList)
-    commentController.handleRelation(newList, lastComment)
-    cdData.belowList.push(...newList)
-  }
-  else {
-    commentController.handleRelation(newList)
-    cdData.belowList = newList
-  }
-
-  if(newList.length < 5) {
-    cdData.hasReachedBottom = true
-  }
-
-  // 检查有无必要加载新评论里的 "溯深" 评论
-  await loadChildrenOfBelow(ctx, newList)
-
-}
-
-
-async function loadChildrenOfBelow(
-  ctx: CommentDetailCtx,
-  newList: CommentShow[],
-) {
-
-  if(newList.length < 1) return
-
-  console.log("去 loadChildrenOfBelow: ")
-  console.log("targetId: ", ctx.cdData.targetId)
-  console.log(" ")
-
-  // 找出值得加载的评论
-  const valueComments = getValuedComments(newList)
-  if(valueComments.length < 1) return
-
-  // 已新添加的评论数
-  let num = 0
-
-  const _addNewComment = (prevId: string, newComment: CommentShow) => {
-    newComment.prevIReplied = true
-    const { belowList } = ctx.cdData
-
-    // 过滤: 若已存在，则忽略
-    const _tmpList = [newComment]
-    usefulTool.filterDuplicated(belowList, _tmpList)
-    if(_tmpList.length < 1) return
-
-    for(let i=0; i<belowList.length; i++) {
-      const v = belowList[i]
-      if(v._id === prevId) {
-        v.nextRepliedMe = true
-        belowList.splice(i + 1, 0, newComment)
-        break
-      }
-    }
-  }
-
-  const _toFind = async (prevId: string) => {
-    const opt: LoadByCommentOpt = {
-      commentId: prevId,
-      loadType: "find_hottest",
-    }
-    const newComments = await commentController.loadByComment(opt)
-    return newComments[0]
-  }
-
-  for(let i=0; i<valueComments.length; i++) {
-    const v = valueComments[i]
-    const p1 = v._id
-    const c1 = await _toFind(p1)
-    if(!c1) continue
-    _addNewComment(p1, c1)
-    num++
-
-    if(c1.commentNum > 0) {
-      const p2 = c1._id
-      const c2 = await _toFind(p2)
-      if(!c2) continue
-      _addNewComment(p2, c2)
-      num++
-    }
-
-    if(num >= 4) break
-  }
 }
 
 

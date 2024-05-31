@@ -1346,16 +1346,6 @@ export const Sch_SyncGet_CommentList = vbot.variant("loadType", [
   Sch_SyncGet_CommentList_D,
 ])
 
-export interface SyncGet_CommentData {
-  taskType: "comment_data"
-  id: string
-}
-
-export const Sch_SyncGet_CommentData = vbot.object({
-  taskType: vbot.literal("comment_data"),
-  id: Sch_Id,
-})
-
 export interface SyncGet_CheckContents {
   taskType: "check_contents"
   ids: string[]
@@ -1386,13 +1376,12 @@ export const Sch_SyncGet_Draft = vbot.object({
 })
 
 export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |
-SyncGet_CommentList | SyncGet_CommentData | SyncGet_CheckContents | SyncGet_Draft
+SyncGet_CommentList | SyncGet_CheckContents | SyncGet_Draft
 
 export const Sch_CloudMergerOpt = vbot.variant("taskType", [
   Sch_SyncGet_ThreadList,
   Sch_SyncGet_ThreadData,
   Sch_SyncGet_CommentList,
-  Sch_SyncGet_CommentData,
   Sch_SyncGet_CheckContents,
   Sch_SyncGet_Draft,
 ])

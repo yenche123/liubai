@@ -10,7 +10,6 @@ import {
   decryptCloudData,
 } from "@/common-util"
 import {
-  Sch_Id,
   Sch_SyncGetAtom,
 } from "@/common-types"
 import type {
@@ -48,7 +47,6 @@ import type {
   SyncGet_CommentList_B,
   SyncGet_CommentList_C,
   SyncGet_CommentList_D,
-  SyncGet_CommentData,
 } from "@/common-types"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
@@ -130,9 +128,6 @@ async function toExecute(
     else if(taskType === "comment_list") {
       res1 = await toCommentList(sgCtx, v, opt)
     }
-    else if(taskType === "comment_data") {
-      res1 = await toCommentData(sgCtx, v, opt)
-    }
 
     if(!res1) {
       res1 = { code: "E5001", taskId, errMsg: "the taskType cannot match"  }
@@ -142,19 +137,6 @@ async function toExecute(
   }
 
   return results
-}
-
-
-async function toCommentData(
-  sgCtx: SyncGetCtx,
-  atom: SyncGet_CommentData,
-  opt: OperationOpt,
-) {
-  const { id } = atom
-  
-  // 1. get shared data
-  const res2 = await getSharedData_2(sgCtx, [id], opt)
-  return res2
 }
 
 
