@@ -12,7 +12,12 @@ import {
 } from "vue";
 import type { SvProps, SvEmits } from "./types"
 import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
-import { scrollViewKey, svScollingKey, svBottomUpKey } from "~/utils/provide-keys"
+import { 
+  scrollViewKey, 
+  svScollingKey, 
+  svBottomUpKey,
+  svElementKey,
+} from "~/utils/provide-keys"
 import { useDebounceFn, useResizeObserver } from "~/hooks/useVueUse"
 import time from "~/utils/basic/time";
 
@@ -33,6 +38,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   provide(scrollViewKey, proData)
   provide(svScollingKey, scrollPosition)
   provide(svBottomUpKey, bottomUp)
+  provide(svElementKey, sv)
 
   let lastScrollPosition = 0
   let lastScrollStamp = 0

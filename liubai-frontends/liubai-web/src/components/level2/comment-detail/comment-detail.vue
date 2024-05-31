@@ -83,8 +83,6 @@ const { t } = useI18n()
       ></CommentCard>
     </template>
 
-    <div v-show="cdData.showZeroBox" class="cd-virtual-zero"></div>
-
     <!-- 目标评论 -->
     <CommentCard
       :cs="cdData.targetComment"
@@ -147,11 +145,6 @@ const { t } = useI18n()
 .cd-container {
   width: 100%;
   position: relative;
-}
-
-.cd-virtual-zero {
-  width: 100%;
-  height: 0px;
 }
 
 .cd-virtual-one {

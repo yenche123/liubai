@@ -13,7 +13,6 @@ export interface CommentDetailData {
   thread?: ThreadShow           // 加载到最顶部就是 thread
   hasReachedBottom: boolean
   hasReachedTop: boolean
-  showZeroBox: boolean
   focusNum: number
   lastLockStamp: number
   networkLevel: number
@@ -32,6 +31,7 @@ export interface CommentDetailEmit {
 export interface CommentDetailCtx {
   cdData: CommentDetailData
   svBottomUp?: ShallowRef<SvBottomUp>
+  svEl?: Ref<HTMLElement | null>
   scrollPosition: Ref<number>
   emit: CommentDetailEmit
 }

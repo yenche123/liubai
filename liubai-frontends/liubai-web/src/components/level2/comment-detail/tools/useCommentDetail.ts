@@ -14,6 +14,7 @@ import {
   scrollViewKey, 
   svBottomUpKey, 
   svScollingKey,
+  svElementKey,
 } from "~/utils/provide-keys";
 import type { SvProvideInject } from "~/types/components/types-scroll-view";
 import type { CommentShow, ThreadShow } from "~/types/types-content";
@@ -46,6 +47,7 @@ export function useCommentDetail(
   const { height } = useWindowSize()
   const svBottomUp = inject(svBottomUpKey)
   const scrollPosition = inject(svScollingKey, ref(0))
+  const svEl = inject(svElementKey)
 
   const cdData = reactive<CommentDetailData>({
     targetId: "",
@@ -54,7 +56,6 @@ export function useCommentDetail(
     belowList: [],
     hasReachedBottom: false,
     hasReachedTop: false,
-    showZeroBox: true,
     focusNum: 0,
     lastLockStamp: time.getTime(),
     networkLevel: level.value,
@@ -66,6 +67,7 @@ export function useCommentDetail(
   const ctx: CommentDetailCtx = {
     cdData,
     svBottomUp,
+    svEl,
     scrollPosition,
     emit,
   }
@@ -171,16 +173,12 @@ async function toLoadTargetComment(
 
   const hasData = c && c.oState === "OK"
 
-  // fix position
-  fixPosition(ctx)
-
   // reset some properties
   delete cdData.thread
   cdData.aboveList = []
   cdData.belowList = []
   cdData.hasReachedBottom = false
   cdData.hasReachedTop = false
-  cdData.showZeroBox = true
   cdData.targetComment = c
   cdData.state = hasData ? -1 : 50
 
@@ -288,6 +286,11 @@ async function toLoadBelowList(
   }
   else {
     commentController.handleRelation(newList)
+
+    // To avoid fixPosition() positioning incorrectly, 
+    // a delay is made
+    await liuUtil.waitAFrame()
+
     cdData.belowList = newList
   }
 
@@ -486,10 +489,40 @@ async function toLoadThread(
 
 /****************************** OTHER *************************/
 
-function fixPosition(
+async function fixPosition(
   ctx: CommentDetailCtx
 ) {
+  const { svEl, scrollPosition, svBottomUp } = ctx
+  const sv = svEl?.value
+  if(!sv || !svBottomUp) return
 
+  const h1 = sv.scrollHeight
+  const s1 = scrollPosition.value
+
+  await liuUtil.waitAFrame()
+
+  const h2 = sv.scrollHeight
+  const diff = h2 - h1
+  if(diff === 0) return
+
+  const s2 = scrollPosition.value
+  const newPosition = s1 + diff
+  const diff2 = Math.abs(newPosition - s2)
+
+  // console.log("diff: ", diff)
+  // console.log("s2: ", s2)
+  // console.log("nP: ", newPosition)
+  // console.log(" ")
+
+  if(diff2 < 2) return  
+
+  ctx.cdData.lastLockStamp = time.getTime()
+  svBottomUp.value = {
+    type: "pixel",
+    pixel: newPosition,
+    instant: true
+  }
+  
 }
 
 
