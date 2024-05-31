@@ -1,4 +1,4 @@
-import { computed, inject, nextTick, reactive, ref, toRef, watch } from "vue";
+import { computed, inject, reactive, ref, toRef, watch } from "vue";
 import type { 
   CommentDetailData,
   CommentDetailCtx,
@@ -10,7 +10,6 @@ import commentController from "~/utils/controllers/comment-controller/comment-co
 import usefulTool from "~/utils/basic/useful-tool"
 import threadController from "~/utils/controllers/thread-controller/thread-controller";
 import { useWindowSize } from "~/hooks/useVueUse";
-import valTool from "~/utils/basic/val-tool";
 import { 
   scrollViewKey, 
   svBottomUpKey, 
@@ -18,13 +17,13 @@ import {
 } from "~/utils/provide-keys";
 import type { SvProvideInject } from "~/types/components/types-scroll-view";
 import type { CommentShow, ThreadShow } from "~/types/types-content";
-import { type ValueComment, getValuedComments } from "~/utils/other/comment-related"
-import cfg from "~/config"
+import { type ValueComment } from "~/utils/other/comment-related"
 import { useTemporaryStore } from "~/hooks/stores/useTemporaryStore";
 import liuEnv from "~/utils/liu-env";
 import type {
   SyncGet_CheckContents,
   SyncGet_CommentList_B,
+  SyncGet_CommentList_C,
 } from "~/types/cloud/sync-get/types"
 import { CloudMerger } from "~/utils/cloud/CloudMerger";
 import time from "~/utils/basic/time";
@@ -231,9 +230,11 @@ async function preloadBelowList(
     commentId,
     lastItemStamp: opt.lastItemStamp,
   }
+  const delay = isInit ? undefined : 0
   const res5 = await CloudMerger.request(param5, {
     waitMilli: 3000,
     maxStackNum: 2,
+    delay,
   })
   if(!res5) {
     toLoadBelowList(ctx, opt, currentList)
@@ -338,7 +339,7 @@ async function preloadAboveList(
   }
   else if(c) {
     parentWeWant = c.replyToComment ?? ""
-    grandparent = c.replyToComment
+    grandparent = c.parentComment
   }
 
   if(!parentWeWant) {
@@ -356,23 +357,86 @@ async function preloadAboveList(
     grandparent,
   }
 
+  // 3. construct param
+  const param: SyncGet_CommentList_C = {
+    taskType: "comment_list",
+    loadType: "find_parent",
+    parentWeWant,
+    grandparent,
+  }
 
-  
-  
+  // 4. get to sync
+  console.log("preloadAboveList param.........")
+  console.log(param)
+  console.log(" ")
+  const delay = isInit ? undefined : 0
+  const res4 = await CloudMerger.request(param, {
+    waitMilli: 3000,
+    maxStackNum: 2,
+    delay,
+  })
+  console.log("preloadAboveList res: ")
+  console.log(res4)
+  console.log(" ")
+
+  // 5. get res4.length
+  const res5 = res4?.length ?? 2
+  toLoadAboveList(ctx, opt, isInit, res5)  
 }
 
 async function toLoadAboveList(
   ctx: CommentDetailCtx,
+  opt: LoadByCommentOpt,
+  isInit: boolean,
+  num: number,
 ) {
+  const { cdData } = ctx
+  const { targetComment, aboveList } = cdData
+  const firstComment = aboveList[0]
   
+  const newList = await commentController.loadByComment(opt)
+  usefulTool.filterDuplicated(aboveList, newList)
+
+  fixPosition(ctx)
+
+  if(isInit) {
+    commentController.handleRelation(newList, undefined, targetComment)
+    cdData.aboveList = newList
+  }
+  else {
+    commentController.handleRelation(newList, undefined,  firstComment)
+    cdData.aboveList.push(...newList)
+  }
+  
+  const newLength = newList.length
+  const newFirstComment = newList[0]
+  const newRe = newFirstComment?.replyToComment
+
+  // load again if the num that we has fetched is greater than
+  // the num we query from local db
+  if(newLength < num && newRe) {
+    // load again
+    console.log("toLoadAboveList again......")
+    opt.parentWeWant = newRe
+    opt.grandparent = newFirstComment.parentComment
+    toLoadAboveList(ctx, opt, false, 0)
+    return
+  }
+
+  if(!newRe) {
+    console.log("get to preloadThread......")
+    preloadThread(ctx, 0)
+  }  
 }
 
 
 /*************************** load thread **********************/
 async function preloadThread(
   ctx: CommentDetailCtx,
+  delay?: number,
 ) {
   const { cdData } = ctx
+  
   const id = cdData.targetComment?.parentComment
   if(!id) return
 
@@ -393,7 +457,7 @@ async function preloadThread(
   }
   await CloudMerger.request(param, { 
     waitMilli: 2500,
-    delay: 0,
+    delay,
   })
 
   toLoadThread(ctx, true)
@@ -428,7 +492,6 @@ function fixPosition(
 }
 
 
-
 function listenScoll(
   ctx: CommentDetailCtx
 ) {
@@ -453,113 +516,4 @@ function listenScoll(
     }
 
   })
-}
-
-
-
-// 3. 加载【溯源评论】（向上）
-async function loadAboveList(
-  ctx: CommentDetailCtx,
-  reload: boolean = false,
-) {
-  const { cdData } = ctx
-  if(!reload && cdData.hasReachedTop) {
-    return
-  }
-
-  let parentWeWant = ""
-  let grandparent: string | undefined
-
-  const c = cdData.targetComment
-  const tmpList = cdData.aboveList
-  const topComment = tmpList[0]
-  if(!reload && topComment) {
-    parentWeWant = topComment.replyToComment ?? ""
-    grandparent = topComment.parentComment
-  }
-  else if(c) {
-    parentWeWant = c.replyToComment ?? ""
-    grandparent = c.parentComment
-  }
-
-  if(!parentWeWant) {
-    loadThread(ctx)
-    return
-  }
-
-  const opt: LoadByCommentOpt = {
-    commentId: cdData.targetId,
-    loadType: "find_parent",
-    parentWeWant,
-    grandparent,
-  }
-  const newList = await commentController.loadByComment(opt)
-  usefulTool.filterDuplicated(cdData.aboveList, newList)
-
-  console.log("loadAboveList 结果: ")
-  console.log(newList)
-  console.log(" ")
-
-  if(!reload && topComment) {
-    commentController.handleRelation(newList, undefined, topComment)
-    cdData.aboveList.splice(0, 0, ...newList)
-  }
-  else {
-    commentController.handleRelation(newList, undefined, cdData.targetComment)
-    cdData.aboveList = newList
-  }
-  await fixCommentDetail(ctx, true)
-
-  // 判断是否要去加载 thread 了
-  const newRe = newList[0]?.replyToComment
-  if(!newRe && !cdData.hasReachedTop) {
-    loadThread(ctx)
-  }
-}
-
-// 固定 target 的位置
-async function fixCommentDetail(
-  ctx: CommentDetailCtx,
-  closeZeroBox: boolean = false
-) {
-  const svBottomUp = ctx.svBottomUp
-  if(!svBottomUp) return
-
-  const { cdData } = ctx
-  if(!cdData.showZeroBox) return
-
-  await nextTick()
-  cdData.lastLockStamp = time.getTime()  
-
-  svBottomUp.value = { 
-    type: "selectors", 
-    selectors: ".cd-virtual-zero",
-    instant: true,
-    offset: -(cfg.vice_navi_height + 10),
-  }
-
-  if(closeZeroBox) {
-    await valTool.waitMilli(250)
-    cdData.showZeroBox = false
-  }
-}
-
-
-// 4. 加载最顶部的 thread
-async function loadThread(
-  ctx: CommentDetailCtx,
-) {
-  const { cdData } = ctx
-  const id = cdData.targetComment?.parentThread
-  if(!id) return
-
-  const res = await threadController.getData({ id })
-
-  cdData.hasReachedTop = true
-  cdData.thread = res
-
-  // 当没有 aboveList 时，要固定目标评论，使它在窗口中相对位置不变
-  if(cdData.aboveList.length < 1) {
-    await fixCommentDetail(ctx, true)
-  }
 }
