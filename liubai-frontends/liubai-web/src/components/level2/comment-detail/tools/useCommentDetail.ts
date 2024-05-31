@@ -124,31 +124,36 @@ async function preloadTargetComment(
   // 3. check out if get to sync
   const canSync = liuEnv.canISync()
   if(!canSync || cdData.networkLevel < 1) {
-    await toLoadTargetComment(ctx, opt)
+    await toLoadTargetComment(ctx, opt, false, c2)
     preloadBelowList(ctx, true)
     preloadAboveList(ctx, true)
     return
   }
 
-  // 4. construct param for sync
+  // 4. show target comment before fetching if it exists
+  if(c2) {
+    toLoadTargetComment(ctx, opt, false, c2)
+  }
+
+  // 5. construct param for sync
   const ids = [id]
   if(c2.parentThread) {
     ids.push(c2.parentThread)
   }
-  const param4: SyncGet_CheckContents = {
+  const param5: SyncGet_CheckContents = {
     taskType: "check_contents",
     ids,
   }
-  const delay4 = liuUtil.check.isJustAppSetup() ? undefined : 0
-  const res4 = await CloudMerger.request(param4, { 
+  const delay5 = liuUtil.check.isJustAppSetup() ? undefined : 0
+  await CloudMerger.request(param5, { 
     waitMilli: 2500,
-    delay: delay4,
+    delay: delay5,
   })
 
-  // 5. load target comment currently
-  await toLoadTargetComment(ctx, opt)
+  // 6. load target comment currently
+  await toLoadTargetComment(ctx, opt, true)
 
-  // 6. load below & above list
+  // 7. load below & above list
   preloadBelowList(ctx, true)
   preloadAboveList(ctx, true)
 }
@@ -156,9 +161,14 @@ async function preloadTargetComment(
 async function toLoadTargetComment(
   ctx: CommentDetailCtx,
   opt: LoadByCommentOpt,
+  loadAgain: boolean,
+  c?: CommentShow,
 ) {
-  const { cdData } = ctx
-  let [c] = await commentController.loadByComment(opt)
+  const { cdData, emit } = ctx
+  if(loadAgain) {
+    let res = await commentController.loadByComment(opt)
+    c = res[0]
+  }
 
   const hasData = c && c.oState === "OK"
 
@@ -171,6 +181,8 @@ async function toLoadTargetComment(
   cdData.showZeroBox = true
   cdData.targetComment = c
   cdData.state = hasData ? -1 : 50
+
+  emit("pagestatechange", cdData.state)
 
   // fix position
   fixPosition()
