@@ -18,7 +18,7 @@ import {
 } from "~/utils/provide-keys";
 import type { SvProvideInject } from "~/types/components/types-scroll-view";
 import type { CommentShow } from "~/types/types-content";
-import { ValueComment, getValuedComments } from "~/utils/other/comment-related"
+import { type ValueComment, getValuedComments } from "~/utils/other/comment-related"
 import cfg from "~/config"
 import { useTemporaryStore } from "~/hooks/stores/useTemporaryStore";
 import liuEnv from "~/utils/liu-env";
@@ -32,7 +32,10 @@ import time from "~/utils/basic/time";
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
 import { storeToRefs } from "pinia";
 import liuUtil from "~/utils/liu-util";
-import { addChildrenIntoValueComments, fetchChildrenComments } from "../../utils/tackle-comments";
+import { 
+  addChildrenIntoValueComments, 
+  fetchChildrenComments,
+} from "../../utils/tackle-comments";
 
 export function useCommentDetail(
   props: CommentDetailProps,
@@ -235,16 +238,36 @@ async function preloadBelowList(
   toLoadBelowList(ctx, opt)
 }
 
-function toLoadBelowList(
+async function toLoadBelowList(
   ctx: CommentDetailCtx,
   opt: LoadByCommentOpt,
   newList?: CommentShow[],
 ) {
+  const { cdData } = ctx
 
+  if(!newList) {
+    newList = await commentController.loadByComment(opt)
+  }
 
+  const oldList = cdData.belowList
+  const oldLength = oldList.length
+  const lastComment = oldList[oldLength - 1]
 
-  // end up
-  // preloadChildrenOfBelow
+  if(opt.lastItemStamp) {
+    usefulTool.filterDuplicated(oldList, newList)
+    commentController.handleRelation(newList, lastComment)
+    cdData.belowList.push(...newList)
+  }
+  else {
+    commentController.handleRelation(newList)
+    cdData.belowList = newList
+  }
+
+  if(newList.length < 5) {
+    cdData.hasReachedBottom = true
+  }
+  
+  preloadChildrenOfBelow(ctx, newList)
 }
 
 

@@ -148,11 +148,12 @@ async function toLoadComments(
     newList = await commentController.loadByThread(opt)
   }
 
-  const oldLength = caData.comments.length
-  const lastComment = caData.comments[oldLength - 1]
+  const oldList = caData.comments
+  const oldLength = oldList.length
+  const lastComment = oldList[oldLength - 1]
   
   if(opt.lastItemStamp) {
-    usefulTool.filterDuplicated(caData.comments, newList)
+    usefulTool.filterDuplicated(oldList, newList)
     commentController.handleRelation(newList, lastComment)
     caData.comments.push(...newList)
   }
