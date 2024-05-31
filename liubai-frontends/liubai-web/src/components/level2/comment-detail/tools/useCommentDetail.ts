@@ -17,7 +17,7 @@ import {
   svScollingKey,
 } from "~/utils/provide-keys";
 import type { SvProvideInject } from "~/types/components/types-scroll-view";
-import type { CommentShow } from "~/types/types-content";
+import type { CommentShow, ThreadShow } from "~/types/types-content";
 import { type ValueComment, getValuedComments } from "~/utils/other/comment-related"
 import cfg from "~/config"
 import { useTemporaryStore } from "~/hooks/stores/useTemporaryStore";
@@ -172,6 +172,9 @@ async function toLoadTargetComment(
 
   const hasData = c && c.oState === "OK"
 
+  // fix position
+  fixPosition(ctx)
+
   // reset some properties
   delete cdData.thread
   cdData.aboveList = []
@@ -183,9 +186,7 @@ async function toLoadTargetComment(
   cdData.state = hasData ? -1 : 50
 
   emit("pagestatechange", cdData.state)
-
-  // fix position
-  fixPosition()
+  
 }
 
 
@@ -341,6 +342,7 @@ async function preloadAboveList(
   }
 
   if(!parentWeWant) {
+    preloadThread(ctx)
     return
   }
 
@@ -350,8 +352,10 @@ async function preloadAboveList(
   const opt: LoadByCommentOpt = {
     commentId,
     loadType: "find_parent",
-
+    parentWeWant,
+    grandparent,
   }
+
 
   
   
@@ -365,13 +369,61 @@ async function toLoadAboveList(
 
 
 /*************************** load thread **********************/
+async function preloadThread(
+  ctx: CommentDetailCtx,
+) {
+  const { cdData } = ctx
+  const id = cdData.targetComment?.parentComment
+  if(!id) return
 
+  // 1. load locally
+  const res = await threadController.getData({ id })
+
+  // 2. show thread if it exists
+  // because we fetch is in preloadTargetComment
+  if(res) {
+    toLoadThread(ctx, false, res)
+    return
+  }
+
+  // 3. fetch
+  const param: SyncGet_CheckContents = {
+    taskType: "check_contents",
+    ids: [id],
+  }
+  await CloudMerger.request(param, { 
+    waitMilli: 2500,
+    delay: 0,
+  })
+
+  toLoadThread(ctx, true)
+}
+
+async function toLoadThread(
+  ctx: CommentDetailCtx,
+  loadAgain: boolean,
+  res?: ThreadShow,
+) {
+  const { cdData } = ctx
+  if(loadAgain) {
+    const id = cdData.targetComment?.parentComment
+    if(!id) return
+    res = await threadController.getData({ id })
+  }
+
+  fixPosition(ctx)
+
+  cdData.hasReachedTop = true
+  cdData.thread = res
+}
 
 
 
 /****************************** OTHER *************************/
 
-function fixPosition() {
+function fixPosition(
+  ctx: CommentDetailCtx
+) {
 
 }
 
