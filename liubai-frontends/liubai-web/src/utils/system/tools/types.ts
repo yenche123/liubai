@@ -28,6 +28,9 @@ export interface LocalOnceData {
   // 前端用后端公钥加密前端的 aes 的结果
   enc_client_key?: string
 
+  // whether you want to open vConsole
+  mobile_debug?: boolean
+
 }
 
 export type KeyOfLocalOnceData = keyof LocalOnceData

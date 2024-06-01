@@ -7,6 +7,7 @@ import { useGlobalStateStore } from "./stores/useGlobalStateStore";
 import liuEnv from "~/utils/liu-env";
 import { useIdsChanged } from "./tools/useIdsChanged";
 import { initAnalytics } from "./tools/initAnalytics";
+import localCache from "~/utils/system/local-cache";
 
 // 监听和处理一些全局的事务，比如路由变化
 
@@ -77,15 +78,27 @@ async function initMobile() {
     return
   }
 
+  const _open = async () => {
+    const VConsole = await getVConsole()
+    new VConsole.default({
+      onReady() {
+        printInit()
+      }
+    })
+    import("~/styles/mobile-style.css")
+  }
+
   const _env = liuEnv.getEnv()
   if(_env.DEV) {
-    
+    _open()
+    return
   }
-  const VConsole = await getVConsole()
-  new VConsole.default({
-    onReady() {
-      printInit()
-    }
-  })
-  import("~/styles/mobile-style.css")
+
+  const onceData = localCache.getOnceData()
+  if(onceData.mobile_debug) {
+    _open()
+    return
+  }
+  
+  printInit()
 }

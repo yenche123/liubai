@@ -16,6 +16,7 @@ export function useSettingContent() {
   const { myProfile } = useMyProfile()
   const { prefix } = usePrefix()
   const hasBackend = liuEnv.hasBackend()
+  const _env = liuEnv.getEnv()
 
   const data = reactive<SettingContentData>({
     language: "system",
@@ -24,6 +25,8 @@ export function useSettingContent() {
     openTerms: false,
     termsList: getTermsList(),
     hasBackend,
+    debugBtn: Boolean(_env.DEBUG_BTN),
+    openDebug: false,
   })
 
   listenSystemStore(data)
@@ -41,7 +44,7 @@ export function useSettingContent() {
   }
 
   const version = LIU_ENV.version
-  let appName = liuEnv.getEnv().APP_NAME ?? ""
+  let appName = _env.APP_NAME ?? ""
   if(appName && appName[0]) {
     appName = appName[0].toUpperCase() + appName.substring(1)
   }

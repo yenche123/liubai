@@ -24,4 +24,8 @@ export interface SettingContentData {
   openTerms: boolean
   termsList: TermsItem[]
   hasBackend: boolean
+
+  debugBtn: boolean
+  openDebug: boolean
+
 }
