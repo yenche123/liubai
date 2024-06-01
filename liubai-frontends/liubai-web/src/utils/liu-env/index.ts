@@ -9,9 +9,12 @@ function getEnv(): LiuSystemEnv {
   if(_env) return _env
 
   const DEV = import.meta.env.DEV
-  const API_URL = import.meta.env.VITE_API_URL
   const API_DOMAIN = import.meta.env.VITE_API_DOMAIN
   const APP_NAME = import.meta.env.VITE_APP_NAME
+
+  // debug btn
+  const VITE_DEBUG_BTN = import.meta.env.VITE_DEBUG_BTN
+  const DEBUG_BTN = VITE_DEBUG_BTN === "01"
 
   // SaaS 各个服务情况上限
   const LOCAL_PIN_NUM = import.meta.env.VITE_LOCAL_PIN_NUM
@@ -71,9 +74,9 @@ function getEnv(): LiuSystemEnv {
 
   _env = {
     DEV,
-    API_URL,
     API_DOMAIN,
     APP_NAME,
+    DEBUG_BTN,
     LOCAL_PIN_NUM: Number(LOCAL_PIN_NUM),
     FREE_PIN_NUM: Number(FREE_PIN_NUM),
     PREMIUM_PIN_NUM: Number(PREMIUM_PIN_NUM),
@@ -111,13 +114,6 @@ function getEnv(): LiuSystemEnv {
   return _env
 }
 
-/** 从环境变量里判断，是否具备后端的配置，若无，则为纯本地应用 */
-function getIfPurelyLocal() {
-  const env = getEnv()
-  if(!env.API_URL) return true
-  return false
-}
-
 let backendExisted: boolean | undefined
 function hasBackend() {
   if(typeof backendExisted === "boolean") return backendExisted
@@ -138,7 +134,6 @@ function canISync() {
 
 export default {
   getEnv,
-  getIfPurelyLocal,
   hasBackend,
   canISync,
 }

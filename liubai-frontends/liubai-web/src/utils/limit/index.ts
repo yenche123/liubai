@@ -2,8 +2,8 @@ import type { LiuLimit } from "~/types/types-atom"
 import liuEnv from "../liu-env"
 
 function getMode() {
-  const env = liuEnv.getEnv()
-  if(env.API_URL) return "online"
+  const be = liuEnv.hasBackend()
+  if(be) return "online"
   return "pure_local"
 }
 

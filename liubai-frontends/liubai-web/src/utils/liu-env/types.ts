@@ -3,9 +3,10 @@
 export interface LiuSystemEnv {
   DEV: boolean
 
-  API_URL?: string
   API_DOMAIN?: string
   APP_NAME?: string
+
+  DEBUG_BTN?: boolean
 
   LOCAL_PIN_NUM: number
   FREE_PIN_NUM: number

@@ -37,8 +37,8 @@ export async function parseOurJson(
   // 那么不是自己发表的动态，一律过滤掉；
   // 若是自己的动态，只是 member 不一致，那允许往下执行
   // 也就是允许把不同工作区的动态导入进当前工作区
-  const isPureLocal = liuEnv.getIfPurelyLocal()
-  if(!isPureLocal && d.user !== myCtx.userId) return
+  const canSync = liuEnv.canISync()
+  if(canSync && d.user !== myCtx.userId) return
 
   let liuAssets = await parseAssets(dateStr, assets)
   const imgsFiles = getImagesAndFiles(d, liuAssets)
