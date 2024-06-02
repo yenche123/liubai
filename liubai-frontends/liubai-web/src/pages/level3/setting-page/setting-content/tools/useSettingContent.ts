@@ -108,8 +108,8 @@ async function whenTapClearCache() {
     content_key: "setting.clear_cache_1"
   })
   if(!res.confirm) return
-
-
+  localStorage.clear()
+  liuApi.route.reload()
 }
 
 function whenTapDebug(
