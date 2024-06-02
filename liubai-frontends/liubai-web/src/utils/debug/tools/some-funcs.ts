@@ -11,6 +11,11 @@ const getBugfender = async () => {
   return Bugfender
 }
 
+const getPostHog = async () => {
+  const { posthog } = await import("posthog-js")
+  return posthog
+}
+
 const isSentryExisted = () => {
   const _env = liuEnv.getEnv()
   const dsn = _env.SENTRY_DSN
@@ -28,9 +33,21 @@ const isBugfenderExisted = () => {
   return true
 }
 
+const isPostHogExisted = () => {
+  const _env = liuEnv.getEnv()
+  const {
+    POSTHOG_APIHOST,
+    POSTHOG_APIKEY,
+  } = _env
+  if(POSTHOG_APIHOST && POSTHOG_APIKEY) return true
+  return false
+}
+
 export {
   getSentry,
   getBugfender,
+  getPostHog,
   isSentryExisted,
   isBugfenderExisted,
+  isPostHogExisted,
 }

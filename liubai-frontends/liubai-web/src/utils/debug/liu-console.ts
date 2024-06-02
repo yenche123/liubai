@@ -1,15 +1,19 @@
 
 import time from "../basic/time"
 import localCache from "../system/local-cache";
-import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { db } from "../db";
 import {
   getSentry,
   getBugfender,
   isSentryExisted,
   isBugfenderExisted,
+  isPostHogExisted,
 } from "./tools/some-funcs"
 import type { Sentry_Breadcrumb } from "./tools/types"
+import {
+  setPostHogUserProperties, 
+  setSentryUserProperties,
+} from "./tools/user-properties";
 
 const showNowStamp = () => {
   const s = time.getTime()
@@ -58,53 +62,24 @@ const addBreadcrumb = async (breadcrumb: Sentry_Breadcrumb) => {
 
 // when workspace state is changed, please trigger the function
 const setUserTagsCtx = async () => {
-  const hasSentry = isSentryExisted()
-  if(!hasSentry) return
+  const localP = localCache.getPreference()
 
-  const { 
-    token,
-    local_id: userId,
-    theme,
-    language,
-  } = localCache.getPreference()
-
-  const Sentry = await getSentry()
-
-  // 1. set tags
-  Sentry.setTag("liu-theme", theme)
-  Sentry.setTag("liu-language", language)
-  Sentry.setTag("liu-has-token", Boolean(token))
-
-
-  // 2. set workspace as context
-  const wStore = useWorkspaceStore()
-  const spaceId = wStore.spaceId
-  const memberId = wStore.memberId
-  const spaceType = wStore.spaceType
-  const m = wStore.myMember
-  const nickname = m?.name
-
-  Sentry.setContext("workspace", {
-    spaceId,
-    memberId,
-    spaceType,
-  })
-
-  // 3. if no user
-  if(!userId) {
-    Sentry.setUser(null)
-    return
+  let email: string | undefined
+  if(localP.local_id) {
+    const user = await db.users.get(localP.local_id)
+    email = user?.email
   }
 
-  // 4. get user's email from db
-  const res = await db.users.get(userId)
-  const email = res?.email
+  const hasSentry = isSentryExisted()
+  if(hasSentry) {
+    setSentryUserProperties(localP, { email })
+  }
 
-  Sentry.setUser({
-    id: userId,
-    username: nickname,
-    email,
-  })
+  const hasPostHog = isPostHogExisted()
+  if(hasPostHog) {
+    setPostHogUserProperties(localP, { email })
+  }
+  
 }
 
 
