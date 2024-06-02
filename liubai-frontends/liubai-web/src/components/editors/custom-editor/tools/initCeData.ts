@@ -3,7 +3,7 @@
 
 
 import type { TipTapEditor } from "~/types/types-editor"
-import { reactive, watchEffect, ref, provide, watch, toRef } from "vue"
+import { reactive, ref, provide, watch, toRef, onActivated } from "vue"
 import type { ShallowRef, Ref } from "vue"
 import type { CeData, CeEmits, CeProps } from "./types"
 import { defaultData } from "./types"
@@ -18,11 +18,16 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
 import { handleOverflow } from "./handle-overflow"
 import liuEnv from "~/utils/liu-env"
-import type { LiuDownloadDraft, SyncGet_Draft, SyncGet_ThreadData } from "~/types/cloud/sync-get/types"
+import type { 
+  LiuDownloadDraft, 
+  SyncGet_Draft, 
+  SyncGet_ThreadData,
+} from "~/types/cloud/sync-get/types"
 import liuUtil from "~/utils/liu-util"
 import { CloudMerger } from "~/utils/cloud/CloudMerger"
 import ider from "~/utils/basic/ider"
 import { CloudFiler } from "~/utils/cloud/CloudFiler"
+import { useThrottleFn } from "~/hooks/useVueUse"
 
 const SEC_30 = 30 * time.SECONED
 let spaceIdRef: Ref<string>
@@ -57,6 +62,12 @@ export function initCeData(
   const numWhenSet = ref(0)
   provide(editorSetKey, numWhenSet)
 
+  const preInit = useThrottleFn((
+    ctx: IcsContext, threadId?: string
+  ) => {
+    initDraft(ctx, threadId)
+  }, 500)
+
   const getCtx = () => {
     const editorVal = editor.value
     const spaceId = spaceIdRef.value
@@ -70,22 +81,22 @@ export function initCeData(
     return ctx
   }
 
-  watchEffect(() => {
+  const whenCtxChanged = () => {
     const ctx = getCtx()
     if(!ctx) return
-    // console.log("去 initDraft.........")
     ceData.threadEdited = tVal.value
-    initDraft(ctx, tVal.value)
-  })
+    preInit(ctx, tVal.value)
+  }
+
+  watch([editor, spaceIdRef, tVal], whenCtxChanged)
+  onActivated(whenCtxChanged)
 
   // 监听 tag 从外部发生变化
   const gStore = useGlobalStateStore()
   const { tagChangedNum } = storeToRefs(gStore)
   watch(tagChangedNum, (newV) => {
     if(time.isWithinMillis(ceData.lastTagChangeStamp ?? 1, 500)) return
-    const ctx = getCtx()
-    if(!ctx) return
-    initDraft(ctx, tVal.value)
+    whenCtxChanged()
   })
 
   return { ceData }
