@@ -328,7 +328,11 @@
     "logout_bd_2": "純本機應用登出後，系統將刪除當前 APP 的所有資料，確定要登出嗎？",
     "logout_tip": "同時刪除我的本地資料",
     "logout_hd_2": "再次詢問",
-    "logout_bd_3": "確定要刪除所有資料嗎?"
+    "logout_bd_3": "確定要刪除所有資料嗎?",
+    "dev_debug": "開發調試",
+    "clear_cache": "清除緩存",
+    "mobile_debug": "行動端調試",
+    "clear_cache_1": "確定要清除緩存嗎？"
   },
   "export": {
     "markdown": "匯出成 markdown 文件",

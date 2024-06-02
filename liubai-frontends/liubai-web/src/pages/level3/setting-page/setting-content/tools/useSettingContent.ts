@@ -10,6 +10,8 @@ import liuEnv from "~/utils/liu-env"
 import { useSystemStore } from "~/hooks/stores/useSystemStore"
 import { storeToRefs } from "pinia"
 import { useMyProfile, usePrefix } from "~/hooks/useCommon"
+import localCache from "~/utils/system/local-cache"
+import liuApi from "~/utils/liu-api"
 
 export function useSettingContent() {
 
@@ -17,6 +19,7 @@ export function useSettingContent() {
   const { prefix } = usePrefix()
   const hasBackend = liuEnv.hasBackend()
   const _env = liuEnv.getEnv()
+  const onceData = localCache.getOnceData()
 
   const data = reactive<SettingContentData>({
     language: "system",
@@ -27,6 +30,7 @@ export function useSettingContent() {
     hasBackend,
     debugBtn: Boolean(_env.DEBUG_BTN),
     openDebug: false,
+    mobileDebug: Boolean(onceData.mobile_debug),
   })
 
   listenSystemStore(data)
@@ -42,6 +46,15 @@ export function useSettingContent() {
       showCancel: false,
     })
   }
+  const onTapDebug = () => whenTapDebug(data)
+
+  const onToggleMobileDebug = (newV: boolean) => {
+    data.mobileDebug = newV
+    localCache.setOnceData("mobile_debug", newV)
+    liuApi.route.reload()
+  }
+
+  const onTapClearCache = () => whenTapClearCache()
 
   const version = LIU_ENV.version
   let appName = _env.APP_NAME ?? ""
@@ -58,6 +71,9 @@ export function useSettingContent() {
     onTapTerms,
     onTapLogout,
     onTapAccounts,
+    onTapDebug,
+    onToggleMobileDebug,
+    onTapClearCache,
     version,
     appName,
   }
@@ -85,6 +101,23 @@ function listenSystemStore(
 
   }, { immediate: true })
 }
+
+async function whenTapClearCache() {
+  const res = await cui.showModal({
+    title_key: "tip.tip",
+    content_key: "setting.clear_cache_1"
+  })
+  if(!res.confirm) return
+
+
+}
+
+function whenTapDebug(
+  data: SettingContentData
+) {
+  data.openDebug = !data.openDebug
+}
+
 
 function whenTapLogout(
   data: SettingContentData

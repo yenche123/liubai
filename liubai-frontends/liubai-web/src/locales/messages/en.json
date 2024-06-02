@@ -328,7 +328,11 @@
     "logout_bd_2": "After logging out of the completely local APP, all data of the current APP will be directly deleted. Are you sure to log out?",
     "logout_tip": "Delete my local data as well",
     "logout_hd_2": "Warning",
-    "logout_bd_3": "It will delete all data. Are you sure?"
+    "logout_bd_3": "It will delete all data. Are you sure?",
+    "dev_debug": "Debug for Developers",
+    "clear_cache": "Clear cache",
+    "mobile_debug": "Mobile debug",
+    "clear_cache_1": "Are you sure to clear cache?"
   },
   "export": {
     "markdown": "Export as markdown files",

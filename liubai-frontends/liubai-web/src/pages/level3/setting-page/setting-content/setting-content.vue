@@ -28,6 +28,9 @@ const {
   onTapTerms,
   onTapLogout,
   onTapAccounts,
+  onTapDebug,
+  onToggleMobileDebug,
+  onTapClearCache,
   version,
   appName,
 } = useSettingContent()
@@ -91,7 +94,7 @@ const iconColor = "var(--main-normal)"
         </AppLink>
 
         <!-- accounts -->
-        <div class="liu-hover sc-bar" @click="onTapAccounts">
+        <div class="liu-hover sc-bar" @click.stop="onTapAccounts">
           <div class="scb-hd">
             <span>{{ t('setting.accounts') }}</span>
           </div>
@@ -113,7 +116,7 @@ const iconColor = "var(--main-normal)"
       </div>
       <div class="sc-box">
         <!-- 主题 -->
-        <div class="liu-hover sc-bar" @click="onTapTheme">
+        <div class="liu-hover sc-bar" @click.stop="onTapTheme">
           <div class="scb-hd">
             <span>{{ t('setting.theme') }}</span>
           </div>
@@ -149,7 +152,7 @@ const iconColor = "var(--main-normal)"
         </div>
 
         <!-- 语言 -->
-        <div class="liu-hover sc-bar" @click="onTapLanguage">
+        <div class="liu-hover sc-bar" @click.stop="onTapLanguage">
           <div class="scb-hd">
             <span>{{ t('setting.language') }}</span>
           </div>
@@ -235,16 +238,16 @@ const iconColor = "var(--main-normal)"
           </div>
         </div>
         <!-- 条款们 -->
-        <div class="sc-terms" :class="{ 'sc-terms_opened': data.openTerms }">
-          <div class="sc-terms-box" :class="{ 'sc-terms-box_opened': data.openTerms }">
+        <div class="sc-pad" :class="{ 'sc-pad_opened': data.openTerms }">
+          <div class="sc-pad-box" :class="{ 'sc-pad-box_opened': data.openTerms }">
             <template v-for="(item, index) in data.termsList"
               :key="item.text"
             >
-              <a :href="item.link" target="_blank" class="liu-hover sc-terms-item">
-                <div class="sc-terms-title">
+              <a :href="item.link" target="_blank" class="liu-hover sc-pad-item">
+                <div class="sc-pad-title">
                   <span>{{ item.text }}</span>
                 </div>
-                <div class="sc-terms-icon">
+                <div class="sc-pad-icon">
                   <svg-icon class="scti-back"
                     name="arrow-right2"
                   ></svg-icon>
@@ -254,7 +257,55 @@ const iconColor = "var(--main-normal)"
           </div>
         </div>
 
-        
+        <!-- 开发调试 -->
+        <div class="liu-hover sc-bar" @click="onTapDebug">
+          <div class="scb-hd">
+            <span>{{ t('setting.dev_debug') }}</span>
+          </div>
+          <div class="scb-footer">
+
+            <div class="scb-footer-icon">
+              <svg-icon class="scbf-back"
+                :class="{ 'scbfb_rotated': data.openDebug }"
+                name="arrow-right2"
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+          </div>
+        </div>
+
+        <!-- 调试们 -->
+        <div class="sc-pad" :class="{ 'sc-pad_opened': data.openDebug }">
+          <div class="sc-pad-box" :class="{ 'sc-pad-box_opened': data.openDebug }">
+
+            <!-- 移动端调试 -->
+            <div class="liu-hover sc-pad-item" 
+              @click.stop="onToggleMobileDebug(!data.mobileDebug)"
+            >
+              <div class="sc-pad-title">
+                <span>{{ t('setting.mobile_debug') }}</span>
+              </div>
+              <div class="sc-pad-footer">
+                <liu-switch :checked="data.mobileDebug" 
+                  @change="onToggleMobileDebug($event.checked)"
+                ></liu-switch>
+              </div>
+            </div>
+
+            <!-- 清除缓存 -->
+            <div class="liu-hover sc-pad-item" @click.stop="onTapClearCache">
+              <div class="sc-pad-title">
+                <span>{{ t('setting.clear_cache') }}</span>
+              </div>
+              <div class="sc-pad-icon">
+                <svg-icon class="scti-back"
+                  name="arrow-right2"
+                ></svg-icon>
+              </div>
+            </div>
+
+          </div>
+        </div>
 
         <!-- 退出 -->
         <div class="liu-hover sc-bar" @click="onTapLogout">
@@ -423,7 +474,7 @@ const iconColor = "var(--main-normal)"
   transform: rotate(90deg);
 }
 
-.sc-terms {
+.sc-pad {
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -432,23 +483,23 @@ const iconColor = "var(--main-normal)"
   transition: .3s;
 }
 
-.sc-terms_opened {
+.sc-pad_opened {
   max-height: 200px;
   opacity: 1;
 }
 
-.sc-terms-box {
+.sc-pad-box {
   position: relative;
   width: 100%;
   transform: translateY(-50%);
   transition: .3s;
 }
 
-.sc-terms-box_opened {
+.sc-pad-box_opened {
   transform: translateY(0);
 }
 
-.sc-terms-item {
+.sc-pad-item {
   width: 100%;
   border-radius: 8px;
   position: relative;
@@ -460,14 +511,14 @@ const iconColor = "var(--main-normal)"
   user-select: none;
 }
 
-.sc-terms-title {
+.sc-pad-title {
   font-size: var(--btn-font);
   color: var(--main-normal);
   font-weight: 700;
-  flex: 1;
+  flex: 2;
 }
 
-.sc-terms-icon {
+.sc-pad-icon {
   width: 28px;
   height: 28px;
   display: flex;
@@ -478,6 +529,13 @@ const iconColor = "var(--main-normal)"
     width: 16px;
     height: 16px;
   }
+}
+
+.sc-pad-footer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 @container sc-box (max-width: 550px) {

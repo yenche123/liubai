@@ -27,5 +27,6 @@ export interface SettingContentData {
 
   debugBtn: boolean
   openDebug: boolean
+  mobileDebug: boolean
 
 }

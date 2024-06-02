@@ -328,7 +328,11 @@
     "logout_bd_2": "纯本地应用退出后，系统将删除当前应用的所有数据，确定要退出吗？",
     "logout_tip": "同时删除我的本地数据",
     "logout_hd_2": "再次询问",
-    "logout_bd_3": "确定要删除所有数据吗？"
+    "logout_bd_3": "确定要删除所有数据吗？",
+    "dev_debug": "开发调试",
+    "mobile_debug": "移动端调试",
+    "clear_cache": "清除缓存",
+    "clear_cache_1": "确定要清除缓存吗？"
   },
   "export": {
     "markdown": "导出成 markdown 文件",
