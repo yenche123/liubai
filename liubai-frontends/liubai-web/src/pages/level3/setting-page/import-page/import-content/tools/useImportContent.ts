@@ -1,4 +1,4 @@
-import { ref } from "vue"
+import { onDeactivated, ref } from "vue"
 import type { Ref } from "vue"
 import liuUtil from "~/utils/liu-util"
 import type JSZip from "jszip"
@@ -61,6 +61,10 @@ export function useImportContent() {
       router.naviBack()
     }
   }
+
+  onDeactivated(() => {
+    onTapCancel()
+  })
 
 
   return {
