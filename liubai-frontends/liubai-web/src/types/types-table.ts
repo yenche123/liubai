@@ -38,6 +38,7 @@ export interface UserLocalTable extends BaseLocalTable {
   email?: string
   github_id?: number
   phone?: string
+  open_id?: string
   subscription?: UserSubscription
 }
 

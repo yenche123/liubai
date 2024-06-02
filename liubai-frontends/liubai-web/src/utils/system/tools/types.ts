@@ -6,6 +6,7 @@ export interface LocalPreference {
   theme?: LocalTheme
   language?: LocalLocale
   local_id?: string
+  open_id?: string
   token?: string
   serial?: string       // token 所在的序列号
   client_key?: string   // 前端生成的 aes 密钥

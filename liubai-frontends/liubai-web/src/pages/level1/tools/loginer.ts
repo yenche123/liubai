@@ -56,6 +56,7 @@ async function toLogin(
     theme: d.theme,
     language: d.language,
     local_id: userId,
+    open_id: d.open_id,
     token,
     serial: serial_id,
     client_key: ck,

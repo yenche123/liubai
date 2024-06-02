@@ -77,6 +77,10 @@ const createFileNonce = () => {
   return _createId(4)
 }
 
+const createOpenId = () => {
+  return "op0" + _createId(16)
+}
+
 export default {
   createUserId,
   createStateId,
@@ -95,4 +99,5 @@ export default {
   createSyncGetTaskId,
   createEncNonce,
   createFileNonce,
+  createOpenId,
 }

@@ -863,6 +863,7 @@ export interface Table_User extends BaseTable {
   oState: OState_User
   email?: string
   phone?: string
+  open_id?: string
   github_id?: number
   thirdData?: UserThirdData
   theme: LocalTheme
@@ -1139,6 +1140,7 @@ export interface Res_UserLoginNormal {
   email?: string
 
   // 只有一个 user 符合时
+  open_id?: string
   github_id?: number
   theme?: LocalTheme
   language?: LocalLocale
@@ -1157,6 +1159,7 @@ export interface Res_UserLoginNormal {
 
 export interface Res_UserSettings_Enter {
   email?: string
+  open_id?: string
   github_id?: number
   theme: LocalTheme
   language: LocalLocale

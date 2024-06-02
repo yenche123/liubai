@@ -28,6 +28,7 @@ export async function handleUser(
     updatedStamp: time.getTime(),
     email: d.email,
     github_id: d.github_id,
+    open_id: d.open_id,
   }
   const res3 = await db.users.update(userId, u)
   console.log("update user res3: ")
@@ -136,6 +137,7 @@ async function createUser(
     subscription: d.subscription,
     email: d.email,
     github_id: d.github_id,
+    open_id: d.open_id,
   }
 
   try {

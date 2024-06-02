@@ -27,6 +27,7 @@ export function logout(
   const p = localCache.getPreference()
   delete p.client_key
   delete p.local_id
+  delete p.open_id
   delete p.serial
   delete p.token
   localCache.setAllPreference(p)

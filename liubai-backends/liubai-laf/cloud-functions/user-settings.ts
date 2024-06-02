@@ -190,10 +190,18 @@ async function getUserSettings(
     return { code: "E4004", errMsg: "it cannot find an userinfo" }
   }
 
-  const { email, github_id, theme, language, subscription } = user
+  const { 
+    email, 
+    open_id,
+    github_id, 
+    theme, 
+    language, 
+    subscription,
+  } = user
   const spaceMemberList = ui.spaceMemberList
   const data: Res_UserSettings_Enter = {
     email,
+    open_id,
     github_id,
     theme,
     language,

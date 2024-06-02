@@ -36,6 +36,7 @@ export interface Res_UserLoginNormal {
   email?: string
 
   // 只有一个 user 符合时
+  open_id?: string
   github_id?: number
   theme?: LocalTheme
   language?: LocalLocale
@@ -57,6 +58,7 @@ export interface Res_UserLoginNormal {
 export interface Res_UserSettings_Enter {
   email?: string
   github_id?: number
+  open_id?: string
   theme: LocalTheme
   language: LocalLocale
   spaceMemberList: LiuSpaceAndMember[]

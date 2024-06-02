@@ -40,6 +40,7 @@ import {
   createCredentialForUserSelect, 
   createLoginState,
   createImgId,
+  createOpenId,
 } from "@/common-ids"
 import { checkIfEmailSentTooMuch, getActiveEmailCode, sendEmails } from "@/service-send"
 import { userLoginLang, useI18n, getAppName } from '@/common-i18n'
@@ -857,6 +858,7 @@ async function sign_in(
   // 7. 构造返回数据
   const obj3: Res_UserLoginNormal = {
     email: user.email,
+    open_id: user.open_id,
     github_id: user.github_id,
     theme: user.theme,
     language: user.language,
@@ -931,6 +933,10 @@ async function handleUserWhileSigningIn(
   }
   if(bLang !== user.language) {
     u.language = bLang
+  }
+
+  if(!user.open_id) {
+    u.open_id = createOpenId()
   }
 
   const now = getNowStamp()
@@ -1079,12 +1085,14 @@ async function sign_up(
 
   // 1. 构造 User
   const basic1 = getBasicStampWhileAdding()
+  const open_id = createOpenId()
   const github_id = thirdData?.github?.id
   const user: PartialSth<Table_User, "_id"> = {
     ...basic1,
     oState: "NORMAL",
     email,
     phone,
+    open_id,
     thirdData,
     theme: "system",
     systemTheme,

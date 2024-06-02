@@ -29,7 +29,7 @@ export async function afterGettingUserData(
   opt?: AgudOpt,
 ) {
 
-  const { local_id: userId } = localCache.getPreference()
+  const { local_id: userId, open_id } = localCache.getPreference()
   if(!userId) return false
 
   // 1. update theme & language
@@ -45,7 +45,12 @@ export async function afterGettingUserData(
   const res3 = await handleSpaceAndMember(d.spaceMemberList, rr)
   if(!res3) return false
 
-  // 4. update liuConsole's context
+  // 4. if old open_id is empty, set it
+  if(!open_id && d.open_id) {
+    localCache.setPreference("open_id", d.open_id)
+  }
+
+  // 5. update liuConsole's context
   await liuConsole.setUserTagsCtx()
   
   return true
@@ -64,6 +69,7 @@ async function handleUser(
     subscription: d.subscription,
     email: d.email,
     github_id: d.github_id,
+    open_id: d.open_id,
     updatedStamp: now,
   }
   if(opt?.isRefresh) {

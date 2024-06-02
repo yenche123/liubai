@@ -104,3 +104,7 @@ export function createFileRandom() {
   return createRandom(4, "onlyUppercase")
 }
 
+export function createOpenId() {
+  return "op0" + createRandom(16)
+}
+

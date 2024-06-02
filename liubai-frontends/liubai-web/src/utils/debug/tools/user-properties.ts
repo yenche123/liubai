@@ -11,6 +11,8 @@ export async function setSentryUserProperties(
   opt: SomeProperties,
 ) {
   const userId = localP.local_id
+  const open_id = localP.open_id
+  if(!open_id) return
   const Sentry = await getSentry()
 
   // 1. set tags
@@ -40,7 +42,7 @@ export async function setSentryUserProperties(
 
   // 4. set email & nickName
   Sentry.setUser({
-    id: userId,
+    id: open_id,
     username: nickname,
     email: opt.email,
   })
@@ -51,6 +53,8 @@ export async function setPostHogUserProperties(
   localP: LocalPreference,
   opt: SomeProperties,
 ) {
+  const open_id = localP.open_id
+  if(!open_id) return
   const userId = localP.local_id
   const posthog = await getPostHog()
 
@@ -79,7 +83,7 @@ export async function setPostHogUserProperties(
     return
   }
 
-  posthog.identify(userId, {
+  posthog.identify(open_id, {
     username: nickname,
     email: opt.email,
   })

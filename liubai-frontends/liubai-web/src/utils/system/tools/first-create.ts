@@ -21,7 +21,7 @@ export async function firstCreate(tryNum: number = 1): Promise<CreateData | null
   const workspace_local = ider.createWorkspaceId()
   const member_local = ider.createMemberId()
 
-  const user = await createUser(user_local, workspace_local)
+  const user = await createUser(user_local)
   if(!user) {
     const res0 = await firstCreate(tryNum + 1)
     return res0
@@ -45,11 +45,12 @@ export async function firstCreate(tryNum: number = 1): Promise<CreateData | null
 
 async function createUser(
   user_local: string,
-  workspace_local: string,
 ): Promise<UserLocalTable | void> {
   const t = time.getTime()
+  const open_id = ider.createOpenId()
   const data: UserLocalTable = {
     _id: user_local,
+    open_id,
     insertedStamp: t,
     updatedStamp: t,
     lastRefresh: t,
