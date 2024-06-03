@@ -282,6 +282,8 @@ function toSyncCloudChange(
 let lastSaveStamp = 0
 /****************** 收集信息、缓存 ***************/
 function collectState(ctx: CesCtx, instant: boolean = false) {
+  ctx.ceData.lastEditStamp = time.getTime()
+  
   if(collectTimeout) clearTimeout(collectTimeout)
   if(instant) {
     toSave(ctx)

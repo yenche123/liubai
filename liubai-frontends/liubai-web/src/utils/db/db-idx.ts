@@ -1,7 +1,7 @@
 
 
 // 版本号，凡是 dexieIdxs 被修改了，这里都要累加！！！
-export const DB_VERSION = 59
+export const DB_VERSION = 60
 
 const dexieIdxs = {
   users: [
@@ -18,6 +18,7 @@ const dexieIdxs = {
   drafts: [
     "_id",
     "first_id",
+    "editedStamp",
     "[infoType+user+spaceId]",
     "[infoType+user+threadEdited]",
     "[infoType+oState+user+spaceId]",

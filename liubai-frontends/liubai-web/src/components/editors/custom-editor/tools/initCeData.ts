@@ -3,7 +3,7 @@
 
 
 import type { TipTapEditor } from "~/types/types-editor"
-import { reactive, ref, provide, watch, toRef, onActivated } from "vue"
+import { reactive, ref, provide, watch, toRef } from "vue"
 import type { ShallowRef, Ref } from "vue"
 import type { CeData, CeEmits, CeProps } from "./types"
 import { defaultData } from "./types"
@@ -28,7 +28,9 @@ import { CloudMerger } from "~/utils/cloud/CloudMerger"
 import ider from "~/utils/basic/ider"
 import { CloudFiler } from "~/utils/cloud/CloudFiler"
 import { useThrottleFn } from "~/hooks/useVueUse"
+import { useActiveSyncNum } from "~/hooks/useCommon"
 
+const SEC_6 = 6 * time.SECONED
 const SEC_30 = 30 * time.SECONED
 let spaceIdRef: Ref<string>
 
@@ -66,7 +68,7 @@ export function initCeData(
     ctx: IcsContext, threadId?: string
   ) => {
     initDraft(ctx, threadId)
-  }, 500)
+  }, 1500)
 
   const getCtx = () => {
     const editorVal = editor.value
@@ -89,7 +91,12 @@ export function initCeData(
   }
 
   watch([editor, spaceIdRef, tVal], whenCtxChanged)
-  onActivated(whenCtxChanged)
+  
+  const { activeSyncNum } = useActiveSyncNum()
+  watch(activeSyncNum, (newV) => {
+    if(newV < 2) return
+    whenCtxChanged()
+  })
 
   // 监听 tag 从外部发生变化
   const gStore = useGlobalStateStore()
@@ -108,13 +115,17 @@ async function initDraft(
   threadId?: string,
 ) {
 
+  const { lastEditStamp = 1 } = ctx.ceData
+  if(time.isWithinMillis(lastEditStamp, SEC_6)) {
+    return
+  }
+
   // if threadId exists, initDraftWithThreadId()
   if(threadId) {
     // 使用 lastWin 法则，比较 thread 和 draft
     initDraftWithThreadId(ctx, threadId)
     return
   }
-
 
   let draft = await localReq.getDraft(spaceIdRef.value)
   const _id = draft?._id

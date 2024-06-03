@@ -37,7 +37,7 @@ async function getDraftById(id: string) {
   return res
 }
 
-// 根据 workspace，来查询有没有 draft 并且 threadEdited 为空的情况
+// 根据 workspace，来查询有没有 draft 并且 threadEdited / commentEdited 为空的情况
 async function getDraft(spaceId: string) {
   const user = _getUserId()
   const w: Partial<DraftLocalTable> = {
@@ -52,7 +52,8 @@ async function getDraft(spaceId: string) {
     return true
   }
 
-  const res = await db.drafts.where(w).filter(_filter).toArray()
+  const q = db.drafts.where(w).filter(_filter)
+  const res = await q.reverse().sortBy("editedStamp")
   if(!res || res.length < 1) return null
   return res[0]
 }

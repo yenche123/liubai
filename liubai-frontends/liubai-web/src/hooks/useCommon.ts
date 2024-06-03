@@ -1,7 +1,7 @@
 // 一些常用的响应式工具函数
 
 import { storeToRefs } from "pinia"
-import { computed, ref } from "vue"
+import { computed, onActivated, onBeforeUnmount, onDeactivated, ref, watch } from "vue"
 import { useWorkspaceStore } from "./stores/useWorkspaceStore"
 import type { MemberShow } from "~/types/types-content";
 import { useLiuWatch } from "./useLiuWatch";
@@ -9,6 +9,7 @@ import localCache from "~/utils/system/local-cache";
 import { db } from "~/utils/db";
 import { usersToMemberShows } from "~/utils/other/member-related";
 import { membersToShows } from "~/utils/other/member-related";
+import { CloudEventBus } from "~/utils/cloud/CloudEventBus";
 
 // 获取路径的前缀
 // 如果当前非个人工作区，就会加上 `/w/${spaceId}`
@@ -57,3 +58,24 @@ export function useMyProfile() {
 
   return { myProfile }
 }
+
+export function useActiveSyncNum() {
+  const activeSyncNum = ref(0)
+  const syncNum = CloudEventBus.getSyncNum()
+  const isActivated = ref(false)
+  onActivated(() => isActivated.value = true)
+  onDeactivated(() => isActivated.value = false)
+  onBeforeUnmount(() => isActivated.value = false)
+  watch([syncNum, isActivated], (
+    [newV1, newV2]
+  ) => {
+    if(newV1 < 1) return
+    if(!newV2) return
+    activeSyncNum.value = newV1
+  }, { immediate: true })
+
+  return {
+    activeSyncNum,
+  }
+}
+

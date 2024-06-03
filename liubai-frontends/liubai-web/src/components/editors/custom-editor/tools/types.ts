@@ -18,6 +18,7 @@ export interface CeData {
   editorContent?: EditorCoreContent
   lastTagChangeStamp?: number
   lastLockStamp?: number     // 锁定时间戳，避免去存储 draft
+  lastEditStamp?: number
   overflowType: "auto" | "visible"
   showTitleBar: boolean
   canSubmit: boolean

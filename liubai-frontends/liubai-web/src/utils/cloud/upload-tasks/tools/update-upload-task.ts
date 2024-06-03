@@ -121,9 +121,6 @@ async function bulkChangeProgressType(
   }
 
   const res = await db.upload_tasks.bulkUpdate(list)
-  console.log("db.upload_tasks.bulkUpdate: ")
-  console.log(res)
-  console.log(" ")
   return true
 }
 

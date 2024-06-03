@@ -1,7 +1,7 @@
 import APIs from "~/requests/APIs"
 import liuReq from "~/requests/liu-req"
 import { type ScData } from "./types"
-import { onActivated, onDeactivated, reactive, ref, watch } from "vue"
+import { reactive, watch } from "vue"
 import liuEnv from "~/utils/liu-env"
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 import time from "~/utils/basic/time"
@@ -22,6 +22,7 @@ import { db } from "~/utils/db"
 import localCache from "~/utils/system/local-cache"
 import type { UserLocalTable } from "~/types/types-table"
 import cui from "~/components/custom-ui"
+import { useActiveSyncNum } from "~/hooks/useCommon"
 
 let timeout1: LiuTimeout  // in order to avoid the view from always loading
 let timeout2: LiuTimeout  // for setDataState
@@ -127,17 +128,10 @@ function initSubscribeContent(
 
   if(scData.state === 53) return
 
-  const isActivated = ref(false)
-  onActivated(() => isActivated.value = true)
-  onDeactivated(() => isActivated.value = false)
-
-  // 1. listen to syncNum
-  const syncNum = CloudEventBus.getSyncNum()
-  watch([syncNum, isActivated], (
-    [newV1, newV2]
-  ) => {
-    if(newV1 < 1) return
-    if(!newV2) return
+  // 1. listen to activeSyncNum
+  const { activeSyncNum } = useActiveSyncNum()
+  watch(activeSyncNum, (newV) => {
+    if(newV < 1) return
     checkState(scData)
   }, { immediate: true })
 
