@@ -4,6 +4,8 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { usePrefix, useMyProfile } from "~/hooks/useCommon";
 import cui from "~/components/custom-ui";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
+import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
+import time from "~/utils/basic/time";
 
 const MORE_ITEMS: MenuItem[] = [
   {
@@ -51,7 +53,16 @@ export function useScTop(emits: ScTopEmits) {
   }
 }
 
-function toModifyName(val: string) {
+async function toModifyName(val: string) {
   const wStore = useWorkspaceStore()
-  wStore.setNickName(val)
+  await wStore.setNickName(val)
+
+  const target_id = wStore.memberId
+  if(!target_id) return
+
+  LocalToCloud.addTask({
+    uploadTask: "member-nickname",
+    target_id,
+    operateStamp: time.getTime(),
+  }, true)
 }
