@@ -6,7 +6,12 @@ import type { SvProvideInject } from "~/types/components/types-scroll-view"
 import type { TlProps, TlViewType, TlEmits, TlData, TlContext } from "./types"
 import type { TcListOption } from "~/utils/controllers/thread-controller/type"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
-import { svBottomUpKey, scrollViewKey, svScollingKey } from "~/utils/provide-keys";
+import { 
+  svBottomUpKey, 
+  scrollViewKey, 
+  svScollingKey,
+  svElementKey,
+} from "~/utils/provide-keys";
 import { handleLastItemStamp } from "./useTLCommon"
 import tlUtil from "./tl-util"
 import typeCheck from "~/utils/basic/type-check"
@@ -34,6 +39,8 @@ export function useThreadList(
 
   // 获取命令 scroll-view 滚动到期望位置的控制器
   const svBottomUp = inject(svBottomUpKey)
+  const scrollPosition = inject(svScollingKey)
+  const svEl = inject(svElementKey)
 
   const cssDetectOverflow = liuApi.canIUse.cssDetectTextOverflow()
   const tlData = reactive<TlData>({
@@ -51,6 +58,8 @@ export function useThreadList(
     reloadRequired: false,
     emits,
     props,
+    scrollPosition,
+    svEl,
   }
 
   // 1. 监听触底/顶加载
@@ -75,6 +84,7 @@ export function useThreadList(
     awakeNum,
   } = useAwakeNum()
   watch(awakeNum, (newV) => {
+    console.log("awakeNum......", newV)
     if(newV < 1) return
     if(ctx.reloadRequired) {
       scollTopAndUpdate(ctx)
@@ -130,7 +140,7 @@ export function useThreadList(
 
   // 5. 获取滚动位置，当卡片被点击展开全文时
   // 恢复定位
-  const scrollPosition = inject(svScollingKey)
+  
   const whenTapBriefing = async () => {
     if(!scrollPosition) return
     const sP1 = scrollPosition.value
@@ -169,9 +179,26 @@ function checkList(
 
   const { list } = ctx.tlData
   if(list.length < 10) {
+    console.log("kkkkkkkkkkkkkk")
     loadList(ctx, true)
     return
   }
+
+  const sv = ctx.svEl?.value
+  if(!sv) return
+  const h1 = sv.scrollHeight - sv.clientHeight
+  const s1 = ctx.scrollPosition?.value ?? 0
+  const diff = h1 - s1
+
+  console.log("s1: ", s1)
+  console.log("diff: ", diff)
+  console.log(" ")
+
+  if(s1 < 300 || diff > 300) {
+    loadList(ctx, true)
+    return
+  }
+  
 }
 
 function isViewType(ctx: TlContext, val: TlViewType) {

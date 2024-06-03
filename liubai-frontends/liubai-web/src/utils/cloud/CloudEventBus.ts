@@ -26,8 +26,8 @@ import { getUser } from "./tools/some-funcs";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import liuConsole from "../debug/liu-console";
 
-const SEC_30 = 30 * time.SECONED
-const MIN_30 = 30 * time.MINUTE
+const SEC_15 = 15 * time.SECONED
+const MIN_15 = 15 * time.MINUTE
 
 // 事件总线，对云同步任务进行调度
 class CloudEventBus {
@@ -104,9 +104,9 @@ class CloudEventBus {
   private static async main() {
 
     // 0. 避免频繁请求的阻断
-    // 0.1 判断是否 30s 内已经请求过了
+    // 0.1 判断是否 15s 内已经请求过了
     const lms = this.lastFinishMainStamp
-    if(time.isWithinMillis(lms, SEC_30)) return
+    if(time.isWithinMillis(lms, SEC_15)) return
 
     // 0.2 判断是否正在执行 main()
     if(this.isMaining) return
@@ -168,9 +168,9 @@ class CloudEventBus {
   // 去执行用户进入应用的流程
   private static async userEnter() {
 
-    // 30 分钟内已经进入过了直接返回 true，视为已同后端交互过
+    // 15 分钟内已经进入过了直接返回 true，视为已同后端交互过
     const lues = this.lastUserEnterStamp
-    if(time.isWithinMillis(lues, MIN_30)) return true
+    if(time.isWithinMillis(lues, MIN_15)) return true
 
     const res = await fetchUserEnter()
     const { code, data: d } = res

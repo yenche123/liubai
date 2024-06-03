@@ -41,6 +41,8 @@ export interface TlContext {
   reloadRequired: boolean
   emits: TlEmits
   props: TlProps
+  scrollPosition?: Ref<number>
+  svEl?: Ref<HTMLElement | null>
 }
 
 export const tlProps = {

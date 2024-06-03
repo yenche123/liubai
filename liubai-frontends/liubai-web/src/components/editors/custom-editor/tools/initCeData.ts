@@ -94,6 +94,7 @@ export function initCeData(
   const { activeSyncNum } = useActiveSyncNum()
   watch(activeSyncNum, (newV) => {
     if(newV < 2) return
+    console.log("activeSyncNum: ", newV)
     whenCtxChanged()
   })
 
