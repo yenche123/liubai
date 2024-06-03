@@ -1,7 +1,6 @@
 // 初始化 编辑器上的文本
 // 仅从本地缓存上寻找！
 
-
 import type { TipTapEditor } from "~/types/types-editor"
 import { reactive, ref, provide, watch, toRef } from "vue"
 import type { ShallowRef, Ref } from "vue"
@@ -213,8 +212,13 @@ async function initDraftFromDraft(
     editor.commands.setContent(json)
     ceData.editorContent = { text, json }
     handleOverflow(ceData)
-    numWhenSet.value++
   }
+  else {
+    editor.commands.setContent("<p></p>")
+    ceData.overflowType = defaultData.overflowType
+    delete ceData.editorContent
+  }
+  numWhenSet.value++
 
   initFromCloudDraft(ctx, draft)
 }
@@ -372,13 +376,13 @@ async function initFromCloudDraft(
     editor.commands.setContent(json)
     ceData.editorContent = { text, json }
     handleOverflow(ceData)
-    numWhenSet.value++
   }
   else {
     editor.commands.setContent("<p></p>")
     ceData.overflowType = defaultData.overflowType
     delete ceData.editorContent
   }
+  numWhenSet.value++
 
   if(updated_1 || updated_2) {
     CloudFiler.notify("drafts", cloud_draft._id)
@@ -433,6 +437,7 @@ async function resetFromCloud(
 
   // 4. reset all
   console.warn("reset all")
+  ceData.lastLockStamp  = time.getTime()
   ceData.overflowType = defaultData.overflowType
   ceData.visScope = defaultData.visScope
   ceData.tagIds = []
@@ -442,6 +447,8 @@ async function resetFromCloud(
   delete ceData.images
   delete ceData.files
   delete ceData.editorContent
+  ctx.editor.commands.setContent("<p></p>")
+  ctx.numWhenSet.value++
   ceData.canSubmit = false
 }
 
@@ -473,8 +480,13 @@ async function initDraftFromThread(
     editor.commands.setContent(json)
     ceData.editorContent = { text, json }
     handleOverflow(ceData)
-    numWhenSet.value++
   }
+  else {
+    editor.commands.setContent("<p></p>")
+    ceData.overflowType = defaultData.overflowType
+    delete ceData.editorContent
+  }
+  numWhenSet.value++
 
   if(loadCloud) {
     initFromCloudDraft(ctx, undefined, thread)

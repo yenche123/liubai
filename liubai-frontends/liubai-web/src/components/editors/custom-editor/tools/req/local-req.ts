@@ -52,7 +52,7 @@ async function getDraft(spaceId: string) {
     return true
   }
 
-  const q = db.drafts.where(w).filter(_filter)
+  const q = db.drafts.where(w).filter(_filter).limit(1)
   const res = await q.reverse().sortBy("editedStamp")
   if(!res || res.length < 1) return null
   return res[0]
