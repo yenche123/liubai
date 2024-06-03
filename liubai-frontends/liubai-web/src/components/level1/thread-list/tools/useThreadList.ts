@@ -1,4 +1,4 @@
-import { inject, onActivated, onDeactivated, reactive, toRef, toRefs, watch } from "vue"
+import { inject, reactive, toRef, toRefs, watch } from "vue"
 import threadController from "~/utils/controllers/thread-controller/thread-controller"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
@@ -20,6 +20,8 @@ import type {
   SyncGet_CheckContents,
 } from "~/types/cloud/sync-get/types"
 import localCache from "~/utils/system/local-cache"
+import { useAwakeNum } from "~/hooks/useCommon"
+import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
 
 export function useThreadList(
   props: TlProps,
@@ -45,7 +47,6 @@ export function useThreadList(
   const ctx: TlContext = {
     tlData,
     spaceIdRef,
-    showNum: 0,
     svBottomUp,
     reloadRequired: false,
     emits,
@@ -59,10 +60,6 @@ export function useThreadList(
     const { type } = svData
     if(isViewType(ctx, "PINNED")) return
 
-    // console.log("触底或触顶.........")
-    // console.log(type)
-    // console.log(" ")
-
     if(type === "to_end") {
       if(tlData.hasReachedBottom) return
       loadList(ctx)
@@ -72,21 +69,19 @@ export function useThreadList(
     }
   })
 
-  // 2. 监听页面切换，使用 vue 原生的 
-  // onActivated / onDeactivated 来实现
-  let isActivated = true
-  onActivated(() => {
-    isActivated = true
-    ctx.showNum++
+  // 2. 监听页面切换 / syncNum 变化
+  const {
+    isActivated,
+    awakeNum,
+  } = useAwakeNum()
+  watch(awakeNum, (newV) => {
+    if(newV < 1) return
     if(ctx.reloadRequired) {
       scollTopAndUpdate(ctx)
     }
-    else if(ctx.showNum > 1) {
+    else if(newV > 1) {
       checkList(ctx)
     }
-  })
-  onDeactivated(() => {
-    isActivated = false
   })
 
   const gStore = useGlobalStateStore()
@@ -109,7 +104,7 @@ export function useThreadList(
         return
       }
 
-      if(!isActivated) {
+      if(!isActivated.value) {
         ctx.reloadRequired = true
         return
       }
@@ -120,7 +115,6 @@ export function useThreadList(
         return
       }
     }
-
     scollTopAndUpdate(ctx)
   }, { immediate: true })
 
@@ -303,6 +297,11 @@ async function loadCloud(
 ) {
   const hasLogin = localCache.hasLoginWithBackend()
   if(!hasLogin) return
+
+  const nStore = useNetworkStore()
+  if(nStore.level < 1) {
+    return
+  }
 
   // 1. request
   const param1: SyncGet_ThreadList = {

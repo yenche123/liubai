@@ -37,7 +37,6 @@ export interface TlEmits {
 export interface TlContext {
   tlData: TlData,
   spaceIdRef: Ref<string>
-  showNum: number
   svBottomUp?: ShallowRef<SvBottomUp>
   reloadRequired: boolean
   emits: TlEmits

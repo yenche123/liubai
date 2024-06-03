@@ -1,7 +1,14 @@
 // 一些常用的响应式工具函数
 
 import { storeToRefs } from "pinia"
-import { computed, onActivated, onBeforeUnmount, onDeactivated, ref, watch } from "vue"
+import { 
+  computed, 
+  onActivated, 
+  onBeforeUnmount, 
+  onDeactivated, 
+  ref, 
+  watch,
+} from "vue"
 import { useWorkspaceStore } from "./stores/useWorkspaceStore"
 import type { MemberShow } from "~/types/types-content";
 import { useLiuWatch } from "./useLiuWatch";
@@ -10,6 +17,7 @@ import { db } from "~/utils/db";
 import { usersToMemberShows } from "~/utils/other/member-related";
 import { membersToShows } from "~/utils/other/member-related";
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus";
+import { useThrottleFn } from "~/hooks/useVueUse"
 
 // 获取路径的前缀
 // 如果当前非个人工作区，就会加上 `/w/${spaceId}`
@@ -76,6 +84,36 @@ export function useActiveSyncNum() {
 
   return {
     activeSyncNum,
+  }
+}
+
+export function useAwakeNum(
+  ms: number = 3000
+) {
+  const awakeNum = ref(0)
+
+  const syncNum = CloudEventBus.getSyncNum()
+  const isActivated = ref(false)
+  onActivated(() => isActivated.value = true)
+  onDeactivated(() => isActivated.value = false)
+  onBeforeUnmount(() => isActivated.value = false)
+
+  const _trigger = useThrottleFn((newSyncNum: number) => {
+    const oldV = awakeNum.value
+    const newV = oldV < newSyncNum ? newSyncNum : (oldV + 1)
+    awakeNum.value = newV
+  }, ms)
+
+  watch([syncNum, isActivated], (
+    [newV1, newV2]
+  ) => {
+    if(!newV2) return
+    _trigger(newV1)
+  }, { immediate: true })
+  
+  return {
+    awakeNum,
+    isActivated,
   }
 }
 
