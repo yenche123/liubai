@@ -1,5 +1,5 @@
 
-import { ref, watch, toRaw, isProxy, computed, toRef } from "vue";
+import { ref, watch, computed, toRef } from "vue";
 import type { Ref, ShallowRef } from "vue";
 import type { 
   EditorCoreContent, 
@@ -309,10 +309,10 @@ async function toSave(ctx: CesCtx) {
   let oState: OState_Draft = "OK"
   let oldOState: OState_Draft | undefined
   if(ceData.draftId) {
+    _id = ceData.draftId
     const tmp = await localReq.getDraftById(ceData.draftId)
     if(tmp) {
       insertedStamp = tmp.insertedStamp
-      _id = tmp._id
       first_id = tmp.first_id
       oState = tmp.oState
       oldOState = tmp.oState
@@ -327,11 +327,11 @@ async function toSave(ctx: CesCtx) {
   }
 
   // 响应式对象 转为普通对象
-  if(isProxy(liuDesc)) liuDesc = toRaw(liuDesc)
+  liuDesc = liuUtil.toRawData(liuDesc)
   let images = _getStoragedFiles(ceData)
   let files = _getStoragedFiles<LiuFileStore>(ceData, "files")
-  let remindMe = isProxy(ceData.remindMe) ? toRaw(ceData.remindMe) : ceData.remindMe
-  let tagIds = isProxy(ceData.tagIds) ? toRaw(ceData.tagIds) : ceData.tagIds
+  let remindMe = liuUtil.toRawData(ceData.remindMe)
+  let tagIds = liuUtil.toRawData(ceData.tagIds)
 
   // checking out oState for local situation
   const ss = ceData.storageState
@@ -384,16 +384,13 @@ function saveDraftToCloud(
 ) {
   const newOState = d.oState
 
-  console.log("newOState: ", newOState)
-
   // 1. draft-set if oState is OK
   if(newOState === "OK") {
-    console.log("upload draft to cloud.......")
     LocalToCloud.addTask({
       uploadTask: "draft-set",
       target_id: d._id,
       operateStamp: d.editedStamp,
-    })
+    }, true)
     return
   }
 

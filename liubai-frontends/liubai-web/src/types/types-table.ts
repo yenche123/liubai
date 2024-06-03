@@ -122,10 +122,12 @@ export interface DraftLocalTable extends BaseLocalTable {
   replyToComment?: string
   visScope?: VisScope
   storageState?: StorageState
+  
   title?: string
   liuDesc?: TipTapJSONContent[]
   images?: LiuImageStore[]
   files?: LiuFileStore[]
+
   whenStamp?: number
   remindMe?: LiuRemindMe
   tagIds?: string[]

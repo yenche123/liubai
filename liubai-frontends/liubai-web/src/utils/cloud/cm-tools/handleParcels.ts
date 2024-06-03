@@ -23,22 +23,23 @@ import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
 import { db } from "~/utils/db";
 import { CloudFiler } from "../CloudFiler";
-import type { SpaceType } from "~/types/types-basic";
+import type { SpaceType, StorageState } from "~/types/types-basic";
 import type { 
   Bulk_Content,
   Bulk_Collection,
+  Bulk_Draft,
 } from "./types";
-
 
 let merged_content_ids: string[] = []
 let merged_collection_ids: string[] = []
 let merged_member_ids: string[] = []
-let merged_user_ids: string[] = []
 
 let new_contents: ContentLocalTable[] = []
 let update_contents: Bulk_Content[] = []
 let new_collections: CollectionLocalTable[] = []
 let update_collections: Bulk_Collection[] = []
+let new_drafts: DraftLocalTable[] = []
+let update_drafts: Bulk_Draft[] = []
 
 export async function handleLiuDownloadParcels(
   list: LiuDownloadParcel[]
@@ -66,32 +67,46 @@ export async function handleLiuDownloadParcels(
 
 }
 
+function bulkNotify(
+  table: LiuTable,
+  list: ContentLocalTable[] | DraftLocalTable[],
+) {
+  list.forEach(v => {
+    const len1 = v.images?.length ?? 0
+    const len2 = v.files?.length ?? 0
+    if(len1 || len2) {
+      CloudFiler.notify(table, v._id)
+    }
+  })
+}
+
+function bulkNotify2(
+  table: LiuTable,
+  list: Bulk_Content[] | Bulk_Draft[],
+) {
+  list.forEach(v => {
+    const bool1 = Boolean(v.changes.images)
+    const bool2 = Boolean(v.changes.files)
+    if(bool1 || bool2) {
+      CloudFiler.notify(table, v.key)
+    }
+  })
+}
+
 
 async function operateAll() {
   if(new_contents.length > 0) {
     await db.contents.bulkPut(new_contents)
 
     // notify CloudFiler
-    new_contents.forEach(v => {
-      const len1 = v.images?.length ?? 0
-      const len2 = v.files?.length ?? 0
-      if(len1 || len2) {
-        CloudFiler.notify("contents", v._id)
-      }
-    })
+    bulkNotify("contents", new_contents)
   }
 
   if(update_contents.length > 0) {
     await db.contents.bulkUpdate(update_contents)
     
     // notify CloudFiler
-    update_contents.forEach(v => {
-      const bool1 = Boolean(v.changes.images)
-      const bool2 = Boolean(v.changes.files)
-      if(bool1 || bool2) {
-        CloudFiler.notify("contents", v.key)
-      }
-    })
+    bulkNotify2("contents", update_contents)
   }
 
   if(new_collections.length > 0) {
@@ -108,6 +123,22 @@ async function operateAll() {
     await db.collections.bulkUpdate(update_collections) 
   }
 
+  if(new_drafts.length > 0) {
+    console.log("new_drafts: ")
+    console.log(valTool.copyObject(new_drafts))
+    console.log(" ")
+    await db.drafts.bulkPut(new_drafts)
+    bulkNotify("drafts", new_drafts)
+  }
+
+  if(update_drafts.length > 0) {
+    console.log("update_drafts: ")
+    console.log(valTool.copyObject(update_drafts))
+    console.log(" ")
+    await db.drafts.bulkUpdate(update_drafts) 
+    bulkNotify2("drafts", update_drafts)
+  }
+
 }
 
 
@@ -116,12 +147,13 @@ function reset() {
   merged_content_ids = []
   merged_collection_ids = []
   merged_member_ids = []
-  merged_user_ids = []
 
   new_contents = []
   update_contents = []
   new_collections = []
   update_collections = []
+  new_drafts = []
+  update_drafts = []
 }
 
 async function handleContentParcels(
@@ -217,11 +249,137 @@ async function handleDraftParcels(
   
 }
 
+async function deleteDraft(id: string) {
+  await db.drafts.delete(id)
+}
+
 async function mergeDraft(
   d: LiuDownloadDraft,
-  oldDraft?: DraftLocalTable,
+  od?: DraftLocalTable,
 ) {
+  const draft_id = d._id
 
+  // 1. the draft has been posted or deleted
+  const newOState = d.oState
+  if(newOState === "POSTED" || newOState === "DELETED") {
+    if(od) {
+      await deleteDraft(od._id)
+    }
+    return
+  }
+
+  // 2. create it if no local draft
+  if(!od) {
+    createDraft(d)
+    return
+  }
+
+  // 3. update draft if oldDraft exists
+  const u: Bulk_Draft = {
+    key: draft_id,
+    changes: {},
+  }
+  const g = u.changes
+  const edited = d.editedStamp > od.editedStamp
+  
+  // 4. when draft has been turned into LOCAL
+  if(newOState === "LOCAL") {
+    if(od.oState === "LOCAL") return
+    g.oState = "LOCAL"
+    const ss = od.storageState
+    if(ss === "CLOUD" || ss === "WAIT_UPLOAD") {
+      g.storageState = getDraftStorageState(d)
+    }
+    if(edited) {
+      g.editedStamp = d.editedStamp
+    }
+    u.changes = g
+    update_drafts.push(u)
+    return
+  }
+
+  // 5. other situations
+  if(!edited) return
+
+  g.editedStamp = d.editedStamp
+  g.first_id = d.first_id
+  g.oState = d.oState
+  g.storageState = getDraftStorageState(d)
+  g.visScope = d.visScope
+
+  g.title = d.title
+  g.liuDesc = d.liuDesc
+  const imgRes = CloudFiler.updateImages(d.images)
+  if(imgRes.updated) {
+    g.images = imgRes.images
+  }
+  const fileRes = CloudFiler.updateFiles(d.files)
+  if(fileRes.updated) {
+    g.files = fileRes.files
+  }
+
+  g.whenStamp = d.whenStamp
+  g.remindMe = d.remindMe
+  g.tagIds = d.tagIds
+
+  u.changes = g
+  update_drafts.push(u)
+}
+
+function getDraftStorageState(
+  d: LiuDownloadDraft,
+) {
+  let storageState: StorageState = "CLOUD"
+  const newOState = d.oState
+  if(newOState === "LOCAL") {
+    if(d.threadEdited || d.commentEdited) {
+      storageState = "ONLY_LOCAL"
+    }
+    else {
+      storageState = "LOCAL"
+    }
+  }
+  return storageState
+}
+
+function createDraft(
+  d: LiuDownloadDraft,
+) {
+  const b = time.getBasicStampWhileAdding()
+
+  const { images } = CloudFiler.updateImages(d.images)
+  const { files } = CloudFiler.updateFiles(d.files)
+
+  let storageState = getDraftStorageState(d)
+  const c: DraftLocalTable = {
+    _id: d._id,
+    ...b,
+    first_id: d.first_id,
+    infoType: d.infoType,
+    oState: d.oState,
+    user: d.user,
+    spaceId: d.spaceId,
+    spaceType: d.spaceType,
+    threadEdited: d.threadEdited,
+    commentEdited: d.commentEdited,
+    parentThread: d.parentThread,
+    parentComment: d.parentComment,
+    replyToComment: d.replyToComment,
+    visScope: d.visScope,
+    storageState,
+
+    title: d.title,
+    liuDesc: d.liuDesc,
+    images,
+    files,
+
+    whenStamp: d.whenStamp,
+    remindMe: d.remindMe,
+    tagIds: d.tagIds,
+    editedStamp: d.editedStamp,
+    firstSyncStamp: b.insertedStamp,
+  }
+  new_drafts.push(c)
 }
 
 
@@ -494,7 +652,7 @@ interface MergeCollectionOpt {
   oldCollection?: CollectionLocalTable
 }
 
-async function mergeCollection(
+function mergeCollection(
   d: LiuDownloadCollection,
   opt: MergeCollectionOpt,
 ) {

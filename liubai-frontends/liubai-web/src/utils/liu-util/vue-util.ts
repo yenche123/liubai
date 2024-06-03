@@ -1,17 +1,14 @@
-import { unref } from "vue"
-import { isRef } from "vue"
-import { 
-  isReactive, 
+import {
   toRaw, 
-  type Ref, 
-  ref, 
-  type UnwrapRef,
+  unref,
+  isRef,
+  isProxy,
 } from "vue"
 
 
 export const toRawData = <T = any>(obj: T): T => {
   if(!obj) return obj
-  if(!isReactive(obj)) return obj
+  if(!isProxy(obj)) return obj
   return toRaw(obj)
 }
 
@@ -21,7 +18,7 @@ export const getRawList = <T = any>(list?: T[]): T[] => {
   const newList: T[] = []
   for(let i=0; i<list.length; i++) {
     const v = list[i]
-    if(isReactive(v)) {
+    if(isProxy(v)) {
       newList.push(toRaw(v))
     }
     else {

@@ -6,6 +6,7 @@ import type { DexieBulkUpdateAtom } from "~/types/other/types-dexie"
 import type { 
   CollectionLocalTable, 
   ContentLocalTable,
+  DraftLocalTable,
 } from "~/types/types-table"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 
@@ -25,3 +26,4 @@ export interface CmOpt {
 
 export type Bulk_Content = DexieBulkUpdateAtom<ContentLocalTable>
 export type Bulk_Collection = DexieBulkUpdateAtom<CollectionLocalTable>
+export type Bulk_Draft = DexieBulkUpdateAtom<DraftLocalTable>

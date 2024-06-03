@@ -237,15 +237,18 @@ async function initFromCloudDraft(
   ctx: IcsContext,
   local_draft?: DraftLocalTable,
   local_thread?: ContentLocalTable,
+  delay?: number,
 ) {
   const canSync = liuEnv.canISync()
   if(!canSync) return
+
+  // 0. get some required params
+  const { ceData } = ctx
 
   // 1. construct opt for cloud
   const opt: SyncGet_Draft = {
     taskType: "draft_data",
   }
-  let delay: number | undefined
 
   if(local_draft) {
     const res1 = liuUtil.check.hasEverSynced(local_draft)
@@ -265,18 +268,32 @@ async function initFromCloudDraft(
   // 2. to merge
   const res = await CloudMerger.request(opt, { delay })
 
+  // console.log("看一下 initFromCloudDraft 结果: ")
+  // console.log(res)
+  // console.log(" ")
+
   // 3. filter nothing
   if(!res) return
   const firRes = res[0]
   if(!firRes) return
   if(firRes.parcelType !== "draft") return
+
+  // 3.1 if not_found
+  if(firRes.status === "not_found") {
+    if(local_draft && !local_draft.threadEdited) {
+      ceData.draftId = ""
+      initFromCloudDraft(ctx, undefined, undefined, 0)
+    }
+    return
+  }
+
   if(firRes.status !== "has_data") return
   const cloud_draft = firRes.draft
   if(!cloud_draft) return
 
 
   // 4. get latest local thread & draft
-  const { ceData, numWhenSet, editor } = ctx
+  const { numWhenSet, editor } = ctx
   if(ceData.draftId) {
     local_draft = await localReq.getDraftById(ceData.draftId)
   }
@@ -309,6 +326,7 @@ async function initFromCloudDraft(
   const diff = e2 - e1
   if(diff > SEC_30) return
 
+  const oldDraftId = ceData.draftId
   ceData.lastLockStamp = time.getTime()
   ceData.draftId = cloud_draft._id
   ceData.visScope = cloud_draft.visScope ?? defaultData.visScope
@@ -353,6 +371,12 @@ async function initFromCloudDraft(
 
   if(updated_1 || updated_2) {
     CloudFiler.notify("drafts", cloud_draft._id)
+  }
+
+  if(oldDraftId !== cloud_draft._id) {
+    if(oldDraftId) {
+      await localReq.deleteDraftById(oldDraftId)
+    }
   }
   
 }
