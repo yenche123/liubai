@@ -24,8 +24,8 @@ import type {
 } from "~/types/cloud/sync-get/types"
 import liuUtil from "~/utils/liu-util"
 import { CloudMerger } from "~/utils/cloud/CloudMerger"
-import ider from "~/utils/basic/ider"
 import { CloudFiler } from "~/utils/cloud/CloudFiler"
+import ider from "~/utils/basic/ider"
 import { useThrottleFn } from "~/hooks/useVueUse"
 import { useActiveSyncNum } from "~/hooks/useCommon"
 
@@ -153,7 +153,7 @@ async function initDraftWithThreadId(
   let thread = await localReq.getContentById(threadId)
 
   if(!draft && !thread) {
-    initFromCloudThread(ctx, threadId)
+    initFromCloudThread(ctx, threadId, true)
     return
   }
   ctx.emits("hasdata", threadId)
@@ -228,6 +228,7 @@ async function initDraftFromDraft(
 async function initFromCloudThread(
   ctx: IcsContext,
   threadId: string,
+  loadCloudMore: boolean,
 ) {
   const canSync = liuEnv.canISync()
   if(!canSync) {
@@ -245,7 +246,7 @@ async function initFromCloudThread(
     return
   }
   ctx.emits("hasdata", threadId)
-  initDraftFromThread(ctx, thread)
+  initDraftFromThread(ctx, thread, loadCloudMore)
 }
 
 
@@ -296,9 +297,16 @@ async function initFromCloudDraft(
 
   // 3.1 if not_found
   if(firRes.status === "not_found") {
-    if(local_draft && !local_draft.threadEdited) {
+    if(local_draft) {
+      let threadId = local_draft.threadEdited
       ceData.draftId = ""
-      initFromCloudDraft(ctx, undefined, undefined, 0)
+      if(threadId) {
+        initFromCloudThread(ctx, threadId, false)
+      }
+      else {
+        initFromCloudDraft(ctx, undefined, undefined, 0)
+      }
+      
     }
     return
   }
@@ -427,9 +435,9 @@ async function resetFromCloud(
 
   delete ceData.draftId
 
-  // 3. initDraftFromThread if threadEdited exists
+  // 3. if threadEdited and local_thread exist
+  //   init it from thread
   if(ceData.threadEdited) {
-    // console.warn("initDraftFromThread if threadEdited exists")
     if(local_thread) {
       initDraftFromThread(ctx, local_thread, false)
     }
