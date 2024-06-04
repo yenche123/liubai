@@ -1,4 +1,4 @@
-.ProseMirror.virtual-cursor-enabled {
+.editor-core .ProseMirror.virtual-cursor-enabled {
   /* Hide the native cursor */
   caret-color: transparent;
 }
@@ -12,7 +12,7 @@
   position: absolute;
   cursor: text;
   pointer-events: none;
-  transform: translate(-0.5px);
+  transform: translate(-0.75px);
   user-select: none;
   -webkit-user-select: none;
   border-left: 2px solid var(--prosemirror-virtual-cursor-color);
