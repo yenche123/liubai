@@ -59,6 +59,7 @@ declare global {
       LIU_QINIU_ACCESS_KEY?: string
       LIU_QINIU_SECRET_KEY?: string
       LIU_QINIU_BUCKET?: string           // 七牛云的目标桶名称
+      LIU_QINIU_FOLDER?: string           // 目标桶下的文件夹，不要加斜杠，默认为 users
       LIU_QINIU_CALLBACK_URL?: string
       LIU_QINIU_CDN_DOMAIN?: string       // 七牛云的 cdn 域名，结尾不要加 /
       LIU_QINIU_CUSTOM_KEY?: string       // 自定义密钥，用于在 webhook-qiniu 中验证使用

@@ -72,6 +72,7 @@ function getUploadTokenViaQiniu(
   const qiniu_bucket = _env.LIU_QINIU_BUCKET ?? ""
   const qiniu_callback_url = _env.LIU_QINIU_CALLBACK_URL ?? ""
   const qiniu_custom_key = _env.LIU_QINIU_CUSTOM_KEY ?? ""
+  const qiniu_folder = _env.LIU_QINIU_FOLDER || "users"
   const mac = new qiniu.auth.digest.Mac(qiniu_access_key, qiniu_secret_key)
 
   const MB = 1024 * 1024
@@ -79,7 +80,7 @@ function getUploadTokenViaQiniu(
   const MB_100 = 100 * MB
 
   const r = createFileRandom()
-  const prefix = `users/${user._id}-${r}`
+  const prefix = `${qiniu_folder}/${user._id}-${r}`
 
   // 2. 构造上传凭证
   let callbackBody = "bucket=$(bucket)&key=$(key)&hash=$(etag)&fname=$(fname)"
