@@ -332,7 +332,8 @@
     "dev_debug": "Debug for Developers",
     "clear_cache": "Clear cache",
     "mobile_debug": "Mobile debug",
-    "clear_cache_1": "Are you sure to clear cache?"
+    "clear_cache_1": "Are you sure to clear cache?",
+    "select_avatar": "Cropping is not supported yet. Crop by yourself and select it please!"
   },
   "export": {
     "markdown": "Export as markdown files",

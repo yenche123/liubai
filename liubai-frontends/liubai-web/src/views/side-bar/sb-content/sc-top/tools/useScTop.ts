@@ -44,12 +44,17 @@ export function useScTop(emits: ScTopEmits) {
     toModifyName(value)
   }
 
+  const onTapAvatar = () => {
+
+  }
+
   return {
     prefix,
     myProfile,
     MORE_ITEMS,
     onTapMoreMenuItem,
     onTapName,
+    onTapAvatar,
   }
 }
 
@@ -66,3 +71,4 @@ async function toModifyName(val: string) {
     operateStamp: time.getTime(),
   }, true)
 }
+

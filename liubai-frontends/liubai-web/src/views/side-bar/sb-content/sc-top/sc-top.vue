@@ -26,6 +26,7 @@ const {
   MORE_ITEMS,
   onTapMoreMenuItem,
   onTapName,
+  onTapAvatar,
 } = useScTop(emits)
 
 const {
@@ -55,6 +56,7 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
       v-if="myProfile"
       :member-show="myProfile"
       class="sc-avatar"
+      @click.stop="onTapAvatar"
     ></LiuAvatar>
     
     <div class="sc-title" v-if="myProfile?.name" @click.stop="onTapName">

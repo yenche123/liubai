@@ -332,7 +332,8 @@
     "dev_debug": "开发调试",
     "mobile_debug": "移动端调试",
     "clear_cache": "清除缓存",
-    "clear_cache_1": "确定要清除缓存吗？"
+    "clear_cache_1": "确定要清除缓存吗？",
+    "select_avatar": "应用内尚不支持裁切，请自行裁切成矩形再选取哦！"
   },
   "export": {
     "markdown": "导出成 markdown 文件",
