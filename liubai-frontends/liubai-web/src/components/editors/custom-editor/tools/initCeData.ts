@@ -1,7 +1,7 @@
 // 初始化 编辑器上的文本
 // 仅从本地缓存上寻找！
 
-import type { TipTapEditor } from "~/types/types-editor"
+import type { TipTapEditor, TipTapJSONContent } from "~/types/types-editor"
 import { reactive, ref, provide, watch, toRef } from "vue"
 import type { ShallowRef, Ref } from "vue"
 import type { CeData, CeEmits, CeProps } from "./types"
@@ -205,21 +205,8 @@ async function initDraftFromDraft(
   ceData.images = draft.images
   ceData.files = draft.files
   ceData.tagIds = draft.tagIds ?? []
-  
-  if(draft.liuDesc) {
-    let text = transferUtil.tiptapToText(draft.liuDesc)
-    let json = { type: "doc", content: draft.liuDesc }
 
-    editor.commands.setContent(json)
-    ceData.editorContent = { text, json }
-    handleOverflow(ceData)
-  }
-  else {
-    editor.commands.setContent("<p></p>")
-    ceData.overflowType = defaultData.overflowType
-    delete ceData.editorContent
-  }
-  numWhenSet.value++
+  setEditorContent(ctx, draft.liuDesc)
 
   initFromCloudDraft(ctx, draft)
 }
@@ -377,8 +364,30 @@ async function initFromCloudDraft(
 
   ceData.tagIds = cloud_draft.tagIds ?? []
 
+  let descJSON: TipTapJSONContent[] | undefined
   if(cloud_draft.liuDesc) {
-    const draftDescJSON = transferUtil.liuToTiptap(cloud_draft.liuDesc)
+    descJSON = transferUtil.liuToTiptap(cloud_draft.liuDesc)
+  }
+  setEditorContent(ctx, descJSON)
+
+  if(updated_1 || updated_2) {
+    CloudFiler.notify("drafts", cloud_draft._id)
+  }
+
+  if(oldDraftId !== cloud_draft._id) {
+    if(oldDraftId) {
+      await localReq.deleteDraftById(oldDraftId)
+    }
+  }
+  
+}
+
+function setEditorContent(
+  ctx: IcsContext,
+  draftDescJSON?: TipTapJSONContent[],
+) {
+  const { ceData, editor, numWhenSet } = ctx
+  if(draftDescJSON) {
     let text = transferUtil.tiptapToText(draftDescJSON)
     let json = { type: "doc", content: draftDescJSON }
 
@@ -393,19 +402,7 @@ async function initFromCloudDraft(
   }
   numWhenSet.value++
 
-  if(updated_1 || updated_2) {
-    CloudFiler.notify("drafts", cloud_draft._id)
-  }
-
-  if(oldDraftId !== cloud_draft._id) {
-    if(oldDraftId) {
-      await localReq.deleteDraftById(oldDraftId)
-    }
-  }
-  
 }
-
-
 
 async function resetFromCloud(
   ctx: IcsContext,
@@ -481,21 +478,11 @@ async function initDraftFromThread(
   ceData.files = thread.files
   ceData.tagIds = thread.tagIds ?? []
 
+  let descJSON: TipTapJSONContent[] | undefined
   if(thread.liuDesc) {
-    let draftDescJSON = transferUtil.liuToTiptap(thread.liuDesc)
-    let text = transferUtil.tiptapToText(draftDescJSON)
-    let json = { type: "doc", content: draftDescJSON }
-
-    editor.commands.setContent(json)
-    ceData.editorContent = { text, json }
-    handleOverflow(ceData)
+    descJSON = transferUtil.liuToTiptap(thread.liuDesc)
   }
-  else {
-    editor.commands.setContent("<p></p>")
-    ceData.overflowType = defaultData.overflowType
-    delete ceData.editorContent
-  }
-  numWhenSet.value++
+  setEditorContent(ctx, descJSON)
 
   if(loadCloud) {
     initFromCloudDraft(ctx, undefined, thread)
