@@ -7,7 +7,6 @@ import type { ShallowRef, Ref } from "vue"
 import type { CeData, CeEmits, CeProps } from "./types"
 import { defaultData } from "./types"
 import type { ContentLocalTable, DraftLocalTable } from "~/types/types-table"
-import type { LiuRemindMe } from "~/types/types-atom"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import localReq from "./req/local-req"
 import transferUtil from "~/utils/transfer-util"
@@ -15,7 +14,7 @@ import { editorSetKey } from "~/utils/provide-keys"
 import { storeToRefs } from "pinia"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
-import { handleOverflow } from "./handle-overflow"
+import { handleOverflow, getRemindMeFromThread } from "./some-funcs"
 import liuEnv from "~/utils/liu-env"
 import type { 
   LiuDownloadDraft, 
@@ -180,7 +179,7 @@ async function initDraftFromDraft(
   ctx: IcsContext,
   draft: DraftLocalTable,
 ) {
-  let { ceData, editor, numWhenSet } = ctx
+  let { ceData } = ctx
 
   // 开始处理 draft 有值的情况
   ceData.lastLockStamp = time.getTime()
@@ -304,7 +303,6 @@ async function initFromCloudDraft(
 
 
   // 4. get latest local thread & draft
-  const { numWhenSet, editor } = ctx
   if(ceData.draftId) {
     local_draft = await localReq.getDraftById(ceData.draftId)
   }
@@ -401,7 +399,6 @@ function setEditorContent(
     delete ceData.editorContent
   }
   numWhenSet.value++
-
 }
 
 async function resetFromCloud(
@@ -444,7 +441,6 @@ async function resetFromCloud(
   // 4. reset all
   console.warn("reset all")
   ceData.lastLockStamp  = time.getTime()
-  ceData.overflowType = defaultData.overflowType
   ceData.visScope = defaultData.visScope
   ceData.tagIds = []
   delete ceData.title
@@ -452,9 +448,8 @@ async function resetFromCloud(
   delete ceData.remindMe
   delete ceData.images
   delete ceData.files
-  delete ceData.editorContent
-  ctx.editor.commands.setContent("<p></p>")
-  ctx.numWhenSet.value++
+  
+  setEditorContent(ctx)
   ceData.canSubmit = false
 }
 
@@ -464,7 +459,7 @@ async function initDraftFromThread(
   thread: ContentLocalTable,
   loadCloud: boolean = true,
 ) {
-  let { ceData, editor, numWhenSet } = ctx
+  let { ceData } = ctx
   const canSync = liuEnv.canISync()
   ceData.lastLockStamp = time.getTime()
   ceData.draftId = ""
@@ -473,7 +468,7 @@ async function initDraftFromThread(
   ceData.title = thread.title
   ceData.showTitleBar = Boolean(thread.title)
   ceData.whenStamp = thread.whenStamp
-  ceData.remindMe = _getRemindMeFromThread(thread)
+  ceData.remindMe = getRemindMeFromThread(thread)
   ceData.images = thread.images
   ceData.files = thread.files
   ceData.tagIds = thread.tagIds ?? []
@@ -487,22 +482,4 @@ async function initDraftFromThread(
   if(loadCloud) {
     initFromCloudDraft(ctx, undefined, thread)
   }
-}
-
-
-// 从 thread 中判断 "xx 之后提醒我" 这个值怎么转成确切时间点
-function _getRemindMeFromThread(
-  thread: ContentLocalTable
-): LiuRemindMe | undefined {
-  const oldRemindMe = thread.remindMe
-  if(!oldRemindMe) return
-  const oldType = oldRemindMe.type
-  if(oldType === "specific_time" || oldType === "early") return oldRemindMe
-  const remindStamp = thread.remindStamp
-  if(!remindStamp) return
-  const newRemindMe: LiuRemindMe = {
-    type: "specific_time",
-    specific_stamp: remindStamp
-  }
-  return newRemindMe
 }
