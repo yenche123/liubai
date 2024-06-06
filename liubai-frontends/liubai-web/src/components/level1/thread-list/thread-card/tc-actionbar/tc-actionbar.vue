@@ -39,6 +39,7 @@ const props = defineProps({
 })
 
 const emits = defineEmits<TcaEmit>()
+const { isPC } = liuApi.getCharacteristic()
 
 // decode emoji
 const theEmoji = computed(() => {
@@ -86,46 +87,46 @@ const default_color = "var(--main-code)"
       </div>
     </div>
 
-    <!-- 评论 -->
+    <!-- tag -->
     <div class="liu-hover tca-item"
-      @click.stop="$emit('tapcomment')"
+      @click.stop="$emit('newoperate', 'tag')"
     >
       <div class="tca-icon-box">
-        <svg-icon name="comment" class="tca-icon_comment" :color="default_color"></svg-icon>
-      </div>
-      <div v-if="commentNum > 0" class="tcb-text tcb-text_adjusted">
-        <span>{{ commentShow }}</span>
+        <svg-icon name="tag" class="tca-icon" :color="default_color"></svg-icon>
       </div>
     </div>
 
-    <!-- 分享 -->
+    <!-- state -->
     <div class="liu-hover tca-item"
-      @click.stop="$emit('tapshare')"
+      @click.stop="$emit('newoperate', 'state')"
     >
       <div class="tca-icon-box">
-        <svg-icon name="share" class="tca-icon" :color="default_color"></svg-icon>
+        <svg-icon name="priority_400" class="tca-icon" :color="default_color"></svg-icon>
       </div>
     </div>
     
-    <!-- 更多的 -->
-    <div class="tca-more-container">
+    <!-- more and more -->
+    <div class="tca-more-container" v-if="isPC">
       <div class="tca-more-box" :class="{ 'tca-more-box_show': showMore }">
 
-        <!-- 标签 -->
+        <!-- comment -->
         <div class="liu-hover tca-item"
-          @click.stop="$emit('newoperate', 'tag')"
+          @click.stop="$emit('tapcomment')"
         >
           <div class="tca-icon-box">
-            <svg-icon name="tag" class="tca-icon" :color="default_color"></svg-icon>
+            <svg-icon name="comment" class="tca-icon_comment" :color="default_color"></svg-icon>
+          </div>
+          <div v-if="commentNum > 0" class="tcb-text tcb-text_adjusted">
+            <span>{{ commentShow }}</span>
           </div>
         </div>
 
-        <!-- 状态 -->
+        <!-- share -->
         <div class="liu-hover tca-item"
-          @click.stop="$emit('newoperate', 'state')"
+          @click.stop="$emit('tapshare')"
         >
           <div class="tca-icon-box">
-            <svg-icon name="priority_400" class="tca-icon" :color="default_color"></svg-icon>
+            <svg-icon name="share" class="tca-icon" :color="default_color"></svg-icon>
           </div>
         </div>
 
