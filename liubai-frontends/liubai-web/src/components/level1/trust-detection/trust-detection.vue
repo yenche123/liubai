@@ -3,8 +3,11 @@ import { ref } from "vue"
 import liuApi from "~/utils/liu-api"
 import { useI18n } from "vue-i18n";
 
+const enable = ref(false)
 const res = liuApi.canIUse.isSafeBrowser()
-const enable = ref(!res)
+if(!res) {
+  enable.value = true
+}
 
 const { t } = useI18n()
 
@@ -83,7 +86,5 @@ const { t } = useI18n()
   margin-block-start: 20px;
   margin-block-end: 20px;
 }
-
-
 
 </style>
