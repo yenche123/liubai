@@ -81,50 +81,61 @@ export function useThreadList(
   // 2. 监听页面切换 / syncNum 变化
   const {
     isActivated,
+    syncNum,
     awakeNum,
   } = useAwakeNum()
-  watch(awakeNum, (newV) => {
-    if(newV < 1) return
-    if(ctx.reloadRequired) {
-      scollTopAndUpdate(ctx)
-    }
-    else if(newV > 1) {
-      checkList(ctx)
-    }
-  })
 
   const gStore = useGlobalStateStore()
   const { tagChangedNum } = storeToRefs(gStore)
 
+  const _whenTagSystemChanged = () => {
+    const whyTagChange = gStore.tagChangedReason
+
+    // 若是创建新的标签，则忽略
+    // 因为已经存在的标签不会受到影响
+    if(whyTagChange === "create") {
+      return false
+    }
+
+    if(!isActivated.value) {
+      ctx.reloadRequired = true
+      return false
+    }
+
+    if(props.showTxt === "false") {
+      return false
+    }
+    return true
+  }
+
   // 3. 监听上下文变化
-  watch([viewType, tagId, spaceIdRef, tagChangedNum], (
-      [newV1, newV2, newV3, newV4],
-      [oldV1, oldV2, oldV3, oldV4]
+  watch([viewType, tagId, spaceIdRef, tagChangedNum, awakeNum], (
+      [newV1, newV2, newV3, newV4, newV5],
+      [oldV1, oldV2, oldV3, oldV4, oldV5]
     ) => {
     if(!newV3) return
+    if(!newV5) return
 
     // 当 "标签系统" 发生变化时
     if(typeCheck.isNumber(oldV4) && newV4 > oldV4) {
-      const whyTagChange = gStore.tagChangedReason
-      
-      // 若是创建新的标签，则忽略
-      // 因为已经存在的标签不会受到影响
-      if(whyTagChange === "create") {
-        return
-      }
-
-      if(!isActivated.value) {
-        ctx.reloadRequired = true
-        return
-      }
-
-      if(props.showTxt === "false") {
-        // console.log("当前是 thread-list 显示状态为 false")
-        // console.log("故忽略..............")
-        return
-      }
+      const go = _whenTagSystemChanged()
+      if(!go) return
     }
-    scollTopAndUpdate(ctx)
+
+    const cloud = syncNum.value > 0
+    if(ctx.reloadRequired) {
+      scrollTopAndUpdate(ctx, cloud)
+      return
+    }
+
+    const isAwakeChanged = newV5 > (oldV5 ?? 0)
+    if(isAwakeChanged) {
+      checkList(ctx, cloud)
+    }
+    else {
+      scrollTopAndUpdate(ctx, cloud)
+    }
+
   }, { immediate: true })
 
 
@@ -159,27 +170,26 @@ export function useThreadList(
 }
 
 // 滚动到最顶部，然后更新 list
-function scollTopAndUpdate(
+function scrollTopAndUpdate(
   ctx: TlContext,
+  cloud: boolean,
 ) {
   if(ctx.svBottomUp && !isViewType(ctx, "PINNED")) {
     ctx.svBottomUp.value = { type: "pixel", pixel: 0 }
   }
-  // console.log(`${ctx.viewType.value} ${ctx.tagId.value} 正在执行 scollTopAndUpdate...`)
-  loadList(ctx, true)
+  // console.log(`${ctx.viewType.value} ${ctx.tagId.value} 正在执行 scrollTopAndUpdate...`)
+  loadList(ctx, true, cloud)
 }
 
 // 页面 onActivated 或者窗口重新被 focus 时，触发该函数
 // 来判断要不要重新加载或局部更新
 function checkList(
-  ctx: TlContext
+  ctx: TlContext,
+  cloud: boolean,
 ) {
-  if(isViewType(ctx, "PINNED")) return
-
   const { list } = ctx.tlData
   if(list.length < 10) {
-    console.log("kkkkkkkkkkkkkk")
-    loadList(ctx, true)
+    loadList(ctx, true, cloud)
     return
   }
 
@@ -194,7 +204,7 @@ function checkList(
   console.log(" ")
 
   if(s1 < 300 || diff > 300) {
-    loadList(ctx, true)
+    loadList(ctx, true, cloud)
     return
   }
   
@@ -213,7 +223,8 @@ function isViewType(ctx: TlContext, val: TlViewType) {
 // 找到后，把该行之后的数据全删除，再赋值云端来的数据进 list 里
 async function loadList(
   ctx: TlContext,
-  reload: boolean = false
+  reload: boolean = false,
+  cloud: boolean = true,
 ) {
 
   const spaceId = ctx.spaceIdRef.value
@@ -308,7 +319,9 @@ async function loadList(
   }
 
   // 6. load cloud
-  loadCloud(ctx, opt1, cloudOpt)
+  if(cloud) {
+    loadCloud(ctx, opt1, cloudOpt)
+  }
 }
 
 interface LoadCloudOpt {

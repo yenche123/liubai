@@ -98,21 +98,31 @@ export function useAwakeNum(
   onDeactivated(() => isActivated.value = false)
   onBeforeUnmount(() => isActivated.value = false)
 
-  const _trigger = useThrottleFn((newSyncNum: number) => {
+  const _go = (newSyncNum: number) => {
     const oldV = awakeNum.value
     const newV = oldV < newSyncNum ? newSyncNum : (oldV + 1)
     awakeNum.value = newV
-  }, ms)
+  }
+
+  const _trigger = useThrottleFn(_go, ms)
 
   watch([syncNum, isActivated], (
-    [newV1, newV2]
+    [newV1, newV2],
+    [oldV1, oldV2],
   ) => {
     if(!newV2) return
+
+    if(newV1 === 1 && newV2 === oldV2) {
+      _go(newV1)
+      return
+    }
+
     _trigger(newV1)
   }, { immediate: true })
   
   return {
     awakeNum,
+    syncNum,
     isActivated,
   }
 }
