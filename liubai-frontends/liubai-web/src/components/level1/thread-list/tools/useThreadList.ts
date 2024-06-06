@@ -84,7 +84,6 @@ export function useThreadList(
     awakeNum,
   } = useAwakeNum()
   watch(awakeNum, (newV) => {
-    console.log("awakeNum......", newV)
     if(newV < 1) return
     if(ctx.reloadRequired) {
       scollTopAndUpdate(ctx)

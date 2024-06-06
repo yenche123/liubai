@@ -63,10 +63,18 @@ export function initCeData(
   provide(editorSetKey, numWhenSet)
 
   const preInit = useThrottleFn((
-    ctx: IcsContext, threadId?: string
+    ctx: IcsContext,
   ) => {
-    initDraft(ctx, threadId)
+    console.log("preInit......")
+    initDraft(ctx, false)
   }, 1500)
+
+  const preInitWithCloud = useThrottleFn((
+    ctx: IcsContext,
+  ) => {
+    console.log("preInitWithCloud......")
+    initDraft(ctx, true)
+  }, 3000)
 
   const getCtx = () => {
     const editorVal = editor.value
@@ -81,28 +89,34 @@ export function initCeData(
     return ctx
   }
 
-  const whenCtxChanged = () => {
+  const whenCtxChanged = (cloud: boolean) => {
     const ctx = getCtx()
     if(!ctx) return
     ceData.threadEdited = tVal.value
-    preInit(ctx, tVal.value)
+    if(cloud) {
+      preInitWithCloud(ctx)
+    }
+    else {
+      preInit(ctx)
+    }
   }
 
-  watch([editor, spaceIdRef, tVal], whenCtxChanged)
+  watch([editor, spaceIdRef, tVal], () => {
+    whenCtxChanged(false)
+  })
   
   const { activeSyncNum } = useActiveSyncNum()
   watch(activeSyncNum, (newV) => {
-    if(newV < 2) return
-    console.log("activeSyncNum: ", newV)
-    whenCtxChanged()
+    if(newV < 1) return
+    whenCtxChanged(true)
   })
 
-  // 监听 tag 从外部发生变化
+  // 监听 tag 从其他组件发生变化
   const gStore = useGlobalStateStore()
   const { tagChangedNum } = storeToRefs(gStore)
   watch(tagChangedNum, (newV) => {
     if(time.isWithinMillis(ceData.lastTagChangeStamp ?? 1, 750)) return
-    whenCtxChanged()
+    whenCtxChanged(false)
   })
 
   return { ceData }
@@ -111,9 +125,9 @@ export function initCeData(
 // spaceId 有值的周期内，本地的 user_id 肯定存在了
 async function initDraft(
   ctx: IcsContext,
-  threadId?: string,
+  loadCloud: boolean,
 ) {
-
+  const threadId = ctx.ceData.threadEdited
   const { lastEditStamp = 1 } = ctx.ceData
   if(time.isWithinMillis(lastEditStamp, SEC_6)) {
     return
@@ -122,7 +136,7 @@ async function initDraft(
   // if threadId exists, initDraftWithThreadId()
   if(threadId) {
     // 使用 lastWin 法则，比较 thread 和 draft
-    initDraftWithThreadId(ctx, threadId)
+    initDraftWithThreadId(ctx, threadId, loadCloud)
     return
   }
 
@@ -135,11 +149,13 @@ async function initDraft(
   }
   
   if(draft) {
-    initDraftFromDraft(ctx, draft)
+    initDraftFromDraft(ctx, draft, loadCloud)
   }
   else {
     ctx.ceData.draftId = ""
-    initFromCloudDraft(ctx)
+    if(loadCloud) {
+      initFromCloudDraft(ctx)
+    }
   }
 }
 
@@ -147,6 +163,7 @@ async function initDraft(
 async function initDraftWithThreadId(
   ctx: IcsContext,
   threadId: string,
+  loadCloud: boolean = true,
 ) {
   let draft = await localReq.getDraftByThreadId(threadId)
   let thread = await localReq.getContentById(threadId)
@@ -163,14 +180,14 @@ async function initDraftWithThreadId(
   // draft 编辑时间比较大的情况
   if(e1 > e2) {
     console.log("####### draft 编辑时间比较大的情况 ########")
-    if(draft) initDraftFromDraft(ctx, draft)
+    if(draft) initDraftFromDraft(ctx, draft, loadCloud)
     return
   }
 
   // thread 编辑时间比较大的情况
   console.log("####### thread 编辑时间比较大的情况 ########")
 
-  if(thread) initDraftFromThread(ctx, thread)
+  if(thread) initDraftFromThread(ctx, thread, loadCloud)
   if(draft) localReq.deleteDraftById(draft._id)
 }
 
@@ -178,6 +195,7 @@ async function initDraftWithThreadId(
 async function initDraftFromDraft(
   ctx: IcsContext,
   draft: DraftLocalTable,
+  loadCloud: boolean = true,
 ) {
   let { ceData } = ctx
 
@@ -207,7 +225,9 @@ async function initDraftFromDraft(
 
   setEditorContent(ctx, draft.liuDesc)
 
-  initFromCloudDraft(ctx, draft)
+  if(loadCloud) {
+    initFromCloudDraft(ctx, draft)
+  }
 }
 
 
