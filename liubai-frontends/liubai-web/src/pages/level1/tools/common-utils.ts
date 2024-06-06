@@ -11,6 +11,11 @@ export async function createClientKey(
   pem_public_key: string
 ) {
   const aesKey = await liuUtil.crypto.createKeyWithAES()
+  if(!aesKey) {
+    console.warn("fail to create aes key")
+    return {}
+  }
+
   const client_key = `client_key_${aesKey}`
   const pk = await liuUtil.crypto.importRsaPublicKey(pem_public_key)
   if(!pk) {

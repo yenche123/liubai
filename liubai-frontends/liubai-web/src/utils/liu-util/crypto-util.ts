@@ -1,5 +1,6 @@
 // 加解密相关的函数
 import type { CryptoCipherAndIV } from "~/types/other/types-custom"
+import liuConsole from "../debug/liu-console";
 
 
 /** 将字符串转换为 ArrayBuffer */
@@ -133,17 +134,25 @@ function base64ToArrayBuffer(b64: string) {
 
 /** 生成 AES-GCM 的密钥 */
 async function createKeyWithAES() {
-  const key = await window.crypto.subtle.generateKey(
-    {
-      name: "AES-GCM",
-      length: 256,
-    },
-    true,
-    ["encrypt", "decrypt"],
-  )
-  const res = await window.crypto.subtle.exportKey("raw", key)
-  const str = arrayBufferToBase64(res)
-  return str
+  try {
+    const key = await window.crypto.subtle.generateKey(
+      {
+        name: "AES-GCM",
+        length: 256,
+      },
+      true,
+      ["encrypt", "decrypt"],
+    )
+    const res = await window.crypto.subtle.exportKey("raw", key)
+    const str = arrayBufferToBase64(res)
+    return str
+  }
+  catch(err) {
+    console.warn("createKeyWithAES err: ")
+    console.log(err)
+    console.log(" ")
+    liuConsole.sendException({ msg: "reateKeyWithAES err", err })
+  }
 }
 
 
