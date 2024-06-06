@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import WhoAreYou from "./components/level1/who-are-you/who-are-you.vue"
+import TrustDetection from "./components/level1/trust-detection/trust-detection.vue"
 import GlobalLoading from "./components/loaders/global-loading/global-loading.vue"
 import { useApp } from "./hooks/useApp";
 import { initLiuRouter } from "./routes/liu-router"
@@ -40,6 +41,7 @@ const { route } = initLiuRouter()
     
     <custom-ui />
     <who-are-you />
+    <TrustDetection></TrustDetection>
     <GlobalLoading></GlobalLoading>
   </div>
 </template>

@@ -225,7 +225,9 @@
     "editing_hd": "Update the post?",
     "editing_bd": "The system will also save the draft even if you cancel the update.",
     "coming_soon": "Coming Soon",
-    "stay_tuned": "Stay tuned!"
+    "stay_tuned": "Stay tuned!",
+    "browser_not_supported_1": "The browser is not supported",
+    "browser_not_supported_2": "Please use Chrome / Safari / Firefox"
   },
   "card_bubble": {
     "copy": "Copy",

@@ -1,6 +1,15 @@
 import { isPrefersReducedMotion } from "./device"
 import { getCharacteristic } from "./characteristic"
 import valTool from "../basic/val-tool"
+import liuEnv from "../liu-env"
+
+function isSafeBrowser() {
+  if(!window) return false
+  const _sub = window.crypto?.subtle
+  const hasBackend = liuEnv.hasBackend()
+  if(typeof _sub === "undefined" && hasBackend) return false
+  return true
+}
 
 function viewTransitionApi() {
   const res1 = isPrefersReducedMotion()
@@ -26,6 +35,7 @@ function cssDetectTextOverflow() {
 }
 
 export default {
+  isSafeBrowser,
   viewTransitionApi,
   cssDetectTextOverflow,
 }
