@@ -126,8 +126,8 @@ const { t } = useI18n()
 
 .hs-virtual-zero {
   width: 100%;
-  height: 16vh;
-  height: 16dvh;
+  height: 14vh;
+  height: 14dvh;
   transition: .3s;
 }
 
@@ -241,21 +241,21 @@ const { t } = useI18n()
 
 @media screen and (max-width: 600px) {
   .hs-virtual-zero {
-    height: 12vh;
-    height: 12dvh;
+    height: 10vh;
+    height: 10dvh;
   }
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 500px) {
 
   .hs-virtual-zero {
-    height: 8vh;
-    height: 8dvh;
+    height: 0;
   }
-
 
   .hs-box {
     width: 100%;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
 
   .hsir-container {
