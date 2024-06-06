@@ -1,7 +1,5 @@
 // 加解密相关的函数
 import type { CryptoCipherAndIV } from "~/types/other/types-custom"
-import liuConsole from "../debug/liu-console";
-
 
 /** 将字符串转换为 ArrayBuffer */
 function str2ab(str: string) {
@@ -151,7 +149,6 @@ async function createKeyWithAES() {
     console.warn("createKeyWithAES err: ")
     console.log(err)
     console.log(" ")
-    liuConsole.sendException({ msg: "reateKeyWithAES err", err })
   }
 }
 
