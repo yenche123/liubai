@@ -4,12 +4,12 @@ import type {
   ContentInfoType,
   TagView,
   LiuUploadTask,
+  LiuStateConfig,
 } from "~/types/types-atom"
 import type { OState, OState_2, OState_Draft } from "~/types/types-basic"
 import type { 
   Cloud_ImageStore,
   Cloud_FileStore,
-  Cloud_StateConfig,
 } from "~/types/types-cloud"
 import type { ContentConfig } from "~/types/other/types-custom";
 import type { EmojiData } from "~/types/types-content"
@@ -97,7 +97,7 @@ export interface LiuUploadWorkspace {
   id: string
   name?: string
   avatar?: Cloud_ImageStore
-  stateConfig?: Cloud_StateConfig
+  stateConfig?: LiuStateConfig
   tagList?: TagView[]
 }
 

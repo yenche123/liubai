@@ -185,12 +185,12 @@ const Sch_LiuAtomState: BaseSchema<LiuAtomState> = vbot.object({
 })
 
 /** 表示数据表里，存储 “状态” 的结构  */
-interface Cloud_StateConfig {
+interface LiuStateConfig {
   stateList: LiuAtomState[]
   updatedStamp: number
 }
 
-export const Sch_Cloud_StateConfig: BaseSchema<Cloud_StateConfig> = vbot.object({
+export const Sch_LiuStateConfig: BaseSchema<LiuStateConfig> = vbot.object({
   stateList: vbot.array(Sch_LiuAtomState),
   updatedStamp: vbot.number(),
 })
@@ -554,6 +554,7 @@ export interface LiuSpaceAndMember {
   member_name?: string
   member_avatar?: Cloud_ImageStore
   member_oState: OState_3
+  member_config?: MemberConfig
 
   // 关于 workspace 的信息
   spaceId: string
@@ -562,6 +563,9 @@ export interface LiuSpaceAndMember {
   space_owner: string
   space_name?: string
   space_avatar?: Cloud_ImageStore
+  space_stateConfig?: LiuStateConfig
+  space_tagList?: TagView[]
+  space_config?: WorkspaceConfig
 }
 
 export interface ServiceSendEmailsParam {
@@ -734,7 +738,7 @@ export interface LiuUploadWorkspace {
   id: string
   name?: string
   avatar?: Cloud_ImageStore
-  stateConfig?: Cloud_StateConfig
+  stateConfig?: LiuStateConfig
   tagList?: TagView[]
 }
 
@@ -882,7 +886,7 @@ export interface Table_User extends BaseTable {
 /** Workspace 表 */
 export interface Table_Workspace extends BaseTable {
   infoType: SpaceType
-  stateConfig?: Cloud_StateConfig
+  stateConfig?: LiuStateConfig
   tagList?: TagView[]
   oState: OState
   owner: string

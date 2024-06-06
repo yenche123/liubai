@@ -5,7 +5,8 @@ import type {
   SpaceType, 
   OState,
 } from "./types-basic"
-import type { LiuAtomState } from "./types-atom"
+import type { LiuStateConfig, TagView } from "./types-atom"
+import type { MemberConfig, WorkspaceConfig } from "./other/types-custom"
 
 export interface Cloud_FileStore {
   id: string
@@ -31,12 +32,6 @@ export interface Cloud_ImageStore {
   someExif?: LiuExif
 }
 
-/** 工作区内，存储 “状态” 的结构  */
-export interface Cloud_StateConfig {
-  stateList?: LiuAtomState[]
-  updatedStamp: number
-}
-
 
 /** 登录时，后端传回来的用户基础信息
  * 只有基础的，复杂的数据配置，需要另外调用
@@ -47,6 +42,7 @@ export interface LiuSpaceAndMember {
   member_name?: string
   member_avatar?: Cloud_ImageStore
   member_oState: OState_3
+  member_config?: MemberConfig
 
   // 关于 workspace 的信息
   spaceId: string
@@ -55,6 +51,9 @@ export interface LiuSpaceAndMember {
   space_owner: string
   space_name?: string
   space_avatar?: Cloud_ImageStore
+  space_stateConfig?: LiuStateConfig
+  space_tagList?: TagView[]
+  space_config?: WorkspaceConfig
 }
 
 

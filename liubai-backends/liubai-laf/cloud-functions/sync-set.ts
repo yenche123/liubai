@@ -48,7 +48,7 @@ import {
   Sch_LiuRemindMe,
   Sch_OState_2,
   Sch_ContentInfoType,
-  Sch_Cloud_StateConfig,
+  Sch_LiuStateConfig,
   Sch_TagView,
   Sch_Id,
   Sch_Opt_Id,
@@ -1397,7 +1397,7 @@ async function toWorkspaceStateConfig(
   // 1. inspect data technically
   const Sch_WorkspaceStateConfig = vbot.object({
     id: Sch_Id,
-    stateConfig: Sch_Cloud_StateConfig,
+    stateConfig: Sch_LiuStateConfig,
   }, vbot.never())
   const res1 = checkoutInput(Sch_WorkspaceStateConfig, workspace, taskId)
   if(res1) return res1

@@ -146,6 +146,9 @@ async function handleSpaceAndMember(
     const v2 = spaceMemberList.find(v => v.spaceId === v1._id)
     if(!v2) continue
 
+    const cfg1 = v1.config ?? {}
+    const cfg2 = v2.space_config
+
     let updated = false
     const u5: Partial<WorkspaceLocalTable> = {
       updatedStamp: time.getTime(),
@@ -181,8 +184,30 @@ async function handleSpaceAndMember(
       u5.avatar = avatarRes.image
       updated = true
     }
+
+    // check tagList
+    const lastOperateTag1 = cfg1?.lastOperateTag ?? 1
+    const lastOperateTag2 = cfg2?.lastOperateTag ?? 1
+    if(lastOperateTag2 > lastOperateTag1) {
+      console.log("update workspace tagList 111111111")
+      u5.tagList = v2.space_tagList
+      cfg1.lastOperateTag = lastOperateTag2
+      updated = true
+    }
+
+    // check stateConfig
+    const stateCfg1 = v1.stateConfig
+    const stateCfg2 = v2.space_stateConfig
+    const s_u1 = stateCfg1?.updatedStamp ?? 1
+    const s_u2 = stateCfg2?.updatedStamp ?? 1
+    if(s_u2 > s_u1) {
+      console.log("update workspace stateConfig 111111111")
+      u5.stateConfig = stateCfg2
+      updated = true
+    }
     
     if(updated) {
+      u5.config = cfg1
       await db.workspaces.update(v1._id, u5)
       const newSpace: WorkspaceLocalTable = { ...v1, ...u5 }
       wStore.setWorkspaceAfterUpdatingDB(newSpace)
@@ -207,6 +232,9 @@ async function handleSpaceAndMember(
     const v2 = spaceMemberList.find(v => v.memberId === v1._id)
     if(!v2) continue
 
+    const cfg1 = v1.config ?? {}
+    const cfg2 = v2.member_config
+
     let updated = false
     const u7: Partial<MemberLocalTable> = {}
 
@@ -216,8 +244,13 @@ async function handleSpaceAndMember(
       updated = true
     }
 
-    if(v1.name !== v2.member_name) {
+    // check name
+    const nameStamp1 = cfg1.lastOperateName ?? 1
+    const nameStamp2 = cfg2?.lastOperateName ?? 1
+    if(nameStamp2 > nameStamp1) {
+      console.log("update member name 111111111")
       u7.name = v2.member_name
+      cfg1.lastOperateName = nameStamp2
       updated = true
     }
 
@@ -229,6 +262,7 @@ async function handleSpaceAndMember(
     }
     
     if(updated) {
+      u7.config = cfg1
       u7.updatedStamp = time.getTime()
       await db.members.update(v1._id, u7)
       const newMember: MemberLocalTable = { ...v1, ...u7 }

@@ -145,6 +145,7 @@ function turnMemberAggsIntoLSAMs(
       member_name,
       member_avatar: v.avatar,
       member_oState,
+      member_config: v.config,
       
       spaceId: theSpace._id,
       spaceType: theSpace.infoType,
@@ -152,6 +153,9 @@ function turnMemberAggsIntoLSAMs(
       space_owner: theSpace.owner,
       space_name: theSpace.name,
       space_avatar: theSpace.avatar,
+      space_stateConfig: theSpace.stateConfig,
+      space_tagList: theSpace.tagList,
+      space_config: theSpace.config,
     }
 
     list.push(obj)
