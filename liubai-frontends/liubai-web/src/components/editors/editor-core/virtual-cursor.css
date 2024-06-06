@@ -16,6 +16,7 @@
   user-select: none;
   -webkit-user-select: none;
   border-left: 2px solid var(--prosemirror-virtual-cursor-color);
+  z-index: 100;
 }
 
 .ProseMirror .prosemirror-virtual-cursor-left {
