@@ -101,7 +101,7 @@ export function initCeData(
   const gStore = useGlobalStateStore()
   const { tagChangedNum } = storeToRefs(gStore)
   watch(tagChangedNum, (newV) => {
-    if(time.isWithinMillis(ceData.lastTagChangeStamp ?? 1, 500)) return
+    if(time.isWithinMillis(ceData.lastTagChangeStamp ?? 1, 750)) return
     whenCtxChanged()
   })
 
@@ -270,10 +270,6 @@ async function initFromCloudDraft(
 
   // 2. to merge
   const res = await CloudMerger.request(opt, { delay })
-
-  // console.log("看一下 initFromCloudDraft 结果: ")
-  // console.log(res)
-  // console.log(" ")
 
   // 3. filter nothing
   if(!res) return

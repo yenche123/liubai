@@ -63,6 +63,8 @@ export function useCeTag(
       return
     }
 
+    ceData.lastTagChangeStamp = time.getTime()
+
     const res = await createTagsFromTagShows(tags)
     if(!res.isOk) return
     const newTagShows = res.tagShows
