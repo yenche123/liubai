@@ -78,7 +78,7 @@
 
 
 /** reset CSS */
-html, body, h1, h2, h3, h4, h5, h6 {
+html, body, h1, h2, h3, h4, h5, h6, button, input {
   padding: 0;
   margin: 0;
   border: 0;
@@ -104,13 +104,10 @@ a:hover {
 button {
   background-color: transparent;
   background: transparent;
-  padding: 0;
-  border: 0;
 }
 
 input {
   background: transparent;
-  border: 0;
   outline: none;
 }
 
