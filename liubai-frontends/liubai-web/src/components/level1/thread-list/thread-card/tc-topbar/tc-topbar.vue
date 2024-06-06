@@ -87,6 +87,7 @@ const onTapState = () => {
   align-items: flex-start;
   justify-content: flex-end;
   position: relative;
+  padding-block-end: 5px;
 
   .tct-pin {
     margin-inline-start: 10px;
