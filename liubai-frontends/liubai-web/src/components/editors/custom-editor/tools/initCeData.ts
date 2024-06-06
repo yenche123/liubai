@@ -65,14 +65,12 @@ export function initCeData(
   const preInit = useThrottleFn((
     ctx: IcsContext,
   ) => {
-    console.log("preInit......")
     initDraft(ctx, false)
   }, 1500)
 
   const preInitWithCloud = useThrottleFn((
     ctx: IcsContext,
   ) => {
-    console.log("preInitWithCloud......")
     initDraft(ctx, true)
   }, 3000)
 
@@ -331,7 +329,6 @@ async function initFromCloudDraft(
 
   // 5. if it is posted or deleted
   if(oState === "POSTED" || oState === "DELETED") {
-    // console.log("the draft has been deleted or posted")
     resetFromCloud(ctx, cloud_draft, local_draft, local_thread)
     return
   }
