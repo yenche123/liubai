@@ -41,7 +41,7 @@ app.component("LiuMenu", defineAsyncComponent(() =>
   import("./components/common/liu-menu/liu-menu.vue")
 ))
 app.component("FloatActionButton", defineAsyncComponent(() =>
-  import("./components/level1/float-action-button/float-action-button.vue")
+  import("./components/level1/floating-action-button/floating-action-button.vue")
 ))
 app.component("LiuTooltip", defineAsyncComponent(() => 
   import("./components/common/liu-tooltip/liu-tooltip.vue")

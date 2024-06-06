@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useNaviAuto } from "./tools/useNaviAuto"
 import cfg from "~/config"
+import { useI18n } from "vue-i18n"
 
+const { t } = useI18n()
 const naviHeightPx = `${cfg.navi_height}px`
 
 const emits = defineEmits<{
@@ -38,7 +40,7 @@ const default_color = "var(--navi-normal)"
 
       <div class="na-title" @click="onTapTitle">
         <div class="na-title-inner">
-          <span>留白记事</span>
+          <span>{{ t('hello.appName') }}</span>
         </div>
       </div>
 
