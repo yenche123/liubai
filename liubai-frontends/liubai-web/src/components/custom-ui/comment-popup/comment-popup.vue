@@ -207,8 +207,8 @@ const onTapTopFooterBtn = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
   overflow: hidden;
 }
 

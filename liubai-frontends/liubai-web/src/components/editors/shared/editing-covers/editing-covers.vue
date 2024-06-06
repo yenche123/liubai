@@ -168,8 +168,8 @@ const vHandle = HandleDirective
     width: 100%;
     height: 100%;
     content: "";
-    backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
     border-radius: 20px 0 10px 0;
     overflow: hidden;
   }

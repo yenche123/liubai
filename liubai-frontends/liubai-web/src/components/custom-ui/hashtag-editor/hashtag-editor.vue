@@ -147,8 +147,8 @@ const onMouseEnterItem = (index: number) => {
       width: 100%;
       height: 100%;
       background-color: var(--frosted-glass-2);
-      backdrop-filter: blur(2px);
       -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(2px);
     }
 
 

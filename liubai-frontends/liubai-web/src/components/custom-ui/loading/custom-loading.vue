@@ -71,8 +71,8 @@ const {
       left: 0;
       width: 100%;
       height: 100%;
-      backdrop-filter: blur(3px);
       -webkit-backdrop-filter: blur(3px);
+      backdrop-filter: blur(3px);
     }
 
     /** 来自 https://uiball.com/loaders/ */

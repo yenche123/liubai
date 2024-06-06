@@ -134,8 +134,8 @@ const {
 <style scoped lang="scss">
 .liu-frosted-glass::before {
   background: none;
-  backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
 }
 
 .st-virtual {

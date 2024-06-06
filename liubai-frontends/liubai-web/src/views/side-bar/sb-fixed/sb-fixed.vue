@@ -191,8 +191,8 @@ const {
 }
 
 .sfc-bg-mask {
-  backdrop-filter: blur(var(--blur-radius));
   -webkit-backdrop-filter: blur(var(--blur-radius));
+  backdrop-filter: blur(var(--blur-radius));
   width: 100%;
   height: 100%;
   background: var(--frosted-glass);
