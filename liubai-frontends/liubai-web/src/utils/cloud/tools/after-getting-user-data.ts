@@ -1,5 +1,7 @@
 
 import { useSystemStore } from "~/hooks/stores/useSystemStore";
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import type { 
   Res_UserSettings_Enter, 
   Res_UserSettings_Latest,
@@ -13,7 +15,6 @@ import localCache from "~/utils/system/local-cache";
 import { db } from "~/utils/db";
 import time from "~/utils/basic/time";
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
-import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import cui from "~/components/custom-ui";
 import type { LiuSpaceAndMember } from "~/types/types-cloud";
 import { CloudFiler } from "../CloudFiler";
@@ -85,6 +86,7 @@ async function handleSpaceAndMember(
   spaceMemberList: LiuSpaceAndMember[],
   rr: RouteAndLiuRouter,
 ) {
+  const gStore = useGlobalStateStore()
   const wStore = useWorkspaceStore()
   const currentSpaceId = wStore.spaceId
   if(!currentSpaceId) return true
@@ -211,6 +213,11 @@ async function handleSpaceAndMember(
       await db.workspaces.update(v1._id, u5)
       const newSpace: WorkspaceLocalTable = { ...v1, ...u5 }
       wStore.setWorkspaceAfterUpdatingDB(newSpace)
+
+      // notify active components that some tags have been updated
+      if(u5.tagList) {
+        gStore.addTagChangedNum()
+      }
     }
     else {
       // console.log("no need to update workspace: " + v1._id)
