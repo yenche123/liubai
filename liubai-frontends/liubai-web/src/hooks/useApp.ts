@@ -9,16 +9,19 @@ import { useIdsChanged } from "./tools/useIdsChanged";
 import { initAnalytics } from "./tools/initAnalytics";
 import localCache from "~/utils/system/local-cache";
 import { deviceChaKey } from "~/utils/provide-keys";
+import type { GetChaRes } from "~/utils/liu-api/tools/types";
 
 // 监听和处理一些全局的事务，比如路由变化
 
-export function useApp() {  
+export function useApp() {
+
+  const cha = liuApi.getCharacteristic()
 
   // init device characteristics
-  initDeviceCha()
+  initDeviceCha(cha)
 
   // init mobile
-  initMobile()
+  initMobile(cha)
 
   // 监听路由变化，若加载过久，窗口顶部会出现加载条
   useGlobalLoading()
@@ -37,10 +40,13 @@ export function useApp() {
 
   // init useIdsChanged
   useIdsChanged()
+
+  return {
+    cha,
+  }
 }
 
-function initDeviceCha() {
-  const cha = liuApi.getCharacteristic()
+function initDeviceCha(cha: GetChaRes) {
   provide(deviceChaKey, cha)
 }
 
@@ -79,8 +85,9 @@ async function getVConsole() {
   return VConsole
 }
 
-async function initMobile() {
-  const cha = liuApi.getCharacteristic()
+async function initMobile(
+  cha: GetChaRes
+) {
 
   if(!cha.isMobile) {
     printInit()

@@ -13,8 +13,9 @@ const CustomUi = defineAsyncComponent(() => {
   return import("./components/custom-ui/custom-ui.vue")
 })
 
-useApp()
+const { cha } = useApp()
 const { route } = initLiuRouter()
+const ios_ipad = Boolean(cha.isIOS || cha.isIPadOS)
 
 </script>
 
@@ -22,6 +23,7 @@ const { route } = initLiuRouter()
   
   <div 
     class="app-container"
+    :class="{ 'liu-ios-device': ios_ipad }"
   >
 
     <!-- 侧边栏视图 -->

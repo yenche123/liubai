@@ -3,6 +3,13 @@
   caret-color: transparent;
 }
 
+/** fix the issue where text selection is incorrect on iOS devices 
+*  see: https://github.com/ocavue/prosemirror-virtual-cursor/issues/35
+*/
+.liu-ios-device .editor-core .ProseMirror.virtual-cursor-enabled {
+  caret-color: var(--primary-color);
+}
+
 .ProseMirror-focused {
   /* Color of the virtual cursor */
   --prosemirror-virtual-cursor-color: var(--primary-color);
@@ -38,6 +45,13 @@
   animation: prosemirror-virtual-cursor-blink 1s linear infinite;
   animation-delay: 0.5s;
 }
+
+.liu-ios-device .ProseMirror .prosemirror-virtual-cursor,
+.liu-ios-device .ProseMirror .prosemirror-virtual-cursor-left,
+.liu-ios-device .ProseMirror .prosemirror-virtual-cursor-right {
+  display: none;
+}
+
 
 @keyframes prosemirror-virtual-cursor-blink {
   0% {
