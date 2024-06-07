@@ -143,7 +143,7 @@ useDraftIdChanged(ceData)
   </div>
 
   <!-- 隐入隐出渐变分隔条 -->
-  <div class="ce-editor-gradient"></div>
+  <div class="ce-editor-gradient ce-editor-gradient_down"></div>
 
   <!-- 留白 -->
   <div class="ce-editor-spacing"></div>
@@ -258,15 +258,6 @@ useDraftIdChanged(ceData)
   }
 }
 
-.ce-editor {
-  margin-top: -20px;
-  width: 100%;
-  max-height: v-bind("maxEditorHeight + 'px'");
-  position: relative;
-  overflow-y: v-bind("ceData.overflowType");
-  transition: .3s;
-}
-
 .ce-editor-gradient {
   width: 100%;
   height: 20px;
@@ -284,9 +275,23 @@ useDraftIdChanged(ceData)
   z-index: 50;
 }
 
+.ce-editor {
+  margin-top: -18px;
+  width: 100%;
+  max-height: v-bind("maxEditorHeight + 'px'");
+  position: relative;
+  overflow-y: v-bind("ceData.overflowType");
+  transition: .3s;
+}
+
+.ce-editor-gradient_down {
+  margin-top: -18px;
+}
+
+
 .ce-editor-spacing {
   width: 100%;
-  height: 15px;
+  height: 12px;
 }
 
 
