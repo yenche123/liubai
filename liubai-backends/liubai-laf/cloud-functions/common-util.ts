@@ -26,6 +26,7 @@ import type {
   VerifyTokenRes_A,
   VerifyTokenRes_B,
   DecryptCloudRes,
+  LiuRqOpt,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -66,7 +67,83 @@ export async function main(ctx: FunctionContext) {
 export function getIp(ctx: FunctionContext) {
   const ip = ctx?.headers?.['x-real-ip']
   if(ip && typeof ip === "string") return ip
+
+  const ip2 = ctx?.headers?.['x-forwarded-for']
+  if(ip2 && typeof ip2 === "string") return ip2
 }
+
+export async function liuReq<T = any>(
+  url: string,
+  body?: Record<string, any>,
+  opt?: LiuRqOpt,
+): Promise<LiuRqReturn<T>> {
+
+  const init: RequestInit = {
+    method: opt?.method ?? "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    },
+  }
+  if(body) {
+    init.body = objToStr(body)
+  }
+  if(opt?.headers) {
+    init.headers = { ...init.headers, ...opt.headers }
+  }
+
+  let res: Response
+  try {
+    res = await fetch(url, init)
+  }
+  catch(err: any) {
+    console.warn("fetch err")
+    console.log(err)
+    const errMsg: unknown = err.toString?.()
+    const errName = err.name
+    let errMsg2 = ""  // 转成小写的 errMsg
+
+    if(typeof errMsg === "string") {
+      errMsg2 = errMsg.toLowerCase()
+    }
+
+    if(errName === "TimeoutError") {
+      return { code: "F0002" }
+    }
+    if(errName === "AbortError") {
+      return { code: "F0003" }
+    }
+    if(errName === "TypeError") {
+      if(errMsg2.includes("failed to fetch")) {
+        return { code: "B0001" }
+      }
+    }
+    return { code: "C0001" }
+  }
+
+  const status = res.status
+  if(status === 500) {
+    return { code: "B0500" }
+  }
+  if(status > 500 && status < 600) {
+    return { code: `B0001` }
+  }
+
+  try {
+    let res2: T = await res.json()
+    return {
+      code: "0000",
+      data: res2,
+    }
+  }
+  catch(err) {
+    console.warn("res.json err")
+    console.log(err)
+  }
+
+  return { code: "E5001" }
+}
+
 
 
 /**

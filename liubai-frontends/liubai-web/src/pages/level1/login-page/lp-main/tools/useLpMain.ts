@@ -35,7 +35,6 @@ export function useLpMain(
     const childEl = parentEl.querySelector(q)
     if(!childEl) return
     const info = liuUtil.getIndicatorLeftAndWidth(parentEl, childEl)
-    console.log("info: ", info)
     if(!info) return
     lpmData.indicatorData = info
   }

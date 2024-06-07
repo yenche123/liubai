@@ -34,6 +34,7 @@ import {
   normalizeToLocalLocale,
   getUserInfos,
   insertToken,
+  liuReq,
 } from "@/common-util"
 import { getNowStamp, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -559,19 +560,7 @@ async function handle_google_oauth(
     grant_type: "authorization_code",
   }
   let access_token = ""
-  let res1: any
-  try {
-    res1 = await cloud.fetch.post(GOOGLE_OAUTH_ACCESS_TOKEN, body1)
-  }
-  catch(err) {
-    console.warn("使用 Google code 去换取用户 access_token 失败")
-    console.log(err)
-    console.log(" ")
-    return { 
-      code: "E5003", 
-      errMsg: "network err while getting google access_token with code",
-    }
-  }
+  const res1 = await liuReq(GOOGLE_OAUTH_ACCESS_TOKEN, body1)
 
   // 2. 解析出 access_token
   const res1_data = res1?.data ?? {}
@@ -585,30 +574,16 @@ async function handle_google_oauth(
       console.log(res1)
       console.log(" ")
     }
-    return { code: "E5004", errMsg: "no access_token from GitHub" }
+    return { code: "E5004", errMsg: "no access_token from Google" }
   }
-  console.log(" ")
 
   // 3. 使用 access_token 去换用户信息
-  let res2: any
-  try {
-    res2 = await cloud.fetch({
-      url: GOOGLE_API_USER,
-      method: "get",
-      headers: {
-        "Authorization": `Bearer ${access_token}`,
-      }
-    })
-  }
-  catch(err) {
-    console.warn("使用 Google access_token 去换取用户信息 失败")
-    console.log(err)
-    console.log(" ")
-    return { 
-      code: "E5003", 
-      errMsg: "network err while getting google user data with access_token",
+  const res2 = await liuReq(GOOGLE_API_USER, undefined, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${access_token}`,
     }
-  }
+  })
 
   // 4. 解析出有用的 user data from Google
   const res2_data = res2?.data ?? {}
@@ -668,28 +643,7 @@ async function handle_github_oauth(
     code: oauth_code,
   }
   let access_token = ""
-  let res1: any
-  try {
-    res1 = await cloud.fetch({
-      url: GH_OAUTH_ACCESS_TOKEN,
-      method: "post",
-      data: body1,
-      timeout: 3000,
-      responseType: "json",
-      headers: {
-        "Accept": "application/json",
-      }
-    })
-  }
-  catch(err) {
-    console.warn("使用 GitHub code 去换取用户 access_token 失败")
-    console.log(err)
-    console.log(" ")
-    return { 
-      code: "E5003", 
-      errMsg: "network err while getting github access_token with code",
-    }
-  }
+  const res1 = await liuReq(GH_OAUTH_ACCESS_TOKEN, body1)
 
   // 2. 解析出 access_token
   const res1_data = res1?.data ?? {}
@@ -705,28 +659,14 @@ async function handle_github_oauth(
     }
     return { code: "E5004", errMsg: "no access_token from GitHub" }
   }
-  console.log(" ")
 
   // 3. 使用 access_token 去换用户信息
-  let res2: any
-  try {
-    res2 = await cloud.fetch({
-      url: GH_API_USER,
-      method: "get",
-      headers: {
-        "Authorization": `Bearer ${access_token}`,
-      }
-    })
-  }
-  catch(err) {
-    console.warn("使用 GitHub access_token 去换取用户信息 失败")
-    console.log(err)
-    console.log(" ")
-    return { 
-      code: "E5003", 
-      errMsg: "network err while getting github user data with access_token",
-    }
-  }
+  const res2 = await liuReq(GH_API_USER, undefined, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${access_token}`,
+    },
+  })
 
   // 4. 解析出有用的 user data from GitHub
   const res2_data = res2?.data ?? {}

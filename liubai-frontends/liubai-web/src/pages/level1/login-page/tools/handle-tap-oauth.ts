@@ -25,9 +25,7 @@ export function handle_google(
   const redirect_uri = window.location.origin + "/login-google"
 
   const url = new URL(thirdLink.GOOGLE_OAUTH2)
-  let scope = "https://www.googleapis.com/auth/userinfo.email "
-  scope += "https://www.googleapis.com/auth/userinfo.profile "
-  scope += "openid"
+  const scope = "profile"
   const sp = url.searchParams
   sp.append("scope", scope)
   sp.append("include_granted_scopes", "true")
