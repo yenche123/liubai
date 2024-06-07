@@ -68,6 +68,11 @@ function getEnv(): LiuSystemEnv {
   const POSTHOG_APIHOST = import.meta.env.VITE_POSTHOG_APIHOST
   const POSTHOG_APIKEY = import.meta.env.VITE_POSTHOG_APIKEY
 
+  // cloudflare web analytics
+  const CF_WEB_ANALYTICS_SRC = import.meta.env.VITE_CF_WEB_ANALYTICS_SRC
+  const CF_WEB_ANALYTICS_TOKEN = import.meta.env.VITE_CF_WEB_ANALYTICS_TOKEN
+  const CF_WEB_ANALYTICS_SENDTO = import.meta.env.VITE_CF_WEB_ANALYTICS_SENDTO
+
   // do not use sync system even if API_DOMAIN is set
   const donotUseSync = import.meta.env.VITE_DONOT_USE_SYNC
   const DONOT_USE_SYNC = donotUseSync === "01"
@@ -109,6 +114,9 @@ function getEnv(): LiuSystemEnv {
     OPENPANEL_CLIENT_SECRET,
     POSTHOG_APIHOST,
     POSTHOG_APIKEY,
+    CF_WEB_ANALYTICS_SRC,
+    CF_WEB_ANALYTICS_TOKEN,
+    CF_WEB_ANALYTICS_SENDTO,
     DONOT_USE_SYNC,
   }
   return _env

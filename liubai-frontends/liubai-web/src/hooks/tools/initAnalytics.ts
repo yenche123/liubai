@@ -1,3 +1,4 @@
+import valTool from "~/utils/basic/val-tool"
 import liuEnv from "~/utils/liu-env"
 
 export function initAnalytics() {
@@ -13,6 +14,9 @@ export function initAnalytics() {
     OPENPANEL_CLIENT_SECRET,
     POSTHOG_APIHOST,
     POSTHOG_APIKEY,
+    CF_WEB_ANALYTICS_SRC,
+    CF_WEB_ANALYTICS_TOKEN,
+    CF_WEB_ANALYTICS_SENDTO,
   } = _env
 
   if(UMAMI_ID && UMAMI_SCRIPT) {
@@ -31,7 +35,36 @@ export function initAnalytics() {
     initPostHog(POSTHOG_APIHOST, POSTHOG_APIKEY)
   }
 
+  if(CF_WEB_ANALYTICS_SRC && CF_WEB_ANALYTICS_TOKEN) {
+    initCloudflareWA(
+      CF_WEB_ANALYTICS_SRC,
+      CF_WEB_ANALYTICS_TOKEN,
+      CF_WEB_ANALYTICS_SENDTO,
+    )
+  }
+
 }
+
+function initCloudflareWA(
+  script: string, 
+  token: string,
+  sendTo?: string,
+) {
+  const scriptEl = document.createElement('script')
+  const json: Record<string, any> = { token }
+  if(sendTo) {
+    json.send = {}
+    json.send.to = sendTo
+  }
+  const cfBeacon = valTool.objToStr(json)
+  scriptEl.src = script
+  scriptEl.setAttribute("data-cf-beacon", cfBeacon)
+  scriptEl.defer = true
+  const headEl = document.querySelector("head")
+  if(!headEl) return
+  headEl.appendChild(scriptEl)
+}
+
 
 async function initPostHog(api_host: string, api_key: string) {
   const { posthog } = await import("posthog-js")

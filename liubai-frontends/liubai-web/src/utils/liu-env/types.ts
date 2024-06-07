@@ -60,6 +60,11 @@ export interface LiuSystemEnv {
   POSTHOG_APIHOST?: string
   POSTHOG_APIKEY?: string
 
+  // cloudflare web analytics
+  CF_WEB_ANALYTICS_SRC?: string
+  CF_WEB_ANALYTICS_TOKEN?: string
+  CF_WEB_ANALYTICS_SENDTO?: string
+
   // don't use sync-system
   DONOT_USE_SYNC?: boolean
 
