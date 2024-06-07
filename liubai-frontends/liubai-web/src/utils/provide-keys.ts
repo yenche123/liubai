@@ -1,6 +1,7 @@
 
 import type { InjectionKey, Ref, ShallowRef } from 'vue'
 import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
+import type { GetChaRes } from './liu-api/tools/types'
 
 // InjectionKey 是什么? 参考: 
 // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-provide-inject
@@ -48,3 +49,6 @@ export const svElementKey = Symbol() as InjectionKey<Ref<HTMLElement | null>>
 
 // 用于看板 传递内部 (kanban-view / list-view) 改变的时间戳给 state-page
 export const kanbanInnerChangeKey = Symbol() as InjectionKey<Ref<number>>
+
+// device characteristics
+export const deviceChaKey = Symbol() as InjectionKey<GetChaRes>

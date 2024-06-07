@@ -2,11 +2,12 @@
 import type { TipTapEditor } from '~/types/types-editor';
 import liuApi from "~/utils/liu-api"
 import type { Instance, Props } from 'tippy.js'
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import valTool from '~/utils/basic/val-tool';
 import cui from '~/components/custom-ui';
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import liuUtil from '~/utils/liu-util';
+import { deviceChaKey } from '~/utils/provide-keys';
 
 
 interface TcBubbleMenuOpt {
@@ -77,6 +78,8 @@ export function useBwBubbleMenu(
     _toCloseTippy(3)
   }
 
+  const cha = inject(deviceChaKey)
+
   return {
     selectedIndex,
     tippyOptions,
@@ -84,6 +87,7 @@ export function useBwBubbleMenu(
     onTapSearchIn,
     onTapSearchOut,
     onTapBot,
+    cha,
   }
 }
 

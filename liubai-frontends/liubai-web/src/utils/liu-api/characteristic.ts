@@ -1,4 +1,5 @@
 import reg_exp from "~/config/regular-expressions"
+import type { GetChaRes } from "./tools/types"
 
 // 判断各种特征
 
@@ -15,22 +16,6 @@ let isSafari: boolean = false;
 let isChrome: boolean = false;
 let isEdge: boolean = false;    // if true, isChrome is true as well
 let browserVersion: string | undefined;
-
-export interface GetChaRes {
-  isPC: boolean
-  isMobile: boolean
-  isWeChat: boolean
-  isIOS: boolean         // 是否为 iphone
-  isIPadOS: boolean      // 是否为 iPad
-  isMac: boolean         // 是否为 mac，注意 iphone 和 ipad 时，此值可能为 false
-  isFeishu: boolean
-  isInWebView: boolean
-  isFirefox: boolean
-  isSafari: boolean
-  isChrome: boolean
-  isEdge: boolean
-  browserVersion?: string
-}
 
 export const getCharacteristic = (): GetChaRes => {
   if(isPC !== undefined) {

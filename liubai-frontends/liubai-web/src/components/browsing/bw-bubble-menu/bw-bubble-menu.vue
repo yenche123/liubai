@@ -6,7 +6,6 @@ import type { TipTapEditor } from '~/types/types-editor';
 import { useI18n } from 'vue-i18n';
 import { shouldShow } from '~/utils/other/bubble-menu';
 import { useBwBubbleMenu } from "./tools/useBwBubbleMenu";
-import liuApi from '~/utils/liu-api';
 
 const bubbleColor = "var(--bubble-menu-color)"
 
@@ -16,13 +15,13 @@ const props = defineProps({
   }
 })
 const { t } = useI18n()
-const cha = liuApi.getCharacteristic()
 const {
   selectedIndex,
   tippyOptions,
   onTapCopy,
   onTapSearchIn,
   onTapSearchOut,
+  cha,
 } = useBwBubbleMenu(props)
 
 const onTapContainer = () => {}
@@ -31,7 +30,7 @@ const onTapContainer = () => {}
 <template>
 
   <bubble-menu
-    v-if="cha.isPC && editor"
+    v-if="cha?.isPC && editor"
     :editor="editor"
     :should-show="shouldShow"
     :updateDelay="250"

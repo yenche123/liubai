@@ -15,13 +15,16 @@ defineProps({
 })
 
 const { t } = useI18n()
-const { tippyOptions } = useEditingBubbleMenu()
+const {
+  tippyOptions,
+  cha,
+} = useEditingBubbleMenu()
 
 </script>
 <template>
 
   <bubble-menu
-    v-if="editor"
+    v-if="editor && cha?.isPC"
     :editor="editor"
     :should-show="shouldShow"
     :updateDelay="250"

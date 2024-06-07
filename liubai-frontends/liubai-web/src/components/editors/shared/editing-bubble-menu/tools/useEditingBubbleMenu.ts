@@ -1,4 +1,6 @@
 import type { Instance, Props } from 'tippy.js'
+import { inject } from 'vue'
+import { deviceChaKey } from '~/utils/provide-keys'
 
 export function useEditingBubbleMenu() {
 
@@ -12,5 +14,7 @@ export function useEditingBubbleMenu() {
     }
   }
 
-  return { tippyOptions }
+  const cha = inject(deviceChaKey)
+
+  return { tippyOptions, cha }
 }

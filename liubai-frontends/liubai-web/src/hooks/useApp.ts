@@ -2,16 +2,20 @@ import { useGlobalLoading } from "./tools/useGlobalLoading"
 import { useGlobalEvent } from "./tools/useGlobalEvent";
 import liuApi from "~/utils/liu-api"
 import { init as initForSystem } from "~/utils/system/init"
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, provide } from "vue";
 import { useGlobalStateStore } from "./stores/useGlobalStateStore";
 import liuEnv from "~/utils/liu-env";
 import { useIdsChanged } from "./tools/useIdsChanged";
 import { initAnalytics } from "./tools/initAnalytics";
 import localCache from "~/utils/system/local-cache";
+import { deviceChaKey } from "~/utils/provide-keys";
 
 // 监听和处理一些全局的事务，比如路由变化
 
 export function useApp() {  
+
+  // init device characteristics
+  initDeviceCha()
 
   // init mobile
   initMobile()
@@ -33,6 +37,11 @@ export function useApp() {
 
   // init useIdsChanged
   useIdsChanged()
+}
+
+function initDeviceCha() {
+  const cha = liuApi.getCharacteristic()
+  provide(deviceChaKey, cha)
 }
 
 function printInit() {

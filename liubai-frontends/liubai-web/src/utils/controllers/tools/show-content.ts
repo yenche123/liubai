@@ -2,7 +2,7 @@ import { ALLOW_DEEP_TYPES } from "~/config/atom";
 import type { LiuContent, LiuNodeType } from "~/types/types-atom";
 import valTool from "~/utils/basic/val-tool";
 import liuApi from "~/utils/liu-api";
-import type { GetChaRes } from "~/utils/liu-api/characteristic"
+import type { GetChaRes } from "~/utils/liu-api/tools/types"
 import reg_exp from "~/config/regular-expressions";
 
 type ParseType = "phone" | ""
