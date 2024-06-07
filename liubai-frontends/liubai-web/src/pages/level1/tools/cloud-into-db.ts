@@ -2,7 +2,11 @@
 // 把远端信息 LiuSpaceAndMember 分别存入 users workspaces members 中
 
 import type { LiuSpaceAndMember } from "~/types/types-cloud";
-import type { UserLocalTable, WorkspaceLocalTable, MemberLocalTable } from "~/types/types-table";
+import type { 
+  UserLocalTable, 
+  WorkspaceLocalTable, 
+  MemberLocalTable,
+} from "~/types/types-table";
 import { db } from "~/utils/db";
 import time from "~/utils/basic/time"
 import { CloudFiler } from "~/utils/cloud/CloudFiler";
@@ -72,6 +76,7 @@ export async function handleSpaceAndMembers(
 async function createSpace(
   v: LiuSpaceAndMember,
 ) {
+  const { image: avatar, useCloud } = CloudFiler.imageFromCloudToStore(v.space_avatar)
   const t = time.getTime()
   const data: WorkspaceLocalTable = {
     _id: v.spaceId,
@@ -80,6 +85,11 @@ async function createSpace(
     owner: v.space_owner,
     insertedStamp: t,
     updatedStamp: t,
+    name: v.space_name,
+    avatar,
+    tagList: v.space_tagList,
+    stateConfig: v.space_stateConfig,
+    config: v.space_config,
   }
   try {
     await db.workspaces.put(data)
@@ -90,6 +100,11 @@ async function createSpace(
     console.log(" ")
     return false
   }
+
+  if(useCloud) {
+    CloudFiler.notify("workspaces", data._id)
+  }
+
   return true
 }
 
@@ -97,7 +112,7 @@ async function createMember(
   userId: string,
   v: LiuSpaceAndMember,
 ) {
-  const { image: avatar } = CloudFiler.imageFromCloudToStore(v.member_avatar)
+  const { image: avatar, useCloud } = CloudFiler.imageFromCloudToStore(v.member_avatar)
   const b1 = time.getBasicStampWhileAdding()
   const data: MemberLocalTable = {
     ...b1,
@@ -119,7 +134,9 @@ async function createMember(
   }
   
   // notify CloudFiler to download images
-  CloudFiler.notify("members", data._id)
+  if(useCloud) {
+    CloudFiler.notify("members", data._id)
+  }
   return true
 }
 
