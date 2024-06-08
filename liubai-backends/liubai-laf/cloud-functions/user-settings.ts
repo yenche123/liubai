@@ -2,21 +2,25 @@
 
 import cloud from '@lafjs/cloud'
 import { 
+  checker,
   getStripeInstance, 
   getUserInfos, 
   updateUserInCache, 
   verifyToken,
 } from '@/common-util'
-import type { 
-  MongoFilter,
-  Table_User, 
-  LiuRqReturn,
-  Res_UserSettings_Enter,
-  Res_UserSettings_Latest,
-  Res_UserSettings_Membership,
-  VerifyTokenRes_B,
+import { 
+  type MongoFilter,
+  type Table_User, 
+  type LiuRqReturn,
+  type Res_UserSettings_Enter,
+  type Res_UserSettings_Latest,
+  type Res_UserSettings_Membership,
+  type VerifyTokenRes_B,
+  Sch_LocalTheme,
+  Sch_LocalLocale,
 } from '@/common-types'
 import { getNowStamp, DAY } from "@/common-time"
+import * as vbot from "valibot"
 
 const db = cloud.database()
 
@@ -41,6 +45,9 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "membership") {
     res = await handle_membership(vRes)
   }
+  else if(oT === "set") {
+    res = await handle_set(vRes, body)
+  }
 
   const stamp2 = getNowStamp()
   const diffS = stamp2 - stamp1
@@ -48,6 +55,66 @@ export async function main(ctx: FunctionContext) {
 
   return res
 }
+
+async function handle_set(
+  vRes: VerifyTokenRes_B,
+  body: Record<string, any>,
+): Promise<LiuRqReturn> {
+
+  // 1. check inputs
+  const Sch_Set = vbot.object({
+    theme: vbot.optional(Sch_LocalTheme),
+    language: vbot.optional(Sch_LocalLocale),
+  })
+  const res1 = vbot.safeParse(Sch_Set, body)
+  if(!res1.success) {
+    const errMsg = checker.getErrMsgFromIssues(res1.issues)
+    return { code: "E4000", errMsg }
+  }
+
+  // 2. return err if both theme and language are empty
+  const { theme, language } = res1.output
+  if(!theme && !language) {
+    return { code: "E4000", errMsg: "nothing to update" }
+  }
+
+  let updated = false
+  const user = vRes.userData
+  const u: Partial<Table_User> = {}
+
+  // 3. update theme
+  if(theme && theme !== user.theme) {
+    updated = true
+    u.theme = theme
+  }
+
+  // 4. update language
+  if(language && language !== user.language) {
+    updated = true
+    u.language = language
+  }
+
+  // 5. return if no update
+  if(!updated) {
+    return { code: "0000" }
+  }
+
+  u.updatedStamp = getNowStamp()
+
+  // 6. to update in db
+  const userId = user._id
+  const col_user = db.collection("User")
+  const res6 = await col_user.doc(userId).update(u)
+  console.log("update user's theme & lang")
+  console.log(res6)
+
+  // 7. update in cache
+  const newUser = { ...user, ...u }
+  updateUserInCache(userId, newUser)
+
+  return { code: "0000" }
+}
+
 
 /** get the status of membership 
  *  so return UserSubscription

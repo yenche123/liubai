@@ -127,8 +127,13 @@ export const oState_Drafts = ["OK", "POSTED", "DELETED", "LOCAL"] as const
 export type OState_Draft = typeof oState_Drafts[number]
 export const Sch_OState_Draft = vbot.picklist(oState_Drafts)
 
-export type SupportedTheme = "light" | "dark"
-export type LocalTheme = SupportedTheme | "system" | "auto"   // auto 就是日夜切换
+export const supportedThemes = ["light", "dark"] as const
+export type SupportedTheme = typeof supportedThemes[number]
+export const Sch_SupportedTheme = vbot.picklist(supportedThemes)
+
+export const localThemes = [...supportedThemes, "system", "auto"] as const
+export type LocalTheme = typeof localThemes[number]
+export const Sch_LocalTheme = vbot.picklist(localThemes)
 
 export const threadListViewTypes = [
   "TRASH", 
@@ -161,7 +166,10 @@ export const supportedLocales = [
 ] as const
 export type SupportedLocale = typeof supportedLocales[number]
 export const Sch_SupportedLocale = vbot.picklist(supportedLocales)
-export type LocalLocale = SupportedLocale | "system"
+
+export const localLocales = [...supportedLocales, "system"] as const
+export type LocalLocale = typeof localLocales[number]
+export const Sch_LocalLocale = vbot.picklist(localLocales)
 
 interface BaseTable {
   _id: string
