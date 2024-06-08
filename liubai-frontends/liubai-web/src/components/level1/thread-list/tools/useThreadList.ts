@@ -203,7 +203,7 @@ function checkList(
   console.log("diff: ", diff)
   console.log(" ")
 
-  if(s1 < 300 || diff > 300) {
+  if(s1 < 300 || diff > 600) {
     loadList(ctx, true, cloud)
     return
   }
