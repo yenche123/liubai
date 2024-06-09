@@ -14,7 +14,7 @@ interface LiuPermissionQuery {
 
 const permissionsQuery = async (option: LiuPermissionQuery) => {
   if(!navigator.permissions || !navigator.permissions.query) {
-    return valTool.getPromise<false>(false)
+    return valTool.getPromise(undefined)
   }
   try {
     const res = await navigator.permissions.query(option as PermissionDescriptor)
@@ -24,8 +24,6 @@ const permissionsQuery = async (option: LiuPermissionQuery) => {
     console.log("浏览器不支持该 api ..........")
     console.log(err)
   }
-
-  return false
 }
 
 export default {
