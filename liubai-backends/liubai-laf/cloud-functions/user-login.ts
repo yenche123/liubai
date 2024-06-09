@@ -875,6 +875,11 @@ async function handleUserWhileSigningIn(
     u.language = bLang
   }
 
+  const systemTheme = body["x_liu_theme"] as SupportedTheme
+  const systemLanguage = body["x_liu_language"]
+  u.systemTheme = systemTheme
+  u.systemLanguage = systemLanguage
+
   if(!user.open_id) {
     u.open_id = createOpenId()
   }
@@ -1016,12 +1021,8 @@ async function sign_up(
     return { code: "E5001", errMsg: "there is no required data in sign_up" }
   }
 
-  let systemTheme = body["x_liu_theme"] as SupportedTheme
-  if(systemTheme !== "light" && systemTheme !== "dark") {
-    systemTheme = "light"
-  }
-
-  let systemLanguage = body["x_liu_language"]
+  const systemTheme = body["x_liu_theme"] as SupportedTheme
+  const systemLanguage = body["x_liu_language"]
 
   // 1. 构造 User
   const basic1 = getBasicStampWhileAdding()

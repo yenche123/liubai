@@ -57,18 +57,15 @@ export const Sch_Opt_Bool = vbot.optional(vbot.boolean())
 export const Sch_Opt_Id = vbot.optional(Sch_Id)
 
 // trim 后有字符串的 string
-export const Sch_String_WithLength = vbot.string([
-  vbot.toTrimmed(), 
-  vbot.minLength(1)
-])
-
-// trim 后有字符串的 string
-export const sch_string_length = (length: number = 1) => {
+export const sch_string_length = (minLength: number = 1) => {
   return vbot.string([
     vbot.toTrimmed(), 
-    vbot.minLength(length)
+    vbot.minLength(minLength)
   ])
 }
+
+// trim 后有字符串的 string
+export const Sch_String_WithLength = sch_string_length()
 
 // optional array something
 export const sch_opt_arr = (
@@ -528,6 +525,7 @@ export const Sch_Cloud_ImageStore: BaseSchema<Cloud_ImageStore> = vbot.object(
 // 每个请求里皆应存在的参数字段
 export const Sch_X_Liu = vbot.object({
   x_liu_language: sch_string_length(2),
+  x_liu_theme: Sch_SupportedTheme,
   x_liu_version: sch_string_length(3),     // 比如 "2.0" 最少有三个字符
 
   // 最小要大于 2024-04-06，这个日期没有意义，只是已读罢了

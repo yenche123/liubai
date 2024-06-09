@@ -7,6 +7,7 @@ import type {
 } from "@/common-types"
 import { Sch_X_Liu, Sch_IP } from "@/common-types"
 import { getNowStamp, SECONED, MINUTE } from "@/common-time"
+import { getIp } from "@/common-util"
 import * as vbot from "valibot"
 
 /****************** 一些常量 *****************/
@@ -41,7 +42,7 @@ export async function main(
   }
 
   // 0.2 获取请求的实际 IP
-  const ip = ctx.headers?.['x-real-ip']
+  const ip = getIp(ctx)
 
   // 0.3 是否直接通过
   const preRes = preCheck(ctx, funcName, ip)
