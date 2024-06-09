@@ -205,7 +205,7 @@ function whenDraftSet(d: DraftLocalTable) {
     tagIds: d.tagIds,
   }
   if(d.liuDesc) {
-    uploadDraft.liuDesc = transferUtil.tiptapToLiu(d.liuDesc)
+    uploadDraft.liuDesc = transferUtil.tiptapToLiu(d.liuDesc, { trim: false })
   }
   return uploadDraft
 }

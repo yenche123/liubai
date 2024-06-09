@@ -9,16 +9,26 @@ import { imagesFromStoreToCloud, filesFromStoreToCloud } from "./file"
 import type { ListToMdOpt } from "./markdown"
 import type { LiuFileStore } from "~/types"
 
-function tiptapToLiu(list: TipTapJSONContent[]): LiuContent[] {
-  list = trimJSONContent(list)
-  
-  // console.log("list 1: ")
-  // console.log(valTool.copyObject(list))
-  list = equipLink(list)
-  // console.log("list 2: ")
-  // console.log(valTool.copyObject(list))
 
-  // 开始过滤掉未定义的标签
+interface TiptapToLiuOpt {
+  trim?: boolean     // true is default
+}
+
+function tiptapToLiu(
+  list: TipTapJSONContent[],
+  opt?: TiptapToLiuOpt,
+): LiuContent[] {
+
+  // 1. trim
+  const trim = opt?.trim ?? true
+  if(trim) {
+    list = trimJSONContent(list)
+  }
+  
+  // 2. handle links
+  list = equipLink(list)
+  
+  // 3. filter unallowed types
   const newList = filterNotLiuType(list)
   return newList
 }

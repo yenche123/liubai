@@ -9,7 +9,10 @@ export function trimJSONContent(list: TipTapJSONContent[]) {
   return list
 }
 
-function trimOneDirection(list: TipTapJSONContent[], direction: 1 | -1) {
+function trimOneDirection(
+  list: TipTapJSONContent[], 
+  direction: 1 | -1,
+) {
   if(!list || list.length < 1) return []
   const initNum = direction > 0 ? 0 : (list.length - 1)
 
