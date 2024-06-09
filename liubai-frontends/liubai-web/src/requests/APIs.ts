@@ -8,6 +8,7 @@ export default {
   LOGIN: d + `user-login`,
   USER_ENTER: d + `user-settings`,
   USER_LATEST: d + `user-settings`,
+  USER_SET: d + `user-settings`,
   USER_MEMBERSHIP: d + `user-settings`,
   SUBSCRIBE_PLAN: d + `subscribe-plan`,
   REQUEST_REFUND: d + `subscribe-plan`,

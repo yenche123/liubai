@@ -7,6 +7,8 @@ import { useWindowSize } from "~/hooks/useVueUse"
 import valTool from "~/utils/basic/val-tool"
 import { transitionHelper } from "~/utils/other/transition-related"
 import { useSystemStore, type UseSystemType } from "~/hooks/stores/useSystemStore"
+import liuEnv from "~/utils/liu-env"
+import { fetchUserSet } from "./requests"
 
 export async function whenTapTheme(
   data: SettingContentData
@@ -25,10 +27,22 @@ export async function whenTapTheme(
   const id = item.id
 
   // 0. 判断是否跟原来的选择一致
-  if(id === data.theme) return
+  const oldTheme = data.theme
+  if(id === oldTheme) return
   
+  // 1. set theme for local
   const systemStore = useSystemStore()
   systemStore.setTheme(id)
+
+  // 2. check out if we have backend
+  const hasBackend = liuEnv.hasBackend()
+  if(!hasBackend) return
+
+  // 3. set theme for remote
+  const res3 = await fetchUserSet(id)
+  console.log("res3: ")
+  console.log(res3)
+  console.log(" ")
 }
 
 
