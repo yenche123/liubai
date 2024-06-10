@@ -2,7 +2,7 @@ import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
 import { type LiuTimeout } from "~/utils/basic/type-tool";
 
-const MAX_WAITING = 4 * time.SECONED
+const MAX_WAITING = 3 * time.SECONED
 
 // listen to document loaded
 // and close the splash screen
@@ -51,8 +51,8 @@ export function listenLoaded() {
 
     const lastEntry = entries[len - 1] as PerformanceNavigationTiming
     console.log(lastEntry)
-
     const stamp = Math.round(lastEntry.loadEventStart)
+    console.log(stamp)
 
     if(stamp > 750) {
       _byebye()
@@ -61,6 +61,7 @@ export function listenLoaded() {
     const duration = 900 - stamp
 
     console.log("等待毫秒数: ", duration)
+    console.log(" ")
     await valTool.waitMilli(duration)
     
     _byebye()
