@@ -31,15 +31,15 @@ const {
   <div v-if="sbfData.enable" 
     class="sb-fixed"
     @touchstart="onTouchStart"
-    @touchmove="onTouchMove"
-    @touchend="onTouchEnd"
-    @touchcancel="onTouchCancel"
+    @touchmove.passive="onTouchMove"
+    @touchend.passive="onTouchEnd"
+    @touchcancel.passive="onTouchCancel"
   >
 
     <div class="sf-bg"
       @click.stop="onTapPopup"
-      @touchstart="onPopupTouchStart"
-      @touchend="onPopupTouchEnd"
+      @touchstart.passive="onPopupTouchStart"
+      @touchend.passive="onPopupTouchEnd"
     ></div>
 
     <div class="sf-container">

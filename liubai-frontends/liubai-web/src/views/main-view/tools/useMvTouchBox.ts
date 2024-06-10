@@ -58,7 +58,7 @@ export function useMvTouchBox(leftPx: Ref<number>, emits: MainViewEmits) {
     }
   }
 
-  const onTouchEnd = (e: TouchEvent) => {
+  const onTouchEnd = () => {
     if(startX === null) return
     let diffPixel = lastX - startX
     let allowOpen = diffPixel >= (width.value / 10) && diffPixel > 40

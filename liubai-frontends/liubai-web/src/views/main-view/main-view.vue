@@ -57,10 +57,10 @@ const onTapCenter = (e: MouseEvent) => {
 
   <!-- 监听滑动打开左边侧边栏的盒子 -->
   <div v-if="showTouchBox" class="mv-touch-box"
-    @touchstart="onTouchStart"
-    @touchmove="onTouchMove"
-    @touchend="onTouchEnd"
-    @touchcancel="onTouchCancel"
+    @touchstart.passive="onTouchStart"
+    @touchmove.passive="onTouchMove"
+    @touchend.passive="onTouchEnd"
+    @touchcancel.passive="onTouchCancel"
     :draggable="false"
   ></div>
 

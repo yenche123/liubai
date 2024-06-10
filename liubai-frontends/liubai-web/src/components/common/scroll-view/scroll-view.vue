@@ -18,7 +18,7 @@ const { isMobile } = liuApi.getCharacteristic()
       'liu-scroll-view_flex': direction === 'horizontal',
       'liu-scollbar_hidden': hiddenScrollBar,
     }"
-    @scroll="onScrolling"
+    @scroll.passive="onScrolling"
   >
     <slot></slot>
   </div>

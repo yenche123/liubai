@@ -121,7 +121,7 @@ useDraftIdChanged(ceData)
   <div class="ce-editor-gradient ce-editor-gradient_up"></div>
 
   <div class="ce-editor"
-    @scroll="onEditorScrolling"
+    @scroll.passive="onEditorScrolling"
   >
     <EditorCore 
       ref="editorCoreRef"
