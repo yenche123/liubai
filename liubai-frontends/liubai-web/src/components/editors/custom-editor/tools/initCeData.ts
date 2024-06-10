@@ -14,7 +14,11 @@ import { editorSetKey } from "~/utils/provide-keys"
 import { storeToRefs } from "pinia"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
-import { handleOverflow, getRemindMeFromThread } from "./some-funcs"
+import { 
+  handleOverflow, 
+  getRemindMeFromThread, 
+  checkIfEditorHasData,
+} from "./some-funcs"
 import liuEnv from "~/utils/liu-env"
 import type { 
   LiuDownloadDraft, 
@@ -224,8 +228,18 @@ async function initDraftFromDraft(
 
   setEditorContent(ctx, draft.liuDesc)
 
-  if(loadCloud) {
+  if(!loadCloud) return
+
+  const threadId = ceData.threadEdited
+  const hasData = checkIfEditorHasData(ceData)
+
+  console.log("checkIfEditorHasData: ", hasData)
+
+  if(threadId || hasData) {
     initFromCloudDraft(ctx, draft)
+  }
+  else {
+    initFromCloudDraft(ctx)
   }
 }
 

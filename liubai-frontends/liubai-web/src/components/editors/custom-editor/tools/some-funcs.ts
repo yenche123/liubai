@@ -58,3 +58,16 @@ export function getRemindMeFromThread(
   }
   return newRemindMe
 }
+
+export function checkIfEditorHasData(
+  ceData: CeData,
+) {
+  const text = ceData.editorContent?.text.trim()
+  if(text?.length) return true
+
+  const { files, images } = ceData
+  if(files?.length) return true
+  if(images?.length) return true
+
+  return false
+}
