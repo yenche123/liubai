@@ -7,6 +7,7 @@ import {
   onBeforeUnmount, 
   onDeactivated, 
   ref, 
+  toRef, 
   watch,
 } from "vue"
 import { useWorkspaceStore } from "./stores/useWorkspaceStore"
@@ -18,6 +19,7 @@ import { usersToMemberShows } from "~/utils/other/member-related";
 import { membersToShows } from "~/utils/other/member-related";
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus";
 import { useThrottleFn } from "~/hooks/useVueUse"
+import type { TrueOrFalse } from "~/types/types-basic";
 
 // 获取路径的前缀
 // 如果当前非个人工作区，就会加上 `/w/${spaceId}`
@@ -87,13 +89,25 @@ export function useActiveSyncNum() {
   }
 }
 
+export interface AwakeNumProps {
+  showTxt?: TrueOrFalse
+  [key: string]: any
+}
+
 export function useAwakeNum(
-  ms: number = 3000
+  ms: number = 3000,
+  props?: AwakeNumProps,
 ) {
   const awakeNum = ref(0)
 
+  let showTxt = ref<TrueOrFalse | undefined>("true")
+  if(props?.showTxt) {
+    showTxt = toRef(props, "showTxt")
+  }
+
   const syncNum = CloudEventBus.getSyncNum()
-  const isActivated = ref(false)
+  const isActivated = ref(showTxt.value === "true")
+
   onActivated(() => isActivated.value = true)
   onDeactivated(() => isActivated.value = false)
   onBeforeUnmount(() => isActivated.value = false)
@@ -106,11 +120,12 @@ export function useAwakeNum(
 
   const _trigger = useThrottleFn(_go, ms)
 
-  watch([syncNum, isActivated], (
-    [newV1, newV2],
-    [oldV1, oldV2],
+  watch([syncNum, isActivated, showTxt], (
+    [newV1, newV2, newV3],
+    [oldV1, oldV2, oldV3],
   ) => {
     if(!newV2) return
+    if(newV3 === "false") return
 
     if(newV1 === 1 && newV2 === oldV2) {
       _go(newV1)

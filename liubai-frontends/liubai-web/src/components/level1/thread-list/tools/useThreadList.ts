@@ -83,7 +83,7 @@ export function useThreadList(
     isActivated,
     syncNum,
     awakeNum,
-  } = useAwakeNum()
+  } = useAwakeNum(undefined, props)
 
   const gStore = useGlobalStateStore()
   const { tagChangedNum } = storeToRefs(gStore)
@@ -112,7 +112,16 @@ export function useThreadList(
   watch([viewType, tagId, spaceIdRef, tagChangedNum, awakeNum], (
       [newV1, newV2, newV3, newV4, newV5],
       [oldV1, oldV2, oldV3, oldV4, oldV5]
-    ) => {
+  ) => {
+
+    // console.log("watch changed.........")
+    // console.log("newV1: ", newV1)
+    // console.log("newV2: ", newV2)
+    // console.log("newV3: ", newV3)
+    // console.log("newV4: ", newV4)
+    // console.log("newV5: ", newV5)
+    // console.log(" ")
+
     if(!newV3) return
     if(!newV5) return
 
