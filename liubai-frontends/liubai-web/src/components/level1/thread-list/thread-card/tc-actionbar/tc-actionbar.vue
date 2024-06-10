@@ -92,7 +92,7 @@ const default_color = "var(--main-code)"
       @click.stop="$emit('newoperate', 'tag')"
     >
       <div class="tca-icon-box">
-        <svg-icon name="tag" class="tca-icon" :color="default_color"></svg-icon>
+        <svg-icon name="tag" class="tca-icon_tag" :color="default_color"></svg-icon>
       </div>
     </div>
 
@@ -101,7 +101,7 @@ const default_color = "var(--main-code)"
       @click.stop="$emit('newoperate', 'state')"
     >
       <div class="tca-icon-box">
-        <svg-icon name="priority_400" class="tca-icon" :color="default_color"></svg-icon>
+        <svg-icon name="priority_400" class="tca-icon_state" :color="default_color"></svg-icon>
       </div>
     </div>
     
@@ -111,6 +111,7 @@ const default_color = "var(--main-code)"
 
         <!-- comment -->
         <div class="liu-hover tca-item"
+          :style="{ 'margin-inline-end': commentNum > 0 ? '4px' : '8px' }"
           @click.stop="$emit('tapcomment')"
         >
           <div class="tca-icon-box">
@@ -193,6 +194,19 @@ const default_color = "var(--main-code)"
       width: 24px;
       height: 24px;
     }
+
+    .tca-icon_tag {
+      margin-top: 2px;
+      width: 26px;
+      height: 26px;
+    }
+
+    .tca-icon_state {
+      margin-top: 4px;
+      width: 26px;
+      height: 26px;
+    }
+
 
     .tca-icon_comment {
       margin-top: 5px;
