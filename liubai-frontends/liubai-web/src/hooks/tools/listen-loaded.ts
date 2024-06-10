@@ -1,6 +1,7 @@
 import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
 import { type LiuTimeout } from "~/utils/basic/type-tool";
+import { onMounted } from "vue";
 
 const MAX_WAITING = 3 * time.SECONED
 
@@ -45,14 +46,25 @@ export function listenLoaded() {
     const entries = performance.getEntriesByType("navigation")
     const len = entries.length
     if(len < 1) {
-      _byebye()
+      console.log("no navigation entries")
       return
     }
 
     const lastEntry = entries[len - 1] as PerformanceNavigationTiming
     console.log(lastEntry)
-    const stamp = Math.round(lastEntry.loadEventStart)
-    console.log(stamp)
+    let stamp = Math.round(lastEntry.loadEventStart)
+    console.log("stamp: ", stamp)
+
+    if(!stamp) {
+      console.log(" ")
+      return
+    }
+
+    const now = Math.round(performance.now())
+    console.log("now: ", now)
+    if(now > stamp) {
+      stamp = now
+    }
 
     if(stamp > 750) {
       _byebye()
@@ -71,4 +83,10 @@ export function listenLoaded() {
     console.log("listenLoaded load.......")
     _calculateConsumingTime()
   })
+
+  onMounted(() => {
+    console.log("listenLoaded onMounted.......")
+    _calculateConsumingTime()
+  })
+  
 }
