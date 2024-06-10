@@ -10,6 +10,7 @@ import { initAnalytics } from "./tools/initAnalytics";
 import localCache from "~/utils/system/local-cache";
 import { deviceChaKey } from "~/utils/provide-keys";
 import type { GetChaRes } from "~/utils/liu-api/tools/types";
+import { listenLoaded } from "./tools/listen-loaded"
 
 // 监听和处理一些全局的事务，比如路由变化
 
@@ -40,6 +41,9 @@ export function useApp() {
 
   // init useIdsChanged
   useIdsChanged()
+
+  // listen to document loaded
+  listenLoaded()
 
   return {
     cha,

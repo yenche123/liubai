@@ -6,11 +6,29 @@
     <link rel="apple-touch-icon" sizes="256x256" href="/logos/logo_256x256_v2.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/logos/logo_32x32_v2.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/logos/logo_16x16_v2.png">
+    
+    <!-- 开屏加载 -->
+    <link rel="stylesheet" href="/styles/liu-splash-screen.css">
+    <link rel="preload" href="/styles/liu-splash-screen.css" as="style" >
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
     <title>Liubai</title>
   </head>
   <body class="theme-common theme-light">
+
+    <!-- splash screen waiting for document loaded -->
+    <div class="liu-splash-screen">
+      <div class="liuss-container">
+        <div class="liuss-slice"></div>
+        <div class="liuss-slice"></div>
+        <div class="liuss-slice"></div>
+        <div class="liuss-slice"></div>
+        <div class="liuss-slice"></div>
+        <div class="liuss-slice"></div>
+      </div>
+    </div>
+
+
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
