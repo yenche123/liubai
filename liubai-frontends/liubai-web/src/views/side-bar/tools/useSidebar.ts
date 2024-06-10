@@ -13,12 +13,14 @@ import { useSbKeyboard } from "./useSbKeyboard"
 import type { SbData } from "./types";
 import { useImages } from "~/hooks/useImages"
 import { type CursorHorizontalResize } from "~/types/types-view";
+import { useWindowLoaded } from "~/hooks/useCommon";
 
 const LISTEN_DELAY = 450
 let sidebarPxByDrag = cfg.default_sidebar_width   // 存储上一次用户拖动侧边栏后视觉上呈现的宽度
 let lastWinResizeStamp = 0
 
 const sbData = reactive<SbData>({
+  enable: false,
   openType: "opened",
   minSidebarPx: cfg.min_sidebar_width,
   sidebarWidthPx: cfg.default_sidebar_width,
@@ -63,6 +65,9 @@ export function useSidebar() {
 
   // 监听 Ctrl + \
   useSbKeyboard(layoutStore, sbData, onTapOpenBtn, onTapCloseBtn, LISTEN_DELAY)
+
+  // listen to global store
+  useWindowLoaded(sbData)
 
   return {
     bgSrc,

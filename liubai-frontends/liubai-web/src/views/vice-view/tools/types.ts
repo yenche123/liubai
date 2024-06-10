@@ -1,6 +1,7 @@
 import type { OpenType } from "~/types/types-view";
 
 export interface VvData {
+  enable: boolean
   openType: OpenType
   intendedMinVvPx: number
   minVvPx: number

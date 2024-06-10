@@ -20,6 +20,7 @@ import { membersToShows } from "~/utils/other/member-related";
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus";
 import { useThrottleFn } from "~/hooks/useVueUse"
 import type { TrueOrFalse } from "~/types/types-basic";
+import { useGlobalStateStore } from "./stores/useGlobalStateStore";
 
 // 获取路径的前缀
 // 如果当前非个人工作区，就会加上 `/w/${spaceId}`
@@ -142,3 +143,16 @@ export function useAwakeNum(
   }
 }
 
+
+interface WinLoadedData {
+  enable: boolean
+  [key: string]: any
+}
+
+export function useWindowLoaded(data: WinLoadedData) {
+  const gs = useGlobalStateStore()
+  const { windowLoaded } = storeToRefs(gs)
+  watch(windowLoaded, (newV) => {
+    data.enable = newV
+  }, { immediate: true })
+}

@@ -24,6 +24,7 @@ import liuApi from "~/utils/liu-api";
 import liuUtil from "~/utils/liu-util";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import type { VvData, VvEmits } from "./types";
+import { useWindowLoaded } from "~/hooks/useCommon";
 
 const LISTEN_DELAY = 450
 const layoutStore = useLayoutStore()
@@ -95,10 +96,9 @@ function initViceView() {
   if(w > 1280) {
     defaultPx = Math.max(defaultPx, Math.round(w / 3.33))
   }
-  
-  const cha = liuApi.getCharacteristic()
 
   const vvData = reactive<VvData>({
+    enable: false,
     openType: "closed_by_auto",
     intendedMinVvPx: cfg.min_viceview_width,
     minVvPx: cfg.min_viceview_width,
@@ -115,6 +115,8 @@ function initViceView() {
   watch(height, (newV) => {
     vvData.vvHeightPx = newV
   })
+
+  useWindowLoaded(vvData)
 
   return { vvData }
 }

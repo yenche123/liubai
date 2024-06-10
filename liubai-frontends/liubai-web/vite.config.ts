@@ -64,6 +64,10 @@ export default defineConfig({
     port: 5175,
   },
 
+  build: {
+    sourcemap: true,
+  },
+
   preview: {
     port: 4175,
   },

@@ -11,6 +11,9 @@ export interface KanbanStateChange {
 }
 
 export const useGlobalStateStore = defineStore("globalState", () => {
+  
+  // window.addEventListener("load") 是否已被触发
+  const windowLoaded = ref(false)
 
   // custom-editor 里的输入框是否正在输入
   const customEditorInputing = ref(false)
@@ -56,6 +59,7 @@ export const useGlobalStateStore = defineStore("globalState", () => {
   }
 
   return { 
+    windowLoaded,
     customEditorInputing, 
     commentEditorInputing,
     canListenKeyboard,

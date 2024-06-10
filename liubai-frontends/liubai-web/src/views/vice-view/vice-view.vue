@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import { ref, toRefs } from "vue";
+import { ref, toRefs, defineAsyncComponent } from "vue";
 import { useViceView } from "./tools/useViceView"
 import { useVvUI } from "./tools/useVvUI";
 import type { VcState } from "./vice-content/tools/types";
-import ViceContent from "./vice-content/vice-content.vue";
-import IframeRestriction from "./iframe-restriction/iframe-restriction.vue";
+
+const ViceContent = defineAsyncComponent(() => {
+  return import("./vice-content/vice-content.vue")
+})
+
+const IframeRestriction = defineAsyncComponent(() => {
+  return import("./iframe-restriction/iframe-restriction.vue")
+})
 
 const emits = defineEmits<{
   (e: "widthchange", widthPx: number): void

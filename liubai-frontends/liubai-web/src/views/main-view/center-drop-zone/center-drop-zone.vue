@@ -34,6 +34,7 @@ onMounted(async () => {
 </script>
 <template>
   <div class="cdz-container"
+    v-if="transDuration !== '0'"
     :class="{ 'cdz-container_show': isOverDropZone }"
     @click="$emit('tap')"
   >

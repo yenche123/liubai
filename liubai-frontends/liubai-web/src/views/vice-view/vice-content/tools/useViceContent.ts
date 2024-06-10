@@ -1,4 +1,4 @@
-import { onActivated, watch, reactive } from "vue";
+import { onActivated, watch, reactive, onMounted } from "vue";
 import type { LocationQuery } from "vue-router";
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import valTool from "~/utils/basic/val-tool";
@@ -237,13 +237,16 @@ function listenRouteChange(
     }
   })
 
-  onActivated(() => {
+  const _pageActivated = () => {
     if(located) return
     if(_hasVal(route.name)) {
       located = route.name
     }
     checkRouteChange(route.query)
-  })
+  }
+
+  onActivated(_pageActivated)
+  onMounted(_pageActivated)
 }
 
 

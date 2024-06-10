@@ -39,7 +39,8 @@ const {
 </script>
 <template>
 
-  <div class="sb-container"
+  <div v-if="sbData.enable"
+    class="sb-container"
     :class="{ 'sb-container_hidden': openType !== 'opened' }"
     @mouseenter="onSbMouseEnter"
     @mouseleave="onSbMouseLeave"

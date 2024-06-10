@@ -2,6 +2,7 @@ import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
 import { type LiuTimeout } from "~/utils/basic/type-tool";
 import { onMounted } from "vue";
+import { useGlobalStateStore } from "../stores/useGlobalStateStore";
 
 const MAX_WAITING = 3 * time.SECONED
 
@@ -9,12 +10,14 @@ const MAX_WAITING = 3 * time.SECONED
 // and close the splash screen
 export function listenLoaded() {
 
+  const gs = useGlobalStateStore()
   let hasClosed = false
   let maxCloseTimeout: LiuTimeout
 
   const _closeSplashScreen = async () => {
     if(hasClosed) return
     hasClosed = true
+    gs.$patch({ windowLoaded: true })
 
     const el = document.querySelector(".liu-splash-screen")
     if(!el) return
