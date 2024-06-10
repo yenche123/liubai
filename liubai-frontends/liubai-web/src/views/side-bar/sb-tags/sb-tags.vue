@@ -46,6 +46,7 @@ const {
   menuList,
   menuList2,
   onTapMenuItem,
+  onTapAdd,
 } = useStMenu(ctx)
 
 
@@ -55,11 +56,16 @@ const {
   <div class="st-virtual"></div>
 
   <div class="liu-frosted-glass st-navibar">
-    <button class="liu-hover st-navi-back" @click="onNaviBack" :tabindex="show ? 0 : -1">
+    <button class="liu-hover st-navi-back" @click.stop="onNaviBack" :tabindex="show ? 0 : -1">
       <SvgIcon class="st-navi-back-icon" name="arrow-back700"></SvgIcon>
     </button>
     <div class="st-navi-title">
       <span>{{ t("common.tags") }}</span>
+    </div>
+    <div class="st-navi-footer">
+      <button class="liu-hover st-navi-back st-add" @click.stop="onTapAdd" :tabindex="show ? 0 : -1">
+        <SvgIcon class="st-navi-back-icon" name="add"></SvgIcon>
+      </button>
     </div>
   </div>
 
@@ -176,6 +182,17 @@ const {
     font-weight: 700;
     letter-spacing: 2px;
   }
+
+  .st-navi-footer {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .st-add {
+    margin-inline-end: -4px;
+  }
+
 }
 
 .st-virtual-two {
@@ -326,6 +343,10 @@ const {
       line-height: 1.5;
       font-weight: 700;
       letter-spacing: 1px;
+    }
+
+    .st-add {
+      margin-inline-end: -8px;
     }
 
   }

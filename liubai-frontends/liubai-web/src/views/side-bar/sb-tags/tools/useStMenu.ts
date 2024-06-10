@@ -49,11 +49,16 @@ export function useStMenu(ctx: StmCtx) {
     }
   }
 
+  const onTapAdd = () => {
+    handle_add()
+  }
+
   return {
     isPC,
     menuList,
     menuList2,
     onTapMenuItem,
+    onTapAdd,
   }
 }
 
@@ -81,6 +86,24 @@ function initMenu(isPC: boolean) {
 
   return { menuList, menuList2 }
 }
+
+async function handle_add() {
+  const res = await cui.showHashtagEditor({ mode: "edit" })
+  if(!res.confirm || res.tagId || !res.text) return
+
+  const param = {
+    text: res.text,
+    icon: res.icon,
+  }
+  const res2 = await addATag(param)
+
+  if(!res2.id) {
+    return
+  }
+  const gStore = useGlobalStateStore()
+  gStore.addTagChangedNum("create")
+}
+
 
 async function handle_create(
   node: TagView,
