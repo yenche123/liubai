@@ -118,10 +118,11 @@ function getStyles(
 
 
   const isCard = computed(() => {
-    const otherData = props.otherData
-    if(otherData?.isSpotify) return true
-    if(otherData?.isAppleMusic) return true
-    if(otherData?.isApplePodcast) return true
+    const od = props.otherData
+    if(od?.isSpotify) return true
+    if(od?.isAppleMusic) return true
+    if(od?.isApplePodcast) return true
+    if(od?.isReddit) return true
     return false
   })
 

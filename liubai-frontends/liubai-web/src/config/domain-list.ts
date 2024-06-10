@@ -74,6 +74,7 @@ export const domainAllowed = [
   "mt.cd",
   "chi.miantiao.me",
   "cnworkshop.xyz",
+  "matthewball.co",
   
   "latepost.com",
   "36kr.com",
@@ -116,7 +117,7 @@ export const domainAllowed = [
   "sohu.com",
   "csdn.net",
   "utgd.net",
-  "psyche.co"
+  "psyche.co",
 ]
 
 // 即使用 proxy 打开，也会有异常的网页
@@ -172,6 +173,7 @@ export const domainNotAllowed = [
   "rust-lang.org",
   "v2.tauri.app",
   "mozilla.org",
+  "reddit.com",
 ]
 
 export const mastodonDomains = [

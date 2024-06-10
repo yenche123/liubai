@@ -128,6 +128,10 @@ export default {
   // some blogs
   LUTAONAN_COM: "https://lutaonan.com/",
 
+  // reddit
+  REDDIT_COM: "https://www.reddit.com/",
+  REDDIT_EMBED: "https://embed.reddit.com/",
+
   // some dev
   REACT_NATIVE: "https://reactnative.dev/",
   

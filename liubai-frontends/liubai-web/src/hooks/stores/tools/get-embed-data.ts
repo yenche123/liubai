@@ -116,6 +116,26 @@ export function getEmbedData(
     }
   }
 
+  // reddit embed
+  const redditEmbed = new URL(thirdLink.REDDIT_EMBED)
+  const isRedditEmbed = valTool.isInDomain(h, redditEmbed.hostname)
+  if(isRedditEmbed) {
+    return {
+      link: originUrl,
+      otherData: { isReddit: true },
+    }
+  }
+
+  // reddit.com
+  const reddit = new URL(thirdLink.REDDIT_COM)
+  const isReddit = valTool.isInDomain(h, reddit.hostname)
+  if(isReddit && p.startsWith("/r/")) {
+    url.hostname = redditEmbed.hostname
+    return {
+      link: url.toString(),
+      otherData: { isReddit: true },
+    }
+  }
 
   // 适配 loom /share
   const loom = thirdLink.LOOM_EMBED
