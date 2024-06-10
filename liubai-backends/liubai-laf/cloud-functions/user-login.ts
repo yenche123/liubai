@@ -868,10 +868,10 @@ async function handleUserWhileSigningIn(
   
   const bTheme = normalizeToLocalTheme(body.theme)
   const bLang = normalizeToLocalLocale(body.language)
-  if(bTheme !== user.theme) {
+  if(bTheme !== "system" && bTheme !== user.theme) {
     u.theme = bTheme
   }
-  if(bLang !== user.language) {
+  if(bLang !== "system" && bLang !== user.language) {
     u.language = bLang
   }
 

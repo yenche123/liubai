@@ -2,6 +2,8 @@ import type { SettingContentData } from "./types"
 import { getLanguageList } from "./get-list"
 import cui from "~/components/custom-ui"
 import { useSystemStore } from "~/hooks/stores/useSystemStore"
+import liuEnv from "~/utils/liu-env"
+import { fetchUserSet } from "./requests"
 
 export async function whenTapLanguage(
   data: SettingContentData
@@ -17,6 +19,17 @@ export async function whenTapLanguage(
   const id = item.id
   if(id === data.language) return
 
+  // 1. set language for local
   const systemStore = useSystemStore()
   systemStore.setLanguage(id)
+
+  // 2. check out if we have backend
+  const hasBackend = liuEnv.hasBackend()
+  if(!hasBackend) return
+
+  // 3. set language for remote
+  const res3 = await fetchUserSet(undefined, id)
+  console.log("res3: ")
+  console.log(res3)
+  console.log(" ")
 }
