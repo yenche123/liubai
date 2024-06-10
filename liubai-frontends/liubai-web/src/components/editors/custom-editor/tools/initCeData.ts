@@ -105,6 +105,7 @@ export function initCeData(
   
   const { activeSyncNum } = useActiveSyncNum()
   watch(activeSyncNum, (newV) => {
+    console.log("activeSyncNum: ", newV)
     if(newV < 1) return
     whenCtxChanged(true)
   })
@@ -287,6 +288,10 @@ async function initFromCloudDraft(
   }
 
   // 2. to merge
+  console.log("initFromCloudDraft opt: ")
+  console.log(opt)
+  console.log(" ")
+
   const res = await CloudMerger.request(opt, { delay })
 
   // 3. filter nothing

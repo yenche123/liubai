@@ -208,9 +208,9 @@ function checkList(
   const s1 = ctx.scrollPosition?.value ?? 0
   const diff = h1 - s1
 
-  console.log("s1: ", s1)
-  console.log("diff: ", diff)
-  console.log(" ")
+  // console.log("s1: ", s1)
+  // console.log("diff: ", diff)
+  // console.log(" ")
 
   if(s1 < 300 || diff > 600) {
     loadList(ctx, true, cloud)
@@ -371,9 +371,9 @@ async function loadCloud(
     return
   }
 
-  console.log("ids for checking contents: ")
-  console.log(ids)
-  console.log(" ")
+  // console.log("ids for checking contents: ")
+  // console.log(ids)
+  // console.log(" ")
   const param3: SyncGet_CheckContents = {
     taskType: "check_contents",
     ids,
