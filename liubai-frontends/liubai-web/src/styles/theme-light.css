@@ -68,6 +68,7 @@
   --drag-border: #aaf2f9;    /** 拖动时的边框色 */
   --gradient-one: linear-gradient(90deg, rgba(255, 255, 255, 0) 10%, rgba(255, 255, 255, 1) 96%);
   --gradient-two: linear-gradient(0deg, rgba(255, 255, 255, 1) 28%, rgba(255, 255, 255, 0) 76%);
+  --gradient-three: linear-gradient(90deg, rgba(255, 255, 255, 0) 5%, rgba(255, 255, 255, .5) 15%, rgba(255, 255, 255, 1) 75%);
   --cool-bg: linear-gradient(30deg, #ACB6E5, #70ded9);
   --tag-bg: #f3f5f8;
   --tag-hover: linear-gradient(60deg, #ececec, #f3f5f8);
@@ -90,7 +91,6 @@
 
   /** 自定义组件: modal */
   --cui-modal: rgba(250, 250, 250, .82);
-  --cui-modal-blur: blur(2.5px);
   --cui-modal-other-btn-bg: #f5f5f5;
   --cui-modal-other-btn-hover: #e5e7ea;
 

@@ -1,5 +1,5 @@
 
-import { ref, watch, computed, toRef } from "vue";
+import { ref, watch, computed, toRef, inject } from "vue";
 import type { Ref, ShallowRef } from "vue";
 import type { 
   EditorCoreContent, 
@@ -24,6 +24,9 @@ import type { LiuTimeout } from "~/utils/basic/type-tool";
 import { handleOverflow } from "./some-funcs";
 import liuApi from "~/utils/liu-api";
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
+import { type EcSelectionChangeData } from "../../editor-core/tools/types";
+import { useDebounceFn } from "~/hooks/useVueUse";
+import { deviceChaKey } from '~/utils/provide-keys';
 
 let collectTimeout: LiuTimeout
 let spaceIdRef: Ref<string>
@@ -183,10 +186,18 @@ export function useCeData(
       _prepareFinish(false)
     }
   })
+
+
+  // 控制右上角是否显示
+  const { 
+    showRightTop,
+    onSelectionChange,
+  } = useRightTop(descFocused)
   
   return {
     titleFocused,
     anyFocused,
+    showRightTop,
     onEditorFocus,
     onEditorBlur,
     onEditorUpdate,
@@ -200,6 +211,48 @@ export function useCeData(
     onTitleBarChange,
     onTitleEnterUp,
     onTitleEnterDown,
+    onSelectionChange,
+  }
+}
+
+
+function useRightTop(
+  descFocused: Ref<boolean>,
+) {
+  const showRightTop = ref(false)
+  const _selectionEmpty = ref(true)
+  const onSelectionChange = (e: EcSelectionChangeData) => {
+    _selectionEmpty.value = e.empty
+  }
+
+  const _toShowRightTop = useDebounceFn(() => {
+    if(_selectionEmpty.value) return
+    if(!descFocused.value) return
+    showRightTop.value = true
+  }, 900)
+  const _toCloseRightTop = useDebounceFn(() => {
+    if(!_selectionEmpty.value && descFocused.value) return
+    showRightTop.value = false
+  }, 450)
+
+  const cha = inject(deviceChaKey)
+  
+  if(cha?.isMobile) {
+
+    watch([_selectionEmpty, descFocused], ([newV1, newV2]) => {
+      if(!newV2 || newV1) {
+        _toCloseRightTop()
+        return
+      }
+      _toShowRightTop()
+    })
+    
+  }
+
+  
+  return { 
+    showRightTop,
+    onSelectionChange,
   }
 }
 

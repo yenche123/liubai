@@ -15,6 +15,7 @@ import CeMoreArea from "./ce-more-area/ce-more-area.vue";
 import { useCeFile } from "./tools/useCeFile";
 import EditingCovers from "../shared/editing-covers/editing-covers.vue";
 import CeToolbar from "./ce-toolbar/ce-toolbar.vue";
+import CeRightTop from "./ce-right-top/ce-right-top.vue";
 import CeTags from "./ce-tags/ce-tags.vue";
 import { initCeData } from "./tools/initCeData";
 import { useCeFinish } from "./tools/useCeFinish";
@@ -73,6 +74,7 @@ const { toFinish } = useCeFinish(ctx)
 const {
   titleFocused,
   anyFocused,
+  showRightTop,
   onEditorFocus,
   onEditorBlur,
   onEditorUpdate,
@@ -86,6 +88,7 @@ const {
   onTitleBarChange,
   onTitleEnterUp,
   onTitleEnterDown,
+  onSelectionChange,
 } = useCeData(props, emits, ceData, toFinish, editor)
 
 useDraftIdChanged(ceData)
@@ -97,6 +100,11 @@ useDraftIdChanged(ceData)
   :class="{ 'ce-container_focused': anyFocused }"
   @click.stop="() => {}"
 >
+
+  <CeRightTop 
+    :editor="editor"
+    :show-right-top="showRightTop"
+  ></CeRightTop>
 
   <div v-if="ceData.showTitleBar" class="ce-title-bar">
     <input 
@@ -123,6 +131,9 @@ useDraftIdChanged(ceData)
   <div class="ce-editor"
     @scroll.passive="onEditorScrolling"
   >
+
+    <div class="ce-rt-virtual"></div>
+
     <EditorCore 
       ref="editorCoreRef"
       @update="onEditorUpdate"
@@ -130,6 +141,7 @@ useDraftIdChanged(ceData)
       @blur="onEditorBlur"
       @finish="onEditorFinish"
       @addhashtag="onAddHashTag"
+      @selectionchange="onSelectionChange"
       purpose="thread-edit"
       :hash-trigger="true"
       :min-height="'' + minEditorHeight + 'px'"
@@ -201,7 +213,7 @@ useDraftIdChanged(ceData)
   background-color: var(--card-bg);
   box-sizing: border-box;
   padding: 20px 20px 15px;
-  border-radius: 20px;
+  border-radius: var(--ce-border-radius);
   margin-bottom: 14px;
   box-shadow: var(--card-shadow);
   position: relative;
@@ -282,6 +294,14 @@ useDraftIdChanged(ceData)
   position: relative;
   overflow-y: v-bind("ceData.overflowType");
   transition: .3s;
+}
+
+.ce-rt-virtual {
+  width: 100%;
+  height: 30px;
+  max-height: v-bind("showRightTop && !ceData.showTitleBar ? '30px' : '0'");
+  transition: .3s;
+  overflow: hidden;
 }
 
 .ce-editor-gradient_down {

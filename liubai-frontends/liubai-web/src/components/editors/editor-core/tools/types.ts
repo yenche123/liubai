@@ -51,12 +51,17 @@ export const editorCoreProps = {
   }
 }
 
+export interface EcSelectionChangeData {
+  empty: boolean
+}
+
 export interface EditorCoreEmits {
-  (event: "update", data: EditorCoreContent): void
-  (event: "focus", data: EditorCoreContent): void
-  (event: "blur", data: EditorCoreContent): void
-  (event: "finish", data: EditorCoreContent): void
-  (event: "addhashtag", data: HashTagEditorRes): void
+  (evt: "update", data: EditorCoreContent): void
+  (evt: "focus", data: EditorCoreContent): void
+  (evt: "blur", data: EditorCoreContent): void
+  (evt: "finish", data: EditorCoreContent): void
+  (evt: "addhashtag", data: HashTagEditorRes): void
+  (evt: "selectionchange", data: EcSelectionChangeData): void
 }
 
 export interface EditorCoreStyles {

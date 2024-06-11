@@ -50,7 +50,11 @@ export function useEditorCore(
     },
     onBlur({ editor }) {
       onEditorBlur(editor, emits)
-    }
+    },
+    onSelectionUpdate({ editor, transaction }) {
+      const empty = transaction.selection.empty
+      emits("selectionchange", { empty })
+    },
   })
   
   

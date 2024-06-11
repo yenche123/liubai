@@ -39,6 +39,9 @@
 
   /** 常用按钮尺寸 */
   --btn-max: 250px;
+
+  /** about custom-editor */
+  --ce-border-radius: 20px;
 }
 
 @media screen and (max-width: 340px) {
