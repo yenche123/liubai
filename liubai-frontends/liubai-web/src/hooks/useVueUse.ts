@@ -7,6 +7,7 @@ import {
   useThrottleFn,
   useDebounceFn,
   useDocumentVisibility,
+  useMutationObserver,
 } from "@vueuse/core"
 import type { NetworkState } from "@vueuse/core"
 import type { Ref } from "vue"
@@ -36,6 +37,7 @@ export {
   useDropZone,
   useNetwork,
   usePageLeave,
+  useMutationObserver,
 
   // 【节流函数】在特定周期（毫秒内）只触发一次
   // 若该周期内没有触发过，则马上去触发

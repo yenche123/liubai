@@ -11,6 +11,7 @@ const emits = defineEmits<{
 }>()
 
 const {
+  containerEl,
   naData,
   TRANSITION_DURATION,
   onTapMenu,
@@ -23,8 +24,13 @@ const default_color = "var(--navi-normal)"
 <template>
 
   <div v-if="naData.enable"
+    ref="containerEl"
     class="liu-frosted-glass na-container"
-    :class="{ 'na-container_show': naData.show, 'na-container_shadow': naData.shadow }"
+    :class="{ 
+      'na-container_show': naData.show, 
+      'na-container_shadow': naData.shadow,
+      'liu-frosted-glass_again': naData.backdropFilterAgain,
+    }"
   >
 
     <div class="na-box">

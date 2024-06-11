@@ -10,6 +10,7 @@ import { useWindowSize } from "~/hooks/useVueUse";
 import cfg from "~/config";
 import type { NaviAutoEmits, NaviAutoData } from "./types"
 import liuUtil from "~/utils/liu-util";
+import { useBackdropFilter } from "~/hooks/useCommon";
 
 const TRANSITION_DURATION = 300
 
@@ -24,13 +25,14 @@ interface NaviAutoCtx {
 export function useNaviAuto(
   emits: NaviAutoEmits,
 ) {
-
+  const containerEl = ref<HTMLDivElement>()
   const naData = reactive<NaviAutoData>({
     enable: false,
     show: false,
     shadow: false,
-    showBackdropFilter: false,
+    backdropFilterAgain: false,
   })
+  useBackdropFilter(containerEl, naData)
 
   // 引入上下文
   const layout = useLayoutStore()
@@ -77,6 +79,7 @@ export function useNaviAuto(
   
   return {
     TRANSITION_DURATION,
+    containerEl,
     naData,
     onTapMenu,
     onTapTitle,
