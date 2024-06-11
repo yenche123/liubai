@@ -99,7 +99,7 @@ export function useSbTags(emits: SbtEmits) {
   }
 
   const onTapTagArrow = (e: MouseEvent, node: TagView, stat: Stat<TagView>) => {
-    const length = node.children?.length ?? 0
+    const length = stat.children.length
     if(!length) return
     stat.open = !stat.open
   }
