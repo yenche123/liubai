@@ -1,4 +1,4 @@
-import { inject, ref, watch } from "vue";
+import { inject, reactive, ref, watch } from "vue";
 import type { Ref } from "vue";
 import { useLayoutStore } from "~/views/useLayoutStore";
 import type { LayoutStore } from "~/views/useLayoutStore";
@@ -8,15 +8,13 @@ import { svScollingKey, svBottomUpKey } from "~/utils/provide-keys";
 import sideBar from "~/views/side-bar";
 import { useWindowSize } from "~/hooks/useVueUse";
 import cfg from "~/config";
-import type { NaviAutoEmits } from "./types"
+import type { NaviAutoEmits, NaviAutoData } from "./types"
 import liuUtil from "~/utils/liu-util";
 
 const TRANSITION_DURATION = 300
 
 interface NaviAutoCtx {
-  enable: Ref<boolean>
-  show: Ref<boolean>
-  shadow: Ref<boolean>
+  naData: NaviAutoData
   scrollPosition: Ref<number>
   layout: LayoutStore,
   windowWidth: Ref<number>,
@@ -26,10 +24,13 @@ interface NaviAutoCtx {
 export function useNaviAuto(
   emits: NaviAutoEmits,
 ) {
-  
-  const enable = ref(false)
-  const show = ref(false)
-  const shadow = ref(false)
+
+  const naData = reactive<NaviAutoData>({
+    enable: false,
+    show: false,
+    shadow: false,
+    showBackdropFilter: false,
+  })
 
   // 引入上下文
   const layout = useLayoutStore()
@@ -38,10 +39,8 @@ export function useNaviAuto(
   // 窗口宽度
   const { width: windowWidth } = useWindowSize()
 
-  const ctx = {
-    enable,
-    show,
-    shadow,
+  const ctx: NaviAutoCtx = {
+    naData,
     scrollPosition,
     layout,
     windowWidth,
@@ -57,8 +56,8 @@ export function useNaviAuto(
 
   // 监听滚动，处理是否要显示阴影
   watch(scrollPosition, (newV) => {
-    if(!enable.value) return
-    judgeShadow(newV, shadow)
+    if(!naData.enable) return
+    judgeShadow(newV, ctx)
   })
 
   // 监听窗口变化
@@ -78,9 +77,7 @@ export function useNaviAuto(
   
   return {
     TRANSITION_DURATION,
-    enable,
-    show,
-    shadow,
+    naData,
     onTapMenu,
     onTapTitle,
   }
@@ -88,10 +85,13 @@ export function useNaviAuto(
 
 function judgeShadow(
   sT: number,
-  shadow: Ref<boolean>
+  ctx: NaviAutoCtx,
 ) {
-  if(sT >= 40 && !shadow.value) shadow.value = true
-  else if(sT <= 20 && shadow.value) shadow.value = false
+  const oldV = ctx.naData.shadow
+  let newV = oldV
+  if(sT >= 40 && !oldV) newV = true
+  else if(sT <= 20 && oldV) newV = false
+  ctx.naData.shadow = newV
 }
 
 
@@ -118,7 +118,7 @@ function judgeState(
   justLoad = false
 
   // 判断阴影变化
-  judgeShadow(ctx.scrollPosition.value, ctx.shadow)
+  judgeShadow(ctx.scrollPosition.value, ctx)
 }
 
 // 聆听窗口变化
@@ -130,7 +130,7 @@ function listenWindowChange(
     const { sidebarWidth, sidebarStatus } = ctx.layout
     if(sidebarWidth > 0 || sidebarStatus === "fullscreen") return
 
-    const { enable, show } = ctx
+    const { enable, show } = ctx.naData
     const {
       isOpening,
       isClosing,
@@ -152,29 +152,32 @@ function listenWindowChange(
 function _openInstantly(
   ctx: NaviAutoCtx,
 ) {
-  ctx.enable.value = true
-  ctx.show.value = true
+  const { naData } = ctx
+  naData.enable = true
+  naData.show = true
   ctx.emits("naviautochangeed", true)
 }
 
 async function _open(
   ctx: NaviAutoCtx,
 ) {
-  if(ctx.show.value) return
-  ctx.enable.value = true
+  const { naData } = ctx
+  if(naData.show) return
+  naData.enable = true
   ctx.emits("naviautochangeed", true)
   await liuUtil.waitAFrame()
-  if(ctx.enable.value) ctx.show.value = true
+  if(naData.enable) naData.show = true
 }
 
 async function _close(
   ctx: NaviAutoCtx,
 ) {
-  if(!ctx.enable.value) return
-  ctx.show.value = false
+  const { naData } = ctx
+  if(!naData.enable) return
+  naData.show = false
   ctx.emits("naviautochangeed", false)
   await valTool.waitMilli(TRANSITION_DURATION)
-  if(!ctx.show.value) ctx.enable.value = false
+  if(!naData.show) naData.enable = false
 }
 
 

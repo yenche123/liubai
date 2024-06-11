@@ -3,6 +3,7 @@ import valTool from "~/utils/basic/val-tool";
 import { type LiuTimeout } from "~/utils/basic/type-tool";
 import { onMounted } from "vue";
 import { useGlobalStateStore } from "../stores/useGlobalStateStore";
+import liuUtil from "~/utils/liu-util";
 
 const MAX_WAITING = 3 * time.SECONED
 
@@ -22,6 +23,7 @@ export function listenLoaded() {
     const el = document.querySelector(".liu-splash-screen")
     if(!el) return
 
+    await liuUtil.waitAFrame()
     el.classList.add("liuss-hidden")
     await valTool.waitMilli(300)
     el.remove()
