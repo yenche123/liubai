@@ -47,26 +47,19 @@ export function listenLoaded() {
     _closeSplashScreen()
   }, MAX_WAITING)
 
-  const _calculateConsumingTime = async () => {
+  const _getLoadEventStart = () => {
     const entries = performance.getEntriesByType("navigation")
     const len = entries.length
-    if(len < 1) {
-      console.log("no navigation entries")
-      return
-    }
-
+    if(len < 1) return
     const lastEntry = entries[len - 1] as PerformanceNavigationTiming
-    console.log(lastEntry)
-    let stamp = Math.round(lastEntry.loadEventStart)
-    console.log("stamp: ", stamp)
+    const stamp = Math.round(lastEntry.loadEventStart)
+    return stamp
+  }
 
-    if(!stamp) {
-      console.log(" ")
-      return
-    }
-
+  const _calculateConsumingTime = async () => {
+    let stamp = _getLoadEventStart()
+    if(!stamp) return
     const now = Math.round(performance.now())
-    console.log("now: ", now)
     if(now > stamp) {
       stamp = now
     }
@@ -76,22 +69,34 @@ export function listenLoaded() {
       return
     }
     const duration = 900 - stamp
-
     console.log("等待毫秒数: ", duration)
     console.log(" ")
     await valTool.waitMilli(duration)
-    
     _byebye()
   }
 
-  window.addEventListener("load", (e) => {
-    console.log("listenLoaded load.......")
-    _calculateConsumingTime()
-  })
+  const stamp1 = _getLoadEventStart()
 
-  onMounted(() => {
-    console.log("listenLoaded onMounted.......")
-    _calculateConsumingTime()
-  })
-  
+  console.log("listenLoaded setup.......")
+  console.log(performance.now())
+  console.log("stamp1: ", stamp1)
+  console.log(" ")
+
+  if(stamp1) {
+    onMounted(() => {
+      console.log("listenLoaded onMounted.......")
+      console.log(performance.now())
+      console.log(" ")
+      _calculateConsumingTime()
+    })
+  }
+  else {
+    window.addEventListener("load", (e) => {
+      console.log("listenLoaded load.......")
+      console.log(performance.now())
+      console.log(" ")
+      _calculateConsumingTime()
+    })
+  }
+
 }
