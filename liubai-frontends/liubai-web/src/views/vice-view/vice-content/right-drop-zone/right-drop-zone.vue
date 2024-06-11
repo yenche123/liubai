@@ -1,6 +1,8 @@
 <script setup lang="ts">
 // vice-content 里，负责显示拖动文件时的指示
 import { useI18n } from 'vue-i18n';
+import { onMounted, ref } from "vue";
+import liuUtil from '~/utils/liu-util';
 
 defineProps({
   showDropZone: {
@@ -11,11 +13,19 @@ defineProps({
 
 const { t } = useI18n()
 const color = "#c7c9ca"
+const enable = ref(false)
+
+onMounted(async () => {
+  await liuUtil.waitAFrame()
+  enable.value = true
+})
+
 
 </script>
 <template>
 
-  <div class="cdz-container"
+  <div v-if="enable"
+    class="cdz-container"
     :class="{ 'cdz-container_show': showDropZone }"
   >
 
