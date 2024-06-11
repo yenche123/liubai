@@ -33,42 +33,49 @@ function listenChange(
   const cha = inject(deviceChaKey)
 
   const _getMaxHeight = () => {
-    let h = height.value - 147
+    const winH = height.value
+    let h = winH - 147
     if(ceData.showTitleBar) h -= 40
     if(ceData.tagIds.length) h -= 48
-    if(ceData.images?.length) h -= 140
-    if(cha?.isMobile) h -= 40
+    if(ceData.images?.length) h -= 142
+    if(cha?.isMobile) {
+      h -= Math.round(winH / 15)
+      if(sidebarStatus.value === "fullscreen") {
+        h += cfg.navi_height
+      }
+    }
 
-    return Math.max(h, 100)
+    return Math.max(h, 120)
   }
 
   const _calc = () => {
     let h = _getMaxHeight()
-    // console.log("h: ", h)
+    console.log("h: ", h)
     maxEditorHeight.value = h
     if(sidebarStatus.value === "fullscreen") {
       minEditorHeight.value = h
     }
-  }
-
-  const whenSidebarStatusChange = () => {
-    if(sidebarStatus.value !== "fullscreen") {
+    else {
       minEditorHeight.value = cfg.min_editor_height
-      return
     }
-    minEditorHeight.value = maxEditorHeight.value
   }
 
-  const _foo = useDebounceFn(() => {
+  const _delay = useDebounceFn(() => {
     _calc()
   }, 300)
 
   const s1 = toRef(ceData, "showTitleBar")
   const s2 = toRef(ceData, "tagIds")
   const s3 = toRef(ceData, "images")
-  watch([height, s1, s2, s3], _foo, { deep: true })
 
-  watch(sidebarStatus, () => {
-    whenSidebarStatusChange()
-  }, { immediate: true })
+  watch([sidebarStatus, height, s1, s2, s3], (
+    [newV1], [oldV1]
+  ) => {
+    if(newV1 !== oldV1) {
+      _calc()
+    }
+    else {
+      _delay()
+    }
+  }, { deep: true })
 }
