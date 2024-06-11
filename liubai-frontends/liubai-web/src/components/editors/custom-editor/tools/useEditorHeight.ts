@@ -26,7 +26,7 @@ function listenChange(
   minEditorHeight: Ref<number>,
   ceData: CeData,
 ) {
-  const { height, width } = useWindowSize()
+  const { height } = useWindowSize()
   const layout = useLayoutStore()
   const { sidebarStatus } = storeToRefs(layout)
 
@@ -37,8 +37,7 @@ function listenChange(
     if(ceData.showTitleBar) h -= 40
     if(ceData.tagIds.length) h -= 48
     if(ceData.images?.length) h -= 140
-    if(width.value <= 480) h -= 55
-    if(cha?.isMobile) h -= 80
+    if(cha?.isMobile) h -= 40
 
     return Math.max(h, 100)
   }
@@ -67,7 +66,7 @@ function listenChange(
   const s1 = toRef(ceData, "showTitleBar")
   const s2 = toRef(ceData, "tagIds")
   const s3 = toRef(ceData, "images")
-  watch([width, height, s1, s2, s3], _foo, { deep: true })
+  watch([height, s1, s2, s3], _foo, { deep: true })
 
   watch(sidebarStatus, () => {
     whenSidebarStatusChange()
