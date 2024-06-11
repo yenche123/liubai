@@ -25,6 +25,7 @@ import EditingBubbleMenu from "../shared/editing-bubble-menu/editing-bubble-menu
 import { useI18n } from "vue-i18n";
 import { type CeEmits, ceProps } from "./tools/types";
 import { useDraftIdChanged } from "./tools/useDraftIdChanged";
+import { useEditorHeight } from "./tools/useEditorHeight";
 
 const { t } = useI18n()
 
@@ -32,14 +33,17 @@ const props = defineProps(ceProps)
 const emits = defineEmits<CeEmits>()
 
 const { 
-  maxEditorHeight, 
-  minEditorHeight, 
   editorCoreRef, 
   editor,
   onEditorScrolling,
   showMask,
 } = useCustomEditor()
 const { ceData } = initCeData(props, emits, editor)
+
+const {
+  maxEditorHeight, 
+  minEditorHeight, 
+} = useEditorHeight(ceData)
 
 const {
   moreRef,
