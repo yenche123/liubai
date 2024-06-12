@@ -101,6 +101,7 @@ async function request<
     if(errName === "TypeError") {
 
       // 当后端整个 Shut Down 时，可能抛出这个错误
+      // 欠费时，也可能抛出这个错误
       if(errMsg2.includes("failed to fetch")) {
         return { code: "B0001" }
       }
