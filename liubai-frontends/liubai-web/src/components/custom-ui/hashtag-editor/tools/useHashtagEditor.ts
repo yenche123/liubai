@@ -150,7 +150,6 @@ function onInput(e: Event) {
   hteData.nativeInputTxt = e.target.value
 
   let val = hteData.inputTxt.trim()
-  console.log(val)
   if(!val) {
     reset(0)
     return
@@ -319,7 +318,6 @@ function toListenKeyboard() {
   // 监听键盘敲击 上、下 的逻辑
   const whenKeyDown = (e: KeyboardEvent) => {
     const key = e.key
-    console.log("keydown: ", key)
     if(key !== "ArrowDown" && key !== "ArrowUp") return
     const len = hteData.list.length
     if(len < 1) return

@@ -185,6 +185,7 @@ const onMouseEnterItem = (index: number) => {
         color: var(--main-normal);
         line-height: 1.75;
         width: calc(100% - 100px);
+        caret-color: var(--primary-color);
       }
 
       .hteb-input::selection {
