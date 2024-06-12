@@ -43,6 +43,16 @@ const isPostHogExisted = () => {
   return false
 }
 
+const isClarityExisted = () => {
+  const _env = liuEnv.getEnv()
+  const {
+    MS_CLARITY_PROJECT_ID,
+    MS_CLARITY_SCRIPT,
+  } = _env
+  if(MS_CLARITY_PROJECT_ID && MS_CLARITY_SCRIPT) return true
+  return false
+}
+
 export {
   getSentry,
   getBugfender,
@@ -50,4 +60,5 @@ export {
   isSentryExisted,
   isBugfenderExisted,
   isPostHogExisted,
+  isClarityExisted,
 }

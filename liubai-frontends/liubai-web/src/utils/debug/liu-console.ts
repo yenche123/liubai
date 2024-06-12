@@ -8,9 +8,11 @@ import {
   isSentryExisted,
   isBugfenderExisted,
   isPostHogExisted,
+  isClarityExisted,
 } from "./tools/some-funcs"
 import type { Sentry_Breadcrumb } from "./tools/types"
 import {
+  setClarityUserProperties,
   setPostHogUserProperties, 
   setSentryUserProperties,
 } from "./tools/user-properties";
@@ -78,6 +80,11 @@ const setUserTagsCtx = async () => {
   const hasPostHog = isPostHogExisted()
   if(hasPostHog) {
     setPostHogUserProperties(localP, { email })
+  }
+
+  const hasClarity = isClarityExisted()
+  if(hasClarity) {
+    setClarityUserProperties(localP, { email})
   }
   
 }

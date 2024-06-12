@@ -89,3 +89,18 @@ export async function setPostHogUserProperties(
   })
 
 }
+
+
+export async function setClarityUserProperties(
+  localP: LocalPreference,
+  opt: SomeProperties,
+) {
+  const email = opt.email
+  if(!email) return
+
+  //@ts-expect-error: clarity
+  const c = window.clarity
+  if(typeof c !== "function") return
+
+  c("identify", email)
+}
