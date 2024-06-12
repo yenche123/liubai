@@ -16,6 +16,7 @@ import liuUtil from "~/utils/liu-util"
 import { initRecent, getRecent } from "./tag-recent"
 import type { SimpleFunc } from "~/utils/basic/type-tool"
 import { useKeyboard } from "~/hooks/useKeyboard"
+import time from "~/utils/basic/time"
 
 const hteData = reactive<HteData>({
   enable: false,
@@ -30,6 +31,7 @@ const hteData = reactive<HteData>({
   selectedIndex: -1,
   mode: "",
   recentTagIds: [],
+  lastFocusOrBlurStamp: 0,
 })
 
 const inputEl = ref<HTMLInputElement | null>(null)
@@ -52,6 +54,7 @@ export function initHashtagEditor() {
     onTapItem,
     onInput,
     onFocus,
+    onBlur,
     onEmojiChange,
   }
 }
@@ -111,11 +114,20 @@ function toResolve(res: HashTagEditorRes) {
   _resolve = undefined
 }
 
+function onBlur() {
+  onFocusOrNot()
+}
+
 function onFocus() {
+  onFocusOrNot()
   if(hteData.mode !== "search") return
   if(!hteData.inputTxt && hteData.list.length < 1) {
     getRecent(hteData)
   }
+}
+
+function onFocusOrNot() {
+  hteData.lastFocusOrBlurStamp = time.getTime()
 }
 
 function reset(
@@ -170,6 +182,9 @@ function onInput(e: Event) {
 }
 
 function onTapMask() {
+  if(time.isWithinMillis(hteData.lastFocusOrBlurStamp, 300)) {
+    return
+  }
   if(hteData.mode === "edit" && checkState()) {
     if(inputEl.value) inputEl.value.blur()
     toEnter()

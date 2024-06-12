@@ -11,6 +11,7 @@ const {
   onTapItem,
   onInput,
   onFocus,
+  onBlur,
   onEmojiChange,
 } = initHashtagEditor()
 
@@ -65,6 +66,7 @@ const onMouseEnterItem = (index: number) => {
           :placeholder="t('tip.tag_ph')"
           @input="onInput" 
           @focus="onFocus"
+          @blur="onBlur"
           autocomplete="nope"
         />
 

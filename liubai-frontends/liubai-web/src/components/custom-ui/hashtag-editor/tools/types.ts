@@ -15,6 +15,7 @@ export interface HteData {
   selectedIndex: number    // 被选择的 index
   mode: HteMode | ""
   recentTagIds: string[]
+  lastFocusOrBlurStamp: number
 }
 
 export type HteResolver = (res: HashTagEditorRes) => void
