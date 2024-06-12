@@ -77,9 +77,8 @@ export function listenLoaded() {
 
   const stamp1 = _getLoadEventStart()
 
-  console.log("listenLoaded setup.......")
-  console.log(performance.now())
-  console.log("stamp1: ", stamp1)
+  console.log("listenLoaded setup: ", performance.now())
+  console.log("load event start at: ", stamp1)
   console.log(" ")
 
   if(stamp1) {
