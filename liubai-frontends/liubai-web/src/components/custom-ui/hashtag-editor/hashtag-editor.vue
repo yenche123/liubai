@@ -23,7 +23,9 @@ const onMouseEnterItem = (index: number) => {
 </script>
 <template>
 
-  <div v-if="hteData.enable" class="hte-container" :class="{ 'hte-container_show': hteData.show }">
+  <div v-if="hteData.enable" class="hte-container" 
+  :class="{ 'hte-container_show': hteData.show }"
+>
 
     <div class="hte-bg" @click="onTapMask" />
 
@@ -58,7 +60,7 @@ const onMouseEnterItem = (index: number) => {
 
         <input ref="inputEl" 
           class="hteb-input" 
-          v-model="hteData.inputVal" 
+          v-model="hteData.inputTxt" 
           :maxlength="50" 
           :placeholder="t('tip.tag_ph')"
           @input="onInput" 

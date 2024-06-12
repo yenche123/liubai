@@ -58,7 +58,7 @@ export function useKeyboard(opt: KeyboardOpt) {
   }
 
 
-  onBeforeMount(() => {
+  const _register = () => {
     if(opt.whenKeyDown || opt.data) {
       window.addEventListener("keydown", _handleKeyDown)
     }
@@ -66,9 +66,9 @@ export function useKeyboard(opt: KeyboardOpt) {
     if(opt.whenKeyUp) {
       window.addEventListener("keyup", _handleKeyUp)
     }
-  })
+  }
 
-  onBeforeUnmount(() => {
+  const _unRegister = () => {
     if(opt.whenKeyDown || opt.data) {
       window.removeEventListener("keydown", _handleKeyDown)
     }
@@ -76,5 +76,18 @@ export function useKeyboard(opt: KeyboardOpt) {
     if(opt.whenKeyUp) {
       window.removeEventListener("keyup", _handleKeyUp)
     }
-  })
+  }
+
+  const isSetup = opt.setup ?? true
+  if(isSetup) {
+    onBeforeMount(_register)
+    onBeforeUnmount(_unRegister)
+  }
+  else {
+    _register()
+  }
+
+  return {
+    stop: _unRegister,
+  }
 }

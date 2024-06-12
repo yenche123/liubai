@@ -9,4 +9,5 @@ export interface KeyboardOpt {
   whenKeyDown?: (e: KeyboardEvent) => void
   whenKeyUp?: (e: KeyboardEvent) => void
   data?: DataWithInputTxt
+  setup?: boolean               // 是否在 setup 中调用，默认为 true
 }

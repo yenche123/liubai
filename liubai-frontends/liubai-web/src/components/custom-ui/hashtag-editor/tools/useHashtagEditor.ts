@@ -14,12 +14,15 @@ import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 import liuUtil from "~/utils/liu-util"
 import { initRecent, getRecent } from "./tag-recent"
+import type { SimpleFunc } from "~/utils/basic/type-tool"
+import { useKeyboard } from "~/hooks/useKeyboard"
 
 const hteData = reactive<HteData>({
   enable: false,
   show: false,
   transDuration: 150,
-  inputVal: "",
+  inputTxt: "",
+  nativeInputTxt: "",
   emoji: "",
   errCode: 0,
   newTag: "",
@@ -71,13 +74,13 @@ function listenRouteChange() {
     }
 
     _toClose()
-  })
+  }, { immediate: true })
 }
 
 
 export function showHashtagEditor(opt: HashTagEditorParam) {
   firstInputVal = opt.text ?? ""
-  hteData.inputVal = firstInputVal
+  hteData.inputTxt = firstInputVal
   firstEmoji = opt.icon ? liuApi.decode_URI_component(opt.icon) : ""
   hteData.emoji = firstEmoji
   hteData.errCode = 0
@@ -110,7 +113,7 @@ function toResolve(res: HashTagEditorRes) {
 
 function onFocus() {
   if(hteData.mode !== "search") return
-  if(!hteData.inputVal && hteData.list.length < 1) {
+  if(!hteData.inputTxt && hteData.list.length < 1) {
     getRecent(hteData)
   }
 }
@@ -130,8 +133,12 @@ function reset(
 }
 
 
-function onInput() {
-  let val = hteData.inputVal.trim()
+function onInput(e: Event) {
+  //@ts-ignore
+  hteData.nativeInputTxt = e.target.value
+
+  let val = hteData.inputTxt.trim()
+  console.log(val)
   if(!val) {
     reset(0)
     return
@@ -205,7 +212,7 @@ function toEnter() {
 }
 
 function toRename() {
-  const text = formatTagText(hteData.inputVal)
+  const text = formatTagText(hteData.inputTxt)
   const tagId = findTagId(text)
   const icon = hteData.emoji ? liuApi.encode_URI_component(hteData.emoji) : undefined
   const res: HashTagEditorRes = {
@@ -255,11 +262,11 @@ function checkState() {
   
   if(m === "edit") {
 
-    if(firstInputVal === hteData.inputVal && firstEmoji === hteData.emoji) {
+    if(firstInputVal === hteData.inputTxt && firstEmoji === hteData.emoji) {
       return false
     }
 
-    const inputValFormatted = formatTagText(hteData.inputVal)
+    const inputValFormatted = formatTagText(hteData.inputTxt)
     if(!inputValFormatted) {
       return false
     }
@@ -276,7 +283,7 @@ async function _toOpen() {
   hteData.enable = true
   await liuUtil.waitAFrame()
   hteData.show = true
-  _toListenKeyUp()
+  toListenKeyboard()
   await valTool.waitMilli(hteData.transDuration)
   if(!inputEl.value) return
   inputEl.value.focus()
@@ -287,49 +294,53 @@ async function _toClose() {
   hteData.show = false
   await valTool.waitMilli(hteData.transDuration)
   hteData.enable = false
-  _cancelListenKeyUp()
+  cancelListenKeyboard()
 }
 
 
-/*********** 监听键盘敲击 上、下 的逻辑 ***********/
-function _whenKeyDown(e: KeyboardEvent) {
-  const key = e.key
-  if(key !== "ArrowDown" && key !== "ArrowUp") return
-  const len = hteData.list.length
-  if(len < 1) return
-
-  e.preventDefault()
-
-  if(!liuUtil.canKeyUpDown()) return
+let stopListenToKeyboard: SimpleFunc | undefined
+function toListenKeyboard() {
   
-  let diff = key === "ArrowDown" ? 1 : -1
-  let tmpIdx = hteData.selectedIndex + diff
-  if(tmpIdx >= len) tmpIdx = -1
-  else if(tmpIdx < -1) tmpIdx = len - 1
-  hteData.selectedIndex = tmpIdx
-}
-
-/*********** 监听键盘敲击 Enter、Escape 的逻辑 ***********/
-function _whenKeyUp(e: KeyboardEvent) {
-  const key = e.key
-  if(key === "Escape") {
-    toCancel()
-    return
+  // 监听键盘敲击 上、下 的逻辑
+  const whenKeyDown = (e: KeyboardEvent) => {
+    const key = e.key
+    console.log("keydown: ", key)
+    if(key !== "ArrowDown" && key !== "ArrowUp") return
+    const len = hteData.list.length
+    if(len < 1) return
+  
+    e.preventDefault()
+  
+    if(!liuUtil.canKeyUpDown()) return
+    
+    let diff = key === "ArrowDown" ? 1 : -1
+    let tmpIdx = hteData.selectedIndex + diff
+    if(tmpIdx >= len) tmpIdx = -1
+    else if(tmpIdx < -1) tmpIdx = len - 1
+    hteData.selectedIndex = tmpIdx
   }
-  if(key === "Enter") {
-    onTapConfirm()
-    return
+
+  // 监听键盘敲击 Enter、Escape 的逻辑
+  const whenKeyUp = (e: KeyboardEvent) => {
+    const key = e.key
+    if(key === "Escape") {
+      toCancel()
+    }
+    else if(key === "Enter") {
+      onTapConfirm()
+    }
   }
+
+  let res = useKeyboard({
+    data: hteData,
+    whenKeyDown,
+    whenKeyUp,
+    setup: false,
+  })
+  stopListenToKeyboard = res.stop
 }
 
-
-function _toListenKeyUp() {
-  window.addEventListener("keydown", _whenKeyDown)
-  window.addEventListener("keyup", _whenKeyUp)
-}
-
-function _cancelListenKeyUp() {
-  window.removeEventListener("keydown", _whenKeyDown)
-  window.removeEventListener("keyup", _whenKeyUp)
+function cancelListenKeyboard() {
+  stopListenToKeyboard?.()
 }
 
