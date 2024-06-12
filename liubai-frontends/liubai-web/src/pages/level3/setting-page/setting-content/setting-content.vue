@@ -258,7 +258,7 @@ const iconColor = "var(--main-normal)"
         </div>
 
         <!-- 开发调试 -->
-        <div class="liu-hover sc-bar" @click="onTapDebug">
+        <div v-if="data.debugBtn" class="liu-hover sc-bar" @click="onTapDebug">
           <div class="scb-hd">
             <span>{{ t('setting.dev_debug') }}</span>
           </div>
@@ -275,7 +275,7 @@ const iconColor = "var(--main-normal)"
         </div>
 
         <!-- 调试们 -->
-        <div class="sc-pad" :class="{ 'sc-pad_opened': data.openDebug }">
+        <div v-if="data.debugBtn" class="sc-pad" :class="{ 'sc-pad_opened': data.openDebug }">
           <div class="sc-pad-box" :class="{ 'sc-pad-box_opened': data.openDebug }">
 
             <!-- 移动端调试 -->
