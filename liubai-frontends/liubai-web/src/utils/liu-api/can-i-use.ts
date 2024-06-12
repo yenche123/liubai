@@ -21,6 +21,12 @@ function viewTransitionApi() {
   return hasViewTransition
 }
 
+function abortSignalTimeout() {
+  if(typeof AbortSignal === "undefined") return false
+  if(typeof AbortSignal.timeout === "undefined") return false
+  return true
+}
+
 /** Using CSS to detect text overflow
  *  https://juejin.cn/post/7347221074704777226
  *  tech stacks:
@@ -38,4 +44,5 @@ export default {
   isSafeBrowser,
   viewTransitionApi,
   cssDetectTextOverflow,
+  abortSignalTimeout,
 }

@@ -65,7 +65,14 @@ async function request<
       "Content-Type": "application/json"
     },
     body: b,
-    signal: opt?.signal ?? AbortSignal.timeout(opt?.timeout ?? 10000),
+  }
+
+  // to avoid TypeError: AbortSignal.timeout is not a function
+  if(opt?.signal) {
+    init.signal = opt.signal
+  }
+  else if(liuApi.canIUse.abortSignalTimeout()) {
+    init.signal = AbortSignal.timeout(opt?.timeout ?? 10000)
   }
   
   let res: Response
