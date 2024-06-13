@@ -10,6 +10,7 @@ import liuApi from "~/utils/liu-api";
 import localCache from "~/utils/system/local-cache";
 import { i18n } from "~/locales";
 import middleBridge from "~/utils/middle-bridge";
+import cfg from "~/config";
 
 export const useSystemStore = defineStore("system", () => {
 
@@ -73,13 +74,21 @@ function toSetSupportedTheme(
 function setClassForTheme(
   supported_theme: Ref<SupportedTheme>,
 ) {
+
+  // 1. toggle .theme-dark on body
   const t = supported_theme.value
   const body = document.querySelector("body")
-  const val = t === "light" ? false : true
+  const val = t === "dark" ? true : false
   body?.classList.toggle("theme-dark", val)
 
-  // 在 document 的根目录上: 当深色模式时，添加 .liu-dark，否则移除 .liu-dark
+  // 2. 在 document 的根目录上: 当深色模式时，添加 .liu-dark，否则移除 .liu-dark
   document.documentElement.classList.toggle("liu-dark", val)
+
+  // 3. change meta name="theme-color"
+  const color = cfg.title_bar_colors[t]
+  const theme_color = document.querySelector(`head > meta[name="theme-color"]`)
+  console.log("修改 meta theme-color: ", color)
+  theme_color?.setAttribute("content", color)
 }
 
 function toSetSupportedLang(
@@ -115,12 +124,7 @@ function initTheme(
     supported_theme.value = _theme
   }
 
-  // add .theme-dark if nescessary
-  if(supported_theme.value === "dark") {
-    const body = document.querySelector("body")
-    body?.classList.add("theme-dark")
-  }
-
+  setClassForTheme(supported_theme)
 }
 
 

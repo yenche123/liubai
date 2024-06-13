@@ -8,6 +8,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import Inspect from 'vite-plugin-inspect'
 import { qrcode } from 'vite-plugin-qrcode';
 import { visualizer } from "rollup-plugin-visualizer";
+import { VitePWA } from 'vite-plugin-pwa'
 
 const { version } = require("./package.json")
 
@@ -42,6 +43,12 @@ export default defineConfig({
 
     // 使用 SSL
     // mkcert(),
+
+    // PWA
+    VitePWA({
+      registerType: "autoUpdate",
+      manifest: false,
+    }),
 
     // 使用 svg 雪碧图
     createSvgIconsPlugin({

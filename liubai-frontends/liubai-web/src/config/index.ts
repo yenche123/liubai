@@ -63,4 +63,9 @@ export default {
   fail_to_upload_max: 5,       // 上传失败的最大次数，若大于等于该次数
                                // 确定是否为新增动态，若是，把该动态改为本地存储
                                // 否则直接删除该任务
+  
+  title_bar_colors: {
+    light: "#435964",         // same as --avatar-bg   
+    dark: "#3d5259",          // same as --drag-bg
+  },
 }

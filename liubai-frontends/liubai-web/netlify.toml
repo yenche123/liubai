@@ -1,0 +1,27 @@
+
+# [[]] refers to an array of tables. 
+# see: https://toml.io/en/v1.0.0#array-of-tables
+
+# Reference: https://vite-pwa-org.netlify.app/deployment/netlify.html
+
+[build]
+  publish = "dist"
+  command = "pnpm run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    cache-control = '''
+    max-age=31536000,
+    immutable
+    '''
