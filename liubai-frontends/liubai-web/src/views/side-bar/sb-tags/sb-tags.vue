@@ -70,6 +70,10 @@ const {
 
   <div class="st-virtual-two"></div>
 
+  <div v-if="tagNodes.length < 1" class="st-no-tags">
+    <span>{{ t('placeholder.no_tag_yet') }}</span>
+  </div>
+
   <Draggable v-model="tagNodes" ref="treeEl" :indent="20" 
     @change="onTreeChange" 
     :watermark="false"
@@ -112,10 +116,6 @@ const {
 
     </template>
   </Draggable>
-
-  <div v-if="tagNodes.length < 1" class="st-no-tags">
-    <span>{{ t('placeholder.no_tag_yet') }}</span>
-  </div>
 
   <div class="st-virtual-three"></div>
 
