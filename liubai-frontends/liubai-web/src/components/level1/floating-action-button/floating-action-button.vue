@@ -49,7 +49,7 @@ const onTapBtn = () => {
   position: absolute;
   height: 56px;
   min-width: 56px;
-  bottom: 16px;
+  bottom: 24px;
   right: 16px;
   border-radius: 16px;
   overflow: hidden;
@@ -101,6 +101,12 @@ const onTapBtn = () => {
 .fab-container:active {
   background-color: var(--secondary-active);
   box-shadow: var(--secondary-shadow-hover);
+}
+
+@media screen and (max-width: 500px) and (min-height: 800px) {
+  .fab-container {
+    bottom: 32px;
+  }
 }
 
 
