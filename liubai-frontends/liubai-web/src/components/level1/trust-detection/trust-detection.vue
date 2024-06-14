@@ -82,7 +82,7 @@ const { t } = useI18n()
   font-size: var(--desc-font);
   color: #1f2429;
   line-height: 1.5;
-  width: 80%;
+  text-wrap: balance;
   margin-block-start: 20px;
   margin-block-end: 20px;
 }
