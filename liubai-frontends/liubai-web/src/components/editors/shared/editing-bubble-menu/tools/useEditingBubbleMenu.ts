@@ -7,6 +7,7 @@ export function useEditingBubbleMenu() {
   let tippy: Instance | undefined = undefined
 
   const tippyOptions: Partial<Props> = {
+    appendTo: () => document.body,
     hideOnClick: true,
     placement: 'bottom',
     onMount(instance) {

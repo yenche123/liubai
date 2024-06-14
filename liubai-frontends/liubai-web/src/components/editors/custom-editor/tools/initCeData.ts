@@ -15,7 +15,6 @@ import { storeToRefs } from "pinia"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
 import { 
-  handleOverflow, 
   getRemindMeFromThread, 
   checkIfEditorHasData,
 } from "./some-funcs"
@@ -423,11 +422,9 @@ function setEditorContent(
 
     editor.commands.setContent(json)
     ceData.editorContent = { text, json }
-    handleOverflow(ceData)
   }
   else {
     editor.commands.setContent("<p></p>")
-    ceData.overflowType = defaultData.overflowType
     delete ceData.editorContent
   }
   numWhenSet.value++

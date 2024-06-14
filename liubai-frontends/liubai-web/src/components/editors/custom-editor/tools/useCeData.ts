@@ -21,7 +21,6 @@ import liuUtil from "~/utils/liu-util";
 import { storeToRefs } from "pinia";
 import type { OState_Draft, SpaceType } from "~/types/types-basic"
 import type { LiuTimeout } from "~/utils/basic/type-tool";
-import { handleOverflow } from "./some-funcs";
 import liuApi from "~/utils/liu-api";
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 import { type EcSelectionChangeData } from "../../editor-core/tools/types";
@@ -101,7 +100,6 @@ export function useCeData(
   const onEditorUpdate = (data: EditorCoreContent) => {
     ceData.editorContent = data
     checkCanSubmit(ceData)
-    handleOverflow(ceData)
     toAutoChange(ctx)
   }
 

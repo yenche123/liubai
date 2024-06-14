@@ -133,7 +133,6 @@ function _resetState(
   ceData.lastLockStamp = time.getTime()
   delete ceData.draftId
   delete ceData.threadEdited
-  ceData.overflowType = defaultData.overflowType
   ceData.visScope = defaultData.visScope
   ceData.tagIds = []
   delete ceData.title

@@ -19,7 +19,6 @@ export interface CeData {
   lastTagChangeStamp?: number
   lastLockStamp?: number     // 锁定时间戳，避免去存储 draft
   lastEditStamp?: number
-  overflowType: "auto" | "visible"
   showTitleBar: boolean
   canSubmit: boolean
 }
@@ -29,7 +28,6 @@ export const defaultData: CeData = {
   visScope: "DEFAULT",
   storageState: "CLOUD",
   tagIds: [],
-  overflowType: "visible",
   showTitleBar: false,
   canSubmit: false,
 }

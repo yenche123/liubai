@@ -296,7 +296,7 @@ useDraftIdChanged(ceData)
   width: 100%;
   max-height: v-bind("maxEditorHeight + 'px'");
   position: relative;
-  overflow-y: v-bind("ceData.overflowType");
+  overflow-y: auto;
   transition: .3s;
 }
 

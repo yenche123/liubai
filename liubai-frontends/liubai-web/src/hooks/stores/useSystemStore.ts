@@ -87,7 +87,6 @@ function setClassForTheme(
   // 3. change meta name="theme-color"
   const color = cfg.title_bar_colors[t]
   const theme_color = document.querySelector(`head > meta[name="theme-color"]`)
-  console.log("修改 meta theme-color: ", color)
   theme_color?.setAttribute("content", color)
 }
 

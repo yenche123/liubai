@@ -75,6 +75,8 @@ https://openmoji.org/
 
 https://svgl.app/   收录各品牌的 logo
 
+https://remixicon.com/
+
 
 ## 一些常用碎片
 

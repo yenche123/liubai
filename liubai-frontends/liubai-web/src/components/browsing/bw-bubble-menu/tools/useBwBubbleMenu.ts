@@ -31,7 +31,8 @@ export function useBwBubbleMenu(
       if(!selection) return
       const { isCollapsed } = selection
       if(!isCollapsed) selection.removeAllRanges()
-    }
+    },
+    appendTo: () => document.body
   }
 
   const rr = useRouteAndLiuRouter()
