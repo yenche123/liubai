@@ -99,7 +99,7 @@ function listenWindowWidthChange(
   const { width } = useWindowSize()
   let lastWidthPx = width.value
 
-  const critialPoint = 400
+  const critialPoint = 355
 
   watch(width, (newV) => {
     let needChange = false

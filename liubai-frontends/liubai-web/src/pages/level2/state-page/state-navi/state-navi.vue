@@ -243,7 +243,7 @@ const iconColor = "var(--main-normal)"
 
 
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 355px) {
 
   .sn-back-box {
     width: 32px;
