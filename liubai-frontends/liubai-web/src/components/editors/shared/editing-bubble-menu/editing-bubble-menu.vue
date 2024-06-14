@@ -27,7 +27,7 @@ const {
     v-if="editor && cha?.isPC"
     :editor="editor"
     :should-show="shouldShow"
-    :updateDelay="250"
+    :updateDelay="0"
     :tippy-options="tippyOptions"
   >
     <!-- 编辑时: 粗体、斜体、删除线 -->

@@ -33,7 +33,7 @@ const onTapContainer = () => {}
     v-if="cha?.isPC && editor"
     :editor="editor"
     :should-show="shouldShow"
-    :updateDelay="250"
+    :updateDelay="0"
     :tippy-options="tippyOptions"
   >
 
