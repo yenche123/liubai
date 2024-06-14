@@ -11,6 +11,7 @@ import liuUtil from "~/utils/liu-util";
 import { initRecent, getRecent, addRecent } from "./tag-recent";
 import liuApi from "~/utils/liu-api";
 import { useKeyboard } from "~/hooks/useKeyboard";
+import time from "~/utils/basic/time";
 
 export function useHsInputResults(
   props: HsirProps,
@@ -121,11 +122,19 @@ function toListenKeyboard(
   emit: HsirEmit,
 ) {
   const { isMac } = liuApi.getCharacteristic()
+  let lastTryToFinish = 0
 
   // 监听 Up / Down
   const whenKeyDown = (e: KeyboardEvent) => {
     if(!liuUtil.canKeyUpDown()) return
     const k = e.key
+    const ctrlPressed = isMac ? e.metaKey : e.ctrlKey
+    if(k === "Enter" && ctrlPressed) {
+      lastTryToFinish = time.getTime()
+      emit("trytofinish")
+      return
+    }
+
     if(k !== "ArrowDown" && k !== "ArrowUp") return
     const length = hsirData.list.length
     if(length < 1) return
@@ -147,6 +156,7 @@ function toListenKeyboard(
       return
     }
     if(k !== "Enter") return
+    if(time.isWithinMillis(lastTryToFinish, 300)) return
     
     const idx = hsirData.selectedIndex
     if(idx < 0) return

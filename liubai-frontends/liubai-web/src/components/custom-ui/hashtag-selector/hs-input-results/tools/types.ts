@@ -22,4 +22,5 @@ export interface HsirEmit {
   (evt: "focusornot", focus: boolean): void
   (evt: "tapitem", item: TagShow): void
   (evt: "toclose"): void
+  (evt: "trytofinish"): void
 }

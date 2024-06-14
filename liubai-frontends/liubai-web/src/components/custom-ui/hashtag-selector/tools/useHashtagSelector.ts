@@ -39,6 +39,7 @@ export function initHashtagSelector() {
     onTapPopup,
     onFocusOrNot,
     onTapItem,
+    tryToFinish: onTapConfirm,
   }
 }
 

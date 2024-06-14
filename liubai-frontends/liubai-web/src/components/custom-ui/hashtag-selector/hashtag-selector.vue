@@ -11,6 +11,7 @@ const {
   onTapPopup,
   onFocusOrNot,
   onTapItem,
+  tryToFinish,
 } = initHashtagSelector()
 
 const { t } = useI18n()
@@ -72,10 +73,11 @@ const { t } = useI18n()
 
       <!-- 输入框 + 搜索结果 -->
       <div class="hsir-container">
-        <HsInputResults :list-added="hsData.list" 
-          @focusornot="onFocusOrNot" 
+        <HsInputResults :list-added="hsData.list"
+          @focusornot="onFocusOrNot"
           @tapitem="onTapItem"
           @toclose="onTapCancel"
+          @trytofinish="tryToFinish"
         ></HsInputResults>
       </div>
 
