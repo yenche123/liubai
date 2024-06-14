@@ -83,7 +83,7 @@ function listenRouteChange() {
 
 export function showHashtagEditor(opt: HashTagEditorParam) {
   firstInputVal = opt.text ?? ""
-  hteData.inputTxt = firstInputVal
+  setInputTxt(firstInputVal)
   firstEmoji = opt.icon ? liuApi.decode_URI_component(opt.icon) : ""
   hteData.emoji = firstEmoji
   hteData.errCode = 0
@@ -102,6 +102,11 @@ export function showHashtagEditor(opt: HashTagEditorParam) {
     _resolve = a
   }
   return new Promise(_wait)
+}
+
+function setInputTxt(text: string) {
+  hteData.inputTxt = text
+  hteData.nativeInputTxt = text
 }
 
 function onEmojiChange(newEmoji?: string) {
