@@ -72,7 +72,9 @@ class LocalToCloud {
     // lastStartToUpload 只是避免队列正在执行、重复触发队列的问题
     const lstu = this.lastStartToUpload
     if(lstu) {
-      if(time.isWithinMillis(lstu, MIN_5)) return
+      if(time.isWithinMillis(lstu, MIN_5)) {
+        return
+      }
       this.stopUploadTasks()
     }
 
@@ -110,7 +112,6 @@ class LocalToCloud {
     const syncNum = CloudEventBus.getSyncNum()
     if(syncNum.value < 1) return false
     const { level } = useNetworkStore()
-    console.log("当前网络等级: " + level)
     if(level <= 1) return false
     return true
   }

@@ -1,10 +1,14 @@
-import { ref, reactive, watch, type WatchStopHandle, readonly } from "vue"
+import { 
+  ref,
+  watch,
+  readonly,
+  type WatchStopHandle,
+} from "vue"
 import { 
   useRouteAndLiuRouter,
   type RouteAndLiuRouter
 } from "~/routes/liu-router"
-import { 
-  useNetwork, 
+import {
   useDocumentVisibility, 
   useThrottleFn,
   usePageLeave,
@@ -25,6 +29,8 @@ import { waitEnterIntoApp } from "~/hooks/useEnterIntoApp";
 import { getUser } from "./tools/some-funcs";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import liuConsole from "../debug/liu-console";
+import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
+import { storeToRefs } from "pinia";
 
 const SEC_25 = 25 * time.SECONED
 const MIN_25 = 25 * time.MINUTE
@@ -64,23 +70,24 @@ class CloudEventBus {
     // 监听网络、窗口是否可视、鼠标是否已经离开当前窗口......等变化
     const visibility = useDocumentVisibility()
     const hasLeftPage = usePageLeave()
-    const networkState0 = useNetwork()
-    const networkState = reactive(networkState0)
-    watch([networkState, visibility, hasLeftPage], (
+    const nStore = useNetworkStore()
+    const { level: netLevel } = storeToRefs(nStore)
+
+    watch([netLevel, visibility, hasLeftPage], (
       [newV1, newV2, newV3],
       [oldV1, oldV2, oldV3],
     ) => {
 
       // 当前分页被隐藏，并且非刚启动时（刚启动时，oldV2 为 undefined）
       if(newV2 === "hidden" && oldV2) return
-      if(!newV1.isOnline) return
+      if(!newV1) return
 
       if(!_this.isTimeCalibrated) {
         preMain()
         return
       }
 
-      if(newV1.isOnline && !newV1?.isOnline) {
+      if(newV1 && !oldV1) {
         preMain()
         return
       }

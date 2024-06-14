@@ -150,7 +150,6 @@ async function checkDraft(
   if(res.length < 1) return
 
   const task_ids = res.map(v => v._id)
-  console.log("checkDraft to delete these tasks: ", task_ids)
   await db.upload_tasks.bulkDelete(task_ids)
 }
 
