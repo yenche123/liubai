@@ -36,8 +36,7 @@ const props = defineProps({
   },
 })
 
-const { 
-  allowHover,
+const {
   hoverColor,
   enableBubbleBar,
   showBubbleBar,

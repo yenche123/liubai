@@ -8,7 +8,10 @@ import { computed, reactive, ref, watch } from "vue";
 import cui from "~/components/custom-ui";
 import { useGlobalStateStore } from '~/hooks/stores/useGlobalStateStore';
 import liuUtil from "~/utils/liu-util";
-import { useRouteAndLiuRouter } from "~/routes/liu-router";
+import { 
+  type RouteAndLiuRouter, 
+  useRouteAndLiuRouter,
+} from "~/routes/liu-router";
 import { emojiList } from "~/config/emoji-list"
 import { useTemporaryStore } from "~/hooks/stores/useTemporaryStore";
 import valTool from "~/utils/basic/val-tool";
@@ -42,26 +45,8 @@ export function useCommentCard(
     onMouseLeaveComment,
   } = initActionbar(props)
 
-  const toCommentDetail = () => {
-    const cid2 = props.cs._id
-    let opt = { rr }
-    liuUtil.open.openComment(cid2, opt)
-  }
-
-  const toContentPanel = async () => {
-    const res = await cui.showContentPanel({ comment: props.cs, onlyReaction: false })
-    if(res?.toReply) {
-      // 等待 content-panel 的弹窗划出
-      await valTool.waitMilli(250)
-      const tempStore = useTemporaryStore()
-      tempStore.setFocusCommentEditor()
-      toCommentDetail()
-    }
-  }
-
-
   const onTapContainer = (e: MouseEvent) => {
-    const { target, currentTarget } = e
+    const { target } = e
     if(!allowHover.value) return
     if(liuApi.eventTargetIsSomeTag(target, "a")) return
     if(liuApi.getSelectionText()) return
@@ -70,10 +55,10 @@ export function useCommentCard(
     const cha = liuApi.getCharacteristic()
 
     if(cha.isMobile) {
-      toContentPanel()
+      toContentPanel(props, rr)
     }
     else {
-      toCommentDetail()
+      toCommentDetail(props, rr)
     }
   }
 
@@ -88,6 +73,36 @@ export function useCommentCard(
     onTapCccCover,
     ccData,
   }
+}
+
+async function toContentPanel(
+  props: CommentCardProps,
+  rr: RouteAndLiuRouter,
+) {
+  const res = await cui.showContentPanel({ comment: props.cs, onlyReaction: false })
+  if(res?.toReply) {
+    // waiting for content-panel to close for 250ms
+    await valTool.waitMilli(250)
+    const tempStore = useTemporaryStore()
+    tempStore.setFocusCommentEditor()
+    toCommentDetail(props, rr)
+  }
+
+  if(res?.toEdit) {
+    // waiting for content-panel to close for 250ms
+    await valTool.waitMilli(250)
+    const cs = props.cs
+    cui.showCommentPopup({ operation: "edit_comment", commentShow: cs })
+  }
+}
+
+function toCommentDetail(
+  props: CommentCardProps,
+  rr: RouteAndLiuRouter,
+) {
+  const cid2 = props.cs._id
+  let opt = { rr }
+  liuUtil.open.openComment(cid2, opt)
 }
 
 

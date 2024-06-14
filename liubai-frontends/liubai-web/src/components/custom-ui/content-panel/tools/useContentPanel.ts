@@ -43,6 +43,7 @@ export function initContentPanel() {
     onTapEmoji,
     onTapDetail,
     onTapReply,
+    onTapEdit,
   }
 }
 
@@ -82,6 +83,11 @@ export function showContentPanel(param: ContentPanelParam) {
 function onTapReply() {
   closeIt(rr, queryKey)
   toResolve({ toReply: true })
+}
+
+function onTapEdit() {
+  closeIt(rr, queryKey)
+  toResolve({ toEdit: true })
 }
 
 function onTapDetail() {

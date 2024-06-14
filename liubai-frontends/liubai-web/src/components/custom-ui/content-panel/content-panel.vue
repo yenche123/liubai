@@ -15,6 +15,7 @@ const {
   onTapEmoji,
   onTapDetail,
   onTapReply,
+  onTapEdit,
 } = initContentPanel()
 const { t } = useI18n()
 
@@ -75,14 +76,14 @@ const iconColor = `var(--other-btn-text)`
             </div>
           </div>
 
-          <div class="cp-btn">
+          <div class="cp-btn" @click.stop="onTapEdit">
             <div class="cp-icon">
-              <svg-icon name="share" class="cp-svg-icon"
+              <svg-icon name="edit_400" class="cp-svg-icon"
                 :color="iconColor"
               ></svg-icon>
             </div>
             <div class="cp-title">
-              <span>{{ t('common.share') }}</span>
+              <span>{{ t('common.edit') }}</span>
             </div>
           </div>
 
