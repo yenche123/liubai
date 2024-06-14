@@ -21,6 +21,7 @@ interface SnCtx {
   indicatorParentEl: Ref<HTMLElement | null>
   indiListEl: Ref<HTMLElement | null>
   indiKanbanEl: Ref<HTMLElement | null>
+  innerCurrent: Ref<StateWhichPage>
 }
 
 export function useStateNavi(
@@ -34,6 +35,7 @@ export function useStateNavi(
   const indiKanbanEl = ref<HTMLElement | null>(null)
 
   const whichPage = toRef(props, "current")
+  const innerCurrent = ref(whichPage.value)
   const pageIn = toRef(props, "pageIn")
   const { t, locale } = useI18n()
 
@@ -44,6 +46,7 @@ export function useStateNavi(
     indiKanbanEl,
     whichPage: whichPage.value,
     pageIn: pageIn.value,
+    innerCurrent,
   }
 
   watch([whichPage, locale], ([newV1, newV2]) => {
@@ -89,6 +92,7 @@ export function useStateNavi(
     onTapReload,
     onTapAddState,
     stateProvideData,
+    innerCurrent,
   }
 }
 
@@ -122,6 +126,12 @@ async function whenWhichPageChange(
   const parentEl = ctx.indicatorParentEl.value
   if(!parentEl) return
   if(ctx.whichPage < 1) return
+
+  const oldInnerCurrent = ctx.innerCurrent.value
+  if(oldInnerCurrent !== ctx.whichPage) {
+    await liuUtil.waitAFrame()
+    ctx.innerCurrent.value = ctx.whichPage
+  }
 
   const childRef = ctx.whichPage === 1 ? ctx.indiListEl : ctx.indiKanbanEl
   

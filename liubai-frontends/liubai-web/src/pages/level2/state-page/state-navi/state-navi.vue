@@ -36,6 +36,7 @@ const {
   reloadRotateDeg,
   onTapReload,
   onTapAddState,
+  innerCurrent,
 } = useStateNavi(props)
 
 const defaultColor = "var(--main-code)"
@@ -55,7 +56,9 @@ const iconColor = "var(--main-normal)"
   <!--直接使用 sticky 布局-->
   <div class="liu-frosted-glass sn-container">
 
-    <div class="sn-box">
+    <div class="sn-box"
+      :class="{ 'sn-box_constraint': innerCurrent === 1 }"
+    >
 
       <!-- 返回按钮 -->
       <div class="liu-hover sn-back-box" @click="onTapBack">
@@ -110,7 +113,7 @@ const iconColor = "var(--main-normal)"
         </div>
 
         <!-- 添加 -->
-        <div class="liu-hover snf-box"
+        <div class="liu-hover liu-hover_last snf-box"
           :aria-label="t('state_related.add_state')"
           @click="onTapAddState"
         >
@@ -140,12 +143,23 @@ const iconColor = "var(--main-normal)"
 }
 
 .sn-box {
-  width: 92%;
+  width: 100%;
+  max-width: 100%;
   height: 100%;
   min-width: var(--card-min);
   display: flex;
   align-items: center;
   position: relative;
+  transition: .3s;
+  padding-inline-start: 34px;
+  padding-inline-end: 20px;
+  box-sizing: border-box;
+}
+
+.sn-box_constraint {
+  width: 92%;
+  max-width: 800px;
+  padding-inline: 0;
 }
 
 .sn-back-box {
@@ -154,6 +168,7 @@ const iconColor = "var(--main-normal)"
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-inline-start: -6px;
   margin-inline-end: 6px;
 
   .nb-back-icon {
@@ -209,6 +224,7 @@ const iconColor = "var(--main-normal)"
     opacity: .08;
     border-radius: 15px;
     z-index: 90;
+    pointer-events: none;
   }
 
 }

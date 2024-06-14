@@ -214,7 +214,7 @@ const { isMobile } = liuApi.getCharacteristic()
 
 .lvc-box {
   width: 92%;
-  max-width: 900px;
+  max-width: 800px;
   position: relative;
   background-color: var(--card-bg);
   box-shadow: var(--card-shadow-2);
