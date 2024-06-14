@@ -36,7 +36,19 @@
       "purpose": "maskable"
     },
     {
+      "src": "logos/anymaskable_256x256_v7.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
       "src": "logos/logo_512x512_v2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logos/anymaskable_512x512_v7.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -47,11 +59,15 @@
     "Notes",
     "To-Do",
     "Tasks",
-    "Calendar"
+    "Calendar",
+    "Cross Platform"
   ],
   "categories": [
-    "utility",
+    "utilities",
     "productivity"
   ],
+  "edge_side_panel": {
+    "preferred_width": 420
+  },
   "$schema": "https://json.schemastore.org/web-manifest-combined.json"
 }

@@ -31,6 +31,28 @@ Build! Anyway
 
 ## PWA
 
+### 图标优先级
+根据经验，PWA 各个操作系统和浏览器如何优先取图标：
+
+#### Android Chrome
+
+根据 manifest.json，选取 sizes 为 256x256，再从中选取 purpose 含有 `maskable` 的元素，并且排列越靠前的越优先选取。
+
+注意: Android Chrome，会对透明背景涂黑，并且会裁切至最小安全区域（minimum safe area），见 https://maskable.app/
+
+#### iPhone Safari
+根据 index.html 中的 `<link rel="apple-touch-icon">` 标签取值。同样地，这组系统也会对背景做涂黑处理。
+
+#### MacOS Chrome
+根据 manifest.json，选取 sizes 为 256x256，再依据 purpose: `any maskable` > `maskable`
+
+#### MacOS Safari
+根据 manifest.json，选取 sizes 为 512x512，再依据 purpose: `maskable` > `any maskable`。这组系统会略微缩小原图（不会缩小至“最小安全区域”那么多，目测只缩小了 90%），居中后把剩余的背景涂白处理。
+
+上方 MacOS 以 MacBook Air M2 为例。
+
+### 图标适配的网站
+
 图标适配，有以下网站可以参考:
 
 1. https://maskable.app/editor
