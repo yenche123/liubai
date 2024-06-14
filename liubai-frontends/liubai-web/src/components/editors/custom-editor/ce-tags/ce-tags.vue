@@ -54,7 +54,7 @@ const onTapClear = (index: number) => {
     font-size: var(--btn-font);
     color: var(--liu-quote);
     background-color: var(--tag-bg);
-    border-radius: 24px;
+    border-radius: 6px;
     margin-inline-end: 10px;
     margin-block-end: 10px;
     user-select: none;
