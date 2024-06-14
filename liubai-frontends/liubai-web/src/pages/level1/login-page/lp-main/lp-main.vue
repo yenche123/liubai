@@ -144,6 +144,7 @@ const {
   opacity: .08;
   border-radius: 20px;
   transition: .3s;
+  pointer-events: none;
 }
 
 
