@@ -131,6 +131,7 @@ const {
   font-size: var(--btn-font);
   color: var(--main-code);
   font-weight: 700;
+  user-select: none;
 
   .lc-add-svg {
     width: 24px;

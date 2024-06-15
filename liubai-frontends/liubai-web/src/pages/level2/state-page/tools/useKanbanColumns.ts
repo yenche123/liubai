@@ -1,4 +1,4 @@
-import { computed, inject, reactive } from "vue";
+import { computed, inject, reactive, ref } from "vue";
 import type { KanbanColumn, ThreadShow } from "~/types/types-content";
 import type { 
   ColumnInsertData,
@@ -69,13 +69,13 @@ export function useKanbanColumns(
   }
 
 
-  const onTapMoreMenuItem = (id: string, item: MenuItem, index: number) => {
+  const onTapMoreMenuItem = (stateId: string, item: MenuItem, index: number) => {
     const textKey = item.text_key
     if(textKey === "common.edit") {
-      kanbanOperate.editKanban(columns, id)
+      kanbanOperate.editKanban(columns, stateId)
     }
     else if(textKey === "common.delete") {
-      kanbanOperate.deleteKanban(columns, id)
+      kanbanOperate.deleteKanban(columns, stateId)
     }
   }
 
@@ -87,6 +87,14 @@ export function useKanbanColumns(
     kanbanOperate.addThreadToKanban(columns, stateId)
   }
 
+  const stateIdThatCursorIsHovering = ref("")
+  const onMenuShow = (stateId: string) => {
+    stateIdThatCursorIsHovering.value = stateId
+  }
+
+  const onMenuHide = (stateId: string) => {
+    stateIdThatCursorIsHovering.value = ""
+  }
 
   return {
     MORE_ITEMS,
@@ -100,6 +108,9 @@ export function useKanbanColumns(
     onTapMoreMenuItem,
     onTapThreadItem,
     onTapAddThread,
+    onMenuShow,
+    onMenuHide,
+    stateIdThatCursorIsHovering,
   }
 }
 

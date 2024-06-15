@@ -49,6 +49,9 @@ const {
   onTapMoreMenuItem,
   onTapThreadItem,
   onTapAddThread,
+  onMenuShow,
+  onMenuHide,
+  stateIdThatCursorIsHovering,
 } = useKanbanColumns(props, emit)
 const { isMobile } = liuApi.getCharacteristic()
 
@@ -118,7 +121,9 @@ const { isMobile } = liuApi.getCharacteristic()
           </div>
 
           <!-- 状态 // 更多 -->
-          <div class="lvch-footer">
+          <div class="lvch-footer"
+            :class="{ 'lvch-footer_show': item.id === stateIdThatCursorIsHovering }"
+          >
 
             <!-- 更多 -->
             <LiuMenu
@@ -126,6 +131,8 @@ const { isMobile } = liuApi.getCharacteristic()
               :container="'#lv-column-header_' + item.id"
               placement="bottom-end"
               @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
+              @menushow="() => onMenuShow(item.id)"
+              @menuhide="() => onMenuHide(item.id)"
             >
               <div class="liu-hover lvch-btn">
                 <svg-icon name="more" class="lvch-svg" 
@@ -306,6 +313,10 @@ const { isMobile } = liuApi.getCharacteristic()
   .lv-column:hover .lvch-footer {
     opacity: 1;
   }
+}
+
+.lvch-footer_show {
+  opacity: 1;
 }
 
 

@@ -47,6 +47,9 @@ const {
   onTapMoreMenuItem,
   onTapThreadItem,
   onTapAddThread,
+  onMenuShow,
+  onMenuHide,
+  stateIdThatCursorIsHovering,
 } = useKanbanColumns(props, emit)
 
 </script>
@@ -111,15 +114,18 @@ const {
           
 
         <!-- 状态 // 更多 -->
-        <div class="kvch-footer">
+        <div class="kvch-footer" 
+          :class="{ 'kvch-footer_show': item.id === stateIdThatCursorIsHovering }"
+        >
 
           <!-- 更多 -->
           <LiuMenu
             :menu="MORE_ITEMS"
             :container="'#kv-column-header_' + item.id"
             placement="bottom-end"
-            :allow-mask="false"
             @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
+            @menushow="() => onMenuShow(item.id)"
+            @menuhide="() => onMenuHide(item.id)"
           >
             <div class="liu-hover kvch-btn">
               <svg-icon name="more" class="kvch-svg" 
@@ -200,7 +206,6 @@ const {
   position: relative;
   display: flex;
   align-items: center;
-  z-index: 100;
 }
 
 .kvch-shadow {
@@ -290,6 +295,12 @@ const {
     opacity: 1;
   }
 }
+
+
+.kvch-footer_show {
+  opacity: 1;
+}
+
 
 @media screen and (max-width: 400px) {
   .kv-column-container {
