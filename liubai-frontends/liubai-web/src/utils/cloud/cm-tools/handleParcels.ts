@@ -29,6 +29,7 @@ import type {
   Bulk_Collection,
   Bulk_Draft,
 } from "./types";
+import transferUtil from "~/utils/transfer-util";
 
 let merged_content_ids: string[] = []
 let merged_collection_ids: string[] = []
@@ -487,6 +488,15 @@ async function mergeContent(
 
     g.search_title = d.search_title
     g.search_other = d.search_other
+
+
+    if(!d.search_title && d.title) {
+      g.search_title = d.title.toLowerCase()
+    }
+    if(!d.search_other) {
+      g.search_other = transferUtil.packSearchOther(d.liuDesc, fileRes.files)
+    }
+
   }
 
   const gCfg = oCfg
@@ -637,6 +647,13 @@ function createContent(
     levelOneAndTwo: d.levelOneAndTwo,
 
     firstSyncStamp: b.insertedStamp,
+  }
+
+  if(!c.search_title && c.title) {
+    c.search_title = c.title.toLowerCase()
+  }
+  if(!c.search_other) {
+    c.search_other = transferUtil.packSearchOther(c.liuDesc, files)
   }
   
   new_contents.push(c)

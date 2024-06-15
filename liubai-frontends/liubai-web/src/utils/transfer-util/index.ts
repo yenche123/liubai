@@ -54,14 +54,24 @@ function tiptapToMarkdown(
 
 // 组装 Content 里的 search_other 字段
 function packSearchOther(
-  list: TipTapJSONContent[],
-  files: LiuFileStore[],
+  list: TipTapJSONContent[] | undefined,
+  files: LiuFileStore[] | undefined,
 ) {
-  let res = tiptapToText(list, true)
+  let res = ""
+
+  // 1. handle desc
+  if(list) {
+    res = tiptapToText(list, true)
+  }
+
+  // 2. handle files' names
+  if(!files) files = []
   for(let i=0; i<files.length; i++) {
     const f = files[i]
     res += ` ${f.name}`
   }
+  
+  // 3. turn into lowercase
   res = res.trim().toLowerCase()
   return res
 }
