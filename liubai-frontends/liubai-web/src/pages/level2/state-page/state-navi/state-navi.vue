@@ -156,6 +156,12 @@ const iconColor = "var(--main-normal)"
   box-sizing: border-box;
 }
 
+@media screen and (max-width: 400px) {
+  .sn-box {
+    padding-inline-start: 19px;
+  }
+}
+
 .sn-box_constraint {
   width: 92%;
   max-width: 800px;
@@ -255,7 +261,6 @@ const iconColor = "var(--main-normal)"
     height: 27px;
   }
 }
-
 
 
 
