@@ -16,10 +16,11 @@ import type { JSZipObject } from "jszip"
 import { db } from "~/utils/db";
 import type { ContentLocalTable } from "~/types/types-table";
 import { equipThreads } from "~/utils/controllers/equip/threads";
-import ider from "~/utils/basic/ider";
 import type { CommentShow, ThreadShow } from "~/types/types-content";
 import { equipComments } from "~/utils/controllers/equip/comments";
 import liuEnv from "~/utils/liu-env";
+
+// key: 会把导入的动态，全部转进当前用户所在的工作区！！
 
 export async function parseOurJson(
   atom: ImportedAtom,
@@ -34,11 +35,19 @@ export async function parseOurJson(
 
 
   // 如果当前并非纯本地模式，即当前为具备云端的模式
-  // 那么不是自己发表的动态，一律过滤掉；
+  // 那么
+  //   1. 动态所属的工作区类型不是 ME 并且不是自己发表的动态，一律过滤掉；
+  //   2. 如果内容属于评论，并且不是自己发表的，一律过滤掉
+  //      （TODO: 应该要导入 profiles 文件夹，还原这些内容之前存放的上下文，
+  //        以判断“我的”这个概念）
+  // 如果是 ME 类型的 THREAD，那么可以任意同步，只是要把 member 设置成自己
   // 若是自己的动态，只是 member 不一致，那允许往下执行
-  // 也就是允许把不同工作区的动态导入进当前工作区
+  // 也就是允许把不同工作区的动态导入进【当前工作区】
   const canSync = liuEnv.canISync()
-  if(canSync && d.user !== myCtx.userId) return
+  if(canSync) {
+    if(d.spaceType !== "ME" && d.user !== myCtx.userId) return
+    if(d.infoType === "COMMENT" && d.user !== myCtx.userId) return
+  }
 
   let liuAssets = await parseAssets(dateStr, assets)
   const imgsFiles = getImagesAndFiles(d, liuAssets)

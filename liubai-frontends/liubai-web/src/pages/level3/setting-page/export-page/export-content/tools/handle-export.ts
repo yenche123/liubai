@@ -25,6 +25,7 @@ export async function handleExport(
 ) {
 
   // 0. 获取工作区状态
+  // IMPORTANT: 只会导出当前工作区的数据
   const wStore = useWorkspaceStore()
   const { spaceId, myMember } = wStore
   if(!spaceId || !myMember) return
