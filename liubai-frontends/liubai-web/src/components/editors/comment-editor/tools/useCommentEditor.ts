@@ -1,6 +1,6 @@
 import { useMyProfile } from "~/hooks/useCommon";
 import EditorCore from "../../editor-core/editor-core.vue"
-import { computed, reactive, ref, shallowRef, watch } from "vue"
+import { computed, reactive, ref, shallowRef, toRef, watch } from "vue"
 import type { Ref, ShallowRef } from "vue"
 import type { TipTapEditor, EditorCoreContent } from "~/types/types-editor"
 import type { CeCtx, CeProps, CeEmit, CommentStorageAtom } from "./types";
@@ -59,11 +59,14 @@ export function useCommentEditor(
   })
 
   // 监听上级组件要求聚焦
-  watch(() => props.focusNum, (newV) => {
-    if(newV <= 0) return
-    const eVal = editor.value
-    if(!eVal) return
-    eVal.commands.focus()
+  const focusNum = toRef(props, "focusNum")
+  watch([focusNum, editor], ([newV1, newV2]) => {
+    // console.log("focusNum: ", newV1)
+    // console.log(newV2)
+    // console.log(" ")
+    if(newV1 <= 0) return
+    if(!newV2) return
+    newV2.commands.focus()
   })
 
   // 监听图片改变，以缓存它们
