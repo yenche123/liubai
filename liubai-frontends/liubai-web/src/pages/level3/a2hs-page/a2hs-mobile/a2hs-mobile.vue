@@ -36,7 +36,6 @@ const { t } = useI18n()
 }
 
 .a2hs-img-2 {
-  margin-block-end: 20px;
   width: 256px;
   height: 256px;
   background-image: url('/images/a2hs-mobile-2.jpg');

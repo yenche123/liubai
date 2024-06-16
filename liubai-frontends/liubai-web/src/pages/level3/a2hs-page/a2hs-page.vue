@@ -34,6 +34,7 @@ onActivated(() => {
         <div class="liu-mc-box">
           <A2hsDesktop v-if="cha.isPC"></A2hsDesktop>
           <A2hsMobile v-else></A2hsMobile>
+          <div style="width: 100%; height: 100px;"></div>
         </div>
       </div>
 
