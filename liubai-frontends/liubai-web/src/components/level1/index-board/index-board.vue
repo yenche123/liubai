@@ -11,10 +11,8 @@ const {
 
   <A2hsTip
     :a2hs="ibData.a2hs"
-    
   ></A2hsTip>
   
-
 
 </template>
 <style scoped lang="scss">

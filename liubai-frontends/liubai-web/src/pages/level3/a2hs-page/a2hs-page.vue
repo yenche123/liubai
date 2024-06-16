@@ -8,9 +8,18 @@ import A2hsDesktop from "./a2hs-desktop/a2hs-desktop.vue";
 import A2hsMobile from "./a2hs-mobile/a2hs-mobile.vue";
 import { useMainVice } from "~/hooks/useMainVice";
 import liuApi from "~/utils/liu-api";
+import { onActivated } from "vue";
+import middleBridge from "~/utils/middle-bridge";
 
-const { hiddenScrollBar, onVvWidthChange } = useMainVice()
+const { 
+  hiddenScrollBar, 
+  onVvWidthChange,
+} = useMainVice({ setDefaultTitle: false })
 const cha = liuApi.getCharacteristic()
+
+onActivated(() => {
+  middleBridge.setAppTitle({ val_key: "a2hs.title" })
+})
 
 </script>
 <template>

@@ -14,8 +14,6 @@ export function useIndexBoard() {
   const onTapInstall = () => {
 
   }
-
-  
   
   return {
     ibData,
@@ -64,6 +62,7 @@ function handleA2HSForSafari(
 
   const cha = liuApi.getCharacteristic()
   if(!cha.isSafari) return
+  if(cha.isInWebView) return
 
   //@ts-expect-error Property only exists on Safari
   const standalone = window.navigator.standalone
