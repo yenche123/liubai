@@ -21,6 +21,7 @@ const ExportPage = () => import("../pages/level3/setting-page/export-page/export
 const ImportPage = () => import("../pages/level3/setting-page/import-page/import-page.vue")
 const SubscribePage = () => import("../pages/level3/payments/subscribe-page/subscribe-page.vue")
 const PaymentSuccessPage = () => import("../pages/level3/payments/success-page/success-page.vue")
+const A2hsPage = () => import("../pages/level3/a2hs-page/a2hs-page.vue")
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -215,6 +216,17 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "notification",
+    meta: {
+      keepAlive: true,
+    }
+  },
+  {
+    path: "/a2hs",
+    components: {
+      default: A2hsPage,
+      LeftSidebar,
+    },
+    name: "a2hs",
     meta: {
       keepAlive: true,
     }

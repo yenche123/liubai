@@ -94,7 +94,11 @@ export const getCharacteristic = (): GetChaRes => {
     const c_version_m = ua.match(reg_exp.chrome_version)
     browserVersion = c_version_m ? c_version_m[1] : undefined
   }
-  else if(ua.includes("safari")) isSafari = true
+  else if(ua.includes("safari")) {
+    if(!ua.includes("android")) {
+      isSafari = true
+    }
+  }
 
   // 处理 iOS 13 之后的 iPad 的 userAgent 里没有 ipad 字段的问题
   // maxTouchPoints 表示设备最多支持一次有多少个 touch 点击

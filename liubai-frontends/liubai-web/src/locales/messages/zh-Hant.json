@@ -402,5 +402,14 @@
     "cancel_refund": "取消訂閱並退款",
     "refund_content": "每個帳號最多享有一次 7 天無理由退款，你確定還要取消訂閱並退款嗎？",
     "to_refund": "確定退款"
+  },
+  "a2hs": {
+    "title": "加入到桌面",
+    "desc": "離線也能使用！",
+    "add": "去加入",
+    "mobile_safari_1": "1. 輕觸底部「分享」按鈕",
+    "mobile_safari_2": "2. 下划後，輕觸「加入 Dock 中」",
+    "desktop_safari_1": "1. 點擊右上角「分享」按鈕",
+    "desktop_safari_2": "2. 點擊「加入 Dock 中」"
   }
 }

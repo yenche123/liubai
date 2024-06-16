@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import cfg from "~/config"
 import CustomEditor from "~/components/editors/custom-editor/custom-editor.vue"
+import IndexBoard from "~/components/level1/index-board/index-board.vue"
 import ThreadList from "~/components/level1/thread-list/thread-list.vue"
 import { useIndexContent } from "./tools/useIndexContent"
 
@@ -28,6 +29,8 @@ const {
       
       <CustomEditor></CustomEditor>
       <div class="liu-mc-spacing"></div>
+
+      <IndexBoard></IndexBoard>
 
       <!-- 置顶 -->
       <ThreadList

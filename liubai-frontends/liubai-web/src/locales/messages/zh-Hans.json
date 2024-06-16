@@ -402,5 +402,14 @@
     "cancel_refund": "取消订阅并退款",
     "refund_content": "每个账号仅支持一次 7 天无理由退款，你确定还要取消订阅并退款吗？",
     "to_refund": "确定退款"
+  },
+  "a2hs": {
+    "title": "添加到桌面",
+    "desc": "断网也能使用！",
+    "add": "去添加",
+    "mobile_safari_1": "1. 点击底部“分享”按钮",
+    "mobile_safari_2": "2. 下划后，点击“添加到主屏幕”",
+    "desktop_safari_1": "1. 点击右上角“分享”按钮",
+    "desktop_safari_2": "2. 点击“添加到程序坞”"
   }
 }
