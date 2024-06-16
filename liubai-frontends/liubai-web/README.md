@@ -40,6 +40,8 @@ Build! Anyway
 
 注意: Android Chrome，会对透明背景涂黑，并且会裁切至最小安全区域（minimum safe area），见 https://maskable.app/
 
+更奇怪的是，Android 上操作系统自动裁切时的形状竟然不是圆形，而是一个大圆角的矩形。
+
 #### iPhone Safari
 根据 index.html 中的 `<link rel="apple-touch-icon">` 标签取值。同样地，这组系统也会对背景做涂黑处理。
 
