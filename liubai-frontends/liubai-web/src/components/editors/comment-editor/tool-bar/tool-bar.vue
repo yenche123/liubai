@@ -80,7 +80,7 @@ const onTapFinishBtn = () => {
     </div>
     <div class="cemt-footer">
       <!-- 完成 -->
-      <div class="cemtf-submit-btn" 
+      <div class="liu-no-user-select cemtf-submit-btn" 
         :class="{ 'cemtf-submit_disabled': !canSubmit }"
         v-show="showSubmitBtn"
         @click.stop="onTapFinishBtn"
@@ -199,7 +199,6 @@ const onTapFinishBtn = () => {
   color: var(--on-primary);
   font-size: var(--mini-font);
   transition: .15s;
-  user-select: none;
   font-weight: 500;
 }
 

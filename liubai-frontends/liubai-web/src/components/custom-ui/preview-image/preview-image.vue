@@ -15,7 +15,7 @@ const {
 <template>
 
   <div v-if="enable" 
-    class="pi-container"
+    class="liu-no-user-select pi-container"
     :class="{ 'pi-container_show': show }"
   >
     <PiContent 
@@ -36,7 +36,6 @@ const {
   position: fixed;
   top: 0;
   left: 0;
-  user-select: none;
   opacity: 0;
   background-color: var(--preview-image-bg);
   transition: v-bind("TRANSITION_DURATION + 'ms'");

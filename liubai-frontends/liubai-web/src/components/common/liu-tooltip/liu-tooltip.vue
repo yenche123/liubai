@@ -44,10 +44,10 @@ defineProps({
 
     <template #popper>
       <div class="lt-container">
-        <div class="lt-title">
+        <div class="liu-no-user-select lt-title">
           <span>{{ ariaLabel }}</span>
         </div>
-        <div class="lt-content" v-if="shortcut">
+        <div class="liu-no-user-select lt-content" v-if="shortcut">
           <span>{{ shortcut }}</span>
         </div>
       </div>
@@ -65,13 +65,11 @@ defineProps({
 .lt-title {
   color: var(--on-cui-loading);
   font-size: var(--mini-font);
-  user-select: none;
 }
 
 .lt-content {
   color: var(--shortcut-text);
   font-size: var(--state-font);
-  user-select: none;
 }
 
 

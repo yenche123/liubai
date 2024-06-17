@@ -32,12 +32,12 @@ watch(() => scData.state, (newV) => {
     <div class="liu-mc-box" v-if="spi && scData.state < 0">
 
       <!-- 方案标题 -->
-      <div class="sc-title">
+      <div class="liu-no-user-select sc-title">
         <span>{{ spi.title }}</span>
       </div>
 
       <!-- price -->
-      <div class="sc-price" v-if="scData.price_1">
+      <div class="liu-no-user-select sc-price" v-if="scData.price_1">
         <span class="scp-tag">{{ spi.symbol }}</span>
 
         <!-- integral -->
@@ -60,13 +60,15 @@ watch(() => scData.state, (newV) => {
       </div>
 
       <!-- 徽章 或 终身会员 -->
-      <div class="sc-badge">
+      <div class="liu-no-user-select sc-badge">
         <span v-if="scData.isLifelong">{{ t('payment.lifetime') }}</span>
         <span v-else>{{ spi.badge }}</span>
       </div>
 
       <!-- 什么时候过期 或 什么时候续费 -->
-      <div class="scb-footer" v-if="!scData.isLifelong && scData.expireStr">
+      <div class="liu-no-user-select scb-footer" 
+        v-if="!scData.isLifelong && scData.expireStr"
+      >
         <span v-if="scData.autoRecharge">{{ t('payment.recharge_date', { date: scData.expireStr }) }}</span>
         <span v-else>{{ t('payment.expire_date', { date: scData.expireStr }) }}</span>
       </div>
@@ -94,7 +96,8 @@ watch(() => scData.state, (newV) => {
         </custom-btn>
 
         <!-- 取消订阅并退款 -->
-        <div v-if="scData.showRefundBtn" class="liu-hover sc-refund"
+        <div v-if="scData.showRefundBtn" 
+          class="liu-no-user-select liu-hover sc-refund"
           @click.stop="onTapRefund"
         >
           <span>{{ t('payment.cancel_refund') }}</span>
@@ -116,14 +119,12 @@ watch(() => scData.state, (newV) => {
   line-height: 1.5;
   font-weight: 700;
   margin-block-end: 2.5px;
-  user-select: none;
 }
 
 .sc-price {
   font-size: var(--big-word-style);
   margin-block-end: 20px;
   color: rgb(225, 81, 65);
-  user-select: none;
 }
 
 .scp-tag {
@@ -162,7 +163,6 @@ watch(() => scData.state, (newV) => {
   padding: 4px 12px;
   overflow: hidden;
   display: inline-flex;
-  user-select: none;
 
   &::before {
     content: "";
@@ -180,7 +180,6 @@ watch(() => scData.state, (newV) => {
   font-size: var(--mini-font);
   margin-block-start: 7.5px;
   color: var(--primary-color);
-  user-select: none;
 }
 
 .sc-content {
@@ -216,7 +215,6 @@ watch(() => scData.state, (newV) => {
   max-width: var(--btn-max);
   cursor: pointer;
   text-align: center;
-  user-select: none;
 }
 
 

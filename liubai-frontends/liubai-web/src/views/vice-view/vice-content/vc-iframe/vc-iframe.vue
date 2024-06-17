@@ -52,7 +52,9 @@ const {
   <div class="vcliu-virtual" :style="{ 'height': styles.bottomVirtual + 'px' }"></div>
   
   <!-- 用于显示拖动时覆盖在 iframe 上的透明度白屏 -->
-  <div class="vcliu-cover" :class="{ 'vcliu-cover_show': isOutterDraging }"></div>
+  <div class="liu-no-user-select vcliu-cover" 
+    :class="{ 'vcliu-cover_show': isOutterDraging }"
+  ></div>
 </template>
 <style scoped>
 
@@ -80,7 +82,6 @@ const {
   opacity: 0;
   visibility: hidden;
   transition: .3s;
-  user-select: none;
 }
 
 .vcliu-cover_show {

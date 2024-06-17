@@ -25,7 +25,7 @@ const { footerMenu, onTapMenuItem } = useTcBottombar(props, emit)
 <template>
 
   <div class="tcb-container">
-    <div class="tcb-time">
+    <div class="liu-no-user-select tcb-time">
       <span v-if="threadData.removedStr">{{ t('thread_related.deleted_at', { date: threadData.removedStr }) }}</span>
       <span v-else-if="threadData.editedStr">{{ t('thread_related.edited_at', { date: threadData.editedStr }) }}</span>
       <span v-else>{{ t('thread_related.created_at', { date: threadData.createdStr }) }}</span>
@@ -61,7 +61,6 @@ const { footerMenu, onTapMenuItem } = useTcBottombar(props, emit)
   .tcb-time {
     font-size: var(--mini-font);
     color: var(--main-tip);
-    user-select: none;
   }
 
   .tcb-footer {

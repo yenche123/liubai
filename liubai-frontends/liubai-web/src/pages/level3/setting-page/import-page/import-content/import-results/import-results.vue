@@ -50,7 +50,7 @@ const smallView = computed(() => {
 <template>
 
   <div class="ir-first-bar">
-    <div class="irf-title">
+    <div class="liu-no-user-select irf-title">
       <span>{{ t('import.parse_result') }}</span>
     </div>
   </div>
@@ -62,7 +62,7 @@ const smallView = computed(() => {
         <div class="iri-top">
 
           <!-- 状态: 新的动态、需要更新、没有变化 -->
-          <div class="iri-status"
+          <div class="liu-no-user-select iri-status"
             :class="{ 
               'iri-status_new': item.status === 'new',
               'iri-status_update': item.status === 'update_required',
@@ -151,7 +151,6 @@ const smallView = computed(() => {
   font-weight: 700;
   color: var(--main-normal);
   margin-inline-start: 10px;
-  user-select: none;
 }
 
 .ir-item {
@@ -181,7 +180,6 @@ const smallView = computed(() => {
   margin-inline-end: 6px;
   position: relative;
   overflow: hidden;
-  user-select: none;
 
   &::before {
     background-color: var(--liu-state-1);

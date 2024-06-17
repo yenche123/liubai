@@ -39,7 +39,7 @@ const onTapWhenItem = (item: MenuItem, index: number) => {
         min-width-str="70px"
         mask-z-index="2600"
       >
-        <div class="fb-text">
+        <div class="liu-no-user-select fb-text">
           <span>{{ fileShowName }}</span>
         </div>
       </LiuMenu>
@@ -85,7 +85,6 @@ const onTapWhenItem = (item: MenuItem, index: number) => {
   position: relative;
   font-size: var(--btn-font);
   line-height: 32px;
-  user-select: none;
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;

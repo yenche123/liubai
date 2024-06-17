@@ -43,7 +43,7 @@ const vHandle = HandleDirective
     @sort-end="onDragEnd"
     @sort-cancel="onDragEnd"
     @update:list="onListUpdate"
-    class="cc-container"
+    class="liu-no-user-select cc-container"
     helper-class="cec-item_helper"
     :hideSortableGhost="true"
   >
@@ -97,7 +97,6 @@ const vHandle = HandleDirective
   display: flex;
   flex-wrap: wrap;
   flex: 1;
-  user-select: none;
 }
 
 .cec-item {

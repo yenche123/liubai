@@ -64,7 +64,7 @@ const { t } = useI18n()
 
   <!-- 动态已被删除 -->
   <div v-else-if="cdData.hasReachedTop && cdData.state < 0" 
-    class="liu-highlight-box cd-thread-deleted"
+    class="liu-no-user-select liu-highlight-box cd-thread-deleted"
   >
     <span>{{ t('comment.thread_deleted') }}</span>
   </div>
@@ -139,7 +139,6 @@ const { t } = useI18n()
 .cd-thread-deleted {
   margin-block-end: 10px;
   padding: 16px 24px;
-  user-select: none;
 }
 
 .cd-container {

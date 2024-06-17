@@ -32,7 +32,7 @@ const {
             :member-show="item"
             class="lpa-avatar"
           ></LiuAvatar>
-          <div class="lpa-name">
+          <div class="liu-no-user-select lpa-name">
             <span v-if="item.name">{{ item.name }}</span>
             <span v-else>{{ t('common.unknown') }}</span>
           </div>
@@ -125,7 +125,6 @@ const {
   color: var(--main-normal);
   line-height: 1.5;
   padding-block-start: 5px;
-  user-select: none;
 }
 
 .lpa-footer {

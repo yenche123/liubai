@@ -47,7 +47,7 @@ const previewDate = computed(() => {
 <template>
 
   <div v-if="enable"
-    class="liu-dp-container"
+    class="liu-no-user-select liu-dp-container"
     :class="{ 'liu-dp-container_show': show }"
   >
     <div class="liu-dp-bg" @click.stop="onTapCancel"></div>
@@ -125,7 +125,6 @@ const previewDate = computed(() => {
   justify-content: center;
   transition: v-bind("dpTranMs + 'ms'");
   opacity: 0;
-  user-select: none;
 
   &.liu-dp-container_show {
     opacity: 1;

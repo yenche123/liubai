@@ -57,7 +57,7 @@ const color_selected = "var(--main-normal)"
     @mouseenter="() => onMouseEnter('index')"
     @mouseleave="onMouseLeave"
   >
-    <NaviLink class="sb-link" 
+    <NaviLink class="liu-no-user-select sb-link" 
       :class="{ 'sb-link_selected': state === 'index' }" 
       :to="prefix"
       :tabindex="tabindex"
@@ -78,7 +78,7 @@ const color_selected = "var(--main-normal)"
     @mouseenter="() => onMouseEnter('favorite')"
     @mouseleave="onMouseLeave"
   >
-    <NaviLink class="sb-link" 
+    <NaviLink class="liu-no-user-select sb-link" 
       :class="{ 'sb-link_selected': state === 'favorite' }" 
       :to="prefix + 'favorite'"
       :tabindex="tabindex"
@@ -100,7 +100,7 @@ const color_selected = "var(--main-normal)"
     @mouseenter="() => onMouseEnter('tags')"
     @mouseleave="onMouseLeave"
   >
-    <AppLink class="sb-link" 
+    <AppLink class="liu-no-user-select sb-link" 
       to="?tags=01"
       :class="{ 'sb-link_selected': state === 'tags' }"
       :tabindex="tabindex"
@@ -121,7 +121,7 @@ const color_selected = "var(--main-normal)"
     @mouseenter="() => onMouseEnter('state')"
     @mouseleave="onMouseLeave"
   >
-    <NaviLink class="sb-link" 
+    <NaviLink class="liu-no-user-select sb-link" 
       :class="{ 'sb-link_selected': state === 'state' }"
       :to="prefix + 'state'"
       :tabindex="tabindex"
@@ -143,7 +143,7 @@ const color_selected = "var(--main-normal)"
     @mouseenter="() => onMouseEnter('connect')"
     @mouseleave="onMouseLeave"
   >
-    <NaviLink class="sb-link" 
+    <NaviLink class="liu-no-user-select sb-link" 
       :to="prefix + 'connect'"
       :class="{ 'sb-link_selected': state === 'connect' }"
       :tabindex="tabindex"
@@ -218,7 +218,7 @@ const color_selected = "var(--main-normal)"
   overflow: hidden;
   position: relative;
   transition: .3s;
-  user-select: none;
+  cursor: pointer;
   letter-spacing: 1px;
 }
 

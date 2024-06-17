@@ -41,7 +41,7 @@ const hasAvatar = computed(() => {
 </script>
 <template>
 
-  <div class="la-container">
+  <div class="liu-no-user-select la-container">
 
     <div class="la-bg" v-if="!hasAvatar"></div>
 
@@ -68,7 +68,6 @@ const hasAvatar = computed(() => {
   border-radius: v-bind("borderRadius");
   overflow: hidden;
   position: relative;
-  user-select: none;
 
   .la-bg {
     width: 100%;

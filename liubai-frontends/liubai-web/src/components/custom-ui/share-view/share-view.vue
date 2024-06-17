@@ -29,7 +29,7 @@ const icon_color = `var(--main-normal)`
     <div class="sv-box">
 
       <!-- export -->
-      <div class="sv-bar sv-hover"
+      <div class="liu-no-user-select sv-bar sv-hover"
         @click.stop="() => svData.openExport = !svData.openExport"
       >
         <div class="svb-icon-box">
@@ -54,7 +54,7 @@ const icon_color = `var(--main-normal)`
 
       <div class="svb-box" :class="{ 'svb-box_expaned': svData.openExport }">
         <div class="svb-bar sv-hover">
-          <div class="svb-title">
+          <div class="liu-no-user-select svb-title">
             <span>{{ t('share_related.markdown_format') }}</span>
           </div>
           <div class="svb-footer">
@@ -66,7 +66,7 @@ const icon_color = `var(--main-normal)`
           </div>
         </div>
         <div class="svb-bar sv-hover">
-          <div class="svb-title">
+          <div class="liu-no-user-select svb-title">
             <span>{{ t('share_related.txt_format') }}</span>
           </div>
           <div class="svb-footer">
@@ -80,7 +80,7 @@ const icon_color = `var(--main-normal)`
       </div>
 
       <!-- copy -->
-      <div class="sv-bar sv-hover"
+      <div class="liu-no-user-select sv-bar sv-hover"
         @click.stop="() => svData.openCopy = !svData.openCopy"
       >
         <div class="svb-icon-box">
@@ -106,7 +106,7 @@ const icon_color = `var(--main-normal)`
 
       <div class="svb-box" :class="{ 'svb-box_expaned': svData.openCopy }">
         <div class="svb-bar sv-hover">
-          <div class="svb-title">
+          <div class="liu-no-user-select svb-title">
             <span>{{ t('share_related.markdown_format') }}</span>
           </div>
           <div class="svb-footer">
@@ -118,7 +118,7 @@ const icon_color = `var(--main-normal)`
           </div>
         </div>
         <div class="svb-bar sv-hover">
-          <div class="svb-title">
+          <div class="liu-no-user-select svb-title">
             <span>{{ t('share_related.txt_format') }}</span>
           </div>
           <div class="svb-footer">
@@ -132,7 +132,7 @@ const icon_color = `var(--main-normal)`
       </div>
 
       <!-- share to -->
-      <div class="sv-bar" style="cursor: auto">
+      <div class="liu-no-user-select sv-bar">
         <div class="svb-hd">
           <span>{{ t('share_related.share_to') }}</span>
         </div>
@@ -140,7 +140,7 @@ const icon_color = `var(--main-normal)`
       <!-- third-party apps' btns -->
       <div class="sv-apps">
 
-        <a class="liu-hover sv-app-item" target="_blank" :href="svData.googleCalendarLink"
+        <a class="liu-no-user-select liu-hover sv-app-item" target="_blank" :href="svData.googleCalendarLink"
           title="Google Calendar"
         >
           <svg-icon name="logos-google-calendar" :coverFillStroke="false"
@@ -148,7 +148,7 @@ const icon_color = `var(--main-normal)`
           ></svg-icon>
         </a>
 
-        <a class="liu-hover sv-app-item" target="_blank" :href="svData.outlookLink"
+        <a class="liu-no-user-select liu-hover sv-app-item" target="_blank" :href="svData.outlookLink"
           title="Outlook"
         >
           <svg-icon name="logos-outlook" :coverFillStroke="false"
@@ -157,7 +157,7 @@ const icon_color = `var(--main-normal)`
         </a>
 
         <a v-if="svData.lineLink" 
-          class="liu-hover sv-app-item" 
+          class="liu-no-user-select liu-hover sv-app-item" 
           target="_blank" 
           :href="svData.lineLink"
           title="LINE"
@@ -169,7 +169,7 @@ const icon_color = `var(--main-normal)`
 
         <a 
           v-if="svData.icsLink"
-          class="liu-hover sv-app-item"
+          class="liu-no-user-select liu-hover sv-app-item"
           :href="svData.icsLink"
           :title="t('share_related.download_ics')"
           @click.stop.prevent="onTapIcs"
@@ -179,7 +179,7 @@ const icon_color = `var(--main-normal)`
           ></svg-icon>
         </a>
 
-        <a class="liu-hover sv-app-item" target="_blank" 
+        <a class="liu-no-user-select liu-hover sv-app-item" target="_blank" 
           :href="svData.twitterLink"
           title="Twitter"
         >
@@ -188,7 +188,7 @@ const icon_color = `var(--main-normal)`
           ></svg-icon>
         </a>
 
-        <a class="liu-hover sv-app-item" target="_blank" 
+        <a class="liu-no-user-select liu-hover sv-app-item" target="_blank" 
           v-if="svData.emailLink"
           :href="svData.emailLink"
           title="Email"
@@ -263,12 +263,7 @@ const icon_color = `var(--main-normal)`
   display: flex;
   align-items: center;
   position: relative;
-  user-select: none;
   cursor: pointer;
-}
-
-.sv-bar_disabled {
-  cursor: auto;
 }
 
 .svb-icon-box {
@@ -361,9 +356,8 @@ const icon_color = `var(--main-normal)`
   color: var(--main-normal);
   font-size: var(--desc-font);
   font-weight: 700;
-  user-select: none;
+  cursor: pointer;
 }
-
 
 .sv-apps {
   margin-inline-start: 24px;
@@ -392,7 +386,6 @@ const icon_color = `var(--main-normal)`
   border-radius: 12px;
   font-size: var(--mini-font);
   color: var(--other-btn-text);
-  user-select: none;
   flex: none;
 
   .sv-app-item_svg {
@@ -505,11 +498,13 @@ const icon_color = `var(--main-normal)`
   }
 }
 
+.sv-hover {
+  cursor: pointer;
+}
 
 @media(hover: hover) {
   .sv-hover {
     transition: opacity .15s;
-    cursor: pointer;
   }
 
   .sv-hover:hover {

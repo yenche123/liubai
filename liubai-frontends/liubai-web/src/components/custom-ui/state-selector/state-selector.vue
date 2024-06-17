@@ -26,7 +26,7 @@ const { t } = useI18n()
       @click="onTapMask"
     ></div>
 
-    <div class="ss-box"
+    <div class="liu-no-user-select ss-box"
       :class="{ 'ss-box_show': show }"
     >
 
@@ -123,7 +123,6 @@ const { t } = useI18n()
   background-color: var(--card-bg);
   overflow: hidden;
   transition: v-bind("transDuration + 'ms'");
-  user-select: none;
 }
 
 .ss-box_show {

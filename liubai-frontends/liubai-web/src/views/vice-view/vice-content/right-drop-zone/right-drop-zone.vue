@@ -33,7 +33,7 @@ onMounted(async () => {
       <svg-icon name="add" class="cdz-add-icon" :color="color"></svg-icon>
     </div>
 
-    <div class="cdz-title">
+    <div class="liu-no-user-select cdz-title">
       <span>{{ t('dnd.add_tip') }}</span>
     </div>
     
@@ -91,7 +91,6 @@ onMounted(async () => {
     font-size: var(--title-font);
     text-align: center;
     letter-spacing: 1.2px;
-    user-select: none;
   }
 
 }

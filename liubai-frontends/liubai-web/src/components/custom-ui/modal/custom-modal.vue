@@ -22,7 +22,7 @@ const {
 
   <div 
     v-if="modalEnable" 
-    class="cui-modal-container" 
+    class="liu-no-user-select cui-modal-container" 
     :class="{ 'cui-modal-container_show': modalShow }"
   >
     <div class="cui-modal-bg"></div>
@@ -96,7 +96,6 @@ const {
   justify-content: center;
   transition: v-bind("modalTranMs + 'ms'");
   opacity: 0;
-  user-select: none;
 
   &.cui-modal-container_show {
     opacity: 1;
@@ -168,6 +167,8 @@ const {
       word-wrap: break-word;
       overflow-wrap: break-word;
       user-select: text;
+      -webkit-user-select: text;
+      cursor: auto;
       z-index: 5112;
     }
 

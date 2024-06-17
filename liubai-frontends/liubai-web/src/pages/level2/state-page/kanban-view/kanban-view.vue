@@ -97,7 +97,7 @@ const {
 
         <!--状态标题 -->
         <div class="kv-state-box">
-          <div class="kv-state"
+          <div class="liu-no-user-select kv-state"
             :style="{ 
               'color': item.colorShow,
             }"
@@ -247,7 +247,6 @@ const {
   letter-spacing: 1px;
   position: relative;
   overflow: hidden;
-  user-select: none;
   font-weight: 500;
 
   .kps-bg {

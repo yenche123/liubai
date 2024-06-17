@@ -43,7 +43,7 @@ const default_color = "var(--navi-normal)"
       </div>
 
       <div class="na-title" @click="onTapTitle">
-        <div class="na-title-inner">
+        <div class="liu-no-user-select na-title-inner">
           <span>{{ t('hello.appName') }}</span>
         </div>
       </div>
@@ -108,7 +108,6 @@ const default_color = "var(--navi-normal)"
         color: v-bind("default_color");
         line-height: 1.5;
         font-weight: 700;
-        user-select: none;
         cursor: pointer;
       }
 

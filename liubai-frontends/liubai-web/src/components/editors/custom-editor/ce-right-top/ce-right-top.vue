@@ -34,7 +34,7 @@ const {
       <div class="crt-bg"></div>
 
       <!-- Bold -->
-      <div class="crt-item"
+      <div class="liu-no-user-select crt-item"
         :class="{ 'crt-item_selected': editor?.isActive('bold') }"
         @click="editor?.chain().focus().toggleBold().run()"
       >
@@ -42,7 +42,7 @@ const {
       </div>
 
       <!-- Italic -->
-      <div class="crt-item"
+      <div class="liu-no-user-select crt-item"
         :class="{ 'crt-item_selected': editor?.isActive('italic') }"
         @click="editor?.chain().focus().toggleItalic().run()"
       >
@@ -50,7 +50,7 @@ const {
       </div>
 
       <!-- Strike -->
-      <div class="crt-item"
+      <div class="liu-no-user-select crt-item"
         :class="{ 'crt-item_selected': editor?.isActive('strike') }"
         @click="editor?.chain().focus().toggleStrike().run()"
       >
@@ -117,7 +117,6 @@ const {
   transition: .2s;
   opacity: .6;
   cursor: pointer;
-  user-select: none;
 }
 
 .crt-item:hover {

@@ -61,7 +61,7 @@ const {
     <div v-if="list.length < 1" class="lc-add-box"
       :class="{ 'lc-add-box_show': showAddBox }"
     >
-      <div class="liu-hover lc-add"
+      <div class="liu-no-user-select liu-hover lc-add"
         @click="$emit('tapadd')"
       >
         <svg-icon name="add" class="lc-add-svg"
@@ -79,7 +79,7 @@ const {
     >
       <div class="lci-inner" @click="$emit('tapitem', thread._id)">
 
-        <div class="lci-text">
+        <div class="liu-no-user-select lci-text">
           <span v-if="thread.title" class="lci-title">{{ thread.title }}</span>
           <span v-if="thread.summary">{{ thread.summary }}</span>
           <span v-else>{{ t('thread_related.img_file') }}</span>
@@ -131,7 +131,6 @@ const {
   font-size: var(--btn-font);
   color: var(--main-code);
   font-weight: 700;
-  user-select: none;
 
   .lc-add-svg {
     width: 24px;
@@ -167,7 +166,6 @@ const {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  user-select: none;
 
   .lci-title {
     font-weight: 700;

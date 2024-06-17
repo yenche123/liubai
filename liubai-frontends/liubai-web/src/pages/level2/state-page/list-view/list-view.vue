@@ -105,7 +105,7 @@ const { isMobile } = liuApi.getCharacteristic()
 
           <!--状态标题 -->
           <div class="lv-state-box">
-            <div class="lv-state"
+            <div class="liu-no-user-select lv-state"
               :style="{ 
                 'color': item.colorShow,
               }"
@@ -271,7 +271,6 @@ const { isMobile } = liuApi.getCharacteristic()
   letter-spacing: 1px;
   position: relative;
   overflow: hidden;
-  user-select: none;
   font-weight: 500;
 
   .lps-bg {

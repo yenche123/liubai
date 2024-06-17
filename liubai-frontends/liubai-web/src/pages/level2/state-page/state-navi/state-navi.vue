@@ -68,7 +68,7 @@ const iconColor = "var(--main-normal)"
       </div>
 
       <!-- 列表 / 看板 -->
-      <div class="sn-toggle"
+      <div class="liu-no-user-select sn-toggle"
         ref="indicatorParentEl"
       >
 
@@ -189,7 +189,6 @@ const iconColor = "var(--main-normal)"
   height: 50px;
   position: relative;
   border-radius: 6px;
-  user-select: none;
 
   .sn-toggle-item {
     height: 44px;

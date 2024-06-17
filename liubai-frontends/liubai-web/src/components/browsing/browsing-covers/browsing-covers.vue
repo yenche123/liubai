@@ -13,7 +13,7 @@ const {
 </script>
 <template>
 
-  <div class="bc-container"
+  <div class="liu-no-user-select bc-container"
     v-if="covers?.length"
   >
 
@@ -104,7 +104,6 @@ const {
 .bc-container {
   width: 100%;
   position: relative;
-  user-select: none;
   padding-block-start: v-bind("paddingBlockStart + 'px'");
 }
 

@@ -39,7 +39,7 @@ const { t } = useI18n()
             <span>{{ t('common.cancel') }}</span>
           </custom-btn>
 
-          <div class="hs-title">
+          <div class="liu-no-user-select hs-title">
             <span>{{ t('tag_related.edit_tag') }}</span>
           </div>
 
@@ -53,7 +53,7 @@ const { t } = useI18n()
         <div class="hs-bar hs-tags" v-show="hsData.list.length > 0">
 
           <template v-for="(item, index) in hsData.list" :key="item.text">
-            <div class="hs-tag">
+            <div class="liu-no-user-select hs-tag">
               <span v-if="item.emoji" class="hs-tag-emoji">{{ item.emoji }}</span>
               <span>{{ item.text }}</span>
               <div class="hs-tag-close" @click.stop="() => onTapClear(index)">
@@ -177,7 +177,6 @@ const { t } = useI18n()
   font-size: var(--desc-font);
   font-weight: 700;
   color: var(--main-normal);
-  user-select: none;
 }
 
 .hs-virtual {
@@ -193,7 +192,6 @@ const { t } = useI18n()
   border-radius: 24px;
   margin-inline-end: 10px;
   margin-block-end: 10px;
-  user-select: none;
   display: flex;
   align-items: center;
   white-space: pre-wrap;

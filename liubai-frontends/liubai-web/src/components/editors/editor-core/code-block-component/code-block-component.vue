@@ -4,7 +4,7 @@
     <!-- 编辑模式 -->
     <div v-if="editor.isEditable" class="cb-right-top">
 
-      <div class="code-block-tip"
+      <div class="liu-no-user-select code-block-tip"
         v-if="!isMobile"
         :class="{ 
           'code-block-tip_hidden': !editor.isActive('codeBlock') || !editor.isFocused
@@ -29,7 +29,7 @@
 
     <!-- 阅读模式 -->
     <div v-else class="cb-right-top_read">
-      <div class="cbrt-tip">
+      <div class="liu-no-user-select cbrt-tip">
         <span v-if="showLanguage">{{ showLanguage }}</span>
         <span v-else>Auto</span>
       </div>
@@ -40,13 +40,13 @@
         @click.stop="onTapCopyCode"
       >
         <svg-icon name="copy" color="#a0a0a0" class="cbrt-btn-svg"></svg-icon>
-        <div class="cbrt-btn-text">
+        <div class="liu-no-user-select cbrt-btn-text">
           <span>{{ t('editor.copy_code') }}</span>
         </div>
 
         <div class="cbrt-copied" :class="{ 'cbrt-copied_show': showCopied }">
           <svg-icon name="check" color="#a0a0a0" class="cbrt-btn-svg"></svg-icon>
-          <div class="cbrt-btn-text">
+          <div class="liu-no-user-select cbrt-btn-text">
             <span>{{ t('common.copied') }}</span>
           </div>
         </div>
@@ -174,8 +174,6 @@ export default {
       max-width: 48%;
       transition: .15s;
       opacity: 1;
-      user-select: none;
-      cursor: default;
     }
 
     .code-block-tip_hidden {
@@ -193,6 +191,7 @@ export default {
       background: var(--card-bg);
       accent-color: var(--main-text);
       user-select: none;
+      -webkit-user-select: none;
       cursor: pointer;
       appearance: v-bind("isSafari ? 'none' : 'auto'");
 
@@ -217,7 +216,6 @@ export default {
       font-size: var(--mini-font);
       font-family: inherit;
       color: #606060;
-      user-select: none;
       margin-inline-end: 12px;
     }
 
@@ -271,7 +269,6 @@ export default {
       margin-inline-start: 4px;
       color: #a0a0a0;
       font-size: var(--mini-font);
-      user-select: none;
     }
 
     .cbrt-copied {

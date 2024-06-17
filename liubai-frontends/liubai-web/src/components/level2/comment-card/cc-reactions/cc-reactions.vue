@@ -18,7 +18,7 @@ defineEmits<{
   <div class="cc-reactions" v-if="reactions?.length">
 
     <template v-for="(item, index) in reactions" :key="item.emojiEncoded">
-      <div class="ccr-item" 
+      <div class="liu-no-user-select ccr-item" 
         :class="{ 'ccr-item_selected': item.chosen }"
         @click.stop="$emit('tapreaction', item.emojiEncoded, item.chosen)"
       >
@@ -66,7 +66,6 @@ defineEmits<{
   color: var(--main-normal);
   font-weight: 700;
   overflow: hidden;
-  user-select: none;
   cursor: pointer;
   transition: .15s;
 

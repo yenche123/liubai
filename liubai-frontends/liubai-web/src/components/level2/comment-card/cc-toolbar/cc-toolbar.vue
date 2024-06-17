@@ -66,7 +66,9 @@ const {
           :color="default_color"
         ></svg-icon>
       </div>
-      <span class="cct-text" v-if="cs.commentNum">{{ cs.commentNum }}</span>
+      <span class="liu-no-user-select cct-text" 
+        v-if="cs.commentNum"
+      >{{ cs.commentNum }}</span>
     </div>
 
     <!-- 分享 -->
@@ -173,7 +175,6 @@ const {
 .cct-text {
   font-size: var(--btn-font);
   color: var(--main-normal);
-  user-select: none;
   font-weight: 400;
   padding-inline-end: 5px;
 }

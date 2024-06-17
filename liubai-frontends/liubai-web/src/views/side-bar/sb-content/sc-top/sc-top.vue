@@ -59,7 +59,7 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
       @click.stop="onTapAvatar"
     ></LiuAvatar>
     
-    <div class="sc-title" v-if="myProfile?.name" @click.stop="onTapName">
+    <div class="liu-no-user-select sc-title" v-if="myProfile?.name" @click.stop="onTapName">
       <span>{{ myProfile.name }}</span>
     </div>
   </div>
@@ -191,7 +191,6 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
     font-size: var(--desc-font);
     font-weight: 500;
     color: var(--main-normal);
-    user-select: none;
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;

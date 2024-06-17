@@ -56,7 +56,7 @@ const onTapCenter = (e: MouseEvent) => {
   </div>
 
   <!-- 监听滑动打开左边侧边栏的盒子 -->
-  <div v-if="showTouchBox" class="mv-touch-box"
+  <div v-if="showTouchBox" class="liu-no-user-select mv-touch-box"
     @touchstart.passive="onTouchStart"
     @touchmove.passive="onTouchMove"
     @touchend.passive="onTouchEnd"
@@ -99,7 +99,6 @@ const onTapCenter = (e: MouseEvent) => {
   height: 100svh;
   width: 6vw;
   max-width: 50px;
-  user-select: none;
 }
 
 </style>

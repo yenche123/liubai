@@ -42,7 +42,7 @@ const onTapTag = (e: MouseEvent, href: string) => {
           :href="toPath + item.tagId"
           @click.stop.prevent="onTapTag($event, toPath + item.tagId)"
         >
-          <div class="ce-tag-item">
+          <div class="liu-no-user-select ce-tag-item">
             <span v-if="item.emoji" class="ce-tag-emoji">{{ item.emoji }} </span>
             <span v-else-if="item.parentEmoji" class="ce-tag-emoji">{{ item.parentEmoji }}</span>
             <span>{{ item.text }}</span>
@@ -72,7 +72,6 @@ const onTapTag = (e: MouseEvent, href: string) => {
     border-radius: 6px;
     margin-inline-end: 10px;
     margin-block-start: 10px;
-    user-select: none;
     display: flex;
     align-items: center;
     white-space: pre-wrap;

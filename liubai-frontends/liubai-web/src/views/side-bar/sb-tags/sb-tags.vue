@@ -54,7 +54,7 @@ const {
 
   <div class="st-virtual"></div>
 
-  <div class="liu-frosted-glass st-navibar">
+  <div class="liu-no-user-select liu-frosted-glass st-navibar">
     <button class="liu-hover st-navi-back" @click.stop="onNaviBack" :tabindex="show ? 0 : -1">
       <SvgIcon class="st-navi-back-icon" name="arrow-back700"></SvgIcon>
     </button>
@@ -70,7 +70,7 @@ const {
 
   <div class="st-virtual-two"></div>
 
-  <div v-if="tagNodes.length < 1" class="st-no-tags">
+  <div v-if="tagNodes.length < 1" class="liu-no-user-select st-no-tags">
     <span>{{ t('placeholder.no_tag_yet') }}</span>
   </div>
 
@@ -139,7 +139,6 @@ const {
   height: v-bind("naviHeightPx");
   display: flex;
   align-items: center;
-  user-select: none;
   z-index: 600;
 
   .st-navi-back {
@@ -196,7 +195,6 @@ const {
   font-size: var(--mini-font);
   color: var(--main-normal);
   line-height: 1.25;
-  user-select: none;
 }
 
 @container sidebar (max-width: 190px) {

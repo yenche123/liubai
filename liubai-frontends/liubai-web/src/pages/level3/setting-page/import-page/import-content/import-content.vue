@@ -26,7 +26,7 @@ const { APP_NAME } = liuEnv.getEnv()
       <div class="sc-box">
 
         <!-- 从专有格式导入 -->
-        <div class="liu-hover sc-bar">
+        <div class="liu-no-user-select liu-hover sc-bar">
           <div class="scb-hd">
             <span>{{ t('import.t1', { appName: APP_NAME }) }}</span>
           </div>
@@ -84,7 +84,6 @@ const { APP_NAME } = liuEnv.getEnv()
   margin-block-end: 6px;
   overflow: hidden;
   padding: 10px 10px;
-  user-select: none;
 }
 
 .sc-bar::before {

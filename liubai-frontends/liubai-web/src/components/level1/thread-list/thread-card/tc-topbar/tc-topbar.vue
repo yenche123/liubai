@@ -55,7 +55,7 @@ const onTapState = () => {
         }"
       ></div>
 
-      <div class="tct-state-box"
+      <div class="liu-no-user-select tct-state-box"
         :style="{ 
           'color': stateColor,
         }"
@@ -137,7 +137,6 @@ const onTapState = () => {
   letter-spacing: 1px;
   position: relative;
   overflow: hidden;
-  user-select: none;
   cursor: pointer;
   transition: .15s;
 

@@ -5,7 +5,7 @@
 
   <div class="cc-box">
     <svg-icon 
-      class="cc-img"
+      class="liu-no-user-select cc-img"
       :cover-fill-stroke="false"
       name="emojis-face_with_peeking_eye_color"
     ></svg-icon>
@@ -32,7 +32,6 @@
   width: 100px;
   height: 100px;
   margin-block-end: min(20%, 100px);
-  user-select: none;
 }
 
 .cc-text {

@@ -40,7 +40,7 @@ const onTapItem = (index: number) => {
 <div class="ht-list" ref="htListEl">
 
   <template v-for="(item, index) in list" :key="item.tagId">
-    <div class="ht-item"
+    <div class="liu-no-user-select ht-item"
       :class="{ 'ht-item_selected': index === selectedIndex }"
       @mouseenter="() => onMouseEnter(index)"
       @click="() => onTapItem(index)"
@@ -102,7 +102,6 @@ const onTapItem = (index: number) => {
     display: flex;
     align-items: center;
     cursor: pointer;
-    user-select: none;
 
     .hti-icon {
       position: relative;

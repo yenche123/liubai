@@ -101,7 +101,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
 
       <!-- 摘要 (不支持 css text overflow 检测的时候) -->
       <div v-if="!cssDetectOverflow && threadData.briefing" v-show="isBriefing" 
-        class="tc-briefing"
+        class="liu-no-user-select tc-briefing"
         @click.stop="onTapBriefing"
       >
         <EditorCore
@@ -244,7 +244,6 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
     .tc-briefing {
       position: relative;
       cursor: pointer;
-      user-select: none;
       position: relative;
 
       .tcb-mask {
@@ -279,6 +278,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
       padding-block-end: 20px;
       cursor: pointer;
       user-select: none;
+      -webkit-user-select: none;
     }
 
     .tc-content_all {

@@ -26,7 +26,7 @@ const cha = liuApi.getCharacteristic()
     <div class="cefa-virtual"></div>
 
     <div class="cefa-box">
-      <span class="cefa-tip"
+      <span class="liu-no-user-select cefa-tip"
         :class="{ 'cefa-tip_hidden': !focused || inCodeBlock || cha.isMobile }"
       >{{ liuUtil.getHelpTip('Mod_Enter') }}</span>
       <custom-btn 
@@ -67,7 +67,6 @@ const cha = liuApi.getCharacteristic()
       font-size: var(--mini-font);
       color: var(--main-tip);
       margin-inline-end: 10px;
-      user-select: none;
       font-weight: 300;
       opacity: 1;
       transition: .15s;

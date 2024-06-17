@@ -73,15 +73,18 @@ const onMouseEnterItem = (index: number) => {
       </div>
 
       <!-- 第二行: 错误提示 -->
-      <div v-if="hteData.errCode > 0" class="hte-err">
+      <div v-if="hteData.errCode > 0" class="liu-no-user-select hte-err">
         <span>*</span>
         <span v-if="hteData.errCode === 1">{{ t('tip.no_strange_char') }}</span>
       </div>
 
       <!-- 第三行: 创建标签 -->
       <div v-else-if="hteData.newTag" class="hte-create-box">
-        <div class="hte-create" :class="{ 'hte-create_selected': hteData.selectedIndex === -1 }" @click="() => onTapItem(-1)"
-          @mouseenter="() => onMouseEnterItem(-1)">
+        <div class="liu-no-user-select hte-create" 
+          :class="{ 'hte-create_selected': hteData.selectedIndex === -1 }" 
+          @click="() => onTapItem(-1)"
+          @mouseenter="() => onMouseEnterItem(-1)"
+        >
           <div class="htec-icon">
             <svg-icon name="add" color="var(--main-normal)" class="htec-svgicon"></svg-icon>
           </div>
@@ -228,7 +231,6 @@ const onMouseEnterItem = (index: number) => {
       padding-bottom: 20px;
       font-size: var(--btn-font);
       color: var(--liu-quote);
-      user-select: none;
     }
 
     .hte-create-box {
@@ -248,7 +250,6 @@ const onMouseEnterItem = (index: number) => {
         padding: 10px 10px;
         transition: .02s;
         cursor: pointer;
-        user-select: none;
 
         .htec-icon {
           width: 38px;

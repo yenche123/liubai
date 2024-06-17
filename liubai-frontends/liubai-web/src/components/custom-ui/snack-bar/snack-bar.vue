@@ -26,13 +26,13 @@ const {
           :style="{ backgroundColor: sbData.dot_color }"
         ></div>
 
-        <div class="sb-text">
+        <div class="liu-no-user-select sb-text">
           <span v-if="sbData.text">{{ sbData.text }}</span>
           <span v-else-if="sbData.text_key">{{ t(sbData.text_key) }}</span>
         </div>
       </div>
       <div v-if="(sbData.action || sbData.action_key)" 
-        class="sb-action"
+        class="liu-no-user-select sb-action"
         :style="{ 'color': sbData.action_color ? sbData.action_color : undefined }"
         @click="onTapAction"
       >
@@ -103,7 +103,6 @@ const {
   font-size: var(--mini-font);
   color: var(--on-cui-snackbar);
   line-height: 1.33;
-  user-select: none;
   flex: 1;
 }
 
@@ -115,7 +114,6 @@ const {
   position: relative;
   transition: .12s;
   cursor: pointer;
-  user-select: none;
 }
 
 .sb-action:hover {

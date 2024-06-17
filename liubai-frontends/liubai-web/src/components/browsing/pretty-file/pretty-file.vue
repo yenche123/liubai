@@ -30,11 +30,11 @@ const {
     <!-- 文件信息 -->
     <div class="pf-info" @click.stop="onTapFile">
       <!-- 文件标题 -->
-      <div class="pf-title">
+      <div class="liu-no-user-select pf-title">
         <span>{{ file.name }}</span>
       </div>
       <!-- 文件大小 -->
-      <div v-if="sizeStr" class="pf-bd">
+      <div v-if="sizeStr" class="liu-no-user-select pf-bd">
         <span>{{ sizeStr }}</span>
       </div>
     </div>
@@ -86,7 +86,6 @@ const {
 .pf-title {
   font-size: var(--mini-font);
   color: var(--main-normal);
-  user-select: none;
   display: inline-block;
   width: fit-content;
   max-width: 100%;
@@ -96,7 +95,6 @@ const {
 .pf-bd {
   font-size: var(--mini-font);
   color: var(--main-note);
-  user-select: none;
 }
 
 @media(hover: hover) {

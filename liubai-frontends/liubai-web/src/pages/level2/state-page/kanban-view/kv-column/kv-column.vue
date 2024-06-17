@@ -66,7 +66,7 @@ const {
   >
 
     <!-- 为空时的添加按钮 -->
-    <div v-if="list.length < 1" class="kc-add-box"
+    <div v-if="list.length < 1" class="liu-no-user-select kc-add-box"
       :class="{ 'kc-add-box_show': showAddBox }"
       @click="$emit('tapadd')"
     >
@@ -83,7 +83,7 @@ const {
       class="kc-kanban-item"
     >
 
-      <div class="kcki-inner"
+      <div class="liu-no-user-select kcki-inner"
         @click="$emit('tapitem', thread._id)"
       >
 
@@ -111,7 +111,7 @@ const {
     <AppLink v-if="hasMore"
       :to="prefix + 'state-more/' + stateId"
     >
-      <div class="liu-hover kc-more">
+      <div class="liu-no-user-select liu-hover kc-more">
         <span>{{ t('common.checkMore') }}</span>
         <div class="kcm-icon-box">
           <svg-icon name="arrow-right2"
@@ -138,7 +138,6 @@ const {
   font-size: var(--btn-font);
   color: var(--main-note);
   border-radius: 20px;
-  user-select: none;
   cursor: pointer;
   transition: .15s;
   opacity: 0;
@@ -167,7 +166,6 @@ const {
   margin-block-end: 16px;
   overflow: hidden;
   padding: 8px 10px;
-  user-select: none;
   font-size: var(--btn-font);
   color: var(--main-normal);
   font-weight: 700;
@@ -242,7 +240,6 @@ const {
   box-sizing: border-box;
   box-shadow: var(--card-shadow-2);
   position: relative;
-  user-select: none;
   will-change: transform;
 }
 

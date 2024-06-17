@@ -47,7 +47,7 @@ const { t } = useI18n()
 
       <SearchResults :se-data="seData"></SearchResults>
 
-      <div class="se-footer">
+      <div class="liu-no-user-select se-footer">
         <div class="sef-first">
           <span class="se-bold">Esc</span>
           <span>{{ t('tip.to_leave') }}</span>
@@ -177,7 +177,6 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   border-top: 0.6px solid var(--main-tip);
-  user-select: none;
 }
 
 .sef-first {

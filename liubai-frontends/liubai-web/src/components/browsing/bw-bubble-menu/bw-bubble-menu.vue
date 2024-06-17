@@ -40,7 +40,7 @@ const onTapContainer = () => {}
     <!-- 浏览时: 复制、内部搜索、外部搜索 -->
     <div class="ec-bubble-menu" @click.stop="onTapContainer">
       <!-- 复制 -->
-      <div class="ec-bb-two"
+      <div class="liu-no-user-select ec-bb-two"
         :class="{ 'ec-bb-two_selected': selectedIndex === 0 }"
         @click.stop="onTapCopy"
       >
@@ -49,7 +49,7 @@ const onTapContainer = () => {}
       </div>
 
       <!-- 站内搜索 -->
-      <div class="ec-bb-two"
+      <div class="liu-no-user-select ec-bb-two"
         :class="{ 'ec-bb-two_selected': selectedIndex === 1 }"
         @click.stop="onTapSearchIn"
       >
@@ -58,7 +58,7 @@ const onTapContainer = () => {}
       </div>
 
       <!-- 站外搜索 -->
-      <div class="ec-bb-two"
+      <div class="liu-no-user-select ec-bb-two"
         :class="{ 'ec-bb-two_selected': selectedIndex === 2 }"
         @click.stop="onTapSearchOut"
       >
@@ -109,7 +109,6 @@ const onTapContainer = () => {}
   transition: .15s;
   opacity: .96;
   cursor: pointer;
-  user-select: none;
   position: relative;
   min-width: 50px;
   text-align: center;

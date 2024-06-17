@@ -18,8 +18,12 @@ const {
   >
     <div class="cui-loading-box">
       <div class="cui-loading-pulsar"></div>
-      <span v-if="loData.title" class="cui-loading-title">{{ loData.title }}</span>
-      <span v-else-if="loData.title_key" class="cui-loading-title">{{ t(loData.title_key) }}</span>
+      <span v-if="loData.title" 
+        class="liu-no-user-select cui-loading-title"
+      >{{ loData.title }}</span>
+      <span v-else-if="loData.title_key" 
+        class="liu-no-user-select cui-loading-title"
+      >{{ t(loData.title_key) }}</span>
     </div>
   </div>
 
@@ -123,7 +127,6 @@ const {
       white-space: nowrap;
       overflow: hidden;
       z-index: 5212;
-      user-select: none;
     }
 
   }

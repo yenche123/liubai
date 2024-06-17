@@ -95,13 +95,13 @@ const {
           ></LiuAvatar>
           <div class="cctf-info">
             <!-- 用户名 -->
-            <div class="cctf-account">
+            <div class="liu-no-user-select cctf-account">
               <span v-if="cs.creator?.name">{{ cs.creator?.name }}</span>
               <span v-else>{{ t('comment.no_idea') }}</span>
             </div>
 
             <!-- 发表或编辑时间 -->
-            <div class="cctf-time">
+            <div class="liu-no-user-select cctf-time">
               <span v-if="cs.editedStr">{{ t('thread_related.edited_at', { date: cs.editedStr }) }}</span>
               <span v-else>{{ cs.createdStr }}</span>
             </div>
@@ -149,7 +149,7 @@ const {
 
         <div class="ccc-main">
           <!-- 用户名 + 时间 -->
-          <div class="ccc-account-time">
+          <div class="liu-no-user-select ccc-account-time">
             <div class="ccc-account">
               <span v-if="cs.creator?.name">{{ cs.creator?.name }}</span>
               <span v-else>{{ t('comment.no_idea') }}</span>
@@ -172,7 +172,7 @@ const {
         </div>
 
         <!-- popup 遮罩，避免用户选中 -->
-        <div class="ccc-cover" v-if="location === 'popup'" @click="onTapCccCover"></div>
+        <div class="liu-no-user-select ccc-cover" v-if="location === 'popup'" @click="onTapCccCover"></div>
 
       </div>
       
@@ -180,7 +180,7 @@ const {
 
     <!-- 已删除时的部分 -->
     <div v-else class="cc-delete">
-      <div class="cc-delete-box">
+      <div class="liu-no-user-select cc-delete-box">
         <span>{{ t('comment.deleted_tip') }}</span>
       </div>
 
@@ -274,14 +274,12 @@ const {
   overflow-wrap: break-word;
   font-size: var(--mini-font);
   color: var(--liu-quote);
-  user-select: none;
   margin-block-start: -4px;
 }
 
 .cctf-time {
   font-size: var(--mini-font);
   color: var(--main-tip);
-  user-select: none;
 }
 
 /** 通用评论的 layout */
@@ -296,7 +294,6 @@ const {
     left: 0;
     width: 100%;
     height: 100%;
-    user-select: none;
   }
 }
 
@@ -342,7 +339,6 @@ const {
 .ccc-account-time {
   display: flex;
   flex-wrap: wrap;
-  user-select: none;
   margin-block-start: -4px;
   margin-block-end: 6px;
 }
@@ -375,7 +371,6 @@ const {
     font-size: var(--mini-font);
     color: var(--main-note);
     word-wrap: break-word;
-    user-select: none;
   }
 
 }

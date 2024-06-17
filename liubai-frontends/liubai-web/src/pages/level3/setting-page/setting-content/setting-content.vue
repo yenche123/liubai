@@ -62,7 +62,7 @@ const iconColor = "var(--main-normal)"
               class="sc-avatar"
             ></LiuAvatar>
           </div>
-          <div class="liu-hover sc-nickname-box">
+          <div class="liu-no-user-select liu-hover sc-nickname-box">
             <div class="sc-nickname">
               <span v-if="myProfile.name">{{ myProfile.name }}</span>
               <span v-else>{{ t('common.unknown') }}</span>
@@ -78,7 +78,7 @@ const iconColor = "var(--main-normal)"
 
         <!-- membership -->
         <AppLink to="/subscription">
-          <div class="liu-hover sc-bar">
+          <div class="liu-no-user-select liu-hover sc-bar">
             <div class="scb-hd">
               <span>{{ t('setting.membership') }}</span>
             </div>
@@ -94,7 +94,9 @@ const iconColor = "var(--main-normal)"
         </AppLink>
 
         <!-- accounts -->
-        <div class="liu-hover sc-bar" @click.stop="onTapAccounts">
+        <div class="liu-no-user-select liu-hover sc-bar" 
+          @click.stop="onTapAccounts"
+        >
           <div class="scb-hd">
             <span>{{ t('setting.accounts') }}</span>
           </div>
@@ -111,12 +113,14 @@ const iconColor = "var(--main-normal)"
       </div>
 
       <!-- 个人偏好 -->
-      <div class="sc-title">
+      <div class="liu-no-user-select sc-title">
         <span>{{ t('setting.preference') }}</span>
       </div>
       <div class="sc-box">
         <!-- 主题 -->
-        <div class="liu-hover sc-bar" @click.stop="onTapTheme">
+        <div class="liu-no-user-select liu-hover sc-bar" 
+          @click.stop="onTapTheme"
+        >
           <div class="scb-hd">
             <span>{{ t('setting.theme') }}</span>
           </div>
@@ -152,7 +156,9 @@ const iconColor = "var(--main-normal)"
         </div>
 
         <!-- 语言 -->
-        <div class="liu-hover sc-bar" @click.stop="onTapLanguage">
+        <div class="liu-no-user-select liu-hover sc-bar" 
+          @click.stop="onTapLanguage"
+        >
           <div class="scb-hd">
             <span>{{ t('setting.language') }}</span>
           </div>
@@ -175,13 +181,13 @@ const iconColor = "var(--main-normal)"
 
 
       <!-- 导入 & 导出 -->
-      <div class="sc-title">
+      <div class="liu-no-user-select sc-title">
         <span>{{ t('setting.import_export') }}</span>
       </div>
       <div class="sc-box">
         <!-- 导入 -->
         <AppLink :to="prefix + 'import'">
-          <div class="liu-hover sc-bar">
+          <div class="liu-no-user-select liu-hover sc-bar">
             <div class="scb-hd">
               <span>{{ t('setting.import') }}</span>
             </div>
@@ -198,7 +204,7 @@ const iconColor = "var(--main-normal)"
 
         <!-- 导出 -->
         <AppLink :to="prefix + 'export'">
-          <div class="liu-hover sc-bar">
+          <div class="liu-no-user-select liu-hover sc-bar">
             <div class="scb-hd">
               <span>{{ t('setting.export') }}</span>
             </div>
@@ -217,12 +223,14 @@ const iconColor = "var(--main-normal)"
       </div>
 
       <!-- 其他 -->
-      <div class="sc-title">
+      <div class="liu-no-user-select sc-title">
         <span>{{ t('setting.other') }}</span>
       </div>
       <div class="sc-box">
         <!-- 条款 -->
-        <div class="liu-hover sc-bar" @click="onTapTerms">
+        <div class="liu-no-user-select liu-hover sc-bar" 
+          @click.stop="onTapTerms"
+        >
           <div class="scb-hd">
             <span>{{ t('setting.terms') }}</span>
           </div>
@@ -243,7 +251,9 @@ const iconColor = "var(--main-normal)"
             <template v-for="(item, index) in data.termsList"
               :key="item.text"
             >
-              <a :href="item.link" target="_blank" class="liu-hover sc-pad-item">
+              <a :href="item.link" target="_blank" 
+                class="liu-no-user-select liu-hover sc-pad-item"
+              >
                 <div class="sc-pad-title">
                   <span>{{ item.text }}</span>
                 </div>
@@ -258,7 +268,10 @@ const iconColor = "var(--main-normal)"
         </div>
 
         <!-- 开发调试 -->
-        <div v-if="data.debugBtn" class="liu-hover sc-bar" @click="onTapDebug">
+        <div v-if="data.debugBtn" 
+          class="liu-no-user-select liu-hover sc-bar" 
+          @click.stop="onTapDebug"
+        >
           <div class="scb-hd">
             <span>{{ t('setting.dev_debug') }}</span>
           </div>
@@ -279,7 +292,7 @@ const iconColor = "var(--main-normal)"
           <div class="sc-pad-box" :class="{ 'sc-pad-box_opened': data.openDebug }">
 
             <!-- 移动端调试 -->
-            <div class="liu-hover sc-pad-item" 
+            <div class="liu-no-user-select liu-hover sc-pad-item" 
               @click.stop="onToggleMobileDebug(!data.mobileDebug)"
             >
               <div class="sc-pad-title">
@@ -293,7 +306,9 @@ const iconColor = "var(--main-normal)"
             </div>
 
             <!-- 清除缓存 -->
-            <div class="liu-hover sc-pad-item" @click.stop="onTapClearCache">
+            <div class="liu-no-user-select liu-hover sc-pad-item" 
+              @click.stop="onTapClearCache"
+            >
               <div class="sc-pad-title">
                 <span>{{ t('setting.clear_cache') }}</span>
               </div>
@@ -308,7 +323,9 @@ const iconColor = "var(--main-normal)"
         </div>
 
         <!-- 退出 -->
-        <div class="liu-hover sc-bar" @click="onTapLogout">
+        <div class="liu-no-user-select liu-hover sc-bar" 
+          @click.stop="onTapLogout"
+        >
           <div class="scb-hd">
             <span>{{ t('setting.logout') }}</span>
           </div>
@@ -326,7 +343,7 @@ const iconColor = "var(--main-normal)"
 
     </div>
 
-    <div class="sc-footer">
+    <div class="liu-no-user-select sc-footer">
       <span>Powered by {{appName}} @ {{ version }}</span>
     </div>
 
@@ -348,7 +365,6 @@ const iconColor = "var(--main-normal)"
   font-size: var(--mini-font);
   font-weight: 200;
   color: var(--main-note);
-  user-select: none;
 }
 
 
@@ -358,7 +374,6 @@ const iconColor = "var(--main-normal)"
   color: var(--main-normal);
   margin-inline-start: 10px;
   margin-block-end: 8px;
-  user-select: none;
 }
 
 .sc-box {
@@ -402,7 +417,6 @@ const iconColor = "var(--main-normal)"
   border-radius: 8px;
   box-sizing: border-box;
   padding: 10px 10px;
-  user-select: none;
 }
 
 .sc-nickname {
@@ -421,7 +435,6 @@ const iconColor = "var(--main-normal)"
   margin-block-end: 6px;
   overflow: hidden;
   padding: 10px 10px;
-  user-select: none;
 }
 
 .sc-bar::before {
@@ -508,7 +521,6 @@ const iconColor = "var(--main-normal)"
   margin-block-end: 4px;
   overflow: hidden;
   padding: 7px 10px;
-  user-select: none;
 }
 
 .sc-pad-title {

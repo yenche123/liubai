@@ -15,7 +15,7 @@ const onTapBtn = (e: Event) => {
 <template>
 
   <button 
-    class="btn-container"
+    class="liu-no-user-select btn-container"
     :class="{ 
       'btn-mini': size === 'mini',
       'btn-other': type === 'other',
@@ -48,7 +48,6 @@ const onTapBtn = (e: Event) => {
   cursor: pointer;
   font-size: var(--btn-font);
   transition: .15s;
-  user-select: none;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -75,7 +75,7 @@ const onTapClear = () => {
 
 </script>
 <template>
-  <div class="si-container"
+  <div class="liu-no-user-select si-container"
     :class="{ 'si-container_selected': indicator && indicator === atomId }"
     @mouseenter="onMouseEnter"
     @click.stop="onTapItem"
@@ -182,7 +182,6 @@ const onTapClear = () => {
   align-items: flex-start;
   position: relative;
   cursor: pointer;
-  user-select: none;
 }
 
 .si-container::before {

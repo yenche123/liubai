@@ -36,7 +36,7 @@ export default defineComponent({
         <div class="mai-icon">
           <svg-icon name="when" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
-        <div class="mai-title">
+        <div class="liu-no-user-select mai-title">
           <span v-if="data.whenStr">{{ data.whenStr }}</span>
           <span v-else>{{ t("editor.when") }}</span>
         </div>
@@ -58,7 +58,7 @@ export default defineComponent({
           <div class="mai-icon">
             <svg-icon name="notification" class="mai-svgicon" :color="default_color"></svg-icon>
           </div>
-          <div class="mai-title">
+          <div class="liu-no-user-select mai-title">
             <span v-if="data.remindMeStr">{{ data.remindMeStr }}</span>
             <span v-else>{{ t("editor.remind") }}</span>
           </div>
@@ -77,7 +77,7 @@ export default defineComponent({
         <div class="mai-icon">
           <svg-icon name="title" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
-        <div class="mai-title">
+        <div class="liu-no-user-select mai-title">
           <span v-if="data.title">{{ data.title }}</span>
           <span v-else>{{ t("editor.add_title") }}</span>
         </div>
@@ -94,7 +94,7 @@ export default defineComponent({
         <div class="mai-icon">
           <svg-icon name="location" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
-        <div class="mai-title">
+        <div class="liu-no-user-select mai-title">
           <span>{{ t("editor.add_site") }}</span>
         </div>
         <div class="mai-footer">
@@ -115,7 +115,7 @@ export default defineComponent({
         <div class="mai-icon">
           <svg-icon name="attachment" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
-        <div class="mai-title">
+        <div class="liu-no-user-select mai-title">
           <span v-if="data.fileShow?.name">{{ data.fileShow.name }}</span>
           <span v-else>{{ t("editor.add_file") }}</span>
         </div>
@@ -133,7 +133,7 @@ export default defineComponent({
         <div class="mai-icon">
           <svg-icon name="cloud" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
-        <div class="mai-title">
+        <div class="liu-no-user-select mai-title">
           <span>{{ t("editor.sync_cloud") }}</span>
         </div>
         <div class="mai-switch-footer">
@@ -205,7 +205,6 @@ export default defineComponent({
     font-size: var(--btn-font);
     font-weight: 400;
     color: var(--other-btn-text);
-    user-select: none;
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;

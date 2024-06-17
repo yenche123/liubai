@@ -31,12 +31,12 @@ const iconColor = "var(--main-normal)"
     >
 
       <div class="as-main-box">
-        <div v-if="asData.title_key" class="as-title">
+        <div v-if="asData.title_key" class="liu-no-user-select as-title">
           <span>{{ t(asData.title_key) }}</span>
         </div>
 
         <template v-for="(item, index) in asData.itemList" :key="item.text_key">
-          <div class="as-item" @click="onTapItem(index)">
+          <div class="liu-no-user-select as-item" @click="onTapItem(index)">
 
             <div class="as-item-box">
 
@@ -61,7 +61,7 @@ const iconColor = "var(--main-normal)"
       </div>
 
 
-      <div class="as-cancel-box" @click="onTapCancel">
+      <div class="liu-no-user-select as-cancel-box" @click="onTapCancel">
         <span>{{ t('common.cancel') }}</span>
       </div>
 
@@ -143,7 +143,6 @@ const iconColor = "var(--main-normal)"
       background-color: var(--cui-actionsheet-bg);
       transition: .15s;
       cursor: pointer;
-      user-select: none;
       position: relative;
       padding-inline-start: 12px;
       padding-inline-end: 12px;
@@ -213,7 +212,6 @@ const iconColor = "var(--main-normal)"
   border-radius: 24px;
   overflow: hidden;
   cursor: pointer;
-  user-select: none;
   display: none;
 
   &:hover {

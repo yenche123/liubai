@@ -21,7 +21,7 @@ const {
 
   <div 
     v-if="teEnable" 
-    class="cui-modal-container" 
+    class="liu-no-user-select cui-modal-container" 
     :class="{ 'cui-modal-container_show': teShow }"
   >
     <div class="cui-modal-bg"></div>
@@ -74,7 +74,6 @@ const {
   justify-content: center;
   transition: v-bind("modalTranMs + 'ms'");
   opacity: 0;
-  user-select: none;
 
   &.cui-modal-container_show {
     opacity: 1;

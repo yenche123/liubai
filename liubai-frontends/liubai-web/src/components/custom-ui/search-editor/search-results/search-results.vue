@@ -35,7 +35,7 @@ const { t } = useI18n()
 
       <!-- 建议 -->
       <div class="sr-inner-box" v-if="seData.suggestList.length">
-        <div class="sri-title">
+        <div class="liu-no-user-select sri-title">
           <span>{{ t('search_related.suggest') }}</span>
         </div>
         <template v-for="(item, index) in seData.suggestList" 
@@ -52,7 +52,7 @@ const { t } = useI18n()
 
       <!-- 最近 -->
       <div class="sr-inner-box" v-if="seData.recentList.length">
-        <div class="sri-title">
+        <div class="liu-no-user-select sri-title">
           <span>{{ t('search_related.recent') }}</span>
         </div>
         <template v-for="(item, index) in seData.recentList" 
@@ -74,7 +74,7 @@ const { t } = useI18n()
 
       <!-- 搜索结果 -->
       <div class="sr-inner-box" v-if="seData.innerList.length">
-        <div class="sri-title">
+        <div class="liu-no-user-select sri-title">
           <span>{{ t('search_related.results') }}</span>
         </div>
         <template v-for="(item, index) in seData.innerList" 
@@ -91,7 +91,7 @@ const { t } = useI18n()
 
       <!-- 第三方 -->
       <div class="sr-inner-box" v-if="seData.thirdList.length">
-        <div class="sri-title">
+        <div class="liu-no-user-select sri-title">
           <span>{{ t('search_related.third_party') }}</span>
         </div>
         <template v-for="(item, index) in seData.thirdList" 
@@ -107,7 +107,7 @@ const { t } = useI18n()
       </div>
 
       <!-- 任何结果都不存在时 -->
-      <div class="sr-no-data"
+      <div class="liu-no-user-select sr-no-data"
         v-if="!seData.innerList.length && !seData.thirdList.length"
       >
         <span>{{ t('search_related.no_data') }}</span>
@@ -151,7 +151,6 @@ const { t } = useI18n()
   font-size: var(--mini-font);
   margin-inline-start: 10px;
   margin-block-end: 6px;
-  user-select: none;
 }
 
 .sr-no-data {
@@ -163,7 +162,6 @@ const { t } = useI18n()
   justify-content: center;
   font-size: var(--mini-font);
   color: var(--main-note);
-  user-select: none;
 }
 
 

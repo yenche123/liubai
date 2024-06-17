@@ -2,6 +2,13 @@
 
 /** 对于按钮的特效 */
 
+/** reject user-select */
+.liu-no-user-select {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
+
 .liu-hover {
   position: relative;
   cursor: pointer;
@@ -79,6 +86,7 @@
     line-height: 2;
     transform: translateX(50%);
     user-select: none;
+    -webkit-user-select: none;
     box-shadow: var(--tooltip-shadow);
     pointer-events: none;
     visibility: hidden;

@@ -64,7 +64,7 @@ const onTapTopFooterBtn = () => {
       
 
       <div class="cp-top-footer">
-        <div class="cemtf-submit-btn" 
+        <div class="liu-no-user-select cemtf-submit-btn" 
           :class="{ 'cemtf-submit_disabled': !cpData.canSubmit }"
           v-show="cpData.rightTopBtn"
           @click.stop="onTapTopFooterBtn"
@@ -249,7 +249,6 @@ const onTapTopFooterBtn = () => {
   color: var(--on-primary);
   font-size: var(--mini-font);
   transition: .15s;
-  user-select: none;
   font-weight: 500;
   position: relative;
 }

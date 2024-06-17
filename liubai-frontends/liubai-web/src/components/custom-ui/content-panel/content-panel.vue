@@ -25,7 +25,7 @@ const iconColor = `var(--other-btn-text)`
 <template>
 
   <!-- 以移动端先进行布局，最后再适配非移动端的模式 -->
-  <div class="cp-container" v-if="cpData.enable">
+  <div class="liu-no-user-select cp-container" v-if="cpData.enable">
 
     <div class="cp-bg" 
       :class="{ 'cp-bg_show': cpData.show }"
@@ -37,7 +37,7 @@ const iconColor = `var(--other-btn-text)`
       @mouseleave="onMouseLeaveBox"
     >
 
-      <div class="cp-big-title" v-if="cpData.onlyReaction">
+      <div class="liu-no-user-select cp-big-title" v-if="cpData.onlyReaction">
         <span>{{ cpData.title }}</span>
       </div>
 
@@ -147,7 +147,6 @@ const iconColor = `var(--other-btn-text)`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  user-select: none;
   z-index: 4500;
 
   .cp-bg {
@@ -204,7 +203,6 @@ const iconColor = `var(--other-btn-text)`
   text-align: center;
   color: var(--main-normal);
   font-size: var(--head-font);
-  user-select: none;
   position: relative;
 }
 

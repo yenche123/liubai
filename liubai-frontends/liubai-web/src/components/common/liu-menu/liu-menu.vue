@@ -92,7 +92,7 @@ const onTapMask = (e: MouseEvent) => {}
               ></SvgIcon>
             </div>
   
-            <div class="mi-title"
+            <div class="liu-no-user-select mi-title"
               :class="{ 'mi-title_long': hasIcon }"
               :style="{ 'color': item.color ? item.color : defaultColor }"
             >
@@ -189,7 +189,6 @@ const onTapMask = (e: MouseEvent) => {}
       text-overflow: ellipsis;
       font-size: var(--mini-font);
       line-height: 28px;
-      user-select: none;
     }
 
     .mi-title_long {

@@ -41,7 +41,7 @@ const cha = inject(deviceChaKey)
   <div class="liu-hover tag-container" :class="{ 'tag-container_selected': node.tagId === currentTagId }">
 
     <!-- tag 所在的该行 -->
-    <div class="tag-box">
+    <div class="liu-no-user-select tag-box">
       <div class="liu-hover tag-arrow" :class="{ 'tag-arrow_unhover': !stat.children.length }"
         @click.stop.prevent="$emit('taptagarrow', $event, node, stat)">
         <SvgIcon v-if="stat.children.length" class="tag-arrow-icon" 
@@ -53,7 +53,7 @@ const cha = inject(deviceChaKey)
       <div v-if="node.icon" class="tag-icon">
         <span>{{ liuApi.decode_URI_component(node.icon) }}</span>
       </div>
-      <div class="tag-title">
+      <div class="liu-no-user-select tag-title">
         <span>{{ node.text }}</span>
       </div>
 
@@ -86,7 +86,6 @@ const cha = inject(deviceChaKey)
     display: flex;
     align-items: center;
     flex: 1;
-    user-select: none;
 
     .tag-arrow {
       width: 32px;
@@ -141,7 +140,6 @@ const cha = inject(deviceChaKey)
       flex: 1;
       font-size: var(--btn-font);
       color: var(--main-normal);
-      user-select: none;
     }
 
     .tag-bg {

@@ -27,7 +27,7 @@ const {
     <div class="lpn-box" v-liu-show="showBackBtn">
 
       <!-- 返回按钮 -->
-      <div class="liu-hover lpn-back" @click.stop="onTapBack">
+      <div class="liu-no-user-select liu-hover lpn-back" @click.stop="onTapBack">
         <div class="lpn-back-icon">
           <svg-icon name="arrow-back700" class="lpn-back-svg" 
             color="var(--main-normal)"
@@ -113,7 +113,6 @@ const {
   color: var(--main-normal);
   font-weight: 700;
   padding: 4px 16px 4px 10px;
-  user-select: none;
 }
 
 .lpn-back-icon {

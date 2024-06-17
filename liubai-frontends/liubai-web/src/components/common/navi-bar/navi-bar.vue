@@ -47,7 +47,7 @@ const {
       >
         <SvgIcon class="nb-icon" name="menu"></SvgIcon>
       </div>
-      <div class="nb-title"
+      <div class="liu-no-user-select nb-title"
         :style="{ 'margin-inline-start': showMenuBtn ? '10px' : '6px' }"
       >
         <span v-if="title">{{ title }}</span>
@@ -111,7 +111,6 @@ const {
   color: var(--main-text);
   line-height: 1.5;
   font-weight: 700;
-  user-select: none;
 }
 
 </style>

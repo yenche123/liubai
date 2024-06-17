@@ -116,7 +116,9 @@ const {
 
       <div class="tca-list">
         <template v-for="(item, index) in thread.files" :key="item.id">
-          <div class="tcal-item" @click.stop="onTapFile($event, index)">
+          <div class="liu-no-user-select tcal-item" 
+            @click.stop="onTapFile($event, index)"
+          >
             <span>{{ item.name }}</span>
           </div>
         </template>
@@ -174,7 +176,6 @@ const {
         font-size: var(--btn-font);
         font-weight: 400;
         color: var(--primary-color);
-        user-select: none;
         display: inline-block;
         white-space: nowrap;
         overflow: hidden;

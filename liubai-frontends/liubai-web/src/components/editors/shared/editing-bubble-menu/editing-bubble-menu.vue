@@ -33,7 +33,7 @@ const {
     <!-- 编辑时: 粗体、斜体、删除线 -->
     <div class="ec-bubble-menu">
       <!-- 粗体 -->
-      <div class="ec-bubble-box"
+      <div class="liu-no-user-select ec-bubble-box"
         :class="{ 'ec-bubble-box_selected': editor?.isActive('bold') }"
         @click="editor?.chain().focus().toggleBold().run()"
       >
@@ -42,7 +42,7 @@ const {
       </div>
 
       <!-- 斜体 -->
-      <div class="ec-bubble-box"
+      <div class="liu-no-user-select ec-bubble-box"
         :class="{ 'ec-bubble-box_selected': editor?.isActive('italic') }"
         @click="editor?.chain().focus().toggleItalic().run()"
       >
@@ -51,7 +51,7 @@ const {
       </div>
 
       <!-- 删除线 -->
-      <div class="ec-bubble-box"
+      <div class="liu-no-user-select ec-bubble-box"
         :class="{ 'ec-bubble-box_selected': editor?.isActive('strike') }"
         @click="editor?.chain().focus().toggleStrike().run()"
       >
@@ -85,7 +85,6 @@ const {
   transition: .2s;
   opacity: .6;
   cursor: pointer;
-  user-select: none;
 }
 
 .ec-bubble-box:hover {

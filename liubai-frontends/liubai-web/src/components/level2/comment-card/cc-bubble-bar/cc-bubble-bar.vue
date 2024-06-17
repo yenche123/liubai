@@ -73,7 +73,9 @@ const { t } = useI18n()
           :color="default_color"
         ></svg-icon>
       </div>
-      <span class="ccbb-text" v-if="cs.commentNum">{{ cs.commentNum }}</span>
+      <span class="liu-no-user-select ccbb-text"
+         v-if="cs.commentNum"
+        >{{ cs.commentNum }}</span>
     </div>
 
     <!-- 分享按钮 -->
@@ -195,7 +197,6 @@ const { t } = useI18n()
   margin-inline-start: -2px;
   font-size: var(--mini-font);
   color: var(--main-code);
-  user-select: none;
   font-weight: 400;
   padding-inline-end: 5px;
 }

@@ -14,7 +14,7 @@ const onTapBtn = () => {
 
   <div class="cc-box">
     <svg-icon 
-      class="cc-img"
+      class="liu-no-user-select cc-img"
       :cover-fill-stroke="false"
       name="emojis-smiling_face_with_heart-eyes_color"
     ></svg-icon>
@@ -48,7 +48,6 @@ const onTapBtn = () => {
   height: 100px;
   flex: none;
   margin-block-end: 5dvh;
-  user-select: none;
 }
 
 .cc-text {

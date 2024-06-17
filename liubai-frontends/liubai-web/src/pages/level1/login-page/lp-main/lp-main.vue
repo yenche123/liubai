@@ -22,12 +22,12 @@ const {
   <div class="lp-selects" ref="lpSelectsEl">
 
     <!-- Email -->
-    <div class="lps-item lps-item-1" @click.stop="onTapSelect(1)">
+    <div class="liu-no-user-select lps-item lps-item-1" @click.stop="onTapSelect(1)">
       <span>{{ t('login.email')}}</span>
     </div>
 
     <!-- 第三方 -->
-    <div class="lps-item lps-item-2" @click.stop="onTapSelect(2)">
+    <div class="liu-no-user-select lps-item lps-item-2" @click.stop="onTapSelect(2)">
       <span>{{ t('login.third_party')}}</span>
     </div>
 
@@ -62,7 +62,7 @@ const {
   <div class="lp-view" v-liu-show="lpmData.current === 2">
 
     <!-- google -->
-    <div class="liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'google')">
+    <div class="liu-no-user-select liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'google')">
       <div class="lpv-icon">
         <svg-icon name="logos-google-color" 
           :cover-fill-stroke="false"
@@ -75,7 +75,7 @@ const {
     </div>
 
     <!-- github -->
-    <div class="liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'github')">
+    <div class="liu-no-user-select liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'github')">
       <div class="lpv-icon">
         <svg-icon name="logos-github" 
           color="var(--main-text)"
@@ -130,7 +130,6 @@ const {
   transition: .15s;
   z-index: 90;
   cursor: pointer;
-  user-select: none;
 }
 
 .lp-indicator {
@@ -211,7 +210,6 @@ const {
   justify-content: center;
   background-color: var(--card-bg);
   margin-block-end: 12px;
-  user-select: none;
 }
 
 .lpv-icon {

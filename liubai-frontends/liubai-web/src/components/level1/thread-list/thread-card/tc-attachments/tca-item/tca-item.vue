@@ -18,7 +18,9 @@ const { t } = useI18n()
     <div class="tca-icon">
       <svg-icon :name="iconName" class="tca-svgicon" :color="color"></svg-icon>
     </div>
-    <div class="tca-title" :aria-label="labelKey ? t(labelKey) : ''">
+    <div class="liu-no-user-select tca-title" 
+      :aria-label="labelKey ? t(labelKey) : ''"
+    >
       <span>{{ title }}</span>
     </div>
   </div>
@@ -55,7 +57,6 @@ const { t } = useI18n()
     font-size: var(--btn-font);
     font-weight: 400;
     color: var(--main-code);
-    user-select: none;
     line-height: 22px;
     white-space: pre-wrap;
     word-wrap: break-word;

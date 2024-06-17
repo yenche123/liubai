@@ -23,7 +23,7 @@ const onTapClear = (index: number) => {
 
     <template v-for="(item, index) in tagShows" :key="item.tagId">
 
-      <div class="ce-tag-item">
+      <div class="liu-no-user-select ce-tag-item">
         <span v-if="item.emoji" class="ce-tag-emoji">{{ item.emoji }}</span>
         <span v-else-if="item.parentEmoji" class="ce-tag-emoji">{{ item.parentEmoji }}</span>
         <span>{{ item.text }}</span>
@@ -57,7 +57,6 @@ const onTapClear = (index: number) => {
     border-radius: 6px;
     margin-inline-end: 10px;
     margin-block-end: 10px;
-    user-select: none;
     display: flex;
     align-items: center;
     white-space: pre-wrap;
