@@ -56,7 +56,8 @@
     "view_detail": "檢視詳情",
     "update": "更新",
     "unknown": "未命名",
-    "under_construction": "施工中"
+    "under_construction": "施工中",
+    "never_prompt": "不再提示"
   },
   "editor": {
     "when": "什麼時候",
@@ -410,6 +411,12 @@
     "mobile_safari_1": "1. 輕觸底部「分享」按鈕",
     "mobile_safari_2": "2. 下划後，輕觸「加入 Dock 中」",
     "desktop_safari_1": "1. 點擊右上角「分享」按鈕",
-    "desktop_safari_2": "2. 點擊「加入 Dock 中」"
+    "desktop_safari_2": "2. 點擊「加入 Dock 中」",
+    "tip_1": "加到桌面只需三秒",
+    "tip_2": "試用七天，感受絲滑體驗！",
+    "tip_cancel": "先不要",
+    "tip_confirm": "試用七天",
+    "fail_to_add": "新增失敗",
+    "fail_to_add_tip": "建議開啟 Chrome 瀏覽器再新增"
   }
 }

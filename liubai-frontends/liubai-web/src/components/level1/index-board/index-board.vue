@@ -4,6 +4,8 @@ import A2hsTip from './a2hs-tip/a2hs-tip.vue';
 
 const {
   ibData,
+  onTapInstall,
+  onTapCloseA2hsTip,
 } = useIndexBoard()
 
 </script>
@@ -11,6 +13,8 @@ const {
 
   <A2hsTip
     :a2hs="ibData.a2hs"
+    @tapinstall="onTapInstall"
+    @tapclose="onTapCloseA2hsTip"
   ></A2hsTip>
   
 

@@ -32,6 +32,10 @@ export interface LocalOnceData {
   // whether you want to open vConsole
   mobile_debug?: boolean
 
+  // a2hs
+  a2hs_never_prompt?: boolean
+  a2hs_last_cancel_stamp?: number
+
 }
 
 export type KeyOfLocalOnceData = keyof LocalOnceData

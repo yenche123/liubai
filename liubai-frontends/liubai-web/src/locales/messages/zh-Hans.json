@@ -56,7 +56,8 @@
     "view_detail": "查看详情",
     "update": "更新",
     "unknown": "未命名",
-    "under_construction": "施工中"
+    "under_construction": "施工中",
+    "never_prompt": "不再提示"
   },
   "editor": {
     "when": "什么时候",
@@ -410,6 +411,12 @@
     "mobile_safari_1": "1. 点击底部“分享”按钮",
     "mobile_safari_2": "2. 下划后，点击“添加到主屏幕”",
     "desktop_safari_1": "1. 点击右上角“分享”按钮",
-    "desktop_safari_2": "2. 点击“添加到程序坞”"
+    "desktop_safari_2": "2. 点击“添加到程序坞”",
+    "tip_1": "添加只要三秒",
+    "tip_2": "试用七天，体验极速访问！",
+    "tip_cancel": "先不要",
+    "tip_confirm": "试用七天",
+    "fail_to_add": "添加失败",
+    "fail_to_add_tip": "建议使用 Chrome 浏览器进行添加"
   }
 }

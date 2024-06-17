@@ -56,7 +56,8 @@
     "view_detail": "View Details",
     "update": "Update",
     "unknown": "Unknown",
-    "under_construction": "Under Construction"
+    "under_construction": "Under Construction",
+    "never_prompt": "Never prompt"
   },
   "editor": {
     "when": "When",
@@ -410,6 +411,12 @@
     "mobile_safari_1": "1. Tap \"Share\" button at the bottom",
     "mobile_safari_2": "2. Swipe down and tap \"Add to Home Screen\"",
     "desktop_safari_1": "1. Click \"Share\" button on the top right corner",
-    "desktop_safari_2": "2. Click \"Add to Dock\""
+    "desktop_safari_2": "2. Click \"Add to Dock\"",
+    "tip_1": "It only takes 3s",
+    "tip_2": "Record your life at your fingertips!",
+    "tip_cancel": "No, thanks",
+    "tip_confirm": "Try it out",
+    "fail_to_add": "Fail to Add",
+    "fail_to_add_tip": "Open Chrome browser and try again please."
   }
 }

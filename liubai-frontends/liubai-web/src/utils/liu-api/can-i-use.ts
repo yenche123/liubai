@@ -11,6 +11,17 @@ function isSafeBrowser() {
   return true
 }
 
+// check if it is in Arc browser
+// reference: https://webmasters.stackexchange.com/a/142231/138612
+function isArcBrowser() {
+  // the function cannot put into getCharacteristic()
+  // because CSS from Arc may not be loaded yet
+  
+  const arcPaletteTitle = window.getComputedStyle(document.documentElement)
+    .getPropertyValue("--arc-palette-title")
+  return Boolean(arcPaletteTitle)
+}
+
 function viewTransitionApi() {
   const res1 = isPrefersReducedMotion()
   if(res1) return false
@@ -45,4 +56,5 @@ export default {
   viewTransitionApi,
   cssDetectTextOverflow,
   abortSignalTimeout,
+  isArcBrowser,
 }
