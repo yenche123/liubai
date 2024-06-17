@@ -409,6 +409,7 @@
     "desc": "Offline also works!",
     "add": "Add",
     "mobile_safari_1": "1. Tap \"Share\" button at the bottom",
+    "ipad_safari_1": "1. Tap \"Share\" button on the top right corner",
     "mobile_safari_2": "2. Swipe down and tap \"Add to Home Screen\"",
     "desktop_safari_1": "1. Click \"Share\" button on the top right corner",
     "desktop_safari_2": "2. Click \"Add to Dock\"",

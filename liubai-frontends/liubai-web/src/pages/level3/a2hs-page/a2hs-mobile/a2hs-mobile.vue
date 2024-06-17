@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import liuApi from '~/utils/liu-api';
 const { t } = useI18n()
+
+const cha = liuApi.getCharacteristic()
 
 </script>
 <template>
 
   <div class="a2hs-title">
-    <span class="liu-selection">{{ t('a2hs.mobile_safari_1') }}</span>
+    <span v-if="cha.isIPadOS" class="liu-selection">{{ t('a2hs.ipad_safari_1') }}</span>
+    <span v-else class="liu-selection">{{ t('a2hs.mobile_safari_1') }}</span>
   </div>
-  <div class="a2hs-img-1"></div>
+
+  <div v-if="cha.isIPadOS" class="a2hs-img-1_ipad"></div>
+  <div v-else class="a2hs-img-1"></div>
 
 
   <div class="a2hs-title">
@@ -24,6 +30,15 @@ const { t } = useI18n()
   font-weight: 700;
   color: var(--main-normal);
   margin-block-end: 10px;
+}
+
+.a2hs-img-1_ipad {
+  margin-block-end: 50px;
+  width: 256px;
+  height: 59px;
+  background-image: url('/images/a2hs-ipad-1.jpg');
+  background-size: contain;
+  border-radius: 10px;
 }
 
 .a2hs-img-1 {
