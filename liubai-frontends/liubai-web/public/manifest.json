@@ -66,6 +66,36 @@
     "utilities",
     "productivity"
   ],
+  "screenshots": [
+    {
+      "src": "/images/screenshot-pc.jpg",
+      "type": "image/jpeg",
+      "sizes": "1280x700",
+      "form_factor": "wide",
+      "label": "Liubai for PC"
+    },
+    {
+      "src": "/images/screenshot-mobile.jpg",
+      "type": "image/jpeg",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "label": "Liubai for mobile"
+    },
+    {
+      "src": "/images/screenshot-pc2.jpg",
+      "type": "image/jpeg",
+      "sizes": "1280x700",
+      "form_factor": "wide",
+      "label": "Liubai on PC"
+    },
+    {
+      "src": "/images/screenshot-mobile2.jpg",
+      "type": "image/jpeg",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "label": "Liubai on mobile"
+    }
+  ],
   "edge_side_panel": {
     "preferred_width": 420
   },
