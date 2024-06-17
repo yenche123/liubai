@@ -25,17 +25,21 @@ defineEmits<{
 const { t } = useI18n()
 const color = "#c7c9ca"
 
+const enable = ref(false)
 const transDuration = ref("0")
 onMounted(async () => {
   await valTool.waitMilli(200)
+  enable.value = true
   transDuration.value = "0.11s"
 })
 
 </script>
 <template>
   <div class="cdz-container"
-    v-if="transDuration !== '0'"
-    :class="{ 'cdz-container_show': isOverDropZone }"
+    :class="{ 
+      'cdz-container_enabled': enable,
+      'cdz-container_show': isOverDropZone,
+    }"
     @click="$emit('tap')"
   >
 
@@ -57,7 +61,7 @@ onMounted(async () => {
   left: v-bind("leftPx + 'px'");
   right: v-bind("rightPx + 'px'");
   position: fixed;
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -100,7 +104,10 @@ onMounted(async () => {
     text-align: center;
     letter-spacing: 1.2px;
   }
+}
 
+.cdz-container_enabled {
+  display: flex;
 }
 
 .cdz-container_show {
