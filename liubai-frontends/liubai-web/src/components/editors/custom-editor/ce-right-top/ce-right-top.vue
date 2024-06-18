@@ -13,7 +13,7 @@ const props = defineProps({
   }
 })
 
-const bubbleColor = "var(--bubble-menu-color)"
+const bubbleColor = "var(--main-text)"
 
 const {
   TRANSITION_MS,
@@ -65,7 +65,7 @@ const {
 
 .crt-container {
   width: 100%;
-  height: 50px;
+  height: 56px;
   position: absolute;
   top: 0;
   left: 0;
@@ -96,10 +96,11 @@ const {
 
 .crt-bg {
   width: 70%;
+  min-width: 250px;
   height: 100%;
   position: absolute;
   top: 0;
-  left: 30%;
+  right: 0;
   background: var(--gradient-three);
 }
 
@@ -119,10 +120,6 @@ const {
   cursor: pointer;
 }
 
-.crt-item:hover {
-  opacity: .86;
-}
-
 .crt-item_selected {
   opacity: .99;
 }
@@ -131,9 +128,6 @@ const {
   width: 30px;
   height: 30px;
 }
-
-
-
 
 
 

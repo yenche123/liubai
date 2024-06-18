@@ -34,6 +34,8 @@ const {
           :class="{ 'ec-custom-editor_show': state === -1 }"
           :force-update-num="forceUpdateNum"
         ></CustomEditor>
+
+        <div class="ec-virtual"></div>
       </div>
       
     </div>
@@ -50,5 +52,11 @@ const {
 .ec-custom-editor_show {
   opacity: 1;
 }
+
+.ec-virtual {
+  width: 100%;
+  height: 100px;
+}
+
 
 </style>

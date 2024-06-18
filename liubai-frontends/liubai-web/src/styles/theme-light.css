@@ -68,7 +68,7 @@
   --drag-border: #aaf2f9;    /** 拖动时的边框色 */
   --gradient-one: linear-gradient(90deg, rgba(255, 255, 255, 0) 10%, rgba(255, 255, 255, 1) 96%);
   --gradient-two: linear-gradient(0deg, rgba(255, 255, 255, 1) 28%, rgba(255, 255, 255, 0) 76%);
-  --gradient-three: linear-gradient(90deg, rgba(255, 255, 255, 0) 5%, rgba(255, 255, 255, .5) 15%, rgba(255, 255, 255, 1) 75%);
+  --gradient-three: linear-gradient(90deg, rgba(255, 255, 255, 0) 5%, rgba(255, 255, 255, .5) 15%, rgba(255, 255, 255, 1) 50%);
   --cool-bg: linear-gradient(30deg, #ACB6E5, #70ded9);
   --tag-bg: #f3f5f8;
   --tag-hover: linear-gradient(60deg, #ececec, #f3f5f8);
