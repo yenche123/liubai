@@ -69,6 +69,6 @@ async function toModifyName(val: string) {
     uploadTask: "member-nickname",
     target_id,
     operateStamp: time.getTime(),
-  }, true)
+  }, { speed: "instant" })
 }
 

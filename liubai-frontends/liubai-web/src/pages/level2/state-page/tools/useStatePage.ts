@@ -132,7 +132,9 @@ async function toAddState(
     insertedStamp: now,
   }
   stateList.splice(0, 0, atom)
-  const res2 = await stateController.setNewStateList(stateList)
+  const res2 = await stateController.setNewStateList(stateList, {
+    speed: "instant",
+  })
   
   // 在视图上创建一个
   const { kanban } = ctx

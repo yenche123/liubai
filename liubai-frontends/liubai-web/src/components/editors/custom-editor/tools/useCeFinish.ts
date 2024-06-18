@@ -121,7 +121,7 @@ async function toRelease(
     uploadTask: "thread-post", 
     target_id: newId,
     operateStamp: now,
-  }, true)
+  }, { speed: "instant" })
   
 }
 
@@ -288,7 +288,7 @@ async function toUpdate(ctx: CepContext) {
         uploadTask: "thread-only_local", 
         target_id,
         operateStamp,
-      }, true)
+      }, { speed: "instant" })
     }
     return
   }
@@ -299,6 +299,6 @@ async function toUpdate(ctx: CepContext) {
     uploadTask, 
     target_id,
     operateStamp,
-  }, true)
+  }, { speed: "instant" })
 }
 

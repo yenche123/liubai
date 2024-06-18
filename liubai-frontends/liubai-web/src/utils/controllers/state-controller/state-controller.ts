@@ -1,5 +1,6 @@
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { LiuStateConfig, LiuAtomState } from "~/types/types-atom"
+import type { AddUploadTaskOpt } from "~/utils/cloud/tools/types"
 import type { TcListOption } from "../thread-controller/type"
 import time from "~/utils/basic/time"
 import valTool from "~/utils/basic/val-tool"
@@ -162,7 +163,10 @@ async function stateListSorted(
 }
 
 // 设置新的 stateList 进 stateConfig 里
-async function setNewStateList(newList: LiuAtomState[]) {
+async function setNewStateList(
+  newList: LiuAtomState[],
+  opt?: AddUploadTaskOpt,
+) {
   const wStore = useWorkspaceStore()
   const currentSpace = wStore.currentSpace
   if(!currentSpace) return false
@@ -182,7 +186,7 @@ async function setNewStateList(newList: LiuAtomState[]) {
     target_id: spaceId,
     uploadTask: "workspace-state_config",
     operateStamp: now,
-  })
+  }, opt)
 
   return res
 }

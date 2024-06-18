@@ -230,3 +230,5 @@ export type ParticularScript = "ig" | "twitter" |
 
 // UploadTaskLocalTable.progressType
 export type UploadTaskProgressType = "waiting" | "file_uploading" | "syncing"
+
+export type SyncSpeed = "instant" | "normal" | "slow"

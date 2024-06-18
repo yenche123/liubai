@@ -3,7 +3,11 @@ import { CloudEventBus } from "./CloudEventBus";
 import time from "../basic/time";
 import { type LiuTimeout } from "../basic/type-tool";
 import localCache from "../system/local-cache";
-import type { UploadTaskParam } from "./tools/types";
+import type { 
+  UploadTaskParam,
+  AddUploadTaskOpt,
+} from "./tools/types";
+import type { SyncSpeed } from "~/types/types-atom";
 import { addUploadTask } from "./tools/add-upload-task";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
@@ -43,12 +47,18 @@ class LocalToCloud {
     })
   }
 
-  private static preTrigger(instant: boolean = false) {
-    const delay = 250
+  private static preTrigger(
+    speed: SyncSpeed = "normal"
+  ) {
+
+    let delay = 250
+    if(speed === "instant") delay = 0
+    else if(speed = "slow") delay = 750
+
     const _this = this
 
-    // if instant is true, then trigger immediately
-    if(instant) {
+    // instantly trigger
+    if(delay === 0) {
       if(_this.triggerTimeout) {
         clearTimeout(_this.triggerTimeout)
         _this.triggerTimeout = undefined
@@ -86,7 +96,7 @@ class LocalToCloud {
   /** add a task into local db */
   static async addTask(
     param: UploadTaskParam,
-    triggerInstantly: boolean = false,
+    opt?: AddUploadTaskOpt,
   ) {
     // 0. check out if I have login
     const { local_id: user, token, serial } = localCache.getPreference()
@@ -104,7 +114,7 @@ class LocalToCloud {
     if(!this.canIPreTigger()) return
 
     // 3. let's go to trigger
-    this.preTrigger(triggerInstantly)
+    this.preTrigger(opt?.speed)
   }
 
 

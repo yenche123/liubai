@@ -108,7 +108,8 @@ export async function deleteForever(
 
 
 /**
- * 检查各个 “状态” 下的动态，是否具备这些被删除的动态
+ * 检查各个工作区里的 “状态” 
+ * 确认是否具备这些被删除的动态，若有，去从看板中移除
  */
 export async function deleteThreadsFromWorkspaceStateCfg(
   threadIds: string[]

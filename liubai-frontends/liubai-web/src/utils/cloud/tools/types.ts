@@ -6,6 +6,7 @@ import type {
   LiuTable, 
   LiuUploadTask,
   SupportedTheme,
+  SyncSpeed,
 } from "~/types/types-atom";
 
 export interface ImageTransferedRes {
@@ -40,6 +41,9 @@ export interface UploadTaskParam {
   operateStamp: number
 }
 
+export interface AddUploadTaskOpt {
+  speed?: SyncSpeed
+}
 
 /** 主进程向每个子进程发消息时，会传入的数据包 */
 export interface MainToChildMessage {

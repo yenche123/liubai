@@ -443,7 +443,7 @@ function saveDraftToCloud(
       uploadTask: "draft-set",
       target_id: d._id,
       operateStamp: d.editedStamp,
-    }, true)
+    }, { speed: "instant" })
     return
   }
 

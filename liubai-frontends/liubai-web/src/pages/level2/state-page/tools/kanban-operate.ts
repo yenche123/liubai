@@ -95,7 +95,9 @@ async function editKanban(
   }
 
   // 3. 更新 workspace db 和 workspaceStore
-  const res2 = await stateController.setNewStateList(stateList)
+  const res2 = await stateController.setNewStateList(stateList, {
+    speed: "instant",
+  })
 
   const colorShow = liuUtil.colorToShow(color)
 
@@ -226,7 +228,9 @@ async function addThreadToKanban(
   })
 
   // 3. 发起更新 stateList
-  const res2 = await stateController.setNewStateList(stateList)
+  const res2 = await stateController.setNewStateList(stateList, {
+    speed: "slow",
+  })
 
   // 4. 更新 content
   const res3 = await dbOp.setStateId(threadId, stateId)
