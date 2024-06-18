@@ -1,6 +1,10 @@
 import { db } from "~/utils/db"
 import time from "~/utils/basic/time"
-import type { MainToChildMessage, SyncRes } from "../tools/types"
+import type { 
+  MainToChildMessage, 
+  SyncResState, 
+  SyncResult,
+} from "../tools/types"
 import type { LiuFileStore, LiuImageStore } from "~/types"
 import type { 
   DownloadTaskLocalTable, 
@@ -15,6 +19,7 @@ interface HanTaskRes {
   hasEverUnknown?: boolean
   hasEverBadNetwork?: boolean
   hasEverKnownErr?: boolean
+  all_results?: SyncResState[]
 }
 
 interface HanFilesRes {
@@ -30,6 +35,7 @@ interface HanImgsRes {
   hasEverBadNetwork?: boolean
   hasEverSuccess?: boolean
   hasEverKnownErr?: boolean
+  results: SyncResState[]
   imgs: LiuImageStore[]
 }
 
@@ -37,11 +43,12 @@ interface HanWhateverRes {
   hasEverUnknown?: boolean
   hasEverBadNetwork?: boolean
   hasEverKnownErr?: boolean
+  results?: SyncResState[]
   [key: string]: any
 }
 
 interface FetchRes {
-  result: SyncRes
+  result: SyncResState
   arrayBuffer?: ArrayBuffer
   size?: number
   mimeType?: string
@@ -53,7 +60,7 @@ const toDownload = async (url: string): Promise<FetchRes> => {
   let res: Response
   try {
     res = await fetch(url, {
-      mode: "no-cors",
+      // mode: "no-cors",
     })
   }
   catch(err: any) {
@@ -74,6 +81,18 @@ const toDownload = async (url: string): Promise<FetchRes> => {
     return { result: "unknown" }
   }
 
+  // console.log("toDownload result: ")
+  // console.log("status: ", res.status)
+  // console.log("statusText: ", res.statusText)
+  // console.log(res.ok)
+  // console.log(res.headers)
+  // console.log("type: ", res.type)
+  // console.log("body", res.body)
+  // console.log("bodyUsed: ", res.bodyUsed)
+  // console.log("redirected: ", res.redirected)
+  // console.log("url: ", res.url)
+  // console.log(" ")
+
   const status = res.status
   if(status === 403 || status === 404) {
     return { result: "known_err" }
@@ -81,6 +100,10 @@ const toDownload = async (url: string): Promise<FetchRes> => {
 
   if(status >= 400 && status < 500) {
     return { result: "unknown" }
+  }
+
+  if(status === 0 && res.type === "opaque") {
+    return { result: "opaque" }
   }
 
   if(!res.ok) {
@@ -145,19 +168,21 @@ const handle_images = async (
   })
   if(imgs2.length < 1) {
     // 不要返回 hasEverSuccess 为 true，要不然会消耗一次修改数据库
-    return { imgs }
+    return { imgs, results: [] }
   }
 
   let hasEverUnknown = false
   let hasEverBadNetwork = false
   let hasEverSuccess = false
   let hasEverKnownErr = false
+  const results: SyncResState[] = []
   for(let i=0; i<imgs2.length; i++) {
     const v = imgs2[i]
     const url = v.cloud_url as string
     const res = await toDownload(url)
     
     const ret = res.result
+    results.push(ret)
     if(ret === "success" && !hasEverSuccess) hasEverSuccess = true
     else if(ret === "known_err" && !hasEverKnownErr) hasEverKnownErr = true
     else if(ret === "bad_network" && !hasEverBadNetwork) hasEverBadNetwork = true
@@ -178,19 +203,29 @@ const handle_images = async (
     hasEverBadNetwork,
     hasEverSuccess,
     hasEverKnownErr,
+    results,
     imgs,
   }
 }
 
 /** 只要有任何一个结果为 true，该字段的总结果就为 true */
-const judgeHanTaskRes = (taskRes: HanTaskRes, newRes: HanWhateverRes) => {
+const judgeHanTaskRes = (
+  taskRes: HanTaskRes, 
+  newRes: HanWhateverRes,
+) => {
   if(newRes.hasEverBadNetwork) taskRes.hasEverBadNetwork = true
   if(newRes.hasEverUnknown) taskRes.hasEverUnknown = true
   if(newRes.hasEverKnownErr) taskRes.hasEverKnownErr = true
+  if(newRes.results?.length) {
+    if(!taskRes.all_results) taskRes.all_results = []
+    taskRes.all_results.push(...newRes.results)
+  }
 }
 
 
-const handle_member = async (task: DownloadTaskLocalTable) => {
+const handle_member = async (
+  task: DownloadTaskLocalTable
+): Promise<HanTaskRes> => {
   const id = task.target_id
   const res = await db.members.get(id)
   if(!res) return {}
@@ -217,10 +252,13 @@ const handle_member = async (task: DownloadTaskLocalTable) => {
   return {
     hasEverUnknown: res2.hasEverUnknown,
     hasEverBadNetwork: res2.hasEverBadNetwork,
+    all_results: res2.results,
   }
 }
 
-const handle_workspace = async (task: DownloadTaskLocalTable) => {
+const handle_workspace = async (
+  task: DownloadTaskLocalTable
+): Promise<HanTaskRes> => {
   const id = task.target_id
   const res = await db.workspaces.get(id)
   if(!res) return {}
@@ -247,10 +285,13 @@ const handle_workspace = async (task: DownloadTaskLocalTable) => {
   return {
     hasEverUnknown: res2.hasEverUnknown,
     hasEverBadNetwork: res2.hasEverBadNetwork,
+    all_results: res2.results,
   }
 }
 
-const handle_content = async (task: DownloadTaskLocalTable) => {
+const handle_content = async (
+  task: DownloadTaskLocalTable
+) => {
   const id = task.target_id
   const res = await db.contents.get(id)
   if(!res) return {}
@@ -277,7 +318,9 @@ const handle_content = async (task: DownloadTaskLocalTable) => {
   return res0
 }
 
-const handle_draft = async (task: DownloadTaskLocalTable) => {
+const handle_draft = async (
+  task: DownloadTaskLocalTable
+) => {
   const id = task.target_id
   const res = await db.drafts.get(id)
   if(!res) return {}
@@ -303,7 +346,9 @@ const handle_draft = async (task: DownloadTaskLocalTable) => {
   return res0
 }
 
-const handle_task = async (task: DownloadTaskLocalTable) => {
+const handle_task = async (
+  task: DownloadTaskLocalTable
+): Promise<HanTaskRes> => {
   const table = task.target_table
 
   let res: HanTaskRes | undefined
@@ -361,8 +406,12 @@ onmessage = async (e) => {
   initWorker(msg)
 
   let times = 0
+  const res0: SyncResult = {
+    state: "success",
+    all_states: [],
+  }
 
-  // 去轮询，查找 DownloadTaskLocalTable 是否有任务存在
+  // 1. 去轮询，查找 DownloadTaskLocalTable 是否有任务存在
   while(true) {
     times++
     if(times > 10) break
@@ -374,23 +423,34 @@ onmessage = async (e) => {
       return true      
     }
 
+    // 1.1 去加载出 download_tasks
     const col_1 = db.download_tasks.orderBy("insertedStamp")
     const col_2 = col_1.filter(_filterFunc)
     const results = await col_2.limit(LIMIT).toArray()
     const len = results.length
 
-    if(len < 1) break
+    // 1.2 如果没有任何任务，退出
+    if(len < 1) {
+      console.log("没有下载任务 break")
+      break
+    }
 
+    // 1.3 处理当批次加载出来的任务
     for(let i=0; i<results.length; i++) {
       const v = results[i]
-      const res = await handle_task(v)
-      if(res.hasEverBadNetwork) {
-        postMessage("bad_network")
+      const res13 = await handle_task(v)
+
+      if(res13.all_results) {
+        res0.all_states.push(...res13.all_results)
+      }
+
+      if(res13.hasEverBadNetwork) {
+        res0.state = "bad_network"
+        postMessage(res0)
         return
       }
     }
-
   }
 
-  postMessage("success")
+  postMessage(res0)
 }

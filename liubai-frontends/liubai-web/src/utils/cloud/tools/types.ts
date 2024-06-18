@@ -26,8 +26,13 @@ export interface TaskOfC2L {
   id: string
 }
 
-export type SyncRes = "success" | "bad_network" | "unknown" | "known_err"
+export type SyncResState = "success" | "bad_network" | "unknown" | "known_err"
+  | "opaque"
 
+export interface SyncResult {
+  state: SyncResState
+  all_states: SyncResState[]
+}
 
 export interface UploadTaskParam {
   uploadTask: LiuUploadTask

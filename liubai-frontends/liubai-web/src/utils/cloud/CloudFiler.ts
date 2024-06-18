@@ -6,30 +6,29 @@ import type {
   ImageShow,
 } from "~/types";
 import { type LiuTable } from "~/types/types-atom"
-import { useNetwork, useDebounceFn } from "~/hooks/useVueUse";
-import { reactive, watch } from "vue";
+import { watch } from "vue";
 import type { LiuTimeout } from "../basic/type-tool";
 import type {
   ImageTransferedRes,
   FileTransferedRes,
   TaskOfC2L,
-  SyncRes,
   CheckDownloadTaskParam,
   UpdateImagesRes,
   UpdateFilesRes,
+  SyncResult,
 } from "./tools/types"
 import CheckDbWorker from "./workers/check-download-task?worker"
 import DownloadWorker from "./workers/task-to-download?worker"
 import time from "../basic/time";
 import valTool from "../basic/val-tool";
 import { getMainToChildMessage } from "./tools/some-funcs";
+import { CloudEventBus } from "./CloudEventBus";
 
 
 const MIN_5 = 5 * time.MINUTE
 
 class CloudFiler {
 
-  private static isOnline: boolean | undefined
   private static downloadWorker: Worker | undefined
   private static checkWorker: Worker | undefined
   private static lastStartToDownload: number | undefined
@@ -40,33 +39,18 @@ class CloudFiler {
   // 放在 App.ts 中去监听网络变化
   static init() {
     const _this = this
-    const networkState = useNetwork()
-    const networkState2 = reactive(networkState)
 
-    const _checkCurrentState = useDebounceFn(() => {
-      const oldV = _this.isOnline
-      const newV = networkState2.isOnline
-      
-      if(!oldV && newV) {
-        // 原先是离线中，当前状态是联网时，去触发下载
-        _this.isOnline = true
-        _this.triggerDownload()
-      }
-      else if(oldV && !newV) {
-        _this.isOnline = false
-      }
-
-    }, 500)
-
-    watch(networkState2, (newV) => {
-      _checkCurrentState()
+    const syncNum = CloudEventBus.getSyncNum()
+    watch(syncNum, (newV) => {
+      if(!newV) return
+      // console.log("syncNum + 1, so triggerDownload......")
+      _this.triggerDownload()
     }, { immediate: true })
   }
 
   /** 触发下载 */
   private static triggerDownload() {
     const _this = this
-    if(!this.isOnline) return
 
     const lstd = this.lastStartToDownload
     if(lstd) {
@@ -78,10 +62,10 @@ class CloudFiler {
     
     _this.downloadWorker = new DownloadWorker()
     _this.downloadWorker.onmessage = (e) => {
-      const txt = e.data as SyncRes
-      if(txt === "bad_network") {
-        _this.isOnline = false
-      }
+      const res = e.data as SyncResult
+      console.log("download worker onmessage: ")
+      console.log(res)
+      console.log(" ")
 
       _this.lastStartToDownload = undefined
       _this.closeDownloadWorker()

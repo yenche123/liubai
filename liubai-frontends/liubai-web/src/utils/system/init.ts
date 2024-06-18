@@ -16,13 +16,13 @@ export async function init() {
   initCycle()
   CloudEventBus.init()
 
-  // 初始化，云端文件存储到本地
-  CloudFiler.init()
-
   if(backend) {
     // 当前为 [登录模式]
     // 初始化，上传到云端
     LocalToCloud.init()
+
+    // 初始化，云端文件存储到本地
+    CloudFiler.init()
   }
   else {
     // 当前为 [纯本地模式]
