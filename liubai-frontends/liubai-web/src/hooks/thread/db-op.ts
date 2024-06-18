@@ -1,6 +1,5 @@
 import type { ThreadShow } from "~/types/types-content";
 import type { CollectionLocalTable, ContentLocalTable } from "~/types/types-table";
-import type { OState } from "~/types/types-basic";
 import ider from "~/utils/basic/ider";
 import time from "~/utils/basic/time";
 import { db } from "~/utils/db";

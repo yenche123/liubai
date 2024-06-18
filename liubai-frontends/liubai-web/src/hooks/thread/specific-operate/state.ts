@@ -8,13 +8,15 @@ import commonPack from "~/utils/controllers/tools/common-pack"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { SnackbarRes, SnackbarParam } from "~/types/other/types-snackbar"
-import type { LiuStateConfig, LiuAtomState, LiuUploadTask } from "~/types/types-atom"
+import type { 
+  LiuStateConfig, 
+  LiuAtomState,
+} from "~/types/types-atom"
 import stateController from "~/utils/controllers/state-controller/state-controller"
 import { i18n } from "~/locales"
 import { mapStateColor } from "~/config/state-color"
 import cfg from "~/config"
-import liuUtil from "~/utils/liu-util"
-import { LocalToCloud } from "~/utils/cloud/LocalToCloud"
+import cloudOp from "../cloud-op"
 
 interface SelectStateRes {
   tipPromise?: Promise<SnackbarRes>
@@ -82,8 +84,8 @@ export async function selectState(
   tsStore.setUpdatedThreadShows([newThread], "state")
 
   // 7. upload
-  _saveContentToCloud(newThread, operateStamp)
-  _saveWorkspaceToCloud(workspace_id)
+  cloudOp.saveContentToCloud(newThread, operateStamp)
+  cloudOp.saveWorkspaceToCloud(workspace_id)
 
   // 8. 显示 snack-bar
   const t = i18n.global.t
@@ -131,8 +133,8 @@ export async function undoState(
   if(!workspace_id) return
 
   // 4. upload
-  _saveContentToCloud(oldThread, operateStamp, true)
-  _saveWorkspaceToCloud(workspace_id, true)
+  cloudOp.saveContentToCloud(oldThread, operateStamp, true)
+  cloudOp.saveWorkspaceToCloud(workspace_id, true)
 }
 
 // 浮上去
@@ -155,7 +157,7 @@ export async function floatUp(
   tsStore.setUpdatedThreadShows([thread], "float_up")
 
   // 3. upload
-  _saveWorkspaceToCloud(workspace_id)
+  cloudOp.saveWorkspaceToCloud(workspace_id)
 
   // 4. 显示 snackbar
   const text_key = "state_related.bubbled"
@@ -181,7 +183,7 @@ export async function undoFloatUp(
   if(!workspace_id) return
 
   // 3. upload
-  _saveWorkspaceToCloud(workspace_id, true)
+  cloudOp.saveWorkspaceToCloud(workspace_id, true)
 }
 
 
@@ -203,7 +205,7 @@ export async function setNewStateForThread(
   tsStore.setUpdatedThreadShows([newThread], "state")
 
   // 3. upload
-  _saveContentToCloud(newThread, operateStamp)
+  cloudOp.saveContentToCloud(newThread, operateStamp)
   
   return true
 }
@@ -267,38 +269,6 @@ async function handleWorkspace(
   
   return currentSpace._id
 }
-
-
-function _saveContentToCloud(
-  thread: ThreadShow,
-  stamp: number,
-  isUndo: boolean = false,
-) {
-  const ss = thread.storageState
-  const isLocal = liuUtil.check.isLocalContent(ss)
-  if(isLocal) return
-
-  LocalToCloud.addTask({
-    uploadTask: isUndo ? "undo_thread-state" : "thread-state",
-    target_id: thread._id,
-    operateStamp: stamp,
-  })
-
-}
-
-function _saveWorkspaceToCloud(
-  workspace_id: string,
-  isUndo: boolean = false,
-) {
-  let uploadTask: LiuUploadTask = "workspace-state_config"
-  if(isUndo) uploadTask = "undo_workspace-state_config"
-  LocalToCloud.addTask({
-    uploadTask,
-    target_id: workspace_id,
-    operateStamp: time.getTime(),
-  })
-}
-
 
 function _addState(
   stateList: LiuAtomState[],

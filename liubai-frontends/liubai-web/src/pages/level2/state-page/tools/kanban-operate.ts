@@ -12,6 +12,7 @@ import time from "~/utils/basic/time"
 import { db } from "~/utils/db"
 import dbOp from "~/hooks/thread/db-op"
 import threadController from "~/utils/controllers/thread-controller/thread-controller"
+import cloudOp from "~/hooks/thread/cloud-op"
 
 // 编辑某一栏的看板
 // 不提供撤回功能
@@ -237,6 +238,10 @@ async function addThreadToKanban(
   // 6. 使用 useThreadShowStore 通知全局
   const tStore = useThreadShowStore()
   tStore.setUpdatedThreadShows([newThread], "state")
+
+  // 7. just upload content because workspace has been uploaded
+  //   in stateController.setNewStateList
+  cloudOp.saveContentToCloud(newThread, newThread.updatedStamp)
 }
 
 
@@ -248,6 +253,7 @@ function _showErr() {
   })
 }
 
+// TODO: 向云端批量更新 contents 的 stateId 
 async function _updateThreadsWhenDeleteState(
   stateId: string
 ) {
