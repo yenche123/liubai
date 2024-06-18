@@ -3,6 +3,9 @@
 import liuApi from "../liu-api"
 import { i18n } from "~/locales"
 import type { SetAppTitleOpt } from "./tools/types"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
+import { LocalToCloud } from "../cloud/LocalToCloud"
+import time from "../basic/time"
 
 function setAppTitle(opt: SetAppTitleOpt = {}) {
   let title = ""
@@ -23,6 +26,23 @@ function setAppTitle(opt: SetAppTitleOpt = {}) {
   liuApi.doc.setTitle(title)
 }
 
+
+async function modifyMemberNickname(val: string) {
+  const wStore = useWorkspaceStore()
+  await wStore.setNickName(val)
+
+  const target_id = wStore.memberId
+  if(!target_id) return
+
+  LocalToCloud.addTask({
+    uploadTask: "member-nickname",
+    target_id,
+    operateStamp: time.getTime(),
+  }, { speed: "instant" })
+}
+
+
 export default {
   setAppTitle,
+  modifyMemberNickname,
 }

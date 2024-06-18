@@ -48,6 +48,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       manifest: false,
+      strategies: "generateSW",
     }),
 
     // 使用 svg 雪碧图

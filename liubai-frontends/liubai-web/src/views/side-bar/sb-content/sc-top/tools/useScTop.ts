@@ -3,9 +3,7 @@ import type { ScTopEmits } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { usePrefix, useMyProfile } from "~/hooks/useCommon";
 import cui from "~/components/custom-ui";
-import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
-import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
-import time from "~/utils/basic/time";
+import middleBridge from "~/utils/middle-bridge";
 
 const MORE_ITEMS: MenuItem[] = [
   {
@@ -41,7 +39,7 @@ export function useScTop(emits: ScTopEmits) {
     })
     const { confirm, value } = res
     if(!confirm || !value) return
-    toModifyName(value)
+    middleBridge.modifyMemberNickname(value)
   }
 
   const onTapAvatar = () => {
@@ -56,19 +54,5 @@ export function useScTop(emits: ScTopEmits) {
     onTapName,
     onTapAvatar,
   }
-}
-
-async function toModifyName(val: string) {
-  const wStore = useWorkspaceStore()
-  await wStore.setNickName(val)
-
-  const target_id = wStore.memberId
-  if(!target_id) return
-
-  LocalToCloud.addTask({
-    uploadTask: "member-nickname",
-    target_id,
-    operateStamp: time.getTime(),
-  }, { speed: "instant" })
 }
 

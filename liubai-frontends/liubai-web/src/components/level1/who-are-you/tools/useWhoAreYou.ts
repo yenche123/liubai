@@ -1,8 +1,9 @@
 import { computed, ref, type Ref } from "vue";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
+import middleBridge from "~/utils/middle-bridge";
 
 export function useWhoAreYou() {
-  const store = useWorkspaceStore()
+  const wStore = useWorkspaceStore()
   const show = ref(false)
   const inputValue = ref("")
   const trimVal = computed(() => {
@@ -10,7 +11,7 @@ export function useWhoAreYou() {
     return iv.trim()
   })
 
-  store.$subscribe((mutation, state) => {
+  wStore.$subscribe((mutation, state) => {
     const myMember = state.myMember
     // console.log("看一下 myMember: ", myMember)
     // console.log(" ")
@@ -18,11 +19,12 @@ export function useWhoAreYou() {
     if(!myMember.name) _open(show)
   })
 
-  const onEnter = () => {
+  const onEnter = async () => {
     const val = inputValue.value.trim()
     if(!val) return
-    store.setNickName(val)
+    
     _close(show)
+    middleBridge.modifyMemberNickname(val)
   }
 
   return { show, inputValue, trimVal, onEnter }
