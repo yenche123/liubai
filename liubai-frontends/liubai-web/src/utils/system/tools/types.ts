@@ -36,6 +36,9 @@ export interface LocalOnceData {
   a2hs_never_prompt?: boolean
   a2hs_last_cancel_stamp?: number
 
+  // service worker
+  lastCheckSWStamp?: number
+
 }
 
 export type KeyOfLocalOnceData = keyof LocalOnceData

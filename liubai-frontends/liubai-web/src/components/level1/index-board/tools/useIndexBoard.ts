@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, reactive, watch } from "vue";
+import { onBeforeUnmount, onMounted, reactive } from "vue";
 import type { IbData } from "./types";
 import liuApi from "~/utils/liu-api";
 import cui from "~/components/custom-ui";
@@ -9,13 +9,6 @@ import {
   useRouteAndLiuRouter,
 } from "~/routes/liu-router";
 import cfg from "~/config";
-import { useRegisterSW } from 'virtual:pwa-register/vue'
-import { pwaInfo } from 'virtual:pwa-info'
-import liuConsole from "~/utils/debug/liu-console";
-import valTool from "~/utils/basic/val-tool";
-
-const SEC_20 = 20 * time.SECONED
-const MIN_15 = 15 * time.MINUTE
 
 interface IbCtx {
   rr: RouteAndLiuRouter
@@ -34,7 +27,6 @@ export function useIndexBoard() {
     ibData,
   }
 
-  useServiceWorker(ctx)
   listenToA2HS(ibData)
 
   const onTapInstall = () => {
@@ -50,80 +42,6 @@ export function useIndexBoard() {
     onTapInstall,
     onTapCloseA2hsTip,
   }
-}
-
-
-function useServiceWorker(
-  ctx: IbCtx,
-) {
-  
-  console.log("查看 PWA info: ", pwaInfo)
-  if(pwaInfo) {
-    const pwaStr = valTool.objToStr(pwaInfo)
-    liuConsole.sendMessage(`PWA info: ${pwaStr}`)
-  }
-
-
-  // Reference: 
-  // https://vite-pwa-org.netlify.app/guide/periodic-sw-updates.html#handling-edge-cases
-  const _checkSW = async (swUrl: string, r: ServiceWorkerRegistration) => {
-    if(r.installing || !navigator) return
-
-    if("connection" in navigator) {
-      if(!navigator.onLine) return
-    }
-
-    const resp = await fetch(swUrl, {
-      cache: 'no-store',
-      headers: {
-        'cache': 'no-store',
-        'cache-control': 'no-cache',
-      },
-    })
-
-    console.log("查看 service worker fetch 的结果: ")
-    console.log(resp)
-    console.log(" ")
-
-    if(resp?.status === 200) {
-      await r.update()
-    }
-  }
-
-  const {
-    offlineReady,
-    needRefresh,
-  } = useRegisterSW({
-    immediate: true,
-    onRegisteredSW(swUrl, r) {
-      console.log(`Service Worker at: ${swUrl}`)
-      console.log(r)
-      liuConsole.sendMessage(`Service Worker registered at: ${swUrl}`)
-      if(!r) return
-      setTimeout(() => {
-        _checkSW(swUrl, r)
-      }, time.SECONED)
-      setInterval(() => {
-        _checkSW(swUrl, r)
-      }, SEC_20)
-    },
-    onRegisterError(err) {
-      console.warn("onRegisterError err:")
-      console.log(err)
-      liuConsole.addBreadcrumb({ 
-        category: "pwa.sw",
-        message: "onRegisterError",
-        level: "error",
-      })
-      liuConsole.sendException(err)
-    }
-  })
-
-  watch([offlineReady, needRefresh], ([newV1, newV2]) => {
-    console.log("offlineReady: ", newV1)
-    console.log("needRefresh: ", newV2)
-    console.log(" ")
-  })
 }
 
 
