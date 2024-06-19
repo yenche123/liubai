@@ -65,6 +65,10 @@ export interface LiuSystemEnv {
   CF_WEB_ANALYTICS_TOKEN?: string
   CF_WEB_ANALYTICS_SENDTO?: string
 
+  // plausible
+  PLAUSIBLE_DOMAIN?: string
+  PLAUSIBLE_SRC?: string
+
   // don't use sync-system
   DONOT_USE_SYNC?: boolean
 

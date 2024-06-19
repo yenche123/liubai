@@ -17,6 +17,8 @@ export function initAnalytics() {
     CF_WEB_ANALYTICS_SRC,
     CF_WEB_ANALYTICS_TOKEN,
     CF_WEB_ANALYTICS_SENDTO,
+    PLAUSIBLE_DOMAIN,
+    PLAUSIBLE_SRC,
   } = _env
 
   if(UMAMI_ID && UMAMI_SCRIPT) {
@@ -43,6 +45,23 @@ export function initAnalytics() {
     )
   }
 
+  if(PLAUSIBLE_SRC && PLAUSIBLE_DOMAIN) {
+    initPlausible(PLAUSIBLE_SRC, PLAUSIBLE_DOMAIN)
+  }
+
+}
+
+function initPlausible(
+  src: string,
+  domain: string,
+) {
+  const scriptEl = document.createElement('script')
+  scriptEl.src = src
+  scriptEl.defer = true
+  scriptEl.setAttribute("data-domain", domain)
+  const headEl = document.querySelector("head")
+  if(!headEl) return
+  headEl.appendChild(scriptEl)
 }
 
 function initCloudflareWA(

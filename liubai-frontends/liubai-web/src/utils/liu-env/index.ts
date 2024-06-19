@@ -73,6 +73,10 @@ function getEnv(): LiuSystemEnv {
   const CF_WEB_ANALYTICS_TOKEN = import.meta.env.VITE_CF_WEB_ANALYTICS_TOKEN
   const CF_WEB_ANALYTICS_SENDTO = import.meta.env.VITE_CF_WEB_ANALYTICS_SENDTO
 
+  // plausible
+  const PLAUSIBLE_DOMAIN = import.meta.env.VITE_PLAUSIBLE_DOMAIN
+  const PLAUSIBLE_SRC = import.meta.env.VITE_PLAUSIBLE_SRC
+
   // do not use sync system even if API_DOMAIN is set
   const donotUseSync = import.meta.env.VITE_DONOT_USE_SYNC
   const DONOT_USE_SYNC = donotUseSync === "01"
@@ -117,6 +121,8 @@ function getEnv(): LiuSystemEnv {
     CF_WEB_ANALYTICS_SRC,
     CF_WEB_ANALYTICS_TOKEN,
     CF_WEB_ANALYTICS_SENDTO,
+    PLAUSIBLE_DOMAIN,
+    PLAUSIBLE_SRC,
     DONOT_USE_SYNC,
   }
   return _env
