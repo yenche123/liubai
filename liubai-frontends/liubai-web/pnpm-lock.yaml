@@ -204,6 +204,9 @@ importers:
       vue-tsc:
         specifier: ^2.0.21
         version: 2.0.21(typescript@5.4.5)
+      workbox-window:
+        specifier: ^7.1.0
+        version: 7.1.0
 
 packages:
 

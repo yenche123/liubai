@@ -42,13 +42,19 @@ export default defineConfig({
     }),
 
     // 使用 SSL
-    // mkcert(),
+    mkcert(),
 
     // PWA
     VitePWA({
       registerType: "autoUpdate",
       manifest: false,
       strategies: "generateSW",
+      devOptions: {
+        enabled: true,
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg}']
+      }
     }),
 
     // 使用 svg 雪碧图

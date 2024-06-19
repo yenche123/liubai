@@ -48,18 +48,24 @@ const sendMessage = async (message: string) => {
 // Only when an error occurs and it will be captured by Sentry,
 // the breadcrumb will be recorded
 const addBreadcrumb = async (breadcrumb: Sentry_Breadcrumb) => {
+
   // 1. check if sentry has been existed
   const hasSentry = isSentryExisted()
-  if(!hasSentry) return
-
-  // 2. add breadcrumb
-  const bc: Sentry_Breadcrumb = {
-    type: "default",
-    level: "info",
-    ...breadcrumb,
+  if(hasSentry) {
+    // 2. add breadcrumb
+    const bc: Sentry_Breadcrumb = {
+      type: "default",
+      level: "info",
+      ...breadcrumb,
+    }
+    const Sentry = await getSentry()
+    Sentry.addBreadcrumb(bc)
   }
-  const Sentry = await getSentry()
-  Sentry.addBreadcrumb(bc)
+
+  // 3. add message
+  if(breadcrumb.message) {
+    sendMessage(breadcrumb.message)
+  }
 }
 
 // when workspace state is changed, please trigger the function

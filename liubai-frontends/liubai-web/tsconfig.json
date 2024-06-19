@@ -15,7 +15,8 @@
     "skipLibCheck": true,
     "types": [
       "./node_modules/user-agent-data-types",
-      "google.accounts"
+      "google.accounts",
+      "vite-plugin-pwa/vue"
     ],
     "paths": {
       "~/*": ["src/*"]
