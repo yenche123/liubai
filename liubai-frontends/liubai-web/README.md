@@ -61,6 +61,10 @@ Build! Anyway
 2. https://favicon.inbrowser.app/tools/favicon-generator
 3. https://realfavicongenerator.net/
 
+### workbox-window
+
+若 VitePWA 的配置项 devOptions.enable 为 `true` 时，请安装 `devDependencies` 开发依赖 `workbox-window` 否则会报错；另外，当开启这个选项时，无法使用热更新。
+
 
 ## 前后端同步原则
 

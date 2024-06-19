@@ -53,7 +53,6 @@ export function useLpMain(
   watch(width, (newV) => {
     if(widthTimeout) clearTimeout(widthTimeout)
     widthTimeout = setTimeout(() => {
-      console.log("width changed in useLpMain......")
       widthTimeout = undefined
       calculateIndicator()
     }, 200)

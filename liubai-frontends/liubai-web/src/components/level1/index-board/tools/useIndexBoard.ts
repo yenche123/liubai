@@ -64,6 +64,8 @@ function useServiceWorker(
   }
 
 
+  // Reference: 
+  // https://vite-pwa-org.netlify.app/guide/periodic-sw-updates.html#handling-edge-cases
   const _checkSW = async (swUrl: string, r: ServiceWorkerRegistration) => {
     if(r.installing || !navigator) return
 
@@ -98,6 +100,9 @@ function useServiceWorker(
       console.log(r)
       liuConsole.sendMessage(`Service Worker registered at: ${swUrl}`)
       if(!r) return
+      setTimeout(() => {
+        _checkSW(swUrl, r)
+      }, time.SECONED)
       setInterval(() => {
         _checkSW(swUrl, r)
       }, SEC_20)

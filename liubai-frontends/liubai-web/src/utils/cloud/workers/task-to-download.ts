@@ -431,7 +431,7 @@ onmessage = async (e) => {
 
     // 1.2 如果没有任何任务，退出
     if(len < 1) {
-      console.log("没有下载任务 break")
+      // console.log("没有下载任务 break")
       break
     }
 
