@@ -119,9 +119,8 @@ export async function uploadViaQiniu(
         category: "upload.file",
         message: "there is no cloud_url in uploadViaQiniu",
         level: "warning",
-        data: res,
       })
-      liuConsole.sendMessage("No cloud_url in uploadViaQiniu")
+      liuConsole.sendException(res)
     }
   }
 
