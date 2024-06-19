@@ -23,7 +23,14 @@ function packThread(
 ) {
 
   let v = content
-  const { member, _id, user, liuDesc, spaceId, title } = v
+  const { 
+    member, 
+    _id, 
+    user, 
+    liuDesc, 
+    spaceId, 
+    title,
+  } = v
 
   let myFavorite = false
   let myFavoriteStamp: number | undefined
@@ -65,8 +72,11 @@ function packThread(
   }
 
   // 删除于 xxxx-xx-xx
-  let removedStr = v.oState === "REMOVED" ? liuUtil.showBasicTime(v.updatedStamp) : undefined
-
+  let removedStr: string | undefined
+  if(v.oState === "REMOVED" && v.removedStamp) {
+    removedStr = liuUtil.showBasicTime(v.removedStamp)
+  }
+  
   const obj: ThreadShow = {
     _id,
     first_id: v.first_id,
