@@ -20,7 +20,7 @@ const icon_color = `var(--main-code)`
     <div class="liu-highlight-box a2hs-box"
       :class="{ 'a2hs-box_show': nvtData.show }"
     >
-      <div class="a2hs-first-bar">
+      <div class="liu-no-user-select a2hs-first-bar">
         <span>{{ t('pwa.new_version_title') }}</span>
         <div class="a2hsf-footer">
           <div class="a2hs-close-box" @click.stop="$emit('cancel')">
@@ -30,7 +30,7 @@ const icon_color = `var(--main-code)`
           </div>
         </div>
       </div>
-      <div class="a2hs-desc">
+      <div class="liu-no-user-select a2hs-desc">
         <span>{{ t('pwa.new_version_desc') }}</span>
       </div>
       <div class="a2hs-btn-bar">

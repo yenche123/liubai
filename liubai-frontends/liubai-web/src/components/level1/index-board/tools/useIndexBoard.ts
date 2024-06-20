@@ -175,21 +175,9 @@ function listenToNewVersion(
     }
 
     const {
-      lastPromptNewVersion,
       lastCancelNewVersion,
       lastConfirmNewVersion,
     } = localCache.getOnceData()
-
-
-    if(lastPromptNewVersion) {
-      const hr1 = cfg.newVersion.prompt_min_duration
-      const duration1 = hr1 * time.HOUR
-      const within1 = time.isWithinMillis(lastPromptNewVersion, duration1)
-      if(within1) {
-        console.warn(`过去 ${hr1} 小时内已提示过新版本`)
-        return
-      }
-    }
 
     if(lastCancelNewVersion) {
       const hr2 = cfg.newVersion.cancel_min_duration
@@ -211,7 +199,6 @@ function listenToNewVersion(
       }
     }
     
-    localCache.setOnceData("lastPromptNewVersion", time.getTime())
     ctx.ibData.newVersion = true
   }
 

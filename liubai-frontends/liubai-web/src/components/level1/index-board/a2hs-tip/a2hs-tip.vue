@@ -20,7 +20,7 @@ const icon_color = `var(--main-code)`
     <div class="liu-highlight-box a2hs-box"
       :class="{ 'a2hs-box_show': atData.show }"
     >
-      <div class="a2hs-first-bar">
+      <div class="liu-no-user-select a2hs-first-bar">
         <span>{{ t('a2hs.title') }}</span>
         <div class="a2hsf-footer">
           <div class="a2hs-close-box" @click.stop="$emit('tapclose')">
@@ -30,7 +30,7 @@ const icon_color = `var(--main-code)`
           </div>
         </div>
       </div>
-      <div class="a2hs-desc">
+      <div class="liu-no-user-select a2hs-desc">
         <span>{{ t('a2hs.desc') }}</span>
       </div>
       <div class="a2hs-btn-bar">
