@@ -1,9 +1,10 @@
 import { onMounted, reactive, ref, watch } from "vue";
 import type { LpmProps, LpmData, LpmEmit } from "./types"
 import liuUtil from '~/utils/liu-util';
-import { useWindowSize } from "~/hooks/useVueUse";
-import { type LiuTimeout } from "~/utils/basic/type-tool";
+import { useDebounceFn, useWindowSize } from "~/hooks/useVueUse";
 import valTool from "~/utils/basic/val-tool";
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import { storeToRefs } from "pinia";
 
 export function useLpMain(
   props: LpmProps,
@@ -36,27 +37,31 @@ export function useLpMain(
     if(!childEl) return
     const info = liuUtil.getIndicatorLeftAndWidth(parentEl, childEl)
     if(!info) return
+    console.log("info: ", info)
     lpmData.indicatorData = info
   }
 
   watch(() => lpmData.current, (newV) => {
     calculateIndicator()
   })
-  onMounted(async () => {
-    calculateIndicator()
-    await valTool.waitMilli(500)
-    calculateIndicator()
-  })
 
-  let widthTimeout: LiuTimeout
+  const _doubleCheck = async (ms: number = 500) => {
+    console.log("double check: ", ms)
+    calculateIndicator()
+    await valTool.waitMilli(ms)
+    calculateIndicator()
+  }
+
+  onMounted(_doubleCheck)
+  const gStore = useGlobalStateStore()
+  const { windowLoaded } = storeToRefs(gStore)
+  watch(windowLoaded, () => _doubleCheck(900))
+
+  const _debounce = useDebounceFn(() => {
+    calculateIndicator()
+  }, 200)
   const { width } = useWindowSize()
-  watch(width, (newV) => {
-    if(widthTimeout) clearTimeout(widthTimeout)
-    widthTimeout = setTimeout(() => {
-      widthTimeout = undefined
-      calculateIndicator()
-    }, 200)
-  })
+  watch(width, _debounce)
 
   // 监听输入是否符合
   watch(() => lpmData.emailVal, (newV) => {
@@ -73,7 +78,6 @@ export function useLpMain(
     if(!el) return
     el.blur()
   }
-
   
   return {
     lpSelectsEl,

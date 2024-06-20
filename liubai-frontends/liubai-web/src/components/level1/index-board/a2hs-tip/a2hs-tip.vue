@@ -34,7 +34,11 @@ const icon_color = `var(--main-code)`
         <span>{{ t('a2hs.desc') }}</span>
       </div>
       <div class="a2hs-btn-bar">
-        <custom-btn type="main" size="mini" @click="$emit('tapinstall')">
+        <custom-btn type="main" 
+          size="mini" 
+          @click="$emit('tapinstall')" 
+          class="a2hs-btn"
+        >
           <span class="a2hs-btn_span">{{ t('a2hs.add') }}</span>
         </custom-btn>
       </div>
@@ -101,6 +105,10 @@ const icon_color = `var(--main-code)`
 
 .a2hs-btn-bar {
   display: flex;
+}
+
+.a2hs-btn {
+  min-width: 100px;
 }
 
 .a2hs-btn_span {

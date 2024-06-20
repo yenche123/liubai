@@ -42,6 +42,7 @@ const {
     <input class="lp-email-input" type="email" 
       :placeholder="t('login.email_ph')" 
       v-model="lpmData.emailVal"
+      id="login-email"
       ref="lpEmailInput"
       @keyup.enter.exact="onEmailEnter"
     />

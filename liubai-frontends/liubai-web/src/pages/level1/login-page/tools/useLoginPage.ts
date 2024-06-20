@@ -28,6 +28,7 @@ import {
 } from "vue";
 import middleBridge from "~/utils/middle-bridge";
 import valTool from "~/utils/basic/val-tool";
+import liuApi from "~/utils/liu-api";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -139,31 +140,45 @@ function listenRouteAndLastLogged(
   let timeout: LiuTimeout
   const lastLogged = toRef(lpData, "lastLogged")
 
-  const _close = () => {
+  const _close = (checkRoute: boolean = true) => {
+    // 1. hide loading
     cui.hideLoading()
     lpData.lastLogged = 0
+
+    // 2. clear timeout
     if(timeout) {
       clearTimeout(timeout)
       timeout = undefined
+    }
+
+    // 3. reload if it's still in login page
+    if(!checkRoute) return
+    const name3 = rr.route.name
+    if(!valTool.isStringWithVal(name3)) return
+    const inLoginPage = name3.startsWith("login")
+    if(inLoginPage) {
+      console.log("去 reload......")
+      liuApi.route.reload()
     }
   }
 
   const _setTimeout = () => {
     if(timeout) clearTimeout(timeout)
     timeout = setTimeout(() => {
-      // console.log("3s 到期............")
+      console.warn("5s 到期............")
       timeout = undefined
       _close()
-    }, 3000)
+    }, 5000)
   }
 
   const _toListen = () => {
     watchStop = watch([lastLogged, rr.route], (
       [newLastLogged, newRoute]
     ) => {
+      if(!newLastLogged || newLastLogged <= 0) return
+
       const newName = newRoute.name
       if(!valTool.isStringWithVal(newName)) return
-      if(!newLastLogged || newLastLogged <= 0) return
 
       const isInLoginPage = newName.startsWith("login")
       if(isInLoginPage) {
@@ -171,10 +186,8 @@ function listenRouteAndLastLogged(
         _setTimeout()
       }
       else {
-        // console.log("路由已变化，去关闭 loading 弹窗")
-        _close()
+        _close(false)
       }
-
     })
   }
 
@@ -184,6 +197,7 @@ function listenRouteAndLastLogged(
 
   onDeactivated(() => {
     watchStop?.()
+    _close(false)
   })
 }
 
@@ -253,8 +267,8 @@ function canLoginUsingLastLogged(
 ) {
   const s = lpData.lastLogged
   if(!s) return true
-  const diff = (time.getTime() - s) / time.SECONED
-  if(diff < 5) return false
+  const isWithin = time.isWithinMillis(s, 6 * time.SECONED)
+  if(isWithin) return false
   return true
 }
 
@@ -435,7 +449,7 @@ function toGetLoginInitData(
     lpData.initStamp = time.getTime()
 
     // google one-tap 登录后端流程已跑通
-    // loadGoogleIdentityService(rr, lpData)
+    loadGoogleIdentityService(rr, lpData)
     a(true)
   }
   initPromise = new Promise(_request)
