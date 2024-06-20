@@ -3,17 +3,18 @@ import { useDebounceFn, useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
 import { useLayoutStore } from "~/views/useLayoutStore"
 import { storeToRefs } from "pinia"
-import type { CeData } from "./types"
+import type { CeData, CeProps } from "./types"
 import { deviceChaKey } from "~/utils/provide-keys"
 
 
 export function useEditorHeight(
+  props: CeProps,
   ceData: CeData,
 ) {
   const maxEditorHeight = ref(500)
   const minEditorHeight = ref(cfg.min_editor_height)
 
-  listenChange(maxEditorHeight, minEditorHeight, ceData)
+  listenChange(props, maxEditorHeight, minEditorHeight, ceData)
 
   return {
     maxEditorHeight,
@@ -22,6 +23,7 @@ export function useEditorHeight(
 }
 
 function listenChange(
+  props: CeProps,
   maxEditorHeight: Ref<number>,
   minEditorHeight: Ref<number>,
   ceData: CeData,
@@ -42,6 +44,11 @@ function listenChange(
       h -= Math.round(winH / 15)
       if(sidebarStatus.value === "fullscreen") {
         h += cfg.navi_height
+      }
+    }
+    else {
+      if(props.threadId) {
+        h -= cfg.navi_height
       }
     }
 

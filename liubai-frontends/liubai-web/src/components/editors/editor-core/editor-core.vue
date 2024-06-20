@@ -155,7 +155,7 @@ defineExpose({ editor })
       background: var(--code-block-bg);
       color: #eee;
       font-family: 'JetBrainsMono', monospace;
-      padding: 2.5rem 1rem 0.75rem;
+      padding: 2.75rem 1rem 0.75rem;
       border-radius: 0.5rem;
       margin: 0.75rem 0;
 

@@ -43,7 +43,7 @@ const { ceData } = initCeData(props, emits, editor)
 const {
   maxEditorHeight, 
   minEditorHeight, 
-} = useEditorHeight(ceData)
+} = useEditorHeight(props, ceData)
 
 const {
   moreRef,
