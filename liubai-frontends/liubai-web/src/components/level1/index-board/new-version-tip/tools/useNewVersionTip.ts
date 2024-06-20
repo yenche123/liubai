@@ -1,18 +1,18 @@
 import { reactive, toRef } from "vue";
-import type { A2hsTipProps, AtData } from "./types";
+import type { NvtProps, NvtData } from "./types";
 import { useOpenClose } from "~/hooks/useOpenClose";
 
 
-export function useA2hsTip(props: A2hsTipProps) {
-  const atData = reactive<AtData>({
+export function useA2hsTip(props: NvtProps) {
+  const nvtData = reactive<NvtData>({
     enable: false,
     show: false,
   })
 
   const isOn = toRef(props, "expand")
-  useOpenClose(isOn, atData)
+  useOpenClose(isOn, nvtData)
 
   return {
-    atData,
+    nvtData,
   }
 }

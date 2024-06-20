@@ -419,5 +419,10 @@
     "tip_confirm": "Try it out",
     "fail_to_add": "Fail to Add",
     "fail_to_add_tip": "Open Chrome browser and try again please."
+  },
+  "pwa": {
+    "new_version_title": "New Version",
+    "new_version_desc": "New version is ready. Click to launch!",
+    "new_version_lanuch": "Launch🚀"
   }
 }

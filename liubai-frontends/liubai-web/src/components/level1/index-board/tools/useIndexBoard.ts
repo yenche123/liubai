@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, reactive } from "vue";
+import { onBeforeUnmount, onMounted, reactive, watch } from "vue";
 import type { IbData } from "./types";
 import liuApi from "~/utils/liu-api";
 import cui from "~/components/custom-ui";
@@ -9,6 +9,9 @@ import {
   useRouteAndLiuRouter,
 } from "~/routes/liu-router";
 import cfg from "~/config";
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import { storeToRefs } from "pinia";
+import { toUpdateSW } from "~/hooks/tools/initServiceWorker";
 
 interface IbCtx {
   rr: RouteAndLiuRouter
@@ -21,27 +24,41 @@ export function useIndexBoard() {
   const rr = useRouteAndLiuRouter()
   const ibData = reactive<IbData>({
     a2hs: false,
+    newVersion: false,
   })
   const ctx: IbCtx = {
     rr,
     ibData,
   }
-
+  listenToNewVersion(ctx)
   listenToA2HS(ibData)
 
-  const onTapInstall = () => {
-    toInstallA2HS(ctx)
-  }
-
-  const onTapCloseA2hsTip = () => {
-    toCloseA2HS(ctx)
-  }
-  
   return {
     ibData,
-    onTapInstall,
-    onTapCloseA2hsTip,
+    onTapInstall: () => toInstallA2HS(ctx),
+    onTapCloseA2hsTip: () => toCloseA2HS(ctx),
+    onConfirmNewVersion: () => toConfirmNewVersion(ctx),
+    onCancelNewVersion: () => toCancelNewVersion(ctx),
   }
+}
+
+
+async function toConfirmNewVersion(
+  ctx: IbCtx,
+) {
+  ctx.ibData.newVersion = false
+  localCache.setOnceData("lastConfirmNewVersion", time.getTime())
+
+  console.log("去确认更新......")
+  await toUpdateSW()
+  console.log("更新 SW 完毕......")
+}
+
+function toCancelNewVersion(
+  ctx: IbCtx,
+) {
+  ctx.ibData.newVersion = false
+  localCache.setOnceData("lastCancelNewVersion", time.getTime())
 }
 
 
@@ -139,6 +156,71 @@ function cannotSupportA2HS(
   ctx.ibData.a2hs = false
 }
 
+function listenToNewVersion(
+  ctx: IbCtx,
+) {
+  const gStore = useGlobalStateStore()
+  const { hasNewVersion } = storeToRefs(gStore)
+
+  const _checkIfPrompt = () => {
+    const { a2hs, newVersion } = ctx.ibData
+    if(a2hs) {
+      console.log("a2hs has already existed")
+      return
+    }
+
+    if(newVersion) {
+      console.log("newVersion has already existed")
+      return
+    }
+
+    const {
+      lastPromptNewVersion,
+      lastCancelNewVersion,
+      lastConfirmNewVersion,
+    } = localCache.getOnceData()
+
+
+    if(lastPromptNewVersion) {
+      const hr1 = cfg.newVersion.prompt_min_duration
+      const duration1 = hr1 * time.HOUR
+      const within1 = time.isWithinMillis(lastPromptNewVersion, duration1)
+      if(within1) {
+        console.log(`过去 ${hr1} 小时内已提示过新版本`)
+        return
+      }
+    }
+
+    if(lastCancelNewVersion) {
+      const hr2 = cfg.newVersion.cancel_min_duration
+      const duration2 = hr2 * time.HOUR
+      const within2 = time.isWithinMillis(lastCancelNewVersion, duration2)
+      if(within2) {
+        console.log(`过去 ${hr2} 小时内已取消过新版本`)
+        return
+      }
+    }
+
+    if(lastConfirmNewVersion) {
+      const hr3 = cfg.newVersion.confirm_min_duration
+      const duration3 = hr3 * time.HOUR
+      const within3 = time.isWithinMillis(lastConfirmNewVersion, duration3)
+      if(within3) {
+        console.log(`过去 ${hr3} 小时内已确认过新版本`)
+        return
+      }
+    }
+    
+    localCache.setOnceData("lastPromptNewVersion", time.getTime())
+    ctx.ibData.newVersion = true
+  }
+
+  watch(hasNewVersion, (newV) => {
+    if(!newV) return
+    console.log("发现新版本......")
+    _checkIfPrompt()
+  })
+}
 
 
 function listenToA2HS(
@@ -164,8 +246,9 @@ function listenToA2HS(
   }
 
   const _beforeInstallPrompt = (e: Event) => {
-    if(liuApi.canIUse.isArcBrowser()) return
     e.preventDefault()
+    if(liuApi.canIUse.isArcBrowser()) return
+    if(ibData.newVersion) return
     deferredPrompt = e
     ibData.a2hs = true
   }
@@ -198,7 +281,7 @@ function handleA2HSForSafari(
   //@ts-expect-error Property only exists on Safari
   const standalone = window.navigator.standalone
   if(typeof standalone !== "boolean") return
-  
+  if(ibData.newVersion) return
   ibData.a2hs = !standalone
 }
 

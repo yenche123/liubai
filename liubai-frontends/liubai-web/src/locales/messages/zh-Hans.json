@@ -419,5 +419,10 @@
     "tip_confirm": "试用七天",
     "fail_to_add": "添加失败",
     "fail_to_add_tip": "建议使用 Chrome 浏览器进行添加"
+  },
+  "pwa": {
+    "new_version_title": "发现新版本",
+    "new_version_desc": "新版本已完成准备，等待你一键启动",
+    "new_version_lanuch": "启动🚀"
   }
 }

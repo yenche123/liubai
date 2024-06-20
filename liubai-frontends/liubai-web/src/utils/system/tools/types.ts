@@ -38,6 +38,9 @@ export interface LocalOnceData {
 
   // service worker
   lastCheckSWStamp?: number
+  lastPromptNewVersion?: number      // last stamp to prompt new version
+  lastConfirmNewVersion?: number     // last stamp to confirm new version
+  lastCancelNewVersion?: number      // last stamp to cancel new version
 
 }
 

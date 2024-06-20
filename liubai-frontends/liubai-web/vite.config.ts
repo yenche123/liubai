@@ -42,21 +42,22 @@ export default defineConfig({
     }),
 
     // 使用 SSL
-    // mkcert(),
+    mkcert(),
 
     // PWA
     VitePWA({
-      registerType: "autoUpdate",
+      registerType: "prompt",
       manifest: false,
       strategies: "generateSW",
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg}']
       },
+      filename: "service-worker.js",
 
       // open it if you want to test service worker update on dev mode
-      // devOptions: {
-      //   enabled: true,
-      // },
+      devOptions: {
+        enabled: true,
+      },
     }),
 
     // 使用 svg 雪碧图

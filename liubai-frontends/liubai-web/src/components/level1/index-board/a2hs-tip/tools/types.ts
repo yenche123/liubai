@@ -2,7 +2,7 @@
 
 
 export interface A2hsTipProps {
-  a2hs: boolean
+  expand: boolean
 }
 
 export interface A2hsTipEmits {

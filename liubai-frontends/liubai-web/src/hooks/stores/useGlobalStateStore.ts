@@ -10,7 +10,19 @@ export interface KanbanStateChange {
   stateShow?: StateShow
 }
 
+
+
 export const useGlobalStateStore = defineStore("globalState", () => {
+
+  // varible to decide whether we have a new version
+  const hasNewVersion = ref(false)
+
+  const setNewVersion = (newVersion: boolean) => {
+    const oldV = hasNewVersion.value
+    if(oldV !== newVersion) {
+      hasNewVersion.value = newVersion
+    }
+  }
   
   // window.addEventListener("load") 是否已被触发
   const windowLoaded = ref(false)
@@ -64,6 +76,10 @@ export const useGlobalStateStore = defineStore("globalState", () => {
     commentEditorInputing,
     canListenKeyboard,
     isDragToSort,
+
+    // new version
+    hasNewVersion,
+    setNewVersion,
 
     // 看板（状态）变化
     kanbanStateChange,

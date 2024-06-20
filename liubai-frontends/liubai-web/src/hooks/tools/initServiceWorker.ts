@@ -5,10 +5,14 @@ import liuConsole from "~/utils/debug/liu-console";
 import localCache from "~/utils/system/local-cache";
 import time from "~/utils/basic/time";
 import valTool from '~/utils/basic/val-tool';
+import { type SimplePromise } from '~/utils/basic/type-tool';
+import { useGlobalStateStore } from '../stores/useGlobalStateStore';
 
 const SEC_20 = 20 * time.SECONED
 const MIN_1 = time.MINUTE
 const MIN_15 = 15 * time.MINUTE
+
+let _updateSW: SimplePromise | undefined
 
 export function initServiceWorker() {
   console.log("PWA info: ", pwaInfo)
@@ -46,11 +50,13 @@ export function initServiceWorker() {
 
     console.log("check out the result from service worker fetch: ")
     console.log(resp)
-    console.log(" ")
 
     if(resp?.status === 200) {
+      console.log("make service worker registeration update......")
       await r.update()
+      console.log("service worker registration updated!")
     }
+    console.log(" ")
   }
 
   const onRegisteredSW = (
@@ -81,16 +87,28 @@ export function initServiceWorker() {
   const {
     offlineReady,
     needRefresh,
+    updateServiceWorker,
   } = useRegisterSW({
     immediate: true,
     onRegisteredSW,
     onRegisterError,
   })
 
+  _updateSW = updateServiceWorker
+
+  const gStore = useGlobalStateStore()
+
   watch([offlineReady, needRefresh], ([newV1, newV2]) => {
     console.log("offlineReady: ", newV1)
     console.log("needRefresh: ", newV2)
     console.log(" ")
+    gStore.setNewVersion(newV2)
   })
-
 }
+
+export async function toUpdateSW() {
+  if(_updateSW) {
+    await _updateSW()
+  }
+}
+

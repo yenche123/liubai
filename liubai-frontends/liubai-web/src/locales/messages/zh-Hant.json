@@ -419,5 +419,10 @@
     "tip_confirm": "試用七天",
     "fail_to_add": "新增失敗",
     "fail_to_add_tip": "建議開啟 Chrome 瀏覽器再新增"
+  },
+  "pwa": {
+    "new_version_title": "發現新版本",
+    "new_version_desc": "新版本已準備完畢，等待你一鍵啟動",
+    "new_version_lanuch": "啟動🚀"
   }
 }
