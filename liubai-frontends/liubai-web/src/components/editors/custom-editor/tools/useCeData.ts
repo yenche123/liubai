@@ -26,6 +26,8 @@ import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 import { type EcSelectionChangeData } from "../../editor-core/tools/types";
 import { useDebounceFn } from "~/hooks/useVueUse";
 import { deviceChaKey } from '~/utils/provide-keys';
+import { checkCanSubmit } from "./some-funcs";
+
 
 let collectTimeout: LiuTimeout
 let spaceIdRef: Ref<string>
@@ -272,20 +274,6 @@ function toAutoChange(
     collectState(ctx, instant)
   }
 }
-
-
-function checkCanSubmit(
-  ceData: CeData,
-) {
-  const title = ceData.title?.trim()
-  const imgLength = ceData.images?.length
-  const fileLength = ceData.files?.length
-  const text = ceData.editorContent?.text.trim()
-  let newCanSubmit = Boolean(imgLength) || Boolean(text) || Boolean(fileLength)
-  newCanSubmit = newCanSubmit || Boolean(title)
-  ceData.canSubmit = newCanSubmit
-}
-
 
 function toWhenChange(
   date: Date | null,

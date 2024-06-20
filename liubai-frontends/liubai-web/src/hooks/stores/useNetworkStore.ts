@@ -24,11 +24,11 @@ export const useNetworkStore = defineStore("network", () => {
       downlink,
     } = newV
 
-    console.log("isOnline: ", isOnline)
-    console.log("effectiveType: ", effectiveType)
-    console.log("rtt: ", rtt)
-    console.log("downlink: ", downlink)
-    console.log(" ")
+    // console.log("isOnline: ", isOnline)
+    // console.log("effectiveType: ", effectiveType)
+    // console.log("rtt: ", rtt)
+    // console.log("downlink: ", downlink)
+    // console.log(" ")
 
     if(!isSupported) return
     if(!isOnline) {

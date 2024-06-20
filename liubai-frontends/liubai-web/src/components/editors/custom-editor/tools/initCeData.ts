@@ -17,6 +17,7 @@ import time from "~/utils/basic/time"
 import { 
   getRemindMeFromThread, 
   checkIfEditorHasData,
+  checkCanSubmit,
 } from "./some-funcs"
 import liuEnv from "~/utils/liu-env"
 import type { 
@@ -225,14 +226,16 @@ async function initDraftFromDraft(
   ceData.files = draft.files
   ceData.tagIds = draft.tagIds ?? []
 
-  setEditorContent(ctx, draft.liuDesc)
+  let descList = draft.liuDesc
+  if(descList) {
+    descList = transferUtil.liuToTiptap(descList)
+  }
+  setEditorContent(ctx, descList)
 
   if(!loadCloud) return
 
   const threadId = ceData.threadEdited
   const hasData = checkIfEditorHasData(ceData)
-
-  console.log("checkIfEditorHasData: ", hasData)
 
   if(threadId || hasData) {
     initFromCloudDraft(ctx, draft)
@@ -428,6 +431,7 @@ function setEditorContent(
     delete ceData.editorContent
   }
   numWhenSet.value++
+  checkCanSubmit(ceData)
 }
 
 async function resetFromCloud(

@@ -33,7 +33,9 @@ function tiptapToLiu(
   return newList
 }
 
-function liuToTiptap(list: LiuContent[]) {
+function liuToTiptap(
+  list: LiuContent[] | TipTapJSONContent[]
+) {
   const newList = depriveLink(list)
   return newList as TipTapJSONContent[]
 }

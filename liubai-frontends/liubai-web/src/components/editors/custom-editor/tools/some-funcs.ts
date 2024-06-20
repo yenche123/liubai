@@ -32,3 +32,15 @@ export function checkIfEditorHasData(
 
   return false
 }
+
+export function checkCanSubmit(
+  ceData: CeData,
+) {
+  const title = ceData.title?.trim()
+  const imgLength = ceData.images?.length
+  const fileLength = ceData.files?.length
+  const text = ceData.editorContent?.text.trim()
+  let newCanSubmit = Boolean(imgLength) || Boolean(text) || Boolean(fileLength)
+  newCanSubmit = newCanSubmit || Boolean(title)
+  ceData.canSubmit = newCanSubmit
+} 

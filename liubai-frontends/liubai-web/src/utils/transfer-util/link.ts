@@ -344,7 +344,9 @@ function _howManyLowerCase(text: string) {
 
 
 // 卸载 link
-export function depriveLink(list: LiuContent[]) {
+export function depriveLink(
+  list: LiuContent[] | TipTapJSONContent[]
+) {
   const newList = valTool.copyObject(list)
   for(let i=0; i<newList.length; i++) {
     const v = newList[i]
@@ -356,7 +358,7 @@ export function depriveLink(list: LiuContent[]) {
       "listItem", 
       "blockquote"
     ]
-    if(canDeepTypes.includes(type) && content) {
+    if(type && canDeepTypes.includes(type) && content) {
       v.content = depriveLink(content)
       continue
     }
@@ -367,7 +369,7 @@ export function depriveLink(list: LiuContent[]) {
     let index = -1
     marks.forEach((v2, i2) => {
       if(v2.type === "link") {
-        linkMark = v2
+        linkMark = v2 as LiuMarkAtom
         index = i2
       }
     })
