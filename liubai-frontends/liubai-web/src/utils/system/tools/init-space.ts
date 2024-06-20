@@ -102,10 +102,10 @@ async function whenRouteChange(
 
 
   // console.log("开始加载 space ..........")
-  console.time("init-space")
+  // console.time("init-space")
   const mySpace = await db.workspaces.get(g)
-  console.timeEnd("init-space")
-  console.log(mySpace)
+  // console.timeEnd("init-space")
+  // console.log(mySpace)
   
   if(!mySpace) return
   if(store.spaceId === mySpace._id) return

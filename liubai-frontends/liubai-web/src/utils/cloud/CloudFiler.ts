@@ -63,9 +63,9 @@ class CloudFiler {
     _this.downloadWorker = new DownloadWorker()
     _this.downloadWorker.onmessage = (e) => {
       const res = e.data as SyncResult
-      console.log("download worker onmessage: ")
-      console.log(res)
-      console.log(" ")
+      // console.log("download worker onmessage: ")
+      // console.log(res)
+      // console.log(" ")
 
       _this.lastStartToDownload = undefined
       _this.closeDownloadWorker()
