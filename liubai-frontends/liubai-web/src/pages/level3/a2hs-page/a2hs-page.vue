@@ -1,20 +1,13 @@
 <script setup lang="ts">
-import MainView from "~/views/main-view/main-view.vue";
-import ViceView from "~/views/vice-view/vice-view.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
 import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import A2hsDesktop from "./a2hs-desktop/a2hs-desktop.vue";
 import A2hsMobile from "./a2hs-mobile/a2hs-mobile.vue";
-import { useMainVice } from "~/hooks/useMainVice";
 import liuApi from "~/utils/liu-api";
 import { onActivated } from "vue";
 import middleBridge from "~/utils/middle-bridge";
 
-const { 
-  hiddenScrollBar, 
-  onVvWidthChange,
-} = useMainVice({ setDefaultTitle: false })
 const cha = liuApi.getCharacteristic()
 
 onActivated(() => {
@@ -25,8 +18,8 @@ onActivated(() => {
 <template>
 
   <!-- 主视图 -->
-  <main-view>
-    <scroll-view :hidden-scroll-bar="hiddenScrollBar">
+  <div class="a2hs-container">
+    <scroll-view>
       <navi-virtual></navi-virtual>
 
       <div class="liu-mc-container">
@@ -39,13 +32,18 @@ onActivated(() => {
       </div>
 
     </scroll-view>
-    <navi-bar></navi-bar>
-  </main-view>
-
-  <!-- 副视图 -->
-  <vice-view @widthchange="onVvWidthChange"></vice-view>
+    <navi-bar :show-menu="false" ></navi-bar>
+  </div>
 
 </template>
 <style scoped>
+
+.a2hs-container {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  position: relative;
+  background-color: var(--bg-color);
+}
 
 </style>

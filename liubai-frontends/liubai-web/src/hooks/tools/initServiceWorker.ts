@@ -52,7 +52,6 @@ export function initServiceWorker() {
     console.log(resp)
 
     if(resp?.status === 200) {
-      console.log("make service worker registeration update......")
       console.time("r.update")
       await r.update()
       console.timeEnd("r.update")

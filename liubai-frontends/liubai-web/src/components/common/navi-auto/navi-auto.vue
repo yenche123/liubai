@@ -35,7 +35,9 @@ const default_color = "var(--navi-normal)"
 
     <div class="na-box">
 
-      <div class="liu-hover na-menu-box" @click="onTapMenu">
+      <div class="liu-hover na-menu-box" @click="onTapMenu"
+        style="margin-inline-start: -6px;"
+      >
         <svg-icon class="na-menu-icon" 
           :color="default_color"
           name="stair_menu"
@@ -72,7 +74,7 @@ const default_color = "var(--navi-normal)"
   z-index: 550;
 
   .na-box {
-    width: 92%;
+    width: var(--card-percent);
     height: 100%;
     max-width: var(--card-max);
     min-width: var(--card-min);

@@ -3,19 +3,10 @@ import cfg from "~/config"
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { useNaviBar } from "./tools/useNaviBar";
 import { useI18n } from "vue-i18n";
+import { naviBarProps } from "./tools/types"
 
 const { router } = useRouteAndLiuRouter()
-defineProps({
-  title: {
-    type: String,
-  },
-  titleKey: {
-    type: String,
-  },
-  placeholderKey: {
-    type: String,
-  }
-})
+const props = defineProps(naviBarProps)
 
 const onTapBack = (e: MouseEvent) => {
   router.naviBack()
@@ -26,7 +17,7 @@ const { t } = useI18n()
 const {
   showMenuBtn,
   onTapMenu
-} = useNaviBar()
+} = useNaviBar(props)
 
 </script>
 <template>
@@ -37,6 +28,7 @@ const {
       <!-- back -->
       <div class="liu-hover nbb-normal" @click.stop="onTapBack"
         :class="{ 'nbb-small': showMenuBtn }"
+        style="margin-inline-start: -6px;"
       >
         <SvgIcon class="nb-icon" name="arrow-back700"></SvgIcon>
       </div>
@@ -71,7 +63,7 @@ const {
   z-index: 540;
 
   .nb-box {
-    width: 92%;
+    width: var(--card-percent);
     height: 100%;
     max-width: var(--card-max);
     min-width: var(--card-min);

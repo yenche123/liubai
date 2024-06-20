@@ -70,11 +70,11 @@ export default {
   },
 
   newVersion: {
-    prompt_min_duration: 1,       // 新版本提示的最短间隔，单位小时;
+    prompt_min_duration: 3,       // 新版本提示的最短间隔，单位小时;
         // 举例: 若过去 prompt_min_duration 小时内有弹窗新版本，就拒绝本次弹窗
-    cancel_min_duration: 2,       // 取消新版本的最短间隔，单位小时 
+    cancel_min_duration: 9,       // 取消新版本的最短间隔，单位小时 
         // 举例: 若过去 cancel_min_duration 小时内有点击取消弹窗，就拒绝本次弹窗         
-    confirm_min_duration: 10,     // 新版本确认的最短间隔，单位小时
+    confirm_min_duration: 18,     // 新版本确认的最短间隔，单位小时
         // 举例: 若过去 confirm_min_duration 分钟内已接受，就拒绝本次弹窗
   },
 

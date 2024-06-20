@@ -4,8 +4,9 @@ import cfg from "~/config";
 import { useWindowSize } from "~/hooks/useVueUse";
 import { useLayoutStore } from "~/views/useLayoutStore";
 import sideBar from "~/views/side-bar";
+import { type NaviBarProps } from "./types";
 
-export function useNaviBar() {
+export function useNaviBar(props: NaviBarProps) {
   const showMenuBtn = ref(false)
 
   const { width } = useWindowSize()
@@ -21,7 +22,9 @@ export function useNaviBar() {
     if(w1 < cfg.sidebar_close_point) newV = true
     if(w1 < cfg.sidebar_open_point && w2 <= 0) newV = true
 
-    if(newV !== oldV) showMenuBtn.value = newV
+    if(props.showMenu) {
+      if(newV !== oldV) showMenuBtn.value = newV
+    }
   }
 
   watch([sidebarWidth, width], () => {

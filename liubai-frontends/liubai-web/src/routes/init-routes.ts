@@ -222,13 +222,11 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/a2hs",
-    components: {
-      default: A2hsPage,
-      LeftSidebar,
-    },
+    component: A2hsPage,
     name: "a2hs",
     meta: {
       keepAlive: true,
+      inApp: false,
     }
   },
   {

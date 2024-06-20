@@ -36,6 +36,7 @@
   --card-min: 200px;
   --card-max: 580px;
   --card-percent: 90%;
+  --vice-percent: 90%;     /** 适用于侧边栏的导航栏宽度 */
 
   /** 常用按钮尺寸 */
   --btn-max: 250px;
@@ -47,6 +48,7 @@
 @media screen and (max-width: 340px) {
   :root {
     --card-percent: 92%;
+    --vice-percent: 92%;
   }
 }
 
@@ -154,15 +156,15 @@ input {
   transition: .3s;
 }
 
-@container liu-mc-container (min-width: 300px) {
-  .liu-mc-container > .liu-mc-box {
-    width: 93%;
-  }
-}
-
 @container liu-mc-container (min-width: 420px) {
   .liu-mc-container > .liu-mc-box {
     width: 92%;
+  }
+}
+
+@media screen and (min-width: 420px) {
+  :root {
+    --card-percent: 92%;
   }
 }
 
@@ -172,9 +174,22 @@ input {
   }
 }
 
+@media screen and (min-width: 460px) {
+  :root {
+    --card-percent: 90%;
+  }
+}
+
+
 @container liu-mc-container (min-width: 500px) {
   .liu-mc-container > .liu-mc-box {
     width: 88%;
+  }
+}
+
+@media screen and (min-width: 500px) {
+  :root {
+    --card-percent: 88%;
   }
 }
 
@@ -184,9 +199,22 @@ input {
   }
 }
 
+@media screen and (min-width: 560px) {
+  :root {
+    --card-percent: 85%;
+  }
+}
+
+
 @container liu-mc-container (min-width: 610px) {
   .liu-mc-container > .liu-mc-box {
     width: 80%;
+  }
+}
+
+@media screen and (min-width: 610px) {
+  :root {
+    --card-percent: 90%;
   }
 }
 

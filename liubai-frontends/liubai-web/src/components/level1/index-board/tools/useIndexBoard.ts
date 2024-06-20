@@ -165,12 +165,12 @@ function listenToNewVersion(
   const _checkIfPrompt = () => {
     const { a2hs, newVersion } = ctx.ibData
     if(a2hs) {
-      console.log("a2hs has already existed")
+      console.warn("a2hs has already existed")
       return
     }
 
     if(newVersion) {
-      console.log("newVersion has already existed")
+      console.warn("newVersion has already existed")
       return
     }
 
@@ -186,7 +186,7 @@ function listenToNewVersion(
       const duration1 = hr1 * time.HOUR
       const within1 = time.isWithinMillis(lastPromptNewVersion, duration1)
       if(within1) {
-        console.log(`过去 ${hr1} 小时内已提示过新版本`)
+        console.warn(`过去 ${hr1} 小时内已提示过新版本`)
         return
       }
     }
@@ -196,7 +196,7 @@ function listenToNewVersion(
       const duration2 = hr2 * time.HOUR
       const within2 = time.isWithinMillis(lastCancelNewVersion, duration2)
       if(within2) {
-        console.log(`过去 ${hr2} 小时内已取消过新版本`)
+        console.warn(`过去 ${hr2} 小时内已取消过新版本`)
         return
       }
     }
@@ -206,7 +206,7 @@ function listenToNewVersion(
       const duration3 = hr3 * time.HOUR
       const within3 = time.isWithinMillis(lastConfirmNewVersion, duration3)
       if(within3) {
-        console.log(`过去 ${hr3} 小时内已确认过新版本`)
+        console.warn(`过去 ${hr3} 小时内已确认过新版本`)
         return
       }
     }
@@ -217,7 +217,7 @@ function listenToNewVersion(
 
   watch(hasNewVersion, (newV) => {
     if(!newV) return
-    console.log("发现新版本......")
+    console.log("发现新版本.................")
     _checkIfPrompt()
   })
 }
