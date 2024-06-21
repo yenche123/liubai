@@ -206,6 +206,7 @@ const {
   position: relative;
   display: flex;
   align-items: center;
+  z-index: 50;
 }
 
 .kvch-shadow {
