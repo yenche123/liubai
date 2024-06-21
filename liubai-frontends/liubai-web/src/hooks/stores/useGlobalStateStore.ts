@@ -10,8 +10,6 @@ export interface KanbanStateChange {
   stateShow?: StateShow
 }
 
-
-
 export const useGlobalStateStore = defineStore("globalState", () => {
 
   // varible to decide whether we have a new version

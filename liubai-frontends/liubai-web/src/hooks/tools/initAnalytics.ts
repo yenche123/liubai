@@ -1,10 +1,18 @@
 import valTool from "~/utils/basic/val-tool"
 import liuEnv from "~/utils/liu-env"
+import { waitWindowLoaded } from "~/utils/wait/wait-window-loaded"
 
-export function initAnalytics() {
-  
+export async function initAnalytics() {
+
+  console.time("wait window loaded")
+  await waitWindowLoaded()
+  console.timeEnd("wait window loaded")
+
   const _env = liuEnv.getEnv()
-  const { 
+  const {
+    BUGFENDER_APIURL,
+    BUGFENDER_BASEURL,
+    BUGFENDER_APPKEY,
     UMAMI_ID, 
     UMAMI_SCRIPT,
     MS_CLARITY_SCRIPT,
@@ -20,6 +28,10 @@ export function initAnalytics() {
     PLAUSIBLE_DOMAIN,
     PLAUSIBLE_SRC,
   } = _env
+
+  if(BUGFENDER_APIURL && BUGFENDER_BASEURL && BUGFENDER_APPKEY) {
+    initBugFender(BUGFENDER_APIURL, BUGFENDER_BASEURL, BUGFENDER_APPKEY)
+  }
 
   if(UMAMI_ID && UMAMI_SCRIPT) {
     initUmami(UMAMI_SCRIPT, UMAMI_ID)
@@ -50,6 +62,28 @@ export function initAnalytics() {
   }
 
 }
+
+
+async function initBugFender(
+  apiURL: string,
+  baseURL: string,
+  appKey: string,
+) {
+  const { Bugfender } = await import("@bugfender/sdk")
+
+  const version = LIU_ENV.version
+  Bugfender.init({
+    appKey,
+    apiURL, 
+    baseURL, 
+    version, 
+    printToConsole: false,
+    overrideConsoleMethods: false,
+    logBrowserEvents: false,
+    logUIEvents: false,
+  })
+}
+
 
 function initPlausible(
   src: string,
@@ -96,7 +130,6 @@ async function initOpenPanel(
   client_secret?: string,
 ) {
   const { Openpanel } = await import("@openpanel/web")
-
   new Openpanel({
     url: api,
     clientId: client_id,
@@ -105,7 +138,6 @@ async function initOpenPanel(
     trackAttributes: true,
     trackOutgoingLinks: true,
   })
-  
 }
 
 

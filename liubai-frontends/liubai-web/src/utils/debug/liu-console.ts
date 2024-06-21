@@ -10,6 +10,7 @@ import {
   isPostHogExisted,
   isClarityExisted,
 } from "./tools/some-funcs"
+import { waitAnalyticsInit } from "~/utils/wait/wait-analytics-init"
 import type { Sentry_Breadcrumb } from "./tools/types"
 import {
   setClarityUserProperties,
@@ -26,11 +27,14 @@ const sendException = async (err: any) => {
   const hasSentry = isSentryExisted()
   if(!hasSentry) return
 
+  await waitAnalyticsInit()
+
   const Sentry = await getSentry()
   Sentry.captureException(err)
 }
 
 const sendMessage = async (message: string) => {
+  await waitAnalyticsInit()
   const hasSentry = isSentryExisted()
   if(hasSentry) {
     const Sentry = await getSentry()
@@ -52,6 +56,8 @@ const addBreadcrumb = async (breadcrumb: Sentry_Breadcrumb) => {
   // 1. check if sentry has been existed
   const hasSentry = isSentryExisted()
   if(hasSentry) {
+    await waitAnalyticsInit()
+
     // 2. add breadcrumb
     const bc: Sentry_Breadcrumb = {
       type: "default",
@@ -70,6 +76,8 @@ const addBreadcrumb = async (breadcrumb: Sentry_Breadcrumb) => {
 
 // when workspace state is changed, please trigger the function
 const setUserTagsCtx = async () => {
+  await waitAnalyticsInit()
+
   const localP = localCache.getPreference()
 
   let email: string | undefined
