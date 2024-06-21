@@ -307,6 +307,10 @@ function _checkUrl_1(text: string) {
     // console.log(text)
   }
 
+  const firstChar = text[0]
+  if(firstChar === "/" || firstChar === ":") return false
+  if(firstChar === "-" || firstChar === ".") return false
+
   const reg = /^[^a-zA-Z]{2,}$/   // 避免字符串里 全是: 数字 . - 的情况
   if(reg.test(text)) {
     // console.log("正则检测失败....")
@@ -315,7 +319,7 @@ function _checkUrl_1(text: string) {
   }
   const engNum = _howManyLowerCase(text)
   if(engNum < 3) return false
-  if(text.indexOf("http") === 0) return true
+  if(text.startsWith("http")) return true
   const manNum = valTool.getChineseCharNum(text)
   if(manNum > 2 && !text.includes("/")) return false
   return true
