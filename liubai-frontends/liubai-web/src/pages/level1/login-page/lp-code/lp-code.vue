@@ -90,6 +90,7 @@ const { t } = useI18n()
   color: var(--main-normal);
   line-height: 1.5;
   white-space: pre;
+  text-wrap: balance;
 
   span::selection {
     background-color: var(--select-bg-2);
