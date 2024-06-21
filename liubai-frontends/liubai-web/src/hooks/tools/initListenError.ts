@@ -3,6 +3,7 @@
 // which are inported
 
 import liuConsole from "~/utils/debug/liu-console"
+import { toUpdateSW } from "./initServiceWorker"
 
 export function initListenError() {
   if(typeof window === "undefined") return
@@ -15,6 +16,10 @@ export function initListenError() {
       level: "error",
     })
     liuConsole.sendException(evt)
+  }
+
+  const _sendSkipWaitingMsg = () => {
+    toUpdateSW()
   }
 
   const _reload = () => {
@@ -37,8 +42,12 @@ export function initListenError() {
     }, 1)
 
     setTimeout(() => {
+      _sendSkipWaitingMsg()
+    }, 2)
+
+    setTimeout(() => {
       _reload()
-    }, 500)
+    }, 1500)
   })
 
 }
