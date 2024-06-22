@@ -4,12 +4,8 @@ import { useCustomButton } from "./tools/useCustomButton"
 import RingLoader from "../../loaders/ring-loader/ring-loader.vue"
  
 const props = defineProps(customBtnProps)
-const { cbData } = useCustomButton(props)
-
 const emit = defineEmits(["click"])
-const onTapBtn = (e: Event) => {
-  emit("click", e)
-}
+const { cbData } = useCustomButton(props)
 
 </script>
 <template>
@@ -24,7 +20,7 @@ const onTapBtn = (e: Event) => {
       'btn-pure': type === 'pure',
     }"
     :disabled="disabled"
-    @click="onTapBtn"
+    @click="$emit('click', $event)"
   >
     <slot />
     <div v-if="cbData.enableLoading" class="btn-loading-box"
