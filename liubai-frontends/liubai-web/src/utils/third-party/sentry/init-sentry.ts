@@ -39,6 +39,9 @@ async function getSentryInitConfig() {
     tracePropagationTargets,
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
+    tracingOptions: {
+      trackComponents: true,
+    },
   }
   return cfg
 }
