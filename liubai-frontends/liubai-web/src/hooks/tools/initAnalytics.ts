@@ -27,6 +27,7 @@ export async function initAnalytics() {
     CF_WEB_ANALYTICS_SENDTO,
     PLAUSIBLE_DOMAIN,
     PLAUSIBLE_SRC,
+    MATOMO_URL,
   } = _env
 
   if(BUGFENDER_APIURL && BUGFENDER_BASEURL && BUGFENDER_APPKEY) {
@@ -61,6 +62,27 @@ export async function initAnalytics() {
     initPlausible(PLAUSIBLE_SRC, PLAUSIBLE_DOMAIN)
   }
 
+  if(MATOMO_URL) {
+    initMatomo(MATOMO_URL)
+  }
+
+}
+
+function initMatomo(
+  url: string,
+) {
+  // @ts-expect-error matomo
+  const _paq = window._paq = window._paq || []
+  _paq.push(['trackPageView'])
+  _paq.push(['enableLinkTracking'])
+  _paq.push(['setTrackerUrl', url + 'matomo.php'])
+  _paq.push(['setSiteId', '1'])
+
+  const scriptEl = document.createElement('script')
+  scriptEl.async = true
+  scriptEl.src = url + 'matomo.js'
+  
+  insertScript(scriptEl)
 }
 
 
@@ -93,9 +115,7 @@ function initPlausible(
   scriptEl.src = src
   scriptEl.defer = true
   scriptEl.setAttribute("data-domain", domain)
-  const headEl = document.querySelector("head")
-  if(!headEl) return
-  headEl.appendChild(scriptEl)
+  insertScript(scriptEl)
 }
 
 function initCloudflareWA(
@@ -113,9 +133,7 @@ function initCloudflareWA(
   scriptEl.src = script
   scriptEl.setAttribute("data-cf-beacon", cfBeacon)
   scriptEl.defer = true
-  const headEl = document.querySelector("head")
-  if(!headEl) return
-  headEl.appendChild(scriptEl)
+  insertScript(scriptEl)
 }
 
 
@@ -148,9 +166,7 @@ function initUmami(script: string, umami_id: string) {
   scriptEl.setAttribute("data-website-id", umami_id)
   scriptEl.defer = true
   scriptEl.async = true
-  const headEl = document.querySelector("head")
-  if(!headEl) return
-  headEl.appendChild(scriptEl)
+  insertScript(scriptEl)
 }
 
 
@@ -169,6 +185,12 @@ function initClarity(script: string, project_id: string) {
   text = text.replace("uuuuu", script);
   scriptEl.innerHTML = text
   
+  insertScript(scriptEl)
+}
+
+function insertScript(
+  scriptEl: HTMLScriptElement,
+) {
   const headEl = document.querySelector("head")
   if(!headEl) return
   headEl.appendChild(scriptEl)

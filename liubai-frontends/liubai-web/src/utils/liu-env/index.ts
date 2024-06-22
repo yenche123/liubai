@@ -77,6 +77,9 @@ function getEnv(): LiuSystemEnv {
   const PLAUSIBLE_DOMAIN = import.meta.env.VITE_PLAUSIBLE_DOMAIN
   const PLAUSIBLE_SRC = import.meta.env.VITE_PLAUSIBLE_SRC
 
+  // matomo
+  const MATOMO_URL = import.meta.env.VITE_MATOMO_URL
+
   // do not use sync system even if API_DOMAIN is set
   const donotUseSync = import.meta.env.VITE_DONOT_USE_SYNC
   const DONOT_USE_SYNC = donotUseSync === "01"
@@ -123,6 +126,7 @@ function getEnv(): LiuSystemEnv {
     CF_WEB_ANALYTICS_SENDTO,
     PLAUSIBLE_DOMAIN,
     PLAUSIBLE_SRC,
+    MATOMO_URL,
     DONOT_USE_SYNC,
   }
   return _env

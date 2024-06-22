@@ -69,6 +69,9 @@ export interface LiuSystemEnv {
   PLAUSIBLE_DOMAIN?: string
   PLAUSIBLE_SRC?: string
 
+  // matomo
+  MATOMO_URL?: string
+
   // don't use sync-system
   DONOT_USE_SYNC?: boolean
 
