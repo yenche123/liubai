@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import type { NvtProps, NvtEmits } from "./tools/types"
-import { useA2hsTip } from "./tools/useNewVersionTip"
+import { useNewVersionTip } from "./tools/useNewVersionTip"
+import { useLightBox } from "~/hooks/elements/useLightBox";
+import { toRef } from "vue";
 
 const props = defineProps<NvtProps>()
 defineEmits<NvtEmits>()
 
-const { nvtData } = useA2hsTip(props)
+const { nvtData } = useNewVersionTip(props)
 const { t } = useI18n()
 
 const icon_color = `var(--main-code)`
+
+const show = toRef(nvtData, "show")
+const { 
+  cardRef, 
+  isCursorIn,
+} = useLightBox({ show })
 
 </script>
 <template>
@@ -18,6 +26,7 @@ const icon_color = `var(--main-code)`
     :class="{ 'a2hs-container_show': nvtData.show }"
   >
     <div class="liu-highlight-box a2hs-box"
+      ref="cardRef"
       :class="{ 'a2hs-box_show': nvtData.show }"
     >
       <div class="liu-no-user-select a2hs-first-bar">
@@ -34,7 +43,11 @@ const icon_color = `var(--main-code)`
         <span>{{ t('pwa.new_version_desc') }}</span>
       </div>
       <div class="a2hs-btn-bar">
-        <custom-btn type="main" size="mini" @click="$emit('confirm')">
+        <custom-btn class="a2hs-btn" 
+          type="main" 
+          size="mini" 
+          @click="$emit('confirm')"
+        >
           <span class="a2hs-btn_span">{{ t('pwa.new_version_lanuch') }}</span>
         </custom-btn>
       </div>
@@ -53,14 +66,19 @@ const icon_color = `var(--main-code)`
 
 .a2hs-container_show {
   max-height: 200px;
+  overflow: v-bind("isCursorIn ? 'visible' : 'hidden'");
 }
 
 .a2hs-box {
   transition: .3s;
   opacity: 0;
+  position: relative;
+  overflow: hidden;
+  transform-origin: center;
 }
 
 .a2hs-box_show {
+  transition: v-bind("isCursorIn ? '0s' : '.3s'");
   opacity: 1;
 }
 
@@ -88,6 +106,7 @@ const icon_color = `var(--main-code)`
   margin-inline-end: -6px;
   transition: .15s;
   cursor: pointer;
+  z-index: 50;
 }
 
 .a2hs-close-svg {
@@ -101,6 +120,11 @@ const icon_color = `var(--main-code)`
 
 .a2hs-btn-bar {
   display: flex;
+}
+
+.a2hs-btn {
+  min-width: 100px;
+  z-index: 50;
 }
 
 .a2hs-btn_span {

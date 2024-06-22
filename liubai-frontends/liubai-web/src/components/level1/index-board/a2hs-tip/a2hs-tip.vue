@@ -2,6 +2,8 @@
 import { useI18n } from "vue-i18n";
 import type { A2hsTipProps, A2hsTipEmits } from "./tools/types"
 import { useA2hsTip } from "./tools/useA2hsTip"
+import { useLightBox } from "~/hooks/elements/useLightBox";
+import { toRef } from "vue";
 
 const props = defineProps<A2hsTipProps>()
 defineEmits<A2hsTipEmits>()
@@ -11,6 +13,12 @@ const { t } = useI18n()
 
 const icon_color = `var(--main-code)`
 
+const show = toRef(atData, "show")
+const { 
+  cardRef, 
+  isCursorIn,
+} = useLightBox({ show })
+
 </script>
 <template>
 
@@ -18,6 +26,7 @@ const icon_color = `var(--main-code)`
     :class="{ 'a2hs-container_show': atData.show }"
   >
     <div class="liu-highlight-box a2hs-box"
+      ref="cardRef"
       :class="{ 'a2hs-box_show': atData.show }"
     >
       <div class="liu-no-user-select a2hs-first-bar">
@@ -57,14 +66,19 @@ const icon_color = `var(--main-code)`
 
 .a2hs-container_show {
   max-height: 200px;
+  overflow: v-bind("isCursorIn ? 'visible' : 'hidden'");
 }
 
 .a2hs-box {
   transition: .3s;
   opacity: 0;
+  position: relative;
+  overflow: hidden;
+  transform-origin: center;
 }
 
 .a2hs-box_show {
+  transition: v-bind("isCursorIn ? '0s' : '.3s'");
   opacity: 1;
 }
 
@@ -92,6 +106,7 @@ const icon_color = `var(--main-code)`
   margin-inline-end: -6px;
   transition: .15s;
   cursor: pointer;
+  z-index: 50;
 }
 
 .a2hs-close-svg {
@@ -109,6 +124,7 @@ const icon_color = `var(--main-code)`
 
 .a2hs-btn {
   min-width: 100px;
+  z-index: 50;
 }
 
 .a2hs-btn_span {

@@ -36,6 +36,9 @@
   --sidebar-bg: #232323;
   --sidebar-scrollbar-thumb: #484848;
 
+  /** light box */
+  --light-box: #88d1ff;
+
   --line-default: #313335;
   --line-bottom: #434343;
   --line-hover: #585858;

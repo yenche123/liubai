@@ -3,7 +3,7 @@ import type { NvtProps, NvtData } from "./types";
 import { useOpenClose } from "~/hooks/useOpenClose";
 
 
-export function useA2hsTip(props: NvtProps) {
+export function useNewVersionTip(props: NvtProps) {
   const nvtData = reactive<NvtData>({
     enable: false,
     show: false,

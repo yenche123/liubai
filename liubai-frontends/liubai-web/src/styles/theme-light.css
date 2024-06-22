@@ -32,6 +32,9 @@
 
   --sidebar-bg: #ffffff;
   --sidebar-scrollbar-thumb: #dcd7d5;
+
+  /** light box */
+  --light-box: #ffffff;
   
   --line-default: #e2e3e4;    /** 浅浅的分割线 */
   --line-bottom: #dedede;
