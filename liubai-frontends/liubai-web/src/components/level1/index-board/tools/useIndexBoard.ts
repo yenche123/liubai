@@ -12,6 +12,9 @@ import cfg from "~/config";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
 import { toUpdateSW } from "~/hooks/tools/initServiceWorker";
+import { useIdle } from "~/hooks/useVueUse"
+
+const SEC_90 = 90 * time.SECONED
 
 interface IbCtx {
   rr: RouteAndLiuRouter
@@ -48,10 +51,7 @@ async function toConfirmNewVersion(
 ) {
   ctx.ibData.newVersion = false
   localCache.setOnceData("lastConfirmNewVersion", time.getTime())
-
-  console.log("去确认更新......")
   await toUpdateSW()
-  console.log("更新 SW 完毕......")
 }
 
 function toCancelNewVersion(
@@ -156,6 +156,20 @@ function cannotSupportA2HS(
   ctx.ibData.a2hs = false
 }
 
+let hasListenedToIdle = false
+function listenToIdleAndUpdate() {
+  if(hasListenedToIdle) return
+  hasListenedToIdle = true
+  
+  const { idle } = useIdle(SEC_90)
+  watch(idle, (newV) => {
+    if(!newV) return
+    console.warn("the tab has been idle for 90s")
+    console.log("let's update sw!!!")
+    toUpdateSW()
+  })
+}
+
 function listenToNewVersion(
   ctx: IbCtx,
 ) {
@@ -180,21 +194,21 @@ function listenToNewVersion(
     } = localCache.getOnceData()
 
     if(lastCancelNewVersion) {
-      const hr2 = cfg.newVersion.cancel_min_duration
-      const duration2 = hr2 * time.HOUR
-      const within2 = time.isWithinMillis(lastCancelNewVersion, duration2)
-      if(within2) {
-        console.warn(`过去 ${hr2} 小时内已取消过新版本`)
+      const day1 = cfg.newVersion.cancel_min_duration
+      const duration1 = day1 * time.DAY
+      const within1 = time.isWithinMillis(lastCancelNewVersion, duration1)
+      if(within1) {
+        listenToIdleAndUpdate()
         return
       }
     }
 
     if(lastConfirmNewVersion) {
-      const hr3 = cfg.newVersion.confirm_min_duration
-      const duration3 = hr3 * time.HOUR
-      const within3 = time.isWithinMillis(lastConfirmNewVersion, duration3)
-      if(within3) {
-        console.warn(`过去 ${hr3} 小时内已确认过新版本`)
+      const day2 = cfg.newVersion.confirm_min_duration
+      const duration2 = day2 * time.DAY
+      const within2 = time.isWithinMillis(lastConfirmNewVersion, duration2)
+      if(within2) {
+        listenToIdleAndUpdate()
         return
       }
     }

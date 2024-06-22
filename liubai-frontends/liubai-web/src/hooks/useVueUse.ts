@@ -4,6 +4,7 @@ import {
   useResizeObserver,
   useDropZone,
   usePageLeave,
+  useIdle,
   useThrottleFn,
   useDebounceFn,
   useDocumentVisibility,
@@ -37,6 +38,7 @@ export {
   useDropZone,
   useNetwork,
   usePageLeave,
+  useIdle,
   useMutationObserver,
 
   // 【节流函数】在特定周期（毫秒内）只触发一次
