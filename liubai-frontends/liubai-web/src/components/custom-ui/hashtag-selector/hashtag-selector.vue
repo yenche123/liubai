@@ -2,6 +2,8 @@
 import { initHashtagSelector } from "./tools/useHashtagSelector"
 import { useI18n } from "vue-i18n";
 import HsInputResults from "./hs-input-results/hs-input-results.vue"
+import liuUtil from "~/utils/liu-util";
+import LiuTooltip from "~/components/common/liu-tooltip/liu-tooltip.vue";
 
 const {
   hsData,
@@ -35,18 +37,32 @@ const { t } = useI18n()
         <!-- 取消、标题、确认 -->
         <div class="hs-bar">
 
-          <custom-btn type="pure" size="mini" @click="onTapCancel">
-            <span>{{ t('common.cancel') }}</span>
-          </custom-btn>
+          <LiuTooltip
+            placement="right"
+            shortcut="Esc"
+            :distance="7.5"
+          >
+            <custom-btn type="pure" size="mini" @click="onTapCancel">
+              <span>{{ t('common.cancel') }}</span>
+            </custom-btn>
+          </LiuTooltip>
 
           <div class="liu-no-user-select hs-title">
             <span>{{ t('tag_related.edit_tag') }}</span>
           </div>
 
-          <custom-btn type="main" size="mini" :disabled="!hsData.canSubmit" @click="onTapConfirm">
-            <span>{{ t('common.confirm') }}</span>
-          </custom-btn>
-
+          <LiuTooltip
+            placement="left"
+            :shortcut="liuUtil.getHelpTip('Mod_Enter')"
+          >
+            <custom-btn type="main" size="mini" shortcut
+              :disabled="!hsData.canSubmit" 
+              @click="onTapConfirm"
+            >
+              <span>{{ t('common.confirm') }}</span>
+            </custom-btn>
+          </LiuTooltip>
+          
         </div>
 
         <!-- 已添加的标签 -->
@@ -128,8 +144,8 @@ const { t } = useI18n()
 
 .hs-virtual-zero {
   width: 100%;
-  height: 14vh;
-  height: 14dvh;
+  height: 10vh;
+  height: 10dvh;
   transition: .3s;
 }
 
@@ -137,7 +153,7 @@ const { t } = useI18n()
   z-index: 5102;
   margin: 0 auto;
   width: 90%;
-  max-width: 500px;
+  max-width: 560px;
   border-radius: 8px;
   box-shadow: var(--card-shadow-2);
   position: relative;
@@ -227,7 +243,7 @@ const { t } = useI18n()
   z-index: 5103;
   position: relative;
   width: 90%;
-  max-width: 500px;
+  max-width: 560px;
   padding: 10px 20px;
   box-sizing: border-box;
   box-shadow: var(--card-shadow-2);
@@ -241,8 +257,8 @@ const { t } = useI18n()
 
 @media screen and (max-width: 600px) {
   .hs-virtual-zero {
-    height: 10vh;
-    height: 10dvh;
+    height: 5vh;
+    height: 5dvh;
   }
 }
 

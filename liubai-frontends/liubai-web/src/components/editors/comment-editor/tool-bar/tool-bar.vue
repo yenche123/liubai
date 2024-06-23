@@ -5,6 +5,8 @@ import type { ToolBarEmits } from "./tools/types"
 import { toolbarProps } from './tools/types';
 import { useFormatClear } from '../../tools/useFormatClear';
 import { useTbInputElements } from './tools/useTbInputElements';
+import { deviceChaKey } from "~/utils/provide-keys"
+import { inject } from 'vue';
 
 const props = defineProps(toolbarProps)
 const emit = defineEmits<ToolBarEmits>()
@@ -30,6 +32,8 @@ const onTapFinishBtn = () => {
   if(!props.canSubmit) return
   emit("tapfinish")
 }
+
+const cha = inject(deviceChaKey)
 
 </script>
 <template>
@@ -79,6 +83,11 @@ const onTapFinishBtn = () => {
 
     </div>
     <div class="cemt-footer">
+
+      <div class="liu-no-user-select cemtf-tip" v-if="cha?.isPC">
+        <span>{{ liuUtil.getHelpTip('Mod_Enter') }}</span>
+      </div>
+
       <!-- 完成 -->
       <div class="liu-no-user-select cemtf-submit-btn" 
         :class="{ 'cemtf-submit_disabled': !canSubmit }"
@@ -183,7 +192,14 @@ const onTapFinishBtn = () => {
 .cemt-footer {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   pointer-events: auto;
+}
+
+.cemtf-tip {
+  padding-inline-end: 10px;
+  font-size: var(--mini-font);
+  color: var(--main-tip);
 }
 
 .cemtf-submit-btn {
