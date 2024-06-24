@@ -24,3 +24,14 @@ reviews:
             comment: 這個表情包會不會太浮誇了......
             time: '2024-05-11T07:01:00.987Z'
             resolved: false
+  index.future_24:
+    locales:
+      zh-Hant:
+        comments:
+          - user:
+              name: yenche123
+              email: tsuiyenche@outlook.com
+            id: r1Jf55US1CqapcXERtlcS
+            type: comment
+            comment: 還是應該叫「未來 24 小時」？
+            time: '2024-06-24T06:29:57.911Z'

@@ -19,7 +19,7 @@ async function getList(
     limit = cfg.default_limit_num,
     tagId,
     collectType,
-    viewType,
+    viewType: vT,
     specific_ids,
     excluded_ids,
     stateId,
@@ -30,16 +30,17 @@ async function getList(
     return res0
   }
   
-  const isIndex= viewType === "INDEX"
-  const isPin = viewType === "PINNED"
-  const isTrash = viewType === "TRASH"
+  const isIndex= vT === "INDEX"
+  const isCalendar = vT === "CALENDAR"
+  const isPin = vT === "PINNED"
+  const isTrash = vT === "TRASH"
 
   const oState: OState = isTrash ? "REMOVED" : "OK"
   const { REMOVING_DAYS } = liuEnv.getEnv()
   const now = time.getTime()
 
   let list: ContentLocalTable[] = []
-  const statesNoInIndex = getNoShowInIndexStates(isIndex)
+  const statesNoInIndex = getNoShowInIndexStates(isIndex || isCalendar)
 
   const filterFunc = (item: ContentLocalTable) => {
     const { 
@@ -51,6 +52,12 @@ async function getList(
       updatedStamp,
     } = item
     
+    if(isCalendar) {
+      if(stateOnThread && statesNoInIndex.includes(stateOnThread)) {
+        return false
+      }
+      return true
+    }
     if(infoType !== "THREAD") return false
     if(specific_ids && specific_ids.includes(_id)) return true
     if(tagId && !tagSearched.includes(tagId)) return false
@@ -80,7 +87,14 @@ async function getList(
   if(isPin) key = "pinStamp"
   else if(isTrash) key = "removedStamp"
 
-  if(specific_ids?.length) {
+  if(isCalendar) {
+    const w = ["oState", "infoType", "calendarStamp"]
+    const b1 = ["OK", "THREAD", now - time.DAY]
+    const b2 = ["OK", "THREAD", now + time.DAY]
+    const q = db.contents.where(w).between(b1, b2, false, true).filter(filterFunc)
+    list = await q.sortBy("calendarStamp")
+  }
+  else if(specific_ids?.length) {
     // I. 加载特定 ids
     let tmp = db.contents.where("_id").anyOf(specific_ids)
     tmp = tmp.filter(filterFunc)
@@ -121,9 +135,8 @@ async function getList(
     // console.timeEnd("查询非首页")
   }
 
-
-  let threads = await equipThreads(list)
   
+  const threads = await equipThreads(list)
   return threads
 }
 

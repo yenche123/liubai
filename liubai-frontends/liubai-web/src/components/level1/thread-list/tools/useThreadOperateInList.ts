@@ -7,11 +7,12 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import localCache from "~/utils/system/local-cache"
-import type { TlData, TlProps, TlViewType } from "./types"
+import type { TlData, TlEmits, TlProps } from "./types"
 import valTool from "~/utils/basic/val-tool"
 import threadOperate from "~/hooks/thread/thread-operate";
 import liuUtil from "~/utils/liu-util"
 import tlUtil from "./tl-util"
+import { filterForCalendar } from "./handle-calendar"
 
 interface ToCtx {
   router: LiuRouter
@@ -22,11 +23,13 @@ interface ToCtx {
   memberId: string
   userId: string
   props: TlProps
+  emit: TlEmits
   tlData: TlData
 }
 
 export function useThreadOperateInList(
   props: TlProps,
+  emit: TlEmits,
   tlData: TlData,
 ) {
   const wStore = useWorkspaceStore()
@@ -56,6 +59,7 @@ export function useThreadOperateInList(
       memberId,
       userId,
       props,
+      emit,
       tlData,
     }
 
@@ -113,11 +117,13 @@ async function handle_state(ctx: ToCtx) {
   let removedFromList = false
   const vT = props.viewType
   const listStateId = props.stateId
+  const isHome = vT === "CALENDAR" || vT === "INDEX"
+
   if(vT === "STATE" && newStateId !== listStateId) {
     removedFromList = true
     await _toHide(tlData, position)
   }
-  else if(vT === "INDEX" && newStateShow?.showInIndex === false) {
+  else if(isHome && newStateShow?.showInIndex === false) {
     removedFromList = true
     await _toHide(tlData, position)
   }
@@ -127,16 +133,40 @@ async function handle_state(ctx: ToCtx) {
     liuUtil.lightFireworks()
   }
 
-  // 3. 等待 snackbar 的返回
-  const res2 = await tipPromise
-  if(res2.result !== "tap") return
+  // 3. 判断是否为空了
+  let runNoData = false
+  if(removedFromList) {
+    if(tlData.list.length < 1) {
+      runNoData = true
+      ctx.emit("nodata")
+    }
+  }
 
-  // 4. 去执行公共的取消逻辑
+  // 4. 等待 snackbar 的返回
+  const res4 = await tipPromise
+  if(res4.result !== "tap") return
+
+  // 5. 去执行公共的取消逻辑
   await threadOperate.undoState(oldThread, memberId, userId)
 
-  // 5. 判断是否重新加回
-  if(removedFromList) {
-    _toShowAgain(tlData, position, oldThread)
+  // 6. 如果不曾移除，直接不再往下执行
+  if(!removedFromList) return
+  
+  // 7. 若当前是 CALENDAR 列表，重新检查是否要再加回
+  //   若能加回，则赋值 title_key
+  let title_key: string | undefined
+  if(vT === "CALENDAR") {
+    const f7 = filterForCalendar([oldThread])
+    if(f7.list.length < 1) return
+    title_key = f7.title_key
+  }
+  
+  // 8. 再次显示
+  _toShowAgain(tlData, position, oldThread)
+
+  // 9. 若曾经执行没有数据，触发又有数据了
+  if(runNoData) {
+    ctx.emit("hasdata", { title_key })
   }
 }
 
@@ -176,7 +206,14 @@ function _toShowAgain(
 
 // 去删除（允许复原）
 async function handle_delete(ctx: ToCtx) {
-  const { memberId, userId, thread, tlData, position } = ctx
+  const { 
+    memberId, 
+    userId, 
+    thread, 
+    tlData, 
+    position,
+    emit,
+  } = ctx
   const oldThread = valTool.copyObject(thread)
   const vT = ctx.props.viewType
 
@@ -186,19 +223,42 @@ async function handle_delete(ctx: ToCtx) {
   // 1. 执行公共逻辑
   const { tipPromise } = await threadOperate.deleteThread(oldThread, memberId, userId)
 
-  // 2. 等待 snackbar 的返回
-  const res2 = await tipPromise
-  if(res2.result !== "tap") return
+  // 2. 判断是否要运行 emit("nodata")
+  let runNoData = false
+  if(tlData.list.length < 1) {
+    runNoData = true
+    emit("nodata")
+  }
+
+  // 3. 等待 snackbar 的返回
+  const res3 = await tipPromise
+  if(res3.result !== "tap") return
 
   // 发生撤销之后
-  // 3. 去执行公共的取消逻辑
+  // 4. 去执行公共的取消逻辑
   await threadOperate.undoDelete(oldThread, memberId, userId)
 
-  // 4. 如果当前列表不是 PINNED, 把 item 加回 list 中
+
+  // 5. 若当前是 CALENDAR 列表，重新检查是否要再加回
+  //   若能加回，则赋值 title_key
+  let title_key: string | undefined
+  if(vT === "CALENDAR") {
+    const f5 = filterForCalendar([oldThread])
+    if(f5.list.length < 1) return
+    title_key = f5.title_key
+  }
+
+  // 6. 如果当前列表不是 PINNED, 把 item 加回 list 中
   // 因为 PINNED 列表在 useNewAndUpdate 里会自动将其加回
   if(vT !== "PINNED") {
     _toShowAgain(tlData, position, oldThread)
   }
+
+  // 7. 判断是否运行过 emit('nodata')
+  if(runNoData) {
+    emit("hasdata", { title_key })
+  }
+
 }
 
 // 去彻底删除

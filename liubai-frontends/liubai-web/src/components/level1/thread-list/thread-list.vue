@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useThreadList } from './tools/useThreadList';
 import ThreadCard from './thread-card/thread-card.vue';
 import { useNewAndUpdate } from './tools/useNewAndUpdate';
@@ -14,13 +15,21 @@ const {
   tlData,
   whenTapBriefing,
 } = useThreadList(props, emit)
-useNewAndUpdate(props, tlData)
+useNewAndUpdate(props, emit, tlData)
 
 const {
-  receiveOperation
-} = useThreadOperateInList(props, tlData)
+  receiveOperation,
+} = useThreadOperateInList(props, emit, tlData)
 
 useIdsChanged(tlData)
+
+
+const enableBottom = computed(() => {
+  const { viewType: vT } = props
+  if(vT === 'PINNED' || vT === 'CALENDAR') return false
+  return true
+})
+
 
 </script>
 <template>
@@ -44,7 +53,7 @@ useIdsChanged(tlData)
     </template>
     
     <ListBottom 
-      v-if="viewType !== 'PINNED'"
+      v-if="enableBottom"
       :has-data="tlData.list.length > 0" 
       :reached="tlData.hasReachedBottom"
     ></ListBottom>

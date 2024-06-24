@@ -48,6 +48,7 @@ import type {
   SyncGet_CommentList_C,
   SyncGet_CommentList_D,
 } from "@/common-types"
+import { getNowStamp, DAY } from "@/common-time"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
 
@@ -536,11 +537,14 @@ async function toThreadListFromContent(
 
   // 2. handle w
   const isIndex = vT === "INDEX"
+  const isCalendar = vT === "CALENDAR"
   const isPin = vT === "PINNED"
   const isTrash = vT === "TRASH"
   const oState = isTrash ? "REMOVED" : "OK"
   let key = oState === "OK" ? "createdStamp" : "updatedStamp"
-  if(isPin) key = "pinStamp"
+
+  if(isCalendar) key = "calendarStamp"
+  else if(isPin) key = "pinStamp"
   else if(isTrash) key = "removedStamp"
 
   const w: Record<string, any> = {
@@ -558,7 +562,13 @@ async function toThreadListFromContent(
     }
   }
 
-  if(isPin) {
+  if(isCalendar) {
+    const now = getNowStamp()
+    const s1 = now - DAY
+    const s2 = now + DAY
+    w.calendarStamp = _.and(_.gt(s1), _.lte(s2))
+  }
+  else if(isPin) {
     w.pinStamp = _.gt(0)
   }
   else if(isIndex) {

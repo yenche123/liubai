@@ -1,7 +1,7 @@
 
 
 // 版本号，凡是 dexieIdxs 被修改了，这里都要累加！！！
-export const DB_VERSION = 60
+export const DB_VERSION = 61
 
 const dexieIdxs = {
   users: [
@@ -37,6 +37,8 @@ const dexieIdxs = {
     "[replyToComment+oState+infoType+createdStamp]",
     "createdStamp",
     "updatedStamp",
+    "calendarStamp",
+    "[oState+infoType+calendarStamp]",
     "pinStamp",
     "*tagIds",
     "*tagSearched",

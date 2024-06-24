@@ -95,7 +95,7 @@ function handleTapThreadCard(
   e: MouseEvent,
   ctx: TcCtx,
 ) {
-  const { target, currentTarget } = e
+  const { target } = e
   const { props } = ctx
 
   if(liuApi.getSelectionText()) return
@@ -104,9 +104,12 @@ function handleTapThreadCard(
   if(res) return
   if(liuApi.eventTargetIsSomeTag(target, "a")) return
   if(props.displayType === "detail") return
-  if(props.viewType === "TRASH") return
 
   const { threadData } = props
+  if(threadData.oState !== "OK") {
+    return
+  }
+
   const cid = threadData._id
   liuUtil.open.openDetail(cid, ctx)
 }

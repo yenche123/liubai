@@ -5,18 +5,27 @@ import type { CommentStoreState } from "~/hooks/stores/useCommentStore"
 import type { ThreadShow } from "~/types/types-content"
 import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
 import valTool from "~/utils/basic/val-tool";
-import type { TlData, TlProps, TlViewType } from "./types"
+import type { TlData, TlEmits, TlProps } from "./types"
 import type { ThreadChangedFrom, WhyThreadChange } from "~/types/types-atom"
 import { handleLastItemStamp } from "./useTLCommon";
 import { storeToRefs } from "pinia"
 import { watch } from "vue"
+import { filterForCalendar } from "./handle-calendar"
 import tlUtil from "./tl-util";
 import cfg from "~/config";
 
+interface TlNuCtx {
+  props: TlProps,
+  emit: TlEmits
+  tlData: TlData
+}
+
 export function useNewAndUpdate(
   props: TlProps,
+  emit: TlEmits,
   tlData: TlData,
 ) {
+  const ctx: TlNuCtx = { props, emit, tlData }
 
   // listen to threadShow changing
   const tStore = useThreadShowStore()
@@ -38,10 +47,10 @@ export function useNewAndUpdate(
     } = state
 
     if(newThreadShows.length > 0) {
-      handleNewList(props, tlData, newThreadShows)
+      handleNewList(ctx, newThreadShows)
     }
     if(updatedThreadShows.length > 0) {
-      handleUpdatedList(props, tlData, updatedThreadShows, whyChange, changeFrom)
+      handleUpdatedList(ctx, updatedThreadShows, whyChange, changeFrom)
     }
   })
 
@@ -102,7 +111,7 @@ function handleKanbanStateChange(
 ) {
   const { list } = tlData
   const vT = props.viewType
-  const inIndex = vT === "INDEX" || vT === "PINNED"
+  const inIndex = vT === "INDEX" || vT === "PINNED" || vT === "CALENDAR"
 
   for(let i=0; i<list.length; i++) {
     const v = list[i].thread
@@ -128,24 +137,30 @@ function handleKanbanStateChange(
 
 
 function handleNewList(
-  props: TlProps,
-  tlData: TlData,
+  ctx: TlNuCtx,
   newList: ThreadShow[],
 ) {
-  const { tagId, stateId } = props
-  const viewType = props.viewType
+  const { tlData, props } = ctx
+  const { tagId, stateId, viewType: vT } = props
+
+  console.log("handleNewList vT: ", vT)
+  console.log(newList)
+  console.log(" ")
+
+
   const myList = newList.filter(v => {
-    const { tagSearched = [] } = v
+    const { tagSearched = [], oState } = v
     // 垃圾桶时
-    if(viewType === "TRASH") return v.oState === "REMOVED"
+    if(vT === "TRASH") return oState === "REMOVED"
 
     // 不是垃圾桶时，遇到 REMOVED 直接 false
-    if(v.oState === "REMOVED") return false
+    if(oState === "REMOVED" || oState === "DELETED") return false
 
-    if(viewType === "TAG") return tagSearched.includes(tagId)
-    if(viewType === "FAVORITE") return v.myFavorite
-    if(viewType === "PINNED") return Boolean(v.pinStamp)
-    if(viewType === "STATE") {
+    if(vT === "TAG") return tagSearched.includes(tagId)
+    if(vT === "FAVORITE") return v.myFavorite
+    if(vT === "PINNED") return Boolean(v.pinStamp)
+    if(vT === "CALENDAR") return Boolean(v.calendarStamp)
+    if(vT === "STATE") {
       if(!v.stateId) return false
       return stateId === v.stateId
     }
@@ -153,21 +168,72 @@ function handleNewList(
     return true
   })
   if(myList.length < 1) return
+
+
+  if(vT === "CALENDAR") {
+    handleNewListForCalendar(ctx, myList)
+    return
+  }
+
   const _myList = tlUtil.threadShowsToList(myList)
   tlData.list.splice(0, 0, ..._myList)
 
   if(tlData.lastItemStamp) return
   // 处理 lastItemStamp 为 0 的情况
-  handleLastItemStamp(viewType, tlData)
+  handleLastItemStamp(vT, tlData)
+}
+
+
+function handleNewListForCalendar(
+  ctx: TlNuCtx,
+  results: ThreadShow[],
+) {
+  const { tlData, emit } = ctx
+  const oldList = tlData.list
+
+  const { 
+    list: tmpList, 
+    title_key,
+  } = filterForCalendar(results)
+
+  if(tmpList.length < 1) return
+  const newList = tlUtil.threadShowsToList(tmpList)
+
+  if(oldList.length < 1) {
+    tlData.list = newList
+    emit("hasdata", { title_key })
+    return
+  }
+
+  for(let i=0; i<newList.length; i++) {
+    const v0 = newList[i]
+    const v1 = v0.thread
+    const c1 = v1.calendarStamp ?? 1
+
+    let hasAdded = false
+    for(let j=0; j<oldList.length; j++) {
+      const v2 = oldList[j].thread
+      const c2 = v2.calendarStamp ?? 1
+      if(c1 < c2) {
+        hasAdded = true
+        oldList.splice(j, 0, v0)
+        break
+      }
+    }
+
+    if(!hasAdded) {
+      oldList.push(v0)
+    }
+  }
 }
 
 function handleUpdatedList(
-  props: TlProps,
-  tlData: TlData,
+  ctx: TlNuCtx,
   updatedList: ThreadShow[],
   whyChange: WhyThreadChange,
   changeFrom?: ThreadChangedFrom,
 ) {
+  const { props, tlData } = ctx
   const { list } = tlData
   const vT = props.viewType
 

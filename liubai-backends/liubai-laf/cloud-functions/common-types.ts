@@ -139,6 +139,7 @@ export const threadListViewTypes = [
   "PINNED",
   "INDEX",
   "STATE",
+  "CALENDAR",
 ] as const
 export type ThreadListViewType = typeof threadListViewTypes[number]
 export const Sch_ThreadListViewType = vbot.picklist(threadListViewTypes)

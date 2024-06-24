@@ -424,5 +424,10 @@
     "new_version_title": "New Version",
     "new_version_desc": "New version is ready. Click to launch!",
     "new_version_lanuch": "Launch🚀"
+  },
+  "index": {
+    "inbox": "Inbox",
+    "today": "Today",
+    "future_24": "Next 24 Hours"
   }
 }

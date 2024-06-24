@@ -18,6 +18,7 @@ export interface TlData {
   hasReachedBottom: boolean
   requestRefreshNum: number    // 非 useThreadList 的函数，请求 useThreadList 去 loadList
   cssDetectOverflow: boolean
+  title_key?: string
 }
 
 export interface TlProps {
@@ -29,9 +30,13 @@ export interface TlProps {
 
 export type TlDisplayType = "list" | "detail"
 
+export interface TlHasDataOpt {
+  title_key?: string
+}
+
 export interface TlEmits {
   (event: "nodata"): void
-  (event: "hasdata"): void
+  (event: "hasdata", opt?: TlHasDataOpt): void
 }
 
 export interface TlContext {

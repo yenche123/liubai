@@ -60,6 +60,8 @@ export interface ThreadShow {
   images?: ImageShow[]
   files?: LiuFileStore[]
   imgLayout?: ImgLayout
+
+  calendarStamp?: number
   whenStamp?: number
   remindStamp?: number
   remindMe?: LiuRemindMe

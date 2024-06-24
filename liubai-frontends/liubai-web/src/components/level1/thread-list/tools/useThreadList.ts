@@ -27,6 +27,7 @@ import type {
 import localCache from "~/utils/system/local-cache"
 import { useAwakeNum } from "~/hooks/useCommon"
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
+import { handleCalendarList } from "./handle-calendar"
 
 export function useThreadList(
   props: TlProps,
@@ -70,6 +71,7 @@ export function useThreadList(
     if(isViewType(ctx, "PINNED")) return
 
     if(type === "to_end") {
+      if(isViewType(ctx, "CALENDAR")) return
       if(tlData.hasReachedBottom) return
       loadList(ctx)
     }
@@ -183,8 +185,10 @@ function scrollTopAndUpdate(
   ctx: TlContext,
   cloud: boolean,
 ) {
-  if(ctx.svBottomUp && !isViewType(ctx, "PINNED")) {
-    ctx.svBottomUp.value = { type: "pixel", pixel: 0 }
+  if(ctx.svBottomUp) {
+    if(!isViewType(ctx, "PINNED") && !isViewType(ctx, "CALENDAR")) {
+      ctx.svBottomUp.value = { type: "pixel", pixel: 0 }
+    }
   }
   // console.log(`${ctx.viewType.value} ${ctx.tagId.value} 正在执行 scrollTopAndUpdate...`)
   loadList(ctx, true, cloud)
@@ -238,16 +242,20 @@ async function loadList(
 
   const spaceId = ctx.spaceIdRef.value
   if(!spaceId) return
-  
-  const { tlData } = ctx
+
+  const { tlData, props } = ctx
+  const { viewType: vT, tagId, stateId } = props
+  if(vT === "CALENDAR") {
+    handleCalendarList(ctx)
+    return
+  }
+
   if(reload) {
     tlData.hasReachedBottom = false
     ctx.reloadRequired = false
   }
 
   const oldList = tlData.list
-  const { viewType: vT, tagId, stateId } = ctx.props
-
   const oldLength = oldList.length
   const isInit = Boolean(reload || oldLength < 1)
   let lastItemStamp = isInit ? undefined : tlData.lastItemStamp
@@ -357,7 +365,7 @@ async function loadCloud(
     ...opt1,
   }
   const delay = Boolean(opt1.lastItemStamp) ? 0 : undefined
-  const res1 = await CloudMerger.request(param1, { delay })
+  const res1 = await CloudMerger.request(param1, { delay, maxStackNum: 4 })
   if(!res1) return
 
   // 2. get ids for checking contents

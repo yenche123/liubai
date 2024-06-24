@@ -307,7 +307,7 @@ async function initFromCloudDraft(
   console.log(opt)
   console.log(" ")
 
-  const res = await CloudMerger.request(opt, { delay })
+  const res = await CloudMerger.request(opt, { delay, maxStackNum: 4 })
 
   // 3. filter nothing
   if(!res) return

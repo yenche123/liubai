@@ -97,6 +97,8 @@ function packThread(
     images,
     imgLayout: imgHelper.getImgLayout(images),
     files: v.files,
+
+    calendarStamp: v.calendarStamp,
     whenStamp: v.whenStamp,
     remindStamp: v.remindStamp,
     remindMe: v.remindMe,
