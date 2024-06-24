@@ -246,7 +246,7 @@ async function loadList(
   const { tlData, props } = ctx
   const { viewType: vT, tagId, stateId } = props
   if(vT === "CALENDAR") {
-    handleCalendarList(ctx)
+    handleCalendarList(ctx, cloud)
     return
   }
 

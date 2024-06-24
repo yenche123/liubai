@@ -7,11 +7,13 @@ import time from "~/utils/basic/time"
 import threadController from "~/utils/controllers/thread-controller/thread-controller";
 import { CloudMerger } from "~/utils/cloud/CloudMerger";
 import tlUtil from "./tl-util";
+import localCache from "~/utils/system/local-cache";
 
 const MIN_30 = time.MINUTE * 30
 
 export async function handleCalendarList(
   ctx: TlContext,
+  cloud: boolean,
 ) {
   const spaceId = ctx.spaceIdRef.value
   
@@ -24,20 +26,25 @@ export async function handleCalendarList(
   let results = await threadController.getList(opt1)
   showCalendarList(ctx, results)
 
-  // 2. load from cloud
-  const param2: SyncGet_ThreadList = {
+  // 2. check if we need to load from cloud
+  if(!cloud) return
+  const res2 = localCache.hasLoginWithBackend()
+  if(!res2) return
+
+  // 3. load from cloud
+  const param3: SyncGet_ThreadList = {
     taskType: "thread_list",
     sort: "asc",
     ...opt1,
   }
-  const res1 = await CloudMerger.request(param2, { maxStackNum: 4 })
-  if(!res1) return
+  const res3 = await CloudMerger.request(param3, { maxStackNum: 4 })
+  if(!res3) return
 
   console.log("远端加载出日历，结果:")
-  console.log(res1)
+  console.log(res3)
   console.log(" ")
 
-  // 3. load locally again
+  // 4. load locally again
   results = await threadController.getList(opt1)
   showCalendarList(ctx, results)
 }

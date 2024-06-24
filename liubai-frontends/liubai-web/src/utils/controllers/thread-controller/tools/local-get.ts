@@ -52,12 +52,6 @@ async function getList(
       updatedStamp,
     } = item
     
-    if(isCalendar) {
-      if(stateOnThread && statesNoInIndex.includes(stateOnThread)) {
-        return false
-      }
-      return true
-    }
     if(infoType !== "THREAD") return false
     if(specific_ids && specific_ids.includes(_id)) return true
     if(tagId && !tagSearched.includes(tagId)) return false
@@ -70,6 +64,11 @@ async function getList(
     if(excluded_ids && excluded_ids.includes(_id)) return false
     if(item.spaceId !== spaceId) return false
     if(item.oState !== oState) return false
+    if(isCalendar) {
+      if(stateOnThread && statesNoInIndex.includes(stateOnThread)) {
+        return false
+      }
+    }
 
     // 如果是已被移除的动态
     // REMOVING_DAYS 以外的就不展示
