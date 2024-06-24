@@ -40,6 +40,10 @@ export const useLightBox = (
     lightDom.style.background = color
     lightDom.style.filter = `blur(${blur}px)`
     lightDom.style.pointerEvents = 'none'
+
+    // fix: filter: blur() cannot work on Safari
+    // see: https://stackoverflow.com/questions/70138527/css-filter-blur-not-working-properly-on-safari
+    lightDom.style.transform = `translate3d(0, 0, 0)`
   };
 
   // 往卡片添加光源
@@ -84,8 +88,8 @@ export const useLightBox = (
     lightDom.style.top = `${cursorY - radiusY}px`;
 
     // 2. 设置动画效果
-    const maxXRotation = 6; // X 轴旋转角度
-    const maxYRotation = 3; // Y 轴旋转角度
+    const maxXRotation = 5; // X 轴旋转角度
+    const maxYRotation = 2.5; // Y 轴旋转角度
 
     const rangeX = h0 / 2; // X 轴旋转的范围
     const rangeY = w0 / 2; // Y 轴旋转的范围
