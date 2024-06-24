@@ -1,16 +1,16 @@
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
-import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
-import { useCommentStore } from "~/hooks/stores/useCommentStore"
-import type { CommentStoreState } from "~/hooks/stores/useCommentStore"
-import type { ThreadShow } from "~/types/types-content"
-import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore"
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import { useCommentStore } from "~/hooks/stores/useCommentStore";
+import type { CommentStoreState } from "~/hooks/stores/useCommentStore";
+import type { ThreadShow } from "~/types/types-content";
+import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore";
 import valTool from "~/utils/basic/val-tool";
-import type { TlData, TlEmits, TlProps } from "./types"
-import type { ThreadChangedFrom, WhyThreadChange } from "~/types/types-atom"
+import type { TlData, TlEmits, TlProps } from "./types";
+import type { ThreadChangedFrom, WhyThreadChange } from "~/types/types-atom";
 import { handleLastItemStamp } from "./useTLCommon";
-import { storeToRefs } from "pinia"
-import { watch } from "vue"
-import { filterForCalendar } from "./handle-calendar"
+import { storeToRefs } from "pinia";
+import { watch } from "vue";
+import { filterForCalendar } from "./handle-calendar";
 import tlUtil from "./tl-util";
 import cfg from "~/config";
 

@@ -27,6 +27,7 @@ export async function handleCalendarList(
   // 2. load from cloud
   const param2: SyncGet_ThreadList = {
     taskType: "thread_list",
+    sort: "asc",
     ...opt1,
   }
   const res1 = await CloudMerger.request(param2, { maxStackNum: 4 })
