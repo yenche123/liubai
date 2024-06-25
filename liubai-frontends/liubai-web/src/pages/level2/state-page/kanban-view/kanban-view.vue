@@ -126,6 +126,7 @@ const {
             @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
             @menushow="() => onMenuShow(item.id)"
             @menuhide="() => onMenuHide(item.id)"
+            mask-z-index="40"
           >
             <div class="liu-hover kvch-btn">
               <svg-icon name="more" class="kvch-svg" 
