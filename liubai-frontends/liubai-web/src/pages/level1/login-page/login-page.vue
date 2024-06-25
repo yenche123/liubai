@@ -2,6 +2,7 @@
 import LpMain from "./lp-main/lp-main.vue"
 import LpCode from "./lp-code/lp-code.vue"
 import LpAccounts from "./lp-accounts/lp-accounts.vue";
+import OpenWithBrowser from "./open-with-browser/open-with-browser.vue";
 import { useLoginPage } from "./tools/useLoginPage"
 import { useI18n } from 'vue-i18n';
 
@@ -81,6 +82,9 @@ const {
     <div class="lp-virtual"></div>
 
   </div>
+
+  <!-- 使用浏览器打开的提示 -->
+  <open-with-browser></open-with-browser>
 
 </template>
 <style scoped lang="scss">

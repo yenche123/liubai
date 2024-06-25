@@ -228,7 +228,10 @@
     "coming_soon": "即將到來",
     "stay_tuned": "敬請期待！",
     "browser_not_supported_1": "不被支援的瀏覽器",
-    "browser_not_supported_2": "請在主流瀏覽器 Chrome / Safari / Firefox 中使用"
+    "browser_not_supported_2": "請在主流瀏覽器 Chrome / Safari / Firefox 中使用",
+    "open_with_browser_1": "開啟預設瀏覽器",
+    "open_with_browser_2": "獲取極致體驗！",
+    "open_with_browser_3": "輕觸「...」開啟預設瀏覽器"
   },
   "card_bubble": {
     "copy": "複製",

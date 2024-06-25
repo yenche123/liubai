@@ -228,7 +228,10 @@
     "coming_soon": "Coming Soon",
     "stay_tuned": "Stay tuned!",
     "browser_not_supported_1": "The browser is not supported",
-    "browser_not_supported_2": "Please use Chrome / Safari / Firefox"
+    "browser_not_supported_2": "Please use Chrome / Safari / Firefox",
+    "open_with_browser_1": "Open with default browser",
+    "open_with_browser_2": "Get the best experience!",
+    "open_with_browser_3": "Tap \"...\" to open with the default browser"
   },
   "card_bubble": {
     "copy": "Copy",
