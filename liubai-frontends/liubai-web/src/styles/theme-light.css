@@ -73,6 +73,7 @@
   --gradient-two: linear-gradient(0deg, rgba(255, 255, 255, 1) 28%, rgba(255, 255, 255, 0) 76%);
   --gradient-three: linear-gradient(90deg, rgba(255, 255, 255, 0) 5%, rgba(255, 255, 255, .5) 15%, rgba(255, 255, 255, 1) 50%);
   --cool-bg: linear-gradient(30deg, #ACB6E5, #70ded9);
+  --checkbox-bg: linear-gradient(30deg, #2a6885, #15455e);
   --tag-bg: #f3f5f8;
   --tag-hover: linear-gradient(60deg, #ececec, #f3f5f8);
   --tooltip-shadow: 0 8px 18px 1px rgba(0,0,0,.28);
