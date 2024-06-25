@@ -8,7 +8,6 @@ import valTool from '~/utils/basic/val-tool';
 import { type SimplePromise } from '~/utils/basic/type-tool';
 import { useGlobalStateStore } from '../stores/useGlobalStateStore';
 
-const SEC_20 = 20 * time.SECONED
 const MIN_1 = time.MINUTE
 const MIN_15 = 15 * time.MINUTE
 
@@ -108,8 +107,9 @@ export function initServiceWorker() {
 }
 
 export async function toUpdateSW() {
-  if(_updateSW) {
-    await _updateSW()
-  }
+  if(!_updateSW) return
+  
+  localCache.setOnceData("lastInstallNewVersion", time.getTime())
+  await _updateSW()
 }
 

@@ -70,10 +70,12 @@ export default {
   },
 
   newVersion: {
+    install_min_duration: 3,      // 安装新版本的最小间隔，单位：天
+        // 举例，若过去 install_min_duration 天内曾安装过新版本，就拒绝弹窗
     cancel_min_duration: 5,       // 取消新版本的最短间隔，单位：天 
-        // 举例: 若过去 cancel_min_duration 天内有点击取消弹窗，就拒绝本次弹窗         
+        // 举例: 若过去 cancel_min_duration 天内有点击取消弹窗，就拒绝弹窗         
     confirm_min_duration: 7,      // 确认新版本的最短间隔，单位：天
-        // 举例: 若过去 confirm_min_duration 天内已点击接受，就拒绝本次弹窗
+        // 举例: 若过去 confirm_min_duration 天内已点击接受，就拒绝弹窗
   },
 
 }

@@ -189,12 +189,27 @@ function listenToNewVersion(
     }
 
     const {
+      lastInstallNewVersion,
       lastCancelNewVersion,
       lastConfirmNewVersion,
     } = localCache.getOnceData()
+    const nv = cfg.newVersion
+
+    if(lastInstallNewVersion) {
+      // remember to remove console.warn after verification
+      console.warn("lastInstallNewVersion:::", lastInstallNewVersion)
+      
+      const day0 = nv.install_min_duration
+      const duration0 = day0 * time.DAY
+      const within0 = time.isWithinMillis(lastInstallNewVersion, duration0)
+      if(within0) {
+        listenToIdleAndUpdate()
+        return
+      }
+    }
 
     if(lastCancelNewVersion) {
-      const day1 = cfg.newVersion.cancel_min_duration
+      const day1 = nv.cancel_min_duration
       const duration1 = day1 * time.DAY
       const within1 = time.isWithinMillis(lastCancelNewVersion, duration1)
       if(within1) {
@@ -204,7 +219,7 @@ function listenToNewVersion(
     }
 
     if(lastConfirmNewVersion) {
-      const day2 = cfg.newVersion.confirm_min_duration
+      const day2 = nv.confirm_min_duration
       const duration2 = day2 * time.DAY
       const within2 = time.isWithinMillis(lastConfirmNewVersion, duration2)
       if(within2) {
