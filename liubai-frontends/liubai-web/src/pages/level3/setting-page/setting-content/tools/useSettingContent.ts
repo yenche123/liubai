@@ -3,7 +3,7 @@ import { reactive, watch } from "vue"
 import type { SettingContentData } from "./types"
 import cui from "~/components/custom-ui"
 import { getLanguageList, getTermsList } from "./get-list"
-import { handleLogoutWithBackend, handleLogoutWithPurlyLocal } from "./handle-logout"
+import { handleLogoutWithPurlyLocal } from "./handle-logout"
 import { whenTapTheme } from "./handle-theme"
 import { whenTapLanguage } from "./handle-lang"
 import liuEnv from "~/utils/liu-env"
@@ -12,6 +12,7 @@ import { storeToRefs } from "pinia"
 import { useMyProfile, usePrefix } from "~/hooks/useCommon"
 import localCache from "~/utils/system/local-cache"
 import liuApi from "~/utils/liu-api"
+import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 
 export function useSettingContent() {
 
@@ -146,9 +147,9 @@ async function askLogoutWithBackend() {
   const res = await cui.showModal({
     title_key: "setting.logout",
     content_key: "setting.logout_bd",
-    tip_key: "setting.logout_tip",
+    // tip_key: "setting.logout_tip",
   })
 
   if(!res.confirm) return
-  handleLogoutWithBackend(res.tipToggle ?? false)
+  CloudEventBus.toLogout()
 }

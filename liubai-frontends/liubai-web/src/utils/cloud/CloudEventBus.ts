@@ -284,6 +284,11 @@ class CloudEventBus {
     this.syncNum.value += 1
     this.lastFinishMainStamp = time.getTime()
   }
+
+  static toLogout() {
+    this.syncNum.value = 0
+    logout(this.rr)
+  }
   
 
 }

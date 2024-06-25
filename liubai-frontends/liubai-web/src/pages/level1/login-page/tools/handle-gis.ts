@@ -6,6 +6,7 @@ import { afterFetchingLogin } from "../../tools/common-utils";
 import { type RouteAndLiuRouter } from "~/routes/liu-router";
 import { getClientKey } from "../../tools/common-tools";
 import time from "~/utils/basic/time";
+import liuApi from "~/utils/liu-api";
 
 // 本文件负责 Google One-Tap 登录流程
 
@@ -33,8 +34,12 @@ export async function loadGoogleIdentityService(
     const gAccounts = window.google?.accounts
     if(!gAccounts) return
 
+    const fedCM = liuApi.canIUse.fedCM()
+
     gAccounts.id.initialize({
       client_id: googleOAuthClientId,
+      use_fedcm_for_prompt: fedCM,
+      itp_support: true,
       callback: (res) => {
         console.log("initialize callback..........")
         console.log(res)
@@ -70,6 +75,11 @@ export async function loadGoogleIdentityService(
 
       lpData.googleOneTapShown = isDisplayed
     })
+    
+    if(fedCM) {
+      lpData.googleOneTapShown = true
+    }
+    
   }
 
   document.head.appendChild(s)

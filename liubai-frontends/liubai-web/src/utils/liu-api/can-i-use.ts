@@ -51,10 +51,26 @@ function cssDetectTextOverflow() {
   return res >= 0
 }
 
+// see: https://developers.google.com/identity/gsi/web/guides/fedcm-migration#before_you_begin
+// & https://developer.mozilla.org/en-US/docs/Web/API/FedCM_API#browser_compatibility
+function fedCM() {
+  const cha = getCharacteristic()
+  const { isChrome, browserVersion } = cha
+
+  if(isChrome && browserVersion) {
+    const res1 = valTool.compareVersion(browserVersion, "117.0.0")
+    return res1 >= 0
+  }
+
+  return false
+}
+
+
 export default {
   isSafeBrowser,
   viewTransitionApi,
   cssDetectTextOverflow,
   abortSignalTimeout,
   isArcBrowser,
+  fedCM,
 }
