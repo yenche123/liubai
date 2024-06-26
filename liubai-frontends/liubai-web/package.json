@@ -1,7 +1,7 @@
 {
   "name": "liubai-web",
   "private": true,
-  "version": "0.0.67",
+  "version": "0.0.68",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
@@ -63,6 +63,7 @@
     "vue-slicksort": "^2.0.5"
   },
   "devDependencies": {
+    "@sentry/vite-plugin": "^2.20.1",
     "@types/canvas-confetti": "^1.6.4",
     "@types/file-saver": "^2.0.7",
     "@types/google.accounts": "^0.0.14",

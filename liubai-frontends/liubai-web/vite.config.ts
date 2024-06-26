@@ -1,4 +1,8 @@
-import { defineConfig } from 'vite'
+import { 
+  defineConfig, 
+  loadEnv,
+  type UserConfig,
+} from 'vite'
 import { resolve } from "path"
 import vue from '@vitejs/plugin-vue'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
@@ -9,89 +13,107 @@ import Inspect from 'vite-plugin-inspect'
 import { qrcode } from 'vite-plugin-qrcode';
 import { visualizer } from "rollup-plugin-visualizer";
 import { VitePWA } from 'vite-plugin-pwa'
+import { sentryVitePlugin } from "@sentry/vite-plugin"
 
 const { version } = require("./package.json")
 const projectRoot = process.cwd()
 
-// https://vitejs.dev/config/
-export default defineConfig({
+const vitePlugins: UserConfig['plugins'] = [
+  Inspect(),
 
-  resolve: {
-    alias: {
-      '~/': `${resolve(projectRoot, 'src')}/`,
+  vue(),
+
+  viteCompression({
+    threshold: 2048,
+  }),
+
+  // vue-i18n 插件
+  VueI18n({
+    runtimeOnly: true,
+    compositionOnly: true,
+    include: [
+      resolve(projectRoot, "src/locales/messages/**")
+    ]
+  }),
+
+  // 使用 SSL
+  // mkcert(),
+
+  // PWA
+  VitePWA({
+    registerType: "prompt",
+    manifest: false,
+    strategies: "generateSW",
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg}']
     },
-  },
+    filename: "service-worker.js",
 
-  plugins: [
-    Inspect(),
+    // open it if you want to test service worker update on dev mode
+    // devOptions: {
+    //   enabled: true,
+    // },
+  }),
 
-    vue(),
+  // 使用 svg 雪碧图
+  createSvgIconsPlugin({
+    iconDirs: [resolve(process.cwd(), 'src/assets/icons')],
+    symbolId: 'icon-[dir]-[name]',
+  }),
 
-    viteCompression({
-      threshold: 2048,
-    }),
+  // show qrcode in dev mode
+  qrcode(),
 
-    // vue-i18n 插件
-    VueI18n({
-      runtimeOnly: true,
-      compositionOnly: true,
-      include: [
-        resolve(projectRoot, "src/locales/messages/**")
-      ]
-    }),
+  // visualize the result of building
+  visualizer({
+    filename: "analysis.html", // 文件名称
+    title: "Project Building Analysis",
+  }),
+]
 
-    // 使用 SSL
-    // mkcert(),
+// https://vitejs.dev/config/
+export default defineConfig(({ command, mode }) => {
 
-    // PWA
-    VitePWA({
-      registerType: "prompt",
-      manifest: false,
-      strategies: "generateSW",
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg}']
+  const _env = loadEnv(mode, projectRoot)
+  if(command === "build" && mode === "production") {
+    // source maps for sentry
+    if(_env.VITE_SENTRY_ORG && _env.VITE_SENTRY_PROJECT) {
+      const _sentry = sentryVitePlugin({
+        org: _env.VITE_SENTRY_ORG,
+        project: _env.VITE_SENTRY_PROJECT,
+        telemetry: false,
+      })
+      vitePlugins.push(_sentry)
+    }
+  }
+
+  return {
+    resolve: {
+      alias: {
+        '~/': `${resolve(projectRoot, 'src')}/`,
       },
-      filename: "service-worker.js",
-
-      // open it if you want to test service worker update on dev mode
-      // devOptions: {
-      //   enabled: true,
-      // },
-    }),
-
-    // 使用 svg 雪碧图
-    createSvgIconsPlugin({
-      iconDirs: [resolve(process.cwd(), 'src/assets/icons')],
-      symbolId: 'icon-[dir]-[name]',
-    }),
-
-    // show qrcode in dev mode
-    qrcode(),
-
-    // visualize the result of building
-    visualizer({
-      filename: "analysis.html", // 文件名称
-      title: "Project Building Analysis",
-    }),
-  ],
-
-  server: {
-    host: true,
-    port: 5175,
-  },
-
-  build: {
-    sourcemap: true,
-  },
-
-  preview: {
-    port: 4175,
-  },
+    },
   
-  define: {
-    "LIU_ENV": {
-      "version": version,
-      "client": "web"
+    plugins: vitePlugins,
+  
+    server: {
+      host: true,
+      port: 5175,
+    },
+  
+    build: {
+      sourcemap: true,
+    },
+  
+    preview: {
+      port: 4175,
+    },
+    
+    define: {
+      "LIU_ENV": {
+        "version": version,
+        "client": "web"
+      }
     }
   }
 })
