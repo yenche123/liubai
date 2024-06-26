@@ -22,6 +22,7 @@ const { t } = useI18n()
 const naviHeightPx = `${cfg.navi_height}px`
 
 const {
+  sbtData,
   tagNodes,
   oldTagNodes,
   lastTagChangeStamp,
@@ -29,9 +30,7 @@ const {
   onTreeChange,
   onTapTagItem,
   onTapTagArrow,
-  toPath,
   onNaviBack,
-  currentTagId,
 } = useSbTags(emits)
 
 const ctx = {
@@ -74,7 +73,8 @@ const {
     <span>{{ t('placeholder.no_tag_yet') }}</span>
   </div>
 
-  <Draggable v-model="tagNodes" ref="treeEl" :indent="20" 
+  <Draggable v-if="sbtData.enable"
+    v-model="tagNodes" ref="treeEl" :indent="20" 
     @change="onTreeChange" 
     :watermark="false"
     update-behavior="new"
@@ -82,15 +82,16 @@ const {
   >
     <template #default="{ node, stat }">
 
-      <RouterLink v-if="isPC" :to="toPath + node.tagId" custom>
+      <RouterLink v-if="isPC" :to="sbtData.toPath + node.tagId" custom>
 
-        <a :href="toPath + node.tagId" @click.prevent="onTapTagItem($event, toPath + node.tagId)">
-
+        <a :href="sbtData.toPath + node.tagId" 
+          @click.prevent="onTapTagItem($event, sbtData.toPath + node.tagId)"
+        >
           <SbtItem
             :is-p-c="isPC"
             :node="node"
             :stat="stat"
-            :current-tag-id="currentTagId"
+            :current-tag-id="sbtData.currentTagId"
             :menu-list="menuList"
             :menu-list2="menuList2"
             @taptagarrow="onTapTagArrow"
@@ -101,12 +102,12 @@ const {
 
       </RouterLink>
 
-      <div v-else @click.stop="onTapTagItem($event, toPath + node.tagId)">
+      <div v-else @click.stop="onTapTagItem($event, sbtData.toPath + node.tagId)">
         <SbtItem
           :is-p-c="isPC"
           :node="node"
           :stat="stat"
-          :current-tag-id="currentTagId"
+          :current-tag-id="sbtData.currentTagId"
           :menu-list="menuList"
           :menu-list2="menuList2"
           @taptagarrow="onTapTagArrow"
