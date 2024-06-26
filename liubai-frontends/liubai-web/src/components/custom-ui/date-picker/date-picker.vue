@@ -265,7 +265,68 @@ const previewDate = computed(() => {
     }
   }
 
+  /********************* hover & active style for Mobile ****************/
+  .dp__button:hover, 
+  .dp__month_year_select:hover, 
+  .dp__overlay_cell:hover, 
+  .dp__time_display:hover:enabled, 
+  .dp__date_hover_end:hover, 
+  .dp__date_hover_start:hover,
+  .dp__date_hover:hover {
+    background: none;
+  }
 
+  .dp__cell_offset.dp__date_hover:hover {
+    color: var(--dp-secondary-color);
+  }
+
+  .dp__inc_dec_button:hover {
+    background: none;
+    color: var(--dp-icon-color);
+  }
+
+  @media(hover: hover) {
+    .dp__button:hover,
+    .dp__month_year_select:hover, 
+    .dp__overlay_cell:hover,
+    .dp__time_display:hover:enabled,
+    .dp__date_hover_end:hover, 
+    .dp__date_hover_start:hover,
+    .dp__date_hover:hover {
+      background: var(--dp-hover-color);
+    }
+
+    .dp__cell_offset.dp__date_hover:hover {
+      color: var(--dp-hover-text-color);
+    }
+
+    .dp__inc_dec_button:hover {
+      background: var(--dp-hover-color);
+      color: var(--dp-primary-color);
+    }
+  }
+
+  .dp__button:active,
+  .dp__month_year_select:active, 
+  .dp__overlay_cell:active,
+  .dp__time_display:active:enabled,
+  .dp__date_hover_end:active, 
+  .dp__date_hover_start:active,
+  .dp__date_hover:active {
+    background: var(--dp-hover-color);
+  }
+
+  .dp__cell_offset.dp__date_hover:active {
+    color: var(--dp-hover-text-color);
+  }
+
+  .dp__inc_dec_button:active {
+    background: var(--dp-hover-color);
+    color: var(--dp-primary-color);
+  }
+
+
+  /******************* responsive style for Mobile *****************/
   @media screen and (max-width: 400px) {
     .dp-custom-menu {
       padding: 10px 10px 10px;
