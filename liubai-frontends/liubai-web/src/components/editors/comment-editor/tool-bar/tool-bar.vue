@@ -84,7 +84,9 @@ const cha = inject(deviceChaKey)
     </div>
     <div class="cemt-footer">
 
-      <div class="liu-no-user-select cemtf-tip" v-if="cha?.isPC">
+      <div class="liu-no-user-select cemtf-tip" v-if="cha?.isPC"
+        :class="{ 'cemtf-tip_show': !isToolbarTranslateY }"
+      >
         <span>{{ liuUtil.getHelpTip('Mod_Enter') }}</span>
       </div>
 
@@ -200,6 +202,12 @@ const cha = inject(deviceChaKey)
   padding-inline-end: 10px;
   font-size: var(--mini-font);
   color: var(--main-tip);
+  opacity: 0;
+  transition: .2s;
+}
+
+.cemtf-tip_show {
+  opacity: 1;
 }
 
 .cemtf-submit-btn {
