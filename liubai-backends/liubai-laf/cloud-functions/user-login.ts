@@ -69,7 +69,6 @@ const _ = db.command
 /************************ 函数们 *************************/
 
 export async function main(ctx: FunctionContext) {
-  console.log("welcome to user-login")
 
   // 0.1 检查 "登录功能" 是否关闭
   const env = process.env
