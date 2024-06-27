@@ -10,7 +10,7 @@ const { t } = useI18n()
       :cover-fill-stroke="false"
       name="emojis-face_with_peeking_eye_color"
     ></svg-icon>
-    <div class="cc-title">
+    <div class="liu-no-user-select cc-title">
       <span>{{ t('tip.coming_soon') }}</span>
     </div>
     <div class="cc-text">
