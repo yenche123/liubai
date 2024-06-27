@@ -1,10 +1,8 @@
 import { useRegisterSW } from 'virtual:pwa-register/vue';
-import { pwaInfo } from 'virtual:pwa-info';
 import { watch } from 'vue';
 import liuConsole from "~/utils/debug/liu-console";
 import localCache from "~/utils/system/local-cache";
 import time from "~/utils/basic/time";
-import valTool from '~/utils/basic/val-tool';
 import { type SimplePromise } from '~/utils/basic/type-tool';
 import { useGlobalStateStore } from '../stores/useGlobalStateStore';
 
@@ -14,11 +12,6 @@ const MIN_15 = 15 * time.MINUTE
 let _updateSW: SimplePromise | undefined
 
 export function initServiceWorker() {
-  console.log("PWA info: ", pwaInfo)
-  if(pwaInfo) {
-    const pwaStr = valTool.objToStr(pwaInfo)
-    liuConsole.sendMessage(`PWA info: ${pwaStr}`)
-  }
 
   // Reference: 
   // https://vite-pwa-org.netlify.app/guide/periodic-sw-updates.html#handling-edge-cases

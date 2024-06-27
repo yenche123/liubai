@@ -32,6 +32,7 @@ watch(show, async (newV) => {
       :maxlength="20"
       @keyup.enter="onEnter" 
       autocomplete="nickname"
+      spellcheck="false"
     />
   </div>
 
