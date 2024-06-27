@@ -91,6 +91,7 @@ button, input {
 }
 
 a {
+  color: var(--primary-color);
   outline: none;
 }
 

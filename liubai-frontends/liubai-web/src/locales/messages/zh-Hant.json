@@ -57,7 +57,8 @@
     "update": "更新",
     "unknown": "未命名",
     "under_construction": "施工中",
-    "never_prompt": "不再提示"
+    "never_prompt": "不再提示",
+    "faq": "常見問題"
   },
   "editor": {
     "when": "什麼時候",
@@ -421,7 +422,12 @@
     "tip_cancel": "先不要",
     "tip_confirm": "試用七天",
     "fail_to_add": "新增失敗",
-    "fail_to_add_tip": "建議開啟 Chrome 瀏覽器再新增"
+    "fail_to_add_tip": "建議開啟 Chrome 瀏覽器再新增",
+    "add_twice_title": "為什麼需要二次登入？",
+    "add_twice_desc_1": "根據 ",
+    "apple_policy": "Apple 的政策",
+    "apple_link": "https://support.apple.com/zh-tw/104996",
+    "add_twice_desc_2": "，網頁版和 Web App 為不同的環境，兩邊的瀏覽資訊不互通。"
   },
   "pwa": {
     "new_version_title": "發現新版本",

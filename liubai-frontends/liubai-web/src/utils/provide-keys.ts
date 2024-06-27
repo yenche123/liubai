@@ -52,3 +52,6 @@ export const kanbanInnerChangeKey = Symbol() as InjectionKey<Ref<number>>
 
 // device characteristics
 export const deviceChaKey = Symbol() as InjectionKey<GetChaRes>
+
+// whether show a2hs-faq or not
+export const showA2hsFaqKey = Symbol() as InjectionKey<Ref<boolean>>

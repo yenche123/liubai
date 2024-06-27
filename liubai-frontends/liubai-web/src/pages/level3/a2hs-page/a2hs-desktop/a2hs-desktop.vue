@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
+import A2hsFaq from "../a2hs-faq/a2hs-faq.vue";
+
 const { t } = useI18n()
 
 </script>
@@ -15,6 +17,8 @@ const { t } = useI18n()
     <span class="liu-selection">{{ t('a2hs.desktop_safari_2') }}</span>
   </div>
   <div class="a2hs-img-2"></div>
+
+  <a2hs-faq></a2hs-faq>
 
 </template>
 <style lang="scss" scoped>

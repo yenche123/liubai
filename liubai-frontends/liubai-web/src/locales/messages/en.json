@@ -57,7 +57,8 @@
     "update": "Update",
     "unknown": "Unknown",
     "under_construction": "Under Construction",
-    "never_prompt": "Never prompt"
+    "never_prompt": "Never prompt",
+    "faq": "FAQ"
   },
   "editor": {
     "when": "When",
@@ -421,7 +422,12 @@
     "tip_cancel": "No, thanks",
     "tip_confirm": "Try it out",
     "fail_to_add": "Fail to Add",
-    "fail_to_add_tip": "Open Chrome browser and try again please."
+    "fail_to_add_tip": "Open Chrome browser and try again please.",
+    "add_twice_title": "Why do we need to log in twice?",
+    "add_twice_desc_1": "According to ",
+    "apple_policy": "Apple's policy",
+    "apple_link": "https://support.apple.com/en-us/104996",
+    "add_twice_desc_2": ", the website and web app are different environments, which results in different browsing information from the two sides."
   },
   "pwa": {
     "new_version_title": "New Version",

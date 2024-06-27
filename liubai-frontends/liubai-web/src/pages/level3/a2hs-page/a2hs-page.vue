@@ -7,8 +7,11 @@ import A2hsMobile from "./a2hs-mobile/a2hs-mobile.vue";
 import liuApi from "~/utils/liu-api";
 import { onActivated } from "vue";
 import middleBridge from "~/utils/middle-bridge";
+import { useA2hsPage } from "./tools/useA2hsPage";
 
 const cha = liuApi.getCharacteristic()
+
+useA2hsPage()
 
 onActivated(() => {
   middleBridge.setAppTitle({ val_key: "a2hs.title" })

@@ -57,7 +57,8 @@
     "update": "更新",
     "unknown": "未命名",
     "under_construction": "施工中",
-    "never_prompt": "不再提示"
+    "never_prompt": "不再提示",
+    "faq": "常见问题"
   },
   "editor": {
     "when": "什么时候",
@@ -421,7 +422,12 @@
     "tip_cancel": "先不要",
     "tip_confirm": "试用七天",
     "fail_to_add": "添加失败",
-    "fail_to_add_tip": "建议使用 Chrome 浏览器进行添加"
+    "fail_to_add_tip": "建议使用 Chrome 浏览器进行添加",
+    "add_twice_title": "为什么需要登录两次？",
+    "add_twice_desc_1": "根据",
+    "apple_policy": "苹果的政策",
+    "apple_link": "https://support.apple.com/zh-cn/104996",
+    "add_twice_desc_2": "，网页版和 Web App 为不同的环境，两边的浏览信息不互通。"
   },
   "pwa": {
     "new_version_title": "发现新版本",
