@@ -1,4 +1,4 @@
-import { reactive, ref, watch, type Ref } from "vue"
+import { reactive, ref, toRef, watch, type Ref } from "vue"
 import type { LpcProps, LpcEmits, LpcData } from "./types"
 
 interface LpcCtx {
@@ -25,6 +25,12 @@ export function useLpCode(
 
   watch(() => lpcData.code, (newV, oldV) => {
     whenCodeChange(newV, oldV, ctx)
+  })
+
+  const clearCodeNum = toRef(props, "clearCodeNum")
+  watch(clearCodeNum, (newV) => {
+    if(!newV) return
+    lpcData.code = ""
   })
   
   const onEnterCode = () => {

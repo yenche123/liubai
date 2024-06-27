@@ -41,8 +41,10 @@ export function useLoginPage() {
   const rr = useRouteAndLiuRouter()
 
   const lpData = reactive<LpData>({
+    enable: true,
     view: "main",
     email: "",
+    clearCodeNum: 0,
     accounts: [],
     isSendingEmail: false,
     isSubmittingEmailCode: false,
@@ -80,10 +82,6 @@ export function useLoginPage() {
     toSubmitEmailAndCode(rr, code, lpData)
   }
 
-  const onBackFromCode = () => {
-    lpData.view = "main"
-  }
-
   const onTapLoginViaThirdParty = async (tp: LoginByThirdParty) => {
     const pass = await _waitInitLogin()
     if(!pass) return
@@ -114,7 +112,7 @@ export function useLoginPage() {
     showBackBtn,
     onEmailSubmitted,
     onSubmitCode,
-    onBackFromCode,
+    onBackFromCode: () => runBackFromCode(lpData),
     onTapLoginViaThirdParty,
     onSelectedAnAccount,
     onTapBack,
@@ -125,6 +123,12 @@ function useTitle() {
   onActivated(() => {
     middleBridge.setAppTitle({ val_key: "hello.login_title" })
   })
+}
+
+async function runBackFromCode(lpData: LpData) {
+  lpData.view = "main"
+  await valTool.waitMilli(300)
+  lpData.clearCodeNum++
 }
 
 
@@ -171,14 +175,34 @@ function listenRouteAndLastLogged(
     }, 5000)
   }
 
+  const _checkRoute = (routeName: string) => {
+    if(routeName === "login" && !lpData.enable) {
+      lpData.enable = true
+      return
+    }
+
+    if(routeName !== "login") {
+      if(lpData.enable) {
+        lpData.enable = false
+        lpData.view = "main"
+      }
+      else {
+        watchStop?.()
+      }
+    }
+  }
+
   const _toListen = () => {
+    if(watchStop) watchStop()
     watchStop = watch([lastLogged, rr.route], (
       [newLastLogged, newRoute]
     ) => {
-      if(!newLastLogged || newLastLogged <= 0) return
-
       const newName = newRoute.name
       if(!valTool.isStringWithVal(newName)) return
+
+      _checkRoute(newName)
+
+      if(!newLastLogged || newLastLogged <= 0) return
 
       const isInLoginPage = newName.startsWith("login")
       if(isInLoginPage) {
@@ -188,7 +212,7 @@ function listenRouteAndLastLogged(
       else {
         _close(false)
       }
-    })
+    }, { immediate: true })
   }
 
   onActivated(() => {
@@ -196,7 +220,6 @@ function listenRouteAndLastLogged(
   })
 
   onDeactivated(() => {
-    watchStop?.()
     _close(false)
   })
 }
@@ -213,7 +236,7 @@ function handleBack(
 
   // 在输入 email 验证码页，返回到 main
   if(vi === "code") {
-    lpData.view = "main"
+    runBackFromCode(lpData)
     return
   }
 

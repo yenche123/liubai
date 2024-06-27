@@ -6,6 +6,7 @@ export type LoginByThirdParty = "google" | "github" | "apple"
 export type LpView = "main" | "code" | "accounts"     // 主页、填写验证码、选择账号
 
 export interface LpData {
+  enable: boolean
   view: LpView
   accounts: MemberShow[]
 
@@ -15,6 +16,7 @@ export interface LpData {
   lastSendEmail?: number         // 最近一次请求后端去发送 email 验证码的时间戳
   isSubmittingEmailCode: boolean
   lastSubmitEmailCode?: number   // 最近一次提交 email 和 验证码的时间戳
+  clearCodeNum: number
 
   // 从后端获取
   publicKey?: string

@@ -7,6 +7,7 @@ import { type RouteAndLiuRouter } from "~/routes/liu-router";
 import { getClientKey } from "../../tools/common-tools";
 import time from "~/utils/basic/time";
 import liuApi from "~/utils/liu-api";
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 
 // 本文件负责 Google One-Tap 登录流程
 
@@ -48,8 +49,9 @@ export async function loadGoogleIdentityService(
       }
     })
 
+    let timeout: LiuTimeout
     gAccounts.id.prompt((res) => {
-        
+      if(timeout) clearTimeout(timeout)
       const isDisplayMoment = res.isDisplayMoment()
       const isDisplayed = res.isDisplayed()
       const isNotDisplayed = res.isNotDisplayed()
@@ -76,9 +78,10 @@ export async function loadGoogleIdentityService(
       lpData.googleOneTapShown = isDisplayed
     })
     
-    if(fedCM) {
+    if(!fedCM) return
+    timeout = setTimeout(() => {
       lpData.googleOneTapShown = true
-    }
+    }, 3000)
     
   }
 

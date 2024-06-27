@@ -44,6 +44,7 @@ const {
 
   <!-- 主体 -->
   <div class="lp-body" 
+    v-if="lpData.enable"
     :class="{ 'lp-body_google-one-tap': lpData.googleOneTapShown }"
   >
 
@@ -62,6 +63,7 @@ const {
     <!-- 输入验证码页 -->
     <div class="lp-container" v-liu-show="lpData.view === 'code'">
       <LpCode :email="lpData.email"
+        :clear-code-num="lpData.clearCodeNum"
         @submitcode="onSubmitCode"
         @back="onBackFromCode"
         :is-submitting-code="lpData.isSubmittingEmailCode"
