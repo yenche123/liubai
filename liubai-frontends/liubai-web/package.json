@@ -84,10 +84,7 @@
     "workbox-window": "^7.1.0"
   },
   "pnpm": {
-    "overrides": {
-      "@volar/typescript": "2.3.1",
-      "@volar/language-core": "2.3.1"
-    }
+    "overrides": {}
   },
   "packageManager": "pnpm@9.0.6"
 }

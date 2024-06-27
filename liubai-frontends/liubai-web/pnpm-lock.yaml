@@ -4,10 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@volar/typescript': 2.3.1
-  '@volar/language-core': 2.3.1
-
 importers:
 
   .:
