@@ -1439,6 +1439,15 @@ async function checkAllowList(
   type: "email",
   value: string,
 ) {
+  const end_1 = value.endsWith("@sjtu.edu.cn")
+  if(end_1) {
+    return true
+  }
+  const end_2 = value.endsWith("@alumni.sjtu.edu.cn")
+  if(end_2) {
+    return true
+  }
+
   const w: Partial<Table_AllowList> = {
     type,
     isOn: "Y",
