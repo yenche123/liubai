@@ -77,7 +77,13 @@ export default defineConfig(({ command, mode }) => {
   const _env = loadEnv(mode, projectRoot)
   if(command === "build" && mode === "production") {
     // source maps for sentry
-    if(_env.VITE_SENTRY_ORG && _env.VITE_SENTRY_PROJECT) {
+    const {
+      VITE_SENTRY_SOURCEMAPS: ssmaps,
+      VITE_SENTRY_ORG,
+      VITE_SENTRY_PROJECT,
+    } = _env
+
+    if(ssmaps === "01" && VITE_SENTRY_ORG && VITE_SENTRY_PROJECT) {
       const _sentry = sentryVitePlugin({
         org: _env.VITE_SENTRY_ORG,
         project: _env.VITE_SENTRY_PROJECT,
