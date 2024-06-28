@@ -249,6 +249,9 @@ function listenToA2HS(
   if(liuApi.canIUse.isArcBrowser()) {
     return
   }
+  if(liuApi.canIUse.isRunningStandalone()) {
+    return
+  }
 
   const onceData = localCache.getOnceData()
   if(onceData.a2hs_never_prompt) {

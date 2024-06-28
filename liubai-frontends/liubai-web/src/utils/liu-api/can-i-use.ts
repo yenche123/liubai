@@ -65,6 +65,17 @@ function fedCM() {
   return false
 }
 
+function isRunningStandalone() {
+  //@ts-expect-error Property only exists on Safari
+  const standalone = window.navigator.standalone
+  if(typeof standalone === "boolean") {
+    return standalone
+  }
+
+  const res = window.matchMedia('(display-mode: standalone)').matches
+  return res
+}
+
 
 export default {
   isSafeBrowser,
@@ -73,4 +84,5 @@ export default {
   abortSignalTimeout,
   isArcBrowser,
   fedCM,
+  isRunningStandalone,
 }
