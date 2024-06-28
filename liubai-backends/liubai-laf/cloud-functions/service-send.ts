@@ -60,6 +60,7 @@ export async function sendEmails(
     tags = [{ name: "category", value: "confirm_email" }]
   }
 
+  const time1 = getNowStamp()
   const res = await resend.emails.send({
     from: `${appName} <${fromEmail}>`,
     to: param.to,
@@ -68,7 +69,9 @@ export async function sendEmails(
     html: newHtml,
     tags,
   })
+  const time2 = getNowStamp()
 
+  console.log(`resend 发送耗时: ${time2 - time1} ms`)
   console.log("查看 resend 的发送结果>>>")
   console.log(res)
   console.log(" ")

@@ -62,6 +62,12 @@ const GOOGLE_API_USER = "https://www.googleapis.com/oauth2/v3/userinfo"
 
 const PREFIX_CLIENT_KEY = "client_key_"
 
+const TEST_EMAILS = [
+  "delivered@resend.dev",
+  "bounced@resend.dev",
+  "complained@resend.dev"
+]
+
 const db = cloud.database()
 const _ = db.command
 
@@ -365,10 +371,7 @@ async function handle_email_code(
 
   // the following has been pass
   // 5. to remove credential
-  const res2 = await col.where({ _id: firstCre._id }).remove()
-  console.log("删除 credential 的结果........")
-  console.log(res2)
-  console.log(" ")
+  col.where({ _id: firstCre._id }).remove()
 
   // 6. 去注册或登录
   const res3 = await signInUpViaEmail(ctx, body, email, client_key)
@@ -397,6 +400,10 @@ async function handle_email(
   ctx: FunctionContext,
   body: Record<string, string>,
 ) {
+
+
+  const T1 = getNowStamp()
+
   let tmpEmail = body.email
   const enc_email = body.enc_email
   if(!tmpEmail && !enc_email) {
@@ -446,7 +453,7 @@ async function handle_email(
 
   // 5. 存入 email code 进 Table_Credential 中
   const basic1 = getBasicStampWhileAdding()
-  const expireStamp = getNowStamp() + 10 * MINUTE
+  const expireStamp = getNowStamp() + 16 * MINUTE
   const obj1: PartialSth<Table_Credential, "_id"> = {
     ...basic1,
     credential: emailCode,
@@ -483,6 +490,9 @@ async function handle_email(
     delete res4.data
   }
 
+
+  const T2 = getNowStamp()
+  console.log("handle_email spent: ", T2 - T1)
 
   return res4
 }
@@ -1402,8 +1412,8 @@ function checkIfStateIsErr(state: any): LiuRqReturn | null {
 
   const now = getNowStamp()
   const diff = now - createdStamp
-  const isMoreThan15Mins = diff > (15 * MINUTE)
-  if(isMoreThan15Mins) {
+  const isMoreThan20Mins = diff > (20 * MINUTE)
+  if(isMoreThan20Mins) {
     console.warn("the state has been expired........")
     liuLoginState.delete(state)
     return { code: "U0003", errMsg: "the state has been expired" }
@@ -1445,6 +1455,11 @@ async function checkAllowList(
   }
   const end_2 = value.endsWith("@alumni.sjtu.edu.cn")
   if(end_2) {
+    return true
+  }
+
+  const isTest = TEST_EMAILS.includes(value)
+  if(isTest) {
     return true
   }
 

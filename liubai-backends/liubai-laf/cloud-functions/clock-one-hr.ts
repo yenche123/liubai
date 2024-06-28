@@ -8,11 +8,11 @@ const db = cloud.mongo.db
 
 export async function main(ctx: FunctionContext) {
 
-  console.log("---------- Start clock-one-hr ----------")
+  // console.log("---------- Start clock-one-hr ----------")
   await clearExpiredCredentials()
   await clearDrafts()
-  console.log("---------- End clock-one-hr ----------")
-  console.log(" ")
+  // console.log("---------- End clock-one-hr ----------")
+  // console.log(" ")
 
   return true
 }

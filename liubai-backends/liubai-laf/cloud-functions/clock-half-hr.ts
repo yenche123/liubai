@@ -8,15 +8,16 @@ import type {
 } from "@/common-types"
 import { getNowStamp, MINUTE } from "@/common-time"
 
-const MIN_10 = 10 * MINUTE
+const MIN_20 = 20 * MINUTE
 const MIN_15 = 15 * MINUTE
 
 export async function main(ctx: FunctionContext) {
 
-  // console.log("---------- Start 清理缓存程序 ----------")
+  console.log("---------- Start 清理缓存程序 ----------")
   clearLoginState()
   clearTokenUser()
-  // console.log("---------- End 清理缓存程序 ----------")
+  console.log("---------- End 清理缓存程序 ----------")
+  console.log(" ")
 
   return true
 }
@@ -33,17 +34,17 @@ function clearLoginState() {
   }
 
   const size1 = loginState.size
-  // console.log(`清理 loginState 前的 size: ${size1}`)
+  console.log(`清理 loginState 前的 size: ${size1}`)
 
   const now = getNowStamp()
   loginState.forEach((val, key) => {
     const diff = now - val.createdStamp
-    if(diff < MIN_10) return
+    if(diff < MIN_20) return
     loginState.delete(key)
   })
 
   const size2 = loginState.size
-  // console.log(`清理 loginState 后的 size: ${size2}`)
+  console.log(`清理 loginState 后的 size: ${size2}`)
   // console.log(" ")
 
   return true
