@@ -330,6 +330,17 @@ useDraftIdChanged(ceData)
   max-height: 55px;
 }
 
+/** if container query is not supported yet */
+@media screen and (max-width: 480px) {
+  .ce-editor {
+    max-height: v-bind("(maxEditorHeight - 55) + 'px'");
+  }
+
+  .ce-virtual {
+    max-height: 55px;
+  }
+}
+
 @container liu-mc-container (max-width: 480px) {
   .ce-editor {
     max-height: v-bind("(maxEditorHeight - 55) + 'px'");

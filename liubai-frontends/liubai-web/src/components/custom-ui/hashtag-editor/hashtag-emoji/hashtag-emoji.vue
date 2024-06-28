@@ -73,7 +73,8 @@ const { t } = useI18n()
 .he-container {
   overflow-y: auto;
   padding: 10px;
-  width: 490px;
+  padding-inline-end: 0;
+  width: 496px;
   max-height: 50vh;
   position: relative;
   scrollbar-color: var(--sidebar-scrollbar-thumb) transparent;
@@ -83,7 +84,7 @@ const { t } = useI18n()
   }
 
   .he-first-bar {
-    width: 100%;
+    width: calc(100% - 10px);
     display: flex;
     justify-content: flex-end;
   }
@@ -107,13 +108,13 @@ const { t } = useI18n()
 
 @media screen and (max-width: 600px) {
   .he-container {
-    width: 410px;
+    width: 416px;
   }
 }
 
-@media screen and (max-width: 430px) {
+@media screen and (max-width: 470px) {
   .he-container {
-    width: 360px;
+    width: 366px;
 
     .he-item {
       width: 70px;
@@ -123,9 +124,9 @@ const { t } = useI18n()
 }
 
 
-@media screen and (max-width: 390px) {
+@media screen and (max-width: 420px) {
   .he-container {
-    width: 310px;
+    width: 316px;
     padding: 10px 0;
 
     .he-item {
@@ -135,9 +136,9 @@ const { t } = useI18n()
   }
 }
 
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 360px) {
   .he-container {
-    width: 260px;
+    width: 266px;
 
     .he-item {
       width: 50px;

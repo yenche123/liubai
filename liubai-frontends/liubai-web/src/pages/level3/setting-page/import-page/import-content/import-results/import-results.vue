@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, inject } from 'vue';
-import type { Ref, PropType } from "vue";
+import { computed, ref } from 'vue';
+import type { PropType } from "vue";
 import type { ImportedAtom2 } from "../tools/types"
 import { useI18n } from 'vue-i18n';
 import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-covers.vue";
-import { mainViewWidthKey } from "~/utils/provide-keys";
 
 const { t } = useI18n()
 
@@ -38,13 +37,6 @@ const showMore = computed(() => {
 
 const moreColor = `var(--main-normal)`
 const iconColor = `var(--liu-quote)`
-
-// 获取 main-view 的宽度
-const mvWidth = inject(mainViewWidthKey) as Ref<number>
-const smallView = computed(() => {
-  const w = mvWidth.value
-  return w < 450
-})
 
 </script>
 <template>
@@ -309,14 +301,38 @@ const smallView = computed(() => {
 }
 
 .ir-btns {
-  padding: v-bind("smallView ? '0 0 50px' : '0 30px 50px 30px'");
+  padding: 0 30px 50px 30px;
   display: flex;
-  justify-content: v-bind("smallView ? 'space-between' : 'space-evenly'");
+  justify-content: space-evenly;
   position: relative;
 }
 
 .ir-btn {
-  min-width: v-bind("smallView ? '45%' : '160px'");
+  min-width: 160px;
+}
+
+/** if container query is not supported yet */
+@media screen and (max-width: 450px) {
+  .ir-btns {
+    padding: 0 0 50px;
+    justify-content: space-between;
+  }
+
+  .ir-btn {
+    min-width: calc(45% - 40px);
+  }
+
+}
+
+@container liu-mc-container (max-width: 450px) {
+  .ir-btns {
+    padding: 0 0 50px;
+    justify-content: space-between;
+  }
+
+  .ir-btn {
+    min-width: calc(45% - 40px);
+  }
 }
 
 </style>

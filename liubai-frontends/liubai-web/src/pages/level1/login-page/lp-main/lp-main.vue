@@ -202,7 +202,7 @@ const {
   max-width: 450px;
   padding: 4px 16px;
   box-sizing: border-box;
-  height: 48px;
+  min-height: 48px;
   border-radius: 8px;
   border: 1.4px solid var(--line-bottom);
   overflow: hidden;

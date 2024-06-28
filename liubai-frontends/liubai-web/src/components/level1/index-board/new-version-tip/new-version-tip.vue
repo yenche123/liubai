@@ -123,7 +123,8 @@ const {
 }
 
 .a2hs-btn {
-  min-width: 100px;
+  padding-block: 5px;
+  min-width: 72px;
   z-index: 50;
 }
 

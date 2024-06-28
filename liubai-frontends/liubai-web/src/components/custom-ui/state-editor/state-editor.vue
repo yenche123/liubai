@@ -264,7 +264,7 @@ const { t } = useI18n()
   }
 
   .se-btn {
-    min-width: 45%;
+    min-width: calc(40% - 40px);
   }
 }
 

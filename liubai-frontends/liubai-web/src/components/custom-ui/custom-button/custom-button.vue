@@ -34,8 +34,7 @@ const { cbData } = useCustomButton(props)
 <style scoped lang="scss">
 
 .btn-container {
-  height: 50px;
-  line-height: 50px;
+  padding-block: 10px;
   width: 100%;
   border: 0;
   border-radius: 8px;
@@ -47,24 +46,23 @@ const { cbData } = useCustomButton(props)
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 30px;
+  box-sizing: content-box;
 }
 
 .btn-mini {
-  height: 40px;
-  line-height: 40px;
+  padding-block: 5px;
   width: auto;
   border-radius: 10px;
-  padding: 0 20px;
+  padding-inline: 20px;
 }
 
 .btn-common {
-  height: 50px;
-  line-height: 50px;
   border-radius: 18px;
   width: auto;
   text-align: center;
-  min-width: 160px;
-  padding: 0 24px;
+  min-width: 120px;
+  padding-inline: 24px;
   font-weight: 700;
 }
 
@@ -85,7 +83,7 @@ const { cbData } = useCustomButton(props)
 
 .btn-loading-box {
   width: 40px;
-  height: 40px;
+  height: 30px;
   max-width: 0;
   opacity: 0;
   transition: .2s;
@@ -151,10 +149,9 @@ const { cbData } = useCustomButton(props)
 @media screen and (max-width: 450px) {
 
   .btn-mini {
-    height: 32px;
-    line-height: 32px;
+    padding-block: 1px;
     border-radius: 8px;
-    padding: 0 14px;
+    padding-inline: 14px;
     font-size: var(--mini-font);
   }
   
