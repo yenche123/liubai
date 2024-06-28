@@ -161,34 +161,3 @@ export function useWindowLoaded(data: WinLoadedData) {
     data.enable = newV
   }, { immediate: true })
 }
-
-
-interface BackdropFilterData {
-  backdropFilterAgain: boolean
-  [key: string]: any
-}
-
-// try to fix backdrop-filter bug for iOS
-export function useBackdropFilter(
-  elRef: Ref<HTMLElement | undefined | null>,
-  data: BackdropFilterData,
-) {
-  const _foo = useDebounceFn(() => {
-    // console.log("去再次展示 backdrop-filter......")
-    data.backdropFilterAgain = true
-  }, 300)
-
-  const res = useMutationObserver(elRef, (mutations) => {
-    const firMutation = mutations[0]
-    if(!firMutation) return
-    // console.log("mutation.......")
-    // console.log(firMutation)
-    // console.log(" ")
-    const attrName = firMutation.attributeName
-
-    if(attrName === "class") {
-      _foo()
-      res.stop()
-    }
-  }, { attributes: true })
-}

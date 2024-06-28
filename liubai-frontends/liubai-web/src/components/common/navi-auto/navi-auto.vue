@@ -29,7 +29,6 @@ const default_color = "var(--navi-normal)"
     :class="{ 
       'na-container_show': naData.show, 
       'na-container_shadow': naData.shadow,
-      'liu-frosted-glass_again': naData.backdropFilterAgain,
     }"
   >
 

@@ -47,17 +47,6 @@
   overflow: hidden;
 }
 
-.liu-frosted-glass_again {
-  position: relative;
-}
-
-.liu-frosted-glass_again::before {
-  content: "";
-  position: absolute;
-  -webkit-backdrop-filter: blur(10.5px);
-  backdrop-filter: blur(10.5px);
-}
-
 
 /********* 仅在有鼠标的设备上生效 *********/
 @media(hover: hover) {

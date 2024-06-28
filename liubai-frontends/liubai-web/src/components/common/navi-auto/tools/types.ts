@@ -5,7 +5,6 @@ export interface NaviAutoData {
   enable: boolean
   show: boolean
   shadow: boolean
-  backdropFilterAgain: boolean
 }
 
 export interface NaviAutoEmits {
