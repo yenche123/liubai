@@ -427,7 +427,8 @@
     "add_twice_desc_1": "根据",
     "apple_policy": "苹果的政策",
     "apple_link": "https://support.apple.com/zh-cn/104996",
-    "add_twice_desc_2": "，网页版和 Web App 为不同的环境，两边的浏览信息不互通。"
+    "add_twice_desc_2": "，网页版和 Web App 为不同的环境，两边的浏览信息不互通。",
+    "install_app": "安装留白记事"
   },
   "pwa": {
     "new_version_title": "发现新版本",

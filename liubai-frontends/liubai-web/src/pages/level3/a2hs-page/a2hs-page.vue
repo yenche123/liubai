@@ -11,7 +11,7 @@ import { useA2hsPage } from "./tools/useA2hsPage";
 
 const cha = liuApi.getCharacteristic()
 
-useA2hsPage()
+const { showA2hsFAQ } = useA2hsPage()
 
 onActivated(() => {
   middleBridge.setAppTitle({ val_key: "a2hs.title" })
@@ -35,7 +35,9 @@ onActivated(() => {
       </div>
 
     </scroll-view>
-    <navi-bar :show-menu="false" ></navi-bar>
+    <navi-bar :show-menu="false"
+      :title-key="showA2hsFAQ ? '' : 'a2hs.install_app'"
+    ></navi-bar>
   </div>
 
 </template>

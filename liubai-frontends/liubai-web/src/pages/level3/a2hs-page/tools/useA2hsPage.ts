@@ -15,4 +15,8 @@ export function useA2hsPage() {
       showA2hsFAQ.value = false
     }
   }, { immediate: true })
+
+  return {
+    showA2hsFAQ,
+  }
 }

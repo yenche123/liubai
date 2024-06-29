@@ -427,7 +427,8 @@
     "add_twice_desc_1": "According to ",
     "apple_policy": "Apple's policy",
     "apple_link": "https://support.apple.com/en-us/104996",
-    "add_twice_desc_2": ", the website and web app are different environments, which results in different browsing information from the two sides."
+    "add_twice_desc_2": ", the website and web app are different environments, which results in different browsing information from the two sides.",
+    "install_app": "Install App"
   },
   "pwa": {
     "new_version_title": "New Version",

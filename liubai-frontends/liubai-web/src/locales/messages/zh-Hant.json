@@ -427,7 +427,8 @@
     "add_twice_desc_1": "根據 ",
     "apple_policy": "Apple 的政策",
     "apple_link": "https://support.apple.com/zh-tw/104996",
-    "add_twice_desc_2": "，網頁版和 Web App 為不同的環境，兩邊的瀏覽資訊不互通。"
+    "add_twice_desc_2": "，網頁版和 Web App 為不同的環境，兩邊的瀏覽資訊不互通。",
+    "install_app": "安装應用程式"
   },
   "pwa": {
     "new_version_title": "發現新版本",

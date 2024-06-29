@@ -29,6 +29,7 @@ import {
 import middleBridge from "~/utils/middle-bridge";
 import valTool from "~/utils/basic/val-tool";
 import liuApi from "~/utils/liu-api";
+import liuUtil from "~/utils/liu-util";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -107,6 +108,8 @@ export function useLoginPage() {
     return true
   })
 
+  checkIfRedirectToA2HS(rr)
+
   return {
     lpData,
     showBackBtn,
@@ -118,6 +121,24 @@ export function useLoginPage() {
     onTapBack,
   }
 }
+
+
+// check out if redirect to A2HS
+function checkIfRedirectToA2HS(
+  rr: RouteAndLiuRouter,
+) {
+  const res1 = liuUtil.check.isJustAppSetup()
+  if(!res1) return
+
+  const { isSafari, isInWebView } = liuApi.getCharacteristic()
+  if(isInWebView) return
+  if(!isSafari) return
+
+  const res2 = liuApi.canIUse.isRunningStandalone()
+  if(res2) return
+  rr.router.push({ name: "a2hs", query: { fr: "login" } })
+}
+
 
 function useTitle() {
   onActivated(() => {
