@@ -22,13 +22,14 @@ export interface ShareViewData {
   lineLink: string
   openExport: boolean
   openCopy: boolean
+
+  text: string
+  markdown: string
 }
 
 export type ShareViewRes = true
 
 export type SvResolver = (res: ShareViewRes) => void
-
-export type IcsDateTime = [number, number, number, number, number]
 
 export interface ExportData {
   title: string          // thread 的标题
@@ -38,3 +39,6 @@ export interface ExportData {
   startStamp?: number
   alarms?: Alarm[]
 }
+
+export type ShareDataType = "text" | "markdown"
+export type ShareViaType = "copy" | "file"

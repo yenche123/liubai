@@ -301,7 +301,9 @@
     "share_to": "分享到",
     "download_ics": "下載 .ics",
     "markdown_format": "Markdown 格式",
-    "txt_format": "Txt 格式"
+    "txt_format": "Txt 格式",
+    "no_text": "沒有可供複製的文字",
+    "under_construction": "🚧 施工中"
   },
   "whatever": {
     "sidebar_more": "設定、回收站"

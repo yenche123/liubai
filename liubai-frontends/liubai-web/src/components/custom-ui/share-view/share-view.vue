@@ -11,6 +11,7 @@ const {
   onPublicChanged,
   onTapAllowComment,
   onTapIcs,
+  onTapShareItem,
 } = initShareView()
 
 
@@ -53,7 +54,11 @@ const icon_color = `var(--main-normal)`
       </div>
 
       <div class="svb-box" :class="{ 'svb-box_expaned': svData.openExport }">
-        <div class="svb-bar sv-hover">
+
+        <!-- export markdown file -->
+        <div class="svb-bar sv-hover"
+          @click.stop="() => onTapShareItem('markdown', 'file')"
+        >
           <div class="liu-no-user-select svb-title">
             <span>{{ t('share_related.markdown_format') }}</span>
           </div>
@@ -65,7 +70,11 @@ const icon_color = `var(--main-normal)`
             </div>
           </div>
         </div>
-        <div class="svb-bar sv-hover">
+
+        <!-- export text file -->
+        <div class="svb-bar sv-hover"
+          @click.stop="() => onTapShareItem('text', 'file')"
+        >
           <div class="liu-no-user-select svb-title">
             <span>{{ t('share_related.txt_format') }}</span>
           </div>
@@ -105,7 +114,11 @@ const icon_color = `var(--main-normal)`
       </div>
 
       <div class="svb-box" :class="{ 'svb-box_expaned': svData.openCopy }">
-        <div class="svb-bar sv-hover">
+
+        <!-- copy markdown format -->
+        <div class="svb-bar sv-hover" 
+          @click.stop="() => onTapShareItem('markdown', 'copy')"
+        >
           <div class="liu-no-user-select svb-title">
             <span>{{ t('share_related.markdown_format') }}</span>
           </div>
@@ -117,7 +130,11 @@ const icon_color = `var(--main-normal)`
             </div>
           </div>
         </div>
-        <div class="svb-bar sv-hover">
+
+        <!-- copy txt format -->
+        <div class="svb-bar sv-hover"
+          @click.stop="() => onTapShareItem('text', 'copy')"
+        >
           <div class="liu-no-user-select svb-title">
             <span>{{ t('share_related.txt_format') }}</span>
           </div>
@@ -132,7 +149,7 @@ const icon_color = `var(--main-normal)`
       </div>
 
       <!-- share to -->
-      <div class="liu-no-user-select sv-bar">
+      <div class="liu-no-user-select sv-bar" style="cursor: default;">
         <div class="svb-hd">
           <span>{{ t('share_related.share_to') }}</span>
         </div>
@@ -412,6 +429,18 @@ const icon_color = `var(--main-normal)`
 
 
 @media screen and (max-width: 550px) {
+
+  .svb-icon-box {
+    width: 36px;
+    height: 36px;
+
+    .svb-svg-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+  }
+
   .sv-app-item {
     min-width: 42px;
     padding: 10px;
@@ -425,6 +454,10 @@ const icon_color = `var(--main-normal)`
 }
 
 @media screen and (max-width: 430px) {
+  .svb-hd {
+    font-size: var(--desc-font);
+  }
+
   .sv-app-item {
     padding: 8px;
     font-size: var(--state-font);
@@ -440,25 +473,15 @@ const icon_color = `var(--main-normal)`
       max-width: 80px;
     }
   }
+
+  .svb-title {
+    font-size: var(--comment-font);
+  }
 }
 
 @media screen and (max-width: 390px) {
   .sv-bar {
     margin-block-start: 20px;
-  }
-
-  .svb-icon-box {
-    width: 36px;
-    height: 36px;
-
-    .svb-svg-icon {
-      width: 24px;
-      height: 24px;
-    }
-  }
-
-  .svb-hd {
-    font-size: var(--desc-font);
   }
 
   .svbf-arrow-box {
@@ -474,10 +497,6 @@ const icon_color = `var(--main-normal)`
   .svb-bar {
     padding-inline-start: 36px;
     padding-block-start: 6px;
-  }
-
-  .svb-title {
-    font-size: var(--comment-font);
   }
 }
 

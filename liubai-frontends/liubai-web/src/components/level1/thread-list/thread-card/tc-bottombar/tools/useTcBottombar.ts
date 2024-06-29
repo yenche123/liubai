@@ -17,9 +17,9 @@ const MENU_1: TcbMenuItem[] = [
     iconName: "edit_400"
   },
   {
-    text_key: "common.state",
-    operation: "state",
-    iconName: "priority_400",
+    text_key: "common.export",
+    operation: "share",
+    iconName: "share",
   },
   {
     text_key: "common.delete",

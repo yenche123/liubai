@@ -301,7 +301,9 @@
     "share_to": "Share to",
     "download_ics": "Download .ics",
     "markdown_format": "Markdown format",
-    "txt_format": "Txt format"
+    "txt_format": "Txt format",
+    "no_text": "No text to copy",
+    "under_construction": "🚧 Under construction"
   },
   "whatever": {
     "sidebar_more": "Settings & Trash"

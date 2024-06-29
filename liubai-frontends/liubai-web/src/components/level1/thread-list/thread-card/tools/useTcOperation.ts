@@ -41,21 +41,13 @@ export function useTcOperation(
     emits
   }
 
-  const onTapComment = () => {
-    handel_comment(ctx)
-  }
-
-  const onTapShare = () => {
-    handle_share(ctx)
-  }
-
   const receiveBottomOperation = (operation: ThreadOperation) => {
     handleOperationFromBottomBar(ctx, operation)
   }
 
   return {
-    onTapComment,
-    onTapShare,
+    onTapComment: () => handel_comment(ctx),
+    onTapShare: () => handle_share(ctx),
     receiveBottomOperation,
   }
 }
@@ -76,6 +68,9 @@ function handleOperationFromBottomBar(
   }
   else if(op === "tag") {
     handle_tag(ctx, threadData)
+  }
+  else if(op === "share") {
+    handle_share(ctx)
   }
   else if(op === "state" || op === "delete") {
     ctx.emits("newoperate", op, position, threadData)

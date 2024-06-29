@@ -196,9 +196,6 @@ function listenToNewVersion(
     const nv = cfg.newVersion
 
     if(lastInstallNewVersion) {
-      // remember to remove console.warn after verification
-      console.warn("lastInstallNewVersion:::", lastInstallNewVersion)
-      
       const day0 = nv.install_min_duration
       const duration0 = day0 * time.DAY
       const within0 = time.isWithinMillis(lastInstallNewVersion, duration0)

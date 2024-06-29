@@ -104,6 +104,7 @@ const {
   color: var(--on-cui-snackbar);
   line-height: 1.33;
   flex: 1;
+  white-space: pre;
 }
 
 .sb-action {

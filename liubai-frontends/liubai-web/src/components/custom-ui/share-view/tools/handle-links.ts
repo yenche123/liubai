@@ -1,5 +1,5 @@
 import type { ThreadShow } from "~/types/types-content";
-import type { ShareViewData, ExportData, IcsDateTime } from "./types"
+import type { ShareViewData, ExportData } from "./types"
 import thirdLink from "~/config/third-link"
 import { add } from "date-fns"
 import liuUtil from "~/utils/liu-util";
@@ -32,6 +32,20 @@ export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
 
   // 7. 处理 LINE
   handleLINE(svData, thread, ed)
+
+  // 8. 处理 text & markdown
+  handleTextAndMd(svData, thread, ed)
+}
+
+
+function handleTextAndMd(
+  svData: ShareViewData, 
+  thread: ThreadShow,
+  ed: ExportData,
+) {
+  svData.text = ed.content2
+
+  // TODO: markdown
 }
 
 function getExportData(thread: ThreadShow) {

@@ -5,6 +5,8 @@ import type {
   ShareViewRes,
   SvResolver,
   ShareViewData,
+  ShareDataType,
+  ShareViaType,
 } from "./tools/types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
@@ -15,6 +17,8 @@ import liuEnv from "~/utils/liu-env"
 import { saveAs as fileSaverSaveAs } from 'file-saver';
 import time from "~/utils/basic/time"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
+import { showSnackBar } from "../snack-bar/index"
+import liuApi from "~/utils/liu-api"
 
 let _resolve: SvResolver | undefined
 const TRANSITION_DURATION = 150
@@ -33,6 +37,8 @@ const svData = reactive<ShareViewData>({
   lineLink: "",
   openCopy: false,
   openExport: false,
+  text: "",
+  markdown: "",
 })
 const queryKey = "shareview"
 let rr: RouteAndLiuRouter | undefined
@@ -49,6 +55,7 @@ export function initShareView() {
     onPublicChanged,
     onTapAllowComment,
     onTapIcs,
+    onTapShareItem,
   }
 }
 
@@ -66,6 +73,55 @@ export function showShareView(param: ShareViewParam) {
   }
   return new Promise(_wait)
 }
+
+
+function onTapShareItem(
+  dataType: ShareDataType,
+  viaType: ShareViaType,
+) {
+  if(dataType === "markdown") {
+    showSnackBar({ text_key: "share_related.under_construction" })
+    return
+  }
+
+  const text = svData.text
+  if(dataType === "text" && !text) {
+    showSnackBar({ text_key: "share_related.no_text" })
+    return
+  }
+
+  if(viaType === "copy" && dataType === "text") {
+    liuApi.copyToClipboard(text)
+    showSnackBar({ text_key: "common.copied" })
+    return
+  }
+
+  if(viaType === "file" && dataType === "text") {
+    exportFile(dataType, text)
+    return
+  }
+
+}
+
+
+function exportFile(
+  dataType: ShareDataType,
+  content: string,
+) {
+  const now = time.getTime()
+  const date = new Date(now)
+  const s = liuUtil.getLiuDate(date)
+  const fileName = `${dataType} ${s.YYYY}-${s.MM}-${s.DD} ${s.hh}_${s.mm}_${s.ss}`
+
+  let mimeType = "text/plain;charset=utf-8"
+  if(dataType === "markdown") {
+    mimeType = "text/markdown;charset=utf-8"
+  }
+
+  const blob = new Blob([content], { type: mimeType })
+  fileSaverSaveAs(blob, fileName)
+}
+
 
 function onTapIcs(e: MouseEvent) {
   if(!svData.icsLink) return

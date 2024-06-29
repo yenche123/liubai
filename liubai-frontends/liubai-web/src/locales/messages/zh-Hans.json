@@ -301,7 +301,9 @@
     "share_to": "分享到",
     "download_ics": "下载 .ics",
     "markdown_format": "Markdown 格式",
-    "txt_format": "Txt 格式"
+    "txt_format": "Txt 格式",
+    "no_text": "没有可供复制的文字",
+    "under_construction": "🚧 施工中"
   },
   "whatever": {
     "sidebar_more": "设置、垃圾桶"
