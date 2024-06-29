@@ -13,11 +13,11 @@ const MIN_15 = 15 * MINUTE
 
 export async function main(ctx: FunctionContext) {
 
-  console.log("---------- Start 清理缓存程序 ----------")
+  // console.log("---------- Start 清理缓存程序 ----------")
   clearLoginState()
   clearTokenUser()
-  console.log("---------- End 清理缓存程序 ----------")
-  console.log(" ")
+  // console.log("---------- End 清理缓存程序 ----------")
+  // console.log(" ")
 
   return true
 }
@@ -34,7 +34,7 @@ function clearLoginState() {
   }
 
   const size1 = loginState.size
-  console.log(`清理 loginState 前的 size: ${size1}`)
+  // console.log(`清理 loginState 前的 size: ${size1}`)
 
   const now = getNowStamp()
   loginState.forEach((val, key) => {
@@ -44,8 +44,7 @@ function clearLoginState() {
   })
 
   const size2 = loginState.size
-  console.log(`清理 loginState 后的 size: ${size2}`)
-  // console.log(" ")
+  // console.log(`清理 loginState 后的 size: ${size2}`)
 
   return true
 }
@@ -73,7 +72,6 @@ function clearTokenUser() {
 
   const size2 = tokenUser.size
   // console.log(`清理 tokenUser 后的 size: ${size2}`)
-  // console.log(" ")
 
   return true
 }

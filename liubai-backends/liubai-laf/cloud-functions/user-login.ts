@@ -434,6 +434,8 @@ async function handle_email(
   const res0 = checkIfStateIsErr(state)
   if(res0) return res0
 
+  console.log(`user wants to log in using ${email}`)
+
   // 2.1 检测邮箱是否在许可名单内
   const res0_1 = await checkAllowList("email", email)
   if(!res0_1) {

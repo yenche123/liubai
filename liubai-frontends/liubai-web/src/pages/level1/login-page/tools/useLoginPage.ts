@@ -30,6 +30,7 @@ import middleBridge from "~/utils/middle-bridge";
 import valTool from "~/utils/basic/val-tool";
 import liuApi from "~/utils/liu-api";
 import liuUtil from "~/utils/liu-util";
+import liuConsole from "~/utils/debug/liu-console";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -339,6 +340,9 @@ async function toSubmitEmailAddress(
     lpData.view = "code"
     return
   }
+
+  console.log(`using ${email} to login`)
+  liuConsole.sendMessage(`user submit email: ${email}`)
 
   const enc_email = await encryptTextWithRSA(publicKey, email)
   if(!enc_email) {

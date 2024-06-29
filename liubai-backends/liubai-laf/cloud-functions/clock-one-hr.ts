@@ -30,8 +30,8 @@ async function clearDrafts() {
   }
   const col = db.collection("Draft")
   const res1 = await col.deleteMany(q)
-  console.log("删除 21 天前已发表或已删除的草稿 result: ")
-  console.log(res1)
+  // console.log("删除 21 天前已发表或已删除的草稿 result: ")
+  // console.log(res1)
 
   const DAY_42_AGO = getNowStamp() - (42 * DAY)
   const q2 = {
@@ -40,8 +40,8 @@ async function clearDrafts() {
     }
   }
   const res2 = await col.deleteMany(q2)
-  console.log("删除过去 42 天内都没被更新的草稿 result: ")
-  console.log(res2)
+  // console.log("删除过去 42 天内都没被更新的草稿 result: ")
+  // console.log(res2)
 }
 
 
