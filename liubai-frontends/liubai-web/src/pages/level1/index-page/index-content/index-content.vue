@@ -53,18 +53,18 @@ const { t } = useI18n()
         @nodata="showTitle = false"
       ></ThreadList>
 
-      <!-- 置顶 -->
-      <ThreadList
-        view-type="PINNED"
-        :show-txt="showTxt"
-      ></ThreadList>
-
       <!-- title: Inbox -->
       <div v-if="showTitle" 
         class="liu-no-user-select ic-title ic-title_inbox"
       >
         <span>{{ t('index.inbox') }}</span>
       </div>
+
+      <!-- 置顶 -->
+      <ThreadList
+        view-type="PINNED"
+        :show-txt="showTxt"
+      ></ThreadList>
 
       <!-- 一般 -->
       <ThreadList
