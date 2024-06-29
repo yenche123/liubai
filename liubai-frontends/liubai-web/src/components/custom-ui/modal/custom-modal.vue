@@ -155,6 +155,9 @@ const {
       margin-block-start: 0;
       margin-block-end: 20px;
       z-index: 5112;
+
+      // see https://developer.chrome.com/blog/new-in-web-ui-io-2024?hl=zh-cn#text-wrap_balance_and_pretty
+      text-wrap: pretty;
     }
 
     p {
@@ -170,6 +173,7 @@ const {
       -webkit-user-select: text;
       cursor: auto;
       z-index: 5112;
+      text-wrap: pretty;
     }
 
     p::selection {

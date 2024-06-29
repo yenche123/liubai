@@ -147,7 +147,7 @@ const { t } = useI18n()
 
 .se-box {
   width: 96%;
-  max-width: 700px;
+  max-width: 600px;
   max-height: 90vh;
   max-height: 90dvh;
   overflow-y: auto;
@@ -258,6 +258,12 @@ const { t } = useI18n()
   justify-content: space-evenly;
 }
 
+@media screen and (max-width: 550px) {
+  .se-bar {
+    padding: 0 24px 28px 28px;
+  }
+}
+
 @media screen and (max-width: 450px) {
   .se-btns {
     justify-content: space-between;
@@ -269,7 +275,7 @@ const { t } = useI18n()
 }
 
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 420px) {
   .se-box {
     border-radius: 24px;
   }
