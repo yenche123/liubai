@@ -1,5 +1,5 @@
 
-import { reactive, watch } from "vue"
+import { type Ref, reactive, watch } from "vue"
 import type { SettingContentData } from "./types"
 import cui from "~/components/custom-ui"
 import { getLanguageList, getTermsList } from "./get-list"
@@ -13,6 +13,8 @@ import { useMyProfile, usePrefix } from "~/hooks/useCommon"
 import localCache from "~/utils/system/local-cache"
 import liuApi from "~/utils/liu-api"
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
+import middleBridge from "~/utils/middle-bridge"
+import { type MemberShow } from "~/types/types-content"
 
 export function useSettingContent() {
 
@@ -48,7 +50,6 @@ export function useSettingContent() {
     })
   }
   const onTapDebug = () => whenTapDebug(data)
-
   const onToggleMobileDebug = (newV: boolean) => {
     data.mobileDebug = newV
     localCache.setOnceData("mobile_debug", newV)
@@ -75,9 +76,24 @@ export function useSettingContent() {
     onTapDebug,
     onToggleMobileDebug,
     onTapClearCache,
+    onTapNickname: () => whenTapNickname(myProfile),
     version,
     appName,
   }
+}
+
+async function whenTapNickname(
+  myProfile: Ref<MemberShow | null>,
+) {
+  const res = await cui.showTextEditor({ 
+    title_key: "who_r_u.modify_name", 
+    placeholder_key: "who_r_u.modify_name_ph",
+    value: myProfile.value?.name,
+    maxLength: 20,
+  })
+  const { confirm, value } = res
+  if(!confirm || !value) return
+  middleBridge.modifyMemberNickname(value)
 }
 
 function listenSystemStore(

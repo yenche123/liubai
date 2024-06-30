@@ -31,6 +31,7 @@ const {
   onTapDebug,
   onToggleMobileDebug,
   onTapClearCache,
+  onTapNickname,
   version,
   appName,
 } = useSettingContent()
@@ -62,7 +63,9 @@ const iconColor = "var(--main-normal)"
               class="sc-avatar"
             ></LiuAvatar>
           </div>
-          <div class="liu-no-user-select liu-hover sc-nickname-box">
+          <div class="liu-no-user-select liu-hover sc-nickname-box"
+            @click.stop="onTapNickname"
+          >
             <div class="sc-nickname">
               <span v-if="myProfile.name">{{ myProfile.name }}</span>
               <span v-else>{{ t('common.unknown') }}</span>
@@ -228,7 +231,7 @@ const iconColor = "var(--main-normal)"
       </div>
       <div class="sc-box">
         <!-- 条款 -->
-        <div class="liu-no-user-select liu-hover sc-bar" 
+        <!-- <div class="liu-no-user-select liu-hover sc-bar" 
           @click.stop="onTapTerms"
         >
           <div class="scb-hd">
@@ -244,9 +247,9 @@ const iconColor = "var(--main-normal)"
               ></svg-icon>
             </div>
           </div>
-        </div>
+        </div> -->
         <!-- 条款们 -->
-        <div class="sc-pad" :class="{ 'sc-pad_opened': data.openTerms }">
+        <!-- <div class="sc-pad" :class="{ 'sc-pad_opened': data.openTerms }">
           <div class="sc-pad-box" :class="{ 'sc-pad-box_opened': data.openTerms }">
             <template v-for="(item, index) in data.termsList"
               :key="item.text"
@@ -265,7 +268,7 @@ const iconColor = "var(--main-normal)"
               </a>
             </template>
           </div>
-        </div>
+        </div> -->
 
         <!-- 开发调试 -->
         <div v-if="data.debugBtn" 
