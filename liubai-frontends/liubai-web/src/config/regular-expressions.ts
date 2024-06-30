@@ -29,5 +29,7 @@ export default {
   edge_version: /edg\/([\d\.]+)/,
 
   firefox_version: /firefox\/([\d\.]+)/,
+
+  safari_version: /version\/([\d\.]+)/,
   
 }

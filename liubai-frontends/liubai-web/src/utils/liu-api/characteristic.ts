@@ -97,6 +97,9 @@ export const getCharacteristic = (): GetChaRes => {
   else if(ua.includes("safari")) {
     if(!ua.includes("android")) {
       isSafari = true
+
+      const s_version_m = ua.match(reg_exp.safari_version)
+      browserVersion = s_version_m ? s_version_m[1] : undefined
     }
   }
 

@@ -76,6 +76,16 @@ function isRunningStandalone() {
   return res
 }
 
+function canAddToHomeScreenInSafari() {
+  const { isSafari, isInWebView, browserVersion } = getCharacteristic()
+  if(isInWebView) return
+  if(!isSafari) return
+  if(!browserVersion) return
+
+  const res = valTool.compareVersion(browserVersion, "17.0")
+  return res >= 0
+}
+
 
 export default {
   isSafeBrowser,
@@ -85,4 +95,5 @@ export default {
   isArcBrowser,
   fedCM,
   isRunningStandalone,
+  canAddToHomeScreenInSafari,
 }

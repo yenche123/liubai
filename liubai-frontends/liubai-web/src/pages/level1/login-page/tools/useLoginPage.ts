@@ -131,12 +131,12 @@ function checkIfRedirectToA2HS(
   const res1 = liuUtil.check.isJustAppSetup()
   if(!res1) return
 
-  const { isSafari, isInWebView } = liuApi.getCharacteristic()
-  if(isInWebView) return
-  if(!isSafari) return
-
   const res2 = liuApi.canIUse.isRunningStandalone()
   if(res2) return
+
+  const res3 = liuApi.canIUse.canAddToHomeScreenInSafari()
+  if(!res3) return
+
   rr.router.push({ name: "a2hs", query: { fr: "login" } })
 }
 

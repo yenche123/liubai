@@ -294,11 +294,10 @@ function listenToA2HS(
 function handleA2HSForSafari(
   ibData: IbData,
 ) {
-  //@ts-expect-error Property only exists on Safari
-  const standalone = window.navigator.standalone
-  if(typeof standalone !== "boolean") return
+  const res = liuApi.canIUse.canAddToHomeScreenInSafari()
+  if(!res) return
   if(ibData.newVersion) return
-  ibData.a2hs = !standalone
+  ibData.a2hs = true
 }
 
 
