@@ -157,15 +157,26 @@ function cannotSupportA2HS(
 }
 
 let hasListenedToIdle = false
-function listenToIdleAndUpdate() {
+function listenToIdleAndUpdate(
+  ctx: IbCtx,
+) {
   if(hasListenedToIdle) return
   hasListenedToIdle = true
   
   const { idle } = useIdle(SEC_90)
   watch(idle, (newV) => {
     if(!newV) return
-    console.warn("the tab has been idle for 90s")
-    console.log("let's update sw!!!")
+
+    const { 
+      vlink, 
+      vfile, 
+    } = ctx.rr.route.query
+
+    if(vlink || vfile) {
+      console.log("cancel update sw because vlink or vfile exists")
+      return
+    }
+
     toUpdateSW()
   })
 }
@@ -200,7 +211,7 @@ function listenToNewVersion(
       const duration0 = day0 * time.DAY
       const within0 = time.isWithinMillis(lastInstallNewVersion, duration0)
       if(within0) {
-        listenToIdleAndUpdate()
+        listenToIdleAndUpdate(ctx)
         return
       }
     }
@@ -210,7 +221,7 @@ function listenToNewVersion(
       const duration1 = day1 * time.DAY
       const within1 = time.isWithinMillis(lastCancelNewVersion, duration1)
       if(within1) {
-        listenToIdleAndUpdate()
+        listenToIdleAndUpdate(ctx)
         return
       }
     }
@@ -220,7 +231,7 @@ function listenToNewVersion(
       const duration2 = day2 * time.DAY
       const within2 = time.isWithinMillis(lastConfirmNewVersion, duration2)
       if(within2) {
-        listenToIdleAndUpdate()
+        listenToIdleAndUpdate(ctx)
         return
       }
     }
