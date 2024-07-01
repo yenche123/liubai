@@ -201,22 +201,16 @@ function checkList(
   cloud: boolean,
 ) {
   const { list } = ctx.tlData
+
+  // 1. reload if list.length is less
   if(list.length < 10) {
     loadList(ctx, true, cloud)
     return
   }
 
-  const sv = ctx.svEl?.value
-  if(!sv) return
-  const h1 = sv.scrollHeight - sv.clientHeight
+  // 2. reload if brosing area is in the top area
   const s1 = ctx.scrollPosition?.value ?? 0
-  const diff = h1 - s1
-
-  // console.log("s1: ", s1)
-  // console.log("diff: ", diff)
-  // console.log(" ")
-
-  if(s1 < 300 || diff > 600) {
+  if(s1 < 500) {
     loadList(ctx, true, cloud)
     return
   }
