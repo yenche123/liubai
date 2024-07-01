@@ -1,6 +1,10 @@
 import type { TlContext } from "./types";
 import type { ThreadShow } from "~/types/types-content"
-import type { SyncGet_ThreadList } from "~/types/cloud/sync-get/types";
+import type { 
+  LiuDownloadParcel, 
+  SyncGet_ThreadList,
+  SyncGet_CheckContents,
+} from "~/types/cloud/sync-get/types";
 import type { TcListOption } from "~/utils/controllers/thread-controller/type";
 import { isToday } from "date-fns"
 import time from "~/utils/basic/time"
@@ -24,7 +28,7 @@ export async function handleCalendarList(
 
   // 1. load locally
   let results = await threadController.getList(opt1)
-  showCalendarList(ctx, results)
+  const results2 = showCalendarList(ctx, results)
 
   // 2. check if we need to load from cloud
   if(!cloud) return
@@ -40,14 +44,35 @@ export async function handleCalendarList(
   const res3 = await CloudMerger.request(param3, { maxStackNum: 4 })
   if(!res3) return
 
-  console.log("远端加载出日历，结果:")
-  console.log(res3)
-  console.log(" ")
+  // 4. get ids for checking contents
+  await checkoutIds(res3, results2)
 
-  // 4. load locally again
+
+  // 5. load locally again
   results = await threadController.getList(opt1)
   showCalendarList(ctx, results)
 }
+
+async function checkoutIds(
+  res: LiuDownloadParcel[],
+  results: ThreadShow[],
+) {
+  const ids = CloudMerger.getIdsForCheckingContents(
+    res,
+    results,
+    "CALENDAR",
+  )
+  if(ids.length < 1) {
+    return
+  }
+
+  const param3: SyncGet_CheckContents = {
+    taskType: "check_contents",
+    ids,
+  }
+  const res3 = await CloudMerger.request(param3)
+}
+
 
 function showCalendarList(
   ctx: TlContext,
@@ -59,12 +84,14 @@ function showCalendarList(
   if(list.length < 1) {
     tlData.list = []
     emits("nodata")
-    return
+    return list
   }
 
   const newList = tlUtil.threadShowsToList(list)
   tlData.list = newList
   emits("hasdata", { title_key })
+  
+  return list
 }
 
 export function filterForCalendar(

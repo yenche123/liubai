@@ -15,23 +15,16 @@ function getIdsForCheckingContents(
     return ids
   }
 
-  const vT = viewType
+  const cloudLength = res1.length
+  if(cloudLength < 1) {
+    return local_list.map(v => v._id)
+  }
+  
   local_list.forEach(v => {
     const s = v.storageState
     if(s !== "CLOUD") return
     const data = res1.find(v1 => v1.id === v._id)
     if(data) return
-
-    let stamp = v.createdStamp
-    const tmpV = v as ThreadShow
-
-    if(vT === "FAVORITE") {
-      stamp = tmpV.myFavoriteStamp ?? 0
-    }
-    else if(vT === "TRASH") {
-      stamp = tmpV.removedStamp ?? 0
-    }
-
     ids.push(v._id)
   })
 
