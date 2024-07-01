@@ -379,4 +379,9 @@ export const routes: Array<RouteRecordRaw> = [
       keepAlive: true,
     }
   },
+  // the rest of routes, redirect to root
+  {
+    path: "/:pathMatch(.*)*",
+    redirect: "/",
+  }
 ]
