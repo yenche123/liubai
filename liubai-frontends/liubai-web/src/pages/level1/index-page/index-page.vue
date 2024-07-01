@@ -30,7 +30,7 @@ const {
     <scroll-view :hidden-scroll-bar="hiddenScrollBar" @scroll="onScroll"
       :go-to-top="goToTop"
     >
-      <NaviAuto @naviautochangeed="onNaviAutoChanged"></NaviAuto>
+      <NaviAuto @naviautochanged="onNaviAutoChanged"></NaviAuto>
       <index-content :show-top="showTop" ></index-content>
     </scroll-view>
 

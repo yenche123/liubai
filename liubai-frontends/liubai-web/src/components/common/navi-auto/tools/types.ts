@@ -8,5 +8,5 @@ export interface NaviAutoData {
 }
 
 export interface NaviAutoEmits {
-  (event: "naviautochangeed", newV: boolean): void
+  (event: "naviautochanged", newV: boolean): void
 }

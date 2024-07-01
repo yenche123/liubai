@@ -3,13 +3,13 @@ import type { Ref } from "vue";
 import { useLayoutStore } from "~/views/useLayoutStore";
 import type { LayoutStore } from "~/views/useLayoutStore";
 import { storeToRefs } from "pinia";
-import valTool from "~/utils/basic/val-tool";
 import { svScollingKey, svBottomUpKey } from "~/utils/provide-keys";
 import sideBar from "~/views/side-bar";
 import { useWindowSize } from "~/hooks/useVueUse";
 import cfg from "~/config";
 import type { NaviAutoEmits, NaviAutoData } from "./types"
 import liuUtil from "~/utils/liu-util";
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 
 const TRANSITION_DURATION = 300
 
@@ -155,18 +155,23 @@ function _openInstantly(
   const { naData } = ctx
   naData.enable = true
   naData.show = true
-  ctx.emits("naviautochangeed", true)
+  ctx.emits("naviautochanged", true)
 }
 
+let toggleTimeout: LiuTimeout
 async function _open(
   ctx: NaviAutoCtx,
 ) {
   const { naData } = ctx
   if(naData.show) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   naData.enable = true
-  ctx.emits("naviautochangeed", true)
-  await liuUtil.waitAFrame()
-  if(naData.enable) naData.show = true
+  ctx.emits("naviautochanged", true)
+  toggleTimeout = setTimeout(() => {
+    naData.show = true
+  }, cfg.frame_duration)
 }
 
 async function _close(
@@ -174,10 +179,14 @@ async function _close(
 ) {
   const { naData } = ctx
   if(!naData.enable) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   naData.show = false
-  ctx.emits("naviautochangeed", false)
-  await valTool.waitMilli(TRANSITION_DURATION)
-  if(!naData.show) naData.enable = false
+  ctx.emits("naviautochanged", false)
+  toggleTimeout = setTimeout(() => {
+    naData.enable = false
+  }, TRANSITION_DURATION)
 }
 
 

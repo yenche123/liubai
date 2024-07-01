@@ -7,7 +7,7 @@ const { t } = useI18n()
 const naviHeightPx = `${cfg.navi_height}px`
 
 const emits = defineEmits<{
-  (event: "naviautochangeed", newV: boolean): void
+  (event: "naviautochanged", newV: boolean): void
 }>()
 
 const {

@@ -1,9 +1,10 @@
 import { ref, toRef, watch } from "vue"
 import type { PageState } from "~/types/types-atom"
 import type { Ref } from "vue"
-import valTool from "~/utils/basic/val-tool"
 import { pageStates } from "~/utils/atom"
 import liuUtil from "~/utils/liu-util"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
+import cfg from "~/config"
 
 interface PvProps {
   pState: PageState
@@ -43,17 +44,20 @@ function whenPStateChange(
   }
 }
 
+
+let toggleTimeout: LiuTimeout
 async function open(
   enable: Ref<boolean>,
   show: Ref<boolean>,
 ) {
   if(show.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   enable.value = true
-
-  await liuUtil.waitAFrame()
-
-  if(!enable.value) return
-  show.value = true
+  toggleTimeout = setTimeout(() => {
+    show.value = true
+  }, cfg.frame_duration)
 }
 
 async function close(
@@ -61,10 +65,11 @@ async function close(
   show: Ref<boolean>,
 ) {
   if(!enable.value) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   show.value = false
-  
-  await valTool.waitMilli(TRANSITION_MS)
-
-  if(show.value) return
-  enable.value = false
+  toggleTimeout = setTimeout(() => {
+    enable.value = false
+  }, TRANSITION_MS)
 }

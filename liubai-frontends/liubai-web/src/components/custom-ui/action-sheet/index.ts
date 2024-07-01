@@ -4,6 +4,7 @@ import type {
   AsSuccessRes,
 } from "./tools/types"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
+import cfg from "~/config"
 
 type AsResolver = (res: AsSuccessRes) => void
 
@@ -65,7 +66,7 @@ function _open() {
   enable.value = true
   toggleTimeout = setTimeout(() => {
     show.value = true
-  }, 16)
+  }, cfg.frame_duration)
 }
 
 function _close() {
