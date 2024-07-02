@@ -8,15 +8,15 @@ import {
   shallowRef, 
   toRef, 
   watch,
-  type Ref
 } from "vue";
-import type { SvProps, SvEmits } from "./types"
+import type { SvProps, SvEmits, SvCtx } from "./types"
 import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
 import { 
   scrollViewKey, 
   svScollingKey, 
   svBottomUpKey,
   svElementKey,
+  svPullRefreshKey,
 } from "~/utils/provide-keys"
 import { useDebounceFn, useResizeObserver } from "~/hooks/useVueUse"
 import time from "~/utils/basic/time";
@@ -27,23 +27,104 @@ const MIN_INVOKE_DURATION = 300
 export function useScrollView(props: SvProps, emits: SvEmits) {
   const sv = ref<HTMLElement | null>(null)
   const scrollPosition = ref(0)
+  const bottomUp = shallowRef<SvBottomUp>({ type: "pixel" })
+
+  provide(svElementKey, sv)
+  provide(svScollingKey, scrollPosition)
+  provide(svBottomUpKey, bottomUp)
+  
+  const ctx: SvCtx = {
+    props,
+    emits,
+    sv,
+    scrollPosition,
+  }
+
+  const { onScrolling } = listenToScroll(ctx)
+
+  const _setScollPosition = (sp: number) => {
+    const svv = sv.value
+    if(!svv) return
+    const isVertical = props.direction === "vertical"
+    if(isVertical) svv.scrollTop = sp
+    else svv.scrollLeft = sp
+  }
+
+  let lastToggleViewStamp = time.getTime()
+  onActivated(async () => {
+    lastToggleViewStamp = time.getTime()
+    if(props.showTxt === "false") {
+      return
+    }
+
+    const sp = scrollPosition.value
+    if(!sp) return
+    _setScollPosition(sp)
+
+    // 由于 v-show 的切换需要时间渲染到界面上
+    // 所以加一层 nextTick 等待页面渲染完毕再恢复至上一次的位置
+    await nextTick()
+    _setScollPosition(sp)
+  })
+
+  onDeactivated(() => {
+    lastToggleViewStamp = time.getTime()
+  })
+
+  watch(bottomUp, (newV) => {
+    whenBottomUp(ctx, newV)
+  })
+
+  const goToTop = toRef(props, "goToTop")
+  watch(goToTop, (newV) => {
+    if(newV > 0) {
+      whenBottomUp(ctx, { type: "pixel", pixel: 0 })
+    }
+  })
+
+  // listen to sv width changed
+  const _resize = useDebounceFn((entries) => {
+    if(time.isWithinMillis(lastToggleViewStamp, 300)) return
+    onScrolling()
+  }, 60)
+  useResizeObserver(sv, _resize)
+
+
+  // listen to pulling refresh
+  const { 
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
+  } = listenToPullingRefresh(ctx)
+
+  return { 
+    sv,
+    onScrolling,
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
+  }
+}
+
+function listenToScroll(
+  ctx: SvCtx,
+) {
+  const {
+    props,
+    emits,
+    sv,
+    scrollPosition,
+  } = ctx
 
   const proData = reactive<SvProvideInject>({
     type: "",
     triggerNum: 0,
   })
-
-  const bottomUp = shallowRef<SvBottomUp>({ type: "pixel" })
-
   provide(scrollViewKey, proData)
-  provide(svScollingKey, scrollPosition)
-  provide(svBottomUpKey, bottomUp)
-  provide(svElementKey, sv)
 
   let lastScrollPosition = 0
   let lastScrollStamp = 0
   let lastInvokeStamp = 0
-  let lastToggleViewStamp = time.getTime()
 
   const onScrolling = () => {
     const _sv = sv.value
@@ -72,7 +153,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     
     if(DIRECTION === "DOWN") {
       if(lastScrollPosition < middleLine && middleLine <= sP) {
-        if(lastInvokeStamp + MIN_INVOKE_DURATION < now) {
+        if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION)) {
           emits("scrolltoend", { scrollPosition: sP })
           proData.type = "to_end"
           proData.triggerNum++
@@ -82,7 +163,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     }
     else if(DIRECTION === "UP") {
       if(lastScrollPosition > middleLine && middleLine >= sP) {
-        if(lastInvokeStamp + MIN_INVOKE_DURATION < now) {
+        if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION)) {
           emits("scrolltostart", { scrollPosition: sP })
           proData.type = "to_start"
           proData.triggerNum++
@@ -94,60 +175,117 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     lastScrollPosition = sP
   }
 
-  const _setScollPosition = (sp: number) => {
-    const svv = sv.value
-    if(!svv) return
-    const isVertical = props.direction === "vertical"
-    if(isVertical) svv.scrollTop = sp
-    else svv.scrollLeft = sp
+  return {
+    onScrolling,
+  }
+}
+
+
+function listenToPullingRefresh(
+  ctx: SvCtx,
+) {
+  const { props, sv, scrollPosition, emits } = ctx
+  if(props.direction === "horizontal") {
+    return {
+      onTouchStart: () => {},
+      onTouchEnd: () => {},
+    }
   }
 
-  onActivated(async () => {
-    lastToggleViewStamp = time.getTime()
-    if(props.showTxt === "false") {
+  const pullRefreshNum = ref(0)
+  provide(svPullRefreshKey, pullRefreshNum)
+
+  let isPullingRefresh = false
+  let lastStartToPullStamp = 0
+  let initClientY = 0
+  let lastClientY = 0
+  const onTouchStart = (e: TouchEvent) => {
+    const svEl = sv.value
+    if(!svEl) return
+
+    const sP = scrollPosition.value
+    // console.log("sP: ", sP)
+
+    if(sP > 10) return
+    const boxRect = svEl.getBoundingClientRect()
+    const touches = e.targetTouches
+    const firstTouch = touches[0]
+    if(!firstTouch) return
+
+    const touchY = firstTouch.clientY
+    const boxHeight = boxRect.height
+    const threshold = boxHeight * 0.8
+
+    if(touchY > threshold) {
+      // console.log("触摸的位置太 ⬇️ 方了........")
       return
     }
 
-    const sp = scrollPosition.value
-    if(!sp) return
-    _setScollPosition(sp)
+    initClientY = touchY
+    lastClientY = initClientY
 
-    // 由于 v-show 的切换需要时间渲染到界面上
-    // 所以加一层 nextTick 等待页面渲染完毕再恢复至上一次的位置
-    await nextTick()
-    _setScollPosition(sp)
-  })
+    // console.log("start...........")
+    // console.log(" ")
 
-  onDeactivated(() => {
-    lastToggleViewStamp = time.getTime()
-  })
+    isPullingRefresh = true
+    lastStartToPullStamp = time.getTime()
+  }
 
-  watch(bottomUp, (newV) => {
-    whenBottomUp(sv, newV, props)
-  })
+  const onTouchMove = (e: TouchEvent) => {
+    if(!isPullingRefresh) return
+    const touches = e.targetTouches
+    const firstTouch = touches[0]
+    if(!firstTouch) return
+    lastClientY = firstTouch.clientY
+  }
 
-  const goToTop = toRef(props, "goToTop")
-  watch(goToTop, (newV) => {
-    if(newV > 0) {
-      whenBottomUp(sv, { type: "pixel", pixel: 0 }, props)
+  const _reset = () => {
+    initClientY = 0
+    lastClientY = 0
+    isPullingRefresh = false
+    lastStartToPullStamp = 0
+  }
+
+  const onTouchEnd = () => {
+    if(!isPullingRefresh) return
+
+    const stamp = lastStartToPullStamp
+    const now = time.getTime()
+    const duration = now - stamp
+    const diffPx = lastClientY - initClientY
+    // console.log("触摸时间差: ", duration)
+    // console.log("触摸位置差: ", diffPx)
+    // console.log(" ")
+
+    if(duration < 200 || duration > 4000) {
+      _reset()
+      return
     }
-  })
 
-  // listen sv width change
-  const _resize = useDebounceFn((entries) => {
-    if(time.isWithinMillis(lastToggleViewStamp, 300)) return
-    onScrolling()
-  }, 60)
-  useResizeObserver(sv, _resize)
+    if(diffPx < 100 || diffPx > 800) {
+      _reset()
+      return
+    }
 
-  return { sv, scrollPosition, onScrolling }
+    console.warn("去触发下拉刷新")
+    
+    emits("refresh")
+    pullRefreshNum.value++
+    _reset()
+  }
+
+  return {
+    onTouchStart,
+    onTouchMove,
+    onTouchEnd,
+  }
 }
 
 function whenBottomUp(
-  sv: Ref<HTMLElement | null>,
+  ctx: SvCtx,
   bu: SvBottomUp,
-  props: SvProps,
 ) {
+  const { props, sv } = ctx
   if(!sv.value) return
   
   const isVertical = props.direction === "vertical"

@@ -1,4 +1,4 @@
-import { inject, reactive, toRef, toRefs, watch } from "vue"
+import { inject, reactive, toRef, toRefs, watch, ref } from "vue"
 import threadController from "~/utils/controllers/thread-controller/thread-controller"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
@@ -11,6 +11,7 @@ import {
   scrollViewKey, 
   svScollingKey,
   svElementKey,
+  svPullRefreshKey,
 } from "~/utils/provide-keys";
 import { handleLastItemStamp } from "./useTLCommon"
 import tlUtil from "./tl-util"
@@ -63,7 +64,7 @@ export function useThreadList(
     svEl,
   }
 
-  // 1. 监听触底/顶加载
+  // 1.1 监听触底/顶加载
   const svData = inject(scrollViewKey, { type: "", triggerNum: 0 }) as SvProvideInject
   const svTrigger = toRef(svData, "triggerNum")
   watch(svTrigger, (newV) => {
@@ -79,6 +80,16 @@ export function useThreadList(
       loadList(ctx, true)
     }
   })
+
+  // 1.2 监听下拉刷新
+  const pullRefreshNum = inject(svPullRefreshKey, ref(0))
+  watch(pullRefreshNum, (newV) => {
+    if(newV < 1) return
+    if(isViewType(ctx, "PINNED")) return
+    // console.log("监听到了下拉刷新............")
+    loadList(ctx, true)
+  })
+
 
   // 2. 监听页面切换 / syncNum 变化
   const {

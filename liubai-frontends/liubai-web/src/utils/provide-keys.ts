@@ -47,6 +47,9 @@ export const svBottomUpKey = Symbol() as InjectionKey<ShallowRef<SvBottomUp>>
 // 让子组件获取当前 scroll-view 的 element
 export const svElementKey = Symbol() as InjectionKey<Ref<HTMLElement | null>>
 
+// 让子组件得知 scroll-view 触发了 pull refresh
+export const svPullRefreshKey = Symbol() as InjectionKey<Ref<number>>
+
 // 用于看板 传递内部 (kanban-view / list-view) 改变的时间戳给 state-page
 export const kanbanInnerChangeKey = Symbol() as InjectionKey<Ref<number>>
 

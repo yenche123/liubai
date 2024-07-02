@@ -7,7 +7,13 @@ import { svProps } from "./tools/types"
 const props = defineProps(svProps)
 const emits = defineEmits<SvEmits>()
 
-const { sv, onScrolling } = useScrollView(props, emits)
+const { 
+  sv, 
+  onScrolling,
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
+} = useScrollView(props, emits)
 const { isMobile } = liuApi.getCharacteristic()
 
 </script>
@@ -19,6 +25,9 @@ const { isMobile } = liuApi.getCharacteristic()
       'liu-scollbar_hidden': hiddenScrollBar,
     }"
     @scroll.passive="onScrolling"
+    @touchstart.passive="onTouchStart"
+    @touchmove.passive="onTouchMove"
+    @touchend.passive="onTouchEnd"
   >
     <slot></slot>
   </div>

@@ -1,4 +1,4 @@
-import type { PropType } from "vue"
+import type { PropType, Ref } from "vue"
 import type { TrueOrFalse } from "~/types/types-basic"
 
 export interface SvProps {
@@ -44,6 +44,13 @@ export interface SvEmits {
   (event: "scrolltostart", data: { scrollPosition: number }): void
   // 下拉刷新被触发
   (event: "refresh"): void
+}
+
+export interface SvCtx {
+  props: SvProps
+  emits: SvEmits
+  scrollPosition: Ref<number>
+  sv: Ref<HTMLElement | null>
 }
 
 // 默认、下拉中、加载中、松开跑回去
