@@ -51,6 +51,7 @@ const { t } = useI18n()
 
   <PlaceholderView 
     :p-state="cdData.state"
+    bg-color="var(--bg-color)"
   ></PlaceholderView>
 
   <ThreadCard 

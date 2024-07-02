@@ -298,6 +298,11 @@ function whenBottomUp(
     if(isVertical) sop.top = bu.pixel
     else sop.left = bu.pixel
     sv.value.scrollTo(sop)
+
+    if(bu.instant) {
+      ctx.scrollPosition.value = bu.pixel
+    }
+
     return
   }
 

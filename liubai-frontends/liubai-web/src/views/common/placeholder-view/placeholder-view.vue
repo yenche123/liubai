@@ -81,6 +81,7 @@ const { enable, show } = usePlaceholderView(props)
   justify-content: center;
   transition: v-bind("TRANSITION_MS + 'ms'");
   z-index: v-bind("zIndex");
+  background-color: v-bind("bgColor");
 
   .pv-loading {
     display: flex;

@@ -6,6 +6,7 @@ export interface PvProps {
   errTitle: string
   errMsg: string
   zIndex: number
+  bgColor: string
 }
 
 export const pvProps = {
@@ -31,5 +32,9 @@ export const pvProps = {
   zIndex: {
     type: Number,
     default: 500,
+  },
+  bgColor: {
+    type: String,
+    default: "transparent",
   }
 }

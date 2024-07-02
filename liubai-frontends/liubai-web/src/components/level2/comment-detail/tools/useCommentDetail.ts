@@ -51,7 +51,7 @@ export function useCommentDetail(
 
   const cdData = reactive<CommentDetailData>({
     targetId: "",
-    state: 1,       // 默认展示切换中，因为 scroll-bar 会瞬移，所以不展示 Loading 的状态
+    state: 0,       // 默认展示切换中，因为 scroll-bar 会瞬移，所以不展示 Loading 的状态
     aboveList: [],
     belowList: [],
     hasReachedBottom: false,
@@ -108,7 +108,7 @@ async function preloadTargetComment(
   ctx: CommentDetailCtx,
 ) {
   const { cdData } = ctx
-  cdData.state = 1
+  cdData.state = 0
 
   // 1. construct query
   const id = cdData.targetId
@@ -368,7 +368,14 @@ async function preloadAboveList(
     grandparent,
   }
 
-  // 3. construct param
+  // 3. check out if get to sync
+  const canSync = liuEnv.canISync()
+  if(!canSync || cdData.networkLevel < 1) {
+    toLoadAboveList(ctx, opt, isInit, 0)
+    return
+  }
+
+  // 4. construct param
   const param: SyncGet_CommentList_C = {
     taskType: "comment_list",
     loadType: "find_parent",
@@ -376,16 +383,17 @@ async function preloadAboveList(
     grandparent,
   }
 
-  // 4. get to sync
+  // 5. get to sync
   const delay = isInit ? undefined : 0
-  const res4 = await CloudMerger.request(param, {
+  const res5 = await CloudMerger.request(param, {
     waitMilli: 3000,
     maxStackNum: 2,
     delay,
   })
-  // 5. get res4.length
-  const res5 = res4?.length ?? 2
-  toLoadAboveList(ctx, opt, isInit, res5)  
+
+  // 6. get number where we got from cloud
+  const res6 = res5?.length ?? 0
+  toLoadAboveList(ctx, opt, isInit, res6)  
 }
 
 async function toLoadAboveList(
@@ -447,13 +455,20 @@ async function preloadThread(
   const res = await threadController.getData({ id })
 
   // 2. show thread if it exists
-  // because we fetch is in preloadTargetComment
+  // because we fetch it in preloadTargetComment
   if(res) {
     toLoadThread(ctx, false, res)
     return
   }
 
-  // 3. fetch
+  // 3. check out if get to sync
+  const canSync = liuEnv.canISync()
+  if(!canSync || cdData.networkLevel < 1) {
+    toLoadThread(ctx, false, res)
+    return
+  }
+
+  // 4. fetch
   const param: SyncGet_CheckContents = {
     taskType: "check_contents",
     ids: [id],
@@ -488,6 +503,11 @@ async function toLoadThread(
 
 
 /****************************** OTHER *************************/
+let isFixingPosition = false
+
+function _resetFixing() {
+  isFixingPosition = false
+}
 
 async function fixPosition(
   ctx: CommentDetailCtx
@@ -496,6 +516,9 @@ async function fixPosition(
   const sv = svEl?.value
   if(!sv || !svBottomUp) return
 
+  if(isFixingPosition) return
+  isFixingPosition = true
+
   const h1 = sv.scrollHeight
   const s1 = scrollPosition.value
 
@@ -503,18 +526,26 @@ async function fixPosition(
 
   const h2 = sv.scrollHeight
   const diff = h2 - h1
-  if(diff === 0) return
+  if(diff === 0) {
+    _resetFixing()
+    return
+  }
 
   const s2 = scrollPosition.value
   const newPosition = s1 + diff
   const diff2 = Math.abs(newPosition - s2)
 
-  // console.log("diff: ", diff)
+  // console.warn("h1: ", h1)
+  // console.log("s1: ", s1)
+  // console.log("h2: ", h2)
   // console.log("s2: ", s2)
   // console.log("nP: ", newPosition)
   // console.log(" ")
 
-  if(diff2 < 2) return  
+  if(diff2 < 2) {
+    _resetFixing()
+    return
+  }  
 
   ctx.cdData.lastLockStamp = time.getTime()
   svBottomUp.value = {
@@ -522,7 +553,7 @@ async function fixPosition(
     pixel: newPosition,
     instant: true
   }
-  
+  _resetFixing()
 }
 
 
@@ -538,9 +569,9 @@ function listenScoll(
     if(cdData.state !== -1) return
 
     const svType = svData.type
-    console.log("comment detail listenScroll .........")
-    console.log(svType)
-    console.log(" ")
+    // console.log("comment detail listenScroll .........")
+    // console.log(svType)
+    // console.log(" ")
 
     if(svType === "to_end") {
       preloadBelowList(ctx)
