@@ -1,16 +1,12 @@
 import { ref, toRef, watch } from "vue"
 import type { PageState } from "~/types/types-atom"
+import type { PvProps } from "./types"
 import type { Ref } from "vue"
 import { pageStates } from "~/utils/atom"
 import liuUtil from "~/utils/liu-util"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 import cfg from "~/config"
 
-interface PvProps {
-  pState: PageState
-  errTitle: string
-  errMsg: string
-}
 
 export const TRANSITION_MS = 300
 
@@ -24,7 +20,7 @@ export function usePlaceholderView(props: PvProps) {
 
   return {
     enable,
-    show
+    show,
   }
 }
 
