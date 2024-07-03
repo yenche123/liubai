@@ -2,6 +2,11 @@
   "name": "liubai-web",
   "private": true,
   "version": "0.0.82",
+  "description": "Your Notes, Tasks, Calendar, and To-Do List",
+  "author": {
+    "name": "yenche123",
+    "email": "tsuiyenche@outlook.com"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite --host",
