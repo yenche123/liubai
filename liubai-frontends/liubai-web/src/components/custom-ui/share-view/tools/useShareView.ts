@@ -7,17 +7,17 @@ import type {
   ShareViewData,
   ShareDataType,
   ShareViaType,
-} from "./tools/types"
+} from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
-import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
-import { handleLinks } from "./tools/handle-links"
+import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
+import { handleLinks } from "./handle-links"
 import liuUtil from "~/utils/liu-util"
 import liuEnv from "~/utils/liu-env"
 import { saveAs as fileSaverSaveAs } from 'file-saver';
 import time from "~/utils/basic/time"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
-import { showSnackBar } from "../snack-bar/index"
+import { showSnackBar } from "../../snack-bar/index"
 import liuApi from "~/utils/liu-api"
 
 let _resolve: SvResolver | undefined

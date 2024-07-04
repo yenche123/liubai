@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { initShareView } from './index';
+import { initShareView } from './tools/useShareView';
 import { useI18n } from "vue-i18n";
 
 const {
