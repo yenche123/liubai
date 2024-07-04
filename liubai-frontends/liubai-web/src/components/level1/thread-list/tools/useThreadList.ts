@@ -29,6 +29,7 @@ import localCache from "~/utils/system/local-cache"
 import { useAwakeNum } from "~/hooks/useCommon"
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
 import { handleCalendarList } from "./handle-calendar"
+import { type ThreadListViewType } from "~/types/types-view"
 
 export function useThreadList(
   props: TlProps,
@@ -364,16 +365,31 @@ async function loadCloud(
     return
   }
 
-  // 1. request
+  // 1. param for request
   const param1: SyncGet_ThreadList = {
     taskType: "thread_list",
     ...opt1,
   }
-  const delay = Boolean(opt1.lastItemStamp) ? 0 : undefined
+
+  // 2. set delay
+  let delay = Boolean(opt1.lastItemStamp) ? 0 : undefined
+  const vT = ctx.props.viewType
+  // the following items are not in Home, so we fetch them imediately
+  const instant_list: ThreadListViewType[] = [
+    "FAVORITE",
+    "STATE",
+    "TAG",
+    "TRASH",
+  ]
+  if(instant_list.includes(vT)) {
+    delay = 0
+  }
+
+  // 3. request
   const res1 = await CloudMerger.request(param1, { delay, maxStackNum: 4 })
   if(!res1) return
 
-  // 2. get ids for checking contents
+  // 4. get ids for checking contents
   const ids = CloudMerger.getIdsForCheckingContents(
     res1,
     opt2.threadShows,
@@ -384,16 +400,15 @@ async function loadCloud(
     return
   }
 
-  // console.log("ids for checking contents: ")
-  // console.log(ids)
-  // console.log(" ")
-  const param3: SyncGet_CheckContents = {
+  // 5. check ids
+  const param5: SyncGet_CheckContents = {
     taskType: "check_contents",
     ids,
   }
-  const res3 = await CloudMerger.request(param3)
+  const delay2 = delay === 0 ? 0 : 16
+  await CloudMerger.request(param5, { delay: delay2 })
 
-  // 3. load content locally again
+  // 6. load contents locally again
   loadAgain(ctx, opt1, opt2)
 }
 

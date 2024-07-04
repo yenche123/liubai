@@ -70,7 +70,7 @@ async function checkoutIds(
     taskType: "check_contents",
     ids,
   }
-  const res3 = await CloudMerger.request(param3)
+  const res3 = await CloudMerger.request(param3, { delay: 16 })
 }
 
 
