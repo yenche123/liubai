@@ -15,7 +15,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { VitePWA } from 'vite-plugin-pwa'
 import { sentryVitePlugin } from "@sentry/vite-plugin"
 
-const { version } = require("./package.json")
+const { version, author } = require("./package.json")
 const projectRoot = process.cwd()
 
 const vitePlugins: UserConfig['plugins'] = [
@@ -117,8 +117,9 @@ export default defineConfig(({ command, mode }) => {
     
     define: {
       "LIU_ENV": {
-        "version": version,
-        "client": "web"
+        version,
+        author,
+        "client": "web",
       }
     }
   }

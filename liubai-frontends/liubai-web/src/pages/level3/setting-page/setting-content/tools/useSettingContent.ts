@@ -15,6 +15,9 @@ import liuApi from "~/utils/liu-api"
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 import middleBridge from "~/utils/middle-bridge"
 import { type MemberShow } from "~/types/types-content"
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
+import { toUpdateSW } from "~/hooks/tools/initServiceWorker"
+import valTool from "~/utils/basic/val-tool"
 
 export function useSettingContent() {
 
@@ -34,6 +37,7 @@ export function useSettingContent() {
     debugBtn: Boolean(_env.DEBUG_BTN),
     openDebug: false,
     mobileDebug: Boolean(onceData.mobile_debug),
+    dev_email: LIU_ENV.author?.email,
   })
 
   listenSystemStore(data)
@@ -64,6 +68,10 @@ export function useSettingContent() {
     appName = appName[0].toUpperCase() + appName.substring(1)
   }
 
+  const gStore = useGlobalStateStore()
+  const { hasNewVersion } = storeToRefs(gStore)
+
+
   return {
     myProfile,
     prefix,
@@ -77,10 +85,57 @@ export function useSettingContent() {
     onToggleMobileDebug,
     onTapClearCache,
     onTapNickname: () => whenTapNickname(myProfile),
+    onTapVerionUpdate: () => whenTapVersionUpdate(hasNewVersion),
     version,
     appName,
   }
 }
+
+async function whenTapVersionUpdate(
+  hasNewVersion: Ref<boolean>
+) {
+
+  const _newVersion = async () => {
+    const res = await cui.showModal({
+      title_key: "pwa.new_version_title",
+      content_key: "pwa.new_version_desc2",
+      confirm_key: "common.update",
+    })
+    if(res) {
+      toUpdateSW()
+    }
+  }
+
+  const _noVersion = () => {
+    cui.showModal({
+      title: "🍫",
+      content_key: "pwa.no_new_version",
+      showCancel: false,
+      isTitleEqualToEmoji: true,
+    })
+  }
+
+
+  let value = hasNewVersion.value
+  if(value) {
+    _newVersion()
+    return
+  }
+
+  cui.showLoading({ title_key: "pwa.checking" })
+  await valTool.waitMilli(1500)
+  cui.hideLoading()
+
+  value = hasNewVersion.value
+  if(value) {
+    _newVersion()
+  }
+  else {
+    _noVersion()
+  }
+}
+
+
 
 async function whenTapNickname(
   myProfile: Ref<MemberShow | null>,

@@ -14,6 +14,11 @@ declare module 'vue-draggable-resizable'
 interface LiuEnv {
   version: string
   client: string
+  author?: {
+    name?: string
+    email?: string
+    url?: string
+  }
 }
 
 declare const LIU_ENV: LiuEnv

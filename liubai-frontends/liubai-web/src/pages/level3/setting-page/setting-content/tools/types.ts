@@ -29,4 +29,6 @@ export interface SettingContentData {
   openDebug: boolean
   mobileDebug: boolean
 
+  dev_email?: string
+
 }

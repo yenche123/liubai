@@ -1,11 +1,12 @@
 {
   "name": "liubai-web",
   "private": true,
-  "version": "0.0.82",
+  "version": "0.0.83",
   "description": "Your Notes, Tasks, Calendar, and To-Do List",
   "author": {
     "name": "yenche123",
-    "email": "tsuiyenche@outlook.com"
+    "email": "tsuiyenche@outlook.com",
+    "url": "https://u1s1.site"
   },
   "type": "module",
   "scripts": {

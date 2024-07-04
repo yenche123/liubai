@@ -32,6 +32,7 @@ const {
   onToggleMobileDebug,
   onTapClearCache,
   onTapNickname,
+  onTapVerionUpdate,
   version,
   appName,
 } = useSettingContent()
@@ -324,6 +325,41 @@ const iconColor = "var(--main-normal)"
 
           </div>
         </div>
+
+        <!-- Version Update -->
+        <div class="liu-no-user-select liu-hover sc-bar"
+          @click.stop="onTapVerionUpdate"
+        >
+          <div class="scb-hd">
+            <span>{{ t('setting.detect_version') }}</span>
+          </div>
+          <div class="scb-footer">
+            <div class="scb-footer-icon">
+              <svg-icon class="scbf-back"
+                name="arrow-right2"
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+          </div>
+        </div>
+        
+
+        <!-- Contact -->
+        <a v-if="data.dev_email" class="liu-no-user-select liu-hover sc-bar" 
+          :href="`mailto:${data.dev_email}`"
+        >
+          <div class="scb-hd">
+            <span>{{ t('setting.contact_dev') }}</span>
+          </div>
+          <div class="scb-footer">
+            <div class="scb-footer-icon">
+              <svg-icon class="scbf-back"
+                name="arrow-right2"
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+          </div>
+        </a>
 
         <!-- 退出 -->
         <div class="liu-no-user-select liu-hover sc-bar" 
