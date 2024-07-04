@@ -18,6 +18,7 @@ import { type MemberShow } from "~/types/types-content"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import { toUpdateSW } from "~/hooks/tools/initServiceWorker"
 import valTool from "~/utils/basic/val-tool"
+import { useShowAddToHomeScreen } from "~/hooks/pwa/useA2HS"
 
 export function useSettingContent() {
 
@@ -38,14 +39,14 @@ export function useSettingContent() {
     openDebug: false,
     mobileDebug: Boolean(onceData.mobile_debug),
     dev_email: LIU_ENV.author?.email,
+    showA2HS: false,
   })
 
+  const { toA2HS } = listenToA2HS(data)
   listenSystemStore(data)
 
   const onTapTheme = () => whenTapTheme(data)
   const onTapLanguage = () => whenTapLanguage(data)
-  const onTapTerms = () => data.openTerms = !data.openTerms
-  const onTapLogout = () => whenTapLogout(data)
   const onTapAccounts = () => {
     cui.showModal({ 
       iconName: "emojis-construction_color", 
@@ -53,14 +54,11 @@ export function useSettingContent() {
       showCancel: false,
     })
   }
-  const onTapDebug = () => whenTapDebug(data)
   const onToggleMobileDebug = (newV: boolean) => {
     data.mobileDebug = newV
     localCache.setOnceData("mobile_debug", newV)
     liuApi.route.reload()
   }
-
-  const onTapClearCache = () => whenTapClearCache()
 
   const version = LIU_ENV.version
   let appName = _env.APP_NAME ?? ""
@@ -71,6 +69,9 @@ export function useSettingContent() {
   const gStore = useGlobalStateStore()
   const { hasNewVersion } = storeToRefs(gStore)
 
+  const onTapA2HS = () => {
+    toA2HS?.()
+  }
 
   return {
     myProfile,
@@ -78,14 +79,15 @@ export function useSettingContent() {
     data,
     onTapTheme,
     onTapLanguage,
-    onTapTerms,
-    onTapLogout,
+    onTapTerms: () => data.openTerms = !data.openTerms,
+    onTapLogout: () => whenTapLogout(),
     onTapAccounts,
-    onTapDebug,
+    onTapDebug: () => whenTapDebug(data),
     onToggleMobileDebug,
-    onTapClearCache,
+    onTapClearCache: () => whenTapClearCache(),
     onTapNickname: () => whenTapNickname(myProfile),
     onTapVerionUpdate: () => whenTapVersionUpdate(hasNewVersion),
+    onTapA2HS,
     version,
     appName,
   }
@@ -135,8 +137,6 @@ async function whenTapVersionUpdate(
   }
 }
 
-
-
 async function whenTapNickname(
   myProfile: Ref<MemberShow | null>,
 ) {
@@ -149,6 +149,21 @@ async function whenTapNickname(
   const { confirm, value } = res
   if(!confirm || !value) return
   middleBridge.modifyMemberNickname(value)
+}
+
+function listenToA2HS(
+  data: SettingContentData,
+) {
+  const {
+    showButtonForA2HS,
+    toA2HS,
+  } = useShowAddToHomeScreen()
+  if(!showButtonForA2HS) return {}
+  watch(showButtonForA2HS, (newV) => {
+    data.showA2HS = newV
+  })
+
+  return { toA2HS }
 }
 
 function listenSystemStore(
@@ -191,9 +206,7 @@ function whenTapDebug(
 }
 
 
-function whenTapLogout(
-  data: SettingContentData
-) {
+function whenTapLogout() {
   const res0 = liuEnv.hasBackend()
   if(!res0) askLogoutWithPurelyLocal()
   else askLogoutWithBackend()

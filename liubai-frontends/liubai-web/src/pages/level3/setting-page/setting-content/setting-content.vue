@@ -33,6 +33,7 @@ const {
   onTapClearCache,
   onTapNickname,
   onTapVerionUpdate,
+  onTapA2HS,
   version,
   appName,
 } = useSettingContent()
@@ -326,8 +327,27 @@ const iconColor = "var(--main-normal)"
           </div>
         </div>
 
+        <!-- Add to Home Screen -->
+        <div class="liu-no-user-select liu-hover sc-bar"
+          v-if="data.showA2HS"
+          @click.stop="onTapA2HS"
+        >
+          <div class="scb-hd">
+            <span>{{ t('a2hs.title') }}</span>
+          </div>
+          <div class="scb-footer">
+            <div class="scb-footer-icon">
+              <svg-icon class="scbf-back"
+                name="arrow-right2"
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+          </div>
+        </div>
+
         <!-- Version Update -->
         <div class="liu-no-user-select liu-hover sc-bar"
+          v-else
           @click.stop="onTapVerionUpdate"
         >
           <div class="scb-hd">

@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, reactive, watch } from "vue";
+import { reactive, watch } from "vue";
 import type { IbData } from "./types";
 import liuApi from "~/utils/liu-api";
 import cui from "~/components/custom-ui";
@@ -12,16 +12,17 @@ import cfg from "~/config";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
 import { toUpdateSW } from "~/hooks/tools/initServiceWorker";
-import { useIdle } from "~/hooks/useVueUse"
+import { useIdle } from "~/hooks/useVueUse";
+import { useShowAddToHomeScreen } from "~/hooks/pwa/useA2HS";
+import { type SimpleFunc } from "~/utils/basic/type-tool";
 
 const SEC_90 = 90 * time.SECONED
 
 interface IbCtx {
   rr: RouteAndLiuRouter
   ibData: IbData
+  hasEverTapInstall: boolean
 }
-
-let deferredPrompt: Event | null
 
 export function useIndexBoard() {
   const rr = useRouteAndLiuRouter()
@@ -32,14 +33,20 @@ export function useIndexBoard() {
   const ctx: IbCtx = {
     rr,
     ibData,
+    hasEverTapInstall: false
   }
   listenToNewVersion(ctx)
-  listenToA2HS(ibData)
+  const { toA2HS } = listenToA2HS(ibData)
+
+  const onTapInstall = () => {
+    ctx.hasEverTapInstall = true
+    toA2HS?.()
+  }
 
   return {
     ibData,
-    onTapInstall: () => toInstallA2HS(ctx),
-    onTapCloseA2hsTip: () => toCloseA2HS(ctx),
+    onTapInstall,
+    onTapCloseA2hsTip: () => toCloseA2HS(ctx, toA2HS),
     onConfirmNewVersion: () => toConfirmNewVersion(ctx),
     onCancelNewVersion: () => toCancelNewVersion(ctx),
   }
@@ -64,10 +71,27 @@ function toCancelNewVersion(
 
 async function toCloseA2HS(
   ctx: IbCtx,
+  toA2HS?: SimpleFunc,
 ) {
-  if(liuApi.canIUse.isArcBrowser()) {
+
+  const _close = () => {
     localCache.setOnceData("a2hs_last_cancel_stamp", time.getTime())
     ctx.ibData.a2hs = false
+  }
+
+  if(liuApi.canIUse.isArcBrowser()) {
+    _close()
+    return
+  }
+
+  if(liuApi.canIUse.isRunningStandalone()) {
+    _close()
+    return
+  }
+
+  const cha = liuApi.getCharacteristic()
+  if(cha.isSafari && ctx.hasEverTapInstall) {
+    _close()
     return
   }
 
@@ -84,76 +108,12 @@ async function toCloseA2HS(
   }
   
   if(res1.cancel) {
-    localCache.setOnceData("a2hs_last_cancel_stamp", time.getTime())
-    ctx.ibData.a2hs = false
+    _close()
   }
 
   if(res1.confirm) {
-    toInstallA2HS(ctx)
+    toA2HS?.()
   }
-}
-
-async function toInstallA2HS(
-  ctx: IbCtx,
-) {
-
-  if(liuApi.canIUse.isArcBrowser()) {
-    cannotSupportA2HS(ctx)
-    return
-  }
-
-  const cha = liuApi.getCharacteristic()
-  if(cha.isSafari) {
-    ctx.rr.router.push({ name: "a2hs" })
-    return
-  }
-
-  if(!deferredPrompt) {
-    ctx.ibData.a2hs = false
-    return
-  }
-
-  console.log("toInstallA2HS......")
-  console.log(deferredPrompt)
-  console.log(" ")
-
-  //@ts-ignore
-  deferredPrompt.prompt()
-
-  const installStamp = time.getTime()
-
-  //@ts-ignore
-  const userChoice = await deferredPrompt.userChoice
-
-  console.log("User Choice::")
-  console.log(userChoice)
-  const outcome = userChoice?.outcome
-
-  if(outcome === "accepted" || outcome === "installed") {
-    console.log('User accepted the A2HS prompt or installed it!')
-    deferredPrompt = null
-    ctx.ibData.a2hs = false
-    return
-  }
-
-  console.log('User dismissed the A2HS prompt')
-
-  if(time.isWithinMillis(installStamp, cfg.frame_duration_2)) {
-    cannotSupportA2HS(ctx)
-  }
-
-}
-
-function cannotSupportA2HS(
-  ctx: IbCtx,
-) {
-  localCache.setOnceData("a2hs_never_prompt", true)
-  cui.showModal({
-    title_key: "a2hs.fail_to_add",
-    content_key: "a2hs.fail_to_add_tip",
-    showCancel: false,
-  })
-  ctx.ibData.a2hs = false
 }
 
 let hasListenedToIdle = false
@@ -250,65 +210,34 @@ function listenToNewVersion(
 function listenToA2HS(
   ibData: IbData,
 ) {
-  const cha = liuApi.getCharacteristic()
-  if(cha.isInWebView) {
-    return
-  }
-  if(liuApi.canIUse.isArcBrowser()) {
-    return
-  }
-  if(liuApi.canIUse.isRunningStandalone()) {
-    return
-  }
 
   const onceData = localCache.getOnceData()
   if(onceData.a2hs_never_prompt) {
-    return
+    return {}
   }
 
   const lastCancelStamp = onceData.a2hs_last_cancel_stamp ?? 1
   const isWithin = time.isWithinMillis(lastCancelStamp, time.DAY)
   if(isWithin) {
-    return
+    return {}
   }
 
-  const _beforeInstallPrompt = (e: Event) => {
-    e.preventDefault()
-    if(liuApi.canIUse.isArcBrowser()) return
-    if(ibData.newVersion) return
-    deferredPrompt = e
-    ibData.a2hs = true
-  }
+  const {
+    showButtonForA2HS,
+    toA2HS,
+  } = useShowAddToHomeScreen()
+  if(!showButtonForA2HS) return {}
 
-  const _appInstalled = () => {
-    deferredPrompt = null
-    ibData.a2hs = false
-  }
-
-  onMounted(() => {
-    window.addEventListener("beforeinstallprompt", _beforeInstallPrompt)
-    window.addEventListener("appinstalled", _appInstalled)
-
-    if(cha.isSafari) {
-      handleA2HSForSafari(ibData)
+  watch(showButtonForA2HS, (newV) => {
+    if(newV) {
+      if(!ibData.newVersion) {
+        ibData.a2hs = true
+      }
+    }
+    else {
+      ibData.a2hs = false
     }
   })
 
-  onBeforeUnmount(() => {
-    window.removeEventListener("beforeinstallprompt", _beforeInstallPrompt)
-    window.removeEventListener("appinstalled", _appInstalled)
-  })
-  
+  return { toA2HS }
 }
-
-
-function handleA2HSForSafari(
-  ibData: IbData,
-) {
-  const res = liuApi.canIUse.canAddToHomeScreenInSafari()
-  if(!res) return
-  if(ibData.newVersion) return
-  ibData.a2hs = true
-}
-
-

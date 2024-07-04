@@ -30,5 +30,5 @@ export interface SettingContentData {
   mobileDebug: boolean
 
   dev_email?: string
-
+  showA2HS: boolean
 }
