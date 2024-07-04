@@ -79,25 +79,36 @@ function onTapShareItem(
   dataType: ShareDataType,
   viaType: ShareViaType,
 ) {
-  if(dataType === "markdown") {
-    showSnackBar({ text_key: "share_related.under_construction" })
-    return
-  }
-
   const text = svData.text
   if(dataType === "text" && !text) {
     showSnackBar({ text_key: "share_related.no_text" })
     return
   }
 
-  if(viaType === "copy" && dataType === "text") {
-    liuApi.copyToClipboard(text)
+  const md = svData.markdown
+  if(dataType === "markdown" && !md) {
+    showSnackBar({ text_key: "share_related.no_md" })
+    return
+  }
+
+  if(viaType === "copy") {
+    if(dataType === "text") {
+      liuApi.copyToClipboard(text)
+    }
+    else if(dataType === "markdown") {
+      liuApi.copyToClipboard(md)
+    }
     showSnackBar({ text_key: "common.copied" })
     return
   }
 
-  if(viaType === "file" && dataType === "text") {
-    exportFile(dataType, text)
+  if(viaType === "file") {
+    if(dataType === "text") {
+      exportFile(dataType, text)
+    }
+    else if(dataType === "markdown") {
+      exportFile(dataType, md)
+    }
     return
   }
 

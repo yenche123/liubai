@@ -6,6 +6,8 @@ import liuUtil from "~/utils/liu-util";
 import type { EventAttributes, Alarm } from "ics";
 import { i18n } from "~/locales";
 import liuApi from "~/utils/liu-api";
+import { db } from "~/utils/db";
+import transferUtil from "~/utils/transfer-util";
 
 export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
 
@@ -38,14 +40,21 @@ export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
 }
 
 
-function handleTextAndMd(
+async function handleTextAndMd(
   svData: ShareViewData, 
   thread: ThreadShow,
   ed: ExportData,
 ) {
+
+  // 1. handle plain text
   svData.text = ed.content2
 
-  // TODO: markdown
+  // 2. handle markdown
+  const _id = thread._id
+  const d = await db.contents.get(_id)
+  if(!d) return
+  let md = transferUtil.tiptapToMarkdown(d.liuDesc ?? [], { title: d.title })
+  svData.markdown = md
 }
 
 function getExportData(thread: ThreadShow) {

@@ -302,8 +302,8 @@
     "download_ics": "Download .ics",
     "markdown_format": "Markdown format",
     "txt_format": "Txt format",
-    "no_text": "No text to copy",
-    "under_construction": "🚧 Under construction"
+    "no_text": "No text to copy or export",
+    "no_md": "No markdown to copy or export"
   },
   "whatever": {
     "sidebar_more": "Settings & Trash"

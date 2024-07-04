@@ -302,8 +302,8 @@
     "download_ics": "下载 .ics",
     "markdown_format": "Markdown 格式",
     "txt_format": "Txt 格式",
-    "no_text": "没有可供复制的文字",
-    "under_construction": "🚧 施工中"
+    "no_text": "没有可供复制或导出的文本",
+    "no_md": "没有可供复制或导出的 markdown"
   },
   "whatever": {
     "sidebar_more": "设置、垃圾桶"

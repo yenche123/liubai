@@ -26,7 +26,7 @@ const { max_export_num } = cfg
       <div class="sc-box">
 
         <!-- 导出成 .md 文件 -->
-        <div class="liu-no-user-select liu-hover sc-bar" @click="onTapMarkdown">
+        <div class="liu-no-user-select liu-hover sc-bar" @click.stop="onTapMarkdown">
           <div class="scb-hd">
             <span>{{ t('export.markdown') }}</span>
           </div>
@@ -41,7 +41,7 @@ const { max_export_num } = cfg
         </div>
 
         <!-- 导出成 .json 文件 -->
-        <div class="liu-no-user-select liu-hover sc-bar" @click="onTapJSON">
+        <div class="liu-no-user-select liu-hover sc-bar" @click.stop="onTapJSON">
           <div class="scb-main">
             <div class="scb-hd scbm-hd">
               <span>{{ t('export.json') }}</span>
