@@ -2406,11 +2406,12 @@ async function updatePartData<T extends SyncSetTable>(
 async function updateAllData(
   ssCtx: SyncSetCtx,
 ) {
-  const { content, draft, member, workspace } = ssCtx
+  const { content, draft, member, workspace, collection } = ssCtx
   await toUpdateTable(content, "Content")
   await toUpdateTable(draft, "Draft")
   await toUpdateTable(workspace, "Workspace")
   await toUpdateTable(member, "Member")
+  await toUpdateTable(collection, "Collection")
 }
 
 
