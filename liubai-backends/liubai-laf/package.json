@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@lafjs/cloud": "1.0.0",
+    "@wecom/crypto": "^1.0.1",
     "date-fns": "^3.6.0",
     "geoip-lite": "^1.4.10",
     "google-auth-library": "^9.10.0",

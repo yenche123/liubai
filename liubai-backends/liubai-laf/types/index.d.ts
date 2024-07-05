@@ -64,6 +64,14 @@ declare global {
       LIU_QINIU_CDN_DOMAIN?: string       // 七牛云的 cdn 域名，结尾不要加 /
       LIU_QINIU_CUSTOM_KEY?: string       // 自定义密钥，用于在 webhook-qiniu 中验证使用
 
+      /** 微信公众号 */
+      LIU_WECHAT_APPID?: string
+      LIU_WECHAT_APPSECRET?: string
+      LIU_WECHAT_TOKEN?: string
+      LIU_WECHAT_ENCODING_AESKEY?: string
+
+      
+
     }
   }
 }

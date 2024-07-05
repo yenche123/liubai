@@ -11,6 +11,9 @@ importers:
       '@lafjs/cloud':
         specifier: 1.0.0
         version: 1.0.0
+      '@wecom/crypto':
+        specifier: ^1.0.1
+        version: 1.0.1
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -18,19 +21,19 @@ importers:
         specifier: ^1.4.10
         version: 1.4.10
       google-auth-library:
-        specifier: ^9.8.0
+        specifier: ^9.10.0
         version: 9.10.0
       mongodb:
-        specifier: ^6.5.0
+        specifier: ^6.6.2
         version: 6.6.2(gcp-metadata@6.1.0)(socks@2.8.3)
       qiniu:
-        specifier: ^7.11.1
+        specifier: ^7.12.0
         version: 7.12.0
       resend:
         specifier: ^3.2.0
         version: 3.2.0
       stripe:
-        specifier: ^15.3.0
+        specifier: ^15.8.0
         version: 15.8.0
       valibot:
         specifier: ^0.30.0
@@ -40,10 +43,10 @@ importers:
         specifier: ^1.4.4
         version: 1.4.4
       '@types/node':
-        specifier: ^20.12.7
+        specifier: ^20.12.12
         version: 20.12.12
       tsx:
-        specifier: ^4.7.2
+        specifier: ^4.11.0
         version: 4.11.0
 
 packages:
@@ -625,6 +628,9 @@ packages:
 
   '@types/ws@8.5.10':
     resolution: {integrity: sha512-vmQSUcfalpIq0R9q7uTo2lXs6eGIpt9wtnLdMv9LVpIjCA/+ufZRozlVoVelIYixx1ugCBKDhn89vnsEGOCx9A==}
+
+  '@wecom/crypto@1.0.1':
+    resolution: {integrity: sha512-K4Ilkl1l64ceJDbj/kflx8ND/J88pcl8tKx4Ivp7IiCrshRJU+Uo5uWCjAa+PjUiLIdcQSZ4m4d0t1npMPCX5A==}
 
   abbrev@2.0.0:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
@@ -2554,6 +2560,8 @@ snapshots:
   '@types/ws@8.5.10':
     dependencies:
       '@types/node': 20.12.12
+
+  '@wecom/crypto@1.0.1': {}
 
   abbrev@2.0.0: {}
 
