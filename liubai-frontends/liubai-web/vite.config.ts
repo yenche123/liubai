@@ -43,15 +43,21 @@ const vitePlugins: UserConfig['plugins'] = [
   VitePWA({
     registerType: "prompt",
     manifest: false,
-    strategies: "generateSW",
+    strategies: "injectManifest",
     workbox: {
       globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg}']
     },
-    filename: "service-worker.js",
+    srcDir: "src",
+    filename: "service-worker.ts",
+    injectManifest: {
+      minify: true,
+    },
 
     // open it if you want to test service worker update on dev mode
     // devOptions: {
     //   enabled: true,
+    //   type: 'module',
+    //   navigateFallback: 'index.html',
     // },
   }),
 

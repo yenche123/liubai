@@ -56,9 +56,8 @@ export function initServiceWorker() {
     swUrl: string, 
     r: ServiceWorkerRegistration | undefined,
   ) => {
-    console.warn("onRegisteredSW swUrl!")
-    console.log(swUrl)
-    console.log(" ")
+    // the func will be called every time you open the page
+    // as long as sw is registered successfully
     
     liuConsole.sendMessage(`Service Worker registered at: ${swUrl}`)
     if(!r) return

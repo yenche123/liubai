@@ -1,7 +1,7 @@
 {
   "name": "liubai-web",
   "private": true,
-  "version": "0.0.84",
+  "version": "0.0.85",
   "description": "Your Notes, Tasks, Calendar, and To-Do List",
   "author": {
     "name": "yenche123",
@@ -87,6 +87,8 @@
     "vite-plugin-qrcode": "^0.2.3",
     "vite-plugin-svg-icons": "^2.0.1",
     "vue-tsc": "^2.0.24",
+    "workbox-precaching": "^7.1.0",
+    "workbox-routing": "^7.1.0",
     "workbox-window": "^7.1.0"
   },
   "pnpm": {

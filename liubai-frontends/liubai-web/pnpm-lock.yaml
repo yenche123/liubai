@@ -207,6 +207,12 @@ importers:
       vue-tsc:
         specifier: ^2.0.24
         version: 2.0.24(typescript@5.5.2)
+      workbox-precaching:
+        specifier: ^7.1.0
+        version: 7.1.0
+      workbox-routing:
+        specifier: ^7.1.0
+        version: 7.1.0
       workbox-window:
         specifier: ^7.1.0
         version: 7.1.0
