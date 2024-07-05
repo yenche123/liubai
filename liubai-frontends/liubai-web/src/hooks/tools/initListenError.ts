@@ -3,7 +3,7 @@
 // which are inported
 
 import liuConsole from "~/utils/debug/liu-console"
-import { toUpdateSW } from "./initServiceWorker"
+import { toUpdateSW } from "../pwa/useServiceWorker"
 
 export function initListenError() {
   if(typeof window === "undefined") return

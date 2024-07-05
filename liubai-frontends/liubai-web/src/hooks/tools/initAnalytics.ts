@@ -4,9 +4,9 @@ import { waitWindowLoaded } from "~/utils/wait/wait-window-loaded"
 
 export async function initAnalytics() {
 
-  console.time("wait window loaded")
+  // console.time("wait window loaded")
   await waitWindowLoaded()
-  console.timeEnd("wait window loaded")
+  // console.timeEnd("wait window loaded")
 
   const _env = liuEnv.getEnv()
   const {

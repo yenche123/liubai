@@ -11,7 +11,7 @@ import {
 import cfg from "~/config";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
-import { toUpdateSW } from "~/hooks/tools/initServiceWorker";
+import { toUpdateSW } from "~/hooks/pwa/useServiceWorker";
 import { useIdle } from "~/hooks/useVueUse";
 import { useShowAddToHomeScreen } from "~/hooks/pwa/useA2HS";
 import { type SimpleFunc } from "~/utils/basic/type-tool";

@@ -56,6 +56,10 @@ export function initServiceWorker() {
     swUrl: string, 
     r: ServiceWorkerRegistration | undefined,
   ) => {
+    console.warn("onRegisteredSW swUrl!")
+    console.log(swUrl)
+    console.log(" ")
+    
     liuConsole.sendMessage(`Service Worker registered at: ${swUrl}`)
     if(!r) return
     setTimeout(() => {

@@ -69,31 +69,29 @@ export function listenLoaded() {
       return
     }
     const duration = 900 - stamp
-    console.log("等待毫秒数: ", duration)
-    console.log(" ")
     await valTool.waitMilli(duration)
     _byebye()
   }
 
   const stamp1 = _getLoadEventStart()
 
-  console.log("listenLoaded setup: ", performance.now())
-  console.log("load event start at: ", stamp1)
-  console.log(" ")
+  // console.log("listenLoaded setup: ", performance.now())
+  // console.log("load event start at: ", stamp1)
+  // console.log(" ")
 
   if(stamp1) {
     onMounted(() => {
-      console.log("listenLoaded onMounted.......")
-      console.log(performance.now())
-      console.log(" ")
+      // console.log("listenLoaded onMounted.......")
+      // console.log(performance.now())
+      // console.log(" ")
       _calculateConsumingTime()
     })
   }
   else {
     window.addEventListener("load", (e) => {
-      console.log("listenLoaded load.......")
-      console.log(performance.now())
-      console.log(" ")
+      // console.log("listenLoaded load.......")
+      // console.log(performance.now())
+      // console.log(" ")
       _calculateConsumingTime()
     })
   }

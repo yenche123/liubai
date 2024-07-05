@@ -16,7 +16,7 @@ import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 import middleBridge from "~/utils/middle-bridge"
 import { type MemberShow } from "~/types/types-content"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
-import { toUpdateSW } from "~/hooks/tools/initServiceWorker"
+import { toUpdateSW } from "~/hooks/pwa/useServiceWorker"
 import valTool from "~/utils/basic/val-tool"
 import { useShowAddToHomeScreen } from "~/hooks/pwa/useA2HS"
 
