@@ -90,11 +90,13 @@ const {
   width: fit-content;
   max-width: 100%;
   text-overflow: ellipsis;
+  cursor: pointer;
 }
 
 .pf-bd {
   font-size: var(--mini-font);
   color: var(--main-note);
+  cursor: pointer;
 }
 
 @media(hover: hover) {
