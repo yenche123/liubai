@@ -3,6 +3,7 @@ import cloud from "@lafjs/cloud";
 import * as crypto from "crypto";
 import { type LiuRqReturn } from "./common-types";
 import { decrypt } from "@wecom/crypto"
+import xml2js from "xml2js"
 
 const db = cloud.database()
 
@@ -11,13 +12,9 @@ export async function main(ctx: FunctionContext) {
 
   const b = ctx.body
   console.log("ctx.body: ", b)
-  const b2 = ctx.request?.body
-  console.log("ctx.request.body: ", b2)
 
   const q = ctx.query
   console.log("ctx.query: ", q)
-  const q2 = ctx.request?.query
-  console.log("ctx.request.query: ", q2)
 
   // 0. preCheck
   const res0 = preCheck()
@@ -26,17 +23,11 @@ export async function main(ctx: FunctionContext) {
   }
 
   // 1. get query
-  const msg_signature = q2?.msg_signature as string
-  const signature = q2?.signature as string
-  const timestamp = q2?.timestamp as string
-  const nonce = q2?.nonce as string
-  const echostr = q2?.echostr as string
-
-  console.log("msg_signature: ", msg_signature)
-  console.log("signature: ", signature)
-  console.log("timestamp: ", timestamp)
-  console.log("nonce: ", nonce)
-  console.log("echostr: ", echostr)
+  const msg_signature = q?.msg_signature as string
+  const signature = q?.signature as string
+  const timestamp = q?.timestamp as string
+  const nonce = q?.nonce as string
+  const echostr = q?.echostr as string
 
   // 2. echostr if we just init the program
   const method = ctx.method
@@ -46,19 +37,76 @@ export async function main(ctx: FunctionContext) {
     return echostr
   }
 
-  return { code: "0000", data: "success" }
+
+  // 3. try to get ciphertext, which applys to most scenarios
+  const payload = b.xml
+  if(!payload) {
+    console.warn("fails to get xml in body")
+    return { code: "E4000", errMsg: "xml in body is required" }
+  }
+  const ciphertext = payload.encrypt?.[0]
+  if(!ciphertext) {
+    console.warn("fails to get encrypt in body")
+    return { code: "E4000", errMsg: "Encrypt in body is required"  }
+  }
+
+  // 4. verify msg_signature
+  const res4 = verifyMsgSignature(msg_signature, timestamp, nonce, ciphertext)
+  if(res4) {
+    console.warn("fails to verify msg_signature")
+    console.log(res4)
+    return res4
+  }
+
+  // 5. decrypt 
+  const { message, id } = toDecrypt(ciphertext)
+  console.log("message from wechat:")
+  console.log(message)
+
+  if(!message) {
+    console.warn("fails to get message")
+    return { code: "E4000", errMsg: "decrypt fail" }
+  }
+
+  // 6. get msg object
+  const msgObj = await getMsgObject(message)
+
+  console.log("msgObj: ")
+  console.log(msgObj)
+
+  if(!msgObj) {
+    console.warn("fails to get msg object")
+    return { code: "E5001", errMsg: "get msg object fail" }
+  }
+
+  // respond with empty string, and then wechat will not retry
+  return ""
+}
+
+async function getMsgObject(message: string) {
+  let res: Record<string, any> | undefined 
+  try {
+    const { xml } = await xml2js.parseStringPromise(message)
+    res = xml
+  }
+  catch(err) {
+    console.warn("getMsgObject fails")
+    console.log(err)
+  }
+
+  return res
 }
 
 
 function preCheck(): LiuRqReturn | undefined {
   const _env = process.env
-  const token = _env.LIU_WECHAT_TOKEN
+  const token = _env.LIU_WX_GZ_TOKEN
   if(!token) {
-    return { code: "E5001", errMsg: "LIU_WECHAT_TOKEN is empty" }
+    return { code: "E5001", errMsg: "LIU_WX_GZ_TOKEN is empty" }
   }
-  const key = _env.LIU_WECHAT_ENCODING_AESKEY
+  const key = _env.LIU_WX_GZ_ENCODING_AESKEY
   if(!key) {
-    return { code: "E5001", errMsg: "LIU_WECHAT_ENCODING_AESKEY is empty" }
+    return { code: "E5001", errMsg: "LIU_WX_GZ_ENCODING_AESKEY is empty" }
   }
 }
 
@@ -66,15 +114,12 @@ function toDecrypt(
   ciphertext: string,
 ) {
   const _env = process.env
-  const encodeingAESKey = _env.LIU_WECHAT_ENCODING_AESKEY as string
+  const encodeingAESKey = _env.LIU_WX_GZ_ENCODING_AESKEY as string
 
   let message = ""
   let id = ""
   try {
     const data = decrypt(encodeingAESKey, ciphertext)
-    console.log("toDecrypt result: ")
-    console.log(data)
-
     message = data.message
     id = data.id
   }
@@ -92,7 +137,7 @@ function verifyEchoStr(
   nonce: string,
 ) {
   const _env = process.env
-  const token = _env.LIU_WECHAT_TOKEN as string
+  const token = _env.LIU_WX_GZ_TOKEN as string
   const arr = [token, timestamp, nonce].sort()
 
   const str = arr.join('')
@@ -108,14 +153,14 @@ function verifyEchoStr(
 }
 
 
-function verifySignature(
+function verifyMsgSignature(
   msg_signature: string, 
   timestamp: string, 
   nonce: string,
   ciphertext: string,
 ): LiuRqReturn | undefined {
   const _env = process.env
-  const token = _env.LIU_WECHAT_TOKEN as string
+  const token = _env.LIU_WX_GZ_TOKEN as string
   const arr = [token, timestamp, nonce, ciphertext].sort()
   const str = arr.join('')
   const sha1 = crypto.createHash('sha1')

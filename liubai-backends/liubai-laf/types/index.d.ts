@@ -65,10 +65,10 @@ declare global {
       LIU_QINIU_CUSTOM_KEY?: string       // 自定义密钥，用于在 webhook-qiniu 中验证使用
 
       /** 微信公众号 */
-      LIU_WECHAT_APPID?: string
-      LIU_WECHAT_APPSECRET?: string
-      LIU_WECHAT_TOKEN?: string
-      LIU_WECHAT_ENCODING_AESKEY?: string
+      LIU_WX_GZ_APPID?: string
+      LIU_WX_GZ_APPSECRET?: string
+      LIU_WX_GZ_TOKEN?: string
+      LIU_WX_GZ_ENCODING_AESKEY?: string
 
       
 
