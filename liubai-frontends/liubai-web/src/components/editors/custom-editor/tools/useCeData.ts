@@ -56,13 +56,13 @@ export function useCeData(
 
   // 监听用户操作 images 的变化，去存储到 IndexedDB 上
   watch(() => ceData.images, (newV) => {
-    toAutoChange(ctx)
+    toAutoChange(ctx, true)
     checkCanSubmit(ceData)
   }, { deep: true })
 
   // 监听用户操作 files 的变化，去存储到 IndexedDB 上
   watch(() => ceData.files, (newV) => {
-    toAutoChange(ctx)
+    toAutoChange(ctx, true)
     checkCanSubmit(ceData)
   }, { deep: true })
 
