@@ -28,5 +28,8 @@ analysis.html
 *.sln
 *.sw?
 
+# verify files
+MP_verify_*
+
 # Sentry Config File
 .env.sentry-build-plugin
