@@ -270,6 +270,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
     .tc-content_briefing {
       display: -webkit-box;
       -webkit-box-orient: vertical;
+      line-clamp: 3;
       -webkit-line-clamp: 3;
       overflow: hidden;
       --trunc: false;
@@ -282,6 +283,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
     }
 
     .tc-content_all {
+      line-clamp: 999;
       -webkit-line-clamp: 999;
       padding-block-end: 0;
       cursor: auto;
