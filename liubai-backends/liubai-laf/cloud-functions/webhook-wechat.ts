@@ -85,8 +85,9 @@ export async function main(ctx: FunctionContext) {
 
 async function getMsgObject(message: string) {
   let res: Record<string, any> | undefined 
+  const parser = new xml2js.Parser({explicitArray : false})
   try {
-    const { xml } = await xml2js.parseStringPromise(message)
+    const { xml } = await parser.parseStringPromise(message)
     res = xml
   }
   catch(err) {

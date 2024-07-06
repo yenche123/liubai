@@ -1600,3 +1600,53 @@ export interface Shared_LoginState {
   createdStamp: number
   num: number
 }
+
+
+/******************* WeChat Subscription Msg Events ****************/
+export interface Wx_Gzh_Base {
+  ToUserName: string
+  FromUserName: string
+  CreateTime: string    // integer which represents timestamp (seconds)
+}
+
+// authorization_change from user
+// https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/authorization_change.html
+
+export type Wx_Gzh_Auth_Change_Event = "user_info_modified" | 
+  "user_authorization_revoke" |
+  "user_authorization_cancellation"
+
+export interface Wx_Gzh_Auth_Change extends Wx_Gzh_Base {
+  MsgType: "event"
+  Event: Wx_Gzh_Auth_Change_Event
+  OpenID: string
+  AppID: string
+  RevokeInfo?: string
+}
+
+// receive basic message from user
+// https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Receiving_standard_messages.html
+export interface Wx_Gzh_Text extends Wx_Gzh_Base {
+  MsgType: "text"
+  Content: string
+  MsgId: string
+  MsgDataId?: string
+}
+
+export interface Wx_Gzh_Image extends Wx_Gzh_Base {
+  MsgType: "image"
+  PicUrl: string
+  MediaId: string
+  MsgId: string
+  MsgDataId?: string
+}
+
+export interface Wx_Gzh_Voice extends Wx_Gzh_Base {
+  MsgType: "voice"
+  MediaId: string
+  Format: string
+  MsgId: string
+  MsgDataId?: string
+}
+
+
