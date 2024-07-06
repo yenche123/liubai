@@ -21,4 +21,15 @@ precacheAndRoute(self.__WB_MANIFEST)
 cleanupOutdatedCaches()
 
 // to allow work offline
-registerRoute(new NavigationRoute(createHandlerBoundToURL('index.html')))
+let allowlist: undefined | RegExp[]
+if (import.meta.env.DEV) {
+  allowlist = [/^\/$/]
+}
+const boundToIndex = createHandlerBoundToURL('index.html')
+const navigationIndex = new NavigationRoute(boundToIndex, {
+  allowlist,
+  denylist: [
+    /^\/lib\//,
+  ]
+})
+registerRoute(navigationIndex)
