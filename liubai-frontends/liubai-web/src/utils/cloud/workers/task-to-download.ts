@@ -215,9 +215,10 @@ const handle_file = async (
 ): Promise<HanFilesRes> => {
 
   const idx = files.findIndex(v => {
-    if(v.arrayBuffer) return false
+    if(v.id !== file_id) return false
     if(!v.cloud_url) return false
-    return v.id === file_id
+    if(v.arrayBuffer) return false
+    return true
   })
 
   if(idx < 0) {

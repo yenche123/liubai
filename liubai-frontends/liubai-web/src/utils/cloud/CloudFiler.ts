@@ -23,6 +23,7 @@ import time from "../basic/time";
 import valTool from "../basic/val-tool";
 import { getMainToChildMessage } from "./tools/some-funcs";
 import { CloudEventBus } from "./CloudEventBus";
+import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
 
 
 const MIN_5 = 5 * time.MINUTE
@@ -51,6 +52,11 @@ class CloudFiler {
   /** 触发下载 */
   private static triggerDownload() {
     const _this = this
+    const { level } = useNetworkStore()
+    if(level < 1) {
+      console.warn("没有网络，拒绝下载......")
+      return
+    }
 
     const lstd = this.lastStartToDownload
     if(lstd) {
