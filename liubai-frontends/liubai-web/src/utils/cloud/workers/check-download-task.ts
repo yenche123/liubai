@@ -24,8 +24,9 @@ onmessage = async (e) => {
     }
     const res = await db.download_tasks.get(g)
     if(res?._id) {
-      // 已存在，略过
-      continue
+      if(res.file_id === v.file_id) {
+        continue
+      }
     }
 
     // 把数据加进 IndexedDB 中
@@ -35,6 +36,7 @@ onmessage = async (e) => {
       insertedStamp: now + i,
       target_id: v.id,
       target_table: v.table,
+      file_id: v.file_id,
     }
     const res2 = await db.download_tasks.add(newData)
   }

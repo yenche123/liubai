@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import type { LiuFileStore } from '~/types';
-import type { PropType } from 'vue';
+import { type PrettyFileEmit, prettyFileProps } from './tools/types';
 import { usePrettyFile } from './tools/usePrettyFile';
 
-const props = defineProps({
-  file: {
-    type: Object as PropType<LiuFileStore>
-  }
-})
+const props = defineProps(prettyFileProps)
+const emit = defineEmits<PrettyFileEmit>()
 
 const {
   iconType,
   sizeStr,
   onTapFile,
-} = usePrettyFile(props)
+} = usePrettyFile(props, emit)
 
 
 </script>

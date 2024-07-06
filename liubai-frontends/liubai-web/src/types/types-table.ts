@@ -162,6 +162,7 @@ export interface DownloadTaskLocalTable {
   target_table: LiuTable
   tryTimes?: number           // 下载失败的次数，若大于某个阈值，就放弃
   failedStamp?: number        // 最近一次下载失败的时间戳
+  file_id?: string            // 若此值存在，查找对应文件，若没有被下载过，则去下载
 }
 
 /** 本地上传任务表 */

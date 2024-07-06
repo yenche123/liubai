@@ -27,6 +27,7 @@ interface HanFilesRes {
   hasEverBadNetwork?: boolean
   hasEverSuccess?: boolean
   hasEverKnownErr?: boolean
+  results: SyncResState[]
   files: LiuFileStore[]
 }
 
@@ -208,6 +209,48 @@ const handle_images = async (
   }
 }
 
+const handle_file = async (
+  files: LiuFileStore[],
+  file_id: string,
+): Promise<HanFilesRes> => {
+
+  const idx = files.findIndex(v => {
+    if(v.arrayBuffer) return false
+    if(!v.cloud_url) return false
+    return v.id === file_id
+  })
+
+  if(idx < 0) {
+    return { files, results: [] }
+  }
+
+  const theFile = files[idx]
+  const res = await toDownload(theFile.cloud_url as string)
+  const ret = res.result
+
+  let hasEverUnknown = ret === "unknown"
+  let hasEverBadNetwork = ret === "bad_network"
+  let hasEverSuccess = ret === "success"
+  let hasEverKnownErr = ret === "known_err"
+  const results: SyncResState[] = [ret]
+  
+  if(hasEverSuccess) {
+    theFile.arrayBuffer = res.arrayBuffer
+    if(res.mimeType) theFile.mimeType = res.mimeType
+    files[idx] = theFile
+  }
+
+  return {
+    hasEverUnknown,
+    hasEverBadNetwork,
+    hasEverSuccess,
+    hasEverKnownErr,
+    files,
+    results,
+  }
+}
+
+
 /** 只要有任何一个结果为 true，该字段的总结果就为 true */
 const judgeHanTaskRes = (
   taskRes: HanTaskRes, 
@@ -293,15 +336,24 @@ const handle_content = async (
   task: DownloadTaskLocalTable
 ) => {
   const id = task.target_id
+  const file_id = task.file_id
   const res = await db.contents.get(id)
   if(!res) return {}
-  const { images = [] } = res
+  const { images = [], files = [] } = res
 
   let u: Partial<ContentLocalTable> = {}
   let targetUpdated = false
   const res0: HanTaskRes = {}
 
-  if(images.length > 0) {
+  if(file_id && files.length > 0) {
+    const res1 = await handle_file(files, file_id)
+    if(res1.hasEverSuccess) {
+      targetUpdated = true
+      u.files = res1.files
+    }
+    judgeHanTaskRes(res0, res1)
+  }
+  else if(images.length > 0) {
     const res2 = await handle_images(images)
     if(res2.hasEverSuccess) {
       targetUpdated = true
@@ -322,15 +374,24 @@ const handle_draft = async (
   task: DownloadTaskLocalTable
 ) => {
   const id = task.target_id
+  const file_id = task.file_id
   const res = await db.drafts.get(id)
   if(!res) return {}
-  const { images = [] } = res
+  const { images = [], files = [] } = res
 
   let u: Partial<DraftLocalTable> = {}
   let targetUpdated = false
   const res0: HanTaskRes = {}
 
-  if(images.length > 0) {
+  if(file_id && files.length > 0) {
+    const res1 = await handle_file(files, file_id)
+    if(res1.hasEverSuccess) {
+      targetUpdated = true
+      u.files = res1.files
+    }
+    judgeHanTaskRes(res0, res1)
+  }
+  else if(images.length > 0) {
     const res2 = await handle_images(images)
     if(res2.hasEverSuccess) {
       targetUpdated = true

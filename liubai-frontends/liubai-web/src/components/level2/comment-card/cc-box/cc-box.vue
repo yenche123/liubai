@@ -12,7 +12,7 @@ const BwBubbleMenu = defineAsyncComponent(() => {
   return import("~/components/browsing/bw-bubble-menu/bw-bubble-menu.vue")
 })
 
-defineProps({
+const props = defineProps({
   cs: {          // cs 为 commentShow 的简写
     type: Object as PropType<CommentShow>,
     required: true,
@@ -26,7 +26,8 @@ defineProps({
 const { 
   editor,
   editorCoreRef,
-} = useCcBox()
+  afterTapFile,
+} = useCcBox(props)
 
 </script>
 <template>
@@ -58,6 +59,7 @@ const {
   <PrettyFile
     v-if="cs.files?.length"
     :file="cs.files[0]"
+    @aftertapfile="afterTapFile"
   ></PrettyFile>
 
 </template>

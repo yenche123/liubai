@@ -1,9 +1,12 @@
 import { computed } from "vue"
-import type { PrettyFileProps, PrettyFileIcon } from "./types"
+import type { PrettyFileProps, PrettyFileIcon, PrettyFileEmit } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import { checkFile } from "~/utils/files/checkFile"
 
-export function usePrettyFile(props: PrettyFileProps) {
+export function usePrettyFile(
+  props: PrettyFileProps,
+  emit: PrettyFileEmit,
+) {
 
   const rr = useRouteAndLiuRouter()
 
@@ -16,6 +19,7 @@ export function usePrettyFile(props: PrettyFileProps) {
     const f = props.file
     if(!f) return
     checkFile(f, rr)
+    emit("aftertapfile")
   }
   
 

@@ -25,6 +25,7 @@ export interface FileTransferedRes {
 export interface TaskOfC2L {
   table: LiuTable
   id: string
+  file_id?: string
 }
 
 export type SyncResState = "success" | "bad_network" | "unknown" | "known_err"

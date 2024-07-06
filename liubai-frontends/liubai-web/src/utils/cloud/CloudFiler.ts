@@ -139,12 +139,18 @@ class CloudFiler {
   /** 告知 CloudFiler 哪个表、哪一行 
    * 需要从网络下载文件（图片），存到 IndexedDB 中
    * */
-  static notify(table: LiuTable, id: string) {
+  static notify(
+    table: LiuTable, 
+    id: string,
+    file_id?: string,
+  ) {
     const data = this.tmp_tasks.find(v => (v.id === id && v.table === table))
-    if(data) return
+    if(data) {
+      if(data.file_id === file_id) return
+    }
 
     const _this = this
-    this.tmp_tasks.push({ id, table })
+    this.tmp_tasks.push({ id, table, file_id })
     if(this.timeoutOfNotify) return
     this.timeoutOfNotify = setTimeout(() => {
       _this.timeoutOfNotify = undefined
