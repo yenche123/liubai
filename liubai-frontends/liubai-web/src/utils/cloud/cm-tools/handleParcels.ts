@@ -482,7 +482,7 @@ async function mergeContent(
       g.images = imgRes.images
     }
     const fileRes = CloudFiler.updateFiles(d.files, oc.files)
-    if(imgRes.updated) {
+    if(fileRes.updated) {
       g.files = fileRes.files
     }
 
