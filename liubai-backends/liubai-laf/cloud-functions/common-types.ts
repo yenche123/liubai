@@ -251,6 +251,8 @@ export const Sch_TagView: BaseSchema<TagView> = vbot.object({
   children: sch_opt_arr(vbot.lazy(() => Sch_TagView)),
 })
 
+
+
 /** Content 表对象的配置结构 */
 export interface ContentConfig {
   showCountdown?: boolean
@@ -896,6 +898,10 @@ export interface Table_User extends BaseTable {
   ipArea?: string
   total_size?: number                 // 用户的总存储空间，单位为 kB
   upload_size?: number                // 用户的总历史上传空间，单位为 kB
+
+  /** wechat data */
+  wx_gzh_openid?: string
+  
 }
 
 /** Workspace 表 */
