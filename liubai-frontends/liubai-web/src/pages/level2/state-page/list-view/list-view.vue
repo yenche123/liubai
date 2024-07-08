@@ -169,6 +169,9 @@ const { isMobile } = liuApi.getCharacteristic()
 
     </SlickItem>
 
+
+    <div class="lv-virtual-2"></div>
+
   </SlickList>
 
 </template>
@@ -209,6 +212,11 @@ const { isMobile } = liuApi.getCharacteristic()
 .lv-virtual {
   width: 100%;
   height: 10px;
+}
+
+.lv-virtual-2 {
+  width: 100%;
+  height: 50px;
 }
 
 .lv-column {
