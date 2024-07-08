@@ -18,7 +18,8 @@ export interface GetThreadsOfAStateOpt {
 export interface GetThreadsOfAStateRes {
   threads: ThreadShow[]
   hasMore: boolean
-  excluded_ids?: string[]
+  excluded_ids?: string[]      // 在 state 列表里，应该被排除在外的 ids 们
+  unknown_ids?: string[]       // 在 kanban 里，本应被加载出来的 ids 们，却找不到数据
 }
 
 
@@ -69,7 +70,10 @@ async function getThreadsOfAState(
   const { stateId, excludeInKanban, lastItemStamp } = opt
   const wStore = useWorkspaceStore()
   const spaceId = wStore.spaceId
-  const NOTHING_DATA = { threads: [], hasMore: false }
+  const NOTHING_DATA: GetThreadsOfAStateRes = { 
+    threads: [], 
+    hasMore: false,
+  }
   if(!spaceId) return NOTHING_DATA
 
   const listOpt: TcListOption = {
@@ -113,6 +117,16 @@ async function getThreadsOfAState(
   listOpt.specific_ids = contentIds
   const res2 = await threadController.getList(listOpt)
 
+  // 去看有没有 加载失败的动态
+  const unknown_ids: string[] = []
+  for(let i=0; i<contentIds.length; i++) {
+    const v = contentIds[i]
+    if(!res2.find(v2 => v2._id === v)) {
+      unknown_ids.push(v)
+    }
+  }
+  NOTHING_DATA.unknown_ids = unknown_ids
+
   for(let i=0; i<res2.length; i++) {
     const v = res2[i]
     if(v.oState !== "OK") {
@@ -143,7 +157,11 @@ async function getThreadsOfAState(
     }
   }
 
-  return { hasMore, threads: res2 }
+  return { 
+    hasMore, 
+    threads: res2,
+    unknown_ids,
+  }
 }
 
 // 重新排列 workspace.LiuStateConfig.stateList

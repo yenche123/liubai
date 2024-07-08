@@ -20,6 +20,10 @@ import cui from "~/components/custom-ui"
 import cfg from "~/config"
 import ider from "~/utils/basic/ider"
 import liuUtil from "~/utils/liu-util"
+import localCache from "~/utils/system/local-cache"
+import { type SyncGet_CheckContents } from "~/types/cloud/sync-get/types"
+import { CloudMerger } from "~/utils/cloud/CloudMerger"
+import valTool from "~/utils/basic/val-tool"
 
 export function useStatePage() {
 
@@ -192,6 +196,7 @@ function listenThreadShowChanged(
     "restore",
     "float_up",
     "undo_float_up",
+    "edit",
   ]
 
   // 内部改变的时间戳
@@ -255,9 +260,11 @@ function toGetColumns(
 }
 
 async function toGetThreads(
-  ctx: StatePageCtx
+  ctx: StatePageCtx,
+  cloud: boolean = true,
 ) {
   const { kanban } = ctx
+  const unknown_ids: string[] = []
   for(let i=0; i<kanban.columns.length; i++) {
     const col = kanban.columns[i]
 
@@ -269,8 +276,69 @@ async function toGetThreads(
 
     col.hasMore = data.hasMore
     col.threads = data.threads
+
+    if(data.unknown_ids) {
+      unknown_ids.push(...data.unknown_ids)
+    }
+  }
+
+  console.log("unknown_ids in useStatePage:::")
+  console.log(unknown_ids)
+  console.log(" ")
+
+  if(cloud) {
+    loadCloud(ctx, unknown_ids)
   }
 }
+
+
+async function loadCloud(
+  ctx: StatePageCtx,
+  unknown_ids: string[],
+) {
+  if(unknown_ids.length < 1) return
+
+  const hasBE = localCache.hasLoginWithBackend()
+  if(!hasBE) return
+
+  const MAX_TIMES = 8
+  let runTimes = 0
+  let loadAgain = false
+
+  console.log("start to poll cloud................")
+  console.time("useStatePage::loadCloud")
+
+  // 1. sync with cloud using while loops
+  while(true) {
+    runTimes += 1
+    if(runTimes > MAX_TIMES) break
+
+    let tmpList = unknown_ids.splice(0, 16)
+    if(tmpList.length < 1) break
+
+    const param: SyncGet_CheckContents = {
+      taskType: "check_contents",
+      ids: tmpList,
+    }
+    const res = await CloudMerger.request(param, { delay: 16 })
+    if(!res) break
+    
+    loadAgain = true
+
+    if(unknown_ids.length < 1) {
+      break
+    }
+
+    await valTool.waitMilli(1000)
+  }
+
+  console.timeEnd("useStatePage::loadCloud")
+
+  if(loadAgain) {
+    toGetThreads(ctx, false)
+  }
+}
+
 
 
 function transferStateListToColumns(
