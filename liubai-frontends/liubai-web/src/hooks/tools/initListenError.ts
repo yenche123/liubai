@@ -23,7 +23,20 @@ export function initListenError() {
   }
 
   const _reload = () => {
+    const now = Date.now()
+    localStorage.setItem("liu_vite-preload-err", now.toString())
     window.location.reload()
+  }
+
+  const _canReload = () => {
+    const lastReloadErr = localStorage.getItem("liu_vite-preload-err")
+    if(!lastReloadErr) return true
+    const now = Date.now()
+    const stamp = Number(lastReloadErr)
+    if(isNaN(stamp)) return false
+    const duration = now - stamp
+    if(duration < (60 * 1000)) return false
+    return true
   }
 
   let hasBeenReport = false
@@ -46,6 +59,7 @@ export function initListenError() {
     }, 2)
 
     setTimeout(() => {
+      if(!_canReload()) return
       _reload()
     }, 1500)
   })

@@ -33,3 +33,6 @@ MP_verify_*
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Tencent COSCLI
+coscli

@@ -6,13 +6,13 @@ import { onMounted, onUnmounted, provide } from "vue";
 import { useGlobalStateStore } from "./stores/useGlobalStateStore";
 import liuEnv from "~/utils/liu-env";
 import { useIdsChanged } from "./tools/useIdsChanged";
-import { initAnalytics } from "./tools/initAnalytics";
 import localCache from "~/utils/system/local-cache";
 import { deviceChaKey } from "~/utils/provide-keys";
 import type { GetChaRes } from "~/utils/liu-api/tools/types";
 import { listenLoaded } from "./tools/listen-loaded"
 import { initServiceWorker } from "./pwa/useServiceWorker"
 import { initListenError } from "./tools/initListenError";
+import { initAnalytics } from "./tools/initAnalytics";
 
 // 监听和处理一些全局的事务，比如路由变化
 
