@@ -191,7 +191,7 @@ async function handleSpaceAndMember(
     const lastOperateTag1 = cfg1?.lastOperateTag ?? 1
     const lastOperateTag2 = cfg2?.lastOperateTag ?? 1
     if(lastOperateTag2 > lastOperateTag1) {
-      console.log("update workspace tagList 111111111")
+      console.warn("update workspace tagList 111111111")
       u5.tagList = v2.space_tagList
       cfg1.lastOperateTag = lastOperateTag2
       updated = true
@@ -203,7 +203,7 @@ async function handleSpaceAndMember(
     const s_u1 = stateCfg1?.updatedStamp ?? 1
     const s_u2 = stateCfg2?.updatedStamp ?? 1
     if(s_u2 > s_u1) {
-      console.log("update workspace stateConfig 111111111")
+      console.warn("update workspace stateConfig 111111111")
       u5.stateConfig = stateCfg2
       updated = true
     }

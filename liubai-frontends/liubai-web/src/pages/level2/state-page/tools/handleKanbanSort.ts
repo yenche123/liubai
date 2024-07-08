@@ -19,6 +19,8 @@ export async function whenThreadInserted(
   newStateId: string,
   thread: ThreadShow
 ) {
+
+  console.log("有动态被添加到 kanban 里了...................")
   const oldStateId = thread.stateId
   crossData = {
     stateId: newStateId,
@@ -56,6 +58,9 @@ async function updateStateList() {
   const currentSpace = wStore.currentSpace
   if(!currentSpace) return false
 
+
+  console.log("有 kanban 被更新了...............")
+
   const stateList = stateController.getStates()
   for(let i=0; i<stateList.length; i++) {
     const v1 = stateList[i]
@@ -75,7 +80,7 @@ async function updateStateList() {
         continue
       }
 
-      if(t1 === t2) {
+      if(t1 && t1 === t2) {
         // 位置一样
         contentIds.push(t2)
         newContentIds.splice(0, 1)
@@ -83,13 +88,13 @@ async function updateStateList() {
       }
 
       // 读到旧的 id 被跨栏移动，代表不应该出现在该 column 里
-      if(t1 === crossData?.threadId) {
+      if(t1 && t1 === crossData?.threadId) {
         continue
       }
 
       // 读到新的 id 被跨栏移动，代表它就应该出现在这里
       // 这时要 j-- 因为下一轮还要再从此刻的 t1 开始
-      if(t2 === crossData?.threadId) {
+      if(t2 && t2 === crossData?.threadId) {
         contentIds.push(t2)
         newContentIds.splice(0, 1)
         j--
@@ -98,7 +103,7 @@ async function updateStateList() {
 
       // 检查 t1 有没有在 newContentIds 里
       // 如果没有，就代表是其他端的动态，请为它保留
-      if(!newContentIds.includes(t1)) {
+      if(t1 && !newContentIds.includes(t1)) {
         contentIds.push(t1)
         continue
       }

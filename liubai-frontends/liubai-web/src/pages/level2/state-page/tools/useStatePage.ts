@@ -1,5 +1,5 @@
-import { onActivated, onDeactivated, provide, reactive, ref } from "vue"
-import { useWindowSize } from "~/hooks/useVueUse"
+import { provide, reactive, ref, watch } from "vue"
+import { useThrottleFn, useWindowSize } from "~/hooks/useVueUse"
 import { stateProvideKey } from "./types"
 import type { 
   StateWhichPage, 
@@ -24,6 +24,8 @@ import localCache from "~/utils/system/local-cache"
 import { type SyncGet_CheckContents } from "~/types/cloud/sync-get/types"
 import { CloudMerger } from "~/utils/cloud/CloudMerger"
 import valTool from "~/utils/basic/val-tool"
+import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
+import { useAwakeNum } from "~/hooks/useCommon"
 
 export function useStatePage() {
 
@@ -185,7 +187,7 @@ async function toRefresh(
 function listenThreadShowChanged(
   ctx: StatePageCtx
 ) {
-  let isActivated = false
+  const { awakeNum, syncNum, isActivated } = useAwakeNum()
   let reloadRequired = false
   const followEvents: WhyThreadChange[] = [
     "delete", 
@@ -210,7 +212,7 @@ function listenThreadShowChanged(
     const tmp = followEvents.includes(state.whyChange)
     if(!tmp) return
 
-    if(isActivated) {
+    if(isActivated.value) {
       toRefresh(ctx, false)
     }
     else {
@@ -218,18 +220,46 @@ function listenThreadShowChanged(
     }
   })
 
-  onActivated(() => {
-    isActivated = true
+  const _toFetch = useThrottleFn(() => {    
+    fetchUserAndRefresh(ctx)
+  }, 50 * time.SECONED)
+
+  watch(awakeNum, (newV) => {
+
+    // console.warn("awakeNum newV")
+    // console.log(newV)
+    // console.log(" ")
+
     if(reloadRequired) {
       ctx.showReload.value = true
       toRefresh(ctx, false)
+      reloadRequired = false
+      return
     }
-    reloadRequired = false
+
+    if(newV < 2) return
+    if(syncNum.value < 1) return
+
+    _toFetch()
   })
 
-  onDeactivated(() => {
-    isActivated = false
-  })
+}
+
+async function fetchUserAndRefresh(
+  ctx: StatePageCtx,
+) {
+  const justLaunched = liuUtil.check.isJustAppSetup()
+  if(justLaunched) {
+    // console.warn("justLaunched.......")
+    toRefresh(ctx, false)
+    return
+  }
+
+  // console.warn("fetchUserAndRefresh.......")
+  const res = await CloudEventBus.getLatestUserInfo()
+  if(!res) return
+  // console.log("toRefresh triggered by fetchUserAndRefresh")
+  toRefresh(ctx, false)
 }
 
 
@@ -239,16 +269,12 @@ function initKanbanColumns(
   const wStore = useWorkspaceStore()
   const spaceIdRef = storeToRefs(wStore).spaceId
 
-  const _getThreads = () => {
+  const _getData = () => {
+    toGetColumns(ctx)
     toGetThreads(ctx)
   }
 
-  const _getColumns = () => {
-    toGetColumns(ctx)
-    _getThreads()
-  }
-
-  useLiuWatch(spaceIdRef, _getColumns)
+  useLiuWatch(spaceIdRef, _getData)
 }
 
 function toGetColumns(
@@ -282,9 +308,9 @@ async function toGetThreads(
     }
   }
 
-  console.log("unknown_ids in useStatePage:::")
-  console.log(unknown_ids)
-  console.log(" ")
+  // console.log("unknown_ids in useStatePage:::")
+  // console.log(unknown_ids)
+  // console.log(" ")
 
   if(cloud) {
     loadCloud(ctx, unknown_ids)
@@ -296,10 +322,9 @@ async function loadCloud(
   ctx: StatePageCtx,
   unknown_ids: string[],
 ) {
-  if(unknown_ids.length < 1) return
-
   const hasBE = localCache.hasLoginWithBackend()
   if(!hasBE) return
+  if(unknown_ids.length < 1) return
 
   const MAX_TIMES = 8
   let runTimes = 0
