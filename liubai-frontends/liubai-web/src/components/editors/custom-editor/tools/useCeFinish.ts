@@ -125,6 +125,8 @@ async function toRelease(
   
 }
 
+
+// reset after releasing
 function _resetState(
   ctx: CepContext
 ) {
@@ -141,8 +143,17 @@ function _resetState(
   delete ceData.images
   delete ceData.files
   delete ceData.editorContent
+  delete ceData.lastEditStamp
 
   ceData.canSubmit = false
+}
+
+// reset after updating
+function _resetState2(
+  ctx: CepContext,
+) {
+  const { ceData } = ctx
+  delete ceData.lastEditStamp
 }
 
 
@@ -279,7 +290,10 @@ async function toUpdate(ctx: CepContext) {
   // 6. logger
   liuConsole.sendMessage("User edited a thread")
 
-  // 7. 如果是本地的动态，检查是否要 go to thread-only_local
+  // 7. reset
+  _resetState2(ctx)
+
+  // 8. 如果是本地的动态，检查是否要 go to thread-only_local
   const target_id = threadId
   const operateStamp = theThread.updatedStamp
   if(newSs === "LOCAL" || newSs === "ONLY_LOCAL") {
@@ -293,7 +307,7 @@ async function toUpdate(ctx: CepContext) {
     return
   }
 
-  // 8. 否则，去发表或上传
+  // 9. 否则，去发表或上传
   const uploadTask = newSs === "WAIT_UPLOAD" ? "thread-post" : "thread-edit"
   LocalToCloud.addTask({ 
     uploadTask, 

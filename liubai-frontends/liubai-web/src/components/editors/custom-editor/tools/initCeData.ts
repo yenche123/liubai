@@ -52,14 +52,13 @@ export function initCeData(
   const spaceStore = useWorkspaceStore()  
   spaceIdRef = storeToRefs(spaceStore).spaceId
 
-  
-  const tVal = toRef(props, "threadId")
+  const threadIdRef = toRef(props, "threadId")
   
   // 不能用 shallowReactive 
   // 因为 images 属性必须监听内部数据的变化
   let ceData = reactive<CeData>({
     ...defaultData,
-    threadEdited: tVal.value,
+    threadEdited: threadIdRef.value,
     lastLockStamp: time.getTime(),
   })
   
@@ -94,7 +93,7 @@ export function initCeData(
   const whenCtxChanged = (cloud: boolean) => {
     const ctx = getCtx()
     if(!ctx) return
-    ceData.threadEdited = tVal.value
+    ceData.threadEdited = threadIdRef.value
     if(cloud) {
       preInitWithCloud(ctx)
     }
@@ -103,7 +102,7 @@ export function initCeData(
     }
   }
 
-  watch([editor, spaceIdRef, tVal], () => {
+  watch([editor, spaceIdRef, threadIdRef], () => {
     whenCtxChanged(false)
   })
   
