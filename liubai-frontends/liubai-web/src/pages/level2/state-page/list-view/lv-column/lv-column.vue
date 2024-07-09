@@ -2,11 +2,10 @@
 import type { PropType } from 'vue';
 import { SlickList, SlickItem } from 'vue-slicksort'
 import type { ThreadShow } from '~/types/types-content';
-import { useKanbanThreads } from "../../tools/useKanbanThreads"
-import { useI18n } from "vue-i18n"
-import type { 
-  ColumnInsertData,
-} from "../../tools/types"
+import { useKanbanThreads } from "../../tools/useKanbanThreads";
+import { useI18n } from "vue-i18n";
+import { useLvColumn } from './tools/useLvColumn';
+import type { KbListEmits } from "../../tools/types";
 
 const props = defineProps({
   stateId: {
@@ -26,20 +25,17 @@ const props = defineProps({
   }
 })
 
-// vue 3.3+ 的 defineEmits 写法
-const emit = defineEmits<{
-  "update:threads": [val: ThreadShow[]]
-  "sort-insert": [val: ColumnInsertData]
-  "threadsupdated": [val: ThreadShow[]]
-  "tapitem": [contentId: string]
-  "tapadd": []
-}>()
+const emit = defineEmits<KbListEmits>()
 
 const { t } = useI18n()
 const {
   list,
   showAddBox,
 } = useKanbanThreads(props, emit)
+
+const {
+  lvcData
+} = useLvColumn(emit)
 
 </script>
 <template>
@@ -51,7 +47,8 @@ const {
     lockAxis="y"
     group="list"
     v-model:list="list"
-    :distance="5"
+    :distance="lvcData.distance"
+    :press-delay="lvcData.pressDelay"
     :id="'list-' + stateId"
     @sort-insert="$emit('sort-insert', $event)"
     @update:list="$emit('threadsupdated', $event)"

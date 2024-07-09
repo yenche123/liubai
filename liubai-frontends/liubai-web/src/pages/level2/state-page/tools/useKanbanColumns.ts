@@ -63,7 +63,11 @@ export function useKanbanColumns(
     whenThreadInserted(stateId, data.value)
   }
 
-  const onThreadsUpdated = (stateId: string, threads: ThreadShow[]) => {
+  const onThreadsUpdated = (
+    stateId: string, 
+    threads: ThreadShow[],
+    fr: "list-view" | "kanban-view",
+  ) => {
     _setInnerStamp()
     whenThreadListUpdated(stateId, threads)
   }

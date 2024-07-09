@@ -5,7 +5,7 @@ import type { ThreadShow } from '~/types/types-content';
 import { useKanbanThreads } from "../../tools/useKanbanThreads"
 import { useKvColumn } from './tools/useKvColumn';
 import { useI18n } from "vue-i18n"
-import type { ColumnInsertData } from "../../tools/types"
+import type { KbListEmits2 } from "../../tools/types"
 import AppLink from '~/components/common/app-link/app-link.vue';
 
 const vHandle = HandleDirective
@@ -27,15 +27,7 @@ const props = defineProps({
   }
 })
 
-// vue 3.3+ 的 defineEmits 写法
-const emit = defineEmits<{
-  "update:threads": [val: ThreadShow[]]
-  "scrolling": [val: number]
-  "sort-insert": [val: ColumnInsertData]
-  "threadsupdated": [val: ThreadShow[]]
-  "tapitem": [contentId: string]
-  "tapadd": []
-}>()
+const emit = defineEmits<KbListEmits2>()
 
 const { t } = useI18n()
 const {
@@ -269,6 +261,7 @@ const {
   overflow-wrap: break-word;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  line-clamp: 3;
   -webkit-line-clamp: 3;
   overflow: hidden;
   max-height: 77px;

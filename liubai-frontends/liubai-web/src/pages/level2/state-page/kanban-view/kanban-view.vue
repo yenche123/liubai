@@ -155,7 +155,7 @@ const {
         :prefix="prefix"
         @scrolling="setScrollTop(item.id, $event)"
         @sort-insert="onThreadInserted(item.id, $event)"
-        @threadsupdated="onThreadsUpdated(item.id, $event)"
+        @threadsupdated="onThreadsUpdated(item.id, $event, 'list-view')"
         @tapitem="onTapThreadItem"
         @tapadd="() => onTapAddThread(item.id)"
       ></KvColumn>

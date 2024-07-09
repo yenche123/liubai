@@ -160,7 +160,7 @@ const { isMobile } = liuApi.getCharacteristic()
           :state-id="item.id"
           :prefix="prefix"
           @sort-insert="onThreadInserted(item.id, $event)"
-          @threadsupdated="onThreadsUpdated(item.id, $event)"
+          @threadsupdated="onThreadsUpdated(item.id, $event, 'kanban-view')"
           @tapitem="onTapThreadItem"
           @tapadd="() => onTapAddThread(item.id)"
         ></LvColumn>
