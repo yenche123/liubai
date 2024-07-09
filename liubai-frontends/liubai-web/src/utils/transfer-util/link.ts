@@ -295,17 +295,8 @@ function _handleSocialLink(text: string) {
 
 // 自定义检查 text 是否为一个链接
 function _checkUrl_1(text: string) {
-
-  try {
-    const url = new URL(text)
-    // 如果 url 能正常解析，但是查无 hostname 的
-    // 视为错误的 url
-    if(!url.hostname) return false
-  }
-  catch(err) {
-    // console.log("new URL err: ")
-    // console.log(text)
-  }
+  const url = valTool.getURL(text)
+  if(!url) return false
 
   const firstChar = text[0]
   if(firstChar === "/" || firstChar === ":") return false

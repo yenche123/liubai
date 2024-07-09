@@ -69,6 +69,10 @@ export function useViceContent(
       url = new URL(u.fullPath, location.origin)
     }
     
+    if(!url && id) {
+      url = valTool.getURL(id)
+    }
+
     if(!url) return
     const tmp = url.toString()
     window.open(tmp, "_blank")

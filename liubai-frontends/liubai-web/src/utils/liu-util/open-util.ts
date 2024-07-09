@@ -87,7 +87,6 @@ function openCommentWithDetailPage(cid2: string, opt: RrOpt) {
 function openOutSearch(
   keyword: string, 
   opt: RrOpt,
-  forceVv: boolean = false
 ) {
   const { route, router } = opt.rr
   const newQ = { outq: keyword }

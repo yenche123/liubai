@@ -260,6 +260,21 @@ const isStringWithVal = (val: any): val is string => {
   return hasValue<string>(val, "string")
 }
 
+const getURL = (val: string) => {
+  let url: URL | undefined
+  try {
+    url = new URL(val)
+    if(!url.hostname) return
+  }
+  catch(err) {
+    console.warn("getURL fail........")
+    console.log(err)
+    console.log(val)
+    console.log(" ")
+  }
+  
+  return url
+}
 
 export default {
   waitMilli,
@@ -284,4 +299,5 @@ export default {
   uniqueArray,
   hasValue,
   isStringWithVal,
+  getURL,
 }
