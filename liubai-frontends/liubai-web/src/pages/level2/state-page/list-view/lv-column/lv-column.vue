@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
-import { SlickList, SlickItem } from 'vue-slicksort'
+import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
 import type { ThreadShow } from '~/types/types-content';
 import { useKanbanThreads } from "../../tools/useKanbanThreads";
 import { useI18n } from "vue-i18n";
 import { useLvColumn } from './tools/useLvColumn';
 import type { KbListEmits } from "../../tools/types";
 
+const vHandle = HandleDirective
 const props = defineProps({
   stateId: {
     type: String,
@@ -37,6 +38,8 @@ const {
   lvcData
 } = useLvColumn(emit)
 
+const iconColor = "var(--main-note)"
+
 </script>
 <template>
 
@@ -47,8 +50,8 @@ const {
     lockAxis="y"
     group="list"
     v-model:list="list"
-    :distance="lvcData.distance"
-    :press-delay="lvcData.pressDelay"
+    use-drag-handle
+    :distance="5"
     :id="'list-' + stateId"
     @sort-insert="$emit('sort-insert', $event)"
     @update:list="$emit('threadsupdated', $event)"
@@ -81,6 +84,13 @@ const {
           <span v-if="thread.summary">{{ thread.summary }}</span>
           <span v-else>{{ t('thread_related.img_file') }}</span>
         </div>
+
+        <span class="lci-handle" v-handle>
+          <svg-icon class="lci-handle-svg"
+            name="drag_handle400"
+            :color="iconColor"
+          ></svg-icon>
+        </span>
 
       </div>
     </SlickItem>
@@ -150,14 +160,16 @@ const {
   width: 100%;
   position: relative;
   display: flex;
+  align-items: center;
   box-sizing: border-box;
-  padding: 10px 16px;
+  padding-block: 4px;
+  padding-inline-start: 16px;
   background-color: var(--card-bg);
   transition: .15s;
 }
 
 .lci-text {
-  width: 100%;
+  width: calc(100% - 50px);
   color: var(--main-normal);
   font-size: var(--btn-font);
   overflow: hidden;
@@ -169,6 +181,21 @@ const {
     margin-inline-end: 6px;
   }
 }
+
+.lci-handle {
+  width: 48px;
+  height: 40px;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .lci-handle-svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 
 @media(hover: hover) {
   .lci-inner:hover {
