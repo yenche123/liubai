@@ -81,7 +81,8 @@ const vitePlugins: UserConfig['plugins'] = [
 export default defineConfig(({ command, mode }) => {
 
   const _env = loadEnv(mode, projectRoot)
-  if(command === "build" && mode === "production") {
+  const isProduction = mode === "production"
+  if(command === "build" && isProduction) {
     // source maps for sentry
     const {
       VITE_SENTRY_SOURCEMAPS: ssmaps,
