@@ -3,11 +3,10 @@ import cloud from '@lafjs/cloud'
 import * as crypto from "crypto"
 import type { 
   Partial_Id,
-  MongoFilter,
   Table_BlockList, 
   Table_Config, 
   Shared_RSA_Key_Pair,
-  Shared_ARS_Key_IV,
+  Shared_AES_Key_IV,
 } from "@/common-types"
 import { getNowStamp } from "@/common-time"
 import { getDocAddId } from '@/common-util'
@@ -88,7 +87,7 @@ async function initConfig() {
 
   // 2. AES Key & IV
   if(c.aesKey && c.aesIV) {
-    const aesData: Shared_ARS_Key_IV = {
+    const aesData: Shared_AES_Key_IV = {
       aesKey: c.aesKey,
       aesIV: c.aesIV,
     }

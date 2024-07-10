@@ -1028,6 +1028,12 @@ export interface Table_Collection extends BaseTable {
 }
 
 
+export interface Config_WeChat_GZH {
+  access_token?: string
+  expire_in?: number      // how many seconds left before it expires
+  lastGetStamp?: number   // Timestamp of the last time access_token was obtained
+}
+
 export interface Table_Config extends BaseTable {
 
   // RSA Key Pair in PEM format
@@ -1039,6 +1045,8 @@ export interface Table_Config extends BaseTable {
   // AES-GCM IV in base64 format
   aesIV?: string
 
+  // wechat subscription
+  wechat_gzh?: Config_WeChat_GZH
 
 }
 
@@ -1579,7 +1587,7 @@ export interface Shared_RSA_Key_Pair {
   privateKey: string
 }
 
-export interface Shared_ARS_Key_IV {
+export interface Shared_AES_Key_IV {
   aesKey: string
   aesIV: string
 }
