@@ -1,14 +1,16 @@
 // Receive messages and events from WeCom
 import cloud from "@lafjs/cloud";
-import * as crypto from "crypto";
-import { type LiuRqReturn } from "./common-types";
+import { type LiuRqReturn } from "@/common-types";
 import { decrypt, getSignature } from "@wecom/crypto"
 import xml2js from "xml2js"
+import { getIp } from "@/common-util";
 
 const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
   console.log("webhook-wecom starts to run!")
+
+  const ip = getIp(ctx)
 
   const b = ctx.body
   console.log("ctx.body: ", b)
@@ -62,7 +64,8 @@ export async function main(ctx: FunctionContext) {
   const res4 = verifyMsgSignature(msg_signature, timestamp, nonce, ciphertext)
   if(res4) {
     console.warn("fails to verify msg_signature")
-    console.log(res4)
+    console.log("ip: ", ip)
+    console.log(" ")
     return res4
   }
 
