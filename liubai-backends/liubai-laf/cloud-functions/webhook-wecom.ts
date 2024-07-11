@@ -39,7 +39,71 @@ export async function main(ctx: FunctionContext) {
     return res2_2.message
   }
 
-  return { code: "0000" }
+
+  // 3. try to get ciphertext, which applys to most scenarios
+  const payload = b.xml
+  if(!payload) {
+    console.warn("fails to get xml in body")
+    return { code: "E4000", errMsg: "xml in body is required" }
+  }
+
+
+  const ciphertext = payload.encrypt?.[0]
+  if(!ciphertext) {
+    console.warn("fails to get encrypt in body")
+    return { code: "E4000", errMsg: "Encrypt in body is required"  }
+  }
+  const tousername = payload.tousername?.[0]
+  const agentid = payload.agentid?.[0]
+  console.log("tousername: ", tousername)
+  console.log("agentid: ", agentid)
+
+  // 4. verify msg_signature
+  const res4 = verifyMsgSignature(msg_signature, timestamp, nonce, ciphertext)
+  if(res4) {
+    console.warn("fails to verify msg_signature")
+    console.log(res4)
+    return res4
+  }
+
+  // 5. decrypt 
+  const { message, id } = toDecrypt(ciphertext)
+  console.log("message from wecom:")
+  console.log(message)
+
+  if(!message) {
+    console.warn("fails to get message")
+    return { code: "E4000", errMsg: "decrypt fail" }
+  }
+
+  // 6. get msg object
+  const msgObj = await getMsgObject(message)
+
+  console.log("msgObj: ")
+  console.log(msgObj)
+
+  if(!msgObj) {
+    console.warn("fails to get msg object")
+    return { code: "E5001", errMsg: "get msg object fail" }
+  }
+
+  // respond with empty string, and then wecom will not retry
+  return ""
+}
+
+async function getMsgObject(message: string) {
+  let res: Record<string, any> | undefined 
+  const parser = new xml2js.Parser({explicitArray : false})
+  try {
+    const { xml } = await parser.parseStringPromise(message)
+    res = xml
+  }
+  catch(err) {
+    console.warn("getMsgObject fails")
+    console.log(err)
+  }
+
+  return res
 }
 
 function preCheck(): LiuRqReturn | undefined {
