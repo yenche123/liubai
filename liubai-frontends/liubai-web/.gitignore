@@ -30,6 +30,7 @@ analysis.html
 
 # verify files
 MP_verify_*
+WW_verify_*
 
 # Sentry Config File
 .env.sentry-build-plugin

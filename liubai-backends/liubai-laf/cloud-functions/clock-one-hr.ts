@@ -16,7 +16,7 @@ const db2 = cloud.database()
 
 export async function main(ctx: FunctionContext) {
 
-  console.log("---------- Start clock-one-hr ----------")
+  // console.log("---------- Start clock-one-hr ----------")
 
   // 1. clear data expired
   await clearExpiredCredentials()
@@ -33,8 +33,8 @@ export async function main(ctx: FunctionContext) {
   // n. update config
   await updateGlobalConfig(cfg, { wechat_gzh })
 
-  console.log("---------- End clock-one-hr ----------")
-  console.log("                                      ")
+  // console.log("---------- End clock-one-hr ----------")
+  // console.log("                                      ")
 
   return true
 }
@@ -60,8 +60,8 @@ async function updateGlobalConfig(
     updatedStamp: getNowStamp(),
   }
   const res2 = await db2.collection("Config").doc(cfg._id).update(u)
-  console.log("updateGlobalConfig res2:")
-  console.log(res2)
+  // console.log("updateGlobalConfig res2:")
+  // console.log(res2)
 
   return true
 }
