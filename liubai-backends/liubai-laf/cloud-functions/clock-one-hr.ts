@@ -4,12 +4,14 @@
 import cloud from '@lafjs/cloud'
 import { getNowStamp, HOUR, DAY } from "@/common-time"
 import { 
+  type Config_WeCom_Inner,
   type Config_WeChat_GZH, 
   type Table_Config,
 } from '@/common-types'
 import { liuReq, valTool } from '@/common-util'
 
 const API_WECHAT_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token"
+const API_WECOM_ACCESS_TOKEN = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
 
 const db = cloud.mongo.db
 const db2 = cloud.database()
@@ -29,6 +31,9 @@ export async function main(ctx: FunctionContext) {
 
   // 3. get accessToken from wechat
   const wechat_gzh = await handleWeChatGZHConfig(cfg)
+
+  // 4. get accessToken from wecom
+
 
   // n. update config
   await updateGlobalConfig(cfg, { wechat_gzh })
@@ -114,7 +119,46 @@ async function handleWeChatGZHConfig(
   const wechat_gzh: Config_WeChat_GZH = {
     ...cfg.wechat_gzh,
     access_token,
-    expire_in: rData?.expires_in,
+    expires_in: rData?.expires_in,
+    lastGetStamp: now1,
+  }
+  return wechat_gzh
+}
+
+async function handleWeComInnerConfig(
+  cfg: Table_Config
+): Promise<Config_WeCom_Inner | undefined> {
+  // 1. get params
+  const now1 = getNowStamp()
+  const _env = process.env
+  const corpid = _env.LIU_WECOM_INNER_CORPID
+  const secret = _env.LIU_WECOM_INNER_SECRET
+  if(!corpid || !secret) {
+    console.warn("corpid and secret are required")
+    console.log("fail to get access_token from wechat")
+    return
+  }
+
+  // 2. fetch access_token
+  const url = new URL(API_WECOM_ACCESS_TOKEN)
+  const sP = url.searchParams
+  sP.set("grant_type", "client_credential")
+  sP.set("corpid", corpid)
+  sP.set("secret", secret)
+  const link = url.toString()
+  const res1 = await liuReq(link, undefined, { method: "GET" })
+  const rData = res1?.data
+  const access_token = rData?.access_token
+  if(!access_token) {
+    console.warn("fail to get access_token from wechat")
+    console.log(res1)
+    return
+  }
+
+  const wechat_gzh: Config_WeCom_Inner = {
+    ...cfg.wechat_gzh,
+    access_token,
+    expires_in: rData?.expires_in,
     lastGetStamp: now1,
   }
   return wechat_gzh

@@ -1030,8 +1030,14 @@ export interface Table_Collection extends BaseTable {
 
 export interface Config_WeChat_GZH {
   access_token?: string
-  expire_in?: number      // how many seconds left before it expires
+  expires_in?: number      // how many seconds left before it expires
   lastGetStamp?: number   // Timestamp of the last time access_token was obtained
+}
+
+export interface Config_WeCom_Inner {
+  access_token?: string
+  expires_in?: number
+  lastGetStamp?: number
 }
 
 export interface Table_Config extends BaseTable {
@@ -1047,6 +1053,8 @@ export interface Table_Config extends BaseTable {
 
   // wechat subscription
   wechat_gzh?: Config_WeChat_GZH
+
+  wecom_inner?: Config_WeCom_Inner
 
 }
 

@@ -71,6 +71,7 @@ declare global {
       LIU_WX_GZ_ENCODING_AESKEY?: string
 
       /** 企业微信 企业内部自建应用 */
+      LIU_WECOM_INNER_CORPID?: string
       LIU_WECOM_INNER_AGENTID?: string
       LIU_WECOM_INNER_SECRET?: string
       LIU_WECOM_INNER_TOKEN?: string
