@@ -42,6 +42,9 @@ export interface LocalOnceData {
   lastConfirmNewVersion?: number     // last stamp to confirm new version
   lastCancelNewVersion?: number      // last stamp to cancel new version
 
+  // goto using in login-page
+  goto?: string
+
 }
 
 export type KeyOfLocalOnceData = keyof LocalOnceData

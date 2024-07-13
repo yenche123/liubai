@@ -55,7 +55,11 @@ function setOnceData(key: KeyOfLocalOnceData, data: any) {
 function removeOnceDataWhileLogging() {
   const localData = getOnceData()
   const keys: KeyOfLocalOnceData[] = [
-    "client_key", "enc_client_key", "githubOAuthState", "googleOAuthState"
+    "client_key", 
+    "enc_client_key", 
+    "githubOAuthState", 
+    "googleOAuthState",
+    "goto",
   ]
   for(let i=0; i<keys.length; i++) {
     const k = keys[i]

@@ -1,4 +1,8 @@
-import { createRouter, createWebHistory } from "vue-router"
+import { 
+  createRouter, 
+  createWebHistory, 
+  type RouteLocationNormalizedGeneric,
+} from "vue-router"
 import { routes } from "./init-routes"
 import liuEnv from "~/utils/liu-env"
 import localCache from "~/utils/system/local-cache"
@@ -26,6 +30,21 @@ const router = createRouter({
   routes,
 })
 
+
+const _getGoTo = (to: RouteLocationNormalizedGeneric) => {
+  const toName = to.name
+  if(toName === "index") {
+    return
+  }
+
+  const toQ = to.query
+  if(toQ.goto) return
+
+  const p1 = to.fullPath
+  return p1
+}
+
+
 // 创建全局守卫导航
 router.beforeEach((to, from) => {
   const backend = liuEnv.hasBackend()
@@ -40,7 +59,12 @@ router.beforeEach((to, from) => {
   // 则路由至 login 页
   if(backend && !hasLogin) {
     if(toInApp !== false && toName !== "login") {
-      return { name: "login" }
+      let loginRoute: Record<string, any> = { name: "login" }
+      const goto = _getGoTo(to)
+      if(goto) {
+        loginRoute.query = { goto }
+      }
+      return loginRoute
     }
   }
 

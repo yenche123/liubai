@@ -25,12 +25,14 @@ import {
   reactive,
   type WatchStopHandle,
   computed,
+  onMounted,
 } from "vue";
 import middleBridge from "~/utils/middle-bridge";
 import valTool from "~/utils/basic/val-tool";
 import liuApi from "~/utils/liu-api";
 import liuUtil from "~/utils/liu-util";
 import liuConsole from "~/utils/debug/liu-console";
+import localCache from "~/utils/system/local-cache";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -61,6 +63,9 @@ export function useLoginPage() {
 
   // 2. 去获取 init 时的数据，比如 state / publicKey
   toGetLoginInitData(rr, lpData)
+
+  // 3. listen to `goto` query
+  initGoTo(rr)
 
 
   // 等待 init 返回结果，并作简单的防抖节流
@@ -121,6 +126,23 @@ export function useLoginPage() {
     onSelectedAnAccount,
     onTapBack,
   }
+}
+
+
+function initGoTo(
+  rr: RouteAndLiuRouter,
+) {
+  onMounted(() => {
+    const q = rr.route.query
+    const q1 = q.goto
+    let goto: string | undefined
+
+    if(valTool.isStringWithVal(q1)) {
+      goto = q1
+    }
+    
+    localCache.setOnceData("goto", goto)
+  })
 }
 
 

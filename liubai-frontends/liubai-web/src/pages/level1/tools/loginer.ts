@@ -40,6 +40,8 @@ async function toLogin(
     return false
   }
 
+  // 2.3 get `goto` of query
+  const goto = onceData.goto
 
   console.log("去登录当前用户 userId: ", userId)
 
@@ -74,8 +76,13 @@ async function toLogin(
   systemStore.setTheme(d.theme)
   systemStore.setLanguage(d.language)
   
-  // 9. router 切换，先不读 goto 参数，直接跳转到 首页
-  rr.router.replace({ name: "index" })
+  // 9. router 切换
+  if(goto) {
+    rr.router.replace(goto)
+  }
+  else {
+    rr.router.replace({ name: "index" })
+  }
 
   return true
 }
