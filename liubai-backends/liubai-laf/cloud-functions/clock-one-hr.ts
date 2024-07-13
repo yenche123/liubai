@@ -18,7 +18,7 @@ const db2 = cloud.database()
 
 export async function main(ctx: FunctionContext) {
 
-  console.log("---------- Start clock-one-hr ----------")
+  // console.log("---------- Start clock-one-hr ----------")
 
   // 1. clear data expired
   await clearExpiredCredentials()
@@ -38,8 +38,8 @@ export async function main(ctx: FunctionContext) {
   // n. update config
   await updateGlobalConfig(cfg, { wechat_gzh, wecom_inner })
 
-  console.log("---------- End clock-one-hr ----------")
-  console.log("                                      ")
+  // console.log("---------- End clock-one-hr ----------")
+  // console.log("                                      ")
 
   return true
 }
@@ -66,8 +66,8 @@ async function updateGlobalConfig(
     updatedStamp: getNowStamp(),
   }
   const res2 = await db2.collection("Config").doc(cfg._id).update(u)
-  console.log("updateGlobalConfig res2:")
-  console.log(res2)
+  // console.log("updateGlobalConfig res2:")
+  // console.log(res2)
 
   return true
 }
@@ -136,7 +136,7 @@ async function handleWeComInnerConfig(
   const secret = _env.LIU_WECOM_INNER_SECRET
   if(!corpid || !secret) {
     console.warn("corpid and secret are required")
-    console.log("fail to get access_token from wechat")
+    console.log("fail to get access_token from wecom")
     return
   }
 
@@ -150,7 +150,7 @@ async function handleWeComInnerConfig(
   const rData = res1?.data
   const access_token = rData?.access_token
   if(!access_token) {
-    console.warn("fail to get access_token from wechat")
+    console.warn("fail to get access_token from wecom")
     console.log(res1)
     return
   }
