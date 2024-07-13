@@ -1057,6 +1057,8 @@ export interface Table_Config extends BaseTable {
   // wechat subscription
   wechat_gzh?: Config_WeChat_GZH
 
+  // wecom config for company internal development
+  // qynb means 企业内部（开发）
   wecom_qynb?: Config_WeCom_Qynb
 
 }
