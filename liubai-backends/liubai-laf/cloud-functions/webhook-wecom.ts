@@ -109,13 +109,13 @@ async function getMsgObject(message: string) {
 
 function preCheck(): LiuRqReturn | undefined {
   const _env = process.env
-  const token = _env.LIU_WECOM_INNER_TOKEN
+  const token = _env.LIU_WECOM_QYNB_TOKEN
   if(!token) {
-    return { code: "E5001", errMsg: "LIU_WECOM_INNER_TOKEN is empty" }
+    return { code: "E5001", errMsg: "LIU_WECOM_QYNB_TOKEN is empty" }
   }
-  const key = _env.LIU_WECOM_INNER_ENCODING_AESKEY
+  const key = _env.LIU_WECOM_QYNB_ENCODING_AESKEY
   if(!key) {
-    return { code: "E5001", errMsg: "LIU_WECOM_INNER_ENCODING_AESKEY is empty" }
+    return { code: "E5001", errMsg: "LIU_WECOM_QYNB_ENCODING_AESKEY is empty" }
   }
 }
 
@@ -123,7 +123,7 @@ function toDecrypt(
   ciphertext: string,
 ) {
   const _env = process.env
-  const encodeingAESKey = _env.LIU_WECOM_INNER_ENCODING_AESKEY as string
+  const encodeingAESKey = _env.LIU_WECOM_QYNB_ENCODING_AESKEY as string
 
   let message = ""
   let id = ""
@@ -148,13 +148,13 @@ function verifyMsgSignature(
   ciphertext: string,
 ): LiuRqReturn | undefined {
   const _env = process.env
-  const token = _env.LIU_WECOM_INNER_TOKEN as string
+  const token = _env.LIU_WECOM_QYNB_TOKEN as string
   const sig = getSignature(token, timestamp, nonce, ciphertext)
 
   if(sig !== msg_signature) {
-    console.warn("msg_signature verification failed")
-    console.log("calculated msg_signature: ", sig)
-    console.log("received msg_signature: ", msg_signature)
+    // console.warn("msg_signature verification failed")
+    // console.log("calculated msg_signature: ", sig)
+    // console.log("received msg_signature: ", msg_signature)
     return { code: "E4003", errMsg: "msg_signature verification failed" }
   }
 }

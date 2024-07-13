@@ -4,7 +4,7 @@
 import cloud from '@lafjs/cloud'
 import { getNowStamp, HOUR, DAY } from "@/common-time"
 import { 
-  type Config_WeCom_Inner,
+  type Config_WeCom_Qynb,
   type Config_WeChat_GZH, 
   type Table_Config,
 } from '@/common-types'
@@ -33,10 +33,10 @@ export async function main(ctx: FunctionContext) {
   const wechat_gzh = await handleWeChatGZHConfig(cfg)
 
   // 4. get accessToken from wecom
-  const wecom_inner = await handleWeComInnerConfig(cfg)
+  const wecom_qynb = await handleWeComQynbConfig(cfg)
 
   // n. update config
-  await updateGlobalConfig(cfg, { wechat_gzh, wecom_inner })
+  await updateGlobalConfig(cfg, { wechat_gzh, wecom_qynb })
 
   // console.log("---------- End clock-one-hr ----------")
   // console.log("                                      ")
@@ -47,7 +47,7 @@ export async function main(ctx: FunctionContext) {
 
 interface UpdateCfgOpt {
   wechat_gzh?: Config_WeChat_GZH
-  wecom_inner?: Config_WeCom_Inner
+  wecom_qynb?: Config_WeCom_Qynb
 }
 
 async function updateGlobalConfig(
@@ -126,14 +126,14 @@ async function handleWeChatGZHConfig(
   return wechat_gzh
 }
 
-async function handleWeComInnerConfig(
+async function handleWeComQynbConfig(
   cfg: Table_Config
-): Promise<Config_WeCom_Inner | undefined> {
+): Promise<Config_WeCom_Qynb | undefined> {
   // 1. get params
   const now1 = getNowStamp()
   const _env = process.env
-  const corpid = _env.LIU_WECOM_INNER_CORPID
-  const secret = _env.LIU_WECOM_INNER_SECRET
+  const corpid = _env.LIU_WECOM_QYNB_CORPID
+  const secret = _env.LIU_WECOM_QYNB_SECRET
   if(!corpid || !secret) {
     console.warn("corpid and secret are required")
     console.log("fail to get access_token from wecom")
@@ -155,13 +155,13 @@ async function handleWeComInnerConfig(
     return
   }
 
-  const wecom_inner: Config_WeCom_Inner = {
-    ...cfg.wecom_inner,
+  const wecom_qynb: Config_WeCom_Qynb = {
+    ...cfg.wecom_qynb,
     access_token,
     expires_in: rData?.expires_in,
     lastGetStamp: now1,
   }
-  return wecom_inner
+  return wecom_qynb
 }
 
 

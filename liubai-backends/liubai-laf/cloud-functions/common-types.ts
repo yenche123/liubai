@@ -901,6 +901,9 @@ export interface Table_User extends BaseTable {
 
   /** wechat data */
   wx_gzh_openid?: string
+
+  /** wecom data for qynb, which is for company internal use */
+  ww_qynb_external_userid?: string
   
 }
 
@@ -1034,7 +1037,7 @@ export interface Config_WeChat_GZH {
   lastGetStamp?: number   // Timestamp of the last time access_token was obtained
 }
 
-export interface Config_WeCom_Inner {
+export interface Config_WeCom_Qynb {
   access_token?: string
   expires_in?: number
   lastGetStamp?: number
@@ -1054,7 +1057,7 @@ export interface Table_Config extends BaseTable {
   // wechat subscription
   wechat_gzh?: Config_WeChat_GZH
 
-  wecom_inner?: Config_WeCom_Inner
+  wecom_qynb?: Config_WeCom_Qynb
 
 }
 

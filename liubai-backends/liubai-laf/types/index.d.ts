@@ -71,11 +71,14 @@ declare global {
       LIU_WX_GZ_ENCODING_AESKEY?: string
 
       /** 企业微信 企业内部自建应用 */
-      LIU_WECOM_INNER_CORPID?: string
-      LIU_WECOM_INNER_AGENTID?: string
-      LIU_WECOM_INNER_SECRET?: string
-      LIU_WECOM_INNER_TOKEN?: string
-      LIU_WECOM_INNER_ENCODING_AESKEY?: string
+      LIU_WECOM_QYNB_CORPID?: string
+      LIU_WECOM_QYNB_AGENTID?: string
+      LIU_WECOM_QYNB_SECRET?: string
+      LIU_WECOM_QYNB_TOKEN?: string
+      LIU_WECOM_QYNB_ENCODING_AESKEY?: string
+      LIU_WECOM_QYNB_BOT_IDS?: string    // wecom's userIds where these wecom users
+                                         // can send & receive messages via our backend
+                                         // plz use comma（,） to split
       
 
     }
