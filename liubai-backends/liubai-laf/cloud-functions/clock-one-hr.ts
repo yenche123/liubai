@@ -18,7 +18,7 @@ const db2 = cloud.database()
 
 export async function main(ctx: FunctionContext) {
 
-  // console.log("---------- Start clock-one-hr ----------")
+  console.log("---------- Start clock-one-hr ----------")
 
   // 1. clear data expired
   await clearExpiredCredentials()
@@ -33,13 +33,13 @@ export async function main(ctx: FunctionContext) {
   const wechat_gzh = await handleWeChatGZHConfig(cfg)
 
   // 4. get accessToken from wecom
-
+  const wecom_inner = await handleWeComInnerConfig(cfg)
 
   // n. update config
-  await updateGlobalConfig(cfg, { wechat_gzh })
+  await updateGlobalConfig(cfg, { wechat_gzh, wecom_inner })
 
-  // console.log("---------- End clock-one-hr ----------")
-  // console.log("                                      ")
+  console.log("---------- End clock-one-hr ----------")
+  console.log("                                      ")
 
   return true
 }
@@ -47,6 +47,7 @@ export async function main(ctx: FunctionContext) {
 
 interface UpdateCfgOpt {
   wechat_gzh?: Config_WeChat_GZH
+  wecom_inner?: Config_WeCom_Inner
 }
 
 async function updateGlobalConfig(
@@ -65,8 +66,8 @@ async function updateGlobalConfig(
     updatedStamp: getNowStamp(),
   }
   const res2 = await db2.collection("Config").doc(cfg._id).update(u)
-  // console.log("updateGlobalConfig res2:")
-  // console.log(res2)
+  console.log("updateGlobalConfig res2:")
+  console.log(res2)
 
   return true
 }
@@ -142,9 +143,8 @@ async function handleWeComInnerConfig(
   // 2. fetch access_token
   const url = new URL(API_WECOM_ACCESS_TOKEN)
   const sP = url.searchParams
-  sP.set("grant_type", "client_credential")
   sP.set("corpid", corpid)
-  sP.set("secret", secret)
+  sP.set("corpsecret", secret)
   const link = url.toString()
   const res1 = await liuReq(link, undefined, { method: "GET" })
   const rData = res1?.data
@@ -155,13 +155,13 @@ async function handleWeComInnerConfig(
     return
   }
 
-  const wechat_gzh: Config_WeCom_Inner = {
-    ...cfg.wechat_gzh,
+  const wecom_inner: Config_WeCom_Inner = {
+    ...cfg.wecom_inner,
     access_token,
     expires_in: rData?.expires_in,
     lastGetStamp: now1,
   }
-  return wechat_gzh
+  return wecom_inner
 }
 
 

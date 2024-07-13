@@ -63,9 +63,10 @@ export async function main(ctx: FunctionContext) {
   // 4. verify msg_signature
   const res4 = verifyMsgSignature(msg_signature, timestamp, nonce, ciphertext)
   if(res4) {
-    console.warn("fails to verify msg_signature")
+    console.warn("fails to verify msg_signature, send 403")
     console.log("ip: ", ip)
     console.log(" ")
+    ctx.response?.status(403)
     return res4
   }
 
