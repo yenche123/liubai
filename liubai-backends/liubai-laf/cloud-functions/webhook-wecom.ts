@@ -13,10 +13,7 @@ export async function main(ctx: FunctionContext) {
   const ip = getIp(ctx)
 
   const b = ctx.body
-  console.log("ctx.body: ", b)
-
   const q = ctx.query
-  console.log("ctx.query: ", q)
 
   // 0. preCheck
   const res0 = preCheck()
@@ -55,17 +52,17 @@ export async function main(ctx: FunctionContext) {
     console.warn("fails to get encrypt in body")
     return { code: "E4000", errMsg: "Encrypt in body is required"  }
   }
-  const tousername = payload.tousername?.[0]
-  const agentid = payload.agentid?.[0]
-  console.log("tousername: ", tousername)
-  console.log("agentid: ", agentid)
+  // const tousername = payload.tousername?.[0]
+  // const agentid = payload.agentid?.[0]
+  // console.log("tousername: ", tousername)
+  // console.log("agentid: ", agentid)
 
   // 4. verify msg_signature
   const res4 = verifyMsgSignature(msg_signature, timestamp, nonce, ciphertext)
   if(res4) {
-    console.warn("fails to verify msg_signature, send 403")
-    console.log("ip: ", ip)
-    console.log(" ")
+    // console.warn("fails to verify msg_signature, send 403")
+    // console.log("ip: ", ip)
+    // console.log(" ")
     ctx.response?.status(403)
     return res4
   }
