@@ -232,6 +232,7 @@ const iconColor = `var(--liu-quote)`
   overflow-wrap: break-word;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  line-clamp: 3;
   -webkit-line-clamp: 3;
   overflow: hidden;
 }

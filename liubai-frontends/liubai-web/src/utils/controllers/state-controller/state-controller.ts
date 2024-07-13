@@ -92,7 +92,7 @@ async function getThreadsOfAState(
     const tmpContentIds = valTool.copyObject(contentIds)
 
     // 让当前状态（看板）里第 max_kanban_thread 个
-    // content 也被加载出来 
+    // content 也被加载出来，让用户有承上启后的感觉
     if(tmpContentIds.length >= cfg.max_kanban_thread) {
       tmpContentIds.pop()
     }
@@ -143,18 +143,6 @@ async function getThreadsOfAState(
   let hasMore = true
   if(cLength < cfg.max_kanban_thread) {
     hasMore = false
-  }
-  else {
-    // 在 contentIds 的数量达到最大值的情况下
-    // 若 contentIds 的最后一个元素 与 加载出来的 res2 的最后一个元素的 id 相同
-    // 那么移除 res2 最后一个元素，以留给 "加载更多" 
-    // 再去加载出来（对应本文件的第 86、87 行）
-
-    const lastId_1 = contentIds[cLength - 1]
-    const lastId_2 = res2[res2.length - 1]._id
-    if(lastId_1 === lastId_2) {
-      res2.pop()
-    }
   }
 
   return { 

@@ -6,6 +6,7 @@ import { useKanbanThreads } from "../../tools/useKanbanThreads";
 import { useI18n } from "vue-i18n";
 import { useLvColumn } from './tools/useLvColumn';
 import type { KbListEmits } from "../../tools/types";
+import AppLink from '~/components/common/app-link/app-link.vue';
 
 const vHandle = HandleDirective
 const props = defineProps({
@@ -95,6 +96,24 @@ const iconColor = "var(--main-note)"
       </div>
     </SlickItem>
 
+    <div class="lc-list_bottom" v-if="hasMore">
+
+      <AppLink 
+        :to="prefix + 'state-more/' + stateId"
+      >
+        <div class="liu-no-user-select liu-hover lc-more">
+          <span class="lcm-text">{{ t('common.checkMore') }}</span>
+          <div class="lcm-icon-box">
+            <svg-icon name="arrow-right2"
+              class="lcm-svg-icon"
+              color="var(--main-normal)"
+            ></svg-icon>
+          </div>
+        </div>
+      </AppLink>
+
+    </div>
+
   </SlickList>
 
   
@@ -105,6 +124,8 @@ const iconColor = "var(--main-note)"
   width: 100%;
   padding: 0 0 10px;
   position: relative;
+  container-type: inline-size;
+  container-name: lv-column;
 }
 
 .lc-list_helper {
@@ -193,6 +214,55 @@ const iconColor = "var(--main-note)"
   .lci-handle-svg {
     width: 24px;
     height: 24px;
+  }
+}
+
+.lc-list_bottom {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-block-start: 10px;
+  position: relative;
+}
+
+.lc-more {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  box-sizing: border-box;
+  min-width: 200px;
+  padding: 4px 12px;
+  font-size: var(--btn-font);
+  color: var(--main-normal);
+  font-weight: 700;
+
+  &::before {
+    border-radius: 8px;
+  }
+}
+
+.lcm-text {
+  padding-inline-start: 10px;
+}
+
+.lcm-icon-box {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .lcm-svg-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@container lv-column (min-width: 450px) {
+  .lc-more {
+    min-width: 275px;
   }
 }
 
