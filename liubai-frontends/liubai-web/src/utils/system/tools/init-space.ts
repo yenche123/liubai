@@ -100,12 +100,13 @@ async function whenRouteChange(
     owner: userId
   }
 
-
-  // console.log("开始加载 space ..........")
-  // console.time("init-space")
+  const t1 = performance.now()
   const mySpace = await db.workspaces.get(g)
-  // console.timeEnd("init-space")
-  // console.log(mySpace)
+  const t2 = performance.now()
+  const consumeStamp = t2 - t1
+  const msg = `getting workspace consumes ${consumeStamp} ms`
+  console.log(msg)
+  liuConsole.sendMessage(msg)
   
   if(!mySpace) return
   if(store.spaceId === mySpace._id) return

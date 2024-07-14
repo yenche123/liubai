@@ -140,8 +140,6 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     myMember.value = m
   }
 
-
-
   return { 
     userId,
     token,

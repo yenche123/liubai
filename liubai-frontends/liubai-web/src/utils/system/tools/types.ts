@@ -45,6 +45,9 @@ export interface LocalOnceData {
   // goto using in login-page
   goto?: string
 
+  // the timestamp when user launched the app
+  launchStamp?: number
+
 }
 
 export type KeyOfLocalOnceData = keyof LocalOnceData

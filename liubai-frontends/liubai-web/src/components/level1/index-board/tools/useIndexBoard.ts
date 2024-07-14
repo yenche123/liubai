@@ -163,6 +163,7 @@ function listenToNewVersion(
       lastInstallNewVersion,
       lastCancelNewVersion,
       lastConfirmNewVersion,
+      launchStamp,
     } = localCache.getOnceData()
     const nv = cfg.newVersion
 
@@ -194,6 +195,12 @@ function listenToNewVersion(
         listenToIdleAndUpdate(ctx)
         return
       }
+    }
+
+    if(launchStamp && !lastInstallNewVersion) {
+      const duration3 = 15 * time.MINUTE
+      const within3 = time.isWithinMillis(launchStamp, duration3)
+      if(within3) return
     }
     
     ctx.ibData.newVersion = true

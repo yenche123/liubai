@@ -13,6 +13,8 @@ import { listenLoaded } from "./tools/listen-loaded"
 import { initServiceWorker } from "./pwa/useServiceWorker"
 import { initListenError } from "./tools/initListenError";
 import { initAnalytics } from "./tools/initAnalytics";
+import { type LocalOnceData } from "~/utils/system/tools/types";
+import time from "~/utils/basic/time";
 
 // 监听和处理一些全局的事务，比如路由变化
 
@@ -21,12 +23,13 @@ export function useApp() {
   initListenError()
 
   const cha = liuApi.getCharacteristic()
+  const onceData = initOnceData()
 
   // init device characteristics
   initDeviceCha(cha)
 
   // init mobile
-  initMobile(cha)
+  initMobile(cha, onceData)
 
   // 监听路由变化，若加载过久，窗口顶部会出现加载条
   useGlobalLoading()
@@ -56,6 +59,18 @@ export function useApp() {
     cha,
   }
 }
+
+
+function initOnceData() {
+  const onceData = localCache.getOnceData()
+  if(!onceData.launchStamp) {
+    const now = time.getTime()
+    onceData.launchStamp = now
+    localCache.setOnceData("launchStamp", now)
+  }
+  return onceData
+}
+
 
 function initDeviceCha(cha: GetChaRes) {
   provide(deviceChaKey, cha)
@@ -97,7 +112,8 @@ async function getVConsole() {
 }
 
 async function initMobile(
-  cha: GetChaRes
+  cha: GetChaRes,
+  onceData: LocalOnceData,
 ) {
 
   if(!cha.isMobile) {
@@ -121,7 +137,6 @@ async function initMobile(
     return
   }
 
-  const onceData = localCache.getOnceData()
   if(onceData.mobile_debug) {
     _open()
     return

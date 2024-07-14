@@ -68,20 +68,6 @@ function removeOnceDataWhileLogging() {
   liuApi.setStorageSync("local-once-data", localData)
 }
 
-/********** 配置数据、同样不依赖登录态 ********/
-function getConfigData() {
-  const res = liuApi.getStorageSync<LocalConfigData>("local-config-data") || {}
-  return res
-}
-
-function setConfigData(data?: LocalConfigData) {
-  if(!data) {
-    liuApi.removeStorageSync("local-config-data")
-    return
-  }
-  liuApi.setStorageSync("local-config-data", data)
-}
-
 /*********** 是否具备后端并且已登录 */
 function hasLoginWithBackend() {
   const {
@@ -102,7 +88,5 @@ export default {
   getOnceData,
   setOnceData,
   removeOnceDataWhileLogging,
-  getConfigData,
-  setConfigData,
   hasLoginWithBackend,
 }
