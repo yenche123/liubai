@@ -172,9 +172,8 @@
     "err_1": "state 缺失，請稍後再試。",
     "err_2": "Email 被視為垃圾信件，請至垃圾或推廣信箱中尋找。",
     "err_3": "Email 已被拒收，請更換你的 email 地址。",
-    "err_4": "提交過於頻繁",
     "err_5": "State 遭遇異常，請刷新當前頁面重試。",
-    "err_6": "驗證代號錯誤或已失效。",
+    "err_6": "驗證代號錯誤、已失效或操作過度頻繁",
     "err_7": "{errMsg}\n(狀態碼: {code})",
     "err_8": "電子信箱地址不存在，無法使用當前的登入方式",
     "err_9": "你的電子信箱地址尚不在許可名單中。"
@@ -432,7 +431,9 @@
     "apple_policy": "Apple 的政策",
     "apple_link": "https://support.apple.com/zh-tw/104996",
     "add_twice_desc_2": "，網頁版和 Web App 為不同的環境，兩邊的瀏覽資訊不互通。",
-    "install_app": "安装應用程式"
+    "install_app": "安装應用程式",
+    "why_recommand": "為什麼建議安裝？",
+    "recommand_desc": "，網頁版和 Web App 不共享登入資訊；若在網頁版上登入後再安裝 Web App，需要重新登入。"
   },
   "pwa": {
     "new_version_title": "發現新版本",

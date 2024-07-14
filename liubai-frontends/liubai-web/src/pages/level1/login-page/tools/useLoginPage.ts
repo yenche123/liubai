@@ -33,6 +33,7 @@ import liuApi from "~/utils/liu-api";
 import liuUtil from "~/utils/liu-util";
 import liuConsole from "~/utils/debug/liu-console";
 import localCache from "~/utils/system/local-cache";
+import { useThrottleFn } from "~/hooks/useVueUse"
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -85,9 +86,9 @@ export function useLoginPage() {
   }
 
   // code 由 9 个字符组成，中间是一个 "-"
-  const onSubmitCode = (code: string) => {
+  const onSubmitCode = useThrottleFn((code: string) => {
     toSubmitEmailAndCode(rr, code, lpData)
-  }
+  }, 1000)
 
   const onTapLoginViaThirdParty = async (tp: LoginByThirdParty) => {
     const pass = await _waitInitLogin()
@@ -97,9 +98,9 @@ export function useLoginPage() {
   }
 
   // 选择了某个用户之后
-  const onSelectedAnAccount = (idx: number) => {
+  const onSelectedAnAccount = useThrottleFn((idx: number) => {
     toSelectAnAccount(rr, idx, lpData)
-  }
+  }, 1000)
 
   const onTapBack = () => {
     handleBack(rr, lpData)
@@ -318,6 +319,7 @@ async function toSelectAnAccount(
   const { enc_client_key } = getClientKey()
   if(!enc_client_key) return
 
+  if(lpData.isSelectingAccount) return
   lpData.isSelectingAccount = true
   const res = await fetchUsersSelect(userId, m1, m2, state, enc_client_key)
   lpData.isSelectingAccount = false
@@ -406,25 +408,18 @@ async function toSubmitEmailAddress(
   lpData.lastSendEmail = time.getTime()
 }
 
-/** 记得做防抖节流，避免多次点击 */
+let isAfterFetchingLogin = false
 async function toSubmitEmailAndCode(
   rr: RouteAndLiuRouter,
   code: string,
   lpData: LpData,
 ) {
-  const { email, state, lastSubmitEmailCode = 1, publicKey } = lpData
+  const { email, state, publicKey } = lpData
   if(!state || !publicKey || !email) return
-  if(lpData.isSubmittingEmailCode) return
 
   // 0. 判断是否可再登录
   if(!canLoginUsingLastLogged(lpData)) return
-
-  const now = time.getTime()
-  const milli = (now - lastSubmitEmailCode)
-  if(milli < 1000) {
-    cui.showSnackBar({ text_key: "login.err_4" })
-    return
-  }
+  if(isAfterFetchingLogin) return
 
   // 1. 获取加密的 email
   const enc_email = await encryptTextWithRSA(publicKey, email)
@@ -438,11 +433,16 @@ async function toSubmitEmailAndCode(
   if(!enc_client_key) return
 
   // 3. 去登录
-  lpData.lastSubmitEmailCode = now
+  if(lpData.isSubmittingEmailCode) return
   lpData.isSubmittingEmailCode = true
   const res = await fetchEmailCode(enc_email, code, state, enc_client_key)
   lpData.isSubmittingEmailCode = false
+
+  // 4. 登录后处理
+  isAfterFetchingLogin = true
   const res2 = await afterFetchingLogin(rr, res)
+  isAfterFetchingLogin = false
+
   if(res2) {
     cui.showLoading({ title_key: "login.logging2" })
     lpData.lastLogged = time.getTime()

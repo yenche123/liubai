@@ -172,9 +172,8 @@
     "err_1": "state 缺失，请稍后再试。",
     "err_2": "邮件被标注为垃圾邮件，请至垃圾或推广邮箱中查找。",
     "err_3": "邮件已被拒收，请更换你的邮箱地址。",
-    "err_4": "提交过于频繁",
     "err_5": "State 遭遇异常，请刷新后重试。",
-    "err_6": "验证码错误或已过期",
+    "err_6": "验证码错误、已过期或操作过于频繁",
     "err_7": "{errMsg}\n（状态码: {code}）",
     "err_8": "邮箱地址不存在，无法使用该登录方式",
     "err_9": "你的邮件地址尚不在许可名单中。"
@@ -432,7 +431,9 @@
     "apple_policy": "苹果的政策",
     "apple_link": "https://support.apple.com/zh-cn/104996",
     "add_twice_desc_2": "，网页版和 Web App 为不同的环境，两边的浏览信息不互通。",
-    "install_app": "安装留白记事"
+    "install_app": "安装留白记事",
+    "why_recommand": "为什么建议安装？",
+    "recommand_desc": "，网页版和 Web App 不共享登录信息；若在网页版上登录后再安装 Web App，需要重新登录。"
   },
   "pwa": {
     "new_version_title": "发现新版本",

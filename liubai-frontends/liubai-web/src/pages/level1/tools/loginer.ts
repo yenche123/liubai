@@ -7,6 +7,7 @@ import { handleUser, handleSpaceAndMembers } from "./cloud-into-db";
 import { LocalPreference } from "~/utils/system/tools/types";
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus";
 import { useSystemStore } from "~/hooks/stores/useSystemStore";
+import liuConsole from "~/utils/debug/liu-console";
 
 // 开始去初始化本地数据
 async function toLogin(
@@ -44,6 +45,9 @@ async function toLogin(
   const goto = onceData.goto
 
   console.log("去登录当前用户 userId: ", userId)
+
+  // 2.4 timer starts
+  const t1 = performance.now()
 
   // 3. 创建 user
   const res2 = await handleUser(userId, d)
@@ -83,6 +87,13 @@ async function toLogin(
   else {
     rr.router.replace({ name: "index" })
   }
+
+  // 10. timer ends
+  const t2 = performance.now()
+  const T = Math.round(t2 - t1)
+  const msg = `init logging time: ${T}ms`
+  console.log(msg)
+  liuConsole.sendMessage(msg)
 
   return true
 }

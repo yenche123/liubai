@@ -172,9 +172,8 @@
     "err_1": "State is missing. Please try again later.",
     "err_2": "The email has been marked as spam, so look for it in the spam/promotion mailboxes.",
     "err_3": "The email has been rejected. Please replace your email address.",
-    "err_4": "Submitting too frequently",
     "err_5": "The error of state has occurred. Try to reload later.",
-    "err_6": "The verification code is wrong or has been expired.",
+    "err_6": "The verification code is wrong or expired, or you operate too frequently.",
     "err_7": "{errMsg}\n(Code: {code})",
     "err_8": "There is no email address through the current login way.",
     "err_9": "Your email address is not in the list of authorized users."
@@ -432,7 +431,9 @@
     "apple_policy": "Apple's policy",
     "apple_link": "https://support.apple.com/en-us/104996",
     "add_twice_desc_2": ", the website and web app are different environments, which results in different browsing information from the two sides.",
-    "install_app": "Install App"
+    "install_app": "Install App",
+    "why_recommand": "Why should I install it?",
+    "recommand_desc": ", the website and web app do not share login information. If you log in on the website and then install the web app, you need to log in again."
   },
   "pwa": {
     "new_version_title": "New Version",

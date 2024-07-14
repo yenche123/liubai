@@ -103,7 +103,7 @@ async function whenRouteChange(
   const t1 = performance.now()
   const mySpace = await db.workspaces.get(g)
   const t2 = performance.now()
-  const consumeStamp = t2 - t1
+  const consumeStamp = Math.round(t2 - t1)
   const msg = `getting workspace consumes ${consumeStamp} ms`
   console.log(msg)
   liuConsole.sendMessage(msg)
