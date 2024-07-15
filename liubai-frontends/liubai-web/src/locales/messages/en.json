@@ -58,7 +58,8 @@
     "unknown": "Unknown",
     "under_construction": "Under Construction",
     "never_prompt": "Never prompt",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "updating": "Updating.."
   },
   "editor": {
     "when": "When",

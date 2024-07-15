@@ -104,7 +104,7 @@ async function whenTapVersionUpdate(
       confirm_key: "common.update",
     })
     if(res) {
-      toUpdateSW()
+      toUpdateSW(true)
     }
   }
 

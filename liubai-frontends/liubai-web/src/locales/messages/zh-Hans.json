@@ -58,7 +58,8 @@
     "unknown": "未命名",
     "under_construction": "施工中",
     "never_prompt": "不再提示",
-    "faq": "常见问题"
+    "faq": "常见问题",
+    "updating": "更新中.."
   },
   "editor": {
     "when": "什么时候",

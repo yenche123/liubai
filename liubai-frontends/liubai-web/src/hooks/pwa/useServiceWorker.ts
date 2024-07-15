@@ -5,6 +5,7 @@ import localCache from "~/utils/system/local-cache";
 import time from "~/utils/basic/time";
 import { type SimplePromise } from '~/utils/basic/type-tool';
 import { useGlobalStateStore } from '../stores/useGlobalStateStore';
+import cui from '~/components/custom-ui';
 
 const MIN_1 = time.MINUTE
 const MIN_15 = 15 * time.MINUTE
@@ -102,8 +103,17 @@ export function initServiceWorker() {
   })
 }
 
-export async function toUpdateSW() {
+export async function toUpdateSW(
+  loading = false
+) {
   if(!_updateSW) return
+
+  if(loading) {
+    cui.showLoading({ title_key: "common.updating" })
+    setTimeout(() => {
+      cui.hideLoading()
+    }, 3000)
+  }
   
   localCache.setOnceData("lastInstallNewVersion", time.getTime())
   await _updateSW()

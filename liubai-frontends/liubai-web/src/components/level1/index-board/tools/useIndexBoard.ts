@@ -58,7 +58,7 @@ async function toConfirmNewVersion(
 ) {
   ctx.ibData.newVersion = false
   localCache.setOnceData("lastConfirmNewVersion", time.getTime())
-  await toUpdateSW()
+  await toUpdateSW(true)
 }
 
 function toCancelNewVersion(
