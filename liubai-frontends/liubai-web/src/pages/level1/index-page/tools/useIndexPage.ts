@@ -1,17 +1,14 @@
 import { ref } from "vue"
 
-
-
 export function useIndexPage() {
-
-  const showTop = ref(true)
+  const isNaviAutoShown = ref(false)
 
   const onNaviAutoChanged = (isNaviAutoOpened: boolean) => {
-    showTop.value = !isNaviAutoOpened
+    isNaviAutoShown.value = isNaviAutoOpened
   }
 
   return {
-    showTop,
+    isNaviAutoShown,
     onNaviAutoChanged,
   }
 }

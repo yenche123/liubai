@@ -1,22 +1,21 @@
 <script setup lang="ts">
 import { useNaviAuto } from "./tools/useNaviAuto"
+import { type NaviAutoEmits, type NaviAutoProps } from "./tools/types"
 import cfg from "~/config"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 const naviHeightPx = `${cfg.navi_height}px`
 
-const emits = defineEmits<{
-  (event: "naviautochanged", newV: boolean): void
-}>()
+const props = defineProps<NaviAutoProps>()
+const emits = defineEmits<NaviAutoEmits>()
 
 const {
   containerEl,
   naData,
   TRANSITION_DURATION,
   onTapMenu,
-  onTapTitle,
-} = useNaviAuto(emits)
+} = useNaviAuto(props, emits)
 
 const default_color = "var(--navi-normal)"
 
@@ -43,7 +42,7 @@ const default_color = "var(--navi-normal)"
         ></svg-icon>
       </div>
 
-      <div class="na-title" @click="onTapTitle">
+      <div class="na-title" @click.stop="$emit('taptitle')">
         <div class="liu-no-user-select na-title-inner">
           <span>{{ t('hello.appName') }}</span>
         </div>
@@ -59,16 +58,16 @@ const default_color = "var(--navi-normal)"
 <style lang="scss" scoped>
 
 .na-container {
-  position: sticky;
-  top: 0;
-  width: 100%;
+  width: 100%; 
   height: v-bind("naviHeightPx");
-  max-height: 0;
+  position: absolute;
   opacity: .3;
   overflow: hidden;
   display: flex;
   justify-content: center;
   transition: v-bind("TRANSITION_DURATION + 'ms'");
+  top: 0;
+  left: 0;
   transform: translateY(-100%);
   z-index: 550;
 
@@ -119,18 +118,11 @@ const default_color = "var(--navi-normal)"
 
 .na-container_show {
   transform: translateY(0);
-  max-height: v-bind("naviHeightPx");
   opacity: 1;
 }
 
 .na-container_shadow {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, .07);
-}
-
-.na-container_shadow::before {
-  content: "";
-  position: absolute;
-  background: var(--frosted-glass-4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .09);
 }
 
 

@@ -1,15 +1,15 @@
-import { inject, reactive, ref, watch } from "vue";
+import { reactive, ref, toRef, watch } from "vue";
 import type { Ref } from "vue";
 import { useLayoutStore } from "~/views/useLayoutStore";
 import type { LayoutStore } from "~/views/useLayoutStore";
 import { storeToRefs } from "pinia";
-import { svScollingKey, svBottomUpKey } from "~/utils/provide-keys";
 import sideBar from "~/views/side-bar";
 import { useWindowSize } from "~/hooks/useVueUse";
 import cfg from "~/config";
-import type { NaviAutoEmits, NaviAutoData } from "./types"
+import type { NaviAutoEmits, NaviAutoData, NaviAutoProps } from "./types"
 import liuUtil from "~/utils/liu-util";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
+import time from "~/utils/basic/time";
 
 const TRANSITION_DURATION = 300
 
@@ -22,6 +22,7 @@ interface NaviAutoCtx {
 }
 
 export function useNaviAuto(
+  props: NaviAutoProps,
   emits: NaviAutoEmits,
 ) {
   const containerEl = ref<HTMLDivElement>()
@@ -33,7 +34,7 @@ export function useNaviAuto(
 
   // 引入上下文
   const layout = useLayoutStore()
-  const scrollPosition = inject(svScollingKey, ref(0))
+  const scrollPosition = toRef(props, "scrollPosition")
 
   // 窗口宽度
   const { width: windowWidth } = useWindowSize()
@@ -62,16 +63,8 @@ export function useNaviAuto(
   // 监听窗口变化
   listenWindowChange(ctx)
   
-
   const onTapMenu = () => {
     sideBar.showFixedSideBar()
-  }
-
-  const svBottomUp = inject(svBottomUpKey)
-  const onTapTitle = () => {
-    if(!svBottomUp) return
-    // svBottomUp.value = { type: "selectors", selectors: ".mc-spacing" }
-    svBottomUp.value = { type: "pixel", pixel: 0 }
   }
   
   return {
@@ -79,7 +72,6 @@ export function useNaviAuto(
     containerEl,
     naData,
     onTapMenu,
-    onTapTitle,
   }
 }
 
@@ -96,12 +88,16 @@ function judgeShadow(
 
 
 // 聆听 左侧边栏的变化
-let justLoad = true
+let firstLoadStamp = 0
 function judgeState(
   ctx: NaviAutoCtx,
 ) {
   const { windowWidth } = ctx
   const winWidthPx = windowWidth.value
+
+  if(!firstLoadStamp) {
+    firstLoadStamp = time.getTime()
+  }
 
   const { sidebarWidth, sidebarStatus } = ctx.layout
   if(sidebarWidth > 0 || sidebarStatus === "fullscreen") {
@@ -111,11 +107,10 @@ function judgeState(
     _close(ctx)
   }
   else {
+    const justLoad = time.isWithinMillis(firstLoadStamp, 2000)
     if(justLoad) _openInstantly(ctx)
     else _open(ctx)
   }
-
-  justLoad = false
 
   // 判断阴影变化
   judgeShadow(ctx.scrollPosition.value, ctx)
@@ -153,6 +148,9 @@ function _openInstantly(
   ctx: NaviAutoCtx,
 ) {
   const { naData } = ctx
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
   naData.enable = true
   naData.show = true
   ctx.emits("naviautochanged", true)

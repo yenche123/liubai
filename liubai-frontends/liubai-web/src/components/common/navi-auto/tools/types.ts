@@ -7,6 +7,11 @@ export interface NaviAutoData {
   shadow: boolean
 }
 
+export interface NaviAutoProps {
+  scrollPosition: number
+}
+
 export interface NaviAutoEmits {
-  (event: "naviautochanged", newV: boolean): void
+  (evt: "naviautochanged", newV: boolean): void
+  (evt: "taptitle"): void
 }

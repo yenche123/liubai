@@ -5,6 +5,7 @@ import { useMainVice } from "~/hooks/useMainVice";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue"
 import IndexContent from "./index-content/index-content.vue"
 import NaviAuto from "~/components/common/navi-auto/navi-auto.vue";
+import NaviAutoVirtual from "~/components/common/navi-auto-virtual/navi-auto-virtual.vue";
 import { useIndexPage } from "./tools/useIndexPage";
 
 const { 
@@ -18,9 +19,13 @@ const {
 } = useMainVice()
 
 const {
-  showTop,
+  isNaviAutoShown,
   onNaviAutoChanged,
 } = useIndexPage()
+
+const onTapNaviTitle = () => {
+  goToTop.value += 1
+}
 
 </script>
 <template>
@@ -30,9 +35,15 @@ const {
     <scroll-view :hidden-scroll-bar="hiddenScrollBar" @scroll="onScroll"
       :go-to-top="goToTop"
     >
-      <NaviAuto @naviautochanged="onNaviAutoChanged"></NaviAuto>
-      <index-content :show-top="showTop" ></index-content>
+      <navi-auto-virtual :show="isNaviAutoShown"></navi-auto-virtual>
+      <index-content :show-top="!isNaviAutoShown" ></index-content>
     </scroll-view>
+
+    <NaviAuto 
+      :scroll-position="scrollPosition"
+      @naviautochanged="onNaviAutoChanged"
+      @taptitle="onTapNaviTitle"
+    ></NaviAuto>
 
     <FloatActionButton :scroll-position="scrollPosition"
       @tapfab="onTapFab"
