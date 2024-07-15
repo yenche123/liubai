@@ -61,7 +61,7 @@ export function getEmbedData(
 
   // 如果直接是 yt /embed 的话
   const yt3 = new URL(yt)
-  const ytReg3 = /(?<=\/embed\/)\w{5,16}/g
+  const ytReg3 = /\/embed\/\w{5,16}/g
   const isYouTube3 = valTool.isInDomain(h, yt3.hostname)
   const ytMatch3 = p.match(ytReg3)
   if(isYouTube3 && ytMatch3) {
@@ -88,11 +88,11 @@ export function getEmbedData(
   // 适配 bilibili /video
   const b = thirdLink.BILIBILI_PLAYER
   const b1 = new URL(thirdLink.BILIBILI_COMMON)
-  const bReg1 = /(?<=\/video\/)\w{5,16}/g
+  const bReg1 = /\/video\/\w{5,16}/g
   const isBili1 = valTool.isInDomain(h, b1.hostname)
   const bMatch1 = p.match(bReg1)
   if(isBili1 && bMatch1) {
-    const v = bMatch1[0]
+    const v = bMatch1[0]?.substring(7)
     if(v) {
       return {
         link: b.replace(x, v),
@@ -140,11 +140,11 @@ export function getEmbedData(
   // 适配 loom /share
   const loom = thirdLink.LOOM_EMBED
   const loom1 = new URL(thirdLink.LOOM_SHARE)
-  const lReg1 = /(?<=\/share\/)\w{16,48}/g
+  const lReg1 = /\/share\/\w{16,48}/g
   const isLoom1 = valTool.isInDomain(h, loom1.hostname)
   const lMatch1 = p.match(lReg1)
   if(isLoom1 && lMatch1) {
-    const v = lMatch1[0]
+    const v = lMatch1[0]?.substring(7)
     if(v) {
       return {
         link: loom.replace(x, v),
@@ -157,7 +157,7 @@ export function getEmbedData(
 
   // 如果是 loom /embed
   const loom2 = new URL(loom)
-  const lReg2 = /(?<=\/embed\/)\w{16,48}/g
+  const lReg2 = /\/embed\/\w{16,48}/g
   const isLoom2 = valTool.isInDomain(h, loom2.hostname)
   const lMatch2 = p.match(lReg2)
   if(isLoom2 && lMatch2) {
@@ -183,17 +183,17 @@ export function getEmbedData(
     }
 
     // document 的情况，通常其路由的 id 部分为 44 个字符
-    const gDocsReg1 = /(?<=\/document\/d\/)\w{40,48}(?=\/preview)/g
+    const gDocsReg1 = /\/document\/d\/\w{40,48}(?=\/preview)/g
     const gDocsMatch1 = p.match(gDocsReg1)
     if(gDocsMatch1) return gDocsRes
 
     // spreadsheets 的情况
-    const gDocsReg2 = /(?<=\/spreadsheets\/d\/)\w{40,48}(?=\/preview)/g
+    const gDocsReg2 = /\/spreadsheets\/d\/\w{40,48}(?=\/preview)/g
     const gDocsMatch2 = p.match(gDocsReg2)
     if(gDocsMatch2) return gDocsRes
 
     // presentation 的情况
-    const gDocsReg3 = /(?<=\/presentation\/d\/)\w{40,48}(?=\/preview)/g
+    const gDocsReg3 = /\/presentation\/d\/\w{40,48}(?=\/preview)/g
     const gDocsMatch3 = p.match(gDocsReg3)
     if(gDocsMatch3) return gDocsRes
 
@@ -242,7 +242,7 @@ export function getEmbedData(
 
     // 将 /file/xxxxxxx 放进 embed 里
     // 通常其 id 在 22 位
-    const figmaReg1 = /(?<=\/file\/)\w{12,32}/g
+    const figmaReg1 = /\/file\/\w{12,32}/g
     const figmaMatch1 = p.match(figmaReg1)
     if(figmaMatch1) {
       const v = liuApi.encode_URI_component(originUrl)
@@ -321,35 +321,35 @@ export function getEmbedData(
     }
 
     // 单曲 /track，其 id 约在 22 字符左右
-    const spotifyReg1 = /(?<=\/track\/)\w{16,32}/g
+    const spotifyReg1 = /\/track\/\w{16,32}/g
     const spotifyMatch1 = p.match(spotifyReg1)
     if(spotifyMatch1) {
-      const trackId = spotifyMatch1[0]
+      const trackId = spotifyMatch1[0]?.substring(7)
       spotify1.pathname = `/embed/track/${trackId}`
     }
 
 
     // 歌单 /playlist
-    const spotifyReg2 = /(?<=\/playlist\/)\w{16,32}/g
+    const spotifyReg2 = /\/playlist\/\w{16,32}/g
     const spotifyMatch2 = p.match(spotifyReg2)
     if(spotifyMatch2) {
-      const playlistId = spotifyMatch2[0]
+      const playlistId = spotifyMatch2[0]?.substring(10)
       spotify1.pathname = `/embed/playlist/${playlistId}`
     }
 
     // 专辑 /playlist
-    const spotifyReg3 = /(?<=\/album\/)\w{16,32}/g
+    const spotifyReg3 = /\/album\/\w{16,32}/g
     const spotifyMatch3 = p.match(spotifyReg3)
     if(spotifyMatch3) {
-      const albumId = spotifyMatch3[0]
+      const albumId = spotifyMatch3[0]?.substring(7)
       spotify1.pathname = `/embed/album/${albumId}`
     }
 
     // 艺人
-    const spotifyReg4 = /(?<=\/artist\/)\w{16,32}/g
+    const spotifyReg4 = /\/artist\/\w{16,32}/g
     const spotifyMatch4 = p.match(spotifyReg4)
     if(spotifyMatch4) {
-      const artistId = spotifyMatch4[0]
+      const artistId = spotifyMatch4[0]?.substring(8)
       spotify1.pathname = `/embed/artist/${artistId}`
     }
 
@@ -430,14 +430,14 @@ export function getEmbedData(
       link: originUrl,
       otherData: { isCoda }
     }
-    const codaReg1 = /(?<=\/embed\/)\w{5,16}\/\w{3,9}/g
+    const codaReg1 = /\/embed\/\w{5,16}\/\w{3,9}/g
     const codaMatch1 = p.match(codaReg1)
     if(codaMatch1) return codaRes
 
-    const codaReg2 = /(?<=\/d\/)\w{5,16}\/\w{3,9}/g
+    const codaReg2 = /\/d\/\w{5,16}\/\w{3,9}/g
     const codaMatch2 = p.match(codaReg2)
     if(codaMatch2) {
-      let codaId = codaMatch2[0]
+      let codaId = codaMatch2[0]?.substring(3)
 
       // coda 分享链接里的 _d 要去掉才能变成嵌入链接
       const _firstTwoCodaId = codaId.substring(0, 2)
@@ -455,10 +455,10 @@ export function getEmbedData(
   const firesidePlayer = new URL(thirdLink.FIRESIDE_PLAYER)
   const isFireside1 = valTool.isInDomain(h, firesideShare.hostname)
   if(isFireside1) {
-    const firesideReg1 = /(?<=\/episode\/)[\w\-\+]{16,32}/g
+    const firesideReg1 = /\/episode\/[\w\-\+]{16,32}/g
     const firesideMatch1 = p.match(firesideReg1)
     if(firesideMatch1) {
-      const firesideId = firesideMatch1[0]
+      const firesideId = firesideMatch1[0]?.substring(9)
       firesidePlayer.pathname += firesideId
       firesidePlayer.searchParams.set("theme", themeVal)
       return { link: firesidePlayer.toString() }
@@ -478,15 +478,20 @@ export function getEmbedData(
     const streetVoiceMatch1 = p.match(streetVoiceReg1)
     if(streetVoiceMatch1) return streetVoiceRes
 
-    const streetVoiceReg2 = /(?<=\/\w{2,20}\/songs\/)\d{2,9}/g
+    const streetVoiceReg2 = /\/\w{2,20}\/songs\/\d{2,9}/g
+    const streetVoiceReg3 = /\/songs\/\d{2,9}/g
     const streetVoiceMatch2 = p.match(streetVoiceReg2)
     if(streetVoiceMatch2) {
-      const songId = streetVoiceMatch2[0]
-      streetVoice.pathname = `/music/embed/`
-      streetVoice.searchParams.set("id", songId)
-      streetVoice.searchParams.set("s", "l")
-      streetVoiceRes.link = streetVoice.toString()
-      return streetVoiceRes
+      const streetVoicePath2 = streetVoiceMatch2[0] ?? ""
+      const streetVoiceMatch3 = streetVoicePath2.match(streetVoiceReg3)
+      if(streetVoiceMatch3) {
+        const songId = streetVoiceMatch3[0]?.substring(7)
+        streetVoice.pathname = `/music/embed/`
+        streetVoice.searchParams.set("id", songId)
+        streetVoice.searchParams.set("s", "l")
+        streetVoiceRes.link = streetVoice.toString()
+        return streetVoiceRes
+      }
     }
   }
 
@@ -500,10 +505,10 @@ export function getEmbedData(
   const isVimeo = valTool.isInDomain(h, vimeo.hostname)
   if(isVimeo) {
     // 通常是 9 位数的 id
-    const vimeoReg1 = /(?<=\/)\d{2,12}/g
+    const vimeoReg1 = /\/\d{2,12}/g
     const vimeoMatch1 = p.match(vimeoReg1)
     if(vimeoMatch1) {
-      const vimeoId = vimeoMatch1[0]
+      const vimeoId = vimeoMatch1[0]?.substring(1)
       vimeo2.pathname = `/video/${vimeoId}`
       return { link: vimeo2.toString(), otherData: { isVimeo: true } }
     }
@@ -531,10 +536,10 @@ export function getEmbedData(
       return xiguaRes
     }
     // 其 id 通常为 19 位数
-    const xiguaReg1 = /(?<=\/)\d{17,32}/g
+    const xiguaReg1 = /\/\d{17,32}/g
     const xiguaMatch1 = p.match(xiguaReg1)
     if(xiguaMatch1) {
-      const xiguaId1 = xiguaMatch1[0]
+      const xiguaId1 = xiguaMatch1[0]?.substring(1)
       const xiguaId2 = s.get("id")
       xigua.pathname = `/iframe/` + (xiguaId2 ? xiguaId2 : xiguaId1)
       xigua.searchParams.set("autoplay", "1")
