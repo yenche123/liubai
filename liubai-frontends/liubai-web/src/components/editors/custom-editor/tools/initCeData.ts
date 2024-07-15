@@ -445,6 +445,11 @@ async function resetFromCloud(
   const e2 = local_draft?.editedStamp ?? 1
   const diff = e2 - e1
 
+  console.log("准备去重置数据.......")
+  console.log("看一下 local_draft:")
+  console.log(local_draft)
+  console.log("diff: ", diff)
+
   // 2. reserve current input
   if(local_draft && diff > SEC_30) {
     console.warn("reserve the current draft but change its id")
@@ -458,9 +463,14 @@ async function resetFromCloud(
     return
   }
 
+  // 3. delete the draft
+  const old_id = ceData.draftId
+  if(old_id) {
+    localReq.deleteDraftById(old_id)
+  }
   delete ceData.draftId
 
-  // 3. if threadEdited and local_thread exist
+  // 4. if threadEdited and local_thread exist
   //   init it from thread
   if(ceData.threadEdited) {
     if(local_thread) {
@@ -469,7 +479,7 @@ async function resetFromCloud(
     return
   }
 
-  // 4. reset all
+  // 5. reset all
   console.warn("reset all")
   ceData.lastLockStamp  = time.getTime()
   ceData.visScope = defaultData.visScope

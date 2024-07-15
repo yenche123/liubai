@@ -262,7 +262,7 @@ async function mergeDraft(
 
   // 1. the draft has been posted or deleted
   const newOState = d.oState
-  if(newOState === "POSTED" || newOState === "DELETED") {
+  if(newOState === "DELETED") {
     if(od) {
       await deleteDraft(od._id)
     }
