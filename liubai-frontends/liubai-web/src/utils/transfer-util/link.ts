@@ -146,24 +146,22 @@ function _innerParse(
   for(let match of matches) {
     let mTxt = match[0]
     let mLen = mTxt.length
+    let startIdx = match.index
+
+    if(startIdx === undefined) continue
 
     if(forType === "email" && mLen < 6) continue
-    if(forType === "social_link" && mLen < 7) continue
     if(forType === "url" && mLen < 8) continue
-    if(forType === "url" && !_checkUrl_1(mTxt)) continue
-
-    // console.log("forType: ", forType)
-    // console.log(mTxt)
-    // console.log(" ")
+    if(forType === "url" && !_checkUrl_1(mTxt)) continue    
 
     let href = mTxt
-    if(forType === "markdown_link") {
-      const mdLinkText = match[1]
-      const mdLinkUrl = match[2]
+    const m1 = match[1]
+    const m2 = match[2]
 
-      if(!mdLinkText || !mdLinkUrl) continue
-      mTxt = mdLinkText
-      href = mdLinkUrl
+    if(forType === "markdown_link") {
+      if(!m1 || !m2) continue
+      mTxt = m1
+      href = m2
 
       // console.log("mTxt: ", mTxt)
       // console.log("href: ", href)
@@ -182,6 +180,12 @@ function _innerParse(
       href = `mailto:${mTxt}`
     }
     else if(forType === "social_link") {
+      if(m1 === undefined || m2 === undefined) continue
+      mTxt = m2
+      mLen = mTxt.length
+      startIdx = startIdx + m1.length
+
+      if(mLen < 7) continue
       href = _handleSocialLink(mTxt)
     }
     else if(forType === "url") {
@@ -189,8 +193,6 @@ function _innerParse(
       if(!_checkUrl_2(href)) continue
     }
 
-    const startIdx = match.index
-    if(startIdx === undefined) continue
     if(!mTxt) continue
     const endIdx = startIdx + mLen
     const obj: TipTapJSONContent = {
