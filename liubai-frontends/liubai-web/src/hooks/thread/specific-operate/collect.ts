@@ -1,10 +1,10 @@
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import type { ThreadShow } from "~/types/types-content"
 import time from "~/utils/basic/time"
-import valTool from "~/utils/basic/val-tool"
 import liuApi from "~/utils/liu-api"
 import cui from "~/components/custom-ui"
 import dbOp from "../db-op"
+import liuUtil from "~/utils/liu-util"
 
 // 处理动态 "收藏" 的公共逻辑
 export const toCollect = async (
@@ -12,7 +12,7 @@ export const toCollect = async (
   memberId: string,
   userId: string,
 ) => {
-  const newThread = valTool.copyObject(oldThread)
+  const newThread = liuUtil.copy.newData(oldThread)
 
   // 1. 修改状态
   let newFavorite = !Boolean(oldThread.myFavorite)
@@ -33,8 +33,6 @@ export const toCollect = async (
   // 5. 震动
   const vib = liuApi.vibrate([50])
 
-  // 6. 【待完善】将该操作塞入远端待同步的队列
-
   return { tipPromise, newFavorite }
 }
 
@@ -50,7 +48,5 @@ export const undoCollect = async (
   // 2. 通知全局
   const tsStore = useThreadShowStore()
   tsStore.setUpdatedThreadShows([oldThread], "undo_collect")
-
-  // 3. 【待完善】将取消操作塞入远端待同步的队列
   
 }

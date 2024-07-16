@@ -1,11 +1,11 @@
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import type { ThreadShow } from "~/types/types-content"
 import time from "~/utils/basic/time"
-import valTool from "~/utils/basic/val-tool"
 import limit from "~/utils/limit"
 import cui from "~/components/custom-ui"
 import dbOp from "../db-op"
 import { type ThreadChangedOpt } from "~/types/types-atom"
+import liuUtil from "~/utils/liu-util"
 
 //【重要】
 // 应该先 “修改 db”，再去 “通知全局”
@@ -19,7 +19,7 @@ export async function toPin(
   opt?: ThreadChangedOpt,
 ) {
 
-  const newThread = valTool.copyObject(oldThread)
+  const newThread = liuUtil.copy.newData(oldThread)
 
   // 1. 修改状态
   let newPin = !Boolean(oldThread.pinStamp)

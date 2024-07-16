@@ -18,6 +18,7 @@ export interface FileShow {
   suffix: string   // 后缀的英文
   size: number     // 单位为 bytes
   cloud_url?: string
+  src?: string     // blob:http://......
 }
 
 
@@ -52,7 +53,7 @@ export interface LiuImageStore {
 
 export interface ImageShow {
   src: string
-  id: string,
+  id: string
   width?: number
   height?: number
   h2w?: string

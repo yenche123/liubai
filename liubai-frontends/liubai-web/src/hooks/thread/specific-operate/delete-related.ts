@@ -1,6 +1,5 @@
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import type { ThreadShow } from "~/types/types-content"
-import valTool from "~/utils/basic/val-tool"
 import cui from "~/components/custom-ui"
 import dbOp from "../db-op"
 import time from "~/utils/basic/time"
@@ -12,7 +11,7 @@ export async function deleteThread(
   memberId: string,
   userId: string,
 ) {
-  const newThread = valTool.copyObject(oldThread)
+  const newThread = liuUtil.copy.newData(oldThread)
   const now = time.getTime()
 
   // 1. 修改数据
@@ -39,7 +38,7 @@ export async function restoreThread(
   memberId: string,
   userId: string,
 ) {
-  const newThread = valTool.copyObject(oldThread)
+  const newThread = liuUtil.copy.newData(oldThread)
 
   // 1. 修改数据
   newThread.oState = "OK"
@@ -87,7 +86,7 @@ export async function deleteForever(
   })
   if(!res.confirm) return false
 
-  const newThread = valTool.copyObject(oldThread)
+  const newThread = liuUtil.copy.newData(oldThread)
 
   // 1. 修改数据
   newThread.oState = "DELETED"

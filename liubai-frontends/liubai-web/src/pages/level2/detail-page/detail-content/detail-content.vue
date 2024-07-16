@@ -10,6 +10,7 @@ defineProps({
 })
 
 const {
+  isShowing,
   onGetThreadShow,
 } = useDetailContent()
 
@@ -20,6 +21,7 @@ const {
     <div class="liu-tc-virtual"></div>
     <div class="liu-mc-box">
       <ThreadDetail 
+        :is-showing="isShowing"
         :thread-id="threadId"
         location="detail-page"
         @getthreadshow="onGetThreadShow"

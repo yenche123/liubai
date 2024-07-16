@@ -104,7 +104,7 @@ function handleOutterOperation(
 // 去打开状态选择面板
 async function handle_state(ctx: ToCtx) {
   const { memberId, userId, thread, tlData, position, props } = ctx
-  const oldThread = valTool.copyObject(thread)
+  const oldThread = liuUtil.toRawData(thread)
   
   const { 
     tipPromise, 
@@ -173,7 +173,7 @@ async function handle_state(ctx: ToCtx) {
 // 去恢复
 async function handle_restore(ctx: ToCtx) {
   const { memberId, userId, thread, props, tlData, position } = ctx
-  const oldThread = valTool.copyObject(thread)
+  const oldThread = liuUtil.toRawData(thread)
   const vT = props.viewType
 
   // 1. 如果当前是在回收桶里，先从 list 里删除是为了避免 menu 的抖动
@@ -214,7 +214,7 @@ async function handle_delete(ctx: ToCtx) {
     position,
     emit,
   } = ctx
-  const oldThread = valTool.copyObject(thread)
+  const oldThread = liuUtil.toRawData(thread)
   const vT = ctx.props.viewType
 
   // 0. 执行消失动画、并删除 item
@@ -264,7 +264,7 @@ async function handle_delete(ctx: ToCtx) {
 // 去彻底删除
 async function handle_deleteForever(ctx: ToCtx) {
   const { memberId, userId, thread, tlData, position } = ctx
-  const oldThread = valTool.copyObject(thread)
+  const oldThread = liuUtil.toRawData(thread)
   const res = await threadOperate.deleteForever(oldThread, memberId, userId)
   if(!res) return
 
@@ -275,7 +275,7 @@ async function handle_deleteForever(ctx: ToCtx) {
 // 去置顶（or 取消）
 async function handle_pin(ctx: ToCtx) {
   const { memberId, userId, thread, tlData, position } = ctx
-  const oldThread = valTool.copyObject(thread)
+  const oldThread = liuUtil.toRawData(thread)
   const { newPin, tipPromise } = await threadOperate.toPin(oldThread, memberId, userId)
   if(!tipPromise) return
 
@@ -305,7 +305,7 @@ async function handle_pin(ctx: ToCtx) {
 // 去收藏（or 取消）
 async function handle_collect(ctx: ToCtx) {
   const { memberId, userId, thread, tlData, position } = ctx
-  const oldThread = valTool.copyObject(thread)
+  const oldThread = liuUtil.toRawData(thread)
   const { newFavorite, tipPromise } = await threadOperate.toCollect(oldThread, memberId, userId)
 
   // 1. 来判断当前列表里的该 item 是否要删除
@@ -334,7 +334,7 @@ async function handle_collect(ctx: ToCtx) {
 // 支持撤回，因为只是修改 wStore 里的
 async function handle_float_up(ctx: ToCtx) {
   const { memberId, userId, thread, props, tlData, position } = ctx
-  const theThread = valTool.copyObject(thread)
+  const theThread = liuUtil.toRawData(thread)
 
   const { 
     tipPromise, 

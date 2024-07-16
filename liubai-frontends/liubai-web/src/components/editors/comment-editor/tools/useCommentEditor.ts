@@ -1,6 +1,6 @@
 import { useMyProfile } from "~/hooks/useCommon";
 import EditorCore from "../../editor-core/editor-core.vue"
-import { computed, reactive, ref, shallowRef, toRef, watch } from "vue"
+import { computed, provide, reactive, ref, shallowRef, toRef, watch } from "vue"
 import type { Ref, ShallowRef } from "vue"
 import type { TipTapEditor, EditorCoreContent } from "~/types/types-editor"
 import type { CeCtx, CeProps, CeEmit, CommentStorageAtom } from "./types";
@@ -17,6 +17,7 @@ import type { LiuTimeout } from "~/utils/basic/type-tool";
 import localReq from "./req/local-req";
 import transferUtil from "~/utils/transfer-util";
 import usefulTool from "~/utils/basic/useful-tool";
+import { editorSetKey } from "~/utils/provide-keys"
 
 export function useCommentEditor(
   props: CeProps,
@@ -31,6 +32,12 @@ export function useCommentEditor(
     return `comment.placeholder1`
   })
 
+
+  // 用代码给 editor-core 赋值时，需要手动增加 numWhenSet，让 edior-core 得知
+  const numWhenSet = ref(0)
+  provide(editorSetKey, numWhenSet)
+
+
   // 上下文
   const ctx = reactive<CeCtx>({
     focused: false,
@@ -42,6 +49,10 @@ export function useCommentEditor(
     canSubmit: false,
     fileShowName: "",
     releasedData: {},
+    numWhenSet: numWhenSet.value,
+  })
+  watch(() => ctx.numWhenSet, (newV) => {
+    numWhenSet.value = newV
   })
 
   watch(() => ctx.canSubmit, (newV) => emit("cansubmit", newV))
@@ -58,12 +69,15 @@ export function useCommentEditor(
     initEditorContent(props, ctx, editor as ShallowRef<TipTapEditor>)
   })
 
+  watch(() => props.isShowing, (newV) => {
+    if(!newV) return
+    if(!editor.value) return
+    initEditorContent(props, ctx, editor as ShallowRef<TipTapEditor>)
+  })
+
   // 监听上级组件要求聚焦
   const focusNum = toRef(props, "focusNum")
   watch([focusNum, editor], ([newV1, newV2]) => {
-    // console.log("focusNum: ", newV1)
-    // console.log(newV2)
-    // console.log(" ")
     if(newV1 <= 0) return
     if(!newV2) return
     newV2.commands.focus()
@@ -196,39 +210,49 @@ function initEditorContent(
   editorRef: ShallowRef<TipTapEditor>
 ) {
   const editor = editorRef.value
-  const oldText = editor.getText()
-  if(oldText.trim()) {
-    return
-  }
   
   let atom = getStorageAtom(props)
   const res = commentCache.toGet(atom)
-  const editorContent = res?.editorContent
-  const images = res?.images
-  const files = res?.files
 
   if(!res && props.commentId) {
     initEditorContentFromDB(props, ctx, editor)
     return
   }
+  if(!res) return
+  const editorContent = res.editorContent
+  const images = res.images
+  const files = res.files
+
+  ctx.lastInitStamp = time.getTime()
   
   if(editorContent?.text?.trim()) {
     editor.commands.setContent(editorContent.json)
     ctx.editorContent = editorContent
     ctx.isToolbarTranslateY = false
-    ctx.canSubmit = true
   }
+  else {
+    editor.commands.setContent("<p></p>")
+    delete ctx.editorContent
+  }
+  ctx.numWhenSet++
 
   if(images?.length) {
     ctx.images = images
     ctx.isToolbarTranslateY = false
-    ctx.canSubmit = true
   }
+  else {
+    ctx.images = []
+  }
+
   if(files?.length) {
     ctx.files = files
     ctx.isToolbarTranslateY = false
-    ctx.canSubmit = true
   }
+  else {
+    ctx.files = []
+  }
+
+  checkCanSubmit(props, ctx)
 }
 
 

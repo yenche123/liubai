@@ -111,31 +111,19 @@ async function operateAll() {
   }
 
   if(new_collections.length > 0) {
-    console.log("new_collections: ")
-    console.log(valTool.copyObject(new_collections))
-    console.log(" ")
     await db.collections.bulkPut(new_collections)
   }
 
   if(update_collections.length > 0) {
-    console.log("update_collections: ")
-    console.log(valTool.copyObject(update_collections))
-    console.log(" ")
     await db.collections.bulkUpdate(update_collections) 
   }
 
   if(new_drafts.length > 0) {
-    console.log("new_drafts: ")
-    console.log(valTool.copyObject(new_drafts))
-    console.log(" ")
     await db.drafts.bulkPut(new_drafts)
     bulkNotify("drafts", new_drafts)
   }
 
   if(update_drafts.length > 0) {
-    console.log("update_drafts: ")
-    console.log(valTool.copyObject(update_drafts))
-    console.log(" ")
     await db.drafts.bulkUpdate(update_drafts) 
     bulkNotify2("drafts", update_drafts)
   }

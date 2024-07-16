@@ -1,6 +1,5 @@
 import liuUtil from "~/utils/liu-util"
 import type { CommentStorageAtom, CommentStorageType } from "./types"
-import valTool from "~/utils/basic/val-tool"
 
 let list: CommentStorageAtom[] = []
 
@@ -54,7 +53,7 @@ function toGet(atom: CommentStorageAtom) {
   list.forEach(v => {
     if(atom.commentId) {
       if(atom.commentId === v.commentId) {
-        res = valTool.copyObject(v)
+        res = liuUtil.copy.newData(v)
       }
       return
     }
@@ -62,7 +61,7 @@ function toGet(atom: CommentStorageAtom) {
     if(!v.commentId && v.parentThread === atom.parentThread) {
       if(v.parentComment === atom.parentComment) {
         if(v.replyToComment === atom.replyToComment) {
-          res = valTool.copyObject(v)
+          res = liuUtil.copy.newData(v)
         }
       }
     }

@@ -17,6 +17,7 @@ import { i18n } from "~/locales"
 import { mapStateColor } from "~/config/state-color"
 import cfg from "~/config"
 import cloudOp from "../cloud-op"
+import liuUtil from "~/utils/liu-util"
 
 interface SelectStateRes {
   tipPromise?: Promise<SnackbarRes>
@@ -41,7 +42,7 @@ export async function selectState(
   memberId: string,
   userId: string,
 ): Promise<SelectStateRes> {
-  const newThread = valTool.copyObject(oldThread) 
+  const newThread = liuUtil.copy.newData(oldThread) 
   const wStore = useWorkspaceStore()
 
   // 1. 让用户选择
@@ -193,7 +194,7 @@ export async function setNewStateForThread(
   newStateId: string,
 ) {
   const wStore = useWorkspaceStore()
-  const newThread = valTool.copyObject(oldThread)
+  const newThread = liuUtil.copy.newData(oldThread)
   newThread.stateId = newStateId
   newThread.stateShow = commonPack.getStateShow(newStateId, wStore)
 

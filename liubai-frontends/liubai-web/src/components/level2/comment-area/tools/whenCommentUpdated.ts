@@ -1,11 +1,9 @@
 
 import valTool from "~/utils/basic/val-tool"
-import type {
-  CommentAreaData,
-} from "./types"
+import type { CommentAreaData } from "./types"
 import type { CommentStoreState } from "~/hooks/stores/useCommentStore"
 import commentController from "~/utils/controllers/comment-controller/comment-controller"
-
+import liuUtil from "~/utils/liu-util"
 
 /** 当 comment-area 监听到 comment-store 发生变化时
  *   相应地做一些处理，比如添加 / 编辑 / 删除 item 
@@ -47,7 +45,7 @@ function handleAdded(
   if(!commentShow) return
 
   const { comments } = caData
-  const newComment = valTool.copyObject(commentShow)
+  const newComment = liuUtil.toRawData(commentShow)
 
   // 0. 如果没有 replyToComment，代表为一级评论，直接添加到最前面
   if(!replyToComment) {

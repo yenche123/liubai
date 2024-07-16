@@ -6,16 +6,22 @@ import fileHelper from "../files/file-helper"
 import liuUtil from "../liu-util"
 import { saveAs as fileSaverSaveAs } from 'file-saver';
 
+function isNormalImage(mimeType: string) {
+  const not_normals = ["adobe", "photoshop", "heic", "microsoft", "icon", "vnd"]
+  const unNormal = not_normals.find(v => mimeType.includes(v))
+  if(unNormal) return false
+  return mimeType.indexOf("image") === 0
+}
+
 // 给定一个文件，若是
 //   图片: 直接用 preview-image 显示
 //   应用: 直接下载
 //   其他: 开启新的窗口显示
 export async function viewFile(store: LiuFileStore) {
-
   const mimeType = store.mimeType.toLowerCase()
 
   // 图片
-  if(mimeType.indexOf("image") === 0) {
+  if(isNormalImage(mimeType)) {
     const f = fileHelper.storeToFile(store)
     if(!f) return
     const [imgStore] = await imgHelper.getMetaDataFromFiles([f])

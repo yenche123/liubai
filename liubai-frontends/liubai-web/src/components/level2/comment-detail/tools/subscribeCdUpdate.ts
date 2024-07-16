@@ -14,6 +14,7 @@ import { storeToRefs } from "pinia"
 import { watch } from "vue"
 import valTool from "~/utils/basic/val-tool";
 import commentController from "~/utils/controllers/comment-controller/comment-controller";
+import liuUtil from "~/utils/liu-util";
 
 export function subscribeCdUpdate(
   cdData: CommentDetailData
@@ -85,7 +86,7 @@ function whenCommentUpdate(
 
   const changedId = state.commentId
   const changeType = state.changeType
-  const newComment = valTool.copyObject(state.commentShow)
+  const newComment = liuUtil.toRawData(state.commentShow)
   const { replyToComment, parentComment } = state
 
   // I. 如果目标评论就是被改变的评论

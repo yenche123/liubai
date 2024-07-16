@@ -14,7 +14,7 @@ async function collect(
   userId: string,
   isUndo: boolean = false,
 ) {
-  let newState = thread.myFavorite
+  let newFavorite = thread.myFavorite
   let stamp = thread.myFavoriteStamp
   
   // 操作 collection
@@ -33,7 +33,7 @@ async function collect(
   const newStamp = stamp ?? now1
   let collection_id = ""
 
-  if(newState && !res0) {
+  if(newFavorite && !res0) {
     // add 数据
     const newId = ider.createCollectId()
     const data0: CollectionLocalTable = {
@@ -55,7 +55,7 @@ async function collect(
     const res1 = await db.collections.add(data0)
     collection_id = newId
   }
-  else if(newState && res0?.oState === "CANCELED") {
+  else if(newFavorite && res0?.oState === "CANCELED") {
     // 将 “已取消” 改成 “正常” 收藏的状态
     const data0: Partial<CollectionLocalTable> = { 
       oState: "OK", 
@@ -66,7 +66,7 @@ async function collect(
     const res1 = await db.collections.update(res0._id, data0)
     collection_id = res0._id
   }
-  else if(!newState && res0?.oState === "OK") {
+  else if(!newFavorite && res0?.oState === "OK") {
     // update
     const data0: Partial<CollectionLocalTable> = { 
       oState: "CANCELED", 
