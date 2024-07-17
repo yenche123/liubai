@@ -19,6 +19,8 @@ import cui from "~/components/custom-ui";
 import type { LiuSpaceAndMember } from "~/types/types-cloud";
 import { CloudFiler } from "../CloudFiler";
 import liuConsole from "~/utils/debug/liu-console";
+import usefulTool from "~/utils/basic/useful-tool";
+import { type SimpleObject } from "~/utils/basic/type-tool";
 
 interface AgudOpt {
   isRefresh?: boolean   // `false` is default
@@ -267,6 +269,16 @@ async function handleSpaceAndMember(
       u7.avatar = avatarRes.image
       updated = true
     }
+
+    // check notification
+    const n1 = v1.notification as SimpleObject
+    const n2 = v2.member_notification as SimpleObject
+    const isNotificationSame = usefulTool.isSameSimpleObject(n1, n2)
+    if(!isNotificationSame) {
+      u7.notification = n2
+      updated = true
+    }
+    
     
     if(updated) {
       u7.config = cfg1

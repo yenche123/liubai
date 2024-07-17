@@ -1,4 +1,5 @@
 // 一些实用的小函数，不知道存放在哪，姑且都收集在这
+import { type SimpleObject } from "./type-tool"
 
 export interface FdBase {
   _id: string
@@ -130,9 +131,37 @@ function encodeBraces(str: string): EncodeBracesRes {
   return { str: newStr, lastCharDeleted }
 }
 
+function isSameSimpleObject(
+  obj1?: SimpleObject,
+  obj2?: SimpleObject,
+) {
+  if(!obj1 && !obj2) return true
+  if(obj1 && !obj2) return false
+  if(!obj1 && obj2) return false
+
+  obj1 = obj1 ?? {}
+  obj2 = obj2 ?? {}
+
+  const keys1 = Object.keys(obj1)
+  const keys2 = Object.keys(obj2)
+  const len1 = keys1.length
+  const len2 = keys2.length
+  if(len1 !== len2) return false
+
+  for(let i=0; i<len1; i++) {
+    const k1 = keys1[i]
+    const v1 = obj1[k1]
+    const v2 = obj2[k1]
+    if(v1 !== v2) return false
+  }
+
+  return true
+}
+
 
 export default {
   filterDuplicated,
   checkIdsInLists,
   encodeBraces,
+  isSameSimpleObject,
 }

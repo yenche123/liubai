@@ -223,6 +223,7 @@ function turnMemberAggsIntoLSAMs(
       member_avatar: v.avatar,
       member_oState,
       member_config: v.config,
+      member_notification: v.notification,
       
       spaceId: theSpace._id,
       spaceType: theSpace.infoType,

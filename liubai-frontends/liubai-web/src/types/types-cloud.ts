@@ -6,7 +6,11 @@ import type {
   OState,
 } from "./types-basic"
 import type { LiuStateConfig, TagView } from "./types-atom"
-import type { MemberConfig, WorkspaceConfig } from "./other/types-custom"
+import type { 
+  MemberConfig, 
+  MemberNotification, 
+  WorkspaceConfig,
+} from "./other/types-custom"
 
 export interface Cloud_FileStore {
   id: string
@@ -43,6 +47,7 @@ export interface LiuSpaceAndMember {
   member_avatar?: Cloud_ImageStore
   member_oState: OState_3
   member_config?: MemberConfig
+  member_notification?: MemberNotification
 
   // 关于 workspace 的信息
   spaceId: string

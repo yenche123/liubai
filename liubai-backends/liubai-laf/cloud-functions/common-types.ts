@@ -295,6 +295,10 @@ export interface MemberConfig {
   lastOperateName?: number     // last stamp when user edited name
 }
 
+export interface MemberNotification {
+  ww_qynb_remind?: boolean
+}
+
 /** 附着在 content 上的 emoji 表态信息 */
 export interface EmojiSystem {
   num: number
@@ -572,6 +576,7 @@ export interface LiuSpaceAndMember {
   member_avatar?: Cloud_ImageStore
   member_oState: OState_3
   member_config?: MemberConfig
+  member_notification?: MemberNotification
 
   // 关于 workspace 的信息
   spaceId: string
@@ -929,6 +934,7 @@ export interface Table_Member extends BaseTable {
   user: string
   oState: OState_3
   config?: MemberConfig
+  notification?: MemberNotification
   editedStamp?: number      // 同步时，用来比大小的
 }
 
@@ -1211,6 +1217,13 @@ export interface Res_UserSettings_Enter {
   language: LocalLocale
   spaceMemberList: LiuSpaceAndMember[]
   subscription?: UserSubscription
+  
+  /** wechat data */
+  wx_gzh_openid?: string
+
+  /** wecom data for qynb, which is for company internal use */
+  ww_qynb_external_userid?: string
+
   new_serial?: string
   new_token?: string
 }

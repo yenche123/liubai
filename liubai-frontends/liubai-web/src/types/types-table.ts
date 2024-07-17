@@ -23,7 +23,10 @@ import type { LiuFileStore, LiuImageStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
 import type { EmojiData } from "./types-content"
 import type { 
-  ContentConfig, MemberConfig, WorkspaceConfig
+  ContentConfig, 
+  MemberConfig, 
+  MemberNotification, 
+  WorkspaceConfig,
 } from "./other/types-custom"
 import type { UserSubscription } from "./types-cloud"
 
@@ -60,6 +63,7 @@ export interface MemberLocalTable extends BaseLocalTable {
   user: string
   oState: OState_3
   config?: MemberConfig
+  notification?: MemberNotification
 }
 
 export interface ContentLocalTable extends BaseLocalTable {
