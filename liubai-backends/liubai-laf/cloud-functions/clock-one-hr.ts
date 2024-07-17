@@ -2,7 +2,7 @@
 // 定时系统: 每 60 分钟执行一次
 // 清理过期的 Credential
 import cloud from '@lafjs/cloud'
-import { getNowStamp, HOUR, DAY } from "@/common-time"
+import { getNowStamp, HOUR, DAY, WEEK } from "@/common-time"
 import { 
   type Config_WeCom_Qynb,
   type Config_WeChat_GZH, 
@@ -23,7 +23,7 @@ export async function main(ctx: FunctionContext) {
   // 1. clear data expired
   await clearExpiredCredentials()
   await clearDrafts()
-
+  await clearTokens()
 
   // 2. get config
   const cfg = await getGlobalConfig()
@@ -207,4 +207,25 @@ async function clearExpiredCredentials() {
 
   return true
 }
+
+async function clearTokens() {
+
+  const col = db.collection("Token")
+
+  // 1. to clear the tokens whose isOn is equal to "N"
+  const q1 = { isOn: "N" }
+  const res1 = await col.deleteMany(q1)
+
+  // 2. to clear the tokens whose expireStamp is less than one week ago
+  const ONE_WEEK_AGO = getNowStamp() - WEEK
+  const q2 = {
+    expireStamp: {
+      $lte: ONE_WEEK_AGO,
+    }
+  }
+  const res2 = await col.deleteMany(q2)
+  
+  return true
+}
+
 
