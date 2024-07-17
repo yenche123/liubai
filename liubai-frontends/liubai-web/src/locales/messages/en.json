@@ -448,5 +448,18 @@
     "inbox": "Inbox",
     "today": "Today",
     "future_24": "Next 24 Hours"
+  },
+  "connect": {
+    "add": "Add",
+    "wechat": "WeChat",
+    "wechat_desc": "Using Liubai on WeChat",
+    "wechat_remind": "WeChat Remind",
+    "wechat_remind_desc": "Add \"留小白\" on WeChat. It will reach out to you when your agenda needs a reminder."
+  },
+  "qrcode": {
+    "long_press": "Long press to recognize and add \"留小白\" on WeChat",
+    "scan": "Scan the QR code on WeChat to add \"留小白\"",
+    "title": "Your exclusive QR code has been generated",
+    "screenshot": "Screenshot and open it on WeChat please"
   }
 }

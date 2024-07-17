@@ -448,5 +448,18 @@
     "inbox": "收件箱",
     "today": "今天",
     "future_24": "接下來一天"
+  },
+  "connect": {
+    "add": "去設定",
+    "wechat": "微信",
+    "wechat_desc": "在微信上使用留白記事",
+    "wechat_remind": "微信提醒",
+    "wechat_remind_desc": "添加「留小白」微信，當你的日程需要提醒時，它會在第一時間通知你！"
+  },
+  "qrcode": {
+    "long_press": "長按識別 QR Code，新增「留小白」的微信",
+    "scan": "請用微信 App，掃描 QR Code 以新增「留小白」微信",
+    "screenshot": "請截圖後，用微信掃描打開",
+    "title": "你的專屬 QR Code 已生成"
   }
 }

@@ -448,5 +448,18 @@
     "inbox": "收件箱",
     "today": "今天",
     "future_24": "接下来一天"
+  },
+  "connect": {
+    "wechat": "微信",
+    "wechat_desc": "在微信上使用留白记事",
+    "wechat_remind": "微信提醒",
+    "wechat_remind_desc": "添加「留小白」微信，当你的日程需要提醒时，它会在第一时间通知你！",
+    "add": "去设置"
+  },
+  "qrcode": {
+    "title": "你的专属二维码已生成",
+    "long_press": "长按识别二维码，添加「留小白」微信",
+    "screenshot": "请截图后，用微信扫码打开",
+    "scan": "请用手机微信，扫码添加「留小白」微信"
   }
 }
