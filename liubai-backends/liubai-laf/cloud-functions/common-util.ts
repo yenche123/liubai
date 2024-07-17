@@ -456,7 +456,7 @@ async function _getUserData(userId: string) {
   return d
 }
 
-function getLiuTokenUser() {
+export function getLiuTokenUser() {
   const gShared = cloud.shared
   const map: Map<string, Shared_TokenUser> = gShared.get('liu-token-user') ?? new Map()
   return map

@@ -6,6 +6,7 @@ const d = env.API_DOMAIN ?? ""
 export default {
   TIME: d + `hello-world`,
   LOGIN: d + `user-login`,
+  LOGOUT: d + `user-settings`,
   USER_ENTER: d + `user-settings`,
   USER_LATEST: d + `user-settings`,
   USER_SET: d + `user-settings`,

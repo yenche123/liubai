@@ -3,6 +3,7 @@
 import cloud from '@lafjs/cloud'
 import { 
   checker,
+  getLiuTokenUser,
   getStripeInstance, 
   getUserInfos, 
   updateUserInCache, 
@@ -16,6 +17,7 @@ import {
   type Res_UserSettings_Latest,
   type Res_UserSettings_Membership,
   type VerifyTokenRes_B,
+  type Table_Token,
   Sch_LocalTheme,
   Sch_LocalLocale,
 } from '@/common-types'
@@ -28,13 +30,20 @@ export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}
   const oT = body.operateType
 
-  const stamp1 = getNowStamp()
+  let res: LiuRqReturn = { code: "E4000" }
 
+  // 0. if it is logout, bypass the verification
+  if(oT === "logout") {
+    res = await handle_logout(ctx, body)
+    return res
+  }
+
+
+  const stamp1 = getNowStamp()
   const entering = oT === "enter"
   const vRes = await verifyToken(ctx, body, { entering })
   if(!vRes.pass) return vRes.rqReturn
 
-  let res: LiuRqReturn = { code: "E4000" }
   if(oT === "enter") {
     // 获取用户设置并记录用户访问
     res = await handle_enter(vRes)
@@ -55,6 +64,54 @@ export async function main(ctx: FunctionContext) {
 
   return res
 }
+
+
+async function handle_logout(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+): Promise<LiuRqReturn> {
+  const token = body["x_liu_token"]
+  const serial_id = body["x_liu_serial"]
+
+  if(!token || !serial_id) {
+    return {
+      code: "E4000",
+      errMsg: "token, serial_id are required", 
+    }
+  }
+
+  // 1. get token data
+  const col = db.collection("Token")
+  const res = await col.doc(serial_id).get<Table_Token>()
+  const d = res.data
+
+  // checking out if it exists
+  if(!d) {
+    return {
+      code: "E4003",
+      errMsg: "token not found",
+    }
+  }
+
+  // checking out the token
+  const _token = d.token
+  if(_token !== token) {
+    return {
+      code: "E4003",
+      errMsg: "your token is wrong",
+    }
+  }
+
+  // 2. remove for db
+  const res2 = await col.where({ _id: serial_id }).remove()
+
+  // 3. remove for cache
+  const map = getLiuTokenUser()
+  map.delete(serial_id)
+
+  return { code: "0000" }
+}
+
 
 async function handle_set(
   vRes: VerifyTokenRes_B,

@@ -19,6 +19,9 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import { toUpdateSW } from "~/hooks/pwa/useServiceWorker"
 import valTool from "~/utils/basic/val-tool"
 import { useShowAddToHomeScreen } from "~/hooks/pwa/useA2HS"
+import liuReq from "~/requests/liu-req"
+import APIs from "~/requests/APIs"
+import liuUtil from "~/utils/liu-util"
 
 export function useSettingContent() {
 
@@ -235,5 +238,13 @@ async function askLogoutWithBackend() {
   })
 
   if(!res.confirm) return
+
+  // 1. logout remotely
+  const url = APIs.LOGOUT
+  const res2 = liuReq.request(url, { operateType: "logout" })
+
+  await liuUtil.waitAFrame()
+
+  // 2. logout locally
   CloudEventBus.toLogout()
 }
