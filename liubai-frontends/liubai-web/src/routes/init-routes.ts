@@ -29,7 +29,6 @@ export const routes: Array<RouteRecordRaw> = [
     component: HomePage,
     name: "home",
     meta: {
-      keepAlive: true,
       inApp: false,
     }
   },
@@ -38,7 +37,6 @@ export const routes: Array<RouteRecordRaw> = [
     component: LoginPage,
     name: "login",
     meta: {
-      keepAlive: true,
       inApp: false,
     }
   },
@@ -47,6 +45,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: OAuthPage,
     name: "login-github",
     meta: {
+      keepAlive: false,
       inApp: false,
     }
   },
@@ -55,6 +54,7 @@ export const routes: Array<RouteRecordRaw> = [
     component: OAuthPage,
     name: "login-google",
     meta: {
+      keepAlive: false,
       inApp: false,
     }
   },
@@ -65,9 +65,7 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "index",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   {
     path: "/:contentId(\\w{10,})",
@@ -77,7 +75,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "detail",
     meta: {
-      keepAlive: true,
       checkWorkspace: false,
     }
   },
@@ -89,7 +86,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "comment",
     meta: {
-      keepAlive: true,
       checkWorkspace: false,
     }
   },
@@ -101,7 +97,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "edit",
     meta: {
-      keepAlive: true,
       checkWorkspace: false,
     }
   },
@@ -112,9 +107,7 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "tag",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   {
     path: "/favorite",
@@ -123,9 +116,7 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "favorite",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   {
     path: "/state",
@@ -134,9 +125,7 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "state",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   {
     path: "/state-more/:stateId(\\w{4,})",
@@ -145,9 +134,7 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "state-more",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   {
     path: "/trash",
@@ -157,7 +144,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "trash",
     meta: {
-      keepAlive: true,
       hasViceView: false,
     }
   },
@@ -169,7 +155,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "connect",
     meta: {
-      keepAlive: true,
       hasViceView: false,
     }
   },
@@ -181,7 +166,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "setting",
     meta: {
-      keepAlive: true,
       inSetting: true,
     }
   },
@@ -193,7 +177,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "export",
     meta: {
-      keepAlive: true,
       inSetting: true,
     }
   },
@@ -205,7 +188,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "import",
     meta: {
-      keepAlive: true,
       inSetting: true,
     }
   },
@@ -216,16 +198,13 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "notification",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   {
     path: "/a2hs",
     component: A2hsPage,
     name: "a2hs",
     meta: {
-      keepAlive: true,
       inApp: false,
     }
   },
@@ -237,7 +216,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "subscription",
     meta: {
-      keepAlive: true,
       checkWorkspace: false,
     },
   },
@@ -249,7 +227,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "payment-success",
     meta: {
-      keepAlive: true,
       checkWorkspace: false,
     },
   },
@@ -261,9 +238,7 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-index",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   {
     path: "/w/:workspaceId(\\w{10,})/tag/:tagId(\\w{18,})",
@@ -272,9 +247,7 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-tag",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   {
     path: "/w/:workspaceId(\\w{10,})/favorite",
@@ -283,9 +256,7 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-favorite",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   {
     path: "/w/:workspaceId(\\w{10,})/state",
@@ -294,9 +265,7 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-state",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   {
     path: "/w/:workspaceId(\\w{10,})/state-more/:stateId(\\w{4,})",
@@ -305,9 +274,7 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-state-more",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   {
     path: "/w/:workspaceId(\\w{10,})/trash",
@@ -317,7 +284,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "collaborative-trash",
     meta: {
-      keepAlive: true,
       hasViceView: false,
     }
   },
@@ -329,7 +295,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "collaborative-connect",
     meta: {
-      keepAlive: true,
       hasViceView: false,
     }
   },
@@ -341,7 +306,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "collaborative-setting",
     meta: {
-      keepAlive: true,
       inSetting: true,
     }
   },
@@ -353,7 +317,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "collaborative-export",
     meta: {
-      keepAlive: true,
       inSetting: true,
     }
   },
@@ -375,9 +338,7 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-notification",
-    meta: {
-      keepAlive: true,
-    }
+    meta: {}
   },
   // the rest of routes, redirect to root
   {

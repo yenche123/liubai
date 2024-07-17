@@ -34,7 +34,7 @@ const ios_ipad = Boolean(cha.isIOS || cha.isIPadOS)
     </router-view>
     
     <!-- 默认视图 -->
-    <router-view v-if="route.meta.keepAlive" v-slot="{ Component }">
+    <router-view v-if="route.meta.keepAlive !== false" v-slot="{ Component }">
       <keep-alive>
         <component :is="Component" />
       </keep-alive>
