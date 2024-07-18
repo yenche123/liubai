@@ -612,6 +612,9 @@ export interface CredentialMetaData {
   payment_circle?: SubscriptionPaymentCircle
   payment_timezone?: string
   plan?: string
+  memberId?: string
+  qr_code?: string
+  ww_qynb_config_id?: string
 }
 
 /*********************** 加解密相关 **********************/
@@ -1071,7 +1074,7 @@ export interface Table_Config extends BaseTable {
 
 /** 临时凭证表的类型 */
 export type Table_Credential_Type =  "sms-code" | "email-code" | "scan-code"
-  | "users-select" | "stripe-checkout-session"
+  | "users-select" | "stripe-checkout-session" | "bind-wecom"
 
 /** 临时凭证表 */
 export interface Table_Credential extends BaseTable {
@@ -1580,6 +1583,23 @@ export interface Res_SyncGet_Cloud {
   plz_enc_results?: SyncGetAtomRes[]
 }
 
+/******************** open-connect **********************/
+export type OpenConnectOperate = "bind-wecom" | "check-wecom"
+
+export type CheckBindStatus = "waiting" | "plz_check" | "expired"
+
+export interface Res_OC_BindWeCom {
+  operateType: "bind-wecom"
+  qr_code: string
+  credential: string
+}
+
+export interface Res_OC_CheckWeCom {
+  operateType: "check-wecom"
+  status: CheckBindStatus
+}
+
+
 
 /******************** 一些云函数间内部的入参和出参类型 **********/
 
@@ -1689,4 +1709,14 @@ export interface Wx_Gzh_Voice extends Wx_Gzh_Base {
   MsgDataId?: string
 }
 
+/******************* Some Types from WeCom  ****************/
+export interface Ww_Base {
+  errcode: number
+  errmsg: string
+}
+
+export interface Ww_Add_Contact_Way extends Ww_Base {
+  config_id: string
+  qr_code?: string
+}
 

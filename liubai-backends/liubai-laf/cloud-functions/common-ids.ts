@@ -108,3 +108,7 @@ export function createOpenId() {
   return "op0" + createRandom(16)
 }
 
+export function createBindCredential() {
+  return "bc0" + createRandom(16)
+}
+
