@@ -232,7 +232,17 @@ async function handleDraftParcels(
     if(v.status !== "has_data") return
     if(!v.draft) continue
 
-    const oldDraft = await db.drafts.get(v.id)
+    let oldDraft = await db.drafts.get(v.id)
+    if(!oldDraft) {
+      console.warn("get old draft using first_id")
+      oldDraft = await db.drafts.get(v.draft.first_id)
+      console.log("oldDraft: ")
+      console.log(oldDraft)
+      console.log("v.draft: ")
+      console.log(v.draft)
+      console.log(" ")
+    }
+
     await mergeDraft(v.draft, oldDraft)
   }
   
@@ -268,12 +278,19 @@ async function mergeDraft(
     }
   }
 
-  // 2. create it if no local draft
+  // 2.1 create it if no local draft
   if(!od) {
     if(newOState === "OK" || newOState === "LOCAL") {
       createDraft(d)
     }
     return
+  }
+
+  // 2.2 pass if local draft has been DELETED
+  if(newOState === "OK" || newOState === "LOCAL") {
+    if(oldOState === "POSTED" || oldOState === "DELETED") {
+      return
+    }
   }
 
   // 3. update draft if oldDraft exists
