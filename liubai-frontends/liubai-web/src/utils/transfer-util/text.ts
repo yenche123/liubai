@@ -11,6 +11,7 @@ export function listToText(
   list: TipTapJSONContent[],
   plainText: string = "",
   moreText?: boolean,
+  parentType?: string,
 ): string {
 
   for(let i=0; i<list.length; i++) {
@@ -24,8 +25,17 @@ export function listToText(
       continue
     }
 
+    if(type === "listItem") {
+      if(parentType === "orderedList") {
+        plainText += `${i + 1}. `
+      }
+      else if(parentType === "bulletList") {
+        plainText += " · "
+      }
+    }
+
     if(content) {
-      plainText = listToText(content, plainText, moreText)
+      plainText = listToText(content, plainText, moreText, type)
       if(type === "codeBlock") plainText += "\n"
     }
 
@@ -37,7 +47,8 @@ export function listToText(
       "taskList",
       "blockquote", 
       "codeBlock",
-      "horizontalRule"
+      "horizontalRule",
+      "listItem",
     ]
     if(type && addes.includes(type as LiuNodeType)) {
       plainText += "\n"
