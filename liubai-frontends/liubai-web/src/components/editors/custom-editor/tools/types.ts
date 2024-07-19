@@ -21,6 +21,7 @@ export interface CeData {
   lastEditStamp?: number
   showTitleBar: boolean
   canSubmit: boolean
+  reject_draft_ids?: string[]
 }
 
 export const defaultData: CeData = {

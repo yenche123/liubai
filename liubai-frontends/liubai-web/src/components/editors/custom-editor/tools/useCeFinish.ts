@@ -87,9 +87,14 @@ async function toRelease(
   const res1 = await localReq.addContent(newThread)
   
   // 2. 删除 drafts
-  if(ceData.draftId) {
-    await localReq.clearDraftOnCloud(ceData.draftId)
-    await localReq.deleteDraftById(ceData.draftId)
+  const draftId = ceData.draftId
+  if(draftId) {
+    await localReq.clearDraftOnCloud(draftId)
+    await localReq.setDraftAsPosted(draftId)
+    if(!ceData.reject_draft_ids) {
+      ceData.reject_draft_ids = []
+    }
+    ceData.reject_draft_ids.push(draftId)
   }
 
   // 3. 重置编辑器的 ceData

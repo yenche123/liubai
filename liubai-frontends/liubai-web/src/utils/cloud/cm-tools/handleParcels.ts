@@ -247,19 +247,32 @@ async function mergeDraft(
   od?: DraftLocalTable,
 ) {
   const draft_id = d._id
+  const old_id = od?._id
 
-  // 1. the draft has been posted or deleted
   const newOState = d.oState
+  const oldOState = od?.oState
+
+  // 1.1 the draft has been DELETED
   if(newOState === "DELETED") {
-    if(od) {
-      await deleteDraft(od._id)
+    if(old_id) {
+      await deleteDraft(old_id)
     }
     return
   }
 
+  // 1.2 the draft has been POSTED
+  if(newOState === "POSTED" && old_id) {
+    if(oldOState === "POSTED" || oldOState === "DELETED") {
+      await deleteDraft(old_id)
+      return
+    }
+  }
+
   // 2. create it if no local draft
   if(!od) {
-    createDraft(d)
+    if(newOState === "OK" || newOState === "LOCAL") {
+      createDraft(d)
+    }
     return
   }
 

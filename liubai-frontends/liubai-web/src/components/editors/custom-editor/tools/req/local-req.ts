@@ -49,6 +49,10 @@ async function getDraft(spaceId: string) {
   const _filter = (v: DraftLocalTable) => {
     if(v.threadEdited) return false
     if(v.commentEdited) return false
+    const oState = v.oState
+    if(oState === "DELETED" || oState === "POSTED") {
+      return false
+    }
     return true
   }
 
@@ -62,6 +66,17 @@ async function deleteDraftById(
   id: string,
 ) {
   await db.drafts.delete(id)
+}
+
+async function setDraftAsPosted(
+  id: string,
+) {
+  const now = time.getTime()
+  const u: Partial<DraftLocalTable> = {
+    oState: "POSTED",
+    updatedStamp: now,
+  }
+  await db.drafts.update(id, u)
 }
 
 async function clearDraftOnCloud(
@@ -112,6 +127,7 @@ export default {
   getDraftById,
   getDraft,
   deleteDraftById,
+  setDraftAsPosted,
   clearDraftOnCloud,
   setDraft,
   addContent,

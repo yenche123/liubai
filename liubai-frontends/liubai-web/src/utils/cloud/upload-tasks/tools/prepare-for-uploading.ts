@@ -382,9 +382,6 @@ async function organizeAtom(task: UploadTaskLocalTable) {
       id: task.draft_id,
       oState: "POSTED",
     }
-    if(draft) {
-      atom.draft.oState = draft.oState
-    }
     isOK = true
   }
   else if(ut === "draft-set" && draft) {

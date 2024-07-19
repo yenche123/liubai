@@ -130,7 +130,7 @@ export async function addUploadTask(
 }
 
 
-/** check out if there are draft-clear and draft-clear in upload_tasks 
+/** check out if there are draft-clear and draft-set in upload_tasks 
  *  when new task about draft is triggered 
  */
 async function checkDraft(
@@ -144,7 +144,6 @@ async function checkDraft(
   const w: Partial<UploadTaskLocalTable> = {
     user,
     draft_id,
-    progressType: "waiting",
   }
   const res = await db.upload_tasks.where(w).filter(filterFunc).toArray()
   if(res.length < 1) return

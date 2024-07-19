@@ -141,14 +141,7 @@ async function initDraft(
     return
   }
 
-  let draft = await localReq.getDraft(spaceIdRef.value)
-  const _id = draft?._id
-  const oState = draft?.oState
-  if(_id && (oState === "POSTED" || oState === "DELETED")) {
-    localReq.deleteDraftById(_id)
-    draft = null
-  }
-  
+  const draft = await localReq.getDraft(spaceIdRef.value)
   if(draft) {
     initDraftFromDraft(ctx, draft, loadCloud)
   }
@@ -351,17 +344,28 @@ async function initFromCloudDraft(
     resetFromCloud(ctx, cloud_draft, local_draft, local_thread)
     return
   }
+
+  // 6. pass if the id is in reject_draft_ids
+  const id_1 = cloud_draft._id
+  const id_2 = cloud_draft.first_id
+  const reject_ids = ceData.reject_draft_ids
+  if(reject_ids) {
+    if(reject_ids.includes(id_1) || reject_ids.includes(id_2)) {
+      localReq.deleteDraftById(id_1)
+      return
+    }
+  }
   
-  // 6. if it has been turned into LOCAL
+  // 7. if it has been turned into LOCAL
   if(oState === "LOCAL") {
     if(local_draft?.oState === "LOCAL") return
-    const s6 = ceData.storageState
-    if(s6 === "LOCAL" || s6 === "ONLY_LOCAL") return
+    const s7 = ceData.storageState
+    if(s7 === "LOCAL" || s7 === "ONLY_LOCAL") return
     ceData.storageState = "LOCAL"
     return
   }
 
-  // 7. check out the diff between local and cloud
+  // 8. check out the diff between local and cloud
   const e1 = cloud_draft.editedStamp
   const e2 = local_draft?.editedStamp ?? 1
   const diff = e2 - e1
