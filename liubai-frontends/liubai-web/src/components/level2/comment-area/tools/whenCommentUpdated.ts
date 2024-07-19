@@ -45,7 +45,7 @@ function handleAdded(
   if(!commentShow) return
 
   const { comments } = caData
-  const newComment = liuUtil.toRawData(commentShow)
+  const newComment = liuUtil.copy.newData(commentShow)
 
   // 0. 如果没有 replyToComment，代表为一级评论，直接添加到最前面
   if(!replyToComment) {

@@ -83,11 +83,15 @@ function whenCommentUpdate(
   } = cdData
 
   if(!targetComment) return
-
-  const changedId = state.commentId
-  const changeType = state.changeType
-  const newComment = liuUtil.toRawData(state.commentShow)
-  const { replyToComment, parentComment } = state
+  
+  const { 
+    commentId: changedId,
+    replyToComment, 
+    parentComment,
+    changeType,
+    commentShow,
+  } = state
+  const newComment = commentShow ? liuUtil.copy.newData(commentShow) : undefined
 
   // I. 如果目标评论就是被改变的评论
   if(targetId === changedId) {
