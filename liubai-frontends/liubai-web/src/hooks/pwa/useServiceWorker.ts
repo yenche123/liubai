@@ -11,6 +11,7 @@ const MIN_1 = time.MINUTE
 const MIN_15 = 15 * time.MINUTE
 
 let _updateSW: SimplePromise | undefined
+let _swRegistration: ServiceWorkerRegistration | undefined
 
 export function initServiceWorker() {
 
@@ -59,6 +60,7 @@ export function initServiceWorker() {
   ) => {
     // the func will be called every time you open the page
     // as long as sw is registered successfully
+    _swRegistration = r
     
     liuConsole.sendMessage(`Service Worker registered at: ${swUrl}`)
     if(!r) return
@@ -117,5 +119,10 @@ export async function toUpdateSW(
   
   localCache.setOnceData("lastInstallNewVersion", time.getTime())
   await _updateSW()
+}
+
+
+export function getSWRegistration() {
+  return _swRegistration
 }
 

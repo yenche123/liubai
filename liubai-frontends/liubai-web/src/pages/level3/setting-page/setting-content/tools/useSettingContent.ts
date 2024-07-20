@@ -16,7 +16,7 @@ import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 import middleBridge from "~/utils/middle-bridge"
 import { type MemberShow } from "~/types/types-content"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
-import { toUpdateSW } from "~/hooks/pwa/useServiceWorker"
+import { getSWRegistration, toUpdateSW } from "~/hooks/pwa/useServiceWorker"
 import valTool from "~/utils/basic/val-tool"
 import { useShowAddToHomeScreen } from "~/hooks/pwa/useA2HS"
 import liuReq from "~/requests/liu-req"
@@ -120,6 +120,15 @@ async function whenTapVersionUpdate(
     })
   }
 
+  const _loadingTip = () => {
+    cui.showModal({
+      title: "📡",
+      content_key: "pwa.installing_tip",
+      showCancel: false,
+      isTitleEqualToEmoji: true,
+    })
+  }
+
 
   let value = hasNewVersion.value
   if(value) {
@@ -134,10 +143,16 @@ async function whenTapVersionUpdate(
   value = hasNewVersion.value
   if(value) {
     _newVersion()
+    return
   }
-  else {
-    _noVersion()
+
+  const r = getSWRegistration()
+  if(r?.installing) {
+    _loadingTip()
+    return
   }
+
+  _noVersion()
 }
 
 async function whenTapNickname(

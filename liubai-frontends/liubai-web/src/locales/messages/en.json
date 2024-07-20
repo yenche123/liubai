@@ -442,7 +442,8 @@
     "new_version_lanuch": "Launch🚀",
     "checking": "Checking..",
     "new_version_desc2": "The new version has been downloaded. Do you want to update it now?",
-    "no_new_version": "All good! No new version yet."
+    "no_new_version": "All good! No new version yet.",
+    "installing_tip": "We are loading new version. Please wait a moment and click again."
   },
   "index": {
     "inbox": "Inbox",
