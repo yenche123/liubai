@@ -44,13 +44,11 @@ const vitePlugins: UserConfig['plugins'] = [
     registerType: "prompt",
     manifest: false,
     strategies: "injectManifest",
-    workbox: {
-      globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg}']
-    },
     srcDir: "src",
     filename: "service-worker.ts",
     injectManifest: {
       minify: true,
+      globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,gif,svg}'],
     },
 
     // open it if you want to test service worker update on dev mode
