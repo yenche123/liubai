@@ -31,6 +31,7 @@ import { CloudFiler } from "~/utils/cloud/CloudFiler"
 import ider from "~/utils/basic/ider"
 import { useThrottleFn } from "~/hooks/useVueUse"
 import { useActiveSyncNum } from "~/hooks/useCommon"
+import { LocalToCloud } from "~/utils/cloud/LocalToCloud"
 
 const SEC_6 = 6 * time.SECONED
 const SEC_30 = 30 * time.SECONED
@@ -332,20 +333,41 @@ async function initFromCloudDraft(
   if(ceData.draftId) {
     local_draft = await localReq.getDraftById(ceData.draftId)
   }
+  if(!local_draft) {
+    local_draft = await localReq.getDraftById(cloud_draft._id)
+  }
   if(ceData.threadEdited) {
     local_thread = await localReq.getContentById(ceData.threadEdited)
   }
 
   const oState = cloud_draft.oState
+  const localState = local_draft?.oState
   
-
   // 5. if it is posted or deleted
   if(oState === "POSTED" || oState === "DELETED") {
     resetFromCloud(ctx, cloud_draft, local_draft, local_thread)
     return
   }
 
-  // 6. pass if the id is in reject_draft_ids
+  console.log("远程的 draft: ")
+  console.log(cloud_draft)
+  console.log("本地的 draft: ")
+  console.log(local_draft)
+
+  // 6. localState is DELETED or POSTED
+  if(localState === "POSTED" || localState === "DELETED") {
+    if(cloud_draft.first_id === local_draft?.first_id) {
+      console.warn("to clear posted draft......")
+      LocalToCloud.addTask({
+        uploadTask: "draft-clear",
+        target_id: cloud_draft._id,
+        operateStamp: time.getTime(),
+      })
+      return
+    }
+  }
+
+  // 7. pass if the id is in reject_draft_ids
   const id_1 = cloud_draft._id
   const id_2 = cloud_draft.first_id
   const reject_ids = ceData.reject_draft_ids
@@ -356,20 +378,20 @@ async function initFromCloudDraft(
     }
   }
   
-  // 7. if it has been turned into LOCAL
+  // 8. if it has been turned into LOCAL
   if(oState === "LOCAL") {
     if(local_draft?.oState === "LOCAL") return
-    const s7 = ceData.storageState
-    if(s7 === "LOCAL" || s7 === "ONLY_LOCAL") return
+    const s8 = ceData.storageState
+    if(s8 === "LOCAL" || s8 === "ONLY_LOCAL") return
     ceData.storageState = "LOCAL"
     return
   }
 
-  // 8. check out the diff between local and cloud
+  // 9. check out the diff between local and cloud
   const e1 = cloud_draft.editedStamp
   const e2 = local_draft?.editedStamp ?? 1
   const diff = e2 - e1
-  if(diff > SEC_30) return
+  if(diff >= 0) return
 
   const oldDraftId = ceData.draftId
   ceData.lastLockStamp = time.getTime()

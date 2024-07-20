@@ -60,7 +60,7 @@ async function getRawData(task: UploadTaskLocalTable) {
   }
 
   // 2.4 get draft
-  if(isDraft && draft_id) {
+  if(isDraft && draft_id && ut !== "draft-clear") {
     draft = await db.drafts.get(draft_id)
   }
 
