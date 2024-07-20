@@ -86,6 +86,10 @@ defineExpose({ editor })
       margin-block-end: 8px;
     }
 
+    ol:has(li:nth-last-child(10)) {
+      padding: 0 0 0 40px;
+    }
+
     li {
       line-height: 1.7;
     }
