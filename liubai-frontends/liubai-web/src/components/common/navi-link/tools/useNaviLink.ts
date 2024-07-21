@@ -17,6 +17,7 @@ export function useNaviLink(props: any, emit: NaviLinkEmits) {
     emit("aftertap", toRoute)
 
     const num = getNaviBackStackNum(toRoute, fromRoute, stacks)
+    console.log("num: ", num)
     if(num === 0) {
       return
     }
@@ -40,8 +41,13 @@ function getNaviBackStackNum(
   fromRoute: RouteLocationNormalizedLoaded,
   stacks: RouteLocationNormalized[],
 ) {
-  if(fromRoute.name === toRoute.name) return 0
+  if(fromRoute.name === toRoute.name) {
+    console.warn("两者名称相同，无需跳转......")
+    return 0
+  }
   const stackLength = stacks.length
+  console.log("stackLength: ", stackLength)
+
   for(let i = stackLength-1; i >= 0; i--) {
     const curStack = stacks[i]
     if(curStack.name === toRoute.name) {
