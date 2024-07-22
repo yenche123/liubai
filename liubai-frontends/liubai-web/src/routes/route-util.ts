@@ -1,4 +1,4 @@
-import { RouteLocationNormalized } from "vue-router"
+import type { RouteLocationNormalized } from "vue-router"
 
 
 // 要 path / query 都一一匹配 才视为相同 route
