@@ -72,8 +72,8 @@ importers:
         specifier: 2.5.4
         version: 2.5.4(@tiptap/core@2.5.4(@tiptap/pm@2.5.4))(@tiptap/pm@2.5.4)(vue@3.4.33(typescript@5.5.3))
       '@vuepic/vue-datepicker':
-        specifier: ^8.8.1
-        version: 8.8.1(vue@3.4.33(typescript@5.5.3))
+        specifier: ^9.0.1
+        version: 9.0.1(vue@3.4.33(typescript@5.5.3))
       '@vueuse/core':
         specifier: ^10.11.0
         version: 10.11.0(vue@3.4.33(typescript@5.5.3))
@@ -120,8 +120,8 @@ importers:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.5.3)(vue@3.4.33(typescript@5.5.3))
       posthog-js:
-        specifier: ^1.142.1
-        version: 1.142.1
+        specifier: ^1.148.0
+        version: 1.148.0
       prosemirror-virtual-cursor:
         specifier: ^0.4.2
         version: 0.4.2(prosemirror-model@1.22.2)(prosemirror-state@1.4.3)(prosemirror-view@1.33.9)
@@ -190,8 +190,8 @@ importers:
         specifier: ^1.1.3
         version: 1.1.3(rollup@4.19.0)
       vite-plugin-inspect:
-        specifier: ^0.8.4
-        version: 0.8.4(rollup@4.19.0)(vite@5.3.4(@types/node@20.14.11)(sass@1.77.8)(terser@5.31.3))
+        specifier: ^0.8.5
+        version: 0.8.5(rollup@4.19.0)(vite@5.3.4(@types/node@20.14.11)(sass@1.77.8)(terser@5.31.3))
       vite-plugin-mkcert:
         specifier: ^1.17.5
         version: 1.17.5(vite@5.3.4(@types/node@20.14.11)(sass@1.77.8)(terser@5.31.3))
@@ -223,8 +223,8 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@antfu/utils@0.7.7':
-    resolution: {integrity: sha512-gFPqTG7otEJ8uP6wrhDv6mqwGWYZKNvAcCq6u9hOj0c+IKCEsY4L1oC9trPq2SaWIzAfHvqfBDxF591JkMf+kg==}
+  '@antfu/utils@0.7.10':
+    resolution: {integrity: sha512-+562v9k4aI80m1+VuMHehNJWLOFjBnXn3tdOitzD0il5b7smkSBal4+a3oKiQTbrwMmN/TBUMDvbdoWDehgOww==}
 
   '@apideck/better-ajv-errors@0.3.6':
     resolution: {integrity: sha512-P+ZygBLZtkp0qqOAJJVX4oX/sFo5JR3eBWwwuqHHhK0GIgQOKWrAfiAaWX0aArHkRWHMuggFEgAZNxVPwPZYaA==}
@@ -1745,8 +1745,9 @@ packages:
   '@vue/shared@3.4.33':
     resolution: {integrity: sha512-aoRY0jQk3A/cuvdkodTrM4NMfxco8n55eG4H7ML/CRy7OryHfiqvug4xrCBBMbbN+dvXAetDDwZW9DXWWjBntA==}
 
-  '@vuepic/vue-datepicker@8.8.1':
-    resolution: {integrity: sha512-8ehfUz1m69Vuc16Pm4ukgb3Mg1VT14x4EsG1ag4O/qbSNRWztTo+pUV4JnFt0FGLl5gGb6NXlxIvR7EjLgD7Gg==}
+  '@vuepic/vue-datepicker@9.0.1':
+    resolution: {integrity: sha512-5sSdwib5cY8cE4Y7SCh+Zemfp+U/m6BDcgaPwd5Vmdv5LAASyV0wugn9sTb6NWX0sIQEdrGDl/RmD9EjcIke3A==}
+    engines: {node: '>=18.12.0'}
     peerDependencies:
       vue: '>=3.2.0'
 
@@ -2249,8 +2250,8 @@ packages:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
     engines: {node: '>=0.12'}
 
-  error-stack-parser-es@0.1.1:
-    resolution: {integrity: sha512-g/9rfnvnagiNf+DRMHEVGuGuIBlCIMDFoTA616HaP2l9PlCjGjVhD98PNbVSJvmK4TttqT5mV5tInMhoFgi+aA==}
+  error-stack-parser-es@0.1.5:
+    resolution: {integrity: sha512-xHku1X40RO+fO8yJ8Wh2f2rZWVjqyhb1zgq1yZ8aZRQkv6OOKhKWRUaht3eSCUbAOBaKIgM+ykwFLE+QUxgGeg==}
 
   error-stack-parser@2.1.4:
     resolution: {integrity: sha512-Sk5V6wVazPhq5MhpO+AUxJn5x7XSXGl1R93Vn7i+zS15KDVxQijejNCrz8340/2bgLBjR9GtEG8ZVKONDjcqGQ==}
@@ -3208,8 +3209,8 @@ packages:
     resolution: {integrity: sha512-0vzE+lAiG7hZl1/9I8yzKLx3aR9Xbof3fBHKunvMfOCYAtMhrsnccJY2iTURb9EZd5+pLuiNV9/c/GZJOHsgIw==}
     engines: {node: ^10 || ^12 || >=14}
 
-  posthog-js@1.142.1:
-    resolution: {integrity: sha512-yqeWTWitlb0sCaH5v6s7UJ+pPspzf/lkzPaSE5pMMXRM2i2KNsMoZEAZqbPCW8fQ8QL6lHs6d8PLjHrvbR288w==}
+  posthog-js@1.148.0:
+    resolution: {integrity: sha512-nydf+aret26YViDBwH7DdN/c8dmCzQGNQ1yredeE47UlbpJ3J/iTgskNdmGJIofFcdSagcwAE/FF7s++YfTtvg==}
 
   posthtml-parser@0.2.1:
     resolution: {integrity: sha512-nPC53YMqJnc/+1x4fRYFfm81KV2V+G9NZY+hTohpYg64Ay7NemWWcV4UWuy/SgMupqQ3kJ88M/iRfZmSnxT+pw==}
@@ -3855,8 +3856,8 @@ packages:
   vite-plugin-compression2@1.1.3:
     resolution: {integrity: sha512-I5XVfEdGY9ZQqRjGRS/sokKofapH7FKHRyrAulMqDyGaOgWqrABGS6eyWsKwWLPKv13cvz/a1F5z9yY3a3uIkw==}
 
-  vite-plugin-inspect@0.8.4:
-    resolution: {integrity: sha512-G0N3rjfw+AiiwnGw50KlObIHYWfulVwaCBUBLh2xTW9G1eM9ocE5olXkEYUbwyTmX+azM8duubi+9w5awdCz+g==}
+  vite-plugin-inspect@0.8.5:
+    resolution: {integrity: sha512-JvTUqsP1JNDw0lMZ5Z/r5cSj81VK2B7884LO1DC3GMBhdcjcsAnJjdWq7bzQL01Xbh+v60d3lju3g+z7eAtNew==}
     engines: {node: '>=14'}
     peerDependencies:
       '@nuxt/kit': '*'
@@ -4127,7 +4128,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
-  '@antfu/utils@0.7.7': {}
+  '@antfu/utils@0.7.10': {}
 
   '@apideck/better-ajv-errors@0.3.6(ajv@8.17.1)':
     dependencies:
@@ -5823,7 +5824,7 @@ snapshots:
 
   '@vue/shared@3.4.33': {}
 
-  '@vuepic/vue-datepicker@8.8.1(vue@3.4.33(typescript@5.5.3))':
+  '@vuepic/vue-datepicker@9.0.1(vue@3.4.33(typescript@5.5.3))':
     dependencies:
       date-fns: 3.6.0
       vue: 3.4.33(typescript@5.5.3)
@@ -6354,7 +6355,7 @@ snapshots:
 
   entities@4.5.0: {}
 
-  error-stack-parser-es@0.1.1: {}
+  error-stack-parser-es@0.1.5: {}
 
   error-stack-parser@2.1.4:
     dependencies:
@@ -7350,7 +7351,7 @@ snapshots:
       picocolors: 1.0.1
       source-map-js: 1.2.0
 
-  posthog-js@1.142.1:
+  posthog-js@1.148.0:
     dependencies:
       fflate: 0.4.8
       preact: 10.22.0
@@ -8119,16 +8120,16 @@ snapshots:
     transitivePeerDependencies:
       - rollup
 
-  vite-plugin-inspect@0.8.4(rollup@4.19.0)(vite@5.3.4(@types/node@20.14.11)(sass@1.77.8)(terser@5.31.3)):
+  vite-plugin-inspect@0.8.5(rollup@4.19.0)(vite@5.3.4(@types/node@20.14.11)(sass@1.77.8)(terser@5.31.3)):
     dependencies:
-      '@antfu/utils': 0.7.7
+      '@antfu/utils': 0.7.10
       '@rollup/pluginutils': 5.1.0(rollup@4.19.0)
-      debug: 4.3.4
-      error-stack-parser-es: 0.1.1
+      debug: 4.3.5
+      error-stack-parser-es: 0.1.5
       fs-extra: 11.2.0
       open: 10.1.0
       perfect-debounce: 1.0.0
-      picocolors: 1.0.0
+      picocolors: 1.0.1
       sirv: 2.0.4
       vite: 5.3.4(@types/node@20.14.11)(sass@1.77.8)(terser@5.31.3)
     transitivePeerDependencies:

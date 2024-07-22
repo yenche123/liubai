@@ -61,9 +61,11 @@ const previewDate = computed(() => {
       v-model="date"
       :min-date="minDate"
       :max-date="maxDate"
-      menuClassName="dp-custom-menu"
-      calendarClassName="dp-custom-calendar-wrapper"
-      calendarCellClassName="dp-custom-cell"
+      :ui="{
+        menu: 'dp-custom-menu',
+        calendar: 'dp-custom-calendar-wrapper',
+        calendarCell: 'dp-custom-cell',
+      }"
       minutesIncrement="5"
       @internalModelChange="handleInternal"
     >
