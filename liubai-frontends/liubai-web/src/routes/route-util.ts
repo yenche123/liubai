@@ -8,7 +8,13 @@ export const isSameRoute = (r1: string, r2: RouteLocationNormalized): boolean =>
   const url = new URL(r1, location.origin)
 
   const idx = r2.fullPath.indexOf(url.pathname)
-  if(idx !== 0) return false
+  if(idx !== 0) {
+    return false
+  }
+
+  if(r2.path !== url.pathname) {
+    return false
+  }
 
   const queryKeys = Object.keys(r2.query)
   for(let i=0; i<queryKeys.length; i++) {

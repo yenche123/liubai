@@ -56,7 +56,7 @@ let lastSetPopStateStamp = 0
 // 超出有效间隔的事件，皆视为由浏览器所触发
 // 如果在切换路由过程中含有远程获取云端数据，请主动调大间隔
 const DEFAULT_DURATION = 60
-let availableDuration = 60
+let availableDuration = 120
 
 // 上一次主动记录堆栈的事件戳
 let routeChangeTmpData: RouteChangeState = {}
@@ -385,7 +385,13 @@ const _judgeBrowserJump = (): void => {
   const now = time.getLocalTime()
   const diff = now - stamp
   const diff2 = now - lastSetPopStateStamp
-  if(diff > availableDuration || diff2 > availableDuration) return
+  if(diff > availableDuration || diff2 > availableDuration) {
+    console.warn("被阻断了......")
+    console.log(diff)
+    console.log(diff2)
+    console.log(" ")
+    return
+  }
   
   const { current, forward, back } = stateFromPopState
 
@@ -404,11 +410,16 @@ const _judgeBrowserJump = (): void => {
     for(let i=oldStackLen-1; i>=0; i--) {
       const v = stack[i]
       const isSame = isSameRoute(current, v)
+      console.log("isSame: ", isSame)
       if(!isSame) continue
       hasFindCurrent = true
 
       // 找到 current 时，发现该索引之后还存在数据，就去删掉
       const nextIdx = i + 1
+      console.log("nextIdx: ", nextIdx)
+      console.log("oldStackLen: ", oldStackLen)
+      console.log(" ")
+
       if(oldStackLen > nextIdx) {
         stack.splice(nextIdx, oldStackLen - nextIdx)
       }
@@ -458,9 +469,9 @@ const initLiuRouter = (): RouteAndRouter => {
   })
 
   const _listenPopState = (e: PopStateEvent) => {
-    // console.log("popstate...........")
-    // console.log(e)
-    // console.log(" ")
+    console.log(" ")
+    console.log("popstate...........")
+    console.log(e.state)
 
     stateFromPopState = e.state
     lastSetPopStateStamp = time.getLocalTime()

@@ -1,6 +1,7 @@
 import { RouteLocationNormalized, RouteLocationNormalizedLoaded, useLink } from 'vue-router'
 import { useRouteAndLiuRouter } from '~/routes/liu-router'
 import type { ToRoute } from "~/types"
+import valTool from '~/utils/basic/val-tool'
 
 interface NaviLinkEmits {
   (event: "aftertap", toRoute: ToRoute): void
@@ -42,10 +43,10 @@ function getNaviBackStackNum(
   stacks: RouteLocationNormalized[],
 ) {
   if(fromRoute.name === toRoute.name) {
-    console.warn("两者名称相同，无需跳转......")
     return 0
   }
   const stackLength = stacks.length
+  console.log(valTool.copyObject(stacks))
   console.log("stackLength: ", stackLength)
 
   for(let i = stackLength-1; i >= 0; i--) {
