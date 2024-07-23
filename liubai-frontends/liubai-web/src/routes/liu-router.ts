@@ -55,8 +55,7 @@ let lastSetPopStateStamp = 0
 // 有效间隔
 // 超出有效间隔的事件，皆视为由浏览器所触发
 // 如果在切换路由过程中含有远程获取云端数据，请主动调大间隔
-const DEFAULT_DURATION = 60
-let availableDuration = 120
+let availableDuration = 300
 
 // 上一次主动记录堆栈的事件戳
 let routeChangeTmpData: RouteChangeState = {}
