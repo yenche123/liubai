@@ -531,10 +531,15 @@ async function toPostThread(
   const { title } = thread
   const enc_title = encryptDataWithAES(title, aesKey)
 
-  // 6. construct a new row of Table_Content
-  const b6 = getBasicStampWhileAdding(ssCtx)
+  // 6. check if it has existed
+  const createdStamp = thread.createdStamp as number
+  const res6 = await checkIfContentExisted(userId, first_id, createdStamp, taskId)
+  if(res6) return res6
+
+  // 7. construct a new row of Table_Content
+  const b7 = getBasicStampWhileAdding(ssCtx)
   const newRow: PartialSth<Table_Content, "_id"> = {
-    ...b6,
+    ...b7,
     first_id,
     user: userId,
     member: memberId,
@@ -555,7 +560,7 @@ async function toPostThread(
     emojiData: thread.emojiData as EmojiData,
     pinStamp: thread.pinStamp,
 
-    createdStamp: thread.createdStamp as number,
+    createdStamp,
     editedStamp: thread.editedStamp as number,
     removedStamp: thread.removedStamp,
 
@@ -625,10 +630,15 @@ async function toPostComment(
   if(!res3.pass) return res3.result
   const { spaceType } = res3
 
-  // 4. construct a new row of Table_Content
-  const b4 = getBasicStampWhileAdding(ssCtx)
+  // 4. check if it has existed
+  const createdStamp = comment.createdStamp as number
+  const res4 = await checkIfContentExisted(userId, first_id, createdStamp, taskId)
+  if(res4) return res4
+
+  // 5. construct a new row of Table_Content
+  const b5 = getBasicStampWhileAdding(ssCtx)
   const newRow: PartialSth<Table_Content, "_id"> = {
-    ...b4,
+    ...b5,
     first_id,
     user: userId,
     member: memberId,
@@ -642,7 +652,7 @@ async function toPostComment(
     enc_images,
     enc_files,
     emojiData: comment.emojiData as EmojiData,
-    createdStamp: comment.createdStamp as number,
+    createdStamp,
     editedStamp: comment.editedStamp as number,
     parentThread: comment.parentThread,
     parentComment: comment.parentComment,
@@ -1728,6 +1738,42 @@ async function toDraftClear(
 
 
 /***************************** helper functions ************************ */
+
+async function checkIfContentExisted(
+  userId: string,
+  first_id: string,
+  createdStamp: number,
+  taskId: string,
+): Promise<SyncSetAtomRes | undefined> {
+  const w = {
+    user: userId,
+    first_id,
+  }
+  const res1 = await db.collection("Content").where(w).get<Table_Content>()
+  const d1 = res1.data
+  if(!d1 || d1.length < 1) {
+    return
+  }
+
+  let hasFound = false
+  for(let i=0; i<d1.length; i++) {
+    const v = d1[i]
+    const diff = Math.abs(v.createdStamp - createdStamp)
+    if(diff < 1000) {
+      hasFound = true
+      break
+    }
+  }
+
+  console.warn("checkIfContentExisted hasFound::: ", hasFound)
+  if(!hasFound) return
+
+  return {
+    code: "0001",
+    taskId,
+  }
+}
+
 
 function canIEditTheContent(
   ssCtx: SyncSetCtx,
