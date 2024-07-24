@@ -25,6 +25,7 @@ const {
   data,
   onTapTheme,
   onTapLanguage,
+  onTapFontSize,
   onTapTerms,
   onTapLogout,
   onTapAccounts,
@@ -43,6 +44,12 @@ const themeTextKey = computed(() => {
   const theme = data.theme
   if(theme === "auto") return "setting.day_and_night"
   return `setting.${theme}`
+})
+
+const fsTextKey = computed(() => {
+  const fontSize = data.fontSize
+  if(fontSize === "L") return "setting.font_large"
+  return "setting.font_medium"
 })
 
 const iconColor = "var(--main-normal)"
@@ -181,6 +188,34 @@ const iconColor = "var(--main-normal)"
             </div>
           </div>
         </div>
+
+        <!-- font size -->
+        <div class="liu-no-user-select liu-hover sc-bar" 
+          @click.stop="onTapFontSize"
+        >
+          <div class="scb-hd">
+            <span>{{ t('setting.font_size') }}</span>
+          </div>
+          <div class="scb-footer">
+
+            <div class="scb-footer-text">
+              <span>{{ t(fsTextKey) }}</span>
+            </div>
+            <div class="scb-footer-icon">
+              <svg-icon v-if="data.fontSize === 'M'"
+                class="scbf-svg-icon" 
+                name="cup_medium"
+                :color="iconColor"
+              ></svg-icon>
+              <svg-icon v-else
+                class="scbf-svg-icon" 
+                name="cup_large"
+                :color="iconColor"
+              ></svg-icon>
+            </div>
+          </div>
+        </div>
+
 
       </div>
 

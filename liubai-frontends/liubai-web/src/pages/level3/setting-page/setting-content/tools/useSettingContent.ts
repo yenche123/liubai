@@ -6,6 +6,7 @@ import { getLanguageList, getTermsList } from "./get-list"
 import { handleLogoutWithPurlyLocal } from "./handle-logout"
 import { whenTapTheme } from "./handle-theme"
 import { whenTapLanguage } from "./handle-lang"
+import { whenTapFontSize } from "./handle-font-size"
 import liuEnv from "~/utils/liu-env"
 import { useSystemStore } from "~/hooks/stores/useSystemStore"
 import { storeToRefs } from "pinia"
@@ -35,6 +36,7 @@ export function useSettingContent() {
     language: "system",
     language_txt: "",
     theme: "system",
+    fontSize: onceData.fontSize ?? "L",
     openTerms: false,
     termsList: getTermsList(),
     hasBackend,
@@ -48,8 +50,6 @@ export function useSettingContent() {
   const { toA2HS } = listenToA2HS(data)
   listenSystemStore(data)
 
-  const onTapTheme = () => whenTapTheme(data)
-  const onTapLanguage = () => whenTapLanguage(data)
   const onTapAccounts = () => {
     cui.showModal({ 
       iconName: "emojis-construction_color", 
@@ -80,8 +80,9 @@ export function useSettingContent() {
     myProfile,
     prefix,
     data,
-    onTapTheme,
-    onTapLanguage,
+    onTapTheme: () => whenTapTheme(data),
+    onTapLanguage: () => whenTapLanguage(data),
+    onTapFontSize: () => whenTapFontSize(data),
     onTapTerms: () => data.openTerms = !data.openTerms,
     onTapLogout: () => whenTapLogout(),
     onTapAccounts,
@@ -188,10 +189,14 @@ function listenSystemStore(
   data: SettingContentData
 ) {
   const systemStore = useSystemStore()
-  const { local_theme, local_lang } = storeToRefs(systemStore)
+  const { 
+    local_theme, 
+    local_lang,
+    local_font_size,
+  } = storeToRefs(systemStore)
 
-  watch([local_theme, local_lang], (newV) => {
-    const [theme, lang] = newV
+  watch([local_theme, local_lang, local_font_size], (newV) => {
+    const [theme, lang, fontSize] = newV
 
     if(data.theme !== theme) {
       data.theme = theme
@@ -202,6 +207,11 @@ function listenSystemStore(
       const langList = getLanguageList()
       const langItem = langList.find(v => v.id === lang)
       if(langItem) data.language_txt = langItem.text
+    }
+
+
+    if(fontSize !== data.fontSize) {
+      data.fontSize = fontSize
     }
 
   }, { immediate: true })

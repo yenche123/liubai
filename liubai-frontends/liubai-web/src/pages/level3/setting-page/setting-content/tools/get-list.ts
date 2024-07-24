@@ -2,7 +2,8 @@ import { i18n } from "~/locales"
 import type { 
   LanguageItem, 
   ThemeItem,
-  TermsItem
+  TermsItem,
+  FontSizeItem
 } from "./types"
 import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
@@ -71,6 +72,22 @@ export function getLanguageList() {
     {
       id: "en",
       text: "English",
+    }
+  ]
+  return list
+}
+
+export function getFontSizeList() {
+  const list: FontSizeItem[] = [
+    {
+      text: t('setting.font_large'),
+      id: "L",
+      iconName: "cup_large",
+    },
+    {
+      text: t("setting.font_medium"),
+      id: "M",
+      iconName: "cup_medium",
     }
   ]
   return list

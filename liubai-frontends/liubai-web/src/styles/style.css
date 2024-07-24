@@ -18,20 +18,6 @@
   /** 标准页宽 竖列模式 */
   --standard-max-px: 500px;
 
-  /** 各字号 */
-  --big-word-style: 36px;
-  --head-font: 28px;
-  --title-font: 24px;
-  --desc-font: 20px;
-  --inline-code-font: 18px;
-  --btn-font: 17px;
-  --mini-font: 15px;
-  --state-font: 13px;
-
-  /** 评论的文字大小 */
-  --comment-font: 18px;
-  --comment-inline-code: 16px;
-
   /** 卡片宽度 */
   --card-min: 200px;
   --card-max: 580px;
@@ -44,6 +30,37 @@
   /** about custom-editor */
   --ce-border-radius: 20px;
 }
+
+/** font-size: L */
+.liu-font-large {
+  --big-word-style: 36px;
+  --head-font: 28px;
+  --title-font: 24px;
+  --desc-font: 20px;
+  --inline-code-font: 18px;
+  --btn-font: 17px;
+  --mini-font: 15px;
+  --state-font: 13px;
+
+  --comment-font: 18px;
+  --comment-inline-code: 16px;
+}
+
+.liu-font-medium {
+  --big-word-style: 30px;
+  --head-font: 24px;
+  --title-font: 21px;
+  --desc-font: 18px;
+  --inline-code-font: 16px;
+  --btn-font: 16px;
+  --mini-font: 14px;
+  --state-font: 13px;
+
+  --comment-font: 16px;
+  --comment-inline-code: 15px;
+}
+
+
 
 @media screen and (max-width: 340px) {
   :root {

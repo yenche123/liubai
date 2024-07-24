@@ -2,7 +2,6 @@ import type {
   LocalPreference, 
   LocalOnceData, 
   KeyOfLocalOnceData,
-  LocalConfigData,
 } from "./tools/types";
 import liuApi from "../liu-api";
 import liuEnv from "../liu-env";

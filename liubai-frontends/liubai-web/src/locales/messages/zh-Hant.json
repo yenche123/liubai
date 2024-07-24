@@ -344,7 +344,10 @@
     "clear_cache_1": "確定要清除緩存嗎？",
     "select_avatar": "應用內尚未支援裁切，請自行裁切成矩行再選取喔！",
     "contact_dev": "聯繫開發者",
-    "detect_version": "檢查更新"
+    "detect_version": "檢查更新",
+    "font_large": "大杯",
+    "font_medium": "中杯",
+    "font_size": "文字大小"
   },
   "export": {
     "markdown": "匯出成 markdown 文件",

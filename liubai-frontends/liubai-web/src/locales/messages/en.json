@@ -344,7 +344,10 @@
     "clear_cache_1": "Are you sure to clear cache?",
     "select_avatar": "Cropping is not supported yet. Crop by yourself and select it please!",
     "contact_dev": "Contact Developer",
-    "detect_version": "Version Update"
+    "detect_version": "Version Update",
+    "font_large": "Large",
+    "font_medium": "Medium",
+    "font_size": "Font Size"
   },
   "export": {
     "markdown": "Export as markdown files",

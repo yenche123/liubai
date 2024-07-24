@@ -48,15 +48,10 @@ export interface LocalOnceData {
   // the timestamp when user launched the app
   launchStamp?: number
 
+  // font size
+  fontSize?: "L" | "M"
+
 }
 
 export type KeyOfLocalOnceData = keyof LocalOnceData
 
-// 存储一些配置信息
-export interface LocalConfigData {
-
-  // 登录时的 配置信息
-  userLoginInitStamp?: number
-  userloginInitCfg?: Res_UserLoginInit
-  
-}

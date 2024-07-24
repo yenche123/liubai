@@ -4,6 +4,7 @@ import { type Ref, ref } from "vue";
 import type {
   SupportedTheme, 
   LocalTheme,
+  LocalFontSize,
 } from "~/types/types-atom";
 import type { LocalLocale, SupportedLocale } from "~/types/types-locale";
 import liuApi from "~/utils/liu-api";
@@ -20,11 +21,13 @@ export const useSystemStore = defineStore("system", () => {
   const local_lang = ref<LocalLocale>("system")
   const supported_lang = i18n.global.locale
 
+  const local_font_size = ref<LocalFontSize>("L")
+  
   initTheme(local_theme, supported_theme)
   initLang(local_lang)
+  initFontSize(local_font_size)
 
-  const setTheme = (theme?: LocalTheme) => {
-    if(!theme) theme = "system"
+  const setTheme = (theme: LocalTheme = "system") => {
     if(theme === local_theme.value) return
     localCache.setPreference("theme", theme)
     local_theme.value = theme
@@ -32,8 +35,7 @@ export const useSystemStore = defineStore("system", () => {
     setClassForTheme(supported_theme)
   }
 
-  const setLanguage = (lang?: LocalLocale) => {
-    if(!lang) lang = "system"
+  const setLanguage = (lang: LocalLocale = "system") => {
     if(lang === local_lang.value) return
     localCache.setPreference("language", lang)
     local_lang.value = lang
@@ -41,13 +43,23 @@ export const useSystemStore = defineStore("system", () => {
     middleBridge.setAppTitle()
   }
 
+  const setFontSize = (size: LocalFontSize = "L") => {
+    if(size === local_font_size.value) return
+    localCache.setOnceData("fontSize", size)
+    local_font_size.value = size
+    setClassForFontSize(local_font_size)
+  }
+
+
   return {
     local_theme,
     supported_theme,
     local_lang,
     supported_lang,
+    local_font_size,
     setTheme,
     setLanguage,
+    setFontSize,
   }
 
 })
@@ -88,6 +100,15 @@ function setClassForTheme(
   const color = cfg.title_bar_colors[t]
   const theme_color = document.querySelector(`head > meta[name="theme-color"]`)
   theme_color?.setAttribute("content", color)
+}
+
+function setClassForFontSize(
+  local_font_size: Ref<LocalFontSize>,
+) {
+  const val = local_font_size.value
+  const body = document.querySelector("body")
+  const isMedium = val === "M"
+  body?.classList.toggle("liu-font-medium", isMedium)
 }
 
 function toSetSupportedLang(
@@ -136,5 +157,18 @@ function initLang(
   }
   else {
     local_lang.value = language
+  }
+}
+
+function initFontSize(
+  local_font_size: Ref<LocalFontSize>,
+) {
+  const { fontSize = "L" } = localCache.getOnceData()
+  if(fontSize !== local_font_size.value) {
+    local_font_size.value = fontSize
+  }
+
+  if(fontSize !== "L") {
+    setClassForFontSize(local_font_size)
   }
 }
