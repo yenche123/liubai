@@ -124,12 +124,12 @@ const iconColor = "var(--main-normal)"
 
       </div>
 
-      <!-- 个人偏好 -->
+      <!-- preference -->
       <div class="liu-no-user-select sc-title">
         <span>{{ t('setting.preference') }}</span>
       </div>
       <div class="sc-box">
-        <!-- 主题 -->
+        <!-- theme -->
         <div class="liu-no-user-select liu-hover sc-bar" 
           @click.stop="onTapTheme"
         >
@@ -167,7 +167,7 @@ const iconColor = "var(--main-normal)"
           </div>
         </div>
 
-        <!-- 语言 -->
+        <!-- language -->
         <div class="liu-no-user-select liu-hover sc-bar" 
           @click.stop="onTapLanguage"
         >

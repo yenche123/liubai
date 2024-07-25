@@ -347,7 +347,8 @@
     "contact_dev": "联系开发者",
     "font_size": "字体大小",
     "font_large": "大杯",
-    "font_medium": "中杯"
+    "font_medium": "中杯",
+    "font_select": "请选择字体大小"
   },
   "export": {
     "markdown": "导出成 markdown 文件",

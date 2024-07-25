@@ -15,7 +15,10 @@ export async function whenTapFontSize(
     }
   })
 
-  const res = await cui.showActionSheet({ itemList })
+  const res = await cui.showActionSheet({
+    title_key: "setting.font_select",
+    itemList,
+  })
   if(res.result !== "option" || res.tapIndex === undefined) return
   const item = list[res.tapIndex]  
   const id = item.id
