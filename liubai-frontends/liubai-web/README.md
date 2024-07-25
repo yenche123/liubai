@@ -97,8 +97,6 @@ https://emojis.alexandru.so/  AI 生成 emoji
 
 https://www.bing.com/images/create  用 DALL-E 3 生成插图
 
-https://svgl.vercel.app/    聚焦各大 Logo 的 SVG
-
 https://openmoji.org/
 
 https://svgl.app/   收录各品牌的 logo

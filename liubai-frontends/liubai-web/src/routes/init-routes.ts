@@ -24,6 +24,7 @@ const PaymentSuccessPage = () => import("../pages/level3/payments/success-page/s
 const A2hsPage = () => import("../pages/level3/a2hs-page/a2hs-page.vue")
 
 export const routes: Array<RouteRecordRaw> = [
+  /*************** 公共页面（不区分工作区） ***************/
   {
     path: "/home",
     component: HomePage,
@@ -59,13 +60,34 @@ export const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/",
+    path: "/a2hs",
+    component: A2hsPage,
+    name: "a2hs",
+    meta: {
+      inApp: false,
+    }
+  },
+  {
+    path: "/subscription",
     components: {
-      default: IndexPage,
+      default: SubscribePage,
       LeftSidebar,
     },
-    name: "index",
-    meta: {}
+    name: "subscription",
+    meta: {
+      checkWorkspace: false,
+    },
+  },
+  {
+    path: "/payment-success",
+    components: {
+      default: PaymentSuccessPage,
+      LeftSidebar,
+    },
+    name: "payment-success",
+    meta: {
+      checkWorkspace: false,
+    },
   },
   {
     path: "/:contentId(\\w{10,})",
@@ -99,6 +121,16 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       checkWorkspace: false,
     }
+  },
+  /*************** Personal Workspace ***************/
+  {
+    path: "/",
+    components: {
+      default: IndexPage,
+      LeftSidebar,
+    },
+    name: "index",
+    meta: {}
   },
   {
     path: "/tag/:tagId(\\w{18,})",
@@ -200,37 +232,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "notification",
     meta: {}
   },
-  {
-    path: "/a2hs",
-    component: A2hsPage,
-    name: "a2hs",
-    meta: {
-      inApp: false,
-    }
-  },
-  {
-    path: "/subscription",
-    components: {
-      default: SubscribePage,
-      LeftSidebar,
-    },
-    name: "subscription",
-    meta: {
-      checkWorkspace: false,
-    },
-  },
-  {
-    path: "/payment-success",
-    components: {
-      default: PaymentSuccessPage,
-      LeftSidebar,
-    },
-    name: "payment-success",
-    meta: {
-      checkWorkspace: false,
-    },
-  },
-  /************************** 协作工作区 ***********************/
+  /********************* Collaborative Workspace ********************/
   {
     path: "/w/:workspaceId(\\w{10,})",
     components: {
@@ -340,7 +342,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "collaborative-notification",
     meta: {}
   },
-  // the rest of routes, redirect to root
+  /***************** the rest of routes, redirect to root ****************/
   {
     path: "/:pathMatch(.*)*",
     redirect: "/",
