@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import MainView from "~/views/main-view/main-view.vue";
-import ViceView from "~/views/vice-view/vice-view.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
 import TrashContent from "./trash-content/trash-content.vue";
 import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
@@ -35,9 +34,6 @@ const { t } = useI18n()
       @tapfab="onTapFab"
     ></FloatActionButton>
   </main-view>
-
-  <!-- 副视图 -->
-  <vice-view @widthchange="onVvWidthChange"></vice-view>
 
 </template>
 <style scoped>
