@@ -1,15 +1,19 @@
 import { 
   getNowStamp,
+  getBasicStampWhileAdding,
   MINUTE,
 } from "@/common-time"
 import cloud from "@lafjs/cloud"
 import type { 
   OpenConnectOperate,
   LiuRqReturn,
+  LiuErrReturn,
   VerifyTokenRes_B,
   Table_Member,
   Table_Credential,
   Ww_Add_Contact_Way,
+  Res_OC_CheckWeCom,
+  Res_OC_BindWeCom,
 } from "@/common-types"
 import { getWwQynbAccessToken, liuReq, verifyToken } from "@/common-util"
 import { createBindCredential } from "@/common-ids"
@@ -28,10 +32,10 @@ export async function main(ctx: FunctionContext) {
 
   let res: LiuRqReturn = { code: "E4000" }
   if(oT === "bind-wecom") {
-    handle_bind_wecom(vRes, body)
+    res = await handle_bind_wecom(vRes, body)
   }
   else if(oT === "check-wecom") {
-
+    res = await handle_check_wecom(vRes, body)
   }
 
 
@@ -42,7 +46,7 @@ export async function main(ctx: FunctionContext) {
 async function handle_bind_wecom(
   vRes: VerifyTokenRes_B,
   body: Record<string, string>,
-) {
+): Promise<LiuRqReturn<Res_OC_BindWeCom>> {
 
   // 0. get params
   const userId = vRes.userData._id
@@ -55,7 +59,7 @@ async function handle_bind_wecom(
 
   // 2. checking out memberId
   const memberId = body.memberId
-  if(memberId) {
+  if(memberId && typeof memberId === "string") {
     const mCol = db.collection("Member")
     const res2 = await mCol.doc(memberId).get<Table_Member>()
     const d2 = res2.data
@@ -79,12 +83,13 @@ async function handle_bind_wecom(
 
 
   // 4. checking if expired
-  const now = getNowStamp()
+  const now4 = getNowStamp()
   const e4 = fir3?.expireStamp ?? 1
   const c4 = fir3?.credential
   const qr4 = fir3?.meta_data?.qr_code
-  const diff4 = e4 - now
+  const diff4 = e4 - now4
   if(diff4 > MINUTE && c4 && qr4) {
+    // if the rest of time is enough to bind
     return {
       code: "0000",
       data: {
@@ -95,11 +100,11 @@ async function handle_bind_wecom(
     }
   }
 
-  // 6. get wecom userid
+  // 5. get wecom userid
   const res5 = getWeComBotId()
   const bot_id = res5.data?.bot_id
   if(!bot_id) {
-    return res5
+    return res5 as LiuErrReturn
   }
 
   // 6. get wecom accessToken
@@ -142,10 +147,33 @@ async function handle_bind_wecom(
 
 
   // 9. add credential into db
-  
+  const b9 = getBasicStampWhileAdding()
+  const now9 = b9.insertedStamp
+  const data9: Partial<Table_Credential> = {
+    ...b9,
+    credential: cred,
+    infoType: "bind-wecom",
+    expireStamp: now9 + (10 * MINUTE),
+    verifyNum: 0,
+    userId,
+    meta_data: {
+      memberId,
+      qr_code: qr8,
+      ww_qynb_config_id: c8,
+    }
+  }
+  const res9 = await cCol.add(data9)
+  console.log("add credential res: ")
+  console.log(res9)
 
-
-
+  return {
+    code: "0000",
+    data: {
+      operateType: "bind-wecom",
+      qr_code: qr8,
+      credential: c8,
+    },
+  }
 }
 
 
@@ -172,6 +200,63 @@ function getWeComBotId(): LiuRqReturn {
 
 
 
-async function handle_check_wecom() {
-  
+async function handle_check_wecom(
+  vRes: VerifyTokenRes_B,
+  body: Record<string, string>,
+) {
+
+  // 0. get params
+  const credential = body.credential
+  if(!credential || typeof credential !== "string") {
+    return { code: "E4000", errMsg: "credential is required" }
+  }
+  const res: LiuRqReturn<Res_OC_CheckWeCom> = {
+    code: "0000",
+  }
+
+  // 1. get credential
+  const w1 = {
+    credential,
+    infoType: "bind-wecom",
+  }
+  const cCol = db.collection("Credential")
+  const q1 = cCol.where(w1).orderBy("expireStamp", "desc")
+  const res1 = await q1.get<Table_Credential>()
+  const list1 = res1.data
+  const len1 = list1?.length
+  if(len1 < 1) {
+    res.data = {
+      operateType: "check-wecom",
+      status: "plz_check",
+    }
+    return res
+  }
+
+  // 2. check out permission
+  const d2 = list1[0]
+  const _userId = d2.userId
+  const userId = vRes.userData._id
+  if(_userId !== userId) {
+    res.code = "E4003"
+    res.errMsg = "permission denied"
+    return res
+  }
+
+  // 3. check out expire
+  const now3 = getNowStamp()
+  if(now3 > d2.expireStamp) {
+    res.data = {
+      operateType: "check-wecom",
+      status: "expired",
+    }
+    return res
+  }
+
+  // 4. return waiting status
+  res.data = {
+    operateType: "check-wecom",
+    status: "waiting",
+  }
+
+  return res
 }
