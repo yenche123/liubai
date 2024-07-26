@@ -454,7 +454,21 @@
     "wechat_desc": "在微信上使用留白记事",
     "wechat_remind": "微信提醒",
     "wechat_remind_desc": "添加「留小白」微信，当你的日程需要提醒时，它会在第一时间通知你！",
-    "add": "去设置"
+    "add": "去设置",
+    "dingtalk": "钉钉",
+    "dingtalk_desc": "在工作时，偷偷使用留白记事",
+    "feishu": "飞书",
+    "feishu_desc": "飞书上的超级个体都用留白记事",
+    "line": "LINE",
+    "line_desc": "在 LINE 上连接留白记事",
+    "slack": "Slack",
+    "slack_desc": "在 Slack 用留白记事打通工作和生活",
+    "telegram": "Telegram",
+    "telegram_desc": "用留白记事整理你在 Telegram 上的消息",
+    "teams": "Teams",
+    "teams_desc": "在 Microsoft Teams 上使用留白记事",
+    "whatsapp": "WhatsApp",
+    "whatsapp_desc": "在 WhatsApp 上使用留白记事"
   },
   "qrcode": {
     "title": "你的专属二维码已生成",

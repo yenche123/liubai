@@ -180,12 +180,12 @@ export const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/connect",
+    path: "/connectors",
     components: {
       default: ConnectPage,
       LeftSidebar,
     },
-    name: "connect",
+    name: "connectors",
     meta: {
       hasViceView: false,
     }
@@ -290,12 +290,12 @@ export const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/w/:workspaceId(\\w{10,})/connect",
+    path: "/w/:workspaceId(\\w{10,})/connectors",
     components: {
       default: ConnectPage,
       LeftSidebar,
     },
-    name: "collaborative-connect",
+    name: "collaborative-connectors",
     meta: {
       hasViceView: false,
     }

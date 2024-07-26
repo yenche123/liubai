@@ -2,6 +2,7 @@ import { computed } from "vue";
 import { useRouteAndLiuRouter } from '~/routes/liu-router';
 import { useI18n } from 'vue-i18n';
 import { usePrefix } from "~/hooks/useCommon"
+import liuEnv from "~/utils/liu-env";
 
 export function useSbContent() {
   const { t } = useI18n()
@@ -15,15 +16,17 @@ export function useSbContent() {
     if(n === "favorite" || n === "collaborative-favorite") return "favorite"
     if(n === "state" || n === "collaborative-state") return "state"
     if(n === "trash" || n === "collaborative-trash") return "trash"
-    if(n === "connect" || n === "collaborative-connect") return "connect"
+    if(n === "connectors" || n === "collaborative-connectors") return "connect"
     return ""
   })
 
   const { prefix } = usePrefix()
+  const { CONNECTORS } = liuEnv.getEnv()
 
   return {
     t,
     state,
     prefix,
+    CONNECTORS,
   }
 }

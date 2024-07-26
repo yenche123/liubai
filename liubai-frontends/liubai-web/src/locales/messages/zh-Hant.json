@@ -454,7 +454,21 @@
     "wechat": "微信",
     "wechat_desc": "在微信上使用留白記事",
     "wechat_remind": "微信提醒",
-    "wechat_remind_desc": "添加「留小白」微信，當你的日程需要提醒時，它會在第一時間通知你！"
+    "wechat_remind_desc": "添加「留小白」微信，當你的日程需要提醒時，它會在第一時間通知你！",
+    "dingtalk": "釘釘",
+    "dingtalk_desc": "在工作時，偷偷使用留白記事",
+    "feishu": "飛書",
+    "feishu_desc": "飛書上的超級個體都用留白記事",
+    "line": "LINE",
+    "line_desc": "在 LINE 上連結留白記事",
+    "slack": "Slack",
+    "slack_desc": "留白記事 + Slack: 打通工作和生活",
+    "telegram": "Telegram",
+    "telegram_desc": "用留白記事整理你在 Telegram 上的訊息",
+    "teams": "Teams",
+    "teams_desc": "在 Microsoft Teams 上使用留白記事",
+    "whatsapp": "WhatsApp",
+    "whatsapp_desc": "在 WhatsApp 上使用留白記事"
   },
   "qrcode": {
     "long_press": "長按識別 QR Code，新增「留小白」的微信",

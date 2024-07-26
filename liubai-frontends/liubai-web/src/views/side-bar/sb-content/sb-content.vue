@@ -24,6 +24,7 @@ const {
   t,
   state,
   prefix,
+  CONNECTORS,
 } = useSbContent()
 
 const {
@@ -139,12 +140,13 @@ const color_selected = "var(--main-normal)"
   
 
   <!-- 连接 -->
-  <!-- <div class="sb-link-box sb-link-connect"
+  <div class="sb-link-box sb-link-connect"
+    v-if="CONNECTORS"
     @mouseenter="() => onMouseEnter('connect')"
     @mouseleave="onMouseLeave"
   >
     <NaviLink class="liu-no-user-select sb-link" 
-      :to="prefix + 'connect'"
+      :to="prefix + 'connectors'"
       :class="{ 'sb-link_selected': state === 'connect' }"
       :tabindex="tabindex"
       @aftertap="toClosePopup"
@@ -157,7 +159,7 @@ const color_selected = "var(--main-normal)"
       </div>
       <span>{{ t("common.connects") }}</span>
     </NaviLink>
-  </div> -->
+  </div>
   
   <div class="sb-virtual"></div>
 
