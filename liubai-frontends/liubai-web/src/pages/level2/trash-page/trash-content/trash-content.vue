@@ -8,7 +8,7 @@ const { t } = useI18n()
 <template>
 
   <div class="liu-mc-container">
-    <div class="tc-virtual"></div>
+    <div class="liu-tc-virtual"></div>
     <div class="liu-mc-box">
 
       <div class="liu-highlight-box">
@@ -24,9 +24,5 @@ const { t } = useI18n()
 </template>
 <style scoped>
 
-.tc-virtual {
-  width: 100%;
-  height: 10px;
-}
 
 </style>

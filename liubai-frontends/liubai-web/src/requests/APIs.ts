@@ -16,4 +16,5 @@ export default {
   UPLOAD_FILE: d + `file-set`,
   SYNC_SET: d + `sync-set`,
   SYNC_GET: d + `sync-get`,
+  OPEN_CONNECT: d + `open-connect`,
 }
