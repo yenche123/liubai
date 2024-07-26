@@ -5,12 +5,10 @@ import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
 import SubscribeContent from "./subscribe-content/subscribe-content.vue"
 import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
-import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
 import { ref } from "vue";
 import { type PageState } from "~/types/types-atom";
 
-const { onVvWidthChange } = useMainVice()
 const { t } = useI18n()
 
 const showTitle = ref(true)
@@ -30,9 +28,6 @@ const whenStateChanged = (state: PageState) => {
     </scroll-view>
     <navi-bar :title="showTitle ? t('payment.member_subscribe') : ''"></navi-bar>
   </main-view>
-
-  <!-- 副视图 -->
-  <vice-view @widthchange="onVvWidthChange"></vice-view>
 
 </template>
 <style scoped>

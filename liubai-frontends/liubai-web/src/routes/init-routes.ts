@@ -76,6 +76,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "subscription",
     meta: {
       checkWorkspace: false,
+      hasViceView: false,
     },
   },
   {
@@ -86,6 +87,7 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "payment-success",
     meta: {
+      hasViceView: false,
       checkWorkspace: false,
     },
   },
@@ -210,6 +212,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "export",
     meta: {
       inSetting: true,
+      hasViceView: false,
     }
   },
   {
@@ -221,6 +224,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "import",
     meta: {
       inSetting: true,
+      hasViceView: false,
     }
   },
   {
@@ -320,6 +324,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "collaborative-export",
     meta: {
       inSetting: true,
+      hasViceView: false,
     }
   },
   {
@@ -331,6 +336,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "collaborative-import",
     meta: {
       inSetting: true,
+      hasViceView: false,
     }
   },
   {

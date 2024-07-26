@@ -8,9 +8,7 @@ import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
 
 const { 
-  hiddenScrollBar, 
   goToTop,
-  onVvWidthChange,
   onTapFab,
   scrollPosition,
   onScroll,
@@ -22,9 +20,7 @@ const { t } = useI18n()
 
   <!-- 主视图 -->
   <main-view>
-    <scroll-view :hidden-scroll-bar="hiddenScrollBar" @scroll="onScroll"
-      :go-to-top="goToTop"
-    >
+    <scroll-view @scroll="onScroll" :go-to-top="goToTop">
       <navi-virtual></navi-virtual>
       <TrashContent></TrashContent>
     </scroll-view>

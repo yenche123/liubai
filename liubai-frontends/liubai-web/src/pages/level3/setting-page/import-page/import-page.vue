@@ -4,14 +4,9 @@ import ViceView from "~/views/vice-view/vice-view.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
 import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
-import ImportContent from "./import-content/import-content.vue"
-import { useMainVice } from "~/hooks/useMainVice";
+import ImportContent from "./import-content/import-content.vue";
 import { useI18n } from "vue-i18n";
 
-const { 
-  hiddenScrollBar,
-  onVvWidthChange
-} = useMainVice()
 const { t } = useI18n()
 
 </script>
@@ -19,15 +14,12 @@ const { t } = useI18n()
 
   <!-- 主视图 -->
   <main-view>
-    <scroll-view :hidden-scroll-bar="hiddenScrollBar">
+    <scroll-view>
       <navi-virtual></navi-virtual>
       <ImportContent></ImportContent>
     </scroll-view>
     <navi-bar :title="t('setting.import')"></navi-bar>
   </main-view>
-
-  <!-- 副视图 -->
-  <vice-view @widthchange="onVvWidthChange"></vice-view>
 
 </template>
 <style scoped>
