@@ -8,6 +8,9 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import showThread from "~/utils/show/show-thread"
 import cfg from "~/config"
 import valTool from "~/utils/basic/val-tool"
+import { useSystemStore } from "~/hooks/stores/useSystemStore"
+import { useWindowSize } from "~/hooks/useVueUse"
+import { type PackThreadOpt } from "~/utils/show/tools/types"
 
 interface MyCollectionOpt {
   content_ids: string[]
@@ -102,6 +105,15 @@ export async function getThreadsByCollection(
   const memberShows = await getMemberShows(member_ids)
 
   let list: ThreadShow[] = []
+  const sStore = useSystemStore()
+  const { width } = useWindowSize()
+  const packOpt: PackThreadOpt = {
+    wStore,
+    sStore,
+    windowWidth: width.value,
+    user_id,
+  }
+
   for(let i=0; i<res.length; i++) {
     const c = res[i]
     const v = res2.find(v1 => v1._id === c.content_id)
@@ -114,7 +126,7 @@ export async function getThreadsByCollection(
       creator = memberShows.find(v2 => v2._id === member)
     }
 
-    let obj = showThread.packThread(v, _collections, creator, user_id, wStore)
+    let obj = showThread.packThread(v, _collections, creator, packOpt)
     list.push(obj)
   }
 

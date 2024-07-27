@@ -1,23 +1,48 @@
 
 import type { LiuContent } from "~/types/types-atom";
 import type { TipTapJSONContent } from "~/types/types-editor";
+import type { PackThreadOpt } from "~/utils/show/tools/types";
 import { listToText, getRowNum } from "~/utils/transfer-util/text";
 import valTool from "~/utils/basic/val-tool";
 
 const MAGIC_NUM = 66
 const TOLERANT_NUM = 10
 const MAX_ROW = 3
+let _magicNum = MAGIC_NUM
+
+function getMagicNum(opt: PackThreadOpt) {
+  const { windowWidth, sStore } = opt
+  const fontSize = sStore.local_font_size
+
+  let width = windowWidth - 100
+  if(width < 200) width = 200
+  else if(width > 500) width = 500
+
+  let size = fontSize === "L" ? 20 : 18
+
+  let num = Math.floor(width / size) * 3
+
+  if(num > 80) num = 80
+  else if(num < 40) num = 40
+
+  return num
+}
+
+
 
 /**
- * 当字数大于 MAGIC_NUM 或行数大于 3 时，显示摘要
+ * 当字数大于 MAGICNUM 或行数大于 3 时，显示摘要
  * @param liuDesc 用户填写的完整内容
  * @returns 摘要
  */
 export function getBriefing(
-  liuDesc?: LiuContent[]
+  liuDesc: LiuContent[] | undefined,
+  opt: PackThreadOpt,
 ): TipTapJSONContent | undefined {
   if(!liuDesc || liuDesc.length < 1) return
   let newLiuDesc = valTool.copyObject(liuDesc)
+  const magicNum = getMagicNum(opt)
+  _magicNum = magicNum
 
   let requiredBrief = false
   const len = newLiuDesc.length
@@ -27,7 +52,7 @@ export function getBriefing(
 
   // 查找文字很多的情况
   // 为什么不直接把 newLiuDesc 带入 listToText() 去计算字符呢？因为要考虑代码块的情况
-  // 可能卡片的前半段全是代码，很容易就超过 MAGIC_NUM 和 特定的行数
+  // 可能卡片的前半段全是代码，很容易就超过 MAGICNUM 和 特定的行数
   let charNum = 0
   let rowNum = 0
   if(!requiredBrief) {
@@ -40,7 +65,7 @@ export function getBriefing(
         let tmpRow = getRowNum([v])
         rowNum += tmpRow
       }
-      if(charNum > (MAGIC_NUM * 2 + TOLERANT_NUM * 2)) {
+      if(charNum > (magicNum * 2 + TOLERANT_NUM * 2)) {
         if(type !== "codeBlock") requiredBrief = true
         if(i < (len - 1)) requiredBrief = true
       }
@@ -69,8 +94,8 @@ export function getBriefing(
       let tmpRow = getRowNum([v])
       rowNum += tmpRow
     }
-    if(charNum > (MAGIC_NUM * 2) || rowNum > MAX_ROW) {
-      // 字数大于阈值 (MAGIC_NUM * 2) 或者行数大于 MAX_ROW
+    if(charNum > (magicNum * 2) || rowNum > MAX_ROW) {
+      // 字数大于阈值 (magicNum * 2) 或者行数大于 MAX_ROW
       const newNode = _getBreakPoint(v, prevRowNum, prevCharNum)
       briefing.push(newNode)
       break
@@ -112,7 +137,7 @@ function _addPoint3x(node: LiuContent) {
 }
 
 /**
- * 当临界 MAGIC_NUM 发生在该节点内时，执行该函数
+ * 当临界 magicNum 发生在该节点内时，执行该函数
  * @param node 当前节点信息
  * @param prevRowNum 未包含当前节点时，已有的行数
  * @param prevCharNum 未包含当前节点时，已有的文字数
@@ -237,7 +262,7 @@ const POINTS = [
 ]
 
 /**
- * 如果字符数超过 MAGIC_NUM 自动截断，并返回特定类型
+ * 如果字符数超过 magicNum 自动截断，并返回特定类型
  * @param textList 由 { type: 'text', text: '文本' } 所组成的数组
  * @param prevCharNum 当前已有的文字数
  * @returns 
@@ -259,14 +284,14 @@ function _handleParagraph(
     }
 
     let tmpNum = charNum + valTool.getTextCharNum(text)
-    let diff_0 = tmpNum - (MAGIC_NUM * 2)
+    let diff_0 = tmpNum - (_magicNum * 2)
     if(diff_0 <= 0) {
       charNum = tmpNum
       newTextList.push(v)
       continue
     }
 
-    let diff_1 = (MAGIC_NUM * 2) - charNum
+    let diff_1 = (_magicNum * 2) - charNum
 
     // 希望不要断点在单词内，开始往前找合适的断点
     let targetText = text.substring(0, diff_1)

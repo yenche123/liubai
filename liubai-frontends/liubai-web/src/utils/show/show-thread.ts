@@ -8,18 +8,16 @@ import type { TagShow, ThreadShow, StateShow } from "~/types/types-content";
 import imgHelper from "../files/img-helper";
 import transferUtil from "../transfer-util";
 import commonPack from "../controllers/tools/common-pack";
-import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { tagIdsToShows } from "../system/tag-related";
 import liuUtil from "../liu-util";
-
+import type { PackThreadOpt } from "./tools/types";
 
 // 封装 thread 成 ThreadShow
 function packThread(
   content: ContentLocalTable,
   collections: CollectionLocalTable[] | undefined,
   creator: MemberShow | undefined,
-  user_id: string | undefined,
-  wStore: WorkspaceStore,
+  opt: PackThreadOpt,
 ) {
 
   let v = content
@@ -49,7 +47,7 @@ function packThread(
   })
 
   let isMine = false
-  if(user && user_id && user === user_id) isMine = true
+  if(user && opt.user_id && user === opt.user_id) isMine = true
 
   const images = v.images?.map(v2 => {
     return imgHelper.imageStoreToShow(v2)
@@ -63,12 +61,12 @@ function packThread(
   let tags: TagShow[] = []
   let stateShow: StateShow | undefined = undefined
   // 判断当前工作区与当前动态是否匹配，若匹配则可展示标签和状态
-  let canTag = spaceId === wStore.spaceId
+  let canTag = spaceId === opt.wStore.spaceId
   // 如果动态所属的工作区与当前工作区匹配
   if(canTag) {
     const tagData = v.tagIds ? tagIdsToShows(v.tagIds) : undefined
     tags = tagData?.tagShows ?? []
-    stateShow = commonPack.getStateShow(v.stateId, wStore)
+    stateShow = commonPack.getStateShow(v.stateId, opt.wStore)
   }
 
   // 删除于 xxxx-xx-xx
@@ -91,7 +89,7 @@ function packThread(
     storageState: v.storageState,
     title,
     content: tiptapContent,
-    briefing: commonPack.getBriefing(newDesc),
+    briefing: commonPack.getBriefing(newDesc, opt),
     summary: commonPack.getSummary(liuDesc, v.files),
     desc,
     images,
