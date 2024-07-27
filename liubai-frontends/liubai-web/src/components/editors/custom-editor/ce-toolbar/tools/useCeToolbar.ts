@@ -23,11 +23,6 @@ export function useCeToolbar(props: CetProps, emit: CetEmit) {
     if(!res.confirm) return
     if(!res.tags) return
     emit("newhashtags", res.tags)
-
-    // 去聚焦
-    const editor = props.editor
-    if(!editor) return
-    editor.commands.focus()
   }
 
   const onTapMore = () => {
