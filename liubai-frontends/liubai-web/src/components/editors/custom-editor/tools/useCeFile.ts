@@ -1,4 +1,4 @@
-import { inject, onActivated, onDeactivated, ref, watch, type Ref } from "vue"
+import { inject, onDeactivated, ref, watch, type Ref } from "vue"
 import type { ImageShow, LiuFileStore, LiuImageStore } from "~/types"
 import imgHelper from "~/utils/files/img-helper"
 import liuUtil from "~/utils/liu-util"
@@ -9,6 +9,7 @@ import valTool from "~/utils/basic/val-tool"
 import ider from "~/utils/basic/ider"
 import limit from "~/utils/limit"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import { onLiuActivated } from "~/hooks/useCommon"
 
 export function useCeFile(
   ceData: CeData,
@@ -118,7 +119,7 @@ function listenDocumentPaste(
     handleFiles(ceData, files, moreRef)
   }
   
-  onActivated(() => {
+  onLiuActivated(() => {
     document.addEventListener("paste", whenPaste)
   })
 

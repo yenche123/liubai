@@ -14,7 +14,13 @@ const {
 
   <PageDefault title-key="connect.wechat">
 
-    <div class="cw-container">
+
+    <PlaceholderView
+      :p-state="cwcData.pageState"
+    ></PlaceholderView>
+
+
+    <div class="cw-container" v-if="cwcData.pageState < 0">
 
       <div class="cw-bar">
         <div class="liu-no-user-select cwb-title">
