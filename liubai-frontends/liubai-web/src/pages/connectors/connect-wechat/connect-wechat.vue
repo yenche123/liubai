@@ -29,20 +29,26 @@ const {
           ></liu-switch>
         </div>
 
-        <div class="liu-no-user-select cwb-footer cwb-footer_add" v-else>
-          <span>{{ t('connect.add') }}</span>
-          <div class="cwbf-arrow">
-            <svg-icon name="arrow-right2" 
-              class="cwbf-arrow-icon"
-              color="var(--main-normal)"
-            ></svg-icon>
-          </div>
+        <div class="liu-no-user-select cwb-footer" v-else>
+
+          <custom-btn size="mini">
+
+            <div class="cwbf-arrow">
+              <svg-icon name="logos-wechat-half-fill" 
+                class="cwbf-arrow-icon"
+                color="var(--on-primary)"
+              ></svg-icon>
+            </div>
+
+            <span>{{ t('connect.add') }}</span>
+          </custom-btn>
+          
         </div>
 
       </div>
 
       <div class="cw-desc">
-        <span>{{ t('connect.wechat_remind_desc') }}</span>
+        <span class="liu-selection">{{ t('connect.wechat_remind_desc') }}</span>
       </div>
 
     </div>
@@ -58,7 +64,7 @@ const {
   box-sizing: border-box;
   background-color: var(--card-bg);
   border-radius: 16px;
-  padding: 32px 32px 32px 48px;
+  padding: 32px 32px 40px 36px;
   box-shadow: var(--card-shadow-2);
   transition: .15s;
 }
@@ -66,32 +72,27 @@ const {
 .cw-bar {
   width: 100%;
   display: flex;
+  align-items: center;
   position: relative;
-  padding-block-end: 4px;
+  padding-block-end: 16px;
 }
 
 .cwb-title {
   flex: 3;
-  font-size: var(--desc-font);
+  font-size: var(--title-font);
   color: var(--main-normal);
   font-weight: 700;
 }
 
 .cwb-footer {
-  flex: 1;
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  font-size: var(--btn-font);
-  color: var(--main-normal);
-}
-
-.cwb-footer_add {
-  cursor: pointer;
 }
 
 .cwbf-arrow {
-  padding-inline-start: 4px;
+  padding-inline-end: 8px;
   width: 20px;
   height: 20px;
   position: relative;
@@ -107,6 +108,15 @@ const {
   font-size: var(--btn-font);
   color: var(--main-code);
   line-height: 1.5;
+}
+
+
+@container liu-mc-container (max-width: 480px) {
+
+  .cw-container {
+    padding: 24px 24px 32px 28px;
+  }
+
 }
 
 
