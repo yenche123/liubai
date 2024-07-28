@@ -450,11 +450,11 @@
     "future_24": "接下来一天"
   },
   "connect": {
+    "add": "去添加",
     "wechat": "微信",
     "wechat_desc": "在微信上使用留白记事",
     "wechat_remind": "微信提醒",
     "wechat_remind_desc": "添加「留小白」微信，当你的日程需要提醒时，它会在第一时间通知你！",
-    "add": "去设置",
     "dingtalk": "钉钉",
     "dingtalk_desc": "在工作时，偷偷使用留白记事",
     "feishu": "飞书",

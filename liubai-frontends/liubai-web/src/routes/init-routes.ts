@@ -22,6 +22,7 @@ const ImportPage = () => import("../pages/level3/setting-page/import-page/import
 const SubscribePage = () => import("../pages/level3/payments/subscribe-page/subscribe-page.vue")
 const PaymentSuccessPage = () => import("../pages/level3/payments/success-page/success-page.vue")
 const A2hsPage = () => import("../pages/level3/a2hs-page/a2hs-page.vue")
+const ConnectWechat = () => import("../pages/connectors/connect-wechat/connect-wechat.vue")
 
 export const routes: Array<RouteRecordRaw> = [
   /*************** 公共页面（不区分工作区） ***************/
@@ -193,6 +194,17 @@ export const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: "/connect/wechat",
+    components: {
+      default: ConnectWechat,
+      LeftSidebar,
+    },
+    name: "connect-wechat",
+    meta: {
+      hasViceView: false,
+    },
+  },
+  {
     path: "/settings",
     components: {
       default: SettingPage,
@@ -303,6 +315,17 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       hasViceView: false,
     }
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/connect/wechat",
+    components: {
+      default: ConnectWechat,
+      LeftSidebar,
+    },
+    name: "collaborative-connect-wechat",
+    meta: {
+      hasViceView: false,
+    },
   },
   {
     path: "/w/:workspaceId(\\w{10,})/settings",
