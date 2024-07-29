@@ -8,6 +8,7 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import APIs from "~/requests/APIs"
 import liuReq from "~/requests/liu-req"
 import type { Res_OC_GetWeChat } from "~/requests/req-types"
+import cui from "~/components/custom-ui"
 
 export function useConnectWeChat() {
 
@@ -22,6 +23,11 @@ export function useConnectWeChat() {
 
   }
 
+  const onTapAddWeChat = async () => {
+    await cui.showBindAccount({ bindType: "ww_qynb" })
+    checkoutData(cwcData)
+  }
+
   const { syncNum, awakeNum } = useAwakeNum()
   watch(awakeNum, (newV) => {
     if(syncNum.value < 1) return
@@ -32,14 +38,13 @@ export function useConnectWeChat() {
   return {
     cwcData,
     onWechatRemindChanged,
+    onTapAddWeChat,
   }
 }
 
 async function checkoutData(
   cwcData: CwcData,
 ) {
-
-  console.log("checkoutData......")
 
   // 1. checking out network
   const nStore = useNetworkStore()

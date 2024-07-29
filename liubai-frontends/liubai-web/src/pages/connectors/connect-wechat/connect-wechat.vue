@@ -7,6 +7,7 @@ const { t } = useI18n()
 const { 
   cwcData,
   onWechatRemindChanged,
+  onTapAddWeChat,
 } = useConnectWeChat()
 
 </script>
@@ -37,7 +38,7 @@ const {
 
         <div class="liu-no-user-select cwb-footer" v-else>
 
-          <custom-btn size="mini">
+          <custom-btn size="mini" @click="onTapAddWeChat">
 
             <div class="cwbf-arrow">
               <svg-icon name="logos-wechat-half-fill" 

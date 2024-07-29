@@ -10,6 +10,7 @@ import {
   useDocumentVisibility,
   useMutationObserver,
 } from "@vueuse/core"
+import { useQRCode } from "@vueuse/integrations/useQRCode"
 import type { NetworkState } from "@vueuse/core"
 import type { Ref } from "vue"
 
@@ -51,4 +52,6 @@ export {
 
   // 监听浏览器分页当前是否可见
   useDocumentVisibility,
+
+  useQRCode,
 }

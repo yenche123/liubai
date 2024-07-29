@@ -473,7 +473,7 @@
   "qrcode": {
     "long_press": "Long press to recognize and add \"留小白\" on WeChat",
     "scan": "Scan the QR code on WeChat to add \"留小白\"",
-    "title": "Your exclusive QR code has been generated",
+    "title": "Your exclusive QR code",
     "screenshot": "Screenshot and open it on WeChat please"
   }
 }
