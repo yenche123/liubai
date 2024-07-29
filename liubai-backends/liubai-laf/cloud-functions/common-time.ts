@@ -21,8 +21,8 @@ export function getNowStamp() {
 export function getBasicStampWhileAdding() {
  const now = getNowStamp()
  return {
-  insertedStamp: now,
-  updatedStamp: now,
+   insertedStamp: now,
+   updatedStamp: now,
  }
 }
 
