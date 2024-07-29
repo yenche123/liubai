@@ -223,7 +223,7 @@ async function handle_bind_wecom(
     data: {
       operateType: "bind-wecom",
       qr_code: qr8,
-      credential: c8,
+      credential: cred,
     },
   }
 }
