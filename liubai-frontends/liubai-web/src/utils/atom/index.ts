@@ -1,6 +1,6 @@
-import { type PageState } from "~/types/types-atom"
+import type { PageState, PageStateKey } from "~/types/types-atom"
 
-export const pageStates: Record<string, PageState> = {
+export const pageStates: Record<PageStateKey, PageState> = {
   OK: -1,
   LOADING: 0,
   SWITCHING: 1,

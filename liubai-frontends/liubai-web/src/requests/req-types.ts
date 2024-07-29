@@ -108,3 +108,28 @@ export interface Res_FileSet_UploadToken {
 export interface Res_WebhookQiniu {
   cloud_url: string
 }
+
+
+/************************ Open System ********************/
+
+/*************** open-connect **************/
+export type OpenConnectOperate = "bind-wecom" | "check-wecom" | "get-wechat"
+
+export type CheckBindStatus = "waiting" | "plz_check" | "expired"
+
+export interface Res_OC_BindWeCom {
+  operateType: "bind-wecom"
+  qr_code: string
+  credential: string
+}
+
+export interface Res_OC_CheckWeCom {
+  operateType: "check-wecom"
+  status: CheckBindStatus
+}
+
+export interface Res_OC_GetWeChat {
+  operateType: "get-wechat"
+  ww_qynb_external_userid?: string
+  ww_qynb_remind?: boolean
+}

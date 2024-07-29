@@ -4,5 +4,5 @@ import type { PageState } from "~/types/types-atom"
 export interface CwcData {
   pageState: PageState
   ww_qynb_external_userid?: string
-  wechatRemind: boolean
+  ww_qynb_remind: boolean
 }
