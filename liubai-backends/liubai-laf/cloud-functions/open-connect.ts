@@ -115,8 +115,8 @@ async function handle_bind_wecom(
     if(!d2) {
       return { code: "E4004", errMsg: "there is no memeber" }
     }
-    if(d2._id !== userId) {
-      return { code: "E4003" }
+    if(d2.user !== userId) {
+      return { code: "E4003", errMsg: "the member is not yours!" }
     }
   }
 
@@ -167,18 +167,21 @@ async function handle_bind_wecom(
   const cred = createBindCredential()
   const state = `b1=${cred}`
   const w7 = {
-    access_token: accessToken,
     type: 1,
     scene: 2,
     state,
     user: [bot_id],
   }
-  const url7 = API_WECOM_ADD_CONTACT
+  const url7 = new URL(API_WECOM_ADD_CONTACT)
+  url7.searchParams.set("access_token", accessToken)
+  const link7 = url7.toString()
   console.log("to request wecom for adding contact way: ")
   console.log(w7)
-  const res7 = await liuReq<Ww_Add_Contact_Way>(url7, w7)
+  console.log(link7)
+  const res7 = await liuReq<Ww_Add_Contact_Way>(link7, w7)
   console.log("res7: ")
   console.log(res7)
+  console.log(" ")
 
   // 8. extract data from wecom
   const res8 = res7.data
