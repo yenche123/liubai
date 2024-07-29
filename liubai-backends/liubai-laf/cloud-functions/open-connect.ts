@@ -126,10 +126,10 @@ async function handle_bind_wecom(
     infoType: "bind-wecom",
     userId,
   }
-  const res3 = await cCol.where(w3).get<Table_Credential>()
+  const q3 = cCol.where(w3).orderBy("expireStamp", "desc").limit(1)
+  const res3 = await q3.get<Table_Credential>()
   const list3 = res3.data
   const fir3 = list3[0]
-
 
   // 4. checking if expired
   const now4 = getNowStamp()
@@ -175,11 +175,8 @@ async function handle_bind_wecom(
   const url7 = new URL(API_WECOM_ADD_CONTACT)
   url7.searchParams.set("access_token", accessToken)
   const link7 = url7.toString()
-  console.log("to request wecom for adding contact way: ")
-  console.log(w7)
-  console.log(link7)
   const res7 = await liuReq<Ww_Add_Contact_Way>(link7, w7)
-  console.log("res7: ")
+  console.log("wecom add contact res7: ")
   console.log(res7)
   console.log(" ")
 
@@ -215,8 +212,6 @@ async function handle_bind_wecom(
     }
   }
   const res9 = await cCol.add(data9)
-  console.log("add credential res: ")
-  console.log(res9)
 
   return {
     code: "0000",
@@ -227,8 +222,6 @@ async function handle_bind_wecom(
     },
   }
 }
-
-
 
 function getWeComBotId(): LiuRqReturn {
   const bot_ids = process.env.LIU_WECOM_QYNB_BOT_IDS
@@ -251,7 +244,6 @@ function getWeComBotId(): LiuRqReturn {
 }
 
 
-
 async function handle_check_wecom(
   vRes: VerifyTokenRes_B,
   body: Record<string, string>,
@@ -272,7 +264,7 @@ async function handle_check_wecom(
     infoType: "bind-wecom",
   }
   const cCol = db.collection("Credential")
-  const q1 = cCol.where(w1).orderBy("expireStamp", "desc")
+  const q1 = cCol.where(w1).orderBy("expireStamp", "desc").limit(1)
   const res1 = await q1.get<Table_Credential>()
   const list1 = res1.data
   const len1 = list1?.length

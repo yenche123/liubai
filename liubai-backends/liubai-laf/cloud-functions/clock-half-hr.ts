@@ -66,16 +66,16 @@ async function clearBindWecom() {
     const config_id = c4.meta_data?.ww_qynb_config_id
     if(!config_id) continue
 
-    console.log("request to delete contact way: ", config_id)
     const res4 = await liuReq(link, { config_id })
-
-    console.log("result 4: ")
-    console.log(res4)
+    const d4 = res4.data  // it looks like { errcode: 0, errmsg: 'ok' }
+    if(d4?.errmsg !== "ok") {
+      console.warn("fail to delete contact way: ", config_id)
+      console.log(res4)
+      break
+    }
 
     // 5. delete the credential
     const res5 = await col.doc(c4._id).remove()
-    console.log("result 5: ")
-    console.log(res5)
   }
 
   return true
