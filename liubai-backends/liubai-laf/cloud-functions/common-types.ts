@@ -1584,7 +1584,7 @@ export interface Res_SyncGet_Cloud {
 }
 
 /******************** open-connect **********************/
-export type OpenConnectOperate = "bind-wecom" | "check-wecom"
+export type OpenConnectOperate = "bind-wecom" | "check-wecom" | "get-wechat"
 
 export type CheckBindStatus = "waiting" | "plz_check" | "expired"
 
@@ -1597,6 +1597,12 @@ export interface Res_OC_BindWeCom {
 export interface Res_OC_CheckWeCom {
   operateType: "check-wecom"
   status: CheckBindStatus
+}
+
+export interface Res_OC_GetWeChat {
+  operateType: "get-wechat"
+  ww_qynb_external_userid?: string
+  ww_qynb_remind?: boolean
 }
 
 

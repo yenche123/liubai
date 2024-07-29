@@ -14,6 +14,8 @@ import type {
   Ww_Add_Contact_Way,
   Res_OC_CheckWeCom,
   Res_OC_BindWeCom,
+  Res_OC_GetWeChat,
+  Table_User,
 } from "@/common-types"
 import { getWwQynbAccessToken, liuReq, verifyToken } from "@/common-util"
 import { createBindCredential } from "@/common-ids"
@@ -37,8 +39,55 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "check-wecom") {
     res = await handle_check_wecom(vRes, body)
   }
+  else if(oT === "get-wechat") {
+    res = await handle_get_wechat(vRes, body)
+  }
+
+  return res
+}
 
 
+async function handle_get_wechat(
+  vRes: VerifyTokenRes_B,
+  body: Record<string, string>,
+) {
+  // 0. get params
+  const memberId = body.memberId
+  if(!memberId || typeof memberId !== "string") {
+    return { code: "E4000", errMsg: "memberId is required" }
+  }
+  const res: LiuRqReturn<Res_OC_GetWeChat> = {
+    code: "0000",
+  }
+
+  // 1. get user
+  const userId = vRes.userData._id
+  const uCol = db.collection("User")
+  const res1 = await uCol.doc(userId).get<Table_User>()
+  const user = res1.data
+  if(!user) {
+    return { code: "E4004", errMsg: "there is no user" }
+  }
+  const { ww_qynb_external_userid } = user
+
+  // 2. get member
+  const mCol = db.collection("Member")
+  const res2 = await mCol.doc(memberId).get<Table_Member>()
+  const member = res2.data
+  if(!member) {
+    return { code: "E4004", errMsg: "there is no memeber" }
+  }
+  if(member.user !== userId) {
+    return { code: "E4003", errMsg: "the member is not yours" }
+  }
+
+  // 3. construct response
+  const ww_qynb_remind = member.notification?.ww_qynb_remind
+  res.data = {
+    operateType: "get-wechat",
+    ww_qynb_external_userid,
+    ww_qynb_remind,
+  }
   return res
 }
 
