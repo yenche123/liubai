@@ -1,3 +1,4 @@
+// Function Name: open-connect
 import { 
   getNowStamp,
   getBasicStampWhileAdding,

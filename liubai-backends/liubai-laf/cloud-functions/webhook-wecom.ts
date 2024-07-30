@@ -1,3 +1,4 @@
+// Function Name: webhook-wecom
 // Receive messages and events from WeCom
 import cloud from "@lafjs/cloud";
 import { type LiuRqReturn } from "@/common-types";
@@ -8,8 +9,6 @@ import { getIp } from "@/common-util";
 const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
-  console.log("webhook-wecom starts to run!")
-
   const ip = getIp(ctx)
 
   const b = ctx.body
