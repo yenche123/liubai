@@ -1585,6 +1585,7 @@ export interface Res_SyncGet_Cloud {
 
 /******************** open-connect **********************/
 export type OpenConnectOperate = "bind-wecom" | "check-wecom" | "get-wechat"
+  | "set-wechat"
 
 export type CheckBindStatus = "waiting" | "plz_check" | "expired"
 

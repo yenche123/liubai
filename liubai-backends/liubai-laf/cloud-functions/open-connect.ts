@@ -42,8 +42,54 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "get-wechat") {
     res = await handle_get_wechat(vRes, body)
   }
+  else if(oT === "set-wechat") {
+    res = await handle_set_wechat(vRes, body)
+  }
 
   return res
+}
+
+
+async function handle_set_wechat(
+  vRes: VerifyTokenRes_B,
+  body: Record<string, any>,
+) {
+  const memberId = body.memberId
+  const ww_qynb_remind = body.ww_qynb_remind
+  if(!memberId || typeof memberId !== "string") {
+    return { code: "E4000", errMsg: "memberId is required" }
+  }
+  if(typeof ww_qynb_remind !== "boolean") {
+    return { code: "E4000", errMsg: "ww_qynb_remind is required" }
+  }
+  
+  // 1. get member
+  const mCol = db.collection("Member")
+  const res1 = await mCol.doc(memberId).get<Table_Member>()
+  const member = res1.data
+  if(!member) {
+    return { code: "E4004", errMsg: "memeber not found" }
+  }
+  const userId = vRes.userData._id
+  if(member.user !== userId) {
+    return { code: "E4003", errMsg: "the member is not yours" }
+  }
+
+  // 2. set ww_qynb_remind
+  const noti = member.notification ?? {}
+  if(noti.ww_qynb_remind === ww_qynb_remind) {
+    return { code: "0001" }
+  }
+  noti.ww_qynb_remind = ww_qynb_remind
+  const w2: Partial<Table_Member> = {
+    notification: noti,
+    updatedStamp: getNowStamp(),
+  }
+  const res2 = await mCol.doc(memberId).update(w2)
+  console.log("set wechat result: ")
+  console.log(res2)
+
+  return { code: "0000" }
 }
 
 
