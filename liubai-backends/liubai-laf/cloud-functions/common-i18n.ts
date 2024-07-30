@@ -50,6 +50,18 @@ export const userLoginLang: LangAtom = {
   }
 }
 
+export const wecomLang: LangAtom = {
+  "zh-Hans": {
+    "welcome_1": "Hi! 我是留小白，你已成功绑定账号 {account}\n在你的留白记事中，若存在需要提醒的卡片，我将在第一时间通知你！"
+  },
+  "zh-Hant": {
+    "welcome_1": "Hi! 我是留小白，你已成功綁定帳號 {account}\n在你的留白記事中，若存在需要提醒的卡片，我將在第一時間通知你！"
+  },
+  "en": {
+    "welcome_1": "Hi! I am Tiny Liu! You have successfully bound your account {account}\nIf you have any card you want to remind, I will notify you in the first time!"
+  }
+}
+
 
 
 

@@ -1717,13 +1717,54 @@ export interface Wx_Gzh_Voice extends Wx_Gzh_Base {
 }
 
 /******************* Some Types from WeCom  ****************/
-export interface Ww_Base {
+export interface Ww_Res_Base {
   errcode: number
   errmsg: string
 }
 
-export interface Ww_Add_Contact_Way extends Ww_Base {
+export interface Ww_Add_Contact_Way extends Ww_Res_Base {
   config_id: string
   qr_code?: string
 }
+
+/********** Event Webhook from WeCom *********/
+
+export interface Ww_Msg_Base {
+  ToUserName: string
+  FromUserName: string
+  CreateTime: string       // integer which represents timestamp (seconds)
+}
+
+// 微信用户添加企业微信联系人时
+export interface Ww_Add_External_Contact extends Ww_Msg_Base {
+  MsgType: "event"
+  Event: "change_external_contact"
+  ChangeType: "add_external_contact"
+  UserID: string
+  ExternalUserID: string
+  State?: string
+  WelcomeCode: string
+}
+
+// 微信用户删除企业微信联系人时
+export interface Ww_Del_Follow_User extends Ww_Msg_Base {
+  MsgType: "event"
+  Event: "change_external_contact"
+  ChangeType: "del_follow_user"
+  UserID: string
+  ExternalUserID: string
+}
+
+// 客户（微信用户）同意进行聊天内容存档
+export interface Ww_Msg_Audit_Approved extends Ww_Msg_Base {
+  MsgType: "event"
+  Event: "change_external_contact"
+  ChangeType: "msg_audit_approved"
+  UserID: string
+  ExternalUserID: string
+  WelcomeCode?: string
+}
+
+export type Ww_Msg_Event = Ww_Add_External_Contact | Ww_Del_Follow_User
+  | Ww_Msg_Audit_Approved
 
