@@ -55,10 +55,6 @@ export async function main(ctx: FunctionContext) {
     console.warn("fails to get encrypt in body")
     return { code: "E4000", errMsg: "Encrypt in body is required"  }
   }
-  // const tousername = payload.tousername?.[0]
-  // const agentid = payload.agentid?.[0]
-  // console.log("tousername: ", tousername)
-  // console.log("agentid: ", agentid)
 
   // 4. verify msg_signature
   const res4 = verifyMsgSignature(msg_signature, timestamp, nonce, ciphertext)
@@ -88,11 +84,7 @@ export async function main(ctx: FunctionContext) {
     return { code: "E5001", errMsg: "get msg object fail" }
   }
   
-  const { MsgType, Event } = msgObj
-  if(MsgType === "event" && Event === "change_external_contact") {
-    
-  }
-
+  
 
   // respond with empty string, and then wecom will not retry
   return ""
@@ -132,13 +124,13 @@ async function getMsgObject(
 
 function preCheck(): LiuRqReturn | undefined {
   const _env = process.env
-  const token = _env.LIU_WECOM_QYNB_TOKEN
+  const token = _env.LIU_WECOM_CHAT_SYNC_TOKEN
   if(!token) {
-    return { code: "E5001", errMsg: "LIU_WECOM_QYNB_TOKEN is empty" }
+    return { code: "E5001", errMsg: "LIU_WECOM_CHAT_SYNC_TOKEN is empty" }
   }
-  const key = _env.LIU_WECOM_QYNB_ENCODING_AESKEY
+  const key = _env.LIU_WECOM_CHAT_SYNC_ENCODING_AESKEY
   if(!key) {
-    return { code: "E5001", errMsg: "LIU_WECOM_QYNB_ENCODING_AESKEY is empty" }
+    return { code: "E5001", errMsg: "LIU_WECOM_CHAT_SYNC_ENCODING_AESKEY is empty" }
   }
 }
 
@@ -146,7 +138,7 @@ function toDecrypt(
   ciphertext: string,
 ) {
   const _env = process.env
-  const encodeingAESKey = _env.LIU_WECOM_QYNB_ENCODING_AESKEY as string
+  const encodeingAESKey = _env.LIU_WECOM_CHAT_SYNC_ENCODING_AESKEY as string
 
   let message = ""
   let id = ""
@@ -171,7 +163,7 @@ function verifyMsgSignature(
   ciphertext: string,
 ): LiuRqReturn | undefined {
   const _env = process.env
-  const token = _env.LIU_WECOM_QYNB_TOKEN as string
+  const token = _env.LIU_WECOM_CHAT_SYNC_TOKEN as string
   const sig = getSignature(token, timestamp, nonce, ciphertext)
 
   if(sig !== msg_signature) {
