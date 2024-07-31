@@ -41,8 +41,23 @@ async function modifyMemberNickname(val: string) {
   }, { speed: "instant" })
 }
 
+function canShowScrollbarProperty() {
+  const {
+    isWindows, 
+    isChrome,
+    isEdge,
+  } = liuApi.getCharacteristic()
+  
+  let showScrollbarProperty = true
+  if(isWindows && isChrome && !isEdge) {
+    showScrollbarProperty = false
+  }
+  return showScrollbarProperty
+}
+
 
 export default {
   setAppTitle,
   modifyMemberNickname,
+  canShowScrollbarProperty,
 }

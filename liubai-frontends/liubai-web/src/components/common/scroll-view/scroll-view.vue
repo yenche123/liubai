@@ -3,6 +3,7 @@ import type { SvEmits } from "./tools/types"
 import liuApi from '~/utils/liu-api';
 import { useScrollView } from './tools/useScrollView';
 import { svProps } from "./tools/types"
+import middleBridge from "~/utils/middle-bridge";
 
 const props = defineProps(svProps)
 const emits = defineEmits<SvEmits>()
@@ -15,6 +16,7 @@ const {
   onTouchEnd,
 } = useScrollView(props, emits)
 const { isMobile } = liuApi.getCharacteristic()
+const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
 
 </script>
 <template>
@@ -22,7 +24,8 @@ const { isMobile } = liuApi.getCharacteristic()
   <div ref="sv" class="liu-scroll-view" 
     :class="{ 
       'liu-scroll-view_flex': direction === 'horizontal',
-      'liu-scollbar_hidden': hiddenScrollBar,
+      'sv-scrollbar': showScrollbarProperty,
+      'liu-scollbar_hidden': showScrollbarProperty && hiddenScrollBar,
     }"
     @scroll.passive="onScrolling"
     @touchstart.passive="onTouchStart"
@@ -43,9 +46,6 @@ const { isMobile } = liuApi.getCharacteristic()
   align-items: flex-start;
   flex-wrap: nowrap;
 
-  scrollbar-color: var(--scrollbar-thumb) transparent;
-  scrollbar-width: v-bind("isMobile || hiddenScrollBar ? 'none' : 'auto'");
-
   &::-webkit-scrollbar {
     display: v-bind("isMobile || hiddenScrollBar ? 'none' : 'block'");
   }
@@ -53,6 +53,11 @@ const { isMobile } = liuApi.getCharacteristic()
   &::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);
   }
+}
+
+.sv-scrollbar {
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  scrollbar-width: v-bind("isMobile || hiddenScrollBar ? 'none' : 'auto'");
 }
 
 .liu-scollbar_hidden {

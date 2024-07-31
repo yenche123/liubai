@@ -3,6 +3,7 @@ import { ref, toRefs, defineAsyncComponent } from "vue";
 import { useViceView } from "./tools/useViceView"
 import { useVvUI } from "./tools/useVvUI";
 import type { VcState } from "./vice-content/tools/types";
+import middleBridge from "~/utils/middle-bridge";
 
 const ViceContent = defineAsyncComponent(() => {
   return import("./vice-content/vice-content.vue")
@@ -44,6 +45,7 @@ const onVcStateChange = (newV: VcState) => {
   vcStateToIr.value = newV
 }
 
+const sbProperty = middleBridge.canShowScrollbarProperty()
 
 </script>
 <template>
@@ -64,7 +66,7 @@ const onVcStateChange = (newV: VcState) => {
 
 
     <!-- 装内容的盒子 -->
-    <div class="vv-box">
+    <div class="vv-box" :class="{ 'vv-box_sb': sbProperty }">
 
       <div class="vv-inner-box">
         <ViceContent :is-outter-draging="isDraging"
@@ -188,6 +190,9 @@ const onVcStateChange = (newV: VcState) => {
   overflow-x: hidden;
   overflow-y: auto;
   direction: ltr;
+}
+
+.vv-box_sb {
   scrollbar-color: transparent transparent;
 }
 
@@ -204,7 +209,7 @@ const onVcStateChange = (newV: VcState) => {
   transition: .15s;
 }
 
-.vv-box:hover {
+.vv-box_sb:hover {
   scrollbar-color: var(--vice-scrollbar-thumb) transparent;
 }
 

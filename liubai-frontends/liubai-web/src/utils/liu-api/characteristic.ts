@@ -9,6 +9,7 @@ let isWeChat: boolean = false;
 let isIOS: boolean = false;
 let isIPadOS: boolean = false;
 let isMac: boolean = false;
+let isWindows: boolean = false;
 let isFeishu: boolean = false;
 let isInWebView: boolean = false;   // 是否在桌面应用 App 的 Webview 中，小程序也算
 let isFirefox: boolean = false;
@@ -68,7 +69,14 @@ export const getCharacteristic = (): GetChaRes => {
     isMobile = true
     isPC = false
   }
-  if(ua.includes("macintosh")) isMac = true
+
+  if(ua.includes("macintosh")) {
+    isMac = true
+  }
+  else if(ua.includes("windows")) {
+    isWindows = true
+  }
+
   if(ua.includes("feishu")) {
     isFeishu = true
     isInWebView = true
@@ -126,6 +134,7 @@ function _returnData(): GetChaRes {
     isIOS, 
     isIPadOS,
     isMac,
+    isWindows,
     isFeishu, 
     isInWebView,
     isFirefox,
