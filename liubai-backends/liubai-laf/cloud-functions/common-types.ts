@@ -1765,6 +1765,13 @@ export interface Ww_Msg_Audit_Approved extends Ww_Msg_Base {
   WelcomeCode?: string
 }
 
+// 当有新的会话产生时，会话内容存档服务会触发此事件
+export interface Ww_Msg_Audit_Notify extends Ww_Msg_Base {
+  MsgType: "event"
+  Event: "msgaudit_notify"
+  AgentID: string
+}
+
 export type Ww_Msg_Event = Ww_Add_External_Contact | Ww_Del_Follow_User
-  | Ww_Msg_Audit_Approved
+  | Ww_Msg_Audit_Approved | Ww_Msg_Audit_Notify
 

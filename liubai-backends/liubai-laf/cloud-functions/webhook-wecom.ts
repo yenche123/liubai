@@ -90,6 +90,16 @@ export async function main(ctx: FunctionContext) {
   
   const { MsgType, Event } = msgObj
   if(MsgType === "event" && Event === "change_external_contact") {
+    const { ChangeType } = msgObj
+    if(ChangeType === "add_external_contact") {
+      handle_add_external_contact(msgObj)
+    }
+    else if(ChangeType === "del_follow_user") {
+
+    }
+    else if(ChangeType === "msg_audit_approved") {
+
+    }
     
   }
 
@@ -99,6 +109,7 @@ export async function main(ctx: FunctionContext) {
 }
 
 
+// when user add WeCom Contact
 function handle_add_external_contact(
   msgObj: Ww_Add_External_Contact,
 ) {
