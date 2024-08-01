@@ -114,6 +114,8 @@ async function createMember(
 ) {
   const { image: avatar, useCloud } = CloudFiler.imageFromCloudToStore(v.member_avatar)
   const b1 = time.getBasicStampWhileAdding()
+
+  
   const data: MemberLocalTable = {
     ...b1,
     _id: v.memberId,
@@ -122,6 +124,8 @@ async function createMember(
     oState: v.member_oState,
     name: v.member_name,
     avatar,
+    config: v.member_config,
+    notification: v.member_notification,
   }
   try {
     const res = await db.members.add(data)

@@ -295,6 +295,10 @@ export interface MemberConfig {
   lastOperateName?: number     // last stamp when user edited name
 }
 
+export interface MemberNotification {
+  ww_qynb_remind?: boolean
+}
+
 /** 附着在 content 上的 emoji 表态信息 */
 export interface EmojiSystem {
   num: number
@@ -572,6 +576,7 @@ export interface LiuSpaceAndMember {
   member_avatar?: Cloud_ImageStore
   member_oState: OState_3
   member_config?: MemberConfig
+  member_notification?: MemberNotification
 
   // 关于 workspace 的信息
   spaceId: string
@@ -607,6 +612,9 @@ export interface CredentialMetaData {
   payment_circle?: SubscriptionPaymentCircle
   payment_timezone?: string
   plan?: string
+  memberId?: string
+  qr_code?: string
+  ww_qynb_config_id?: string
 }
 
 /*********************** 加解密相关 **********************/
@@ -929,6 +937,7 @@ export interface Table_Member extends BaseTable {
   user: string
   oState: OState_3
   config?: MemberConfig
+  notification?: MemberNotification
   editedStamp?: number      // 同步时，用来比大小的
 }
 
@@ -1065,7 +1074,7 @@ export interface Table_Config extends BaseTable {
 
 /** 临时凭证表的类型 */
 export type Table_Credential_Type =  "sms-code" | "email-code" | "scan-code"
-  | "users-select" | "stripe-checkout-session"
+  | "users-select" | "stripe-checkout-session" | "bind-wecom"
 
 /** 临时凭证表 */
 export interface Table_Credential extends BaseTable {
@@ -1211,6 +1220,13 @@ export interface Res_UserSettings_Enter {
   language: LocalLocale
   spaceMemberList: LiuSpaceAndMember[]
   subscription?: UserSubscription
+  
+  /** wechat data */
+  wx_gzh_openid?: string
+
+  /** wecom data for qynb, which is for company internal use */
+  ww_qynb_external_userid?: string
+
   new_serial?: string
   new_token?: string
 }
@@ -1567,6 +1583,30 @@ export interface Res_SyncGet_Cloud {
   plz_enc_results?: SyncGetAtomRes[]
 }
 
+/******************** open-connect **********************/
+export type OpenConnectOperate = "bind-wecom" | "check-wecom" | "get-wechat"
+  | "set-wechat"
+
+export type CheckBindStatus = "waiting" | "plz_check" | "expired"
+
+export interface Res_OC_BindWeCom {
+  operateType: "bind-wecom"
+  qr_code: string
+  credential: string
+}
+
+export interface Res_OC_CheckWeCom {
+  operateType: "check-wecom"
+  status: CheckBindStatus
+}
+
+export interface Res_OC_GetWeChat {
+  operateType: "get-wechat"
+  ww_qynb_external_userid?: string
+  ww_qynb_remind?: boolean
+}
+
+
 
 /******************** 一些云函数间内部的入参和出参类型 **********/
 
@@ -1676,4 +1716,62 @@ export interface Wx_Gzh_Voice extends Wx_Gzh_Base {
   MsgDataId?: string
 }
 
+/******************* Some Types from WeCom  ****************/
+export interface Ww_Res_Base {
+  errcode: number
+  errmsg: string
+}
+
+export interface Ww_Add_Contact_Way extends Ww_Res_Base {
+  config_id: string
+  qr_code?: string
+}
+
+/********** Event Webhook from WeCom *********/
+
+export interface Ww_Msg_Base {
+  ToUserName: string
+  FromUserName: string
+  CreateTime: string       // integer which represents timestamp (seconds)
+}
+
+// 微信用户添加企业微信联系人时
+export interface Ww_Add_External_Contact extends Ww_Msg_Base {
+  MsgType: "event"
+  Event: "change_external_contact"
+  ChangeType: "add_external_contact"
+  UserID: string
+  ExternalUserID: string
+  State?: string
+  WelcomeCode: string
+}
+
+// 微信用户删除企业微信联系人时
+export interface Ww_Del_Follow_User extends Ww_Msg_Base {
+  MsgType: "event"
+  Event: "change_external_contact"
+  ChangeType: "del_follow_user"
+  UserID: string
+  ExternalUserID: string
+}
+
+// 客户（微信用户）同意进行聊天内容存档
+export interface Ww_Msg_Audit_Approved extends Ww_Msg_Base {
+  MsgType: "event"
+  Event: "change_external_contact"
+  ChangeType: "msg_audit_approved"
+  UserID: string
+  ExternalUserID: string
+  WelcomeCode?: string
+}
+
+// 当有新的会话产生时，会话内容存档服务会触发此事件
+export interface Ww_Msg_Audit_Notify extends Ww_Msg_Base {
+  MsgType: "event"
+  Event: "msgaudit_notify"
+  AgentID: string
+}
+
+export type Ww_Msg_Event = Ww_Add_External_Contact | Ww_Del_Follow_User
+  | Ww_Msg_Audit_Approved | Ww_Msg_Audit_Notify
 

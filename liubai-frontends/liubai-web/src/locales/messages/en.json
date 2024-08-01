@@ -453,5 +453,32 @@
     "inbox": "Inbox",
     "today": "Today",
     "future_24": "Next 24 Hours"
+  },
+  "connect": {
+    "add": "Add",
+    "wechat": "WeChat",
+    "wechat_desc": "Using Liubai on WeChat",
+    "wechat_remind": "WeChat Remind",
+    "wechat_remind_desc": "Add \"留小白\" on WeChat. It will reach out to you when your agenda needs a reminder.",
+    "dingtalk": "DingTalk",
+    "dingtalk_desc": "Ｕsing Liubai quietly on DingTalk",
+    "feishu": "Feishu",
+    "feishu_desc": "All of super individuals on Feishu is using Liubai",
+    "line": "LINE",
+    "line_desc": "Connecting Liubai with LINE",
+    "slack": "Slack",
+    "slack_desc": "Using Liubai on Slack",
+    "telegram": "Telegram",
+    "telegram_desc": "Organize your messages on Telegram with Liubai",
+    "teams": "Teams",
+    "teams_desc": "Liubai for Microsoft Teams",
+    "whatsapp": "WhatsApp",
+    "whatsapp_desc": "Using Liubai on WhatsApp"
+  },
+  "qrcode": {
+    "long_press": "Long press to recognize and add \"留小白\" on WeChat",
+    "scan": "Scan the QR code on WeChat to add \"留小白\"",
+    "title": "Your exclusive QR code",
+    "screenshot": "Screenshot and open it on WeChat please"
   }
 }

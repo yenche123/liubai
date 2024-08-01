@@ -27,6 +27,7 @@ import type {
   VerifyTokenRes_B,
   DecryptCloudRes,
   LiuRqOpt,
+  Table_Config,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -223,6 +224,7 @@ function turnMemberAggsIntoLSAMs(
       member_avatar: v.avatar,
       member_oState,
       member_config: v.config,
+      member_notification: v.notification,
       
       spaceId: theSpace._id,
       spaceType: theSpace.infoType,
@@ -1221,4 +1223,14 @@ export function getStripeInstance() {
   if(!sk) return
   const stripe = new Stripe(sk)
   return stripe
+}
+
+
+/*************** About WeCom ****************/
+export async function getWwQynbAccessToken() {
+  const col = db.collection("Config")
+  const res = await col.getOne<Table_Config>()
+  const d = res.data
+  const accessToken = d?.wecom_qynb?.access_token
+  return accessToken
 }

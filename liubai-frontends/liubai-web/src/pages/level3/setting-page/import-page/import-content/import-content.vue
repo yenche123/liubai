@@ -7,7 +7,7 @@ import liuEnv from "~/utils/liu-env";
 const { t } = useI18n()
 
 const iconColor = "var(--main-normal)"
-const { 
+const {
   list,
   oursFileEl,
   onOursFileChange,
@@ -20,50 +20,32 @@ const { APP_NAME } = liuEnv.getEnv()
 </script>
 <template>
 
-  <div class="liu-mc-container">
-    <div class="liu-mc-box">
+  <div class="sc-box">
 
-      <div class="sc-box">
-
-        <!-- 从专有格式导入 -->
-        <div class="liu-no-user-select liu-hover sc-bar">
-          <div class="scb-hd">
-            <span>{{ t('import.t1', { appName: APP_NAME }) }}</span>
-          </div>
-          <div class="scb-footer">
-            <div class="scb-footer-icon">
-              <svg-icon class="scbf-back"
-                name="arrow-right2"
-                :color="iconColor"
-              ></svg-icon>
-            </div>
-          </div>
-
-          <input ref="oursFileEl" 
-            type="file" 
-            class="sc-file-input" 
-            @change="onOursFileChange"
-            accept="application/zip"
-          />
+    <!-- 从专有格式导入 -->
+    <div class="liu-no-user-select liu-hover sc-bar">
+      <div class="scb-hd">
+        <span>{{ t('import.t1', { appName: APP_NAME }) }}</span>
+      </div>
+      <div class="scb-footer">
+        <div class="scb-footer-icon">
+          <svg-icon class="scbf-back" name="arrow-right2" :color="iconColor"></svg-icon>
         </div>
-
       </div>
 
-      <!-- 导入后的结果 -->
-      <div v-if="list.length" class="import-results">
-        <ImportResults :list="list"
-          @tapcancel="onTapCancel"
-          @tapclear="onTapClear"
-          @tapconfirm="onTapConfirm"
-        ></ImportResults>
-      </div>
-
+      <input ref="oursFileEl" type="file" class="sc-file-input" @change="onOursFileChange" accept="application/zip" />
     </div>
+
+  </div>
+
+  <!-- 导入后的结果 -->
+  <div v-if="list.length" class="import-results">
+    <ImportResults :list="list" @tapcancel="onTapCancel" @tapclear="onTapClear" @tapconfirm="onTapConfirm">
+    </ImportResults>
   </div>
 
 </template>
 <style scoped lang="scss">
-
 .sc-box {
   background-color: var(--card-bg);
   border-radius: 24px;
@@ -145,6 +127,4 @@ const { APP_NAME } = liuEnv.getEnv()
   width: 100%;
   position: relative;
 }
-
-
 </style>

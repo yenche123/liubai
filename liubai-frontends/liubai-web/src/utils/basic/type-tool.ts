@@ -21,5 +21,7 @@ export type Prettify<T> = {
 export type SimplePromise = () => Promise<void>
 
 export type LiuTimeout = ReturnType<typeof setTimeout> | undefined
+
+export type SimpleObject = Record<string, boolean | number | string | null | undefined>
  
  

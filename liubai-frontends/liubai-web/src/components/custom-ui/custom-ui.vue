@@ -16,6 +16,7 @@ const ShareView = defineAsyncComponent(() => import("./share-view/share-view.vue
 const ContentPanel = defineAsyncComponent(() => import("./content-panel/content-panel.vue"))
 const CommentPopup = defineAsyncComponent(() => import("./comment-popup/comment-popup.vue"))
 const HashtagSelector = defineAsyncComponent(() => import("./hashtag-selector/hashtag-selector.vue"))
+const BindAccount = defineAsyncComponent(() => import("./bind-account/bind-account.vue"))
 
 </script>
 <template>
@@ -64,6 +65,9 @@ const HashtagSelector = defineAsyncComponent(() => import("./hashtag-selector/ha
 
   <!-- 评论弹窗 -->
   <CommentPopup></CommentPopup>
+
+  <!-- 绑定账号 -->
+  <BindAccount></BindAccount>
   
 </template>
 

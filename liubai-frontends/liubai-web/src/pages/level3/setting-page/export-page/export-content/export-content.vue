@@ -16,59 +16,45 @@ const { max_export_num } = cfg
 </script>
 <template>
 
-  <div class="liu-mc-container">
-    <div class="liu-mc-box">
+  <div class="liu-highlight-box">
+    <span class="liu-selection">{{ t('export.highlight_tip', { max: max_export_num }) }}</span>
+  </div>
 
-      <div class="liu-highlight-box">
-        <span class="liu-selection">{{ t('export.highlight_tip', { max: max_export_num }) }}</span>
+  <div class="sc-box">
+
+    <!-- 导出成 .md 文件 -->
+    <div class="liu-no-user-select liu-hover sc-bar" @click.stop="onTapMarkdown">
+      <div class="scb-hd">
+        <span>{{ t('export.markdown') }}</span>
       </div>
-
-      <div class="sc-box">
-
-        <!-- 导出成 .md 文件 -->
-        <div class="liu-no-user-select liu-hover sc-bar" @click.stop="onTapMarkdown">
-          <div class="scb-hd">
-            <span>{{ t('export.markdown') }}</span>
-          </div>
-          <div class="scb-footer">
-            <div class="scb-footer-icon">
-              <svg-icon class="scbf-back"
-                name="arrow-right2"
-                :color="iconColor"
-              ></svg-icon>
-            </div>
-          </div>
+      <div class="scb-footer">
+        <div class="scb-footer-icon">
+          <svg-icon class="scbf-back" name="arrow-right2" :color="iconColor"></svg-icon>
         </div>
-
-        <!-- 导出成 .json 文件 -->
-        <div class="liu-no-user-select liu-hover sc-bar" @click.stop="onTapJSON">
-          <div class="scb-main">
-            <div class="scb-hd scbm-hd">
-              <span>{{ t('export.json') }}</span>
-            </div>
-            <div class="scbm-bd">
-              <span>{{ t('export.json_tip') }}</span>
-            </div>
-          </div>
-          <div class="scb-footer">
-            <div class="scb-footer-icon">
-              <svg-icon class="scbf-back"
-                name="arrow-right2"
-                :color="iconColor"
-              ></svg-icon>
-            </div>
-          </div>
-        </div>
-
       </div>
-
-
     </div>
+
+    <!-- 导出成 .json 文件 -->
+    <div class="liu-no-user-select liu-hover sc-bar" @click.stop="onTapJSON">
+      <div class="scb-main">
+        <div class="scb-hd scbm-hd">
+          <span>{{ t('export.json') }}</span>
+        </div>
+        <div class="scbm-bd">
+          <span>{{ t('export.json_tip') }}</span>
+        </div>
+      </div>
+      <div class="scb-footer">
+        <div class="scb-footer-icon">
+          <svg-icon class="scbf-back" name="arrow-right2" :color="iconColor"></svg-icon>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </template>
 <style scoped lang="scss">
-
 .sc-box {
   background-color: var(--card-bg);
   border-radius: 24px;
@@ -135,7 +121,4 @@ const { max_export_num } = cfg
   height: 18px;
   transition: .3s;
 }
-
-
-
 </style>

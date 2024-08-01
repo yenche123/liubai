@@ -79,6 +79,10 @@ declare global {
       LIU_WECOM_QYNB_BOT_IDS?: string    // wecom's userIds where these wecom users
                                          // can send & receive messages via our backend
                                          // plz use comma（,） to split
+      // 企业微信 会话内容存档
+      LIU_WECOM_CHAT_SYNC_TOKEN?: string
+      LIU_WECOM_CHAT_SYNC_ENCODING_AESKEY?: string
+
       
 
     }

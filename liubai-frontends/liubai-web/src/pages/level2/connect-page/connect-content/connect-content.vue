@@ -1,44 +1,65 @@
 <script setup lang="ts">
+import { useConnectContent } from "./tools/useConnectContent"
+import ConnectItem from "./connect-item/connect-item.vue";
+import ListBottom from "~/components/common/list-bottom/list-bottom.vue";
+
+const {
+  prefix,
+  _env,
+} = useConnectContent()
 
 </script>
 <template>
 
-  <div class="cc-box">
-    <svg-icon 
-      class="liu-no-user-select cc-img"
-      :cover-fill-stroke="false"
-      name="emojis-face_with_peeking_eye_color"
-    ></svg-icon>
-    <div class="cc-text">
-      <span class="liu-selection">这可能需要一点时间。外部应用众多，通信格式也各异，我们会试图寻找优雅的方式让人们可以很轻松的连接各个应用，同时免除琐碎配置的烦恼。这需要我们花大量的时间去研究交互，希望能得到你的理解。</span>
-    </div>
-  </div>
+  <!-- wechat -->
+  <ConnectItem v-if="_env.C_WECHAT" 
+    :prefix="prefix" connector-id="wechat" title-key="connect.wechat"
+    desc-key="connect.wechat_desc" icon-url="/images/third-party/wechat.png"
+  ></ConnectItem>
+
+  <!-- TODO: dingtalk -->
+  <ConnectItem v-if="_env.C_DINGTALK" 
+    :prefix="prefix" connector-id="dingtalk" title-key="connect.dingtalk"
+    desc-key="connect.dingtalk_desc" icon-url="/images/third-party/dingtalk.svg"
+  ></ConnectItem>
+
+  <!-- TODO: feishu -->
+  <ConnectItem v-if="_env.C_FEISHU" 
+    :prefix="prefix" connector-id="feishu" title-key="connect.feishu"
+    desc-key="connect.feishu_desc" icon-url="/images/third-party/feishu.png"
+  ></ConnectItem>
+
+  <!-- TODO: telegram -->
+  <ConnectItem v-if="_env.C_TELEGRAM" 
+    :prefix="prefix" connector-id="telegram" title-key="connect.telegram"
+    desc-key="connect.telegram_desc" icon-url="/images/third-party/telegram.svg"
+  ></ConnectItem>
+
+  <!-- whatsapp -->
+  <ConnectItem v-if="_env.C_WHATSAPP" 
+    :prefix="prefix" connector-id="whatsapp" title-key="connect.whatsapp"
+    desc-key="connect.whatsapp_desc" icon-url="/images/third-party/whatsapp.svg"
+  ></ConnectItem>
+
+  <!-- line -->
+  <ConnectItem v-if="_env.C_LINE" 
+    :prefix="prefix" connector-id="line" title-key="connect.line"
+    desc-key="connect.line_desc" icon-url="/images/third-party/line.svg"
+  ></ConnectItem>
+
+  <!-- teams -->
+  <ConnectItem v-if="_env.C_TEAMS" 
+    :prefix="prefix" connector-id="teams" title-key="connect.teams"
+    desc-key="connect.teams_desc" icon-url="/images/third-party/teams.svg"
+  ></ConnectItem>
+
+  <!-- TODO: slack -->
+  <ConnectItem v-if="_env.C_SLACK" 
+    :prefix="prefix" connector-id="slack" title-key="connect.slack"
+    desc-key="connect.slack_desc" icon-url="/images/third-party/slack.svg"
+  ></ConnectItem>
+
+  <ListBottom has-data reached></ListBottom>
 
 </template>
-<style scoped>
-
-.cc-box {
-  width: 60%;
-  padding-inline: 20%;
-  min-height: 85%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.cc-img {
-  width: 100px;
-  height: 100px;
-  margin-block-end: min(20%, 100px);
-}
-
-.cc-text {
-  text-align: center;
-  line-height: 1.9;
-  padding-block-end: min(15%, 75px);
-  color: var(--main-text);
-}
-
-</style>
+<style scoped></style>

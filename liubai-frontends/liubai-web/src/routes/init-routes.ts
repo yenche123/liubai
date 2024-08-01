@@ -22,8 +22,10 @@ const ImportPage = () => import("../pages/level3/setting-page/import-page/import
 const SubscribePage = () => import("../pages/level3/payments/subscribe-page/subscribe-page.vue")
 const PaymentSuccessPage = () => import("../pages/level3/payments/success-page/success-page.vue")
 const A2hsPage = () => import("../pages/level3/a2hs-page/a2hs-page.vue")
+const ConnectWechat = () => import("../pages/connectors/connect-wechat/connect-wechat.vue")
 
 export const routes: Array<RouteRecordRaw> = [
+  /*************** 公共页面（不区分工作区） ***************/
   {
     path: "/home",
     component: HomePage,
@@ -59,13 +61,36 @@ export const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/",
+    path: "/a2hs",
+    component: A2hsPage,
+    name: "a2hs",
+    meta: {
+      inApp: false,
+    }
+  },
+  {
+    path: "/subscription",
     components: {
-      default: IndexPage,
+      default: SubscribePage,
       LeftSidebar,
     },
-    name: "index",
-    meta: {}
+    name: "subscription",
+    meta: {
+      checkWorkspace: false,
+      hasViceView: false,
+    },
+  },
+  {
+    path: "/payment-success",
+    components: {
+      default: PaymentSuccessPage,
+      LeftSidebar,
+    },
+    name: "payment-success",
+    meta: {
+      hasViceView: false,
+      checkWorkspace: false,
+    },
   },
   {
     path: "/:contentId(\\w{10,})",
@@ -99,6 +124,16 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       checkWorkspace: false,
     }
+  },
+  /*************** Personal Workspace ***************/
+  {
+    path: "/",
+    components: {
+      default: IndexPage,
+      LeftSidebar,
+    },
+    name: "index",
+    meta: {}
   },
   {
     path: "/tag/:tagId(\\w{18,})",
@@ -148,15 +183,26 @@ export const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/connect",
+    path: "/connectors",
     components: {
       default: ConnectPage,
       LeftSidebar,
     },
-    name: "connect",
+    name: "connectors",
     meta: {
       hasViceView: false,
     }
+  },
+  {
+    path: "/connect/wechat",
+    components: {
+      default: ConnectWechat,
+      LeftSidebar,
+    },
+    name: "connect-wechat",
+    meta: {
+      hasViceView: false,
+    },
   },
   {
     path: "/settings",
@@ -178,6 +224,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "export",
     meta: {
       inSetting: true,
+      hasViceView: false,
     }
   },
   {
@@ -189,6 +236,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "import",
     meta: {
       inSetting: true,
+      hasViceView: false,
     }
   },
   {
@@ -200,37 +248,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "notification",
     meta: {}
   },
-  {
-    path: "/a2hs",
-    component: A2hsPage,
-    name: "a2hs",
-    meta: {
-      inApp: false,
-    }
-  },
-  {
-    path: "/subscription",
-    components: {
-      default: SubscribePage,
-      LeftSidebar,
-    },
-    name: "subscription",
-    meta: {
-      checkWorkspace: false,
-    },
-  },
-  {
-    path: "/payment-success",
-    components: {
-      default: PaymentSuccessPage,
-      LeftSidebar,
-    },
-    name: "payment-success",
-    meta: {
-      checkWorkspace: false,
-    },
-  },
-  /************************** 协作工作区 ***********************/
+  /********************* Collaborative Workspace ********************/
   {
     path: "/w/:workspaceId(\\w{10,})",
     components: {
@@ -288,15 +306,26 @@ export const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: "/w/:workspaceId(\\w{10,})/connect",
+    path: "/w/:workspaceId(\\w{10,})/connectors",
     components: {
       default: ConnectPage,
       LeftSidebar,
     },
-    name: "collaborative-connect",
+    name: "collaborative-connectors",
     meta: {
       hasViceView: false,
     }
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/connect/wechat",
+    components: {
+      default: ConnectWechat,
+      LeftSidebar,
+    },
+    name: "collaborative-connect-wechat",
+    meta: {
+      hasViceView: false,
+    },
   },
   {
     path: "/w/:workspaceId(\\w{10,})/settings",
@@ -318,6 +347,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "collaborative-export",
     meta: {
       inSetting: true,
+      hasViceView: false,
     }
   },
   {
@@ -329,6 +359,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "collaborative-import",
     meta: {
       inSetting: true,
+      hasViceView: false,
     }
   },
   {
@@ -340,7 +371,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "collaborative-notification",
     meta: {}
   },
-  // the rest of routes, redirect to root
+  /***************** the rest of routes, redirect to root ****************/
   {
     path: "/:pathMatch(.*)*",
     redirect: "/",

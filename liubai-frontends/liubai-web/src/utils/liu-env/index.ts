@@ -80,6 +80,17 @@ function getEnv(): LiuSystemEnv {
   // matomo
   const MATOMO_URL = import.meta.env.VITE_MATOMO_URL
 
+  // connectors
+  const CONNECTORS = import.meta.env.VITE_CONNECTORS === "01"
+  const C_WECHAT = import.meta.env.VITE_CONNECT_WECHAT === "01"
+  const C_DINGTALK = import.meta.env.VITE_CONNECT_DINGTALK === "01"
+  const C_FEISHU = import.meta.env.VITE_CONNECT_FEISHU === "01"
+  const C_TELEGRAM = import.meta.env.VITE_CONNECT_TELEGRAM === "01"
+  const C_WHATSAPP = import.meta.env.VITE_CONNECT_WHATSAPP === "01"
+  const C_LINE = import.meta.env.VITE_CONNECT_LINE === "01"
+  const C_TEAMS = import.meta.env.VITE_CONNECT_TEAMS === "01"
+  const C_SLACK = import.meta.env.VITE_CONNECT_SLACK === "01"
+
   // do not use sync system even if API_DOMAIN is set
   const donotUseSync = import.meta.env.VITE_DONOT_USE_SYNC
   const DONOT_USE_SYNC = donotUseSync === "01"
@@ -127,6 +138,15 @@ function getEnv(): LiuSystemEnv {
     PLAUSIBLE_DOMAIN,
     PLAUSIBLE_SRC,
     MATOMO_URL,
+    CONNECTORS,
+    C_WECHAT,
+    C_DINGTALK,
+    C_FEISHU,
+    C_TELEGRAM,
+    C_WHATSAPP,
+    C_LINE,
+    C_TEAMS,
+    C_SLACK,
     DONOT_USE_SYNC,
   }
   return _env

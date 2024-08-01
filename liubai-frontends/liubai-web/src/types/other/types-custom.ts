@@ -43,6 +43,10 @@ export interface MemberConfig {
   lastOperateName?: number     // last stamp when user edited name
 }
 
+export interface MemberNotification {
+  ww_qynb_remind?: boolean
+}
+
 export interface ImgOneLayout {
   heightStr: string           // 整个盒子的高度，比如 80% （相对于宽度）
   maxWidthPx: number          // 整个 covers 盒子的最大宽度，单位 px

@@ -29,6 +29,17 @@ Build! Anyway
 }
 ```
 
+8. 清楚 pnpm 缓存: `pnpm store prune`
+
+9. socks 的代理 link: `socks5://127.0.0.1:1081`
+
+
+## 彻底解决 pnpm 网络请求超时的问题
+
+关闭 ipv6! 改为 `仅本地连接`
+关闭 ipv6! 改为 `仅本地连接`
+关闭 ipv6! 改为 `仅本地连接`
+
 ## PWA
 
 ### 图标优先级
@@ -96,8 +107,6 @@ https://yesicon.app/
 https://emojis.alexandru.so/  AI 生成 emoji
 
 https://www.bing.com/images/create  用 DALL-E 3 生成插图
-
-https://svgl.vercel.app/    聚焦各大 Logo 的 SVG
 
 https://openmoji.org/
 

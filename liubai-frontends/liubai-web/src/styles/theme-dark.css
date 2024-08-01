@@ -99,6 +99,9 @@
   --on-cui-snackbar: #2a2c2e;
   --cui-snackbar-shadow: 0 6px 12px rgba(255, 255, 255, .14);
 
+  /** 自定义组件: 通用 popup */
+  --cui-popup-shadow: 0 -12px 32px rgba(255, 255, 255, .12);
+
   /** preview-image 预览图片 */
   --preview-image-bg: rgba(0, 0, 0, 1);        /** 移动端的背景，没有透明读 */
   --preview-image-bg-2: rgba(0, 0, 0, .86);    /** 电脑端的背景，具备一定透明度 */
@@ -112,7 +115,7 @@
   --frosted-glass-2: rgba(36, 38, 40, .8);  /** spotlight 模态框的背景色 */
   /** 跟随 --bg-color 的背景色 */
   --frosted-glass-3: linear-gradient(0deg, rgba(41, 43, 45, .86) 50%, rgba(41, 43, 45, .75) 90%);
-  --frosted-glass-4: rgba(35, 35, 35, .66);    /** navi-auto 在有阴影状态时的背景色 */
+  --frosted-glass-4: rgba(35, 35, 35, .66);
   --frosted-glass-5: linear-gradient(0deg, rgba(41, 43, 45, .86) 50%, rgba(41, 43, 45, .75) 90%);
 
   /********* 导入页: 「查看更多」的背景 *******/

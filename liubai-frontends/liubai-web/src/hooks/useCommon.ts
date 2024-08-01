@@ -2,11 +2,12 @@
 
 import { storeToRefs } from "pinia"
 import { 
-  Ref,
   computed, 
   onActivated, 
   onBeforeUnmount, 
   onDeactivated,
+  onMounted,
+  readonly,
   ref, 
   toRef, 
   watch,
@@ -20,12 +21,11 @@ import { usersToMemberShows } from "~/utils/other/member-related";
 import { membersToShows } from "~/utils/other/member-related";
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus";
 import { 
-  useThrottleFn, 
-  useDebounceFn, 
-  useMutationObserver,
+  useThrottleFn,
 } from "./useVueUse"
 import type { TrueOrFalse } from "~/types/types-basic";
 import { useGlobalStateStore } from "./stores/useGlobalStateStore";
+import type { SimpleFunc } from "~/utils/basic/type-tool";
 
 // 获取路径的前缀
 // 如果当前非个人工作区，就会加上 `/w/${spaceId}`
@@ -115,6 +115,7 @@ export function useAwakeNum(
   const isActivated = ref(showTxt.value === "true")
 
   onActivated(() => isActivated.value = true)
+  onMounted(() => isActivated.value = true)
   onDeactivated(() => isActivated.value = false)
   onBeforeUnmount(() => isActivated.value = false)
 
@@ -142,7 +143,7 @@ export function useAwakeNum(
   }, { immediate: true })
   
   return {
-    awakeNum,
+    awakeNum: readonly(awakeNum),
     syncNum,
     isActivated,
   }
@@ -160,4 +161,21 @@ export function useWindowLoaded(data: WinLoadedData) {
   watch(windowLoaded, (newV) => {
     data.enable = newV
   }, { immediate: true })
+}
+
+
+export function onLiuActivated(fn: SimpleFunc) {
+  
+  let mounted = false
+
+  onActivated(() => {
+    if(!mounted) return
+    fn()
+  })
+
+  onMounted(() => {
+    fn()
+    mounted = true
+  })
+
 }

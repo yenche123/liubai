@@ -132,7 +132,13 @@ export interface TagView {
  * 53: 该页面需要后端方可访问
  */
 export type PageState = -1 | 0 | 1 | 50 | 51 | 52 | 53
-
+export type PageStateKey = "OK" 
+  | "LOADING"
+  | "SWITCHING"
+  | "NO_DATA"
+  | "NO_AUTH"
+  | "NETWORK_ERR"
+  | "NEED_BACKEND"
 
 // 方案限制
 export type LiuLimit = "pin" // 置顶数

@@ -1,6 +1,11 @@
+// Function Name: webhook-wecom
 // Receive messages and events from WeCom
 import cloud from "@lafjs/cloud";
-import { type LiuRqReturn } from "@/common-types";
+import type { 
+  LiuRqReturn,
+  Ww_Add_External_Contact,
+  Ww_Msg_Event,
+} from "@/common-types";
 import { decrypt, getSignature } from "@wecom/crypto"
 import xml2js from "xml2js"
 import { getIp } from "@/common-util";
@@ -8,13 +13,11 @@ import { getIp } from "@/common-util";
 const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
-  console.log("webhook-wecom starts to run!")
-
   const ip = getIp(ctx)
 
   const b = ctx.body
   const q = ctx.query
-
+  
   // 0. preCheck
   const res0 = preCheck()
   if(res0) {
@@ -69,9 +72,6 @@ export async function main(ctx: FunctionContext) {
 
   // 5. decrypt 
   const { message, id } = toDecrypt(ciphertext)
-  console.log("message from wecom:")
-  console.log(message)
-
   if(!message) {
     console.warn("fails to get message")
     return { code: "E4000", errMsg: "decrypt fail" }
@@ -87,17 +87,51 @@ export async function main(ctx: FunctionContext) {
     console.warn("fails to get msg object")
     return { code: "E5001", errMsg: "get msg object fail" }
   }
+  
+  const { MsgType, Event } = msgObj
+  if(MsgType === "event" && Event === "change_external_contact") {
+    const { ChangeType } = msgObj
+    if(ChangeType === "add_external_contact") {
+      handle_add_external_contact(msgObj)
+    }
+    else if(ChangeType === "del_follow_user") {
+
+    }
+    else if(ChangeType === "msg_audit_approved") {
+
+    }
+    
+  }
+
 
   // respond with empty string, and then wecom will not retry
   return ""
 }
 
-async function getMsgObject(message: string) {
-  let res: Record<string, any> | undefined 
+
+// when user add WeCom Contact
+function handle_add_external_contact(
+  msgObj: Ww_Add_External_Contact,
+) {
+
+
+
+}
+
+
+
+
+
+/***************** helper functions *************/
+
+async function getMsgObject(
+  message: string
+): Promise<Ww_Msg_Event | undefined> {
+  let res: Ww_Msg_Event | undefined 
   const parser = new xml2js.Parser({explicitArray : false})
   try {
     const { xml } = await parser.parseStringPromise(message)
-    res = xml
+    res = xml as Ww_Msg_Event
   }
   catch(err) {
     console.warn("getMsgObject fails")

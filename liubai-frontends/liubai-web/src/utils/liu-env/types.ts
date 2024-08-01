@@ -72,6 +72,17 @@ export interface LiuSystemEnv {
   // matomo
   MATOMO_URL?: string
 
+  // connectors
+  CONNECTORS?: boolean
+  C_WECHAT?: boolean
+  C_DINGTALK?: boolean
+  C_FEISHU?: boolean
+  C_TELEGRAM?: boolean
+  C_WHATSAPP?: boolean
+  C_LINE?: boolean
+  C_TEAMS?: boolean
+  C_SLACK?: boolean
+
   // don't use sync-system
   DONOT_USE_SYNC?: boolean
 

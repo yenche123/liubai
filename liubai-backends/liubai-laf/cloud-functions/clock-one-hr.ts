@@ -13,8 +13,8 @@ import { liuReq, valTool } from '@/common-util'
 const API_WECHAT_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token"
 const API_WECOM_ACCESS_TOKEN = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
 
-const db = cloud.mongo.db
-const db2 = cloud.database()
+const db0 = cloud.mongo.db
+const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
 
@@ -65,7 +65,7 @@ async function updateGlobalConfig(
     ...opt,
     updatedStamp: getNowStamp(),
   }
-  const res2 = await db2.collection("Config").doc(cfg._id).update(u)
+  const res2 = await db.collection("Config").doc(cfg._id).update(u)
   // console.log("updateGlobalConfig res2:")
   // console.log(res2)
 
@@ -74,7 +74,7 @@ async function updateGlobalConfig(
 
 
 async function getGlobalConfig() {
-  const col = db2.collection("Config")
+  const col = db.collection("Config")
   const res = await col.get<Table_Config>()
   const list = res.data
   let cfg = list[0]
@@ -175,7 +175,7 @@ async function clearDrafts() {
       $in: ["POSTED", "DELETED"]
     }
   }
-  const col = db.collection("Draft")
+  const col = db0.collection("Draft")
   const res1 = await col.deleteMany(q)
   // console.log("删除 21 天前已发表或已删除的草稿 result: ")
   // console.log(res1)
@@ -200,7 +200,7 @@ async function clearExpiredCredentials() {
       $lte: ONE_HR_AGO
     }
   }
-  const col = db.collection("Credential")
+  const col = db0.collection("Credential")
   const res = await col.deleteMany(q)
   // console.log("clearExpiredCredentials res:")
   // console.log(res)
@@ -210,17 +210,21 @@ async function clearExpiredCredentials() {
 
 async function clearTokens() {
 
-  const col = db.collection("Token")
+  const col = db0.collection("Token")
 
   // 1. to clear the tokens whose isOn is equal to "N"
   const q1 = { isOn: "N" }
   const res1 = await col.deleteMany(q1)
 
   // 2. to clear the tokens whose expireStamp is less than one week ago
+  // and they are not related to binding something
   const ONE_WEEK_AGO = getNowStamp() - WEEK
   const q2 = {
     expireStamp: {
       $lte: ONE_WEEK_AGO,
+    },
+    infoType: {
+      $nin: ["bind-wecom"]
     }
   }
   const res2 = await col.deleteMany(q2)
