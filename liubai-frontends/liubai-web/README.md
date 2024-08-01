@@ -29,16 +29,17 @@ Build! Anyway
 }
 ```
 
-8. 清楚 pnpm 缓存: `pnpm store prune`
-
-9. socks 的代理 link: `socks5://127.0.0.1:1081`
-
-
 ## 彻底解决 pnpm 网络请求超时的问题
 
 关闭 ipv6! 改为 `仅本地连接`
 关闭 ipv6! 改为 `仅本地连接`
 关闭 ipv6! 改为 `仅本地连接`
+
+清除 pnpm 缓存: `pnpm store prune`
+
+pnpm 设置代理: `pnpm config set proxy socks5://127.0.0.1:1081`
+
+查看 pnpm 配置: `pnpm config list`
 
 ## PWA
 
