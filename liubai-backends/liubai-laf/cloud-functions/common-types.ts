@@ -1727,6 +1727,66 @@ export interface Ww_Add_Contact_Way extends Ww_Res_Base {
   qr_code?: string
 }
 
+/********** Send Welcome message for WeCom *********/
+
+export interface Ww_Wel_Text {
+  content: string
+}
+
+export interface Ww_Wel_Attachment_Image {
+  msgtype: "image"
+  image: {
+    media_id?: string
+    pic_url?: string   // 仅可使用上传图片接口得到的链接
+  }
+}
+
+export interface Ww_Wel_Attachment_Link {
+  msgtype: "link"
+  link: {
+    title: string
+    picurl?: string
+    desc?: string
+    url: string
+  }
+}
+
+export interface Ww_Wel_Attachment_Miniprogram {
+  msgtype: "miniprogrampage"
+  miniprogrampage: {
+    title: string
+    pic_media_id: string    // 封面图建议尺寸为520*416
+    appid: string           // 必须是关联到企业的小程序应用
+    page: string
+  }
+}
+
+export interface Ww_Wel_Attachment_Video {
+  msgtype: "video"
+  video: {
+    media_id: string
+  }
+}
+
+export interface Ww_Wel_Attachment_File {
+  msgtype: "file"
+	file: {
+    media_id: string
+  }
+}
+
+export type Ww_Wel_Attachment = Ww_Wel_Attachment_Image
+  | Ww_Wel_Attachment_Link
+  | Ww_Wel_Attachment_Miniprogram
+  | Ww_Wel_Attachment_Video
+  | Ww_Wel_Attachment_File
+
+export interface Ww_Welcome_Body {
+  welcome_code: string
+  text?: Ww_Wel_Text
+  attachments?: Ww_Wel_Attachment[]
+}
+
 /********** Event Webhook from WeCom *********/
 
 export interface Ww_Msg_Base {
