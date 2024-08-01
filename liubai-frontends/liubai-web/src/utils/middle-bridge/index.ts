@@ -43,13 +43,12 @@ async function modifyMemberNickname(val: string) {
 
 function canShowScrollbarProperty() {
   const {
-    isWindows, 
     isChrome,
     isEdge,
   } = liuApi.getCharacteristic()
   
   let showScrollbarProperty = true
-  if(isWindows && isChrome && !isEdge) {
+  if(isChrome && !isEdge) {
     showScrollbarProperty = false
   }
   return showScrollbarProperty
