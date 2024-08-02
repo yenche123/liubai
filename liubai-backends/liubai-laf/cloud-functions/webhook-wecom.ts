@@ -4,14 +4,17 @@ import cloud from "@lafjs/cloud";
 import type { 
   LiuRqReturn,
   Table_Config,
+  Table_Credential,
+  Table_User,
   Ww_Add_External_Contact,
   Ww_Msg_Event,
   Ww_Welcome_Body,
 } from "@/common-types";
 import { decrypt, getSignature } from "@wecom/crypto";
 import xml2js from "xml2js";
-import { getIp, liuReq } from "@/common-util";
+import { getIp, liuReq, updateUserInCache } from "@/common-util";
 import { useI18n, wecomLang } from "@/common-i18n";
+import { getNowStamp } from "@/common-time";
 
 const db = cloud.database()
 
@@ -98,7 +101,7 @@ export async function main(ctx: FunctionContext) {
   if(MsgType === "event" && Event === "change_external_contact") {
     const { ChangeType } = msgObj
     if(ChangeType === "add_external_contact") {
-      handle_add_external_contact(msgObj)
+      await handle_add_external_contact(msgObj)
     }
     else if(ChangeType === "del_follow_user") {
 
@@ -127,6 +130,38 @@ async function handle_add_external_contact(
   } = msgObj
   const { t: t0 } = useI18n(wecomLang)
 
+  // 0.1 a function to return welcome_2
+  const _when_no_state = async () => {
+    if(!WelcomeCode) return
+    const text = t0("welcome_2", { link: "TESTing" })
+    await sendWelcomeMessage({
+      welcome_code: WelcomeCode,
+      text: { content: text },
+    })
+  }
+
+  // 0.2 a function to return welcome_3 which means that
+  // the original QR code is expired or invalid
+  const _when_cred_err = async () => {
+    if(!WelcomeCode) return
+    const text = t0("welcome_3", { link: "TESTing" })
+    await sendWelcomeMessage({
+      welcome_code: WelcomeCode,
+      text: { content: text },
+    })
+  }
+
+  // 0.3 when the WeChat account has been bound
+  const _when_bound = async () => {
+    if(!WelcomeCode) return
+    const text = t0("err_1")
+    await sendWelcomeMessage({
+      welcome_code: WelcomeCode,
+      text: { content: text },
+    })
+  }
+
+
   // 1. if ExternalUserID is empty, return
   if(!ExternalUserID) {
     console.warn("fails to get ExternalUserID")
@@ -134,18 +169,102 @@ async function handle_add_external_contact(
     return { code: "E5002", errMsg: "ExternalUserID is empty" }
   }
 
+  // 1.2 check if ExternalUserID has been bound
+  const uCol = db.collection("User")
+  const w1_2: Partial<Table_User> = {
+    ww_qynb_external_userid: ExternalUserID,
+  }
+  const res1_2 = await uCol.where(w1_2).get<Table_User>()
+  const list1_2 = res1_2.data
+  if(list1_2.length > 0) {
+    console.warn("ExternalUserID has been bound")
+    console.log(list1_2)
+    console.log(msgObj)
+    _when_bound()
+    return { code: "0000" }
+  }
+
   // 2. return binding link if State is empty
   if(!State) {
-    let res2: LiuRqReturn = { code: "0000" }
-    if(WelcomeCode) {
-      const text2 = t0("welcome_2", { link: "TESTing" })
-      res2 = await sendWelcomeMessage({
-        welcome_code: WelcomeCode,
-        text: { content: text2 },
-      })
-    }
-    return res2
+    _when_no_state()
+    return { code: "0000" }
   }
+
+  // 3. parse state
+  const isBindWecom = State.startsWith("b1=")
+  if(!isBindWecom || State.length < 10) {
+    console.warn("state looks weird: ", State)
+    _when_no_state()
+    return { code: "0000" }
+  }
+
+  // 4. get credential and query
+  const cred = State.substring(3)
+  const cCol = db.collection("Credential")
+  const w4 = {
+    credential: cred,
+    infoType: "bind-wecom",
+  }
+  const res4 = await cCol.where(w4).get<Table_Credential>()
+
+  // 5. check out if credential is valid
+  const list5 = res4.data
+  const c5 = list5[0]
+  if(!c5) {
+    _when_cred_err()
+    return { code: "0000" }
+  }
+  const c5_id = c5._id
+
+  // 6. if credential is expired
+  const now = getNowStamp()
+  if(now > c5.expireStamp) {
+    _when_cred_err()
+    return { code: "0000" }
+  }
+
+  // 7. get userId
+  const userId = c5.userId
+  if(!userId) {
+    console.warn("userId in credential is empty")
+    return { code: "E5001", errMsg: "userId is empty" }
+  }
+
+  // 8. get user
+  const res8 = await uCol.doc(userId).get<Table_User>()
+  const user = res8.data
+  if(!user) {
+    console.warn("there is no user")
+    return { code: "E5001", errMsg: "there is no user" }
+  }
+
+  // 9. update user
+  user.ww_qynb_external_userid = ExternalUserID
+  user.updatedStamp = now
+  const w9: Partial<Table_User> = {
+    ww_qynb_external_userid: ExternalUserID,
+    updatedStamp: now,
+  }
+  const res9 = await uCol.doc(userId).update(w9)
+  console.log("update user res9: ")
+  console.log(res9)
+  updateUserInCache(userId, user)
+
+  // 10. make cred expired
+  const now10 = getNowStamp()
+  const w10: Partial<Table_Credential> = {
+    expireStamp: now10,
+    updatedStamp: now10,
+  }
+  const res10 = await cCol.doc(c5_id).update(w10)
+  console.log("make cred expired result: ")
+  console.log(res10)
+
+
+  // 11. send welcome_1
+  // 根据 user 的语言构造 t()
+
+
 
   
 
