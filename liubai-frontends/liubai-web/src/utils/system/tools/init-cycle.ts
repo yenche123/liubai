@@ -3,6 +3,10 @@
 // 执行一些系统操作：
 // 1. 将 DELETED 的 contents 都给删除
 // 2. 将超过 30 天且为 REMOVED 的 contents 调整为 DELETED
+// 3.1 将 uploadTask 中，progressType 为 syncing 并且 
+//     updatedStamp 早于 5mins 的 task 改为 waiting
+// 3.2 将 uploadTask 中，progressType 为 syncing 并且
+//     updatedStamp 早于 30mins 的 task 改为 waiting
 
 // 删除完后，不需要用 useThreadShowStore 通知各组件
 // 因为各组件都不应显示出过期并且已删除的数据
@@ -14,6 +18,12 @@ import { db } from "~/utils/db";
 import { 
   deleteThreadsFromWorkspaceStateCfg 
 } from "~/hooks/thread/specific-operate/delete-related"
+import type {
+  BulkUpdateAtom_UploadTask
+} from "~/utils/cloud/upload-tasks/tools/types"
+
+const MIN_5 = time.MINUTE * 5
+const MIN_30 = time.MINUTE * 30
 
 export function initCycle() {
 
@@ -24,6 +34,7 @@ export function initCycle() {
 
     await handleDeletedContents()
     await handleRemovedContents()
+    await handleSyncingUploadTasks()
 
   })
 
@@ -74,4 +85,51 @@ async function handleRemovedContents() {
   // 2. 再去把动态都改为 "DELETED"
   const res2 = await db.contents.bulkPut(list)
 
+}
+
+async function handleSyncingUploadTasks() {
+
+  // 1. get upload tasks
+  const task_ids: string[] = []
+  const col = db.upload_tasks.orderBy("updatedStamp").limit(10)
+  const results = await col.toArray()
+
+  // 2. get targeted task ids
+  const now = time.getTime()
+  results.forEach(v => {
+    const { progressType, updatedStamp, _id } = v
+    if(progressType === "waiting") return
+
+    const diff = now - updatedStamp
+    if(progressType === "file_uploading") {
+      if(diff > MIN_30) {
+        task_ids.push(_id)
+      }
+    }
+    else if(progressType === "syncing") {
+      if(diff > MIN_5) {
+        task_ids.push(_id)
+      }
+    }
+
+  })
+  
+  // 3. package bulk atoms
+  if(task_ids.length < 1) return
+  const list: BulkUpdateAtom_UploadTask[] = []
+  for(let i=0; i<task_ids.length; i++) {
+    const id = task_ids[i]
+    const updatedStamp = now + i
+    const obj: BulkUpdateAtom_UploadTask = {
+      key: id,
+      changes: {
+        progressType: "waiting",
+        updatedStamp,
+      }
+    }
+    list.push(obj)
+  }
+
+  // 4. bulk update
+  const res = await db.upload_tasks.bulkUpdate(list)
 }
