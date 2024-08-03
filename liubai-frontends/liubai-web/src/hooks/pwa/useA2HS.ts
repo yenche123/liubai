@@ -3,6 +3,7 @@ import cui from "~/components/custom-ui";
 import cfg from "~/config";
 import { RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router";
 import time from "~/utils/basic/time";
+import liuConsole from "~/utils/debug/liu-console";
 import liuApi from "~/utils/liu-api";
 import localCache from "~/utils/system/local-cache";
 
@@ -17,7 +18,10 @@ export function useShowAddToHomeScreen() {
   if(liuApi.canIUse.isArcBrowser()) {
     return {}
   }
-  if(liuApi.canIUse.isRunningStandalone()) {
+
+  const isStanda = liuApi.canIUse.isRunningStandalone()
+  liuConsole.sendMessage(`isStanda: ${isStanda}`)
+  if(isStanda) {
     return {}
   }
 

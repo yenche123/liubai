@@ -70,11 +70,25 @@ export async function setPostHogUserProperties(
     memberId,
   })
 
+  const _getStanda = () => {
+    //@ts-expect-error Property only exists on Safari
+    const standalone = window.navigator.standalone
+    if(typeof standalone === "boolean") {
+      return standalone
+    }
+
+    const res = window.matchMedia('(display-mode: standalone)').matches
+    return res
+  }
+
+  const theStandalone = _getStanda()
+
   posthog.capture("user_profile", {
     $set: {
       "liu-theme": localP.theme,
       "liu-language": localP.language,
       "liu-has-token": Boolean(localP.token),
+      "liu-standalone": theStandalone,
     },
   })
 
