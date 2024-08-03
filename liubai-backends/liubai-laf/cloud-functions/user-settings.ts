@@ -46,7 +46,7 @@ export async function main(ctx: FunctionContext) {
 
   if(oT === "enter") {
     // 获取用户设置并记录用户访问
-    res = await handle_enter(vRes)
+    res = await handle_enter(ctx, vRes)
   }
   else if(oT === "latest") {
     res = await handle_latest(vRes)
@@ -252,9 +252,12 @@ async function getStripeCustomerPortal(
 
 
 async function handle_enter(
+  ctx: FunctionContext,
   vRes: VerifyTokenRes_B,
 ): Promise<LiuRqReturn<Res_UserSettings_Enter>> {
+  // 0. get some params
   const user = vRes.userData
+  const userAgent = ctx.headers?.['user-agent']
 
   // 1. 去获取用户基础设置
   const res1 = await getUserSettings(user)
@@ -267,6 +270,7 @@ async function handle_enter(
   const u: MongoFilter<Table_User> = {
     lastEnterStamp: now,
     updatedStamp: now,
+    userAgent,
   }
 
   // 3. 查看 verifyToken 时，是否有生成新的 token serial

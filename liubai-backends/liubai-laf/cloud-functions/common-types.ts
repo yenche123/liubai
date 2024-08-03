@@ -912,6 +912,8 @@ export interface Table_User extends BaseTable {
 
   /** wecom data for qynb, which is for company internal use */
   ww_qynb_external_userid?: string
+
+  userAgent?: string
   
 }
 
