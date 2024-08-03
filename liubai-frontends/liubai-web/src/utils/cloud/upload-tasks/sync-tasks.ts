@@ -122,7 +122,11 @@ async function afterSyncSet(
   const delete_list = atoms.map(v => v.taskId)
 
   await deleteUploadTasks(delete_list)
-  dataHasNewIds(list)
+
+  const d1 = time.getTime()
+  await dataHasNewIds(list)
+  const d2 = time.getTime()
+  console.log(`dataHasNewIds 耗时: ${d2 - d1}ms`)
 
   return true
 }
