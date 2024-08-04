@@ -223,6 +223,7 @@ async function initDraftFromDraft(
     descList = transferUtil.liuToTiptap(descList)
   }
   setEditorContent(ctx, descList)
+  checkToggleOfMore(ceData)
 
   if(!loadCloud) return
 
@@ -234,6 +235,17 @@ async function initDraftFromDraft(
   }
   else {
     initFromCloudDraft(ctx)
+  }
+}
+
+
+function checkToggleOfMore(ceData: CeData) {
+  if(ceData.whenStamp || ceData.remindMe) {
+    ceData.more = true
+    return
+  }
+  if(ceData.files?.length) {
+    ceData.more = true
   }
 }
 
@@ -421,6 +433,7 @@ async function toMergeDraft(
     descJSON = transferUtil.liuToTiptap(cloud_draft.liuDesc)
   }
   setEditorContent(ctx, descJSON)
+  checkToggleOfMore(ceData)
 
   if(oldDraftId !== cloud_draft._id) {
     if(oldDraftId) {
@@ -537,6 +550,7 @@ async function initDraftFromThread(
     descJSON = transferUtil.liuToTiptap(thread.liuDesc)
   }
   setEditorContent(ctx, descJSON)
+  checkToggleOfMore(ceData)
 
   if(loadCloud) {
     initFromCloudDraft(ctx, undefined, thread)
