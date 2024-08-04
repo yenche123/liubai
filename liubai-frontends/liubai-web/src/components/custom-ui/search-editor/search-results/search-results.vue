@@ -125,7 +125,7 @@ const { t } = useI18n()
   position: relative;
   border-top: 0.6px solid var(--main-tip);
   overflow-y: auto;
-  max-height: max(50vh, 300px);
+  max-height: max(66vh, 300px);
 
   &::-webkit-scrollbar-thumb {
     background: var(--main-note);
@@ -162,6 +162,12 @@ const { t } = useI18n()
   justify-content: center;
   font-size: var(--mini-font);
   color: var(--main-note);
+}
+
+@media screen and (max-width: 600px) {
+  .sr-container {
+    max-height: max(75vh, 450px);
+  }
 }
 
 

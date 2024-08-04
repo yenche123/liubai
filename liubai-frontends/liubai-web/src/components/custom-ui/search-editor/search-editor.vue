@@ -27,6 +27,7 @@ const { t } = useI18n()
 
     <div class="se-bg" @click="onTapMask" />
 
+    <div class="se-virtual-zero"></div>
 
     <div class="se-box">
 
@@ -103,9 +104,15 @@ const { t } = useI18n()
   }
 }
 
+.se-virtual-zero {
+  width: 100%;
+  height: 10vh;
+  height: 10dvh;
+  transition: .3s;
+}
+
 .se-box {
   z-index: 4902;
-  margin-top: 16vh;
   width: 90vw;
   max-width: 750px;
   border-radius: 9px;
@@ -205,6 +212,12 @@ const { t } = useI18n()
 }
 
 @media screen and (max-width: 600px) {
+
+  .se-virtual-zero {
+    height: 5vh;
+    height: 5dvh;
+  }
+
   .se-footer {
     display: none;
   }
