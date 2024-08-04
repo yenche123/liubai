@@ -96,12 +96,12 @@ function _getSelectionText(
   editor?: TipTapEditor
 ) {
   if(!editor) {
-    console.log("editor 不存在呀..........")
+    console.log("editor dose not exist..........")
     return ""
   }
   const { state } = editor
   const { doc, selection } = state
   const { from, to } = selection
-  const str = doc.textBetween(from, to)
+  const str = doc.textBetween(from, to, "\n")
   return str
 }
