@@ -341,8 +341,11 @@ async function initFromCloudDraft(
   const cloud_draft = firRes.draft
   if(!cloud_draft) return
 
+  const local_draft_2 = await localReq.getDraftById(cloud_draft._id)
+
   const oState = cloud_draft.oState
   const localState = local_draft?.oState
+  const localState_2 = local_draft_2?.oState
   
   // 5. if it is posted or deleted
   if(oState === "POSTED" || oState === "DELETED") {
@@ -352,10 +355,12 @@ async function initFromCloudDraft(
 
   console.log("远程的 draft: ")
   console.log(cloud_draft)
-  console.log("本地的 draft: ")
+  console.log("本地的 draft 1: ")
   console.log(local_draft)
+  console.log("本地的 draft 2: ")
+  console.log(local_draft_2)
 
-  // 6. localState is DELETED or POSTED
+  // 6.1 localState is DELETED or POSTED
   if(localState === "POSTED" || localState === "DELETED") {
     if(cloud_draft.first_id === local_draft?.first_id) {
       console.warn("to clear posted draft......")
@@ -366,6 +371,17 @@ async function initFromCloudDraft(
       })
       return
     }
+  }
+
+  // 6.2 localState_2 is DELETED or POSTED
+  if(localState_2 === "POSTED" || localState_2 === "DELETED") {
+    console.warn("to clear posted draft 222......")
+    LocalToCloud.addTask({
+      uploadTask: "draft-clear",
+      target_id: cloud_draft._id,
+      operateStamp: time.getTime(),
+    })
+    return
   }
 
   // 7. pass if the id is in reject_draft_ids
