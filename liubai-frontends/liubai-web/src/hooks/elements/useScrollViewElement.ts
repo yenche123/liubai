@@ -2,23 +2,35 @@ import { onActivated, onMounted, onUnmounted } from "vue"
 
 export type SveOnScrolling = (sT: number) => void
 
+export interface SveOpt {
+  onScrolling?: SveOnScrolling
+  isTop?: boolean
+}
+
+
 export function useScrollViewElement(
   selectors: string,
-  onScrolling?: SveOnScrolling,
+  opt?: SveOpt,
 ) {
+  const isTop = opt?.isTop ?? true
   let sv: HTMLElement | null = null
-  let lastScrollTop = 0
+  let lastScrollPosition = 0
 
   const _whenScrolling = () => {
     if(!sv) return
-    lastScrollTop = sv.scrollTop
-    onScrolling?.(lastScrollTop)
+    lastScrollPosition = isTop ? sv.scrollTop : sv.scrollLeft
+    opt?.onScrolling?.(lastScrollPosition)
   }
 
   onActivated(() => {
-    if(lastScrollTop <= 1) return
+    if(lastScrollPosition <= 1) return
     if(!sv) return
-    sv.scrollTop = lastScrollTop
+    if(isTop) {
+      sv.scrollTop = lastScrollPosition
+    }
+    else {
+      sv.scrollLeft = lastScrollPosition
+    }
   })
 
   onMounted(() => {

@@ -10,6 +10,7 @@ import { useKanbanColumns } from '../tools/useKanbanColumns';
 import KvColumn from "./kv-column/kv-column.vue"
 import { useI18n } from 'vue-i18n';
 import type { MenuItem } from '~/components/common/liu-menu/tools/types';
+import { useKanbanView } from './tools/useKanbanView';
 
 // Vue 3.3+ 的 defineEmits 声明方式
 const emit = defineEmits<{
@@ -28,6 +29,7 @@ const props = defineProps({
   },
 })
 
+useKanbanView()
 const vHandle = HandleDirective
 
 const iconColor = "var(--main-note)"
@@ -69,6 +71,7 @@ const {
     helper-class="kv-column-container_helper"
     v-model:list="columns"
     use-drag-handle
+    id="state-page-kv-column-container"
     @update:list="onColumnsSorted"
   >
 

@@ -35,5 +35,5 @@ function handleScrollView(
     emits("scrolling", sT)
   }
 
-  useScrollViewElement(selectors, onScrolling)
+  useScrollViewElement(selectors, { onScrolling })
 }
