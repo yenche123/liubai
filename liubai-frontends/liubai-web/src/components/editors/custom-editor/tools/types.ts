@@ -22,6 +22,7 @@ export interface CeData {
   showTitleBar: boolean
   canSubmit: boolean
   reject_draft_ids?: string[]
+  more: boolean
 }
 
 export const defaultData: CeData = {
@@ -31,6 +32,7 @@ export const defaultData: CeData = {
   tagIds: [],
   showTitleBar: false,
   canSubmit: false,
+  more: false,
 }
 
 export interface CeProps {

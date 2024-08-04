@@ -8,7 +8,6 @@
 
 import EditorCore from "../editor-core/editor-core.vue"
 import { useCustomEditor } from "./tools/useCustomEditor";
-import { useMoreItems } from "./tools/useMoreItems";
 import { useCeData } from "./tools/useCeData";
 import CeFinishArea from "./ce-finish-area/ce-finish-area.vue";
 import CeMoreArea from "./ce-more-area/ce-more-area.vue";
@@ -46,18 +45,12 @@ const {
 } = useEditorHeight(props, ceData)
 
 const {
-  moreRef,
-  onTapMore,
-  showVirtualBar,
-} = useMoreItems(props)
-
-const {
   onImageChange,
   covers,
   onClearCover,
   onCoversSorted,
   onFileChange,
-} = useCeFile(ceData, moreRef)
+} = useCeFile(ceData)
 const {
   tagShows,
   onTapClearTag,
@@ -93,6 +86,7 @@ const {
   onTitleEnterUp,
   onTitleEnterDown,
   onSelectionChange,
+  onTapMore,
 } = useCeData(props, emits, ceData, toFinish, editor)
 
 useDraftIdChanged(ceData)
@@ -177,7 +171,7 @@ useDraftIdChanged(ceData)
 
   <ce-toolbar
     :editor="editor"
-    :more="moreRef"
+    :more="ceData.more"
     :tag-shows="tagShows"
     @imagechange="onImageChange"
     @tapmore="onTapMore"
@@ -187,7 +181,7 @@ useDraftIdChanged(ceData)
   <!-- 更多栏 -->
   <ce-more-area 
     :editor="editor"
-    :show="moreRef"
+    :show="ceData.more"
     :ce-data="ceData"
     @whenchange="onWhenChange"
     @remindmechange="onRemindMeChange"
@@ -197,7 +191,7 @@ useDraftIdChanged(ceData)
   ></ce-more-area>
 
   <!-- 虚拟空间 用于避免完成按钮挡到其他地方 -->
-  <div class="ce-virtual" :class="{ 'ce-virtual_show': showVirtualBar }"></div>
+  <div class="ce-virtual" :class="{ 'ce-virtual_show': ceData.more }"></div>
 
   <!-- 右小角: 提示字 + 按钮 -->
   <ce-finish-area 

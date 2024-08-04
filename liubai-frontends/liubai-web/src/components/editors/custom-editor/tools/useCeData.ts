@@ -193,6 +193,10 @@ export function useCeData(
     showRightTop,
     onSelectionChange,
   } = useRightTop(descFocused)
+
+  const onTapMore = () => {
+    ceData.more = !ceData.more
+  }
   
   return {
     titleFocused,
@@ -212,6 +216,7 @@ export function useCeData(
     onTitleEnterUp,
     onTitleEnterDown,
     onSelectionChange,
+    onTapMore,
   }
 }
 

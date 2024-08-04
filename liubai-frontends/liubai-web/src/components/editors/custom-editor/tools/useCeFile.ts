@@ -13,15 +13,14 @@ import { onLiuActivated } from "~/hooks/useCommon"
 
 export function useCeFile(
   ceData: CeData,
-  moreRef: Ref<boolean>
 ) {
   const covers = ref<ImageShow[]>([])
 
   // 监听文件拖动掉落
-  listenFilesDrop(ceData, moreRef)
+  listenFilesDrop(ceData)
 
   // 监听文件黏贴上来
-  listenDocumentPaste(ceData, moreRef)
+  listenDocumentPaste(ceData)
 
   // 监听逻辑数据改变，去响应视图
   watch(() => ceData.images, (newImages) => {
@@ -90,14 +89,13 @@ function whenCoversSorted(
 // 处理文件掉落
 function listenFilesDrop(
   ceData: CeData,
-  moreRef: Ref<boolean>,
 ) {
   const dropFiles = inject(mvFileKey)
   watch(() => dropFiles?.value, async (files) => {
     if(!files?.length) return
     console.log("listenFilesDrop 接收到掉落的文件............")
     console.log(files)
-    await handleFiles(ceData, files, moreRef)
+    await handleFiles(ceData, files)
     if(!dropFiles?.value) return
     dropFiles.value = []
   })
@@ -106,7 +104,6 @@ function listenFilesDrop(
 // 全局监听 "黏贴事件"
 function listenDocumentPaste(
   ceData: CeData,
-  moreRef: Ref<boolean>,
 ) {
   const gs = useGlobalStateStore()
   const whenPaste = (e: ClipboardEvent) => {
@@ -116,7 +113,7 @@ function listenDocumentPaste(
     const fileList = e.clipboardData?.files
     if(!fileList || fileList.length < 1) return
     const files = liuUtil.getArrayFromFileList(fileList)
-    handleFiles(ceData, files, moreRef)
+    handleFiles(ceData, files)
   }
   
   onLiuActivated(() => {
@@ -132,7 +129,6 @@ function listenDocumentPaste(
 async function handleFiles(
   ceData: CeData,
   files: File[],
-  moreRef?: Ref<boolean>,
 ) {
   const imgFiles = liuUtil.getOnlyImageFiles(files)
   if(imgFiles.length > 0) {
@@ -141,14 +137,13 @@ async function handleFiles(
 
   const otherFiles = liuUtil.getNotImageFiles(files)
   if(otherFiles.length > 0) {
-    handleOtherFiles(ceData, files, moreRef)
+    handleOtherFiles(ceData, files)
   }
 }
 
 async function handleOtherFiles(
   ceData: CeData,
   files: File[],
-  moreRef?: Ref<boolean>,
 ) {
   const fileList: LiuFileStore[] = []
   const MB = 1024 * 1024
@@ -181,7 +176,7 @@ async function handleOtherFiles(
   }
 
   ceData.files = fileList
-  if(moreRef) moreRef.value = true
+  ceData.more = true
 }
 
 async function handleImages(
