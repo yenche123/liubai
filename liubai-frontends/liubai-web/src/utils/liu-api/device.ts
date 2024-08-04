@@ -31,7 +31,6 @@ const copyToClipboard = (text: string) => {
     element.value = text
     element.select()
     if (document.execCommand('copy')) {
-      document.execCommand('copy')
       document.body.removeChild(element)
       a(true)
       return
