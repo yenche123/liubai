@@ -31,7 +31,10 @@ const iconColor = "var(--main-normal)"
     >
 
       <div class="as-main-box">
-        <div v-if="asData.title_key" class="liu-no-user-select as-title">
+        <div v-if="asData.title" class="liu-no-user-select as-title">
+          <span>{{ asData.title }}</span>
+        </div>
+        <div v-else-if="asData.title_key" class="liu-no-user-select as-title">
           <span>{{ t(asData.title_key) }}</span>
         </div>
 

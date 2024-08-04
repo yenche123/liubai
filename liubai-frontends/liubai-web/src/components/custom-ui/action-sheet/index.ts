@@ -12,6 +12,7 @@ const TRANSITION_DURATION = 220
 const enable = ref(false)
 const show = ref(false)
 const asData = reactive<Required<ActionSheetParam>>({
+  title: "",
   title_key: "",
   itemList: [],
   cancel_key: "",
@@ -31,6 +32,7 @@ export function initActionSheet() {
 }
 
 export function showActionSheet(opt: ActionSheetParam) {
+  asData.title = opt.title ?? ""
   asData.title_key = opt.title_key ?? ""
   asData.itemList = opt.itemList
   asData.cancel_key = opt.cancel_key ?? ""

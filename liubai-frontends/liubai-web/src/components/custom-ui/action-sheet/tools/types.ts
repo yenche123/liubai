@@ -8,6 +8,7 @@ export interface ActionSheetItem {
 }
 
 export interface ActionSheetParam {
+  title?: string
   title_key?: string
   itemList: ActionSheetItem[]
   cancel_key?: string          // 自定义 "取消" 文案

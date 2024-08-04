@@ -1,19 +1,14 @@
 import { ALLOW_DEEP_TYPES } from "~/config/atom";
 import type { LiuContent, LiuNodeType } from "~/types/types-atom";
-import type { GetChaRes } from "~/utils/liu-api/tools/types";
 import valTool from "~/utils/basic/val-tool";
-import liuApi from "~/utils/liu-api";
 import reg_exp from "~/config/regular-expressions";
 
 type ParseType = "phone" | ""
-let cha: GetChaRes | undefined
 
 export function addSomethingWhenBrowsing(
   list: LiuContent[],
   parentType?: LiuNodeType
 ) {
-
-  cha = liuApi.getCharacteristic()
 
   for(let i=0; i<list.length; i++) {
     const v = list[i]
@@ -50,13 +45,11 @@ function _parseTextsForLink(
     if(marks?.length) continue
 
     // 解析 phoneNumber, 其中正则末尾的 (?!\w) 表示手机号后面不要接英文字母、数字和下划线
-    if(cha?.isMobile) {
-      const listTel = _innerParse(text, reg_exp.phone, "phone")
-      if(listTel) {
-        list.splice(i, 1, ...listTel)
-        i--
-        continue
-      }
+    const listTel = _innerParse(text, reg_exp.phone, "phone")
+    if(listTel) {
+      list.splice(i, 1, ...listTel)
+      i--
+      continue
     }
 
   }

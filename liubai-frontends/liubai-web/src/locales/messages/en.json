@@ -83,7 +83,10 @@
     "copy_code": "Copy code",
     "format_clear": "Clear format",
     "attachment": "File",
-    "cannot_sync": "It's not supported to sync with cloud on the pure local mode."
+    "cannot_sync": "It's not supported to sync with cloud on the pure local mode.",
+    "copy": "Copy",
+    "mail": "Mail",
+    "call": "Call"
   },
   "cui": {
     "plz_input_txt": "Text here"
