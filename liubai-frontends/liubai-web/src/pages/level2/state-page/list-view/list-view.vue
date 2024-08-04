@@ -11,6 +11,7 @@ import type { MenuItem } from '~/components/common/liu-menu/tools/types';
 import LvColumn from "./lv-column/lv-column.vue";
 import liuApi from '~/utils/liu-api';
 import { useListView } from "./tools/useListView"
+import middleBridge from '~/utils/middle-bridge';
 
 // Vue 3.3+ 的 defineEmits 声明方式
 const emit = defineEmits<{
@@ -55,6 +56,8 @@ const {
 } = useKanbanColumns(props, emit)
 const { isMobile } = liuApi.getCharacteristic()
 
+const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
+
 </script>
 <template>
 
@@ -62,7 +65,10 @@ const { isMobile } = liuApi.getCharacteristic()
     axis="y"
     lockAxis="y"
     class="lv-container"
-    :class="{ 'lv-scroll_hidden': hideScrollbar }"
+    :class="{ 
+      'lv-scrollbar': showScrollbarProperty,
+      'lv-scroll_hidden': hideScrollbar,
+    }"
     helper-class="lv-container_helper"
     v-model:list="columns"
     use-drag-handle
@@ -184,9 +190,6 @@ const { isMobile } = liuApi.getCharacteristic()
   overflow-y: auto;
   overflow-x: hidden;
 
-  scrollbar-color: var(--scrollbar-thumb) transparent;
-  scrollbar-width: v-bind("isMobile ? 'none' : 'auto'"); 
-
   &::-webkit-scrollbar {
     display: v-bind("isMobile ? 'none' : 'block'");
   }
@@ -195,6 +198,12 @@ const { isMobile } = liuApi.getCharacteristic()
     background: var(--scrollbar-thumb);
   }
 }
+
+.lv-scrollbar {
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  scrollbar-width: v-bind("isMobile ? 'none' : 'auto'"); 
+}
+
 
 .lv-scroll_hidden {
   scrollbar-color: transparent transparent;
