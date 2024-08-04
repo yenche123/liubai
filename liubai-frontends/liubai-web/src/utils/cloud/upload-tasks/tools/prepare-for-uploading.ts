@@ -187,8 +187,6 @@ function whenDraftSet(d: DraftLocalTable) {
     spaceId: d.spaceId,
 
     // liuDesc is put below
-    images: transferUtil.imagesFromStoreToCloud(d.images),
-    files: transferUtil.filesFromStoreToCloud(d.files),
 
     editedStamp: d.editedStamp,
     infoType: d.infoType,

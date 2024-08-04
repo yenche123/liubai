@@ -324,21 +324,10 @@ async function initFromCloudDraft(
     return
   }
 
+  // 4. check if cloud has data
   if(firRes.status !== "has_data") return
   const cloud_draft = firRes.draft
   if(!cloud_draft) return
-
-
-  // 4. get latest local thread & draft
-  if(ceData.draftId) {
-    local_draft = await localReq.getDraftById(ceData.draftId)
-  }
-  if(!local_draft) {
-    local_draft = await localReq.getDraftById(cloud_draft._id)
-  }
-  if(ceData.threadEdited) {
-    local_thread = await localReq.getContentById(ceData.threadEdited)
-  }
 
   const oState = cloud_draft.oState
   const localState = local_draft?.oState
@@ -368,12 +357,12 @@ async function initFromCloudDraft(
   }
 
   // 7. pass if the id is in reject_draft_ids
-  const id_1 = cloud_draft._id
-  const id_2 = cloud_draft.first_id
+  const cloud_id = cloud_draft._id
+  const cloud_first_id = cloud_draft.first_id
   const reject_ids = ceData.reject_draft_ids
   if(reject_ids) {
-    if(reject_ids.includes(id_1) || reject_ids.includes(id_2)) {
-      localReq.deleteDraftById(id_1)
+    if(reject_ids.includes(cloud_id) || reject_ids.includes(cloud_first_id)) {
+      localReq.deleteDraftById(cloud_id)
       return
     }
   }
@@ -391,7 +380,31 @@ async function initFromCloudDraft(
   const e1 = cloud_draft.editedStamp
   const e2 = local_draft?.editedStamp ?? 1
   const diff = e2 - e1
-  if(diff >= 0) return
+  if(diff < 0) {
+    console.log("to merge draft ......")
+    await toMergeDraft(ctx, cloud_draft)
+    return
+  }
+
+  // 10. if local_draft is not matched with ceData.draftId
+  const local_id = local_draft?._id
+  if(local_id === cloud_id && local_id !== ceData.draftId) {
+    console.warn("new feature: local_id === cloud_id && local_id !== ceData.draftId")
+    console.log("local_id: ", local_id)
+    console.log("cloud_id: ", cloud_id)
+    console.log("ceData.draftId: ", ceData.draftId)
+    console.log(" ")
+    await toMergeDraft(ctx, cloud_draft)
+    return
+  }
+  
+}
+
+async function toMergeDraft(
+  ctx: IcsContext,
+  cloud_draft: LiuDownloadDraft,
+) {
+  const { ceData } = ctx
 
   const oldDraftId = ceData.draftId
   ceData.lastLockStamp = time.getTime()
@@ -401,23 +414,6 @@ async function initFromCloudDraft(
   ceData.showTitleBar = Boolean(cloud_draft.title)
   ceData.whenStamp = cloud_draft.whenStamp
   ceData.remindMe = cloud_draft.remindMe
-  
-  const {
-    updated: updated_1,
-    images,
-  } = CloudFiler.updateImages(cloud_draft.images, ceData.images)
-  if(updated_1) {
-    ceData.images = images
-  }
-
-  const {
-    updated: updated_2,
-    files,
-  } = CloudFiler.updateFiles(cloud_draft.files, ceData.files)
-  if(updated_2) {
-    ceData.files = files
-  }
-
   ceData.tagIds = cloud_draft.tagIds ?? []
 
   let descJSON: TipTapJSONContent[] | undefined
@@ -426,16 +422,12 @@ async function initFromCloudDraft(
   }
   setEditorContent(ctx, descJSON)
 
-  if(updated_1 || updated_2) {
-    CloudFiler.notify("drafts", cloud_draft._id)
-  }
-
   if(oldDraftId !== cloud_draft._id) {
     if(oldDraftId) {
       await localReq.deleteDraftById(oldDraftId)
     }
   }
-  
+
 }
 
 function setEditorContent(
@@ -471,7 +463,7 @@ async function resetFromCloud(
   const e2 = local_draft?.editedStamp ?? 1
   const diff = e2 - e1
 
-  console.log("准备去重置数据.......")
+  console.warn("准备去重置数据.......")
   console.log("看一下 local_draft:")
   console.log(local_draft)
   console.log("diff: ", diff)
