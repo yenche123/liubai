@@ -39,6 +39,8 @@ export async function addUploadTask(
   const isUndo = taskType.startsWith("undo_")
   const isThreadEdited = content_edit_events.includes(taskType)
   const isCommentEdited = taskType === "comment-edit"
+  const isDraftClear = taskType === "draft-clear"
+  const isDraftSet = taskType === "draft-set"
 
   // 0. classify
   const { 
@@ -65,6 +67,9 @@ export async function addUploadTask(
   else if(isCommentEdited) {
     addRequired = await whenContentEdit(target_id, user, "comment-post")
   }
+  else if(isDraftClear) {
+    addRequired = await whenDraftClear(target_id, user)
+  }
   if(!addRequired) return
   
   // 2. 检查是否已存在，若存在去删除旧的任务
@@ -83,9 +88,8 @@ export async function addUploadTask(
   else if(isMember) {
     await checkDuplicated("member_id", target_id, user, taskType)
   }
-  else if(isDraft) {
-    // draft is special, so do not use checkDuplicated
-    await checkDraft(target_id, user)
+  else if(isDraftSet) {
+    await checkDraftSet(target_id, user)
   }
 
   // 3. 把 target_id 转换成对应的 id
@@ -129,11 +133,7 @@ export async function addUploadTask(
   return true
 }
 
-
-/** check out if there are draft-clear and draft-set in upload_tasks 
- *  when new task about draft is triggered 
- */
-async function checkDraft(
+async function whenDraftClear(
   draft_id: string,
   user: string,
 ) {
@@ -144,8 +144,35 @@ async function checkDraft(
   const w: Partial<UploadTaskLocalTable> = {
     user,
     draft_id,
+    progressType: "waiting",
   }
   const res = await db.upload_tasks.where(w).filter(filterFunc).toArray()
+  if(res.length < 1) return true
+
+  const task_ids = res.map(v => v._id)
+  console.warn('whenDraftClear to delete these tasks: ', task_ids)
+  await db.upload_tasks.bulkDelete(task_ids)
+
+  if(draft_id.startsWith("d0")) {
+    return false
+  }
+
+  return true
+}
+
+// 因为 draft 不再同步文件，所以遇到新的 draft-set 时，直接删除旧的，也不会发生
+// 文件正在上传，上传完毕后找不到原 upload task id 或 触发多次上传文件的问题
+async function checkDraftSet(
+  draft_id: string,
+  user: string,
+) {
+  const w: Partial<UploadTaskLocalTable> = {
+    user,
+    draft_id,
+    progressType: "waiting",
+    uploadTask: "draft-set",
+  }
+  const res = await db.upload_tasks.where(w).toArray()
   if(res.length < 1) return
 
   const task_ids = res.map(v => v._id)

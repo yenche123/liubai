@@ -25,6 +25,8 @@ const createMemberId = () => {
   return "m0" + _createId(18)
 }
 
+// don't modify `d0` just because whenDraftClear function 
+// in add-upload-task.ts is using it
 const createDraftId = () => {
   return "d0" + _createId(18)
 }

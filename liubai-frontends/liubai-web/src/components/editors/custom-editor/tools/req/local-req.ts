@@ -90,7 +90,9 @@ async function clearDraftOnCloud(
   }
 
   const synced = liuUtil.check.hasEverSynced(originDraft)
-  if(!synced) return
+  if(!synced) {
+    console.warn("没有同步过，还是去远端删除！......")
+  }
 
   LocalToCloud.addTask({
     uploadTask: "draft-clear",

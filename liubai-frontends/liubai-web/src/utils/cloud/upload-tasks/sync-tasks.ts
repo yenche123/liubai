@@ -126,7 +126,7 @@ async function afterSyncSet(
   const d1 = time.getTime()
   await dataHasNewIds(list)
   const d2 = time.getTime()
-  console.log(`dataHasNewIds 耗时: ${d2 - d1}ms`)
+  // console.log(`dataHasNewIds 耗时: ${d2 - d1}ms`)
 
   return true
 }
@@ -215,8 +215,6 @@ async function dataHasNewIds(
 ) {
   if(list.length < 1) return
 
-  console.log("dataHasNewIds.......")
-
   const list_content = list.filter(v => {
     return v.whichType === "comment" || v.whichType === "thread"
   })
@@ -228,8 +226,6 @@ async function dataHasNewIds(
   await replaceInSpecificTable("drafts", list_draft)
 
   // notify via useSyncStore()
-  console.log("go to notify useSyncStore..........")
-  console.log(" ")
   const sStore = useSyncStore()
   sStore.afterSync(list)
 }
