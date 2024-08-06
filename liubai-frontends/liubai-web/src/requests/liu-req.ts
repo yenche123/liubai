@@ -111,9 +111,12 @@ async function request<
     return { code: "C0001" }
   }
 
-  // console.log("liu-req res: ")
-  // console.log(res)
-  // console.log(" ")
+  if(!res) {
+    console.warn("liu-req fail: ")
+    console.log(res)
+    console.log(" ")
+    return { code: "C0001" }
+  }
 
   const status = res.status
 
