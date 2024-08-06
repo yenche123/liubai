@@ -12,7 +12,7 @@ import type {
   VerifyTokenRes_B,
   Table_Member,
   Table_Credential,
-  Ww_Add_Contact_Way,
+  Ww_Res_Add_Contact_Way,
   Res_OC_CheckWeCom,
   Res_OC_BindWeCom,
   Res_OC_GetWeChat,
@@ -222,7 +222,7 @@ async function handle_bind_wecom(
   const url7 = new URL(API_WECOM_ADD_CONTACT)
   url7.searchParams.set("access_token", accessToken)
   const link7 = url7.toString()
-  const res7 = await liuReq<Ww_Add_Contact_Way>(link7, w7)
+  const res7 = await liuReq<Ww_Res_Add_Contact_Way>(link7, w7)
   console.log("wecom add contact res7: ")
   console.log(res7)
   console.log(" ")

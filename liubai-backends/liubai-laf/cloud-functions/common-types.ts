@@ -550,6 +550,7 @@ export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
 export interface UserThirdData {
   google?: any
   github?: any
+  wecom?: Ww_External_Contact
 }
 
 /** 用户的订阅方案 */
@@ -1724,9 +1725,58 @@ export interface Ww_Res_Base {
   errmsg: string
 }
 
-export interface Ww_Add_Contact_Way extends Ww_Res_Base {
+export interface Ww_Res_Add_Contact_Way extends Ww_Res_Base {
   config_id: string
   qr_code?: string
+}
+
+// @see https://developer.work.weixin.qq.com/document/path/92114#13878
+export interface Ww_External_Contact {
+  external_userid: string
+  name: string
+  avatar?: string
+  type: 1 | 2         // 1: WeChat user;  2: WeCom user
+  gender: 0 | 1 | 2   // 0: unknown;  1: male;  2: female
+  unionid?: string
+
+  // properties only for WeCom users
+  position?: string
+  corp_name?: string
+  corp_full_name?: string
+}
+
+export interface Ww_Follow_User_Tag {
+  group_name: string
+  tag_name: string
+  type: 1 | 2 | 3       // 1: set by enterprise;  2: set by user;  3: set by rule
+  tag_id?: string
+}
+
+export interface Ww_Wechat_Channels {
+  nickname: string
+  source: 0 | 1 | 2 | 3
+}
+
+
+// @see https://developer.work.weixin.qq.com/document/path/92114#13878
+export interface Ww_Follow_User {
+  userid: string
+  remark: string
+  description: string
+  createtime: number       // the stamp when the wecom member added the user (sec)
+  tags?: Ww_Follow_User_Tag[]
+  remark_corp_name?: string
+  remark_mobiles?: string[]
+  add_way: number         // see https://developer.work.weixin.qq.com/document/path/92114#%E6%9D%A5%E6%BA%90%E5%AE%9A%E4%B9%89
+  wechat_channels?: Ww_Wechat_Channels
+  oper_userid: string
+  state?: string
+}
+
+export interface Ww_Res_User_Info extends Ww_Res_Base {
+  external_contact: Ww_External_Contact
+  follow_user: Ww_Follow_User[]
+  next_cursor?: string
 }
 
 /********** Send Welcome message for WeCom *********/
