@@ -135,31 +135,31 @@ async function handle_del_follow_user(
   const q1 = uCol.where({ ww_qynb_external_userid: ExternalUserID })
   const res1 = await q1.getOne<Table_User>()
 
-  console.log("handle_del_follow_user res1: ")
-  console.log(res1)
-  console.log(" ")
-
   const user = res1.data
   if(!user) {
+    console.warn("no user in handle_del_follow_user")
+    console.log(res1)
     return { code: "0000" }
   }
 
   // 2. construct query
+  const now = getNowStamp()
   const w2: Record<string, any> = {
     ww_qynb_external_userid: _.remove(),
-    updatedStamp: getNowStamp(),
+    updatedStamp: now,
   }
+  delete user.ww_qynb_external_userid
+  user.updatedStamp = now
   const thirdData = user.thirdData
   if(thirdData) {
     delete thirdData.wecom
     w2.thirdData = _.set(thirdData)
+    user.thirdData = thirdData
   }
 
   // 3. update user
   const res3 = await uCol.doc(user._id).update(w2)
-  console.log("update result: ")
-  console.log(res3)
-  console.log(" ")
+  updateUserInCache(user._id, user)
 
   return { code: "0000" }
 }
@@ -414,7 +414,7 @@ async function getExternalContactOfWecom(
   const link = url.toString()
 
   // 3. fetch
-  const res3 = liuReq<Ww_Res_User_Info>(link, undefined, { method: "GET" })
+  const res3 = await liuReq<Ww_Res_User_Info>(link, undefined, { method: "GET" })
 
   console.log("getExternalContactOfWecom res3: ")
   console.log(res3)

@@ -223,15 +223,13 @@ async function handle_bind_wecom(
   url7.searchParams.set("access_token", accessToken)
   const link7 = url7.toString()
   const res7 = await liuReq<Ww_Res_Add_Contact_Way>(link7, w7)
-  console.log("wecom add contact res7: ")
-  console.log(res7)
-  console.log(" ")
 
   // 8. extract data from wecom
   const res8 = res7.data
   const c8 = res8?.config_id
   const qr8 = res8?.qr_code
   if(!c8 || !qr8) {
+    console.log("wecom add contact err7: ")
     console.log("res7: ")
     console.log(res7)
 
