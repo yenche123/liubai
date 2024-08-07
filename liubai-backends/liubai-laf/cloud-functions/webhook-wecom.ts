@@ -11,6 +11,7 @@ import type {
   Ww_Add_External_Contact,
   Ww_Msg_Event,
   Ww_Welcome_Body,
+  Ww_Del_Follow_User,
 } from "@/common-types";
 import { decrypt, getSignature } from "@wecom/crypto";
 import xml2js from "xml2js";
@@ -19,6 +20,8 @@ import { useI18n, wecomLang } from "@/common-i18n";
 import { getNowStamp } from "@/common-time";
 
 const db = cloud.database()
+const _ = db.command
+
 let wecom_access_token = ""
 
 /********* some constants *************/
@@ -108,7 +111,7 @@ export async function main(ctx: FunctionContext) {
       handle_add_external_contact(msgObj)
     }
     else if(ChangeType === "del_follow_user") {
-
+      handle_del_follow_user(msgObj)
     }
     else if(ChangeType === "msg_audit_approved") {
 
@@ -121,6 +124,44 @@ export async function main(ctx: FunctionContext) {
   return ""
 }
 
+async function handle_del_follow_user(
+  msgObj: Ww_Del_Follow_User,
+) {
+  const { ExternalUserID } = msgObj
+  
+  // 1. look for ww_qynb_external_userid from db
+  const uCol = db.collection("User")
+  const q1 = uCol.where({ ww_qynb_external_userid: ExternalUserID })
+  const res1 = await q1.getOne<Table_User>()
+
+  console.log("handle_del_follow_user res1: ")
+  console.log(res1)
+  console.log(" ")
+
+  const user = res1.data
+  if(!user) {
+    return { code: "0000" }
+  }
+
+  // 2. construct query
+  const w2: Record<string, any> = {
+    ww_qynb_external_userid: _.remove(),
+    updatedStamp: getNowStamp(),
+  }
+  const thirdData = user.thirdData
+  if(thirdData) {
+    delete thirdData.wecom
+    w2.thirdData = _.set(thirdData)
+  }
+
+  // 3. update user
+  const res3 = await uCol.doc(user._id).update(w2)
+  console.log("update result: ")
+  console.log(res3)
+  console.log(" ")
+
+  return { code: "0000" }
+}
 
 // when user add WeCom Contact
 async function handle_add_external_contact(
