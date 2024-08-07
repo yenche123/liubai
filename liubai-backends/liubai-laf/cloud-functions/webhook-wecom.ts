@@ -12,10 +12,11 @@ import type {
   Ww_Msg_Event,
   Ww_Welcome_Body,
   Ww_Del_Follow_User,
+  Table_Member,
 } from "@/common-types";
 import { decrypt, getSignature } from "@wecom/crypto";
 import xml2js from "xml2js";
-import { getIp, liuReq, updateUserInCache } from "@/common-util";
+import { generateAvatar, getIp, liuReq, updateUserInCache } from "@/common-util";
 import { useI18n, wecomLang } from "@/common-i18n";
 import { getNowStamp } from "@/common-time";
 
@@ -206,6 +207,20 @@ async function handle_add_external_contact(
     })
   }
 
+  // 0.4 when usually
+  const _when_usually = async (
+    account: string,
+    user: Table_User,
+  ) => {
+    if(!WelcomeCode) return
+    const { t: t1 } = useI18n(wecomLang, { user })
+    const content = t1("welcome_1", { account })
+    await sendWelcomeMessage({
+      welcome_code: WelcomeCode,
+      text: { content },
+    })
+  }
+
 
   // 1. if ExternalUserID is empty, return
   if(!ExternalUserID) {
@@ -279,6 +294,7 @@ async function handle_add_external_contact(
 
   // 7. get userId for our app
   const userId = c5.userId
+  const memberId = c5.meta_data?.memberId
   if(!userId) {
     console.warn("userId in credential is empty")
     return { code: "E5001", errMsg: "userId is empty" }
@@ -292,9 +308,38 @@ async function handle_add_external_contact(
     return { code: "E5001", errMsg: "there is no user" }
   }
   
+  // 9. get member
+  let member: Table_Member | null
+  const mCol = db.collection("Member")
+  if(memberId) {
+    const res9_1 = await mCol.doc(memberId).get<Table_Member>()
+    member = res9_1.data
+  }
+  else {
+    const w9: Partial<Table_Member> = {
+      spaceType: "ME",
+      user: userId,
+    }
+    const res9_2 = await mCol.where(w9).getOne<Table_Member>()
+    member = res9_2.data
+  }
+  
+  // 10. no member
+  if(!member) {
+    console.warn("no member in handle_add_external_contact")
+    console.log("user: ", user)
+    console.log("msgObj: ", msgObj)
+    return { code: "E5001", errMsg: "no member" }
+  }
 
+  // 11. get account & send welcome
+  let name11 = member.name
+  if(!name11) {
+    name11 = userInfo.name
+  }
+  _when_usually(name11, user)
 
-  // 9. update user
+  // 12. update user
   user.ww_qynb_external_userid = ExternalUserID
   user.updatedStamp = now
   const thirdData = { ...user.thirdData }
@@ -309,23 +354,43 @@ async function handle_add_external_contact(
   console.log(res9)
   updateUserInCache(userId, user)
 
-  // 10. make cred expired
-  const now10 = getNowStamp()
-  const w10: Partial<Table_Credential> = {
-    expireStamp: now10,
-    updatedStamp: now10,
+
+  // 13. check if updating member is needed
+  let updateMember = false
+  const w13: Partial<Table_Member> = {
+    updatedStamp: getNowStamp(),
   }
-  const res10 = await cCol.doc(c5_id).update(w10)
+  if(!member.name) {
+    updateMember = true
+    w13.name = userInfo.name
+  }
+  if(!member.avatar && userInfo.avatar) {
+    updateMember = true
+    w13.avatar = generateAvatar(userInfo.avatar)
+  }
+  if(memberId) {
+    updateMember = true
+    const noti13 = { ...member.notification }
+    noti13.ww_qynb_remind = true
+    w13.notification = noti13
+  }
+
+  // 14. update member
+  if(updateMember) {
+    const res14 = await mCol.doc(member._id).update(w13)
+    console.log("update member: ")
+    console.log(res14)
+  }
+
+  // 15. make cred expired
+  const now15 = getNowStamp()
+  const w15: Partial<Table_Credential> = {
+    expireStamp: now15,
+    updatedStamp: now15,
+  }
+  const res10 = await cCol.doc(c5_id).update(w15)
   console.log("make cred expired result: ")
   console.log(res10)
-
-
-  // 11. send welcome_1
-  // 根据 user 的语言构造 t()
-
-
-
-  
 
   // n. reset
   reset()
