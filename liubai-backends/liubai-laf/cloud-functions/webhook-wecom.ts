@@ -237,6 +237,11 @@ async function handle_add_external_contact(
     return res1_2
   }
   const userInfo = res1_2.data.external_contact
+  const follow_user = res1_2.data.follow_user
+  console.log("userInfo from wecom: ")
+  console.log(userInfo)
+  console.log("follow_user from wecom: ")
+  console.log(follow_user)
 
   // 1.3 check if ExternalUserID has been bound
   const uCol = db.collection("User")
@@ -350,8 +355,6 @@ async function handle_add_external_contact(
     thirdData,
   }
   const res9 = await uCol.doc(userId).update(w9)
-  console.log("update user res9: ")
-  console.log(res9)
   updateUserInCache(userId, user)
 
 
@@ -378,8 +381,6 @@ async function handle_add_external_contact(
   // 14. update member
   if(updateMember) {
     const res14 = await mCol.doc(member._id).update(w13)
-    console.log("update member: ")
-    console.log(res14)
   }
 
   // 15. make cred expired
@@ -389,8 +390,6 @@ async function handle_add_external_contact(
     updatedStamp: now15,
   }
   const res10 = await cCol.doc(c5_id).update(w15)
-  console.log("make cred expired result: ")
-  console.log(res10)
 
   // n. reset
   reset()

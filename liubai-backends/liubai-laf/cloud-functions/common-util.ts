@@ -775,8 +775,6 @@ export function updateUserInCache(
     if(user) {
       val.lastSet = getNowStamp()
       val.userData = user
-      console.log("找到要更新的 cache........")
-      console.log(val)
       map.set(key, val)
     }
     else {
