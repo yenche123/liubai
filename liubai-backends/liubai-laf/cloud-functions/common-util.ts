@@ -36,7 +36,7 @@ import {
   Sch_Cloud_ImageStore,
   Sch_Simple_LiuContent,
 } from "@/common-types"
-import { createToken, createEncNonce } from "@/common-ids"
+import { createToken, createEncNonce, createImgId } from "@/common-ids"
 import { 
   getNowStamp, 
   getBasicStampWhileAdding, 
@@ -182,6 +182,20 @@ export function getSuffix(name: string) {
   return format
 }
 
+/** generate avatar from third party's url */
+export function generateAvatar(url: string) {
+  const imgId = createImgId()
+  const suffix = getSuffix(url)
+  const name = suffix ? `${imgId}.${suffix}` : imgId
+  const now = getNowStamp()
+  const obj: Cloud_ImageStore = {
+    id: imgId,
+    name,
+    lastModified: now,
+    url,
+  }
+  return obj
+}
 
 
 /********************* 封装函数 *****************/

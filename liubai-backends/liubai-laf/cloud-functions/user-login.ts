@@ -16,7 +16,6 @@ import type {
   Table_Credential,
   Res_ULN_User,
   Res_UserLoginNormal,
-  Cloud_ImageStore,
   LiuSpaceAndMember,
   SupportedClient,
   ServiceSendEmailsParam,
@@ -28,7 +27,7 @@ import {
   getPublicKey, 
   isEmailAndNormalize, 
   getDocAddId,
-  getSuffix,
+  generateAvatar,
   canPassByExponentialDoor,
   normalizeToLocalTheme,
   normalizeToLocalLocale,
@@ -40,7 +39,6 @@ import { getNowStamp, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import { 
   createCredentialForUserSelect, 
   createLoginState,
-  createImgId,
   createOpenId,
 } from "@/common-ids"
 import { checkIfEmailSentTooMuch, getActiveEmailCode, sendEmails } from "@/service-send"
@@ -1149,29 +1147,14 @@ function constructMemberAvatarFromThirdData(
   if(!thirdData) return
   const { google: googleData, github: githubData } = thirdData
 
-  const now = getNowStamp()
-
-  const _generateAvatar = (url: string) => {
-    const imgId = createImgId()
-    const suffix = getSuffix(url)
-    const name = suffix ? `${imgId}.${suffix}` : imgId
-    const obj: Cloud_ImageStore = {
-      id: imgId,
-      name,
-      lastModified: now,
-      url,
-    }
-    return obj
-  }
-
   const pic1 = googleData?.picture
   if(pic1 && typeof pic1 === "string") {
-    return _generateAvatar(pic1)
+    return generateAvatar(pic1)
   }
 
   const pic2 = githubData?.avatar_url
   if(pic2 && typeof pic2 === "string") {
-    return _generateAvatar(pic2)
+    return generateAvatar(pic2)
   }
 
 }
