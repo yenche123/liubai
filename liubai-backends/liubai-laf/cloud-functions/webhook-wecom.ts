@@ -13,6 +13,7 @@ import type {
   Ww_Welcome_Body,
   Ww_Del_Follow_User,
   Table_Member,
+  Ww_Msg_Audit_Notify,
 } from "@/common-types";
 import { decrypt, getSignature } from "@wecom/crypto";
 import xml2js from "xml2js";
@@ -30,7 +31,46 @@ const API_WECOM_SEND_WELCOME = "https://qyapi.weixin.qq.com/cgi-bin/externalcont
 const API_WECOM_GET_USERINFO = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get"
 
 export async function main(ctx: FunctionContext) {
-  const ip = getIp(ctx)
+  
+  const res = await turnInputIntoMsgObj(ctx)
+  if(typeof res === "string") {
+    return res
+  }
+  const { data: msgObj, code } = res
+  if(code !== "0000" || !msgObj) {
+    return res
+  }
+  
+  const { MsgType, Event } = msgObj
+  if(MsgType === "event" && Event === "change_external_contact") {
+    const { ChangeType } = msgObj
+    if(ChangeType === "add_external_contact") {
+      handle_add_external_contact(msgObj)
+    }
+    else if(ChangeType === "del_follow_user") {
+      handle_del_follow_user(msgObj)
+    }
+    else if(ChangeType === "msg_audit_approved") {
+
+    }
+  
+  }
+
+  if(MsgType === "event" && Event === "msgaudit_notify") {
+    handle_msgaudit_notify(msgObj)
+  }
+
+
+
+
+  // respond with empty string, and then wecom will not retry
+  return ""
+}
+
+
+async function turnInputIntoMsgObj(
+  ctx: FunctionContext,
+): Promise<LiuRqReturn<Ww_Msg_Event> | string> {
 
   const b = ctx.body
   const q = ctx.query
@@ -97,33 +137,22 @@ export async function main(ctx: FunctionContext) {
   // 6. get msg object
   const msgObj = await getMsgObject(message)
 
-  console.log("msgObj: ")
-  console.log(msgObj)
-
   if(!msgObj) {
     console.warn("fails to get msg object")
     return { code: "E5001", errMsg: "get msg object fail" }
   }
-  
-  const { MsgType, Event } = msgObj
-  if(MsgType === "event" && Event === "change_external_contact") {
-    const { ChangeType } = msgObj
-    if(ChangeType === "add_external_contact") {
-      handle_add_external_contact(msgObj)
-    }
-    else if(ChangeType === "del_follow_user") {
-      handle_del_follow_user(msgObj)
-    }
-    else if(ChangeType === "msg_audit_approved") {
 
-    }
-    
-  }
-
-
-  // respond with empty string, and then wecom will not retry
-  return ""
+  return { code: "0000", data: msgObj }
 }
+
+
+async function handle_msgaudit_notify(
+  msgObj: Ww_Msg_Audit_Notify,
+) {
+  console.log("handle_msgaudit_notify!")
+}
+
+
 
 async function handle_del_follow_user(
   msgObj: Ww_Del_Follow_User,
@@ -506,7 +535,7 @@ async function getMsgObject(
   return res
 }
 
-function preCheck(): LiuRqReturn | undefined {
+function preCheck(): LiuErrReturn | undefined {
   const _env = process.env
   const token = _env.LIU_WECOM_QYNB_TOKEN
   if(!token) {
@@ -545,7 +574,7 @@ function verifyMsgSignature(
   timestamp: string, 
   nonce: string,
   ciphertext: string,
-): LiuRqReturn | undefined {
+): LiuErrReturn | undefined {
   const _env = process.env
   const token = _env.LIU_WECOM_QYNB_TOKEN as string
   const sig = getSignature(token, timestamp, nonce, ciphertext)
