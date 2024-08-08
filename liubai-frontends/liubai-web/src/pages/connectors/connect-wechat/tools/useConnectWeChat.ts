@@ -17,6 +17,7 @@ export function useConnectWeChat() {
   const cwcData = reactive<CwcData>({
     pageState: hasBE ? pageStates.LOADING : pageStates.NEED_BACKEND,
     ww_qynb_toggle: false,
+    wx_gzh_toggle: false,
   })
 
   const onWechatRemindChanged = (val: boolean) => {
@@ -26,6 +27,10 @@ export function useConnectWeChat() {
   const onTapAddWeChat = async () => {
     await cui.showBindAccount({ bindType: "ww_qynb" })
     checkoutData(cwcData)
+  }
+
+  const onTapFollowOnWeChat = async () => {
+
   }
 
   const { syncNum, awakeNum } = useAwakeNum()
@@ -39,6 +44,7 @@ export function useConnectWeChat() {
     cwcData,
     onWechatRemindChanged,
     onTapAddWeChat,
+    onTapFollowOnWeChat,
   }
 }
 
@@ -88,4 +94,6 @@ async function checkoutData(
 
   cwcData.ww_qynb_external_userid = data3?.ww_qynb_external_userid
   cwcData.ww_qynb_toggle = Boolean(data3?.ww_qynb_toggle)
+  cwcData.wx_gzh_openid = data3?.wx_gzh_openid
+  cwcData.wx_gzh_toggle = Boolean(data3?.wx_gzh_toggle)
 }

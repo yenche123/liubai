@@ -459,10 +459,11 @@
   },
   "connect": {
     "add": "Add",
+    "follow": "Follow",
     "wechat": "WeChat",
     "wechat_desc": "Using Liubai on WeChat",
     "wechat_remind": "WeChat Remind",
-    "wechat_remind_desc": "Add \"留小白\" on WeChat. It will reach out to you when your agenda needs a reminder.",
+    "wechat_remind_desc": "Follow \"Liubai\" on WeChat. It will reach out to you when your agenda needs a reminder.",
     "dingtalk": "DingTalk",
     "dingtalk_desc": "Ｕsing Liubai quietly on DingTalk",
     "feishu": "Feishu",

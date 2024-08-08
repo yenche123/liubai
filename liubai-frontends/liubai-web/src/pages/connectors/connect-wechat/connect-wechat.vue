@@ -8,6 +8,7 @@ const {
   cwcData,
   onWechatRemindChanged,
   onTapAddWeChat,
+  onTapFollowOnWeChat,
 } = useConnectWeChat()
 
 </script>
@@ -29,16 +30,16 @@ const {
         </div>
 
 
-        <div class="liu-no-user-select cwb-footer" v-if="cwcData.ww_qynb_external_userid">
+        <div class="liu-no-user-select cwb-footer" v-if="cwcData.wx_gzh_openid">
           <liu-switch 
-            :checked="cwcData.ww_qynb_toggle"
+            :checked="cwcData.wx_gzh_toggle"
             @change="onWechatRemindChanged($event.checked)"
           ></liu-switch>
         </div>
 
         <div class="liu-no-user-select cwb-footer" v-else>
 
-          <custom-btn size="mini" @click="onTapAddWeChat">
+          <custom-btn size="mini" @click="onTapFollowOnWeChat">
 
             <div class="cwbf-arrow">
               <svg-icon name="logos-wechat-half-fill" 
@@ -47,7 +48,7 @@ const {
               ></svg-icon>
             </div>
 
-            <span>{{ t('connect.add') }}</span>
+            <span>{{ t('connect.follow') }}</span>
           </custom-btn>
           
         </div>

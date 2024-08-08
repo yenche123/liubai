@@ -297,6 +297,7 @@ export interface MemberConfig {
 
 export interface MemberNotification {
   ww_qynb_toggle?: boolean
+  wx_gzh_toggle?: boolean
 }
 
 /** 附着在 content 上的 emoji 表态信息 */
@@ -1588,13 +1589,13 @@ export interface Res_SyncGet_Cloud {
 
 /******************** open-connect **********************/
 export type OpenConnectOperate = "bind-wecom" | "check-wecom" | "get-wechat"
-  | "set-wechat"
+  | "set-wechat" | "bind-wechat" | "check-wechat"
 
 export type CheckBindStatus = "waiting" | "plz_check" | "expired"
 
 export interface Res_OC_BindWeCom {
   operateType: "bind-wecom"
-  qr_code: string
+  pic_url: string
   credential: string
 }
 
@@ -1603,10 +1604,23 @@ export interface Res_OC_CheckWeCom {
   status: CheckBindStatus
 }
 
+export interface Res_OC_BindWeChat {
+  operateType: "bind-wechat"
+  qr_code: string
+  credential: string
+}
+
+export interface Res_OC_CheckWeChat {
+  operateType: "check-wechat"
+  status: CheckBindStatus
+}
+
 export interface Res_OC_GetWeChat {
   operateType: "get-wechat"
   ww_qynb_external_userid?: string
   ww_qynb_toggle?: boolean
+  wx_gzh_openid?: string
+  wx_gzh_toggle?: boolean
 }
 
 

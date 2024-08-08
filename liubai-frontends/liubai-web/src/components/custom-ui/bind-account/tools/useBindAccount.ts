@@ -89,7 +89,7 @@ async function fetchData() {
     return
   }
 
-  baData.pic_url = d4.qr_code
+  baData.pic_url = d4.pic_url
   const cred = d4.credential
   if(!cred) return
   if(pollTimeout) clearTimeout(pollTimeout)

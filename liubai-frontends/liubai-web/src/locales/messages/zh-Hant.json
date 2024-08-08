@@ -459,10 +459,11 @@
   },
   "connect": {
     "add": "去新增",
+    "follow": "去關注",
     "wechat": "微信",
     "wechat_desc": "在微信上使用留白記事",
     "wechat_remind": "微信提醒",
-    "wechat_remind_desc": "新增「留小白」微信，當你的日程需要提醒時，它會在第一時間通知你！",
+    "wechat_remind_desc": "關注「留白記事」官方賬號，當你的日程需要提醒時，它會在第一時間通知你！",
     "dingtalk": "釘釘",
     "dingtalk_desc": "在工作時，偷偷使用留白記事",
     "feishu": "飛書",

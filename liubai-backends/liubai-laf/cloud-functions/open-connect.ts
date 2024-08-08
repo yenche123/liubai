@@ -46,8 +46,29 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "set-wechat") {
     res = await handle_set_wechat(vRes, body)
   }
+  else if(oT === "bind-wechat") {
+    handle_bind_wechat(vRes, body)
+  }
+  else if(oT === "check-wechat") {
+    handle_check_wechat(vRes, body)
+  }
 
   return res
+}
+
+
+async function handle_bind_wechat(
+  vRes: VerifyTokenRes_B,
+  body: Record<string, any>,
+) {
+  
+}
+
+async function handle_check_wechat(
+  vRes: VerifyTokenRes_B,
+  body: Record<string, any>,
+) {
+  
 }
 
 
@@ -115,7 +136,10 @@ async function handle_get_wechat(
   if(!user) {
     return { code: "E4004", errMsg: "there is no user" }
   }
-  const { ww_qynb_external_userid } = user
+  const { 
+    wx_gzh_openid,
+    ww_qynb_external_userid,
+  } = user
 
   // 2. get member
   const mCol = db.collection("Member")
@@ -129,11 +153,16 @@ async function handle_get_wechat(
   }
 
   // 3. construct response
-  const ww_qynb_toggle = member.notification?.ww_qynb_toggle
+  const mNoti = member.notification
+  const ww_qynb_toggle = mNoti?.ww_qynb_toggle
+  const wx_gzh_toggle = mNoti?.wx_gzh_toggle
+  
   res.data = {
     operateType: "get-wechat",
     ww_qynb_external_userid,
     ww_qynb_toggle,
+    wx_gzh_openid,
+    wx_gzh_toggle,
   }
   return res
 }
@@ -190,7 +219,7 @@ async function handle_bind_wecom(
       code: "0000",
       data: {
         operateType: "bind-wecom",
-        qr_code: qr4,
+        pic_url: qr4,
         credential: c4,
       },
     }
@@ -262,7 +291,7 @@ async function handle_bind_wecom(
     code: "0000",
     data: {
       operateType: "bind-wecom",
-      qr_code: qr8,
+      pic_url: qr8,
       credential: cred,
     },
   }
