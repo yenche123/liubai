@@ -19,6 +19,7 @@ import type {
   Table_User,
   Wx_Res_Create_QR,
   Res_OC_BindWeChat,
+  Res_OC_CheckWeChat,
 } from "@/common-types"
 import { getWeChatAccessToken, getWwQynbAccessToken, liuReq, verifyToken } from "@/common-util"
 import { createBindCredential } from "@/common-ids"
@@ -54,7 +55,7 @@ export async function main(ctx: FunctionContext) {
     res = await handle_bind_wechat(vRes, body)
   }
   else if(oT === "check-wechat") {
-    handle_check_wechat(vRes, body)
+    res = await handle_check_wechat(vRes, body)
   }
 
   return res
@@ -65,7 +66,60 @@ async function handle_check_wechat(
   vRes: VerifyTokenRes_B,
   body: Record<string, any>,
 ) {
-  
+  // 0. get params
+  const credential = body.credential
+  if(!credential || typeof credential !== "string") {
+    return { code: "E4000", errMsg: "credential is required" }
+  }
+  const res: LiuRqReturn<Res_OC_CheckWeChat> = {
+    code: "0000",
+  }
+
+  // 1. get credential
+  const w1 = {
+    credential,
+    infoType: "bind-wechat",
+  }
+  const cCol = db.collection("Credential")
+  const q1 = cCol.where(w1).orderBy("expireStamp", "desc").limit(1)
+  const res1 = await q1.get<Table_Credential>()
+  const list1 = res1.data
+  const len1 = list1?.length
+  if(len1 < 1) {
+    res.data = {
+      operateType: "check-wechat",
+      status: "plz_check",
+    }
+    return res
+  }
+
+  // 2. check out permission
+  const d2 = list1[0]
+  const _userId = d2.userId
+  const userId = vRes.userData._id
+  if(_userId !== userId) {
+    res.code = "E4003"
+    res.errMsg = "permission denied"
+    return res
+  }
+
+  // 3. check out expiration
+  const now3 = getNowStamp()
+  if(now3 > d2.expireStamp) {
+    res.data = {
+      operateType: "check-wechat",
+      status: "expired",
+    }
+    return res
+  }
+
+  // 4. return waiting status
+  res.data = {
+    operateType: "check-wechat",
+    status: "waiting",
+  }
+
+  return res
 }
 
 async function handle_bind_wechat(
@@ -460,7 +514,7 @@ async function handle_check_wecom(
     return res
   }
 
-  // 3. check out expire
+  // 3. check out expiration
   const now3 = getNowStamp()
   if(now3 > d2.expireStamp) {
     res.data = {
