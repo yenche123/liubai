@@ -7,11 +7,12 @@ import type {
 import { LiuTimeout } from "~/utils/basic/type-tool";
 import cfg from "~/config";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
-import { OpenConnectOperate } from "~/requests/req-types";
 import APIs from "~/requests/APIs";
 import liuReq from "~/requests/liu-req";
 import type { 
+  Res_OC_BindWeChat,
   Res_OC_BindWeCom,
+  Res_OC_CheckWeChat,
   Res_OC_CheckWeCom,
 } from "~/requests/req-types";
 import time from "~/utils/basic/time";
@@ -56,30 +57,62 @@ export function showBindAccount(param: BindAccountParam) {
 let pollTimeout: LiuTimeout
 async function fetchData() {
 
-  // 1. get bindType & operateType
-  const bT = baData.bindType
-  if(!bT) return
-  let operateType: OpenConnectOperate | undefined
-  if(bT === "ww_qynb") {
-    operateType = "bind-wecom"
-  }
-  if(!operateType) return
-
-  // 2. get memberId & clear pollTimeout
+  // 1. get memberId & clear pollTimeout
   const wStore = useWorkspaceStore()
   const memberId = wStore.memberId
+  if(!memberId) return
   if(pollTimeout) clearTimeout(pollTimeout)
 
-  // 3. construct request
+  // 2. to request 
+  const bT = baData.bindType
+  if(bT === "ww_qynb") {
+    fetchWeCom(memberId)
+  }
+  else if(bT === "wx_gzh") {
+    fetchWeChat(memberId)
+  }
+  
+}
+
+async function fetchWeChat(
+  memberId: string,
+) {
   const w3 = {
-    operateType,
+    operateType: "bind-wechat",
     memberId,
   }
   const url = APIs.OPEN_CONNECT
+  const res3 = await liuReq.request<Res_OC_BindWeChat>(url, w3)
+  console.log("fetch wechat result: ")
+  console.log(res3)
+  console.log(" ")
+  
+  const d4 = res3.data
+  if(!d4) {
+    _over()
+    return
+  }
 
-  console.time("bind account")
+  baData.qr_code = d4.qr_code
+  const cred = d4.credential
+  if(!cred) return
+  if(pollTimeout) clearTimeout(pollTimeout)
+  pollTimeout = setTimeout(() => {
+    checkData(cred)
+  }, SEC_6)
+}
+
+
+async function fetchWeCom(
+  memberId: string,
+) {
+  const w3 = {
+    operateType: "bind-wecom",
+    memberId,
+  }
+  const url = APIs.OPEN_CONNECT
   const res3 = await liuReq.request<Res_OC_BindWeCom>(url, w3)
-  console.timeEnd("bind account")
+  console.log("fetch wecom result: ")
   console.log(res3)
   console.log(" ")
   
@@ -98,35 +131,16 @@ async function fetchData() {
   }, SEC_6)
 }
 
-async function checkData(
+async function checkWeCom(
   credential: string,
 ) {
-
-  // 1. can we check out data?
-  if(!baData.enable) return
-  baData.runTimes++
-  if(baData.runTimes > 100) {
-    _over()
-    return
-  }
-
-  // 2. get param
-  const bT = baData.bindType
-  if(!bT) return
-  let operateType: OpenConnectOperate | undefined
-  if(bT === "ww_qynb") {
-    operateType = "check-wecom"
-  }
-  if(!operateType) return
-
-  // 3. construct request
   const url = APIs.OPEN_CONNECT
   const b3 = {
-    operateType,
+    operateType: "check-wecom",
     credential,
   }
   const res3 = await liuReq.request<Res_OC_CheckWeCom>(url, b3)
-  console.log("checkData res3: ")
+  console.log("checkWeCom res3: ")
   console.log(res3)
   console.log(" ")
   
@@ -141,6 +155,56 @@ async function checkData(
   pollTimeout = setTimeout(() => {
     checkData(credential)
   }, SEC_4)
+}
+
+async function checkWeChat(
+  credential: string,
+) {
+  const url = APIs.OPEN_CONNECT
+  const b3 = {
+    operateType: "check-wechat",
+    credential,
+  }
+  const res3 = await liuReq.request<Res_OC_CheckWeChat>(url, b3)
+  console.log("checkWeChat res3: ")
+  console.log(res3)
+  console.log(" ")
+  
+  // 4. check result
+  const d4 = res3.data
+  const status = d4?.status
+  if(status !== "waiting") {
+    _over()
+    return
+  }
+  
+  pollTimeout = setTimeout(() => {
+    checkData(credential)
+  }, SEC_4)
+}
+
+
+async function checkData(
+  credential: string,
+) {
+
+  // 1. can we check out data?
+  if(!baData.enable) return
+  baData.runTimes++
+  if(baData.runTimes > 100) {
+    _over()
+    return
+  }
+
+  // 2. to check out specific data
+  const bT = baData.bindType
+  if(bT === "ww_qynb") {
+    checkWeCom(credential)
+  }
+  else if(bT === "wx_gzh") {
+    checkWeChat(credential)
+  }
+  
 }
 
 

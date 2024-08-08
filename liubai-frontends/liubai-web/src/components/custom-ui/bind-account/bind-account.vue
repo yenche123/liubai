@@ -47,13 +47,19 @@ const cha = liuApi.getCharacteristic()
       <!-- info box -->
       <div class="liu-no-user-select ba-info">
         <div class="ba-info-title">
-          <span v-if="baData.bindType === 'ww_qynb'">{{ t('qrcode.title') }}</span>
+          <span>{{ t('qrcode.title') }}</span>
         </div>
-        <div class="ba-info-desc">
-          <span v-if="cha.isMobile && cha.isWeChat">{{ t('qrcode.long_press') }}</span>
+        <div v-if="baData.bindType === 'ww_qynb'" class="ba-info-desc">
+          <span v-if="cha.isMobile && cha.isWeChat">{{ t('qrcode.long_press_1') }}</span>
           <span v-else-if="cha.isMobile">{{ t('qrcode.screenshot') }}</span>
-          <span v-else>{{ t('qrcode.scan') }}</span>
+          <span v-else>{{ t('qrcode.scan_1') }}</span>
         </div>
+        <div v-else-if="baData.bindType === 'wx_gzh'" class="ba-info-desc">
+          <span v-if="cha.isMobile && cha.isWeChat">{{ t('qrcode.long_press_2') }}</span>
+          <span v-else-if="cha.isMobile">{{ t('qrcode.screenshot') }}</span>
+          <span v-else>{{ t('qrcode.scan_2') }}</span>
+        </div>
+
       </div>
 
     </div>

@@ -480,8 +480,10 @@
     "whatsapp_desc": "在 WhatsApp 上使用留白記事"
   },
   "qrcode": {
-    "long_press": "長按識別 QR Code，新增「留小白」的微信",
-    "scan": "請用微信 App，掃描 QR Code 以新增「留小白」微信",
+    "long_press_1": "長按識別 QR Code，新增「留小白」的微信",
+    "long_press_2": "長按識別 QR Code，關注「留白记事」",
+    "scan_1": "請用微信 App，掃描 QR Code 以新增「留小白」微信",
+    "scan_2": "請用微信 App，掃描 QR Code 關注「留白记事」",
     "screenshot": "請截圖後，用微信掃描打開",
     "title": "你的專屬 QR Code 已生成"
   }
