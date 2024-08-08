@@ -17,13 +17,17 @@ import type {
   Res_OC_BindWeCom,
   Res_OC_GetWeChat,
   Table_User,
+  Wx_Res_Create_QR,
+  Res_OC_BindWeChat,
 } from "@/common-types"
-import { getWwQynbAccessToken, liuReq, verifyToken } from "@/common-util"
+import { getWeChatAccessToken, getWwQynbAccessToken, liuReq, verifyToken } from "@/common-util"
 import { createBindCredential } from "@/common-ids"
 
 const db = cloud.database()
 
 const API_WECOM_ADD_CONTACT = "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_contact_way"
+const API_WECHAT_CREATE_QRCODE = "https://api.weixin.qq.com/cgi-bin/qrcode/create"
+const MIN_10 = 10 * MINUTE
 
 export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}
@@ -47,7 +51,7 @@ export async function main(ctx: FunctionContext) {
     res = await handle_set_wechat(vRes, body)
   }
   else if(oT === "bind-wechat") {
-    handle_bind_wechat(vRes, body)
+    res = await handle_bind_wechat(vRes, body)
   }
   else if(oT === "check-wechat") {
     handle_check_wechat(vRes, body)
@@ -57,18 +61,122 @@ export async function main(ctx: FunctionContext) {
 }
 
 
-async function handle_bind_wechat(
+async function handle_check_wechat(
   vRes: VerifyTokenRes_B,
   body: Record<string, any>,
 ) {
   
 }
 
-async function handle_check_wechat(
+async function handle_bind_wechat(
   vRes: VerifyTokenRes_B,
   body: Record<string, any>,
-) {
-  
+): Promise<LiuRqReturn<Res_OC_BindWeChat>> {
+  // 0. get params
+  const userId = vRes.userData._id
+
+  // 1. return directly if wx_gzh_openid exists
+  const { wx_gzh_openid } = vRes.userData
+  if(wx_gzh_openid) {
+    return { code: "Y0001" }
+  }
+
+  // 2. checking out memberId
+  const memberId = body.memberId
+  if(memberId && typeof memberId === "string") {
+    const res2 = await checkIfMemberIdIsMine(memberId, userId)
+    if(res2) return res2
+  }
+
+  // 3. checking out credential
+  const cCol = db.collection("Credential")
+  const w3: Partial<Table_Credential> = {
+    infoType: "bind-wechat",
+    userId,
+  }
+  const q3 = cCol.where(w3).orderBy("expireStamp", "desc").limit(1)
+  const res3 = await q3.get<Table_Credential>()
+  const list3 = res3.data
+  const fir3 = list3[0]
+
+  // 4. checking if expired
+  const now4 = getNowStamp()
+  const e4 = fir3?.expireStamp ?? 1
+  const c4 = fir3?.credential
+  const qr4 = fir3?.meta_data?.qr_code
+  const diff4 = e4 - now4
+  if(diff4 > MINUTE && c4 && qr4) {
+    // if the rest of time is enough to bind
+    return {
+      code: "0000",
+      data: {
+        operateType: "bind-wechat",
+        qr_code: qr4,
+        credential: c4,
+      },
+    }
+  }
+
+  // 5. get wechat accessToken
+  const accessToken = await getWeChatAccessToken()
+  if(!accessToken) {
+    return { code: "E5001", errMsg: "wechat accessToken not found" }
+  }
+
+
+  // 6. generate credential
+  const cred = createBindCredential()
+  const scene_str = `b2=${cred}`
+  const w6 = {
+    expire_seconds: 60 * 10,
+    action_name: "QR_STR_SCENE",
+    action_info: {
+      scene: {
+        scene_str,
+      }
+    }
+  }
+  const url6 = new URL(API_WECHAT_CREATE_QRCODE)
+  url6.searchParams.set("access_token", accessToken)
+  const link6 = url6.toString()
+  const res6 = await liuReq<Wx_Res_Create_QR>(link6, w6)
+
+
+  // 7. extract data from wechat
+  const res7 = res6.data
+  const qr_code_7 = res7?.url
+  if(!qr_code_7) {
+    return { 
+      code: "E5004", 
+      errMsg: "creating QR code from wechat failed",
+    }
+  }
+
+  // 8. add credential into db
+  const b8 = getBasicStampWhileAdding()
+  const now8 = b8.insertedStamp
+  const data8: Partial<Table_Credential> = {
+    ...b8,
+    credential: cred,
+    infoType: "bind-wechat",
+    expireStamp: now8 + MIN_10,
+    verifyNum: 0,
+    userId,
+    meta_data: {
+      memberId,
+      qr_code: qr_code_7,
+    }
+  }
+  cCol.add(data8)
+
+  return {
+    code: "0000",
+    data: {
+      operateType: "bind-wechat",
+      qr_code: qr_code_7,
+      credential: cred,
+    }
+  }
 }
 
 
@@ -172,7 +280,6 @@ async function handle_bind_wecom(
   vRes: VerifyTokenRes_B,
   body: Record<string, string>,
 ): Promise<LiuRqReturn<Res_OC_BindWeCom>> {
-
   // 0. get params
   const userId = vRes.userData._id
 
@@ -185,20 +292,13 @@ async function handle_bind_wecom(
   // 2. checking out memberId
   const memberId = body.memberId
   if(memberId && typeof memberId === "string") {
-    const mCol = db.collection("Member")
-    const res2 = await mCol.doc(memberId).get<Table_Member>()
-    const d2 = res2.data
-    if(!d2) {
-      return { code: "E4004", errMsg: "there is no memeber" }
-    }
-    if(d2.user !== userId) {
-      return { code: "E4003", errMsg: "the member is not yours!" }
-    }
+    const res2 = await checkIfMemberIdIsMine(memberId, userId)
+    if(res2) return res2
   }
 
   // 3. checking out credential
   const cCol = db.collection("Credential")
-  const w3 = {
+  const w3: Partial<Table_Credential> = {
     infoType: "bind-wecom",
     userId,
   }
@@ -211,15 +311,15 @@ async function handle_bind_wecom(
   const now4 = getNowStamp()
   const e4 = fir3?.expireStamp ?? 1
   const c4 = fir3?.credential
-  const qr4 = fir3?.meta_data?.qr_code
+  const pic_url_4 = fir3?.meta_data?.pic_url
   const diff4 = e4 - now4
-  if(diff4 > MINUTE && c4 && qr4) {
+  if(diff4 > MINUTE && c4 && pic_url_4) {
     // if the rest of time is enough to bind
     return {
       code: "0000",
       data: {
         operateType: "bind-wecom",
-        pic_url: qr4,
+        pic_url: pic_url_4,
         credential: c4,
       },
     }
@@ -256,8 +356,8 @@ async function handle_bind_wecom(
   // 8. extract data from wecom
   const res8 = res7.data
   const c8 = res8?.config_id
-  const qr8 = res8?.qr_code
-  if(!c8 || !qr8) {
+  const pic_url_8 = res8?.qr_code
+  if(!c8 || !pic_url_8) {
     console.log("wecom add contact err7: ")
     console.log("res7: ")
     console.log(res7)
@@ -276,22 +376,22 @@ async function handle_bind_wecom(
     ...b9,
     credential: cred,
     infoType: "bind-wecom",
-    expireStamp: now9 + (10 * MINUTE),
+    expireStamp: now9 + MIN_10,
     verifyNum: 0,
     userId,
     meta_data: {
       memberId,
-      qr_code: qr8,
+      pic_url: pic_url_8,
       ww_qynb_config_id: c8,
     }
   }
-  const res9 = await cCol.add(data9)
+  cCol.add(data9)
 
   return {
     code: "0000",
     data: {
       operateType: "bind-wecom",
-      pic_url: qr8,
+      pic_url: pic_url_8,
       credential: cred,
     },
   }
@@ -377,4 +477,20 @@ async function handle_check_wecom(
   }
 
   return res
+}
+
+
+async function checkIfMemberIdIsMine(
+  memberId: string,
+  userId: string,
+): Promise<LiuErrReturn | undefined> {
+  const mCol = db.collection("Member")
+  const res2 = await mCol.doc(memberId).get<Table_Member>()
+  const d2 = res2.data
+  if(!d2) {
+    return { code: "E4004", errMsg: "there is no memeber" }
+  }
+  if(d2.user !== userId) {
+    return { code: "E4003", errMsg: "the member is not yours!" }
+  }
 }

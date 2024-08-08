@@ -17,7 +17,12 @@ import type {
 } from "@/common-types";
 import { decrypt, getSignature } from "@wecom/crypto";
 import xml2js from "xml2js";
-import { generateAvatar, getIp, liuReq, updateUserInCache } from "@/common-util";
+import { 
+  generateAvatar, 
+  getWwQynbAccessToken, 
+  liuReq, 
+  updateUserInCache,
+} from "@/common-util";
 import { useI18n, wecomLang } from "@/common-i18n";
 import { getNowStamp } from "@/common-time";
 
@@ -477,18 +482,6 @@ function reset() {
 }
 
 
-async function getWecomAccessToken() {
-  const col = db.collection("Config")
-  const res = await col.get<Table_Config>()
-  const list = res.data
-  let cfg = list[0]
-  if(!cfg) return
-  const access_token = cfg.wecom_qynb?.access_token
-  wecom_access_token = access_token ?? ""
-  return access_token
-}
-
-
 interface Cwat_A {
   pass: true
 }
@@ -504,16 +497,16 @@ async function checkWecomAccessToken(): Promise<CwatRes> {
   if(wecom_access_token) {
     return { pass: true }
   }
-  const access_token = await getWecomAccessToken()
+  const access_token = await getWwQynbAccessToken()
   if(!access_token) {
     return { 
       pass: false, 
       err: { code: "E5001", errMsg: "wecom access_token is empty" },
     }
   }
+  wecom_access_token = access_token
   return { pass: true }
 }
-
 
 
 /***************** helper functions *************/

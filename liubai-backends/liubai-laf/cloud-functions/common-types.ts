@@ -615,6 +615,7 @@ export interface CredentialMetaData {
   payment_timezone?: string
   plan?: string
   memberId?: string
+  pic_url?: string
   qr_code?: string
   ww_qynb_config_id?: string
 }
@@ -1078,7 +1079,7 @@ export interface Table_Config extends BaseTable {
 
 /** 临时凭证表的类型 */
 export type Table_Credential_Type =  "sms-code" | "email-code" | "scan-code"
-  | "users-select" | "stripe-checkout-session" | "bind-wecom"
+  | "users-select" | "stripe-checkout-session" | "bind-wecom" | "bind-wechat"
 
 /** 临时凭证表 */
 export interface Table_Credential extends BaseTable {
@@ -1684,6 +1685,16 @@ export interface Shared_LoginState {
   createdStamp: number
   num: number
 }
+
+/******************* Some Types from WeChat ****************/
+
+/** result of creating QR */
+export interface Wx_Res_Create_QR {
+  ticket: string
+  expire_seconds: number
+  url: string
+}
+
 
 
 /******************* WeChat Subscription Msg Events ****************/

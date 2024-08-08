@@ -1246,3 +1246,12 @@ export async function getWwQynbAccessToken() {
   const accessToken = d?.wecom_qynb?.access_token
   return accessToken
 }
+
+/*************** About WeChat ****************/
+export async function getWeChatAccessToken() {
+  const col = db.collection("Config")
+  const res = await col.getOne<Table_Config>()
+  const d = res.data
+  const accessToken = d?.wechat_gzh?.access_token
+  return accessToken
+}
