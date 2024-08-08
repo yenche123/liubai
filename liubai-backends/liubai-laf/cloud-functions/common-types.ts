@@ -1744,6 +1744,12 @@ export interface Wx_Gzh_Voice extends Wx_Gzh_Base {
   MsgDataId?: string
 }
 
+
+export type Wx_Gzh_Msg_Event = Wx_Gzh_Auth_Change |
+  Wx_Gzh_Text |
+  Wx_Gzh_Image |
+  Wx_Gzh_Voice
+
 /******************* Some Types from WeCom  ****************/
 export interface Ww_Res_Base {
   errcode: number

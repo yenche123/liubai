@@ -1,20 +1,38 @@
 // Receive messages and events from WeChat subscription servers
 import cloud from "@lafjs/cloud";
 import * as crypto from "crypto";
-import { type LiuRqReturn } from "./common-types";
+import { LiuErrReturn, Wx_Gzh_Msg_Event, type LiuRqReturn } from "./common-types";
 import { decrypt } from "@wecom/crypto"
 import xml2js from "xml2js"
 
 const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
-  console.log("webhook-wechat starts to run!")
+  console.log("webhook-wechat is called!")
+  const res = await turnInputIntoMsgObj(ctx)
+  if(typeof res === "string") {
+    return res
+  }
+  const { data: msgObj, code } = res
+  if(code !== "0000" || !msgObj) {
+    return res
+  }
 
+  console.log("webhook-wechat successfully called......")
+  console.log(msgObj)
+  
+
+
+  // respond with empty string, and then wechat will not retry
+  return ""
+}
+
+
+async function turnInputIntoMsgObj(
+  ctx: FunctionContext,
+): Promise<LiuRqReturn<Wx_Gzh_Msg_Event> | string> {
   const b = ctx.body
-  console.log("ctx.body: ", b)
-
   const q = ctx.query
-  console.log("ctx.query: ", q)
 
   // 0. preCheck
   const res0 = preCheck()
@@ -60,8 +78,6 @@ export async function main(ctx: FunctionContext) {
 
   // 5. decrypt 
   const { message, id } = toDecrypt(ciphertext)
-  console.log("message from wechat:")
-  console.log(message)
 
   if(!message) {
     console.warn("fails to get message")
@@ -71,20 +87,17 @@ export async function main(ctx: FunctionContext) {
   // 6. get msg object
   const msgObj = await getMsgObject(message)
 
-  console.log("msgObj: ")
-  console.log(msgObj)
-
   if(!msgObj) {
     console.warn("fails to get msg object")
     return { code: "E5001", errMsg: "get msg object fail" }
   }
-
-  // respond with empty string, and then wechat will not retry
-  return ""
+  
+  return { code: "0000", data: msgObj }
 }
 
+
 async function getMsgObject(message: string) {
-  let res: Record<string, any> | undefined 
+  let res: Wx_Gzh_Msg_Event | undefined 
   const parser = new xml2js.Parser({explicitArray : false})
   try {
     const { xml } = await parser.parseStringPromise(message)
@@ -99,7 +112,7 @@ async function getMsgObject(message: string) {
 }
 
 
-function preCheck(): LiuRqReturn | undefined {
+function preCheck(): LiuErrReturn | undefined {
   const _env = process.env
   const token = _env.LIU_WX_GZ_TOKEN
   if(!token) {
@@ -136,7 +149,7 @@ function verifyEchoStr(
   signature: string, 
   timestamp: string, 
   nonce: string,
-) {
+): LiuErrReturn | undefined {
   const _env = process.env
   const token = _env.LIU_WX_GZ_TOKEN as string
   const arr = [token, timestamp, nonce].sort()
@@ -159,7 +172,7 @@ function verifyMsgSignature(
   timestamp: string, 
   nonce: string,
   ciphertext: string,
-): LiuRqReturn | undefined {
+): LiuErrReturn | undefined {
   const _env = process.env
   const token = _env.LIU_WX_GZ_TOKEN as string
   const arr = [token, timestamp, nonce, ciphertext].sort()

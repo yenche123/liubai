@@ -195,6 +195,9 @@ async function handle_bind_wechat(
   const link6 = url6.toString()
   const res6 = await liuReq<Wx_Res_Create_QR>(link6, w6)
 
+  console.log("wechat qrcode result: ")
+  console.log(res6)
+
 
   // 7. extract data from wechat
   const res7 = res6.data
