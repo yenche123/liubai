@@ -56,12 +56,12 @@ async function handle_set_wechat(
   body: Record<string, any>,
 ) {
   const memberId = body.memberId
-  const ww_qynb_remind = body.ww_qynb_remind
+  const ww_qynb_toggle = body.ww_qynb_toggle
   if(!memberId || typeof memberId !== "string") {
     return { code: "E4000", errMsg: "memberId is required" }
   }
-  if(typeof ww_qynb_remind !== "boolean") {
-    return { code: "E4000", errMsg: "ww_qynb_remind is required" }
+  if(typeof ww_qynb_toggle !== "boolean") {
+    return { code: "E4000", errMsg: "ww_qynb_toggle is required" }
   }
   
   // 1. get member
@@ -76,12 +76,12 @@ async function handle_set_wechat(
     return { code: "E4003", errMsg: "the member is not yours" }
   }
 
-  // 2. set ww_qynb_remind
+  // 2. set ww_qynb_toggle
   const noti = member.notification ?? {}
-  if(noti.ww_qynb_remind === ww_qynb_remind) {
+  if(noti.ww_qynb_toggle === ww_qynb_toggle) {
     return { code: "0001" }
   }
-  noti.ww_qynb_remind = ww_qynb_remind
+  noti.ww_qynb_toggle = ww_qynb_toggle
   const w2: Partial<Table_Member> = {
     notification: noti,
     updatedStamp: getNowStamp(),
@@ -129,11 +129,11 @@ async function handle_get_wechat(
   }
 
   // 3. construct response
-  const ww_qynb_remind = member.notification?.ww_qynb_remind
+  const ww_qynb_toggle = member.notification?.ww_qynb_toggle
   res.data = {
     operateType: "get-wechat",
     ww_qynb_external_userid,
-    ww_qynb_remind,
+    ww_qynb_toggle,
   }
   return res
 }

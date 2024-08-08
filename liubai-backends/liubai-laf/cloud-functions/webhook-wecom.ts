@@ -374,7 +374,7 @@ async function handle_add_external_contact(
   if(memberId) {
     updateMember = true
     const noti13 = { ...member.notification }
-    noti13.ww_qynb_remind = true
+    noti13.ww_qynb_toggle = true
     w13.notification = noti13
   }
 

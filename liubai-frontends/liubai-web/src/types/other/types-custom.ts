@@ -44,7 +44,7 @@ export interface MemberConfig {
 }
 
 export interface MemberNotification {
-  ww_qynb_remind?: boolean
+  ww_qynb_toggle?: boolean
 }
 
 export interface ImgOneLayout {

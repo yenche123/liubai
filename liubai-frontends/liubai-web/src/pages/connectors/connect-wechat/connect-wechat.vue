@@ -31,7 +31,7 @@ const {
 
         <div class="liu-no-user-select cwb-footer" v-if="cwcData.ww_qynb_external_userid">
           <liu-switch 
-            :checked="cwcData.ww_qynb_remind"
+            :checked="cwcData.ww_qynb_toggle"
             @change="onWechatRemindChanged($event.checked)"
           ></liu-switch>
         </div>

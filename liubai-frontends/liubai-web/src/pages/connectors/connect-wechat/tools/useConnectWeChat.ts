@@ -16,7 +16,7 @@ export function useConnectWeChat() {
 
   const cwcData = reactive<CwcData>({
     pageState: hasBE ? pageStates.LOADING : pageStates.NEED_BACKEND,
-    ww_qynb_remind: false,
+    ww_qynb_toggle: false,
   })
 
   const onWechatRemindChanged = (val: boolean) => {
@@ -87,5 +87,5 @@ async function checkoutData(
   }
 
   cwcData.ww_qynb_external_userid = data3?.ww_qynb_external_userid
-  cwcData.ww_qynb_remind = Boolean(data3?.ww_qynb_remind)
+  cwcData.ww_qynb_toggle = Boolean(data3?.ww_qynb_toggle)
 }

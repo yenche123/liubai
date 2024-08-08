@@ -296,7 +296,7 @@ export interface MemberConfig {
 }
 
 export interface MemberNotification {
-  ww_qynb_remind?: boolean
+  ww_qynb_toggle?: boolean
 }
 
 /** 附着在 content 上的 emoji 表态信息 */
@@ -1606,7 +1606,7 @@ export interface Res_OC_CheckWeCom {
 export interface Res_OC_GetWeChat {
   operateType: "get-wechat"
   ww_qynb_external_userid?: string
-  ww_qynb_remind?: boolean
+  ww_qynb_toggle?: boolean
 }
 
 
