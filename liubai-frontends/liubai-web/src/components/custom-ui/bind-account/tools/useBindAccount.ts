@@ -28,6 +28,7 @@ const baData = reactive<BindAccountData>({
   qr_code: "",
   pic_url: "",
   runTimes: 0,
+  loading: true,
 })
 
 export function initBindAccount() {
@@ -35,6 +36,7 @@ export function initBindAccount() {
     TRANSITION_DURATION,
     baData,
     onTapMask,
+    onImgLoaded,
   }
 }
 
@@ -44,6 +46,7 @@ export function showBindAccount(param: BindAccountParam) {
   baData.qr_code = ""
   baData.pic_url = ""
   baData.runTimes = 0
+  baData.loading = true
 
   _open()
   fetchData()
@@ -52,6 +55,12 @@ export function showBindAccount(param: BindAccountParam) {
     _resolve = a
   }
   return new Promise(_wait)
+}
+
+
+function onImgLoaded() {
+  console.log("onImgLoaded......")
+  baData.loading = false
 }
 
 let pollTimeout: LiuTimeout
@@ -94,6 +103,8 @@ async function fetchWeChat(
   }
 
   baData.qr_code = d4.qr_code
+  baData.loading = false
+  
   const cred = d4.credential
   if(!cred) return
   if(pollTimeout) clearTimeout(pollTimeout)

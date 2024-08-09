@@ -8,6 +8,7 @@ import liuApi from "~/utils/liu-api"
 const {
   TRANSITION_DURATION,
   onTapMask,
+  onImgLoaded,
   baData,
 } = initBindAccount()
 
@@ -31,14 +32,29 @@ const cha = liuApi.getCharacteristic()
 
 
         <div v-if="baData.pic_url" class="ba-qrcode">
-          <img class="ba-qrcode-img" :src="baData.pic_url" />
+          <img class="ba-qrcode-img" 
+            :class="{ 'ba-qrcode-img_shown': !baData.loading }"
+            :src="baData.pic_url" 
+            @load="onImgLoaded" 
+          />
         </div>
 
         <div v-else-if="qrcode && baData.qr_code" class="ba-qrcode">
-          <img class="ba-qrcode-img" :src="qrcode" />
+          <img class="ba-qrcode-img ba-qrcode-img_shown" :src="qrcode" />
         </div>
 
-        <RingLoader v-else></RingLoader>
+        <div v-show="baData.loading" class="ba-loading-box">
+          <RingLoader></RingLoader>
+        </div>
+
+        <div class="ba-logo-box"
+          v-if="!baData.pic_url"
+          :class="{ 'ba-logo-box_shown': !baData.loading }"
+        >
+          <img src="/logos/logo_32x32_v2.png" 
+            class="liu-no-user-select ba-logo-img"
+          />
+        </div>
 
       </div>
 
@@ -80,7 +96,7 @@ const cha = liuApi.getCharacteristic()
   justify-content: center;
   z-index: 2600;
   opacity: 0;
-  transition: v-bind("TRANSITION_DURATION + 'ms'");
+  transition-duration: v-bind("TRANSITION_DURATION + 'ms'");
 
   .ba-bg {
     position: absolute;
@@ -111,7 +127,8 @@ const cha = liuApi.getCharacteristic()
   border-radius: 24px;
   overflow: hidden;
   background-color: var(--card-bg);
-  transition: v-bind("TRANSITION_DURATION + 'ms'");
+  transition-timing-function: cubic-bezier(0.17, 0.86, 0.45, 1);
+  transition-duration: v-bind("TRANSITION_DURATION + 'ms'");
   transform: translateY(25%);
   position: relative;
   box-shadow: var(--cui-popup-shadow);
@@ -131,6 +148,18 @@ const cha = liuApi.getCharacteristic()
   justify-content: center;
 }
 
+.ba-loading-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
 .ba-qrcode {
   width: 100%;
   height: 100%;
@@ -146,6 +175,33 @@ const cha = liuApi.getCharacteristic()
 .ba-qrcode-img {
   width: 90%;
   height: 90%;
+  opacity: 0;
+  transition: .3s;
+}
+
+.ba-qrcode-img_shown {
+  opacity: 1;
+}
+
+.ba-logo-box {
+  width: 16%;
+  height: 16%;
+  position: absolute;
+  top: 42%;
+  left: 42%;
+  opacity: 0;
+  transition: .3s;
+  pointer-events: none;
+}
+
+.ba-logo-box_shown {
+  opacity: 1;
+}
+
+.ba-logo-img {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .ba-virtual {
@@ -209,6 +265,12 @@ const cha = liuApi.getCharacteristic()
     }
   }
   
+}
+
+@media screen and (max-width: 720px) {
+  .ba-virtual {
+    width: 24px;
+  }
 }
 
 

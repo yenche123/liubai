@@ -104,7 +104,7 @@
   --cui-snackbar-shadow: 0 6px 12px rgba(0, 0, 0, .18);
   
   /** 自定义组件: 通用 popup */
-  --cui-popup-shadow: 0 -12px 32px rgba(0, 0, 0, .12);
+  --cui-popup-shadow: 0 -6px 18px rgba(0, 0, 0, .09);
 
   /** preview-image 预览图片 */
   --preview-image-bg: rgba(255, 255, 255, 1);

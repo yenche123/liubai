@@ -14,6 +14,7 @@ export interface BindAccountData {
   qr_code: string
   pic_url: string
   runTimes: number
+  loading: boolean
 }
 
 export type BindAccountRes = boolean

@@ -30,7 +30,8 @@ export function useConnectWeChat() {
   }
 
   const onTapFollowOnWeChat = async () => {
-
+    await cui.showBindAccount({ bindType: "wx_gzh" })
+    checkoutData(cwcData)
   }
 
   const { syncNum, awakeNum } = useAwakeNum()
