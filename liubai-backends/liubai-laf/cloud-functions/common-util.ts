@@ -25,9 +25,9 @@ import type {
   LiuContent,
   VerifyTokenRes_A,
   VerifyTokenRes_B,
-  DecryptCloudRes,
   LiuRqOpt,
   Table_Config,
+  CommonPass,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -1091,7 +1091,7 @@ function decryptWithAES(
 /** decrypt cloud data with AES */
 export function decryptCloudData<T>(
   civ?: CryptoCipherAndIV,
-): DecryptCloudRes<T> {
+): CommonPass<T> {
   if(!civ) return { pass: true }
 
   const aesKey = getAESKey()
@@ -1099,7 +1099,7 @@ export function decryptCloudData<T>(
     console.warn("aesKey is empty in decryptCloudData")
     return {
       pass: false,
-      result: {
+      err: {
         code: "E5001",
         errMsg: "aesKey is empty in decryptCloudData",
       }
@@ -1111,7 +1111,7 @@ export function decryptCloudData<T>(
     console.warn("err occurs in decryptCloudData")
     return {
       pass: false,
-      result: {
+      err: {
         code: "E5001",
         errMsg: "decryptWithAES failed in decryptCloudData",
       }
@@ -1122,7 +1122,7 @@ export function decryptCloudData<T>(
   if(pre !== aesKey.substring(0, 5)) {
     return {
       pass: false,
-      result: {
+      err: {
         code: "E5001",
         errMsg: "pre is not matched",
       }

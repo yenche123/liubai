@@ -1,5 +1,6 @@
 // Function Name: webhook-wecom
 // Receive messages and events from WeCom
+
 import cloud from "@lafjs/cloud";
 import type { 
   LiuRqReturn,
@@ -13,6 +14,7 @@ import type {
   Ww_Del_Follow_User,
   Table_Member,
   Ww_Msg_Audit_Notify,
+  CommonPass,
 } from "@/common-types";
 import { decrypt, getSignature } from "@wecom/crypto";
 import xml2js from "xml2js";
@@ -480,19 +482,7 @@ function reset() {
   wecom_access_token = ""
 }
 
-
-interface Cwat_A {
-  pass: true
-}
-
-interface Cwat_B {
-  pass: false
-  err: LiuErrReturn
-}
-
-type CwatRes = Cwat_A | Cwat_B
-
-async function checkWecomAccessToken(): Promise<CwatRes> {
+async function checkWecomAccessToken(): Promise<CommonPass> {
   if(wecom_access_token) {
     return { pass: true }
   }

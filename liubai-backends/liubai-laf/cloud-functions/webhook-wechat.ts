@@ -1,14 +1,34 @@
+// Function Name: webhook-wechat
 // Receive messages and events from WeChat subscription servers
+
 import cloud from "@lafjs/cloud";
 import * as crypto from "crypto";
-import { LiuErrReturn, Wx_Gzh_Msg_Event, type LiuRqReturn } from "./common-types";
+import type { 
+  LiuErrReturn, 
+  LiuRqReturn,
+  Wx_Gzh_Msg_Event, 
+  Wx_Gzh_Scan, 
+  Wx_Gzh_Subscribe, 
+  Wx_Gzh_Unsubscribe, 
+} from "./common-types";
 import { decrypt } from "@wecom/crypto"
 import xml2js from "xml2js"
 
 const db = cloud.database()
+let wechat_access_token = ""
+let lastGetAccessTokenStamp = 0
 
+/***************************** constants **************************/
+
+// @see https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html#7
+const API_SEND = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
+const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
+
+// @see https://api.weixin.qq.com/cgi-bin/user/info
+const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
+
+/***************************** main **************************/
 export async function main(ctx: FunctionContext) {
-  console.log("webhook-wechat is called!")
   const res = await turnInputIntoMsgObj(ctx)
   if(typeof res === "string") {
     return res
@@ -20,12 +40,46 @@ export async function main(ctx: FunctionContext) {
 
   console.log("webhook-wechat successfully called......")
   console.log(msgObj)
+
+  const { MsgType } = msgObj
+  if(MsgType === "event") {
+    const { Event } = msgObj
+    if(Event === "subscribe") {
+      handle_subscribe(msgObj)
+    }
+    else if(Event === "SCAN") {
+      handle_scan(msgObj)
+    }
+    else if(Event === "unsubscribe") {
+      handle_unsubscribe(msgObj)
+    }
+  }
   
-
-
   // respond with empty string, and then wechat will not retry
   return ""
 }
+
+
+function handle_unsubscribe(
+  msgObj: Wx_Gzh_Unsubscribe,
+) {
+  const wx_gzh_openid = msgObj.FromUserName
+
+}
+ 
+function handle_subscribe(
+  msgObj: Wx_Gzh_Subscribe,
+) {
+
+}
+
+
+function handle_scan(
+  msgObj: Wx_Gzh_Scan,
+) {
+
+}
+
 
 
 async function turnInputIntoMsgObj(
@@ -111,6 +165,11 @@ async function getMsgObject(message: string) {
   return res
 }
 
+/****************************** helper functions ******************************/
+
+function reset() {
+  wechat_access_token = ""
+}
 
 function preCheck(): LiuErrReturn | undefined {
   const _env = process.env

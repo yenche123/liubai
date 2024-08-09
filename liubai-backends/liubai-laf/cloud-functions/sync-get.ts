@@ -31,7 +31,6 @@ import type {
   LiuContent,
   Cloud_ImageStore,
   Cloud_FileStore,
-  LiuErrReturn,
   LiuDownloadParcel_A,
   Res_SyncGet_Cloud,
   SyncGet_CheckContents,
@@ -41,12 +40,12 @@ import type {
   LiuDownloadParcel_B,
   LiuDownloadDraft,
   CryptoCipherAndIV,
-  DecryptCloudRes_A,
   SyncGet_CommentList,
   SyncGet_CommentList_A,
   SyncGet_CommentList_B,
   SyncGet_CommentList_C,
   SyncGet_CommentList_D,
+  CommonPass_A,
 } from "@/common-types"
 import { getNowStamp, DAY } from "@/common-time"
 import cloud from '@lafjs/cloud'
@@ -676,7 +675,7 @@ async function toThreadListFromCollection(
   // 6. package contents into LiuDownloadContent[]
   const res6 = packContents(sgCtx, contents, collections, authors)
   if(!res6.pass) {
-    const result_6 = { ...res6.result, taskId }
+    const result_6 = { ...res6.err, taskId }
     return result_6 
   }
 
@@ -714,7 +713,7 @@ function getSharedData_6(
 
   const res6 = decryptEncData(d)
   if(!res6.pass) {
-    const result_6 = { ...res6.result, taskId }
+    const result_6 = { ...res6.err, taskId }
     return result_6
   }
   const draft: LiuDownloadDraft = {
@@ -832,7 +831,7 @@ async function getSharedData_3(
   // 3. package contents into LiuDownloadContent[]
   const res3 = packContents(sgCtx, contents, myCollections, authors)
   if(!res3.pass) {
-    const result_3 = { ...res3.result, taskId }
+    const result_3 = { ...res3.err, taskId }
     return result_3
   }
 
@@ -895,7 +894,7 @@ async function getSharedData_2(
   // 8. package contents into LiuDownloadContent[]
   const res8 = packContents(sgCtx, contents, myCollections, authors)
   if(!res8.pass) {
-    const result_8 = { ...res8.result, taskId }
+    const result_8 = { ...res8.err, taskId }
     return result_8
   }
   
@@ -915,18 +914,12 @@ async function getSharedData_2(
   return { code: "0000", taskId, list }  
 }
 
-
-interface PackContent_A {
-  pass: false
-  result: LiuErrReturn
-}
-
 interface PackContent_B {
   pass: true
   list: LiuDownloadContent[]
 }
 
-type PackContents_Res = PackContent_A | PackContent_B
+type PackContents_Res = CommonPass_A | PackContent_B
 
 
 function turnDownloadContentsIntoParcels(
@@ -960,7 +953,7 @@ interface DecryptEncData_B {
   files?: Cloud_FileStore[]
 }
 
-type DecryptEncDataRes = DecryptCloudRes_A | DecryptEncData_B
+type DecryptEncDataRes = CommonPass_A | DecryptEncData_B
 
 function decryptEncData(e: EncData): DecryptEncDataRes {
 

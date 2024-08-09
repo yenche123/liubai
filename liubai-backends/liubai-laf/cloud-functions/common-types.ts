@@ -632,17 +632,19 @@ export interface LiuPlainText<T = any> {
   data: T
 }
 
-export interface DecryptCloudRes_A {
+/*********************** 通用函数间的返回格式 **********************/
+
+export interface CommonPass_A {
   pass: false
-  result: LiuErrReturn
+  err: LiuErrReturn
 }
 
-export interface DecryptCloudRes_B<T> {
+export interface CommonPass_B<T> {
   pass: true
   data?: T
 }
 
-export type DecryptCloudRes<T> = DecryptCloudRes_A | DecryptCloudRes_B<T>
+export type CommonPass<T = any> = CommonPass_A | CommonPass_B<T>
 
 
 /*********************** 关于上传同步 ********************/
@@ -1742,6 +1744,14 @@ export interface Wx_Gzh_Voice extends Wx_Gzh_Base {
   Format: string
   MsgId: string
   MsgDataId?: string
+}
+
+// @see "发送菜单消息" https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html#4:~:text=ARTICLE_ID%22%0A%20%20%20%20%7D%0A%7D-,%E5%8F%91%E9%80%81%E8%8F%9C%E5%8D%95%E6%B6%88%E6%81%AF,-%7B%0A%20%20%22touser%22
+export interface Wx_Gzh_MsgMenu extends Wx_Gzh_Base {
+  MsgType: "text"
+  Content: string
+  MsgId: string
+  bizmsgmenuid: string
 }
 
 // subscribe or unsubscribe from user
