@@ -1744,11 +1744,54 @@ export interface Wx_Gzh_Voice extends Wx_Gzh_Base {
   MsgDataId?: string
 }
 
+// subscribe or unsubscribe from user
+export interface Wx_Gzh_Subscribe extends Wx_Gzh_Base {
+  MsgType: "event"
+  Event: "subscribe"
+  EventKey: string     // If available, qrscene_ is the prefix 
+                       // followed by the parameter value of the QR code
+  Ticket?: string
+}
+
+export interface Wx_Gzh_Unsubscribe extends Wx_Gzh_Base {
+  MsgType: "event"
+  Event: "unsubscribe"
+  EventKey: string
+}
+
+// scan qrcode when the user has subscribed in advance
+export interface Wx_Gzh_Scan extends Wx_Gzh_Base {
+  MsgType: "event"
+  Event: "SCAN"
+  EventKey: string
+  Ticket: string
+}
+
+// user clicks on the menu and pull a message
+export interface Wx_Gzh_Click extends Wx_Gzh_Base {
+  MsgType: "event"
+  Event: "CLICK"
+  EventKey: string    // which is equal to the key to the custom menu
+}
+
+// user clicks on the menu and navigate to a URL
+export interface Wx_Gzh_View extends Wx_Gzh_Base {
+  MsgType: "event"
+  Event: "VIEW"
+  EventKey: string     // URL to be opened
+}
+
+
 
 export type Wx_Gzh_Msg_Event = Wx_Gzh_Auth_Change |
   Wx_Gzh_Text |
   Wx_Gzh_Image |
-  Wx_Gzh_Voice
+  Wx_Gzh_Voice |
+  Wx_Gzh_Subscribe |
+  Wx_Gzh_Unsubscribe |
+  Wx_Gzh_Scan |
+  Wx_Gzh_Click |
+  Wx_Gzh_View
 
 /******************* Some Types from WeCom  ****************/
 export interface Ww_Res_Base {

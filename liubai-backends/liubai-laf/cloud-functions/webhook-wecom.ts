@@ -4,7 +4,6 @@ import cloud from "@lafjs/cloud";
 import type { 
   LiuRqReturn,
   LiuErrReturn,
-  Table_Config,
   Table_Credential,
   Table_User,
   Ww_Res_User_Info,
