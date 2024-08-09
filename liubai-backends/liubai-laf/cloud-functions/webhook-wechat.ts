@@ -10,9 +10,15 @@ import type {
   Wx_Gzh_Scan, 
   Wx_Gzh_Subscribe, 
   Wx_Gzh_Unsubscribe, 
-} from "./common-types";
+} from "@/common-types";
 import { decrypt } from "@wecom/crypto"
 import xml2js from "xml2js"
+import { 
+  getNowStamp, 
+  isWithinMillis,
+  MINUTE,
+} from "@/common-time"
+import { getWeChatAccessToken } from "@/common-util";
 
 const db = cloud.database()
 let wechat_access_token = ""
@@ -26,6 +32,8 @@ const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 
 // @see https://api.weixin.qq.com/cgi-bin/user/info
 const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
+
+const MIN_3 = 3 * MINUTE
 
 /***************************** main **************************/
 export async function main(ctx: FunctionContext) {
@@ -67,9 +75,21 @@ function handle_unsubscribe(
 
 }
  
-function handle_subscribe(
+async function handle_subscribe(
   msgObj: Wx_Gzh_Subscribe,
 ) {
+  // 1. checking out access_token
+  const res1 = await checkAccessToken()
+  if(!res1) return
+
+  // 2. get openid
+  const wx_gzh_openid = msgObj.FromUserName
+  if(!wx_gzh_openid) return
+
+  // 3. send welcome message
+
+
+
 
 }
 
@@ -80,6 +100,35 @@ function handle_scan(
 
 }
 
+
+/***************** operations ****************/
+async function send_welcome(
+
+) {
+  
+}
+
+
+
+/***************** helper functions *************/
+
+
+// check out access_token
+async function checkAccessToken() {
+  if(isWithinMillis(lastGetAccessTokenStamp, MIN_3) && wechat_access_token) {
+    return true
+  }
+
+  const res = await getWeChatAccessToken()
+  if(!res) {
+    console.warn("getWeChatAccessToken fails")
+    return false
+  }
+
+  wechat_access_token = res
+  lastGetAccessTokenStamp = getNowStamp()
+  return true
+}
 
 
 async function turnInputIntoMsgObj(

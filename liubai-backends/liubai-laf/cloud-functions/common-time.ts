@@ -42,6 +42,13 @@ export function formatTimezone(str?: string) {
   return timezone
 }
 
+export function isWithinMillis(stamp: number, ms: number) {
+  const now = getNowStamp()
+  const diff = now - stamp
+  if(diff < ms) return true
+  return false
+}
+
 // 将 "秒" / "分" / "时" / "天" 转为 毫秒数
 export const SECONED = 1000
 export const MINUTE = 60 * SECONED

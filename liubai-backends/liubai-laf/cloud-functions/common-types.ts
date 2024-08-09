@@ -547,11 +547,26 @@ export const Sch_IP = vbot.string([vbot.ip()])
 
 export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
 
+// user's wechat data
+export interface UserWeChatData {
+
+  // https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html#UinonId
+  language?: string
+  subscribe_time?: number      // the time (sec) of the user's subscription
+  subscribe_scene?: string
+
+  // https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html#3
+  nickname?: string
+  headimgurl?: string
+
+}
+
 // User 表里的 thirdData 字段的类型
 export interface UserThirdData {
   google?: any
   github?: any
   wecom?: Ww_External_Contact
+  wx_gzh?: UserWeChatData
 }
 
 /** 用户的订阅方案 */
