@@ -126,9 +126,34 @@ async function handle_subscribe(
 
 }
 
-function handle_scan(
+async function handle_scan(
   msgObj: Wx_Gzh_Scan,
 ) {
+  // 1. checking out access_token
+  const res1 = await checkAccessToken()
+  if(!res1) return
+
+  // 2. get openid
+  const wx_gzh_openid = msgObj.FromUserName
+  if(!wx_gzh_openid) return
+
+  // 3. get user info
+  const userInfo = await get_user_info(wx_gzh_openid)
+
+  // 4. get state
+  const res4 = getDirectionCredential(msgObj.EventKey)
+  if(!res4) return
+  const { direction, credential } = res4
+
+  // 5. decide which path to take
+  if(direction === "b2") {
+    // get to bind account
+    bind_wechat_gzh(wx_gzh_openid, credential, userInfo)
+  }
+  else if(direction === "b3") {
+    // continue with wechat gzh
+
+  }
 
 }
 
@@ -265,14 +290,39 @@ async function make_user_subscribed(
     user = res1.data
   }
 
-  // 2. update thirdData?.wx_gzh
+  // 2. check if updating is required
+  let needUpdate = false
   const userId = user._id
   const thirdData = user.thirdData ?? {}
   const wx_gzh = user.thirdData?.wx_gzh ?? {}
-  wx_gzh.subscribe = 1
-  wx_gzh.language = userInfo?.language
-  wx_gzh.subscribe_scene = userInfo?.subscribe_scene
-  wx_gzh.subscribe_time = userInfo?.subscribe_time
+  if(wx_gzh.subscribe !== 1) {
+    needUpdate = true
+    wx_gzh.subscribe = 1
+  }
+  if(user.wx_gzh_openid !== wx_gzh_openid) {
+    needUpdate = true
+  }
+
+  const newLang = userInfo?.language
+  if(newLang && newLang !== wx_gzh.language) {
+    needUpdate = true
+    wx_gzh.language = newLang
+  }
+  const newScene = userInfo?.subscribe_scene
+  if(newScene && newScene !== wx_gzh.subscribe_scene) {
+    needUpdate = true
+    wx_gzh.subscribe_scene = newScene
+  }
+  const newSubTime = userInfo?.subscribe_time
+  if(newSubTime && newSubTime !== wx_gzh.subscribe_time) {
+    needUpdate = true
+    wx_gzh.subscribe_time = newSubTime
+  }
+  if(!needUpdate) {
+    console.warn("there is no need to update user")
+    console.log(user)
+    return false
+  }
   thirdData.wx_gzh = wx_gzh
 
   // 3. update user for db
