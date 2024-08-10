@@ -548,9 +548,10 @@ export const Sch_IP = vbot.string([vbot.ip()])
 export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
 
 // user's wechat data
-export interface UserWeChatData {
+export interface UserWeChatGzh {
 
   // https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html#UinonId
+  subscribe?: 0 | 1            // 0: unsubscribed    1: subscribed
   language?: string
   subscribe_time?: number      // the time (sec) of the user's subscription
   subscribe_scene?: string
@@ -566,7 +567,7 @@ export interface UserThirdData {
   google?: any
   github?: any
   wecom?: Ww_External_Contact
-  wx_gzh?: UserWeChatData
+  wx_gzh?: UserWeChatGzh
 }
 
 /** 用户的订阅方案 */
@@ -1639,6 +1640,7 @@ export interface Res_OC_GetWeChat {
   ww_qynb_toggle?: boolean
   wx_gzh_openid?: string
   wx_gzh_toggle?: boolean
+  wx_gzh_subscribed?: boolean
 }
 
 
@@ -1712,6 +1714,19 @@ export interface Wx_Res_Create_QR {
   url: string
 }
 
+export interface Wx_Res_GzhUserInfo {
+  subscribe: 0 | 1      // 0: unsubscribed    1: subscribed
+  openid: string
+  language?: string
+  subscribe_time?: number       // the timestamp (sec) when user subscribed
+  unionid?: string
+  remark?: string
+  groupid?: number
+  tagid_list?: number[]
+  subscribe_scene?: string
+  qr_scene?: number
+  qr_scene_str?: string
+}
 
 
 /******************* WeChat Subscription Msg Events ****************/

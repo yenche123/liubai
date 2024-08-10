@@ -112,3 +112,7 @@ export function createBindCredential() {
   return "bc0" + createRandom(16)
 }
 
+export function createSignInCredential() {
+  return "si0" + createRandom(16)
+}
+

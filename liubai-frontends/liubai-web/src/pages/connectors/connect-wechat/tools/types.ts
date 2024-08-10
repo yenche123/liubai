@@ -7,4 +7,5 @@ export interface CwcData {
   ww_qynb_toggle: boolean
   wx_gzh_openid?: string
   wx_gzh_toggle: boolean
+  wx_gzh_subscribed: boolean
 }

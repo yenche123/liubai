@@ -28,6 +28,7 @@ import type {
   LiuRqOpt,
   Table_Config,
   CommonPass,
+  Table_Member,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -477,6 +478,23 @@ export function getLiuTokenUser() {
   const map: Map<string, Shared_TokenUser> = gShared.get('liu-token-user') ?? new Map()
   return map
 }
+
+export async function getAccountName(
+  user: Table_User,
+) {
+  if(user.email) return user.email
+  const userId = user._id
+  const mCol = db.collection("Member")
+  const w1: Partial<Table_Member> = {
+    spaceType: "ME",
+    user: userId,
+  }
+  const res1 = await mCol.where(w1).getOne<Table_Member>()
+  const member = res1.data
+  if(member?.name) return member.name
+  return "no idea"
+}
+
 
 /** 更新 token 数据至 Token 表中 
  *  注意：该函数不会更新缓存

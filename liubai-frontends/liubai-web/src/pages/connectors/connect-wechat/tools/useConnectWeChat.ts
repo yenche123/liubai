@@ -18,6 +18,7 @@ export function useConnectWeChat() {
     pageState: hasBE ? pageStates.LOADING : pageStates.NEED_BACKEND,
     ww_qynb_toggle: false,
     wx_gzh_toggle: false,
+    wx_gzh_subscribed: false,
   })
 
   const onWechatRemindChanged = (val: boolean) => {
@@ -97,4 +98,5 @@ async function checkoutData(
   cwcData.ww_qynb_toggle = Boolean(data3?.ww_qynb_toggle)
   cwcData.wx_gzh_openid = data3?.wx_gzh_openid
   cwcData.wx_gzh_toggle = Boolean(data3?.wx_gzh_toggle)
+  cwcData.wx_gzh_subscribed = Boolean(data3?.wx_gzh_subscribed)
 }

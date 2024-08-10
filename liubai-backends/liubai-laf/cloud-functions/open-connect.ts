@@ -129,9 +129,10 @@ async function handle_bind_wechat(
   // 0. get params
   const userId = vRes.userData._id
 
-  // 1. return directly if wx_gzh_openid exists
-  const { wx_gzh_openid } = vRes.userData
-  if(wx_gzh_openid) {
+  // 1. return directly if wx_gzh_openid exists and subscribe === 1
+  const { wx_gzh_openid, thirdData } = vRes.userData
+  const subscribe = thirdData?.wx_gzh?.subscribe
+  if(wx_gzh_openid && subscribe === 1) {
     return { code: "Y0001" }
   }
 
@@ -321,6 +322,8 @@ async function handle_get_wechat(
   const mNoti = member.notification
   const ww_qynb_toggle = mNoti?.ww_qynb_toggle
   const wx_gzh_toggle = mNoti?.wx_gzh_toggle
+  const sub3 = user.thirdData?.wx_gzh?.subscribe
+  const wx_gzh_subscribed = sub3 ? true : false
   
   res.data = {
     operateType: "get-wechat",
@@ -328,6 +331,7 @@ async function handle_get_wechat(
     ww_qynb_toggle,
     wx_gzh_openid,
     wx_gzh_toggle,
+    wx_gzh_subscribed,
   }
   return res
 }

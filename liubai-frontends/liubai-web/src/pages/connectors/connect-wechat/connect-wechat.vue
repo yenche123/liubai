@@ -30,7 +30,9 @@ const {
         </div>
 
 
-        <div class="liu-no-user-select cwb-footer" v-if="cwcData.wx_gzh_openid">
+        <div class="liu-no-user-select cwb-footer" 
+          v-if="cwcData.wx_gzh_openid && cwcData.wx_gzh_subscribed"
+        >
           <liu-switch 
             :checked="cwcData.wx_gzh_toggle"
             @change="onWechatRemindChanged($event.checked)"

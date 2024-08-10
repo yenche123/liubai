@@ -6,10 +6,13 @@ import * as crypto from "crypto";
 import type { 
   LiuErrReturn, 
   LiuRqReturn,
+  Table_Credential,
+  Table_User,
   Wx_Gzh_Msg_Event, 
   Wx_Gzh_Scan, 
   Wx_Gzh_Subscribe, 
-  Wx_Gzh_Unsubscribe, 
+  Wx_Gzh_Unsubscribe,
+  Wx_Res_GzhUserInfo, 
 } from "@/common-types";
 import { decrypt } from "@wecom/crypto"
 import xml2js from "xml2js"
@@ -18,7 +21,8 @@ import {
   isWithinMillis,
   MINUTE,
 } from "@/common-time"
-import { getWeChatAccessToken } from "@/common-util";
+import { getAccountName, getWeChatAccessToken, liuReq, updateUserInCache } from "@/common-util";
+import { useI18n, wechatLang } from "@/common-i18n"
 
 const db = cloud.database()
 let wechat_access_token = ""
@@ -30,8 +34,12 @@ let lastGetAccessTokenStamp = 0
 const API_SEND = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
 const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 
-// @see https://api.weixin.qq.com/cgi-bin/user/info
+// @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
 const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
+
+// @see https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html#3
+// get userinfo through web oAuth 2.0
+const API_SNS_USERINFO = "https://api.weixin.qq.com/sns/userinfo"
 
 const MIN_3 = 3 * MINUTE
 
@@ -68,10 +76,16 @@ export async function main(ctx: FunctionContext) {
 }
 
 
-function handle_unsubscribe(
+async function handle_unsubscribe(
   msgObj: Wx_Gzh_Unsubscribe,
 ) {
   const wx_gzh_openid = msgObj.FromUserName
+  if(!wx_gzh_openid) return
+
+  const uCol = db.collection("User")
+  const res1 = await uCol.where({ wx_gzh_openid }).getOne()
+
+  // TODO
 
 }
  
@@ -86,13 +100,31 @@ async function handle_subscribe(
   const wx_gzh_openid = msgObj.FromUserName
   if(!wx_gzh_openid) return
 
-  // 3. send welcome message
+  // 3. get user info
+  const userInfo = await get_user_info(wx_gzh_openid)
 
+  // 4. send welcome message
+  send_welcome(wx_gzh_openid, userInfo)
 
+  // 5. get EventKey, and extract state
+  const res5 = getDirectionCredential(msgObj.EventKey, "qrscene_")
+  if(!res5) {
+    make_user_subscribed(wx_gzh_openid, userInfo)
+    return
+  }
+  const { direction, credential } = res5
 
+  // 6. decide which path to take
+  if(direction === "b2") {
+    // get to bind account
+    bind_wechat_gzh(wx_gzh_openid, credential, userInfo)
+  }
+  else if(direction === "b3") {
+    // continue with wechat gzh
+
+  }
 
 }
-
 
 function handle_scan(
   msgObj: Wx_Gzh_Scan,
@@ -102,15 +134,221 @@ function handle_scan(
 
 
 /***************** operations ****************/
-async function send_welcome(
 
+async function bind_wechat_gzh(
+  wx_gzh_openid: string,
+  credential: string,
+  userInfo?: Wx_Res_GzhUserInfo,
 ) {
+  const cCol = db.collection("Credential")
+
+  // 0.1 define some functions
+  const _clearCredential = async (id: string) => {
+    const res0_1 = await cCol.doc(id).remove()
+    console.log("_clearCredential: ")
+    console.log(res0_1)
+  }
+
+  // 1. get the credential
+  const w1: Partial<Table_Credential> = {
+    credential,
+    infoType: "bind-wechat",
+  }
+  const res1 = await cCol.where(w1).getOne<Table_Credential>()
+  const data1 = res1.data
+  if(!data1) return false
+
+  // 2. check if it is available
+  const { expireStamp, userId } = data1
+  if(!userId) {
+    console.warn("bind_wechat_gzh: userId is null")
+    console.log(data1)
+    return false
+  }
+  if(!isWithinMillis(expireStamp, MINUTE)) {
+    console.warn("bind_wechat_gzh: credential expired")
+    console.log(data1)
+    console.log("now: ", getNowStamp())
+    return false
+  }
+
+  // 3. get the user
+  const uCol = db.collection("User")
+  const res3 = await uCol.doc(userId).get<Table_User>()
+  const user3 = res3.data
+  if(!user3) return false
+
+  // 4. get i18n
+  const { t } = useI18n(wechatLang, { user: user3 })
+  const success_msg = t("success_1")
+
+  // 5. if the user's wx_gzh_openid is equal to the current one
+  if(user3.wx_gzh_openid === wx_gzh_openid) {
+    send_text_to_wechat_gzh(wx_gzh_openid, success_msg)
+    await make_user_subscribed(wx_gzh_openid, userInfo, user3)
+    await _clearCredential(data1._id)
+    return true
+  }
+
+  // 6. check out another user whose wx_gzh_openid 
+  // matches the current one
+  const w6: Partial<Table_User> = {
+    wx_gzh_openid,
+  }
+  const res6 = await uCol.where(w6).getOne()
+  const user6 = res6.data
+  if(user6) {
+    const name6 = await getAccountName(user6)
+    const already_bound_msg = t("already_bound", { account: name6 })
+    send_text_to_wechat_gzh(wx_gzh_openid, already_bound_msg)
+    return false
+  }
+
+  // 7. everything is ok
+  send_text_to_wechat_gzh(wx_gzh_openid, success_msg)
+  await make_user_subscribed(wx_gzh_openid, userInfo, user3)
+  await _clearCredential(data1._id)
+
+  return true
+}
+
+
+async function send_welcome(
+  wx_gzh_openid: string,
+  userInfo?: Wx_Res_GzhUserInfo,
+) {
+  // 1. get language
+  const lang = userInfo?.language
+
+  // 2. i18n
+  const { t } = useI18n(wechatLang, { lang })
+  const text = t("welcome_1")
   
+  // 3. reply user with text
+  await send_text_to_wechat_gzh(wx_gzh_openid, text)
+
+  return true
+}
+
+
+async function send_text_to_wechat_gzh(
+  wx_gzh_openid: string,
+  text: string,
+) {
+  const body = {
+    touser: wx_gzh_openid,
+    msgtype: "text",
+    text: {
+      content: text,
+    }
+  }
+  const url = new URL(API_SEND)
+  url.searchParams.set("access_token", wechat_access_token)
+  const link = url.toString()
+  const res = await liuReq(link, body)
+  console.log("send_text_to_wechat_gzh res: ")
+  console.log(res)
+}
+
+async function make_user_subscribed(
+  wx_gzh_openid: string,
+  userInfo?: Wx_Res_GzhUserInfo,
+  user?: Table_User,
+) {
+  const uCol = db.collection("User")
+
+  // 1. get user
+  if(!user) {  
+    const w1: Partial<Table_User> = { wx_gzh_openid }
+    const res1 = await uCol.where(w1).getOne<Table_User>()
+    if(!res1.data) return false
+    user = res1.data
+  }
+
+  // 2. update thirdData?.wx_gzh
+  const userId = user._id
+  const thirdData = user.thirdData ?? {}
+  const wx_gzh = user.thirdData?.wx_gzh ?? {}
+  wx_gzh.subscribe = 1
+  wx_gzh.language = userInfo?.language
+  wx_gzh.subscribe_scene = userInfo?.subscribe_scene
+  wx_gzh.subscribe_time = userInfo?.subscribe_time
+  thirdData.wx_gzh = wx_gzh
+
+  // 3. update user for db
+  const now = getNowStamp()
+  const u3: Partial<Table_User> = {
+    wx_gzh_openid,
+    thirdData,
+    updatedStamp: now,
+  }
+  const res3 = await uCol.doc(userId).update(u3)
+  console.log("make_user_subscribed res3: ")
+  console.log(res3)
+
+  // 4. update cache
+  user.wx_gzh_openid = wx_gzh_openid
+  user.thirdData = thirdData
+  user.updatedStamp = now
+  updateUserInCache(userId, user)
+
+  return true
 }
 
 
 
 /***************** helper functions *************/
+
+async function get_user_info(
+  wx_gzh_openid: string,
+) {
+  const url = new URL(API_USER_INFO)
+  const sP = url.searchParams
+  sP.set("access_token", wechat_access_token)
+  sP.set("openid", wx_gzh_openid)
+  const link = url.toString()
+  const res1 = await liuReq<Wx_Res_GzhUserInfo>(link, undefined, { method: "GET" })
+  console.log("get user info from wechat gzh: ")
+  console.log(res1)
+  const data1 = res1.data
+  return data1
+}
+
+
+interface DirectionCredential {
+  direction: string
+  credential: string
+}
+
+// extract key and value from event_key
+// for example event_key="qrscene_b"
+function getDirectionCredential(
+  event_key: string,
+  prefix?: string,
+): DirectionCredential | undefined {
+  if(!event_key) return
+
+  // 1. get state
+  let state = ""
+  if(prefix) {
+    if(!event_key.startsWith(prefix)) return
+    state = event_key.substring(prefix.length)
+    if(!state) return
+  }
+  else {
+    state = event_key
+  }
+
+  // 2. get direction and credential from state
+  const tmp2 = state.split("=")
+  if(tmp2.length !== 2) return
+
+  const direction = tmp2[0]
+  const credential = tmp2[1]
+  if(!direction || !credential) return
+  return { direction, credential }
+}
+
 
 
 // check out access_token
