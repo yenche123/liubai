@@ -1612,6 +1612,20 @@ export type OpenConnectOperate = "bind-wecom" | "check-wecom" | "get-wechat"
 
 export type CheckBindStatus = "waiting" | "plz_check" | "expired"
 
+export interface Param_OC_SetWechat {
+  operateType: "set-wechat"
+  memberId: string
+  ww_qynb_toggle?: boolean
+  wx_gzh_toggle?: boolean
+}
+
+export const Sch_Param_OC_SetWechat = vbot.object({
+  operateType: vbot.literal("set-wechat"),
+  memberId: vbot.string(),
+  ww_qynb_toggle: Sch_Opt_Bool,
+  wx_gzh_toggle: Sch_Opt_Bool,
+})
+
 export interface Res_OC_BindWeCom {
   operateType: "bind-wecom"
   pic_url: string

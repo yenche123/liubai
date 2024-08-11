@@ -5,24 +5,33 @@ import {
   MINUTE,
 } from "@/common-time"
 import cloud from "@lafjs/cloud"
-import type { 
-  OpenConnectOperate,
-  LiuRqReturn,
-  LiuErrReturn,
-  VerifyTokenRes_B,
-  Table_Member,
-  Table_Credential,
-  Ww_Res_Add_Contact_Way,
-  Res_OC_CheckWeCom,
-  Res_OC_BindWeCom,
-  Res_OC_GetWeChat,
-  Table_User,
-  Wx_Res_Create_QR,
-  Res_OC_BindWeChat,
-  Res_OC_CheckWeChat,
+import { 
+  type OpenConnectOperate,
+  type LiuRqReturn,
+  type LiuErrReturn,
+  type VerifyTokenRes_B,
+  type Table_Member,
+  type Table_Credential,
+  type Ww_Res_Add_Contact_Way,
+  type Res_OC_CheckWeCom,
+  type Res_OC_BindWeCom,
+  type Res_OC_GetWeChat,
+  type Table_User,
+  type Wx_Res_Create_QR,
+  type Res_OC_BindWeChat,
+  type Res_OC_CheckWeChat,
+  type Param_OC_SetWechat,
+  Sch_Param_OC_SetWechat,
 } from "@/common-types"
-import { getWeChatAccessToken, getWwQynbAccessToken, liuReq, verifyToken } from "@/common-util"
+import { 
+  checker, 
+  getWeChatAccessToken, 
+  getWwQynbAccessToken, 
+  liuReq, 
+  verifyToken,
+} from "@/common-util"
 import { createBindCredential } from "@/common-ids"
+import * as vbot from "valibot"
 
 const db = cloud.database()
 
@@ -240,15 +249,22 @@ async function handle_bind_wechat(
 
 async function handle_set_wechat(
   vRes: VerifyTokenRes_B,
-  body: Record<string, any>,
-) {
+  body: Param_OC_SetWechat,
+): Promise<LiuRqReturn> {
+
+  // 0. check params
+  const res0 = vbot.safeParse(Sch_Param_OC_SetWechat, body)
+  if(!res0.success) {
+    const err0 = checker.getErrMsgFromIssues(res0.issues)
+    return { code: "E4000", errMsg: err0 }
+  }
   const memberId = body.memberId
   const ww_qynb_toggle = body.ww_qynb_toggle
-  if(!memberId || typeof memberId !== "string") {
-    return { code: "E4000", errMsg: "memberId is required" }
-  }
-  if(typeof ww_qynb_toggle !== "boolean") {
-    return { code: "E4000", errMsg: "ww_qynb_toggle is required" }
+  const wx_gzh_toggle = body.wx_gzh_toggle
+  if(typeof ww_qynb_toggle === "undefined") {
+    if(typeof wx_gzh_toggle === "undefined") {
+      return { code: "E4000", errMsg: "ww_qynb_toggle or wx_gzh_toggle is required" }
+    }
   }
   
   // 1. get member
@@ -263,12 +279,26 @@ async function handle_set_wechat(
     return { code: "E4003", errMsg: "the member is not yours" }
   }
 
-  // 2. set ww_qynb_toggle
+  // 2. check if we need to update
+  let needUpdate = false
   const noti = member.notification ?? {}
-  if(noti.ww_qynb_toggle === ww_qynb_toggle) {
+  if(typeof ww_qynb_toggle === "boolean") {
+    if(noti.ww_qynb_toggle !== ww_qynb_toggle) {
+      needUpdate = true
+      noti.ww_qynb_toggle = ww_qynb_toggle
+    }
+  }
+  if(typeof wx_gzh_toggle === "boolean") {
+    if(noti.wx_gzh_toggle !== wx_gzh_toggle) {
+      needUpdate = true
+      noti.wx_gzh_toggle = wx_gzh_toggle
+    }
+  }
+  if(!needUpdate) {
     return { code: "0001" }
   }
-  noti.ww_qynb_toggle = ww_qynb_toggle
+
+  // 3. to update
   const w2: Partial<Table_Member> = {
     notification: noti,
     updatedStamp: getNowStamp(),
