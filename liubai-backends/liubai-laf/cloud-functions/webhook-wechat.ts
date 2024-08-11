@@ -7,6 +7,7 @@ import type {
   LiuErrReturn, 
   LiuRqReturn,
   Table_Credential,
+  Table_Member,
   Table_User,
   Wx_Gzh_Msg_Event, 
   Wx_Gzh_Scan, 
@@ -198,12 +199,38 @@ async function bind_wechat_gzh(
   userInfo?: Wx_Res_GzhUserInfo,
 ) {
   const cCol = db.collection("Credential")
+  const mCol = db.collection("Member")
 
-  // 0.1 define some functions
+  // 0. define some functions
+  // 0.1 clear credential
   const _clearCredential = async (id: string) => {
     const res0_1 = await cCol.doc(id).remove()
-    console.log("_clearCredential: ")
-    console.log(res0_1)
+  }
+
+  // 0.2 make member's notification opened
+  const _openWeChatNotification = async (id: string) => {
+
+    // 1. get member
+    const res0_2_1 = await mCol.doc(id).get<Table_Member>()
+    const member = res0_2_1.data
+    if(!member) {
+      console.warn("member not found")
+      return
+    }
+    const oldNoti = member.notification?.wx_gzh_toggle
+    if(oldNoti) return
+
+    // 2. update member
+    const noti = member.notification ?? {}
+    noti.wx_gzh_toggle = true
+    const now0_2 = getNowStamp()
+    const u0_2: Partial<Table_Member> = {
+      notification: noti,
+      updatedStamp: now0_2,
+    }
+    const res0_2_2 = await mCol.doc(id).update(u0_2)
+    console.log("update member result: ")
+    console.log(res0_2_2)
   }
 
   // 1. get the credential
@@ -215,6 +242,7 @@ async function bind_wechat_gzh(
   const res1 = await q1.getOne<Table_Credential>()
   const data1 = res1.data
   if(!data1) return false
+  const memberId_1 = data1.meta_data?.memberId
 
   // 2. check if it is available
   const { expireStamp, userId } = data1
@@ -244,6 +272,9 @@ async function bind_wechat_gzh(
   if(user3.wx_gzh_openid === wx_gzh_openid) {
     send_text_to_wechat_gzh(wx_gzh_openid, success_msg)
     await make_user_subscribed(wx_gzh_openid, userInfo, user3)
+    if(memberId_1) {
+      await _openWeChatNotification(memberId_1)
+    }
     await _clearCredential(data1._id)
     return true
   }
@@ -266,6 +297,9 @@ async function bind_wechat_gzh(
   // 7. everything is ok
   send_text_to_wechat_gzh(wx_gzh_openid, success_msg)
   await make_user_subscribed(wx_gzh_openid, userInfo, user3)
+  if(memberId_1) {
+    await _openWeChatNotification(memberId_1)
+  }
   await _clearCredential(data1._id)
 
   return true
