@@ -12,6 +12,7 @@ import type {
   Wx_Gzh_Msg_Event, 
   Wx_Gzh_Scan, 
   Wx_Gzh_Subscribe, 
+  Wx_Gzh_Text, 
   Wx_Gzh_Unsubscribe,
   Wx_Res_Common,
   Wx_Res_GzhUserInfo, 
@@ -65,7 +66,10 @@ export async function main(ctx: FunctionContext) {
   console.log(msgObj)
 
   const { MsgType } = msgObj
-  if(MsgType === "event") {
+  if(MsgType === "text") {
+    handle_text(msgObj)
+  }
+  else if(MsgType === "event") {
     const { Event } = msgObj
     if(Event === "subscribe") {
       handle_subscribe(msgObj)
@@ -80,6 +84,14 @@ export async function main(ctx: FunctionContext) {
   
   // respond with empty string, and then wechat will not retry
   return ""
+}
+
+
+async function handle_text(
+  msgObj: Wx_Gzh_Text,
+) {
+  // TODO
+  
 }
 
 
@@ -230,8 +242,6 @@ async function bind_wechat_gzh(
       updatedStamp: now0_2,
     }
     const res0_2_2 = await mCol.doc(id).update(u0_2)
-    console.log("update member result: ")
-    console.log(res0_2_2)
   }
 
   // 1. get the credential
@@ -339,13 +349,21 @@ async function send_text_to_wechat_gzh(
   const url = new URL(API_SEND)
   url.searchParams.set("access_token", wechat_access_token)
   const link = url.toString()
+  
+  const d1 = getNowStamp()
   const res = await liuReq<Wx_Res_Common>(link, body)
+  const d2 = getNowStamp()
+
   const { code, data } = res
   if(code !== "0000" || data?.errcode !== 0) {
     console.warn("send_text_to_wechat_gzh might fail")
     console.log(res)
     console.log(body)
   }
+  else {
+    console.log(`send_text_to_wechat_gzh: ${d2 - d1}ms`)
+  }
+
 }
 
 async function make_user_subscribed(

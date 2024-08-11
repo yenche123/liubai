@@ -764,7 +764,7 @@ async function sign_in(
   body: Record<string, string>,
   userInfos: LiuUserInfo[],
   opt: SignInOpt,
-): Promise<LiuRqReturn> {
+): Promise<LiuRqReturn<Res_UserLoginNormal>> {
 
   // 1. 判断是否为多个 userInfo
   const uLength = userInfos.length
@@ -940,7 +940,7 @@ async function sign_multi_in(
   body: Record<string, string>,
   userInfos: LiuUserInfo[],
   thirdData?: UserThirdData,
-) {
+): Promise<LiuRqReturn<Res_UserLoginNormal>> {
   if(userInfos.length < 2) {
     return { 
       code: "E5001", 
