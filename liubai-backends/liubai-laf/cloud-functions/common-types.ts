@@ -1707,6 +1707,13 @@ export interface Shared_LoginState {
 
 /******************* Some Types from WeChat ****************/
 
+// common result: { errcode: 0, errmsg: "ok" }  
+export interface Wx_Res_Common {
+  errcode: number
+  errmsg: string
+}
+
+
 /** result of creating QR */
 export interface Wx_Res_Create_QR {
   ticket: string

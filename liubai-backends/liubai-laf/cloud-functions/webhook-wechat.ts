@@ -13,6 +13,7 @@ import type {
   Wx_Gzh_Scan, 
   Wx_Gzh_Subscribe, 
   Wx_Gzh_Unsubscribe,
+  Wx_Res_Common,
   Wx_Res_GzhUserInfo, 
 } from "@/common-types";
 import { decrypt } from "@wecom/crypto"
@@ -97,7 +98,7 @@ async function handle_unsubscribe(
 
   // 2. check if updating is required
   const oldSub = user.thirdData?.wx_gzh?.subscribe
-  if(oldSub === 1) return
+  if(oldSub === 0) return
 
   // 3. update user
   const userId = user._id
@@ -338,9 +339,13 @@ async function send_text_to_wechat_gzh(
   const url = new URL(API_SEND)
   url.searchParams.set("access_token", wechat_access_token)
   const link = url.toString()
-  const res = await liuReq(link, body)
-  console.log("send_text_to_wechat_gzh res: ")
-  console.log(res)
+  const res = await liuReq<Wx_Res_Common>(link, body)
+  const { code, data } = res
+  if(code !== "0000" || data?.errcode !== 0) {
+    console.warn("send_text_to_wechat_gzh might fail")
+    console.log(res)
+    console.log(body)
+  }
 }
 
 async function make_user_subscribed(
@@ -402,8 +407,6 @@ async function make_user_subscribed(
     updatedStamp: now,
   }
   const res3 = await uCol.doc(userId).update(u3)
-  console.log("make_user_subscribed res3: ")
-  console.log(res3)
 
   // 4. update cache
   user.wx_gzh_openid = wx_gzh_openid
@@ -642,9 +645,10 @@ function verifyMsgSignature(
   sha1.update(str)
   const sig = sha1.digest('hex')
 
-  console.log("计算出来的 msg_signature: ", sig)
-
   if(sig !== msg_signature) {
+    console.warn("msg_signature verification failed")
+    console.log("sig caculated: ", sig)
+    console.log("msg_signature: ", msg_signature)
     return { code: "E4003", errMsg: "msg_signature verification failed" }
   }
 }
