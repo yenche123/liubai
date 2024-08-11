@@ -21,7 +21,12 @@ import {
   isWithinMillis,
   MINUTE,
 } from "@/common-time"
-import { getAccountName, getWeChatAccessToken, liuReq, updateUserInCache } from "@/common-util";
+import { 
+  getAccountName, 
+  getWeChatAccessToken, 
+  liuReq, 
+  updateUserInCache,
+} from "@/common-util";
 import { useI18n, wechatLang } from "@/common-i18n"
 
 const db = cloud.database()
@@ -82,11 +87,38 @@ async function handle_unsubscribe(
   const wx_gzh_openid = msgObj.FromUserName
   if(!wx_gzh_openid) return
 
+  // 1. get the user
   const uCol = db.collection("User")
-  const res1 = await uCol.where({ wx_gzh_openid }).getOne()
+  const q1 = uCol.where({ wx_gzh_openid }).orderBy("insertedStamp", "desc")
+  const res1 = await q1.getOne<Table_User>()
+  const user = res1.data
+  if(!user) return
 
-  // TODO
+  // 2. check if updating is required
+  const oldSub = user.thirdData?.wx_gzh?.subscribe
+  if(oldSub === 1) return
 
+  // 3. update user
+  const userId = user._id
+  const thirdData = user.thirdData ?? {}
+  const wx_gzh = thirdData.wx_gzh ?? {}
+  wx_gzh.subscribe = 0
+  thirdData.wx_gzh = wx_gzh
+  const now = getNowStamp()
+  const u3: Partial<Table_User> = {
+    thirdData,
+    updatedStamp: now,
+  }
+  const res3 = await uCol.doc(userId).update(u3)
+  console.log("handle_unsubscribe: ")
+  console.log(res3)
+
+  // 4. update cache
+  user.thirdData = thirdData
+  user.updatedStamp = now
+  updateUserInCache(userId, user)
+
+  return true
 }
  
 async function handle_subscribe(
@@ -179,7 +211,8 @@ async function bind_wechat_gzh(
     credential,
     infoType: "bind-wechat",
   }
-  const res1 = await cCol.where(w1).getOne<Table_Credential>()
+  const q1 = cCol.where(w1)
+  const res1 = await q1.getOne<Table_Credential>()
   const data1 = res1.data
   if(!data1) return false
 
@@ -220,7 +253,8 @@ async function bind_wechat_gzh(
   const w6: Partial<Table_User> = {
     wx_gzh_openid,
   }
-  const res6 = await uCol.where(w6).getOne()
+  const q6 = uCol.where(w6).orderBy("insertedStamp", "desc")
+  const res6 = await q6.getOne<Table_User>()
   const user6 = res6.data
   if(user6) {
     const name6 = await getAccountName(user6)
@@ -285,7 +319,8 @@ async function make_user_subscribed(
   // 1. get user
   if(!user) {  
     const w1: Partial<Table_User> = { wx_gzh_openid }
-    const res1 = await uCol.where(w1).getOne<Table_User>()
+    const q1 = uCol.where(w1).orderBy("insertedStamp", "desc")
+    const res1 = await q1.getOne<Table_User>()
     if(!res1.data) return false
     user = res1.data
   }
@@ -503,10 +538,6 @@ async function getMsgObject(message: string) {
 }
 
 /****************************** helper functions ******************************/
-
-function reset() {
-  wechat_access_token = ""
-}
 
 function preCheck(): LiuErrReturn | undefined {
   const _env = process.env
