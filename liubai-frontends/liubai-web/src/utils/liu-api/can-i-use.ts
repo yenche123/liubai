@@ -2,6 +2,7 @@ import { isPrefersReducedMotion } from "./device"
 import { getCharacteristic } from "./characteristic"
 import valTool from "../basic/val-tool"
 import liuEnv from "../liu-env"
+import type { LiuYorN } from "~/types/types-basic"
 
 function isSafeBrowser() {
   if(!window) return false
@@ -76,6 +77,39 @@ function isRunningStandalone() {
   return res
 }
 
+
+async function hasInstalledPWA(): Promise<LiuYorN> {
+  const res1 = isRunningStandalone()
+  if(res1) return "Y"
+
+  const { isSafari } = getCharacteristic()
+  if(isSafari) {
+    if(res1) return "Y"
+    return "N"
+  }
+
+  const res2 = "getInstalledRelatedApps" in navigator
+  if(!res2) {
+    console.warn("navigator.getInstalledRelatedApps is not supported")
+    return "U"
+  }
+  
+  console.log("to call getInstalledRelatedApps............")
+
+  const d1 = Date.now()
+  //@ts-expect-error getInstalledRelatedApps is undefined
+  const relatedApps = await navigator.getInstalledRelatedApps()
+  const d2 = Date.now()
+
+  // sometimes it consumes too much, like 32s
+  console.log(`getInstalledRelatedApps 耗时: ${d2 - d1} ms`)
+  console.log(relatedApps)
+  console.table(relatedApps)
+
+  if(relatedApps.length > 0) return "Y"
+  return "N"
+}
+
 function canAddToHomeScreenInSafari() {
   const { isSafari, isInWebView, browserVersion } = getCharacteristic()
   if(isInWebView) return
@@ -95,5 +129,6 @@ export default {
   isArcBrowser,
   fedCM,
   isRunningStandalone,
+  hasInstalledPWA,
   canAddToHomeScreenInSafari,
 }

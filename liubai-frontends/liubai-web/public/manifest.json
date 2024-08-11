@@ -8,7 +8,16 @@
   "theme_color": "#2a6885",
   "background_color": "#eaecef",
   "orientation": "any",
-  "related_applications": [],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://alpha.liubai.cc/manifest.json"
+    },
+    {
+      "platform": "webapp",
+      "url": "https://test.liubai.cc/manifest.json"
+    }
+  ],
   "prefer_related_applications": false,
   "icons": [
     {
@@ -98,6 +107,5 @@
   ],
   "edge_side_panel": {
     "preferred_width": 420
-  },
-  "$schema": "https://json.schemastore.org/web-manifest-combined.json"
+  }
 }

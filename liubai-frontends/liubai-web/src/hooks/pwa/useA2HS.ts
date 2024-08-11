@@ -3,7 +3,6 @@ import cui from "~/components/custom-ui";
 import cfg from "~/config";
 import { RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router";
 import time from "~/utils/basic/time";
-import liuConsole from "~/utils/debug/liu-console";
 import liuApi from "~/utils/liu-api";
 import localCache from "~/utils/system/local-cache";
 
@@ -20,7 +19,6 @@ export function useShowAddToHomeScreen() {
   }
 
   const isStanda = liuApi.canIUse.isRunningStandalone()
-  liuConsole.sendMessage(`isStanda: ${isStanda}`)
   if(isStanda) {
     return {}
   }
@@ -40,6 +38,10 @@ export function useShowAddToHomeScreen() {
     showButtonForA2HS.value = false
   }
 
+  const _testRelatedApps = async () => {
+    await liuApi.canIUse.hasInstalledPWA()
+  }
+
   onMounted(() => {
     // console.warn("pretend to show a2hs button")
     // showButtonForA2HS.value = true
@@ -50,6 +52,8 @@ export function useShowAddToHomeScreen() {
     if(cha.isSafari) {
       handleA2HSForSafari(showButtonForA2HS)
     }
+
+    _testRelatedApps()
   })
 
   onBeforeUnmount(() => {

@@ -1,6 +1,7 @@
 
 export type BaseIsOn = "Y" | "N"
 export type TrueOrFalse = "true" | "false"
+export type LiuYorN = BaseIsOn | "U"        // "U" means unknown
 
 // oState for content and workspace
 export type OState = "OK" | "REMOVED" | "DELETED"
