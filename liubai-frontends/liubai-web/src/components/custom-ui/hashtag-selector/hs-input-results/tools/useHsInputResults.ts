@@ -223,7 +223,7 @@ function initOnInput(
       return
     }
 
-    const res2 = searchLocal(val)
+    const res2 = searchLocal(val2)
     const text = val2.replace(/\//g, " / ")
     handleAfterSearching(props, hsirData, text, res2)
   }

@@ -16,9 +16,9 @@ const TRANSITION_DURATION = 300
 interface NaviAutoCtx {
   naData: NaviAutoData
   scrollPosition: Ref<number>
-  layout: LayoutStore,
-  windowWidth: Ref<number>,
-  emits: NaviAutoEmits,
+  layout: LayoutStore
+  windowWidth: Ref<number>
+  emits: NaviAutoEmits
 }
 
 export function useNaviAuto(
