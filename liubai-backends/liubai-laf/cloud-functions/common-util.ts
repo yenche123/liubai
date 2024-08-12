@@ -177,8 +177,11 @@ export function getDocAddId(res: any) {
  *  若提取失败 则返回空的字符串
 */
 export function getSuffix(name: string) {
-  const arr = /\.([\w]*)$/.exec(name)
-  if(!arr) return ""
+  let arr = /\.([\w]*)$/.exec(name)
+  if(!arr) {
+    arr = /\/([\w]*)$/.exec(name)
+    if(!arr) return ""
+  }
   const format = arr[1].toLowerCase()
   return format
 }

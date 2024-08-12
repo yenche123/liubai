@@ -35,6 +35,8 @@ export type MongoFilter<T> = Partial<Omit<T, "_id">>
 /** 在 mongodb 中，定义一个 _id 为可选属性的 Table (Collection) */
 export type Partial_Id<T extends BaseTable> = PartialSth<T, "_id">
 
+export type LiuTimeout = ReturnType<typeof setTimeout> | undefined
+
 /*********************** 回调类型 **********************/
 export interface LiuRqReturn<T = Record<string, any>> {
   code: string
@@ -96,6 +98,20 @@ export interface LiuRqOpt {
   timeout?: number           // 超时的毫秒数，默认为 10000; 当 signal 属性存在时，此值无意义
 }
 
+export interface DownloadFileOpt {
+  max_sec?: number       // max seconds for waiting. default 30
+}
+
+export interface DownloadFileRes {
+  code: string
+  errMsg?: string
+  data?: {
+    url: string
+    res: Response
+  }
+}
+
+export type DownloadFileResolver = (res: DownloadFileRes) => void
 
 /*********************** 基类型、原子化类型 **********************/
 

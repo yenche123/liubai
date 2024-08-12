@@ -14,9 +14,15 @@ importers:
       '@wecom/crypto':
         specifier: ^1.0.1
         version: 1.0.1
+      axios:
+        specifier: ^1.7.3
+        version: 1.7.3
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
+      form-data:
+        specifier: ^4.0.0
+        version: 4.0.0
       geoip-lite:
         specifier: ^1.4.10
         version: 1.4.10
@@ -678,8 +684,8 @@ packages:
   asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
 
-  axios@1.7.2:
-    resolution: {integrity: sha512-2A8QhOMrbomlDuiLeK9XibIBzuHeRcqqNOHp0Cyp5EoJ1IFDh+XZH3A6BkXtv0K4gFGCI0Y4BM7B1wOEi0Rmgw==}
+  axios@1.7.3:
+    resolution: {integrity: sha512-Ar7ND9pU99eJ9GpoGQKhKf58GpUOgnzuaB7ueNQ5BMi0p+LZ5oaEnfF999fAArcTIBwXTCHAmGcHOZJaWPq9Nw==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -2168,7 +2174,7 @@ snapshots:
       '@aws-sdk/s3-request-presigner': 3.583.0
       '@types/express': 4.17.21
       '@types/ws': 8.5.10
-      axios: 1.7.2
+      axios: 1.7.3
       database-proxy: 1.0.0
       mongodb: 5.9.2
       ws: 8.17.0
@@ -2617,7 +2623,7 @@ snapshots:
 
   asynckit@0.4.0: {}
 
-  axios@1.7.2:
+  axios@1.7.3:
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
