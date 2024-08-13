@@ -6,6 +6,7 @@ import * as crypto from "crypto";
 import type { 
   LiuErrReturn, 
   LiuRqReturn,
+  SupportedLocale,
   Table_Credential,
   Table_Member,
   Table_User,
@@ -43,6 +44,7 @@ let lastGetAccessTokenStamp = 0
 const API_SEND = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
 const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 const API_TAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging"
+const API_UNTAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging"
 
 // @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
 const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
@@ -287,7 +289,7 @@ async function bind_wechat_gzh(
       await _openWeChatNotification(memberId_1)
     }
     await _clearCredential(data1._id)
-    await tag_user(wx_gzh_openid, user3, userInfo)
+    await tag_user_lang(wx_gzh_openid, user3, userInfo)
   }
   
   // 5. if the user's wx_gzh_openid is equal to the current one
@@ -318,10 +320,11 @@ async function bind_wechat_gzh(
 }
 
 // tag bound user for language
-async function tag_user(
+export async function tag_user_lang(
   wx_gzh_openid: string,
   user: Table_User,
   userInfo?: Wx_Res_GzhUserInfo,
+  oldLocale?: SupportedLocale,
 ) {
   const _env = process.env
   const tagManagement = _env.LIU_WX_GZ_TAG_MANAGEMENT
@@ -330,27 +333,70 @@ async function tag_user(
     return
   }
 
+  // 0. get userInfo & check access_token
+  if(!userInfo) {
+    await checkAccessToken()
+    userInfo = await get_user_info(wx_gzh_openid)
+  }
+
   // 1. get target tagId
   const locale = getCurrentLocale({ user })
   const tagId = wechat_tag_cfg[locale]
 
-  // 2. check if exist
+
+  // 2. if oldLocale exists, untag
   const tags = userInfo?.tagid_list ?? []
-  const existed = tags.includes(tagId)
-  if(existed) {
+  if(oldLocale && oldLocale !== locale) {
+    const oldTagId = wechat_tag_cfg[oldLocale]
+    const existed2 = tags.includes(oldTagId)
+    if(oldTagId && existed2) {
+      await untag_user(wx_gzh_openid, oldTagId)
+    }
+  }
+
+  // 3. check if tagId has exists
+  const existed3 = tags.includes(tagId)
+  if(existed3) {
     return true
   }
   
-  // 3. set tag
-  const url3 = new URL(API_TAG_USER)
-  url3.searchParams.set("access_token", wechat_access_token)
-  const link3 = url3.toString()
-  const q3 = {
+  // 4. set tag
+  const url4 = new URL(API_TAG_USER)
+  url4.searchParams.set("access_token", wechat_access_token)
+  const link4 = url4.toString()
+  const q4 = {
     openid_list: [wx_gzh_openid],
     tagid: tagId,
   }
-  const res3 = await liuReq<Wx_Res_Common>(link3, q3)
+  const res3 = await liuReq<Wx_Res_Common>(link4, q4)
+  const errcode = res3.data?.errcode
+  if(errcode !== 0) {
+    console.warn("tag user for wechat gzh failed")
+    console.log(res3.data)
+  }
+
   return true
+}
+
+
+async function untag_user(
+  wx_gzh_openid: string,
+  tagid: number,
+) {
+  const url = new URL(API_UNTAG_USER)
+  url.searchParams.set("access_token", wechat_access_token)
+  const link = url.toString()
+
+  const q = {
+    openid_list: [wx_gzh_openid],
+    tagid,
+  }
+  const res = await liuReq<Wx_Res_Common>(link, q)
+  const errcode = res.data?.errcode
+  if(errcode !== 0) {
+    console.warn("untag user for wechat gzh failed")
+    console.log(res.data)
+  }
 }
 
 
@@ -476,7 +522,7 @@ async function make_user_subscribed(
 
 /***************** helper functions *************/
 
-async function get_user_info(
+export async function get_user_info(
   wx_gzh_openid: string,
 ) {
   const url = new URL(API_USER_INFO)

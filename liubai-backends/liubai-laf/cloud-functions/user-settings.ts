@@ -23,6 +23,10 @@ import {
 } from '@/common-types'
 import { getNowStamp, DAY } from "@/common-time"
 import * as vbot from "valibot"
+import { getCurrentLocale } from '@/common-i18n'
+import {
+  tag_user_lang as wx_gzh_tag_user_lang,
+} from "@/webhook-wechat"
 
 const db = cloud.database()
 
@@ -149,6 +153,14 @@ async function handle_set(
   if(language && language !== user.language) {
     updated = true
     u.language = language
+
+    // 4.1 update on wechat gzh
+    const oldLocale = getCurrentLocale({ user })
+    const openid = user.wx_gzh_openid
+    const tmpUser4 = { ...user, language }
+    if(openid) {
+      wx_gzh_tag_user_lang(openid, tmpUser4, undefined, oldLocale)
+    }
   }
 
   // 5. return if no update
