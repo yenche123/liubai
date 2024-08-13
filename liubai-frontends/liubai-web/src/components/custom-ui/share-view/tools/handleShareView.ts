@@ -9,7 +9,10 @@ import liuApi from "~/utils/liu-api";
 import { db } from "~/utils/db";
 import transferUtil from "~/utils/transfer-util";
 
-export function handleLinks(svData: ShareViewData, thread: ThreadShow) {
+export function handleShareView(
+  svData: ShareViewData, 
+  thread: ThreadShow,
+) {
 
   // 1. 处理 copLink
   handleCopyLink(svData, thread)

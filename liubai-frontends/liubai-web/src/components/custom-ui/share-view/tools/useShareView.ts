@@ -11,10 +11,10 @@ import type {
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
-import { handleLinks } from "./handle-links"
+import { handleShareView } from "./handleShareView"
 import liuUtil from "~/utils/liu-util"
 import liuEnv from "~/utils/liu-env"
-import { saveAs as fileSaverSaveAs } from 'file-saver';
+import { saveAs as fileSaverSaveAs } from "file-saver"
 import time from "~/utils/basic/time"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 import { showSnackBar } from "../../snack-bar/index"
@@ -64,7 +64,7 @@ export function showShareView(param: ShareViewParam) {
   svData.allowComment = param.allowComment ?? false
   svData.threadId = param.threadId
 
-  handleLinks(svData, param.thread)
+  handleShareView(svData, param.thread)
 
   openIt(rr, queryKey)
 

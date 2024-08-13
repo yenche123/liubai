@@ -41,9 +41,7 @@ export function listToText(
 
     let addes: LiuNodeType[] = [
       "heading",
-      "paragraph", 
-      "bulletList",
-      "orderedList", 
+      "paragraph",
       "taskList",
       "blockquote", 
       "codeBlock",
