@@ -30,7 +30,8 @@ import {
   liuReq, 
   updateUserInCache,
 } from "@/common-util";
-import { useI18n, wechatLang } from "@/common-i18n"
+import { getCurrentLocale, useI18n, wechatLang } from "@/common-i18n"
+import { wechat_tag_cfg } from "@/common-config";
 
 const db = cloud.database()
 let wechat_access_token = ""
@@ -41,6 +42,7 @@ let lastGetAccessTokenStamp = 0
 // @see https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html#7
 const API_SEND = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
 const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
+const API_TAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging"
 
 // @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
 const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
@@ -124,8 +126,6 @@ async function handle_unsubscribe(
     updatedStamp: now,
   }
   const res3 = await uCol.doc(userId).update(u3)
-  console.log("handle_unsubscribe: ")
-  console.log(res3)
 
   // 4. update cache
   user.thirdData = thirdData
@@ -279,14 +279,20 @@ async function bind_wechat_gzh(
   const { t } = useI18n(wechatLang, { user: user3 })
   const success_msg = t("success_1")
 
-  // 5. if the user's wx_gzh_openid is equal to the current one
-  if(user3.wx_gzh_openid === wx_gzh_openid) {
+  // 4.1 define successful logic
+  const _success = async () => {
     send_text_to_wechat_gzh(wx_gzh_openid, success_msg)
     await make_user_subscribed(wx_gzh_openid, userInfo, user3)
     if(memberId_1) {
       await _openWeChatNotification(memberId_1)
     }
     await _clearCredential(data1._id)
+    await tag_user(wx_gzh_openid, user3, userInfo)
+  }
+  
+  // 5. if the user's wx_gzh_openid is equal to the current one
+  if(user3.wx_gzh_openid === wx_gzh_openid) {
+    await _success()
     return true
   }
 
@@ -306,13 +312,44 @@ async function bind_wechat_gzh(
   }
 
   // 7. everything is ok
-  send_text_to_wechat_gzh(wx_gzh_openid, success_msg)
-  await make_user_subscribed(wx_gzh_openid, userInfo, user3)
-  if(memberId_1) {
-    await _openWeChatNotification(memberId_1)
-  }
-  await _clearCredential(data1._id)
+  await _success()
 
+  return true
+}
+
+// tag bound user for language
+async function tag_user(
+  wx_gzh_openid: string,
+  user: Table_User,
+  userInfo?: Wx_Res_GzhUserInfo,
+) {
+  const _env = process.env
+  const tagManagement = _env.LIU_WX_GZ_TAG_MANAGEMENT
+  if(tagManagement !== "01") {
+    console.warn("tag mode is not enabled")
+    return
+  }
+
+  // 1. get target tagId
+  const locale = getCurrentLocale({ user })
+  const tagId = wechat_tag_cfg[locale]
+
+  // 2. check if exist
+  const tags = userInfo?.tagid_list ?? []
+  const existed = tags.includes(tagId)
+  if(existed) {
+    return true
+  }
+  
+  // 3. set tag
+  const url3 = new URL(API_TAG_USER)
+  url3.searchParams.set("access_token", wechat_access_token)
+  const link3 = url3.toString()
+  const q3 = {
+    openid_list: [wx_gzh_openid],
+    tagid: tagId,
+  }
+  const res3 = await liuReq<Wx_Res_Common>(link3, q3)
   return true
 }
 
@@ -640,10 +677,11 @@ function verifyEchoStr(
   const sha1 = crypto.createHash('sha1')
   sha1.update(str)
   const sig = sha1.digest('hex')
-
-  console.log("计算出来的 signature: ", sig)
-
+  
   if(sig !== signature) {
+    console.warn("verifyEchoStr failed")
+    console.log("sig caculated: ", sig)
+    console.log("signature: ", signature)
     return { code: "E4003", errMsg: "signature verification failed" }
   }
 }

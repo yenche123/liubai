@@ -124,7 +124,7 @@ function normalizeLanguage(val: string): SupportedLocale {
 }
 
 /** 获取当前注入信息下的语言 */
-function getCurrentLocale(
+export function getCurrentLocale(
   opt?: GetLangValOpt
 ): SupportedLocale {
   let locale = opt?.locale
@@ -140,9 +140,14 @@ function getCurrentLocale(
   // 从 user 中判断
   const user = opt?.user
   if(user) {
-    const { language, systemLanguage = "en" } = user
+    const { language, systemLanguage } = user
     if(language !== "system") return language
-    locale = normalizeLanguage(systemLanguage)
+    if(systemLanguage) {
+      locale = normalizeLanguage(systemLanguage)
+    }
+    else {
+      locale = getFallbackLocale()
+    }
     return locale
   }
 
