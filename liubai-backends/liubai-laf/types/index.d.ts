@@ -38,6 +38,9 @@ declare global {
       /** 兜底的语言信息，若该字段不存在，系统会使用 'en' 做兜底 */
       LIU_FALLBACK_LOCALE?: string
 
+      /** 商务合作 email */
+      LIU_EMAIL_1?: string
+
       /** GitHub OAuth */
       LIU_GITHUB_OAUTH_CLIENT_ID?: string
       LIU_GITHUB_OAUTH_CLIENT_SECRET?: string

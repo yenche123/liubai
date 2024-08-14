@@ -1856,6 +1856,7 @@ export interface Wx_Gzh_View extends Wx_Gzh_Base {
   MsgType: "event"
   Event: "VIEW"
   EventKey: string     // URL to be opened
+  MenuId?: string      // the key exists after test
 }
 
 

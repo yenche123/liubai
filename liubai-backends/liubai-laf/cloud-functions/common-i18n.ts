@@ -92,6 +92,18 @@ export const wechatLang: LangAtom = {
   }
 }
 
+export const wechatMenuClickLang: LangAtom = {
+  "zh-Hans": {
+
+  },
+  "zh-Hant": {
+
+  },
+  "en": {
+
+  }
+}
+
 
 
 /********************* 映射函数 ****************/
