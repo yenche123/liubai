@@ -36,9 +36,11 @@ const { t } = useI18n()
           <span>{{ t('state_related.state_title') }}</span>
         </div>
 
-        <input v-model="reData.text" class="se-input" 
+        <input v-model="reData.text" 
+          class="se-input" 
           :placeholder="t('state_related.state_ph')"
           autocomplete="nope"
+          :maxlength="8"
         />
 
       </div>
@@ -193,6 +195,7 @@ const { t } = useI18n()
   color: var(--main-normal);
   font-size: var(--desc-font);
   line-height: 1.5;
+  caret-color: var(--primary-color);
 
   &::-webkit-input-placeholder {
     color: var(--main-note);
