@@ -25,8 +25,8 @@ const onMouseEnterItem = (index: number) => {
 <template>
 
   <div v-if="hteData.enable" class="hte-container" 
-  :class="{ 'hte-container_show': hteData.show }"
->
+    :class="{ 'hte-container_show': hteData.show }"
+  >
 
     <div class="hte-bg" @click="onTapMask" />
 
@@ -36,38 +36,30 @@ const onMouseEnterItem = (index: number) => {
       <div class="hte-bar">
 
         <!-- search 模式，仅显示一个 # 字符 -->
-        <div class="hteb-box"
-          v-if="hteData.mode === 'search'"
-        >
-          <svg-icon name="tag" class="hteb-icon"
-            color="var(--main-normal)"
-          ></svg-icon>
+        <div class="hteb-box" v-if="hteData.mode === 'search'">
+          <svg-icon name="tag" class="hteb-icon" color="var(--main-normal)"></svg-icon>
         </div>
         <!-- edit 模式，允许被点击-->
-        <HashtagEmoji v-else 
-          @emojichange="onEmojiChange"
+        <HashtagEmoji v-else @emojichange="onEmojiChange" 
           :has-emoji="Boolean(hteData.emoji)"
         >
           <div class="liu-hover hteb-box">
             <svg-icon 
-              v-if="!hteData.emoji"
-              name="tag" class="hteb-icon"
-              color="var(--main-normal)"
+              v-if="!hteData.emoji" 
+              name="tag" 
+              class="hteb-icon" color="var(--main-normal)"
             ></svg-icon>
             <span v-else>{{ hteData.emoji }}</span>
           </div>
         </HashtagEmoji>
         
-
         <input ref="inputEl" 
           class="hteb-input" 
           v-model="hteData.inputTxt" 
-          :maxlength="50" 
-          :placeholder="t('tip.tag_ph')"
-          @input="onInput" 
-          @focus="onFocus"
-          @blur="onBlur"
-          autocomplete="nope"
+          :maxlength="50"
+          :placeholder="t('tip.tag_ph')" 
+          @input="onInput" @focus="onFocus" @blur="onBlur" 
+          autocomplete="nope" 
         />
 
       </div>
@@ -81,8 +73,8 @@ const onMouseEnterItem = (index: number) => {
       <!-- 第三行: 创建标签 -->
       <div v-else-if="hteData.newTag" class="hte-create-box">
         <div class="liu-no-user-select hte-create" 
-          :class="{ 'hte-create_selected': hteData.selectedIndex === -1 }" 
-          @click="() => onTapItem(-1)"
+          :class="{ 'hte-create_selected': hteData.selectedIndex === -1 }"
+          @click="() => onTapItem(-1)" 
           @mouseenter="() => onMouseEnterItem(-1)"
         >
           <div class="htec-icon">
@@ -95,8 +87,12 @@ const onMouseEnterItem = (index: number) => {
       </div>
 
       <!-- 第四部分: 搜索结果 -->
-      <HashtagList v-if="hteData.mode === 'search' && hteData.list.length > 0" :list="hteData.list" :selected-index="hteData.selectedIndex"
-        @mouseenteritem="onMouseEnterItem" @tapitem="onTapItem"></HashtagList>
+      <HashtagList v-if="hteData.mode === 'search' && hteData.list.length > 0" 
+        :list="hteData.list"
+        :selected-index="hteData.selectedIndex" 
+        @mouseenteritem="onMouseEnterItem" 
+        @tapitem="onTapItem"
+      ></HashtagList>
 
     </div>
 
@@ -134,167 +130,184 @@ const onMouseEnterItem = (index: number) => {
     height: 100%;
     background: var(--popup-bg);
   }
-
-  .hte-box {
-    z-index: 5102;
-    margin-top: 20vh;
-    margin-top: 20dvh;
-    width: 90vw;
-    max-width: 750px;
-    border-radius: 20px;
-    box-shadow: var(--card-shadow-2);
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: var(--frosted-glass-2);
-      -webkit-backdrop-filter: blur(2px);
-      backdrop-filter: blur(2px);
-    }
+}
 
 
-    .hte-bar {
-      height: 90px;
-      display: flex;
-      align-items: center;
-      flex: 1;
-      position: relative;
+.hte-box {
+  z-index: 5102;
+  margin-top: 18vh;
+  margin-top: 18dvh;
+  width: 90vw;
+  max-width: 750px;
+  border-radius: 18px;
+  box-shadow: var(--card-shadow-2);
+  position: relative;
+  overflow: hidden;
+  transition: .3s;
 
-      .hteb-box {
-        width: 90px;
-        height: 90px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--main-normal);
-        font-weight: 700;
-        font-size: var(--head-font);
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--frosted-glass-2);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+}
 
-        .hteb-icon {
-          width: 40px;
-          height: 40px;
-        }
+.hte-create-box {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0px 10px 10px;
+  position: relative;
+}
 
-      }
+.hte-create {
+  border-radius: 10px;
+  overflow: hidden;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 10px;
+  transition: .02s;
+  cursor: pointer;
+}
 
-      .hteb-input {
-        font-size: var(--title-font);
-        color: var(--main-normal);
-        line-height: 1.75;
-        width: calc(100% - 100px);
-        caret-color: var(--primary-color);
-      }
+.hte-create_selected {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, .03);
 
-      .hteb-input::selection {
-        background-color: var(--select-bg);
-      }
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--card-bg);
+    opacity: .6;
+  }
+}
 
-      .hteb-input::-webkit-input-placeholder {
-        color: var(--main-note)
-      }
+.htec-icon {
+  width: 38px;
+  height: 38px;
+  margin-inline-end: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 
-    }
+  .htec-svgicon {
+    width: 24px;
+    height: 24px;
+  }
+}
 
-    @media screen and (max-width: 380px) {
-
-      .hte-bar {
-        height: 80px;
-
-        .hteb-box {
-          height: 80px;
-          width: 80px;
-
-          .hteb-icon {
-            width: 32px;
-            height: 32px;
-          }
-
-        }
-
-        .hteb-input {
-          width: calc(100% - 90px);
-          font-size: var(--desc-font);
-        }
-      }
-    }
-
-    .hte-err {
-      position: relative;
-      height: 30px;
-      margin-inline-start: 90px;
-      padding-bottom: 20px;
-      font-size: var(--btn-font);
-      color: var(--liu-quote);
-    }
-
-    .hte-create-box {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 0px 10px 10px;
-      position: relative;
-
-      .hte-create {
-        border-radius: 10px;
-        overflow: hidden;
-        height: 60px;
-        display: flex;
-        align-items: center;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 10px 10px;
-        transition: .02s;
-        cursor: pointer;
-
-        .htec-icon {
-          width: 38px;
-          height: 38px;
-          margin-inline-end: 6px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-
-          .htec-svgicon {
-            width: 24px;
-            height: 24px;
-          }
-        }
-
-        .hte-create-title {
-          font-size: var(--desc-font);
-          color: var(--main-normal);
-          position: relative;
-        }
-
-      }
-
-      .hte-create_selected {
-        position: relative;
-        overflow: hidden;
-        box-shadow: 1px 2px 3px rgba(0, 0, 0, .03);
-
-        &::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: var(--card-bg);
-          opacity: .6;
-        }
-      }
-
-    }
+.hte-create-title {
+  font-size: var(--desc-font);
+  color: var(--main-normal);
+  position: relative;
+}
 
 
+.hte-bar {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.hteb-box {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--main-normal);
+  font-weight: 700;
+  font-size: var(--head-font);
+
+  .hteb-icon {
+    width: 40px;
+    height: 40px;
   }
 
 }
+
+.hteb-input {
+  font-size: var(--title-font);
+  color: var(--main-normal);
+  line-height: 1.75;
+  width: calc(100% - 100px);
+  caret-color: var(--primary-color);
+
+  &::selection {
+    background-color: var(--select-bg);
+  }
+
+  &::-webkit-input-placeholder {
+    color: var(--main-note)
+  }
+}
+
+
+.hte-err {
+  position: relative;
+  height: 30px;
+  margin-inline-start: 90px;
+  padding-bottom: 20px;
+  font-size: var(--btn-font);
+  color: var(--liu-quote);
+}
+
+
+@media screen and (max-width: 550px) {
+
+  .hte-box {
+    margin-top: 12vh;
+    margin-top: 12dvh;
+    border-radius: 14px;
+  }
+
+}
+
+
+@media screen and (max-width: 420px) {
+
+  .hte-box {
+    margin-top: 8vh;
+    margin-top: 8dvh;
+    border-radius: 10px;
+  }
+
+
+  .hte-bar {
+    height: 72px;
+  }
+
+  .hteb-input {
+    width: calc(100% - 90px);
+    font-size: var(--desc-font);
+  }
+
+  .hteb-box {
+    height: 72px;
+    width: 72px;
+
+    .hteb-icon {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+}
+
 </style>
