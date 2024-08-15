@@ -51,6 +51,7 @@ export interface SvCtx {
   emits: SvEmits
   scrollPosition: Ref<number>
   sv: Ref<HTMLElement | null>
+  lastToggleViewStamp: Ref<number>
 }
 
 // 默认、下拉中、加载中、松开跑回去

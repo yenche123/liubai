@@ -18,7 +18,7 @@ export function useNaviLink(props: any, emit: NaviLinkEmits) {
     emit("aftertap", toRoute)
 
     const num = getNaviBackStackNum(toRoute, fromRoute, stacks)
-    console.log("num: ", num)
+    // console.log("num: ", num)
     if(num === 0) {
       return
     }
@@ -46,8 +46,8 @@ function getNaviBackStackNum(
     return 0
   }
   const stackLength = stacks.length
-  console.log(valTool.copyObject(stacks))
-  console.log("stackLength: ", stackLength)
+  // console.log(valTool.copyObject(stacks))
+  // console.log("stackLength: ", stackLength)
 
   for(let i = stackLength-1; i >= 0; i--) {
     const curStack = stacks[i]

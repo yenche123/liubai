@@ -10,7 +10,11 @@ import {
   watch,
 } from "vue";
 import type { SvProps, SvEmits, SvCtx } from "./types"
-import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
+import type { 
+  SvTriggerType,
+  SvProvideInject, 
+  SvBottomUp,
+} from "~/types/components/types-scroll-view"
 import { 
   scrollViewKey, 
   svScollingKey, 
@@ -20,14 +24,17 @@ import {
 } from "~/utils/provide-keys"
 import { useDebounceFn, useResizeObserver } from "~/hooks/useVueUse"
 import time from "~/utils/basic/time";
+import valTool from "~/utils/basic/val-tool";
 
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
+const MAGIC_NUM_1 = 500
 
 export function useScrollView(props: SvProps, emits: SvEmits) {
   const sv = ref<HTMLElement | null>(null)
   const scrollPosition = ref(0)
   const bottomUp = shallowRef<SvBottomUp>({ type: "pixel" })
+  const lastToggleViewStamp = ref(time.getTime())
 
   provide(svElementKey, sv)
   provide(svScollingKey, scrollPosition)
@@ -38,6 +45,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     emits,
     sv,
     scrollPosition,
+    lastToggleViewStamp,
   }
 
   const { onScrolling } = listenToScroll(ctx)
@@ -50,9 +58,8 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     else svv.scrollLeft = sp
   }
 
-  let lastToggleViewStamp = time.getTime()
   onActivated(async () => {
-    lastToggleViewStamp = time.getTime()
+    lastToggleViewStamp.value = time.getTime()
     if(props.showTxt === "false") {
       return
     }
@@ -68,7 +75,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   })
 
   onDeactivated(() => {
-    lastToggleViewStamp = time.getTime()
+    lastToggleViewStamp.value = time.getTime()
   })
 
   watch(bottomUp, (newV) => {
@@ -84,7 +91,10 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
 
   // listen to sv width changed
   const _resize = useDebounceFn((entries) => {
-    if(time.isWithinMillis(lastToggleViewStamp, 300)) return
+    const stamp = lastToggleViewStamp.value
+    if(time.isWithinMillis(stamp, 300)) {
+      return
+    }
     onScrolling()
   }, 60)
   useResizeObserver(sv, _resize)
@@ -126,6 +136,37 @@ function listenToScroll(
   let lastScrollStamp = 0
   let lastInvokeStamp = 0
 
+  const _setSvData = (
+    svType: SvTriggerType,
+    sP: number,
+    currentStamp: number,
+  ) => {
+    if(svType === "to_end") {
+      emits("scrolltoend", { scrollPosition: sP })
+    }
+    else {
+      emits("scrolltostart", { scrollPosition: sP })
+    }
+    proData.type = svType
+    proData.triggerNum++
+    lastInvokeStamp = currentStamp
+    lastScrollPosition = sP
+  }
+
+  const _specialToEnd = async (
+    sP: number,
+  ) => {
+    await valTool.waitMilli(MAGIC_NUM_1)
+    if(time.isWithinMillis(lastInvokeStamp, MAGIC_NUM_1)) {
+      return
+    }
+    emits("scrolltoend", { scrollPosition: sP })
+    proData.type = "to_end"
+    proData.triggerNum++
+    lastInvokeStamp = time.getTime()
+    lastScrollPosition = sP
+  }
+
   const onScrolling = () => {
     const _sv = sv.value
     if(!_sv) return
@@ -140,34 +181,56 @@ function listenToScroll(
     }
     lastScrollStamp = now
   
-    
+
     const cH = isVertical ? _sv.clientHeight : _sv.clientWidth
     const sH0 = isVertical ? _sv.scrollHeight : _sv.scrollWidth
     const sH = sH0 - cH
+    const lP = lastScrollPosition
 
     scrollPosition.value = sP
     emits("scroll", { scrollPosition: sP })
+
+    // console.log("sP: ", sP)
+    // console.log("lP: ", lP)
+    // console.log("sH: ", sH)
+    // console.log(" ")
   
-    const DIRECTION = sP - lastScrollPosition > 0 ? "DOWN" : "UP"
+    const DIRECTION = sP - lP > 0 ? "DOWN" : "UP"
     const middleLine = DIRECTION === "DOWN" ? sH - props.lowerThreshold : props.upperThreshold
-    
+
+    const lastViewStamp = ctx.lastToggleViewStamp.value
+
+    // fix: bug when user navigate back to the last page
+    if(time.isWithinMillis(lastViewStamp, MAGIC_NUM_1)) {
+      const doubleThreshold = props.lowerThreshold * 2
+      if(sH >= doubleThreshold) {
+        const doubleDuration = MIN_INVOKE_DURATION * 2
+        if(!time.isWithinMillis(lastInvokeStamp, doubleDuration)) {
+          const lowerLine = sH - props.lowerThreshold
+          if(lowerLine <= lP && lowerLine <= sP) {
+            // console.warn("to_end 111")
+            _specialToEnd(sP)
+            return
+          }
+        }
+      }
+    }
+
+
     if(DIRECTION === "DOWN") {
-      if(lastScrollPosition < middleLine && middleLine <= sP) {
+      if(lP < middleLine && middleLine <= sP) {
         if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION)) {
-          emits("scrolltoend", { scrollPosition: sP })
-          proData.type = "to_end"
-          proData.triggerNum++
-          lastInvokeStamp = now
+          // console.warn("to_end 222")
+          _setSvData("to_end", sP, now)
+          return
         }
       }
     }
     else if(DIRECTION === "UP") {
-      if(lastScrollPosition > middleLine && middleLine >= sP) {
+      if(lP > middleLine && middleLine >= sP) {
         if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION)) {
-          emits("scrolltostart", { scrollPosition: sP })
-          proData.type = "to_start"
-          proData.triggerNum++
-          lastInvokeStamp = now
+          _setSvData("to_start", sP, now)
+          return
         }
       }
     }

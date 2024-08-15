@@ -202,7 +202,7 @@ function scrollTopAndUpdate(
       ctx.svBottomUp.value = { type: "pixel", pixel: 0 }
     }
   }
-  // console.log(`${ctx.viewType.value} ${ctx.tagId.value} 正在执行 scrollTopAndUpdate...`)
+  // console.log(`${ctx.props.viewType} ${ctx.props.tagId} scrollTopAndUpdate...`)
   loadList(ctx, true, cloud)
 }
 

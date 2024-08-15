@@ -468,9 +468,9 @@ const initLiuRouter = (): RouteAndRouter => {
   })
 
   const _listenPopState = (e: PopStateEvent) => {
-    console.log(" ")
-    console.log("popstate...........")
-    console.log(e.state)
+    // console.log(" ")
+    // console.log("popstate...........")
+    // console.log(e.state)
 
     stateFromPopState = e.state
     lastSetPopStateStamp = time.getLocalTime()

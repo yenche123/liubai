@@ -1,7 +1,8 @@
 
+export type SvTriggerType = "to_end" | "to_start"
 
 export interface SvProvideInject {
-  type: "to_end" | "to_start" | ""
+  type: SvTriggerType | ""
   triggerNum: number
 }
 
