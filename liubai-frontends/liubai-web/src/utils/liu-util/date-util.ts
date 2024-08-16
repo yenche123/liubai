@@ -115,7 +115,8 @@ export function formatStamp(
 
 // 给定类型为 LiuRemindLater 的值，以当前时间为基准，计算出对应的时间戳
 export function getLaterStamp(val: LiuRemindLater): number {
-  const now = time.getTime()
+  let now = time.getTime()
+  now = Math.round(now / 1000) * 1000
 
   let diff = 0
   if(val === "30min") diff = 30 * time.MINUTE
