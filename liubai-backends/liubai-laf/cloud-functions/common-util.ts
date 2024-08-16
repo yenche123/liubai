@@ -29,6 +29,8 @@ import type {
   Table_Config,
   CommonPass,
   Table_Member,
+  CommonPass_A,
+  LiuNodeType,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -273,6 +275,75 @@ function getUserName(
   return email.substring(0, idx)
 }
 
+
+/*************************** 动态、评论 富文本编辑器相关 ****************************/
+
+/**
+ * 将 TipTapJSONContent 格式的数组，转换成纯文本
+ * @param list 当前要转换成文本的 TipTapJSONContent[]
+ * @param plainText 已转换完毕的文本
+ * @param moreText 是否开启更多文字的模式，比如遇到链接，把链接也加载进来。默认为 false，表示关闭
+ */
+export function listToText(
+  list: LiuContent[],
+  plainText: string = "",
+  parentType?: string,
+): string {
+
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    const { type, content, text } = v
+    if(text) {
+      plainText += text
+      continue
+    }
+
+    if(type === "listItem") {
+      if(parentType === "orderedList") {
+        plainText += `${i + 1}. `
+      }
+      else if(parentType === "bulletList") {
+        plainText += " · "
+      }
+    }
+
+    if(content) {
+      plainText = listToText(content, plainText, type)
+      if(type === "codeBlock") plainText += "\n"
+    }
+
+    let addes: LiuNodeType[] = [
+      "heading",
+      "paragraph",
+      "taskList",
+      "blockquote", 
+      "codeBlock",
+      "horizontalRule",
+      "listItem",
+    ]
+    if(type && addes.includes(type as LiuNodeType)) {
+      plainText += "\n"
+    }
+
+  }
+
+  return plainText
+}
+
+export function getSummary(
+  content: LiuContent[] | undefined,
+) {
+  let text = ""
+  if(content && content.length > 0) {
+    text = listToText(content)
+    text = text.replace(/\n/g, " ")
+    text = text.trim()
+    if(text.length > 140) text = text.substring(0, 140)
+    if(text) return text
+  }
+
+  return text
+}
 
 
 /********************* 一些 “归一化” 相关的函数 *****************/
@@ -1065,8 +1136,6 @@ export function getDecryptedBody(
   return { newBody }
 }
 
-
-
 function decryptWithAES(
   civ: CryptoCipherAndIV,
   key: string,
@@ -1150,6 +1219,49 @@ export function decryptCloudData<T>(
     }
   }
   return { pass: true, data: res2.data }
+}
+
+interface EncData {
+  enc_title?: CryptoCipherAndIV
+  enc_desc?: CryptoCipherAndIV
+  enc_images?: CryptoCipherAndIV
+  enc_files?: CryptoCipherAndIV
+  [key: string]: any
+}
+
+interface DecryptEncData_B {
+  pass: true
+  title?: string
+  liuDesc?: LiuContent[]
+  images?: Cloud_ImageStore[]
+  files?: Cloud_FileStore[]
+}
+
+type DecryptEncDataRes = CommonPass_A | DecryptEncData_B
+
+export function decryptEncData(e: EncData): DecryptEncDataRes {
+
+  // title
+  const d_title = decryptCloudData<string>(e.enc_title)
+  if(!d_title.pass) return d_title
+  const title = d_title.data
+
+  // desc
+  const d_desc = decryptCloudData<LiuContent[]>(e.enc_desc)
+  if(!d_desc.pass) return d_desc
+  const liuDesc = d_desc.data
+
+  // images
+  const d_images = decryptCloudData<Cloud_ImageStore[]>(e.enc_images)
+  if(!d_images.pass) return d_images
+  const images = d_images.data
+
+  // files
+  const d_files = decryptCloudData<Cloud_FileStore[]>(e.enc_files)
+  if(!d_files.pass) return d_files
+  const files = d_files.data
+
+  return { pass: true, title, liuDesc, images, files }
 }
 
 

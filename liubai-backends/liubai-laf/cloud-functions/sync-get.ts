@@ -7,7 +7,7 @@ import {
   getDecryptedBody,
   getEncryptedData,
   valTool,
-  decryptCloudData,
+  decryptEncData,
 } from "@/common-util"
 import {
   Sch_SyncGetAtom,
@@ -936,50 +936,6 @@ function turnDownloadContentsIntoParcels(
   })
   return results
 }
-
-interface EncData {
-  enc_title?: CryptoCipherAndIV
-  enc_desc?: CryptoCipherAndIV
-  enc_images?: CryptoCipherAndIV
-  enc_files?: CryptoCipherAndIV
-  [key: string]: any
-}
-
-interface DecryptEncData_B {
-  pass: true
-  title?: string
-  liuDesc?: LiuContent[]
-  images?: Cloud_ImageStore[]
-  files?: Cloud_FileStore[]
-}
-
-type DecryptEncDataRes = CommonPass_A | DecryptEncData_B
-
-function decryptEncData(e: EncData): DecryptEncDataRes {
-
-  // title
-  const d_title = decryptCloudData<string>(e.enc_title)
-  if(!d_title.pass) return d_title
-  const title = d_title.data
-
-  // desc
-  const d_desc = decryptCloudData<LiuContent[]>(e.enc_desc)
-  if(!d_desc.pass) return d_desc
-  const liuDesc = d_desc.data
-
-  // images
-  const d_images = decryptCloudData<Cloud_ImageStore[]>(e.enc_images)
-  if(!d_images.pass) return d_images
-  const images = d_images.data
-
-  // files
-  const d_files = decryptCloudData<Cloud_FileStore[]>(e.enc_files)
-  if(!d_files.pass) return d_files
-  const files = d_files.data
-
-  return { pass: true, title, liuDesc, images, files }
-}
-
 
 
 function packContents(
