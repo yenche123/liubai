@@ -1765,6 +1765,14 @@ export interface Wx_Res_GzhUserInfo {
   qr_scene_str?: string
 }
 
+export interface Wx_Param_Msg_Templ_Send {
+  touser: string
+  template_id: string
+  url?: string
+  client_msg_id?: string
+  data: Record<string, Record<"value", string>>
+}
+
 
 /******************* WeChat Subscription Msg Events ****************/
 export interface Wx_Gzh_Base {

@@ -7,12 +7,14 @@ import type {
   LiuRqReturn,
   ServiceSendEmailsParam,
   Table_Credential,
+  Wx_Param_Msg_Templ_Send,
 } from "@/common-types"
 import { 
   getNowStamp, 
   MINUTE, 
 } from "@/common-time"
 import { createEmailCode } from '@/common-ids'
+import { liuReq } from '@/common-util'
 
 const db = cloud.database()
 const _ = db.command
@@ -173,4 +175,17 @@ function getResendInstance() {
   if(!resendApiKey) return
   const resend = new Resend(resendApiKey)
   return resend
+}
+
+/********************** About WeChat *****************/
+
+const API_WECHAT_TMPL_SEND = "https://api.weixin.qq.com/cgi-bin/message/template/send"
+
+export async function sendWxTemplateMessage(
+  access_token: string,
+  param: Wx_Param_Msg_Templ_Send,
+) {
+  const url = `${API_WECHAT_TMPL_SEND}?access_token=${access_token}`
+  const res = await liuReq(url, param)
+  return res
 }

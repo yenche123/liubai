@@ -15,4 +15,17 @@ export const wechat_tag_cfg = {
   "en": 102,
 }
 
-
+/********************* wechat template messages ****************/
+export const wx_reminder_tmpl = {
+  touser: "",
+  template_id: "2PtKG06TkCunDmMkktZLeGpEzb4xtVaZmEMN3qDALy4",
+  url: "",
+  data: {
+    thing18: {
+      value: "",
+    },
+    time4: {
+      value: "",
+    },
+  }
+}
