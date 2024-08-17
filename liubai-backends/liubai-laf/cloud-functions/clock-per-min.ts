@@ -3,7 +3,12 @@
 // 发送提醒
 import cloud from "@lafjs/cloud";
 import { addSeconds, set as date_fn_set } from "date-fns"
-import { type Table_Content } from "@/common-types";
+import type { 
+  Table_Member, 
+  Table_User,
+  Table_Content,
+  RequireSth,
+} from "@/common-types";
 import { decryptEncData, getSummary } from "@/common-util";
 
 const db = cloud.database()
@@ -19,11 +24,15 @@ export async function main(ctx: FunctionContext) {
 interface RemindAtom {
   contentId: string
   userId: string
-  memberId?: string
+  memberId: string
   title?: string
   hasImage?: boolean
   hasFile?: boolean
+
+  wx_gzh_openid?: string
 }
+
+type RemindAtom_2 = RequireSth<RemindAtom, "wx_gzh_openid">
 
 async function handle_remind() {
   let startDate = addSeconds(new Date(), -30)
@@ -39,8 +48,114 @@ async function handle_remind() {
   const endStamp = endDate.getTime()
 
   const atoms = await get_remind_atoms(startStamp, endStamp)
+  if(atoms.length < 1) return true
+
+  const atoms2 = await find_remind_authors(atoms)
+  if(atoms2.length < 1) return true
+
   
   
+}
+
+interface AuthorAtom {
+  userId: string
+  memberId: string
+  wx_gzh_openid?: string
+}
+
+async function find_remind_authors(
+  atoms: RemindAtom[],
+) {
+  const list_1: AuthorAtom[] = []
+  const list_2: AuthorAtom[] = []
+  const list_3: AuthorAtom[] = []
+
+  // 1. package list_1
+  for(let i=0; i<atoms.length; i++) {
+    const v1 = atoms[i]
+    const idx = list_1.findIndex(v2 => v1.userId === v2.userId)
+    if(idx >= 0) continue
+    list_1.push({ userId: v1.userId, memberId: v1.memberId })
+  }
+
+  const uCol = db.collection("User")
+  let runTimes = 0
+  const NUM_ONCE = 50
+  const MAX_TIMES = 100
+
+  // 2. find users
+  while(list_1.length > 0 && runTimes < MAX_TIMES) {
+    let tmpList = list_1.splice(0, NUM_ONCE)
+
+    const userIds = tmpList.map(v => v.userId)
+    const w = {
+      oState: "NORMAL",
+      _id: _.in(userIds),
+    }
+    const f: Record<string, 0 | 1> = {
+      _id: 1,
+      oState: 1,
+      thirdData: 1,
+      wx_gzh_openid: 1,
+    }
+    const res1 = await uCol.where(w).field(f).get<Table_User>()
+    const results1 = res1.data
+    console.log("results1: ")
+    console.log(results1)
+
+    tmpList = packAuthors1(tmpList, results1)
+    list_2.push(...tmpList)
+
+    runTimes++
+  }
+
+  runTimes = 0
+
+  // 3. find members
+  const mCol = db.collection("Member")
+  while(list_2.length > 0 && runTimes < MAX_TIMES) {
+    let tmpList = list_2.splice(0, NUM_ONCE)
+    const memberIds = tmpList.map(v => v.memberId)
+    const w = {
+      oState: "OK",
+      _id: _.in(memberIds),
+    }
+    const f: Record<string, 0 | 1> = {
+      _id: 1,
+      oState: 1,
+      config: 1,
+      notification: 1,
+    }
+
+    const res2 = await mCol.where(w).field(f).get<Table_Member>()
+    const results2 = res2.data
+    console.log("results2: ")
+    console.log(results2)
+    tmpList = packAuthors(tmpList, results2)
+    list_3.push(...tmpList)
+
+    runTimes++
+  }
+
+  // 4. get list_3 into atoms
+  for(let i=0; i<list_3.length; i++) {
+    const v1 = list_3[i]
+    for(let j=0; j<atoms.length; j++) {
+      const v2 = atoms[j]
+      if(v1.userId === v2.userId) {
+        v2.wx_gzh_openid = v1.wx_gzh_openid
+      }
+    }
+  }
+
+  // 5. filter atoms without wx_gzh_openid
+  let newAtoms = atoms.filter(v => v.wx_gzh_openid) as RemindAtom_2[]
+  console.log("old atoms: ")
+  console.log(atoms)
+  console.log("new atoms: ")
+  console.log(newAtoms)
+  
+  return newAtoms
 }
 
 async function get_remind_atoms(
@@ -60,7 +175,7 @@ async function get_remind_atoms(
   const atoms: RemindAtom[] = []
 
   while(runTimes < MAX_TIMES) {
-    let q = cCol.where(w)
+    let q = cCol.where(w).orderBy("remindStamp", "asc")
     if(runTimes > 0) {
       q = q.skip(runTimes * NUM_ONCE)
     }
@@ -83,14 +198,61 @@ async function get_remind_atoms(
   return atoms
 }
 
+// when we get members, package authors with them
+// filter members whose wx_gzh_toggle is false or undefined
+function packAuthors(
+  tmpList: AuthorAtom[],
+  members: Table_Member[],
+) {
+  if(members.length < 1) return []
+
+  for(let i=0; i<tmpList.length; i++) {
+    const v1 = tmpList[i]
+    const member = members.find(v2 => v1.memberId === v2._id)
+    const wx_gzh_toggle = member?.notification?.wx_gzh_toggle
+    if(!wx_gzh_toggle) {
+      tmpList.splice(i, 1)
+      i--
+      continue
+    }
+  }
+
+  return tmpList
+}
+
+// when we get users, package authors with them
+function packAuthors1(
+  tmpList: AuthorAtom[],
+  users: Table_User[],
+) {
+
+  if(users.length < 1) return []
+
+  for(let i=0; i<tmpList.length; i++) {
+    const v1 = tmpList[i]
+    const user = users.find(v2 => v1.userId === v2._id)
+    const wx_gzh_openid = user?.wx_gzh_openid
+    const wx_subscribe = user?.thirdData?.wx_gzh?.subscribe
+    if(!wx_gzh_openid || wx_subscribe !== 1) {
+      tmpList.splice(i, 1)
+      i--
+      continue
+    }
+
+    v1.wx_gzh_openid = wx_gzh_openid
+  }
+
+  return tmpList
+}
+
 
 function turnContentIntoAtom(
   v: Table_Content,
 ) {
+  if(!v.member) return
+
   const res1 = decryptEncData(v)
-  if(!res1.pass) {
-    return
-  }
+  if(!res1.pass) return
 
   let title: string | undefined
   if(res1.title) {
