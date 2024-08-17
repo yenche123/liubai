@@ -15,10 +15,44 @@ import {
   getSummary, 
   getWeChatAccessToken,
 } from "@/common-util";
-import { getCurrentLocale } from "./common-i18n";
+import { getCurrentLocale } from "@/common-i18n";
 
 const db = cloud.database()
 const _ = db.command
+
+
+/************************** types **************************/
+interface RemindAtom {
+  contentId: string
+  userId: string
+  memberId: string
+  locale?: SupportedLocale
+  title?: string
+  hasImage?: boolean
+  hasFile?: boolean
+  calendarStamp: number
+
+  wx_gzh_openid?: string
+}
+
+type RemindAtom_2 = RequireSth<RemindAtom, "wx_gzh_openid">
+
+interface AuthorAtom {
+  userId: string
+  memberId: string
+  locale?: SupportedLocale
+  wx_gzh_openid?: string
+}
+
+type AuthorAtom_2 = RequireSth<AuthorAtom, "locale">
+
+type Field_User = {
+  [key in keyof Table_User]?: 0 | 1
+}
+
+type Field_Member = {
+  [key in keyof Table_Member]?: 0 | 1
+}
 
 
 /************************** entry **************************/
@@ -28,21 +62,6 @@ export async function main(ctx: FunctionContext) {
 
   return { code: "0000" }
 }
-
-
-interface RemindAtom {
-  contentId: string
-  userId: string
-  memberId: string
-  locale?: SupportedLocale
-  title?: string
-  hasImage?: boolean
-  hasFile?: boolean
-
-  wx_gzh_openid?: string
-}
-
-type RemindAtom_2 = RequireSth<RemindAtom, "wx_gzh_openid">
 
 async function handle_remind() {
   let startDate = addSeconds(new Date(), -30)
@@ -69,27 +88,14 @@ async function handle_remind() {
     return false
   }
 
+}
 
+async function batch_send(
+  access_token: string,
+  atoms: RemindAtom_2[],
+) {
 
   
-  
-}
-
-interface AuthorAtom {
-  userId: string
-  memberId: string
-  locale?: SupportedLocale
-  wx_gzh_openid?: string
-}
-
-type AuthorAtom_2 = RequireSth<AuthorAtom, "locale">
-
-type Field_User = {
-  [key in keyof Table_User]?: 0 | 1
-}
-
-type Field_Member = {
-  [key in keyof Table_Member]?: 0 | 1
 }
 
 async function find_remind_authors(
@@ -282,6 +288,7 @@ function turnContentIntoAtom(
   v: Table_Content,
 ) {
   if(!v.member) return
+  if(!v.calendarStamp) return
 
   const res1 = decryptEncData(v)
   if(!res1.pass) return
@@ -305,6 +312,7 @@ function turnContentIntoAtom(
     title,
     hasImage: Boolean(res1.images?.length),
     hasFile: Boolean(res1.files?.length),
+    calendarStamp: v.calendarStamp,
   }
   return atom
 }

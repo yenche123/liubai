@@ -48,6 +48,7 @@ import {
 import geoip from "geoip-lite"
 import Stripe from "stripe"
 import * as vbot from "valibot"
+import { dateLang, useI18n } from '@/common-i18n'
 
 const db = cloud.database()
 const _ = db.command
@@ -63,6 +64,73 @@ const DAY_7 = DAY * 7
 export async function main(ctx: FunctionContext) {
   console.log("do nothing with common-util")
   return true
+}
+
+
+/********************* 基础工具函数 ****************/
+
+// 字符串转对象
+function strToObj<T = any>(str: string): T {
+  let res = {}
+  try {
+    res = JSON.parse(str)
+  }
+  catch(err) {}
+  return res as T
+}
+
+// 对象转字符串
+function objToStr<T = any>(obj: T): string {
+  let str = ``
+  try {
+    str = JSON.stringify(obj)
+  }
+  catch(err) {}
+  return str
+}
+
+/**
+ * minus one and make sure that
+ * the new value is greater than or equal to 0
+ * @param oldVal original value, which is minuend
+ * @param subtrahend subtrahend, whose default value is 1
+ */
+function minusAndMinimumZero(
+  oldVal: number | undefined,
+  subtrahend: number = 1,
+) {
+  if(!oldVal) return 0
+  let newVal = oldVal - subtrahend
+  if(newVal < 0) return 0
+  return newVal
+}
+
+// removing duplicates from an array
+const uniqueArray = (arr: string[]) => {
+  const uniqueSet = new Set(arr)
+  const uniqueArr = [...uniqueSet]
+  return uniqueArr
+}
+
+
+/**
+ * format 0-9 to 00-09
+ */
+const format0 = (val: string | number): string => {
+  if(typeof val === "number") {
+    if(val < 10) return "0" + val
+    return "" + val  
+  }
+  if(val.length < 2) return "0" + val
+  return val
+}
+
+export const valTool = {
+  strToObj,
+  objToStr,
+  minusAndMinimumZero,
+  uniqueArray,
+  format0,
 }
 
 
@@ -148,7 +216,24 @@ export async function liuReq<T = any>(
   return { code: "E5001" }
 }
 
+/** show date / time */
+export function showBasicTime(
+  stamp: number,
+  locale?: SupportedLocale,
+) {
+  const d = new Date(stamp)
+  const { t } = useI18n(dateLang, { locale})
 
+  const mm = valTool.format0(d.getMonth() + 1)
+  const hr = valTool.format0(d.getHours())
+  const min = valTool.format0(d.getMinutes())
+  const MON = t("date_related.m_" + mm)
+  const DAY = t("date_related.day_" + d.getDay())
+  
+  const mm2 = locale === "en" ? MON : String(d.getMonth() + 1)
+  const dd2 = String(d.getDate())
+  return t("date_related.show_1", { mm: mm2, dd: dd2, day: DAY, hr, min })
+}
 
 /**
  * 获取新增的数据的 _id
@@ -1287,59 +1372,6 @@ export function getIpGeo(ctx: FunctionContext) {
   const r = geo?.region
   if(!r) return c
   return `${c}-${r}`
-}
-
-
-/********************* 工具函数 ****************/
-
-// 字符串转对象
-function strToObj<T = any>(str: string): T {
-  let res = {}
-  try {
-    res = JSON.parse(str)
-  }
-  catch(err) {}
-  return res as T
-}
-
-// 对象转字符串
-function objToStr<T = any>(obj: T): string {
-  let str = ``
-  try {
-    str = JSON.stringify(obj)
-  }
-  catch(err) {}
-  return str
-}
-
-/**
- * minus one and make sure that
- * the new value is greater than or equal to 0
- * @param oldVal original value, which is minuend
- * @param subtrahend subtrahend, whose default value is 1
- */
-function minusAndMinimumZero(
-  oldVal: number | undefined,
-  subtrahend: number = 1,
-) {
-  if(!oldVal) return 0
-  let newVal = oldVal - subtrahend
-  if(newVal < 0) return 0
-  return newVal
-}
-
-// removing duplicates from an array
-const uniqueArray = (arr: string[]) => {
-  const uniqueSet = new Set(arr)
-  const uniqueArr = [...uniqueSet]
-  return uniqueArr
-}
-
-export const valTool = {
-  strToObj,
-  objToStr,
-  minusAndMinimumZero,
-  uniqueArray,
 }
 
 
