@@ -241,8 +241,8 @@ export function showBasicTime(
   const mm = valTool.format0(d.getMonth() + 1)
   const hr = valTool.format0(d.getHours())
   const min = valTool.format0(d.getMinutes())
-  const MON = t("date_related.m_" + mm)
-  const DAY = t("date_related.day_" + d.getDay())
+  const MON = t("m_" + mm)
+  const DAY = t("day_" + d.getDay())
   
   const mm2 = locale === "en" ? MON : String(d.getMonth() + 1)
   const dd2 = String(d.getDate())

@@ -140,7 +140,7 @@ async function send_wx_message(
 
   obj.touser = wx_gzh_openid
   if(domain) {
-    obj.touser = `${domain}/${contentId}`
+    obj.url = `${domain}/${contentId}`
   }
   
   let title = atom.title
@@ -157,6 +157,7 @@ async function send_wx_message(
 
   console.log("sendWxTemplateMessage: ")
   console.log(obj)
+  console.log(obj.data)
 
   const res = await sendWxTemplateMessage(access_token, obj)
   console.log(`发送微信模板消息给 ${userId} 结果:`)
