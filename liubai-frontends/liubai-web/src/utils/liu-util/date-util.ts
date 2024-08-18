@@ -153,6 +153,23 @@ export function getCalendarStamp(
   }
 }
 
+export function getRemindStamp(
+  remindMe: LiuRemindMe | undefined,
+  whenStamp: number | undefined,
+) {
+  if(!remindMe) return
+  const { type, early_minute, later, specific_stamp } = remindMe
+  if(type === "specific_time" && specific_stamp) {
+    return formatStamp(specific_stamp)
+  }
+  if(type === "early" && typeof early_minute === 'number' && whenStamp) {
+    return getEarlyStamp(whenStamp, early_minute)
+  }
+  if(type === "later" && later) {
+    return getLaterStamp(later)
+  }
+}
+
 // 用于发布前/编辑时，展示 "提醒我"
 export function getRemindMeStr(
   t: ComposerTranslation,

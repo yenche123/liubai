@@ -16,7 +16,7 @@ export const setWhen = async (
   userId: string,
 ) => {
   const newThread = valTool.copyObject(oldThread)
-  const { whenStamp } = newThread
+  const { whenStamp, remindMe } = newThread
   if(!whenStamp) return
 
   // 1. 显示 date-picker
@@ -24,7 +24,11 @@ export const setWhen = async (
   if(!res.confirm || !res.date) return
 
   // 2. 将新的数据装到 newThread 里
-  newThread.whenStamp = res.date.getTime()
+  const newWhenStamp = res.date.getTime()
+  newThread.whenStamp = newWhenStamp
+  newThread.calendarStamp = liuUtil.getCalendarStamp(newWhenStamp, remindMe)
+  newThread.remindStamp = liuUtil.getRemindStamp(remindMe, newWhenStamp)
+
   soTool.setEdit(newThread)
 
   // 3. 操作 db

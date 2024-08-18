@@ -130,9 +130,8 @@ async function editWhenRemind(
 
   const now1 = time.getTime()
   const newCfg = getNewCfg("lastOperateWhenRemind", now1, oldCfg)
-  const calendarStamp = liuUtil.getCalendarStamp(thread.whenStamp, thread.remindMe)
   const newData: Partial<ContentLocalTable> = {
-    calendarStamp,
+    calendarStamp: thread.calendarStamp,
     whenStamp: thread.whenStamp,
     remindStamp: thread.remindStamp,
     remindMe: thread.remindMe,
