@@ -86,7 +86,8 @@
     "cannot_sync": "純本地模式不支援同步到雲端",
     "copy": "複製",
     "mail": "寫信",
-    "call": "撥號"
+    "call": "撥號",
+    "try_to_open": "嘗試開啟"
   },
   "cui": {
     "plz_input_txt": "請輸入文字"

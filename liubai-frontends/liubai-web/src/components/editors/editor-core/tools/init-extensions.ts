@@ -154,10 +154,20 @@ export function initExtensions(
   ]
 
   if(!props.isEdit) {
-    const CustomLink = Link.configure({
-      openOnClick: false,
-      HTMLAttributes: {
-        class: "liu-link"
+    const CustomLink = Link.extend({
+      addAttributes() {
+        return {
+          ...this.parent?.(),
+          customAttr: {
+            default: null,
+            renderHTML: (attrs) => {
+              return {
+                "class": "liu-link",
+                "data-link": attrs.href,
+              }
+            }
+          }
+        }
       }
     })
   

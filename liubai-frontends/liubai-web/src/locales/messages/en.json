@@ -86,7 +86,8 @@
     "cannot_sync": "It's not supported to sync with cloud on the pure local mode.",
     "copy": "Copy",
     "mail": "Mail",
-    "call": "Call"
+    "call": "Call",
+    "try_to_open": "Try to Open"
   },
   "cui": {
     "plz_input_txt": "Text here"

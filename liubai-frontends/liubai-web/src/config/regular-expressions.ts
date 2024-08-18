@@ -23,6 +23,9 @@ export default {
   // 放到 if else 的最后去判断，应优先判断其他更加特殊的格式
   url: /[\w\./:-]*\w{1,32}\.\w{2,6}[^\n\s\"\'\[\]，。！？]*/g,
 
+  // capture URL Scheme
+  url_scheme: /[a-z][a-z0-9]{1,19}:\/\/([a-z][\w=&%\!\$\/\-\?]{0,88})?/g,
+
   phone: /\+?\d[\d\-]{6,15}(?!\w)/g,
 
   chrome_version: /chrome\/([\d\.]+)/,

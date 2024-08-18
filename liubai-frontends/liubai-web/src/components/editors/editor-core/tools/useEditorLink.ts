@@ -10,6 +10,7 @@ import {
 } from "~/routes/liu-router"
 import liuApi from "~/utils/liu-api"
 import liuUtil from "~/utils/liu-util"
+import reg_exp from "~/config/regular-expressions"
 
 // 为每个 "浏览态" 的链接添加 监听器
 export function useEditorLink(
@@ -26,19 +27,25 @@ export function useEditorLink(
 }
 
 
-
-type LinkType = "phone" | "email" | "other"
-function getLinkType(url: string): LinkType {
+type LinkType = "phone" | "email" | "url_scheme" | "other"
+function getLinkType(
+  url: string,
+  dataLink: string | null,
+): LinkType {
   const res1 = url.startsWith("mailto:")
   if(res1) return "email"
 
   const res2 = url.startsWith("tel:")
   if(res2) return "phone"
 
+  if(dataLink && isUrlScheme(dataLink)) {
+    return "url_scheme"
+  }
+
   return "other"
 }
 
-async function whenTapEmail(email: string, rr: RouteAndLiuRouter) {
+async function whenTapEmail(email: string) {
   const res = await cui.showActionSheet({
     title: email,
     itemList: [
@@ -62,14 +69,15 @@ async function whenTapEmail(email: string, rr: RouteAndLiuRouter) {
     cui.showSnackBar({ text_key: "common.copied" })
   }
   else if(idx === 1) {
-    liuUtil.open.openLink(`mailto:${email}`, { rr })
+    location.href = `mailto:${email}`
   }
 }
 
-async function whenTapPhoneNumber(phone: string, rr: RouteAndLiuRouter) {
-  const cha = liuApi.getCharacteristic()
+async function whenTapPhoneNumber(phone: string) {
+  const { isPC, isMac } = liuApi.getCharacteristic()
 
-  if(cha.isPC) {
+  if(isPC && !isMac) {
+    // filter macOS beacuse people can use FaceTime on macOS
     liuApi.copyToClipboard(phone)
     cui.showSnackBar({ text_key: "common.copied" })
     return
@@ -98,22 +106,74 @@ async function whenTapPhoneNumber(phone: string, rr: RouteAndLiuRouter) {
     cui.showSnackBar({ text_key: "common.copied" })
   }
   else if(idx === 1) {
-    liuUtil.open.openLink(`tel:${phone}`, { rr })
+    location.href = `tel:${phone}`
+  }
+}
+
+function isUrlScheme(dataLink: string) {
+  if(dataLink.startsWith("http")) return false
+  const matches = dataLink.matchAll(reg_exp.url_scheme)
+  const dLen = dataLink.length
+  for(let match of matches) {
+    const mTxt = match[0]
+    const mLen = mTxt.length
+    if(mLen === dLen) return true
+  }
+  return false
+}
+
+async function whenTapUrlScheme(
+  dataLink: string,
+) {
+  const res = await cui.showActionSheet({
+    title: dataLink,
+    itemList: [
+      {
+        text_key: "editor.copy",
+        iconName: "copy",
+      },
+      {
+        text_key: "editor.try_to_open",
+        iconName: "arrow_outward",
+      }
+    ]
+  })
+
+  if(res.result !== "option") return
+  const idx = res.tapIndex
+  if(typeof idx === "undefined") return
+  
+  if(idx === 0) {
+    liuApi.copyToClipboard(dataLink)
+    cui.showSnackBar({ text_key: "common.copied" })
+  }
+  else if(idx === 1) {
+    location.href = dataLink
   }
 }
 
 
-async function whenTapLink(url: string, rr: RouteAndLiuRouter) {
-  const linkType = getLinkType(url)
+async function whenTapLink(
+  a: HTMLLinkElement,
+  url: string, 
+  rr: RouteAndLiuRouter,
+) {
+  const dataLink = a.getAttribute("data-link")
+  const linkType = getLinkType(url, dataLink)
   if(linkType === "email") {
     const email = url.substring(7)
-    whenTapEmail(email, rr)
+    whenTapEmail(email)
     return
   }
 
   if(linkType === "phone") {
     const phone = url.substring(4)
-    whenTapPhoneNumber(phone, rr)
+    whenTapPhoneNumber(phone)
+    return
+  }
+
+  if(linkType === "url_scheme") {
+    whenTapUrlScheme(dataLink as string)
     return
   }
 
@@ -133,7 +193,7 @@ function initEditorLink(
     const a = e.target as HTMLLinkElement
     const url = a.href
     if(!url) return
-    whenTapLink(url, rr)
+    whenTapLink(a, url, rr)
   }
 
   const resetLinks = (parentEl: HTMLElement) => {

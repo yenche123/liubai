@@ -3,7 +3,7 @@ import type { LiuContent, LiuNodeType } from "~/types/types-atom";
 import valTool from "~/utils/basic/val-tool";
 import reg_exp from "~/config/regular-expressions";
 
-type ParseType = "phone" | ""
+type ParseType = "phone" | "url_scheme" | ""
 
 export function addSomethingWhenBrowsing(
   list: LiuContent[],
@@ -52,9 +52,27 @@ function _parseTextsForLink(
       continue
     }
 
+    // parse URL scheme
+    const listUrlScheme = _innerParse(text, reg_exp.url_scheme, "url_scheme")
+    if(listUrlScheme) {
+      list.splice(i, 1, ...listUrlScheme)
+      i--
+      continue
+    }
+
+
   }
 
   return list
+}
+
+function checkUrlScheme(
+  mTxt: string,
+  text: string,
+  startIdx: number,
+) {
+  if(mTxt.startsWith("http")) return false
+  return true
 }
 
 
@@ -119,16 +137,21 @@ function _innerParse(
   let tmpList: LiuContent[] = []
   let tmpEndIdx = 0
   const isPhone = parseType === "phone"
+  const isUrlScheme = parseType === "url_scheme"
 
   for(let match of matches) {
-    let mTxt = match[0]
-    let mLen = mTxt.length
+    const mTxt = match[0]
+    const mLen = mTxt.length
     const startIdx = match.index
     if(startIdx === undefined) continue
     if(isPhone) {
       // 如果是手机号 做更多判断
-      const res = checkPhoneNumber(mTxt, text, startIdx)
-      if(!res) continue
+      const res1 = checkPhoneNumber(mTxt, text, startIdx)
+      if(!res1) continue
+    }
+    if(isUrlScheme) {
+      const res2 = checkUrlScheme(mTxt, text, startIdx)
+      if(!res2) continue
     }
 
     const endIdx = startIdx + mLen
@@ -136,13 +159,18 @@ function _innerParse(
     let href = isPhone ? `tel:${mTxt}` : mTxt
     let openTarget = isPhone ? '_self' : '_blank'
 
+    const attrs = {
+      href,
+      target: openTarget, 
+      class: null,
+    }
     const obj: LiuContent = {
       type: "text",
       text: mTxt,
       marks: [
         {
           "type": "link",
-          "attrs": { href, target: openTarget, class: null }
+          "attrs": attrs,
         }
       ]
     }

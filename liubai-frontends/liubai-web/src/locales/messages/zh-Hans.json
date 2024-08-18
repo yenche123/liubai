@@ -86,7 +86,8 @@
     "cannot_sync": "纯本地模式不支持同步到云端",
     "copy": "复制",
     "mail": "写信",
-    "call": "拨号"
+    "call": "拨号",
+    "try_to_open": "尝试打开"
   },
   "cui": {
     "plz_input_txt": "请输入文字"
