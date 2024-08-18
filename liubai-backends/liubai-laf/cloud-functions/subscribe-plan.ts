@@ -302,7 +302,7 @@ async function handle_create_stripe(
 ): Promise<LiuRqReturn<Res_SubPlan_StripeCheckout>> {
 
   // 1. 参数是否齐全
-  const useTimezone = body.x_liu_timezone
+  const userTimezone = body.x_liu_timezone
   const subscription_id = body.subscription_id
   if(!subscription_id || typeof subscription_id !== "string") {
     return { code: "E4000", errMsg: "subscription_id is required" }
@@ -433,7 +433,7 @@ async function handle_create_stripe(
     stripeCheckoutSession: session,
     meta_data: {
       payment_circle: data_2.payment_circle,
-      payment_timezone: useTimezone,
+      payment_timezone: userTimezone,
       plan: subscription_id,
     },
   }

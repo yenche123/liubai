@@ -951,6 +951,7 @@ export interface Table_User extends BaseTable {
   ww_qynb_external_userid?: string
 
   userAgent?: string
+  timezone?: string
   
 }
 

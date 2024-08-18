@@ -270,6 +270,8 @@ async function handle_enter(
   // 0. get some params
   const user = vRes.userData
   const userAgent = ctx.headers?.['user-agent']
+  const body = ctx.request?.body ?? {}
+  const userTimezone = body.x_liu_timezone 
 
   // 1. 去获取用户基础设置
   const res1 = await getUserSettings(user)
@@ -284,6 +286,10 @@ async function handle_enter(
     updatedStamp: now,
     userAgent,
   }
+  if(userTimezone !== user.timezone) {
+    u.timezone = userTimezone
+  }
+
 
   // 3. 查看 verifyToken 时，是否有生成新的 token serial
   // 若有，送进回调里

@@ -886,8 +886,10 @@ async function handleUserWhileSigningIn(
 
   const systemTheme = body["x_liu_theme"] as SupportedTheme
   const systemLanguage = body["x_liu_language"]
+  const userTimezone = body['x_liu_timezone']
   u.systemTheme = systemTheme
   u.systemLanguage = systemLanguage
+  u.timezone = userTimezone
 
   if(!user.open_id) {
     u.open_id = createOpenId()
