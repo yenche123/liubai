@@ -148,6 +148,11 @@ async function send_wx_message(
     if(atom.hasImage) title = `[${t1("image")}]`
     else if(atom.hasFile) title = `[${t1("file")}]`
   }
+  if(title.length > 20) {
+    title = title.substring(0, 17) + "..."
+  }
+  title = title.replace(/\n/g, " ")
+
   obj.data.thing18.value = title
 
   const str_time = displayTime(calendarStamp, locale, timezone)
@@ -361,10 +366,6 @@ function turnContentIntoAtom(
   }
   else if(res1.liuDesc) {
     title = getSummary(res1.liuDesc)
-  }
-
-  if(title && title.length > 20) {
-    title = title.substring(0, 20) + "..."
   }
 
   const atom: RemindAtom = {
