@@ -25,12 +25,21 @@ export async function main(ctx: FunctionContext) {
 export const commonLang: LangAtom = {
   "zh-Hans": {
     "appName": "留白记事",
+    "image": "图片",
+    "file": "文件",
+    "other": "其它",
   },
   "zh-Hant": {
     "appName": "留白記事",
+    "image": "圖片",
+    "file": "文件",
+    "other": "其它",
   },
   "en": {
-    "appName": "Liubai"
+    "appName": "Liubai",
+    "image": "Image",
+    "file": "File",
+    "other": "Other",
   }
 }
 

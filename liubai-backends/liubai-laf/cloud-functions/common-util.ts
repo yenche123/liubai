@@ -69,6 +69,16 @@ export async function main(ctx: FunctionContext) {
 
 /********************* 基础工具函数 ****************/
 
+const waitMilli = (milli: number = 0): Promise<true> => {
+  let _t = (a: (a1: true) => void) => {
+    setTimeout(() => {
+      a(true)
+    }, milli)
+  }
+
+  return new Promise(_t)
+}
+
 // 字符串转对象
 function strToObj<T = any>(str: string): T {
   let res = {}
@@ -126,6 +136,7 @@ const format0 = (val: string | number): string => {
 }
 
 export const valTool = {
+  waitMilli,
   strToObj,
   objToStr,
   minusAndMinimumZero,

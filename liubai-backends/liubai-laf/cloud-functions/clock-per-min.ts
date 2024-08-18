@@ -14,8 +14,12 @@ import {
   decryptEncData, 
   getSummary, 
   getWeChatAccessToken,
+  showBasicTime,
+  valTool,
 } from "@/common-util";
-import { getCurrentLocale } from "@/common-i18n";
+import { commonLang, getCurrentLocale, useI18n } from "@/common-i18n";
+import { wx_reminder_tmpl } from "@/common-config";
+import { sendWxTemplateMessage } from "./service-send";
 
 const db = cloud.database()
 const _ = db.command
@@ -87,6 +91,8 @@ async function handle_remind() {
     console.warn("access_token is not found")
     return false
   }
+  
+  await batch_send(access_token, atoms2)
 
 }
 
@@ -94,8 +100,61 @@ async function batch_send(
   access_token: string,
   atoms: RemindAtom_2[],
 ) {
+  const numMap = new Map<string, number>()
+  const aLength = atoms.length
 
+  for(let i=0; i<atoms.length; i++) {
+    const v = atoms[i]
+    const userId = v.userId
+    const num = numMap.get(userId) ?? 0
+    if(num > 3) continue
+    numMap.set(userId, num + 1)
+    send_wx_message(access_token, v)
+
+    if(i !== 0 && (i % 5) === 0 && i !== (aLength - 1)) {
+      await valTool.waitMilli(200)
+    }
+  }
   
+}
+
+async function send_wx_message(
+  access_token: string,
+  atom: RemindAtom_2,
+) {
+  const obj = { ...wx_reminder_tmpl }
+  const domain = process.env.LIU_DOMAIN
+  const { 
+    contentId, 
+    locale, 
+    calendarStamp,
+    wx_gzh_openid,
+    userId,
+  } = atom
+
+  obj.touser = wx_gzh_openid
+  if(domain) {
+    obj.touser = `${domain}/${contentId}`
+  }
+  
+  let title = atom.title
+  if(!title) {
+    const { t: t1 } = useI18n(commonLang, { locale })
+    title = `[${t1("other")}]`
+    if(atom.hasImage) title = `[${t1("image")}]`
+    else if(atom.hasFile) title = `[${t1("file")}]`
+  }
+  obj.data.thing18.value = title
+
+  const str_time = showBasicTime(calendarStamp, locale)
+  console.log("str_time: ", str_time)
+  obj.data.time4.value = str_time
+
+  const res = await sendWxTemplateMessage(access_token, obj)
+  console.log(`发送微信模板消息给 ${userId} 结果:`)
+  console.log(res)
+
+  return true
 }
 
 async function find_remind_authors(
