@@ -10,6 +10,9 @@ export interface LpData {
   view: LpView
   accounts: MemberShow[]
 
+  // 一些配置
+  openWithBrowser: boolean
+
   // email 相关
   email: string
   isSendingEmail: boolean

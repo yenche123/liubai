@@ -34,6 +34,7 @@ import liuUtil from "~/utils/liu-util";
 import liuConsole from "~/utils/debug/liu-console";
 import localCache from "~/utils/system/local-cache";
 import { useThrottleFn } from "~/hooks/useVueUse"
+import liuEnv from "~/utils/liu-env";
 
 // 等待向后端调用 init 的结果
 let initPromise: Promise<boolean>
@@ -44,6 +45,7 @@ let hasTap = false
 export function useLoginPage() {
 
   const rr = useRouteAndLiuRouter()
+  const { OPEN_WITH_BROWSER } = liuEnv.getEnv()
 
   const lpData = reactive<LpData>({
     enable: true,
@@ -54,6 +56,7 @@ export function useLoginPage() {
     isSendingEmail: false,
     isSubmittingEmailCode: false,
     isSelectingAccount: false,
+    openWithBrowser: OPEN_WITH_BROWSER,
   })
 
   // 0. 去监听登录成功后的 路由切换

@@ -86,7 +86,7 @@ const {
   </div>
 
   <!-- 使用浏览器打开的提示 -->
-  <open-with-browser></open-with-browser>
+  <open-with-browser v-if="lpData.openWithBrowser"></open-with-browser>
 
 </template>
 <style scoped lang="scss">

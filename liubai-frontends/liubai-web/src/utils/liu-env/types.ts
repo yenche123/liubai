@@ -28,6 +28,7 @@ export interface LiuSystemEnv {
 
   FALLBACK_LOCALE: string
 
+  OPEN_WITH_BROWSER: boolean
   REMOVING_DAYS: number
   DELETING_DAYS: number
 

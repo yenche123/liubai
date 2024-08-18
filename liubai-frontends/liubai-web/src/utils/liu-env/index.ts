@@ -35,6 +35,7 @@ function getEnv(): LiuSystemEnv {
   const FALLBACK_LOCALE = import.meta.env.VITE_FALLBACK_LOCALE
 
   // 系统设置
+  const OPEN_WITH_BROWSER = import.meta.env.VITE_OPEN_WITH_BROWSER
   const REMOVING_DAYS = import.meta.env.VITE_REMOVING_DAYS
   const DELETING_DAYS = import.meta.env.VITE_DELETING_DAYS
 
@@ -114,6 +115,7 @@ function getEnv(): LiuSystemEnv {
     FREE_COMMENT_IMG_NUM: Number(FREE_COMMENT_IMG_NUM),
     PREMIUM_COMMENT_IMG_NUM: Number(PREMIUM_COMMENT_IMG_NUM),
     FALLBACK_LOCALE,
+    OPEN_WITH_BROWSER: OPEN_WITH_BROWSER === "01",
     REMOVING_DAYS: Number(REMOVING_DAYS),
     DELETING_DAYS: Number(DELETING_DAYS),
     IFRAME_PROXY,
