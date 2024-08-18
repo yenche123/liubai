@@ -38,6 +38,9 @@ declare global {
       /** 兜底的语言信息，若该字段不存在，系统会使用 'en' 做兜底 */
       LIU_FALLBACK_LOCALE?: string
 
+      /** 默认时区，比如 "8.5" 就是东 8.5 时区 */
+      LIU_TIMEZONE?: string
+
       /** 商务合作 email */
       LIU_EMAIL_1?: string
 

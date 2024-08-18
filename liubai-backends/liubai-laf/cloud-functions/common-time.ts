@@ -8,7 +8,15 @@ export async function main(ctx: FunctionContext) {
   return true
 }
 
-/********************* 公共函数和变量们 ****************/
+/********************* 常量 ****************/
+// 将 "秒" / "分" / "时" / "天" 转为 毫秒数
+export const SECONED = 1000
+export const MINUTE = 60 * SECONED
+export const HOUR = 60 * MINUTE
+export const DAY = 24 * HOUR
+export const WEEK = 7 * DAY
+
+/********************* 公共函数 ****************/
 
 /** 获取当前时间戳 */
 export function getNowStamp() {
@@ -42,16 +50,31 @@ export function formatTimezone(str?: string) {
   return timezone
 }
 
+export function localizeStamp(stamp: number, timezone?: string) {
+  if(!timezone) {
+    const envTimezone = process.env.LIU_TIMEZONE
+    if(envTimezone) timezone = envTimezone
+    else timezone = "0"
+  }
+
+  const tz = formatTimezone(timezone)
+  const diff = tz - getServerTimezone()
+  const newStamp = stamp + diff * HOUR
+  return newStamp
+}
+
+/** to get the current hours of a specific timezone */
+export function currentHoursOfSpecificTimezone(timezone: number) {
+  const serverTimezone = getServerTimezone() 
+  const serverHrs = (new Date()).getHours()
+  const diffTimezone = timezone - serverTimezone
+  const hrs = (serverHrs + diffTimezone) % 24 
+  return hrs
+}
+
 export function isWithinMillis(stamp: number, ms: number) {
   const now = getNowStamp()
   const diff = now - stamp
   if(diff < ms) return true
   return false
 }
-
-// 将 "秒" / "分" / "时" / "天" 转为 毫秒数
-export const SECONED = 1000
-export const MINUTE = 60 * SECONED
-export const HOUR = 60 * MINUTE
-export const DAY = 24 * HOUR
-export const WEEK = 7 * DAY

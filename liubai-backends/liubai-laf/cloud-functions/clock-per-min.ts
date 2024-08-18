@@ -14,7 +14,7 @@ import {
   decryptEncData, 
   getSummary, 
   getWeChatAccessToken,
-  showBasicTime,
+  displayTime,
   valTool,
 } from "@/common-util";
 import { commonLang, getCurrentLocale, useI18n } from "@/common-i18n";
@@ -30,13 +30,14 @@ interface RemindAtom {
   contentId: string
   userId: string
   memberId: string
-  locale?: SupportedLocale
   title?: string
   hasImage?: boolean
   hasFile?: boolean
   calendarStamp: number
 
   wx_gzh_openid?: string
+  locale?: SupportedLocale
+  timezone?: string
 }
 
 type RemindAtom_2 = RequireSth<RemindAtom, "wx_gzh_openid">
@@ -44,8 +45,10 @@ type RemindAtom_2 = RequireSth<RemindAtom, "wx_gzh_openid">
 interface AuthorAtom {
   userId: string
   memberId: string
-  locale?: SupportedLocale
+
   wx_gzh_openid?: string
+  locale?: SupportedLocale
+  timezone?: string
 }
 
 type AuthorAtom_2 = RequireSth<AuthorAtom, "locale">
@@ -72,23 +75,17 @@ async function handle_remind() {
   startDate = date_fn_set(startDate, { seconds: 55, milliseconds: 0 })
   let endDate = addSeconds(startDate, 59)
 
-  console.log("startDate: ")
-  console.log(startDate)
-  console.log("endDate: ")
-  console.log(endDate)
-
   const startStamp = startDate.getTime()
   const endStamp = endDate.getTime()
 
   const atoms = await get_remind_atoms(startStamp, endStamp)
   if(atoms.length < 1) {
-    console.log("没有任何 atoms")
     return true
   }
 
   const atoms2 = await find_remind_authors(atoms)
   if(atoms2.length < 1) {
-    console.log("没有任何 atoms2")
+    console.warn("没有任何 atoms2")
     return true
   }
 
@@ -136,6 +133,7 @@ async function send_wx_message(
     calendarStamp,
     wx_gzh_openid,
     userId,
+    timezone,
   } = atom
 
   obj.touser = wx_gzh_openid
@@ -152,7 +150,7 @@ async function send_wx_message(
   }
   obj.data.thing18.value = title
 
-  const str_time = showBasicTime(calendarStamp, locale)
+  const str_time = displayTime(calendarStamp, locale, timezone)
   obj.data.time4.value = str_time
 
   console.log("sendWxTemplateMessage: ")
@@ -202,12 +200,10 @@ async function find_remind_authors(
       wx_gzh_openid: 1,
       language: 1,
       systemLanguage: 1,
+      timezone: 1,
     }
     const res1 = await uCol.where(w).field(f).get<Table_User>()
     const results1 = res1.data
-    console.log("results1: ")
-    console.log(results1)
-
     const tmpList2 = packAuthors1(tmpList, results1)
     list_2.push(...tmpList2)
 
@@ -234,8 +230,6 @@ async function find_remind_authors(
 
     const res2 = await mCol.where(w).field(f).get<Table_Member>()
     const results2 = res2.data
-    console.log("results2: ")
-    console.log(results2)
     tmpList = packAuthors2(tmpList, results2)
     list_3.push(...tmpList)
 
@@ -249,16 +243,15 @@ async function find_remind_authors(
       const v2 = atoms[j]
       if(v1.userId === v2.userId) {
         v2.wx_gzh_openid = v1.wx_gzh_openid
+        v2.timezone = v1.timezone
+        v2.locale = v1.locale
       }
     }
   }
 
   // 5. filter atoms without wx_gzh_openid
+  // TODO: web push
   let newAtoms = atoms.filter(v => v.wx_gzh_openid) as RemindAtom_2[]
-  console.log("old atoms: ")
-  console.log(atoms)
-  console.log("new atoms: ")
-  console.log(newAtoms)
   
   return newAtoms
 }
@@ -346,6 +339,7 @@ function packAuthors1(
 
     v1.locale = getCurrentLocale({ user })
     v1.wx_gzh_openid = wx_gzh_openid
+    v1.timezone = user.timezone
   }
 
   return tmpList as AuthorAtom_2[]

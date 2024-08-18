@@ -65,6 +65,8 @@ export const dateLang: LangAtom = {
     "day_5": "五",
     "day_6": "六",
     "show_1": "{mm}/{dd} ({day}) {hr}:{min}",
+    "show_2": "{mm}月{dd}日 {hr}:{min}",
+    "show_3": "{yyyy}年{mm}月{dd}日 {hr}:{min}"
   },
   "zh-Hant": {
     "m_01": "一月",
@@ -87,6 +89,8 @@ export const dateLang: LangAtom = {
     "day_5": "五",
     "day_6": "六",
     "show_1": "{mm}/{dd} ({day}) {hr}:{min}",
+    "show_2": "{mm}月{dd}日 {hr}:{min}",
+    "show_3": "{yyyy}年{mm}月{dd}日 {hr}:{min}"
   },
   "en": {
     "m_01": "Jan",
@@ -109,6 +113,8 @@ export const dateLang: LangAtom = {
     "day_5": "Fr",
     "day_6": "Sa",
     "show_1": "{mm} {dd} ({day}), {hr}:{min}",
+    "show_2": "{mm}-{dd} {hr}:{min}",
+    "show_3": "{yyyy}-{mm}-{dd} {hr}:{min}"
   }
 }
 

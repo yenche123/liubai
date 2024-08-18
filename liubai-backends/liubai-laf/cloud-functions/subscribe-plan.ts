@@ -20,8 +20,8 @@ import type {
   SubscriptionPaymentCircle,
 } from "@/common-types";
 import { 
-  getBasicStampWhileAdding, 
-  getServerTimezone,
+  getBasicStampWhileAdding,
+  currentHoursOfSpecificTimezone,
   getNowStamp,
   formatTimezone,
   MINUTE,
@@ -498,7 +498,7 @@ function getNewExpireStamp(
   // set endDate to 23:59:59 for user's timezone
   const userTimezone = formatTimezone(payment_timezone)
   // get what o'clock for user's timezone
-  const userHrs = getHoursOfSpecificTimezone(userTimezone)
+  const userHrs = currentHoursOfSpecificTimezone(userTimezone)
   const diffHrs = 23 - userHrs
   if(diffHrs !== 0) {
     endDate = addHours(endDate, diffHrs)
@@ -508,13 +508,4 @@ function getNewExpireStamp(
   
   const endStamp = endDate.getTime()
   return endStamp
-}
-
-/** to get the current hours of a specific timezone */
-function getHoursOfSpecificTimezone(timezone: number) {
-  const serverTimezone = getServerTimezone() 
-  const serverHrs = (new Date()).getHours()
-  const diffTimezone = timezone - serverTimezone
-  const hrs = (serverHrs + diffTimezone) % 24 
-  return hrs
 }

@@ -43,7 +43,8 @@ import { createToken, createEncNonce, createImgId } from "@/common-ids"
 import { 
   getNowStamp, 
   getBasicStampWhileAdding, 
-  SECONED, DAY, MINUTE, 
+  SECONED, DAY, MINUTE,
+  localizeStamp, 
 } from "@/common-time"
 import geoip from "geoip-lite"
 import Stripe from "stripe"
@@ -231,11 +232,13 @@ export async function liuReq<T = any>(
 export function showBasicTime(
   stamp: number,
   locale?: SupportedLocale,
+  timezone?: string,
 ) {
   if(!locale) {
     locale = getFallbackLocale()
   }
-  const d = new Date(stamp)
+  const newStamp = localizeStamp(stamp, timezone)
+  const d = new Date(newStamp)
   const { t } = useI18n(dateLang, { locale})
 
   const mm = valTool.format0(d.getMonth() + 1)
@@ -247,6 +250,40 @@ export function showBasicTime(
   const mm2 = locale === "en" ? MON : String(d.getMonth() + 1)
   const dd2 = String(d.getDate())
   return t("show_1", { mm: mm2, dd: dd2, day: DAY, hr, min })
+}
+
+export function displayTime(
+  stamp: number,
+  locale?: SupportedLocale,
+  timezone?: string,
+) {
+  if(!locale) {
+    locale = getFallbackLocale()
+  }
+  const newStamp = localizeStamp(stamp, timezone)
+  const d = new Date(newStamp)
+  const currentStamp = localizeStamp(getNowStamp(), timezone)
+  const d2 = new Date(currentStamp)
+  const { t } = useI18n(dateLang, { locale})
+  
+
+  const yyyy = valTool.format0(d.getFullYear())
+  let mm = String(d.getMonth() + 1)
+  let dd = String(d.getDate())
+  const hr = valTool.format0(d.getHours())
+  const min = valTool.format0(d.getMinutes())
+
+  if(locale === "en") {
+    mm = valTool.format0(mm)
+    dd = valTool.format0(dd) 
+  }
+  
+  const yyyy2 = valTool.format0(d2.getFullYear())
+  if(yyyy !== yyyy2) {
+    return t("show_3", { yyyy, mm, dd, hr, min })
+  }
+
+  return t("show_2", { mm, dd, hr, min })
 }
 
 /**
