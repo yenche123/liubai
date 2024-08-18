@@ -188,7 +188,7 @@ export const wechatMenuClickLang: LangAtom = {
 
 /** 获取兜底语言 */
 let fallbackLocale: SupportedLocale | undefined
-function getFallbackLocale(): SupportedLocale {
+export function getFallbackLocale(): SupportedLocale {
   if(fallbackLocale) return fallbackLocale
   const f = process.env.LIU_FALLBACK_LOCALE
   if(!f) return "en"

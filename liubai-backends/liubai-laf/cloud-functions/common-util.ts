@@ -48,7 +48,7 @@ import {
 import geoip from "geoip-lite"
 import Stripe from "stripe"
 import * as vbot from "valibot"
-import { dateLang, useI18n } from '@/common-i18n'
+import { dateLang, getFallbackLocale, useI18n } from '@/common-i18n'
 
 const db = cloud.database()
 const _ = db.command
@@ -232,6 +232,9 @@ export function showBasicTime(
   stamp: number,
   locale?: SupportedLocale,
 ) {
+  if(!locale) {
+    locale = getFallbackLocale()
+  }
   const d = new Date(stamp)
   const { t } = useI18n(dateLang, { locale})
 
@@ -243,7 +246,7 @@ export function showBasicTime(
   
   const mm2 = locale === "en" ? MON : String(d.getMonth() + 1)
   const dd2 = String(d.getDate())
-  return t("date_related.show_1", { mm: mm2, dd: dd2, day: DAY, hr, min })
+  return t("show_1", { mm: mm2, dd: dd2, day: DAY, hr, min })
 }
 
 /**

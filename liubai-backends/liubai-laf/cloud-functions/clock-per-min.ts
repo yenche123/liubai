@@ -19,7 +19,7 @@ import {
 } from "@/common-util";
 import { commonLang, getCurrentLocale, useI18n } from "@/common-i18n";
 import { wx_reminder_tmpl } from "@/common-config";
-import { sendWxTemplateMessage } from "./service-send";
+import { sendWxTemplateMessage } from "@/service-send";
 
 const db = cloud.database()
 const _ = db.command
@@ -68,7 +68,7 @@ export async function main(ctx: FunctionContext) {
 }
 
 async function handle_remind() {
-  let startDate = addSeconds(new Date(), -30)
+  let startDate = addSeconds(new Date(), -59)
   startDate = date_fn_set(startDate, { seconds: 55, milliseconds: 0 })
   let endDate = addSeconds(startDate, 59)
 
@@ -81,10 +81,16 @@ async function handle_remind() {
   const endStamp = endDate.getTime()
 
   const atoms = await get_remind_atoms(startStamp, endStamp)
-  if(atoms.length < 1) return true
+  if(atoms.length < 1) {
+    console.log("没有任何 atoms")
+    return true
+  }
 
   const atoms2 = await find_remind_authors(atoms)
-  if(atoms2.length < 1) return true
+  if(atoms2.length < 1) {
+    console.log("没有任何 atoms2")
+    return true
+  }
 
   const access_token = await getWeChatAccessToken()
   if(!access_token) {
@@ -147,8 +153,10 @@ async function send_wx_message(
   obj.data.thing18.value = title
 
   const str_time = showBasicTime(calendarStamp, locale)
-  console.log("str_time: ", str_time)
   obj.data.time4.value = str_time
+
+  console.log("sendWxTemplateMessage: ")
+  console.log(obj)
 
   const res = await sendWxTemplateMessage(access_token, obj)
   console.log(`发送微信模板消息给 ${userId} 结果:`)
