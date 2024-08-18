@@ -55,7 +55,7 @@ function _parseTextsForLink(
     // 解析 markdown 格式的链接
     const regMdLink = reg_exp.md_link
     const newText = _encodeBraces(text)
-    let list1 = _innerParse(newText, regMdLink, "markdown_link")
+    const list1 = _innerParse(newText, regMdLink, "markdown_link")
     if(list1) {
       content.splice(i, 1, ...list1)
       i--
@@ -64,7 +64,7 @@ function _parseTextsForLink(
 
     // 解析 email
     const regEmail = reg_exp.email
-    let list2 = _innerParse(text, regEmail, "email")
+    const list2 = _innerParse(text, regEmail, "email")
     if(list2) {
       content.splice(i, 1, ...list2)
       i--
@@ -73,12 +73,22 @@ function _parseTextsForLink(
 
     // 解析 一般链接
     const regUrl = reg_exp.url
-    let list3 = _innerParse(text, regUrl, "url")
+    const list3 = _innerParse(text, regUrl, "url")
     if(list3) {
       content.splice(i, 1, ...list3)
       i--
       continue
     }
+
+    // 更加精准地解析链接
+    const regHttpUrl = reg_exp.exact_url
+    const list4 = _innerParse(text, regHttpUrl, "url")
+    if(list4) {
+      content.splice(i, 1, ...list4)
+      i--
+      continue
+    }
+
   }
 
   return content
