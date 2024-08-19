@@ -273,6 +273,7 @@ async function get_remind_atoms(
     infoType: "THREAD",
     oState: "OK",
     remindStamp: _.and(_.gte(startStamp), _.lte(endStamp)),
+    stateId: _.neq("FINISHED"),
   }
   const cCol = db.collection("Content")
   const atoms: RemindAtom[] = []
