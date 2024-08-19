@@ -59,6 +59,7 @@ export function getBriefing(
     for(let i=0; i<len; i++) {
       const v = newLiuDesc[i]
       const { type, content } = v
+      const isCodeBlock = type === "codeBlock"
       if(content && content.length) {
         let tmpText = listToText(content)
         charNum += valTool.getTextCharNum(tmpText)
@@ -66,11 +67,19 @@ export function getBriefing(
         rowNum += tmpRow
       }
       if(charNum > (magicNum * 2 + TOLERANT_NUM * 2)) {
-        if(type !== "codeBlock") requiredBrief = true
+        if(!isCodeBlock) requiredBrief = true
         if(i < (len - 1)) requiredBrief = true
       }
       if(rowNum > MAX_ROW) {
-        if(type !== "codeBlock") requiredBrief = true
+        if(isCodeBlock) {
+          if(rowNum > MAX_ROW + 1) {
+            requiredBrief = true
+          }
+        }
+        else {
+          requiredBrief = true
+        }
+
         if(i < (len - 1)) requiredBrief = true
       }
       if(requiredBrief) break
@@ -94,6 +103,8 @@ export function getBriefing(
       let tmpRow = getRowNum([v])
       rowNum += tmpRow
     }
+
+
     if(charNum > (magicNum * 2) || rowNum > MAX_ROW) {
       // 字数大于阈值 (magicNum * 2) 或者行数大于 MAX_ROW
       const newNode = _getBreakPoint(v, prevRowNum, prevCharNum)
@@ -106,10 +117,11 @@ export function getBriefing(
       briefing.push(_addPoint3x(v))
       break
     }
+    
+    briefing.push(v)
 
     prevCharNum = charNum
     prevRowNum = rowNum
-    briefing.push(v)
 
     if(rowNum >= 3 && i < (len - 1)) {
       break
@@ -161,9 +173,42 @@ function _getBreakPoint(
     const tmp = _handleParagraph(content, prevCharNum)
     newNode.content = tmp.content
   }
+  else if(type === "codeBlock") {
+    newNode.content = _handleCodeBlock(content, prevRowNum, prevCharNum)
+  }
 
   return newNode
 }
+
+function _handleCodeBlock(
+  items: LiuContent[],
+  prevRowNum: number, 
+  prevCharNum: number,
+) {
+  const v = items[0]
+  const codeText = v?.text
+  if(items.length !== 1 || !codeText) return items
+
+  let leftRowNum = MAX_ROW - prevRowNum
+  if(leftRowNum < 1) return items
+
+  // ensure codeBlock has at least 2 lines
+  if(leftRowNum === 1) leftRowNum = 2
+
+  const tmpList = codeText.split("\n")
+  if(tmpList.length <= leftRowNum) return items
+
+  let text = ""
+  for(let i=0; i<leftRowNum; i++) {
+    const _txt = tmpList[i]
+    text += _txt
+    if(i < (leftRowNum - 1)) text += "\n"
+  }
+
+  const newV = { ...v, text }
+  return [newV]
+}
+
 
 // 返回 blockquote 所需的 content
 function _handleBlockQuote(
