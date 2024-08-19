@@ -124,7 +124,8 @@ const iconColor = "var(--main-normal)"
 
     .as-title {
       width: 100%;
-      height: 48px;
+      box-sizing: border-box;
+      padding: 12px 24px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -134,6 +135,7 @@ const iconColor = "var(--main-normal)"
       border-bottom: 0.5px solid var(--line-default);
       background-color: var(--cui-actionsheet-bg);
       font-weight: 700;
+      text-wrap: balance;
     }
 
     .as-item {

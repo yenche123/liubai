@@ -73,13 +73,19 @@ async function whenTapEmail(email: string) {
   }
 }
 
+
+function copyAndSnackBar(text: string) {
+  liuApi.copyToClipboard(text)
+  cui.showSnackBar({ text_key: "common.copied" })
+}
+
+
 async function whenTapPhoneNumber(phone: string) {
   const { isPC, isMac } = liuApi.getCharacteristic()
 
   if(isPC && !isMac) {
     // filter macOS beacuse people can use FaceTime on macOS
-    liuApi.copyToClipboard(phone)
-    cui.showSnackBar({ text_key: "common.copied" })
+    copyAndSnackBar(phone)
     return
   }
 
@@ -102,8 +108,7 @@ async function whenTapPhoneNumber(phone: string) {
   if(typeof idx === "undefined") return
   
   if(idx === 0) {
-    liuApi.copyToClipboard(phone)
-    cui.showSnackBar({ text_key: "common.copied" })
+    copyAndSnackBar(phone)
   }
   else if(idx === 1) {
     location.href = `tel:${phone}`
@@ -125,6 +130,12 @@ function isUrlScheme(dataLink: string) {
 async function whenTapUrlScheme(
   dataLink: string,
 ) {
+  const { isInWebView } = liuApi.getCharacteristic()
+  if(isInWebView) {
+    copyAndSnackBar(dataLink)
+    return
+  }
+
   const res = await cui.showActionSheet({
     title: dataLink,
     itemList: [
@@ -144,8 +155,7 @@ async function whenTapUrlScheme(
   if(typeof idx === "undefined") return
   
   if(idx === 0) {
-    liuApi.copyToClipboard(dataLink)
-    cui.showSnackBar({ text_key: "common.copied" })
+    copyAndSnackBar(dataLink)
   }
   else if(idx === 1) {
     location.href = dataLink
