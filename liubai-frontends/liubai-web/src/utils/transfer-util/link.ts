@@ -307,8 +307,13 @@ function _handleSocialLink(text: string) {
 
 // 自定义检查 text 是否为一个链接
 function _checkUrl_1(text: string) {
-  const url = valTool.getURL(text)
-  if(!url) return false
+  let url = valTool.getURL(text)
+  if(!url) {
+    url = valTool.getURL(`https://${text}`)
+    if(!url) {
+      return false
+    }
+  }
 
   const firstChar = text[0]
   if(firstChar === "/" || firstChar === ":") return false
