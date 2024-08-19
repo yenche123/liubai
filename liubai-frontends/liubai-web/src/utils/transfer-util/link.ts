@@ -161,7 +161,7 @@ function _innerParse(
     if(startIdx === undefined) continue
 
     if(forType === "email" && mLen < 6) continue
-    if(forType === "url" && mLen < 8) continue
+    if(forType === "url" && mLen < 6) continue
     if(forType === "url" && !_checkUrl_1(mTxt)) continue    
 
     let href = mTxt
