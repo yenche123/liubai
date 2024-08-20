@@ -16,7 +16,7 @@
     "types": [
       "./node_modules/user-agent-data-types",
       "google.accounts",
-      "vite-plugin-pwa/vue"
+      "vite-plugin-pwa/client"
     ],
     "paths": {
       "~/*": ["src/*"]
