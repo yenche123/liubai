@@ -61,7 +61,7 @@ function getEnv(): LiuSystemEnv {
   const BUGFENDER_APPKEY = import.meta.env.VITE_BUGFENDER_APPKEY
 
   // openpanel
-  const OPENPANEL_API = import.meta.env.VITE_OPENPANEL_API
+  const OPENPANEL_API_URL = import.meta.env.VITE_OPENPANEL_API_URL
   const OPENPANEL_CLIENT_ID = import.meta.env.VITE_OPENPANEL_CLIENT_ID
   const OPENPANEL_CLIENT_SECRET = import.meta.env.VITE_OPENPANEL_CLIENT_SECRET
 
@@ -129,7 +129,7 @@ function getEnv(): LiuSystemEnv {
     BUGFENDER_APIURL,
     BUGFENDER_BASEURL,
     BUGFENDER_APPKEY,
-    OPENPANEL_API,
+    OPENPANEL_API_URL,
     OPENPANEL_CLIENT_ID,
     OPENPANEL_CLIENT_SECRET,
     POSTHOG_APIHOST,

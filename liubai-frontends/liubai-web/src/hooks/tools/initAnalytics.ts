@@ -17,7 +17,7 @@ export async function initAnalytics() {
     UMAMI_SCRIPT,
     MS_CLARITY_SCRIPT,
     MS_CLARITY_PROJECT_ID,
-    OPENPANEL_API,
+    OPENPANEL_API_URL,
     OPENPANEL_CLIENT_ID,
     OPENPANEL_CLIENT_SECRET,
     POSTHOG_APIHOST,
@@ -42,8 +42,8 @@ export async function initAnalytics() {
     initClarity(MS_CLARITY_SCRIPT, MS_CLARITY_PROJECT_ID)
   }
 
-  if(OPENPANEL_API && OPENPANEL_CLIENT_ID) {
-    initOpenPanel(OPENPANEL_API, OPENPANEL_CLIENT_ID, OPENPANEL_CLIENT_SECRET)
+  if(OPENPANEL_API_URL && OPENPANEL_CLIENT_ID) {
+    initOpenPanel(OPENPANEL_API_URL, OPENPANEL_CLIENT_ID, OPENPANEL_CLIENT_SECRET)
   }
 
   if(POSTHOG_APIHOST && POSTHOG_APIKEY) {
@@ -143,13 +143,13 @@ async function initPostHog(api_host: string, api_key: string) {
 }
 
 async function initOpenPanel(
-  api: string, 
+  apiUrl: string, 
   client_id: string,
   client_secret?: string,
 ) {
-  const { Openpanel } = await import("@openpanel/web")
-  new Openpanel({
-    url: api,
+  const { OpenPanel } = await import("@openpanel/web")
+  new OpenPanel({
+    apiUrl,
     clientId: client_id,
     clientSecret: client_secret,
     trackScreenViews: true,

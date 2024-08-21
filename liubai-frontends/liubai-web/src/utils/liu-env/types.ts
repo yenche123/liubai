@@ -53,7 +53,7 @@ export interface LiuSystemEnv {
   BUGFENDER_APPKEY?: string
 
   // OpenPanel
-  OPENPANEL_API?: string
+  OPENPANEL_API_URL?: string
   OPENPANEL_CLIENT_ID?: string
   OPENPANEL_CLIENT_SECRET?: string
 
