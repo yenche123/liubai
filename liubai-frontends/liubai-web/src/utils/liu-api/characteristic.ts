@@ -5,18 +5,20 @@ import type { GetChaRes } from "./tools/types"
 
 let isPC: boolean;
 let isMobile: boolean;   // 此字段表示是否为移动装置，包含是否为手机或pad
-let isWeChat: boolean = false;
-let isIOS: boolean = false;
-let isIPadOS: boolean = false;
-let isMac: boolean = false;
-let isWindows: boolean = false;
-let isFeishu: boolean = false;
-let isInWebView: boolean = false;   // 是否在桌面应用 App 的 Webview 中，小程序也算
-let isFirefox: boolean = false;
-let isSafari: boolean = false;
-let isChrome: boolean = false;
-let isEdge: boolean = false;    // if true, isChrome is true as well
+let isWeChat = false;
+let isIOS = false;
+let isIPadOS = false;
+let isMac = false;
+let isWindows = false;
+let isFeishu = false;
+let isInWebView = false;   // 是否在桌面应用 App 的 Webview 中，小程序也算
+let isFirefox = false;
+let isSafari = false;
+let isChrome = false;
+let isEdge = false;    // if true, isChrome is true as well
 let browserVersion: string | undefined;
+let isHarmonyOS = false;
+let isHuaweiBrowser = false;
 
 export const getCharacteristic = (): GetChaRes => {
   if(isPC !== undefined) {
@@ -82,6 +84,14 @@ export const getCharacteristic = (): GetChaRes => {
     isInWebView = true
   }
 
+  if(ua.includes("harmonyos")) {
+    isHarmonyOS = true
+  }
+  if(ua.includes("huaweibrowser")) {
+    isHuaweiBrowser = true
+  }
+
+
   // 判别浏览器
   const edg_version_m = ua.match(reg_exp.edge_version)
   if(edg_version_m) {
@@ -142,5 +152,7 @@ function _returnData(): GetChaRes {
     isChrome,
     isEdge,
     browserVersion,
+    isHarmonyOS,
+    isHuaweiBrowser,
   }
 }

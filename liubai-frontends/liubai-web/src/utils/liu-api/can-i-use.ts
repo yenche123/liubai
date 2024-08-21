@@ -94,7 +94,7 @@ async function hasInstalledPWA(): Promise<LiuYorN> {
     return "U"
   }
   
-  console.log("to call getInstalledRelatedApps............")
+  // console.log("to call getInstalledRelatedApps............")
 
   const d1 = Date.now()
   //@ts-expect-error getInstalledRelatedApps is undefined
@@ -102,9 +102,9 @@ async function hasInstalledPWA(): Promise<LiuYorN> {
   const d2 = Date.now()
 
   // sometimes it consumes too much, like 32s
-  console.log(`getInstalledRelatedApps 耗时: ${d2 - d1} ms`)
-  console.log(relatedApps)
-  console.table(relatedApps)
+  // console.log(`getInstalledRelatedApps 耗时: ${d2 - d1} ms`)
+  // console.log(relatedApps)
+  // console.table(relatedApps)
 
   if(relatedApps.length > 0) return "Y"
   return "N"

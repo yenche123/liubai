@@ -217,7 +217,7 @@ function listenToNewVersion(
 function listenToA2HS(
   ibData: IbData,
 ) {
-
+  const cha = liuApi.getCharacteristic()
   const onceData = localCache.getOnceData()
   if(onceData.a2hs_never_prompt) {
     return {}
@@ -227,6 +227,12 @@ function listenToA2HS(
   const isWithin = time.isWithinMillis(lastCancelStamp, time.DAY)
   if(isWithin) {
     return {}
+  }
+
+  if(onceData.a2hs_installed_stamp) {
+    if(cha.isHarmonyOS || cha.isHuaweiBrowser) {
+      return {}
+    }
   }
 
   const {

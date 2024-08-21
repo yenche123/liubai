@@ -35,6 +35,7 @@ export interface LocalOnceData {
   // a2hs
   a2hs_never_prompt?: boolean
   a2hs_last_cancel_stamp?: number
+  a2hs_installed_stamp?: number
 
   // service worker
   lastCheckSWStamp?: number

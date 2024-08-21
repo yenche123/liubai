@@ -16,4 +16,6 @@ export interface GetChaRes {
   isChrome: boolean
   isEdge: boolean
   browserVersion?: string
+  isHarmonyOS: boolean
+  isHuaweiBrowser: boolean
 }

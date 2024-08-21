@@ -36,6 +36,7 @@ export function useShowAddToHomeScreen() {
   const _appInstalled = () => {
     deferredPrompt = null
     showButtonForA2HS.value = false
+    localCache.setOnceData("a2hs_installed_stamp", time.getTime())
   }
 
   const _testRelatedApps = async () => {
@@ -106,6 +107,7 @@ async function whenA2HS(
 
 
   if(outcome === "accepted" || outcome === "installed") {
+    localCache.setOnceData("a2hs_installed_stamp", time.getTime())
     showButtonForA2HS.value = false
     return
   }
