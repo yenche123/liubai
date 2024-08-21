@@ -601,14 +601,13 @@ async function turnInputIntoMsgObj(
 ): Promise<LiuRqReturn<Wx_Gzh_Msg_Event> | string> {
   const b = ctx.body
   const q = ctx.query
-
-  console.log("看一下 body: ")
-  console.log(b)
-  console.log("看一下 query: ")
-  console.log(q)
   
   // 0.1 which mode it is
   const msgMode = getMsgMode(q, b)
+  if(msgMode === "plain_text" && b) {
+    console.log("看一下 body.xml: ")
+    console.log(b.xml)
+  }
 
   // 0.2 preCheck
   const res0 = preCheck(msgMode)
@@ -632,7 +631,7 @@ async function turnInputIntoMsgObj(
   }
 
   // 3. try to get ciphertext, which applys to most scenarios
-  const payload = b.xml
+  const payload = b?.xml
   if(!payload) {
     console.warn("fails to get xml in body")
     return { code: "E4000", errMsg: "xml in body is required" }
@@ -717,6 +716,8 @@ function getMsgObjForPlainText(
   if(xml.ticket) msgObj.Ticket = xml.ticket[0]
 
   if(xml.menuid) msgObj.MenuId = xml.menuid[0]
+
+  if(xml.status) msgObj.Status = xml.status[0]
 
   return msgObj as Wx_Gzh_Msg_Event
 }

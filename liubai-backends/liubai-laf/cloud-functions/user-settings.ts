@@ -174,8 +174,6 @@ async function handle_set(
   const userId = user._id
   const col_user = db.collection("User")
   const res6 = await col_user.doc(userId).update(u)
-  console.log("update user's theme & lang")
-  console.log(res6)
 
   // 7. update in cache
   const newUser = { ...user, ...u }

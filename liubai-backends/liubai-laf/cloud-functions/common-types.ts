@@ -1868,6 +1868,12 @@ export interface Wx_Gzh_View extends Wx_Gzh_Base {
   MenuId?: string      // the key exists after test
 }
 
+export interface Wx_Gzh_Tmpl_Send extends Wx_Gzh_Base {
+  MsgType: "event"
+  Event: "TEMPLATESENDJOBFINISH"
+  MsgId: string
+  Status: string
+}
 
 
 export type Wx_Gzh_Msg_Event = Wx_Gzh_Auth_Change |
@@ -1878,7 +1884,8 @@ export type Wx_Gzh_Msg_Event = Wx_Gzh_Auth_Change |
   Wx_Gzh_Unsubscribe |
   Wx_Gzh_Scan |
   Wx_Gzh_Click |
-  Wx_Gzh_View
+  Wx_Gzh_View |
+  Wx_Gzh_Tmpl_Send
 
 /******************* Some Types from WeCom  ****************/
 export interface Ww_Res_Base {
