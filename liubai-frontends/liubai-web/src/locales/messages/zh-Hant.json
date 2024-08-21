@@ -167,7 +167,7 @@
     "continue_with_github": "使用 GitHub 登入",
     "continue_with_apple": "使用 Apple 登入",
     "email_verification": "Email 驗證",
-    "email_verification_tip": "驗證代號已被發送至 {email}\n 請檢查你的收件箱或垃圾信箱。",
+    "email_verification_tip": "驗證代號已被發送至 {email}\n 請記得檢查你的垃圾郵件。",
     "verification_code": "驗證代號",
     "choosing_account": "選擇帳號",
     "logging": "正在登入..",
@@ -454,7 +454,7 @@
     "installing_tip": "正在加載新的版本，请稍後再來點擊更新。"
   },
   "index": {
-    "inbox": "收件箱",
+    "inbox": "收件匣",
     "today": "今天",
     "future_24": "接下來一天"
   },

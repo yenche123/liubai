@@ -167,7 +167,7 @@
     "continue_with_github": "使用 GitHub 登录",
     "continue_with_apple": "使用 Apple 登录",
     "email_verification": "邮箱验证",
-    "email_verification_tip": "已发送验证码至 {email}\n 请检查你的收件箱或垃圾邮箱。",
+    "email_verification_tip": "已发送验证码至 {email}\n 请记得检查你的垃圾邮件。",
     "verification_code": "验证码",
     "choosing_account": "选择账号",
     "logging": "正在登录..",
