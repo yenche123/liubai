@@ -55,6 +55,10 @@ const API_SNS_USERINFO = "https://api.weixin.qq.com/sns/userinfo"
 
 const MIN_3 = 3 * MINUTE
 
+
+/***************************** types **************************/
+type MsgMode = "plain_text" | "safe"
+
 /***************************** main **************************/
 export async function main(ctx: FunctionContext) {
   const res = await turnInputIntoMsgObj(ctx)
@@ -598,8 +602,16 @@ async function turnInputIntoMsgObj(
   const b = ctx.body
   const q = ctx.query
 
-  // 0. preCheck
-  const res0 = preCheck()
+  console.log("看一下 body: ")
+  console.log(b)
+  console.log("看一下 query: ")
+  console.log(q)
+  
+  // 0.1 which mode it is
+  const msgMode = getMsgMode(q, b)
+
+  // 0.2 preCheck
+  const res0 = preCheck(msgMode)
   if(res0) {
     return res0
   }
@@ -614,11 +626,10 @@ async function turnInputIntoMsgObj(
   // 2. echostr if we just init the program
   const method = ctx.method
   if(method === "GET" && echostr) {
-    const res2_1 = verifyEchoStr(signature, timestamp, nonce)
+    const res2_1 = verifySignature(signature, timestamp, nonce)
     if(res2_1) return res2_1
     return echostr
   }
-
 
   // 3. try to get ciphertext, which applys to most scenarios
   const payload = b.xml
@@ -627,31 +638,49 @@ async function turnInputIntoMsgObj(
     return { code: "E4000", errMsg: "xml in body is required" }
   }
   const ciphertext = payload.encrypt?.[0]
-  if(!ciphertext) {
+  if(msgMode === "safe" && !ciphertext) {
     console.warn("fails to get encrypt in body")
     return { code: "E4000", errMsg: "Encrypt in body is required"  }
   }
 
-  // 4. verify msg_signature
-  const res4 = verifyMsgSignature(msg_signature, timestamp, nonce, ciphertext)
-  if(res4) {
-    console.warn("fails to verify msg_signature")
-    console.log(res4)
-    return res4
+  // 4.1 verify msg_signature while it is safe mode
+  if(msgMode === "safe") {
+    const res4_1 = verifyMsgSignature(msg_signature, timestamp, nonce, ciphertext)
+    if(res4_1) {
+      console.warn("fails to verify msg_signature")
+      console.log(res4_1)
+      return res4_1
+    }
+  }
+  else {
+    const res4_2 = verifySignature(signature, timestamp, nonce)
+    if(res4_2) {
+      console.warn("fails to verify signature")
+      console.log(res4_2)
+      return res4_2
+    }
   }
 
-  // 5. decrypt 
-  const { message, id } = toDecrypt(ciphertext)
+  let msgObj: Wx_Gzh_Msg_Event | undefined
+  if(msgMode === "safe") {
+    // 5. decrypt 
+    const { message, id } = toDecrypt(ciphertext)
 
-  if(!message) {
-    console.warn("fails to get message")
-    return { code: "E4000", errMsg: "decrypt fail" }
+    if(!message) {
+      console.warn("fails to get message")
+      return { code: "E4000", errMsg: "decrypt fail" }
+    }
+
+    // 6. get msg object
+    msgObj = await getMsgObjForSafeMode(message)
+  }
+  else {
+    msgObj = getMsgObjForPlainText(payload)
+    // console.log("明文模式下的 msgObj: ")
+    // console.log(msgObj)
   }
 
-  // 6. get msg object
-  const msgObj = await getMsgObject(message)
-
-  if(!msgObj) {
+  if(!msgObj || !msgObj.MsgType) {
     console.warn("fails to get msg object")
     return { code: "E5001", errMsg: "get msg object fail" }
   }
@@ -659,8 +688,40 @@ async function turnInputIntoMsgObj(
   return { code: "0000", data: msgObj }
 }
 
+function getMsgObjForPlainText(
+  xml: Record<string, Array<any>>,
+) {
+  let msgObj: any = {}
+  if(xml.tousername) msgObj.ToUserName = xml.tousername[0]
+  if(xml.fromusername) msgObj.FromUserName = xml.fromusername[0]
+  if(xml.createtime) msgObj.CreateTime = xml.createtime[0]
+  if(xml.msgtype) msgObj.MsgType = xml.msgtype[0]
+  if(xml.event) msgObj.Event = xml.event[0]
+  if(xml.eventkey) msgObj.EventKey = xml.eventkey[0]
+  
+  if(xml.openid) msgObj.OpenID = xml.openid[0]
+  if(xml.appid) msgObj.AppID = xml.appid[0]
+  if(xml.revokeinfo) msgObj.RevokeInfo = xml.revokeinfo[0]
 
-async function getMsgObject(message: string) {
+  if(xml.content) msgObj.Content = xml.content[0]
+  if(xml.msgid) msgObj.MsgId = xml.msgid[0]
+  if(xml.msgdataid) msgObj.MsgDataId = xml.msgdataid[0]
+
+  if(xml.picurl) msgObj.PicUrl = xml.picurl[0]
+  if(xml.mediaid) msgObj.MediaId = xml.mediaid[0]
+
+  if(xml.format) msgObj.Format = xml.format[0]
+
+  if(xml.bizmsgmenuid) msgObj.bizmsgmenuid = xml.bizmsgmenuid[0]
+
+  if(xml.ticket) msgObj.Ticket = xml.ticket[0]
+
+  if(xml.menuid) msgObj.MenuId = xml.menuid[0]
+
+  return msgObj as Wx_Gzh_Msg_Event
+}
+
+async function getMsgObjForSafeMode(message: string) {
   let res: Wx_Gzh_Msg_Event | undefined 
   const parser = new xml2js.Parser({explicitArray : false})
   try {
@@ -668,7 +729,7 @@ async function getMsgObject(message: string) {
     res = xml
   }
   catch(err) {
-    console.warn("getMsgObject fails")
+    console.warn("getMsgObjForSafeMode fails")
     console.log(err)
   }
 
@@ -677,14 +738,33 @@ async function getMsgObject(message: string) {
 
 /****************************** helper functions ******************************/
 
-function preCheck(): LiuErrReturn | undefined {
+function getMsgMode(
+  q: Record<string, any>,
+  b: Record<string, any>,
+): MsgMode {
+  const encrypt_type = q.encrypt_type
+  const encrypt = b.xml.encrypt
+
+  console.log("encrypt_type: ", encrypt_type)
+  console.log("encrypt: ", encrypt)
+
+  if(encrypt_type && encrypt) {
+    return "safe"
+  }
+  
+  return "plain_text"
+}
+
+function preCheck(
+  msgMode: MsgMode,
+): LiuErrReturn | undefined {
   const _env = process.env
   const token = _env.LIU_WX_GZ_TOKEN
   if(!token) {
     return { code: "E5001", errMsg: "LIU_WX_GZ_TOKEN is empty" }
   }
   const key = _env.LIU_WX_GZ_ENCODING_AESKEY
-  if(!key) {
+  if(!key && msgMode === "safe") {
     return { code: "E5001", errMsg: "LIU_WX_GZ_ENCODING_AESKEY is empty" }
   }
 }
@@ -710,29 +790,6 @@ function toDecrypt(
   return { message, id }
 }
 
-function verifyEchoStr(
-  signature: string, 
-  timestamp: string, 
-  nonce: string,
-): LiuErrReturn | undefined {
-  const _env = process.env
-  const token = _env.LIU_WX_GZ_TOKEN as string
-  const arr = [token, timestamp, nonce].sort()
-
-  const str = arr.join('')
-  const sha1 = crypto.createHash('sha1')
-  sha1.update(str)
-  const sig = sha1.digest('hex')
-  
-  if(sig !== signature) {
-    console.warn("verifyEchoStr failed")
-    console.log("sig caculated: ", sig)
-    console.log("signature: ", signature)
-    return { code: "E4003", errMsg: "signature verification failed" }
-  }
-}
-
-
 function verifyMsgSignature(
   msg_signature: string, 
   timestamp: string, 
@@ -752,5 +809,25 @@ function verifyMsgSignature(
     console.log("sig caculated: ", sig)
     console.log("msg_signature: ", msg_signature)
     return { code: "E4003", errMsg: "msg_signature verification failed" }
+  }
+}
+
+function verifySignature(
+  signature: string,
+  timestamp: string, 
+  nonce: string,
+) {
+  const _env = process.env
+  const token = _env.LIU_WX_GZ_TOKEN as string
+  const arr = [token, timestamp, nonce].sort()
+  const str = arr.join('')
+  const sha1 = crypto.createHash('sha1')
+  sha1.update(str)
+  const sig = sha1.digest('hex')
+  if(sig !== signature) {
+    console.warn("signature verification failed")
+    console.log("sig caculated: ", sig)
+    console.log("signature: ", signature)
+    return { code: "E4003", errMsg: "signature verification failed" }
   }
 }
