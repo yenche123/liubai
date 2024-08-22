@@ -1801,7 +1801,7 @@ export interface Wx_Gzh_Auth_Change extends Wx_Gzh_Base {
 // https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Receiving_standard_messages.html
 export interface Wx_Gzh_Text extends Wx_Gzh_Base {
   MsgType: "text"
-  Content: string
+  Content: string    // if we got unsupported message, it would be: "[收到不支持的消息类型，暂无法显示]"
   MsgId: string
   MsgDataId?: string
 }
@@ -1817,7 +1817,45 @@ export interface Wx_Gzh_Image extends Wx_Gzh_Base {
 export interface Wx_Gzh_Voice extends Wx_Gzh_Base {
   MsgType: "voice"
   MediaId: string
-  Format: string
+  Format: string       // e.g. "amr"，"speex"
+  MsgId: string
+  MsgDataId?: string
+  recognition?: string
+  MediaId16K?: string
+}
+
+export interface Wx_Gzh_Video extends Wx_Gzh_Base {
+  MsgType: "video"
+  MediaId: string
+  ThumbMediaId: string
+  MsgId: string
+  MsgDataId?: string
+}
+
+export interface Wx_Gzh_ShortVideo extends Wx_Gzh_Base {
+  MsgType: "shortvideo"
+  MediaId: string
+  ThumbMediaId: string
+  MsgId: string
+  MsgDataId?: string
+}
+
+// TODO: Location
+export interface Wx_Gzh_Location extends Wx_Gzh_Base {
+  MsgType: "location"
+  Location_X: string  // 纬度, e.g. "26.953295"
+  Location_Y: string  // 经度, e.g. "100.212433"
+  Scale: string       // 缩放大小, e.g. "15"
+  Label: string       // description, e.g. 玉龙纳西族自治县Y010与新尚段交叉口
+  MsgId: string
+  MsgDataId?: string
+}
+
+export interface Wx_Gzh_Link extends Wx_Gzh_Base {
+  MsgType: "link"
+  Title: string
+  Description: string
+  Url: string
   MsgId: string
   MsgDataId?: string
 }
@@ -1865,7 +1903,7 @@ export interface Wx_Gzh_View extends Wx_Gzh_Base {
   MsgType: "event"
   Event: "VIEW"
   EventKey: string     // URL to be opened
-  MenuId?: string      // the key exists after test
+  MenuId?: string      // the key exists after testing
 }
 
 export interface Wx_Gzh_Tmpl_Send extends Wx_Gzh_Base {

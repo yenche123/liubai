@@ -698,6 +698,7 @@ function getMsgObjForPlainText(
   if(xml.event) msgObj.Event = xml.event[0]
   if(xml.eventkey) msgObj.EventKey = xml.eventkey[0]
   
+  // auth change event
   if(xml.openid) msgObj.OpenID = xml.openid[0]
   if(xml.appid) msgObj.AppID = xml.appid[0]
   if(xml.revokeinfo) msgObj.RevokeInfo = xml.revokeinfo[0]
@@ -711,13 +712,33 @@ function getMsgObjForPlainText(
 
   if(xml.format) msgObj.Format = xml.format[0]
 
+  // msg menu
   if(xml.bizmsgmenuid) msgObj.bizmsgmenuid = xml.bizmsgmenuid[0]
 
   if(xml.ticket) msgObj.Ticket = xml.ticket[0]
 
   if(xml.menuid) msgObj.MenuId = xml.menuid[0]
 
+  // template message sent
   if(xml.status) msgObj.Status = xml.status[0]
+
+  // location
+  if(xml.location_x) msgObj.Location_X = xml.location_x[0]
+  if(xml.location_y) msgObj.Location_Y = xml.location_y[0]
+  if(xml.scale) msgObj.Scale = xml.scale[0]
+  if(xml.label) msgObj.Label = xml.label[0]
+
+  // link
+  if(xml.title) msgObj.Title = xml.title[0]
+  if(xml.description) msgObj.Description = xml.description[0]
+  if(xml.url) msgObj.Url = xml.url[0]
+
+  // voice
+  if(xml.recognition) msgObj.Recognition = xml.recognition[0]
+  if(xml.mediaid16k) msgObj.MediaId16K = xml.mediaid16k[0]
+
+  // video
+  if(xml.thumbmediaid) msgObj.ThumbMediaId = xml.thumbmediaid[0]
 
   return msgObj as Wx_Gzh_Msg_Event
 }
