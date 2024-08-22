@@ -27,11 +27,13 @@ import { type EcSelectionChangeData } from "../../editor-core/tools/types";
 import { useDebounceFn } from "~/hooks/useVueUse";
 import { deviceChaKey } from '~/utils/provide-keys';
 import { checkCanSubmit } from "./some-funcs";
+import { checkIfReminderEnabled } from "./reminder-tip";
 
 
 let collectTimeout: LiuTimeout
 let spaceIdRef: Ref<string>
 let spaceTypeRef: Ref<SpaceType>
+let memberIdRef: Ref<string>
 
 const SEC_5 = time.SECONED * 5
 
@@ -53,6 +55,7 @@ export function useCeData(
   const wRefs = storeToRefs(wStore)
   spaceIdRef = wRefs.spaceId
   spaceTypeRef = wRefs.spaceType as Ref<SpaceType>
+  memberIdRef = wRefs.memberId
 
   // 监听用户操作 images 的变化，去存储到 IndexedDB 上
   watch(() => ceData.images, (newV) => {
@@ -299,6 +302,12 @@ function toRemindMeChange(
 ) {
   ctx.ceData.remindMe = val ? val : undefined
   collectState(ctx)
+
+  // check out if the notification is enabled
+  if(!val) return
+  const memberId = memberIdRef.value
+  if(!memberId) return
+  checkIfReminderEnabled(memberId)
 }
 
 function toTitleChange(

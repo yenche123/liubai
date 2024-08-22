@@ -91,6 +91,7 @@ function getEnv(): LiuSystemEnv {
   const C_LINE = import.meta.env.VITE_CONNECT_LINE === "01"
   const C_TEAMS = import.meta.env.VITE_CONNECT_TEAMS === "01"
   const C_SLACK = import.meta.env.VITE_CONNECT_SLACK === "01"
+  const NOTIFICATION_PRIORITY = import.meta.env.VITE_NOTIFICATION_PRIORITY
 
   // do not use sync system even if API_DOMAIN is set
   const donotUseSync = import.meta.env.VITE_DONOT_USE_SYNC
@@ -149,6 +150,7 @@ function getEnv(): LiuSystemEnv {
     C_LINE,
     C_TEAMS,
     C_SLACK,
+    NOTIFICATION_PRIORITY,
     DONOT_USE_SYNC,
   }
   return _env

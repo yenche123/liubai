@@ -83,6 +83,7 @@ export interface LiuSystemEnv {
   C_LINE?: boolean
   C_TEAMS?: boolean
   C_SLACK?: boolean
+  NOTIFICATION_PRIORITY?: "wx_gzh" | "web_push" | "disable"
 
   // don't use sync-system
   DONOT_USE_SYNC?: boolean

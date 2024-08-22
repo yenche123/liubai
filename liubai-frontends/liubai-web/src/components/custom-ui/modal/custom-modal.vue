@@ -3,6 +3,7 @@
 // 因为可能会放在导航守卫里去触发 showModal 这就会产生冲突
 // 比如：导航守卫里阻断了本次的路由跳转然后展示 modal，结果 showModal 又触发路由变化
 // 就会进入死循环
+import { computed } from "vue";
 import { initModal } from "./tools/useCustomModal"
 import { useI18n } from "vue-i18n";
 
@@ -16,6 +17,7 @@ const {
   TRANSITION_DURATION: modalTranMs,
   onTapTip: onTapModalTip,
 } = initModal()
+const iconUrl = computed(() => modalData.iconUrl)
 
 </script>
 <template>
@@ -37,6 +39,9 @@ const {
         :coverFillStroke="false"
         class="cui-modal-icon"
       ></svg-icon>
+      <div v-else-if="modalData.iconUrl"
+        class="cui-modal-icon cui-modal-pic"
+      ></div>
 
       <p v-if="modalData.content">{{ modalData.content }}</p>
       <p v-else-if="modalData.content_key && modalData.content_opt">{{ t(modalData.content_key, modalData.content_opt) }}</p>
@@ -140,10 +145,15 @@ const {
     }
     
     .cui-modal-icon {
-      widows: 60px;
+      width: 60px;
       height: 60px;
       margin-block-end: 20px;
       z-index: 5112;
+    }
+
+    .cui-modal-pic {
+      background-image: v-bind("'url(' + iconUrl + ')'");
+      background-size: contain;
     }
 
 

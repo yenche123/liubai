@@ -487,5 +487,9 @@
     "scan_2": "請用微信 App，掃描 QR Code 關注「留白记事」",
     "screenshot": "請截圖後，用微信掃描打開",
     "title": "你的專屬 QR Code 已生成"
+  },
+  "notification": {
+    "open_wx_gzh": "追蹤微信公眾號，留白才可以提醒到你。",
+    "to_follow": "去追蹤"
   }
 }

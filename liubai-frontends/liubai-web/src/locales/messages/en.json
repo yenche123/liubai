@@ -487,5 +487,9 @@
     "scan_2": "Scan the QR code using WeChat to follow \"Liubai\"",
     "title": "Your exclusive QR code",
     "screenshot": "Screenshot and open it on WeChat please"
+  },
+  "notification": {
+    "open_wx_gzh": "Please follow the WeChat Subscription. Liubai will remind you only after that.",
+    "to_follow": "Follow"
   }
 }
