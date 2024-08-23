@@ -96,6 +96,7 @@ function getUploadTokenViaQiniu(
     fsizeLimit: hasSubscribed ? MB_100 : MB_10,
     callbackUrl: qiniu_callback_url,
     callbackBody,
+    callbackBodyType: 'application/json'
   }
 
   const putPolicy = new qiniu.rs.PutPolicy(opt)

@@ -11,7 +11,6 @@ import cloud from '@lafjs/cloud'
 import { getNowStamp } from "@/common-time"
 import * as vbot from "valibot"
 import qiniu from "qiniu"
-import { restoreQiniuReqBody } from "@/file-utils"
 
 const db = cloud.database()
 
@@ -69,9 +68,8 @@ function checkCallbackIsFromQiniu(
   const sKey = _env.LIU_QINIU_SECRET_KEY ?? ""
   const mac = new qiniu.auth.digest.Mac(aKey, sKey)
   const reqURI = _env.LIU_QINIU_CALLBACK_URL ?? ""
-  const reqBody = restoreQiniuReqBody(body)
-  const accessToken = qiniu.util.generateAccessToken(mac, reqURI, reqBody)
-
+  const accessToken = qiniu.util.generateAccessToken(mac, reqURI)
+  
   if(Authorization !== accessToken) {
     console.warn("Authorization is not equal to accessToken")
     console.log("Authorization: ", Authorization)

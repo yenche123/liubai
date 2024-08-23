@@ -1,13 +1,13 @@
 import type {
   LiuTimeout,
   DownloadFileOpt,
+  DownloadFileRes,
   DownloadFileResolver,
 } from '@/common-types';
-import { getSuffix, valTool } from '@/common-util';
+import { getSuffix } from '@/common-util';
 import FormData from 'form-data';
 import qiniu from "qiniu";
 import { createFileRandom } from '@/common-ids';
-import { URLSearchParams } from 'node:url';
 
 /********************* constants *****************/
 const MB = 1024 * 1024
@@ -25,7 +25,7 @@ export async function main(ctx: FunctionContext) {
 export function downloadFile(
   url: string,
   opt?: DownloadFileOpt,
-) {
+): Promise<DownloadFileRes> {
   let timeout: LiuTimeout
   const max_sec = opt?.max_sec ?? 30
 
@@ -113,7 +113,7 @@ interface QutOpt {
   whichType: string     // e.g. "wechat-logo"
 }
 
-function qiniuUploadToken(
+export function qiniuUploadToken(
   opt: QutOpt
 ) {
   // 1. get parameters (形参)
@@ -159,6 +159,7 @@ function qiniuUploadToken(
     fsizeLimit,
     callbackUrl,
     callbackBody,
+    callbackBodyType: 'application/json'
   }
 
   const putPolicy = new qiniu.rs.PutPolicy(arg)
@@ -170,35 +171,12 @@ export function qiniuCallBackBody(
   customKey: string,
   endUser?: boolean,
 ) {
-  let callbackBody = "bucket=$(bucket)&key=$(key)&hash=$(etag)&fname=$(fname)"
-  callbackBody += "&fsize=$(fsize)&mimeType=$(mimeType)"
-  if(endUser) callbackBody += "&endUser=$(endUser)"
-  callbackBody += `&customKey=${customKey}`
-  return callbackBody
-}
-
-export function restoreQiniuReqBody(
-  body: Record<string, string>,
-) {
-  if(!body) return ""
-  const b = valTool.copyObject(body)
-  const sp = new URLSearchParams()
-  
-  if(b.bucket) sp.append('bucket', b.bucket)
-  if(b.key) sp.append('key', b.key)
-  if(b.hash) sp.append('hash', b.hash)
-  if(b.fname) sp.append('fname', b.fname)
-  if(b.fsize) sp.append('fsize', b.fsize)
-  if(b.mimeType) sp.append('mimeType', b.mimeType)
-  if(b.endUser) sp.append('endUser', b.endUser)
-  if(b.customKey) sp.append('customKey', b.customKey)
-  
-  const str = sp.toString()
+  let str = `{"bucket":"$(bucket)","key":"$(key)","hash":"$(etag)","fname":"$(fname)"`
+  str += `,"fsize":"$(fsize)","mimeType":"$(mimeType)"`
+  if(endUser) str += `,"endUser":"$(endUser)"`
+  str += `,"customKey":"${customKey}"}`
   return str
 }
-
-
-
 
 /********************* qiniu ends ****************/
 
