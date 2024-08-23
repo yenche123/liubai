@@ -1212,7 +1212,8 @@ export interface Param_WebhookQiniu {
   fsize: string
   fname: string
   mimeType: string
-  endUser: string
+  customKey: string
+  endUser?: string
 }
 
 export const Sch_Param_WebhookQiniu = vbot.object({

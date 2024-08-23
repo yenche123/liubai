@@ -14,6 +14,7 @@ import type {
   Res_FileSet_UploadToken,
 } from "@/common-types"
 import { createFileRandom } from "@/common-ids"
+import { qiniuCallBackBody } from "@/file-utils"
 
 const MB = 1024 * 1024
 const MB_10 = 10 * MB
@@ -83,9 +84,7 @@ function getUploadTokenViaQiniu(
   const prefix = `${qiniu_folder}/${user._id}-${r}`
 
   // 2. 构造上传凭证
-  let callbackBody = "bucket=$(bucket)&key=$(key)&hash=$(etag)&fname=$(fname)"
-  callbackBody += "&fsize=$(fsize)&mimeType=$(mimeType)&endUser=$(endUser)"
-  callbackBody += `&customKey=${qiniu_custom_key}`
+  let callbackBody = qiniuCallBackBody(qiniu_custom_key, true)
 
   const opt = {
     scope: `${qiniu_bucket}:${prefix}`,

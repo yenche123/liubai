@@ -52,6 +52,10 @@ export async function main(
   }
   if(preRes === "N") {
     console.warn("非法访问.............")
+    console.log("=========== 当前入参特征信息 ===========")
+    console.log("目标函数: ", funcName)
+    console.log("当前 ip: ", ip)
+    console.log("=========== ============== ===========")
     return { code: "E4003" }
   }
   

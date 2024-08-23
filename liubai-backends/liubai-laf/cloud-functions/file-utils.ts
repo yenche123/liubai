@@ -3,7 +3,7 @@ import type {
   DownloadFileOpt,
   DownloadFileResolver,
 } from '@/common-types'
-import { getSuffix } from '@/common-util'
+import { getSuffix, valTool } from '@/common-util'
 import FormData from 'form-data'
 import qiniu from "qiniu"
 import { createFileRandom } from '@/common-ids'
@@ -146,9 +146,7 @@ function qiniuUploadToken(
   const prefix = `${folder}/${opt.whichType}-${r}`
 
   // 3. constuct upload token
-  let callbackBody = "bucket=$(bucket)&key=$(key)&hash=$(etag)&fname=$(fname)"
-  callbackBody += "&fsize=$(fsize)&mimeType=$(mimeType)"
-  callbackBody += `&customKey=${customKey}`
+  let callbackBody = qiniuCallBackBody(customKey)
 
   // 4. make argument (实参)
   const arg = {
@@ -166,6 +164,52 @@ function qiniuUploadToken(
   const uploadToken = putPolicy.uploadToken(mac)
   return uploadToken
 }
+
+export function qiniuCallBackBody(
+  customKey: string,
+  endUser?: boolean,
+) {
+  let callbackBody = "bucket=$(bucket)&key=$(key)&hash=$(etag)&fname=$(fname)"
+  callbackBody += "&fsize=$(fsize)&mimeType=$(mimeType)"
+  if(endUser) callbackBody += "&endUser=$(endUser)"
+  callbackBody += `&customKey=${customKey}`
+  return callbackBody
+}
+
+export function restoreQiniuReqBody(
+  body: Record<string, string>,
+) {
+  if(!body) return ""
+  const b = valTool.copyObject(body)
+
+  const keys = Object.keys(b)
+  const kLen = keys.length
+  if(kLen < 1) return ""
+  for(let i=0; i<kLen; i++) {
+    const key = keys[i]
+    const val = b[key]
+    b[key] = valTool.encode_URI_component(val)
+  }
+
+  let str = ""
+  if(b.bucket) str += `bucket=${b.bucket}&`
+  if(b.key) str += `key=${b.key}&`
+  if(b.hash) str += `hash=${b.hash}&`
+  if(b.fname) str += `fname=${b.fname}&`
+  if(b.fsize) str += `fsize=${b.fsize}&`
+  if(b.mimeType) str += `mimeType=${b.mimeType}&`
+  if(b.endUser) str += `endUser=${b.endUser}&`
+  if(b.customKey) str += `customKey=${b.customKey}&`
+  
+  // 移除最后一个 '&'
+  if(str.endsWith("&")) {
+    str = str.substring(0, str.length - 1)
+  }
+  
+  return str
+}
+
+
 
 
 /********************* qiniu ends ****************/

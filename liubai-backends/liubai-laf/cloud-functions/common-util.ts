@@ -136,6 +136,34 @@ const format0 = (val: string | number): string => {
   return val
 }
 
+
+const copyObject = <T = any>(obj: T): T => {
+  let type = typeof obj
+  if(type !== "object") return obj
+
+  let obj2: T;
+  try {
+    obj2 = JSON.parse(JSON.stringify(obj))
+  }
+  catch(err) {
+    return obj
+  }
+  return obj2
+}
+
+
+const encode_URI_component = (uri: string | boolean | number) => {
+  let str = ""
+  try {
+    str = encodeURIComponent(uri)
+  }
+  catch(err) {
+    console.warn("encodeURIComponent 出错......")
+    console.log(err)
+  }
+  return str
+}
+
 export const valTool = {
   waitMilli,
   strToObj,
@@ -143,6 +171,8 @@ export const valTool = {
   minusAndMinimumZero,
   uniqueArray,
   format0,
+  copyObject,
+  encode_URI_component,
 }
 
 
