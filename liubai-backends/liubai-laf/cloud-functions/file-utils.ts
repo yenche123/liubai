@@ -2,11 +2,12 @@ import type {
   LiuTimeout,
   DownloadFileOpt,
   DownloadFileResolver,
-} from '@/common-types'
-import { getSuffix, valTool } from '@/common-util'
-import FormData from 'form-data'
-import qiniu from "qiniu"
-import { createFileRandom } from '@/common-ids'
+} from '@/common-types';
+import { getSuffix, valTool } from '@/common-util';
+import FormData from 'form-data';
+import qiniu from "qiniu";
+import { createFileRandom } from '@/common-ids';
+import { URLSearchParams } from 'node:url';
 
 /********************* constants *****************/
 const MB = 1024 * 1024
@@ -181,31 +182,18 @@ export function restoreQiniuReqBody(
 ) {
   if(!body) return ""
   const b = valTool.copyObject(body)
-
-  const keys = Object.keys(b)
-  const kLen = keys.length
-  if(kLen < 1) return ""
-  for(let i=0; i<kLen; i++) {
-    const key = keys[i]
-    const val = b[key]
-    b[key] = valTool.encode_URI_component(val)
-  }
-
-  let str = ""
-  if(b.bucket) str += `bucket=${b.bucket}&`
-  if(b.key) str += `key=${b.key}&`
-  if(b.hash) str += `hash=${b.hash}&`
-  if(b.fname) str += `fname=${b.fname}&`
-  if(b.fsize) str += `fsize=${b.fsize}&`
-  if(b.mimeType) str += `mimeType=${b.mimeType}&`
-  if(b.endUser) str += `endUser=${b.endUser}&`
-  if(b.customKey) str += `customKey=${b.customKey}&`
+  const sp = new URLSearchParams()
   
-  // 移除最后一个 '&'
-  if(str.endsWith("&")) {
-    str = str.substring(0, str.length - 1)
-  }
+  if(b.bucket) sp.append('bucket', b.bucket)
+  if(b.key) sp.append('key', b.key)
+  if(b.hash) sp.append('hash', b.hash)
+  if(b.fname) sp.append('fname', b.fname)
+  if(b.fsize) sp.append('fsize', b.fsize)
+  if(b.mimeType) sp.append('mimeType', b.mimeType)
+  if(b.endUser) sp.append('endUser', b.endUser)
+  if(b.customKey) sp.append('customKey', b.customKey)
   
+  const str = sp.toString()
   return str
 }
 

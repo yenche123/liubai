@@ -22,8 +22,8 @@ export async function main(ctx: FunctionContext) {
     return { code: "E4000", errMsg: "body is required in webhook-qiniu" }
   }
 
-  console.log("webhook-qiniu called.........")
-  console.log(ctx.body)
+  // console.log("webhook-qiniu called.........")
+  // console.log(ctx.body)
 
   // 1. check if the callback is from qiniu
   const res1 = checkCallbackIsFromQiniu(ctx)
@@ -64,17 +64,20 @@ function checkCallbackIsFromQiniu(
 
   const headers = ctx.headers
   const Authorization = headers?.authorization
-  console.log("Authorization: ", Authorization)
   
   const aKey = _env.LIU_QINIU_ACCESS_KEY ?? ""
   const sKey = _env.LIU_QINIU_SECRET_KEY ?? ""
   const mac = new qiniu.auth.digest.Mac(aKey, sKey)
   const reqURI = _env.LIU_QINIU_CALLBACK_URL ?? ""
   const reqBody = restoreQiniuReqBody(body)
-  console.log("reqBody: ")
-  console.log(reqBody)
   const accessToken = qiniu.util.generateAccessToken(mac, reqURI, reqBody)
-  console.log("accessToken: ", accessToken)
+
+  if(Authorization !== accessToken) {
+    console.warn("Authorization is not equal to accessToken")
+    console.log("Authorization: ", Authorization)
+    console.log("accessToken: ", accessToken)
+    return false
+  }
 
   return true
 }
