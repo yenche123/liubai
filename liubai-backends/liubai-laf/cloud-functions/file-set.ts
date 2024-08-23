@@ -15,6 +15,10 @@ import type {
 } from "@/common-types"
 import { createFileRandom } from "@/common-ids"
 
+const MB = 1024 * 1024
+const MB_10 = 10 * MB
+const MB_100 = 100 * MB
+
 export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}
 
@@ -74,10 +78,6 @@ function getUploadTokenViaQiniu(
   const qiniu_custom_key = _env.LIU_QINIU_CUSTOM_KEY ?? ""
   const qiniu_folder = _env.LIU_QINIU_FOLDER || "users"
   const mac = new qiniu.auth.digest.Mac(qiniu_access_key, qiniu_secret_key)
-
-  const MB = 1024 * 1024
-  const MB_10 = 10 * MB
-  const MB_100 = 100 * MB
 
   const r = createFileRandom()
   const prefix = `${qiniu_folder}/${user._id}-${r}`

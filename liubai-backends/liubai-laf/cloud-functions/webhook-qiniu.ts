@@ -93,6 +93,11 @@ function getReturnData(
 async function recordQuota(
   body: Param_WebhookQiniu,
 ) {
+  const userId = body.endUser
+  if(!userId) {
+    return false
+  }
+
   let theSize = 0
   try {
     const s = body.fsize
@@ -106,7 +111,6 @@ async function recordQuota(
   }
   if(theSize < 1) theSize = 1
 
-  const userId = body.endUser
   const col_user = db.collection("User")
   const res1 = await col_user.doc(userId).get<Table_User>()
   const theUser = res1.data

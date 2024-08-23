@@ -5,6 +5,12 @@ import type {
 } from '@/common-types'
 import { getSuffix } from '@/common-util'
 import FormData from 'form-data'
+import qiniu from "qiniu"
+import { createFileRandom } from '@/common-ids'
+
+/********************* constants *****************/
+const MB = 1024 * 1024
+const MB_10 = 10 * MB
 
 /********************* empty function ****************/
 export async function main(ctx: FunctionContext) {
@@ -97,4 +103,70 @@ export async function responseToFormData(
   return { form }
 }
 
+
+/********************* qiniu starts ****************/
+
+interface QutOpt {
+  folder?: string
+  maxBytes?: number
+  whichType: string     // e.g. "wechat-logo"
+}
+
+function qiniuUploadToken(
+  opt: QutOpt
+) {
+  // 1. get parameters (形参)
+  const _env = process.env
+  const aKey = _env.LIU_QINIU_ACCESS_KEY
+  const sKey = _env.LIU_QINIU_SECRET_KEY
+  const bucket = _env.LIU_QINIU_BUCKET
+  const callbackUrl = _env.LIU_QINIU_CALLBACK_URL
+  const customKey = _env.LIU_QINIU_CUSTOM_KEY
+  let folder = opt?.folder
+  if(!folder) {
+    folder = _env.LIU_QINIU_THIRD_FOLDER || "third"
+  }
+
+  if(!aKey || !sKey || !bucket) {
+    console.warn("qiniuUploadToken error")
+    console.log("aKey, sKey, and bucket are required")
+    return
+  }
+
+  if(!callbackUrl || !customKey) {
+    console.warn("qiniuUploadToken error")
+    console.log("callbackUrl and customKey are required")
+    return
+  }
+
+  // 2. constuck mac for auth
+  const mac = new qiniu.auth.digest.Mac(aKey, sKey)
+  const fsizeLimit = opt?.maxBytes ?? MB_10
+  const r = createFileRandom()
+  const prefix = `${folder}/${opt.whichType}-${r}`
+
+  // 3. constuct upload token
+  let callbackBody = "bucket=$(bucket)&key=$(key)&hash=$(etag)&fname=$(fname)"
+  callbackBody += "&fsize=$(fsize)&mimeType=$(mimeType)"
+  callbackBody += `&customKey=${customKey}`
+
+  // 4. make argument (实参)
+  const arg = {
+    scope: `${bucket}:${prefix}`,
+    isPrefixalScope: 1,
+    insertOnly: 1,
+    expires: 30 * 60,     // 30 mins expiration
+    detectMime: 1,
+    fsizeLimit,
+    callbackUrl,
+    callbackBody,
+  }
+
+  const putPolicy = new qiniu.rs.PutPolicy(arg)
+  const uploadToken = putPolicy.uploadToken(mac)
+  return uploadToken
+}
+
+
+/********************* qiniu ends ****************/
 

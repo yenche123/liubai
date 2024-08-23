@@ -675,8 +675,6 @@ async function turnInputIntoMsgObj(
   }
   else {
     msgObj = getMsgObjForPlainText(payload)
-    // console.log("明文模式下的 msgObj: ")
-    // console.log(msgObj)
   }
 
   if(!msgObj || !msgObj.MsgType) {

@@ -1222,7 +1222,8 @@ export const Sch_Param_WebhookQiniu = vbot.object({
   fsize: vbot.string(),
   fname: vbot.string(),
   mimeType: vbot.string(),
-  endUser: vbot.string(),
+  customKey: vbot.string(),
+  endUser: Sch_Opt_Str,
 })
 
 export interface Res_ULN_User extends LiuSpaceAndMember {
