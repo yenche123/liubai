@@ -19,7 +19,7 @@ const abc = "abcdefghijkmnopqrstuvwxyz"
 type LimitType = "allowUppercase" | "onlyUppercase" | "onlyNumber"
 
 // 创建随机字符串
-function createRandom(
+export function createRandom(
   digits: number = 30,
   limitType?: LimitType,
 ) {
