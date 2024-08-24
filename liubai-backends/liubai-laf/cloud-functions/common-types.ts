@@ -465,7 +465,7 @@ export const Sch_Simple_LiuContent = vbot.object({
   text: Sch_Opt_Str,
 })
 
-/*********************** 文件图片相关 **********************/
+/*********************** 文件图片相关 (包含上传下载) **********************/
 
 export interface Cloud_FileStore {
   id: string
@@ -523,6 +523,7 @@ export interface Cloud_ImageStore {
   url_2?: string             // 低分辨率的图片地址
   blurhash?: string
   someExif?: LiuExif
+  size?: number              // 单位为 bytes
 }
 
 export const Sch_Cloud_ImageStore: BaseSchema<Cloud_ImageStore> = vbot.object(
@@ -541,6 +542,26 @@ export const Sch_Cloud_ImageStore: BaseSchema<Cloud_ImageStore> = vbot.object(
   },
   vbot.never(),
 )
+
+// used by downloadAndUpload() in file-utils.ts
+export interface DownloadUploadOpt {
+  url: string
+  oss: CloudStorageService
+  prefix: string             // e.g. "google-avatar"  "weixin-avatar"
+  type: "image" | "file" | "auto"
+}
+
+export interface DownloadUploadRes_1 {
+  resType: "image"
+  image: Cloud_ImageStore
+}
+
+export interface DownloadUploadRes_2 {
+  resType: "file"
+  file: Cloud_FileStore
+}
+
+export type DownloadUploadRes = DownloadUploadRes_1 | DownloadUploadRes_2
 
 
 /*********************** 杂七杂八的 **********************/

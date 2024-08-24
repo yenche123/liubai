@@ -34,6 +34,7 @@ export interface Cloud_ImageStore {
   url_2?: string             // 低分辨率的图片地址
   blurhash?: string
   someExif?: LiuExif
+  size?: number              // 单位为 bytes
 }
 
 

@@ -49,6 +49,7 @@ export interface LiuImageStore {
   cloud_url_2?: string       // 云端低分辨率的图片
   blurhash?: string
   someExif?: LiuExif
+  size?: number              // 单位为 bytes
 }
 
 export interface ImageShow {

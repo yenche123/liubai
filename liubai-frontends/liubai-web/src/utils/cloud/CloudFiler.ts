@@ -196,6 +196,7 @@ class CloudFiler {
       cloud_url_2: cloudImage.url_2,
       blurhash: cloudImage.blurhash,
       someExif: cloudImage.someExif,
+      size: cloudImage.size,
     }
     return { useCloud: true, image: newImage }
   }

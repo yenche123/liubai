@@ -6,10 +6,23 @@ import type {
   DownloadFileRes,
   DownloadFileResolver,
   LiuRqReturn,
+  Cloud_ImageStore,
+  Cloud_FileStore,
+  LiuErrReturn,
+  Param_WebhookQiniu,
+  DownloadUploadOpt,
+  DownloadUploadRes,
 } from '@/common-types';
 import { getSuffix } from '@/common-util';
 import FormData from 'form-data';
 import qiniu from "qiniu";
+import { 
+  createFileRandom, 
+  createRandom,
+  createImgId,
+  createFileId,
+} from "@/common-ids";
+import { getNowStamp } from "@/common-time";
 
 /********************* constants *****************/
 const MB = 1024 * 1024
@@ -21,7 +34,7 @@ export async function main(ctx: FunctionContext) {
   return true
 }
 
-/********************* useful functions ****************/
+/********************* useful functions start ****************/
 
 // download file through url
 export function downloadFile(
@@ -107,14 +120,171 @@ export async function responseToFormData(
 }
 
 
+// download cloud_url and upload to our OSS
+export async function downloadAndUpload(
+  opt: DownloadUploadOpt,
+) {
+
+  // 1. download file
+  const res1 = await downloadFile(opt.url)
+  const { code, data, errMsg } = res1
+  if(code !== "0000" || !data) {
+    console.warn("download file err:::")
+    console.log(code)
+    console.log(errMsg)
+    return { code, errMsg }
+  }
+
+  // 2. get Uint8Array from response
+  const res2 = data.res
+  let result: LiuRqReturn<DownloadUploadRes> = { 
+    code: "E4000", 
+    errMsg: "oss of param is not matched",
+  }
+
+  // 3. upload to the targeted OSS
+  if(opt.oss === "qiniu") {
+    result = await prepareToUploadToQiniu(res2, opt)
+  }
+
+  return result
+}
+
+// 获取允许的图片类型 由 , 拼接而成的字符串
+export function getAcceptImgTypesString() {
+  return "image/png,image/jpg,image/jpeg,image/gif,image/webp"
+} 
+
+
+/********************* useful functions end ****************/
+
 /********************* qiniu starts ****************/
+
+async function prepareToUploadToQiniu(
+  res: Response,
+  opt: DownloadUploadOpt,
+): Promise<LiuRqReturn<DownloadUploadRes>> {
+  // 0. get bytes
+  const fileBlob = await res.blob()
+  const arrayBuffer = await fileBlob.arrayBuffer()
+  const bytes = new Uint8Array(arrayBuffer)
+
+  // 1. get upload token
+  const folder = `third`
+  const uploadToken = qiniuServerUploadToken({ folder })
+  if(!uploadToken) {
+    console.log("没有 uploadToken")
+    return { code: "E4004" }
+  }
+
+  // 2. get suffix and filename
+  const contentType = fileBlob.type
+  const suffix = getSuffix(contentType)
+  const r1 = createFileRandom()
+  const r2 = createRandom(4)
+  const now = getNowStamp()
+  const filename = `${opt.prefix}-${r1}-${now}-${r2}`
+  let key = `${folder}/${filename}`
+  if(suffix) {
+    key += `.${suffix}`
+  }
+  
+  // 3. upload
+  // const d3_1 = getNowStamp()
+  const res3 = await uploadToQiniu(bytes, key, uploadToken)
+  // const d3_2 = getNowStamp()
+  // console.log(`上传耗时: ${d3_2 - d3_1}ms`)
+  const data3 = res3?.data
+  if(res3.code !== "0000" || !data3) {
+    return res3 as LiuErrReturn
+  }
+
+  // 4. cdn_domain
+  const _env = process.env
+  const cdn_domain = _env.LIU_QINIU_CDN_DOMAIN ?? ""
+  if(!cdn_domain) {
+    console.warn("cdn_domain is empty")
+    return { code: "E5001", errMsg: "cdn_domain is empty" }
+  }
+
+  // 5. to parse
+  const cloud_url = `${cdn_domain}/${data3.key}`
+  let isImage = opt.type === "image"
+  if(opt.type === "auto") {
+    const imgStr = getAcceptImgTypesString()
+    isImage = imgStr.includes(contentType)
+  }
+  let data5: DownloadUploadRes
+  if(isImage) {
+    const imgObj = parseImageFromQiniu(data3, filename, cloud_url)
+    data5 = {
+      resType: "image",
+      image: imgObj,
+    }
+  }
+  else {
+    const fileObj = parseFileFromQiniu(data3, filename, cloud_url, suffix)
+    data5 = {
+      resType: "file",
+      file: fileObj,
+    }
+  }
+
+  return { code: "0000", data: data5 }
+}
+
+
+function parseFileFromQiniu(
+  data: Param_WebhookQiniu,
+  filename: string,
+  cloud_url: string,
+  suffix: string,
+) {
+  let size = Number(data.fsize)
+  if(isNaN(size)) {
+    size = 0
+  }
+
+  const obj: Cloud_FileStore = {
+    id: createFileId(),
+    name: filename,
+    lastModified: getNowStamp(),
+    suffix,
+    size,
+    mimeType: data.mimeType,
+    url: cloud_url,
+  }
+  return obj
+}
+
+
+function parseImageFromQiniu(
+  data: Param_WebhookQiniu,
+  filename: string,
+  cloud_url: string,
+) {
+  let size = Number(data.fsize)
+  if(isNaN(size)) {
+    size = 0
+  }
+
+  const obj: Cloud_ImageStore = {
+    id: createImgId(),
+    name: filename,
+    lastModified: getNowStamp(),
+    mimeType: data.mimeType,
+    url: cloud_url,
+    size,
+  }
+  return obj
+}
 
 
 export async function uploadToQiniu(
   uint8arr: Uint8Array,
   key: string,
   uploadToken: string,
-): Promise<LiuRqReturn> {
+): Promise<LiuRqReturn<Param_WebhookQiniu>> {
   const config = new qiniu.conf.Config()
   const formUploader = new qiniu.form_up.FormUploader(config)
   const putExtra = new qiniu.form_up.PutExtra()
@@ -125,14 +295,17 @@ export async function uploadToQiniu(
       data,
     } = await formUploader.put(uploadToken, key, uint8arr, putExtra)
 
+
+    if(resp.statusCode === 200) {
+      const data2 = data as Param_WebhookQiniu
+      return { code: "0000", data: data2 }
+    }
+
+    console.warn("uploadToQiniu resp.statusCode is not 200")
     console.log("resp: ")
     console.log(resp)
     console.log("data: ")
     console.log(data)
-    if(resp.statusCode === 200) {
-      console.log("success!")
-      return { code: "0000", data }
-    }
   }
   catch(err) {
     console.warn("uploadToQiniu error")

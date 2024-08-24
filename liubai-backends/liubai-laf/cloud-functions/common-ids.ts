@@ -69,6 +69,10 @@ export function createImgId() {
   return "i0" + createRandom(27)
 }
 
+export function createFileId() {
+  return "f0" + createRandom(27)
+}
+
 // 创建邮箱验证码
 // 结构: 四个英文字母-四个数字
 export function createEmailCode() {

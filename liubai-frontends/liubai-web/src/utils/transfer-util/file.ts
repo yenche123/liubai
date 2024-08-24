@@ -23,6 +23,7 @@ export function imagesFromStoreToCloud(
       url_2: v.cloud_url_2,
       blurhash: v.blurhash,
       someExif: v.someExif,
+      size: v.size,
     }
     cloud_list.push(obj)
   }
