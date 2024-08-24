@@ -2,7 +2,7 @@
 
 
 export interface OpData {
-  via: "github" | "google" | "err" | ""
+  via: "github" | "google" | "wechat" | "err" | ""
   code: string
   showLoading: boolean
   errTitle?: string

@@ -1248,10 +1248,20 @@ export const Sch_Param_WebhookQiniu = vbot.object({
   endUser: Sch_Opt_Str,
 })
 
+/********* 用户登录相关 ********/
+
 export interface Res_ULN_User extends LiuSpaceAndMember {
   userId: string
   createdStamp: number
 }
+
+export type UserLoginOperate = "init" | "email" | "email_code" 
+  | "github_oauth" 
+  | "google_oauth"
+  | "wx_gzh_oauth"
+  | "google_credential"
+  | "users_select"
+  | "enter"
 
 export interface Res_UserLoginNormal {
   // 需要验证 email 时或只有一个 user 符合时

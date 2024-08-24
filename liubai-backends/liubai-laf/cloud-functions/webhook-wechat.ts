@@ -49,10 +49,6 @@ const API_UNTAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchunta
 // @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
 const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
 
-// @see https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html#3
-// get userinfo through web oAuth 2.0
-const API_SNS_USERINFO = "https://api.weixin.qq.com/sns/userinfo"
-
 const MIN_3 = 3 * MINUTE
 
 

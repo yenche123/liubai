@@ -20,6 +20,8 @@ import type {
   SupportedClient,
   ServiceSendEmailsParam,
   Table_AllowList,
+  UserLoginOperate,
+  LiuErrReturn,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -58,6 +60,12 @@ const GOOGLE_OAUTH_ACCESS_TOKEN = "https://oauth2.googleapis.com/token"
 // Google 使用 accessToken 去获取用户信息
 const GOOGLE_API_USER = "https://www.googleapis.com/oauth2/v3/userinfo"
 
+// 微信公众号 OAuth2 使用 code 去换用户的 accessToken
+const WX_GZH_OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token"
+
+// 微信公众号 OAuth2 使用 accessToken 去获取用户信息
+const WX_GZH_SNS_USERINFO = "https://api.weixin.qq.com/sns/userinfo"
+
 const PREFIX_CLIENT_KEY = "client_key_"
 
 const TEST_EMAILS = [
@@ -82,7 +90,7 @@ export async function main(ctx: FunctionContext) {
   }
 
   const body = ctx.request?.body ?? {}
-  const oT = body.operateType
+  const oT = body.operateType as UserLoginOperate
 
   let res: LiuRqReturn = { code: "E4000" }
   if(oT === "init") {
@@ -93,6 +101,9 @@ export async function main(ctx: FunctionContext) {
   }
   else if(oT === "google_oauth") {
     res = await handle_google_oauth(ctx, body)
+  }
+  else if(oT === "wx_gzh_oauth") {
+
   }
   else if(oT === "email") {
     res = await handle_email(ctx, body)
@@ -529,28 +540,17 @@ async function handle_google_oauth(
   ctx: FunctionContext,
   body: Record<string, string>,
 ) {
-
-  // 检查 oauth_code
-  const oauth_code = body.oauth_code
-  if(!oauth_code) {
-    return { code: "E4000", errMsg: "no oauth_code" }
+  const res0 = checkOAuthParams(body)
+  const { code: code0, data: data0 } = res0
+  if(code0 !== "0000" || !data0) {
+    return res0 as LiuErrReturn
   }
+  const { oauth_code, client_key } = data0
 
   // 检查 redirect_uri
   const redirect_uri = body.oauth_redirect_uri
   if(!redirect_uri) {
     return { code: "E4000", errMsg: "no oauth_redirect_uri" }
-  }
-
-  // 检查 state
-  const state = body.state
-  const res0 = checkIfStateIsErr(state)
-  if(res0) return res0
-
-  // 检查 client_key
-  const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
-  if(!client_key || code1) {
-    return { code: code1 ?? "E5001", errMsg: errMsg1 }
   }
 
   const _env = process.env
@@ -615,29 +615,41 @@ async function handle_google_oauth(
   return res3
 }
 
+async function handle_wx_gzh_oauth(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+) {
+  const res0 = checkOAuthParams(body)
+  const { code: code0, data: data0 } = res0
+  if(code0 !== "0000" || !data0) {
+    return res0 as LiuErrReturn
+  }
+  const { oauth_code, client_key } = data0
+
+  const _env = process.env
+  const appid = _env.LIU_WX_GZ_APPID
+  const appSecret = _env.LIU_WX_GZ_APPSECRET
+  if(!appid || !appSecret) {
+    return { code: "E5001", errMsg: "no appid or appSecret on backend" }
+  }
+
+
+  
+}
 
 async function handle_github_oauth(
   ctx: FunctionContext,
   body: Record<string, string>,
 ) {
-
-  // 检查 oauth_code
-  const oauth_code = body.oauth_code
-  if(!oauth_code) {
-    return { code: "E4000", errMsg: "no oauth_code" }
+  // 1. check out parameters
+  const res1 = checkOAuthParams(body)
+  const { code: code1, data: data1 } = res1
+  if(code1 !== "0000" || !data1) {
+    return res1 as LiuErrReturn
   }
+  const { oauth_code, client_key } = data1
 
-  // 检查 state
-  const state = body.state
-  const res0 = checkIfStateIsErr(state)
-  if(res0) return res0
-
-  // 检查 client_key
-  const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
-  if(!client_key || code1) {
-    return { code: code1 ?? "E5001", errMsg: errMsg1 }
-  }
-
+  // 2. get client_id & client_secret
   const _env = process.env
   const client_id = _env.LIU_GITHUB_OAUTH_CLIENT_ID
   const client_secret = _env.LIU_GITHUB_OAUTH_CLIENT_SECRET
@@ -645,47 +657,47 @@ async function handle_github_oauth(
     return { code: "E5001", errMsg: "no client_id or client_secret on backend" }
   }
 
-  // 1. 使用 code 去换 access_token
-  const body1 = {
+  // 3. 使用 code 去换 access_token
+  const body3 = {
     client_id,
     client_secret,
     code: oauth_code,
   }
   let access_token = ""
-  const res1 = await liuReq(GH_OAUTH_ACCESS_TOKEN, body1)
+  const res3 = await liuReq(GH_OAUTH_ACCESS_TOKEN, body3)
 
-  // 2. 解析出 access_token
-  const res1_data = res1?.data ?? {}
-  console.log("github res1_data: ")
-  console.log(res1_data)
-  access_token = res1_data?.access_token
+  // 4. 解析出 access_token
+  const data4 = res3?.data ?? {}
+  console.log("github data4: ")
+  console.log(data4)
+  access_token = data4?.access_token
   if(!access_token) {
-    console.warn("没有获得 github access_token")
+    console.warn("cannot get github access_token")
     console.log(" ")
-    if(res1_data?.error === undefined) {
-      console.log(res1)
+    if(data4?.error === undefined) {
+      console.log(res3)
       console.log(" ")
     }
     return { code: "E5004", errMsg: "no access_token from GitHub" }
   }
 
-  // 3. 使用 access_token 去换用户信息
-  const res2 = await liuReq(GH_API_USER, undefined, {
+  // 5. 使用 access_token 去换用户信息
+  const res5 = await liuReq(GH_API_USER, undefined, {
     method: "GET",
     headers: {
       "Authorization": `Bearer ${access_token}`,
     },
   })
 
-  // 4. 解析出有用的 user data from GitHub
-  const res2_data = res2?.data ?? {}
-  console.log("github res2_data: ")
-  console.log(res2_data)
+  // 6. 解析出有用的 user data from GitHub
+  const data6 = res5?.data ?? {}
+  console.log("github data6: ")
+  console.log(data6)
   console.log(" ")
 
   // login: 为 github 的用户名，可以用来初始化 name
   // email: 正如其名
-  let { login, email, id: github_id } = res2_data
+  let { login, email, id: github_id } = data6
   email = isEmailAndNormalize(email)
   if(!login) {
     return {
@@ -706,24 +718,24 @@ async function handle_github_oauth(
     }
   }
 
-  const thirdData: UserThirdData = { github: res2_data }
+  const thirdData: UserThirdData = { github: data6 }
 
-  // 5. 使用 github_id 去找用户
-  const res3 = await findUserByGitHubId(github_id)
+  // 7. 使用 github_id 去找用户
+  const res7 = await findUserByGitHubId(github_id)
 
-  // 5.1. 使用 github_id 查找后，发现拒绝登录或异常
-  if(res3.type === 1) {
-    return res3.rqReturn
+  // 8.1. 使用 github_id 查找后，发现拒绝登录或异常
+  if(res7.type === 1) {
+    return res7.rqReturn
   }
-  // 5.2. 使用 github_id 查找后，找到可供登录的用户们
-  if(res3.type === 2) {
-    const res3_1 = await sign_in(ctx, body, res3.userInfos, { client_key, thirdData })
-    return res3_1
+  // 8.2. 使用 github_id 查找后，找到可供登录的用户们
+  if(res7.type === 2) {
+    const res8_2 = await sign_in(ctx, body, res7.userInfos, { client_key, thirdData })
+    return res8_2
   }
   
-  // 6. 使用 email 去找用户
-  const res4 = await signInUpViaEmail(ctx, body, email, client_key, thirdData)
-  return res4
+  // 9. 使用 email 去找用户
+  const res9 = await signInUpViaEmail(ctx, body, email, client_key, thirdData)
+  return res9
 }
 
 /** 使用 email 进行登录或注册 */
@@ -1382,7 +1394,7 @@ function getLiuLoginState() {
 }
 
 /** 检测 state 是否正常，若正常返回 null，若不正常返回 LiuRqReturn */
-function checkIfStateIsErr(state: any): LiuRqReturn | null {
+function checkIfStateIsErr(state: any): LiuErrReturn | null {
   const liuLoginState = getLiuLoginState()
   if(!state || typeof state !== "string") {
     console.warn("the state is required")
@@ -1467,4 +1479,42 @@ async function checkAllowList(
 }
 
 
+interface CheckOAuthParams {
+  oauth_code: string
+  state: string
+  client_key: string
+}
+
+
+// check out params for OAuth
+function checkOAuthParams(
+  body: Record<string, string>,
+): LiuRqReturn<CheckOAuthParams> {
+
+  // 检查 oauth_code
+  const oauth_code = body.oauth_code
+  if(!oauth_code) {
+    return { code: "E4000", errMsg: "no oauth_code" }
+  }
+
+  // 检查 state
+  const state = body.state
+  const res0 = checkIfStateIsErr(state)
+  if(res0) return res0
+
+  // 检查 client_key
+  const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
+  if(!client_key || code1) {
+    return { code: code1 ?? "E5001", errMsg: errMsg1 }
+  }
+
+  return {
+    code: "0000",
+    data: {
+      oauth_code,
+      state,
+      client_key,
+    }
+  }
+}
 

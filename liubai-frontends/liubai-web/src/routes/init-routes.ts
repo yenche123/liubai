@@ -61,6 +61,15 @@ export const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: "/login-wechat",
+    component: OAuthPage,
+    name: "login-wechat",
+    meta: {
+      keepAlive: false,
+      inApp: false,
+    }
+  },
+  {
     path: "/a2hs",
     component: A2hsPage,
     name: "a2hs",

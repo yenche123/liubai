@@ -45,6 +45,9 @@ function listenRouteChange(
     else if(n === "login-google" && via !== "google") {
       enterFromGoogle(opData, rr)
     }
+    else if(n === "login-wechat" && via !== "wechat") {
+      enterFromWeChat(opData, rr)
+    }
     
   }, { immediate: true })
 }
@@ -86,14 +89,14 @@ async function enterFromGitHub(
     return
   }
 
-  // 2.5 获取 enc_client_key
+  // 3. 获取 enc_client_key
   const { enc_client_key } = getClientKey()
   if(!enc_client_key) return
 
-  // 3. 清除 query
+  // 4. 清除 query
   rr.router.replace({ name: "login-github" })
 
-  // 4. 去请求后端登录
+  // 5. 去请求后端登录
   const res = await fetchOAuth("github_oauth", code, state, enc_client_key)
   afterFetchingLogin(rr, res)
 }
@@ -135,16 +138,60 @@ async function enterFromGoogle(
     return
   }
 
-  // 2.5 获取 enc_client_key
+  // 3. 获取 enc_client_key
   const { enc_client_key } = getClientKey()
   if(!enc_client_key) return
 
-  // 3. 清除 query
+  // 4. 清除 query
   rr.router.replace({ name: "login-google" })
 
-  // 4. 去请求后端登录
+  // 5. 去请求后端登录
   const redirect_uri = location.origin + "/login-google"
   const res = await fetchOAuth("google_oauth", code, state, enc_client_key, redirect_uri)
+  afterFetchingLogin(rr, res)
+}
+
+
+async function enterFromWeChat(
+  opData: OpData,
+  rr: RouteAndLiuRouter,
+) {
+  const qry = rr.route.query
+  console.log("enterFromWeChat: ")
+  console.log(qry)
+
+  const { code, state } = qry
+
+  if(!code || !state) {
+    console.warn("WeChat 授权失败.......")
+    return
+  }
+
+  if(!code || !typeCheck.isString(code)) return
+  if(!state || !typeCheck.isString(state)) return
+
+  // 1. switch via
+  opData.via = "wechat"
+
+  // 2. check out state
+  const onceData = localCache.getOnceData()
+  const oldState = onceData.wxGzhOAuthState
+  if(oldState !== state) {
+    console.warn("state 与 oldState 不匹配！！")
+    console.log("oldState: ", oldState)
+    console.log(" ")
+    return
+  }
+
+  // 3 获取 enc_client_key
+  const { enc_client_key } = getClientKey()
+  if(!enc_client_key) return
+
+  // 4. 清除 query
+  rr.router.replace({ name: "login-wechat" })
+
+  // 5. 去请求后端登录
+  const res = await fetchOAuth("wx_gzh_oauth", code, state, enc_client_key)
   afterFetchingLogin(rr, res)
 }
 
