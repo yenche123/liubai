@@ -8,7 +8,11 @@ import {
   fetchUsersSelect,
 } from "../../tools/requests";
 import { getClientKey } from "../../tools/common-tools"
-import { handle_google, handle_github } from "./handle-tap-oauth";
+import { 
+  handle_google, 
+  handle_github,
+  handle_wechat,
+} from "./handle-tap-oauth";
 import time from "~/utils/basic/time"
 import { encryptTextWithRSA, afterFetchingLogin } from "../../tools/common-utils"
 import { loadGoogleIdentityService } from "./handle-gis"
@@ -487,7 +491,10 @@ function whenTapLoginViaThirdParty(
   const isOkay = isEverythingOkay(initCode)
   if(!isOkay) return
 
-  if(tp === "github") {
+  if(tp === "wechat") {
+    whenTapWeChat(lpData)
+  }
+  else if(tp === "github") {
     handle_github(lpData)
   }
   else if(tp === "google") {
@@ -496,6 +503,22 @@ function whenTapLoginViaThirdParty(
   else if(tp === "apple") {
 
   }
+}
+
+function whenTapWeChat(
+  lpData: LpData,
+) {
+  const cha = liuApi.getCharacteristic()
+
+  // 1. go OAuth if it is in wechat environment
+  if(cha.isWeChat) {
+    handle_wechat(lpData)
+    return
+  }
+
+  // 2. show qr code to scan for logging in
+  console.log("TODO: show qr code to scan for logging in")
+
 }
 
 
@@ -518,6 +541,7 @@ function toGetLoginInitData(
     lpData.publicKey = data.publicKey
     lpData.githubOAuthClientId = data.githubOAuthClientId
     lpData.googleOAuthClientId = data.googleOAuthClientId
+    lpData.wxGzhAppid = data.wxGzhAppid
     lpData.state = data.state
     lpData.initStamp = time.getTime()
 

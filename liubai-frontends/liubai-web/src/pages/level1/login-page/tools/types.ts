@@ -1,7 +1,7 @@
 import type { MemberShow } from "~/types/types-content"
 
 
-export type LoginByThirdParty = "google" | "github" | "apple"
+export type LoginByThirdParty = "wechat" | "google" | "github" | "apple"
 
 export type LpView = "main" | "code" | "accounts"     // 主页、填写验证码、选择账号
 
@@ -24,6 +24,7 @@ export interface LpData {
   publicKey?: string
   githubOAuthClientId?: string
   googleOAuthClientId?: string
+  wxGzhAppid?: string
   state?: string
   initCode?: string           // 调用 login 接口 init 时，返回的 code
   initStamp?: number          // 调用 login 接口 init 后的时间戳

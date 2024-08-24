@@ -1325,7 +1325,9 @@ function handle_init() {
   const githubOAuthClientSecret = _env.LIU_GITHUB_OAUTH_CLIENT_SECRET
   const googleOAuthClientId = _env.LIU_GOOGLE_OAUTH_CLIENT_ID
   const googleOAuthClientSecret = _env.LIU_GOOGLE_OAUTH_CLIENT_SECRET
-
+  const wxGzhAppid = _env.LIU_WX_GZ_APPID
+  const wxGzhAppSecret = _env.LIU_WX_GZ_APPSECRET
+  const wxGzhOAuth = _env.LIU_WX_GZ_OAUTH
 
   const state = generateState()
   const data: Record<string, string | undefined> = {
@@ -1341,6 +1343,11 @@ function handle_init() {
   // 如果 Google OAuth 有存在的话
   if(googleOAuthClientId && googleOAuthClientSecret) {
     data.googleOAuthClientId = googleOAuthClientId
+  }
+
+  // if wechat gzh exists
+  if(wxGzhAppid && wxGzhAppSecret && wxGzhOAuth === "01") {
+    data.wxGzhAppid = wxGzhAppid
   }
 
   return { code: `0000`, data }

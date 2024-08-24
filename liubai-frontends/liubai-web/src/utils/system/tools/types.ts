@@ -23,6 +23,9 @@ export interface LocalOnceData {
   // 使用 Google 登录时，一次性 state
   googleOAuthState?: string
 
+  // one-off state while logging in with wechat
+  wxGzhOAuthState?: string
+
   // 前端生成的 aes 密钥
   client_key?: string
 

@@ -77,6 +77,7 @@ declare global {
       LIU_WX_GZ_TOKEN?: string
       LIU_WX_GZ_ENCODING_AESKEY?: string
       LIU_WX_GZ_TAG_MANAGEMENT?: string    // 01: tag management enabled, otherwise disabled
+      LIU_WX_GZ_OAUTH?: string             // 01: oauth enabled, otherwise disabled
 
       /** 企业微信 企业内部自建应用 */
       LIU_WECOM_QYNB_CORPID?: string

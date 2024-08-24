@@ -62,6 +62,16 @@ const {
   <!-- third-party view -->
   <div class="lp-view" v-liu-show="lpmData.current === 2">
 
+    <!-- wechat -->
+    <div class="liu-no-user-select liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'wechat')">
+      <div class="lpv-icon">
+        <div class="lpv-icon-div"></div>
+      </div>
+      <div class="lpv-text">
+        <span>{{ t('login.continue_with_wechat') }}</span>
+      </div>
+    </div>
+
     <!-- google -->
     <div class="liu-no-user-select liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'google')">
       <div class="lpv-icon">
@@ -224,6 +234,13 @@ const {
   .lpv-svg-icon {
     width: 25px;
     height: 25px;
+  }
+
+  .lpv-icon-div {
+    width: 27px;
+    height: 27px;
+    background-image: url('/images/third-party/wechat.png');
+    background-size: contain;
   }
 }
 

@@ -22,7 +22,7 @@ export function handle_google(
   }
   localCache.setOnceData("googleOAuthState", state)
   
-  const redirect_uri = window.location.origin + "/login-google"
+  const redirect_uri = location.origin + "/login-google"
 
   const url = new URL(thirdLink.GOOGLE_OAUTH2)
   const scope = "profile"
@@ -59,5 +59,37 @@ export function handle_github(
   sp.append("scope", "user:email")
   sp.append("state", state)
   const link = url.toString()
+  location.href = link
+}
+
+export function handle_wechat(
+  lpData: LpData,
+) {
+  const appid = lpData.wxGzhAppid
+  if(!appid) {
+    showDisableTip("WeChat")
+    return
+  }
+
+  const state = lpData.state
+  if(!state) {
+    showOtherTip("login.err_1")
+    return
+  }
+  localCache.setOnceData("wxGzhOAuthState", state)
+
+  const redirect_uri = location.origin + "/login-wechat"
+
+  const url = new URL(thirdLink.WX_GZH_OAUTH)
+  const sp = url.searchParams
+  sp.append("appid", appid)
+  sp.append("redirect_uri", redirect_uri)
+  sp.append("response_type", "code")
+
+  sp.append("scope", "snsapi_userinfo")
+  // sp.append("scope", "snsapi_base")
+
+  sp.append("state", state)
+  const link = url.toString() + `#wechat_redirect`
   location.href = link
 }

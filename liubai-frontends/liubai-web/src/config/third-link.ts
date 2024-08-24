@@ -28,6 +28,9 @@ export default {
   GITHUB_OAUTH: "https://github.com/login/oauth/authorize",
   GITHUB_SEARCH: "https://github.com/search",
 
+  // wechat
+  WX_GZH_OAUTH: "https://open.weixin.qq.com/connect/oauth2/authorize",
+
   // apple music
   APPLE_MUSIC: "https://music.apple.com/",
   APPLE_MUSIC_EMBED: "https://embed.music.apple.com/",

@@ -163,6 +163,7 @@
     "email": "Email",
     "email_ph": "你的邮箱地址",
     "third_party": "通过第三方",
+    "continue_with_wechat": "使用微信登录",
     "continue_with_google": "使用 Google 登录",
     "continue_with_github": "使用 GitHub 登录",
     "continue_with_apple": "使用 Apple 登录",
