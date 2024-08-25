@@ -1,0 +1,18 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+
+node_modules/
+dist/
+dev-dist/
+dist-ssr/
+*.local
+analysis.html
+
+# verify files
+MP_verify_*
+WW_verify_*
+
+# Sentry Config File
+.env.sentry-build-plugin
+
+# Tencent COSCLI
+coscli
