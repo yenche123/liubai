@@ -540,19 +540,21 @@ async function handle_google_oauth(
   ctx: FunctionContext,
   body: Record<string, string>,
 ) {
-  const res0 = checkOAuthParams(body)
-  const { code: code0, data: data0 } = res0
-  if(code0 !== "0000" || !data0) {
-    return res0 as LiuErrReturn
+  // 1. check out parameters
+  const res1 = checkOAuthParams(body)
+  const { code: code1, data: data1 } = res1
+  if(code1 !== "0000" || !data1) {
+    return res1 as LiuErrReturn
   }
-  const { oauth_code, client_key } = data0
+  const { oauth_code, client_key } = data1
 
-  // 检查 redirect_uri
+  // 2. check out redirect_uri
   const redirect_uri = body.oauth_redirect_uri
   if(!redirect_uri) {
     return { code: "E4000", errMsg: "no oauth_redirect_uri" }
   }
 
+  // 3. get client_id & client_secret
   const _env = process.env
   const client_id = _env.LIU_GOOGLE_OAUTH_CLIENT_ID
   const client_secret = _env.LIU_GOOGLE_OAUTH_CLIENT_SECRET
@@ -560,8 +562,8 @@ async function handle_google_oauth(
     return { code: "E5001", errMsg: "no client_id or client_secret on backend" }
   }
 
-  // 1. 使用 code 去换 access_token
-  const body1 = {
+  // 4. get access_token with code
+  const body4 = {
     client_id,
     client_secret,
     code: oauth_code,
@@ -569,38 +571,35 @@ async function handle_google_oauth(
     grant_type: "authorization_code",
   }
   let access_token = ""
-  const res1 = await liuReq(GOOGLE_OAUTH_ACCESS_TOKEN, body1)
+  const res4 = await liuReq(GOOGLE_OAUTH_ACCESS_TOKEN, body4)
 
-  // 2. 解析出 access_token
-  const res1_data = res1?.data ?? {}
-  console.log("google oauth res1_data: ")
-  console.log(res1_data)
-  access_token = res1_data?.access_token
+  // 5. 解析出 access_token
+  const data5 = res4?.data ?? {}
+  console.log("google oauth data5: ")
+  console.log(data5)
+  access_token = data5?.access_token
   if(!access_token) {
     console.warn("没有获得 google access_token")
-    console.log(" ")
-    if(res1_data?.error === undefined) {
-      console.log(res1)
-      console.log(" ")
+    if(data5?.error === undefined) {
+      console.log(res4)
     }
     return { code: "E5004", errMsg: "no access_token from Google" }
   }
 
-  // 3. 使用 access_token 去换用户信息
-  const res2 = await liuReq(GOOGLE_API_USER, undefined, {
+  // 6. 使用 access_token 去换用户信息
+  const res6 = await liuReq(GOOGLE_API_USER, undefined, {
     method: "GET",
     headers: {
       "Authorization": `Bearer ${access_token}`,
     }
   })
 
-  // 4. 解析出有用的 user data from Google
-  const res2_data = res2?.data ?? {}
-  console.log("google res2_data: ")
-  console.log(res2_data)
-  console.log(" ")
+  // 7. 解析出有用的 user data from Google
+  const data7 = res6?.data ?? {}
+  console.log("google data7: ")
+  console.log(data7)
 
-  let { email, email_verified } = res2_data
+  let { email, email_verified } = data7
   email = isEmailAndNormalize(email)
   if(!email) {
     return { code: "U0002" }
@@ -610,28 +609,66 @@ async function handle_google_oauth(
     return { code: "U0001", data: rData }
   }
 
-  const opt: UserThirdData = { google: res2_data }
-  const res3 = await signInUpViaEmail(ctx, body, email, client_key, opt)
-  return res3
+  // 8. find the user using email address
+  const thirdData: UserThirdData = { google: data7 }
+  const res8 = await signInUpViaEmail(ctx, body, email, client_key, thirdData)
+  return res8
 }
 
 async function handle_wx_gzh_oauth(
   ctx: FunctionContext,
   body: Record<string, string>,
 ) {
-  const res0 = checkOAuthParams(body)
-  const { code: code0, data: data0 } = res0
-  if(code0 !== "0000" || !data0) {
-    return res0 as LiuErrReturn
+  // 1. check out params
+  const res1 = checkOAuthParams(body)
+  const { code: code1, data: data1 } = res1
+  if(code1 !== "0000" || !data1) {
+    return res1 as LiuErrReturn
   }
-  const { oauth_code, client_key } = data0
+  const { oauth_code, client_key } = data1
 
+  // 2. get appid & secret
   const _env = process.env
   const appid = _env.LIU_WX_GZ_APPID
   const appSecret = _env.LIU_WX_GZ_APPSECRET
   if(!appid || !appSecret) {
     return { code: "E5001", errMsg: "no appid or appSecret on backend" }
   }
+
+  // 3. get access_token with code
+  const url3 = new URL(WX_GZH_OAUTH_ACCESS_TOKEN)
+  const sp3 = url3.searchParams
+  sp3.set("appid", appid)
+  sp3.set("secret", appSecret)
+  sp3.set("code", oauth_code)
+  sp3.set("grant_type", "authorization_code")
+  const link3 = url3.toString()
+  const res3 = await liuReq(link3, undefined, { method: "GET" })
+
+  // 4. extract access_token, and so on
+  const data4 = res3?.data ?? {}
+  const access_token = data4?.access_token
+  if(!access_token) {
+    return { code: "E5004", errMsg: "no access_token from wx gzh" }
+  }
+  const wx_gzh_openid = data4?.openid
+  if(!wx_gzh_openid) {
+    return { code: "E5004", errMsg: "no openid from wx gzh" }
+  }
+  const is_snapshotuser = data4?.is_snapshotuser
+  if(is_snapshotuser === "1") {
+    return { code: "U0007", errMsg: "the user is a snapshot user" }
+  }
+  
+
+
+
+  
+
+
+
+
+  
 
 
   
