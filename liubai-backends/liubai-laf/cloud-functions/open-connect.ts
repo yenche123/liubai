@@ -24,8 +24,8 @@ import {
   Sch_Param_OC_SetWechat,
 } from "@/common-types"
 import { 
-  checker, 
-  getWeChatAccessToken, 
+  checkAndGetWxGzhAccessToken,
+  checker,
   getWwQynbAccessToken, 
   liuReq, 
   verifyToken,
@@ -182,7 +182,7 @@ async function handle_bind_wechat(
   }
 
   // 5. get wechat accessToken
-  const accessToken = await getWeChatAccessToken()
+  const accessToken = await checkAndGetWxGzhAccessToken()
   if(!accessToken) {
     return { code: "E5001", errMsg: "wechat accessToken not found" }
   }

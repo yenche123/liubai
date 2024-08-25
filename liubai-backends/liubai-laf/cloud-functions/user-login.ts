@@ -22,6 +22,8 @@ import type {
   Table_AllowList,
   UserLoginOperate,
   LiuErrReturn,
+  Wx_Res_GzhSnsUserInfo,
+  UserWeChatGzh,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -659,19 +661,50 @@ async function handle_wx_gzh_oauth(
   if(is_snapshotuser === "1") {
     return { code: "U0007", errMsg: "the user is a snapshot user" }
   }
+
+  // 5. get user info
+  const url5 = new URL(WX_GZH_SNS_USERINFO)
+  const sp5 = url5.searchParams
+  sp5.set("access_token", access_token)
+  sp5.set("openid", wx_gzh_openid)
+  sp5.set("lang", "en")
+  const link5 = url5.toString()
+  const res5 = await liuReq<Wx_Res_GzhSnsUserInfo>(link5, undefined, { method: "GET" })
+  const data5 = res5?.data
+  console.log("wx gzh data5: ")
+  console.log(data5)
+  console.log(" ")
+
+  if(!data5?.nickname) {
+    console.warn("no nickname from wx gzh")
+    console.log(res5)
+    return { code: "E5004", errMsg: "no nickname from wx gzh" }
+  }
+
+  // 6. create userWeChatGzh
+  const userWeChatGzh: UserWeChatGzh = {
+    nickname: data5.nickname,
+    headimgurl: data5.headimgurl,
+  }
+  const thirdData: UserThirdData = { wx_gzh: userWeChatGzh }
+
+  // 7. 使用 openid 去找用户
+  const res7 = await findUserByWxOpenId(wx_gzh_openid)
+
+  // 8.1 使用 openid 查找后，发现拒绝登录或异常
+  if(res7.type === 1) {
+    return res7.rqReturn
+  }
+  // 8.2 使用 openid 查找后，找到可供登录的用户们
+  if(res7.type === 2) {
+    const res8_2 = await sign_in(ctx, body, res7.userInfos, { client_key, thirdData })
+    return res8_2
+  }
+  
+  // 9. get subscribe status of the user
   
 
 
-
-  
-
-
-
-
-  
-
-
-  
 }
 
 async function handle_github_oauth(
@@ -1066,6 +1099,7 @@ function getRes_ULN_User(
 interface SignUpParam2 {
   email?: string
   phone?: string
+  wx_gzh_openid?: string
 }
 
 /*************************** 注册 ************************/
@@ -1076,8 +1110,8 @@ async function sign_up(
   client_key?: string,
   thirdData?: UserThirdData,
 ) {
-  const { email, phone } = param2
-  if(!email && !phone) {
+  const { email, phone, wx_gzh_openid } = param2
+  if(!email && !phone && !wx_gzh_openid) {
     return { code: "E5001", errMsg: "there is no required data in sign_up" }
   }
 
@@ -1094,6 +1128,7 @@ async function sign_up(
     email,
     phone,
     open_id,
+    wx_gzh_openid,
     thirdData,
     theme: "system",
     systemTheme,
@@ -1266,17 +1301,29 @@ type FindUserRes = {
   type: 3
 }
 
+/** look up user by openid */
+async function findUserByWxOpenId(
+  wx_gzh_openid: string,
+) {
+  const w: Partial<Table_User> = { wx_gzh_openid }
+  const uCol = db.collection("User")
+  const res1 = await uCol.where(w).get<Table_User>()
+  console.log("findUserByWxOpenId res1 ----->")
+  console.log("res.code: ", res1.code)
+  console.log("res.data: ", res1.data)
+  console.log("res.ok: ", res1.ok)
+  console.log(" ")
+  const list = res1.data
+  const res2 = await handleUsersFound(list)
+  return res2
+}
+
 /** 使用 github_id 去寻找用户 */
 async function findUserByGitHubId(
   github_id: number,
 ) {
   const w = { github_id }
   const res = await db.collection("User").where(w).get<Table_User>()
-  console.log("findUserByGitHubId res ----->")
-  console.log("res.code: ", res.code)
-  console.log("res.data: ", res.data)
-  console.log("res.ok: ", res.ok)
-  console.log(" ")
   const list = res.data
   const res2 = await handleUsersFound(list)
   return res2

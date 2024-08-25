@@ -12,10 +12,10 @@ import type {
 } from "@/common-types";
 import { 
   decryptEncData, 
-  getSummary, 
-  getWeChatAccessToken,
+  getSummary,
   displayTime,
   valTool,
+  checkAndGetWxGzhAccessToken,
 } from "@/common-util";
 import { commonLang, getCurrentLocale, useI18n } from "@/common-i18n";
 import { wx_reminder_tmpl } from "@/common-config";
@@ -89,7 +89,7 @@ async function handle_remind() {
     return true
   }
 
-  const access_token = await getWeChatAccessToken()
+  const access_token = await checkAndGetWxGzhAccessToken()
   if(!access_token) {
     console.warn("access_token is not found")
     return false

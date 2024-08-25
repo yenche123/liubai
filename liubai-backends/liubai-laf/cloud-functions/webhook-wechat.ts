@@ -26,8 +26,8 @@ import {
   MINUTE,
 } from "@/common-time"
 import { 
-  getAccountName, 
-  getWeChatAccessToken, 
+  getAccountName,
+  checkAndGetWxGzhAccessToken,
   liuReq, 
   updateUserInCache,
 } from "@/common-util";
@@ -36,7 +36,6 @@ import { wechat_tag_cfg } from "@/common-config";
 
 const db = cloud.database()
 let wechat_access_token = ""
-let lastGetAccessTokenStamp = 0
 
 /***************************** constants **************************/
 
@@ -576,19 +575,8 @@ function getDirectionCredential(
 
 // check out access_token
 async function checkAccessToken() {
-  if(isWithinMillis(lastGetAccessTokenStamp, MIN_3) && wechat_access_token) {
-    return true
-  }
-
-  const res = await getWeChatAccessToken()
-  if(!res) {
-    console.warn("getWeChatAccessToken fails")
-    return false
-  }
-
-  wechat_access_token = res
-  lastGetAccessTokenStamp = getNowStamp()
-  return true
+  wechat_access_token = await checkAndGetWxGzhAccessToken()
+  return wechat_access_token
 }
 
 

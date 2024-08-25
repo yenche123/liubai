@@ -44,7 +44,8 @@ import {
   getNowStamp, 
   getBasicStampWhileAdding, 
   SECONED, DAY, MINUTE,
-  localizeStamp, 
+  localizeStamp,
+  isWithinMillis, 
 } from "@/common-time"
 import geoip from "geoip-lite"
 import Stripe from "stripe"
@@ -56,6 +57,7 @@ const _ = db.command
 
 
 /********************* 常量 ****************/
+const MIN_3 = MINUTE * 3
 const MIN_5 = MINUTE * 5
 const DAY_90 = DAY * 90
 const DAY_28 = DAY * 28
@@ -1500,4 +1502,24 @@ export async function getWeChatAccessToken() {
   const d = res.data
   const accessToken = d?.wechat_gzh?.access_token
   return accessToken
+}
+
+let wx_gzh_access_token = ""
+let lastGetWxGzhAccessTokenStamp = 0
+export async function checkAndGetWxGzhAccessToken() {
+  if(wx_gzh_access_token) {
+    if(isWithinMillis(lastGetWxGzhAccessTokenStamp, MIN_3)) {
+      return wx_gzh_access_token
+    }
+  }
+
+  const res = await getWeChatAccessToken()
+  if(!res) {
+    console.warn("getWeChatAccessToken fails")
+    return ""
+  }
+
+  wx_gzh_access_token = res
+  lastGetWxGzhAccessTokenStamp = getNowStamp()
+  return res
 }
