@@ -530,8 +530,6 @@ export async function get_user_info(
   sP.set("openid", wx_gzh_openid)
   const link = url.toString()
   const res1 = await liuReq<Wx_Res_GzhUserInfo>(link, undefined, { method: "GET" })
-  console.log("get user info from wechat gzh: ")
-  console.log(res1)
   const data1 = res1.data
   return data1
 }

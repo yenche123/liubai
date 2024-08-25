@@ -24,6 +24,7 @@ import type {
   LiuErrReturn,
   Wx_Res_GzhSnsUserInfo,
   UserWeChatGzh,
+  Wx_Res_GzhUserInfo,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -38,6 +39,7 @@ import {
   getUserInfos,
   insertToken,
   liuReq,
+  checkAndGetWxGzhAccessToken,
 } from "@/common-util"
 import { getNowStamp, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -67,6 +69,9 @@ const WX_GZH_OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_t
 
 // 微信公众号 OAuth2 使用 accessToken 去获取用户信息
 const WX_GZH_SNS_USERINFO = "https://api.weixin.qq.com/sns/userinfo"
+
+// @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
+const WX_GZH_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
 
 const PREFIX_CLIENT_KEY = "client_key_"
 
@@ -105,7 +110,7 @@ export async function main(ctx: FunctionContext) {
     res = await handle_google_oauth(ctx, body)
   }
   else if(oT === "wx_gzh_oauth") {
-
+    res = await handle_wx_gzh_oauth(ctx, body)
   }
   else if(oT === "email") {
     res = await handle_email(ctx, body)
@@ -620,7 +625,7 @@ async function handle_google_oauth(
 async function handle_wx_gzh_oauth(
   ctx: FunctionContext,
   body: Record<string, string>,
-) {
+): Promise<LiuRqReturn<Res_UserLoginNormal>> {
   // 1. check out params
   const res1 = checkOAuthParams(body)
   const { code: code1, data: data1 } = res1
@@ -682,11 +687,11 @@ async function handle_wx_gzh_oauth(
   }
 
   // 6. create userWeChatGzh
-  const userWeChatGzh: UserWeChatGzh = {
+  const wx_gzh: UserWeChatGzh = {
     nickname: data5.nickname,
     headimgurl: data5.headimgurl,
   }
-  const thirdData: UserThirdData = { wx_gzh: userWeChatGzh }
+  const thirdData: UserThirdData = { wx_gzh }
 
   // 7. 使用 openid 去找用户
   const res7 = await findUserByWxOpenId(wx_gzh_openid)
@@ -700,17 +705,42 @@ async function handle_wx_gzh_oauth(
     const res8_2 = await sign_in(ctx, body, res7.userInfos, { client_key, thirdData })
     return res8_2
   }
+
+  /******* prepare to sign up ********/
   
   // 9. get subscribe status of the user
-  
+  const wx_gzh_access_token = await checkAndGetWxGzhAccessToken()
+  if(!wx_gzh_access_token) {
+    return { code: "E5001", errMsg: "there is no wx_gzh_access_token" }
+  }
+  const url9 = new URL(WX_GZH_USER_INFO)
+  const sP = url9.searchParams
+  sP.set("access_token", wx_gzh_access_token)
+  sP.set("openid", wx_gzh_openid)
+  const link9 = url9.toString()
+  const res9 = await liuReq<Wx_Res_GzhUserInfo>(link9, undefined, { method: "GET" })
+  const data9 = res9.data
+  if(!data9) {
+    return { code: "E5004", errMsg: "there is no data9 from wx gzh" }
+  }
+  console.log("wx gzh data9: ")
+  console.log(data9)
 
+  wx_gzh.subscribe = data9.subscribe
+  if(data9.language) wx_gzh.language = data9.language
+  if(data9.subscribe_scene) wx_gzh.subscribe_scene = data9.subscribe_scene
+  if(data9.subscribe_time) wx_gzh.subscribe_time = data9.subscribe_time
+  thirdData.wx_gzh = wx_gzh
 
+  // 10. sign up
+  const res10 = await sign_up(ctx, body, { wx_gzh_openid }, client_key, thirdData)
+  return res10
 }
 
 async function handle_github_oauth(
   ctx: FunctionContext,
   body: Record<string, string>,
-) {
+): Promise<LiuRqReturn<Res_UserLoginNormal>> {
   // 1. check out parameters
   const res1 = checkOAuthParams(body)
   const { code: code1, data: data1 } = res1
@@ -944,16 +974,20 @@ async function handleUserWhileSigningIn(
   }
 
   const oldThirdData = user.thirdData ?? {}
-  const oldGoogle = oldThirdData?.google
-  const oldGitHub = oldThirdData?.github
+  const oldWxGzh = oldThirdData?.wx_gzh
   const newGoogle = thirdData?.google
   const newGitHub = thirdData?.github
-  if(!oldGoogle && newGoogle) {
+  const newWxGzh = thirdData?.wx_gzh
+  if(newGoogle) {
     oldThirdData.google = newGoogle
     u.thirdData = oldThirdData
   }
-  if(!oldGitHub && newGitHub) {
+  if(newGitHub) {
     oldThirdData.github = newGitHub
+    u.thirdData = oldThirdData
+  }
+  if(newWxGzh) {
+    oldThirdData.wx_gzh = { ...oldWxGzh, ...newWxGzh }
     u.thirdData = oldThirdData
   }
   
@@ -1293,7 +1327,7 @@ async function _cancelSignUp(
  */
 type FindUserRes = {
   type: 1
-  rqReturn: LiuRqReturn
+  rqReturn: LiuErrReturn
 } | {
   type: 2
   userInfos: LiuUserInfo[]
