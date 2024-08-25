@@ -25,6 +25,8 @@ import type {
   Wx_Res_GzhSnsUserInfo,
   UserWeChatGzh,
   Wx_Res_GzhUserInfo,
+  Wx_Res_GzhOAuthAccessToken,
+  MemberNotification,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -650,20 +652,26 @@ async function handle_wx_gzh_oauth(
   sp3.set("code", oauth_code)
   sp3.set("grant_type", "authorization_code")
   const link3 = url3.toString()
-  const res3 = await liuReq(link3, undefined, { method: "GET" })
+  const res3 = await liuReq<Wx_Res_GzhOAuthAccessToken>(link3, undefined, { method: "GET" })
 
   // 4. extract access_token, and so on
-  const data4 = res3?.data ?? {}
+  const data4 = res3?.data
   const access_token = data4?.access_token
   if(!access_token) {
+    console.warn("no access_token from wx gzh")
+    console.log(res3)
     return { code: "E5004", errMsg: "no access_token from wx gzh" }
   }
   const wx_gzh_openid = data4?.openid
   if(!wx_gzh_openid) {
+    console.warn("no openid from wx gzh")
+    console.log(res3)
     return { code: "E5004", errMsg: "no openid from wx gzh" }
   }
   const is_snapshotuser = data4?.is_snapshotuser
-  if(is_snapshotuser === "1") {
+  if(is_snapshotuser === 1) {
+    console.warn("the user is a snapshot user")
+    console.log(res3)
     return { code: "U0007", errMsg: "the user is a snapshot user" }
   }
 
@@ -676,9 +684,6 @@ async function handle_wx_gzh_oauth(
   const link5 = url5.toString()
   const res5 = await liuReq<Wx_Res_GzhSnsUserInfo>(link5, undefined, { method: "GET" })
   const data5 = res5?.data
-  console.log("wx gzh data5: ")
-  console.log(data5)
-  console.log(" ")
 
   if(!data5?.nickname) {
     console.warn("no nickname from wx gzh")
@@ -721,10 +726,10 @@ async function handle_wx_gzh_oauth(
   const res9 = await liuReq<Wx_Res_GzhUserInfo>(link9, undefined, { method: "GET" })
   const data9 = res9.data
   if(!data9) {
+    console.warn("there is no data9 from wx gzh")
+    console.log(res9)
     return { code: "E5004", errMsg: "there is no data9 from wx gzh" }
   }
-  console.log("wx gzh data9: ")
-  console.log(data9)
 
   wx_gzh.subscribe = data9.subscribe
   if(data9.language) wx_gzh.language = data9.language
@@ -1200,6 +1205,10 @@ async function sign_up(
   const name = getNameFromThirdData(thirdData)
   const avatar = constructMemberAvatarFromThirdData(thirdData)
   const basic3 = getBasicStampWhileAdding()
+  const member_noti: MemberNotification = {}
+  if(thirdData?.wx_gzh?.subscribe) {
+    member_noti.wx_gzh_toggle = true
+  }
   const member: PartialSth<Table_Member, "_id"> = {
     spaceType: "ME",
     name,
@@ -1207,6 +1216,7 @@ async function sign_up(
     spaceId,
     user: userId,
     oState: "OK",
+    notification: member_noti,
     ...basic3,
   }
   const res3 = await db.collection("Member").add(member)
@@ -1222,6 +1232,7 @@ async function sign_up(
     member_name: name,
     member_avatar: avatar,
     member_oState: "OK",
+    member_notification: member_noti,
 
     spaceId,
     spaceType: "ME",
@@ -1240,6 +1251,9 @@ async function sign_up(
   // 7. 最后去登录
   const signInOpt = { client_key, thirdData, justSignUp: true }
   const res4 = await sign_in(ctx, body, userInfos, signInOpt)
+
+  // 8. TODO: download and upload avatar if it exists
+
   return res4
 }
 
@@ -1247,7 +1261,11 @@ function getNameFromThirdData(
   thirdData?: UserThirdData,
 ) {
   if(!thirdData) return
-  const { google: googleData, github: githubData } = thirdData
+  const { 
+    google: googleData, 
+    github: githubData,
+    wx_gzh: wxGzhData,
+  } = thirdData
 
   const n1 = googleData?.given_name
   if(n1 && typeof n1 === "string") return n1
@@ -1255,8 +1273,11 @@ function getNameFromThirdData(
   const n2 = googleData?.name
   if(n2 && typeof n2 === "string") return n2
 
-  const n3 = githubData?.login
+  const n3 = wxGzhData?.nickname
   if(n3 && typeof n3 === "string") return n3
+
+  const n4 = githubData?.login
+  if(n4 && typeof n4 === "string") return n4
 
 }
 
@@ -1265,7 +1286,11 @@ function constructMemberAvatarFromThirdData(
   thirdData?: UserThirdData,
 ) {
   if(!thirdData) return
-  const { google: googleData, github: githubData } = thirdData
+  const { 
+    google: googleData, 
+    github: githubData,
+    wx_gzh: wxGzhData,
+  } = thirdData
 
   const pic1 = googleData?.picture
   if(pic1 && typeof pic1 === "string") {
@@ -1275,6 +1300,11 @@ function constructMemberAvatarFromThirdData(
   const pic2 = githubData?.avatar_url
   if(pic2 && typeof pic2 === "string") {
     return generateAvatar(pic2)
+  }
+
+  const pic3 = wxGzhData?.headimgurl
+  if(pic3 && typeof pic3 === "string") {
+    return generateAvatar(pic3)
   }
 
 }

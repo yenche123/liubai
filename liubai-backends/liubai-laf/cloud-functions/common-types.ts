@@ -1785,6 +1785,16 @@ export interface Wx_Res_Create_QR {
   url: string
 }
 
+export interface Wx_Res_GzhOAuthAccessToken {
+  access_token: string
+  expires_in: number      // usually 7200 seconds
+  refresh_token: string
+  openid: string
+  scope: string
+  is_snapshotuser?: 1
+  unionid?: string
+}
+
 export interface Wx_Res_GzhUserInfo {
   subscribe: 0 | 1      // 0: unsubscribed    1: subscribed
   openid: string

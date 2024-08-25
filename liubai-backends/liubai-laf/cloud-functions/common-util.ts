@@ -348,11 +348,17 @@ export function getDocAddId(res: any) {
 */
 export function getSuffix(name: string) {
   let arr = /\.([\w]*)$/.exec(name)
-  if(!arr) {
-    arr = /\/([\w]*)$/.exec(name)
-    if(!arr) return ""
-  }
+  if(!arr) return ""
   const format = arr[1].toLowerCase()
+  if(format.length > 9) return ""
+  return format
+}
+
+export function getMimeTypeSuffix(name: string) {
+  let arr = /\/([\w]*)$/.exec(name)
+  if(!arr) return ""
+  const format = arr[1].toLowerCase()
+  if(format.length > 9) return ""
   return format
 }
 

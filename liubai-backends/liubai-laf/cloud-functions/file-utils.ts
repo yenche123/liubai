@@ -13,7 +13,7 @@ import type {
   DownloadUploadOpt,
   DownloadUploadRes,
 } from '@/common-types';
-import { getSuffix } from '@/common-util';
+import { getMimeTypeSuffix } from '@/common-util';
 import FormData from 'form-data';
 import qiniu from "qiniu";
 import { 
@@ -105,7 +105,7 @@ export async function responseToFormData(
   const formKey = opt?.formKey ?? "media"
   let filename = opt?.filename
   if(!filename) {
-    let suffix = getSuffix(contentType)
+    let suffix = getMimeTypeSuffix(contentType)
     if(!suffix) suffix = "jpg"
     filename = `upload.${suffix}`
   }
@@ -179,7 +179,7 @@ async function prepareToUploadToQiniu(
 
   // 2. get suffix and filename
   const contentType = fileBlob.type
-  const suffix = getSuffix(contentType)
+  const suffix = getMimeTypeSuffix(contentType)
   const r1 = createFileRandom()
   const r2 = createRandom(4)
   const now = getNowStamp()

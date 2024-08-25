@@ -124,10 +124,10 @@ const { t } = useI18n()
 .lpc-title {
   text-align: center;
   width: 100%;
-  font-size: var(--head-font);
+  font-size: var(--title-font);
   font-weight: 700;
   color: var(--main-normal);
-  margin-block-end: 75px;
+  margin-block-end: 50px;
 }
 
 
