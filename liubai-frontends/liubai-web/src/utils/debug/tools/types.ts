@@ -12,3 +12,7 @@ export interface Sentry_Breadcrumb {
   };
   timestamp?: number;
 } 
+
+export interface SomeProperties {
+  email?: string
+}

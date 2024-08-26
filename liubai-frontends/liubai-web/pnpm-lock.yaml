@@ -20,6 +20,9 @@ importers:
       '@openpanel/web':
         specifier: 1.0.0
         version: 1.0.0
+      '@openreplay/tracker':
+        specifier: ^14.0.4
+        version: 14.0.4
       '@sentry/vue':
         specifier: ^8.26.0
         version: 8.26.0(vue@3.4.38(typescript@5.5.4))
@@ -1059,6 +1062,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
+  '@medv/finder@3.2.0':
+    resolution: {integrity: sha512-JmU7JIBwyL8RAzefvzALT4sP2M0biGk8i2invAgpQmma/QgfsaqoHIvJ7S0YC8n9hUVG8X3Leul2nGa06PvhbQ==}
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -1128,6 +1134,10 @@ packages:
 
   '@openpanel/web@1.0.0':
     resolution: {integrity: sha512-ipY5hYWWrzPDwi1BtzyNn1d+Ly1gjujpmLvqO6oMKOhbNT8CwV9dIObZjyhzckaSMS8qYII9pLDIU1HCRysEDg==}
+
+  '@openreplay/tracker@14.0.4':
+    resolution: {integrity: sha512-Mz+MPw9EYbH6tpZ3d1u2yLJsY+MaoBmJX0gQt4HtvGlwJnd7xJvF37xHY8/e3N1Tc7zENsrf7xcpiZXabNKoVQ==}
+    engines: {node: '>=14.0'}
 
   '@polka/url@1.0.0-next.25':
     resolution: {integrity: sha512-j7P6Rgr3mmtdkeDGTe0E/aYyWEWVtc5yFXtHCRHs28/jptDEWfaVOc5T7cblqy1XKPPfCxJc/8DwQ5YgLOZOVQ==}
@@ -2365,6 +2375,9 @@ packages:
 
   fflate@0.4.8:
     resolution: {integrity: sha512-FJqqoDBR00Mdj9ppamLa/Y7vxm+PRmNWA67N846RvsoYVMKB4q3y/de5PA7gUmRMYK/8CMz2GDZQmCRN1wBcWA==}
+
+  fflate@0.8.2:
+    resolution: {integrity: sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==}
 
   file-saver@2.0.5:
     resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
@@ -5111,6 +5124,8 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  '@medv/finder@3.2.0': {}
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -5191,6 +5206,12 @@ snapshots:
   '@openpanel/web@1.0.0':
     dependencies:
       '@openpanel/sdk': 1.0.0
+
+  '@openreplay/tracker@14.0.4':
+    dependencies:
+      '@medv/finder': 3.2.0
+      error-stack-parser: 2.1.4
+      fflate: 0.8.2
 
   '@polka/url@1.0.0-next.25': {}
 
@@ -6540,6 +6561,8 @@ snapshots:
       picomatch: 4.0.2
 
   fflate@0.4.8: {}
+
+  fflate@0.8.2: {}
 
   file-saver@2.0.5: {}
 

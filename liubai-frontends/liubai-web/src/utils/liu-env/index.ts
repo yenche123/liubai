@@ -81,6 +81,10 @@ function getEnv(): LiuSystemEnv {
   // matomo
   const MATOMO_URL = import.meta.env.VITE_MATOMO_URL
 
+  // openreplay
+  const OPENREPLAY_PROJECT_KEY = import.meta.env.VITE_OPENREPLAY_PROJECT_KEY
+  const OPENREPLAY_INGEST_POINT = import.meta.env.VITE_OPENREPLAY_INGEST_POINT
+
   // connectors
   const CONNECTORS = import.meta.env.VITE_CONNECTORS === "01"
   const C_WECHAT = import.meta.env.VITE_CONNECT_WECHAT === "01"
@@ -141,6 +145,8 @@ function getEnv(): LiuSystemEnv {
     PLAUSIBLE_DOMAIN,
     PLAUSIBLE_SRC,
     MATOMO_URL,
+    OPENREPLAY_PROJECT_KEY,
+    OPENREPLAY_INGEST_POINT,
     CONNECTORS,
     C_WECHAT,
     C_DINGTALK,

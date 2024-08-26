@@ -42,6 +42,7 @@ defineExpose({ editor })
     ref="ecRef" 
     data-clarity-mask="true"
     data-bf-ignore-keypress
+    data-openreplay-obscured
   />
 </template>
 

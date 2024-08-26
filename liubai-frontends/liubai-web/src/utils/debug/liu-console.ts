@@ -9,6 +9,7 @@ import {
   isBugfenderExisted,
   isPostHogExisted,
   isClarityExisted,
+  isOpenReplayExisted,
 } from "./tools/some-funcs"
 import { waitAnalyticsInit } from "~/utils/wait/wait-analytics-init"
 import type { Sentry_Breadcrumb } from "./tools/types"
@@ -17,6 +18,10 @@ import {
   setPostHogUserProperties, 
   setSentryUserProperties,
 } from "./tools/user-properties";
+import { 
+  getOpenReplayTracker,
+  initOpenReplay,
+} from "./tools/open-replay";
 
 const showNowStamp = () => {
   const s = time.getTime()
@@ -46,6 +51,12 @@ const sendMessage = async (message: string) => {
     const { Bugfender } = await getBugfender()
     Bugfender.log(message)
   }
+
+  const hasOpenReplay = isOpenReplayExisted()
+  if(hasOpenReplay) {
+    const openReplayTracker = getOpenReplayTracker()
+    openReplayTracker?.event("message", message)
+  }
 }
 
 // 打点，记录面包屑
@@ -68,7 +79,17 @@ const addBreadcrumb = async (breadcrumb: Sentry_Breadcrumb) => {
     Sentry.addBreadcrumb(bc)
   }
 
-  // 3. add message
+  // 3. openreplay
+  const hasOpenReplay = isOpenReplayExisted()
+  if(hasOpenReplay) {
+    const key3 = breadcrumb.category ?? "default"
+    const payload3 = { ...breadcrumb }
+    delete payload3.category
+    const openReplayTracker = getOpenReplayTracker()
+    openReplayTracker?.issue(key3, payload3)
+  }
+
+  // 4. add message
   if(breadcrumb.message) {
     sendMessage(breadcrumb.message)
   }
@@ -100,7 +121,11 @@ const setUserTagsCtx = async () => {
   if(hasClarity) {
     setClarityUserProperties(localP, { email})
   }
-  
+
+  const hasOpenReplay = isOpenReplayExisted()
+  if(hasOpenReplay) {
+    initOpenReplay(localP, { email })
+  }
 }
 
 

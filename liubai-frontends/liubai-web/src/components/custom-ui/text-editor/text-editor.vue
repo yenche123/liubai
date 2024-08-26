@@ -38,6 +38,7 @@ const {
         @input="onInput"
         data-clarity-mask="true"
         data-bf-ignore-keypress
+        data-openreplay-obscured
       />
       <div class="cui-modal-btns">
         <div 

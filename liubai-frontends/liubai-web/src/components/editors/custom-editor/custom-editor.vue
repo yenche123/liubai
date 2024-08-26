@@ -115,6 +115,7 @@ useDraftIdChanged(ceData)
       @keydown.enter="onTitleEnterDown"
       data-clarity-mask="true"
       data-bf-ignore-keypress
+      data-openreplay-obscured
     />
     <div class="ce-clear-title" @click.stop="onTapCloseTitle">
       <svg-icon name="close-circle" class="ce-clear-svg" 

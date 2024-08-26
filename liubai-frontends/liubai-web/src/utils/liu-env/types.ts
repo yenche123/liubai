@@ -73,6 +73,10 @@ export interface LiuSystemEnv {
   // matomo
   MATOMO_URL?: string
 
+  // openreplay
+  OPENREPLAY_PROJECT_KEY?: string
+  OPENREPLAY_INGEST_POINT?: string
+
   // connectors
   CONNECTORS?: boolean
   C_WECHAT?: boolean

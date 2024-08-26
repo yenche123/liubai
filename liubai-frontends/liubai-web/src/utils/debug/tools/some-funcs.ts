@@ -52,6 +52,14 @@ const isClarityExisted = () => {
   return false
 }
 
+
+const isOpenReplayExisted = () => {
+  const _env = liuEnv.getEnv()
+  const { OPENREPLAY_PROJECT_KEY } = _env
+  if(OPENREPLAY_PROJECT_KEY) return true
+  return false
+}
+
 export {
   getSentry,
   getBugfender,
@@ -60,4 +68,5 @@ export {
   isBugfenderExisted,
   isPostHogExisted,
   isClarityExisted,
+  isOpenReplayExisted,
 }

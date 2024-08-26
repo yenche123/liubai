@@ -1,10 +1,7 @@
 import { getPostHog, getSentry } from "./some-funcs";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { type LocalPreference } from "~/utils/system/tools/types";
-
-interface SomeProperties {
-  email?: string
-}
+import { type SomeProperties } from "./types";
 
 export async function setSentryUserProperties(
   localP: LocalPreference,
