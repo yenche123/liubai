@@ -3,8 +3,9 @@ import type {
   BindAccountParam, 
   BindAccountData, 
   BaResolver,
+  BaResult,
 } from "./types"
-import { LiuTimeout } from "~/utils/basic/type-tool";
+import type { LiuTimeout } from "~/utils/basic/type-tool";
 import cfg from "~/config";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import APIs from "~/requests/APIs";
@@ -16,8 +17,13 @@ import type {
   Res_OC_CheckWeCom,
 } from "~/requests/req-types";
 import time from "~/utils/basic/time";
+import { 
+  fetchScanCheck, 
+  fetchWxGzhScan,
+} from "~/pages/level1/tools/requests";
 
 const SEC_4 = time.SECONED * 4
+const SEC_5 = time.SECONED * 5
 const SEC_6 = time.SECONED * 6
 
 const TRANSITION_DURATION = 350
@@ -47,6 +53,7 @@ export function showBindAccount(param: BindAccountParam) {
   baData.pic_url = ""
   baData.runTimes = 0
   baData.loading = true
+  baData.state = param.state
 
   _open()
   fetchData()
@@ -66,24 +73,54 @@ function onImgLoaded() {
 let pollTimeout: LiuTimeout
 async function fetchData() {
 
-  // 1. get memberId & clear pollTimeout
+  // 1. clear pollTimeout
+  const bT = baData.bindType
+  if(pollTimeout) clearTimeout(pollTimeout)
+  if(bT === "wx_gzh_scan") {
+    fetch_wx_gzh_scan()
+    return
+  }
+
+  // 2. get memberId
   const wStore = useWorkspaceStore()
   const memberId = wStore.memberId
   if(!memberId) return
-  if(pollTimeout) clearTimeout(pollTimeout)
-
-  // 2. to request 
-  const bT = baData.bindType
+  
+  // 3. to request 
   if(bT === "ww_qynb") {
-    fetchWeCom(memberId)
+    fetch_bind_wecom(memberId)
   }
   else if(bT === "wx_gzh") {
-    fetchWeChat(memberId)
+    fetch_bind_wechat(memberId)
   }
   
 }
 
-async function fetchWeChat(
+
+async function fetch_wx_gzh_scan() {
+  const state = baData.state
+  if(!state) {
+    console.warn("state is required while wx_gzh_scan")
+    return
+  }
+  const res = await fetchWxGzhScan(state)
+  const { code, data: d } = res
+  if(code !== "0000" || !d) {
+    _over()
+    return
+  }
+  baData.qr_code = d.qr_code
+  baData.loading = false
+
+  const cred = d.credential
+  if(!cred) return
+  if(pollTimeout) clearTimeout(pollTimeout)
+  pollTimeout = setTimeout(() => {
+    checkData(cred)
+  }, SEC_5)
+}
+
+async function fetch_bind_wechat(
   memberId: string,
 ) {
   const w3 = {
@@ -114,7 +151,7 @@ async function fetchWeChat(
 }
 
 
-async function fetchWeCom(
+async function fetch_bind_wecom(
   memberId: string,
 ) {
   const w3 = {
@@ -142,7 +179,7 @@ async function fetchWeCom(
   }, SEC_6)
 }
 
-async function checkWeCom(
+async function fetch_check_wecom(
   credential: string,
 ) {
   const url = APIs.OPEN_CONNECT
@@ -151,7 +188,7 @@ async function checkWeCom(
     credential,
   }
   const res3 = await liuReq.request<Res_OC_CheckWeCom>(url, b3)
-  console.log("checkWeCom res3: ")
+  console.log("fetch_check_wecom res3: ")
   console.log(res3)
   console.log(" ")
   
@@ -159,7 +196,7 @@ async function checkWeCom(
   const d4 = res3.data
   const status = d4?.status
   if(status !== "waiting") {
-    _over()
+    _over({ resultType: "plz_check" })
     return
   }
   
@@ -168,7 +205,33 @@ async function checkWeCom(
   }, SEC_4)
 }
 
-async function checkWeChat(
+
+async function fetch_scan_check(
+  credential: string,
+) {
+  const res = await fetchScanCheck(credential)
+  const { code, data } = res
+  if(code !== "0000" || !data) {
+    _over()
+    return
+  }
+  const { status, credential_2 } = data
+  if(status === "plz_check") {
+    _over({ resultType: "plz_check", credential, credential_2 })
+    return
+  }
+  if(status !== "waiting") {
+    _over()
+    return
+  }
+
+  pollTimeout = setTimeout(() => {
+    checkData(credential)
+  }, SEC_4)
+}
+
+
+async function fetch_check_wechat(
   credential: string,
 ) {
   const url = APIs.OPEN_CONNECT
@@ -177,7 +240,7 @@ async function checkWeChat(
     credential,
   }
   const res3 = await liuReq.request<Res_OC_CheckWeChat>(url, b3)
-  console.log("checkWeChat res3: ")
+  console.log("fetch_check_wechat res3: ")
   console.log(res3)
   console.log(" ")
   
@@ -185,7 +248,7 @@ async function checkWeChat(
   const d4 = res3.data
   const status = d4?.status
   if(status !== "waiting") {
-    _over()
+    _over({ resultType: "plz_check" })
     return
   }
   
@@ -203,17 +266,20 @@ async function checkData(
   if(!baData.enable) return
   baData.runTimes++
   if(baData.runTimes > 100) {
-    _over()
+    _over({ resultType: "plz_check" })
     return
   }
 
   // 2. to check out specific data
   const bT = baData.bindType
   if(bT === "ww_qynb") {
-    checkWeCom(credential)
+    fetch_check_wecom(credential)
   }
   else if(bT === "wx_gzh") {
-    checkWeChat(credential)
+    fetch_check_wechat(credential)
+  }
+  else if(bT === "wx_gzh_scan") {
+    fetch_scan_check(credential)
   }
   
 }
@@ -221,7 +287,7 @@ async function checkData(
 
 function onTapMask() {
   if(pollTimeout) clearTimeout(pollTimeout)
-  _over()
+  _over({ resultType: "cancel" })
 }
 
 let toggleTimeout: LiuTimeout
@@ -234,8 +300,13 @@ function _open() {
   }, cfg.frame_duration)
 }
 
-function _over() {
-  _resolve && _resolve(true)
+function _over(
+  res?: BaResult,
+) {
+  if(!res) {
+    res = { resultType: "error" }
+  }
+  _resolve && _resolve(res)
   _close()
 }
 

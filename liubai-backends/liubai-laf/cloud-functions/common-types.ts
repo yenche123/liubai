@@ -185,6 +185,8 @@ export const localLocales = [...supportedLocales, "system"] as const
 export type LocalLocale = typeof localLocales[number]
 export const Sch_LocalLocale = vbot.picklist(localLocales)
 
+export type CheckBindStatus = "waiting" | "plz_check" | "expired"
+
 interface BaseTable {
   _id: string
   insertedStamp: number
@@ -671,6 +673,7 @@ export interface CredentialMetaData {
   pic_url?: string
   qr_code?: string
   ww_qynb_config_id?: string
+  wx_gzh_openid?: string
 }
 
 /*********************** 加解密相关 **********************/
@@ -1134,12 +1137,13 @@ export interface Table_Config extends BaseTable {
 }
 
 /** 临时凭证表的类型 */
-export type Table_Credential_Type =  "sms-code" | "email-code" | "scan-code"
+export type Table_Credential_Type =  "sms-code" | "email-code" | "wx-gzh-scan"
   | "users-select" | "stripe-checkout-session" | "bind-wecom" | "bind-wechat"
 
 /** 临时凭证表 */
 export interface Table_Credential extends BaseTable {
   credential: string
+  credential_2?: string
   infoType: Table_Credential_Type
   expireStamp: number
 
@@ -1259,9 +1263,24 @@ export type UserLoginOperate = "init" | "email" | "email_code"
   | "github_oauth" 
   | "google_oauth"
   | "wx_gzh_oauth"
+  | "wx_gzh_scan"
+  | "scan_check"
+  | "scan_login"
   | "google_credential"
   | "users_select"
   | "enter"
+
+export interface Res_UL_WxGzhScan {
+  operateType: "wx_gzh_scan"
+  qr_code: string
+  credential: string
+}
+
+export interface Res_UL_ScanCheck {
+  operateType: "scan_check"
+  status: CheckBindStatus
+  credential_2?: string     // 当 status 为 "plz_check" 时，必有
+}
 
 export interface Res_UserLoginNormal {
   // 需要验证 email 时或只有一个 user 符合时
@@ -1659,8 +1678,6 @@ export interface Res_SyncGet_Cloud {
 /******************** open-connect **********************/
 export type OpenConnectOperate = "bind-wecom" | "check-wecom" | "get-wechat"
   | "set-wechat" | "bind-wechat" | "check-wechat"
-
-export type CheckBindStatus = "waiting" | "plz_check" | "expired"
 
 export interface Param_OC_SetWechat {
   operateType: "set-wechat"

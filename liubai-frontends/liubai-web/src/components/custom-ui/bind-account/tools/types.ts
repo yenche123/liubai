@@ -1,10 +1,11 @@
 
 
 
-export type BindType = "ww_qynb" | "wx_gzh"
+export type BindType = "ww_qynb" | "wx_gzh" | "wx_gzh_scan"
 
 export interface BindAccountParam {
   bindType: BindType
+  state?: string         // for login
 }
 
 export interface BindAccountData {
@@ -15,8 +16,13 @@ export interface BindAccountData {
   pic_url: string
   runTimes: number
   loading: boolean
+  state?: string
 }
 
-export type BindAccountRes = boolean
+export interface BaResult {
+  resultType: "plz_check" | "cancel" | "error"
+  credential?: string
+  credential_2?: string
+}
 
-export type BaResolver = (res: BindAccountRes) => void
+export type BaResolver = (res: BaResult) => void

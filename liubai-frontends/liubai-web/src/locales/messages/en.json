@@ -482,12 +482,15 @@
     "whatsapp_desc": "Using Liubai on WhatsApp"
   },
   "qrcode": {
+    "title": "Your exclusive QR code",
     "long_press_1": "Long press to recognize and add \"留小白\" on WeChat",
     "long_press_2": "Long press to recognize and follow \"Liubai\" on WeChat",
+    "long_press_3": "Long press to recognize and follow \"Liubai\" on WeChat",
+    "screenshot": "Screenshot and open it on WeChat please",
     "scan_1": "Scan the QR code using WeChat to add \"留小白\"",
     "scan_2": "Scan the QR code using WeChat to follow \"Liubai\"",
-    "title": "Your exclusive QR code",
-    "screenshot": "Screenshot and open it on WeChat please"
+    "scan_3": "Scan the QR code using WeChat to follow \"Liubai\"",
+    "wx_scan_login": "WeChat Scan Login"
   },
   "notification": {
     "open_wx_gzh": "Please follow the WeChat Subscription. Liubai will remind you only after that.",

@@ -1,6 +1,11 @@
 import APIs from "~/requests/APIs"
 import liuReq from "~/requests/liu-req"
-import type { Res_UserLoginInit, Res_UserLoginNormal } from "~/requests/req-types"
+import type { 
+  Res_UL_WxGzhScan, 
+  Res_UL_ScanCheck,
+  Res_UserLoginInit, 
+  Res_UserLoginNormal,
+} from "~/requests/req-types"
 import localCache from "~/utils/system/local-cache";
 import { createClientKey } from "./common-utils"
 import { type LiuRqReturn } from "~/requests/tools/types";
@@ -127,5 +132,50 @@ export async function fetchGoogleCredential(
   const res = await liuReq.request<Res_UserLoginNormal>(url, opt)
   return res
 }
+
+export async function fetchWxGzhScan(
+  state: string,
+) {
+  const url = APIs.LOGIN
+  const default_opt = _getDefaultOpt()
+  const opt = {
+    ...default_opt,
+    operateType: "wx_gzh_scan",
+    state,
+  }
+  const res = await liuReq.request<Res_UL_WxGzhScan>(url, opt)
+  return res
+}
+
+export async function fetchScanCheck(
+  credential: string,
+) {
+  const url = APIs.LOGIN
+  const default_opt = _getDefaultOpt()
+  const opt = {
+    ...default_opt,
+    operateType: "scan_check",
+    credential,
+  }
+  const res = await liuReq.request<Res_UL_ScanCheck>(url, opt)
+  return res
+}
+
+export async function fetchScanLogin(
+  credential: string,
+  credential_2: string,
+) {
+  const url = APIs.LOGIN
+  const default_opt = _getDefaultOpt()
+  const opt = {
+    ...default_opt,
+    operateType: "scan_login",
+    credential,
+    credential_2,
+  }
+  const res = await liuReq.request<Res_UserLoginNormal>(url, opt)
+  return res
+}
+
 
 export type Fetch_UserLoginNormal = LiuRqReturn<Res_UserLoginNormal>

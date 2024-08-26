@@ -126,6 +126,15 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "users_select") {
     res = await handle_users_select(ctx, body)
   }
+  else if(oT === "wx_gzh_scan") {
+
+  }
+  else if(oT === "scan_check") {
+
+  }
+  else if(oT === "scan_login") {
+    
+  }
 
   return res
 }

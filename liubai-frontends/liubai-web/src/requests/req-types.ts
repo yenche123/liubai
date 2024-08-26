@@ -31,6 +31,18 @@ export interface Res_ULN_User extends LiuSpaceAndMember {
   createdStamp: number
 }
 
+export interface Res_UL_WxGzhScan {
+  operateType: "wx_gzh_scan"
+  qr_code: string
+  credential: string
+}
+
+export interface Res_UL_ScanCheck {
+  operateType: "scan_check"
+  status: CheckBindStatus
+  credential_2?: string     // 当 status 为 "plz_check" 时，必有
+}
+
 export interface Res_UserLoginNormal {
 
   // 需要验证 email 时或只有一个 user 符合时
