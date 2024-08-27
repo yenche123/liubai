@@ -143,17 +143,73 @@ export async function main(ctx: FunctionContext) {
     res = await handle_scan_check(ctx, body)
   }
   else if(oT === "scan_login") {
-    
+    res = await handle_scan_login(ctx, body)
   }
 
   return res
 }
 
 
+/***************************** Sign in with credential_2 *************************/
+async function handle_scan_login(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+) {
+  // 1. check out params
+  const cred = body.credential
+  const cred_2 = body.credential_2
+  if(!cred || typeof cred !== "string") {
+    return { code: "E4000", errMsg: "no credential" }
+  }
+  if(!cred_2 || typeof cred_2 !== "string") {
+    return { code: "E4000", errMsg: "no credential_2" }
+  }
 
+  // 2. check out client_key
+  const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
+  if(!client_key || code1) {
+    return { code: code1 ?? "E5001", errMsg: errMsg1 }
+  }
 
+  // 3. get cred
+  const cCol = db.collection("Credential")
+  const q3 = cCol.where({ credential: cred })
+  const res3 = await q3.orderBy("insertedStamp", "desc").get<Table_Credential>()
+  const list3 = res3.data
+  const fir3 = list3[0]
+  if(!fir3) {
+    return { code: "E4003", errMsg: "no credential" }
+  }
 
-/******************************** 检测二维码状态 *************************/
+  // 4. check if credential_2 is matched
+  if(fir3.credential_2 !== cred_2) {
+    return { code: "E4003", errMsg: "credential_2 is not matched" }
+  }
+  
+  // 5. decide which path to log in
+  const infoType = fir3.infoType
+  const wx_gzh_openid = fir3.meta_data?.wx_gzh_openid
+
+  // 6. define remove credential function
+  const _removeCredential = () => {
+    cCol.where({ _id: fir3._id }).remove()
+  }
+
+  // 7.1 login with wx_gzh_openid
+  if(infoType === "wx-gzh-scan" && wx_gzh_openid) {
+    const opt7_1 = { client_key }
+    const res7_1 = await tryToSignInWithWxGzhOpenId(ctx, body, wx_gzh_openid, opt7_1)
+    if(res7_1) {
+      _removeCredential()
+      return res7_1
+    }
+    return { code: "E4003", errMsg: "sign in with wx_gzh_openid failed" }
+  }
+
+  return { code: "E4003", errMsg: "no way to log in" }
+}
+
+/****************************** Detect qr code *************************/
 async function handle_scan_check(
   ctx: FunctionContext,
   body: Record<string, string>,
@@ -209,7 +265,7 @@ async function handle_scan_check(
 }
 
 
-/******************************** 请求微信二维码 *************************/
+/**************************** request wechat qr code *************************/
 async function handle_wx_gzh_scan(
   ctx: FunctionContext,
   body: Record<string, string>,
@@ -849,42 +905,35 @@ async function handle_wx_gzh_oauth(
   const thirdData: UserThirdData = { wx_gzh }
 
   // 7. 使用 openid 去找用户
-  const res7 = await findUserByWxOpenId(wx_gzh_openid)
-
-  // 8.1 使用 openid 查找后，发现拒绝登录或异常
-  if(res7.type === 1) {
-    return res7.rqReturn
-  }
-  // 8.2 使用 openid 查找后，找到可供登录的用户们
-  if(res7.type === 2) {
-    const res8_2 = await sign_in(ctx, body, res7.userInfos, { client_key, thirdData })
-    return res8_2
-  }
+  const opt7 = { client_key, thirdData }
+  const res7 = await tryToSignInWithWxGzhOpenId(ctx, body, wx_gzh_openid, opt7)
+  if(res7) return res7
 
   /******* prepare to sign up ********/
   
-  // 9. get subscribe status of the user
+  // 8. get subscribe status of the user
   const wx_gzh_access_token = await checkAndGetWxGzhAccessToken()
   if(!wx_gzh_access_token) {
     return { code: "E5001", errMsg: "there is no wx_gzh_access_token" }
   }
-  const url9 = new URL(WX_GZH_USER_INFO)
-  const sP = url9.searchParams
+  const url8 = new URL(WX_GZH_USER_INFO)
+  const sP = url8.searchParams
   sP.set("access_token", wx_gzh_access_token)
   sP.set("openid", wx_gzh_openid)
-  const link9 = url9.toString()
-  const res9 = await liuReq<Wx_Res_GzhUserInfo>(link9, undefined, { method: "GET" })
-  const data9 = res9.data
-  if(!data9) {
-    console.warn("there is no data9 from wx gzh")
-    console.log(res9)
-    return { code: "E5004", errMsg: "there is no data9 from wx gzh" }
+  const link8 = url8.toString()
+  const res8 = await liuReq<Wx_Res_GzhUserInfo>(link8, undefined, { method: "GET" })
+  const data8 = res8.data
+  if(!data8) {
+    console.warn("there is no data8 from wx gzh")
+    console.log(res8)
+    return { code: "E5004", errMsg: "there is no data8 from wx gzh" }
   }
 
-  wx_gzh.subscribe = data9.subscribe
-  if(data9.language) wx_gzh.language = data9.language
-  if(data9.subscribe_scene) wx_gzh.subscribe_scene = data9.subscribe_scene
-  if(data9.subscribe_time) wx_gzh.subscribe_time = data9.subscribe_time
+  // 9. set thirdData as new data (data8)
+  wx_gzh.subscribe = data8.subscribe
+  if(data8.language) wx_gzh.language = data8.language
+  if(data8.subscribe_scene) wx_gzh.subscribe_scene = data8.subscribe_scene
+  if(data8.subscribe_time) wx_gzh.subscribe_time = data8.subscribe_time
   thirdData.wx_gzh = wx_gzh
 
   // 10. sign up
@@ -1087,6 +1136,24 @@ async function sign_in(
 
   return { code: "0000", data: obj3 }
 }
+
+
+async function tryToSignInWithWxGzhOpenId(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+  wx_gzh_openid: string,
+  opt: SignInOpt,
+) {
+  const res1 = await findUserByWxOpenId(wx_gzh_openid)
+  if(res1.type === 1) {
+    return res1.rqReturn
+  }
+  if(res1.type === 2) {
+    const res2 = await sign_in(ctx, body, res1.userInfos, opt)
+    return res2
+  }
+}
+
 
 /** 登录后，检查 token 是否过多，过多的拿去销毁 */
 async function checkIfTooManyTokens(
