@@ -27,6 +27,8 @@ import type {
   Wx_Res_GzhUserInfo,
   Wx_Res_GzhOAuthAccessToken,
   MemberNotification,
+  Wx_Res_Create_QR,
+  Res_UL_WxGzhScan,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -48,6 +50,7 @@ import {
   createCredentialForUserSelect, 
   createLoginState,
   createOpenId,
+  createSignInCredential,
 } from "@/common-ids"
 import { checkIfEmailSentTooMuch, getActiveEmailCode, sendEmails } from "@/service-send"
 import { userLoginLang, useI18n, getAppName } from '@/common-i18n'
@@ -75,7 +78,12 @@ const WX_GZH_SNS_USERINFO = "https://api.weixin.qq.com/sns/userinfo"
 // @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
 const WX_GZH_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
 
+// 微信公众号 创建二维码
+const API_WECHAT_CREATE_QRCODE = "https://api.weixin.qq.com/cgi-bin/qrcode/create"
+
 const PREFIX_CLIENT_KEY = "client_key_"
+
+const MIN_5 = 5 * MINUTE
 
 const TEST_EMAILS = [
   "delivered@resend.dev",
@@ -127,7 +135,7 @@ export async function main(ctx: FunctionContext) {
     res = await handle_users_select(ctx, body)
   }
   else if(oT === "wx_gzh_scan") {
-
+    res = await handle_wx_gzh_scan(ctx, body)
   }
   else if(oT === "scan_check") {
 
@@ -137,6 +145,77 @@ export async function main(ctx: FunctionContext) {
   }
 
   return res
+}
+
+/******************************** 请求微信二维码 *************************/
+async function handle_wx_gzh_scan(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+): Promise<LiuRqReturn<Res_UL_WxGzhScan>> {
+  // 1. to check state
+  const state = body.state
+  const res1 = checkIfStateIsErr(state)
+  if(res1) return res1
+
+  // 2. get wx gzh access_token
+  const wx_access_token = await checkAndGetWxGzhAccessToken()
+  if(!wx_access_token) {
+    return { code: "E5001", errMsg: "wechat accessToken not found" }
+  }
+
+  // 3. generate credential
+  const cred = createSignInCredential()
+  const scene_str = `b3=${cred}`
+  const w3 = {
+    expire_seconds: 60 * 6,
+    action_name: "QR_STR_SCENE",
+    action_info: {
+      scene: {
+        scene_str,
+      }
+    }
+  }
+  const url3 = new URL(API_WECHAT_CREATE_QRCODE)
+  url3.searchParams.set("access_token", wx_access_token)
+  const link3 = url3.toString()
+  const res3 = await liuReq<Wx_Res_Create_QR>(link3, w3)
+  console.log("handle_wx_gzh_scan wechat qrcode: ")
+  console.log(res3)
+
+  // 4. extract data from wechat
+  const res4 = res3.data
+  const qr_code_4 = res4?.url
+  if(!qr_code_4) {
+    return { 
+      code: "E5004", 
+      errMsg: "creating QR code from wechat failed",
+    }
+  }
+
+  // 5. add credential into db
+  const b5 = getBasicStampWhileAdding()
+  const now5 = b5.insertedStamp
+  const data5: Partial<Table_Credential> = {
+    ...b5,
+    credential: cred,
+    infoType: "wx-gzh-scan",
+    expireStamp: now5 + MIN_5,
+    verifyNum: 0,
+    meta_data: {
+      qr_code: qr_code_4,
+    }
+  }
+  const cCol = db.collection("Credential")
+  cCol.add(data5)
+
+  return {
+    code: "0000",
+    data: {
+      operateType: "wx_gzh_scan",
+      qr_code: qr_code_4,
+      credential: cred,
+    }
+  }
 }
 
 
