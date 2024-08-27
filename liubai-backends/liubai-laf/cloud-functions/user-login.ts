@@ -29,6 +29,8 @@ import type {
   MemberNotification,
   Wx_Res_Create_QR,
   Res_UL_WxGzhScan,
+  Res_UL_ScanCheck,
+  Table_Credential_Type,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -138,7 +140,7 @@ export async function main(ctx: FunctionContext) {
     res = await handle_wx_gzh_scan(ctx, body)
   }
   else if(oT === "scan_check") {
-
+    res = await handle_scan_check(ctx, body)
   }
   else if(oT === "scan_login") {
     
@@ -146,6 +148,66 @@ export async function main(ctx: FunctionContext) {
 
   return res
 }
+
+
+
+
+
+/******************************** 检测二维码状态 *************************/
+async function handle_scan_check(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+): Promise<LiuRqReturn<Res_UL_ScanCheck>> {
+  const cred = body.credential
+  if(!cred || typeof cred !== "string") {
+    return { code: "E4000", errMsg: "no credential" }
+  }
+
+  // 1. get credential
+  const cCol = db.collection("Credential")
+  const q1 = cCol.where({ credential: cred })
+  const res1 = await q1.orderBy("insertedStamp", "desc").get<Table_Credential>()
+  const list1 = res1.data
+  const fir1 = list1[0]
+  if(!fir1) {
+    return { code: "E4003", errMsg: "no credential" }
+  }
+
+  const resData: Res_UL_ScanCheck = {
+    operateType: "scan_check",
+    status: "waiting",
+  }
+
+  // 2. check if it is available
+  const now2 = getNowStamp()
+  const { expireStamp, verifyNum, infoType } = fir1
+  const info_types: Table_Credential_Type[] = ["wx-gzh-scan"]
+  if(!info_types.includes(infoType)) {
+    return { code: "E4003", errMsg: "infoType is not supported" }
+  }
+  if(now2 > expireStamp) {
+    resData.status = "expired"
+    return { code: "0000", data: resData }
+  }
+  if(verifyNum && verifyNum > 100) {
+    return { code: "E4003", errMsg: "checking too much" }
+  }
+
+  // 3. check if credential_2 exists
+  const credential_2 = fir1.credential_2
+  if(credential_2) {
+    resData.status = "plz_check"
+    resData.credential_2 = credential_2
+    return { code: "0000", data: resData }
+  }
+
+  // 4. add verifyNum
+  const newVerifyNum = verifyNum ? verifyNum + 1 : 1
+  addVerifyNum(fir1._id, newVerifyNum)
+  
+  return { code: "0000", data: resData }
+}
+
 
 /******************************** 请求微信二维码 *************************/
 async function handle_wx_gzh_scan(
