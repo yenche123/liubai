@@ -26,12 +26,12 @@ export function useConnectWeChat() {
   }
 
   const onTapAddWeChat = async () => {
-    await cui.showBindAccount({ bindType: "ww_qynb" })
+    await cui.showQRCodePopup({ bindType: "ww_qynb" })
     checkoutData(cwcData)
   }
 
   const onTapFollowOnWeChat = async () => {
-    await cui.showBindAccount({ bindType: "wx_gzh" })
+    await cui.showQRCodePopup({ bindType: "wx_gzh" })
     checkoutData(cwcData)
   }
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { initBindAccount } from "./tools/useBindAccount";
+import { initQRCodePopup } from "./tools/useQRCodePopup";
 import { useQRCode } from "~/hooks/useVueUse"
 import RingLoader from "~/components/loaders/ring-loader/ring-loader.vue";
 import { useI18n } from "vue-i18n";
@@ -9,47 +9,47 @@ const {
   TRANSITION_DURATION,
   onTapMask,
   onImgLoaded,
-  baData,
-} = initBindAccount()
+  qpData,
+} = initQRCodePopup()
 
-const qrcode = useQRCode(() => baData.qr_code)
+const qrcode = useQRCode(() => qpData.qr_code)
 const { t } = useI18n()
 const cha = liuApi.getCharacteristic()
 
 </script>
 <template>
 
-  <div v-if="baData.enable" class="ba-container"
-    :class="{ 'ba-container_show': baData.show }"
+  <div v-if="qpData.enable" class="ba-container"
+    :class="{ 'ba-container_show': qpData.show }"
   >
     <div class="ba-bg" @click.stop="onTapMask"></div>
     <div class="ba-box"
-      :class="{ 'ba-box_show': baData.show }"
+      :class="{ 'ba-box_show': qpData.show }"
     >
 
       <!-- qrcode -->
       <div class="ba-qrcode-box">
 
 
-        <div v-if="baData.pic_url" class="ba-qrcode">
+        <div v-if="qpData.pic_url" class="ba-qrcode">
           <img class="ba-qrcode-img" 
-            :class="{ 'ba-qrcode-img_shown': !baData.loading }"
-            :src="baData.pic_url" 
+            :class="{ 'ba-qrcode-img_shown': !qpData.loading }"
+            :src="qpData.pic_url" 
             @load="onImgLoaded" 
           />
         </div>
 
-        <div v-else-if="qrcode && baData.qr_code" class="ba-qrcode">
+        <div v-else-if="qrcode && qpData.qr_code" class="ba-qrcode">
           <img class="ba-qrcode-img ba-qrcode-img_shown" :src="qrcode" />
         </div>
 
-        <div v-show="baData.loading" class="ba-loading-box">
+        <div v-show="qpData.loading" class="ba-loading-box">
           <RingLoader></RingLoader>
         </div>
 
         <div class="ba-logo-box"
-          v-if="!baData.pic_url"
-          :class="{ 'ba-logo-box_shown': !baData.loading }"
+          v-if="!qpData.pic_url"
+          :class="{ 'ba-logo-box_shown': !qpData.loading }"
         >
           <img src="/logos/logo_32x32_v2.png" 
             class="liu-no-user-select ba-logo-img"
@@ -63,20 +63,20 @@ const cha = liuApi.getCharacteristic()
       <!-- info box -->
       <div class="liu-no-user-select ba-info">
         <div class="ba-info-title">
-          <span v-if="baData.bindType === 'wx_gzh_scan'">{{ t('qrcode.wx_scan_login') }}</span>
+          <span v-if="qpData.bindType === 'wx_gzh_scan'">{{ t('qrcode.wx_scan_login') }}</span>
           <span v-else>{{ t('qrcode.title') }}</span>
         </div>
-        <div v-if="baData.bindType === 'wx_gzh_scan'" class="ba-info-desc">
+        <div v-if="qpData.bindType === 'wx_gzh_scan'" class="ba-info-desc">
           <span v-if="cha.isMobile && cha.isWeChat">{{ t('qrcode.long_press_3') }}</span>
           <span v-else-if="cha.isMobile">{{ t('qrcode.scan_3') }}</span>
           <span v-else>{{ t('qrcode.scan_3') }}</span>
         </div>
-        <div v-else-if="baData.bindType === 'ww_qynb'" class="ba-info-desc">
+        <div v-else-if="qpData.bindType === 'ww_qynb'" class="ba-info-desc">
           <span v-if="cha.isMobile && cha.isWeChat">{{ t('qrcode.long_press_1') }}</span>
           <span v-else-if="cha.isMobile">{{ t('qrcode.screenshot') }}</span>
           <span v-else>{{ t('qrcode.scan_1') }}</span>
         </div>
-        <div v-else-if="baData.bindType === 'wx_gzh'" class="ba-info-desc">
+        <div v-else-if="qpData.bindType === 'wx_gzh'" class="ba-info-desc">
           <span v-if="cha.isMobile && cha.isWeChat">{{ t('qrcode.long_press_2') }}</span>
           <span v-else-if="cha.isMobile">{{ t('qrcode.screenshot') }}</span>
           <span v-else>{{ t('qrcode.scan_2') }}</span>

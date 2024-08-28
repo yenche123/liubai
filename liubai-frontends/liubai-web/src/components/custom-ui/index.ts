@@ -14,7 +14,7 @@ import { showShareView } from "./share-view/tools/useShareView"
 import { showContentPanel } from "./content-panel/tools/useContentPanel"
 import { showCommentPopup } from "./comment-popup/tools/useCommentPopup"
 import { showHashtagSelector } from "./hashtag-selector/tools/useHashtagSelector"
-import { showBindAccount } from "./bind-account/tools/useBindAccount"
+import { showQRCodePopup } from "./qrcode-popup/tools/useQRCodePopup"
 
 export default {
   showModal,
@@ -33,5 +33,5 @@ export default {
   showShareView,
   showContentPanel,
   showCommentPopup,
-  showBindAccount,
+  showQRCodePopup,
 }

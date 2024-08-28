@@ -52,5 +52,5 @@ async function checkOutWxGzh(
   if(!res2.confirm) return
 
   // 3. popup 
-  cui.showBindAccount({ bindType: "wx_gzh" })
+  cui.showQRCodePopup({ bindType: "wx_gzh" })
 }

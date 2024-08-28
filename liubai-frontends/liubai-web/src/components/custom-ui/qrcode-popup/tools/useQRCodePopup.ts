@@ -1,9 +1,9 @@
 import { reactive } from "vue";
 import type { 
-  BindAccountParam, 
-  BindAccountData, 
-  BaResolver,
-  BaResult,
+  QpParam, 
+  QpData, 
+  QpResolver,
+  QpResult,
 } from "./types"
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import cfg from "~/config";
@@ -27,8 +27,8 @@ const SEC_5 = time.SECONED * 5
 const SEC_6 = time.SECONED * 6
 
 const TRANSITION_DURATION = 350
-let _resolve: BaResolver | undefined
-const baData = reactive<BindAccountData>({
+let _resolve: QpResolver | undefined
+const qpData = reactive<QpData>({
   show: false,
   enable: false,
   qr_code: "",
@@ -37,28 +37,28 @@ const baData = reactive<BindAccountData>({
   loading: true,
 })
 
-export function initBindAccount() {
+export function initQRCodePopup() {
   return {
     TRANSITION_DURATION,
-    baData,
+    qpData,
     onTapMask,
     onImgLoaded,
   }
 }
 
 
-export function showBindAccount(param: BindAccountParam) {
-  baData.bindType = param.bindType
-  baData.qr_code = ""
-  baData.pic_url = ""
-  baData.runTimes = 0
-  baData.loading = true
-  baData.state = param.state
+export function showQRCodePopup(param: QpParam) {
+  qpData.bindType = param.bindType
+  qpData.qr_code = ""
+  qpData.pic_url = ""
+  qpData.runTimes = 0
+  qpData.loading = true
+  qpData.state = param.state
 
   _open()
   fetchData()
 
-  const _wait = (a: BaResolver) => {
+  const _wait = (a: QpResolver) => {
     _resolve = a
   }
   return new Promise(_wait)
@@ -67,14 +67,14 @@ export function showBindAccount(param: BindAccountParam) {
 
 function onImgLoaded() {
   console.log("onImgLoaded......")
-  baData.loading = false
+  qpData.loading = false
 }
 
 let pollTimeout: LiuTimeout
 async function fetchData() {
 
   // 1. clear pollTimeout
-  const bT = baData.bindType
+  const bT = qpData.bindType
   if(pollTimeout) clearTimeout(pollTimeout)
   if(bT === "wx_gzh_scan") {
     fetch_wx_gzh_scan()
@@ -98,7 +98,7 @@ async function fetchData() {
 
 
 async function fetch_wx_gzh_scan() {
-  const state = baData.state
+  const state = qpData.state
   if(!state) {
     console.warn("state is required while wx_gzh_scan")
     return
@@ -109,8 +109,8 @@ async function fetch_wx_gzh_scan() {
     _over()
     return
   }
-  baData.qr_code = d.qr_code
-  baData.loading = false
+  qpData.qr_code = d.qr_code
+  qpData.loading = false
 
   const cred = d.credential
   if(!cred) return
@@ -139,8 +139,8 @@ async function fetch_bind_wechat(
     return
   }
 
-  baData.qr_code = d4.qr_code
-  baData.loading = false
+  qpData.qr_code = d4.qr_code
+  qpData.loading = false
   
   const cred = d4.credential
   if(!cred) return
@@ -170,7 +170,7 @@ async function fetch_bind_wecom(
     return
   }
 
-  baData.pic_url = d4.pic_url
+  qpData.pic_url = d4.pic_url
   const cred = d4.credential
   if(!cred) return
   if(pollTimeout) clearTimeout(pollTimeout)
@@ -263,15 +263,15 @@ async function checkData(
 ) {
 
   // 1. can we check out data?
-  if(!baData.enable) return
-  baData.runTimes++
-  if(baData.runTimes > 100) {
+  if(!qpData.enable) return
+  qpData.runTimes++
+  if(qpData.runTimes > 100) {
     _over({ resultType: "plz_check" })
     return
   }
 
   // 2. to check out specific data
-  const bT = baData.bindType
+  const bT = qpData.bindType
   if(bT === "ww_qynb") {
     fetch_check_wecom(credential)
   }
@@ -292,16 +292,16 @@ function onTapMask() {
 
 let toggleTimeout: LiuTimeout
 function _open() {
-  if(baData.show) return
+  if(qpData.show) return
   if(toggleTimeout) clearTimeout(toggleTimeout)
-  baData.enable = true
+  qpData.enable = true
   toggleTimeout = setTimeout(() => {
-    baData.show = true
+    qpData.show = true
   }, cfg.frame_duration)
 }
 
 function _over(
-  res?: BaResult,
+  res?: QpResult,
 ) {
   if(!res) {
     res = { resultType: "error" }
@@ -311,12 +311,12 @@ function _over(
 }
 
 function _close() {
-  if(!baData.enable) return
+  if(!qpData.enable) return
   if(toggleTimeout) {
     clearTimeout(toggleTimeout)
   }
-  baData.show = false
+  qpData.show = false
   toggleTimeout = setTimeout(() => {
-    baData.enable = false
+    qpData.enable = false
   }, TRANSITION_DURATION)
 }
