@@ -6,6 +6,7 @@ import {
   fetchSubmitEmail, 
   fetchEmailCode, 
   fetchUsersSelect,
+  fetchScanLogin,
 } from "../../tools/requests";
 import { getClientKey } from "../../tools/common-tools"
 import { 
@@ -101,7 +102,7 @@ export function useLoginPage() {
     const pass = await _waitInitLogin()
     if(!pass) return
 
-    whenTapLoginViaThirdParty(tp, lpData)
+    whenTapLoginViaThirdParty(rr, tp, lpData)
   }
 
   // 选择了某个用户之后
@@ -447,10 +448,10 @@ async function toSubmitEmailAndCode(
 
   // 4. 登录后处理
   isAfterFetchingLogin = true
-  const res2 = await afterFetchingLogin(rr, res)
+  const res4 = await afterFetchingLogin(rr, res)
   isAfterFetchingLogin = false
 
-  if(res2) {
+  if(res4) {
     cui.showLoading({ title_key: "login.logging2" })
     lpData.lastLogged = time.getTime()
   }
@@ -484,6 +485,7 @@ function listenLoginStore(lpData: LpData) {
 }
 
 function whenTapLoginViaThirdParty(
+  rr: RouteAndLiuRouter,
   tp: LoginByThirdParty,
   lpData: LpData,
 ) {
@@ -492,7 +494,7 @@ function whenTapLoginViaThirdParty(
   if(!isOkay) return
 
   if(tp === "wechat") {
-    whenTapWeChat(lpData)
+    whenTapWeChat(rr, lpData)
   }
   else if(tp === "github") {
     handle_github(lpData)
@@ -505,7 +507,8 @@ function whenTapLoginViaThirdParty(
   }
 }
 
-function whenTapWeChat(
+async function whenTapWeChat(
+  rr: RouteAndLiuRouter,
   lpData: LpData,
 ) {
   const cha = liuApi.getCharacteristic()
@@ -518,7 +521,37 @@ function whenTapWeChat(
 
   // 2. show qr code to scan for logging in
   console.log("TODO: show qr code to scan for logging in")
+  const state = lpData.state
+  if(!state) return
+  const res2 = await cui.showQRCodePopup({ bindType: "wx_gzh_scan", state })
+  console.log("res2: ")
+  console.log(res2)
+  const { 
+    resultType,
+    credential,
+    credential_2,
+  } = res2
+  if(resultType !== "plz_check") return
+  if(!credential || !credential_2) return
+  if(!canLoginUsingLastLogged(lpData)) return
+  if(isAfterFetchingLogin) return
 
+  console.log("fetchScanLogin......")
+
+  // 3. login via scan-login
+  const res3 = await fetchScanLogin(credential, credential_2)
+  console.log("fetchScanLogin res3: ")
+  console.log(res3)
+  console.log(" ")
+
+  // 4. 登录后处理
+  isAfterFetchingLogin = true
+  const res4 = await afterFetchingLogin(rr, res3)
+  isAfterFetchingLogin = false
+  if(res4) {
+    cui.showLoading({ title_key: "login.logging2" })
+    lpData.lastLogged = time.getTime()
+  }
 }
 
 
