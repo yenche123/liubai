@@ -3,5 +3,6 @@
     "src/locales/messages"
   ],
   "i18n-ally.keystyle": "nested",
-  "vue.codeActions.enabled": false
+  "vue.codeActions.enabled": false,
+  "material-icon-theme.activeIconPack": "vue"
 }
