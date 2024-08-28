@@ -267,10 +267,10 @@ const getURL = (val: string) => {
     if(!url.hostname) return
   }
   catch(err) {
-    console.warn("getURL fail........")
-    console.log(err)
-    console.log(val)
-    console.log(" ")
+    // console.warn("getURL fail........")
+    // console.log(err)
+    // console.log(val)
+    // console.log(" ")
   }
   
   return url

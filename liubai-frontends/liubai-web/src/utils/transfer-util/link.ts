@@ -311,6 +311,8 @@ function _checkUrl_1(text: string) {
   if(!url) {
     url = valTool.getURL(`https://${text}`)
     if(!url) {
+      console.warn("fail to _checkUrl_1....")
+      console.log(text)
       return false
     }
   }
