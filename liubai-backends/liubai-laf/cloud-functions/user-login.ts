@@ -203,6 +203,9 @@ async function handle_scan_login(
       _removeCredential()
       return res7_1
     }
+
+    // 7.2 TODO: send message to user: login successfully
+
     return { code: "E4003", errMsg: "sign in with wx_gzh_openid failed" }
   }
 
@@ -321,6 +324,8 @@ async function handle_wx_gzh_scan(
     verifyNum: 0,
     meta_data: {
       qr_code: qr_code_4,
+      x_liu_theme: body["x_liu_theme"],
+      x_liu_language: body["x_liu_language"],
     }
   }
   const cCol = db.collection("Credential")
@@ -904,7 +909,7 @@ async function handle_wx_gzh_oauth(
   }
   const thirdData: UserThirdData = { wx_gzh }
 
-  // 7. 使用 openid 去找用户
+  // 7. try to sign in with wx_gzh_openid
   const opt7 = { client_key, thirdData }
   const res7 = await tryToSignInWithWxGzhOpenId(ctx, body, wx_gzh_openid, opt7)
   if(res7) return res7
@@ -1366,6 +1371,28 @@ async function sign_up(
   client_key?: string,
   thirdData?: UserThirdData,
 ) {
+  // 1. init user
+  const res1 = await init_user(body, param2, thirdData)
+  const { code, data: userInfos } = res1
+  if(code !== "0000" || !userInfos) {
+    return res1 as LiuErrReturn
+  }
+
+  // 2. sign in
+  const signInOpt = { client_key, thirdData, justSignUp: true }
+  const res4 = await sign_in(ctx, body, userInfos, signInOpt)
+
+  // 3. TODO: download and upload avatar if it exists
+
+  return res4
+}
+
+
+export async function init_user(
+  body: Record<string, string | undefined>,
+  param2: SignUpParam2,
+  thirdData?: UserThirdData,
+): Promise<LiuRqReturn<LiuUserInfo[]>> {
   const { email, phone, wx_gzh_openid } = param2
   if(!email && !phone && !wx_gzh_openid) {
     return { code: "E5001", errMsg: "there is no required data in sign_up" }
@@ -1374,7 +1401,7 @@ async function sign_up(
   const systemTheme = body["x_liu_theme"] as SupportedTheme
   const systemLanguage = body["x_liu_language"]
 
-  // 1. 构造 User
+  // 1. construct a user
   const basic1 = getBasicStampWhileAdding()
   const open_id = createOpenId()
   const github_id = thirdData?.github?.id
@@ -1395,33 +1422,33 @@ async function sign_up(
     user.github_id = github_id
   }
 
-  // 2. 去创造 User
-  const res1 = await db.collection("User").add(user)
-  const userId = getDocAddId(res1)
+  // 2. create the user
+  const res2 = await db.collection("User").add(user)
+  const userId = getDocAddId(res2)
   if(!userId) {
     return { code: "E5001", errMsg: "fail to add an user" }
   }
   const newUser: Table_User = { ...user, _id: userId }
 
-  // 3. 去创造 workspace
-  const basic2 = getBasicStampWhileAdding()
+  // 3. create a workspace
+  const basic3 = getBasicStampWhileAdding()
   const workspace: PartialSth<Table_Workspace, "_id"> = {
-    ...basic2,
+    ...basic3,
     infoType: "ME",
     oState: "OK",
     owner: userId,
   }
-  const res2 = await db.collection("Workspace").add(workspace)
-  const spaceId = getDocAddId(res2)
+  const res3 = await db.collection("Workspace").add(workspace)
+  const spaceId = getDocAddId(res3)
   if(!spaceId) {
     _cancelSignUp({ userId })
     return { code: "E5001", errMsg: "fail to add an workspace" }
   }
 
-  // 4. 去创造 member
+  // 4. create a member
   const name = getNameFromThirdData(thirdData)
   const avatar = constructMemberAvatarFromThirdData(thirdData)
-  const basic3 = getBasicStampWhileAdding()
+  const basic4 = getBasicStampWhileAdding()
   const member_noti: MemberNotification = {}
   if(thirdData?.wx_gzh?.subscribe) {
     member_noti.wx_gzh_toggle = true
@@ -1434,30 +1461,30 @@ async function sign_up(
     user: userId,
     oState: "OK",
     notification: member_noti,
-    ...basic3,
+    ...basic4,
   }
-  const res3 = await db.collection("Member").add(member)
-  const memberId = getDocAddId(res3)
+  const res4 = await db.collection("Member").add(member)
+  const memberId = getDocAddId(res4)
   if(!memberId) {
     _cancelSignUp({ userId, spaceId })
     return { code: "E5001", errMsg: "fail to add an member" }
   }
 
-  // 5. 去构造 LiuSpaceAndMember （个人工作区以及自己这个成员）
+  // 5. construct LiuSpaceAndMember
   const liuSpaceAndMember: LiuSpaceAndMember = {
     memberId,
     member_name: name,
     member_avatar: avatar,
     member_oState: "OK",
     member_notification: member_noti,
-
+    
     spaceId,
     spaceType: "ME",
     space_oState: "OK",
     space_owner: userId,
   }
 
-  // 6. 去构造 userInfo
+  // 6. construct userInfos
   const userInfos: LiuUserInfo[] = [
     {
       user: newUser,
@@ -1465,14 +1492,12 @@ async function sign_up(
     }
   ]
 
-  // 7. 最后去登录
-  const signInOpt = { client_key, thirdData, justSignUp: true }
-  const res4 = await sign_in(ctx, body, userInfos, signInOpt)
-
-  // 8. TODO: download and upload avatar if it exists
-
-  return res4
+  // 7. sign in
+  return { code: "0000", data: userInfos }
 }
+
+
+
 
 function getNameFromThirdData(
   thirdData?: UserThirdData,

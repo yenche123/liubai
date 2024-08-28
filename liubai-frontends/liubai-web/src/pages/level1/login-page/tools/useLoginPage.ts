@@ -17,7 +17,12 @@ import {
 import time from "~/utils/basic/time"
 import { encryptTextWithRSA, afterFetchingLogin } from "../../tools/common-utils"
 import { loadGoogleIdentityService } from "./handle-gis"
-import { isEverythingOkay, showEmojiTip, showOtherTip } from "../../tools/show-msg"
+import { 
+  isEverythingOkay, 
+  showDisableTip, 
+  showEmojiTip, 
+  showOtherTip,
+} from "../../tools/show-msg"
 import { useLoginStore } from "./useLoginStore";
 import { storeToRefs } from "pinia";
 import { useLiuWatch } from "~/hooks/useLiuWatch";
@@ -511,9 +516,15 @@ async function whenTapWeChat(
   rr: RouteAndLiuRouter,
   lpData: LpData,
 ) {
-  const cha = liuApi.getCharacteristic()
+  // 0. check out if wechat login is available
+  const appid = lpData.wxGzhAppid
+  if(!appid) {
+    showDisableTip("WeChat")
+    return
+  }
 
   // 1. go OAuth if it is in wechat environment
+  const cha = liuApi.getCharacteristic()
   if(cha.isWeChat) {
     handle_wechat(lpData)
     return
@@ -544,7 +555,7 @@ async function whenTapWeChat(
   console.log(res3)
   console.log(" ")
 
-  // 4. 登录后处理
+  // 4. handle after fetching login
   isAfterFetchingLogin = true
   const res4 = await afterFetchingLogin(rr, res3)
   isAfterFetchingLogin = false

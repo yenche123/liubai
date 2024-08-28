@@ -10,6 +10,8 @@ import type {
   Table_Credential,
   Table_Member,
   Table_User,
+  UserThirdData,
+  UserWeChatGzh,
   Wx_Gzh_Msg_Event, 
   Wx_Gzh_Scan, 
   Wx_Gzh_Subscribe, 
@@ -33,6 +35,8 @@ import {
 } from "@/common-util";
 import { getCurrentLocale, useI18n, wechatLang } from "@/common-i18n"
 import { wechat_tag_cfg } from "@/common-config";
+import { createCredential2 } from "@/common-ids";
+import { init_user } from "@/user-login";
 
 const db = cloud.database()
 let wechat_access_token = ""
@@ -168,7 +172,7 @@ async function handle_subscribe(
   }
   else if(direction === "b3") {
     // continue with wechat gzh
-
+    login_with_wechat_gzh(wx_gzh_openid, credential, userInfo)
   }
 
 }
@@ -199,13 +203,81 @@ async function handle_scan(
   }
   else if(direction === "b3") {
     // continue with wechat gzh
-
+    login_with_wechat_gzh(wx_gzh_openid, credential, userInfo)
   }
 
 }
 
 
 /***************** operations ****************/
+
+async function login_with_wechat_gzh(
+  wx_gzh_openid: string,
+  credential: string,
+  userInfo?: Wx_Res_GzhUserInfo,
+) {
+  // 1. get credential
+  const cCol = db.collection("Credential")
+  const w1: Partial<Table_Credential> = {
+    credential,
+    infoType: "wx-gzh-scan",
+  }
+  const q1 = cCol.where(w1)
+  const res1 = await q1.getOne<Table_Credential>()
+  const data1 = res1.data
+  if(!data1) return false
+  const cId = data1._id
+  const meta_data = data1.meta_data ?? {}
+
+  // 2. define some functions
+  // 2.1 set credential_2
+  const _setCredential2 = async () => {
+    const cred_2 = createCredential2()
+    meta_data.wx_gzh_openid = wx_gzh_openid
+    const w2: Partial<Table_Credential> = {
+      credential_2: cred_2,
+      meta_data,
+      updatedStamp: getNowStamp(),
+    }
+    const res2 = await cCol.doc(cId).update(w2)
+    console.log("set credential_2: ", res2)
+  }
+
+  // 3. get user by wx_gzh_openid
+  const uCol = db.collection("User")
+  const w3: Partial<Table_User> = { wx_gzh_openid }
+  const q3 = uCol.where(w3)
+  const res3 = await q3.getOne<Table_User>()
+  const user3 = res3.data
+  if(user3) {
+    console.warn("user exists, so we don't need to create it")
+    _setCredential2()
+    return
+  }
+
+  // 4. create user
+  const body = {
+    x_liu_theme: meta_data.x_liu_theme,
+    x_liu_language: meta_data.x_liu_language,
+  }
+  let thirdData: UserThirdData | undefined
+  if(userInfo) {
+    const wx_gzh: UserWeChatGzh = {
+      subscribe: userInfo.subscribe,
+      language: userInfo.language,
+      subscribe_time: userInfo.subscribe_time,
+      subscribe_scene: userInfo.subscribe_scene,
+    }
+    thirdData = { wx_gzh }
+  }
+  const res4 = await init_user(body, { wx_gzh_openid }, thirdData)
+  console.log("init_user: ")
+  console.log(res4)
+
+  // 5. set credential_2
+  _setCredential2()
+}
+
 
 async function bind_wechat_gzh(
   wx_gzh_openid: string,

@@ -598,7 +598,6 @@ export interface UserWeChatGzh {
   // https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html#3
   nickname?: string
   headimgurl?: string
-
 }
 
 // User 表里的 thirdData 字段的类型
@@ -674,6 +673,9 @@ export interface CredentialMetaData {
   qr_code?: string
   ww_qynb_config_id?: string
   wx_gzh_openid?: string
+
+  x_liu_theme?: string
+  x_liu_language?: string
 }
 
 /*********************** 加解密相关 **********************/

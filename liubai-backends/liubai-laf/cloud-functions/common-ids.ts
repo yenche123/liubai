@@ -120,3 +120,6 @@ export function createSignInCredential() {
   return "si0" + createRandom(16)
 }
 
+export function createCredential2() {
+  return "cred_2_" + createRandom(23)
+}

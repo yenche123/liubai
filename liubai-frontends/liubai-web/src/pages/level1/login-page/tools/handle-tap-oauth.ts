@@ -66,10 +66,7 @@ export function handle_wechat(
   lpData: LpData,
 ) {
   const appid = lpData.wxGzhAppid
-  if(!appid) {
-    showDisableTip("WeChat")
-    return
-  }
+  if(!appid) return
 
   const state = lpData.state
   if(!state) {
