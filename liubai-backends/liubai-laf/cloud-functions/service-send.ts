@@ -219,7 +219,7 @@ export async function sendWxTextMessage(
     console.log(body)
   }
   else {
-    console.log(`sendWxTextMessage: ${d2 - d1}ms`)
+    // console.log(`sendWxTextMessage: ${d2 - d1}ms`)
   }
 
 }

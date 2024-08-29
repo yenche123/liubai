@@ -64,7 +64,13 @@ import {
   sendEmails, 
   sendWxTextMessage,
 } from "@/service-send"
-import { userLoginLang, useI18n, getAppName, getCurrentLocale } from '@/common-i18n'
+import { 
+  userLoginLang, 
+  useI18n, 
+  getAppName, 
+  getCurrentLocale, 
+  type GetLangValOpt,
+} from '@/common-i18n'
 import { OAuth2Client, type TokenPayload } from "google-auth-library"
 
 /************************ 一些常量 *************************/
@@ -213,7 +219,8 @@ async function handle_scan_login(
 
     if(res7_1) {
       // 7.2 TODO: send message to user: login successfully
-      sendLoginMsgToWxGzhUser(ctx, body, wx_gzh_openid, "wx-gzh-scan")
+      const lang = res7_1.data?.language
+      sendLoginMsgToWxGzhUser(ctx, wx_gzh_openid, "wx-gzh-scan", { body, lang })
       _removeCredential()
       return res7_1
     }
@@ -312,8 +319,6 @@ async function handle_wx_gzh_scan(
   url3.searchParams.set("access_token", wx_access_token)
   const link3 = url3.toString()
   const res3 = await liuReq<Wx_Res_Create_QR>(link3, w3)
-  console.log("handle_wx_gzh_scan wechat qrcode: ")
-  console.log(res3)
 
   // 4. extract data from wechat
   const res4 = res3.data
@@ -630,9 +635,6 @@ async function addVerifyNum(
   }
   const col = db.collection("Credential")
   const res1 = await col.where({ _id: id }).update(u1)
-  console.log("addVerifyNum res1: ")
-  console.log(res1)
-  console.log(" ")
 }
 
 
@@ -1156,14 +1158,14 @@ async function sign_in(
 
 async function sendLoginMsgToWxGzhUser(
   ctx: FunctionContext,
-  body: Record<string, string | undefined>,
   wx_gzh_openid: string,
   login_way: "wx-gzh-scan",
+  opt: GetLangValOpt,
 ) {
-  const deviceStr = getDeviceI18nStr(ctx, body)
+  const deviceStr = getDeviceI18nStr(ctx, opt)
   console.log("deviceStr: ", deviceStr)
 
-  const { t } = useI18n(userLoginLang, { body })
+  const { t } = useI18n(userLoginLang, opt)
   let msg = t("login_success")
 
   // 1. Login Way
@@ -1173,8 +1175,8 @@ async function sendLoginMsgToWxGzhUser(
 
   // 2. Operate Time
   msg += `\n`
-  const locale = getCurrentLocale(body)
-  const time = displayTime(getNowStamp(), locale, body.x_liu_timezone)
+  const locale = getCurrentLocale(opt)
+  const time = displayTime(getNowStamp(), locale, opt.body?.x_liu_timezone)
   msg += t("operate_time", { time })
 
   // 3. IP Address
@@ -1192,8 +1194,8 @@ async function sendLoginMsgToWxGzhUser(
     msg += t("device_info", { device: deviceStr })
   }
   
-  console.log("see msg: ")
-  console.log(msg)
+  // console.log("see msg: ")
+  // console.log(msg)
 
   const wx_gzh_access_token = await checkAndGetWxGzhAccessToken()
   if(!wx_gzh_access_token) {
@@ -1206,12 +1208,12 @@ async function sendLoginMsgToWxGzhUser(
 
 function getDeviceI18nStr(
   ctx: FunctionContext,
-  body: Record<string, string | undefined>,
+  opt: GetLangValOpt,
 ) {
   const userAgent = ctx.headers?.['user-agent']
-  const x_liu_device = body.x_liu_device
+  const x_liu_device = opt.body?.x_liu_device
   let deviceStr = normalizeUserAgent(userAgent, x_liu_device)
-  const { t } = useI18n(userLoginLang, { body })
+  const { t } = useI18n(userLoginLang, opt)
 
   if(deviceStr.includes("WeCom")) {
     deviceStr = deviceStr.replace("WeCom", t("wecom_client"))
@@ -1254,7 +1256,7 @@ async function tryToSignInWithWxGzhOpenId(
   body: Record<string, string>,
   wx_gzh_openid: string,
   opt: SignInOpt,
-) {
+): Promise<LiuRqReturn<Res_UserLoginNormal> | undefined> {
   const res1 = await findUserByWxOpenId(wx_gzh_openid)
   if(res1.type === 1) {
     return res1.rqReturn
@@ -1720,11 +1722,6 @@ async function findUserByWxOpenId(
   const w: Partial<Table_User> = { wx_gzh_openid }
   const uCol = db.collection("User")
   const res1 = await uCol.where(w).get<Table_User>()
-  console.log("findUserByWxOpenId res1 ----->")
-  console.log("res.code: ", res1.code)
-  console.log("res.data: ", res1.data)
-  console.log("res.ok: ", res1.ok)
-  console.log(" ")
   const list = res1.data
   const res2 = await handleUsersFound(list)
   return res2

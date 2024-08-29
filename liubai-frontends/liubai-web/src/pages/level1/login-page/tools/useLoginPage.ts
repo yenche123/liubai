@@ -531,7 +531,6 @@ async function whenTapWeChat(
   }
 
   // 2. show qr code to scan for logging in
-  console.log("TODO: show qr code to scan for logging in")
   const state = lpData.state
   if(!state) return
   const res2 = await cui.showQRCodePopup({ bindType: "wx_gzh_scan", state })
@@ -547,19 +546,24 @@ async function whenTapWeChat(
   if(!canLoginUsingLastLogged(lpData)) return
   if(isAfterFetchingLogin) return
 
+  // 3. get enc_client_key
+  const { enc_client_key } = getClientKey()
+  if(!enc_client_key) return
+
   console.log("fetchScanLogin......")
+  console.log("enc_client_key: ", enc_client_key)
 
   // 3. login via scan-login
-  const res3 = await fetchScanLogin(credential, credential_2)
+  const res4 = await fetchScanLogin(credential, credential_2, enc_client_key)
   console.log("fetchScanLogin res3: ")
-  console.log(res3)
+  console.log(res4)
   console.log(" ")
 
   // 4. handle after fetching login
   isAfterFetchingLogin = true
-  const res4 = await afterFetchingLogin(rr, res3)
+  const res5 = await afterFetchingLogin(rr, res4)
   isAfterFetchingLogin = false
-  if(res4) {
+  if(res5) {
     cui.showLoading({ title_key: "login.logging2" })
     lpData.lastLogged = time.getTime()
   }

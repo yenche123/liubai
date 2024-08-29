@@ -164,6 +164,7 @@ export async function fetchScanCheck(
 export async function fetchScanLogin(
   credential: string,
   credential_2: string,
+  enc_client_key: string,
 ) {
   const url = APIs.LOGIN
   const default_opt = _getDefaultOpt()
@@ -172,6 +173,7 @@ export async function fetchScanLogin(
     operateType: "scan_login",
     credential,
     credential_2,
+    enc_client_key,
   }
   const res = await liuReq.request<Res_UserLoginNormal>(url, opt)
   return res

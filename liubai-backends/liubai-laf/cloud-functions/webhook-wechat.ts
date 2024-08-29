@@ -237,7 +237,6 @@ async function login_with_wechat_gzh(
       updatedStamp: getNowStamp(),
     }
     const res2 = await cCol.doc(cId).update(w2)
-    console.log("set credential_2: ", res2)
   }
 
   // 3. get user by wx_gzh_openid
@@ -247,7 +246,6 @@ async function login_with_wechat_gzh(
   const res3 = await q3.getOne<Table_User>()
   const user3 = res3.data
   if(user3) {
-    console.warn("user exists, so we don't need to create it")
     _setCredential2()
     return
   }
@@ -792,8 +790,8 @@ function getMsgMode(
   const encrypt_type = q.encrypt_type
   const encrypt = b.xml.encrypt
 
-  console.log("encrypt_type: ", encrypt_type)
-  console.log("encrypt: ", encrypt)
+  // console.log("encrypt_type: ", encrypt_type)
+  // console.log("encrypt: ", encrypt)
 
   if(encrypt_type && encrypt) {
     return "safe"

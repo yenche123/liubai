@@ -675,8 +675,8 @@ export interface CredentialMetaData {
   ww_qynb_config_id?: string
   wx_gzh_openid?: string
 
-  x_liu_theme?: string
-  x_liu_language?: string
+  x_liu_theme?: string           // to create a user while signing up
+  x_liu_language?: string        // to create a user while signing up
 }
 
 export interface GetChaRes {
