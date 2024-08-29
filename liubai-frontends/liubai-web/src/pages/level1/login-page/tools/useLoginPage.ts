@@ -52,6 +52,9 @@ let initPromise: Promise<boolean>
 // 避免 initPromise 还没 resolve 时，用户多次点击多次触发
 let hasTap = false
 
+// constants
+const MIN_5 = 5 * time.MINUTE
+
 export function useLoginPage() {
 
   const rr = useRouteAndLiuRouter()
@@ -550,16 +553,13 @@ async function whenTapWeChat(
   const { enc_client_key } = getClientKey()
   if(!enc_client_key) return
 
-  console.log("fetchScanLogin......")
-  console.log("enc_client_key: ", enc_client_key)
-
-  // 3. login via scan-login
+  // 4. login via scan-login
   const res4 = await fetchScanLogin(credential, credential_2, enc_client_key)
-  console.log("fetchScanLogin res3: ")
-  console.log(res4)
-  console.log(" ")
+  // console.log("fetchScanLogin res4: ")
+  // console.log(res4)
+  // console.log(" ")
 
-  // 4. handle after fetching login
+  // 5. handle after fetching login
   isAfterFetchingLogin = true
   const res5 = await afterFetchingLogin(rr, res4)
   isAfterFetchingLogin = false
@@ -597,5 +597,20 @@ function toGetLoginInitData(
     loadGoogleIdentityService(rr, lpData)
     a(true)
   }
-  initPromise = new Promise(_request)
+
+  onActivated(() => {
+    const initStamp = lpData.initStamp ?? 0
+    const now = time.getTime()
+    const diff = now - initStamp
+    if(diff > MIN_5) {
+      initPromise = new Promise(_request)
+      return
+    }
+
+    const { enc_client_key } = localCache.getOnceData()
+    if(!enc_client_key) {
+      initPromise = new Promise(_request)
+      return
+    }
+  })
 }

@@ -214,9 +214,7 @@ async function handle_scan_login(
   if(infoType === "wx-gzh-scan" && wx_gzh_openid) {
     const opt7_1 = { client_key }
     const res7_1 = await tryToSignInWithWxGzhOpenId(ctx, body, wx_gzh_openid, opt7_1)
-    console.log("res7_1: ")
-    console.log(res7_1)
-
+    
     if(res7_1) {
       // 7.2 TODO: send message to user: login successfully
       const lang = res7_1.data?.language
@@ -1162,9 +1160,6 @@ async function sendLoginMsgToWxGzhUser(
   login_way: "wx-gzh-scan",
   opt: GetLangValOpt,
 ) {
-  const deviceStr = getDeviceI18nStr(ctx, opt)
-  console.log("deviceStr: ", deviceStr)
-
   const { t } = useI18n(userLoginLang, opt)
   let msg = t("login_success")
 
@@ -1189,6 +1184,7 @@ async function sendLoginMsgToWxGzhUser(
   }
 
   // 4. Device info
+  const deviceStr = getDeviceI18nStr(ctx, opt)
   if(deviceStr) {
     msg += `\n`
     msg += t("device_info", { device: deviceStr })

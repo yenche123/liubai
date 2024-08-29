@@ -58,6 +58,7 @@ function removeOnceDataWhileLogging() {
     "enc_client_key", 
     "githubOAuthState", 
     "googleOAuthState",
+    "wxGzhOAuthState",
     "goto",
   ]
   for(let i=0; i<keys.length; i++) {

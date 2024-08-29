@@ -266,6 +266,7 @@ function normalizeLanguage(val: string): SupportedLocale {
   if(val === "zh-tw") return "zh-Hant"
   if(val === "zh-hk") return "zh-Hant"
   if(val.startsWith("zh")) return "zh-Hans"
+  if(val.length > 1) return "en"
 
   return getFallbackLocale()
 }
@@ -279,7 +280,7 @@ export function getCurrentLocale(
 
   // 从 lang 判断
   const lang = opt?.lang
-  if(lang) {
+  if(lang && lang !== "system") {
     locale = normalizeLanguage(lang)
     return locale
   }
