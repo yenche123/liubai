@@ -33,6 +33,7 @@ export function getMainToChildMessage(
     client_key,
     system_language: navigator.language,
     system_theme: liuApi.getThemeFromSystem(),
+    device_string: liuApi.getDeviceString(),
   }
   return data
 }

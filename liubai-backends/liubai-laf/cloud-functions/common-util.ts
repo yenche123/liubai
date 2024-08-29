@@ -31,6 +31,7 @@ import type {
   Table_Member,
   CommonPass_A,
   LiuNodeType,
+  GetChaRes,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -62,6 +63,13 @@ const MIN_5 = MINUTE * 5
 const DAY_90 = DAY * 90
 const DAY_28 = DAY * 28
 const DAY_7 = DAY * 7
+
+export const reg_exp = {
+  chrome_version: /chrome\/([\d\.]+)/,
+  edge_version: /edg\/([\d\.]+)/,
+  firefox_version: /firefox\/([\d\.]+)/,
+  safari_version: /version\/([\d\.]+)/,
+}
 
 /********************* 空函数 ****************/
 export async function main(ctx: FunctionContext) {
@@ -551,6 +559,235 @@ export function normalizeToLocalLocale(str: any): LocalLocale {
   return "system"
 }
 
+export function getCharacteristic(
+  userAgent: any,
+  x_liu_device?: string,
+) {
+  if(!userAgent || typeof userAgent !== "string") return
+  const cha: GetChaRes = {
+    isPC: false,
+    isMobile: false,
+    isWeCom: false,
+    isWeChat: false,
+    isAlipay: false,
+    isDingTalk: false,
+    isFeishu: false,
+    isUCBrowser: false,
+    isQuark: false,
+    isIOS: false,
+    isIPadOS: false,
+    isMac: false,
+    isWindows: false,
+    isInWebView: false,
+    isFirefox: false,
+    isSafari: false,
+    isChrome: false,
+    isEdge: false,
+    isHarmonyOS: false,
+    isHuaweiBrowser: false,
+    isAndroid: false,
+  }
+  const ua = userAgent.toLowerCase()
+  const mobileMatch = userAgent.match(/AppleWebKit.*Mobile.*/)
+  
+  if(ua.includes("wxwork")) {
+    cha.isWeCom = true
+    cha.isInWebView = true
+  }
+  else if(ua.includes("micromessenger")) {
+    cha.isWeChat = true
+    cha.isInWebView = true
+  }
+  else if(ua.includes("dingtalk")) {
+    cha.isDingTalk = true
+    cha.isInWebView = true
+  }
+  else if(ua.includes("alipayclient")) {
+    cha.isAlipay = true
+    cha.isInWebView = true
+  }
+  else if(ua.includes("feishu")) {
+    cha.isFeishu = true
+    cha.isInWebView = true
+  }
+  else if(ua.includes("quark")) {
+    cha.isQuark = true
+  }
+  else if(ua.includes("ucbrowser")) {
+    cha.isUCBrowser = true
+  }
+
+  if(!!mobileMatch) {
+    cha.isMobile = true
+    cha.isPC = false
+  }
+  else if(ua.indexOf("mobile") > 1) {
+    cha.isMobile = true
+    cha.isPC = false
+  }
+  else {
+    cha.isMobile = false
+    cha.isPC = true
+  }
+
+  if(ua.includes("iphone")) {
+    cha.isIOS = true
+    cha.isMobile = true
+    cha.isPC = false
+  }
+  if(ua.includes("ios")) {
+    cha.isIOS = true
+  }
+  if(ua.includes("ipod")) {
+    cha.isIOS = true
+    cha.isMobile = true
+    cha.isPC = false
+  }
+  if(ua.includes("ipad")) {
+    cha.isIPadOS = true
+    cha.isMobile = true
+    cha.isPC = false
+  }
+
+  if(ua.includes("macintosh")) {
+    cha.isMac = true
+  }
+  else if(ua.includes("windows")) {
+    cha.isWindows = true
+  }
+  else if(ua.includes("android")) {
+    if(!cha.isIOS && !cha.isMac) {
+      cha.isAndroid = true
+    }
+  }
+
+  if(ua.includes("harmonyos")) {
+    cha.isHarmonyOS = true
+  }
+  if(ua.includes("huaweibrowser")) {
+    cha.isHuaweiBrowser = true
+  }
+
+  // 判别浏览器
+  const edg_version_m = ua.match(reg_exp.edge_version)
+  if(edg_version_m) {
+    // edge browser
+    cha.isEdge = true
+    cha.isChrome = true
+    cha.browserVersion = edg_version_m[1]
+  }
+  else if(ua.includes("firefox")) {
+    cha.isFirefox = true
+
+    const f_version_m = ua.match(reg_exp.firefox_version)
+    cha.browserVersion = f_version_m ? f_version_m[1] : undefined
+  }
+  else if(ua.includes("chrome")) {
+    cha.isChrome = true
+
+    const c_version_m = ua.match(reg_exp.chrome_version)
+    cha.browserVersion = c_version_m ? c_version_m[1] : undefined
+  }
+  else if(ua.includes("safari")) {
+    if(!ua.includes("android")) {
+      cha.isSafari = true
+
+      const s_version_m = ua.match(reg_exp.safari_version)
+      cha.browserVersion = s_version_m ? s_version_m[1] : undefined
+    }
+  }
+
+  if(x_liu_device) {
+    const isIPadOS = x_liu_device.includes("iPadOS")
+    if(!cha.isIPadOS && isIPadOS) {
+      cha.isIPadOS = true
+      cha.isIOS = true
+      cha.isMobile = true
+      cha.isPC = false
+      cha.isMac = false
+    }
+  }
+
+
+  return cha
+}
+
+// 原则: 应用（浏览器） + 操作系统（设备名）
+export function normalizeUserAgent(
+  userAgent: any,
+  x_liu_device?: string,
+) {
+  let device = ""
+  if(!userAgent || typeof userAgent !== "string") return ""
+  const cha = getCharacteristic(userAgent, x_liu_device)
+  if(!cha) return ""
+
+  if(cha.isWeCom) {
+    
+  }
+  else if(cha.isWeChat) {
+    device += "WeChat, "
+  }
+  else if(cha.isDingTalk) {
+    device += "DingTalk, "
+  }
+  else if(cha.isAlipay) {
+    device += "Alipay, "
+  }
+  else if(cha.isFeishu) {
+    device += "Feishu, "
+  }
+  else if(cha.isQuark) {
+    device += "Quark, "
+  }
+  else if(cha.isUCBrowser) {
+    device += "UCBrowser, "
+  }
+  else if(cha.isHuaweiBrowser) {
+    device += "HuaweiBrowser, "
+  }
+  else if(cha.isFirefox) {
+    device += "Firefox, "
+  }
+  else if(cha.isEdge) {
+    device += "Edge, "
+  }
+  else if(cha.isChrome) {
+    device += "Chrome, "
+  }
+  else if(cha.isSafari) {
+    device += "Safari, "
+  }
+  
+  if(cha.isHarmonyOS) {
+    device += "Harmony"
+  }
+  else if(cha.isIPadOS) {
+    device += "iPad"
+  }
+  else if(cha.isIOS) {
+    device += "iPhone"
+  }
+  else if(cha.isMac) {
+    device += "Mac"
+  }
+  else if(cha.isWindows) {
+    device += "Windows"
+  }
+  else if(cha.isAndroid) {
+    device += "Android"
+  }
+  
+  device = device.trim()
+  const dLength = device.length
+  if(dLength > 2) {
+    const lastChat = device[dLength - 1]
+    if(lastChat === ",") {
+      device = device.substring(0, dLength - 1)
+    }
+  }
+  return device
+}
 
 /********************* 一些验证、检查函数 *****************/
 

@@ -1,4 +1,7 @@
-import { getCharacteristic } from "./characteristic"
+import { 
+  getCharacteristic,
+  getDeviceString,
+} from "./characteristic"
 import device from "./device"
 import storage from "./storage"
 import basic from "./basic"
@@ -28,6 +31,7 @@ export default {
   removeStorageSync: storage.removeStorageSync,
   clearStorageSync: storage.clearStorageSync,
   getCharacteristic,
+  getDeviceString,
   requestAnimationFrame: basic.requestAnimationFrame,
   eventTargetIsSomeTag: basic.eventTargetIsSomeTag,
   encode_URI_component: basic.encode_URI_component,

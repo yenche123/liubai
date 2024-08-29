@@ -16,6 +16,7 @@ function init(msg: MainToChildMessage) {
     x_liu_client: LIU_ENV.client,
     x_liu_token: msg.token,
     x_liu_serial: msg.serial,
+    x_liu_device: msg.device_string,
   }
   if(msg.client_key) {
     client_key = msg.client_key

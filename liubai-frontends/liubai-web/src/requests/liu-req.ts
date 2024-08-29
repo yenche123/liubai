@@ -29,6 +29,7 @@ async function _getBody<U extends Record<string, any>>(
     x_liu_stamp: time.getTime(),
     x_liu_timezone: time.getTimezone().toFixed(1),
     x_liu_client: LIU_ENV.client,
+    x_liu_device: liuApi.getDeviceString(),
     ...body,
   }
 

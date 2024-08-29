@@ -56,6 +56,7 @@ export interface MainToChildMessage {
   timeDiff: number
   system_language: string
   system_theme: SupportedTheme
+  device_string: string
 }
 
 export interface CheckDownloadTaskParam {

@@ -37,6 +37,7 @@ import { getCurrentLocale, useI18n, wechatLang } from "@/common-i18n"
 import { wechat_tag_cfg } from "@/common-config";
 import { createCredential2 } from "@/common-ids";
 import { init_user } from "@/user-login";
+import { sendWxTextMessage } from "@/service-send";
 
 const db = cloud.database()
 let wechat_access_token = ""
@@ -44,16 +45,12 @@ let wechat_access_token = ""
 /***************************** constants **************************/
 
 // @see https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html#7
-const API_SEND = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
 const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 const API_TAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging"
 const API_UNTAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging"
 
 // @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
 const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
-
-const MIN_3 = 3 * MINUTE
-
 
 /***************************** types **************************/
 type MsgMode = "plain_text" | "safe"
@@ -493,31 +490,7 @@ async function send_text_to_wechat_gzh(
   wx_gzh_openid: string,
   text: string,
 ) {
-  const body = {
-    touser: wx_gzh_openid,
-    msgtype: "text",
-    text: {
-      content: text,
-    }
-  }
-  const url = new URL(API_SEND)
-  url.searchParams.set("access_token", wechat_access_token)
-  const link = url.toString()
-  
-  const d1 = getNowStamp()
-  const res = await liuReq<Wx_Res_Common>(link, body)
-  const d2 = getNowStamp()
-
-  const { code, data } = res
-  if(code !== "0000" || data?.errcode !== 0) {
-    console.warn("send_text_to_wechat_gzh might fail")
-    console.log(res)
-    console.log(body)
-  }
-  else {
-    console.log(`send_text_to_wechat_gzh: ${d2 - d1}ms`)
-  }
-
+  await sendWxTextMessage(wx_gzh_openid, wechat_access_token, text)
 }
 
 async function make_user_subscribed(

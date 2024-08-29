@@ -8,6 +8,7 @@ import type {
   ServiceSendEmailsParam,
   Table_Credential,
   Wx_Param_Msg_Templ_Send,
+  Wx_Res_Common,
 } from "@/common-types"
 import { 
   getNowStamp, 
@@ -180,6 +181,7 @@ function getResendInstance() {
 /********************** About WeChat *****************/
 
 const API_WECHAT_TMPL_SEND = "https://api.weixin.qq.com/cgi-bin/message/template/send"
+const API_WECHAT_MSG_SEND = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
 
 export async function sendWxTemplateMessage(
   access_token: string,
@@ -188,4 +190,36 @@ export async function sendWxTemplateMessage(
   const url = `${API_WECHAT_TMPL_SEND}?access_token=${access_token}`
   const res = await liuReq(url, param)
   return res
+}
+
+export async function sendWxTextMessage(
+  wx_gzh_openid: string,
+  access_token: string,
+  text: string,
+) {
+  const body = {
+    touser: wx_gzh_openid,
+    msgtype: "text",
+    text: {
+      content: text,
+    }
+  }
+  const url = new URL(API_WECHAT_MSG_SEND)
+  url.searchParams.set("access_token", access_token)
+  const link = url.toString()
+  
+  const d1 = getNowStamp()
+  const res = await liuReq<Wx_Res_Common>(link, body)
+  const d2 = getNowStamp()
+
+  const { code, data } = res
+  if(code !== "0000" || data?.errcode !== 0) {
+    console.warn("sendWxTextMessage might fail")
+    console.log(res)
+    console.log(body)
+  }
+  else {
+    console.log(`sendWxTextMessage: ${d2 - d1}ms`)
+  }
+
 }

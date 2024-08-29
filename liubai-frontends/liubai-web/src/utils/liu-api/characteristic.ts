@@ -5,20 +5,27 @@ import type { GetChaRes } from "./tools/types"
 
 let isPC: boolean;
 let isMobile: boolean;   // 此字段表示是否为移动装置，包含是否为手机或pad
+let isWeCom = false;
 let isWeChat = false;
+let isAlipay = false;
+let isDingTalk = false;
+let isFeishu = false;
+let isQuark = false;
+let isUCBrowser = false;
 let isIOS = false;
 let isIPadOS = false;
 let isMac = false;
 let isWindows = false;
-let isFeishu = false;
 let isInWebView = false;   // 是否在桌面应用 App 的 Webview 中，小程序也算
 let isFirefox = false;
 let isSafari = false;
 let isChrome = false;
 let isEdge = false;    // if true, isChrome is true as well
 let browserVersion: string | undefined;
+let appVersion: string | undefined;
 let isHarmonyOS = false;
 let isHuaweiBrowser = false;
+let isAndroid = false;
 
 export const getCharacteristic = (): GetChaRes => {
   if(isPC !== undefined) {
@@ -34,8 +41,24 @@ export const getCharacteristic = (): GetChaRes => {
   // console.log("mobileMatch: ", mobileMatch)
 
   // 判断是否为微信环境
-  if(ua.includes("micromessenger")) {
+  if(ua.includes("wxwork")) {
+    isWeCom = true
+    isInWebView = true
+  }
+  else if(ua.includes("micromessenger")) {
     isWeChat = true
+    isInWebView = true
+  }
+  else if(ua.includes("dingtalk")) {
+    isDingTalk = true
+    isInWebView = true
+  }
+  else if(ua.includes("alipayclient")) {
+    isAlipay = true
+    isInWebView = true
+  }
+  else if(ua.includes("feishu")) {
+    isFeishu = true
     isInWebView = true
   }
 
@@ -78,10 +101,10 @@ export const getCharacteristic = (): GetChaRes => {
   else if(ua.includes("windows")) {
     isWindows = true
   }
-
-  if(ua.includes("feishu")) {
-    isFeishu = true
-    isInWebView = true
+  else if(ua.includes("android")) {
+    if(!isIOS && !isMac) {
+      isAndroid = true
+    }
   }
 
   if(ua.includes("harmonyos")) {
@@ -136,23 +159,68 @@ export const getCharacteristic = (): GetChaRes => {
   return res
 }
 
+export const getDeviceString = (
+  cha?: GetChaRes,
+) => {
+  if(!cha) cha = getCharacteristic()
+  let str = ""
+
+  if(cha.isPC) str += "PC "
+  else if(cha.isMobile) str += "Mobile "
+
+  if(cha.isWeCom) str += "WeCom "
+  else if(cha.isWeChat) str += "WeChat "
+  else if(cha.isDingTalk) str += "DingTalk "
+  else if(cha.isAlipay) str += "Alipay "
+  else if(cha.isFeishu) str += "Feishu "
+  else if(cha.isUCBrowser) str += "UCBrowser "
+  else if(cha.isQuark) str += "Quark "
+
+  if(cha.isIOS) str += "iOS "
+  if(cha.isIPadOS) str += "iPadOS "
+
+  if(cha.isMac) str += "Mac "
+  else if(cha.isWindows) str += "Windows "
+
+  if(cha.isInWebView) str += "WebView "
+  if(cha.isFirefox) str += "Firefox "
+  if(cha.isSafari) str += "Safari "
+  if(cha.isChrome) str += "Chrome "
+  if(cha.isEdge) str += "Edge "
+  if(cha.isHarmonyOS) str += "HarmonyOS "
+  if(cha.isHuaweiBrowser) str += "HuaweiBrowser "
+  
+  if(cha.browserVersion) {
+    str += `v${cha.browserVersion}`
+  }
+  
+  return str
+}
+
 function _returnData(): GetChaRes {
   return { 
     isPC, 
     isMobile, 
+    isWeCom,
     isWeChat, 
+    isAlipay,
+    isDingTalk,
+    isFeishu, 
+    isQuark,
+    isUCBrowser,
     isIOS, 
     isIPadOS,
     isMac,
     isWindows,
-    isFeishu, 
     isInWebView,
     isFirefox,
     isSafari,
     isChrome,
     isEdge,
     browserVersion,
+    appVersion,
     isHarmonyOS,
     isHuaweiBrowser,
+    isAndroid,
   }
 }

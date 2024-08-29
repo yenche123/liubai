@@ -46,6 +46,10 @@ import {
   insertToken,
   liuReq,
   checkAndGetWxGzhAccessToken,
+  normalizeUserAgent,
+  displayTime,
+  getIp,
+  getIpGeo,
 } from "@/common-util"
 import { getNowStamp, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -54,8 +58,13 @@ import {
   createOpenId,
   createSignInCredential,
 } from "@/common-ids"
-import { checkIfEmailSentTooMuch, getActiveEmailCode, sendEmails } from "@/service-send"
-import { userLoginLang, useI18n, getAppName } from '@/common-i18n'
+import { 
+  checkIfEmailSentTooMuch, 
+  getActiveEmailCode, 
+  sendEmails, 
+  sendWxTextMessage,
+} from "@/service-send"
+import { userLoginLang, useI18n, getAppName, getCurrentLocale } from '@/common-i18n'
 import { OAuth2Client, type TokenPayload } from "google-auth-library"
 
 /************************ 一些常量 *************************/
@@ -199,12 +208,15 @@ async function handle_scan_login(
   if(infoType === "wx-gzh-scan" && wx_gzh_openid) {
     const opt7_1 = { client_key }
     const res7_1 = await tryToSignInWithWxGzhOpenId(ctx, body, wx_gzh_openid, opt7_1)
+    console.log("res7_1: ")
+    console.log(res7_1)
+
     if(res7_1) {
+      // 7.2 TODO: send message to user: login successfully
+      sendLoginMsgToWxGzhUser(ctx, body, wx_gzh_openid, "wx-gzh-scan")
       _removeCredential()
       return res7_1
     }
-
-    // 7.2 TODO: send message to user: login successfully
 
     return { code: "E4003", errMsg: "sign in with wx_gzh_openid failed" }
   }
@@ -1141,6 +1153,100 @@ async function sign_in(
 
   return { code: "0000", data: obj3 }
 }
+
+async function sendLoginMsgToWxGzhUser(
+  ctx: FunctionContext,
+  body: Record<string, string | undefined>,
+  wx_gzh_openid: string,
+  login_way: "wx-gzh-scan",
+) {
+  const deviceStr = getDeviceI18nStr(ctx, body)
+  console.log("deviceStr: ", deviceStr)
+
+  const { t } = useI18n(userLoginLang, { body })
+  let msg = t("login_success")
+
+  // 1. Login Way
+  msg += `\n\n`
+  let way1 = login_way === "wx-gzh-scan" ? t("wechat_scan") : t("_unknown")
+  msg += t("login_way", { way: way1 })
+
+  // 2. Operate Time
+  msg += `\n`
+  const locale = getCurrentLocale(body)
+  const time = displayTime(getNowStamp(), locale, body.x_liu_timezone)
+  msg += t("operate_time", { time })
+
+  // 3. IP Address
+  const ip = getIp(ctx)
+  if(ip) {
+    msg += `\n`
+    msg += t("ip_address", { ip })
+    const ipGEO = getIpGeo(ctx)
+    if(ipGEO) msg += ` (${ipGEO})`
+  }
+
+  // 4. Device info
+  if(deviceStr) {
+    msg += `\n`
+    msg += t("device_info", { device: deviceStr })
+  }
+  
+  console.log("see msg: ")
+  console.log(msg)
+
+  const wx_gzh_access_token = await checkAndGetWxGzhAccessToken()
+  if(!wx_gzh_access_token) {
+    console.warn("there is no wx_gzh_access_token in sendLoginMsgToWxGzhUser")
+    return { code: "E5001", errMsg: "there is no wx_gzh_access_token" }
+  }
+  
+  await sendWxTextMessage(wx_gzh_openid, wx_gzh_access_token, msg)
+}
+
+function getDeviceI18nStr(
+  ctx: FunctionContext,
+  body: Record<string, string | undefined>,
+) {
+  const userAgent = ctx.headers?.['user-agent']
+  const x_liu_device = body.x_liu_device
+  let deviceStr = normalizeUserAgent(userAgent, x_liu_device)
+  const { t } = useI18n(userLoginLang, { body })
+
+  if(deviceStr.includes("WeCom")) {
+    deviceStr = deviceStr.replace("WeCom", t("wecom_client"))
+  }
+  else if(deviceStr.includes("WeChat")) {
+    deviceStr = deviceStr.replace("WeChat", t("wechat_client"))
+  }
+  else if(deviceStr.includes("Alipay")) {
+    deviceStr = deviceStr.replace("Alipay", t("alipay_client"))
+  }
+  else if(deviceStr.includes("DingTalk")) {
+    deviceStr = deviceStr.replace("DingTalk", t("dingtalk_client"))
+  }
+  else if(deviceStr.includes("Feishu")) {
+    deviceStr = deviceStr.replace("Feishu", t("feishu_client"))
+  }
+  else if(deviceStr.includes("Quark")) {
+    deviceStr = deviceStr.replace("Quark", t("quark_client"))
+  }
+  else if(deviceStr.includes("UCBrowser")) {
+    deviceStr = deviceStr.replace("UCBrowser", t("uc_client"))
+  }
+  else if(deviceStr.includes("HuaweiBrowser")) {
+    deviceStr = deviceStr.replace("HuaweiBrowser", t("huawei_browser"))
+  }
+  
+  if(deviceStr.includes("Harmony")) {
+    deviceStr = deviceStr.replace("Harmony", t("harmony_os"))
+  }
+  if(deviceStr.includes("Android")) {
+    deviceStr = deviceStr.replace("Android", t("android"))
+  }
+  return deviceStr
+}
+
 
 
 async function tryToSignInWithWxGzhOpenId(
