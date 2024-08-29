@@ -22,8 +22,8 @@ import {
   fetchWxGzhScan,
 } from "~/pages/level1/tools/requests";
 
+const SEC_3 = time.SECONED * 3
 const SEC_4 = time.SECONED * 4
-const SEC_5 = time.SECONED * 5
 const SEC_6 = time.SECONED * 6
 
 const TRANSITION_DURATION = 350
@@ -117,7 +117,7 @@ async function fetch_wx_gzh_scan() {
   if(pollTimeout) clearTimeout(pollTimeout)
   pollTimeout = setTimeout(() => {
     checkData(cred)
-  }, SEC_5)
+  }, SEC_4)
 }
 
 async function fetch_bind_wechat(
@@ -205,7 +205,7 @@ async function fetch_check_wecom(
   }, SEC_4)
 }
 
-
+// checking scan result for login via wx gzh scan
 async function fetch_scan_check(
   credential: string,
 ) {
@@ -227,7 +227,7 @@ async function fetch_scan_check(
 
   pollTimeout = setTimeout(() => {
     checkData(credential)
-  }, SEC_4)
+  }, SEC_3)
 }
 
 
@@ -265,7 +265,7 @@ async function checkData(
   // 1. can we check out data?
   if(!qpData.enable) return
   qpData.runTimes++
-  if(qpData.runTimes > 100) {
+  if(qpData.runTimes >= 100) {
     _over({ resultType: "plz_check" })
     return
   }
