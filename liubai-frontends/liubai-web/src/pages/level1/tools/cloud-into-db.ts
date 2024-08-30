@@ -35,9 +35,6 @@ export async function handleUser(
     open_id: d.open_id,
   }
   const res3 = await db.users.update(userId, u)
-  console.log("update user res3: ")
-  console.log(res3)
-  console.log(" ")
 
   return true
 }

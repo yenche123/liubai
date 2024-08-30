@@ -12,17 +12,10 @@ import {
 } from "@vueuse/core"
 import { useQRCode } from "@vueuse/integrations/useQRCode"
 import type { NetworkState } from "@vueuse/core"
-import type { Ref } from "vue"
 
-let winWidth: Ref<number> | null = null
-let winHeight: Ref<number> | null = null
 const useWindowSize = () => {
-  if(!winWidth || !winHeight) {
-    let { width, height } = vueUseWindowSize()
-    winWidth = width
-    winHeight = height
-  }
-  return { width: winWidth, height: winHeight }
+  const res = vueUseWindowSize()
+  return res
 }
 
 let networkState: NetworkState | null = null

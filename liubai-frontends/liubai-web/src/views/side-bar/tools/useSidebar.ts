@@ -1,4 +1,12 @@
-import { computed, onActivated, onDeactivated, provide, reactive, toRef, watch } from "vue";
+import { 
+  computed, 
+  onActivated, 
+  onDeactivated, 
+  provide, 
+  reactive, 
+  toRef, 
+  watch,
+} from "vue";
 import { useLayoutStore } from "../../useLayoutStore";
 import type { LayoutStore, LayoutType } from "../../useLayoutStore";
 import { useWindowSize } from "~/hooks/useVueUse";
@@ -211,7 +219,7 @@ function listenWindowChange(
   layoutStore: LayoutStore,
 ) {
   const { width } = useWindowSize()
-  let lastWindowTimeout = 0
+  let lastWindowTimeout: LiuTimeout
 
   const collectState = async () => {
     recalculate(layoutStore)
@@ -219,12 +227,13 @@ function listenWindowChange(
 
   const whenWindowChange = () => {
     if(lastWindowTimeout) clearTimeout(lastWindowTimeout)
-    lastWindowTimeout = window.setTimeout(() => {
+    lastWindowTimeout = setTimeout(() => {
       collectState()
     }, LISTEN_DELAY)
   }
 
   // watch 挂在 setup 周期内 所以不需要在 onUnmounted 手写销毁，vue 会自动完成
+  // console.log("去監聽 width 变化")
   watch(width, () => {
     whenWindowChange()
   })
