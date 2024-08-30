@@ -43,6 +43,8 @@ const db = cloud.database()
 let wechat_access_token = ""
 
 /***************************** constants **************************/
+// how many accounts can be bound to one wechat gzh openid
+const MAX_ACCOUNTS_TO_BIND = 2
 
 // @see https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html#7
 const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
@@ -105,34 +107,45 @@ async function handle_unsubscribe(
   const wx_gzh_openid = msgObj.FromUserName
   if(!wx_gzh_openid) return
 
-  // 1. get the user
+  // 0. define functions where we update user and cache
   const uCol = db.collection("User")
-  const q1 = uCol.where({ wx_gzh_openid }).orderBy("insertedStamp", "desc")
-  const res1 = await q1.getOne<Table_User>()
-  const user = res1.data
-  if(!user) return
+  const _updateUser = async (user: Table_User) => {
+    // 0.1 check if updating is required
+    const oldSub = user.thirdData?.wx_gzh?.subscribe
+    if(oldSub === 0) return
 
-  // 2. check if updating is required
-  const oldSub = user.thirdData?.wx_gzh?.subscribe
-  if(oldSub === 0) return
+    // 0.2 update user
+    const userId = user._id
+    const thirdData = user.thirdData ?? {}
+    const wx_gzh = thirdData.wx_gzh ?? {}
+    wx_gzh.subscribe = 0
+    thirdData.wx_gzh = wx_gzh
+    const now = getNowStamp()
+    const u3: Partial<Table_User> = {
+      thirdData,
+      updatedStamp: now,
+    }
+    const res3 = await uCol.doc(userId).update(u3)
 
-  // 3. update user
-  const userId = user._id
-  const thirdData = user.thirdData ?? {}
-  const wx_gzh = thirdData.wx_gzh ?? {}
-  wx_gzh.subscribe = 0
-  thirdData.wx_gzh = wx_gzh
-  const now = getNowStamp()
-  const u3: Partial<Table_User> = {
-    thirdData,
-    updatedStamp: now,
+    // 0.3 update cache
+    user.thirdData = thirdData
+    user.updatedStamp = now
+    updateUserInCache(userId, user)
   }
-  const res3 = await uCol.doc(userId).update(u3)
 
-  // 4. update cache
-  user.thirdData = thirdData
-  user.updatedStamp = now
-  updateUserInCache(userId, user)
+  // 1. get the user
+  const q1 = uCol.where({ wx_gzh_openid }).orderBy("insertedStamp", "desc")
+  const res1 = await q1.get<Table_User>()
+  const list1 = res1.data
+  const len1 = list1.length
+  if(len1 < 1) return
+
+  // 2. to update
+  for(let i = 0; i < len1; i++) {
+    const user = list1[i]
+    if(i > (MAX_ACCOUNTS_TO_BIND - 1)) break
+    await _updateUser(user)
+  }
 
   return true
 }
@@ -370,9 +383,13 @@ async function bind_wechat_gzh(
     wx_gzh_openid,
   }
   const q6 = uCol.where(w6).orderBy("insertedStamp", "desc")
-  const res6 = await q6.getOne<Table_User>()
-  const user6 = res6.data
-  if(user6) {
+  const res6 = await q6.get<Table_User>()
+  const list6 = res6.data
+
+  // binding two accounts is allowed, but binding three is not
+  const len6 = list6.length
+  if(len6 > (MAX_ACCOUNTS_TO_BIND - 1)) {
+    const user6 = list6[0]
     const name6 = await getAccountName(user6)
     const already_bound_msg = t("already_bound", { account: name6 })
     send_text_to_wechat_gzh(wx_gzh_openid, already_bound_msg)
