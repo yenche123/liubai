@@ -43,7 +43,7 @@ import type {
   SyncGet_CommentList_D,
   CommonPass_A,
 } from "@/common-types"
-import { getNowStamp, DAY } from "@/common-time"
+import { getNowStamp, DAY, HOUR } from "@/common-time"
 import cloud from '@lafjs/cloud'
 import * as vbot from "valibot"
 
@@ -560,7 +560,7 @@ async function toThreadListFromContent(
   if(isCalendar) {
     const now = getNowStamp()
     const s1 = now - DAY
-    const s2 = now + DAY
+    const s2 = now + DAY + (HOUR * 2)
     w.calendarStamp = _.and(_.gt(s1), _.lte(s2))
   }
   else if(isPin) {

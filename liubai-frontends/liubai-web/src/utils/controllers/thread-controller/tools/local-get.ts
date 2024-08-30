@@ -89,7 +89,7 @@ async function getList(
   if(isCalendar) {
     const w = ["oState", "infoType", "calendarStamp"]
     const b1 = ["OK", "THREAD", now - time.DAY]
-    const b2 = ["OK", "THREAD", now + time.DAY]
+    const b2 = ["OK", "THREAD", now + time.DAY + (time.HOUR * 2)]
     const q = db.contents.where(w).between(b1, b2, false, true).filter(filterFunc)
     list = await q.sortBy("calendarStamp")
   }

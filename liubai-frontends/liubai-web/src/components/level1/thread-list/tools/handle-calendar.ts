@@ -6,7 +6,7 @@ import type {
   SyncGet_CheckContents,
 } from "~/types/cloud/sync-get/types";
 import type { TcListOption } from "~/utils/controllers/thread-controller/type";
-import { isToday } from "date-fns"
+import { isToday, addHours, set as date_fn_set } from "date-fns"
 import time from "~/utils/basic/time"
 import threadController from "~/utils/controllers/thread-controller/thread-controller";
 import { CloudMerger } from "~/utils/cloud/CloudMerger";
@@ -107,9 +107,7 @@ export function filterForCalendar(
 
   if(next24Hrs) {
     // load threads within next 24 hrs
-    const now = time.getTime()
-    const s1 = now - MIN_30
-    const s2 = now + time.DAY
+    const { s1, s2 } = getStartAndEndStampForNext24Hrs()
     list = results.filter(v => {
       const { calendarStamp } = v
       if(!calendarStamp) return false
@@ -125,4 +123,17 @@ export function filterForCalendar(
   }
 
   return { list, title_key }
+}
+
+function getStartAndEndStampForNext24Hrs() {
+  let date = new Date()
+  date = addHours(date, -12)
+  date = date_fn_set(date, { hours: 21, minutes: 0, seconds: 0, milliseconds: 0 })
+  const s1 = date.getTime()
+
+  date = addHours(date, 24)
+  date = date_fn_set(date, { hours: 23, minutes: 59, seconds: 59, milliseconds: 0 })
+  const s2 = date.getTime()
+
+  return { s1, s2 }
 }
