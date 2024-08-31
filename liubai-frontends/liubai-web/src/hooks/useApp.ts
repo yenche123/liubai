@@ -14,6 +14,7 @@ import { initServiceWorker } from "./pwa/useServiceWorker"
 import { initListenError } from "./tools/initListenError";
 import { initAnalytics } from "./tools/initAnalytics";
 import { type LocalOnceData } from "~/utils/system/tools/types";
+import { useScreenOrientation } from "./useVueUse";
 import time from "~/utils/basic/time";
 
 // 监听和处理一些全局的事务，比如路由变化
@@ -116,11 +117,18 @@ async function initMobile(
   onceData: LocalOnceData,
 ) {
 
+  // 0. return if not mobile
   if(!cha.isMobile) {
     printInit()
     return
   }
 
+  // 1. lock screen orientation
+  setTimeout(() => {
+    toLockOrientation(cha)
+  }, time.SECONED)
+
+  // 2. open vconsole
   const _open = async () => {
     const VConsole = await getVConsole()
     new VConsole.default({
@@ -143,4 +151,37 @@ async function initMobile(
   }
   
   printInit()
+}
+
+
+async function toLockOrientation(
+  cha: GetChaRes,
+) {
+  if(!cha.isAndroid && !cha.isHarmonyOS) return
+
+  const {
+    isSupported,
+    orientation,
+    lockOrientation,
+  } = useScreenOrientation()
+
+  if(!isSupported.value) {
+    console.log("screen orientation is not supported")
+    return
+  }
+
+  const isStandalone = liuApi.canIUse.isRunningStandalone()
+  if(!isStandalone && !cha.isHarmonyOS) {
+    console.log("not running in standalone mode")
+    return
+  }
+
+  const oType = orientation.value
+  console.log("oType", oType)
+  if(oType === "portrait-primary") {
+    console.log("locking to portrait-primary starts")
+    await lockOrientation("portrait-primary")
+    console.log("locking to portrait-primary ends")
+  }
+
 }

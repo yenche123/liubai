@@ -9,6 +9,7 @@ import {
   useDebounceFn,
   useDocumentVisibility,
   useMutationObserver,
+  useScreenOrientation,
 } from "@vueuse/core"
 import { useQRCode } from "@vueuse/integrations/useQRCode"
 import type { NetworkState } from "@vueuse/core"
@@ -47,4 +48,6 @@ export {
   useDocumentVisibility,
 
   useQRCode,
+
+  useScreenOrientation,
 }

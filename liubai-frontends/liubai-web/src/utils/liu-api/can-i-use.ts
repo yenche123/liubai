@@ -73,8 +73,16 @@ function isRunningStandalone() {
     return standalone
   }
 
-  const res = window.matchMedia('(display-mode: standalone)').matches
-  return res
+  try {
+    const res = window.matchMedia('(display-mode: standalone)').matches
+    return res
+  }
+  catch(err) {
+    console.warn("fail to call window.matchMedia('(display-mode: standalone)').matches")
+    console.log(err)
+  }
+
+  return false
 }
 
 
