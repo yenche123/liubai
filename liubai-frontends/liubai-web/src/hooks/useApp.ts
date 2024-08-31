@@ -159,12 +159,9 @@ async function initMobile(
 async function toLockOrientation(
   cha: GetChaRes,
 ) {
-  if(!cha.isAndroid && !cha.isHarmonyOS) return
-
   const {
     isSupported,
     orientation,
-    lockOrientation,
   } = useScreenOrientation()
 
   if(!isSupported.value) {
@@ -172,18 +169,7 @@ async function toLockOrientation(
     return
   }
 
-  const isStandalone = liuApi.canIUse.isRunningStandalone()
-  if(!isStandalone && !cha.isHarmonyOS) {
-    console.log("not running in standalone mode")
-    return
-  }
-
   const oType = orientation.value
-  console.log("oType", oType)
-  if(oType === "portrait-primary") {
-    console.log("locking to portrait-primary starts")
-    await lockOrientation("portrait-primary")
-    console.log("locking to portrait-primary ends")
-  }
+  console.log("let me see orientation: ", oType)
 
 }

@@ -7,7 +7,7 @@
   "description": "Your Notes, Calendar, Tasks, To-Do List, and more",
   "theme_color": "#2a6885",
   "background_color": "#eaecef",
-  "orientation": "any",
+  "orientation": "natural",
   "related_applications": [
     {
       "platform": "webapp",
