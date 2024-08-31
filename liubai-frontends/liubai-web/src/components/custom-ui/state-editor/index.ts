@@ -10,6 +10,7 @@ import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../tools/useCuiTool"
 import liuUtil from "~/utils/liu-util"
 import time from "~/utils/basic/time"
+import cfg from "~/config"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 
 let _resolve: SeResolver | undefined
@@ -149,7 +150,7 @@ function _toOpen() {
   enable.value = true
   toggleTimeout = setTimeout(() => {
     show.value = true
-  }, 16)
+  }, cfg.frame_duration)
 }
 
 async function _toClose() {

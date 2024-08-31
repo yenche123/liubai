@@ -6,6 +6,7 @@ import valTool from "~/utils/basic/val-tool";
 import time from "~/utils/basic/time";
 import type { TagShow } from "~/types/types-content"
 import type { LiuTimeout } from "~/utils/basic/type-tool";
+import cfg from "~/config"
 
 /**
  * 说明: 
@@ -167,7 +168,7 @@ function _toOpen() {
   hsData.enable = true
   toggleTimeout = setTimeout(() => {
     hsData.show = true
-  }, 16)
+  }, cfg.frame_duration)
 }
 
 function _toClose() {

@@ -19,6 +19,7 @@ import time from "~/utils/basic/time"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 import { showSnackBar } from "../../snack-bar/index"
 import liuApi from "~/utils/liu-api"
+import cfg from "~/config"
 
 let _resolve: SvResolver | undefined
 const TRANSITION_DURATION = 150
@@ -189,7 +190,7 @@ function _toOpen() {
   
   toggleTimeout = setTimeout(() => {
     show.value = true
-  }, 16)
+  }, cfg.frame_duration)
 }
 
 function _toClose() {

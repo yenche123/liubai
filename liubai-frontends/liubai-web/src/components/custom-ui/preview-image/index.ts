@@ -14,6 +14,7 @@ import { transitionHelper } from "~/utils/other/transition-related"
 import { getSpecificCSSRule } from "~/utils/other/css-related"
 import { Swiper } from "swiper"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
+import cfg from "~/config"
 
 let _resolve: PiResolver | undefined
 let _viewTranResolve: ViewTransitionResolver | undefined
@@ -124,7 +125,7 @@ function _toOpen() {
   toggleTimeout = setTimeout(() => {
     show.value = true
     toListenEscKeyUp(toCancel)
-  }, 16)
+  }, cfg.frame_duration)
 }
 
 function _openByViewTransition() {
