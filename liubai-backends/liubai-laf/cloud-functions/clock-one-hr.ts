@@ -135,8 +135,6 @@ async function handleWeComQynbConfig(
   const corpid = _env.LIU_WECOM_QYNB_CORPID
   const secret = _env.LIU_WECOM_QYNB_SECRET
   if(!corpid || !secret) {
-    console.warn("corpid and secret are required")
-    console.log("fail to get access_token from wecom")
     return
   }
 
