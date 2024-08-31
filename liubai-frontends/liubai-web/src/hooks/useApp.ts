@@ -134,6 +134,8 @@ async function initMobile(
     new VConsole.default({
       onReady() {
         printInit()
+        console.log("characteristic: ", cha)
+        console.log(" ")
       }
     })
     import("~/styles/mobile-style.css")

@@ -35,5 +35,7 @@ export default {
   firefox_version: /firefox\/([\d\.]+)/,
 
   safari_version: /version\/([\d\.]+)/,
+
+  ios_version: /iphone os ([\d_]+)/,
   
 }

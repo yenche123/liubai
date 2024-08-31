@@ -69,6 +69,7 @@ export const reg_exp = {
   edge_version: /edg\/([\d\.]+)/,
   firefox_version: /firefox\/([\d\.]+)/,
   safari_version: /version\/([\d\.]+)/,
+  ios_version: /iphone os ([\d_]+)/,
 }
 
 /********************* 空函数 ****************/
@@ -694,6 +695,14 @@ export function getCharacteristic(
 
       const s_version_m = ua.match(reg_exp.safari_version)
       cha.browserVersion = s_version_m ? s_version_m[1] : undefined
+    }
+  }
+
+  if(cha.isIOS && !cha.browserVersion) {
+    const ios_version_m = ua.match(reg_exp.ios_version)
+    const tmpVersion = ios_version_m ? ios_version_m[1] : undefined
+    if(tmpVersion) {
+      cha.browserVersion = tmpVersion.replace("_", ".")
     }
   }
 

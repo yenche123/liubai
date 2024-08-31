@@ -144,6 +144,14 @@ export const getCharacteristic = (): GetChaRes => {
     }
   }
 
+  if(isIOS && !browserVersion) {
+    const ios_version_m = ua.match(reg_exp.ios_version)
+    const tmpVersion = ios_version_m ? ios_version_m[1] : undefined
+    if(tmpVersion) {
+      browserVersion = tmpVersion.replace("_", ".")
+    }
+  }
+
   // 处理 iOS 13 之后的 iPad 的 userAgent 里没有 ipad 字段的问题
   // maxTouchPoints 表示设备最多支持一次有多少个 touch 点击
   // 比如触屏设备通常一次两次 touch points 以实现两指 pitch 缩放
