@@ -72,6 +72,7 @@ import {
   type GetLangValOpt,
 } from '@/common-i18n'
 import { OAuth2Client, type TokenPayload } from "google-auth-library"
+import { downloadAndUpload } from '@/file-utils'
 
 /************************ 一些常量 *************************/
 // GitHub 使用 code 去换 accessToken
@@ -1259,6 +1260,14 @@ async function tryToSignInWithWxGzhOpenId(
   }
   if(res1.type === 2) {
     const res2 = await sign_in(ctx, body, res1.userInfos, opt)
+
+    // handle avatar
+    const userInfo = res1.userInfos[0]
+    const user = userInfo?.user
+    if(user && opt.thirdData) {
+      handle_avatar(user, opt.thirdData)
+    }
+
     return res2
   }
 }
@@ -1275,18 +1284,18 @@ async function checkIfTooManyTokens(
   const w = { userId, platform }
   const q = db.collection("Token").where(w).orderBy("expireStamp", "desc")
   const res1 = await q.skip(max).get<Table_Token>()
-  console.log("checkIfTooManyTokens res1: ")
-  console.log(res1)
-  console.log(" ")
-
   const list = res1.data
   if(list.length < 1) return
   const id = list[0]._id
   if(!id) return
 
+  console.log("checkIfTooManyTokens res1: ")
+  console.log(res1)
+  console.log(" ")
+
   const u = { isOn: "N", updatedStamp: getNowStamp() }
   const res2 = await db.collection("Token").where({ _id: id }).update(u)
-  console.log("res2: ")
+  console.log("checkIfTooManyTokens res2: ")
   console.log(res2)
   console.log(" ")
 }
@@ -1358,7 +1367,7 @@ async function handleUserWhileSigningIn(
 async function turnMembersIntoOkWhileSigningIn(
   userInfo: LiuUserInfo,
 ) {
-  const { spaceMemberList, user} = userInfo
+  const { spaceMemberList, user } = userInfo
 
   // 1. 检查是否有 DEACTIVATED 的
   const list = spaceMemberList.filter(v => v.member_oState === "DEACTIVATED")
@@ -1371,7 +1380,7 @@ async function turnMembersIntoOkWhileSigningIn(
   const u = { oState: "OK", updatedStamp: getNowStamp() }
   const q = db.collection("Member").where(w)
   const res = await q.update(u, { multi: true })
-  console.log("turnMembersIntoOkWhileSigningIn res.......")
+  console.warn("turnMembersIntoOkWhileSigningIn res.......")
   console.log(res)
   console.log(" ")
 
@@ -1486,9 +1495,105 @@ async function sign_up(
   const signInOpt = { client_key, thirdData, justSignUp: true }
   const res4 = await sign_in(ctx, body, userInfos, signInOpt)
 
-  // 3. TODO: download and upload avatar if it exists
+  // 3. download and upload avatar if it exists
+  const userInfo = userInfos[0]
+  const user = userInfo?.user
+  if(user && thirdData) {
+    handle_avatar(user, thirdData)
+  }
 
   return res4
+}
+
+async function handle_avatar(
+  user: Table_User,
+  thirdData: UserThirdData,
+) {
+  // 0. get param
+  const userId = user._id
+
+  // 1. get cloud_url & prefix from thirdData
+  let cloud_url = ""
+  let prefix = ""
+  if(thirdData.google?.picture) {
+    cloud_url = thirdData.google.picture
+    prefix = "google-avatar"
+  }
+  else if(thirdData.github?.avatar_url) {
+    cloud_url = thirdData.github.avatar_url
+    prefix = "github-avatar"
+  }
+  else if(thirdData.wx_gzh?.headimgurl) {
+    cloud_url = thirdData.wx_gzh.headimgurl
+    prefix = "weixin-avatar"
+  }
+
+  // console.log("handle_avatar::")
+  // console.log("cloud_url: ", cloud_url)
+  // console.log("prefix: ", prefix)
+
+  if(!cloud_url || !prefix) return true
+
+  // 2. check out env
+  const _env = process.env
+  const qiniu_access_key = _env.LIU_QINIU_ACCESS_KEY
+  const qiniu_secret_key = _env.LIU_QINIU_SECRET_KEY
+  if(!qiniu_access_key || !qiniu_secret_key) {
+    console.log("qiniu_access_key or qiniu_secret_key is not set")
+    return
+  }
+
+  // 3. look up the user's members
+  const mCol = db.collection("Member")
+  const w3: Partial<Table_Member> = { user: userId }
+  const res3 = await mCol.where(w3).get<Table_Member>()
+  let members = res3.data
+  if(members.length < 1) return true
+  members = members.filter(v => !Boolean(v.avatar?.url))
+  if(members.length < 1) return true
+
+  // 4. download and upload
+  const res4 = await downloadAndUpload({
+    url: cloud_url,
+    oss: "qiniu",
+    prefix,
+    type: "image",
+  })
+  const { code: code4, data: data4 } = res4
+  if(code4 !== "0000" || !data4) {
+    console.warn("downloadAndUpload failed")
+    console.log(res4)
+    return
+  }
+
+  // 5. get Cloud_ImageStore from data4
+  if(data4.resType !== "image") {
+    console.warn("downloadAndUpload resType is not image")
+    console.log(res4)
+    return
+  }
+  const image = data4.image
+
+  // 6. define a function to update member
+  const _updateMember = async (member: Table_Member) => {
+    if(member.avatar?.url) return
+    const now6 = getNowStamp()
+    const u6: Partial<Table_Member> = {
+      avatar: image,
+      updatedStamp: now6,
+      editedStamp: now6,
+    }
+    const res6 = await mCol.doc(member._id).update(u6)
+  }
+
+  // 7. update members
+  for(let i=0; i<members.length; i++) {
+    const m7 = members[i]
+    await _updateMember(m7)
+    if(i > 2) break
+  }
+  
+  return true
 }
 
 

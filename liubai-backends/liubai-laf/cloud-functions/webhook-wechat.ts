@@ -280,7 +280,7 @@ async function login_with_wechat_gzh(
   }
   const res4 = await init_user(body, { wx_gzh_openid }, thirdData)
   console.log("init_user: ")
-  console.log(res4)
+  console.log(res4.data)
 
   // 5. set credential_2
   _setCredential2()
