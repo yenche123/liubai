@@ -42,16 +42,16 @@ export function initServiceWorker() {
       },
     })
 
-    console.log("check out the result from service worker fetch: ")
-    console.log(resp)
-
     if(resp?.status === 200) {
       console.time("r.update")
       await r.update()
       console.timeEnd("r.update")
-      console.log("service worker registration updated!")
     }
-    console.log(" ")
+    else {
+      console.warn("fail to fetch the result from service worker:")
+      console.log(resp)
+      console.log(" ")
+    }
   }
 
   const onRegisteredSW = (
