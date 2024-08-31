@@ -805,7 +805,7 @@ function getMsgMode(
   b: Record<string, any>,
 ): MsgMode {
   const encrypt_type = q.encrypt_type
-  const encrypt = b.xml.encrypt
+  const encrypt = b?.xml?.encrypt
 
   // console.log("encrypt_type: ", encrypt_type)
   // console.log("encrypt: ", encrypt)
