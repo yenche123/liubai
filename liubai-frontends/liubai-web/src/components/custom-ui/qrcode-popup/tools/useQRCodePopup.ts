@@ -1,4 +1,4 @@
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 import type { 
   QpParam, 
   QpData, 
@@ -21,6 +21,8 @@ import {
   fetchScanCheck, 
   fetchWxGzhScan,
 } from "~/pages/level1/tools/requests";
+import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router";
+import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
 
 const SEC_3 = time.SECONED * 3
 const SEC_4 = time.SECONED * 4
@@ -28,6 +30,8 @@ const SEC_6 = time.SECONED * 6
 
 const TRANSITION_DURATION = 350
 let _resolve: QpResolver | undefined
+
+const queryKey = "qrcodepopup"
 const qpData = reactive<QpData>({
   show: false,
   enable: false,
@@ -37,7 +41,12 @@ const qpData = reactive<QpData>({
   loading: true,
 })
 
+let rr: RouteAndLiuRouter | undefined
+
 export function initQRCodePopup() {
+  rr = useRouteAndLiuRouter()
+  listenRouteChange()
+
   return {
     TRANSITION_DURATION,
     qpData,
@@ -55,13 +64,28 @@ export function showQRCodePopup(param: QpParam) {
   qpData.loading = true
   qpData.state = param.state
 
-  _open()
+  openIt(rr, queryKey)
   fetchData()
 
   const _wait = (a: QpResolver) => {
     _resolve = a
   }
   return new Promise(_wait)
+}
+
+function listenRouteChange() {
+  if(!rr) return
+  watch(rr.route, (newV) => {
+    const { query } = newV
+    if(!query) return
+
+    if(query[queryKey] === "01") {
+      if(qpData.bindType) _toOpen()
+      else handleCustomUiQueryErr(rr, queryKey)
+      return
+    }
+    _toClose()
+  }, { immediate: true })
 }
 
 
@@ -188,14 +212,15 @@ async function fetch_check_wecom(
     credential,
   }
   const res3 = await liuReq.request<Res_OC_CheckWeCom>(url, b3)
-  console.log("fetch_check_wecom res3: ")
-  console.log(res3)
-  console.log(" ")
+  // console.log("fetch_check_wecom res3: ")
+  // console.log(res3)
+  // console.log(" ")
   
   // 4. check result
+  const res4 = isExpectedCode(res3.code)
   const d4 = res3.data
   const status = d4?.status
-  if(status !== "waiting") {
+  if(res4 && status !== "waiting") {
     _over({ resultType: "plz_check" })
     return
   }
@@ -209,20 +234,29 @@ async function fetch_check_wecom(
 async function fetch_scan_check(
   credential: string,
 ) {
+  // 1. fetch scan check
   const res = await fetchScanCheck(credential)
   const { code, data } = res
-  if(code !== "0000" || !data) {
-    _over()
-    return
-  }
-  const { status, credential_2 } = data
-  if(status === "plz_check") {
-    _over({ resultType: "plz_check", credential, credential_2 })
-    return
-  }
-  if(status !== "waiting") {
-    _over()
-    return
+  
+  // 2. check if it's an expected code
+  const res2 = isExpectedCode(code)
+  const status = data?.status
+  const credential_2 = data?.credential_2
+
+  // console.log("fetch_scan_check res2: ")
+  // console.log(res2)
+  // console.log(status)
+  // console.log(" ")
+
+  if(res2) {
+    if(status === "plz_check" && credential_2) {
+      _over({ resultType: "plz_check", credential, credential_2 })
+      return
+    }
+    if(!data || status !== "waiting") {
+      _over()
+      return
+    }
   }
 
   pollTimeout = setTimeout(() => {
@@ -240,14 +274,15 @@ async function fetch_check_wechat(
     credential,
   }
   const res3 = await liuReq.request<Res_OC_CheckWeChat>(url, b3)
-  console.log("fetch_check_wechat res3: ")
-  console.log(res3)
-  console.log(" ")
+  // console.log("fetch_check_wechat res3: ")
+  // console.log(res3)
+  // console.log(" ")
   
   // 4. check result
+  const res4 = isExpectedCode(res3.code)
   const d4 = res3.data
   const status = d4?.status
-  if(status !== "waiting") {
+  if(res4 && status !== "waiting") {
     _over({ resultType: "plz_check" })
     return
   }
@@ -284,20 +319,14 @@ async function checkData(
   
 }
 
+function isExpectedCode(code: string) {
+  const codes = ["0000", "E4004"]
+  return codes.includes(code)
+}
 
 function onTapMask() {
   if(pollTimeout) clearTimeout(pollTimeout)
   _over({ resultType: "cancel" })
-}
-
-let toggleTimeout: LiuTimeout
-function _open() {
-  if(qpData.show) return
-  if(toggleTimeout) clearTimeout(toggleTimeout)
-  qpData.enable = true
-  toggleTimeout = setTimeout(() => {
-    qpData.show = true
-  }, cfg.frame_duration)
 }
 
 function _over(
@@ -307,10 +336,22 @@ function _over(
     res = { resultType: "error" }
   }
   _resolve && _resolve(res)
-  _close()
+  closeIt(rr, queryKey)
 }
 
-function _close() {
+let toggleTimeout: LiuTimeout
+function _toOpen() {
+  if(qpData.show) return
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
+  qpData.enable = true
+  toggleTimeout = setTimeout(() => {
+    qpData.show = true
+  }, cfg.frame_duration)
+}
+
+async function _toClose() {
   if(!qpData.enable) return
   if(toggleTimeout) {
     clearTimeout(toggleTimeout)

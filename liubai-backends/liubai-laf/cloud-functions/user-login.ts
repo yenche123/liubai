@@ -247,7 +247,7 @@ async function handle_scan_check(
   const list1 = res1.data
   const fir1 = list1[0]
   if(!fir1) {
-    return { code: "E4003", errMsg: "no credential" }
+    return { code: "E4004", errMsg: "no credential" }
   }
 
   const resData: Res_UL_ScanCheck = {
