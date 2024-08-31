@@ -1933,7 +1933,7 @@ function handle_init() {
   const googleOAuthClientSecret = _env.LIU_GOOGLE_OAUTH_CLIENT_SECRET
   const wxGzhAppid = _env.LIU_WX_GZ_APPID
   const wxGzhAppSecret = _env.LIU_WX_GZ_APPSECRET
-  const wxGzhOAuth = _env.LIU_WX_GZ_OAUTH
+  const wxGzhLogin = _env.LIU_WX_GZ_LOGIN
 
   const state = generateState()
   const data: Record<string, string | undefined> = {
@@ -1952,7 +1952,7 @@ function handle_init() {
   }
 
   // if wechat gzh exists
-  if(wxGzhAppid && wxGzhAppSecret && wxGzhOAuth === "01") {
+  if(wxGzhAppid && wxGzhAppSecret && wxGzhLogin === "01") {
     data.wxGzhAppid = wxGzhAppid
   }
 
