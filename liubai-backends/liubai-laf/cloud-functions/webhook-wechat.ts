@@ -12,6 +12,7 @@ import type {
   Table_User,
   UserThirdData,
   UserWeChatGzh,
+  Wx_Gzh_Click,
   Wx_Gzh_Msg_Event, 
   Wx_Gzh_Scan, 
   Wx_Gzh_Subscribe, 
@@ -33,11 +34,16 @@ import {
   liuReq, 
   updateUserInCache,
 } from "@/common-util";
-import { getCurrentLocale, useI18n, wechatLang } from "@/common-i18n"
+import { 
+  getCurrentLocale, 
+  useI18n, 
+  wechatLang,
+  wxClickReplies,
+} from "@/common-i18n"
 import { wechat_tag_cfg } from "@/common-config";
 import { createCredential2 } from "@/common-ids";
 import { init_user } from "@/user-login";
-import { sendWxTextMessage } from "@/service-send";
+import { sendWxMessage, sendWxTextMessage } from "@/service-send";
 
 const db = cloud.database()
 let wechat_access_token = ""
@@ -86,12 +92,41 @@ export async function main(ctx: FunctionContext) {
     else if(Event === "unsubscribe") {
       handle_unsubscribe(msgObj)
     }
+    else if(Event === "CLICK") {
+      handle_click(msgObj)
+    }
   }
   
   // respond with empty string, and then wechat will not retry
   return ""
 }
 
+async function handle_click(
+  msgObj: Wx_Gzh_Click,
+) {
+
+  // 1. get params
+  const { EventKey } = msgObj
+  if(!EventKey) return
+
+  const wx_gzh_openid = msgObj.FromUserName
+  if(!wx_gzh_openid) return false
+
+  const replies = wxClickReplies[EventKey]
+  if(!replies || replies.length < 1) return false
+
+  // 2. get access_token
+  const res2 = await checkAccessToken()
+  if(!res2) return
+
+  // 3. reply
+  for(let i = 0; i < replies.length; i++) {
+    const v = replies[i]
+    const res3 = await sendWxMessage(wx_gzh_openid, wechat_access_token, v)
+  }
+
+  return true
+}
 
 async function handle_text(
   msgObj: Wx_Gzh_Text,

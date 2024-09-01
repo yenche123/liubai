@@ -2021,6 +2021,84 @@ export type Wx_Gzh_Msg_Event = Wx_Gzh_Auth_Change |
   Wx_Gzh_View |
   Wx_Gzh_Tmpl_Send
 
+/******************* Send msg to user on WeChat using gzh  ****************/
+export interface Wx_Gzh_Send_Text {
+  msgtype: "text"
+  text: {
+    content: string
+  }
+}
+
+export interface Wx_Gzh_Send_Image {
+  msgtype: "image"
+  image: {
+    media_id: string
+  }
+}
+
+export interface Wx_Gzh_Send_Voice {
+  msgtype: "voice"
+  voice: {
+    media_id: string
+  }
+}
+
+export interface Wx_Gzh_Send_Video {
+  msgtype: "video"
+  video: {
+    media_id: string
+    title?: string
+    description?: string
+  }
+}
+
+export interface Wx_Gzh_Send_Music {
+  msgtype: "music"
+  music: {
+    title?: string
+    description?: string
+    musicurl: string
+    hqmusicurl: string
+    thumb_media_id: string
+  }
+}
+
+export interface Wx_Gzh_Send_News {
+  msgtype: "news"
+  news: {
+    articles: {
+      title: string
+      description: string
+      url: string
+      picurl: string
+    }[]               // only one article is allowed
+  }
+}
+
+export interface Wx_Gzh_Send_Article {
+  msgtype: "mpnewsarticle"
+  mpnewsarticle: {
+    article_id: string
+  }
+}
+
+export interface Wx_Gzh_Send_Msgmenu {
+  msgtype: "msgmenu"
+  msgmenu: {
+    head_content: string
+    list: {
+      id: string
+      text: string
+    }[]
+    tail_content: string
+  }
+}
+
+export type Wx_Gzh_Send_Msg = Wx_Gzh_Send_Text | Wx_Gzh_Send_Image | Wx_Gzh_Send_Voice
+  | Wx_Gzh_Send_Video | Wx_Gzh_Send_Music | Wx_Gzh_Send_News | Wx_Gzh_Send_Article
+  | Wx_Gzh_Send_Msgmenu
+
+
 /******************* Some Types from WeCom  ****************/
 export interface Ww_Res_Base {
   errcode: number

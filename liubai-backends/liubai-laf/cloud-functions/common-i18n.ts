@@ -4,6 +4,7 @@ import {
   supportedLocales,
   type SupportedLocale,
   type Table_User,
+  type Wx_Gzh_Send_Msg,
 } from "@/common-types"
 
 export type LangAtom = Record<SupportedLocale, Record<string, string>>
@@ -227,16 +228,160 @@ export const wechatLang: LangAtom = {
   }
 }
 
-export const wechatMenuClickLang: LangAtom = {
-  "zh-Hans": {
+/********************* Wx Click Replies ****************/
+export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
+  // zh-Hans
+  "introduction": [
+    {
+      msgtype: "text",
+      text: {
+        content: '【TODO】\n要不你帮我写一下？给钱的那种',
+      }
+    }
+  ],
+  "guidebook": [
+    {
+      msgtype: "text",
+      text: {
+        content: `🪧 指路牌
 
-  },
-  "zh-Hant": {
+⭐ <a href="https://alpha.liubai.cc/favorite">我的收藏</a>
 
-  },
-  "en": {
+📂 <a href="https://alpha.liubai.cc/state">我的看板</a>
 
-  }
+⚙️ <a href="https://alpha.liubai.cc/settings">我的设置</a>
+
+📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">关注小红书</a>
+`,   // TODO: 添加到桌面（离线使用）
+      }
+    }
+  ],
+  "wechat-bind-app": [
+    {
+      msgtype: "text",
+      text: {
+        content: '<a href="https://alpha.liubai.cc/connect/wechat">戳我绑定微信</a>',
+      }
+    }
+  ],
+  "customer-service": [
+    {
+      msgtype: "text",
+      text: {
+        content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">戳我联系客服📞</a>',
+      }
+    }
+  ],
+  "cooperation": [
+    {
+      msgtype: "text",
+      text: {
+        content: '📨 期待你的来信！\n\n<a href="mailto:hi@liubai.cc">hi@liubai.cc</a>',
+      }
+    }
+  ],
+
+  // zh-Hant
+  "introduction=zh-Hant": [
+    {
+      msgtype: "text",
+      text: {
+        content: '【TODO】\n要不你幫我寫一下？給錢的那種',
+      }
+    }
+  ],
+  "guidebook=zh-Hant": [
+    {
+      msgtype: "text",
+      text: {
+        content: `🪧 指路牌
+
+⭐ <a href="https://alpha.liubai.cc/favorite">我的收藏</a>
+
+📂 <a href="https://alpha.liubai.cc/state">我的看板</a>
+
+⚙️ <a href="https://alpha.liubai.cc/settings">我的設定</a>
+
+📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">追蹤小紅書</a>
+`,   // TODO: 添加到桌面（离线使用）
+      }
+    }
+  ],
+  "wechat-bind-app=zh-Hant": [
+    {
+      msgtype: "text",
+      text: {
+        content: '<a href="https://alpha.liubai.cc/connect/wechat">輕觸我綁定微信</a>',
+      }
+    }
+  ],
+  "customer-service=zh-Hant": [
+    {
+      msgtype: "text",
+      text: {
+        content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">點我聯繫客服📞</a>',
+      }
+    }
+  ],
+  "cooperation=zh-Hant": [
+    {
+      msgtype: "text",
+      text: {
+        content: '📨 期待你的來信！\n\n<a href="mailto:hi@liubai.cc">hi@liubai.cc</a>',
+      }
+    }
+  ],
+
+  // en
+  "introduction=en": [
+    {
+      msgtype: "text",
+      text: {
+        content: '【TODO】\nCan you help me write it? For money.',
+      }
+    }
+  ],
+  "guidebook=en": [
+    {
+      msgtype: "text",
+      text: {
+        content: `🪧 Guidebook
+
+⭐ <a href="https://alpha.liubai.cc/favorite">My Favorite</a>
+
+📂 <a href="https://alpha.liubai.cc/state">My Board</a>
+
+⚙️ <a href="https://alpha.liubai.cc/settings">My Settings</a>
+
+📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">Follow on Red</a>
+`,   // TODO: 添加到桌面（离线使用）
+      }
+    }
+  ],
+  "wechat-bind-app=en": [
+    {
+      msgtype: "text",
+      text: {
+        content: '<a href="https://alpha.liubai.cc/connect/wechat">Click me to bind WeChat</a>',
+      }
+    }
+  ],
+  "customer-service=en": [
+    {
+      msgtype: "text",
+      text: {
+        content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">Click me to contact customer service📞</a>',
+      }
+    }
+  ],
+  "cooperation=en": [
+    {
+      msgtype: "text",
+      text: {
+        content: '📨 I am looking forward to your letter!\n\n<a href="mailto:hi@liubai.cc">hi@liubai.cc</a>',
+      }
+    }
+  ]
 }
 
 

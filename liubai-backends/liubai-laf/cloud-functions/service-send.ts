@@ -7,6 +7,8 @@ import type {
   LiuRqReturn,
   ServiceSendEmailsParam,
   Table_Credential,
+  Wx_Gzh_Send_Msg,
+  Wx_Gzh_Send_Text,
   Wx_Param_Msg_Templ_Send,
   Wx_Res_Common,
 } from "@/common-types"
@@ -197,29 +199,33 @@ export async function sendWxTextMessage(
   access_token: string,
   text: string,
 ) {
-  const body = {
-    touser: wx_gzh_openid,
+  const body: Wx_Gzh_Send_Text = {
     msgtype: "text",
     text: {
       content: text,
     }
   }
+  const res = await sendWxMessage(wx_gzh_openid, access_token, body)
+}
+
+export async function sendWxMessage(
+  wx_gzh_openid: string,
+  access_token: string,
+  param: Wx_Gzh_Send_Msg,
+) {
+  const obj = {
+    touser: wx_gzh_openid,
+    ...param,
+  }
   const url = new URL(API_WECHAT_MSG_SEND)
   url.searchParams.set("access_token", access_token)
   const link = url.toString()
-  
-  const d1 = getNowStamp()
-  const res = await liuReq<Wx_Res_Common>(link, body)
-  const d2 = getNowStamp()
-
+  const res = await liuReq<Wx_Res_Common>(link, obj)
   const { code, data } = res
   if(code !== "0000" || data?.errcode !== 0) {
-    console.warn("sendWxTextMessage might fail")
+    console.warn("sendWxMessage failed")
     console.log(res)
-    console.log(body)
+    console.log(param)
   }
-  else {
-    // console.log(`sendWxTextMessage: ${d2 - d1}ms`)
-  }
-
-}
+  return res
+} 
