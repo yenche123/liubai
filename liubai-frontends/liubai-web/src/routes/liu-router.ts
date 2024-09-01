@@ -6,12 +6,13 @@ import {
   Router as VueRouter, 
   RouteLocationRaw,
   NavigationFailure,
-  RouteLocationNormalized,
-  RouteLocationNormalizedLoaded,
+  type RouteLocationNormalized,
+  type RouteLocationNormalizedLoaded,
   useLink,
   onBeforeRouteLeave,
   onBeforeRouteUpdate,
-  NavigationGuard,
+  type NavigationGuard,
+  type LocationQuery,
 } from "vue-router"
 import valTool from "~/utils/basic/val-tool"
 import time from "../utils/basic/time"
@@ -86,7 +87,7 @@ class LiuRouter {
   /** 用新的参数，取代当前页面 */
   async replaceWithNewQuery(
     route: RouteLocationNormalizedLoaded,
-    newQuery: Record<string, string>,
+    newQuery: Record<string, string> | LocationQuery,
   ) {
     const { name, params } = route
     if(typeof name !== "string") {

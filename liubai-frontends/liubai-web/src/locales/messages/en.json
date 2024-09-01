@@ -462,6 +462,7 @@
   "connect": {
     "add": "Add",
     "follow": "Follow",
+    "bind": "Bind",
     "wechat": "WeChat",
     "wechat_desc": "Using Liubai on WeChat",
     "wechat_remind": "WeChat Remind",
@@ -486,10 +487,12 @@
     "long_press_1": "Long press to recognize and add \"留小白\" on WeChat",
     "long_press_2": "Long press to recognize and follow \"Liubai\" on WeChat",
     "long_press_3": "Long press to recognize and follow \"Liubai\" on WeChat",
+    "long_press_4": "Long press to recognize and bind Liubai account",
     "screenshot": "Screenshot and open it on WeChat please",
     "scan_1": "Scan the QR code using WeChat to add \"留小白\"",
     "scan_2": "Scan the QR code using WeChat to follow \"Liubai\"",
     "scan_3": "Scan the QR code using WeChat to follow \"Liubai\"",
+    "scan_4": "Scan the QR code using WeChat to bind Liubai account",
     "wx_scan_login": "WeChat Scan Login"
   },
   "notification": {

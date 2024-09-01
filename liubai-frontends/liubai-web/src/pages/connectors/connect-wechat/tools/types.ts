@@ -8,4 +8,5 @@ export interface CwcData {
   wx_gzh_openid?: string
   wx_gzh_toggle: boolean
   wx_gzh_subscribed: boolean
+  fr?: string
 }

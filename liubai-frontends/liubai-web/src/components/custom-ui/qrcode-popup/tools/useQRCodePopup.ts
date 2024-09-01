@@ -63,6 +63,7 @@ export function showQRCodePopup(param: QpParam) {
   qpData.runTimes = 0
   qpData.loading = true
   qpData.state = param.state
+  qpData.fr = param.fr
 
   openIt(rr, queryKey)
   fetchData()

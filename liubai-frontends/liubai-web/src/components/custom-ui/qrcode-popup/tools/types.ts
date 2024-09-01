@@ -6,6 +6,7 @@ export type BindType = "ww_qynb" | "wx_gzh" | "wx_gzh_scan"
 export interface QpParam {
   bindType: BindType
   state?: string         // for login
+  fr?: string
 }
 
 export interface QpData {
@@ -17,6 +18,7 @@ export interface QpData {
   runTimes: number
   loading: boolean
   state?: string
+  fr?: string
 }
 
 export interface QpResult {

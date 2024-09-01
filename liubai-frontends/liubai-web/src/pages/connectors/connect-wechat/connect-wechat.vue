@@ -50,7 +50,8 @@ const {
               ></svg-icon>
             </div>
 
-            <span>{{ t('connect.follow') }}</span>
+            <span v-if="cwcData.fr === 'wx_gzh'">{{ t('connect.bind') }}</span>
+            <span v-else>{{ t('connect.follow') }}</span>
           </custom-btn>
           
         </div>

@@ -77,7 +77,9 @@ const cha = liuApi.getCharacteristic()
           <span v-else>{{ t('qrcode.scan_1') }}</span>
         </div>
         <div v-else-if="qpData.bindType === 'wx_gzh'" class="ba-info-desc">
-          <span v-if="cha.isMobile && cha.isWeChat">{{ t('qrcode.long_press_2') }}</span>
+          <span v-if="qpData.fr === 'wx_gzh' && cha.isMobile && cha.isWeChat">{{ t('qrcode.long_press_4') }}</span>
+          <span v-else-if="qpData.fr === 'wx_gzh'">{{ t('qrcode.scan_4') }}</span>
+          <span v-else-if="cha.isMobile && cha.isWeChat">{{ t('qrcode.long_press_2') }}</span>
           <span v-else-if="cha.isMobile">{{ t('qrcode.screenshot') }}</span>
           <span v-else>{{ t('qrcode.scan_2') }}</span>
         </div>
