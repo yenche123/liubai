@@ -18,8 +18,7 @@ export const wechat_tag_cfg = {
 /********************* wechat template messages ****************/
 export const wx_reminder_tmpl = {
   touser: "",
-  // template_id: "2PtKG06TkCunDmMkktZLeGpEzb4xtVaZmEMN3qDALy4",
-  template_id: "7C_Wfb_WybU8x60KRYtNxcBDesmDNIjRT-qZtzknuVo",
+  template_id: "",
   url: "",
   data: {
     thing18: {

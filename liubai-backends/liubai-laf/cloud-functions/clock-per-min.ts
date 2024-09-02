@@ -71,6 +71,14 @@ export async function main(ctx: FunctionContext) {
 }
 
 async function handle_remind() {
+
+  // check out if the tmplId is enabled
+  const _env = process.env
+  const tmplId = _env.LIU_WX_GZ_TMPL_ID_1
+  if(!tmplId) {
+    return false
+  }
+
   let startDate = addSeconds(new Date(), -59)
   startDate = date_fn_set(startDate, { seconds: 55, milliseconds: 0 })
   let endDate = addSeconds(startDate, 59)
@@ -126,7 +134,10 @@ async function send_wx_message(
   atom: RemindAtom_2,
 ) {
   const obj = { ...wx_reminder_tmpl }
-  const domain = process.env.LIU_DOMAIN
+  const _env = process.env
+  const domain = _env.LIU_DOMAIN
+  const tmplId = _env.LIU_WX_GZ_TMPL_ID_1 ?? ""
+  obj.template_id = tmplId
   const { 
     contentId, 
     locale, 
