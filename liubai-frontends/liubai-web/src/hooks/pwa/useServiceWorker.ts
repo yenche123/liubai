@@ -103,6 +103,13 @@ export function initServiceWorker() {
     console.log(" ")
     gStore.setNewVersion(newV2)
   })
+
+  window.addEventListener('beforeunload', (event) => {
+    if(needRefresh.value) {
+      console.log("needRefresh is true, so we get to update the sw")
+      updateServiceWorker()
+    }
+  })
 }
 
 export async function toUpdateSW(
