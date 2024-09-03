@@ -13,6 +13,7 @@ export const wechat_tag_cfg = {
   "zh-Hans": 100,
   "zh-Hant": 101,
   "en": 102,
+  "me": 103,
 }
 
 /********************* wechat template messages ****************/

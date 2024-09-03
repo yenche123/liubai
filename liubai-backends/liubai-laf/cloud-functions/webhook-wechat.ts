@@ -779,7 +779,15 @@ function getMsgObjForPlainText(
   if(xml.revokeinfo) msgObj.RevokeInfo = xml.revokeinfo[0]
 
   if(xml.content) msgObj.Content = xml.content[0]
-  if(xml.msgid) msgObj.MsgId = xml.msgid[0]
+  if(xml.msgid) {
+    const msgid = xml.msgid[0]
+    if(msgObj.Event === "MASSSENDJOBFINISH") {
+      msgObj.MsgID = msgid
+    }
+    else {
+      msgObj.MsgId = msgid
+    }
+  }
   if(xml.msgdataid) msgObj.MsgDataId = xml.msgdataid[0]
 
   if(xml.picurl) msgObj.PicUrl = xml.picurl[0]
@@ -814,6 +822,12 @@ function getMsgObjForPlainText(
 
   // video
   if(xml.thumbmediaid) msgObj.ThumbMediaId = xml.thumbmediaid[0]
+
+  // message job finish 群发结果回调
+  if(xml.totalcount) msgObj.TotalCount = xml.totalcount[0]
+  if(xml.filtercount) msgObj.FilterCount = xml.filtercount[0]
+  if(xml.sentcount) msgObj.SentCount = xml.sentcount[0]
+  if(xml.errorcount) msgObj.ErrorCount = xml.errorcount[0]
 
   return msgObj as Wx_Gzh_Msg_Event
 }

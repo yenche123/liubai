@@ -2019,6 +2019,29 @@ export interface Wx_Gzh_Tmpl_Send extends Wx_Gzh_Base {
   Status: string
 }
 
+export interface Wx_Gzh_Mass_Send_Job_Finish extends Wx_Gzh_Base {
+  MsgType: "event"
+  Event: "MASSSENDJOBFINISH"
+  MsgID: string
+  Status: string
+  TotalCount: string         // tag_id下粉丝数；或者openid_list中的粉丝数
+  FilterCount: string        // 过滤（用户设置拒收、用户接收已超4条）后，准备发送的粉丝数
+                             // 此值约等于 SentCount + ErrorCount
+  SentCount: string          // 发送成功的粉丝数
+  ErrorCount: string         // 发送失败的粉丝数
+  CopyrightCheckResult: {
+    Count: string
+    ResultList: any
+    CheckState: "1" | "2" | "3"    // "1": 未被判为转载，可以群发
+                                   // "2": 被判为转载，可以群发
+                                   // "3": 被判为转载，不能群发
+  }
+  ArticleUrlResult: {
+    Count: string
+    ResultList: any
+  }
+}
+
 
 export type Wx_Gzh_Msg_Event = Wx_Gzh_Auth_Change |
   Wx_Gzh_Text |
