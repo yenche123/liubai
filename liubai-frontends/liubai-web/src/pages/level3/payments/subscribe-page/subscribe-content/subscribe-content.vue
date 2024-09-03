@@ -82,7 +82,7 @@ watch(() => scData.state, (newV) => {
       <div class="sc-btns" v-if="!scData.isLifelong">
 
         <!-- 购买 -->
-        <custom-btn v-if="!scData.stripe_portal_url" class="sc-btn"
+        <custom-btn v-if="!scData.stripe_portal_url" class="sc-btn sc-btn_buy"
           @click="onTapBuyViaStripe"
         >
           <span>{{ t('payment.buy') }}</span>
@@ -203,6 +203,10 @@ watch(() => scData.state, (newV) => {
   .sc-btn {
     width: 60%;
     max-width: var(--btn-max);
+  }
+
+  .sc-btn_buy {
+    font-weight: 700;
   }
 }
 

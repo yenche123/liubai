@@ -126,7 +126,7 @@ function initSubscribeContent(
   scData: ScData,
 ) {
 
-  if(scData.state === 53) return
+  if(scData.state === pageStates.NEED_BACKEND) return
 
   // 1. listen to activeSyncNum
   const { activeSyncNum } = useActiveSyncNum()

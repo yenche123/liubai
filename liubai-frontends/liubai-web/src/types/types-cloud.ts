@@ -95,6 +95,14 @@ export interface SubscriptionStripe {
   price_id: string
 }
 
+export interface SubscriptionWxpay {
+  isOn: BaseIsOn
+}
+
+export interface SubscriptionAlipay {
+  isOn: BaseIsOn
+}
+
 export type SubscriptionPaymentCircle = "monthly" | "yearly"
 
 /*************************** 云存储 **********************/

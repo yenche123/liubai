@@ -7,6 +7,8 @@ import type {
   SubscriptionStripe,
   SubscriptionPaymentCircle,
   CloudStorageService,
+  SubscriptionWxpay,
+  SubscriptionAlipay,
 } from "~/types/types-cloud"
 
 
@@ -96,6 +98,8 @@ export interface Res_SubPlan_Info {
   title: string
   desc: string
   stripe?: SubscriptionStripe
+  wxpay?: SubscriptionWxpay
+  alipay?: SubscriptionAlipay
 
   // 以下价格是向用户在前端展示的价格，请使用用户能理解的常用单位
   // 而非最终收费的单位
