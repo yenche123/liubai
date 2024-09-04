@@ -66,9 +66,16 @@ export function useSubscribeContent() {
     toRefund(scData)
   }
 
+  const onTapBuyViaUnion = () => {
+
+  }
+
+
+
   return {
     scData,
     onTapBuyViaStripe,
+    onTapBuyViaUnion,
     onTapManage,
     onTapRefund,
   }

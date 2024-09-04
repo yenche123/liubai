@@ -22,3 +22,24 @@ export function waitWindowLoaded() {
   waitPromise = new Promise(_wait)
   return waitPromise
 }
+
+let waitJSWxBridgePromise: Promise<boolean> | undefined
+export function waitWxJSBridge() {
+  if(waitJSWxBridgePromise) return waitJSWxBridgePromise
+  const _wait = (a: BoolFunc) => {
+    const gStore = useGlobalStateStore()
+    if(gStore.wxJSBridgeReady) {
+      a(true)
+      return
+    }
+
+    const { wxJSBridgeReady } = storeToRefs(gStore)
+    const _stop = watch(wxJSBridgeReady, (newV) => {
+      if(!newV) return
+      a(true)
+      _stop()
+    }, { immediate: true })
+  }
+  waitJSWxBridgePromise = new Promise(_wait)
+  return waitJSWxBridgePromise
+}

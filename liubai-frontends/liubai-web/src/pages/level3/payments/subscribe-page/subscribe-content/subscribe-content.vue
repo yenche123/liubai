@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { useSubscribeContent } from "./tools/useSubscribeContent"
-import { toRef, watch } from "vue";
+import { computed, toRef, watch } from "vue";
 import type { ScEmits } from "./tools/types"
 
 const emits = defineEmits<ScEmits>()
@@ -9,10 +9,17 @@ const emits = defineEmits<ScEmits>()
 const { 
   scData,
   onTapBuyViaStripe,
+  onTapBuyViaUnion,
   onTapManage,
   onTapRefund,
 } = useSubscribeContent()
 const spi = toRef(scData, "subPlanInfo")
+const showUnionBuy = computed(() => {
+  const spiVal = spi.value
+  const wxpay = spiVal?.wxpay?.isOn === "Y"
+  const alipay = spiVal?.alipay?.isOn === "Y"
+  return wxpay || alipay
+})
 
 const { t } = useI18n()
 
@@ -81,8 +88,15 @@ watch(() => scData.state, (newV) => {
       <!-- 按钮 -->
       <div class="sc-btns" v-if="!scData.isLifelong">
 
-        <!-- 购买 -->
-        <custom-btn v-if="!scData.stripe_portal_url" class="sc-btn sc-btn_buy"
+        <!-- 使用联合订单购买 -->
+        <custom-btn v-if="showUnionBuy" class="sc-btn sc-btn_buy"
+          @click="onTapBuyViaUnion"
+        >
+          <span>{{ t('payment.buy') }}</span>
+        </custom-btn>
+
+        <!-- 使用 stripe 购买 -->
+        <custom-btn v-else-if="!scData.stripe_portal_url" class="sc-btn sc-btn_buy"
           @click="onTapBuyViaStripe"
         >
           <span>{{ t('payment.buy') }}</span>

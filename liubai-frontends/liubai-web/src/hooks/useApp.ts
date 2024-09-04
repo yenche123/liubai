@@ -9,7 +9,7 @@ import { useIdsChanged } from "./tools/useIdsChanged";
 import localCache from "~/utils/system/local-cache";
 import { deviceChaKey } from "~/utils/provide-keys";
 import type { GetChaRes } from "~/utils/liu-api/tools/types";
-import { listenLoaded } from "./tools/listen-loaded"
+import { listenLoaded, listenWxJSBridgeReady } from "./tools/listen-loaded"
 import { initServiceWorker } from "./pwa/useServiceWorker"
 import { initListenError } from "./tools/initListenError";
 import { initAnalytics } from "./tools/initAnalytics";
@@ -52,6 +52,11 @@ export function useApp() {
 
   // listen to document loaded
   listenLoaded()
+
+  // listen to wx jsbridge ready
+  if(cha.isWeChat) {
+    listenWxJSBridgeReady()
+  }
 
   // init service worker
   initServiceWorker()

@@ -25,6 +25,9 @@ export const useGlobalStateStore = defineStore("globalState", () => {
   // window.addEventListener("load") 是否已被触发
   const windowLoaded = ref(false)
 
+  // 微信 jsbridge 是否已准备好
+  const wxJSBridgeReady = ref(false)
+
   // custom-editor 里的输入框是否正在输入
   const customEditorInputing = ref(false)
 
@@ -70,6 +73,7 @@ export const useGlobalStateStore = defineStore("globalState", () => {
 
   return { 
     windowLoaded,
+    wxJSBridgeReady,
     customEditorInputing, 
     commentEditorInputing,
     canListenKeyboard,

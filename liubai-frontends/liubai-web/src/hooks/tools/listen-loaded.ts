@@ -4,6 +4,7 @@ import { type LiuTimeout } from "~/utils/basic/type-tool";
 import { onMounted } from "vue";
 import { useGlobalStateStore } from "../stores/useGlobalStateStore";
 import liuUtil from "~/utils/liu-util";
+import liuApi from "~/utils/liu-api";
 
 const MAX_WAITING = 3 * time.SECONED
 
@@ -96,4 +97,23 @@ export function listenLoaded() {
     })
   }
 
+}
+
+
+// listen to wx jsbridge ready
+export function listenWxJSBridgeReady() {
+  const gs = useGlobalStateStore()
+
+  const _onBridgeReady = () => {
+    gs.$patch({ wxJSBridgeReady: true })
+  }
+  
+  if(typeof WeixinJSBridge === "undefined") {
+    if (document.addEventListener) {
+      document.addEventListener('WeixinJSBridgeReady', _onBridgeReady, false);
+    }
+  }
+  else {
+    _onBridgeReady()
+  }
 }

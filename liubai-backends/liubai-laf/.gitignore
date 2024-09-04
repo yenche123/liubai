@@ -1,3 +1,4 @@
 test-data.json
 
 cloud-functions/debug-*
+cloud-functions/secret-*

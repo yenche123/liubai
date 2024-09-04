@@ -93,6 +93,10 @@ declare global {
       LIU_WECOM_CHAT_SYNC_TOKEN?: string
       LIU_WECOM_CHAT_SYNC_ENCODING_AESKEY?: string
 
+      // 微信支付
+      LIU_WXPAY_MCH_ID?: string
+      LIU_WXPAY_NOTIFY_URL?: string       // callback url from wxpay
+
       
 
     }

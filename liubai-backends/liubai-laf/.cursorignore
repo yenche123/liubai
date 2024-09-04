@@ -1,3 +1,7 @@
 # Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
 
 test-data.json
+
+cloud-functions/debug-*
+
+cloud-functions/secret-config.ts

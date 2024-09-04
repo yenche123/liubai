@@ -131,7 +131,7 @@ async function toRefundAndCancel(
   else if(payChannel === "alipay") {
     
   }
-  else if(payChannel === "wechat") {
+  else if(payChannel === "wxpay") {
 
   }
 
@@ -203,6 +203,7 @@ async function requestStripeToRefund(
 async function handle_info(
   ctx: FunctionContext,
 ) {
+  const _env = process.env
   const col = db.collection("Subscription")
   const res = await col.where({ isOn: "Y" }).getOne<Table_Subscription>()
 
@@ -221,6 +222,18 @@ async function handle_info(
     currency = "USD"
   }
 
+  // check out wxpay
+  let wxpay = d.wxpay
+  const wx_appid = _env.LIU_WX_GZ_APPID
+  const wx_mchid = _env.LIU_WXPAY_MCH_ID
+  const wxpay_notify_url = _env.LIU_WXPAY_NOTIFY_URL
+  if(!wx_appid || !wx_mchid || !wxpay_notify_url) {
+    wxpay = undefined
+  }
+
+  // TODO: check out alipay
+
+
   const sym = getCurrencySymbol(currency)
   const r: Res_SubPlan_Info = {
     id: d._id,
@@ -229,6 +242,8 @@ async function handle_info(
     title: d.title,
     desc: d.desc,
     stripe: d.stripe,
+    wxpay,
+    alipay: d.alipay,
     price,
     currency,
     symbol: sym,

@@ -1206,6 +1206,8 @@ export interface Table_Subscription extends BaseTable {
   title: string
   desc: string
   stripe?: SubscriptionStripe
+  wxpay?: SubscriptionWxpay
+  alipay?: SubscriptionAlipay
 
   // 以下价格是向用户在前端展示的价格，请使用用户能理解的常用单位
   // 而非最终收费的单位
@@ -1229,7 +1231,7 @@ export interface Table_Order extends BaseTable {
   paidAmount: number       // 已支付的总金额，以 “分” 为单位
   refundedAmount: number
   currency: string         // 小写的货币代码
-  payChannel: "stripe" | "wechat" | "alipay"
+  payChannel?: "stripe" | "wxpay" | "alipay"
   orderType: "subscription" | "product"
   plan_id?: string
   product_id?: string
@@ -1244,6 +1246,12 @@ export interface Table_Order extends BaseTable {
   stripe_other_data?: {
     hosted_invoice_url?: string   // 发票地址
     receipt_url?: string          // 收据地址
+  }
+
+  // 一些 wxpay 的信息
+  wxpay_other_data?: {
+    wx_gzh_openid?: string
+    jsapi_params?: Wxpay_Jsapi_Params
   }
 
 }
@@ -1288,6 +1296,44 @@ export const Sch_Param_WebhookQiniu = vbot.object({
   customKey: vbot.string(),
   endUser: Sch_Opt_Str,
 })
+
+/********* payment-order ********/
+export interface Param_PaymentOrder_A {
+  operateType: "create_order"
+  subscription_id: string
+}
+export const Sch_Param_PaymentOrder_A = vbot.object({
+  operateType: vbot.literal("create_order"),
+  subscription_id: Sch_Id,
+})
+
+export interface Param_PaymentOrder_B {
+  operateType: "get_order"
+  order_id: string
+}
+export const Sch_Param_PaymentOrder_B = vbot.object({
+  operateType: vbot.literal("get_order"),
+  order_id: Sch_Id,
+})
+
+export interface Param_PaymentOrder_C {
+  operateType: "wxpay_jsapi"
+  order_id: string
+  wx_gzh_openid: string
+}
+export const Sch_Param_PaymentOrder_C = vbot.object({
+  operateType: vbot.literal("wxpay_jsapi"),
+  order_id: Sch_Id,
+  wx_gzh_openid: Sch_Id,
+})
+
+export type Param_PaymentOrder = Param_PaymentOrder_A | Param_PaymentOrder_B | Param_PaymentOrder_C
+export const Sch_Param_PaymentOrder = vbot.variant("operateType", [
+  Sch_Param_PaymentOrder_A,
+  Sch_Param_PaymentOrder_B,
+  Sch_Param_PaymentOrder_C,
+])
+
 
 /********* 用户登录相关 ********/
 
@@ -2299,4 +2345,14 @@ export interface Ww_Msg_Audit_Notify extends Ww_Msg_Base {
 
 export type Ww_Msg_Event = Ww_Add_External_Contact | Ww_Del_Follow_User
   | Ww_Msg_Audit_Approved | Ww_Msg_Audit_Notify
+
+/******************* Some Types from Wxpay  ****************/
+export interface Wxpay_Jsapi_Params {
+  appId: string
+  timeStamp: string
+  nonceStr: string
+  package: string
+  signType: string
+  paySign: string
+}
 

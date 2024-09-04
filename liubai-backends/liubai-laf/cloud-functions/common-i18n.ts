@@ -29,18 +29,21 @@ export const commonLang: LangAtom = {
     "image": "图片",
     "file": "文件",
     "other": "其它",
+    "payment_title": "留白记事会员"
   },
   "zh-Hant": {
     "appName": "留白記事",
     "image": "圖片",
     "file": "文件",
     "other": "其它",
+    "payment_title": "留白記事會員"
   },
   "en": {
     "appName": "Liubai",
     "image": "Image",
     "file": "File",
     "other": "Other",
+    "payment_title": "Liubai Membership"
   }
 }
 
