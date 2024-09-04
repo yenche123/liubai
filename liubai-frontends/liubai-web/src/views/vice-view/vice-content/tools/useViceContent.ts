@@ -107,9 +107,7 @@ function listenRouteChange(
   }
 
   const openPDF = (q: string) => {
-    const f = liuApi.encode_URI_component(q)
-    const url = `/lib/pdf-js/web/viewer.html?file=${f}`
-    setNewIframeSrc(url)
+    setNewIframeSrc(q)
   }
 
   const openSougoSearch = (q: string) => {
