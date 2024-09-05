@@ -16,11 +16,11 @@ import {
   getBasicStampWhileAdding,
   SECONED,
 } from "@/common-time"
-import { createOrderId } from "@/common-ids"
 import { 
   updateUserInCache, 
   getIdFromStripeObj, 
   getStripeInstance,
+  createAvailableOrderId,
 } from "@/common-util"
 
 const db = cloud.database()
@@ -801,28 +801,5 @@ async function handle_session_expired(
   console.log(res2)
 
   return { code: "0000" }
-}
-
-/** create an available orderId */
-async function createAvailableOrderId() {
-  let num = 0
-  let orderId = ""
-  const col_order = db.collection("Order")
-  while(true) {
-    if(num > 3) break
-
-    let tmpId = createOrderId()
-    const res = await col_order.where({ order_id: tmpId }).getOne<Table_Order>()
-    const rData = res.data
-    
-    if(!rData) {
-      orderId = tmpId
-      break
-    }
-
-    num++
-  }
-
-  return orderId
 }
 

@@ -140,6 +140,22 @@ export const oState_Drafts = ["OK", "POSTED", "DELETED", "LOCAL"] as const
 export type OState_Draft = typeof oState_Drafts[number]
 export const Sch_OState_Draft = vbot.picklist(oState_Drafts)
 
+// order 的 oState
+export const oState_Orders = ["OK", "DEL_BY_USER"] as const
+export type OState_Order = typeof oState_Orders[number]
+
+// order 的 orderStatus
+export const orderStatuses = ["INIT", "PAID", "PAYING", "CLOSED"] as const
+export type OrderStatus = typeof orderStatuses[number]
+
+// channel of payment
+export type PayChannel = "stripe" | "wxpay" | "alipay"
+
+// type of order
+export const orderTypes = ["subscription", "product"] as const
+export type OrderType = typeof orderTypes[number]
+export const Sch_OrderType = vbot.picklist(orderTypes)
+
 export const supportedThemes = ["light", "dark"] as const
 export type SupportedTheme = typeof supportedThemes[number]
 export const Sch_SupportedTheme = vbot.picklist(supportedThemes)
@@ -665,10 +681,12 @@ export interface SubscriptionStripe {
 
 export interface SubscriptionWxpay {
   isOn: BaseIsOn
+  amount_CNY?: number   // 订单总金额，单位:“分”，若此值为空，取 Table_Subscription.amount_CNY
 }
 
 export interface SubscriptionAlipay {
   isOn: BaseIsOn
+  amount_CNY?: number   // 订单总金额，单位:“分”，若此值为空，取 Table_Subscription.amount_CNY
 }
 
 export type SubscriptionPaymentCircle = "monthly" | "yearly"
@@ -1219,20 +1237,24 @@ export interface Table_Subscription extends BaseTable {
   price_JPY?: string        // 比如 "¥550"
   price_NZD?: string        // 比如 "$5.75"
   price_TWD?: string        // 比如 "150"
+
+  amount_CNY?: number       // 人民币价格，单位为“分”，当调用 `payment-order` 且为下单订阅单时，必填
+                            // 该值可填 0
+
 }
 
 /** 订单表 */
 export interface Table_Order extends BaseTable {
   order_id: string
   user_id: string
-  oState: "OK" | "DEL_BY_USER"
-  orderStatus: "INIT" | "PAID" | "PAYING" | "CLOSED"
+  oState: OState_Order
+  orderStatus: OrderStatus
   orderAmount: number      // 订单总金额，以 “分” 为单位
   paidAmount: number       // 已支付的总金额，以 “分” 为单位
   refundedAmount: number
-  currency: string         // 小写的货币代码
-  payChannel?: "stripe" | "wxpay" | "alipay"
-  orderType: "subscription" | "product"
+  currency: string         // “小写” 的货币代码
+  payChannel?: PayChannel
+  orderType: OrderType
   plan_id?: string
   product_id?: string
   expireStamp?: number
@@ -1334,6 +1356,38 @@ export const Sch_Param_PaymentOrder = vbot.variant("operateType", [
   Sch_Param_PaymentOrder_C,
 ])
 
+export interface Res_OrderData {
+  order_id: string
+  oState: OState_Order
+  orderStatus: OrderStatus
+  orderAmount: number
+  paidAmount: number
+  currency: string          // 三位英文 “小写” 字符组成
+  refundedAmount: number
+  payChannel?: PayChannel
+  orderType: OrderType
+  plan_id?: string
+  product_id?: string
+  expireStamp?: number
+  tradedStamp?: number
+  insertedStamp: number
+}
+
+export interface Res_PO_CreateOrder {
+  operateType: "create_order"
+  orderData: Res_OrderData
+}
+
+export interface Res_PO_GetOrder {
+  operateType: "get_order"
+  orderData: Res_OrderData
+}
+
+export interface Res_PO_WxpayJsapi {
+  operateType: "wxpay_jsapi"
+  param: Wxpay_Jsapi_Params
+}
+
 
 /********* 用户登录相关 ********/
 
@@ -1426,7 +1480,7 @@ export interface Res_SubPlan_Info {
   // 以下价格是向用户在前端展示的价格，请使用用户能理解的常用单位
   // 而非最终收费的单位
   price: string
-  currency: string   // 三位英文大写字符组成
+  currency: string   // 三位英文 “大写” 字符组成
   symbol: string     // 货币符号，比如 "¥"
 }
 

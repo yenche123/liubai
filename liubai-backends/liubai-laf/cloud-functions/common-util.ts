@@ -32,6 +32,7 @@ import type {
   CommonPass_A,
   LiuNodeType,
   GetChaRes,
+  Table_Order,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -40,7 +41,12 @@ import {
   Sch_Cloud_ImageStore,
   Sch_Simple_LiuContent,
 } from "@/common-types"
-import { createToken, createEncNonce, createImgId } from "@/common-ids"
+import { 
+  createToken, 
+  createEncNonce, 
+  createImgId, 
+  createOrderId,
+} from "@/common-ids"
 import { 
   getNowStamp, 
   getBasicStampWhileAdding, 
@@ -1774,4 +1780,28 @@ export async function checkAndGetWxGzhAccessToken() {
   wx_gzh_access_token = res
   lastGetWxGzhAccessTokenStamp = getNowStamp()
   return res
+}
+
+
+/*************** About order or payment ***************/
+export async function createAvailableOrderId() {
+  let num = 0
+  let orderId = ""
+  const oCol = db.collection("Order")
+  while(true) {
+    if(num > 3) break
+
+    let tmpId = createOrderId()
+    const res = await oCol.where({ order_id: tmpId }).getOne<Table_Order>()
+    const rData = res.data
+    
+    if(!rData) {
+      orderId = tmpId
+      break
+    }
+
+    num++
+  }
+
+  return orderId
 }
