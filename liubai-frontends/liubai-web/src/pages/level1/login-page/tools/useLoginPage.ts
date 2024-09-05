@@ -401,7 +401,7 @@ async function toSubmitEmailAddress(
   const { code, errMsg } = res
 
   if(code === "U0006") {
-    showEmojiTip("login.err_9", "👾")
+    showEmojiTip("login.err_7", "👾")
     return
   }
   else if(code === "E4003" && errMsg === "last_event: bounced") {

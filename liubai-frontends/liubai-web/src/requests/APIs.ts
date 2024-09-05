@@ -17,4 +17,5 @@ export default {
   SYNC_SET: d + `sync-set`,
   SYNC_GET: d + `sync-get`,
   OPEN_CONNECT: d + `open-connect`,
+  PAYMENT_ORDER: d + `payment-order`,
 }

@@ -180,9 +180,8 @@
     "err_3": "Email 已被拒收，請更換你的 email 地址。",
     "err_5": "State 遭遇異常，請刷新當前頁面重試。",
     "err_6": "驗證代號錯誤、已失效或操作過度頻繁",
-    "err_7": "{errMsg}\n(狀態碼: {code})",
-    "err_8": "電子信箱地址不存在，無法使用當前的登入方式",
-    "err_9": "你的電子信箱地址尚不在許可名單中。"
+    "err_7": "你的電子信箱地址尚不在許可名單中。",
+    "err_8": "電子信箱地址不存在，無法使用當前的登入方式"
   },
   "tip": {
     "tip": "提示",
@@ -225,6 +224,7 @@
     "no_context": "沒有工作區基礎資訊，請重新登入",
     "maintaining_1": "當前後端雲服務維修中。請稍後再試。",
     "err_1": "出現未知的錯誤，請稍後再試\n(狀態碼: {code})",
+    "err_2": "{errMsg}\n(狀態碼: {code})",
     "workspace_1": "你已退出該工作區 或 當前工作區不存在",
     "workspace_2": "你已退出該工作區",
     "workspace_3": "當前工作區不存在",
@@ -237,7 +237,8 @@
     "browser_not_supported_2": "請在主流瀏覽器 Chrome / Safari / Firefox 中使用",
     "open_with_browser_1": "開啟預設瀏覽器",
     "open_with_browser_2": "獲取極致體驗！",
-    "open_with_browser_3": "輕觸「...」開啟預設瀏覽器"
+    "open_with_browser_3": "輕觸「...」開啟預設瀏覽器",
+    "fail_to_request": "網路請求失敗"
   },
   "card_bubble": {
     "copy": "複製",
@@ -419,7 +420,8 @@
     "check_out": "去看看",
     "cancel_refund": "取消訂閱並退款",
     "refund_content": "每個帳號最多享有一次 7 天無理由退款，你確定還要取消訂閱並退款嗎？",
-    "to_refund": "確定退款"
+    "to_refund": "確定退款",
+    "err_1": "訂購失敗"
   },
   "a2hs": {
     "title": "加入到桌面",

@@ -2,6 +2,10 @@
 import type { LocalTheme } from "~/types/types-atom"
 import type { LocalLocale } from "~/types/types-locale"
 import type { 
+  OState_Order,
+  OrderStatus,
+  PayChannel,
+  OrderType,
   UserSubscription, 
   LiuSpaceAndMember, 
   SubscriptionStripe,
@@ -9,6 +13,7 @@ import type {
   CloudStorageService,
   SubscriptionWxpay,
   SubscriptionAlipay,
+  Wxpay_Jsapi_Params,
 } from "~/types/types-cloud"
 
 
@@ -111,6 +116,57 @@ export interface Res_SubPlan_Info {
 export interface Res_SubPlan_StripeCheckout {
   checkout_url: string
 }
+
+/************************ payment-order ********************/
+export interface Param_PaymentOrder_A {
+  operateType: "create_order"
+  subscription_id: string
+}
+
+export interface Param_PaymentOrder_B {
+  operateType: "get_order"
+  order_id: string
+}
+
+export interface Param_PaymentOrder_C {
+  operateType: "wxpay_jsapi"
+  order_id: string
+  wx_gzh_openid: string
+}
+
+
+export interface Res_OrderData {
+  order_id: string
+  oState: OState_Order
+  orderStatus: OrderStatus
+  orderAmount: number
+  paidAmount: number
+  currency: string          // 三位英文 “小写” 字符组成
+  refundedAmount: number
+  payChannel?: PayChannel
+  orderType: OrderType
+  plan_id?: string
+  product_id?: string
+  expireStamp?: number
+  tradedStamp?: number
+  insertedStamp: number
+}
+
+export interface Res_PO_CreateOrder {
+  operateType: "create_order"
+  orderData: Res_OrderData
+}
+
+export interface Res_PO_GetOrder {
+  operateType: "get_order"
+  orderData: Res_OrderData
+}
+
+export interface Res_PO_WxpayJsapi {
+  operateType: "wxpay_jsapi"
+  param: Wxpay_Jsapi_Params
+}
+
 
 /************************ Uploading File ********************/
 

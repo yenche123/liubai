@@ -48,6 +48,7 @@ export interface LiuRqReturn<T = Record<string, any>> {
 export interface LiuErrReturn {
   code: string
   errMsg?: string
+  showMsg?: string
 }
 
 /***************** 基础 Schema 用于 valibot *************/

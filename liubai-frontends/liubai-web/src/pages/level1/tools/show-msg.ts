@@ -1,4 +1,5 @@
 import cui from "~/components/custom-ui";
+import { type LiuErrReturn } from "~/requests/tools/types";
 import liuApi from "~/utils/liu-api";
 
 export function isEverythingOkay(
@@ -62,20 +63,22 @@ export async function showEmojiTip(
   return true
 }
 
-// 处理未知的登录异常
-export async function showLoginErrMsg(
-  code: string,
-  errMsg?: string,
-  showMsg?: string,
+export async function showErrMsg(
+  theType: "order" | "login",
+  res: LiuErrReturn,
 ) {
+  const code = res.code
+  const errMsg = res.errMsg
+  const showMsg = res.showMsg
+
   let content_key = "tip.try_again_later"
   let content_opt: Record<string, string> | undefined
   if(showMsg) {
-    content_key = "login.err_7"
+    content_key = "tip.err_2"
     content_opt = { errMsg: showMsg, code }
   }
   else if(errMsg) {
-    content_key = "login.err_7"
+    content_key = "tip.err_2"
     content_opt = { errMsg, code }
   }
   else {
@@ -85,8 +88,9 @@ export async function showLoginErrMsg(
     return false
   }
 
+  let title_key = theType === "order" ? "payment.err_1" : "login.err_login"
   await cui.showModal({
-    title_key: "login.err_login",
+    title_key,
     content_key,
     content_opt,
     showCancel: false,

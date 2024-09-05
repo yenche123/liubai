@@ -11,3 +11,9 @@ export interface LiuRqReturn<T> {
   showMsg?: string
   data?: T
 }
+
+export interface LiuErrReturn {
+  code: string
+  errMsg?: string
+  showMsg?: string
+}

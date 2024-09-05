@@ -12,6 +12,25 @@ import type {
   WorkspaceConfig,
 } from "./other/types-custom"
 
+/***************************** cloud atom types start ***********************/
+
+// order 的 oState
+export const oState_Orders = ["OK", "DEL_BY_USER"] as const
+export type OState_Order = typeof oState_Orders[number]
+
+// order 的 orderStatus
+export const orderStatuses = ["INIT", "PAID", "PAYING", "CLOSED"] as const
+export type OrderStatus = typeof orderStatuses[number]
+
+// channel of payment
+export type PayChannel = "stripe" | "wxpay" | "alipay"
+
+// type of order
+export const orderTypes = ["subscription", "product"] as const
+export type OrderType = typeof orderTypes[number]
+/***************************** cloud atom types end ***********************/
+
+
 export interface Cloud_FileStore {
   id: string
   name: string
@@ -104,6 +123,16 @@ export interface SubscriptionAlipay {
 }
 
 export type SubscriptionPaymentCircle = "monthly" | "yearly"
+
+/******************* Some Types from Wxpay  ****************/
+export interface Wxpay_Jsapi_Params {
+  appId: string
+  timeStamp: string
+  nonceStr: string
+  package: string
+  signType: string
+  paySign: string
+}
 
 /*************************** 云存储 **********************/
 // 云存储服务

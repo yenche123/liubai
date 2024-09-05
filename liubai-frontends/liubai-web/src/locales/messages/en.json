@@ -180,9 +180,8 @@
     "err_3": "The email has been rejected. Please replace your email address.",
     "err_5": "The error of state has occurred. Try to reload later.",
     "err_6": "The verification code is wrong or expired, or you operate too frequently.",
-    "err_7": "{errMsg}\n(Code: {code})",
-    "err_8": "There is no email address through the current login way.",
-    "err_9": "Your email address is not in the list of authorized users."
+    "err_7": "Your email address is not in the list of authorized users.",
+    "err_8": "There is no email address through the current login way."
   },
   "tip": {
     "tip": "TIP",
@@ -225,6 +224,7 @@
     "no_context": "There is no workspace context. Please login again.",
     "maintaining_1": "The backend service is currnetly under maintenance. Please try again later.",
     "err_1": "An unknown error occurred. Please try again later.\n(Code: {code})",
+    "err_2": "{errMsg}\n(Code: {code})",
     "workspace_1": "You have left from the workspace or the current workspace does not exist.",
     "workspace_2": "You have left from the workspace.",
     "workspace_3": "The current workspace does not exist.",
@@ -237,7 +237,8 @@
     "browser_not_supported_2": "Please use Chrome / Safari / Firefox",
     "open_with_browser_1": "Open with default browser",
     "open_with_browser_2": "Get the best experience!",
-    "open_with_browser_3": "Tap \"...\" to open with the default browser"
+    "open_with_browser_3": "Tap \"...\" to open with the default browser",
+    "fail_to_request": "Network Error"
   },
   "card_bubble": {
     "copy": "Copy",
@@ -419,7 +420,8 @@
     "check_out": "Check it out",
     "cancel_refund": "Cancel & Refund",
     "refund_content": "You have only one chane to refund within 7 days after the first purchase. Are you sure to cancel the subscription and get the refund?",
-    "to_refund": "Yes"
+    "to_refund": "Yes",
+    "err_1": "Fail to Order"
   },
   "a2hs": {
     "title": "Add to Home",

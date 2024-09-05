@@ -9,6 +9,8 @@ import type {
   Res_UserSettings_Membership,
   Res_SubPlan_Info,
   Res_SubPlan_StripeCheckout,
+  Param_PaymentOrder_A,
+  Res_PO_CreateOrder,
 } from "~/requests/req-types"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 import type { 
@@ -23,12 +25,15 @@ import localCache from "~/utils/system/local-cache"
 import type { UserLocalTable } from "~/types/types-table"
 import cui from "~/components/custom-ui"
 import { useActiveSyncNum } from "~/hooks/useCommon"
+import { RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
+import { showErrMsg } from "~/pages/level1/tools/show-msg"
+import liuApi from "~/utils/liu-api"
 
 let timeout1: LiuTimeout  // in order to avoid the view from always loading
 let timeout2: LiuTimeout  // for setDataState
 
 export function useSubscribeContent() {
-
+  const rr = useRouteAndLiuRouter()
   const hasBackend = liuEnv.hasBackend()
   const now = time.getTime()
   const scData = reactive<ScData>({
@@ -67,7 +72,7 @@ export function useSubscribeContent() {
   }
 
   const onTapBuyViaUnion = () => {
-
+    toBuyViaUnion(scData, rr)
   }
 
 
@@ -80,6 +85,55 @@ export function useSubscribeContent() {
     onTapRefund,
   }
 }
+
+
+async function toBuyViaUnion(
+  scData: ScData,
+  rr: RouteAndLiuRouter,
+) {
+  // 1. get params
+  const { subPlanInfo } = scData
+  if (!subPlanInfo) {
+    console.warn("there is no subPlanInfo")
+    return
+  }
+
+  // 2. construct query
+  const subscription_id = subPlanInfo.id
+  const data2: Param_PaymentOrder_A = {
+    operateType: "create_order",
+    subscription_id,
+  }
+  const url2 = APIs.PAYMENT_ORDER
+
+  // 3. request
+  cui.showLoading({ title_key: "tip.hold_on" })
+  const res3 = await liuReq.request<Res_PO_CreateOrder>(url2, data2)
+  cui.hideLoading()
+
+  // 4. handle result
+  const { code, data } = res3
+  if(code !== "0000" || !data) {
+    showErrMsg("order", res3)
+    return
+  }
+
+  // 5. show qrcode if it is PC
+  const od = data.orderData
+  const order_id = od.order_id
+  const cha = liuApi.getCharacteristic()
+  if(cha.isPC) {
+    return
+  }
+
+
+  // 6. navigate to payment page
+  
+
+
+  
+}
+
 
 async function toRefund(
   scData: ScData

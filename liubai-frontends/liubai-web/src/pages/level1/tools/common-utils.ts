@@ -2,7 +2,7 @@ import liuUtil from "~/utils/liu-util";
 import { type RouteAndLiuRouter } from "~/routes/liu-router"
 import { type Fetch_UserLoginNormal } from "./requests"
 import { useLoginStore } from "../login-page/tools/useLoginStore"
-import { showEmojiTip, showLoginErrMsg } from "./show-msg"
+import { showEmojiTip, showErrMsg } from "./show-msg"
 import loginer from "./loginer";
 import { redirectToLoginPage } from "./common-tools"
 
@@ -68,7 +68,7 @@ export async function afterFetchingLogin(
 
   // 4. 其他异常，弹提示；提示完回到 login 页
   if(code !== "0000" || !data) {
-    await showLoginErrMsg(code, res.errMsg, res.showMsg)
+    await showErrMsg("login", res)
     redirectToLoginPage(rr)
     return false
   }
