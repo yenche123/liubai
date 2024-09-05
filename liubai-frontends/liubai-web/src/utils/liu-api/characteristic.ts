@@ -12,6 +12,7 @@ let isDingTalk = false;
 let isFeishu = false;
 let isQuark = false;
 let isUCBrowser = false;
+let isLine = false;
 let isIOS = false;
 let isIPadOS = false;
 let isMac = false;
@@ -40,7 +41,6 @@ export const getCharacteristic = (): GetChaRes => {
   // console.log("ua: ", ua)
   // console.log("mobileMatch: ", mobileMatch)
 
-  // 判断是否为微信环境
   if(ua.includes("wxwork")) {
     isWeCom = true
     isInWebView = true
@@ -59,6 +59,10 @@ export const getCharacteristic = (): GetChaRes => {
   }
   else if(ua.includes("feishu")) {
     isFeishu = true
+    isInWebView = true
+  }
+  else if(ua.match(reg_exp.line_version)) {
+    isLine = true
     isInWebView = true
   }
 
@@ -216,6 +220,7 @@ function _returnData(): GetChaRes {
     isFeishu, 
     isQuark,
     isUCBrowser,
+    isLine,
     isIOS, 
     isIPadOS,
     isMac,

@@ -37,5 +37,7 @@ export default {
   safari_version: /version\/([\d\.]+)/,
 
   ios_version: /iphone os ([\d_]+)/,
+
+  line_version: /line\/([\d\.]+)/,
   
 }

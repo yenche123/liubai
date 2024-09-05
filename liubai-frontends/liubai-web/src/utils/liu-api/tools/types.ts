@@ -11,6 +11,7 @@ export interface GetChaRes {
   isFeishu: boolean
   isQuark: boolean
   isUCBrowser: boolean
+  isLine: boolean
   isIOS: boolean         // 是否为 iphone
   isIPadOS: boolean      // 是否为 iPad
   isMac: boolean         // 是否为 mac，注意 iphone 和 ipad 时，此值可能为 false
