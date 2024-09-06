@@ -140,6 +140,9 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "wx_gzh_oauth") {
     res = await handle_wx_gzh_oauth(ctx, body)
   }
+  else if(oT === "wx_gzh_base") {
+    
+  }
   else if(oT === "email") {
     res = await handle_email(ctx, body)
   }
@@ -846,6 +849,54 @@ async function handle_google_oauth(
   const thirdData: UserThirdData = { google: data7 }
   const res8 = await signInUpViaEmail(ctx, body, email, client_key, thirdData)
   return res8
+}
+
+async function handle_wx_gzh_base(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+) {
+  // 1. check out oauth_code
+  const oauth_code = body.oauth_code
+  if(!oauth_code) {
+    return { code: "E4000", errMsg: "no oauth_code" }
+  }
+
+  // 2. check out state
+  const state = body.state
+  const res0 = checkIfStateIsErr(state)
+  if(res0) return res0
+
+  // 3. get appid & secret
+  const _env = process.env
+  const appid = _env.LIU_WX_GZ_APPID
+  const appSecret = _env.LIU_WX_GZ_APPSECRET
+  if(!appid || !appSecret) {
+    return { code: "E5001", errMsg: "no appid or appSecret on backend" }
+  }
+
+  // 4. get access_token with code
+  const url4 = new URL(WX_GZH_OAUTH_ACCESS_TOKEN)
+  const sp4 = url4.searchParams
+  sp4.set("appid", appid)
+  sp4.set("secret", appSecret)
+  sp4.set("code", oauth_code)
+  sp4.set("grant_type", "authorization_code")
+  const link4 = url4.toString()
+  const res4 = await liuReq<Wx_Res_GzhOAuthAccessToken>(link4, undefined, { method: "GET" })
+
+  // 5. extract openid
+  const data5 = res4?.data
+  const openid = data5?.openid
+  if(!openid) {
+    console.warn("no openid from wx gzh")
+    console.log(res4)
+    return { code: "E5004", errMsg: "no openid from wx gzh" }
+  }
+
+  return { 
+    code: "0000", 
+    data: { openid }
+  }
 }
 
 async function handle_wx_gzh_oauth(

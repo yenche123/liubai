@@ -44,6 +44,11 @@ export interface Res_UL_WxGzhScan {
   credential: string
 }
 
+export interface Res_UL_WxGzhBase {
+  operateType: "wx_gzh_base"
+  wx_gzh_openid: string
+}
+
 export interface Res_UL_ScanCheck {
   operateType: "scan_check"
   status: CheckBindStatus
@@ -165,6 +170,7 @@ export interface Res_PO_GetOrder {
 export interface Res_PO_WxpayJsapi {
   operateType: "wxpay_jsapi"
   param: Wxpay_Jsapi_Params
+  expireStamp: number
 }
 
 

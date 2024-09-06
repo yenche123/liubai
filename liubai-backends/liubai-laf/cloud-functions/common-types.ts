@@ -1273,8 +1273,19 @@ export interface Table_Order extends BaseTable {
 
   // 一些 wxpay 的信息
   wxpay_other_data?: {
-    wx_gzh_openid?: string
+    jsapi_out_trade_no?: string        // format: w1xxxxLD...... where xxxx is 4 digits random lowercase letters 
+                                       // that do not include "l" and "o"
+    jsapi_openid?: string
     jsapi_params?: Wxpay_Jsapi_Params
+
+    h5_out_trade_no?: string           // format: w2xxxxLD......
+    h5_url?: string
+    h5_created_stamp?: number
+
+    native_out_trade_no?: string       // format: w3xxxxLD......
+    native_code_url?: string
+    native_created_stamp?: number
+
   }
 
 }
@@ -1387,6 +1398,8 @@ export interface Res_PO_GetOrder {
 export interface Res_PO_WxpayJsapi {
   operateType: "wxpay_jsapi"
   param: Wxpay_Jsapi_Params
+  expireStamp: number      // the time stamp when the param will be expired
+                           // usually which is 1 min after the param has been created
 }
 
 
@@ -1402,6 +1415,7 @@ export type UserLoginOperate = "init" | "email" | "email_code"
   | "google_oauth"
   | "wx_gzh_oauth"
   | "wx_gzh_scan"
+  | "wx_gzh_base"   // only for wx_gzh_openid
   | "scan_check"
   | "scan_login"
   | "google_credential"
@@ -1418,6 +1432,11 @@ export interface Res_UL_ScanCheck {
   operateType: "scan_check"
   status: CheckBindStatus
   credential_2?: string     // 当 status 为 "plz_check" 时，必有
+}
+
+export interface Res_UL_WxGzhBase {
+  operateType: "wx_gzh_base"
+  wx_gzh_openid: string
 }
 
 export interface Res_UserLoginNormal {

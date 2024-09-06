@@ -126,9 +126,18 @@ async function toBuyViaUnion(
     return
   }
 
+  // 6. login with wx gzh for openid
+  // and pull wxpay popup if we are in Weixin App
+  if(cha.isWeChat && cha.isMobile) {
+    return
+  }
 
-  // 6. navigate to payment page
+  // 7. redirect to alipay page if we are in Alipay App
+  if(cha.isAlipay && cha.isMobile) {
+    return
+  }
   
+  // 8. otherwise, go to payment-page
 
 
   
