@@ -1276,7 +1276,8 @@ export interface Table_Order extends BaseTable {
     jsapi_out_trade_no?: string        // format: w1xxxxLD...... where xxxx is 4 digits random lowercase letters 
                                        // that do not include "l" and "o"
     jsapi_openid?: string
-    jsapi_params?: Wxpay_Jsapi_Params
+    jsapi_prepay_id?: string
+    jsapi_created_stamp?: number
 
     h5_out_trade_no?: string           // format: w2xxxxLD......
     h5_url?: string

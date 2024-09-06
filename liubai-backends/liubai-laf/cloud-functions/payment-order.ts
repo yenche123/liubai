@@ -10,19 +10,23 @@ import {
   type Res_OrderData,
   type Table_Order,
   type Table_User,
+  type LiuRqReturn,
   Partial_Id,
-  PartialSth,
   Sch_Param_PaymentOrder,
   Table_Subscription,
+  Wxpay_Jsapi_Params,
 } from "@/common-types"
 import * as vbot from "valibot"
+import * as crypto from "crypto"
 import { getBasicStampWhileAdding, getNowStamp, MINUTE } from "@/common-time"
-import { wxpay_apiclient_cert } from "@/secret-config"
+import { wxpay_apiclient_cert, wxpay_apiclient_key } from "@/secret-config"
+import { createEncNonce } from "@/common-ids"
 
 const db = cloud.database()
 const _ = db.command
 
 const MIN_3 = MINUTE * 3
+const MIN_15 = MINUTE * 15
 const MIN_30 = MINUTE * 30
 
 export async function main(ctx: FunctionContext) {
@@ -34,13 +38,13 @@ export async function main(ctx: FunctionContext) {
 
   // 2. go to specific operation
   const oT = body.operateType as string
+  let res2: LiuRqReturn = { code: "E4000", errMsg: "operateType not found" }
   if(oT === "create_order") {
     // check out token
     const vRes = await verifyToken(ctx, body)
     if(!vRes.pass) return vRes.rqReturn
     const user = vRes.userData
-    create_sp_order(body, user)
-
+    res2 = await create_sp_order(body, user)
   }
   else if(oT === "get_order") {
 
@@ -49,10 +53,64 @@ export async function main(ctx: FunctionContext) {
 
   }
 
-
-
-  return true
+  return res2
 }
+
+
+async function wxpay_jsapi(
+  body: Record<string, any>,
+) {
+  const order_id = body.order_id as string
+  const wx_gzh_openid = body.wx_gzh_openid as string
+
+  // 1. get order
+  const oCol = db.collection("Order")
+  const res1 = await oCol.where({ order_id }).getOne<Table_Order>()
+  const d1 = res1.data
+  if(!d1) {
+    return { code: "E4004", errMsg: "order not found" }
+  }
+
+  // 2. check out order
+  const now2 = getNowStamp()
+  const stamp2 = d1.expireStamp ?? 1
+  if(stamp2 < now2) {
+    return { code: "E4006", errMsg: "the order is expired" }
+  }
+  if(d1.oState !== "OK") {
+    return { code: "E4004", errMsg: "the order is not OK" }
+  }
+  if(d1.orderStatus === "PAYING") {
+    return { code: "P0003", errMsg: "the order is being paid" }
+  }
+  if(d1.orderStatus === "PAID") {
+    return { code: "P0004", errMsg: "the order is already paid" }
+  }
+  if(!d1.orderAmount) {
+    return { code: "P0005", errMsg: "the order amount is zero" }
+  }
+  
+  // 3. check out if we need to invoke JSAPI
+  const wxData = d1.wxpay_other_data ?? {}
+  let out_trade_no = wxData.jsapi_out_trade_no ?? ""
+  let openid = wxData.jsapi_openid ?? ""
+  let prepay_id = wxData.jsapi_prepay_id ?? ""
+  let created_stamp = wxData.jsapi_created_stamp ?? 1
+  const diff3 = now2 - created_stamp
+  let needToInvokeJSAPI = false
+  if(!out_trade_no) needToInvokeJSAPI = true
+  if(wx_gzh_openid !== openid) needToInvokeJSAPI = true
+  if(!prepay_id) needToInvokeJSAPI = true
+  if(diff3 > MIN_15) needToInvokeJSAPI = true
+
+
+  
+
+
+  
+  
+}
+
 
 // create subscription order
 async function create_sp_order(
@@ -174,11 +232,45 @@ function checkBody(
   }
 
   // 2. check out wxpay_apiclient_cert
+  const _env = process.env
   const oT = body.operateType as string
   if(oT === "wxpay_jsapi") {
     if(!wxpay_apiclient_cert) {
       return { code: "E4001", errMsg: "wxpay_apiclient_cert is not set" }
     }
+    if(!wxpay_apiclient_key) {
+      return { code: "E4001", errMsg: "wxpay_apiclient_key is not set" }
+    }
+    if(!_env.LIU_WX_GZ_APPID) {
+      return { code: "E4001", errMsg: "wx gzh appid is not set" }
+    }
   }
 
+}
+
+function getWxpayJsapiParams(
+  prepay_id: string,
+): Wxpay_Jsapi_Params {
+  // 1. get params
+  const _env = process.env
+  const appid = _env.LIU_WX_GZ_APPID as string
+  const stamp = Math.floor(getNowStamp() / 1000)
+  const nonceStr = createEncNonce()
+  const p = `prepay_id=${prepay_id}`
+
+  // 2. construct message
+  const msg = appid + "\n" + stamp + "\n" + nonceStr + "\n" + p + "\n"
+
+  // 3. get signature
+  const sign3 = crypto.createSign("sha256WithRSAEncryption").update(msg)
+  const paySign = sign3.sign(wxpay_apiclient_key, "base64")
+
+  return {
+    appId: appid,
+    timeStamp: String(stamp),
+    nonceStr,
+    package: p,
+    signType: "RSA",
+    paySign,
+  }
 }
