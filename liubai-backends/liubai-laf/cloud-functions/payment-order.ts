@@ -97,11 +97,23 @@ async function wxpay_jsapi(
   let prepay_id = wxData.jsapi_prepay_id ?? ""
   let created_stamp = wxData.jsapi_created_stamp ?? 1
   const diff3 = now2 - created_stamp
-  let needToInvokeJSAPI = false
-  if(!out_trade_no) needToInvokeJSAPI = true
-  if(wx_gzh_openid !== openid) needToInvokeJSAPI = true
-  if(!prepay_id) needToInvokeJSAPI = true
-  if(diff3 > MIN_15) needToInvokeJSAPI = true
+  if(!out_trade_no) prepay_id = ""
+  if(wx_gzh_openid !== openid) prepay_id = ""
+  if(diff3 > MIN_15) prepay_id = ""
+
+  // 4. to get prepay_id
+  if(!prepay_id) {
+
+    // 4.1 get subscription
+
+    // 4.2 get prepay_id
+
+    // 4.3 storage prepay_id
+
+  }
+
+
+
 
 
   
@@ -218,6 +230,19 @@ function packageOrderData(
   return obj
 }
 
+
+async function getSubscriptionPlan(
+  id: string,
+) {
+  const sCol = db.collection("Subscription")
+  const res = await sCol.doc(id).get<Table_Subscription>()
+  res.data
+}
+
+
+function getPrepayIdFromWxpay() {
+
+}
 
 
 function checkBody(
