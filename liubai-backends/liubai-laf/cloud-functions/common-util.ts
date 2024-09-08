@@ -33,6 +33,8 @@ import type {
   LiuNodeType,
   GetChaRes,
   Table_Order,
+  Wx_Res_GzhUserInfo,
+  Wx_Res_Common,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -57,7 +59,13 @@ import {
 import geoip from "geoip-lite"
 import Stripe from "stripe"
 import * as vbot from "valibot"
-import { dateLang, getFallbackLocale, useI18n } from '@/common-i18n'
+import { 
+  dateLang, 
+  getCurrentLocale, 
+  getFallbackLocale, 
+  useI18n,
+} from '@/common-i18n'
+import { wechat_tag_cfg } from '@/common-config'
 
 const db = cloud.database()
 const _ = db.command
@@ -77,6 +85,14 @@ export const reg_exp = {
   safari_version: /version\/([\d\.]+)/,
   ios_version: /iphone os ([\d_]+)/,
 }
+
+// @see https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html#7
+const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
+const API_TAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging"
+const API_UNTAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging"
+
+// @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
+const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
 
 /********************* 空函数 ****************/
 export async function main(ctx: FunctionContext) {
@@ -1781,6 +1797,112 @@ export async function checkAndGetWxGzhAccessToken() {
   lastGetWxGzhAccessTokenStamp = getNowStamp()
   return res
 }
+
+export async function getWxGzhUserInfo(
+  wx_gzh_openid: string,
+) {
+  const url = new URL(API_USER_INFO)
+  const sP = url.searchParams
+  sP.set("access_token", wx_gzh_access_token)
+  sP.set("openid", wx_gzh_openid)
+  const link = url.toString()
+  const res1 = await liuReq<Wx_Res_GzhUserInfo>(link, undefined, { method: "GET" })
+  const data1 = res1.data
+
+  if(!data1) {
+    console.warn("there is no userinfo from wx gzh")
+    console.log(res1)
+  }
+
+  return data1
+}
+
+// tag bound user for language
+export async function tagWxUserLang(
+  wx_gzh_openid: string,
+  user: Table_User,
+  userInfo?: Wx_Res_GzhUserInfo,
+  oldLocale?: SupportedLocale,
+) {
+  const _env = process.env
+  const tagManagement = _env.LIU_WX_GZ_TAG_MANAGEMENT
+  if(tagManagement !== "01") {
+    console.warn("tag mode is not enabled")
+    return
+  }
+
+  // 0. get userInfo & check access_token
+  const accessToken = await checkAndGetWxGzhAccessToken()
+  if(!accessToken) return
+  if(!userInfo) {
+    userInfo = await getWxGzhUserInfo(wx_gzh_openid)
+  }
+
+  // 1. get target tagId
+  const locale = getCurrentLocale({ user })
+  const tagId = wechat_tag_cfg[locale]
+
+
+  // 2. if oldLocale exists, untag
+  const tags = userInfo?.tagid_list ?? []
+  if(oldLocale && oldLocale !== locale) {
+    const oldTagId = wechat_tag_cfg[oldLocale]
+    const existed2 = tags.includes(oldTagId)
+    if(oldTagId && existed2) {
+      await untagWxUser(wx_gzh_openid, oldTagId)
+    }
+  }
+
+  // 3. check if tagId has exists
+  const existed3 = tags.includes(tagId)
+  if(existed3) {
+    return true
+  }
+  
+  // 4. set tag
+  const url4 = new URL(API_TAG_USER)
+  url4.searchParams.set("access_token", wx_gzh_access_token)
+  const link4 = url4.toString()
+  const q4 = {
+    openid_list: [wx_gzh_openid],
+    tagid: tagId,
+  }
+  const res3 = await liuReq<Wx_Res_Common>(link4, q4)
+  const errcode = res3.data?.errcode
+  if(errcode !== 0) {
+    console.warn("tag user for wechat gzh failed")
+    console.log(res3.data)
+  }
+  console.log("tagWxUserLang result: ")
+  console.log(res3)
+
+  return true
+}
+
+
+export async function untagWxUser(
+  wx_gzh_openid: string,
+  tagid: number,
+) {
+  const accessToken = await checkAndGetWxGzhAccessToken()
+  if(!accessToken) return
+
+  const url = new URL(API_UNTAG_USER)
+  url.searchParams.set("access_token", accessToken)
+  const link = url.toString()
+
+  const q = {
+    openid_list: [wx_gzh_openid],
+    tagid,
+  }
+  const res = await liuReq<Wx_Res_Common>(link, q)
+  const errcode = res.data?.errcode
+  if(errcode !== 0) {
+    console.warn("untag user for wechat gzh failed")
+    console.log(res.data)
+  }
+}
+
 
 
 /*************** About order or payment ***************/

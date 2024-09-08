@@ -31,6 +31,7 @@ import type {
   Res_UL_WxGzhScan,
   Res_UL_ScanCheck,
   Table_Credential_Type,
+  Res_UL_WxGzhBase,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -50,6 +51,8 @@ import {
   displayTime,
   getIp,
   getIpGeo,
+  tagWxUserLang,
+  getWxGzhUserInfo,
 } from "@/common-util"
 import { getNowStamp, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -92,9 +95,6 @@ const WX_GZH_OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_t
 
 // 微信公众号 OAuth2 使用 accessToken 去获取用户信息
 const WX_GZH_SNS_USERINFO = "https://api.weixin.qq.com/sns/userinfo"
-
-// @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
-const WX_GZH_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
 
 // 微信公众号 创建二维码
 const API_WECHAT_CREATE_QRCODE = "https://api.weixin.qq.com/cgi-bin/qrcode/create"
@@ -141,7 +141,7 @@ export async function main(ctx: FunctionContext) {
     res = await handle_wx_gzh_oauth(ctx, body)
   }
   else if(oT === "wx_gzh_base") {
-    
+    res = await handle_wx_gzh_base(ctx, body)
   }
   else if(oT === "email") {
     res = await handle_email(ctx, body)
@@ -854,7 +854,7 @@ async function handle_google_oauth(
 async function handle_wx_gzh_base(
   ctx: FunctionContext,
   body: Record<string, string>,
-) {
+): Promise<LiuRqReturn<Res_UL_WxGzhBase>> {
   // 1. check out oauth_code
   const oauth_code = body.oauth_code
   if(!oauth_code) {
@@ -895,7 +895,10 @@ async function handle_wx_gzh_base(
 
   return { 
     code: "0000", 
-    data: { openid }
+    data: { 
+      operateType: "wx_gzh_base",
+      wx_gzh_openid: openid,
+    }
   }
 }
 
@@ -985,18 +988,12 @@ async function handle_wx_gzh_oauth(
   if(!wx_gzh_access_token) {
     return { code: "E5001", errMsg: "there is no wx_gzh_access_token" }
   }
-  const url8 = new URL(WX_GZH_USER_INFO)
-  const sP = url8.searchParams
-  sP.set("access_token", wx_gzh_access_token)
-  sP.set("openid", wx_gzh_openid)
-  const link8 = url8.toString()
-  const res8 = await liuReq<Wx_Res_GzhUserInfo>(link8, undefined, { method: "GET" })
-  const data8 = res8.data
+  const data8 = await getWxGzhUserInfo(wx_gzh_openid)
   if(!data8) {
-    console.warn("there is no data8 from wx gzh")
-    console.log(res8)
     return { code: "E5004", errMsg: "there is no data8 from wx gzh" }
   }
+  console.log("let me see data8:::")
+  console.log(data8)
 
   // 9. set thirdData as new data (data8)
   wx_gzh.subscribe = data8.subscribe
@@ -1006,7 +1003,8 @@ async function handle_wx_gzh_oauth(
   thirdData.wx_gzh = wx_gzh
 
   // 10. sign up
-  const res10 = await sign_up(ctx, body, { wx_gzh_openid }, client_key, thirdData)
+  const arg10: SignUpParam2 = { wx_gzh_openid, wx_gzh_userinfo: data8 }
+  const res10 = await sign_up(ctx, body, arg10, client_key, thirdData)
   return res10
 }
 
@@ -1525,6 +1523,7 @@ interface SignUpParam2 {
   email?: string
   phone?: string
   wx_gzh_openid?: string
+  wx_gzh_userinfo?: Wx_Res_GzhUserInfo
 }
 
 /*************************** 注册 ************************/
@@ -1534,7 +1533,7 @@ async function sign_up(
   param2: SignUpParam2,
   client_key?: string,
   thirdData?: UserThirdData,
-) {
+): Promise<LiuRqReturn<Res_UserLoginNormal>> {
   // 1. init user
   const res1 = await init_user(body, param2, thirdData)
   const { code, data: userInfos } = res1
@@ -1551,6 +1550,13 @@ async function sign_up(
   const user = userInfo?.user
   if(user && thirdData) {
     handle_avatar(user, thirdData)
+  }
+
+  // 4. tag user's language for wx gzh
+  const wx_gzh_openid = param2.wx_gzh_openid
+  const wx_gzh_userinfo = param2.wx_gzh_userinfo
+  if(user && wx_gzh_userinfo && wx_gzh_openid) {
+    tagWxUserLang(wx_gzh_openid, user, wx_gzh_userinfo)
   }
 
   return res4
@@ -2162,4 +2168,3 @@ function checkOAuthParams(
     }
   }
 }
-

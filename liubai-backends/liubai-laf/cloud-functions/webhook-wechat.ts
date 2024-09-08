@@ -6,7 +6,6 @@ import * as crypto from "crypto";
 import type { 
   LiuErrReturn, 
   LiuRqReturn,
-  SupportedLocale,
   Table_Credential,
   Table_Member,
   Table_User,
@@ -18,7 +17,6 @@ import type {
   Wx_Gzh_Subscribe, 
   Wx_Gzh_Text, 
   Wx_Gzh_Unsubscribe,
-  Wx_Res_Common,
   Wx_Res_GzhUserInfo, 
 } from "@/common-types";
 import { decrypt } from "@wecom/crypto"
@@ -31,16 +29,15 @@ import {
 import { 
   getAccountName,
   checkAndGetWxGzhAccessToken,
-  liuReq, 
   updateUserInCache,
+  tagWxUserLang,
+  getWxGzhUserInfo,
 } from "@/common-util";
-import { 
-  getCurrentLocale, 
+import {
   useI18n, 
   wechatLang,
   wxClickReplies,
-} from "@/common-i18n"
-import { wechat_tag_cfg } from "@/common-config";
+} from "@/common-i18n";
 import { createCredential2 } from "@/common-ids";
 import { init_user } from "@/user-login";
 import { sendWxMessage, sendWxTextMessage } from "@/service-send";
@@ -51,14 +48,6 @@ let wechat_access_token = ""
 /***************************** constants **************************/
 // how many accounts can be bound to one wechat gzh openid
 const MAX_ACCOUNTS_TO_BIND = 2
-
-// @see https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html#7
-const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
-const API_TAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging"
-const API_UNTAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging"
-
-// @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
-const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
 
 /***************************** types **************************/
 type MsgMode = "plain_text" | "safe"
@@ -197,27 +186,26 @@ async function handle_subscribe(
   if(!wx_gzh_openid) return
 
   // 3. get user info
-  const userInfo = await get_user_info(wx_gzh_openid)
+  const userInfo = await getWxGzhUserInfo(wx_gzh_openid)
 
-  // 4. send welcome message
-  send_welcome(wx_gzh_openid, userInfo)
-
-  // 5. get EventKey, and extract state
-  const res5 = getDirectionCredential(msgObj.EventKey, "qrscene_")
-  if(!res5) {
+  // 4. get EventKey, and extract state
+  const res4 = getDirectionCredential(msgObj.EventKey, "qrscene_")
+  if(!res4) {
+    send_welcome(wx_gzh_openid, userInfo)
     make_user_subscribed(wx_gzh_openid, userInfo)
     return
   }
-  const { direction, credential } = res5
+  const { direction, credential } = res4
 
-  // 6. decide which path to take
+  // 5. decide which path to take
+  const opt5 = { isFromSubscribeEvent: true }
   if(direction === "b2") {
     // get to bind account
-    bind_wechat_gzh(wx_gzh_openid, credential, userInfo)
+    bind_wechat_gzh(wx_gzh_openid, credential, userInfo, opt5)
   }
   else if(direction === "b3") {
     // continue with wechat gzh
-    login_with_wechat_gzh(wx_gzh_openid, credential, userInfo)
+    login_with_wechat_gzh(wx_gzh_openid, credential, userInfo, opt5)
   }
 
 }
@@ -234,7 +222,7 @@ async function handle_scan(
   if(!wx_gzh_openid) return
 
   // 3. get user info
-  const userInfo = await get_user_info(wx_gzh_openid)
+  const userInfo = await getWxGzhUserInfo(wx_gzh_openid)
 
   // 4. get state
   const res4 = getDirectionCredential(msgObj.EventKey)
@@ -256,10 +244,15 @@ async function handle_scan(
 
 /***************** operations ****************/
 
+interface OperationOpt {
+  isFromSubscribeEvent?: boolean
+}
+
 async function login_with_wechat_gzh(
   wx_gzh_openid: string,
   credential: string,
   userInfo?: Wx_Res_GzhUserInfo,
+  opt?: OperationOpt,
 ) {
   // 1. get credential
   const cCol = db.collection("Credential")
@@ -273,6 +266,11 @@ async function login_with_wechat_gzh(
   if(!data1) return false
   const cId = data1._id
   const meta_data = data1.meta_data ?? {}
+
+  // 1.1 optionally send welcome_message
+  if(opt?.isFromSubscribeEvent) {
+    send_welcome(wx_gzh_openid, userInfo, meta_data.x_liu_language)
+  }
 
   // 2. define some functions
   // 2.1 set credential_2
@@ -323,7 +321,7 @@ async function login_with_wechat_gzh(
     const tmpUserInfo = data5[0]
     const user5 = tmpUserInfo?.user
     if(user5) {
-      tag_user_lang(wx_gzh_openid, user5, userInfo)
+      tagWxUserLang(wx_gzh_openid, user5, userInfo)
     }
   }
 
@@ -336,6 +334,7 @@ async function bind_wechat_gzh(
   wx_gzh_openid: string,
   credential: string,
   userInfo?: Wx_Res_GzhUserInfo,
+  opt?: OperationOpt,
 ) {
   const cCol = db.collection("Credential")
   const mCol = db.collection("Member")
@@ -379,7 +378,13 @@ async function bind_wechat_gzh(
   const res1 = await q1.getOne<Table_Credential>()
   const data1 = res1.data
   if(!data1) return false
-  const memberId_1 = data1.meta_data?.memberId
+  const meta_data = data1.meta_data ?? {}
+  const memberId_1 = meta_data?.memberId
+
+  // 1.1 optionally send welcome_message
+  if(opt?.isFromSubscribeEvent) {
+    send_welcome(wx_gzh_openid, userInfo, meta_data.x_liu_language)
+  }
 
   // 2. check if it is available
   const { expireStamp, userId } = data1
@@ -413,7 +418,7 @@ async function bind_wechat_gzh(
       await _openWeChatNotification(memberId_1)
     }
     await _clearCredential(data1._id)
-    await tag_user_lang(wx_gzh_openid, user3, userInfo)
+    await tagWxUserLang(wx_gzh_openid, user3, userInfo)
   }
   
   // 5. if the user's wx_gzh_openid is equal to the current one
@@ -447,93 +452,13 @@ async function bind_wechat_gzh(
   return true
 }
 
-// tag bound user for language
-export async function tag_user_lang(
-  wx_gzh_openid: string,
-  user: Table_User,
-  userInfo?: Wx_Res_GzhUserInfo,
-  oldLocale?: SupportedLocale,
-) {
-  const _env = process.env
-  const tagManagement = _env.LIU_WX_GZ_TAG_MANAGEMENT
-  if(tagManagement !== "01") {
-    console.warn("tag mode is not enabled")
-    return
-  }
-
-  // 0. get userInfo & check access_token
-  if(!userInfo) {
-    await checkAccessToken()
-    userInfo = await get_user_info(wx_gzh_openid)
-  }
-
-  // 1. get target tagId
-  const locale = getCurrentLocale({ user })
-  const tagId = wechat_tag_cfg[locale]
-
-
-  // 2. if oldLocale exists, untag
-  const tags = userInfo?.tagid_list ?? []
-  if(oldLocale && oldLocale !== locale) {
-    const oldTagId = wechat_tag_cfg[oldLocale]
-    const existed2 = tags.includes(oldTagId)
-    if(oldTagId && existed2) {
-      await untag_user(wx_gzh_openid, oldTagId)
-    }
-  }
-
-  // 3. check if tagId has exists
-  const existed3 = tags.includes(tagId)
-  if(existed3) {
-    return true
-  }
-  
-  // 4. set tag
-  const url4 = new URL(API_TAG_USER)
-  url4.searchParams.set("access_token", wechat_access_token)
-  const link4 = url4.toString()
-  const q4 = {
-    openid_list: [wx_gzh_openid],
-    tagid: tagId,
-  }
-  const res3 = await liuReq<Wx_Res_Common>(link4, q4)
-  const errcode = res3.data?.errcode
-  if(errcode !== 0) {
-    console.warn("tag user for wechat gzh failed")
-    console.log(res3.data)
-  }
-
-  return true
-}
-
-
-async function untag_user(
-  wx_gzh_openid: string,
-  tagid: number,
-) {
-  const url = new URL(API_UNTAG_USER)
-  url.searchParams.set("access_token", wechat_access_token)
-  const link = url.toString()
-
-  const q = {
-    openid_list: [wx_gzh_openid],
-    tagid,
-  }
-  const res = await liuReq<Wx_Res_Common>(link, q)
-  const errcode = res.data?.errcode
-  if(errcode !== 0) {
-    console.warn("untag user for wechat gzh failed")
-    console.log(res.data)
-  }
-}
-
-
 async function send_welcome(
   wx_gzh_openid: string,
   userInfo?: Wx_Res_GzhUserInfo,
+  x_liu_language?: string,
 ) {
   // 1. get language
-  const lang = userInfo?.language
+  const lang = x_liu_language ?? userInfo?.language
 
   // 2. i18n
   const { t } = useI18n(wechatLang, { lang })
@@ -625,20 +550,6 @@ async function make_user_subscribed(
 
 
 /***************** helper functions *************/
-
-export async function get_user_info(
-  wx_gzh_openid: string,
-) {
-  const url = new URL(API_USER_INFO)
-  const sP = url.searchParams
-  sP.set("access_token", wechat_access_token)
-  sP.set("openid", wx_gzh_openid)
-  const link = url.toString()
-  const res1 = await liuReq<Wx_Res_GzhUserInfo>(link, undefined, { method: "GET" })
-  const data1 = res1.data
-  return data1
-}
-
 
 interface DirectionCredential {
   direction: string

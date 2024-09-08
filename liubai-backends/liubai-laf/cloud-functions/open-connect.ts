@@ -228,6 +228,8 @@ async function handle_bind_wechat(
     meta_data: {
       memberId,
       qr_code: qr_code_7,
+      x_liu_theme: body["x_liu_theme"],
+      x_liu_language: body["x_liu_language"],
     }
   }
   cCol.add(data8)
