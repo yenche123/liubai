@@ -317,7 +317,17 @@ async function login_with_wechat_gzh(
   console.log("init_user: ")
   console.log(res4.data)
 
-  // 5. set credential_2
+  // 5. update user's tag (language) for wx gzh
+  const data5 = res4.data
+  if(data5) {
+    const tmpUserInfo = data5[0]
+    const user5 = tmpUserInfo?.user
+    if(user5) {
+      tag_user_lang(wx_gzh_openid, user5, userInfo)
+    }
+  }
+
+  // 6. set credential_2
   _setCredential2()
 }
 
