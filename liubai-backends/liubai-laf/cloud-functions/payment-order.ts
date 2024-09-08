@@ -38,6 +38,8 @@ export async function main(ctx: FunctionContext) {
 
   // 2. go to specific operation
   const oT = body.operateType as string
+
+
   let res2: LiuRqReturn = { code: "E4000", errMsg: "operateType not found" }
   if(oT === "create_order") {
     // check out token
@@ -50,6 +52,7 @@ export async function main(ctx: FunctionContext) {
 
   }
   else if(oT === "wxpay_jsapi") {
+    wxpay_jsapi(body)
 
   }
 
@@ -89,6 +92,9 @@ async function wxpay_jsapi(
   if(!d1.orderAmount) {
     return { code: "P0005", errMsg: "the order amount is zero" }
   }
+  if(!d1.plan_id) {
+    return { code: "E4004", errMsg: "subscription plan not found" }
+  }
   
   // 3. check out if we need to invoke JSAPI
   const wxData = d1.wxpay_other_data ?? {}
@@ -105,8 +111,16 @@ async function wxpay_jsapi(
   if(!prepay_id) {
 
     // 4.1 get subscription
+    const subPlan = await getSubscriptionPlan(d1.plan_id)
+    if(!subPlan) {
+      return { code: "E4004", errMsg: "fail to get sub plan" }
+    }
+    if(!subPlan.wxpay || subPlan.wxpay?.isOn !== "Y") {
+      return { code: "E4003", errMsg: "wxpay for this sub plan is not supported" }
+    }
 
     // 4.2 get prepay_id
+    
 
     // 4.3 storage prepay_id
 
@@ -236,7 +250,10 @@ async function getSubscriptionPlan(
 ) {
   const sCol = db.collection("Subscription")
   const res = await sCol.doc(id).get<Table_Subscription>()
-  res.data
+  const d = res.data
+  if(!d) return
+  if(d.isOn !== "Y") return
+  return d
 }
 
 
