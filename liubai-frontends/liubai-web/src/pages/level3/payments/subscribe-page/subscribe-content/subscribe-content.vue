@@ -3,6 +3,7 @@ import { useI18n } from "vue-i18n";
 import { useSubscribeContent } from "./tools/useSubscribeContent"
 import { computed, toRef, watch } from "vue";
 import type { ScEmits } from "./tools/types"
+import ShinyButton from "~/components/custom-ui/shiny-button/shiny-button.vue";
 
 const emits = defineEmits<ScEmits>()
 
@@ -89,18 +90,18 @@ watch(() => scData.state, (newV) => {
       <div class="sc-btns" v-if="!scData.isLifelong">
 
         <!-- 使用联合订单购买 -->
-        <custom-btn v-if="showUnionBuy" class="sc-btn sc-btn_buy"
+        <ShinyButton v-if="showUnionBuy" class="sc-btn"
           @click="onTapBuyViaUnion"
         >
           <span>{{ t('payment.buy') }}</span>
-        </custom-btn>
+        </ShinyButton>
 
         <!-- 使用 stripe 购买 -->
-        <custom-btn v-else-if="!scData.stripe_portal_url" class="sc-btn sc-btn_buy"
+        <ShinyButton v-else-if="!scData.stripe_portal_url" class="sc-btn"
           @click="onTapBuyViaStripe"
         >
           <span>{{ t('payment.buy') }}</span>
-        </custom-btn>
+        </ShinyButton>
 
         <!-- 管理订单 -->
         <custom-btn v-else-if="spi.stripe?.isOn === 'Y'" class="sc-btn"
@@ -217,10 +218,6 @@ watch(() => scData.state, (newV) => {
   .sc-btn {
     width: 60%;
     max-width: var(--btn-max);
-  }
-
-  .sc-btn_buy {
-    font-weight: 700;
   }
 }
 

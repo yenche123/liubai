@@ -124,6 +124,13 @@
   /** drag-handle */
   --liu-drag-handle: #505359;
 
+  /** shiny button */
+  --shiny-cta-bg: #080808;
+  --shiny-cta-bg-subtle: #181818;
+  --shiny-cta-fg: #fafafa;
+  --shiny-cta-highlight: #48abdd;
+  --shiny-cta-highlight-subtle: #2a6885;
+
   /** 状态色 */
   --liu-state-1: #C3BBB3;
   --liu-state-2: #b3b788;

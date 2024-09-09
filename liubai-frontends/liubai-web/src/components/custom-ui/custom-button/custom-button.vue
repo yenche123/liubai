@@ -4,7 +4,7 @@ import { useCustomButton } from "./tools/useCustomButton"
 import RingLoader from "../../loaders/ring-loader/ring-loader.vue"
  
 const props = defineProps(customBtnProps)
-const emit = defineEmits(["click"])
+defineEmits(["click"])
 const { cbData } = useCustomButton(props)
 
 </script>
@@ -48,6 +48,10 @@ const { cbData } = useCustomButton(props)
   align-items: center;
   min-height: 30px;
   box-sizing: content-box;
+
+  &:active {
+    translate: 0 1px;
+  }
 }
 
 .btn-mini {
@@ -143,6 +147,10 @@ const { cbData } = useCustomButton(props)
   background-color: var(--primary-color);
   opacity: .5;
   cursor: default;
+
+  &:active {
+    translate: 0;
+  }
 }
 
 
