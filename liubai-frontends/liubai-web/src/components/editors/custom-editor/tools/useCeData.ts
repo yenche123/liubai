@@ -293,7 +293,19 @@ function toWhenChange(
   }
 
   ctx.ceData.whenStamp = newWhenStamp
+  if(newWhenStamp && !ctx.ceData.remindMe) {
+    ctx.ceData.remindMe = {
+      type: "early",
+      early_minute: 0,
+    }
+  }
   collectState(ctx)
+
+  // check out if the notification is enabled
+  if(!newWhenStamp) return
+  const memberId = memberIdRef.value
+  if(!memberId) return
+  checkIfReminderEnabled(memberId)
 }
 
 function toRemindMeChange(

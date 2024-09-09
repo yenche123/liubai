@@ -25,6 +25,7 @@ async function checkOutWxGzh(
   memberId: string,
 ) {
   if(hasCheckedWxGzh) return
+  hasCheckedWxGzh = true
   
   // 1. fetch
   const url = APIs.OPEN_CONNECT
@@ -34,9 +35,10 @@ async function checkOutWxGzh(
   }
   const res1 = await liuReq.request<Res_OC_GetWeChat>(url, w)
   const { code, data } = res1
-
-  if(code !== "0000" || !data) return
-  hasCheckedWxGzh = true
+  if(code !== "0000" || !data) {
+    hasCheckedWxGzh = false
+    return
+  }
 
   const hasWxGzhOpenId = Boolean(data.wx_gzh_openid)
   const hasSubscribed = Boolean(data.wx_gzh_subscribed)
