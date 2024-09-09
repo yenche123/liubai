@@ -25,7 +25,6 @@ import type {
   Wx_Res_GzhSnsUserInfo,
   UserWeChatGzh,
   Wx_Res_GzhUserInfo,
-  Wx_Res_GzhOAuthAccessToken,
   MemberNotification,
   Wx_Res_Create_QR,
   Res_UL_WxGzhScan,
@@ -53,6 +52,7 @@ import {
   getIpGeo,
   tagWxUserLang,
   getWxGzhUserInfo,
+  getWxGzhUserOAuthAccessToken,
 } from "@/common-util"
 import { getNowStamp, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -89,9 +89,6 @@ const GOOGLE_OAUTH_ACCESS_TOKEN = "https://oauth2.googleapis.com/token"
 
 // Google 使用 accessToken 去获取用户信息
 const GOOGLE_API_USER = "https://www.googleapis.com/oauth2/v3/userinfo"
-
-// 微信公众号 OAuth2 使用 code 去换用户的 accessToken
-const WX_GZH_OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token"
 
 // 微信公众号 OAuth2 使用 accessToken 去获取用户信息
 const WX_GZH_SNS_USERINFO = "https://api.weixin.qq.com/sns/userinfo"
@@ -866,23 +863,10 @@ async function handle_wx_gzh_base(
   const res0 = checkIfStateIsErr(state)
   if(res0) return res0
 
-  // 3. get appid & secret
-  const _env = process.env
-  const appid = _env.LIU_WX_GZ_APPID
-  const appSecret = _env.LIU_WX_GZ_APPSECRET
-  if(!appid || !appSecret) {
-    return { code: "E5001", errMsg: "no appid or appSecret on backend" }
-  }
+  // 3. [ignore] this logic has been merged into 4.
 
   // 4. get access_token with code
-  const url4 = new URL(WX_GZH_OAUTH_ACCESS_TOKEN)
-  const sp4 = url4.searchParams
-  sp4.set("appid", appid)
-  sp4.set("secret", appSecret)
-  sp4.set("code", oauth_code)
-  sp4.set("grant_type", "authorization_code")
-  const link4 = url4.toString()
-  const res4 = await liuReq<Wx_Res_GzhOAuthAccessToken>(link4, undefined, { method: "GET" })
+  const res4 = await getWxGzhUserOAuthAccessToken(oauth_code)
 
   // 5. extract openid
   const data5 = res4?.data
@@ -912,25 +896,16 @@ async function handle_wx_gzh_oauth(
   if(code1 !== "0000" || !data1) {
     return res1 as LiuErrReturn
   }
+  
+  // 2. get oauth_code & client_key
   const { oauth_code, client_key } = data1
 
-  // 2. get appid & secret
-  const _env = process.env
-  const appid = _env.LIU_WX_GZ_APPID
-  const appSecret = _env.LIU_WX_GZ_APPSECRET
-  if(!appid || !appSecret) {
-    return { code: "E5001", errMsg: "no appid or appSecret on backend" }
+  // 3. get user's accessToken
+  const res3 = await getWxGzhUserOAuthAccessToken(oauth_code)
+  const code3 = res3?.code
+  if(code3 !== "0000") {
+    return res3 as LiuErrReturn
   }
-
-  // 3. get access_token with code
-  const url3 = new URL(WX_GZH_OAUTH_ACCESS_TOKEN)
-  const sp3 = url3.searchParams
-  sp3.set("appid", appid)
-  sp3.set("secret", appSecret)
-  sp3.set("code", oauth_code)
-  sp3.set("grant_type", "authorization_code")
-  const link3 = url3.toString()
-  const res3 = await liuReq<Wx_Res_GzhOAuthAccessToken>(link3, undefined, { method: "GET" })
 
   // 4. extract access_token, and so on
   const data4 = res3?.data

@@ -35,6 +35,7 @@ import type {
   Table_Order,
   Wx_Res_GzhUserInfo,
   Wx_Res_Common,
+  Wx_Res_GzhOAuthAccessToken,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -93,6 +94,9 @@ const API_UNTAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchunta
 
 // @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
 const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
+
+// 微信公众号 OAuth2 使用 code 去换用户的 accessToken
+const WX_GZH_OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token"
 
 /********************* 空函数 ****************/
 export async function main(ctx: FunctionContext) {
@@ -1798,6 +1802,26 @@ export async function checkAndGetWxGzhAccessToken() {
   return res
 }
 
+export async function getWxGzhUserOAuthAccessToken(
+  oauth_code: string,
+) {
+  const _env = process.env
+  const appid = _env.LIU_WX_GZ_APPID
+  const appSecret = _env.LIU_WX_GZ_APPSECRET
+  if(!appid || !appSecret) {
+    return { code: "E5001", errMsg: "no appid or appSecret on backend" }
+  }
+  const url = new URL(WX_GZH_OAUTH_ACCESS_TOKEN)
+  const sp = url.searchParams
+  sp.set("appid", appid)
+  sp.set("secret", appSecret)
+  sp.set("code", oauth_code)
+  sp.set("grant_type", "authorization_code")
+  const link = url.toString()
+  const res3 = await liuReq<Wx_Res_GzhOAuthAccessToken>(link, undefined, { method: "GET" })
+  return res3
+}
+
 export async function getWxGzhUserInfo(
   wx_gzh_openid: string,
 ) {
@@ -1873,8 +1897,6 @@ export async function tagWxUserLang(
     console.warn("tag user for wechat gzh failed")
     console.log(res3.data)
   }
-  console.log("tagWxUserLang result: ")
-  console.log(res3)
 
   return true
 }
@@ -1901,8 +1923,8 @@ export async function untagWxUser(
     console.warn("untag user for wechat gzh failed")
     console.log(res.data)
   }
+  return res
 }
-
 
 
 /*************** About order or payment ***************/
