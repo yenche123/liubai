@@ -55,7 +55,8 @@ import {
   getBasicStampWhileAdding, 
   SECONED, DAY, MINUTE,
   localizeStamp,
-  isWithinMillis, 
+  isWithinMillis,
+  getServerTimezone, 
 } from "@/common-time"
 import geoip from "geoip-lite"
 import Stripe from "stripe"
@@ -163,13 +164,20 @@ const uniqueArray = (arr: string[]) => {
 
 /**
  * format 0-9 to 00-09
+ * format -1 ~ -9 into -01 ~ -09
  */
 const format0 = (val: string | number): string => {
   if(typeof val === "number") {
-    if(val < 10) return "0" + val
+    if(val >= 0 && val < 10) return "0" + val
+    else if(val > -10 && val < 0) return `-0${Math.abs(val)}`
     return "" + val  
   }
   if(val.length < 2) return "0" + val
+  if(val[0] === "-") {
+    const num = Number(val)
+    if(isNaN(num)) return val
+    if(num > -10 && num < 0) return `-0${Math.abs(num)}`
+  }
   return val
 }
 
@@ -352,6 +360,58 @@ export function displayTime(
 
   return t("show_2", { mm, dd, hr, min })
 }
+
+
+export function transformStampIntoStr(stamp: number) {
+  const d = new Date(stamp)
+  const yyyy = d.getFullYear()
+  const mm = format0(d.getMonth() + 1)
+  const dd = format0(d.getDate())
+  const hr = format0(d.getHours())
+  const min = format0(d.getMinutes())
+  const sec = format0(d.getSeconds())
+  return `${yyyy}-${mm}-${dd}T${hr}:${min}:${sec}`
+}
+
+export function transformStampIntoRFC3339(
+  stamp: number,
+  timezone?: number,
+) {
+  let str1 = transformStampIntoStr(stamp)
+
+  if(typeof timezone === "undefined") {
+    timezone = getServerTimezone()
+  }
+  let str2 = ""
+  const zoneStr = String(timezone)
+  const zoneArr = zoneStr.split(".")
+  if(!zoneArr || zoneArr.length < 1) {
+    console.warn("transformStampIntoRFC3339() zoneArr is not valid")
+    return
+  }
+  const arr0 = zoneArr[0]
+  const arr1 = zoneArr[1]
+  if(timezone >= 0) {
+    str2 = `+${format0(arr0)}:`
+  }
+  else {
+    str2 = `${format0(arr0)}:`
+  }
+  if(arr1 === "5") {
+    str2 += `30`
+  }
+  else {
+    str2 += `00`
+  }
+  
+  const res = str1 + str2
+  console.log("transformStampIntoRFC3339: ")
+  console.log(res)
+
+  return res
+}
+
+
 
 /**
  * 获取新增的数据的 _id

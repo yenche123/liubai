@@ -1400,8 +1400,6 @@ export interface Res_PO_GetOrder {
 export interface Res_PO_WxpayJsapi {
   operateType: "wxpay_jsapi"
   param: Wxpay_Jsapi_Params
-  expireStamp: number      // the time stamp when the param will be expired
-                           // usually which is 1 min after the param has been created
 }
 
 
@@ -2432,3 +2430,47 @@ export interface Wxpay_Jsapi_Params {
   paySign: string
 }
 
+export interface Wxpay_GoodsDetail {
+  merchant_goods_id: string
+  wechatpay_goods_id?: string
+  goods_name?: string
+  quantity: string
+  unit_price: number
+}
+
+export interface Wxpay_Order_Jsapi {
+  appid: string
+  mchid: string
+  description: string
+  out_trade_no: string
+  time_expire?: string
+  attach?: string
+  notify_url: string
+  goods_tag?: string
+  support_fapiao?: boolean
+  amount: {
+    total: number
+    currency?: string
+  }
+  payer: {
+    openid: string
+  }
+  detail?: {
+    cost_price?: number
+    invoice_id?: string
+    goods_detail: Wxpay_GoodsDetail[]
+  }
+  scene_info?: {
+    payer_client_ip: string
+    device_id?: string
+    store_info?: {
+      id: string
+      name?: string
+      area_code?: string
+      address?: string
+    }
+  }
+  settle_info?: {
+    profit_sharing?: boolean
+  }
+}

@@ -16,12 +16,17 @@ const abc = "abcdefghijkmnopqrstuvwxyz"
 
 /********************* 工具函数们 ****************/
 
-type LimitType = "allowUppercase" | "onlyUppercase" | "onlyNumber"
+type LimitType = "allowUppercase" | "onlyUppercase" | "onlyNumber" | "UppercaseAndNumber" | "onlyLowercase"
+
+interface CreateRandomOpt {
+  no_l_o?: boolean
+}
 
 // 创建随机字符串
 export function createRandom(
   digits: number = 30,
   limitType?: LimitType,
+  opt?: CreateRandomOpt,
 ) {
   let alphabet = NUMS + abc
   if(limitType === "allowUppercase") {
@@ -33,6 +38,17 @@ export function createRandom(
   else if(limitType === "onlyUppercase") {
     alphabet = ABC
   }
+  else if(limitType === "UppercaseAndNumber") {
+    alphabet = ABC + NUMS
+  }
+  else if(limitType === "onlyLowercase") {
+    alphabet = abc
+  }
+
+  if(opt?.no_l_o) {
+    alphabet = alphabet.replace("l", "").replace("o", "")
+  }
+
 
   const charset = alphabet.length
   let randomString = ""
@@ -122,4 +138,8 @@ export function createSignInCredential() {
 
 export function createCredential2() {
   return "cred_2_" + createRandom(23)
+}
+
+export function createPaymentNonce() {
+  return createRandom(32, "UppercaseAndNumber")
 }

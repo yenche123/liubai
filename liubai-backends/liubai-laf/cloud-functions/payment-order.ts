@@ -4,6 +4,9 @@ import {
   checker,
   createAvailableOrderId,
   getDocAddId,
+  valTool,
+  liuReq,
+  transformStampIntoRFC3339,
 } from "@/common-util"
 import {
   type LiuErrReturn,
@@ -15,12 +18,19 @@ import {
   Sch_Param_PaymentOrder,
   Table_Subscription,
   Wxpay_Jsapi_Params,
+  Wxpay_Order_Jsapi,
+  Res_PO_WxpayJsapi,
 } from "@/common-types"
 import * as vbot from "valibot"
 import * as crypto from "crypto"
 import { getBasicStampWhileAdding, getNowStamp, MINUTE } from "@/common-time"
-import { wxpay_apiclient_cert, wxpay_apiclient_key } from "@/secret-config"
-import { createEncNonce } from "@/common-ids"
+import { 
+  wxpay_apiclient_serial_no,
+  wxpay_apiclient_cert, 
+  wxpay_apiclient_key,
+} from "@/secret-config"
+import { createEncNonce, createPaymentNonce, createRandom } from "@/common-ids"
+import { useI18n, commonLang } from "@/common-i18n"
 
 const db = cloud.database()
 const _ = db.command
@@ -28,6 +38,10 @@ const _ = db.command
 const MIN_3 = MINUTE * 3
 const MIN_15 = MINUTE * 15
 const MIN_30 = MINUTE * 30
+
+const WXPAY_DOMAIN = "https://api.mch.weixin.qq.com"
+const WXPAY_JSAPI_PATH = "/v3/pay/transactions/jsapi"
+const WXPAY_JSAPI_ORDER = WXPAY_DOMAIN + WXPAY_JSAPI_PATH
 
 export async function main(ctx: FunctionContext) {
 
@@ -46,23 +60,22 @@ export async function main(ctx: FunctionContext) {
     const vRes = await verifyToken(ctx, body)
     if(!vRes.pass) return vRes.rqReturn
     const user = vRes.userData
-    res2 = await create_sp_order(body, user)
+    res2 = await handle_create_sp_order(body, user)
   }
   else if(oT === "get_order") {
 
   }
   else if(oT === "wxpay_jsapi") {
-    wxpay_jsapi(body)
-
+    res2 = await handle_wxpay_jsapi(body)
   }
 
   return res2
 }
 
 
-async function wxpay_jsapi(
+async function handle_wxpay_jsapi(
   body: Record<string, any>,
-) {
+): Promise<LiuRqReturn<Res_PO_WxpayJsapi>> {
   const order_id = body.order_id as string
   const wx_gzh_openid = body.wx_gzh_openid as string
 
@@ -100,7 +113,7 @@ async function wxpay_jsapi(
   const wxData = d1.wxpay_other_data ?? {}
   let out_trade_no = wxData.jsapi_out_trade_no ?? ""
   let openid = wxData.jsapi_openid ?? ""
-  let prepay_id = wxData.jsapi_prepay_id ?? ""
+  let prepay_id = wxData.jsapi_prepay_id
   let created_stamp = wxData.jsapi_created_stamp ?? 1
   const diff3 = now2 - created_stamp
   if(!out_trade_no) prepay_id = ""
@@ -119,27 +132,57 @@ async function wxpay_jsapi(
       return { code: "E4003", errMsg: "wxpay for this sub plan is not supported" }
     }
 
-    // 4.2 get prepay_id
-    
+    // 4.2 get sub plan info
+    const now4_2 = getNowStamp()
+    const res4_2 = getRequiredDataForPayment("wxpay_jsapi", d1, subPlan, body)
+    const d4_2 = res4_2.data
+    if(res4_2.code !== "0000" || !d4_2) {
+      return res4_2 as LiuErrReturn
+    }
 
-    // 4.3 storage prepay_id
+    // 4.3 get prepay_id
+    const param4_3: WxpayOrderByJsapiParam = {
+      out_trade_no: d4_2.out_trade_no,
+      openid: wx_gzh_openid,
+      fee: d4_2.fee,
+      description: d4_2.payment_title,
+      expireStamp: d4_2.expireStamp,
+    }
+    prepay_id = await wxpayOrderByJsapi(param4_3)
+    if(!prepay_id) {
+      console.warn("fail to get prepay_id in wxpay_jsapi")
+      console.log(param4_3)
+      return { code: "E5001", errMsg: "fail to get prepay_id" }
+    }
 
+    // 4.4 storage prepay_id
+    const now4_4 = getNowStamp()
+    wxData.jsapi_out_trade_no = d4_2.out_trade_no
+    wxData.jsapi_openid = wx_gzh_openid
+    wxData.jsapi_prepay_id = prepay_id
+    wxData.jsapi_created_stamp = now4_2
+    const w4_4: Partial<Table_Order> = {
+      wxpay_other_data: wxData,
+      updatedStamp: now4_4,
+    }
+    oCol.doc(d1._id).update(w4_4)
   }
 
+  // 5. get return data
+  const data5 = getWxpayJsapiParams(prepay_id)
 
-
-
-
-  
-
-
-  
-  
+  return {
+    code: "0000",
+    data: {
+      operateType: "wxpay_jsapi",
+      param: data5,
+    }
+  }
 }
 
 
 // create subscription order
-async function create_sp_order(
+async function handle_create_sp_order(
   body: Record<string, any>,
   user: Table_User,
 ) {
@@ -257,11 +300,6 @@ async function getSubscriptionPlan(
 }
 
 
-function getPrepayIdFromWxpay() {
-
-}
-
-
 function checkBody(
   ctx: FunctionContext,
   body: Record<string, any>,
@@ -277,6 +315,9 @@ function checkBody(
   const _env = process.env
   const oT = body.operateType as string
   if(oT === "wxpay_jsapi") {
+    if(!wxpay_apiclient_serial_no) {
+      return { code: "E4001", errMsg: "wxpay_apiclient_serial_no is not set" }
+    }
     if(!wxpay_apiclient_cert) {
       return { code: "E4001", errMsg: "wxpay_apiclient_cert is not set" }
     }
@@ -286,9 +327,162 @@ function checkBody(
     if(!_env.LIU_WX_GZ_APPID) {
       return { code: "E4001", errMsg: "wx gzh appid is not set" }
     }
+    if(!_env.LIU_WXPAY_MCH_ID) {
+      return { code: "E4001", errMsg: "wxpay mchid is not set" }
+    }
+    if(!_env.LIU_WXPAY_NOTIFY_URL) {
+      return { code: "E4001", errMsg: "wxpay notify url is not set" }
+    }
   }
 
 }
+
+
+interface RequiredDataForPayment {
+  payment_title: string
+  fee: number
+  out_trade_no: string
+  expireStamp: number
+}
+
+type PaymentType = "wxpay_jsapi" | "wxpay_h5" | "wxpay_native"
+
+function getRequiredDataForPayment(
+  payment_type: PaymentType,
+  order: Table_Order,
+  sub_plan: Table_Subscription,
+  body: Record<string, any>,
+): LiuRqReturn<RequiredDataForPayment> {
+  const order_id = order.order_id
+  let expireStamp = getNowStamp() + MIN_15
+  if(order.expireStamp) {
+    if(order.expireStamp < expireStamp) {
+      expireStamp = order.expireStamp
+    }
+  }
+
+  const { t } = useI18n(commonLang, { body })
+  const payment_title = t("payment_title")
+  let fee = sub_plan.amount_CNY
+  let out_trade_no = ""
+
+  const nonce = createRandom(4, "onlyLowercase", { no_l_o: true })
+  if(payment_type === "wxpay_jsapi") {
+    fee = sub_plan.wxpay?.amount_CNY ?? fee
+    out_trade_no = `w1${nonce}${order_id}`
+  }
+  else if(payment_type === "wxpay_h5") {
+    fee = sub_plan.wxpay?.amount_CNY ?? fee
+    out_trade_no = `w2${nonce}${order_id}`
+  }
+  else if(payment_type === "wxpay_native") {
+    fee = sub_plan.wxpay?.amount_CNY ?? fee
+    out_trade_no = `w3${nonce}${order_id}`
+  }
+
+  if(!fee) {
+    return { code: "E5001", errMsg: "fail to get fee" }
+  }
+  if(!out_trade_no) {
+    return { code: "E5001", errMsg: "fail to get out_trade_no" }
+  }
+  if(!payment_title) {
+    return { code: "E5001", errMsg: "fail to get payment_title" }
+  }
+
+  return { 
+    code: "0000", 
+    data: { 
+      payment_title, 
+      fee, 
+      out_trade_no,
+      expireStamp,
+    }
+  }
+}
+
+interface WxpayOrderByJsapiParam {
+  out_trade_no: string
+  openid: string
+  fee: number      // unit: cent
+  description: string
+  attach?: string
+  expireStamp?: number
+}
+
+async function wxpayOrderByJsapi(
+  param: WxpayOrderByJsapiParam,
+) {
+  const _env = process.env
+  const wx_appid = _env.LIU_WX_GZ_APPID as string
+  const wx_mchid = _env.LIU_WXPAY_MCH_ID as string
+  const wxpay_notify_url = _env.LIU_WXPAY_NOTIFY_URL as string
+  let time_expire: string | undefined
+  if(param.expireStamp) {
+    time_expire = transformStampIntoRFC3339(param.expireStamp)
+  }
+
+  const body: Wxpay_Order_Jsapi = {
+    appid: wx_appid,
+    mchid: wx_mchid,
+    notify_url: wxpay_notify_url,
+    out_trade_no: param.out_trade_no,
+    description: param.description,
+    amount: {
+      total: param.fee,
+    },
+    payer: {
+      openid: param.openid,
+    }
+  }
+  if(param.attach) body.attach = param.attach
+  if(time_expire) body.time_expire = time_expire
+
+  const Authorization = getWxpayReqAuthorization("POST", body, WXPAY_JSAPI_PATH)
+  const headers = { Authorization }
+  const res = await liuReq(WXPAY_JSAPI_ORDER, body, { headers })
+  const { code, data } = res
+  if(code !== "0000" || !data) {
+    console.warn("fail to invoke wxpay jsapi")
+    console.log(res)
+    return
+  }
+  const prepay_id = data?.prepay_id as string
+  return prepay_id
+}
+
+function getWxpayReqAuthorization(
+  method: "POST" | "GET",
+  body: Record<string, any>,
+  path: string,
+) {
+  const timestamp = Math.floor(getNowStamp() / 1000)
+  const nonce = createPaymentNonce()
+  const bodyStr = valTool.objToStr(body)
+  const msg = `${method}\n${path}\n${timestamp}\n${nonce}\n${bodyStr}\n`
+
+  const tmpSign = crypto.createSign("sha256WithRSAEncryption").update(msg)
+  const signature = tmpSign.sign(wxpay_apiclient_key, "base64")
+
+  console.log("getWxpayReqAuthorization signature: ")
+  console.log(signature)
+
+  const _env = process.env
+  const wx_mchid = _env.LIU_WXPAY_MCH_ID as string
+
+  let reqAuth = `WECHATPAY2-SHA256-RSA2048 `
+  reqAuth += `mchid="${wx_mchid}",`
+  reqAuth += `nonce_str="${nonce}",`
+  reqAuth += `signature="${signature}",`
+  reqAuth += `timestamp="${timestamp}",`
+  reqAuth += `serial_no="${wxpay_apiclient_serial_no}"`
+
+  console.log("getWxpayReqAuthorization reqAuth: ")
+  console.log(reqAuth)
+
+  return reqAuth
+}
+
 
 function getWxpayJsapiParams(
   prepay_id: string,
