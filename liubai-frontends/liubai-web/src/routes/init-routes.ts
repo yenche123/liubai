@@ -91,14 +91,10 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/payment-success",
-    components: {
-      default: PaymentSuccessPage,
-      LeftSidebar,
-    },
+    component: PaymentSuccessPage,
     name: "payment-success",
     meta: {
-      hasViceView: false,
-      checkWorkspace: false,
+      inApp: false,
     },
   },
   {

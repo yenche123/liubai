@@ -47,6 +47,14 @@
   overflow: hidden;
 }
 
+.liu-basic-page {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  position: relative;
+  background-color: var(--bg-color);
+}
+
 
 /********* 仅在有鼠标的设备上生效 *********/
 @media(hover: hover) {

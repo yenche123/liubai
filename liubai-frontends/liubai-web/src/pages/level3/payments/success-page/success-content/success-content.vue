@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 
 const { t } = useI18n()
@@ -8,6 +9,8 @@ const rr = useRouteAndLiuRouter()
 const onTapBtn = () => {
   rr.router.push({ name: "subscription" })
 }
+
+const wStore = useWorkspaceStore()
 
 </script>
 <template>
@@ -21,9 +24,9 @@ const onTapBtn = () => {
     <div class="cc-text">
       <span class="liu-selection">{{ t('payment.success_title') }}</span>
     </div>
-    <div class="cc-btn-box">
+    <div class="cc-btn-box" v-if="wStore.userId">
       <custom-btn class="cc-btn" @click="onTapBtn">
-        <span>{{ t('payment.check_out') }}</span>
+        <span style="font-weight: 700;">{{ t('payment.check_out') }}</span>
       </custom-btn>
     </div>
 

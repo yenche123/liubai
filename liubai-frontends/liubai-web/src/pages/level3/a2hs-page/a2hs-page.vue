@@ -21,7 +21,7 @@ onActivated(() => {
 <template>
 
   <!-- 主视图 -->
-  <div class="a2hs-container">
+  <div class="liu-basic-page">
     <scroll-view>
       <navi-virtual></navi-virtual>
 
@@ -42,13 +42,5 @@ onActivated(() => {
 
 </template>
 <style scoped>
-
-.a2hs-container {
-  width: 100%;
-  height: 100vh;
-  height: 100dvh;
-  position: relative;
-  background-color: var(--bg-color);
-}
 
 </style>
