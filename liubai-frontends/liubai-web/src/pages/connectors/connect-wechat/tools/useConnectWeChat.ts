@@ -128,7 +128,7 @@ async function checkoutData(
     cwcData.pageState = pageStates.NO_DATA
   }
   else if(code3 === "0000") {
-    cwcData.pageState = -1
+    cwcData.pageState = pageStates.OK
   }
   else {
     cwcData.pageState = pageStates.NETWORK_ERR

@@ -407,6 +407,7 @@
     "cafe": "Coffee"
   },
   "payment": {
+    "pay": "Pay",
     "success_title": "Paid",
     "think_again": "Reconsider",
     "member_subscribe": "Subscription",

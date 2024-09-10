@@ -7,13 +7,12 @@ import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 </script>
 <template>
 
-  <!-- 主视图 -->
   <div class="liu-basic-page">
     <scroll-view>
       <navi-virtual></navi-virtual>
       <SuccessContent></SuccessContent>
     </scroll-view>
-    <navi-bar></navi-bar>
+    <navi-bar :show-menu="false"></navi-bar>
   </div>
 
 </template>

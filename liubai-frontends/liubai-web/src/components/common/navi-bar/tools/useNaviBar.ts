@@ -14,6 +14,7 @@ export function useNaviBar(props: NaviBarProps) {
   const { sidebarWidth } = storeToRefs(layout)
 
   const _judge = () => {
+    if(!props.showMenu) return
     const w1 = width.value
     const w2 = sidebarWidth.value
     const oldV = showMenuBtn.value
@@ -21,10 +22,7 @@ export function useNaviBar(props: NaviBarProps) {
     let newV = false
     if(w1 < cfg.sidebar_close_point) newV = true
     if(w1 < cfg.sidebar_open_point && w2 <= 0) newV = true
-
-    if(props.showMenu) {
-      if(newV !== oldV) showMenuBtn.value = newV
-    }
+    if(newV !== oldV) showMenuBtn.value = newV
   }
 
   watch([sidebarWidth, width], () => {
