@@ -14,14 +14,10 @@ import { wrappingInputRule, nodeInputRule, Extension } from "@tiptap/core"
 import type { TipTapEditor } from "~/types/types-editor"
 import type { EditorCoreProps, EditorCoreEmits } from "./types"
 import { linkToTextPlugin } from "../link-to-text/link-to-text"
-
-import { lowlight } from 'lowlight'
-import { initLowlight } from "~/utils/other/lowlight-related"
 import CodeBlockComponent from '../code-block-component/code-block-component.vue'
 import { createVirtualCursor } from 'prosemirror-virtual-cursor'
 import { useI18n } from 'vue-i18n'
-
-initLowlight()
+import { initLowlight } from '~/utils/other/lowlight-related'
 
 export function initExtensions(
   props: EditorCoreProps,
@@ -110,6 +106,7 @@ export function initExtensions(
     },
   })
 
+  const { lowlight } = initLowlight()
   const extensions = [
     CustomCode,
     CustomBlockQuote,

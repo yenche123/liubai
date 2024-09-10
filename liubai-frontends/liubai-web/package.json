@@ -1,7 +1,7 @@
 {
   "name": "liubai-web",
   "private": true,
-  "version": "0.0.150",
+  "version": "0.0.151",
   "description": "Your Notes, Tasks, Calendar, and To-Do List",
   "author": {
     "name": "yenche123",
@@ -53,9 +53,10 @@
     "exifreader": "^4.23.5",
     "file-saver": "^2.0.5",
     "floating-vue": "^5.2.2",
+    "highlight.js": "^11.10.0",
     "ics": "^3.7.6",
     "jszip": "^3.10.1",
-    "lowlight": "^2.9.0",
+    "lowlight": "^3.1.0",
     "nanoid": "^5.0.7",
     "pinia": "^2.2.2",
     "posthog-js": "^1.160.3",
