@@ -1,40 +1,27 @@
-<script lang="ts">
+<script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { useNaviLink } from "./tools/useNaviLink";
-import type { ToRoute } from "~/types";
+import { useNaviLink, type NaviLinkEmits } from "./tools/useNaviLink";
 import liuApi from '~/utils/liu-api';
 
-export default {
-  name: "NaviLink",
+defineOptions({
   inheritAttrs: false,
+})
 
-  props: {
-    //@ts-ignore
-    ...RouterLink.props,
-  },
+const props = defineProps({
+  //@ts-ignore
+  ...RouterLink.props,
+})
 
-  emits: {
-    aftertap: (toRoute: ToRoute) => true,
-  },
-
-  setup(props: any, { emit }) {
-    const {
-      href,
-      onTapLink,
-    } = useNaviLink(props, emit)
-
-    const network = liuApi.network
-
-    return { href, onTapLink, network }
-  }
-}
+const emit = defineEmits<NaviLinkEmits>()
+const { href, onTapLink } = useNaviLink(props, emit)
+const network = liuApi.network
 
 </script>
 <template>
   <router-link
     v-bind="$props"
     custom
-    :to="to"
+    :to="props.to"
   >
     <a
       v-bind="$attrs"

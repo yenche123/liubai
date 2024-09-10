@@ -1,47 +1,42 @@
-<script lang="ts">
+<script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { useAppLink } from "./tools/useAppLink";
 
-export default {
-  name: "AppLink",
+defineOptions({
   inheritAttrs: false,
+})
 
-  props: {
-    //@ts-ignore
-    ...RouterLink.props,
-    inactiveClass: String,
-  },
+const props = defineProps({
+  //@ts-ignore
+  ...RouterLink.props,
+  inactiveClass: String,
+})
 
-  setup(props: any, context: any) {
-    const {
-      isExternalLink,
-      href,
-      isActive,
-      isExactActive,
-      onTapLink,
-    } = useAppLink(props)
-
-    return { isExternalLink, href, isActive, isExactActive, onTapLink }
-  }
-}
+const {
+  isExternalLink,
+  href,
+  isActive,
+  isExactActive,
+  onTapLink,
+} = useAppLink(props)
 
 </script>
 
 <template>
-  <a v-if="isExternalLink" v-bind="$attrs" :href="to" target="_blank">
+  <a v-if="isExternalLink" v-bind="$attrs" :href="props.to" target="_blank">
     <slot />
   </a>
   <router-link
     v-else
     v-bind="$props"
     custom
-    :to="to"
+    :to="props.to"
   >
     <a
       v-bind="$attrs"
       :href="href"
       @click.prevent="onTapLink"
-      :class="isActive ? activeClass : inactiveClass"
+      :class="isActive ? props.activeClass : props.inactiveClass"
     >
       <slot />
     </a>

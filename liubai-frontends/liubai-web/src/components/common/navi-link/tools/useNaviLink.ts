@@ -1,9 +1,12 @@
-import { RouteLocationNormalized, RouteLocationNormalizedLoaded, useLink } from 'vue-router'
+import { 
+  type RouteLocationNormalized, 
+  type RouteLocationNormalizedLoaded, 
+  useLink,
+} from 'vue-router'
 import { useRouteAndLiuRouter } from '~/routes/liu-router'
 import type { ToRoute } from "~/types"
-import valTool from '~/utils/basic/val-tool'
 
-interface NaviLinkEmits {
+export interface NaviLinkEmits {
   (event: "aftertap", toRoute: ToRoute): void
 }
 
