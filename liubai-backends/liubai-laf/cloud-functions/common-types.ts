@@ -690,7 +690,7 @@ export interface SubscriptionAlipay {
   amount_CNY?: number   // 订单总金额，单位:“分”，若此值为空，取 Table_Subscription.amount_CNY
 }
 
-export type SubscriptionPaymentCircle = "monthly" | "yearly"
+export type SubscriptionPaymentCircle = "monthly" | "quarterly" | "yearly"
 
 export interface CredentialMetaData {
   payment_circle?: SubscriptionPaymentCircle
@@ -1242,7 +1242,12 @@ export interface Table_Subscription extends BaseTable {
 
   amount_CNY?: number       // 人民币价格，单位为“分”，当调用 `payment-order` 且为下单订阅单时，必填
                             // 该值可填 0
+  renewal_only?: boolean    // 是否仅续费者有效，新用户不适用
 
+}
+
+export interface OrderMetaData {
+  payment_timezone?: string
 }
 
 /** 订单表 */
@@ -1289,6 +1294,8 @@ export interface Table_Order extends BaseTable {
     native_created_stamp?: number
 
   }
+
+  meta_data?: OrderMetaData
 
 }
 
@@ -1385,6 +1392,8 @@ export interface Res_OrderData {
   expireStamp?: number
   tradedStamp?: number
   insertedStamp: number
+  canPay: boolean
+  title?: string
 }
 
 export interface Res_PO_CreateOrder {

@@ -14,12 +14,14 @@ import {
   type Table_Order,
   type Table_User,
   type LiuRqReturn,
-  Partial_Id,
+  type Res_PO_CreateOrder,
+  type Partial_Id,
+  type Table_Subscription,
+  type Wxpay_Jsapi_Params,
+  type Wxpay_Order_Jsapi,
+  type Res_PO_WxpayJsapi,
   Sch_Param_PaymentOrder,
-  Table_Subscription,
-  Wxpay_Jsapi_Params,
-  Wxpay_Order_Jsapi,
-  Res_PO_WxpayJsapi,
+  Res_PO_GetOrder,
 } from "@/common-types"
 import * as vbot from "valibot"
 import * as crypto from "crypto"
@@ -30,7 +32,7 @@ import {
   wxpay_apiclient_key,
 } from "@/secret-config"
 import { createEncNonce, createPaymentNonce, createRandom } from "@/common-ids"
-import { useI18n, commonLang } from "@/common-i18n"
+import { useI18n, subPlanLang } from "@/common-i18n"
 
 const db = cloud.database()
 const _ = db.command
@@ -63,7 +65,7 @@ export async function main(ctx: FunctionContext) {
     res2 = await handle_create_sp_order(body, user)
   }
   else if(oT === "get_order") {
-
+    res2 = await handle_get_order(body)
   }
   else if(oT === "wxpay_jsapi") {
     res2 = await handle_wxpay_jsapi(body)
@@ -78,6 +80,7 @@ async function handle_wxpay_jsapi(
 ): Promise<LiuRqReturn<Res_PO_WxpayJsapi>> {
   const order_id = body.order_id as string
   const wx_gzh_openid = body.wx_gzh_openid as string
+  const userTimezone = body.x_liu_timezone
 
   // 1. get order
   const oCol = db.collection("Order")
@@ -111,6 +114,7 @@ async function handle_wxpay_jsapi(
   
   // 3. check out if we need to invoke JSAPI
   const wxData = d1.wxpay_other_data ?? {}
+  const metaData = d1.meta_data ?? {}
   let out_trade_no = wxData.jsapi_out_trade_no ?? ""
   let openid = wxData.jsapi_openid ?? ""
   let prepay_id = wxData.jsapi_prepay_id
@@ -161,8 +165,10 @@ async function handle_wxpay_jsapi(
     wxData.jsapi_openid = wx_gzh_openid
     wxData.jsapi_prepay_id = prepay_id
     wxData.jsapi_created_stamp = now4_2
+    metaData.payment_timezone = userTimezone
     const w4_4: Partial<Table_Order> = {
       wxpay_other_data: wxData,
+      meta_data: metaData,
       updatedStamp: now4_4,
     }
     oCol.doc(d1._id).update(w4_4)
@@ -180,18 +186,53 @@ async function handle_wxpay_jsapi(
   }
 }
 
+async function handle_get_order(
+  body: Record<string, any>,
+): Promise<LiuRqReturn<Res_PO_GetOrder>> {
+  // 1. get the order
+  const order_id = body.order_id as string
+  const oCol = db.collection("Order")
+  const res1 = await oCol.where({ order_id }).getOne<Table_Order>()
+  const d1 = res1.data
+  if(!d1) {
+    return { code: "E4004", errMsg: "order not found" }
+  }
+
+  // 2. get sub plan
+  let subPlan: Table_Subscription | undefined
+  if(d1.plan_id) {
+    subPlan = await getSubscriptionPlan(d1.plan_id)
+  }
+
+  // 3. TODO: get product in the future
+
+  const obj = packageOrderData(d1, { subPlan, body })
+  return { code: "0000", data: { operateType: "get_order", orderData: obj } }
+}
+
 
 // create subscription order
 async function handle_create_sp_order(
   body: Record<string, any>,
   user: Table_User,
-) {
+): Promise<LiuRqReturn<Res_PO_CreateOrder>> {
   // 1. get param
   const user_id = user._id
   const subscription_id = body.subscription_id as string
   const stamp1 = getNowStamp() + MIN_3
 
-  // 2. construct query
+  // 2. get subscription
+  const subPlan = await getSubscriptionPlan(subscription_id)
+  if(!subPlan || subPlan.isOn !== "Y") {
+    return { code: "E4004", errMsg: "subscription plan not found" }
+  }
+
+  // 3. check out amount_CNY
+  if(typeof subPlan.amount_CNY !== "number") {
+    return { code: "P0002", errMsg: "no amount_CNY in database" }
+  }
+
+  // 4. construct query
   const w2 = {
     user_id,
     oState: "OK",
@@ -203,30 +244,16 @@ async function handle_create_sp_order(
   const oCol = db.collection("Order")
   const res2 = await oCol.where(w2).getOne<Table_Order>()
 
-  // 3. check out order and its expire time
+  // 5. check out order and its expire time
   const d3 = res2.data
   if(d3) {
     const stamp3 = d3.expireStamp ?? 1
     const now2 = getNowStamp()
     if(stamp3 > now2) {
-      const obj3 = packageOrderData(d3)
+      const obj3 = packageOrderData(d3, { body, subPlan })
       return { code: "0000", data: { operateType: "create_order", orderData: obj3 } }
     }
   }
-
-  // 4. get subscription
-  const sCol = db.collection("Subscription")
-  const res4 = await sCol.doc(subscription_id).get<Table_Subscription>()
-  const d4 = res4.data
-  if(!d4 || d4.isOn !== "N") {
-    return { code: "E4004", errMsg: "subscription plan not found" }
-  }
-
-  // 5. check out amount_CNY
-  if(typeof d4.amount_CNY !== "number") {
-    return { code: "P0002", errMsg: "no amount_CNY in database" }
-  }
-  
 
   // 6. create new order
   const b6 = getBasicStampWhileAdding()
@@ -240,7 +267,7 @@ async function handle_create_sp_order(
     user_id,
     oState: "OK",
     orderStatus: "INIT",
-    orderAmount: d4.amount_CNY,
+    orderAmount: subPlan.amount_CNY,
     paidAmount: 0,
     refundedAmount: 0,
     currency: "cny",
@@ -260,14 +287,24 @@ async function handle_create_sp_order(
   }
 
   // 8. package
-  const res8 = packageOrderData(newOrder)
+  const res8 = packageOrderData(newOrder, { subPlan, body })
   return { code: "0000", data: { operateType: "create_order", orderData: res8 } }
 }
 
+interface PackageOrderDataOpt {
+  subPlan?: Table_Subscription
+  body?: Record<string, any>
+}
 
 function packageOrderData(
   d: Table_Order,
+  opt?: PackageOrderDataOpt,
 ) {
+  const now = getNowStamp()
+  const subPlan = opt?.subPlan
+  const body = opt?.body
+
+  // 1. basic info
   const obj: Res_OrderData = {
     order_id: d.order_id,
     oState: d.oState,
@@ -283,7 +320,41 @@ function packageOrderData(
     expireStamp: d.expireStamp,
     tradedStamp: d.tradedStamp,
     insertedStamp: d.insertedStamp,
+    canPay: d.oState === "OK" && d.orderStatus === "INIT",
   }
+  if(d.expireStamp) {
+    if(now >= d.expireStamp) {
+      obj.canPay = false
+    }
+  }
+
+  // 2. handle subscription plan
+  if(subPlan) {
+
+    // 2.1 calculate if it can be paid
+    if(subPlan.isOn !== "Y") {
+      obj.canPay = false
+    }
+
+    // 2.2 get title
+    const { t: t1 } = useI18n(subPlanLang, { body })
+    const pCircle = subPlan.payment_circle
+    if(pCircle === "monthly") {
+      obj.title = t1("monthly_membership")
+    }
+    else if(pCircle === "quarterly") {
+      obj.title = t1("quarterly_membership")
+    }
+    else if(pCircle === "yearly") {
+      obj.title = t1("annual_membership")
+    }
+
+    // 2.3 fallback
+    if(!obj.title && subPlan.title) {
+      obj.title = subPlan.title
+    }
+  }
+  
   return obj
 }
 
@@ -295,7 +366,6 @@ async function getSubscriptionPlan(
   const res = await sCol.doc(id).get<Table_Subscription>()
   const d = res.data
   if(!d) return
-  if(d.isOn !== "Y") return
   return d
 }
 
@@ -361,7 +431,7 @@ function getRequiredDataForPayment(
     }
   }
 
-  const { t } = useI18n(commonLang, { body })
+  const { t } = useI18n(subPlanLang, { body })
   const payment_title = t("payment_title")
   let fee = sub_plan.amount_CNY
   let out_trade_no = ""

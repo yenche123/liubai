@@ -29,21 +29,39 @@ export const commonLang: LangAtom = {
     "image": "图片",
     "file": "文件",
     "other": "其它",
-    "payment_title": "留白记事会员"
   },
   "zh-Hant": {
     "appName": "留白記事",
     "image": "圖片",
     "file": "文件",
     "other": "其它",
-    "payment_title": "留白記事會員"
   },
   "en": {
     "appName": "Liubai",
     "image": "Image",
     "file": "File",
     "other": "Other",
-    "payment_title": "Liubai Membership"
+  }
+}
+
+export const subPlanLang: LangAtom = {
+  "zh-Hans": {
+    "payment_title": "留白记事会员",
+    "annual_membership": "年度会员 Premium",
+    "quarterly_membership": "季度会员 Premium",
+    "monthly_membership": "月度会员 Premium"
+  },
+  "zh-Hant": {
+    "payment_title": "留白記事會員",
+    "annual_membership": "年度會員 Premium",
+    "quarterly_membership": "季度會員 Premium",
+    "monthly_membership": "月度會員 Premium"
+  },
+  "en": {
+    "payment_title": "Liubai Membership",
+    "annual_membership": "Annual Membership (Premium)",
+    "quarterly_membership": "Quarterly Membership (Premium)",
+    "monthly_membership": "Monthly Membership (Premium)"
   }
 }
 
