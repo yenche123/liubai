@@ -26,7 +26,6 @@ export function transitionHelper(opt: TransitionHelperParam) {
   rootEl.classList.add(...classNamesArray)
 
   // 2. 使用 View Transition API
-  //@ts-expect-error: View Transition API
   const transition = document.startViewTransition(updateDOM)
 
   // 会在 transition.finished.then 被触发之前执行

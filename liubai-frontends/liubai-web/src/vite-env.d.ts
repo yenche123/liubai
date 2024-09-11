@@ -26,3 +26,20 @@ declare const LIU_ENV: LiuEnv
 declare const WeixinJSBridge: {
   invoke: (method: string, ...args: any[]) => void
 }
+
+// extend Document
+interface Document {
+  startViewTransition(updateCallback: () => Promise<void> | void): ViewTransition;
+}
+
+// View Transition API
+interface ViewTransition {
+  readonly ready: Promise<undefined>;
+  readonly finished: Promise<undefined>;
+  readonly updateCallbackDone: Promise<undefined>;
+  skipTransition(): void;
+}
+
+interface CSSStyleDeclaration {
+  viewTransitionName: string;
+}
