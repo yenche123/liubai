@@ -136,6 +136,10 @@
   --shiny-cta-highlight: #88d1ff;
   --shiny-cta-highlight-subtle: #bfdfed;
 
+  /** third-party */
+  --wechat-green: #03C160;
+  --alpay-blue: #1777FF;
+
   /** 状态色 */
   --liu-state-1: #7f766f;
   --liu-state-2: #7a8d2b;

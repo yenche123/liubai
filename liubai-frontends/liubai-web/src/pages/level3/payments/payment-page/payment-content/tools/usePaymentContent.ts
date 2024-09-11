@@ -1,4 +1,4 @@
-import { reactive, watch } from "vue";
+import { inject, reactive, watch } from "vue";
 import { type RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router";
 import liuEnv from "~/utils/liu-env";
 import { type PcData } from "./types";
@@ -6,10 +6,11 @@ import { pageStates } from "~/utils/atom"
 import APIs from "~/requests/APIs";
 import liuReq from "~/requests/liu-req";
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
-import { Res_UL_WxGzhBase, type Res_PO_GetOrder } from "~/requests/req-types";
+import { Res_OrderData, Res_UL_WxGzhBase, type Res_PO_GetOrder } from "~/requests/req-types";
 import liuApi from "~/utils/liu-api";
 import typeCheck from "~/utils/basic/type-check";
 import localCache from "~/utils/system/local-cache";
+import { deviceChaKey } from "~/utils/provide-keys";
 
 export function usePaymentContent() {
   const rr = useRouteAndLiuRouter()
@@ -18,10 +19,12 @@ export function usePaymentContent() {
     state: hasBackend ? pageStates.LOADING : pageStates.NEED_BACKEND,
   })
 
+  const cha = inject(deviceChaKey)
   initPaymentContent(pcData, rr)
 
   return {
     pcData,
+    cha,
   }
 }
 
@@ -146,10 +149,27 @@ async function fetchOrderData(
     pcData.state = pageStates.NETWORK_ERR
   }
   if(!data4) {
-    pcData.od = undefined
+    resetOrderData(pcData)
     return
   }
   
-  pcData.od = data4.orderData
-  
+  setNewOrderData(pcData, data4.orderData)
+}
+
+function setNewOrderData(
+  pcData: PcData,
+  od: Res_OrderData,
+) {
+  pcData.od = od
+  if(od.orderAmount) {
+    pcData.order_amount_txt = od.orderAmount.toFixed(2)
+  }
+}
+
+function resetOrderData(
+  pcData: PcData,
+) {
+  pcData.od = undefined
+  pcData.order_amount_txt = undefined
+
 }

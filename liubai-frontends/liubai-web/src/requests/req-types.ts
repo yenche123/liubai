@@ -155,6 +155,8 @@ export interface Res_OrderData {
   expireStamp?: number
   tradedStamp?: number
   insertedStamp: number
+  canPay: boolean
+  title?: string
 }
 
 export interface Res_PO_CreateOrder {
