@@ -7,6 +7,12 @@ import { isSupportedLocale } from '../types/types-locale'
 import localCache from '../utils/system/local-cache'
 import liuApi from '~/utils/liu-api'
 import liuEnv from '~/utils/liu-env'
+import {
+  registerMessageResolver, // register the message resolver API
+  resolveValue, // message resolver of vue-i18n which is used by default
+} from '@intlify/core-base'
+
+registerMessageResolver(resolveValue)
 
 // 初始化语言
 const initLocale = (): SupportedLocale => {
