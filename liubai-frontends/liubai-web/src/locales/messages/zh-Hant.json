@@ -429,7 +429,13 @@
     "payee": "收款方",
     "pay_immediately": "立即支付",
     "content1": "微信還是支付寶",
-    "content2": "請使用支付寶或微信掃描支付"
+    "content2": "請使用支付寶或微信掃描支付",
+    "cannot_pay": "無法付款",
+    "cannot_pay_tip": "當前訂單已關閉、已過期或已付款",
+    "order_not_found": "訂單不存在或訂閱方案已下架",
+    "order_being_paid": "有人正在支付中..",
+    "order_expired": "訂單已過期",
+    "ready_to_pay": "準備支付.."
   },
   "a2hs": {
     "title": "加入到桌面",

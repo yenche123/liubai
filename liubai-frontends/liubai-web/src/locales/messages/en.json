@@ -429,7 +429,13 @@
     "payee": "Payee",
     "pay_immediately": "Pay Now",
     "content1": "WeChat or Alipay",
-    "content2": "Please scan the code with Alipay or WeChat"
+    "content2": "Please scan the code with Alipay or WeChat",
+    "cannot_pay": "Cannot Pay",
+    "cannot_pay_tip": "The current order is closed, expired, or has been paid",
+    "order_not_found": "Order not found or subscription plan unavailable",
+    "order_being_paid": "Someone is paying..",
+    "order_expired": "Order Expired",
+    "ready_to_pay": "Processing.."
   },
   "a2hs": {
     "title": "Add to Home",

@@ -429,7 +429,13 @@
     "payee": "收款方",
     "pay_immediately": "立即支付",
     "content1": "微信还是支付宝",
-    "content2": "请使用支付宝或微信扫码支付"
+    "content2": "请使用支付宝或微信扫码支付",
+    "cannot_pay": "无法付款",
+    "cannot_pay_tip": "当前订单已关闭、已过期或已付款",
+    "order_not_found": "订单不存在或订阅方案已下架",
+    "order_being_paid": "有人正在支付中..",
+    "order_expired": "订单已过期",
+    "ready_to_pay": "准备支付.."
   },
   "a2hs": {
     "title": "添加到桌面",

@@ -8,7 +8,6 @@ import liuReq from "~/requests/liu-req";
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
 import type { 
   Res_OrderData, 
-  Res_UL_WxGzhBase, 
   Res_PO_GetOrder,
 } from "~/requests/req-types";
 import liuApi from "~/utils/liu-api";
@@ -16,6 +15,13 @@ import typeCheck from "~/utils/basic/type-check";
 import localCache from "~/utils/system/local-cache";
 import { deviceChaKey } from "~/utils/provide-keys";
 import valTool from "~/utils/basic/val-tool";
+import { useThrottleFn } from "~/hooks/useVueUse"; 
+import cui from "~/components/custom-ui";
+import { 
+  buyViaWxpayJSAPI, 
+  getWxGzhOpenid, 
+  redirectForWxGzhOpenid,
+} from "../../../utils/pay-tools";
 
 export function usePaymentContent() {
   const rr = useRouteAndLiuRouter()
@@ -27,10 +33,55 @@ export function usePaymentContent() {
   const cha = inject(deviceChaKey)
   initPaymentContent(pcData, rr)
 
+
+  const onTapWxpay = useThrottleFn(() => {
+    whenTapWxpay(pcData, rr)
+  }, 1000)
+
+  const onTapAlipay = useThrottleFn(() => {
+
+  }, 1000)
+
+
   return {
     pcData,
     cha,
+    onTapAlipay,
+    onTapWxpay,
   }
+}
+
+function whenTapWxpay(
+  pcData: PcData,
+  rr: RouteAndLiuRouter,
+) {
+  // 1. check if we can pay
+  const od = pcData.od
+  if(!od) return
+  if(!od.canPay) {
+    showCannotPayTip()
+    return
+  }
+
+  // 2. redirect to login page if no wx_gzh_openid
+  const wx_gzh_openid = pcData.wx_gzh_openid
+  const order_id = od.order_id
+  if(!wx_gzh_openid) {
+    redirectForWxGzhOpenid(order_id)
+    return
+  }
+
+  // 3. buy via wxpay
+  buyViaWxpayJSAPI(order_id, wx_gzh_openid)
+}
+
+
+function showCannotPayTip() {
+  cui.showModal({
+    title_key: "payment.cannot_pay",
+    content_key: "payment.cannot_pay_tip",
+    showCancel: false,
+  })
 }
 
 
@@ -93,15 +144,9 @@ async function loginWithWxGzhOAuthCode(
   rr.router.replace({ name: name3, params: param3 })
 
   // 4. get wx_gzh_openid
-  const url4 = APIs.LOGIN
-  const w4 = {
-    operateType: "wx_gzh_base",
-    state,
-    oauth_code: code,
-  }
-  const res4 = await liuReq.request<Res_UL_WxGzhBase>(url4, w4)
-  if(res4.code === "0000" && res4.data) {
-    pcData.wx_gzh_openid = res4.data.wx_gzh_openid
+  const res4 = await getWxGzhOpenid(code, state)
+  if(res4) {
+    pcData.wx_gzh_openid = res4
     fetchOrderData(pcData, { fr: "wx_gzh_oauth" })
     return
   }

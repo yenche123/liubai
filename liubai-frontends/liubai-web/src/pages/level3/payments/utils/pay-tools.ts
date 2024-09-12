@@ -1,9 +1,10 @@
 import thirdLink from "~/config/third-link";
 import APIs from "~/requests/APIs";
 import liuReq from "~/requests/liu-req";
-import { 
-  type Res_UserLoginInit,
-  type Res_UL_WxGzhBase,
+import type { 
+  Res_UserLoginInit,
+  Res_UL_WxGzhBase,
+  Res_PO_WxpayJsapi,
 } from "~/requests/req-types";
 import { 
   type Wxpay_Jsapi_Params,
@@ -12,7 +13,8 @@ import time from "~/utils/basic/time";
 import { BoolFunc } from "~/utils/basic/type-tool";
 import localCache from "~/utils/system/local-cache";
 import { waitWxJSBridge } from "~/utils/wait/wait-window-loaded";
-
+import cui from "~/components/custom-ui";
+import { showErrMsg } from "~/pages/level1/tools/show-msg";
 
 let initData: Res_UserLoginInit | undefined
 
@@ -123,10 +125,39 @@ export async function buyViaWxpayJSAPI(
   }
 
   // 3. fetch for param
+  const url3 = APIs.PAYMENT_ORDER
+  const w3 = {
+    order_id,
+    wx_gzh_openid,
+  }
+  cui.showLoading({ title_key: "payment.ready_to_pay" })
+  const res3 = await liuReq.request<Res_PO_WxpayJsapi>(url3, w3)
+  cui.hideLoading()
+
+
+  // 4. get param of Res_PO_WxpayJsapi
+  const code4 = res3.code
+  const data4 = res3.data
+  if(code4 === "E4004") {
+    showNoOrder()
+    return false
+  }
+  if(code4 === "E4006") {
+    showOrderExpired()
+    return false
+  }
+  if(code4 === "P0003") {
+    showOrderBeingPaid()
+    return false
+  }
+  if(code4 !== "0000" || !data4) {
+    showErrMsg("order", res3)
+    return false
+  }
   
-
-
-
+  // 5. pull wxpay
+  const res5 = await _pullWxpay(data4.param)
+  return res5
 }
 
 // pay by alipay.trade.wap.pay
@@ -134,4 +165,31 @@ export async function buyViaAlipayWap(
   order_id: string,
 ) {
   
+}
+
+function showOrderBeingPaid() {
+  cui.showModal({
+    title: "⌛",
+    content_key: "payment.order_being_paid",
+    showCancel: false,
+    isTitleEqualToEmoji: true,
+  })
+}
+
+function showOrderExpired() {
+  cui.showModal({
+    title: "😬",
+    content_key: "payment.order_expired",
+    showCancel: false,
+    isTitleEqualToEmoji: true,
+  })
+}
+
+function showNoOrder() {
+  cui.showModal({
+    title: "🫠",
+    content_key: "payment.order_not_found",
+    showCancel: false,
+    isTitleEqualToEmoji: true,
+  })
 }
