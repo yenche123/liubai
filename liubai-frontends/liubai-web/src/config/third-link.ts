@@ -83,6 +83,9 @@ export default {
   YOUTUBE_PLAYLIST: "https://www.youtube.com/playlist?list=__XXX__",
   YOUTUBE_VIDEOSERIES: "https://www.youtube.com/embed/videoseries?list=__XXX__",
 
+  // warp
+  WARP_DEV: "https://app.warp.dev/block/",
+
   // figma
   FIGMA_EMBED: "https://www.figma.com/embed?embed_host=share&url=__XXX__",
 

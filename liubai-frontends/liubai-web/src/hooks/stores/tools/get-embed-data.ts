@@ -225,6 +225,32 @@ export function getEmbedData(
     if(gMapsMatch1) return gMapsRes
   }
 
+  // warp embed
+  const warp1 = new URL(thirdLink.WARP_DEV)
+  const warpReg1 = /\/block\/embed\/\w{16,48}/g
+  const isWarp1 = valTool.isInDomain(h, warp1.hostname)
+  const warpMatch1 = p.match(warpReg1)
+  if(isWarp1 && warpMatch1) {
+    return {
+      link: originUrl,
+      otherData: { isWarp: true }
+    }
+  }
+
+  // warp share
+  const warpReg2 = /\/block\/\w{16,48}/g
+  const warpMatch2 = p.match(warpReg2)
+  if(isWarp1 && warpMatch2) {
+    const v = warpMatch2[0]?.substring(7)
+    if(v) {
+      url.pathname = `/block/embed/${v}`
+      return {
+        link: url.toString(),
+        otherData: { isWarp: true }
+      }
+    }
+  }
+
   // figma
   const figma = thirdLink.FIGMA_EMBED
   const figma1 = new URL(figma)
