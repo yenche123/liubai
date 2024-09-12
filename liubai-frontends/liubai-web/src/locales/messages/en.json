@@ -81,6 +81,7 @@
     "restore": "Restore",
     "tag": "Tag",
     "copy_code": "Copy code",
+    "copy_text": "Copy text",
     "format_clear": "Clear format",
     "attachment": "File",
     "cannot_sync": "It's not supported to sync with cloud on the pure local mode.",

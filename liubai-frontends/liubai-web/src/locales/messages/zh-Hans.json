@@ -81,6 +81,7 @@
     "restore": "恢复",
     "tag": "标签",
     "copy_code": "复制代码",
+    "copy_text": "复制文本",
     "format_clear": "清除样式",
     "attachment": "附件",
     "cannot_sync": "纯本地模式不支持同步到云端",

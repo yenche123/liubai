@@ -41,7 +41,10 @@
       >
         <svg-icon name="copy" color="#a0a0a0" class="cbrt-btn-svg"></svg-icon>
         <div class="liu-no-user-select cbrt-btn-text">
-          <span>{{ t('editor.copy_code') }}</span>
+          <span 
+            v-if="selectedLanguage === 'plaintext' || selectedLanguage === 'markdown'"
+          >{{ t('editor.copy_text') }}</span>
+          <span v-else>{{ t('editor.copy_code') }}</span>
         </div>
 
         <div class="cbrt-copied" :class="{ 'cbrt-copied_show': showCopied }">
