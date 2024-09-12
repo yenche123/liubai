@@ -138,8 +138,10 @@
 
   /** third-party */
   --wechat-green: #03C160;
+  --wechat-green-hover: #02a34e;
   --alpay-blue: #1777FF;
-
+  --alpay-blue-hover: #156ae0;
+  
   /** 状态色 */
   --liu-state-1: #7f766f;
   --liu-state-2: #7a8d2b;

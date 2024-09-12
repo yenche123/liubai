@@ -23,6 +23,7 @@ const SubscribePage = () => import("../pages/level3/payments/subscribe-page/subs
 const PaymentSuccessPage = () => import("../pages/level3/payments/success-page/success-page.vue")
 const A2hsPage = () => import("../pages/level3/a2hs-page/a2hs-page.vue")
 const ConnectWechat = () => import("../pages/connectors/connect-wechat/connect-wechat.vue")
+const PaymentPage = () => import("../pages/level3/payments/payment-page/payment-page.vue")
 
 export const routes: Array<RouteRecordRaw> = [
   /*************** 公共页面（不区分工作区） ***************/
@@ -87,6 +88,14 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       checkWorkspace: false,
       hasViceView: false,
+    },
+  },
+  {
+    path: "/payment/:order_id",
+    component: PaymentPage,
+    name: "payment",
+    meta: {
+      inApp: false,
     },
   },
   {

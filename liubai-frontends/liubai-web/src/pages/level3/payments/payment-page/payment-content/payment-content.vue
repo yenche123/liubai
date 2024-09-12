@@ -54,7 +54,7 @@ const { pcData, cha } = usePaymentContent()
 
   <!-- 3. wxpay -->
   <div v-else-if="cha?.isWeChat && cha?.isMobile && pcData.od && pcData.order_amount_txt"
-    class="pc-container"
+    class="liu-no-user-select pc-container"
   >
     <!-- title (like: 年度会员) -->
     <div class="pc-wxpay-title">
@@ -81,7 +81,7 @@ const { pcData, cha } = usePaymentContent()
     </div>
 
     <!-- pay button -->
-    <button class="pc-wxpay-button">
+    <button class="pc-btn pc-wxpay-button">
       <span>{{ t('payment.pay_immediately') }}</span>
     </button>
 
@@ -89,7 +89,7 @@ const { pcData, cha } = usePaymentContent()
 
   <!-- 4. alipay -->
   <div v-else-if="cha?.isAlipay && cha?.isMobile && pcData.od && pcData.order_amount_txt"
-    class="pc-container"
+    class="liu-no-user-select pc-container"
   >
     <!-- title (like: 年度会员) -->
     <div class="pc-wxpay-title">
@@ -116,11 +116,13 @@ const { pcData, cha } = usePaymentContent()
     </div>
 
     <!-- pay button -->
-    <button class="pc-alipay-button">
+    <button class="pc-btn pc-alipay-button">
       <span>{{ t('payment.pay_immediately') }}</span>
     </button>
 
   </div>
+
+  <!-- 5. qr code -->
 
 
 
@@ -138,7 +140,7 @@ const { pcData, cha } = usePaymentContent()
 
 .pc-square {
   width: 100%;
-  height: calc(100dvh - 140px);
+  height: calc(100dvh - 160px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -184,28 +186,32 @@ const { pcData, cha } = usePaymentContent()
   margin-block-end: 20px;
   text-align: center;
   width: 75%;
+  font-weight: 500;
+  position: relative;
+  line-height: 1.1;
 }
 
 .pc-wxpay-symbol {
   font-size: var(--inline-code-font);
-  vertical-align: text-top;
   font-weight: 700;
+  margin-inline-end: 4px;
+  vertical-align: super;
 }
 
 .pc-wxpay-payee {
   width: 100%;
   display: flex;
-  border-radius: 24px;
+  border-radius: 8px;
   padding: 20px;
   background-color: var(--card-bg);
   box-sizing: border-box;
-  margin-block-end: 20px;
+  margin-block-end: 30px;
   border: 1px solid var(--line-bottom);
 }
 
 .pcwp-title {
   font-size: var(--btn-font);
-  color: var(--main-note);
+  color: var(--main-code);
   flex: 1;
 }
 
@@ -213,33 +219,50 @@ const { pcData, cha } = usePaymentContent()
   flex: 2;
   text-align: right;
   font-size: var(--btn-font);
-  color: var(--main-normal);
+  color: var(--main-text);
+}
+
+.pc-btn {
+  color: #fafafa;
+  font-size: var(--btn-font);
+  width: 100%;
+  padding: 12px 24px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: .15s;
 }
 
 .pc-wxpay-button {
   background-color: var(--wechat-green);
-  color: #fafafa;
-  font-size: var(--btn-font);
-  width: 100%;
-  padding: 10px 20px;
-  box-sizing: border-box;
   border-radius: 8px;
 }
 
 .pc-alipay-button {
   position: absolute;
-  bottom: 10px;
+  bottom: 50px;
   left: 0;
   right: 0;
   background-color: var(--alpay-blue);
-  color: #fafafa;
-  font-size: var(--btn-font);
-  width: 100%;
-  padding: 10px 20px;
-  box-sizing: border-box;
   border-radius: 50px;
 }
 
+@media(hover: hover) {
+  .pc-wxpay-button:hover {
+    background-color: var(--wechat-green-hover);
+  }
+
+  .pc-alipay-button:hover {
+    background-color: var(--alpay-blue-hover);
+  }
+}
+
+.pc-wxpay-button:active {
+  background-color: var(--wechat-green-hover);
+}
+
+.pc-alipay-button:active {
+  background-color: var(--alpay-blue-hover);
+}
 
 
 </style>
