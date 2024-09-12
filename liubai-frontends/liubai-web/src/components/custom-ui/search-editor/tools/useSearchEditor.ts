@@ -200,7 +200,8 @@ function listenInputChange() {
       mode: seData.mode,
       excludeThreads: seData.excludeThreads,
     }
-    seData.thirdList = searchController.searchThird(opt1)
+    // hide third list because it's not useful
+    // seData.thirdList = searchController.searchThird(opt1)
 
     // 2. 搜索结果
     console.time("searchInner")
