@@ -6,7 +6,11 @@ import { pageStates } from "~/utils/atom"
 import APIs from "~/requests/APIs";
 import liuReq from "~/requests/liu-req";
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
-import { Res_OrderData, Res_UL_WxGzhBase, type Res_PO_GetOrder } from "~/requests/req-types";
+import type { 
+  Res_OrderData, 
+  Res_UL_WxGzhBase, 
+  Res_PO_GetOrder,
+} from "~/requests/req-types";
 import liuApi from "~/utils/liu-api";
 import typeCheck from "~/utils/basic/type-check";
 import localCache from "~/utils/system/local-cache";

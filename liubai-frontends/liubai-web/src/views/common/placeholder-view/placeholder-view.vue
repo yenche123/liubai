@@ -102,7 +102,7 @@ const { enable, show } = usePlaceholderView(props)
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 30px;
+      margin-block-end: 30px;
 
       .pv-emoji {
         width: 80px;
