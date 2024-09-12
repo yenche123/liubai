@@ -16,6 +16,7 @@ import { initAnalytics } from "./tools/initAnalytics";
 import { type LocalOnceData } from "~/utils/system/tools/types";
 import { useScreenOrientation } from "./useVueUse";
 import time from "~/utils/basic/time";
+import { initAwake } from "./tools/initAwake";
 
 // 监听和处理一些全局的事务，比如路由变化
 
@@ -60,6 +61,9 @@ export function useApp() {
 
   // init service worker
   initServiceWorker()
+
+  // 在一段时间后，监听页面被显示
+  initAwake()
 
   return {
     cha,

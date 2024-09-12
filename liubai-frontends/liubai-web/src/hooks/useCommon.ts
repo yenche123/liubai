@@ -75,6 +75,7 @@ export function useMyProfile() {
   return { myProfile }
 }
 
+// 当页面 activate 且 syncNum + 1 时，让 activeSyncNum = syncNum
 export function useActiveSyncNum() {
   const activeSyncNum = ref(0)
   const syncNum = CloudEventBus.getSyncNum()
@@ -100,6 +101,7 @@ export interface AwakeNumProps {
   [key: string]: any
 }
 
+// 当页面 activate 或 syncNum + 1 时，让 awakeNum + 1
 export function useAwakeNum(
   ms: number = 3000,
   props?: AwakeNumProps,

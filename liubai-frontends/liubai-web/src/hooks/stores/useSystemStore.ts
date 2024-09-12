@@ -50,6 +50,10 @@ export const useSystemStore = defineStore("system", () => {
     setClassForFontSize(local_font_size)
   }
 
+  const checkTheme = () => {
+    toCheckTheme(local_theme, supported_theme)
+  }
+
 
   return {
     local_theme,
@@ -60,11 +64,44 @@ export const useSystemStore = defineStore("system", () => {
     setTheme,
     setLanguage,
     setFontSize,
+    checkTheme,
   }
 
 })
 
 export type UseSystemType = ReturnType<typeof useSystemStore>
+
+function toCheckTheme(
+  local_theme: Ref<LocalTheme>,
+  supported_theme: Ref<SupportedTheme>,
+) {
+  const localPf = localCache.getPreference()
+  const _theme = localPf.theme
+
+  let newLocal: LocalTheme
+  let newSupported: SupportedTheme
+
+  if(!_theme || _theme === "system") {
+    newLocal = "system"
+    newSupported = liuApi.getThemeFromSystem()
+  }
+  else if(_theme === "auto") {
+    newLocal = "auto"
+    newSupported = liuApi.getThemeFromTime()
+  }
+  else {
+    newLocal = _theme
+    newSupported = _theme
+  }
+
+  if(local_theme.value !== newLocal) {
+    local_theme.value = newLocal
+  }
+  if(supported_theme.value !== newSupported) {
+    supported_theme.value = newSupported
+    setClassForTheme(supported_theme)
+  }
+}
 
 function toSetSupportedTheme(
   theme: LocalTheme,

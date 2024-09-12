@@ -12,6 +12,7 @@ import {
   useDocumentVisibility, 
   useThrottleFn,
   usePageLeave,
+  useWindowFocus,
 } from "~/hooks/useVueUse";
 import { 
   fetchHelloWorld, 
@@ -71,11 +72,12 @@ class CloudEventBus {
     const visibility = useDocumentVisibility()
     const hasLeftPage = usePageLeave()
     const nStore = useNetworkStore()
+    const focused = useWindowFocus()
     const { level: netLevel } = storeToRefs(nStore)
 
-    watch([netLevel, visibility, hasLeftPage], (
-      [newV1, newV2, newV3],
-      [oldV1, oldV2, oldV3],
+    watch([netLevel, visibility, hasLeftPage, focused], (
+      [newV1, newV2, newV3, newV4],
+      [oldV1, oldV2, oldV3, oldV4],
     ) => {
 
       // 当前分页被隐藏，并且非刚启动时（刚启动时，oldV2 为 undefined）
@@ -99,6 +101,11 @@ class CloudEventBus {
 
       // had left the window and now it's back
       if(!newV3 && oldV3) {
+        preMain()
+        return
+      }
+
+      if(newV4 && !oldV4) {
         preMain()
         return
       }
