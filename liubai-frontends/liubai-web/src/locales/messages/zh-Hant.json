@@ -426,7 +426,9 @@
     "order_paid": "訂單已支付",
     "order_closed": "訂單已關閉",
     "payee": "收款方",
-    "pay_immediately": "立即支付"
+    "pay_immediately": "立即支付",
+    "content1": "微信還是支付寶",
+    "content2": "請使用支付寶或微信掃描支付"
   },
   "a2hs": {
     "title": "加入到桌面",

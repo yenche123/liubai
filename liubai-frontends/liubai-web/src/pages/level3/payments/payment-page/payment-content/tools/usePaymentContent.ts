@@ -15,6 +15,7 @@ import liuApi from "~/utils/liu-api";
 import typeCheck from "~/utils/basic/type-check";
 import localCache from "~/utils/system/local-cache";
 import { deviceChaKey } from "~/utils/provide-keys";
+import valTool from "~/utils/basic/val-tool";
 
 export function usePaymentContent() {
   const rr = useRouteAndLiuRouter()
@@ -42,15 +43,14 @@ function initPaymentContent(
 
     // 1. get & set order_id
     const { order_id } = newV.params
-    if(!order_id) return
-    if(typeof order_id !== "string") return
+    if(!valTool.isStringWithVal(order_id)) return
     if(pcData.order_id === order_id) return
     pcData.order_id = order_id
 
     // 2. check out code from wx gzh oAuth
     const { code } = newV.query
     const cha = liuApi.getCharacteristic()
-    if(code && typeof code === "string") {
+    if(valTool.isStringWithVal(code)) {
       if(cha.isWeChat) {
         loginWithWxGzhOAuthCode(pcData, rr)
         return
@@ -173,7 +173,7 @@ function setNewOrderData(
 function resetOrderData(
   pcData: PcData,
 ) {
-  pcData.od = undefined
+  // pcData.od = undefined
   pcData.order_amount_txt = undefined
 
 }

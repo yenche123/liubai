@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { usePaymentContent } from "./tools/usePaymentContent"
+import { useQRCode } from "~/hooks/useVueUse"
 
 const { t } = useI18n()
 const { pcData, cha } = usePaymentContent()
+
+const qrcode = useQRCode(() => {
+  const order_id = pcData.od?.order_id
+  if(!order_id) return ""
+  return location.href
+})
 
 </script>
 <template>
@@ -123,6 +130,23 @@ const { pcData, cha } = usePaymentContent()
   </div>
 
   <!-- 5. qr code -->
+  <div v-else-if="pcData.od?.order_id && qrcode" class="liu-no-user-select pc-container">
+    <div class="pc-square">
+
+      <div class="pc-qrcode">
+        <img :src="qrcode" class="pc-qrcode-img">
+      </div>
+
+      <div class="pcq-title">
+        <span>{{ t('payment.content1') }}</span>
+      </div>
+
+      <div class="pcq-desc">
+        <span>{{ t('payment.content2') }}</span>
+      </div>
+
+    </div>
+  </div>
 
 
 
@@ -245,6 +269,44 @@ const { pcData, cha } = usePaymentContent()
   background-color: var(--alpay-blue);
   border-radius: 50px;
 }
+
+.pc-qrcode {
+  width: 200px;
+  height: 200px;
+  background-color: #fff;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-block-end: 30px;
+  overflow: hidden;
+  position: relative;
+
+  .pc-qrcode-img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.pcq-title {
+  font-weight: 700;
+  font-size: var(--title-font);
+  color: var(--main-normal);
+  text-align: center;
+  width: 75%;
+  margin-block-end: 10px;
+  letter-spacing: 1px;
+}
+
+.pcq-desc {
+  width: 90%;
+  text-align: center;
+  font-size: var(--btn-font);
+  color: var(--main-normal);
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
 
 @media(hover: hover) {
   .pc-wxpay-button:hover {

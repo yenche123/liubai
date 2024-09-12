@@ -426,7 +426,9 @@
     "order_paid": "Order Paid",
     "order_closed": "Order Closed",
     "payee": "Payee",
-    "pay_immediately": "Pay Now"
+    "pay_immediately": "Pay Now",
+    "content1": "WeChat or Alipay",
+    "content2": "Please scan the code with Alipay or WeChat"
   },
   "a2hs": {
     "title": "Add to Home",
