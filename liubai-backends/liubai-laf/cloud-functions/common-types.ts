@@ -1173,6 +1173,13 @@ export interface Config_WeCom_Qynb {
   lastGetStamp?: number
 }
 
+export interface LiuWxpayCert {
+  serial_no: string
+  effective_time: string
+  expire_time: string
+  cert_pem: string
+}
+
 export interface Table_Config extends BaseTable {
 
   // RSA Key Pair in PEM format
@@ -1190,6 +1197,8 @@ export interface Table_Config extends BaseTable {
   // wecom config for company internal development
   // qynb means 企业内部（开发）
   wecom_qynb?: Config_WeCom_Qynb
+
+  wxpay_certs?: LiuWxpayCert[]
 
 }
 
@@ -2482,4 +2491,30 @@ export interface Wxpay_Order_Jsapi {
   settle_info?: {
     profit_sharing?: boolean
   }
+}
+
+export interface WxpayReqAuthorizationOpt {
+  method: "POST" | "GET",
+  path: string,
+  apiclient_key: string,
+  apiclient_serial_no: string,
+  body?: Record<string, any>,
+}
+
+export interface Wxpay_Encrypt_Certificate {
+  algorithm: string
+  nonce: string
+  associated_data: string
+  ciphertext: string
+}
+
+export interface Wxpay_Cert_Info {
+  serial_no: string
+  effective_time: string
+  expire_time: string
+  encrypt_certificate: Wxpay_Encrypt_Certificate
+}
+
+export interface Res_Wxpay_Download_Cert {
+  data: Wxpay_Cert_Info[]
 }

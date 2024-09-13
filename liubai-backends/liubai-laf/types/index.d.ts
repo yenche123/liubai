@@ -96,6 +96,7 @@ declare global {
       // 微信支付
       LIU_WXPAY_MCH_ID?: string
       LIU_WXPAY_NOTIFY_URL?: string       // callback url from wxpay
+      LIU_WXPAY_API_V3_KEY?: string       // api v3 key
 
       
 

@@ -1,12 +1,14 @@
+// Function Name: payment-order
+
 import cloud from "@lafjs/cloud"
 import { 
   verifyToken,
   checker,
   createAvailableOrderId,
   getDocAddId,
-  valTool,
   liuReq,
   transformStampIntoRFC3339,
+  WxpayHandler,
 } from "@/common-util"
 import {
   type LiuErrReturn,
@@ -20,8 +22,9 @@ import {
   type Wxpay_Jsapi_Params,
   type Wxpay_Order_Jsapi,
   type Res_PO_WxpayJsapi,
+  type Res_PO_GetOrder,
+  type WxpayReqAuthorizationOpt,
   Sch_Param_PaymentOrder,
-  Res_PO_GetOrder,
 } from "@/common-types"
 import * as vbot from "valibot"
 import * as crypto from "crypto"
@@ -508,8 +511,19 @@ async function wxpayOrderByJsapi(
   if(param.attach) body.attach = param.attach
   if(time_expire) body.time_expire = time_expire
 
-  const Authorization = getWxpayReqAuthorization("POST", body, WXPAY_JSAPI_PATH)
-  const headers = { Authorization }
+  const opt: WxpayReqAuthorizationOpt = {
+    method: "POST",
+    path: WXPAY_JSAPI_PATH,
+    apiclient_key: wxpay_apiclient_key,
+    apiclient_serial_no: wxpay_apiclient_serial_no,
+    body,
+  }
+  const Authorization = WxpayHandler.getWxpayReqAuthorization(opt)
+  if(!Authorization) {
+    console.warn("fail to get Authorization")
+    return
+  }
+  const headers = WxpayHandler.getWxpayReqHeaders({ Authorization })
   const res = await liuReq(WXPAY_JSAPI_ORDER, body, { headers })
   const { code, data } = res
   if(code !== "0000" || !data) {
@@ -520,39 +534,6 @@ async function wxpayOrderByJsapi(
   const prepay_id = data?.prepay_id as string
   return prepay_id
 }
-
-function getWxpayReqAuthorization(
-  method: "POST" | "GET",
-  body: Record<string, any>,
-  path: string,
-) {
-  const timestamp = Math.floor(getNowStamp() / 1000)
-  const nonce = createPaymentNonce()
-  const bodyStr = valTool.objToStr(body)
-  const msg = `${method}\n${path}\n${timestamp}\n${nonce}\n${bodyStr}\n`
-
-  const tmpSign = crypto.createSign("sha256WithRSAEncryption").update(msg)
-  const signature = tmpSign.sign(wxpay_apiclient_key, "base64")
-
-  console.log("getWxpayReqAuthorization signature: ")
-  console.log(signature)
-
-  const _env = process.env
-  const wx_mchid = _env.LIU_WXPAY_MCH_ID as string
-
-  let reqAuth = `WECHATPAY2-SHA256-RSA2048 `
-  reqAuth += `mchid="${wx_mchid}",`
-  reqAuth += `nonce_str="${nonce}",`
-  reqAuth += `signature="${signature}",`
-  reqAuth += `timestamp="${timestamp}",`
-  reqAuth += `serial_no="${wxpay_apiclient_serial_no}"`
-
-  console.log("getWxpayReqAuthorization reqAuth: ")
-  console.log(reqAuth)
-
-  return reqAuth
-}
-
 
 function getWxpayJsapiParams(
   prepay_id: string,

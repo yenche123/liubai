@@ -36,6 +36,10 @@ import type {
   Wx_Res_GzhUserInfo,
   Wx_Res_Common,
   Wx_Res_GzhOAuthAccessToken,
+  WxpayReqAuthorizationOpt,
+  Wxpay_Cert_Info,
+  Wxpay_Encrypt_Certificate,
+  LiuWxpayCert,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -49,6 +53,7 @@ import {
   createEncNonce, 
   createImgId, 
   createOrderId,
+  createPaymentNonce,
 } from "@/common-ids"
 import { 
   getNowStamp, 
@@ -209,6 +214,24 @@ const encode_URI_component = (uri: string | boolean | number) => {
   return str
 }
 
+const hasValue = <T>(
+  val: any, 
+  type: string,
+  checkLength: boolean = true,
+): val is T => {
+  if(val && typeof val === type) {
+    if(checkLength && Array.isArray(val)) {
+      if(val.length < 1) return false
+    }
+    return true
+  }
+  return false
+}
+
+const isStringWithVal = (val: any): val is string => {
+  return hasValue<string>(val, "string")
+}
+
 export const valTool = {
   waitMilli,
   strToObj,
@@ -218,6 +241,8 @@ export const valTool = {
   format0,
   copyObject,
   encode_URI_component,
+  hasValue,
+  isStringWithVal,
 }
 
 
@@ -1833,7 +1858,7 @@ export async function getWwQynbAccessToken() {
   return accessToken
 }
 
-/*************** About WeChat ****************/
+/*************** Functions about wechat starts ****************/
 export async function getWeChatAccessToken() {
   const col = db.collection("Config")
   const res = await col.getOne<Table_Config>()
@@ -1985,6 +2010,128 @@ export async function untagWxUser(
   }
   return res
 }
+
+/*************** Functions about wechat ends ****************/
+
+/*************** Functions about wxpay starts ****************/
+export class WxpayHandler {
+
+  static getWxpayReqAuthorization(
+    opt: WxpayReqAuthorizationOpt
+  ) {
+    const { method, path, apiclient_key, apiclient_serial_no, body } = opt
+    const timestamp = Math.floor(getNowStamp() / 1000)
+    const nonce = createPaymentNonce()
+    let msg = `${method}\n${path}\n${timestamp}\n${nonce}\n`
+    if(body) {
+      const bodyStr = valTool.objToStr(body)
+      msg += `${bodyStr}\n`
+    }
+    if(method === "GET") {
+      msg += "\n"
+    }
+  
+    const tmpSign = crypto.createSign("sha256WithRSAEncryption").update(msg)
+    const signature = tmpSign.sign(apiclient_key, "base64")
+  
+    const _env = process.env
+    const wx_mchid = _env.LIU_WXPAY_MCH_ID as string
+    if(!wx_mchid) {
+      console.warn("wx_mchid is not set")
+      return ""
+    }
+  
+    let reqAuth = `WECHATPAY2-SHA256-RSA2048 `
+    reqAuth += `mchid="${wx_mchid}",`
+    reqAuth += `nonce_str="${nonce}",`
+    reqAuth += `signature="${signature}",`
+    reqAuth += `timestamp="${timestamp}",`
+    reqAuth += `serial_no="${apiclient_serial_no}"`
+  
+    return reqAuth
+  }
+
+  static getWxpayReqHeaders(
+    headers: Record<string, string>,
+  ) {
+    const h = {
+      "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+      ...headers,
+    }
+    return h
+  }
+
+  static decryptWxpayCert(
+    encrypt_certificate: Wxpay_Encrypt_Certificate,
+  ) {
+    const {
+      algorithm,
+      nonce,
+      associated_data,
+      ciphertext,
+    } = encrypt_certificate
+  
+    if(algorithm !== "AEAD_AES_256_GCM") {
+      console.warn("algorithm is not supported: ", algorithm)
+      return
+    }
+  
+    const api_v3_key = process.env.LIU_WXPAY_API_V3_KEY
+    if(!api_v3_key) {
+      console.warn("no api_v3_key")
+      return
+    }
+  
+    const tagLength = 16
+    const encryptedBuffer = Buffer.from(ciphertext, 'base64')
+    const tag = encryptedBuffer.subarray(encryptedBuffer.length - tagLength)
+    const data = encryptedBuffer.subarray(0, encryptedBuffer.length - tagLength)
+  
+    const decipher = crypto.createDecipheriv("aes-256-gcm", api_v3_key, nonce)
+  
+    try {
+      decipher.setAuthTag(tag)
+      decipher.setAAD(Buffer.from(associated_data))
+    }
+    catch(err) {
+      console.warn("setAuthTag or setAAD failed")
+      console.log(err)
+      return
+    }
+  
+    let decrypted = ""
+    try {
+      decrypted = decipher.update(data, undefined, 'utf8');
+    }
+    catch(err) {
+      console.warn("fail to decrypt with AES 256 GCM")
+      console.log(err)
+      return
+    }
+  
+    return decrypted
+  }
+
+  static getLiuWxpayCert(
+    v: Wxpay_Cert_Info,
+  ) {
+    // 1. process of decrypt
+    const decrypted = this.decryptWxpayCert(v.encrypt_certificate)
+    if(!decrypted) return
+  
+    // 2. construct LiuWxpayCert
+    const obj2: LiuWxpayCert = {
+      serial_no: v.serial_no,
+      effective_time: v.effective_time,
+      expire_time: v.expire_time,
+      cert_pem: decrypted,
+    }
+    
+    return obj2
+  }
+}
+/*************** Functions about wxpay ends ****************/
 
 
 /*************** About order or payment ***************/

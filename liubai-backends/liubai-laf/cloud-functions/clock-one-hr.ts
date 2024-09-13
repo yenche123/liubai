@@ -35,6 +35,9 @@ export async function main(ctx: FunctionContext) {
   // 4. get accessToken from wecom
   const wecom_qynb = await handleWeComQynbConfig(cfg)
 
+  // 5. get wxpay certs
+  
+
   // n. update config
   await updateGlobalConfig(cfg, { wechat_gzh, wecom_qynb })
 
