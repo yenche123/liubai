@@ -11,7 +11,7 @@ import {
   type Res_Wxpay_Download_Cert,
   type LiuWxpayCert,
 } from '@/common-types'
-import { liuReq, valTool, WxpayHandler } from '@/common-util'
+import { liuFetch, liuReq, valTool, WxpayHandler } from '@/common-util'
 import {
   wxpay_apiclient_key, 
   wxpay_apiclient_serial_no,
@@ -270,16 +270,34 @@ async function handleWxpayCerts(): Promise<LiuWxpayCert[] | undefined> {
   
   // 3. to fetch
   const url3 = WXPAY_DOMAIN + WXPAY_DOWNLOAD_CERT_PATH
-  const res3 = await liuReq<Res_Wxpay_Download_Cert>(url3, undefined, { headers, method: "GET" })
+  const res3 = await liuFetch<Res_Wxpay_Download_Cert>(url3, { headers, method: "GET" })
   const data3 = res3.data
-  if(!data3?.data) {
-    console.warn("fail to get encrypted certs from wxpay")
+  if(res3.code !== "0000" || !data3) {
+    console.warn("fail to fetch certs in handleWxpayCerts")
+    console.log("headers: ")
+    console.log(headers)
     console.log(res3)
     return
   }
-  
-  // 4. decrypt
-  const list = data3.data
+
+  // 4. verify sign
+  const err4 = await WxpayHandler.verifySignByLiuFetch(data3)
+  if(err4) {
+    console.warn("verify sign failed in handleWxpayCerts")
+    console.log(err4)
+    return
+  }
+
+  // 5. get json from data3
+  const json5 = data3.json
+  if(!json5) {
+    console.warn("no json5 in handleWxpayCerts")
+    console.log(data3)
+    return
+  }
+
+  // 6. decrypt
+  const list = json5.data
   const certs: LiuWxpayCert[] = []
   for(let i=0; i<list.length; i++) {
     const v = list[i]

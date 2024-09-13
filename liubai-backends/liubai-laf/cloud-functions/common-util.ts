@@ -41,6 +41,7 @@ import type {
   Wxpay_Encrypt_Certificate,
   LiuWxpayCert,
   WxpayVerifySignOpt,
+  LiuErrReturn,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -307,10 +308,10 @@ export async function liuFetch<T = any>(
 
   let json: T | undefined
   try {
-    json = await res.json()
+    json = valTool.strToObj(text)
   }
   catch(err) {
-    console.warn("res.json() err")
+    console.warn("getting json failed")
     console.log(err)
   }
 
@@ -2245,11 +2246,68 @@ export class WxpayHandler {
     // 3. verify
     const bodystr = typeof body === "string" ? body : objToStr(body)
     const data = `${timestamp}\n${nonce}\n${bodystr}\n`
-    const verifier = crypto.createVerify("RSA-SHA256")
-    verifier.update(data)
-    const res3 = verifier.verify(publicKey, signature, "base64")
-    console.log("verify result: ", res3)
-    return res3
+    try {
+      const verifier = crypto.createVerify("RSA-SHA256")
+      verifier.update(data)
+      const res3 = verifier.verify(publicKey, signature, "base64")
+      return res3
+    }
+    catch(err) {
+      console.warn("verify sign failed")
+      console.log(err)
+    }
+    
+    return false
+  }
+
+  static async verifySignByLiuFetch(
+    data: Res_LiuFetch<any>
+  ): Promise<LiuErrReturn | undefined> {
+
+    // 1. check out body
+    const body = data.text
+    if(!body) {
+      console.warn("no text of data in verifySignByLiuFetch")
+      return { code: "E5004", errMsg: "no body" }
+    }
+
+    const h = data.headers
+
+    // 2. get wxchatpay-xxxxx from headers
+    const signature = h.get("wechatpay-signature")
+    if(!signature) {
+      console.warn("no signature in verifySignByLiuFetch")
+      return { code: "E5004", errMsg: "no signature" }
+    }
+    const serial = h.get("wechatpay-serial")
+    if(!serial) {
+      return { code: "E5004", errMsg: "no serial" }
+    }
+    const timestamp = h.get("wechatpay-timestamp")
+    if(!timestamp) {
+      return { code: "E5004", errMsg: "no timestamp" }
+    }
+    const nonce = h.get("wechatpay-nonce")
+    if(!nonce) {
+      return { code: "E5004", errMsg: "no nonce" }
+    }
+    // console.log("signature: ", signature)
+    // console.log("serial: ", serial)
+    // console.log("timestamp: ", timestamp)
+    // console.log("nonce: ", nonce)
+
+    // 3. to verify
+    const opt: WxpayVerifySignOpt = {
+      signature,
+      timestamp,
+      nonce,
+      body,
+      serial,
+    }
+    const res = await this.verifySign(opt)
+    if(!res) {
+      return { code: "E4003", errMsg: "verifySign failed" }
+    }
   }
 
 
