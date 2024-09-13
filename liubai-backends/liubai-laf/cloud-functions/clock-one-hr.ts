@@ -7,11 +7,22 @@ import {
   type Config_WeCom_Qynb,
   type Config_WeChat_GZH, 
   type Table_Config,
+  type WxpayReqAuthorizationOpt,
+  type Res_Wxpay_Download_Cert,
+  type LiuWxpayCert,
 } from '@/common-types'
-import { liuReq, valTool } from '@/common-util'
+import { liuReq, valTool, WxpayHandler } from '@/common-util'
+import {
+  wxpay_apiclient_key, 
+  wxpay_apiclient_serial_no,
+} from "@/secret-config"
 
 const API_WECHAT_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token"
 const API_WECOM_ACCESS_TOKEN = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
+
+// 微信支付 下载平台证书
+const WXPAY_DOMAIN = "https://api.mch.weixin.qq.com"
+const WXPAY_DOWNLOAD_CERT_PATH = `/v3/certificates`
 
 const db0 = cloud.mongo.db
 const db = cloud.database()
@@ -36,10 +47,10 @@ export async function main(ctx: FunctionContext) {
   const wecom_qynb = await handleWeComQynbConfig(cfg)
 
   // 5. get wxpay certs
-  
+  const wxpay_certs = await handleWxpayCerts()
 
   // n. update config
-  await updateGlobalConfig(cfg, { wechat_gzh, wecom_qynb })
+  await updateGlobalConfig(cfg, { wechat_gzh, wecom_qynb, wxpay_certs })
 
   // console.log("---------- End clock-one-hr ----------")
   // console.log("                                      ")
@@ -51,6 +62,7 @@ export async function main(ctx: FunctionContext) {
 interface UpdateCfgOpt {
   wechat_gzh?: Config_WeChat_GZH
   wecom_qynb?: Config_WeCom_Qynb
+  wxpay_certs?: LiuWxpayCert[]
 }
 
 async function updateGlobalConfig(
@@ -233,4 +245,50 @@ async function clearTokens() {
   return true
 }
 
+async function handleWxpayCerts(): Promise<LiuWxpayCert[] | undefined> {
+  // 0. check out if need
+  const _env = process.env
+  if(!_env.LIU_WXPAY_API_V3_KEY) return
+  if(!wxpay_apiclient_key) return
+  if(!wxpay_apiclient_serial_no) return
+
+  // 1. get authorization
+  const opt1: WxpayReqAuthorizationOpt = {
+    method: "GET",
+    path: WXPAY_DOWNLOAD_CERT_PATH,
+    apiclient_key: wxpay_apiclient_key,
+    apiclient_serial_no: wxpay_apiclient_serial_no,
+  }
+  const Authorization = WxpayHandler.getWxpayReqAuthorization(opt1)
+  if(!Authorization) {
+    console.warn("fail to get Authorization in handleWxpayCerts")
+    return
+  }
+
+  // 2. get headers
+  const headers = WxpayHandler.getWxpayReqHeaders({ Authorization })
+  
+  // 3. to fetch
+  const url3 = WXPAY_DOMAIN + WXPAY_DOWNLOAD_CERT_PATH
+  const res3 = await liuReq<Res_Wxpay_Download_Cert>(url3, undefined, { headers, method: "GET" })
+  const data3 = res3.data
+  if(!data3?.data) {
+    console.warn("fail to get encrypted certs from wxpay")
+    console.log(res3)
+    return
+  }
+  
+  // 4. decrypt
+  const list = data3.data
+  const certs: LiuWxpayCert[] = []
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    const cert = WxpayHandler.getLiuWxpayCert(v)
+    if(cert) {
+      certs.push(cert)
+    }
+  }
+
+  return certs
+}
 
