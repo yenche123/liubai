@@ -40,6 +40,7 @@ import type {
   Wxpay_Cert_Info,
   Wxpay_Encrypt_Certificate,
   LiuWxpayCert,
+  WxpayVerifySignOpt,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -254,6 +255,72 @@ export function getIp(ctx: FunctionContext) {
 
   const ip2 = ctx?.headers?.['x-forwarded-for']
   if(ip2 && typeof ip2 === "string") return ip2
+}
+
+interface Res_LiuFetch<T> {
+  status: number
+  headers: any
+  text?: string
+  json?: T
+}
+
+export async function liuFetch<T = any>(
+  url: string,
+  reqInit: RequestInit,
+): Promise<LiuRqReturn<Res_LiuFetch<T>>> {
+  let res: Response
+  try {
+    res = await fetch(url, reqInit)
+  }
+  catch(err: any) {
+    console.warn("fetch err")
+    console.log(err)
+    const errMsg: unknown = err.toString?.()
+    const errName = err.name
+    let errMsg2 = ""  // 转成小写的 errMsg
+
+    if(typeof errMsg === "string") {
+      errMsg2 = errMsg.toLowerCase()
+    }
+    if(errName === "TimeoutError") {
+      return { code: "F0002" }
+    }
+    if(errName === "AbortError") {
+      return { code: "F0003" }
+    }
+    if(errName === "TypeError") {
+      if(errMsg2.includes("failed to fetch")) {
+        return { code: "B0001" }
+      }
+    }
+    return { code: "C0001" }
+  }
+
+  let text: string | undefined
+  try {
+    text = await res.text()
+  }
+  catch(err) {
+    console.warn("res.text() err")
+    return { code: "E5001", errMsg: "res.text() err" }
+  }
+
+  let json: T | undefined
+  try {
+    json = await res.json()
+  }
+  catch(err) {
+    console.warn("res.json() err")
+    console.log(err)
+  }
+
+  const data = {
+    status: res.status,
+    headers: res.headers,
+    text,
+    json,
+  }
+  return { code: "0000", data }
 }
 
 export async function liuReq<T = any>(
@@ -2055,6 +2122,8 @@ export class WxpayHandler {
     headers: Record<string, string>,
   ) {
     const h = {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
       "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
       ...headers,
@@ -2130,6 +2199,60 @@ export class WxpayHandler {
     
     return obj2
   }
+
+
+  private static certs: LiuWxpayCert[] = []
+  private static lastGetCertsStamp = 0
+  private static async getWxpayCerts() {
+    const _certs = this.certs
+    const stamp = this.lastGetCertsStamp
+    if(_certs.length > 0 && isWithinMillis(stamp, MIN_5)) {
+      return _certs
+    }
+
+    const cCol = db.collection("Config")
+    const res = await cCol.getOne<Table_Config>()
+    const d = res.data
+    const list = d?.wxpay_certs
+    if(!list) {
+      console.warn("no wxpay certs")
+      return []
+    }
+
+    this.lastGetCertsStamp = getNowStamp()
+    this.certs = list
+    return list
+  }
+
+  static async verifySign(opt: WxpayVerifySignOpt) {
+    // 1. get api_v3_key  
+    const api_v3_key = process.env.LIU_WXPAY_API_V3_KEY
+    if(!api_v3_key) {
+      console.warn("no api_v3_key")
+      return false
+    }
+
+    // 2. get the specific cert
+    const { timestamp, nonce, body, serial, signature } = opt
+    const certs = await this.getWxpayCerts()
+    const theCert = certs.find(v => v.serial_no === serial)
+    if(!theCert) {
+      console.warn("no cert found for serial: ", serial)
+      return false
+    }
+    const publicKey = theCert.cert_pem
+
+    // 3. verify
+    const bodystr = typeof body === "string" ? body : objToStr(body)
+    const data = `${timestamp}\n${nonce}\n${bodystr}\n`
+    const verifier = crypto.createVerify("RSA-SHA256")
+    verifier.update(data)
+    const res3 = verifier.verify(publicKey, signature, "base64")
+    console.log("verify result: ", res3)
+    return res3
+  }
+
+
 }
 /*************** Functions about wxpay ends ****************/
 

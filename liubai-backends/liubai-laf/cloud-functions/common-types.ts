@@ -2518,3 +2518,11 @@ export interface Wxpay_Cert_Info {
 export interface Res_Wxpay_Download_Cert {
   data: Wxpay_Cert_Info[]
 }
+
+export interface WxpayVerifySignOpt {
+  timestamp: string | number
+  nonce: string
+  body: Record<string, any> | string
+  serial: string
+  signature: string
+}
