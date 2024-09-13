@@ -27,7 +27,8 @@ export async function initAnalytics() {
     CF_WEB_ANALYTICS_SENDTO,
     PLAUSIBLE_DOMAIN,
     PLAUSIBLE_SRC,
-    MATOMO_URL,
+    GOATCOUNTER_DATA,
+    GOATCOUNTER_SRC,
   } = _env
 
   if(BUGFENDER_APIURL && BUGFENDER_BASEURL && BUGFENDER_APPKEY) {
@@ -62,29 +63,22 @@ export async function initAnalytics() {
     initPlausible(PLAUSIBLE_SRC, PLAUSIBLE_DOMAIN)
   }
 
-  if(MATOMO_URL) {
-    initMatomo(MATOMO_URL)
+  if(GOATCOUNTER_DATA && GOATCOUNTER_SRC) {
+    initGoatCounter(GOATCOUNTER_DATA, GOATCOUNTER_SRC)
   }
 
 }
 
-function initMatomo(
-  url: string,
+function initGoatCounter(
+  data: string,
+  src: string,
 ) {
-  // @ts-expect-error matomo
-  const _paq = window._paq = window._paq || []
-  _paq.push(['trackPageView'])
-  _paq.push(['enableLinkTracking'])
-  _paq.push(['setTrackerUrl', url + 'matomo.php'])
-  _paq.push(['setSiteId', '1'])
-
   const scriptEl = document.createElement('script')
+  scriptEl.src = src
   scriptEl.async = true
-  scriptEl.src = url + 'matomo.js'
-  
+  scriptEl.setAttribute("data-goatcounter", data)
   insertScript(scriptEl)
 }
-
 
 async function initBugFender(
   apiURL: string,

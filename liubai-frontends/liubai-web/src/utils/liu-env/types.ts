@@ -70,12 +70,13 @@ export interface LiuSystemEnv {
   PLAUSIBLE_DOMAIN?: string
   PLAUSIBLE_SRC?: string
 
-  // matomo
-  MATOMO_URL?: string
-
   // openreplay
   OPENREPLAY_PROJECT_KEY?: string
   OPENREPLAY_INGEST_POINT?: string
+
+  // goatcounter
+  GOATCOUNTER_DATA?: string
+  GOATCOUNTER_SRC?: string
 
   // connectors
   CONNECTORS?: boolean

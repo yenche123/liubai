@@ -78,12 +78,13 @@ function getEnv(): LiuSystemEnv {
   const PLAUSIBLE_DOMAIN = import.meta.env.VITE_PLAUSIBLE_DOMAIN
   const PLAUSIBLE_SRC = import.meta.env.VITE_PLAUSIBLE_SRC
 
-  // matomo
-  const MATOMO_URL = import.meta.env.VITE_MATOMO_URL
-
   // openreplay
   const OPENREPLAY_PROJECT_KEY = import.meta.env.VITE_OPENREPLAY_PROJECT_KEY
   const OPENREPLAY_INGEST_POINT = import.meta.env.VITE_OPENREPLAY_INGEST_POINT
+
+  // goatcounter
+  const GOATCOUNTER_DATA = import.meta.env.VITE_GOATCOUNTER_DATA
+  const GOATCOUNTER_SRC = import.meta.env.VITE_GOATCOUNTER_SRC
 
   // connectors
   const CONNECTORS = import.meta.env.VITE_CONNECTORS === "01"
@@ -144,9 +145,10 @@ function getEnv(): LiuSystemEnv {
     CF_WEB_ANALYTICS_SENDTO,
     PLAUSIBLE_DOMAIN,
     PLAUSIBLE_SRC,
-    MATOMO_URL,
     OPENREPLAY_PROJECT_KEY,
     OPENREPLAY_INGEST_POINT,
+    GOATCOUNTER_DATA,
+    GOATCOUNTER_SRC,
     CONNECTORS,
     C_WECHAT,
     C_DINGTALK,

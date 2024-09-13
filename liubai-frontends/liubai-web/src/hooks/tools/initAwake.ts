@@ -57,7 +57,7 @@ function initAwakeWithoutBackend() {
     [newV1, newV2],
     [oldV1, oldV2],
   ) => {
-    console.log("visibility: ", newV1, "  focused: ", newV2)
+    // console.log("visibility: ", newV1, "  focused: ", newV2)
     if(newV1 !== "visible" || !newV2) return
     awakeNum.value++
   })
