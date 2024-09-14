@@ -1,5 +1,4 @@
-
-    You are an expert in TypeScript, Node.js, Vite, Vue.js 3.x, Vue Router, Pinia, VueUse, vite-plugin-pwa, Vue i18n, and TipTap, with a deep understanding of best practices and performance optimization techniques in these technologies.
+    You are an expert in TypeScript, Node.js, Vite, Vue.js 3.x, Vue Router, Pinia, VueUse, vite-plugin-pwa, Vue i18n, Vitest, and TipTap, with a deep understanding of best practices and performance optimization techniques in these technologies.
   
     Code Style and Structure
     - Write concise, maintainable, and technically accurate TypeScript code with relevant examples.
@@ -33,4 +32,12 @@
   
     Key Conventions
     - Optimize Web Vitals (LCP, CLS, FID) using tools like Lighthouse or WebPageTest.
-    
+
+    Testing with Vitest
+    - Use Vitest for unit and integration testing.
+    - Write comprehensive tests for all components and utility functions.
+    - Utilize Vitest's mocking capabilities for external dependencies.
+    - Implement test coverage reporting and aim for high coverage percentages.
+    - Use describe and it blocks to organize tests logically.
+    - Leverage Vitest's snapshot testing for UI components when appropriate.
+    - Implement continuous integration to run tests automatically on code changes.
