@@ -50,7 +50,7 @@ export function findTagShowById(
     }
     if(v.children) {
       parents.push(v.text)
-      const tmp = findTagShowById(id, v.children, parents, v.icon)
+      const tmp = findTagShowById(id, v.children, parents, v.icon ?? parentIcon)
       if(tmp) return tmp
       else parents.pop()
     }

@@ -81,7 +81,7 @@ function _searchInList(
       }
     }
     else if(v.children) {
-      const tmpList = _searchInList(texts, newParents, v.children, v.icon)
+      const tmpList = _searchInList(texts, newParents, v.children, v.icon ?? parentIcon)
       list = list.concat(tmpList)
     }
 
