@@ -99,5 +99,5 @@
   "pnpm": {
     "overrides": {}
   },
-  "packageManager": "pnpm@9.0.6"
+  "packageManager": "pnpm@9.10.0"
 }
