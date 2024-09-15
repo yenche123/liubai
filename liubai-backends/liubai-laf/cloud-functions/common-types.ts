@@ -2496,8 +2496,6 @@ export interface Wxpay_Order_Jsapi {
 export interface WxpayReqAuthorizationOpt {
   method: "POST" | "GET",
   path: string,
-  apiclient_key: string,
-  apiclient_serial_no: string,
   body?: Record<string, any>,
 }
 

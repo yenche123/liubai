@@ -34,7 +34,7 @@ import {
   wxpay_apiclient_cert, 
   wxpay_apiclient_key,
 } from "@/secret-config"
-import { createEncNonce, createPaymentNonce, createRandom } from "@/common-ids"
+import { createEncNonce, createRandom } from "@/common-ids"
 import { useI18n, subPlanLang } from "@/common-i18n"
 
 const db = cloud.database()
@@ -514,21 +514,19 @@ async function wxpayOrderByJsapi(
   const opt: WxpayReqAuthorizationOpt = {
     method: "POST",
     path: WXPAY_JSAPI_PATH,
-    apiclient_key: wxpay_apiclient_key,
-    apiclient_serial_no: wxpay_apiclient_serial_no,
     body,
   }
-  const Authorization = WxpayHandler.getWxpayReqAuthorization(opt)
-  if(!Authorization) {
+  const res1 = WxpayHandler.getWxpayReqAuthorization(opt)
+  if(!res1.pass || !res1.data) {
     console.warn("fail to get Authorization")
     return
   }
-  const headers = WxpayHandler.getWxpayReqHeaders({ Authorization })
-  const res = await liuReq(WXPAY_JSAPI_ORDER, body, { headers })
-  const { code, data } = res
+  const headers = WxpayHandler.getWxpayReqHeaders({ Authorization: res1.data })
+  const res2 = await liuReq(WXPAY_JSAPI_ORDER, body, { headers })
+  const { code, data } = res2
   if(code !== "0000" || !data) {
     console.warn("fail to invoke wxpay jsapi")
-    console.log(res)
+    console.log(res2)
     return
   }
   const prepay_id = data?.prepay_id as string

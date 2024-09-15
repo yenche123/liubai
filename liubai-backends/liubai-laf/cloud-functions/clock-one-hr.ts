@@ -256,17 +256,15 @@ async function handleWxpayCerts(): Promise<LiuWxpayCert[] | undefined> {
   const opt1: WxpayReqAuthorizationOpt = {
     method: "GET",
     path: WXPAY_DOWNLOAD_CERT_PATH,
-    apiclient_key: wxpay_apiclient_key,
-    apiclient_serial_no: wxpay_apiclient_serial_no,
   }
-  const Authorization = WxpayHandler.getWxpayReqAuthorization(opt1)
-  if(!Authorization) {
+  const res1 = WxpayHandler.getWxpayReqAuthorization(opt1)
+  if(!res1.pass || !res1.data) {
     console.warn("fail to get Authorization in handleWxpayCerts")
     return
   }
 
   // 2. get headers
-  const headers = WxpayHandler.getWxpayReqHeaders({ Authorization })
+  const headers = WxpayHandler.getWxpayReqHeaders({ Authorization: res1.data })
   
   // 3. to fetch
   const url3 = WXPAY_DOMAIN + WXPAY_DOWNLOAD_CERT_PATH

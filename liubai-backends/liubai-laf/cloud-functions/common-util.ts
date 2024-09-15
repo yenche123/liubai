@@ -75,10 +75,13 @@ import {
   useI18n,
 } from '@/common-i18n'
 import { wechat_tag_cfg } from '@/common-config'
+import { 
+  wxpay_apiclient_serial_no,
+  wxpay_apiclient_key,
+} from "@/secret-config"
 
 const db = cloud.database()
 const _ = db.command
-
 
 /********************* 常量 ****************/
 const MIN_3 = MINUTE * 3
@@ -2086,8 +2089,21 @@ export class WxpayHandler {
 
   static getWxpayReqAuthorization(
     opt: WxpayReqAuthorizationOpt
-  ) {
-    const { method, path, apiclient_key, apiclient_serial_no, body } = opt
+  ): CommonPass<string> {
+
+    // 1. check out required envs
+    if(!wxpay_apiclient_key || !wxpay_apiclient_serial_no) {
+      console.warn("no wxpay_apiclient_key or wxpay_apiclient_serial_no")
+      return { 
+        pass: false,
+        err: {
+          code: "E5001",
+          errMsg: "no wxpay_apiclient_key or wxpay_apiclient_serial_no",
+        }
+      }
+    }
+
+    const { method, path, body } = opt
     const timestamp = Math.floor(getNowStamp() / 1000)
     const nonce = createPaymentNonce()
     let msg = `${method}\n${path}\n${timestamp}\n${nonce}\n`
@@ -2100,13 +2116,19 @@ export class WxpayHandler {
     }
   
     const tmpSign = crypto.createSign("sha256WithRSAEncryption").update(msg)
-    const signature = tmpSign.sign(apiclient_key, "base64")
+    const signature = tmpSign.sign(wxpay_apiclient_key, "base64")
   
     const _env = process.env
     const wx_mchid = _env.LIU_WXPAY_MCH_ID as string
     if(!wx_mchid) {
       console.warn("wx_mchid is not set")
-      return ""
+      return {
+        pass: false,
+        err: {
+          code: "E5001",
+          errMsg: "no wx_mchid",
+        }
+      }
     }
   
     let reqAuth = `WECHATPAY2-SHA256-RSA2048 `
@@ -2114,9 +2136,9 @@ export class WxpayHandler {
     reqAuth += `nonce_str="${nonce}",`
     reqAuth += `signature="${signature}",`
     reqAuth += `timestamp="${timestamp}",`
-    reqAuth += `serial_no="${apiclient_serial_no}"`
+    reqAuth += `serial_no="${wxpay_apiclient_serial_no}"`
   
-    return reqAuth
+    return { pass: true, data: reqAuth }
   }
 
   static getWxpayReqHeaders(
@@ -2308,6 +2330,11 @@ export class WxpayHandler {
     if(!res) {
       return { code: "E4003", errMsg: "verifySign failed" }
     }
+  }
+
+  // enquire order by out_trade_no
+  static async enquireOrderByOutTradeNo(out_trade_no: string) {
+    
   }
 
 
