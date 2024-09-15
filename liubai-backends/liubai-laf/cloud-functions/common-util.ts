@@ -42,6 +42,7 @@ import type {
   LiuWxpayCert,
   WxpayVerifySignOpt,
   LiuErrReturn,
+  Res_Wxpay_Enquire_Order,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -108,6 +109,10 @@ const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
 
 // 微信公众号 OAuth2 使用 code 去换用户的 accessToken
 const WX_GZH_OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token"
+
+// 微信支付 下载平台证书
+const WXPAY_DOMAIN = "https://api.mch.weixin.qq.com"
+const WXPAY_OUT_TRADE_NO = `/v3/pay/transactions/out-trade-no/`
 
 /********************* 空函数 ****************/
 export async function main(ctx: FunctionContext) {
@@ -2096,7 +2101,7 @@ export class WxpayHandler {
 
   static getWxpayReqAuthorization(
     opt: WxpayReqAuthorizationOpt
-  ): CommonPass<string> {
+  ): CommonPass<string> {    // this string is just Authorization
 
     // 1. check out required envs
     if(!wxpay_apiclient_key || !wxpay_apiclient_serial_no) {
@@ -2125,18 +2130,9 @@ export class WxpayHandler {
     const tmpSign = crypto.createSign("sha256WithRSAEncryption").update(msg)
     const signature = tmpSign.sign(wxpay_apiclient_key, "base64")
   
-    const _env = process.env
-    const wx_mchid = _env.LIU_WXPAY_MCH_ID as string
-    if(!wx_mchid) {
-      console.warn("wx_mchid is not set")
-      return {
-        pass: false,
-        err: {
-          code: "E5001",
-          errMsg: "no wx_mchid",
-        }
-      }
-    }
+    const res2 = this.getMchId()
+    if(!res2.pass) return res2
+    const wx_mchid = res2.data as string
   
     let reqAuth = `WECHATPAY2-SHA256-RSA2048 `
     reqAuth += `mchid="${wx_mchid}",`
@@ -2272,14 +2268,26 @@ export class WxpayHandler {
     }
     const publicKey = theCert.cert_pem
 
-    // 3. verify
+    // 3. check out stamp
+    let stamp = valTool.isStringWithVal(timestamp) ? Number(timestamp) : timestamp
+    stamp = stamp * 1000
+    const now = getNowStamp()
+    const diff3 = Math.abs(now - stamp)
+    if(diff3 > MIN_5) {
+      console.warn("the timestamp is invalid")
+      console.log("now: ", now)
+      console.log("stamp: ", stamp)
+      return false
+    }
+
+    // 4. verify
     const bodystr = typeof body === "string" ? body : objToStr(body)
     const data = `${timestamp}\n${nonce}\n${bodystr}\n`
     try {
       const verifier = crypto.createVerify("RSA-SHA256")
       verifier.update(data)
-      const res3 = verifier.verify(publicKey, signature, "base64")
-      return res3
+      const res4 = verifier.verify(publicKey, signature, "base64")
+      return res4
     }
     catch(err) {
       console.warn("verify sign failed")
@@ -2290,10 +2298,13 @@ export class WxpayHandler {
   }
 
   static async verifySignByLiuFetch(
-    data: Res_LiuFetch<any>
+    data: Res_LiuFetch<any> | undefined
   ): Promise<LiuErrReturn | undefined> {
 
     // 1. check out body
+    if(!data) {
+      return { code: "E5004", errMsg: "no data" }
+    }
     const body = data.text
     if(!body) {
       console.warn("no text of data in verifySignByLiuFetch")
@@ -2339,9 +2350,57 @@ export class WxpayHandler {
     }
   }
 
+  static getMchId(): CommonPass<string> {
+    const _env = process.env
+    const wx_mchid = _env.LIU_WXPAY_MCH_ID as string
+    if(!wx_mchid) {
+      console.warn("wx_mchid is not set")
+      return {
+        pass: false,
+        err: {
+          code: "E5001",
+          errMsg: "no wx_mchid",
+        }
+      }
+    }
+    return { pass: true, data: wx_mchid }
+  }
+
   // enquire order by out_trade_no
-  static async enquireOrderByOutTradeNo(out_trade_no: string) {
-    
+  static async enquireOrderByOutTradeNo(
+    out_trade_no: string
+  ): Promise<CommonPass<Res_Wxpay_Enquire_Order>> {
+    // 1. construct path
+    const res1 = this.getMchId()
+    if(!res1.pass) return { pass: false, err: res1.err }
+    const mchId = res1.data
+    const path = WXPAY_OUT_TRADE_NO + out_trade_no + `?mchid=${mchId}`
+    const url = WXPAY_DOMAIN + path
+    const opt2: WxpayReqAuthorizationOpt = {
+      method: "GET",
+      path,
+    }
+
+    // 2. get authorization
+    const res2 = this.getWxpayReqAuthorization(opt2)
+    if(!res2.pass) return { pass: false, err: res2.err }
+    const Authorization = res2.data as string
+
+    // 3. get headers
+    const headers = this.getWxpayReqHeaders({ Authorization })
+
+    // 4. fetch
+    const res4 = await liuFetch<Res_Wxpay_Enquire_Order>(url, { headers })
+    const data4 = res4.data
+    const code4 = res4.code
+    if(code4 !== "0000" || !data4) {
+      return { pass: false, err: res4 }
+    }
+    const err4 = await this.verifySignByLiuFetch(data4)
+    if(err4) return { pass: false, err: err4 }
+    const json4 = data4.json as Res_Wxpay_Enquire_Order
+
+    return { pass: true, data: json4 }
   }
 
 

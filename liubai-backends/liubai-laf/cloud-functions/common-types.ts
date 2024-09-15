@@ -2456,6 +2456,15 @@ export interface Wxpay_GoodsDetail {
   unit_price: number
 }
 
+// @see https://pay.weixin.qq.com/docs/merchant/apis/jsapi-payment/query-by-out-trade-no.html
+export interface Wxpay_GoodsDetailInPromotion {
+  goods_id: string
+  quantity: number
+  unit_price: number
+  discount_amount: number
+  goods_remark?: string
+}
+
 export interface Wxpay_Order_Jsapi {
   appid: string
   mchid: string
@@ -2515,6 +2524,48 @@ export interface Wxpay_Cert_Info {
 
 export interface Res_Wxpay_Download_Cert {
   data: Wxpay_Cert_Info[]
+}
+
+export type Wxpay_Trade_Type = "JSAPI" | "NATIVE" | "APP" | "MICROPAY" | "MWEB" | "FACEPAY"
+export type Wxpay_Trade_State = "SUCCESS" | "REFUND" | "NOTPAY"
+  | "CLOSED" | "REVOKED" | "USERPAYING" | "PAYERROR"
+export interface Wxpay_PromotionDetail {
+  coupon_id: string
+  name?: string
+  scope?: "GLOBAL" | "SINGLE"
+  type?: "CASH" | "NOCASH"
+  amount: number    // 优惠券面额
+  stock_id?: string
+  wechatpay_contribute?: number
+  merchant_contribute?: number
+  other_contribute?: number
+  currency?: string
+  goods_detail?: Wxpay_GoodsDetailInPromotion[]
+}
+
+export interface Res_Wxpay_Enquire_Order {
+  appid?: string
+  mchid: string
+  out_trade_no: string
+  transaction_id?: string
+  trade_type?: Wxpay_Trade_Type
+  trade_state: Wxpay_Trade_State
+  bank_type?: string
+  attach?: string
+  success_time?: string
+  payer?: {
+    openid: string
+  }
+  amount?: {
+    total?: number
+    payer_total?: number
+    currency?: string       // CNY
+    payer_currency?: string
+  }
+  scene_info?: {
+    device_id?: string
+  }
+  promotion_detail?: Wxpay_PromotionDetail[]
 }
 
 export interface WxpayVerifySignOpt {
