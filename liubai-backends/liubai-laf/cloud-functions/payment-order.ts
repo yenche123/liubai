@@ -6,9 +6,9 @@ import {
   checker,
   createAvailableOrderId,
   getDocAddId,
-  liuReq,
   transformStampIntoRFC3339,
   WxpayHandler,
+  liuFetch,
 } from "@/common-util"
 import {
   type LiuErrReturn,
@@ -486,6 +486,7 @@ interface WxpayOrderByJsapiParam {
 async function wxpayOrderByJsapi(
   param: WxpayOrderByJsapiParam,
 ) {
+  // 1. get env
   const _env = process.env
   const wx_appid = _env.LIU_WX_GZ_APPID as string
   const wx_mchid = _env.LIU_WXPAY_MCH_ID as string
@@ -495,6 +496,7 @@ async function wxpayOrderByJsapi(
     time_expire = transformStampIntoRFC3339(param.expireStamp)
   }
 
+  // 2. construct body
   const body: Wxpay_Order_Jsapi = {
     appid: wx_appid,
     mchid: wx_mchid,
@@ -511,6 +513,7 @@ async function wxpayOrderByJsapi(
   if(param.attach) body.attach = param.attach
   if(time_expire) body.time_expire = time_expire
 
+  // 3. get Authorization
   const opt: WxpayReqAuthorizationOpt = {
     method: "POST",
     path: WXPAY_JSAPI_PATH,
@@ -521,15 +524,28 @@ async function wxpayOrderByJsapi(
     console.warn("fail to get Authorization")
     return
   }
+
+  // 4. invoke wxpay jsapi
   const headers = WxpayHandler.getWxpayReqHeaders({ Authorization: res1.data })
-  const res2 = await liuReq(WXPAY_JSAPI_ORDER, body, { headers })
-  const { code, data } = res2
-  if(code !== "0000" || !data) {
+  const res4 = await liuFetch(WXPAY_JSAPI_ORDER, { headers }, body)
+  const { code, data: data4 } = res4
+  if(code !== "0000" || !data4) {
     console.warn("fail to invoke wxpay jsapi")
-    console.log(res2)
+    console.log(res4)
     return
   }
-  const prepay_id = data?.prepay_id as string
+
+  // 5. check out signature
+  const err5 = await WxpayHandler.verifySignByLiuFetch(data4)
+  if(err5) {
+    console.warn("fail to verify signature")
+    console.log(err5)
+    return
+  }
+
+  // 6. get prepay_id
+  const json = data4.json
+  const prepay_id = json?.prepay_id as string
   return prepay_id
 }
 

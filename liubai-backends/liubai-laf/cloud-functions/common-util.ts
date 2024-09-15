@@ -271,8 +271,15 @@ interface Res_LiuFetch<T> {
 export async function liuFetch<T = any>(
   url: string,
   reqInit: RequestInit,
+  body?: Record<string, any>,
 ): Promise<LiuRqReturn<Res_LiuFetch<T>>> {
   let res: Response
+
+  if(body) {
+    reqInit.body = objToStr(body)
+  }
+
+
   try {
     res = await fetch(url, reqInit)
   }
