@@ -6,25 +6,69 @@ import {
   wxpay_apiclient_key, 
   wxpay_apiclient_serial_no,
 } from "@/secret-config"
-import type { LiuErrReturn, WxpayVerifySignOpt } from "@/common-types"
+import type { 
+  CommonPass, 
+  LiuErrReturn, 
+  Wxpay_Notice_Base, 
+  Wxpay_Notice_Result, 
+  WxpayVerifySignOpt,
+} from "@/common-types"
 
 const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
   console.log("webhook-wxpay invoked!")
 
+  // 0. [test] decrypt first
+  const res0 = await decryptData(ctx)
+  if(res0.pass) {
+    console.warn("解密成功......")
+    console.log(res0.data)
+  }
+  else {
+    console.warn("解密失败......")
+    console.log(res0.err)
+    ctx.response?.status(403)
+    return res0.err
+  }
+  
   // 1. check out the signature
   const err1 = await checkFromWxpay(ctx)
   if(err1) {
     return err1
   }
 
-  // 2. decrypt
-
-
-  
-
   return { code: "0000" }
+}
+
+async function decryptData(
+  ctx: FunctionContext,
+): Promise<CommonPass<Wxpay_Notice_Result>> {
+  const body = ctx.body as Wxpay_Notice_Base
+  const resource = body.resource
+  if(!resource) {
+    return { 
+      pass: false, 
+      err: {
+        code: "E4000",
+        errMsg: "resource is empty",
+      }
+    }
+  }
+
+  const plaintext = WxpayHandler.decryptResource(resource)
+  if(!plaintext) {
+    return { 
+      pass: false, 
+      err: {
+        code: "E4003",
+        errMsg: "decrypt resource failed",
+      }
+    }
+  }
+  
+  const obj = valTool.strToObj(plaintext) as Wxpay_Notice_Result
+  return { pass: true, data: obj } 
 }
 
 

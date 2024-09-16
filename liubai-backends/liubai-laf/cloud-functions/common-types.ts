@@ -2391,6 +2391,14 @@ export interface Ww_Welcome_Body {
 }
 
 /********** Event Webhook from WeCom *********/
+export type Wxpay_Trade_Type = "JSAPI" | "NATIVE" | "APP" | "MICROPAY" | "MWEB" | "FACEPAY"
+export type Wxpay_Trade_State = "SUCCESS" | "REFUND" | "NOTPAY"
+  | "CLOSED" | "REVOKED" | "USERPAYING" | "PAYERROR"
+
+export interface Wxpay_FundsFromItem {
+  account: "AVAILABLE" | "UNAVAILABLE"
+  amount: number
+}
 
 export interface Ww_Msg_Base {
   ToUserName: string
@@ -2456,6 +2464,16 @@ export interface Wxpay_GoodsDetail {
   unit_price: number
 }
 
+export interface Wxpay_Refund_GoodsDetail {
+  merchant_goods_id: string
+  wechatpay_goods_id?: string
+  goods_name?: string
+  unit_price: number
+  refund_amount: number
+  refund_quantity: number
+}
+
+
 // @see https://pay.weixin.qq.com/docs/merchant/apis/jsapi-payment/query-by-out-trade-no.html
 export interface Wxpay_GoodsDetailInPromotion {
   goods_id: string
@@ -2464,6 +2482,82 @@ export interface Wxpay_GoodsDetailInPromotion {
   discount_amount: number
   goods_remark?: string
 }
+
+export interface Wxpay_PromotionDetail {
+  coupon_id: string
+  name?: string
+  scope?: "GLOBAL" | "SINGLE"
+  type?: "CASH" | "NOCASH"
+  amount: number    // 优惠券面额
+  stock_id?: string
+  wechatpay_contribute?: number
+  merchant_contribute?: number
+  other_contribute?: number
+  currency?: string
+  goods_detail?: Wxpay_GoodsDetailInPromotion[]
+}
+
+// @see https://pay.weixin.qq.com/docs/merchant/apis/jsapi-payment/query-by-out-refund-no.html#:~:text=%E5%B1%9E%E6%80%A7-,promotion_detail,-%E9%80%89%E5%A1%AB
+export interface Wxpay_Refund_PromotionDetail {
+  promotion_id: string
+  scope: "GLOBAL" | "SINGLE"
+  type: "COUPON" | "DISCOUNT"
+  amount: number
+  refund_amount: number
+  goods_detail?: Wxpay_Refund_GoodsDetail[]
+}
+
+export interface Res_Wxpay_Transaction {
+  appid?: string
+  mchid: string
+  out_trade_no: string
+  transaction_id?: string
+  trade_type?: Wxpay_Trade_Type
+  trade_state: Wxpay_Trade_State
+  bank_type?: string
+  attach?: string
+  success_time?: string
+  payer?: {
+    openid: string
+  }
+  amount?: {
+    total?: number
+    payer_total?: number
+    currency?: string       // CNY
+    payer_currency?: string
+  }
+  scene_info?: {
+    device_id?: string
+  }
+  promotion_detail?: Wxpay_PromotionDetail[]
+}
+
+export interface Res_Wxpay_Refund {
+  refund_id: string
+  out_refund_no: string
+  transaction_id: string
+  out_trade_no: string
+  channel: "ORIGINAL" | "BALANCE" | "OTHER_BALANCE" | "OTHER_BANKCARD"
+  user_received_account: string
+  success_time?: string
+  create_time: string
+  status: "SUCCESS" | "PROCESSING" | "CLOSED" | "ABNORMAL"
+  funds_account?: "UNSETTLED" | "AVAILABLE" | "UNAVAILABLE" | "OPERATION" | "BASIC" | "ECNY_BASIC"
+  amount: {
+    total: number
+    refund: number
+    from?: Wxpay_FundsFromItem[]
+    payer_total: number
+    payer_refund: number
+    settlement_refund: number
+    settlement_total: number
+    discount_refund: number
+    currency: string
+    refund_fee?: number
+  }
+  promotion_detail?: Wxpay_Refund_PromotionDetail[]
+}
+
 
 export interface Wxpay_Order_Jsapi {
   appid: string
@@ -2526,6 +2620,73 @@ export interface Wxpay_Encrypt_Certificate extends Wxpay_Resource_Base {
   associated_data: "certificate"
 }
 
+export interface Wxpay_Resource_Transaction extends Wxpay_Resource_Base {
+  original_type: "transaction"
+}
+
+export interface Wxpay_Resource_Refund extends Wxpay_Resource_Base {
+  original_type: "refund"
+}
+
+export interface Wxpay_Notice_Base {
+  id: string
+  create_time: string
+  event_type: Wxpay_Notify_Event_Type
+  summary: string
+  resource_type: "encrypt-resource"
+  resource: Wxpay_Resource_Transaction | Wxpay_Resource_Refund
+}
+
+// export interface Wxpay_Notify_Transaction extends Wxpay_Notice_Base {
+//   event_type: "TRANSACTION.SUCCESS"
+//   resource: Wxpay_Resource_Transaction
+// }
+
+// export interface Wxpay_Notify_Refund extends Wxpay_Notice_Base {
+//   event_type: "REFUND.SUCCESS" | "REFUND.ABNORMAL" | "REFUND.CLOSED"
+//   resource: Wxpay_Resource_Refund
+// }
+
+
+// @see https://pay.weixin.qq.com/docs/merchant/apis/jsapi-payment/payment-notice.html#:~:text=%23-,resource%E8%A7%A3%E5%AF%86%E5%90%8E%E5%AD%97%E6%AE%B5,-Body
+export interface Wxpay_Notice_PaymentResource extends Res_Wxpay_Transaction {
+  appid: string
+  transaction_id: string
+  trade_type: Wxpay_Trade_Type
+  trade_state_desc: string
+  bank_type: string
+  success_time: string
+  payer: {
+    openid: string
+  }
+  amount: {
+    total: number
+    payer_total: number
+    currency: string  // CNY：人民币，境内商户号仅支持人民币。
+    payer_currency: string   // 大写的货币类型
+  }
+}
+
+export interface Wxpay_Notice_RefundResource {
+  mchid: string
+  out_trade_no: string
+  transaction_id: string
+  out_refund_no: string
+  refund_id: string
+  refund_status: "SUCCESS" | "CLOSED" | "ABNORMAL"
+  success_time?: string
+  user_received_account: string
+  amount: {
+    total: number
+    refund: number
+    payer_total: number
+    payer_refund: number
+  }
+}
+
+export type Wxpay_Notice_Result = Wxpay_Notice_PaymentResource
+  | Wxpay_Notice_RefundResource
+
 export interface Wxpay_Cert_Info {
   serial_no: string
   effective_time: string
@@ -2535,48 +2696,6 @@ export interface Wxpay_Cert_Info {
 
 export interface Res_Wxpay_Download_Cert {
   data: Wxpay_Cert_Info[]
-}
-
-export type Wxpay_Trade_Type = "JSAPI" | "NATIVE" | "APP" | "MICROPAY" | "MWEB" | "FACEPAY"
-export type Wxpay_Trade_State = "SUCCESS" | "REFUND" | "NOTPAY"
-  | "CLOSED" | "REVOKED" | "USERPAYING" | "PAYERROR"
-export interface Wxpay_PromotionDetail {
-  coupon_id: string
-  name?: string
-  scope?: "GLOBAL" | "SINGLE"
-  type?: "CASH" | "NOCASH"
-  amount: number    // 优惠券面额
-  stock_id?: string
-  wechatpay_contribute?: number
-  merchant_contribute?: number
-  other_contribute?: number
-  currency?: string
-  goods_detail?: Wxpay_GoodsDetailInPromotion[]
-}
-
-export interface Res_Wxpay_Enquire_Order {
-  appid?: string
-  mchid: string
-  out_trade_no: string
-  transaction_id?: string
-  trade_type?: Wxpay_Trade_Type
-  trade_state: Wxpay_Trade_State
-  bank_type?: string
-  attach?: string
-  success_time?: string
-  payer?: {
-    openid: string
-  }
-  amount?: {
-    total?: number
-    payer_total?: number
-    currency?: string       // CNY
-    payer_currency?: string
-  }
-  scene_info?: {
-    device_id?: string
-  }
-  promotion_detail?: Wxpay_PromotionDetail[]
 }
 
 export interface WxpayVerifySignOpt {

@@ -38,11 +38,11 @@ import type {
   Wx_Res_GzhOAuthAccessToken,
   WxpayReqAuthorizationOpt,
   Wxpay_Cert_Info,
-  Wxpay_Encrypt_Certificate,
   LiuWxpayCert,
   WxpayVerifySignOpt,
   LiuErrReturn,
-  Res_Wxpay_Enquire_Order,
+  Res_Wxpay_Transaction,
+  Wxpay_Resource_Base,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -2157,15 +2157,15 @@ export class WxpayHandler {
     return h
   }
 
-  static decryptWxpayCert(
-    encrypt_certificate: Wxpay_Encrypt_Certificate,
+  static decryptResource(
+    resource: Wxpay_Resource_Base,
   ) {
     const {
       algorithm,
       nonce,
       associated_data,
       ciphertext,
-    } = encrypt_certificate
+    } = resource
   
     if(algorithm !== "AEAD_AES_256_GCM") {
       console.warn("algorithm is not supported: ", algorithm)
@@ -2187,7 +2187,9 @@ export class WxpayHandler {
   
     try {
       decipher.setAuthTag(tag)
-      decipher.setAAD(Buffer.from(associated_data))
+      if(typeof associated_data === "string") {
+        decipher.setAAD(Buffer.from(associated_data))
+      }
     }
     catch(err) {
       console.warn("setAuthTag or setAAD failed")
@@ -2212,7 +2214,7 @@ export class WxpayHandler {
     v: Wxpay_Cert_Info,
   ) {
     // 1. process of decrypt
-    const decrypted = this.decryptWxpayCert(v.encrypt_certificate)
+    const decrypted = this.decryptResource(v.encrypt_certificate)
     if(!decrypted) return
   
     // 2. construct LiuWxpayCert
@@ -2369,7 +2371,7 @@ export class WxpayHandler {
   // enquire order by out_trade_no
   static async enquireOrderByOutTradeNo(
     out_trade_no: string
-  ): Promise<CommonPass<Res_Wxpay_Enquire_Order>> {
+  ): Promise<CommonPass<Res_Wxpay_Transaction>> {
     // 1. construct path
     const res1 = this.getMchId()
     if(!res1.pass) return { pass: false, err: res1.err }
@@ -2390,7 +2392,7 @@ export class WxpayHandler {
     const headers = this.getWxpayReqHeaders({ Authorization })
 
     // 4. fetch
-    const res4 = await liuFetch<Res_Wxpay_Enquire_Order>(url, { headers })
+    const res4 = await liuFetch<Res_Wxpay_Transaction>(url, { headers })
     const data4 = res4.data
     const code4 = res4.code
     if(code4 !== "0000" || !data4) {
@@ -2398,7 +2400,7 @@ export class WxpayHandler {
     }
     const err4 = await this.verifySignByLiuFetch(data4)
     if(err4) return { pass: false, err: err4 }
-    const json4 = data4.json as Res_Wxpay_Enquire_Order
+    const json4 = data4.json as Res_Wxpay_Transaction
 
     return { pass: true, data: json4 }
   }
