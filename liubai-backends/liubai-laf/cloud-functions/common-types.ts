@@ -2508,11 +2508,22 @@ export interface WxpayReqAuthorizationOpt {
   body?: Record<string, any>,
 }
 
-export interface Wxpay_Encrypt_Certificate {
-  algorithm: string
-  nonce: string
-  associated_data: string
+
+export type Wxpay_Resource_OriginalType = "refund" | "transaction"
+export type Wxpay_Notify_Event_Type = "REFUND.SUCCESS"  // 退款成功通知
+  | "REFUND.ABNORMAL"  // 退款异常通知
+  | "REFUND.CLOSED"    // 退款关闭通知
+  | "TRANSACTION.SUCCESS"  // 支付成功通知
+
+export interface Wxpay_Resource_Base {
+  algorithm: "AEAD_AES_256_GCM"
   ciphertext: string
+  associated_data?: string
+  nonce: string
+}
+
+export interface Wxpay_Encrypt_Certificate extends Wxpay_Resource_Base {
+  associated_data: "certificate"
 }
 
 export interface Wxpay_Cert_Info {
