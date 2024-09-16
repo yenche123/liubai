@@ -156,9 +156,9 @@ class CloudEventBus {
   
   // 去对齐时间
   private static async timeCalibrate() {
-    const t1 = time.getTime()
+    const t1 = time.getLocalTime()
     const res = await fetchHelloWorld()
-    const t2 = time.getTime()
+    const t2 = time.getLocalTime()
     
     // console.log("fetchHelloWorld.......")
     // console.log(res)

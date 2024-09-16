@@ -3,6 +3,6 @@ import type { MainToChildMessage } from "../../tools/types";
 import workerReq from "./worker-req";
 
 export function initWorker(msg: MainToChildMessage) {
-  time.setDiff(msg.timeDiff)
+  time.setDiff(msg.timeDiff, true)
   workerReq.init(msg)
 }

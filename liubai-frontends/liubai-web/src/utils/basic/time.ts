@@ -1,6 +1,17 @@
 import valTool from "./val-tool"
+import liuEnv from "../liu-env"
+
+// 将 "秒" / "分" / "时" / "天" 转为 毫秒数
+const SECONED = 1000
+const MINUTE = 60 * SECONED
+const HOUR = 60 * MINUTE
+const DAY = 24 * HOUR
+const WEEK = 7 * DAY
+
+const storageKey = "liu_time-diff"
 
 let diff = 0
+let hasSetDiffEver = false
 let appSetupStamp = 0  // App.vue setup 周期被执行的时间戳
 
 // 当 App.vue 被运行时，在 setup 周期里调用
@@ -13,15 +24,72 @@ const getAppSetupStamp = () => {
   return appSetupStamp + diff
 }
 
+const _getStorageDiff = () => {
+  try {
+    const diffStr = localStorage.getItem(storageKey)
+    if(!diffStr) return null
+    const diffNum = Number(diffStr)
+    if(isNaN(diffNum)) return null
+    return diffNum
+  }
+  catch(err) {}
+  return null
+}
+
+const _setStorageDiff = (val: number) => {
+  try {
+    localStorage.setItem(storageKey, String(val))
+  }
+  catch(err) {
+    console.warn("_setStorageDiff err: ")
+    console.log(err)
+    return false
+  }
+  return true
+}
+
+
 // 设置时间差，由 CloudEventBus 调用
-const setDiff = (val: number) => {
+const setDiff = (
+  val: number,
+  fromWorker: boolean = false,
+) => {
   diff = val
+  hasSetDiffEver = true
+
+  if(fromWorker) return
+  const hasBE = liuEnv.hasBackend()
+  if(!hasBE) return
+
+  const oldDiff = _getStorageDiff()
+  const isOk = _setStorageDiff(val)
+  if(!isOk) return
+
+  if(oldDiff === null) return
+  const diffBetweenOldAndNew = Math.abs(val - oldDiff)
+  const MIN_5 = 5 * MINUTE
+  console.log("diffBetweenOldAndNew: ", diffBetweenOldAndNew)
+  if(diffBetweenOldAndNew < MIN_5) return
+
+  console.warn("diff 的差值竟然超过 5 分钟，太恐怖啦！")
+  setTimeout(() => {
+    location.reload()
+  }, 90 * SECONED)
 }
 
 const getDiff = () => diff
 
 // 经过标定的时间
 const getTime = () => {
+  const hasBE = liuEnv.hasBackend()
+  if(!hasBE) return Date.now()
+  if(hasSetDiffEver) return Date.now() + diff
+  hasSetDiffEver = true
+
+  const sDiff = _getStorageDiff()
+  if(sDiff === null) return Date.now()
+  diff = sDiff
+  
   return Date.now() + diff
 }
 
@@ -82,14 +150,6 @@ const getBasicStampWhileAdding = () => {
     updatedStamp: now,
   }
 }
-
-
-// 将 "秒" / "分" / "时" / "天" 转为 毫秒数
-const SECONED = 1000
-const MINUTE = 60 * SECONED
-const HOUR = 60 * MINUTE
-const DAY = 24 * HOUR
-const WEEK = 7 * DAY
 
 export default {
   whenAppSetup,
