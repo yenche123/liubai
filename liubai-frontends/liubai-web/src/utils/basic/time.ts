@@ -1,5 +1,9 @@
 import valTool from "./val-tool"
 import liuEnv from "../liu-env"
+import { 
+  getStorageSafely, 
+  setStorageSafely,
+} from "./safe-funcs"
 
 // 将 "秒" / "分" / "时" / "天" 转为 毫秒数
 const SECONED = 1000
@@ -8,7 +12,8 @@ const HOUR = 60 * MINUTE
 const DAY = 24 * HOUR
 const WEEK = 7 * DAY
 
-const storageKey = "liu_time-diff"
+const key1 = "liu_time-diff"
+const key2 = "liu_time-err"
 
 let diff = 0
 let hasSetDiffEver = false
@@ -25,29 +30,43 @@ const getAppSetupStamp = () => {
 }
 
 const _getStorageDiff = () => {
-  try {
-    const diffStr = localStorage.getItem(storageKey)
-    if(!diffStr) return null
-    const diffNum = Number(diffStr)
-    if(isNaN(diffNum)) return null
-    return diffNum
-  }
-  catch(err) {}
-  return null
+  const diffStr = getStorageSafely(key1, false)
+  if(!diffStr) return null
+  const diffNum = Number(diffStr)
+  if(isNaN(diffNum)) return null
+  return diffNum
 }
 
 const _setStorageDiff = (val: number) => {
-  try {
-    localStorage.setItem(storageKey, String(val))
-  }
-  catch(err) {
-    console.warn("_setStorageDiff err: ")
-    console.log(err)
-    return false
-  }
-  return true
+  const isOK = setStorageSafely(key1, String(val))
+  return isOK
 }
 
+const _getTimeErrStamp = () => {
+  const errStr = getStorageSafely(key2, false)
+  if(!errStr) return 0
+  const errNum = Number(errStr)
+  if(isNaN(errNum)) return 0
+  return errNum
+}
+
+const _setTimeErrStamp = (val: number) => {
+  const isOK = setStorageSafely(key2, String(val))
+  return isOK
+}
+
+const _canIReload = () => {
+  const now = Date.now()
+  const stamp = _getTimeErrStamp()
+  if(!stamp) {
+    _setTimeErrStamp(now)
+    return true
+  }
+  const duration = now - stamp
+  if(duration < MINUTE) return false
+  _setTimeErrStamp(now)
+  return true
+}
 
 // 设置时间差，由 CloudEventBus 调用
 const setDiff = (
@@ -68,13 +87,17 @@ const setDiff = (
   if(oldDiff === null) return
   const diffBetweenOldAndNew = Math.abs(val - oldDiff)
   const MIN_5 = 5 * MINUTE
-  console.log("diffBetweenOldAndNew: ", diffBetweenOldAndNew)
   if(diffBetweenOldAndNew < MIN_5) return
 
-  console.warn("diff 的差值竟然超过 5 分钟，太恐怖啦！")
+  console.warn("we may need to reload the page cause diffBetweenOldAndNew is too large.")
+  console.log("oldDiff: ", oldDiff)
+  console.log("val: ", val)
+
+  if(!_canIReload()) return
+
   setTimeout(() => {
     location.reload()
-  }, 90 * SECONED)
+  }, 3 * SECONED)
 }
 
 const getDiff = () => diff

@@ -1,7 +1,7 @@
 // do not import too many files in this file as possible
 // just because error occurring probably is just from those files
 // which are inported
-
+import { getStorageSafely, setStorageSafely } from "~/utils/basic/safe-funcs"
 import liuConsole from "~/utils/debug/liu-console"
 import { toUpdateSW } from "../pwa/useServiceWorker"
 
@@ -44,13 +44,14 @@ export function initListenError() {
   const _reload = (errType: ErrType) => {
     const now = Date.now()
     const key = _getItemKey(errType)
-    localStorage.setItem(key, now.toString())
+    const isOK = setStorageSafely(key, now.toString())
+    if(!isOK) return
     window.location.reload()
   }
 
   const _canReload = (errType: ErrType) => {
     const key = _getItemKey(errType)
-    const lastReloadErr = localStorage.getItem(key)
+    const lastReloadErr = getStorageSafely(key)
     if(!lastReloadErr) return true
     const now = Date.now()
     const stamp = Number(lastReloadErr)
