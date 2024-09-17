@@ -57,13 +57,21 @@ export function initQRCodePopup() {
 
 
 export function showQRCodePopup(param: QpParam) {
-  qpData.bindType = param.bindType
+  const bT = param.bindType
+  qpData.bindType = bT
+  qpData.order_id = param.order_id
   qpData.qr_code = ""
   qpData.pic_url = ""
   qpData.runTimes = 0
   qpData.loading = true
   qpData.state = param.state
   qpData.fr = param.fr
+
+
+  if(bT === "union_pay" && !param.order_id) {
+    console.warn("order_id is required while union_pay")
+    return
+  }
 
   openIt(rr, queryKey)
   fetchData()
@@ -101,17 +109,25 @@ async function fetchData() {
   // 1. clear pollTimeout
   const bT = qpData.bindType
   if(pollTimeout) clearTimeout(pollTimeout)
+
+  // 2. login via wx gzh scan
   if(bT === "wx_gzh_scan") {
     fetch_wx_gzh_scan()
     return
   }
 
-  // 2. get memberId
+  // 3. show qrcode for union pay
+  if(bT === "union_pay") {
+    handle_union_pay()
+    return
+  }
+
+  // 4. get memberId
   const wStore = useWorkspaceStore()
   const memberId = wStore.memberId
   if(!memberId) return
   
-  // 3. to request 
+  // 5. to request 
   if(bT === "ww_qynb") {
     fetch_bind_wecom(memberId)
   }
@@ -119,6 +135,15 @@ async function fetchData() {
     fetch_bind_wechat(memberId)
   }
   
+}
+
+
+function handle_union_pay() {
+  const order_id = qpData.order_id as string
+  const origin = location.origin
+  const path = `/payment/${order_id}`
+  qpData.qr_code = `${origin}${path}`
+  qpData.loading = false
 }
 
 

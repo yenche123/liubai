@@ -28,6 +28,7 @@ import { useActiveSyncNum } from "~/hooks/useCommon"
 import { RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
 import { showErrMsg } from "~/pages/level1/tools/show-msg"
 import liuApi from "~/utils/liu-api"
+import { redirectForWxGzhOpenid } from "../../../utils/pay-tools"
 
 let timeout1: LiuTimeout  // in order to avoid the view from always loading
 let timeout2: LiuTimeout  // for setDataState
@@ -111,6 +112,10 @@ async function toBuyViaUnion(
   const res3 = await liuReq.request<Res_PO_CreateOrder>(url2, data2)
   cui.hideLoading()
 
+  console.log("res3: ")
+  console.log(res3)
+  console.log(" ")
+
   // 4. handle result
   const { code, data } = res3
   if(code !== "0000" || !data) {
@@ -123,12 +128,14 @@ async function toBuyViaUnion(
   const order_id = od.order_id
   const cha = liuApi.getCharacteristic()
   if(cha.isPC) {
+    cui.showQRCodePopup({ bindType: "union_pay", order_id })
     return
   }
 
   // 6. login with wx gzh for openid
   // and pull wxpay popup if we are in Weixin App
   if(cha.isWeChat && cha.isMobile) {
+    redirectForWxGzhOpenid(order_id)
     return
   }
 
@@ -138,9 +145,11 @@ async function toBuyViaUnion(
   }
   
   // 8. otherwise, go to payment-page
+  rr.router.push({
+    name: "payment",
+    params: { order_id },
+  })
 
-
-  
 }
 
 

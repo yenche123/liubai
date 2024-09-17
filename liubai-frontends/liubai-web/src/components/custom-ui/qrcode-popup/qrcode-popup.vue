@@ -62,11 +62,25 @@ const cha = liuApi.getCharacteristic()
 
       <!-- info box -->
       <div class="liu-no-user-select ba-info">
+
+        <!-- title -->
         <div class="ba-info-title">
           <span v-if="qpData.bindType === 'wx_gzh_scan'">{{ t('qrcode.wx_scan_login') }}</span>
+          <span v-else-if="qpData.bindType === 'union_pay'"
+            class="ba-info-title_unionpay"
+          >{{ t('payment.content1') }}</span>
           <span v-else>{{ t('qrcode.title') }}</span>
         </div>
-        <div v-if="qpData.bindType === 'wx_gzh_scan'" class="ba-info-desc">
+
+        <!-- desc -->
+        <div v-if="qpData.bindType === 'union_pay'" class="ba-info-desc ba-info-desc_unionpay">
+          <span>{{ t('payment.content3') }}</span>
+          <span class="ba-info-icon ba-info-icon_wechat"></span>
+          <span>{{ t('payment.content4') }}</span>
+          <span class="ba-info-icon ba-info-icon_alipay"></span>
+          <span>{{ t('payment.content5') }}</span>
+        </div>
+        <div v-else-if="qpData.bindType === 'wx_gzh_scan'" class="ba-info-desc">
           <span v-if="cha.isMobile && cha.isWeChat">{{ t('qrcode.long_press_3') }}</span>
           <span v-else-if="cha.isMobile">{{ t('qrcode.scan_3') }}</span>
           <span v-else>{{ t('qrcode.scan_3') }}</span>
@@ -232,12 +246,50 @@ const cha = liuApi.getCharacteristic()
   text-wrap: pretty;
 }
 
+.ba-info-title_unionpay {
+  font-size: var(--head-font);
+  letter-spacing: 1px;
+}
+
 .ba-info-desc {
   font-size: var(--btn-font);
   color: var(--main-code);
   line-height: 1.5;
   text-wrap: pretty;
 }
+
+.ba-info-desc_unionpay {
+  font-size: var(--desc-font);
+  line-height: 1.75;
+}
+
+.ba-info-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  margin-inline: 8px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: text-top;
+}
+
+.ba-info-icon_wechat {
+  width: 26px;
+  height: 26px;
+  background-image: url('/images/third-party/wechat.png');
+}
+
+.ba-info-icon_alipay {
+  background-image: url('/images/third-party/alipay.png');
+}
+
+@media screen and (max-width: 500px) {
+  .ba-info-title_unionpay {
+    font-size: var(--title-font);
+  }
+}
+
 
 @media screen and (max-width: 660px) {
 
