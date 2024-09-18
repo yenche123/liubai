@@ -48,7 +48,8 @@ export function useConnectWeChat() {
 
   const { syncNum, awakeNum } = useAwakeNum()
   watch(awakeNum, (newV) => {
-    if(syncNum.value < 1) return
+    // console.log("awakeNum: ", newV)
+    // console.log("syncNum: ", syncNum.value)
     if(newV < 1) return
     checkoutData(cwcData, rr)
   }, { immediate: true })

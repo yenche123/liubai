@@ -67,18 +67,18 @@ export function showQRCodePopup(param: QpParam) {
   qpData.state = param.state
   qpData.fr = param.fr
 
+  const _wait = (a: QpResolver) => {
+    _resolve = a
+  }
 
   if(bT === "union_pay" && !param.order_id) {
     console.warn("order_id is required while union_pay")
-    return
+    return new Promise(_wait)
   }
 
   openIt(rr, queryKey)
   fetchData()
 
-  const _wait = (a: QpResolver) => {
-    _resolve = a
-  }
   return new Promise(_wait)
 }
 

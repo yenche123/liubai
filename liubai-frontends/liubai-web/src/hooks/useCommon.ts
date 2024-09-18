@@ -92,7 +92,7 @@ export function useActiveSyncNum() {
   }, { immediate: true })
 
   return {
-    activeSyncNum,
+    activeSyncNum: readonly(activeSyncNum),
   }
 }
 
@@ -147,7 +147,7 @@ export function useAwakeNum(
   return {
     awakeNum: readonly(awakeNum),
     syncNum,
-    isActivated,
+    isActivated: readonly(isActivated),
   }
 }
 
