@@ -91,7 +91,7 @@ export function initExtensions(
 
   const CustomCodeBlockLowlight = CodeBlockLowlight.extend({
     addNodeView() {
-      return VueNodeViewRenderer(CodeBlockComponent)
+      return VueNodeViewRenderer(CodeBlockComponent as any)
     }
   })
 

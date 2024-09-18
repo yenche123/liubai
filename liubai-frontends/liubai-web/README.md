@@ -26,6 +26,9 @@ Build! Anyway
 }
 ```
 
+8. 2024-09-18，将 sass 从 `v1.78.0` 升级至 `v1.79.1`，运行 `pnpm dev` 控制台会出现大量警告⚠️: Deprecation Warning: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+
 ## 彻底解决 pnpm 网络请求超时的问题
 
 关闭 ipv6! 改为 `仅本地连接`
@@ -34,7 +37,7 @@ Build! Anyway
 
 清除 pnpm 缓存: `pnpm store prune`
 
-pnpm 设置代理: `pnpm config set proxy socks5://127.0.0.1:1081`
+pnpm 设置代理: `pnpm config set proxy socks5://127.0.0.1:1081`，运行后 pnpm 会修改你的 `~/Library/Preferences/pnpm/rc`（macOS）文件。
 
 查看 pnpm 配置: `pnpm config list`
 
@@ -155,7 +158,11 @@ https://www.logo.dev/ 同样收录各个品牌的 logo
 
 19. 运行 `curl cip.cc` 查看当前命令行设置的代理
 
-20. 一个使用 Rust 编写的 node.js 版本管理工具 `fnm`，安装好后在项目根目录下运行 `eval "$(fnm env --use-on-cd)"` （以 MacOS 为例）开始使用，运行 `fnm current` 查看当前项目使用的 node.js 版本号。若全局电脑只想使用 LTS 的 node.js，那么是不需要使用 `fnm` 的，只要在 node.js 官网下载（升级时亦然）并安装即可。
+20. 一个使用 Rust 编写的 node.js 版本管理工具 `fnm`，安装好后在项目根目录下运行 `eval "$(fnm env --use-on-cd)"` （以 MacOS 为例）开始使用，运行 `fnm current` 查看当前项目使用的 node.js 版本号。
+
+运行 `fnm use VERSION` 切换当前上下文 node.js 版本（VERSION 指版本号，需要加 `v`）。上下文指的是当前 shell 环境，举例：在 Cursor 中打开命令行，之后再用 warp 打开同一目录，两者为 **不同** 上下文。
+
+若全局电脑只想使用 LTS 的 node.js，那么是不需要使用 `fnm` 的，只要在 node.js 官网下载（升级时亦然）并安装即可。
 
 21. pnpm v9 起，可使用 `pnpm licenses list` 打印当前目录下所有第三方依赖的许可证信息
 
