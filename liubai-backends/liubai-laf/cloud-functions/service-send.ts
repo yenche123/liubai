@@ -29,90 +29,102 @@ export async function main(ctx: FunctionContext) {
 
 /********************** 发送邮件相关 *****************/
 
-/** 去发送邮件 */
-export async function sendEmails(
-  param: ServiceSendEmailsParam,
-): Promise<LiuRqReturn> {
+/** package Resend */
+export class LiuResend {
+
+  /** 去发送邮件 */
+  static async sendEmails(
+    param: ServiceSendEmailsParam,
+  ): Promise<LiuRqReturn> {
+    
+    let { text, html, subject, tags } = param
+    if(!text && !html) {
+      return { code: "E5001", errMsg: "no text or html of param in sendEmails" }
+    }
+    if(param.to.length < 1) {
+      return { code: "E5001", errMsg: "to.length of param is meant to be bigger than 0" }
+    }
   
-  let { text, html, subject, tags } = param
-  if(!text && !html) {
-    return { code: "E5001", errMsg: "no text or html of param in sendEmails" }
-  }
-  if(param.to.length < 1) {
-    return { code: "E5001", errMsg: "to.length of param is meant to be bigger than 0" }
-  }
-
-  const newText = text as string
-  const newHtml = html as string
-
-  const _env = process.env
-  const fromEmail = _env.LIU_RESEND_FROM_EMAIL
-  if(!fromEmail) {
-    return { code: "E5001", errMsg: "no fromEmail in sendEmails" } 
-  }
-
-  const resend = getResendInstance()
-  if(!resend) {
-    return { code: "E5001", errMsg: "no resendApiKey in sendEmails" }
-  }
-
-  const appName = _env.LIU_APP_NAME
-  if(!appName) {
-    return { code: "E5001", errMsg: "appName is required in sendEmails" } 
-  }
-
-  if(!tags) {
-    tags = [{ name: "category", value: "confirm_email" }]
-  }
-
-  const time1 = getNowStamp()
-  const res = await resend.emails.send({
-    from: `${appName} <${fromEmail}>`,
-    to: param.to,
-    subject,
-    text: newText,
-    html: newHtml,
-    tags,
-  })
-  const time2 = getNowStamp()
-
-  console.log(`resend 发送耗时: ${time2 - time1} ms`)
-  console.log("查看 resend 的发送结果>>>")
-  console.log(res)
-  console.log(" ")
-
-  if(res.error) {
-    return { code: "U0005", data: res.error }
-  }
-
-  if(res.data) {
-    return { code: "0000", data: res.data }
-  }
-
-  return { code: "0000" }
-}
-
-/** 去检索邮件发送结果 */
-async function retrieveEmail(
-  email_id: string,
-): Promise<LiuRqReturn> {
-  const resend = getResendInstance()
-  if(!resend) {
-    return { code: "E5001", errMsg: "no resendApiKey in retrieveEmail" } 
-  }
-  const res = await resend.emails.get(email_id)
-  console.log("retrieveEmail res: ")
-  console.log(res)
-  console.log(" ")
+    const newText = text as string
+    const newHtml = html as string
   
-  if(res.error) {
-    return { code: "E5004", data: res.error }
-  }
-  if(res.data) {
-    return { code: "0000", data: res.data }
+    const _env = process.env
+    const fromEmail = _env.LIU_RESEND_FROM_EMAIL
+    if(!fromEmail) {
+      return { code: "E5001", errMsg: "no fromEmail in sendEmails" } 
+    }
+  
+    const resend = this._getResendInstance()
+    if(!resend) {
+      return { code: "E5001", errMsg: "no resendApiKey in sendEmails" }
+    }
+  
+    const appName = _env.LIU_APP_NAME
+    if(!appName) {
+      return { code: "E5001", errMsg: "appName is required in sendEmails" } 
+    }
+  
+    if(!tags) {
+      tags = [{ name: "category", value: "confirm_email" }]
+    }
+  
+    const time1 = getNowStamp()
+    const res = await resend.emails.send({
+      from: `${appName} <${fromEmail}>`,
+      to: param.to,
+      subject,
+      text: newText,
+      html: newHtml,
+      tags,
+    })
+    const time2 = getNowStamp()
+  
+    console.log(`resend 发送耗时: ${time2 - time1} ms`)
+    console.log("查看 resend 的发送结果>>>")
+    console.log(res)
+    console.log(" ")
+  
+    if(res.error) {
+      return { code: "U0005", data: res.error }
+    }
+  
+    if(res.data) {
+      return { code: "0000", data: res.data }
+    }
+  
+    return { code: "0000" }
   }
 
-  return { code: "E5001", errMsg: "it's not as expected in retrieveEmail" }
+  static async retrieveEmail(
+    email_id: string,
+  ): Promise<LiuRqReturn> {
+    const resend = this._getResendInstance()
+    if(!resend) {
+      return { code: "E5001", errMsg: "no resendApiKey in retrieveEmail" } 
+    }
+    const res = await resend.emails.get(email_id)
+    console.log("retrieveEmail res: ")
+    console.log(res)
+    console.log(" ")
+    
+    if(res.error) {
+      return { code: "E5004", data: res.error }
+    }
+    if(res.data) {
+      return { code: "0000", data: res.data }
+    }
+  
+    return { code: "E5001", errMsg: "it's not as expected in retrieveEmail" }
+  }
+
+  private static _getResendInstance() {
+    const _env = process.env
+    const resendApiKey = _env.LIU_RESEND_API_KEY
+    if(!resendApiKey) return
+    const resend = new Resend(resendApiKey)
+    return resend
+  }
+
 }
 
 
@@ -138,7 +150,7 @@ export async function checkIfEmailSentTooMuch(
     errMsg: "sending to the email address too much"
   }
   if(firRes.email_id && firRes.send_channel === "resend") {
-    const res2 = await retrieveEmail(firRes.email_id)
+    const res2 = await LiuResend.retrieveEmail(firRes.email_id)
     const last_event = res2?.data?.last_event
     if(res2.code === "0000" && typeof last_event === "string") {
       rData.errMsg = `last_event: ${last_event}`
@@ -169,15 +181,6 @@ export async function getActiveEmailCode(): Promise<LiuRqReturn> {
   }
 
   return { code: "E5001", errMsg: "cannot get an active email code" }
-}
-
-
-function getResendInstance() {
-  const _env = process.env
-  const resendApiKey = _env.LIU_RESEND_API_KEY
-  if(!resendApiKey) return
-  const resend = new Resend(resendApiKey)
-  return resend
 }
 
 /********************** About WeChat *****************/

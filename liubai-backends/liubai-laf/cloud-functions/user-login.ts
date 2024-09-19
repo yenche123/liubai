@@ -63,8 +63,8 @@ import {
 } from "@/common-ids"
 import { 
   checkIfEmailSentTooMuch, 
-  getActiveEmailCode, 
-  sendEmails, 
+  getActiveEmailCode,
+  LiuResend,
   sendWxTextMessage,
 } from "@/service-send"
 import { 
@@ -724,7 +724,7 @@ async function handle_email(
     subject,
     text,
   }
-  const res4 = await sendEmails(dataSent)
+  const res4 = await LiuResend.sendEmails(dataSent)
 
   // 8. 处理发送后的结果
   handleEmailSent(cId, "resend", res4)
