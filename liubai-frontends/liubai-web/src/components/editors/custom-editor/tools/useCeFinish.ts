@@ -52,7 +52,7 @@ export function useCeFinish(ctx: CepContext) {
   return { toFinish }
 }
 
-// 去发表
+// to release
 async function toRelease(
   ctx: CepContext,
   focusRequired: boolean
@@ -61,6 +61,7 @@ async function toRelease(
   const { local_id: user } = localCache.getPreference()
   if(!user) return
 
+  // 1. get new thread data
   const { ceData } = ctx
   const preThread = _getThreadData(ceData)
   if(!preThread) return
@@ -76,18 +77,32 @@ async function toRelease(
   preThread.emojiData = { total: 0, system: [] }
   preThread.createdStamp = now
   preThread.insertedStamp = now
-
-  // console.log("看一下 preThread.........")
-  // console.log(preThread)
-  // console.log(" ")
-
   const newThread = preThread as ContentLocalTable
-
-  // 1. 添加进 contents 表里
-  const res1 = await localReq.addContent(newThread)
   
-  // 2. 删除 drafts
+  // 2. to release
   const draftId = ceData.draftId
+  releaseAsync(ctx, newThread, draftId)
+
+  // 3. reset ceData
+  _resetState(ctx)
+ 
+  // 4. reset editor
+  _resetEditor(ctx, focusRequired)
+}
+
+async function releaseAsync(
+  ctx: CepContext,
+  newThread: ContentLocalTable,
+  draftId?: string,
+) {
+  const ceData = ctx.ceData
+  const newId = newThread._id
+  const stamp = newThread.insertedStamp
+
+  // 1. add new thread into db
+  await localReq.addContent(newThread)
+
+  // 2. delete drafts
   if(draftId) {
     await localReq.clearDraftOnCloud(draftId)
     await localReq.setDraftAsPosted(draftId)
@@ -97,10 +112,27 @@ async function toRelease(
     ceData.reject_draft_ids.push(draftId)
   }
 
-  // 3. 重置编辑器的 ceData
-  _resetState(ctx)
- 
-  // 4. 重置 editor
+  // 3. notify other components
+  const threadShows = await equipThreads([newThread])
+  ctx.threadShowStore.setNewThreadShows(threadShows)
+
+  // 4. ignore if it's a local thread
+  const storageState = newThread.storageState
+  if(storageState === "LOCAL" || storageState === "ONLY_LOCAL") return
+
+  // 5. upload to cloud
+  LocalToCloud.addTask({ 
+    uploadTask: "thread-post", 
+    target_id: newId,
+    operateStamp: stamp,
+  }, { speed: "instant" })
+}
+
+
+function _resetEditor(
+  ctx: CepContext,
+  focusRequired: boolean,
+) {
   const editor = ctx.editor.value
   if(!editor) return
   if(focusRequired) {
@@ -109,25 +141,6 @@ async function toRelease(
   else {
     editor.chain().setContent('<p></p>').run()
   }
-
-  // 5. 通知全局 需要更新 threads
-  const threadShows = await equipThreads([newThread])
-  ctx.threadShowStore.setNewThreadShows(threadShows)
-
-  // 6. logger
-  liuConsole.sendMessage("User released a thread")
-
-  // 7. 如果是本地的动态，忽略去同步后端
-  const storageState = preThread.storageState
-  if(storageState === "LOCAL" || storageState === "ONLY_LOCAL") return
-
-  // 8. 去同步后端
-  LocalToCloud.addTask({ 
-    uploadTask: "thread-post", 
-    target_id: newId,
-    operateStamp: now,
-  }, { speed: "instant" })
-  
 }
 
 

@@ -67,6 +67,8 @@ export class LiuResend {
     if(!tags) {
       tags = [{ name: "category", value: "confirm_email" }]
     }
+
+    console.log(`from: ${fromEmail}`)
   
     const time1 = getNowStamp()
     const res = await resend.emails.send({
