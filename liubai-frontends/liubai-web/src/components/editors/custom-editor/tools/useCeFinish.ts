@@ -8,7 +8,6 @@ import { defaultData, type CeData, type CeEmits } from "./types"
 import time from "~/utils/basic/time";
 import transferUtil from "~/utils/transfer-util";
 import liuUtil from "~/utils/liu-util";
-import type { LiuRemindMe } from "~/types/types-atom";
 import localReq from "./req/local-req";
 import type { ThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { storeToRefs } from "pinia";
@@ -80,8 +79,7 @@ async function toRelease(
   const newThread = preThread as ContentLocalTable
   
   // 2. to release
-  const draftId = ceData.draftId
-  releaseAsync(ctx, newThread, draftId)
+  releaseAsync(ctx, newThread)
 
   // 3. reset ceData
   _resetState(ctx)
@@ -93,9 +91,9 @@ async function toRelease(
 async function releaseAsync(
   ctx: CepContext,
   newThread: ContentLocalTable,
-  draftId?: string,
 ) {
   const ceData = ctx.ceData
+  const draftId = ceData.draftId
   const newId = newThread._id
   const stamp = newThread.insertedStamp
 
