@@ -75,8 +75,9 @@ function _searchInList(
         parentEmoji: parentIcon ? liuApi.decode_URI_component(parentIcon) : undefined,
       }
       list.push(obj)
-      if(list.length < 10 && v.children) {
-        const tmpList = _pushSomeChildren(newParents, v.children)
+      const len = list.length
+      if(len < 10 && v.children) {
+        const tmpList = _pushSomeChildren(newParents, v.children, len)
         list = list.concat(tmpList)
       }
     }
@@ -95,11 +96,14 @@ function _searchInList(
  */
 function _pushSomeChildren(
   parents: string[],
-  children: TagView[]
+  children: TagView[],
+  len: number,
 ) {
   const list: TagShow[] = []
+  const maxLen = Math.max(10 - len, 5)
+
   for(let i=0; i<children.length; i++) {
-    if(i >= 3) break
+    if(i >= maxLen) break
     const v = children[i]
     if(v.oState !== "OK") continue
     let text = v.text
