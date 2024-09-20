@@ -10,6 +10,9 @@ export type ThreadCardShowType = "normal" | "hiding"
 
 export type CursorHorizontalResize = "ew-resize" | "e-resize" | "w-resize"
 
+// LiuDisplayType
+export type LiuDisplayType = "list" | "detail"
+
 // 自定义页面内的视图单元
 export interface BasicView {
   show: boolean

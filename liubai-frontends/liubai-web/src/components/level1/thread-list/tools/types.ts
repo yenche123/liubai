@@ -28,8 +28,6 @@ export interface TlProps {
   showTxt?: TrueOrFalse
 }
 
-export type TlDisplayType = "list" | "detail"
-
 export interface TlHasDataOpt {
   title_key?: string
 }

@@ -1,15 +1,12 @@
 import type { ThreadShow } from '~/types/types-content';
-import type { 
-  TlViewType, 
-  TlDisplayType,  
-} from '../../tools/types';
+import type { TlViewType } from '../../tools/types';
 import type { ThreadOutterOperation } from "~/types/types-atom"
-import type { ThreadCardShowType } from "~/types/types-view"
+import type { ThreadCardShowType, LiuDisplayType } from "~/types/types-view"
 import type { TrueOrFalse } from '~/types/types-basic'
 
 export interface TcProps {
   threadData: ThreadShow
-  displayType: TlDisplayType
+  displayType: LiuDisplayType
   viewType?: TlViewType
   position: number
   showType: ThreadCardShowType

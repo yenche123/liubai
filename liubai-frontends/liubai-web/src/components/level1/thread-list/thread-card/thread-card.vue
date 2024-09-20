@@ -11,9 +11,9 @@ import BrowsingCovers from "~/components/browsing/browsing-covers/browsing-cover
 import { useThreadCard } from './tools/useThreadCard';
 import { useI18n } from 'vue-i18n';
 import { useTcOperation } from "./tools/useTcOperation";
-import type { TlViewType, TlDisplayType } from "../tools/types";
+import type { TlViewType } from "../tools/types";
 import type { TcEmits } from "./tools/types"
-import type { ThreadCardShowType } from "~/types/types-view"
+import type { ThreadCardShowType, LiuDisplayType } from "~/types/types-view"
 import { useTcAnimate } from './tools/useTcAnimate';
 import type { TrueOrFalse } from '~/types/types-basic';
 
@@ -27,7 +27,7 @@ const props = defineProps({
     required: true
   },
   displayType: {
-    type: String as PropType<TlDisplayType>,
+    type: String as PropType<LiuDisplayType>,
     default: "list",
   },
   viewType: {
@@ -108,6 +108,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
           :is-edit="false"
           :content="threadData.briefing"
           is-in-card
+          :display-type="displayType"
         ></EditorCore>
         <div class="tcb-mask"></div>
         <div class="tcb-more">
@@ -136,6 +137,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
           :is-edit="false"
           :content="threadData.content"
           is-in-card
+          :display-type="displayType"
         ></EditorCore>
 
         <!-- 支持 css overflow text 的 tcc-expand -->

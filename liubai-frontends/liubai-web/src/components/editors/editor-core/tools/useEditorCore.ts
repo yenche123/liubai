@@ -103,6 +103,7 @@ function getStyles(
     const pse = props.purpose
     const isComment = pse === "comment-browse" || pse === "comment-edit"
     const isInCard = props.isInCard
+    const displayType = props.displayType
 
     let fontSize = "var(--desc-font)"
     let h1Size = "var(--title-font)"
@@ -111,7 +112,7 @@ function getStyles(
     let lineHeight = 1.9
     let hrBg = "var(--liu-hr)"
 
-    if(isComment) {
+    if(isComment || displayType === "detail") {
       fontSize = "var(--comment-font)"
       h1Size = "var(--desc-font)"
       inlineCodeSize = "var(--comment-inline-code)"
