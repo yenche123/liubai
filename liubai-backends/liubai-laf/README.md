@@ -18,6 +18,13 @@ export const wxpay_apiclient_key = ""
 
 ## 开发日记
 
+### 2024-09-20
+
+腾讯云 SES（Simple Email Service） node.js SDK，安装 `pnpm add -D tencentcloud-sdk-nodejs-ses`
+
+仓库地址: https://github.com/TencentCloud/tencentcloud-sdk-nodejs/tree/master/tencentcloud/services/ses
+
+
 ### 2024-09-04
 
 部署指南里，记得提醒要添加 `secret-config.ts` 文件，否则会报错！

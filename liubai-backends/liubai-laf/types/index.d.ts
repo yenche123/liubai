@@ -98,6 +98,9 @@ declare global {
       LIU_WXPAY_NOTIFY_URL?: string       // callback url from wxpay
       LIU_WXPAY_API_V3_KEY?: string       // api v3 key
 
+      // 腾讯云
+      LIU_TENCENTCLOUD_SECRET_ID?: string    // 腾讯云的 secret id
+      LIU_TENCENTCLOUD_SECRET_KEY?: string   // 腾讯云的 secret key
       
 
     }
