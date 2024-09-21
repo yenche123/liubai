@@ -10,6 +10,7 @@ import type {
   GlobalStateStore
 } from "~/hooks/stores/useGlobalStateStore"
 import liuUtil from '~/utils/liu-util';
+import cui from '~/components/custom-ui';
 
 interface TcCtx {
   props: TcProps
@@ -104,9 +105,11 @@ function handleTapThreadCard(
   if(res) return
   if(liuApi.eventTargetIsSomeTag(target, "a")) return
   if(props.displayType === "detail") return
+  if(props.viewType === "TRASH") return
 
   const { threadData } = props
   if(threadData.oState !== "OK") {
+    cui.showSnackBar({ text_key: "thread_related.content_deleted" })
     return
   }
 

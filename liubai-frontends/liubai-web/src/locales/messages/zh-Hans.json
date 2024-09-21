@@ -272,7 +272,8 @@
     "deleted_at": "删除于 {date}",
     "created_at": "创建于 {date}",
     "edited_at": "编辑于 {date}",
-    "saved_locally": "仅本地存储"
+    "saved_locally": "仅本地存储",
+    "content_deleted": "🗑️ 该动态已被删除"
   },
   "state_related": {
     "add_state": "添加状态",

@@ -272,7 +272,8 @@
     "deleted_at": "{date} 刪除",
     "created_at": "{date} 新增",
     "edited_at": "{date} 編輯",
-    "saved_locally": "只保存於本機"
+    "saved_locally": "只保存於本機",
+    "content_deleted": "🗑️ 該動態已被刪除"
   },
   "state_related": {
     "add_state": "新增狀態",

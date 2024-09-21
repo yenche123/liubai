@@ -262,7 +262,7 @@
   },
   "thread_related": {
     "delete_forever_1": "Delete Forever",
-    "delete_forever_2": "Are you sure to delete the post completely? The post will not be retrieved after you delete it.",
+    "delete_forever_2": "Are you sure to delete the post permanently? The post will not be retrieved after you delete it.",
     "delete_btn": "DELETE",
     "finished": "Finished",
     "todo": "Todo",
@@ -272,7 +272,8 @@
     "deleted_at": "Deleted {date}",
     "created_at": "Created {date}",
     "edited_at": "Edited {date}",
-    "saved_locally": "Only Saved Locally"
+    "saved_locally": "Only Saved Locally",
+    "content_deleted": "🗑️ It's been deleted"
   },
   "state_related": {
     "add_state": "New State",
