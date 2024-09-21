@@ -55,6 +55,9 @@ export interface LocalOnceData {
   // font size
   fontSize?: "L" | "M"
 
+  // show the popup where we cannot remind you
+  cannotRemindStamp?: number
+
 }
 
 export type KeyOfLocalOnceData = keyof LocalOnceData

@@ -2,11 +2,22 @@ import APIs from "~/requests/APIs"
 import liuReq from "~/requests/liu-req"
 import liuEnv from "~/utils/liu-env"
 import type { Res_OC_GetWeChat } from "~/requests/req-types";
+import type { CeData } from "./types";
 import cui from "~/components/custom-ui";
+import localCache from "~/utils/system/local-cache";
+import time from "~/utils/basic/time";
+import liuUtil from "~/utils/liu-util";
 
 export function checkIfReminderEnabled(
-  memberId: string
+  memberId: string,
+  ceData: CeData,
 ) {
+  const sState = ceData.storageState
+  if(sState === "LOCAL") {
+    checkIfShowCannotRemind()
+    return
+  }
+
   const { NOTIFICATION_PRIORITY: nPriority } = liuEnv.getEnv()
   if(!nPriority || nPriority === "disable") return
 
@@ -16,7 +27,22 @@ export function checkIfReminderEnabled(
   if(nPriority === "wx_gzh") {
     checkOutWxGzh(memberId)
   }
+}
 
+async function checkIfShowCannotRemind() {
+  const onceData = localCache.getOnceData()
+  if(onceData.cannotRemindStamp) return
+  await liuUtil.waitAFrame(true)
+  const res = await cui.showModal({
+    title_key: "tip.tip",
+    content_key: "tip.cannot_remind_you",
+    showCancel: false,
+    confirm_key: "tip.got_it"
+  })
+  if(res.confirm) {
+    const now = time.getTime()
+    localCache.setOnceData("cannotRemindStamp", now)
+  }
 }
 
 

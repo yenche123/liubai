@@ -239,7 +239,8 @@
     "open_with_browser_1": "開啟預設瀏覽器",
     "open_with_browser_2": "獲取極致體驗！",
     "open_with_browser_3": "輕觸「...」開啟預設瀏覽器",
-    "fail_to_request": "網路請求失敗"
+    "fail_to_request": "網路請求失敗",
+    "cannot_remind_you": "由於您關閉了雲端同步，提醒功能將僅為裝飾，屆時系統無法彈出通知。"
   },
   "card_bubble": {
     "copy": "複製",

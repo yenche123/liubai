@@ -29,7 +29,6 @@ import { deviceChaKey } from '~/utils/provide-keys';
 import { checkCanSubmit } from "./some-funcs";
 import { checkIfReminderEnabled } from "./reminder-tip";
 
-
 let collectTimeout: LiuTimeout
 let spaceIdRef: Ref<string>
 let spaceTypeRef: Ref<SpaceType>
@@ -305,7 +304,7 @@ function toWhenChange(
   if(!newWhenStamp) return
   const memberId = memberIdRef.value
   if(!memberId) return
-  checkIfReminderEnabled(memberId)
+  checkIfReminderEnabled(memberId, ctx.ceData)
 }
 
 function toRemindMeChange(
@@ -319,7 +318,7 @@ function toRemindMeChange(
   if(!val) return
   const memberId = memberIdRef.value
   if(!memberId) return
-  checkIfReminderEnabled(memberId)
+  checkIfReminderEnabled(memberId, ctx.ceData)
 }
 
 function toTitleChange(
