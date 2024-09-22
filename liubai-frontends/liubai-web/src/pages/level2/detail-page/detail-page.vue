@@ -36,7 +36,7 @@ const { t } = useI18n()
           <navi-virtual></navi-virtual>
           <detail-content :thread-id="item.id"></detail-content>
         </scroll-view>
-        <navi-bar :title="t('common.detail')"></navi-bar>
+        <navi-bar></navi-bar>
       </div>
     </template>
   </main-view>
