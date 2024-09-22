@@ -255,10 +255,13 @@ async function setTags(
   return true
 }
 
-async function countPin() {
+async function countPin(
+  spaceId: string,
+) {
   const filterFunc = (item: ContentLocalTable) => {
     if(item.oState !== "OK") return false
     if(item.infoType !== "THREAD") return false
+    if(item.spaceId !== spaceId) return false
     return true
   }
   const res = await db.contents.where("pinStamp").above(0).filter(filterFunc).count()

@@ -27,7 +27,7 @@ export async function toPin(
   // 2. 新的状态是置顶，去查看数目
   // 若已达最大值，提示用户 pin_maximum
   if(newPin) {
-    const pinnedNum = await dbOp.countPin()
+    const pinnedNum = await dbOp.countPin(oldThread.spaceId)
     const limitNum = limit.getLimit("pin")
     if(limitNum >= 0 && pinnedNum >= limitNum) {
       cui.showSnackBar({ text_key: "tip.pin_maximum", duration: 3000 })
