@@ -79,6 +79,7 @@ const {
   border-radius: 6px;
   position: relative;
   pointer-events: auto;
+  content-visibility: auto;
 }
 
 .sb-main-box {

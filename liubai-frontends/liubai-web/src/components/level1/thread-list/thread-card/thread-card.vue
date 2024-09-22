@@ -204,6 +204,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
   will-change: margin-block-start;
   transition: .3s;
   padding-block-end: 10px;
+  content-visibility: auto;
 }
 
 .tc-big-container_hiding {

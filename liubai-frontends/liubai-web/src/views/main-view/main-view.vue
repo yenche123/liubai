@@ -81,6 +81,7 @@ const onTapCenter = (e: MouseEvent) => {
   height: 100%;
   transition: .45s;
   background-color: #e6e4bf;
+  contain: strict;
 }
 
 .mv-center {
@@ -89,6 +90,7 @@ const onTapCenter = (e: MouseEvent) => {
   height: 100dvh;
   position: relative;
   overflow-x: hidden;
+  content-visibility: auto;
 }
 
 .mv-touch-box {

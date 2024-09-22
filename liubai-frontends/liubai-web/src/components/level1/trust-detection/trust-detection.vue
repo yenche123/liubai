@@ -44,6 +44,7 @@ const { t } = useI18n()
   display: flex;
   align-items: center;
   justify-content: center;
+  content-visibility: auto;
 
   &::before {
     content: "";

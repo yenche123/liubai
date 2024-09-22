@@ -126,6 +126,7 @@ const {
   z-index: 600;
   transition: .3s;
   overflow: hidden;
+  content-visibility: auto;
 }
 
 .sb-container_hidden {

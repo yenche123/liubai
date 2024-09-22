@@ -121,6 +121,7 @@ const sbProperty = middleBridge.canShowScrollbarProperty()
   transition: .45s;
   direction: rtl;
   will-change: transform;
+  contain: layout style;
 }
 
 .vv-container_hidden {
