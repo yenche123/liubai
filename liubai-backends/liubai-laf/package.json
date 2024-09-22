@@ -21,6 +21,7 @@
     "qiniu": "^7.12.0",
     "resend": "^4.0.0",
     "stripe": "^16.12.0",
+    "tencentcloud-sdk-nodejs-ses": "^4.0.929",
     "valibot": "^0.30.0",
     "xml2js": "^0.6.2"
   },

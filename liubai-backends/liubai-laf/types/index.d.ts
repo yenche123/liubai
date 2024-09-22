@@ -101,6 +101,9 @@ declare global {
       // 腾讯云
       LIU_TENCENTCLOUD_SECRET_ID?: string    // 腾讯云的 secret id
       LIU_TENCENTCLOUD_SECRET_KEY?: string   // 腾讯云的 secret key
+
+      // 腾讯云 SES
+      LIU_TENCENT_SES_FROM_EMAIL?: string    // 腾讯云 SES 的发件邮箱
       
 
     }

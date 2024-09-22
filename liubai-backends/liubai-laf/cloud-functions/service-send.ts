@@ -18,6 +18,7 @@ import {
 } from "@/common-time"
 import { createEmailCode } from '@/common-ids'
 import { liuReq } from '@/common-util'
+import { ses as TencentSES } from "tencentcloud-sdk-nodejs-ses"
 
 const db = cloud.database()
 const _ = db.command
@@ -29,6 +30,64 @@ export async function main(ctx: FunctionContext) {
 
 /********************** 发送邮件相关 *****************/
 
+
+function checkEmailParam(param: ServiceSendEmailsParam) {
+  const { text, html, subject, to } = param
+  if(!text && !html) {
+    return { code: "E5001", errMsg: "no text or html of param in sendEmails" }
+  }
+  if(to.length < 1) {
+    return { code: "E5001", errMsg: "to.length of param is meant to be bigger than 0" }
+  }
+}
+
+
+/** package Tencent Simplet Email Service (SES) */
+export class LiuTencentSES {
+  static _getInstance() {
+    const _env = process.env
+    const secretId = _env.LIU_TENCENT_SES_SECRET_ID
+    const secretKey = _env.LIU_TENCENT_SES_SECRET_KEY
+    if(!secretId || !secretKey) {
+      return
+    }
+    const TecentSESClient = TencentSES.v20201002.Client
+    const client = new TecentSESClient({
+      credential: {
+        secretId,
+        secretKey,
+      },
+    })
+    return client
+  }
+
+  static async sendEmails(
+    param: ServiceSendEmailsParam,
+  ) {
+
+    // 1. get instance & check param
+    const client = this._getInstance()
+    if(!client) {
+      return { code: "E5001", errMsg: "no tencent ses client in sendEmails" } 
+    }
+    const err1 = checkEmailParam(param)
+    if(err1) return err1
+
+    // 2. get fromEmail
+    const _env = process.env
+    const fromEmail = _env.LIU_TENCENT_SES_FROM_EMAIL
+    if(!fromEmail) {
+      return { code: "E5001", errMsg: "no fromEmail in sendEmails" } 
+    }
+
+    
+
+  }
+
+}
+
+
+
 /** package Resend */
 export class LiuResend {
 
@@ -36,17 +95,9 @@ export class LiuResend {
   static async sendEmails(
     param: ServiceSendEmailsParam,
   ): Promise<LiuRqReturn> {
-    
-    let { text, html, subject, tags } = param
-    if(!text && !html) {
-      return { code: "E5001", errMsg: "no text or html of param in sendEmails" }
-    }
-    if(param.to.length < 1) {
-      return { code: "E5001", errMsg: "to.length of param is meant to be bigger than 0" }
-    }
-  
-    const newText = text as string
-    const newHtml = html as string
+    let { subject, tags } = param
+    const err1 = checkEmailParam(param)
+    if(err1) return err1
   
     const _env = process.env
     const fromEmail = _env.LIU_RESEND_FROM_EMAIL
@@ -75,8 +126,8 @@ export class LiuResend {
       from: `${appName} <${fromEmail}>`,
       to: param.to,
       subject,
-      text: newText,
-      html: newHtml,
+      text: param.text as string,
+      html: param.html as string,
       tags,
     })
     const time2 = getNowStamp()
