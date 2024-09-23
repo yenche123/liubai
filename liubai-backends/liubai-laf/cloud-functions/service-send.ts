@@ -19,9 +19,8 @@ import {
   MINUTE, 
 } from "@/common-time"
 import { createEmailCode } from '@/common-ids'
-import { liuReq } from '@/common-util'
+import { getYYYYMMDD, liuReq } from '@/common-util'
 import { ses as TencentSES } from "tencentcloud-sdk-nodejs-ses"
-import { relative } from 'node:path/posix'
 
 const db = cloud.database()
 const _ = db.command
@@ -108,7 +107,6 @@ export class LiuTencentSES {
       })
       console.log("tencent ses send emails res: ")
       console.log(res4)
-      console.log(" ")
 
       if(res4.MessageId) {
         return { code: "0000", data: res4 }
@@ -121,6 +119,37 @@ export class LiuTencentSES {
     }
     
     return { code: "0000" }
+  }
+
+  static async retrieveEmail(
+    MessageId: string,
+  ): Promise<LiuRqReturn> {
+    const client = this._getInstance()
+    if(!client) {
+      return { code: "E5001", errMsg: "no tencent ses client in retrieveEmail" } 
+    }
+    const date = getYYYYMMDD(getNowStamp())
+    
+    try {
+      const res = await client.GetSendEmailStatus({
+        Limit: 10,
+        Offset: 0,
+        RequestDate: date,
+        MessageId,
+      })
+
+      // SendEmailStatus: https://cloud.tencent.com/document/product/1288/51053#SendEmailStatus
+      if(res.EmailStatusList?.length) {
+        return { code: "0000", data: res.EmailStatusList[0] }
+      }
+    }
+    catch(err) {
+      console.warn("tencent ses retrieveEmail failed")
+      console.log(err)
+      return { code: "E5004" }
+    }
+
+    return { code: "E5001", errMsg: "it's not as expected in retrieveEmail" }
   }
 
 }
@@ -161,8 +190,6 @@ export class LiuResend {
     if(!tags) {
       tags = [{ name: "category", value: "confirm_email" }]
     }
-
-    console.log(`from: ${fromEmail}`)
   
     try {
       const time1 = getNowStamp()
@@ -179,7 +206,6 @@ export class LiuResend {
       console.log(`resend 发送耗时: ${time2 - time1} ms`)
       console.log("查看 resend 的发送结果>>>")
       console.log(res)
-      console.log(" ")
     
       if(res.error) {
         return { code: "U0005", data: res.error }
@@ -206,9 +232,8 @@ export class LiuResend {
       return { code: "E5001", errMsg: "no resendApiKey in retrieveEmail" } 
     }
     const res = await resend.emails.get(email_id)
-    console.log("retrieveEmail res: ")
+    console.log("LiuResend retrieveEmail res: ")
     console.log(res)
-    console.log(" ")
     
     if(res.error) {
       return { code: "E5004", data: res.error }
@@ -235,6 +260,8 @@ export class LiuResend {
 export async function checkIfEmailSentTooMuch(
   email: string,
 ): Promise<LiuRqReturn | undefined> {
+
+  // 1. get credential
   const now1 = getNowStamp()
   const ONE_MIN_AGO = now1 - MINUTE
   const w1 = { 
@@ -247,7 +274,7 @@ export async function checkIfEmailSentTooMuch(
   const firRes = list1[0]
   if(!firRes) return
 
-  // 检索邮件
+  // 2. retrieve email
   const rData: LiuRqReturn = {
     code: "E4003",
     errMsg: "sending to the email address too much"
@@ -259,7 +286,37 @@ export async function checkIfEmailSentTooMuch(
       rData.errMsg = `last_event: ${last_event}`
     }
   }
-  
+  if(firRes.email_id && firRes.send_channel === "tencent-ses") {
+    const res2 = await LiuTencentSES.retrieveEmail(firRes.email_id)
+
+    // you can see https://cloud.tencent.com/document/product/1288/51053#SendEmailStatus 
+    // to know about res2.data 
+    let last_event = "delivered"
+    const d2 = res2.data ?? {}
+    const SendStatus = d2.SendStatus ?? 0
+    const DeliverStatus = d2.DeliverStatus ?? 0
+
+    if(SendStatus !== 0) {
+      console.warn("tencent ses SendStatus is not 0")
+      console.log(d2)
+    }
+    else if(DeliverStatus > 1) {
+      console.warn("tencent ses deliverStatus is greater than 1")
+      console.log(d2)
+    }
+
+    // 1008: 域名被收件人拒收
+    // 1013: 域名被收件人取消订阅
+    // 3020: 收件方邮箱类型在黑名单
+    if(SendStatus === 1008 || SendStatus === 1013 || SendStatus === 3020) {
+      last_event = "bounced"
+    }
+
+    if(res2.code === "0000") {
+      rData.errMsg = `last_event: ${last_event}`
+    }
+  }
+
   return rData
 }
 

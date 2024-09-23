@@ -821,12 +821,11 @@ function handleEmailSent(
       q.update(u)
     }
     else if(valTool.isStringWithVal(data?.MessageId)) {
-      u.email_id = data.id
+      u.email_id = data.MessageId
       q.update(u)
     }
   }
-
-  if(code === "U0005") {
+  else if(code === "U0005") {
     console.warn('邮件发送失败')
     console.log('删除该 Credential')
     q.remove()

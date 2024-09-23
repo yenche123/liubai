@@ -481,6 +481,12 @@ export function transformStampIntoStr(stamp: number) {
   return `${yyyy}-${mm}-${dd}T${hr}:${min}:${sec}`
 }
 
+// get date string like "2024-05-01"
+export function getYYYYMMDD(stamp: number) {
+  const str = transformStampIntoStr(stamp)
+  return str.substring(0, 10)
+}
+
 export function transformStampIntoRFC3339(
   stamp: number,
   timezone?: number,
