@@ -42,6 +42,9 @@
   --mini-font: 15px;
   --state-font: 13px;
 
+  --detail-font: 19px;
+  --detail-inline-code: 17px;
+
   --comment-font: 18px;
   --comment-inline-code: 16px;
 }
@@ -55,6 +58,9 @@
   --btn-font: 16px;
   --mini-font: 14px;
   --state-font: 13px;
+
+  --detail-font: 17px;
+  --detail-inline-code: 15px;
 
   --comment-font: 16px;
   --comment-inline-code: 15px;

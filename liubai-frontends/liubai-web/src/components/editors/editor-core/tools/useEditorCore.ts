@@ -112,11 +112,17 @@ function getStyles(
     let lineHeight = 1.9
     let hrBg = "var(--liu-hr)"
 
-    if(isComment || displayType === "detail") {
+    if(isComment) {
       fontSize = "var(--comment-font)"
       h1Size = "var(--desc-font)"
       inlineCodeSize = "var(--comment-inline-code)"
       lineHeight = 1.7
+    }
+    else if(displayType === "detail") {
+      fontSize = "var(--detail-font)"
+      h1Size = "var(--desc-font)"
+      inlineCodeSize = "var(--detail-inline-code)"
+      lineHeight = 1.8
     }
 
     if(!isInCard) {
