@@ -172,7 +172,7 @@ export const userLoginLang: LangAtom = {
     "wechat_scan": "微信掃描",
     "operate_time": "操作時間: {time}",
     "ip_address": "IP 地址: {ip}",
-    "device_info": "設備特徵: {device}",
+    "device_info": "裝置特徵: {device}",
     "wechat_client": "微信客戶端",
     "wecom_client": "企業微信",
     "dingtalk_client": "釘釘客戶端",
