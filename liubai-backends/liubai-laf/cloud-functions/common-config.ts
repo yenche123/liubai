@@ -30,3 +30,12 @@ export const wx_reminder_tmpl = {
     },
   }
 }
+
+/********************* tencent SES template config ****************/
+export const tencent_ses_tmpl_cfg = {
+  "confirmation": {
+    "zh-Hans": 128068,
+    "zh-Hant": 128070,
+    "en": 128071,
+  }
+}

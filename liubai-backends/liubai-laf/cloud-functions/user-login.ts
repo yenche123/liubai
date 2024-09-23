@@ -18,7 +18,7 @@ import type {
   Res_UserLoginNormal,
   LiuSpaceAndMember,
   SupportedClient,
-  ServiceSendEmailsParam,
+  LiuResendEmailsParam,
   Table_AllowList,
   UserLoginOperate,
   LiuErrReturn,
@@ -31,6 +31,8 @@ import type {
   Res_UL_ScanCheck,
   Table_Credential_Type,
   Res_UL_WxGzhBase,
+  LiuTencentSESParam,
+  LiuSESChannel,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -53,6 +55,7 @@ import {
   tagWxUserLang,
   getWxGzhUserInfo,
   getWxGzhUserOAuthAccessToken,
+  valTool,
 } from "@/common-util"
 import { getNowStamp, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -65,6 +68,7 @@ import {
   checkIfEmailSentTooMuch, 
   getActiveEmailCode,
   LiuResend,
+  LiuTencentSES,
   sendWxTextMessage,
 } from "@/service-send"
 import { 
@@ -76,6 +80,7 @@ import {
 } from '@/common-i18n'
 import { OAuth2Client, type TokenPayload } from "google-auth-library"
 import { downloadAndUpload } from '@/file-utils'
+import { tencent_ses_tmpl_cfg } from "@/common-config"
 
 /************************ 一些常量 *************************/
 // GitHub 使用 code 去换 accessToken
@@ -642,8 +647,6 @@ async function handle_email(
   ctx: FunctionContext,
   body: Record<string, string>,
 ) {
-
-
   const T1 = getNowStamp()
 
   let tmpEmail = body.email
@@ -711,52 +714,116 @@ async function handle_email(
     return { code: "E5001", errMsg: "cannot insert email-code into Credential" }
   }
 
-  // 6. 构造邮件内容、去发送
+  // 6. get appName, i18n, and some other data
   const appName = getAppName({ body })
   const { t } = useI18n(userLoginLang, { body })
   const subject = t('confirmation_subject')
-  let text = t('confirmation_text_1', { appName, code: emailCode })
-  text += t('confirmation_text_2')
 
-  // 7. 去发送
-  const dataSent: ServiceSendEmailsParam = {
-    to: [email],
-    subject,
-    text,
+  // 7. define some functions to send email
+  const _sendByResend = async () => {
+    let text = t('confirmation_text_1', { appName, code: emailCode })
+    text += t('confirmation_text_2')
+  
+    // 7.1 send
+    const dataSent: LiuResendEmailsParam = {
+      to: [email],
+      subject,
+      text,
+    }
+    const res7 = await LiuResend.sendEmails(dataSent)
+  
+    // 7.2 handle result
+    handleEmailSent(cId, "resend", res7)
+  
+    // 7.3 remove data if success
+    if(res7.code === "0000") {
+      delete res7.data
+    }
+    return res7
   }
-  const res4 = await LiuResend.sendEmails(dataSent)
 
-  // 8. 处理发送后的结果
-  handleEmailSent(cId, "resend", res4)
+  const _sendByTencentSES = async () => {
+    const lang = getCurrentLocale({ body })
+    const confirmation_tmpl = tencent_ses_tmpl_cfg.confirmation
+    const TemplateID = confirmation_tmpl[lang]
+    if(!TemplateID) {
+      return { code: "E5001", errMsg: "no confirmation_tmpl_id" }
+    }
+    const templ_data = {
+      appName,
+      code: emailCode,
+    }
+    const TemplateData = valTool.objToStr(templ_data)
 
-  // 9. 如果发送成功，去掉 data
-  if(res4.code === "0000") {
-    delete res4.data
+    console.log("TemplateID: ", TemplateID)
+    console.log("templ_data: ")
+    console.log(templ_data)
+
+    const dataSent: LiuTencentSESParam = {
+      to: [email],
+      subject,
+      Template: {
+        TemplateID,
+        TemplateData,
+      }
+    }
+    const res7 = await LiuTencentSES.sendEmails(dataSent)
+
+    // 8. handle result
+    handleEmailSent(cId, "tencent-ses", res7)
+  
+    // 9. remove data if success
+    if(res7.code === "0000") {
+      delete res7.data
+    }
+    return res7
   }
 
+
+  // 8. choose send channel
+  const _env = process.env
+  const sendChannel = _env.LIU_EMAIL_SEND_CHANNEL
+  let res8: LiuRqReturn | undefined
+  if(sendChannel === "tencent-ses") {
+    res8 = await _sendByTencentSES()
+  }
+  else {
+    res8 = await _sendByResend()
+  }
 
   const T2 = getNowStamp()
   console.log("handle_email spent: ", T2 - T1)
 
-  return res4
+  if(!res8) {
+    return { code: "E5001", errMsg: "cannot send email" }
+  }
+
+  return res8
 }
+
 
 function handleEmailSent(
   cId: string,
-  send_channel: string,
-  res4: LiuRqReturn<Record<string, any>>,
+  send_channel: LiuSESChannel,
+  res: LiuRqReturn<Record<string, any>>,
 ) {
   const u: Partial<Table_Credential> = {}
-  const { code, data } = res4
+  const { code, data } = res
   const now = getNowStamp()
 
   const q = db.collection("Credential").where({ _id: cId })
 
-  if(code === "0000" && typeof (data?.id) === "string") {
-    u.send_channel = send_channel
-    u.email_id = data.id
-    u.updatedStamp = now
-    q.update(u)
+  u.send_channel = send_channel
+  u.updatedStamp = now
+  if(code === "0000") {
+    if(valTool.isStringWithVal(data?.id)) {
+      u.email_id = data.id
+      q.update(u)
+    }
+    else if(valTool.isStringWithVal(data?.MessageId)) {
+      u.email_id = data.id
+      q.update(u)
+    }
   }
 
   if(code === "U0005") {

@@ -118,6 +118,9 @@ export type DownloadFileResolver = (res: DownloadFileRes) => void
 
 export type BaseIsOn = "Y" | "N"
 
+// send email channel
+export type LiuSESChannel = "resend" | "tencent-ses"
+
 // 内容的 oState
 export type OState = "OK" | "REMOVED" | "DELETED"
 
@@ -664,9 +667,12 @@ export interface LiuSpaceAndMember {
   space_config?: WorkspaceConfig
 }
 
-export interface ServiceSendEmailsParam {
+export interface LiuSendEmailsBase {
   to: string[]        // 目标邮箱地址们
   subject: string     // 标题
+}
+
+export interface LiuResendEmailsParam extends LiuSendEmailsBase {
   html?: string       // html 格式的内文
   text?: string       // 纯文本 格式的内文
   tags?: {
@@ -674,6 +680,14 @@ export interface ServiceSendEmailsParam {
     value: string
   }[]
 }
+
+export interface LiuTencentSESParam extends LiuSendEmailsBase {
+  Template: {
+    TemplateID: number
+    TemplateData: string
+  }
+}
+
 
 export interface SubscriptionStripe {
   isOn: BaseIsOn

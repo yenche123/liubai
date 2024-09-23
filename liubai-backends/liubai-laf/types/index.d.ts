@@ -41,8 +41,10 @@ declare global {
       /** 默认时区，比如 "8.5" 就是东 8.5 时区 */
       LIU_TIMEZONE?: string
 
-      /** 商务合作 email */
-      LIU_EMAIL_1?: string
+      /** email */
+      LIU_EMAIL_1?: string           // 商务合作
+      LIU_EMAIL_FOR_REPLY?: string   // 用户回复 noreply 时回复到哪个邮箱地址
+      LIU_EMAIL_SEND_CHANNEL?: "resend" | "tencent-ses"    // 必须与 LiuSESChannel 一致
 
       /** GitHub OAuth */
       LIU_GITHUB_OAUTH_CLIENT_ID?: string
@@ -103,6 +105,7 @@ declare global {
       LIU_TENCENTCLOUD_SECRET_KEY?: string   // 腾讯云的 secret key
 
       // 腾讯云 SES
+      LIU_TENCENT_SES_REGION?: string        // 腾讯云 SES 所属的地域，有值 "ap-guangzhou" / "ap-hongkong"
       LIU_TENCENT_SES_FROM_EMAIL?: string    // 腾讯云 SES 的发件邮箱
       
 

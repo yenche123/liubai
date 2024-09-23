@@ -5,7 +5,9 @@ import cloud from '@lafjs/cloud'
 import { Resend } from 'resend'
 import type {
   LiuRqReturn,
-  ServiceSendEmailsParam,
+  LiuSendEmailsBase,
+  LiuResendEmailsParam,
+  LiuTencentSESParam,
   Table_Credential,
   Wx_Gzh_Send_Msg,
   Wx_Gzh_Send_Text,
@@ -19,6 +21,7 @@ import {
 import { createEmailCode } from '@/common-ids'
 import { liuReq } from '@/common-util'
 import { ses as TencentSES } from "tencentcloud-sdk-nodejs-ses"
+import { relative } from 'node:path/posix'
 
 const db = cloud.database()
 const _ = db.command
@@ -31,11 +34,8 @@ export async function main(ctx: FunctionContext) {
 /********************** 发送邮件相关 *****************/
 
 
-function checkEmailParam(param: ServiceSendEmailsParam) {
-  const { text, html, subject, to } = param
-  if(!text && !html) {
-    return { code: "E5001", errMsg: "no text or html of param in sendEmails" }
-  }
+function checkEmailParam(param: LiuSendEmailsBase) {
+  const { to } = param
   if(to.length < 1) {
     return { code: "E5001", errMsg: "to.length of param is meant to be bigger than 0" }
   }
@@ -46,24 +46,34 @@ function checkEmailParam(param: ServiceSendEmailsParam) {
 export class LiuTencentSES {
   static _getInstance() {
     const _env = process.env
-    const secretId = _env.LIU_TENCENT_SES_SECRET_ID
-    const secretKey = _env.LIU_TENCENT_SES_SECRET_KEY
+    const secretId = _env.LIU_TENCENTCLOUD_SECRET_ID
+    const secretKey = _env.LIU_TENCENTCLOUD_SECRET_KEY
     if(!secretId || !secretKey) {
+      console.warn("secretId and secretKey of tencent cloud are required......")
       return
     }
+    const region = _env.LIU_TENCENT_SES_REGION
+    if(!region) {
+      console.warn("LIU_TENCENT_SES_REGION is required......")
+      return
+    }
+
     const TecentSESClient = TencentSES.v20201002.Client
     const client = new TecentSESClient({
       credential: {
         secretId,
         secretKey,
       },
+      region,
     })
     return client
   }
 
   static async sendEmails(
-    param: ServiceSendEmailsParam,
-  ) {
+    param: LiuTencentSESParam,
+  ): Promise<LiuRqReturn> {
+    // 0. get subject
+    const subject = param.subject
 
     // 1. get instance & check param
     const client = this._getInstance()
@@ -80,8 +90,37 @@ export class LiuTencentSES {
       return { code: "E5001", errMsg: "no fromEmail in sendEmails" } 
     }
 
-    
+    // 3. get appName
+    const appName = _env.LIU_APP_NAME
+    const replyEmail = _env.LIU_EMAIL_FOR_REPLY
+    if(!appName) {
+      return { code: "E5001", errMsg: "appName is required in sendEmails" } 
+    }
 
+    // 4. send email
+    try {
+      const res4 = await client.SendEmail({
+        FromEmailAddress: `${appName} <${fromEmail}>`,
+        Destination: param.to,
+        Subject: subject,
+        ReplyToAddresses: replyEmail,
+        Template: param.Template,
+      })
+      console.log("tencent ses send emails res: ")
+      console.log(res4)
+      console.log(" ")
+
+      if(res4.MessageId) {
+        return { code: "0000", data: res4 }
+      }
+    }
+    catch(err) {
+      console.warn("tencent ses send emails failed")
+      console.log(err)
+      return { code: "U0005" }
+    }
+    
+    return { code: "0000" }
   }
 
 }
@@ -93,11 +132,15 @@ export class LiuResend {
 
   /** 去发送邮件 */
   static async sendEmails(
-    param: ServiceSendEmailsParam,
+    param: LiuResendEmailsParam,
   ): Promise<LiuRqReturn> {
-    let { subject, tags } = param
+    let { subject, tags, text, html } = param
     const err1 = checkEmailParam(param)
     if(err1) return err1
+
+    if(!text && !html) {
+      return { code: "E5001", errMsg: "no text or html of param in sendEmails" }
+    }
   
     const _env = process.env
     const fromEmail = _env.LIU_RESEND_FROM_EMAIL
@@ -121,30 +164,37 @@ export class LiuResend {
 
     console.log(`from: ${fromEmail}`)
   
-    const time1 = getNowStamp()
-    const res = await resend.emails.send({
-      from: `${appName} <${fromEmail}>`,
-      to: param.to,
-      subject,
-      text: param.text as string,
-      html: param.html as string,
-      tags,
-    })
-    const time2 = getNowStamp()
-  
-    console.log(`resend 发送耗时: ${time2 - time1} ms`)
-    console.log("查看 resend 的发送结果>>>")
-    console.log(res)
-    console.log(" ")
-  
-    if(res.error) {
-      return { code: "U0005", data: res.error }
+    try {
+      const time1 = getNowStamp()
+      const res = await resend.emails.send({
+        from: `${appName} <${fromEmail}>`,
+        to: param.to,
+        subject,
+        text: param.text as string,
+        html: param.html as string,
+        tags,
+      })
+      const time2 = getNowStamp()
+    
+      console.log(`resend 发送耗时: ${time2 - time1} ms`)
+      console.log("查看 resend 的发送结果>>>")
+      console.log(res)
+      console.log(" ")
+    
+      if(res.error) {
+        return { code: "U0005", data: res.error }
+      }
+
+      if(res.data) {
+        return { code: "0000", data: res.data }
+      }
     }
-  
-    if(res.data) {
-      return { code: "0000", data: res.data }
+    catch(err) {
+      console.warn("resend send emails failed")
+      console.log(err)
+      return { code: "U0005" }
     }
-  
+    
     return { code: "0000" }
   }
 
