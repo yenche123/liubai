@@ -16,6 +16,9 @@ function getEnv(): LiuSystemEnv {
   const VITE_DEBUG_BTN = import.meta.env.VITE_DEBUG_BTN
   const DEBUG_BTN = VITE_DEBUG_BTN === "01"
 
+  // contact dev
+  const CONTACT_WECOM = import.meta.env.VITE_CONTACT_WECOM
+
   // SaaS 各个服务情况上限
   const LOCAL_PIN_NUM = import.meta.env.VITE_LOCAL_PIN_NUM
   const FREE_PIN_NUM = import.meta.env.VITE_FREE_PIN_NUM
@@ -107,6 +110,7 @@ function getEnv(): LiuSystemEnv {
     API_DOMAIN,
     APP_NAME,
     DEBUG_BTN,
+    CONTACT_WECOM,
     LOCAL_PIN_NUM: Number(LOCAL_PIN_NUM),
     FREE_PIN_NUM: Number(FREE_PIN_NUM),
     PREMIUM_PIN_NUM: Number(PREMIUM_PIN_NUM),

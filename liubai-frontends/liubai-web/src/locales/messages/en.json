@@ -59,7 +59,8 @@
     "under_construction": "Under Construction",
     "never_prompt": "Never prompt",
     "faq": "FAQ",
-    "updating": "Updating.."
+    "updating": "Updating..",
+    "to_contact": "Contact"
   },
   "editor": {
     "when": "When",
@@ -182,7 +183,8 @@
     "err_5": "The error of state has occurred. Try to reload later.",
     "err_6": "The verification code is wrong or expired, or you operate too frequently.",
     "err_7": "Your email address is not in the list of authorized users.",
-    "err_8": "There is no email address through the current login way."
+    "err_8": "There is no email address through the current login way.",
+    "err_9": "Fail to send the email. Contact the developer please."
   },
   "tip": {
     "tip": "TIP",

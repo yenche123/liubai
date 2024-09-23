@@ -19,6 +19,7 @@ import { encryptTextWithRSA, afterFetchingLogin } from "../../tools/common-utils
 import { loadGoogleIdentityService } from "./handle-gis"
 import { 
   isEverythingOkay, 
+  showContactDev, 
   showDisableTip, 
   showEmojiTip, 
   showOtherTip,
@@ -413,6 +414,10 @@ async function toSubmitEmailAddress(
     console.log(code)
     console.log(" ")
     showOtherTip("login.err_5", true)
+    return
+  }
+  else if(code === "U0005" || (code >= "E5001" && code < "E6000")) {
+    showContactDev("login.err_9", "🫥")
     return
   }
   else if(code === "E4003" && errMsg === "last_event: complained") {

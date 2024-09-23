@@ -7,6 +7,7 @@ export interface LiuSystemEnv {
   APP_NAME?: string
 
   DEBUG_BTN?: boolean
+  CONTACT_WECOM?: string
 
   LOCAL_PIN_NUM: number
   FREE_PIN_NUM: number

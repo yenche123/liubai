@@ -1,6 +1,7 @@
 import cui from "~/components/custom-ui";
 import { type LiuErrReturn } from "~/requests/tools/types";
 import liuApi from "~/utils/liu-api";
+import liuEnv from "~/utils/liu-env";
 
 export function isEverythingOkay(
   initCode?: string
@@ -61,6 +62,41 @@ export async function showEmojiTip(
     isTitleEqualToEmoji: true,
   })
   return true
+}
+
+export async function showContactDev(
+  content_key: string,
+  title: string,
+) {
+  let contactWay = ""
+  const _env = liuEnv.getEnv()
+  const contactWecom = _env.CONTACT_WECOM
+  const devEmail = LIU_ENV.author?.email
+  if(contactWecom) {
+    contactWay = "wecom"
+  }
+  else if(devEmail) {
+    contactWay = "email"
+  }
+
+  const hasContactWay = Boolean(contactWay)
+
+  const res = await cui.showModal({
+    title,
+    content_key,
+    showCancel: hasContactWay,
+    confirm_key: hasContactWay ? "common.to_contact" : undefined,
+    isTitleEqualToEmoji: true,
+  })
+
+  if(res.confirm && contactWay) {
+    if(contactWay === "wecom") {
+      window.open(contactWecom, "_blank")
+    }
+    else if(contactWay === "email"){
+      location.href = `mailto:${devEmail}`
+    }
+  }
 }
 
 export async function showErrMsg(
