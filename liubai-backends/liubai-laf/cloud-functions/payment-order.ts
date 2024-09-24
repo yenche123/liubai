@@ -559,15 +559,22 @@ async function wxpayOrderByJsapi(
   // 6. handle some known errors
   const json = data4.json
   const code6 = json?.code
+  const message6 = json?.message
+  const prepay_id = json?.prepay_id as string
   if(code6 === "APPID_MCHID_NOT_MATCH") {
     return {
       pass: false,
       err: { code: "E5001", errMsg: "appid and mchid do not match" },
     }
   }
+  if(!prepay_id) {
+    return {
+      pass: false,
+      err: { code: "E5001", errMsg: message6 ?? "fail to get prepay_id" },
+    }
+  }
 
-  // 7. get prepay_id
-  const prepay_id = json?.prepay_id as string
+  // 7. success
   return { pass: true, data: prepay_id }
 }
 

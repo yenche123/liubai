@@ -1321,6 +1321,9 @@ export interface Table_Order extends BaseTable {
     native_code_url?: string
     native_created_stamp?: number
 
+    transaction_id?: string           // 微信支付订单号，支付成功后获得
+    refund_id?: string                // 微信退款号，发起退款后获得
+
   }
 
   meta_data?: OrderMetaData

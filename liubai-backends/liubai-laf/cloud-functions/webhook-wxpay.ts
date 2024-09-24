@@ -22,12 +22,6 @@ export async function main(ctx: FunctionContext) {
   // 1. check out the signature
   const err1 = await checkFromWxpay(ctx)
   if(err1) {
-    console.warn("checkFromWxpay failed! err: ")
-    console.log(err1)
-    console.log("ctx.headers: ")
-    console.log(ctx.headers)
-    console.log("ctx.request?.body: ")
-    console.log(ctx.request?.body)
     return err1
   }
 
@@ -173,6 +167,16 @@ async function checkFromWxpay(
   }
   const res5 = await WxpayHandler.verifySign(opt5)
   if(!res5) {
+    if(!signature.startsWith("WECHATPAY/SIGNTEST/")) {
+      console.warn("[webhook-wxpay] E4003 verify sign failed")
+      console.log("ctx.headers: ")
+      console.log(ctx.headers)
+      console.log("ctx.request?.body: ")
+      console.log(ctx.request?.body)
+    }
+    else {
+      console.log("we get a test message from wxpay")
+    }
     return { code: "E4003", errMsg: "verify sign failed" }
   }
   
