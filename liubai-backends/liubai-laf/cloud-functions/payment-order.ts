@@ -560,7 +560,7 @@ async function wxpayOrderByJsapi(
   const json = data4.json
   const code6 = json?.code
   const message6 = json?.message
-  const prepay_id = json?.prepay_id as string
+  const prepay_id = json?.prepay_id
   if(code6 === "APPID_MCHID_NOT_MATCH") {
     return {
       pass: false,

@@ -9,6 +9,7 @@ import {
 import type {
   DataPass, 
   LiuErrReturn, 
+  Table_Order, 
   Wxpay_Notice_Base, 
   Wxpay_Notice_PaymentResource, 
   Wxpay_Notice_RefundResource, 
@@ -66,8 +67,38 @@ export async function main(ctx: FunctionContext) {
 async function handle_transaction_success(
   data: Wxpay_Notice_PaymentResource,
 ) {
+
+  // 1. extract order_id from out_trade_no
+  const { out_trade_no, transaction_id } = data
+  const order_id = extractOrderId(out_trade_no)
+  if(!order_id) {
+    console.warn("fail to extract order_id from out_trade_no")
+    return
+  }
+
+  // 2. get order from db
+  const oCol = db.collection("Order")
+  const res = await oCol.where({ order_id }).getOne<Table_Order>()
+  const rData = res.data
+  if(!rData) {
+    console.warn("fail to get order from db")
+    return
+  }
+
+  // 3. update order
+  
+
   
 }
+
+// out_trade_no: wN + 4位随机数 + order_id 
+function extractOrderId(out_trade_no: string) {
+  let tmpId = out_trade_no.substring(6)
+  if(tmpId.length > 10 && tmpId.startsWith("LD")) {
+    return tmpId
+  }
+}
+
 
 async function handle_refund_success(
   data: Wxpay_Notice_RefundResource,
