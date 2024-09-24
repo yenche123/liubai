@@ -51,7 +51,7 @@ export function usePaymentContent() {
   }
 }
 
-function whenTapWxpay(
+async function whenTapWxpay(
   pcData: PcData,
   rr: RouteAndLiuRouter,
 ) {
@@ -72,7 +72,10 @@ function whenTapWxpay(
   }
 
   // 3. buy via wxpay
-  buyViaWxpayJSAPI(order_id, wx_gzh_openid)
+  const res3 = await buyViaWxpayJSAPI(order_id, wx_gzh_openid)
+  if(res3) {
+    rr.router.replace({ name: "payment-success" })
+  }
 }
 
 
@@ -108,7 +111,7 @@ function initPaymentContent(
       }
     }
 
-    fetchOrderData(pcData)
+    fetchOrderData(pcData, rr)
     
   }, { immediate: true })
 }
@@ -147,7 +150,7 @@ async function loginWithWxGzhOAuthCode(
   const res4 = await getWxGzhOpenid(code, state)
   if(res4) {
     pcData.wx_gzh_openid = res4
-    fetchOrderData(pcData, { fr: "wx_gzh_oauth" })
+    fetchOrderData(pcData, rr, { fr: "wx_gzh_oauth" })
     return
   }
 
@@ -162,6 +165,7 @@ interface FetchOrderDataOpt {
 
 async function fetchOrderData(
   pcData: PcData,
+  rr: RouteAndLiuRouter,
   opt?: FetchOrderDataOpt,
 ) {
   // 1. get params
@@ -203,13 +207,17 @@ async function fetchOrderData(
     resetOrderData(pcData)
     return
   }
-  
   setNewOrderData(pcData, data4.orderData)
 
+
+  // 5. pay via wxpay
   const { wx_gzh_openid } = pcData
   if(opt?.fr === "wx_gzh_oauth" && wx_gzh_openid) {
-    buyViaWxpayJSAPI(order_id, wx_gzh_openid)
+    const res5 = await buyViaWxpayJSAPI(order_id, wx_gzh_openid)
+    if(!res5) return
+    rr.router.replace({ name: "payment-success" })
   }
+  
 }
 
 function setNewOrderData(

@@ -25,6 +25,8 @@ import {
   type Res_PO_GetOrder,
   type WxpayReqAuthorizationOpt,
   Sch_Param_PaymentOrder,
+  type DataPass,
+  type Res_Wxpay_Jsapi,
 } from "@/common-types"
 import * as vbot from "valibot"
 import * as crypto from "crypto"
@@ -155,12 +157,14 @@ async function handle_wxpay_jsapi(
       description: d4_2.payment_title,
       expireStamp: d4_2.expireStamp,
     }
-    prepay_id = await wxpayOrderByJsapi(param4_3)
-    if(!prepay_id) {
+    const res4_3 = await wxpayOrderByJsapi(param4_3)
+    const pass4_3 = res4_3.pass
+    if(!pass4_3) {
       console.warn("fail to get prepay_id in wxpay_jsapi")
       console.log(param4_3)
-      return { code: "E5001", errMsg: "fail to get prepay_id" }
+      return res4_3.err
     }
+    prepay_id = res4_3.data
 
     // 4.4 storage prepay_id
     const now4_4 = getNowStamp()
@@ -486,7 +490,7 @@ interface WxpayOrderByJsapiParam {
 
 async function wxpayOrderByJsapi(
   param: WxpayOrderByJsapiParam,
-) {
+): Promise<DataPass<string>> {
   // 1. get env
   const _env = process.env
   const wx_appid = _env.LIU_WX_GZ_APPID as string
@@ -523,17 +527,22 @@ async function wxpayOrderByJsapi(
   const res1 = WxpayHandler.getWxpayReqAuthorization(opt)
   if(!res1.pass || !res1.data) {
     console.warn("fail to get Authorization")
-    return
+    return { pass: false, err: { code: "E5001", errMsg: "fail to get Authorization" } }
   }
 
   // 4. invoke wxpay jsapi
   const headers = WxpayHandler.getWxpayReqHeaders({ Authorization: res1.data })
-  const res4 = await liuFetch(WXPAY_JSAPI_ORDER, { headers }, body)
+  const res4 = await liuFetch<Res_Wxpay_Jsapi>(WXPAY_JSAPI_ORDER, { headers, method: "POST" }, body)
   const { code, data: data4 } = res4
-  if(code !== "0000" || !data4) {
+
+  console.log("data4: ")
+  console.log(data4)
+  console.log(data4?.json)
+
+  if(code !== "0000" || !data4 || !data4.json) {
     console.warn("fail to invoke wxpay jsapi")
     console.log(res4)
-    return
+    return { pass: false, err: { code: "E5001", errMsg: "fail to invoke wxpay jsapi" } }
   }
 
   // 5. check out signature
@@ -541,13 +550,25 @@ async function wxpayOrderByJsapi(
   if(err5) {
     console.warn("fail to verify signature")
     console.log(err5)
-    return
+    return { 
+      pass: false, 
+      err: { code: "E5001", errMsg: "fail to verify signature for wxpay jsapi" },
+    }
   }
 
-  // 6. get prepay_id
+  // 6. handle some known errors
   const json = data4.json
+  const code6 = json?.code
+  if(code6 === "APPID_MCHID_NOT_MATCH") {
+    return {
+      pass: false,
+      err: { code: "E5001", errMsg: "appid and mchid do not match" },
+    }
+  }
+
+  // 7. get prepay_id
   const prepay_id = json?.prepay_id as string
-  return prepay_id
+  return { pass: true, data: prepay_id }
 }
 
 function getWxpayJsapiParams(

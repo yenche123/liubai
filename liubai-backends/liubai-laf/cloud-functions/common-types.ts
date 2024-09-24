@@ -771,8 +771,13 @@ export interface CommonPass_B<T> {
   data?: T
 }
 
-export type CommonPass<T = any> = CommonPass_A | CommonPass_B<T>
+export interface DataPass_B<T> {
+  pass: true
+  data: T
+}
 
+export type CommonPass<T = any> = CommonPass_A | CommonPass_B<T>
+export type DataPass<T = any> = CommonPass_A | DataPass_B<T>
 
 /*********************** 关于上传同步 ********************/
 /** 
@@ -2718,4 +2723,10 @@ export interface WxpayVerifySignOpt {
   body: Record<string, any> | string
   serial: string
   signature: string
+}
+
+export interface Res_Wxpay_Jsapi {
+  prepay_id?: string
+  code?: string
+  message?: string
 }

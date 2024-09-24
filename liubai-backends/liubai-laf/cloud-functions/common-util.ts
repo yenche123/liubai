@@ -284,7 +284,6 @@ export async function liuFetch<T = any>(
     reqInit.body = objToStr(body)
   }
 
-
   try {
     res = await fetch(url, reqInit)
   }

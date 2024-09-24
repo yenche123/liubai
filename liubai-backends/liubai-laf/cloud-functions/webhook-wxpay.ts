@@ -82,11 +82,9 @@ async function checkFromWxpay(
   const signature = headers["wechatpay-signature"]
   const timestamp = headers["wechatpay-timestamp"]    // seconds
   const nonce = headers["wechatpay-nonce"]
-  const serial = headers["wechatpay-serial-no"]
-  console.log("wxpay signature: ", signature)
-  console.log("wxpay timestamp: ", timestamp)
-  console.log("wxpay nonce: ", nonce)
-  console.log("wxpay serial: ", serial)
+  const serial = headers["wechatpay-serial"]
+  console.log("check out headers for webhook-wxpay: ")
+  console.log(headers)
 
   // 2. check params
   if(!valTool.isStringWithVal(signature)) {
