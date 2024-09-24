@@ -110,14 +110,29 @@ async function checkFromWxpay(
     return { code: "E5002", errMsg: "wxpay_apiclient_serial_no is not set" }
   }
 
+  // 4. handle body
+  let b_4 = ctx.request?.body
+  try {
+    console.warn("try to turn body into string.............")
+    b_4 = b_4.toString()
+  }
+  catch(err) {
+    console.warn("turn body into string failed")
+    console.log(err)
+  }
+
   // 4. check out the signature
   const opt4: WxpayVerifySignOpt = {
     timestamp,
     nonce,
     signature,
     serial,
-    body: ctx.body,
+    body: b_4,
   }
+
+  console.log("see opt4: ")
+  console.log(opt4)
+
   const res4 = WxpayHandler.verifySign(opt4)
   if(!res4) {
     return { code: "E4003", errMsg: "verify sign failed" }
