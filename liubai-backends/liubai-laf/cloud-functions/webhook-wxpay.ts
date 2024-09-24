@@ -6,10 +6,12 @@ import {
   wxpay_apiclient_key, 
   wxpay_apiclient_serial_no,
 } from "@/secret-config"
-import type { 
-  CommonPass, 
+import type {
+  DataPass, 
   LiuErrReturn, 
   Wxpay_Notice_Base, 
+  Wxpay_Notice_PaymentResource, 
+  Wxpay_Notice_RefundResource, 
   Wxpay_Notice_Result, 
   WxpayVerifySignOpt,
 } from "@/common-types"
@@ -17,35 +19,84 @@ import type {
 const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
-  console.log("webhook-wxpay invoked!")
-
-  // 0. [test] decrypt first
-  const res0 = await decryptData(ctx)
-  if(res0.pass) {
-    console.warn("解密成功......")
-    console.log(res0.data)
-  }
-  else {
-    console.warn("解密失败......")
-    console.log(res0.err)
-    ctx.response?.status(403)
-    return res0.err
-  }
-  
   // 1. check out the signature
   const err1 = await checkFromWxpay(ctx)
   if(err1) {
-    console.warn("checkFromWxpay failed")
+    console.warn("checkFromWxpay failed! err: ")
     console.log(err1)
+    console.log("ctx.headers: ")
+    console.log(ctx.headers)
+    console.log("ctx.request?.body: ")
+    console.log(ctx.request?.body)
     return err1
+  }
+
+  // 2. decrypt
+  const res2 = await decryptData(ctx)
+  if(res2.pass) {
+    console.warn("解密成功......")
+    console.log(res2.data)
+  }
+  else {
+    console.warn("解密失败......")
+    console.log(res2.err)
+    ctx.response?.status(403)
+    return res2.err
+  }
+
+  // 3. decide what to do next
+  const d3 = res2.data
+  const b3 = ctx.body as Wxpay_Notice_Base
+  const event_type = b3.event_type
+  if(event_type === "TRANSACTION.SUCCESS") {
+    // when transaction success
+    handle_transaction_success(d3 as Wxpay_Notice_PaymentResource)
+  }
+  else if(event_type === "REFUND.SUCCESS") {
+    // when refund success
+    handle_refund_success(d3 as Wxpay_Notice_RefundResource)
+  }
+  else if(event_type === "REFUND.ABNORMAL") {
+    // when refund abnormal
+    handle_refund_abnormal(d3 as Wxpay_Notice_RefundResource)
+  }
+  else if(event_type === "REFUND.CLOSED") {
+    // when refund closed
+    handle_refund_closed(d3 as Wxpay_Notice_RefundResource)
   }
 
   return { code: "0000" }
 }
 
+
+async function handle_transaction_success(
+  data: Wxpay_Notice_PaymentResource,
+) {
+  
+}
+
+async function handle_refund_success(
+  data: Wxpay_Notice_RefundResource,
+) {
+  console.warn("TODO: handle_refund_success")
+
+}
+
+async function handle_refund_abnormal(
+  data: Wxpay_Notice_RefundResource,
+) {
+  console.warn("TODO: handle_refund_abnormal")
+}
+
+async function handle_refund_closed(
+  data: Wxpay_Notice_RefundResource,
+) {
+  console.warn("TODO: handle_refund_closed")
+}
+
 async function decryptData(
   ctx: FunctionContext,
-): Promise<CommonPass<Wxpay_Notice_Result>> {
+): Promise<DataPass<Wxpay_Notice_Result>> {
   const body = ctx.body as Wxpay_Notice_Base
   const resource = body.resource
   if(!resource) {
@@ -83,8 +134,6 @@ async function checkFromWxpay(
   const timestamp = headers["wechatpay-timestamp"]    // seconds
   const nonce = headers["wechatpay-nonce"]
   const serial = headers["wechatpay-serial"]
-  console.log("check out headers for webhook-wxpay: ")
-  console.log(headers)
 
   // 2. check params
   if(!valTool.isStringWithVal(signature)) {
@@ -111,30 +160,19 @@ async function checkFromWxpay(
   }
 
   // 4. handle body
-  let b_4 = ctx.request?.body
-  try {
-    console.warn("try to turn body into string.............")
-    b_4 = b_4.toString()
-  }
-  catch(err) {
-    console.warn("turn body into string failed")
-    console.log(err)
-  }
+  const b4_1 = ctx.request?.body
+  const b4_2 = valTool.objToStr(b4_1)
 
-  // 4. check out the signature
-  const opt4: WxpayVerifySignOpt = {
+  // 5. check out the signature
+  const opt5: WxpayVerifySignOpt = {
     timestamp,
     nonce,
     signature,
     serial,
-    body: b_4,
+    body: b4_2,
   }
-
-  console.log("see opt4: ")
-  console.log(opt4)
-
-  const res4 = WxpayHandler.verifySign(opt4)
-  if(!res4) {
+  const res5 = await WxpayHandler.verifySign(opt5)
+  if(!res5) {
     return { code: "E4003", errMsg: "verify sign failed" }
   }
   
