@@ -276,11 +276,12 @@ async function handle_create_sp_order(
     currency: "cny",
     orderType: "subscription",
     plan_id: subscription_id,
+    expireStamp: getNowStamp() + MIN_30,
   }
   const res6 = await oCol.add(obj6)
 
   // 7. get Table_Order._id
-  const id7 =  getDocAddId(res6)
+  const id7 = getDocAddId(res6)
   if(!id7) {
     return { code: "E5001", errMsg: "creating an order failed" }
   }

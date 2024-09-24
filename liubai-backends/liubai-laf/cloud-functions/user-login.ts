@@ -918,6 +918,12 @@ async function handle_wx_gzh_base(
   ctx: FunctionContext,
   body: Record<string, string>,
 ): Promise<LiuRqReturn<Res_UL_WxGzhBase>> {
+
+
+  console.log("handle_wx_gzh_base invoked!")
+  console.log(body)
+
+
   // 1. check out oauth_code
   const oauth_code = body.oauth_code
   if(!oauth_code) {

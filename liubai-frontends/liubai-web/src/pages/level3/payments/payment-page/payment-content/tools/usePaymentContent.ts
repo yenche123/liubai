@@ -205,6 +205,11 @@ async function fetchOrderData(
   }
   
   setNewOrderData(pcData, data4.orderData)
+
+  const { wx_gzh_openid } = pcData
+  if(opt?.fr === "wx_gzh_oauth" && wx_gzh_openid) {
+    buyViaWxpayJSAPI(order_id, wx_gzh_openid)
+  }
 }
 
 function setNewOrderData(

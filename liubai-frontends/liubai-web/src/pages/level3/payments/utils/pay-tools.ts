@@ -65,6 +65,7 @@ export async function getWxGzhOpenid(
 ) {
   const url = APIs.LOGIN
   const opt = {
+    operateType: "wx_gzh_base",
     oauth_code,
     state,
   }
@@ -132,6 +133,7 @@ export async function buyViaWxpayJSAPI(
   // 3. fetch for param
   const url3 = APIs.PAYMENT_ORDER
   const w3 = {
+    operateType: "wxpay_jsapi",
     order_id,
     wx_gzh_openid,
   }
