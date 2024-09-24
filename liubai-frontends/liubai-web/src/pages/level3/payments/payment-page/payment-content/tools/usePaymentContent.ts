@@ -182,6 +182,8 @@ async function fetchOrderData(
     order_id,
   }
   const res3 = await liuReq.request<Res_PO_GetOrder>(url, w3)
+  console.log("fetchOrderData res3: ")
+  console.log(res3)
   
   // 4. handle data
   const { code: code4, data: data4 } = res3
@@ -211,7 +213,7 @@ function setNewOrderData(
 ) {
   pcData.od = od
   if(od.orderAmount) {
-    pcData.order_amount_txt = od.orderAmount.toFixed(2)
+    pcData.order_amount_txt = (od.orderAmount / 100).toFixed(2)
   }
 }
 

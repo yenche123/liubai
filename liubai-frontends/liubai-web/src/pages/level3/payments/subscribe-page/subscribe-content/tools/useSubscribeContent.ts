@@ -76,8 +76,6 @@ export function useSubscribeContent() {
     toBuyViaUnion(scData, rr)
   }
 
-
-
   return {
     scData,
     onTapBuyViaStripe,

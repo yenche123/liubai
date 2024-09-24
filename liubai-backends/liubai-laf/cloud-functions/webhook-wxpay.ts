@@ -35,6 +35,8 @@ export async function main(ctx: FunctionContext) {
   // 1. check out the signature
   const err1 = await checkFromWxpay(ctx)
   if(err1) {
+    console.warn("checkFromWxpay failed")
+    console.log(err1)
     return err1
   }
 

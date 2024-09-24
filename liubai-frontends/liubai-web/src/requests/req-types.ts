@@ -172,7 +172,6 @@ export interface Res_PO_GetOrder {
 export interface Res_PO_WxpayJsapi {
   operateType: "wxpay_jsapi"
   param: Wxpay_Jsapi_Params
-  expireStamp: number
 }
 
 

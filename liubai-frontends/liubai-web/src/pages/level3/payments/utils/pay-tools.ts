@@ -69,6 +69,9 @@ export async function getWxGzhOpenid(
     state,
   }
   const res = await liuReq.request<Res_UL_WxGzhBase>(url, opt)
+  console.log("getWxGzhOpenid res:")
+  console.log(res)
+
   if(res.code === "0000" && res.data) {
     return res.data.wx_gzh_openid
   }
@@ -93,6 +96,8 @@ export async function buyViaWxpayJSAPI(
     await waitWxJSBridge()
     const _wait = (a: BoolFunc) => {
       WeixinJSBridge.invoke("getBrandWCPayRequest", param, (res: any) => {
+        console.log("WeixinJSBridge.invoke res:")
+        console.log(res)
         if(res?.err_msg === "get_brand_wcpay_request:ok") {
           a(true)
         }
@@ -132,8 +137,9 @@ export async function buyViaWxpayJSAPI(
   }
   cui.showLoading({ title_key: "payment.ready_to_pay" })
   const res3 = await liuReq.request<Res_PO_WxpayJsapi>(url3, w3)
+  console.log("buyViaWxpayJSAPI res3:")
+  console.log(res3)
   cui.hideLoading()
-
 
   // 4. get param of Res_PO_WxpayJsapi
   const code4 = res3.code
@@ -156,6 +162,8 @@ export async function buyViaWxpayJSAPI(
   }
   
   // 5. pull wxpay
+  vwjData.param = data4.param
+  vwjData.expireStamp = time.getTime() + time.MINUTE
   const res5 = await _pullWxpay(data4.param)
   return res5
 }

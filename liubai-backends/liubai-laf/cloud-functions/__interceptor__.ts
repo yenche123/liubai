@@ -25,6 +25,7 @@ const VISITED_NUM = 60
 const ALLOW_WITHOUT_TOKEN = [
   "hello-world",
   "user-login",
+  "payment-order",
 ]
 
 /****************** 函数组成 *****************/

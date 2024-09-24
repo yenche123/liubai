@@ -4,7 +4,12 @@ import { usePaymentContent } from "./tools/usePaymentContent"
 import { useQRCode } from "~/hooks/useVueUse"
 
 const { t } = useI18n()
-const { pcData, cha } = usePaymentContent()
+const { 
+  pcData, 
+  cha,
+  onTapAlipay,
+  onTapWxpay,
+} = usePaymentContent()
 
 const qrcode = useQRCode(() => {
   const order_id = pcData.od?.order_id
@@ -88,7 +93,7 @@ const qrcode = useQRCode(() => {
     </div>
 
     <!-- pay button -->
-    <button class="pc-btn pc-wxpay-button">
+    <button class="pc-btn pc-wxpay-button" @click.stop="onTapWxpay">
       <span>{{ t('payment.pay_immediately') }}</span>
     </button>
 
@@ -123,7 +128,7 @@ const qrcode = useQRCode(() => {
     </div>
 
     <!-- pay button -->
-    <button class="pc-btn pc-alipay-button">
+    <button class="pc-btn pc-alipay-button" @click.stop="onTapAlipay">
       <span>{{ t('payment.pay_immediately') }}</span>
     </button>
 
