@@ -164,7 +164,7 @@ async function transaction_success_for_subscription(
     isOn: "Y",
     plan: plan_id,
     isLifelong: oldUserSub?.isLifelong ?? false,
-    autoRecharge: oldUserSub?.autoRecharge ?? false,
+    autoRecharge: false,
     createdStamp: oldUserSub?.createdStamp ?? now3,
     chargedStamp: now3,
     firstChargedStamp: oldUserSub?.firstChargedStamp ?? now3,
