@@ -436,7 +436,7 @@
     "content2": "请使用支付宝或微信扫码支付",
     "content3": "请使用",
     "content4": "或",
-    "content5": "扫码支付",
+    "content5": "扫码支付；支付完毕，请点击刷新。",
     "cannot_pay": "无法付款",
     "cannot_pay_tip": "当前订单已关闭、已过期或已付款",
     "order_not_found": "订单不存在或订阅方案已下架",

@@ -3,13 +3,8 @@ import { type RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-route
 import liuEnv from "~/utils/liu-env";
 import { type PcData } from "./types";
 import { pageStates } from "~/utils/atom"
-import APIs from "~/requests/APIs";
-import liuReq from "~/requests/liu-req";
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
-import type { 
-  Res_OrderData, 
-  Res_PO_GetOrder,
-} from "~/requests/req-types";
+import type { Res_OrderData } from "~/requests/req-types";
 import liuApi from "~/utils/liu-api";
 import typeCheck from "~/utils/basic/type-check";
 import localCache from "~/utils/system/local-cache";
@@ -22,6 +17,7 @@ import {
   getWxGzhOpenid, 
   redirectForWxGzhOpenid,
 } from "../../../utils/pay-tools";
+import { fetchOrder } from "~/requests/shared";
 
 export function usePaymentContent() {
   const rr = useRouteAndLiuRouter()
@@ -180,14 +176,7 @@ async function fetchOrderData(
   }
 
   // 3. fetch
-  const url = APIs.PAYMENT_ORDER
-  const w3 = {
-    operateType: "get_order",
-    order_id,
-  }
-  const res3 = await liuReq.request<Res_PO_GetOrder>(url, w3)
-  console.log("fetchOrderData res3: ")
-  console.log(res3)
+  const res3 = await fetchOrder(order_id)
   
   // 4. handle data
   const { code: code4, data: data4 } = res3

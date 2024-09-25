@@ -436,7 +436,7 @@
     "content2": "Please scan the code with Alipay or WeChat",
     "content3": "Please use",
     "content4": "or",
-    "content5": "to pay",
+    "content5": "to pay. After payment, please tap \"Refresh\".",
     "cannot_pay": "Cannot Pay",
     "cannot_pay_tip": "The current order is closed, expired, or has been paid",
     "order_not_found": "Order not found or subscription plan unavailable",

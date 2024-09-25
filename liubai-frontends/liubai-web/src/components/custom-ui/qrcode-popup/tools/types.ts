@@ -21,6 +21,7 @@ export interface QpData {
   loading: boolean
   state?: string
   fr?: string
+  reloadRotateDeg: number
 }
 
 export interface QpResult {

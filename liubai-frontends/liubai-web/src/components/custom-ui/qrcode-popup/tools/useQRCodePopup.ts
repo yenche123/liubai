@@ -23,6 +23,8 @@ import {
 } from "~/pages/level1/tools/requests";
 import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router";
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
+import { fetchOrder } from "~/requests/shared";
+import { useThrottleFn } from "~/hooks/useVueUse";
 
 const SEC_3 = time.SECONED * 3
 const SEC_4 = time.SECONED * 4
@@ -39,6 +41,7 @@ const qpData = reactive<QpData>({
   pic_url: "",
   runTimes: 0,
   loading: true,
+  reloadRotateDeg: 0,
 })
 
 let rr: RouteAndLiuRouter | undefined
@@ -52,6 +55,7 @@ export function initQRCodePopup() {
     qpData,
     onTapMask,
     onImgLoaded,
+    onTapRefresh: useThrottleFn(onTapRefresh, 1000),
   }
 }
 
@@ -81,6 +85,36 @@ export function showQRCodePopup(param: QpParam) {
 
   return new Promise(_wait)
 }
+
+
+async function onTapRefresh() {
+  // 1. check out args
+  const bT = qpData.bindType
+  const order_id = qpData.order_id
+  if(bT !== "union_pay" || !order_id) {
+    return
+  }
+
+  // 2. fetch order
+  qpData.reloadRotateDeg += 360
+  const res = await fetchOrder(order_id)
+  console.log("fetch order result: ")
+  console.log(res)
+  console.log(" ")
+  
+  // 3. handle result
+  const { code, data } = res
+  if(code === "E4004") {
+    _over()
+    return
+  }
+  if(!data) return
+  const od = data.orderData
+  if(od.canPay === false || od.orderStatus === "PAID") {
+    _over({ resultType: "plz_check" })
+  }
+}
+
 
 function listenRouteChange() {
   if(!rr) return

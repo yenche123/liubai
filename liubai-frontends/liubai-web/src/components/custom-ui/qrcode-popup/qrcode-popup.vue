@@ -10,6 +10,7 @@ const {
   onTapMask,
   onImgLoaded,
   qpData,
+  onTapRefresh,
 } = initQRCodePopup()
 
 const qrcode = useQRCode(() => qpData.qr_code)
@@ -24,7 +25,9 @@ const cha = liuApi.getCharacteristic()
   >
     <div class="ba-bg" @click.stop="onTapMask"></div>
     <div class="ba-box"
-      :class="{ 'ba-box_show': qpData.show }"
+      :class="{ 
+        'ba-box_show': qpData.show,
+      }"
     >
 
       <!-- qrcode -->
@@ -61,7 +64,9 @@ const cha = liuApi.getCharacteristic()
       <div class="ba-virtual"></div>
 
       <!-- info box -->
-      <div class="liu-no-user-select ba-info">
+      <div class="liu-no-user-select ba-info"
+        :class="{ 'ba-info_align_start': qpData.bindType === 'union_pay' }"
+      >
 
         <!-- title -->
         <div class="ba-info-title">
@@ -97,6 +102,18 @@ const cha = liuApi.getCharacteristic()
           <span v-else-if="cha.isMobile">{{ t('qrcode.screenshot') }}</span>
           <span v-else>{{ t('qrcode.scan_2') }}</span>
         </div>
+
+        <!-- button -->
+        <button v-if="qpData.bindType === 'union_pay'" class="liu-no-user-select ba-info-btn"
+          @click.stop="onTapRefresh"
+        >
+          <div class="bib-icon-box">
+            <svg-icon name="refresh" class="bib-icon"
+              color="var(--on-primary)"
+            ></svg-icon>
+          </div>
+          <span class="bib-text">{{ t('common.refresh') }}</span>
+        </button>
 
       </div>
 
@@ -234,8 +251,13 @@ const cha = liuApi.getCharacteristic()
 .ba-info {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   width: 300px;
   position: relative;
+}
+
+.ba-info_align_start {
+  padding-block-start: 40px;
 }
 
 .ba-info-title {
@@ -284,6 +306,52 @@ const cha = liuApi.getCharacteristic()
   background-image: url('/images/third-party/alipay.png');
 }
 
+.ba-info-btn {
+  margin-block-start: 20px;
+  display: flex;
+  align-items: center;
+  padding: 10px 30px;
+  border-radius: 8px;
+  font-weight: 700;
+  background-color: var(--primary-color);
+  color: var(--on-primary);
+  font-size: var(--btn-font);
+  cursor: pointer;
+}
+
+.bib-icon-box {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  .bib-icon {
+    width: 20px;
+    height: 20px;
+    transition: .6s;
+    transform: v-bind("'rotate(' + qpData.reloadRotateDeg + 'deg)'");
+  }
+}
+
+.bib-text {
+  margin-inline-start: 12px;
+  padding-inline-end: 4px;
+}
+
+
+@media(hover: hover) {
+  .ba-info-btn:hover {
+    background-color: var(--primary-hover);
+  }
+}
+
+.ba-info-btn:active {
+  background-color: var(--primary-active);
+}
+
+
 @media screen and (max-width: 500px) {
   .ba-info-title_unionpay {
     font-size: var(--title-font);
@@ -315,14 +383,15 @@ const cha = liuApi.getCharacteristic()
 
   .ba-info {
     width: 100%;
-  }
-
-  .ba-info {
     align-items: center;
 
     div {
       text-align: center;
     }
+  }
+
+  .ba-info_align_start {
+    padding-block-start: 0;
   }
   
 }

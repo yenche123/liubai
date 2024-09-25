@@ -436,7 +436,7 @@
     "content2": "請使用支付寶或微信掃描支付",
     "content3": "請使用",
     "content4": "或",
-    "content5": "掃描支付",
+    "content5": "掃描支付；支付完畢，請輕觸刷新。",
     "cannot_pay": "無法付款",
     "cannot_pay_tip": "當前訂單已關閉、已過期或已付款",
     "order_not_found": "訂單不存在或訂閱方案已下架",

@@ -126,7 +126,8 @@ async function toBuyViaUnion(
   const order_id = od.order_id
   const cha = liuApi.getCharacteristic()
   if(cha.isPC) {
-    cui.showQRCodePopup({ bindType: "union_pay", order_id })
+    await cui.showQRCodePopup({ bindType: "union_pay", order_id })
+    getMembershipRemotely(scData)
     return
   }
 
