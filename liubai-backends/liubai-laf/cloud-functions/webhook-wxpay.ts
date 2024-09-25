@@ -161,7 +161,7 @@ async function transaction_success_for_subscription(
   let chargeTimes = oldUserSub?.chargeTimes ?? 0
   chargeTimes += 1
   const newUserSub: UserSubscription = {
-    isOn: oldUserSub?.isOn ?? "Y",
+    isOn: "Y",
     plan: plan_id,
     isLifelong: oldUserSub?.isLifelong ?? false,
     autoRecharge: oldUserSub?.autoRecharge ?? false,
