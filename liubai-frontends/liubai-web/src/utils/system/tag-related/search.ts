@@ -129,13 +129,21 @@ function _pushSomeChildren(
  * @param tagView 当前节点
  * @return 若有匹配则返回 true，否则为 false
  */
-function _searchInTagView(texts: string[], parents: string[], tagView: TagView) {
+function _searchInTagView(
+  texts: string[], 
+  parents: string[], 
+  tagView: TagView,
+) {
   if(texts.length > parents.length + 1) return false
 
   if(texts.length === 1) {
     const t1 = texts[0].toLowerCase()
     const t2 = tagView.text.toLowerCase()
-    return t2.startsWith(t1)
+    if(t2.startsWith(t1)) return true
+    if(t1.length > 1) {
+      if(t2.includes(t1)) return true
+    }
+    return false
   }
 
   let newTexts = [...texts]
