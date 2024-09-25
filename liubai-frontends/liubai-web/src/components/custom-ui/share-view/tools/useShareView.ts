@@ -123,13 +123,19 @@ function exportFile(
   const now = time.getTime()
   const date = new Date(now)
   const s = liuUtil.getLiuDate(date)
-  const fileName = `${dataType} ${s.YYYY}-${s.MM}-${s.DD} ${s.hh}_${s.mm}_${s.ss}`
+  let fileName = `${dataType} ${s.YYYY}-${s.MM}-${s.DD} ${s.hh}_${s.mm}_${s.ss}`
 
-  let mimeType = "text/plain;charset=utf-8"
-  if(dataType === "markdown") {
+  let mimeType = ""
+  if(dataType === "text") {
+    mimeType = "text/plain;charset=utf-8"
+    fileName += ".txt"
+  }
+  else if(dataType === "markdown") {
     mimeType = "text/markdown;charset=utf-8"
+    fileName += ".md"
   }
 
+  if(!mimeType || !fileName) return
   const blob = new Blob([content], { type: mimeType })
   fileSaverSaveAs(blob, fileName)
 }
