@@ -19,7 +19,7 @@ import {
   MINUTE, 
 } from "@/common-time"
 import { createEmailCode } from '@/common-ids'
-import { getYYYYMMDD, liuReq } from '@/common-util'
+import { LiuDateUtil, liuReq } from '@/common-util'
 import { ses as TencentSES } from "tencentcloud-sdk-nodejs-ses"
 
 const db = cloud.database()
@@ -128,7 +128,7 @@ export class LiuTencentSES {
     if(!client) {
       return { code: "E5001", errMsg: "no tencent ses client in retrieveEmail" } 
     }
-    const date = getYYYYMMDD(getNowStamp())
+    const date = LiuDateUtil.getYYYYMMDD(getNowStamp())
     
     try {
       const res = await client.GetSendEmailStatus({

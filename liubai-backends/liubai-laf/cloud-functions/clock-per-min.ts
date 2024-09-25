@@ -13,7 +13,7 @@ import type {
 import { 
   decryptEncData, 
   getSummary,
-  displayTime,
+  LiuDateUtil,
   valTool,
   checkAndGetWxGzhAccessToken,
 } from "@/common-util";
@@ -166,7 +166,7 @@ async function send_wx_message(
 
   obj.data.thing18.value = title
 
-  const str_time = displayTime(calendarStamp, locale, timezone)
+  const str_time = LiuDateUtil.displayTime(calendarStamp, locale, timezone)
   obj.data.time4.value = str_time
 
   console.log("sendWxTemplateMessage: ")

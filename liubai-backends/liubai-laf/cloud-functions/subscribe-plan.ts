@@ -17,19 +17,14 @@ import type {
   LiuRqReturn,
   Table_Credential,
   Table_Order,
-  SubscriptionPaymentCircle,
 } from "@/common-types";
 import { 
   getBasicStampWhileAdding,
-  currentHoursOfSpecificTimezone,
   getNowStamp,
-  formatTimezone,
   MINUTE,
   HOUR,
   WEEK,
 } from "@/common-time";
-import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
-
 
 const db = cloud.database()
 
@@ -486,41 +481,4 @@ function getBillingCycleAnchor(
   if(diff < HOUR_3) return
   const b = Math.round(e / 1000)
   return b
-}
-
-
-/** the func is for one-off trade, which is not developed */
-function getNewExpireStamp(
-  payment_circle: SubscriptionPaymentCircle,
-  payment_timezone?: string,
-  oldExpireStamp?: number,
-) {
-  const now = getNowStamp()
-  let startStamp = oldExpireStamp ? oldExpireStamp : now
-  if(startStamp < now) {
-    startStamp = now
-  }
-
-  const startDate = new Date(startStamp)
-  let endDate = new Date(startStamp)
-  if(payment_circle === "monthly") {
-    endDate = addMonths(startDate, 1)
-  }
-  else if(payment_circle === "yearly") {
-    endDate = addYears(startDate, 1)
-  }
-
-  // set endDate to 23:59:59 for user's timezone
-  const userTimezone = formatTimezone(payment_timezone)
-  // get what o'clock for user's timezone
-  const userHrs = currentHoursOfSpecificTimezone(userTimezone)
-  const diffHrs = 23 - userHrs
-  if(diffHrs !== 0) {
-    endDate = addHours(endDate, diffHrs)
-  }
-  // turn the minutes & seconds into 59 and 59
-  endDate = date_fn_set(endDate, { minutes: 59, seconds: 59, milliseconds: 0 })
-  
-  const endStamp = endDate.getTime()
-  return endStamp
 }

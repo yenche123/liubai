@@ -538,6 +538,7 @@ async function handle_session_completed(
   const plan = meta_data?.plan
   if(!cred || !cred_id) {
     // 查无 credential
+    console.warn("there is no credential")
     return { code: "E4004", errMsg: "there is no credential" }
   }
   if(!userId) {

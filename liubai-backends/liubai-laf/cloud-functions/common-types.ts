@@ -207,6 +207,14 @@ export const Sch_LocalLocale = vbot.picklist(localLocales)
 
 export type CheckBindStatus = "waiting" | "plz_check" | "expired"
 
+/************ atom types from third party ***************/
+// wxpay
+export type Wxpay_Trade_Type = "JSAPI" | "NATIVE" | "APP" | "MICROPAY" | "MWEB" | "FACEPAY"
+export type Wxpay_Trade_State = "SUCCESS" | "REFUND" | "NOTPAY"
+  | "CLOSED" | "REVOKED" | "USERPAYING" | "PAYERROR"
+
+/************ atom types from third party end ***************/
+
 interface BaseTable {
   _id: string
   insertedStamp: number
@@ -1323,6 +1331,8 @@ export interface Table_Order extends BaseTable {
 
     transaction_id?: string           // 微信支付订单号，支付成功后获得
     refund_id?: string                // 微信退款号，发起退款后获得
+    trade_type?: Wxpay_Trade_Type     // 交易类型，支付成功后获得
+    
 
   }
 
@@ -2413,9 +2423,6 @@ export interface Ww_Welcome_Body {
 }
 
 /********** Event Webhook from WeCom *********/
-export type Wxpay_Trade_Type = "JSAPI" | "NATIVE" | "APP" | "MICROPAY" | "MWEB" | "FACEPAY"
-export type Wxpay_Trade_State = "SUCCESS" | "REFUND" | "NOTPAY"
-  | "CLOSED" | "REVOKED" | "USERPAYING" | "PAYERROR"
 
 export interface Wxpay_FundsFromItem {
   account: "AVAILABLE" | "UNAVAILABLE"

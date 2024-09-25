@@ -49,7 +49,7 @@ import {
   liuReq,
   checkAndGetWxGzhAccessToken,
   normalizeUserAgent,
-  displayTime,
+  LiuDateUtil,
   getIp,
   getIpGeo,
   tagWxUserLang,
@@ -1268,7 +1268,7 @@ async function sendLoginMsgToWxGzhUser(
   // 2. Operate Time
   msg += `\n`
   const locale = getCurrentLocale(opt)
-  const time = displayTime(getNowStamp(), locale, opt.body?.x_liu_timezone)
+  const time = LiuDateUtil.displayTime(getNowStamp(), locale, opt.body?.x_liu_timezone)
   msg += t("operate_time", { time })
 
   // 3. IP Address

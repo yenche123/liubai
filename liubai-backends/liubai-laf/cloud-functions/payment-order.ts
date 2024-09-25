@@ -6,7 +6,7 @@ import {
   checker,
   createAvailableOrderId,
   getDocAddId,
-  transformStampIntoRFC3339,
+  LiuDateUtil,
   WxpayHandler,
   liuFetch,
 } from "@/common-util"
@@ -498,7 +498,7 @@ async function wxpayOrderByJsapi(
   const wxpay_notify_url = _env.LIU_WXPAY_NOTIFY_URL as string
   let time_expire: string | undefined
   if(param.expireStamp) {
-    time_expire = transformStampIntoRFC3339(param.expireStamp)
+    time_expire = LiuDateUtil.transformStampIntoRFC3339(param.expireStamp)
   }
 
   // 2. construct body

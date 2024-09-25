@@ -43,6 +43,7 @@ import type {
   LiuErrReturn,
   Res_Wxpay_Transaction,
   Wxpay_Resource_Base,
+  SubscriptionPaymentCircle,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -64,7 +65,9 @@ import {
   SECONED, DAY, MINUTE,
   localizeStamp,
   isWithinMillis,
-  getServerTimezone, 
+  getServerTimezone,
+  formatTimezone,
+  currentHoursOfSpecificTimezone, 
 } from "@/common-time"
 import geoip from "geoip-lite"
 import Stripe from "stripe"
@@ -80,6 +83,7 @@ import {
   wxpay_apiclient_serial_no,
   wxpay_apiclient_key,
 } from "@/secret-config"
+import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
 
 const db = cloud.database()
 const _ = db.command
@@ -411,120 +415,169 @@ export async function liuReq<T = any>(
 }
 
 /** show date / time */
-export function showBasicTime(
-  stamp: number,
-  locale?: SupportedLocale,
-  timezone?: string,
-) {
-  if(!locale) {
-    locale = getFallbackLocale()
-  }
-  const newStamp = localizeStamp(stamp, timezone)
-  const d = new Date(newStamp)
-  const { t } = useI18n(dateLang, { locale})
+export class LiuDateUtil {
 
-  const mm = valTool.format0(d.getMonth() + 1)
-  const hr = valTool.format0(d.getHours())
-  const min = valTool.format0(d.getMinutes())
-  const MON = t("m_" + mm)
-  const DAY = t("day_" + d.getDay())
+  static showBasicTime(
+    stamp: number,
+    locale?: SupportedLocale,
+    timezone?: string,
+  ) {
+    if(!locale) {
+      locale = getFallbackLocale()
+    }
+    const newStamp = localizeStamp(stamp, timezone)
+    const d = new Date(newStamp)
+    const { t } = useI18n(dateLang, { locale})
   
-  const mm2 = locale === "en" ? MON : String(d.getMonth() + 1)
-  const dd2 = String(d.getDate())
-  return t("show_1", { mm: mm2, dd: dd2, day: DAY, hr, min })
-}
-
-export function displayTime(
-  stamp: number,
-  locale?: SupportedLocale,
-  timezone?: string,
-) {
-  if(!locale) {
-    locale = getFallbackLocale()
+    const mm = valTool.format0(d.getMonth() + 1)
+    const hr = valTool.format0(d.getHours())
+    const min = valTool.format0(d.getMinutes())
+    const MON = t("m_" + mm)
+    const DAY = t("day_" + d.getDay())
+    
+    const mm2 = locale === "en" ? MON : String(d.getMonth() + 1)
+    const dd2 = String(d.getDate())
+    return t("show_1", { mm: mm2, dd: dd2, day: DAY, hr, min })
   }
-  const newStamp = localizeStamp(stamp, timezone)
-  const d = new Date(newStamp)
-  const currentStamp = localizeStamp(getNowStamp(), timezone)
-  const d2 = new Date(currentStamp)
-  const { t } = useI18n(dateLang, { locale})
+
+  static displayTime(
+    stamp: number,
+    locale?: SupportedLocale,
+    timezone?: string,
+  ) {
+    if(!locale) {
+      locale = getFallbackLocale()
+    }
+    const newStamp = localizeStamp(stamp, timezone)
+    const d = new Date(newStamp)
+    const currentStamp = localizeStamp(getNowStamp(), timezone)
+    const d2 = new Date(currentStamp)
+    const { t } = useI18n(dateLang, { locale})
+    
   
-
-  const yyyy = valTool.format0(d.getFullYear())
-  let mm = String(d.getMonth() + 1)
-  let dd = String(d.getDate())
-  const hr = valTool.format0(d.getHours())
-  const min = valTool.format0(d.getMinutes())
-
-  if(locale === "en") {
-    mm = valTool.format0(mm)
-    dd = valTool.format0(dd) 
-  }
+    const yyyy = valTool.format0(d.getFullYear())
+    let mm = String(d.getMonth() + 1)
+    let dd = String(d.getDate())
+    const hr = valTool.format0(d.getHours())
+    const min = valTool.format0(d.getMinutes())
   
-  const yyyy2 = valTool.format0(d2.getFullYear())
-  if(yyyy !== yyyy2) {
-    return t("show_3", { yyyy, mm, dd, hr, min })
-  }
-
-  return t("show_2", { mm, dd, hr, min })
-}
-
-
-export function transformStampIntoStr(stamp: number) {
-  const d = new Date(stamp)
-  const yyyy = d.getFullYear()
-  const mm = format0(d.getMonth() + 1)
-  const dd = format0(d.getDate())
-  const hr = format0(d.getHours())
-  const min = format0(d.getMinutes())
-  const sec = format0(d.getSeconds())
-  return `${yyyy}-${mm}-${dd}T${hr}:${min}:${sec}`
-}
-
-// get date string like "2024-05-01"
-export function getYYYYMMDD(stamp: number) {
-  const str = transformStampIntoStr(stamp)
-  return str.substring(0, 10)
-}
-
-export function transformStampIntoRFC3339(
-  stamp: number,
-  timezone?: number,
-) {
-  let str1 = transformStampIntoStr(stamp)
-
-  if(typeof timezone === "undefined") {
-    timezone = getServerTimezone()
-  }
-  let str2 = ""
-  const zoneStr = String(timezone)
-  const zoneArr = zoneStr.split(".")
-  if(!zoneArr || zoneArr.length < 1) {
-    console.warn("transformStampIntoRFC3339() zoneArr is not valid")
-    return
-  }
-  const arr0 = zoneArr[0]
-  const arr1 = zoneArr[1]
-  if(timezone >= 0) {
-    str2 = `+${format0(arr0)}:`
-  }
-  else {
-    str2 = `${format0(arr0)}:`
-  }
-  if(arr1 === "5") {
-    str2 += `30`
-  }
-  else {
-    str2 += `00`
-  }
+    if(locale === "en") {
+      mm = valTool.format0(mm)
+      dd = valTool.format0(dd) 
+    }
+    
+    const yyyy2 = valTool.format0(d2.getFullYear())
+    if(yyyy !== yyyy2) {
+      return t("show_3", { yyyy, mm, dd, hr, min })
+    }
   
-  const res = str1 + str2
-  console.log("transformStampIntoRFC3339: ")
-  console.log(res)
+    return t("show_2", { mm, dd, hr, min })
+  }
 
-  return res
+  static transformStampIntoStr(stamp: number) {
+    const d = new Date(stamp)
+    const yyyy = d.getFullYear()
+    const mm = format0(d.getMonth() + 1)
+    const dd = format0(d.getDate())
+    const hr = format0(d.getHours())
+    const min = format0(d.getMinutes())
+    const sec = format0(d.getSeconds())
+    return `${yyyy}-${mm}-${dd}T${hr}:${min}:${sec}`
+  }
+
+  static getYYYYMMDD(stamp: number) {
+    const str = this.transformStampIntoStr(stamp)
+    return str.substring(0, 10)
+  }
+
+  static transformStampIntoRFC3339(
+    stamp: number,
+    timezone?: number,
+  ) {
+    let str1 = this.transformStampIntoStr(stamp)
+  
+    if(typeof timezone === "undefined") {
+      timezone = getServerTimezone()
+    }
+    let str2 = ""
+    const zoneStr = String(timezone)
+    const zoneArr = zoneStr.split(".")
+    if(!zoneArr || zoneArr.length < 1) {
+      console.warn("transformStampIntoRFC3339() zoneArr is not valid")
+      return
+    }
+    const arr0 = zoneArr[0]
+    const arr1 = zoneArr[1]
+    if(timezone >= 0) {
+      str2 = `+${format0(arr0)}:`
+    }
+    else {
+      str2 = `${format0(arr0)}:`
+    }
+    if(arr1 === "5") {
+      str2 += `30`
+    }
+    else {
+      str2 += `00`
+    }
+    
+    const res = str1 + str2
+    return res
+  }
+
+  static transformRFC3339ToStamp(str: string) {
+    try {
+      const d = new Date(str)
+      const stamp = d.getTime()
+      if(isNaN(stamp)) return
+      return stamp
+    }
+    catch(err) {
+      console.warn("transformRFC3339ToStamp() err")
+      console.log(err)
+    }
+  }
+
+  // extend the expire time of user's subscription
+  static getNewExpireStamp(
+    payment_circle: SubscriptionPaymentCircle,
+    payment_timezone?: string,
+    oldExpireStamp?: number,
+  ) {
+    const now = getNowStamp()
+    let startStamp = oldExpireStamp ? oldExpireStamp : now
+    if(startStamp < now) {
+      startStamp = now
+    }
+  
+    const startDate = new Date(startStamp)
+    let endDate = new Date(startStamp)
+    if(payment_circle === "monthly") {
+      endDate = addMonths(startDate, 1)
+    }
+    else if(payment_circle === "quarterly") {
+      endDate = addMonths(startDate, 3)
+    }
+    else if(payment_circle === "yearly") {
+      endDate = addYears(startDate, 1)
+    }
+  
+    // set endDate to 23:59:59 for user's timezone
+    const userTimezone = formatTimezone(payment_timezone)
+    // get what o'clock for user's timezone
+    const userHrs = currentHoursOfSpecificTimezone(userTimezone)
+    const diffHrs = 23 - userHrs
+    if(diffHrs !== 0) {
+      endDate = addHours(endDate, diffHrs)
+    }
+    // turn the minutes & seconds into 59 and 59
+    endDate = date_fn_set(endDate, { minutes: 59, seconds: 59, milliseconds: 0 })
+    
+    const endStamp = endDate.getTime()
+    return endStamp
+  }
+
 }
-
-
 
 /**
  * 获取新增的数据的 _id
