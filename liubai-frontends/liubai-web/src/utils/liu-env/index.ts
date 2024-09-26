@@ -12,6 +12,9 @@ function getEnv(): LiuSystemEnv {
   const API_DOMAIN = import.meta.env.VITE_API_DOMAIN
   const APP_NAME = import.meta.env.VITE_APP_NAME
 
+  // payment priority
+  const PAYMENT_PRIORITY = import.meta.env.VITE_PAYMENT_PRIORITY
+
   // debug btn
   const VITE_DEBUG_BTN = import.meta.env.VITE_DEBUG_BTN
   const DEBUG_BTN = VITE_DEBUG_BTN === "01"
@@ -109,6 +112,7 @@ function getEnv(): LiuSystemEnv {
     DEV,
     API_DOMAIN,
     APP_NAME,
+    PAYMENT_PRIORITY,
     DEBUG_BTN,
     CONTACT_WECOM,
     LOCAL_PIN_NUM: Number(LOCAL_PIN_NUM),

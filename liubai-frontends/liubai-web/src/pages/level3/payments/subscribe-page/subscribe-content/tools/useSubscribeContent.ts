@@ -37,9 +37,12 @@ export function useSubscribeContent() {
   const rr = useRouteAndLiuRouter()
   const hasBackend = liuEnv.hasBackend()
   const now = time.getTime()
+  const { PAYMENT_PRIORITY } = liuEnv.getEnv()
+
   const scData = reactive<ScData>({
     state: hasBackend ? pageStates.LOADING : pageStates.NEED_BACKEND,
     initStamp: now,
+    payment_priority: PAYMENT_PRIORITY ?? "stripe",
   })
 
   initSubscribeContent(scData)

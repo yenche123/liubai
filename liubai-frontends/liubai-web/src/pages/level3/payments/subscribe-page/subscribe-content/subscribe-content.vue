@@ -86,6 +86,7 @@ watch(() => scData.state, (newV) => {
         <span class="liu-selection">{{ spi.desc }}</span>
       </div>
 
+
       <!-- 按钮 -->
       <div class="sc-btns" v-if="!scData.isLifelong">
 
