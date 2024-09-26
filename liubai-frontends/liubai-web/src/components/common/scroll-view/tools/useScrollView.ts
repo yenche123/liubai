@@ -25,11 +25,13 @@ import {
 import { useDebounceFn, useResizeObserver } from "~/hooks/useVueUse"
 import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
-import liuUtil from "~/utils/liu-util";
+import liuApi from "~/utils/liu-api";
 
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
 const MAGIC_NUM_1 = 500
+const MAGIC_NUM_2 = 120
+const MAX_RUN_TIMES = 5
 
 export function useScrollView(props: SvProps, emits: SvEmits) {
   const sv = ref<HTMLElement | null>(null)
@@ -50,45 +52,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   }
 
   const { onScrolling } = listenToScroll(ctx)
-
-  const _setScollPosition = (sp: number) => {
-    const svv = sv.value
-    if(!svv) return
-    const isVertical = props.direction === "vertical"
-
-    // there are two ways to set scroll position
-    // 1. use scrollTo()
-    // 2. use scrollTop / scrollLeft
-
-    const sop: ScrollToOptions = { behavior: "instant" }
-    if(isVertical) sop.top = sp
-    else sop.left = sp
-    svv.scrollTo(sop)
-
-    // if(isVertical) svv.scrollTop = sp
-    // else svv.scrollLeft = sp
-  }
-
-  onActivated(async () => {
-    lastToggleViewStamp.value = time.getTime()
-    if(props.showTxt === "false") {
-      return
-    }
-
-    const sp = scrollPosition.value
-    if(!sp) return
-    
-    // 由于 v-show 的切换需要时间渲染到界面上
-    // 所以加一层 nextTick 等待页面渲染完毕再恢复至上一次的位置
-    await nextTick()
-    _setScollPosition(sp)
-    await liuUtil.waitAFrame()
-    _setScollPosition(sp)
-  })
-
-  onDeactivated(() => {
-    lastToggleViewStamp.value = time.getTime()
-  })
+  listenToViewChange(ctx)
 
   watch(bottomUp, (newV) => {
     whenBottomUp(ctx, newV)
@@ -126,6 +90,87 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     onTouchMove,
     onTouchEnd,
   }
+}
+
+
+function listenToViewChange(
+  ctx: SvCtx,
+) {
+  const {
+    props,
+    sv,
+    scrollPosition,
+    lastToggleViewStamp,
+  } = ctx
+
+  const _setScollPosition = (sp: number) => {
+    const svv = sv.value
+    if(!svv) return
+    const isVertical = props.direction === "vertical"
+
+    // there are two ways to set scroll position
+    // 1. use scrollTo()
+    // 2. use scrollTop / scrollLeft
+
+    const sop: ScrollToOptions = { behavior: "instant" }
+    if(isVertical) sop.top = sp
+    else sop.left = sp
+    svv.scrollTo(sop)
+
+    // if(isVertical) svv.scrollTop = sp
+    // else svv.scrollLeft = sp
+  }
+
+  const _getScrollPosition = () => {
+    const svv = sv.value
+    if(!svv) return
+    return svv.scrollTop
+  }
+
+  onActivated(async () => {
+    lastToggleViewStamp.value = time.getTime()
+    if(props.showTxt === "false") {
+      return
+    }
+
+    const sp = scrollPosition.value
+    if(!sp) return
+    
+    // 由于 v-show 的切换需要时间渲染到界面上
+    // 所以加一层 nextTick 等待页面渲染完毕再恢复至上一次的位置
+    // console.time("nextTick1")
+    await nextTick()
+    // console.timeEnd("nextTick1")
+
+    // console.log("期望 sp: ", sp)
+    _setScollPosition(sp)
+    // console.log("实际 sp1: ", _getScrollPosition())
+
+    let runTimes = 0
+    while(runTimes < MAX_RUN_TIMES) {
+      runTimes++
+      // console.time("requestAnimationFrame")
+      await liuApi.requestAnimationFrame()
+      // console.timeEnd("requestAnimationFrame")
+
+      _setScollPosition(sp)
+      const sp2 = _getScrollPosition()
+      // console.log("实际 sp2: ", sp2)
+
+      if(typeof sp2 === "undefined") break
+      const diff = Math.abs(sp2 - sp)
+      if(diff < 5) {
+        scrollPosition.value = sp2
+        break
+      }
+    }
+
+  })
+
+  onDeactivated(() => {
+    lastToggleViewStamp.value = time.getTime()
+  })
+
 }
 
 function listenToScroll(
@@ -183,6 +228,9 @@ function listenToScroll(
     const _sv = sv.value
     if(!_sv) return
 
+    const lastViewStamp = ctx.lastToggleViewStamp.value
+    if(time.isWithinMillis(lastViewStamp, MAGIC_NUM_2)) return
+
     const isVertical = props.direction === "vertical"
     const sP = isVertical ? _sv.scrollTop : _sv.scrollLeft
 
@@ -202,15 +250,13 @@ function listenToScroll(
     scrollPosition.value = sP
     emits("scroll", { scrollPosition: sP })
 
-    // console.log("sP: ", sP)
+    // console.log("onScrolling sP: ", sP)
     // console.log("lP: ", lP)
     // console.log("sH: ", sH)
     // console.log(" ")
   
     const DIRECTION = sP - lP > 0 ? "DOWN" : "UP"
     const middleLine = DIRECTION === "DOWN" ? sH - props.lowerThreshold : props.upperThreshold
-
-    const lastViewStamp = ctx.lastToggleViewStamp.value
 
     // fix: bug when user navigate back to the last page
     if(time.isWithinMillis(lastViewStamp, MAGIC_NUM_1)) {
