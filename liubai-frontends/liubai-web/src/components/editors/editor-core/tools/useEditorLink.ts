@@ -79,13 +79,28 @@ function copyAndSnackBar(text: string) {
   cui.showSnackBar({ text_key: "common.copied" })
 }
 
+function callThePhoneNumber(phone: string) {
+  location.href = `tel:${phone}`
+}
+
 
 async function whenTapPhoneNumber(phone: string) {
-  const { isPC, isMac } = liuApi.getCharacteristic()
+  const { 
+    isPC, 
+    isMac, 
+    isWeChat, 
+    isAndroid,
+    isMobile,
+  } = liuApi.getCharacteristic()
 
   if(isPC && !isMac) {
     // filter macOS beacuse people can use FaceTime on macOS
     copyAndSnackBar(phone)
+    return
+  }
+
+  if(isWeChat && isAndroid && isMobile) {
+    callThePhoneNumber(phone)
     return
   }
 
@@ -111,7 +126,7 @@ async function whenTapPhoneNumber(phone: string) {
     copyAndSnackBar(phone)
   }
   else if(idx === 1) {
-    location.href = `tel:${phone}`
+    callThePhoneNumber(phone)
   }
 }
 
