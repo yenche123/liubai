@@ -25,6 +25,7 @@ import {
 import { useDebounceFn, useResizeObserver } from "~/hooks/useVueUse"
 import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
+import liuUtil from "~/utils/liu-util";
 
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
@@ -54,8 +55,18 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     const svv = sv.value
     if(!svv) return
     const isVertical = props.direction === "vertical"
-    if(isVertical) svv.scrollTop = sp
-    else svv.scrollLeft = sp
+
+    // there are two ways to set scroll position
+    // 1. use scrollTo()
+    // 2. use scrollTop / scrollLeft
+
+    const sop: ScrollToOptions = { behavior: "instant" }
+    if(isVertical) sop.top = sp
+    else sop.left = sp
+    svv.scrollTo(sop)
+
+    // if(isVertical) svv.scrollTop = sp
+    // else svv.scrollLeft = sp
   }
 
   onActivated(async () => {
@@ -66,11 +77,12 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
 
     const sp = scrollPosition.value
     if(!sp) return
-    _setScollPosition(sp)
-
+    
     // 由于 v-show 的切换需要时间渲染到界面上
     // 所以加一层 nextTick 等待页面渲染完毕再恢复至上一次的位置
     await nextTick()
+    _setScollPosition(sp)
+    await liuUtil.waitAFrame()
     _setScollPosition(sp)
   })
 
@@ -349,7 +361,8 @@ function whenBottomUp(
   bu: SvBottomUp,
 ) {
   const { props, sv } = ctx
-  if(!sv.value) return
+  const svv = sv.value
+  if(!svv) return
   
   const isVertical = props.direction === "vertical"
   const sop: ScrollToOptions = {
@@ -360,7 +373,7 @@ function whenBottomUp(
   if(bu.type === "pixel" && typeof bu.pixel !== "undefined") {
     if(isVertical) sop.top = bu.pixel
     else sop.left = bu.pixel
-    sv.value.scrollTo(sop)
+    svv.scrollTo(sop)
 
     if(bu.instant) {
       ctx.scrollPosition.value = bu.pixel
@@ -371,10 +384,10 @@ function whenBottomUp(
 
   // 如果是 string 类型，代表要传递到 .querySelector()
   if(bu.type !== "selectors" || typeof bu.selectors !== "string") return
-  const el = sv.value.querySelector(bu.selectors)
+  const el = svv.querySelector(bu.selectors)
   if(!el) return
 
-  const scrollPosition = isVertical ? sv.value.scrollTop : sv.value.scrollLeft
+  const scrollPosition = isVertical ? svv.scrollTop : svv.scrollLeft
 
   const domRect = el.getBoundingClientRect()
   const { top, left } = domRect
@@ -388,6 +401,6 @@ function whenBottomUp(
   if(isVertical) sop.top = sP
   else sop.left = sP
 
-  sv.value.scrollTo(sop)
+  svv.scrollTo(sop)
 }
 
