@@ -5,9 +5,9 @@ import Stripe from "stripe";
 import { 
   verifyToken, 
   getIpArea, 
-  getDocAddId, 
-  getStripeInstance,
+  getDocAddId,
   checkIfUserSubscribed,
+  LiuStripe,
 } from '@/common-util';
 import type { 
   Table_Subscription, 
@@ -133,11 +133,20 @@ async function toRefundAndCancel(
   return res2
 }
 
+async function toRefundAndCancelThroughWxpay(
+  user: Table_User,
+  order: Table_Order,
+) {
+  
+}
+
+
+
 async function toRefundAndCancelThroughStripe(
   user: Table_User,
   order: Table_Order,
 ): Promise<LiuRqReturn> {
-  const stripe = getStripeInstance()
+  const stripe = LiuStripe.getStripeInstance()
   if(!stripe) {
     return { 
       code: "E5001", 
@@ -322,7 +331,7 @@ async function handle_create_stripe(
   if(!LIU_DOMAIN) {
     return { code: "E5001", errMsg: "there is no domain in env" }
   }
-  const stripe = getStripeInstance()
+  const stripe = LiuStripe.getStripeInstance()
   if(!stripe) {
     return { code: "E5001", errMsg: "no stripe api key" }
   }

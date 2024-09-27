@@ -17,10 +17,9 @@ import {
   SECONED,
 } from "@/common-time"
 import { 
-  updateUserInCache, 
-  getIdFromStripeObj, 
-  getStripeInstance,
+  updateUserInCache,
   createAvailableOrderId,
+  LiuStripe,
 } from "@/common-util"
 
 const db = cloud.database()
@@ -106,7 +105,7 @@ interface RetrieveEventRes {
 async function retrieveEvent(
   ctx: FunctionContext
 ): Promise<RetrieveEventRes> {
-  const stripe = getStripeInstance()
+  const stripe = LiuStripe.getStripeInstance()
   if(!stripe) return { rqReturn: { code: "E5001", errMsg: "no stripe instance" } }
 
   const id = ctx.request?.body?.id as string
@@ -515,7 +514,7 @@ async function handle_session_completed(
     console.log("当前 payment_status 或 status 不符合预期.........")
     return { code: "0000" }
   }
-  const stripe_subscription_id = getIdFromStripeObj(stripe_sub)
+  const stripe_subscription_id = LiuStripe.getIdFromStripeObj(stripe_sub)
   if(!stripe_subscription_id) {
     console.log("Checkout.Session 中 subscription 不存在......")
     return { code: "E4000", errMsg: "there is no subscription in Checkout.Session" }
@@ -574,7 +573,7 @@ async function handle_session_completed(
   }
 
   // 3. to get Subscription from Stripe
-  const stripe = getStripeInstance()
+  const stripe = LiuStripe.getStripeInstance()
   if(!stripe) return { code: "E5001", errMsg: "no stripe instance" }
 
   let sub: Stripe.Subscription
@@ -586,7 +585,7 @@ async function handle_session_completed(
     console.log(err)
     return { code: "E4004", errMsg: "we cannot retrieve subscription" }
   }
-  const stripe_customer_id = getIdFromStripeObj(sub.customer)
+  const stripe_customer_id = LiuStripe.getIdFromStripeObj(sub.customer)
 
   // 4. get invoice or charge if allowed
   let invoice: Stripe.Invoice | undefined
@@ -713,7 +712,7 @@ async function createOrderFromInvoiceAndCharge(
   const hosted_invoice_url = invoice.hosted_invoice_url ?? ""
   const receipt_url = charge?.receipt_url ?? ""
   const payment_intent = invoice.payment_intent
-  const stripe_payment_intent_id = getIdFromStripeObj(payment_intent)
+  const stripe_payment_intent_id = LiuStripe.getIdFromStripeObj(payment_intent)
 
   const anOrder: Omit<Table_Order, "_id"> = {
     ...basic1,
@@ -756,7 +755,7 @@ async function getInvoiceAndCharge(
   invoice_id: string
 ): Promise<GetInvoiceAndChargeRes> {
   if(!invoice_id) return {}
-  const stripe = getStripeInstance()
+  const stripe = LiuStripe.getStripeInstance()
   if(!stripe) return {}
 
   let invoice: Stripe.Invoice | undefined

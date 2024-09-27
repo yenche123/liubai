@@ -4,11 +4,11 @@ import cloud from '@lafjs/cloud'
 import { 
   checker,
   getLiuTokenUser,
-  getStripeInstance, 
   getUserInfos, 
   updateUserInCache, 
   verifyToken,
   tagWxUserLang,
+  LiuStripe,
 } from '@/common-util'
 import { 
   type MongoFilter,
@@ -236,7 +236,7 @@ async function handle_membership(
 async function getStripeCustomerPortal(
   customer: string
 ) {
-  const stripe = getStripeInstance()
+  const stripe = LiuStripe.getStripeInstance()
   if(!stripe) return
 
   let return_url = process.env.LIU_DOMAIN

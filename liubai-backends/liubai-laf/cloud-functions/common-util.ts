@@ -1964,29 +1964,33 @@ export function getIpGeo(ctx: FunctionContext) {
 
 /********************* stripe 相关 ****************/
 
-/**
- * stripe 的一些对象中的属性，有时候是 string 的 id 值
- * 有时候则是该属性对象，所以做一个嵌套的方法专门获取其 id
- * @param data 某对象下的属性“值”
- * @return 返回该对象的 id
- */
-export function getIdFromStripeObj(data: any) {
-  if(!data) return undefined
-  if(typeof data === "string") {
-    return data
-  }
-  const id = data?.id
-  if(typeof id === "string") {
-    return id
-  }
-}
+export class LiuStripe {
 
-export function getStripeInstance() {
-  const _env = process.env
-  const sk = _env.LIU_STRIPE_API_KEY
-  if(!sk) return
-  const stripe = new Stripe(sk)
-  return stripe
+  /**
+   * stripe 的一些对象中的属性，有时候是 string 的 id 值
+   * 有时候则是该属性对象，所以做一个嵌套的方法专门获取其 id
+   * @param data 某对象下的属性“值”
+   * @return 返回该对象的 id
+  */
+  static getIdFromStripeObj(data: any) {
+    if(!data) return undefined
+    if(typeof data === "string") {
+      return data
+    }
+    const id = data?.id
+    if(typeof id === "string") {
+      return id
+    }
+  }
+
+  static getStripeInstance() {
+    const _env = process.env
+    const sk = _env.LIU_STRIPE_API_KEY
+    if(!sk) return
+    const stripe = new Stripe(sk)
+    return stripe
+  }
+
 }
 
 
