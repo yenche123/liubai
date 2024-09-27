@@ -2740,3 +2740,11 @@ export interface Res_Wxpay_Jsapi {
   code?: string
   message?: string
 }
+
+export interface Wxpay_Refund_Custom_Param {
+  transaction_id: string
+  out_refund_no: string
+  refund_amount: number
+  total_amount: number
+  reason?: string
+}

@@ -49,19 +49,22 @@ export const subPlanLang: LangAtom = {
     "payment_title": "留白记事会员",
     "annual_membership": "年度会员 Premium",
     "quarterly_membership": "季度会员 Premium",
-    "monthly_membership": "月度会员 Premium"
+    "monthly_membership": "月度会员 Premium",
+    "seven_days_refund": "7天无理由退款",
   },
   "zh-Hant": {
     "payment_title": "留白記事會員",
     "annual_membership": "年度會員 Premium",
     "quarterly_membership": "季度會員 Premium",
-    "monthly_membership": "月度會員 Premium"
+    "monthly_membership": "月度會員 Premium",
+    "seven_days_refund": "7天無理由退款",
   },
   "en": {
     "payment_title": "Liubai Membership",
     "annual_membership": "Annual Membership (Premium)",
     "quarterly_membership": "Quarterly Membership (Premium)",
-    "monthly_membership": "Monthly Membership (Premium)"
+    "monthly_membership": "Monthly Membership (Premium)",
+    "seven_days_refund": "7 Days Refund",
   }
 }
 

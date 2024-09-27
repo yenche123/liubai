@@ -98,6 +98,7 @@ async function toRefundAndCancel(
   body: Record<string, string>,
   user: Table_User,
 ): Promise<LiuRqReturn> {
+  // 1. get order
   const w: Partial<Table_Order> = {
     user_id: user._id,
     oState: "OK",
@@ -108,13 +109,16 @@ async function toRefundAndCancel(
   const res1 = await q1.getOne<Table_Order>()
   const theOrder = res1.data
 
-  // return ok if no order
+  // 2. return ok if no order
   if(!theOrder) {
     return { code: "0000" }
   }
 
+  // 3. get arguments
   const sub_id = user.stripe_subscription_id
   const { payChannel } = theOrder
+
+
 
   // decide which channel to refund and cancel
   let res2: LiuRqReturn = { 
@@ -127,7 +131,7 @@ async function toRefundAndCancel(
     
   }
   else if(payChannel === "wxpay") {
-
+    toRefundAndCancelThroughWxpay(user, theOrder)
   }
 
   return res2
@@ -137,6 +141,18 @@ async function toRefundAndCancelThroughWxpay(
   user: Table_User,
   order: Table_Order,
 ) {
+
+  // 1. get arguments
+  const wxpayData = order.wxpay_other_data ?? {}
+  const transaction_id = wxpayData.transaction_id
+  if(!transaction_id) {
+    return { code: "E5001", errMsg: "no transaction_id in wxpay_other_data" }
+  }
+
+  
+
+  
+
   
 }
 

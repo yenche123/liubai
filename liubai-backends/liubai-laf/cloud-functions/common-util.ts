@@ -44,6 +44,9 @@ import type {
   Res_Wxpay_Transaction,
   Wxpay_Resource_Base,
   SubscriptionPaymentCircle,
+  Wxpay_Refund_Custom_Param,
+  DataPass,
+  Res_Wxpay_Refund,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -117,6 +120,7 @@ const WX_GZH_OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_t
 // 微信支付 下载平台证书
 const WXPAY_DOMAIN = "https://api.mch.weixin.qq.com"
 const WXPAY_OUT_TRADE_NO = `/v3/pay/transactions/out-trade-no/`
+const WXPAY_REFUND_PATH = `/v3/refund/domestic/refunds`
 
 /********************* 空函数 ****************/
 export async function main(ctx: FunctionContext) {
@@ -2163,7 +2167,7 @@ export class WxpayHandler {
 
   static getWxpayReqAuthorization(
     opt: WxpayReqAuthorizationOpt
-  ): CommonPass<string> {    // this string is just Authorization
+  ): DataPass<string> {    // this string is just Authorization
 
     // 1. check out required envs
     if(!wxpay_apiclient_key || !wxpay_apiclient_serial_no) {
@@ -2414,7 +2418,7 @@ export class WxpayHandler {
     }
   }
 
-  static getMchId(): CommonPass<string> {
+  static getMchId(): DataPass<string> {
     const _env = process.env
     const wx_mchid = _env.LIU_WXPAY_MCH_ID as string
     if(!wx_mchid) {
@@ -2433,7 +2437,7 @@ export class WxpayHandler {
   // enquire order by out_trade_no
   static async enquireOrderByOutTradeNo(
     out_trade_no: string
-  ): Promise<CommonPass<Res_Wxpay_Transaction>> {
+  ): Promise<DataPass<Res_Wxpay_Transaction>> {
     // 1. construct path
     const res1 = this.getMchId()
     if(!res1.pass) return { pass: false, err: res1.err }
@@ -2448,7 +2452,7 @@ export class WxpayHandler {
     // 2. get authorization
     const res2 = this.getWxpayReqAuthorization(opt2)
     if(!res2.pass) return { pass: false, err: res2.err }
-    const Authorization = res2.data as string
+    const Authorization = res2.data
 
     // 3. get headers
     const headers = this.getWxpayReqHeaders({ Authorization })
@@ -2465,6 +2469,59 @@ export class WxpayHandler {
     const json4 = data4.json as Res_Wxpay_Transaction
 
     return { pass: true, data: json4 }
+  }
+
+  static async refund(
+    param: Wxpay_Refund_Custom_Param,
+  ): Promise<DataPass<Res_Wxpay_Refund>> {
+    const _env = process.env
+    const wxpay_notify_url = _env.LIU_WXPAY_NOTIFY_URL as string
+
+    // 1. construct body
+    const b1 = {
+      transaction_id: param.transaction_id,
+      out_refund_no: param.out_refund_no,
+      reason: param.reason,
+      notify_url: wxpay_notify_url,
+      amount: {
+        refund: param.refund_amount,
+        total: param.total_amount,
+        currency: "CNY",
+      }
+    }
+
+    // 2. construct Authorization
+    const opt2: WxpayReqAuthorizationOpt = {
+      method: "POST",
+      path: WXPAY_REFUND_PATH,
+      body: b1,
+    }
+    const res2 = this.getWxpayReqAuthorization(opt2)
+    if(!res2.pass) return { pass: false, err: res2.err }
+    const Authorization = res2.data
+
+    // 3. get headers
+    const headers = this.getWxpayReqHeaders({ Authorization })
+
+    // 4. to fetch
+    const url = WXPAY_DOMAIN + WXPAY_REFUND_PATH
+    const res4 = await liuFetch<Res_Wxpay_Refund>(
+      url, 
+      { headers, method: "POST" },
+      b1,
+    )
+    const data4 = res4.data
+    const code4 = res4.code
+    if(code4 !== "0000" || !data4) {
+      return { pass: false, err: res4 }
+    }
+
+    // 5. verify sign
+    const err5 = await this.verifySignByLiuFetch(data4)
+    if(err5) return { pass: false, err: err5 }
+    const json5 = data4.json as Res_Wxpay_Refund
+
+    return { pass: true, data: json5 }
   }
 
 
