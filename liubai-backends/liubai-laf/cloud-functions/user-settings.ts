@@ -187,18 +187,26 @@ async function handle_set(
 async function handle_membership(
   vRes: VerifyTokenRes_B,
 ): Promise<LiuRqReturn<Res_UserSettings_Membership>> {
-  let user = vRes.userData
-  const sub = user.subscription
 
+  // 1. get latest user data
+  const userId = vRes.userData._id
+  const col_user = db.collection("User")
+  const res1 = await col_user.doc(userId).get<Table_User>()
+  const user = res1.data
+  if(!user) {
+    return { code: "E4004", errMsg: "user not found" }
+  }
+
+  // 2. check out subscription
+  const sub = user.subscription
   if(!sub || sub.isOn === "N") {
     return { code: "0000", data: {} }
   }
-
   const { stripe_customer_id } = user
+
+  // 3. get latest stripe customer portal if needed
   let update_user = false
   const uUser: Partial<Table_User> = {}
-  
-  // 1. check data related to stripe
   if(stripe_customer_id) {
     const cpc = sub.stripe?.customer_portal_created ?? 1
     const cpu = sub.stripe?.customer_portal_url
@@ -208,17 +216,19 @@ async function handle_membership(
     // or customer_portal_created is over 24 hrs
     if(!cpu || diff >= DAY) {
       const cPortal = await getStripeCustomerPortal(stripe_customer_id)
-      if(!cPortal) {
-        return { code: "E5001", errMsg: "err happened during getStripeCustomerPortal" }
+      if(cPortal) {
+        sub.stripe = {
+          ...sub.stripe,
+          customer_portal_created: cPortal.created,
+          customer_portal_url: cPortal.url,
+        }
+        user.subscription = sub
+        uUser.subscription = sub
+        update_user = true
       }
-      sub.stripe = {
-        ...sub.stripe,
-        customer_portal_created: cPortal.created,
-        customer_portal_url: cPortal.url,
+      else {
+        console.warn("err happened during getStripeCustomerPortal")
       }
-      user.subscription = sub
-      uUser.subscription = sub
-      update_user = true
     }
   }
 

@@ -26,7 +26,7 @@ import type { UserLocalTable } from "~/types/types-table"
 import cui from "~/components/custom-ui"
 import { useActiveSyncNum } from "~/hooks/useCommon"
 import { RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
-import { showErrMsg } from "~/pages/level1/tools/show-msg"
+import { showEmojiTip, showErrMsg } from "~/pages/level1/tools/show-msg"
 import liuApi from "~/utils/liu-api"
 import { redirectForWxGzhOpenid } from "../../../utils/pay-tools"
 
@@ -88,6 +88,10 @@ export function useSubscribeContent() {
   }
 }
 
+function _showUnableToPay() {
+  showEmojiTip("payment.unable_to_pay", "🥵")
+}
+
 
 async function toBuyViaUnion(
   scData: ScData,
@@ -97,34 +101,44 @@ async function toBuyViaUnion(
   const { subPlanInfo } = scData
   if (!subPlanInfo) {
     console.warn("there is no subPlanInfo")
+    _showUnableToPay()
     return
   }
 
-  // 2. construct query
+  // 2. check if the payment is available
   const subscription_id = subPlanInfo.id
-  const data2: Param_PaymentOrder_A = {
+  const { wxpay, alipay } = subPlanInfo
+  const isOn1 = wxpay?.isOn === "Y"
+  const isOn2 = alipay?.isOn === "Y"
+  if(!isOn1 && !isOn2) {
+    _showUnableToPay()
+    return
+  }
+
+  // 3. construct query
+  const data3: Param_PaymentOrder_A = {
     operateType: "create_order",
     subscription_id,
   }
-  const url2 = APIs.PAYMENT_ORDER
+  const url3 = APIs.PAYMENT_ORDER
 
-  // 3. request
+  // 4. request
   cui.showLoading({ title_key: "tip.hold_on" })
-  const res3 = await liuReq.request<Res_PO_CreateOrder>(url2, data2)
+  const res4 = await liuReq.request<Res_PO_CreateOrder>(url3, data3)
   cui.hideLoading()
 
-  console.log("res3: ")
-  console.log(res3)
+  console.log("res4: ")
+  console.log(res4)
   console.log(" ")
 
-  // 4. handle result
-  const { code, data } = res3
+  // 5. handle result
+  const { code, data } = res4
   if(code !== "0000" || !data) {
-    showErrMsg("order", res3)
+    showErrMsg("order", res4)
     return
   }
 
-  // 5. show qrcode if it is PC
+  // 6. show qrcode if it is PC
   const od = data.orderData
   const order_id = od.order_id
   const cha = liuApi.getCharacteristic()
@@ -134,19 +148,19 @@ async function toBuyViaUnion(
     return
   }
 
-  // 6. login with wx gzh for openid
+  // 7. login with wx gzh for openid
   // and pull wxpay popup if we are in Weixin App
   if(cha.isWeChat && cha.isMobile) {
     redirectForWxGzhOpenid(order_id)
     return
   }
 
-  // 7. redirect to alipay page if we are in Alipay App
+  // 8. redirect to alipay page if we are in Alipay App
   if(cha.isAlipay && cha.isMobile) {
     return
   }
   
-  // 8. otherwise, go to payment-page
+  // 9. otherwise, go to payment-page
   rr.router.push({
     name: "payment",
     params: { order_id },

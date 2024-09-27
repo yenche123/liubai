@@ -424,7 +424,7 @@
     "per_month": "{currency} / 月",
     "per_year": "{currency} / 年",
     "check_out": "去看看",
-    "cancel_refund": "取消訂閱並退款",
+    "cancel_refund": "不想用了...",
     "refund_content": "每個帳號最多享有一次 7 天無理由退款，你確定還要取消訂閱並退款嗎？",
     "to_refund": "確定退款",
     "err_1": "訂購失敗",
@@ -442,7 +442,9 @@
     "order_not_found": "訂單不存在或訂閱方案已下架",
     "order_being_paid": "有人正在支付中..",
     "order_expired": "訂單已過期",
-    "ready_to_pay": "準備支付.."
+    "ready_to_pay": "準備支付..",
+    "unable_to_pay": "暫不支援購買會員，請稍後再試。",
+    "renewal": "續費"
   },
   "a2hs": {
     "title": "加入到桌面",

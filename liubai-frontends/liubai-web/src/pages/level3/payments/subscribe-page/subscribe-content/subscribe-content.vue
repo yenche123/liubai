@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { useSubscribeContent } from "./tools/useSubscribeContent"
-import { computed, toRef, watch } from "vue";
+import { toRef, watch } from "vue";
 import type { ScEmits } from "./tools/types"
 import ShinyButton from "~/components/custom-ui/shiny-button/shiny-button.vue";
 
@@ -15,12 +15,6 @@ const {
   onTapRefund,
 } = useSubscribeContent()
 const spi = toRef(scData, "subPlanInfo")
-const showUnionBuy = computed(() => {
-  const spiVal = spi.value
-  const wxpay = spiVal?.wxpay?.isOn === "Y"
-  const alipay = spiVal?.alipay?.isOn === "Y"
-  return wxpay || alipay
-})
 
 const { t } = useI18n()
 
@@ -86,32 +80,40 @@ watch(() => scData.state, (newV) => {
         <span class="liu-selection">{{ spi.desc }}</span>
       </div>
 
-
-      <!-- 按钮 -->
-      <div class="sc-btns" v-if="!scData.isLifelong">
-
-        <!-- 使用联合订单购买 -->
-        <ShinyButton v-if="showUnionBuy" class="sc-btn"
+      <!-- wechat or alipay -->
+      <div v-if="!scData.isLifelong && scData.payment_priority === 'union'"
+        class="sc-btns"
+      >
+        <ShinyButton class="sc-btn"
           @click="onTapBuyViaUnion"
         >
           <span>{{ t('payment.buy') }}</span>
         </ShinyButton>
 
-        <!-- 使用 stripe 购买 -->
-        <ShinyButton v-else-if="!scData.stripe_portal_url" class="sc-btn"
+        <!-- Cancel subscription & Refund -->
+        <div v-if="scData.showRefundBtn" 
+          class="liu-no-user-select liu-hover sc-refund"
+          @click.stop="onTapRefund"
+        >
+          <span>{{ t('payment.cancel_refund') }}</span>
+        </div>
+
+      </div>
+
+      <!-- stripe -->
+      <div
+        v-else-if="!scData.isLifelong && scData.payment_priority === 'stripe'"
+        class="sc-btns"
+      >
+        
+        <!-- Buy via Stripe -->
+        <ShinyButton v-if="!scData.stripe_portal_url" class="sc-btn"
           @click="onTapBuyViaStripe"
         >
           <span>{{ t('payment.buy') }}</span>
         </ShinyButton>
 
-        <!-- 管理订单 -->
-        <custom-btn v-else-if="spi.stripe?.isOn === 'Y'" class="sc-btn"
-          type="pure" @click="onTapManage"
-        >
-          <span>{{ t('payment.manage_sub') }}</span>
-        </custom-btn>
-
-        <!-- 取消订阅并退款 -->
+        <!-- Cancel subscription & Refund -->
         <div v-if="scData.showRefundBtn" 
           class="liu-no-user-select liu-hover sc-refund"
           @click.stop="onTapRefund"
@@ -119,7 +121,13 @@ watch(() => scData.state, (newV) => {
           <span>{{ t('payment.cancel_refund') }}</span>
         </div>
         
-
+        <!-- Manage subscription -->
+        <custom-btn v-else-if="scData.stripe_portal_url" class="sc-btn"
+          type="pure" @click="onTapManage"
+        >
+          <span>{{ t('payment.manage_sub') }}</span>
+        </custom-btn>
+    
       </div>
       
     </div>
@@ -224,7 +232,7 @@ watch(() => scData.state, (newV) => {
 
 .sc-refund {
   font-size: var(--mini-font);
-  color: var(--main-code);
+  color: var(--main-note);
   margin-block-start: 8px;
   line-height: 2.5;
   width: 60%;

@@ -424,7 +424,7 @@
     "per_month": "{currency} per month",
     "per_year": "{currency} per year",
     "check_out": "Check it out",
-    "cancel_refund": "Cancel & Refund",
+    "cancel_refund": "Not using anymore...",
     "refund_content": "You have only one chane to refund within 7 days after the first purchase. Are you sure to cancel the subscription and get the refund?",
     "to_refund": "Yes",
     "err_1": "Fail to Order",
@@ -442,7 +442,9 @@
     "order_not_found": "Order not found or subscription plan unavailable",
     "order_being_paid": "Someone is paying..",
     "order_expired": "Order Expired",
-    "ready_to_pay": "Processing.."
+    "ready_to_pay": "Processing..",
+    "unable_to_pay": "It is unable to pay now. Please try again later.",
+    "renewal": "Renewal"
   },
   "a2hs": {
     "title": "Add to Home",

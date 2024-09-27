@@ -424,7 +424,7 @@
     "per_month": "{currency} / 月",
     "per_year": "{currency} / 年",
     "check_out": "去看看",
-    "cancel_refund": "取消订阅并退款",
+    "cancel_refund": "不想用了...",
     "refund_content": "每个账号仅支持一次 7 天无理由退款，你确定还要取消订阅并退款吗？",
     "to_refund": "确定退款",
     "err_1": "下单失败",
@@ -442,7 +442,9 @@
     "order_not_found": "订单不存在或订阅方案已下架",
     "order_being_paid": "有人正在支付中..",
     "order_expired": "订单已过期",
-    "ready_to_pay": "准备支付.."
+    "ready_to_pay": "准备支付..",
+    "unable_to_pay": "会员通道暂时关闭，请稍后再试。",
+    "renewal": "续费"
   },
   "a2hs": {
     "title": "添加到桌面",
