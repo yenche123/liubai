@@ -25,6 +25,7 @@ import {
   HOUR,
   WEEK,
 } from "@/common-time";
+import { createRefundNo } from "@/common-ids";
 
 const db = cloud.database()
 
@@ -118,9 +119,7 @@ async function toRefundAndCancel(
   const sub_id = user.stripe_subscription_id
   const { payChannel } = theOrder
 
-
-
-  // decide which channel to refund and cancel
+  // 4. decide which channel to refund and cancel
   let res2: LiuRqReturn = { 
     code: "E5001", errMsg: "no channel to refund and cancel"
   }
@@ -148,6 +147,14 @@ async function toRefundAndCancelThroughWxpay(
   if(!transaction_id) {
     return { code: "E5001", errMsg: "no transaction_id in wxpay_other_data" }
   }
+
+  // 2. get refund amount
+  const out_refund_no = createRefundNo()
+  const refund_amount = order.paidAmount - order.refundedAmount
+  if(refund_amount <= 0) {
+    
+  }
+
 
   
 

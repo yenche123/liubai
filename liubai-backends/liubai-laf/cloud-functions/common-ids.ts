@@ -115,6 +115,14 @@ export function createOrderId() {
   return randomString
 }
 
+/** 创建退款单号 */
+export function createRefundNo() {
+  let randomString = "RF" + createRandom(4, "onlyNumber")
+  randomString += createRandom(4, "onlyUppercase")
+  randomString += createRandom(4, "onlyNumber")
+  return randomString
+}
+
 /** 创建加密数据里的 nonce */
 export function createEncNonce() {
   return createRandom(10)

@@ -444,7 +444,9 @@
     "order_expired": "訂單已過期",
     "ready_to_pay": "準備支付..",
     "unable_to_pay": "暫不支援購買會員，請稍後再試。",
-    "renewal": "續費"
+    "renewal": "續費",
+    "refund_1": "退款已發起",
+    "refund_2": "審核通過後，預計 24 小時內到帳。"
   },
   "a2hs": {
     "title": "加入到桌面",
