@@ -132,9 +132,9 @@ const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
           >
 
             <!-- 更多 -->
+            <!-- 原本有一个属性: :container="'#lv-column-header_' + item.id" -->
             <LiuMenu
               :menu="MORE_ITEMS"
-              :container="'#lv-column-header_' + item.id"
               placement="bottom-end"
               @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
               @menushow="() => onMenuShow(item.id)"
@@ -234,7 +234,6 @@ const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
   justify-content: center;
   margin-block-end: 20px;
   position: relative;
-  touch-action: none;
 }
 
 .lvc-box {
@@ -266,6 +265,7 @@ const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
   padding-inline-end: 6px;
   flex: none;
   cursor: grab;
+  touch-action: none;
 }
 
 .lv-handle-svg {

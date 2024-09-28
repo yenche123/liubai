@@ -282,6 +282,7 @@ const {
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none;
 }
 
 .kcf-handle-svg {

@@ -122,14 +122,13 @@ const {
         >
 
           <!-- 更多 -->
+          <!-- :container="'#kv-column-header_' + item.id" -->
           <LiuMenu
             :menu="MORE_ITEMS"
-            :container="'#kv-column-header_' + item.id"
             placement="bottom-end"
             @tapitem="(event1: MenuItem, event2: number) => onTapMoreMenuItem(item.id, event1, event2)"
             @menushow="() => onMenuShow(item.id)"
             @menuhide="() => onMenuHide(item.id)"
-            mask-z-index="40"
           >
             <div class="liu-hover kvch-btn">
               <svg-icon name="more" class="kvch-svg" 
@@ -202,7 +201,6 @@ const {
   position: relative;
   background-color: var(--bg-color);
   overflow: hidden;
-  touch-action: none;
 }
 
 .kv-column-header {
@@ -230,6 +228,7 @@ const {
   padding-inline-end: 6px;
   flex: none;
   cursor: grab;
+  touch-action: none;
 }
 
 .kv-handle-svg {

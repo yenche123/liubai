@@ -210,6 +210,7 @@ const iconColor = "var(--main-note)"
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none;
 
   .lci-handle-svg {
     width: 24px;
