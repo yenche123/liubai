@@ -80,7 +80,7 @@ const cha = liuApi.getCharacteristic()
         <!-- desc -->
         <div v-if="qpData.bindType === 'union_pay'" class="ba-info-desc ba-info-desc_unionpay">
           <span>{{ t('payment.content3') }}</span>
-          <span class="ba-info-icon ba-info-icon_wechat"></span>
+          <span class="ba-info-icon ba-info-icon_wxpay"></span>
           <span>{{ t('payment.content4') }}</span>
           <span class="ba-info-icon ba-info-icon_alipay"></span>
           <span>{{ t('payment.content5') }}</span>
@@ -296,10 +296,8 @@ const cha = liuApi.getCharacteristic()
   vertical-align: text-top;
 }
 
-.ba-info-icon_wechat {
-  width: 26px;
-  height: 26px;
-  background-image: url('/images/third-party/wechat.png');
+.ba-info-icon_wxpay {
+  background-image: url('/images/third-party/wxpay.png');
 }
 
 .ba-info-icon_alipay {
