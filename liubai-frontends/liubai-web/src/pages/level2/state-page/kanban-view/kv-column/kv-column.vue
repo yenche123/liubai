@@ -222,7 +222,6 @@ const {
   margin-block-end: 10px;
   width: 98%;
   position: relative;
-  touch-action: none;
 }
 
 .kcki-inner {
