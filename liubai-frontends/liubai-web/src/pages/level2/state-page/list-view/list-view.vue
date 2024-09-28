@@ -234,6 +234,7 @@ const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
   justify-content: center;
   margin-block-end: 20px;
   position: relative;
+  touch-action: none;
 }
 
 .lvc-box {

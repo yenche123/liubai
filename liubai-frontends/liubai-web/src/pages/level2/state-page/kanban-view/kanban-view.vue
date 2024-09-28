@@ -202,6 +202,7 @@ const {
   position: relative;
   background-color: var(--bg-color);
   overflow: hidden;
+  touch-action: none;
 }
 
 .kv-column-header {
