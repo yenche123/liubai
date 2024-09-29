@@ -96,6 +96,7 @@ async function handle_transaction_success(
   // 3. update the order
   const wxpayData = theOrder.wxpay_other_data ?? {}
   wxpayData.transaction_id = data.transaction_id
+  wxpayData.trade_type = data.trade_type
   const u3: Partial<Table_Order> = {}
   u3.wxpay_other_data = wxpayData
   u3.orderAmount = data.amount.total

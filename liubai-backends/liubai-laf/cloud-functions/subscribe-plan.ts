@@ -8,6 +8,7 @@ import {
   getDocAddId,
   checkIfUserSubscribed,
   LiuStripe,
+  WxpayHandler,
 } from '@/common-util';
 import type { 
   Table_Subscription, 
@@ -17,6 +18,7 @@ import type {
   LiuRqReturn,
   Table_Credential,
   Table_Order,
+  Wxpay_Refund_Custom_Param,
 } from "@/common-types";
 import { 
   getBasicStampWhileAdding,
@@ -26,6 +28,7 @@ import {
   WEEK,
 } from "@/common-time";
 import { createRefundNo } from "@/common-ids";
+import { useI18n, subPlanLang } from "@/common-i18n";
 
 const db = cloud.database()
 
@@ -120,26 +123,26 @@ async function toRefundAndCancel(
   const { payChannel } = theOrder
 
   // 4. decide which channel to refund and cancel
-  let res2: LiuRqReturn = { 
+  let res4: LiuRqReturn = { 
     code: "E5001", errMsg: "no channel to refund and cancel"
   }
   if(payChannel === "stripe" && sub_id) {
-    res2 = await toRefundAndCancelThroughStripe(user, theOrder)
+    res4 = await toRefundAndCancelThroughStripe(user, theOrder)
   }
   else if(payChannel === "alipay") {
     
   }
   else if(payChannel === "wxpay") {
-    toRefundAndCancelThroughWxpay(user, theOrder)
+    res4 = await toRefundAndCancelThroughWxpay(user, theOrder)
   }
 
-  return res2
+  return res4
 }
 
 async function toRefundAndCancelThroughWxpay(
   user: Table_User,
   order: Table_Order,
-) {
+): Promise<LiuRqReturn> {
 
   // 1. get arguments
   const wxpayData = order.wxpay_other_data ?? {}
@@ -147,20 +150,52 @@ async function toRefundAndCancelThroughWxpay(
   if(!transaction_id) {
     return { code: "E5001", errMsg: "no transaction_id in wxpay_other_data" }
   }
+  if(wxpayData.refund_id) {
+    return { code: "SP011", errMsg: "the order has been refunded" }
+  }
 
   // 2. get refund amount
   const out_refund_no = createRefundNo()
   const refund_amount = order.paidAmount - order.refundedAmount
   if(refund_amount <= 0) {
-    
+    return { code: "SP010", errMsg: "the refund amount is not positive" } 
   }
 
+  // 3. get refund reason
+  const { t } = useI18n(subPlanLang, { user })
+  const reason = t("seven_days_refund")
 
-  
+  // 4. construct arg and request refund
+  const arg4: Wxpay_Refund_Custom_Param = {
+    transaction_id,
+    out_refund_no,
+    refund_amount,
+    total_amount: order.paidAmount,
+    reason,
+  }
+  const refund_created_stamp = getNowStamp()
+  const res4 = await WxpayHandler.refund(arg4)
+  if(!res4.pass) return res4.err
 
-  
+  console.log("res of WxpayHandler.refund: ")
+  console.log(res4)
 
-  
+  // 5. update order
+  const d5 = res4.data
+  wxpayData.refund_id = d5.refund_id
+  wxpayData.refund_created_stamp = refund_created_stamp
+  const u5: Partial<Table_Order> = {
+    refundedAmount: d5.amount.refund,
+    wxpay_other_data: wxpayData,
+    updatedStamp: getNowStamp(),
+  }
+  const oCol = db.collection("Order")
+  const res5 = await oCol.doc(order._id).update(u5)
+
+  console.log("res of oCol.doc(order._id).update: ")
+  console.log(res5)
+
+  return { code: "0000" }
 }
 
 
