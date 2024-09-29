@@ -9,6 +9,7 @@ import {
   checkIfUserSubscribed,
   LiuStripe,
   WxpayHandler,
+  updateUserInCache,
 } from '@/common-util';
 import type { 
   Table_Subscription, 
@@ -143,6 +144,7 @@ async function toRefundAndCancelThroughWxpay(
   user: Table_User,
   order: Table_Order,
 ): Promise<LiuRqReturn> {
+  const time1 = getNowStamp()
 
   // 1. get arguments
   const wxpayData = order.wxpay_other_data ?? {}
@@ -195,9 +197,37 @@ async function toRefundAndCancelThroughWxpay(
   console.log("res of oCol.doc(order._id).update: ")
   console.log(res5)
 
+  // 6. terminate user's subscription
+  await terminateUserSubscription(user)
+
+  const time2 = getNowStamp()
+  const diffTime = time2 - time1
+  console.log("diffTime of toRefundAndCancelThroughWxpay: ", diffTime)
+
   return { code: "0000" }
 }
 
+async function terminateUserSubscription(
+  user: Table_User,
+) {
+  const sub = user.subscription
+  if(!sub) {
+    console.warn("no subscription in the user")
+    return
+  }
+  const now = getNowStamp()
+  sub.expireStamp = now
+  const u1: Partial<Table_User> = {
+    subscription: sub,
+    updatedStamp: now,
+  }
+  const col_user = db.collection("User")
+  const res1 = await col_user.doc(user._id).update(u1)
+  console.log("terminateUserSubscription res: ")
+  console.log(res1)
+  const newUser: Table_User = { ...user, ...u1 }
+  updateUserInCache(user._id, newUser)
+}
 
 
 async function toRefundAndCancelThroughStripe(
