@@ -35,7 +35,7 @@
 .liu-font-large {
   --big-word-style: 36px;
   --head-font: 28px;
-  --title-font: 24px;
+  --title-font: 22px;
   --desc-font: 20px;
   --inline-code-font: 18px;
   --btn-font: 17px;
@@ -52,7 +52,7 @@
 .liu-font-medium {
   --big-word-style: 30px;
   --head-font: 24px;
-  --title-font: 21px;
+  --title-font: 20px;
   --desc-font: 18px;
   --inline-code-font: 16px;
   --btn-font: 16px;
