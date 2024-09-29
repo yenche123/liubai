@@ -136,7 +136,7 @@ https://svglogo.top/
 
 6. 定期执行 `pnpm run build` 虽然我们在开发时，运行 `pnpm run dev` 即可进行调试或预览，但是最终交给用户的代码依然需要运行前者这样的命令，若最终打包时出现大面积错误，修改起来会很痛苦，所以建议定期执行该命令，确保你所写的代码都能成功打包。
 
-7. Keyboard Info: https://www.toptal.com/developers/keycode 可以查看键盘 keyboard 的 key
+7. Keyboard Info: https://www.toptal.com/developers/keycode 可以查看键盘 keyboard 的 key; toptal 还提供 .gitignore 的模板 https://www.toptal.com/developers/gitignore ，真的非常棒！
 
 8.  在路由里 `cid` 已经被拿来作为 `threadId` 的昵称，那么姑且就用 `cid2` 作为 `commentId` 的昵称
 
