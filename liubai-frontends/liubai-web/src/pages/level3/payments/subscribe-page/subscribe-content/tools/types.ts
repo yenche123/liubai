@@ -17,5 +17,5 @@ export interface ScData {
   autoRecharge?: boolean
   expireStr?: string
   showRefundBtn?: boolean
-  payment_priority: "stripe" | "union"
+  payment_priority: "stripe" | "one-off"
 }

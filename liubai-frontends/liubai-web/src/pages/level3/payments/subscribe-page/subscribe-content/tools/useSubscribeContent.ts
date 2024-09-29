@@ -75,14 +75,14 @@ export function useSubscribeContent() {
     toRefund(scData)
   }
 
-  const onTapBuyViaUnion = () => {
-    toBuyViaUnion(scData, rr)
+  const onTapBuyViaOneOff = () => {
+    toBuyViaOneOff(scData, rr)
   }
 
   return {
     scData,
     onTapBuyViaStripe,
-    onTapBuyViaUnion,
+    onTapBuyViaOneOff,
     onTapManage,
     onTapRefund,
   }
@@ -93,7 +93,7 @@ function _showUnableToPay() {
 }
 
 
-async function toBuyViaUnion(
+async function toBuyViaOneOff(
   scData: ScData,
   rr: RouteAndLiuRouter,
 ) {
@@ -143,7 +143,7 @@ async function toBuyViaUnion(
   const order_id = od.order_id
   const cha = liuApi.getCharacteristic()
   if(cha.isPC) {
-    await cui.showQRCodePopup({ bindType: "union_pay", order_id })
+    await cui.showQRCodePopup({ bindType: "one_off_pay", order_id })
     getMembershipRemotely(scData)
     return
   }

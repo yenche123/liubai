@@ -1,13 +1,13 @@
 
 
 
-export type BindType = "ww_qynb" | "wx_gzh" | "wx_gzh_scan" | "union_pay"
+export type BindType = "ww_qynb" | "wx_gzh" | "wx_gzh_scan" | "one_off_pay"
 
 export interface QpParam {
   bindType: BindType
   state?: string         // for login
   fr?: string
-  order_id?: string      // for union pay
+  order_id?: string      // for one-off pay
 }
 
 export interface QpData {

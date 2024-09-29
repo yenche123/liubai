@@ -10,7 +10,7 @@ const emits = defineEmits<ScEmits>()
 const { 
   scData,
   onTapBuyViaStripe,
-  onTapBuyViaUnion,
+  onTapBuyViaOneOff,
   onTapManage,
   onTapRefund,
 } = useSubscribeContent()
@@ -81,11 +81,11 @@ watch(() => scData.state, (newV) => {
       </div>
 
       <!-- wechat or alipay -->
-      <div v-if="!scData.isLifelong && scData.payment_priority === 'union'"
+      <div v-if="!scData.isLifelong && scData.payment_priority === 'one-off'"
         class="sc-btns"
       >
         <ShinyButton class="sc-btn"
-          @click="onTapBuyViaUnion"
+          @click="onTapBuyViaOneOff"
         >
           <span>{{ t('payment.buy') }}</span>
         </ShinyButton>

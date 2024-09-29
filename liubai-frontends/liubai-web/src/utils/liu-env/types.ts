@@ -6,7 +6,7 @@ export interface LiuSystemEnv {
   API_DOMAIN?: string
   APP_NAME?: string
 
-  PAYMENT_PRIORITY?: "stripe" | "union"
+  PAYMENT_PRIORITY?: "stripe" | "one-off"
 
   DEBUG_BTN?: boolean
   CONTACT_WECOM?: string

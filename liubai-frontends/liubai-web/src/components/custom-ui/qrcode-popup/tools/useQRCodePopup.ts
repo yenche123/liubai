@@ -75,8 +75,8 @@ export function showQRCodePopup(param: QpParam) {
     _resolve = a
   }
 
-  if(bT === "union_pay" && !param.order_id) {
-    console.warn("order_id is required while union_pay")
+  if(bT === "one_off_pay" && !param.order_id) {
+    console.warn("order_id is required while one-off pay")
     return new Promise(_wait)
   }
 
@@ -91,7 +91,7 @@ async function onTapRefresh() {
   // 1. check out args
   const bT = qpData.bindType
   const order_id = qpData.order_id
-  if(bT !== "union_pay" || !order_id) {
+  if(bT !== "one_off_pay" || !order_id) {
     return
   }
 
@@ -150,9 +150,9 @@ async function fetchData() {
     return
   }
 
-  // 3. show qrcode for union pay
-  if(bT === "union_pay") {
-    handle_union_pay()
+  // 3. show qrcode for one-off pay
+  if(bT === "one_off_pay") {
+    handle_one_off_pay()
     return
   }
 
@@ -172,7 +172,7 @@ async function fetchData() {
 }
 
 
-function handle_union_pay() {
+function handle_one_off_pay() {
   const order_id = qpData.order_id as string
   const origin = location.origin
   const path = `/payment/${order_id}`

@@ -65,20 +65,20 @@ const cha = liuApi.getCharacteristic()
 
       <!-- info box -->
       <div class="liu-no-user-select ba-info"
-        :class="{ 'ba-info_align_start': qpData.bindType === 'union_pay' }"
+        :class="{ 'ba-info_align_start': qpData.bindType === 'one_off_pay' }"
       >
 
         <!-- title -->
         <div class="ba-info-title">
           <span v-if="qpData.bindType === 'wx_gzh_scan'">{{ t('qrcode.wx_scan_login') }}</span>
-          <span v-else-if="qpData.bindType === 'union_pay'"
-            class="ba-info-title_unionpay"
+          <span v-else-if="qpData.bindType === 'one_off_pay'"
+            class="ba-info-title_oneoffpay"
           >{{ t('payment.content1') }}</span>
           <span v-else>{{ t('qrcode.title') }}</span>
         </div>
 
         <!-- desc -->
-        <div v-if="qpData.bindType === 'union_pay'" class="ba-info-desc ba-info-desc_unionpay">
+        <div v-if="qpData.bindType === 'one_off_pay'" class="ba-info-desc ba-info-desc_oneoffpay">
           <span>{{ t('payment.content3') }}</span>
           <span class="ba-info-icon ba-info-icon_wxpay"></span>
           <span>{{ t('payment.content4') }}</span>
@@ -104,7 +104,7 @@ const cha = liuApi.getCharacteristic()
         </div>
 
         <!-- button -->
-        <button v-if="qpData.bindType === 'union_pay'" class="liu-no-user-select ba-info-btn"
+        <button v-if="qpData.bindType === 'one_off_pay'" class="liu-no-user-select ba-info-btn"
           @click.stop="onTapRefresh"
         >
           <div class="bib-icon-box">
@@ -268,7 +268,7 @@ const cha = liuApi.getCharacteristic()
   text-wrap: pretty;
 }
 
-.ba-info-title_unionpay {
+.ba-info-title_oneoffpay {
   font-size: var(--head-font);
   letter-spacing: 1px;
 }
@@ -280,7 +280,7 @@ const cha = liuApi.getCharacteristic()
   text-wrap: pretty;
 }
 
-.ba-info-desc_unionpay {
+.ba-info-desc_oneoffpay {
   font-size: var(--desc-font);
   line-height: 1.75;
 }
@@ -351,7 +351,7 @@ const cha = liuApi.getCharacteristic()
 
 
 @media screen and (max-width: 500px) {
-  .ba-info-title_unionpay {
+  .ba-info-title_oneoffpay {
     font-size: var(--title-font);
   }
 }

@@ -17,6 +17,10 @@ const qrcode = useQRCode(() => {
   return location.href
 })
 
+if(cha) {
+  cha.isAlipay = true
+}
+
 </script>
 <template>
 
