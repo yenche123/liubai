@@ -44,7 +44,6 @@ export const domainAllowed = [
 
   // dev
   "caniuse.com",
-  "vuejs.org",
   "vitejs.dev",
   "vueuse.org",
   "typescriptlang.org",
