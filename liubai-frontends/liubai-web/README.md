@@ -117,6 +117,10 @@ https://remixicon.com/
 
 https://www.logo.dev/ 同样收录各个品牌的 logo
 
+https://simpleicons.org/
+
+https://svglogo.top/
+
 
 ## 一些常用碎片
 
