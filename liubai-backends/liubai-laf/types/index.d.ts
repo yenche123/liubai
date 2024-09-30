@@ -107,6 +107,10 @@ declare global {
       // 腾讯云 SES
       LIU_TENCENT_SES_REGION?: string        // 腾讯云 SES 所属的地域，有值 "ap-guangzhou" / "ap-hongkong"
       LIU_TENCENT_SES_FROM_EMAIL?: string    // 腾讯云 SES 的发件邮箱
+
+      // 支付宝
+      LIU_ALIPAY_APP_ID?: string
+      LIU_ALIPAY_NOTIFY_URL?: string
       
 
     }

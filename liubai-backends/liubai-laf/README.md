@@ -11,9 +11,16 @@
 export const wxpay_apiclient_serial_no = ""
 export const wxpay_apiclient_cert = ""
 export const wxpay_apiclient_key = ""
+
+export const alipay_cfg = {
+  privateKey: "",
+  alipayPublicKey: "",
+}
 ```
 
 `wxpay_` 开头的变量仅在启用微信支付时需要，否则填空字符串即可。
+
+`alipay_cfg` 仅在启用支付宝支付时需要，否则其对应的字段，维持空字符串即可。
 
 
 ## 开发日记

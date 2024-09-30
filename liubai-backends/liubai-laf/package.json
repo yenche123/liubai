@@ -12,6 +12,7 @@
   "dependencies": {
     "@lafjs/cloud": "1.0.0",
     "@wecom/crypto": "^1.0.1",
+    "alipay-sdk": "^4.13.0",
     "axios": "^1.7.7",
     "date-fns": "^4.1.0",
     "form-data": "^4.0.0",
