@@ -27,7 +27,6 @@ import type {
 } from "~/types/cloud/sync-get/types"
 import liuUtil from "~/utils/liu-util"
 import { CloudMerger } from "~/utils/cloud/CloudMerger"
-import { CloudFiler } from "~/utils/cloud/CloudFiler"
 import ider from "~/utils/basic/ider"
 import { useThrottleFn } from "~/hooks/useVueUse"
 import { useActiveSyncNum } from "~/hooks/useCommon"
@@ -353,12 +352,12 @@ async function initFromCloudDraft(
     return
   }
 
-  console.log("远程的 draft: ")
-  console.log(cloud_draft)
-  console.log("本地的 draft 1: ")
-  console.log(local_draft)
-  console.log("本地的 draft 2: ")
-  console.log(local_draft_2)
+  // console.log("远程的 draft: ")
+  // console.log(cloud_draft)
+  // console.log("本地的 draft 1: ")
+  // console.log(local_draft)
+  // console.log("本地的 draft 2: ")
+  // console.log(local_draft_2)
 
   // 6.1 localState is DELETED or POSTED
   if(localState === "POSTED" || localState === "DELETED") {
