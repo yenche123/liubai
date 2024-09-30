@@ -1,4 +1,4 @@
-import { nextTick, toRef, watch, ref } from "vue";
+import { nextTick, toRef, watch, useTemplateRef } from "vue";
 import liuUtil from "~/utils/liu-util";
 import type { SearchEditorData } from "../../tools/types";
 import time from "~/utils/basic/time"
@@ -10,7 +10,7 @@ interface SearchResultsProps {
 export function useSearchResults(
   props: SearchResultsProps
 ) {
-  const srContainerEl = ref<HTMLElement>()
+  const srContainerEl = useTemplateRef<HTMLElement>("srContainerEl")
   const seData = props.seData
   const indicator = toRef(seData, "indicator")
   const initStamp = time.getTime()

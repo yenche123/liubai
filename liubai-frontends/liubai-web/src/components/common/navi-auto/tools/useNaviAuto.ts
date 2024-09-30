@@ -1,4 +1,4 @@
-import { reactive, ref, toRef, watch } from "vue";
+import { reactive, toRef, watch } from "vue";
 import type { Ref } from "vue";
 import { useLayoutStore } from "~/views/useLayoutStore";
 import type { LayoutStore } from "~/views/useLayoutStore";
@@ -25,7 +25,6 @@ export function useNaviAuto(
   props: NaviAutoProps,
   emits: NaviAutoEmits,
 ) {
-  const containerEl = ref<HTMLDivElement>()
   const naData = reactive<NaviAutoData>({
     enable: false,
     show: false,
@@ -69,7 +68,6 @@ export function useNaviAuto(
   
   return {
     TRANSITION_DURATION,
-    containerEl,
     naData,
     onTapMenu,
   }

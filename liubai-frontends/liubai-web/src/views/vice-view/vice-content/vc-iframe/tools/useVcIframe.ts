@@ -1,4 +1,4 @@
-import { computed, onMounted, onUnmounted, ref } from "vue"
+import { computed, onMounted, onUnmounted, useTemplateRef } from "vue"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import liuApi from "~/utils/liu-api"
 import localCache from "~/utils/system/local-cache"
@@ -12,7 +12,7 @@ const { IFRAME_PROXY, IFRAME_PROXY_KEY } = liuEnv.getEnv()
 
 export function useVcIframe(props: VciProps) {
   const { route } = useRouteAndLiuRouter()
-  const iframeEl = ref<HTMLIFrameElement | null>(null)
+  const iframeEl = useTemplateRef<HTMLIFrameElement>("iframeEl")
   const { bgColor, isCard, styles } = getStyles(props)
 
   const whenWebViewerLoaded = () => {

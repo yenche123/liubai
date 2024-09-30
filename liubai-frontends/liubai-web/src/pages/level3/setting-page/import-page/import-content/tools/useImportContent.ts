@@ -1,4 +1,4 @@
-import { onDeactivated, ref } from "vue"
+import { onDeactivated, ref, useTemplateRef } from "vue"
 import type { Ref } from "vue"
 import liuUtil from "~/utils/liu-util"
 import type JSZip from "jszip"
@@ -24,7 +24,7 @@ export function useImportContent() {
 
   const { router } = useRouteAndLiuRouter()
   const list = ref<ImportedAtom2[]>([])
-  const oursFileEl = ref<HTMLInputElement | null>(null)
+  const oursFileEl = useTemplateRef<HTMLInputElement>("oursFileEl")
   const ctx: IcCtx = {
     list,
   }

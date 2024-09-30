@@ -1,4 +1,4 @@
-import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, useTemplateRef } from "vue";
 import thirdLink from "~/config/third-link";
 
 export interface ThirdScriptAttr {
@@ -11,7 +11,7 @@ export function useThirdScript(
   attributes?: Array<ThirdScriptAttr>,
 ) {
 
-  const boxRef = ref<HTMLDivElement>()
+  const boxRef = useTemplateRef<HTMLDivElement>("boxRef")
 
   let hasAdded = false
   const s = document.createElement("script")

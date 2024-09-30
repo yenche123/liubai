@@ -1,4 +1,4 @@
-import { nextTick, onMounted, reactive, ref, toRef, watch } from "vue";
+import { nextTick, onMounted, reactive, toRef, useTemplateRef, watch } from "vue";
 import type { HsirAtom, HsirData, HsirEmit, HsirProps } from "./types";
 import { 
   hasStrangeChar, 
@@ -18,7 +18,7 @@ export function useHsInputResults(
   emit: HsirEmit,
 ) {
 
-  const inputEl = ref<HTMLInputElement>()
+  const inputEl = useTemplateRef<HTMLInputElement>("inputEl")
 
   const hsirData = reactive<HsirData>({
     focus: false,

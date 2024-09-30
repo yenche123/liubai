@@ -11,7 +11,6 @@ const props = defineProps<NaviAutoProps>()
 const emits = defineEmits<NaviAutoEmits>()
 
 const {
-  containerEl,
   naData,
   TRANSITION_DURATION,
   onTapMenu,
@@ -23,7 +22,6 @@ const default_color = "var(--navi-normal)"
 <template>
 
   <div v-if="naData.enable"
-    ref="containerEl"
     class="liu-frosted-glass na-container"
     :class="{ 
       'na-container_show': naData.show, 

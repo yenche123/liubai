@@ -7,6 +7,7 @@ import {
   ref, 
   shallowRef, 
   toRef, 
+  useTemplateRef, 
   watch,
 } from "vue";
 import type { SvProps, SvEmits, SvCtx } from "./types"
@@ -34,7 +35,7 @@ const MAGIC_NUM_2 = 120
 const MAX_RUN_TIMES = 5
 
 export function useScrollView(props: SvProps, emits: SvEmits) {
-  const sv = ref<HTMLElement | null>(null)
+  const sv = useTemplateRef<HTMLElement>("sv")
   const scrollPosition = ref(0)
   const bottomUp = shallowRef<SvBottomUp>({ type: "pixel" })
   const lastToggleViewStamp = ref(time.getTime())

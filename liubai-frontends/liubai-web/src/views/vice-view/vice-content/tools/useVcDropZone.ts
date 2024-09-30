@@ -1,4 +1,4 @@
-import { ref, computed, provide } from "vue";
+import { ref, computed, provide, useTemplateRef } from "vue";
 import type { PageState } from "~/types/types-atom";
 import type { VcProps, VcData } from "./types"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
@@ -11,7 +11,7 @@ export function useVcDropZone(
   vcData: VcData,
   props: VcProps,
 ) {
-  const containerRef = ref<HTMLDivElement>()
+  const containerRef = useTemplateRef<HTMLDivElement>("containerRef")
   const viewState = ref<PageState>(pageStates.LOADING)
   const onViewStateChange = (newV: PageState) => {
     viewState.value = newV

@@ -1,4 +1,4 @@
-import type { PropType, Ref } from "vue"
+import type { PropType, Ref, ShallowRef } from "vue"
 import type { TrueOrFalse } from "~/types/types-basic"
 
 export interface SvProps {
@@ -50,7 +50,7 @@ export interface SvCtx {
   props: SvProps
   emits: SvEmits
   scrollPosition: Ref<number>
-  sv: Ref<HTMLElement | null>
+  sv: Readonly<ShallowRef<HTMLElement | null>>
   lastToggleViewStamp: Ref<number>
 }
 

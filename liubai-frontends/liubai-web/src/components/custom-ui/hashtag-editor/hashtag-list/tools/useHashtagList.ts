@@ -1,4 +1,4 @@
-import { nextTick, ref, toRef, watch } from "vue";
+import { nextTick, toRef, useTemplateRef, watch } from "vue";
 import liuUtil from "~/utils/liu-util";
 import type { TagItem } from "../../tools/types";
 
@@ -10,7 +10,7 @@ interface HtlProps {
 export function useHashtagList(props: HtlProps) {
   // 处理 selectedIndex 变化时，让被选中的选项进入可视区域
 
-  const htListEl = ref<HTMLElement>()
+  const htListEl = useTemplateRef<HTMLElement>("htListEl")
   const selectedIndex = toRef(props, "selectedIndex")
   
   watch(selectedIndex, async (newV, oldV) => {

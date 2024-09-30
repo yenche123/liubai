@@ -1,4 +1,4 @@
-import { provide, ref, watch } from "vue";
+import { provide, ref, watch, useTemplateRef } from "vue";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { useDropZone } from "~/hooks/useVueUse"
 import { mvFileKey } from "~/utils/provide-keys"
@@ -7,7 +7,7 @@ import type { MainViewProps } from "./types"
 export function useMvDropZone(
   props: MainViewProps
 ) {
-  const centerRef = ref<HTMLDivElement>()
+  const centerRef = useTemplateRef<HTMLDivElement>("centerRef")
   const dropFiles = ref<File[]>([])
   provide(mvFileKey, dropFiles)
 

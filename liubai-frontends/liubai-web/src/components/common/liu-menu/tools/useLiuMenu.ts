@@ -1,10 +1,10 @@
-import { nextTick, ref } from "vue"
+import { nextTick, useTemplateRef } from "vue"
 import { hideAllPoppers } from 'floating-vue'
 import type { LiuMenuProps } from "./types"
 
 export function useLiuMenu(props: LiuMenuProps) {
 
-  const maskEl = ref<HTMLElement | null>(null)
+  const maskEl = useTemplateRef<HTMLElement>("maskEl")
 
   const _whenWheel = (ev: WheelEvent) => {
     // console.log("whenWheel ev: ")

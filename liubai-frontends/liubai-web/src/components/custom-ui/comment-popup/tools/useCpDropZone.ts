@@ -1,4 +1,4 @@
-import { ref, computed, provide } from "vue";
+import { ref, computed, provide, useTemplateRef } from "vue";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
 import { useDropZone } from "~/hooks/useVueUse"
@@ -8,7 +8,7 @@ import type { CommentPopupData } from "./types"
 export function useCpDropZone(
   cpData: CommentPopupData
 ) {
-  const containerRef = ref<HTMLDivElement>()
+  const containerRef = useTemplateRef<HTMLDivElement>("containerRef")
   const gStore = useGlobalStateStore()
   const { isDragToSort } = storeToRefs(gStore)
 
