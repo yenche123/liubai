@@ -1337,6 +1337,10 @@ export interface Table_Order extends BaseTable {
 
   }
 
+  alipay_other_data?: {
+    
+  }
+
   meta_data?: OrderMetaData
 
 }

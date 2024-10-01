@@ -27,6 +27,7 @@ import {
   Sch_Param_PaymentOrder,
   type DataPass,
   type Res_Wxpay_Jsapi,
+  CommonPass_A,
 } from "@/common-types"
 import * as vbot from "valibot"
 import * as crypto from "crypto"
@@ -35,6 +36,7 @@ import {
   wxpay_apiclient_serial_no,
   wxpay_apiclient_cert, 
   wxpay_apiclient_key,
+  alipay_cfg,
 } from "@/secret-config"
 import { createEncNonce, createRandom } from "@/common-ids"
 import { useI18n, subPlanLang } from "@/common-i18n"
@@ -60,7 +62,6 @@ export async function main(ctx: FunctionContext) {
   // 2. go to specific operation
   const oT = body.operateType as string
 
-
   let res2: LiuRqReturn = { code: "E4000", errMsg: "operateType not found" }
   if(oT === "create_order") {
     // check out token
@@ -75,8 +76,34 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "wxpay_jsapi") {
     res2 = await handle_wxpay_jsapi(body)
   }
+  else if(oT === "alipay_wap") {
+    handle_alipay_wap(body)
+  }
 
   return res2
+}
+
+// @see https://opendocs.alipay.com/open-v3/1a957be0_alipay.trade.wap.pay
+// @see https://www.npmjs.com/package/alipay-sdk
+async function handle_alipay_wap(
+  body: Record<string, any>,
+) {
+  const order_id = body.order_id as string
+
+  // 1. get order
+  const res1 = await getSharedData_1(order_id)
+  if(!res1.pass) return res1.err
+  const d1 = res1.data
+
+  // 2. get some args out of order
+  const now2 = getNowStamp()
+  const plan_id = d1.plan_id as string
+
+  // 3. check out if we need to invoke WAP
+  
+
+  
+
 }
 
 
@@ -88,34 +115,13 @@ async function handle_wxpay_jsapi(
   const userTimezone = body.x_liu_timezone
 
   // 1. get order
-  const oCol = db.collection("Order")
-  const res1 = await oCol.where({ order_id }).getOne<Table_Order>()
+  const res1 = await getSharedData_1(order_id)
+  if(!res1.pass) return res1.err
   const d1 = res1.data
-  if(!d1) {
-    return { code: "E4004", errMsg: "order not found" }
-  }
 
-  // 2. check out order
+  // 2. get some args out of order
   const now2 = getNowStamp()
-  const stamp2 = d1.expireStamp ?? 1
-  if(stamp2 < now2) {
-    return { code: "E4006", errMsg: "the order is expired" }
-  }
-  if(d1.oState !== "OK") {
-    return { code: "E4004", errMsg: "the order is not OK" }
-  }
-  if(d1.orderStatus === "PAYING") {
-    return { code: "P0003", errMsg: "the order is being paid" }
-  }
-  if(d1.orderStatus === "PAID") {
-    return { code: "P0004", errMsg: "the order is already paid" }
-  }
-  if(!d1.orderAmount) {
-    return { code: "P0005", errMsg: "the order amount is zero" }
-  }
-  if(!d1.plan_id) {
-    return { code: "E4004", errMsg: "subscription plan not found" }
-  }
+  const plan_id = d1.plan_id as string
   
   // 3. check out if we need to invoke JSAPI
   const wxData = d1.wxpay_other_data ?? {}
@@ -130,10 +136,11 @@ async function handle_wxpay_jsapi(
   if(diff3 > MIN_15) prepay_id = ""
 
   // 4. to get prepay_id
+  const oCol = db.collection("Order")
   if(!prepay_id) {
 
     // 4.1 get subscription
-    const subPlan = await getSubscriptionPlan(d1.plan_id)
+    const subPlan = await getSubscriptionPlan(plan_id)
     if(!subPlan) {
       return { code: "E4004", errMsg: "fail to get sub plan" }
     }
@@ -394,25 +401,38 @@ function checkBody(
   const oT = body.operateType as string
   if(oT === "wxpay_jsapi") {
     if(!wxpay_apiclient_serial_no) {
-      return { code: "E4001", errMsg: "wxpay_apiclient_serial_no is not set" }
+      return { code: "E5001", errMsg: "wxpay_apiclient_serial_no is not set" }
     }
     if(!wxpay_apiclient_cert) {
-      return { code: "E4001", errMsg: "wxpay_apiclient_cert is not set" }
+      return { code: "E5001", errMsg: "wxpay_apiclient_cert is not set" }
     }
     if(!wxpay_apiclient_key) {
-      return { code: "E4001", errMsg: "wxpay_apiclient_key is not set" }
+      return { code: "E5001", errMsg: "wxpay_apiclient_key is not set" }
     }
     if(!_env.LIU_WX_GZ_APPID) {
-      return { code: "E4001", errMsg: "wx gzh appid is not set" }
+      return { code: "E5001", errMsg: "wx gzh appid is not set" }
     }
     if(!_env.LIU_WXPAY_MCH_ID) {
-      return { code: "E4001", errMsg: "wxpay mchid is not set" }
+      return { code: "E5001", errMsg: "wxpay mchid is not set" }
     }
     if(!_env.LIU_WXPAY_NOTIFY_URL) {
-      return { code: "E4001", errMsg: "wxpay notify url is not set" }
+      return { code: "E5001", errMsg: "wxpay notify url is not set" }
     }
   }
-
+  else if(oT === "alipay_wap") {
+    if(!_env.LIU_ALIPAY_APP_ID) {
+      return { code: "E5001", errMsg: "alipay app id is not set" }
+    }
+    if(!_env.LIU_ALIPAY_NOTIFY_URL) {
+      return { code: "E5001", errMsg: "alipay: notify url is not set" }
+    }
+    if(!alipay_cfg.alipayPublicKey) {
+      return { code: "E5001", errMsg: "alipay: alipay's public key is not set" }
+    }
+    if(!alipay_cfg.privateKey) {
+      return { code: "E5001", errMsg: "alipay: private key is not set" }
+    }
+  }
 }
 
 
@@ -603,4 +623,58 @@ function getWxpayJsapiParams(
     signType: "RSA",
     paySign,
   }
+}
+
+// get order data
+async function getSharedData_1(
+  order_id: string,
+): Promise<DataPass<Table_Order>> {
+  const errData: CommonPass_A = {
+    pass: false,
+    err: { code: "E4004", errMsg: "order not found" },
+  }
+
+  // 1. get order
+  const oCol = db.collection("Order")
+  const res1 = await oCol.where({ order_id }).getOne<Table_Order>()
+  const d1 = res1.data
+  if(!d1) {
+    return errData
+  }
+
+  // 2. check out order
+  const now2 = getNowStamp()
+  const stamp2 = d1.expireStamp ?? 1
+  if(stamp2 < now2) {
+    errData.err.code = "E4006"
+    errData.err.errMsg = "the order is expired"
+    return errData
+  }
+  if(d1.oState !== "OK") {
+    errData.err.code = "E4004"
+    errData.err.errMsg = "the order is not OK"
+    return errData
+  }
+  if(d1.orderStatus === "PAYING") {
+    errData.err.code = "P0003"
+    errData.err.errMsg = "the order is being paid"
+    return errData
+  }
+  if(d1.orderStatus === "PAID") {
+    errData.err.code = "P0004"
+    errData.err.errMsg = "the order is already paid"
+    return errData
+  }
+  if(!d1.orderAmount) {
+    errData.err.code = "P0005"
+    errData.err.errMsg = "the order amount is zero"
+    return errData
+  }
+  if(!d1.plan_id) {
+    errData.err.code = "E4004"
+    errData.err.errMsg = "subscription plan not found"
+    return errData
+  }
+
+  return { pass: true, data: d1 }
 }
