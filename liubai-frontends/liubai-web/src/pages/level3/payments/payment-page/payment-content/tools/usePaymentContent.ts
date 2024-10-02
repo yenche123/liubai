@@ -13,6 +13,7 @@ import valTool from "~/utils/basic/val-tool";
 import { useThrottleFn } from "~/hooks/useVueUse"; 
 import cui from "~/components/custom-ui";
 import { 
+  buyViaAlipayWap,
   buyViaWxpayJSAPI, 
   getWxGzhOpenid, 
   redirectForWxGzhOpenid,
@@ -35,9 +36,8 @@ export function usePaymentContent() {
   }, 1000)
 
   const onTapAlipay = useThrottleFn(() => {
-
+    whenTapAlipay(pcData)
   }, 1000)
-
 
   return {
     pcData,
@@ -45,6 +45,22 @@ export function usePaymentContent() {
     onTapAlipay,
     onTapWxpay,
   }
+}
+
+function whenTapAlipay(
+  pcData: PcData,
+) {
+  // 1. check if we can pay
+  const od = pcData.od
+  if(!od) return
+  if(!od.canPay) {
+    showCannotPayTip()
+    return
+  }
+
+  // 2. invoke pay-tool
+  const order_id = od.order_id
+  buyViaAlipayWap(order_id)
 }
 
 async function whenTapWxpay(
