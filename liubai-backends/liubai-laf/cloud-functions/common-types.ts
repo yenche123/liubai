@@ -1338,6 +1338,11 @@ export interface Table_Order extends BaseTable {
   }
 
   alipay_other_data?: {
+
+    // alipay.trade.wap.pay
+    wap_out_trade_no?: string        // format: a1xxxxLD......
+    wap_url?: string
+    wap_created_stamp?: number
     
   }
 
@@ -1455,6 +1460,11 @@ export interface Res_PO_GetOrder {
 export interface Res_PO_WxpayJsapi {
   operateType: "wxpay_jsapi"
   param: Wxpay_Jsapi_Params
+}
+
+export interface Res_PO_AlipayWap {
+  operateType: "alipay_wap"
+  wap_url: string
 }
 
 

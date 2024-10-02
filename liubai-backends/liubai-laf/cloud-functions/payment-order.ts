@@ -27,11 +27,12 @@ import {
   Sch_Param_PaymentOrder,
   type DataPass,
   type Res_Wxpay_Jsapi,
-  CommonPass_A,
+  type CommonPass_A,
+  type Res_PO_AlipayWap,
 } from "@/common-types"
 import * as vbot from "valibot"
 import * as crypto from "crypto"
-import { getBasicStampWhileAdding, getNowStamp, MINUTE } from "@/common-time"
+import { getBasicStampWhileAdding, getNowStamp, localizeStamp, MINUTE } from "@/common-time"
 import { 
   wxpay_apiclient_serial_no,
   wxpay_apiclient_cert, 
@@ -40,6 +41,7 @@ import {
 } from "@/secret-config"
 import { createEncNonce, createRandom } from "@/common-ids"
 import { useI18n, subPlanLang } from "@/common-i18n"
+import { AlipaySdk } from "alipay-sdk"
 
 const db = cloud.database()
 const _ = db.command
@@ -77,7 +79,7 @@ export async function main(ctx: FunctionContext) {
     res2 = await handle_wxpay_jsapi(body)
   }
   else if(oT === "alipay_wap") {
-    handle_alipay_wap(body)
+    res2 = await handle_alipay_wap(body)
   }
 
   return res2
@@ -87,7 +89,7 @@ export async function main(ctx: FunctionContext) {
 // @see https://www.npmjs.com/package/alipay-sdk
 async function handle_alipay_wap(
   body: Record<string, any>,
-) {
+): Promise<LiuRqReturn<Res_PO_AlipayWap>> {
   const order_id = body.order_id as string
 
   // 1. get order
@@ -100,10 +102,88 @@ async function handle_alipay_wap(
   const plan_id = d1.plan_id as string
 
   // 3. check out if we need to invoke WAP
-  
+  const alipayData = d1.alipay_other_data ?? {}
+  let out_trade_no = alipayData.wap_out_trade_no ?? ""
+  let wap_url = alipayData.wap_url ?? ""
+  let created_stamp = alipayData.wap_created_stamp ?? 1
+  const diff3 = now2 - created_stamp
+  if(!out_trade_no) wap_url = ""
+  if(diff3 > MIN_15) wap_url = ""
 
-  
+  // 4. return wap_url
+  if(wap_url) {
+    return { code: "0000", data: { operateType: "alipay_wap", wap_url } }
+  }
 
+  // 5. construct alipaySdk
+  const _env = process.env
+  const appId = _env.LIU_ALIPAY_APP_ID as string
+  const notify_url = _env.LIU_ALIPAY_NOTIFY_URL as string
+  const domain = _env.LIU_DOMAIN as string
+  const return_url = `${domain}/payment-success`
+  const alipaySdk = new AlipaySdk({
+    appId,
+    privateKey: alipay_cfg.privateKey,
+    alipayPublicKey: alipay_cfg.alipayPublicKey,
+  })
+
+  // 6. get sub plan
+  const subPlan = await getSubscriptionPlan(plan_id)
+  if(!subPlan) {
+    return { code: "E4004", errMsg: "fail to get sub plan" }
+  }
+  if(!subPlan.wxpay || subPlan.wxpay?.isOn !== "Y") {
+    return { code: "E4003", errMsg: "wxpay for this sub plan is not supported" }
+  }
+
+  // 7. get required data
+  const res7 = getRequiredDataForPayment("alipay_wap", d1, subPlan, body)
+  if(!res7.pass) return res7.err
+  const d7 = res7.data
+
+  // 8. get time_expire
+  const res8 = getTimeExpireForAlipay(d7.expireStamp)
+  if(!res8.pass) return res8.err
+  const time_expire = res8.data
+
+  // 9. construct bizContent & other data
+  const quit_url = `${domain}/payment/${order_id}`
+  const bizContent = {
+    out_trade_no: d7.out_trade_no,
+    total_amount: d7.total_amount,
+    subject: d7.payment_title,
+    product_code: "QUICK_WAP_WAY",
+    quit_url,
+    time_expire,
+    merchant_order_no: order_id,
+  }
+
+  // 10. request
+  const res10 = alipaySdk.pageExecute("alipay.trade.wap.pay", "GET", {
+    notify_url,
+    return_url,
+    bizContent,
+  })
+  console.log("see res10 in handle_alipay_wap()")
+  console.log(res10)
+  if(typeof res10 !== "string") {
+    return { code: "E5004", errMsg: "fail to invoke alipaySdk.pageExecute()" }
+  }
+
+  // 11. storage wap_url
+  wap_url = res10
+  const now11 = getNowStamp()
+  alipayData.wap_created_stamp = now11
+  alipayData.wap_out_trade_no = d7.out_trade_no
+  alipayData.wap_url = wap_url
+  const w11: Partial<Table_Order> = {
+    alipay_other_data: alipayData,
+    updatedStamp: now11,
+  }
+  const oCol = db.collection("Order")
+  oCol.doc(d1._id).update(w11)
+
+  return { code: "0000", data: { operateType: "alipay_wap", wap_url } }
 }
 
 
@@ -149,14 +229,12 @@ async function handle_wxpay_jsapi(
     }
 
     // 4.2 get sub plan info
-    const now4_2 = getNowStamp()
     const res4_2 = getRequiredDataForPayment("wxpay_jsapi", d1, subPlan, body)
+    if(!res4_2.pass) return res4_2.err
     const d4_2 = res4_2.data
-    if(res4_2.code !== "0000" || !d4_2) {
-      return res4_2 as LiuErrReturn
-    }
 
     // 4.3 get prepay_id
+    const now4_3 = getNowStamp()
     const param4_3: WxpayOrderByJsapiParam = {
       out_trade_no: d4_2.out_trade_no,
       openid: wx_gzh_openid,
@@ -178,7 +256,7 @@ async function handle_wxpay_jsapi(
     wxData.jsapi_out_trade_no = d4_2.out_trade_no
     wxData.jsapi_openid = wx_gzh_openid
     wxData.jsapi_prepay_id = prepay_id
-    wxData.jsapi_created_stamp = now4_2
+    wxData.jsapi_created_stamp = now4_3
     metaData.payment_timezone = userTimezone
     const w4_4: Partial<Table_Order> = {
       wxpay_other_data: wxData,
@@ -438,19 +516,20 @@ function checkBody(
 
 interface RequiredDataForPayment {
   payment_title: string
-  fee: number
+  fee: number             // 订单总金额，单位为“分”
+  total_amount: number    // 订单总金额，单位为“元”，精确到小数点后两位
   out_trade_no: string
   expireStamp: number
 }
 
-type PaymentType = "wxpay_jsapi" | "wxpay_h5" | "wxpay_native"
+type PaymentType = "wxpay_jsapi" | "wxpay_h5" | "wxpay_native" | "alipay_wap"
 
 function getRequiredDataForPayment(
   payment_type: PaymentType,
   order: Table_Order,
   sub_plan: Table_Subscription,
   body: Record<string, any>,
-): LiuRqReturn<RequiredDataForPayment> {
+): DataPass<RequiredDataForPayment> {
   const order_id = order.order_id
   let expireStamp = getNowStamp() + MIN_15
   if(order.expireStamp) {
@@ -462,6 +541,7 @@ function getRequiredDataForPayment(
   const { t } = useI18n(subPlanLang, { body })
   const payment_title = t("payment_title")
   let fee = sub_plan.amount_CNY
+  let total_amount = 0
   let out_trade_no = ""
 
   const nonce = createRandom(4, "onlyLowercase", { no_l_o: true })
@@ -477,26 +557,51 @@ function getRequiredDataForPayment(
     fee = sub_plan.wxpay?.amount_CNY ?? fee
     out_trade_no = `w3${nonce}${order_id}`
   }
+  else if(payment_type === "alipay_wap") {
+    fee = sub_plan.alipay?.amount_CNY ?? fee
+    out_trade_no = `a1${nonce}${order_id}`
+  }
 
   if(!fee) {
-    return { code: "E5001", errMsg: "fail to get fee" }
+    return { pass: false, err: { code: "E5001", errMsg: "fail to get fee" } }
+  }
+
+  total_amount = Number((fee / 100).toFixed(2))
+
+  if(!total_amount) {
+    return { pass: false, err: { code: "E5001", errMsg: "fail to get total_amount" } }
   }
   if(!out_trade_no) {
-    return { code: "E5001", errMsg: "fail to get out_trade_no" }
+    return { pass: false, err: { code: "E5001", errMsg: "fail to get out_trade_no" } }
   }
   if(!payment_title) {
-    return { code: "E5001", errMsg: "fail to get payment_title" }
+    return { pass: false, err: { code: "E5001", errMsg: "fail to get payment_title" } }
   }
 
   return { 
-    code: "0000", 
+    pass: true,
     data: { 
       payment_title, 
       fee, 
+      total_amount,
       out_trade_no,
       expireStamp,
     }
   }
+}
+
+
+function getTimeExpireForAlipay(
+  expireStamp: number,
+): DataPass<string> {
+  const stampFor8Zone = localizeStamp(expireStamp, "8")
+  let time_expire = LiuDateUtil.transformStampIntoRFC3339(stampFor8Zone)
+  if(!time_expire) {
+    return { pass: false, err: { code: "E5001", errMsg: "fail to get time_expire" } }
+  }
+  time_expire = time_expire.replace("T", " ")
+  time_expire = time_expire.substring(0, 19)      // get string like "2024-05-02 10:00:00"
+  return { pass: true, data: time_expire }
 }
 
 interface WxpayOrderByJsapiParam {
@@ -519,6 +624,8 @@ async function wxpayOrderByJsapi(
   let time_expire: string | undefined
   if(param.expireStamp) {
     time_expire = LiuDateUtil.transformStampIntoRFC3339(param.expireStamp)
+    console.log("wxpayOrderByJsapi time_expire: ")
+    console.log(time_expire)
   }
 
   // 2. construct body
