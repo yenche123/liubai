@@ -28,7 +28,7 @@ import { useActiveSyncNum } from "~/hooks/useCommon"
 import { RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
 import { showEmojiTip, showErrMsg } from "~/pages/level1/tools/show-msg"
 import liuApi from "~/utils/liu-api"
-import { redirectForWxGzhOpenid } from "../../../utils/pay-tools"
+import { buyViaAlipayWap, redirectForWxGzhOpenid } from "../../../utils/pay-tools"
 
 let timeout1: LiuTimeout  // in order to avoid the view from always loading
 let timeout2: LiuTimeout  // for setDataState
@@ -155,9 +155,10 @@ async function toBuyViaOneOff(
     return
   }
 
-  // 8. redirect to alipay page if we are in Alipay App
-  if(cha.isAlipay && cha.isMobile) {
-    return
+  // 8. redirect to alipay
+  if(cha.isMobile) {
+    const res8 = await buyViaAlipayWap(order_id)
+    if(res8) return
   }
   
   // 9. otherwise, go to payment-page

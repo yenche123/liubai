@@ -176,7 +176,7 @@ export async function buyViaAlipayWap(
     const diff1 = e1 - now1
     if(diff1 > 0) {
       location.href = vawData.wap_url
-      return
+      return true
     }
   }
 

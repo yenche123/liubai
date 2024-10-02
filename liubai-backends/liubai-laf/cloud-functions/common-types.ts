@@ -1421,11 +1421,21 @@ export const Sch_Param_PaymentOrder_C = vbot.object({
   wx_gzh_openid: Sch_Id,
 })
 
+export interface Param_PaymentOrder_D {
+  operateType: "alipay_wap"
+  order_id: string
+}
+export const Sch_Param_PaymentOrder_D = vbot.object({
+  operateType: vbot.literal("alipay_wap"),
+  order_id: Sch_Id,
+})
+
 export type Param_PaymentOrder = Param_PaymentOrder_A | Param_PaymentOrder_B | Param_PaymentOrder_C
 export const Sch_Param_PaymentOrder = vbot.variant("operateType", [
   Sch_Param_PaymentOrder_A,
   Sch_Param_PaymentOrder_B,
   Sch_Param_PaymentOrder_C,
+  Sch_Param_PaymentOrder_D,
 ])
 
 export interface Res_OrderData {
