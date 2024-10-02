@@ -5,6 +5,7 @@ import type {
   Res_UserLoginInit,
   Res_UL_WxGzhBase,
   Res_PO_WxpayJsapi,
+  Res_PO_AlipayWap,
 } from "~/requests/req-types";
 import { 
   type Wxpay_Jsapi_Params,
@@ -15,6 +16,7 @@ import localCache from "~/utils/system/local-cache";
 import { waitWxJSBridge } from "~/utils/wait/wait-window-loaded";
 import cui from "~/components/custom-ui";
 import { showErrMsg } from "~/pages/level1/tools/show-msg";
+import { type LiuRqReturn } from "~/requests/tools/types";
 
 let initData: Res_UserLoginInit | undefined
 
@@ -144,8 +146,76 @@ export async function buyViaWxpayJSAPI(
   cui.hideLoading()
 
   // 4. get param of Res_PO_WxpayJsapi
-  const code4 = res3.code
-  const data4 = res3.data
+  const res4 = _handlePayResult(res3)
+  if(!res4) return false
+  const data4 = res3.data as Res_PO_WxpayJsapi
+  
+  // 5. pull wxpay
+  vwjData.param = data4.param
+  vwjData.expireStamp = time.getTime() + time.MINUTE
+  const res5 = await _pullWxpay(data4.param)
+  return res5
+}
+
+interface VawData {
+  order_id?: string
+  wap_url?: string
+  expireStamp?: number
+}
+
+const vawData: VawData = {}
+
+// pay by alipay.trade.wap.pay
+export async function buyViaAlipayWap(
+  order_id: string,
+) {
+  // 1. check out vawData
+  if(order_id === vawData.order_id && vawData.wap_url) {
+    const now1 = time.getLocalTime()
+    const e1 = vawData.expireStamp ?? 1
+    const diff1 = e1 - now1
+    if(diff1 > 0) {
+      location.href = vawData.wap_url
+      return
+    }
+  }
+
+  // 2. set new data
+  vawData.wap_url = undefined
+  if(order_id !== vawData.order_id) {
+    vawData.order_id = order_id
+  }
+
+  // 3. fetch for wap_url
+  const url3 = APIs.PAYMENT_ORDER
+  const w3 = {
+    operateType: "alipay_wap",
+    order_id,
+  }
+  cui.showLoading({ title_key: "payment.ready_to_pay" })
+  const res3 = await liuReq.request<Res_PO_AlipayWap>(url3, w3)
+  cui.hideLoading()
+
+  console.log("buyViaAlipayWap res3: ")
+  console.log(res3)
+
+  // 4. get wap_url of Res_PO_AlipayWap
+  const res4 = _handlePayResult(res3)
+  if(!res4) return false
+  const data4 = res3.data as Res_PO_AlipayWap
+
+  // 5. redirect to wap_url
+  vawData.wap_url = data4.wap_url
+  vawData.expireStamp = time.getLocalTime() + time.MINUTE
+  location.href = vawData.wap_url
+  return true
+}
+
+function _handlePayResult(
+  res: LiuRqReturn<any>,
+) {
+  const code4 = res.code
+  const data4 = res.data
   if(code4 === "E4004") {
     showNoOrder()
     return false
@@ -159,23 +229,13 @@ export async function buyViaWxpayJSAPI(
     return false
   }
   if(code4 !== "0000" || !data4) {
-    showErrMsg("order", res3)
+    showErrMsg("order", res)
     return false
   }
-  
-  // 5. pull wxpay
-  vwjData.param = data4.param
-  vwjData.expireStamp = time.getTime() + time.MINUTE
-  const res5 = await _pullWxpay(data4.param)
-  return res5
+
+  return true
 }
 
-// pay by alipay.trade.wap.pay
-export async function buyViaAlipayWap(
-  order_id: string,
-) {
-  
-}
 
 function showOrderBeingPaid() {
   cui.showModal({
