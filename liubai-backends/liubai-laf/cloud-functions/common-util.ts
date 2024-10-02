@@ -85,8 +85,10 @@ import { wechat_tag_cfg } from '@/common-config'
 import { 
   wxpay_apiclient_serial_no,
   wxpay_apiclient_key,
+  alipay_cfg,
 } from "@/secret-config"
 import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
+import { AlipaySdk } from "alipay-sdk"
 
 const db = cloud.database()
 const _ = db.command
@@ -2527,6 +2529,22 @@ export class WxpayHandler {
 
 }
 /*************** Functions about wxpay ends ****************/
+
+/*************** Functions about alipay starts ***************/
+export class AlipayHandler {
+  static getAlipaySdk() {
+    const _env = process.env
+    const appId = _env.LIU_ALIPAY_APP_ID as string
+    const alipaySdk = new AlipaySdk({
+      appId,
+      privateKey: alipay_cfg.privateKey,
+      alipayPublicKey: alipay_cfg.alipayPublicKey,
+      keyType: "PKCS8",
+    })
+    return alipaySdk
+  }
+}
+/*************** Functions about alipay ends ***************/
 
 
 /*************** About order or payment ***************/

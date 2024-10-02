@@ -9,6 +9,7 @@ import {
   LiuDateUtil,
   WxpayHandler,
   liuFetch,
+  AlipayHandler,
 } from "@/common-util"
 import {
   type LiuErrReturn,
@@ -41,7 +42,6 @@ import {
 } from "@/secret-config"
 import { createEncNonce, createRandom } from "@/common-ids"
 import { useI18n, subPlanLang } from "@/common-i18n"
-import { AlipaySdk } from "alipay-sdk"
 
 const db = cloud.database()
 const _ = db.command
@@ -115,17 +115,12 @@ async function handle_alipay_wap(
     return { code: "0000", data: { operateType: "alipay_wap", wap_url } }
   }
 
-  // 5. construct alipaySdk
+  // 5. get notify_url & return_url & alipaySdk
   const _env = process.env
-  const appId = _env.LIU_ALIPAY_APP_ID as string
   const notify_url = _env.LIU_ALIPAY_NOTIFY_URL as string
   const domain = _env.LIU_DOMAIN as string
   const return_url = `${domain}/payment-success`
-  const alipaySdk = new AlipaySdk({
-    appId,
-    privateKey: alipay_cfg.privateKey,
-    alipayPublicKey: alipay_cfg.alipayPublicKey,
-  })
+  const alipaySdk = AlipayHandler.getAlipaySdk()
 
   // 6. get sub plan
   const subPlan = await getSubscriptionPlan(plan_id)
@@ -185,7 +180,6 @@ async function handle_alipay_wap(
 
   return { code: "0000", data: { operateType: "alipay_wap", wap_url } }
 }
-
 
 async function handle_wxpay_jsapi(
   body: Record<string, any>,
@@ -383,6 +377,9 @@ async function handle_create_sp_order(
   const res8 = packageOrderData(newOrder, { subPlan, body })
   return { code: "0000", data: { operateType: "create_order", orderData: res8 } }
 }
+
+
+/********************* helper functions ****************/
 
 interface PackageOrderDataOpt {
   subPlan?: Table_Subscription
