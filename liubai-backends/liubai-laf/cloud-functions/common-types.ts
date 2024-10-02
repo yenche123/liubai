@@ -1332,7 +1332,7 @@ export interface Table_Order extends BaseTable {
     transaction_id?: string           // 微信支付订单号，支付成功后获得
     refund_id?: string                // 微信退款号，发起退款后获得
     trade_type?: Wxpay_Trade_Type     // 交易类型，支付成功后获得
-    refund_created_stamp?: number     // 退款时间戳
+    refund_created_stamp?: number     // 发起退款时间戳
     
 
   }
@@ -1343,7 +1343,13 @@ export interface Table_Order extends BaseTable {
     wap_out_trade_no?: string        // format: a1xxxxLD......
     wap_url?: string
     wap_created_stamp?: number
-    
+
+    trade_no?: string                // 支付宝交易号，支付后获得
+    buyer_open_id?: string           // 买家支付宝用户唯一标识，支付后获得
+    buyer_logon_id?: string          // like "159****5620"
+    out_request_no?: string          // 商户退款请求号，发起退款时必填
+    refund_created_stamp?: number    // 发起退款时间戳
+
   }
 
   meta_data?: OrderMetaData
@@ -2772,4 +2778,51 @@ export interface Wxpay_Refund_Custom_Param {
   refund_amount: number
   total_amount: number
   reason?: string
+}
+
+/******************* Some Types from Alipay  ****************/
+export interface Alipay_Notice {
+  notify_time: string   // 通知的发送时间。格式为 yyyy-MM-dd HH:mm:ss。
+  notify_type: string   // like "trade_status_sync"
+  notify_id: string
+  app_id: string
+  charset: "utf-8"
+  version: "1.0"
+  sign_type: "RSA" | "RSA2"
+
+  sign: string
+  trade_no: string       // 支付宝交易凭证号
+  out_trade_no: string   // 商户订单号
+  out_biz_no?: string    // 商户业务 ID，主要是退款通知中返回退款申请的流水号
+  buyer_open_id?: string
+  buyer_logon_id?: string     // like "159****5620"
+
+  seller_id?: string
+  seller_email?: string
+  trade_status?: "WAIT_BUYER_PAY" | "TRADE_CLOSED" | "TRADE_SUCCESS" | "TRADE_FINISHED"
+  
+  total_amount?: string      // 订单金额，单位为“元”
+  receipt_amount?: string    // 实收金额，单位为“元”
+  invoice_amount?: string    // 可开票金额，单位为“元”
+  buyer_pay_amount?: string  // 买家付款金额，单位为“元”
+  point_amount?: string      // 使用集分宝支付的金额，单位为“元”
+  refund_fee?: string         // 退款通知中，返回总退款金额，单位为“元”
+  
+  subject?: string           // 订单标题
+  body?: string              // 订单的备注、描述、明细等。对应请求时的 body 参数，原样通知回来。
+
+  gmt_create?: string        // 交易创建时间。格式为 yyyy-MM-dd HH:mm:ss
+  gmt_payment?: string       // 交易付款时间。
+  gmt_refund?: string        // 交易退款时间。
+  gmt_close?: string         // 交易结束时间。
+
+  fund_bill_list?: string    // 支付成功的各个渠道金额信息。详情可查看 资金明细信息说明。
+  passback_params?: string    // 公共回传参数，如果请求时传递了该参数，则返回给商户时会回传该参数。
+  voucher_detail_list?: string    // 本交易支付时所使用的所有优惠券信息。
+  
+  // 以下字段为文档 https://opendocs.alipay.com/open-v3/05w4ku?pathHash=af025e20
+  // 中没有，但是实际返回中存在
+  merchant_app_id?: string
+  auth_app_id?: string
+
 }

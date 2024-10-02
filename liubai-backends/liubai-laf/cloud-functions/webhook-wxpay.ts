@@ -1,7 +1,13 @@
 // Function Name: webhook-wxpay
 // Receive messages and events from Weixin Pay
 import cloud from '@lafjs/cloud'
-import { LiuDateUtil, valTool, WxpayHandler } from '@/common-util'
+import { 
+  LiuDateUtil, 
+  valTool, 
+  WxpayHandler,
+  extractOrderId,
+  upgrade_user_subscription,
+} from '@/common-util'
 import { 
   wxpay_apiclient_key, 
   wxpay_apiclient_serial_no,
@@ -9,21 +15,17 @@ import {
 import type {
   DataPass, 
   LiuErrReturn, 
-  Table_Order, 
-  Table_Subscription, 
-  Table_User, 
-  UserSubscription, 
+  Table_Order,
   Wxpay_Notice_Base, 
   Wxpay_Notice_PaymentResource, 
   Wxpay_Notice_RefundResource, 
   Wxpay_Notice_Result, 
   WxpayVerifySignOpt,
 } from "@/common-types"
-import { getNowStamp, SECONED } from './common-time'
+import { getNowStamp } from './common-time'
 
 /*************** some constants **********************/
 const db = cloud.database()
-const SEC_5 = 5 * SECONED
 
 export async function main(ctx: FunctionContext) {
   // 1. check out the signature
@@ -117,77 +119,10 @@ async function handle_transaction_success(
   // 4. upgrade user's plan if he or she bought a subscription
   const oT = theOrder.orderType
   if(oT === "subscription" && theOrder.plan_id) {
-    await transaction_success_for_subscription(data, theOrder)
+    await upgrade_user_subscription(theOrder)
   }
 
   
-}
-
-
-async function transaction_success_for_subscription(
-  data: Wxpay_Notice_PaymentResource,
-  theOrder: Table_Order,
-) {
-  // 1. get plan from db
-  const plan_id = theOrder.plan_id as string
-  const sCol = db.collection("Subscription")
-  const res1 = await sCol.doc(plan_id).get<Table_Subscription>()
-  const thePlan = res1.data
-  if(!thePlan) {
-    console.warn("[transaction_success_for_subscription] fail to get plan from db")
-    return
-  }
-  
-  // 2. get the user
-  const user_id = theOrder.user_id
-  const uCol = db.collection("User")
-  const res2 = await uCol.doc(user_id).get<Table_User>()
-  const theUser = res2.data
-  if(!theUser) {
-    console.warn("[transaction_success_for_subscription] fail to get user from db")
-    return
-  }
-
-  // 3. check out chargedStamp to avoid duplicate charging
-  const oldUserSub = theUser.subscription
-  const chargedStamp = oldUserSub?.chargedStamp ?? 1
-  const now3 = getNowStamp()
-  const diff3 = now3 - chargedStamp
-  if(diff3 < SEC_5) {
-    console.warn("the user has been charged in the past 5 seconds")
-    return
-  }
-  
-  // 4. generate a new subscription in user
-  let chargeTimes = oldUserSub?.chargeTimes ?? 0
-  chargeTimes += 1
-  const newUserSub: UserSubscription = {
-    isOn: "Y",
-    plan: plan_id,
-    isLifelong: oldUserSub?.isLifelong ?? false,
-    autoRecharge: false,
-    createdStamp: oldUserSub?.createdStamp ?? now3,
-    chargedStamp: now3,
-    firstChargedStamp: oldUserSub?.firstChargedStamp ?? now3,
-    chargeTimes,
-  }
-  if(!newUserSub.isLifelong) {
-    const newExpireStamp = LiuDateUtil.getNewExpireStamp(
-      thePlan.payment_circle,
-      theOrder.meta_data?.payment_timezone,
-      oldUserSub?.expireStamp,
-    )
-    newUserSub.expireStamp = newExpireStamp
-  }
-
-  // 5. update user's subscription
-  console.log("newUserSub: ")
-  console.log(newUserSub)
-  const u5: Partial<Table_User> = {
-    subscription: newUserSub,
-    updatedStamp: now3,
-  }
-  uCol.doc(user_id).update(u5)
 }
 
 
@@ -197,15 +132,6 @@ function transaction_success_for_product(
 ) {
   // TODO
 
-}
-
-
-// out_trade_no: wN + 4位随机数 + order_id 
-function extractOrderId(out_trade_no: string) {
-  let tmpId = out_trade_no.substring(6)
-  if(tmpId.length > 10 && tmpId.startsWith("LD")) {
-    return tmpId
-  }
 }
 
 

@@ -47,6 +47,8 @@ import type {
   Wxpay_Refund_Custom_Param,
   DataPass,
   Res_Wxpay_Refund,
+  Table_Subscription,
+  UserSubscription,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -94,6 +96,7 @@ const db = cloud.database()
 const _ = db.command
 
 /********************* 常量 ****************/
+const SEC_5 = SECONED * 5
 const MIN_3 = MINUTE * 3
 const MIN_5 = MINUTE * 5
 const DAY_90 = DAY * 90
@@ -2568,4 +2571,79 @@ export async function createAvailableOrderId() {
   }
 
   return orderId
+}
+
+export function extractOrderId(out_trade_no: string) {
+  let tmpId = out_trade_no.substring(6)
+  if(tmpId.length > 10 && tmpId.startsWith("LD")) {
+    return tmpId
+  }
+}
+
+// 升级或延长用户订阅
+export async function upgrade_user_subscription(
+  theOrder: Table_Order,
+) {
+  // 1. get plan from db
+  const plan_id = theOrder.plan_id as string
+  const sCol = db.collection("Subscription")
+  const res1 = await sCol.doc(plan_id).get<Table_Subscription>()
+  const thePlan = res1.data
+  if(!thePlan) {
+    console.warn("[upgrade_user_subscription] fail to get plan from db")
+    return
+  }
+  
+  // 2. get the user
+  const user_id = theOrder.user_id
+  const uCol = db.collection("User")
+  const res2 = await uCol.doc(user_id).get<Table_User>()
+  const theUser = res2.data
+  if(!theUser) {
+    console.warn("[upgrade_user_subscription] fail to get user from db")
+    return
+  }
+
+  // 3. check out chargedStamp to avoid duplicate charging
+  const oldUserSub = theUser.subscription
+  const chargedStamp = oldUserSub?.chargedStamp ?? 1
+  const now3 = getNowStamp()
+  const diff3 = now3 - chargedStamp
+  if(diff3 < SEC_5) {
+    console.warn("the user has been charged in the past 5 seconds")
+    return
+  }
+  
+  // 4. generate a new subscription in user
+  let chargeTimes = oldUserSub?.chargeTimes ?? 0
+  chargeTimes += 1
+  const newUserSub: UserSubscription = {
+    isOn: "Y",
+    plan: plan_id,
+    isLifelong: oldUserSub?.isLifelong ?? false,
+    autoRecharge: false,
+    createdStamp: oldUserSub?.createdStamp ?? now3,
+    chargedStamp: now3,
+    firstChargedStamp: oldUserSub?.firstChargedStamp ?? now3,
+    chargeTimes,
+  }
+  if(!newUserSub.isLifelong) {
+    const newExpireStamp = LiuDateUtil.getNewExpireStamp(
+      thePlan.payment_circle,
+      theOrder.meta_data?.payment_timezone,
+      oldUserSub?.expireStamp,
+    )
+    newUserSub.expireStamp = newExpireStamp
+  }
+
+  // 5. update user's subscription
+  console.log("newUserSub: ")
+  console.log(newUserSub)
+  const u5: Partial<Table_User> = {
+    subscription: newUserSub,
+    updatedStamp: now3,
+  }
+  const res5 = await uCol.doc(user_id).update(u5)
+  const newUser: Table_User = { ...theUser, ...u5 }
+  updateUserInCache(user_id, newUser)
 }

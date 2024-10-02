@@ -150,8 +150,9 @@ async function handle_alipay_wap(
     product_code: "QUICK_WAP_WAY",
     quit_url,
     time_expire,
-    merchant_order_no: order_id,
   }
+  console.log("bizContent: ")
+  console.log(bizContent)
 
   // 10. request
   const res10 = alipaySdk.pageExecute("alipay.trade.wap.pay", "GET", {
