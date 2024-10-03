@@ -323,8 +323,13 @@ async function handle_info(
     wxpay = undefined
   }
 
-  // TODO: check out alipay
-
+  // check out alipay
+  let alipay = d.alipay
+  const alipay_appid = _env.LIU_ALIPAY_APP_ID
+  const alipay_notify_url = _env.LIU_ALIPAY_NOTIFY_URL
+  if(!alipay_appid || !alipay_notify_url) {
+    alipay = undefined
+  }
 
   const sym = getCurrencySymbol(currency)
   const r: Res_SubPlan_Info = {
@@ -335,7 +340,7 @@ async function handle_info(
     desc: d.desc,
     stripe: d.stripe,
     wxpay,
-    alipay: d.alipay,
+    alipay,
     price,
     currency,
     symbol: sym,
