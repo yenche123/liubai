@@ -8,7 +8,8 @@ const {
   pcData, 
   cha,
   onTapAlipay,
-  onTapWxpay,
+  onTapWxpayJSAPI,
+  onTapWxpayH5,
 } = usePaymentContent()
 
 const qrcode = useQRCode(() => {
@@ -16,6 +17,8 @@ const qrcode = useQRCode(() => {
   if(!order_id) return ""
   return location.href
 })
+
+const arrowColor = "var(--main-normal)"
 
 </script>
 <template>
@@ -69,16 +72,13 @@ const qrcode = useQRCode(() => {
     class="liu-no-user-select pc-container"
   >
     <!-- title (like: 年度会员) -->
-    <div class="pc-wxpay-title">
+    <div class="pc-pay-title">
       <span v-if="pcData.od.title">{{ pcData.od.title }}</span>
     </div>
 
     <!-- price (like: ¥150.00) -->
-    <div class="pc-wxpay-price">
-      <span v-if="pcData.od.currency === 'cny' || pcData.od.currency === 'jpy'" 
-        class="pc-wxpay-symbol"
-      >¥</span>
-      <span v-else class="pc-wxpay-symbol">$</span>
+    <div class="pc-pay-price">
+      <span class="pc-pay-symbol">{{ pcData.od.symbol }}</span>
       <span>{{ pcData.order_amount_txt }}</span>
     </div>
 
@@ -93,7 +93,7 @@ const qrcode = useQRCode(() => {
     </div>
 
     <!-- pay button -->
-    <button class="pc-btn pc-wxpay-button" @click.stop="onTapWxpay">
+    <button class="pc-btn pc-wxpay-button" @click.stop="onTapWxpayJSAPI">
       <span>{{ t('payment.pay_immediately') }}</span>
     </button>
 
@@ -104,16 +104,13 @@ const qrcode = useQRCode(() => {
     class="liu-no-user-select pc-container"
   >
     <!-- title (like: 年度会员) -->
-    <div class="pc-wxpay-title">
+    <div class="pc-pay-title">
       <span v-if="pcData.od.title">{{ pcData.od.title }}</span>
     </div>
 
     <!-- price (like: ¥150.00) -->
-    <div class="pc-wxpay-price">
-      <span v-if="pcData.od.currency === 'cny' || pcData.od.currency === 'jpy'" 
-        class="pc-wxpay-symbol"
-      >¥</span>
-      <span v-else class="pc-wxpay-symbol">$</span>
+    <div class="pc-pay-price">
+      <span class="pc-pay-symbol">{{ pcData.od.symbol }}</span>
       <span>{{ pcData.order_amount_txt }}</span>
     </div>
 
@@ -134,7 +131,57 @@ const qrcode = useQRCode(() => {
 
   </div>
 
-  <!-- 5. qr code -->
+  <!-- 5. mobile web -->
+  <div v-else-if="cha?.isMobile && pcData.od && pcData.order_amount_txt"
+    class="liu-no-user-select pc-container"
+  >
+
+    <!-- title (like: Payment Method) -->
+    <div class="pc-pay-title">
+      <span v-if="pcData.od.title">{{ t('payment.choose_pay_method') }}</span>
+    </div>
+
+    <!-- price (like: ¥150.00) -->
+    <div class="pc-pay-price">
+      <span class="pc-pay-symbol">{{ pcData.od.symbol }}</span>
+      <span>{{ pcData.order_amount_txt }}</span>
+    </div>
+
+    <div class="pc-pay-virtual"></div>
+
+    <!-- alipay button -->
+    <div class="pc-pay-button" @click.stop="onTapAlipay">
+      <div class="pcpb-icon-box">
+        <div class="pcpb-icon pcpb-icon_alipay"></div>
+      </div>
+      <div class="pcpb-title">
+        <span>{{ t('payment.alipay') }}</span>
+      </div>
+      <div class="pcpb-arrow">
+        <svg-icon name="arrow-right2" class="pcpb-arrow-icon"
+          :color="arrowColor"
+        ></svg-icon>
+      </div>
+    </div>
+
+    <!-- wxpay button -->
+    <div class="pc-pay-button" @click.stop="onTapWxpayH5">
+      <div class="pcpb-icon-box">
+        <div class="pcpb-icon pcpb-icon_wxpay"></div>
+      </div>
+      <div class="pcpb-title">
+        <span>{{ t('payment.wxpay') }}</span>
+      </div>
+      <div class="pcpb-arrow">
+        <svg-icon name="arrow-right2" class="pcpb-arrow-icon"
+          :color="arrowColor"
+        ></svg-icon>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 6. qr code -->
   <div v-else-if="pcData.od?.order_id && qrcode" class="liu-no-user-select pc-container">
     <div class="pc-square">
 
@@ -199,7 +246,7 @@ const qrcode = useQRCode(() => {
   width: 75%;
 }
 
-.pc-wxpay-title {
+.pc-pay-title {
   margin-block-end: 10px;
   font-size: var(--btn-font);
   font-weight: 700;
@@ -209,7 +256,7 @@ const qrcode = useQRCode(() => {
   color: var(--main-text);
 }
 
-.pc-wxpay-price {
+.pc-pay-price {
   font-size: var(--big-word-style);
   color: var(--main-text);
   margin-block-end: 20px;
@@ -220,7 +267,7 @@ const qrcode = useQRCode(() => {
   line-height: 1.1;
 }
 
-.pc-wxpay-symbol {
+.pc-pay-symbol {
   font-size: var(--inline-code-font);
   font-weight: 700;
   margin-inline-end: 4px;
@@ -312,6 +359,71 @@ const qrcode = useQRCode(() => {
   text-wrap: balance;
 }
 
+.pc-pay-virtual {
+  width: 100%;
+  height: 16px;
+}
+
+.pc-pay-button {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  background-color: var(--card-bg);
+  margin-block-end: 10px;
+  cursor: pointer;
+  box-shadow: var(--card-shadow-2);
+  transition: .15s;
+}
+
+.pcpb-icon-box {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: 20px;
+  flex: none;
+
+  .pcpb-icon {
+    width: 28px;
+    height: 28px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .pcpb-icon_alipay {
+    background-image: url('/images/third-party/alipay.png');
+  }
+
+  .pcpb-icon_wxpay {
+    background-image: url('/images/third-party/wxpay.png');
+  }
+}
+
+.pcpb-title {
+  flex: 1;
+  font-size: var(--btn-font);
+  color: var(--main-normal);
+  font-weight: 700;
+}
+
+.pcpb-arrow {
+  width: 16px;
+  height: 16px;
+  position: relative;
+  flex: none;
+  margin-inline-end: -4px;
+
+  .pcpb-arrow-icon {
+    width: 100%;
+    height: 100%;
+  }
+}
+
 
 @media(hover: hover) {
   .pc-wxpay-button:hover {
@@ -321,6 +433,10 @@ const qrcode = useQRCode(() => {
   .pc-alipay-button:hover {
     background-color: var(--alpay-blue-hover);
   }
+
+  .pc-pay-button:hover {
+    box-shadow: var(--card-shadow2-hover);
+  }
 }
 
 .pc-wxpay-button:active {
@@ -329,6 +445,11 @@ const qrcode = useQRCode(() => {
 
 .pc-alipay-button:active {
   background-color: var(--alpay-blue-hover);
+}
+
+.pc-pay-button:active {
+  background-color: var(--on-primary);
+  box-shadow: var(--card-shadow2-hover);
 }
 
 

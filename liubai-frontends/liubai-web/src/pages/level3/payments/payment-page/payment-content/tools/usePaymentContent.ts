@@ -31,19 +31,24 @@ export function usePaymentContent() {
   initPaymentContent(pcData, rr)
 
 
-  const onTapWxpay = useThrottleFn(() => {
-    whenTapWxpay(pcData, rr)
+  const onTapWxpayJSAPI = useThrottleFn(() => {
+    whenTapWxpayJSAPI(pcData, rr)
   }, 1000)
 
   const onTapAlipay = useThrottleFn(() => {
     whenTapAlipay(pcData)
   }, 1000)
 
+  const onTapWxpayH5 = useThrottleFn(() => {
+    whenTapWxpayH5(pcData, rr)
+  }, 1000)
+
   return {
     pcData,
     cha,
     onTapAlipay,
-    onTapWxpay,
+    onTapWxpayJSAPI,
+    onTapWxpayH5,
   }
 }
 
@@ -63,7 +68,32 @@ function whenTapAlipay(
   buyViaAlipayWap(order_id)
 }
 
-async function whenTapWxpay(
+async function whenTapWxpayH5(
+  pcData: PcData,
+  rr: RouteAndLiuRouter,
+) {
+  // 1. check if we can pay
+  const od = pcData.od
+  if(!od) return
+  if(!od.canPay) {
+    showCannotPayTip()
+    return
+  }
+
+  // 2. use wxpay H5 but use popup for now
+  const order_id = od.order_id
+  const res2 = await cui.showQRCodePopup({ bindType: "one_off_pay", order_id })
+  if(res2.resultType === "error") return
+
+  // 3. fetch order data
+  const res3 = await fetchOrder(order_id)
+  const od3 = res3.data?.orderData
+  if(od3?.orderStatus === "PAID") {
+    rr.router.replace({ name: "payment-success" })
+  }
+}
+
+async function whenTapWxpayJSAPI(
   pcData: PcData,
   rr: RouteAndLiuRouter,
 ) {

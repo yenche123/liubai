@@ -10,6 +10,7 @@ import {
   LiuStripe,
   WxpayHandler,
   updateUserInCache,
+  getCurrencySymbol,
 } from '@/common-util';
 import type { 
   Table_Subscription, 
@@ -376,16 +377,6 @@ function getSupportedCurrency(
   }
 
   return c
-}
-
-function getCurrencySymbol(c: string) {
-  const list1 = ["JPY", "CNY"]
-  if(list1.includes(c)) return "¥"
-
-  const list2 = ["EUR"]
-  if(list2.includes(c)) return "€"
-
-  return "$"
 }
 
 function checkIfUserCanBindStripe(

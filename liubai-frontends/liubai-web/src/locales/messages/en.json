@@ -446,7 +446,10 @@
     "unable_to_pay": "It is unable to pay now. Please try again later.",
     "renew": "Renew",
     "refund_1": "Refund Initiated",
-    "refund_2": "After approval, it is expected to arrive within 24 hours."
+    "refund_2": "After approval, it is expected to arrive within 24 hours.",
+    "choose_pay_method": "Payment Method",
+    "alipay": "Alipay",
+    "wxpay": "WeChat Pay"
   },
   "a2hs": {
     "title": "Add to Home",

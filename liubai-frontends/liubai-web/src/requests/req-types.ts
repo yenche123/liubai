@@ -147,6 +147,7 @@ export interface Res_OrderData {
   orderAmount: number
   paidAmount: number
   currency: string          // 三位英文 “小写” 字符组成
+  symbol: string
   refundedAmount: number
   payChannel?: PayChannel
   orderType: OrderType

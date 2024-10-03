@@ -10,6 +10,7 @@ import {
   WxpayHandler,
   liuFetch,
   AlipayHandler,
+  getCurrencySymbol,
 } from "@/common-util"
 import {
   type LiuErrReturn,
@@ -394,6 +395,7 @@ function packageOrderData(
   const now = getNowStamp()
   const subPlan = opt?.subPlan
   const body = opt?.body
+  const sym = getCurrencySymbol(d.currency)
 
   // 1. basic info
   const obj: Res_OrderData = {
@@ -403,6 +405,7 @@ function packageOrderData(
     orderAmount: d.orderAmount,
     paidAmount: d.paidAmount,
     currency: d.currency,
+    symbol: sym,
     refundedAmount: d.refundedAmount,
     payChannel: d.payChannel,
     orderType: d.orderType,

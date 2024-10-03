@@ -2580,6 +2580,17 @@ export function extractOrderId(out_trade_no: string) {
   }
 }
 
+export function getCurrencySymbol(c: string) {
+  const list1 = ["JPY", "CNY"]
+  const c2 = c.toUpperCase()
+  if(list1.includes(c2)) return "¥"
+
+  const list2 = ["EUR"]
+  if(list2.includes(c2)) return "€"
+
+  return "$"
+}
+
 // 升级或延长用户订阅
 export async function upgrade_user_subscription(
   theOrder: Table_Order,
