@@ -87,7 +87,8 @@ watch(() => scData.state, (newV) => {
         <ShinyButton class="sc-btn"
           @click="onTapBuyViaOneOff"
         >
-          <span>{{ t('payment.buy') }}</span>
+          <span v-if="scData.isPremium">{{ t('payment.renew') }}</span>
+          <span v-else>{{ t('payment.buy') }}</span>
         </ShinyButton>
 
         <!-- Cancel subscription & Refund -->

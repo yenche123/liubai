@@ -43,6 +43,7 @@ export function useSubscribeContent() {
     state: hasBackend ? pageStates.LOADING : pageStates.NEED_BACKEND,
     initStamp: now,
     payment_priority: PAYMENT_PRIORITY ?? "stripe",
+    isPremium: false,
   })
 
   initSubscribeContent(scData)
@@ -356,8 +357,10 @@ function packUserSubscription(
   scData.stripe_portal_url = sub.stripe?.customer_portal_url
   scData.isLifelong = sub.isLifelong
   scData.autoRecharge = sub.autoRecharge
-  if(sub.expireStamp) {
-    scData.expireStr = liuUtil.showBasicDate(sub.expireStamp)
+
+  const expireStamp = sub.expireStamp ?? 0
+  if(expireStamp) {
+    scData.expireStr = liuUtil.showBasicDate(expireStamp)
   }
   else {
     scData.expireStr = undefined
@@ -371,6 +374,17 @@ function packUserSubscription(
   }
   else {
     scData.showRefundBtn = false
+  }
+
+  // check out isPremium
+  if(sub.isLifelong && sub.isOn === "Y") {
+    scData.isPremium = true
+  }
+  else if(sub.isOn !== "Y") {
+    scData.isPremium = false
+  }
+  else {
+    scData.isPremium = expireStamp > now
   }
   
   setDataState(scData, pageStates.OK)

@@ -444,7 +444,7 @@
     "order_expired": "订单已过期",
     "ready_to_pay": "准备支付..",
     "unable_to_pay": "会员通道暂时关闭，请稍后再试。",
-    "renewal": "续费",
+    "renew": "续费",
     "refund_1": "退款已发起",
     "refund_2": "审核通过后，预计 24 小时内到账。"
   },

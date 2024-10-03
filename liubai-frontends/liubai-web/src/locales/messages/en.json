@@ -444,7 +444,7 @@
     "order_expired": "Order Expired",
     "ready_to_pay": "Processing..",
     "unable_to_pay": "It is unable to pay now. Please try again later.",
-    "renewal": "Renewal",
+    "renew": "Renew",
     "refund_1": "Refund Initiated",
     "refund_2": "After approval, it is expected to arrive within 24 hours."
   },

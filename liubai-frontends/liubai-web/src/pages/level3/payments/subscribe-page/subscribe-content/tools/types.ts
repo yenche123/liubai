@@ -18,4 +18,5 @@ export interface ScData {
   expireStr?: string
   showRefundBtn?: boolean
   payment_priority: "stripe" | "one-off"
+  isPremium: boolean
 }

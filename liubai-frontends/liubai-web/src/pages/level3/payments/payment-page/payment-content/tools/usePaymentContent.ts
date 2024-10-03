@@ -2,7 +2,7 @@ import { inject, reactive, watch } from "vue";
 import { type RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router";
 import liuEnv from "~/utils/liu-env";
 import { type PcData } from "./types";
-import { pageStates } from "~/utils/atom"
+import { pageStates } from "~/utils/atom";
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
 import type { Res_OrderData } from "~/requests/req-types";
 import liuApi from "~/utils/liu-api";
