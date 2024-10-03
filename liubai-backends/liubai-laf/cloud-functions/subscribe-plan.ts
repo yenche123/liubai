@@ -11,6 +11,7 @@ import {
   WxpayHandler,
   updateUserInCache,
   getCurrencySymbol,
+  AlipayHandler,
 } from '@/common-util';
 import type { 
   Table_Subscription, 
@@ -21,6 +22,7 @@ import type {
   Table_Credential,
   Table_Order,
   Wxpay_Refund_Custom_Param,
+  Alipay_Refund_Param,
 } from "@/common-types";
 import { 
   getBasicStampWhileAdding,
@@ -28,6 +30,7 @@ import {
   MINUTE,
   HOUR,
   WEEK,
+  SECONED,
 } from "@/common-time";
 import { createRefundNo } from "@/common-ids";
 import { useI18n, subPlanLang } from "@/common-i18n";
@@ -35,6 +38,7 @@ import { useI18n, subPlanLang } from "@/common-i18n";
 const db = cloud.database()
 
 /** some constants */
+const SEC_5 = SECONED * 5
 const MIN_30 = MINUTE * 30
 const HOUR_3 = HOUR * 3
 
@@ -45,7 +49,6 @@ export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}
 
   // 1. 验证 token
-
   const vRes = await verifyToken(ctx, body)
   if(!vRes.pass) return vRes.rqReturn
   const user = vRes.userData
@@ -132,13 +135,79 @@ async function toRefundAndCancel(
     res4 = await toRefundAndCancelThroughStripe(user, theOrder)
   }
   else if(payChannel === "alipay") {
-    
+    res4 = await toRefundAndCancelThroughAlipay(user, theOrder)
   }
   else if(payChannel === "wxpay") {
     res4 = await toRefundAndCancelThroughWxpay(user, theOrder)
   }
 
   return res4
+}
+
+async function toRefundAndCancelThroughAlipay(
+  user: Table_User,
+  order: Table_Order,
+): Promise<LiuRqReturn> {
+  // 1. get arguments
+  const stamp1 = getNowStamp()
+  const alipayData = order.alipay_other_data ?? {}
+  const trade_no = alipayData.trade_no
+  if(!trade_no) {
+    return { code: "E5001", errMsg: "no trade_no in alipay_other_data" }
+  }
+  if(alipayData.out_request_no) {
+    return { code: "SP011", errMsg: "the order has been refunded" }
+  }
+  const refundStamp = alipayData.refund_created_stamp ?? 0
+  const diff1 = stamp1 - refundStamp
+  if(diff1 < SEC_5) {
+    return { code: "E4003", errMsg: "request too frequently" }
+  }
+
+  // 2. get refund amount
+  const out_request_no = createRefundNo()
+  const refundAmount = order.paidAmount - order.refundedAmount
+  if(refundAmount <= 0) {
+    return { code: "SP010", errMsg: "the refund amount is not positive" } 
+  }
+  // turn refund_amount to yuan
+  const refund_amount = (refundAmount / 100).toFixed(2)
+
+  // 3. get refund reason
+  const { t } = useI18n(subPlanLang, { user })
+  const refund_reason = t("seven_days_refund")
+
+  // 4. construct Alipay_Refund_Param
+  const arg4: Alipay_Refund_Param = {
+    refund_amount,
+    trade_no,
+    refund_reason,
+    out_request_no,
+  }
+
+  // 5. to fetch
+  const res5 = await AlipayHandler.refund(arg4)
+  if(!res5.pass) return res5.err
+
+  // 6. update order
+  alipayData.out_request_no = out_request_no
+  alipayData.refund_created_stamp = stamp1
+  const u5: Partial<Table_Order> = {
+    refundedAmount: order.refundedAmount + refundAmount,
+    alipay_other_data: alipayData,
+    updatedStamp: getNowStamp(),
+  }
+  const oCol = db.collection("Order")
+  const res6 = await oCol.doc(order._id).update(u5)
+
+  // 7. terminate user's subscription
+  await terminateUserSubscription(user)
+
+  const stamp2 = getNowStamp()
+  const diffTime = stamp2 - stamp1
+  console.log("diffTime of toRefundAndCancelThroughAlipay: ", diffTime)
+  
+  return { code: "0000" }
 }
 
 async function toRefundAndCancelThroughWxpay(

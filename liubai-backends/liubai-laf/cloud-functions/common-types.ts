@@ -2827,3 +2827,11 @@ export interface Alipay_Notice {
   auth_app_id?: string
 
 }
+
+export interface Alipay_Refund_Param {
+  refund_amount: string     // 退款金额，单位为元，精确到小数点后两位
+  out_trade_no?: string     // 与 trade_no 二选一 
+  trade_no?: string         // 与 out_trade_no
+  refund_reason: string
+  out_request_no: string
+}

@@ -49,6 +49,7 @@ import type {
   Res_Wxpay_Refund,
   Table_Subscription,
   UserSubscription,
+  Alipay_Refund_Param,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -2545,6 +2546,42 @@ export class AlipayHandler {
       keyType: "PKCS8",
     })
     return alipaySdk
+  }
+
+  static checkReady(): CommonPass {
+    const _env = process.env
+    const appId = _env.LIU_ALIPAY_APP_ID
+    const privateKey = alipay_cfg.privateKey
+    const alipayPublicKey = alipay_cfg.alipayPublicKey
+    if(!appId || !privateKey || !alipayPublicKey) {
+      console.warn("AlipayHandler.checkReady failed")
+      return { pass: false, err: { code: "E5001", errMsg: "no alipay config" } }
+    }
+    return { pass: true }
+  }
+
+  static async refund(
+    param: Alipay_Refund_Param,
+  ): Promise<DataPass<any>> {
+    // 1. init alipay sdk
+    const res1 = this.checkReady()
+    if(!res1.pass) return res1
+    const alipaySdk = this.getAlipaySdk()
+
+    // 2. request to refund
+    try {
+      const res2 = await alipaySdk.curl("POST", "/v3/alipay/trade/refund", {
+        body: param,
+      })
+      console.log("AlipayHandler.refund() res2: ")
+      console.log(res2)
+      return { pass: true, data: res2 }
+    }
+    catch(err) {
+      console.warn("AlipayHandler.refund() err: ")
+      console.log(err)
+    }
+    return { pass: false, err: { code: "E5003", errMsg: "fail to refund via alipay" } }
   }
 }
 /*************** Functions about alipay ends ***************/
