@@ -77,7 +77,7 @@ function _searchInList(
       list.push(obj)
       const len = list.length
       if(len < 10 && v.children) {
-        const tmpList = _pushSomeChildren(newParents, v.children, len)
+        const tmpList = _pushSomeChildren(newParents, v.children, len, v.icon ?? parentIcon)
         list = list.concat(tmpList)
       }
     }
@@ -98,6 +98,7 @@ function _pushSomeChildren(
   parents: string[],
   children: TagView[],
   len: number,
+  parentIcon?: string,
 ) {
   const list: TagShow[] = []
   const maxLen = Math.max(10 - len, 5)
@@ -113,7 +114,8 @@ function _pushSomeChildren(
     const obj: TagShow = {
       tagId: v.tagId,
       text,
-      emoji: v.icon ? liuApi.decode_URI_component(v.icon) : undefined
+      emoji: v.icon ? liuApi.decode_URI_component(v.icon) : undefined,
+      parentEmoji: parentIcon ? liuApi.decode_URI_component(parentIcon) : undefined,
     }
     list.push(obj)
   }

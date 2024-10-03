@@ -71,10 +71,11 @@ const { t } = useI18n()
           <template v-for="(item, index) in hsData.list" :key="item.text">
             <div class="liu-no-user-select hs-tag">
               <span v-if="item.emoji" class="hs-tag-emoji">{{ item.emoji }}</span>
+              <span v-else-if="item.parentEmoji" class="hs-tag-emoji">{{ item.parentEmoji }}</span>
               <span>{{ item.text }}</span>
               <div class="hs-tag-close" @click.stop="() => onTapClear(index)">
                 <div class="liu-flexible-dot_bg">
-                  <div class="liu-flexible-dot_circle"></div>
+                  <div class="liu-flexible-dot_circle" />
                 </div>
                 <svg-icon name="close" class="hs-tag-close_svg" color="var(--liu-quote)"></svg-icon>
               </div>
