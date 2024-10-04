@@ -3,7 +3,6 @@ import liuReq from "~/requests/liu-req"
 import { type ScData } from "./types"
 import { reactive, watch } from "vue"
 import liuEnv from "~/utils/liu-env"
-import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 import time from "~/utils/basic/time"
 import type {
   Res_SubPlan_Info,
@@ -20,7 +19,6 @@ import { pageStates } from "~/utils/atom"
 import { useNetwork } from "~/hooks/useVueUse"
 import liuUtil from "~/utils/liu-util"
 import { db } from "~/utils/db"
-import localCache from "~/utils/system/local-cache"
 import type { UserLocalTable } from "~/types/types-table"
 import cui from "~/components/custom-ui"
 import { useActiveSyncNum } from "~/hooks/useCommon"
@@ -196,8 +194,6 @@ async function toRefund(
   console.log("res2: ")
   console.log(res2)
   console.log(" ")
-
-  
 }
 
 
@@ -236,7 +232,7 @@ function initSubscribeContent(
   const { activeSyncNum } = useActiveSyncNum()
   watch(activeSyncNum, (newV) => {
     if(newV < 1) return
-    checkState(scData)
+    getSubscriptionPlan(scData)
   }, { immediate: true })
 
   // 2. if no network while init
@@ -249,46 +245,10 @@ function initSubscribeContent(
   timeout1 = setTimeout(() => {
     if(scData.state !== 0) return
     setDataState(scData, pageStates.NETWORK_ERR)
-  }, 5 * time.SECONED)
+  }, 7 * time.SECONED)
 }
 
-async function checkState(
-  scData: ScData,
-) {
-  const user = await CloudEventBus.getUserFromDB()
-  if(!user) return
-
-  // 1. check stripe customer portal created is within 24 hrs
-  const sub = user.subscription
-  const c1 = sub?.stripe?.customer_portal_created ?? 1
-  const c2 = sub?.stripe?.customer_portal_url
-  const diff = time.getTime() - (c1 * 1000)
-  if(sub?.isOn === "Y" && diff < time.DAY && c2) {
-    packUserSubscription(scData, sub)
-  }
-
-  // 2. get subscription plan
-  getSubscriptionPlan(scData)
-}
-
-async function getMembershipRemotely(
-  scData: ScData,
-) {
-  const res = await fetchUserSubscription()
-  let sub: UserSubscription | undefined
-  if(res.code === "0000" && res.data) {
-    sub = res.data.subscription
-  }
-
-  if(!sub || sub.isOn === "N") {
-    setDataState(scData, pageStates.OK)
-    return
-  }
-
-  packUserSubscription(scData, sub, { writeIntoDB: true })
-}
-
-// get subscription plan
+// 1. fetch: get subscription plan
 async function getSubscriptionPlan(
   scData: ScData,
 ) {
@@ -317,7 +277,27 @@ async function getSubscriptionPlan(
     return
   }
 
+  const wStore = useWorkspaceStore()
+  const localSub = wStore.userSubscription
+  if(localSub) {
+    packUserSubscription(scData, localSub)
+  }
+
   getMembershipRemotely(scData)
+}
+
+// 2. fetch: get membership remotely
+async function getMembershipRemotely(
+  scData: ScData,
+) {
+  const res = await fetchUserSubscription()
+  if(res.code === "0000") {
+    const sub = res.data?.subscription
+    packUserSubscription(scData, sub)
+  }
+  else {
+    setDataState(scData, pageStates.OK)
+  }
 }
 
 
@@ -342,14 +322,14 @@ interface CheckSubOpt {
 
 async function packUserSubscription(
   scData: ScData,
-  sub: UserSubscription,
+  sub?: UserSubscription,
   opt?: CheckSubOpt,
 ) {
-  scData.stripe_portal_url = sub.stripe?.customer_portal_url
-  scData.isLifelong = sub.isLifelong
-  scData.autoRecharge = sub.autoRecharge
+  scData.stripe_portal_url = sub?.stripe?.customer_portal_url
+  scData.isLifelong = sub?.isLifelong
+  scData.autoRecharge = sub?.autoRecharge
 
-  const expireStamp = sub.expireStamp ?? 0
+  const expireStamp = sub?.expireStamp ?? 0
   if(expireStamp) {
     scData.expireStr = liuUtil.showBasicDate(expireStamp)
   }
@@ -359,8 +339,8 @@ async function packUserSubscription(
 
   // check if should show refund btn
   const now = time.getTime()
-  const diff = now - (sub.firstChargedStamp ?? 1)
-  if(diff < time.WEEK && sub.chargeTimes === 1) {
+  const diff = now - (sub?.firstChargedStamp ?? 1)
+  if(diff < time.WEEK && sub?.chargeTimes === 1) {
     scData.showRefundBtn = true
   }
   else {
@@ -368,10 +348,10 @@ async function packUserSubscription(
   }
 
   // check out isPremium
-  if(sub.isLifelong && sub.isOn === "Y") {
+  if(sub?.isLifelong && sub?.isOn === "Y") {
     scData.isPremium = true
   }
-  else if(sub.isOn !== "Y") {
+  else if(sub?.isOn !== "Y") {
     scData.isPremium = false
   }
   else {
@@ -381,10 +361,12 @@ async function packUserSubscription(
   setDataState(scData, pageStates.OK)
 
   // to write into db
-  if(!opt?.writeIntoDB) return
-  const { local_id } = localCache.getPreference()
-  if(!local_id) return
+  if(!opt?.writeIntoDB) {
+    return
+  }
   const wStore = useWorkspaceStore()
+  const userId = wStore.userId
+  if(!userId) return
   const oldSub = liuUtil.toRawData(wStore.userSubscription)
   const newSub = sub as unknown as SimpleObject
   const isSame = usefulTool.isSameSimpleObject(oldSub ?? undefined, newSub)
@@ -393,7 +375,7 @@ async function packUserSubscription(
     subscription: sub,
     updatedStamp: now,
   }
-  await db.users.update(local_id, u)
+  await db.users.update(userId, u)
   wStore.setSubscriptionAfterUpdatingDB(sub)
 }
 
