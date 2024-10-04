@@ -4,10 +4,11 @@ import valTool from "~/utils/basic/val-tool";
 import type { TagView, LiuStateConfig } from "~/types/types-atom";
 import type { MemberLocalTable, WorkspaceLocalTable } from "~/types/types-table";
 import { db } from "~/utils/db";
-import type { SpaceType } from "~/types/types-basic"
+import type { SpaceType } from "~/types/types-basic";
 import type { MemberConfig } from "~/types/other/types-custom";
+import type { UserSubscription } from "~/types/types-cloud";
 
-export interface SpaceAndMemberOpt {
+export interface AboutMeOpt {
 
   userId: string
   serial?: string
@@ -18,6 +19,8 @@ export interface SpaceAndMemberOpt {
   isCollaborative: boolean
   currentSpace?: WorkspaceLocalTable
   myMember?: MemberLocalTable
+
+  userSubscription?: UserSubscription
 }
 
 export const useWorkspaceStore = defineStore("workspace", () => {
@@ -31,6 +34,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
   const memberId = ref("")
   const workspace = ref("")    // 协作工作区时，是对应的 spaceId；个人工作区时是 ME
   const isCollaborative = ref(false)
+  const userSubscription = ref<UserSubscription | null>(null)
 
   const currentSpace = ref<WorkspaceLocalTable | null>(null)
   const myMember = ref<MemberLocalTable | null>(null)
@@ -58,7 +62,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     return list
   }
 
-  const setSpaceAndMember = (opt: SpaceAndMemberOpt) => {
+  const setDataAboutMe = (opt: AboutMeOpt) => {
     userId.value = opt.userId
     token.value = opt.token
     serial.value = opt.serial
@@ -69,6 +73,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     workspace.value = opt.isCollaborative ? opt.spaceId : "ME"
     currentSpace.value = opt.currentSpace ?? null
     myMember.value = opt.myMember ?? null
+    userSubscription.value = opt.userSubscription ?? null
   }
 
   const updateSerialAndToken = (newSerial: string, newToken: string) => {
@@ -127,6 +132,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     currentSpace.value = null
     myMember.value = null
     mySpaceIds.value = []
+    userSubscription.value = null
   }
 
 
@@ -138,6 +144,10 @@ export const useWorkspaceStore = defineStore("workspace", () => {
   const setMemberAfterUpdatingDB = (m: MemberLocalTable) => {
     if(memberId.value !== m._id) return
     myMember.value = m
+  }
+
+  const setSubscriptionAfterUpdatingDB = (newUserSub?: UserSubscription) => {
+    userSubscription.value = newUserSub ?? null
   }
 
   return { 
@@ -152,9 +162,10 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     currentSpace,
     myMember,
     mySpaceIds,
+    userSubscription,
     getStateList,
     getStatesNoInIndex,
-    setSpaceAndMember,
+    setDataAboutMe,
     setNickName,
     setTagList,
     setMemberConfig,
@@ -164,6 +175,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     logout,
     setWorkspaceAfterUpdatingDB,
     setMemberAfterUpdatingDB,
+    setSubscriptionAfterUpdatingDB,
   }
 })
 

@@ -22,6 +22,8 @@ export type SimplePromise = () => Promise<void>
 
 export type LiuTimeout = ReturnType<typeof setTimeout> | undefined
 
-export type SimpleObject = Record<string, boolean | number | string | null | undefined>
+export type ValueType = boolean | number | string | null | undefined
+
+export type SimpleObject = Record<string, ValueType | Record<string, ValueType> | Array<ValueType>>
  
  

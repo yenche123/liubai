@@ -154,22 +154,6 @@ const getSuffix = (name: string): string => {
   return format
 }
 
-const isSameSimpleList = (
-  list1: Array<string | number>, 
-  list2: Array<string | number>
-): boolean => {
-  if(list1.length !== list2.length) return false
-  
-  for(let i=0; i<list1.length; i++) {
-    const v1 = list1[i]
-    const v2 = list2[i]
-    if(v1 !== v2) return false
-  }
-
-  return true
-}
-
-
 // 检查 hostname 是否为 domain 或其下的子域名
 const isInDomain = (
   hostname: string,
@@ -292,7 +276,6 @@ export default {
   getValInMinAndMax,
   isAIncludedInB,
   getSuffix,
-  isSameSimpleList,
   isInDomain,
   minusAndMinimumZero,
   compareVersion,

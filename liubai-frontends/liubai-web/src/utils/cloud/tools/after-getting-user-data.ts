@@ -65,6 +65,8 @@ async function handleUser(
   d: Res_UserSettings_Enter | Res_UserSettings_Latest,
   opt?: AgudOpt,
 ) {
+
+  // 1. get user from db
   const res1 = await db.users.get(userId)
   if(!res1) return false
   const now = time.getTime()
@@ -79,7 +81,13 @@ async function handleUser(
     u.lastRefresh = now
   }
   
+  // 2. update user for db
   const res2 = await db.users.update(userId, u)
+
+  // 3. update workspace store
+  const wStore = useWorkspaceStore()
+  wStore.setSubscriptionAfterUpdatingDB(d.subscription)
+
   return true
 }
 

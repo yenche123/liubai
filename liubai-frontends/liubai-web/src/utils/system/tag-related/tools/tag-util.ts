@@ -6,6 +6,7 @@ import time from "../../../basic/time";
 import valTool from "../../../basic/val-tool";
 import liuUtil from "../../../liu-util";
 import type { WhichTagChange } from "./types";
+import usefulTool from "~/utils/basic/useful-tool";
 
 /**
  * 寻找某个片段文字（忽略大小写）是否在该级的 tagViews 中存在
@@ -274,7 +275,7 @@ function tagAddedHere(
   let parents2 = findParentOfTag(tagId, [], oldTree)
 
   // 平移的情况
-  if(valTool.isSameSimpleList(parents1, parents2)) {
+  if(usefulTool.isSameSimpleList(parents1, parents2)) {
     return {
       changeType: "translate",
       tagId,

@@ -6,13 +6,12 @@ import liuEnv from "~/utils/liu-env"
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 import time from "~/utils/basic/time"
 import type {
-  Res_UserSettings_Membership,
   Res_SubPlan_Info,
   Res_SubPlan_StripeCheckout,
   Param_PaymentOrder_A,
   Res_PO_CreateOrder,
 } from "~/requests/req-types"
-import type { LiuTimeout } from "~/utils/basic/type-tool"
+import type { LiuTimeout, SimpleObject } from "~/utils/basic/type-tool"
 import type { 
   UserSubscription,
 } from "~/types/types-cloud"
@@ -25,10 +24,13 @@ import localCache from "~/utils/system/local-cache"
 import type { UserLocalTable } from "~/types/types-table"
 import cui from "~/components/custom-ui"
 import { useActiveSyncNum } from "~/hooks/useCommon"
-import { RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
+import { type RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
 import { showEmojiTip, showErrMsg } from "~/pages/level1/tools/show-msg"
 import liuApi from "~/utils/liu-api"
 import { buyViaAlipayWap, redirectForWxGzhOpenid } from "../../../utils/pay-tools"
+import { fetchUserSubscription } from "~/utils/cloud/tools/requests"
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
+import usefulTool from "~/utils/basic/useful-tool"
 
 let timeout1: LiuTimeout  // in order to avoid the view from always loading
 let timeout2: LiuTimeout  // for setDataState
@@ -185,10 +187,15 @@ async function toRefund(
   })
   if(!res1.confirm) return
   
-  // cui.showLoading({ title_key: "tip.hold_on" })
-  // const url = APIs.REQUEST_REFUND
-  // const param = { operateType: "cancel_and_refund" }
-  // const res2 = await liuReq.request(url, param)
+  cui.showLoading({ title_key: "tip.hold_on" })
+  const url = APIs.REQUEST_REFUND
+  const param = { operateType: "cancel_and_refund" }
+  const res2 = await liuReq.request(url, param)
+  cui.hideLoading()
+
+  console.log("res2: ")
+  console.log(res2)
+  console.log(" ")
 
   
 }
@@ -262,31 +269,15 @@ async function checkState(
 
   // 2. get subscription plan
   getSubscriptionPlan(scData)
-
 }
 
 async function getMembershipRemotely(
   scData: ScData,
 ) {
-  const url = APIs.USER_MEMBERSHIP
-  const param = { operateType: "membership" }
+  const res = await fetchUserSubscription()
   let sub: UserSubscription | undefined
-  try {
-    const res = await liuReq.request<Res_UserSettings_Membership>(url, param)
-    console.log("getMembershipRemotely res: ")
-    console.log(res)
-    console.log(" ")
-    
-    if(res.code === "0000" && res.data) {
-      sub = res.data.subscription
-    }
-  }
-  catch(err) {
-    console.log("getLatestMembership err: ")
-    console.log(err)
-    console.log(" ")
-    setDataState(scData, pageStates.NETWORK_ERR)
-    return
+  if(res.code === "0000" && res.data) {
+    sub = res.data.subscription
   }
 
   if(!sub || sub.isOn === "N") {
@@ -349,7 +340,7 @@ interface CheckSubOpt {
   writeIntoDB?: boolean   // @default: false
 }
 
-function packUserSubscription(
+async function packUserSubscription(
   scData: ScData,
   sub: UserSubscription,
   opt?: CheckSubOpt,
@@ -393,11 +384,17 @@ function packUserSubscription(
   if(!opt?.writeIntoDB) return
   const { local_id } = localCache.getPreference()
   if(!local_id) return
+  const wStore = useWorkspaceStore()
+  const oldSub = liuUtil.toRawData(wStore.userSubscription)
+  const newSub = sub as unknown as SimpleObject
+  const isSame = usefulTool.isSameSimpleObject(oldSub ?? undefined, newSub)
+  if(isSame) return
   const u: Partial<UserLocalTable> = {
     subscription: sub,
     updatedStamp: now,
   }
-  db.users.update(local_id, u)
+  await db.users.update(local_id, u)
+  wStore.setSubscriptionAfterUpdatingDB(sub)
 }
 
 

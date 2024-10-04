@@ -2,7 +2,7 @@ import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { firstCreate } from "./first-create"
 import localCache from "../local-cache"
 import { findSystem } from "./find-sytem"
-import type { SpaceAndMemberOpt } from "~/hooks/stores/useWorkspaceStore"
+import type { AboutMeOpt } from "~/hooks/stores/useWorkspaceStore"
 
 // 纯本地模式的初始化
 export async function initForPureLocalMode(
@@ -24,7 +24,7 @@ export async function initForPureLocalMode(
   const { workspace, member, user } = createData
   localCache.setPreference("local_id", user._id)
   
-  const opt: SpaceAndMemberOpt = {
+  const opt: AboutMeOpt = {
     userId: user._id,
     spaceId: workspace._id,
     memberId: member._id,
@@ -33,5 +33,5 @@ export async function initForPureLocalMode(
     myMember: member
   }
   store.setMySpaceIds([workspace._id])
-  store.setSpaceAndMember(opt)
+  store.setDataAboutMe(opt)
 }
