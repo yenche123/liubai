@@ -42,7 +42,9 @@ function abortSignalTimeout() {
  *  https://juejin.cn/post/7347221074704777226
  *  tech stacks:
  *    CSS at-rule: @container: Style queries
+ *      see: https://developer.mozilla.org/en-US/docs/Web/CSS/@container#browser_compatibility
  *    CSS property: animation-timeline: scroll()
+ *      see: https://developer.mozilla.org/en-US/docs/Web/CSS/animation-timeline#browser_compatibility
  */
 function cssDetectTextOverflow() {
   const cha = getCharacteristic()
