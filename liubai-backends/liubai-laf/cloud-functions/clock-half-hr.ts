@@ -6,6 +6,7 @@ import type {
   Shared_LoginState, 
   Shared_TokenUser,
   Table_Credential,
+  Table_Order,
 } from "@/common-types"
 import { getNowStamp, MINUTE } from "@/common-time"
 import { getWwQynbAccessToken, liuReq } from '@/common-util'
@@ -21,14 +22,39 @@ const API_WECOM_DEL_CONTACT_WAY = "https://qyapi.weixin.qq.com/cgi-bin/externalc
 export async function main(ctx: FunctionContext) {
 
   // console.log("---------- Start 清理缓存程序 ----------")
-  clearBindWecom()
+  await clearBindWecom()
   clearLoginState()
   clearTokenUser()
+  await clearExpiredOrder()
   // console.log("---------- End 清理缓存程序 ----------")
   // console.log(" ")
 
   return true
 }
+
+
+async function clearExpiredOrder() {
+  const MIN_15_AGO = getNowStamp() - MIN_15
+
+  // 1. get expired orders
+  const col = db.collection("Order")
+  const w1 = {
+    oState: "OK",
+    orderStatus: "INIT",
+    expireStamp: _.lt(MIN_15_AGO),
+  }
+  const res1 = await col.where(w1).get<Table_Order>()
+  const d1 = res1.data
+  if(d1.length < 1) return true
+
+  // 2. to delete
+  const res2 = await col.where(w1).remove({ multi: true })
+  // console.log("clearExpiredOrder res2: ")
+  // console.log(res2)
+  
+  return true
+}
+
 
 /** to clear credentials about `bind-wecom` */
 async function clearBindWecom() {
@@ -80,7 +106,6 @@ async function clearBindWecom() {
 
   return true
 }
-
 
 
 /** 清理 liu-login-state 字段的 map */

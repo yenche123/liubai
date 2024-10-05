@@ -153,5 +153,8 @@ function checkSign(ctx: FunctionContext) {
     return false
   }
 
+  console.warn("fail to checkNotifySign or checkNotifySignV2")
+  console.log(body)
+
   return false
 }
