@@ -528,5 +528,12 @@
   "notification": {
     "open_wx_gzh": "关注微信公众号，留白才可以提醒到你。",
     "to_follow": "去关注"
+  },
+  "limit": {
+    "pin_premium": "开通会员，可置顶 {num} 条动态",
+    "thread_img_premium": "开通会员，可添加 {num} 张图片的动态",
+    "comment_img_premium": "开通会员，可添加 {num} 张图片的评论",
+    "file_capacity_premium": "开通会员，可上传 {num} mB 的文件",
+    "become_premium": "去开通"
   }
 }

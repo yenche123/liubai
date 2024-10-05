@@ -528,5 +528,12 @@
   "notification": {
     "open_wx_gzh": "Please follow the WeChat Subscription. Liubai will remind you only after that.",
     "to_follow": "Follow"
+  },
+  "limit": {
+    "pin_premium": "You can pin {num} posts when you have Premium",
+    "thread_img_premium": "You can add {num} images to a post when you have Premium",
+    "comment_img_premium": "You can add {num} images to a comment when you have Premium",
+    "file_capacity_premium": "You can upload {num} mB files when you have Premium",
+    "become_premium": "Have it now"
   }
 }

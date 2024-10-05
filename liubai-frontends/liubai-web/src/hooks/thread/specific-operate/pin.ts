@@ -30,7 +30,7 @@ export async function toPin(
     const pinnedNum = await dbOp.countPin(oldThread.spaceId)
     const limitNum = limit.getLimit("pin")
     if(limitNum >= 0 && pinnedNum >= limitNum) {
-      cui.showSnackBar({ text_key: "tip.pin_maximum", duration: 3000 })
+      limit.handleLimited("pin", limitNum)
       return {}
     }
   }

@@ -190,12 +190,7 @@ async function handleImages(
   if(max_pic_num <= 0) max_pic_num = 9
   const canPushNum = max_pic_num - hasLength
   if(canPushNum <= 0) {
-    cui.showModal({
-      title_key: "tip.tip",
-      content_key: "tip.max_pic_num",
-      content_opt: { num: max_pic_num },
-      showCancel: false
-    })
+    limit.handleLimited("thread_img", max_pic_num)
     return
   }
 

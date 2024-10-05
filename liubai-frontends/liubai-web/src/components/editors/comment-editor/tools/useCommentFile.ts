@@ -157,16 +157,11 @@ async function handleImages(
   imgFiles: File[],
 ) {
   const hasLength = ctx.images.length
-  let max_pic_num = limit.getLimit("thread_img")
+  let max_pic_num = limit.getLimit("comment_img")
   if(max_pic_num <= 0) max_pic_num = 9
   const canPushNum = max_pic_num - hasLength
   if(canPushNum <= 0) {
-    cui.showModal({
-      title_key: "tip.tip",
-      content_key: "tip.max_pic_num",
-      content_opt: { num: max_pic_num },
-      showCancel: false
-    })
+    limit.handleLimited("comment_img", max_pic_num)
     return
   }
 

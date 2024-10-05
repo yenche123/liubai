@@ -146,6 +146,7 @@ export type LiuLimit = "pin" // 置顶数
   | "thread"         // 动态保留数，比如免费版是 200 条
   | "thread_img"     // 动态图片数
   | "comment_img"    // 评论图片数
+  | "file_capacity"  // 单个文件容量
 
 
 // 在 thread-card 内部消化完成的操作（不需要移除或添加至列表里）

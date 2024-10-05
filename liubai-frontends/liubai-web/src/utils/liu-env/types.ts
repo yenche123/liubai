@@ -29,6 +29,10 @@ export interface LiuSystemEnv {
   FREE_COMMENT_IMG_NUM: number
   PREMIUM_COMMENT_IMG_NUM: number
 
+  LOCAL_FILE_MB: number
+  FREE_FILE_MB: number
+  PREMIUM_FILE_MB: number
+
   FALLBACK_LOCALE: string
 
   OPEN_WITH_BROWSER: boolean

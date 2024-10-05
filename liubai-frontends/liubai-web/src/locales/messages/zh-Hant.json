@@ -528,5 +528,12 @@
   "notification": {
     "open_wx_gzh": "追蹤微信公眾號，留白才可以提醒到你。",
     "to_follow": "去追蹤"
+  },
+  "limit": {
+    "pin_premium": "開通會員，可置頂 {num} 則動態",
+    "thread_img_premium": "開通會員，可新增 {num} 張圖片的動態",
+    "comment_img_premium": "開通會員，可新增 {num} 張圖片的留言",
+    "file_capacity_premium": "開通會員，可上傳 {num} mB 的文件",
+    "become_premium": "去開通"
   }
 }
