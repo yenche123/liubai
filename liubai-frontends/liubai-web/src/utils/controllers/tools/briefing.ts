@@ -338,10 +338,14 @@ function _handleParagraph(
 
     let diff_1 = (_magicNum * 2) - charNum
 
-    // 希望不要断点在单词内，开始往前找合适的断点
-    let targetText = text.substring(0, diff_1)
+    // 希望不要断点在单词内，开始往前找合适的断点，最多查找 10 个字符
+    let targetText = _getTargetText(text, diff_1)
     const tLength = targetText.length
-    for(let j=tLength-1; j>3; j--) {
+    const startIdx = tLength - 1
+    let endIdx = startIdx - 10
+    if(endIdx < 3) endIdx = 3
+    
+    for(let j=startIdx; j>endIdx; j--) {
       const _char = targetText[j]
       if(POINTS.includes(_char)) {
         hasMagic = true
@@ -361,4 +365,26 @@ function _handleParagraph(
   }
 
   return { content: newTextList, hasMagic, charNum }
+}
+
+function _getTargetText(
+  text: string,
+  diff_1: number,
+) {
+  if(diff_1 < 20) return text.substring(0, 20)
+  const textLength = text.length
+  if(textLength < 10) return text
+  
+  let targetText = ""
+  let charNum = 0
+  for(let i=0; i<textLength; i++) {
+    const _char = text[i]
+    charNum += valTool.getTextCharNum(_char)
+    targetText += _char
+    if(charNum > diff_1) {
+      break
+    }
+  }
+
+  return targetText
 }
