@@ -30,6 +30,8 @@ export function logout(
   delete p.open_id
   delete p.serial
   delete p.token
+  delete p.loadEditStamp
+  delete p.loginStamp
   localCache.setAllPreference(p)
 
   // 3. 删除 workspace store

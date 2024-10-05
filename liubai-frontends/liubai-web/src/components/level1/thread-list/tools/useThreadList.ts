@@ -30,6 +30,10 @@ import { useAwakeNum } from "~/hooks/useCommon"
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
 import { handleCalendarList } from "./handle-calendar"
 import { type ThreadListViewType } from "~/types/types-view"
+import time from "~/utils/basic/time"
+import { preLoadCreateFirst, preLoadEditFirst } from "./pre-download"
+
+const SEC_15 = time.SECONED * 15
 
 export function useThreadList(
   props: TlProps,
@@ -466,5 +470,41 @@ async function loadAgain(
   else {
     tlData.hasReachedBottom = true
   }
-  
+
+  preDownloadContents(ctx, results)
+}
+
+
+let hasPreDownload = false
+async function preDownloadContents(
+  ctx: TlContext,
+  results: ThreadShow[],
+) {
+  // 1. check if we can pre-download
+  const vt1 = ctx.props.viewType
+  if(vt1 !== "INDEX") return
+  const spaceId = ctx.spaceIdRef.value
+  if(!spaceId) return
+  if(hasPreDownload) return
+  hasPreDownload = true
+  const rLength = results.length
+  if(rLength < 10) return
+
+  // 2. decide which one to download first
+  const localPf = localCache.getPreference()
+  const loginStamp = localPf.loginStamp ?? 1
+  const justLogged = time.isWithinMillis(loginStamp, SEC_15)
+
+  // 3. load created first
+  if(justLogged) {
+    console.log("刚登录，优先加载最近发表的动态......")
+    const lastItem = results[rLength - 1]
+    const lastItemStamp = lastItem.createdStamp
+    preLoadCreateFirst(spaceId, lastItemStamp)
+    return
+  }
+
+  // 4. load edit first
+  console.log("去优先加载最近更新的动态......")
+  preLoadEditFirst(spaceId, localPf.loadEditStamp)
 }

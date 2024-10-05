@@ -1609,6 +1609,25 @@ const Sch_SyncGet_Base = vbot.object({
   taskId: Sch_Id,
 })
 
+
+export interface SyncGet_ContentList {
+  taskType: "content_list"
+  spaceId: string
+  loadType: "EDIT_FIRST" | "CREATE_FIRST"
+
+  // 每次最多加载多少个，默认为 cfg.default_limit.num
+  limit?: number
+  lastItemStamp?: number
+}
+
+export const Sch_SyncGet_ContentList = vbot.object({
+  taskType: vbot.literal("content_list"),
+  spaceId: Sch_Id,
+  loadType: vbot.picklist(["EDIT_FIRST", "CREATE_FIRST"]),
+  limit: sch_opt_num(1, 32),
+  lastItemStamp: Sch_Opt_Num,
+})
+
 export interface SyncGet_ThreadList {
   taskType: "thread_list"
   spaceId: string
@@ -1774,10 +1793,11 @@ export const Sch_SyncGet_Draft = vbot.object({
 })
 
 export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |
-SyncGet_CommentList | SyncGet_CheckContents | SyncGet_Draft
+SyncGet_CommentList | SyncGet_CheckContents | SyncGet_Draft | SyncGet_ContentList
 
 export const Sch_CloudMergerOpt = vbot.variant("taskType", [
   Sch_SyncGet_ThreadList,
+  Sch_SyncGet_ContentList,
   Sch_SyncGet_ThreadData,
   Sch_SyncGet_CommentList,
   Sch_SyncGet_CheckContents,

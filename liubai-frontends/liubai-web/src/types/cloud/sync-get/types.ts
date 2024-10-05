@@ -29,6 +29,16 @@ interface SyncGet_Base {
   taskId: string
 }
 
+export interface SyncGet_ContentList {
+  taskType: "content_list"
+  spaceId: string
+  loadType: "EDIT_FIRST" | "CREATE_FIRST"
+
+  // 每次最多加载多少个，默认为 cfg.default_limit.num
+  limit?: number
+  lastItemStamp?: number
+}
+
 export interface SyncGet_ThreadList {
   taskType: "thread_list"
   spaceId: string
@@ -114,7 +124,7 @@ export interface SyncGet_Draft {
 }
 
 export type CloudMergerOpt = SyncGet_ThreadList | SyncGet_ThreadData |
-SyncGet_CommentList | SyncGet_CheckContents | SyncGet_Draft
+SyncGet_CommentList | SyncGet_CheckContents | SyncGet_Draft | SyncGet_ContentList
 
 export type SyncGetAtom = CloudMergerOpt & SyncGet_Base
 

@@ -138,7 +138,7 @@ class CloudMerger {
     showList: CommentShow[] | ThreadShow[],
     viewType?: ThreadListViewType,
   ) {
-    const res = someFuncs.getIdsForCheckingContents(res1, showList, viewType)
+    const res = someFuncs.getIdsForCheckingContents(res1, showList)
     return res
   }
 

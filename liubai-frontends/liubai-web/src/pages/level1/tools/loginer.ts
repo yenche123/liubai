@@ -8,6 +8,7 @@ import { LocalPreference } from "~/utils/system/tools/types";
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus";
 import { useSystemStore } from "~/hooks/stores/useSystemStore";
 import liuConsole from "~/utils/debug/liu-console";
+import time from "~/utils/basic/time";
 
 // 开始去初始化本地数据
 async function toLogin(
@@ -66,6 +67,7 @@ async function toLogin(
     token,
     serial: serial_id,
     client_key: ck,
+    loginStamp: time.getTime(),
   }
   localCache.setAllPreference(obj1)
 

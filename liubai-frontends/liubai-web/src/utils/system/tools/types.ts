@@ -1,5 +1,4 @@
 import type { LocalTheme } from "~/types/types-atom"
-import type { Res_UserLoginInit } from "~/requests/req-types"
 import type { LocalLocale } from "~/types/types-locale"
 
 export interface LocalPreference {
@@ -10,6 +9,9 @@ export interface LocalPreference {
   token?: string
   serial?: string       // token 所在的序列号
   client_key?: string   // 前端生成的 aes 密钥
+
+  loginStamp?: number
+  loadEditStamp?: number
 }
 
 export interface LocalOnceData {

@@ -42,6 +42,7 @@ import type {
   SyncGet_CommentList_C,
   SyncGet_CommentList_D,
   CommonPass_A,
+  SyncGet_ContentList,
 } from "@/common-types"
 import { getNowStamp, DAY, HOUR } from "@/common-time"
 import cloud from '@lafjs/cloud'
@@ -112,6 +113,9 @@ async function toExecute(
     if(taskType === "thread_list") {
       res1 = await toThreadList(sgCtx, v, opt)
     }
+    else if(taskType === "content_list") {
+      res1 = await toContentList(sgCtx, v, opt)
+    }
     else if(taskType === "check_contents") {
       res1 = await toCheckContents(sgCtx, v, opt)
     }
@@ -133,6 +137,40 @@ async function toExecute(
   }
 
   return results
+}
+
+async function toContentList(
+  sgCtx: SyncGetCtx,
+  atom: SyncGet_ContentList,
+  opt: OperationOpt,
+): Promise<SyncGetAtomRes> {
+  // 1. get parameters
+  const { 
+    spaceId,
+    loadType,
+    limit = 16,
+    lastItemStamp,
+  } = atom
+
+  // 2. construct query
+  let key = loadType === "CREATE_FIRST" ? "createdStamp" : "editedStamp"
+  const w: Record<string, any> = {
+    oState: "OK",
+    spaceId,
+  }
+  if(lastItemStamp) {
+    w[key] = _.lt(lastItemStamp)
+  }
+
+  // 3. to query
+  let q3 = db.collection("Content").where(w)
+  q3 = q3.orderBy(key, "desc").limit(limit)
+  const res3 = await q3.get<Table_Content>()
+  const results = res3.data ?? []
+
+  // 4. get shared data
+  const res4 = await getSharedData_3(sgCtx, results, opt)
+  return res4
 }
 
 

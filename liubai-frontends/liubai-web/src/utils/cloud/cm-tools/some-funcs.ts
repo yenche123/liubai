@@ -2,12 +2,10 @@ import type {
   LiuDownloadParcel,
 } from "~/types/cloud/sync-get/types";
 import type { CommentShow, ThreadShow } from "~/types/types-content";
-import type { ThreadListViewType } from "~/types/types-view";
 
 function getIdsForCheckingContents(
   res1: LiuDownloadParcel[],
   local_list: CommentShow[] | ThreadShow[],
-  viewType?: ThreadListViewType,
 ) {
 
   const ids: string[] = []
