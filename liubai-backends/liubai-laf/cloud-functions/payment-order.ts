@@ -92,6 +92,7 @@ async function handle_alipay_wap(
   body: Record<string, any>,
 ): Promise<LiuRqReturn<Res_PO_AlipayWap>> {
   const order_id = body.order_id as string
+  const userTimezone = body.x_liu_timezone
 
   // 1. get order
   const res1 = await getSharedData_1(order_id)
@@ -104,6 +105,7 @@ async function handle_alipay_wap(
 
   // 3. check out if we need to invoke WAP
   const alipayData = d1.alipay_other_data ?? {}
+  const metaData = d1.meta_data ?? {}
   let out_trade_no = alipayData.wap_out_trade_no ?? ""
   let wap_url = alipayData.wap_url ?? ""
   let created_stamp = alipayData.wap_created_stamp ?? 1
@@ -173,8 +175,10 @@ async function handle_alipay_wap(
   alipayData.wap_created_stamp = now11
   alipayData.wap_out_trade_no = d7.out_trade_no
   alipayData.wap_url = wap_url
+  metaData.payment_timezone = userTimezone
   const w11: Partial<Table_Order> = {
     alipay_other_data: alipayData,
+    meta_data: metaData,
     updatedStamp: now11,
   }
   const oCol = db.collection("Order")
