@@ -7,6 +7,7 @@ import { db } from "~/utils/db";
 import type { SpaceType } from "~/types/types-basic";
 import type { MemberConfig } from "~/types/other/types-custom";
 import type { UserSubscription } from "~/types/types-cloud";
+import time from "~/utils/basic/time";
 
 export interface AboutMeOpt {
 
@@ -35,6 +36,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
   const workspace = ref("")    // 协作工作区时，是对应的 spaceId；个人工作区时是 ME
   const isCollaborative = ref(false)
   const userSubscription = ref<UserSubscription | null>(null)
+  const isPremium = ref(false)
 
   const currentSpace = ref<WorkspaceLocalTable | null>(null)
   const myMember = ref<MemberLocalTable | null>(null)
@@ -74,6 +76,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     currentSpace.value = opt.currentSpace ?? null
     myMember.value = opt.myMember ?? null
     userSubscription.value = opt.userSubscription ?? null
+    isPremium.value = getPremium(opt.userSubscription)
   }
 
   const updateSerialAndToken = (newSerial: string, newToken: string) => {
@@ -133,6 +136,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     myMember.value = null
     mySpaceIds.value = []
     userSubscription.value = null
+    isPremium.value = false
   }
 
 
@@ -148,6 +152,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
 
   const setSubscriptionAfterUpdatingDB = (newUserSub?: UserSubscription) => {
     userSubscription.value = newUserSub ?? null
+    isPremium.value = getPremium(newUserSub)
   }
 
   return { 
@@ -163,6 +168,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     myMember,
     mySpaceIds,
     userSubscription,
+    isPremium,
     getStateList,
     getStatesNoInIndex,
     setDataAboutMe,
@@ -180,3 +186,12 @@ export const useWorkspaceStore = defineStore("workspace", () => {
 })
 
 export type WorkspaceStore = ReturnType<typeof useWorkspaceStore>
+
+function getPremium(sub?: UserSubscription) {
+  if(!sub) return false
+  if(sub.isOn === "N") return false
+  if(sub.isLifelong) return true
+  const stamp = sub.expireStamp ?? 1
+  const now = time.getTime()
+  return stamp > now
+}

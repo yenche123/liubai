@@ -11,9 +11,7 @@ import type {
   Res_PO_CreateOrder,
 } from "~/requests/req-types"
 import type { LiuTimeout, SimpleObject } from "~/utils/basic/type-tool"
-import type { 
-  UserSubscription,
-} from "~/types/types-cloud"
+import type { UserSubscription } from "~/types/types-cloud"
 import type { PageState } from "~/types/types-atom"
 import { pageStates } from "~/utils/atom"
 import { useNetwork } from "~/hooks/useVueUse"
@@ -29,6 +27,7 @@ import { buyViaAlipayWap, redirectForWxGzhOpenid } from "../../../utils/pay-tool
 import { fetchUserSubscription } from "~/utils/cloud/tools/requests"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import usefulTool from "~/utils/basic/useful-tool"
+import { storeToRefs } from "pinia"
 
 let timeout1: LiuTimeout  // in order to avoid the view from always loading
 let timeout2: LiuTimeout  // for setDataState
@@ -246,6 +245,13 @@ function initSubscribeContent(
     if(scData.state !== 0) return
     setDataState(scData, pageStates.NETWORK_ERR)
   }, 7 * time.SECONED)
+
+  // 4. get premium
+  const wStore = useWorkspaceStore()
+  const { isPremium } = storeToRefs(wStore)
+  watch(isPremium, (newV) => {
+    scData.isPremium = newV
+  }, { immediate: true })
 }
 
 // 1. fetch: get subscription plan
@@ -293,7 +299,7 @@ async function getMembershipRemotely(
   const res = await fetchUserSubscription()
   if(res.code === "0000") {
     const sub = res.data?.subscription
-    packUserSubscription(scData, sub)
+    packUserSubscription(scData, sub, { writeIntoDB: true })
   }
   else {
     setDataState(scData, pageStates.OK)
@@ -346,24 +352,11 @@ async function packUserSubscription(
   else {
     scData.showRefundBtn = false
   }
-
-  // check out isPremium
-  if(sub?.isLifelong && sub?.isOn === "Y") {
-    scData.isPremium = true
-  }
-  else if(sub?.isOn !== "Y") {
-    scData.isPremium = false
-  }
-  else {
-    scData.isPremium = expireStamp > now
-  }
   
   setDataState(scData, pageStates.OK)
 
   // to write into db
-  if(!opt?.writeIntoDB) {
-    return
-  }
+  if(!opt?.writeIntoDB) return
   const wStore = useWorkspaceStore()
   const userId = wStore.userId
   if(!userId) return
