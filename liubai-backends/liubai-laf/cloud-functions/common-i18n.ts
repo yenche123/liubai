@@ -237,16 +237,19 @@ export const wecomLang: LangAtom = {
 export const wechatLang: LangAtom = {
   "zh-Hans": {
     "welcome_1": "欢迎关注留白记事！\n\n留白记事 = 备忘录📝 + 日历📆 + 任务📌 + 待办清单📂\n\n你可以在这里记录所有事情，所有“只属于你”的信息都将在这里汇聚。\n\n若这世界就是一个巨大的游乐园，请去体验，去创造🥂\n\n[未完待续]",
+    "welcome_2": "欢迎关注留白记事！\n\n留白记事 = 备忘录📝 + 日历📆 + 任务📌 + 待办清单📂\n\n若你还没有体验资格，可以在这里回复你的邮箱，稍后将你加入哦！",
     "already_bound": "当前微信已绑定帐号 {account}\n请先在原帐号上解绑后，再重新扫码。",
     "success_1": "绑定成功🎉\n\n小诀窍：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
   },
   "zh-Hant": {
     "welcome_1": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n你可以在這裡記錄所有事情，所有「只屬於你」的資訊都將在這裡匯聚。\n\n若這世界就是一個巨大的遊樂園，請去體驗、去創造🥂\n\n[未完待續]",
+    "welcome_2": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n若你還沒有體驗資格，可以在此處回覆你的 email，稍後將你加入喔！",
     "already_bound": "當前微信已綁定帳號 {account}\n請先在原帳號上解綁後，再重新掃描 QR Code",
     "success_1": "綁定成功🎉\n\n小訣竅：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
   },
   "en": {
     "welcome_1": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nYou can record all your life’s events, and all information you want is out here.\n\nIf this world is a giant playground, please experience it and create it 🥂\n\n[To be continued]",
+    "welcome_2": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nIf you don't have access to Liubai, you can reply your email here, and we will add you later.",
     "already_bound": "Current Wechat has already bound account {account}\nPlease unbind it from the original account first, then re-scan the QR code.",
     "success_1": "Binding successful🎉\n\nTip: <a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>How to avoid missing reminders</a>",
   }
@@ -275,7 +278,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
 
 ⚙️ <a href="https://alpha.liubai.cc/settings">我的设置</a>
 
-📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">关注小红书</a>
+📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">开发者的小红书</a>
 `,   // TODO: 添加到桌面（离线使用）
       }
     }
@@ -326,7 +329,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
 
 ⚙️ <a href="https://alpha.liubai.cc/settings">我的設定</a>
 
-📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">追蹤小紅書</a>
+📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">開發者的小紅書</a>
 `,   // TODO: 添加到桌面（离线使用）
       }
     }
@@ -377,7 +380,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
 
 ⚙️ <a href="https://alpha.liubai.cc/settings">My Settings</a>
 
-📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">Follow on Red</a>
+📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">Follow me on RED</a>
 `,   // TODO: 添加到桌面（离线使用）
       }
     }

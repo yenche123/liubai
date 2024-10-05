@@ -462,7 +462,7 @@ async function send_welcome(
 
   // 2. i18n
   const { t } = useI18n(wechatLang, { lang })
-  const text = t("welcome_1")
+  const text = t("welcome_2")
   
   // 3. reply user with text
   await send_text_to_wechat_gzh(wx_gzh_openid, text)
