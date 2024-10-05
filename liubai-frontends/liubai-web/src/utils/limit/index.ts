@@ -97,14 +97,19 @@ async function _guideToSubscribe(
     num = _env.PREMIUM_COMMENT_IMG_NUM
     content_key = "limit.comment_img_premium"
   }
+  else if(limitType === "file_capacity") {
+    num = _env.PREMIUM_FILE_MB
+    content_key = "limit.file_capacity_premium"
+  }
   
   if(num <= 0 || !content_key) return false
 
   const res = await cui.showModal({
-    title: "🔓",
+    title: "🎁",
     content_key,
     content_opt: { num },
     confirm_key: "limit.become_premium",
+    isTitleEqualToEmoji: true,
   })
   if(!res.confirm || !rr) return
 
@@ -127,6 +132,16 @@ function _showLimited(
       content_key: "tip.max_pic_num",
       content_opt: { num: maxNum },
       showCancel: false
+    })
+    return
+  }
+
+  if(limitType === "file_capacity") {
+    cui.showModal({
+      title_key: "tip.file_exceed_title",
+      title_opt: { num: maxNum },
+      content_key: "tip.file_exceed_content",
+      showCancel: false,
     })
     return
   }

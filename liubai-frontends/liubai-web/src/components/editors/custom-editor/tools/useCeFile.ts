@@ -166,12 +166,10 @@ async function handleOtherFiles(
 
   const firstFile = fileList[0]
   if(!firstFile) return
-  if(firstFile.size > 10 * MB) {
-    cui.showModal({
-      title_key: "tip.file_exceed_title",
-      content_key: "tip.file_exceed_content",
-      showCancel: false
-    })
+  const maxMB = limit.getLimit("file_capacity")
+  const maxSize = maxMB * MB
+  if(maxSize > 0 && firstFile.size > maxSize) {
+    limit.handleLimited("file_capacity", maxMB)
     return
   }
 
