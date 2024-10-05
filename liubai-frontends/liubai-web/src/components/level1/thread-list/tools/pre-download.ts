@@ -13,7 +13,6 @@ export async function preLoadEditFirst(
 ) {
   let loadTimes = 0
   let lastItemStamp: number | undefined
-
   const arg: SyncGet_ContentList = {
     taskType: "content_list",
     spaceId,
@@ -54,9 +53,9 @@ export async function preLoadEditFirst(
 
 export async function preLoadCreateFirst(
   spaceId: string,
-  lastItemStamp: number,
 ) {
   let loadTimes = 0
+  let lastItemStamp: number | undefined
   const arg: SyncGet_ContentList = {
     taskType: "content_list",
     spaceId,
@@ -67,7 +66,9 @@ export async function preLoadCreateFirst(
     loadTimes++
     await valTool.waitMilli(2000)
 
-    arg.lastItemStamp = lastItemStamp
+    if(lastItemStamp) {
+      arg.lastItemStamp = lastItemStamp
+    }
     // console.log(`preLoadCreateFirst ${loadTimes}`)
     const parcels = await CloudMerger.request(arg)
     // console.log("preLoadCreateFirst parcels: ")
@@ -78,11 +79,9 @@ export async function preLoadCreateFirst(
     const lastParcel = parcels[parcels.length - 1]
     const parcelType = lastParcel?.parcelType
     
-    let tmpStamp: number | undefined
     if(parcelType === "content") {
-      tmpStamp = lastParcel.content?.createdStamp
+      lastItemStamp = lastParcel.content?.createdStamp
     }
-    if(!tmpStamp) break
-    lastItemStamp = tmpStamp
+    if(!lastItemStamp) break
   }
 }

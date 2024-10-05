@@ -498,9 +498,7 @@ async function preDownloadContents(
   // 3. load created first
   if(justLogged) {
     console.log("刚登录，优先加载最近发表的动态......")
-    const lastItem = results[rLength - 1]
-    const lastItemStamp = lastItem.createdStamp
-    preLoadCreateFirst(spaceId, lastItemStamp)
+    preLoadCreateFirst(spaceId)
     return
   }
 
