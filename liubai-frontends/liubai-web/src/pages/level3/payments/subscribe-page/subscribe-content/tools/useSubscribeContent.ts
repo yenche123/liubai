@@ -193,8 +193,27 @@ async function toRefund(
   console.log("res2: ")
   console.log(res2)
   console.log(" ")
+  if(res2.code === "0000") {
+    afterRefunded(scData)
+    return
+  }
+  showErrMsg("refund", res2)
 }
 
+async function afterRefunded(
+  scData: ScData,
+) {
+  await cui.showModal({
+    title_key: "payment.refund_1",
+    content_key: "payment.refund_2",
+    showCancel: false,
+    confirm_key: "tip.got_it",
+  })
+
+  if(scData.isPremium) {
+    getMembershipRemotely(scData)
+  }
+}
 
 async function toBuyViaStripe(
   scData: ScData,

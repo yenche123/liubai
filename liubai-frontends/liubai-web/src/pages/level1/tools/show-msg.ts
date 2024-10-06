@@ -100,7 +100,7 @@ export async function showContactDev(
 }
 
 export async function showErrMsg(
-  theType: "order" | "login",
+  theType: "order" | "login" | "refund",
   res: LiuErrReturn,
 ) {
   const code = res.code
@@ -124,7 +124,14 @@ export async function showErrMsg(
     return false
   }
 
-  let title_key = theType === "order" ? "payment.err_1" : "login.err_login"
+  let title_key = "payment.err_1"
+  if(theType === "refund") {
+    title_key = "payment.err_2"
+  }
+  else if(theType === "login") {
+    title_key = "login.err_login"
+  }
+
   await cui.showModal({
     title_key,
     content_key,

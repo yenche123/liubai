@@ -429,6 +429,7 @@
     "refund_content": "You have only one chane to refund within 7 days after the first purchase. Are you sure to cancel the subscription and get the refund?",
     "to_refund": "Yes",
     "err_1": "Fail to Order",
+    "err_2": "Failed to Refund",
     "order_paid": "Order Paid",
     "order_closed": "Order Closed",
     "payee": "Payee",
