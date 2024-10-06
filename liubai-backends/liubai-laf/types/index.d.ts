@@ -40,6 +40,8 @@ declare global {
 
       /** 默认时区，比如 "8.5" 就是东 8.5 时区 */
       LIU_TIMEZONE?: string
+      LIU_CURRENCY?: string   // 默认货币单位（兜底用，大写）
+                              // 比如 "CNY" / "USD" / "HKD" / "EUR" / "JPY" / "TWD" / "NZD" / "AUD"
 
       /** email */
       LIU_EMAIL_1?: string           // 商务合作

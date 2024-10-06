@@ -377,11 +377,17 @@ async function handle_info(
   //@ts-ignore price
   let price: string | undefined = d[`price_${currency}`]
   if(!price) {
-    price = d.price_USD
+    const tmpCurrency = _env.LIU_CURRENCY
+    if(!tmpCurrency) {
+      return { code: "E5001", errMsg: "we have to use LIU_CURRENCY to get price" }
+    }
+    currency = tmpCurrency
+
+    //@ts-ignore price
+    price = d[`price_${currency}`]
     if(!price) {
       return { code: "E4004", errMsg: "there is no currency matched" }
     }
-    currency = "USD"
   }
 
   // check out wxpay
