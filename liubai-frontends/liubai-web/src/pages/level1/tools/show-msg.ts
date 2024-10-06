@@ -31,7 +31,7 @@ export function isEverythingOkay(
 export function showDisableTip(thirdParty: string) {
   cui.showModal({
     title_key: "tip.tip",
-    content_key: "login.cannot_login_via",
+    content_key: "login.in_beta",
     content_opt: { thirdParty },
     showCancel: false,
   })

@@ -176,6 +176,7 @@
     "logging": "正在登录..",
     "logging2": "登录中..",
     "cannot_login_via": "当前暂不支持「使用 {thirdParty} 登录」，请使用其他登录方式。",
+    "in_beta": "内测阶段，暂不开放「使用 {thirdParty} 登录」",
     "err_login": "登录异常",
     "err_1": "state 缺失，请稍后再试。",
     "err_2": "邮件被标注为垃圾邮件，请至垃圾或推广邮箱中查找。",
