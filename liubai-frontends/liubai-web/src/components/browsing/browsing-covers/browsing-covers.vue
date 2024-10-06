@@ -204,35 +204,41 @@ const {
   display: flex;
   flex-wrap: wrap;
   flex: 1;
+}
 
-  .cec-item {
-    width: v-bind("imgWidth + 'px'");
-    height: v-bind("imgWidth + 'px'");
-    overflow: hidden;
-    border-radius: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    position: relative;
-    cursor: pointer;
-    transition: .15s;
+.cec-item {
+  width: v-bind("imgWidth + 'px'");
+  height: v-bind("imgWidth + 'px'");
+  overflow: hidden;
+  border-radius: 10px;
+  margin-inline-end: 10px;
+  margin-block-end: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: .15s;
 
-    @media(hover: hover) {
-      &:hover {
-        opacity: .8;
-      }
-    }
-
-    &:active {
-      opacity: .72;
-    }
-
-    .cc-img {
-      width: v-bind("imgWidth + 'px'");
-      height: v-bind("imgWidth + 'px'");
-      cursor: pointer;
+  @media(hover: hover) {
+    &:hover {
+      opacity: .8;
     }
   }
 
+  &:active {
+    opacity: .72;
+  }
+
+  .cc-img {
+    width: v-bind("imgWidth + 'px'");
+    height: v-bind("imgWidth + 'px'");
+    cursor: pointer;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .cec-item {
+    margin-inline-end: 7px;
+    margin-block-end: 7px;
+  }
 }
 
 </style>
