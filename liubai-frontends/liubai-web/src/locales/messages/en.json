@@ -538,5 +538,8 @@
     "comment_img_premium": "You can add {num} images to a comment when you have Premium",
     "file_capacity_premium": "You can upload {num} mB files when you have Premium",
     "become_premium": "Have it now"
+  },
+  "premium": {
+    "badge_tip": "You have all Premium rights"
   }
 }

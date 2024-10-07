@@ -538,5 +538,8 @@
     "comment_img_premium": "开通会员，可添加 {num} 张图片的评论",
     "file_capacity_premium": "开通会员，可上传 {num} mB 的文件",
     "become_premium": "去开通"
+  },
+  "premium": {
+    "badge_tip": "你享有所有 Premium 权益"
   }
 }

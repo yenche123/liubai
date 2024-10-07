@@ -538,5 +538,8 @@
     "comment_img_premium": "開通會員，可新增 {num} 張圖片的留言",
     "file_capacity_premium": "開通會員，可上傳 {num} mB 的文件",
     "become_premium": "去開通"
+  },
+  "premium": {
+    "badge_tip": "你享有所有 Premium 權益"
   }
 }

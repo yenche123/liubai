@@ -65,9 +65,17 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
     </div>
   </div>
 
-  <div class="liu-no-user-select sc-premium" v-if="isPremium">
-    <span>🥂</span>
-    <span class="sc-premium-text">Premium</span>
+  <div class="sc-premium-box" v-if="isPremium">
+    <LiuTooltip
+      placement="bottom-start"
+      :distance="4"
+      :aria-label="t('premium.badge_tip')"
+    >
+      <div class="liu-no-user-select sc-premium">
+        <span>🥂</span>
+        <span class="sc-premium-text">Premium</span>
+      </div>
+    </LiuTooltip>
   </div>
 
   <div class="sc-virtual"></div>
@@ -221,9 +229,12 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
 
 }
 
-.sc-premium {
+.sc-premium-box {
   margin-inline-start: 16px;
   margin-block-end: 10px;
+}
+
+.sc-premium {
   font-size: var(--state-font);
   letter-spacing: 1px;
   padding: 2px 10px;
