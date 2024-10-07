@@ -1491,10 +1491,12 @@ async function toMemberNickname(
   if(oldStamp >= operateStamp) {
     return { code: "0002", taskId }
   }
+  cfg.lastOperateName = operateStamp
   
   // 4. update
   const u: Partial<Table_Member> = {
     name: member.name,
+    config: cfg,
   }
   const memberId = member.id
   await updatePartData(ssCtx, "member", memberId, u)
