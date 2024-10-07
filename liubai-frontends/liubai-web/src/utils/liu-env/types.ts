@@ -100,4 +100,7 @@ export interface LiuSystemEnv {
   // don't use sync-system
   DONOT_USE_SYNC?: boolean
 
+  // login ways
+  LOGIN_WAYS?: string[]
+
 }

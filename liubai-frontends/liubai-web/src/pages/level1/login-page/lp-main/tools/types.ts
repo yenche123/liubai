@@ -8,6 +8,9 @@ export interface LpmData {
     width: string
     left: string
   }
+  loginViaWeChat: boolean
+  loginViaGoogle: boolean
+  loginViaGitHub: boolean
 }
 
 export interface LpmProps {

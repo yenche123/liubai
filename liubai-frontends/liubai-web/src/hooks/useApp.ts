@@ -181,7 +181,7 @@ async function toLockOrientation(
     return
   }
 
-  const oType = orientation.value
-  console.log("let me see orientation: ", oType)
+  // const oType = orientation.value
+  // console.log("let me see orientation: ", oType)
 
 }

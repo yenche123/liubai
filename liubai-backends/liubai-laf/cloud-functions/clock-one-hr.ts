@@ -278,24 +278,16 @@ async function handleWxpayCerts(): Promise<LiuWxpayCert[] | undefined> {
     return
   }
 
-  // 4. verify sign
-  const err4 = await WxpayHandler.verifySignByLiuFetch(data3)
-  if(err4) {
-    console.warn("verify sign failed in handleWxpayCerts")
-    console.log(err4)
-    return
-  }
-
-  // 5. get json from data3
-  const json5 = data3.json
-  if(!json5) {
-    console.warn("no json5 in handleWxpayCerts")
+  // 4. get json from data3
+  const json4 = data3.json
+  if(!json4) {
+    console.warn("no json4 in handleWxpayCerts")
     console.log(data3)
     return
   }
 
-  // 6. decrypt
-  const list = json5.data
+  // 5. decrypt
+  const list = json4.data
   const certs: LiuWxpayCert[] = []
   for(let i=0; i<list.length; i++) {
     const v = list[i]

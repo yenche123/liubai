@@ -63,7 +63,10 @@ const {
   <div class="lp-view" v-liu-show="lpmData.current === 2">
 
     <!-- wechat -->
-    <div class="liu-no-user-select liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'wechat')">
+    <div v-if="lpmData.loginViaWeChat"
+      class="liu-no-user-select liu-hover lpv-btn" 
+      @click.stop="$emit('tapthirdparty', 'wechat')"
+    >
       <div class="lpv-icon">
         <div class="lpv-icon-div"></div>
       </div>
@@ -73,7 +76,10 @@ const {
     </div>
 
     <!-- google -->
-    <div class="liu-no-user-select liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'google')">
+    <div v-if="lpmData.loginViaGoogle"
+      class="liu-no-user-select liu-hover lpv-btn" 
+      @click.stop="$emit('tapthirdparty', 'google')"
+    >
       <div class="lpv-icon">
         <svg-icon name="logos-google-color" 
           :cover-fill-stroke="false"
@@ -86,7 +92,10 @@ const {
     </div>
 
     <!-- github -->
-    <div class="liu-no-user-select liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'github')">
+    <div v-if="lpmData.loginViaGitHub"
+      class="liu-no-user-select liu-hover lpv-btn" 
+      @click.stop="$emit('tapthirdparty', 'github')"
+    >
       <div class="lpv-icon">
         <svg-icon name="logos-github" 
           color="var(--main-text)"

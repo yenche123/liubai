@@ -111,6 +111,10 @@ function getEnv(): LiuSystemEnv {
   const donotUseSync = import.meta.env.VITE_DONOT_USE_SYNC
   const DONOT_USE_SYNC = donotUseSync === "01"
 
+  // login ways
+  const loginWays = import.meta.env.VITE_LOGIN_WAYS
+  const LOGIN_WAYS = loginWays ? loginWays.split(",") : []
+
   _env = {
     DEV,
     API_DOMAIN,
@@ -174,6 +178,7 @@ function getEnv(): LiuSystemEnv {
     C_SLACK,
     NOTIFICATION_PRIORITY,
     DONOT_USE_SYNC,
+    LOGIN_WAYS,
   }
   return _env
 }

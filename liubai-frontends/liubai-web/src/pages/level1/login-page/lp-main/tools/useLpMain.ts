@@ -5,11 +5,14 @@ import { useDebounceFn, useWindowSize } from "~/hooks/useVueUse";
 import valTool from "~/utils/basic/val-tool";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
+import liuEnv from "~/utils/liu-env";
 
 export function useLpMain(
   props: LpmProps,
   emit: LpmEmit,
 ) {
+  const _env = liuEnv.getEnv()
+  const loginWays = _env.LOGIN_WAYS ?? []
 
   const lpSelectsEl = ref<HTMLElement>()
   const lpEmailInput = ref<HTMLInputElement>()
@@ -20,7 +23,10 @@ export function useLpMain(
     indicatorData: {
       width: "0px",
       left: "0px",
-    }
+    },
+    loginViaWeChat: loginWays.includes("wechat"),
+    loginViaGoogle: loginWays.includes("google"),
+    loginViaGitHub: loginWays.includes("github"),
   })
 
   const onTapSelect = (newIndex: number) => {
