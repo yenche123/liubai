@@ -207,6 +207,7 @@ const arrowColor = "var(--main-normal)"
 
 .pc-container {
   width: 100%;
+  min-height: 86vh;
   min-height: calc(100dvh - 80px);
   position: relative;
   display: flex;
