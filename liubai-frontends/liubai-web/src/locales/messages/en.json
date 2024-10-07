@@ -185,7 +185,8 @@
     "err_6": "The verification code is wrong or expired, or you operate too frequently.",
     "err_7": "Your email address is not in the list of authorized users.",
     "err_8": "There is no email address through the current login way.",
-    "err_9": "Fail to send the email. Contact the developer please."
+    "err_9": "Fail to send the email. Contact the developer please.",
+    "get_permission": "Your email address is not in the list. Follow our WeChat \"留白记事\" to get the permission!"
   },
   "tip": {
     "tip": "TIP",

@@ -402,7 +402,7 @@ async function toSubmitEmailAddress(
   const { code, errMsg } = res
 
   if(code === "U0006") {
-    showEmojiTip("login.err_7", "👾")
+    showFollowToGetPermission()
     return
   }
   else if(code === "E4003" && errMsg === "last_event: bounced") {
@@ -427,6 +427,25 @@ async function toSubmitEmailAddress(
   lpData.email = email
   lpData.view = "code"
   lpData.lastSendEmail = time.getTime()
+}
+
+
+async function showFollowToGetPermission() {
+  const res = await cui.showModal({
+    title: "🎫",
+    content_key: "login.get_permission",
+    confirm_key: "notification.to_follow",
+    isTitleEqualToEmoji: true,
+  })
+  if(!res.confirm) return
+  cui.previewImage({
+    imgs: [{ 
+      src: "/images/official-qrcode.jpg", 
+      id: "whatever",
+      h2w: "1",
+      
+    }]
+  })
 }
 
 let isAfterFetchingLogin = false

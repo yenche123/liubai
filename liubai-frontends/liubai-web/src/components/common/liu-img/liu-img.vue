@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
 import { BlurHashCanvas } from "another-vue3-blurhash"
-import valTool from '~/utils/basic/val-tool';
-import liuUtil from '~/utils/liu-util';
-import type { CSSProperties, PropType } from 'vue';
-import type { LiuObjectFit, LiuImgStyles } from "./tools/types"
-
-const TRANSITION_MS = 300
+import type { PropType } from 'vue';
+import type { 
+  LiuObjectFit,
+  LiuImgEmits,
+} from "./tools/types"
+import { useLiuImg } from './tools/useLiuImg';
 
 const props = defineProps({
   src: {
@@ -46,45 +45,18 @@ const props = defineProps({
     type: String,
   }
 })
+const emits = defineEmits<LiuImgEmits>()
 
-const imgStyles = computed<CSSProperties>(() => {
-  const baseStyles: LiuImgStyles = {
-    objectFit: props.objectFit,
-    transition: TRANSITION_MS + "ms",
-    userSelect: props.userSelect ? 'auto' : 'none',
-    borderRadius: props.borderRadius ? props.borderRadius : '0',
-    viewTransitionName: props.viewTransitionName,
-  }
-  return baseStyles as CSSProperties
-})
-
-const canvasWH = computed(() => {
-  const w = props.width
-  const h = props.height
-  if(!w || !h) return null
-  const widthHeight = liuUtil.constraintWidthHeight(w, h, 128, 128)
-  return widthHeight
-})
-
-
-const show = ref(false)
-const closeCanvas = ref(false)
-const bgOpacity = computed(() => {
-  if(show.value) return 0
-  return 1
-})
-
-const onImgLoaded = async () => {
-  if(props.disableTransition) return
-  if(show.value) return
-  show.value = true
-
-  if(closeCanvas.value) return
-  if(!props.blurhash || !canvasWH.value) return
-
-  await valTool.waitMilli(TRANSITION_MS)
-  closeCanvas.value = true
-}
+const {
+  TRANSITION_MS,
+  imgEl,
+  imgStyles,
+  canvasWH,
+  show,
+  closeCanvas,
+  bgOpacity,
+  onImgLoaded,
+} = useLiuImg(props, emits)
 
 </script>
 <template>
@@ -106,6 +78,7 @@ const onImgLoaded = async () => {
 
 
     <img class="custom-img" 
+      ref="imgEl"
       :class="{ 'custom-img_loaded': disableTransition || show }"
       :style="imgStyles"
       :width="width ? width : undefined"
