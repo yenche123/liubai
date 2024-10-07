@@ -45,7 +45,6 @@ const {
   <!-- 主体 -->
   <div class="lp-body" 
     v-if="lpData.enable"
-    :class="{ 'lp-body_google-one-tap': lpData.googleOneTapShown }"
   >
 
     <!-- 顶部占位 -->
@@ -162,14 +161,6 @@ const {
   position: relative;
   width: 92%;
   max-width: 600px;
-}
-
-@media screen and (min-width: 530px) and (max-width: 1420px) {
-
-  .lp-body_google-one-tap .lp-virtual-first {
-    min-height: 220px;
-  }
-  
 }
 
 

@@ -328,6 +328,8 @@ async function handle_wx_gzh_scan(
   const res4 = res3.data
   const qr_code_4 = res4?.url
   if(!qr_code_4) {
+    console.warn("creating QR code from wechat failed")
+    console.log(res4)
     return { 
       code: "E5004", 
       errMsg: "creating QR code from wechat failed",

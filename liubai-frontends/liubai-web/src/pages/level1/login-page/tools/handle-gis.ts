@@ -28,10 +28,7 @@ export async function loadGoogleIdentityService(
   const s = document.createElement("script")
   s.async = true
   s.src = thirdLink.GOOGLE_GIS_SCRIPT
-  console.time("GIS")
   s.onload = () => {
-    console.timeEnd("GIS")
-    
     const gAccounts = window.google?.accounts
     if(!gAccounts) return
 
@@ -42,46 +39,25 @@ export async function loadGoogleIdentityService(
       use_fedcm_for_prompt: fedCM,
       itp_support: true,
       callback: (res) => {
-        console.log("initialize callback..........")
+        console.log("gis initialize callback..........")
         console.log(res)
         console.log(" ")
         handleCredentialResponse(rr, lpData, res)
       }
     })
 
-    let timeout: LiuTimeout
     gAccounts.id.prompt((res) => {
-      if(timeout) clearTimeout(timeout)
-      const isDisplayMoment = res.isDisplayMoment()
-      const isDisplayed = res.isDisplayed()
-      const isNotDisplayed = res.isNotDisplayed()
-      const notDisplayedReason = res.getNotDisplayedReason()
       const isSkippedMoment = res.isSkippedMoment()
-      const skippedReason = res.getSkippedReason()
       const isDismissedMoment = res.isDismissedMoment()
       const dimissedReason = res.getDismissedReason()
       const momentType = res.getMomentType()
-
-      console.log(" ")
-      console.log("prompt callback...........")
-      console.log("isDisplayMoment: ", isDisplayMoment)
-      console.log("isDisplayed: ", isDisplayed)
-      console.log("isNotDisplayed: ", isNotDisplayed)
-      console.log("notDisplayedReason: ", notDisplayedReason)
+      console.log("gis prompt callback...........")
       console.log("isSkippedMoment: ", isSkippedMoment)
-      console.log("skippedReason: ", skippedReason)
       console.log("isDismissedMoment: ", isDismissedMoment)
       console.log("dimissedReason: ", dimissedReason)
       console.log("momentType: ", momentType)
       console.log(" ")
-
-      lpData.googleOneTapShown = isDisplayed
     })
-    
-    if(!fedCM) return
-    timeout = setTimeout(() => {
-      lpData.googleOneTapShown = true
-    }, 3000)
     
   }
 

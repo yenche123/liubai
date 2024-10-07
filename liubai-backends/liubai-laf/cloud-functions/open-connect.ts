@@ -209,6 +209,8 @@ async function handle_bind_wechat(
   const res7 = res6.data
   const qr_code_7 = res7?.url
   if(!qr_code_7) {
+    console.warn("creating QR code from wechat failed")
+    console.log(res7)
     return { 
       code: "E5004", 
       errMsg: "creating QR code from wechat failed",

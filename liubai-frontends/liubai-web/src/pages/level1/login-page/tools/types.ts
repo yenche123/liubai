@@ -29,8 +29,6 @@ export interface LpData {
   initCode?: string           // 调用 login 接口 init 时，返回的 code
   initStamp?: number          // 调用 login 接口 init 后的时间戳
 
-  googleOneTapShown?: boolean  // 是否当前 google one tap 被展示着
-
   // 多用户选择 相关
   multi_credential?: string
   multi_credential_id?: string
