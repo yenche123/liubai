@@ -18,3 +18,9 @@ export interface BasicView {
   show: boolean
   id: string
 }
+
+export interface LiuImgData {
+  src: string
+  naturalWidth: number
+  naturalHeight: number
+}

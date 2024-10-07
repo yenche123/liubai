@@ -2,6 +2,7 @@ import { computed, ref, useTemplateRef, type CSSProperties } from "vue";
 import type { LiuImgEmits, LiuImgProps, LiuImgStyles } from "./types";
 import liuUtil from "~/utils/liu-util";
 import valTool from "~/utils/basic/val-tool";
+import type { LiuImgData } from "~/types/types-view";
 
 export function useLiuImg(
   props: LiuImgProps,
@@ -47,7 +48,13 @@ export function useLiuImg(
     if(!_img) return
     const naturalHeight = _img.naturalHeight
     const naturalWidth = _img.naturalWidth
-    emits("load", { naturalWidth, naturalHeight })
+    const src = _img.src
+    const data: LiuImgData = {
+      naturalHeight,
+      naturalWidth,
+      src,
+    }
+    emits("load", data)
   
     if(closeCanvas.value) return
     if(!props.blurhash || !canvasWH.value) return

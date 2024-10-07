@@ -7,6 +7,7 @@ import type { ZoomEvents } from "swiper/types"
 import { Zoom, Mousewheel, Keyboard } from "swiper/modules"
 import time from '~/utils/basic/time';
 import liuApi from '~/utils/liu-api';
+import type { LiuImgData } from '~/types/types-view';
 
 export function usePiContent(
   props: PicProps,
@@ -18,6 +19,7 @@ export function usePiContent(
   const coverLength = computed(() => covers.value.length)
   const { width, height } = useWindowSize()
   const imgsRef = toRef(props, "imgs")
+  const imgDatas = ref<Array<LiuImgData | undefined>>([])
   const zoomScale = ref(1)
 
   const ctx: PicCtx = {
@@ -27,10 +29,10 @@ export function usePiContent(
   }
 
   const debounceCalc = useDebounceFn(() => {
-    calcImages(covers, imgsRef.value, width.value, height.value)
+    calcImages(covers, imgDatas, imgsRef.value, width.value, height.value)
   }, 300)
-  watch([imgsRef, width, height], debounceCalc)
-  calcImages(covers, imgsRef.value, width.value, height.value)
+  watch([imgsRef, imgDatas, width, height], debounceCalc)
+  calcImages(covers, imgDatas, imgsRef.value, width.value, height.value)
 
   const onZoomChange: ZoomEvents['zoomChange'] = (
     swiper,
@@ -51,6 +53,10 @@ export function usePiContent(
     whenBoxPointerUp(ctx, evt)
   }
 
+  const onImgLoaded = (index: number, data: LiuImgData) => {
+    calculateImgDatas(imgDatas, imgsRef, index, data)
+  }
+
   return { 
     swiperParams,
     covers, 
@@ -58,9 +64,27 @@ export function usePiContent(
     onZoomChange,
     onBoxPointerDown,
     onBoxPointerUp,
+    onImgLoaded,
   }
 }
 
+
+function calculateImgDatas(
+  imgDatas: Ref<Array<LiuImgData | undefined>>,
+  imgsRef: Ref<ImageShow[]>,
+  index: number,
+  img: LiuImgData,
+) {
+  const list1 = imgDatas.value
+  const list2 = imgsRef.value
+  const len1 = list1.length
+  const len2 = list2.length
+  if(index >= len2) return
+  if(len1 !== len2) {
+    imgDatas.value = new Array(len2)
+  }
+  imgDatas.value[index] = img
+}
 
 function initSwiperParams() {
   const cha = liuApi.getCharacteristic()
@@ -157,15 +181,18 @@ function whenBoxPointerUp(
  */
 function calcImages(
   covers: Ref<ImageShow[]>,
+  imgDatas: Ref<Array<LiuImgData | undefined>>,
   imgs: ImageShow[],
   w: number,
   h: number
 ){
   const newList: PicCover[] = []
   const v_h2w = h / w
+  const datas = imgDatas.value
 
   for(let i=0; i<imgs.length; i++) {
     const v = imgs[i]
+    const d = datas[i]
     const { width, height, h2w, id, src, blurhash } = v
 
     if(width && height && width <= w && height <= h) {
@@ -173,31 +200,39 @@ function calcImages(
       continue
     }
 
+    const nW = d?.naturalWidth
+    const nH = d?.naturalHeight
+    const _w = width ?? nW
+    const _h = height ?? nH
+
     const obj: PicCover = {
       id,
       src,
-      width: width ? Math.min(width, w) : w,
-      height: height ? Math.min(height, h) : h,
+      width: _w ? Math.min(_w, w) : w,
+      height: _h ? Math.min(_h, h) : h,
       blurhash,
     }
     
-    const img_h2w = Number(h2w)
+    let img_h2w = Number(h2w)
     if(!h2w || isNaN(img_h2w)) {
-      newList.push(obj)
-      continue
+      if(_w && _h) {
+        img_h2w = _h / _w
+      }
+      if(!img_h2w || isNaN(img_h2w)) {
+        newList.push(obj)
+        continue
+      }
     }
 
     // 如果窗口的高宽比 >= 图片的，那么图片的宽就等于窗口的宽
     if(v_h2w >= img_h2w) {
-      obj.width = Math.round(w)
-      obj.height = Math.round(w * img_h2w)
+      obj.height = Math.round(obj.width * img_h2w)
       newList.push(obj)
       continue
     }
 
     // 否则 图片的高就等于窗口的高
-    obj.height = Math.round(h)
-    obj.width = Math.round(h / img_h2w)
+    obj.width = Math.round(obj.height / img_h2w)
     newList.push(obj)
   }
 

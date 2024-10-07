@@ -1,3 +1,4 @@
+import type { LiuImgData } from "~/types/types-view"
 
 export type LiuObjectFit = "fill" | "contain" | "cover" | "none" | "scale-down"
 
@@ -23,11 +24,6 @@ export interface LiuImgProps {
   userSelect: boolean
   disableTransition: boolean
   viewTransitionName?: string
-}
-
-export interface LiuImgData {
-  naturalWidth: number
-  naturalHeight: number
 }
 
 export interface LiuImgEmits {

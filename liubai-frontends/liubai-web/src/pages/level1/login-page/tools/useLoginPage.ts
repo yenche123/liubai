@@ -443,7 +443,8 @@ async function showFollowToGetPermission() {
       src: "/images/official-qrcode.jpg", 
       id: "whatever",
       h2w: "1",
-      
+      width: 250,
+      height: 250,
     }]
   })
 }

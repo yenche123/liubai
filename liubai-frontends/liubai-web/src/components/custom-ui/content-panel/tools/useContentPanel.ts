@@ -230,8 +230,8 @@ function _makeItHot() {
   let idleID = window.requestIdleCallback((idleDeadline) => {
     const timeRemaining = idleDeadline.timeRemaining()
     const didTimeout = idleDeadline.didTimeout
-    console.log("didTimeout: ", didTimeout)
-    console.log("timeRemaining: ", timeRemaining)
+    // console.log("didTimeout: ", didTimeout)
+    // console.log("timeRemaining: ", timeRemaining)
 
     if(didTimeout) return
     if(cpData.enable) return

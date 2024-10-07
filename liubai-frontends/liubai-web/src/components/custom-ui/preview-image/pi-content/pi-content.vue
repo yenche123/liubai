@@ -22,6 +22,7 @@ const {
   onBoxPointerDown,
   onBoxPointerUp,
   onZoomChange,
+  onImgLoaded,
 } = usePiContent(props, emit)
     
 let _swiper = shallowRef<Swiper | null>(null)
@@ -94,6 +95,7 @@ const onSwiper = (swiper: Swiper) => {
               :disableTransition="currentIndex === index && viewTransitionName ? true : false"
               :view-transition-name="currentIndex === index ? viewTransitionName : undefined"
               :loading="currentIndex === index ? 'eager' : 'lazy'"
+              @load="onImgLoaded(index, $event)"
             ></liu-img>
           </div>
 
