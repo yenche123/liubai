@@ -23,6 +23,7 @@ const onTapItem = () => {
 const {
   prefix,
   myProfile,
+  isPremium,
   MORE_ITEMS,
   onTapMoreMenuItem,
   onTapName,
@@ -63,6 +64,13 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
       <span>{{ myProfile.name }}</span>
     </div>
   </div>
+
+  <div class="liu-no-user-select sc-premium" v-if="isPremium">
+    <span>🥂</span>
+    <span class="sc-premium-text">Premium</span>
+  </div>
+
+  <div class="sc-virtual"></div>
 
   <div class="sc-toolbar">
 
@@ -177,7 +185,7 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
   margin-block-start: 10px;
   width: 100%;
   height: 50px;
-  margin-block-end: 20px;
+  margin-block-end: 10px;
   display: flex;
   align-items: center;
 
@@ -211,6 +219,44 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
     }
   }
 
+}
+
+.sc-premium {
+  margin-inline-start: 16px;
+  margin-block-end: 10px;
+  font-size: var(--state-font);
+  letter-spacing: 1px;
+  padding: 2px 10px;
+  position: relative;
+  color: var(--primary-color);
+  border-radius: 24px;
+  overflow: hidden;
+  width: fit-content;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--primary-color);
+    opacity: .09;
+  }
+}
+
+.sc-premium-text {
+  margin-inline-start: 4px;
+  font-weight: 200;
+  background: linear-gradient(45deg, var(--inverse-primary), var(--primary-color) 70%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sc-virtual {
+  width: 100%;
+  height: 10px;
 }
 
 .sc-toolbar {

@@ -18,7 +18,7 @@ const MORE_ITEMS: MenuItem[] = [
 
 export function useScTop(emits: ScTopEmits) {
   const rr = useRouteAndLiuRouter()
-  const { myProfile } = useMyProfile()
+  const { myProfile, isPremium } = useMyProfile()
   const { prefix } = usePrefix()
 
   const onTapMoreMenuItem = (item: MenuItem, index: number) => {
@@ -49,6 +49,7 @@ export function useScTop(emits: ScTopEmits) {
   return {
     prefix,
     myProfile,
+    isPremium,
     MORE_ITEMS,
     onTapMoreMenuItem,
     onTapName,

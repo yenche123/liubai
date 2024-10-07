@@ -47,7 +47,7 @@ export function useMyProfile() {
   const myProfile = ref<MemberShow | null>(null)
 
   const wStore = useWorkspaceStore()
-  const { myMember } = storeToRefs(wStore)
+  const { myMember, isPremium } = storeToRefs(wStore)
 
   const whenMemberChange = async () => {
     const { local_id: userId } = localCache.getPreference()
@@ -72,7 +72,7 @@ export function useMyProfile() {
   }
   useLiuWatch(myMember, whenMemberChange, true)
 
-  return { myProfile }
+  return { myProfile, isPremium }
 }
 
 // 当页面 activate 且 syncNum + 1 时，让 activeSyncNum = syncNum
