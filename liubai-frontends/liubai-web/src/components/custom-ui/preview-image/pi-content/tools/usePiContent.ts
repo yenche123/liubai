@@ -1,5 +1,5 @@
 import { toRef, watch, ref, computed, type Ref } from 'vue';
-import { useWindowSize } from '~/hooks/useVueUse';
+import { useDebounceFn, useWindowSize } from '~/hooks/useVueUse';
 import type { ImageShow } from '~/types';
 import type { LiuTimeout } from '~/utils/basic/type-tool';
 import type { PicProps, PicCover, PicEmits, PicCtx, PicSwiperParams } from './types';
@@ -26,15 +26,10 @@ export function usePiContent(
     zoomScale,
   }
 
-  let timeout: LiuTimeout
-  watch([imgsRef, width, height], (newV) => {
-    if(timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => {
-      timeout = undefined
-      calcImages(covers, imgsRef.value, width.value, height.value)
-    }, 300)
-  })
-
+  const debounceCalc = useDebounceFn(() => {
+    calcImages(covers, imgsRef.value, width.value, height.value)
+  }, 300)
+  watch([imgsRef, width, height], debounceCalc)
   calcImages(covers, imgsRef.value, width.value, height.value)
 
   const onZoomChange: ZoomEvents['zoomChange'] = (
@@ -94,7 +89,7 @@ let lastPointerDown = 0
 let lastClientX = 0
 let lastClientY = 0
 function whenZoomChange() {
-  if(waitingToCancel) clearInterval(waitingToCancel)
+  if(waitingToCancel) clearTimeout(waitingToCancel)
 }
 
 function whenBoxPointerDown(evt: PointerEvent) {
