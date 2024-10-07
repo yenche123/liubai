@@ -188,6 +188,21 @@ async function toRefundAndCancelThroughAlipay(
   // 5. to fetch
   const res5 = await AlipayHandler.refund(arg4)
   if(!res5.pass) return res5.err
+  const status5 = res5.data.responseHttpStatus
+  if(status5 !== 200) {
+    return { 
+      code: "SP012", 
+      errMsg: `fail to refund via alipay because responseHttpStatus is ${status5}`,
+    }
+  }
+  const d5 = res5.data.data
+  const refundFee = Number(d5?.refund_fee)
+  if(isNaN(refundFee) || refundFee <= 0) {
+    return {
+      code: "SP012",
+      errMsg: "fail to refund via alipay because refund_fee is not positive",
+    }
+  }
 
   // 6. update order
   alipayData.out_request_no = out_request_no
@@ -292,9 +307,7 @@ async function terminateUserSubscription(
     updatedStamp: now,
   }
   const col_user = db.collection("User")
-  const res1 = await col_user.doc(user._id).update(u1)
-  console.log("terminateUserSubscription res: ")
-  console.log(res1)
+  await col_user.doc(user._id).update(u1)
   const newUser: Table_User = { ...user, ...u1 }
   updateUserInCache(user._id, newUser)
 }

@@ -2855,3 +2855,24 @@ export interface Alipay_Refund_Param {
   refund_reason: string
   out_request_no: string
 }
+
+export interface Alipay_TradeFundBill {
+  fund_channel: string
+  amount: string    // unit: yuan
+  real_amount?: string
+  fund_type?: "DEBIT_CARD" | "CREDIT_CARD" | "MIXED_CARD"
+}
+
+export interface Res_Alipay_Refund {
+  trade_no: string
+  out_trade_no: string
+  buyer_logon_id: string
+  refund_fee: string
+  refund_detail_item_list?: Alipay_TradeFundBill[]
+  store_name?: string
+  buyer_user_id?: string
+  buyer_open_id?: string
+  send_back_fee?: string
+  fund_change?: "Y" | "N"
+  refund_hyb_amount?: string     // 本次请求退惠营宝金额。单位：元。
+}

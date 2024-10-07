@@ -69,7 +69,7 @@ watch(() => scData.state, (newV) => {
 
       <!-- 什么时候过期 或 什么时候续费 -->
       <div class="liu-no-user-select scb-footer" 
-        v-if="!scData.isLifelong && scData.expireStr"
+        v-if="!scData.isLifelong && scData.expireStr && scData.isPremium"
       >
         <span v-if="scData.autoRecharge">{{ t('payment.recharge_date', { date: scData.expireStr }) }}</span>
         <span v-else>{{ t('payment.expire_date', { date: scData.expireStr }) }}</span>
@@ -92,7 +92,7 @@ watch(() => scData.state, (newV) => {
         </ShinyButton>
 
         <!-- Cancel subscription & Refund -->
-        <div v-if="scData.showRefundBtn" 
+        <div v-if="scData.showRefundBtn && scData.isPremium" 
           class="liu-no-user-select liu-hover sc-refund"
           @click.stop="onTapRefund"
         >

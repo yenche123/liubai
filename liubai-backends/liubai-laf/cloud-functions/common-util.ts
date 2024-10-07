@@ -50,6 +50,7 @@ import type {
   Table_Subscription,
   UserSubscription,
   Alipay_Refund_Param,
+  Res_Alipay_Refund,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -91,7 +92,7 @@ import {
   alipay_cfg,
 } from "@/secret-config"
 import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
-import { AlipaySdk } from "alipay-sdk"
+import { AlipaySdk, type AlipayCommonResult } from "alipay-sdk"
 
 const db = cloud.database()
 const _ = db.command
@@ -2562,7 +2563,7 @@ export class AlipayHandler {
 
   static async refund(
     param: Alipay_Refund_Param,
-  ): Promise<DataPass<any>> {
+  ): Promise<DataPass<AlipayCommonResult<Res_Alipay_Refund>>> {
     // 1. init alipay sdk
     const res1 = this.checkReady()
     if(!res1.pass) return res1
@@ -2570,11 +2571,13 @@ export class AlipayHandler {
 
     // 2. request to refund
     try {
-      const res2 = await alipaySdk.curl("POST", "/v3/alipay/trade/refund", {
-        body: param,
-      })
-      console.log("AlipayHandler.refund() res2: ")
-      console.log(res2)
+      const res2 = await alipaySdk.curl<Res_Alipay_Refund>(
+        "POST", 
+        "/v3/alipay/trade/refund",
+        { body: param },
+      )
+      console.log("AlipayHandler.refund() res2.data: ")
+      console.log(res2.data)
       return { pass: true, data: res2 }
     }
     catch(err) {
