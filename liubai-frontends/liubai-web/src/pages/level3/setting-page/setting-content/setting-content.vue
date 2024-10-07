@@ -447,6 +447,7 @@ const iconColor = "var(--main-normal)"
 <style scoped lang="scss">
 
 .liu-mc-box {
+  min-height: calc(100vh - 60px);
   min-height: calc(100dvh - 60px);
 }
 

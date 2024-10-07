@@ -171,6 +171,7 @@ const {
   width: 100%;
   padding-block-start: 10px;
   padding-block-end: 20px;
+  height: 45vh;
   height: 45dvh;
   min-height: 300px;
   max-height: 420px;

@@ -217,6 +217,7 @@ const arrowColor = "var(--main-normal)"
 
 .pc-square {
   width: 100%;
+  height: 80vh;
   height: calc(100dvh - 160px);
   display: flex;
   flex-direction: column;

@@ -50,6 +50,7 @@ const wStore = useWorkspaceStore()
   width: 100px;
   height: 100px;
   flex: none;
+  margin-block-end: 5vh;
   margin-block-end: 5dvh;
 }
 
@@ -58,6 +59,7 @@ const wStore = useWorkspaceStore()
   line-height: 1.9;
   font-size: var(--head-font);
   font-weight: 700;
+  margin-block-end: 18vh;
   margin-block-end: 20dvh;
   color: var(--main-text);
 }
