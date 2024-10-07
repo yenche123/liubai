@@ -30,6 +30,8 @@ export const alipay_cfg = {
 3. 检查环境变量
 4. 部署 common- 开头的云函数
 5. 部署剩余的云函数
+6. 修改数据表，比如 Config 表
+7. 重启
 
 ## 开发日记
 
