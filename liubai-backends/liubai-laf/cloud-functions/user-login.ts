@@ -754,11 +754,6 @@ async function handle_email(
       code: emailCode,
     }
     const TemplateData = valTool.objToStr(templ_data)
-
-    console.log("TemplateID: ", TemplateID)
-    console.log("templ_data: ")
-    console.log(templ_data)
-
     const dataSent: LiuTencentSESParam = {
       to: [email],
       subject,

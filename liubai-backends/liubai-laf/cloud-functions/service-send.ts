@@ -105,12 +105,13 @@ export class LiuTencentSES {
         ReplyToAddresses: replyEmail,
         Template: param.Template,
       })
-      console.log("tencent ses send emails res: ")
-      console.log(res4)
 
       if(res4.MessageId) {
         return { code: "0000", data: res4 }
       }
+      console.warn("tencent ses sending emails probably failed")
+      console.log(res4)
+
     }
     catch(err) {
       console.warn("tencent ses send emails failed")
