@@ -32,6 +32,7 @@ export const alipay_cfg = {
 5. 部署剩余的云函数
 6. 修改数据表，比如 Config 表
 7. 重启
+8. 检查 IP 变化，修改各平台的 IP 许可名单
 
 ## 开发日记
 
