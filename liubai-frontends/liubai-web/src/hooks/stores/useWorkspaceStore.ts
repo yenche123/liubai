@@ -64,6 +64,15 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     return list
   }
 
+  const getPremium = (sub?: UserSubscription) =>{
+    if(!sub) return false
+    if(sub.isOn === "N") return false
+    if(sub.isLifelong) return true
+    const stamp = sub.expireStamp ?? 1
+    const now = time.getTime()
+    return stamp > now
+  }
+
   const setDataAboutMe = (opt: AboutMeOpt) => {
     userId.value = opt.userId
     token.value = opt.token
@@ -169,6 +178,7 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     mySpaceIds,
     userSubscription,
     isPremium,
+    getPremium,
     getStateList,
     getStatesNoInIndex,
     setDataAboutMe,
@@ -186,12 +196,3 @@ export const useWorkspaceStore = defineStore("workspace", () => {
 })
 
 export type WorkspaceStore = ReturnType<typeof useWorkspaceStore>
-
-function getPremium(sub?: UserSubscription) {
-  if(!sub) return false
-  if(sub.isOn === "N") return false
-  if(sub.isLifelong) return true
-  const stamp = sub.expireStamp ?? 1
-  const now = time.getTime()
-  return stamp > now
-}

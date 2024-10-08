@@ -10,23 +10,24 @@ import type {
   Param_PaymentOrder_A,
   Res_PO_CreateOrder,
 } from "~/requests/req-types"
-import type { LiuTimeout, SimpleObject } from "~/utils/basic/type-tool"
+import type { LiuTimeout } from "~/utils/basic/type-tool"
 import type { UserSubscription } from "~/types/types-cloud"
 import type { PageState } from "~/types/types-atom"
 import { pageStates } from "~/utils/atom"
 import { useNetwork } from "~/hooks/useVueUse"
 import liuUtil from "~/utils/liu-util"
-import { db } from "~/utils/db"
-import type { UserLocalTable } from "~/types/types-table"
 import cui from "~/components/custom-ui"
 import { useActiveSyncNum } from "~/hooks/useCommon"
 import { type RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
 import { showEmojiTip, showErrMsg } from "~/pages/level1/tools/show-msg"
 import liuApi from "~/utils/liu-api"
-import { buyViaAlipayWap, redirectForWxGzhOpenid } from "../../../utils/pay-tools"
+import { 
+  buyViaAlipayWap, 
+  storageMySubscription, 
+  redirectForWxGzhOpenid,
+} from "../../../utils/pay-tools"
 import { fetchUserSubscription } from "~/utils/cloud/tools/requests"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
-import usefulTool from "~/utils/basic/useful-tool"
 import { storeToRefs } from "pinia"
 
 let timeout1: LiuTimeout  // in order to avoid the view from always loading
@@ -281,9 +282,9 @@ async function getSubscriptionPlan(
   const param = { operateType: "info" }
   try {
     const res = await liuReq.request<Res_SubPlan_Info>(url, param)
-    console.log("getSubscriptionPlan res:")
-    console.log(res)
-    console.log(" ")
+    // console.log("getSubscriptionPlan res:")
+    // console.log(res)
+    // console.log(" ")
 
     if(res.code === "0000" && res.data) {
       scData.subPlanInfo = res.data
@@ -376,19 +377,7 @@ async function packUserSubscription(
 
   // to write into db
   if(!opt?.writeIntoDB) return
-  const wStore = useWorkspaceStore()
-  const userId = wStore.userId
-  if(!userId) return
-  const oldSub = liuUtil.toRawData(wStore.userSubscription)
-  const newSub = sub as unknown as SimpleObject
-  const isSame = usefulTool.isSameSimpleObject(oldSub ?? undefined, newSub)
-  if(isSame) return
-  const u: Partial<UserLocalTable> = {
-    subscription: sub,
-    updatedStamp: now,
-  }
-  await db.users.update(userId, u)
-  wStore.setSubscriptionAfterUpdatingDB(sub)
+  storageMySubscription(sub)
 }
 
 

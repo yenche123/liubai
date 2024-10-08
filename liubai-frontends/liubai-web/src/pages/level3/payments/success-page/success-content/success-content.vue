@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
-import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
+import { useSuccessContent } from "./tools/useSuccessContent";
 
 const { t } = useI18n()
 
@@ -10,7 +10,7 @@ const onTapBtn = () => {
   rr.router.push({ name: "subscription" })
 }
 
-const wStore = useWorkspaceStore()
+const { wStore } = useSuccessContent()
 
 </script>
 <template>
