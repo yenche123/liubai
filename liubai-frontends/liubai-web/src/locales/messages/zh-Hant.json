@@ -400,7 +400,7 @@
     "thread_deleted": "原動態已被刪除",
     "delete_tip2": "確定要删除嗎?",
     "delete_tip3": "注意: 留言被刪除後不支援復原",
-    "whatever": "請回覆我，而非點擊我（￣︶￣）↗",
+    "whatever": "請回覆我，而非按我（￣︶￣）↗",
     "esc": "退出"
   },
   "emoji": {
@@ -461,8 +461,8 @@
     "mobile_safari_1": "1. 輕觸底部「分享」按鈕",
     "ipad_safari_1": "1. 輕觸右上角「分享」按鈕",
     "mobile_safari_2": "2. 下划後，輕觸「加入主畫面」",
-    "desktop_safari_1": "1. 點擊右上角「分享」按鈕",
-    "desktop_safari_2": "2. 點擊「加入 Dock 中」",
+    "desktop_safari_1": "1. 按一下右上角「分享」按鈕",
+    "desktop_safari_2": "2. 按一下「加入 Dock 中」",
     "tip_1": "加到桌面只需三秒",
     "tip_2": "試用七天，感受絲滑體驗！",
     "tip_cancel": "先不要",
@@ -485,7 +485,7 @@
     "checking": "检查中..",
     "new_version_desc2": "新版本已下載完成，是否立即更新？",
     "no_new_version": "都很好！暫無新版本。",
-    "installing_tip": "正在加載新的版本，请稍後再來點擊更新。"
+    "installing_tip": "正在加載新的版本，请稍後再來點選更新。"
   },
   "index": {
     "inbox": "收件匣",

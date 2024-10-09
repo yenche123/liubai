@@ -72,7 +72,7 @@ function handleMainViewTapped(
 ) {
   const { route, router } = useRouteAndLiuRouter()
 
-  // 接收来自 page 的 tapMvStamp，當 tapMvStamp 變化時，代表有被點擊
+  // 接收来自 page 的 tapMvStamp，當 tapMvStamp 變化時，代表有被點選
   const tapMvStamp = inject(tapMainViewStampKey, ref(0))
   watch(tapMvStamp, (newV, oldV) => {
     if(newV <= 0) return
