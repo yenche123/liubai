@@ -83,7 +83,7 @@ export function useThreadList(
       loadList(ctx)
     }
     else if(type === "to_start") {
-      if(props.showTxt === "false") return
+      if(props.showTxt === "F") return
       loadList(ctx, true)
     }
   })
@@ -120,7 +120,7 @@ export function useThreadList(
       return false
     }
 
-    if(props.showTxt === "false") {
+    if(props.showTxt === "F") {
       return false
     }
     return true

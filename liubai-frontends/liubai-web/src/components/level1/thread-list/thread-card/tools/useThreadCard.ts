@@ -75,7 +75,7 @@ export function useThreadCard(
   }
 
   watch(() => props.showTxt, (newV) => {
-    if(newV !== "false") return
+    if(newV !== "F") return
     showMore.value = false
   })
 

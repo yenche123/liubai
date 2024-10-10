@@ -3,7 +3,7 @@ import type { TrueOrFalse } from "~/types/types-basic";
 import type { TlHasDataOpt } from "~/components/level1/thread-list/tools/types";
 
 export function useIndexContent() {
-  const showTxt = ref<TrueOrFalse>("true")
+  const showTxt = ref<TrueOrFalse>("T")
   const showTitle = ref(false)
   const calendarTitleKey = ref("")
   const onCalendarHasData = (opt?: TlHasDataOpt) => {
@@ -12,11 +12,11 @@ export function useIndexContent() {
   }
 
   onActivated(() => {
-    showTxt.value = "true"
+    showTxt.value = "T"
   })
 
   onDeactivated(() => {
-    showTxt.value = "false"
+    showTxt.value = "F"
   })
 
   return {

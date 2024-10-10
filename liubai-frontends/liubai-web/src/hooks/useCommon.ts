@@ -108,13 +108,13 @@ export function useAwakeNum(
 ) {
   const awakeNum = ref(0)
 
-  let showTxt = ref<TrueOrFalse | undefined>("true")
+  let showTxt = ref<TrueOrFalse | undefined>("T")
   if(props?.showTxt) {
     showTxt = toRef(props, "showTxt")
   }
 
   const syncNum = CloudEventBus.getSyncNum()
-  const isActivated = ref(showTxt.value === "true")
+  const isActivated = ref(showTxt.value === "T")
 
   onActivated(() => isActivated.value = true)
   onMounted(() => isActivated.value = true)
@@ -134,7 +134,7 @@ export function useAwakeNum(
     [oldV1, oldV2, oldV3],
   ) => {
     if(!newV2) return
-    if(newV3 === "false") return
+    if(newV3 === "F") return
 
     if(newV1 === 1 && newV2 === oldV2) {
       _go(newV1)

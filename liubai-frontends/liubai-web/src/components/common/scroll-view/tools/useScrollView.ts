@@ -182,7 +182,7 @@ function listenToViewChange(
 
   const showTxtRef = toRef(props, "showTxt")
   watch([isActivated, showTxtRef], ([newV1, newV2]) => {
-    const isShow = Boolean(newV2 !== "false")
+    const isShow = Boolean(newV2 !== "F")
     const newVisible = Boolean(newV1 && isShow)
     isVisible.value = newVisible
   })
