@@ -446,6 +446,7 @@
     "order_being_paid": "有人正在支付中..",
     "order_expired": "訂單已過期",
     "ready_to_pay": "準備支付..",
+    "paying": "支付中..",
     "unable_to_pay": "暫不支援購買會員，請稍後再試。",
     "renew": "續費",
     "refund_1": "退款已發起",

@@ -446,6 +446,7 @@
     "order_being_paid": "Someone is paying..",
     "order_expired": "Order Expired",
     "ready_to_pay": "Processing..",
+    "paying": "Paying..",
     "unable_to_pay": "It is unable to pay now. Please try again later.",
     "renew": "Renew",
     "refund_1": "Refund Initiated",

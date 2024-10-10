@@ -181,7 +181,7 @@ export async function buyViaAlipayWap(
     const e1 = vawData.expireStamp ?? 1
     const diff1 = e1 - now1
     if(diff1 > 0) {
-      location.href = vawData.wap_url
+      jumpToAlipayWap()
       return true
     }
   }
@@ -193,13 +193,8 @@ export async function buyViaAlipayWap(
   }
 
   // 3. fetch for wap_url
-  const url3 = APIs.PAYMENT_ORDER
-  const w3 = {
-    operateType: "alipay_wap",
-    order_id,
-  }
   cui.showLoading({ title_key: "payment.ready_to_pay" })
-  const res3 = await liuReq.request<Res_PO_AlipayWap>(url3, w3)
+  const res3 = await preloadAlipayWap(order_id)
   cui.hideLoading()
 
   console.log("buyViaAlipayWap res3: ")
@@ -208,13 +203,42 @@ export async function buyViaAlipayWap(
   // 4. get wap_url of Res_PO_AlipayWap
   const res4 = _handlePayResult(res3)
   if(!res4) return false
-  const data4 = res3.data as Res_PO_AlipayWap
 
   // 5. redirect to wap_url
-  vawData.wap_url = data4.wap_url
-  vawData.expireStamp = time.getLocalTime() + time.MINUTE
-  location.href = vawData.wap_url
+  jumpToAlipayWap()
   return true
+}
+
+function jumpToAlipayWap() {
+  const url = vawData.wap_url
+  if(!url) return
+  cui.showLoading({ title_key: "payment.paying" })
+  location.href = url
+  setTimeout(() => {
+    cui.hideLoading()
+  }, 1500)
+}
+
+export async function preloadAlipayWap(
+  order_id: string,
+) {
+  const url3 = APIs.PAYMENT_ORDER
+  const w3 = {
+    operateType: "alipay_wap",
+    order_id,
+  }
+  console.log("preloadAlipayWap.........")
+  const res3 = await liuReq.request<Res_PO_AlipayWap>(url3, w3)
+  console.log("preloadAlipayWap res3:")
+  console.log(res3)
+  const wap_url = res3.data?.wap_url
+  if(!wap_url) return res3
+
+  vawData.order_id = order_id
+  vawData.wap_url = wap_url
+  vawData.expireStamp = time.getLocalTime() + time.MINUTE
+
+  return res3
 }
 
 function _handlePayResult(

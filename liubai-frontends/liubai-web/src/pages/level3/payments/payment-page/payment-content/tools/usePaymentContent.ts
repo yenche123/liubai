@@ -16,6 +16,7 @@ import {
   buyViaAlipayWap,
   buyViaWxpayJSAPI, 
   getWxGzhOpenid, 
+  preloadAlipayWap, 
   redirectForWxGzhOpenid,
 } from "../../../utils/pay-tools";
 import { fetchOrder } from "~/requests/shared";
@@ -29,7 +30,6 @@ export function usePaymentContent() {
 
   const cha = inject(deviceChaKey)
   initPaymentContent(pcData, rr)
-
 
   const onTapWxpayJSAPI = useThrottleFn(() => {
     whenTapWxpayJSAPI(pcData, rr)
@@ -251,6 +251,14 @@ async function fetchOrderData(
     const res5 = await buyViaWxpayJSAPI(order_id, wx_gzh_openid)
     if(!res5) return
     rr.router.replace({ name: "payment-success" })
+    return
+  }
+
+  // 6. preload alipay wap if the user is in Alipay App
+  const cha = liuApi.getCharacteristic()
+  if(cha.isAlipay && cha.isMobile) {
+    preloadAlipayWap(order_id)
+    return
   }
   
 }
