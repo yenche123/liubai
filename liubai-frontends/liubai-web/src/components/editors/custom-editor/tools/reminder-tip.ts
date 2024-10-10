@@ -34,10 +34,11 @@ async function checkIfShowCannotRemind() {
   if(onceData.cannotRemindStamp) return
   await liuUtil.waitAFrame(true)
   const res = await cui.showModal({
-    title_key: "tip.tip",
+    title: "🔕",
     content_key: "tip.cannot_remind_you",
     showCancel: false,
-    confirm_key: "tip.got_it"
+    confirm_key: "tip.got_it",
+    isTitleEqualToEmoji: true,
   })
   if(res.confirm) {
     const now = time.getTime()
