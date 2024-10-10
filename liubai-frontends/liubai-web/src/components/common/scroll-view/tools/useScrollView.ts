@@ -31,7 +31,7 @@ import liuApi from "~/utils/liu-api";
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
 const MAGIC_NUM_1 = 500
-const MAGIC_NUM_2 = 120
+const MAGIC_NUM_2 = 500  // 当切换 view 视图（通常来自于路由切换）时，多少 ms 内的 onScrolling 更新自动忽略
 const MAX_RUN_TIMES = 5
 
 export function useScrollView(props: SvProps, emits: SvEmits) {
@@ -50,6 +50,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     sv,
     scrollPosition,
     lastToggleViewStamp,
+    isVisible: ref(true),
   }
 
   const { onScrolling } = listenToScroll(ctx)
@@ -102,6 +103,7 @@ function listenToViewChange(
     sv,
     scrollPosition,
     lastToggleViewStamp,
+    isVisible,
   } = ctx
 
   const _setScollPosition = (sp: number) => {
@@ -128,22 +130,16 @@ function listenToViewChange(
     return svv.scrollTop
   }
 
-  onActivated(async () => {
-    lastToggleViewStamp.value = time.getTime()
-    if(props.showTxt === "false") {
-      return
-    }
-
+  const _restorePosition = async () => {
     const sp = scrollPosition.value
+    // console.log("期望 sp: ", sp)
     if(!sp) return
     
     // 由于 v-show 的切换需要时间渲染到界面上
     // 所以加一层 nextTick 等待页面渲染完毕再恢复至上一次的位置
     // console.time("nextTick1")
     await nextTick()
-    // console.timeEnd("nextTick1")
-
-    // console.log("期望 sp: ", sp)
+    // console.timeEnd("nextTick1")    
     _setScollPosition(sp)
     // console.log("实际 sp1: ", _getScrollPosition())
 
@@ -160,16 +156,35 @@ function listenToViewChange(
 
       if(typeof sp2 === "undefined") break
       const diff = Math.abs(sp2 - sp)
-      if(diff < 5) {
+      if(diff < 11) {
         scrollPosition.value = sp2
         break
       }
     }
+  }
 
+  let isActivated = ref(false)
+  onActivated(() => {
+    lastToggleViewStamp.value = time.getTime()
+    isActivated.value = true
   })
 
   onDeactivated(() => {
     lastToggleViewStamp.value = time.getTime()
+    isActivated.value = false
+  })
+
+  watch(isVisible, (newV, oldV) => {
+    if(newV) {
+      _restorePosition()
+    }
+  })
+
+  const showTxtRef = toRef(props, "showTxt")
+  watch([isActivated, showTxtRef], ([newV1, newV2]) => {
+    const isShow = Boolean(newV2 !== "false")
+    const newVisible = Boolean(newV1 && isShow)
+    isVisible.value = newVisible
   })
 
 }
@@ -182,6 +197,7 @@ function listenToScroll(
     emits,
     sv,
     scrollPosition,
+    isVisible,
   } = ctx
 
   const proData = reactive<SvProvideInject>({
@@ -229,11 +245,19 @@ function listenToScroll(
     const _sv = sv.value
     if(!_sv) return
 
-    const lastViewStamp = ctx.lastToggleViewStamp.value
-    if(time.isWithinMillis(lastViewStamp, MAGIC_NUM_2)) return
-
     const isVertical = props.direction === "vertical"
     const sP = isVertical ? _sv.scrollTop : _sv.scrollLeft
+
+    const lastViewStamp = ctx.lastToggleViewStamp.value
+    if(time.isWithinMillis(lastViewStamp, MAGIC_NUM_2)) {
+      if(!sP) {
+        return
+      }
+    }
+
+    if(!isVisible.value) {
+      return
+    }
 
     const now = Date.now()
     if(lastScrollStamp + MIN_SCROLL_DURATION > now) {

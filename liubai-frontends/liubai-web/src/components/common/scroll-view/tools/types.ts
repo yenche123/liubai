@@ -52,6 +52,7 @@ export interface SvCtx {
   scrollPosition: Ref<number>
   sv: Readonly<ShallowRef<HTMLElement | null>>
   lastToggleViewStamp: Ref<number>
+  isVisible: Ref<boolean>
 }
 
 // 默认、下拉中、加载中、松开跑回去

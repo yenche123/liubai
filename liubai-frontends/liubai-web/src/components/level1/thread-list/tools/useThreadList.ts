@@ -34,6 +34,8 @@ import time from "~/utils/basic/time"
 import { preLoadCreateFirst, preLoadEditFirst } from "./pre-download"
 
 const SEC_15 = time.SECONED * 15
+const MIN_THREADS = 9      // 最少应该有的个数，若少于这个个数，checkList 会触发重新加载
+                               // 加载完成时 hasReachedBottom 会设置为 true
 
 export function useThreadList(
   props: TlProps,
@@ -82,6 +84,7 @@ export function useThreadList(
       loadList(ctx)
     }
     else if(type === "to_start") {
+      if(props.showTxt === "false") return
       loadList(ctx, true)
     }
   })
@@ -91,10 +94,8 @@ export function useThreadList(
   watch(pullRefreshNum, (newV) => {
     if(newV < 1) return
     if(isViewType(ctx, "PINNED")) return
-    // console.log("监听到了下拉刷新............")
     loadList(ctx, true)
   })
-
 
   // 2. 监听页面切换 / syncNum 变化
   const {
@@ -177,7 +178,6 @@ export function useThreadList(
 
   // 5. 获取滚动位置，当卡片被点击展开全文时
   // 恢复定位
-  
   const whenTapBriefing = async () => {
     if(!scrollPosition) return
     const sP1 = scrollPosition.value
@@ -206,7 +206,6 @@ function scrollTopAndUpdate(
       ctx.svBottomUp.value = { type: "pixel", pixel: 0 }
     }
   }
-  // console.log(`${ctx.props.viewType} ${ctx.props.tagId} scrollTopAndUpdate...`)
   loadList(ctx, true, cloud)
 }
 
@@ -219,7 +218,7 @@ function checkList(
   const { list } = ctx.tlData
 
   // 1. reload if list.length is less
-  if(list.length < 10) {
+  if(list.length < MIN_THREADS) {
     loadList(ctx, true, cloud)
     return
   }
@@ -271,7 +270,7 @@ async function loadList(
   let lastItemStamp = isInit ? undefined : tlData.lastItemStamp
 
   const cloudOpt: LoadCloudOpt = { 
-    startIndex: oldLength, 
+    startIndex: isInit ? 0 : oldLength, 
     threadShows: [],
   }
   let results: ThreadShow[] = []
@@ -341,7 +340,7 @@ async function loadList(
   }
 
   // 5. 小于一定数量的时候 表示已经触底
-  if(newLength < 6) {
+  if(newLength < MIN_THREADS) {
     tlData.hasReachedBottom = true
   }
 
@@ -425,7 +424,12 @@ async function loadAgain(
   const { tlData, props } = ctx
   const { startIndex } = opt2
   const theOne = tlData.list[startIndex]
-  if(startIndex && !theOne) return
+  if(startIndex && !theOne) {
+    if(!tlData.hasReachedBottom) {
+      tlData.hasReachedBottom = true
+    }
+    return
+  }
 
   // 2. ignore if viewType is not matched
   const vT = props.viewType
@@ -446,10 +450,7 @@ async function loadAgain(
   }
   else {
     results = await threadController.getList(opt1)
-  }
-
-  // console.log("loadAgain results: ")
-  // console.log(results)
+  }  
 
   const newList = tlUtil.threadShowsToList(results)
   const deltaLength = newList.length
@@ -464,7 +465,7 @@ async function loadAgain(
 
   handleLastItemStamp(vT, tlData)
 
-  if(hasMore || deltaLength >= 6) {
+  if(hasMore || deltaLength >= MIN_THREADS) {
     tlData.hasReachedBottom = false
   }
   else {
