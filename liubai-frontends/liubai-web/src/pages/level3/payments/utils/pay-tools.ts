@@ -216,7 +216,7 @@ function jumpToAlipayWap() {
   location.href = url
   setTimeout(() => {
     cui.hideLoading()
-  }, 1500)
+  }, 3 * time.SECONED)
 }
 
 export async function preloadAlipayWap(
