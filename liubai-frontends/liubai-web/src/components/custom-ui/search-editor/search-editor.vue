@@ -136,7 +136,7 @@ const { t } = useI18n()
 .se-bar {
   height: 70px;
   width: 100%;
-  padding: 10px 16px;
+  padding: 10px 4px 10px 16px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -144,7 +144,7 @@ const { t } = useI18n()
 }
 
 .se-input {
-  flex: 1;
+  width: calc(100% - 48px);
   font-size: var(--desc-font);
   color: var(--main-normal);
   line-height: 1.75;
