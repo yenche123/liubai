@@ -7,7 +7,6 @@ import type { KanbanStateChange } from "~/hooks/stores/useGlobalStateStore";
 import valTool from "~/utils/basic/val-tool";
 import type { TlData, TlEmits, TlProps } from "./types";
 import type { ThreadChangedFrom, WhyThreadChange } from "~/types/types-atom";
-import { handleLastItemStamp } from "./useTLCommon";
 import { storeToRefs } from "pinia";
 import { watch } from "vue";
 import { filterForCalendar } from "./handle-calendar";
@@ -180,7 +179,7 @@ function handleNewList(
 
   if(tlData.lastItemStamp) return
   // 处理 lastItemStamp 为 0 的情况
-  handleLastItemStamp(vT, tlData)
+  tlUtil.handleLastItemStamp(vT, tlData)
 }
 
 
@@ -240,14 +239,14 @@ function handleUpdatedList(
   // 1. 检查是否有无需监听变化的修改
   const NO_ACTIONS: WhyThreadChange[] = [
     "float_up", 
-    "undo_float_up"
+    "undo_float_up",
   ]
   const isInNoActions = NO_ACTIONS.includes(whyChange)
   if(isInNoActions) return
 
   // 2. 如果当前列表为 "置顶"，另外处理
   if(vT === "PINNED") {
-    handleUpdateForPinnedList(tlData, updatedList)
+    _handleUpdateForPinnedList(tlData, updatedList)
     return
   }
 
@@ -290,6 +289,7 @@ function handleUpdatedList(
   // 设法把这些 thread 加入到列表里
   if(vT === "INDEX" && whyChange === "pin") {
     _handleIndexListWhenPin(tlData, newList, changeFrom)
+    return
   }
 
 }
@@ -347,7 +347,7 @@ function _handleIndexListForUnpin(
 }
 
 // 有动态更新时，特别处理置顶列表
-function handleUpdateForPinnedList(
+function _handleUpdateForPinnedList(
   tlData: TlData,
   updatedList: ThreadShow[],
 ) {
@@ -360,39 +360,26 @@ function handleUpdateForPinnedList(
     const v = list[i].thread
 
     let idx = -1
-    const inPin = pinList.find((v1, i1) => {
+    const _findItem = (v1: ThreadShow, i1: number) => {
       if(v._id === v1._id) {
         idx = i1
         return true
       }
-
-      // 若现有的动态两个 id 一致，并且发生变化的动态的 first_id 也与其一致
       if(v._id === v.first_id && v1.first_id === v.first_id) {
         idx = i1
         return true
       }
       return false
-    })
+    }
+
+    const inPin = pinList.find(_findItem)
     if(inPin) {
       list[i].thread = inPin
       pinList.splice(idx, 1)
       continue
     }
 
-    const inUnpin = unpinList.find((v1, i1) => {
-      if(v._id === v1._id) {
-        idx = i1
-        return true
-      }
-
-      // 若现有的动态两个 id 一致，并且发生变化的动态的 first_id 也与其一致
-      if(v._id === v.first_id && v1.first_id === v.first_id) {
-        idx = i1
-        return true
-      }
-      return false
-    })
-
+    const inUnpin = unpinList.find(_findItem)
     if(inUnpin) {
       list.splice(i, 1)
       i--

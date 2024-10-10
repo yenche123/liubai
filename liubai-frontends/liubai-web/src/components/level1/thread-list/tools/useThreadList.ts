@@ -13,7 +13,6 @@ import {
   svElementKey,
   svPullRefreshKey,
 } from "~/utils/provide-keys";
-import { handleLastItemStamp } from "./useTLCommon"
 import tlUtil from "./tl-util"
 import typeCheck from "~/utils/basic/type-check"
 import stateController from "~/utils/controllers/state-controller/state-controller"
@@ -336,7 +335,7 @@ async function loadList(
 
   // 4. 处理 lastItemStamp
   if(newLength) {
-    handleLastItemStamp(vT, tlData)
+    tlUtil.handleLastItemStamp(vT, tlData)
   }
 
   // 5. 小于一定数量的时候 表示已经触底
@@ -463,7 +462,7 @@ async function loadAgain(
     tlData.list[i] = newList[i - startIndex]
   }
 
-  handleLastItemStamp(vT, tlData)
+  tlUtil.handleLastItemStamp(vT, tlData)
 
   if(hasMore || deltaLength >= MIN_THREADS) {
     tlData.hasReachedBottom = false
