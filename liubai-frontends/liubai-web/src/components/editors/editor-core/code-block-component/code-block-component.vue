@@ -127,7 +127,7 @@ export default {
       if(!text) return
       liuApi.copyToClipboard(text)
       showCopied.value = true
-      if(copiedTimeout) clearInterval(copiedTimeout)
+      if(copiedTimeout) clearTimeout(copiedTimeout)
       copiedTimeout = setTimeout(() => {
         copiedTimeout = undefined
         showCopied.value = false

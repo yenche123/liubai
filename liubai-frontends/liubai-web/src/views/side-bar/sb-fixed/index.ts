@@ -59,7 +59,7 @@ function toOpen() {
   if(s === "opening") return
 
   sbfData.state = "opening"
-  if(closeTimeout) clearInterval(closeTimeout)
+  if(closeTimeout) clearTimeout(closeTimeout)
 
   const stamp1 = time.getLocalTime()
 
@@ -118,7 +118,7 @@ function toClose() {
   if(s === "closing") return
 
   sbfData.state = "closing"
-  if(openTimeout) clearInterval(openTimeout)
+  if(openTimeout) clearTimeout(openTimeout)
 
   const foo2 = (newDuration: number) => {
     sbfData.bgOpacity = 0
