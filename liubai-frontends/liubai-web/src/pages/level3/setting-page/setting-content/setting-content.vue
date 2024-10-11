@@ -544,10 +544,10 @@ const iconColor = "var(--main-normal)"
   margin-block-end: 6px;
   overflow: hidden;
   padding: 10px 10px;
-}
 
-.sc-bar::before {
-  border-radius: 8px;
+  &::before {
+    border-radius: 8px;
+  }
 }
 
 .scb-hd {

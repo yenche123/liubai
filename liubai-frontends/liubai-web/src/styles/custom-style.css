@@ -55,6 +55,38 @@
   background-color: var(--bg-color);
 }
 
+/************************ premium **********************/
+.liu-premium {
+  font-size: var(--state-font);
+  letter-spacing: 1px;
+  padding: 2px 10px;
+  position: relative;
+  color: var(--primary-color);
+  border-radius: 24px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.liu-premium::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-color);
+  opacity: .09;
+}
+
+.liu-premium-text {
+  margin-inline-start: 4px;
+  font-weight: 200;
+  background: linear-gradient(45deg, var(--inverse-primary), var(--primary-color) 70%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 
 /********* 仅在有鼠标的设备上生效 *********/
 @media(hover: hover) {

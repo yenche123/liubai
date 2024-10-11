@@ -65,7 +65,7 @@ const color_selected = "var(--main-normal)"
       @aftertap="toClosePopup"
     >
       <div class="sb-icon-container">
-        <SvgIcon class="sb-icon" 
+        <SvgIcon class="sb-icon" style="padding-block-end: 3px"
           :name="state === 'index' ? 'home_selected' : 'home'" 
           :color="state === 'index' ? color_selected : color"
         ></SvgIcon>
@@ -86,7 +86,7 @@ const color_selected = "var(--main-normal)"
       @aftertap="toClosePopup"
     >
      <div class="sb-icon-container">
-        <SvgIcon class="sb-icon" 
+        <SvgIcon class="sb-icon" style="padding-block-end: 4px"
           :name="state === 'favorite' ? 'star_selected' : 'star'" 
           :color="state === 'favorite' ? color_selected : color"
         ></SvgIcon>
@@ -107,7 +107,7 @@ const color_selected = "var(--main-normal)"
       :tabindex="tabindex"
     >
       <div class="sb-icon-container">
-        <SvgIcon class="sb-icon" 
+        <SvgIcon class="sb-icon" style="padding-block-end: 3px"
           name="tag" 
           :color="state === 'tags' ? color_selected : color"
         ></SvgIcon>
