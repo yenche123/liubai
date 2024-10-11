@@ -21,6 +21,7 @@ import {
 import type {
   BulkUpdateAtom_UploadTask
 } from "~/utils/cloud/upload-tasks/tools/types"
+import { useSystemStore } from "~/hooks/stores/useSystemStore";
 
 const MIN_5 = time.MINUTE * 5
 const MIN_30 = time.MINUTE * 30
@@ -28,6 +29,7 @@ const MIN_30 = time.MINUTE * 30
 export function initCycle() {
 
   useEnterIntoApp(async () => {
+    await initHtmlLang()
 
     // 等个 2500 ms 再去处理这些背景操作
     await valTool.waitMilli(2500)
@@ -38,6 +40,13 @@ export function initCycle() {
 
   })
 
+}
+
+async function initHtmlLang() {
+  const sStore = useSystemStore()
+  const lang = sStore.supported_lang
+  const html = document.querySelector("html")
+  html?.setAttribute("lang", lang)
 }
 
 // 将 DELETED 的 contents 都给删除

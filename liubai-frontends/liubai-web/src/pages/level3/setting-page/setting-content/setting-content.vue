@@ -452,7 +452,7 @@ const iconColor = "var(--main-normal)"
     </div>
 
     <div class="liu-no-user-select sc-footer">
-      <span>Powered by {{appName}} @ {{ version }}</span>
+      <span translate="no">Powered by {{appName}} @ {{ version }}</span>
     </div>
 
   </div>

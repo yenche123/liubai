@@ -158,6 +158,8 @@ function toSetSupportedLang(
   else {
     supported_lang.value = lang
   }
+  const html = document.querySelector("html")
+  html?.setAttribute("lang", supported_lang.value)
 }
 
 
