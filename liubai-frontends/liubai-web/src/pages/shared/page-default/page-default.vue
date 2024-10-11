@@ -15,6 +15,10 @@ defineProps({
   topVirtual: {
     type: Boolean,
     default: true,
+  },
+  hasTopNavi: {
+    type: Boolean,
+    default: true,
   }
 })
 
@@ -24,7 +28,7 @@ defineProps({
 
   <main-view>
     <scroll-view>
-      <navi-virtual></navi-virtual>
+      <navi-virtual v-if="hasTopNavi"></navi-virtual>
       <div class="liu-mc-container">
         <div class="liu-tc-virtual" v-if="topVirtual"></div>
         <div class="liu-mc-box">
@@ -32,7 +36,7 @@ defineProps({
         </div>
       </div>
     </scroll-view>
-    <navi-bar :title="t(titleKey)"></navi-bar>
+    <navi-bar v-if="hasTopNavi" :title="t(titleKey)"></navi-bar>
   </main-view>
 
 </template>

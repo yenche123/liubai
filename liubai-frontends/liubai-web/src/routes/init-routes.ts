@@ -24,6 +24,7 @@ const PaymentSuccessPage = () => import("../pages/level3/payments/success-page/s
 const A2hsPage = () => import("../pages/level3/a2hs-page/a2hs-page.vue")
 const ConnectWechat = () => import("../pages/connectors/connect-wechat/connect-wechat.vue")
 const PaymentPage = () => import("../pages/level3/payments/payment-page/payment-page.vue")
+const MinePage = () => import("../pages/level2/mine-page/mine-page.vue")
 
 export const routes: Array<RouteRecordRaw> = [
   /*************** 公共页面（不区分工作区） ***************/
@@ -219,6 +220,17 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/mine",
+    components: {
+      default: MinePage,
+      LeftSidebar,
+    },
+    name: "mine",
+    meta: {
+      hasViceView: false,
+    }
+  },
+  {
     path: "/settings",
     components: {
       default: SettingPage,
@@ -227,6 +239,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "setting",
     meta: {
       inSetting: true,
+      hasViceView: false,
     }
   },
   {
@@ -342,6 +355,17 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/w/:workspaceId(\\w{10,})/mine",
+    components: {
+      default: MinePage,
+      LeftSidebar,
+    },
+    name: "collaborative-mine",
+    meta: {
+      hasViceView: false,
+    },
+  },
+  {
     path: "/w/:workspaceId(\\w{10,})/settings",
     components: {
       default: SettingPage,
@@ -350,6 +374,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "collaborative-setting",
     meta: {
       inSetting: true,
+      hasViceView: false,
     }
   },
   {
