@@ -197,7 +197,7 @@ function _toOpen() {
   toggleTimeout = setTimeout(() => {
     cpData.show = true
     toggleTimeout = undefined
-  }, 16)
+  }, cfg.frame_duration)
 }
 
 function _toClose() {
