@@ -40,6 +40,8 @@ const ios_ipad = Boolean(cha.isIOS || cha.isIPadOS)
       </keep-alive>
     </router-view>
     <router-view v-else></router-view>
+
+    <!-- TODO: router-view 底部导航栏 -->
     
     <custom-ui />
     <who-are-you />

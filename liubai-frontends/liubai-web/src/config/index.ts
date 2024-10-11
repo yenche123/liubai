@@ -78,4 +78,9 @@ export default {
         // 举例: 若过去 confirm_min_duration 天内已点击接受，就拒绝弹窗
   },
 
+  breakpoint_max_size: {
+    mobile: 590,
+    tablet: 1090,
+  },
+
 }

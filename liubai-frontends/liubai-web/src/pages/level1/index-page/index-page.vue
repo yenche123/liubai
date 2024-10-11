@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import MainView from "~/views/main-view/main-view.vue"
+import MainView from "~/views/main-view/main-view.vue";
 import ViceView from "~/views/vice-view/vice-view.vue";
 import { useMainVice } from "~/hooks/useMainVice";
-import ScrollView from "~/components/common/scroll-view/scroll-view.vue"
-import IndexContent from "./index-content/index-content.vue"
+import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
+import IndexContent from "./index-content/index-content.vue";
 import NaviAuto from "~/components/common/navi-auto/navi-auto.vue";
 import NaviAutoVirtual from "~/components/common/navi-auto-virtual/navi-auto-virtual.vue";
 import { useIndexPage } from "./tools/useIndexPage";
