@@ -497,12 +497,10 @@ async function preDownloadContents(
 
   // 3. load created first
   if(justLogged) {
-    console.log("刚登录，优先加载最近发表的动态......")
     preLoadCreateFirst(spaceId)
     return
   }
 
   // 4. load edit first
-  console.log("去优先加载最近更新的动态......")
   preLoadEditFirst(spaceId, localPf.loadEditStamp)
 }

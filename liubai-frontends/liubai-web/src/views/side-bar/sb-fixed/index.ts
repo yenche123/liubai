@@ -61,6 +61,8 @@ function toOpen() {
   sbfData.state = "opening"
   if(closeTimeout) clearInterval(closeTimeout)
 
+  const stamp1 = time.getLocalTime()
+
   // 第 3 步: 设置完全开启后的最终态
   const foo3 = (newDuration: number) => {
     sbfData.bgOpacity = 1
@@ -73,6 +75,9 @@ function toOpen() {
       sbfData.bgOpacity = 1
       sbfData.distance = "0"
     }, newDuration + cfg.frame_duration)
+
+    const stamp2 = time.getLocalTime()
+    console.log("toOpen consumed: ", stamp2 - stamp1)
   }
 
   // 第 2 步: 判别过渡时长
@@ -100,13 +105,9 @@ function toOpen() {
   const foo1 = () => {
     if(!sbfData.enable) {
       sbfData.enable = true
-      openTimeout = setTimeout(() => {
-        foo2()
-      }, cfg.frame_duration)
     }
-    else {
-      foo2()
-    }
+    console.log("call foo2 directly")
+    foo2()
   }
 
   foo1()  
