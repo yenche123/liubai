@@ -11,6 +11,7 @@ import {
   cancelListenKeyboard 
 } from "../../tools/listen-keyboard"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
+import cfg from "~/config"
 
 let _success: TextEditorResolver | undefined
 let _resolve: TextEditorResolver | undefined
@@ -63,7 +64,7 @@ const _open = () => {
   toggleTimeout = setTimeout(() => {
     show.value = true
     toListenKeyboard({ whenKeyUp, data: teData })
-  }, 16)
+  }, cfg.frame_duration)
 }
 
 const _close = () => {

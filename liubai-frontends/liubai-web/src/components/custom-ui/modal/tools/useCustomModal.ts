@@ -12,6 +12,7 @@ import type {
   ModalResolver,
 } from "./types"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
+import cfg from "~/config"
 
 let _success: ModalResolver | undefined
 let _resolve: ModalResolver | undefined
@@ -44,8 +45,7 @@ function _open() {
     show.value = true
     toListenEnterKey(onTapConfirm)
     toListenEscKeyUp(onTapCancel)
-  }, 16)
-  
+  }, cfg.frame_duration)
 }
 
 function _close() {

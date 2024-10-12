@@ -19,4 +19,5 @@
     }
   },
   "include": ["cloud-functions/**/*.ts", "cloud-functions/**/*.d.ts", "types"],
+  "exclude": ["node_modules/**"]
 }
