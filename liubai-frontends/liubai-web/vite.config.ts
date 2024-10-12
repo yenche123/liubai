@@ -1,6 +1,7 @@
 import { 
   defineConfig, 
   loadEnv,
+  type PluginOption,
   type UserConfig,
 } from 'vite'
 import { resolve } from "path"
@@ -71,8 +72,8 @@ const vitePlugins: UserConfig['plugins'] = [
   // visualize the result of building
   visualizer({
     filename: "analysis.html", // 文件名称
-    title: "Project Building Analysis",
-  }),
+    title: "Liubai Frontend Analysis",
+  }) as unknown as PluginOption,
 ]
 
 // https://vitejs.dev/config/
