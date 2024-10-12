@@ -47,9 +47,16 @@ function _step2() {
 
 function _step3() {
   timeout = setTimeout(() => {
-    transition.value = 9000
+    transition.value = 7000
     number.value = 99
+    _step4()
   }, 1500)
+}
+
+function _step4() {
+  timeout = setTimeout(() => {
+    hideGlobalLoading()
+  }, 7000)
 }
 
 
