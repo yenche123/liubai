@@ -217,7 +217,6 @@ async function organizeAtom(task: UploadTaskLocalTable) {
     collection,
   } = await getRawData(task)
 
-  
   const { uploadTask: ut, _id: taskId } = task
   let isOK = false
   const atom: SyncSetAtom = { 

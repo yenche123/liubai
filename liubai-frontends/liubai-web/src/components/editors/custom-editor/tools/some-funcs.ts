@@ -1,7 +1,7 @@
-import type { CeData } from "./types"
+import { defaultData, type CeData } from "./types"
 import type { ContentLocalTable } from "~/types/types-table"
 import type { LiuRemindMe } from "~/types/types-atom"
-
+import time from "~/utils/basic/time"
 
 // 从 thread 中判断 "xx 之后提醒我" 这个值怎么转成确切时间点
 export function getRemindMeFromThread(
@@ -43,4 +43,23 @@ export function checkCanSubmit(
   let newCanSubmit = Boolean(imgLength) || Boolean(text) || Boolean(fileLength)
   newCanSubmit = newCanSubmit || Boolean(title)
   ceData.canSubmit = newCanSubmit
-} 
+}
+
+// reset but keep editorContent
+export function resetBasicCeData(
+  ceData: CeData,
+) {
+  ceData.lastLockStamp  = time.getTime()
+  delete ceData.draftId
+  delete ceData.threadEdited
+  ceData.visScope = defaultData.visScope
+  ceData.tagIds = []
+  delete ceData.title
+  delete ceData.whenStamp
+  delete ceData.remindMe
+  delete ceData.images
+  delete ceData.files
+  delete ceData.lastEditStamp
+  delete ceData.stateId
+  ceData.canSubmit = false
+}

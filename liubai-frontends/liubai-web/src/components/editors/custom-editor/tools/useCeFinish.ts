@@ -4,7 +4,7 @@ import type { TipTapEditor } from "~/types/types-editor"
 import type { ContentLocalTable } from "~/types/types-table";
 import ider from "~/utils/basic/ider";
 import localCache from "~/utils/system/local-cache";
-import { defaultData, type CeData, type CeEmits } from "./types"
+import { type CeData, type CeEmits } from "./types"
 import time from "~/utils/basic/time";
 import transferUtil from "~/utils/transfer-util";
 import liuUtil from "~/utils/liu-util";
@@ -16,6 +16,7 @@ import { getTagIdsParents } from "~/utils/system/tag-related";
 import type { SpaceType } from "~/types/types-basic";
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 import liuConsole from "~/utils/debug/liu-console";
+import { resetBasicCeData } from "./some-funcs";
 
 // 本文件处理发表的逻辑
 
@@ -147,21 +148,8 @@ function _resetState(
   ctx: CepContext
 ) {
   const { ceData } = ctx
-
-  ceData.lastLockStamp = time.getTime()
-  delete ceData.draftId
-  delete ceData.threadEdited
-  ceData.visScope = defaultData.visScope
-  ceData.tagIds = []
-  delete ceData.title
-  delete ceData.whenStamp
-  delete ceData.remindMe
-  delete ceData.images
-  delete ceData.files
+  resetBasicCeData(ceData)
   delete ceData.editorContent
-  delete ceData.lastEditStamp
-
-  ceData.canSubmit = false
 }
 
 // reset after updating
@@ -217,6 +205,7 @@ function _getThreadData(
     updatedStamp: now,
     editedStamp: now,
     tagIds,
+    stateId: ceData.stateId,
     tagSearched,
     search_title,
     search_other,

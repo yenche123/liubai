@@ -15,6 +15,7 @@ export interface CeData {
   images?: LiuImageStore[]
   files?: LiuFileStore[]
   tagIds: string[]
+  stateId?: string
   editorContent?: EditorCoreContent
   lastTagChangeStamp?: number
   lastLockStamp?: number     // 锁定时间戳，避免去存储 draft

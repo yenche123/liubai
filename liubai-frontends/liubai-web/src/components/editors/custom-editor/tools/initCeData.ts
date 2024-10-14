@@ -18,6 +18,7 @@ import {
   getRemindMeFromThread, 
   checkIfEditorHasData,
   checkCanSubmit,
+  resetBasicCeData,
 } from "./some-funcs"
 import liuEnv from "~/utils/liu-env"
 import type { 
@@ -527,17 +528,8 @@ async function resetFromCloud(
 
   // 5. reset all
   console.warn("reset all")
-  ceData.lastLockStamp  = time.getTime()
-  ceData.visScope = defaultData.visScope
-  ceData.tagIds = []
-  delete ceData.title
-  delete ceData.whenStamp
-  delete ceData.remindMe
-  delete ceData.images
-  delete ceData.files
-  
+  resetBasicCeData(ceData)
   setEditorContent(ctx)
-  ceData.canSubmit = false
 }
 
 
