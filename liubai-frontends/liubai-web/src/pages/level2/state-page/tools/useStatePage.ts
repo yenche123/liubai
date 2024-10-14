@@ -199,6 +199,7 @@ function listenThreadShowChanged(
     "float_up",
     "undo_float_up",
     "edit",
+    "new_thread",
   ]
 
   // 内部改变的时间戳

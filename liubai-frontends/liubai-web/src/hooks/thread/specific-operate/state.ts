@@ -12,7 +12,6 @@ import type {
   LiuStateConfig, 
   LiuAtomState,
 } from "~/types/types-atom"
-import stateController from "~/utils/controllers/state-controller/state-controller"
 import { i18n } from "~/locales"
 import { mapStateColor } from "~/config/state-color"
 import cfg from "~/config"
@@ -211,6 +210,18 @@ export async function setNewStateForThread(
   return true
 }
 
+// triggered by custom-editor
+export async function setStateFromThreadEditor(
+  thread: ThreadShow,
+) {
+  const wStore = useWorkspaceStore()
+  const workspace_id = await handleWorkspace(wStore, thread)
+  if(!workspace_id) return
+
+  cloudOp.saveWorkspaceToCloud(workspace_id)
+  
+  return true
+}
 
 async function restoreStateCfg(
   wStore: WorkspaceStore,

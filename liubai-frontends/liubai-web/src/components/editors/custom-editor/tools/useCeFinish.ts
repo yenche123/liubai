@@ -17,6 +17,7 @@ import type { SpaceType } from "~/types/types-basic";
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 import liuConsole from "~/utils/debug/liu-console";
 import { resetBasicCeData } from "./some-funcs";
+import { setStateFromThreadEditor } from "~/hooks/thread/specific-operate/state";
 
 // 本文件处理发表的逻辑
 
@@ -113,6 +114,9 @@ async function releaseAsync(
 
   // 3. notify other components
   const threadShows = await equipThreads([newThread])
+  if(newThread.stateId) {
+    await setStateFromThreadEditor(threadShows[0])
+  }
   ctx.threadShowStore.setNewThreadShows(threadShows)
 
   // 4. ignore if it's a local thread
@@ -270,6 +274,9 @@ async function toUpdate(ctx: CepContext) {
   const theThread = await localReq.getContentById(threadId)
   if(!theThread) return
   const threadShows = await equipThreads([theThread])
+  if(oldContent.stateId !== theThread.stateId) {
+    await setStateFromThreadEditor(threadShows[0])
+  }
   ctx.threadShowStore.setUpdatedThreadShows(threadShows, "edit")
 
   // 5. emits 到页面

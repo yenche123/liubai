@@ -163,7 +163,7 @@ export type ThreadOutterUndo = "undo_collect" | "undo_emoji" | "undo_delete"
   | "undo_state" | "undo_pin" | "undo_float_up"
 
 export type WhyThreadChange = ThreadInnerOperation | ThreadOutterOperation
-  | ThreadInnerUndo | ThreadOutterUndo | ""
+  | ThreadInnerUndo | ThreadOutterUndo | "new_thread" | ""
 
 // 当动态被“更新”时，使用 changeFrom 变量得知从哪里发起的改变
 export type ThreadChangedFrom = "list" | "detail"

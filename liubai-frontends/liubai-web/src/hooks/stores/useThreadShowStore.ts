@@ -23,7 +23,7 @@ export const useThreadShowStore = defineStore("threadShow", () => {
   const changeFrom = shallowRef<ThreadChangedFrom | undefined>()
 
   const setNewThreadShows = (list: ThreadShow[]) => {
-    whyChange.value = ""
+    whyChange.value = "new_thread"
     newThreadShows.value = list
     updatedThreadShows.value = []
   }
