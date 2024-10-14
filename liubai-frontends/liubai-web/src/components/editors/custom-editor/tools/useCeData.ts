@@ -446,9 +446,9 @@ async function toSave(ctx: CesCtx) {
     stateId: ceData.stateId,
   }
 
-  console.log("去本地存储 draft.........")
-  console.log(draft)
-  console.log(" ")
+  // console.log("去本地存储 draft.........")
+  // console.log(draft)
+  // console.log(" ")
 
   const res = await localReq.setDraft(draft)
   if(!ceData.draftId && res) ceData.draftId = res as string

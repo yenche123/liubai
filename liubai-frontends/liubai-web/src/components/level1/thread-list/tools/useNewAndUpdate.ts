@@ -142,10 +142,9 @@ function handleNewList(
   const { tlData, props } = ctx
   const { tagId, stateId, viewType: vT } = props
 
-  console.log("handleNewList vT: ", vT)
-  console.log(newList)
-  console.log(" ")
-
+  // console.log("handleNewList vT: ", vT)
+  // console.log(newList)
+  // console.log(" ")
 
   const myList = newList.filter(v => {
     const { tagSearched = [], oState } = v
@@ -158,6 +157,16 @@ function handleNewList(
     if(vT === "TAG") return tagSearched.includes(tagId)
     if(vT === "FAVORITE") return v.myFavorite
     if(vT === "PINNED") return Boolean(v.pinStamp)
+
+    // check out stateShow.showInIndex if we're in INDEX or CALENDAR
+    if(vT === "INDEX" || vT === "CALENDAR") {
+      if(v.stateId && v.stateShow) {
+        if(v.stateShow.showInIndex === false) {
+          return false
+        }
+      }
+    }
+
     if(vT === "CALENDAR") return Boolean(v.calendarStamp)
     if(vT === "STATE") {
       if(!v.stateId) return false

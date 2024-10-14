@@ -79,7 +79,8 @@ class LocalToCloud {
 
   private static async toTrigger() {
 
-    // lastStartToUpload 只是避免队列正在执行、重复触发队列的问题
+    // 1. If the queue is currently executing, check if it has timed out. 
+    //    If it hasn't timed out, ignore this trigger
     const lstu = this.lastStartToUpload
     if(lstu) {
       if(time.isWithinMillis(lstu, MIN_5)) {
@@ -88,9 +89,20 @@ class LocalToCloud {
       this.stopUploadTasks()
     }
 
+    // 2. start to handle tasks
     this.lastStartToUpload = time.getTime()
-    const res = await handleUploadTasks()
+    const res2 = await handleUploadTasks()
     this.lastStartToUpload = undefined
+
+    // 3. add more tasks after handleUploadTasks
+    if(res2.length < 1) return
+    const _this = this
+    res2.forEach(v => {
+      console.warn("add more task!")
+      console.log(v)
+      _this.addTask(v, { speed: "slow" })
+    })
+
   }
 
   /** add a task into local db */

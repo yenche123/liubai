@@ -1,3 +1,4 @@
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import type { 
   CollectionLocalTable, 
   ContentLocalTable, 
@@ -7,6 +8,8 @@ import type {
   WorkspaceLocalTable,
 } from "~/types/types-table"
 import { db } from "~/utils/db"
+import { type UploadTaskParam } from "../../tools/types"
+import time from "~/utils/basic/time"
 
 
 async function _handle_shared(
@@ -81,6 +84,9 @@ async function handle_new_contentIds(
 ) {
 
   // 1. checking out workspace
+  const wStore = useWorkspaceStore()
+  const moreTasks: UploadTaskParam[] = []
+  let newSpaces: WorkspaceLocalTable[] = []
   const _filterWorkspace = (item: WorkspaceLocalTable) => {
     const sc = item.stateConfig
     if(!sc) return false
@@ -100,18 +106,44 @@ async function handle_new_contentIds(
     tmpList = tmpList.map(v1 => {
       let contentIds = v1.contentIds
       if(!contentIds) return v1
+
+      let hasChanged = false
       contentIds = contentIds.map(v2 => {
         const idx2 = first_ids.indexOf(v2)
-        if(idx2 >= 0) return new_ids[idx2]
+        if(idx2 >= 0) {
+          hasChanged = true
+          return new_ids[idx2]
+        }
         return v2
       })
-      v1.contentIds = contentIds
+      if(hasChanged) {
+        v1.contentIds = contentIds
+        v1.updatedStamp = time.getTime()
+      }
       return v1
     })
     sc.stateList = tmpList
+    sc.updatedStamp = time.getTime()
     item.stateConfig = sc
+
+    const arg1: UploadTaskParam = {
+      uploadTask: "workspace-state_config",
+      target_id: item._id,
+      operateStamp: time.getTime(),
+    }
+    moreTasks.push(arg1)
+    newSpaces.push(item)
   })
   // console.log("handle_new_contentIds workspace res1: ", res1)
+
+  // 1.2 update workspace store
+  const currentSpaceId = wStore.spaceId
+  if(currentSpaceId && res1 > 0) {
+    const tmp1_2 = newSpaces.find(v => v._id === currentSpaceId)
+    if(tmp1_2) {
+      wStore.setStateConfig(tmp1_2.stateConfig)
+    }
+  }
 
   // 2. checking out content
   const _filterContentDraft = (item: ContentLocalTable | DraftLocalTable) => {
@@ -167,6 +199,8 @@ async function handle_new_contentIds(
 
   // 5. checking out shared func
   await _handle_shared(first_ids, new_ids, "contents")
+
+  return moreTasks
 }
 
 async function handle_new_collectionIds(
