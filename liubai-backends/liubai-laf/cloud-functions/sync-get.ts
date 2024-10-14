@@ -774,6 +774,7 @@ function getSharedData_6(
     whenStamp: d.whenStamp,
     remindMe: d.remindMe,
     tagIds: d.tagIds,
+    stateId: d.stateId,
     editedStamp: d.editedStamp,
   }
 

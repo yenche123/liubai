@@ -896,6 +896,7 @@ export interface LiuUploadDraft extends LiuUploadBase {
   whenStamp?: number
   remindMe?: LiuRemindMe
   tagIds?: string[]
+  stateId?: string
 }
 
 export interface LiuUploadMember {
@@ -1168,6 +1169,7 @@ export interface Table_Draft extends BaseTable {
   whenStamp?: number
   remindMe?: LiuRemindMe
   tagIds?: string[]
+  stateId?: string
   editedStamp: number       // 草稿被用户实际编辑的时间戳
 }
 

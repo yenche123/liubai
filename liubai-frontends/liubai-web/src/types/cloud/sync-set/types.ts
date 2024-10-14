@@ -85,6 +85,7 @@ export interface LiuUploadDraft extends LiuUploadBase {
   whenStamp?: number
   remindMe?: LiuRemindMe
   tagIds?: string[]
+  stateId?: string
 }
 
 export interface LiuUploadMember {

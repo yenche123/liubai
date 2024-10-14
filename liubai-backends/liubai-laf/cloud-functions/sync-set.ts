@@ -1535,6 +1535,7 @@ async function toDraftSet(
     whenStamp: Sch_Opt_Num,
     remindMe: vbot.optional(Sch_LiuRemindMe),
     tagIds: sch_opt_arr(Sch_Id),
+    stateId: Sch_Opt_Str,
   }, vbot.never())
   const res1 = checkoutInput(Sch_DraftSet, draft, taskId)
   if(res1) return res1
@@ -1612,6 +1613,7 @@ async function toDraftEdit(
     whenStamp: draft.whenStamp,
     remindMe: draft.remindMe,
     tagIds: draft.tagIds,
+    stateId: draft.stateId,
     editedStamp,
   }
   await updatePartData(ssCtx, "draft", draft_id, u)
@@ -1676,6 +1678,7 @@ async function toDraftCreate(
     whenStamp: draft.whenStamp,
     remindMe: draft.remindMe,
     tagIds: draft.tagIds,
+    stateId: draft.stateId,
     editedStamp: draft.editedStamp as number,
   }
   const new_id = await insertData(ssCtx, "draft", u)
