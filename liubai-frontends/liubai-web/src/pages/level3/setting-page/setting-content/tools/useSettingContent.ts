@@ -3,7 +3,7 @@ import { type Ref, reactive, watch } from "vue"
 import type { SettingContentData } from "./types"
 import cui from "~/components/custom-ui"
 import { getLanguageList, getTermsList } from "./get-list"
-import { handleLogoutWithPurlyLocal } from "./handle-logout"
+import { deleteLocalData } from "./handle-logout"
 import { whenTapTheme } from "./handle-theme"
 import { whenTapLanguage } from "./handle-lang"
 import { whenTapFontSize } from "./handle-font-size"
@@ -252,16 +252,16 @@ async function askLogoutWithPurelyLocal() {
     modalType: "warning",
   })
   if(!res2.confirm) return
-  handleLogoutWithPurlyLocal()
+  deleteLocalData()
 }
 
 async function askLogoutWithBackend() {
+  // 0. show popup to ask
   const res = await cui.showModal({
     title_key: "setting.logout",
     content_key: "setting.logout_bd",
-    // tip_key: "setting.logout_tip",
+    tip_key: "setting.logout_tip",
   })
-
   if(!res.confirm) return
 
   // 1. logout remotely
@@ -272,4 +272,9 @@ async function askLogoutWithBackend() {
 
   // 2. logout locally
   CloudEventBus.toLogout()
+
+  // 3. delete local data
+  if(res.tipToggle) {
+    deleteLocalData()
+  }
 }

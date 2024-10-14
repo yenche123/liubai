@@ -348,7 +348,7 @@
     "logout": "登出",
     "logout_bd": "確定要登出嗎?",
     "logout_bd_2": "純本機應用登出後，系統將刪除當前 APP 的所有資料，確定要登出嗎？",
-    "logout_tip": "同時刪除我的本地資料",
+    "logout_tip": "同時刪除本機資料",
     "logout_hd_2": "再次詢問",
     "logout_bd_3": "確定要刪除所有資料嗎?",
     "dev_debug": "開發偵錯",
