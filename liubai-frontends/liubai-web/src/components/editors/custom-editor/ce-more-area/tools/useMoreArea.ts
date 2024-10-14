@@ -1,4 +1,4 @@
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import cui from "~/components/custom-ui";
 import type { LiuRemindMe, LiuRemindEarly, LiuRemindLater } from "~/types/types-atom"
 import liuUtil from "~/utils/liu-util";
@@ -7,6 +7,9 @@ import { REMIND_LATER, REMIND_EARLY } from "~/config/atom"
 import type { SwitchChangeEmitOpt } from "~/components/common/liu-switch/types"
 import type { MaData, MoreAreaEmits, MaContext, CmaProps } from "./types-cma"
 import liuEnv from "~/utils/liu-env";
+import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
+import { storeToRefs } from "pinia";
+import commonPack from "~/utils/controllers/tools/common-pack";
 
 export function useMoreArea(
   props: CmaProps,
@@ -30,7 +33,7 @@ export function useMoreArea(
     return liuUtil.getRemindMenu(hasWhen)
   })
 
-  const ctx: MaContext = { emits, data }
+  const ctx: MaContext = { props, emits, data }
 
   const onTapWhen = async () => {
     const res = await cui.showDatePicker({ minDate: new Date(), date: data.whenDate })
@@ -107,6 +110,8 @@ export function useMoreArea(
     toClearAttachment(ctx)
   }
 
+  handleState(props, data)
+
   return { 
     selectFileEl,
     data,
@@ -122,7 +127,29 @@ export function useMoreArea(
     onFileChange,
     onTapClearAttachment,
     onTapAddSite,
+    onTapAddState: () => setNewState(ctx),
+    onTapClearState: () => emits("statechange", null),
   }
+}
+
+
+async function handleState(
+  props: CmaProps,
+  data: MaData,
+) {
+  const stateId = computed(() => props.ceData?.stateId)
+  const ws = useWorkspaceStore()
+  const { spaceId } = storeToRefs(ws)
+
+  watch([stateId, spaceId], ([newV1, newV2]) => {
+    if(!newV1 || !newV2) {
+      delete data.stateShow
+      return
+    }
+
+    const theStateShow = commonPack.getStateShow(newV1, ws)
+    data.stateShow = theStateShow
+  }, { immediate: true })
 }
 
 async function toAddTitle(
@@ -151,6 +178,16 @@ function toClearTitle(ctx: MaContext) {
 function toClearAttachment(ctx: MaContext) {
   ctx.emits("filechange", null)
 }
+
+async function setNewState(ctx: MaContext) {
+  const stateIdSelected = ctx.props.ceData?.stateId
+  const res = await cui.showStateSelector({ stateIdSelected })
+  if(res.action === "mask") return
+  if(res.action === "remove" && !stateIdSelected) return
+  if(res.action === "confirm" && stateIdSelected === res.stateId) return
+  ctx.emits("statechange", res.stateId ?? null)
+}
+
 
 function setNewRemind(ctx: MaContext, item?: MenuItem, index?: number) {
   if(!item || index === undefined) {

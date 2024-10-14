@@ -227,6 +227,7 @@ export interface LiuDownloadDraft {
   whenStamp?: number
   remindMe?: LiuRemindMe
   tagIds?: string[]
+  stateId?: string
   editedStamp: number
 }
 

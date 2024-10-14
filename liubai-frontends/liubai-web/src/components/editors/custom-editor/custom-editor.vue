@@ -78,6 +78,7 @@ const {
   onEditorFinish,
   onWhenChange,
   onRemindMeChange,
+  onStateChange,
   onTitleChange,
   onSyncCloudChange,
   onTapFinish,
@@ -189,6 +190,7 @@ useDraftIdChanged(ceData)
     @titlechange="onTitleChange"
     @synccloudchange="onSyncCloudChange"
     @filechange="onFileChange"
+    @statechange="onStateChange"
   ></ce-more-area>
 
   <!-- 虚拟空间 用于避免完成按钮挡到其他地方 -->

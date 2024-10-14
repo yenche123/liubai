@@ -3,6 +3,7 @@ import type { LiuRemindMe } from "~/types/types-atom"
 import type { CeData } from "../../tools/types"
 import type { PropType } from "vue"
 import type { TipTapEditor } from "~/types/types-editor"
+import type { StateShow } from "~/types/types-content"
 
 export type CmaRemindType = "early" | "later"
 
@@ -18,6 +19,9 @@ export interface MaData {
   // 浅浅记录一下 什么时候的 Date 类型，这样子再选择时，定位到该日期
   whenDate?: Date
 
+  // 状态
+  stateShow?: StateShow
+
   // 提醒我的类型，分成 early (准时 / 提前10分钟..) 和 later (30分钟后 / 1小时后.....)
   remindType: CmaRemindType
 }
@@ -28,9 +32,11 @@ export interface MoreAreaEmits {
   (event: "titlechange", val: string): void
   (event: "synccloudchange", val: boolean): void
   (event: "filechange", val: File[] | null): void
+  (event: "statechange", val: string | null): void
 }
 
 export interface MaContext {
+  props: CmaProps
   emits: MoreAreaEmits
   data: MaData
 }
@@ -56,4 +62,5 @@ export const cmaEmits = {
   titlechange: (val: string) => true,
   synccloudchange: (val: boolean) => true,
   filechange: (val: File[] | null) => true,
+  statechange: (val: string | null) => true,
 }

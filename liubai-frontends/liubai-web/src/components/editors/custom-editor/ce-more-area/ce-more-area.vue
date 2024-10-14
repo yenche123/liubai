@@ -24,9 +24,7 @@ export default defineComponent({
 
 </script>
 <template>
-  <div class="ma-container"
-    :class="{ 'ma-container_expand': show }"
-  >
+  <div class="ma-container" :class="{ 'ma-container_expand': show }">
 
     <div style="width: 100%; height: 10px"></div>
 
@@ -49,10 +47,7 @@ export default defineComponent({
       </div>
 
       <!-- 提醒我 -->
-      <LiuMenu :menu="remindMenu"
-        @tapitem="onTapRemindItem"
-        min-width-str="120px"
-      >
+      <LiuMenu :menu="remindMenu" @tapitem="onTapRemindItem" min-width-str="120px">
 
         <div class="liu-hover ma-item">
           <div class="mai-icon">
@@ -71,7 +66,7 @@ export default defineComponent({
         </div>
 
       </LiuMenu>
-      
+
       <!-- 加标题 -->
       <div class="liu-hover ma-item" @click="onTapAddTitle">
         <div class="mai-icon">
@@ -90,7 +85,7 @@ export default defineComponent({
       </div>
 
       <!-- 加位置 -->
-      <div class="liu-hover ma-item" @click.stop="onTapAddSite">
+      <!-- <div class="liu-hover ma-item" @click.stop="onTapAddSite">
         <div class="mai-icon">
           <svg-icon name="location" class="mai-svgicon" :color="default_color"></svg-icon>
         </div>
@@ -100,17 +95,34 @@ export default defineComponent({
         <div class="mai-footer">
           <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
         </div>
+      </div> -->
+
+      <!-- state -->
+      <div class="liu-hover ma-item" @click.stop="onTapAddState">
+        <div class="mai-icon">
+          <svg-icon name="priority_400" class="mai-svgicon" :color="default_color"></svg-icon>
+        </div>
+
+        <div class="liu-no-user-select mai-title" v-if="data.stateShow">
+          <span v-if="data.stateShow.text">{{ data.stateShow.text }}</span>
+          <span v-else-if="data.stateShow.text_key">{{ t(data.stateShow.text_key) }}</span>
+        </div>
+        <div class="liu-no-user-select mai-title" v-else>
+          <span>{{ t("editor.add_state") }}</span>
+        </div>
+
+        <div v-if="data.stateShow" class="liu-hover mai-footer" @click.stop="onTapClearState">
+          <svg-icon name="close" class="maif-clear" :color="default_color"></svg-icon>
+        </div>
+        <div v-else class="mai-footer">
+          <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
+        </div>
       </div>
 
       <!-- 加附件 -->
       <div class="liu-hover ma-item">
 
-        <input ref="selectFileEl" 
-          type="file" 
-          class="mai-input" 
-          title=""
-          @change="onFileChange"
-        />
+        <input ref="selectFileEl" type="file" class="mai-input" title="" @change="onFileChange" />
 
         <div class="mai-icon">
           <svg-icon name="attachment" class="mai-svgicon" :color="default_color"></svg-icon>
@@ -125,7 +137,7 @@ export default defineComponent({
         <div v-else class="mai-footer">
           <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
         </div>
-        
+
       </div>
 
       <!-- 同步到云端 -->
@@ -137,10 +149,7 @@ export default defineComponent({
           <span>{{ t("editor.sync_cloud") }}</span>
         </div>
         <div class="mai-switch-footer">
-          <liu-switch :checked="data.syncCloud"
-            @change="onSyncCloudChange"
-            :disabled="data.scDisabled"
-          ></liu-switch>
+          <liu-switch :checked="data.syncCloud" @change="onSyncCloudChange" :disabled="data.scDisabled"></liu-switch>
         </div>
       </div>
 

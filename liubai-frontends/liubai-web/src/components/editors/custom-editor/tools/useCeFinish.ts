@@ -205,8 +205,8 @@ function _getThreadData(
     updatedStamp: now,
     editedStamp: now,
     tagIds,
-    stateId: ceData.stateId,
     tagSearched,
+    stateId: ceData.stateId,
     search_title,
     search_other,
   }

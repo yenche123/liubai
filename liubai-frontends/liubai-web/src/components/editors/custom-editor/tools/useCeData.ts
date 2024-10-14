@@ -133,6 +133,10 @@ export function useCeData(
     checkCanSubmit(ceData)
   }
 
+  const onStateChange = (val: string | null) => {
+    toStateChange(val, ctx)
+  }
+
   const onSyncCloudChange = (val: boolean) => {
     toSyncCloudChange(val, ctx)
   }
@@ -210,6 +214,7 @@ export function useCeData(
     onEditorFinish,
     onWhenChange,
     onRemindMeChange,
+    onStateChange,
     onTitleChange,
     onSyncCloudChange,
     onTapFinish,
@@ -307,11 +312,19 @@ function toWhenChange(
   checkIfReminderEnabled(memberId, ctx.ceData)
 }
 
+function toStateChange(
+  val: string | null,
+  ctx: CesCtx,
+) {
+  ctx.ceData.stateId = val ?? undefined
+  collectState(ctx)
+}
+
 function toRemindMeChange(
   val: LiuRemindMe | null,
   ctx: CesCtx,
 ) {
-  ctx.ceData.remindMe = val ? val : undefined
+  ctx.ceData.remindMe = val ?? undefined
   collectState(ctx)
 
   // check out if the notification is enabled
@@ -430,6 +443,7 @@ async function toSave(ctx: CesCtx) {
     updatedStamp: now,
     editedStamp: now,
     tagIds,
+    stateId: ceData.stateId,
   }
 
   console.log("去本地存储 draft.........")

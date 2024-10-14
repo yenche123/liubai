@@ -27,37 +27,8 @@ export interface GetThreadsOfAStateRes {
 // 默认会有 TODO / FINISHED 两个列表
 function getStates() {
   const wStore = useWorkspaceStore()
-  const currentSpace = wStore.currentSpace
-  if(!currentSpace) return []
-  const stateCfg = currentSpace.stateConfig
-  if(!stateCfg) return getSystemStates()
-  if(stateCfg.stateList.length < 1) return getSystemStates()
-  const list = valTool.copyObject(stateCfg.stateList)
-  return list
+  return wStore.getStateList()
 }
-
-
-/** 获取初始的两个状态列表 */
-function getSystemStates() {
-  const now = time.getTime()
-  const defaultStates: LiuAtomState[] = [
-    {
-      id: "TODO",
-      showInIndex: true,
-      updatedStamp: now,
-      insertedStamp: now,
-    },
-    {
-      id: "FINISHED",
-      showInIndex: false,
-      updatedStamp: now,
-      insertedStamp: now,
-      showFireworks: true,
-    }
-  ]
-  return defaultStates
-}
-
 
 
 /**
@@ -181,7 +152,7 @@ async function setNewStateList(
 
   let stateCfg = currentSpace.stateConfig
   if(!stateCfg) {
-    stateCfg = getDefaultStateCfg()
+    stateCfg = wStore.getDefaultStateCfg()
   }
   const now = time.getTime()
   stateCfg.stateList = newList
@@ -197,24 +168,10 @@ async function setNewStateList(
   return res
 }
 
-/** 获取默认 stateConfig */
-function getDefaultStateCfg() {
-  const now = time.getTime()
-  let stateList = getSystemStates()
-  const obj: LiuStateConfig = {
-    stateList,
-    updatedStamp: now,
-  }
-  return obj
-}
-
-
 export default {
   getStates,
   getThreadsOfAState,
-  getSystemStates,
   stateListSorted,
   setNewStateList,
-  getDefaultStateCfg,
 }
 

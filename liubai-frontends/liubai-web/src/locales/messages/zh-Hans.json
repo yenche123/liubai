@@ -67,6 +67,7 @@
     "remind": "提醒我",
     "add_title": "加标题",
     "add_site": "加地点",
+    "add_state": "加状态",
     "only_local": "仅存于本地",
     "sync_cloud": "同步到云端",
     "add_file": "加附件",

@@ -217,6 +217,7 @@ async function initDraftFromDraft(
   ceData.images = draft.images
   ceData.files = draft.files
   ceData.tagIds = draft.tagIds ?? []
+  ceData.stateId = draft.stateId
 
   let descList = draft.liuDesc
   if(descList) {
@@ -443,6 +444,7 @@ async function toMergeDraft(
   ceData.whenStamp = cloud_draft.whenStamp
   ceData.remindMe = cloud_draft.remindMe
   ceData.tagIds = cloud_draft.tagIds ?? []
+  ceData.stateId = cloud_draft.stateId
 
   let descJSON: TipTapJSONContent[] | undefined
   if(cloud_draft.liuDesc) {
@@ -551,6 +553,7 @@ async function initDraftFromThread(
   ceData.images = thread.images
   ceData.files = thread.files
   ceData.tagIds = thread.tagIds ?? []
+  ceData.stateId = thread.stateId
 
   let descJSON: TipTapJSONContent[] | undefined
   if(thread.liuDesc) {

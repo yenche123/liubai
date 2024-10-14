@@ -241,10 +241,10 @@ async function handleWorkspace(
   // 2. 去生成 newStateConfig
   let newStateCfg: LiuStateConfig
   if(!oldStateConfig) {
-    newStateCfg = stateController.getDefaultStateCfg()
+    newStateCfg = wStore.getDefaultStateCfg()
   }
   else if(oldStateConfig.stateList.length < 1) {
-    newStateCfg = stateController.getDefaultStateCfg()
+    newStateCfg = wStore.getDefaultStateCfg()
   }
   else {
     newStateCfg = valTool.copyObject(oldStateConfig)

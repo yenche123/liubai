@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import valTool from "~/utils/basic/val-tool";
-import type { TagView, LiuStateConfig } from "~/types/types-atom";
+import type { TagView, LiuStateConfig, LiuAtomState } from "~/types/types-atom";
 import type { MemberLocalTable, WorkspaceLocalTable } from "~/types/types-table";
 import { db } from "~/utils/db";
 import type { SpaceType } from "~/types/types-basic";
@@ -49,8 +49,13 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     const spaceVal = currentSpace.value
     if(!spaceVal) return []
     const { stateConfig } = spaceVal
-    if(!stateConfig) return []
-    const tmpList = valTool.copyObject(stateConfig.stateList)
+    let tmpList: LiuAtomState[] = []
+    if(!stateConfig) {
+      tmpList = getDefaultStates()
+    }
+    else {
+      tmpList = valTool.copyObject(stateConfig.stateList)
+    }
     return tmpList
   }
 
@@ -192,7 +197,40 @@ export const useWorkspaceStore = defineStore("workspace", () => {
     setWorkspaceAfterUpdatingDB,
     setMemberAfterUpdatingDB,
     setSubscriptionAfterUpdatingDB,
+    getDefaultStateCfg,
   }
 })
 
 export type WorkspaceStore = ReturnType<typeof useWorkspaceStore>
+
+
+function getDefaultStates() {
+  const now = time.getTime()
+  const defaultStates: LiuAtomState[] = [
+    {
+      id: "TODO",
+      showInIndex: true,
+      updatedStamp: now,
+      insertedStamp: now,
+    },
+    {
+      id: "FINISHED",
+      showInIndex: false,
+      updatedStamp: now,
+      insertedStamp: now,
+      showFireworks: true,
+    }
+  ]
+  return defaultStates
+}
+
+/** get default stateConfig */
+function getDefaultStateCfg() {
+  const now = time.getTime()
+  let stateList = getDefaultStates()
+  const obj: LiuStateConfig = {
+    stateList,
+    updatedStamp: now,
+  }
+  return obj
+}

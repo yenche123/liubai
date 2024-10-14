@@ -135,6 +135,7 @@ export interface DraftLocalTable extends BaseLocalTable {
   whenStamp?: number
   remindMe?: LiuRemindMe
   tagIds?: string[]
+  stateId?: string
   editedStamp: number       // 草稿被用户实际编辑的时间戳
   firstSyncStamp?: number   // the stamp when the content is first synced
 }
