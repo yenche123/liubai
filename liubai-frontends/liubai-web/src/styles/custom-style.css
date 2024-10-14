@@ -87,6 +87,10 @@
   -webkit-text-fill-color: transparent;
 }
 
+.liu-android-device .liu-premium-text {
+  font-weight: 300;
+}
+
 
 /********* 仅在有鼠标的设备上生效 *********/
 @media(hover: hover) {

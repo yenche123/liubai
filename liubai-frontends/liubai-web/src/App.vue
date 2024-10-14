@@ -23,7 +23,10 @@ const ios_ipad = Boolean(cha.isIOS || cha.isIPadOS)
   
   <div 
     class="app-container"
-    :class="{ 'liu-ios-device': ios_ipad }"
+    :class="{ 
+      'liu-ios-device': ios_ipad,
+      'liu-android-device': cha.isAndroid,
+    }"
   >
 
     <!-- 侧边栏视图 -->
