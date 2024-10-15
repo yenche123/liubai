@@ -304,7 +304,8 @@
     "bing_search": "Ask Bing",
     "xhs_search": "Open xhs",
     "github_search": "Github Search",
-    "no_data": "0 result"
+    "no_data": "0 result",
+    "add_instantly": "Add a new one"
   },
   "share_related": {
     "public_share": "Public",

@@ -210,6 +210,7 @@ async function addThreadToKanban(
   // 1. 搜索要添加哪个动态
   const excludeThreads = aCol.threads.map(v => v._id)
   const res = await cui.showSearchEditor({ type: "select_thread", excludeThreads })
+  console.log("showSearchEditor res: ", res)
   if(res.action !== "confirm" || !res.threadId) return
 
   // 2. 先把已在 kanban 里的该 thread 删除，再添加到 kanban 为 stateId 的第一项

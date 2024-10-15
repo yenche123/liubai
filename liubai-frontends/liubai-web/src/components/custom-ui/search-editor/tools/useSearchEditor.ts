@@ -258,27 +258,26 @@ function toSetIndicator() {
   let tmp = ""
   let txt = seData.trimTxt
   if(txt) {
-    let list1 = seData.innerList
+    const list1 = seData.innerList
+    const list2 = seData.thirdList
     if(list1.length) {
       tmp = list1[0].atomId
     }
-    else {
-      let list2 = seData.thirdList
-      if(list2.length) {
-        tmp = list2[0].atomId
-      }
+    else if(list2.length) {
+      tmp = list2[0].atomId
+    }
+    else if(seData.mode === "select_thread") {
+      tmp = "new_one"
     }
   }
   else {
-    let list3 = seData.suggestList
+    const list3 = seData.suggestList
+    const list4 = seData.recentList
     if(list3.length) {
       tmp = list3[0].atomId
     }
-    else {
-      let list4 = seData.recentList
-      if(list4.length) {
-        tmp = list4[0].atomId
-      }
+    else if(list4.length) {
+      tmp = list4[0].atomId
     }
   }
   seData.indicator = tmp
@@ -399,7 +398,7 @@ function getConfirmRes() {
   let res: SearchEditorRes = {
     action: "confirm",
   }
-  let { indicator } = seData
+  let { indicator, mode } = seData
   let hasTxt = Boolean(seData.trimTxt)
 
   if(hasTxt) {
@@ -412,6 +411,10 @@ function getConfirmRes() {
     let tmp2 = seData.thirdList.find(v => v.atomId === indicator)
     if(tmp2) {
       res.atomId = tmp2.atomId
+      return res
+    }
+    if(mode === "select_thread") {
+      res.inputTxt = seData.trimTxt
       return res
     }
   }

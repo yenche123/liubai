@@ -304,7 +304,8 @@
     "bing_search": "问 Bing",
     "xhs_search": "打开小红书",
     "github_search": "Github 搜索",
-    "no_data": "0 个搜索结果"
+    "no_data": "0 个搜索结果",
+    "add_instantly": "快速新建"
   },
   "share_related": {
     "public_share": "公开分享",

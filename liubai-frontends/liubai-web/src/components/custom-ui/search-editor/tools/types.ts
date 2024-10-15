@@ -12,7 +12,7 @@ import type {
 
 export type ThirdPartyType = ScThirdPartyType
 
-export type SearchListType = "suggest" | "recent" | "results" | "third_party"
+export type SearchListType = "suggest" | "recent" | "results" | "third_party" | "new_one"
 
 export interface SearchEditorData {
   reloadNum: number
@@ -39,6 +39,7 @@ export interface SearchEditorRes {
   threadId?: string
   commentId?: string
   atomId?: string
+  inputTxt?: string
 }
 
 export type SeResolver = (res: SearchEditorRes) => void

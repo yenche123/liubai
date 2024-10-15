@@ -1,7 +1,7 @@
 import type { ImageShow } from "~/types"
 
 
-export type ScMode = "search" | "select_thread"      // 通用搜索、选择一条动态
+export type ScMode = "search" | "select_thread"      // 通用搜索、选择一条动态（包含新建动态）
 
 export interface ScContentAtom {
   atomId: string

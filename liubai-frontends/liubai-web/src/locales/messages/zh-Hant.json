@@ -304,7 +304,8 @@
     "bing_search": "問 Bing",
     "xhs_search": "開啟小紅書",
     "github_search": "Github 搜尋",
-    "no_data": "0 個搜尋結果"
+    "no_data": "0 個搜尋結果",
+    "add_instantly": "快速新增"
   },
   "share_related": {
     "public_share": "公開分享",

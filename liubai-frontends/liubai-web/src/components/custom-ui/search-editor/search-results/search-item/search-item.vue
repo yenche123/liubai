@@ -30,6 +30,9 @@ const props = defineProps({
   },
   thirdAtom: {
     type: Object as PropType<ScThirdPartyAtom>,
+  },
+  inputTxt: {
+    type: String,
   }
 })
 
@@ -72,11 +75,15 @@ const onTapClear = () => {
   injectData.clearitem(props.siType, props.atomId)
 }
 
+const isSelected = computed(() => {
+  if(props.indicator && props.indicator === props.atomId) return true
+  return false
+})
 
 </script>
 <template>
   <div class="liu-no-user-select si-container"
-    :class="{ 'si-container_selected': indicator && indicator === atomId }"
+    :class="{ 'si-container_selected': isSelected }"
     @mouseenter="onMouseEnter"
     @click.stop="onTapItem"
   >
@@ -120,6 +127,12 @@ const onTapClear = () => {
         :color="iconColor"
       ></svg-icon>
 
+      <!-- ADD -->
+      <svg-icon v-else-if="siType === 'new_one'"
+        class="si-search-icon"
+        name="add"
+        :color="iconColor"
+      ></svg-icon>
 
       <!-- 以 desc 兜底 -->
       <svg-icon v-else
@@ -147,6 +160,7 @@ const onTapClear = () => {
           <span v-else-if="atomId === 'xhs'">{{ t('search_related.xhs_search') }}</span>
           <span v-else-if="atomId === 'github'">{{ t('search_related.github_search') }}</span>
         </template>
+        <span v-else-if="siType === 'new_one' && inputTxt">{{ inputTxt }}</span>
         <span v-else class="si-placeholder">{{ t('thread_related.img_file') }}</span>
       </div>
 

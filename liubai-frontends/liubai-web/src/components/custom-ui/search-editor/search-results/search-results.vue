@@ -107,11 +107,26 @@ const { t } = useI18n()
       </div>
 
       <!-- 任何结果都不存在时 -->
-      <div class="liu-no-user-select sr-no-data"
-        v-if="!seData.innerList.length && !seData.thirdList.length"
-      >
-        <span>{{ t('search_related.no_data') }}</span>
-      </div>
+      <template v-if="!seData.innerList.length && !seData.thirdList.length">
+        <!-- 1. 新建动态 -->
+        <div class="sr-inner-box" v-if="seData.mode === 'select_thread'">
+          <div class="liu-no-user-select sri-title">
+            <span>{{ t('search_related.add_instantly') }}</span>
+          </div>
+          <SearchItem
+            si-type="new_one"
+            atom-id="new_one"
+            :indicator="seData.indicator"
+            :input-txt="seData.trimTxt"
+          ></SearchItem>
+        </div>
+
+        <!-- 2. 搜索结果为空 -->
+        <div class="liu-no-user-select sr-no-data" v-else>
+          <span>{{ t('search_related.no_data') }}</span>
+        </div>
+      </template>
+      
     
     </div>
 
