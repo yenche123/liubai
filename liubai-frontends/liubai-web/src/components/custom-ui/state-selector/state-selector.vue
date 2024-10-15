@@ -139,7 +139,7 @@ const { t } = useI18n()
 }
 
 .ss-title {
-  font-size: var(--head-font);
+  font-size: var(--title-font);
   color: var(--main-text);
   font-weight: 700;
 }
@@ -274,10 +274,6 @@ const { t } = useI18n()
 
   .ss-first-bar {
     padding: 24px 16px 16px 20px;
-  }
-
-  .ss-title {
-    font-size: var(--title-font);
   }
 
   .ss-item {

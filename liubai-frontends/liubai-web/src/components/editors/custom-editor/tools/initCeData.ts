@@ -241,7 +241,7 @@ async function initDraftFromDraft(
 
 
 function checkToggleOfMore(ceData: CeData) {
-  if(ceData.whenStamp || ceData.remindMe) {
+  if(ceData.whenStamp || ceData.remindMe || ceData.stateId) {
     ceData.more = true
     return
   }

@@ -4,10 +4,16 @@ import { useI18n } from 'vue-i18n';
 import { useMoreArea } from "./tools/useMoreArea";
 import { receiveCmaProps } from "./tools/receiveCmaProps"
 import { cmaProps, cmaEmits } from "./tools/types-cma"
+import StateBadge from '~/components/common/state-badge/state-badge.vue';
 
 export default defineComponent({
   props: cmaProps,
   emits: cmaEmits,
+
+  components: {
+    StateBadge,
+  },
+
   setup(props, { emit }){
     const { t } = useI18n()
     const default_color = "var(--other-btn-text)"
@@ -104,8 +110,9 @@ export default defineComponent({
         </div>
 
         <div class="liu-no-user-select mai-title" v-if="data.stateShow">
-          <span v-if="data.stateShow.text">{{ data.stateShow.text }}</span>
-          <span v-else-if="data.stateShow.text_key">{{ t(data.stateShow.text_key) }}</span>
+          <StateBadge :state-show="data.stateShow"
+            @tapstate="onTapAddState"
+          ></StateBadge>
         </div>
         <div class="liu-no-user-select mai-title" v-else>
           <span>{{ t("editor.add_state") }}</span>

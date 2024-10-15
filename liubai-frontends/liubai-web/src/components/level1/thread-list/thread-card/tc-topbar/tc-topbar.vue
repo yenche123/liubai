@@ -4,6 +4,7 @@ import { useI18n } from 'vue-i18n';
 import type { ThreadShow } from '~/types/types-content';
 import { useTcTopbar } from './tools/useTcTopbar';
 import type { TctEmits } from "./tools/types"
+import StateBadge from '~/components/common/state-badge/state-badge.vue';
 
 const props = defineProps({
   threadData: {
@@ -12,19 +13,14 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits<TctEmits>()
+defineEmits<TctEmits>()
 const { t } = useI18n()
 const { 
   td,
   showTopbar,
-  stateColor,
   cloudOffPlacement,
-  theme,
 } = useTcTopbar(props)
 
-const onTapState = () => {
-  emit('newoperate', 'state')
-}
 
 </script>
 <template>
@@ -46,31 +42,10 @@ const onTapState = () => {
     </div>
 
     <!-- 状态 -->
-    <div class="tct-item-container" v-if="td.stateShow">
-
-      <div class="tct-state-shadow"
-        v-if="theme === 'dark'"
-        :style="{
-          'background-color': stateColor
-        }"
-      ></div>
-
-      <div class="liu-no-user-select tct-state-box"
-        :style="{ 
-          'color': stateColor,
-        }"
-        @click.stop="onTapState"
-      >
-        <div class="tctsb-bg"
-          :style="{
-            'background-color': stateColor
-          }"
-        ></div>
-        <span v-if="td.stateShow.text">{{ td.stateShow.text }}</span>
-        <span v-else-if="td.stateShow.text_key">{{ t(td.stateShow.text_key) }}</span>
-      </div>
-
-    </div>
+    <StateBadge v-if="td.stateShow" :state-show="td.stateShow" 
+      @tapstate="$emit('newoperate', 'state')"
+      class="tct-item-container"
+    ></StateBadge>
     
     <!-- 置顶 -->
     <svg v-if="td.pinStamp" class="tct-pin" viewBox="-50 -50 300 300">
@@ -115,47 +90,6 @@ const onTapState = () => {
   width: 20px;
   height: 20px;
   outline: 0;
-}
-
-.tct-state-shadow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: .24;
-  border-radius: 6px 30px 6px 30px;
-  filter: blur(9px);
-}
-
-.tct-state-box {
-  padding: 2px 8px;
-  border-radius: 2px 10px 2px 10px;
-  min-width: 40px;
-  text-align: center;
-  font-size: var(--state-font);
-  letter-spacing: 1px;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: .15s;
-
-  .tctsb-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: v-bind("theme === 'dark' ? '.11' : '.19'");
-  }
-}
-
-@media(hover: hover) {
-
-  .tct-state-box:hover {
-    opacity: .8;
-  }
-
 }
 
 
