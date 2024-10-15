@@ -13,6 +13,7 @@ import { db } from "~/utils/db"
 import dbOp from "~/hooks/thread/db-op"
 import threadController from "~/utils/controllers/thread-controller/thread-controller"
 import cloudOp from "~/hooks/thread/cloud-op"
+import { addNewThreadToKanban } from "./some-funcs"
 
 // 编辑某一栏的看板
 // 不提供撤回功能
@@ -210,11 +211,16 @@ async function addThreadToKanban(
   // 1. 搜索要添加哪个动态
   const excludeThreads = aCol.threads.map(v => v._id)
   const res = await cui.showSearchEditor({ type: "select_thread", excludeThreads })
-  console.log("showSearchEditor res: ", res)
-  if(res.action !== "confirm" || !res.threadId) return
+
+  // 1.2 addd new thread instantly
+  const { action, threadId, inputTxt } = res
+  if(action === "confirm" && inputTxt) {
+    addNewThreadToKanban(stateId, inputTxt)
+    return
+  }
+  if(action !== "confirm" || !threadId) return
 
   // 2. 先把已在 kanban 里的该 thread 删除，再添加到 kanban 为 stateId 的第一项
-  const threadId = res.threadId
   const stateList = stateController.getStates()
   stateList.forEach(v1 => {
     let { contentIds } =  v1

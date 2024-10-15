@@ -211,7 +211,7 @@ export async function setNewStateForThread(
 }
 
 // triggered by custom-editor
-export async function setStateFromThreadEditor(
+export async function setStateForNewThread(
   thread: ThreadShow,
 ) {
   const wStore = useWorkspaceStore()
