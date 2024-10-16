@@ -1,4 +1,4 @@
-
+import { type TagView } from "~/types/types-atom"
 
 export interface SbTagsData {
   enable: boolean
@@ -25,3 +25,5 @@ export interface HeTreeStat<T> {
   style: any // 自定义样式. 支持Vue的style格式.
   class: any // 自定义样式类. 支持Vue的class格式.
 }
+
+export type LiuTreeStat = HeTreeStat<TagView>

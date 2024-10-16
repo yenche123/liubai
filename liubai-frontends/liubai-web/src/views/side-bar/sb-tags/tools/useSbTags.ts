@@ -9,7 +9,7 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import time from "~/utils/basic/time";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import valTool from "~/utils/basic/val-tool";
-import type { SbTagsData, SbtEmits, HeTreeStat } from "./types";
+import type { SbTagsData, SbtEmits, LiuTreeStat } from "./types";
 import liuUtil from "~/utils/liu-util";
 
 
@@ -91,7 +91,7 @@ export function useSbTags(emits: SbtEmits) {
     lastTagChangeStamp.value = time.getTime()
   }
 
-  const onTapTagArrow = (e: MouseEvent, node: TagView, stat: HeTreeStat<TagView>) => {
+  const onTapTagArrow = (e: MouseEvent, node: TagView, stat: LiuTreeStat) => {
     const length = stat.children.length
     if(!length) return
     stat.open = !stat.open
@@ -106,6 +106,16 @@ export function useSbTags(emits: SbtEmits) {
     router.naviBackUntilNoSpecificQuery(route, "tags")
   }
 
+  const onOpenNode = (stat: LiuTreeStat) => {
+    console.log("onOpenNode............")
+    console.log(stat)
+  }
+
+  const onCloseNode = (stat: LiuTreeStat) => {
+    console.log("onCloseNode............")
+    console.log(stat)
+  }
+
   return {
     sbtData,
     tagNodes, 
@@ -116,6 +126,8 @@ export function useSbTags(emits: SbtEmits) {
     onTapTagItem, 
     onTapTagArrow,
     onNaviBack,
+    onOpenNode,
+    onCloseNode,
   }
 }
 

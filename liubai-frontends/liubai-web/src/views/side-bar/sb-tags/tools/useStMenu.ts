@@ -18,7 +18,7 @@ import type { T_i18n } from "~/locales"
 import type { RenameTagParam } from "~/utils/system/tag-related/tools/types"
 import { getTagViewLevel } from "~/utils/system/tag-related/tools/tag-util"
 import time from "~/utils/basic/time"
-import type { HeTreeStat } from "./types"
+import type { LiuTreeStat } from "./types"
 
 export interface StmCtx {
   tagNodes: Ref<TagView[]>
@@ -35,7 +35,7 @@ export function useStMenu(ctx: StmCtx) {
     item: MenuItem, 
     index: number, 
     node: TagView, 
-    stat: HeTreeStat<TagView>
+    stat: LiuTreeStat
   ) => {
     const { text_key } = item
     if(text_key === "tag_related.create") {
@@ -107,7 +107,7 @@ async function handle_add() {
 
 async function handle_create(
   node: TagView,
-  stat: HeTreeStat<TagView>
+  stat: LiuTreeStat
 ) {
   if(stat.level >= 3) return
   const tagId = node.tagId
@@ -138,7 +138,7 @@ async function handle_create(
 
 async function handle_edit(
   node: TagView,
-  stat: HeTreeStat<TagView>,
+  stat: LiuTreeStat,
   ctx: StmCtx,
 ) {
   const oldTagId = node.tagId
@@ -228,7 +228,7 @@ function _showErr(
 
 async function handle_delete(
   node: TagView,
-  stat: HeTreeStat<TagView>
+  stat: LiuTreeStat,
 ) {
   const tagId = node.tagId
   const { tagShows } = tagIdsToShows([tagId])

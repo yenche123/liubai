@@ -31,6 +31,8 @@ const {
   onTapTagItem,
   onTapTagArrow,
   onNaviBack,
+  onOpenNode,
+  onCloseNode,
 } = useSbTags(emits)
 
 const ctx = {
@@ -79,6 +81,8 @@ const {
     :watermark="false"
     update-behavior="new"
     :max-level="3"
+    @open:node="onOpenNode"
+    @close:node="onCloseNode"
   >
     <template #default="{ node, stat }">
 
