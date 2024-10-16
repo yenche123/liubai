@@ -1,7 +1,7 @@
 {
   "name": "liubai-web",
   "private": true,
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Your Notes, Tasks, Calendar, and To-Do List",
   "author": {
     "name": "yenche123",
@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@bugfender/sdk": "^2.3.0",
-    "@he-tree/vue": "^2.8.6",
+    "@he-tree/vue": "^2.8.7",
     "@intlify/core-base": "^10.0.1",
     "@intlify/unplugin-vue-i18n": "^5.2.0",
     "@openpanel/web": "1.0.0",

@@ -129,6 +129,19 @@ export function useSbTags(emits: SbtEmits) {
     return stat
   }
 
+
+  // try to fix the bug that the node we're dragging will be disapeared
+  // but it doesn't work
+  const onAfterDrop = () => {
+    console.log("onAfterDrop............")
+  }
+
+  const onLeave = () => {
+    console.log("onLeave............")
+    // console.log(tagNodes.value)
+    // console.log(" ")
+  }
+
   return {
     sbtData,
     tagNodes, 
@@ -142,6 +155,8 @@ export function useSbTags(emits: SbtEmits) {
     onOpenNode,
     onCloseNode,
     statHandler,
+    onAfterDrop,
+    onLeave,
   }
 }
 

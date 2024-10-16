@@ -35,6 +35,8 @@ const {
   onOpenNode,
   onCloseNode,
   statHandler,
+  onAfterDrop,
+  onLeave,
 } = useSbTags(emits)
 
 const ctx = {
@@ -87,6 +89,8 @@ const {
     :stat-handler="statHandler"
     @open:node="onOpenNode"
     @close:node="onCloseNode"
+    @after-drop="onAfterDrop"
+    @leave="onLeave"
   >
     <template #default="{ node, stat }">
 
