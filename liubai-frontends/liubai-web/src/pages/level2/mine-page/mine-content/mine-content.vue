@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import NaviLink from "~/components/common/navi-link/navi-link.vue";
+import AppLink from "~/components/common/app-link/app-link.vue";
 import LiuAvatar from '~/components/common/liu-avatar/liu-avatar.vue';
 import { useMineContent } from "./tools/useMineContent"
 import { useI18n } from 'vue-i18n';
@@ -31,7 +32,7 @@ const iconColor = `var(--main-normal)`
     </div>
 
     <!-- premium -->
-    <div class="mc-me-premium-box" v-if="isPremium">
+    <AppLink to="/subscription" v-if="isPremium">
       <LiuTooltip
         placement="bottom"
         :distance="4"
@@ -42,7 +43,7 @@ const iconColor = `var(--main-normal)`
           <span class="liu-premium-text">Premium</span>
         </div>
       </LiuTooltip>
-    </div>
+    </AppLink>
 
   </div>
 
@@ -50,6 +51,8 @@ const iconColor = `var(--main-normal)`
 
   <!-- favorite + tags + kanban -->
   <div class="mc-box">
+
+    <!-- favorite -->
     <NaviLink :to="prefix + 'favorite'">
       <div class="iu-no-user-select liu-hover mc-item">
         <div class="mci-icon-box">
@@ -68,6 +71,7 @@ const iconColor = `var(--main-normal)`
       </div>
     </NaviLink>
 
+    <!-- kanban -->
     <NaviLink :to="prefix + 'state'">
       <div class="iu-no-user-select liu-hover mc-item">
         <div class="mci-icon-box">
@@ -87,9 +91,60 @@ const iconColor = `var(--main-normal)`
   </div>
 
   <!-- connections + settings + trash -->
-  <!-- <div class="mc-box">
+  <div class="mc-box">
+
+    <!-- connections -->
+    <NaviLink :to="prefix + 'connectors'">
+      <div class="iu-no-user-select liu-hover mc-item">
+        <div class="mci-icon-box">
+          <SvgIcon :color="iconColor" name="hub" class="mci-icon"></SvgIcon>
+        </div>
+        <div class="mci-text">
+          <span>{{ t('common.connects') }}</span>
+        </div>
+        <div class="mci-footer">
+          <div class="mcif-arrow">
+            <SvgIcon :color="iconColor" name="arrow-right2" class="mcif-arrow-icon"></SvgIcon>
+          </div>
+        </div>
+      </div>
+    </NaviLink>
+
+    <!-- settings -->
+    <NaviLink :to="prefix + 'settings'">
+      <div class="iu-no-user-select liu-hover mc-item">
+        <div class="mci-icon-box">
+          <SvgIcon :color="iconColor" name="setting" class="mci-icon"></SvgIcon>
+        </div>
+        <div class="mci-text">
+          <span>{{ t('common.setting') }}</span>
+        </div>
+        <div class="mci-footer">
+          <div class="mcif-arrow">
+            <SvgIcon :color="iconColor" name="arrow-right2" class="mcif-arrow-icon"></SvgIcon>
+          </div>
+        </div>
+      </div>
+    </NaviLink>
+
+    <!-- trash -->
+    <NaviLink :to="prefix + 'trash'">
+      <div class="iu-no-user-select liu-hover mc-item">
+        <div class="mci-icon-box">
+          <SvgIcon :color="iconColor" name="delete_400" class="mci-icon"></SvgIcon>
+        </div>
+        <div class="mci-text">
+          <span>{{ t('common.trash') }}</span>
+        </div>
+        <div class="mci-footer">
+          <div class="mcif-arrow">
+            <SvgIcon :color="iconColor" name="arrow-right2" class="mcif-arrow-icon"></SvgIcon>
+          </div>
+        </div>
+      </div>
+    </NaviLink>
     
-  </div> -->
+  </div>
   
 
 </template>
@@ -118,8 +173,8 @@ const iconColor = `var(--main-normal)`
   margin-block-end: 10px;
 }
 
-.mc-me-premium-box {
-  margin-block-end: 10px;
+.liu-premium {
+  cursor: pointer;
 }
 
 .mc-virtual {
@@ -135,7 +190,7 @@ const iconColor = `var(--main-normal)`
   width: 100%;
   box-sizing: border-box;
   box-shadow: var(--card-shadow-2);
-  margin-block-end: 32px;
+  margin-block-end: 16px;
 }
 
 .mc-item {
