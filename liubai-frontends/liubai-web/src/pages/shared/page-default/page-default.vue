@@ -36,7 +36,7 @@ defineProps({
         </div>
       </div>
     </scroll-view>
-    <navi-bar v-if="hasTopNavi" :title="t(titleKey)"></navi-bar>
+    <navi-bar v-if="hasTopNavi" :title="titleKey ? t(titleKey) : ''"></navi-bar>
   </main-view>
 
 </template>

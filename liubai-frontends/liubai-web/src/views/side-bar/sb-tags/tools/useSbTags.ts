@@ -9,27 +9,9 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import time from "~/utils/basic/time";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import valTool from "~/utils/basic/val-tool";
-import { type SbTagsData } from "./types";
+import type { SbTagsData, SbtEmits, HeTreeStat } from "./types";
 import liuUtil from "~/utils/liu-util";
 
-export interface Stat<T> {
-  data: T
-  open: boolean // 是否展开
-  parent: Stat<T> | null // 父级节点stat
-  children: Stat<T>[] // 子级节点
-  level: number // 层级. 层级从1开始.
-  isStat: boolean // 是否是stat对象
-  hidden: boolean // 是否隐藏
-  checked: boolean | null // 是否勾选. null表示后代节点部分勾选
-  draggable: boolean | null // 是否可拖动. null表示继承父级.
-  droppable: boolean | null // 是否可拖入. null表示继承父级.
-  style: any // 自定义样式. 支持Vue的style格式.
-  class: any // 自定义样式类. 支持Vue的class格式.
-}
-
-interface SbtEmits {
-  (event: "aftertap"): void
-}
 
 export function useSbTags(emits: SbtEmits) {
   const wStore = useWorkspaceStore()
@@ -109,7 +91,7 @@ export function useSbTags(emits: SbtEmits) {
     lastTagChangeStamp.value = time.getTime()
   }
 
-  const onTapTagArrow = (e: MouseEvent, node: TagView, stat: Stat<TagView>) => {
+  const onTapTagArrow = (e: MouseEvent, node: TagView, stat: HeTreeStat<TagView>) => {
     const length = stat.children.length
     if(!length) return
     stat.open = !stat.open
