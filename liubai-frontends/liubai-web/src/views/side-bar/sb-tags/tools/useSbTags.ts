@@ -106,14 +106,27 @@ export function useSbTags(emits: SbtEmits) {
     router.naviBackUntilNoSpecificQuery(route, "tags")
   }
 
+
+  // record which nodes are closed
+  const closedNodes: Record<string, boolean | undefined> = {}
   const onOpenNode = (stat: LiuTreeStat) => {
-    console.log("onOpenNode............")
-    console.log(stat)
+    const tagId = stat.data.tagId
+    if(!tagId) return
+    closedNodes[tagId] = false
   }
 
   const onCloseNode = (stat: LiuTreeStat) => {
-    console.log("onCloseNode............")
-    console.log(stat)
+    const tagId = stat.data.tagId
+    if(!tagId) return
+    closedNodes[tagId] = true
+  }
+
+  const statHandler = (stat: LiuTreeStat) => {
+    const tagId = stat.data.tagId
+    if(!tagId) return stat
+    const isClosed = closedNodes[tagId]
+    if(isClosed) stat.open = false
+    return stat
   }
 
   return {
@@ -128,6 +141,7 @@ export function useSbTags(emits: SbtEmits) {
     onNaviBack,
     onOpenNode,
     onCloseNode,
+    statHandler,
   }
 }
 

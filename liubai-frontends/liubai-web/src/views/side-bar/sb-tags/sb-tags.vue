@@ -6,6 +6,7 @@ import { useSbTags } from "./tools/useSbTags";
 import { RouterLink } from 'vue-router'
 import SbtItem from './sbt-item/sbt-item.vue';
 import { useStMenu } from "./tools/useStMenu";
+import { type LiuTreeStat } from "./tools/types"
 
 defineProps({
   show: {
@@ -33,6 +34,7 @@ const {
   onNaviBack,
   onOpenNode,
   onCloseNode,
+  statHandler,
 } = useSbTags(emits)
 
 const ctx = {
@@ -81,6 +83,8 @@ const {
     :watermark="false"
     update-behavior="new"
     :max-level="3"
+    :node-key="(stat, index) => stat.data.tagId"
+    :stat-handler="statHandler"
     @open:node="onOpenNode"
     @close:node="onCloseNode"
   >
