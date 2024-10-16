@@ -153,11 +153,11 @@ async function initMobile(
     import("~/styles/mobile-style.css")
   }
 
-  const _env = liuEnv.getEnv()
-  if(_env.DEV) {
-    _open()
-    return
-  }
+  // const _env = liuEnv.getEnv()
+  // if(_env.DEV) {
+  //   _open()
+  //   return
+  // }
 
   if(onceData.mobile_debug) {
     _open()
