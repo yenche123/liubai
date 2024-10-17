@@ -7,53 +7,60 @@ import { type SimplePromise } from '~/utils/basic/type-tool';
 import { useGlobalStateStore } from '../stores/useGlobalStateStore';
 import cui from '~/components/custom-ui';
 
-const MIN_1 = time.MINUTE
+const SEC_10 = 10 * time.SECONED
 const MIN_15 = 15 * time.MINUTE
 
 let _updateSW: SimplePromise | undefined
 let _swRegistration: ServiceWorkerRegistration | undefined
 
-export function initServiceWorker() {
+// Reference: 
+// https://vite-pwa-org.netlify.app/guide/periodic-sw-updates.html#handling-edge-cases
+const _checkSW = async (swUrl: string, r: ServiceWorkerRegistration) => {
+  console.warn("see service-worker status: ")
+  console.log("r.installing: ", r.installing)
+  console.log("r.waiting: ", r.waiting)
+  console.log("r.active: ", r.active)
+  console.log(" ")
 
-  // Reference: 
-  // https://vite-pwa-org.netlify.app/guide/periodic-sw-updates.html#handling-edge-cases
-  const _checkSW = async (swUrl: string, r: ServiceWorkerRegistration) => {
-    if(r.installing || !navigator) return
+  if (r.installing || !navigator) return
 
-    if("connection" in navigator) {
-      if(!navigator.onLine) return
-    }
-
-    const { lastCheckSWStamp } = localCache.getOnceData()
-    if(lastCheckSWStamp) {
-      const isWithin = time.isWithinMillis(lastCheckSWStamp, MIN_1)
-      if(isWithin) {
-        console.log("too frequent to check out service worker")
-        return
-      }
-    }
-    localCache.setOnceData("lastCheckSWStamp", time.getTime())
-
-    const resp = await fetch(swUrl, {
-      cache: 'no-store',
-      headers: {
-        'cache': 'no-store',
-        'cache-control': 'no-cache',
-      },
-    })
-
-    if(resp?.status === 200) {
-      console.time("r.update")
-      await r.update()
-      console.timeEnd("r.update")
-    }
-    else {
-      console.warn("fail to fetch the result from service worker:")
-      console.log(resp)
-      console.log(" ")
-    }
+  if ("connection" in navigator) {
+    if (!navigator.onLine) return
   }
 
+  const { lastCheckSWStamp } = localCache.getOnceData()
+  if (lastCheckSWStamp) {
+    const isWithin = time.isWithinMillis(lastCheckSWStamp, SEC_10)
+    if (isWithin) {
+      console.log("too frequent to check out service worker")
+      return
+    }
+  }
+  localCache.setOnceData("lastCheckSWStamp", time.getTime())
+
+  const resp = await fetch(swUrl, {
+    cache: 'no-store',
+    headers: {
+      'cache': 'no-store',
+      'cache-control': 'no-cache',
+    },
+  })
+
+  if (resp?.status === 200) {
+    console.time("r.update")
+    await r.update()
+    console.timeEnd("r.update")
+  }
+  else {
+    console.warn("fail to fetch the result from service worker:")
+    console.log(resp)
+    console.log(" ")
+  }
+}
+
+
+export function initServiceWorker() {
+  
   const onRegisteredSW = (
     swUrl: string, 
     r: ServiceWorkerRegistration | undefined,
@@ -62,7 +69,6 @@ export function initServiceWorker() {
     // as long as sw is registered successfully
     _swRegistration = r
     
-    liuConsole.sendMessage(`Service Worker registered at: ${swUrl}`)
     if(!r) return
     setTimeout(() => {
       _checkSW(swUrl, r)
@@ -70,6 +76,20 @@ export function initServiceWorker() {
     setInterval(() => {
       _checkSW(swUrl, r)
     }, MIN_15)
+
+    r.addEventListener("updatefound", (evt) => {
+      console.warn("service-worker updatefound......")
+      console.log(evt)
+      const newWorker = r.installing
+      if(!newWorker) return
+      const state1 = newWorker.state
+      console.log("newWorker.state: ", state1)
+      
+      newWorker.addEventListener("statechange", (evt) => {
+        console.warn("newWorker statechange......")
+        console.log(newWorker.state)
+      })
+    })
   }
 
   const onRegisterError = (err: any) => {

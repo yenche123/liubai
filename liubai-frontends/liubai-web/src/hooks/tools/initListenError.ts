@@ -76,7 +76,7 @@ export function initListenError() {
     setTimeout(() => {
       if(!_canReload(errType)) return
       _reload(errType)
-    }, 1500)
+    }, 2500)
   }
 
   let hasBeenReport = false

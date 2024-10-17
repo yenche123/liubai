@@ -21,6 +21,11 @@ self.addEventListener('message', (event) => {
 // self.__WB_MANIFEST is default injection point
 precacheAndRoute(self.__WB_MANIFEST)
 
+self.addEventListener("install", (evt) => {
+  console.log("[my service worker] install......")
+  console.log(evt)
+})
+
 // clean old assets after the new service-worker is activated
 self.addEventListener("activate", (evt) => {
   console.log("[my service worker] activate......")
