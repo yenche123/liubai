@@ -120,6 +120,17 @@ export default defineConfig(({ command, mode }) => {
     preview: {
       port: 4175,
     },
+
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler"
+        },
+        sass: {
+          api: "modern-compiler"
+        }
+      }
+    },
     
     define: {
       "LIU_ENV": {
