@@ -227,7 +227,7 @@ const {
 .kcki-inner {
   border-radius: 4px;
   background-color: var(--card-bg);
-  padding: 10px;
+  padding: 14px;
   width: 100%;
   box-sizing: border-box;
   box-shadow: var(--card-shadow-2);
