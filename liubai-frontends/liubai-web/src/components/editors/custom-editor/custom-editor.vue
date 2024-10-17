@@ -213,7 +213,7 @@ useDraftIdChanged(ceData)
   width: 100%;
   background-color: var(--card-bg);
   box-sizing: border-box;
-  padding: 20px 20px 15px;
+  padding: 24px 24px 19px 24px;
   border-radius: var(--ce-border-radius);
   margin-bottom: 14px;
   box-shadow: var(--card-shadow);

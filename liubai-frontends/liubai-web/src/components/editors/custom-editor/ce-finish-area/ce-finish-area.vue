@@ -45,8 +45,8 @@ const cha = liuApi.getCharacteristic()
 <style scoped lang="scss">
 .ce-finish-area {
   position: absolute;
-  bottom: 15px;
-  right: 20px;
+  bottom: 19px;
+  right: 24px;
   display: flex;
   pointer-events: none;
 

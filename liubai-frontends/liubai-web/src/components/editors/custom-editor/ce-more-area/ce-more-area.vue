@@ -182,7 +182,7 @@ export default defineComponent({
 }
 
 .ma-container_expand {
-  max-height: 200px;
+  max-height: 180px;
   opacity: 1;
 }
 
@@ -192,7 +192,7 @@ export default defineComponent({
   /** 下方这样写，而不是 1fr 1fr 的好处是 .mai-title 下的文字可能溢出，会撑爆单元格 */
   /** 然而这样写，代表每个单元格已有确切的宽度了 */
   grid-template-columns: calc(50% - 3px) calc(50% - 3px);
-  gap: 10px 5px;    /** <grid-row-gap> <grid-column-gap> */
+  gap: 5px 5px;    /** <grid-row-gap> <grid-column-gap> */
 }
 
 .ma-item {
@@ -267,7 +267,7 @@ export default defineComponent({
 @container liu-mc-container (max-width: 590px) {
 
   .ma-container_expand {
-    max-height: 400px;
+    max-height: 380px;
   }
 
   .ma-grid {

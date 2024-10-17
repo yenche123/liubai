@@ -241,7 +241,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
   .tc-box {
     width: 100%;
     box-sizing: border-box;
-    padding: 20px;
+    padding: 24px;
     position: relative;
 
     .tc-briefing {
