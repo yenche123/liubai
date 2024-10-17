@@ -74,8 +74,8 @@
   --gradient-three: linear-gradient(90deg, rgba(255, 255, 255, 0) 5%, rgba(255, 255, 255, .5) 15%, rgba(255, 255, 255, 1) 50%);
   --cool-bg: linear-gradient(30deg, #ACB6E5, #70ded9);
   --checkbox-bg: linear-gradient(30deg, #2a6885, #15455e);
-  --tag-bg: #f3f5f8;
-  --tag-hover: linear-gradient(60deg, #ececec, #f3f5f8);
+  --tag-bg: #f2f4f7;
+  --tag-hover: linear-gradient(-60deg, #eaecf1, #f7f9fc 70%);
   --tooltip-shadow: 0 8px 18px 1px rgba(0,0,0,.28);
   --shortcut-text: #9e9e9e;
   --avatar-bg: #435964;

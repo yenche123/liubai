@@ -72,7 +72,7 @@
   --cool-bg: linear-gradient(30deg, #8e95b7, #10635f);
   --checkbox-bg: linear-gradient(30deg, #88d1ff, #48abdd);
   --tag-bg: #2a2c2e;
-  --tag-hover: linear-gradient(60deg, #353535, #2a2c2e);
+  --tag-hover: linear-gradient(30deg, #37393b, #25272a 70%);
   --tooltip-shadow: 0 4px 12px -1px rgba(255, 255, 255, .1);
   --shortcut-text: #989898;
   --avatar-bg: #a6bbc5;
