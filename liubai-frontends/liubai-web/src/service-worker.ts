@@ -7,18 +7,25 @@ import { NavigationRoute, registerRoute } from 'workbox-routing'
 
 declare let self: ServiceWorkerGlobalScope
 
-console.log("[my service worker] Hello world!!!")
+console.log("[my service worker] Hello, service worker!")
 
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING')
+  const eData = event.data
+  if(!eData) return
+  if(eData.type === 'SKIP_WAITING') {
+    console.log("[my service worker] skip waiting")
     self.skipWaiting()
+  }
 })
 
 // self.__WB_MANIFEST is default injection point
 precacheAndRoute(self.__WB_MANIFEST)
 
-// clean old assets
-cleanupOutdatedCaches()
+// clean old assets after the new service-worker is activated
+self.addEventListener("activate", (evt) => {
+  console.log("[my service worker] activate......")
+  cleanupOutdatedCaches()
+})
 
 // to allow work offline
 let allowlist: undefined | RegExp[]

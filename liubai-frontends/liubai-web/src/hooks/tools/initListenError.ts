@@ -69,6 +69,7 @@ export function initListenError() {
     }, 1)
 
     setTimeout(() => {
+      if(!_canReload(errType)) return
       _sendSkipWaitingMsg()
     }, 2)
 
