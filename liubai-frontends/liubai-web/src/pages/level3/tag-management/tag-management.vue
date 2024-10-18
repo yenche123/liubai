@@ -26,9 +26,8 @@ const {
     <div v-else class="tm-container">
       <Draggable
         v-model="tmData.tagNodes"
-        :indent="20"
+        :indent="30"
         @change="onTreeChange"
-        :watermark="false"
         :max-level="3"
         :node-key="(stat, index) => stat.data.tagId"
         :stat-handler="statHandler"
@@ -86,6 +85,12 @@ const {
     height: 46px;
     border-radius: 8px;
     border: 1px dashed var(--drag-border);
+  }
+
+  .drag-overing {
+    .liu-hover::before {
+      background-color: transparent;
+    }
   }
 }
 

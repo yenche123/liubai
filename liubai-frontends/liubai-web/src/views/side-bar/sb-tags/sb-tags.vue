@@ -80,8 +80,7 @@ const {
 
   <Draggable v-if="sbtData.enable"
     v-model="tagNodes" ref="treeEl" :indent="20" 
-    @change="onTreeChange" 
-    :watermark="false"
+    @change="onTreeChange"
     update-behavior="new"
     :max-level="3"
     :node-key="(stat, index) => stat.data.tagId"
@@ -262,6 +261,12 @@ const {
     height: 46px;
     border-radius: 8px;
     border: 1px dashed var(--drag-border);
+  }
+
+  .drag-overing {
+    .liu-hover::before {
+      background-color: transparent;
+    }
   }
 }
 

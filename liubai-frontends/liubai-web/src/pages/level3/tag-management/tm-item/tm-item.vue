@@ -62,7 +62,6 @@ defineEmits<{
   position: relative;
   padding: 5px 0;
   transition: .15s;
-  margin-block-end: 3px;
 }
 
 .tag-box {
