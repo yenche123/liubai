@@ -36,7 +36,7 @@ export function usePaymentContent() {
   }, 1000)
 
   const onTapAlipay = useThrottleFn(() => {
-    whenTapAlipay(pcData)
+    whenTapAlipay(pcData, rr)
   }, 1000)
 
   const onTapWxpayH5 = useThrottleFn(() => {
@@ -54,6 +54,7 @@ export function usePaymentContent() {
 
 function whenTapAlipay(
   pcData: PcData,
+  rr: RouteAndLiuRouter,
 ) {
   // 1. check if we can pay
   const od = pcData.od
@@ -65,7 +66,7 @@ function whenTapAlipay(
 
   // 2. invoke pay-tool
   const order_id = od.order_id
-  buyViaAlipayWap(order_id)
+  buyViaAlipayWap(order_id, rr, "payment")
 }
 
 async function whenTapWxpayH5(

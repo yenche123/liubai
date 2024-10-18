@@ -158,7 +158,7 @@ async function toBuyViaOneOff(
 
   // 8. redirect to alipay
   if(cha.isMobile) {
-    const res8 = await buyViaAlipayWap(order_id)
+    const res8 = await buyViaAlipayWap(order_id, rr, "subscription")
     if(res8) return
   }
   

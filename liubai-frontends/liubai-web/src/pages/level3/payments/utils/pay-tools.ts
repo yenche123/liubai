@@ -23,6 +23,8 @@ import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import usefulTool from "~/utils/basic/useful-tool";
 import { type UserLocalTable } from "~/types/types-table";
 import { db } from "~/utils/db";
+import liuApi from "~/utils/liu-api";
+import { type RouteAndLiuRouter } from "~/routes/liu-router";
 
 let initData: Res_UserLoginInit | undefined
 
@@ -174,6 +176,8 @@ const vawData: VawData = {}
 // pay by alipay.trade.wap.pay
 export async function buyViaAlipayWap(
   order_id: string,
+  rr: RouteAndLiuRouter,
+  currentPage: "payment" | "subscription",
 ) {
   // 1. check out vawData
   if(order_id === vawData.order_id && vawData.wap_url) {
@@ -181,7 +185,7 @@ export async function buyViaAlipayWap(
     const e1 = vawData.expireStamp ?? 1
     const diff1 = e1 - now1
     if(diff1 > 0) {
-      jumpToAlipayWap()
+      jumpToAlipayWap(rr, currentPage)
       return true
     }
   }
@@ -205,17 +209,37 @@ export async function buyViaAlipayWap(
   if(!res4) return false
 
   // 5. redirect to wap_url
-  jumpToAlipayWap()
+  jumpToAlipayWap(rr, currentPage)
   return true
 }
 
-function jumpToAlipayWap() {
+function jumpToAlipayWap(
+  rr: RouteAndLiuRouter,
+  currentPage: "payment" | "subscription",
+) {
   const url = vawData.wap_url
   if(!url) return
   cui.showLoading({ title_key: "payment.paying" })
-  location.href = url
+
+  const cha = liuApi.getCharacteristic()
+  const usingRedirect = Boolean(cha.isAlipay || cha.isIOS || cha.isIPadOS)
+
+  if(usingRedirect) {
+    location.href = url
+  }
+  else {
+    window.open(url, "_blank")
+  }
+
   setTimeout(() => {
     cui.hideLoading()
+
+    const order_id = vawData.order_id
+    if(!order_id) return
+    if(currentPage === "subscription" && !cha.isAlipay) {
+      rr.router.push({ name: "payment", params: { order_id } })
+    }
+
   }, 3 * time.SECONED)
 }
 
