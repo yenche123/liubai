@@ -31,7 +31,7 @@ const onTapNaviTitle = () => {
 <template>
 
   <!-- 主视图 -->
-  <main-view :drop-files="true" @tapmainview="onTapMainView">
+  <main-view :enable-drop-files="true" @tapmainview="onTapMainView">
     <scroll-view :hidden-scroll-bar="hiddenScrollBar" @scroll="onScroll"
       :go-to-top="goToTop"
     >

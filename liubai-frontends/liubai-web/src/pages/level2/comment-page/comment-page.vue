@@ -26,7 +26,7 @@ const { t } = useI18n()
 <template>
 
   <!-- 主视图 -->
-  <main-view :drop-files="true">
+  <main-view :enable-drop-files="true">
     <template v-for="(item, index) in cpData.list" :key="item.id">
       <div class="liu-view" v-show="item.show">
         <scroll-view 

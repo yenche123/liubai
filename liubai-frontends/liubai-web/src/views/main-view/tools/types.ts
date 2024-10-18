@@ -1,7 +1,14 @@
 
 
 export interface MainViewProps {
-  dropFiles: boolean
+  enableDropFiles: boolean
+}
+
+export const mainViewProps = {
+  enableDropFiles: {
+    type: Boolean,
+    default: false
+  }
 }
 
 export interface MainViewEmits {

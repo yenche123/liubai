@@ -3,19 +3,13 @@ import { defineAsyncComponent } from "vue"
 import { useMainView } from "./tools/useMainView"
 import { useMvDropZone } from "./tools/useMvDropZone"
 import { useMvTouchBox } from "./tools/useMvTouchBox"
-import type { MainViewEmits } from "./tools/types"
+import { type MainViewEmits, mainViewProps } from "./tools/types"
 
 const CenterDropZone = defineAsyncComponent(() => {
   return import("./center-drop-zone/center-drop-zone.vue")
 })
 
-const props = defineProps({
-  dropFiles: {
-    type: Boolean,
-    default: false
-  }
-})
-
+const props = defineProps(mainViewProps)
 const emits = defineEmits<MainViewEmits>()
 
 const { leftPx, rightPx } = useMainView()
@@ -44,7 +38,7 @@ const onTapCenter = (e: MouseEvent) => {
       <slot />
 
       <center-drop-zone 
-        v-if="dropFiles"
+        v-if="enableDropFiles"
         :is-over-drop-zone="isOverDropZone"
         :left-px="leftPx"
         :right-px="rightPx"
