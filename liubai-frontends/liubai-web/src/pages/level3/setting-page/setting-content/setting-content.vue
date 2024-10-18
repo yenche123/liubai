@@ -478,7 +478,7 @@ const iconColor = "var(--main-normal)"
 
 
 .sc-title {
-  font-size: var(--title-font);
+  font-size: var(--desc-font);
   font-weight: 700;
   color: var(--main-normal);
   margin-inline-start: 10px;
@@ -489,7 +489,7 @@ const iconColor = "var(--main-normal)"
   background-color: var(--card-bg);
   border-radius: 24px;
   position: relative;
-  padding: 16px 10px 10px 10px;
+  padding: 16px 10px 12px 10px;
   width: 100%;
   box-sizing: border-box;
   box-shadow: var(--card-shadow-2);
@@ -541,7 +541,6 @@ const iconColor = "var(--main-normal)"
   position: relative;
   display: flex;
   box-sizing: border-box;
-  margin-block-end: 6px;
   overflow: hidden;
   padding: 10px 10px;
 
@@ -613,6 +612,7 @@ const iconColor = "var(--main-normal)"
 .sc-pad-box {
   position: relative;
   width: 100%;
+  padding-block-end: 6px;
   transform: translateY(-50%);
   transition: .3s;
 }

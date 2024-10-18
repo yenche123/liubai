@@ -186,7 +186,7 @@ const iconColor = `var(--main-normal)`
   background-color: var(--card-bg);
   border-radius: 24px;
   position: relative;
-  padding: 14px 10px 8px 10px;
+  padding: 14px 10px 10px 10px;
   width: 100%;
   box-sizing: border-box;
   box-shadow: var(--card-shadow-2);
@@ -200,7 +200,7 @@ const iconColor = `var(--main-normal)`
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  margin-block-end: 6px;
+  margin-block-end: 4px;
   overflow: hidden;
   padding: 8px 10px;
 
