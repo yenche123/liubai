@@ -74,7 +74,7 @@ export function useTagManagement() {
     tmData.oldTagNodes = valTool.copyObject(tmData.tagNodes)
   }
 
-  const onTapTagItem = (e: MouseEvent, href: string) => {
+  const onTapTagItem = (href: string) => {
     rr.router.push({ path: href, query: rr.route.query })
   }
 

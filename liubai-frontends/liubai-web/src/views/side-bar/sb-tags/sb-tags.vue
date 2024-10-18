@@ -249,16 +249,21 @@ const {
 
 
 </style>
-<style>
-.he-tree {
-  min-height: 300px;
+<style lang="scss">
+
+.sb-inner-box {
+  .he-tree {
+    min-height: 300px;
+  }
+
+  /** 当标签正在拖动时的 css */
+  .he-tree-drag-placeholder {
+    background-color: var(--drag-bg);
+    height: 46px;
+    border-radius: 8px;
+    border: 1px dashed var(--drag-border);
+  }
 }
 
-/** 当标签正在拖动时的 css */
-.he-tree-drag-placeholder {
-  background-color: var(--drag-bg);
-  height: 46px;
-  border-radius: 8px;
-  border: 1px dashed var(--drag-border);
-}
+
 </style>
