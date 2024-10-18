@@ -1,5 +1,9 @@
 import type { RouteLocation } from 'vue-router'
 import type { SpaceType } from "./types-basic"
+import type { HeTreeStat } from './other/types-hetree'
+import type { TagView } from './types-atom'
+
+export type LiuTagTreeStat = HeTreeStat<TagView>
 
 export interface LiuFileStore {
   id: string

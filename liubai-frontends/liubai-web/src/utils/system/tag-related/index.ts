@@ -39,6 +39,7 @@ import {
 } from "./tools/draft-util"
 import valTool from "~/utils/basic/val-tool";
 import { toSetTagList } from "./tools/some-foos"
+import { type LiuTagTreeStat } from "~/types";
 
 // 返回当前工作区的 tags
 export function getCurrentSpaceTagList(): TagView[] {
@@ -411,4 +412,44 @@ export function hasStrangeChar(val: string) {
 export function getLevelFromText(val: string) {
   const list = val.split("/")
   return list.length
+}
+
+export function useTagsTree() {
+  const onTapTagArrow = (
+    e: MouseEvent, 
+    node: TagView, 
+    stat: LiuTagTreeStat,
+  ) => {
+    const length = stat.children.length
+    if(!length) return
+    stat.open = !stat.open
+  }
+
+  const closedNodes: Record<string, boolean | undefined> = {}
+  const onOpenNode = (stat: LiuTagTreeStat) => {
+    const tagId = stat.data.tagId
+    if(!tagId) return
+    closedNodes[tagId] = false
+  }
+
+  const onCloseNode = (stat: LiuTagTreeStat) => {
+    const tagId = stat.data.tagId
+    if(!tagId) return
+    closedNodes[tagId] = true
+  }
+
+  const statHandler = (stat: LiuTagTreeStat) => {
+    const tagId = stat.data.tagId
+    if(!tagId) return stat
+    const isClosed = closedNodes[tagId]
+    if(isClosed) stat.open = false
+    return stat
+  }
+
+  return {
+    onTapTagArrow,
+    onOpenNode,
+    onCloseNode,
+    statHandler,
+  }
 }

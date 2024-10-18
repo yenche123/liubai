@@ -3,13 +3,13 @@ import { Draggable } from "@he-tree/vue";
 import type { TagView } from "~/types/types-atom";
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
-import { getCurrentSpaceTagList } from "~/utils/system/tag-related";
+import { getCurrentSpaceTagList, useTagsTree } from "~/utils/system/tag-related";
 import { filterTag, tagMovedInTree } from "~/utils/system/tag-related/tags";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import time from "~/utils/basic/time";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import valTool from "~/utils/basic/val-tool";
-import type { SbTagsData, SbtEmits, LiuTreeStat } from "./types";
+import type { SbTagsData, SbtEmits } from "./types";
 import liuUtil from "~/utils/liu-util";
 
 
@@ -32,7 +32,7 @@ export function useSbTags(emits: SbtEmits) {
     sbtData.toPath = _path
   }, { immediate: true })
 
-  const { router, route } = useRouteAndLiuRouter()
+  const rr = useRouteAndLiuRouter()
 
   const treeEl = ref<typeof Draggable | null>(null)
   const tagNodes = ref<TagView[]>([])
@@ -49,11 +49,12 @@ export function useSbTags(emits: SbtEmits) {
       console.log("tagChangedNum 才刚内部发生变化 忽略")
       return
     }
+    console.log("11111111111")
     getLatestSpaceTag(sbtData, tagNodes, oldTagNodes)
   })
 
   // 监听 route 变化
-  watch(route, (newV) => {
+  watch(rr.route, (newV) => {
     const { name, params } = newV
     if(name !== "tag" && name !== "collaborative-tag") {
       sbtData.currentTagId = ""
@@ -76,6 +77,7 @@ export function useSbTags(emits: SbtEmits) {
       tagNodes.value = res0.tree
     }
 
+    lastTagChangeStamp.value = time.getTime()
     const res = await tagMovedInTree(tagNodes.value, oldTagNodes.value)
     if(!res.moved) {
       tagNodes.value = oldTagNodes.value
@@ -83,52 +85,28 @@ export function useSbTags(emits: SbtEmits) {
     }
 
     if(res.newNewTree) {
-      console.log("有 newNewTree 所以去赋值......")
       tagNodes.value = res.newNewTree
     }
     
     oldTagNodes.value = valTool.copyObject(tagNodes.value)
-    lastTagChangeStamp.value = time.getTime()
-  }
-
-  const onTapTagArrow = (e: MouseEvent, node: TagView, stat: LiuTreeStat) => {
-    const length = stat.children.length
-    if(!length) return
-    stat.open = !stat.open
   }
 
   const onTapTagItem = (e: MouseEvent, href: string) => {
-    router.push({ path: href, query: route.query })
+    rr.router.push({ path: href, query: rr.route.query })
     emits("aftertap")
   }
 
   const onNaviBack = () => {
-    router.naviBackUntilNoSpecificQuery(route, "tags")
+    rr.router.naviBackUntilNoSpecificQuery(rr.route, "tags")
   }
-
 
   // record which nodes are closed
-  const closedNodes: Record<string, boolean | undefined> = {}
-  const onOpenNode = (stat: LiuTreeStat) => {
-    const tagId = stat.data.tagId
-    if(!tagId) return
-    closedNodes[tagId] = false
-  }
-
-  const onCloseNode = (stat: LiuTreeStat) => {
-    const tagId = stat.data.tagId
-    if(!tagId) return
-    closedNodes[tagId] = true
-  }
-
-  const statHandler = (stat: LiuTreeStat) => {
-    const tagId = stat.data.tagId
-    if(!tagId) return stat
-    const isClosed = closedNodes[tagId]
-    if(isClosed) stat.open = false
-    return stat
-  }
-
+  const {
+    onTapTagArrow,
+    onOpenNode,
+    onCloseNode,
+    statHandler,
+  } = useTagsTree()
 
   // try to fix the bug that the node we're dragging will be disapeared
   // but it doesn't work
@@ -185,12 +163,8 @@ function initTagNodes(
   oldTagNodes: Ref<TagView[]>,
   spaceId: Ref<string>,
 ) {
-  const _get = () => {
-    if(!spaceId.value) return
-    getLatestSpaceTag(sbtData, tagNodes, oldTagNodes)
-  }
-
   watch(spaceId, (newV) => {
-    _get()
+    if(!newV) return
+    getLatestSpaceTag(sbtData, tagNodes, oldTagNodes)
   }, { immediate: true })
 }

@@ -6,7 +6,6 @@ import { useSbTags } from "./tools/useSbTags";
 import { RouterLink } from 'vue-router'
 import SbtItem from './sbt-item/sbt-item.vue';
 import { useStMenu } from "./tools/useStMenu";
-import { type LiuTreeStat } from "./tools/types"
 
 defineProps({
   show: {
