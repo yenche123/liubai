@@ -189,7 +189,14 @@ function onTapMask() {
   if(time.isWithinMillis(hteData.lastFocusOrBlurStamp, 300)) {
     return
   }
-  if(hteData.mode === "edit" && checkState()) {
+  
+  const m = hteData.mode
+  if(m === "edit" && !firstInputVal) {
+    toCancel()
+    return
+  }
+
+  if(m === "edit" && checkState()) {
     if(inputEl.value) inputEl.value.blur()
     toEnter()
   }
