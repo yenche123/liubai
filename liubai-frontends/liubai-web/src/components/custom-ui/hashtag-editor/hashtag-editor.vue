@@ -261,8 +261,9 @@ const onMouseEnterItem = (index: number) => {
 
 .hte-err {
   position: relative;
-  height: 30px;
+  min-height: 30px;
   margin-inline-start: 90px;
+  width: calc(100% - 96px);
   padding-bottom: 20px;
   font-size: var(--btn-font);
   color: var(--liu-quote);
@@ -306,6 +307,11 @@ const onMouseEnterItem = (index: number) => {
       width: 30px;
       height: 30px;
     }
+  }
+
+  .hte-err {
+    margin-inline-start: 72px;
+    width: calc(100% - 80px);
   }
 
 }

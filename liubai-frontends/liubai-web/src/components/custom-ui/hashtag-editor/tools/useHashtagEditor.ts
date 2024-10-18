@@ -50,7 +50,6 @@ export function initHashtagEditor() {
     inputEl,
     hteData,
     onTapMask,
-    onTapConfirm,
     onTapItem,
     onInput,
     onFocus,
@@ -190,19 +189,7 @@ function onTapMask() {
     return
   }
   
-  const m = hteData.mode
-  if(m === "edit" && !firstInputVal) {
-    toCancel()
-    return
-  }
-
-  if(m === "edit" && checkState()) {
-    if(inputEl.value) inputEl.value.blur()
-    toEnter()
-  }
-  else {
-    toCancel()
-  }
+  toCancel()
 }
 
 function toCancel() {
@@ -274,7 +261,6 @@ function toSelect() {
   closeIt(rr, queryKey)
 }
 
-// 检测 onTapConfirm
 function checkState() {
   
   const m = hteData.mode
