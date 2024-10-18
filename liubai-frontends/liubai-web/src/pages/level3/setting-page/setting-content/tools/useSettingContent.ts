@@ -17,7 +17,11 @@ import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 import middleBridge from "~/utils/middle-bridge"
 import { type MemberShow } from "~/types/types-content"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
-import { getSWRegistration, toUpdateSW } from "~/hooks/pwa/useServiceWorker"
+import { 
+  getSWRegistration, 
+  toUpdateSW,
+  checkUpdateManually,
+} from "~/hooks/pwa/useServiceWorker"
 import valTool from "~/utils/basic/val-tool"
 import { useShowAddToHomeScreen } from "~/hooks/pwa/useA2HS"
 import liuReq from "~/requests/liu-req"
@@ -90,7 +94,7 @@ export function useSettingContent() {
     onToggleMobileDebug,
     onTapClearCache: () => whenTapClearCache(),
     onTapNickname: () => whenTapNickname(myProfile),
-    onTapVerionUpdate: () => whenTapVersionUpdate(hasNewVersion),
+    onTapVersionUpdate: () => whenTapVersionUpdate(hasNewVersion),
     onTapA2HS,
     version,
     appName,
@@ -136,6 +140,8 @@ async function whenTapVersionUpdate(
     _newVersion()
     return
   }
+
+  checkUpdateManually()
 
   cui.showLoading({ title_key: "pwa.checking" })
   await valTool.waitMilli(1500)

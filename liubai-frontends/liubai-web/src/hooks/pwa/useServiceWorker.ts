@@ -11,17 +11,20 @@ const SEC_10 = 10 * time.SECONED
 const MIN_15 = 15 * time.MINUTE
 
 let _updateSW: SimplePromise | undefined
+let _swUrl: string | undefined
 let _swRegistration: ServiceWorkerRegistration | undefined
 
 // Reference: 
 // https://vite-pwa-org.netlify.app/guide/periodic-sw-updates.html#handling-edge-cases
-const _checkSW = async (swUrl: string, r: ServiceWorkerRegistration) => {
+const _checkSW = async (r: ServiceWorkerRegistration) => {
   console.warn("see service-worker status: ")
   console.log("r.installing: ", r.installing)
   console.log("r.waiting: ", r.waiting)
   console.log("r.active: ", r.active)
   console.log(" ")
 
+  const swUrl = _swUrl
+  if(!swUrl) return
   if (r.installing || !navigator) return
 
   if ("connection" in navigator) {
@@ -68,13 +71,14 @@ export function initServiceWorker() {
     // the func will be called every time you open the page
     // as long as sw is registered successfully
     _swRegistration = r
+    _swUrl = swUrl
     
     if(!r) return
     setTimeout(() => {
-      _checkSW(swUrl, r)
+      _checkSW(r)
     }, time.SECONED)
     setInterval(() => {
-      _checkSW(swUrl, r)
+      _checkSW(r)
     }, MIN_15)
 
     r.addEventListener("updatefound", (evt) => {
@@ -148,6 +152,11 @@ export async function toUpdateSW(
   await _updateSW()
 }
 
+export function checkUpdateManually() {
+  const r = _swRegistration
+  if(!r) return false
+  _checkSW(r)
+}
 
 export function getSWRegistration() {
   return _swRegistration

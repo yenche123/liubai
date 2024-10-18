@@ -33,7 +33,7 @@ const {
   onToggleMobileDebug,
   onTapClearCache,
   onTapNickname,
-  onTapVerionUpdate,
+  onTapVersionUpdate,
   onTapA2HS,
   version,
   appName,
@@ -361,7 +361,7 @@ const iconColor = "var(--main-normal)"
 
             <!-- 版本更新 -->
             <div v-if="data.showA2HS" class="liu-no-user-select liu-hover sc-pad-item" 
-              @click.stop="onTapVerionUpdate"
+              @click.stop="onTapVersionUpdate"
             >
               <div class="sc-pad-title">
                 <span>{{ t('setting.detect_version') }}</span>
@@ -397,7 +397,7 @@ const iconColor = "var(--main-normal)"
         <!-- Version Update -->
         <div class="liu-no-user-select liu-hover sc-bar"
           v-else
-          @click.stop="onTapVerionUpdate"
+          @click.stop="onTapVersionUpdate"
         >
           <div class="scb-hd">
             <span>{{ t('setting.detect_version') }}</span>

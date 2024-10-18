@@ -106,7 +106,7 @@ function toOpen() {
     if(!sbfData.enable) {
       sbfData.enable = true
     }
-    console.log("call foo2 directly")
+    // console.log("call foo2 directly")
     foo2()
   }
 
