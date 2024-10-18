@@ -25,6 +25,7 @@ const A2hsPage = () => import("../pages/level3/a2hs-page/a2hs-page.vue")
 const ConnectWechat = () => import("../pages/connectors/connect-wechat/connect-wechat.vue")
 const PaymentPage = () => import("../pages/level3/payments/payment-page/payment-page.vue")
 const MinePage = () => import("../pages/level2/mine-page/mine-page.vue")
+const TagManagement = () => import("../pages/level3/tag-management/tag-management.vue")
 
 export const routes: Array<RouteRecordRaw> = [
   /*************** 公共页面（不区分工作区） ***************/
@@ -160,6 +161,15 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {}
   },
   {
+    path: "/tags",
+    components: {
+      default: TagManagement,
+      LeftSidebar,
+    },
+    name: "tags",
+    meta: {},
+  },
+  {
     path: "/favorite",
     components: {
       default: FavoritePage,
@@ -293,6 +303,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "collaborative-tag",
     meta: {}
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/tags",
+    components: {
+      default: TagManagement,
+      LeftSidebar,
+    },
+    name: "collaborative-tags",
+    meta: {},
   },
   {
     path: "/w/:workspaceId(\\w{10,})/favorite",

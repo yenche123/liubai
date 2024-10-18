@@ -7,7 +7,7 @@ import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 </script>
 <template>
 
-  <div class="liu-basic-page">
+  <div class="liu-simple-page">
     <scroll-view>
       <navi-virtual></navi-virtual>
       <SuccessContent></SuccessContent>
