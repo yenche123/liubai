@@ -19,8 +19,16 @@ defineProps({
   hasTopNavi: {
     type: Boolean,
     default: true,
+  },
+  showAdd: {
+    type: Boolean,
+    default: false,
   }
 })
+
+defineEmits<{
+  (evt: "tapadd"): void
+}>()
 
 
 </script>
@@ -36,7 +44,10 @@ defineProps({
         </div>
       </div>
     </scroll-view>
-    <navi-bar v-if="hasTopNavi" :title="titleKey ? t(titleKey) : ''"></navi-bar>
+    <navi-bar v-if="hasTopNavi" :title="titleKey ? t(titleKey) : ''"
+      :show-add="showAdd"
+      @tapadd="$emit('tapadd')"
+    ></navi-bar>
   </main-view>
 
 </template>

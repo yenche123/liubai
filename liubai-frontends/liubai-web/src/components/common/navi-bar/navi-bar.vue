@@ -3,10 +3,11 @@ import cfg from "~/config"
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { useNaviBar } from "./tools/useNaviBar";
 import { useI18n } from "vue-i18n";
-import { naviBarProps } from "./tools/types"
+import { naviBarProps, type NaviBarEmit } from "./tools/types"
 
 const { router } = useRouteAndLiuRouter()
 const props = defineProps(naviBarProps)
+defineEmits<NaviBarEmit>()
 
 const onTapBack = (e: MouseEvent) => {
   router.naviBack()
@@ -39,6 +40,8 @@ const {
       >
         <SvgIcon class="nb-icon" name="menu"></SvgIcon>
       </div>
+
+      <!-- title -->
       <div class="liu-no-user-select nb-title"
         :style="{ 'margin-inline-start': showMenuBtn ? '10px' : '6px' }"
       >
@@ -46,6 +49,17 @@ const {
         <span v-else-if="titleKey">{{ t(titleKey) }}</span>
         <span v-else-if="placeholderKey">{{ t(placeholderKey) }}</span>
       </div>
+
+      <!-- add -->
+      <div v-if="showAdd" 
+        class="liu-hover nbb-normal"
+        :class="{ 'nbb-small': showMenuBtn }" 
+        style="margin-inline-end: -6px;"
+        @click="$emit('tapadd')"
+      >
+        <SvgIcon class="nb-icon_add" name="add"></SvgIcon>
+      </div>
+
     </div>
 
   </div>
@@ -61,16 +75,18 @@ const {
   display: flex;
   justify-content: center;
   z-index: 540;
+  container-type: inline-size;
+  container-name: nb-container;
+}
 
-  .nb-box {
-    width: var(--card-percent);
-    height: 100%;
-    max-width: var(--card-max);
-    min-width: var(--card-min);
-    display: flex;
-    align-items: center;
-    position: relative;
-  }
+.nb-box {
+  width: var(--card-percent);
+  height: 100%;
+  max-width: var(--card-max);
+  min-width: var(--card-min);
+  display: flex;
+  align-items: center;
+  position: relative;
 }
 
 .nbb-normal {
@@ -79,10 +95,16 @@ const {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: none;
 
   .nb-icon {
     width: 26px;
     height: 26px;
+  }
+
+  .nb-icon_add {
+    width: 30px;
+    height: 30px;
   }
 }
 
@@ -94,8 +116,12 @@ const {
     width: 24px;
     height: 24px;
   }
-}
 
+  .nb-icon_add {
+    width: 28px;
+    height: 28px;
+  }
+}
 
 .nb-title {
   position: relative;
@@ -103,6 +129,34 @@ const {
   color: var(--main-text);
   line-height: 1.5;
   font-weight: 700;
+  flex: 1;
 }
+
+/** the container query below is following `@container liu-mc-container` in style.css */
+
+@container nb-container (min-width: 460px) {
+  .nb-container > .nb-box {
+    width: 90%;
+  }
+}
+
+@container nb-container (min-width: 500px) {
+  .nb-container > .nb-box {
+    width: 88%;
+  }
+}
+
+@container nb-container (min-width: 560px) {
+  .nb-container > .nb-box {
+    width: 85%;
+  }
+}
+
+@container nb-container (min-width: 610px) {
+  .nb-container > .nb-box {
+    width: 80%;
+  }
+}
+
 
 </style>

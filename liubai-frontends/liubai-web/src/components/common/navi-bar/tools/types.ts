@@ -5,6 +5,11 @@ export interface NaviBarProps {
   titleKey?: string
   placeholderKey?: string
   showMenu: boolean
+  showAdd: boolean
+}
+
+export interface NaviBarEmit {
+  (evt: "tapadd"): void
 }
 
 export const naviBarProps = {
@@ -20,5 +25,9 @@ export const naviBarProps = {
   showMenu: {
     type: Boolean,
     default: true,
+  },
+  showAdd: {
+    type: Boolean,
+    default: false,
   }
 }

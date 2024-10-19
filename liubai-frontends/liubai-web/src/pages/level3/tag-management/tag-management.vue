@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import PageDefault from "~/pages/shared/page-default/page-default.vue";
 import { useTagManagement } from "./tools/useTagManagement";
+import { useTagMenu } from "~/pages/shared/foos/useTagMenu"
 import { Draggable } from "@he-tree/vue";
 import TmItem from "./tm-item/tm-item.vue";
 
@@ -14,10 +15,17 @@ const {
   statHandler,
 } = useTagManagement()
 
+const {
+  menuList,
+  menuList2,
+  onTapMenuItem,
+  onTapAdd,
+} = useTagMenu(tmData)
+
 </script>
 <template>
 
-  <PageDefault title-key="common.tags">
+  <PageDefault title-key="common.tags" show-add @tapadd="onTapAdd">
 
     <div v-if="tmData.tagNodes.length < 1" class="tm-nothing-here">
       <span>nothing here</span>
@@ -36,7 +44,10 @@ const {
       >
         <template #default="{ node, stat }">
           <TmItem :node="node" :stat="stat" 
+            :menuList="menuList"
+            :menuList2="menuList2"
             @tapitem="onTapTagItem(tmData.toPath + node.tagId)"
+            @tapmenuitem="onTapMenuItem"
             @taptagarrow="onTapTagArrow"
           ></TmItem>
         </template>

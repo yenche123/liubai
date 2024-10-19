@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { PropType, inject } from "vue";
+import { type PropType } from "vue";
 import LiuMenu from "~/components/common/liu-menu/liu-menu.vue"
 import { type MenuItem } from "~/components/common/liu-menu/tools/types";
 import liuApi from '~/utils/liu-api';
-import { deviceChaKey } from "~/utils/provide-keys";
 
 defineProps({
   isPC: {
@@ -32,8 +31,6 @@ defineEmits<{
   (evt: "taptagarrow", evt2: MouseEvent, node: any, stat: any): void
   (evt: "tapmenuitem", item: MenuItem, idx: number, node: any, stat: any): void
 }>()
-
-const cha = inject(deviceChaKey)
 
 </script>
 <template>

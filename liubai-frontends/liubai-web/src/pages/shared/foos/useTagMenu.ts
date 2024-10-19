@@ -12,7 +12,6 @@ import {
   editTagIcon,
   getLevelFromText,
 } from "~/utils/system/tag-related"
-import type { Ref } from "vue"
 import { i18n } from "~/locales"
 import type { T_i18n } from "~/locales"
 import type { RenameTagParam } from "~/utils/system/tag-related/tools/types"
@@ -20,15 +19,12 @@ import { getTagViewLevel } from "~/utils/system/tag-related/tools/tag-util"
 import time from "~/utils/basic/time"
 import type { LiuTagTreeStat } from "~/types"
 
-export interface StmCtx {
-  tagNodes: Ref<TagView[]>
-  oldTagNodes: Ref<TagView[]>
-  lastTagChangeStamp: Ref<number>
+export interface UtmData {
+  lastTagChangeStamp: number
+  [key: string]: any
 }
 
-export function useStMenu(ctx: StmCtx) {
-  const cha = liuApi.getCharacteristic() 
-  const isPC = cha.isPC
+export function useTagMenu(data: UtmData) {
   const { menuList, menuList2 } = initMenu()
 
   const onTapMenuItem = (
@@ -42,7 +38,7 @@ export function useStMenu(ctx: StmCtx) {
       handle_create(node, stat)
     }
     else if(text_key === "common.edit") {
-      handle_edit(node, stat, ctx)
+      handle_edit(node, stat, data)
     }
     else if(text_key === "common.delete") {
       handle_delete(node, stat)
@@ -53,8 +49,8 @@ export function useStMenu(ctx: StmCtx) {
     handle_add()
   }
 
+
   return {
-    isPC,
     menuList,
     menuList2,
     onTapMenuItem,
@@ -86,6 +82,7 @@ function initMenu() {
 
   return { menuList, menuList2 }
 }
+
 
 async function handle_add() {
   const res = await cui.showHashtagEditor({ mode: "edit" })
@@ -136,10 +133,11 @@ async function handle_create(
   gStore.addTagChangedNum("create")
 }
 
+
 async function handle_edit(
   node: TagView,
   stat: LiuTagTreeStat,
-  ctx: StmCtx,
+  data: UtmData,
 ) {
   const oldTagId = node.tagId
   const { tagShows } = tagIdsToShows([oldTagId])
@@ -162,7 +160,7 @@ async function handle_edit(
     if(res.icon === node.icon) return
     const res2 = await editTagIcon(oldTagId, res.icon)
     node.icon = res.icon
-    ctx.lastTagChangeStamp.value = time.getTime()
+    data.lastTagChangeStamp = time.getTime()
     gStore.addTagChangedNum("edit")
     return
   }
@@ -225,6 +223,7 @@ function _showErr(
     showCancel: false,
   })
 }
+
 
 async function handle_delete(
   node: TagView,

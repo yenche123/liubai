@@ -3,7 +3,8 @@ import { type TagView } from '~/types/types-atom';
 import { type PropType } from 'vue';
 import { LiuTagTreeStat } from '~/types';
 import liuApi from '~/utils/liu-api';
-import { MenuItem } from '~/components/common/liu-menu/tools/types';
+import LiuMenu from "~/components/common/liu-menu/liu-menu.vue";
+import { type MenuItem } from '~/components/common/liu-menu/tools/types';
 
 defineProps({
   node: {
@@ -13,6 +14,12 @@ defineProps({
   stat: {
     type: Object as PropType<LiuTagTreeStat>,
     required: true,
+  },
+  menuList: {
+    type: Array as PropType<MenuItem[]>
+  },
+  menuList2: {
+    type: Array as PropType<MenuItem[]>
   },
 })
 
@@ -44,11 +51,18 @@ defineEmits<{
         <span>{{ node.text }}</span>
       </div>
 
-      <div class="tag-bg"></div>
-    </div>
+      <!-- menu -->
+      <LiuMenu :menu="stat.level < 3 ? menuList2 : menuList"
+        min-width-str="100px"
+        placement="bottom-end"
+        @tapitem="(item2, index2) => $emit('tapmenuitem', item2, index2, node, stat)"
+      >
+        <div class="liu-hover tag-more">
+          <svg-icon class="tag-more-icon" name="more" color="var(--main-normal)"></svg-icon>
+        </div>
+      </LiuMenu>
 
-    <!-- 更多 -->
-    
+    </div>
 
 
   </div>
@@ -124,12 +138,20 @@ defineEmits<{
   color: var(--main-normal);
 }
 
-.tag-bg {
-  position: absolute;
-  top: 0;
-  left: 40px;
-  right: 0;
-  bottom: 0;
+.tag-more {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline-end: 4px;
+
+  .tag-more-icon {
+    width: 26px;
+    height: 26px;
+  }
+
 }
 
 
