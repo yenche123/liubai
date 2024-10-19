@@ -13,6 +13,7 @@ import {
   useThrottleFn,
   usePageLeave,
   useWindowFocus,
+  useIdle,
 } from "~/hooks/useVueUse";
 import { 
   fetchHelloWorld, 
@@ -34,6 +35,7 @@ import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
 import { storeToRefs } from "pinia";
 
 const SEC_25 = 25 * time.SECONED
+const MIN_5 = 5 * time.MINUTE
 const MIN_25 = 25 * time.MINUTE
 
 // 事件总线，对云同步任务进行调度
@@ -73,11 +75,12 @@ class CloudEventBus {
     const hasLeftPage = usePageLeave()
     const nStore = useNetworkStore()
     const focused = useWindowFocus()
+    const { idle } = useIdle()
     const { level: netLevel } = storeToRefs(nStore)
 
-    watch([netLevel, visibility, hasLeftPage, focused], (
-      [newV1, newV2, newV3, newV4],
-      [oldV1, oldV2, oldV3, oldV4],
+    watch([netLevel, visibility, hasLeftPage, focused, idle], (
+      [newV1, newV2, newV3, newV4, newV5],
+      [oldV1, oldV2, oldV3, oldV4, oldV5],
     ) => {
 
       // 当前分页被隐藏，并且非刚启动时（刚启动时，oldV2 为 undefined）
@@ -110,7 +113,16 @@ class CloudEventBus {
         return
       }
 
+      if(!newV5 && oldV5) {
+        preMain()
+        return
+      }
+
     }, { immediate: true })
+
+    setInterval(() => {
+      preMain()
+    }, MIN_5)
 
   }
 

@@ -80,9 +80,12 @@ export function useActiveSyncNum() {
   const activeSyncNum = ref(0)
   const syncNum = CloudEventBus.getSyncNum()
   const isActivated = ref(false)
+  
   onActivated(() => isActivated.value = true)
+  onMounted(() => isActivated.value = true)
   onDeactivated(() => isActivated.value = false)
   onBeforeUnmount(() => isActivated.value = false)
+
   watch([syncNum, isActivated], (
     [newV1, newV2]
   ) => {

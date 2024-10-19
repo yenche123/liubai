@@ -2,15 +2,11 @@
 
 import liuEnv from "~/utils/liu-env";
 import { useActiveSyncNum } from "../useCommon";
-import { ref, watch } from "vue";
+import { watch } from "vue";
 import { useSystemStore } from "../stores/useSystemStore";
-import {
-  useDocumentVisibility,
-  useThrottleFn,
-  useWindowFocus,
-} from "~/hooks/useVueUse";
 import time from "~/utils/basic/time";
-import liuUtil from "~/utils/liu-util";
+
+const MIN_3 = 3 * time.MINUTE
 
 export function initAwake() {
   const hasBE = liuEnv.hasBackend()
@@ -33,32 +29,8 @@ function initAwakeWithBackend() {
 }
 
 function initAwakeWithoutBackend() {
-  const visibility = useDocumentVisibility()
-  const focused = useWindowFocus()
-  const awakeNum = ref(0)
-
-  const _whenAwaken = useThrottleFn(() => {
+  setInterval(() => {
     const sStore = useSystemStore()
     sStore.checkTheme()
-  }, time.MINUTE)
-
-  watch(awakeNum, (newV) => {
-    const justLaunched = liuUtil.check.isJustAppSetup()
-    if(justLaunched) return
-    _whenAwaken()
-  })
-
-  /**
-   * 在 macOS 上，使用 cmd + Tab 切换应用时，
-   * visibility 不会变化，只有 focused 会变化
-   * 所以才需要同时监听 visibility 和 focused
-   */
-  watch([visibility, focused], (
-    [newV1, newV2],
-    [oldV1, oldV2],
-  ) => {
-    // console.log("visibility: ", newV1, "  focused: ", newV2)
-    if(newV1 !== "visible" || !newV2) return
-    awakeNum.value++
-  })
+  }, MIN_3)
 }

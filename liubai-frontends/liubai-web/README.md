@@ -28,6 +28,7 @@ Build! Anyway
 
 8. 2024-09-18，将 sass 从 `v1.78.0` 升级至 `v1.79.1`，运行 `pnpm dev` 控制台会出现大量警告⚠️: Deprecation Warning: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
 
+9. 2024-10-19，在 macOS 上使用 Cmd + TAB 切换应用时，来自 useDocumentVisibility() 的 `visibility` 不会发生变化，所以还需要监听 useWindowFocus() 的 `focused`，才能比较好地判断当前网页又被用户聚焦了。
 
 ## 彻底解决 pnpm 网络请求超时的问题
 
