@@ -378,6 +378,9 @@ const _popStacks = (num: number) => {
     if(stack.length < 1) break
     stack.pop()
   }
+  console.log("stack after _popStacks: ")
+  console.log([...stack])
+  console.log(" ")
 }
 
 const _changeLastHasPrev = (val: boolean) => {
@@ -395,6 +398,12 @@ const _judgeInitiativeJump = (
   from: RouteLocationNormalized
 ) => {
   let { operation, delta = 0 } = routeChangeTmpData
+
+  console.log("_judgeInitiativeJump 111:")
+  console.log(operation)
+  console.log(delta)
+  console.log(" ")
+
   if(operation) {
     if(delta === 1) stack.push(to)
     else if(delta === 0) {
@@ -415,27 +424,52 @@ const _judgeInitiativeJump = (
   else {
     // 保存状态以等待 window.addEventListener("popstate") 触发
     toAndFrom = { to, from, stamp: time.getLocalTime() }
+    console.log("_judgeInitiativeJump 222: ")
+    console.log(valTool.copyObject(toAndFrom))
+    console.log(" ")
     _judgeBrowserJump()
   }
 }
 
 const _judgeBrowserJump = (): void => {
   let { to, from, stamp = 0 } = toAndFrom
-  if(!to || !from || !stateFromPopState) return
+
+  console.log("_judgeBrowserJump 111: ")
+  console.log(valTool.copyObject(to))
+  console.log(valTool.copyObject(from))
+
+  if(!to || !from || !stateFromPopState) {
+    console.log("看一下 stack: ")
+    console.log([...stack])
+    return
+  }
 
 
   const now = time.getLocalTime()
   const diff = now - stamp
   const diff2 = now - lastSetPopStateStamp
+
+  console.log("_judgeBrowserJump 222: ")
+  console.log(diff)
+  console.log(diff2)
+  console.log(" ")
+
+
   if(diff > availableDuration || diff2 > availableDuration) {
     console.warn("被阻断了......")
     console.log(diff)
     console.log(diff2)
+    console.log([...stack])
     console.log(" ")
     return
   }
   
   const { current, forward, back } = stateFromPopState
+  console.log("看一下 stateFromPopState: ")
+  console.log(current)
+  console.log(forward)
+  console.log(back)
+  console.log(" ")
 
   if(!back) {
     // 当前为第一页时
@@ -483,6 +517,10 @@ const _judgeBrowserJump = (): void => {
     }
   }
 
+  console.log("看一下 stack after _judgeBrowserJump: ")
+  console.log([...stack])
+  console.log(" ")
+
   stateFromPopState = null
   toAndFrom.to = undefined
   toAndFrom.from = undefined
@@ -494,12 +532,12 @@ const initLiuRouter = (): RouteAndRouter => {
   const vueRoute = useVueRoute()
 
   let cancelAfterEach = vueRouter.afterEach((to, from, failure) => {
-    // console.log("########  监听到路由已发生变化  ########")
+    console.log("########  监听到路由已发生变化  ########")
     if(isNavigationFailure(failure)) return
 
-    // console.log("to: ", to)
-    // console.log("from: ", from)
-    // console.log(" ")
+    console.log("to: ", to)
+    console.log("from: ", from)
+    console.log(" ")
     
     // 判断是不是第一个路由
     if(stack.length === 0 && !from.name) {
@@ -512,8 +550,8 @@ const initLiuRouter = (): RouteAndRouter => {
 
   const _listenPopState = (e: PopStateEvent) => {
     // console.log(" ")
-    // console.log("popstate...........")
-    // console.log(e.state)
+    console.log("popstate...........")
+    console.log(e.state)
 
     stateFromPopState = e.state
     lastSetPopStateStamp = time.getLocalTime()
