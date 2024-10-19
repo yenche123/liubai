@@ -1,0 +1,91 @@
+{
+  "scope": "/",
+  "display": "standalone",
+  "start_url": "/",
+  "name": "Liubai",
+  "short_name": "Liubai",
+  "description": "Your Notes, Calendar, Tasks, To-Do List, and more",
+  "theme_color": "#2a6885",
+  "background_color": "#eaecef",
+  "orientation": "natural",
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://alpha.liubai.cc/manifest.json"
+    },
+    {
+      "platform": "webapp",
+      "url": "https://test.liubai.cc/manifest.json"
+    }
+  ],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "logos/for_ios_192x192_v1.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logos/for_ios_256x256_v1.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "logos/for_ios_512x512_v1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logos/maskable_512x512_v1.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "lang": "zh-CN",
+  "features": [
+    "Notes",
+    "To-Do",
+    "Tasks",
+    "Calendar",
+    "Cross Platform"
+  ],
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
+  "screenshots": [
+    {
+      "src": "/images/screenshot-pc.jpg",
+      "type": "image/jpeg",
+      "sizes": "1280x700",
+      "form_factor": "wide",
+      "label": "Liubai for PC"
+    },
+    {
+      "src": "/images/screenshot-mobile.jpg",
+      "type": "image/jpeg",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "label": "Liubai for mobile"
+    },
+    {
+      "src": "/images/screenshot-pc2.jpg",
+      "type": "image/jpeg",
+      "sizes": "1280x700",
+      "form_factor": "wide",
+      "label": "Liubai on PC"
+    },
+    {
+      "src": "/images/screenshot-mobile2.jpg",
+      "type": "image/jpeg",
+      "sizes": "750x1334",
+      "form_factor": "narrow",
+      "label": "Liubai on mobile"
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 420
+  }
+}

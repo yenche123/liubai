@@ -39,14 +39,25 @@
      <!-- it will be changed by useSystemStore.ts -->
     <meta name="theme-color" content="#435964">
 
-    <!-- manifest -->
-    <link rel="manifest" href="/manifest.json">
-
     <!-- <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
     <script>
       var vConsole = new window.VConsole();
-      console.log("this is index.html, 0.0.101");
+      console.log("this is index.html, 0.1.19.3");
     </script> -->
+
+    <!-- manifest -->
+    <link rel="manifest" id="manifest">
+    <script>
+      let manifestHref = "/manifest.json"
+      try {
+        const ua = navigator.userAgent.toLowerCase()
+        if(ua.includes("iphone") || ua.includes("ipad") || ua.includes("ios")) {
+          manifestHref = "/manifest-ios.json"
+        }
+      }
+      catch(e) {}
+      document.querySelector("#manifest").setAttribute("href", manifestHref)
+    </script>
 
   </head>
   <body class="liu-font-large theme-common theme-light">
