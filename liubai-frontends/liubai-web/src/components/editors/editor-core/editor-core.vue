@@ -43,6 +43,7 @@ defineExpose({ editor })
     data-clarity-mask="true"
     data-bf-ignore-keypress
     data-openreplay-obscured
+    spellcheck="false"
   />
 </template>
 
