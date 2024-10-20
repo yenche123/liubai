@@ -1,6 +1,7 @@
 import { ref, toRef, watch } from "vue"
 import type { FabCtx, FabProps } from "./types"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
+import { useLayoutStore } from "~/views/useLayoutStore"
 
 export function useFAB(props: FabProps) {
 
@@ -9,11 +10,12 @@ export function useFAB(props: FabProps) {
   const scrollPosition = toRef(props, "scrollPosition")
 
   const ctx: FabCtx = {
+    props,
     enable,
     show,
     scrollPosition,
   }
-  listenScrollPositionChange(ctx)
+  listenToContext(ctx)
 
   return {
     enable,
@@ -21,23 +23,51 @@ export function useFAB(props: FabProps) {
   }
 }
 
-function listenScrollPositionChange(
+function listenToContext(
   ctx: FabCtx,
 ) {
+  const { show, enable, props, scrollPosition } = ctx
+  const layoutStore = useLayoutStore()
 
-  const { show, enable } = ctx
-
-  const onScroll = (newV: number) => {
-    
-    if(newV > 500 && !show.value) {
+  // 0. decide whether open or close as scroll position change
+  const _decideOpenOrClose = (sP: number) => {
+    if(sP > 500 && !show.value) {
       toOpen(ctx)
     }
-    else if(newV < 300 && enable.value) {
+    else if(sP < 300 && enable.value) {
       toClose(ctx)
     }
   }
 
-  watch(ctx.scrollPosition, onScroll)
+  // 1. listen to scroll position change
+  const _onScroll = (newV: number) => {
+    if(props.considerBottomNaviBar) {
+      if(layoutStore.bottomNaviBar) {
+        if(enable.value) {
+          toClose(ctx)
+        }
+        return
+      }
+    }
+    
+    _decideOpenOrClose(newV)
+  }
+  watch(scrollPosition, _onScroll)
+
+
+  // 2. listen to bottom navigation bar change
+  if(!props.considerBottomNaviBar) return
+  watch(() => layoutStore.bottomNaviBar, (newV) => {
+    if(newV) {
+      if(enable.value) {
+        toClose(ctx)
+      }
+      return
+    }
+    
+    const sP = scrollPosition.value
+    _decideOpenOrClose(sP)
+  })
 }
 
 let toggleTimeout: LiuTimeout

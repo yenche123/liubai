@@ -5,7 +5,11 @@ const props = defineProps({
   scrollPosition: {
     type: Number,
     default: 0
-  }
+  },
+  considerBottomNaviBar: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emits = defineEmits<{

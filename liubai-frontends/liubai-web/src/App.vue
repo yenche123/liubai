@@ -44,7 +44,12 @@ const ios_ipad = Boolean(cha.isIOS || cha.isIPadOS)
     </router-view>
     <router-view v-else></router-view>
 
-    <!-- TODO: router-view 底部导航栏 -->
+    <!-- router-view for bottom navigation bar -->
+    <router-view name="BottomNaviBar" v-slot="{ Component }">
+      <keep-alive>
+        <component :is="Component" />
+      </keep-alive>
+    </router-view>
     
     <custom-ui />
     <who-are-you />

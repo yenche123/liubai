@@ -31,9 +31,9 @@ const { t } = useI18n()
     </scroll-view>
     <navi-bar :title="t('common.favorite')"></navi-bar>
 
-    <FloatActionButton :scroll-position="scrollPosition"
+    <FloatingActionButton :scroll-position="scrollPosition"
       @tapfab="onTapFab"
-    ></FloatActionButton>
+    ></FloatingActionButton>
   </main-view>
 
   <!-- 副视图 -->

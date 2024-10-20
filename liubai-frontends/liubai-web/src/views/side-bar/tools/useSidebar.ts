@@ -221,14 +221,10 @@ function listenWindowChange(
   const { width } = useWindowSize()
   let lastWindowTimeout: LiuTimeout
 
-  const collectState = async () => {
-    recalculate(layoutStore)
-  }
-
   const whenWindowChange = () => {
     if(lastWindowTimeout) clearTimeout(lastWindowTimeout)
     lastWindowTimeout = setTimeout(() => {
-      collectState()
+      recalculate(layoutStore)
     }, LISTEN_DELAY)
   }
 

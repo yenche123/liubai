@@ -39,7 +39,7 @@ app.component("PlaceholderView", PlaceholderView)
 app.component("LiuMenu", defineAsyncComponent(() => 
   import("./components/common/liu-menu/liu-menu.vue")
 ))
-app.component("FloatActionButton", defineAsyncComponent(() =>
+app.component("FloatingActionButton", defineAsyncComponent(() =>
   import("./components/level1/floating-action-button/floating-action-button.vue")
 ))
 app.component("LiuTooltip", defineAsyncComponent(() => 

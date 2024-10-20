@@ -44,10 +44,10 @@ const { tpData, onTapFab, onScroll } = useTagPage()
           placeholder-key="common.tags"
         ></navi-bar>
 
-        <FloatActionButton 
+        <FloatingActionButton 
           :scroll-position="item.scrollPosition"
           @tapfab="onTapFab"
-        ></FloatActionButton>
+        ></FloatingActionButton>
       </div>
     </template>
     

@@ -45,9 +45,10 @@ const onTapNaviTitle = () => {
       @taptitle="onTapNaviTitle"
     ></NaviAuto>
 
-    <FloatActionButton :scroll-position="scrollPosition"
+    <FloatingActionButton :scroll-position="scrollPosition"
       @tapfab="onTapFab"
-    ></FloatActionButton>
+      consider-bottom-navi-bar
+    ></FloatingActionButton>
 
   </main-view>
 

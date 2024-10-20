@@ -19,12 +19,14 @@ export const useLayoutStore = defineStore("layout", () => {
   const clientWidth = ref(width.value)
   const changeType = ref<LayoutChangeType>("")
   const sidebarStatus = ref<SidebarStatus>("default")
+  const bottomNaviBar = ref(_initBottomNaviBar(width.value))
 
   return { 
     sidebarWidth, 
     clientWidth,
     changeType,
     sidebarStatus,
+    bottomNaviBar,
   }
 })
 
@@ -33,6 +35,10 @@ export interface LayoutType {
   sidebarWidth: number
   clientWidth: number
   changeType: LayoutChangeType
+}
+
+function _initBottomNaviBar(windowWidth: number) {
+  return windowWidth <= cfg.breakpoint_max_size.mobile
 }
 
 function _initSidebarWidth(windowWidth: number) {
