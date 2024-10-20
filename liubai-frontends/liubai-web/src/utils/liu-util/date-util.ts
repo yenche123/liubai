@@ -30,9 +30,12 @@ export function areTheDatesEqual(d1: Date, d2: Date) {
 }
 
 // 给定时间（戳），展示时间，比如用于 "什么时候" / "提醒我"
+// strChangedAsHour: coming from useDateStore().hour, which is changed as "HH"
+//   it is not used in this function, just for computed()
 export function showBasicTime(
   val: Date | number, 
-  lang?: SupportedLocale
+  lang?: SupportedLocale,
+  strChangedAsHour?: string,
 ) {
   let d = typeof val === "number" ? new Date(val) : val
   const { t, locale } = i18n.global

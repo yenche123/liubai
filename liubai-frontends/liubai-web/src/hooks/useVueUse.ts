@@ -11,6 +11,8 @@ import {
   useMutationObserver,
   useScreenOrientation,
   useWindowFocus,
+  useDateFormat,
+  useNow,
 } from "@vueuse/core"
 import { useQRCode } from "@vueuse/integrations/useQRCode"
 import type { NetworkState } from "@vueuse/core"
@@ -55,4 +57,7 @@ export {
 
   useScreenOrientation,
 
+  // related to date and time
+  useDateFormat,
+  useNow,
 }

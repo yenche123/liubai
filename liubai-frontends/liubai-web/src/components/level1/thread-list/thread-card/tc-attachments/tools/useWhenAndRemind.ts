@@ -15,6 +15,8 @@ import type { SnackbarRes } from "~/types/other/types-snackbar"
 import type { LiuRemindMe } from "~/types/types-atom"
 import type { ContentConfig } from "~/types/other/types-custom";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
+import { useDateStore } from "~/hooks/stores/useDateStore";
+import { storeToRefs } from "pinia";
 
 const { 
   SECONED: SEC,
@@ -27,6 +29,8 @@ export function useWhenAndRemind(props: TcaProps) {
 
   const { locale } = useI18n()
   const threadData = toRef(props, "thread")
+  const dStore = useDateStore()
+  const { hour } = storeToRefs(dStore)
 
   const whenStamp = computed(() => threadData.value.whenStamp)
   const remindStamp = computed(() => threadData.value.remindStamp)
@@ -47,7 +51,8 @@ export function useWhenAndRemind(props: TcaProps) {
     let nowLocale = locale.value
     let whenStampVal = whenStamp.value
     if(!whenStampVal) return ""
-    return liuUtil.showBasicTime(whenStampVal, nowLocale as SupportedLocale)
+    const hourVal = hour.value
+    return liuUtil.showBasicTime(whenStampVal, nowLocale as SupportedLocale, hourVal)
   })
   const remindStr = ref("")
   const countdownStr = ref("")
