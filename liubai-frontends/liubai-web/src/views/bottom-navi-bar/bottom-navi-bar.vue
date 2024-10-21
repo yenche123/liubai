@@ -31,7 +31,7 @@ const color_selected = "var(--main-normal)"
       <!-- home -->
       <div class="bnb-item" :class="{ 'bnb-item_active': bnbData.currentState === 'home' }">
         <div class="bnb-icon-box">
-          <svg-icon class="bnb-icon"
+          <svg-icon class="bnb-icon bnb-icon_home"
             :name="bnbData.currentState === 'home' ? 'home_selected' : 'home'"
             :color="bnbData.currentState === 'home' ? color_selected : color"
           ></svg-icon>
@@ -89,7 +89,6 @@ const color_selected = "var(--main-normal)"
   justify-content: space-evenly;
   width: 100%;
   position: relative;
-  cursor: pointer;
 }
 
 /** Prioritize adaptation for devices 500px (inclusive) and below */
@@ -98,8 +97,9 @@ const color_selected = "var(--main-normal)"
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-block: 8px;
+  padding-block: 10px;
   min-width: 90px;
+  cursor: pointer;
 }
 
 .bnb-icon-box {
@@ -137,7 +137,7 @@ const color_selected = "var(--main-normal)"
 
 .bnb-virtual {
   width: 100%;
-  height: 16px;
+  height: 14px;
 }
 
 @media screen and (min-height: 800px) {
@@ -150,5 +150,27 @@ const color_selected = "var(--main-normal)"
   }
 
 }
+
+@media screen and (min-width: 500px) {
+  .bnb-item {
+    flex-direction: row;
+    min-width: 150px;
+  }
+
+  .bnb-icon-box {
+    margin-inline-end: 10px;
+    margin-block-end: 0;
+  }
+
+  .bnb-icon_home{
+    margin-block-end: 2px;
+  }
+
+  .bnb-text {
+    font-size: var(--btn-font);
+  }
+  
+}
+
 
 </style>
