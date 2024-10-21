@@ -13,7 +13,7 @@ export function useSbOpen() {
   const show = computed(() => {
     if(sidebarStatus.value === "fullscreen") return false
     if(sidebarWidth.value > 0) return false
-    if(width.value <= cfg.sidebar_close_point) return false
+    if(width.value <= cfg.breakpoint_max_size.mobile) return false
 
     return true
   })

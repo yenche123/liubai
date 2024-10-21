@@ -6,7 +6,7 @@ const { bnbData } = useBottomNaviBar()
 
 const { t } = useI18n()
 
-const color = "var(--navi-normal)"
+const color = "var(--main-code)"
 const color_selected = "var(--main-normal)"
 
 </script>
@@ -21,7 +21,7 @@ const color_selected = "var(--main-normal)"
       <!-- search -->
       <div class="bnb-item">
         <div class="bnb-icon-box">
-          <svg-icon name="search" class="bnb-icon_search" :color="color_selected"></svg-icon>
+          <svg-icon name="search" class="bnb-icon_search" :color="color"></svg-icon>
         </div>
         <div class="bnb-text">
           <span>{{ t('common.search') }}</span>
@@ -72,6 +72,12 @@ const color_selected = "var(--main-normal)"
   left: 0;
   bottom: 0;
   right: 0;
+
+  &::before {
+    -webkit-backdrop-filter: blur(0px);
+    backdrop-filter: blur(0px);
+    background: var(--frosted-glass-6);
+  }
 }
 
 .bnb-container_show {

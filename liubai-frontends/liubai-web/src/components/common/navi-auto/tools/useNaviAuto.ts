@@ -1,4 +1,4 @@
-import { reactive, toRef, watch } from "vue";
+import { inject, reactive, toRef, watch } from "vue";
 import type { Ref } from "vue";
 import { useLayoutStore } from "~/views/useLayoutStore";
 import type { LayoutStore } from "~/views/useLayoutStore";
@@ -10,6 +10,7 @@ import type { NaviAutoEmits, NaviAutoData, NaviAutoProps } from "./types"
 import liuUtil from "~/utils/liu-util";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import time from "~/utils/basic/time";
+import { deviceChaKey } from "~/utils/provide-keys";
 
 const TRANSITION_DURATION = 300
 
@@ -47,8 +48,27 @@ export function useNaviAuto(
   }
 
 
-  // 处理 左侧边栏的变化
+  const cha = inject(deviceChaKey)
+  if(!cha?.isInWebView || !cha?.isMobile) {
+    initListenContext(ctx)
+  }
+  
+  const onTapMenu = () => {
+    sideBar.showFixedSideBar()
+  }
+  
+  return {
+    TRANSITION_DURATION,
+    naData,
+    onTapMenu,
+  }
+}
+
+function initListenContext(ctx: NaviAutoCtx) {
+  const { layout, scrollPosition, naData } = ctx
   const { sidebarWidth, sidebarStatus } = storeToRefs(layout)
+
+  // 处理 左侧边栏的变化
   watch([sidebarWidth, sidebarStatus], (newV) => {
     judgeState(ctx)
   }, { immediate: true })
@@ -61,16 +81,6 @@ export function useNaviAuto(
 
   // 监听窗口变化
   listenWindowChange(ctx)
-  
-  const onTapMenu = () => {
-    sideBar.showFixedSideBar()
-  }
-  
-  return {
-    TRANSITION_DURATION,
-    naData,
-    onTapMenu,
-  }
 }
 
 function judgeShadow(
@@ -101,7 +111,7 @@ function judgeState(
   if(sidebarWidth > 0 || sidebarStatus === "fullscreen") {
     _close(ctx)
   }
-  else if(winWidthPx >= cfg.sidebar_close_point) {
+  else if(winWidthPx >= cfg.breakpoint_max_size.mobile) {
     _close(ctx)
   }
   else {
@@ -129,10 +139,10 @@ function listenWindowChange(
       isClosing,
     } = liuUtil.view.getOpeningClosing(enable, show)
 
-    if(winWidthPx < cfg.sidebar_close_point && !isOpening) {
+    if(winWidthPx <= cfg.breakpoint_max_size.mobile && !isOpening) {
       _open(ctx)
     }
-    else if(winWidthPx >= cfg.sidebar_open_point && !isClosing) {
+    else if(winWidthPx > cfg.breakpoint_max_size.mobile && !isClosing) {
       _close(ctx)
     }
   }

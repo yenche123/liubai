@@ -1,10 +1,10 @@
 import { reactive, watch } from "vue"
 import type { BnbData } from "./types"
-import { useWindowSize } from "~/hooks/useVueUse"
 import { useLayoutStore } from "~/views/useLayoutStore"
 import { storeToRefs } from "pinia"
-import cfg from "~/config"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import { useWindowSize } from "~/hooks/useVueUse"
+import cfg from "~/config"
 
 export function useBottomNaviBar() {
   const bnbData = reactive<BnbData>({
@@ -35,12 +35,15 @@ function listenToRoute(bnbData: BnbData) {
 function listenToContext(
   bnbData: BnbData
 ) {
-  const { width } = useWindowSize()
   const layoutStore = useLayoutStore()
-  const { sidebarWidth } = storeToRefs(layoutStore)
+  const { sidebarWidth, sidebarStatus } = storeToRefs(layoutStore)
+  const { width} = useWindowSize()
 
-  watch([width, sidebarWidth], ([newV1, newV2]) => {
-    if(newV2 > 0) {
+  watch([sidebarWidth, sidebarStatus, width], (
+    [newV1, newV2, newV3]
+  ) => {
+    const { sidebarType } = layoutStore
+    if(newV1 > 0 || newV2 === "fullscreen") {
       if(bnbData.show) {
         toHide(bnbData)
         layoutStore.$patch({ bottomNaviBar: false })
@@ -48,7 +51,11 @@ function listenToContext(
       return
     }
 
-    const needToShow = newV1 <= cfg.breakpoint_max_size.mobile
+    let needToShow = sidebarType === "closed_by_auto"
+    if(newV3 <= cfg.breakpoint_max_size.mobile) {
+      needToShow = true
+    }
+    
     if (needToShow && !bnbData.show) {
       toShow(bnbData)
       layoutStore.$patch({ bottomNaviBar: true })

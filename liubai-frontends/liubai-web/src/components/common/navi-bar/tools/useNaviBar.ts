@@ -20,7 +20,7 @@ export function useNaviBar(props: NaviBarProps) {
     const oldV = showMenuBtn.value
 
     let newV = false
-    if(w1 < cfg.sidebar_close_point) newV = true
+    if(w1 < cfg.breakpoint_max_size.mobile) newV = true
     if(w1 < cfg.sidebar_open_point && w2 <= 0) newV = true
     if(newV !== oldV) showMenuBtn.value = newV
   }

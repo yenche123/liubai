@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useWindowSize } from "../hooks/useVueUse";
 import type { Prettify } from "~/utils/basic/type-tool";
 import cfg from "~/config";
+import type { OpenType } from "~/types/types-view";
 
 export type LayoutChangeType = "window" | "sidebar" | ""
 
@@ -16,13 +17,15 @@ export const useLayoutStore = defineStore("layout", () => {
   
   // 需要返回的数据
   const sidebarWidth = ref(_initSidebarWidth(width.value))    // 如果侧边栏收起来时，该值为 0
+  const sidebarType = ref<OpenType>("opened")
   const clientWidth = ref(width.value)
   const changeType = ref<LayoutChangeType>("")
   const sidebarStatus = ref<SidebarStatus>("default")
-  const bottomNaviBar = ref(_initBottomNaviBar(width.value))
+  const bottomNaviBar = ref(false)
 
   return { 
     sidebarWidth, 
+    sidebarType,
     clientWidth,
     changeType,
     sidebarStatus,
@@ -33,12 +36,9 @@ export const useLayoutStore = defineStore("layout", () => {
 export type LayoutStore = Prettify<ReturnType<typeof useLayoutStore>>
 export interface LayoutType {
   sidebarWidth: number
+  sidebarType: OpenType
   clientWidth: number
   changeType: LayoutChangeType
-}
-
-function _initBottomNaviBar(windowWidth: number) {
-  return windowWidth <= cfg.breakpoint_max_size.mobile
 }
 
 function _initSidebarWidth(windowWidth: number) {

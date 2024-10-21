@@ -118,6 +118,14 @@
   --frosted-glass-4: rgba(35, 35, 35, .66);
   --frosted-glass-5: linear-gradient(0deg, rgba(41, 43, 45, .86) 50%, rgba(41, 43, 45, .75) 90%);
 
+  /** for bottom-navi-bar */
+  --frosted-glass-6: linear-gradient(
+    0deg, 
+    rgba(41, 43, 45, .92) 25%, 
+    rgba(41, 43, 45, .97) 50%,
+    rgba(41, 43, 45, .99) 70%
+  );
+
   /********* 导入页: 「查看更多」的背景 *******/
   --mask-bg: linear-gradient(0deg, rgba(42, 44, 46, 1) 40%, rgba(42, 44, 46, 0) 95%);
 
