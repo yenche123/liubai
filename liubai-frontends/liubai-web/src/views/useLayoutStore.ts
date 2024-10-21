@@ -27,6 +27,12 @@ export const useLayoutStore = defineStore("layout", () => {
   const bottomNaviBar = ref(false)          // 若当前页面存在 bottom-navi-bar，它是否被显示
   const bnbHeight = ref(0)
 
+  // go to top about bottom-navi-bar
+  const bnbGoToTop = ref(0)
+  const triggerBnbGoToTop = () => {
+    bnbGoToTop.value++
+  }
+
   return { 
     sidebarWidth, 
     sidebarType,
@@ -36,6 +42,8 @@ export const useLayoutStore = defineStore("layout", () => {
     routeHasBottomNaviBar,
     bottomNaviBar,
     bnbHeight,
+    bnbGoToTop,
+    triggerBnbGoToTop,
   }
 })
 

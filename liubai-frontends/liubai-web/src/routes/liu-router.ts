@@ -332,9 +332,10 @@ class LiuRouter {
 
   /** navigate to a TAB page */
   public switchTab(
-    toRoute: ToRoute,
+    to: RouteLocationRaw,
     currentRoute: RouteLocationNormalizedLoaded,
   ) {
+    const toRoute = this.resolve(to)
     const list = this.getStack()
     const num = this._getNaviBackStackNum(toRoute, currentRoute, list)
     if(num > 0) {

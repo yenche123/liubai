@@ -1,9 +1,13 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
 import { useBottomNaviBar } from "./tools/useBottomNaviBar";
-import NaviLink from "~/components/common/navi-link/navi-link.vue";
 
-const { bnbData } = useBottomNaviBar()
+const { 
+  bnbData,
+  onTapSearch,
+  onTapHome,
+  onTapMine,
+} = useBottomNaviBar()
 
 const { t } = useI18n()
 
@@ -31,23 +35,24 @@ const color_selected = "var(--main-normal)"
       </div>
 
       <!-- home -->
-      <NaviLink :to="bnbData.prefix">
-      <div class="bnb-item" :class="{ 'bnb-item_active': bnbData.currentState === 'home' }">
+      <div class="bnb-item" :class="{ 'bnb-item_active': bnbData.currentState === 'index' }"
+        @click.stop="onTapHome"
+      >
         <div class="bnb-icon-box">
           <svg-icon class="bnb-icon bnb-icon_home"
-            :name="bnbData.currentState === 'home' ? 'home_selected' : 'home'"
-            :color="bnbData.currentState === 'home' ? color_selected : color"
+            :name="bnbData.currentState === 'index' ? 'home_selected' : 'home'"
+            :color="bnbData.currentState === 'index' ? color_selected : color"
           ></svg-icon>
         </div>
         <div class="bnb-text">
           <span>{{ t('common.home') }}</span>
         </div>
       </div>
-      </NaviLink>
 
       <!-- mine -->
-      <NaviLink :to="bnbData.prefix + 'mine'">
-      <div class="bnb-item" :class="{ 'bnb-item_active': bnbData.currentState === 'mine' }">
+      <div class="bnb-item" :class="{ 'bnb-item_active': bnbData.currentState === 'mine' }"
+        @click.stop="onTapMine"
+      >
         <div class="bnb-icon-box">
           <svg-icon class="bnb-icon"
             :name="bnbData.currentState === 'mine' ? 'mine_selected' : 'mine'"
@@ -58,7 +63,6 @@ const color_selected = "var(--main-normal)"
           <span>{{ t('common.mine') }}</span>
         </div>
       </div>
-      </NaviLink>
 
     </div>
 

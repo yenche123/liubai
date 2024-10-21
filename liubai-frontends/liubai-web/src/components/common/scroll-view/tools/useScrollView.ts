@@ -111,10 +111,17 @@ function listenToLayout(
   ctx: SvCtx,
 ) {
   const layoutStore = useLayoutStore()
-  const { bottomNaviBar, bnbHeight } = storeToRefs(layoutStore)
+  const { bottomNaviBar, bnbHeight, bnbGoToTop } = storeToRefs(layoutStore)
   watch([bottomNaviBar, bnbHeight], ([newV1, newV2]) => {
     ctx.svData.offset = !newV1 ? 0 : newV2
   }, { immediate: true })
+
+  watch(bnbGoToTop, (newV) => {
+    if(!ctx.isVisible.value || newV < 1) {
+      return
+    }
+    whenBottomUp(ctx, { type: "pixel", pixel: 0 })
+  })
 }
 
 function listenToViewChange(

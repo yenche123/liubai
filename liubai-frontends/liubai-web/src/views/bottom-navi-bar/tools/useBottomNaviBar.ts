@@ -12,7 +12,7 @@ export function useBottomNaviBar() {
   
   const bnbData = reactive<BnbData>({
     show: false,
-    currentState: "home",
+    currentState: "index",
     prefix: prefix.value,
   })
   watch(prefix, (newV) => bnbData.prefix = newV)
@@ -22,10 +22,48 @@ export function useBottomNaviBar() {
 
   // listen to resize
   listenToResize()
-
+  const funcs = initFunctions(bnbData)
 
   return {
     bnbData,
+    ...funcs,
+  }
+}
+
+function initFunctions(
+  bnbData: BnbData,
+) {
+  const layoutStore = useLayoutStore()
+  const rr = useRouteAndLiuRouter()
+
+  const onTapSearch = () => {
+
+  }
+
+  const _switchTab = (to: string) => {
+    rr.router.switchTab(to, rr.route)
+  }
+
+  const onTapHome = () => {
+    if(bnbData.currentState === "index") {
+      layoutStore.triggerBnbGoToTop()
+      return
+    }
+    _switchTab(bnbData.prefix)
+  }
+
+  const onTapMine = () => {
+    if(bnbData.currentState === "mine") {
+      layoutStore.triggerBnbGoToTop()
+      return
+    }
+    _switchTab(bnbData.prefix + "mine")
+  }
+
+  return {
+    onTapSearch,
+    onTapHome,
+    onTapMine,
   }
 }
 
@@ -48,7 +86,7 @@ function listenToRoute(bnbData: BnbData) {
   const { route } = useRouteAndLiuRouter()
   watch(() => route.name, (newV) => {
     if(newV === "index" || newV === "collaborative-index") {
-      bnbData.currentState = "home"
+      bnbData.currentState = "index"
     }
     else if(newV === "mine" || newV === "collaborative-mine") {
       bnbData.currentState = "mine"
