@@ -10,7 +10,7 @@ import {
   useTemplateRef, 
   watch,
 } from "vue";
-import type { SvProps, SvEmits, SvCtx } from "./types"
+import type { SvProps, SvEmits, SvCtx, SvData } from "./types"
 import type { 
   SvTriggerType,
   SvProvideInject, 
@@ -27,6 +27,8 @@ import { useDebounceFn, useResizeObserver } from "~/hooks/useVueUse"
 import time from "~/utils/basic/time";
 import valTool from "~/utils/basic/val-tool";
 import liuApi from "~/utils/liu-api";
+import { useLayoutStore } from "~/views/useLayoutStore";
+import { storeToRefs } from "pinia";
 
 const MIN_SCROLL_DURATION = 17
 const MIN_INVOKE_DURATION = 300
@@ -43,6 +45,10 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   provide(svElementKey, sv)
   provide(svScollingKey, scrollPosition)
   provide(svBottomUpKey, bottomUp)
+
+  const svData = reactive<SvData>({
+    offset: 0,
+  })
   
   const ctx: SvCtx = {
     props,
@@ -51,6 +57,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     scrollPosition,
     lastToggleViewStamp,
     isVisible: ref(true),
+    svData,
   }
 
   const { onScrolling } = listenToScroll(ctx)
@@ -85,8 +92,13 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
     onTouchEnd,
   } = listenToPullingRefresh(ctx)
 
+  if(props.considerBottomNaviBar) {
+    listenToLayout(ctx)
+  }
+
   return { 
     sv,
+    svData,
     onScrolling,
     onTouchStart,
     onTouchMove,
@@ -94,6 +106,16 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   }
 }
 
+
+function listenToLayout(
+  ctx: SvCtx,
+) {
+  const layoutStore = useLayoutStore()
+  const { bottomNaviBar, bnbHeight } = storeToRefs(layoutStore)
+  watch([bottomNaviBar, bnbHeight], ([newV1, newV2]) => {
+    ctx.svData.offset = !newV1 ? 0 : newV2
+  }, { immediate: true })
+}
 
 function listenToViewChange(
   ctx: SvCtx,
@@ -198,6 +220,7 @@ function listenToScroll(
     sv,
     scrollPosition,
     isVisible,
+    svData,
   } = ctx
 
   const proData = reactive<SvProvideInject>({
@@ -281,15 +304,17 @@ function listenToScroll(
     // console.log(" ")
   
     const DIRECTION = sP - lP > 0 ? "DOWN" : "UP"
-    const middleLine = DIRECTION === "DOWN" ? sH - props.lowerThreshold : props.upperThreshold
+    const _lowerThreshold = props.lowerThreshold + svData.offset
+    const _upperThreshold = props.upperThreshold
+    const middleLine = DIRECTION === "DOWN" ? sH - _lowerThreshold : _upperThreshold
 
     // fix: bug when user navigate back to the last page
     if(time.isWithinMillis(lastViewStamp, MAGIC_NUM_1)) {
-      const doubleThreshold = props.lowerThreshold * 2
+      const doubleThreshold = _lowerThreshold * 2
       if(sH >= doubleThreshold) {
         const doubleDuration = MIN_INVOKE_DURATION * 2
         if(!time.isWithinMillis(lastInvokeStamp, doubleDuration)) {
-          const lowerLine = sH - props.lowerThreshold
+          const lowerLine = sH - _lowerThreshold
           if(lowerLine <= lP && lowerLine <= sP) {
             // console.warn("to_end 111")
             _specialToEnd(sP)

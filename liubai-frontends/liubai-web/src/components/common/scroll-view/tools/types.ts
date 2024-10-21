@@ -9,6 +9,7 @@ export interface SvProps {
   goToTop: number
   showTxt?: TrueOrFalse     // 当一个页面里，有多个自定义的 view 时，需传递此值
                             // 为什么不单纯地传递布尔值 true / false 呢？因为 undefined 时默认为 false
+  considerBottomNaviBar: boolean
 }
 
 export const svProps = {
@@ -34,6 +35,10 @@ export const svProps = {
   },
   showTxt: {
     type: String as PropType<TrueOrFalse>,
+  },
+  considerBottomNaviBar: {
+    type: Boolean,
+    default: false,
   }
 }
 
@@ -46,6 +51,10 @@ export interface SvEmits {
   (event: "refresh"): void
 }
 
+export interface SvData {
+  offset: number
+}
+
 export interface SvCtx {
   props: SvProps
   emits: SvEmits
@@ -53,6 +62,7 @@ export interface SvCtx {
   sv: Readonly<ShallowRef<HTMLElement | null>>
   lastToggleViewStamp: Ref<number>
   isVisible: Ref<boolean>
+  svData: SvData
 }
 
 // 默认、下拉中、加载中、松开跑回去

@@ -9,7 +9,6 @@ const {
   myProfile,
   isPremium,
   prefix,
-  layoutStore,
 } = useMineContent()
 
 const { t } = useI18n()
@@ -166,9 +165,7 @@ const iconColor = `var(--main-normal)`
     
   </div>
 
-  <div class="mc-virtual"
-    :class="{ 'mc-virtual-2': layoutStore.bottomNaviBar }"
-  ></div>
+  <div class="mc-virtual"></div>
 
 </template>
 <style scoped lang="scss">
@@ -203,11 +200,6 @@ const iconColor = `var(--main-normal)`
 .mc-virtual {
   width: 100%;
   height: 32px;
-}
-
-.mc-virtual-2 {
-  width: 100%;
-  height: 100px;
 }
 
 .mc-box {

@@ -10,6 +10,7 @@ const emits = defineEmits<SvEmits>()
 
 const { 
   sv, 
+  svData,
   onScrolling,
   onTouchStart,
   onTouchMove,
@@ -33,6 +34,11 @@ const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
     @touchend.passive="onTouchEnd"
   >
     <slot></slot>
+
+    <div class="sv-offset"
+      :class="{ 'sv-offset_horizontal': direction === 'horizontal' }"
+    ></div>
+
   </div>
 </template>
 
@@ -62,6 +68,16 @@ const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
 
 .liu-scollbar_hidden {
   scrollbar-color: transparent transparent;
+}
+
+.sv-offset {
+  width: 100%;
+  height: v-bind("svData.offset + 'px'");
+}
+
+.sv-offset_horizontal {
+  width: v-bind("svData.offset + 'px'");
+  height: 1px;
 }
 
 </style>

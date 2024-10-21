@@ -5,7 +5,7 @@ import MineContent from "./mine-content/mine-content.vue";
 </script>
 <template>
 
-  <PageDefault :has-top-navi="false">
+  <PageDefault :has-top-navi="false" consider-bottom-navi-bar>
     <MineContent></MineContent>
   </PageDefault>
 
