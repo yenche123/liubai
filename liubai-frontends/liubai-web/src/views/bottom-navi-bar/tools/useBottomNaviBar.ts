@@ -5,7 +5,8 @@ import { storeToRefs } from "pinia"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import { useWindowSize, useResizeObserver, useDebounceFn } from "~/hooks/useVueUse"
 import { usePrefix } from "~/hooks/useCommon"
-import cfg from "~/config"
+import cfg from "~/config";
+import cui from '~/components/custom-ui';
 
 export function useBottomNaviBar() {
   const { prefix } = usePrefix()
@@ -37,7 +38,7 @@ function initFunctions(
   const rr = useRouteAndLiuRouter()
 
   const onTapSearch = () => {
-
+    cui.showSearchEditor({ type: "search" })
   }
 
   const _switchTab = (to: string) => {
@@ -84,11 +85,18 @@ function listenToResize() {
 
 function listenToRoute(bnbData: BnbData) {
   const { route } = useRouteAndLiuRouter()
-  watch(() => route.name, (newV) => {
-    if(newV === "index" || newV === "collaborative-index") {
+  watch(route, (newV) => {
+    const { name, query } = newV
+    const search = query?.search
+    const q = query?.q
+
+    if(search === "01" || q) {
+      bnbData.currentState = "search"
+    }
+    else if(name === "index" || name === "collaborative-index") {
       bnbData.currentState = "index"
     }
-    else if(newV === "mine" || newV === "collaborative-mine") {
+    else if(name === "mine" || name === "collaborative-mine") {
       bnbData.currentState = "mine"
     }
   }, { immediate: true })

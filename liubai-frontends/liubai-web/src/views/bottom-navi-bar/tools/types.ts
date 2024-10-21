@@ -2,6 +2,6 @@
 
 export interface BnbData {
   show: boolean
-  currentState: "index" | "mine"
+  currentState: "search" | "index" | "mine"
   prefix: string
 }
