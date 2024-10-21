@@ -3,7 +3,6 @@ import type { Ref } from "vue";
 import { useLayoutStore } from "~/views/useLayoutStore";
 import type { LayoutStore } from "~/views/useLayoutStore";
 import { storeToRefs } from "pinia";
-import sideBar from "~/views/side-bar";
 import { useWindowSize } from "~/hooks/useVueUse";
 import cfg from "~/config";
 import type { NaviAutoEmits, NaviAutoData, NaviAutoProps } from "./types"
@@ -53,14 +52,9 @@ export function useNaviAuto(
     initListenContext(ctx)
   }
   
-  const onTapMenu = () => {
-    sideBar.showFixedSideBar()
-  }
-  
   return {
     TRANSITION_DURATION,
     naData,
-    onTapMenu,
   }
 }
 

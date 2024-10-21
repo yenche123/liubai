@@ -13,7 +13,6 @@ const emits = defineEmits<NaviAutoEmits>()
 const {
   naData,
   TRANSITION_DURATION,
-  onTapMenu,
 } = useNaviAuto(props, emits)
 
 const default_color = "var(--navi-normal)"
@@ -31,14 +30,6 @@ const default_color = "var(--navi-normal)"
 
     <div class="na-box">
 
-      <div class="liu-hover na-menu-box" @click="onTapMenu"
-        style="margin-inline-start: -6px;"
-      >
-        <svg-icon class="na-menu-icon" 
-          :color="default_color"
-          name="stair_menu"
-        ></svg-icon>
-      </div>
 
       <div class="na-title" @click.stop="$emit('taptitle')">
         <div class="liu-no-user-select na-title-inner">
@@ -46,7 +37,6 @@ const default_color = "var(--navi-normal)"
         </div>
       </div>
 
-      <div class="na-menu-box"></div>
     </div>
 
   </div>

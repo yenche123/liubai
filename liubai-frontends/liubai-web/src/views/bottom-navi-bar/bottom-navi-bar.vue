@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useI18n } from "vue-i18n";
-import { useBottomNaviBar } from "./tools/useBottomNaviBar"
+import { useBottomNaviBar } from "./tools/useBottomNaviBar";
+import NaviLink from "~/components/common/navi-link/navi-link.vue";
 
 const { bnbData } = useBottomNaviBar()
 
@@ -29,6 +30,7 @@ const color_selected = "var(--main-normal)"
       </div>
 
       <!-- home -->
+      <NaviLink :to="bnbData.prefix">
       <div class="bnb-item" :class="{ 'bnb-item_active': bnbData.currentState === 'home' }">
         <div class="bnb-icon-box">
           <svg-icon class="bnb-icon bnb-icon_home"
@@ -40,8 +42,10 @@ const color_selected = "var(--main-normal)"
           <span>{{ t('common.home') }}</span>
         </div>
       </div>
+      </NaviLink>
 
       <!-- mine -->
+      <NaviLink :to="bnbData.prefix + 'mine'">
       <div class="bnb-item" :class="{ 'bnb-item_active': bnbData.currentState === 'mine' }">
         <div class="bnb-icon-box">
           <svg-icon class="bnb-icon"
@@ -53,6 +57,7 @@ const color_selected = "var(--main-normal)"
           <span>{{ t('common.mine') }}</span>
         </div>
       </div>
+      </NaviLink>
 
     </div>
 
