@@ -4,13 +4,19 @@ import { useLayoutStore } from "~/views/useLayoutStore"
 import { storeToRefs } from "pinia"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import { useWindowSize } from "~/hooks/useVueUse"
+import { usePrefix } from "~/hooks/useCommon"
 import cfg from "~/config"
 
 export function useBottomNaviBar() {
+  const { prefix } = usePrefix()
+  
   const bnbData = reactive<BnbData>({
     show: false,
-    currentState: "home"
+    currentState: "home",
+    prefix: prefix.value,
   })
+  watch(prefix, (newV) => bnbData.prefix = newV)
+
   listenToContext(bnbData)
   listenToRoute(bnbData)
 
