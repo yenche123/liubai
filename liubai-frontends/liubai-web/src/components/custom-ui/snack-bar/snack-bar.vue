@@ -52,15 +52,15 @@ const {
   width: 100%;
   position: fixed;
   left: 0;
-  bottom: 0;
-  padding-bottom: 24px;
+  bottom: v-bind("sbData.offset + 'px'");
+  padding-block-end: 24px;
   display: flex;
   justify-content: center;
   will-change: transform;
   transform: translateY(100%);
   opacity: 0;
   transition: v-bind("TRANSITION_DURATION + 'ms'");
-  z-index: 5600;
+  z-index: v-bind("sbData.zIndex");
   pointer-events: none;
 }
 
@@ -124,7 +124,7 @@ const {
 
 /** 当 sb-action 不存在时显示的占位 */
 .sb-virtual {
-  height: 8x;
+  height: 8px;
   width: 8px;
 }
 

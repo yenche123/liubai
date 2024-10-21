@@ -18,6 +18,7 @@ import { useScreenOrientation } from "./useVueUse";
 import time from "~/utils/basic/time";
 import { initAwake } from "./tools/initAwake";
 import limit from "~/utils/limit";
+import { initLayout } from "./tools/initLayout";
 
 // 监听和处理一些全局的事务，比如路由变化
 
@@ -65,6 +66,8 @@ export function useApp() {
 
   // 在一段时间后，监听页面被显示
   initAwake()
+
+  initLayout()
 
   limit.init()
 

@@ -1,9 +1,9 @@
-import { reactive, watch } from "vue"
+import { reactive, watch, useTemplateRef } from "vue"
 import type { BnbData } from "./types"
 import { useLayoutStore } from "~/views/useLayoutStore"
 import { storeToRefs } from "pinia"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
-import { useWindowSize } from "~/hooks/useVueUse"
+import { useWindowSize, useResizeObserver, useDebounceFn } from "~/hooks/useVueUse"
 import { usePrefix } from "~/hooks/useCommon"
 import cfg from "~/config"
 
@@ -20,9 +20,27 @@ export function useBottomNaviBar() {
   listenToContext(bnbData)
   listenToRoute(bnbData)
 
+  // listen to resize
+  listenToResize()
+
+
   return {
     bnbData,
   }
+}
+
+
+function listenToResize() {
+  const layoutStore = useLayoutStore()
+  const elRef = useTemplateRef<HTMLElement>("bottom-navi-bar")
+  const _resize = useDebounceFn((entries: readonly ResizeObserverEntry[]) => {
+    const entry = entries[0]
+    const { height } = entry.contentRect
+    if(height > 0 && height !== layoutStore.bnbHeight) {
+      layoutStore.$patch({ bnbHeight: height })
+    }
+  }, 200)
+  useResizeObserver(elRef, _resize)
 }
 
 

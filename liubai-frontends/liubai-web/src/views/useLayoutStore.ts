@@ -15,13 +15,17 @@ export type SidebarStatus = "default" | "fullscreen"
 export const useLayoutStore = defineStore("layout", () => {
   const { width } = useWindowSize()
   
-  // 需要返回的数据
+  // about sidebar
   const sidebarWidth = ref(_initSidebarWidth(width.value))    // 如果侧边栏收起来时，该值为 0
   const sidebarType = ref<OpenType>("opened")
   const clientWidth = ref(width.value)
   const changeType = ref<LayoutChangeType>("")
   const sidebarStatus = ref<SidebarStatus>("default")
-  const bottomNaviBar = ref(false)
+
+  // about bottom navi bar
+  const routeHasBottomNaviBar = ref(false)  // 当前页面是否可能存在 bottom-navi-bar
+  const bottomNaviBar = ref(false)          // 若当前页面存在 bottom-navi-bar，它是否被显示
+  const bnbHeight = ref(0)
 
   return { 
     sidebarWidth, 
@@ -29,7 +33,9 @@ export const useLayoutStore = defineStore("layout", () => {
     clientWidth,
     changeType,
     sidebarStatus,
+    routeHasBottomNaviBar,
     bottomNaviBar,
+    bnbHeight,
   }
 })
 

@@ -1,8 +1,10 @@
 
-import { reactive, ref } from "vue"
-import { SnackbarParam } from "~/types/other/types-snackbar"
-import { SbResolver } from "./tools/types"
+import { reactive, ref, watch } from "vue"
+import type { SnackbarParam } from "~/types/other/types-snackbar"
+import type { SbResolver, SbData } from "./tools/types"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
+import { useLayoutStore } from "~/views/useLayoutStore"
+import { storeToRefs } from "pinia"
 
 
 let _resolve: SbResolver | undefined
@@ -11,7 +13,7 @@ const TRANSITION_DURATION = 150
 const enable = ref(false)
 const show = ref(false)
 
-const sbData = reactive({
+const sbData = reactive<SbData>({
   text: "",
   text_key: "",
   action: "",
@@ -19,9 +21,12 @@ const sbData = reactive({
   action_color: "",
   duration: 0,
   dot_color: "",
+  offset: 0,
+  zIndex: 5600,
 })
 
 export function initSnackBar() {
+  listenToContext()
   return {
     TRANSITION_DURATION,
     enable,
@@ -30,6 +35,33 @@ export function initSnackBar() {
     onTapAction,
   }
 }
+
+function _reset() {
+  sbData.zIndex = 5600
+  sbData.offset = 0
+}
+
+// listen to layoutStore for offset 
+function listenToContext() {
+  const layoutStore = useLayoutStore()
+  const {
+    routeHasBottomNaviBar,
+    bottomNaviBar,
+    bnbHeight,
+  } = storeToRefs(layoutStore)
+  watch([routeHasBottomNaviBar, bottomNaviBar, bnbHeight], (
+    [newV1, newV2, newV3]
+  ) => {
+    if(!newV1 || !newV2) {
+      _reset()
+      return
+    }
+
+    sbData.offset = newV3
+    sbData.zIndex = 590
+  }, { immediate: true })
+}
+
 
 export function showSnackBar(opt: SnackbarParam) {
   if(!opt.text && !opt.text_key) {

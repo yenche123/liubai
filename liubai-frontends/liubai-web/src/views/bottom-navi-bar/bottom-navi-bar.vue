@@ -15,6 +15,7 @@ const color_selected = "var(--main-normal)"
 
   <div class="liu-frosted-glass bnb-container"
     :class="{ 'bnb-container_show': bnbData.show }"
+    ref="bottom-navi-bar"
   >
     <!-- content area -->
     <div class="liu-no-user-select bnb-box">
