@@ -35,7 +35,7 @@ onActivated(() => {
       </div>
 
     </scroll-view>
-    <navi-bar :show-menu="false"
+    <navi-bar 
       :title-key="showA2hsFAQ ? '' : 'a2hs.install_app'"
     ></navi-bar>
   </div>

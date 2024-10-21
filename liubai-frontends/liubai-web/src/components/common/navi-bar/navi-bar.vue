@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import cfg from "~/config"
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
-import { useNaviBar } from "./tools/useNaviBar";
 import { useI18n } from "vue-i18n";
 import { naviBarProps, type NaviBarEmit } from "./tools/types"
 
@@ -15,11 +14,6 @@ const onTapBack = (e: MouseEvent) => {
 
 const { t } = useI18n()
 
-const {
-  showMenuBtn,
-  onTapMenu
-} = useNaviBar(props)
-
 </script>
 <template>
 
@@ -28,23 +22,13 @@ const {
     <div class="nb-box">
       <!-- back -->
       <div class="liu-hover nbb-normal" @click.stop="onTapBack"
-        :class="{ 'nbb-small': showMenuBtn }"
         style="margin-inline-start: -6px;"
       >
         <SvgIcon class="nb-icon" name="arrow-back700"></SvgIcon>
       </div>
-      <!-- menu -->
-      <div v-if="showMenuBtn" 
-        class="liu-hover nbb-normal nbb-small" 
-        @click="onTapMenu"
-      >
-        <SvgIcon class="nb-icon" name="menu"></SvgIcon>
-      </div>
 
       <!-- title -->
-      <div class="liu-no-user-select nb-title"
-        :style="{ 'margin-inline-start': showMenuBtn ? '10px' : '6px' }"
-      >
+      <div class="liu-no-user-select nb-title">
         <span v-if="title">{{ title }}</span>
         <span v-else-if="titleKey">{{ t(titleKey) }}</span>
         <span v-else-if="placeholderKey">{{ t(placeholderKey) }}</span>
@@ -53,8 +37,7 @@ const {
       <!-- add -->
       <div v-if="showAdd" 
         class="liu-hover nbb-normal"
-        :class="{ 'nbb-small': showMenuBtn }" 
-        style="margin-inline-end: -6px;"
+        style="margin-inline-end: -10px;"
         @click="$emit('tapadd')"
       >
         <SvgIcon class="nb-icon_add" name="add"></SvgIcon>
@@ -108,21 +91,6 @@ const {
   }
 }
 
-.nbb-small {
-  width: 34px;
-  height: 34px;
-
-  .nb-icon {
-    width: 24px;
-    height: 24px;
-  }
-
-  .nb-icon_add {
-    width: 28px;
-    height: 28px;
-  }
-}
-
 .nb-title {
   position: relative;
   font-size: var(--desc-font);
@@ -130,6 +98,7 @@ const {
   line-height: 1.5;
   font-weight: 700;
   flex: 1;
+  margin-inline-start: 6px;
 }
 
 /** the container query below is following `@container liu-mc-container` in style.css */

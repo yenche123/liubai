@@ -4,7 +4,6 @@ export interface NaviBarProps {
   title?: string
   titleKey?: string
   placeholderKey?: string
-  showMenu: boolean
   showAdd: boolean
 }
 
@@ -21,10 +20,6 @@ export const naviBarProps = {
   },
   placeholderKey: {
     type: String,
-  },
-  showMenu: {
-    type: Boolean,
-    default: true,
   },
   showAdd: {
     type: Boolean,
