@@ -30,6 +30,8 @@ Build! Anyway
 
 9. 2024-10-19，在 macOS 上使用 Cmd + TAB 切换应用时，来自 useDocumentVisibility() 的 `visibility` 不会发生变化，所以还需要监听 useWindowFocus() 的 `focused`，才能比较好地判断当前网页又被用户聚焦了。
 
+10. 文件夹飘红，显示: `contains emphasized items`，解决方案: `Cmd + Shift + P`，输入 `reload`，选择 `Developer: Reload Window`
+
 ## 彻底解决 pnpm 网络请求超时的问题
 
 关闭 ipv6! 改为 `仅本地连接`
