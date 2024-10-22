@@ -25,7 +25,7 @@ onActivated(() => {
       </div>
       
     </scroll-view>
-    <navi-bar :show-menu="false"></navi-bar>
+    <navi-bar></navi-bar>
   </div>
 
 </template>

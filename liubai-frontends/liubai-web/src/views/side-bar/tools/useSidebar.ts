@@ -117,6 +117,7 @@ async function toOpen(
   // console.log("打印 sidebarWidthPx: ", sbData.sidebarWidthPx)
   
   // 广播数据
+  newState.sidebarType = sbData.openType
   layoutStore.$patch(newState)
 
   // 等待 316ms 执行动画
@@ -127,7 +128,7 @@ async function toOpen(
 function toClose(
   layoutStore: LayoutStore,
 ) {
-  layoutStore.$patch({ sidebarWidth: 0 })
+  layoutStore.$patch({ sidebarWidth: 0, sidebarType: "closed_by_user" })
   sbData.openType = "closed_by_user"
 }
 
@@ -221,14 +222,10 @@ function listenWindowChange(
   const { width } = useWindowSize()
   let lastWindowTimeout: LiuTimeout
 
-  const collectState = async () => {
-    recalculate(layoutStore)
-  }
-
   const whenWindowChange = () => {
     if(lastWindowTimeout) clearTimeout(lastWindowTimeout)
     lastWindowTimeout = setTimeout(() => {
-      collectState()
+      recalculate(layoutStore)
     }, LISTEN_DELAY)
   }
 
@@ -302,6 +299,7 @@ async function recalculate(
   }
 
   // 广播数据
+  newState.sidebarType = sbData.openType
   layoutStore.$patch(newState)
 
   // 等待 450 + 16ms 执行动画
@@ -313,7 +311,7 @@ async function recalculate(
 // 获取可拖动的最大值和最小值
 function getCurrentMinMax(cw: number): { min: number, max: number } {
   const _min = cfg.min_sidebar_width
-  if(cw <= cfg.sidebar_close_point) return { min: _min, max: 0 }
+  if(cw <= cfg.breakpoint_max_size.mobile) return { min: _min, max: 0 }
   if(cw <= 720) return { min: _min, max: Math.max(260, cw / 2.5) }
   if(cw <= 1080) return { min: _min, max: cw / 2 }
   if(cw <= 1560) return { min: _min, max: Math.min(700, cw / 2) }
@@ -357,12 +355,13 @@ function initSidebar(
   // console.log("max: ", max)
   // console.log(" ")
 
-  if(w < cfg.sidebar_close_point && sbData.openType === "opened") {
-    // console.log("发现 窗口宽度不足 600px，但之前却是打开状态")
+  if(w <= cfg.breakpoint_max_size.mobile && sbData.openType === "opened") {
+    // console.log("发现 窗口宽度小于等于 590px，但之前却是打开状态")
     // console.log("则优先采纳 store 的.........")
     sbData.openType = "closed_by_auto"
     sbData.sidebarWidthPx = d2
     sidebarPxByDrag = d2
+    newState.sidebarType = "closed_by_auto"
     newState.sidebarWidth = 0
   }
   else if(d2 === 0) {

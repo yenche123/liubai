@@ -71,6 +71,25 @@ const iconColor = `var(--main-normal)`
       </div>
     </NaviLink>
 
+    <!-- tags -->
+    <NaviLink :to="prefix + 'tags'">
+      <div class="iu-no-user-select liu-hover mc-item">
+        <div class="mci-icon-box">
+          <SvgIcon :color="iconColor" name="tag" class="mci-icon"
+            style="padding-block-end: 3px;"
+          ></SvgIcon>
+        </div>
+        <div class="mci-text">
+          <span>{{ t('common.tags') }}</span>
+        </div>
+        <div class="mci-footer">
+          <div class="mcif-arrow">
+            <SvgIcon :color="iconColor" name="arrow-right2" class="mcif-arrow-icon"></SvgIcon>
+          </div>
+        </div>
+      </div>
+    </NaviLink>
+
     <!-- kanban -->
     <NaviLink :to="prefix + 'state'">
       <div class="iu-no-user-select liu-hover mc-item">
@@ -145,7 +164,8 @@ const iconColor = `var(--main-normal)`
     </NaviLink>
     
   </div>
-  
+
+  <div class="mc-virtual"></div>
 
 </template>
 <style scoped lang="scss">

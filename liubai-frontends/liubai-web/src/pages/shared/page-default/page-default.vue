@@ -23,6 +23,10 @@ defineProps({
   showAdd: {
     type: Boolean,
     default: false,
+  },
+  considerBottomNaviBar: {
+    type: Boolean,
+    default: false,
   }
 })
 
@@ -35,7 +39,9 @@ defineEmits<{
 <template>
 
   <main-view>
-    <scroll-view>
+    <scroll-view 
+      :consider-bottom-navi-bar="considerBottomNaviBar"
+    >
       <navi-virtual v-if="hasTopNavi"></navi-virtual>
       <div class="liu-mc-container">
         <div class="liu-tc-virtual" v-if="topVirtual"></div>

@@ -33,6 +33,7 @@ const onTapNaviTitle = () => {
   <!-- 主视图 -->
   <main-view :enable-drop-files="true" @tapmainview="onTapMainView">
     <scroll-view :hidden-scroll-bar="hiddenScrollBar" @scroll="onScroll"
+      consider-bottom-navi-bar
       :go-to-top="goToTop"
     >
       <navi-auto-virtual :show="isNaviAutoShown"></navi-auto-virtual>
@@ -45,9 +46,10 @@ const onTapNaviTitle = () => {
       @taptitle="onTapNaviTitle"
     ></NaviAuto>
 
-    <FloatActionButton :scroll-position="scrollPosition"
+    <FloatingActionButton :scroll-position="scrollPosition"
       @tapfab="onTapFab"
-    ></FloatActionButton>
+      consider-bottom-navi-bar
+    ></FloatingActionButton>
 
   </main-view>
 

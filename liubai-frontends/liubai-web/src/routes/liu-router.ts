@@ -19,6 +19,7 @@ import time from "../utils/basic/time"
 import { isSameRoute } from "./route-util"
 import cui from "~/components/custom-ui"
 import type { SimpleFunc } from "~/utils/basic/type-tool"
+import type { ToRoute } from "~/types"
 
 interface RouteChangeState {
   operation?: "push" | "replace" | "go"
@@ -327,6 +328,47 @@ class LiuRouter {
   // 【待完善】注意区别登录态和工作区
   public goHome() {
     this.replace({ name: "index" })
+  }
+
+  /** navigate to a TAB page */
+  public switchTab(
+    to: RouteLocationRaw,
+    currentRoute: RouteLocationNormalizedLoaded,
+  ) {
+    const toRoute = this.resolve(to)
+    const list = this.getStack()
+    const num = this._getNaviBackStackNum(toRoute, currentRoute, list)
+    if(num > 0) {
+      this.go(-num)
+      return
+    }
+    
+    this.push(toRoute)
+  }
+
+  /** 获取返回多少页面 可以到达 tab 页
+   * 若没有 则返回 -1
+   * 若当前页面就是 则返回 0
+   */
+  private _getNaviBackStackNum(
+    toRoute: ToRoute, 
+    fromRoute: RouteLocationNormalizedLoaded,
+    list: RouteLocationNormalized[],
+  ) {
+    if(fromRoute.name === toRoute.name) {
+      return 0
+    }
+    const stackLength = list.length
+    // console.log(valTool.copyObject(stacks))
+    // console.log("stackLength: ", stackLength)
+  
+    for(let i = stackLength-1; i >= 0; i--) {
+      const curStack = list[i]
+      if(curStack.name === toRoute.name) {
+        return stackLength - (i + 1)
+      }
+    }
+    return -1
   }
 
 }

@@ -14,7 +14,7 @@ const { width: windowWidth } = useWindowSize()
 // 若小于等于 600px，显示成手机，否则显示成浏览器窗口
 const deviceIcon = computed(() => {
   const w = windowWidth.value
-  if(w <= cfg.max_mobile_breakpoint) return "devices-smartphone"
+  if(w <= cfg.breakpoint_max_size.mobile) return "devices-smartphone"
   return "devices-app-window"
 })
 

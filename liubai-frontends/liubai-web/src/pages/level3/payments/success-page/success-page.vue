@@ -12,7 +12,7 @@ import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
       <navi-virtual></navi-virtual>
       <SuccessContent></SuccessContent>
     </scroll-view>
-    <navi-bar :show-menu="false"></navi-bar>
+    <navi-bar></navi-bar>
   </div>
 
 </template>

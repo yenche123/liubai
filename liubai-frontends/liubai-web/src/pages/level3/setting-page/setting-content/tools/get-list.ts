@@ -29,7 +29,7 @@ export function getTermsList() {
 export function getThemeList() {
   const { width } = useWindowSize()
   const w = width.value
-  const breakpoint = cfg.max_mobile_breakpoint
+  const breakpoint = cfg.breakpoint_max_size.mobile
   const list: ThemeItem[] = [
     {
       id: "system",

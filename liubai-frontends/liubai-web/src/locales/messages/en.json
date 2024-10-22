@@ -60,7 +60,8 @@
     "never_prompt": "Never prompt",
     "faq": "FAQ",
     "updating": "Updating..",
-    "to_contact": "Contact"
+    "to_contact": "Contact",
+    "mine": "Mine"
   },
   "editor": {
     "when": "When",

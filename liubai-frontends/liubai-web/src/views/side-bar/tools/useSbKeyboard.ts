@@ -49,7 +49,7 @@ export function useSbKeyboard(
   }
 
   const whenKeyDown = (e: KeyboardEvent) => {
-    if(width.value <= cfg.sidebar_close_point) return
+    if(width.value <= cfg.breakpoint_max_size.mobile) return
     const ctrlPressed = isMac ? e.metaKey : e.ctrlKey
     const key = e.key?.toLowerCase()
 

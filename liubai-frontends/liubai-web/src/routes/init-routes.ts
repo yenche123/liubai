@@ -2,6 +2,7 @@
 import { type RouteRecordRaw } from "vue-router"
 
 const LeftSidebar = () => import("../views/side-bar/side-bar.vue")
+const BottomNaviBar = () => import("../views/bottom-navi-bar/bottom-navi-bar.vue")
 const HomePage = () => import("../pages/level1/home-page/home-page.vue")
 const LoginPage = () => import("../pages/level1/login-page/login-page.vue")
 const OAuthPage = () => import("../pages/level1/oauth-page/oauth-page.vue")
@@ -147,6 +148,7 @@ export const routes: Array<RouteRecordRaw> = [
     components: {
       default: IndexPage,
       LeftSidebar,
+      BottomNaviBar,
     },
     name: "index",
     meta: {}
@@ -234,6 +236,7 @@ export const routes: Array<RouteRecordRaw> = [
     components: {
       default: MinePage,
       LeftSidebar,
+      BottomNaviBar,
     },
     name: "mine",
     meta: {
@@ -291,6 +294,7 @@ export const routes: Array<RouteRecordRaw> = [
     components: {
       default: IndexPage,
       LeftSidebar,
+      BottomNaviBar,
     },
     name: "collaborative-index",
     meta: {}
@@ -378,6 +382,7 @@ export const routes: Array<RouteRecordRaw> = [
     components: {
       default: MinePage,
       LeftSidebar,
+      BottomNaviBar,
     },
     name: "collaborative-mine",
     meta: {

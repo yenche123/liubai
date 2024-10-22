@@ -1,17 +1,20 @@
-import { reactive, toRef, watch } from "vue";
+import { inject, reactive, toRef, watch } from "vue";
 import type { Ref } from "vue";
 import { useLayoutStore } from "~/views/useLayoutStore";
 import type { LayoutStore } from "~/views/useLayoutStore";
 import { storeToRefs } from "pinia";
-import sideBar from "~/views/side-bar";
 import { useWindowSize } from "~/hooks/useVueUse";
 import cfg from "~/config";
 import type { NaviAutoEmits, NaviAutoData, NaviAutoProps } from "./types"
 import liuUtil from "~/utils/liu-util";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import time from "~/utils/basic/time";
+import { deviceChaKey } from "~/utils/provide-keys";
 
 const TRANSITION_DURATION = 300
+
+let lastScrollPosition = 0
+let lastOpenStamp = 0
 
 interface NaviAutoCtx {
   naData: NaviAutoData
@@ -29,6 +32,7 @@ export function useNaviAuto(
     enable: false,
     show: false,
     shadow: false,
+    tempHidden: false,
   })
 
   // 引入上下文
@@ -47,8 +51,22 @@ export function useNaviAuto(
   }
 
 
-  // 处理 左侧边栏的变化
+  const cha = inject(deviceChaKey)
+  if(!cha?.isInWebView || !cha?.isMobile) {
+    initListenContext(ctx)
+  }
+  
+  return {
+    TRANSITION_DURATION,
+    naData,
+  }
+}
+
+function initListenContext(ctx: NaviAutoCtx) {
+  const { layout, scrollPosition, naData } = ctx
   const { sidebarWidth, sidebarStatus } = storeToRefs(layout)
+
+  // 处理 左侧边栏的变化
   watch([sidebarWidth, sidebarStatus], (newV) => {
     judgeState(ctx)
   }, { immediate: true })
@@ -56,28 +74,49 @@ export function useNaviAuto(
   // 监听滚动，处理是否要显示阴影
   watch(scrollPosition, (newV) => {
     if(!naData.enable) return
-    judgeShadow(newV, ctx)
+    judgeScrollPosition(ctx)
+    judgeShadow(ctx)
   })
 
   // 监听窗口变化
   listenWindowChange(ctx)
-  
-  const onTapMenu = () => {
-    sideBar.showFixedSideBar()
+}
+
+
+function judgeScrollPosition(
+  ctx: NaviAutoCtx,
+) {
+  const { scrollPosition, naData } = ctx
+  const sP = scrollPosition.value
+  const justOpened = time.isWithinMillis(lastOpenStamp, 1000)
+
+  if(sP < 200 || justOpened) {
+    if(naData.tempHidden) {
+      naData.tempHidden = false
+    }
+    lastScrollPosition = sP
+    return
   }
-  
-  return {
-    TRANSITION_DURATION,
-    naData,
-    onTapMenu,
+
+  const diff1 = Math.abs(sP - lastScrollPosition)
+  if(diff1 < 10) return
+
+  const diff2 = sP - lastScrollPosition
+  if(diff2 >= 0 && !naData.tempHidden) {
+    naData.tempHidden = true
   }
+  else if(diff2 < 0 && naData.tempHidden) {
+    naData.tempHidden = false
+  }
+
+  lastScrollPosition = sP
 }
 
 function judgeShadow(
-  sT: number,
   ctx: NaviAutoCtx,
 ) {
   const oldV = ctx.naData.shadow
+  const sT = ctx.scrollPosition.value
   let newV = oldV
   if(sT >= 40 && !oldV) newV = true
   else if(sT <= 20 && oldV) newV = false
@@ -101,7 +140,7 @@ function judgeState(
   if(sidebarWidth > 0 || sidebarStatus === "fullscreen") {
     _close(ctx)
   }
-  else if(winWidthPx >= cfg.sidebar_close_point) {
+  else if(winWidthPx >= cfg.breakpoint_max_size.mobile) {
     _close(ctx)
   }
   else {
@@ -111,7 +150,7 @@ function judgeState(
   }
 
   // 判断阴影变化
-  judgeShadow(ctx.scrollPosition.value, ctx)
+  judgeShadow(ctx)
 }
 
 // 聆听窗口变化
@@ -129,10 +168,10 @@ function listenWindowChange(
       isClosing,
     } = liuUtil.view.getOpeningClosing(enable, show)
 
-    if(winWidthPx < cfg.sidebar_close_point && !isOpening) {
+    if(winWidthPx <= cfg.breakpoint_max_size.mobile && !isOpening) {
       _open(ctx)
     }
-    else if(winWidthPx >= cfg.sidebar_open_point && !isClosing) {
+    else if(winWidthPx > cfg.breakpoint_max_size.mobile && !isClosing) {
       _close(ctx)
     }
   }
@@ -142,27 +181,32 @@ function listenWindowChange(
   })
 }
 
+let toggleTimeout: LiuTimeout
+function _reset(ctx: NaviAutoCtx) {
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
+  ctx.naData.tempHidden = false
+  lastOpenStamp = time.getTime()
+  lastScrollPosition = ctx.scrollPosition.value
+}
+
 function _openInstantly(
   ctx: NaviAutoCtx,
 ) {
   const { naData } = ctx
-  if(toggleTimeout) {
-    clearTimeout(toggleTimeout)
-  }
+  _reset(ctx)
   naData.enable = true
   naData.show = true
   ctx.emits("naviautochanged", true)
 }
 
-let toggleTimeout: LiuTimeout
 async function _open(
   ctx: NaviAutoCtx,
 ) {
   const { naData } = ctx
   if(naData.show) return
-  if(toggleTimeout) {
-    clearTimeout(toggleTimeout)
-  }
+  _reset(ctx)
   naData.enable = true
   ctx.emits("naviautochanged", true)
   toggleTimeout = setTimeout(() => {

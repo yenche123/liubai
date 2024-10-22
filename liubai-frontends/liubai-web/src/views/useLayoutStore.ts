@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useWindowSize } from "../hooks/useVueUse";
 import type { Prettify } from "~/utils/basic/type-tool";
 import cfg from "~/config";
+import type { OpenType } from "~/types/types-view";
 
 export type LayoutChangeType = "window" | "sidebar" | ""
 
@@ -14,23 +15,42 @@ export type SidebarStatus = "default" | "fullscreen"
 export const useLayoutStore = defineStore("layout", () => {
   const { width } = useWindowSize()
   
-  // 需要返回的数据
+  // about sidebar
   const sidebarWidth = ref(_initSidebarWidth(width.value))    // 如果侧边栏收起来时，该值为 0
+  const sidebarType = ref<OpenType>("opened")
   const clientWidth = ref(width.value)
   const changeType = ref<LayoutChangeType>("")
   const sidebarStatus = ref<SidebarStatus>("default")
 
+  // about bottom navi bar
+  const routeHasBottomNaviBar = ref(false)  // 当前页面是否可能存在 bottom-navi-bar
+  const bottomNaviBar = ref(false)          // 若当前页面存在 bottom-navi-bar，它是否被显示
+  const bnbHeight = ref(0)
+
+  // go to top about bottom-navi-bar
+  const bnbGoToTop = ref(0)
+  const triggerBnbGoToTop = () => {
+    bnbGoToTop.value++
+  }
+
   return { 
     sidebarWidth, 
+    sidebarType,
     clientWidth,
     changeType,
     sidebarStatus,
+    routeHasBottomNaviBar,
+    bottomNaviBar,
+    bnbHeight,
+    bnbGoToTop,
+    triggerBnbGoToTop,
   }
 })
 
 export type LayoutStore = Prettify<ReturnType<typeof useLayoutStore>>
 export interface LayoutType {
   sidebarWidth: number
+  sidebarType: OpenType
   clientWidth: number
   changeType: LayoutChangeType
 }
