@@ -121,6 +121,7 @@ export const clearWhen = async (
 
   // 1. 修改状态
   delete newThread.whenStamp
+  delete newThread.calendarStamp
   if(newThread.remindMe?.type === "early") {
     delete newThread.remindMe
     delete newThread.remindStamp
@@ -150,6 +151,9 @@ export const clearRemind = async (
   // 1. 修改状态
   delete newThread.remindMe
   delete newThread.remindStamp
+  if(!newThread.whenStamp) {
+    delete newThread.calendarStamp
+  }
   soTool.setEdit(newThread)
 
   // 2. 操作 db
