@@ -4,10 +4,11 @@ import type {
   TextEditorParam,
   TextEditorResolver,
 } from "./types"
-import { computed, reactive, ref, watch } from "vue"
+import { computed, reactive, ref } from "vue"
 import { 
   toListenKeyboard, 
-  cancelListenKeyboard 
+  cancelListenKeyboard, 
+  toFocusInput
 } from "../../tools/listen-keyboard"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 import cfg from "~/config"
@@ -17,7 +18,7 @@ let _resolve: TextEditorResolver | undefined
 
 const enable = ref(false)
 const show = ref(false)
-const inputEl = ref<HTMLElement | null>(null)
+const inputEl = ref<HTMLInputElement | null>(null)
 const TRANSITION_DURATION = 120 // 200
 
 const DEFAULT_MIN_LENGTH = 1
@@ -142,7 +143,7 @@ export async function showTextEditor(
     _success = undefined
   }
 
-  _toFocus()
+  toFocusInput(inputEl)
   _open()
   
   const _wait = (a: TextEditorResolver): void => {
@@ -150,15 +151,6 @@ export async function showTextEditor(
   }
 
   return new Promise(_wait)
-}
-
-function _toFocus() {
-  const stop = watch(inputEl, (newV) => {
-    if(!newV) return
-    console.warn("to focus......")
-    newV.focus()
-    stop()
-  })
 }
 
 function setInputTxt(text: string) {

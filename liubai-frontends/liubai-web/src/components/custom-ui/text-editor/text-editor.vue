@@ -56,6 +56,9 @@ const {
         </div>
       </div>
     </div>
+
+    <div class="cui-modal-virtual"></div>
+
   </div>
 
 
@@ -73,6 +76,7 @@ const {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   transition: v-bind("modalTranMs + 'ms'");
   opacity: 0;
 
@@ -210,6 +214,21 @@ const {
   }
 }
 
+
+.cui-modal-virtual {
+  width: 100%;
+  height: 0px;
+  max-height: 360px;  /** 最多垫高一个手机屏幕宽 */
+}
+
+@media screen and (max-width: 590px) and (max-height: 800px) {
+
+  .cui-modal-virtual {
+    height: 25vh;
+    height: 25dvh;
+  }
+
+}
 
 
 </style>

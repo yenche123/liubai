@@ -18,7 +18,10 @@ const color_selected = "var(--main-normal)"
 <template>
 
   <div class="liu-frosted-glass bnb-container"
-    :class="{ 'bnb-container_show': bnbData.show }"
+    :class="{ 
+      'bnb-container_show': bnbData.show,
+      'bnb-container_temp-hidden': bnbData.tempHidden,
+    }"
     ref="bottom-navi-bar"
   >
     <!-- content area -->
@@ -97,6 +100,11 @@ const color_selected = "var(--main-normal)"
 
 .bnb-container_show {
   transform: translateY(0);
+}
+
+.bnb-container_temp-hidden {
+  pointer-events: none;
+  opacity: 0;
 }
 
 .bnb-box {

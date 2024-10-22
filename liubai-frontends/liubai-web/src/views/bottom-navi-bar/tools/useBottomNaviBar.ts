@@ -1,4 +1,4 @@
-import { reactive, watch, useTemplateRef } from "vue"
+import { reactive, watch, useTemplateRef, inject, onMounted, onBeforeUnmount } from "vue"
 import type { BnbData } from "./types"
 import { useLayoutStore } from "~/views/useLayoutStore"
 import { storeToRefs } from "pinia"
@@ -7,6 +7,7 @@ import { useWindowSize, useResizeObserver, useDebounceFn } from "~/hooks/useVueU
 import { usePrefix } from "~/hooks/useCommon"
 import cfg from "~/config";
 import cui from '~/components/custom-ui';
+import { deviceChaKey } from "~/utils/provide-keys"
 
 export function useBottomNaviBar() {
   const { prefix } = usePrefix()
@@ -15,6 +16,7 @@ export function useBottomNaviBar() {
     show: false,
     currentState: "index",
     prefix: prefix.value,
+    tempHidden: false,
   })
   watch(prefix, (newV) => bnbData.prefix = newV)
 
@@ -25,11 +27,36 @@ export function useBottomNaviBar() {
   listenToResize()
   const funcs = initFunctions(bnbData)
 
+  const cha = inject(deviceChaKey)
+  if(cha?.isAndroid) {
+    listenToInputChange(bnbData)
+  }
+
   return {
     bnbData,
     ...funcs,
   }
 }
+
+
+function listenToInputChange(bnbData: BnbData) {
+  const _focusin = () => {
+    bnbData.tempHidden = true
+  }
+  const _focusout = () => {
+    bnbData.tempHidden = false
+  }
+
+  onMounted(() => {
+    document.body.addEventListener("focusin", _focusin)
+    document.body.addEventListener("focusout", _focusout)
+  })
+  onBeforeUnmount(() => {
+    document.body.removeEventListener("focusin", _focusin)
+    document.body.removeEventListener("focusout", _focusout)
+  })
+}
+
 
 function initFunctions(
   bnbData: BnbData,

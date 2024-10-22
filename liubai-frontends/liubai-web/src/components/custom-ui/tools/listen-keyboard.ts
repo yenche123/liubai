@@ -1,5 +1,10 @@
 
-import { isProxy, watch, type WatchStopHandle } from "vue"
+import { 
+  isProxy, 
+  watch, 
+  type WatchStopHandle,
+  type Ref, 
+} from "vue"
 import cfg from "~/config"
 import time from "~/utils/basic/time"
 import type { KeyboardOpt } from "~/types/other/types-keyboard"
@@ -121,5 +126,16 @@ export function cancelListenKeyboard() {
   }
 
   _opt = undefined
+}
+
+
+export function toFocusInput(
+  inputEl: Ref<HTMLInputElement | null>
+) {
+  const stop = watch(inputEl, (newV) => {
+    if(!newV) return
+    newV.focus()
+    stop()
+  })
 }
 

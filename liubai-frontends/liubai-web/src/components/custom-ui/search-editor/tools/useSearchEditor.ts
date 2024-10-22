@@ -24,6 +24,7 @@ import type { LiuTimeout } from "~/utils/basic/type-tool";
 import { 
   toListenKeyboard, 
   cancelListenKeyboard,
+  toFocusInput,
 } from "../../tools/listen-keyboard"
 
 const TRANSITION_DURATION = 150
@@ -306,6 +307,8 @@ function closeIt() {
 
 async function _toOpen() {
   if(show.value) return
+  toFocusInput(inputEl)
+  
   enable.value = true
   await liuUtil.waitAFrame()
   show.value = true
@@ -315,9 +318,6 @@ async function _toOpen() {
     whenKeyUp, 
     data: seData,
   })
-
-  if(!inputEl.value) return
-  inputEl.value.focus()
 }
 
 async function _toClose() {
