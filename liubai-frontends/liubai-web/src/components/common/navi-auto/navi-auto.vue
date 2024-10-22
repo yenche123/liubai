@@ -23,7 +23,7 @@ const default_color = "var(--navi-normal)"
   <div v-if="naData.enable"
     class="liu-frosted-glass na-container"
     :class="{ 
-      'na-container_show': naData.show, 
+      'na-container_show': naData.show && !naData.tempHidden, 
       'na-container_shadow': naData.shadow,
     }"
   >

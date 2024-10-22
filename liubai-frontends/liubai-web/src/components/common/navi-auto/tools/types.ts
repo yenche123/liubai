@@ -4,6 +4,7 @@
 export interface NaviAutoData {
   enable: boolean
   show: boolean
+  tempHidden: boolean
   shadow: boolean
 }
 

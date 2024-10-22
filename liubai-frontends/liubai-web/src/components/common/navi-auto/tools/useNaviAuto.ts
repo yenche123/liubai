@@ -13,6 +13,9 @@ import { deviceChaKey } from "~/utils/provide-keys";
 
 const TRANSITION_DURATION = 300
 
+let lastScrollPosition = 0
+let lastOpenStamp = 0
+
 interface NaviAutoCtx {
   naData: NaviAutoData
   scrollPosition: Ref<number>
@@ -29,6 +32,7 @@ export function useNaviAuto(
     enable: false,
     show: false,
     shadow: false,
+    tempHidden: false,
   })
 
   // 引入上下文
@@ -70,18 +74,49 @@ function initListenContext(ctx: NaviAutoCtx) {
   // 监听滚动，处理是否要显示阴影
   watch(scrollPosition, (newV) => {
     if(!naData.enable) return
-    judgeShadow(newV, ctx)
+    judgeScrollPosition(ctx)
+    judgeShadow(ctx)
   })
 
   // 监听窗口变化
   listenWindowChange(ctx)
 }
 
+
+function judgeScrollPosition(
+  ctx: NaviAutoCtx,
+) {
+  const { scrollPosition, naData } = ctx
+  const sP = scrollPosition.value
+  const justOpened = time.isWithinMillis(lastOpenStamp, 1000)
+
+  if(sP < 200 || justOpened) {
+    if(naData.tempHidden) {
+      naData.tempHidden = false
+    }
+    lastScrollPosition = sP
+    return
+  }
+
+  const diff1 = Math.abs(sP - lastScrollPosition)
+  if(diff1 < 10) return
+
+  const diff2 = sP - lastScrollPosition
+  if(diff2 >= 0 && !naData.tempHidden) {
+    naData.tempHidden = true
+  }
+  else if(diff2 < 0 && naData.tempHidden) {
+    naData.tempHidden = false
+  }
+
+  lastScrollPosition = sP
+}
+
 function judgeShadow(
-  sT: number,
   ctx: NaviAutoCtx,
 ) {
   const oldV = ctx.naData.shadow
+  const sT = ctx.scrollPosition.value
   let newV = oldV
   if(sT >= 40 && !oldV) newV = true
   else if(sT <= 20 && oldV) newV = false
@@ -115,7 +150,7 @@ function judgeState(
   }
 
   // 判断阴影变化
-  judgeShadow(ctx.scrollPosition.value, ctx)
+  judgeShadow(ctx)
 }
 
 // 聆听窗口变化
@@ -146,27 +181,32 @@ function listenWindowChange(
   })
 }
 
+let toggleTimeout: LiuTimeout
+function _reset(ctx: NaviAutoCtx) {
+  if(toggleTimeout) {
+    clearTimeout(toggleTimeout)
+  }
+  ctx.naData.tempHidden = false
+  lastOpenStamp = time.getTime()
+  lastScrollPosition = ctx.scrollPosition.value
+}
+
 function _openInstantly(
   ctx: NaviAutoCtx,
 ) {
   const { naData } = ctx
-  if(toggleTimeout) {
-    clearTimeout(toggleTimeout)
-  }
+  _reset(ctx)
   naData.enable = true
   naData.show = true
   ctx.emits("naviautochanged", true)
 }
 
-let toggleTimeout: LiuTimeout
 async function _open(
   ctx: NaviAutoCtx,
 ) {
   const { naData } = ctx
   if(naData.show) return
-  if(toggleTimeout) {
-    clearTimeout(toggleTimeout)
-  }
+  _reset(ctx)
   naData.enable = true
   ctx.emits("naviautochanged", true)
   toggleTimeout = setTimeout(() => {
