@@ -23,6 +23,9 @@ export async function searchInner(param: SearchOpt) {
   
   const texts = text.split(" ").filter(v => Boolean(v))
   const regexs = texts.map(v => {
+    if(v.length >= 4) {
+      return new RegExp(v, "g")
+    }
     const isEng = valTool.isAllEnglishChar(v)
     if(isEng) {
       return new RegExp("\\b" + v + "", "gi")

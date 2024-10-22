@@ -61,7 +61,7 @@ function _getTitleAndDesc(
   let title = v.title ?? ""
   let desc = ""
 
-  const content = transferUtil.tiptapToText(v.liuDesc ?? [], true)
+  const content = transferUtil.tiptapToText(v.liuDesc ?? [])
   const fileName = _getFileName(v)
 
   if(!title) {
@@ -141,8 +141,18 @@ function _trimForward(text: string, end: number) {
 
     num += valTool.getTextCharNum(char)
 
-    if(num < 10) continue
-    if(!POINTS.includes(char)) continue
+    if(num < 8) continue
+    const isPoint = POINTS.includes(char)
+    if(!isPoint) {
+      if(num > 16) {
+        text = text.substring(i)
+        if(i > 0) {
+          text = "..." + text
+        }
+        break
+      }
+      continue
+    }
 
     text = text.substring(i + 1)
     text = text.trimStart()
