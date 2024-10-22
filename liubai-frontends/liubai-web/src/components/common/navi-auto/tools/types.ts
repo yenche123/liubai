@@ -6,6 +6,7 @@ export interface NaviAutoData {
   show: boolean
   tempHidden: boolean
   shadow: boolean
+  lastViewChangedStamp: number
 }
 
 export interface NaviAutoProps {

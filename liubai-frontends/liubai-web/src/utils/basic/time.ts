@@ -158,8 +158,12 @@ const getTimezone = () => {
  * @param stamp some last stamp
  * @param range 
  */
-const isWithinMillis = (stamp: number, ms: number) => {
-  const now = getTime()
+const isWithinMillis = (
+  stamp: number,
+  ms: number,
+  onlyLocal: boolean = false,
+) => {
+  const now = onlyLocal ? getLocalTime() : getTime()
   const diff = now - stamp
   if(diff < ms) return true
   return false

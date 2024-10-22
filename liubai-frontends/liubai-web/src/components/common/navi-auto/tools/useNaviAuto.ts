@@ -10,8 +10,10 @@ import liuUtil from "~/utils/liu-util";
 import type { LiuTimeout } from "~/utils/basic/type-tool";
 import time from "~/utils/basic/time";
 import { deviceChaKey } from "~/utils/provide-keys";
+import { onLiuActivated, onLiuDeactivated } from "~/hooks/useCommon";
 
 const TRANSITION_DURATION = 300
+const JUMP_THRESHOLD = 50
 
 let lastScrollPosition = 0
 let lastOpenStamp = 0
@@ -33,27 +35,13 @@ export function useNaviAuto(
     show: false,
     shadow: false,
     tempHidden: false,
+    lastViewChangedStamp: 0,
   })
-
-  // 引入上下文
-  const layout = useLayoutStore()
-  const scrollPosition = toRef(props, "scrollPosition")
-
-  // 窗口宽度
-  const { width: windowWidth } = useWindowSize()
-
-  const ctx: NaviAutoCtx = {
-    naData,
-    scrollPosition,
-    layout,
-    windowWidth,
-    emits,
-  }
-
 
   const cha = inject(deviceChaKey)
   if(!cha?.isInWebView || !cha?.isMobile) {
-    initListenContext(ctx)
+    // init listen to context
+    initListenContext(props, emits, naData)
   }
   
   return {
@@ -62,8 +50,24 @@ export function useNaviAuto(
   }
 }
 
-function initListenContext(ctx: NaviAutoCtx) {
-  const { layout, scrollPosition, naData } = ctx
+function initListenContext(
+  props: NaviAutoProps,
+  emits: NaviAutoEmits,
+  naData: NaviAutoData,
+) {
+  // include context
+  const layout = useLayoutStore()
+  const scrollPosition = toRef(props, "scrollPosition")
+
+  // include window width
+  const { width: windowWidth } = useWindowSize()
+  const ctx: NaviAutoCtx = {
+    naData,
+    scrollPosition,
+    layout,
+    windowWidth,
+    emits,
+  }
   const { sidebarWidth, sidebarStatus } = storeToRefs(layout)
 
   // 处理 左侧边栏的变化
@@ -78,8 +82,17 @@ function initListenContext(ctx: NaviAutoCtx) {
     judgeShadow(ctx)
   })
 
-  // 监听窗口变化
+  // listen to window change
   listenWindowChange(ctx)
+
+  // listen to activated and deactivated
+  onLiuActivated(() => {
+    naData.lastViewChangedStamp = time.getLocalTime()
+  })
+  onLiuDeactivated(() => {
+    naData.lastViewChangedStamp = time.getLocalTime()
+  })
+
 }
 
 
@@ -88,25 +101,40 @@ function judgeScrollPosition(
 ) {
   const { scrollPosition, naData } = ctx
   const sP = scrollPosition.value
-  const justOpened = time.isWithinMillis(lastOpenStamp, 1000)
+  const justOpened = time.isWithinMillis(lastOpenStamp, 1000, true)
+  const diff1 = Math.abs(sP - lastScrollPosition)
 
   if(sP < 200 || justOpened) {
     if(naData.tempHidden) {
-      naData.tempHidden = false
+      if(diff1 > JUMP_THRESHOLD) {
+        _changeTempHidden(ctx, false)
+      }
+      else {
+        _changeTempHidden(ctx, false, true)
+      }
     }
     lastScrollPosition = sP
     return
   }
 
-  const diff1 = Math.abs(sP - lastScrollPosition)
   if(diff1 < 10) return
 
   const diff2 = sP - lastScrollPosition
   if(diff2 >= 0 && !naData.tempHidden) {
-    naData.tempHidden = true
+    if(diff1 > JUMP_THRESHOLD) {
+      _changeTempHidden(ctx, true)
+    }
+    else {
+      _changeTempHidden(ctx, true, true)
+    }
   }
   else if(diff2 < 0 && naData.tempHidden) {
-    naData.tempHidden = false
+    if(diff1 > JUMP_THRESHOLD) {
+      _changeTempHidden(ctx, false)
+    }
+    else {
+      _changeTempHidden(ctx, false, true)
+    }
   }
 
   lastScrollPosition = sP
@@ -133,7 +161,7 @@ function judgeState(
   const winWidthPx = windowWidth.value
 
   if(!firstLoadStamp) {
-    firstLoadStamp = time.getTime()
+    firstLoadStamp = time.getLocalTime()
   }
 
   const { sidebarWidth, sidebarStatus } = ctx.layout
@@ -144,7 +172,7 @@ function judgeState(
     _close(ctx)
   }
   else {
-    const justLoad = time.isWithinMillis(firstLoadStamp, 2000)
+    const justLoad = time.isWithinMillis(firstLoadStamp, 2000, true)
     if(justLoad) _openInstantly(ctx)
     else _open(ctx)
   }
@@ -181,13 +209,13 @@ function listenWindowChange(
   })
 }
 
-let toggleTimeout: LiuTimeout
+let toggleTimeout1: LiuTimeout
 function _reset(ctx: NaviAutoCtx) {
-  if(toggleTimeout) {
-    clearTimeout(toggleTimeout)
+  if(toggleTimeout1) {
+    clearTimeout(toggleTimeout1)
   }
   ctx.naData.tempHidden = false
-  lastOpenStamp = time.getTime()
+  lastOpenStamp = time.getLocalTime()
   lastScrollPosition = ctx.scrollPosition.value
 }
 
@@ -209,7 +237,7 @@ async function _open(
   _reset(ctx)
   naData.enable = true
   ctx.emits("naviautochanged", true)
-  toggleTimeout = setTimeout(() => {
+  toggleTimeout1 = setTimeout(() => {
     naData.show = true
   }, cfg.frame_duration)
 }
@@ -219,14 +247,39 @@ async function _close(
 ) {
   const { naData } = ctx
   if(!naData.enable) return
-  if(toggleTimeout) {
-    clearTimeout(toggleTimeout)
+  if(toggleTimeout1) {
+    clearTimeout(toggleTimeout1)
   }
   naData.show = false
   ctx.emits("naviautochanged", false)
-  toggleTimeout = setTimeout(() => {
+  toggleTimeout1 = setTimeout(() => {
     naData.enable = false
   }, TRANSITION_DURATION)
+}
+
+
+let toggleTimeout2: LiuTimeout
+function _changeTempHidden(
+  ctx: NaviAutoCtx,
+  newTempHidden: boolean,
+  instantly: boolean = false,
+) {
+  if(toggleTimeout2) {
+    clearTimeout(toggleTimeout2)
+  }
+  if(instantly) {
+    ctx.naData.tempHidden = newTempHidden
+    return
+  }
+
+  toggleTimeout2 = setTimeout(() => {
+    toggleTimeout2 = undefined
+    const { lastViewChangedStamp } = ctx.naData
+    if(time.isWithinMillis(lastViewChangedStamp, 600, true)) {
+      return
+    }
+    ctx.naData.tempHidden = newTempHidden
+  }, 200)
 }
 
 

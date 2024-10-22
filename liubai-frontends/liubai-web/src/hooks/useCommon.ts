@@ -184,3 +184,8 @@ export function onLiuActivated(fn: SimpleFunc) {
   })
 
 }
+
+export function onLiuDeactivated(fn: SimpleFunc) {
+  onDeactivated(() => fn())
+  onBeforeUnmount(() => fn())
+}
