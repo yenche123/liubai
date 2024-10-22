@@ -4,8 +4,7 @@ import type {
   TextEditorParam,
   TextEditorResolver,
 } from "./types"
-import { computed, reactive, ref } from "vue"
-import valTool from "~/utils/basic/val-tool"
+import { computed, reactive, ref, watch } from "vue"
 import { 
   toListenKeyboard, 
   cancelListenKeyboard 
@@ -143,19 +142,23 @@ export async function showTextEditor(
     _success = undefined
   }
 
-  _open()
-
-  const _toFocus = async() => {
-    await valTool.waitMilli(200)
-    inputEl?.value?.focus()
-  }
   _toFocus()
+  _open()
   
   const _wait = (a: TextEditorResolver): void => {
     _resolve = a
   }
 
   return new Promise(_wait)
+}
+
+function _toFocus() {
+  const stop = watch(inputEl, (newV) => {
+    if(!newV) return
+    console.warn("to focus......")
+    newV.focus()
+    stop()
+  })
 }
 
 function setInputTxt(text: string) {
