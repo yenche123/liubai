@@ -57,7 +57,7 @@ let lastSetPopStateStamp = 0
 // 有效间隔
 // 超出有效间隔的事件，皆视为由浏览器所触发
 // 如果在切换路由过程中含有远程获取云端数据，请主动调大间隔
-let availableDuration = 300
+let availableDuration = 400
 
 // 上一次主动记录堆栈的事件戳
 let routeChangeTmpData: RouteChangeState = {}
@@ -381,9 +381,6 @@ const _popStacks = (num: number) => {
     if(stack.length < 1) break
     stack.pop()
   }
-  console.log("stack after _popStacks: ")
-  console.log(valTool.copyObject(stack))
-  console.log(" ")
 }
 
 const _changeLastHasPrev = (val: boolean) => {
@@ -395,7 +392,9 @@ const _changeLastHasPrev = (val: boolean) => {
 }
 
 // 判断前端代码触发跳转成功与否，并操作堆栈
-// 如果是浏览器导航栏的操作，则存储 to 和 from，再触发 _judgeBrowserJump
+// 如果是浏览器导航栏的操作，则存储 to 和 from
+// 并触发 _judgeBrowserJump，跟 popstate 竞争谁后触发
+// 后触发者将在 _judgeBrowserJump() 中判断堆栈状态
 const _judgeInitiativeJump = (
   to: RouteLocationNormalized, 
   from: RouteLocationNormalized
@@ -421,8 +420,12 @@ const _judgeInitiativeJump = (
       // 如果有前一页
       _changeLastHasPrev(true)
     }
+  
+    console.warn("see stack after _judgeInitiativeJump: ")
+    console.log(valTool.copyObject(stack))
+    console.log(" ")
 
-    routeChangeTmpData = {}
+    _reset()
   }
   else {
     // 保存状态以等待 window.addEventListener("popstate") 触发
@@ -437,13 +440,12 @@ const _judgeInitiativeJump = (
 const _judgeBrowserJump = (): void => {
   let { to, from, stamp = 0 } = toAndFrom
 
-  console.log("_judgeBrowserJump 111: ")
-  console.log(valTool.copyObject(to))
-  console.log(valTool.copyObject(from))
+  // console.log("_judgeBrowserJump 111: ")
+  // console.log(valTool.copyObject(to))
+  // console.log(valTool.copyObject(from))
+  // console.log(valTool.copyObject(stateFromPopState))
 
   if(!to || !from || !stateFromPopState) {
-    console.log("看一下 stack 111: ")
-    console.log([...stack])
     return
   }
 
@@ -452,20 +454,16 @@ const _judgeBrowserJump = (): void => {
   const diff = now - stamp
   const diff2 = now - lastSetPopStateStamp
 
-  console.log("_judgeBrowserJump 222: ")
-  console.log(diff)
-  console.log(diff2)
-
+  // console.log("_judgeBrowserJump 222: ")
+  // console.log(diff)
+  // console.log(diff2)
 
   if(diff > availableDuration || diff2 > availableDuration) {
-    console.warn("被阻断了......")
-    console.log(valTool.copyObject(stack))
-    console.log(" ")
     return
   }
   
   const { current, forward, back } = stateFromPopState
-  console.log("看一下 stateFromPopState: ")
+  console.log("_judgeBrowserJump 看一下 stateFromPopState: ")
   console.log(current)
   console.log(forward)
   console.log(back)
@@ -494,7 +492,6 @@ const _judgeBrowserJump = (): void => {
       const nextIdx = i + 1
       console.log("nextIdx: ", nextIdx)
       console.log("oldStackLen: ", oldStackLen)
-      console.log(" ")
 
       if(oldStackLen > nextIdx) {
         stack.splice(nextIdx, oldStackLen - nextIdx)
@@ -517,15 +514,18 @@ const _judgeBrowserJump = (): void => {
     }
   }
 
-  console.log("看一下 stack after _judgeBrowserJump: ")
-  console.log([...stack])
+  console.warn("see stack after _judgeBrowserJump: ")
+  console.log(valTool.copyObject(stack))
   console.log(" ")
 
-  stateFromPopState = null
-  toAndFrom.to = undefined
-  toAndFrom.from = undefined
+  _reset()
 }
 
+function _reset() {
+  stateFromPopState = null
+  routeChangeTmpData = {}
+  toAndFrom = {}
+}
 
 const initLiuRouter = (): RouteAndRouter => {
   const vueRouter = useVueRouter()
