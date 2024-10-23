@@ -1,4 +1,8 @@
-import type { RouteLocation } from 'vue-router'
+import type { 
+  RouteLocation, 
+  RouteLocationNormalized, 
+  RouteLocationResolvedGeneric,
+} from 'vue-router'
 import type { SpaceType } from "./types-basic"
 import type { HeTreeStat } from './other/types-hetree'
 import type { TagView } from './types-atom'
@@ -81,5 +85,7 @@ export interface LiuMyContext {
 }
 
 export type LiuFileAndImage = LiuFileStore | LiuImageStore
+
+export type RouteItem = RouteLocationResolvedGeneric | RouteLocationNormalized
 
 export type ToRoute = RouteLocation & { href: string }

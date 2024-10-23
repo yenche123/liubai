@@ -1,4 +1,4 @@
-import { onUnmounted, ref, type Ref } from "vue"
+import { onUnmounted } from "vue"
 import { 
   useRouter as useVueRouter, 
   useRoute as useVueRoute,
@@ -15,11 +15,10 @@ import {
   type LocationQuery,
 } from "vue-router"
 import valTool from "~/utils/basic/val-tool"
-import time from "../utils/basic/time"
 import { isSameRoute } from "./route-util"
 import cui from "~/components/custom-ui"
 import type { SimpleFunc } from "~/utils/basic/type-tool"
-import type { ToRoute } from "~/types"
+import type { ToRoute, RouteItem } from "~/types"
 
 interface RouteChangeState {
   operation?: "push" | "replace" | "go"
@@ -36,40 +35,14 @@ export interface RouteAndLiuRouter {
   router: LiuRouter
 }
 
-interface ToAndFrom {
-  to?: RouteLocationNormalized
-  from?: RouteLocationNormalized
-  stamp?: number
-}
-
 export type VueRoute = RouteLocationNormalizedLoaded
-
-// 当前路由是否有前路由
-let lastHasPrev = ref(false)
-
-// 等待原生事件 存储 to 和 from
-let toAndFrom: ToAndFrom = {}
-
-// 原生 popstate 的 state
-let stateFromPopState: PopStateEvent["state"] = null
-let lastSetPopStateStamp = 0
-
-// 有效间隔
-// 超出有效间隔的事件，皆视为由浏览器所触发
-// 如果在切换路由过程中含有远程获取云端数据，请主动调大间隔
-let availableDuration = 400
 
 // 上一次主动记录堆栈的事件戳
 let routeChangeTmpData: RouteChangeState = {}
 
 // 路由堆栈记录
 // 仅会记录 刷新/从外部网页跳转回来/从外部网页跳转进来 之后的堆栈
-let stack: RouteLocationNormalized[] = []
-
-// 依序从 hasPreviousRouteInApp() 调用顺序
-// 存储是否有前一页的 ref
-// 请不要改变 hasPrevList 的顺序
-let hasPrevList: Ref<boolean>[] = []
+let stack: RouteItem[] = []
 
 class LiuRouter {
 
@@ -205,7 +178,7 @@ class LiuRouter {
   }
 
   // 获取路由堆栈
-  public getStack(): RouteLocationNormalized[] {
+  public getStack(): RouteItem[] {
     let list = stack.map(v => {
       let v2 = Object.assign({}, v)
       return v2
@@ -356,7 +329,7 @@ class LiuRouter {
   private _getNaviBackStackNum(
     toRoute: ToRoute, 
     fromRoute: RouteLocationNormalizedLoaded,
-    list: RouteLocationNormalized[],
+    list: RouteItem[],
   ) {
     if(fromRoute.name === toRoute.name) {
       return 0
@@ -383,28 +356,15 @@ const _popStacks = (num: number) => {
   }
 }
 
-const _changeLastHasPrev = (val: boolean) => {
-  lastHasPrev.value = val
-  const len = hasPrevList.length
-  if(len > 0) {
-    hasPrevList[len - 1].value = val
-  }
-}
-
 // 判断前端代码触发跳转成功与否，并操作堆栈
-// 如果是浏览器导航栏的操作，则存储 to 和 from
-// 并触发 _judgeBrowserJump，跟 popstate 竞争谁后触发
-// 后触发者将在 _judgeBrowserJump() 中判断堆栈状态
 const _judgeInitiativeJump = (
-  to: RouteLocationNormalized, 
-  from: RouteLocationNormalized
+  to: RouteLocationNormalized,
 ) => {
   let { operation, delta = 0 } = routeChangeTmpData
 
   console.log("_judgeInitiativeJump 111:")
   console.log(operation)
   console.log(delta)
-  console.log(" ")
 
   if(operation) {
     if(delta === 1) stack.push(to)
@@ -414,118 +374,101 @@ const _judgeInitiativeJump = (
     else if(delta < 0) {
       _popStacks(-delta)
     }
-
-    // 判断是否有前一页
-    if(to.name && from.name && stack.length > 1) {
-      // 如果有前一页
-      _changeLastHasPrev(true)
-    }
   
     console.warn("see stack after _judgeInitiativeJump: ")
     console.log(valTool.copyObject(stack))
     console.log(" ")
+  }
 
-    _reset()
-  }
-  else {
-    // 保存状态以等待 window.addEventListener("popstate") 触发
-    toAndFrom = { to, from, stamp: time.getLocalTime() }
-    console.log("_judgeInitiativeJump 222: ")
-    console.log(valTool.copyObject(toAndFrom))
-    console.log(" ")
-    _judgeBrowserJump()
-  }
+  _reset()
 }
 
-const _judgeBrowserJump = (): void => {
-  let { to, from, stamp = 0 } = toAndFrom
+function _reset() {
+  routeChangeTmpData = {}
+}
 
-  // console.log("_judgeBrowserJump 111: ")
-  // console.log(valTool.copyObject(to))
-  // console.log(valTool.copyObject(from))
-  // console.log(valTool.copyObject(stateFromPopState))
 
-  if(!to || !from || !stateFromPopState) {
+// 判断浏览器导航栏的操作，并操作堆栈
+const _judgeBrowserJump = (
+  vueRouter: VueRouter,
+  state: any,
+): void => {
+  // 1. get currentRoute
+  const { current, back } = state
+  if(!current) {
+    console.warn("current is undefined!!!")
     return
   }
+  const currentRoute = vueRouter.resolve(current)
 
-
-  const now = time.getLocalTime()
-  const diff = now - stamp
-  const diff2 = now - lastSetPopStateStamp
-
-  // console.log("_judgeBrowserJump 222: ")
-  // console.log(diff)
-  // console.log(diff2)
-
-  if(diff > availableDuration || diff2 > availableDuration) {
-    return
-  }
-  
-  const { current, forward, back } = stateFromPopState
-  console.log("_judgeBrowserJump 看一下 stateFromPopState: ")
-  console.log(current)
-  console.log(forward)
-  console.log(back)
-  console.log(" ")
-
+  // 2. we're on the first page
   if(!back) {
-    // 当前为第一页时
-    stack = [to]
-    _changeLastHasPrev(false)
+    console.warn("only one route!")
+    stack = [currentRoute]
+    return
+  }
+
+  // 3. search forward to see if `current` has been in stack
+  const len3 = stack.length
+  let hasFoundCurrent = false
+  for(let i=len3-1; i>=0; i--) {
+    const v = stack[i]
+    const isSame = isSameRoute(currentRoute, v)
+    if(!isSame) continue
+    hasFoundCurrent = true
+
+    // delete the index after current
+    const nextIdx = i + 1
+    if(len3 > nextIdx) {
+      stack.splice(nextIdx, len3 - nextIdx)
+    }
+    break
+  }
+
+  // 4. if `current` not found, push it into stack
+  if(!hasFoundCurrent) {
+    stack.push(currentRoute)
+  }
+
+  // [start to check stack]
+  // 5. check out `current` with `lastItem` from stack 
+  const len5 = stack.length
+  if(len5 < 1) {
+    console.log("len5 < 1")
+    stack.push(currentRoute)
   }
   else {
-    // 当前为第 2、3.... 页
-    _changeLastHasPrev(true)
+    const lastItem = stack[len5 - 1]
+    const isSame5 = isSameRoute(currentRoute, lastItem)
+    console.log("isSame5: ", isSame5)
+    if(!isSame5) stack.push(currentRoute)
+  }
 
-    // 由后往前查找 current 是否在 stack 里
-    const oldStackLen = stack.length
-    let hasFindCurrent = false
-    for(let i=oldStackLen-1; i>=0; i--) {
-      const v = stack[i]
-      const isSame = isSameRoute(current, v)
-      console.log("isSame: ", isSame)
-      if(!isSame) continue
-      hasFindCurrent = true
+  // 6. check out `back` with previous stack item
+  if(back) {
+    const backRoute = vueRouter.resolve(back)
+    console.log("backRoute: ")
+    console.log(valTool.copyObject(backRoute))
 
-      // 找到 current 时，发现该索引之后还存在数据，就去删掉
-      const nextIdx = i + 1
-      console.log("nextIdx: ", nextIdx)
-      console.log("oldStackLen: ", oldStackLen)
-
-      if(oldStackLen > nextIdx) {
-        stack.splice(nextIdx, oldStackLen - nextIdx)
-      }
-      break
+    const len6 = stack.length
+    if(len6 <= 1) {
+      console.log("len6 <= 1")
+      stack.unshift(backRoute)
     }
-
-    // 如果没有找到 current，那么就在最后插入 to
-    if(!hasFindCurrent) {
-      stack.push(to)
-    }
-
-    // 如果 from 存在
-    // 并且 浏览器没有后一页（代表 from 不可能是浏览器的后一页）
-    // 再并且浏览器的前一页跟 from 不一致
-    //   则在最后的前一个索引插入 from
-    if(from.name && !forward && !isSameRoute(back, from)) {
-      const isSame2 = isSameRoute(back, from)
-      if(!isSame2) stack.splice(stack.length - 1, 0, from)
+    else {
+      const prevIdx = len6 - 2
+      const prevItem = stack[prevIdx]
+      const isSame6 = isSameRoute(backRoute, prevItem)
+      console.log("isSame6: ", isSame6)
+      if(!isSame6) stack[prevIdx] = backRoute
     }
   }
 
   console.warn("see stack after _judgeBrowserJump: ")
   console.log(valTool.copyObject(stack))
   console.log(" ")
-
-  _reset()
 }
 
-function _reset() {
-  stateFromPopState = null
-  routeChangeTmpData = {}
-  toAndFrom = {}
-}
 
 const initLiuRouter = (): RouteAndRouter => {
   const vueRouter = useVueRouter()
@@ -545,17 +488,20 @@ const initLiuRouter = (): RouteAndRouter => {
       return
     }
 
-    _judgeInitiativeJump(to, from)
+    _judgeInitiativeJump(to)
   })
 
   const _listenPopState = (e: PopStateEvent) => {
     // console.log(" ")
     console.log("popstate...........")
     console.log(e.state)
+    const state = e.state
+    if(!state) {
+      console.warn("state is undefined!!!")
+      return
+    }
 
-    stateFromPopState = e.state
-    lastSetPopStateStamp = time.getLocalTime()
-    _judgeBrowserJump()
+    _judgeBrowserJump(vueRouter, state)
   }
 
   // iframe 内的路由历史变化（前进或后退） 不会在这里触发
@@ -567,14 +513,6 @@ const initLiuRouter = (): RouteAndRouter => {
   })
 
   return { route: vueRoute, router: vueRouter }
-}
-
-// 借由 router.afterEach 来判断的
-// 如果 from.name 不存在，就代表没有更多以前的 route
-const hasPreviousRouteInApp = (): Ref<boolean> => {
-  const prev = ref(lastHasPrev.value)
-  hasPrevList.push(prev)
-  return prev
 }
 
 const useRouter = (): LiuRouter => {
@@ -590,7 +528,6 @@ const useRouteAndLiuRouter = (): RouteAndLiuRouter => {
 export {
   LiuRouter,
   initLiuRouter,
-  hasPreviousRouteInApp,
   useRouter,
   useRouteAndLiuRouter,
   useLink,
