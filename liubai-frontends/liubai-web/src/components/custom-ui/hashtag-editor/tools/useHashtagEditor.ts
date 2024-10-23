@@ -17,6 +17,7 @@ import { initRecent, getRecent } from "./tag-recent"
 import type { SimpleFunc } from "~/utils/basic/type-tool"
 import { useKeyboard } from "~/hooks/useKeyboard"
 import time from "~/utils/basic/time"
+import { toFocusInput } from "../../tools/listen-keyboard"
 
 const hteData = reactive<HteData>({
   enable: false,
@@ -154,6 +155,13 @@ function onInput(e: Event) {
   hteData.nativeInputTxt = e.target.value
 
   let val = hteData.inputTxt.trim()
+  if(val === "#") {
+    hteData.inputTxt = ""
+    hteData.nativeInputTxt = ""
+    reset(0)
+    return
+  }
+
   if(!val) {
     reset(0)
     return
@@ -292,13 +300,14 @@ function checkState() {
 
 async function _toOpen() {
   if(hteData.show) return
+
+  toFocusInput(inputEl)
+
   hteData.enable = true
   await liuUtil.waitAFrame()
   hteData.show = true
   toListenKeyboard()
   await valTool.waitMilli(hteData.transDuration)
-  if(!inputEl.value) return
-  inputEl.value.focus()
 }
 
 async function _toClose() {
