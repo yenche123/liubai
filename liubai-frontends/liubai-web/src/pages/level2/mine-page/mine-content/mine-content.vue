@@ -9,6 +9,7 @@ const {
   myProfile,
   isPremium,
   prefix,
+  CONNECTORS,
 } = useMineContent()
 
 const { t } = useI18n()
@@ -113,7 +114,7 @@ const iconColor = `var(--main-normal)`
   <div class="mc-box">
 
     <!-- connections -->
-    <NaviLink :to="prefix + 'connectors'">
+    <NaviLink v-if="CONNECTORS" :to="prefix + 'connectors'">
       <div class="iu-no-user-select liu-hover mc-item">
         <div class="mci-icon-box">
           <SvgIcon :color="iconColor" name="hub" class="mci-icon"></SvgIcon>

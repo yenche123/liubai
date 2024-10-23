@@ -51,6 +51,7 @@ export function useConnectWeChat() {
     // console.log("awakeNum: ", newV)
     // console.log("syncNum: ", syncNum.value)
     if(newV < 1) return
+    if(!hasBE) return
     checkoutData(cwcData, rr)
   }, { immediate: true })
 
