@@ -333,6 +333,15 @@ async function loadList(
     tlData.list.push(...newList)
   }
 
+
+  // test
+  if(vT === "INDEX" && isInit && newLength) {
+    console.warn("check local results: ")
+    console.log(valTool.copyObject(newList))
+    console.log(" ")
+  }
+
+
   // 4. 处理 lastItemStamp
   if(newLength) {
     tlUtil.handleLastItemStamp(vT, tlData)
@@ -460,6 +469,17 @@ async function loadAgain(
   }
   for(let i=startIndex; i<newLength; i++) {
     tlData.list[i] = newList[i - startIndex]
+  }
+
+  // test
+  if(vT === "INDEX" && newLength) {
+    console.warn("check local results again: ")
+    console.log("startIndex: ", startIndex)
+    console.log("deltaLength: ", deltaLength)
+    console.log("newLength: ", newLength)
+    console.log("oldLength: ", oldLength)
+    console.log(valTool.copyObject(newList))
+    console.log(" ")
   }
 
   tlUtil.handleLastItemStamp(vT, tlData)
