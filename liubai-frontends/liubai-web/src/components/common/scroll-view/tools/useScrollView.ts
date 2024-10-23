@@ -236,6 +236,7 @@ function listenToScroll(
   })
   provide(scrollViewKey, proData)
 
+  let lastScrollSize = 0
   let lastScrollPosition = 0
   let lastScrollStamp = 0
   let lastInvokeStamp = 0
@@ -243,6 +244,7 @@ function listenToScroll(
   const _setSvData = (
     svType: SvTriggerType,
     sP: number,
+    sH: number,
     currentStamp: number,
   ) => {
     if(svType === "to_end") {
@@ -254,11 +256,13 @@ function listenToScroll(
     proData.type = svType
     proData.triggerNum++
     lastInvokeStamp = currentStamp
+    lastScrollSize = sH
     lastScrollPosition = sP
   }
 
   const _specialToEnd = async (
     sP: number,
+    sH: number,
   ) => {
     await valTool.waitMilli(MAGIC_NUM_1)
     if(time.isWithinMillis(lastInvokeStamp, MAGIC_NUM_1)) {
@@ -268,6 +272,7 @@ function listenToScroll(
     proData.type = "to_end"
     proData.triggerNum++
     lastInvokeStamp = time.getTime()
+    lastScrollSize = sH
     lastScrollPosition = sP
   }
 
@@ -300,6 +305,7 @@ function listenToScroll(
     const cH = isVertical ? _sv.clientHeight : _sv.clientWidth
     const sH0 = isVertical ? _sv.scrollHeight : _sv.scrollWidth
     const sH = sH0 - cH
+    const lH = lastScrollSize
     const lP = lastScrollPosition
 
     scrollPosition.value = sP
@@ -308,6 +314,7 @@ function listenToScroll(
     // console.log("onScrolling sP: ", sP)
     // console.log("lP: ", lP)
     // console.log("sH: ", sH)
+    // console.log("lH: ", lH)
     // console.log(" ")
   
     const DIRECTION = sP - lP > 0 ? "DOWN" : "UP"
@@ -324,7 +331,7 @@ function listenToScroll(
           const lowerLine = sH - _lowerThreshold
           if(lowerLine <= lP && lowerLine <= sP) {
             // console.warn("to_end 111")
-            _specialToEnd(sP)
+            _specialToEnd(sP, sH)
             return
           }
         }
@@ -336,20 +343,34 @@ function listenToScroll(
       if(lP < middleLine && middleLine <= sP) {
         if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION)) {
           // console.warn("to_end 222")
-          _setSvData("to_end", sP, now)
+          _setSvData("to_end", sP, sH, now)
           return
         }
       }
+
+      // lastScrollSize is much bigger than the latest one,
+      // and lastScrollPosition is bigger than the current middleLine
+      // which means some items may be removed from the scroll-view
+      // so we need to trigger the `to_end` event
+      if(sH < (lH - 100) && lP > middleLine) {
+        if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION)) {
+          console.warn("to_end 333")
+          _setSvData("to_end", sP, sH, now)
+          return
+        }
+      }
+
     }
     else if(DIRECTION === "UP") {
       if(lP > middleLine && middleLine >= sP) {
         if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION)) {
-          _setSvData("to_start", sP, now)
+          _setSvData("to_start", sP, sH, now)
           return
         }
       }
     }
   
+    lastScrollSize = sH
     lastScrollPosition = sP
   }
 
