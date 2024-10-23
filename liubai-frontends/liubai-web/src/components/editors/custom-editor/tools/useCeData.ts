@@ -109,7 +109,8 @@ export function useCeData(
 
   let lastPreFinish = 0
   const _prepareFinish = (focusRequired: boolean) => {
-    lastPreFinish = time.getTime()
+    if(time.isWithinMillis(lastPreFinish, 500, true)) return
+    lastPreFinish = time.getLocalTime()
     if(collectTimeout) clearTimeout(collectTimeout)
     toFinish(focusRequired)
   }
@@ -162,7 +163,7 @@ export function useCeData(
 
   const onTitleEnterUp = () => {
     // 若前一刻准备去执行 “完成” 的流程，就阻断
-    if(time.isWithinMillis(lastPreFinish, 500)) return
+    if(time.isWithinMillis(lastPreFinish, 500, true)) return
     
     const e = editor.value
     if(!e) return
