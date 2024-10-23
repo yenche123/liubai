@@ -3,7 +3,7 @@ import type { DraftLocalTable, ContentLocalTable } from "~/types/types-table"
 import localCache from "~/utils/system/local-cache"
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud"
 import time from "~/utils/basic/time"
-import liuUtil from "~/utils/liu-util"
+import valTool from "~/utils/basic/val-tool"
 
 function _getUserId(): string {
   const { local_id } = localCache.getPreference()
@@ -35,6 +35,12 @@ async function getDraftByThreadId(threadId: string) {
 async function getDraftById(id: string) {
   const res = await db.drafts.get(id)
   return res
+}
+
+async function getDraftByFirstId(first_id: string) {
+  const res = await db.drafts.where({ first_id }).toArray()
+  if(!res || res.length < 1) return
+  return res[0]
 }
 
 // 根据 workspace，来查询有没有 draft 并且 threadEdited / commentEdited 为空的情况
@@ -81,20 +87,22 @@ async function setDraftAsPosted(
 
 async function clearDraftOnCloud(
   id: string,
-  originDraft?: DraftLocalTable,
 ) {
-  if(!originDraft) {
-    const res = await db.drafts.get(id)
-    if(!res) return
-    originDraft = res
-  }
+  // 1. wait for 1 second, to make sure some pending tasks have been uploaded
+  await valTool.waitMilli(1000)
 
-  const synced = liuUtil.check.hasEverSynced(originDraft)
-  if(!synced) {
-    console.warn("没有同步过，还是去远端删除！......")
+  // 2. get the latest id
+  let theDraft = await getDraftById(id)
+  if(!theDraft) {
+    theDraft = await getDraftByFirstId(id)
   }
+  if(!theDraft) return
+  console.log("old draft id: ", id)
+  id = theDraft._id
+  console.log("new draft id: ", id)
 
-  LocalToCloud.addTask({
+  // 3. clear the draft instantly
+  LocalToCloud.clearDraft({
     uploadTask: "draft-clear",
     target_id: id,
     operateStamp: time.getTime(),

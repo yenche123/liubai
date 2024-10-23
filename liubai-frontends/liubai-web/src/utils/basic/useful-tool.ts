@@ -196,6 +196,12 @@ function isSameSimpleObject(
   return true
 }
 
+function isRequestSuccess(code?: string) {
+  if(!code) return false
+  if(code === "0000" || code === "0001" || code === "0002") return true
+  return false
+}
+
 
 export default {
   filterDuplicated,
@@ -203,4 +209,5 @@ export default {
   encodeBraces,
   isSameSimpleList,
   isSameSimpleObject,
+  isRequestSuccess,
 }

@@ -104,7 +104,7 @@ async function releaseAsync(
 
   // 2. delete drafts
   if(draftId) {
-    await localReq.clearDraftOnCloud(draftId)
+    localReq.clearDraftOnCloud(draftId)
     await localReq.setDraftAsPosted(draftId)
     if(!ceData.reject_draft_ids) {
       ceData.reject_draft_ids = []
@@ -265,7 +265,7 @@ async function toUpdate(ctx: CepContext) {
   
   // 3. 删除 drafts
   if(ceData.draftId) {
-    await localReq.clearDraftOnCloud(ceData.draftId)
+    localReq.clearDraftOnCloud(ceData.draftId)
     await localReq.deleteDraftById(ceData.draftId)
     delete ceData.draftId
   }

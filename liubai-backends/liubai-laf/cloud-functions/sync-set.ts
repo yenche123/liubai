@@ -1712,9 +1712,16 @@ async function toDraftClear(
   
   // 1. get the old draft
   const draft_id = draft.id as string
-  const oldDraft = await getData<Table_Draft>(ssCtx, "draft", draft_id)
+  let oldDraft = await getData<Table_Draft>(ssCtx, "draft", draft_id)
   if(!oldDraft) {
-    return { code: "E4004", errMsg: "draft not found", taskId  }
+    const w1: Partial<Table_Draft> = { first_id: draft_id }
+    const res1 = await db.collection("Draft").where(w1).getOne<Table_Draft>()
+    if(res1.data) {
+      oldDraft = res1.data
+    }
+    if(!oldDraft) {
+      return { code: "E4004", errMsg: "draft not found", taskId  }
+    }
   }
 
   // 2. check out permission to edit the draft

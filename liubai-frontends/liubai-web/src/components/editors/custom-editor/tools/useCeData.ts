@@ -478,7 +478,7 @@ function saveDraftToCloud(
   const synced = liuUtil.check.hasEverSynced(d)
   if(!synced) return
   if(oldOState !== "LOCAL" && newOState === "LOCAL") {
-    console.log("clear draft on cloud......")
+    console.log("the draft has turned into local, so clear it on cloud......")
     LocalToCloud.addTask({
       uploadTask: "draft-clear",
       target_id: d._id,

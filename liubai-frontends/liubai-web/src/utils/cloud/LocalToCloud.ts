@@ -14,6 +14,7 @@ import { storeToRefs } from "pinia";
 import { handleUploadTasks } from "./upload-tasks"
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
 import liuEnv from "../liu-env";
+import { clearDraftInstantly } from "./tools/clear-draft-instantly";
 
 const MIN_5 = 5 * time.MINUTE
 
@@ -105,21 +106,29 @@ class LocalToCloud {
 
   }
 
+  private static preCheck() {
+    // 1. check out if I have login
+    const { local_id: userId, token, serial } = localCache.getPreference()
+    if(!userId || !token || !serial) return false
+
+    // 2 check out if I can sync with cloud
+    const canSync = liuEnv.canISync()
+    if(!canSync) return false
+
+    return userId
+  }
+
   /** add a task into local db */
   static async addTask(
     param: UploadTaskParam,
     opt?: AddUploadTaskOpt,
   ) {
-    // 0. check out if I have login
-    const { local_id: user, token, serial } = localCache.getPreference()
-    if(!user || !token || !serial) return false
+    // 0. pre check
+    const userId = this.preCheck()
+    if(!userId) return
 
-    // 0.1 check out if I can sync with cloud
-    const canSync = liuEnv.canISync()
-    if(!canSync) return false
-
-    // 1. add upload task into db
-    const res = await addUploadTask(param, user)
+    // 1. add the upload task into db
+    const res = await addUploadTask(param, userId)
     if(!res) return
 
     // 2. check out if I can trigger immediately
@@ -127,6 +136,22 @@ class LocalToCloud {
 
     // 3. let's go to trigger
     this.preTrigger(opt?.speed)
+  }
+
+  static async clearDraft(
+    param: UploadTaskParam,
+    opt?: AddUploadTaskOpt,
+  ) {
+    // 0. check out if I have login
+    const userId = this.preCheck()
+    if(!userId) return
+
+    // 1. clear the draft instantly
+    const res1 = await clearDraftInstantly(param.target_id, userId)
+    if(res1) return
+
+    // 2. fallback to add a common task
+    this.addTask(param, opt)
   }
 
 

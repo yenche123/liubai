@@ -133,7 +133,7 @@ export async function addUploadTask(
   return true
 }
 
-async function whenDraftClear(
+export async function whenDraftClear(
   draft_id: string,
   user: string,
 ) {
@@ -152,11 +152,6 @@ async function whenDraftClear(
   const task_ids = res.map(v => v._id)
   console.warn('whenDraftClear to delete these tasks: ', task_ids)
   await db.upload_tasks.bulkDelete(task_ids)
-
-  if(draft_id.startsWith("d0")) {
-    return false
-  }
-
   return true
 }
 

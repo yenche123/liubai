@@ -18,6 +18,7 @@ import liuReq from "~/requests/liu-req";
 import { useSyncStore, type SyncStoreAtom } from "~/hooks/stores/useSyncStore"
 import newIds from "./tools/handle-new-ids"
 import { type UploadTaskParam } from "../tools/types";
+import usefulTool from "~/utils/basic/useful-tool";
 
 export async function syncTasks(tasks: UploadTaskLocalTable[]) {
 
@@ -95,7 +96,7 @@ async function afterSyncSet(
       return false
     }
 
-    const completed = code === "0000" || code === "0001" || code === "0002"
+    const completed = usefulTool.isRequestSuccess(code)
     if(!completed) continue
 
     const { taskType } = atom
