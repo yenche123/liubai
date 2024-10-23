@@ -132,14 +132,6 @@ export function useThreadList(
       [oldV1, oldV2, oldV3, oldV4, oldV5]
   ) => {
 
-    // console.log("watch changed.........")
-    // console.log("newV1: ", newV1)
-    // console.log("newV2: ", newV2)
-    // console.log("newV3: ", newV3)
-    // console.log("newV4: ", newV4)
-    // console.log("newV5: ", newV5)
-    // console.log(" ")
-
     if(!newV3) return
     if(!newV5) return
 
@@ -335,11 +327,11 @@ async function loadList(
 
 
   // test
-  if(vT === "INDEX" && isInit && newLength) {
-    console.warn("check local results: ")
-    console.log(valTool.copyObject(newList))
-    console.log(" ")
-  }
+  // if(vT === "INDEX" && isInit && newLength) {
+  //   console.warn("check local results: ")
+  //   console.log(valTool.copyObject(newList))
+  //   console.log(" ")
+  // }
 
 
   // 4. 处理 lastItemStamp
@@ -472,15 +464,15 @@ async function loadAgain(
   }
 
   // test
-  if(vT === "INDEX" && newLength) {
-    console.warn("check local results again: ")
-    console.log("startIndex: ", startIndex)
-    console.log("deltaLength: ", deltaLength)
-    console.log("newLength: ", newLength)
-    console.log("oldLength: ", oldLength)
-    console.log(valTool.copyObject(newList))
-    console.log(" ")
-  }
+  // if(vT === "INDEX" && newLength) {
+  //   console.warn("check local results again: ")
+  //   console.log("startIndex: ", startIndex)
+  //   console.log("deltaLength: ", deltaLength)
+  //   console.log("newLength: ", newLength)
+  //   console.log("oldLength: ", oldLength)
+  //   console.log(valTool.copyObject(newList))
+  //   console.log(" ")
+  // }
 
   tlUtil.handleLastItemStamp(vT, tlData)
 

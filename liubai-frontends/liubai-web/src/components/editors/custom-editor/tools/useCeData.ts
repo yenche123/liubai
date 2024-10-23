@@ -180,7 +180,7 @@ export function useCeData(
     
     if(res) {
       checkCanSubmit(ceData)
-      _prepareFinish(true)
+      _prepareFinish(false)
     }
   }
 

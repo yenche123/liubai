@@ -78,7 +78,7 @@ export function initExtensions(
           }
 
           onModEnter(editor, emits)
-          return editor.commands.focus()
+          return false
         },
         'Escape': ({ editor }) => {
           const isCodeBlock = editor.isActive("codeBlock")
