@@ -338,6 +338,9 @@ class LiuRouter {
     const toRoute = this.resolve(to)
     const list = this.getStack()
     const num = this._getNaviBackStackNum(toRoute, currentRoute, list)
+
+    console.log("switchTab num: ", num)
+
     if(num > 0) {
       this.go(-num)
       return
@@ -379,7 +382,7 @@ const _popStacks = (num: number) => {
     stack.pop()
   }
   console.log("stack after _popStacks: ")
-  console.log([...stack])
+  console.log(valTool.copyObject(stack))
   console.log(" ")
 }
 
@@ -439,7 +442,7 @@ const _judgeBrowserJump = (): void => {
   console.log(valTool.copyObject(from))
 
   if(!to || !from || !stateFromPopState) {
-    console.log("看一下 stack: ")
+    console.log("看一下 stack 111: ")
     console.log([...stack])
     return
   }
@@ -452,14 +455,11 @@ const _judgeBrowserJump = (): void => {
   console.log("_judgeBrowserJump 222: ")
   console.log(diff)
   console.log(diff2)
-  console.log(" ")
 
 
   if(diff > availableDuration || diff2 > availableDuration) {
     console.warn("被阻断了......")
-    console.log(diff)
-    console.log(diff2)
-    console.log([...stack])
+    console.log(valTool.copyObject(stack))
     console.log(" ")
     return
   }
