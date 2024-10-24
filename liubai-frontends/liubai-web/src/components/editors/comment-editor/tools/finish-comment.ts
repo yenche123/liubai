@@ -20,6 +20,7 @@ import { getStorageAtom } from "./useCommentEditor"
 import { equipComments } from "~/utils/controllers/equip/comments"
 import commentController from "~/utils/controllers/comment-controller/comment-controller";
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
+import liuApi from "~/utils/liu-api";
 
 export function finishComment(
   props: CeProps,
@@ -238,6 +239,8 @@ function _reset(ctx: HcCtx) {
   editor.chain().setContent('<p></p>').run()
 
   const { located } = props
+  const cha = liuApi.getCharacteristic()
+  if(cha.isPC) return
   if(located === "main-view" || located === "vice-view") {
     ctx.ceCtx.isToolbarTranslateY = true
   }
