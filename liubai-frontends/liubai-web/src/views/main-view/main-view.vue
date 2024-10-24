@@ -40,8 +40,6 @@ const onTapCenter = (e: MouseEvent) => {
       <center-drop-zone 
         v-if="enableDropFiles"
         :is-over-drop-zone="isOverDropZone"
-        :left-px="leftPx"
-        :right-px="rightPx"
         @tap="onTapCenterDropZone"
       ></center-drop-zone>
 
@@ -84,6 +82,7 @@ const onTapCenter = (e: MouseEvent) => {
   height: 100dvh;
   position: relative;
   overflow-x: hidden;
+  transform: translateX(0);
   content-visibility: auto;
 }
 

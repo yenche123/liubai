@@ -8,14 +8,6 @@ defineProps({
     type: Boolean,
     default: false
   },
-  leftPx: {
-    type: Number,
-    default: 0
-  },
-  rightPx: {
-    type: Number,
-    default: 0
-  }
 })
 
 defineEmits<{
@@ -55,11 +47,15 @@ onMounted(async () => {
 </template>
 <style scoped lang="scss">
 
+
+/** cdz-container is relative to mv-center due to 
+* the transform / content-visibility  properties 
+*/
 .cdz-container {
   top: 0;
   bottom: 0;
-  left: v-bind("leftPx + 'px'");
-  right: v-bind("rightPx + 'px'");
+  left: 0;
+  right: 0;
   position: fixed;
   display: none;
   flex-direction: column;

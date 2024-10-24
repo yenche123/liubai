@@ -1,11 +1,10 @@
 import { ref, computed, provide, useTemplateRef } from "vue";
 import type { PageState } from "~/types/types-atom";
 import type { VcProps, VcData } from "./types"
-import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
-import { useDropZone } from "~/hooks/useVueUse"
 import { vcFileKey } from "~/utils/provide-keys"
 import { pageStates } from "~/utils/atom";
+import { useLiuDropZone } from "~/hooks/elements/useLiuDropZone";
 
 export function useVcDropZone(
   vcData: VcData,
@@ -17,23 +16,13 @@ export function useVcDropZone(
     viewState.value = newV
   }
 
-  const gStore = useGlobalStateStore()
+  const {
+    gStore,
+    isOverDropZone,
+    dropFiles,
+  } = useLiuDropZone(containerRef)
   const { isDragToSort } = storeToRefs(gStore)
-  const dropFiles = ref<File[]>([])
   provide(vcFileKey, dropFiles)
-
-  const onDrop = (files: File[] | null) => {
-    if(gStore.isDragToSort) return
-    if(files?.length) dropFiles.value = files 
-  }
-
-  const { isOverDropZone } = useDropZone(containerRef, {
-    dataTypes: (types) => {
-      const len = types.length ?? 0
-      return len > 0
-    },
-    onDrop
-  })
 
   const showDropZone = computed(() => {
     // 当前 vice-content 不是承载 thread 时，返回 false

@@ -1,32 +1,20 @@
-import { ref, computed, provide, useTemplateRef } from "vue";
-import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
+import { computed, provide, useTemplateRef } from "vue";
 import { storeToRefs } from "pinia";
-import { useDropZone } from "~/hooks/useVueUse"
 import { popupFileKey } from "~/utils/provide-keys"
 import type { CommentPopupData } from "./types"
+import { useLiuDropZone } from "~/hooks/elements/useLiuDropZone";
 
 export function useCpDropZone(
   cpData: CommentPopupData
 ) {
   const containerRef = useTemplateRef<HTMLDivElement>("containerRef")
-  const gStore = useGlobalStateStore()
+  const {
+    gStore,
+    isOverDropZone,
+    dropFiles,
+  } = useLiuDropZone(containerRef)
   const { isDragToSort } = storeToRefs(gStore)
-
-  const dropFiles = ref<File[]>([])
   provide(popupFileKey, dropFiles)
-
-  const onDrop = (files: File[] | null) => {
-    if(gStore.isDragToSort) return
-    if(files?.length) dropFiles.value = files 
-  }
-
-  const { isOverDropZone } = useDropZone(containerRef, {
-    dataTypes: (types) => {
-      const len = types.length ?? 0
-      return len > 0
-    },
-    onDrop
-  })
 
   const showDropZone = computed(() => {
     // 当前全局状态是否存在 
@@ -39,5 +27,4 @@ export function useCpDropZone(
     containerRef,
     showDropZone,
   }
-
 }

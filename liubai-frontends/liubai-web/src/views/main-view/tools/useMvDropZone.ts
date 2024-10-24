@@ -5,10 +5,9 @@ import {
   type ShallowRef, 
   type Ref,
 } from "vue";
-import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
-import { useDropZone } from "~/hooks/useVueUse"
 import { mvFileKey } from "~/utils/provide-keys"
 import type { MainViewProps } from "./types"
+import { useLiuDropZone } from "~/hooks/elements/useLiuDropZone";
 
 export function useMvDropZone(
   props: MainViewProps
@@ -35,32 +34,17 @@ function initMvDropZone(
   centerRef: ShallowRef<HTMLDivElement | null>,
   _isOverDropZone: Ref<boolean>
 ) {
-
-  const dropFiles = ref<File[]>([])
+  const {
+    isOverDropZone,
+    gStore,
+    dropFiles,
+  } = useLiuDropZone(centerRef)
   provide(mvFileKey, dropFiles)
-
-  const globalState = useGlobalStateStore()
-
-  const onDrop = (files: File[] | null) => {
-    if(globalState.isDragToSort) {
-      return
-    }
-    if(files?.length) dropFiles.value = files 
-  }
-
-  const { isOverDropZone } = useDropZone(centerRef, {
-    dataTypes: (types) => {
-      const len = types.length ?? 0
-      return len > 0
-    },
-    onDrop,
-  })
 
   // 不直接回传 isOverDropZone，而是套一层 _isOverDropZone
   // 为了考量 全局状态 isDragToSort (内部是否正在拖动以排序图片)
-  
   watch(isOverDropZone, (newV) => {
-    if(globalState.isDragToSort) return
+    if(gStore.isDragToSort) return
     _isOverDropZone.value = newV
   })
 }
