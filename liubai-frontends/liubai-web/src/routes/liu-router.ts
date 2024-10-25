@@ -312,7 +312,7 @@ class LiuRouter {
     const list = this.getStack()
     const num = this._getNaviBackStackNum(toRoute, currentRoute, list)
 
-    console.log("switchTab num: ", num)
+    // console.log("switchTab num: ", num)
 
     if(num > 0) {
       this.go(-num)
@@ -335,8 +335,6 @@ class LiuRouter {
       return 0
     }
     const stackLength = list.length
-    // console.log(valTool.copyObject(stacks))
-    // console.log("stackLength: ", stackLength)
   
     for(let i = stackLength-1; i >= 0; i--) {
       const curStack = list[i]
@@ -362,9 +360,9 @@ const _judgeInitiativeJump = (
 ) => {
   let { operation, delta = 0 } = routeChangeTmpData
 
-  console.log("_judgeInitiativeJump 111:")
-  console.log(operation)
-  console.log(delta)
+  // console.log("_judgeInitiativeJump 111:")
+  // console.log(operation)
+  // console.log(delta)
 
   if(operation) {
     if(delta === 1) stack.push(to)
@@ -375,9 +373,9 @@ const _judgeInitiativeJump = (
       _popStacks(-delta)
     }
   
-    console.warn("see stack after _judgeInitiativeJump: ")
-    console.log(valTool.copyObject(stack))
-    console.log(" ")
+    // console.warn("see stack after _judgeInitiativeJump: ")
+    // console.log(valTool.copyObject(stack))
+    // console.log(" ")
   }
 
   _reset()
@@ -403,7 +401,7 @@ const _judgeBrowserJump = (
 
   // 2. we're on the first page
   if(!back) {
-    console.warn("only one route!")
+    // console.warn("only one route!")
     stack = [currentRoute]
     return
   }
@@ -434,39 +432,39 @@ const _judgeBrowserJump = (
   // 5. check out `current` with `lastItem` from stack 
   const len5 = stack.length
   if(len5 < 1) {
-    console.log("len5 < 1")
+    // console.log("len5 < 1")
     stack.push(currentRoute)
   }
   else {
     const lastItem = stack[len5 - 1]
     const isSame5 = isSameRoute(currentRoute, lastItem)
-    console.log("isSame5: ", isSame5)
+    // console.log("isSame5: ", isSame5)
     if(!isSame5) stack.push(currentRoute)
   }
 
   // 6. check out `back` with previous stack item
   if(back) {
     const backRoute = vueRouter.resolve(back)
-    console.log("backRoute: ")
-    console.log(valTool.copyObject(backRoute))
+    // console.log("backRoute: ")
+    // console.log(valTool.copyObject(backRoute))
 
     const len6 = stack.length
     if(len6 <= 1) {
-      console.log("len6 <= 1")
+      // console.log("len6 <= 1")
       stack.unshift(backRoute)
     }
     else {
       const prevIdx = len6 - 2
       const prevItem = stack[prevIdx]
       const isSame6 = isSameRoute(backRoute, prevItem)
-      console.log("isSame6: ", isSame6)
+      // console.log("isSame6: ", isSame6)
       if(!isSame6) stack[prevIdx] = backRoute
     }
   }
 
-  console.warn("see stack after _judgeBrowserJump: ")
-  console.log(valTool.copyObject(stack))
-  console.log(" ")
+  // console.warn("see stack after _judgeBrowserJump: ")
+  // console.log(valTool.copyObject(stack))
+  // console.log(" ")
 }
 
 
@@ -475,12 +473,12 @@ const initLiuRouter = (): RouteAndRouter => {
   const vueRoute = useVueRoute()
 
   let cancelAfterEach = vueRouter.afterEach((to, from, failure) => {
-    console.log("########  监听到路由已发生变化  ########")
+    // console.log("########  监听到路由已发生变化  ########")
     if(isNavigationFailure(failure)) return
 
-    console.log("to: ", to)
-    console.log("from: ", from)
-    console.log(" ")
+    // console.log("to: ", to)
+    // console.log("from: ", from)
+    // console.log(" ")
     
     // 判断是不是第一个路由
     if(stack.length === 0 && !from.name) {
@@ -493,8 +491,8 @@ const initLiuRouter = (): RouteAndRouter => {
 
   const _listenPopState = (e: PopStateEvent) => {
     // console.log(" ")
-    console.log("popstate...........")
-    console.log(e.state)
+    // console.log("popstate...........")
+    // console.log(e.state)
     const state = e.state
     if(!state) {
       console.warn("state is undefined!!!")
