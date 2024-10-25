@@ -22,6 +22,7 @@ export function useSbTags(emits: SbtEmits) {
     everMoved: false,
     currentTagId: "",
     toPath: "/tag/",
+    lastTagChangeStamp: time.getTime(),
   })
 
   watch(spaceType, (newV) => {
@@ -38,14 +39,13 @@ export function useSbTags(emits: SbtEmits) {
   const tagNodes = ref<TagView[]>([])
   const oldTagNodes = ref<TagView[]>([])
   const gStore = useGlobalStateStore()
-  const lastTagChangeStamp = ref(time.getTime())
   const { tagChangedNum } = storeToRefs(gStore)
 
   initTagNodes(sbtData, tagNodes, oldTagNodes, spaceId)
 
   // 监听 tag 从外部发生变化
   watch(tagChangedNum, (newV) => {
-    if(time.isWithinMillis(lastTagChangeStamp.value, 500)) {
+    if(time.isWithinMillis(sbtData.lastTagChangeStamp, 500)) {
       console.log("tagChangedNum 才刚内部发生变化 忽略")
       return
     }
@@ -76,7 +76,7 @@ export function useSbTags(emits: SbtEmits) {
       tagNodes.value = res0.tree
     }
 
-    lastTagChangeStamp.value = time.getTime()
+    sbtData.lastTagChangeStamp = time.getTime()
     const res = await tagMovedInTree(tagNodes.value, oldTagNodes.value)
     if(!res.moved) {
       tagNodes.value = oldTagNodes.value
@@ -123,7 +123,6 @@ export function useSbTags(emits: SbtEmits) {
     sbtData,
     tagNodes, 
     oldTagNodes,
-    lastTagChangeStamp,
     treeEl, 
     onTreeChange, 
     onTapTagItem, 

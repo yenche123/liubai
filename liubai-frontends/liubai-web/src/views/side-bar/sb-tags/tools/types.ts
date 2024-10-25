@@ -4,6 +4,7 @@ export interface SbTagsData {
   everMoved: boolean
   currentTagId: string
   toPath: string
+  lastTagChangeStamp: number
 }
 
 export interface SbtEmits {

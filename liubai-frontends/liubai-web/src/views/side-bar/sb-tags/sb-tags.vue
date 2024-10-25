@@ -5,7 +5,8 @@ import { Draggable } from "@he-tree/vue";
 import { useSbTags } from "./tools/useSbTags";
 import { RouterLink } from 'vue-router'
 import SbtItem from './sbt-item/sbt-item.vue';
-import { useStMenu } from "./tools/useStMenu";
+import { useTagMenu } from '~/hooks/shared/useTagMenu';
+import liuApi from '~/utils/liu-api';
 
 defineProps({
   show: {
@@ -24,8 +25,6 @@ const naviHeightPx = `${cfg.navi_height}px`
 const {
   sbtData,
   tagNodes,
-  oldTagNodes,
-  lastTagChangeStamp,
   treeEl,
   onTreeChange,
   onTapTagItem,
@@ -38,19 +37,13 @@ const {
   onLeave,
 } = useSbTags(emits)
 
-const ctx = {
-  tagNodes,
-  oldTagNodes,
-  lastTagChangeStamp
-}
-
+const { isPC } = liuApi.getCharacteristic()
 const {
-  isPC,
   menuList,
   menuList2,
   onTapMenuItem,
   onTapAdd,
-} = useStMenu(ctx)
+} = useTagMenu(sbtData)
 
 
 </script>

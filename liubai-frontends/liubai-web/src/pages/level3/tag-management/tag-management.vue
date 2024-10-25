@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PageDefault from "~/pages/shared/page-default/page-default.vue";
 import { useTagManagement } from "./tools/useTagManagement";
-import { useTagMenu } from "~/pages/shared/foos/useTagMenu"
+import { useTagMenu } from "~/hooks/shared/useTagMenu"
 import { Draggable } from "@he-tree/vue";
 import TmItem from "./tm-item/tm-item.vue";
 
