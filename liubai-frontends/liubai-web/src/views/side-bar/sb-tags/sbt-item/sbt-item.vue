@@ -202,8 +202,8 @@ defineEmits<{
       }
 
       .tag-icon {
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
       }
 
       .tag-bg {
@@ -216,7 +216,6 @@ defineEmits<{
   }
 
   .tag-more {
-    top: 7px;
     right: 2px;
     width: 28px;
     height: 28px;
