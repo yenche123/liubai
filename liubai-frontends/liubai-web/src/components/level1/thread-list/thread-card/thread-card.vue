@@ -87,7 +87,10 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
 >
 
   <div class="tc-container"
-    :class="{ 'tc-container_hiding': showType === 'hiding' }"
+    :class="{ 
+      'tc-container_hiding': showType === 'hiding',
+      'tc-container_normal': threadData.oState === 'OK',
+    }"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
@@ -225,117 +228,116 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
     opacity: 0;
     margin-block-start: v-bind("(-cardHeightPx) + 'px'");
   }
+}
 
-  @media(hover: hover) {
-    &:hover {
-      border-radius: v-bind("hoverRadius");
-      box-shadow: var(--card-shadow2-hover);
+
+.tc-box {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px;
+  position: relative;
+
+  .tc-briefing {
+    position: relative;
+    cursor: pointer;
+    position: relative;
+
+    .tcb-mask {
+      width: 100%;
+      height: 50px;
+      background: var(--gradient-two);
+      margin-block-start: -52px;
+      position: relative;
+    }
+
+    .tcb-more {
+      font-size: var(--mini-font);
+      line-height: 1.5;
+      color: var(--main-note);
+      text-align: right;
     }
   }
 
-  &:active {
+  .tc-content {
+    position: relative;
+    cursor: auto;
+  }
+
+  .tc-content_briefing {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    --trunc: false;
+    animation: check 1s;
+    animation-timeline: scroll(self);
+    padding-block-end: 20px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .tc-content_all {
+    line-clamp: 999;
+    -webkit-line-clamp: 999;
+    padding-block-end: 0;
+    cursor: auto;
+    user-select: auto;
+    overflow: visible;
+  }
+
+  @keyframes check {
+    from, to {
+      --trunc: true;
+    }
+  }
+
+  .tcc-expand {
+    display: none;
+    width: 100%;
+    height: 70px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    .tcc-mask {
+      width: 100%;
+      height: 70px;
+      position: relative;
+      background: var(--gradient-two);
+    }
+
+    .tcc-more {
+      font-size: var(--mini-font);
+      line-height: 1.5;
+      color: var(--main-note);
+      text-align: right;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
+  }
+
+  @container style(--trunc: true) {
+    .tcc-expand {
+      display: initial;
+    }
+  }
+
+}
+
+@media(hover: hover) {
+  .tc-container_normal:hover {
     border-radius: v-bind("hoverRadius");
     box-shadow: var(--card-shadow2-hover);
   }
+}
 
-  .tc-box {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 24px;
-    position: relative;
-
-    .tc-briefing {
-      position: relative;
-      cursor: pointer;
-      position: relative;
-
-      .tcb-mask {
-        width: 100%;
-        height: 50px;
-        background: var(--gradient-two);
-        margin-block-start: -52px;
-        position: relative;
-      }
-
-      .tcb-more {
-        font-size: var(--mini-font);
-        line-height: 1.5;
-        color: var(--main-note);
-        text-align: right;
-      }
-    }
-
-    .tc-content {
-      position: relative;
-      cursor: auto;
-    }
-
-    .tc-content_briefing {
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      line-clamp: 3;
-      -webkit-line-clamp: 3;
-      overflow: hidden;
-      --trunc: false;
-      animation: check 1s;
-      animation-timeline: scroll(self);
-      padding-block-end: 20px;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    .tc-content_all {
-      line-clamp: 999;
-      -webkit-line-clamp: 999;
-      padding-block-end: 0;
-      cursor: auto;
-      user-select: auto;
-      overflow: visible;
-    }
-
-    @keyframes check {
-      from, to {
-        --trunc: true;
-      }
-    }
-
-    .tcc-expand {
-      display: none;
-      width: 100%;
-      height: 70px;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-
-      .tcc-mask {
-        width: 100%;
-        height: 70px;
-        position: relative;
-        background: var(--gradient-two);
-      }
-
-      .tcc-more {
-        font-size: var(--mini-font);
-        line-height: 1.5;
-        color: var(--main-note);
-        text-align: right;
-        position: absolute;
-        right: 0;
-        bottom: 0;
-      }
-    }
-
-    @container style(--trunc: true) {
-      .tcc-expand {
-        display: initial;
-      }
-    }
-
-  }
-
-
+.tc-container_normal:active {
+  border-radius: v-bind("hoverRadius");
+  box-shadow: var(--card-shadow2-hover);
 }
 
 
