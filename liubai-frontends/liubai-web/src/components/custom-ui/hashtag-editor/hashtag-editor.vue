@@ -168,12 +168,12 @@ const onMouseEnterItem = (index: number) => {
 .hte-create {
   border-radius: 10px;
   overflow: hidden;
-  height: 60px;
+  min-height: 56px;
   display: flex;
   align-items: center;
   width: 100%;
   box-sizing: border-box;
-  padding: 10px 10px;
+  padding: 8px;
   transition: .02s;
   cursor: pointer;
 }
@@ -198,7 +198,7 @@ const onMouseEnterItem = (index: number) => {
 .htec-icon {
   width: 38px;
   height: 38px;
-  margin-inline-end: 6px;
+  margin-inline-end: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -218,7 +218,7 @@ const onMouseEnterItem = (index: number) => {
 
 
 .hte-bar {
-  height: 90px;
+  height: 72px;
   display: flex;
   align-items: center;
   flex: 1;
@@ -226,18 +226,17 @@ const onMouseEnterItem = (index: number) => {
 }
 
 .hteb-box {
-  width: 90px;
-  height: 90px;
+  width: 66px;
+  height: 66px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--main-normal);
-  font-weight: 700;
   font-size: var(--head-font);
 
   .hteb-icon {
-    width: 40px;
-    height: 40px;
+    width: 33px;
+    height: 33px;
   }
 
 }
@@ -262,9 +261,9 @@ const onMouseEnterItem = (index: number) => {
 .hte-err {
   position: relative;
   min-height: 30px;
-  margin-inline-start: 90px;
-  width: calc(100% - 96px);
-  padding-bottom: 20px;
+  margin-inline-start: 66px;
+  width: calc(100% - 86px);
+  padding-block-end: 20px;
   font-size: var(--btn-font);
   color: var(--liu-quote);
 }
@@ -281,7 +280,7 @@ const onMouseEnterItem = (index: number) => {
 }
 
 
-@media screen and (max-width: 420px) {
+@media screen and (max-width: 480px) {
 
   .hte-box {
     margin-top: 8vh;
@@ -289,9 +288,8 @@ const onMouseEnterItem = (index: number) => {
     border-radius: 10px;
   }
 
-
   .hte-bar {
-    height: 72px;
+    height: 66px;
   }
 
   .hteb-input {
@@ -300,8 +298,8 @@ const onMouseEnterItem = (index: number) => {
   }
 
   .hteb-box {
-    height: 72px;
-    width: 72px;
+    height: 60px;
+    width: 60px;
 
     .hteb-icon {
       width: 30px;
@@ -309,9 +307,33 @@ const onMouseEnterItem = (index: number) => {
     }
   }
 
+  .hteb-input {
+    font-size: var(--desc-font);
+  }
+
+  .hte-create {
+    min-height: 50px;
+  }
+
+  .htec-icon {
+    width: 32px;
+    height: 32px;
+
+    .htec-svgicon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .hte-create-title {
+    font-size: var(--btn-font);
+  }
+
   .hte-err {
-    margin-inline-start: 72px;
+    margin-inline-start: 60px;
     width: calc(100% - 80px);
+    font-size: var(--mini-font);
+    padding-block-end: 10px;
   }
 
 }
