@@ -196,6 +196,12 @@ function onTapMask() {
   if(time.isWithinMillis(hteData.lastFocusOrBlurStamp, 300)) {
     return
   }
+
+  // 如果当前是编辑模式，考虑到 emoji 改版的情况
+  if(hteData.mode === "edit" && firstEmoji !== hteData.emoji) {
+    onTapConfirm()
+    return
+  }
   
   toCancel()
 }
