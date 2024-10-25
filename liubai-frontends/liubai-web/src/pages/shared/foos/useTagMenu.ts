@@ -85,7 +85,7 @@ function initMenu() {
 
 
 async function handle_add() {
-  const res = await cui.showHashtagEditor({ mode: "edit" })
+  const res = await cui.showHashtagEditor({ mode: "add" })
   if(!res.confirm || res.tagId || !res.text) return
 
   const param = {

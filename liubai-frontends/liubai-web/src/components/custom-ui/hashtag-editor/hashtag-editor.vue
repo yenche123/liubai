@@ -7,6 +7,7 @@ import HashtagEmoji from "./hashtag-emoji/hashtag-emoji.vue";
 const {
   inputEl,
   hteData,
+  isMobile,
   onTapMask,
   onTapItem,
   onInput,
@@ -39,7 +40,7 @@ const onMouseEnterItem = (index: number) => {
         <div class="hteb-box" v-if="hteData.mode === 'search'">
           <svg-icon name="tag" class="hteb-icon" color="var(--main-normal)"></svg-icon>
         </div>
-        <!-- edit 模式，允许被点击-->
+        <!-- edit / add 模式，允许被点击-->
         <HashtagEmoji v-else @emojichange="onEmojiChange" 
           :has-emoji="Boolean(hteData.emoji)"
         >
@@ -81,7 +82,8 @@ const onMouseEnterItem = (index: number) => {
             <svg-icon name="add" color="var(--main-normal)" class="htec-svgicon"></svg-icon>
           </div>
           <div class="hte-create-title">
-            <span>{{ t('tip.add_tag', { tag: hteData.newTag }) }}</span>
+            <span v-if="isMobile">{{ hteData.newTag }}</span>
+            <span v-else>{{ t('tip.add_tag', { tag: hteData.newTag }) }}</span>
           </div>
         </div>
       </div>

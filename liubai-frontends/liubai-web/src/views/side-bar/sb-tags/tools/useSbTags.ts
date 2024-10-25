@@ -49,7 +49,6 @@ export function useSbTags(emits: SbtEmits) {
       console.log("tagChangedNum 才刚内部发生变化 忽略")
       return
     }
-    console.log("11111111111")
     getLatestSpaceTag(sbtData, tagNodes, oldTagNodes)
   })
 

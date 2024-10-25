@@ -47,9 +47,12 @@ let _resolve: HteResolver | undefined
 export function initHashtagEditor() {
   rr = useRouteAndLiuRouter()
   listenRouteChange()
+  const { isMobile } = liuApi.getCharacteristic()
+
   return { 
     inputEl,
     hteData,
+    isMobile,
     onTapMask,
     onTapItem,
     onInput,
@@ -125,8 +128,8 @@ function onBlur() {
 
 function onFocus() {
   onFocusOrNot()
-  if(hteData.mode !== "search") return
-  if(!hteData.inputTxt && hteData.list.length < 1) {
+  const { mode, inputTxt, list } = hteData
+  if(mode === "search" && !inputTxt && list.length < 1) {
     getRecent(hteData)
   }
 }
@@ -155,6 +158,8 @@ function onInput(e: Event) {
   hteData.nativeInputTxt = e.target.value
 
   let val = hteData.inputTxt.trim()
+
+  // 1. the input is "#"
   if(val === "#") {
     hteData.inputTxt = ""
     hteData.nativeInputTxt = ""
@@ -162,10 +167,13 @@ function onInput(e: Event) {
     return
   }
 
+  // 2. the input is empty
   if(!val) {
     reset(0)
     return
   }
+
+  // 3. the input contains strange char
   const res1 = hasStrangeChar(val)
   if(res1) {
     reset(1)
@@ -173,13 +181,23 @@ function onInput(e: Event) {
   }
   hteData.errCode = 0
 
-  if(hteData.mode === "edit") return
+  // 4. return if the mode is `edit` mode
+  const { mode } = hteData
+  if(mode === "edit") return
 
+  // 5. format the input
   val = formatTagText(val)
-  const res2 = searchLocal(val)
+  const newTag = val.split("/").join(" / ")
 
+  // 6. set newTag if the mode is `add`
+  if(mode === "add") {
+    hteData.newTag = newTag
+    return
+  }
+
+  // 7. search local
+  const res2 = searchLocal(val)
   let tagExisted = false
-  let newTag = val.split("/").join(" / ")
   res2.forEach(v => {
     if(v.text === newTag) tagExisted = true
   })
@@ -230,15 +248,15 @@ function toEnter() {
   if(inputEl.value) inputEl.value.blur()
 
   const m = hteData.mode
-  if(m === "edit") {
-    toRename()
+  if(m === "edit" || m === "add") {
+    toRenameOrAdd()
   }
   else if(m === "search") {
     toSelect()
   }
 }
 
-function toRename() {
+function toRenameOrAdd() {
   const text = formatTagText(hteData.inputTxt)
   const tagId = findTagId(text)
   const icon = hteData.emoji ? liuApi.encode_URI_component(hteData.emoji) : undefined
@@ -286,8 +304,7 @@ function checkState() {
     return false
   }
   
-  if(m === "edit") {
-
+  if(m === "edit" || m === "add") {
     if(firstInputVal === hteData.inputTxt && firstEmoji === hteData.emoji) {
       return false
     }

@@ -1,6 +1,6 @@
 
 
-export type HteMode = "search" | "edit"
+export type HteMode = "search" | "edit" | "add"
 
 export interface HashTagEditorParam {
   text?: string
