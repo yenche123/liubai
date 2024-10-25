@@ -110,7 +110,7 @@ const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
   position: relative;
   width: 38px;
   height: 38px;
-  margin-inline-end: 8px;
+  margin-inline-end: 10px;
   display: flex;
   align-items: center;
   justify-content: center;

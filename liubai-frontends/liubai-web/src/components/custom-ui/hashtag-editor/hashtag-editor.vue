@@ -200,7 +200,7 @@ const onMouseEnterItem = (index: number) => {
 .htec-icon {
   width: 38px;
   height: 38px;
-  margin-inline-end: 8px;
+  margin-inline-end: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
