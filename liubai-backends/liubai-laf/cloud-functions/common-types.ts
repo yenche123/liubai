@@ -2280,6 +2280,13 @@ export type Wx_Gzh_Msg_Event = Wx_Gzh_Auth_Change |
   Wx_Gzh_Tmpl_Send
 
 /******************* Send msg to user on WeChat using gzh  ****************/
+
+export interface Wx_Gzh_Send_Base {
+  customservice?: {
+    kf_account: string
+  }
+}
+
 export interface Wx_Gzh_Send_Text {
   msgtype: "text"
   text: {
@@ -2352,9 +2359,9 @@ export interface Wx_Gzh_Send_Msgmenu {
   }
 }
 
-export type Wx_Gzh_Send_Msg = Wx_Gzh_Send_Text | Wx_Gzh_Send_Image | Wx_Gzh_Send_Voice
+export type Wx_Gzh_Send_Msg = (Wx_Gzh_Send_Text | Wx_Gzh_Send_Image | Wx_Gzh_Send_Voice
   | Wx_Gzh_Send_Video | Wx_Gzh_Send_Music | Wx_Gzh_Send_News | Wx_Gzh_Send_Article
-  | Wx_Gzh_Send_Msgmenu
+  | Wx_Gzh_Send_Msgmenu) & Wx_Gzh_Send_Base
 
 
 /******************* Some Types from WeCom  ****************/

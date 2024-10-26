@@ -14,6 +14,7 @@ import type {
   Wx_Gzh_Click,
   Wx_Gzh_Msg_Event, 
   Wx_Gzh_Scan, 
+  Wx_Gzh_Send_Msg, 
   Wx_Gzh_Subscribe, 
   Wx_Gzh_Text, 
   Wx_Gzh_Unsubscribe,
@@ -96,7 +97,7 @@ async function handle_click(
 
   // 1. get params
   const { EventKey } = msgObj
-  if(!EventKey) return
+  if(!EventKey) return false
 
   const wx_gzh_openid = msgObj.FromUserName
   if(!wx_gzh_openid) return false
@@ -120,8 +121,27 @@ async function handle_click(
 async function handle_text(
   msgObj: Wx_Gzh_Text,
 ) {
-  // TODO
-  
+  // TEST
+  // 1. get openid
+  const wx_gzh_openid = msgObj.FromUserName
+  if(!wx_gzh_openid) return
+
+  // 2. check access_token
+  const res2 = await checkAccessToken()
+  if(!res2) return
+
+  // 3. construct reply
+  const msg: Wx_Gzh_Send_Msg = {
+    msgtype: "text",
+    text: {
+      content: "test message from a custom customer service"
+    },
+    customservice: {
+      kf_account: "test@test",
+    }
+  }
+  await sendWxMessage(wx_gzh_openid, wechat_access_token, msg)
+  return true
 }
 
 
