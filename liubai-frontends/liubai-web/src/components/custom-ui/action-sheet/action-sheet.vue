@@ -107,7 +107,7 @@ const iconColor = "var(--main-normal)"
 }
 
 .as-box {
-  width: 96%;
+  width: 95%;
   max-width: 480px;
   position: relative;
   z-index: 5055;
@@ -208,7 +208,7 @@ const iconColor = "var(--main-normal)"
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: var(--desc-font);
+  font-size: var(--inline-code-font);
   color: var(--primary-color);
   font-weight: 700;
   background-color: var(--card-bg);

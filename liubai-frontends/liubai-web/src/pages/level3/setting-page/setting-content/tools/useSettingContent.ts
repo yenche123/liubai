@@ -27,6 +27,7 @@ import { useShowAddToHomeScreen } from "~/hooks/pwa/useA2HS"
 import liuReq from "~/requests/liu-req"
 import APIs from "~/requests/APIs"
 import liuUtil from "~/utils/liu-util"
+import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
 
 export function useSettingContent() {
 
@@ -105,6 +106,20 @@ async function whenTapVersionUpdate(
   hasNewVersion: Ref<boolean>
 ) {
 
+  // 1. check network
+  const networkStore = useNetworkStore()
+  if(networkStore.level < 1) {
+    cui.showModal({
+      title: "🌐",
+      content_key: "tip.network_required",
+      showCancel: false,
+      isTitleEqualToEmoji: true,
+    })
+    return
+  }
+
+
+  // 2. define some functions
   const _newVersion = async () => {
     const res = await cui.showModal({
       title_key: "pwa.new_version_title",
@@ -135,12 +150,14 @@ async function whenTapVersionUpdate(
   }
 
 
+  // 3. if hasNewVersion has been already true
   let value = hasNewVersion.value
   if(value) {
     _newVersion()
     return
   }
 
+  // 4. check update manually
   checkUpdateManually()
 
   cui.showLoading({ title_key: "pwa.checking" })

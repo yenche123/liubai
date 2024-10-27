@@ -246,7 +246,8 @@
     "open_with_browser_2": "Get the best experience!",
     "open_with_browser_3": "Tap \"...\" to open with the default browser",
     "fail_to_request": "Network Error",
-    "cannot_remind_you": "Liubai will be unable to remind you because you has closed the sync to cloud."
+    "cannot_remind_you": "Liubai will be unable to remind you because you has closed the sync to cloud.",
+    "network_required": "This function requires the Internet"
   },
   "card_bubble": {
     "copy": "Copy",

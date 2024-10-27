@@ -246,7 +246,8 @@
     "open_with_browser_1": "打开默认浏览器",
     "open_with_browser_2": "获取极致体验！",
     "open_with_browser_3": "点击“...”打开默认浏览器",
-    "cannot_remind_you": "由于云端同步已被关闭，提醒功能将只作为装饰；届时系统无法弹出通知。"
+    "cannot_remind_you": "由于云端同步已被关闭，提醒功能将只作为装饰；届时系统无法弹出通知。",
+    "network_required": "该功能需要联网才能使用"
   },
   "card_bubble": {
     "copy": "复制",
