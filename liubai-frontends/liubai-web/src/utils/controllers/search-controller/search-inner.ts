@@ -24,7 +24,7 @@ export async function searchInner(param: SearchOpt) {
   const texts = text.split(" ").filter(v => Boolean(v))
   const regexs = texts.map(v => {
     if(v.length >= 4) {
-      return new RegExp(v, "g")
+      return new RegExp(v, "gi")
     }
     const isEng = valTool.isAllEnglishChar(v)
     if(isEng) {
@@ -52,7 +52,22 @@ export async function searchInner(param: SearchOpt) {
       const matches2 = search_other.matchAll(reg)
       const count2 = Array.from(matches2).length
       if(!count1 && !count2) return false
-      score = score + (count1 * 22) + (count2 * 10)
+
+      let count3 = 0  // Check if in first 3 lines
+      let count4 = 0  // Check if in first line
+      if(count2) {
+        let lines = search_other.split("\n")
+        if(lines.length > 3) {
+          lines.splice(3, lines.length - 3)
+        }
+        const matches3 = lines.join("\n").matchAll(reg)
+        count3 = Array.from(matches3).length
+        if(count3) {
+          const matches4 = lines[0].matchAll(reg)
+          count4 = Array.from(matches4).length
+        }
+      }
+      score = score + (count1 * 22) + (count2 * 10) + (count3 * 7) + (count4 * 7)
     }
 
     list.push({ score, data: item })

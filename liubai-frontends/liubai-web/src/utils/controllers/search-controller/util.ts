@@ -108,7 +108,10 @@ function _getHighlight(
 ) {
   const lowerText = text.toLowerCase()
   if(keyword) {
-    const idx1 = lowerText.indexOf(keyword)
+    let idx1 = lowerText.indexOf(keyword)
+    if(idx1 < 0) {
+      idx1 = lowerText.indexOf(keyword.toLowerCase())
+    }
     const idx2 = fileName.toLowerCase().indexOf(keyword)
 
     if(idx1 < 0 && idx2 >= 0) {
