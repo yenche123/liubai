@@ -167,12 +167,13 @@ export const domainNotAllowed = [
   "tongyi.aliyun.com",
   "yuewen.cn",
   "metaso.cn",
-  "chat.deepseek.com",
+  "deepseek.com",
   "xueqiu.com",
   "rust-lang.org",
   "v2.tauri.app",
   "mozilla.org",
   "reddit.com",
+  "bigmodel.cn",
 ]
 
 export const mastodonDomains = [
