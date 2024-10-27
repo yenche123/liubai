@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import type { SearchEditorData } from "../tools/types";
 import SearchItem from './search-item/search-item.vue';
 import { useSearchResults } from './tools/useSearchResults';
+import liuApi from '~/utils/liu-api';
 
 const props = defineProps({
   seData: {
@@ -24,6 +25,7 @@ const show = computed(() => {
 })
 
 const { t } = useI18n()
+const { isMobile } = liuApi.getCharacteristic()
 
 </script>
 <template>
@@ -141,6 +143,10 @@ const { t } = useI18n()
   border-top: 0.6px solid var(--main-tip);
   overflow-y: auto;
   max-height: max(66vh, 300px);
+
+  &::-webkit-scrollbar {
+    display: v-bind("isMobile ? 'none' : 'block'");
+  }
 
   &::-webkit-scrollbar-thumb {
     background: var(--main-note);

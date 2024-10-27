@@ -23,6 +23,7 @@ export function searchRecent(param: SearchOpt) {
 
 export async function addKeywordToRecent(text: string) {
   if(!text) return true
+  if(text.length < 2) return true
   const wStore = useWorkspaceStore()
   const memberCfg = wStore.myMember?.config ?? {}
   const { searchKeywords = [] } = memberCfg

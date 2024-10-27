@@ -31,7 +31,7 @@ watch(() => scData.state, (newV) => {
 
   <div class="liu-mc-container">
     <div class="liu-tc-virtual"></div>
-    <div class="liu-mc-box" v-if="spi && scData.state < 0">
+    <div class="liu-mc-box sc-box" v-if="spi && scData.state < 0">
 
       <!-- 方案标题 -->
       <div class="liu-no-user-select sc-title">
@@ -243,6 +243,11 @@ watch(() => scData.state, (newV) => {
 }
 
 
+@media screen and (max-width: 460px) {
+  .sc-box {
+    width: 90%;
+  }
+}
 
 
 
