@@ -33,11 +33,13 @@ import {
   updateUserInCache,
   tagWxUserLang,
   getWxGzhUserInfo,
+  isEmailAndNormalize,
 } from "@/common-util";
 import {
   useI18n, 
   wechatLang,
   wxClickReplies,
+  wxTextReplies,
 } from "@/common-i18n";
 import { createCredential2 } from "@/common-ids";
 import { init_user } from "@/user-login";
@@ -121,26 +123,19 @@ async function handle_click(
 async function handle_text(
   msgObj: Wx_Gzh_Text,
 ) {
-  // TEST
+  
   // 1. get openid
   const wx_gzh_openid = msgObj.FromUserName
   if(!wx_gzh_openid) return
 
-  // 2. check access_token
-  const res2 = await checkAccessToken()
-  if(!res2) return
+  // 2. check if we get to auto-reply
+  const res2 = await autoReplyAfterReceivingText(wx_gzh_openid, msgObj.Content)
+  if(res2) return
 
-  // 3. construct reply
-  const msg: Wx_Gzh_Send_Msg = {
-    msgtype: "text",
-    text: {
-      content: "test message from a custom customer service"
-    },
-    customservice: {
-      kf_account: "test@test",
-    }
-  }
-  await sendWxMessage(wx_gzh_openid, wechat_access_token, msg)
+  // 3. check out login or not
+  
+
+
   return true
 }
 
@@ -432,7 +427,7 @@ async function bind_wechat_gzh(
 
   // 4.1 define successful logic
   const _success = async () => {
-    send_text_to_wechat_gzh(wx_gzh_openid, success_msg)
+    sendWxTextMessage(wx_gzh_openid, wechat_access_token, success_msg)
     await make_user_subscribed(wx_gzh_openid, userInfo, user3)
     if(memberId_1) {
       await _openWeChatNotification(memberId_1)
@@ -462,7 +457,7 @@ async function bind_wechat_gzh(
     const user6 = list6[0]
     const name6 = await getAccountName(user6)
     const already_bound_msg = t("already_bound", { account: name6 })
-    send_text_to_wechat_gzh(wx_gzh_openid, already_bound_msg)
+    sendWxTextMessage(wx_gzh_openid, wechat_access_token, already_bound_msg)
     return false
   }
 
@@ -485,17 +480,9 @@ async function send_welcome(
   const text = t("welcome_2")
   
   // 3. reply user with text
-  await send_text_to_wechat_gzh(wx_gzh_openid, text)
+  await sendWxTextMessage(wx_gzh_openid, wechat_access_token, text)
 
   return true
-}
-
-
-async function send_text_to_wechat_gzh(
-  wx_gzh_openid: string,
-  text: string,
-) {
-  await sendWxTextMessage(wx_gzh_openid, wechat_access_token, text)
 }
 
 async function make_user_subscribed(
@@ -570,6 +557,47 @@ async function make_user_subscribed(
 
 
 /***************** helper functions *************/
+
+// when user sends text, check out if we have to reply automatically
+async function autoReplyAfterReceivingText(
+  wx_gzh_openid: string,
+  text: string,
+) {
+  // 1. check if text is empty
+  const text1 = text.trim()
+  if(!text1) {
+    console.warn("autoReply: text is empty")
+    return true
+  }
+
+  // 2. check if text is "[收到不支持的消息类型，暂无法显示]"
+  if(text1.startsWith("[收到不支持的消息类型")) {
+    const res2 = await checkAccessToken()
+    if(!res2) return true
+    sendWxTextMessage(wx_gzh_openid, wechat_access_token, "[收到不支持的消息类型]")
+    return true
+  }
+
+  // 3. TODO: because we're in beta, check if it is email address
+  const res3 = isEmailAndNormalize(text1)
+  if(res3) {
+    return true
+  }
+
+  // 4. whether or not the text is targeted by wxTextReplies
+  const replies = wxTextReplies[text1]
+  if(!replies || replies.length < 1) return false
+  
+  // 5. auto reply
+  const res5_1 = await checkAccessToken()
+  if(!res5_1) return true
+  for(let i = 0; i < replies.length; i++) {
+    const v = replies[i]
+    await sendWxMessage(wx_gzh_openid, wechat_access_token, v)
+  }
+  return true
+}
+
 
 interface DirectionCredential {
   direction: string

@@ -411,7 +411,17 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
   ]
 }
 
-
+/********************* Wx Text Auto Replies ****************/
+export const wxTextReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
+  "111": [
+    {
+      msgtype: "text",
+      text: {
+        content: '这是自动回复～',
+      }
+    }
+  ]
+}
 
 /********************* 映射函数 ****************/
 
