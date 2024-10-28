@@ -1,4 +1,4 @@
-import { reactive, watch, useTemplateRef, inject, onMounted, onBeforeUnmount } from "vue"
+import { reactive, watch, useTemplateRef, inject } from "vue"
 import type { BnbData } from "./types"
 import { useLayoutStore } from "~/views/useLayoutStore"
 import { storeToRefs } from "pinia"
@@ -9,6 +9,7 @@ import cfg from "~/config";
 import cui from '~/components/custom-ui';
 import { deviceChaKey } from "~/utils/provide-keys"
 import liuUtil from "~/utils/liu-util"
+import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 
 export function useBottomNaviBar() {
   const { prefix } = usePrefix()
@@ -40,20 +41,10 @@ export function useBottomNaviBar() {
 
 
 function listenToInputChange(bnbData: BnbData) {
-  const _focusin = () => {
-    bnbData.tempHidden = true
-  }
-  const _focusout = () => {
-    bnbData.tempHidden = false
-  }
-
-  onMounted(() => {
-    document.body.addEventListener("focusin", _focusin)
-    document.body.addEventListener("focusout", _focusout)
-  })
-  onBeforeUnmount(() => {
-    document.body.removeEventListener("focusin", _focusin)
-    document.body.removeEventListener("focusout", _focusout)
+  const gStore = useGlobalStateStore()
+  const { customEditorInputing } = storeToRefs(gStore)
+  watch(customEditorInputing, (newV) => {
+    bnbData.tempHidden = newV
   })
 }
 
