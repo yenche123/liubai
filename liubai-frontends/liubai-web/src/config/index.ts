@@ -79,8 +79,8 @@ export default {
   },
 
   breakpoint_max_size: {
-    mobile: 590,
-    tablet: 1090,
+    mobile: 650,
+    tablet: 1150,
   },
 
 }

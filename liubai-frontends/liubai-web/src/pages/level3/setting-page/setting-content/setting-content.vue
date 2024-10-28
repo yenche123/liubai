@@ -11,7 +11,7 @@ const { t } = useI18n()
 const { width: windowWidth } = useWindowSize()
 
 // 判断屏幕尺寸，决定当前机型的图标
-// 若小于等于 600px，显示成手机，否则显示成浏览器窗口
+// 若小于等于 650px，显示成手机，否则显示成浏览器窗口
 const deviceIcon = computed(() => {
   const w = windowWidth.value
   if(w <= cfg.breakpoint_max_size.mobile) return "devices-smartphone"
