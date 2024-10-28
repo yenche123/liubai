@@ -14,10 +14,10 @@ import type { LiuTimeout } from "~/utils/basic/type-tool"
 import type { UserSubscription } from "~/types/types-cloud"
 import type { PageState } from "~/types/types-atom"
 import { pageStates } from "~/utils/atom"
-import { useNetwork } from "~/hooks/useVueUse"
+import { useThrottleFn } from "~/hooks/useVueUse"
 import liuUtil from "~/utils/liu-util"
 import cui from "~/components/custom-ui"
-import { useActiveSyncNum } from "~/hooks/useCommon"
+import { useAwakeNum } from "~/hooks/useCommon"
 import { type RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router"
 import { showEmojiTip, showErrMsg } from "~/pages/level1/tools/show-msg"
 import liuApi from "~/utils/liu-api"
@@ -29,6 +29,7 @@ import {
 import { fetchUserSubscription } from "~/utils/cloud/tools/requests"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import { storeToRefs } from "pinia"
+import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
 
 let timeout1: LiuTimeout  // in order to avoid the view from always loading
 let timeout2: LiuTimeout  // for setDataState
@@ -247,18 +248,17 @@ function initSubscribeContent(
 
   if(scData.state === pageStates.NEED_BACKEND) return
 
-  // 1. listen to activeSyncNum
-  const { activeSyncNum } = useActiveSyncNum()
-  watch(activeSyncNum, (newV) => {
-    if(newV < 1) return
+  // 1. throttle for getSubscriptionPlan
+  const _getPlan = useThrottleFn(() => {
     getSubscriptionPlan(scData)
-  }, { immediate: true })
+  }, 3000)
 
-  // 2. if no network while init
-  const { isOnline } = useNetwork()
-  if(!isOnline.value) {
-    setDataState(scData, pageStates.NETWORK_ERR)
-  }
+  // 2. listen to activeSyncNum
+  const { awakeNum, syncNum } = useAwakeNum()
+  watch(awakeNum, (newV) => {
+    if(newV < 1 || syncNum.value < 1) return
+    _getPlan()
+  }, { immediate: true })
 
   // 3. set delay to check if the status is not equal to 0
   timeout1 = setTimeout(() => {
@@ -280,6 +280,7 @@ async function getSubscriptionPlan(
 ) {
   const url = APIs.SUBSCRIBE_PLAN
   const param = { operateType: "info" }
+  let code = ""
   try {
     const res = await liuReq.request<Res_SubPlan_Info>(url, param)
     // console.log("getSubscriptionPlan res:")
@@ -287,12 +288,9 @@ async function getSubscriptionPlan(
     // console.log(" ")
 
     if(res.code === "0000" && res.data) {
+      code = res.code
       scData.subPlanInfo = res.data
       parsePrice(scData, res.data)
-    }
-    else {
-      setDataState(scData, pageStates.NO_DATA)
-      return
     }
   }
   catch(err) {
@@ -300,6 +298,17 @@ async function getSubscriptionPlan(
     console.log(err)
     console.log(" ")
     setDataState(scData, pageStates.NETWORK_ERR)
+    return
+  }
+
+  if(code !== "0000") {
+    const nStore = useNetworkStore()
+    if(nStore.level < 1) {
+      setDataState(scData, pageStates.NETWORK_ERR)
+    }
+    else {
+      setDataState(scData, pageStates.NO_DATA)
+    }
     return
   }
 

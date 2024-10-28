@@ -8,6 +8,7 @@ import { usePrefix } from "~/hooks/useCommon"
 import cfg from "~/config";
 import cui from '~/components/custom-ui';
 import { deviceChaKey } from "~/utils/provide-keys"
+import liuUtil from "~/utils/liu-util"
 
 export function useBottomNaviBar() {
   const { prefix } = usePrefix()
@@ -21,14 +22,13 @@ export function useBottomNaviBar() {
   watch(prefix, (newV) => bnbData.prefix = newV)
 
   listenToContext(bnbData)
-  listenToRoute(bnbData)
 
   // listen to resize
   listenToResize()
   const funcs = initFunctions(bnbData)
 
   const cha = inject(deviceChaKey)
-  if(cha?.isAndroid) {
+  if(cha?.isMobile) {
     listenToInputChange(bnbData)
   }
 
@@ -109,14 +109,33 @@ function listenToResize() {
   useResizeObserver(elRef, _resize)
 }
 
-
-function listenToRoute(bnbData: BnbData) {
+function listenToContext(
+  bnbData: BnbData
+) {
   const { route } = useRouteAndLiuRouter()
-  watch(route, (newV) => {
-    const { name, query } = newV
+  const layoutStore = useLayoutStore()
+  const { sidebarWidth, sidebarStatus } = storeToRefs(layoutStore)
+  const { width} = useWindowSize()
+
+  watch([sidebarWidth, sidebarStatus, width, route], (
+    [newV1, newV2, newV3, newV4]
+  ) => {
+    const { sidebarType } = layoutStore
+    const { name, query } = newV4
+    const hasViceView = liuUtil.needToOpenViceView(query)
+    
+    // 1. force to hide
+    if(newV1 > 0 || newV2 === "fullscreen" || hasViceView) {
+      if(bnbData.show) {
+        toHide(bnbData)
+        layoutStore.$patch({ bottomNaviBar: false })
+      }
+      return
+    }
+
+    // 2. handle currentState
     const search = query?.search
     const q = query?.q
-
     if(search === "01" || q) {
       bnbData.currentState = "search"
     }
@@ -126,33 +145,12 @@ function listenToRoute(bnbData: BnbData) {
     else if(name === "mine" || name === "collaborative-mine") {
       bnbData.currentState = "mine"
     }
-  }, { immediate: true })
-}
 
-function listenToContext(
-  bnbData: BnbData
-) {
-  const layoutStore = useLayoutStore()
-  const { sidebarWidth, sidebarStatus } = storeToRefs(layoutStore)
-  const { width} = useWindowSize()
-
-  watch([sidebarWidth, sidebarStatus, width], (
-    [newV1, newV2, newV3]
-  ) => {
-    const { sidebarType } = layoutStore
-    if(newV1 > 0 || newV2 === "fullscreen") {
-      if(bnbData.show) {
-        toHide(bnbData)
-        layoutStore.$patch({ bottomNaviBar: false })
-      }
-      return
-    }
-
+    // 3. show or hide
     let needToShow = sidebarType === "closed_by_auto"
     if(newV3 <= cfg.breakpoint_max_size.mobile) {
       needToShow = true
     }
-    
     if (needToShow && !bnbData.show) {
       toShow(bnbData)
       layoutStore.$patch({ bottomNaviBar: true })

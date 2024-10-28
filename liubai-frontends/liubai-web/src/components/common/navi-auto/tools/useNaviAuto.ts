@@ -117,7 +117,7 @@ function judgeScrollPosition(
     return
   }
 
-  if(diff1 < 10) return
+  if(diff1 < 20) return
 
   const diff2 = sP - lastScrollPosition
   if(diff2 >= 0 && !naData.tempHidden) {

@@ -51,6 +51,8 @@ const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
   display: v-bind("direction === 'horizontal' ? 'flex' : 'block'");
   align-items: flex-start;
   flex-wrap: nowrap;
+  container-type: inline-size;
+  container-name: liu-scroll-view;
 
   &::-webkit-scrollbar {
     display: v-bind("isMobile || hiddenScrollBar ? 'none' : 'block'");

@@ -196,6 +196,7 @@ const cha = inject(deviceChaKey)
   justify-content: flex-end;
   align-items: center;
   pointer-events: auto;
+  flex: none;
 }
 
 .cemtf-tip {
@@ -225,6 +226,14 @@ const cha = inject(deviceChaKey)
   transition: .15s;
   font-weight: 500;
 }
+
+
+@container liu-scroll-view (max-width: 380px) {
+  .cemtf-tip {
+    display: none;
+  }
+}
+
 
 @media(hover: hover) {
   .cemtf-submit-btn:hover {

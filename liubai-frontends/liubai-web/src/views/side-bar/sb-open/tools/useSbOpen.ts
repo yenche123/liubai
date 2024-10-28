@@ -15,12 +15,20 @@ export function useSbOpen() {
   const { width } = useWindowSize()
 
   const show = computed(() => {
+    // 1. fullscreen
     if(sidebarStatus.value === "fullscreen") return false
+
+    // 2. current page does not have bottom-navi-bar
     if(!routeHasBottomNaviBar.value) {
       if(sidebarWidth.value > 0) return false
       return width.value > cfg.breakpoint_max_size.mobile
     }
-    return !Boolean(bottomNaviBar.value)
+
+    // 3. close if bottom-navi-bar is open
+    if(Boolean(bottomNaviBar.value)) return false
+
+    // 4. open if width is larger than mobile
+    return width.value > cfg.breakpoint_max_size.mobile
   })
   
   return { show }
