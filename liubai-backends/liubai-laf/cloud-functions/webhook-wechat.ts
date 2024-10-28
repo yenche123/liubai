@@ -44,6 +44,7 @@ import {
 import { createCredential2 } from "@/common-ids";
 import { init_user } from "@/user-login";
 import { sendWxMessage, sendWxTextMessage } from "@/service-send";
+import { enter_ai } from "@/ai-entrance";
 
 const db = cloud.database()
 let wechat_access_token = ""
@@ -65,9 +66,6 @@ export async function main(ctx: FunctionContext) {
   if(code !== "0000" || !msgObj) {
     return res
   }
-
-  console.log("webhook-wechat successfully called......")
-  console.log(msgObj)
 
   const { MsgType } = msgObj
   if(MsgType === "text") {
@@ -125,7 +123,8 @@ async function handle_text(
   if(!wx_gzh_openid) return
 
   // 2. check if we get to auto-reply
-  const res2 = await autoReplyAfterReceivingText(wx_gzh_openid, msgObj.Content)
+  const userText = msgObj.Content
+  const res2 = await autoReplyAfterReceivingText(wx_gzh_openid, userText)
   if(res2) return
 
   // 3. get user
@@ -146,10 +145,9 @@ async function handle_text(
     return
   }
 
+  // 5. ai!
+  enter_ai({ user: user4, text: userText, wx_gzh_openid })
   
-  
-
-
   return true
 }
 
@@ -741,6 +739,7 @@ async function turnInputIntoMsgObj(
   return { code: "0000", data: msgObj }
 }
 
+// take care of this function
 function getMsgObjForPlainText(
   xml: Record<string, Array<any>>,
 ) {

@@ -2056,6 +2056,7 @@ export interface Shared_LoginState {
 export interface Wx_Res_Common {
   errcode: number
   errmsg: string
+  msgid?: string
 }
 
 
