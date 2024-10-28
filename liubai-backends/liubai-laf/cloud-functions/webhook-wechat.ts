@@ -107,14 +107,10 @@ async function handle_click(
   const replies = wxClickReplies[EventKey]
   if(!replies || replies.length < 1) return false
 
-  // 2. get access_token
-  const res2 = await checkAccessToken()
-  if(!res2) return
-
-  // 3. reply
+  // 2. reply
   for(let i = 0; i < replies.length; i++) {
     const v = replies[i]
-    const res3 = await sendWxMessage(wx_gzh_openid, wechat_access_token, v)
+    await sendObject(wx_gzh_openid, v)
   }
 
   return true
@@ -132,7 +128,25 @@ async function handle_text(
   const res2 = await autoReplyAfterReceivingText(wx_gzh_openid, msgObj.Content)
   if(res2) return
 
-  // 3. check out login or not
+  // 3. get user
+  const w3: Partial<Table_User> = {
+    oState: "NORMAL",
+    wx_gzh_openid,
+  }
+  const uCol = db.collection("User")
+  const q3 = uCol.where(w3).orderBy("insertedStamp", "desc")
+  const res3 = await q3.getOne<Table_User>()
+
+  // 4. check out login or not
+  const user4 = res3.data
+  if(!user4) {
+    const { t: t4 } = useI18n(wechatLang)
+    const text4 = t4("login_first")
+    await sendText(wx_gzh_openid, text4)
+    return
+  }
+
+  
   
 
 
@@ -427,7 +441,7 @@ async function bind_wechat_gzh(
 
   // 4.1 define successful logic
   const _success = async () => {
-    sendWxTextMessage(wx_gzh_openid, wechat_access_token, success_msg)
+    sendText(wx_gzh_openid, success_msg)
     await make_user_subscribed(wx_gzh_openid, userInfo, user3)
     if(memberId_1) {
       await _openWeChatNotification(memberId_1)
@@ -457,7 +471,7 @@ async function bind_wechat_gzh(
     const user6 = list6[0]
     const name6 = await getAccountName(user6)
     const already_bound_msg = t("already_bound", { account: name6 })
-    sendWxTextMessage(wx_gzh_openid, wechat_access_token, already_bound_msg)
+    sendText(wx_gzh_openid, already_bound_msg)
     return false
   }
 
@@ -480,7 +494,7 @@ async function send_welcome(
   const text = t("welcome_2")
   
   // 3. reply user with text
-  await sendWxTextMessage(wx_gzh_openid, wechat_access_token, text)
+  await sendText(wx_gzh_openid, text)
 
   return true
 }
@@ -572,9 +586,7 @@ async function autoReplyAfterReceivingText(
 
   // 2. check if text is "[收到不支持的消息类型，暂无法显示]"
   if(text1.startsWith("[收到不支持的消息类型")) {
-    const res2 = await checkAccessToken()
-    if(!res2) return true
-    sendWxTextMessage(wx_gzh_openid, wechat_access_token, "[收到不支持的消息类型]")
+    await sendText(wx_gzh_openid, "[收到不支持的消息类型]")
     return true
   }
 
@@ -589,11 +601,9 @@ async function autoReplyAfterReceivingText(
   if(!replies || replies.length < 1) return false
   
   // 5. auto reply
-  const res5_1 = await checkAccessToken()
-  if(!res5_1) return true
   for(let i = 0; i < replies.length; i++) {
     const v = replies[i]
-    await sendWxMessage(wx_gzh_openid, wechat_access_token, v)
+    await sendObject(wx_gzh_openid, v)
   }
   return true
 }
@@ -817,6 +827,24 @@ async function getMsgObjForSafeMode(message: string) {
 }
 
 /****************************** helper functions ******************************/
+
+async function sendText(
+  wx_gzh_openid: string,
+  text: string,
+) {
+  const res1 = await checkAccessToken()
+  if(!res1) return false
+  await sendWxTextMessage(wx_gzh_openid, wechat_access_token, text)
+}
+
+async function sendObject(
+  wx_gzh_openid: string,
+  obj: Wx_Gzh_Send_Msg,
+) {
+  const res1 = await checkAccessToken()
+  if(!res1) return false
+  await sendWxMessage(wx_gzh_openid, wechat_access_token, obj)
+}
 
 function getMsgMode(
   q: Record<string, any>,
