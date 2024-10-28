@@ -36,6 +36,7 @@ const seData = reactive<SearchEditorData>({
   mode: "search",
   inputTxt: "",
   nativeInputTxt: "",
+  lastOnInputStamp: 0,
   trimTxt: "",
   excludeThreads: [],
   indicator: "",
@@ -63,6 +64,7 @@ export function initSearchEditor() {
   const onInput = (e: Event) => {
     //@ts-expect-error
     seData.nativeInputTxt = e.target.value
+    seData.lastOnInputStamp = time.getLocalTime()
   }
 
   return {

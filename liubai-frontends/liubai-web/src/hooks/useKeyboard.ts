@@ -1,5 +1,6 @@
 import { onBeforeUnmount, onBeforeMount } from "vue"
 import type { KeyboardOpt } from "~/types/other/types-keyboard"
+import time from "~/utils/basic/time"
 
 export function useKeyboard(opt: KeyboardOpt) {
 
@@ -30,10 +31,21 @@ export function useKeyboard(opt: KeyboardOpt) {
 
     if(d) {
       if(key === "Enter") {
+        // 1. inputTxt is not matched, we ignore `Enter` key
         const newInputTxt = d.inputTxt
         if(newInputTxt !== oldInputTxt) {
           return
         }
+
+        // 2. if just inputting, we ignore `Enter` key
+        const now = time.getLocalTime()
+        const lastOnInputStamp =  d.lastOnInputStamp ?? 1
+        const diffStamp = now - lastOnInputStamp
+        if(diffStamp < 150) {
+          console.warn("ignore ENTER")
+          return
+        }
+        console.log("_handleKeyUp diffStamp: ", diffStamp)
       }
     }
 

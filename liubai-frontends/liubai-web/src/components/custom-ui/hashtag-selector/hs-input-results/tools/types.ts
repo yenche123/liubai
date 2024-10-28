@@ -9,6 +9,7 @@ export interface HsirData {
   focus: boolean
   inputTxt: string
   nativeInputTxt: string
+  lastOnInputStamp: number
   list: HsirAtom[]
   selectedIndex: number
   recentTagIds: string[]

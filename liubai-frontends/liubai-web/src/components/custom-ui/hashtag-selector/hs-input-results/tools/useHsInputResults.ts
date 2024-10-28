@@ -24,6 +24,7 @@ export function useHsInputResults(
     focus: false,
     inputTxt: "",
     nativeInputTxt: "",
+    lastOnInputStamp: 0,
     list: [],
     selectedIndex: -1,
     recentTagIds: [],
@@ -199,6 +200,7 @@ function initOnInput(
   const onInput = (e: Event) => {
     //@ts-ignore
     hsirData.nativeInputTxt = e.target.value
+    hsirData.lastOnInputStamp = time.getLocalTime()
 
     let val = hsirData.inputTxt.trim()
     if(val === lastInputTxt) return

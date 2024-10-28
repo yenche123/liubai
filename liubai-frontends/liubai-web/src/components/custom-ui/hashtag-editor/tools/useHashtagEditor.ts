@@ -25,6 +25,7 @@ const hteData = reactive<HteData>({
   transDuration: 150,
   inputTxt: "",
   nativeInputTxt: "",
+  lastOnInputStamp: 0,
   emoji: "",
   errCode: 0,
   newTag: "",
@@ -156,11 +157,11 @@ function reset(
 function onInput(e: Event) {
   //@ts-ignore
   hteData.nativeInputTxt = e.target.value
-
+  hteData.lastOnInputStamp = time.getLocalTime()
   let val = hteData.inputTxt.trim()
 
   // 1. the input is "#"
-  if(val === "#") {
+  if(val === "#" || val === "＃") {
     hteData.inputTxt = ""
     hteData.nativeInputTxt = ""
     reset(0)
@@ -231,12 +232,10 @@ function toCancel() {
 }
 
 function onTapConfirm() {
-  if(!checkState()) {
-    toCancel()
-    return
+  const res1 = checkState()
+  if(res1) {
+    toEnter()
   }
-
-  toEnter()
 }
 
 function onTapItem(index: number) {
@@ -294,7 +293,7 @@ function toSelect() {
 }
 
 function checkState() {
-  
+
   const m = hteData.mode
   if(m === "search") {
     const sIdx = hteData.selectedIndex

@@ -19,6 +19,7 @@ export interface SearchEditorData {
   mode: ScMode
   inputTxt: string
   nativeInputTxt: string
+  lastOnInputStamp: number
   trimTxt: string
   excludeThreads: string[]
   indicator: string               // 指示器，表示现在选中的是哪一个
