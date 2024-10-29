@@ -16,9 +16,12 @@ async function getContentByFirstId(first_id: string) {
   return res
 }
 
-async function getContent(id: string) {
+async function getContent(
+  id: string,
+  alsoFindByFirstId = true,
+) {
   let res = await db.contents.get(id)
-  if(!res) {
+  if(alsoFindByFirstId && !res) {
     res = await getContentByFirstId(id)
   }
   return res

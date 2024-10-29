@@ -132,7 +132,7 @@ export function useCommentEditor(
   }
 
   const onEditorUpdate = (data: EditorCoreContent) => {
-    let atom = getStorageAtom(props, data)
+    const atom = getStorageAtom(props, data)
     commentCache.toSave(atom)
     ctx.editorContent = data
     checkCanSubmit(props, ctx)
@@ -181,7 +181,7 @@ export function getStorageAtom(
   files?: LiuFileStore[],
   images?: LiuImageStore[],
 ) {
-  let atom: CommentStorageAtom = {
+  const atom: CommentStorageAtom = {
     parentThread: props.parentThread,
     parentComment: props.parentComment,
     replyToComment: props.replyToComment,
@@ -204,19 +204,22 @@ function isJustInitOrFinish(ctx: CeCtx) {
 }
 
 
-function initEditorContent(
+async function initEditorContent(
   props: CeProps,
   ctx: CeCtx,
   editorRef: ShallowRef<TipTapEditor>
 ) {
   const editor = editorRef.value
   
-  let atom = getStorageAtom(props)
-  const res = commentCache.toGet(atom)
+  const atom = getStorageAtom(props)
+  let res = commentCache.toGet(atom)
 
-  if(!res && props.commentId) {
-    initEditorContentFromDB(props, ctx, editor)
-    return
+  if(!res) {
+    if(props.commentId) {
+      initEditorContentFromDB(props, ctx, editor)
+      return
+    }
+    res = await commentCache.toGetByFirstId(atom)
   }
   if(!res) return
   const editorContent = res.editorContent
