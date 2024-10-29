@@ -1,7 +1,12 @@
 import liuEnv from "~/utils/liu-env";
 import { useSyncStore, type SyncStoreItem } from "../stores/useSyncStore";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
-import { type RouteLocationNormalized } from "vue-router";
+import type { 
+  LocationQuery, 
+  RouteLocationResolvedGeneric, 
+  RouteParamsGeneric, 
+  RouteLocationNormalized,
+} from "vue-router";
 import valTool from "~/utils/basic/val-tool";
 
 export function useIdsChanged() {
@@ -11,11 +16,15 @@ export function useIdsChanged() {
   let all_threads: SyncStoreItem[] = []
   let all_comments: SyncStoreItem[] = []
 
+  const rr = useRouteAndLiuRouter()
+
   // pass `to` route representing the current route or the route to be navigated to
   // and then check if the new route is going to be generated
   const _getNewRoute = (to: RouteLocationNormalized) => {    
-    let newRoute: RouteLocationNormalized | undefined
+    let newRoute: RouteLocationResolvedGeneric | undefined
     const { params, query } = to
+    let newParams: RouteParamsGeneric | undefined
+    let newQuery: LocationQuery | undefined
 
     const threadId = params.contentId
     const commentId = params.commentId
@@ -23,19 +32,19 @@ export function useIdsChanged() {
     if(valTool.isStringWithVal(threadId)) {
       const newThreadId = getNewId(threadId, all_threads)
       if(newThreadId) {
-        console.log("new thread id in params is found: ", newThreadId)
-        console.log("the old id is ", threadId)
-        console.log(" ")
-        newRoute = addNewParam(to, newRoute, "contentId", newThreadId)
+        // console.warn("new thread id in params is found: ", newThreadId)
+        // console.log("the old id is ", threadId)
+        // console.log(" ")
+        newParams = getNewParam(newParams ?? params, "contentId", newThreadId)
       }
     }
     if(valTool.isStringWithVal(commentId)) {
       const newCommentId = getNewId(commentId, all_comments)
       if(newCommentId) {
-        console.log("new thread id is in params found: ", newCommentId)
-        console.log("the old id is ", commentId)
-        console.log(" ")
-        newRoute = addNewParam(to, newRoute, "commentId", newCommentId)
+        // console.warn("new comment id is in params found: ", newCommentId)
+        // console.log("the old id is ", commentId)
+        // console.log(" ")
+        newParams = getNewParam(newParams ?? params, "commentId", newCommentId)
       }
     }
 
@@ -44,28 +53,33 @@ export function useIdsChanged() {
     if(valTool.isStringWithVal(cid)) {
       const newCid = getNewId(cid, all_threads)
       if(newCid) {
-        console.log("new thread id in query is found: ", newCid)
-        console.log("the old id is ", cid)
-        console.log(" ")
-        newRoute = addNewQuery(to, newRoute, "cid", newCid)
+        // console.warn("new thread id in query is found: ", newCid)
+        // console.log("the old id is ", cid)
+        // console.log(" ")
+        newQuery = getNewQuery(newQuery ?? query, "cid", newCid)
       }
     }
     if(valTool.isStringWithVal(cid2)) {
       const newCid2 = getNewId(cid2, all_comments)
       if(newCid2) {
-        console.log("new comment id in query is found: ", newCid2)
-        console.log("the old id is ", cid2)
-        console.log(" ")
-        newRoute = addNewQuery(to, newRoute, "cid2", newCid2)
+        // console.warn("new comment id in query is found: ", newCid2)
+        // console.log("the old id is ", cid2)
+        // console.log(" ")
+        newQuery = getNewQuery(newQuery ?? query, "cid2", newCid2)
       }
     }
+    
+    if(newParams || newQuery) {
+      newRoute = rr.router.resolve({ params: newParams, query: newQuery }, to)
+    }
 
+    // 因为有守卫导航，所以有值才返回，否则返回 void 而非 undefined
     if(newRoute) {
       return newRoute
     }
   }
 
-  const rr = useRouteAndLiuRouter()
+  
 
   // 1. listening to changes in sync store
   const syncStore = useSyncStore()
@@ -90,28 +104,24 @@ export function useIdsChanged() {
   rr.router.beforeEach(_getNewRoute)
 }
 
-
-
-function addNewParam(
-  originRoute: RouteLocationNormalized,
-  newRoute: RouteLocationNormalized | undefined,
+function getNewParam(
+  oldParams: RouteParamsGeneric,
   key: string,
-  val: string,
+  newVal: string,
 ) {
-  if(!newRoute) newRoute = { ...originRoute }
-  newRoute.params[key] = val
-  return newRoute
+  const newParams = { ...oldParams }
+  newParams[key] = newVal
+  return newParams
 }
 
-function addNewQuery(
-  originRoute: RouteLocationNormalized,
-  newRoute: RouteLocationNormalized | undefined,
+function getNewQuery(
+  oldQuery: LocationQuery,
   key: string,
-  val: string,
+  newVal: string,
 ) {
-  if(!newRoute) newRoute = { ...originRoute }
-  newRoute.query[key] = val
-  return newRoute
+  const newQuery = { ...oldQuery }
+  newQuery[key] = newVal
+  return newQuery
 }
 
 function getNewId(

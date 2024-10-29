@@ -22,7 +22,7 @@ import commentController from "~/utils/controllers/comment-controller/comment-co
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 import liuApi from "~/utils/liu-api";
 
-export function finishComment(
+export async function finishComment(
   props: CeProps,
   emit: CeEmit, 
   ceCtx: CeCtx,
@@ -38,16 +38,17 @@ export function finishComment(
   const { local_id: user } = localCache.getPreference()
   if(!user) return
 
+  const newProps = await _getNewProps(props)
   const ctx: HcCtx = {
     wStore,
     ceCtx,
-    props,
+    props: newProps,
     emit,
     editor,
     user,
   }
-
-  if(props.commentId) toUpdate(ctx)
+  
+  if(newProps.commentId) toUpdate(ctx)
   else toRelease(ctx)
 }
 
@@ -344,4 +345,58 @@ async function _getSuperior(
   }
 
   return
+}
+
+async function _getNewProps(
+  props: CeProps,
+) {
+  const newProps = { ...props }
+  let { 
+    commentId,
+    parentThread, 
+    parentComment, 
+    replyToComment,
+  } = newProps
+
+  // 1. handle parentThread
+  if(parentThread.startsWith("t0")) {
+    const res1 = await localReq.getContentByFirstId(parentThread)
+    // console.warn("_getNewProps res1: ")
+    // console.log(res1)
+    if(res1) parentThread = res1._id
+  }
+
+  // 2. handle parentComment
+  let res2: ContentLocalTable | undefined
+  if(parentComment && parentComment.startsWith("c0")) {
+    res2 = await localReq.getContentByFirstId(parentComment)
+    // console.warn("_getNewProps res2: ")
+    // console.log(res2)
+    if(res2) parentComment = res2._id
+  }
+
+  // 3. handle replyToComment
+  if(res2 && res2.first_id === replyToComment) {
+    replyToComment = res2._id
+  }
+  else if(replyToComment && replyToComment.startsWith("c0")) {
+    const res3 = await localReq.getContentByFirstId(replyToComment)
+    // console.warn("_getNewProps res3: ")
+    // console.log(res3)
+    if(res3) replyToComment = res3._id
+  }
+
+  // 4. handle commentId
+  if(commentId && commentId.startsWith("c0")) {
+    const res4 = await localReq.getContentByFirstId(commentId)
+    // console.warn("_getNewProps res4: ")
+    // console.log(res4)
+    if(res4) commentId = res4._id
+  }
+
+  newProps.parentThread = parentThread
+  newProps.parentComment = parentComment
+  newProps.replyToComment = replyToComment
+  newProps.commentId = commentId
+  return newProps
 }
