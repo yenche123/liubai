@@ -2273,6 +2273,11 @@ export type Wx_Gzh_Msg_Event = Wx_Gzh_Auth_Change |
   Wx_Gzh_Text |
   Wx_Gzh_Image |
   Wx_Gzh_Voice |
+  Wx_Gzh_Video |
+  Wx_Gzh_ShortVideo |
+  Wx_Gzh_Location |
+  Wx_Gzh_Link |
+  Wx_Gzh_MsgMenu |
   Wx_Gzh_Subscribe |
   Wx_Gzh_Unsubscribe |
   Wx_Gzh_Scan |
@@ -2354,7 +2359,7 @@ export interface Wx_Gzh_Send_Msgmenu {
     head_content: string
     list: {
       id: string
-      text: string
+      content: string
     }[]
     tail_content: string
   }
