@@ -29,6 +29,7 @@ export async function initAnalytics() {
     PLAUSIBLE_SRC,
     GOATCOUNTER_DATA,
     GOATCOUNTER_SRC,
+    TINYLYTICS_SRC,
   } = _env
 
   if(BUGFENDER_APIURL && BUGFENDER_BASEURL && BUGFENDER_APPKEY) {
@@ -67,6 +68,17 @@ export async function initAnalytics() {
     initGoatCounter(GOATCOUNTER_DATA, GOATCOUNTER_SRC)
   }
 
+  if(TINYLYTICS_SRC) {
+    initTinylytics(TINYLYTICS_SRC)
+  }
+
+}
+
+function initTinylytics(src: string) {
+  const scriptEl = document.createElement('script')
+  scriptEl.src = src
+  scriptEl.defer = true
+  insertScript(scriptEl)
 }
 
 function initGoatCounter(

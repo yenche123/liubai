@@ -85,6 +85,9 @@ export interface LiuSystemEnv {
   GOATCOUNTER_DATA?: string
   GOATCOUNTER_SRC?: string
 
+  // tinylytics
+  TINYLYTICS_SRC?: string
+
   // connectors
   CONNECTORS?: boolean
   C_WECHAT?: boolean

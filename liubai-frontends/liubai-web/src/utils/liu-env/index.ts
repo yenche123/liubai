@@ -95,6 +95,9 @@ function getEnv(): LiuSystemEnv {
   const GOATCOUNTER_DATA = import.meta.env.VITE_GOATCOUNTER_DATA
   const GOATCOUNTER_SRC = import.meta.env.VITE_GOATCOUNTER_SRC
 
+  // tinylytics
+  const TINYLYTICS_SRC = import.meta.env.VITE_TINYLYTICS_SRC
+
   // connectors
   const CONNECTORS = import.meta.env.VITE_CONNECTORS === "01"
   const C_WECHAT = import.meta.env.VITE_CONNECT_WECHAT === "01"
@@ -167,6 +170,7 @@ function getEnv(): LiuSystemEnv {
     OPENREPLAY_INGEST_POINT,
     GOATCOUNTER_DATA,
     GOATCOUNTER_SRC,
+    TINYLYTICS_SRC,
     CONNECTORS,
     C_WECHAT,
     C_DINGTALK,
