@@ -594,6 +594,35 @@ export interface DownloadUploadRes_2 {
 export type DownloadUploadRes = DownloadUploadRes_1 | DownloadUploadRes_2
 
 
+/*********************** About AI **********************/
+export type AiProvider = "deepseek" | "moonshot" | "stepfun" | 
+  "zero-one" | "zhipu"
+
+// AiCharacter 不跟供应商绑定，它是角色，只不过现在各个供应商都有自己的 To C 角色罢了
+export type AiCharacter = "deepseek" | "kimi" | "yuewen" | "wanzhi" | "zhipu"
+
+export type AiMsgType = "user" | "assistant" | "summary" | "clear" | 
+  "action" | "background"
+
+export type AiAbility = "chat" | "text_to_image" | "image_to_text"
+
+export interface AiUsage {
+  completion_tokens: number
+  prompt_tokens: number
+  total_tokens: number
+}
+
+export interface AiBot {
+  name: string
+  character: AiCharacter
+  provider: AiProvider
+  model: string
+  abilities: AiAbility[]
+  alias: string[]
+  wx_gzh_kf_account?: string
+}
+
+
 /*********************** 杂七杂八的 **********************/
 // 新增类型前，记得全局搜索一下，避免冲突
 
@@ -1357,6 +1386,30 @@ export interface Table_Order extends BaseTable {
   meta_data?: OrderMetaData
 
 }
+
+
+/** AI Room */
+export interface Table_AiRoom extends BaseTable {
+  owner: string           // corresponds to userId
+  bots: AiProvider[]
+}
+
+export interface Table_AiChat extends BaseTable {
+  roomId: string
+  msgType: AiMsgType
+  text?: string
+  imageUrl?: string
+
+  // about LLM
+  model?: string         // like "gpt-4o"
+  provider?: AiProvider
+  usage?: AiUsage
+
+  // about human
+  userId?: string
+}
+
+
 
 
 /*********************** 基于 Table 的扩展类型 ***********************/

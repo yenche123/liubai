@@ -1,10 +1,19 @@
 // Function Name: ai-entrance
 
-import type { Table_User, Wx_Gzh_Send_Msg } from "@/common-types"
+import type { 
+  Partial_Id, 
+  Table_AiRoom, 
+  Table_User, 
+  Wx_Gzh_Send_Msg,
+} from "@/common-types"
 import OpenAI from "openai"
-import { checkAndGetWxGzhAccessToken } from "@/common-util"
+import { checkAndGetWxGzhAccessToken, getDocAddId } from "@/common-util"
 import { sendWxMessage } from "@/service-send"
-import { getNowStamp } from "@/common-time"
+import { getBasicStampWhileAdding, getNowStamp } from "@/common-time"
+import { aiBots } from "@/ai-prompt"
+import cloud from "@lafjs/cloud"
+
+const db = cloud.database()
 
 /********************* empty function ****************/
 export async function main(ctx: FunctionContext) {
@@ -19,48 +28,22 @@ export interface AiEntrance {
 }
 
 export async function enter_ai(
-  data: AiEntrance,
+  entry: AiEntrance,
 ) {
 
-  // 1. get text or other params
-  const text = data.text
+  // 1. check out text
+  const text = entry.text
   if(!text) {
     console.warn("no text")
     return
   }
-  
-  // 2. construct args for zhipu
-  const zhipu = new Zhipu()
-  const param1: OpenAI.Chat.ChatCompletionCreateParams = {
-    messages: [{ role: "user", content: text }],
-    model: "glm-4-plus",
-  }
-  const res2 = await zhipu.chat(param1)
-  if(!res2) return
-  console.log("res2: ")
-  console.log(res2)
-  
-  // 3. get text from ai
-  const msg3 = res2.choices[0].message.content
-  if(!msg3) {
-    console.warn("no msg3")
-    return
-  }
 
-  // 4. send to wx user
-  const wx_gzh_openid = data.wx_gzh_openid
-  if(!wx_gzh_openid) {
-    console.warn("no wx_gzh_openid")
-    return
-  }
-  const obj4: Wx_Gzh_Send_Msg = {
-    msgtype: "text",
-    text: { content: msg3 },
-    customservice: {
-      kf_account: "glm-4-plus@test",
-    }
-  }
-  const res4 = await sendToWxGzh(wx_gzh_openid, obj4)
+  // 2. check out directive
+  const isDirective = AiDirective.check(entry)
+  if(isDirective) return
+
+
+
 }
 
 
@@ -73,6 +56,45 @@ async function sendToWxGzh(
   const res = await sendWxMessage(wx_gzh_openid, accessToken, obj)
   return res
 }
+
+
+/** check out if it's a directive, like "召唤..." */
+class AiDirective {
+
+  static check(entry: AiEntrance) {
+
+    // 1. get text
+    const text = entry.text
+    if(!text) return false
+
+    // 2. is it a kick directive
+    const text2 = text.trim().replace("+", " ")
+    const botKicked = this.isKickBot(text2)
+    if(botKicked) {
+      // WIP: to kick
+      return true
+    }
+    
+
+  }
+
+  static isKickBot(text: string) {
+    const prefix = ["踢掉", "移除"]
+    let prefixMatched = prefix.find(v => text.startsWith(v))
+    if(!prefixMatched) return
+
+    const otherText = text.substring(prefixMatched.length).trim()
+    const botMatched = aiBots.find(v => {
+      if(v.name === otherText) return true
+      if(v.alias.includes(otherText)) return true
+      return false
+    })
+
+    return botMatched
+  }
+
+}
+
 
 
 class Zhipu {
@@ -115,4 +137,35 @@ class Zhipu {
 }
 
 
+
+/*********************** helper functions ************************/
+async function getMyAiRoom(
+  entry: AiEntrance,
+) {
+  // 1. get room
+  const userId = entry.user._id
+  const rCol = db.collection("AiRoom")
+  const res1 = await rCol.where({ owner: userId }).getOne<Table_AiRoom>()
+  const room = res1.data
+  if(room) return room
+
+  // 2. create room
+  const b2 = getBasicStampWhileAdding()
+  const room2: Partial_Id<Table_AiRoom> = {
+    ...b2,
+    owner: userId,
+    bots: [],
+  }
+  const res2 = await rCol.add(room2)
+  const roomId = getDocAddId(res2)
+  if(!roomId) {
+    console.warn("cannot get roomId while creating ai room error")
+    console.log(res2)
+    return
+  }
+
+  // 3. return room
+  const newRoom: Table_AiRoom = { _id: roomId, ...room2 }
+  return newRoom
+}
 
