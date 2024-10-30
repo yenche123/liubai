@@ -5,6 +5,7 @@ import type { HsirEmit, HsirProps } from "./tools/types"
 
 const props = defineProps<HsirProps>()
 const emit = defineEmits<HsirEmit>()
+const modelValue = defineModel<string>({ required: true })
 
 const { t } = useI18n()
 const {
@@ -15,7 +16,7 @@ const {
   onInput,
   onMouseEnter,
   onTapItem,
-} = useHsInputResults(props, emit)
+} = useHsInputResults(props, emit, modelValue)
 
 const icon_color = `var(--main-normal)`
 

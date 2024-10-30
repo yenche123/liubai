@@ -24,6 +24,7 @@ const hsData = reactive<HsData>({
   originalList: [],
   canSubmit: false,
   lastFocusOrBlurStamp: 0,
+  inputTxt: "",
 })
 let rr: RouteAndLiuRouter | undefined
 let _resolve: HtsResolver | undefined
@@ -39,6 +40,7 @@ export function initHashtagSelector() {
     onTapClear,
     onTapPopup,
     onFocusOrNot,
+    onTapSelected,
     onTapItem,
     tryToFinish: onTapConfirm,
   }
@@ -58,6 +60,9 @@ export function showHashtagSelector(param: HsParam) {
   return new Promise(_wait)
 }
 
+function onTapSelected(item: TagShow) {
+  hsData.inputTxt = item.text.trim()
+}
 
 function onTapItem(
   item: TagShow,

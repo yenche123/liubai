@@ -13,6 +13,7 @@ const {
   onTapPopup,
   onFocusOrNot,
   onTapItem,
+  onTapSelected,
   tryToFinish,
 } = initHashtagSelector()
 
@@ -69,7 +70,7 @@ const { t } = useI18n()
         <div class="hs-bar hs-tags" v-show="hsData.list.length > 0">
 
           <template v-for="(item, index) in hsData.list" :key="item.text">
-            <div class="liu-no-user-select hs-tag">
+            <div class="liu-no-user-select hs-tag" @click.stop="onTapSelected(item)">
               <span v-if="item.emoji" class="hs-tag-emoji">{{ item.emoji }}</span>
               <span v-else-if="item.parentEmoji" class="hs-tag-emoji">{{ item.parentEmoji }}</span>
               <span>{{ item.text }}</span>
@@ -90,7 +91,8 @@ const { t } = useI18n()
 
       <!-- 输入框 + 搜索结果 -->
       <div class="hsir-container">
-        <HsInputResults :list-added="hsData.list"
+        <HsInputResults v-model="hsData.inputTxt"
+          :list-added="hsData.list"
           @focusornot="onFocusOrNot"
           @tapitem="onTapItem"
           @toclose="onTapCancel"
@@ -213,6 +215,7 @@ const { t } = useI18n()
   align-items: center;
   white-space: pre-wrap;
   position: relative;
+  cursor: pointer;
 
   span {
     position: relative;

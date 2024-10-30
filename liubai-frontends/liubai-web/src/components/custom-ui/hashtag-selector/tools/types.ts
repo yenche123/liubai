@@ -9,6 +9,7 @@ export interface HsData {
   originalList: TagShow[]
   canSubmit: boolean
   lastFocusOrBlurStamp: number
+  inputTxt: string
 }
 
 export interface HsParam {

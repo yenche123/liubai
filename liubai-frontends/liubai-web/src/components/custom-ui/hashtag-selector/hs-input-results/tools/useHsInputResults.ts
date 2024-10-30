@@ -1,4 +1,12 @@
-import { nextTick, onMounted, reactive, toRef, useTemplateRef, watch } from "vue";
+import { 
+  nextTick, 
+  onMounted, 
+  reactive, 
+  toRef, 
+  useTemplateRef, 
+  watch,
+  type Ref,
+} from "vue";
 import type { HsirAtom, HsirData, HsirEmit, HsirProps } from "./types";
 import { 
   hasStrangeChar, 
@@ -13,9 +21,12 @@ import liuApi from "~/utils/liu-api";
 import { useKeyboard } from "~/hooks/useKeyboard";
 import time from "~/utils/basic/time";
 
+let lastInputTxt = ""
+
 export function useHsInputResults(
   props: HsirProps,
   emit: HsirEmit,
+  modelValue: Ref<string>,
 ) {
 
   const inputEl = useTemplateRef<HTMLInputElement>("inputEl")
@@ -29,7 +40,7 @@ export function useHsInputResults(
     selectedIndex: -1,
     recentTagIds: [],
   })
-  watchSelectedIndex(hsirData)
+  watchContext(props, hsirData, modelValue)
   initRecent(hsirData)
 
   const onFocus = () => {
@@ -81,9 +92,12 @@ export function useHsInputResults(
   }
 }
 
-function watchSelectedIndex(
-  hsirData: HsirData
+function watchContext(
+  props: HsirProps,
+  hsirData: HsirData,
+  modelValue: Ref<string>,
 ) {
+  // 1. handle selectedIndex
   const selectedIndex = toRef(hsirData, "selectedIndex") 
   watch(selectedIndex, async (newV, oldV) => {
     if(newV < 0) return
@@ -95,6 +109,19 @@ function watchSelectedIndex(
     if(!el) return
     
     liuUtil.makeBoxScrollToShowChild(parent, el)
+  })
+
+  // 2. bind modelValue and modelValue in both directions
+  watch(modelValue, (newV) => {
+    if(newV === hsirData.inputTxt) return
+    lastInputTxt = newV
+    hsirData.inputTxt = newV
+    toSearch(props, hsirData, newV)
+  })
+  const inputTxt = toRef(hsirData, "inputTxt")
+  watch(inputTxt, (newV) => {
+    if(newV === modelValue.value) return
+    modelValue.value = newV
   })
 }
 
@@ -195,8 +222,6 @@ function initOnInput(
   props: HsirProps,
   hsirData: HsirData,
 ) {
-  let lastInputTxt = ""
-
   const onInput = (e: Event) => {
     //@ts-ignore
     hsirData.nativeInputTxt = e.target.value
@@ -206,34 +231,41 @@ function initOnInput(
     if(val === lastInputTxt) return
     lastInputTxt = val
 
-    if(!val) {
-      reset(props, hsirData, true)
-      return
-    }
-
-    const res1 = hasStrangeChar(val)
-    if(res1) {
-      reset(props, hsirData)
-      return
-    }
-
-    const val2 = formatTagText(val)
-
-    // 判断层数是否大于 3 
-    if(getLevelFromText(val2) > 3) {
-      reset(props, hsirData)
-      return
-    }
-
-    const res2 = searchLocal(val2)
-    const text = val2.replace(/\//g, " / ")
-    handleAfterSearching(props, hsirData, text, res2)
+    toSearch(props, hsirData, val)
   }
-
 
   return { onInput }
 }
 
+
+function toSearch(
+  props: HsirProps,
+  hsirData: HsirData,
+  val: string,
+) {
+  if(!val) {
+    reset(props, hsirData, true)
+    return
+  }
+
+  const res1 = hasStrangeChar(val)
+  if(res1) {
+    reset(props, hsirData)
+    return
+  }
+
+  const val2 = formatTagText(val)
+
+  // 判断层数是否大于 3 
+  if(getLevelFromText(val2) > 3) {
+    reset(props, hsirData)
+    return
+  }
+
+  const res2 = searchLocal(val2)
+  const text = val2.replace(/\//g, " / ")
+  handleAfterSearching(props, hsirData, text, res2)
+}
 
 
 function handleAfterSearching(
