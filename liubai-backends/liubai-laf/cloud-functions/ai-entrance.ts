@@ -30,11 +30,12 @@ export async function enter_ai(
   }
   
   // 2. construct args for zhipu
+  const zhipu = new Zhipu()
   const param1: OpenAI.Chat.ChatCompletionCreateParams = {
     messages: [{ role: "user", content: text }],
-    model: "glm-4-air",
+    model: "glm-4-plus",
   }
-  const res2 = await Zhipu.chat(param1)
+  const res2 = await zhipu.chat(param1)
   if(!res2) return
   console.log("res2: ")
   console.log(res2)
@@ -76,23 +77,25 @@ async function sendToWxGzh(
 
 class Zhipu {
 
-  private static _getClient() {
+  private _client: OpenAI | undefined
+
+  constructor() {
+    const _this = this
     const _env = process.env
     const apiKey = _env.LIU_ZHIPU_API_KEY
     const baseURL = _env.LIU_ZHIPU_BASE_URL
     try {
-      const client = new OpenAI({ apiKey, baseURL })
-      return client
+      _this._client = new OpenAI({ apiKey, baseURL })
     } catch(err) {
-      console.warn("zhipu get client error: ")
+      console.warn("Zhipu constructor gets client error: ")
       console.log(err)
     }
   }
 
-  static async chat(
+  async chat(
     params: OpenAI.Chat.ChatCompletionCreateParams,
   ) {
-    const client = this._getClient()
+    const client = this._client
     if(!client) return
 
     try {
