@@ -55,6 +55,7 @@ export async function searchInner(param: SearchOpt) {
 
       let count3 = 0  // Check if in first 3 lines
       let count4 = 0  // Check if in first line
+      let count5 = 0  // Check if in first line and in first 30 chars
       if(count2) {
         let lines = search_other.split("\n")
         if(lines.length > 3) {
@@ -63,11 +64,18 @@ export async function searchInner(param: SearchOpt) {
         const matches3 = lines.join("\n").matchAll(reg)
         count3 = Array.from(matches3).length
         if(count3) {
-          const matches4 = lines[0].matchAll(reg)
+          const firstLine = lines[0]
+          const matches4 = firstLine.matchAll(reg)
           count4 = Array.from(matches4).length
+          if(count4) {
+            const matches5 = firstLine.substring(0, 30).matchAll(reg)
+            count5 = Array.from(matches5).length
+          }
         }
       }
-      score = score + (count1 * 22) + (count2 * 10) + (count3 * 7) + (count4 * 7)
+      
+      score = score + (count1 * 22) + (count2 * 10) + (count3 * 7)
+      score = score + (count4 * 7) + (count5 * 17)
     }
 
     list.push({ score, data: item })
