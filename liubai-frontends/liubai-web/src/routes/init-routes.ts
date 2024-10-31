@@ -27,6 +27,7 @@ const ConnectWechat = () => import("../pages/connectors/connect-wechat/connect-w
 const PaymentPage = () => import("../pages/level3/payments/payment-page/payment-page.vue")
 const MinePage = () => import("../pages/level2/mine-page/mine-page.vue")
 const TagManagement = () => import("../pages/level3/tag-management/tag-management.vue")
+const PastPage = () => import("../pages/level3/past-page/past-page.vue")
 
 export const routes: Array<RouteRecordRaw> = [
   /*************** 公共页面（不区分工作区） ***************/
@@ -288,6 +289,15 @@ export const routes: Array<RouteRecordRaw> = [
     name: "notification",
     meta: {}
   },
+  {
+    path: "/past",
+    components: {
+      default: PastPage,
+      LeftSidebar,
+    },
+    name: "past",
+    meta: {}
+  },
   /********************* Collaborative Workspace ********************/
   {
     path: "/w/:workspaceId(\\w{10,})",
@@ -432,6 +442,15 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-notification",
+    meta: {}
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/past",
+    components: {
+      default: PastPage,
+      LeftSidebar,
+    },
+    name: "collaborative-past",
     meta: {}
   },
   /***************** the rest of routes, redirect to root ****************/

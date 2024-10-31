@@ -65,5 +65,3 @@ export interface SvCtx {
   svData: SvData
 }
 
-// 默认、下拉中、加载中、松开跑回去
-export type RefreshState = "default" | "pulling" | "loading" | "loosing"
