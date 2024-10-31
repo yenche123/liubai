@@ -83,6 +83,7 @@ declare global {
       LIU_WX_GZ_TAG_MANAGEMENT?: string    // 01: tag management enabled, otherwise disabled
       LIU_WX_GZ_LOGIN?: string             // 01: logging in by wx gzh enabled, otherwise disabled
       LIU_WX_GZ_TMPL_ID_1?: string         // reminder template id enabled, otherwise disabled
+      LIU_WX_GZ_TEST_OPENID?: string       // test openid of wx_gzh for testing ai
 
       /** 企业微信 企业内部自建应用 */
       LIU_WECOM_QYNB_CORPID?: string
@@ -113,6 +114,16 @@ declare global {
       // 支付宝
       LIU_ALIPAY_APP_ID?: string
       LIU_ALIPAY_NOTIFY_URL?: string
+
+      /** LLMs */
+      LIU_ZHIPU_BASE_URL?: string            // 智谱的 base url
+      LIU_ZHIPU_API_KEY?: string             // 智谱的 api key
+      LIU_MOONSHOT_BASE_URL?: string         // Moonshot AI 的 base url
+      LIU_MOONSHOT_API_KEY?: string          // Moonshot AI 的 api key
+      LIU_DEEPSEEK_BASE_URL?: string         // DeepSeek AI 的 base url
+      LIU_DEEPSEEK_API_KEY?: string          // DeepSeek AI 的 api key
+      LIU_STEPFUN_BASE_URL?: string          // Stepfun AI 的 base url
+      LIU_STEPFUN_API_KEY?: string           // Stepfun AI 的 api key
       
 
     }

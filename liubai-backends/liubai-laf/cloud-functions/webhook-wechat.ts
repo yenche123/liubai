@@ -14,6 +14,7 @@ import type {
   Wx_Gzh_Click,
   Wx_Gzh_Msg_Event, 
   Wx_Gzh_Scan, 
+  Wx_Gzh_Send_Msg, 
   Wx_Gzh_Subscribe, 
   Wx_Gzh_Text, 
   Wx_Gzh_Unsubscribe,
@@ -32,15 +33,18 @@ import {
   updateUserInCache,
   tagWxUserLang,
   getWxGzhUserInfo,
+  isEmailAndNormalize,
 } from "@/common-util";
 import {
   useI18n, 
   wechatLang,
   wxClickReplies,
+  wxTextReplies,
 } from "@/common-i18n";
 import { createCredential2 } from "@/common-ids";
 import { init_user } from "@/user-login";
 import { sendWxMessage, sendWxTextMessage } from "@/service-send";
+import { enter_ai } from "@/ai-entrance";
 
 const db = cloud.database()
 let wechat_access_token = ""
@@ -62,9 +66,6 @@ export async function main(ctx: FunctionContext) {
   if(code !== "0000" || !msgObj) {
     return res
   }
-
-  console.log("webhook-wechat successfully called......")
-  console.log(msgObj)
 
   const { MsgType } = msgObj
   if(MsgType === "text") {
@@ -96,7 +97,7 @@ async function handle_click(
 
   // 1. get params
   const { EventKey } = msgObj
-  if(!EventKey) return
+  if(!EventKey) return false
 
   const wx_gzh_openid = msgObj.FromUserName
   if(!wx_gzh_openid) return false
@@ -104,14 +105,10 @@ async function handle_click(
   const replies = wxClickReplies[EventKey]
   if(!replies || replies.length < 1) return false
 
-  // 2. get access_token
-  const res2 = await checkAccessToken()
-  if(!res2) return
-
-  // 3. reply
+  // 2. reply
   for(let i = 0; i < replies.length; i++) {
     const v = replies[i]
-    const res3 = await sendWxMessage(wx_gzh_openid, wechat_access_token, v)
+    await sendObject(wx_gzh_openid, v)
   }
 
   return true
@@ -120,8 +117,46 @@ async function handle_click(
 async function handle_text(
   msgObj: Wx_Gzh_Text,
 ) {
-  // TODO
   
+  // 1. get openid
+  const wx_gzh_openid = msgObj.FromUserName
+  if(!wx_gzh_openid) return
+
+  // 2. check if we get to auto-reply
+  const userText = msgObj.Content
+  const res2 = await autoReplyAfterReceivingText(wx_gzh_openid, userText)
+  if(res2) return
+
+  // 2.1 TODO: temporarily check out test openid
+  const _env = process.env
+  const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
+  if(!testOpenId || testOpenId !== wx_gzh_openid) {
+    console.warn("interrupte handle_text!")
+    return
+  }
+
+  // 3. get user
+  const w3: Partial<Table_User> = {
+    oState: "NORMAL",
+    wx_gzh_openid,
+  }
+  const uCol = db.collection("User")
+  const q3 = uCol.where(w3).orderBy("insertedStamp", "desc")
+  const res3 = await q3.getOne<Table_User>()
+
+  // 4. check out login or not
+  const user4 = res3.data
+  if(!user4) {
+    const { t: t4 } = useI18n(wechatLang)
+    const text4 = t4("login_first")
+    await sendText(wx_gzh_openid, text4)
+    return
+  }
+
+  // 5. ai!
+  enter_ai({ user: user4, text: userText, wx_gzh_openid })
+  
+  return true
 }
 
 
@@ -412,7 +447,7 @@ async function bind_wechat_gzh(
 
   // 4.1 define successful logic
   const _success = async () => {
-    send_text_to_wechat_gzh(wx_gzh_openid, success_msg)
+    sendText(wx_gzh_openid, success_msg)
     await make_user_subscribed(wx_gzh_openid, userInfo, user3)
     if(memberId_1) {
       await _openWeChatNotification(memberId_1)
@@ -442,7 +477,7 @@ async function bind_wechat_gzh(
     const user6 = list6[0]
     const name6 = await getAccountName(user6)
     const already_bound_msg = t("already_bound", { account: name6 })
-    send_text_to_wechat_gzh(wx_gzh_openid, already_bound_msg)
+    sendText(wx_gzh_openid, already_bound_msg)
     return false
   }
 
@@ -465,17 +500,9 @@ async function send_welcome(
   const text = t("welcome_2")
   
   // 3. reply user with text
-  await send_text_to_wechat_gzh(wx_gzh_openid, text)
+  await sendText(wx_gzh_openid, text)
 
   return true
-}
-
-
-async function send_text_to_wechat_gzh(
-  wx_gzh_openid: string,
-  text: string,
-) {
-  await sendWxTextMessage(wx_gzh_openid, wechat_access_token, text)
 }
 
 async function make_user_subscribed(
@@ -550,6 +577,43 @@ async function make_user_subscribed(
 
 
 /***************** helper functions *************/
+
+// when user sends text, check out if we have to reply automatically
+async function autoReplyAfterReceivingText(
+  wx_gzh_openid: string,
+  text: string,
+) {
+  // 1. check if text is empty
+  const text1 = text.trim()
+  if(!text1) {
+    console.warn("autoReply: text is empty")
+    return true
+  }
+
+  // 2. check if text is "[收到不支持的消息类型，暂无法显示]"
+  if(text1.startsWith("[收到不支持的消息类型")) {
+    await sendText(wx_gzh_openid, "[收到不支持的消息类型]")
+    return true
+  }
+
+  // 3. TODO: because we're in beta, check if it is email address
+  const res3 = isEmailAndNormalize(text1)
+  if(res3) {
+    return true
+  }
+
+  // 4. whether or not the text is targeted by wxTextReplies
+  const replies = wxTextReplies[text1]
+  if(!replies || replies.length < 1) return false
+  
+  // 5. auto reply
+  for(let i = 0; i < replies.length; i++) {
+    const v = replies[i]
+    await sendObject(wx_gzh_openid, v)
+  }
+  return true
+}
+
 
 interface DirectionCredential {
   direction: string
@@ -683,6 +747,7 @@ async function turnInputIntoMsgObj(
   return { code: "0000", data: msgObj }
 }
 
+// take care of this function
 function getMsgObjForPlainText(
   xml: Record<string, Array<any>>,
 ) {
@@ -769,6 +834,24 @@ async function getMsgObjForSafeMode(message: string) {
 }
 
 /****************************** helper functions ******************************/
+
+async function sendText(
+  wx_gzh_openid: string,
+  text: string,
+) {
+  const res1 = await checkAccessToken()
+  if(!res1) return false
+  await sendWxTextMessage(wx_gzh_openid, wechat_access_token, text)
+}
+
+async function sendObject(
+  wx_gzh_openid: string,
+  obj: Wx_Gzh_Send_Msg,
+) {
+  const res1 = await checkAccessToken()
+  if(!res1) return false
+  await sendWxMessage(wx_gzh_openid, wechat_access_token, obj)
+}
 
 function getMsgMode(
   q: Record<string, any>,

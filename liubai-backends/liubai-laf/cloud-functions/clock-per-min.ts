@@ -168,15 +168,8 @@ async function send_wx_message(
 
   const str_time = LiuDateUtil.displayTime(calendarStamp, locale, timezone)
   obj.data.time4.value = str_time
-
-  console.log("sendWxTemplateMessage: ")
-  console.log(obj)
-  console.log(obj.data)
-
+  
   const res = await sendWxTemplateMessage(access_token, obj)
-  console.log(`发送微信模板消息给 ${userId} 结果:`)
-  console.log(res)
-
   return true
 }
 

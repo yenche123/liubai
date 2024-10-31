@@ -354,7 +354,13 @@ export async function sendWxTemplateMessage(
   param: Wx_Param_Msg_Templ_Send,
 ) {
   const url = `${API_WECHAT_TMPL_SEND}?access_token=${access_token}`
-  const res = await liuReq(url, param)
+  const res = await liuReq<Wx_Res_Common>(url, param)
+  const { code, data } = res
+  if(code !== "0000" || data?.errcode !== 0) {
+    console.warn("sendWxTemplateMessage failed")
+    console.log(res)
+    console.log(param)
+  }
   return res
 }
 
