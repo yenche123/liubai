@@ -33,7 +33,7 @@ const enableBottom = computed(() => {
 
 </script>
 <template>
-  <div class="tl-container">
+  <div>
 
     <template v-for="(item, index) in tlData.list" 
       :key="item.thread.first_id"

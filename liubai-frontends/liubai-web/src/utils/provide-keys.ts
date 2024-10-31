@@ -45,7 +45,7 @@ export const svScollingKey = Symbol() as InjectionKey<Ref<number>>
 export const svBottomUpKey = Symbol() as InjectionKey<ShallowRef<SvBottomUp>>
 
 // 让子组件获取当前 scroll-view 的 element
-export const svElementKey = Symbol() as InjectionKey<Ref<HTMLElement | null>>
+export const svElementKey = Symbol() as InjectionKey<Ref<HTMLDivElement | null>>
 
 // 让子组件得知 scroll-view 触发了 pull refresh
 export const svPullRefreshKey = Symbol() as InjectionKey<Ref<number>>

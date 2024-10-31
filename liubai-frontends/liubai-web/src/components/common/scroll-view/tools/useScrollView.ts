@@ -37,7 +37,7 @@ const MAGIC_NUM_2 = 500  // 当切换 view 视图（通常来自于路由切换�
 const MAX_RUN_TIMES = 5
 
 export function useScrollView(props: SvProps, emits: SvEmits) {
-  const sv = useTemplateRef<HTMLElement>("sv")
+  const sv = useTemplateRef<HTMLDivElement>("sv")
   const scrollPosition = ref(0)
   const bottomUp = shallowRef<SvBottomUp>({ type: "pixel" })
   const lastToggleViewStamp = ref(time.getTime())

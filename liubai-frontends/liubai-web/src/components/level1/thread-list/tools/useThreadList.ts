@@ -10,7 +10,6 @@ import {
   svBottomUpKey, 
   scrollViewKey, 
   svScollingKey,
-  svElementKey,
   svPullRefreshKey,
 } from "~/utils/provide-keys";
 import tlUtil from "./tl-util"
@@ -48,7 +47,6 @@ export function useThreadList(
   // 获取命令 scroll-view 滚动到期望位置的控制器
   const svBottomUp = inject(svBottomUpKey)
   const scrollPosition = inject(svScollingKey)
-  const svEl = inject(svElementKey)
 
   const cssDetectOverflow = liuApi.canIUse.cssDetectTextOverflow()
   const tlData = reactive<TlData>({
@@ -67,7 +65,6 @@ export function useThreadList(
     emits,
     props,
     scrollPosition,
-    svEl,
   }
 
   // 1.1 监听触底/顶加载
