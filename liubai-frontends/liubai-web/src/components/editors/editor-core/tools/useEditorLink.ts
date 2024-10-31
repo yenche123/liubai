@@ -1,7 +1,7 @@
 import type { 
   EditorCoreProps, 
 } from "./types"
-import { nextTick, onMounted, ref, toRef, watch } from "vue"
+import { nextTick, onBeforeUnmount, ref, toRef, watch } from "vue"
 import type { ComponentPublicInstance, Ref } from "vue"
 import cui from "~/components/custom-ui"
 import { 
@@ -221,26 +221,35 @@ function initEditorLink(
     whenTapLink(a, url, rr)
   }
 
-  const resetLinks = (parentEl: HTMLElement) => {
+  const resetLinks = (
+    parentEl: HTMLElement,
+    onlyRemove: boolean = false,
+  ) => {
     const nodes = parentEl.querySelectorAll<HTMLElement>("a.liu-link")
 
     nodes.forEach(v => {
       v.removeEventListener("click", onTapLink)
-      v.addEventListener("click", onTapLink)
+      if(!onlyRemove) {
+        v.addEventListener("click", onTapLink)
+      }
     })
   }
 
-  onMounted(async () => {
-    const el = ecRef.value?.$el
-    if(!el) return
+  watch([contentRef, ecRef], async ([newV1, newV2]) => {
+    if(!newV1 || !newV2) return
+    const len = newV1.content?.length
+    if(!len) return
+
+    const _el = newV2.$el
+    if(!_el) return
     await nextTick()
-    resetLinks(el)
+    await liuUtil.waitAFrame()
+    resetLinks(_el)
   })
 
-  watch(contentRef, async (newV) => {
-    await nextTick()
+  onBeforeUnmount(() => {
     const el = ecRef.value?.$el
     if(!el) return
-    resetLinks(el)
+    resetLinks(el, true)
   })
 }
