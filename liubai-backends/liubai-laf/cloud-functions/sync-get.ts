@@ -77,7 +77,7 @@ export async function main(ctx: FunctionContext) {
   const sgCtx = initSgCtx(user, workspaces)
 
   // 6. to execute
-  const results = await toExecute(sgCtx, res3.newBody)
+  const results = await toRun(sgCtx, res3.newBody)
   
   // 7. construct response
   const res7: Res_SyncGet_Cloud = {
@@ -97,7 +97,7 @@ interface OperationOpt {
   taskId: string
 }
 
-async function toExecute(
+async function toRun(
   sgCtx: SyncGetCtx,
   body: Record<string, any>,
 ) {
@@ -568,31 +568,17 @@ async function toThreadListFromContent(
   const res1 = getSharedData_1(sgCtx, spaceId, opt)
   if(!res1.pass) return res1.result
 
-  // 2. handle w
+  // 2.1 handle w
   const isIndex = vT === "INDEX"
   const isCalendar = vT === "CALENDAR"
   const isPin = vT === "PINNED"
   const isTrash = vT === "TRASH"
   const oState = isTrash ? "REMOVED" : "OK"
-  let key = oState === "OK" ? "createdStamp" : "updatedStamp"
-
-  if(isCalendar) key = "calendarStamp"
-  else if(isPin) key = "pinStamp"
-  else if(isTrash) key = "removedStamp"
 
   const w: Record<string, any> = {
     oState,
     infoType: "THREAD",
     spaceId,
-  }
-
-  if(lastItemStamp) {
-    if(sort === "desc") {
-      w[key] = _.lt(lastItemStamp)
-    }
-    else {
-      w[key] = _.gt(lastItemStamp)
-    }
   }
 
   if(isCalendar) {
@@ -617,12 +603,29 @@ async function toThreadListFromContent(
     w.tagSearched = _.in([tagId])
   }
 
+  // 2.2 handle specific_ids and excluded_ids
   if(specific_ids?.length) {
     w._id = _.in(specific_ids)
   }
   else if(excluded_ids?.length) {
     w._id = _.nin(excluded_ids)
   }
+
+  // 2.3 handle lastItemStamp using key
+  let key = oState === "OK" ? "createdStamp" : "updatedStamp"
+  if(isCalendar) key = "calendarStamp"
+  else if(isPin) key = "pinStamp"
+  else if(isTrash) key = "removedStamp"
+
+  if(lastItemStamp) {
+    if(sort === "desc") {
+      w[key] = _.lt(lastItemStamp)
+    }
+    else {
+      w[key] = _.gt(lastItemStamp)
+    }
+  }
+
 
   // 3. to query
   let q3 = db.collection("Content").where(w)
