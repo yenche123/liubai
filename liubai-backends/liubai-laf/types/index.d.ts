@@ -83,6 +83,7 @@ declare global {
       LIU_WX_GZ_TAG_MANAGEMENT?: string    // 01: tag management enabled, otherwise disabled
       LIU_WX_GZ_LOGIN?: string             // 01: logging in by wx gzh enabled, otherwise disabled
       LIU_WX_GZ_TMPL_ID_1?: string         // reminder template id enabled, otherwise disabled
+      LIU_WX_GZ_TEST_OPENID?: string       // test openid of wx_gzh for testing ai
 
       /** 企业微信 企业内部自建应用 */
       LIU_WECOM_QYNB_CORPID?: string

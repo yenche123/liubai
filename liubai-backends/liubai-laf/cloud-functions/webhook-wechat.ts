@@ -127,6 +127,14 @@ async function handle_text(
   const res2 = await autoReplyAfterReceivingText(wx_gzh_openid, userText)
   if(res2) return
 
+  // 2.1 TODO: temporarily check out test openid
+  const _env = process.env
+  const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
+  if(!testOpenId || testOpenId !== wx_gzh_openid) {
+    console.warn("interrupte handle_text!")
+    return
+  }
+
   // 3. get user
   const w3: Partial<Table_User> = {
     oState: "NORMAL",
