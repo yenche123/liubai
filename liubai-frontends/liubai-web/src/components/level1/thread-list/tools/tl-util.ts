@@ -3,7 +3,10 @@ import type { TlAtom, TlData, TlViewType } from "./types"
 
 
 // 将 ThreadShow 转为 thread-list 的格式
-function threadShowsToList(results: ThreadShow[]) {
+function threadShowsToList(
+  results: ThreadShow[],
+  viewType?: TlViewType,
+) {
   const newList: TlAtom[] = []
   results.forEach(v => {
     const obj: TlAtom = {

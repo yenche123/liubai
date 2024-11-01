@@ -3,12 +3,11 @@ import { type CsEmits, csProps } from "./tools/types"
 import liuApi from '~/utils/liu-api';
 import middleBridge from '~/utils/middle-bridge';
 import { useChatScroll } from "./tools/useChatScroll";
-import cfg from "~/config";
 
 const props = defineProps(csProps)
 const emits = defineEmits<CsEmits>()
 
-const { cs, csData } = useChatScroll(props, emits)
+const { cs, csData, onScrolling } = useChatScroll(props, emits)
 const { isMobile } = liuApi.getCharacteristic()
 const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
 
@@ -21,6 +20,7 @@ const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
       'cs-scrollbar': showScrollbarProperty,
       'cs-scollbar_hidden': showScrollbarProperty && hiddenScrollBar,
     }"
+    @scroll.passive="onScrolling"
   >
     <slot></slot>
     <div class="cs-offset"></div>
@@ -62,7 +62,7 @@ const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
 
 .cs-offset {
   width: 100%;
-  height: v-bind("cfg.navi_height + 'px'");
+  height: v-bind("csData.offset + 'px'");
 }
 
 </style>

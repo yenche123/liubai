@@ -9,7 +9,7 @@ import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore"
 import localCache from "~/utils/system/local-cache"
 import type { TlData, TlEmits, TlProps } from "./types"
 import valTool from "~/utils/basic/val-tool"
-import threadOperate from "~/hooks/thread/thread-operate";
+import threadOperate from "~/hooks/thread/thread-operate"
 import liuUtil from "~/utils/liu-util"
 import tlUtil from "./tl-util"
 import { filterForCalendar } from "./handle-calendar"

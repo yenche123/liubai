@@ -39,7 +39,7 @@ export const editorCanInteractKey = Symbol() as InjectionKey<Ref<boolean>>
 export const scrollViewKey = Symbol() as InjectionKey<SvProvideInject>
 
 // 用于跨级传递 scroll-view scolling 事件
-export const svScollingKey = Symbol() as InjectionKey<Ref<number>>
+export const svScrollingKey = Symbol() as InjectionKey<Ref<number>>
 
 // 用于让子/孙组件传递参数给 scroll-view 让后者滚动到特定位置
 export const svBottomUpKey = Symbol() as InjectionKey<ShallowRef<SvBottomUp>>

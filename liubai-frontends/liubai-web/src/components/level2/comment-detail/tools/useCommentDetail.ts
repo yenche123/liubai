@@ -13,7 +13,7 @@ import { useWindowSize } from "~/hooks/useVueUse";
 import { 
   scrollViewKey, 
   svBottomUpKey, 
-  svScollingKey,
+  svScrollingKey,
   svElementKey,
 } from "~/utils/provide-keys";
 import type { SvProvideInject } from "~/types/components/types-scroll-view";
@@ -46,7 +46,7 @@ export function useCommentDetail(
   const tmpStore = useTemporaryStore()
   const { height } = useWindowSize()
   const svBottomUp = inject(svBottomUpKey)
-  const scrollPosition = inject(svScollingKey, ref(0))
+  const scrollPosition = inject(svScrollingKey, ref(0))
   const svEl = inject(svElementKey)
 
   const cdData = reactive<CommentDetailData>({

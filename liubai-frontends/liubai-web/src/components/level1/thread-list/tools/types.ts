@@ -10,6 +10,7 @@ export type TlViewType = ThreadListViewType
 export interface TlAtom {
   thread: ThreadShow
   showType: ThreadCardShowType
+  dateText?: string     // which is for calendar TODAY_FUTURE & PAST
 }
 
 export interface TlData {

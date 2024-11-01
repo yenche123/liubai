@@ -3,13 +3,13 @@ import { computed, inject } from "vue";
 import { useLayoutStore } from "~/views/useLayoutStore";
 import cui from "~/components/custom-ui";
 import type { CetEmit, CetProps } from "./types";
-import { svBottomUpKey, svScollingKey } from "~/utils/provide-keys";
+import { svBottomUpKey, svScrollingKey } from "~/utils/provide-keys";
 import valTool from "~/utils/basic/val-tool";
 import { useFormatClear } from "../../../tools/useFormatClear"
 
 export function useCeToolbar(props: CetProps, emit: CetEmit) {
   const svBottomUp = inject(svBottomUpKey)
-  const scrollPosition = inject(svScollingKey)
+  const scrollPosition = inject(svScrollingKey)
 
   const layout = useLayoutStore()
   const { sidebarStatus } = storeToRefs(layout)

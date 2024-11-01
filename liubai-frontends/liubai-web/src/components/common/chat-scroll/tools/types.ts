@@ -29,6 +29,7 @@ export interface CsData {
   scrollPosition: number
   lastToggleViewStamp: number
   isVisible: boolean
+  offset: number
 }
 
 export interface CsCtx {

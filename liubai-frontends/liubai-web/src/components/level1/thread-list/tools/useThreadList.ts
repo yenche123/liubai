@@ -9,7 +9,7 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { 
   svBottomUpKey, 
   scrollViewKey, 
-  svScollingKey,
+  svScrollingKey,
   svPullRefreshKey,
 } from "~/utils/provide-keys";
 import tlUtil from "./tl-util"
@@ -46,7 +46,7 @@ export function useThreadList(
 
   // 获取命令 scroll-view 滚动到期望位置的控制器
   const svBottomUp = inject(svBottomUpKey)
-  const scrollPosition = inject(svScollingKey)
+  const scrollPosition = inject(svScrollingKey)
 
   const cssDetectOverflow = liuApi.canIUse.cssDetectTextOverflow()
   const tlData = reactive<TlData>({
@@ -169,6 +169,7 @@ export function useThreadList(
   const whenTapBriefing = async () => {
     if(!scrollPosition) return
     const sP1 = scrollPosition.value
+    if(!sP1) return
     await valTool.waitMilli(60)
     const sP2 = scrollPosition.value
     const diff = sP2 - sP1

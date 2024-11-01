@@ -18,7 +18,7 @@ import type {
 } from "~/types/components/types-scroll-view"
 import { 
   scrollViewKey, 
-  svScollingKey, 
+  svScrollingKey, 
   svBottomUpKey,
   svElementKey,
   svPullRefreshKey,
@@ -43,7 +43,7 @@ export function useScrollView(props: SvProps, emits: SvEmits) {
   const lastToggleViewStamp = ref(time.getTime())
 
   provide(svElementKey, sv)
-  provide(svScollingKey, scrollPosition)
+  provide(svScrollingKey, scrollPosition)
   provide(svBottomUpKey, bottomUp)
 
   const svData = reactive<SvData>({
@@ -245,7 +245,6 @@ function listenToScroll(
     svType: SvTriggerType,
     sP: number,
     sH: number,
-    currentStamp: number,
   ) => {
     if(svType === "to_end") {
       emits("scrolltoend", { scrollPosition: sP })
@@ -255,7 +254,7 @@ function listenToScroll(
     }
     proData.type = svType
     proData.triggerNum++
-    lastInvokeStamp = currentStamp
+    lastInvokeStamp = time.getLocalTime()
     lastScrollSize = sH
     lastScrollPosition = sP
   }
@@ -265,13 +264,13 @@ function listenToScroll(
     sH: number,
   ) => {
     await valTool.waitMilli(MAGIC_NUM_1)
-    if(time.isWithinMillis(lastInvokeStamp, MAGIC_NUM_1)) {
+    if(time.isWithinMillis(lastInvokeStamp, MAGIC_NUM_1, true)) {
       return
     }
     emits("scrolltoend", { scrollPosition: sP })
     proData.type = "to_end"
     proData.triggerNum++
-    lastInvokeStamp = time.getTime()
+    lastInvokeStamp = time.getLocalTime()
     lastScrollSize = sH
     lastScrollPosition = sP
   }
@@ -282,6 +281,7 @@ function listenToScroll(
 
     const isVertical = props.direction === "vertical"
     const sP = isVertical ? _sv.scrollTop : _sv.scrollLeft
+    const lP = lastScrollPosition
 
     const lastViewStamp = ctx.lastToggleViewStamp.value
     if(time.isWithinMillis(lastViewStamp, MAGIC_NUM_2)) {
@@ -294,19 +294,17 @@ function listenToScroll(
       return
     }
 
-    const now = Date.now()
-    if(lastScrollStamp + MIN_SCROLL_DURATION > now) {
-      // 确保在零点时 不会受防抖节流影响
-      if(sP !== 0 || scrollPosition.value === 0) return
+    // 防抖截流，避免频繁触发 onScrolling
+    if(time.isWithinMillis(lastScrollStamp, MIN_SCROLL_DURATION, true)) {
+      if(sP !== 0 && lP !== 0) return
     }
-    lastScrollStamp = now
+    lastScrollStamp = time.getLocalTime()
   
 
     const cH = isVertical ? _sv.clientHeight : _sv.clientWidth
     const sH0 = isVertical ? _sv.scrollHeight : _sv.scrollWidth
     const sH = sH0 - cH
     const lH = lastScrollSize
-    const lP = lastScrollPosition
 
     scrollPosition.value = sP
     emits("scroll", { scrollPosition: sP })
@@ -327,7 +325,7 @@ function listenToScroll(
       const doubleThreshold = _lowerThreshold * 2
       if(sH >= doubleThreshold) {
         const doubleDuration = MIN_INVOKE_DURATION * 2
-        if(!time.isWithinMillis(lastInvokeStamp, doubleDuration)) {
+        if(!time.isWithinMillis(lastInvokeStamp, doubleDuration, true)) {
           const lowerLine = sH - _lowerThreshold
           if(lowerLine <= lP && lowerLine <= sP) {
             // console.warn("to_end 111")
@@ -341,9 +339,9 @@ function listenToScroll(
 
     if(DIRECTION === "DOWN") {
       if(lP < middleLine && middleLine <= sP) {
-        if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION)) {
+        if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION, true)) {
           // console.warn("to_end 222")
-          _setSvData("to_end", sP, sH, now)
+          _setSvData("to_end", sP, sH)
           return
         }
       }
@@ -353,9 +351,9 @@ function listenToScroll(
       // which means some items may be removed from the scroll-view
       // so we need to trigger the `to_end` event
       if(sH < (lH - 100) && lP > middleLine) {
-        if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION)) {
+        if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION, true)) {
           console.warn("to_end 333")
-          _setSvData("to_end", sP, sH, now)
+          _setSvData("to_end", sP, sH)
           return
         }
       }
@@ -363,8 +361,8 @@ function listenToScroll(
     }
     else if(DIRECTION === "UP") {
       if(lP > middleLine && middleLine >= sP) {
-        if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION)) {
-          _setSvData("to_start", sP, sH, now)
+        if(!time.isWithinMillis(lastInvokeStamp, MIN_INVOKE_DURATION, true)) {
+          _setSvData("to_start", sP, sH)
           return
         }
       }

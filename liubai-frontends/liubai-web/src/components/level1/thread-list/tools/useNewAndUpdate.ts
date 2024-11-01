@@ -255,7 +255,7 @@ function handleUpdatedList(
 
   // 2. 如果当前列表为 "置顶"，另外处理
   if(vT === "PINNED") {
-    _handleUpdateForPinnedList(tlData, updatedList)
+    _handleUpdateForPinnedList(ctx, updatedList)
     return
   }
 
@@ -297,14 +297,14 @@ function handleUpdatedList(
   // 如果当前为 INDEX 列表 whyChange 是 pin 事件，并且有 unpin 的 thread 
   // 设法把这些 thread 加入到列表里
   if(vT === "INDEX" && whyChange === "pin") {
-    _handleIndexListWhenPin(tlData, newList, changeFrom)
+    _handleIndexListWhenPin(ctx, newList, changeFrom)
     return
   }
 
 }
 
 function _handleIndexListWhenPin(
-  tlData: TlData,
+  ctx: TlNuCtx,
   newList: ThreadShow[],
   changeFrom?: ThreadChangedFrom,
 ) {
@@ -312,7 +312,7 @@ function _handleIndexListWhenPin(
   // 检查是否有 “被取消指定” 的动态
   const unpinList = newList.filter(v => !Boolean(v.pinStamp) && Boolean(v.oState === 'OK'))
   if(unpinList.length >= 1) {
-    _handleIndexListForUnpin(tlData, unpinList)
+    _handleIndexListForUnpin(ctx, unpinList)
     return
   }
   
@@ -325,9 +325,10 @@ function _handleIndexListWhenPin(
  * 当 “取消置顶” 发生时，处理 index 列表
  */
 function _handleIndexListForUnpin(
-  tlData: TlData,
+  ctx: TlNuCtx,
   unpinList: ThreadShow[],
 ) {
+  const { tlData } = ctx
   const { list } = tlData
 
   // 2. 判断是否使用 “刷新” 加载
@@ -357,9 +358,10 @@ function _handleIndexListForUnpin(
 
 // 有动态更新时，特别处理置顶列表
 function _handleUpdateForPinnedList(
-  tlData: TlData,
+  ctx: TlNuCtx,
   updatedList: ThreadShow[],
 ) {
+  const { tlData } = ctx
   const { list } = tlData
   const newList = valTool.copyObject(updatedList)
   const pinList = newList.filter(v => Boolean(v.pinStamp) && Boolean(v.oState === "OK"))
