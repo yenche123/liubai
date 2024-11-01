@@ -91,6 +91,7 @@ const { t } = useI18n()
 
       <!-- 输入框 + 搜索结果 -->
       <div class="hsir-container">
+        <div class="hsir-bg" @click.stop="onTapPopup"></div>
         <HsInputResults v-model="hsData.inputTxt"
           :list-added="hsData.list"
           @focusornot="onFocusOrNot"
@@ -253,6 +254,15 @@ const { t } = useI18n()
   box-shadow: var(--card-shadow-2);
   margin-block-start: -78px;
 }
+
+.hsir-bg {
+  position: absolute;
+  top: 78px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 
 .hs-virtual-two {
   width: 100%;
