@@ -1,10 +1,4 @@
-import { 
-  isEqual, 
-  isToday, 
-  isTomorrow, 
-  isYesterday, 
-  isThisYear, 
-} from 'date-fns'
+import dateTool from '~/utils/basic/date-tool'
 import { i18n } from '~/locales'
 import type { LiuRemindEarly, LiuRemindLater, LiuRemindMe } from '~/types/types-atom'
 import { REMIND_LATER, REMIND_EARLY } from "~/config/atom"
@@ -26,7 +20,7 @@ export function getDefaultDate() {
 }
 
 export function areTheDatesEqual(d1: Date, d2: Date) {
-  return isEqual(d1, d2)
+  return dateTool.isEqual(d1, d2)
 }
 
 // 给定时间（戳），展示时间，比如用于 "什么时候" / "提醒我"
@@ -51,18 +45,18 @@ export function showBasicTime(
   const MON = t("date_related.m_" + mm)
   const DAY = t("date_related.day_" + d.getDay())
 
-  if(isToday(d)) {
+  if(dateTool.isToday(d)) {
     return `${t("common.today")} ${hr}:${min}`
   }
-  if(isYesterday(d)) {
+  if(dateTool.isYesterday(d)) {
     return `${t("common.yesterday")} ${hr}:${min}`
   }
-  if(isTomorrow(d)) {
+  if(dateTool.isTomorrow(d)) {
     return `${t("common.tomorrow")} ${hr}:${min}`
   }
 
   // 在今年
-  if(isThisYear(d)) {
+  if(dateTool.isThisYear(d)) {
     let mm2 = lang === "en" ? MON : (d.getMonth() + 1)
     let dd2 = d.getDate()
     return t("date_related.show_1", { mm: mm2, dd: dd2, day: DAY, hr, min })
@@ -89,11 +83,57 @@ export function showBasicDate(
   const MON = t("date_related.m_" + mm)
   const mm2 = lang === "en" ? MON : (d.getMonth() + 1)
 
-  if(isThisYear(d)) {
+  if(dateTool.isThisYear(d)) {
     return t("date_related.show_2", { mm: mm2, dd })
   }
 
   return t("date_related.show_3", { mm: mm2, dd, yyyy: yy })
+}
+
+
+export function showMonthAndDay(stamp: number) {
+  const { t, locale } = i18n.global
+  const lang = locale.value as SupportedLocale
+  const d = new Date(stamp)
+
+  const mm = d.getMonth() + 1
+  const dd = d.getDate()
+  const day = t("date_related.day_" + d.getDay())
+
+  if(lang === "zh-Hans" || lang === "zh-Hant") {
+    return t("date_related.show_4", { mm, dd, day })
+  }
+
+  const mm2 = valTool.format0(mm)
+  const MON = t("date_related.m_" + mm2)
+
+  return t("date_related.show_4", { mm: MON, dd, day })
+}
+
+export function showYearAndMonth(stamp: number) {
+  const { t, locale } = i18n.global
+  const lang = locale.value as SupportedLocale
+  const d = new Date(stamp)
+
+  const mm = d.getMonth() + 1
+
+  // 1. this year
+  if(dateTool.isThisYear(d)) {
+    const mm2 = valTool.format0(mm)
+    return t("date_related.month_" + mm2)
+  }
+
+  const yyyy = d.getFullYear()
+
+  // 2. other year and lang is zh-Hans or zh-Hant
+  if(lang === "zh-Hans" || lang === "zh-Hant") {
+    return t("date_related.show_5", { yyyy, mm })
+  }
+
+  // 3. other year and lang is en
+  const mm3 = valTool.format0(mm)
+  const MON = t("date_related.m_" + mm3)
+  return t("date_related.show_5", { yyyy, mm: MON })
 }
 
 

@@ -33,7 +33,9 @@ const enableBottom = computed(() => {
 
 </script>
 <template>
-  <div>
+  <div :class="{
+    'thread-list_reverse': viewType === 'PAST',
+  }">
 
     <template v-for="(item, index) in tlData.list" 
       :key="item.thread.first_id"
@@ -60,7 +62,14 @@ const enableBottom = computed(() => {
 
   </div>
 </template>
-<style lang="scss">
+<style scoped lang="scss">
+
+.thread-list_reverse {
+  display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
+  position: relative;
+}
 
 
 </style>

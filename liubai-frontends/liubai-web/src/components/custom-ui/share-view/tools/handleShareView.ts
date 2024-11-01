@@ -1,7 +1,7 @@
 import type { ThreadShow } from "~/types/types-content";
 import type { ShareViewData, ExportData } from "./types"
 import thirdLink from "~/config/third-link"
-import { add } from "date-fns"
+import dateTool from "~/utils/basic/date-tool";
 import liuUtil from "~/utils/liu-util";
 import type { EventAttributes, Alarm } from "ics";
 import { i18n } from "~/locales";
@@ -140,7 +140,7 @@ function handleGoogleCalendar(
 
   const getDates = (stamp: number) => {
     const startDate = new Date(stamp)
-    const endDate = add(startDate, { minutes: 30 })
+    const endDate = dateTool.add(startDate, { minutes: 30 })
     const s = liuUtil.getLiuDate(startDate, { utc: true })
     const e = liuUtil.getLiuDate(endDate, { utc: true })
     let dates = `${s.YYYY}${s.MM}${s.DD}T${s.hh}${s.mm}00Z/`
