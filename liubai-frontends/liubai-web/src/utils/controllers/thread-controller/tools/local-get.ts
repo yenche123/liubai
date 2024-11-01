@@ -34,6 +34,8 @@ async function getList(
   const isCalendar = vT === "CALENDAR"
   const isPin = vT === "PINNED"
   const isTrash = vT === "TRASH"
+  const isTodayFuture = vT === "TODAY_FUTURE"
+  const isPast = vT === "PAST"
 
   const oState: OState = isTrash ? "REMOVED" : "OK"
   const { REMOVING_DAYS } = liuEnv.getEnv()
@@ -93,6 +95,18 @@ async function getList(
     const q = db.contents.where(w).between(b1, b2, false, true).filter(filterFunc)
     list = await q.sortBy("calendarStamp")
   }
+  else if(isTodayFuture) {
+    let theStamp = lastItemStamp ?? (now - time.DAY)
+    let tmp = db.contents.where("calendarStamp").above(theStamp)
+    tmp = tmp.filter(filterFunc).limit(limit)
+    list = await tmp.toArray()
+  }
+  else if(isPast) {
+    let theStamp = lastItemStamp ?? now
+    let tmp = db.contents.where("calendarStamp").below(theStamp)
+    tmp = tmp.reverse().filter(filterFunc).limit(limit)
+    list = await tmp.toArray()
+  }
   else if(specific_ids?.length) {
     // I. 加载特定 ids
     let tmp = db.contents.where("_id").anyOf(specific_ids)
@@ -115,8 +129,7 @@ async function getList(
     // II. 首次加载
     let tmp = db.contents.orderBy(key)
     if(sort === "desc") tmp = tmp.reverse()
-    tmp = tmp.filter(filterFunc)
-    tmp = tmp.limit(limit)
+    tmp = tmp.filter(filterFunc).limit(limit)
 
     // console.time("查询首页")
     list = await tmp.toArray()
@@ -127,8 +140,7 @@ async function getList(
     let w = db.contents.where(key)
     let tmp = sort === "desc" ? w.below(lastItemStamp) : w.above(lastItemStamp)
     if(sort === "desc") tmp = tmp.reverse()
-    tmp = tmp.filter(filterFunc)
-    tmp = tmp.limit(limit)
+    tmp = tmp.filter(filterFunc).limit(limit)
     // console.time("查询非首页")
     list = await tmp.toArray()
     // console.timeEnd("查询非首页")

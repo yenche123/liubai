@@ -63,6 +63,7 @@ const {
   showMore,
   onMouseEnter,
   onMouseLeave,
+  showActionBar,
 } = useThreadCard(props, emit)
 const { t } = useI18n()
 const {
@@ -173,7 +174,7 @@ const hoverRadius = props.displayType === "list" ? "24px" : "8px"
 
       <!-- 操作栏 -->
       <TcActionbar
-        v-if="threadData.oState === 'OK'"
+        v-if="showActionBar"
         :space-type="threadData.spaceType"
         :is-mine="threadData.isMine"
         :comment-num="threadData.commentNum"

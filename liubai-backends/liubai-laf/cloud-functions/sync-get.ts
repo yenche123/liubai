@@ -547,14 +547,14 @@ async function toThreadListFromContent(
   const { 
     spaceId, 
     viewType: vT, 
-    limit = 16, 
-    sort = "desc", 
+    limit = 16,
     lastItemStamp,
     specific_ids,
     excluded_ids,
     tagId,
     stateId,
   } = atom
+  let sort = atom.sort ?? "desc"
 
   // 0. checking out more
   if(vT === "STATE" && !stateId) {
@@ -573,6 +573,8 @@ async function toThreadListFromContent(
   const isCalendar = vT === "CALENDAR"
   const isPin = vT === "PINNED"
   const isTrash = vT === "TRASH"
+  const isTodayFuture = vT === "TODAY_FUTURE"
+  const isPast = vT === "PAST"
   const oState = isTrash ? "REMOVED" : "OK"
 
   const w: Record<string, any> = {
@@ -586,6 +588,16 @@ async function toThreadListFromContent(
     const s1 = now - DAY
     const s2 = now + DAY + (HOUR * 2)
     w.calendarStamp = _.and(_.gt(s1), _.lte(s2))
+  }
+  else if(isTodayFuture) {
+    sort = "asc"
+    const now = getNowStamp()
+    const s1 = now - DAY
+    w.calendarStamp = _.gt(s1)
+  }
+  else if(isPast) {
+    const now = getNowStamp()
+    w.calendarStamp = _.lt(now)
   }
   else if(isPin) {
     w.pinStamp = _.gt(0)
@@ -613,7 +625,9 @@ async function toThreadListFromContent(
 
   // 2.3 handle lastItemStamp using key
   let key = oState === "OK" ? "createdStamp" : "updatedStamp"
-  if(isCalendar) key = "calendarStamp"
+  if(isCalendar || isTodayFuture || isPast) {
+    key = "calendarStamp"
+  }
   else if(isPin) key = "pinStamp"
   else if(isTrash) key = "removedStamp"
 

@@ -1,4 +1,4 @@
-import { onMounted, ref, shallowRef, watch } from 'vue';
+import { computed, onMounted, ref, shallowRef, watch } from 'vue';
 import EditorCore from "~/components/editors/editor-core/editor-core.vue"
 import type { TipTapEditor } from "~/types/types-editor"
 import type { TcEmits, TcProps } from "./types"
@@ -79,6 +79,12 @@ export function useThreadCard(
     showMore.value = false
   })
 
+  const showActionBar = computed(() => {
+    const vT = props.viewType
+    if(vT === "TODAY_FUTURE" || vT === "PAST") return false
+    return props.threadData.oState === "OK"
+  })
+
   return {
     editorCoreRef,
     editor,
@@ -89,6 +95,7 @@ export function useThreadCard(
     showMore,
     onMouseEnter,
     onMouseLeave,
+    showActionBar,
   }
 }
 
