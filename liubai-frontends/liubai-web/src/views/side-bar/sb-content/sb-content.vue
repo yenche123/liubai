@@ -150,7 +150,7 @@ const color_selected = "var(--main-normal)"
       @aftertap="toClosePopup"
     >
       <div class="sb-icon-container">
-        <SvgIcon class="sb-icon" 
+        <SvgIcon class="sb-icon" style="padding-block-end: 1px"
           :name="state === 'schedule' ? 'schedule_selected' : 'schedule'" 
           :color="state === 'schedule' ? color_selected : color"
         ></SvgIcon>
