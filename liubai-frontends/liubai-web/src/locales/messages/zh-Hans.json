@@ -144,7 +144,7 @@
     "show_2": "{mm} 月 {dd} 日",
     "show_3": "{yyyy} 年 {mm} 月 {dd} 日",
     "show_4": "{mm}/{dd} ({day})",
-    "show_5": "{yyyy}年{mm}月",
+    "show_5": "{yyyy} 年 {mm} 月",
     "countdown_1": "倒计时 {min} 分 {sec} 秒",
     "countdown_2": "倒计时 {hr} 小时 {min} 分钟",
     "countdown_3": "倒计时 {day} 天 {hr} 小时 {min} 分",

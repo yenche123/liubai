@@ -132,7 +132,7 @@
     "show_2": "{mm} 月 {dd} 日",
     "show_3": "{yyyy} 年 {mm} 月 {dd} 日",
     "show_4": "{mm}/{dd} ({day})",
-    "show_5": "{yyyy}年{mm}月",
+    "show_5": "{yyyy} 年 {mm} 月",
     "countdown_1": "還有 {min} 分 {sec} 秒",
     "countdown_2": "還有 {hr} 小時 {min} 分鐘",
     "countdown_3": "還有 {day} 天 {hr} 小時 {min} 分",

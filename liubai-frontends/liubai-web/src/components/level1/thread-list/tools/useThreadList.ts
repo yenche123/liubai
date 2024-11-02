@@ -307,7 +307,7 @@ async function loadList(
 
   // 2. 加载完数据后，开始封装
   cloudOpt.threadShows = results
-  const newList = tlUtil.threadShowsToList(results)
+  const newList = tlUtil.threadShowsToList(results, vT)
   const newLength = newList.length
 
   // 3. 赋值到 list 上
@@ -450,7 +450,7 @@ async function loadAgain(
     results = await threadController.getList(opt1)
   }  
 
-  const newList = tlUtil.threadShowsToList(results)
+  const newList = tlUtil.threadShowsToList(results, vT)
   const deltaLength = newList.length
   const newLength = deltaLength + startIndex
   const oldLength = tlData.list.length

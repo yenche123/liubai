@@ -183,7 +183,7 @@ function handleNewList(
     return
   }
 
-  const _myList = tlUtil.threadShowsToList(myList)
+  const _myList = tlUtil.threadShowsToList(myList, vT)
   tlData.list.splice(0, 0, ..._myList)
 
   if(tlData.lastItemStamp) return
@@ -205,7 +205,7 @@ function handleNewListForCalendar(
   } = filterForCalendar(results)
 
   if(tmpList.length < 1) return
-  const newList = tlUtil.threadShowsToList(tmpList)
+  const newList = tlUtil.threadShowsToList(tmpList, ctx.props.viewType)
 
   if(oldList.length < 1) {
     tlData.list = newList

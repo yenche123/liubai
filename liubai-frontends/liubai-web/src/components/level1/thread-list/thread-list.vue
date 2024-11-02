@@ -40,7 +40,17 @@ const enableBottom = computed(() => {
     <template v-for="(item, index) in tlData.list" 
       :key="item.thread.first_id"
     >
+
+      <!-- the bar of date for TODAY_FUTURE -->
+      <template v-if="viewType === 'TODAY_FUTURE' && item.dateText">
+        <div v-if="index === 0 || tlData.list[index - 1].dateText !== item.dateText" 
+          class="liu-no-user-select thread-list-bar"
+        >
+          <span>{{ item.dateText }}</span>
+        </div>
+      </template>
       
+      <!-- the card of thread -->
       <ThreadCard 
         :thread-data="item.thread"
         :position="index"
@@ -69,6 +79,16 @@ const enableBottom = computed(() => {
   flex-direction: column-reverse;
   width: 100%;
   position: relative;
+}
+
+.thread-list-bar {
+  width: 100%;
+  padding-inline-start: 8px;
+  padding-block: 8px;
+  box-sizing: border-box;
+  font-size: var(--title-font);
+  color: var(--main-text);
+  font-weight: 700;
 }
 
 
