@@ -108,6 +108,23 @@ const iconColor = `var(--main-normal)`
       </div>
     </NaviLink>
 
+    <!-- schedule -->
+    <NaviLink :to="prefix + 'schedule'">
+      <div class="iu-no-user-select liu-hover mc-item">
+        <div class="mci-icon-box">
+          <SvgIcon :color="iconColor" name="schedule" class="mci-icon"></SvgIcon>
+        </div>
+        <div class="mci-text">
+          <span>{{ t('calendar.schedule') }}</span>
+        </div>
+        <div class="mci-footer">
+          <div class="mcif-arrow">
+            <SvgIcon :color="iconColor" name="arrow-right2" class="mcif-arrow-icon"></SvgIcon>
+          </div>
+        </div>
+      </div>
+    </NaviLink>
+
   </div>
 
   <!-- connections + settings + trash -->

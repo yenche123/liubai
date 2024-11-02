@@ -78,7 +78,6 @@ export function usePageEnabled(pageName: string) {
       return v.name === pageName || v.name === `collaborative-${pageName}`
     })
     const hasCurrentPage = Boolean(currentPage)
-    console.log("hasCurrentPage: ", hasCurrentPage)
     pageEnabled.value = hasCurrentPage
   })
 
