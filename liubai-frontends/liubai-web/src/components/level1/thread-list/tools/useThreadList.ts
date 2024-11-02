@@ -213,8 +213,8 @@ function checkList(
   }
 
   // 2. reload if brosing area is in the top area
-  const s1 = ctx.scrollPosition?.value ?? 0
-  if(s1 < 500) {
+  const s1 = Math.abs(ctx.scrollPosition?.value ?? 0)
+  if(s1 < 1500) {
     loadList(ctx, true, cloud)
     return
   }
@@ -309,6 +309,12 @@ async function loadList(
   cloudOpt.threadShows = results
   const newList = tlUtil.threadShowsToList(results, vT)
   const newLength = newList.length
+
+  if(vT === "TODAY_FUTURE") {
+    console.warn("TODAY_FUTURE newList: ")
+    console.log(newList)
+  }
+
 
   // 3. 赋值到 list 上
   if(isInit || vT === "PINNED") {

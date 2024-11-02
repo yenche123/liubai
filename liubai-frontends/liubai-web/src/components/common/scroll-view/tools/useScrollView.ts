@@ -285,9 +285,7 @@ function listenToScroll(
 
     const lastViewStamp = ctx.lastToggleViewStamp.value
     if(time.isWithinMillis(lastViewStamp, MAGIC_NUM_2)) {
-      if(!sP) {
-        return
-      }
+      return
     }
 
     if(!isVisible.value) {

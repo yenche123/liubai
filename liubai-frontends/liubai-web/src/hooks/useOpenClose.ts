@@ -1,4 +1,5 @@
-import { Ref, watch } from "vue";
+import { ref, watch, type Ref } from "vue";
+import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { SimpleFunc } from "~/utils/basic/type-tool";
 import valTool from "~/utils/basic/val-tool";
 import liuUtil from "~/utils/liu-util";
@@ -59,5 +60,29 @@ async function _close(
   if(!data.show) {
     data.enable = false
     opt?.afterClose?.()
+  }
+}
+
+
+/** simulate page navigation on mobile experience 
+ * Effect: when user is back to the previous page, the page will be closed
+*/
+export function usePageEnabled(pageName: string) {
+  const pageEnabled = ref(true)
+  const rr = useRouteAndLiuRouter()
+
+  watch(rr.route, (newV) => {
+    if(!newV) return
+    const stacks = rr.router.getStack()
+    const currentPage = stacks.find(v => {
+      return v.name === pageName || v.name === `collaborative-${pageName}`
+    })
+    const hasCurrentPage = Boolean(currentPage)
+    console.log("hasCurrentPage: ", hasCurrentPage)
+    pageEnabled.value = hasCurrentPage
+  })
+
+  return {
+    pageEnabled,
   }
 }

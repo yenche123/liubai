@@ -7,6 +7,7 @@ import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
+import { usePageEnabled } from "~/hooks/useOpenClose";
 
 const { 
   hiddenScrollBar, 
@@ -18,11 +19,14 @@ const {
 } = useMainVice()
 const { t } = useI18n()
 
+const { pageEnabled } = usePageEnabled("schedule")
+
 </script>
 <template>
 
   <main-view>
-    <scroll-view :hidden-scroll-bar="hiddenScrollBar" @scroll="onScroll"
+    <scroll-view v-if="pageEnabled"
+      :hidden-scroll-bar="hiddenScrollBar" @scroll="onScroll"
       :go-to-top="goToTop"
     >
       <navi-virtual></navi-virtual>
