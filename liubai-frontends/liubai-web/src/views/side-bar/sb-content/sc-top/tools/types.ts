@@ -17,4 +17,4 @@ export interface ScTopEmits {
   (evt: "mouseleave"): void
 }
 
-export type SctIndicator = "notification" | "setting" | "trash" | ""
+export type SctIndicator = "notification" | "connect" | "setting" | "trash" | ""

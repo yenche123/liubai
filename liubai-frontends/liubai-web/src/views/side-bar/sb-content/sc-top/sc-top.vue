@@ -28,6 +28,7 @@ const {
   onTapMoreMenuItem,
   onTapName,
   onTapAvatar,
+  CONNECTORS,
 } = useScTop(emits)
 
 const {
@@ -103,10 +104,30 @@ const searchTip = `${liuUtil.getHelpTip('Mod')} + K`
         </div>
       </LiuTooltip>
     </div>
+
+    <!-- Connectors -->
+    <div v-if="CONNECTORS"
+      class="sct-item sct-item-connect"
+      @mouseenter="$emit('mouseenter', 'connect')"
+      @mouseleave="$emit('mouseleave')"
+    >
+      <NaviLink 
+        @aftertap="onTapItem"
+        :to="prefix + 'connectors'"
+      >
+        <div class="liu-hover sct-box" :aria-label="t('common.connects')"
+          :class="{'sc-selected': sctIndicator === 'connect'}"
+        >
+          <svg-icon name="hub" class="sct-icon"
+            :color="iconColor"
+          ></svg-icon>
+        </div>
+      </NaviLink>
+    </div>
     
 
     <!-- 通知 -->
-    <div class="sct-item sct-item-notification"
+    <div v-else class="sct-item sct-item-notification"
       @mouseenter="$emit('mouseenter', 'notification')"
       @mouseleave="$emit('mouseleave')"
     >

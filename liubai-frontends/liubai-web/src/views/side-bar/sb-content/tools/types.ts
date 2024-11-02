@@ -29,5 +29,5 @@ export interface SbcCursorInfo {
   y: number
 }
 
-export type ScTopItemKey = "search" | "notification" | "setting"
+export type ScTopItemKey = "search" | "connect" | "notification" | "setting"
   | "trash" | "more"

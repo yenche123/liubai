@@ -4,6 +4,7 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { usePrefix, useMyProfile } from "~/hooks/useCommon";
 import cui from "~/components/custom-ui";
 import middleBridge from "~/utils/middle-bridge";
+import liuEnv from "~/utils/liu-env";
 
 const MORE_ITEMS: MenuItem[] = [
   {
@@ -42,9 +43,9 @@ export function useScTop(emits: ScTopEmits) {
     middleBridge.modifyMemberNickname(value)
   }
 
-  const onTapAvatar = () => {
+  const onTapAvatar = () => {}
 
-  }
+  const { CONNECTORS } = liuEnv.getEnv()
 
   return {
     prefix,
@@ -54,6 +55,7 @@ export function useScTop(emits: ScTopEmits) {
     onTapMoreMenuItem,
     onTapName,
     onTapAvatar,
+    CONNECTORS,
   }
 }
 

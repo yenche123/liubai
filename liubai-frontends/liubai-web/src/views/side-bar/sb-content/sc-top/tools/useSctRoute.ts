@@ -24,6 +24,9 @@ export function useSctRoute() {
     else if(name === "trash" || name === "collaborative-trash") {
       sctIndicator.value = "trash"
     }
+    else if(name === "connectors" || name === "collaborative-connectors") {
+      sctIndicator.value = "connect"
+    }
     else {
       sctIndicator.value = ""
     }

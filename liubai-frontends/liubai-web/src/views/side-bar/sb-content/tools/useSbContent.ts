@@ -17,6 +17,7 @@ export function useSbContent() {
     if(n === "state" || n === "collaborative-state") return "state"
     if(n === "trash" || n === "collaborative-trash") return "trash"
     if(n === "connectors" || n === "collaborative-connectors") return "connect"
+    if(n === "schedule" || n === "collaborative-schedule") return "schedule"
     return ""
   })
 

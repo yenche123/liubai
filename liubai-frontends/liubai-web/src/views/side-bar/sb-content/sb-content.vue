@@ -137,27 +137,25 @@ const color_selected = "var(--main-normal)"
       <span>{{ t("common.state") }}</span>
     </NaviLink>
   </div>
-  
 
-  <!-- 连接 -->
-  <div class="sb-link-box sb-link-connect"
-    v-if="CONNECTORS"
-    @mouseenter="() => onMouseEnter('connect')"
+  <!-- 日程 -->
+  <div class="sb-link-box sb-link-schedule"
+    @mouseenter="() => onMouseEnter('schedule')"
     @mouseleave="onMouseLeave"
   >
     <NaviLink class="liu-no-user-select sb-link" 
-      :to="prefix + 'connectors'"
-      :class="{ 'sb-link_selected': state === 'connect' }"
+      :to="prefix + 'schedule'"
+      :class="{ 'sb-link_selected': state === 'schedule' }"
       :tabindex="tabindex"
       @aftertap="toClosePopup"
     >
       <div class="sb-icon-container">
         <SvgIcon class="sb-icon" 
-          :name="state === 'connect' ? 'hub_selected' : 'hub'" 
-          :color="state === 'connect' ? color_selected : color"
+          :name="state === 'schedule' ? 'schedule_selected' : 'schedule'" 
+          :color="state === 'schedule' ? color_selected : color"
         ></SvgIcon>
       </div>
-      <span>{{ t("common.connects") }}</span>
+      <span>{{ t("calendar.schedule") }}</span>
     </NaviLink>
   </div>
   
