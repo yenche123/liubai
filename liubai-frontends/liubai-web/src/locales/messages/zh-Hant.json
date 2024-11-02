@@ -551,6 +551,8 @@
   },
   "calendar": {
     "past": "過往",
-    "schedule": "行程"
+    "schedule": "行程",
+    "empty_1": "沒有任何行程",
+    "empty_2": "你的現在和未來都留白了！"
   }
 }

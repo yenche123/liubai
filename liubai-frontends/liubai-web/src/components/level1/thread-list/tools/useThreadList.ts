@@ -310,10 +310,10 @@ async function loadList(
   const newList = tlUtil.threadShowsToList(results, vT)
   const newLength = newList.length
 
-  if(vT === "TODAY_FUTURE") {
-    console.warn("TODAY_FUTURE newList: ")
-    console.log(newList)
-  }
+  // if(vT === "TODAY_FUTURE") {
+  //   console.warn("TODAY_FUTURE newList: ")
+  //   console.log(newList)
+  // }
 
 
   // 3. 赋值到 list 上
@@ -328,14 +328,6 @@ async function loadList(
   else if(newLength) {
     tlData.list.push(...newList)
   }
-
-
-  // test
-  // if(vT === "INDEX" && isInit && newLength) {
-  //   console.warn("check local results: ")
-  //   console.log(valTool.copyObject(newList))
-  //   console.log(" ")
-  // }
 
 
   // 4. 处理 lastItemStamp
@@ -467,16 +459,15 @@ async function loadAgain(
     tlData.list[i] = newList[i - startIndex]
   }
 
-  // test
-  // if(vT === "INDEX" && newLength) {
-  //   console.warn("check local results again: ")
-  //   console.log("startIndex: ", startIndex)
-  //   console.log("deltaLength: ", deltaLength)
-  //   console.log("newLength: ", newLength)
-  //   console.log("oldLength: ", oldLength)
-  //   console.log(valTool.copyObject(newList))
-  //   console.log(" ")
-  // }
+
+  if(startIndex === 0) {
+    if(newLength > 0) {
+      ctx.emits("hasdata")
+    }
+    else {
+      ctx.emits("nodata")
+    }
+  }
 
   tlUtil.handleLastItemStamp(vT, tlData)
 

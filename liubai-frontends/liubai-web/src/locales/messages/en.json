@@ -563,6 +563,8 @@
   },
   "calendar": {
     "past": "Past",
-    "schedule": "Schedule"
+    "schedule": "Schedule",
+    "empty_1": "No Schedule Yet",
+    "empty_2": "Take a rest and enjoy your life!"
   }
 }

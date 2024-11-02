@@ -563,6 +563,8 @@
   },
   "calendar": {
     "past": "过往",
-    "schedule": "日程"
+    "schedule": "日程",
+    "empty_1": "你已清空日程",
+    "empty_2": "你的现在和未来都留白了！"
   }
 }
