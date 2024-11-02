@@ -562,6 +562,7 @@
     "badge_tip": "You have all Premium rights"
   },
   "calendar": {
-    "past": "Past"
+    "past": "Past",
+    "schedule": "Schedule"
   }
 }

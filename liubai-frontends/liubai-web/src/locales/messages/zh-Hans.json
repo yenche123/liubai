@@ -562,6 +562,7 @@
     "badge_tip": "你享有所有 Premium 权益"
   },
   "calendar": {
-    "past": "过往"
+    "past": "过往",
+    "schedule": "日程"
   }
 }

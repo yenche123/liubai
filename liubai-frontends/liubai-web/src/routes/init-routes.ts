@@ -27,6 +27,7 @@ const ConnectWechat = () => import("../pages/connectors/connect-wechat/connect-w
 const PaymentPage = () => import("../pages/level3/payments/payment-page/payment-page.vue")
 const MinePage = () => import("../pages/level2/mine-page/mine-page.vue")
 const TagManagement = () => import("../pages/level3/tag-management/tag-management.vue")
+const SchedulePage = () => import("../pages/level3/schedule-page/schedule-page.vue")
 const PastPage = () => import("../pages/level3/past-page/past-page.vue")
 
 export const routes: Array<RouteRecordRaw> = [
@@ -290,6 +291,15 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {}
   },
   {
+    path: "/schedule",
+    components: {
+      default: SchedulePage,
+      LeftSidebar,
+    },
+    name: "schedule",
+    meta: {}
+  },
+  {
     path: "/past",
     components: {
       default: PastPage,
@@ -442,6 +452,15 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "collaborative-notification",
+    meta: {}
+  },
+  {
+    path: "/w/:workspaceId(\\w{10,})/schedule",
+    components: {
+      default: SchedulePage,
+      LeftSidebar,
+    },
+    name: "collaborative-schedule",
     meta: {}
   },
   {

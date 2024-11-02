@@ -550,6 +550,7 @@
     "badge_tip": "你享有所有 Premium 權益"
   },
   "calendar": {
-    "past": "過往"
+    "past": "過往",
+    "schedule": "行程"
   }
 }
