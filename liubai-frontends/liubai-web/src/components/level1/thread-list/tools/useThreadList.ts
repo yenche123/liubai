@@ -321,7 +321,7 @@ async function loadList(
     cloudOpt.startIndex = 0
     tlData.list = newList
 
-    if(newLength) ctx.emits("hasdata")
+    if(newLength) ctx.emits("hasdata", { results })
     else ctx.emits("nodata")
     
   }
@@ -462,7 +462,7 @@ async function loadAgain(
 
   if(startIndex === 0) {
     if(newLength > 0) {
-      ctx.emits("hasdata")
+      ctx.emits("hasdata", { results })
     }
     else {
       ctx.emits("nodata")

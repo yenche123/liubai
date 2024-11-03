@@ -31,6 +31,7 @@ export interface TlProps {
 
 export interface TlHasDataOpt {
   title_key?: string
+  results?: ThreadShow[]
 }
 
 export interface TlEmits {
