@@ -565,6 +565,7 @@
     "past": "Past",
     "schedule": "Schedule",
     "empty_1": "No Schedule Yet",
-    "empty_2": "Take a rest and enjoy your life!"
+    "empty_2": "Take a rest and enjoy your life!",
+    "midnight_tip": "It's {clock} o'clock\nToday is {today}"
   }
 }

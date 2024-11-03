@@ -565,6 +565,7 @@
     "past": "过往",
     "schedule": "日程",
     "empty_1": "你已清空日程",
-    "empty_2": "你的现在和未来都留白了！"
+    "empty_2": "你的现在和未来都留白了！",
+    "midnight_tip": "现在已是凌晨 {clock} 点\n今天是 {today}"
   }
 }

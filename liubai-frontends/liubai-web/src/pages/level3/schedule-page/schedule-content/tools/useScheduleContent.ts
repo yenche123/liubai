@@ -1,26 +1,33 @@
-import { ref } from "vue"
+import { reactive, ref } from "vue"
 import { TlHasDataOpt } from "~/components/level1/thread-list/tools/types"
 import time from "~/utils/basic/time"
+import liuUtil from "~/utils/liu-util"
+import type { ScData } from "./types"
 
 
 export function useScheduleContent() {
-  const isEmpty = ref(false)
-  const midnightClock = ref("")
+  const scData = reactive<ScData>({
+    isEmpty: false,
+    tipClock: "",
+    tipToday: "",
+    tipShown: true,
+  })
 
   const _reset = () => {
-    midnightClock.value = ""
+    scData.tipClock = ""
+    scData.tipToday = ""
   }
 
 
   const onNodata = () => {
-    isEmpty.value = true
+    scData.isEmpty = true
   }
 
   const onHasdata = (opt?: TlHasDataOpt) => {
     // 1. set isEmpty
-    isEmpty.value = false
+    scData.isEmpty = false
 
-    // 2. start to calculate midnightClock
+    // 2. start to calculate tipClock
     const firRes = opt?.results?.[0]
     const calendarStamp = firRes?.calendarStamp
     if(!calendarStamp) {
@@ -41,12 +48,12 @@ export function useScheduleContent() {
       _reset()
       return
     }
-    midnightClock.value = `${hrs}`
+    scData.tipClock = `${hrs}`
+    scData.tipToday = liuUtil.showMonthAndDay(now)
   }
 
   return {
-    isEmpty,
-    midnightClock,
+    scData,
     onNodata,
     onHasdata,
   }
