@@ -497,7 +497,8 @@
   "index": {
     "inbox": "收件匣",
     "today": "今天",
-    "future_24": "接下來一天"
+    "future_24": "接下來一天",
+    "view_calendar": "檢視行程"
   },
   "connect": {
     "add": "去新增",

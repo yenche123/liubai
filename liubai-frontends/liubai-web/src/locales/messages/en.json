@@ -509,7 +509,8 @@
   "index": {
     "inbox": "Inbox",
     "today": "Today",
-    "future_24": "Next 24 Hours"
+    "future_24": "Next 24 Hours",
+    "view_calendar": "View more"
   },
   "connect": {
     "add": "Add",

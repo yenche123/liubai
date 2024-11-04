@@ -20,6 +20,7 @@ const {
   showTitle,
   calendarTitleKey,
   onCalendarHasData,
+  onTapViewCalendar,
 } = useIndexContent()
 
 const { t } = useI18n()
@@ -42,10 +43,19 @@ const { t } = useI18n()
       <div v-if="showTitle && calendarTitleKey" 
         class="liu-no-user-select ic-title"
       >
-        <span>{{ t(calendarTitleKey) }}</span>
+        <div class="ic-title_calendar">
+          <span>{{ t(calendarTitleKey) }}</span>
+        </div>
+        <div class="ict-view" @click.stop="onTapViewCalendar">
+          <span>{{ t('index.view_calendar') }}</span>
+          <svg-icon name="arrow-right2"
+            class="ict-icon"
+            color="var(--main-note)"
+          ></svg-icon>
+        </div>
       </div>
 
-      <!-- 时间优先 -->
+      <!-- Time First -->
       <ThreadList
         view-type="CALENDAR"
         :show-txt="showTxt"
@@ -60,13 +70,13 @@ const { t } = useI18n()
         <span>{{ t('index.inbox') }}</span>
       </div>
 
-      <!-- 置顶 -->
+      <!-- Pin -->
       <ThreadList
         view-type="PINNED"
         :show-txt="showTxt"
       ></ThreadList>
 
-      <!-- 一般 -->
+      <!-- General -->
       <ThreadList
         view-type="INDEX"
         :show-txt="showTxt"
@@ -85,6 +95,32 @@ const { t } = useI18n()
   font-weight: 700;
   padding-inline-start: 8px;
   padding-block: 5px;
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ic-title_calendar {
+  flex: 1;
+}
+
+.ict-view {
+  flex: none;
+  color: var(--main-note);
+  font-size: var(--mini-font);
+  font-weight: 700;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  cursor: pointer;
+  transition: .15s;
+  min-width: 90px;
+}
+
+.ict-icon {
+  margin-inline-start: 4px;
+  width: 14px;
+  height: 14px
 }
 
 .ic-title_inbox {
@@ -100,6 +136,12 @@ const { t } = useI18n()
 
 .mc-virtual_short {
   max-height: v-bind("shortVirtual + 'px'");
+}
+
+@media(hover: hover) {
+  .ict-view:hover {
+    opacity: .8;
+  }
 }
 
 

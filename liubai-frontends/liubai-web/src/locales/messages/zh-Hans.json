@@ -509,7 +509,8 @@
   "index": {
     "inbox": "收件箱",
     "today": "今天",
-    "future_24": "接下来一天"
+    "future_24": "接下来一天",
+    "view_calendar": "查看日程"
   },
   "connect": {
     "add": "去添加",
