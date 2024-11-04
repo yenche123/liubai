@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { type PropType, ref } from 'vue';
+import { type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useHighlightBox } from './tools/useHighlightBox';
 
 defineProps({
   titleKey: {
@@ -16,7 +17,7 @@ defineProps({
   }
 })
 
-const show = ref(true)
+const { show, onTapClose } = useHighlightBox()
 const { t } = useI18n()
 
 </script>
@@ -27,7 +28,7 @@ const { t } = useI18n()
         <span v-if="titleKeyOpt">{{ t(titleKey, titleKeyOpt) }}</span>
         <span v-else>{{ t(titleKey) }}</span>
       </div>
-      <div class="highlight-close" @click.stop="() => show = false">
+      <div class="highlight-close" @click.stop="onTapClose">
         <svg-icon name="close" class="highlight-close-svg" 
           :color="iconColor"
         ></svg-icon>
