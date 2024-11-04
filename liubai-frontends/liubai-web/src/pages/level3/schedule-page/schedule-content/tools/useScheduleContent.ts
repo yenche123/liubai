@@ -1,5 +1,5 @@
-import { reactive, ref } from "vue"
-import { TlHasDataOpt } from "~/components/level1/thread-list/tools/types"
+import { reactive } from "vue"
+import type { TlHasDataOpt } from "~/components/level1/thread-list/tools/types"
 import time from "~/utils/basic/time"
 import liuUtil from "~/utils/liu-util"
 import type { ScData } from "./types"
@@ -10,7 +10,6 @@ export function useScheduleContent() {
     isEmpty: false,
     tipClock: "",
     tipToday: "",
-    tipShown: true,
   })
 
   const _reset = () => {
@@ -26,7 +25,7 @@ export function useScheduleContent() {
   const onHasdata = (opt?: TlHasDataOpt) => {
     // 1. set isEmpty
     scData.isEmpty = false
-
+    
     // 2. start to calculate tipClock
     const firRes = opt?.results?.[0]
     const calendarStamp = firRes?.calendarStamp
@@ -34,6 +33,8 @@ export function useScheduleContent() {
       _reset()
       return
     }
+    
+    // 3. reset if the duration from now is more than 1 day
     const now = time.getTime()
     const day = Math.abs(now - calendarStamp) / time.DAY
     if(day >= 1) {
@@ -41,13 +42,15 @@ export function useScheduleContent() {
       return
     }
 
-    // 3. get clock
+    // 4. reset if it's already past 5am
     const date = new Date(now)
     const hrs = date.getHours()
     if(hrs >= 5) {
       _reset()
       return
     }
+    
+    // 5. set tipClock and tipToday
     scData.tipClock = `${hrs}`
     scData.tipToday = liuUtil.showMonthAndDay(now)
   }
