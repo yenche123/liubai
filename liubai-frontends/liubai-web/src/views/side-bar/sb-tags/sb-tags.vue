@@ -78,6 +78,7 @@ const {
     :max-level="3"
     :node-key="(stat, index) => stat.data.tagId"
     :stat-handler="statHandler"
+    :default-open="tagNodes.length < 10"
     @open:node="onOpenNode"
     @close:node="onCloseNode"
     @after-drop="onAfterDrop"

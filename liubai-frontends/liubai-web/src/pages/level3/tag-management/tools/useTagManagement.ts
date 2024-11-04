@@ -1,6 +1,5 @@
 import { reactive, type Ref, watch } from "vue";
 import { type TmData } from "./types";
-import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
@@ -8,12 +7,9 @@ import { getCurrentSpaceTagList, useTagsTree } from "~/utils/system/tag-related"
 import valTool from "~/utils/basic/val-tool";
 import { filterTag, tagMovedInTree } from "~/utils/system/tag-related/tags";
 import time from "~/utils/basic/time";
+import { usePrefix } from "~/hooks/useCommon";
 
 export function useTagManagement() {
-
-  const wStore = useWorkspaceStore()
-  const { spaceType, spaceId } = storeToRefs(wStore)
-
   const tmData = reactive<TmData>({
     toPath: "/tag/",
     tagNodes: [],
@@ -22,12 +18,9 @@ export function useTagManagement() {
     everMoved: false,
   })
 
-  watch(spaceType, (newV) => {
-    let _path = "/tag/"
-    if(newV === "TEAM") {
-      _path = `/w/${spaceId.value}/tag/`
-    }
-    tmData.toPath = _path
+  const { prefix, spaceId } = usePrefix()
+  watch(prefix, (newV) => {
+    tmData.toPath = newV + "tag/"
   }, { immediate: true })
 
   const rr = useRouteAndLiuRouter()

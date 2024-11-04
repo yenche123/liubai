@@ -39,7 +39,7 @@ export function usePrefix() {
     return `/`
   })
 
-  return { prefix }
+  return { prefix, spaceId }
 }
 
 // 显示我当前的头像和昵称，返回 myProfile 其为 Ref<MemberShow | null> 类型

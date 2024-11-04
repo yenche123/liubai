@@ -443,6 +443,12 @@ export function useTagsTree() {
     if(!tagId) return stat
     const isClosed = closedNodes[tagId]
     if(isClosed) stat.open = false
+
+    const cLength = stat.data.children?.length ?? 0
+    if(cLength >= 5) {
+      stat.open = false
+    }
+    
     return stat
   }
 

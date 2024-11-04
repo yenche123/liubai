@@ -1,7 +1,6 @@
 import { reactive, ref, watch, type Ref } from "vue";
 import { Draggable } from "@he-tree/vue";
 import type { TagView } from "~/types/types-atom";
-import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
 import { storeToRefs } from "pinia";
 import { getCurrentSpaceTagList, useTagsTree } from "~/utils/system/tag-related";
 import { filterTag, tagMovedInTree } from "~/utils/system/tag-related/tags";
@@ -11,12 +10,10 @@ import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import valTool from "~/utils/basic/val-tool";
 import type { SbTagsData, SbtEmits } from "./types";
 import liuUtil from "~/utils/liu-util";
+import { usePrefix } from "~/hooks/useCommon";
 
 
 export function useSbTags(emits: SbtEmits) {
-  const wStore = useWorkspaceStore()
-  const { spaceType, spaceId } = storeToRefs(wStore)
-
   const sbtData = reactive<SbTagsData>({
     enable: true,
     everMoved: false,
@@ -25,12 +22,9 @@ export function useSbTags(emits: SbtEmits) {
     lastTagChangeStamp: time.getTime(),
   })
 
-  watch(spaceType, (newV) => {
-    let _path = "/tag/"
-    if(newV === "TEAM") {
-      _path = `/w/${spaceId.value}/tag/`
-    }
-    sbtData.toPath = _path
+  const { prefix, spaceId } = usePrefix()
+  watch(prefix, (newV) => {
+    sbtData.toPath = newV + "tag/"
   }, { immediate: true })
 
   const rr = useRouteAndLiuRouter()
