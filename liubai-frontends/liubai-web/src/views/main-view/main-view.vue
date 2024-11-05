@@ -2,7 +2,6 @@
 import { defineAsyncComponent } from "vue"
 import { useMainView } from "./tools/useMainView"
 import { useMvDropZone } from "./tools/useMvDropZone"
-import { useMvTouchBox } from "./tools/useMvTouchBox"
 import { type MainViewEmits, mainViewProps } from "./tools/types"
 
 const CenterDropZone = defineAsyncComponent(() => {
@@ -18,13 +17,6 @@ const {
   centerRef,
   onTapCenterDropZone,
 } = useMvDropZone(props)
-const { 
-  showTouchBox,
-  onTouchStart,
-  onTouchMove,
-  onTouchEnd,
-  onTouchCancel,
-} = useMvTouchBox(leftPx, emits)
 
 const onTapCenter = (e: MouseEvent) => {
   emits("tapmainview")
@@ -48,13 +40,6 @@ const onTapCenter = (e: MouseEvent) => {
   </div>
 
   <!-- 监听滑动打开左边侧边栏的盒子 -->
-  <div v-if="showTouchBox" class="liu-no-user-select mv-touch-box"
-    @touchstart.passive="onTouchStart"
-    @touchmove.passive="onTouchMove"
-    @touchend.passive="onTouchEnd"
-    @touchcancel.passive="onTouchCancel"
-    :draggable="false"
-  ></div>
 
 </template>
 <style scoped>
@@ -84,16 +69,6 @@ const onTapCenter = (e: MouseEvent) => {
   overflow-x: hidden;
   transform: translateX(0);
   content-visibility: auto;
-}
-
-.mv-touch-box {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 90vh;
-  height: 100svh;
-  width: 6vw;
-  max-width: 50px;
 }
 
 </style>
