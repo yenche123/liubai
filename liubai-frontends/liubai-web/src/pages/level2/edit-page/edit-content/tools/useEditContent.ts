@@ -55,6 +55,7 @@ export function useEditContent() {
     cui.showModal({ 
       title_key: "tip.editing_hd",
       content_key: "tip.editing_bd",
+      cancel_key: "tip.got_it",
       confirm_key: "common.update",
       success(res) {
         alwaysAllowBack.value = true
