@@ -6,6 +6,7 @@ import time from "~/utils/basic/time";
 import { type SimplePromise } from '~/utils/basic/type-tool';
 import { useGlobalStateStore } from '../stores/useGlobalStateStore';
 import cui from '~/components/custom-ui';
+import { db } from '~/utils/db';
 
 const SEC_10 = 10 * time.SECONED
 const MIN_15 = 15 * time.MINUTE
@@ -149,6 +150,9 @@ export async function toUpdateSW(
   }
   
   localCache.setOnceData("lastInstallNewVersion", time.getTime())
+
+  db.close()
+
   await _updateSW()
 }
 
