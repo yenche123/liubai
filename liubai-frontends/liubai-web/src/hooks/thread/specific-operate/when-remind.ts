@@ -97,6 +97,7 @@ export const setRemind = async (
 
   newThread.remindMe = newRemindMe
   newThread.remindStamp = newRemindStamp
+  newThread.calendarStamp = liuUtil.getCalendarStamp(whenStamp, newRemindMe)
   soTool.setEdit(newThread)
 
   // 3. 操作 db
