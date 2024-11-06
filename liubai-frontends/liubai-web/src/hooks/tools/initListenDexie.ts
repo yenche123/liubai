@@ -1,7 +1,7 @@
 import cui from "~/components/custom-ui";
 import { db } from "~/utils/db";
+import liuApi from "~/utils/liu-api";
 import liuEnv from "~/utils/liu-env";
-
 
 function _redirectToCustomerService() {
   const _env = liuEnv.getEnv()
@@ -23,14 +23,18 @@ function _redirectToCustomerService() {
 
 export function initListenDexie() {
 
-
   const _blocked = async () => {
     console.warn("db blocked!!!")
+
+    const isStandalone = liuApi.canIUse.isRunningStandalone()
+    let content_key = "err.database_blocked_1"
+    if(isStandalone) content_key = "err.database_blocked_2"
+
     const res1 = await cui.showModal({
       title: "⚠️",
-      content_key: "err.database_blocked",
+      content_key,
       showCancel: false,
-      confirm_key: "common.contact_cs",
+      confirm_key: "common.contact_us",
       isTitleEqualToEmoji: true,
     })
     if(res1.confirm) {

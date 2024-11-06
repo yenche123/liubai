@@ -1,7 +1,7 @@
 
 
 // 版本号，凡是 dexieIdxs 被修改了，这里都要累加！！！
-export const DB_VERSION = 65
+export const DB_VERSION = 66
 
 const dexieIdxs = {
   users: [

@@ -62,7 +62,7 @@
     "updating": "更新中..",
     "to_contact": "去聯繫",
     "mine": "我的",
-    "contact_cs": "聯繫客服"
+    "contact_us": "聯繫客服"
   },
   "editor": {
     "when": "什麼時候",
@@ -347,7 +347,8 @@
     "network": "目前頁面需要網路才能檢視",
     "backend_required": "目前頁面需要後端才能檢視",
     "unknown_err": "未知的異常",
-    "database_blocked": "我們對本機資料庫進行了升級，請關閉瀏覽器再重新開啟；若問題持續存在，請聯繫客服。"
+    "database_blocked_1": "我們對本機資料庫進行了升級，請關閉瀏覽器再重新開啟；若問題持續存在，請聯繫客服。",
+    "database_blocked_2": "我們對本機資料庫進行了升級，請關閉應用程式再重新開啟；若問題持續存在，請聯繫客服。"
   },
   "setting": {
     "membership": "會員",

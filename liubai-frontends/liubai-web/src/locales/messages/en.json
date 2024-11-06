@@ -62,7 +62,7 @@
     "updating": "Updating..",
     "to_contact": "Contact",
     "mine": "Mine",
-    "contact_cs": "Contact"
+    "contact_us": "Contact"
   },
   "editor": {
     "when": "When",
@@ -347,7 +347,8 @@
     "network": "The page needs network to view",
     "backend_required": "The page needs backend to view",
     "unknown_err": "Unknown Error",
-    "database_blocked": "We're upgrading the local database. Close your browser and open it again please. If the issue constantly occurs, please contact us!"
+    "database_blocked_1": "We're upgrading the local database. Close your browser and open it again please. If the issue constantly occurs, please contact us!",
+    "database_blocked_2": "We're upgrading the local database. Close the APP and open it again please. If the issue constantly occurs, please contact us!"
   },
   "setting": {
     "membership": "Membership",
