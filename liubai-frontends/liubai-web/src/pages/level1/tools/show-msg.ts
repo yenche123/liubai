@@ -70,7 +70,7 @@ export async function showContactDev(
 ) {
   let contactWay = ""
   const _env = liuEnv.getEnv()
-  const contactWecom = _env.CONTACT_WECOM
+  const contactWecom = _env.CUSTOMER_SERVICE
   const devEmail = LIU_ENV.author?.email
   if(contactWecom) {
     contactWay = "wecom"

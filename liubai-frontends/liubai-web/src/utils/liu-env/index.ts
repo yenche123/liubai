@@ -19,9 +19,6 @@ function getEnv(): LiuSystemEnv {
   const VITE_DEBUG_BTN = import.meta.env.VITE_DEBUG_BTN
   const DEBUG_BTN = VITE_DEBUG_BTN === "01"
 
-  // contact dev
-  const CONTACT_WECOM = import.meta.env.VITE_CONTACT_WECOM
-
   // SaaS 各个服务情况上限
   const LOCAL_PIN_NUM = import.meta.env.VITE_LOCAL_PIN_NUM
   const FREE_PIN_NUM = import.meta.env.VITE_FREE_PIN_NUM
@@ -98,6 +95,9 @@ function getEnv(): LiuSystemEnv {
   // tinylytics
   const TINYLYTICS_SRC = import.meta.env.VITE_TINYLYTICS_SRC
 
+  // customer service link
+  const CUSTOMER_SERVICE = import.meta.env.VITE_CUSTOMER_SERVICE
+
   // connectors
   const CONNECTORS = import.meta.env.VITE_CONNECTORS === "01"
   const C_WECHAT = import.meta.env.VITE_CONNECT_WECHAT === "01"
@@ -124,7 +124,6 @@ function getEnv(): LiuSystemEnv {
     APP_NAME,
     PAYMENT_PRIORITY,
     DEBUG_BTN,
-    CONTACT_WECOM,
     LOCAL_PIN_NUM: Number(LOCAL_PIN_NUM),
     FREE_PIN_NUM: Number(FREE_PIN_NUM),
     PREMIUM_PIN_NUM: Number(PREMIUM_PIN_NUM),
@@ -171,6 +170,7 @@ function getEnv(): LiuSystemEnv {
     GOATCOUNTER_DATA,
     GOATCOUNTER_SRC,
     TINYLYTICS_SRC,
+    CUSTOMER_SERVICE,
     CONNECTORS,
     C_WECHAT,
     C_DINGTALK,

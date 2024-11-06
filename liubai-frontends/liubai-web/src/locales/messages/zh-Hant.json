@@ -61,7 +61,8 @@
     "faq": "常見問題",
     "updating": "更新中..",
     "to_contact": "去聯繫",
-    "mine": "我的"
+    "mine": "我的",
+    "contact_cs": "聯繫客服"
   },
   "editor": {
     "when": "什麼時候",
@@ -121,6 +122,18 @@
     "m_10": "十月",
     "m_11": "11月",
     "m_12": "12月",
+    "month_01": "1月",
+    "month_02": "2月",
+    "month_03": "3月",
+    "month_04": "4月",
+    "month_05": "5月",
+    "month_06": "6月",
+    "month_07": "7月",
+    "month_08": "8月",
+    "month_09": "9月",
+    "month_10": "10月",
+    "month_11": "11月",
+    "month_12": "12月",
     "day_0": "日",
     "day_1": "一",
     "day_2": "二",
@@ -249,7 +262,8 @@
     "open_with_browser_3": "輕觸「...」開啟預設瀏覽器",
     "fail_to_request": "網路請求失敗",
     "cannot_remind_you": "由於雲端同步已被關閉，提醒功能將只作為裝飾；屆時系統無法彈出通知。",
-    "network_required": "該功能需要連線網路才能使用"
+    "network_required": "該功能需要連線網路才能使用",
+    "save_draft": "保存草稿"
   },
   "card_bubble": {
     "copy": "複製",
@@ -332,7 +346,8 @@
     "no_auth": "沒有訪問權限",
     "network": "目前頁面需要網路才能檢視",
     "backend_required": "目前頁面需要後端才能檢視",
-    "unknown_err": "未知的異常"
+    "unknown_err": "未知的異常",
+    "database_blocked": "我們對本機資料庫進行了升級，請關閉瀏覽器再重新開啟；若問題持續存在，請聯繫客服。"
   },
   "setting": {
     "membership": "會員",

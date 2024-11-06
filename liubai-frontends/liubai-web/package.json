@@ -1,7 +1,7 @@
 {
   "name": "liubai-web",
   "private": true,
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Your Notes, Tasks, Calendar, and To-Do List",
   "author": {
     "name": "yenche123",
@@ -43,7 +43,7 @@
     "@tiptap/starter-kit": "2.8.0",
     "@tiptap/suggestion": "2.8.0",
     "@tiptap/vue-3": "2.8.0",
-    "@vuepic/vue-datepicker": "^9.0.3",
+    "@vuepic/vue-datepicker": "^10.0.0",
     "@vueuse/core": "^11.1.0",
     "@vueuse/integrations": "^11.1.0",
     "another-vue3-blurhash": "^0.0.1",

@@ -414,8 +414,8 @@ const iconColor = "var(--main-normal)"
         
 
         <!-- Contact -->
-        <a v-if="data.dev_email" class="liu-no-user-select liu-hover sc-bar" 
-          :href="`mailto:${data.dev_email}`"
+        <a v-if="data.contactLink" class="liu-no-user-select liu-hover sc-bar" 
+          :href="data.contactLink"
         >
           <div class="scb-hd">
             <span>{{ t('setting.contact_dev') }}</span>

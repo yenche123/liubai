@@ -9,7 +9,6 @@ export interface LiuSystemEnv {
   PAYMENT_PRIORITY?: "stripe" | "one-off"
 
   DEBUG_BTN?: boolean
-  CONTACT_WECOM?: string
 
   LOCAL_PIN_NUM: number
   FREE_PIN_NUM: number
@@ -87,6 +86,9 @@ export interface LiuSystemEnv {
 
   // tinylytics
   TINYLYTICS_SRC?: string
+
+  // customer service link
+  CUSTOMER_SERVICE?: string
 
   // connectors
   CONNECTORS?: boolean

@@ -36,6 +36,11 @@ export function useSettingContent() {
   const hasBackend = liuEnv.hasBackend()
   const _env = liuEnv.getEnv()
   const onceData = localCache.getOnceData()
+  let contactLink = _env.CUSTOMER_SERVICE
+  if(!contactLink) {
+    const email = LIU_ENV.author?.email
+    if(email) contactLink = `mailto:${email}`
+  }
 
   const data = reactive<SettingContentData>({
     language: "system",
@@ -48,7 +53,7 @@ export function useSettingContent() {
     debugBtn: Boolean(_env.DEBUG_BTN),
     openDebug: false,
     mobileDebug: Boolean(onceData.mobile_debug),
-    dev_email: LIU_ENV.author?.email,
+    contactLink,
     showA2HS: false,
   })
 

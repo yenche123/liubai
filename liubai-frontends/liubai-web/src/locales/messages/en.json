@@ -61,7 +61,8 @@
     "faq": "FAQ",
     "updating": "Updating..",
     "to_contact": "Contact",
-    "mine": "Mine"
+    "mine": "Mine",
+    "contact_cs": "Contact"
   },
   "editor": {
     "when": "When",
@@ -261,7 +262,8 @@
     "open_with_browser_3": "Tap \"...\" to open with the default browser",
     "fail_to_request": "Network Error",
     "cannot_remind_you": "Liubai will be unable to remind you because you has closed the sync to cloud.",
-    "network_required": "This function requires the Internet"
+    "network_required": "This function requires the Internet",
+    "save_draft": "Save"
   },
   "card_bubble": {
     "copy": "Copy",
@@ -344,7 +346,8 @@
     "no_auth": "No Access",
     "network": "The page needs network to view",
     "backend_required": "The page needs backend to view",
-    "unknown_err": "Unknown Error"
+    "unknown_err": "Unknown Error",
+    "database_blocked": "We're upgrading the local database. Close your browser and open it again please. If the issue constantly occurs, please contact us!"
   },
   "setting": {
     "membership": "Membership",

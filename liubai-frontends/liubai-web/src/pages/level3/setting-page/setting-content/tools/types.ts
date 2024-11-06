@@ -36,6 +36,6 @@ export interface SettingContentData {
   openDebug: boolean
   mobileDebug: boolean
 
-  dev_email?: string
+  contactLink?: string
   showA2HS: boolean
 }
