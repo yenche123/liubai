@@ -27,9 +27,12 @@ async function getDraftByThreadId(threadId: string) {
     user,
     threadEdited: threadId,
   }
-  const res = await db.drafts.get(w)
-  if(!res) return null
-  return res
+
+  const q = db.drafts.where(w).limit(1)
+  const results = await q.reverse().sortBy("editedStamp")
+  if(!results || results.length < 1) return null
+  
+  return results[0]
 }
 
 async function getDraftById(id: string) {
@@ -80,6 +83,17 @@ async function setDraftAsPosted(
   const now = time.getTime()
   const u: Partial<DraftLocalTable> = {
     oState: "POSTED",
+    updatedStamp: now,
+  }
+  await db.drafts.update(id, u)
+}
+
+async function setDraftAsDeleted(
+  id: string,
+) {
+  const now = time.getTime()
+  const u: Partial<DraftLocalTable> = {
+    oState: "DELETED",
     updatedStamp: now,
   }
   await db.drafts.update(id, u)
@@ -137,6 +151,7 @@ export default {
   getDraftById,
   getDraft,
   deleteDraftById,
+  setDraftAsDeleted,
   setDraftAsPosted,
   clearDraftOnCloud,
   setDraft,

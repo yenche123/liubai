@@ -147,7 +147,7 @@ function _resetEditor(
 }
 
 
-// reset after releasing
+// reset
 function _resetState(
   ctx: CepContext
 ) {
@@ -155,15 +155,6 @@ function _resetState(
   resetBasicCeData(ceData)
   delete ceData.editorContent
 }
-
-// reset after updating
-function _resetState2(
-  ctx: CepContext,
-) {
-  const { ceData } = ctx
-  delete ceData.lastEditStamp
-}
-
 
 // _id / createdStamp / insertedStamp / user / member / commentNum / emojiData
 // 没有被添加进 ceData
@@ -234,16 +225,31 @@ async function toUpdate(ctx: CepContext) {
   const { ceData } = ctx
   const preThread = _getThreadData(ceData)
   if(!preThread) return
-
-  // console.log("看一下 preThread.........")
-  // console.log(preThread)
-  // console.log(" ")
-
   const threadId = ceData.threadEdited as string
 
-  // 0. get old content
+  // 1. get old content
   const oldContent = await localReq.getContentById(threadId)
   if(!oldContent) return
+
+  // 2. update
+  updateAsync(ctx, oldContent, preThread)
+
+  // 3. reset
+  _resetState(ctx)
+
+  // 4. reset editor
+  _resetEditor(ctx, false)
+}
+
+
+async function updateAsync(
+  ctx: CepContext,
+  oldContent: ContentLocalTable,
+  preThread: Partial<ContentLocalTable>,
+) {
+  const ceData = ctx.ceData
+  const threadId = ceData.threadEdited as string
+  const draftId = ceData.draftId
 
   // 1. recheck storageState
   const oldSs = oldContent.storageState
@@ -260,17 +266,20 @@ async function toUpdate(ctx: CepContext) {
     goThreadOnlyLocal = true
   }
 
-  // 2. 更新进 contents 表里
+  // 2. update content in db
   await localReq.updateContent(threadId, preThread)
-  
-  // 3. 删除 drafts
-  if(ceData.draftId) {
-    localReq.clearDraftOnCloud(ceData.draftId)
-    await localReq.deleteDraftById(ceData.draftId)
-    delete ceData.draftId
+
+  // 3. delete drafts
+  if(draftId) {
+    localReq.clearDraftOnCloud(draftId)
+    await localReq.setDraftAsDeleted(draftId)
+    if(!ceData.reject_draft_ids) {
+      ceData.reject_draft_ids = []
+    }
+    ceData.reject_draft_ids.push(draftId)
   }
 
-  // 4. 查找该 thread，然后通知全局
+  // 4. notify other components
   const theThread = await localReq.getContentById(threadId)
   if(!theThread) return
   const threadShows = await equipThreads([theThread])
@@ -279,16 +288,10 @@ async function toUpdate(ctx: CepContext) {
   }
   ctx.threadShowStore.setUpdatedThreadShows(threadShows, "edit")
 
-  // 5. emits 到页面
+  // 5. emits to page
   ctx.emits("updated", threadId)
 
-  // 6. logger
-  liuConsole.sendMessage("User edited a thread")
-
-  // 7. reset
-  _resetState2(ctx)
-
-  // 8. 如果是本地的动态，检查是否要 go to thread-only_local
+  // 6. If it is a local post, check whether to go to thread-only_local
   const target_id = threadId
   const operateStamp = theThread.updatedStamp
   if(newSs === "LOCAL" || newSs === "ONLY_LOCAL") {
@@ -302,7 +305,7 @@ async function toUpdate(ctx: CepContext) {
     return
   }
 
-  // 9. 否则，去发表或上传
+  // 7. otherwise, to post or upload
   const uploadTask = newSs === "WAIT_UPLOAD" ? "thread-post" : "thread-edit"
   LocalToCloud.addTask({ 
     uploadTask, 

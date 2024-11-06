@@ -144,7 +144,7 @@ async function initDraft(
 
   const draft = await localReq.getDraft(spaceIdRef.value)
   if(draft) {
-    initDraftFromDraft(ctx, draft, loadCloud)
+    setDataFromDraft(ctx, draft, loadCloud)
   }
   else {
     ctx.ceData.draftId = ""
@@ -162,6 +162,10 @@ async function initDraftWithThreadId(
 ) {
   let draft = await localReq.getDraftByThreadId(threadId)
   let thread = await localReq.getContentById(threadId)
+  const dState = draft?.oState
+  if(dState === "DELETED" || dState === "POSTED") {
+    draft = null
+  }
 
   if(!draft && !thread) {
     initFromCloudThread(ctx, threadId, true)
@@ -175,19 +179,19 @@ async function initDraftWithThreadId(
   // draft 编辑时间比较大的情况
   if(e1 > e2) {
     console.log("####### draft 编辑时间比较大的情况 ########")
-    if(draft) initDraftFromDraft(ctx, draft, loadCloud)
+    if(draft) setDataFromDraft(ctx, draft, loadCloud)
     return
   }
 
   // thread 编辑时间比较大的情况
   console.log("####### thread 编辑时间比较大的情况 ########")
 
-  if(thread) initDraftFromThread(ctx, thread, loadCloud)
+  if(thread) setDataFromThread(ctx, thread, loadCloud)
   if(draft) localReq.deleteDraftById(draft._id)
 }
 
 // 尚未发表
-async function initDraftFromDraft(
+async function setDataFromDraft(
   ctx: IcsContext,
   draft: DraftLocalTable,
   loadCloud: boolean = true,
@@ -272,7 +276,7 @@ async function initFromCloudThread(
     return
   }
   ctx.emits("hasdata", threadId)
-  initDraftFromThread(ctx, thread, loadCloudMore)
+  setDataFromThread(ctx, thread, loadCloudMore)
 }
 
 
@@ -466,18 +470,36 @@ function setEditorContent(
   draftDescJSON?: TipTapJSONContent[],
 ) {
   const { ceData, editor, numWhenSet } = ctx
-  if(draftDescJSON) {
-    let text = transferUtil.tiptapToText(draftDescJSON)
-    let json = { type: "doc", content: draftDescJSON }
+  let hasSet = false
 
-    editor.commands.setContent(json)
-    ceData.editorContent = { text, json }
+  // 1. get old text
+  let oldText = ""
+  const oldJSON = editor.getJSON()
+  if(oldJSON.type === "doc" && oldJSON.content) {
+    oldText = transferUtil.tiptapToText(oldJSON.content).trim()
+  }
+
+  // 2. check if the text is different
+  if(draftDescJSON) {
+    let text = transferUtil.tiptapToText(draftDescJSON).trim()
+    if(text !== oldText) {
+      hasSet = true
+      let json = { type: "doc", content: draftDescJSON }
+      editor.commands.setContent(json)
+      ceData.editorContent = { text, json }
+    }
   }
   else {
+    hasSet = true
     editor.commands.setContent("<p></p>")
     delete ceData.editorContent
   }
-  numWhenSet.value++
+
+  // 3. if the text is different, increase the numWhenSet
+  if(hasSet) {
+    numWhenSet.value++
+  }
+
   checkCanSubmit(ceData)
 }
 
@@ -523,7 +545,7 @@ async function resetFromCloud(
   //   init it from thread
   if(ceData.threadEdited) {
     if(local_thread) {
-      initDraftFromThread(ctx, local_thread, false)
+      setDataFromThread(ctx, local_thread, false)
     }
     return
   }
@@ -535,7 +557,7 @@ async function resetFromCloud(
 }
 
 
-async function initDraftFromThread(
+async function setDataFromThread(
   ctx: IcsContext,
   thread: ContentLocalTable,
   loadCloud: boolean = true,

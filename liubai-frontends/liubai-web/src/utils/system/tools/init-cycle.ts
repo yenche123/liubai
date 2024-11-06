@@ -22,6 +22,7 @@ import type {
   BulkUpdateAtom_UploadTask
 } from "~/utils/cloud/upload-tasks/tools/types"
 import { useSystemStore } from "~/hooks/stores/useSystemStore";
+import { type OState_Draft } from "~/types/types-basic";
 
 const MIN_5 = time.MINUTE * 5
 const MIN_30 = time.MINUTE * 30
@@ -36,6 +37,8 @@ export function initCycle() {
 
     await handleDeletedContents()
     await handleRemovedContents()
+    await handleUnusedDrafts("DELETED")
+    await handleUnusedDrafts("POSTED")
     await handleSyncingUploadTasks()
 
   })
@@ -95,6 +98,25 @@ async function handleRemovedContents() {
   const res2 = await db.contents.bulkPut(list)
 
 }
+
+async function handleUnusedDrafts(
+  oState: OState_Draft
+) {
+  const now = time.getTime()
+  const DAYS_20_AGO = now - (20 * time.DAY)
+
+  const w = ["oState", "updatedStamp"]
+  const b1 = [oState, 1]
+  const b2 = [oState, DAYS_20_AGO]
+
+  const col = db.drafts.where(w).between(b1, b2, false, false)
+  const results = await col.limit(50).sortBy("updatedStamp")
+  if(results.length < 1) return
+
+  const ids = results.map(v => v._id)
+  await db.drafts.bulkDelete(ids)
+}
+
 
 async function handleSyncingUploadTasks() {
 
