@@ -13,7 +13,7 @@ import type {
   ContentLocalTable,
   DraftLocalTable,
 } from "~/types/types-table"
-import { initWorker } from "./tools/worker-funcs"
+import { endWorker, initWorker } from "./tools/worker-funcs"
 
 interface HanTaskRes {
   hasEverUnknown?: boolean
@@ -465,7 +465,7 @@ const LIMIT = 10
 onmessage = async (e) => {
 
   const msg = e.data as MainToChildMessage
-  initWorker(msg)
+  await initWorker(msg)
 
   let times = 0
   const res0: SyncResult = {
@@ -514,5 +514,6 @@ onmessage = async (e) => {
     }
   }
 
+  endWorker()
   postMessage(res0)
 }

@@ -32,8 +32,6 @@ export function initListenDexie() {
     let content_key = "err.database_blocked_1"
     if(isStandalone) content_key = "err.database_blocked_2"
 
-    db.close()
-
     const res1 = await cui.showModal({
       title: "⚠️",
       content_key,
@@ -49,7 +47,7 @@ export function initListenDexie() {
   db.on("blocked", _blocked)
 
   db.on("versionchange", (e) => {
-    console.warn("db versionchange! x8")
+    console.warn("db versionchange in initListenDexie")
     console.log(e)
     console.log(" ")
     liuConsole.sendMessage("db versionchange!")
@@ -61,7 +59,7 @@ export function initListenDexie() {
   })
 
   db.on("close", () => {
-    console.warn("db close! x8")
+    console.warn("db close in initListenDexie")
   })
 
 }

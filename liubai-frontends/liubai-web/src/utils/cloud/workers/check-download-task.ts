@@ -3,14 +3,14 @@ import type { CheckDownloadTaskParam } from "../tools/types"
 import type { DownloadTaskLocalTable } from "~/types/types-table"
 import ider from "~/utils/basic/ider"
 import time from "~/utils/basic/time"
-import { initWorker } from "./tools/worker-funcs"
+import { endWorker, initWorker } from "./tools/worker-funcs"
 
 onmessage = async (e) => {
   
   const param = e.data as CheckDownloadTaskParam
   const tmp_tasks = param.tasks
   const msg = param.msg
-  initWorker(msg)
+  await initWorker(msg)
 
   const len = tmp_tasks.length
   if(len < 1) return
@@ -41,5 +41,6 @@ onmessage = async (e) => {
     const res2 = await db.download_tasks.add(newData)
   }
 
+  endWorker()
   postMessage("checked")
 }
