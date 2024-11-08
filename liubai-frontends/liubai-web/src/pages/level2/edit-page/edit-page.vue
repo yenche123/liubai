@@ -7,16 +7,19 @@ import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
+import { usePageEnabled } from "~/hooks/useOpenClose";
 
 const { onVvWidthChange } = useMainVice()
 const { t } = useI18n()
+
+const { pageEnabled } = usePageEnabled("edit")
 
 </script>
 <template>
 
   <!-- 主视图 -->
-  <main-view :enable-drop-files="true">
-    <scroll-view>
+  <main-view enable-drop-files>
+    <scroll-view v-if="pageEnabled">
       <navi-virtual></navi-virtual>
       <edit-content></edit-content>
     </scroll-view>
