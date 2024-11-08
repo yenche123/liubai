@@ -1,6 +1,7 @@
 // Function Name: ai-entrance
 
 import type { 
+  AiBot,
   Partial_Id, 
   Table_AiRoom, 
   Table_User, 
@@ -14,6 +15,9 @@ import { aiBots } from "@/ai-prompt"
 import cloud from "@lafjs/cloud"
 
 const db = cloud.database()
+
+/********************* constants ************************/
+const MAX_BOTS = 3
 
 /********************* empty function ****************/
 export async function main(ctx: FunctionContext) {
@@ -33,14 +37,20 @@ export async function enter_ai(
 
   // 1. check out text
   const text = entry.text
-  if(!text) {
-    console.warn("no text")
-    return
-  }
+  if(!text) return
 
   // 2. check out directive
   const isDirective = AiDirective.check(entry)
   if(isDirective) return
+
+  // 3. get my ai room
+  const room = await AiHelper.getMyAiRoom(entry)
+  if(!room) return
+
+  
+
+
+
 
 
 
@@ -67,18 +77,78 @@ class AiDirective {
     const text = entry.text
     if(!text) return false
 
-    // 2. is it a kick directive
+    // 2. is it a kick directive?
     const text2 = text.trim().replace("+", " ")
     const botKicked = this.isKickBot(text2)
     if(botKicked) {
-      // WIP: to kick
+      this.toKickBot(entry, botKicked)
       return true
     }
-    
 
+    // 3. is it an adding directive?
+    const botAdded = this.isAddBot(text2)
+    if(botAdded) {
+      this.toAddBot(entry, botAdded)
+      return true
+    }
+
+    return false
   }
 
-  static isKickBot(text: string) {
+  private static async toKickBot(entry: AiEntrance, bot: AiBot) {
+
+    // 1. get the user's ai room
+    const room = await AiHelper.getMyAiRoom(entry)
+    if(!room) return
+
+    // 2. find the bot in the room
+    const theBot = room.bots.find(v => v === bot.character)
+    if(!theBot) return
+
+    // 3. remove the bot from the room
+    const newBots = room.bots.filter(v => v !== bot.character)
+    const u3: Partial<Table_AiRoom> = {
+      bots: newBots,
+      updatedStamp: getNowStamp(),
+    }
+    const rCol = db.collection("AiRoom")
+    const res3 = await rCol.doc(room._id).update(u3)
+
+    console.log("toKickBot res3: ")
+    console.log(res3)
+
+    return res3    
+  }
+
+  private static async toAddBot(entry: AiEntrance, bot: AiBot) {
+    // 1. get the user's ai room
+    const room = await AiHelper.getMyAiRoom(entry)
+    if(!room) return
+    const bots = room.bots
+
+    // 2. find the bot in the room
+    const theBot = bots.find(v => v === bot.character)
+    if(theBot) return
+
+    // 3. check out if the room has reached the max bots
+    if(bots.length >= MAX_BOTS) return
+
+    // 4. add the bot to the room
+    const newBots = [...bots, bot.character]
+    const u4: Partial<Table_AiRoom> = {
+      bots: newBots,
+      updatedStamp: getNowStamp(),
+    }
+    const rCol = db.collection("AiRoom")
+    const res4 = await rCol.doc(room._id).update(u4)
+
+    console.log("toAddBot res4: ")
+    console.log(res4)
+
+    return true
+  }
+
+  private static isKickBot(text: string) {
     const prefix = ["踢掉", "移除"]
     let prefixMatched = prefix.find(v => text.startsWith(v))
     if(!prefixMatched) return
@@ -90,6 +160,20 @@ class AiDirective {
       return false
     })
 
+    return botMatched
+  }
+
+  private static isAddBot(text: string) {
+    const prefix = ["召唤", "添加", "呼叫"]
+    let prefixMatched = prefix.find(v => text.startsWith(v))
+    if(!prefixMatched) return
+
+    const otherText = text.substring(prefixMatched.length).trim()
+    const botMatched = aiBots.find(v => {
+      if(v.name === otherText) return true
+      if(v.alias.includes(otherText)) return true
+      return false
+    })
     return botMatched
   }
 
@@ -139,33 +223,39 @@ class Zhipu {
 
 
 /*********************** helper functions ************************/
-async function getMyAiRoom(
-  entry: AiEntrance,
-) {
-  // 1. get room
-  const userId = entry.user._id
-  const rCol = db.collection("AiRoom")
-  const res1 = await rCol.where({ owner: userId }).getOne<Table_AiRoom>()
-  const room = res1.data
-  if(room) return room
 
-  // 2. create room
-  const b2 = getBasicStampWhileAdding()
-  const room2: Partial_Id<Table_AiRoom> = {
-    ...b2,
-    owner: userId,
-    bots: [],
-  }
-  const res2 = await rCol.add(room2)
-  const roomId = getDocAddId(res2)
-  if(!roomId) {
-    console.warn("cannot get roomId while creating ai room error")
-    console.log(res2)
-    return
+class AiHelper {
+
+  static async getMyAiRoom(
+    entry: AiEntrance,
+  ) {
+    // 1. get room
+    const userId = entry.user._id
+    const rCol = db.collection("AiRoom")
+    const res1 = await rCol.where({ owner: userId }).getOne<Table_AiRoom>()
+    const room = res1.data
+    if(room) return room
+  
+    // 2. create room
+    const b2 = getBasicStampWhileAdding()
+    const room2: Partial_Id<Table_AiRoom> = {
+      ...b2,
+      owner: userId,
+      bots: [],
+    }
+    const res2 = await rCol.add(room2)
+    const roomId = getDocAddId(res2)
+    if(!roomId) {
+      console.warn("cannot get roomId while creating ai room error")
+      console.log(res2)
+      console.log("entry: ")
+      console.log(entry)
+      return
+    }
+  
+    // 3. return room
+    const newRoom: Table_AiRoom = { _id: roomId, ...room2 }
+    return newRoom
   }
 
-  // 3. return room
-  const newRoom: Table_AiRoom = { _id: roomId, ...room2 }
-  return newRoom
 }
-

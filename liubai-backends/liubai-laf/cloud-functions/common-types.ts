@@ -1390,12 +1390,13 @@ export interface Table_Order extends BaseTable {
 }
 
 
-/** AI Room */
+/********* AI Room *********/
 export interface Table_AiRoom extends BaseTable {
   owner: string           // corresponds to userId
-  bots: AiProvider[]
+  bots: AiCharacter[]
 }
 
+/********* AI Chat *********/
 export interface Table_AiChat extends BaseTable {
   roomId: string
   msgType: AiMsgType
@@ -1403,14 +1404,14 @@ export interface Table_AiChat extends BaseTable {
   imageUrl?: string
 
   // about LLM
-  model?: string         // like "gpt-4o"
-  provider?: AiProvider
+  model?: string           // like "gpt-4o"
+  character?: AiCharacter
   usage?: AiUsage
 
   // about human
   userId?: string
+  channel?: "wx_gzh"
 }
-
 
 
 
