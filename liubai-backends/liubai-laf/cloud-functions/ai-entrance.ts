@@ -121,6 +121,13 @@ class AiDirective {
       return true
     }
 
+    // 4. is it clear directive?
+    const res4 = this.isClear(text2)
+    if(res4) {
+      this.toClear(entry)
+      return true
+    }
+
     return false
   }
 
@@ -146,6 +153,8 @@ class AiDirective {
     console.log("toKickBot res3: ")
     console.log(res3)
 
+    // 4. WIP: send a message to user
+
     return res3    
   }
 
@@ -170,6 +179,8 @@ class AiDirective {
     }
     const rCol = db.collection("AiRoom")
     const res4 = await rCol.doc(room._id).update(u4)
+
+    // 5. WIP: send a message to user
 
     console.log("toAddBot res4: ")
     console.log(res4)
@@ -204,6 +215,33 @@ class AiDirective {
       return false
     })
     return botMatched
+  }
+
+  private static isClear(text: string) {
+    const strs = ["清空上文", "清空上下文", "清楚历史记录"]
+    return strs.includes(text)
+  }
+
+  private static async toClear(entry: AiEntrance) {
+    // 1. get the user's ai room
+    const room = await AiHelper.getMyAiRoom(entry)
+    if(!room) return false
+
+    // 2. add a clear record into db
+    const b2 = getBasicStampWhileAdding()
+    const data2: Partial_Id<Table_AiChat> = {
+      ...b2,
+      msgType: "clear",
+      roomId: room._id,
+    }
+    const col = db.collection("AiChat")
+    const res2 = await col.add(data2)
+    console.log("toClear res2: ")
+    console.log(res2)
+
+    // 3. WIP: send a clear message to user
+
+    return true
   }
 
 }
@@ -414,6 +452,47 @@ class AiHelper {
     }
 
     return token
+  }
+
+}
+
+
+
+class TellUser {
+
+  static async text(
+    entry: AiEntrance, 
+    text: string,
+    from?: AiBot,
+  ) {
+    const { wx_gzh_openid } = entry
+
+    // 1. send to wx gzh
+    if(wx_gzh_openid) {
+      const obj1: Wx_Gzh_Send_Msg = {
+        msgtype: "text",
+        text: { content: text },
+      }
+      if(from?.wx_gzh_kf_account) {
+        obj1.customservice = { kf_account: from.wx_gzh_kf_account }
+      }
+      const res1 = await this.sendToWxGzh(wx_gzh_openid, obj1)
+      return res1
+    }
+
+    
+
+  }
+
+
+  private static async sendToWxGzh(
+    wx_gzh_openid: string,
+    obj: Wx_Gzh_Send_Msg,
+  ) {
+    const accessToken = await checkAndGetWxGzhAccessToken()
+    if(!accessToken) return
+    const res = await sendWxMessage(wx_gzh_openid, accessToken, obj)
+    return res
   }
 
 }
