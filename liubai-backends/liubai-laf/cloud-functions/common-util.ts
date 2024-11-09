@@ -257,6 +257,16 @@ const isStringWithVal = (val: any): val is string => {
   return hasValue<string>(val, "string")
 }
 
+const isLatinChar = (char: string) => {
+  const isEng1 = char >= "a" && char <= "z"
+  if(isEng1) return true
+  const isEng2 = char >= "A" && char <= "Z"
+  if(isEng2) return true
+  const isNum = char >= "0" && char <= "9"
+  if(isNum) return true
+  return false
+}
+
 export const valTool = {
   waitMilli,
   strToObj,
@@ -268,6 +278,7 @@ export const valTool = {
   encode_URI_component,
   hasValue,
   isStringWithVal,
+  isLatinChar,
 }
 
 

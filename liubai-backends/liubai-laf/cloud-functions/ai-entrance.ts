@@ -3,12 +3,18 @@
 import type { 
   AiBot,
   Partial_Id, 
+  Table_AiChat, 
   Table_AiRoom, 
   Table_User, 
   Wx_Gzh_Send_Msg,
 } from "@/common-types"
 import OpenAI from "openai"
-import { checkAndGetWxGzhAccessToken, getDocAddId } from "@/common-util"
+import { 
+  checkAndGetWxGzhAccessToken, 
+  checkIfUserSubscribed, 
+  getDocAddId,
+  valTool,
+} from "@/common-util"
 import { sendWxMessage } from "@/service-send"
 import { getBasicStampWhileAdding, getNowStamp } from "@/common-time"
 import { aiBots } from "@/ai-prompt"
@@ -16,8 +22,16 @@ import cloud from "@lafjs/cloud"
 
 const db = cloud.database()
 
-/********************* constants ************************/
+/********************* constants ***********************/
 const MAX_BOTS = 3
+const MAX_TOKEN_1 = 8000
+const TOKEN_NEED_COMPRESS = 6000
+
+/************************** types ************************/
+interface HistoryData {
+  results: Table_AiChat[]
+  totalToken: number
+}
 
 /********************* empty function ****************/
 export async function main(ctx: FunctionContext) {
@@ -43,9 +57,24 @@ export async function enter_ai(
   const isDirective = AiDirective.check(entry)
   if(isDirective) return
 
-  // 3. get my ai room
+  // 3. check out quota
+  const isQuotaEnough = await AiHelper.checkQuota(entry)
+  if(!isQuotaEnough) return
+
+  // 4. get my ai room
   const room = await AiHelper.getMyAiRoom(entry)
   if(!room) return
+  const roomId = room._id
+
+  // 5. add the current message into db
+  const chatId = await AiHelper.addUserMsg(entry, roomId)
+  if(!chatId) return
+
+  // 6. get latest chat record
+  const res6 = await AiHelper.getLatestChat(roomId)
+
+
+
 
   
 
@@ -221,6 +250,29 @@ class Zhipu {
 }
 
 
+/*********************** AI Controller ************************/
+class AiController {
+
+  run(
+    entry: AiEntrance,
+    room: Table_AiRoom,
+    historyData: HistoryData,
+  ) {
+    // 1. compress history data
+    let promptToken = historyData.totalToken
+    if(promptToken > TOKEN_NEED_COMPRESS) {
+      // WIP: compress
+
+    }
+
+    
+
+  }
+
+
+}
+
+
 
 /*********************** helper functions ************************/
 
@@ -256,6 +308,112 @@ class AiHelper {
     // 3. return room
     const newRoom: Table_AiRoom = { _id: roomId, ...room2 }
     return newRoom
+  }
+
+
+  static async checkQuota(
+    entry: AiEntrance,
+  ) {
+    const user = entry.user
+    const quota = user.quota
+    if(!quota) return true
+
+    const count = quota.aiConversationCount
+    const isSubscribed = checkIfUserSubscribed(user)
+    const MAX_TIMES = isSubscribed ? 200 : 10
+
+    const available = count < MAX_TIMES
+    if(!available) {
+      // WIP: send message to user: "please upgrade your subscription to continue"
+
+    }
+
+    return available
+  }
+
+  static async addUserMsg(
+    entry: AiEntrance,
+    roomId: string,
+  ) {
+    const text = entry.text
+    const userId = entry.user._id
+    const b1 = getBasicStampWhileAdding()
+    const data1: Partial_Id<Table_AiChat> = {
+      ...b1,
+      roomId,
+      msgType: "user",
+      text,
+      userId,
+      channel: "wx_gzh",
+    }
+    const col = db.collection("AiChat")
+    const res1 = await col.add(data1)
+    const chatId = getDocAddId(res1)
+    if(!chatId) {
+      console.warn("cannot get chatId while adding user msg error")
+      console.log(res1)
+      console.log("entry: ")
+      console.log(entry)
+      return
+    }
+
+    return chatId
+  }
+
+  static async getLatestChat(
+    roomId: string,
+  ): Promise<HistoryData> {
+    const _this = this
+    const col = db.collection("AiChat")
+    const q1 = col.where({ roomId }).orderBy("insertedStamp", "desc")
+    const res1 = await q1.limit(50).get<Table_AiChat>()
+    const chats = res1.data
+    const results: Table_AiChat[] = []
+    let totalToken = 0
+    for(let i=0; i<chats.length; i++) {
+      const v = chats[i]
+      if(v.msgType === "clear") {
+        break
+      }
+      const token = _this.calculateToken(v)
+      const tmpToken = totalToken + token
+      if(tmpToken > MAX_TOKEN_1) {
+        break
+      }
+      totalToken = tmpToken
+      results.push(v)
+    }
+
+    return { results, totalToken }
+  }
+
+
+  static calculateToken(
+    chat: Table_AiChat,
+  ) {
+    const { msgType, usage, text, imageUrl } = chat
+    if(msgType === "assistant") {
+      const token1 = usage?.completion_tokens
+      if(token1) return token1
+    }
+
+    let token = 0
+    if(text) {
+      for(let i=0; i<text.length; i++) {
+        const char = text[i]
+        if(valTool.isLatinChar(char)) {
+          token += 0.5
+        }
+        else {
+          token += 1
+        }
+      }
+    }
+    else if(imageUrl) {
+      token += 400
+    }
+
+    return token
   }
 
 }

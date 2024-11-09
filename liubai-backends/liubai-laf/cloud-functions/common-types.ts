@@ -668,7 +668,7 @@ export interface UserThirdData {
   wx_gzh?: UserWeChatGzh
 }
 
-/** 用户的订阅方案 */
+/** User's Subscription Plan */
 export interface UserSubscription {
   isOn: BaseIsOn
   plan: string             // 订阅计划 “应用内 Subscription 表” 的 _id
@@ -683,6 +683,11 @@ export interface UserSubscription {
     customer_portal_url?: string        // stripe 的订阅管理网址，供用户去管理订阅
     customer_portal_created?: number    // 注意: 以秒为单位
   }
+}
+
+/** User's Quota about AI conversation */
+export interface UserQuota {
+  aiConversationCount: number
 }
 
 export interface LiuSpaceAndMember {
@@ -1083,6 +1088,7 @@ export interface Table_User extends BaseTable {
   ipArea?: string
   total_size?: number                 // 用户的总存储空间，单位为 kB
   upload_size?: number                // 用户的总历史上传空间，单位为 kB
+  quota?: UserQuota
 
   /** wechat data */
   wx_gzh_openid?: string
@@ -1411,6 +1417,11 @@ export interface Table_AiChat extends BaseTable {
   // about human
   userId?: string
   channel?: "wx_gzh"
+}
+
+export interface Table_Log extends BaseTable {
+  userId: string
+  infoType: "conversation"
 }
 
 
