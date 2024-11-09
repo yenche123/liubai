@@ -124,6 +124,8 @@ declare global {
       LIU_DEEPSEEK_API_KEY?: string          // DeepSeek AI 的 api key
       LIU_STEPFUN_BASE_URL?: string          // Stepfun AI 的 base url
       LIU_STEPFUN_API_KEY?: string           // Stepfun AI 的 api key
+      LIU_YI_BASE_URL?: string               // 01.ai 的 base url
+      LIU_YI_API_KEY?: string                // 01.ai 的 api key
       
 
     }

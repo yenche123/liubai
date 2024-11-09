@@ -605,6 +605,12 @@ export type AiCharacter = "deepseek" | "kimi" | "yuewen" | "wanzhi" | "zhipu"
 
 export type AiMsgType = "user" | "assistant" | "summary" | "clear" | 
   "action" | "background"
+// user: 用户发来的消息
+// assistant: AI 的回复
+// summary: AI 的总结 for context
+// clear: 清除对话
+// action: 记录用户的操作，比如“同意 xxx 读取 yyy”
+// background: 比如 url 的解析结果 / 关键词搜索结果
 
 export type AiAbility = "chat" | "text_to_image" | "image_to_text"
 
@@ -1399,7 +1405,7 @@ export interface Table_Order extends BaseTable {
 /********* AI Room *********/
 export interface Table_AiRoom extends BaseTable {
   owner: string           // corresponds to userId
-  bots: AiCharacter[]
+  characters: AiCharacter[]
 }
 
 /********* AI Chat *********/

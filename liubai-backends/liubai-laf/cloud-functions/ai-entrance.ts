@@ -2,6 +2,7 @@
 
 import type { 
   AiBot,
+  AiCharacter,
   Partial_Id, 
   Table_AiChat, 
   Table_AiRoom, 
@@ -23,14 +24,29 @@ import cloud from "@lafjs/cloud"
 const db = cloud.database()
 
 /********************* constants ***********************/
-const MAX_BOTS = 3
+const MAX_CHARACTERS = 3
 const MAX_TOKEN_1 = 8000
 const TOKEN_NEED_COMPRESS = 6000
 
 /************************** types ************************/
+
+export interface AiEntrance {
+  user: Table_User
+  text?: string
+  wx_gzh_openid?: string
+}
+
 interface HistoryData {
-  results: Table_AiChat[]
+  results: Table_AiChat[]    // desc by insertedStamp
   totalToken: number
+}
+
+// pass it to aiController.run() and bot.run()
+interface AiRunParam {
+  entry: AiEntrance
+  room: Table_AiRoom
+  chatId: string
+  historyData: HistoryData
 }
 
 /********************* empty function ****************/
@@ -39,11 +55,6 @@ export async function main(ctx: FunctionContext) {
   return true
 }
 
-export interface AiEntrance {
-  user: Table_User
-  text?: string
-  wx_gzh_openid?: string
-}
 
 export async function enter_ai(
   entry: AiEntrance,
@@ -70,7 +81,7 @@ export async function enter_ai(
   const chatId = await AiHelper.addUserMsg(entry, roomId)
   if(!chatId) return
 
-  // 6. get latest chat record
+  // 6. get latest chat records
   const res6 = await AiHelper.getLatestChat(roomId)
 
 
@@ -83,17 +94,6 @@ export async function enter_ai(
 
 
 
-}
-
-
-async function sendToWxGzh(
-  wx_gzh_openid: string,
-  obj: Wx_Gzh_Send_Msg,
-) {
-  const accessToken = await checkAndGetWxGzhAccessToken()
-  if(!accessToken) return
-  const res = await sendWxMessage(wx_gzh_openid, accessToken, obj)
-  return res
 }
 
 
@@ -138,13 +138,13 @@ class AiDirective {
     if(!room) return
 
     // 2. find the bot in the room
-    const theBot = room.bots.find(v => v === bot.character)
+    const theBot = room.characters.find(v => v === bot.character)
     if(!theBot) return
 
     // 3. remove the bot from the room
-    const newBots = room.bots.filter(v => v !== bot.character)
+    const newBots = room.characters.filter(v => v !== bot.character)
     const u3: Partial<Table_AiRoom> = {
-      bots: newBots,
+      characters: newBots,
       updatedStamp: getNowStamp(),
     }
     const rCol = db.collection("AiRoom")
@@ -162,19 +162,19 @@ class AiDirective {
     // 1. get the user's ai room
     const room = await AiHelper.getMyAiRoom(entry)
     if(!room) return
-    const bots = room.bots
+    const bots = room.characters
 
     // 2. find the bot in the room
     const theBot = bots.find(v => v === bot.character)
     if(theBot) return
 
     // 3. check out if the room has reached the max bots
-    if(bots.length >= MAX_BOTS) return
+    if(bots.length >= MAX_CHARACTERS) return
 
     // 4. add the bot to the room
     const newBots = [...bots, bot.character]
     const u4: Partial<Table_AiRoom> = {
-      bots: newBots,
+      characters: newBots,
       updatedStamp: getNowStamp(),
     }
     const rCol = db.collection("AiRoom")
@@ -248,7 +248,9 @@ class AiDirective {
 
 
 
-class Zhipu {
+/**************************** Bots ***************************/
+
+class BotZhipu {
 
   private _client: OpenAI | undefined
 
@@ -285,25 +287,39 @@ class Zhipu {
     }
   }
 
+  async run(param: AiRunParam) {
+    const { historyData } = param
+
+
+  }
+
 }
 
 
 /*********************** AI Controller ************************/
 class AiController {
 
-  run(
-    entry: AiEntrance,
-    room: Table_AiRoom,
-    historyData: HistoryData,
-  ) {
-    // 1. compress history data
+  async run(param: AiRunParam) {
+    const { room, historyData } = param
+
+    // 1. check bots in the room
+    const characters = room.characters
+    if(characters.length < 1) {
+      console.warn("no characters in the room")
+      return false
+    }
+
+    // 2. compress history data
     let promptToken = historyData.totalToken
+    let chats = historyData.results
     if(promptToken > TOKEN_NEED_COMPRESS) {
       // WIP: compress
+      // ......
+
+      // 2.1 update the history data
 
     }
 
-    
 
   }
 
@@ -328,10 +344,13 @@ class AiHelper {
   
     // 2. create room
     const b2 = getBasicStampWhileAdding()
+    const characters = this.fillCharacters()
+    console.log("init characters: ")
+    console.log(characters)
     const room2: Partial_Id<Table_AiRoom> = {
       ...b2,
       owner: userId,
-      bots: [],
+      characters,
     }
     const res2 = await rCol.add(room2)
     const roomId = getDocAddId(res2)
@@ -346,6 +365,62 @@ class AiHelper {
     // 3. return room
     const newRoom: Table_AiRoom = { _id: roomId, ...room2 }
     return newRoom
+  }
+
+  private static fillCharacters() {
+    const all_characters = this.getAvailableCharacters()
+    if(all_characters.length <= MAX_CHARACTERS) {
+      return all_characters
+    }
+
+    const my_characters: AiCharacter[] = []
+    for(let i=0; i<MAX_CHARACTERS; i++) {
+      const r = Math.floor(Math.random() * all_characters.length)
+      const c = all_characters[r]
+      my_characters.push(c)
+      all_characters.splice(r, 1)
+    }
+
+    return my_characters
+  }
+
+  private static getAvailableCharacters() {
+    const characters: AiCharacter[] = []
+    const _env = process.env
+
+    for(let i=0; i<aiBots.length; i++) {
+      const bot = aiBots[i]
+      const c = bot.character
+      if(characters.includes(c)) continue
+      const p = bot.provider
+      if(p === "zhipu") {
+        if(_env.LIU_ZHIPU_API_KEY && _env.LIU_ZHIPU_BASE_URL) {
+          characters.push(c)
+        }
+      }
+      else if(p === "moonshot") {
+        if(_env.LIU_MOONSHOT_API_KEY && _env.LIU_MOONSHOT_BASE_URL) {
+          characters.push(c)
+        }
+      }
+      else if(p === "deepseek") {
+        if(_env.LIU_DEEPSEEK_API_KEY && _env.LIU_DEEPSEEK_BASE_URL) {
+          characters.push(c)
+        }
+      }
+      else if(p === "stepfun") {
+        if(_env.LIU_STEPFUN_API_KEY && _env.LIU_STEPFUN_BASE_URL) {
+          characters.push(c)
+        }
+      }
+      else if(p === "zero-one") {
+        if(_env.LIU_YI_API_KEY && _env.LIU_YI_BASE_URL) {
+          characters.push(c)
+        }
+      }
+    }
+
+    return characters
   }
 
 
@@ -420,17 +495,20 @@ class AiHelper {
       }
       totalToken = tmpToken
       results.push(v)
+
+      if(v.msgType === "summary") {
+        break
+      }
     }
 
     return { results, totalToken }
   }
 
-
   static calculateToken(
     chat: Table_AiChat,
   ) {
     const { msgType, usage, text, imageUrl } = chat
-    if(msgType === "assistant") {
+    if(msgType === "assistant" || msgType === "summary") {
       const token1 = usage?.completion_tokens
       if(token1) return token1
     }
@@ -452,6 +530,29 @@ class AiHelper {
     }
 
     return token
+  }
+
+  static async canReply(
+    roomId: string,
+    chatId: string,
+  ) {
+    const col = db.collection("AiChat")
+    const q1 = col.where({ roomId }).orderBy("insertedStamp", "desc")
+    const res1 = await q1.limit(10).get<Table_AiChat>()
+    const chats = res1.data
+
+    let res = false
+    for(let i=0; i<chats.length; i++) {
+      const v = chats[i]
+      if(v.msgType === "user") {
+        res = v._id === chatId
+        break
+      }
+      if(v.msgType === "clear") {
+        break
+      }
+    }
+    return res
   }
 
 }
