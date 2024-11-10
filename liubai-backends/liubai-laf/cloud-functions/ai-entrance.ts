@@ -3,7 +3,7 @@
 import type { 
   AiBot,
   AiCharacter,
-  DataPass,
+  AiUsage,
   Partial_Id, 
   Table_AiChat, 
   Table_AiRoom, 
@@ -55,7 +55,13 @@ interface AiRunSuccess {
   chatCompletion?: OpenAI.Chat.ChatCompletion
 }
 
-type AiRunResult = DataPass<AiRunSuccess>
+interface HelperAssistantMsgParam {
+  roomId: string
+  text?: string
+  model: string
+  character: AiCharacter
+  usage?: AiUsage
+}
 
 /********************* empty function ****************/
 export async function main(ctx: FunctionContext) {
@@ -91,13 +97,6 @@ export async function enter_ai(
 
   // 6. get latest chat records
   const res6 = await AiHelper.getLatestChat(roomId)
-
-
-
-
-  
-
-
 
 
 
@@ -334,6 +333,7 @@ class BotStepfun {
 class BotZhipu {
 
   private _client: OpenAI | undefined
+  private _character: AiCharacter = "zhipu"
 
   constructor() {
     const _this = this
@@ -368,14 +368,70 @@ class BotZhipu {
     }
   }
 
-  async run(param: AiRunParam) {
-    const { historyData } = param
+  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+    // 1. get history data & model
+    const { historyData, room, chatId, entry } = param
+    const roomId = room._id
     const chats = historyData.results
-    
+    let totalToken = historyData.totalToken
+    const model = this.getModel()
+    if(!model) return
 
-    
+    console.log("Zhipu model: ", model)
+
+    // 2. add system prompt
+
+    // 3. turn chats into prompt
+    const prompts = AiHelper.turnChatsIntoPrompt(chats)
+    prompts.reverse()
+
+    // 4. calculate maxTokens
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+
+    // 5. to chat
+    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+      messages: prompts,
+      max_completion_tokens: maxToken,
+      model,
+    }
+    const res5 = await this.chat(params)
+    if(!res5) return
+
+    // 6. get content, add now we only support text
+    const txt6 = res5.choices[0].message.content
+    if(!txt6) return
+
+    // 7. can i reply
+    const res7 = await AiHelper.canReply(roomId, chatId)
+    if(!res7) return
+
+    // 8. reply
+    TellUser.text(entry, txt6)
+
+    // 9. add assistant chat
+    const param9: HelperAssistantMsgParam = {
+      roomId,
+      text: txt6,
+      model,
+      character: this._character,
+      usage: res5.usage,
+    }
+    const assistantChatId = await AiHelper.addAssistantMsg(param9)
+    if(!assistantChatId) return
+
+    return { chatCompletion: res5, assistantChatId }
+  }
 
 
+  private getModel() {
+    const c = this._character
+    const bots = aiBots.filter(v => v.character === c)
+    if(bots.length < 1) {
+      console.warn("no model for zhipu can be used")
+      return
+    }
+    const bot = bots[0]
+    return bot.model
   }
 
 }
@@ -570,6 +626,30 @@ class AiHelper {
     return chatId
   }
 
+  static async addAssistantMsg(
+    param: HelperAssistantMsgParam,
+  ) {
+    const b1 = getBasicStampWhileAdding()
+    const data1: Partial_Id<Table_AiChat> = {
+      ...b1,
+      roomId: param.roomId,
+      msgType: "assistant",
+      text: param.text,
+      model: param.model,
+      character: param.character,
+      usage: param.usage,
+    }
+    const col = db.collection("AiChat")
+    const res1 = await col.add(data1)
+    const chatId = getDocAddId(res1)
+    if(!chatId) {
+      console.warn("adding assistant msg error")
+      console.log(res1)
+      return
+    }
+    return chatId
+  }
+
   static async getLatestChat(
     roomId: string,
   ): Promise<HistoryData> {
@@ -718,6 +798,19 @@ class AiHelper {
 
     return messages
   }
+
+  static getMaxToken(
+    totalToken: number,
+    firstChat: Table_AiChat,
+  ) {
+    const restToken = MAX_TOKEN_1 - totalToken
+    const firstToken = this.calculateToken(firstChat)
+    let maxTokens = firstToken * 2
+    if(maxTokens < 280) maxTokens = 280
+    if(maxTokens > restToken) maxTokens = restToken
+    return maxTokens
+  }
+
 
 }
 
