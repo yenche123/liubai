@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, PropType, inject } from 'vue';
+import { type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type {
   ScContentAtom,
@@ -7,7 +7,7 @@ import type {
   ScThirdPartyAtom,
 } from "~/utils/controllers/search-controller/types"
 import type { SearchListType } from "../../tools/types"
-import { searchFuncsKey } from "../../tools/types"
+import { useSearchItem } from './tools/useSearchItem';
 
 const props = defineProps({
   siType: {
@@ -36,49 +36,17 @@ const props = defineProps({
   }
 })
 
+const {
+  desc,
+  onMouseEnter,
+  onTapItem,
+  showClear,
+  onTapClear,
+  isSelected
+} = useSearchItem(props)
+
 const { t } = useI18n()
-
-const desc = computed(() => {
-  const { siType, contentAtom } = props
-  if(siType === 'suggest' || siType === 'results') {
-    if(contentAtom?.desc) return contentAtom.desc
-  }
-
-  return ""
-})
-
 const iconColor = "var(--main-code)"
-
-
-const injectData = inject(searchFuncsKey)
-
-const onMouseEnter = () => {
-  if(!injectData) return
-  injectData.mouseenteritem(props.atomId)
-}
-
-const onTapItem = () => {
-  if(!injectData) return
-  injectData.tapitem(props.siType, props.atomId)
-}
-
-const showClear = computed(() => {
-  const { indicator, atomId, siType } = props
-  if(indicator && indicator === atomId && siType === 'recent') return true
-  return false
-})
-
-const onTapClear = () => {
-  const { indicator, atomId } = props
-  if(!indicator || indicator !== atomId) return
-  if(!injectData) return
-  injectData.clearitem(props.siType, props.atomId)
-}
-
-const isSelected = computed(() => {
-  if(props.indicator && props.indicator === props.atomId) return true
-  return false
-})
 
 </script>
 <template>
