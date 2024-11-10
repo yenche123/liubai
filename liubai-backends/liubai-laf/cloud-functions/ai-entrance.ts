@@ -98,6 +98,9 @@ export async function enter_ai(
   // 6. get latest chat records
   const res6 = await AiHelper.getLatestChat(roomId)
 
+  const controller = new AiController()
+  controller.run({ entry, room, chatId, historyData: res6 })
+
 
 
 
@@ -260,6 +263,7 @@ class AiDirective {
 class BotZeroOne {
 
   private _client: OpenAI | undefined
+  private _character: AiCharacter = "wanzhi"
 
   constructor() {
     const _env = process.env
@@ -268,9 +272,95 @@ class BotZeroOne {
     try {
       this._client = new OpenAI({ apiKey, baseURL })
     } catch(err) {
-      console.warn("ZeroOne constructor gets client error: ")
+      console.warn("yi constructor gets client error: ")
       console.log(err)
     }
+  }
+
+  async chat(
+    params: OpenAI.Chat.ChatCompletionCreateParams,
+  ) {
+    const client = this._client
+    if(!client) return
+
+    try {
+      const t1 = getNowStamp()
+      const chatCompletion = await client.chat.completions.create(params)
+      const t2 = getNowStamp()
+      const cost = t2 - t1
+      console.log(`yi chat cost: ${cost}ms`)
+      console.log(chatCompletion)
+      return chatCompletion as OpenAI.Chat.ChatCompletion
+    }
+    catch(err) {
+      console.warn("yi chat error: ")
+      console.log(err)
+    }
+  }
+
+  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+    // 1. get history data & model
+    const { historyData, room, chatId, entry } = param
+    const roomId = room._id
+    const chats = historyData.results
+    let totalToken = historyData.totalToken
+    const bot = this.getSuitableBot()
+    if(!bot) return
+    const model = bot.model
+    console.log("yi model: ", model)
+
+    // 2. add system prompt
+
+    // 3. turn chats into prompt
+    const prompts = AiHelper.turnChatsIntoPrompt(chats)
+    prompts.reverse()
+
+    // 4. calculate maxTokens
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+
+    // 5. to chat
+    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+      messages: prompts,
+      max_tokens: maxToken,
+      model,
+    }
+    const res5 = await this.chat(params)
+    if(!res5) return
+
+    // 6. get content, add now we only support text
+    const txt6 = res5.choices[0].message.content
+    if(!txt6) return
+
+    // 7. can i reply
+    const res7 = await AiHelper.canReply(roomId, chatId)
+    if(!res7) return
+
+    // 8. reply
+    TellUser.text(entry, txt6, bot)
+
+    // 9. add assistant chat
+    const param9: HelperAssistantMsgParam = {
+      roomId,
+      text: txt6,
+      model,
+      character: this._character,
+      usage: res5.usage,
+    }
+    const assistantChatId = await AiHelper.addAssistantMsg(param9)
+    if(!assistantChatId) return
+
+    return { chatCompletion: res5, assistantChatId }
+  }
+
+
+  private getSuitableBot() {
+    const c = this._character
+    const bots = aiBots.filter(v => v.character === c)
+    if(bots.length < 1) {
+      console.warn("no bot for yi can be used")
+      return
+    }
+    return bots[0]
   }
 
 }
@@ -278,6 +368,7 @@ class BotZeroOne {
 class BotMoonshot {
 
   private _client: OpenAI | undefined
+  private _character: AiCharacter = "kimi"
 
   constructor() {
     const _env = process.env
@@ -291,11 +382,98 @@ class BotMoonshot {
     }
   }
 
+  async chat(
+    params: OpenAI.Chat.ChatCompletionCreateParams,
+  ) {
+    const client = this._client
+    if(!client) return
+
+    try {
+      const t1 = getNowStamp()
+      const chatCompletion = await client.chat.completions.create(params)
+      const t2 = getNowStamp()
+      const cost = t2 - t1
+      console.log(`moonshot chat cost: ${cost}ms`)
+      console.log(chatCompletion)
+      return chatCompletion as OpenAI.Chat.ChatCompletion
+    }
+    catch(err) {
+      console.warn("moonshot chat error: ")
+      console.log(err)
+    }
+  }
+
+  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+    // 1. get history data & model
+    const { historyData, room, chatId, entry } = param
+    const roomId = room._id
+    const chats = historyData.results
+    let totalToken = historyData.totalToken
+    const bot = this.getSuitableBot()
+    if(!bot) return
+    const model = bot.model
+    console.log("moonshot model: ", model)
+
+    // 2. add system prompt
+
+    // 3. turn chats into prompt
+    const prompts = AiHelper.turnChatsIntoPrompt(chats)
+    prompts.reverse()
+
+    // 4. calculate maxTokens
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+
+    // 5. to chat
+    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+      messages: prompts,
+      max_tokens: maxToken,
+      model,
+    }
+    const res5 = await this.chat(params)
+    if(!res5) return
+
+    // 6. get content, add now we only support text
+    const txt6 = res5.choices[0].message.content
+    if(!txt6) return
+
+    // 7. can i reply
+    const res7 = await AiHelper.canReply(roomId, chatId)
+    if(!res7) return
+
+    // 8. reply
+    TellUser.text(entry, txt6, bot)
+
+    // 9. add assistant chat
+    const param9: HelperAssistantMsgParam = {
+      roomId,
+      text: txt6,
+      model,
+      character: this._character,
+      usage: res5.usage,
+    }
+    const assistantChatId = await AiHelper.addAssistantMsg(param9)
+    if(!assistantChatId) return
+
+    return { chatCompletion: res5, assistantChatId }
+  }
+
+
+  private getSuitableBot() {
+    const c = this._character
+    const bots = aiBots.filter(v => v.character === c)
+    if(bots.length < 1) {
+      console.warn("no bot for moonshot can be used")
+      return
+    }
+    return bots[0]
+  }
+
 }
 
 class BotDeepSeek {
 
   private _client: OpenAI | undefined
+  private _character: AiCharacter = "kimi"
 
   constructor() {
     const _env = process.env
@@ -309,11 +487,98 @@ class BotDeepSeek {
     }
   }
 
+  async chat(
+    params: OpenAI.Chat.ChatCompletionCreateParams,
+  ) {
+    const client = this._client
+    if(!client) return
+
+    try {
+      const t1 = getNowStamp()
+      const chatCompletion = await client.chat.completions.create(params)
+      const t2 = getNowStamp()
+      const cost = t2 - t1
+      console.log(`deepseek chat cost: ${cost}ms`)
+      console.log(chatCompletion)
+      return chatCompletion as OpenAI.Chat.ChatCompletion
+    }
+    catch(err) {
+      console.warn("deepseek chat error: ")
+      console.log(err)
+    }
+  }
+
+  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+    // 1. get history data & model
+    const { historyData, room, chatId, entry } = param
+    const roomId = room._id
+    const chats = historyData.results
+    let totalToken = historyData.totalToken
+    const bot = this.getSuitableBot()
+    if(!bot) return
+    const model = bot.model
+
+    console.log("deepseek model: ", model)
+
+    // 2. add system prompt
+
+    // 3. turn chats into prompt
+    const prompts = AiHelper.turnChatsIntoPrompt(chats)
+    prompts.reverse()
+
+    // 4. calculate maxTokens
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+
+    // 5. to chat
+    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+      messages: prompts,
+      max_tokens: maxToken,
+      model,
+    }
+    const res5 = await this.chat(params)
+    if(!res5) return
+
+    // 6. get content, add now we only support text
+    const txt6 = res5.choices[0].message.content
+    if(!txt6) return
+
+    // 7. can i reply
+    const res7 = await AiHelper.canReply(roomId, chatId)
+    if(!res7) return
+
+    // 8. reply
+    TellUser.text(entry, txt6, bot)
+
+    // 9. add assistant chat
+    const param9: HelperAssistantMsgParam = {
+      roomId,
+      text: txt6,
+      model,
+      character: this._character,
+      usage: res5.usage,
+    }
+    const assistantChatId = await AiHelper.addAssistantMsg(param9)
+    if(!assistantChatId) return
+
+    return { chatCompletion: res5, assistantChatId }
+  }
+
+  private getSuitableBot() {
+    const c = this._character
+    const bots = aiBots.filter(v => v.character === c)
+    if(bots.length < 1) {
+      console.warn("no bot for deepseek can be used")
+      return
+    }
+    return bots[0]
+  }
+
 }
 
 class BotStepfun {
 
   private _client: OpenAI | undefined
+  private _character: AiCharacter = "yuewen"
 
   constructor() {
     const _env = process.env
@@ -325,6 +590,92 @@ class BotStepfun {
       console.warn("Stepfun constructor gets client error: ")
       console.log(err)
     }
+  }
+
+  async chat(
+    params: OpenAI.Chat.ChatCompletionCreateParams,
+  ) {
+    const client = this._client
+    if(!client) return
+
+    try {
+      const t1 = getNowStamp()
+      const chatCompletion = await client.chat.completions.create(params)
+      const t2 = getNowStamp()
+      const cost = t2 - t1
+      console.log(`stepfun chat cost: ${cost}ms`)
+      console.log(chatCompletion)
+      return chatCompletion as OpenAI.Chat.ChatCompletion
+    }
+    catch(err) {
+      console.warn("stepfun chat error: ")
+      console.log(err)
+    }
+  }
+
+  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+    // 1. get history data & model
+    const { historyData, room, chatId, entry } = param
+    const roomId = room._id
+    const chats = historyData.results
+    let totalToken = historyData.totalToken
+    const bot = this.getSuitableBot()
+    if(!bot) return
+    const model = bot.model
+
+    console.log("stepfun model: ", model)
+
+    // 2. add system prompt
+
+    // 3. turn chats into prompt
+    const prompts = AiHelper.turnChatsIntoPrompt(chats)
+    prompts.reverse()
+
+    // 4. calculate maxTokens
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+
+    // 5. to chat
+    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+      messages: prompts,
+      max_tokens: maxToken,
+      model,
+    }
+    const res5 = await this.chat(params)
+    if(!res5) return
+
+    // 6. get content, add now we only support text
+    const txt6 = res5.choices[0].message.content
+    if(!txt6) return
+
+    // 7. can i reply
+    const res7 = await AiHelper.canReply(roomId, chatId)
+    if(!res7) return
+
+    // 8. reply
+    TellUser.text(entry, txt6, bot)
+
+    // 9. add assistant chat
+    const param9: HelperAssistantMsgParam = {
+      roomId,
+      text: txt6,
+      model,
+      character: this._character,
+      usage: res5.usage,
+    }
+    const assistantChatId = await AiHelper.addAssistantMsg(param9)
+    if(!assistantChatId) return
+
+    return { chatCompletion: res5, assistantChatId }
+  }
+
+  private getSuitableBot() {
+    const c = this._character
+    const bots = aiBots.filter(v => v.character === c)
+    if(bots.length < 1) {
+      console.warn("no bot for stepfun can be used")
+      return
+    }
+    return bots[0]
   }
 
 
@@ -360,6 +711,7 @@ class BotZhipu {
       const t2 = getNowStamp()
       const cost = t2 - t1
       console.log(`zhipu chat cost: ${cost}ms`)
+      console.log(chatCompletion)
       return chatCompletion as OpenAI.Chat.ChatCompletion
     }
     catch(err) {
@@ -374,8 +726,9 @@ class BotZhipu {
     const roomId = room._id
     const chats = historyData.results
     let totalToken = historyData.totalToken
-    const model = this.getModel()
-    if(!model) return
+    const bot = this.getSuitableBot()
+    if(!bot) return
+    const model = bot.model
 
     console.log("Zhipu model: ", model)
 
@@ -391,7 +744,7 @@ class BotZhipu {
     // 5. to chat
     const params: OpenAI.Chat.ChatCompletionCreateParams = {
       messages: prompts,
-      max_completion_tokens: maxToken,
+      max_tokens: maxToken,
       model,
     }
     const res5 = await this.chat(params)
@@ -406,7 +759,7 @@ class BotZhipu {
     if(!res7) return
 
     // 8. reply
-    TellUser.text(entry, txt6)
+    TellUser.text(entry, txt6, bot)
 
     // 9. add assistant chat
     const param9: HelperAssistantMsgParam = {
@@ -422,16 +775,14 @@ class BotZhipu {
     return { chatCompletion: res5, assistantChatId }
   }
 
-
-  private getModel() {
+  private getSuitableBot() {
     const c = this._character
     const bots = aiBots.filter(v => v.character === c)
     if(bots.length < 1) {
-      console.warn("no model for zhipu can be used")
+      console.warn("no bot for zhipu can be used")
       return
     }
-    const bot = bots[0]
-    return bot.model
+    return bots[0]
   }
 
 }
@@ -441,7 +792,7 @@ class BotZhipu {
 class AiController {
 
   async run(param: AiRunParam) {
-    const { room, historyData } = param
+    const { room, historyData, entry } = param
 
     // 1. check bots in the room
     let characters = room.characters
@@ -462,17 +813,54 @@ class AiController {
 
     }
 
-    // 3. promises
-    const promises: Promise<boolean>[] = []
+    // 3. get promises
+    const promises: Promise<AiRunSuccess | undefined>[] = []
     for(let i=0; i<characters.length; i++) {
       const c = characters[i]
       if(c === "deepseek") {
         const bot1 = new BotDeepSeek()
-        
+        const pro1 = bot1.run(param)
+        promises.push(pro1)
+      }
+      else if(c === "kimi") {
+        const bot2 = new BotMoonshot()
+        const pro2 = bot2.run(param)
+        promises.push(pro2)
+      }
+      else if(c === "wanzhi") {
+        const bot3 = new BotZeroOne()
+        const pro3 = bot3.run(param)
+        promises.push(pro3)
+      }
+      else if(c === "yuewen") {
+        const bot4 = new BotStepfun()
+        const pro4 = bot4.run(param)
+        promises.push(pro4)
+      }
+      else if(c === "zhipu") {
+        const bot5 = new BotZhipu()
+        const pro5 = bot5.run(param)
+        promises.push(pro5)
       }
     }
 
+    // 4. wait for all promises
+    const res4 = await Promise.all(promises)
+    let hasEverSucceeded = false
+    for(let i=0; i<res4.length; i++) {
+      const v = res4[i]
+      if(v) {
+        hasEverSucceeded = true
+      }
+    }
+    if(!hasEverSucceeded) return
 
+    // 5. add quota for user
+    const num5 = await AiHelper.addQuotaForUser(entry)
+    if((num5 % 3) === 2) {
+      // WIP: send menu, which is a toolbox
+
+    }
 
   }
 
@@ -809,6 +1197,26 @@ class AiHelper {
     if(maxTokens < 280) maxTokens = 280
     if(maxTokens > restToken) maxTokens = restToken
     return maxTokens
+  }
+
+  static async addQuotaForUser(entry: AiEntrance) {
+    // 1. add
+    const user = entry.user
+    const userId = user._id
+    const quota = user.quota ?? { aiConversationCount: 0 }
+    quota.aiConversationCount += 1
+
+    // 2. update
+    const u2: Partial<Table_User> = {
+      quota,
+      updatedStamp: getNowStamp(),
+    }
+    const uCol = db.collection("User")
+    const res2 = await uCol.doc(userId).update(u2)
+    console.log("addQuota res2: ")
+    console.log(res2)
+    
+    return quota.aiConversationCount
   }
 
 
