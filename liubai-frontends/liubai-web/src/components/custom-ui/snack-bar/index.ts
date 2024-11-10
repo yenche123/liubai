@@ -5,6 +5,7 @@ import type { SbResolver, SbData } from "./tools/types"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 import { useLayoutStore } from "~/views/useLayoutStore"
 import { storeToRefs } from "pinia"
+import { useRouteAndLiuRouter } from "~/routes/liu-router"
 
 
 let _resolve: SbResolver | undefined
@@ -49,14 +50,30 @@ function listenToContext() {
     bottomNaviBar,
     bnbHeight,
   } = storeToRefs(layoutStore)
-  watch([routeHasBottomNaviBar, bottomNaviBar, bnbHeight], (
-    [newV1, newV2, newV3]
+
+  const { route } = useRouteAndLiuRouter()
+  watch([routeHasBottomNaviBar, bottomNaviBar, bnbHeight, route], (
+    [newV1, newV2, newV3, newV4]
   ) => {
+    // 1. check out if there is a bottom navi bar
     if(!newV1 || !newV2) {
       _reset()
       return
     }
 
+    // 2. check out if there is a popup
+    let hasPopup = false
+    const query = newV4.query
+    Object.keys(query).forEach(k => {
+      const v = query[k]
+      if(v === "01") hasPopup = true
+    })
+    if(hasPopup) {
+      _reset()
+      return
+    }
+
+    // 3. set offset and zIndex
     sbData.offset = newV3
     sbData.zIndex = 590
   }, { immediate: true })
