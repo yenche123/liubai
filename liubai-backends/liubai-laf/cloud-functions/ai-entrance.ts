@@ -98,10 +98,9 @@ export async function enter_ai(
   // 6. get latest chat records
   const res6 = await AiHelper.getLatestChat(roomId)
 
+  // 7. run AI!
   const controller = new AiController()
   controller.run({ entry, room, chatId, historyData: res6 })
-
-
 
 
 }

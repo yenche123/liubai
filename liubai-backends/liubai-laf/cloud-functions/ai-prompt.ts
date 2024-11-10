@@ -5,7 +5,7 @@ export const aiBots: AiBot[] = [
     name: "DeepSeek",
     character: "deepseek",
     provider: "deepseek",
-    model: "deepseek-chat",
+    model: "deepseek-ai/DeepSeek-V2.5",     // deepseek-chat
     abilities: ["chat"],
     alias: ["深度求索"]
   },
@@ -29,7 +29,7 @@ export const aiBots: AiBot[] = [
     name: "万知",
     character: "wanzhi",
     provider: "zero-one",
-    model: "yi-lightning",
+    model: "01-ai/Yi-1.5-9B-Chat-16K",     // yi-lightning
     abilities: ["chat"],
     alias: ["零一万物", "01.ai"]
   },
@@ -37,7 +37,7 @@ export const aiBots: AiBot[] = [
     name: "智谱",
     character: "zhipu",
     provider: "zhipu",
-    model: "glm-4-plus",
+    model: "THUDM/glm-4-9b-chat",          // glm-4-plus
     abilities: ["chat"],
     alias: ["智谱AI", "智谱清言", "ChatGLM"]
   }
