@@ -61,6 +61,8 @@ interface HelperAssistantMsgParam {
   model: string
   character: AiCharacter
   usage?: AiUsage
+  requestId?: string
+  baseUrl?: string
 }
 
 /********************* empty function ****************/
@@ -263,11 +265,13 @@ class BotZeroOne {
 
   private _client: OpenAI | undefined
   private _character: AiCharacter = "wanzhi"
+  private _baseUrl: string | undefined
 
   constructor() {
     const _env = process.env
     const apiKey = _env.LIU_YI_API_KEY
     const baseURL = _env.LIU_YI_BASE_URL
+    this._baseUrl = baseURL
     try {
       this._client = new OpenAI({ apiKey, baseURL })
     } catch(err) {
@@ -288,7 +292,7 @@ class BotZeroOne {
       const t2 = getNowStamp()
       const cost = t2 - t1
       console.log(`yi chat cost: ${cost}ms`)
-      console.log(chatCompletion)
+      // console.log(chatCompletion)
       return chatCompletion as OpenAI.Chat.ChatCompletion
     }
     catch(err) {
@@ -306,13 +310,16 @@ class BotZeroOne {
     const bot = this.getSuitableBot()
     if(!bot) return
     const model = bot.model
-    console.log("yi model: ", model)
+    // console.log("yi model: ", model)
 
     // 2. add system prompt
 
     // 3. turn chats into prompt
     const prompts = AiHelper.turnChatsIntoPrompt(chats)
     prompts.reverse()
+
+    // console.log("yi prompts: ")
+    // console.log(prompts)
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
@@ -325,10 +332,13 @@ class BotZeroOne {
     }
     const res5 = await this.chat(params)
     if(!res5) return
+    console.log("yi res5.choices[0]: ")
+    console.log(res5.choices[0])
 
     // 6. get content, add now we only support text
-    const txt6 = res5.choices[0].message.content
+    let txt6 = res5.choices[0].message.content
     if(!txt6) return
+    txt6 = txt6.trimStart()
 
     // 7. can i reply
     const res7 = await AiHelper.canReply(roomId, chatId)
@@ -344,6 +354,8 @@ class BotZeroOne {
       model,
       character: this._character,
       usage: res5.usage,
+      requestId: res5.id,
+      baseUrl: this._baseUrl,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(param9)
     if(!assistantChatId) return
@@ -368,11 +380,13 @@ class BotMoonshot {
 
   private _client: OpenAI | undefined
   private _character: AiCharacter = "kimi"
+  private _baseUrl: string | undefined
 
   constructor() {
     const _env = process.env
     const apiKey = _env.LIU_MOONSHOT_API_KEY
     const baseURL = _env.LIU_MOONSHOT_BASE_URL
+    this._baseUrl = baseURL
     try {
       this._client = new OpenAI({ apiKey, baseURL })
     } catch(err) {
@@ -393,7 +407,7 @@ class BotMoonshot {
       const t2 = getNowStamp()
       const cost = t2 - t1
       console.log(`moonshot chat cost: ${cost}ms`)
-      console.log(chatCompletion)
+      // console.log(chatCompletion)
       return chatCompletion as OpenAI.Chat.ChatCompletion
     }
     catch(err) {
@@ -411,13 +425,16 @@ class BotMoonshot {
     const bot = this.getSuitableBot()
     if(!bot) return
     const model = bot.model
-    console.log("moonshot model: ", model)
+    // console.log("moonshot model: ", model)
 
     // 2. add system prompt
 
     // 3. turn chats into prompt
     const prompts = AiHelper.turnChatsIntoPrompt(chats)
     prompts.reverse()
+
+    // console.log("moonshot prompts: ")
+    // console.log(prompts)
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
@@ -430,10 +447,13 @@ class BotMoonshot {
     }
     const res5 = await this.chat(params)
     if(!res5) return
+    console.log("moonshot res5.choices[0]: ")
+    console.log(res5.choices[0])
 
     // 6. get content, add now we only support text
-    const txt6 = res5.choices[0].message.content
+    let txt6 = res5.choices[0].message.content
     if(!txt6) return
+    txt6 = txt6.trimStart()
 
     // 7. can i reply
     const res7 = await AiHelper.canReply(roomId, chatId)
@@ -449,6 +469,8 @@ class BotMoonshot {
       model,
       character: this._character,
       usage: res5.usage,
+      requestId: res5.id,
+      baseUrl: this._baseUrl,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(param9)
     if(!assistantChatId) return
@@ -472,12 +494,14 @@ class BotMoonshot {
 class BotDeepSeek {
 
   private _client: OpenAI | undefined
-  private _character: AiCharacter = "kimi"
+  private _character: AiCharacter = "deepseek"
+  private _baseUrl: string | undefined
 
   constructor() {
     const _env = process.env
     const apiKey = _env.LIU_DEEPSEEK_API_KEY
     const baseURL = _env.LIU_DEEPSEEK_BASE_URL
+    this._baseUrl = baseURL
     try {
       this._client = new OpenAI({ apiKey, baseURL })
     } catch(err) {
@@ -498,7 +522,7 @@ class BotDeepSeek {
       const t2 = getNowStamp()
       const cost = t2 - t1
       console.log(`deepseek chat cost: ${cost}ms`)
-      console.log(chatCompletion)
+      // console.log(chatCompletion)
       return chatCompletion as OpenAI.Chat.ChatCompletion
     }
     catch(err) {
@@ -517,13 +541,15 @@ class BotDeepSeek {
     if(!bot) return
     const model = bot.model
 
-    console.log("deepseek model: ", model)
+    // console.log("deepseek model: ", model)
 
     // 2. add system prompt
 
     // 3. turn chats into prompt
     const prompts = AiHelper.turnChatsIntoPrompt(chats)
     prompts.reverse()
+    // console.log("deepseek prompts: ")
+    // console.log(prompts)
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
@@ -536,10 +562,13 @@ class BotDeepSeek {
     }
     const res5 = await this.chat(params)
     if(!res5) return
+    console.log("deepseek res5.choices[0]: ")
+    console.log(res5.choices[0])
 
     // 6. get content, add now we only support text
-    const txt6 = res5.choices[0].message.content
+    let txt6 = res5.choices[0].message.content
     if(!txt6) return
+    txt6 = txt6.trimStart()
 
     // 7. can i reply
     const res7 = await AiHelper.canReply(roomId, chatId)
@@ -555,6 +584,8 @@ class BotDeepSeek {
       model,
       character: this._character,
       usage: res5.usage,
+      requestId: res5.id,
+      baseUrl: this._baseUrl,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(param9)
     if(!assistantChatId) return
@@ -578,11 +609,13 @@ class BotStepfun {
 
   private _client: OpenAI | undefined
   private _character: AiCharacter = "yuewen"
+  private _baseUrl: string | undefined
 
   constructor() {
     const _env = process.env
     const apiKey = _env.LIU_STEPFUN_API_KEY
     const baseURL = _env.LIU_STEPFUN_BASE_URL
+    this._baseUrl = baseURL
     try {
       this._client = new OpenAI({ apiKey, baseURL })
     } catch(err) {
@@ -603,7 +636,7 @@ class BotStepfun {
       const t2 = getNowStamp()
       const cost = t2 - t1
       console.log(`stepfun chat cost: ${cost}ms`)
-      console.log(chatCompletion)
+      // console.log(chatCompletion)
       return chatCompletion as OpenAI.Chat.ChatCompletion
     }
     catch(err) {
@@ -622,13 +655,15 @@ class BotStepfun {
     if(!bot) return
     const model = bot.model
 
-    console.log("stepfun model: ", model)
+    // console.log("stepfun model: ", model)
 
     // 2. add system prompt
 
     // 3. turn chats into prompt
     const prompts = AiHelper.turnChatsIntoPrompt(chats)
     prompts.reverse()
+    // console.log("stepfun prompts: ")
+    // console.log(prompts)
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
@@ -641,10 +676,13 @@ class BotStepfun {
     }
     const res5 = await this.chat(params)
     if(!res5) return
+    console.log("stepfun res5.choices[0]: ")
+    console.log(res5.choices[0])
 
     // 6. get content, add now we only support text
-    const txt6 = res5.choices[0].message.content
+    let txt6 = res5.choices[0].message.content
     if(!txt6) return
+    txt6 = txt6.trimStart()
 
     // 7. can i reply
     const res7 = await AiHelper.canReply(roomId, chatId)
@@ -660,6 +698,8 @@ class BotStepfun {
       model,
       character: this._character,
       usage: res5.usage,
+      requestId: res5.id,
+      baseUrl: this._baseUrl,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(param9)
     if(!assistantChatId) return
@@ -684,12 +724,14 @@ class BotZhipu {
 
   private _client: OpenAI | undefined
   private _character: AiCharacter = "zhipu"
+  private _baseUrl: string | undefined
 
   constructor() {
     const _this = this
     const _env = process.env
     const apiKey = _env.LIU_ZHIPU_API_KEY
     const baseURL = _env.LIU_ZHIPU_BASE_URL
+    _this._baseUrl = baseURL
     try {
       _this._client = new OpenAI({ apiKey, baseURL })
     } catch(err) {
@@ -710,7 +752,7 @@ class BotZhipu {
       const t2 = getNowStamp()
       const cost = t2 - t1
       console.log(`zhipu chat cost: ${cost}ms`)
-      console.log(chatCompletion)
+      // console.log(chatCompletion)
       return chatCompletion as OpenAI.Chat.ChatCompletion
     }
     catch(err) {
@@ -729,13 +771,15 @@ class BotZhipu {
     if(!bot) return
     const model = bot.model
 
-    console.log("Zhipu model: ", model)
+    // console.log("Zhipu model: ", model)
 
     // 2. add system prompt
 
     // 3. turn chats into prompt
     const prompts = AiHelper.turnChatsIntoPrompt(chats)
     prompts.reverse()
+    // console.log("zhipu prompts: ")
+    // console.log(prompts)
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
@@ -748,10 +792,13 @@ class BotZhipu {
     }
     const res5 = await this.chat(params)
     if(!res5) return
+    console.log("zhipu res5.choices[0]: ")
+    console.log(res5.choices[0])
 
     // 6. get content, add now we only support text
-    const txt6 = res5.choices[0].message.content
+    let txt6 = res5.choices[0].message.content
     if(!txt6) return
+    txt6 = txt6.trimStart()
 
     // 7. can i reply
     const res7 = await AiHelper.canReply(roomId, chatId)
@@ -767,6 +814,8 @@ class BotZhipu {
       model,
       character: this._character,
       usage: res5.usage,
+      requestId: res5.id,
+      baseUrl: this._baseUrl,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(param9)
     if(!assistantChatId) return
@@ -855,7 +904,7 @@ class AiController {
     if(!hasEverSucceeded) return
 
     // 5. add quota for user
-    const num5 = await AiHelper.addQuotaForUser(entry)
+    const num5 = AiHelper.addQuotaForUser(entry)
     if((num5 % 3) === 2) {
       // WIP: send menu, which is a toolbox
 
@@ -1025,6 +1074,8 @@ class AiHelper {
       model: param.model,
       character: param.character,
       usage: param.usage,
+      requestId: param.requestId,
+      baseUrl: param.baseUrl,
     }
     const col = db.collection("AiChat")
     const res1 = await col.add(data1)
@@ -1198,7 +1249,7 @@ class AiHelper {
     return maxTokens
   }
 
-  static async addQuotaForUser(entry: AiEntrance) {
+  static addQuotaForUser(entry: AiEntrance) {
     // 1. add
     const user = entry.user
     const userId = user._id
@@ -1211,9 +1262,7 @@ class AiHelper {
       updatedStamp: getNowStamp(),
     }
     const uCol = db.collection("User")
-    const res2 = await uCol.doc(userId).update(u2)
-    console.log("addQuota res2: ")
-    console.log(res2)
+    uCol.doc(userId).update(u2)
     
     return quota.aiConversationCount
   }

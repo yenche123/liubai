@@ -615,6 +615,7 @@ export type AiMsgType = "user" | "assistant" | "summary" | "clear" |
 export type AiAbility = "chat" | "text_to_image" | "image_to_text"
 
 export interface AiUsage {
+  cached_tokens?: number
   completion_tokens: number
   prompt_tokens: number
   total_tokens: number
@@ -1419,6 +1420,8 @@ export interface Table_AiChat extends BaseTable {
   model?: string           // like "gpt-4o"
   character?: AiCharacter
   usage?: AiUsage
+  requestId?: string
+  baseUrl?: string
 
   // about human
   userId?: string
