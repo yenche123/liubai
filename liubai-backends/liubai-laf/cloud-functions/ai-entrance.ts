@@ -3,6 +3,7 @@
 import type { 
   AiBot,
   AiCharacter,
+  DataPass,
   Partial_Id, 
   Table_AiChat, 
   Table_AiRoom, 
@@ -48,6 +49,13 @@ interface AiRunParam {
   chatId: string
   historyData: HistoryData
 }
+
+interface AiRunSuccess {
+  assistantChatId: string
+  chatCompletion?: OpenAI.Chat.ChatCompletion
+}
+
+type AiRunResult = DataPass<AiRunSuccess>
 
 /********************* empty function ****************/
 export async function main(ctx: FunctionContext) {
@@ -250,6 +258,79 @@ class AiDirective {
 
 /**************************** Bots ***************************/
 
+class BotZeroOne {
+
+  private _client: OpenAI | undefined
+
+  constructor() {
+    const _env = process.env
+    const apiKey = _env.LIU_YI_API_KEY
+    const baseURL = _env.LIU_YI_BASE_URL
+    try {
+      this._client = new OpenAI({ apiKey, baseURL })
+    } catch(err) {
+      console.warn("ZeroOne constructor gets client error: ")
+      console.log(err)
+    }
+  }
+
+}
+
+class BotMoonshot {
+
+  private _client: OpenAI | undefined
+
+  constructor() {
+    const _env = process.env
+    const apiKey = _env.LIU_MOONSHOT_API_KEY
+    const baseURL = _env.LIU_MOONSHOT_BASE_URL
+    try {
+      this._client = new OpenAI({ apiKey, baseURL })
+    } catch(err) {
+      console.warn("ZeroOne constructor gets client error: ")
+      console.log(err)
+    }
+  }
+
+}
+
+class BotDeepSeek {
+
+  private _client: OpenAI | undefined
+
+  constructor() {
+    const _env = process.env
+    const apiKey = _env.LIU_DEEPSEEK_API_KEY
+    const baseURL = _env.LIU_DEEPSEEK_BASE_URL
+    try {
+      this._client = new OpenAI({ apiKey, baseURL })
+    } catch(err) {
+      console.warn("DeepSeek constructor gets client error: ")
+      console.log(err)
+    }
+  }
+
+}
+
+class BotStepfun {
+
+  private _client: OpenAI | undefined
+
+  constructor() {
+    const _env = process.env
+    const apiKey = _env.LIU_STEPFUN_API_KEY
+    const baseURL = _env.LIU_STEPFUN_BASE_URL
+    try {
+      this._client = new OpenAI({ apiKey, baseURL })
+    } catch(err) {
+      console.warn("Stepfun constructor gets client error: ")
+      console.log(err)
+    }
+  }
+
+
+}
+
 class BotZhipu {
 
   private _client: OpenAI | undefined
@@ -289,6 +370,10 @@ class BotZhipu {
 
   async run(param: AiRunParam) {
     const { historyData } = param
+    const chats = historyData.results
+    
+
+    
 
 
   }
@@ -303,9 +388,10 @@ class AiController {
     const { room, historyData } = param
 
     // 1. check bots in the room
-    const characters = room.characters
+    let characters = room.characters
+    characters = characters.filter(c => AiHelper.isCharacterAvailable(c))
     if(characters.length < 1) {
-      console.warn("no characters in the room")
+      console.warn("no available characters in the room")
       return false
     }
 
@@ -319,6 +405,17 @@ class AiController {
       // 2.1 update the history data
 
     }
+
+    // 3. promises
+    const promises: Promise<boolean>[] = []
+    for(let i=0; i<characters.length; i++) {
+      const c = characters[i]
+      if(c === "deepseek") {
+        const bot1 = new BotDeepSeek()
+        
+      }
+    }
+
 
 
   }
@@ -553,6 +650,73 @@ class AiHelper {
       }
     }
     return res
+  }
+
+  static isCharacterAvailable(c: AiCharacter) {
+    const _env = process.env
+    if(c === "deepseek") {
+      if(_env.LIU_DEEPSEEK_API_KEY && _env.LIU_DEEPSEEK_BASE_URL) {
+        return true
+      }
+      return false
+    }
+    else if(c === "kimi") {
+      if(_env.LIU_MOONSHOT_API_KEY && _env.LIU_MOONSHOT_BASE_URL) {
+        return true
+      }
+      return false
+    }
+    else if(c === "wanzhi") {
+      if(_env.LIU_YI_API_KEY && _env.LIU_YI_BASE_URL) {
+        return true
+      }
+      return false
+    }
+    else if(c === "yuewen") {
+      if(_env.LIU_STEPFUN_API_KEY && _env.LIU_STEPFUN_BASE_URL) {
+        return true
+      }
+      return false
+    }
+    else if(c === "zhipu") {
+      if(_env.LIU_ZHIPU_API_KEY && _env.LIU_ZHIPU_BASE_URL) {
+        return true
+      }
+      return false
+    }
+    return false
+  }
+
+
+  static turnChatsIntoPrompt(chats: Table_AiChat[]) {
+    const messages: OpenAI.Chat.ChatCompletionMessageParam[] = []
+    for(let i=0; i<chats.length; i++) {
+      const v = chats[i]
+      const { msgType, text, imageUrl, character } = v
+      if(msgType === "user") {
+        if(text) {
+          messages.push({ role: "user", content: text })
+        }
+        else if(imageUrl) {
+          messages.push({ 
+            role: "user", 
+            content: [{ type: "image_url", image_url: { url: imageUrl } }]
+          })
+        }
+      }
+      else if(msgType === "assistant") {
+        if(text) {
+          messages.push({ role: "assistant", content: text, name: character })
+        }
+      }
+      else if(msgType === "background" || msgType === "summary") {
+        if(text) {
+          messages.push({ role: "system", content: text })
+        }
+      }
+    }
+
+    return messages
   }
 
 }
