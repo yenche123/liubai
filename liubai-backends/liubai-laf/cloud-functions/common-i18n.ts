@@ -495,6 +495,24 @@ export function getCurrentLocale(
   return getFallbackLocale()
 }
 
+
+export function i18nFill(
+  res: string,
+  opt2: Record<string, string>,
+) {
+  const keys = Object.keys(opt2)
+  for(let i=0; i<keys.length; i++) {
+    const v = keys[i]
+    const theVal = opt2[v]
+    const dynamicPattern = `{${v}}`
+    const escapedPattern = dynamicPattern.replace(/[{}]/g, '\\$&')
+    const regexPattern = new RegExp(escapedPattern, 'g')
+    res = res.replace(regexPattern, theVal) 
+  }
+  return res
+}
+
+
 /** 返回一个翻译函数 t */
 export function useI18n(
   langAtom: LangAtom,
@@ -518,15 +536,7 @@ export function useI18n(
     if(!opt2) return res
 
     // 处理 opt2
-    const keys = Object.keys(opt2)
-    for(let i=0; i<keys.length; i++) {
-      const v = keys[i]
-      const theVal = opt2[v]
-      const dynamicPattern = `{${v}}`
-      const escapedPattern = dynamicPattern.replace(/[{}]/g, '\\$&')
-      const regexPattern = new RegExp(escapedPattern, 'g')
-      res = res.replace(regexPattern, theVal) 
-    }
+    res = i18nFill(res, opt2)
     return res
   }
 

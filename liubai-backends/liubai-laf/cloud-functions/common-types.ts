@@ -638,9 +638,15 @@ export interface AiEntry {
   wx_gzh_openid?: string
 }
 
-export interface AiI18nParam {
+export interface AiI18nChannelParam {
   character: AiCharacter
   entry: AiEntry
+}
+
+export type AiPromptType = "compress" | "search_keyword" | "parse_link"
+export interface AiI18nSharedParam {
+  type: AiPromptType
+  user?: Table_User
 }
 
 

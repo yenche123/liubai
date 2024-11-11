@@ -1,4 +1,10 @@
-import type { AiBot, AiI18nParam, T_I18N } from "@/common-types"
+import type { 
+  AiBot, 
+  AiI18nChannelParam, 
+  AiI18nSharedParam, 
+  T_I18N,
+} from "@/common-types"
+import { i18nFill } from "@/common-i18n"
 
 export const aiBots: AiBot[] = [
   {
@@ -198,9 +204,51 @@ const wx_gzh_prompts = {
   },
 }
 
+const compress_system_1 = `
+你是一个文字压缩器，擅长将一段话压缩成一段更简洁的话。
+以下是人们与留白记事 AI 助手的对话记录/聊天记录，请将这些对话压缩成一段话，并给出总结。
+字数限制: 1000 字以内
+`
+const compress_system_2 = `
+再次提示：【请对以上对话进行总结/摘要/压缩】
+`
 
-export function aiI18n(
-  param: AiI18nParam,
+const compress_prefix_msg = `
+最近的聊天记录摘要：
+`
+
+const compress_prompts = {
+  "system_1": compress_system_1,
+  "system_2": compress_system_2,
+  "prefix_msg": compress_prefix_msg,
+}
+
+export function aiI18nShared(
+  param: AiI18nSharedParam,
+) {
+  const theType = param.type
+  let thePrompts: Record<string, string> = {}
+  if(theType === "compress") {
+    thePrompts = compress_prompts
+  }
+
+  const p: T_I18N = (key: string, opt2?: Record<string, string>) => {
+    if(!thePrompts) return ""
+    let res = thePrompts[key]
+    if(!res) return ""
+    if(!opt2) return res.trim()
+
+     // 处理 opt2
+     res = i18nFill(res, opt2)
+     return res.trim()
+  }
+
+  return { p }
+}
+
+
+export function aiI18nChannel(
+  param: AiI18nChannelParam,
 ) {
   const c = param.character
   let thePrompts: Record<string, string> = {}
@@ -212,19 +260,11 @@ export function aiI18n(
     if(!thePrompts) return ""
     let res = thePrompts[key]
     if(!res) return ""
-    if(!opt2) return res
+    if(!opt2) return res.trim()
 
      // 处理 opt2
-     const keys = Object.keys(opt2)
-     for(let i=0; i<keys.length; i++) {
-       const v = keys[i]
-       const theVal = opt2[v]
-       const dynamicPattern = `{${v}}`
-       const escapedPattern = dynamicPattern.replace(/[{}]/g, '\\$&')
-       const regexPattern = new RegExp(escapedPattern, 'g')
-       res = res.replace(regexPattern, theVal) 
-     }
-     return res
+     res = i18nFill(res, opt2)
+     return res.trim()
   }
 
   return { p }

@@ -127,6 +127,13 @@ declare global {
       LIU_ZHIPU_BASE_URL?: string            // 智谱的 base url
       LIU_ZHIPU_API_KEY?: string             // 智谱的 api key
 
+      /** Summary */
+      LIU_SUMMARY_BASE_URL?: string
+      LIU_SUMMARY_API_KEY?: string
+      LIU_SUMMARY_MODEL?: string
+      LIU_SUMMARY_PREFIX?: "01"              // closed by default, reference: https://api-docs.deepseek.com/zh-cn/guides/chat_prefix_completion
+      LIU_SUMMARY_PARTIAL?: "01"             // closed by default, reference: https://platform.moonshot.cn/docs/api/partial
+
       /** Characters */
       LIU_WXGZH_KF_DEEPSEEK?: string         // kf_account of deepseek
       LIU_WXGZH_KF_KIMI?: string             // kf_account of kimi

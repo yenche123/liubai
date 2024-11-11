@@ -20,7 +20,7 @@ import {
 } from "@/common-util"
 import { sendWxMessage } from "@/service-send"
 import { getBasicStampWhileAdding, getNowStamp } from "@/common-time"
-import { aiBots, aiI18n } from "@/ai-prompt"
+import { aiBots, aiI18nChannel, aiI18nShared } from "@/ai-prompt"
 import cloud from "@lafjs/cloud"
 
 const db = cloud.database()
@@ -70,6 +70,9 @@ export async function main(ctx: FunctionContext) {
 export async function enter_ai(
   entry: AiEntry,
 ) {
+  // 0. pre check
+  const res0 = preCheck()
+  if(!res0) return
 
   // 1. check out text
   const text = entry.text
@@ -100,6 +103,19 @@ export async function enter_ai(
   controller.run({ entry, room, chatId, historyData: res6 })
 
 
+}
+
+
+function preCheck() {
+  const _env = process.env
+  const summaryBaseUrl = _env.LIU_SUMMARY_BASE_URL
+  const summaryApiKey = _env.LIU_SUMMARY_API_KEY
+  const summaryModel = _env.LIU_SUMMARY_MODEL
+  if(!summaryBaseUrl || !summaryApiKey || !summaryModel) {
+    console.warn("summary is not available")
+    return false
+  }
+  return true
 }
 
 
@@ -317,7 +333,7 @@ class BaseBot {
     const prompts = AiHelper.turnChatsIntoPrompt(historyData.results)
 
     // 3. add system prompt
-    const { p } = aiI18n({ entry, character: bot.character })
+    const { p } = aiI18nChannel({ entry, character: bot.character })
     const system_1 = p("system_1")
     const system_1_token = AiHelper.calculateTextToken(system_1)
     if(system_1) {
@@ -637,6 +653,58 @@ class AiController {
 
 }
 
+
+/*********************** AI Compressor ************************/
+class AiCompressor {
+  static async run(
+    param: AiRunParam,
+  ) {
+    const _env = process.env
+    const { historyData, entry } = param
+    const { results, totalToken } = historyData
+
+    // 1. get the two system prompts
+    const { p } = aiI18nShared({ type: "compress", user: entry.user })
+    const system1 = p("system_1")
+    const system2 = p("system_2")
+
+    // 2. add two system prompts to the prompts
+    const prompts = AiHelper.turnChatsIntoPrompt(results)
+    prompts.reverse()
+    prompts.unshift({ role: "system", content: system1 })
+    prompts.push({ role: "system", content: system2 })
+
+    // 3. add prefix msg
+    const prefix_msg = p("prefix_msg")
+    if(_env.LIU_SUMMARY_PREFIX === "01") {
+      const msg3_1 = { 
+        role: "assistant", 
+        content: prefix_msg, 
+        prefix: true,
+      } as OpenAI.Chat.ChatCompletionMessageParam
+      prompts.push(msg3_1)
+    }
+    else if(_env.LIU_SUMMARY_PARTIAL === "01") {
+      const msg3_2 = { 
+        role: "assistant", 
+        content: prefix_msg, 
+        partial: true,
+      } as OpenAI.Chat.ChatCompletionMessageParam
+      prompts.push(msg3_2)
+    }
+
+    
+    
+
+    
+
+
+
+  
+
+
+  }
+}
 
 
 /*********************** helper functions ************************/
