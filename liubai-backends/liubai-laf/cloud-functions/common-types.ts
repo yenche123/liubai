@@ -37,6 +37,8 @@ export type Partial_Id<T extends BaseTable> = PartialSth<T, "_id">
 
 export type LiuTimeout = ReturnType<typeof setTimeout> | undefined
 
+export type T_I18N = (key: string, opt2?: Record<string, string>) => string
+
 /*********************** 回调类型 **********************/
 export interface LiuRqReturn<T = Record<string, any>> {
   code: string
@@ -628,6 +630,17 @@ export interface AiBot {
   model: string
   abilities: AiAbility[]
   alias: string[]
+}
+
+export interface AiEntry {
+  user: Table_User
+  text?: string
+  wx_gzh_openid?: string
+}
+
+export interface AiI18nParam {
+  character: AiCharacter
+  entry: AiEntry
 }
 
 

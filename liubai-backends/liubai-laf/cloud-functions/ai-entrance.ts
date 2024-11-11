@@ -4,6 +4,7 @@ import type {
   AiBot,
   AiCharacter,
   AiUsage,
+  AiEntry,
   Partial_Id, 
   Table_AiChat, 
   Table_AiRoom, 
@@ -19,7 +20,7 @@ import {
 } from "@/common-util"
 import { sendWxMessage } from "@/service-send"
 import { getBasicStampWhileAdding, getNowStamp } from "@/common-time"
-import { aiBots } from "@/ai-prompt"
+import { aiBots, aiI18n } from "@/ai-prompt"
 import cloud from "@lafjs/cloud"
 
 const db = cloud.database()
@@ -30,12 +31,6 @@ const MAX_TOKEN_1 = 8000
 const TOKEN_NEED_COMPRESS = 6000
 
 /************************** types ************************/
-
-export interface AiEntry {
-  user: Table_User
-  text?: string
-  wx_gzh_openid?: string
-}
 
 interface HistoryData {
   results: Table_AiChat[]    // desc by insertedStamp
@@ -311,53 +306,45 @@ class BaseBot {
     return bots[0]
   }
 
-}
-
-class BotZeroOne extends BaseBot {
-
-  constructor() {
-    const _env = process.env
-    super("wanzhi", _env.LIU_YI_API_KEY, _env.LIU_YI_BASE_URL)
-  }
-
-  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
-    // 1. get history data & model
-    const { historyData, room, chatId, entry } = param
-    const roomId = room._id
-    const chats = historyData.results
+  protected preRun(param: AiRunParam) {
+    // 1. get bot
+    const { historyData, entry } = param
     let totalToken = historyData.totalToken
     const bot = this.getSuitableBot()
     if(!bot) return
-    const model = bot.model
-    // console.log("yi model: ", model)
 
-    // 2. add system prompt
+    // 2. get prompts and add system prompt
+    const prompts = AiHelper.turnChatsIntoPrompt(historyData.results)
 
-    // 3. turn chats into prompt
-    const prompts = AiHelper.turnChatsIntoPrompt(chats)
+    // 3. add system prompt
+    const { p } = aiI18n({ entry, character: bot.character })
+    const system_1 = p("system_1")
+    const system_1_token = AiHelper.calculateTextToken(system_1)
+    if(system_1) {
+      prompts.push({ role: "system", content: system_1 })
+      totalToken += system_1_token
+    }
+
+    // 4. reverse prompts
     prompts.reverse()
 
-    // console.log("yi prompts: ")
-    // console.log(prompts)
+    return { prompts, totalToken, bot }
+  }
 
-    // 4. calculate maxTokens
-    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+  protected async postRun(
+    param: AiRunParam,
+    bot: AiBot,
+    res?: OpenAI.Chat.ChatCompletion,
+  ): Promise<AiRunSuccess | undefined> {
+    if(!res) return
 
-    // 5. to chat
-    const params: OpenAI.Chat.ChatCompletionCreateParams = {
-      messages: prompts,
-      max_tokens: maxToken,
-      model,
-    }
-    const res5 = await this.chat(params)
-    if(!res5) return
-    console.log("yi res5.choices[0]: ")
-    console.log(res5.choices[0])
+    console.log(`${bot.character} postRun res: `)
+    console.log(res)
 
-    // 6. get content, add now we only support text
-    let txt6 = res5.choices[0].message.content
+    const { room, chatId, entry } = param
+    const roomId = room._id
+    const txt6 = AiHelper.getTextFromLLM(res)
     if(!txt6) return
-    txt6 = txt6.trimStart()
 
     // 7. can i reply
     const res7 = await AiHelper.canReply(roomId, chatId)
@@ -370,87 +357,16 @@ class BotZeroOne extends BaseBot {
     const param9: HelperAssistantMsgParam = {
       roomId,
       text: txt6,
-      model,
+      model: bot.model,
       character: this._character,
-      usage: res5.usage,
-      requestId: res5.id,
+      usage: res.usage,
+      requestId: res.id,
       baseUrl: this._baseUrl,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(param9)
     if(!assistantChatId) return
 
-    return { chatCompletion: res5, assistantChatId }
-  }
-
-}
-
-class BotMoonshot extends BaseBot {
-
-  constructor() {
-    const _env = process.env
-    super("kimi", _env.LIU_MOONSHOT_API_KEY, _env.LIU_MOONSHOT_BASE_URL)
-  }
-
-  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
-    // 1. get history data & model
-    const { historyData, room, chatId, entry } = param
-    const roomId = room._id
-    const chats = historyData.results
-    let totalToken = historyData.totalToken
-    const bot = this.getSuitableBot()
-    if(!bot) return
-    const model = bot.model
-    // console.log("moonshot model: ", model)
-
-    // 2. add system prompt
-
-    // 3. turn chats into prompt
-    const prompts = AiHelper.turnChatsIntoPrompt(chats)
-    prompts.reverse()
-
-    // console.log("moonshot prompts: ")
-    // console.log(prompts)
-
-    // 4. calculate maxTokens
-    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
-
-    // 5. to chat
-    const params: OpenAI.Chat.ChatCompletionCreateParams = {
-      messages: prompts,
-      max_tokens: maxToken,
-      model,
-    }
-    const res5 = await this.chat(params)
-    if(!res5) return
-    console.log("moonshot res5.choices[0]: ")
-    console.log(res5.choices[0])
-
-    // 6. get content, add now we only support text
-    let txt6 = res5.choices[0].message.content
-    if(!txt6) return
-    txt6 = txt6.trimStart()
-
-    // 7. can i reply
-    const res7 = await AiHelper.canReply(roomId, chatId)
-    if(!res7) return
-
-    // 8. reply
-    TellUser.text(entry, txt6, bot)
-
-    // 9. add assistant chat
-    const param9: HelperAssistantMsgParam = {
-      roomId,
-      text: txt6,
-      model,
-      character: this._character,
-      usage: res5.usage,
-      requestId: res5.id,
-      baseUrl: this._baseUrl,
-    }
-    const assistantChatId = await AiHelper.addAssistantMsg(param9)
-    if(!assistantChatId) return
-
-    return { chatCompletion: res5, assistantChatId }
+    return { chatCompletion: res, assistantChatId }
   }
 
 }
@@ -463,24 +379,16 @@ class BotDeepSeek extends BaseBot {
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
-    // 1. get history data & model
-    const { historyData, room, chatId, entry } = param
-    const roomId = room._id
-    const chats = historyData.results
-    let totalToken = historyData.totalToken
-    const bot = this.getSuitableBot()
-    if(!bot) return
+    // 1. pre run
+    const res1 = this.preRun(param)
+    if(!res1) return
+    const { prompts, totalToken, bot } = res1
+
+    // 2. get other params
+    const chats = param.historyData.results
     const model = bot.model
 
-    // console.log("deepseek model: ", model)
-
-    // 2. add system prompt
-
-    // 3. turn chats into prompt
-    const prompts = AiHelper.turnChatsIntoPrompt(chats)
-    prompts.reverse()
-    // console.log("deepseek prompts: ")
-    // console.log(prompts)
+    // 3. handle other things
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
@@ -492,36 +400,47 @@ class BotDeepSeek extends BaseBot {
       model,
     }
     const res5 = await this.chat(params)
-    if(!res5) return
-    console.log("deepseek res5.choices[0]: ")
-    console.log(res5.choices[0])
+    
+    // 6. post run
+    const res6 = await this.postRun(param, bot, res5)
+    return res6
+  }
 
-    // 6. get content, add now we only support text
-    let txt6 = res5.choices[0].message.content
-    if(!txt6) return
-    txt6 = txt6.trimStart()
+}
 
-    // 7. can i reply
-    const res7 = await AiHelper.canReply(roomId, chatId)
-    if(!res7) return
+class BotMoonshot extends BaseBot {
 
-    // 8. reply
-    TellUser.text(entry, txt6, bot)
+  constructor() {
+    const _env = process.env
+    super("kimi", _env.LIU_MOONSHOT_API_KEY, _env.LIU_MOONSHOT_BASE_URL)
+  }
 
-    // 9. add assistant chat
-    const param9: HelperAssistantMsgParam = {
-      roomId,
-      text: txt6,
+  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+    // 1. pre run
+    const res1 = this.preRun(param)
+    if(!res1) return
+    const { prompts, totalToken, bot } = res1
+
+    // 2. get other params
+    const chats = param.historyData.results
+    const model = bot.model
+
+    // 3. handle other things
+
+    // 4. calculate maxTokens
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+
+    // 5. to chat
+    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+      messages: prompts,
+      max_tokens: maxToken,
       model,
-      character: this._character,
-      usage: res5.usage,
-      requestId: res5.id,
-      baseUrl: this._baseUrl,
     }
-    const assistantChatId = await AiHelper.addAssistantMsg(param9)
-    if(!assistantChatId) return
-
-    return { chatCompletion: res5, assistantChatId }
+    const res5 = await this.chat(params)
+    
+    // 6. post run
+    const res6 = await this.postRun(param, bot, res5)
+    return res6
   }
 
 }
@@ -534,24 +453,16 @@ class BotStepfun extends BaseBot {
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
-    // 1. get history data & model
-    const { historyData, room, chatId, entry } = param
-    const roomId = room._id
-    const chats = historyData.results
-    let totalToken = historyData.totalToken
-    const bot = this.getSuitableBot()
-    if(!bot) return
+    // 1. pre run
+    const res1 = this.preRun(param)
+    if(!res1) return
+    const { prompts, totalToken, bot } = res1
+
+    // 2. get other params
+    const chats = param.historyData.results
     const model = bot.model
 
-    // console.log("stepfun model: ", model)
-
-    // 2. add system prompt
-
-    // 3. turn chats into prompt
-    const prompts = AiHelper.turnChatsIntoPrompt(chats)
-    prompts.reverse()
-    // console.log("stepfun prompts: ")
-    // console.log(prompts)
+    // 3. handle other things
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
@@ -563,36 +474,47 @@ class BotStepfun extends BaseBot {
       model,
     }
     const res5 = await this.chat(params)
-    if(!res5) return
-    console.log("stepfun res5.choices[0]: ")
-    console.log(res5.choices[0])
+    
+    // 6. post run
+    const res6 = await this.postRun(param, bot, res5)
+    return res6
+  }
 
-    // 6. get content, add now we only support text
-    let txt6 = res5.choices[0].message.content
-    if(!txt6) return
-    txt6 = txt6.trimStart()
+}
 
-    // 7. can i reply
-    const res7 = await AiHelper.canReply(roomId, chatId)
-    if(!res7) return
+class BotYi extends BaseBot {
 
-    // 8. reply
-    TellUser.text(entry, txt6, bot)
+  constructor() {
+    const _env = process.env
+    super("wanzhi", _env.LIU_YI_API_KEY, _env.LIU_YI_BASE_URL)
+  }
 
-    // 9. add assistant chat
-    const param9: HelperAssistantMsgParam = {
-      roomId,
-      text: txt6,
+  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+    // 1. pre run
+    const res1 = this.preRun(param)
+    if(!res1) return
+    const { prompts, totalToken, bot } = res1
+
+    // 2. get other params
+    const chats = param.historyData.results
+    const model = bot.model
+
+    // 3. handle other things
+
+    // 4. calculate maxTokens
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+
+    // 5. to chat
+    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+      messages: prompts,
+      max_tokens: maxToken,
       model,
-      character: this._character,
-      usage: res5.usage,
-      requestId: res5.id,
-      baseUrl: this._baseUrl,
     }
-    const assistantChatId = await AiHelper.addAssistantMsg(param9)
-    if(!assistantChatId) return
-
-    return { chatCompletion: res5, assistantChatId }
+    const res5 = await this.chat(params)
+    
+    // 6. post run
+    const res6 = await this.postRun(param, bot, res5)
+    return res6
   }
 
 }
@@ -606,24 +528,16 @@ class BotZhipu extends BaseBot {
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
-    // 1. get history data & model
-    const { historyData, room, chatId, entry } = param
-    const roomId = room._id
-    const chats = historyData.results
-    let totalToken = historyData.totalToken
-    const bot = this.getSuitableBot()
-    if(!bot) return
+    // 1. pre run
+    const res1 = this.preRun(param)
+    if(!res1) return
+    const { prompts, totalToken, bot } = res1
+
+    // 2. get other params
+    const chats = param.historyData.results
     const model = bot.model
 
-    // console.log("Zhipu model: ", model)
-
-    // 2. add system prompt
-
-    // 3. turn chats into prompt
-    const prompts = AiHelper.turnChatsIntoPrompt(chats)
-    prompts.reverse()
-    // console.log("zhipu prompts: ")
-    // console.log(prompts)
+    // 3. handle other things
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
@@ -635,36 +549,10 @@ class BotZhipu extends BaseBot {
       model,
     }
     const res5 = await this.chat(params)
-    if(!res5) return
-    console.log("zhipu res5.choices[0]: ")
-    console.log(res5.choices[0])
-
-    // 6. get content, add now we only support text
-    let txt6 = res5.choices[0].message.content
-    if(!txt6) return
-    txt6 = txt6.trimStart()
-
-    // 7. can i reply
-    const res7 = await AiHelper.canReply(roomId, chatId)
-    if(!res7) return
-
-    // 8. reply
-    TellUser.text(entry, txt6, bot)
-
-    // 9. add assistant chat
-    const param9: HelperAssistantMsgParam = {
-      roomId,
-      text: txt6,
-      model,
-      character: this._character,
-      usage: res5.usage,
-      requestId: res5.id,
-      baseUrl: this._baseUrl,
-    }
-    const assistantChatId = await AiHelper.addAssistantMsg(param9)
-    if(!assistantChatId) return
-
-    return { chatCompletion: res5, assistantChatId }
+    
+    // 6. post run
+    const res6 = await this.postRun(param, bot, res5)
+    return res6
   }
 
 }
@@ -710,7 +598,7 @@ class AiController {
         promises.push(pro2)
       }
       else if(c === "wanzhi") {
-        const bot3 = new BotZeroOne()
+        const bot3 = new BotYi()
         const pro3 = bot3.run(param)
         promises.push(pro3)
       }
@@ -939,7 +827,7 @@ class AiHelper {
       if(v.msgType === "clear") {
         break
       }
-      const token = _this.calculateToken(v)
+      const token = _this.calculateChatToken(v)
       const tmpToken = totalToken + token
       if(tmpToken > MAX_TOKEN_1) {
         break
@@ -955,7 +843,21 @@ class AiHelper {
     return { results, totalToken }
   }
 
-  static calculateToken(
+  static calculateTextToken(text: string) {
+    let token = 0
+    for(let i=0; i<text.length; i++) {
+      const char = text[i]
+      if(valTool.isLatinChar(char)) {
+        token += 0.5
+      }
+      else {
+        token += 1
+      }
+    }
+    return token
+  }
+
+  static calculateChatToken(
     chat: Table_AiChat,
   ) {
     const { msgType, usage, text, imageUrl } = chat
@@ -966,15 +868,7 @@ class AiHelper {
 
     let token = 0
     if(text) {
-      for(let i=0; i<text.length; i++) {
-        const char = text[i]
-        if(valTool.isLatinChar(char)) {
-          token += 0.5
-        }
-        else {
-          token += 1
-        }
-      }
+      token = this.calculateTextToken(text)
     }
     else if(imageUrl) {
       token += 400
@@ -1078,7 +972,7 @@ class AiHelper {
     firstChat: Table_AiChat,
   ) {
     const restToken = MAX_TOKEN_1 - totalToken
-    const firstToken = this.calculateToken(firstChat)
+    const firstToken = this.calculateChatToken(firstChat)
     let maxTokens = firstToken * 2
     if(maxTokens < 280) maxTokens = 280
     if(maxTokens > restToken) maxTokens = restToken
@@ -1103,6 +997,12 @@ class AiHelper {
     return quota.aiConversationCount
   }
 
+  static getTextFromLLM(res: OpenAI.Chat.ChatCompletion) {
+    const text = res.choices[0].message.content
+    if(!text) return
+    return text.trim()
+  }
+
 
 }
 
@@ -1124,7 +1024,6 @@ class TellUser {
         text: { content: text },
       }
       const kf_account = this._getWxGzhKfAccount(from)
-      console.log("text kf_account: ", kf_account)
       if(kf_account) {
         obj1.customservice = { kf_account }
       }
@@ -1137,9 +1036,6 @@ class TellUser {
   private static _getWxGzhKfAccount(bot?: AiBot) {
     if(!bot) return
     const c = bot.character
-
-    console.log("_getWxGzhKfAccount character: ", c)
-
     const _env = process.env
     if(c === "deepseek") {
       return _env.LIU_WXGZH_KF_DEEPSEEK
@@ -1147,11 +1043,11 @@ class TellUser {
     else if(c === "kimi") {
       return _env.LIU_WXGZH_KF_KIMI
     }
-    else if(c === "yuewen") {
-      return _env.LIU_WXGZH_KF_YUEWEN
-    }
     else if(c === "wanzhi") {
       return _env.LIU_WXGZH_KF_WANZHI
+    }
+    else if(c === "yuewen") {
+      return _env.LIU_WXGZH_KF_YUEWEN
     }
     else if(c === "zhipu") {
       return _env.LIU_WXGZH_KF_ZHIPU

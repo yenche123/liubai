@@ -5,6 +5,7 @@ import {
   type SupportedLocale,
   type Table_User,
   type Wx_Gzh_Send_Msg,
+  type T_I18N,
 } from "@/common-types"
 
 export type LangAtom = Record<SupportedLocale, Record<string, string>>
@@ -493,9 +494,6 @@ export function getCurrentLocale(
 
   return getFallbackLocale()
 }
-
-export type T_I18N = (key: string, opt2?: Record<string, string>) => string
-
 
 /** 返回一个翻译函数 t */
 export function useI18n(
