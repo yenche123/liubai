@@ -31,7 +31,7 @@ const TOKEN_NEED_COMPRESS = 6000
 
 /************************** types ************************/
 
-export interface AiEntrance {
+export interface AiEntry {
   user: Table_User
   text?: string
   wx_gzh_openid?: string
@@ -44,7 +44,7 @@ interface HistoryData {
 
 // pass it to aiController.run() and bot.run()
 interface AiRunParam {
-  entry: AiEntrance
+  entry: AiEntry
   room: Table_AiRoom
   chatId: string
   historyData: HistoryData
@@ -73,7 +73,7 @@ export async function main(ctx: FunctionContext) {
 
 
 export async function enter_ai(
-  entry: AiEntrance,
+  entry: AiEntry,
 ) {
 
   // 1. check out text
@@ -111,7 +111,7 @@ export async function enter_ai(
 /** check out if it's a directive, like "召唤..." */
 class AiDirective {
 
-  static check(entry: AiEntrance) {
+  static check(entry: AiEntry) {
 
     // 1. get text
     const text = entry.text
@@ -142,7 +142,7 @@ class AiDirective {
     return false
   }
 
-  private static async toKickBot(entry: AiEntrance, bot: AiBot) {
+  private static async toKickBot(entry: AiEntry, bot: AiBot) {
 
     // 1. get the user's ai room
     const room = await AiHelper.getMyAiRoom(entry)
@@ -169,7 +169,7 @@ class AiDirective {
     return res3    
   }
 
-  private static async toAddBot(entry: AiEntrance, bot: AiBot) {
+  private static async toAddBot(entry: AiEntry, bot: AiBot) {
     // 1. get the user's ai room
     const room = await AiHelper.getMyAiRoom(entry)
     if(!room) return
@@ -233,7 +233,7 @@ class AiDirective {
     return strs.includes(text)
   }
 
-  private static async toClear(entry: AiEntrance) {
+  private static async toClear(entry: AiEntry) {
     // 1. get the user's ai room
     const room = await AiHelper.getMyAiRoom(entry)
     if(!room) return false
@@ -242,6 +242,7 @@ class AiDirective {
     const b2 = getBasicStampWhileAdding()
     const data2: Partial_Id<Table_AiChat> = {
       ...b2,
+      sortStamp: b2.insertedStamp,
       msgType: "clear",
       roomId: room._id,
     }
@@ -261,44 +262,62 @@ class AiDirective {
 
 /**************************** Bots ***************************/
 
-class BotZeroOne {
+class BaseBot {
+  protected _client: OpenAI | undefined
+  protected _character: AiCharacter
+  protected _baseUrl: string | undefined
 
-  private _client: OpenAI | undefined
-  private _character: AiCharacter = "wanzhi"
-  private _baseUrl: string | undefined
-
-  constructor() {
-    const _env = process.env
-    const apiKey = _env.LIU_YI_API_KEY
-    const baseURL = _env.LIU_YI_BASE_URL
+  constructor(c: AiCharacter, apiKey?: string, baseURL?: string) {
+    this._character = c
     this._baseUrl = baseURL
     try {
       this._client = new OpenAI({ apiKey, baseURL })
-    } catch(err) {
-      console.warn("yi constructor gets client error: ")
+    }
+    catch(err) {
+      console.warn(`${c} constructor gets client error: `)
       console.log(err)
     }
   }
 
-  async chat(
+  protected async chat(
     params: OpenAI.Chat.ChatCompletionCreateParams,
   ) {
     const client = this._client
+    const c = this._character
     if(!client) return
-
+    
     try {
       const t1 = getNowStamp()
       const chatCompletion = await client.chat.completions.create(params)
       const t2 = getNowStamp()
       const cost = t2 - t1
-      console.log(`yi chat cost: ${cost}ms`)
+      console.log(`${c} chat cost: ${cost}ms`)
       // console.log(chatCompletion)
       return chatCompletion as OpenAI.Chat.ChatCompletion
     }
     catch(err) {
-      console.warn("yi chat error: ")
+      console.warn(`${c} chat error: `)
       console.log(err)
     }
+  }
+
+  protected getSuitableBot() {
+    const c = this._character
+    const bots = aiBots.filter(v => v.character === c)
+    if(bots.length < 1) {
+      console.warn(`no bot for ${c} can be used`)
+      return
+    }
+    return bots[0]
+  }
+
+}
+
+class BotZeroOne extends BaseBot {
+
+  constructor() {
+    const _env = process.env
+    super("wanzhi", _env.LIU_YI_API_KEY, _env.LIU_YI_BASE_URL)
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -363,57 +382,13 @@ class BotZeroOne {
     return { chatCompletion: res5, assistantChatId }
   }
 
-
-  private getSuitableBot() {
-    const c = this._character
-    const bots = aiBots.filter(v => v.character === c)
-    if(bots.length < 1) {
-      console.warn("no bot for yi can be used")
-      return
-    }
-    return bots[0]
-  }
-
 }
 
-class BotMoonshot {
-
-  private _client: OpenAI | undefined
-  private _character: AiCharacter = "kimi"
-  private _baseUrl: string | undefined
+class BotMoonshot extends BaseBot {
 
   constructor() {
     const _env = process.env
-    const apiKey = _env.LIU_MOONSHOT_API_KEY
-    const baseURL = _env.LIU_MOONSHOT_BASE_URL
-    this._baseUrl = baseURL
-    try {
-      this._client = new OpenAI({ apiKey, baseURL })
-    } catch(err) {
-      console.warn("ZeroOne constructor gets client error: ")
-      console.log(err)
-    }
-  }
-
-  async chat(
-    params: OpenAI.Chat.ChatCompletionCreateParams,
-  ) {
-    const client = this._client
-    if(!client) return
-
-    try {
-      const t1 = getNowStamp()
-      const chatCompletion = await client.chat.completions.create(params)
-      const t2 = getNowStamp()
-      const cost = t2 - t1
-      console.log(`moonshot chat cost: ${cost}ms`)
-      // console.log(chatCompletion)
-      return chatCompletion as OpenAI.Chat.ChatCompletion
-    }
-    catch(err) {
-      console.warn("moonshot chat error: ")
-      console.log(err)
-    }
+    super("kimi", _env.LIU_MOONSHOT_API_KEY, _env.LIU_MOONSHOT_BASE_URL)
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -478,57 +453,13 @@ class BotMoonshot {
     return { chatCompletion: res5, assistantChatId }
   }
 
-
-  private getSuitableBot() {
-    const c = this._character
-    const bots = aiBots.filter(v => v.character === c)
-    if(bots.length < 1) {
-      console.warn("no bot for moonshot can be used")
-      return
-    }
-    return bots[0]
-  }
-
 }
 
-class BotDeepSeek {
-
-  private _client: OpenAI | undefined
-  private _character: AiCharacter = "deepseek"
-  private _baseUrl: string | undefined
+class BotDeepSeek extends BaseBot {
 
   constructor() {
     const _env = process.env
-    const apiKey = _env.LIU_DEEPSEEK_API_KEY
-    const baseURL = _env.LIU_DEEPSEEK_BASE_URL
-    this._baseUrl = baseURL
-    try {
-      this._client = new OpenAI({ apiKey, baseURL })
-    } catch(err) {
-      console.warn("DeepSeek constructor gets client error: ")
-      console.log(err)
-    }
-  }
-
-  async chat(
-    params: OpenAI.Chat.ChatCompletionCreateParams,
-  ) {
-    const client = this._client
-    if(!client) return
-
-    try {
-      const t1 = getNowStamp()
-      const chatCompletion = await client.chat.completions.create(params)
-      const t2 = getNowStamp()
-      const cost = t2 - t1
-      console.log(`deepseek chat cost: ${cost}ms`)
-      // console.log(chatCompletion)
-      return chatCompletion as OpenAI.Chat.ChatCompletion
-    }
-    catch(err) {
-      console.warn("deepseek chat error: ")
-      console.log(err)
-    }
+    super("deepseek", _env.LIU_DEEPSEEK_API_KEY, _env.LIU_DEEPSEEK_BASE_URL)
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -593,56 +524,13 @@ class BotDeepSeek {
     return { chatCompletion: res5, assistantChatId }
   }
 
-  private getSuitableBot() {
-    const c = this._character
-    const bots = aiBots.filter(v => v.character === c)
-    if(bots.length < 1) {
-      console.warn("no bot for deepseek can be used")
-      return
-    }
-    return bots[0]
-  }
-
 }
 
-class BotStepfun {
-
-  private _client: OpenAI | undefined
-  private _character: AiCharacter = "yuewen"
-  private _baseUrl: string | undefined
+class BotStepfun extends BaseBot {
 
   constructor() {
     const _env = process.env
-    const apiKey = _env.LIU_STEPFUN_API_KEY
-    const baseURL = _env.LIU_STEPFUN_BASE_URL
-    this._baseUrl = baseURL
-    try {
-      this._client = new OpenAI({ apiKey, baseURL })
-    } catch(err) {
-      console.warn("Stepfun constructor gets client error: ")
-      console.log(err)
-    }
-  }
-
-  async chat(
-    params: OpenAI.Chat.ChatCompletionCreateParams,
-  ) {
-    const client = this._client
-    if(!client) return
-
-    try {
-      const t1 = getNowStamp()
-      const chatCompletion = await client.chat.completions.create(params)
-      const t2 = getNowStamp()
-      const cost = t2 - t1
-      console.log(`stepfun chat cost: ${cost}ms`)
-      // console.log(chatCompletion)
-      return chatCompletion as OpenAI.Chat.ChatCompletion
-    }
-    catch(err) {
-      console.warn("stepfun chat error: ")
-      console.log(err)
-    }
+    super("yuewen", _env.LIU_STEPFUN_API_KEY, _env.LIU_STEPFUN_BASE_URL)
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -707,58 +595,14 @@ class BotStepfun {
     return { chatCompletion: res5, assistantChatId }
   }
 
-  private getSuitableBot() {
-    const c = this._character
-    const bots = aiBots.filter(v => v.character === c)
-    if(bots.length < 1) {
-      console.warn("no bot for stepfun can be used")
-      return
-    }
-    return bots[0]
-  }
-
-
 }
 
-class BotZhipu {
+class BotZhipu extends BaseBot {
 
-  private _client: OpenAI | undefined
-  private _character: AiCharacter = "zhipu"
-  private _baseUrl: string | undefined
 
   constructor() {
-    const _this = this
     const _env = process.env
-    const apiKey = _env.LIU_ZHIPU_API_KEY
-    const baseURL = _env.LIU_ZHIPU_BASE_URL
-    _this._baseUrl = baseURL
-    try {
-      _this._client = new OpenAI({ apiKey, baseURL })
-    } catch(err) {
-      console.warn("Zhipu constructor gets client error: ")
-      console.log(err)
-    }
-  }
-
-  async chat(
-    params: OpenAI.Chat.ChatCompletionCreateParams,
-  ) {
-    const client = this._client
-    if(!client) return
-
-    try {
-      const t1 = getNowStamp()
-      const chatCompletion = await client.chat.completions.create(params)
-      const t2 = getNowStamp()
-      const cost = t2 - t1
-      console.log(`zhipu chat cost: ${cost}ms`)
-      // console.log(chatCompletion)
-      return chatCompletion as OpenAI.Chat.ChatCompletion
-    }
-    catch(err) {
-      console.warn("zhipu chat error: ")
-      console.log(err)
-    }
+    super("zhipu", _env.LIU_ZHIPU_API_KEY, _env.LIU_ZHIPU_BASE_URL)
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -821,16 +665,6 @@ class BotZhipu {
     if(!assistantChatId) return
 
     return { chatCompletion: res5, assistantChatId }
-  }
-
-  private getSuitableBot() {
-    const c = this._character
-    const bots = aiBots.filter(v => v.character === c)
-    if(bots.length < 1) {
-      console.warn("no bot for zhipu can be used")
-      return
-    }
-    return bots[0]
   }
 
 }
@@ -922,7 +756,7 @@ class AiController {
 class AiHelper {
 
   static async getMyAiRoom(
-    entry: AiEntrance,
+    entry: AiEntry,
   ) {
     // 1. get room
     const userId = entry.user._id
@@ -1014,7 +848,7 @@ class AiHelper {
 
 
   static async checkQuota(
-    entry: AiEntrance,
+    entry: AiEntry,
   ) {
     const user = entry.user
     const quota = user.quota
@@ -1034,7 +868,7 @@ class AiHelper {
   }
 
   static async addUserMsg(
-    entry: AiEntrance,
+    entry: AiEntry,
     roomId: string,
   ) {
     const text = entry.text
@@ -1042,6 +876,7 @@ class AiHelper {
     const b1 = getBasicStampWhileAdding()
     const data1: Partial_Id<Table_AiChat> = {
       ...b1,
+      sortStamp: b1.insertedStamp,
       roomId,
       msgType: "user",
       text,
@@ -1068,6 +903,7 @@ class AiHelper {
     const b1 = getBasicStampWhileAdding()
     const data1: Partial_Id<Table_AiChat> = {
       ...b1,
+      sortStamp: b1.insertedStamp,
       roomId: param.roomId,
       msgType: "assistant",
       text: param.text,
@@ -1093,7 +929,7 @@ class AiHelper {
   ): Promise<HistoryData> {
     const _this = this
     const col = db.collection("AiChat")
-    const q1 = col.where({ roomId }).orderBy("insertedStamp", "desc")
+    const q1 = col.where({ roomId }).orderBy("sortStamp", "desc")
     const res1 = await q1.limit(50).get<Table_AiChat>()
     const chats = res1.data
     const results: Table_AiChat[] = []
@@ -1152,7 +988,7 @@ class AiHelper {
     chatId: string,
   ) {
     const col = db.collection("AiChat")
-    const q1 = col.where({ roomId }).orderBy("insertedStamp", "desc")
+    const q1 = col.where({ roomId }).orderBy("sortStamp", "desc")
     const res1 = await q1.limit(10).get<Table_AiChat>()
     const chats = res1.data
 
@@ -1249,7 +1085,7 @@ class AiHelper {
     return maxTokens
   }
 
-  static addQuotaForUser(entry: AiEntrance) {
+  static addQuotaForUser(entry: AiEntry) {
     // 1. add
     const user = entry.user
     const userId = user._id
@@ -1275,7 +1111,7 @@ class AiHelper {
 class TellUser {
 
   static async text(
-    entry: AiEntrance, 
+    entry: AiEntry, 
     text: string,
     from?: AiBot,
   ) {

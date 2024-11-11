@@ -1411,6 +1411,7 @@ export interface Table_AiRoom extends BaseTable {
 
 /********* AI Chat *********/
 export interface Table_AiChat extends BaseTable {
+  sortStamp: number        // bascially which is createdStamp except for the 'summary' chat 
   roomId: string
   msgType: AiMsgType
   text?: string
