@@ -126,7 +126,13 @@ declare global {
       LIU_STEPFUN_API_KEY?: string           // Stepfun AI 的 api key
       LIU_YI_BASE_URL?: string               // 01.ai 的 base url
       LIU_YI_API_KEY?: string                // 01.ai 的 api key
-      
+
+      /** Characters */
+      LIU_WXGZH_KF_ZHIPU?: string            // kf_account of zhipu
+      LIU_WXGZH_KF_KIMI?: string             // kf_account of kimi
+      LIU_WXGZH_KF_DEEPSEEK?: string         // kf_account of deepseek
+      LIU_WXGZH_KF_YUEWEN?: string           // kf_account of yuewen
+      LIU_WXGZH_KF_WANZHI?: string           // kf_account of wanzhi
 
     }
   }

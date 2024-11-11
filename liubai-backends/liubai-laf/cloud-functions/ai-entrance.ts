@@ -1123,19 +1123,42 @@ class TellUser {
         msgtype: "text",
         text: { content: text },
       }
-      if(from?.wx_gzh_kf_account) {
-        obj1.customservice = { kf_account: from.wx_gzh_kf_account }
+      const kf_account = this._getWxGzhKfAccount(from)
+      console.log("text kf_account: ", kf_account)
+      if(kf_account) {
+        obj1.customservice = { kf_account }
       }
-      const res1 = await this.sendToWxGzh(wx_gzh_openid, obj1)
+      const res1 = await this._sendToWxGzh(wx_gzh_openid, obj1)
       return res1
     }
 
-    
-
   }
 
+  private static _getWxGzhKfAccount(bot?: AiBot) {
+    if(!bot) return
+    const c = bot.character
 
-  private static async sendToWxGzh(
+    console.log("_getWxGzhKfAccount character: ", c)
+
+    const _env = process.env
+    if(c === "deepseek") {
+      return _env.LIU_WXGZH_KF_DEEPSEEK
+    }
+    else if(c === "kimi") {
+      return _env.LIU_WXGZH_KF_KIMI
+    }
+    else if(c === "yuewen") {
+      return _env.LIU_WXGZH_KF_YUEWEN
+    }
+    else if(c === "wanzhi") {
+      return _env.LIU_WXGZH_KF_WANZHI
+    }
+    else if(c === "zhipu") {
+      return _env.LIU_WXGZH_KF_ZHIPU
+    }
+  }
+
+  private static async _sendToWxGzh(
     wx_gzh_openid: string,
     obj: Wx_Gzh_Send_Msg,
   ) {

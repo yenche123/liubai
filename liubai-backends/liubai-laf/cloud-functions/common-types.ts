@@ -628,7 +628,6 @@ export interface AiBot {
   model: string
   abilities: AiAbility[]
   alias: string[]
-  wx_gzh_kf_account?: string
 }
 
 
