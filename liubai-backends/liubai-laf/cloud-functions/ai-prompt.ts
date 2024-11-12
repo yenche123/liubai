@@ -35,7 +35,7 @@ export const aiBots: AiBot[] = [
     name: "万知",
     character: "wanzhi",
     provider: "zero-one",
-    model: "01-ai/Yi-1.5-9B-Chat-16K",     // yi-lightning
+    model: "yi-lightning",                // yi-lightning 01-ai/Yi-1.5-9B-Chat-16K
     abilities: ["chat"],
     alias: ["零一万物", "01.ai"]
   },
