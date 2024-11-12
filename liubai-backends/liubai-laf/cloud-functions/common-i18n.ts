@@ -259,6 +259,37 @@ export const wechatLang: LangAtom = {
   }
 }
 
+
+export const aiLang: LangAtom = {
+  "zh-Hans": {
+    "privacy_title": "🔓 隐私提示:",
+    "operation_title": "🕹️ 操作栏:",
+    "generative_ai_warning": "⚠️ 内容由 AI 生成，请仔细甄别。",
+    "kick": "踢掉",
+    "add": "召唤",
+    "clear_context": "清空上文",
+  },
+  "zh-Hant": {
+    "privacy_title": "🔓 隱私提示:",
+    "operation_title": "🕹️ 操作欄:",
+    "generative_ai_warning": "⚠️ 內容由 AI 生成，請仔細甄別。",
+    "kick": "踢掉",
+    "add": "召喚",
+    "clear_context": "清除上文",
+  },
+  "en": {
+    "privacy_title": "🔓 Privacy:",
+    "operation_title": "🕹️ Operations:",
+    "generative_ai_warning": "⚠️ AI can make mistakes. Please double-check it.",
+    "kick": "Kick ",
+    "add": "Add ",
+    "clear_context": "Clear context",
+  }
+}
+
+
+
+
 /********************* Wx Click Replies ****************/
 export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
   // zh-Hans

@@ -10,6 +10,8 @@ import type {
   Table_AiRoom, 
   Table_User, 
   Wx_Gzh_Send_Msg,
+  Wx_Gzh_Send_Msgmenu_Item,
+  Wx_Gzh_Send_Msgmenu,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -22,6 +24,7 @@ import { sendWxMessage } from "@/service-send"
 import { getBasicStampWhileAdding, getNowStamp } from "@/common-time"
 import { aiBots, aiI18nChannel, aiI18nShared } from "@/ai-prompt"
 import cloud from "@lafjs/cloud"
+import { useI18n, aiLang } from "@/common-i18n"
 
 const db = cloud.database()
 
@@ -46,9 +49,13 @@ interface AiRunParam {
 }
 
 interface AiRunSuccess {
-  assistantChatId: string
+  character: AiCharacter
+  replyStatus: "yes" | "has_new_msg"
+  assistantChatId?: string
   chatCompletion?: OpenAI.Chat.ChatCompletion
 }
+
+type AiRunResults = Array<AiRunSuccess | undefined>
 
 interface HelperAssistantMsgParam {
   roomId: string
@@ -58,6 +65,11 @@ interface HelperAssistantMsgParam {
   usage?: AiUsage
   requestId?: string
   baseUrl?: string
+}
+
+interface AiMenuItem {
+  operation: "kick" | "add" | "clear_history" | "more_operations"
+  character?: AiCharacter
 }
 
 /********************* empty function ****************/
@@ -211,7 +223,7 @@ class AiDirective {
   }
 
   private static isKickBot(text: string) {
-    const prefix = ["踢掉", "移除"]
+    const prefix = ["踢掉", "踢掉", "Kick"]
     let prefixMatched = prefix.find(v => text.startsWith(v))
     if(!prefixMatched) return
 
@@ -226,7 +238,7 @@ class AiDirective {
   }
 
   private static isAddBot(text: string) {
-    const prefix = ["召唤", "添加", "呼叫"]
+    const prefix = ["召唤", "召喚", "Add"]
     let prefixMatched = prefix.find(v => text.startsWith(v))
     if(!prefixMatched) return
 
@@ -240,7 +252,7 @@ class AiDirective {
   }
 
   private static isClear(text: string) {
-    const strs = ["清空上文", "清空上下文", "清楚历史记录"]
+    const strs = ["清空上文", "清除上文", "Clear context"]
     return strs.includes(text)
   }
 
@@ -370,7 +382,8 @@ class BaseBot extends BaseLLM {
   ): Promise<AiRunSuccess | undefined> {
     if(!res) return
 
-    console.log(`${bot.character} postRun res: `)
+    const c = bot.character
+    console.log(`${c} postRun res: `)
     console.log(res)
 
     const { room, chatId, entry } = param
@@ -380,7 +393,13 @@ class BaseBot extends BaseLLM {
 
     // 7. can i reply
     const res7 = await AiHelper.canReply(roomId, chatId)
-    if(!res7) return
+    if(!res7) {
+      return {
+        character: c,
+        replyStatus: "has_new_msg",
+        chatCompletion: res,
+      }
+    }
 
     // 8. reply
     TellUser.text(entry, txt6, bot)
@@ -390,7 +409,7 @@ class BaseBot extends BaseLLM {
       roomId,
       text: txt6,
       model: bot.model,
-      character: this._character,
+      character: c,
       usage: res.usage,
       requestId: res.id,
       baseUrl: this._baseUrl,
@@ -398,7 +417,12 @@ class BaseBot extends BaseLLM {
     const assistantChatId = await AiHelper.addAssistantMsg(param9)
     if(!assistantChatId) return
 
-    return { chatCompletion: res, assistantChatId }
+    return { 
+      character: c,
+      replyStatus: "yes",
+      chatCompletion: res, 
+      assistantChatId,
+    }
   }
 
 }
@@ -598,8 +622,8 @@ class AiController {
 
     // 1. check bots in the room
     let characters = room.characters
-    characters = characters.filter(c => AiHelper.isCharacterAvailable(c))
-    if(characters.length < 1) {
+    const newCharacters = characters.filter(c => AiHelper.isCharacterAvailable(c))
+    if(newCharacters.length < 1) {
       console.warn("no available characters in the room")
       return false
     }
@@ -615,8 +639,8 @@ class AiController {
 
     // 3. get promises
     const promises: Promise<AiRunSuccess | undefined>[] = []
-    for(let i=0; i<characters.length; i++) {
-      const c = characters[i]
+    for(let i=0; i<newCharacters.length; i++) {
+      const c = newCharacters[i]
       if(c === "deepseek") {
         const bot1 = new BotDeepSeek()
         const pro1 = bot1.run(param)
@@ -649,7 +673,7 @@ class AiController {
     let hasEverSucceeded = false
     for(let i=0; i<res4.length; i++) {
       const v = res4[i]
-      if(v) {
+      if(v && v.replyStatus === "yes") {
         hasEverSucceeded = true
       }
     }
@@ -658,10 +682,48 @@ class AiController {
     // 5. add quota for user
     const num5 = AiHelper.addQuotaForUser(entry)
     if((num5 % 3) === 2) {
-      // WIP: send menu, which is a toolbox
-
+      this.sendFallbackMenu(param, res4)
     }
 
+  }
+
+  private async sendFallbackMenu(
+    param: AiRunParam,
+    results: AiRunResults,
+  ) {
+    const { entry, room } = param
+    const user = entry.user
+    const { t } = useI18n(aiLang, { user })
+    const characters = room.characters
+    let prefixMessage = ""
+    let suffixMessage = ""
+
+    // 1. get kickList & addedList
+    const kickList = AiHelper.getKickCharacters(characters, results)
+    const addedList = AiHelper.getAddedCharacters(characters, results)
+
+    // 2. privacy tips
+
+    // 3. menu
+    const menuList: AiMenuItem[] = []
+    kickList.forEach(v => menuList.push({ operation: "kick", character: v }))
+    addedList.forEach(v => menuList.push({ operation: "add", character: v }))
+    menuList.push({ operation: "clear_history" })
+    if(menuList.length > 0) {
+      prefixMessage += t("operation_title")
+      suffixMessage = "\n"
+    }
+
+    // 4. add warning into suffixMessage
+    suffixMessage += t("generative_ai_warning")
+
+    console.warn("ready to send menu........")
+    console.log(prefixMessage)
+    console.log(menuList)
+    console.log(suffixMessage)
+
+    // 5. send
+    TellUser.menu(entry, prefixMessage, menuList, suffixMessage)
   }
 
 
@@ -1141,6 +1203,70 @@ class AiHelper {
     return text.trim()
   }
 
+  static getKickCharacters(
+    characters: AiCharacter[],
+    results: AiRunResults,
+  ) {
+    const cLength = characters.length
+    if(cLength < 2) return []
+
+    const kickList: AiCharacter[] = []
+    const successList: AiCharacter[] = []
+
+    // 1. add failed characters to kickList first
+    characters.forEach(v => {
+      const r = results.find(v2 => v2?.character === v)
+      if(!r) kickList.push(v)
+      else if(r.replyStatus === "has_new_msg") kickList.push(v)
+      else successList.push(v)
+    })
+
+    // 2. and then add successful characters
+    kickList.push(...successList)
+
+    return kickList
+  }
+
+  static getAddedCharacters(
+    characters: AiCharacter[],
+    results: AiRunResults,
+  ) {
+    const cLength = characters.length
+    if(cLength >= MAX_CHARACTERS) return []
+    
+    // 1. get available characters
+    const availableCharacters = this.getAvailableCharacters()
+    for(let i=0; i<availableCharacters.length; i++) {
+      const v = availableCharacters[i]
+      if(characters.includes(v)) {
+        availableCharacters.splice(i, 1)
+        i--
+      }
+    }
+    if(availableCharacters.length <= 2) {
+      return availableCharacters
+    }
+
+    // 2. select characters
+    const selectNum = cLength >= (MAX_CHARACTERS - 1) ? 2 : 3
+    const addedList: AiCharacter[] = []
+    for(let i=0; i<selectNum; i++) {
+      const aLength = availableCharacters.length
+      if(aLength <= 1) {
+        addedList.push(...availableCharacters)
+        break
+      }
+      const r = Math.floor(Math.random() * aLength)
+      const c = availableCharacters[r]
+      addedList.push(c)
+      availableCharacters.splice(r, 1)
+    }
+
+    return addedList
+  }
+
+  
+
 
 }
 
@@ -1171,6 +1297,62 @@ class TellUser {
 
   }
 
+
+  static async menu(
+    entry: AiEntry,
+    prefixMessage: string,
+    menuList: AiMenuItem[],
+    suffixMessage: string,
+  ) {
+    const { wx_gzh_openid, user } = entry
+    const { t } = useI18n(aiLang, { user })
+
+    // 1. localize the menuList
+    const wx_menu_list: Wx_Gzh_Send_Msgmenu_Item[] = []
+    for(let i=0; i<menuList.length; i++) {
+      const v = menuList[i]
+      const { operation, character } = v
+
+      if(operation === "clear_history") {
+        wx_menu_list.push({ id: "clear_history", content: t("clear_context") })
+        continue
+      }
+
+      if(operation === "kick" && character) {
+        const characterName = AiUtil.getCharacterName(character)
+        if(!characterName) continue
+        wx_menu_list.push({ id: "kick_" + character, content: t("kick") + characterName })
+      }
+
+      if(operation === "add" && character) {
+        const characterName = AiUtil.getCharacterName(character)
+        if(!characterName) continue
+        wx_menu_list.push({ id: "add_" + character, content: t("add") + characterName })
+      }
+    }
+
+    console.warn("see wx_menu_list: ")
+    console.log(wx_menu_list)
+
+    // 2. send to wx gzh
+    if(wx_gzh_openid) {
+      const obj2: Wx_Gzh_Send_Msgmenu = {
+        msgtype: "msgmenu",
+        msgmenu: {
+          head_content: prefixMessage,
+          list: wx_menu_list,
+          tail_content: suffixMessage,
+        }
+      }
+      const res2 = await this._sendToWxGzh(wx_gzh_openid, obj2)
+      return res2
+    }
+    
+
+  }
+
+  
+
   private static _getWxGzhKfAccount(bot?: AiBot) {
     if(!bot) return
     const c = bot.character
@@ -1200,6 +1382,17 @@ class TellUser {
     if(!accessToken) return
     const res = await sendWxMessage(wx_gzh_openid, accessToken, obj)
     return res
+  }
+
+}
+
+class AiUtil {
+
+  static getCharacterName(character: AiCharacter) {
+    let name = ""
+    const bot = aiBots.find(v => v.character === character)
+    if(bot) name = bot.name
+    return name
   }
 
 }

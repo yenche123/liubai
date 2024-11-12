@@ -2448,14 +2448,16 @@ export interface Wx_Gzh_Send_Article {
   }
 }
 
+export interface Wx_Gzh_Send_Msgmenu_Item {
+  id: string
+  content: string
+}
+
 export interface Wx_Gzh_Send_Msgmenu {
   msgtype: "msgmenu"
   msgmenu: {
     head_content: string
-    list: {
-      id: string
-      content: string
-    }[]
+    list: Wx_Gzh_Send_Msgmenu_Item[]
     tail_content: string
   }
 }
