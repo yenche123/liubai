@@ -273,43 +273,59 @@ class AiDirective {
 
 /**************************** Bots ***************************/
 
-class BaseBot {
+class BaseLLM {
   protected _client: OpenAI | undefined
-  protected _character: AiCharacter
   protected _baseUrl: string | undefined
-
-  constructor(c: AiCharacter, apiKey?: string, baseURL?: string) {
-    this._character = c
+  constructor(apiKey?: string, baseURL?: string) {
     this._baseUrl = baseURL
     try {
       this._client = new OpenAI({ apiKey, baseURL })
     }
     catch(err) {
-      console.warn(`${c} constructor gets client error: `)
+      console.warn("BaseLLM constructor gets client error: ")
       console.log(err)
     }
   }
 
-  protected async chat(
-    params: OpenAI.Chat.ChatCompletionCreateParams,
+  public async chat(
+    params: OpenAI.Chat.ChatCompletionCreateParams
   ) {
     const client = this._client
-    const c = this._character
     if(!client) return
-    
     try {
-      const t1 = getNowStamp()
       const chatCompletion = await client.chat.completions.create(params)
-      const t2 = getNowStamp()
-      const cost = t2 - t1
-      console.log(`${c} chat cost: ${cost}ms`)
-      // console.log(chatCompletion)
       return chatCompletion as OpenAI.Chat.ChatCompletion
     }
     catch(err) {
-      console.warn(`${c} chat error: `)
+      console.warn("BaseLLM chat error: ")
       console.log(err)
     }
+  }
+}
+
+class BaseBot extends BaseLLM {
+  protected _character: AiCharacter
+
+  constructor(c: AiCharacter, apiKey?: string, baseURL?: string) {
+    super(apiKey, baseURL)
+    this._character = c
+  }
+
+  public async chat(
+    params: OpenAI.Chat.ChatCompletionCreateParams,
+  ) {
+    const t1 = getNowStamp()
+    const res = await super.chat(params)
+    const t2 = getNowStamp()
+    const cost = t2 - t1
+
+    const c = this._character
+    console.log(`${c} chat cost: ${cost}ms`)
+    if(!res) {
+      console.warn(`${c} chat got an error`)
+    }
+
+    return res
   }
 
   protected getSuitableBot() {
@@ -578,7 +594,7 @@ class BotZhipu extends BaseBot {
 class AiController {
 
   async run(param: AiRunParam) {
-    const { room, historyData, entry } = param
+    const { room, entry } = param
 
     // 1. check bots in the room
     let characters = room.characters
@@ -589,14 +605,12 @@ class AiController {
     }
 
     // 2. compress history data
-    let promptToken = historyData.totalToken
-    let chats = historyData.results
+    let promptToken = param.historyData.totalToken
     if(promptToken > TOKEN_NEED_COMPRESS) {
-      // WIP: compress
-      // ......
-
-      // 2.1 update the history data
-
+      console.log("go to compress..............")
+      const newHistoryData = await AiCompressor.run(param)
+      if(!newHistoryData) return
+      param.historyData = newHistoryData
     }
 
     // 3. get promises
@@ -660,8 +674,8 @@ class AiCompressor {
     param: AiRunParam,
   ) {
     const _env = process.env
-    const { historyData, entry } = param
-    const { results, totalToken } = historyData
+    const { historyData, entry, room } = param
+    const { results } = historyData
 
     // 1. get the two system prompts
     const { p } = aiI18nShared({ type: "compress", user: entry.user })
@@ -672,7 +686,7 @@ class AiCompressor {
     const prompts = AiHelper.turnChatsIntoPrompt(results)
     prompts.reverse()
     prompts.unshift({ role: "system", content: system1 })
-    prompts.push({ role: "system", content: system2 })
+    prompts.push({ role: "user", content: system2 })
 
     // 3. add prefix msg
     const prefix_msg = p("prefix_msg")
@@ -693,16 +707,75 @@ class AiCompressor {
       prompts.push(msg3_2)
     }
 
-    
-    
+    // 4. construct the arg to send to LLM
+    const llm = new BaseLLM(_env.LIU_SUMMARY_API_KEY, _env.LIU_SUMMARY_BASE_URL)
+    const arg4: OpenAI.Chat.ChatCompletionCreateParams = {
+      messages: prompts,
+      model: _env.LIU_SUMMARY_MODEL ?? "",
+    }
+    const t1 = getNowStamp()
+    const res4 = await llm.chat(arg4)
+    const t2 = getNowStamp()
+    const cost = t2 - t1
+    console.log("summary cost: ", cost)
+    if(!res4) {
+      console.warn("summary llm got an error")
+      return
+    }
 
-    
+    console.log("see summary response......")
+    console.log(res4.choices[0])
+    // 5. get data from the response
+    const usage = res4.usage
+    const text = res4.choices[0].message.content
+    if(!text) {
+      console.warn("no text in the summary response")
+      return
+    }
 
+    // 6. calculate the new total token and get the sortStamp
+    let totalToken = 0
+    let idx6 = 0
+    const newResults: Table_AiChat[] = []
+    for(let i=0; i<results.length; i++) {
+      const v = results[i]
+      const token = AiHelper.calculateChatToken(v)
+      totalToken += token
+      newResults.push(v)
+      idx6 = i
+      if(totalToken > 900) {
+        break
+      }
+    }
+    if(usage?.completion_tokens) {
+      totalToken += usage.completion_tokens
+    }
+    const sortStamp = results[idx6]?.sortStamp ?? getNowStamp()
+    const newSortStamp = sortStamp - 10
 
+    // 7. storage the summary
+    const b7 = getBasicStampWhileAdding()
+    const data7: Partial_Id<Table_AiChat> = {
+      ...b7,
+      sortStamp: newSortStamp,
+      roomId: room._id,
+      msgType: "summary",
+      text,
+      model: _env.LIU_SUMMARY_MODEL,
+      usage,
+      requestId: res4.id,
+      baseUrl: _env.LIU_SUMMARY_BASE_URL,
+    }
+    const chatId7 = await AiHelper.addChat(data7)
+    if(!chatId7) return
+    newResults.push({ _id: chatId7, ...data7 })
 
-  
-
-
+    // 8. return the new history data
+    const newHistoryData: HistoryData = {
+      results: newResults,
+      totalToken,
+    }
+    return newHistoryData
   }
 }
 
@@ -823,6 +896,20 @@ class AiHelper {
     return available
   }
 
+  static async addChat(data: Partial_Id<Table_AiChat>) {
+    const col = db.collection("AiChat")
+    const res1 = await col.add(data)
+    const chatId = getDocAddId(res1)
+    if(!chatId) {
+      console.warn("cannot get chatId while adding chat error")
+      console.log(res1)
+      console.log("data: ")
+      console.log(data)
+      return
+    }
+    return chatId
+  }
+
   static async addUserMsg(
     entry: AiEntry,
     roomId: string,
@@ -839,17 +926,7 @@ class AiHelper {
       userId,
       channel: "wx_gzh",
     }
-    const col = db.collection("AiChat")
-    const res1 = await col.add(data1)
-    const chatId = getDocAddId(res1)
-    if(!chatId) {
-      console.warn("cannot get chatId while adding user msg error")
-      console.log(res1)
-      console.log("entry: ")
-      console.log(entry)
-      return
-    }
-
+    const chatId = await this.addChat(data1)
     return chatId
   }
 
@@ -869,14 +946,7 @@ class AiHelper {
       requestId: param.requestId,
       baseUrl: param.baseUrl,
     }
-    const col = db.collection("AiChat")
-    const res1 = await col.add(data1)
-    const chatId = getDocAddId(res1)
-    if(!chatId) {
-      console.warn("adding assistant msg error")
-      console.log(res1)
-      return
-    }
+    const chatId = await this.addChat(data1)
     return chatId
   }
 
