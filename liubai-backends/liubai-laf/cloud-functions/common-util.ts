@@ -2675,6 +2675,12 @@ export async function upgrade_user_subscription(
     console.warn("the user has been charged in the past 5 seconds")
     return
   }
+
+  // 3.2 reset quota
+  const quota = theUser.quota
+  if(quota) {
+    quota.aiConversationCount = 0
+  }
   
   // 4. generate a new subscription in user
   let chargeTimes = oldUserSub?.chargeTimes ?? 0
@@ -2701,8 +2707,12 @@ export async function upgrade_user_subscription(
   // 5. update user's subscription
   console.log("newUserSub: ")
   console.log(newUserSub)
+  console.log("quota: ")
+  console.log(quota)
+
   const u5: Partial<Table_User> = {
     subscription: newUserSub,
+    quota,
     updatedStamp: now3,
   }
   const res5 = await uCol.doc(user_id).update(u5)

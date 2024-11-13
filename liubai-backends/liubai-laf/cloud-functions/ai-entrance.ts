@@ -1297,17 +1297,27 @@ class AiHelper {
 
 class UserHelper {
 
-  static sendQuotaWarning2(entry: AiEntry) {
+  static async sendQuotaWarning2(entry: AiEntry) {
+    // 1. check out domain
     const _env = process.env
-    const csLink = _env.LIU_CUSTOMER_SERVICE
+    const domain = _env.LIU_DOMAIN
+    if(!domain) return
 
+    // 2. get my order
+    const order = await this.createOrderForQuota(entry)
+    if(!order) return
+
+    // 3. get payment link
+    const orderId = order.order_id
+    const paymentLink = `${domain}/payment/${orderId}`
+
+    // 4. i18n
     const { user } = entry
     const { t } = useI18n(aiLang, { user })
-    let msg = t("quota_warning_2", { membershipTimes: MAX_TIMES_MEMBERSHIP })
-    if(csLink) {
-      msg += "\n"
-      msg += t("open_customer_service", { link: csLink })
-    }
+    let msg = t("quota_warning_2", { 
+      membershipTimes: MAX_TIMES_MEMBERSHIP,
+      link: paymentLink,
+    })
 
     TellUser.text(entry, msg)
   }
