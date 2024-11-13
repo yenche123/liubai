@@ -1298,20 +1298,11 @@ class AiHelper {
 class UserHelper {
 
   static async sendQuotaWarning2(entry: AiEntry) {
-    // 1. check out domain
-    const _env = process.env
-    const domain = _env.LIU_DOMAIN
-    if(!domain) return
-
-    // 2. get my order
-    const order = await this.createOrderForQuota(entry)
-    if(!order) return
-
-    // 3. get payment link
-    const orderId = order.order_id
-    const paymentLink = `${domain}/payment/${orderId}`
-
-    // 4. i18n
+    // 1. get payment link
+    const paymentLink = await this._getPaymentLink(entry)
+    if(!paymentLink) return
+    
+    // 2. send
     const { user } = entry
     const { t } = useI18n(aiLang, { user })
     let msg = t("quota_warning_2", { 
@@ -1323,20 +1314,12 @@ class UserHelper {
   }
 
   static async sendQuotaWarning(entry: AiEntry) {
-    // 1. check out domain
+    // 1. get payment link
     const _env = process.env
-    const domain = _env.LIU_DOMAIN
-    if(!domain) return
+    const paymentLink = await this._getPaymentLink(entry)
+    if(!paymentLink) return
 
-    // 2. get my order
-    const order = await this.createOrderForQuota(entry)
-    if(!order) return
-
-    // 3. get payment link
-    const orderId = order.order_id
-    const paymentLink = `${domain}/payment/${orderId}`
-
-    // 4. i18n
+    // 2. i18n
     const { user } = entry
     const { t } = useI18n(aiLang, { user })
     let msg = t("quota_warning", { 
@@ -1350,11 +1333,27 @@ class UserHelper {
       msg += t("deploy_tip", { link: csLink })
     }
 
-    // 5. tell user
+    // 3. tell user
     TellUser.text(entry, msg)
   }
 
-  private static async createOrderForQuota(entry: AiEntry) {
+  private static async _getPaymentLink(entry: AiEntry) {
+    // 1. check out domain
+    const _env = process.env
+    const domain = _env.LIU_DOMAIN
+    if(!domain) return
+
+    // 2. get my order
+    const order = await this._createOrderForQuota(entry)
+    if(!order) return
+
+    // 3. get payment link
+    const orderId = order.order_id
+    const paymentLink = `${domain}/payment/${orderId}`
+    return paymentLink
+  }
+
+  private static async _createOrderForQuota(entry: AiEntry) {
     // 1. get param
     const { user, wx_gzh_openid } = entry
     const userId = user._id
