@@ -91,7 +91,14 @@ import {
   wxpay_apiclient_key,
   alipay_cfg,
 } from "@/secret-config"
-import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
+import { 
+  addHours,
+  addDays, 
+  addMonths,
+  addYears, 
+  set as date_fn_set,
+  differenceInCalendarDays,
+} from "date-fns"
 import { AlipaySdk, type AlipayCommonResult } from "alipay-sdk"
 
 const db = cloud.database()
@@ -576,9 +583,21 @@ export class LiuDateUtil {
     let endDate = new Date(startStamp)
     if(payment_circle === "monthly") {
       endDate = addMonths(startDate, 1)
+      const diffDays = differenceInCalendarDays(endDate, startDate)
+      console.warn("monthly diffDays: ", diffDays)
+      const diffOfDiffDays = 30 - diffDays
+      if(diffOfDiffDays > 0) {
+        endDate = addDays(endDate, diffOfDiffDays)
+      }
     }
     else if(payment_circle === "quarterly") {
       endDate = addMonths(startDate, 3)
+      const diffDays = differenceInCalendarDays(endDate, startDate)
+      console.warn("quarterly diffDays: ", diffDays)
+      const diffOfDiffDays = 90 - diffDays
+      if(diffOfDiffDays > 0) {
+        endDate = addDays(endDate, diffOfDiffDays)
+      }
     }
     else if(payment_circle === "yearly") {
       endDate = addYears(startDate, 1)
