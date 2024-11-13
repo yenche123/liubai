@@ -37,7 +37,7 @@ export type Partial_Id<T extends BaseTable> = PartialSth<T, "_id">
 
 export type LiuTimeout = ReturnType<typeof setTimeout> | undefined
 
-export type T_I18N = (key: string, opt2?: Record<string, string>) => string
+export type T_I18N = (key: string, opt2?: Record<string, string | number>) => string
 
 /*********************** 回调类型 **********************/
 export interface LiuRqReturn<T = Record<string, any>> {

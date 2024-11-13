@@ -238,7 +238,7 @@ export function aiI18nShared(
     thePrompts = compress_prompts
   }
 
-  const p: T_I18N = (key: string, opt2?: Record<string, string>) => {
+  const p: T_I18N = (key, opt2) => {
     if(!thePrompts) return ""
     let res = thePrompts[key]
     if(!res) return ""
@@ -262,7 +262,7 @@ export function aiI18nChannel(
     thePrompts = wx_gzh_prompts[c]
   }
 
-  const p: T_I18N = (key: string, opt2?: Record<string, string>) => {
+  const p: T_I18N = (key, opt2) => {
     if(!thePrompts) return ""
     let res = thePrompts[key]
     if(!res) return ""

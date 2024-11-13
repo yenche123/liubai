@@ -41,6 +41,9 @@ const MAX_CHARACTERS = 3
 const MAX_TOKEN_1 = 8000
 const TOKEN_NEED_COMPRESS = 6000
 
+const MAX_TIMES_FREE = 10
+const MAX_TIMES_MEMBERSHIP = 200
+
 const MIN_3 = MINUTE * 3
 const MIN_30 = MINUTE * 30
 
@@ -958,11 +961,16 @@ class AiHelper {
 
     const count = quota.aiConversationCount
     const isSubscribed = checkIfUserSubscribed(user)
-    const MAX_TIMES = isSubscribed ? 200 : 10
+    const MAX_TIMES = isSubscribed ? MAX_TIMES_MEMBERSHIP : MAX_TIMES_FREE
 
     const available = count < MAX_TIMES
     if(!available) {
-      UserHelper.sendQuotaWarning(entry)
+      if(MAX_TIMES === MAX_TIMES_FREE) {
+        UserHelper.sendQuotaWarning(entry)
+      }
+      else {
+        UserHelper.sendQuotaWarning2(entry)
+      }
     }
 
     return available
@@ -1289,6 +1297,21 @@ class AiHelper {
 
 class UserHelper {
 
+  static sendQuotaWarning2(entry: AiEntry) {
+    const _env = process.env
+    const csLink = _env.LIU_CUSTOMER_SERVICE
+
+    const { user } = entry
+    const { t } = useI18n(aiLang, { user })
+    let msg = t("quota_warning_2", { membershipTimes: MAX_TIMES_MEMBERSHIP })
+    if(csLink) {
+      msg += "\n"
+      msg += t("open_customer_service", { link: csLink })
+    }
+
+    TellUser.text(entry, msg)
+  }
+
   static async sendQuotaWarning(entry: AiEntry) {
     // 1. check out domain
     const _env = process.env
@@ -1306,7 +1329,11 @@ class UserHelper {
     // 4. i18n
     const { user } = entry
     const { t } = useI18n(aiLang, { user })
-    let msg = t("quota_warning", { link: paymentLink })
+    let msg = t("quota_warning", { 
+      freeTimes: MAX_TIMES_FREE,
+      membershipTimes: MAX_TIMES_MEMBERSHIP,
+      link: paymentLink,
+    })
     const csLink = _env.LIU_CUSTOMER_SERVICE
     if(csLink) {
       msg += "\n\n"

@@ -268,8 +268,10 @@ export const aiLang: LangAtom = {
     "kick": "踢掉",
     "add": "召唤",
     "clear_context": "清空上文",
-    "quota_warning": "免费版共有 10 轮对话机会\n购买会员畅享每月 200 轮对话！同时解锁留白记事所有权益。\n<a href='{link}'>戳我立即解锁</a>",
+    "quota_warning": "免费版共有 {freeTimes} 轮对话机会\n购买会员畅享每月 {membershipTimes} 轮对话！同时解锁留白记事所有权益。\n<a href='{link}'>戳我立即解锁</a>",
     "deploy_tip": "若你想给自己的公众号部署一套留白记事\n<a href='{link}'>欢迎咨询</a>",
+    "quota_warning_2": "您已使用 {membershipTimes} 轮会员版对话额度。若有更多需求，欢迎联系客服。",
+    "open_customer_service": "<a href='{link}'>联系客服</a>",
   },
   "zh-Hant": {
     "privacy_title": "🔓 隱私提示:",
@@ -278,8 +280,10 @@ export const aiLang: LangAtom = {
     "kick": "踢掉",
     "add": "召喚",
     "clear_context": "清除上文",
-    "quota_warning": "免費版共有 10 輪對話機會\n購買會員暢享每月 200 輪對話！同時解鎖留白記事所有權益。\n<a href='{link}'>輕觸立即解鎖</a>",
+    "quota_warning": "免費版共有 {freeTimes} 輪對話機會\n購買會員暢享每月 {membershipTimes} 輪對話！同時解鎖留白記事所有權益。\n<a href='{link}'>輕觸立即解鎖</a>",
     "deploy_tip": "若你想給自己的公眾號部署一套留白記事\n<a href='{link}'>歡迎諮詢</a>",
+    "quota_warning_2": "您已使用 {membershipTimes} 輪會員版對話額度。若有更多需求，歡迎聯繫客服。",
+    "open_customer_service": "<a href='{link}'>聯繫客服</a>",
   },
   "en": {
     "privacy_title": "🔓 Privacy:",
@@ -288,8 +292,10 @@ export const aiLang: LangAtom = {
     "kick": "Kick ",
     "add": "Add ",
     "clear_context": "Clear context",
-    "quota_warning": "Free version has 10 conversation opportunities.\nPurchase membership to enjoy 200 conversations per month! Also unlock all Liubai rights.\n<a href='{link}'>Tap to unlock</a>",
+    "quota_warning": "Free version has {freeTimes} conversation opportunities.\nPurchase membership to enjoy {membershipTimes} conversations per month! Also unlock all Liubai rights.\n<a href='{link}'>Tap to unlock</a>",
     "deploy_tip": "If you want to deploy a Liubai for your public account\n<a href='{link}'>Welcome to consult</a>",
+    "quota_warning_2": "You have used {membershipTimes} conversation opportunities of membership. If you have more needs, please contact customer service.",
+    "open_customer_service": "<a href='{link}'>Contact customer service</a>",
   }
 }
 
@@ -535,7 +541,7 @@ export function getCurrentLocale(
 
 export function i18nFill(
   res: string,
-  opt2: Record<string, string>,
+  opt2: Record<string, string | number>,
 ) {
   const keys = Object.keys(opt2)
   for(let i=0; i<keys.length; i++) {
@@ -544,7 +550,7 @@ export function i18nFill(
     const dynamicPattern = `{${v}}`
     const escapedPattern = dynamicPattern.replace(/[{}]/g, '\\$&')
     const regexPattern = new RegExp(escapedPattern, 'g')
-    res = res.replace(regexPattern, theVal) 
+    res = res.replace(regexPattern, theVal.toString()) 
   }
   return res
 }
@@ -567,7 +573,7 @@ export function useI18n(
     }
   }
 
-  const t: T_I18N = (key: string, opt2?: Record<string, string>) => {
+  const t: T_I18N = (key, opt2) => {
     let res = _getVal(key)
     if(!res) return ""
     if(!opt2) return res
