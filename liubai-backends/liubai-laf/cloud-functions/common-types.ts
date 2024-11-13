@@ -713,6 +713,7 @@ export interface UserSubscription {
 /** User's Quota about AI conversation */
 export interface UserQuota {
   aiConversationCount: number
+  lastWxGzhChatStamp?: number
 }
 
 export interface LiuSpaceAndMember {

@@ -1185,6 +1185,9 @@ class AiHelper {
     const userId = user._id
     const quota = user.quota ?? { aiConversationCount: 0 }
     quota.aiConversationCount += 1
+    if(entry.wx_gzh_openid) {
+      quota.lastWxGzhChatStamp = getNowStamp()
+    }
 
     // 2. update
     const u2: Partial<Table_User> = {
