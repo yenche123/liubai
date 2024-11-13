@@ -1,11 +1,11 @@
 import { reactive, watch } from "vue"
 import { type OpData } from "./types"
 import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router"
-import typeCheck from "~/utils/basic/type-check"
 import localCache from "~/utils/system/local-cache"
 import { getClientKey } from "../../tools/common-tools"
 import { fetchOAuth } from "../../tools/requests"
 import { afterFetchingLogin } from "../../tools/common-utils"
+import valTool from "~/utils/basic/val-tool"
 
 export function useOAuthPage() {
 
@@ -73,8 +73,8 @@ async function enterFromGitHub(
     return
   }
 
-  if(!code || !typeCheck.isString(code)) return
-  if(!state || !typeCheck.isString(state)) return
+  if(!valTool.isStringWithVal(code)) return
+  if(!valTool.isStringWithVal(state)) return
 
   // 1. 先把 via 切换到 github，避免 route 抖动重复触发 enterFromGitHub
   opData.via = "github"
@@ -122,8 +122,8 @@ async function enterFromGoogle(
     return
   }
 
-  if(!code || !typeCheck.isString(code)) return
-  if(!state || !typeCheck.isString(state)) return
+  if(!valTool.isStringWithVal(code)) return
+  if(!valTool.isStringWithVal(state)) return
 
   // 1. 先把 via 切换到 google
   opData.via = "google"
@@ -167,8 +167,8 @@ async function enterFromWeChat(
     return
   }
 
-  if(!code || !typeCheck.isString(code)) return
-  if(!state || !typeCheck.isString(state)) return
+  if(!valTool.isStringWithVal(code)) return
+  if(!valTool.isStringWithVal(state)) return
 
   // 1. switch via
   opData.via = "wechat"

@@ -2,8 +2,8 @@ import { onDeactivated, reactive, watch } from "vue"
 import type { CpData } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteLocationNormalizedLoaded } from "vue-router"
-import typeCheck from "~/utils/basic/type-check"
 import liuUtil from "~/utils/liu-util"
+import valTool from "~/utils/basic/val-tool"
 
 export function useCommentPage() {
 
@@ -30,7 +30,7 @@ function listenRouteChange(
     const { name, params } = r
     if(name !== "comment") return
     const id = params.commentId
-    if(!typeCheck.isString(id)) return
+    if(!valTool.isStringWithVal(id)) return
 
     const newView = { show: true, id }
     liuUtil.view.showView(list, newView)

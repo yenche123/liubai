@@ -11,7 +11,6 @@ import type {
 import { searchFuncsKey } from "./types"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
-import typeCheck from "~/utils/basic/type-check";
 import valTool from "~/utils/basic/val-tool";
 import time from "~/utils/basic/time";
 import searchController from "~/utils/controllers/search-controller";
@@ -147,7 +146,7 @@ function listenRouteChange() {
 
     const { q, search } = query
     if(search === "01" || q) {
-      if(q && typeCheck.isString(q) && q !== seData.inputTxt) {
+      if(valTool.isStringWithVal(q) && q !== seData.inputTxt) {
         setInputTxt(q)
       }
       if(seData.reloadNum < 1) seData.reloadNum = 1

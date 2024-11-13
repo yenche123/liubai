@@ -6,7 +6,6 @@ import { pageStates } from "~/utils/atom";
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
 import type { Res_OrderData } from "~/requests/req-types";
 import liuApi from "~/utils/liu-api";
-import typeCheck from "~/utils/basic/type-check";
 import localCache from "~/utils/system/local-cache";
 import { deviceChaKey } from "~/utils/provide-keys";
 import valTool from "~/utils/basic/val-tool";
@@ -144,7 +143,7 @@ function initPaymentContent(
     if(pcData.order_id === order_id) return
     pcData.order_id = order_id
 
-    // 2. check out code from wx gzh oAuth
+    // 2.1 check out code from wx gzh oAuth
     const { code } = newV.query
     const cha = liuApi.getCharacteristic()
     if(valTool.isStringWithVal(code)) {
@@ -154,6 +153,29 @@ function initPaymentContent(
       }
     }
 
+    // 2.2 If 
+    //   1. we're in WeChat App and mobile
+    //   2. we have logged in
+    //   3. keepData does not have wx_gzh_openid
+    //   4. only one page in the stack
+    //     then redirect to wechat oAuth page
+    if(cha.isWeChat && cha.isMobile) {
+      const keepData = localCache.getKeepData()
+      const openid = keepData.wx_gzh_openid
+      if(openid) {
+        pcData.wx_gzh_openid = openid
+      }
+
+      const hasLogin = localCache.hasLoginWithBackend()
+      const stack = rr.router.getStack()
+      if(hasLogin && stack.length <= 1 && !openid) {
+        console.warn("redirect to wechat oAuth page........")
+        redirectForWxGzhOpenid(order_id)
+        return
+      }
+    }
+
+    // 3. fallback to fetch order data
     fetchOrderData(pcData, rr)
     
   }, { immediate: true })
@@ -171,8 +193,9 @@ async function loginWithWxGzhOAuthCode(
     console.warn("WeChat 授权失败.......")
     return
   }
-  if(!code || !typeCheck.isString(code)) return
-  if(!state || !typeCheck.isString(state)) return
+
+  if(!valTool.isStringWithVal(code)) return
+  if(!valTool.isStringWithVal(state)) return
 
   // 2. check out state
   const onceData = localCache.getOnceData()
@@ -193,6 +216,7 @@ async function loginWithWxGzhOAuthCode(
   const res4 = await getWxGzhOpenid(code, state)
   if(res4) {
     pcData.wx_gzh_openid = res4
+    localCache.setKeepData("wx_gzh_openid", res4)
     fetchOrderData(pcData, rr, { fr: "wx_gzh_oauth" })
     return
   }

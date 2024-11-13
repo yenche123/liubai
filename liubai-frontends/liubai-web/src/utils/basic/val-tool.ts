@@ -235,6 +235,11 @@ const hasValue = <T>(
     if(checkLength && Array.isArray(val)) {
       if(val.length < 1) return false
     }
+
+    if(type === "string") {
+      return Boolean(val.trim())
+    }
+
     return true
   }
   return false
