@@ -976,8 +976,8 @@ class AiHelper {
     entry: AiEntry,
     roomId: string,
   ) {
-    const text = entry.text
     const userId = entry.user._id
+    const { wx_gzh_openid, text } = entry
     const b1 = getBasicStampWhileAdding()
     const data1: Partial_Id<Table_AiChat> = {
       ...b1,
@@ -986,8 +986,11 @@ class AiHelper {
       msgType: "user",
       text,
       userId,
-      channel: "wx_gzh",
     }
+    if(wx_gzh_openid) {
+      data1.channel = "wx_gzh"
+    }
+
     const chatId = await this.addChat(data1)
     return chatId
   }

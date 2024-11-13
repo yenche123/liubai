@@ -55,6 +55,9 @@ watch(() => scData.state, (newV) => {
         <span v-if="spi.payment_circle === 'monthly'" 
           class="scp-footer"
         >{{ t('payment.per_month', { currency: spi.currency }) }}</span>
+        <span v-else-if="spi.payment_circle === 'quarterly'" 
+          class="scp-footer"
+        >{{ t('payment.per_quarter', { currency: spi.currency }) }}</span>
         <span v-else-if="spi.payment_circle === 'yearly'" 
           class="scp-footer"
         >{{ t('payment.per_year', { currency: spi.currency }) }}</span>

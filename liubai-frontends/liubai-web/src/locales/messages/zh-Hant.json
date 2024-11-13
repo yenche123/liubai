@@ -447,6 +447,7 @@
     "manage_sub": "管理訂閱",
     "per_month": "{currency} / 月",
     "per_year": "{currency} / 年",
+    "per_quarter": "{currency} / 季度",
     "check_out": "去看看",
     "cancel_refund": "不想用了...",
     "refund_content": "每個帳號最多享有一次 7 天無理由退款，你確定還要取消訂閱並退款嗎？",

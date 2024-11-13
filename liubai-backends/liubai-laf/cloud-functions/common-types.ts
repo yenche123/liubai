@@ -1326,6 +1326,9 @@ export interface Table_Subscription extends BaseTable {
   badge: string
   title: string
   desc: string
+  showInPricing: BaseIsOn
+  priority: number        // the smaller number means higher priority
+
   stripe?: SubscriptionStripe
   wxpay?: SubscriptionWxpay
   alipay?: SubscriptionAlipay

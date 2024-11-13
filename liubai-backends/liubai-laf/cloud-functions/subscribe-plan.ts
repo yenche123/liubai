@@ -380,9 +380,11 @@ async function handle_info(
 ) {
   const _env = process.env
   const col = db.collection("Subscription")
-  const res = await col.where({ isOn: "Y" }).getOne<Table_Subscription>()
-
-  const d = res.data
+  const q = col.where({ isOn: "Y", showInPricing: "Y" }).orderBy("priority", "asc")
+  const res = await q.limit(2).get<Table_Subscription>()
+  const list = res.data
+  if(list.length < 1) return { code: "E4004" }
+  const d = list[0]
   if(!d) return { code: "E4004" }
 
   let currency = getSupportedCurrency(ctx)
