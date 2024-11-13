@@ -268,6 +268,8 @@ export const aiLang: LangAtom = {
     "kick": "踢掉",
     "add": "召唤",
     "clear_context": "清空上文",
+    "quota_warning": "免费版共有 10 轮对话机会\n购买会员畅享每月 200 轮对话！同时解锁留白记事所有权益。\n<a href='{link}'>戳我立即解锁</a>",
+    "deploy_tip": "若你想给自己的公众号部署一套留白记事\n<a href='{link}'>欢迎咨询</a>",
   },
   "zh-Hant": {
     "privacy_title": "🔓 隱私提示:",
@@ -276,6 +278,8 @@ export const aiLang: LangAtom = {
     "kick": "踢掉",
     "add": "召喚",
     "clear_context": "清除上文",
+    "quota_warning": "免費版共有 10 輪對話機會\n購買會員暢享每月 200 輪對話！同時解鎖留白記事所有權益。\n<a href='{link}'>輕觸立即解鎖</a>",
+    "deploy_tip": "若你想給自己的公眾號部署一套留白記事\n<a href='{link}'>歡迎諮詢</a>",
   },
   "en": {
     "privacy_title": "🔓 Privacy:",
@@ -284,6 +288,8 @@ export const aiLang: LangAtom = {
     "kick": "Kick ",
     "add": "Add ",
     "clear_context": "Clear context",
+    "quota_warning": "Free version has 10 conversation opportunities.\nPurchase membership to enjoy 200 conversations per month! Also unlock all Liubai rights.\n<a href='{link}'>Tap to unlock</a>",
+    "deploy_tip": "If you want to deploy a Liubai for your public account\n<a href='{link}'>Welcome to consult</a>",
   }
 }
 

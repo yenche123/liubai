@@ -1347,6 +1347,7 @@ export interface Table_Subscription extends BaseTable {
   amount_CNY?: number       // 人民币价格，单位为“分”，当调用 `payment-order` 且为下单订阅单时，必填
                             // 该值可填 0
   renewal_only?: boolean    // 是否仅续费者有效，新用户不适用
+  channel?: string          // order channel, like "wx_gzh"
 
 }
 
@@ -1421,6 +1422,7 @@ export interface Table_Order extends BaseTable {
   }
 
   meta_data?: OrderMetaData
+  channel?: string             // order channel, like "wx_gzh"
 
 }
 

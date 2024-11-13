@@ -12,6 +12,8 @@ import type {
   Wx_Gzh_Send_Msg,
   Wx_Gzh_Send_Msgmenu_Item,
   Wx_Gzh_Send_Msgmenu,
+  Table_Order,
+  Table_Subscription,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -19,19 +21,28 @@ import {
   checkIfUserSubscribed, 
   getDocAddId,
   valTool,
+  createAvailableOrderId,
 } from "@/common-util"
 import { sendWxMessage } from "@/service-send"
-import { getBasicStampWhileAdding, getNowStamp } from "@/common-time"
+import { 
+  getBasicStampWhileAdding, 
+  getNowStamp, 
+  MINUTE,
+} from "@/common-time"
 import { aiBots, aiI18nChannel, aiI18nShared } from "@/ai-prompt"
 import cloud from "@lafjs/cloud"
 import { useI18n, aiLang } from "@/common-i18n"
 
 const db = cloud.database()
+const _ = db.command
 
 /********************* constants ***********************/
 const MAX_CHARACTERS = 3
 const MAX_TOKEN_1 = 8000
 const TOKEN_NEED_COMPRESS = 6000
+
+const MIN_3 = MINUTE * 3
+const MIN_30 = MINUTE * 30
 
 /************************** types ************************/
 
@@ -951,8 +962,7 @@ class AiHelper {
 
     const available = count < MAX_TIMES
     if(!available) {
-      // WIP: send message to user: "please upgrade your subscription to continue"
-
+      UserHelper.sendQuotaWarning(entry)
     }
 
     return available
@@ -1277,6 +1287,118 @@ class AiHelper {
 }
 
 
+class UserHelper {
+
+  static async sendQuotaWarning(entry: AiEntry) {
+    // 1. check out domain
+    const _env = process.env
+    const domain = _env.LIU_DOMAIN
+    if(!domain) return
+
+    // 2. get my order
+    const order = await this.createOrderForQuota(entry)
+    if(!order) return
+
+    // 3. get payment link
+    const orderId = order.order_id
+    const paymentLink = `${domain}/payment/${orderId}`
+
+    // 4. i18n
+    const { user } = entry
+    const { t } = useI18n(aiLang, { user })
+    let msg = t("quota_warning", { link: paymentLink })
+    const csLink = _env.LIU_CUSTOMER_SERVICE
+    if(csLink) {
+      msg += "\n\n"
+      msg += t("deploy_tip", { link: csLink })
+    }
+
+    // 5. tell user
+    TellUser.text(entry, msg)
+  }
+
+  private static async createOrderForQuota(entry: AiEntry) {
+    // 1. get param
+    const { user, wx_gzh_openid } = entry
+    const userId = user._id
+    const stamp1 = getNowStamp() + MIN_3
+    
+    // 2. get existed order
+    const oCol = db.collection("Order")
+    const w2: Record<string, any> = {
+      user_id: userId,
+      oState: "OK",
+      orderStatus: "INIT",
+      orderType: "subscription",
+      expireStamp: _.gte(stamp1),
+    }
+    if(wx_gzh_openid) {
+      w2.channel = "wx_gzh"
+    }
+    const res2 = await oCol.where(w2).getOne<Table_Order>()
+    let theOrder = res2.data ?? undefined
+
+    // 3. calculate expireStamp
+    if(!theOrder) {
+      theOrder = await this._createOrder(entry)
+    }
+
+    return theOrder
+  }
+
+  private static async _createOrder(entry: AiEntry) {
+    // 1. get subscription
+    const sCol = db.collection("Subscription")
+    const q1 = sCol.where({ isOn: "Y", payment_circle: "monthly" })
+    const res1 = await q1.getOne<Table_Subscription>()
+    const subPlan = res1.data
+    if(!subPlan) return
+
+    // 2. check out amount_CNY
+    if(typeof subPlan.amount_CNY !== "number") {
+      return
+    }
+
+    // 3. create order_id
+    const order_id = await createAvailableOrderId()
+    if(!order_id) return
+
+    // 4. construct an order
+    const { user, wx_gzh_openid } = entry
+    const userId = user._id
+    const b4 = getBasicStampWhileAdding()
+    const data4: Partial_Id<Table_Order> = {
+      ...b4,
+      user_id: userId,
+      order_id,
+      oState: "OK",
+      orderStatus: "INIT",
+      orderType: "subscription",
+      orderAmount: subPlan.amount_CNY,
+      paidAmount: 0,
+      refundedAmount: 0,
+      currency: "cny",
+      plan_id: subPlan._id,
+      expireStamp: getNowStamp() + MIN_30,
+    }
+    if(wx_gzh_openid) {
+      data4.channel = "wx_gzh"
+    }
+
+    // 5. add the order
+    const oCol = db.collection("Order")
+    const res5 = await oCol.add(data4)
+    const id5 = getDocAddId(res5)
+    if(!id5) return
+
+    const newOrder: Table_Order = {
+      _id: id5,
+      ...data4,
+    }
+    return newOrder
+  }
+
+}
 
 class TellUser {
 

@@ -48,6 +48,9 @@ declare global {
       LIU_EMAIL_FOR_REPLY?: string   // 用户回复 noreply 时回复到哪个邮箱地址
       LIU_EMAIL_SEND_CHANNEL?: "resend" | "tencent-ses"    // 必须与 LiuSESChannel 一致
 
+      /** customer service */
+      LIU_CUSTOMER_SERVICE?: string   // wecom customer service link, like "https://work.weixin.qq.com/kfid/kfcf......"
+
       /** GitHub OAuth */
       LIU_GITHUB_OAUTH_CLIENT_ID?: string
       LIU_GITHUB_OAUTH_CLIENT_SECRET?: string
