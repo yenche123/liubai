@@ -100,9 +100,9 @@ export async function enter_ai(
   const res0 = preCheck()
   if(!res0) return
 
-  // 1. check out text
-  const text = entry.text
-  if(!text) return
+  // 1. check out text or image_url
+  const { image_url, text } = entry
+  if(!text && !image_url) return
 
   // 2. check out directive
   const isDirective = AiDirective.check(entry)
@@ -995,7 +995,7 @@ class AiHelper {
     roomId: string,
   ) {
     const userId = entry.user._id
-    const { wx_gzh_openid, text } = entry
+    const { wx_gzh_openid, text, image_url, wx_media_id } = entry
     const b1 = getBasicStampWhileAdding()
     const data1: Partial_Id<Table_AiChat> = {
       ...b1,
@@ -1003,6 +1003,8 @@ class AiHelper {
       roomId,
       msgType: "user",
       text,
+      imageUrl: image_url,
+      wxMediaId: wx_media_id,
       userId,
     }
     if(wx_gzh_openid) {

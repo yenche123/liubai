@@ -12,6 +12,7 @@ import type {
   UserThirdData,
   UserWeChatGzh,
   Wx_Gzh_Click,
+  Wx_Gzh_Image,
   Wx_Gzh_Msg_Event, 
   Wx_Gzh_Scan, 
   Wx_Gzh_Send_Msg, 
@@ -67,9 +68,15 @@ export async function main(ctx: FunctionContext) {
     return res
   }
 
+  console.log("msgObj: ")
+  console.log(msgObj)
+
   const { MsgType } = msgObj
   if(MsgType === "text") {
     handle_text(msgObj)
+  }
+  else if(MsgType === "image") {
+    handle_image(msgObj)
   }
   else if(MsgType === "event") {
     const { Event } = msgObj
@@ -131,32 +138,42 @@ async function handle_text(
   const _env = process.env
   const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
   if(!testOpenId || testOpenId !== wx_gzh_openid) {
-    console.warn("interrupte handle_text!")
+    console.warn("interrupt handle_text!")
     return
   }
 
   // 3. get user
-  const w3: Partial<Table_User> = {
-    oState: "NORMAL",
-    wx_gzh_openid,
-  }
-  const uCol = db.collection("User")
-  const q3 = uCol.where(w3).orderBy("insertedStamp", "desc")
-  const res3 = await q3.getOne<Table_User>()
+  const user = await getUserByWxGzhOpenid(wx_gzh_openid)
+  if(!user) return
 
-  // 4. check out login or not
-  const user4 = res3.data
-  if(!user4) {
-    const { t: t4 } = useI18n(wechatLang)
-    const text4 = t4("login_first")
-    await sendText(wx_gzh_openid, text4)
+  // 4. ai!
+  enter_ai({ user, text: userText, wx_gzh_openid })
+  
+  return true
+}
+
+async function handle_image(
+  msgObj: Wx_Gzh_Image,
+) {
+  // 1. get openid
+  const wx_gzh_openid = msgObj.FromUserName
+  const wx_media_id = msgObj.MediaId
+  const image_url = msgObj.PicUrl
+  if(!wx_gzh_openid) return
+
+  // 2.1 TODO: temporarily check out test openid
+  const _env = process.env
+  const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
+  if(!testOpenId || testOpenId !== wx_gzh_openid) {
+    console.warn("interrupt handle_image!")
     return
   }
 
-  // 5. ai!
-  enter_ai({ user: user4, text: userText, wx_gzh_openid })
-  
-  return true
+  // 3. get user
+  const user = await getUserByWxGzhOpenid(wx_gzh_openid)
+  if(!user) return
+
+  enter_ai({ user, image_url, wx_media_id, wx_gzh_openid })
 }
 
 
@@ -834,6 +851,30 @@ async function getMsgObjForSafeMode(message: string) {
 }
 
 /****************************** helper functions ******************************/
+
+
+async function getUserByWxGzhOpenid(wx_gzh_openid: string) {
+  const w3: Partial<Table_User> = {
+    oState: "NORMAL",
+    wx_gzh_openid,
+  }
+  const uCol = db.collection("User")
+  const q3 = uCol.where(w3).orderBy("insertedStamp", "desc")
+  const res3 = await q3.getOne<Table_User>()
+
+  // check out login or not
+  const user4 = res3.data
+  if(!user4) {
+    const { t: t4 } = useI18n(wechatLang)
+    const text4 = t4("login_first")
+    await sendText(wx_gzh_openid, text4)
+    return
+  }
+
+  return user4
+}
+
+
 
 async function sendText(
   wx_gzh_openid: string,

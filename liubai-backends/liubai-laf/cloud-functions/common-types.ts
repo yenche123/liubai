@@ -635,6 +635,8 @@ export interface AiBot {
 export interface AiEntry {
   user: Table_User
   text?: string
+  image_url?: string
+  wx_media_id?: string
   wx_gzh_openid?: string
 }
 
@@ -1451,6 +1453,9 @@ export interface Table_AiChat extends BaseTable {
   // about human
   userId?: string
   channel?: "wx_gzh"
+
+  // channel specific data
+  wxMediaId?: string
 }
 
 export interface Table_Log extends BaseTable {
