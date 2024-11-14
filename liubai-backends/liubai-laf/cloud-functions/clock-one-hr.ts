@@ -2,20 +2,34 @@
 // 定时系统: 每 60 分钟执行一次
 // 清理过期的 Credential
 import cloud from '@lafjs/cloud'
-import { getNowStamp, HOUR, DAY, WEEK } from "@/common-time"
 import { 
-  type Config_WeCom_Qynb,
-  type Config_WeChat_GZH, 
-  type Table_Config,
-  type WxpayReqAuthorizationOpt,
-  type Res_Wxpay_Download_Cert,
-  type LiuWxpayCert,
+  getNowStamp, 
+  HOUR, 
+  DAY, 
+  WEEK, 
+  localizeStamp,
+} from "@/common-time"
+import type { 
+  Config_WeCom_Qynb,
+  Config_WeChat_GZH, 
+  Table_Config,
+  WxpayReqAuthorizationOpt,
+  Res_Wxpay_Download_Cert,
+  LiuWxpayCert,
+  Table_User,
 } from '@/common-types'
-import { liuFetch, liuReq, valTool, WxpayHandler } from '@/common-util'
+import { 
+  checkIfUserSubscribed, 
+  liuFetch, 
+  liuReq, 
+  valTool, 
+  WxpayHandler,
+} from '@/common-util'
 import {
   wxpay_apiclient_key, 
   wxpay_apiclient_serial_no,
 } from "@/secret-config"
+import { differenceInCalendarMonths } from "date-fns"
 
 const API_WECHAT_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token"
 const API_WECOM_ACCESS_TOKEN = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
@@ -26,6 +40,7 @@ const WXPAY_DOWNLOAD_CERT_PATH = `/v3/certificates`
 
 const db0 = cloud.mongo.db
 const db = cloud.database()
+const _ = db.command
 
 export async function main(ctx: FunctionContext) {
 
@@ -49,13 +64,116 @@ export async function main(ctx: FunctionContext) {
   // 5. get wxpay certs
   const wxpay_certs = await handleWxpayCerts()
 
-  // n. update config
+  // 6. update config
   await updateGlobalConfig(cfg, { wechat_gzh, wecom_qynb, wxpay_certs })
+
+  // 7. update user's quota on 1st day of each month
+  await updateUserQuota()
 
   // console.log("---------- End clock-one-hr ----------")
   // console.log("                                      ")
 
   return true
+}
+
+
+export async function updateUserQuota() {
+  // 1. check out if the moment is the 1st day of the month and in midnight
+  const stamp1 = getNowStamp()
+  const currentStamp = localizeStamp(stamp1)
+  const d1 = new Date(currentStamp)
+  const currentDate = d1.getDate()
+  const currentHour = d1.getHours()
+  if(currentDate !== 1 || currentHour !== 0) {
+    return
+  }
+  console.warn("the moment is the 1st day of the month and in midnight")
+
+  // 2. construct query
+  const w2 = {
+    oState: "NORMAL",
+    subscription: {
+      isOn: "Y",
+    },
+    quota: {
+      aiConversationCount: _.gt(0),
+    },
+  }
+  const uCol = db.collection("User")
+
+  // 3. to get
+  const MAX_RUN_TIMES = 50
+  const NUM_PER_RUN = 50
+  let runTimes = 0
+  while(runTimes < MAX_RUN_TIMES) {
+    let q3 = uCol.where(w2)
+    q3 = q3.limit(NUM_PER_RUN).orderBy("insertedStamp", "asc")
+    if(runTimes > 0) {
+      q3 = q3.skip(runTimes * NUM_PER_RUN)
+    }
+    const res3 = await q3.get<Table_User>()
+    const list3 = res3.data
+    const len3 = list3.length
+    console.log("updateUserQuota len3: ", len3)
+    if(len3 < 1) break
+
+    // 4. get updated ids
+    const updatedIds: string[] = []
+    for(let i=0; i<len3; i++) {
+      const v = list3[i]
+      const userId = v._id
+      const sub = v.subscription
+      if(!sub) continue
+      const isSubscribed = checkIfUserSubscribed(v)
+      if(!isSubscribed) continue
+
+      if(sub.isLifelong) {
+        updatedIds.push(userId)
+        continue
+      }
+
+      console.log(`see ${userId} subscription: `)
+      console.log(sub)
+
+      // 5. calculate the duration between now and the expireStamp
+      const expireStamp = sub.expireStamp ?? 1
+      const stamp5 = localizeStamp(expireStamp)
+      const d5 = new Date(stamp5)
+      const diffMonths5 = differenceInCalendarMonths(d5, d1)
+      console.log("months between now and expireStamp: ", diffMonths5)
+
+
+      // 6. calcuate the duration between now and the chargedStamp
+      const chargedStamp = sub.chargedStamp ?? 1
+      const stamp6 = localizeStamp(chargedStamp)
+      const d6 = new Date(stamp6)
+      const diffMonths6 = differenceInCalendarMonths(d1, d6)
+      console.log("months between chargedStamp and now: ", diffMonths6)
+
+      // 7. ignore if the expiredStamp is within this month
+      //   and the timing when the user charged is within the last month
+      if(diffMonths5 === 0 && diffMonths6 <= 1) {
+        continue
+      }
+
+      updatedIds.push(userId)
+    }
+
+    // 5. update quota
+    if(updatedIds.length > 0) {
+      const q5 = uCol.where({ _id: _.in(updatedIds) })
+      const res5 = await q5.update({ quota: { aiConversationCount: 0 } })
+      console.log("updateUserQuota res5: ")
+      console.log(res5)
+    }
+
+    // 6. break if len3 is less than NUM_PER_RUN
+    if(len3 < NUM_PER_RUN) {
+      break
+    }
+    runTimes++
+  }
+  
 }
 
 

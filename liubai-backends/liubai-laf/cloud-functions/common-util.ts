@@ -456,7 +456,7 @@ export class LiuDateUtil {
     }
     const newStamp = localizeStamp(stamp, timezone)
     const d = new Date(newStamp)
-    const { t } = useI18n(dateLang, { locale})
+    const { t } = useI18n(dateLang, { locale })
   
     const mm = valTool.format0(d.getMonth() + 1)
     const hr = valTool.format0(d.getHours())
