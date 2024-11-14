@@ -131,7 +131,7 @@ async function whenTapVersionUpdate(
       content_key: "pwa.new_version_desc2",
       confirm_key: "common.update",
     })
-    if(res) {
+    if(res.confirm) {
       toUpdateSW(true)
     }
   }
