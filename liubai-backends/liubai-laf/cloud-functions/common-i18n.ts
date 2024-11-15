@@ -242,6 +242,7 @@ export const wechatLang: LangAtom = {
     "already_bound": "当前微信已绑定帐号 {account}\n请先在原帐号上解绑后，再重新扫码。",
     "success_1": "绑定成功🎉\n\n小诀窍：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
     "login_first": "尚未登录！<a href='https://alpha.liubai.cc/connect/wechat'>请先登录</a>",  // TODO: link to wechat-bind
+    "video_unsupported": "[暂不支持发送视频消息]",
   },
   "zh-Hant": {
     "welcome_1": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n你可以在這裡記錄所有事情，所有「只屬於你」的資訊都將在這裡匯聚。\n\n若這世界就是一個巨大的遊樂園，請去體驗、去創造🥂\n\n[未完待續]",
@@ -249,6 +250,7 @@ export const wechatLang: LangAtom = {
     "already_bound": "當前微信已綁定帳號 {account}\n請先在原帳號上解綁後，再重新掃描 QR Code",
     "success_1": "綁定成功🎉\n\n小訣竅：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
     "login_first": "尚未登入! <a href='https://alpha.liubai.cc/connect/wechat'>請先登入</a>",  // TODO: link to wechat-bind
+    "video_unsupported": "[暫不支援影片訊息]",
   },
   "en": {
     "welcome_1": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nYou can record all your life’s events, and all information you want is out here.\n\nIf this world is a giant playground, please experience it and create it 🥂\n\n[To be continued]",
@@ -256,6 +258,7 @@ export const wechatLang: LangAtom = {
     "already_bound": "Current Wechat has already bound account {account}\nPlease unbind it from the original account first, then re-scan the QR code.",
     "success_1": "Binding successful🎉\n\nTip: <a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>How to avoid missing reminders</a>",
     "login_first": "Not logged in! <a href='https://alpha.liubai.cc/connect/wechat'>Please login first</a>",  // TODO: link to wechat-bind
+    "video_unsupported": "[Videos are not supported to send]",
   }
 }
 

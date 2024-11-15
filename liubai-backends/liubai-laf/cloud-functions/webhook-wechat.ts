@@ -19,6 +19,8 @@ import type {
   Wx_Gzh_Subscribe, 
   Wx_Gzh_Text, 
   Wx_Gzh_Unsubscribe,
+  Wx_Gzh_Video,
+  Wx_Gzh_Voice,
   Wx_Res_GzhUserInfo, 
 } from "@/common-types";
 import { decrypt } from "@wecom/crypto"
@@ -71,12 +73,23 @@ export async function main(ctx: FunctionContext) {
   console.log("msgObj: ")
   console.log(msgObj)
 
-  const { MsgType } = msgObj
+  const { MsgType, FromUserName } = msgObj
+  if(!FromUserName) {
+    console.warn("no wx_gzh_openid!")
+    return ""
+  }
+
   if(MsgType === "text") {
     handle_text(msgObj)
   }
   else if(MsgType === "image") {
     handle_image(msgObj)
+  }
+  else if(MsgType === "voice") {
+    handle_voice(msgObj)
+  }
+  else if(MsgType === "video") {
+    handle_video(msgObj)
   }
   else if(MsgType === "event") {
     const { Event } = msgObj
@@ -103,11 +116,8 @@ async function handle_click(
 ) {
 
   // 1. get params
-  const { EventKey } = msgObj
+  const { EventKey, FromUserName: wx_gzh_openid } = msgObj
   if(!EventKey) return false
-
-  const wx_gzh_openid = msgObj.FromUserName
-  if(!wx_gzh_openid) return false
 
   const replies = wxClickReplies[EventKey]
   if(!replies || replies.length < 1) return false
@@ -124,10 +134,8 @@ async function handle_click(
 async function handle_text(
   msgObj: Wx_Gzh_Text,
 ) {
-  
   // 1. get openid
   const wx_gzh_openid = msgObj.FromUserName
-  if(!wx_gzh_openid) return
 
   // 2. check if we get to auto-reply
   const userText = msgObj.Content
@@ -147,19 +155,16 @@ async function handle_text(
   if(!user) return
 
   // 4. ai!
-  enter_ai({ user, text: userText, wx_gzh_openid })
-  
-  return true
+  enter_ai({ user, msg_type: "text", text: userText, wx_gzh_openid })
 }
 
 async function handle_image(
   msgObj: Wx_Gzh_Image,
 ) {
-  // 1. get openid
+  // 1. get params
   const wx_gzh_openid = msgObj.FromUserName
   const wx_media_id = msgObj.MediaId
   const image_url = msgObj.PicUrl
-  if(!wx_gzh_openid) return
 
   // 2.1 TODO: temporarily check out test openid
   const _env = process.env
@@ -173,7 +178,56 @@ async function handle_image(
   const user = await getUserByWxGzhOpenid(wx_gzh_openid)
   if(!user) return
 
-  enter_ai({ user, image_url, wx_media_id, wx_gzh_openid })
+  // 4. get to ai system
+  enter_ai({ 
+    user, 
+    msg_type: "image", 
+    image_url, 
+    wx_media_id, 
+    wx_gzh_openid,
+  })
+}
+
+async function handle_voice(
+  msgObj: Wx_Gzh_Voice,
+) {
+  // 1. get params
+  const wx_gzh_openid = msgObj.FromUserName
+  const wx_media_id = msgObj.MediaId
+  const wx_media_id_16k = msgObj.MediaId16K
+
+  // 2.1 TODO: temporarily check out test openid
+  const _env = process.env
+  const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
+  if(!testOpenId || testOpenId !== wx_gzh_openid) {
+    console.warn("interrupt handle_image!")
+    return
+  }
+
+  // 3. get user
+  const user = await getUserByWxGzhOpenid(wx_gzh_openid)
+  if(!user) return
+  
+  // 4. get to ai system
+  enter_ai({ 
+    user, 
+    msg_type: "voice", 
+    wx_media_id, 
+    wx_media_id_16k,
+    wx_gzh_openid,
+  })
+}
+
+async function handle_video(
+  msgObj: Wx_Gzh_Video,
+) {
+  // 1. get openid
+  const wx_gzh_openid = msgObj.FromUserName
+
+  // 2. send unsupported message
+  const { t } = useI18n(wechatLang)
+  const msg = t("video_unsupported")
+  sendText(wx_gzh_openid, msg)
 }
 
 
@@ -181,7 +235,6 @@ async function handle_unsubscribe(
   msgObj: Wx_Gzh_Unsubscribe,
 ) {
   const wx_gzh_openid = msgObj.FromUserName
-  if(!wx_gzh_openid) return
 
   // 0. define functions where we update user and cache
   const uCol = db.collection("User")
@@ -235,7 +288,6 @@ async function handle_subscribe(
 
   // 2. get openid
   const wx_gzh_openid = msgObj.FromUserName
-  if(!wx_gzh_openid) return
 
   // 3. get user info
   const userInfo = await getWxGzhUserInfo(wx_gzh_openid)
@@ -271,7 +323,6 @@ async function handle_scan(
 
   // 2. get openid
   const wx_gzh_openid = msgObj.FromUserName
-  if(!wx_gzh_openid) return
 
   // 3. get user info
   const userInfo = await getWxGzhUserInfo(wx_gzh_openid)
@@ -595,6 +646,14 @@ async function make_user_subscribed(
 
 /***************** helper functions *************/
 
+async function downloadMedia(
+  mediaId: string,
+) {
+  
+  
+}
+
+
 // when user sends text, check out if we have to reply automatically
 async function autoReplyAfterReceivingText(
   wx_gzh_openid: string,
@@ -850,9 +909,6 @@ async function getMsgObjForSafeMode(message: string) {
   return res
 }
 
-/****************************** helper functions ******************************/
-
-
 async function getUserByWxGzhOpenid(wx_gzh_openid: string) {
   const w3: Partial<Table_User> = {
     oState: "NORMAL",
@@ -873,8 +929,6 @@ async function getUserByWxGzhOpenid(wx_gzh_openid: string) {
 
   return user4
 }
-
-
 
 async function sendText(
   wx_gzh_openid: string,

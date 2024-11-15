@@ -280,7 +280,7 @@ class AiDirective {
     const data2: Partial_Id<Table_AiChat> = {
       ...b2,
       sortStamp: b2.insertedStamp,
-      msgType: "clear",
+      infoType: "clear",
       roomId: room._id,
     }
     const col = db.collection("AiChat")
@@ -835,7 +835,7 @@ class AiCompressor {
       ...b7,
       sortStamp: newSortStamp,
       roomId: room._id,
-      msgType: "summary",
+      infoType: "summary",
       text,
       model: _env.LIU_SUMMARY_MODEL,
       usage,
@@ -1001,7 +1001,7 @@ class AiHelper {
       ...b1,
       sortStamp: b1.insertedStamp,
       roomId,
-      msgType: "user",
+      infoType: "user",
       text,
       imageUrl: image_url,
       wxMediaId: wx_media_id,
@@ -1023,7 +1023,7 @@ class AiHelper {
       ...b1,
       sortStamp: b1.insertedStamp,
       roomId: param.roomId,
-      msgType: "assistant",
+      infoType: "assistant",
       text: param.text,
       model: param.model,
       character: param.character,
@@ -1047,7 +1047,7 @@ class AiHelper {
     let totalToken = 0
     for(let i=0; i<chats.length; i++) {
       const v = chats[i]
-      if(v.msgType === "clear") {
+      if(v.infoType === "clear") {
         break
       }
       const token = _this.calculateChatToken(v)
@@ -1058,7 +1058,7 @@ class AiHelper {
       totalToken = tmpToken
       results.push(v)
 
-      if(v.msgType === "summary") {
+      if(v.infoType === "summary") {
         break
       }
     }
@@ -1083,8 +1083,8 @@ class AiHelper {
   static calculateChatToken(
     chat: Table_AiChat,
   ) {
-    const { msgType, usage, text, imageUrl } = chat
-    if(msgType === "assistant" || msgType === "summary") {
+    const { infoType, usage, text, imageUrl } = chat
+    if(infoType === "assistant" || infoType === "summary") {
       const token1 = usage?.completion_tokens
       if(token1) return token1
     }
@@ -1112,11 +1112,11 @@ class AiHelper {
     let res = false
     for(let i=0; i<chats.length; i++) {
       const v = chats[i]
-      if(v.msgType === "user") {
+      if(v.infoType === "user") {
         res = v._id === chatId
         break
       }
-      if(v.msgType === "clear") {
+      if(v.infoType === "clear") {
         break
       }
     }
@@ -1163,8 +1163,8 @@ class AiHelper {
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = []
     for(let i=0; i<chats.length; i++) {
       const v = chats[i]
-      const { msgType, text, imageUrl, character } = v
-      if(msgType === "user") {
+      const { infoType, text, imageUrl, character } = v
+      if(infoType === "user") {
         if(text) {
           messages.push({ role: "user", content: text })
         }
@@ -1175,12 +1175,12 @@ class AiHelper {
           })
         }
       }
-      else if(msgType === "assistant") {
+      else if(infoType === "assistant") {
         if(text) {
           messages.push({ role: "assistant", content: text, name: character })
         }
       }
-      else if(msgType === "background" || msgType === "summary") {
+      else if(infoType === "background" || infoType === "summary") {
         if(text) {
           messages.push({ role: "system", content: text })
         }

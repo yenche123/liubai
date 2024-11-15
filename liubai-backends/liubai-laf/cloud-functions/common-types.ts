@@ -605,7 +605,7 @@ export type AiProvider = "deepseek" | "moonshot" | "stepfun" |
 // AiCharacter 不跟供应商绑定，它是角色，只不过现在各个供应商都有自己的 To C 角色罢了
 export type AiCharacter = "deepseek" | "kimi" | "yuewen" | "wanzhi" | "zhipu"
 
-export type AiMsgType = "user" | "assistant" | "summary" | "clear" | 
+export type AiInfoType = "user" | "assistant" | "summary" | "clear" | 
   "action" | "background"
 // user: 用户发来的消息
 // assistant: AI 的回复
@@ -615,6 +615,7 @@ export type AiMsgType = "user" | "assistant" | "summary" | "clear" |
 // background: 比如 url 的解析结果 / 关键词搜索结果
 
 export type AiAbility = "chat" | "text_to_image" | "image_to_text"
+export type AiMsgType = "text" | "image" | "voice"
 
 export interface AiUsage {
   cached_tokens?: number
@@ -634,9 +635,13 @@ export interface AiBot {
 
 export interface AiEntry {
   user: Table_User
+  msg_type: AiMsgType
   text?: string
   image_url?: string
+
+  // from weixin gzh
   wx_media_id?: string
+  wx_media_id_16k?: string
   wx_gzh_openid?: string
 }
 
@@ -1439,7 +1444,8 @@ export interface Table_AiRoom extends BaseTable {
 export interface Table_AiChat extends BaseTable {
   sortStamp: number        // bascially which is createdStamp except for the 'summary' chat 
   roomId: string
-  msgType: AiMsgType
+  infoType: AiInfoType
+  msgType?: AiMsgType
   text?: string
   imageUrl?: string
 
