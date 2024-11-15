@@ -639,6 +639,10 @@ export interface AiEntry {
   text?: string
   image_url?: string
 
+  // file, including audio file
+  file_blob?: Blob
+  file_base64?: string
+
   // from weixin gzh
   wx_media_id?: string
   wx_media_id_16k?: string
@@ -1448,6 +1452,7 @@ export interface Table_AiChat extends BaseTable {
   msgType?: AiMsgType
   text?: string
   imageUrl?: string
+  fileBase64?: string     // like for audio
 
   // about LLM
   model?: string           // like "gpt-4o"
@@ -1460,8 +1465,9 @@ export interface Table_AiChat extends BaseTable {
   userId?: string
   channel?: "wx_gzh"
 
-  // channel specific data
+  // specific data about wx gzh
   wxMediaId?: string
+  wxMediaId16K?: string
 }
 
 export interface Table_Log extends BaseTable {

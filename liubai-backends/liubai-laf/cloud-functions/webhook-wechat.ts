@@ -53,8 +53,13 @@ const db = cloud.database()
 let wechat_access_token = ""
 
 /***************************** constants **************************/
+
+// 1 MB
+const MB = 1024 * 1024
 // how many accounts can be bound to one wechat gzh openid
 const MAX_ACCOUNTS_TO_BIND = 2
+// download temp media from wx gzh
+const API_MEDIA_DOWNLOAD = "https://api.weixin.qq.com/cgi-bin/media/get"
 
 /***************************** types **************************/
 type MsgMode = "plain_text" | "safe"
@@ -207,8 +212,25 @@ async function handle_voice(
   // 3. get user
   const user = await getUserByWxGzhOpenid(wx_gzh_openid)
   if(!user) return
+
+  // 4. download voice
+  const res4 = await downloadVoice(wx_media_id)
+  if(!res4) return
+  const size4 = res4.fileBlob.size
+  const type4 = res4.fileBlob.type
+  if(size4 > MB) {
+    console.warn("the audio is too large!")
+    console.log(size4)
+    return
+  }
+
+  // 4.1 convert
+  if(type4) {
+    console.warn(`convert ${type4} into mp3!`)
+    return
+  }
   
-  // 4. get to ai system
+  // 5. get to ai system
   enter_ai({ 
     user, 
     msg_type: "voice", 
@@ -646,10 +668,41 @@ async function make_user_subscribed(
 
 /***************** helper functions *************/
 
-async function downloadMedia(
-  mediaId: string,
+async function downloadVoice(
+  media_id: string,
 ) {
-  
+  // 1. get accessToken for wx gzh
+  const res1 = await checkAccessToken()
+  if(!res1) return
+
+  // 2. construct link
+  const url = new URL(API_MEDIA_DOWNLOAD)
+  const sP = url.searchParams
+  sP.set("access_token", res1)
+  sP.set("media_id", media_id)
+  const link = url.toString()
+
+  // 3. to download
+  try {
+    const res = await fetch(link)
+    console.log("download_media headers of res: ")
+    console.log(res.headers)
+    const fileBlob = await res.blob()
+    const arrayBuffer = await fileBlob.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+    const b64 = buffer.toString("base64")
+    return { fileBlob, b64 }
+  }
+  catch(err) {
+    console.warn("downloadVoice err:")
+    console.log(err)
+  }
+}
+
+// TODO WIP!
+async function convertAMRtoMP3(
+
+) {
   
 }
 

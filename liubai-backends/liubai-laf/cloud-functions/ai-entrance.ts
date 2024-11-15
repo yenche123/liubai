@@ -101,8 +101,10 @@ export async function enter_ai(
   if(!res0) return
 
   // 1. check out text or image_url
-  const { image_url, text } = entry
-  if(!text && !image_url) return
+  const { msg_type, image_url, text, file_base64 } = entry
+  if(msg_type === "text" && !text) return
+  if(msg_type === "image" && !image_url) return
+  if(msg_type === "voice" && !file_base64) return
 
   // 2. check out directive
   const isDirective = AiDirective.check(entry)
@@ -995,16 +997,27 @@ class AiHelper {
     roomId: string,
   ) {
     const userId = entry.user._id
-    const { wx_gzh_openid, text, image_url, wx_media_id } = entry
+    const { 
+      msg_type,
+      text, 
+      image_url, 
+      file_base64,
+      wx_gzh_openid,
+      wx_media_id,
+      wx_media_id_16k,
+    } = entry
     const b1 = getBasicStampWhileAdding()
     const data1: Partial_Id<Table_AiChat> = {
       ...b1,
       sortStamp: b1.insertedStamp,
       roomId,
       infoType: "user",
+      msgType: msg_type,
       text,
       imageUrl: image_url,
+      fileBase64: file_base64,
       wxMediaId: wx_media_id,
+      wxMediaId16K: wx_media_id_16k,
       userId,
     }
     if(wx_gzh_openid) {
@@ -1083,7 +1096,7 @@ class AiHelper {
   static calculateChatToken(
     chat: Table_AiChat,
   ) {
-    const { infoType, usage, text, imageUrl } = chat
+    const { infoType, usage, text, imageUrl, msgType } = chat
     if(infoType === "assistant" || infoType === "summary") {
       const token1 = usage?.completion_tokens
       if(token1) return token1
@@ -1094,6 +1107,10 @@ class AiHelper {
       token = this.calculateTextToken(text)
     }
     else if(imageUrl) {
+      token += 400
+    }
+
+    if(msgType === "voice") {
       token += 400
     }
 
@@ -1163,7 +1180,15 @@ class AiHelper {
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = []
     for(let i=0; i<chats.length; i++) {
       const v = chats[i]
-      const { infoType, text, imageUrl, character } = v
+      const { 
+        infoType, 
+        text, 
+        imageUrl, 
+        character, 
+        fileBase64,
+        msgType,
+      } = v
+
       if(infoType === "user") {
         if(text) {
           messages.push({ role: "user", content: text })
@@ -1174,6 +1199,19 @@ class AiHelper {
             content: [{ type: "image_url", image_url: { url: imageUrl } }]
           })
         }
+        else if(msgType === "voice" && fileBase64) {
+          messages.push({
+            role: "user",
+            content: [{
+              type: "input_audio",
+              input_audio: {
+                data: fileBase64,
+                format: "mp3",
+              }
+            }]
+          })
+        }
+
       }
       else if(infoType === "assistant") {
         if(text) {
