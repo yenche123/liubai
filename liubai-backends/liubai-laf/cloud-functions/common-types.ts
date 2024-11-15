@@ -614,7 +614,12 @@ export type AiInfoType = "user" | "assistant" | "summary" | "clear" |
 // action: 记录用户的操作，比如“同意 xxx 读取 yyy”
 // background: 比如 url 的解析结果 / 关键词搜索结果
 
+
 export type AiAbility = "chat" | "text_to_image" | "image_to_text"
+// chat: interact with plain-text
+// text_to_image: user inputs text and LLM return image
+// image_to_text: user inputs image and LLM return text
+
 export type AiMsgType = "text" | "image" | "voice"
 
 export interface AiUsage {

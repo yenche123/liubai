@@ -356,13 +356,32 @@ class BaseBot extends BaseLLM {
     return res
   }
 
-  protected getSuitableBot() {
+  protected getSuitableBot(
+    param: AiRunParam,
+  ) {
+    // 1. filter bots for this character
+    const { entry, historyData } = param
+    const { t } = useI18n(aiLang, { user: entry.user })
+    const chats = historyData.results
     const c = this._character
-    const bots = aiBots.filter(v => v.character === c)
+    let bots = aiBots.filter(v => v.character === c)
+
+    // 2. filter bots for image_to_text
+    const imageToText = AiHelper.needImageToTextAbility(chats)
+    if(imageToText) {
+      bots = bots.filter(v => v.abilities.includes("image_to_text"))
+      if(bots.length < 1) {
+        const msg2 = t("cannot_read_images")
+        TellUser.text(entry, msg2, undefined, c)
+        return
+      }
+    }
+
     if(bots.length < 1) {
       console.warn(`no bot for ${c} can be used`)
       return
     }
+    
     return bots[0]
   }
 
@@ -370,7 +389,7 @@ class BaseBot extends BaseLLM {
     // 1. get bot
     const { historyData, entry } = param
     let totalToken = historyData.totalToken
-    const bot = this.getSuitableBot()
+    const bot = this.getSuitableBot(param)
     if(!bot) return
 
     // 2. get prompts and add system prompt
@@ -657,29 +676,32 @@ class AiController {
     const promises: Promise<AiRunSuccess | undefined>[] = []
     for(let i=0; i<newCharacters.length; i++) {
       const c = newCharacters[i]
+      const h3 = valTool.copyObject(param.historyData)
+      const newParam: AiRunParam = { ...param, historyData: h3 }
+
       if(c === "deepseek") {
         const bot1 = new BotDeepSeek()
-        const pro1 = bot1.run(param)
+        const pro1 = bot1.run(newParam)
         promises.push(pro1)
       }
       else if(c === "kimi") {
         const bot2 = new BotMoonshot()
-        const pro2 = bot2.run(param)
+        const pro2 = bot2.run(newParam)
         promises.push(pro2)
       }
       else if(c === "wanzhi") {
         const bot3 = new BotYi()
-        const pro3 = bot3.run(param)
+        const pro3 = bot3.run(newParam)
         promises.push(pro3)
       }
       else if(c === "yuewen") {
         const bot4 = new BotStepfun()
-        const pro4 = bot4.run(param)
+        const pro4 = bot4.run(newParam)
         promises.push(pro4)
       }
       else if(c === "zhipu") {
         const bot5 = new BotZhipu()
-        const pro5 = bot5.run(param)
+        const pro5 = bot5.run(newParam)
         promises.push(pro5)
       }
     }
@@ -1084,7 +1106,7 @@ class AiHelper {
     for(let i=0; i<text.length; i++) {
       const char = text[i]
       if(valTool.isLatinChar(char)) {
-        token += 0.5
+        token += 0.4
       }
       else {
         token += 1
@@ -1107,7 +1129,7 @@ class AiHelper {
       token = this.calculateTextToken(text)
     }
     else if(imageUrl) {
-      token += 400
+      token += 600
     }
 
     if(msgType === "voice") {
@@ -1329,6 +1351,21 @@ class AiHelper {
     return addedList
   }
 
+
+  static needImageToTextAbility(
+    chats: Table_AiChat[],
+  ) {
+    let need = false
+    for(let i=0; i<chats.length; i++) {
+      const chat = chats[i]
+      if(chat.msgType === "image") {
+        need = true
+        break
+      }
+    }
+    return need
+  }
+
   
 
 
@@ -1482,6 +1519,7 @@ class TellUser {
     entry: AiEntry, 
     text: string,
     from?: AiBot,
+    fromCharacter?: AiCharacter
   ) {
     const { wx_gzh_openid } = entry
 
@@ -1491,7 +1529,7 @@ class TellUser {
         msgtype: "text",
         text: { content: text },
       }
-      const kf_account = this._getWxGzhKfAccount(from)
+      const kf_account = this._getWxGzhKfAccount(from, fromCharacter)
       if(kf_account) {
         obj1.customservice = { kf_account }
       }
@@ -1557,9 +1595,13 @@ class TellUser {
 
   
 
-  private static _getWxGzhKfAccount(bot?: AiBot) {
-    if(!bot) return
-    const c = bot.character
+  private static _getWxGzhKfAccount(
+    bot?: AiBot,
+    character?: AiCharacter,
+  ) {
+    let c = bot?.character ?? character
+    if(!c) return
+
     const _env = process.env
     if(c === "deepseek") {
       return _env.LIU_WXGZH_KF_DEEPSEEK

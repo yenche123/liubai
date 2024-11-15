@@ -46,7 +46,18 @@ export const aiBots: AiBot[] = [
     model: "THUDM/glm-4-9b-chat",          // glm-4-plus
     abilities: ["chat"],
     alias: ["智谱AI", "智谱清言", "ChatGLM"]
-  }
+  },
+
+  /** image to text */
+  {
+    name: "万知",
+    character: "wanzhi",
+    provider: "zero-one",
+    model: "yi-vision",                
+    abilities: ["chat", "image_to_text"],
+    alias: ["零一万物", "01.ai"]
+  },
+
 ]
 
 
