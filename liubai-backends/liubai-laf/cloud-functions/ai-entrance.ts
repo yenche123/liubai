@@ -1085,6 +1085,14 @@ class AiHelper {
       if(v.infoType === "clear") {
         break
       }
+
+      // turn image to [image]
+      if(v.msgType === "image" && i > 4) {
+        v.msgType = "text"
+        v.text = "[image]"
+        delete v.imageUrl
+      }
+
       const token = _this.calculateChatToken(v)
       const tmpToken = totalToken + token
       if(tmpToken > MAX_TOKEN_1) {
