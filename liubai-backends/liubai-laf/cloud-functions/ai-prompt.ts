@@ -7,13 +7,38 @@ import type {
 import { i18nFill } from "@/common-i18n"
 
 export const aiBots: AiBot[] = [
+
+  /** chat using secondary providers */
+  {
+    name: "万知",
+    character: "wanzhi",
+    provider: "zero-one",
+    secondaryProvider: "siliconflow",
+    model: "01-ai/Yi-1.5-9B-Chat-16K",
+    abilities: ["chat"],
+    alias: ["零一万物", "01.ai"],
+    maxWindowTokenK: 16,
+  },
+  {
+    name: "智谱",
+    character: "zhipu",
+    provider: "zhipu",
+    secondaryProvider: "siliconflow",
+    model: "THUDM/glm-4-9b-chat",
+    abilities: ["chat"],
+    alias: ["智谱AI", "智谱清言", "ChatGLM"],
+    maxWindowTokenK: 128,
+  },
+
+  /** chat using official providers */
   {
     name: "DeepSeek",
     character: "deepseek",
     provider: "deepseek",
     model: "deepseek-ai/DeepSeek-V2.5",     // deepseek-chat
     abilities: ["chat"],
-    alias: ["深度求索"]
+    alias: ["深度求索"],
+    maxWindowTokenK: 64,
   },
   {
     name: "Kimi",
@@ -21,7 +46,8 @@ export const aiBots: AiBot[] = [
     provider: "moonshot",
     model: "moonshot-v1-8k",
     abilities: ["chat"],
-    alias: ["Moonshot", "月之暗面"]
+    alias: ["Moonshot", "月之暗面"],
+    maxWindowTokenK: 8,
   },
   {
     name: "跃问",
@@ -29,33 +55,55 @@ export const aiBots: AiBot[] = [
     provider: "stepfun",
     model: "step-1-8k",
     abilities: ["chat"],
-    alias: ["阶跃星辰"]
+    alias: ["阶跃星辰"],
+    maxWindowTokenK: 8,
   },
   {
     name: "万知",
     character: "wanzhi",
     provider: "zero-one",
-    model: "yi-lightning",                // yi-lightning 01-ai/Yi-1.5-9B-Chat-16K
+    model: "yi-lightning",
     abilities: ["chat"],
-    alias: ["零一万物", "01.ai"]
+    alias: ["零一万物", "01.ai"],
+    maxWindowTokenK: 16,
   },
   {
     name: "智谱",
     character: "zhipu",
     provider: "zhipu",
-    model: "THUDM/glm-4-9b-chat",          // glm-4-plus
+    model: "glm-4-air",
     abilities: ["chat"],
-    alias: ["智谱AI", "智谱清言", "ChatGLM"]
+    alias: ["智谱AI", "智谱清言", "ChatGLM"],
+    maxWindowTokenK: 128,
   },
 
   /** image to text */
+  {
+    name: "跃问",
+    character: "yuewen",
+    provider: "stepfun",
+    model: "step-1v-8k",
+    abilities: ["chat", "image_to_text"],
+    alias: ["阶跃星辰"],
+    maxWindowTokenK: 8,
+  },
   {
     name: "万知",
     character: "wanzhi",
     provider: "zero-one",
     model: "yi-vision",                
     abilities: ["chat", "image_to_text"],
-    alias: ["零一万物", "01.ai"]
+    alias: ["零一万物", "01.ai"],
+    maxWindowTokenK: 16,
+  },
+  {
+    name: "智谱",
+    character: "zhipu",
+    provider: "zhipu",
+    model: "glm-4v-plus",
+    abilities: ["chat"],
+    alias: ["智谱AI", "智谱清言", "ChatGLM"],
+    maxWindowTokenK: 8,
   },
 
 ]

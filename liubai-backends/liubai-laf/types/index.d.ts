@@ -118,7 +118,7 @@ declare global {
       LIU_ALIPAY_APP_ID?: string
       LIU_ALIPAY_NOTIFY_URL?: string
 
-      /** LLMs */
+      /** Official LLMs */
       LIU_DEEPSEEK_BASE_URL?: string         // DeepSeek AI 的 base url
       LIU_DEEPSEEK_API_KEY?: string          // DeepSeek AI 的 api key
       LIU_MOONSHOT_BASE_URL?: string         // Moonshot AI 的 base url
@@ -129,6 +129,10 @@ declare global {
       LIU_YI_API_KEY?: string                // 01.ai 的 api key
       LIU_ZHIPU_BASE_URL?: string            // 智谱的 base url
       LIU_ZHIPU_API_KEY?: string             // 智谱的 api key
+
+      /** Secondary Providers */
+      LIU_SILICONFLOW_BASE_URL?: string
+      LIU_SILICONFLOW_API_KEY?: string
 
       /** Summary */
       LIU_SUMMARY_BASE_URL?: string

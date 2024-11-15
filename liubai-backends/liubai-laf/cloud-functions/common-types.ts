@@ -602,6 +602,8 @@ export type DownloadUploadRes = DownloadUploadRes_1 | DownloadUploadRes_2
 export type AiProvider = "deepseek" | "moonshot" | "stepfun" | 
   "zero-one" | "zhipu"
 
+export type AiSecondaryProvider = "siliconflow" | "smallai" | "302"
+
 // AiCharacter 不跟供应商绑定，它是角色，只不过现在各个供应商都有自己的 To C 角色罢了
 export type AiCharacter = "deepseek" | "kimi" | "yuewen" | "wanzhi" | "zhipu"
 
@@ -633,9 +635,11 @@ export interface AiBot {
   name: string
   character: AiCharacter
   provider: AiProvider
+  secondaryProvider?: AiSecondaryProvider
   model: string
   abilities: AiAbility[]
   alias: string[]
+  maxWindowTokenK: number  // 8 means 8k, 128 means 128k
 }
 
 export interface AiEntry {

@@ -331,19 +331,30 @@ class BaseLLM {
   }
 }
 
-class BaseBot extends BaseLLM {
+class BaseBot {
   protected _character: AiCharacter
+  protected _bots: AiBot[]
 
-  constructor(c: AiCharacter, apiKey?: string, baseURL?: string) {
-    super(apiKey, baseURL)
+  constructor(c: AiCharacter) {
     this._character = c
+    this._bots = aiBots.filter(v => v.character === c)
   }
 
-  public async chat(
+  protected async chat(
     params: OpenAI.Chat.ChatCompletionCreateParams,
+    bot: AiBot,
   ) {
+
+    const apiData = AiHelper.getApiEndpointFromBot(bot)
+    if(!apiData) {
+      console.warn(`no api data for ${this._character}`)
+      console.log(bot)
+      return
+    }
+
+    const llm = new BaseLLM(apiData.apiKey, apiData.baseURL)
     const t1 = getNowStamp()
-    const res = await super.chat(params)
+    const res = await llm.chat(params)
     const t2 = getNowStamp()
     const cost = t2 - t1
 
@@ -363,8 +374,9 @@ class BaseBot extends BaseLLM {
     const { entry, historyData } = param
     const { t } = useI18n(aiLang, { user: entry.user })
     const chats = historyData.results
-    const c = this._character
-    let bots = aiBots.filter(v => v.character === c)
+    const _this = this
+    const c = _this._character
+    let bots = [..._this._bots]
 
     // 2. filter bots for image_to_text
     const imageToText = AiHelper.needImageToTextAbility(chats)
@@ -440,6 +452,7 @@ class BaseBot extends BaseLLM {
     TellUser.text(entry, txt6, bot)
 
     // 9. add assistant chat
+    const apiEndpoint = AiHelper.getApiEndpointFromBot(bot)
     const param9: HelperAssistantMsgParam = {
       roomId,
       text: txt6,
@@ -447,7 +460,7 @@ class BaseBot extends BaseLLM {
       character: c,
       usage: res.usage,
       requestId: res.id,
-      baseUrl: this._baseUrl,
+      baseUrl: apiEndpoint?.baseURL,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(param9)
     if(!assistantChatId) return
@@ -465,8 +478,7 @@ class BaseBot extends BaseLLM {
 class BotDeepSeek extends BaseBot {
 
   constructor() {
-    const _env = process.env
-    super("deepseek", _env.LIU_DEEPSEEK_API_KEY, _env.LIU_DEEPSEEK_BASE_URL)
+    super("deepseek")
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -490,7 +502,7 @@ class BotDeepSeek extends BaseBot {
       max_tokens: maxToken,
       model,
     }
-    const res5 = await this.chat(params)
+    const res5 = await this.chat(params, bot)
     
     // 6. post run
     const res6 = await this.postRun(param, bot, res5)
@@ -502,8 +514,7 @@ class BotDeepSeek extends BaseBot {
 class BotMoonshot extends BaseBot {
 
   constructor() {
-    const _env = process.env
-    super("kimi", _env.LIU_MOONSHOT_API_KEY, _env.LIU_MOONSHOT_BASE_URL)
+    super("kimi")
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -527,7 +538,7 @@ class BotMoonshot extends BaseBot {
       max_tokens: maxToken,
       model,
     }
-    const res5 = await this.chat(params)
+    const res5 = await this.chat(params, bot)
     
     // 6. post run
     const res6 = await this.postRun(param, bot, res5)
@@ -539,8 +550,7 @@ class BotMoonshot extends BaseBot {
 class BotStepfun extends BaseBot {
 
   constructor() {
-    const _env = process.env
-    super("yuewen", _env.LIU_STEPFUN_API_KEY, _env.LIU_STEPFUN_BASE_URL)
+    super("yuewen")
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -564,7 +574,7 @@ class BotStepfun extends BaseBot {
       max_tokens: maxToken,
       model,
     }
-    const res5 = await this.chat(params)
+    const res5 = await this.chat(params, bot)
     
     // 6. post run
     const res6 = await this.postRun(param, bot, res5)
@@ -576,8 +586,7 @@ class BotStepfun extends BaseBot {
 class BotYi extends BaseBot {
 
   constructor() {
-    const _env = process.env
-    super("wanzhi", _env.LIU_YI_API_KEY, _env.LIU_YI_BASE_URL)
+    super("wanzhi")
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -601,7 +610,7 @@ class BotYi extends BaseBot {
       max_tokens: maxToken,
       model,
     }
-    const res5 = await this.chat(params)
+    const res5 = await this.chat(params, bot)
     
     // 6. post run
     const res6 = await this.postRun(param, bot, res5)
@@ -612,10 +621,8 @@ class BotYi extends BaseBot {
 
 class BotZhipu extends BaseBot {
 
-
   constructor() {
-    const _env = process.env
-    super("zhipu", _env.LIU_ZHIPU_API_KEY, _env.LIU_ZHIPU_BASE_URL)
+    super("zhipu")
   }
 
   async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -639,7 +646,7 @@ class BotZhipu extends BaseBot {
       max_tokens: maxToken,
       model,
     }
-    const res5 = await this.chat(params)
+    const res5 = await this.chat(params, bot)
     
     // 6. post run
     const res6 = await this.postRun(param, bot, res5)
@@ -936,39 +943,54 @@ class AiHelper {
     return my_characters
   }
 
+  static getApiEndpointFromBot(bot: AiBot) {
+    const _env = process.env
+    const p = bot.provider
+    const p2 = bot.secondaryProvider
+
+    let apiKey: string | undefined
+    let baseURL: string | undefined
+
+    if(p2 === "siliconflow") {
+      apiKey = _env.LIU_SILICONFLOW_API_KEY
+      baseURL = _env.LIU_SILICONFLOW_BASE_URL
+    }
+    else if(p === "zhipu") {
+      apiKey = _env.LIU_ZHIPU_API_KEY
+      baseURL = _env.LIU_ZHIPU_BASE_URL
+    }
+    else if(p === "moonshot") {
+      apiKey = _env.LIU_MOONSHOT_API_KEY
+      baseURL = _env.LIU_MOONSHOT_BASE_URL
+    }
+    else if(p === "deepseek") {
+      apiKey = _env.LIU_DEEPSEEK_API_KEY
+      baseURL = _env.LIU_DEEPSEEK_BASE_URL
+    }
+    else if(p === "stepfun") {
+      apiKey = _env.LIU_STEPFUN_API_KEY
+      baseURL = _env.LIU_STEPFUN_BASE_URL
+    }
+    else if(p === "zero-one") {
+      apiKey = _env.LIU_YI_API_KEY
+      baseURL = _env.LIU_YI_BASE_URL
+    }
+    
+    if(apiKey && baseURL) {
+      return { apiKey, baseURL }
+    }
+  }
+
   private static getAvailableCharacters() {
     const characters: AiCharacter[] = []
-    const _env = process.env
-
     for(let i=0; i<aiBots.length; i++) {
       const bot = aiBots[i]
       const c = bot.character
       if(characters.includes(c)) continue
-      const p = bot.provider
-      if(p === "zhipu") {
-        if(_env.LIU_ZHIPU_API_KEY && _env.LIU_ZHIPU_BASE_URL) {
-          characters.push(c)
-        }
-      }
-      else if(p === "moonshot") {
-        if(_env.LIU_MOONSHOT_API_KEY && _env.LIU_MOONSHOT_BASE_URL) {
-          characters.push(c)
-        }
-      }
-      else if(p === "deepseek") {
-        if(_env.LIU_DEEPSEEK_API_KEY && _env.LIU_DEEPSEEK_BASE_URL) {
-          characters.push(c)
-        }
-      }
-      else if(p === "stepfun") {
-        if(_env.LIU_STEPFUN_API_KEY && _env.LIU_STEPFUN_BASE_URL) {
-          characters.push(c)
-        }
-      }
-      else if(p === "zero-one") {
-        if(_env.LIU_YI_API_KEY && _env.LIU_YI_BASE_URL) {
-          characters.push(c)
-        }
+
+      const apiData = this.getApiEndpointFromBot(bot)
+      if(apiData) {
+        characters.push(c)
       }
     }
 
