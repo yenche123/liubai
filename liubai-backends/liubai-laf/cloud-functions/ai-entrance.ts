@@ -38,7 +38,7 @@ const _ = db.command
 
 /********************* constants ***********************/
 const MAX_CHARACTERS = 3
-const MAX_TOKEN_1 = 8000
+const MIN_RESERVED_TOKENS = 1600
 const TOKEN_NEED_COMPRESS = 6000
 
 const MAX_TIMES_FREE = 10
@@ -50,8 +50,7 @@ const MIN_30 = MINUTE * 30
 /************************** types ************************/
 
 interface HistoryData {
-  results: Table_AiChat[]    // desc by insertedStamp
-  totalToken: number
+  chats: Table_AiChat[]    // desc by insertedStamp
 }
 
 // pass it to aiController.run() and bot.run()
@@ -129,7 +128,6 @@ export async function enter_ai(
   // 7. run AI!
   const controller = new AiController()
   controller.run({ entry, room, chatId, historyData: res6 })
-
 
 }
 
@@ -367,59 +365,100 @@ class BaseBot {
     return res
   }
 
-  protected getSuitableBot(
-    param: AiRunParam,
-  ) {
-    // 1. filter bots for this character
-    const { entry, historyData } = param
-    const { t } = useI18n(aiLang, { user: entry.user })
-    const chats = historyData.results
+  private _getBotAndChats(param: AiRunParam) {
+    // 1. get params
+    const { historyData } = param
+    let { chats } = historyData
     const _this = this
-    const c = _this._character
     let bots = [..._this._bots]
 
     // 2. filter bots for image_to_text
-    const imageToText = AiHelper.needImageToTextAbility(chats)
-    if(imageToText) {
+    const needImageToText = AiHelper.needImageToTextAbility(chats)
+    if(needImageToText) {
       bots = bots.filter(v => v.abilities.includes("image_to_text"))
       if(bots.length < 1) {
-        const msg2 = t("cannot_read_images")
-        TellUser.text(entry, msg2, undefined, c)
-        return
+
+        // 3. try to compress chats for images
+        const newChats = AiHelper.compressChats(chats)
+        if(!newChats) {
+          const { t } = useI18n(aiLang, { user: param.entry.user })
+          const msg3 = t("cannot_read_images")
+          TellUser.text(param.entry, msg3, undefined, _this._character)
+          return
+        }
+
+        bots = [..._this._bots]
+        chats = newChats
+      }
+    }
+    
+    return { bot: bots[0], chats }
+  }
+
+  private _clipChats(
+    bot: AiBot,
+    chats: Table_AiChat[],
+  ) {
+    const cLength = chats.length
+    if(cLength < 2) return chats
+
+    // 1. get windowTokens
+    const { maxWindowTokenK } = bot
+    const windowTokens = 1000 * maxWindowTokenK
+
+    // 2. calculate reachedTokens
+    let reservedToken = Math.floor(windowTokens * 0.1)
+    if(reservedToken < MIN_RESERVED_TOKENS) {
+      reservedToken = MIN_RESERVED_TOKENS
+    }
+    const reachedTokens = windowTokens - reservedToken
+
+    // 3. to clip
+    let token = 0
+    for(let i=0; i<cLength; i++) {
+      const v = chats[i]
+      token += AiHelper.calculateChatToken(v)
+      if(token > reachedTokens) {
+        chats = chats.slice(0, i)
+        break
       }
     }
 
-    if(bots.length < 1) {
-      console.warn(`no bot for ${c} can be used`)
-      return
-    }
-    
-    return bots[0]
+    return chats
   }
 
   protected preRun(param: AiRunParam) {
     // 1. get bot
-    const { historyData, entry } = param
-    let totalToken = historyData.totalToken
-    const bot = this.getSuitableBot(param)
-    if(!bot) return
+    const botAndChats = this._getBotAndChats(param)
+    if(!botAndChats) return
+    let { bot, chats } = botAndChats
 
-    // 2. get prompts and add system prompt
-    const prompts = AiHelper.turnChatsIntoPrompt(historyData.results)
+    // 2. clip chats
+    chats = this._clipChats(bot, chats)
 
-    // 3. add system prompt
+    // 3. get prompts and add system prompt
+    const prompts = AiHelper.turnChatsIntoPrompt(chats)
+
+    // 4. add system prompt
+    const { entry } = param
     const { p } = aiI18nChannel({ entry, character: bot.character })
     const system_1 = p("system_1")
     const system_1_token = AiHelper.calculateTextToken(system_1)
     if(system_1) {
       prompts.push({ role: "system", content: system_1 })
-      totalToken += system_1_token
     }
 
-    // 4. reverse prompts
+    // 5. reverse prompts
     prompts.reverse()
 
-    return { prompts, totalToken, bot }
+    // 6. calculate total token
+    let totalToken = 0
+    chats.forEach(v => {
+      totalToken += AiHelper.calculateChatToken(v)
+    })
+    totalToken += system_1_token
+
+    return { prompts, totalToken, bot, chats }
   }
 
   protected async postRun(
@@ -485,16 +524,15 @@ class BotDeepSeek extends BaseBot {
     // 1. pre run
     const res1 = this.preRun(param)
     if(!res1) return
-    const { prompts, totalToken, bot } = res1
+    const { prompts, totalToken, bot, chats } = res1
 
     // 2. get other params
-    const chats = param.historyData.results
     const model = bot.model
 
     // 3. handle other things
 
     // 4. calculate maxTokens
-    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
 
     // 5. to chat
     const params: OpenAI.Chat.ChatCompletionCreateParams = {
@@ -524,13 +562,13 @@ class BotMoonshot extends BaseBot {
     const { prompts, totalToken, bot } = res1
 
     // 2. get other params
-    const chats = param.historyData.results
+    const { chats } = param.historyData
     const model = bot.model
 
     // 3. handle other things
 
     // 4. calculate maxTokens
-    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
 
     // 5. to chat
     const params: OpenAI.Chat.ChatCompletionCreateParams = {
@@ -557,16 +595,15 @@ class BotStepfun extends BaseBot {
     // 1. pre run
     const res1 = this.preRun(param)
     if(!res1) return
-    const { prompts, totalToken, bot } = res1
+    const { prompts, totalToken, bot, chats } = res1
 
     // 2. get other params
-    const chats = param.historyData.results
     const model = bot.model
 
     // 3. handle other things
 
     // 4. calculate maxTokens
-    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
 
     // 5. to chat
     const params: OpenAI.Chat.ChatCompletionCreateParams = {
@@ -593,16 +630,15 @@ class BotYi extends BaseBot {
     // 1. pre run
     const res1 = this.preRun(param)
     if(!res1) return
-    const { prompts, totalToken, bot } = res1
+    const { prompts, totalToken, bot, chats } = res1
 
     // 2. get other params
-    const chats = param.historyData.results
     const model = bot.model
 
     // 3. handle other things
 
     // 4. calculate maxTokens
-    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
 
     // 5. to chat
     const params: OpenAI.Chat.ChatCompletionCreateParams = {
@@ -629,16 +665,15 @@ class BotZhipu extends BaseBot {
     // 1. pre run
     const res1 = this.preRun(param)
     if(!res1) return
-    const { prompts, totalToken, bot } = res1
+    const { prompts, totalToken, bot, chats } = res1
 
     // 2. get other params
-    const chats = param.historyData.results
     const model = bot.model
 
     // 3. handle other things
 
     // 4. calculate maxTokens
-    const maxToken = AiHelper.getMaxToken(totalToken, chats[0])
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
 
     // 5. to chat
     const params: OpenAI.Chat.ChatCompletionCreateParams = {
@@ -671,8 +706,8 @@ class AiController {
     }
 
     // 2. compress history data
-    let promptToken = param.historyData.totalToken
-    if(promptToken > TOKEN_NEED_COMPRESS) {
+    const needCompress = AiCompressor.doINeedCompress(param.historyData.chats)
+    if(needCompress) {
       console.log("go to compress..............")
       const newHistoryData = await AiCompressor.run(param)
       if(!newHistoryData) return
@@ -777,12 +812,29 @@ class AiController {
 
 /*********************** AI Compressor ************************/
 class AiCompressor {
+
+  static doINeedCompress(chats: Table_AiChat[]) {
+    const len = chats.length
+    if(len < 3) return false
+    
+    let token = 0
+    for(let i=0; i<len; i++) {
+      const v = chats[i]
+      token += AiHelper.calculateChatToken(v)
+      if(v.infoType === "summary") break
+    }
+
+    if(token > TOKEN_NEED_COMPRESS) return true
+    return false
+  }
+
+
   static async run(
     param: AiRunParam,
-  ) {
+  ): Promise<HistoryData | undefined> {
     const _env = process.env
     const { historyData, entry, room } = param
-    const { results } = historyData
+    const { chats } = historyData
 
     // 1. get the two system prompts
     const { p } = aiI18nShared({ type: "compress", user: entry.user })
@@ -790,7 +842,7 @@ class AiCompressor {
     const system2 = p("system_2")
 
     // 2. add two system prompts to the prompts
-    const prompts = AiHelper.turnChatsIntoPrompt(results)
+    const prompts = AiHelper.turnChatsIntoPrompt(chats)
     prompts.reverse()
     prompts.unshift({ role: "system", content: system1 })
     prompts.push({ role: "user", content: system2 })
@@ -843,12 +895,12 @@ class AiCompressor {
     // 6. calculate the new total token and get the sortStamp
     let totalToken = 0
     let idx6 = 0
-    const newResults: Table_AiChat[] = []
-    for(let i=0; i<results.length; i++) {
-      const v = results[i]
+    const newChats: Table_AiChat[] = []
+    for(let i=0; i<chats.length; i++) {
+      const v = chats[i]
       const token = AiHelper.calculateChatToken(v)
       totalToken += token
-      newResults.push(v)
+      newChats.push(v)
       idx6 = i
       if(totalToken > 900) {
         break
@@ -857,7 +909,7 @@ class AiCompressor {
     if(usage?.completion_tokens) {
       totalToken += usage.completion_tokens
     }
-    const sortStamp = results[idx6]?.sortStamp ?? getNowStamp()
+    const sortStamp = chats[idx6]?.sortStamp ?? getNowStamp()
     const newSortStamp = sortStamp - 10
 
     // 7. storage the summary
@@ -875,14 +927,10 @@ class AiCompressor {
     }
     const chatId7 = await AiHelper.addChat(data7)
     if(!chatId7) return
-    newResults.push({ _id: chatId7, ...data7 })
+    newChats.push({ _id: chatId7, ...data7 })
 
     // 8. return the new history data
-    const newHistoryData: HistoryData = {
-      results: newResults,
-      totalToken,
-    }
-    return newHistoryData
+    return { chats: newChats }
   }
 }
 
@@ -951,6 +999,7 @@ class AiHelper {
     let apiKey: string | undefined
     let baseURL: string | undefined
 
+    // If secondaryProvider exists, use it first
     if(p2 === "siliconflow") {
       apiKey = _env.LIU_SILICONFLOW_API_KEY
       baseURL = _env.LIU_SILICONFLOW_BASE_URL
@@ -1095,40 +1144,34 @@ class AiHelper {
   static async getLatestChat(
     roomId: string,
   ): Promise<HistoryData> {
-    const _this = this
     const col = db.collection("AiChat")
     const q1 = col.where({ roomId }).orderBy("sortStamp", "desc")
     const res1 = await q1.limit(50).get<Table_AiChat>()
-    const chats = res1.data
-    const results: Table_AiChat[] = []
-    let totalToken = 0
-    for(let i=0; i<chats.length; i++) {
-      const v = chats[i]
+    const results = res1.data
+    const chats: Table_AiChat[] = []
+    let imageNum = 0
+
+    for(let i=0; i<results.length; i++) {
+      const v = results[i]
       if(v.infoType === "clear") {
         break
       }
 
       // turn image to [image]
-      if(v.msgType === "image" && i > 4) {
-        v.msgType = "text"
-        v.text = "[image]"
-        delete v.imageUrl
+      if(v.msgType === "image") {
+        imageNum++
+
+        if(imageNum > 3 || i > 9) {
+          v.msgType = "text"
+          v.text = "[image]"
+          delete v.imageUrl
+        }
       }
 
-      const token = _this.calculateChatToken(v)
-      const tmpToken = totalToken + token
-      if(tmpToken > MAX_TOKEN_1) {
-        break
-      }
-      totalToken = tmpToken
-      results.push(v)
-
-      if(v.infoType === "summary") {
-        break
-      }
+      chats.push(v)
     }
 
-    return { results, totalToken }
+    return { chats }
   }
 
   static calculateTextToken(text: string) {
@@ -1283,8 +1326,9 @@ class AiHelper {
   static getMaxToken(
     totalToken: number,
     firstChat: Table_AiChat,
+    bot: AiBot,
   ) {
-    const restToken = MAX_TOKEN_1 - totalToken
+    const restToken = (bot.maxWindowTokenK * 1000) - totalToken
     const firstToken = this.calculateChatToken(firstChat)
     let maxTokens = firstToken * 2
     if(maxTokens < 280) maxTokens = 280
@@ -1381,6 +1425,36 @@ class AiHelper {
     return addedList
   }
 
+  // only return chats when compression (turn images into text) succeeds
+  static compressChats(chats: Table_AiChat[]) {
+    if(chats.length < 1) return []
+
+    // 1. check if we can compress
+    let canCompress = true
+    const cLength = chats.length
+    const maxIndex = Math.min(cLength, 2)
+    for(let i=0; i<maxIndex; i++) {
+      const v = chats[i]
+      if(v.msgType === "image" || v.imageUrl) {
+        canCompress = false
+        break
+      }
+    }
+    if(!canCompress) return
+
+    // 2. turn all images into text
+    const newChats = chats.map(v => {
+      const { msgType, imageUrl } = v
+      if(msgType === "image" || imageUrl) {
+        v.msgType = "text"
+        v.text = "[image]"
+        delete v.imageUrl
+      }
+      return v
+    })
+    return newChats
+  }
+
 
   static needImageToTextAbility(
     chats: Table_AiChat[],
@@ -1395,9 +1469,6 @@ class AiHelper {
     }
     return need
   }
-
-  
-
 
 }
 
