@@ -1431,18 +1431,42 @@ class AiHelper {
 
     // 1. check if we can compress
     let canCompress = true
+    let firstAssistantIdx = -1
+    let firstPhotoIdx = -1
     const cLength = chats.length
-    const maxIndex = Math.min(cLength, 2)
-    for(let i=0; i<maxIndex; i++) {
+    const maxIndex1 = Math.min(cLength, 2)
+    const maxIndex2 = Math.min(cLength, 5)
+    for(let i=0; i<maxIndex2; i++) {
       const v = chats[i]
-      if(v.msgType === "image" || v.imageUrl) {
-        canCompress = false
-        break
+      const { msgType, imageUrl, infoType } = v
+
+      // 1.2 if index is less than 2 and there is any image among the first 2 items
+      // then we can't compress
+      if(i < maxIndex1) {
+        if(msgType === "image" || imageUrl) {
+          canCompress = false
+          break
+        }
+      }
+
+      if(infoType === "assistant" && firstAssistantIdx < 0) {
+        firstAssistantIdx = i
+      }
+      if((msgType === "image" || imageUrl) && firstPhotoIdx < 0) {
+        firstPhotoIdx = i
       }
     }
     if(!canCompress) return
 
-    // 2. turn all images into text
+    // 2. if there is any photo in the first 5 messages
+    if(firstPhotoIdx >= 0) {
+      // 2.1 we cannot compress if there is no assistant message
+      if(firstAssistantIdx < 0) return
+      // 2.2 we cannot compress if the assistant message is after the first photo
+      if(firstAssistantIdx > firstPhotoIdx) return
+    }
+
+    // 3. turn all images into text
     const newChats = chats.map(v => {
       const { msgType, imageUrl } = v
       if(msgType === "image" || imageUrl) {
