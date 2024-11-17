@@ -275,6 +275,7 @@ export const aiLang: LangAtom = {
     "deploy_tip": "若你想给自己的公众号部署一套留白记事\n<a href='{link}'>欢迎咨询</a>",
     "quota_warning_2": "您已使用 {membershipTimes} 轮会员版对话额度。续费会员，可将“已使用额度”归零！\n<a href='{link}'>立即续费</a>",
     "cannot_read_images": "我目前没有识别图片的能力",
+    "history_cleared": "已清空前面的历史记录",
   },
   "zh-Hant": {
     "privacy_title": "🔓 隱私提示:",
@@ -287,6 +288,7 @@ export const aiLang: LangAtom = {
     "deploy_tip": "若你想給自己的公眾號部署一套留白記事\n<a href='{link}'>歡迎諮詢</a>",
     "quota_warning_2": "您已使用 {membershipTimes} 輪會員版對話額度。續費會員，可將「已使用額度」歸零！\n<a href='{link}'>立即續費</a>",
     "cannot_read_images": "我目前沒有讀取圖片的能力",
+    "history_cleared": "已清空前面的歷史記錄",
   },
   "en": {
     "privacy_title": "🔓 Privacy:",
@@ -299,6 +301,7 @@ export const aiLang: LangAtom = {
     "deploy_tip": "If you want to deploy a Liubai for your public account\n<a href='{link}'>Welcome to consult</a>",
     "quota_warning_2": "You have used {membershipTimes} conversations of membership. Renew membership to reset the used quota!\n<a href='{link}'>Renew now</a>",
     "cannot_read_images": "I don't have the ability to read images yet",
+    "history_cleared": "History cleared",
   }
 }
 

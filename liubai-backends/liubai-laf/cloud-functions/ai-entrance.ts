@@ -266,7 +266,7 @@ class AiDirective {
   }
 
   private static isClear(text: string) {
-    const strs = ["清空上文", "清除上文", "Clear context"]
+    const strs = ["清空上文", "清除上文", "清除上下文", "Clear history",  "Clear context"]
     return strs.includes(text)
   }
 
@@ -288,7 +288,9 @@ class AiDirective {
     console.log("toClear res2: ")
     console.log(res2)
 
-    // 3. WIP: send a clear message to user
+    // 3. send a cleared message to user
+    const { t } = useI18n(aiLang, { user: entry.user })
+    TellUser.text(entry, t("history_cleared"))
 
     return true
   }
