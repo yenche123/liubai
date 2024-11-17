@@ -16,6 +16,7 @@ import { handleLiuDownloadParcels } from "./cm-tools/handleParcels";
 import someFuncs from "./cm-tools/some-funcs"
 import type { CommentShow, ThreadShow } from "~/types/types-content";
 import type { ThreadListViewType } from "~/types/types-view";
+import { useNetworkStore } from "~/hooks/stores/useNetworkStore";
 
 class CloudMerger {
 
@@ -129,6 +130,13 @@ class CloudMerger {
 
       await handleLiuDownloadParcels(list2)
       task.resolver(list2)
+    }
+    
+    // 4. check out network store
+    const nStore = useNetworkStore()
+    if(nStore.level < 1) {
+      console.warn("set level to 2 while sync-get success")
+      nStore.setLevelManually(2)
     }
     
   }

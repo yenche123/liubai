@@ -70,7 +70,12 @@ export const useNetworkStore = defineStore("network", () => {
     level.value = 3
   }, { immediate: true })
 
+  const setLevelManually = (newV: number) => {
+    level.value = newV
+  }
+
   return {
     level: readonly(level),
+    setLevelManually,
   }
 })
