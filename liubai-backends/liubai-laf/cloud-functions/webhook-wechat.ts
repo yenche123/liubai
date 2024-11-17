@@ -42,7 +42,7 @@ import {
   useI18n, 
   wechatLang,
   wxClickReplies,
-  wxTextReplies,
+  wxTextRepliesItems,
 } from "@/common-i18n";
 import { createCredential2 } from "@/common-ids";
 import { init_user } from "@/user-login";
@@ -731,13 +731,22 @@ async function autoReplyAfterReceivingText(
     return true
   }
 
-  // 4. whether or not the text is targeted by wxTextReplies
-  const replies = wxTextReplies[text1]
-  if(!replies || replies.length < 1) return false
+  // 4. check out if auto reply
+  let theReplies: Wx_Gzh_Send_Msg[] = []
+  for(let i=0; i<wxTextRepliesItems.length; i++) {
+    const item = wxTextRepliesItems[i]
+    const { keywords, replies } = item
+    const existed = keywords.includes(text1)
+    if(existed) {
+      theReplies = replies
+      break
+    }
+  }
+  if(theReplies.length < 1) return false
   
   // 5. auto reply
-  for(let i = 0; i < replies.length; i++) {
-    const v = replies[i]
+  for(let i = 0; i < theReplies.length; i++) {
+    const v = theReplies[i]
     await sendObject(wx_gzh_openid, v)
   }
   return true

@@ -462,16 +462,79 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
 }
 
 /********************* Wx Text Auto Replies ****************/
-export const wxTextReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
-  "111": [
-    {
-      msgtype: "text",
-      text: {
-        content: '这是自动回复～',
-      }
-    }
-  ]
+interface WxTextReplyItem {
+  keywords: string[]
+  replies: Wx_Gzh_Send_Msg[]
 }
+
+export const wxTextRepliesItems: WxTextReplyItem[] = [
+  {
+    keywords: ["人工", "客服", "人工客服", "联系客服", "联系"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">戳我联系客服📞</a>',
+        }
+      }
+    ]
+  },
+  {
+    keywords: ["聯繫", "聯繫客服"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">點我聯繫客服📞</a>',
+        }
+      }
+    ]
+  },
+  {
+    keywords: ["Customer Service", "Contact"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">Here you are 📞</a>',
+        }
+      }
+    ]
+  },
+  {
+    keywords: ["商务合作"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '📨 期待你的来信！\n\n<a href="mailto:hi@liubai.cc">hi@liubai.cc</a>',
+        }
+      }
+    ]
+  },
+  {
+    keywords: ["商務合作"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '📨 期待你的來信！\n\n<a href="mailto:hi@liubai.cc">hi@liubai.cc</a>',
+        }
+      }
+    ]
+  },
+  {
+    keywords: ["Business Cooperation", "Cooperation"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '📨 I am looking forward to your letter!\n\n<a href="mailto:hi@liubai.cc">hi@liubai.cc</a>',
+        }
+      }
+    ]
+  }
+]
 
 /********************* 映射函数 ****************/
 
