@@ -122,7 +122,7 @@ export interface SubscriptionAlipay {
   isOn: BaseIsOn
 }
 
-export type SubscriptionPaymentCircle = "monthly" | "yearly"
+export type SubscriptionPaymentCircle = "monthly" | "quarterly" | "yearly"
 
 /******************* Some Types from Wxpay  ****************/
 export interface Wxpay_Jsapi_Params {
