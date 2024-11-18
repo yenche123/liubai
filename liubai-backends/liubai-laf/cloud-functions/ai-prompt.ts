@@ -5,7 +5,9 @@ import type {
   T_I18N,
 } from "@/common-types"
 import { i18nFill } from "@/common-i18n"
+import OpenAI from "openai"
 
+/***************************** Bots ***************************/
 export const aiBots: AiBot[] = [
 
   /** chat using secondary providers */
@@ -118,6 +120,7 @@ export const aiBots: AiBot[] = [
 
 ]
 
+/***************************** Prompts ***************************/
 const system_intro = `
 https://alpha.liubai.cc/
 一句话介绍：留白记事 = 备忘录📝 + 日历📆 + 任务📌 + 待办清单📂
@@ -369,3 +372,143 @@ export function aiI18nChannel(
 
   return { p }
 }
+
+
+/***************************** Tools ***************************/
+
+const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
+  /** Parse Link  */
+  {
+    type: "function",
+    function: {
+      name: "parse_link",
+      description: "解析链接。给定一个 http 链接，返回它的标题、摘要、内文......",
+      parameters: {
+        type: "object",
+        properties: {
+          url: {
+            type: "string",
+            description: "要解析的链接",
+          },
+        },
+        required: ["url"],
+        additionalProperties: false,
+      }
+    }
+  },
+
+  /** Draw a picture */
+  {
+    type: "function",
+    function: {
+      name: "draw",
+      description: "画图。给定一段描述，返回一张根据该描述绘制的图像",
+      parameters: {
+        type: "object",
+        properties: {
+          description: {
+            type: "string",
+            description: "描述栏，表示你想绘制的图像长怎样，越精细具体越好",
+          }
+        },
+        required: ["description"],
+        additionalProperties: false
+      }
+    }
+  },
+
+  /** Add a note */
+  {
+    type: "function",
+    function: {
+      name: "add_note",
+      description: "添加笔记，其中必须包含内文，以及可选的标题。",
+      parameters: {
+        type: "object",
+        properties: {
+          title: {
+            type: ["string", "null"],
+            description: "笔记标题"
+          },
+          description: {
+            type: "string",
+            description: "笔记内文",
+          },
+        },
+        required: ["description"],
+        additionalProperties: false
+      }
+    }
+  },
+
+  /** Add a todo / reminder / event / calendar */
+  {
+    type: "function",
+    function: {
+      name: "add_todo",
+      description: "添加: 待办 / 提醒事项 / 日程 / 事件 / 任务",
+      parameters: {
+        type: "object",
+        properties: {
+          title: {
+            type: ["string", "null"],
+            description: "标题"
+          },
+          description: {
+            type: "string",
+            description: "描述（内容）",
+          },
+          date: {
+            type: ["string", "null"],
+            description: "日期，格式为 YYYY-MM-DD"
+          },
+          time: {
+            type: ["string", "null"],
+            description: "时间，格式为 hh:mm",
+          },
+          earlyMinute: {
+            type: ["number", "null"],
+            description: "提前多少分钟提醒。设置为 0 时表示准时提醒，设置 1440 表示提前一天提醒。",
+            enum: [0, 10, 15, 30, 60, 120, 1440]
+          },
+          laterHour: {
+            type: ["number", "null"],
+            description: `从现在起，往后推算多少小时后发生。设置为 0.5 表示三十分钟后，1 表示一小时后，24 表示一天后发生。该字段与 date, time, earlyMinute 三个字段互斥。`,
+            enum: [0.5, 1, 2, 3, 24],
+          }
+        },
+        required: ["description"],
+        additionalProperties: false
+      }
+    }
+  },
+
+  /** Get schedule */
+  {
+    type: "function",
+    function: {
+      name: "get_schedule",
+      description: "获取最近的日程",
+      parameters: {
+        type: "object",
+        properties: {
+          hoursFromNow: {
+            type: "number",
+            description: "获取最近几个小时内的日程，正数表示未来，举例: 24 表示获取未来 24 小时的日程，48 表示获取未来 48 小时的日程；负数表示过去，举例：-24 表示获取过去 24 小时的日程，-48 表示获取过去 48 小时的日程。",
+            enum: [-24, 24, 48],
+          },
+          date: {
+            type: "string",
+            description: "获取昨天、今天或明天的日程。date 和 hoursFromNow 不可以同时指定。",
+            enum: ["yesterday", "today", "tomorrow"]  
+          }
+        },
+        additionalProperties: false
+      }
+    }
+  },
+
+
+
+]
+
