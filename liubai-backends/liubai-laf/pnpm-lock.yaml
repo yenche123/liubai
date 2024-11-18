@@ -61,14 +61,17 @@ importers:
         specifier: ^1.4.4
         version: 1.4.4
       '@types/node':
-        specifier: ^20.12.12
-        version: 20.12.12
+        specifier: ^20.17.6
+        version: 20.17.6
       '@types/xml2js':
         specifier: ^0.4.14
         version: 0.4.14
       tsx:
         specifier: ^4.19.1
         version: 4.19.1
+      typescript:
+        specifier: ^5.6.3
+        version: 5.6.3
 
 packages:
 
@@ -643,11 +646,11 @@ packages:
   '@types/node-fetch@2.6.11':
     resolution: {integrity: sha512-24xFj9R5+rfQJLRyM56qh+wnVSYhyXC2tkoBndtY0U+vubqNsYXGjufB2nn8Q6gt0LrARwL6UBtMCSVCwl4B1g==}
 
-  '@types/node@18.19.59':
-    resolution: {integrity: sha512-vizm2EqwV/7Zay+A6J3tGl9Lhr7CjZe2HmWS988sefiEmsyP9CeXEleho6i4hJk/8UtZAo0bWN4QPZZr83RxvQ==}
+  '@types/node@18.19.64':
+    resolution: {integrity: sha512-955mDqvO2vFf/oL7V3WiUtiz+BugyX8uVbaT2H8oj3+8dRyH2FLiNdowe7eNqRM7IOIZvzDH76EoAT+gwm6aIQ==}
 
-  '@types/node@20.12.12':
-    resolution: {integrity: sha512-eWLDGF/FOSPtAvEqeRAQ4C8LSA7M1I7i0ky1I8U7kD1J5ITyW3AsRhQrKVoWf5pFKZ2kILsEGJhsI9r93PYnOw==}
+  '@types/node@20.17.6':
+    resolution: {integrity: sha512-VEI7OdvK2wP7XHnsuXbAJnEpEkF6NjSN45QJlL4VGqZSXsnicpesdTWsg9RISeSdYd3yeRj/y3k5KGjUXYnFwQ==}
 
   '@types/qs@6.9.15':
     resolution: {integrity: sha512-uXHQKES6DQKKCLh441Xv/dwxOq1TVS3JPUMlEqoEglvlhR6Mxnlew/Xq/LRVHpLyk7iK3zODe1qYHIMltO7XGg==}
@@ -1625,8 +1628,16 @@ packages:
     engines: {node: '>=4.2.0'}
     hasBin: true
 
+  typescript@5.6.3:
+    resolution: {integrity: sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
   undici@6.19.8:
     resolution: {integrity: sha512-U8uCCl2x9TK3WANvmBavymRzxbfFYG+tAu+fgx3zxQy3qdagQqBLwJVrdyO1TBfUXvfKveMKJZhpvUYoOjM+4g==}
@@ -2717,15 +2728,15 @@ snapshots:
   '@types/body-parser@1.19.5':
     dependencies:
       '@types/connect': 3.4.38
-      '@types/node': 20.12.12
+      '@types/node': 20.17.6
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.6
 
   '@types/express-serve-static-core@4.19.1':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.6
       '@types/qs': 6.9.15
       '@types/range-parser': 1.2.7
       '@types/send': 0.17.4
@@ -2745,16 +2756,16 @@ snapshots:
 
   '@types/node-fetch@2.6.11':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.6
       form-data: 4.0.0
 
-  '@types/node@18.19.59':
+  '@types/node@18.19.64':
     dependencies:
       undici-types: 5.26.5
 
-  '@types/node@20.12.12':
+  '@types/node@20.17.6':
     dependencies:
-      undici-types: 5.26.5
+      undici-types: 6.19.8
 
   '@types/qs@6.9.15': {}
 
@@ -2763,12 +2774,12 @@ snapshots:
   '@types/send@0.17.4':
     dependencies:
       '@types/mime': 1.3.5
-      '@types/node': 20.12.12
+      '@types/node': 20.17.6
 
   '@types/serve-static@1.15.7':
     dependencies:
       '@types/http-errors': 2.0.4
-      '@types/node': 20.12.12
+      '@types/node': 20.17.6
       '@types/send': 0.17.4
 
   '@types/webidl-conversions@7.0.3': {}
@@ -2779,16 +2790,16 @@ snapshots:
 
   '@types/whatwg-url@8.2.2':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.6
       '@types/webidl-conversions': 7.0.3
 
   '@types/ws@8.5.10':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.6
 
   '@types/xml2js@0.4.14':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.6
 
   '@wecom/crypto@1.0.1': {}
 
@@ -3483,7 +3494,7 @@ snapshots:
 
   openai@4.68.4:
     dependencies:
-      '@types/node': 18.19.59
+      '@types/node': 18.19.64
       '@types/node-fetch': 2.6.11
       abort-controller: 3.0.0
       agentkeepalive: 4.5.0
@@ -3700,7 +3711,7 @@ snapshots:
 
   stripe@16.12.0:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 20.17.6
       qs: 6.13.0
 
   strnum@1.0.5: {}
@@ -3776,7 +3787,11 @@ snapshots:
 
   typescript@4.9.5: {}
 
+  typescript@5.6.3: {}
+
   undici-types@5.26.5: {}
+
+  undici-types@6.19.8: {}
 
   undici@6.19.8: {}
 
