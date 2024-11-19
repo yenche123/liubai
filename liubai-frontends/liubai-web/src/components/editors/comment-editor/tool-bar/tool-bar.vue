@@ -227,6 +227,12 @@ const cha = inject(deviceChaKey)
   font-weight: 500;
 }
 
+/** if container query is not supported yet */
+@media screen and (max-width: 380px) {
+  .cemtf-tip {
+    display: none;
+  }
+}
 
 @container liu-scroll-view (max-width: 380px) {
   .cemtf-tip {

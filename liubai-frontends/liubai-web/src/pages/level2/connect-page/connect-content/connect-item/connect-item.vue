@@ -94,9 +94,8 @@ const { t } = useI18n()
   }
 }
 
-
-@container liu-mc-container (max-width: 480px) {
-
+/** if container query is not supported yet */
+@media screen and (max-width: 480px) {
   .ci-box {
     padding: 24px 24px 24px 32px;
   }
@@ -115,7 +114,28 @@ const { t } = useI18n()
   .ci-desc {
     font-size: var(--mini-font);
   }
+}
 
+
+@container liu-mc-container (max-width: 480px) {
+  .ci-box {
+    padding: 24px 24px 24px 32px;
+  }
+
+  .ci-icon {
+    width: 40px;
+    height: 40px;
+    margin-inline-end: 20px;
+  }
+
+  .ci-title {
+    font-size: var(--desc-font);
+    margin-block-end: 0px;
+  }
+
+  .ci-desc {
+    font-size: var(--mini-font);
+  }
 }
 
 

@@ -659,6 +659,43 @@ const iconColor = "var(--main-normal)"
   justify-content: flex-end;
 }
 
+@media screen and (max-width: 550px) {
+  .sc-avatar-nickname {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .sc-avatar-box {
+    flex: initial;
+    margin-inline-end: 0;
+    margin-block-end: 6px;
+    padding: 5px;
+  }
+
+  .sc-nickname-box {
+    flex: initial;
+    padding: 4px 6px 4px 10px;
+    justify-content: flex-start;
+    margin-block-end: 0px;
+  }
+
+  .sc-nickname {
+    font-weight: 700;
+    color: var(--main-text);
+  }
+
+  .sc-nickname-arrow {
+    width: 20px;
+    height: 20px;
+
+    .scbf-back {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
 @container sc-box (max-width: 550px) {
   .sc-avatar-nickname {
     flex-direction: column;

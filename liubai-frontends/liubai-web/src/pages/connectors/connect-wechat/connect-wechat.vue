@@ -121,13 +121,17 @@ const {
   line-height: 1.5;
 }
 
-
-@container liu-mc-container (max-width: 480px) {
-
+/** if container query is not supported yet */
+@media screen and (max-width: 480px) {
   .cw-container {
     padding: 24px 24px 32px 28px;
   }
+}
 
+@container liu-mc-container (max-width: 480px) {
+  .cw-container {
+    padding: 24px 24px 32px 28px;
+  }
 }
 
 

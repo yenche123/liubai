@@ -32,6 +32,9 @@ Build! Anyway
 
 10. 文件夹飘红，显示: `contains emphasized items`，解决方案: `Cmd + Shift + P`，输入 `reload`，选择 `Developer: Reload Window`
 
+11. VS Code 设置: 搜索 `WordSeperator`，然后将其改成 `~!@#%^&*()=+[{]}\|;:'",.<>/?
+其实就是去掉 `$` 和 `-`
+
 ## 彻底解决 pnpm 网络请求超时的问题
 
 关闭 ipv6! 改为 `仅本地连接`

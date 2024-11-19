@@ -264,8 +264,9 @@ export default defineComponent({
 
 }
 
-@container liu-mc-container (max-width: 590px) {
-
+/** if container query is not supported yet */
+/** so compatible with the browser whose version is less than iOS 16 */
+@media screen and (max-width: 590px) {
   .ma-container_expand {
     max-height: 380px;
   }
@@ -278,7 +279,21 @@ export default defineComponent({
       display: v-bind("data.scDisabled ? 'none' : 'flex'");
     }
   }
+}
 
+@container liu-mc-container (max-width: 590px) {
+  .ma-container_expand {
+    max-height: 380px;
+  }
+
+  .ma-grid {
+    grid-template-columns: 100%;
+    gap: 4px;
+
+    .ma-sync {
+      display: v-bind("data.scDisabled ? 'none' : 'flex'");
+    }
+  }
 }
 
 
