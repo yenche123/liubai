@@ -90,6 +90,13 @@ interface AiMenuItem {
   character?: AiCharacter
 }
 
+interface PreRunResult {
+  prompts: OpenAI.Chat.ChatCompletionMessageParam[]
+  totalToken: number
+  bot: AiBot
+  chats: Table_AiChat[]
+  tools?: OpenAI.Chat.ChatCompletionTool[]
+}
 
 interface PostRunParam {
   aiParam: AiRunParam
@@ -340,6 +347,8 @@ class BaseLLM {
     catch(err) {
       console.warn("BaseLLM chat error: ")
       console.log(err)
+      console.log(`current baseURL: `, client.baseURL)
+      console.log(`current model: `, params.model)
     }
   }
 }
@@ -442,7 +451,7 @@ class BaseBot {
     return chats
   }
 
-  protected preRun(param: AiRunParam) {
+  protected preRun(param: AiRunParam): PreRunResult | undefined {
     // 1. get bot
     const botAndChats = this._getBotAndChats(param)
     if(!botAndChats) return
@@ -473,10 +482,17 @@ class BaseBot {
     })
     totalToken += system_1_token
 
-    // 7. copy tools
-    const tools = valTool.copyObject(aiTools)
 
-    return { prompts, totalToken, bot, chats, tools }
+    // 7. construct result of preRun
+    const res7: PreRunResult = { prompts, totalToken, bot, chats }
+
+    // 8. tools
+    if(bot.abilities.includes("tool_use")) {
+      const tools = valTool.copyObject(aiTools)
+      res7.tools = tools
+    }
+
+    return res7
   }
 
   protected async postRun(postParam: PostRunParam): Promise<AiRunSuccess | undefined> {
@@ -1738,6 +1754,7 @@ class TellUser {
     menuList: AiMenuItem[],
     suffixMessage: string,
   ) {
+    const _env = process.env
     const { wx_gzh_openid, user } = entry
     const { t } = useI18n(aiLang, { user })
 
@@ -1765,11 +1782,13 @@ class TellUser {
       }
     }
 
-    console.warn("see wx_menu_list: ")
-    console.log(wx_menu_list)
-
     // 2. send to wx gzh
     if(wx_gzh_openid) {
+      if(_env.LIU_WX_GZ_TYPE === "subscription_account") {
+        console.warn("we cannot send the menu to the user due to subscription_account")
+        return
+      }
+
       const obj2: Wx_Gzh_Send_Msgmenu = {
         msgtype: "msgmenu",
         msgmenu: {
@@ -1778,6 +1797,8 @@ class TellUser {
           tail_content: suffixMessage,
         }
       }
+      console.warn("see wx_menu_list: ")
+      console.log(wx_menu_list)
       const res2 = await this._sendToWxGzh(wx_gzh_openid, obj2)
       return res2
     }

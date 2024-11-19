@@ -617,7 +617,7 @@ export type AiInfoType = "user" | "assistant" | "summary" | "clear" |
 // background: 比如 url 的解析结果 / 关键词搜索结果
 
 
-export type AiAbility = "chat" | "text_to_image" | "image_to_text"
+export type AiAbility = "chat" | "text_to_image" | "image_to_text" | "tool_use"
 // chat: interact with plain-text
 // text_to_image: user inputs text and LLM return image
 // image_to_text: user inputs image and LLM return text
