@@ -29,7 +29,12 @@ import {
   getNowStamp, 
   MINUTE,
 } from "@/common-time"
-import { aiBots, aiI18nChannel, aiI18nShared } from "@/ai-prompt"
+import { 
+  aiBots, 
+  aiI18nChannel, 
+  aiI18nShared,
+  aiTools,
+} from "@/ai-prompt"
 import cloud from "@lafjs/cloud"
 import { useI18n, aiLang } from "@/common-i18n"
 
@@ -83,6 +88,14 @@ interface HelperAssistantMsgParam {
 interface AiMenuItem {
   operation: "kick" | "add" | "clear_history" | "more_operations"
   character?: AiCharacter
+}
+
+
+interface PostRunParam {
+  aiParam: AiRunParam
+  chatParam: OpenAI.Chat.ChatCompletionCreateParams
+  chatCompletion?: OpenAI.Chat.Completions.ChatCompletion
+  bot: AiBot
 }
 
 /********************* empty function ****************/
@@ -322,7 +335,7 @@ class BaseLLM {
     if(!client) return
     try {
       const chatCompletion = await client.chat.completions.create(params)
-      return chatCompletion as OpenAI.Chat.ChatCompletion
+      return chatCompletion as OpenAI.Chat.Completions.ChatCompletion
     }
     catch(err) {
       console.warn("BaseLLM chat error: ")
@@ -460,23 +473,41 @@ class BaseBot {
     })
     totalToken += system_1_token
 
-    return { prompts, totalToken, bot, chats }
+    // 7. copy tools
+    const tools = valTool.copyObject(aiTools)
+
+    return { prompts, totalToken, bot, chats, tools }
   }
 
-  protected async postRun(
-    param: AiRunParam,
-    bot: AiBot,
-    res?: OpenAI.Chat.ChatCompletion,
-  ): Promise<AiRunSuccess | undefined> {
-    if(!res) return
+  protected async postRun(postParam: PostRunParam): Promise<AiRunSuccess | undefined> {
+    const { bot, chatCompletion, aiParam, chatParam } = postParam
+    if(!chatCompletion) return
 
     const c = bot.character
-    console.log(`${c} postRun res: `)
-    console.log(res)
+    
+    console.log(`${c} postRun:::`)
+    const firstChoice = chatCompletion.choices[0]
+    if(!firstChoice) {
+      console.warn(`${c} no choice!`)
+      return
+    }
+    const { finish_reason, message } = firstChoice
+    console.log(finish_reason)
+    console.log(message)
+    
+    if(finish_reason === "tool_calls") {
 
-    const { room, chatId, entry } = param
+    }
+    else if(finish_reason === "length") {
+
+    }
+    else if(finish_reason === "content_filter") {
+      console.warn(`${c} content filter!`)
+    }
+
+    const { room, chatId, entry } = aiParam
     const roomId = room._id
-    const txt6 = AiHelper.getTextFromLLM(res)
+    const txt6 = AiHelper.getTextFromLLM(chatCompletion)
     if(!txt6) return
 
     // 7. can i reply
@@ -485,7 +516,7 @@ class BaseBot {
       return {
         character: c,
         replyStatus: "has_new_msg",
-        chatCompletion: res,
+        chatCompletion,
       }
     }
 
@@ -499,8 +530,8 @@ class BaseBot {
       text: txt6,
       model: bot.model,
       character: c,
-      usage: res.usage,
-      requestId: res.id,
+      usage: chatCompletion.usage,
+      requestId: chatCompletion.id,
       baseUrl: apiEndpoint?.baseURL,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(param9)
@@ -509,7 +540,7 @@ class BaseBot {
     return { 
       character: c,
       replyStatus: "yes",
-      chatCompletion: res, 
+      chatCompletion, 
       assistantChatId,
     }
   }
@@ -522,11 +553,11 @@ class BotDeepSeek extends BaseBot {
     super("deepseek")
   }
 
-  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+  async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
     // 1. pre run
-    const res1 = this.preRun(param)
+    const res1 = this.preRun(aiParam)
     if(!res1) return
-    const { prompts, totalToken, bot, chats } = res1
+    const { prompts, totalToken, bot, chats, tools } = res1
 
     // 2. get other params
     const model = bot.model
@@ -537,15 +568,22 @@ class BotDeepSeek extends BaseBot {
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
 
     // 5. to chat
-    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+    const chatParam: OpenAI.Chat.ChatCompletionCreateParams = {
       messages: prompts,
       max_tokens: maxToken,
       model,
+      tools,
     }
-    const res5 = await this.chat(params, bot)
+    const chatCompletion = await this.chat(chatParam, bot)
     
     // 6. post run
-    const res6 = await this.postRun(param, bot, res5)
+    const postParam: PostRunParam = {
+      aiParam,
+      chatParam,
+      chatCompletion,
+      bot,
+    }
+    const res6 = await this.postRun(postParam)
     return res6
   }
 
@@ -557,14 +595,13 @@ class BotMoonshot extends BaseBot {
     super("kimi")
   }
 
-  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+  async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
     // 1. pre run
-    const res1 = this.preRun(param)
+    const res1 = this.preRun(aiParam)
     if(!res1) return
-    const { prompts, totalToken, bot } = res1
+    const { prompts, totalToken, bot, chats, tools } = res1
 
     // 2. get other params
-    const { chats } = param.historyData
     const model = bot.model
 
     // 3. handle other things
@@ -573,15 +610,22 @@ class BotMoonshot extends BaseBot {
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
 
     // 5. to chat
-    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+    const chatParam: OpenAI.Chat.ChatCompletionCreateParams = {
       messages: prompts,
       max_tokens: maxToken,
       model,
+      tools,
     }
-    const res5 = await this.chat(params, bot)
+    const chatCompletion = await this.chat(chatParam, bot)
     
     // 6. post run
-    const res6 = await this.postRun(param, bot, res5)
+    const postParam: PostRunParam = {
+      aiParam,
+      chatParam,
+      chatCompletion,
+      bot,
+    }
+    const res6 = await this.postRun(postParam)
     return res6
   }
 
@@ -593,11 +637,11 @@ class BotStepfun extends BaseBot {
     super("yuewen")
   }
 
-  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+  async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
     // 1. pre run
-    const res1 = this.preRun(param)
+    const res1 = this.preRun(aiParam)
     if(!res1) return
-    const { prompts, totalToken, bot, chats } = res1
+    const { prompts, totalToken, bot, chats, tools } = res1
 
     // 2. get other params
     const model = bot.model
@@ -608,15 +652,22 @@ class BotStepfun extends BaseBot {
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
 
     // 5. to chat
-    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+    const chatParam: OpenAI.Chat.ChatCompletionCreateParams = {
       messages: prompts,
       max_tokens: maxToken,
       model,
+      tools,
     }
-    const res5 = await this.chat(params, bot)
+    const chatCompletion = await this.chat(chatParam, bot)
     
     // 6. post run
-    const res6 = await this.postRun(param, bot, res5)
+    const postParam: PostRunParam = {
+      aiParam,
+      chatParam,
+      chatCompletion,
+      bot,
+    }
+    const res6 = await this.postRun(postParam)
     return res6
   }
 
@@ -628,11 +679,11 @@ class BotYi extends BaseBot {
     super("wanzhi")
   }
 
-  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+  async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
     // 1. pre run
-    const res1 = this.preRun(param)
+    const res1 = this.preRun(aiParam)
     if(!res1) return
-    const { prompts, totalToken, bot, chats } = res1
+    const { prompts, totalToken, bot, chats, tools } = res1
 
     // 2. get other params
     const model = bot.model
@@ -643,15 +694,22 @@ class BotYi extends BaseBot {
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
 
     // 5. to chat
-    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+    const chatParam: OpenAI.Chat.ChatCompletionCreateParams = {
       messages: prompts,
       max_tokens: maxToken,
       model,
+      tools,
     }
-    const res5 = await this.chat(params, bot)
+    const chatCompletion = await this.chat(chatParam, bot)
     
     // 6. post run
-    const res6 = await this.postRun(param, bot, res5)
+    const postParam: PostRunParam = {
+      aiParam,
+      chatParam,
+      chatCompletion,
+      bot,
+    }
+    const res6 = await this.postRun(postParam)
     return res6
   }
 
@@ -663,11 +721,11 @@ class BotZhipu extends BaseBot {
     super("zhipu")
   }
 
-  async run(param: AiRunParam): Promise<AiRunSuccess | undefined> {
+  async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
     // 1. pre run
-    const res1 = this.preRun(param)
+    const res1 = this.preRun(aiParam)
     if(!res1) return
-    const { prompts, totalToken, bot, chats } = res1
+    const { prompts, totalToken, bot, chats, tools } = res1
 
     // 2. get other params
     const model = bot.model
@@ -678,15 +736,22 @@ class BotZhipu extends BaseBot {
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
 
     // 5. to chat
-    const params: OpenAI.Chat.ChatCompletionCreateParams = {
+    const chatParam: OpenAI.Chat.ChatCompletionCreateParams = {
       messages: prompts,
       max_tokens: maxToken,
       model,
+      tools,
     }
-    const res5 = await this.chat(params, bot)
+    const chatCompletion = await this.chat(chatParam, bot)
     
     // 6. post run
-    const res6 = await this.postRun(param, bot, res5)
+    const postParam: PostRunParam = {
+      aiParam,
+      chatParam,
+      chatCompletion,
+      bot,
+    }
+    const res6 = await this.postRun(postParam)
     return res6
   }
 

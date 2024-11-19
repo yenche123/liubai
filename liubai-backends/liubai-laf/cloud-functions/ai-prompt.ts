@@ -376,7 +376,7 @@ export function aiI18nChannel(
 
 /***************************** Tools ***************************/
 
-const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
+export const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
   /** Parse Link  */
   {
     type: "function",
