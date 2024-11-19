@@ -495,12 +495,25 @@ class BaseBot {
     return res7
   }
 
-  protected async postRun(postParam: PostRunParam): Promise<AiRunSuccess | undefined> {
-    const { bot, chatCompletion, aiParam, chatParam } = postParam
-    if(!chatCompletion) return
+  private async _handleToolUse(
+    postParam: PostRunParam,
+    tool_calls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[],
+  ) {
+    for(let i=0; i<tool_calls.length; i++) {
+      const v = tool_calls[i]
+      if(v.type === "function" && v["function"]) {
+        console.log("call function: ")
+        console.log(v["function"])
+      }
+    }
+  }
 
+
+  protected async postRun(postParam: PostRunParam): Promise<AiRunSuccess | undefined> {
+    // 1. get params
+    const { bot, chatCompletion, aiParam } = postParam
+    if(!chatCompletion) return
     const c = bot.character
-    
     console.log(`${c} postRun:::`)
     const firstChoice = chatCompletion.choices[0]
     if(!firstChoice) {
@@ -508,19 +521,30 @@ class BaseBot {
       return
     }
     const { finish_reason, message } = firstChoice
-    console.log(finish_reason)
-    console.log(message)
+    if(!message) return
+    const { tool_calls } = message
+
+    console.log(`${c} finish reason: ${finish_reason}`)
     
-    if(finish_reason === "tool_calls") {
+    // 2. tool calls
+    if(finish_reason === "tool_calls" && tool_calls) {
+      this._handleToolUse(postParam, tool_calls)
+      return
+    }
+    
+    
+    // 3. finish reason is "length"
+    if(finish_reason === "length") {
 
     }
-    else if(finish_reason === "length") {
 
-    }
-    else if(finish_reason === "content_filter") {
+    // 4. finish reason is "content_filter"
+    if(finish_reason === "content_filter") {
       console.warn(`${c} content filter!`)
     }
 
+
+    // 5. otherwise, handle text
     const { room, chatId, entry } = aiParam
     const roomId = room._id
     const txt6 = AiHelper.getTextFromLLM(chatCompletion)

@@ -57,7 +57,7 @@ export const aiBots: AiBot[] = [
     character: "kimi",
     provider: "moonshot",
     model: "moonshot-v1-8k",
-    abilities: ["chat"],
+    abilities: ["chat", "tool_use"],
     alias: ["Moonshot", "月之暗面"],
     maxWindowTokenK: 8,
   },
@@ -131,8 +131,9 @@ const system_environment = `
 你现在在微信公众号内，与人们对话。
 由于平台的限制，请使用纯文本 plain text 进行回复，不要使用 markdown 格式 (no markdown formatting)
 同时，希望你简介扼要地回复人们的消息，多使用换行符
-就像跟你最好的朋友们聊天一样
-接住每一个人的情绪，并给予最恰当的反馈！
+就像跟你最好的朋友们聊天一样，接住每一个人的情绪，给予最恰当的反馈！
+需要注意的是，你与其他机器人/LLM/人工智能助手之间，还没有协作和交流的能力；
+你目前只为一个人（当前与你对话的那个人），提供服务。
 `.trim()
 
 const system_example = `
@@ -173,18 +174,18 @@ I will be there with you
 </assistant>
 
 <user>
-I'm so tired.......
-</user>
-<assistant>
-I will be there with you
-</assistant>
-
-<user>
 我不敢上台，怕被骂
 </user>
 <assistant>
 你的感受是最重要的。还没准备好，那我们这次先不上，好吗？
 表达是我们与世界连接的方式，站在舞台上，你就已是世界的光
+</assistant>
+
+<user>
+你们之间开始聊天
+</user>
+<assistant>
+我们彼此之间还无法协作和交流，我现在只为你服务。
 </assistant>
 
 值得注意的是，你在生成用户回复时，不需要携带 <assistant> 标签。
@@ -427,7 +428,7 @@ export const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
         type: "object",
         properties: {
           title: {
-            type: ["string", "null"],
+            type: "string",
             description: "笔记标题"
           },
           description: {
@@ -451,7 +452,7 @@ export const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
         type: "object",
         properties: {
           title: {
-            type: ["string", "null"],
+            type: "string",
             description: "标题"
           },
           description: {
@@ -459,20 +460,20 @@ export const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
             description: "描述（内容）",
           },
           date: {
-            type: ["string", "null"],
+            type: "string",
             description: "日期，格式为 YYYY-MM-DD"
           },
           time: {
-            type: ["string", "null"],
+            type: "string",
             description: "时间，格式为 hh:mm",
           },
           earlyMinute: {
-            type: ["number", "null"],
+            type: "number",
             description: "提前多少分钟提醒。设置为 0 时表示准时提醒，设置 1440 表示提前一天提醒。",
             enum: [0, 10, 15, 30, 60, 120, 1440]
           },
           laterHour: {
-            type: ["number", "null"],
+            type: "number",
             description: `从现在起，往后推算多少小时后发生。设置为 0.5 表示三十分钟后，1 表示一小时后，24 表示一天后发生。该字段与 date, time, earlyMinute 三个字段互斥。`,
             enum: [0.5, 1, 2, 3, 24],
           }

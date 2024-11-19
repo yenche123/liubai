@@ -27,7 +27,7 @@ export const alipay_cfg = {
 
 1. 检查 npm 依赖、版本号
 2. 检查 `secret-config.ts` 文件是否存在
-3. 检查环境变量
+3. 检查环境变量（确定字段是否存在，确定数值是否正确）
 4. 部署 common- 开头的云函数
 5. 部署剩余的云函数
 6. 检查数据表，比如 Config 表
@@ -36,6 +36,51 @@ export const alipay_cfg = {
 9. 检查 IP 变化，修改各平台的 IP 许可名单
 
 ## 开发日记
+
+### 2024-11-19
+
+实测，`moonshot` 的模型，`tools` 工具调用的声明里，`function.parameters.properties.key1.type` 不允许是一个数组，必须是一个字符串，举例：
+
+```ts
+const tools_1 = [
+  {
+    type: "function",
+    function: {
+      name: "add_todo",
+      description: "添加: 待办 / 提醒事项 / 日程 / 事件 / 任务",
+      parameters: {
+        type: "object",
+        properties: {
+          title: {
+            type: ["string", "null"],    // 报错
+            description: "标题"
+          }
+        }
+      }
+    }
+  }
+]
+
+const tools_2 = [
+  {
+    type: "function",
+    function: {
+      name: "add_todo",
+      description: "添加: 待办 / 提醒事项 / 日程 / 事件 / 任务",
+      parameters: {
+        type: "object",
+        properties: {
+          title: {
+            type: "string",         // 正确
+            description: "标题"
+          }
+        }
+      }
+    }
+  }
+]
+```
+
 
 ### 2024-09-20
 
