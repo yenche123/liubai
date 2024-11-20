@@ -483,7 +483,6 @@ export class LiuDateUtil {
     const d2 = new Date(currentStamp)
     const { t } = useI18n(dateLang, { locale})
     
-  
     const yyyy = valTool.format0(d.getFullYear())
     let mm = String(d.getMonth() + 1)
     let dd = String(d.getDate())
@@ -501,6 +500,14 @@ export class LiuDateUtil {
     }
   
     return t("show_2", { mm, dd, hr, min })
+  }
+
+  static getDateAndTime(stamp: number, timezone?: string) {
+    const newStamp = localizeStamp(stamp, timezone)
+    const str = this.transformStampIntoStr(newStamp)
+    const date = str.substring(0, 10)
+    const time = str.substring(11)
+    return { date, time }
   }
 
   static transformStampIntoStr(stamp: number) {

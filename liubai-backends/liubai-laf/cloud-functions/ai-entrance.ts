@@ -23,6 +23,7 @@ import {
   getDocAddId,
   valTool,
   createAvailableOrderId,
+  LiuDateUtil,
 } from "@/common-util"
 import { sendWxMessage } from "@/service-send"
 import { 
@@ -469,14 +470,20 @@ class BaseBot {
 
     // 2. clip chats
     const { entry } = param
-    chats = this._clipChats(bot, chats, entry.user)
+    const { user } = entry
+    chats = this._clipChats(bot, chats, user)
 
     // 3. get prompts and add system prompt
     const prompts = AiHelper.turnChatsIntoPrompt(chats)
 
-    // 4. add system prompt
+    // 4. handle current date & time 
+    // then add system prompt
+    const { 
+      date: current_date, 
+      time: current_time,
+    } = LiuDateUtil.getDateAndTime(getNowStamp(), user.timezone)
     const { p } = aiI18nChannel({ entry, character: bot.character })
-    const system_1 = p("system_1")
+    const system_1 = p("system_1", { current_date, current_time })
     const system_1_token = AiHelper.calculateTextToken(system_1)
     if(system_1) {
       prompts.push({ role: "system", content: system_1 })
