@@ -276,6 +276,11 @@ export const aiLang: LangAtom = {
     "quota_warning_2": "您已使用 {membershipTimes} 轮会员版对话额度。续费会员，可将“已使用额度”归零！\n<a href='{link}'>立即续费</a>",
     "cannot_read_images": "我目前没有识别图片的能力",
     "history_cleared": "已清空前面的历史记录",
+    "add_note_only_desc": "{botName}请求添加笔记:\n{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
+    "add_note_with_title": "{botName}请求添加笔记\n\n标题：{title}\n详情：{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
+    "add_todo": "{botName}请求添加待办:\n{title}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
+    "added_note": "【用户已同意创建笔记】",
+    "added_todo": "【用户已同意创建待办】",
   },
   "zh-Hant": {
     "privacy_title": "🔓 隱私提示:",
@@ -289,6 +294,11 @@ export const aiLang: LangAtom = {
     "quota_warning_2": "您已使用 {membershipTimes} 輪會員版對話額度。續費會員，可將「已使用額度」歸零！\n<a href='{link}'>立即續費</a>",
     "cannot_read_images": "我目前沒有讀取圖片的能力",
     "history_cleared": "已清空前面的歷史記錄",
+    "add_note_only_desc": "{botName}請求新增筆記:\n{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 編輯</a>",
+    "add_note_with_title": "{botName}請求新增筆記\n\n標題：{title}\n詳情：{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 編輯</a>",
+    "add_todo": "{botName}請求新增待辦:\n{title}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 編輯</a>",
+    "added_note": "【使用者已同意新增筆記】",
+    "added_todo": "【使用者已同意新增待辦】",
   },
   "en": {
     "privacy_title": "🔓 Privacy:",
@@ -302,6 +312,11 @@ export const aiLang: LangAtom = {
     "quota_warning_2": "You have used {membershipTimes} conversations of membership. Renew membership to reset the used quota!\n<a href='{link}'>Renew now</a>",
     "cannot_read_images": "I don't have the ability to read images yet",
     "history_cleared": "History cleared",
+    "add_note_only_desc": "{botName} requests to add a note:\n{desc}\n\n<a href='{agreeLink}'>🆗 Agree</a>    <a href='{editLink}'>✏️ Edit</a>",
+    "add_note_with_title": "{botName} requests to add a note\n\nTitle: {title}\nDescription: {desc}\n\n<a href='{agreeLink}'>🆗 Agree</a>    <a href='{editLink}'>✏️ Edit</a>",
+    "add_todo": "{botName} requests to add a todo:\n{title}\n\n<a href='{agreeLink}'>🆗 Agree</a>    <a href='{editLink}'>✏️ Edit</a>",
+    "added_note": "【User has agreed to create a note】",
+    "added_todo": "【User has agreed to create a todo】",
   }
 }
 

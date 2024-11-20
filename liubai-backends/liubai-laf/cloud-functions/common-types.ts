@@ -1,4 +1,5 @@
 // Function Name: common-types
+import OpenAI from "openai"
 import Stripe from "stripe"
 import * as vbot from "valibot"
 import type { BaseSchema } from "valibot"
@@ -669,6 +670,9 @@ export interface AiI18nSharedParam {
   type: AiPromptType
   user?: Table_User
 }
+
+export type OaiPrompt = OpenAI.Chat.ChatCompletionMessageParam
+export type OaiToolCall = OpenAI.Chat.ChatCompletionMessageToolCall
 
 /******** ai tool-use *********/
 
@@ -1524,6 +1528,7 @@ export interface Table_AiChat extends BaseTable {
   baseUrl?: string
   funcName?: string        // like "add_todo"
   funcJson?: Record<string, any>    // we have to filter from LLM response
+  tool_calls?: OaiToolCall[]
 
   // about human
   userId?: string

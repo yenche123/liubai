@@ -686,6 +686,10 @@ export function generateAvatar(url: string) {
   return obj
 }
 
+export function getLiuDoman() {
+  return process.env.LIU_DOMAIN ?? ""
+}
+
 
 /********************* 封装函数 *****************/
 

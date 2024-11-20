@@ -5,6 +5,8 @@ import {
   type AiCharacter,
   type AiUsage,
   type AiEntry,
+  type OaiPrompt,
+  type OaiToolCall,
   type Partial_Id, 
   type Table_AiChat, 
   type Table_AiRoom, 
@@ -15,6 +17,8 @@ import {
   type Table_Order,
   type Table_Subscription,
   Sch_AiToolAddNoteParam,
+  Sch_AiToolAddTodoParam,
+  Sch_AiToolAddCalendarParam,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -24,6 +28,7 @@ import {
   valTool,
   createAvailableOrderId,
   LiuDateUtil,
+  getLiuDoman,
 } from "@/common-util"
 import { sendWxMessage } from "@/service-send"
 import { 
@@ -88,6 +93,7 @@ interface HelperAssistantMsgParam {
   baseUrl?: string
   funcName?: string
   funcJson?: Record<string, any>
+  tool_calls?: OaiToolCall[]
 }
 
 interface AiMenuItem {
@@ -96,7 +102,7 @@ interface AiMenuItem {
 }
 
 interface PreRunResult {
-  prompts: OpenAI.Chat.ChatCompletionMessageParam[]
+  prompts: OaiPrompt[]
   totalToken: number
   bot: AiBot
   chats: Table_AiChat[]
@@ -166,6 +172,13 @@ function preCheck() {
     console.warn("summary is not available")
     return false
   }
+
+  const domain = _env.LIU_DOMAIN
+  if(!domain) {
+    console.warn("domain is not set")
+    return false
+  }
+
   return true
 }
 
@@ -474,7 +487,7 @@ class BaseBot {
     chats = this._clipChats(bot, chats, user)
 
     // 3. get prompts and add system prompt
-    const prompts = AiHelper.turnChatsIntoPrompt(chats)
+    const prompts = AiHelper.turnChatsIntoPrompt(chats, user)
 
     // 4. handle current date & time 
     // then add system prompt
@@ -514,10 +527,15 @@ class BaseBot {
 
   private async _handleToolUse(
     postParam: PostRunParam,
-    tool_calls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[],
+    tool_calls: OaiToolCall[],
   ) {
     const { aiParam, bot, chatCompletion } = postParam
-    const toolHandler = new ToolHandler(aiParam, bot, chatCompletion)
+    const toolHandler = new ToolHandler(
+      aiParam, 
+      bot,
+      tool_calls,
+      chatCompletion,
+    )
 
     for(let i=0; i<tool_calls.length; i++) {
       const v = tool_calls[i]
@@ -530,10 +548,10 @@ class BaseBot {
       const funcJson = valTool.strToObj(funcArgs)
 
       if(funcName === "add_note") {
-        toolHandler.add_note(funcJson)
+        await toolHandler.add_note(funcJson)
       }
       else if(funcName === "add_todo") {
-        toolHandler.add_todo(funcJson)
+        await toolHandler.add_todo(funcJson)
       }
       else if(funcName === "add_calendar") {
         toolHandler.add_calendar(funcJson)
@@ -975,15 +993,16 @@ class AiCompressor {
   ): Promise<HistoryData | undefined> {
     const _env = process.env
     const { historyData, entry, room } = param
+    const { user } = entry
     const { chats } = historyData
 
     // 1. get the two system prompts
-    const { p } = aiI18nShared({ type: "compress", user: entry.user })
+    const { p } = aiI18nShared({ type: "compress", user })
     const system1 = p("system_1")
     const system2 = p("system_2")
 
     // 2. add two system prompts to the prompts
-    const prompts = AiHelper.turnChatsIntoPrompt(chats)
+    const prompts = AiHelper.turnChatsIntoPrompt(chats, user)
     prompts.reverse()
     prompts.unshift({ role: "system", content: system1 })
     prompts.push({ role: "user", content: system2 })
@@ -995,7 +1014,7 @@ class AiCompressor {
         role: "assistant", 
         content: prefix_msg, 
         prefix: true,
-      } as OpenAI.Chat.ChatCompletionMessageParam
+      } as OaiPrompt
       prompts.push(msg3_1)
     }
     else if(_env.LIU_SUMMARY_PARTIAL === "01") {
@@ -1003,7 +1022,7 @@ class AiCompressor {
         role: "assistant", 
         content: prefix_msg, 
         partial: true,
-      } as OpenAI.Chat.ChatCompletionMessageParam
+      } as OaiPrompt
       prompts.push(msg3_2)
     }
 
@@ -1083,15 +1102,18 @@ class ToolHandler {
 
   private _aiParam: AiRunParam
   private _bot: AiBot
+  private _tool_calls: OaiToolCall[]
   private _chatCompletion?: OpenAI.Chat.Completions.ChatCompletion
 
   constructor(
     aiParam: AiRunParam, 
     bot: AiBot,
+    tool_calls: OaiToolCall[],
     chatCompletion?: OpenAI.Chat.Completions.ChatCompletion,
   ) {
     this._aiParam = aiParam
     this._bot = bot
+    this._tool_calls = tool_calls
     this._chatCompletion = chatCompletion
   }
 
@@ -1112,9 +1134,29 @@ class ToolHandler {
       baseUrl: apiEndpoint?.baseURL,
       funcName,
       funcJson,
+      tool_calls: this._tool_calls,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(arg)
     return assistantChatId
+  }
+
+  private _getAgreeAndEditLinks(assistantChatId: string) {
+    const domain = getLiuDoman()
+
+    // WIP: agree page / compose page
+    const agreeLink = `${domain}/agree?chatId=${assistantChatId}`
+    const editLink = `${domain}/compose?chatId=${assistantChatId}`
+
+    return { agreeLink, editLink }
+  }
+
+  private _getEssentialReplyData(assistantChatId: string) {
+    const entry = this._aiParam.entry
+    const { user } = entry
+    const { t } = useI18n(aiLang, { user })
+    const { agreeLink, editLink } = this._getAgreeAndEditLinks(assistantChatId)
+    const botName = this._bot.name
+    return { t, agreeLink, editLink, botName }
   }
   
   async add_note(funcJson: Record<string, any>) {
@@ -1132,14 +1174,51 @@ class ToolHandler {
     if(!assistantChatId) return
 
     // 3. reply
+    const { t, agreeLink, editLink, botName } = this._getEssentialReplyData(assistantChatId)
+    let msg = ""
+    const { title, description } = funcJson
+    if(title) {
+      msg = t("add_note_with_title", { botName, title, desc: description, agreeLink, editLink })
+    }
+    else {
+      msg = t("add_note_only_desc", { botName, desc: description, agreeLink, editLink })
+    }
+    TellUser.text(this._aiParam.entry, msg)
+  }
+
+  async add_todo(funcJson: Record<string, any>) {
+    // 1. check out param
+    const res1 = vbot.safeParse(Sch_AiToolAddTodoParam, funcJson)
+    if(!res1.success) {
+      console.warn("cannot parse add_todo param: ")
+      console.log(funcJson)
+      console.log(res1.issues)
+      return
+    }
+
+    // 2. add msg
+    const assistantChatId = await this._addMsgToChat("add_note", funcJson)
+    if(!assistantChatId) return
+
+    // 3. reply
+    const { t, agreeLink, editLink, botName } = this._getEssentialReplyData(assistantChatId)
+    const { title } = funcJson
+    let msg = t("add_todo", { botName, title, agreeLink, editLink })
+    TellUser.text(this._aiParam.entry, msg)
+  }
+
+  async add_calendar(funcJson: Record<string, any>) {
+    // 1. check out param
+    const res1 = vbot.safeParse(Sch_AiToolAddCalendarParam, funcJson)
+    if(!res1.success) {
+      console.warn("cannot parse add_calendar param: ")
+      console.log(funcJson)
+      console.log(res1.issues)
+      return
+    }
+
+    // 2. check out params specifically
     
-  }
-
-  add_todo(funcJson: Record<string, any>) {
-
-  }
-
-  add_calendar(funcJson: Record<string, any>) {
 
   }
 
@@ -1348,6 +1427,7 @@ class AiHelper {
       baseUrl: param.baseUrl,
       funcName: param.funcName,
       funcJson: param.funcJson,
+      tool_calls: param.tool_calls,
     }
     const chatId = await this.addChat(data1)
     return chatId
@@ -1483,8 +1563,13 @@ class AiHelper {
   }
 
 
-  static turnChatsIntoPrompt(chats: Table_AiChat[]) {
-    const messages: OpenAI.Chat.ChatCompletionMessageParam[] = []
+  static turnChatsIntoPrompt(
+    chats: Table_AiChat[],
+    user: Table_User,
+  ) {
+    const messages: OaiPrompt[] = []
+    const { t } = useI18n(aiLang, { user })
+
     for(let i=0; i<chats.length; i++) {
       const v = chats[i]
       const { 
@@ -1494,6 +1579,9 @@ class AiHelper {
         character, 
         fileBase64,
         msgType,
+        tool_calls,
+        funcName,
+        contentId,
       } = v
 
       if(infoType === "user") {
@@ -1530,6 +1618,23 @@ class AiHelper {
           messages.push({ role: "system", content: text })
         }
       }
+      else if(infoType === "tool_use" && tool_calls) {
+        messages.push({ role: "assistant", tool_calls, name: character })
+
+        const tool_call_id = tool_calls[0]?.id
+        if(!tool_call_id) continue
+
+        // add tool_call_result prompt 
+        // where the role is "tool" and  tool_call_id is attached
+        if(funcName === "add_note" && contentId) {
+          messages.push({ role: "tool", content: t("added_note"), tool_call_id })
+        }
+        else if(funcName === "add_todo" && contentId) {
+          messages.push({ role: "tool", content: t("added_todo"), tool_call_id })
+        }
+
+      }
+      
     }
 
     return messages
@@ -1753,9 +1858,7 @@ class UserHelper {
 
   private static async _getPaymentLink(entry: AiEntry) {
     // 1. check out domain
-    const _env = process.env
-    const domain = _env.LIU_DOMAIN
-    if(!domain) return
+    const domain = getLiuDoman()
 
     // 2. get my order
     const order = await this._createOrderForQuota(entry)
