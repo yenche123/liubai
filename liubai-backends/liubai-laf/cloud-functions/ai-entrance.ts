@@ -1,19 +1,20 @@
 // Function Name: ai-entrance
 
-import type { 
-  AiBot,
-  AiCharacter,
-  AiUsage,
-  AiEntry,
-  Partial_Id, 
-  Table_AiChat, 
-  Table_AiRoom, 
-  Table_User, 
-  Wx_Gzh_Send_Msg,
-  Wx_Gzh_Send_Msgmenu_Item,
-  Wx_Gzh_Send_Msgmenu,
-  Table_Order,
-  Table_Subscription,
+import { 
+  type AiBot,
+  type AiCharacter,
+  type AiUsage,
+  type AiEntry,
+  type Partial_Id, 
+  type Table_AiChat, 
+  type Table_AiRoom, 
+  type Table_User, 
+  type Wx_Gzh_Send_Msg,
+  type Wx_Gzh_Send_Msgmenu_Item,
+  type Wx_Gzh_Send_Msgmenu,
+  type Table_Order,
+  type Table_Subscription,
+  Sch_AiToolAddNoteParam,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -37,6 +38,7 @@ import {
 } from "@/ai-prompt"
 import cloud from "@lafjs/cloud"
 import { useI18n, aiLang } from "@/common-i18n"
+import * as vbot from "valibot"
 
 const db = cloud.database()
 const _ = db.command
@@ -83,6 +85,8 @@ interface HelperAssistantMsgParam {
   usage?: AiUsage
   requestId?: string
   baseUrl?: string
+  funcName?: string
+  funcJson?: Record<string, any>
 }
 
 interface AiMenuItem {
@@ -505,6 +509,9 @@ class BaseBot {
     postParam: PostRunParam,
     tool_calls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[],
   ) {
+    const { aiParam, bot, chatCompletion } = postParam
+    const toolHandler = new ToolHandler(aiParam, bot, chatCompletion)
+
     for(let i=0; i<tool_calls.length; i++) {
       const v = tool_calls[i]
       const funcData = v["function"]
@@ -516,13 +523,13 @@ class BaseBot {
       const funcJson = valTool.strToObj(funcArgs)
 
       if(funcName === "add_note") {
-
+        toolHandler.add_note(funcJson)
       }
       else if(funcName === "add_todo") {
-
+        toolHandler.add_todo(funcJson)
       }
       else if(funcName === "add_calendar") {
-
+        toolHandler.add_calendar(funcJson)
       }
 
     }
@@ -1065,18 +1072,67 @@ class AiCompressor {
 /*********************** helper functions ************************/
 
 
-class ToolHelper {
+class ToolHandler {
 
+  private _aiParam: AiRunParam
+  private _bot: AiBot
+  private _chatCompletion?: OpenAI.Chat.Completions.ChatCompletion
+
+  constructor(
+    aiParam: AiRunParam, 
+    bot: AiBot,
+    chatCompletion?: OpenAI.Chat.Completions.ChatCompletion,
+  ) {
+    this._aiParam = aiParam
+    this._bot = bot
+    this._chatCompletion = chatCompletion
+  }
+
+  private async _addMsgToChat(
+    funcName: string, 
+    funcJson: Record<string, any>,
+  ) {
+    const { room } = this._aiParam
+    const bot = this._bot
+    const chatCompletion = this._chatCompletion
+    const apiEndpoint = AiHelper.getApiEndpointFromBot(bot)
+    const arg: HelperAssistantMsgParam = {
+      roomId: room._id,
+      model: bot.model,
+      character: bot.character,
+      usage: chatCompletion?.usage,
+      requestId: chatCompletion?.id,
+      baseUrl: apiEndpoint?.baseURL,
+      funcName,
+      funcJson,
+    }
+    const assistantChatId = await AiHelper.addAssistantMsg(arg)
+    return assistantChatId
+  }
   
-  static add_note() {
+  async add_note(funcJson: Record<string, any>) {
+    // 1. check out param
+    const res1 = vbot.safeParse(Sch_AiToolAddNoteParam, funcJson)
+    if(!res1.success) {
+      console.warn("cannot parse add_note param: ")
+      console.log(funcJson)
+      console.log(res1.issues)
+      return
+    }
+
+    // 2. add msg
+    const assistantChatId = await this._addMsgToChat("add_note", funcJson)
+    if(!assistantChatId) return
+
+    // 3. reply
     
   }
 
-  static add_todo() {
+  add_todo(funcJson: Record<string, any>) {
 
   }
 
-  static add_calendar() {
+  add_calendar(funcJson: Record<string, any>) {
 
   }
 
@@ -1276,13 +1332,15 @@ class AiHelper {
       ...b1,
       sortStamp: b1.insertedStamp,
       roomId: param.roomId,
-      infoType: "assistant",
+      infoType: param.funcName ? "tool_use" : "assistant",
       text: param.text,
       model: param.model,
       character: param.character,
       usage: param.usage,
       requestId: param.requestId,
       baseUrl: param.baseUrl,
+      funcName: param.funcName,
+      funcJson: param.funcJson,
     }
     const chatId = await this.addChat(data1)
     return chatId

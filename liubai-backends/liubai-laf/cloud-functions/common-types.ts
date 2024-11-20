@@ -670,6 +670,57 @@ export interface AiI18nSharedParam {
   user?: Table_User
 }
 
+/******** ai tool-use *********/
+
+// the param of add_note
+export const Sch_AiToolAddNoteParam = vbot.object({
+  title: Sch_Opt_Str,
+  description: Sch_String_WithLength,
+})
+
+// the param of add_todo
+export const Sch_AiToolAddTodoParam = vbot.object({
+  title: Sch_String_WithLength,
+})
+
+// the param of add_calendar
+export const aiToolAddCalendarSpecificDates = [
+  "today", 
+  "tomorrow", 
+  "day_after_tomorrow", 
+  "monday", 
+  "tuesday", 
+  "wednesday", 
+  "thursday", 
+  "friday", 
+  "saturday", 
+  "sunday"
+] as const
+export type AiToolAddCalendarSpecificDate = typeof aiToolAddCalendarSpecificDates[number]
+export const Sch_AiToolAddCalendarSpecificDate = vbot.picklist(aiToolAddCalendarSpecificDates)
+
+export const aiToolAddCalendarEarlyMinutes = [
+  0, 10, 15, 30, 60, 120, 1440
+] as const
+export type AiToolAddCalendarEarlyMinute = typeof aiToolAddCalendarEarlyMinutes[number]
+export const Sch_AiToolAddCalendarEarlyMinute = vbot.picklist(aiToolAddCalendarEarlyMinutes)
+
+export const aiToolAddCalendarLaterHours = [
+  0, 10, 15, 30, 60, 120, 1440
+] as const
+export type AiToolAddCalendarLaterHour = typeof aiToolAddCalendarLaterHours[number]
+export const Sch_AiToolAddCalendarLaterHour = vbot.picklist(aiToolAddCalendarLaterHours)
+
+export const Sch_AiToolAddCalendarParam = vbot.object({
+  title: Sch_Opt_Str,
+  description: Sch_String_WithLength,
+  date: Sch_Opt_Str,
+  specificDate: vbot.optional(Sch_AiToolAddCalendarSpecificDate),
+  time: Sch_Opt_Str,
+  earlyMinute: vbot.optional(Sch_AiToolAddCalendarEarlyMinute),
+  laterHour: vbot.optional(Sch_AiToolAddCalendarLaterHour),
+})
+
 
 /*********************** 杂七杂八的 **********************/
 // 新增类型前，记得全局搜索一下，避免冲突
@@ -1472,7 +1523,7 @@ export interface Table_AiChat extends BaseTable {
   requestId?: string
   baseUrl?: string
   funcName?: string        // like "add_todo"
-  funcArgs?: string
+  funcJson?: Record<string, any>    // we have to filter from LLM response
 
   // about human
   userId?: string

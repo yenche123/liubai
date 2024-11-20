@@ -1,8 +1,11 @@
-import type { 
-  AiBot, 
-  AiI18nChannelParam, 
-  AiI18nSharedParam, 
-  T_I18N,
+import { 
+  aiToolAddCalendarSpecificDates,
+  aiToolAddCalendarEarlyMinutes,
+  aiToolAddCalendarLaterHours,
+  type AiBot, 
+  type AiI18nChannelParam, 
+  type AiI18nSharedParam, 
+  type T_I18N,
 } from "@/common-types"
 import { i18nFill } from "@/common-i18n"
 import OpenAI from "openai"
@@ -476,7 +479,7 @@ export const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
           specificDate: {
             type: "string",
             description: "特定日期: 今天、明天、后天或周几。该字段与 date 互斥，仅能指定一个。",
-            enum: ["today", "tomorrow", "day_after_tomorrow", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+            enum: aiToolAddCalendarSpecificDates,
           },
           time: {
             type: "string",
@@ -485,12 +488,12 @@ export const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
           earlyMinute: {
             type: "number",
             description: "提前多少分钟提醒。设置为 0 时表示准时提醒，设置 1440 表示提前一天提醒。",
-            enum: [0, 10, 15, 30, 60, 120, 1440]
+            enum: aiToolAddCalendarEarlyMinutes,
           },
           laterHour: {
             type: "number",
             description: `从现在起，往后推算多少小时后发生。设置为 0.5 表示三十分钟后，1 表示一小时后，24 表示一天后发生。该字段与 date, time, earlyMinute 三个字段互斥。`,
-            enum: [0.5, 1, 2, 3, 24],
+            enum: aiToolAddCalendarLaterHours,
           }
         },
         required: ["description"],
