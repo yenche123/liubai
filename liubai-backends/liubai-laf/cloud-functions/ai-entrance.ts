@@ -422,13 +422,19 @@ class BaseBot {
   private _clipChats(
     bot: AiBot,
     chats: Table_AiChat[],
+    user: Table_User,
   ) {
     const cLength = chats.length
     if(cLength < 2) return chats
 
     // 1. get windowTokens
+    const isSubscribed = checkIfUserSubscribed(user)
+    const _MAX_TOKEN = isSubscribed ? 32000 : 16000
     const { maxWindowTokenK } = bot
-    const windowTokens = 1000 * maxWindowTokenK
+    let windowTokens = 1000 * maxWindowTokenK
+    if(windowTokens > _MAX_TOKEN) {
+      windowTokens = _MAX_TOKEN
+    }
 
     // 2. calculate reachedTokens
     let reservedToken = Math.floor(windowTokens * 0.1)
@@ -458,13 +464,13 @@ class BaseBot {
     let { bot, chats } = botAndChats
 
     // 2. clip chats
-    chats = this._clipChats(bot, chats)
+    const { entry } = param
+    chats = this._clipChats(bot, chats, entry.user)
 
     // 3. get prompts and add system prompt
     const prompts = AiHelper.turnChatsIntoPrompt(chats)
 
     // 4. add system prompt
-    const { entry } = param
     const { p } = aiI18nChannel({ entry, character: bot.character })
     const system_1 = p("system_1")
     const system_1_token = AiHelper.calculateTextToken(system_1)

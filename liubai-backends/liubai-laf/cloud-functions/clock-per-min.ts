@@ -93,7 +93,9 @@ async function handle_remind() {
 
   const atoms2 = await find_remind_authors(atoms)
   if(atoms2.length < 1) {
-    console.warn("没有任何 atoms2")
+    console.warn("there is no atoms2")
+    console.log("see atoms: ")
+    console.log(atoms)
     return true
   }
 

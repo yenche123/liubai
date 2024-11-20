@@ -37,6 +37,11 @@ export const alipay_cfg = {
 
 ## 开发日记
 
+
+### 2024-11-20
+
+`01-ai/Yi-1.5-9B-Chat-16K` 无法传递工具调用，会报错
+
 ### 2024-11-19
 
 实测，`moonshot` 的模型，`tools` 工具调用的声明里，`function.parameters.properties.key1.type` 不允许是一个数组，必须是一个字符串，举例：
