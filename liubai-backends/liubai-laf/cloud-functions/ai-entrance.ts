@@ -507,10 +507,24 @@ class BaseBot {
   ) {
     for(let i=0; i<tool_calls.length; i++) {
       const v = tool_calls[i]
-      if(v.type === "function" && v["function"]) {
-        console.log("call function: ")
-        console.log(v["function"])
+      const funcData = v["function"]
+
+      if(v.type !== "function" || !funcData) continue
+
+      const funcName = funcData.name
+      const funcArgs = funcData.arguments
+      const funcJson = valTool.strToObj(funcArgs)
+
+      if(funcName === "add_note") {
+
       }
+      else if(funcName === "add_todo") {
+
+      }
+      else if(funcName === "add_calendar") {
+
+      }
+
     }
   }
 
@@ -1049,6 +1063,26 @@ class AiCompressor {
 
 
 /*********************** helper functions ************************/
+
+
+class ToolHelper {
+
+  
+  static add_note() {
+    
+  }
+
+  static add_todo() {
+
+  }
+
+  static add_calendar() {
+
+  }
+
+}
+
+
 
 class AiHelper {
 

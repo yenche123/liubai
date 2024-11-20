@@ -608,13 +608,14 @@ export type AiSecondaryProvider = "siliconflow" | "smallai" | "302"
 export type AiCharacter = "deepseek" | "kimi" | "yuewen" | "wanzhi" | "zhipu"
 
 export type AiInfoType = "user" | "assistant" | "summary" | "clear" | 
-  "action" | "background"
+  "action" | "background" | "tool_use"
 // user: 用户发来的消息
 // assistant: AI 的回复
 // summary: AI 的总结 for context
 // clear: 清除对话
 // action: 记录用户的操作，比如“同意 xxx 读取 yyy”
 // background: 比如 url 的解析结果 / 关键词搜索结果
+// tool_use: 使用工具
 
 
 export type AiAbility = "chat" | "text_to_image" | "image_to_text" | "tool_use"
@@ -1462,6 +1463,7 @@ export interface Table_AiChat extends BaseTable {
   text?: string
   imageUrl?: string
   fileBase64?: string     // like for audio
+  contentId?: string      // content which has been connected to this chat
 
   // about LLM
   model?: string           // like "gpt-4o"
@@ -1469,6 +1471,8 @@ export interface Table_AiChat extends BaseTable {
   usage?: AiUsage
   requestId?: string
   baseUrl?: string
+  funcName?: string        // like "add_todo"
+  funcArgs?: string
 
   // about human
   userId?: string

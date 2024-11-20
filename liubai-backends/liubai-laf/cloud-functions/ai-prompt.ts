@@ -117,13 +117,13 @@ https://alpha.liubai.cc/
 致力于让每个人都成为超级个体 Super Individual，帮助人们从日常琐事中解放出来，专注于最重要的事，享受生活！
 `.trim()
 
-const system_environment = `
-你现在在微信公众号内，与人们对话。
-由于平台的限制，请使用纯文本 plain text 进行回复，不要使用 markdown 格式 (no markdown formatting)
-同时，希望你简介扼要地回复人们的消息，多使用换行符
-就像跟你最好的朋友们聊天一样，接住每一个人的情绪，给予最恰当的反馈！
-需要注意的是，你与其他机器人/LLM/人工智能助手之间，还没有协作和交流的能力；
-你目前只为一个人（当前与你对话的那个人），提供服务。
+const system_wx_env = `
+会话渠道：微信公众号
+回复格式：纯文本 plain-text
+当前日期：{current_date}
+当前时间：{current_time}
+回复期望：简洁扼要，多使用换行符
+其他限制：只能与人们对话，不能与其他机器人/LLM/人工智能助手进行协作和交流
 `.trim()
 
 const system_example = `
@@ -188,7 +188,7 @@ const system_settings = `
 此时的你冷静沉著、用字如金，你会在表达上提供更多的建设性意见
 
 后者讲究“体验”，请让人们觉得被启发、被陪伴、被理解、被接纳......
-当他/她掉落时，你会接住他/她。
+当他/她掉落时，你会接住他/她；TA的每一个情绪，都能让你感同身受
 此时的你智慧、幽默、感性、温暖、善解人意，你会与每一个同你对话的人同频且产生共鸣
 你会在用词上体现出更多“支持性作用”，让对方感到慰藉，充满力量
 `.trim()
@@ -201,7 +201,7 @@ const wx_deepseek_system_1 = `
 ${system_intro}
 
 【当前环境】
-${system_environment}
+${system_wx_env}
 
 【问答示例】
 ${system_example}
@@ -218,7 +218,7 @@ const wx_kimi_system_1 = `
 ${system_intro}
 
 【当前环境】
-${system_environment}
+${system_wx_env}
 
 【问答示例】
 ${system_example}
@@ -235,7 +235,7 @@ const wx_wanzhi_system_1 = `
 ${system_intro}
 
 【当前环境】
-${system_environment}
+${system_wx_env}
 
 【问答示例】
 ${system_example}
@@ -252,7 +252,7 @@ const wx_yuewen_system_1 = `
 ${system_intro}
 
 【当前环境】
-${system_environment}
+${system_wx_env}
 
 【问答示例】
 ${system_example}
@@ -269,7 +269,7 @@ const wx_zhipu_system_1 = `
 ${system_intro}
 
 【当前环境】
-${system_environment}
+${system_wx_env}
 
 【问答示例】
 ${system_example}
@@ -432,12 +432,32 @@ export const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
     }
   },
 
-  /** Add a todo / reminder / event / calendar */
+  /** Add a todo */
   {
     type: "function",
     function: {
       name: "add_todo",
-      description: "添加: 待办 / 提醒事项 / 日程 / 事件 / 任务",
+      description: "添加待办",
+      parameters: {
+        type: "object",
+        properties: {
+          title: {
+            type: "string",
+            description: "待办事项标题"
+          }
+        },
+        required: ["title"],
+        additionalProperties: false
+      }
+    }
+  },
+
+  /** Add a reminder / event / calendar */
+  {
+    type: "function",
+    function: {
+      name: "add_calendar",
+      description: "添加: 提醒事项 / 日程 / 事件 / 任务",
       parameters: {
         type: "object",
         properties: {
@@ -451,7 +471,12 @@ export const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
           },
           date: {
             type: "string",
-            description: "日期，格式为 YYYY-MM-DD"
+            description: "日期，格式为 YYYY-MM-DD。该字段与 specificDate 互斥，仅能指定一个。",
+          },
+          specificDate: {
+            type: "string",
+            description: "特定日期: 今天、明天、后天或周几。该字段与 date 互斥，仅能指定一个。",
+            enum: ["today", "tomorrow", "day_after_tomorrow", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
           },
           time: {
             type: "string",
@@ -488,7 +513,7 @@ export const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
             description: "获取最近几个小时内的日程，正数表示未来，举例: 24 表示获取未来 24 小时的日程，48 表示获取未来 48 小时的日程；负数表示过去，举例：-24 表示获取过去 24 小时的日程，-48 表示获取过去 48 小时的日程。",
             enum: [-24, 24, 48],
           },
-          date: {
+          specificDate: {
             type: "string",
             description: "获取昨天、今天或明天的日程。date 和 hoursFromNow 不可以同时指定。",
             enum: ["yesterday", "today", "tomorrow"]  
