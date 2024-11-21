@@ -46,7 +46,7 @@ import {
 } from "@/common-i18n";
 import { createCredential2 } from "@/common-ids";
 import { init_user } from "@/user-login";
-import { sendWxMessage, sendWxTextMessage } from "@/service-send";
+import { WxGzhSender } from "@/service-send";
 import { enter_ai } from "@/ai-entrance";
 
 const db = cloud.database()
@@ -998,7 +998,7 @@ async function sendText(
 ) {
   const res1 = await checkAccessToken()
   if(!res1) return false
-  await sendWxTextMessage(wx_gzh_openid, wechat_access_token, text)
+  await WxGzhSender.sendTextMessage(wx_gzh_openid, wechat_access_token, text)
 }
 
 async function sendObject(
@@ -1007,7 +1007,7 @@ async function sendObject(
 ) {
   const res1 = await checkAccessToken()
   if(!res1) return false
-  await sendWxMessage(wx_gzh_openid, wechat_access_token, obj)
+  await WxGzhSender.sendMessage(wx_gzh_openid, wechat_access_token, obj)
 }
 
 function getMsgMode(

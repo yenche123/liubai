@@ -69,7 +69,7 @@ import {
   getActiveEmailCode,
   LiuResend,
   LiuTencentSES,
-  sendWxTextMessage,
+  WxGzhSender,
 } from "@/service-send"
 import { 
   userLoginLang, 
@@ -1293,7 +1293,7 @@ async function sendLoginMsgToWxGzhUser(
     return { code: "E5001", errMsg: "there is no wx_gzh_access_token" }
   }
   
-  await sendWxTextMessage(wx_gzh_openid, wx_gzh_access_token, msg)
+  await WxGzhSender.sendTextMessage(wx_gzh_openid, wx_gzh_access_token, msg)
 }
 
 function getDeviceI18nStr(

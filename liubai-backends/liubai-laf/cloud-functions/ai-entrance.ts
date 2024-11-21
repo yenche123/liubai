@@ -30,7 +30,7 @@ import {
   LiuDateUtil,
   getLiuDoman,
 } from "@/common-util"
-import { sendWxMessage } from "@/service-send"
+import { WxGzhSender } from "@/service-send"
 import { 
   getBasicStampWhileAdding, 
   getNowStamp, 
@@ -854,7 +854,7 @@ class BotZhipu extends BaseBot {
 class AiController {
 
   async run(param: AiRunParam) {
-    const { room, entry } = param
+    const { room, entry, chatId } = param
 
     // 1. check bots in the room
     let characters = room.characters
@@ -867,10 +867,16 @@ class AiController {
     // 2. compress history data
     const needCompress = AiCompressor.doINeedCompress(param.historyData.chats)
     if(needCompress) {
-      console.log("go to compress..............")
+      console.log("get to compress..............")
       const newHistoryData = await AiCompressor.run(param)
       if(!newHistoryData) return
       param.historyData = newHistoryData
+      const res2 = await AiHelper.canReply(room._id, chatId)
+      if(!res2) {
+        console.warn("we don't need to reply because ")
+        console.log("there is a new message after compressing")
+        return
+      }
     }
 
     // 3. get promises
@@ -906,6 +912,9 @@ class AiController {
         promises.push(pro5)
       }
     }
+
+    // 3.1 send "typing" state
+    TellUser.typing(entry)
 
     // 4. wait for all promises
     const res4 = await Promise.all(promises)
@@ -2038,6 +2047,17 @@ class TellUser {
 
   }
 
+  static async typing(entry: AiEntry) {
+    const { wx_gzh_openid } = entry
+
+    // 1. to wx gzh
+    if(wx_gzh_openid) {
+      const wxGzhAccessToken = await checkAndGetWxGzhAccessToken()
+      if(!wxGzhAccessToken) return
+      WxGzhSender.sendTyping(wx_gzh_openid, wxGzhAccessToken)
+    }
+  }
+
   
 
   private static _getWxGzhKfAccount(
@@ -2071,7 +2091,7 @@ class TellUser {
   ) {
     const accessToken = await checkAndGetWxGzhAccessToken()
     if(!accessToken) return
-    const res = await sendWxMessage(wx_gzh_openid, accessToken, obj)
+    const res = await WxGzhSender.sendMessage(wx_gzh_openid, accessToken, obj)
     return res
   }
 
