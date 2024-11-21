@@ -357,11 +357,17 @@ class BaseLLM {
     }
   }
 
+  private _tryTimes = 0
+
   public async chat(
     params: OpenAI.Chat.ChatCompletionCreateParams
   ) {
-    const client = this._client
+    const _this = this
+    const client = _this._client
     if(!client) return
+
+    _this._tryTimes++
+
     try {
       const chatCompletion = await client.chat.completions.create(params)
       return chatCompletion as OaiChatCompletion
@@ -371,6 +377,25 @@ class BaseLLM {
       console.log(err)
       console.log(`current baseURL: `, client.baseURL)
       console.log(`current model: `, params.model)
+
+      let isRateLimit = false
+      const errType = typeof err
+      console.log(`errType: ${errType}`)
+      const errMsg = errType === "string" ? err : err?.toString?.()
+      console.log("errMsg: ")
+      console.log(errMsg)
+      
+      if(typeof errMsg === "string") {
+        console.log("errMsg is string!")
+        isRateLimit = errMsg.includes("当前API请求过多，请稍后重试")
+      }
+
+      if(_this._tryTimes < 2 && isRateLimit) {
+        setTimeout(() => {
+          console.warn("wait for a second and retry!")
+          _this.chat(params)
+        }, 1000)
+      }
     }
   }
 }
