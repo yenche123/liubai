@@ -241,7 +241,7 @@ export const wechatLang: LangAtom = {
     "welcome_2": "欢迎关注留白记事！\n\n留白记事 = 备忘录📝 + 日历📆 + 任务📌 + 待办清单📂\n\n若你还没有体验资格，可以在这里回复你的邮箱，稍后将你加入哦！",
     "already_bound": "当前微信已绑定帐号 {account}\n请先在原帐号上解绑后，再重新扫码。",
     "success_1": "绑定成功🎉\n\n小诀窍：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
-    "login_first": "尚未登录！<a href='https://alpha.liubai.cc/connect/wechat'>请先登录</a>",  // TODO: link to wechat-bind
+    "login_first": "尚未登录！<a href='{LIU_DOMAIN}/connect/wechat'>请先登录</a>",  // TODO: link to wechat-bind
     "video_unsupported": "[暂不支持发送视频消息]",
   },
   "zh-Hant": {
@@ -249,7 +249,7 @@ export const wechatLang: LangAtom = {
     "welcome_2": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n若你還沒有體驗資格，可以在此處回覆你的 email，稍後將你加入喔！",
     "already_bound": "當前微信已綁定帳號 {account}\n請先在原帳號上解綁後，再重新掃描 QR Code",
     "success_1": "綁定成功🎉\n\n小訣竅：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
-    "login_first": "尚未登入! <a href='https://alpha.liubai.cc/connect/wechat'>請先登入</a>",  // TODO: link to wechat-bind
+    "login_first": "尚未登入! <a href='{LIU_DOMAIN}/connect/wechat'>請先登入</a>",  // TODO: link to wechat-bind
     "video_unsupported": "[暫不支援影片訊息]",
   },
   "en": {
@@ -257,7 +257,7 @@ export const wechatLang: LangAtom = {
     "welcome_2": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nIf you don't have access to Liubai, you can reply your email here, and we will add you later.",
     "already_bound": "Current Wechat has already bound account {account}\nPlease unbind it from the original account first, then re-scan the QR code.",
     "success_1": "Binding successful🎉\n\nTip: <a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>How to avoid missing reminders</a>",
-    "login_first": "Not logged in! <a href='https://alpha.liubai.cc/connect/wechat'>Please login first</a>",  // TODO: link to wechat-bind
+    "login_first": "Not logged in! <a href='{LIU_DOMAIN}/connect/wechat'>Please login first</a>",  // TODO: link to wechat-bind
     "video_unsupported": "[Videos are not supported to send]",
   }
 }
@@ -340,11 +340,11 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
       text: {
         content: `🪧 指路牌
 
-⭐ <a href="https://alpha.liubai.cc/favorite">我的收藏</a>
+⭐ <a href="{LIU_DOMAIN}/favorite">我的收藏</a>
 
-📂 <a href="https://alpha.liubai.cc/state">我的看板</a>
+📂 <a href="{LIU_DOMAIN}/state">我的看板</a>
 
-⚙️ <a href="https://alpha.liubai.cc/settings">我的设置</a>
+⚙️ <a href="{LIU_DOMAIN}/settings">我的设置</a>
 
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">开发者的小红书</a>
 `,   // TODO: 添加到桌面（离线使用）
@@ -355,7 +355,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://alpha.liubai.cc/connect/wechat">戳我绑定微信</a>',
+        content: '<a href="{LIU_DOMAIN}/connect/wechat">戳我绑定微信</a>',
       }
     }
   ],
@@ -391,11 +391,11 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
       text: {
         content: `🪧 指路牌
 
-⭐ <a href="https://alpha.liubai.cc/favorite">我的收藏</a>
+⭐ <a href="{LIU_DOMAIN}/favorite">我的收藏</a>
 
-📂 <a href="https://alpha.liubai.cc/state">我的看板</a>
+📂 <a href="{LIU_DOMAIN}/state">我的看板</a>
 
-⚙️ <a href="https://alpha.liubai.cc/settings">我的設定</a>
+⚙️ <a href="{LIU_DOMAIN}/settings">我的設定</a>
 
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">開發者的小紅書</a>
 `,   // TODO: 添加到桌面（离线使用）
@@ -406,7 +406,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://alpha.liubai.cc/connect/wechat">輕觸我綁定微信</a>',
+        content: '<a href="{LIU_DOMAIN}/connect/wechat">輕觸我綁定微信</a>',
       }
     }
   ],
@@ -442,11 +442,11 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
       text: {
         content: `🪧 Guidebook
 
-⭐ <a href="https://alpha.liubai.cc/favorite">My Favorite</a>
+⭐ <a href="{LIU_DOMAIN}/favorite">My Favorite</a>
 
-📂 <a href="https://alpha.liubai.cc/state">My Board</a>
+📂 <a href="{LIU_DOMAIN}/state">My Board</a>
 
-⚙️ <a href="https://alpha.liubai.cc/settings">My Settings</a>
+⚙️ <a href="{LIU_DOMAIN}/settings">My Settings</a>
 
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">Follow me on RED</a>
 `,   // TODO: 添加到桌面（离线使用）
@@ -457,7 +457,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://alpha.liubai.cc/connect/wechat">Click me to bind WeChat</a>',
+        content: '<a href="{LIU_DOMAIN}/connect/wechat">Click me to bind WeChat</a>',
       }
     }
   ],
@@ -645,6 +645,8 @@ export function useI18n(
   langAtom: LangAtom,
   opt1?: GetLangValOpt,
 ) {
+  const _env = process.env
+  const LIU_DOMAIN = _env.LIU_DOMAIN ?? ""
 
   const _getVal = (key: string) => {
     const locale = getCurrentLocale(opt1)
@@ -660,10 +662,13 @@ export function useI18n(
   const t: T_I18N = (key, opt2) => {
     let res = _getVal(key)
     if(!res) return ""
-    if(!opt2) return res
+    if(!opt2) {
+      res = i18nFill(res, { LIU_DOMAIN })
+      return res
+    }
 
     // 处理 opt2
-    res = i18nFill(res, opt2)
+    res = i18nFill(res, { LIU_DOMAIN, ...opt2 })
     return res
   }
 

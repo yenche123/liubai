@@ -115,7 +115,7 @@ export const aiBots: AiBot[] = [
 
 /***************************** Prompts ***************************/
 const system_intro = `
-https://alpha.liubai.cc/
+{LIU_DOMAIN}
 一句话介绍：留白记事 = 备忘录📝 + 日历📆 + 任务📌 + 待办清单📂
 致力于让每个人都成为超级个体 Super Individual，帮助人们从日常琐事中解放出来，专注于最重要的事，享受生活！
 `.trim()
@@ -321,6 +321,29 @@ const compress_prompts = {
   "prefix_msg": compress_prefix_msg,
 }
 
+
+function _get_p(thePrompts: Record<string, string>) {
+  const _env = process.env
+  const LIU_DOMAIN = _env.LIU_DOMAIN ?? ""
+
+  const p: T_I18N = (key, opt2) => {
+    if(!thePrompts) return ""
+    let res = thePrompts[key]
+    if(!res) return ""
+    if(!opt2) {
+      res = i18nFill(res, { LIU_DOMAIN })
+      return res.trim()
+    }
+
+     // handle opt2
+     res = i18nFill(res, { LIU_DOMAIN, ...opt2 })
+     return res.trim()
+  }
+  
+  return { p }
+}
+
+
 export function aiI18nShared(
   param: AiI18nSharedParam,
 ) {
@@ -329,19 +352,8 @@ export function aiI18nShared(
   if(theType === "compress") {
     thePrompts = compress_prompts
   }
-
-  const p: T_I18N = (key, opt2) => {
-    if(!thePrompts) return ""
-    let res = thePrompts[key]
-    if(!res) return ""
-    if(!opt2) return res.trim()
-
-     // 处理 opt2
-     res = i18nFill(res, opt2)
-     return res.trim()
-  }
-
-  return { p }
+  const res = _get_p(thePrompts)
+  return res
 }
 
 
@@ -354,18 +366,8 @@ export function aiI18nChannel(
     thePrompts = wx_gzh_prompts[c]
   }
 
-  const p: T_I18N = (key, opt2) => {
-    if(!thePrompts) return ""
-    let res = thePrompts[key]
-    if(!res) return ""
-    if(!opt2) return res.trim()
-
-     // 处理 opt2
-     res = i18nFill(res, opt2)
-     return res.trim()
-  }
-
-  return { p }
+  const res = _get_p(thePrompts)
+  return res
 }
 
 
