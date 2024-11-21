@@ -121,7 +121,6 @@ export const reg_exp = {
 }
 
 // @see https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html#7
-const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 const API_TAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging"
 const API_UNTAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging"
 

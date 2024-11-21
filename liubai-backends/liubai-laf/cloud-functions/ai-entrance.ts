@@ -7,6 +7,9 @@ import {
   type AiEntry,
   type OaiPrompt,
   type OaiToolCall,
+  type OaiMessage,
+  type OaiCreateParam,
+  type OaiChatCompletion,
   type Partial_Id, 
   type Table_AiChat, 
   type Table_AiRoom, 
@@ -53,6 +56,7 @@ const _ = db.command
 const MAX_CHARACTERS = 3
 const MIN_RESERVED_TOKENS = 1600
 const TOKEN_NEED_COMPRESS = 6000
+const MAX_WX_TOKEN = 560   // wx gzh will send 45002 error if we send too many words once
 
 const MAX_TIMES_FREE = 10
 const MAX_TIMES_MEMBERSHIP = 200
@@ -78,7 +82,7 @@ interface AiRunSuccess {
   character: AiCharacter
   replyStatus: "yes" | "has_new_msg"
   assistantChatId?: string
-  chatCompletion?: OpenAI.Chat.ChatCompletion
+  chatCompletion?: OaiChatCompletion
 }
 
 type AiRunResults = Array<AiRunSuccess | undefined>
@@ -111,8 +115,8 @@ interface PreRunResult {
 
 interface PostRunParam {
   aiParam: AiRunParam
-  chatParam: OpenAI.Chat.ChatCompletionCreateParams
-  chatCompletion?: OpenAI.Chat.Completions.ChatCompletion
+  chatParam: OaiCreateParam
+  chatCompletion?: OaiChatCompletion
   bot: AiBot
 }
 
@@ -360,7 +364,7 @@ class BaseLLM {
     if(!client) return
     try {
       const chatCompletion = await client.chat.completions.create(params)
-      return chatCompletion as OpenAI.Chat.Completions.ChatCompletion
+      return chatCompletion as OaiChatCompletion
     }
     catch(err) {
       console.warn("BaseLLM chat error: ")
@@ -560,62 +564,81 @@ class BaseBot {
     }
   }
 
+  private async _toContinue(
+    postParam: PostRunParam,
+    msgFromAssistant: OaiMessage,
+  ) {
+    // 1. handle max tokens
+    const { chatParam, chatCompletion, bot, aiParam } = postParam
+    const usage = chatCompletion?.usage
+    if(!usage) return
+    const usedTokens = usage.total_tokens
+    const { messages } = chatParam
+    const prompts = [...messages]
+    const maxWindowTokens = postParam.bot.maxWindowTokenK * 1000
+    let restTokens = maxWindowTokens - usedTokens
+    if(restTokens < 1) return
+    if(restTokens < 1024) {
+      const mLength = messages.length
+      if(mLength < 2) return
+      if(mLength < 6) {
+        prompts.splice(1, 1)
+      }
+      else {
+        const deleteNum = Math.floor(mLength / 3)
+        prompts.splice(1, deleteNum)
+      }
+    }
+    if(restTokens > MAX_WX_TOKEN) {
+      restTokens = MAX_WX_TOKEN
+    }
 
-  protected async postRun(postParam: PostRunParam): Promise<AiRunSuccess | undefined> {
-    // 1. get params
-    const { bot, chatCompletion, aiParam } = postParam
-    if(!chatCompletion) return
+    // 2. handle prompts
+    prompts.push(msgFromAssistant)
+
+    // 3. new chat create param
+    const newChatParam: OaiCreateParam = { 
+      ...chatParam,
+      messages: prompts,
+      max_tokens: restTokens,
+    }
+    console.warn("continue to chat......")
+    console.log("restTokens: ", restTokens)
+    const res3 = await this.chat(newChatParam, bot)
+    if(!res3) return
+
+    // 4. can i reply
+    const res4 = await AiHelper.canReply(aiParam.room._id, aiParam.chatId)
+    if(!res4) return
+    
+    // 5. handle text from response
+    const assistantChatId = await this._handleAssistantText(res3, aiParam, bot)
+    if(!assistantChatId) return
+
+    return { 
+      character: bot.character,
+      replyStatus: "yes",
+      chatCompletion, 
+      assistantChatId,
+    }
+  }
+
+  private async _handleAssistantText(
+    chatCompletion: OaiChatCompletion,
+    aiParam: AiRunParam,
+    bot: AiBot,
+  ) {
+    const roomId = aiParam.room._id
     const c = bot.character
-    console.log(`${c} postRun:::`)
-    const firstChoice = chatCompletion.choices[0]
-    if(!firstChoice) {
-      console.warn(`${c} no choice!`)
-      return
-    }
-    const { finish_reason, message } = firstChoice
-    if(!message) return
-    const { tool_calls } = message
 
-    console.log(`${c} finish reason: ${finish_reason}`)
-    
-    // 2. tool calls
-    if(finish_reason === "tool_calls" && tool_calls) {
-      this._handleToolUse(postParam, tool_calls)
-      return
-    }
-    
-    
-    // 3. finish reason is "length"
-    if(finish_reason === "length") {
-
-    }
-
-    // 4. finish reason is "content_filter"
-    if(finish_reason === "content_filter") {
-      console.warn(`${c} content filter!`)
-    }
-
-
-    // 5. otherwise, handle text
-    const { room, chatId, entry } = aiParam
-    const roomId = room._id
+    // 1. get text
     const txt6 = AiHelper.getTextFromLLM(chatCompletion)
     if(!txt6) return
 
-    // 7. can i reply
-    const res7 = await AiHelper.canReply(roomId, chatId)
-    if(!res7) {
-      return {
-        character: c,
-        replyStatus: "has_new_msg",
-        chatCompletion,
-      }
-    }
-
-    // 8. reply
-    TellUser.text(entry, txt6, bot)
-
-    // 9. add assistant chat
+    // 2. reply to user
+    TellUser.text(aiParam.entry, txt6, bot)
+    
+    // 3. add assistant chat
     const apiEndpoint = AiHelper.getApiEndpointFromBot(bot)
     const param9: HelperAssistantMsgParam = {
       roomId,
@@ -629,6 +652,62 @@ class BaseBot {
     const assistantChatId = await AiHelper.addAssistantMsg(param9)
     if(!assistantChatId) return
 
+    return assistantChatId
+  }
+
+
+
+  protected async postRun(postParam: PostRunParam): Promise<AiRunSuccess | undefined> {
+    // 1. get params
+    const { bot, chatCompletion, aiParam } = postParam
+    if(!chatCompletion) return
+    const { room, chatId } = aiParam
+    const roomId = room._id
+    const c = bot.character
+    const firstChoice = chatCompletion.choices[0]
+    if(!firstChoice) {
+      console.warn(`${c} no choice!`)
+      return
+    }
+    const { finish_reason, message } = firstChoice
+    if(!message) return
+    const { tool_calls } = message
+
+    console.warn(`${c} finish reason: ${finish_reason}`)
+    console.log(`usage: `)
+    console.log(chatCompletion.usage)
+    console.log(`message: `)
+    console.log(message)
+    
+    // 2. tool calls
+    if(finish_reason === "tool_calls" && tool_calls) {
+      this._handleToolUse(postParam, tool_calls)
+      return
+    }
+    
+    // 3. can i reply
+    const res3 = await AiHelper.canReply(roomId, chatId)
+    if(!res3) {
+      return {
+        character: c,
+        replyStatus: "has_new_msg",
+        chatCompletion,
+      }
+    }
+    
+    // 4. finish reason is "length"
+    if(finish_reason === "length") {
+      this._toContinue(postParam, message)
+    }
+
+    // 5. finish reason is "content_filter"
+    if(finish_reason === "content_filter") {
+      console.warn(`${c} content filter!`)
+    }
+
+    // 6. otherwise, handle text
+    const assistantChatId = await this._handleAssistantText(chatCompletion, aiParam, bot)
+    
     return { 
       character: c,
       replyStatus: "yes",
@@ -1112,13 +1191,13 @@ class ToolHandler {
   private _aiParam: AiRunParam
   private _bot: AiBot
   private _tool_calls: OaiToolCall[]
-  private _chatCompletion?: OpenAI.Chat.Completions.ChatCompletion
+  private _chatCompletion?: OaiChatCompletion
 
   constructor(
     aiParam: AiRunParam, 
     bot: AiBot,
     tool_calls: OaiToolCall[],
-    chatCompletion?: OpenAI.Chat.Completions.ChatCompletion,
+    chatCompletion?: OaiChatCompletion,
   ) {
     this._aiParam = aiParam
     this._bot = bot
@@ -1659,6 +1738,7 @@ class AiHelper {
     let maxTokens = firstToken * 2
     if(maxTokens < 280) maxTokens = 280
     if(maxTokens > restToken) maxTokens = restToken
+    if(maxTokens > MAX_WX_TOKEN) maxTokens = MAX_WX_TOKEN
     return maxTokens
   }
 
@@ -1683,7 +1763,7 @@ class AiHelper {
     return quota.aiConversationCount
   }
 
-  static getTextFromLLM(res: OpenAI.Chat.ChatCompletion) {
+  static getTextFromLLM(res: OaiChatCompletion) {
     const text = res.choices[0].message.content
     if(!text) return
     return text.trim()
