@@ -56,7 +56,7 @@ const _ = db.command
 const MAX_CHARACTERS = 3
 const MIN_RESERVED_TOKENS = 1600
 const TOKEN_NEED_COMPRESS = 6000
-const MAX_WX_TOKEN = 560   // wx gzh will send 45002 error if we send too many words once
+const MAX_WX_TOKEN = 360  // wx gzh will send 45002 error if we send too many words once
 
 const MAX_TIMES_FREE = 10
 const MAX_TIMES_MEMBERSHIP = 200
@@ -387,7 +387,22 @@ class BaseLLM {
       
       if(typeof errMsg === "string") {
         console.log("errMsg is string!")
-        isRateLimit = errMsg.includes("当前API请求过多，请稍后重试")
+
+        // for zhipu
+        if(!isRateLimit) {
+          isRateLimit = errMsg.includes("当前API请求过多，请稍后重试")
+        }
+        
+        // for moonshot
+        if(!isRateLimit) {
+          isRateLimit = errMsg.includes("please try again after 1 seconds")
+        }
+
+        // fallback
+        if(!isRateLimit) {
+          isRateLimit = errMsg.includes("RateLimitError: 429")
+        }
+        
       }
 
       if(_this._tryTimes < 2 && isRateLimit) {
@@ -599,27 +614,29 @@ class BaseBot {
     if(!usage) return
     const usedTokens = usage.total_tokens
     const { messages } = chatParam
-    const prompts = [...messages]
+    let prompts = [...messages]
     const maxWindowTokens = postParam.bot.maxWindowTokenK * 1000
     let restTokens = maxWindowTokens - usedTokens
     if(restTokens < 1) return
-    if(restTokens < 1024) {
-      const mLength = messages.length
-      if(mLength < 2) return
-      if(mLength < 6) {
-        prompts.splice(1, 1)
-      }
-      else {
-        const deleteNum = Math.floor(mLength / 3)
-        prompts.splice(1, deleteNum)
-      }
+    const mLength = messages.length
+    if(mLength < 2) return
+    if(mLength > 5) {
+      const systemPrompt = messages[0]
+      const tempPrompts = messages.slice(mLength - 3)
+      prompts = [systemPrompt, ...tempPrompts]
     }
     if(restTokens > MAX_WX_TOKEN) {
       restTokens = MAX_WX_TOKEN
     }
 
-    // 2. handle prompts
+    // 2. add "latest message from assistant"
+    // and "Continue" if needed
+    const c = bot.character
     prompts.push(msgFromAssistant)
+    if(c === "wanzhi") {
+      prompts.push({ role: "user", content: "继续 / Continue" })
+    }
+    console.log("restTokens in continue: ", restTokens)
 
     // 3. new chat create param
     const newChatParam: OaiCreateParam = { 
@@ -627,10 +644,11 @@ class BaseBot {
       messages: prompts,
       max_tokens: restTokens,
     }
-    console.warn("continue to chat......")
-    console.log("restTokens: ", restTokens)
     const res3 = await this.chat(newChatParam, bot)
     if(!res3) return
+
+    console.log("see usage in continue......")
+    console.log(res3.usage)
 
     // 4. can i reply
     const res4 = await AiHelper.canReply(aiParam.room._id, aiParam.chatId)
@@ -641,7 +659,7 @@ class BaseBot {
     if(!assistantChatId) return
 
     return { 
-      character: bot.character,
+      character: c,
       replyStatus: "yes",
       chatCompletion, 
       assistantChatId,
@@ -659,6 +677,8 @@ class BaseBot {
     // 1. get text
     const txt6 = AiHelper.getTextFromLLM(chatCompletion)
     if(!txt6) return
+
+    console.log(`${c} assistant text.length: ${txt6.length}`)
 
     // 2. reply to user
     TellUser.text(aiParam.entry, txt6, bot)
@@ -701,8 +721,6 @@ class BaseBot {
     console.warn(`${c} finish reason: ${finish_reason}`)
     console.log(`usage: `)
     console.log(chatCompletion.usage)
-    console.log(`message: `)
-    console.log(message)
     
     // 2. tool calls
     if(finish_reason === "tool_calls" && tool_calls) {
@@ -1095,6 +1113,8 @@ class AiCompressor {
       token += AiHelper.calculateChatToken(v)
       if(v.infoType === "summary") break
     }
+
+    console.log("do i need compress: ", token)
 
     if(token > TOKEN_NEED_COMPRESS) return true
     return false
