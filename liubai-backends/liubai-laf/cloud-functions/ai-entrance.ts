@@ -66,16 +66,12 @@ const MIN_30 = MINUTE * 30
 
 /************************** types ************************/
 
-interface HistoryData {
-  chats: Table_AiChat[]    // desc by insertedStamp
-}
-
 // pass it to aiController.run() and bot.run()
 interface AiRunParam {
   entry: AiEntry
   room: Table_AiRoom
   chatId: string
-  historyData: HistoryData
+  chats: Table_AiChat[]
 }
 
 interface AiRunSuccess {
@@ -162,7 +158,7 @@ export async function enter_ai(
 
   // 7. run AI!
   const controller = new AiController()
-  controller.run({ entry, room, chatId, historyData: res6 })
+  controller.run({ entry, room, chatId, chats: res6 })
 
 }
 
@@ -453,8 +449,7 @@ class BaseBot {
 
   private _getBotAndChats(param: AiRunParam) {
     // 1. get params
-    const { historyData } = param
-    let { chats } = historyData
+    let { chats } = param
     const _this = this
     let bots = [..._this._bots]
 
@@ -604,7 +599,7 @@ class BaseBot {
     }
   }
 
-  private async _toContinue(
+  private async _autoContinue(
     postParam: PostRunParam,
     msgFromAssistant: OaiMessage,
   ) {
@@ -740,7 +735,7 @@ class BaseBot {
     
     // 4. finish reason is "length"
     if(finish_reason === "length") {
-      this._toContinue(postParam, message)
+      this._autoContinue(postParam, message)
     }
 
     // 5. finish reason is "content_filter"
@@ -986,13 +981,13 @@ class AiController {
       return false
     }
 
-    // 2. compress history data
-    const needCompress = AiCompressor.doINeedCompress(param.historyData.chats)
+    // 2. compress chats
+    const needCompress = AiCompressor.doINeedCompress(param.chats)
     if(needCompress) {
       console.log("get to compress..............")
-      const newHistoryData = await AiCompressor.run(param)
-      if(!newHistoryData) return
-      param.historyData = newHistoryData
+      const newChats = await AiCompressor.run(param)
+      if(!newChats) return
+      param.chats = newChats
       const res2 = await AiHelper.canReply(room._id, chatId)
       if(!res2) {
         console.warn("we don't need to reply because ")
@@ -1005,8 +1000,11 @@ class AiController {
     const promises: Promise<AiRunSuccess | undefined>[] = []
     for(let i=0; i<newCharacters.length; i++) {
       const c = newCharacters[i]
-      const h3 = valTool.copyObject(param.historyData)
-      const newParam: AiRunParam = { ...param, historyData: h3 }
+      const _chats = valTool.copyObject(param.chats)
+      const newParam: AiRunParam = { 
+        ...param,
+        chats: _chats,
+      }
 
       if(c === "deepseek") {
         const bot1 = new BotDeepSeek()
@@ -1123,11 +1121,10 @@ class AiCompressor {
 
   static async run(
     param: AiRunParam,
-  ): Promise<HistoryData | undefined> {
+  ): Promise<Table_AiChat[] | undefined> {
     const _env = process.env
-    const { historyData, entry, room } = param
+    const { chats, entry, room } = param
     const { user } = entry
-    const { chats } = historyData
 
     // 1. get the two system prompts
     const { p } = aiI18nShared({ type: "compress", user })
@@ -1222,8 +1219,8 @@ class AiCompressor {
     if(!chatId7) return
     newChats.push({ _id: chatId7, ...data7 })
 
-    // 8. return the new history data
-    return { chats: newChats }
+    // 8. return the new chats
+    return newChats
   }
 }
 
@@ -1568,7 +1565,7 @@ class AiHelper {
 
   static async getLatestChat(
     roomId: string,
-  ): Promise<HistoryData> {
+  ): Promise<Table_AiChat[]> {
     const col = db.collection("AiChat")
     const q1 = col.where({ roomId }).orderBy("sortStamp", "desc")
     const res1 = await q1.limit(50).get<Table_AiChat>()
@@ -1596,7 +1593,7 @@ class AiHelper {
       chats.push(v)
     }
 
-    return { chats }
+    return chats
   }
 
   static calculateTextToken(text: string) {
