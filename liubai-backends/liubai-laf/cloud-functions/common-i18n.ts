@@ -274,7 +274,7 @@ export const aiLang: LangAtom = {
     "quota_warning": "免费版共有 {freeTimes} 轮对话机会\n购买会员畅享每月 {membershipTimes} 轮对话！同时解锁留白记事所有权益。\n<a href='{link}'>戳我立即解锁</a>",
     "deploy_tip": "若你想给自己的公众号部署一套留白记事\n<a href='{link}'>欢迎咨询</a>",
     "quota_warning_2": "您已使用 {membershipTimes} 轮会员版对话额度。续费会员，可将“已使用额度”归零！\n<a href='{link}'>立即续费</a>",
-    "cannot_read_images": "我目前没有识别图片的能力",
+    "cannot_read_images": "我目前没有识图的能力",
     "history_cleared": "已清空前面的历史记录",
     "add_note_only_desc": "{botName}请求添加笔记:\n{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
     "add_note_with_title": "{botName}请求添加笔记\n\n标题：{title}\n详情：{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",

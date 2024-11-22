@@ -626,6 +626,11 @@ export type AiAbility = "chat" | "text_to_image" | "image_to_text" | "tool_use"
 
 export type AiMsgType = "text" | "image" | "voice"
 
+export type AiCommandByHuman = "kick" | "add" | "clear_history" 
+  | "more_operations" | "continue"
+
+export type AiFinishReason = "stop" | "length"
+
 export interface AiUsage {
   cached_tokens?: number
   completion_tokens: number
@@ -1532,6 +1537,7 @@ export interface Table_AiChat extends BaseTable {
   funcName?: string        // like "add_todo"
   funcJson?: Record<string, any>    // we have to filter from LLM response
   tool_calls?: OaiToolCall[]
+  finish_reason?: AiFinishReason
 
   // about human
   userId?: string

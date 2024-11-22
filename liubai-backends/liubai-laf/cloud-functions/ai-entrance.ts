@@ -5,6 +5,7 @@ import {
   type AiCharacter,
   type AiUsage,
   type AiEntry,
+  type AiCommandByHuman,
   type OaiPrompt,
   type OaiToolCall,
   type OaiMessage,
@@ -22,6 +23,7 @@ import {
   Sch_AiToolAddNoteParam,
   Sch_AiToolAddTodoParam,
   Sch_AiToolAddCalendarParam,
+  AiFinishReason,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -83,7 +85,7 @@ interface AiRunSuccess {
 
 type AiRunResults = Array<AiRunSuccess | undefined>
 
-interface HelperAssistantMsgParam {
+interface AiHelperAssistantMsgParam {
   roomId: string
   text?: string
   model: string
@@ -94,10 +96,11 @@ interface HelperAssistantMsgParam {
   funcName?: string
   funcJson?: Record<string, any>
   tool_calls?: OaiToolCall[]
+  finish_reason?: AiFinishReason
 }
 
 interface AiMenuItem {
-  operation: "kick" | "add" | "clear_history" | "more_operations"
+  operation: AiCommandByHuman
   character?: AiCharacter
 }
 
@@ -137,8 +140,10 @@ export async function enter_ai(
   if(msg_type === "voice" && !file_base64) return
 
   // 2. check out directive
-  const isDirective = AiDirective.check(entry)
-  if(isDirective) return
+  const theDirective = AiDirective.check(entry)
+  if(theDirective && theDirective !== "continue") {
+    return
+  }
 
   // 3. check out quota
   const isQuotaEnough = await AiHelper.checkQuota(entry)
@@ -148,6 +153,13 @@ export async function enter_ai(
   const room = await AiHelper.getMyAiRoom(entry)
   if(!room) return
   const roomId = room._id
+
+  // 4.1 check out if it's "continue" command
+  if(theDirective === "continue") {
+    const handler4_1 = new ContinueHandler(entry, room)
+    handler4_1.run()
+    return
+  }
 
   // 5. add the current message into db
   const chatId = await AiHelper.addUserMsg(entry, roomId)
@@ -186,35 +198,47 @@ function preCheck() {
 /** check out if it's a directive, like "召唤..." */
 class AiDirective {
 
-  static check(entry: AiEntry) {
+  static check(
+    entry: AiEntry
+  ): AiCommandByHuman | undefined {
 
     // 1. get text
     const text = entry.text
-    if(!text) return false
+    if(!text) return
 
     // 2. is it a kick directive?
     const text2 = text.trim().replace("+", " ")
     const botKicked = this.isKickBot(text2)
     if(botKicked) {
       this.toKickBot(entry, botKicked)
-      return true
+      return "kick"
     }
 
     // 3. is it an adding directive?
     const botAdded = this.isAddBot(text2)
     if(botAdded) {
       this.toAddBot(entry, botAdded)
-      return true
+      return "add"
     }
 
     // 4. is it clear directive?
     const res4 = this.isClear(text2)
     if(res4) {
       this.toClear(entry)
-      return true
+      return "clear_history"
     }
 
-    return false
+    // 5. is it continue directive?
+    const res5 = this.isContinue(text2)
+    if(res5) {
+      return "continue"
+    }
+
+  }
+
+  private static isContinue(text: string) {
+    const strs = ["继续", "繼續", "Continue"]
+    return strs.includes(text)
   }
 
   private static async toKickBot(entry: AiEntry, bot: AiBot) {
@@ -680,7 +704,7 @@ class BaseBot {
     
     // 3. add assistant chat
     const apiEndpoint = AiHelper.getApiEndpointFromBot(bot)
-    const param9: HelperAssistantMsgParam = {
+    const param9: AiHelperAssistantMsgParam = {
       roomId,
       text: txt6,
       model: bot.model,
@@ -688,6 +712,7 @@ class BaseBot {
       usage: chatCompletion.usage,
       requestId: chatCompletion.id,
       baseUrl: apiEndpoint?.baseURL,
+      finish_reason: AiHelper.getFinishReason(chatCompletion),
     }
     const assistantChatId = await AiHelper.addAssistantMsg(param9)
     if(!assistantChatId) return
@@ -735,7 +760,7 @@ class BaseBot {
     
     // 4. finish reason is "length"
     if(finish_reason === "length") {
-      this._autoContinue(postParam, message)
+      // this._autoContinue(postParam, message)
     }
 
     // 5. finish reason is "content_filter"
@@ -1094,8 +1119,56 @@ class AiController {
     TellUser.menu(entry, prefixMessage, menuList, suffixMessage)
   }
 
+}
+
+/*********************** Contine by Human ************************/
+
+interface ContinueTmpItem {
+  character: AiCharacter
+  chats: Table_AiChat[]
+}
+
+class ContinueHandler {
+
+  private _entry: AiEntry
+  private _room: Table_AiRoom
+
+  constructor(entry: AiEntry, room: Table_AiRoom) {
+    this._entry = entry
+    this._room = room
+  }
+
+  async run() {
+    const roomId = this._room._id
+    const entry = this._entry
+
+    // 1. get latest 10 chats
+    const chats = await AiHelper.getLatestChat(roomId, 10)
+    if(chats.length < 1) return
+
+    // 2. find characters and their chats to continue
+    const list: ContinueTmpItem[] = []
+    for(let i=0; i<chats.length; i++) {
+      const v = chats[i]
+      if(v.infoType === "user") break
+      if(v.infoType !== "assistant" || v.finish_reason !== "length") continue
+      const c = v.character
+      if(!c) continue
+      const v2 = list.find(v3 => v3.character === c)
+      if(v2) continue
+      const newChats = valTool.copyObject(chats.slice(i))
+      list.push({ character: c, chats: newChats })
+    }
+    if(list.length < 1) return
+
+    
+
+
+
+  }
 
 }
+
 
 
 /*********************** AI Compressor ************************/
@@ -1255,7 +1328,7 @@ class ToolHandler {
     const bot = this._bot
     const chatCompletion = this._chatCompletion
     const apiEndpoint = AiHelper.getApiEndpointFromBot(bot)
-    const arg: HelperAssistantMsgParam = {
+    const arg: AiHelperAssistantMsgParam = {
       roomId: room._id,
       model: bot.model,
       character: bot.character,
@@ -1541,7 +1614,7 @@ class AiHelper {
   }
 
   static async addAssistantMsg(
-    param: HelperAssistantMsgParam,
+    param: AiHelperAssistantMsgParam,
   ) {
     const b1 = getBasicStampWhileAdding()
     const data1: Partial_Id<Table_AiChat> = {
@@ -1558,6 +1631,7 @@ class AiHelper {
       funcName: param.funcName,
       funcJson: param.funcJson,
       tool_calls: param.tool_calls,
+      finish_reason: param.finish_reason,
     }
     const chatId = await this.addChat(data1)
     return chatId
@@ -1565,10 +1639,11 @@ class AiHelper {
 
   static async getLatestChat(
     roomId: string,
+    limit: number = 50,
   ): Promise<Table_AiChat[]> {
     const col = db.collection("AiChat")
     const q1 = col.where({ roomId }).orderBy("sortStamp", "desc")
-    const res1 = await q1.limit(50).get<Table_AiChat>()
+    const res1 = await q1.limit(limit).get<Table_AiChat>()
     const results = res1.data
     const chats: Table_AiChat[] = []
     let imageNum = 0
@@ -1809,6 +1884,13 @@ class AiHelper {
     const text = res.choices[0].message.content
     if(!text) return
     return text.trim()
+  }
+
+  static getFinishReason(
+    res: OaiChatCompletion
+  ): AiFinishReason | undefined {
+    const reason = res.choices?.[0]?.finish_reason
+    if(reason === "stop" || reason === "length") return reason
   }
 
   static getKickCharacters(
