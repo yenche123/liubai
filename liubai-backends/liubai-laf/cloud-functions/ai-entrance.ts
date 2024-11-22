@@ -72,8 +72,9 @@ const MIN_30 = MINUTE * 30
 interface AiRunParam {
   entry: AiEntry
   room: Table_AiRoom
-  chatId: string
+  chatId?: string
   chats: Table_AiChat[]
+  isContinueCommand?: boolean
 }
 
 interface AiRunSuccess {
@@ -156,8 +157,8 @@ export async function enter_ai(
 
   // 4.1 check out if it's "continue" command
   if(theDirective === "continue") {
-    const handler4_1 = new ContinueHandler(entry, room)
-    handler4_1.run()
+    const controller4_1 = new ContinueController(entry, room)
+    controller4_1.run()
     return
   }
 
@@ -192,6 +193,39 @@ function preCheck() {
   }
 
   return true
+}
+
+
+function mapBots(
+  c: AiCharacter,
+  aiParam: AiRunParam,
+  promises: Promise<AiRunSuccess | undefined>[],
+) {
+  if(c === "deepseek") {
+    const bot1 = new BotDeepSeek()
+    const pro1 = bot1.run(aiParam)
+    promises.push(pro1)
+  }
+  else if(c === "kimi") {
+    const bot2 = new BotMoonshot()
+    const pro2 = bot2.run(aiParam)
+    promises.push(pro2)
+  }
+  else if(c === "wanzhi") {
+    const bot3 = new BotYi()
+    const pro3 = bot3.run(aiParam)
+    promises.push(pro3)
+  }
+  else if(c === "yuewen") {
+    const bot4 = new BotStepfun()
+    const pro4 = bot4.run(aiParam)
+    promises.push(pro4)
+  }
+  else if(c === "zhipu") {
+    const bot5 = new BotZhipu()
+    const pro5 = bot5.run(aiParam)
+    promises.push(pro5)
+  }
 }
 
 
@@ -670,7 +704,7 @@ class BaseBot {
     console.log(res3.usage)
 
     // 4. can i reply
-    const res4 = await AiHelper.canReply(aiParam.room._id, aiParam.chatId)
+    const res4 = await AiHelper.canReply(aiParam)
     if(!res4) return
     
     // 5. handle text from response
@@ -720,14 +754,10 @@ class BaseBot {
     return assistantChatId
   }
 
-
-
   protected async postRun(postParam: PostRunParam): Promise<AiRunSuccess | undefined> {
     // 1. get params
     const { bot, chatCompletion, aiParam } = postParam
     if(!chatCompletion) return
-    const { room, chatId } = aiParam
-    const roomId = room._id
     const c = bot.character
     const firstChoice = chatCompletion.choices[0]
     if(!firstChoice) {
@@ -749,7 +779,7 @@ class BaseBot {
     }
     
     // 3. can i reply
-    const res3 = await AiHelper.canReply(roomId, chatId)
+    const res3 = await AiHelper.canReply(aiParam, bot)
     if(!res3) {
       return {
         character: c,
@@ -759,7 +789,7 @@ class BaseBot {
     }
     
     // 4. finish reason is "length"
-    if(finish_reason === "length") {
+    if(finish_reason === "length" && !aiParam.isContinueCommand) {
       // this._autoContinue(postParam, message)
     }
 
@@ -923,6 +953,9 @@ class BotYi extends BaseBot {
     const model = bot.model
 
     // 3. handle other things
+    if(aiParam.isContinueCommand) {
+      prompts.push({ role: "user", content: "Continue / 继续" })
+    }
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
@@ -996,7 +1029,7 @@ class BotZhipu extends BaseBot {
 class AiController {
 
   async run(param: AiRunParam) {
-    const { room, entry, chatId } = param
+    const { room, entry } = param
 
     // 1. check bots in the room
     let characters = room.characters
@@ -1013,7 +1046,7 @@ class AiController {
       const newChats = await AiCompressor.run(param)
       if(!newChats) return
       param.chats = newChats
-      const res2 = await AiHelper.canReply(room._id, chatId)
+      const res2 = await AiHelper.canReply(param)
       if(!res2) {
         console.warn("we don't need to reply because ")
         console.log("there is a new message after compressing")
@@ -1030,33 +1063,9 @@ class AiController {
         ...param,
         chats: _chats,
       }
-
-      if(c === "deepseek") {
-        const bot1 = new BotDeepSeek()
-        const pro1 = bot1.run(newParam)
-        promises.push(pro1)
-      }
-      else if(c === "kimi") {
-        const bot2 = new BotMoonshot()
-        const pro2 = bot2.run(newParam)
-        promises.push(pro2)
-      }
-      else if(c === "wanzhi") {
-        const bot3 = new BotYi()
-        const pro3 = bot3.run(newParam)
-        promises.push(pro3)
-      }
-      else if(c === "yuewen") {
-        const bot4 = new BotStepfun()
-        const pro4 = bot4.run(newParam)
-        promises.push(pro4)
-      }
-      else if(c === "zhipu") {
-        const bot5 = new BotZhipu()
-        const pro5 = bot5.run(newParam)
-        promises.push(pro5)
-      }
+      mapBots(c, newParam, promises)
     }
+    if(promises.length < 1) return
 
     // 3.1 send "typing" state
     TellUser.typing(entry)
@@ -1128,7 +1137,7 @@ interface ContinueTmpItem {
   chats: Table_AiChat[]
 }
 
-class ContinueHandler {
+class ContinueController {
 
   private _entry: AiEntry
   private _room: Table_AiRoom
@@ -1139,32 +1148,104 @@ class ContinueHandler {
   }
 
   async run() {
-    const roomId = this._room._id
+    const room = this._room
+    const roomId = room._id
     const entry = this._entry
 
     // 1. get latest 10 chats
     const chats = await AiHelper.getLatestChat(roomId, 10)
-    if(chats.length < 1) return
+    if(chats.length < 2) return
 
-    // 2. find characters and their chats to continue
-    const list: ContinueTmpItem[] = []
+    // 1.1 generate a chat list where the first one is the user message, and the rest is messages before that
+    let firstSectionChats: Table_AiChat[] = []
+    let userAndTheRest: Table_AiChat[] = []
     for(let i=0; i<chats.length; i++) {
       const v = chats[i]
-      if(v.infoType === "user") break
-      if(v.infoType !== "assistant" || v.finish_reason !== "length") continue
-      const c = v.character
-      if(!c) continue
-      const v2 = list.find(v3 => v3.character === c)
-      if(v2) continue
-      const newChats = valTool.copyObject(chats.slice(i))
-      list.push({ character: c, chats: newChats })
+      if(v.infoType === "user") {
+        firstSectionChats = chats.slice(0, i)
+        userAndTheRest = chats.slice(i)
+        break
+      }
     }
-    if(list.length < 1) return
+    if(firstSectionChats.length < 1) return
+    if(userAndTheRest.length < 1) return
 
-    
+    // 2. find characters and their chats to continue
+    const stoppedCharacters: AiCharacter[] = []
+    const list: ContinueTmpItem[] = []
+    for(let i=0; i<firstSectionChats.length; i++) {
+      const v = firstSectionChats[i]
+      const { infoType, character, finish_reason } = v
 
+      // 2.1 next if infoType is not assistant or character is undefined
+      if(infoType !== "assistant" || !character) continue
 
+      // 2.2 next if character is stopped
+      const isStopped = stoppedCharacters.includes(character)
+      if(isStopped) continue
 
+      // 2.3 add character into stoppedCharacters if finish_reason is stop
+      if(finish_reason === "stop") {
+        stoppedCharacters.push(character)
+        continue
+      }
+
+      // 2.4 next if finish_reason is not "length"
+      if(finish_reason !== "length") continue
+      
+      // 2.5 add the chat
+      const v2 = list.find(v3 => v3.character === character)
+      if(v2) {
+        v2.chats.push(v)
+        continue
+      }
+      list.push({ character, chats: [v] })
+    }
+
+    // 3. return if list is empty
+    if(list.length < 1) {
+      console.warn("list is empty in ContinueController")
+      return
+    }
+    list.forEach(v => {
+      const copyOfUserAndTheRest = valTool.copyObject(userAndTheRest)
+      v.chats.push(...copyOfUserAndTheRest)
+      console.warn("item of list in ContinueController: ")
+      console.log(v.character)
+      console.log(v.chats)
+    })
+
+    // 4. get promises
+    const promises: Promise<AiRunSuccess | undefined>[] = []
+    for(let i=0; i<list.length; i++) {
+      const v = list[i]
+      const c = v.character
+      const newParam: AiRunParam = {
+        entry,
+        room,
+        chats: v.chats,
+        isContinueCommand: true,
+      }
+      mapBots(c, newParam, promises)
+    }
+    if(promises.length < 1) return
+
+    // 3.1 send "typing" state
+    TellUser.typing(entry)
+
+    // 4. wait for all promises
+    const res4 = await Promise.all(promises)
+    let hasEverSucceeded = false
+    for(let i=0; i<res4.length; i++) {
+      const v = res4[i]
+      if(v && v.replyStatus === "yes") {
+        hasEverSucceeded = true
+      }
+    }
+    if(!hasEverSucceeded) return
+
+    // 5. add quota for user
+    AiHelper.addQuotaForUser(entry)
   }
 
 }
@@ -1426,7 +1507,6 @@ class ToolHandler {
   }
 
 }
-
 
 
 class AiHelper {
@@ -1709,10 +1789,13 @@ class AiHelper {
     return token
   }
 
+  // @param bot is required if isContinueCommand is true
   static async canReply(
-    roomId: string,
-    chatId: string,
+    aiParam: AiRunParam,
+    bot?: AiBot,
   ) {
+    const { room, chatId, isContinueCommand } = aiParam
+    const roomId = room._id
     const col = db.collection("AiChat")
     const q1 = col.where({ roomId }).orderBy("sortStamp", "desc")
     const res1 = await q1.limit(10).get<Table_AiChat>()
@@ -1721,11 +1804,23 @@ class AiHelper {
     let res = false
     for(let i=0; i<chats.length; i++) {
       const v = chats[i]
-      if(v.infoType === "user") {
+      const { infoType } = v
+
+      if(isContinueCommand) {
+        if(!bot) break
+        if(bot.character === v.character) {
+          if(v.finish_reason === "stop") break
+          res = true
+          break
+        }
+        continue
+      }
+
+      if(infoType === "user") {
         res = v._id === chatId
         break
       }
-      if(v.infoType === "clear") {
+      if(infoType === "clear") {
         break
       }
     }
