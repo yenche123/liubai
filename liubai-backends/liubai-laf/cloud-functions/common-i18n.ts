@@ -281,6 +281,7 @@ export const aiLang: LangAtom = {
     "add_todo": "{botName}请求添加待办:\n{title}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
     "added_note": "【用户已同意创建笔记】",
     "added_todo": "【用户已同意创建待办】",
+    "too_many_words": "这么多字！它们思考不来💭\n（单条文本最多支持 3000 字符）",
   },
   "zh-Hant": {
     "privacy_title": "🔓 隱私提示:",
@@ -299,6 +300,7 @@ export const aiLang: LangAtom = {
     "add_todo": "{botName}請求新增待辦:\n{title}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 編輯</a>",
     "added_note": "【使用者已同意新增筆記】",
     "added_todo": "【使用者已同意新增待辦】",
+    "too_many_words": "這麼多字！它們思考不來💭\n（單則文本最多支持 3000 字元）",
   },
   "en": {
     "privacy_title": "🔓 Privacy:",
@@ -317,6 +319,7 @@ export const aiLang: LangAtom = {
     "add_todo": "{botName} requests to add a todo:\n{title}\n\n<a href='{agreeLink}'>🆗 Agree</a>    <a href='{editLink}'>✏️ Edit</a>",
     "added_note": "【User has agreed to create a note】",
     "added_todo": "【User has agreed to create a todo】",
+    "too_many_words": "Too many words to think💭\n(Text supports up to 3000 characters.)",
   }
 }
 

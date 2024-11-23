@@ -59,6 +59,7 @@ const MAX_CHARACTERS = 3
 const MIN_RESERVED_TOKENS = 1600
 const TOKEN_NEED_COMPRESS = 6000
 const MAX_WX_TOKEN = 360  // wx gzh will send 45002 error if we send too many words once
+const MAX_WORDS = 3000
 
 const MAX_TIMES_FREE = 10
 const MAX_TIMES_MEMBERSHIP = 200
@@ -140,6 +141,12 @@ export async function enter_ai(
   if(msg_type === "image" && !image_url) return
   if(msg_type === "voice" && !file_base64) return
 
+  // 1.1 check out text
+  if(msg_type === "text" && text) {
+    const res1_1 = preCheckText(text, entry)
+    if(!res1_1) return
+  }
+
   // 2. check out directive
   const theDirective = AiDirective.check(entry)
   if(theDirective && theDirective !== "continue") {
@@ -189,6 +196,17 @@ function preCheck() {
   const domain = _env.LIU_DOMAIN
   if(!domain) {
     console.warn("domain is not set")
+    return false
+  }
+
+  return true
+}
+
+function preCheckText(text: string, entry: AiEntry) {
+  if(text.length > MAX_WORDS) {
+    const { t } = useI18n(aiLang, { user: entry.user })
+    const msg = t("too_many_words")
+    TellUser.text(entry, msg)
     return false
   }
 
