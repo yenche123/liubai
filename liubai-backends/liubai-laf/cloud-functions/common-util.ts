@@ -831,6 +831,36 @@ export function getSummary(
   return text
 }
 
+export class MarkdownParser {
+
+  static mdToText(md: string) {
+    // Convert bold/strong text (**** or **) to Chinese quotes 「」
+    md = md.replace(/\*\*\*\*([^*]+)\*\*\*\*/g, '「$1」');
+    md = md.replace(/\*\*([^*]+)\*\*/g, '「$1」');
+
+    // Convert unordered list items to special character
+    md = md.replace(/^[\s]*[-*+][\s]+(.+)$/gm, ' • $1');
+    
+    // Convert headings to plain text
+    md = md.replace(/^#{1,6}\s+(.+)$/gm, '$1');
+
+    return md
+  }
+
+  static mdToWxGzhText(md: string) {
+    if (!md) return '';
+
+    md = this.mdToText(md)
+    
+    // Convert markdown links to WeChat compatible <a> tags
+    // [link text](URL) becomes <a href="URL">link text</a>
+    md = md.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+    
+    return md
+  }
+
+} 
+
 
 /********************* 一些 “归一化” 相关的函数 *****************/
 
@@ -1881,7 +1911,6 @@ function decryptWithAES(
   catch(err) {
     console.warn("setAuthTag 异常......")
     console.log(err)
-    console.log(" ")
     return null
   }
 

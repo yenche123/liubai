@@ -34,6 +34,7 @@ import {
   createAvailableOrderId,
   LiuDateUtil,
   getLiuDoman,
+  MarkdownParser,
 } from "@/common-util"
 import { WxGzhSender } from "@/service-send"
 import { 
@@ -433,7 +434,7 @@ class BaseLLM {
 
   public async chat(
     params: OpenAI.Chat.ChatCompletionCreateParams
-  ) {
+  ): Promise<OaiChatCompletion | undefined> {
     const _this = this
     const client = _this._client
     if(!client) return
@@ -477,11 +478,11 @@ class BaseLLM {
         
       }
 
-      if(_this._tryTimes < 2 && isRateLimit) {
-        setTimeout(() => {
-          console.warn("wait for a second and retry!")
-          _this.chat(params)
-        }, 1000)
+      if(_this._tryTimes < 3 && isRateLimit) {
+        console.log("getting to try again!")
+        await valTool.waitMilli(1000)
+        const triedRes = await _this.chat(params)
+        return triedRes
       }
     }
   }
@@ -1046,8 +1047,8 @@ class BotZhipu extends BaseBot {
 /*********************** AI Controller ************************/
 class AiController {
 
-  async run(param: AiRunParam) {
-    const { room, entry } = param
+  async run(aiParam: AiRunParam) {
+    const { room, entry } = aiParam
 
     // 1. check bots in the room
     let characters = room.characters
@@ -1058,13 +1059,14 @@ class AiController {
     }
 
     // 2. compress chats
-    const needCompress = AiCompressor.doINeedCompress(param.chats)
+    const needCompress = AiCompressor.doINeedCompress(aiParam.chats)
     if(needCompress) {
       console.log("get to compress..............")
-      const newChats = await AiCompressor.run(param)
-      if(!newChats) return
-      param.chats = newChats
-      const res2 = await AiHelper.canReply(param)
+      const newChats = await AiCompressor.run(aiParam)
+      if(newChats) {
+        aiParam.chats = newChats
+      }
+      const res2 = await AiHelper.canReply(aiParam)
       if(!res2) {
         console.warn("we don't need to reply because ")
         console.log("there is a new message after compressing")
@@ -1076,9 +1078,9 @@ class AiController {
     const promises: Promise<AiRunSuccess | undefined>[] = []
     for(let i=0; i<newCharacters.length; i++) {
       const c = newCharacters[i]
-      const _chats = valTool.copyObject(param.chats)
+      const _chats = valTool.copyObject(aiParam.chats)
       const newParam: AiRunParam = { 
-        ...param,
+        ...aiParam,
         chats: _chats,
       }
       mapBots(c, newParam, promises)
@@ -1102,16 +1104,16 @@ class AiController {
     // 5. add quota for user
     const num5 = AiHelper.addQuotaForUser(entry)
     if((num5 % 3) === 2) {
-      this.sendFallbackMenu(param, res4)
+      this.sendFallbackMenu(aiParam, res4)
     }
 
   }
 
   private async sendFallbackMenu(
-    param: AiRunParam,
+    aiParam: AiRunParam,
     results: AiRunResults,
   ) {
-    const { entry, room } = param
+    const { entry, room } = aiParam
     const user = entry.user
     const { t } = useI18n(aiLang, { user })
     const characters = room.characters
@@ -1292,10 +1294,10 @@ class AiCompressor {
 
 
   static async run(
-    param: AiRunParam,
+    aiParam: AiRunParam,
   ): Promise<Table_AiChat[] | undefined> {
     const _env = process.env
-    const { chats, entry, room } = param
+    const { chats, entry, room } = aiParam
     const { user } = entry
 
     // 1. get the two system prompts
@@ -2291,6 +2293,12 @@ class TellUser {
 
     // 1. send to wx gzh
     if(wx_gzh_openid) {
+      console.warn("markdown: ")
+      console.log(text)
+      text = MarkdownParser.mdToWxGzhText(text)
+      console.warn("wx gzh text: ")
+      console.log(text)
+
       const obj1: Wx_Gzh_Send_Msg = {
         msgtype: "text",
         text: { content: text },
