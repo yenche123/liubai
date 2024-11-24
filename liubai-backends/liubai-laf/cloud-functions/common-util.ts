@@ -833,6 +833,47 @@ export function getSummary(
 
 export class MarkdownParser {
 
+
+  private static _doesTheCharNeedTrim(char: string) {
+    if(char === " " || char === "\n" || char === "*") {
+      return true
+    }
+    else if(char === "-" || char === "•") {
+      return true
+    }
+    return false
+  }
+
+  private static _trimText(text: string) {
+    // trim start
+    for(let i=0; i<text.length; i++) {
+      const char = text[i]
+      const res = this._doesTheCharNeedTrim(char)
+      if(res) {
+        text = text.substring(1)
+        i--
+      }
+      else {
+        break
+      }
+    }
+
+    // trim end
+    for(let i=text.length-1; i>=0; i--) {
+      const char = text[i]
+      const res = this._doesTheCharNeedTrim(char)
+      if(res) {
+        text = text.substring(0, i)
+      }
+      else {
+        break
+      }
+    }
+  
+    return text
+  }
+
+
   static mdToText(md: string) {
     // Convert bold/strong text (**** or **) to Chinese quotes 「」
     md = md.replace(/\*\*\*\*([^*]+)\*\*\*\*/g, '「$1」');
@@ -843,6 +884,9 @@ export class MarkdownParser {
     
     // Convert headings to plain text
     md = md.replace(/^#{1,6}\s+(.+)$/gm, '$1');
+
+    // trim “* - \n” in the beginning and ending
+    md = this._trimText(md)
 
     return md
   }
