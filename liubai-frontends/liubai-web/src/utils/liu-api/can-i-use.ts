@@ -120,13 +120,24 @@ async function hasInstalledPWA(): Promise<LiuYorN> {
 }
 
 function canAddToHomeScreenInSafari() {
-  const { isSafari, isInWebView, browserVersion } = getCharacteristic()
+  const { 
+    isSafari, 
+    isInWebView, 
+    browserVersion,
+    isIOS,
+  } = getCharacteristic()
   if(isInWebView) return
   if(!isSafari) return
   if(!browserVersion) return
 
-  const res = valTool.compareVersion(browserVersion, "17.0")
-  return res >= 0
+  // for PC
+  const res1 = valTool.compareVersion(browserVersion, "17.0")
+  if(res1 >= 0) return true
+
+  // for mobile
+  if(!isIOS) return false
+  const res2 = valTool.compareVersion(browserVersion, "15.0")
+  return res2 >= 0
 }
 
 

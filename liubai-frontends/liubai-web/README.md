@@ -35,6 +35,10 @@ Build! Anyway
 11. VS Code 设置: 搜索 `WordSeperator`，然后将其改成 `~!@#%^&*()=+[{]}\|;:'",.<>/?
 其实就是去掉 `$` 和 `-`
 
+12. Remove apple-touch-icon from index.html because it takes precedence over manifest-declared icons.
+see: "manifest-declared icons"
+https://webkit.org/blog/12445/new-webkit-features-in-safari-15-4/#:~:text=takes%20precedence%20over-,manifest%2Ddeclared%20icons,-in%20order%20to
+
 ## 彻底解决 pnpm 网络请求超时的问题
 
 关闭 ipv6! 改为 `仅本地连接`
