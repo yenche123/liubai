@@ -875,9 +875,15 @@ export class MarkdownParser {
 
 
   static mdToText(md: string) {
-    // Convert bold/strong text (**** or **) to Chinese quotes 「」
-    md = md.replace(/\*\*\*\*([^*\n]+)\*\*\*\*/g, '「$1」');
-    md = md.replace(/\*\*([^*\n]+)\*\*/g, '「$1」');
+    // Convert bold/strong text (**** or **) to Chinese quotes 「」, but skip if already has quotes
+    md = md.replace(/\*\*\*\*([^*\n]+)\*\*\*\*/g, (match, content) => {
+      if (content.match(/^[「《【"“(（]/)) return content;
+      return `「${content}」`;
+    });
+    md = md.replace(/\*\*([^*\n]+)\*\*/g, (match, content) => {
+      if (content.match(/^[「《【"“(（]/)) return content;
+      return `「${content}」`;
+    });
 
     // Convert unordered list items to special character while preserving indentation
     md = md.replace(/^(\s*)[-*+][\s]+(.+)$/gm, (match, spaces, content) => {
