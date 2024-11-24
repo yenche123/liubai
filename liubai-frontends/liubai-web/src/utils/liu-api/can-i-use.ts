@@ -124,7 +124,7 @@ function canAddToHomeScreenInSafari() {
     isSafari, 
     isInWebView, 
     browserVersion,
-    isIOS,
+    isMobile,
   } = getCharacteristic()
   if(isInWebView) return
   if(!isSafari) return
@@ -135,8 +135,8 @@ function canAddToHomeScreenInSafari() {
   if(res1 >= 0) return true
 
   // for mobile
-  if(!isIOS) return false
-  const res2 = valTool.compareVersion(browserVersion, "15.0")
+  if(!isMobile) return false
+  const res2 = valTool.compareVersion(browserVersion, "14.0")
   return res2 >= 0
 }
 
