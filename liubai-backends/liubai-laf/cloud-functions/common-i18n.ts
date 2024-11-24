@@ -282,6 +282,7 @@ export const aiLang: LangAtom = {
     "added_note": "【用户已同意创建笔记】",
     "added_todo": "【用户已同意创建待办】",
     "too_many_words": "这么多字！它们思考不来💭\n（单条文本最多支持 3000 字符）",
+    "no_more_to_continue": "没有更多可以继续了",
   },
   "zh-Hant": {
     "privacy_title": "🔓 隱私提示:",
@@ -301,6 +302,7 @@ export const aiLang: LangAtom = {
     "added_note": "【使用者已同意新增筆記】",
     "added_todo": "【使用者已同意新增待辦】",
     "too_many_words": "這麼多字！它們思考不來💭\n（單則文本最多支持 3000 字元）",
+    "no_more_to_continue": "沒有更多可以繼續了",
   },
   "en": {
     "privacy_title": "🔓 Privacy:",
@@ -320,6 +322,7 @@ export const aiLang: LangAtom = {
     "added_note": "【User has agreed to create a note】",
     "added_todo": "【User has agreed to create a todo】",
     "too_many_words": "Too many words to think💭\n(Text supports up to 3000 characters.)",
+    "no_more_to_continue": "No more to continue",
   }
 }
 

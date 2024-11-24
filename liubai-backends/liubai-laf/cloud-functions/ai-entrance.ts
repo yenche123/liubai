@@ -316,9 +316,19 @@ class AiDirective {
     return botMatched
   }
 
+  private static _areTheyMatched(
+    prefix: string[],
+    text: string,
+  ) {
+    const str = text.toLowerCase()
+    const list = prefix.map(v => v.toLowerCase())
+    return list.includes(str)
+  }
+
   private static isContinue(text: string): AiDirectiveCheckRes | undefined {
     const prefix = ["继续", "繼續", "Continue"]
-    if(prefix.includes(text)) return { theCommand: "continue" }
+    const res1 = this._areTheyMatched(prefix, text)
+    if(res1) return { theCommand: "continue" }
     const botMatched = this._getCommandedBot(prefix, text)
     if(botMatched) {
       return { theCommand: "continue", theBot: botMatched }
@@ -396,7 +406,8 @@ class AiDirective {
 
   private static isClear(text: string) {
     const strs = ["清空上文", "清除上文", "清除上下文", "Clear history",  "Clear context"]
-    return strs.includes(text)
+    const res = this._areTheyMatched(strs, text)
+    return res
   }
 
   private static async toClear(entry: AiEntry) {
@@ -1193,8 +1204,8 @@ class ContinueController {
     const entry = this._entry
     const characterSelected = this._characterSelected
 
-    // 1. get latest 10 chats
-    const chats = await AiHelper.getLatestChat(roomId, 10)
+    // 1. get latest 16 chats
+    const chats = await AiHelper.getLatestChat(roomId, 16)
     if(chats.length < 2) return
 
     // 1.1 generate a chat list where the first one is the user message, and the rest is messages before that
@@ -1250,7 +1261,9 @@ class ContinueController {
 
     // 3. return if list is empty
     if(list.length < 1) {
-      console.warn("list is empty in ContinueController")
+      const { t } = useI18n(aiLang, { user: entry.user })
+      const msg3 = t("no_more_to_continue")
+      TellUser.text(entry, msg3)
       return
     }
     list.forEach(v => {

@@ -865,6 +865,10 @@ export class MarkdownParser {
       if(res) {
         text = text.substring(0, i)
       }
+      else if(char === "#") {
+        text = text.substring(1)
+        i--
+      }
       else {
         break
       }
