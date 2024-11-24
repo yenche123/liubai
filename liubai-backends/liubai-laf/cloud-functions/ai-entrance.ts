@@ -70,6 +70,11 @@ const MIN_30 = MINUTE * 30
 
 /************************** types ************************/
 
+interface AiDirectiveCheckRes {
+  theCommand: AiCommandByHuman
+  theBot?: AiBot
+}
+
 // pass it to aiController.run() and bot.run()
 interface AiRunParam {
   entry: AiEntry
@@ -150,7 +155,7 @@ export async function enter_ai(
 
   // 2. check out directive
   const theDirective = AiDirective.check(entry)
-  if(theDirective && theDirective !== "continue") {
+  if(theDirective && theDirective.theCommand !== "continue") {
     return
   }
 
@@ -164,8 +169,12 @@ export async function enter_ai(
   const roomId = room._id
 
   // 4.1 check out if it's "continue" command
-  if(theDirective === "continue") {
-    const controller4_1 = new ContinueController(entry, room)
+  if(theDirective?.theCommand === "continue") {
+    const controller4_1 = new ContinueController(
+      entry, 
+      room, 
+      theDirective?.theBot?.character
+    )
     controller4_1.run()
     return
   }
@@ -253,7 +262,7 @@ class AiDirective {
 
   static check(
     entry: AiEntry
-  ): AiCommandByHuman | undefined {
+  ): AiDirectiveCheckRes | undefined {
 
     // 1. get text
     const text = entry.text
@@ -264,34 +273,56 @@ class AiDirective {
     const botKicked = this.isKickBot(text2)
     if(botKicked) {
       this.toKickBot(entry, botKicked)
-      return "kick"
+      return { theCommand: "kick", theBot: botKicked }
     }
 
     // 3. is it an adding directive?
     const botAdded = this.isAddBot(text2)
     if(botAdded) {
       this.toAddBot(entry, botAdded)
-      return "add"
+      return { theCommand: "add", theBot: botAdded }
     }
 
     // 4. is it clear directive?
     const res4 = this.isClear(text2)
     if(res4) {
       this.toClear(entry)
-      return "clear_history"
+      return { theCommand: "clear_history" }
     }
 
     // 5. is it continue directive?
     const res5 = this.isContinue(text2)
-    if(res5) {
-      return "continue"
-    }
+    if(res5) return res5
 
   }
 
-  private static isContinue(text: string) {
-    const strs = ["继续", "繼續", "Continue"]
-    return strs.includes(text)
+  private static _getCommandedBot(
+    prefix: string[],
+    text: string,
+  ) {
+    const prefixMatched = prefix.find(v => text.startsWith(v))
+    if(!prefixMatched) return
+
+    const txt1 = text.substring(prefixMatched.length).trim()
+    const txt2 = txt1.toLowerCase()
+    const botMatched = aiBots.find(v => {
+      const name = v.name.toLowerCase()
+      const alias = v.alias.map(v => v.toLowerCase())
+      if(name === txt2) return true
+      if(alias.includes(txt2)) return true
+      return false
+    })
+
+    return botMatched
+  }
+
+  private static isContinue(text: string): AiDirectiveCheckRes | undefined {
+    const prefix = ["继续", "繼續", "Continue"]
+    if(prefix.includes(text)) return { theCommand: "continue" }
+    const botMatched = this._getCommandedBot(prefix, text)
+    if(botMatched) {
+      return { theCommand: "continue", theBot: botMatched }
+    }
   }
 
   private static async toKickBot(entry: AiEntry, bot: AiBot) {
@@ -353,31 +384,14 @@ class AiDirective {
 
   private static isKickBot(text: string) {
     const prefix = ["踢掉", "踢掉", "Kick"]
-    let prefixMatched = prefix.find(v => text.startsWith(v))
-    if(!prefixMatched) return
-
-    const otherText = text.substring(prefixMatched.length).trim()
-    const botMatched = aiBots.find(v => {
-      if(v.name === otherText) return true
-      if(v.alias.includes(otherText)) return true
-      return false
-    })
-
-    return botMatched
+    const botMatched = this._getCommandedBot(prefix, text)
+    return botMatched 
   }
 
   private static isAddBot(text: string) {
     const prefix = ["召唤", "召喚", "Add"]
-    let prefixMatched = prefix.find(v => text.startsWith(v))
-    if(!prefixMatched) return
-
-    const otherText = text.substring(prefixMatched.length).trim()
-    const botMatched = aiBots.find(v => {
-      if(v.name === otherText) return true
-      if(v.alias.includes(otherText)) return true
-      return false
-    })
-    return botMatched
+    const botMatched = this._getCommandedBot(prefix, text)
+    return botMatched 
   }
 
   private static isClear(text: string) {
@@ -1161,59 +1175,71 @@ class ContinueController {
 
   private _entry: AiEntry
   private _room: Table_AiRoom
+  private _characterSelected?: AiCharacter
 
-  constructor(entry: AiEntry, room: Table_AiRoom) {
+  constructor(
+    entry: AiEntry, 
+    room: Table_AiRoom,
+    characterSelected?: AiCharacter
+  ) {
     this._entry = entry
     this._room = room
+    this._characterSelected = characterSelected
   }
 
   async run() {
     const room = this._room
     const roomId = room._id
     const entry = this._entry
+    const characterSelected = this._characterSelected
 
     // 1. get latest 10 chats
     const chats = await AiHelper.getLatestChat(roomId, 10)
     if(chats.length < 2) return
 
     // 1.1 generate a chat list where the first one is the user message, and the rest is messages before that
-    let firstSectionChats: Table_AiChat[] = []
+    let chatsBeforeUser: Table_AiChat[] = []
     let userAndTheRest: Table_AiChat[] = []
     for(let i=0; i<chats.length; i++) {
       const v = chats[i]
       if(v.infoType === "user") {
-        firstSectionChats = chats.slice(0, i)
+        chatsBeforeUser = chats.slice(0, i)
         userAndTheRest = chats.slice(i)
         break
       }
     }
-    if(firstSectionChats.length < 1) return
+    if(chatsBeforeUser.length < 1) return
     if(userAndTheRest.length < 1) return
 
     // 2. find characters and their chats to continue
     const stoppedCharacters: AiCharacter[] = []
     const list: ContinueTmpItem[] = []
-    for(let i=0; i<firstSectionChats.length; i++) {
-      const v = firstSectionChats[i]
+    for(let i=0; i<chatsBeforeUser.length; i++) {
+      const v = chatsBeforeUser[i]
       const { infoType, character, finish_reason } = v
 
       // 2.1 next if infoType is not assistant or character is undefined
       if(infoType !== "assistant" || !character) continue
 
-      // 2.2 next if character is stopped
+      // 2.2 check out if it's the selected character
+      if(characterSelected) {
+        if(character !== characterSelected) continue
+      }
+
+      // 2.3 next if character is stopped
       const isStopped = stoppedCharacters.includes(character)
       if(isStopped) continue
 
-      // 2.3 add character into stoppedCharacters if finish_reason is stop
+      // 2.4 add character into stoppedCharacters if finish_reason is stop
       if(finish_reason === "stop") {
         stoppedCharacters.push(character)
         continue
       }
 
-      // 2.4 next if finish_reason is not "length"
+      // 2.5 next if finish_reason is not "length"
       if(finish_reason !== "length") continue
       
-      // 2.5 add the chat
+      // 2.6 add the chat
       const v2 = list.find(v3 => v3.character === character)
       if(v2) {
         v2.chats.push(v)
@@ -2137,6 +2163,10 @@ class AiHelper {
       }
     }
     return need
+  }
+
+  static doesUserWantOneBotToAnswer(entry: AiEntry) {
+
   }
 
 }
