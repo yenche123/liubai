@@ -54,6 +54,9 @@ const showScrollbarProperty = middleBridge.canShowScrollbarProperty()
   container-type: inline-size;
   container-name: liu-scroll-view;
 
+  /** refer: https://defensivecss.dev/tip/scrollbar-gutter/ */
+  scrollbar-gutter: v-bind("isMobile ? 'auto' : 'stable'");
+
   &::-webkit-scrollbar {
     display: v-bind("isMobile || hiddenScrollBar ? 'none' : 'block'");
   }

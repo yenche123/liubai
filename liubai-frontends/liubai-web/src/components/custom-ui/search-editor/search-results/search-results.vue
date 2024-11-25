@@ -144,6 +144,9 @@ const { isMobile } = liuApi.getCharacteristic()
   overflow-y: auto;
   max-height: max(66vh, 300px);
 
+  /** refer: https://moderncss.dev/12-modern-css-one-line-upgrades/#overscroll-behavior */
+  overscroll-behavior: contain;
+
   &::-webkit-scrollbar {
     display: v-bind("isMobile ? 'none' : 'block'");
   }
