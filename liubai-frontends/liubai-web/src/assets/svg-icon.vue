@@ -17,7 +17,11 @@ const props = defineProps({
   coverFillStroke: {
     type: Boolean,
     default: true
-  }
+  },
+  disableStroke: {
+    type: Boolean,
+    default: false
+  },
 })
 const symbolId = computed(() => {
   return `#${props.prefix}-${props.name}`
@@ -25,10 +29,13 @@ const symbolId = computed(() => {
 
 </script>
 <template>
-  <svg aria-hidden="true" :class="{ 'svg-icon': coverFillStroke }">
+  <svg aria-hidden="true" :class="{ 
+    'svg-icon': coverFillStroke,
+    'svg-icon_stroke': coverFillStroke && !disableStroke,
+  }">
     <use :xlink:href="symbolId" 
       :fill="color ? color : undefined" 
-      :stroke="color ? color : undefined" 
+      :stroke="disableStroke ? undefined : (color ? color : undefined)" 
     />
   </svg>
 </template>
@@ -36,6 +43,9 @@ const symbolId = computed(() => {
 
 .svg-icon {
   fill: var(--main-text);
+}
+
+.svg-icon_stroke {
   stroke: var(--main-text);
 }
 

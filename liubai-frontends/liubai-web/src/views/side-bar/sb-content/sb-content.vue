@@ -132,6 +132,7 @@ const color_selected = "var(--main-normal)"
         <SvgIcon class="sb-icon" 
           :name="state === 'state' ? 'priority_selected' : 'priority'" 
           :color="state === 'state' ? color_selected : color"
+          :disable-stroke="state === 'state'"
         ></SvgIcon>
       </div>
       <span>{{ t("common.state") }}</span>
