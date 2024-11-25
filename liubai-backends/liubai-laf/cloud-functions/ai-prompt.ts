@@ -60,7 +60,7 @@ export const aiBots: AiBot[] = [
     provider: "stepfun",
     model: "step-1-8k",
     abilities: ["chat"],
-    alias: ["阶跃星辰"],
+    alias: ["阶跃星辰", "stepfun", "阶跃"],
     maxWindowTokenK: 8,
   },
   // {
@@ -69,7 +69,7 @@ export const aiBots: AiBot[] = [
   //   provider: "zero-one",
   //   model: "yi-large-fc",
   //   abilities: ["chat", "tool_use"],
-  //   alias: ["零一万物", "01.ai"],
+  //   alias: ["零一万物", "01.ai", "01", "零一"],
   //   maxWindowTokenK: 32,
   // },
   {
@@ -78,7 +78,7 @@ export const aiBots: AiBot[] = [
     provider: "zero-one",
     model: "yi-lightning",
     abilities: ["chat"],
-    alias: ["零一万物", "01.ai"],
+    alias: ["零一万物", "01.ai", "01", "零一"],
     maxWindowTokenK: 16,
   },
   {
@@ -101,7 +101,7 @@ export const aiBots: AiBot[] = [
     provider: "stepfun",
     model: "step-1v-8k",
     abilities: ["chat", "image_to_text"],
-    alias: ["阶跃星辰"],
+    alias: ["阶跃星辰", "stepfun", "阶跃"],
     maxWindowTokenK: 8,
   },
   {
@@ -110,7 +110,7 @@ export const aiBots: AiBot[] = [
     provider: "zero-one",
     model: "yi-vision",                
     abilities: ["chat", "image_to_text"],
-    alias: ["零一万物", "01.ai"],
+    alias: ["零一万物", "01.ai", "01", "零一"],
     maxWindowTokenK: 16,
   },
   {

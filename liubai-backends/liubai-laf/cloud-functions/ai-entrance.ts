@@ -366,7 +366,10 @@ class AiDirective {
     console.log("toKickBot res3: ")
     console.log(res3)
 
-    // 4. WIP: send a message to user
+    // 4. send a message to user
+    const { t } = useI18n(aiLang, { user: entry.user })
+    const msg4 = t("bot_left", { botName: bot.name })
+    TellUser.text(entry, msg4)
 
     return res3    
   }
@@ -393,10 +396,13 @@ class AiDirective {
     const rCol = db.collection("AiRoom")
     const res4 = await rCol.doc(room._id).update(u4)
 
-    // 5. WIP: send a message to user
-
-    console.log("toAddBot res4: ")
-    console.log(res4)
+    // 5. send a message to user
+    const msgList = ["called_1", "called_2", "called_3", "called_4"]
+    const r = Math.floor(Math.random() * msgList.length)
+    const msgKey = msgList[r]
+    const { t } = useI18n(aiLang, { user: entry.user })
+    const msg5 = t(msgKey, { botName: bot.name })
+    TellUser.text(entry, msg5, bot)
 
     return true
   }
