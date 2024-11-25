@@ -279,7 +279,7 @@ export const aiLang: LangAtom = {
     "add_note_only_desc": "{botName}请求添加笔记:\n{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
     "add_note_with_title": "{botName}请求添加笔记\n\n标题：{title}\n详情：{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
     "add_todo": "{botName}请求添加待办:\n{title}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
-    "add_calendar_1": "{botName}请求添加日程:\n\n",
+    "add_calendar_1": "{botName}请求添加日程\n\n",
     "add_calendar_2": "标题: {title}\n",
     "add_calendar_3": "内容: {desc}\n",
     "add_calendar_4": "日期: {date}\n",
@@ -298,6 +298,7 @@ export const aiLang: LangAtom = {
     "not_agree_yet": "【客户尚未同意你的请求】",
     "too_many_words": "这么多字！它们思考不来💭\n（单条文本最多 3000 字符）",
     "no_more_to_continue": "没有更多可以继续了",
+    "bot_call_tools": "调用工具: {funcName}\n参数: {funcArg}",
 
     // corresponding to aiToolAddCalendarSpecificDates
     "today": "今天",
@@ -327,7 +328,7 @@ export const aiLang: LangAtom = {
     "add_note_only_desc": "{botName}請求新增筆記:\n{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 編輯</a>",
     "add_note_with_title": "{botName}請求新增筆記\n\n標題：{title}\n詳情：{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 編輯</a>",
     "add_todo": "{botName}請求新增待辦:\n{title}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 編輯</a>",
-    "add_calendar_1": "{botName}請求新增日程:\n\n",
+    "add_calendar_1": "{botName}請求新增日程\n\n",
     "add_calendar_2": "標題: {title}\n",
     "add_calendar_3": "內文: {desc}\n",
     "add_calendar_4": "日期: {date}\n",
@@ -346,6 +347,7 @@ export const aiLang: LangAtom = {
     "not_agree_yet": "【客户尚未同意你的請求】",
     "too_many_words": "這麼多字！它們思考不來💭\n（單則文本最多 3000 字元）",
     "no_more_to_continue": "沒有更多可以繼續了",
+    "bot_call_tools": "調用工具: {funcName}\n參數: {funcArg}",
 
     // corresponding to aiToolAddCalendarSpecificDates
     "today": "今天",
@@ -374,7 +376,7 @@ export const aiLang: LangAtom = {
     "add_note_only_desc": "{botName} requests to add a note:\n{desc}\n\n<a href='{agreeLink}'>🆗 Agree</a>    <a href='{editLink}'>✏️ Edit</a>",
     "add_note_with_title": "{botName} requests to add a note\n\nTitle: {title}\nDescription: {desc}\n\n<a href='{agreeLink}'>🆗 Agree</a>    <a href='{editLink}'>✏️ Edit</a>",
     "add_todo": "{botName} requests to add a todo:\n{title}\n\n<a href='{agreeLink}'>🆗 Agree</a>    <a href='{editLink}'>✏️ Edit</a>",
-    "add_calendar_1": "{botName} requests to add a calendar:\n\n",
+    "add_calendar_1": "{botName} requests to add a calendar\n\n",
     "add_calendar_2": "Title: {title}\n",
     "add_calendar_3": "Description: {desc}\n",
     "add_calendar_4": "Date: {date}\n",
@@ -393,6 +395,7 @@ export const aiLang: LangAtom = {
     "not_agree_yet": "Customer has not yet agreed to your request",
     "too_many_words": "Too many words to think💭\n(Text supports up to 3000 characters.)",
     "no_more_to_continue": "No more to continue",
+    "bot_call_tools": "Call a tool: {funcName}\nArguments: {funcArg}",
 
     // corresponding to aiToolAddCalendarSpecificDates
     "today": "Today",

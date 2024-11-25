@@ -7,6 +7,7 @@ import {
   type AiEntry,
   type AiCommandByHuman,
   type OaiPrompt,
+  type OaiToolPrompt,
   type OaiToolCall,
   type OaiMessage,
   type OaiCreateParam,
@@ -25,6 +26,8 @@ import {
   Sch_AiToolAddCalendarParam,
   type AiFinishReason,
   type AiToolAddCalendarParam,
+  AiAbility,
+  T_I18N,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -126,6 +129,10 @@ interface PostRunParam {
   chatParam: OaiCreateParam
   chatCompletion?: OaiChatCompletion
   bot: AiBot
+}
+
+interface TurnChatsIntoPromptOpt {
+  abilities?: AiAbility[]
 }
 
 /********************* empty function ****************/
@@ -628,7 +635,11 @@ class BaseBot {
     chats = this._clipChats(bot, chats, user)
 
     // 3. get prompts and add system prompt
-    const prompts = AiHelper.turnChatsIntoPrompt(chats, user)
+    const prompts = AiHelper.turnChatsIntoPrompt(
+      chats,
+      user,
+      { abilities: bot.abilities },
+    )
 
     // 4. handle current date & time 
     // then add system prompt
@@ -2015,12 +2026,68 @@ class AiHelper {
   }
 
 
+  static _getToolMsg(
+    tool_call_id: string,
+    t: T_I18N,
+    v: Table_AiChat,
+  ) {
+    const { funcName, contentId } = v
+
+    let toolMsg: OaiToolPrompt | undefined
+    if (funcName === "add_note") {
+      if (contentId) {
+        toolMsg = { role: "tool", content: t("added_note"), tool_call_id }
+      }
+      else {
+        toolMsg = { role: "tool", content: t("not_agree_yet"), tool_call_id }
+      }
+    }
+    else if (funcName === "add_todo") {
+      if (contentId) {
+        toolMsg = { role: "tool", content: t("added_todo"), tool_call_id }
+      }
+      else {
+        toolMsg = { role: "tool", content: t("not_agree_yet"), tool_call_id }
+      }
+    }
+    else if (funcName === "add_calendar") {
+      if (contentId) {
+        toolMsg = { role: "tool", content: t("added_calendar"), tool_call_id }
+      }
+      else {
+        toolMsg = { role: "tool", content: t("not_agree_yet"), tool_call_id }
+      }
+    }
+
+    return toolMsg
+  }
+
+  static _turnToolCallIntoNormalAssistanMsg(
+    t: T_I18N,
+    v: Table_AiChat,
+  ) {
+    const { funcName, funcJson } = v
+    if(!funcName) return
+    const funcArg = funcJson ? valTool.objToStr(funcJson) : "{}"
+    const msg = t("bot_call_tools", { funcName, funcArg })
+    const assistantMsg: OaiPrompt = {
+      role: "assistant",
+      content: msg,
+    }
+    return assistantMsg
+  }
+
+
   static turnChatsIntoPrompt(
     chats: Table_AiChat[],
     user: Table_User,
+    opt?: TurnChatsIntoPromptOpt,
   ) {
+    const _this = this
     const messages: OaiPrompt[] = []
     const { t } = useI18n(aiLang, { user })
+    const abilities = opt?.abilities ?? ["chat"]
+    const canToolUse = abilities.includes("tool_use")
 
     for(let i=0; i<chats.length; i++) {
       const v = chats[i]
@@ -2032,8 +2099,6 @@ class AiHelper {
         fileBase64,
         msgType,
         tool_calls,
-        funcName,
-        contentId,
       } = v
 
       if(infoType === "user") {
@@ -2076,35 +2141,24 @@ class AiHelper {
 
         // add tool_call_result prompt 
         // where the role is "tool" and  tool_call_id is attached
-        let toolMsg: OaiPrompt | undefined
-        if(funcName === "add_note") {
-          if(contentId) {
-            toolMsg = { role: "tool", content: t("added_note"), tool_call_id }
+        let toolMsg = _this._getToolMsg(tool_call_id, t, v)
+
+        // if we can use tool
+        if(canToolUse) {  
+          if(toolMsg) {
+            messages.push(toolMsg)
+            messages.push({ role: "assistant", tool_calls, name: character })
           }
-          else {
-            toolMsg = { role: "tool", content: t("not_agree_yet"), tool_call_id }
-          }
-        }
-        else if(funcName === "add_todo") {
-          if(contentId) {
-            toolMsg = { role: "tool", content: t("added_todo"), tool_call_id }
-          }
-          else {
-            toolMsg = { role: "tool", content: t("not_agree_yet"), tool_call_id }
-          }
-        }
-        else if(funcName === "add_calendar") {
-          if(contentId) {
-            toolMsg = { role: "tool", content: t("added_calendar"), tool_call_id }
-          }
-          else {
-            toolMsg = { role: "tool", content: t("not_agree_yet"), tool_call_id }
-          }
+          continue
         }
 
+        // otherwise, turn the tool_call_result prompt into a user prompt
         if(toolMsg) {
-          messages.push(toolMsg)
-          messages.push({ role: "assistant", tool_calls, name: character })
+          messages.push({ role: "user", content: toolMsg.content }) 
+        }
+        const assistantMsg = _this._turnToolCallIntoNormalAssistanMsg(t, v)
+        if(assistantMsg) {
+          messages.push(assistantMsg)
         }
 
       }
