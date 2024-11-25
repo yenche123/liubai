@@ -677,6 +677,7 @@ export interface AiI18nSharedParam {
 }
 
 export type OaiPrompt = OpenAI.Chat.ChatCompletionMessageParam
+export type OaiTool = OpenAI.Chat.ChatCompletionTool
 export type OaiToolPrompt = OpenAI.Chat.ChatCompletionToolMessageParam 
 export type OaiCreateParam = OpenAI.Chat.ChatCompletionCreateParams
 export type OaiChatCompletion = OpenAI.Chat.ChatCompletion

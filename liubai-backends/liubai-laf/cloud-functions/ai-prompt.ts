@@ -6,9 +6,9 @@ import {
   type AiI18nChannelParam, 
   type AiI18nSharedParam, 
   type T_I18N,
+  type OaiTool,
 } from "@/common-types"
 import { i18nFill } from "@/common-i18n"
-import OpenAI from "openai"
 
 /***************************** Bots ***************************/
 export const aiBots: AiBot[] = [
@@ -382,7 +382,7 @@ export function aiI18nChannel(
 
 /***************************** Tools ***************************/
 
-export const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
+export const aiTools: OaiTool[] = [
   /** Parse Link  */
   {
     type: "function",
@@ -401,6 +401,26 @@ export const aiTools: OpenAI.Chat.ChatCompletionTool[] = [
         additionalProperties: false,
       }
     }
+  },
+
+  /** Web Search */
+  {
+    type: "function",
+    function: {
+      name: "web_search",
+      description: "搜索网页。给定一段关键词，返回一系列与之相关的网页和背景信息。",
+      parameters: {
+        type: "object",
+        properties: {
+          q: {
+            type: "string",
+            description: "搜索关键词",
+          }
+        },
+        required: ["q"],
+        additionalProperties: false
+      }
+    },
   },
 
   /** Draw a picture */

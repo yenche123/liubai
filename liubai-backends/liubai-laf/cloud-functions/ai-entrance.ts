@@ -7,6 +7,7 @@ import {
   type AiEntry,
   type AiCommandByHuman,
   type OaiPrompt,
+  type OaiTool,
   type OaiToolPrompt,
   type OaiToolCall,
   type OaiMessage,
@@ -121,7 +122,7 @@ interface PreRunResult {
   totalToken: number
   bot: AiBot
   chats: Table_AiChat[]
-  tools?: OpenAI.Chat.ChatCompletionTool[]
+  tools?: OaiTool[]
 }
 
 interface PostRunParam {
@@ -693,6 +694,15 @@ class BaseBot {
       chatCompletion,
     )
 
+    if(chatCompletion) {
+      const text = AiHelper.getTextFromLLM(chatCompletion)
+      if(text) {
+        console.warn("_handleToolUse text 存在，先暂停！")
+        console.log(text)
+        return
+      }
+    }
+
     for(let i=0; i<tool_calls.length; i++) {
       const v = tool_calls[i]
       const funcData = v["function"]
@@ -714,6 +724,9 @@ class BaseBot {
       }
       else if(funcName === "add_calendar") {
         await toolHandler.add_calendar(funcJson)
+      }
+      else if(funcName === "web_search") {
+        await toolHandler.web_search(funcJson)
       }
 
     }
@@ -834,20 +847,22 @@ class BaseBot {
     console.log(`usage: `)
     console.log(chatCompletion.usage)
     
-    // 2. tool calls
-    if(finish_reason === "tool_calls" && tool_calls) {
-      this._handleToolUse(postParam, tool_calls)
-      return
-    }
-    
-    // 3. can i reply
-    const res3 = await AiHelper.canReply(aiParam, bot)
-    if(!res3) {
+    // 2. can i reply
+    const res2 = await AiHelper.canReply(aiParam, bot)
+    if(!res2) {
       return {
         character: c,
         replyStatus: "has_new_msg",
         chatCompletion,
       }
+    }
+
+    console.log(`${c} can reply! see message: `)
+    console.log(chatCompletion.choices[0].message)
+
+    // 3. tool calls
+    if(finish_reason === "tool_calls" && tool_calls) {
+      this._handleToolUse(postParam, tool_calls)
     }
     
     // 4. finish reason is "length"
@@ -1060,6 +1075,25 @@ class BotZhipu extends BaseBot {
     const model = bot.model
 
     // 3. handle other things
+    // 3.1 remove web_search and parse_link, and add its own web_search
+    if(tools) {
+      AiHelper.removeOneTool("web_search", tools)
+      AiHelper.removeOneTool("parse_link", tools)
+      
+      // see https://bigmodel.cn/dev/howuse/websearch
+      const webSearchTool = {
+        type: "web_search",
+        web_search: {
+          enable: true,
+          search_result: true,
+        }
+      }
+      tools.push(webSearchTool as any)
+    }
+
+    console.warn("see zhipu tools: ")
+    console.log(tools)
+
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
@@ -1669,6 +1703,11 @@ class ToolHandler {
     TellUser.text(this._aiParam.entry, msg)
   }
 
+  async web_search(funcJson: Record<string, any>) {
+    console.warn("web_search by ourselves!")
+    console.log(funcJson)
+  }
+
 }
 
 
@@ -2068,8 +2107,8 @@ class AiHelper {
   ) {
     const { funcName, funcJson } = v
     if(!funcName) return
-    const funcArg = funcJson ? valTool.objToStr(funcJson) : "{}"
-    const msg = t("bot_call_tools", { funcName, funcArg })
+    const funcArgs = funcJson ? valTool.objToStr(funcJson) : "{}"
+    const msg = t("bot_call_tools", { funcName, funcArgs })
     const assistantMsg: OaiPrompt = {
       role: "assistant",
       content: msg,
@@ -2347,8 +2386,14 @@ class AiHelper {
     return need
   }
 
-  static doesUserWantOneBotToAnswer(entry: AiEntry) {
-
+  static removeOneTool(funcName: string, tools: OaiTool[]) {
+    for(let i=0; i<tools.length; i++) {
+      const v = tools[i]
+      if(v.type === "function" && v.function?.name === funcName) {
+        tools.splice(i, 1)
+        break
+      }
+    }
   }
 
 }
