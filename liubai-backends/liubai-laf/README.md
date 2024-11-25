@@ -38,6 +38,10 @@ export const alipay_cfg = {
 ## 开发日记
 
 
+### 2024-11-25
+
+`yi-lighting` 模型，当 prompt 中有 role 为 `tool` 的消息，会发生 `InternalServerError: 500 try again` 的错误。
+
 ### 2024-11-20
 
 `01-ai/Yi-1.5-9B-Chat-16K` 无法传递工具调用，会报错

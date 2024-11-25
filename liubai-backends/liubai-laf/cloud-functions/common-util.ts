@@ -624,6 +624,40 @@ export class LiuDateUtil {
     return endStamp
   }
 
+  // give "YYYY-MM-DD" to json { year: number, month: number, day: number }
+  // the month is from 1 to 12
+  static distractFromYYYY_MM_DD(str: string) {
+    const arr = str.split("-")
+    const yyyy = arr[0]
+    const mm = arr[1]
+    const dd = arr[2]
+    if(!yyyy || !mm || !dd) {
+      return
+    }
+    const year = Number(yyyy)
+    const month = Number(mm)
+    const day = Number(dd)
+    if(isNaN(year) || isNaN(month) || isNaN(day)) {
+      return
+    }
+    return { year, month, day }
+  }
+
+  static distractFromhh_mm(str: string) {
+    const arr = str.split(":")
+    const hh = arr[0]
+    const mm = arr[1]
+    if(!hh || !mm) {
+      return
+    }
+    const hour = Number(hh)
+    const minute = Number(mm)
+    if(isNaN(hour) || isNaN(minute)) {
+      return
+    }
+    return { hour, minute }
+  }
+
 }
 
 /**

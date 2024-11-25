@@ -23,7 +23,8 @@ import {
   Sch_AiToolAddNoteParam,
   Sch_AiToolAddTodoParam,
   Sch_AiToolAddCalendarParam,
-  AiFinishReason,
+  type AiFinishReason,
+  type AiToolAddCalendarParam,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -478,7 +479,6 @@ class BaseLLM {
 
       let isRateLimit = false
       const errType = typeof err
-      console.log(`errType: ${errType}`)
       const errMsg = errType === "string" ? err : err?.toString?.()
       console.log("errMsg: ")
       console.log(errMsg)
@@ -663,6 +663,10 @@ class BaseBot {
       res7.tools = tools
     }
 
+
+    // console.warn(`see ${bot.character} prompts: `)
+    // console.log(prompts)
+
     return res7
   }
 
@@ -688,6 +692,9 @@ class BaseBot {
       const funcArgs = funcData.arguments
       const funcJson = valTool.strToObj(funcArgs)
 
+      console.log("funcName: ", funcName)
+      console.log(funcJson)
+
       if(funcName === "add_note") {
         await toolHandler.add_note(funcJson)
       }
@@ -695,7 +702,7 @@ class BaseBot {
         await toolHandler.add_todo(funcJson)
       }
       else if(funcName === "add_calendar") {
-        toolHandler.add_calendar(funcJson)
+        await toolHandler.add_calendar(funcJson)
       }
 
     }
@@ -1480,6 +1487,9 @@ class ToolHandler {
       tool_calls: this._tool_calls,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(arg)
+
+    console.log("_addMsgToChat assistantChatId: ", assistantChatId)
+
     return assistantChatId
   }
 
@@ -1560,9 +1570,92 @@ class ToolHandler {
       return
     }
 
-    // 2. check out params specifically
-    
+    // 2. add msg
+    const assistantChatId = await this._addMsgToChat("add_calendar", funcJson)
+    if(!assistantChatId) return
 
+    // 3. reply
+    const { t, agreeLink, editLink, botName } = this._getEssentialReplyData(assistantChatId)
+    const {
+      title,
+      description,
+      date,
+      specificDate,
+      time,
+      earlyMinute,
+      laterHour,
+    } = funcJson as AiToolAddCalendarParam
+    let msg = t("add_calendar_1", { botName })
+    if(title) {
+      msg += t("add_calendar_2", { title })
+    }
+    msg += t("add_calendar_3", { desc: description })
+
+    // 3.1 handle date
+    let hasAddedDate = false
+    if(date) {
+      const dateObj = LiuDateUtil.distractFromYYYY_MM_DD(date)
+      if(dateObj) {
+        hasAddedDate = true
+        msg += t("add_calendar_4", { date })
+      }
+    }
+    if(specificDate && !hasAddedDate) {
+      const strDate = t(specificDate)
+      if(strDate) {
+        hasAddedDate = true
+        msg += t("add_calendar_4", { date: strDate })
+      }
+    }
+
+    // 3.2 handle time
+    let hasAddedTime = false
+    if(time) {
+      const timeObj = LiuDateUtil.distractFromhh_mm(time)
+      if(timeObj) {
+        hasAddedTime = true
+        msg += t("add_calendar_5", { time })
+      }
+    }
+    if(earlyMinute && hasAddedTime) {
+      let strReminder = ""
+      if(earlyMinute < 60) {
+        strReminder = t("early_min", { min: earlyMinute })
+      }
+      else if(earlyMinute === 60 || earlyMinute === 120) {
+        const tmpHrs = Math.round(earlyMinute / 60)
+        strReminder = t("early_hr", { hr: tmpHrs })
+      }
+      else if(earlyMinute === 1440) {
+        strReminder = t("early_day", { day: 1 })
+      }
+      if(strReminder) {
+        msg += t("add_calendar_6", { str: strReminder })
+      }
+    }
+    if(laterHour && !hasAddedTime) {
+      let strLater = ""
+      if(laterHour === 0.5) {
+        strLater = t("later_min", { min: 30 })
+      }
+      else if(laterHour < 24) {
+        strLater = t("later_hr", { hr: laterHour })
+      }
+      else if(laterHour === 24) {
+        strLater = t("later_day", { day: 1 })
+      }
+      if(strLater) {
+        msg += t("add_calendar_6", { str: strLater })
+      }
+    }
+
+    // 3.3 add footer
+    msg += t("add_calendar_7", { agreeLink, editLink })
+
+    console.warn("see msg for calendar: ")
+    console.log(msg)
+
+    TellUser.text(this._aiParam.entry, msg)
   }
 
 }
@@ -1978,18 +2071,40 @@ class AiHelper {
         }
       }
       else if(infoType === "tool_use" && tool_calls) {
-        messages.push({ role: "assistant", tool_calls, name: character })
-
         const tool_call_id = tool_calls[0]?.id
         if(!tool_call_id) continue
 
         // add tool_call_result prompt 
         // where the role is "tool" and  tool_call_id is attached
-        if(funcName === "add_note" && contentId) {
-          messages.push({ role: "tool", content: t("added_note"), tool_call_id })
+        let toolMsg: OaiPrompt | undefined
+        if(funcName === "add_note") {
+          if(contentId) {
+            toolMsg = { role: "tool", content: t("added_note"), tool_call_id }
+          }
+          else {
+            toolMsg = { role: "tool", content: t("not_agree_yet"), tool_call_id }
+          }
         }
-        else if(funcName === "add_todo" && contentId) {
-          messages.push({ role: "tool", content: t("added_todo"), tool_call_id })
+        else if(funcName === "add_todo") {
+          if(contentId) {
+            toolMsg = { role: "tool", content: t("added_todo"), tool_call_id }
+          }
+          else {
+            toolMsg = { role: "tool", content: t("not_agree_yet"), tool_call_id }
+          }
+        }
+        else if(funcName === "add_calendar") {
+          if(contentId) {
+            toolMsg = { role: "tool", content: t("added_calendar"), tool_call_id }
+          }
+          else {
+            toolMsg = { role: "tool", content: t("not_agree_yet"), tool_call_id }
+          }
+        }
+
+        if(toolMsg) {
+          messages.push(toolMsg)
+          messages.push({ role: "assistant", tool_calls, name: character })
         }
 
       }
@@ -2336,11 +2451,11 @@ class TellUser {
 
     // 1. send to wx gzh
     if(wx_gzh_openid) {
-      console.warn("markdown: ")
-      console.log(text)
+      // console.warn("markdown: ")
+      // console.log(text)
       text = MarkdownParser.mdToWxGzhText(text)
-      console.warn("wx gzh text: ")
-      console.log(text)
+      // console.warn("wx gzh text: ")
+      // console.log(text)
 
       const obj1: Wx_Gzh_Send_Msg = {
         msgtype: "text",
