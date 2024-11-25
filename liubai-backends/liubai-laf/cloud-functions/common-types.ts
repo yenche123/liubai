@@ -647,6 +647,11 @@ export interface AiBot {
   abilities: AiAbility[]
   alias: string[]
   maxWindowTokenK: number  // 8 means 8k, 128 means 128k
+
+  // other meta data
+  metaData?: {
+    zhipuWebSearch?: boolean     // false is default
+  }
 }
 
 export interface AiEntry {

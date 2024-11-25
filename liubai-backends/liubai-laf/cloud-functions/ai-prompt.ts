@@ -24,16 +24,16 @@ export const aiBots: AiBot[] = [
     alias: ["深度求索"],
     maxWindowTokenK: 64,
   },
-  {
-    name: "智谱",
-    character: "zhipu",
-    provider: "zhipu",
-    secondaryProvider: "siliconflow",
-    model: "THUDM/glm-4-9b-chat",
-    abilities: ["chat", "tool_use"],
-    alias: ["智谱AI", "智谱清言", "ChatGLM"],
-    maxWindowTokenK: 128,
-  },
+  // {
+  //   name: "智谱",
+  //   character: "zhipu",
+  //   provider: "zhipu",
+  //   secondaryProvider: "siliconflow",
+  //   model: "THUDM/glm-4-9b-chat",
+  //   abilities: ["chat", "tool_use"],
+  //   alias: ["智谱AI", "智谱清言", "ChatGLM"],
+  //   maxWindowTokenK: 128,
+  // },
 
   /** chat using official providers */
   {
@@ -86,9 +86,12 @@ export const aiBots: AiBot[] = [
     character: "zhipu",
     provider: "zhipu",
     model: "glm-4-air",
-    abilities: ["chat"],
+    abilities: ["chat", "tool_use"],
     alias: ["智谱AI", "智谱清言", "ChatGLM"],
     maxWindowTokenK: 128,
+    metaData: {
+      zhipuWebSearch: true,
+    }
   },
 
   /** image to text */
@@ -115,9 +118,12 @@ export const aiBots: AiBot[] = [
     character: "zhipu",
     provider: "zhipu",
     model: "glm-4v-plus",
-    abilities: ["chat"],
+    abilities: ["chat", "tool_use", "image_to_text"],
     alias: ["智谱AI", "智谱清言", "ChatGLM"],
     maxWindowTokenK: 8,
+    metaData: {
+      zhipuWebSearch: true,
+    }
   },
 
 ]

@@ -414,7 +414,37 @@ class AiDirective {
   }
 
   private static isClear(text: string) {
-    const strs = ["清空上文", "清除上文", "清除上下文", "Clear history",  "Clear context"]
+    const strs = [
+      // 清空
+      "清空",
+      "清空上文", 
+      "清空上下文",
+      "清空历史", 
+      "清空歷史",
+      "清空历史纪录",
+      "清空歷史紀錄",
+
+      // 清除
+      "清除上文", 
+      "清除上下文",
+      "清除历史", 
+      "清除歷史",
+      "清除历史纪录",
+      "清除歷史紀錄",
+
+      // 消除
+      "消除上文", 
+      "消除上下文",
+      "消除历史", 
+      "消除歷史",
+      "消除历史纪录",
+      "消除歷史紀錄",
+
+      // Eng
+      "Clear chat",
+      "Clear history",
+      "Clear context",
+    ]
     const res = this._areTheyMatched(strs, text)
     return res
   }
@@ -1076,7 +1106,7 @@ class BotZhipu extends BaseBot {
 
     // 3. handle other things
     // 3.1 remove web_search and parse_link, and add its own web_search
-    if(tools) {
+    if(tools && bot.metaData?.zhipuWebSearch) {
       AiHelper.removeOneTool("web_search", tools)
       AiHelper.removeOneTool("parse_link", tools)
       
@@ -1088,7 +1118,7 @@ class BotZhipu extends BaseBot {
           search_result: true,
         }
       }
-      tools.push(webSearchTool as any)
+      tools.splice(0, 0, webSearchTool as any)
     }
 
     console.warn("see zhipu tools: ")
@@ -1321,9 +1351,6 @@ class ContinueController {
     list.forEach(v => {
       const copyOfUserAndTheRest = valTool.copyObject(userAndTheRest)
       v.chats.push(...copyOfUserAndTheRest)
-      console.warn("item of list in ContinueController: ")
-      console.log(v.character)
-      console.log(v.chats)
     })
 
     // 4. get promises

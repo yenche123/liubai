@@ -913,15 +913,22 @@ export class MarkdownParser {
 
 
   static mdToText(md: string) {
-    // Convert bold/strong text (**** or **) to Chinese quotes 「」, but skip if already has quotes
-    md = md.replace(/\*\*\*\*([^*\n]+)\*\*\*\*/g, (match, content) => {
+    // Convert bold/strong text (**** or **) to Chinese quotes 「」
+    // but skip if already has quotes
+    const _handleBold = (match:string, content: any, offset: any) => {
+      // check out if content has quotes
       if (content.match(/^[「《【"“(（]/)) return content;
+
+      // check out previous char
+      if (typeof offset === "number" && offset > 1) {
+        const prevChar = md[offset - 1];
+        if(prevChar && prevChar.match(/^[「《【"“(（]/)) return content;
+      }
+
       return `「${content}」`;
-    });
-    md = md.replace(/\*\*([^*\n]+)\*\*/g, (match, content) => {
-      if (content.match(/^[「《【"“(（]/)) return content;
-      return `「${content}」`;
-    });
+    }
+    md = md.replace(/\*\*\*\*([^*\n]+)\*\*\*\*/g, _handleBold);
+    md = md.replace(/\*\*([^*\n]+)\*\*/g, _handleBold);
 
     // Convert unordered list items to special character while preserving indentation
     md = md.replace(/^(\s*)[-*+][\s]+(.+)$/gm, (match, spaces, content) => {
