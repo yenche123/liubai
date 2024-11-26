@@ -1,5 +1,6 @@
 import type { SortWay } from "../../types-basic"
 import type { 
+  AiCharacter,
   CollectionInfoType,
   ContentInfoType,
   LiuContent,
@@ -198,6 +199,7 @@ export interface LiuDownloadContent {
 
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
+  aiCharacter?: AiCharacter
 
   myFavorite?: LiuDownloadCollection
   myEmoji?: LiuDownloadCollection

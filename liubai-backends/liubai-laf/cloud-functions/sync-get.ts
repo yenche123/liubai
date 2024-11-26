@@ -1058,6 +1058,7 @@ function packContents(
 
       levelOne: v.levelOne,
       levelOneAndTwo: v.levelOneAndTwo,
+      aiCharacter: v.aiCharacter,
 
       myFavorite,
       myEmoji,

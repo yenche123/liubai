@@ -18,6 +18,7 @@ import type {
   LiuTable,
   LiuUploadTask,
   UploadTaskProgressType,
+  AiCharacter,
 } from "./types-atom"
 import type { LiuFileStore, LiuImageStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
@@ -110,6 +111,7 @@ export interface ContentLocalTable extends BaseLocalTable {
   levelOneAndTwo?: number   // 一级 + 二级评论数
 
   firstSyncStamp?: number   // the stamp when the content is first synced
+  aiCharacter?: AiCharacter
 }
 
 export interface DraftLocalTable extends BaseLocalTable {

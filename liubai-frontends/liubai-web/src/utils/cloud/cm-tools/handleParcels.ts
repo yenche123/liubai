@@ -494,6 +494,7 @@ async function mergeContent(
     g.visScope = d.visScope
     g.title = d.title
     g.liuDesc = d.liuDesc 
+    g.aiCharacter = d.aiCharacter
 
     const imgRes = CloudFiler.updateImages(d.images, oc.images)
     if(imgRes.updated) {
@@ -665,6 +666,7 @@ function createContent(
     levelOneAndTwo: d.levelOneAndTwo,
 
     firstSyncStamp: b.insertedStamp,
+    aiCharacter: d.aiCharacter,
   }
 
   if(!c.search_title && c.title) {

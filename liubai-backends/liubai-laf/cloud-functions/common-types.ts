@@ -1308,6 +1308,7 @@ export interface Table_Content extends BaseTable {
   config?: ContentConfig
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
+  aiCharacter?: AiCharacter
 }
 
 /** 草稿表 */
@@ -2090,6 +2091,7 @@ export interface LiuDownloadContent {
 
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
+  aiCharacter?: AiCharacter
 
   myFavorite?: LiuDownloadCollection
   myEmoji?: LiuDownloadCollection

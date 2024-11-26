@@ -241,3 +241,6 @@ export type ParticularScript = "ig" | "twitter" |
 export type UploadTaskProgressType = "waiting" | "file_uploading" | "syncing"
 
 export type SyncSpeed = "instant" | "normal" | "slow"
+
+// about AI
+export type AiCharacter = "deepseek" | "kimi" | "yuewen" | "wanzhi" | "zhipu"
