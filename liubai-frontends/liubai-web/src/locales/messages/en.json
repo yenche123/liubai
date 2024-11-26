@@ -62,7 +62,9 @@
     "updating": "Updating..",
     "to_contact": "Contact",
     "mine": "Mine",
-    "contact_us": "Contact"
+    "contact_us": "Contact",
+    "ok": "OK",
+    "check_it_out": "Check it out"
   },
   "editor": {
     "when": "When",
@@ -289,7 +291,9 @@
     "delete_forever_2": "Are you sure to delete the post permanently? The post will not be retrieved after you delete it.",
     "delete_btn": "DELETE",
     "finished": "Finished",
+    "note": "Note",
     "todo": "Todo",
+    "agenda": "Agenda",
     "select_state": "Select",
     "switch_to": "Switch to ",
     "img_file": "[Image or file]",
@@ -297,7 +301,8 @@
     "created_at": "Created {date}",
     "edited_at": "Edited {date}",
     "saved_locally": "Only Saved Locally",
-    "content_deleted": "🗑️ It's been deleted"
+    "content_deleted": "🗑️ It's been deleted",
+    "captured_that": "{event} captured!"
   },
   "state_related": {
     "add_state": "New State",

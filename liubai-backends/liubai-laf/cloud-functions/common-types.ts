@@ -2168,8 +2168,11 @@ export namespace SyncOperateAPI {
     remindMe?: LiuRemindMe
   }
 
+  export type ContentType = "note" | "todo" | "calendar"
+
   export interface Res_AgreeAichat {
     operateType: "agree-aichat"
+    contentType: ContentType
     contentId: string
   }
 

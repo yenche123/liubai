@@ -62,7 +62,9 @@
     "updating": "更新中..",
     "to_contact": "去联系",
     "mine": "我的",
-    "contact_us": "联系客服"
+    "contact_us": "联系客服",
+    "ok": "好的",
+    "check_it_out": "去查看"
   },
   "editor": {
     "when": "什么时候",
@@ -289,7 +291,9 @@
     "delete_forever_2": "确定要彻底删除吗？该操作无法恢复。",
     "delete_btn": "彻底删除",
     "finished": "已完成",
+    "note": "笔记",
     "todo": "待办",
+    "agenda": "日程",
     "select_state": "选择状态",
     "switch_to": "切换至 ",
     "img_file": "[图片或文件]",
@@ -297,7 +301,8 @@
     "created_at": "创建于 {date}",
     "edited_at": "编辑于 {date}",
     "saved_locally": "仅本地存储",
-    "content_deleted": "🗑️ 该动态已被删除"
+    "content_deleted": "🗑️ 该动态已被删除",
+    "captured_that": "已接住你的{event}"
   },
   "state_related": {
     "add_state": "添加状态",

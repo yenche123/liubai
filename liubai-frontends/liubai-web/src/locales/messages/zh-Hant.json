@@ -62,7 +62,9 @@
     "updating": "更新中..",
     "to_contact": "去聯繫",
     "mine": "我的",
-    "contact_us": "聯繫客服"
+    "contact_us": "聯繫客服",
+    "ok": "好的",
+    "check_it_out": "去看看"
   },
   "editor": {
     "when": "什麼時候",
@@ -289,7 +291,9 @@
     "delete_forever_2": "確定要徹底刪除嗎？此動作無法被復原",
     "delete_btn": "徹底刪除",
     "finished": "已完成",
+    "note": "筆記",
     "todo": "待辦",
+    "agenda": "日程",
     "select_state": "選擇狀態",
     "switch_to": "切換至 ",
     "img_file": "[圖片或文件]",
@@ -297,7 +301,8 @@
     "created_at": "{date} 新增",
     "edited_at": "{date} 編輯",
     "saved_locally": "只保存於本機",
-    "content_deleted": "🗑️ 該動態已被刪除"
+    "content_deleted": "🗑️ 該動態已被刪除",
+    "captured_that": "已接住你的{event}"
   },
   "state_related": {
     "add_state": "新增狀態",
