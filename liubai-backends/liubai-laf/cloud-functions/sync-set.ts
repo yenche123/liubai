@@ -18,6 +18,7 @@ import type {
   Table_Draft,
   Table_Member,
   Table_Workspace,
+  Table_AiChat,
   SyncSetCtxAtom,
   SyncSetCtx,
   LiuUploadTask,
@@ -500,6 +501,7 @@ async function toPostThread(
 
     emojiData: Sch_EmojiData,
     config: vbot.optional(Sch_ContentConfig),
+    aiChatId: Sch_Opt_Str,
   }, vbot.never())     // open strict mode
   const res1 = checkoutInput(Sch_PostThread, thread, taskId)
   if(res1) return res1
@@ -536,6 +538,13 @@ async function toPostThread(
   const res6 = await checkIfContentExisted(userId, first_id, createdStamp, taskId)
   if(res6) return res6
 
+  // 6.2 get ai chat
+  const chatId = thread.aiChatId
+  let aiChat: Table_AiChat | undefined
+  if(chatId) {
+    aiChat = await getData<Table_AiChat>(ssCtx, "aiChat", chatId)
+  }
+
   // 7. construct a new row of Table_Content
   const b7 = getBasicStampWhileAdding(ssCtx)
   const newRow: PartialSth<Table_Content, "_id"> = {
@@ -570,11 +579,19 @@ async function toPostThread(
     config: thread.config,
     levelOne: 0,
     levelOneAndTwo: 0,
+    aiCharacter: aiChat?.character,
   }
 
+  // 8. insert content
   const new_id = await insertData(ssCtx, "content", newRow)
   if(!new_id) {
     return { code: "E5001", taskId, errMsg: "inserting data failed" }
+  }
+
+  // 9. update ai chat if aiChat exists
+  if(aiChat) {
+    const u9: Partial<Table_AiChat> = { contentId: new_id }
+    await updatePartData(ssCtx, "aiChat", aiChat._id, u9)
   }
 
   return { code: "0000", taskId, first_id, new_id }
@@ -2327,6 +2344,7 @@ function initSyncSetCtx(
     member: new Map<string, SyncSetCtxAtom<Table_Member>>(),
     workspace: new Map<string, SyncSetCtxAtom<Table_Workspace>>(),
     collection: new Map<string, SyncSetCtxAtom<Table_Collection>>(),
+    aiChat: new Map<string, SyncSetCtxAtom<Table_AiChat>>(),
     me: user,
     space_ids,
     lastUsedStamp: 0,

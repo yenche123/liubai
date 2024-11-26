@@ -56,6 +56,9 @@ export interface LiuUploadThread extends LiuUploadBase {
   // 只在 thread-hourglass 时有效，且为必填，不得为 undefined
   showCountdown?: boolean
 
+  // ai chat associated with this thread
+  aiChatId?: string
+
   
 }
 

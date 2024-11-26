@@ -1031,6 +1031,9 @@ export interface LiuUploadThread extends LiuUploadBase {
 
   // 只在 thread-hourglass 时有效，且为必填
   showCountdown?: boolean
+
+  // ai chat associated with this thread
+  aiChatId?: string
 }
 
 /** 存一些 评论 与动态和草稿相比独有的字段 */
@@ -1116,12 +1119,13 @@ export interface SyncSetCtxAtom<T> {  // 这里的 T 必须是 Table 类型
 
 export interface SyncSetCtx {
 
-  // 下面四个属性，其首字母大写后，要直接对应数据表的表名
+  // 下面 6 个属性，其首字母大写后，要直接对应数据表的表名
   content: Map<string, SyncSetCtxAtom<Table_Content>>
   draft: Map<string, SyncSetCtxAtom<Table_Draft>>
   member: Map<string, SyncSetCtxAtom<Table_Member>>
   workspace: Map<string, SyncSetCtxAtom<Table_Workspace>>
   collection: Map<string, SyncSetCtxAtom<Table_Collection>>
+  aiChat: Map<string, SyncSetCtxAtom<Table_AiChat>>
 
   // my data
   me: Table_User
@@ -1134,7 +1138,8 @@ export interface SyncSetCtx {
 }
 
 export type SyncSetTable = Table_Content | 
-  Table_Draft | Table_Member | Table_Workspace | Table_Collection
+  Table_Draft | Table_Member | Table_Workspace | 
+  Table_Collection | Table_AiChat
 
 export interface SyncSetAtomRes {
   code: string
