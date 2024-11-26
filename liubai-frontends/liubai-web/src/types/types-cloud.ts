@@ -5,7 +5,12 @@ import type {
   SpaceType, 
   OState,
 } from "./types-basic"
-import type { LiuStateConfig, TagView } from "./types-atom"
+import type { 
+  LiuContent, 
+  LiuRemindMe, 
+  LiuStateConfig, 
+  TagView,
+} from "./types-atom"
 import type { 
   MemberConfig, 
   MemberNotification, 
@@ -137,4 +142,36 @@ export interface Wxpay_Jsapi_Params {
 /*************************** 云存储 **********************/
 // 云存储服务
 export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
+
+
+
+/****************** sync-operate api ***************/
+
+export namespace SyncOperateAPI {
+  export interface Param {
+    operateType: "agree-aichat" | "get-aichat"
+    chatId: string
+  }
+
+  export interface WaitingData {
+    title?: string
+    liuDesc?: LiuContent[]
+    whenStamp?: number
+    remindMe?: LiuRemindMe
+  }
+
+  export interface Res_AgreeAichat {
+    operateType: "agree-aichat"
+    contentId: string
+  }
+
+  export interface Res_GetAichat {
+    operateType: "get-aichat"
+    result: "waiting" | "created"
+    contentId?: string
+    waitingData?: WaitingData
+  }
+
+  export type Result = Res_AgreeAichat | Res_GetAichat
+}
 

@@ -2152,6 +2152,37 @@ export interface Res_SyncGet_Cloud {
   plz_enc_results?: SyncGetAtomRes[]
 }
 
+
+/****************** sync-operate api ***************/
+
+export namespace SyncOperateAPI {
+  export interface Param {
+    operateType: "agree-aichat" | "get-aichat"
+    chatId: string
+  }
+
+  export interface WaitingData {
+    title?: string
+    liuDesc?: LiuContent[]
+    whenStamp?: number
+    remindMe?: LiuRemindMe
+  }
+
+  export interface Res_AgreeAichat {
+    operateType: "agree-aichat"
+    contentId: string
+  }
+
+  export interface Res_GetAichat {
+    operateType: "get-aichat"
+    result: "waiting" | "created"
+    contentId?: string
+    waitingData?: WaitingData
+  }
+
+  export type Result = Res_AgreeAichat | Res_GetAichat
+}
+
 /******************** open-connect **********************/
 export type OpenConnectOperate = "bind-wecom" | "check-wecom" | "get-wechat"
   | "set-wechat" | "bind-wechat" | "check-wechat"
