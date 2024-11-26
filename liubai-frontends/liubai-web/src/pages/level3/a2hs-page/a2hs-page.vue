@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
-import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
-import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import A2hsDesktop from "./a2hs-desktop/a2hs-desktop.vue";
 import A2hsMobile from "./a2hs-mobile/a2hs-mobile.vue";
 import liuApi from "~/utils/liu-api";

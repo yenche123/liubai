@@ -3,8 +3,6 @@ import MainView from "~/views/main-view/main-view.vue";
 import ViceView from "~/views/vice-view/vice-view.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
 import TagContent from "./tag-content/tag-content.vue";
-import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
-import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import { useMainVice } from "~/hooks/useMainVice";
 import { useTagPage } from "./tools/useTagPage";
 import type { TrueOrFalse } from "~/types/types-basic";

@@ -2,7 +2,6 @@
 import MainView from "~/views/main-view/main-view.vue";
 import ViceView from "~/views/vice-view/vice-view.vue";
 import ChatScroll from "~/components/common/chat-scroll/chat-scroll.vue";
-import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
 
