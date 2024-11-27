@@ -2168,6 +2168,11 @@ export namespace SyncOperateAPI {
     chatId: string
   }
 
+  export const Sch_Param = vbot.object({
+    operateType: vbot.picklist(["agree-aichat", "get-aichat"]),
+    chatId: Sch_String_WithLength,
+  })
+
   export interface WaitingData {
     title?: string
     liuDesc?: LiuContent[]
@@ -2254,7 +2259,7 @@ export interface VerifyTokenOpt {
 
 export interface VerifyTokenRes_A {
   pass: false
-  rqReturn: LiuRqReturn
+  rqReturn: LiuErrReturn
 }
 
 export interface VerifyTokenRes_B {

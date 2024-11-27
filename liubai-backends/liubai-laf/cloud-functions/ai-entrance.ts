@@ -22,9 +22,6 @@ import {
   type Wx_Gzh_Send_Msgmenu,
   type Table_Order,
   type Table_Subscription,
-  Sch_AiToolAddNoteParam,
-  Sch_AiToolAddTodoParam,
-  Sch_AiToolAddCalendarParam,
   type AiFinishReason,
   type AiToolAddCalendarParam,
   AiAbility,
@@ -40,6 +37,7 @@ import {
   LiuDateUtil,
   getLiuDoman,
   MarkdownParser,
+  AiToolUtil,
 } from "@/common-util"
 import { WxGzhSender } from "@/service-send"
 import { 
@@ -1592,11 +1590,10 @@ class ToolHandler {
   
   async add_note(funcJson: Record<string, any>) {
     // 1. check out param
-    const res1 = vbot.safeParse(Sch_AiToolAddNoteParam, funcJson)
-    if(!res1.success) {
-      console.warn("cannot parse add_note param: ")
+    const waitingData = AiToolUtil.turnJsonToWaitingData("add_note", funcJson)
+    if(!waitingData) {
+      console.warn("cannot parse funcJson in add_note: ")
       console.log(funcJson)
-      console.log(res1.issues)
       return
     }
 
@@ -1619,16 +1616,15 @@ class ToolHandler {
 
   async add_todo(funcJson: Record<string, any>) {
     // 1. check out param
-    const res1 = vbot.safeParse(Sch_AiToolAddTodoParam, funcJson)
-    if(!res1.success) {
-      console.warn("cannot parse add_todo param: ")
+    const waitingData = AiToolUtil.turnJsonToWaitingData("add_todo", funcJson)
+    if(!waitingData) {
+      console.warn("cannot parse funcJson in add_todo: ")
       console.log(funcJson)
-      console.log(res1.issues)
       return
     }
 
     // 2. add msg
-    const assistantChatId = await this._addMsgToChat("add_note", funcJson)
+    const assistantChatId = await this._addMsgToChat("add_todo", funcJson)
     if(!assistantChatId) return
 
     // 3. reply
@@ -1640,11 +1636,10 @@ class ToolHandler {
 
   async add_calendar(funcJson: Record<string, any>) {
     // 1. check out param
-    const res1 = vbot.safeParse(Sch_AiToolAddCalendarParam, funcJson)
-    if(!res1.success) {
-      console.warn("cannot parse add_calendar param: ")
+    const waitingData = AiToolUtil.turnJsonToWaitingData("add_calendar", funcJson)
+    if(!waitingData) {
+      console.warn("cannot parse funcJson in add_calendar: ")
       console.log(funcJson)
-      console.log(res1.issues)
       return
     }
 
@@ -1669,6 +1664,9 @@ class ToolHandler {
     }
     msg += t("add_calendar_3", { desc: description })
 
+    /** Priority:
+     *   date > specificDate > laterHour
+     */
     // 3.1 handle date
     let hasAddedDate = false
     if(date) {
@@ -1711,7 +1709,9 @@ class ToolHandler {
         msg += t("add_calendar_6", { str: strReminder })
       }
     }
-    if(laterHour && !hasAddedTime) {
+
+    // 3.3 handle later
+    if(laterHour && !hasAddedTime && !hasAddedDate) {
       let strLater = ""
       if(laterHour === 0.5) {
         strLater = t("later_min", { min: 30 })
@@ -2098,7 +2098,7 @@ class AiHelper {
   }
 
 
-  static _getToolMsg(
+  private static _getToolMsg(
     tool_call_id: string,
     t: T_I18N,
     v: Table_AiChat,
@@ -2134,7 +2134,7 @@ class AiHelper {
     return toolMsg
   }
 
-  static _turnToolCallIntoNormalAssistanMsg(
+  private static _turnToolCallIntoNormalAssistanMsg(
     t: T_I18N,
     v: Table_AiChat,
   ) {
@@ -2429,6 +2429,13 @@ class AiHelper {
     }
   }
 
+  static getCharacterName(character: AiCharacter) {
+    let name = ""
+    const bot = aiBots.find(v => v.character === character)
+    if(bot) name = bot.name
+    return name
+  }
+
 }
 
 
@@ -2626,13 +2633,13 @@ class TellUser {
       }
 
       if(operation === "kick" && character) {
-        const characterName = AiUtil.getCharacterName(character)
+        const characterName = AiHelper.getCharacterName(character)
         if(!characterName) continue
         wx_menu_list.push({ id: "kick_" + character, content: t("kick") + characterName })
       }
 
       if(operation === "add" && character) {
-        const characterName = AiUtil.getCharacterName(character)
+        const characterName = AiHelper.getCharacterName(character)
         if(!characterName) continue
         wx_menu_list.push({ id: "add_" + character, content: t("add") + characterName })
       }
@@ -2708,17 +2715,6 @@ class TellUser {
     if(!accessToken) return
     const res = await WxGzhSender.sendMessage(wx_gzh_openid, accessToken, obj)
     return res
-  }
-
-}
-
-class AiUtil {
-
-  static getCharacterName(character: AiCharacter) {
-    let name = ""
-    const bot = aiBots.find(v => v.character === character)
-    if(bot) name = bot.name
-    return name
   }
 
 }

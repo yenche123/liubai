@@ -51,6 +51,10 @@ import type {
   UserSubscription,
   Alipay_Refund_Param,
   Res_Alipay_Refund,
+  SyncOperateAPI,
+  LiuRemindMe,
+  AiToolAddCalendarParam,
+  AiToolAddCalendarSpecificDate,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -58,6 +62,9 @@ import {
   Sch_Cloud_FileStore,
   Sch_Cloud_ImageStore,
   Sch_Simple_LiuContent,
+  Sch_AiToolAddNoteParam,
+  Sch_AiToolAddTodoParam,
+  Sch_AiToolAddCalendarParam,
 } from "@/common-types"
 import { 
   createToken, 
@@ -69,7 +76,7 @@ import {
 import { 
   getNowStamp, 
   getBasicStampWhileAdding, 
-  SECONED, DAY, MINUTE,
+  SECONED, DAY, MINUTE, HOUR,
   localizeStamp,
   isWithinMillis,
   getServerTimezone,
@@ -1538,7 +1545,7 @@ export async function verifyToken(
   const gShared = cloud.shared
   const map = getLiuTokenUser()
 
-  const errReturn: LiuRqReturn = { 
+  const errReturn: LiuErrReturn = { 
     code: "E4003", 
     errMsg: "the verification of token failed",
   }
@@ -2874,3 +2881,257 @@ export async function upgrade_user_subscription(
   const newUser: Table_User = { ...theUser, ...u5 }
   updateUserInCache(user_id, newUser)
 }
+
+
+/*************** About ai tool ***************/
+export class AiToolUtil {
+
+
+  static turnTextToLiuDesc(text: string) {
+    if(!text) return
+    let list = text.split("\n")
+    const liuDesc: LiuContent[] = []
+    for(let i=0; i<list.length; i++) {
+      const v = list[i]
+      const obj: LiuContent = {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: v,
+          }
+        ]
+      }
+      liuDesc.push(obj)
+    }
+    return liuDesc
+  }
+
+  private static _turnSpecificDateToWhenStamp(
+    specificDate: AiToolAddCalendarSpecificDate,
+    userTimezone?: string,
+  ) {
+    const opt1 = { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 }
+    const stamp1 = getNowStamp()
+    const currentStamp = localizeStamp(stamp1, userTimezone)
+    const diffStamp = currentStamp - stamp1
+    const todayMidnight = date_fn_set(new Date(currentStamp), opt1)
+
+    // 1. handle today
+    if(specificDate === "today") {
+      return todayMidnight.getTime() - diffStamp
+    }
+
+    // 2. handle tomorrow
+    if(specificDate === "tomorrow") {
+      let tomorrowMidnight = addDays(todayMidnight, 1)
+      return tomorrowMidnight.getTime() - diffStamp
+    }
+
+    // 3. handle day_after_tomorrow
+    if(specificDate === "day_after_tomorrow") {
+      let date3 = addDays(todayMidnight, 2)
+      return date3.getTime() - diffStamp
+    }
+
+    // 4. handle other days
+    let dayList: AiToolAddCalendarSpecificDate[] = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ]
+    const currentDay = todayMidnight.getDay()
+    const dayIdx = dayList.indexOf(specificDate)
+    if(dayIdx < 0) {
+      // return today midnight stamp as default
+      return todayMidnight.getTime() - diffStamp
+    }
+
+    let diffDays = dayIdx - currentDay
+    if(diffDays <= 0) diffDays += 7
+    let date4 = addDays(todayMidnight, diffDays)
+    return date4.getTime() - diffStamp
+  }
+
+
+  private static _turnCalendarJsonToWaitingData(
+    funcJson: Record<string, any>,
+    user?: Table_User,
+  ) {
+    // 1. get param and check out description
+    const {
+      title,
+      description,
+      date,
+      specificDate,
+      time,
+      earlyMinute,
+      laterHour,
+    } = funcJson as AiToolAddCalendarParam
+    const liuDesc = this.turnTextToLiuDesc(description)
+    if(!liuDesc || liuDesc.length === 0) {
+      console.warn("cannot get liuDesc1 in _turnCalendarJsonToWaitingData!")
+      console.log(funcJson)
+      return
+    }
+    let userTimezone = user?.timezone
+    let whenStamp: number | undefined
+    let remindMe: LiuRemindMe | undefined
+
+    /** Priority:
+     *   date > specificDate > laterHour
+     */
+
+    // 2. date
+    let hasAddedDate = false
+    if(date) {
+      const dateObj = LiuDateUtil.distractFromYYYY_MM_DD(date)
+      if(dateObj) {
+        hasAddedDate = true
+        const tmpDate = new Date(dateObj.year, dateObj.month - 1, dateObj.day)
+        const tmpStamp = tmpDate.getTime()
+        whenStamp = localizeStamp(tmpStamp, userTimezone)
+      }
+    }
+
+    // 3. specificDate
+    if(specificDate && !hasAddedDate) {
+      whenStamp = this._turnSpecificDateToWhenStamp(specificDate, userTimezone)
+      hasAddedDate = true
+    }
+
+    // 4. time
+    if(time) {
+      const timeObj = LiuDateUtil.distractFromhh_mm(time)
+      if(!timeObj) {
+        console.warn("cannot parse time: ", time)
+        return
+      }
+      if(!whenStamp) {
+        whenStamp = this._turnSpecificDateToWhenStamp("today", userTimezone)
+      }
+      const hr4 = timeObj.hour * HOUR
+      const min4 = timeObj.minute * MINUTE
+      whenStamp += (hr4 + min4)
+    }
+
+    // 5. earlyMinute
+    if(earlyMinute && whenStamp) {
+      remindMe = {
+        type: "early",
+        early_minute: earlyMinute,
+      }
+    }
+
+    // 6. laterHour
+    const now = getNowStamp()
+    if(laterHour && !whenStamp) {
+      remindMe = { type: "later" }
+      if(laterHour === 0.5) {
+        remindMe.later = "30min"
+      }
+      else if(laterHour === 1) {
+        remindMe.later = "1hr"
+      }
+      else if(laterHour === 2) {
+        remindMe.later = "2hr"
+      }
+      else if(laterHour === 3) {
+        remindMe.later = "3hr"
+      }
+      else if(laterHour === 12) {
+        remindMe = {
+          type: "specific_time",
+          specific_stamp: now + (12 * HOUR),
+        }
+      }
+      else {
+        remindMe.later = "tomorrow_this_moment"
+      }
+    }
+
+    // 7. return data
+    const waitingData: SyncOperateAPI.WaitingData = {
+      title,
+      liuDesc,
+      whenStamp,
+      remindMe,
+    }
+    return waitingData
+  }
+
+
+  static turnJsonToWaitingData(
+    funcName: string,
+    funcJson: Record<string, any>,
+    user?: Table_User,
+  ): SyncOperateAPI.WaitingData | undefined {
+
+    // 1. add_note
+    if(funcName === "add_note") {
+      const res1 = vbot.safeParse(Sch_AiToolAddNoteParam, funcJson)
+      if(!res1.success) {
+        console.warn("cannot parse add_note param: ")
+        console.log(funcJson)
+        console.log(res1.issues)
+        return
+      }
+      
+      const { title, description } = funcJson
+      const liuDesc1 = this.turnTextToLiuDesc(description)
+      if(!liuDesc1 || liuDesc1.length === 0) {
+        console.warn("cannot get liuDesc1 in add_note!")
+        console.log(funcJson)
+        return
+      }
+      const d1: SyncOperateAPI.WaitingData = {
+        title,
+        liuDesc: liuDesc1,
+      }
+      return d1
+    }
+
+    // 2. add_todo
+    if(funcName === "add_todo") {
+      const res2 = vbot.safeParse(Sch_AiToolAddTodoParam, funcJson)
+      if(!res2.success) {
+        console.warn("cannot parse add_todo param: ")
+        console.log(funcJson)
+        console.log(res2.issues)
+        return
+      }
+
+      const { title } = funcJson
+      const liuDesc2 = this.turnTextToLiuDesc(title)
+      if(!liuDesc2 || liuDesc2.length === 0) {
+        console.warn("cannot get liuDesc2 in add_todo!")
+        console.log(funcJson)
+        return
+      }
+      const d2: SyncOperateAPI.WaitingData = {
+        liuDesc: liuDesc2,
+      }
+      return d2
+    }
+
+    // 3. add_calendar
+    if(funcName === "add_calendar") {
+      const res3 = vbot.safeParse(Sch_AiToolAddCalendarParam, funcJson)
+      if(!res3.success) {
+        console.warn("cannot parse add_calendar param: ")
+        console.log(funcJson)
+        console.log(res3.issues)
+        return
+      }
+      const d3 = this._turnCalendarJsonToWaitingData(funcJson, user)
+      return d3
+    }
+    
+  }
+
+}
+
