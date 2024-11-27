@@ -156,6 +156,8 @@ export namespace SyncOperateAPI {
   export interface WaitingData {
     title?: string
     liuDesc?: LiuContent[]
+    calendarStamp?: number
+    remindStamp?: number
     whenStamp?: number
     remindMe?: LiuRemindMe
   }

@@ -55,6 +55,8 @@ import type {
   LiuRemindMe,
   AiToolAddCalendarParam,
   AiToolAddCalendarSpecificDate,
+  LiuAtomState,
+  LiuStateConfig,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -1738,6 +1740,41 @@ export function updateUserInCache(
 }
 
 
+/********************* About Workspace ****************/
+export class SpaceUtil {
+
+  private static _getDefaultStates() {
+    const now = getNowStamp()
+    const defaultStates: LiuAtomState[] = [
+      {
+        id: "TODO",
+        showInIndex: true,
+        updatedStamp: now,
+        insertedStamp: now,
+      },
+      {
+        id: "FINISHED",
+        showInIndex: false,
+        updatedStamp: now,
+        insertedStamp: now,
+        showFireworks: true,
+      }
+    ]
+    return defaultStates
+  }
+
+  static getDefaultStateCfg() {
+    const now = getNowStamp()
+    const stateList = this._getDefaultStates()
+    const obj: LiuStateConfig = {
+      stateList,
+      updatedStamp: now,
+    }
+    return obj
+  }
+
+}
+
 /********************* Crypto 加解密相关的函数 ****************/
 
 /**
@@ -2979,6 +3016,8 @@ export class AiToolUtil {
       return
     }
     let userTimezone = user?.timezone
+    let calendarStamp: number | undefined
+    let remindStamp: number | undefined
     let whenStamp: number | undefined
     let remindMe: LiuRemindMe | undefined
 
@@ -3025,12 +3064,14 @@ export class AiToolUtil {
         type: "early",
         early_minute: earlyMinute,
       }
+      remindStamp = whenStamp - (earlyMinute * MINUTE)
     }
 
     // 6. laterHour
     const now = getNowStamp()
     if(laterHour && !whenStamp) {
       remindMe = { type: "later" }
+      remindStamp = now + (laterHour * HOUR)
       if(laterHour === 0.5) {
         remindMe.later = "30min"
       }
@@ -3054,10 +3095,22 @@ export class AiToolUtil {
       }
     }
 
-    // 7. return data
+    // 7. "on time" is default if no remindMe
+    // and whenStamp is in the future
+    if(whenStamp && !remindMe && whenStamp > now) {
+      remindMe = { type: "early", early_minute: 0 }
+      remindStamp = whenStamp
+    }
+
+    // 8. handle calendarStamp
+    calendarStamp = remindStamp ?? whenStamp
+
+    // 9. return data
     const waitingData: SyncOperateAPI.WaitingData = {
       title,
       liuDesc,
+      calendarStamp,
+      remindStamp,
       whenStamp,
       remindMe,
     }

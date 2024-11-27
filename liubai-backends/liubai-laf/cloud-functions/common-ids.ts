@@ -151,3 +151,7 @@ export function createCredential2() {
 export function createPaymentNonce() {
   return createRandom(32, "UppercaseAndNumber")
 }
+
+export function createThreadId() {
+  return "t0" + createRandom()
+}

@@ -227,7 +227,7 @@ interface BaseTable {
 }
 
 /** 表示 “状态” 的原子结构 */
-interface LiuAtomState {
+export interface LiuAtomState {
   id: string
   text?: string
   color?: string     // 存储 # 开头的 hex，或者 --liu-state- 开头的系统颜色
@@ -250,7 +250,7 @@ const Sch_LiuAtomState: BaseSchema<LiuAtomState> = vbot.object({
 })
 
 /** 表示数据表里，存储 “状态” 的结构  */
-interface LiuStateConfig {
+export interface LiuStateConfig {
   stateList: LiuAtomState[]
   updatedStamp: number
 }
@@ -2176,6 +2176,8 @@ export namespace SyncOperateAPI {
   export interface WaitingData {
     title?: string
     liuDesc?: LiuContent[]
+    calendarStamp?: number
+    remindStamp?: number
     whenStamp?: number
     remindMe?: LiuRemindMe
   }
