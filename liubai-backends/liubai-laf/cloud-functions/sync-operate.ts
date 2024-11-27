@@ -1,5 +1,13 @@
 import cloud from '@lafjs/cloud'
-import { AiToolUtil, checker, encryptDataWithAES, getAESKey, getDocAddId, SpaceUtil, verifyToken } from '@/common-util'
+import { 
+  AiToolUtil, 
+  checker, 
+  encryptDataWithAES, 
+  getAESKey, 
+  getDocAddId, 
+  SpaceUtil, 
+  verifyToken,
+} from '@/common-util'
 import * as vbot from "valibot"
 import { 
   type CryptoCipherAndIV, 
@@ -10,6 +18,7 @@ import {
   type Table_Member, 
   type Table_User, 
   type Table_Workspace,
+  type DataPass,
   SyncOperateAPI,
 } from '@/common-types'
 import { getBasicStampWhileAdding, getNowStamp } from './common-time'
@@ -37,44 +46,67 @@ export async function main(ctx: FunctionContext) {
     res = await agree_aichat(user, b.chatId)
   }
   else if(b.operateType === "get-aichat") {
-
+    res = await get_aichat(user, b.chatId)
   }
   
   return res
 }
 
 
+interface SharedData {
+  funcName: string
+  funcJson: Record<string, any>
+  theChat: Table_AiChat
+  theRoom: Table_AiRoom
+}
+
+async function get_aichat(
+  user: Table_User,
+  chatId: string,
+): Promise<LiuRqReturn<SyncOperateAPI.Res_GetAichat>> {
+  // 1. get shared data
+  const data1 = await getSharedData(user, chatId)
+  if(!data1.pass) return data1.err
+  const { funcName, funcJson, theChat } = data1.data
+
+  // 2. return directly if there is a content associated with this chat
+  if(theChat.contentId) {
+    return {
+      code: "0000",
+      data: {
+        operateType: "get-aichat",
+        result: "created",
+        contentId: theChat.contentId
+      }
+    }
+  }
+
+  // 3. get waiting data
+  const waitingData = AiToolUtil.turnJsonToWaitingData(funcName, funcJson, user)
+  if(!waitingData) {
+    return { code: "E5001", errMsg: "fail to get waitingData" }
+  }
+
+  return {
+    code: "0000",
+    data: {
+      operateType: "get-aichat",
+      result: "waiting",
+      waitingData,
+    }
+  }
+}
+
 async function agree_aichat(
   user: Table_User,
   chatId: string,
 ): Promise<LiuRqReturn<SyncOperateAPI.Res_AgreeAichat>> {
-  // 1. get the ai chat
-  const aiChatCol = db.collection("AiChat")
-  const res1 = await aiChatCol.doc(chatId).get<Table_AiChat>()
-  const theChat = res1.data
-  if(!theChat) {
-    return { code: "E4004", errMsg: "ai chat not found" }
-  }
-  const { funcName, funcJson } = theChat
-  if(!funcName || !funcJson) {
-    return { code: "E5001", errMsg: "funcName or funcJson is empty" }
-  }
+  // 1. get shared data
+  const data1 = await getSharedData(user, chatId)
+  if(!data1.pass) return data1.err
+  const { funcName, funcJson, theChat } = data1.data
 
-  // 2. get the room
-  const roomId = theChat.roomId
-  const rCol = db.collection("AiRoom")
-  const res2 = await rCol.doc(roomId).get<Table_AiRoom>()
-  const theRoom = res2.data
-  if(!theRoom) {
-    return { code: "E4004", errMsg: "ai room not found" }
-  }
-
-  // 3. check out permission
-  if(theRoom.owner !== user._id) {
-    return { code: "E4003", errMsg: "permission denied" }
-  }
-
-  // 4. return if there is a content associated with this chat
+  // 2. return if there is a content associated with this chat
   let contentType: SyncOperateAPI.ContentType = "note"
   if(funcName === "add_todo") contentType = "todo"
   else if(funcName === "add_calendar") contentType = "calendar"
@@ -89,20 +121,20 @@ async function agree_aichat(
     }
   }
 
-  // 5. get my personal space & member
+  // 3. get my personal space & member
   const spaceAndMember = await getMyPersonalSpaceAndMember(user._id)
   if(!spaceAndMember) {
     return { code: "E5001", errMsg: "fail to get my space or member" }
   }
   const { space, member } = spaceAndMember
 
-  // 6. construct content
+  // 4. construct content
   const waitingData = AiToolUtil.turnJsonToWaitingData(funcName, funcJson, user)
   if(!waitingData) {
     return { code: "E5001", errMsg: "fail to get waitingData" }
   }
 
-  // 7. encrypt waitingData
+  // 5. encrypt waitingData
   const aesKey = getAESKey() ?? ""
   const enc_title = encryptDataWithAES(waitingData.title, aesKey)
   let enc_desc: CryptoCipherAndIV | undefined
@@ -111,11 +143,11 @@ async function agree_aichat(
   }
   // TODO: enc_search_text
 
-  // 8. construct content
-  const b8 = getBasicStampWhileAdding()
+  // 6. construct content
+  const b6 = getBasicStampWhileAdding()
   const first_id = createThreadId()
-  const d8: Partial<Table_Content> = {
-    ...b8,
+  const newContent: Partial<Table_Content> = {
+    ...b6,
     first_id,
     user: user._id,
     member: member._id,
@@ -136,15 +168,15 @@ async function agree_aichat(
     remindMe: waitingData.remindMe,
     emojiData: { total: 0, system: [] },
 
-    createdStamp: b8.insertedStamp,
-    editedStamp: b8.insertedStamp,
+    createdStamp: b6.insertedStamp,
+    editedStamp: b6.insertedStamp,
 
     levelOne: 0,
     levelOneAndTwo: 0,
     aiCharacter: theChat.character,
   }
 
-  // 9. check out TODO
+  // 7. check out TODO
   let todoIdx = -1
   if(funcName === "add_todo") {
     const sCfg9 = space.stateConfig ?? SpaceUtil.getDefaultStateCfg()
@@ -154,24 +186,30 @@ async function agree_aichat(
       }
     })
     if(todoIdx >= 0) {
-      d8.stateId = "TODO"
+      newContent.stateId = "TODO"
     }
   }
-  console.log("see d8: ")
-  console.log(d8)
+  console.log("see newContent: ")
+  console.log(newContent)
 
-  // 10. save content
+  // 8. save content
   const cCol = db.collection("Content")
-  const res10 = await cCol.add(d8)
-  const contentId = getDocAddId(res10)
+  const res8 = await cCol.add(newContent)
+  const contentId = getDocAddId(res8)
   if(!contentId) {
     return { code: "E5001", errMsg: "fail to get contentId" }
   }
 
-  // 11. update stateConfig of space
+  // 9. update stateConfig of space
   if(todoIdx >= 0) {
     addNewContentIntoKanban(contentId, "TODO", space)
   }
+
+  // 10. update ai chat
+  const now10 = getNowStamp()
+  const u10: Partial<Table_AiChat> = { contentId, updatedStamp: now10 }
+  const aCol = db.collection("AiChat")
+  aCol.doc(chatId).update(u10)
 
   return { 
     code: "0000", 
@@ -180,6 +218,61 @@ async function agree_aichat(
       contentType,
       contentId,
     },
+  }
+}
+
+
+async function getSharedData(
+  user: Table_User,
+  chatId: string,
+): Promise<DataPass<SharedData>> {
+  // 1. get the ai chat
+  const aiChatCol = db.collection("AiChat")
+  const res1 = await aiChatCol.doc(chatId).get<Table_AiChat>()
+  const theChat = res1.data
+  
+  if(!theChat) {
+    return { 
+      pass: false, 
+      err: { code: "E4004", errMsg: "ai chat not found" }
+    }
+  }
+  const { funcName, funcJson } = theChat
+  if(!funcName || !funcJson) {
+    return {
+      pass: false,
+      err: { code: "E5001", errMsg: "funcName or funcJson is empty" }
+    }
+  }
+
+  // 2. get the room
+  const roomId = theChat.roomId
+  const rCol = db.collection("AiRoom")
+  const res2 = await rCol.doc(roomId).get<Table_AiRoom>()
+  const theRoom = res2.data
+  if(!theRoom) {
+    return { 
+      pass: false, 
+      err: { code: "E4004", errMsg: "ai room not found" }
+    }
+  }
+
+  // 3. check out permission
+  if(theRoom.owner !== user._id) {
+    return { 
+      pass: false, 
+      err: { code: "E4003", errMsg: "permission denied" }
+    }
+  }
+
+  return {
+    pass: true,
+    data: {
+      funcName,
+      funcJson,
+      theChat,
+      theRoom,
+    }
   }
 }
 
