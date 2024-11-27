@@ -254,9 +254,9 @@ function initSubscribeContent(
   }, 3000)
 
   // 2. listen to activeSyncNum
-  const { awakeNum, syncNum } = useAwakeNum()
+  const { awakeNum } = useAwakeNum()
   watch(awakeNum, (newV) => {
-    if(newV < 1 || syncNum.value < 1) return
+    if(newV < 1) return
     _getPlan()
   }, { immediate: true })
 
@@ -283,14 +283,15 @@ async function getSubscriptionPlan(
   let code = ""
   try {
     const res = await liuReq.request<Res_SubPlan_Info>(url, param)
-    // console.log("getSubscriptionPlan res:")
-    // console.log(res)
-    // console.log(" ")
-
     if(res.code === "0000" && res.data) {
       code = res.code
       scData.subPlanInfo = res.data
       parsePrice(scData, res.data)
+    }
+    else {
+      console.log("fail to get subscription plan: ")
+      console.log(res)
+      console.log(" ")
     }
   }
   catch(err) {
