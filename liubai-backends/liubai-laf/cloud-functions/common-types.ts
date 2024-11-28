@@ -1361,9 +1361,14 @@ export interface Table_Collection extends BaseTable {
 
 
 export interface Config_WeChat_GZH {
+
+  // about access token
   access_token?: string
-  expires_in?: number      // how many seconds left before it expires
-  lastGetStamp?: number   // Timestamp of the last time access_token was obtained
+  expires_in?: number      // how many seconds left before it expires, which is only for access_token
+  lastGetStamp?: number    // Timestamp of the last time access_token was obtained
+
+  // about jsapi_ticket for js-sdk
+  jsapi_ticket?: string
 }
 
 export interface Config_WeCom_Qynb {

@@ -32,6 +32,7 @@ import {
 import { differenceInCalendarMonths } from "date-fns"
 
 const API_WECHAT_ACCESS_TOKEN = "https://api.weixin.qq.com/cgi-bin/token"
+const API_WX_JSAPI_TICKET = "https://api.weixin.qq.com/cgi-bin/ticket/getticket"
 const API_WECOM_ACCESS_TOKEN = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
 
 // 微信支付 下载平台证书
@@ -235,26 +236,46 @@ async function handleWeChatGZHConfig(
   }
 
   // 2. fetch access_token
-  const url = new URL(API_WECHAT_ACCESS_TOKEN)
-  const sP = url.searchParams
-  sP.set("grant_type", "client_credential")
-  sP.set("appid", appid)
-  sP.set("secret", secret)
-  const link = url.toString()
-  const res1 = await liuReq(link, undefined, { method: "GET" })
-  const rData = res1?.data
-  const access_token = rData?.access_token
+  const url2 = new URL(API_WECHAT_ACCESS_TOKEN)
+  const sP2 = url2.searchParams
+  sP2.set("grant_type", "client_credential")
+  sP2.set("appid", appid)
+  sP2.set("secret", secret)
+  const link2 = url2.toString()
+  const res2 = await liuReq(link2, undefined, { method: "GET" })
+  const rData2 = res2?.data
+  const access_token = rData2?.access_token
   if(!access_token) {
     console.warn("fail to get access_token from wechat")
-    console.log(res1)
+    console.log(res2)
+    return
+  }
+
+  // 3. handle jsapi_ticket
+  const url3 = new URL(API_WX_JSAPI_TICKET)
+  const sP3 = url3.searchParams
+  sP3.set("access_token", access_token)
+  sP3.set("type", "jsapi")
+  const link3 = url3.toString()
+  const res3 = await liuReq(link3, undefined, { method: "GET" })
+  const rData3 = res3?.data
+  const jsapi_ticket = rData3?.ticket
+  if(!jsapi_ticket) {
+    console.warn("fail to get jsapi_ticket from wechat")
+    console.log(res3)
     return
   }
 
   const wechat_gzh: Config_WeChat_GZH = {
     ...cfg.wechat_gzh,
+    
+    // for access_token
     access_token,
-    expires_in: rData?.expires_in,
+    expires_in: rData2?.expires_in,
     lastGetStamp: now1,
+
+    // for jsapi
+    jsapi_ticket,
   }
   return wechat_gzh
 }
