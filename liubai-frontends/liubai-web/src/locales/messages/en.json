@@ -482,7 +482,9 @@
     "refund_2": "After approval, it is expected to arrive within 24 hours.",
     "choose_pay_method": "Payment Method",
     "alipay": "Alipay",
-    "wxpay": "WeChat Pay"
+    "wxpay": "WeChat Pay",
+    "go_to_group": "Join VIP Group",
+    "scan_with_wx": "Please scan with WeChat"
   },
   "a2hs": {
     "title": "Add to Home",

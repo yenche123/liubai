@@ -90,6 +90,9 @@ export interface LiuSystemEnv {
   // customer service link
   CUSTOMER_SERVICE?: string
 
+  // wecom
+  WECOM_GROUP_LINK?: string
+
   // connectors
   CONNECTORS?: boolean
   C_WECHAT?: boolean

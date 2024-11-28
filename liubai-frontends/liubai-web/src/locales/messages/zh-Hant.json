@@ -482,7 +482,9 @@
     "refund_2": "審核通過後，預計 24 小時內到帳。",
     "choose_pay_method": "選擇支付方式",
     "alipay": "支付寶",
-    "wxpay": "微信支付"
+    "wxpay": "微信支付",
+    "go_to_group": "進入 VIP 群組",
+    "scan_with_wx": "請用微信掃描"
   },
   "a2hs": {
     "title": "加入到桌面",

@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n"
-import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import { useSuccessContent } from "./tools/useSuccessContent";
 
 const { t } = useI18n()
 
-const rr = useRouteAndLiuRouter()
-const onTapBtn = () => {
-  rr.router.push({ name: "subscription" })
-}
-
-const { wStore } = useSuccessContent()
+const { 
+  wStore,
+  WECOM_GROUP_LINK,
+  onTapView,
+  onTapGroup,
+} = useSuccessContent()
 
 </script>
 <template>
@@ -25,8 +24,16 @@ const { wStore } = useSuccessContent()
       <span class="liu-selection">{{ t('payment.success_title') }}</span>
     </div>
     <div class="cc-btn-box" v-if="wStore.userId">
-      <custom-btn class="cc-btn" @click="onTapBtn">
-        <span style="font-weight: 700;">{{ t('payment.check_out') }}</span>
+
+      <custom-btn v-if="WECOM_GROUP_LINK" class="cc-btn" @click="onTapGroup">
+        <span style="font-weight: 700;">{{ t('payment.go_to_group') }}</span>
+      </custom-btn>
+
+      <custom-btn class="cc-btn" @click="onTapView"
+        :type="WECOM_GROUP_LINK ? 'pure' : 'main'"
+      >
+        <span v-if="WECOM_GROUP_LINK">{{ t('common.back') }}</span>
+        <span v-else style="font-weight: 700;">{{ t('payment.check_out') }}</span>
       </custom-btn>
     </div>
 
@@ -68,12 +75,14 @@ const { wStore } = useSuccessContent()
   width: 100%;
   padding-block-end: 30px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   position: relative;
 }
 
 .cc-btn {
   max-width: var(--btn-max);
+  margin-block-end: 12px;
 }
 
 </style>

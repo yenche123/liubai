@@ -482,7 +482,9 @@
     "refund_2": "审核通过后，预计 24 小时内到账。",
     "choose_pay_method": "选择支付方式",
     "alipay": "支付宝",
-    "wxpay": "微信支付"
+    "wxpay": "微信支付",
+    "go_to_group": "进入会员群",
+    "scan_with_wx": "请用微信扫一扫"
   },
   "a2hs": {
     "title": "添加到桌面",

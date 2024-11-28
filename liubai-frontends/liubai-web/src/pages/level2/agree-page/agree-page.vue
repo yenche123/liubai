@@ -93,6 +93,7 @@ const eventKey = computed(() => {
 .ap-btn-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   position: absolute;
   bottom: 40px;
@@ -100,8 +101,13 @@ const eventKey = computed(() => {
   right: 0;
 }
 
+.ap-btn {
+  max-width: var(--btn-max);
+}
+
 .ap-ok-btn {
-  margin-block-end: 10px;
+  font-weight: 700;
+  margin-block-end: 12px;
 }
 
 /** for wide screen */
