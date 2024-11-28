@@ -9,7 +9,11 @@ import valTool from "~/utils/basic/val-tool"
 import { SyncOperateAPI } from "~/types/types-cloud"
 import liuReq from "~/requests/liu-req"
 import APIs from "~/requests/APIs"
-import { invokeWxJsSdk } from "~/utils/third-party/wx-js-sdk/handle-wx-js-sdk"
+import { 
+  getGlobalWx,
+  invokeWxJsSdk,
+} from "~/utils/third-party/weixin/handle-wx-js-sdk"
+import liuApi from "~/utils/liu-api"
 
 export function useAgreePage() {
 
@@ -29,7 +33,6 @@ export function useAgreePage() {
 
     // to fetch data
     toGetData(apData)
-    invokeWxJsSdk()
   }, { immediate: true })
   
 
@@ -52,8 +55,8 @@ async function toGetData(
 
   // 2. request
   const url = APIs.SYNC_OPERATE
-  const res = await liuReq.request<SyncOperateAPI.Res_AgreeAichat>(url, param1)
-  const { code, data } = res
+  const res2 = await liuReq.request<SyncOperateAPI.Res_AgreeAichat>(url, param1)
+  const { code, data } = res2
 
   // 3. handle result
   if(code === "E4003") {
@@ -73,15 +76,35 @@ async function toGetData(
   if(!data) return
   apData.contentId = data.contentId
   apData.contentType = data.contentType
+
+  // 5. init wx-js-sdk
+  const cha = liuApi.getCharacteristic()
+  if(cha.isWeChat) {
+    invokeWxJsSdk()
+  }
 }
 
 
-function toTapOK(
+async function toTapOK(
   apData: ApData,
   rr: RouteAndLiuRouter,
 ) {
+  const cha = liuApi.getCharacteristic()
+  if(!cha.isWeChat) {
+    // go to index page
+    rr.router.push({ name: "index" })
+    return
+  }
 
+  const res1 = await invokeWxJsSdk(1000)
+  if(!res1) {
+    rr.router.push({ name: "index" })
+    return
+  }
 
+  console.log("try to close window!")
+  const wx = getGlobalWx()
+  wx.closeWindow()
 }
 
 function toTapCheckItOut(

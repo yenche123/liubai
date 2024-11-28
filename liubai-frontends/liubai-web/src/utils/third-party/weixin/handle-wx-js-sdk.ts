@@ -8,16 +8,35 @@ const jsApiList: wx.jsApiList = [
   "closeWindow",
 ]
 
+export function getGlobalWx() {
+  return wx
+}
+
 let activeUrl = ""
 let promise: Promise<boolean> | undefined
-
-export function invokeWxJsSdk() {
+export function invokeWxJsSdk(
+  maxWaitMilli: number = 3000
+) {
   const tmpList = location.href.split("#") 
   const currentUrl = tmpList[0]
   if(currentUrl === activeUrl && promise) return promise
   activeUrl = currentUrl
 
   const _wait = async (a: BoolFunc) => {
+
+    // 0. set timeout
+    let hasFinished = false
+    const timeout = setTimeout(() => {
+      hasFinished = true
+      a(false)
+    }, maxWaitMilli)
+    const _sendResult = (isOK: boolean) => {
+      if(hasFinished) return
+      hasFinished = true
+      a(isOK)
+      clearTimeout(timeout)
+    }
+
     // 1. fetch 
     const link1 = APIs.SERVICE_POLY
     const body1: ServicePolyAPI.Param = {
@@ -29,12 +48,11 @@ export function invokeWxJsSdk() {
       body1,
     )
     const data1 = res1.data
-    console.log("get-wxjssdk-config res1: ")
-    console.log(res1)
-    console.log(" ")
-
     if(res1.code !== "0000" || !data1) {
-      a(false)
+      console.warn("get-wxjssdk-config fail........")
+      console.log(res1)
+      console.log(" ")
+      _sendResult(false)
       return
     }
 
@@ -58,13 +76,13 @@ export function invokeWxJsSdk() {
 
     wx.ready(() => {
       console.warn("wx.ready.........")
-      a(true)
+      _sendResult(true)
     })
 
     wx.error((err) => {
       console.warn("wx.error.........")
       console.log(err)
-      a(false)
+      _sendResult(false)
     })
   }
 
