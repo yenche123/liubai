@@ -180,3 +180,20 @@ export namespace SyncOperateAPI {
   export type Result = Res_AgreeAichat | Res_GetAichat
 }
 
+/****************** service-poly api ***************/
+export namespace ServicePolyAPI {
+  
+  export interface Param {
+    operateType: "get-wxjssdk-config"
+    url: string
+  }
+
+  export interface Res_GetWxjssdkConfig {
+    operateType: "get-wxjssdk-config"
+    appId: string
+    timestamp: number
+    nonceStr: string
+    signature: string
+  }
+}
+

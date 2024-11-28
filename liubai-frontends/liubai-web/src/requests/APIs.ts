@@ -19,4 +19,5 @@ export default {
   SYNC_OPERATE: d + `sync-operate`,
   OPEN_CONNECT: d + `open-connect`,
   PAYMENT_ORDER: d + `payment-order`,
+  SERVICE_POLY: d + `service-poly`,
 }

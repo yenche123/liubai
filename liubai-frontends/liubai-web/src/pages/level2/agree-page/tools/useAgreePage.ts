@@ -1,11 +1,15 @@
 import { reactive, watch } from "vue"
 import type { ApData } from "./types"
 import { pageStates } from "~/utils/atom"
-import { useRouteAndLiuRouter } from "~/routes/liu-router"
+import { 
+  type RouteAndLiuRouter, 
+  useRouteAndLiuRouter,
+} from "~/routes/liu-router"
 import valTool from "~/utils/basic/val-tool"
 import { SyncOperateAPI } from "~/types/types-cloud"
 import liuReq from "~/requests/liu-req"
 import APIs from "~/requests/APIs"
+import { invokeWxJsSdk } from "~/utils/third-party/wx-js-sdk/handle-wx-js-sdk"
 
 export function useAgreePage() {
 
@@ -25,11 +29,14 @@ export function useAgreePage() {
 
     // to fetch data
     toGetData(apData)
+    invokeWxJsSdk()
   }, { immediate: true })
   
 
   return {
     apData,
+    onTapOK: () => toTapOK(apData, rr),
+    onTapCheckItOut: () => toTapCheckItOut(apData, rr),
   }
 }
 
@@ -66,4 +73,21 @@ async function toGetData(
   if(!data) return
   apData.contentId = data.contentId
   apData.contentType = data.contentType
+}
+
+
+function toTapOK(
+  apData: ApData,
+  rr: RouteAndLiuRouter,
+) {
+
+
+}
+
+function toTapCheckItOut(
+  apData: ApData,
+  rr: RouteAndLiuRouter,
+) {
+
+
 }
