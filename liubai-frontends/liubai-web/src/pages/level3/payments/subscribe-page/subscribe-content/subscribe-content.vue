@@ -72,10 +72,11 @@ watch(() => scData.state, (newV) => {
 
       <!-- 什么时候过期 或 什么时候续费 -->
       <div class="liu-no-user-select scb-footer" 
-        v-if="!scData.isLifelong && scData.expireStr && scData.isPremium"
+        v-if="!scData.isLifelong && scData.expireStr"
       >
         <span v-if="scData.autoRecharge">{{ t('payment.recharge_date', { date: scData.expireStr }) }}</span>
-        <span v-else>{{ t('payment.expire_date', { date: scData.expireStr }) }}</span>
+        <span v-else-if="scData.isPremium">{{ t('payment.until_date', { date: scData.expireStr }) }}</span>
+        <span v-else>{{ t('payment.expired_date', { date: scData.expireStr }) }}</span>
       </div>
 
       <!-- 方案内文 -->
