@@ -7,7 +7,7 @@ import { type RouteAndLiuRouter } from "~/routes/liu-router";
 import { getClientKey } from "../../tools/common-tools";
 import time from "~/utils/basic/time";
 import liuApi from "~/utils/liu-api";
-import type { LiuTimeout } from "~/utils/basic/type-tool";
+import localCache from "~/utils/system/local-cache";
 
 // 本文件负责 Google One-Tap 登录流程
 
@@ -78,6 +78,13 @@ async function handleCredentialResponse(
   // 2. 获取 enc_client_key
   const { enc_client_key } = getClientKey()
   if(!enc_client_key) return
+
+  // 3. logged already
+  const hasLogged = localCache.hasLoginWithBackend()
+  if(hasLogged) {
+    console.warn("Google One-Tap: the user has logged already!")
+    return
+  }
 
   cui.showLoading({ title_key: "login.logging2" })
   const res2 = await fetchGoogleCredential(google_id_token, state, enc_client_key)
