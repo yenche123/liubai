@@ -302,7 +302,9 @@
     "edited_at": "Edited {date}",
     "saved_locally": "Only Saved Locally",
     "content_deleted": "🗑️ It's been deleted",
-    "captured_that": "{event} captured!"
+    "captured_that": "{event} captured!",
+    "created_by_ai": "The card was created by {name} ({company})",
+    "created_by_ai2": "The card was created by {name}."
   },
   "state_related": {
     "add_state": "New State",
@@ -581,5 +583,19 @@
     "empty_1": "No Schedule Yet",
     "empty_2": "Take a rest and enjoy your life!",
     "midnight_tip": "It's {clock} o'clock\nToday is {today}"
+  },
+  "ai_character": {
+    "deepseek": "DeepSeek",
+    "kimi": "Kimi",
+    "wanzhi": "Wanzhi",
+    "yuewen": "Yuewen",
+    "zhipu": "Zhipu"
+  },
+  "ai_provider": {
+    "deepseek": "DeepSeek",
+    "kimi": "Moonshot",
+    "wanzhi": "01.ai",
+    "yuewen": "Stepfun",
+    "zhipu": "Zhipu"
   }
 }

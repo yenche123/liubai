@@ -122,6 +122,7 @@ function packThread(
     stateId: v.stateId,
     stateShow,
     config: v.config,
+    aiCharacter: v.aiCharacter,
   }
   return obj
 }

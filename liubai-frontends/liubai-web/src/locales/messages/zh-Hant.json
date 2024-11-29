@@ -302,7 +302,9 @@
     "edited_at": "{date} 編輯",
     "saved_locally": "只保存於本機",
     "content_deleted": "🗑️ 該動態已被刪除",
-    "captured_that": "已接住你的{event}"
+    "captured_that": "已接住你的{event}",
+    "created_by_ai": "本卡片由 {name}（{company}）協助創建",
+    "created_by_ai2": "本卡片由 {name} 協助創建"
   },
   "state_related": {
     "add_state": "新增狀態",
@@ -581,5 +583,19 @@
     "empty_1": "沒有任何行程",
     "empty_2": "你的現在和未來都留白了！",
     "midnight_tip": "現在已是凌晨 {clock} 點\n今天是 {today}"
+  },
+  "ai_character": {
+    "deepseek": "DeepSeek",
+    "kimi": "Kimi",
+    "yuewen": "躍問",
+    "wanzhi": "萬知",
+    "zhipu": "智譜"
+  },
+  "ai_provider": {
+    "deepseek": "深度求索",
+    "kimi": "月之暗面",
+    "yuewen": "階躍星辰",
+    "wanzhi": "零一萬物",
+    "zhipu": "智譜"
   }
 }

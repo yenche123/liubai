@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { useAgreePage } from "./tools/useAgreePage";
 import { computed } from 'vue';
 
-const { apData } = useAgreePage()
+const { apData, onTapOK, onTapCheckItOut } = useAgreePage()
 const { t } = useI18n()
 
 const eventKey = computed(() => {
@@ -39,12 +39,12 @@ const eventKey = computed(() => {
         <div class="ap-btn-container">
 
           <!-- OK -->
-          <custom-btn class="ap-btn ap-ok-btn">
+          <custom-btn class="ap-btn ap-ok-btn" @click="onTapOK">
             <span>{{ t('common.ok') }}</span>
           </custom-btn>
 
           <!-- check it out -->
-          <custom-btn type="pure" class="ap-btn">
+          <custom-btn type="pure" class="ap-btn" @click="onTapCheckItOut">
             <span>{{ t('common.check_it_out') }}</span>
           </custom-btn>
 
