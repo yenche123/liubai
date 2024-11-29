@@ -139,6 +139,13 @@
   --shiny-cta-highlight: #48abdd;
   --shiny-cta-highlight-subtle: #2a6885;
 
+  /** ai characters */
+  --deepseek-color: #4D6BFE;
+  --kimi-color: #007AFF;
+  --wanzhi-color: #08F400;
+  --yuewen-color: #36DBFF;
+  --zhipu-color: #76A8F6;
+
   /** 状态色 */
   --liu-state-1: #C3BBB3;
   --liu-state-2: #b3b788;

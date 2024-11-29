@@ -53,6 +53,7 @@ export function useTcTopbar(
     }
     
     cui.showModal({
+      title_key: "tip.tip",
       content,
       showCancel: false,
       confirm_key: "common.ok"

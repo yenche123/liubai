@@ -5,6 +5,7 @@ import type { ThreadShow } from '~/types/types-content';
 import { useTcTopbar } from './tools/useTcTopbar';
 import type { TctEmits } from "./tools/types"
 import StateBadge from '~/components/common/state-badge/state-badge.vue';
+import AiCharacterBadge from './ai-character-badge/ai-character-badge.vue';
 
 const props = defineProps({
   threadData: {
@@ -43,23 +44,22 @@ const {
       </LiuTooltip>
     </div>
 
+    <!-- ai character -->
+    <div v-if="aiCharacterUrl && td.aiCharacter" 
+      class="tct-item-container tct-ai-box"
+      @click.stop="onTapAiCharacter"
+    >
+      <AiCharacterBadge
+        :ai-character="td.aiCharacter"
+        :icon-url="aiCharacterUrl"
+      ></AiCharacterBadge>
+    </div>
+
     <!-- 状态 -->
     <StateBadge v-if="td.stateShow" :state-show="td.stateShow" 
       @tapstate="$emit('newoperate', 'state')"
       class="tct-item-container"
     ></StateBadge>
-
-    <!-- ai character -->
-    <div v-if="aiCharacterUrl" class="tct-item-container tct-ai-box"
-      @click.stop="onTapAiCharacter"
-    >
-      <div class="tct-ai-character"
-        :class="{
-          'tct-ai-deepseek': aiCharacterUrl === 'deepseek.svg',
-          'tct-ai-yuewen': aiCharacterUrl === 'yuewen.svg',
-        }"
-      ></div>
-    </div>
     
     <!-- 置顶 -->
     <svg v-if="td.pinStamp" class="tct-pin" viewBox="-50 -50 300 300">
@@ -102,25 +102,6 @@ const {
 
 .tct-ai-box {
   cursor: pointer;
-}
-
-.tct-ai-character {
-  width: 22px;
-  height: 22px;
-  background-image: v-bind("'url(/images/third-party/' + aiCharacterUrl + ')'");
-  background-size: contain;
-  overflow: hidden;
-  border-radius: 50%;
-}
-
-.tct-ai-deepseek {
-  height: 16px;
-  border-radius: 0;
-  margin-block-start: 3px;
-}
-
-.tct-ai-yuewen {
-  margin-block-start: 1px;
 }
 
 .tct-local-svg {

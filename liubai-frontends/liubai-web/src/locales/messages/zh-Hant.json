@@ -587,15 +587,15 @@
   "ai_character": {
     "deepseek": "DeepSeek",
     "kimi": "Kimi",
-    "yuewen": "躍問",
     "wanzhi": "萬知",
+    "yuewen": "躍問",
     "zhipu": "智譜"
   },
   "ai_provider": {
     "deepseek": "深度求索",
     "kimi": "月之暗面",
-    "yuewen": "階躍星辰",
     "wanzhi": "零一萬物",
+    "yuewen": "階躍星辰",
     "zhipu": "智譜"
   }
 }
