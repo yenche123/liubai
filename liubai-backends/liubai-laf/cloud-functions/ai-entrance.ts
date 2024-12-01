@@ -26,6 +26,8 @@ import {
   type AiToolAddCalendarParam,
   AiAbility,
   T_I18N,
+  ZhipuBigModel,
+  LiuAi,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -38,6 +40,7 @@ import {
   getLiuDoman,
   MarkdownParser,
   AiToolUtil,
+  liuReq,
 } from "@/common-util"
 import { WxGzhSender } from "@/service-send"
 import { 
@@ -1739,7 +1742,131 @@ class ToolHandler {
   async web_search(funcJson: Record<string, any>) {
     console.warn("web_search by ourselves!")
     console.log(funcJson)
+
+    // 1. get q
+    const q = funcJson.q
+    if(typeof q !== "string") {
+      console.warn("web_search q is not string")
+      return
+    }
+
+    
+
   }
+
+}
+
+
+export class WebSearch {
+
+
+  static async run(q: string) {
+    const _env = process.env
+    const zhipuUrl = _env.LIU_ZHIPU_BASE_URL
+    const zhipuApiKey = _env.LIU_ZHIPU_API_KEY
+
+    let searchRes: LiuAi.SearchResult | undefined
+    if(zhipuUrl && zhipuApiKey) {
+      searchRes = await this.runByZhipu(q, zhipuUrl, zhipuApiKey)
+    }
+
+  }
+
+  // reference: https://www.bigmodel.cn/dev/api/search-tool/web-search-pro
+  static async runByZhipu(
+    q: string,
+    baseUrl: string,
+    apiKey: string,
+  ) {
+    const url = baseUrl + "tools"
+    const headers = {
+      "Authorization": `Bearer ${apiKey}`,
+    }
+    const messages = [{ role: "user", content: q }]
+    const body = {
+      tool: "web-search-pro",
+      messages,
+      stream: false,
+    }
+    try {
+      const res = await liuReq<ZhipuBigModel.WebSearchChatCompletion>(
+        url, 
+        body, 
+        { headers }
+      )
+      if(res.code === "0000" && res.data) {
+        const parseResult = this._parseFromZhipu(q, res.data)
+        return parseResult
+      }
+      console.warn("web-search runByZhipu got an unexpected result: ")
+      console.log(res)
+    }
+    catch(err) {
+      console.warn("web-search runByZhipu error: ")
+      console.log(err)
+    }
+  }
+
+  // parse from zhipu's result
+  private static _parseFromZhipu(
+    q: string,
+    chatCompletion: ZhipuBigModel.WebSearchChatCompletion,
+  ): LiuAi.SearchResult | undefined {
+    // 1. get results
+    const theChoice = chatCompletion.choices[0]
+    if(!theChoice) return
+    const { finish_reason, message } = theChoice
+    if(finish_reason !== "stop") {
+      console.warn(`web-search finish reason is not stop: ${finish_reason}`)
+      console.log(theChoice)
+      return
+    }
+    const tool_calls = message?.tool_calls ?? []
+    if(!tool_calls.length) return
+    const resultData = tool_calls.find(v => v.type === "search_result")
+    const results = resultData?.search_result ?? []
+    if(results.length < 1) {
+      return {
+        markdown: `搜索：${q}\n结果：查无任何结果`,
+        provider: "zhipu",
+        originalResult: chatCompletion,
+      }
+    }
+
+    // 2. get intent
+    const intentData = tool_calls.find(v => v.type === "search_intent")
+    const intents = intentData?.search_intent ?? []
+    const theIntent = intents.length > 0 ? intents[0] : undefined
+
+    let md = ""
+    // 3. add intent
+    if(theIntent) {
+      md += `【关键词】：${theIntent.keywords}\n`
+      md += `【原始意图】：${theIntent.query}\n`
+      if(theIntent.intent === "SEARCH_ALL") {
+        md += `【搜索范围】：全网搜索\n`
+      }
+    }
+    else {
+      md += `【搜索】：${q}\n`
+    }
+    md += `【搜索结果】：\n\n`
+
+    // 4. add results
+    for(const r of results) {
+      md += `#### ${r.title}\n`
+      md += `【链接】：${r.link}\n`
+      md += `【来源】：${r.media}\n`
+      md += `【描述】：${r.content}\n\n`
+    }
+
+    return {
+      markdown: md,
+      provider: "zhipu",
+      originalResult: chatCompletion,
+    }
+  }
+
 
 }
 

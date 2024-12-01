@@ -1562,10 +1562,14 @@ export interface Table_AiChat extends BaseTable {
   usage?: AiUsage
   requestId?: string
   baseUrl?: string
-  funcName?: string        // like "add_todo"
+  funcName?: string        // like "add_todo" | "web_search"
   funcJson?: Record<string, any>    // we have to filter from LLM response
   tool_calls?: OaiToolCall[]
   finish_reason?: AiFinishReason
+
+  // about web-search
+  webSearchProvider?: LiuAi.SearchProvider
+  webSearchData?: Record<string, any>
 
   // about human
   userId?: string
@@ -3176,4 +3180,80 @@ export interface Res_Alipay_Refund {
   send_back_fee?: string
   fund_change?: "Y" | "N"
   refund_hyb_amount?: string     // 本次请求退惠营宝金额。单位：元。
+}
+
+/**************************** about AI **********************/
+export namespace LiuAi {
+
+  export interface Usage {
+    completion_tokens: number
+    prompt_tokens: number
+    total_tokens: number
+  }
+
+  export type SearchProvider = "zhipu" | "serper" | "tavily"
+
+  export interface SearchResult {
+    markdown: string
+    provider: SearchProvider
+    originalResult: Record<string, any>
+  }
+
+}
+
+
+/** zhipu big model */
+export namespace ZhipuBigModel {
+
+  export interface WebSearchIntentItem {
+    category: string
+    index: number
+    intent: "SEARCH_URL" | "SEARCH_TOOL" | "SEARCH_ALL" | "SEARCH_NONE"
+    keywords: string    // 改写意图
+    query: string       // 原始 query
+  }
+
+  export interface WebSearchResultItem {
+    content: string
+    icon: string
+    index: 0
+    link: string
+    media: string
+    refer: string    // 角标序号
+    title: string
+  }
+
+  export interface WebSearchToolCall_A {
+    id: string
+    type: "search_intent"
+    search_intent: WebSearchIntentItem[]
+  }
+
+  export interface WebSearchToolCall_B {
+    id: string
+    type: "search_result"
+    search_result: WebSearchResultItem[]
+  }
+
+  export type WebSearchToolCall = WebSearchToolCall_A | WebSearchToolCall_B
+
+  export type WebSearchFinishReason = "stop" | "sensitive" | "network_error"
+
+  export interface WebSearchChoice {
+    finish_reason: WebSearchFinishReason
+    index: number
+    message: {
+      role: "tool"
+      tool_calls: WebSearchToolCall[]
+    }
+  }
+
+  export interface WebSearchChatCompletion {
+    choices: WebSearchChoice[]
+    created: number
+    id: string
+    model: "web-search-pro"
+    request_id: string
+    usage: LiuAi.Usage
+  }
 }
