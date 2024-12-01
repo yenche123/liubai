@@ -56,7 +56,6 @@ import {
 } from "@/ai-prompt"
 import cloud from "@lafjs/cloud"
 import { useI18n, aiLang } from "@/common-i18n"
-import * as vbot from "valibot"
 
 const db = cloud.database()
 const _ = db.command
@@ -66,6 +65,7 @@ const MAX_CHARACTERS = 3
 const MIN_RESERVED_TOKENS = 1600
 const TOKEN_NEED_COMPRESS = 6000
 const MAX_WX_TOKEN = 360  // wx gzh will send 45002 error if we send too many words once
+const MIN_REST_TOKEN = 100
 const MAX_WORDS = 3000
 
 const MAX_TIMES_FREE = 10
@@ -111,6 +111,8 @@ interface AiHelperAssistantMsgParam {
   funcJson?: Record<string, any>
   tool_calls?: OaiToolCall[]
   finish_reason?: AiFinishReason
+  webSearchProvider?: LiuAi.SearchProvider
+  webSearchData?: Record<string, any>
 }
 
 interface AiMenuItem {
@@ -732,7 +734,7 @@ class BaseBot {
     )
 
     if(chatCompletion) {
-      const text = AiHelper.getTextFromLLM(chatCompletion)
+      const text = AiHelper.getTextFromLLM(chatCompletion, bot)
       if(text) {
         console.warn("_handleToolUse text 存在，先暂停！")
         console.log(text)
@@ -763,18 +765,20 @@ class BaseBot {
         await toolHandler.add_calendar(funcJson)
       }
       else if(funcName === "web_search") {
-        await toolHandler.web_search(funcJson)
+        let searchRes = await toolHandler.web_search(funcJson)
+        if(searchRes) {
+          this._continueAfterWebSearch(postParam, tool_calls, searchRes)
+          break
+        }
       }
 
     }
   }
 
-  private async _autoContinue(
+  private _getRestTokensAndPrompts(
     postParam: PostRunParam,
-    msgFromAssistant: OaiMessage,
   ) {
-    // 1. handle max tokens
-    const { chatParam, chatCompletion, bot, aiParam } = postParam
+    const { chatParam, chatCompletion } = postParam
     const usage = chatCompletion?.usage
     if(!usage) return
     const usedTokens = usage.total_tokens
@@ -790,6 +794,95 @@ class BaseBot {
       const tempPrompts = messages.slice(mLength - 3)
       prompts = [systemPrompt, ...tempPrompts]
     }
+    return { restTokens, prompts }
+  }
+
+  private async _continueAfterWebSearch(
+    postParam: PostRunParam,
+    tool_calls: OaiToolCall[],
+    searchRes: LiuAi.SearchResult,
+  ) {
+    // 1. handle max tokens
+    const tool_call_id = tool_calls[0]?.id
+    if(!tool_call_id) return
+    const data1 = this._getRestTokensAndPrompts(postParam)
+    if(!data1) return
+    let { restTokens, prompts } = data1
+    const searchMarkdown = searchRes.markdown
+    const token1 = AiHelper.calculateTextToken(searchMarkdown)
+    restTokens -= token1
+    if(restTokens > MAX_WX_TOKEN) {
+      restTokens = MAX_WX_TOKEN
+    }
+    if(restTokens < MIN_REST_TOKEN) {
+      if(prompts.length > 3) {
+        restTokens = MAX_WX_TOKEN
+        prompts.splice(0, prompts.length - 3)
+      }
+      else {
+        console.warn("not enough rest tokens in _continueAfterWebSearch!")
+        return
+      }
+    }
+
+    // 2. add "assistant" message to prompts
+    const c = this._character
+    prompts.push({ role: "assistant", tool_calls, name: c })
+
+    // 3. add "tool" message to prompts
+    prompts.push({
+      role: "tool",
+      content: searchMarkdown,
+      tool_call_id,
+    })
+
+    console.warn("see prompts in _continueAfterWebSearch: ")
+    if(prompts.length < 5) {
+      console.log(prompts)
+    }
+    else {
+      const pLength = prompts.length
+      const p1 = prompts[pLength - 3]
+      const p2 = prompts[pLength - 2]
+      const p3 = prompts[pLength - 1]
+      console.log([p1, p2, p3])
+    }
+
+    // 4. new chat create param
+    const { chatParam, bot, aiParam, chatCompletion } = postParam
+    const newChatParam: OaiCreateParam = { 
+      ...chatParam,
+      messages: prompts,
+      max_tokens: restTokens,
+    }
+    const res4 = await this.chat(newChatParam, bot)
+    if(!res4) return
+
+    // 5. can i reply
+    const res5 = await AiHelper.canReply(aiParam)
+    if(!res5) return
+
+    // 6. handle text from response
+    const assistantChatId = await this._handleAssistantText(res4, aiParam, bot)
+    if(!assistantChatId) return
+
+    return {
+      character: c,
+      replyStatus: "yes",
+      chatCompletion, 
+      assistantChatId,
+    }
+  }
+
+  private async _autoContinue(
+    postParam: PostRunParam,
+    msgFromAssistant: OaiMessage,
+  ) {
+    // 1. handle max tokens
+    const data1 = this._getRestTokensAndPrompts(postParam)
+    if(!data1) return
+    let { restTokens, prompts } = data1
+    const { chatParam, chatCompletion, bot, aiParam } = postParam
     if(restTokens > MAX_WX_TOKEN) {
       restTokens = MAX_WX_TOKEN
     }
@@ -840,7 +933,7 @@ class BaseBot {
     const c = bot.character
 
     // 1. get text
-    const txt6 = AiHelper.getTextFromLLM(chatCompletion)
+    const txt6 = AiHelper.getTextFromLLM(chatCompletion, bot)
     if(!txt6) return
 
     console.log(`${c} assistant text.length: ${txt6.length}`)
@@ -1127,10 +1220,6 @@ class BotZhipu extends BaseBot {
       }
       tools.splice(0, 0, webSearchTool as any)
     }
-
-    console.warn("see zhipu tools: ")
-    console.log(tools)
-
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
@@ -1547,8 +1636,7 @@ class ToolHandler {
   }
 
   private async _addMsgToChat(
-    funcName: string, 
-    funcJson: Record<string, any>,
+    param: Partial<AiHelperAssistantMsgParam>
   ) {
     const { room } = this._aiParam
     const bot = this._bot
@@ -1561,9 +1649,8 @@ class ToolHandler {
       usage: chatCompletion?.usage,
       requestId: chatCompletion?.id,
       baseUrl: apiEndpoint?.baseURL,
-      funcName,
-      funcJson,
       tool_calls: this._tool_calls,
+      ...param,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(arg)
 
@@ -1601,7 +1688,10 @@ class ToolHandler {
     }
 
     // 2. add msg
-    const assistantChatId = await this._addMsgToChat("add_note", funcJson)
+    const assistantChatId = await this._addMsgToChat({
+      funcName: "add_note",
+      funcJson,
+    })
     if(!assistantChatId) return
 
     // 3. reply
@@ -1627,7 +1717,10 @@ class ToolHandler {
     }
 
     // 2. add msg
-    const assistantChatId = await this._addMsgToChat("add_todo", funcJson)
+    const assistantChatId = await this._addMsgToChat({
+      funcName: "add_todo",
+      funcJson,
+    })
     if(!assistantChatId) return
 
     // 3. reply
@@ -1647,7 +1740,10 @@ class ToolHandler {
     }
 
     // 2. add msg
-    const assistantChatId = await this._addMsgToChat("add_calendar", funcJson)
+    const assistantChatId = await this._addMsgToChat({
+      funcName: "add_calendar",
+      funcJson,
+    })
     if(!assistantChatId) return
 
     // 3. reply
@@ -1750,15 +1846,29 @@ class ToolHandler {
       return
     }
 
-    
+    // 2. call WebSearch.run
+    const searchRes = await WebSearch.run(q)
+    if(!searchRes) {
+      console.warn("fail to search on web")
+      return
+    }
 
+    // 3. add msg
+    const data3: Partial<AiHelperAssistantMsgParam> = {
+      funcName: "web_search",
+      funcJson,
+      webSearchProvider: searchRes.provider,
+      webSearchData: searchRes.originalResult,
+      text: searchRes.markdown,
+    }
+    const assistantChatId = await this._addMsgToChat(data3)
+    return searchRes
   }
 
 }
 
 
 export class WebSearch {
-
 
   static async run(q: string) {
     const _env = process.env
@@ -1770,6 +1880,7 @@ export class WebSearch {
       searchRes = await this.runByZhipu(q, zhipuUrl, zhipuApiKey)
     }
 
+    return searchRes
   }
 
   // reference: https://www.bigmodel.cn/dev/api/search-tool/web-search-pro
@@ -2074,6 +2185,8 @@ class AiHelper {
       funcJson: param.funcJson,
       tool_calls: param.tool_calls,
       finish_reason: param.finish_reason,
+      webSearchProvider: param.webSearchProvider,
+      webSearchData: param.webSearchData,
     }
     const chatId = await this.addChat(data1)
     return chatId
@@ -2257,11 +2370,16 @@ class AiHelper {
         toolMsg = { role: "tool", content: t("not_agree_yet"), tool_call_id }
       }
     }
+    else if(funcName === "web_search") {
+      if(v.text && v.webSearchData && v.webSearchProvider) {
+        toolMsg = { role: "tool", content: v.text, tool_call_id }
+      }
+    }
 
     return toolMsg
   }
 
-  private static _turnToolCallIntoNormalAssistanMsg(
+  private static _turnToolCallIntoNormalAssistantMsg(
     t: T_I18N,
     v: Table_AiChat,
   ) {
@@ -2286,7 +2404,7 @@ class AiHelper {
     const messages: OaiPrompt[] = []
     const { t } = useI18n(aiLang, { user })
     const abilities = opt?.abilities ?? ["chat"]
-    const canToolUse = abilities.includes("tool_use")
+    const canUseTool = abilities.includes("tool_use")
 
     for(let i=0; i<chats.length; i++) {
       const v = chats[i]
@@ -2343,7 +2461,7 @@ class AiHelper {
         let toolMsg = _this._getToolMsg(tool_call_id, t, v)
 
         // if we can use tool
-        if(canToolUse) {  
+        if(canUseTool) {  
           if(toolMsg) {
             messages.push(toolMsg)
             messages.push({ role: "assistant", tool_calls, name: character })
@@ -2355,7 +2473,7 @@ class AiHelper {
         if(toolMsg) {
           messages.push({ role: "user", content: toolMsg.content }) 
         }
-        const assistantMsg = _this._turnToolCallIntoNormalAssistanMsg(t, v)
+        const assistantMsg = _this._turnToolCallIntoNormalAssistantMsg(t, v)
         if(assistantMsg) {
           messages.push(assistantMsg)
         }
@@ -2402,9 +2520,21 @@ class AiHelper {
     return quota.aiConversationCount
   }
 
-  static getTextFromLLM(res: OaiChatCompletion) {
-    const text = res.choices[0].message.content
+  static getTextFromLLM(
+    res: OaiChatCompletion,
+    bot?: AiBot,
+  ) {
+    let text = res.choices[0].message.content
     if(!text) return
+
+    text = text.trim()
+
+    // 1. remove "?" in the beginning for zhipu
+    if(bot?.character === "zhipu") {
+      let err1 = text.startsWith("？")
+      if(err1) text = text.substring(1)
+    }
+
     return text.trim()
   }
 

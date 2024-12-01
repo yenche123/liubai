@@ -390,24 +390,24 @@ export function aiI18nChannel(
 
 export const aiTools: OaiTool[] = [
   /** Parse Link  */
-  {
-    type: "function",
-    function: {
-      name: "parse_link",
-      description: "解析链接。给定一个 http 链接，返回它的标题、摘要、内文......",
-      parameters: {
-        type: "object",
-        properties: {
-          url: {
-            type: "string",
-            description: "要解析的链接",
-          },
-        },
-        required: ["url"],
-        additionalProperties: false,
-      }
-    }
-  },
+  // {
+  //   type: "function",
+  //   function: {
+  //     name: "parse_link",
+  //     description: "解析链接。给定一个 http 链接，返回它的标题、摘要、内文......",
+  //     parameters: {
+  //       type: "object",
+  //       properties: {
+  //         url: {
+  //           type: "string",
+  //           description: "要解析的链接",
+  //         },
+  //       },
+  //       required: ["url"],
+  //       additionalProperties: false,
+  //     }
+  //   }
+  // },
 
   /** Web Search */
   {
