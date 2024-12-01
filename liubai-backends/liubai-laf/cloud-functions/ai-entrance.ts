@@ -28,6 +28,9 @@ import {
   T_I18N,
   ZhipuBigModel,
   LiuAi,
+  Sch_AiToolGetScheduleParam,
+  Sch_AiToolGetCardsParam,
+  AiToolGetCardType,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -56,6 +59,7 @@ import {
 } from "@/ai-prompt"
 import cloud from "@lafjs/cloud"
 import { useI18n, aiLang } from "@/common-i18n"
+import * as vbot from "valibot"
 
 const db = cloud.database()
 const _ = db.command
@@ -1863,6 +1867,41 @@ class ToolHandler {
     }
     const assistantChatId = await this._addMsgToChat(data3)
     return searchRes
+  }
+
+
+  async get_schedule(funcJson: Record<string, any>) {
+    // 1. checking out param
+    const res1 = vbot.safeParse(Sch_AiToolGetScheduleParam, funcJson)
+    if(!res1.success) {
+      console.warn("cannot parse get_schedule param: ")
+      console.log(funcJson)
+      console.log(res1.issues)
+      return
+    }
+    const { hoursFromNow, specificDate } = funcJson
+    if(!hoursFromNow && !specificDate) {
+      console.warn("hoursFromNow or specificDate is required")
+      return
+    }
+
+    // WIP
+
+  }
+
+  async get_cards(funcJson: Record<string, any>) {
+    const res1 = vbot.safeParse(Sch_AiToolGetCardsParam, funcJson)
+    if(!res1.success) {
+      console.warn("cannot parse get_cards param: ")
+      console.log(funcJson)
+      console.log(res1.issues)
+      return
+    }
+    const cardType = funcJson.cardType as AiToolGetCardType
+
+    // WIP
+
+
   }
 
 }

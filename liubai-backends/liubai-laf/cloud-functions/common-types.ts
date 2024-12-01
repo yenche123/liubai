@@ -750,6 +750,34 @@ export const Sch_AiToolAddCalendarParam = vbot.object({
   laterHour: vbot.optional(Sch_AiToolAddCalendarLaterHour),
 })
 
+// the param of get_schedule
+export const aiToolGetScheduleHoursFromNow = [
+  -24, 24, 48
+] as const
+export type AiToolGetScheduleHoursFromNow = typeof aiToolGetScheduleHoursFromNow[number]
+export const Sch_AiToolGetScheduleHoursFromNow = vbot.picklist(aiToolGetScheduleHoursFromNow)
+
+export const aiToolGetScheduleSpecificDates = [
+  "yesterday", "today", "tomorrow"
+] as const
+export type AiToolGetScheduleSpecificDate = typeof aiToolGetScheduleSpecificDates[number]
+export const Sch_AiToolGetScheduleSpecificDate = vbot.picklist(aiToolGetScheduleSpecificDates)
+
+export const Sch_AiToolGetScheduleParam = vbot.object({
+  hoursFromNow: vbot.optional(Sch_AiToolGetScheduleHoursFromNow),
+  specificDate: vbot.optional(Sch_AiToolGetScheduleSpecificDate),
+})
+
+// the param of get_cards
+export const aiToolGetCardTypes = [
+  "TODO", "FINISHED", "ADD_RECENTLY"
+] as const
+export type AiToolGetCardType = typeof aiToolGetCardTypes[number]
+export const Sch_AiToolGetCardType = vbot.picklist(aiToolGetCardTypes)
+export const Sch_AiToolGetCardsParam = vbot.object({
+  cardType: Sch_AiToolGetCardType,
+})
+
 
 /*********************** 杂七杂八的 **********************/
 // 新增类型前，记得全局搜索一下，避免冲突

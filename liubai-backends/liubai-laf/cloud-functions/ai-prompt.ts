@@ -2,6 +2,9 @@ import {
   aiToolAddCalendarSpecificDates,
   aiToolAddCalendarEarlyMinutes,
   aiToolAddCalendarLaterHours,
+  aiToolGetScheduleHoursFromNow,
+  aiToolGetScheduleSpecificDates,
+  aiToolGetCardTypes,
   type AiBot, 
   type AiI18nChannelParam, 
   type AiI18nSharedParam, 
@@ -551,13 +554,13 @@ export const aiTools: OaiTool[] = [
         properties: {
           hoursFromNow: {
             type: "number",
-            description: "获取最近几个小时内的日程，正数表示未来，举例: 24 表示获取未来 24 小时的日程，48 表示获取未来 48 小时的日程；负数表示过去，举例：-24 表示获取过去 24 小时的日程，-48 表示获取过去 48 小时的日程。",
-            enum: [-24, 24, 48],
+            description: "获取最近几个小时内的日程，正数表示未来，举例: 24 表示获取未来 24 小时的日程，48 表示获取未来 48 小时的日程；负数表示过去，举例：-24 表示获取过去 24 小时的日程。",
+            enum: aiToolGetScheduleHoursFromNow,
           },
           specificDate: {
             type: "string",
-            description: "获取昨天、今天或明天的日程。date 和 hoursFromNow 不可以同时指定。",
-            enum: ["yesterday", "today", "tomorrow"]  
+            description: "获取昨天、今天或明天的日程。specificDate 和 hoursFromNow 不可以同时指定。",
+            enum: aiToolGetScheduleSpecificDates
           }
         },
         additionalProperties: false
@@ -565,7 +568,26 @@ export const aiTools: OaiTool[] = [
     }
   },
 
-
+  /** Get cards (TODO / FINISHED / ADD_RECENTLY) */
+  {
+    type: "function",
+    function: {
+      name: "get_cards",
+      description: "获取待办、已完成或最近添加的事项（卡片）",
+      parameters: {
+        type: "object",
+        properties: {
+          cardType: {
+            type: "string",
+            description: "指定获取哪类事项，有以下合法值：\nTODO: 表示待办；\nFINISHED: 表示已完成；\nADD_RECENTLY: 表示最近添加的事项。",
+            enum: aiToolGetCardTypes,
+          }
+        },
+        required: ["cardType"],
+        additionalProperties: false
+      }
+    }
+  },
 
 ]
 
