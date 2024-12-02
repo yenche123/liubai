@@ -436,7 +436,7 @@ export const aiTools: OaiTool[] = [
   {
     type: "function",
     function: {
-      name: "draw",
+      name: "draw_picture",
       description: "Drawing. Given a prompt, return an image drawn from it.",
       parameters: {
         type: "object",

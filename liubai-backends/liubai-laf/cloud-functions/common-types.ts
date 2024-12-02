@@ -1599,6 +1599,11 @@ export interface Table_AiChat extends BaseTable {
   webSearchProvider?: LiuAi.SearchProvider
   webSearchData?: Record<string, any>
 
+  // about draw_a_picture
+  drawPictureUrl?: string           // the url of the picture
+  drawPictureModel?: string
+  drawPictureData?: Record<string, any>
+
   // about human
   userId?: string
   channel?: "wx_gzh"

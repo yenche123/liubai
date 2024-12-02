@@ -118,6 +118,9 @@ interface AiHelperAssistantMsgParam {
   finish_reason?: AiFinishReason
   webSearchProvider?: LiuAi.SearchProvider
   webSearchData?: Record<string, any>
+  drawPictureUrl?: string
+  drawPictureModel?: string
+  drawPictureData?: Record<string, any>
 }
 
 interface AiMenuItem {
@@ -775,11 +778,14 @@ class BaseBot {
         await toolHandler.add_calendar(funcJson)
       }
       else if(funcName === "web_search") {
-        let searchRes = await toolHandler.web_search(funcJson)
+        const searchRes = await toolHandler.web_search(funcJson)
         if(searchRes) {
           this._continueAfterWebSearch(postParam, tool_calls, searchRes)
           break
         }
+      }
+      else if(funcName === "draw_picture") {
+        await toolHandler.draw_picture(funcJson)
       }
 
     }
@@ -1875,6 +1881,44 @@ class ToolHandler {
     return searchRes
   }
 
+  async draw_picture(funcJson: Record<string, any>) {
+    // 1. check out param
+    const prompt = funcJson.prompt
+    if(!prompt || typeof prompt !== "string") {
+      console.warn("draw_picture prompt is not string")
+      console.log(funcJson)
+      return
+    }
+
+    // 2. add message first because text_to_image may take a long time
+    const data2: Partial<AiHelperAssistantMsgParam> = {
+      funcName: "draw_picture",
+      funcJson,
+      text: prompt,
+    }
+    const assistantChatId = await this._addMsgToChat(data2)
+    if(!assistantChatId) return
+
+    // 3. draw
+    const res3 = await Palette.run(prompt)
+    if(!res3) return
+
+    // 4. update assistant msg
+    const data4: Partial<Table_AiChat> = {
+      drawPictureUrl: res3.url,
+      drawPictureData: res3.originalResult,
+      drawPictureModel: res3.model,
+    }
+    AiHelper.updateAiChat(assistantChatId, data4)
+
+    // 5. download image via the url
+    
+    
+
+
+
+  }
+
 
   async get_schedule(funcJson: Record<string, any>) {
     // 1. checking out param
@@ -2345,6 +2389,9 @@ class AiHelper {
       finish_reason: param.finish_reason,
       webSearchProvider: param.webSearchProvider,
       webSearchData: param.webSearchData,
+      drawPictureUrl: param.drawPictureUrl,
+      drawPictureModel: param.drawPictureModel,
+      drawPictureData: param.drawPictureData,
     }
     const chatId = await this.addChat(data1)
     return chatId
@@ -2849,6 +2896,13 @@ class AiHelper {
     const bot = aiBots.find(v => v.character === character)
     if(bot) name = bot.name
     return name
+  }
+
+  static async updateAiChat(id: string, data: Partial<Table_AiChat>) {
+    if(!data.updatedStamp) data.updatedStamp = getNowStamp()
+    const cCol = db.collection("AiChat")
+    const res = await cCol.doc(id).update(data)
+    return res
   }
 
 }
