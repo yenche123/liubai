@@ -2426,6 +2426,12 @@ export interface Wx_Param_Msg_Templ_Send {
   data: Record<string, Record<"value", string>>
 }
 
+export interface Wx_Res_GzhUploadMedia {
+  type?: string
+  media_id?: string
+  created_at?: number     // seconds
+}
+
 
 /******************* WeChat Subscription Msg Events ****************/
 export interface Wx_Gzh_Base {

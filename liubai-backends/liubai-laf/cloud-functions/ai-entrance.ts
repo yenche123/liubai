@@ -61,6 +61,7 @@ import {
 import cloud from "@lafjs/cloud"
 import { useI18n, aiLang } from "@/common-i18n"
 import * as vbot from "valibot"
+import { WxGzhUploader } from "@/file-utils"
 
 const db = cloud.database()
 const _ = db.command
@@ -1912,7 +1913,7 @@ class ToolHandler {
     AiHelper.updateAiChat(assistantChatId, data4)
 
     // 5. download image via the url
-    
+
     
 
 
