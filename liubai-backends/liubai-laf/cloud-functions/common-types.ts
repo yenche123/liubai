@@ -10,6 +10,7 @@ import type { BaseSchema } from "valibot"
 // Sch_ 开头的，表示类型的 Schema，用于 valibot
 // Res_ 开头的，表示返回至前端的类型
 // Param_ 开头的，表示传入云函数的类型
+// Ns_ 开头，表示命名空间
 
 export async function main(ctx: FunctionContext) {
   console.log("do nothing")
@@ -681,6 +682,8 @@ export interface AiI18nSharedParam {
   user?: Table_User
 }
 
+export const aiImageSizeTypes = ["square", "portrait"] as const
+export type AiImageSizeType = typeof aiImageSizeTypes[number]
 export type OaiPrompt = OpenAI.Chat.ChatCompletionMessageParam
 export type OaiTool = OpenAI.Chat.ChatCompletionTool
 export type OaiToolPrompt = OpenAI.Chat.ChatCompletionToolMessageParam 
@@ -3249,7 +3252,7 @@ export namespace LiuAi {
 
 
 /** types from siliconflow */
-export namespace SiliconFlow {
+export namespace Ns_SiliconFlow {
 
   export interface GeneratedImage {
     url: string
@@ -3269,7 +3272,7 @@ export namespace SiliconFlow {
 
 
 /** zhipu big model */
-export namespace ZhipuBigModel {
+export namespace Ns_Zhipu {
 
   export interface WebSearchIntentItem {
     category: string
@@ -3322,4 +3325,12 @@ export namespace ZhipuBigModel {
     request_id: string
     usage: LiuAi.Usage
   }
+
+  export interface ImagesGenerationsRes {
+    created: number
+    data: Array<{
+      url: string
+    }>
+  }
+
 }

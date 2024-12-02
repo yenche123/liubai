@@ -5,6 +5,7 @@ import {
   aiToolGetScheduleHoursFromNow,
   aiToolGetScheduleSpecificDates,
   aiToolGetCardTypes,
+  aiImageSizeTypes,
   type AiBot, 
   type AiI18nChannelParam, 
   type AiI18nSharedParam, 
@@ -444,6 +445,11 @@ export const aiTools: OaiTool[] = [
           prompt: {
             type: "string",
             description: "Description field using English, which indicates what the image you want to draw looks like. The more detailed the description, the better the result.",
+          },
+          sizeType: {
+            type: "string",
+            description: `"square" indicates a square image, and "portrait" indicates a vertical image. The default value is "square".`,
+            enum: aiImageSizeTypes,
           }
         },
         required: ["prompt"],

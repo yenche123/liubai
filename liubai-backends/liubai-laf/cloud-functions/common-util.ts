@@ -206,6 +206,10 @@ const uniqueArray = (arr: string[]) => {
   return uniqueArr
 }
 
+const numToFix = (num: number, fix: number): number => {
+  const str = num.toFixed(fix)
+  return Number(str)
+}
 
 /**
  * format 0-9 to 00-09
@@ -288,6 +292,7 @@ export const valTool = {
   objToStr,
   minusAndMinimumZero,
   uniqueArray,
+  numToFix,
   format0,
   copyObject,
   encode_URI_component,

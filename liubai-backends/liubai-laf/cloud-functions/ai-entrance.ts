@@ -26,12 +26,13 @@ import {
   type AiToolAddCalendarParam,
   type AiAbility,
   type T_I18N,
-  ZhipuBigModel,
+  type AiImageSizeType,
+  Ns_Zhipu,
   LiuAi,
   Sch_AiToolGetScheduleParam,
   Sch_AiToolGetCardsParam,
   type AiToolGetCardType,
-  SiliconFlow,
+  Ns_SiliconFlow,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -1891,6 +1892,10 @@ class ToolHandler {
       console.log(funcJson)
       return
     }
+    let sizeType = funcJson.sizeType as AiImageSizeType
+    if(sizeType !== "portrait" && sizeType !== "square") {
+      sizeType = "square"
+    }
 
     // 2. add message first because text_to_image may take a long time
     const data2: Partial<AiHelperAssistantMsgParam> = {
@@ -1902,7 +1907,16 @@ class ToolHandler {
     if(!assistantChatId) return
 
     // 3. draw
-    const res3 = await Palette.run(prompt)
+    let res3: LiuAi.PaletteResult | undefined
+    const c = this._bot.character
+    // 3.1 use "cogview-3-plus" first for zhipu
+    if(c === "zhipu") {
+      res3 = await Palette.runByZhipu(prompt, sizeType)
+    }
+    // 3.2 otherwise
+    if(!res3) {
+      res3 = await Palette.run(prompt, sizeType)
+    }
     if(!res3) return
 
     // 4. update assistant msg
@@ -1982,9 +1996,7 @@ export class WebSearch {
     apiKey: string,
   ) {
     const url = baseUrl + "tools"
-    const headers = {
-      "Authorization": `Bearer ${apiKey}`,
-    }
+    const headers = { "Authorization": `Bearer ${apiKey}` }
     const messages = [{ role: "user", content: q }]
     const body = {
       tool: "web-search-pro",
@@ -1992,7 +2004,7 @@ export class WebSearch {
       stream: false,
     }
     try {
-      const res = await liuReq<ZhipuBigModel.WebSearchChatCompletion>(
+      const res = await liuReq<Ns_Zhipu.WebSearchChatCompletion>(
         url, 
         body, 
         { headers }
@@ -2013,7 +2025,7 @@ export class WebSearch {
   // parse from zhipu's result
   private static _parseFromZhipu(
     q: string,
-    chatCompletion: ZhipuBigModel.WebSearchChatCompletion,
+    chatCompletion: Ns_Zhipu.WebSearchChatCompletion,
   ): LiuAi.SearchResult | undefined {
     // 1. get results
     const theChoice = chatCompletion.choices[0]
@@ -2084,7 +2096,8 @@ interface PaletteSpecificOpt {
 export class Palette {
 
   static async run(
-    prompt: string
+    prompt: string,
+    sizeType: AiImageSizeType,
   ) {
     const _env = process.env
     const sfUrl = _env.LIU_SILICONFLOW_BASE_URL
@@ -2098,13 +2111,88 @@ export class Palette {
         baseUrl: sfUrl,
         model: sfModel,
       }
-      const res1 = await this.runBySiliconflow(prompt, opt1)
+      const res1 = await this.runBySiliconflow(prompt, sizeType, opt1)
       return res1
+    }
+  }
+
+  static async runByZhipu(
+    prompt: string,
+    sizeType: AiImageSizeType,
+  ) {
+    // 1. get api key and base url
+    const _env = process.env
+    const apiKey = _env.LIU_ZHIPU_API_KEY
+    const baseUrl = _env.LIU_ZHIPU_BASE_URL
+    if(!apiKey || !baseUrl) {
+      console.warn("there is no apiKey or baseUrl of zhipu in Palette")
+      return
+    }
+
+    // 2. construct url, headers, and body
+    const model = "cogview-3-plus"
+    const url = baseUrl + "images/generations"
+    const headers = { "Authorization": `Bearer ${apiKey}` }
+    const body = {
+      model,
+      prompt,
+      size: sizeType === "square" ? "1024x1024" : "768x1344",
+    }
+
+    try {
+      const stamp1 = getNowStamp()
+      const res = await liuReq<Ns_Zhipu.ImagesGenerationsRes>(
+        url, 
+        body, 
+        { headers }
+      )
+      const stamp2 = getNowStamp()
+      const durationStamp = stamp2 - stamp1
+      if(res.code === "0000" && res.data) {
+        const parseResult = this._parseFromZhipu(res.data, model, durationStamp)
+        return parseResult
+      }
+      console.warn("palette runByZhipu got an unexpected result: ")
+      console.log(res)
+    }
+    catch(err) {
+      console.warn("palette runByZhipu error: ")
+      console.log(err)
+    }
+  }
+
+  private static _parseFromZhipu(
+    res: Ns_Zhipu.ImagesGenerationsRes,
+    model: string,
+    durationStamp: number,
+  ): LiuAi.PaletteResult | undefined {
+    // 1. get duration
+    const duration = valTool.numToFix(durationStamp, 2)
+    if(isNaN(duration)) {
+      console.warn("cannot parse duration in _parseFromZhipu: ")
+      console.log(res)
+      return
+    }
+
+    // 2. get url
+    const url = res.data?.[0]?.url
+    if(!url) {
+      console.warn("cannot get url in _parseFromZhipu: ")
+      console.log(res)
+      return
+    }
+
+    return {
+      url,
+      model,
+      duration,
+      originalResult: res,
     }
   }
 
   static async runBySiliconflow(
     prompt: string,
+    sizeType: AiImageSizeType,
     opt: PaletteSpecificOpt,
   ) {
 
@@ -2116,7 +2204,7 @@ export class Palette {
     const body: Record<string, any> = {
       model: opt.model,
       prompt,
-      image_size: "768x1024",    // portrait
+      image_size: sizeType === "square" ? "1024x1024" : "768x1024",
       num_inference_steps: 20,
     }
 
@@ -2130,7 +2218,7 @@ export class Palette {
 
     // 3. to fetch
     try {
-      const res3 = await liuReq<SiliconFlow.ImagesGenerationsRes>(
+      const res3 = await liuReq<Ns_SiliconFlow.ImagesGenerationsRes>(
         url, 
         body, 
         { headers }
@@ -2153,7 +2241,7 @@ export class Palette {
   }
 
   private static _parseFromSiliconflow(
-    data: SiliconFlow.ImagesGenerationsRes,
+    data: Ns_SiliconFlow.ImagesGenerationsRes,
     model: string,
   ): LiuAi.PaletteResult | undefined {
     const img = data.images?.[0]
@@ -2167,8 +2255,7 @@ export class Palette {
       model = tmpList[tmpList.length - 1]
     }
 
-    const strDuration = inference.toFixed(2)
-    const duration = Number(strDuration)
+    const duration = valTool.numToFix(inference, 2)
     if(isNaN(duration)) {
       console.warn("cannot parse duration from siliconflow: ")
       console.log(data)
