@@ -24,13 +24,13 @@ import {
   type Table_Subscription,
   type AiFinishReason,
   type AiToolAddCalendarParam,
-  AiAbility,
-  T_I18N,
+  type AiAbility,
+  type T_I18N,
   ZhipuBigModel,
   LiuAi,
   Sch_AiToolGetScheduleParam,
   Sch_AiToolGetCardsParam,
-  AiToolGetCardType,
+  type AiToolGetCardType,
   SiliconFlow,
 } from "@/common-types"
 import OpenAI from "openai"
@@ -787,6 +787,7 @@ class BaseBot {
       }
       else if(funcName === "draw_picture") {
         await toolHandler.draw_picture(funcJson)
+        break
       }
 
     }
@@ -1912,14 +1913,14 @@ class ToolHandler {
     }
     AiHelper.updateAiChat(assistantChatId, data4)
 
-    // 5. download image via the url
+    // 5. reply image
+    const res5 = await TellUser.image(this._aiParam.entry, res3.url)
+    console.warn("see the result of sending an image: ")
+    console.log(res5)
 
-    
-
-
-
+    // 6. menu
+    // WIP
   }
-
 
   async get_schedule(funcJson: Record<string, any>) {
     // 1. checking out param
@@ -3077,6 +3078,27 @@ class TellUser {
       return res1
     }
 
+  }
+
+  static async image(
+    entry: AiEntry,
+    imageUrl: string,
+  ) {
+    const { wx_gzh_openid } = entry
+
+    // 1. send to wx gzh
+    if(wx_gzh_openid) {
+      const res1 = await WxGzhUploader.mediaByUrl(imageUrl)
+      const media_id = res1?.media_id
+      if(!media_id) return
+
+      const obj2: Wx_Gzh_Send_Msg = {
+        msgtype: "image",
+        image: { media_id },
+      }
+      const res2 = await this._sendToWxGzh(wx_gzh_openid, obj2)
+      return res2
+    }
   }
 
 
