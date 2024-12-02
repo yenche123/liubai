@@ -63,7 +63,9 @@ import {
 import cloud from "@lafjs/cloud"
 import { useI18n, aiLang } from "@/common-i18n"
 import * as vbot from "valibot"
-import { blobToFormData, WxGzhUploader } from "@/file-utils"
+import { WxGzhUploader } from "@/file-utils"
+import FormData from "form-data"
+import axios from 'axios';
 
 const db = cloud.database()
 const _ = db.command
@@ -3325,24 +3327,51 @@ class SpeechToText {
     const url = baseUrl + "/audio/transcriptions"
 
     // 2. turn blob to formData
-    const res2 = await blobToFormData(file_blob)
-    const form = res2.form
-    form.append("model", "FunAudioLLM/SenseVoiceSmall")
-
-    // 3. options
-    const options = {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": 'multipart/form-data'
-      },
-      body: form,
+    const arrayBuffer = await file_blob.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+    const form = new FormData()
+    try {
+      console.log("add buffer......")
+      form.append("file", buffer)
+      form.append("model", "FunAudioLLM/SenseVoiceSmall")
+    }
+    catch(err) {
+      console.warn("FormData append err: ")
+      console.log(err)
     }
 
-    // 4. to fetch (or axios.post)
-    const res4 = await liuFetch(url, options as any)
-    console.warn("SpeechToText res4: ")
-    console.log(res4)
+    // 3. options
+    const headers = {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": 'multipart/form-data'
+    }
+
+    // 4. axios.post
+    try {
+      const res4 = await axios.post(url, form, { headers })
+      console.log("see axios.post res4: ")
+      console.log(res4.data)
+    }
+    catch(err) {
+      console.warn("SpeechToText axios.post err: ")
+      console.log(err)
+    }
+
+    // const options = {
+    //   method: "POST",
+    //   headers,
+    //   body: form,
+    // }
+
+    // // 4. to fetch (or axios.post)
+    // const s1 = getNowStamp()
+    // const res4 = await liuFetch(url, options as any)
+    // const s2 = getNowStamp()
+
+    // const diffStamp = s2 - s1
+    // console.log("耗时: ", diffStamp)
+    // console.warn("SpeechToText res4: ")
+    // console.log(res4)
   }
 
 }

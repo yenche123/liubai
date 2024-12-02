@@ -227,12 +227,6 @@ async function handle_voice(
     console.log(size4)
     return
   }
-
-  // 4.1 convert
-  if(type4) {
-    console.warn(`convert ${type4} into mp3!`)
-    return
-  }
   
   // 5. get to ai system
   enter_ai({ 
@@ -692,8 +686,6 @@ async function downloadVoice(
   // 3. to download
   try {
     const res = await fetch(link)
-    console.log("download_media headers of res: ")
-    console.log(res.headers)
     const fileBlob = await res.blob()
     const arrayBuffer = await fileBlob.arrayBuffer()
     const buffer = Buffer.from(arrayBuffer)
