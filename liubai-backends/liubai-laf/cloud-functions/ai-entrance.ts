@@ -2162,7 +2162,7 @@ export class Palette {
   }
 
   private static _parseFromZhipu(
-    res: Ns_Zhipu.ImagesGenerationsRes,
+    res: Ns_Zhipu.ImagesGenerationsRes | Ns_Zhipu.ErrorResponse,
     model: string,
     durationStamp: number,
   ): LiuAi.PaletteResult | undefined {
@@ -2175,10 +2175,12 @@ export class Palette {
     }
 
     // 2. get url
-    const url = res.data?.[0]?.url
+    const successRes = res as Ns_Zhipu.ImagesGenerationsRes
+    const failRes = res as Ns_Zhipu.ErrorResponse
+    const url = successRes.data?.[0]?.url
     if(!url) {
-      console.warn("cannot get url in _parseFromZhipu: ")
-      console.log(res)
+      console.warn("cannot get the image url in _parseFromZhipu: ")
+      console.log(failRes)
       return
     }
 

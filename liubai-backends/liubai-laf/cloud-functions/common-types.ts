@@ -3333,4 +3333,11 @@ export namespace Ns_Zhipu {
     }>
   }
 
+  export interface ErrorResponse {
+    error?: {
+      code?: string        // like "1113"
+      message?: string     // like "您的账户已欠费，请充值后重试。"
+    }
+  }
+
 }
