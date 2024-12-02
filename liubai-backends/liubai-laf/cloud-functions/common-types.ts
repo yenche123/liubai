@@ -662,6 +662,7 @@ export interface AiEntry {
   image_url?: string
 
   // file, including audio file
+  file_type?: string
   file_blob?: Blob
   file_base64?: string
 
@@ -1584,8 +1585,11 @@ export interface Table_AiChat extends BaseTable {
   msgType?: AiMsgType
   text?: string
   imageUrl?: string
-  fileBase64?: string     // like for audio
   contentId?: string      // content which has been connected to this chat
+
+  // about file
+  fileType?: string
+  fileBase64?: string     // like for audio
 
   // about LLM
   model?: string           // like "gpt-4o"
@@ -3245,6 +3249,12 @@ export namespace LiuAi {
     url: string
     model: string      // please remove the prefix like "stabilityai/" or "black-forest-labs"
     duration: number   // cost time (seconds) and to fixed(2)
+    originalResult: Record<string, any>
+  }
+
+  export interface SpeechToTextResult {
+    text: string
+    model: string
     originalResult: Record<string, any>
   }
 

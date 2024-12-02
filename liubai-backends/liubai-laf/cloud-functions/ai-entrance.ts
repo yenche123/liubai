@@ -46,6 +46,7 @@ import {
   MarkdownParser,
   AiToolUtil,
   liuReq,
+  liuFetch,
 } from "@/common-util"
 import { WxGzhSender } from "@/service-send"
 import { 
@@ -62,7 +63,7 @@ import {
 import cloud from "@lafjs/cloud"
 import { useI18n, aiLang } from "@/common-i18n"
 import * as vbot from "valibot"
-import { WxGzhUploader } from "@/file-utils"
+import { blobToFormData, WxGzhUploader } from "@/file-utils"
 
 const db = cloud.database()
 const _ = db.command
@@ -168,10 +169,10 @@ export async function enter_ai(
   if(!res0) return
 
   // 1. check out text or image_url
-  const { msg_type, image_url, text, file_base64 } = entry
+  const { msg_type, image_url, text, file_blob } = entry
   if(msg_type === "text" && !text) return
   if(msg_type === "image" && !image_url) return
-  if(msg_type === "voice" && !file_base64) return
+  if(msg_type === "voice" && !file_blob) return
 
   // 1.1 check out text
   if(msg_type === "text" && text) {
@@ -202,6 +203,13 @@ export async function enter_ai(
       theDirective?.theBot?.character
     )
     controller4_1.run()
+    return
+  }
+
+  // 4.2 transcibe voice msg
+  if(msg_type === "voice" && file_blob) {
+    // WIP
+    SpeechToText.runFromBlob(file_blob)
     return
   }
 
@@ -2203,6 +2211,7 @@ export class Palette {
     const headers = {
       "Authorization": `Bearer ${opt.apiKey}`,
     }
+    // reference: https://docs.siliconflow.cn/api-reference/images/images-generations
     const body: Record<string, any> = {
       model: opt.model,
       prompt,
@@ -2433,6 +2442,7 @@ class AiHelper {
       text, 
       image_url, 
       file_base64,
+      file_type,
       wx_gzh_openid,
       wx_media_id,
       wx_media_id_16k,
@@ -2446,6 +2456,7 @@ class AiHelper {
       msgType: msg_type,
       text,
       imageUrl: image_url,
+      fileType: file_type,
       fileBase64: file_base64,
       wxMediaId: wx_media_id,
       wxMediaId16K: wx_media_id_16k,
@@ -2725,16 +2736,16 @@ class AiHelper {
           })
         }
         else if(msgType === "voice" && fileBase64) {
-          messages.push({
-            role: "user",
-            content: [{
-              type: "input_audio",
-              input_audio: {
-                data: fileBase64,
-                format: "mp3",
-              }
-            }]
-          })
+          // messages.push({
+          //   role: "user",
+          //   content: [{
+          //     type: "input_audio",
+          //     input_audio: {
+          //       data: fileBase64,
+          //       format: "mp3",
+          //     }
+          //   }]
+          // })
         }
 
       }
@@ -3295,6 +3306,43 @@ class TellUser {
     if(!accessToken) return
     const res = await WxGzhSender.sendMessage(wx_gzh_openid, accessToken, obj)
     return res
+  }
+
+}
+
+
+class SpeechToText {
+
+  static async runFromBlob(file_blob: Blob) {
+    // 1. get apiKey, baseUrl, and request url
+    const _env = process.env
+    const apiKey = _env.LIU_SILICONFLOW_API_KEY
+    const baseUrl = _env.LIU_SILICONFLOW_BASE_URL
+    if(!apiKey || !baseUrl) {
+      console.warn("no apiKey or baseUrl in SpeechToText")
+      return
+    }
+    const url = baseUrl + "/audio/transcriptions"
+
+    // 2. turn blob to formData
+    const res2 = await blobToFormData(file_blob)
+    const form = res2.form
+    form.append("model", "FunAudioLLM/SenseVoiceSmall")
+
+    // 3. options
+    const options = {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": 'multipart/form-data'
+      },
+      body: form,
+    }
+
+    // 4. to fetch (or axios.post)
+    const res4 = await liuFetch(url, options as any)
+    console.warn("SpeechToText res4: ")
+    console.log(res4)
   }
 
 }

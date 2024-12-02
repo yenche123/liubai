@@ -218,6 +218,10 @@ async function handle_voice(
   if(!res4) return
   const size4 = res4.fileBlob.size
   const type4 = res4.fileBlob.type
+
+  console.log("size4: ", size4)
+  console.log("type4: ", type4)
+
   if(size4 > MB) {
     console.warn("the audio is too large!")
     console.log(size4)
@@ -234,6 +238,9 @@ async function handle_voice(
   enter_ai({ 
     user, 
     msg_type: "voice", 
+    file_type: type4,
+    file_base64: res4.b64,
+    file_blob: res4.fileBlob,
     wx_media_id, 
     wx_media_id_16k,
     wx_gzh_openid,

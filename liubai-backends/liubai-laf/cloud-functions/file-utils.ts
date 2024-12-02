@@ -14,7 +14,10 @@ import type {
   DownloadUploadRes,
   Wx_Res_GzhUploadMedia,
 } from '@/common-types';
-import { checkAndGetWxGzhAccessToken, getMimeTypeSuffix } from '@/common-util';
+import { 
+  checkAndGetWxGzhAccessToken, 
+  getMimeTypeSuffix,
+} from '@/common-util';
 import FormData from 'form-data';
 import qiniu from "qiniu";
 import { 
@@ -94,12 +97,10 @@ interface RTFD_Opt {
   filename?: string     // default: `upload.${ext}`
 }
 
-// turn response into buffer
-export async function responseToFormData(
-  res: Response,
+export async function blobToFormData(
+  fileBlob: Blob,
   opt?: RTFD_Opt,
 ) {
-  const fileBlob = await res.blob()
   const arrayBuffer = await fileBlob.arrayBuffer()
   const buffer = Buffer.from(arrayBuffer)
 
@@ -119,6 +120,16 @@ export async function responseToFormData(
   })
   
   return { form }
+}
+
+// turn response into buffer
+export async function responseToFormData(
+  response: Response,
+  opt?: RTFD_Opt,
+) {
+  const fileBlob = await response.blob()
+  const res = await blobToFormData(fileBlob, opt)
+  return res
 }
 
 
