@@ -420,9 +420,6 @@ export class WxGzhUploader {
 
     // 2. transfrom response into formData
     const res2 = data.res
-    console.log("see res2: ")
-    console.log(res2)
-
     const { form } = await responseToFormData(res2)
 
     // 3. construct request

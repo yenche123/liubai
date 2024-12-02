@@ -1918,7 +1918,8 @@ class ToolHandler {
 
     // 3. draw
     let res3: LiuAi.PaletteResult | undefined
-    const c = this._bot.character
+    const bot = this._bot
+    const c = bot.character
     // 3.1 use "cogview-3-plus" first for zhipu
     if(c === "zhipu") {
       res3 = await Palette.runByZhipu(prompt, sizeType)
@@ -1938,7 +1939,8 @@ class ToolHandler {
     AiHelper.updateAiChat(assistantChatId, data4)
 
     // 5. reply image
-    const res5 = await TellUser.image(this._aiParam.entry, res3.url)
+    const { entry } = this._aiParam
+    const res5 = await TellUser.image(entry, res3.url, bot)
     console.warn("see the result of sending an image: ")
     console.log(res5)
 
@@ -2238,8 +2240,6 @@ export class Palette {
       )
 
       if(res3.code === "0000" && res3.data) {
-        console.log("see res3.data in runBySiliconflow: ")
-        console.log(res3.data)
         const parseResult = this._parseFromSiliconflow(res3.data, opt.model)
         return parseResult
       }
@@ -3172,10 +3172,7 @@ class TellUser {
         msgtype: "text",
         text: { content: text },
       }
-      const kf_account = this._getWxGzhKfAccount(from, fromCharacter)
-      if(kf_account) {
-        obj1.customservice = { kf_account }
-      }
+      this._fillWxGzhKf(obj1, from, fromCharacter)
       const res1 = await this._sendToWxGzh(wx_gzh_openid, obj1)
       return res1
     }
@@ -3185,6 +3182,8 @@ class TellUser {
   static async image(
     entry: AiEntry,
     imageUrl: string,
+    from?: AiBot,
+    fromCharacter?: AiCharacter,
   ) {
     const { wx_gzh_openid } = entry
 
@@ -3198,6 +3197,7 @@ class TellUser {
         msgtype: "image",
         image: { media_id },
       }
+      this._fillWxGzhKf(obj2, from, fromCharacter)
       const res2 = await this._sendToWxGzh(wx_gzh_openid, obj2)
       return res2
     }
@@ -3273,7 +3273,16 @@ class TellUser {
     }
   }
 
-  
+  private static _fillWxGzhKf(
+    obj: Wx_Gzh_Send_Msg,
+    bot?: AiBot,
+    character?: AiCharacter,
+  ) {
+    const kf_account = this._getWxGzhKfAccount(bot, character)
+    if(kf_account) {
+      obj.customservice = { kf_account }
+    }
+  }
 
   private static _getWxGzhKfAccount(
     bot?: AiBot,
