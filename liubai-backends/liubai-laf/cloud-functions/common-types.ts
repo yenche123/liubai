@@ -3227,6 +3227,33 @@ export namespace LiuAi {
     originalResult: Record<string, any>
   }
 
+  export interface PaletteResult {
+    url: string
+    model: string      // please remove the prefix like "stabilityai/" or "black-forest-labs"
+    duration: number   // cost time (seconds) and to fixed(2)
+    originalResult: Record<string, any>
+  }
+
+}
+
+
+/** types from siliconflow */
+export namespace SiliconFlow {
+
+  export interface GeneratedImage {
+    url: string
+  }
+
+  export interface GenerateImageTiming {
+    inference: number        // seconds
+  }
+
+  export interface ImagesGenerationsRes {
+    images: GeneratedImage[]
+    timings: GenerateImageTiming
+    seed: number
+  }
+
 }
 
 

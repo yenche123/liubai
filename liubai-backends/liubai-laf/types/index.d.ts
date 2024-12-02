@@ -134,6 +134,7 @@ declare global {
       /** Secondary Providers */
       LIU_SILICONFLOW_BASE_URL?: string
       LIU_SILICONFLOW_API_KEY?: string
+      LIU_SILICONFLOW_IMAGE_GENERATION_MODEL?: string
 
       /** Summary */
       LIU_SUMMARY_BASE_URL?: string

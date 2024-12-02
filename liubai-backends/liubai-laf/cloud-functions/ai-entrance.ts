@@ -31,6 +31,7 @@ import {
   Sch_AiToolGetScheduleParam,
   Sch_AiToolGetCardsParam,
   AiToolGetCardType,
+  SiliconFlow,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -141,6 +142,10 @@ interface PostRunParam {
 
 interface TurnChatsIntoPromptOpt {
   abilities?: AiAbility[]
+}
+
+interface BaseLLMChatOpt {
+  maxTryTimes?: number
 }
 
 /********************* empty function ****************/
@@ -510,7 +515,8 @@ class BaseLLM {
   private _tryTimes = 0
 
   public async chat(
-    params: OpenAI.Chat.ChatCompletionCreateParams
+    params: OpenAI.Chat.ChatCompletionCreateParams,
+    opt?: BaseLLMChatOpt,
   ): Promise<OaiChatCompletion | undefined> {
     const _this = this
     const client = _this._client
@@ -520,6 +526,7 @@ class BaseLLM {
 
     try {
       const chatCompletion = await client.chat.completions.create(params)
+      _this._tryTimes = 0
       return chatCompletion as OaiChatCompletion
     }
     catch(err) {
@@ -531,9 +538,7 @@ class BaseLLM {
       let isRateLimit = false
       const errType = typeof err
       const errMsg = errType === "string" ? err : err?.toString?.()
-      console.log("errMsg: ")
-      console.log(errMsg)
-      
+
       if(typeof errMsg === "string") {
         console.log("errMsg is string!")
 
@@ -554,10 +559,11 @@ class BaseLLM {
         
       }
 
-      if(_this._tryTimes < 3 && isRateLimit) {
+      const maxTryTimes = opt?.maxTryTimes ?? 2
+      if(_this._tryTimes < maxTryTimes && isRateLimit) {
         console.log("getting to try again!")
         await valTool.waitMilli(1000)
-        const triedRes = await _this.chat(params)
+        const triedRes = await _this.chat(params, opt)
         return triedRes
       }
     }
@@ -1907,6 +1913,7 @@ class ToolHandler {
 }
 
 
+/******************** tool for web search ************************/
 export class WebSearch {
 
   static async run(q: string) {
@@ -2017,6 +2024,118 @@ export class WebSearch {
     }
   }
 
+}
+
+
+/******************** tool for painting ************************/
+
+interface PaletteSpecificOpt {
+  apiKey: string
+  baseUrl: string
+  model: string
+}
+
+export class Palette {
+
+  static async run(
+    prompt: string
+  ) {
+    const _env = process.env
+    const sfUrl = _env.LIU_SILICONFLOW_BASE_URL
+    const sfApiKey = _env.LIU_SILICONFLOW_API_KEY
+    const sfModel = _env.LIU_SILICONFLOW_IMAGE_GENERATION_MODEL
+    
+    // 1. run by siliconflow
+    if(sfUrl && sfApiKey && sfModel) {
+      const opt1: PaletteSpecificOpt = {
+        apiKey: sfApiKey,
+        baseUrl: sfUrl,
+        model: sfModel,
+      }
+      const res1 = await this.runBySiliconflow(prompt, opt1)
+      return res1
+    }
+  }
+
+  static async runBySiliconflow(
+    prompt: string,
+    opt: PaletteSpecificOpt,
+  ) {
+
+    // 1. construct headers and body
+    const url = opt.baseUrl + "/images/generations"
+    const headers = {
+      "Authorization": `Bearer ${opt.apiKey}`,
+    }
+    const body: Record<string, any> = {
+      model: opt.model,
+      prompt,
+      image_size: "768x1024",    // portrait
+      num_inference_steps: 20,
+    }
+
+    // 2.1 for stable diffusion
+    if(opt.model.includes("stable-diffusion")) {
+      body.batch_size = 1
+      body.guidance_scale = 7.5 
+    }
+
+    console.warn("start to draw with ", opt.model)
+
+    // 3. to fetch
+    try {
+      const res3 = await liuReq<SiliconFlow.ImagesGenerationsRes>(
+        url, 
+        body, 
+        { headers }
+      )
+
+      if(res3.code === "0000" && res3.data) {
+        console.log("see res3.data in runBySiliconflow: ")
+        console.log(res3.data)
+        const parseResult = this._parseFromSiliconflow(res3.data, opt.model)
+        return parseResult
+      }
+
+      console.warn("palette runBySiliconflow got an unexpected result: ")
+      console.log(res3)
+    }
+    catch(err) {
+      console.warn("palette runBySiliconflow error: ")
+      console.log(err)
+    }
+  }
+
+  private static _parseFromSiliconflow(
+    data: SiliconFlow.ImagesGenerationsRes,
+    model: string,
+  ): LiuAi.PaletteResult | undefined {
+    const img = data.images?.[0]
+    if(!img) return
+    const inference = data.timings?.inference
+    if(!inference) return
+    const url = img.url
+
+    if(model.indexOf("/") > 0) {
+      const tmpList = model.split("/")
+      model = tmpList[tmpList.length - 1]
+    }
+
+    const strDuration = inference.toFixed(2)
+    const duration = Number(strDuration)
+    if(isNaN(duration)) {
+      console.warn("cannot parse duration from siliconflow: ")
+      console.log(data)
+      return
+    }
+
+    return {
+      url,
+      model,
+      duration,
+      originalResult: data,
+    }
+  }
 
 }
 
@@ -2733,7 +2852,6 @@ class AiHelper {
   }
 
 }
-
 
 class UserHelper {
 

@@ -437,16 +437,16 @@ export const aiTools: OaiTool[] = [
     type: "function",
     function: {
       name: "draw",
-      description: "画图。给定一段描述，返回一张根据该描述绘制的图像",
+      description: "Drawing. Given a prompt, return an image drawn from it.",
       parameters: {
         type: "object",
         properties: {
-          description: {
+          prompt: {
             type: "string",
-            description: "描述栏，表示你想绘制的图像长怎样，越精细具体越好",
+            description: "Description field using English, which indicates what the image you want to draw looks like. The more detailed the description, the better the result.",
           }
         },
-        required: ["description"],
+        required: ["prompt"],
         additionalProperties: false
       }
     }
