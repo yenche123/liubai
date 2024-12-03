@@ -143,6 +143,11 @@ declare global {
       LIU_SUMMARY_PREFIX?: "01"              // closed by default, reference: https://api-docs.deepseek.com/zh-cn/guides/chat_prefix_completion
       LIU_SUMMARY_PARTIAL?: "01"             // closed by default, reference: https://platform.moonshot.cn/docs/api/partial
 
+      /** Translation */
+      LIU_TRANSLATION_BASE_URL?: string
+      LIU_TRANSLATION_API_KEY?: string
+      LIU_TRANSLATION_MODEL?: string
+
       /** Characters */
       LIU_WXGZH_KF_DEEPSEEK?: string         // kf_account of deepseek
       LIU_WXGZH_KF_KIMI?: string             // kf_account of kimi

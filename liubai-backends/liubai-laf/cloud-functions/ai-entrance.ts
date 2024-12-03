@@ -28,12 +28,13 @@ import {
   type AiAbility,
   type T_I18N,
   type AiImageSizeType,
+  type AiToolGetCardType,
   Ns_Zhipu,
   LiuAi,
   Sch_AiToolGetScheduleParam,
   Sch_AiToolGetCardsParam,
-  type AiToolGetCardType,
   Ns_SiliconFlow,
+  AiApiEndpoint,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -2365,7 +2366,7 @@ class AiHelper {
     return my_characters
   }
 
-  static getApiEndpointFromBot(bot: AiBot) {
+  static getApiEndpointFromBot(bot: AiBot): AiApiEndpoint | undefined {
     const _env = process.env
     const p = bot.provider
     const p2 = bot.secondaryProvider
@@ -3424,6 +3425,84 @@ class TransformText {
 
     return true
   }
+
+}
+
+
+export class Translator {
+
+  private _bot?: AiBot
+  private _user?: Table_User
+
+  constructor(bot?: AiBot, user?: Table_User) {
+    this._bot = bot
+    this._user = user
+  }
+
+  async run(
+    text: string,
+  ): Promise<LiuAi.TranslateResult | undefined> {
+    // 1. get apiEndpoint
+    let apiEndpoint: AiApiEndpoint | undefined
+    const bot = this._bot
+    const canUseChat = bot?.abilities.includes("chat")
+    if(canUseChat && bot) {
+      apiEndpoint = AiHelper.getApiEndpointFromBot(bot)
+    }
+    let model = bot?.model
+    if(!apiEndpoint || !model) {
+      const _env = process.env
+      const baseURL = _env.LIU_TRANSLATION_BASE_URL
+      const apiKey = _env.LIU_TRANSLATION_API_KEY
+      model = _env.LIU_TRANSLATION_MODEL
+      if(!apiKey || !baseURL || !model) {
+        console.warn("there is no apiKey or baseUrl in Translator")
+        return
+      }
+      apiEndpoint = { apiKey, baseURL }
+    }
+
+    // 2. get prompts
+    const { p } = aiI18nShared({ type: "translate", user: this._user})
+    const prompts: OaiPrompt[] = [
+      { role: "system", content: p("system") },
+      { role: "user", content: p("user_1") },
+      { role: "assistant", content: p("assistant_1") },
+      { role: "user", content: p("user_2") },
+      { role: "assistant", content: p("assistant_2") },
+      { role: "user", content: p("user_3") },
+      { role: "assistant", content: p("assistant_3") },
+      { role: "user", content: p("user_4") },
+      { role: "assistant", content: p("assistant_4") },
+      { role: "user", content: p("user_5") },
+      { role: "assistant", content: p("assistant_5") },
+      { role: "user", content: text },
+    ]
+
+    // 3. chat 
+    const llm = new BaseLLM(apiEndpoint.apiKey, apiEndpoint.baseURL)
+    console.log("see prompts in Translator: ")
+    console.log(prompts)
+    const res3 = await llm.chat({ model, messages: prompts })
+    if(!res3) {
+      console.warn("no res3 in Translator")
+      return
+    }
+
+    // 4. get translatedText
+    const translatedText = AiHelper.getTextFromLLM(res3, this._bot)
+    if(!translatedText) {
+      console.warn("no translatedText in Translator")
+      return
+    }
+    
+    return {
+      originalText: text,
+      translatedText,
+      model,
+    }
+  }
+
 
 }
 

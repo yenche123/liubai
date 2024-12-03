@@ -632,6 +632,11 @@ export type AiCommandByHuman = "kick" | "add" | "clear_history"
 
 export type AiFinishReason = "stop" | "length"
 
+export interface AiApiEndpoint {
+  apiKey: string
+  baseURL: string
+}
+
 export interface AiUsage {
   cached_tokens?: number
   completion_tokens: number
@@ -677,7 +682,7 @@ export interface AiI18nChannelParam {
   entry: AiEntry
 }
 
-export type AiPromptType = "compress" | "search_keyword" | "parse_link"
+export type AiPromptType = "compress" | "translate"
 export interface AiI18nSharedParam {
   type: AiPromptType
   user?: Table_User
@@ -3251,6 +3256,12 @@ export namespace LiuAi {
     model: string      // please remove the prefix like "stabilityai/" or "black-forest-labs"
     duration: number   // cost time (seconds) and to fixed(2)
     originalResult: Record<string, any>
+  }
+
+  export interface TranslateResult {
+    originalText: string
+    translatedText: string
+    model: string
   }
 
   export interface SpeechToTextResult {
