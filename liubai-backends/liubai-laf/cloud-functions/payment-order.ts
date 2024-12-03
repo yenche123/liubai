@@ -544,7 +544,10 @@ function getRequiredDataForPayment(
   }
 
   const { t } = useI18n(subPlanLang, { body })
-  const payment_title = t("payment_title")
+  let payment_title = t("payment_title")
+  if(sub_plan.payment_circle === "monthly") {
+    payment_title = t("monthly_payment_title")
+  }
   let fee = sub_plan.amount_CNY
   let total_amount = 0
   let out_trade_no = ""

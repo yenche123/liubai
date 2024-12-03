@@ -48,6 +48,7 @@ export const commonLang: LangAtom = {
 export const subPlanLang: LangAtom = {
   "zh-Hans": {
     "payment_title": "留白记事会员",
+    "monthly_payment_title": "留白月度会员",
     "annual_membership": "年度会员 Premium",
     "quarterly_membership": "季度会员 Premium",
     "monthly_membership": "月度会员 Premium",
@@ -55,6 +56,7 @@ export const subPlanLang: LangAtom = {
   },
   "zh-Hant": {
     "payment_title": "留白記事會員",
+    "monthly_payment_title": "留白月度會員",
     "annual_membership": "年度會員 Premium",
     "quarterly_membership": "季度會員 Premium",
     "monthly_membership": "月度會員 Premium",
@@ -62,6 +64,7 @@ export const subPlanLang: LangAtom = {
   },
   "en": {
     "payment_title": "Liubai Membership",
+    "monthly_payment_title": "Liubai Monthly Membership",
     "annual_membership": "Annual Membership (Premium)",
     "quarterly_membership": "Quarterly Membership (Premium)",
     "monthly_membership": "Monthly Membership (Premium)",
