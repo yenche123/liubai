@@ -53,7 +53,9 @@ import { WxGzhSender } from "@/service-send"
 import { 
   getBasicStampWhileAdding, 
   getNowStamp, 
+  isWithinMillis, 
   MINUTE,
+  SECONED,
 } from "@/common-time"
 import { 
   aiBots, 
@@ -83,6 +85,7 @@ const MAX_WORDS = 3000
 const MAX_TIMES_FREE = 10
 const MAX_TIMES_MEMBERSHIP = 200
 
+const SEC_15 = SECONED * 15
 const MIN_3 = MINUTE * 3
 const MIN_30 = MINUTE * 30
 
@@ -647,7 +650,7 @@ class BaseBot {
       if(bots.length < 1) {
 
         // 3. try to compress chats for images
-        const newChats = AiHelper.compressChats(chats)
+        const newChats = AiHelper.compressChatsForImages(chats)
         if(!newChats) {
           const { t } = useI18n(aiLang, { user: param.entry.user })
           const msg3 = t("cannot_read_images")
@@ -741,7 +744,6 @@ class BaseBot {
       totalToken += AiHelper.calculateChatToken(v)
     })
     totalToken += system_1_token
-
 
     // 7. construct result of preRun
     const res7: PreRunResult = { prompts, totalToken, bot, chats }
@@ -1305,6 +1307,21 @@ class BotZhipu extends BaseBot {
 /*********************** AI Controller ************************/
 class AiController {
 
+  // decide whether to send "typing"
+  private _handleSendTyping(aiParam: AiRunParam) {
+    const { chats, entry } = aiParam
+    if(chats.length < 3) {
+      TellUser.typing(entry)
+      return
+    }
+    const secondChat = chats[1]
+    if(secondChat.infoType === "user") {
+      const hasTyping = isWithinMillis(secondChat.insertedStamp, SEC_15)
+      if(hasTyping) return
+    }
+    TellUser.typing(entry)
+  }
+
   async run(aiParam: AiRunParam) {
     const { room, entry } = aiParam
 
@@ -1346,7 +1363,7 @@ class AiController {
     if(promises.length < 1) return
 
     // 3.1 send "typing" state
-    TellUser.typing(entry)
+    this._handleSendTyping(aiParam)
 
     // 4. wait for all promises
     const res4 = await Promise.all(promises)
@@ -1554,8 +1571,6 @@ class AiCompressor {
       token += AiHelper.calculateChatToken(v)
       if(v.infoType === "summary") break
     }
-
-    console.log("do i need compress: ", token)
 
     if(token > TOKEN_NEED_COMPRESS) return true
     return false
@@ -2578,7 +2593,13 @@ class AiHelper {
   static calculateChatToken(
     chat: Table_AiChat,
   ) {
-    const { infoType, usage, text, imageUrl, msgType } = chat
+    const { 
+      infoType, 
+      usage, 
+      text, 
+      imageUrl, 
+      msgType,
+    } = chat
     if(infoType === "assistant" || infoType === "summary") {
       const token1 = usage?.completion_tokens
       if(token1) return token1
@@ -2590,6 +2611,20 @@ class AiHelper {
     }
     else if(imageUrl) {
       token += 600
+    }
+    
+    if(infoType === "tool_use") {
+      const toolToken1 = usage?.completion_tokens ?? 0
+      let toolToken2 = 0
+      if(chat.funcName) {
+        toolToken2 += this.calculateTextToken(chat.funcName)
+      }
+      if(chat.funcJson) {
+        const jsonStr = valTool.objToStr(chat.funcJson)
+        toolToken2 += this.calculateTextToken(jsonStr)
+      }
+      toolToken2 += 10
+      token += Math.max(toolToken1, toolToken2)
     }
 
     if(msgType === "voice") {
@@ -2950,7 +2985,7 @@ class AiHelper {
   }
 
   // only return chats when compression (turn images into text) succeeds
-  static compressChats(chats: Table_AiChat[]) {
+  static compressChatsForImages(chats: Table_AiChat[]) {
     if(chats.length < 1) return []
 
     // 1. check if we can compress
@@ -2976,6 +3011,10 @@ class AiHelper {
       if(infoType === "assistant" && firstAssistantIdx < 0) {
         firstAssistantIdx = i
       }
+      else if(infoType === "tool_use" && firstAssistantIdx < 0) {
+        firstAssistantIdx = i
+      }
+
       if((msgType === "image" || imageUrl) && firstPhotoIdx < 0) {
         firstPhotoIdx = i
       }
