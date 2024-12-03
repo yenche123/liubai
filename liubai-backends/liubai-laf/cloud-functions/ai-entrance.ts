@@ -212,7 +212,7 @@ export async function enter_ai(
   // 4.2 transcibe voice msg
   if(msg_type === "voice" && file_blob) {
     // WIP
-    SpeechToText.runFromBlob(file_blob)
+    // SpeechToText.runFromBlob(file_blob)
     return
   }
 
@@ -3373,7 +3373,7 @@ class TransformText {
     text: string,
   ) {
     // 1. check if the text starts with "调用工具"
-    const prefix1s = ["调用工具:", "工具调用:", "调用工具：", "工具调用："]
+    const prefix1s = ["调用工具:", "調用工具:", "Call a tool:"]
     const thePrefix1 = prefix1s.find(v => text.startsWith(v))
     if(!thePrefix1) return
 
@@ -3389,7 +3389,7 @@ class TransformText {
     // 3. check if the rest of the text starts with "参数"
     tmpList2.shift()
     text = tmpList2.join("\n").trim()
-    const prefix3s = ["参数:", "参数："]
+    const prefix3s = ["参数:", "參數:", "Arguments:"]
     const thePrefix3 = prefix3s.find(v => text.startsWith(v))
     if(!thePrefix3) return
 
