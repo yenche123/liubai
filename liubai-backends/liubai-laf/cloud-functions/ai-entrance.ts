@@ -607,6 +607,17 @@ class BaseBot {
       return
     }
 
+    // print last 5 prompts
+    const msgLength = params.messages.length
+    console.log(`last 5 prompts: `)
+    if(msgLength > 5) {
+      const messages2 = params.messages.slice(msgLength - 5)
+      console.log(messages2)
+    }
+    else {
+      console.log(params.messages)
+    }
+
     const llm = new BaseLLM(apiData.apiKey, apiData.baseURL)
     const t1 = getNowStamp()
     const res = await llm.chat(params)
@@ -2705,11 +2716,18 @@ class AiHelper {
   private static _turnToolCallIntoNormalAssistantMsg(
     t: T_I18N,
     v: Table_AiChat,
+    opt?: TurnChatsIntoPromptOpt,
   ) {
     const { funcName, funcJson } = v
     if(!funcName) return
     const funcArgs = funcJson ? valTool.objToStr(funcJson) : "{}"
-    const msg = t("bot_call_tools", { funcName, funcArgs })
+    let msg = t("bot_call_tools", { funcName, funcArgs })
+
+    if(funcName === "draw_picture" && v.drawPictureUrl) {
+      let drawMsg = t("draw_result", { imageUrl: v.drawPictureUrl })
+      msg += `\n${drawMsg}`
+    }
+
     const assistantMsg: OaiPrompt = {
       role: "assistant",
       content: msg,
@@ -2788,15 +2806,15 @@ class AiHelper {
           if(toolMsg) {
             messages.push(toolMsg)
             messages.push({ role: "assistant", tool_calls, name: character })
+            continue
           }
-          continue
         }
 
         // otherwise, turn the tool_call_result prompt into a user prompt
         if(toolMsg) {
           messages.push({ role: "user", content: toolMsg.content }) 
         }
-        const assistantMsg = _this._turnToolCallIntoNormalAssistantMsg(t, v)
+        const assistantMsg = _this._turnToolCallIntoNormalAssistantMsg(t, v, opt)
         if(assistantMsg) {
           messages.push(assistantMsg)
         }
@@ -3376,7 +3394,10 @@ class TransformText {
     if(!thePrefix3) return
 
     // 4. get args
-    const toolArgs = text.substring(thePrefix3.length).trimStart()
+    text = text.substring(thePrefix3.length).trimStart()
+    let toolArgs = text.split("\n")[0]
+    if(!toolArgs) return
+    toolArgs = toolArgs.trim()
     try {
       const args = JSON.parse(toolArgs)
       console.warn("see args in _turnIntoTool: ")

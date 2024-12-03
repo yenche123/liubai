@@ -299,6 +299,7 @@ export const aiLang: LangAtom = {
     "too_many_words": "这么多字！它们思考不来💭\n（单条文本最多 3000 字符）",
     "no_more_to_continue": "没有更多可以继续了",
     "bot_call_tools": "调用工具: {funcName}\n参数: {funcArgs}",
+    "draw_result": "作图结果: {imageUrl}",
     "bot_left": "{botName}已离开聊天室",
 
     // the first message when a bot has been called
@@ -355,6 +356,7 @@ export const aiLang: LangAtom = {
     "too_many_words": "這麼多字！它們思考不來💭\n（單則文本最多 3000 字元）",
     "no_more_to_continue": "沒有更多可以繼續了",
     "bot_call_tools": "調用工具: {funcName}\n參數: {funcArgs}",
+    "draw_result": "畫圖結果: {imageUrl}",
     "bot_left": "{botName}已離開聊天室",
 
     // the first message when a bot has been called
@@ -410,6 +412,7 @@ export const aiLang: LangAtom = {
     "too_many_words": "Too many words to think💭\n(Text supports up to 3000 characters.)",
     "no_more_to_continue": "No more to continue",
     "bot_call_tools": "Call a tool: {funcName}\nArguments: {funcArgs}",
+    "draw_result": "The drawing result: {imageUrl}",
     "bot_left": "{botName} has already left",
 
     // the first message when a bot has been called

@@ -166,8 +166,7 @@ export async function downloadAndUpload(
 // 获取允许的图片类型 由 , 拼接而成的字符串
 export function getAcceptImgTypesString() {
   return "image/png,image/jpg,image/jpeg,image/gif,image/webp"
-} 
-
+}
 
 /********************* useful functions end ****************/
 
