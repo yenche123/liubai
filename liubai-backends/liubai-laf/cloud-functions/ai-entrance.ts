@@ -988,6 +988,18 @@ class BaseBot {
     return assistantChatId
   }
 
+  private _handleLength(message: OaiMessage) {
+    let content = message.content
+    if(!content) return
+    content = content.trimEnd()
+    const tmpList = content.split("\n")
+    if(tmpList.length < 5) return
+    tmpList.pop()
+    message.content = tmpList.join("\n")
+    console.warn("see message.content in _handleLength: ")
+    console.log(message.content)
+  }
+
   protected async postRun(postParam: PostRunParam): Promise<AiRunSuccess | undefined> {
     // 1. get params
     const { bot, chatCompletion, aiParam } = postParam
@@ -1025,8 +1037,8 @@ class BaseBot {
     }
     
     // 4. finish reason is "length"
-    if(finish_reason === "length" && !aiParam.isContinueCommand) {
-      // this._autoContinue(postParam, message)
+    if(finish_reason === "length") {
+      this._handleLength(message)
     }
 
     // 5. finish reason is "content_filter"
