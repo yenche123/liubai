@@ -692,6 +692,7 @@ export type OaiCreateParam = OpenAI.Chat.ChatCompletionCreateParams
 export type OaiChatCompletion = OpenAI.Chat.ChatCompletion
 export type OaiMessage = OpenAI.Chat.ChatCompletionMessage
 export type OaiToolCall = OpenAI.Chat.ChatCompletionMessageToolCall
+export type OaiChoice = OpenAI.Chat.ChatCompletion.Choice
 
 /******** ai tool-use *********/
 

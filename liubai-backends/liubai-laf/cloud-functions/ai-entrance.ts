@@ -10,6 +10,7 @@ import {
   type OaiTool,
   type OaiToolPrompt,
   type OaiToolCall,
+  type OaiChoice,
   type OaiMessage,
   type OaiCreateParam,
   type OaiChatCompletion,
@@ -46,7 +47,6 @@ import {
   MarkdownParser,
   AiToolUtil,
   liuReq,
-  liuFetch,
 } from "@/common-util"
 import { WxGzhSender } from "@/service-send"
 import { 
@@ -66,6 +66,7 @@ import * as vbot from "valibot"
 import { WxGzhUploader } from "@/file-utils"
 import FormData from "form-data"
 import axios from 'axios';
+import { createRandom } from "@/common-ids"
 
 const db = cloud.database()
 const _ = db.command
@@ -965,8 +966,6 @@ class BaseBot {
     const txt6 = AiHelper.getTextFromLLM(chatCompletion, bot)
     if(!txt6) return
 
-    console.log(`${c} assistant text.length: ${txt6.length}`)
-
     // 2. reply to user
     TellUser.text(aiParam.entry, txt6, bot)
     
@@ -1013,6 +1012,9 @@ class BaseBot {
     const { finish_reason, message } = firstChoice
     if(!message) return
     const { tool_calls } = message
+
+    // 1.1 try to transform text into tool
+    TransformText.handlefromAssistantChoice(firstChoice)
 
     console.warn(`${c} finish reason: ${finish_reason}`)
     console.log(`usage: `)
@@ -3329,6 +3331,77 @@ class TellUser {
     if(!accessToken) return
     const res = await WxGzhSender.sendMessage(wx_gzh_openid, accessToken, obj)
     return res
+  }
+
+}
+
+class TransformText {
+
+  static handlefromAssistantChoice(choice: OaiChoice) {
+    // 1. get text
+    if(choice.finish_reason !== "stop") return
+    const { message } = choice
+    let text = message.content
+    if(!text) return
+    text = text.trim()
+
+    // 2. try to turn into a tool call
+    const res2 = this._turnIntoTool(choice, text)
+    if(res2) return
+  }
+
+  private static _turnIntoTool(
+    choice: OaiChoice,
+    text: string,
+  ) {
+    // 1. check if the text starts with "调用工具"
+    const prefix1s = ["调用工具:", "工具调用:", "调用工具：", "工具调用："]
+    const thePrefix1 = prefix1s.find(v => text.startsWith(v))
+    if(!thePrefix1) return
+
+    // 2. get toolName
+    text = text.substring(thePrefix1.length).trimStart()
+    const tmpList2 = text.split("\n")
+    if(!tmpList2 || tmpList2.length < 2) return
+    const toolName = tmpList2[0].trim()
+    if(!toolName) return
+    const hasTheTool = aiTools.find(v => v.function?.name === toolName)
+    if(!hasTheTool) return
+
+    // 3. check if the rest of the text starts with "参数"
+    tmpList2.shift()
+    text = tmpList2.join("\n").trim()
+    const prefix3s = ["参数:", "参数："]
+    const thePrefix3 = prefix3s.find(v => text.startsWith(v))
+    if(!thePrefix3) return
+
+    // 4. get args
+    const toolArgs = text.substring(thePrefix3.length).trimStart()
+    try {
+      const args = JSON.parse(toolArgs)
+      console.warn("see args in _turnIntoTool: ")
+      console.log(args)
+    }
+    catch(err) {
+      console.warn("TransformText _turnIntoTool err: ")
+      console.log(err)
+      return
+    }
+
+    // 5. let's transform!
+    const toolCall: OaiToolCall = {
+      "type": "function",
+      "function": {
+        "name": toolName,
+        "arguments": toolArgs,
+      },
+      "id": `call_${createRandom(5)}`,
+    }
+    choice.message.content = ""
+    choice.message.tool_calls = [toolCall]
+    choice.finish_reason = "tool_calls"
+
+    return true
   }
 
 }
