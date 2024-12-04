@@ -3253,6 +3253,7 @@ export namespace LiuAi {
 
   export interface PaletteResult {
     url: string
+    prompt: string
     model: string      // please remove the prefix like "stabilityai/" or "black-forest-labs"
     duration: number   // cost time (seconds) and to fixed(2)
     originalResult: Record<string, any>

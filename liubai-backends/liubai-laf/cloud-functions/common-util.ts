@@ -286,6 +286,15 @@ const isLatinChar = (char: string) => {
   return false
 }
 
+const getChineseCharNum = (val: string) => {
+  if(!val) return 0
+  let num = 0
+  for(let i=0; i<val.length; i++) {
+    if(val.charCodeAt(i) >= 10000) num++
+  }
+  return num
+}
+
 export const valTool = {
   waitMilli,
   strToObj,
@@ -299,6 +308,7 @@ export const valTool = {
   hasValue,
   isStringWithVal,
   isLatinChar,
+  getChineseCharNum,
 }
 
 
@@ -962,7 +972,15 @@ export class MarkdownParser {
     if (!md) return '';
 
     md = this.mdToText(md)
-    
+
+    // Convert markdown image links to WeChat compatible <a> tags
+    // ![alt text](URL) becomes <a href="URL">alt text</a>
+    // If alt text is empty, use "打开图片" as default
+    md = md.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) => {
+      if(!alt) alt = "打开图片"
+      return `<a href="${url}">${alt}</a>`
+    })
+
     // Convert markdown links to WeChat compatible <a> tags
     // [link text](URL) becomes <a href="URL">link text</a>
     md = md.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')

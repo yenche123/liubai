@@ -432,8 +432,13 @@ export class WxGzhUploader {
           "Content-Type": "multipart/form-data"
         }
       })
-      console.log("res4.data: ")
-      console.log(res4.data)
+      const data4 = res4.data
+      if(!data4 || data4.errcode) {
+        console.warn("failed to upload temporary media to wx gzh")
+        console.log(res4)
+        return
+      }
+
       return res4.data as Wx_Res_GzhUploadMedia
     }
     catch(err) {

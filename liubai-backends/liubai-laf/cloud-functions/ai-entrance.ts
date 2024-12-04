@@ -1018,17 +1018,22 @@ class BaseBot {
     const { bot, chatCompletion, aiParam } = postParam
     if(!chatCompletion) return
     const c = bot.character
-    const firstChoice = chatCompletion.choices[0]
+    let firstChoice = chatCompletion.choices[0]
     if(!firstChoice) {
       console.warn(`${c} no choice!`)
       return
     }
-    const { finish_reason, message } = firstChoice
+    let { finish_reason, message } = firstChoice
     if(!message) return
-    const { tool_calls } = message
+    let { tool_calls } = message
 
     // 1.1 try to transform text into tool
-    TransformText.handlefromAssistantChoice(firstChoice)
+    const res1 = TransformText.handlefromAssistantChoice(firstChoice)
+    if(res1) {
+      finish_reason = firstChoice.finish_reason
+      message = firstChoice.message
+      tool_calls = message.tool_calls
+    }
 
     console.warn(`${c} finish reason: ${finish_reason}`)
     console.log(`usage: `)
@@ -1723,9 +1728,6 @@ class ToolHandler {
       ...param,
     }
     const assistantChatId = await AiHelper.addAssistantMsg(arg)
-
-    console.log("_addMsgToChat assistantChatId: ", assistantChatId)
-
     return assistantChatId
   }
 
@@ -1935,6 +1937,42 @@ class ToolHandler {
     return searchRes
   }
 
+  private async _getDrawResult(
+    prompt: string, 
+    sizeType: AiImageSizeType,
+  ) {
+    // 1. get param
+    let res: LiuAi.PaletteResult | undefined
+    const bot = this._bot
+    const c = bot.character
+    
+    // 2. translate if needed
+    let imagePrompt = prompt
+    const num2 = valTool.getChineseCharNum(prompt)
+    console.warn("chinese char num: ", num2)
+    if(num2 > 4) {
+      const user = this._aiParam.entry.user
+      const translator = new Translator(bot, user)
+      const res2 = await translator.run(prompt)
+      if(!res2) {
+        console.warn("fail to translate")
+      }
+      else {
+        imagePrompt = res2.translatedText
+      }
+    }
+
+    // 3. run by zhipu if character is zhipu
+    if(c === "zhipu") {
+      res = await Palette.runByZhipu(imagePrompt, sizeType)
+      if(res) return res
+    }
+
+    // 4. run 
+    res = await Palette.run(imagePrompt, sizeType)
+    return res
+  }
+
   async draw_picture(funcJson: Record<string, any>) {
     // 1. check out param
     const prompt = funcJson.prompt
@@ -1958,17 +1996,7 @@ class ToolHandler {
     if(!assistantChatId) return
 
     // 3. draw
-    let res3: LiuAi.PaletteResult | undefined
-    const bot = this._bot
-    const c = bot.character
-    // 3.1 use "cogview-3-plus" first for zhipu
-    if(c === "zhipu") {
-      res3 = await Palette.runByZhipu(prompt, sizeType)
-    }
-    // 3.2 otherwise
-    if(!res3) {
-      res3 = await Palette.run(prompt, sizeType)
-    }
+    let res3 = await this._getDrawResult(prompt, sizeType)
     if(!res3) return
 
     // 4. update assistant msg
@@ -1977,13 +2005,15 @@ class ToolHandler {
       drawPictureData: res3.originalResult,
       drawPictureModel: res3.model,
     }
+    if(prompt !== res3.prompt) {
+      data4.text = res3.prompt
+    }
+
     AiHelper.updateAiChat(assistantChatId, data4)
 
     // 5. reply image
     const { entry } = this._aiParam
-    const res5 = await TellUser.image(entry, res3.url, bot)
-    console.warn("see the result of sending an image: ")
-    console.log(res5)
+    const res5 = await TellUser.image(entry, res3.url, this._bot)
 
     // 6. menu
     // WIP
@@ -2191,6 +2221,9 @@ export class Palette {
       prompt,
       size: sizeType === "square" ? "1024x1024" : "768x1344",
     }
+    
+    console.warn("start to draw with ", model)
+    console.log(prompt)
 
     try {
       const stamp1 = getNowStamp()
@@ -2202,7 +2235,7 @@ export class Palette {
       const stamp2 = getNowStamp()
       const durationStamp = stamp2 - stamp1
       if(res.code === "0000" && res.data) {
-        const parseResult = this._parseFromZhipu(res.data, model, durationStamp)
+        const parseResult = this._parseFromZhipu(res.data, model, durationStamp, prompt)
         return parseResult
       }
       console.warn("palette runByZhipu got an unexpected result: ")
@@ -2218,6 +2251,7 @@ export class Palette {
     res: Ns_Zhipu.ImagesGenerationsRes | Ns_Zhipu.ErrorResponse,
     model: string,
     durationStamp: number,
+    prompt: string,
   ): LiuAi.PaletteResult | undefined {
     // 1. get duration
     const duration = valTool.numToFix(durationStamp, 2)
@@ -2239,6 +2273,7 @@ export class Palette {
 
     return {
       url,
+      prompt,
       model,
       duration,
       originalResult: res,
@@ -2271,6 +2306,7 @@ export class Palette {
     }
 
     console.warn("start to draw with ", opt.model)
+    console.log(prompt)
 
     // 3. to fetch
     try {
@@ -2281,7 +2317,7 @@ export class Palette {
       )
 
       if(res3.code === "0000" && res3.data) {
-        const parseResult = this._parseFromSiliconflow(res3.data, opt.model)
+        const parseResult = this._parseFromSiliconflow(res3.data, opt.model, prompt)
         return parseResult
       }
 
@@ -2297,6 +2333,7 @@ export class Palette {
   private static _parseFromSiliconflow(
     data: Ns_SiliconFlow.ImagesGenerationsRes,
     model: string,
+    prompt: string,
   ): LiuAi.PaletteResult | undefined {
     const img = data.images?.[0]
     if(!img) return
@@ -2319,6 +2356,7 @@ export class Palette {
     return {
       url,
       model,
+      prompt,
       duration,
       originalResult: data,
     }
@@ -2745,6 +2783,15 @@ class AiHelper {
         toolMsg = { role: "tool", content: v.text, tool_call_id }
       }
     }
+    else if(funcName === "draw_picture") {
+      if(v.text && v.drawPictureUrl) {
+        toolMsg = { 
+          role: "tool", 
+          content: `【成功作图】\nprompt: ${v.text}`, 
+          tool_call_id,
+        }
+      }
+    }
 
     return toolMsg
   }
@@ -2754,16 +2801,18 @@ class AiHelper {
     v: Table_AiChat,
     opt?: TurnChatsIntoPromptOpt,
   ) {
+    // 1. get params
     const { funcName, funcJson } = v
     if(!funcName) return
-    const funcArgs = funcJson ? valTool.objToStr(funcJson) : "{}"
-    let msg = t("bot_call_tools", { funcName, funcArgs })
-
-    if(funcName === "draw_picture" && v.drawPictureUrl) {
-      let drawMsg = t("draw_result", { imageUrl: v.drawPictureUrl })
-      msg += `\n${drawMsg}`
+    
+    // 2. change prompt if funcName is draw_picture
+    if(funcName === "draw_picture" && v.text && funcJson) {
+      funcJson.prompt = v.text
     }
 
+    // 3. handle content
+    const funcArgs = funcJson ? valTool.objToStr(funcJson) : "{}"
+    let msg = t("bot_call_tools", { funcName, funcArgs })
     const assistantMsg: OaiPrompt = {
       role: "assistant",
       content: msg,
@@ -3405,7 +3454,7 @@ class TransformText {
 
     // 2. try to turn into a tool call
     const res2 = this._turnIntoTool(choice, text)
-    if(res2) return
+    if(res2) return true
   }
 
   private static _turnIntoTool(
@@ -3515,13 +3564,13 @@ export class Translator {
       { role: "assistant", content: p("assistant_4") },
       { role: "user", content: p("user_5") },
       { role: "assistant", content: p("assistant_5") },
+      { role: "user", content: p("user_6") },
+      { role: "assistant", content: p("assistant_6") },
       { role: "user", content: text },
     ]
 
     // 3. chat 
     const llm = new BaseLLM(apiEndpoint.apiKey, apiEndpoint.baseURL)
-    console.log("see prompts in Translator: ")
-    console.log(prompts)
     const res3 = await llm.chat({ model, messages: prompts })
     if(!res3) {
       console.warn("no res3 in Translator")
@@ -3534,12 +3583,16 @@ export class Translator {
       console.warn("no translatedText in Translator")
       return
     }
-    
-    return {
+
+    // 5. return 
+    const res5: LiuAi.TranslateResult = {
       originalText: text,
       translatedText,
       model,
     }
+    console.log("see translate result: ")
+    console.log(res5)
+    return res5
   }
 
 
