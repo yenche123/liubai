@@ -110,6 +110,7 @@ interface AiRunSuccess {
   replyStatus: "yes" | "has_new_msg"
   assistantChatId?: string
   chatCompletion?: OaiChatCompletion
+  toolName?: string
 }
 
 type AiRunResults = Array<AiRunSuccess | undefined>
@@ -782,6 +783,7 @@ class BaseBot {
       }
     }
 
+    let toolName = ""
     for(let i=0; i<tool_calls.length; i++) {
       const v = tool_calls[i]
       const funcData = v["function"]
@@ -791,7 +793,7 @@ class BaseBot {
       const funcName = funcData.name
       const funcArgs = funcData.arguments
       const funcJson = valTool.strToObj(funcArgs)
-
+      toolName = funcName
       console.log("funcName: ", funcName)
       console.log(funcJson)
 
@@ -815,8 +817,9 @@ class BaseBot {
         await toolHandler.draw_picture(funcJson)
         break
       }
-
     }
+
+    return toolName
   }
 
   private _getRestTokensAndPrompts(
@@ -1053,8 +1056,9 @@ class BaseBot {
     console.log(chatCompletion.choices[0].message)
 
     // 3. tool calls
+    let toolName: string | undefined
     if(finish_reason === "tool_calls" && tool_calls) {
-      this._handleToolUse(postParam, tool_calls)
+      toolName = await this._handleToolUse(postParam, tool_calls)
     }
     
     // 4. finish reason is "length"
@@ -1075,6 +1079,7 @@ class BaseBot {
       replyStatus: "yes",
       chatCompletion, 
       assistantChatId,
+      toolName,
     }
   }
 
@@ -1373,17 +1378,19 @@ class AiController {
     // 4. wait for all promises
     const res4 = await Promise.all(promises)
     let hasEverSucceeded = false
+    let hasEverUsedTool = false
     for(let i=0; i<res4.length; i++) {
       const v = res4[i]
       if(v && v.replyStatus === "yes") {
         hasEverSucceeded = true
+        if(v.toolName) hasEverUsedTool = true
       }
     }
     if(!hasEverSucceeded) return
 
     // 5. add quota for user
     const num5 = AiHelper.addQuotaForUser(entry)
-    if((num5 % 3) === 2) {
+    if((num5 % 3) === 2 && !hasEverUsedTool) {
       this.sendFallbackMenu(aiParam, res4)
     }
 
