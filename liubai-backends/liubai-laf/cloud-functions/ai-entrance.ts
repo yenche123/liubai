@@ -34,7 +34,9 @@ import {
   Sch_AiToolGetScheduleParam,
   Sch_AiToolGetCardsParam,
   Ns_SiliconFlow,
-  AiApiEndpoint,
+  type AiApiEndpoint,
+  type AiToolGetScheduleHoursFromNow,
+  type AiToolGetScheduleSpecificDate,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -105,12 +107,28 @@ interface AiRunParam {
   isContinueCommand?: boolean
 }
 
+interface AiRunLog_A {
+  toolName: "get_schedule"
+  hoursFromNow?: AiToolGetScheduleHoursFromNow
+  specificDate?: AiToolGetScheduleSpecificDate
+}
+
+interface AiRunLog_B {
+  toolName: "get_cards"
+  cardType: AiToolGetCardType
+}
+
+export type AiRunLog = (AiRunLog_A | AiRunLog_B) & {
+  character: AiCharacter
+}
+
 interface AiRunSuccess {
   character: AiCharacter
   replyStatus: "yes" | "has_new_msg"
   assistantChatId?: string
   chatCompletion?: OaiChatCompletion
   toolName?: string
+  logs?: AiRunLog[]
 }
 
 type AiRunResults = Array<AiRunSuccess | undefined>
@@ -544,9 +562,12 @@ class BaseLLM {
     if(!client) return
 
     _this._tryTimes++
+    const timeout = _this._tryTimes > 1 ? 15000 : 30000
 
     try {
-      const chatCompletion = await client.chat.completions.create(params)
+      const chatCompletion = await client.chat.completions.create(params, {
+        timeout
+      })
       _this._tryTimes = 0
       return chatCompletion as OaiChatCompletion
     }
@@ -1379,19 +1400,24 @@ class AiController {
     const res4 = await Promise.all(promises)
     let hasEverSucceeded = false
     let hasEverUsedTool = false
+    const aiLogs: AiRunLog[] = []
     for(let i=0; i<res4.length; i++) {
       const v = res4[i]
       if(v && v.replyStatus === "yes") {
         hasEverSucceeded = true
         if(v.toolName) hasEverUsedTool = true
+        if(v.logs) aiLogs.push(...v.logs)
       }
     }
     if(!hasEverSucceeded) return
 
     // 5. add quota for user
     const num5 = AiHelper.addQuotaForUser(entry)
-    if((num5 % 3) === 2 && !hasEverUsedTool) {
-      this.sendFallbackMenu(aiParam, res4)
+    if(aiLogs.length > 0) {
+      this.sendFallbackMenu(aiParam, res4, aiLogs) 
+    }
+    else if((num5 % 3) === 2 && !hasEverUsedTool) {
+      this.sendFallbackMenu(aiParam, res4, aiLogs)
     }
 
   }
@@ -1399,6 +1425,7 @@ class AiController {
   private async sendFallbackMenu(
     aiParam: AiRunParam,
     results: AiRunResults,
+    all_logs: AiRunLog[],
   ) {
     const { entry, room } = aiParam
     const user = entry.user
