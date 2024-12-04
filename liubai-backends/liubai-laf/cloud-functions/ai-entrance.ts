@@ -1950,7 +1950,7 @@ class ToolHandler {
     let imagePrompt = prompt
     const num2 = valTool.getChineseCharNum(prompt)
     console.warn("chinese char num: ", num2)
-    if(num2 > 4) {
+    if(num2 > 3) {
       const user = this._aiParam.entry.user
       const translator = new Translator(bot, user)
       const res2 = await translator.run(prompt)
@@ -2787,7 +2787,7 @@ class AiHelper {
       if(v.text && v.drawPictureUrl) {
         toolMsg = { 
           role: "tool", 
-          content: `【成功作图】\nprompt: ${v.text}`, 
+          content: `[Finish to draw]`, 
           tool_call_id,
         }
       }
@@ -2818,6 +2818,33 @@ class AiHelper {
       content: msg,
     }
     return assistantMsg
+  }
+
+  private static _getAssistantMsgWithTooMsg(
+    tool_calls: OaiToolCall[],
+    v: Table_AiChat,
+  ) {
+    const { character, funcName, text } = v
+    let msg: OaiPrompt = {
+      role: "assistant",
+      tool_calls,
+      name: character,
+    }
+
+    if(funcName === "draw_picture" && text) {
+      const aToolCall = tool_calls[0]
+      if(!aToolCall) return msg
+      const theFunc = aToolCall["function"]
+      if(!theFunc) return msg
+      const drawArgsStr = theFunc["arguments"]
+      if(!drawArgsStr) return msg
+      const drawArgs = valTool.strToObj(drawArgsStr)
+      drawArgs.prompt = text
+      const drawArgsStr2 = valTool.objToStr(drawArgs)
+      theFunc["arguments"] = drawArgsStr2
+    }
+
+    return msg
   }
 
 
@@ -2882,26 +2909,27 @@ class AiHelper {
         const tool_call_id = tool_calls[0]?.id
         if(!tool_call_id) continue
 
-        // add tool_call_result prompt 
+        // 1. add tool_call_result prompt 
         // where the role is "tool" and  tool_call_id is attached
         let toolMsg = _this._getToolMsg(tool_call_id, t, v)
 
-        // if we can use tool
+        // 2. if we can use tool
         if(canUseTool) {  
           if(toolMsg) {
             messages.push(toolMsg)
-            messages.push({ role: "assistant", tool_calls, name: character })
+            let assistantMsg2 = _this._getAssistantMsgWithTooMsg(tool_calls, v)
+            messages.push(assistantMsg2)
             continue
           }
         }
 
-        // otherwise, turn the tool_call_result prompt into a user prompt
+        // 3. otherwise, turn the tool_call_result prompt into a user prompt
         if(toolMsg) {
           messages.push({ role: "user", content: toolMsg.content }) 
         }
-        const assistantMsg = _this._turnToolCallIntoNormalAssistantMsg(t, v, opt)
-        if(assistantMsg) {
-          messages.push(assistantMsg)
+        const assistantMsg3 = _this._turnToolCallIntoNormalAssistantMsg(t, v, opt)
+        if(assistantMsg3) {
+          messages.push(assistantMsg3)
         }
 
       }
@@ -3450,24 +3478,211 @@ class TransformText {
     const { message } = choice
     let text = message.content
     if(!text) return
-    text = text.trim()
+    const originalText = text.trim()
 
-    // 2. try to turn into a tool call
-    const res2 = this._turnIntoTool(choice, text)
+    // 2. for shape 1
+    const res2 = this._turnIntoTool_1(choice, originalText)
     if(res2) return true
+
+    // 3. for shape 2
+    const res3 = this._turnIntoTool_2(choice, originalText)
+    if(res3) return true
+
+    // 4. for shape 3
+    const res4 = this._turnIntoTool_3(choice, originalText)
+    if(res4) return true
   }
 
-  private static _turnIntoTool(
+  private static _fillChoiceWithToolCall(
+    choice: OaiChoice, 
+    toolName: string,
+    toolArgs: string,
+  ) {
+    const toolCall: OaiToolCall = {
+      "type": "function",
+      "function": {
+        "name": toolName,
+        "arguments": toolArgs,
+      },
+      "id": `call_${createRandom(5)}`,
+    }
+    choice.message.content = ""
+    choice.message.tool_calls = [toolCall]
+    choice.finish_reason = "tool_calls"
+    return toolCall
+  }
+
+  /**
+   * change shape like:
+   * 
+   * function draw_picture
+   * ```json
+   * {"prompt": "......"}
+   * ```
+   * 
+   * into tool call
+   */
+  private static _turnIntoTool_3(
+    choice: OaiChoice,
+    text: string,
+  ) {
+    // 1. check if the text starts with "function"
+    let index1 = -1
+    let thePrefix1 = ""
+    const prefix1s = ["function ", "function: "]
+    for(let i=0; i<prefix1s.length; i++) {
+      const v = prefix1s[i]
+      index1 = text.indexOf(v)
+      if(index1 >= 0) {
+        thePrefix1 = v
+        break
+      }
+    }
+    if(!thePrefix1) return
+
+    // 2. get toolName
+    text = text.substring(index1 + thePrefix1.length).trimStart()
+    const tmpList2 = text.split("\n")
+    if(!tmpList2 || tmpList2.length < 2) return
+    const toolName = tmpList2[0].trim()
+    if(!toolName) return
+    const hasTheTool = aiTools.find(v => v.function?.name === toolName)
+    if(!hasTheTool) return
+
+    // 3. check if the rest of the text starts with ```json
+    tmpList2.shift()
+    text = tmpList2.join("\n").trim()
+    const prefix3s = ["```json", "```JSON"]
+    const thePrefix3 = prefix3s.find(v => text.startsWith(v))
+    if(!thePrefix3) return
+
+    // 4. check if the rest of the text ends with ```
+    text = text.substring(thePrefix3.length).trimStart()
+    if(!text.endsWith("```")) return
+    text = text.substring(0, text.length - 3).trimEnd()
+
+    // 5. handle toolArgs
+    let toolArgs = ""
+    try {
+      toolArgs = JSON.stringify(text)
+    }
+    catch(err) {
+      console.warn("_turnIntoTool_3 err when stringify: ")
+      console.log(err)
+      return
+    }
+
+    // 6. let's transform!
+    const toolCall = this._fillChoiceWithToolCall(choice, toolName, toolArgs)
+    console.warn("success to turnIntoTool_3: ")
+    console.log(toolCall)
+    return true
+  }
+
+  /**
+   * change shape like:
+   * 
+   * {
+   *   "name": "draw_picture",
+   *   "parameters": {...}
+   * }
+   * 
+   * into tool call
+   */
+  private static _turnIntoTool_2(
+    choice: OaiChoice,
+    text: string,
+  ) {
+    // 1. start and end with
+    const startMatched = text.startsWith("{")
+    const endMatched = text.endsWith("}")
+    if(!startMatched || !endMatched) return
+
+    // 2. get toolName and tmpArgs
+    let toolName = ""
+    let tmpArgs: unknown
+    try {
+      const obj = JSON.parse(text)
+      if(!obj) return
+      toolName = obj.name
+      if(obj["parameters"]) {
+        tmpArgs = obj["parameters"]
+      }
+      if(obj["arguments"]) {
+        tmpArgs = obj["arguments"]
+      }
+    }
+    catch(err) {
+      console.warn("_turnIntoTool_2 err: ")
+      console.log(err)
+      return
+    }
+    if(!toolName || !tmpArgs) return
+
+    // 3. check if toolName exists
+    const hasTheTool = aiTools.find(v => v.function?.name === toolName)
+    if(!hasTheTool) return
+
+    // 4. handle toolArgs
+    let toolArgs = ""
+    if(typeof tmpArgs === "string") {
+      let tmp4 = tmpArgs.trim()
+      try {
+        JSON.parse(tmp4)
+      }
+      catch(err) {
+        console.warn("JSON.parse(tmp4) error: ")
+        console.log(err)
+        return
+      }
+      toolArgs = tmp4
+    }
+    else if(typeof tmpArgs === "object") {
+      try {
+        toolArgs = JSON.stringify(tmpArgs)
+      }
+      catch(err) {
+        console.warn("JSON.stringify(tmpArgs) error: ")
+        console.log(err)
+      }
+    }
+    if(!toolArgs) return
+
+    
+    const toolCall = this._fillChoiceWithToolCall(choice, toolName, toolArgs)
+    console.warn("success to turnIntoTool_2: ")
+    console.log(toolCall)
+    return true
+  }
+
+  /**
+   * change shape like:
+   * 
+   * 调用工具: xxx
+   * 参数: xxxxxx
+   * 
+   * into tool call
+   */
+  private static _turnIntoTool_1(
     choice: OaiChoice,
     text: string,
   ) {
     // 1. check if the text starts with "调用工具"
+    let index1 = -1
+    let thePrefix1 = ""
     const prefix1s = ["调用工具:", "調用工具:", "Call a tool:"]
-    const thePrefix1 = prefix1s.find(v => text.startsWith(v))
+    for(let i=0; i<prefix1s.length; i++) {
+      const v = prefix1s[i]
+      index1 = text.indexOf(v)
+      if(index1 >= 0) {
+        thePrefix1 = v
+        break
+      }
+    }
     if(!thePrefix1) return
 
     // 2. get toolName
-    text = text.substring(thePrefix1.length).trimStart()
+    text = text.substring(index1 + thePrefix1.length).trimStart()
     const tmpList2 = text.split("\n")
     if(!tmpList2 || tmpList2.length < 2) return
     const toolName = tmpList2[0].trim()
@@ -3499,18 +3714,9 @@ class TransformText {
     }
 
     // 5. let's transform!
-    const toolCall: OaiToolCall = {
-      "type": "function",
-      "function": {
-        "name": toolName,
-        "arguments": toolArgs,
-      },
-      "id": `call_${createRandom(5)}`,
-    }
-    choice.message.content = ""
-    choice.message.tool_calls = [toolCall]
-    choice.finish_reason = "tool_calls"
-
+    const toolCall = this._fillChoiceWithToolCall(choice, toolName, toolArgs)
+    console.warn("success to turnIntoTool_1: ")
+    console.log(toolCall)
     return true
   }
 
