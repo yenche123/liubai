@@ -57,6 +57,7 @@ import type {
   AiToolAddCalendarSpecificDate,
   LiuAtomState,
   LiuStateConfig,
+  SyncGetTable,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -887,6 +888,21 @@ export function getSummary(
   }
 
   return text
+}
+
+export function sortListWithIds<T extends SyncGetTable>(
+  list: T[],
+  ids: string[],
+) {
+  const newList: T[] = []
+  for(let i=0; i<ids.length; i++) {
+    const id = ids[i]
+    const index = list.findIndex(v => v._id === id)
+    if(index >= 0) {
+      newList.push(list[index])
+    }
+  }
+  return newList
 }
 
 export class MarkdownParser {

@@ -335,6 +335,14 @@ export const aiLang: LangAtom = {
     "bot_read_tomorrow": "{bot}查看了明天的日程",
     "bot_read_last": "{bot}查看了过去 {hour} 小时的日程",
     "bot_read_next": "{bot}查看了未来 {hour} 小时内的日程",
+
+    // get cards
+    "todo_cards": "最近的待办:\n\n",
+    "note_cards": "最近的笔记:\n\n",
+    "finished_cards": "最近完成的事项:\n\n",
+    "bot_read_todo": "{bot}查看了最近的待办",
+    "bot_read_note": "{bot}查看了最近的笔记",
+    "bot_read_finished": "{bot}查看了最近完成的事项",
   },
   "zh-Hant": {
     "privacy_title": "🔓 隱私提示:",
@@ -404,6 +412,14 @@ export const aiLang: LangAtom = {
     "bot_read_tomorrow": "{bot}查閱了明天的日程",
     "bot_read_last": "{bot}查閱了過去 {hour} 小時的日程",
     "bot_read_next": "{bot}查閱了未來 {hour} 小時内的日程",
+
+    // get cards
+    "todo_cards": "最近的待辦:\n\n",
+    "note_cards": "最近的筆記:\n\n",
+    "finished_cards": "最近完成的事項:\n\n",
+    "bot_read_todo": "{bot}查看了最近的待辦",
+    "bot_read_note": "{bot}查看了最近的筆記",
+    "bot_read_finished": "{bot}查看了最近完成的事項",
   },
   "en": {
     "privacy_title": "🔓 Privacy:",
@@ -473,6 +489,14 @@ export const aiLang: LangAtom = {
     "bot_read_tomorrow": "{bot} read tomorrow's schedule",
     "bot_read_last": "{bot} read the schedule for the last {hour} hours",
     "bot_read_next": "{bot} read the schedule for the next {hour} hours",
+
+    // get cards
+    "todo_cards": "Latest to-dos:\n\n",
+    "note_cards": "Latest notes:\n\n",
+    "finished_cards": "Latest finished tasks:\n\n",
+    "bot_read_todo": "{bot} read latest to-dos",
+    "bot_read_note": "{bot} read latest notes",
+    "bot_read_finished": "{bot} read latest finished tasks",
   }
 }
 

@@ -40,6 +40,7 @@ import {
   type AiToolGetScheduleParam,
   type Table_Content,
   type SortWay,
+  type Table_Workspace,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -55,6 +56,8 @@ import {
   liuReq,
   decryptEncData,
   getSummary,
+  SpaceUtil,
+  sortListWithIds,
 } from "@/common-util"
 import { WxGzhSender } from "@/service-send"
 import { 
@@ -825,7 +828,6 @@ class BaseBot {
       }
     }
 
-    let toolName = ""
     const aiLogs: AiRunLog[] = []
     for(let i=0; i<tool_calls.length; i++) {
       const v = tool_calls[i]
@@ -837,7 +839,6 @@ class BaseBot {
       const funcName = funcData.name
       const funcArgs = funcData.arguments
       const funcJson = valTool.strToObj(funcArgs)
-      toolName = funcName
       console.log("funcName: ", funcName)
       console.log(funcJson)
 
@@ -877,7 +878,7 @@ class BaseBot {
             toolName: "get_schedule",
             hoursFromNow: funcJson.hoursFromNow,
             specificDate: funcJson.specificDate,
-            character: bot.character,
+            character: this._character,
             textToUser: scheduleRes.textToUser,
           }
           aiLogs.push(scheduleLog)
@@ -885,7 +886,25 @@ class BaseBot {
         
       }
       else if(funcName === "get_cards") {
-        await toolHandler.get_cards(funcJson)
+        const cardsRes = await toolHandler.get_cards(funcJson)
+        if(!cardsRes) continue
+
+        await this._continueAfterReadingCards(
+          postParam,
+          tool_calls,
+          cardsRes,
+          tool_call_id,
+        )
+
+        if(cardsRes.textToUser) {
+          const cardLog: AiRunLog = {
+            toolName: "get_cards",
+            cardType: funcJson.cardType,
+            character: this._character,
+            textToUser: cardsRes.textToUser,
+          }
+          aiLogs.push(cardLog)
+        }
       }
     }
 
@@ -944,7 +963,48 @@ class BaseBot {
         return
       }
     }
-    
+
+    // 2. add "assistant" message to prompts
+    const c = this._character
+    prompts.push({ role: "assistant", tool_calls, name: c})
+
+    // 3. add "tool" message to prompts
+    prompts.push({
+      role: "tool",
+      content: textToBot,
+      tool_call_id,
+    })
+
+    console.warn("see prompts in _continueAfterReadingCards: ")
+    if(prompts.length < 5) {
+      console.log(prompts)
+    }
+    else {
+      const pLength = prompts.length
+      const p1 = prompts[pLength - 3]
+      const p2 = prompts[pLength - 2]
+      const p3 = prompts[pLength - 1]
+      console.log([p1, p2, p3])
+    }
+
+    // 4. new chat create param
+    const { chatParam, bot, aiParam } = postParam
+    const newChatParam: OaiCreateParam = { 
+      ...chatParam,
+      messages: prompts,
+      max_tokens: restTokens,
+    }
+    const res4 = await this.chat(newChatParam, bot)
+    if(!res4) return
+
+    // 5. get text
+    const txt5 = AiHelper.getTextFromLLM(res4, bot)
+    if(!txt5) return
+
+    // 6. reply to user
+    console.log("reply user in _continueAfterReadingCards: ")
+    console.log(txt5)
+    TellUser.text(aiParam.entry, txt5, bot)
   }
 
   private async _continueAfterWebSearch(
@@ -1520,6 +1580,13 @@ class AiController {
     const addedList = AiHelper.getAddedCharacters(characters, results)
 
     // 2. privacy tips
+    if(all_logs.length > 0) {
+      prefixMessage += (t("privacy_title") + "\n")
+      all_logs.forEach(v => {
+        prefixMessage += (v.textToUser + "\n")
+      })
+      prefixMessage += "\n"
+    }
 
     // 3. menu
     const menuList: AiMenuItem[] = []
@@ -1540,6 +1607,7 @@ class AiController {
     console.log(suffixMessage)
 
     // 5. send
+    await valTool.waitMilli(500)
     TellUser.menu(entry, prefixMessage, menuList, suffixMessage)
   }
 
@@ -2276,7 +2344,10 @@ class ToolHandler {
     }
   }
 
-  async get_cards(funcJson: Record<string, any>) {
+  async get_cards(
+    funcJson: Record<string, any>
+  ): Promise<LiuAi.ReadCardsResult | undefined> {
+    // 1. checking out param
     const res1 = vbot.safeParse(Sch_AiToolGetCardsParam, funcJson)
     if(!res1.success) {
       console.warn("cannot parse get_cards param: ")
@@ -2286,9 +2357,123 @@ class ToolHandler {
     }
     const cardType = funcJson.cardType as AiToolGetCardType
 
-    // WIP
+    // 2. construct basic query
+    const entry = this._aiParam.entry
+    const bot = this._bot
+    const { user } = entry
+    const userId = user._id
+    const q2: Record<string, any> = {
+      user: userId,
+      spaceType: "ME",
+      infoType: "THREAD",
+      oState: "OK",
+      aiReadable: "Y",
+    }
+
+    // 2.1 define replied text
+    let textToBot = ""
+    let textToUser = ""
+    const { t } = useI18n(aiLang, { user })
+    let contents: Table_Content[] | undefined
+
+    // 3. get contents
+    if(cardType === "TODO" || cardType === "FINISHED") {
+      contents = await this._getCardsForState(cardType, userId, q2)
+      if(!contents) return
+      if(cardType === "TODO") {
+        textToBot = t("todo_cards")
+        textToUser = t("bot_read_todo", { bot: bot.name })
+      }
+      else if(cardType === "FINISHED") {
+        textToBot = t("finished_cards")
+        textToUser = t("bot_read_finished", { bot: bot.name })
+      }
+    }
+    else {
+      const cCol = db.collection("Content")
+      const q3_2 = cCol.where(q2).orderBy("createdStamp", "desc").limit(10)
+      const res3_2 = await q3_2.get<Table_Content>()
+      contents = res3_2.data
+      textToBot = t("note_cards")
+      textToUser = t("bot_read_note", { bot: bot.name })
+    }
+
+    // 6. package
+    let msg6 = ""
+    for(let i=0; i<contents.length; i++) {
+      const v = contents[i]
+      const card = TransformContent.getCardData(v)
+      if(!card) continue
+      const msg6_1 = TransformContent.toPlainText(card, user)
+      if(!msg6_1) continue
+      msg6 += msg6_1
+    }
+
+    // 7. has data
+    const hasData = Boolean(msg6)
+    if(hasData) {
+      textToBot += msg6
+    }
+    else {
+      textToBot += t("no_data")
+      textToUser = ""
+    }
+
+    console.warn("see textToUser: ")
+    console.log(textToUser)
+    console.warn("see textToBot: ")
+    console.log(textToBot)
+
+    // 8. add msg
+    const data8: Partial<AiHelperAssistantMsgParam> = {
+      funcName: "get_cards",
+      funcJson,
+      text: textToUser || textToBot,
+    }
+    const assistantChatId = await this._addMsgToChat(data8)
+    if(!assistantChatId) return
+
+    return {
+      textToUser,
+      textToBot,
+      assistantChatId,
+    }
+  }
 
 
+  private async _getCardsForState(
+    cardType: "TODO" | "FINISHED",
+    userId: string,
+    q: Record<string, any>,
+  ): Promise<Table_Content[] | undefined> {
+    // 1. get space
+    const q1: Partial<Table_Workspace> = {
+      infoType: "ME",
+      owner: userId,
+      oState: "OK",
+    }
+    const wCol = db.collection("Workspace")
+    const res1 = await wCol.where(q1).getOne<Table_Workspace>()
+    const space = res1.data
+    if(!space) return
+
+    // 2. get the state
+    const sCfg = space.stateConfig ?? SpaceUtil.getDefaultStateCfg()
+    const theState = sCfg.stateList.find(v => v.id === cardType)
+    const ids = theState?.contentIds ?? []
+    if(ids.length < 1) return []
+
+    // 3. query contents
+    if(ids.length > 10) {
+      ids.splice(10, ids.length - 10)
+    }
+    q._id = _.in(ids)
+    const cCol = db.collection("Content")
+    const res3 = await cCol.where(q).get<Table_Content>()
+    const contents = res3.data
+    if(contents.length < 2) return contents
+    const sortedContents = sortListWithIds(contents, ids)
+    return sortedContents
   }
 
 }

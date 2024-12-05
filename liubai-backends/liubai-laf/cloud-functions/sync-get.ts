@@ -8,6 +8,7 @@ import {
   getEncryptedData,
   valTool,
   decryptEncData,
+  sortListWithIds,
 } from "@/common-util"
 import {
   Sch_SyncGetAtom,
@@ -1300,23 +1301,6 @@ async function getListViaIds<T extends SyncGetTable>(
   list.push(...newList)
   return list
 }
-
-
-function sortListWithIds<T extends SyncGetTable>(
-  list: T[],
-  ids: string[],
-) {
-  const newList: T[] = []
-  for(let i=0; i<ids.length; i++) {
-    const id = ids[i]
-    const index = list.findIndex(v => v._id === id)
-    if(index >= 0) {
-      newList.push(list[index])
-    }
-  }
-  return newList
-}
-
 
 /** checking out if i logged in and space ids */
 function getSharedData_1(
