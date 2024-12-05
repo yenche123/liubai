@@ -772,7 +772,10 @@ export const aiToolGetScheduleSpecificDates = [
 ] as const
 export type AiToolGetScheduleSpecificDate = typeof aiToolGetScheduleSpecificDates[number]
 export const Sch_AiToolGetScheduleSpecificDate = vbot.picklist(aiToolGetScheduleSpecificDates)
-
+export interface AiToolGetScheduleParam {
+  hoursFromNow?: AiToolGetScheduleHoursFromNow
+  specificDate?: AiToolGetScheduleSpecificDate
+}
 export const Sch_AiToolGetScheduleParam = vbot.object({
   hoursFromNow: vbot.optional(Sch_AiToolGetScheduleHoursFromNow),
   specificDate: vbot.optional(Sch_AiToolGetScheduleSpecificDate),
@@ -1352,6 +1355,7 @@ export interface Table_Content extends BaseTable {
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
   aiCharacter?: AiCharacter
+  aiReadable?: BaseIsOn
 }
 
 /** 草稿表 */
@@ -3269,6 +3273,12 @@ export namespace LiuAi {
     text: string
     model: string
     originalResult: Record<string, any>
+  }
+
+  export interface ReadCardsResult {
+    textToUser: string
+    textToBot: string
+    assistantChatId: string
   }
 
 }

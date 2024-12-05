@@ -323,6 +323,18 @@ export const aiLang: LangAtom = {
     "saturday": "周六",
     "sunday": "周日",
 
+    // get schedule
+    "yesterday_schedule": "昨天的日程:\n\n",
+    "today_schedule": "今天的日程:\n\n",
+    "tomorrow_schedule": "明天的日程:\n\n",
+    "schedule_last": "过去 {hour} 小时的日程:\n\n",
+    "schedule_next": "未来 {hour} 小时内的日程:\n\n",
+    "no_data": "查无结果",
+    "bot_read_yesterday": "{bot}查看了昨天的日程",
+    "bot_read_today": "{bot}查看了今天的日程",
+    "bot_read_tomorrow": "{bot}查看了明天的日程",
+    "bot_read_last": "{bot}查看了过去 {hour} 小时的日程",
+    "bot_read_next": "{bot}查看了未来 {hour} 小时内的日程",
   },
   "zh-Hant": {
     "privacy_title": "🔓 隱私提示:",
@@ -379,6 +391,19 @@ export const aiLang: LangAtom = {
     "friday": "星期五",
     "saturday": "星期六",
     "sunday": "星期日",
+
+    // get schedule
+    "yesterday_schedule": "昨天的日程:\n\n",
+    "today_schedule": "今天的日程:\n\n",
+    "tomorrow_schedule": "明天的日程:\n\n",
+    "schedule_last": "過去 {hour} 小時的日程:\n\n",
+    "schedule_next": "未來 {hour} 小時内的日程:\n\n",
+    "no_data": "查無結果",
+    "bot_read_yesterday": "{bot}查閲了昨天的日程",
+    "bot_read_today": "{bot}查閲了今天的日程",
+    "bot_read_tomorrow": "{bot}查閱了明天的日程",
+    "bot_read_last": "{bot}查閱了過去 {hour} 小時的日程",
+    "bot_read_next": "{bot}查閱了未來 {hour} 小時内的日程",
   },
   "en": {
     "privacy_title": "🔓 Privacy:",
@@ -435,6 +460,19 @@ export const aiLang: LangAtom = {
     "friday": "Friday",
     "saturday": "Saturday",
     "sunday": "Sunday",
+
+    // get schedule
+    "yesterday_schedule": "Schedule for yesterday:\n\n",
+    "today_schedule": "Schedule for today:\n\n",
+    "tomorrow_schedule": "Schedule for tomorrow:\n\n",
+    "schedule_last": "Schedule for the last {hour} hours:\n\n",
+    "schedule_next": "Schedule for the next {hour} hours:\n\n",
+    "no_data": "No results found",
+    "bot_read_yesterday": "{bot} read yesterday's schedule",
+    "bot_read_today": "{bot} read today's schedule",
+    "bot_read_tomorrow": "{bot} read tomorrow's schedule",
+    "bot_read_last": "{bot} read the schedule for the last {hour} hours",
+    "bot_read_next": "{bot} read the schedule for the next {hour} hours",
   }
 }
 

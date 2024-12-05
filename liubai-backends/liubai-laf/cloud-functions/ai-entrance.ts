@@ -37,6 +37,9 @@ import {
   type AiApiEndpoint,
   type AiToolGetScheduleHoursFromNow,
   type AiToolGetScheduleSpecificDate,
+  type AiToolGetScheduleParam,
+  type Table_Content,
+  type SortWay,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -50,12 +53,16 @@ import {
   MarkdownParser,
   AiToolUtil,
   liuReq,
+  decryptEncData,
+  getSummary,
 } from "@/common-util"
 import { WxGzhSender } from "@/service-send"
 import { 
   getBasicStampWhileAdding, 
   getNowStamp, 
+  HOUR, 
   isWithinMillis, 
+  localizeStamp, 
   MINUTE,
   SECONED,
 } from "@/common-time"
@@ -66,12 +73,15 @@ import {
   aiTools,
 } from "@/ai-prompt"
 import cloud from "@lafjs/cloud"
-import { useI18n, aiLang } from "@/common-i18n"
+import { useI18n, aiLang, getCurrentLocale } from "@/common-i18n"
 import * as vbot from "valibot"
 import { WxGzhUploader } from "@/file-utils"
 import FormData from "form-data"
 import axios from 'axios';
 import { createRandom } from "@/common-ids"
+import { addDays, set as date_fn_set } from "date-fns"
+
+
 
 const db = cloud.database()
 const _ = db.command
@@ -92,6 +102,16 @@ const MIN_3 = MINUTE * 3
 const MIN_30 = MINUTE * 30
 
 /************************** types ************************/
+
+interface AiCard {
+  title: string
+  summary: string
+  contentId: string
+  hasImage: boolean
+  hasFile: boolean
+  calendarStamp?: number
+  createdStamp: number
+}
 
 interface AiDirectiveCheckRes {
   theCommand: AiCommandByHuman
@@ -120,6 +140,7 @@ interface AiRunLog_B {
 
 export type AiRunLog = (AiRunLog_A | AiRunLog_B) & {
   character: AiCharacter
+  textToUser: string
 }
 
 interface AiRunSuccess {
@@ -805,11 +826,13 @@ class BaseBot {
     }
 
     let toolName = ""
+    const aiLogs: AiRunLog[] = []
     for(let i=0; i<tool_calls.length; i++) {
       const v = tool_calls[i]
       const funcData = v["function"]
 
       if(v.type !== "function" || !funcData) continue
+      const tool_call_id = v.id
 
       const funcName = funcData.name
       const funcArgs = funcData.arguments
@@ -830,7 +853,7 @@ class BaseBot {
       else if(funcName === "web_search") {
         const searchRes = await toolHandler.web_search(funcJson)
         if(searchRes) {
-          this._continueAfterWebSearch(postParam, tool_calls, searchRes)
+          this._continueAfterWebSearch(postParam, tool_calls, searchRes, tool_call_id)
           break
         }
       }
@@ -838,14 +861,44 @@ class BaseBot {
         await toolHandler.draw_picture(funcJson)
         break
       }
+      else if(funcName === "get_schedule") {
+        const scheduleRes = await toolHandler.get_schedule(funcJson)
+        if(!scheduleRes) continue
+
+        await this._continueAfterReadingCards(
+          postParam,
+          tool_calls,
+          scheduleRes,
+          tool_call_id,
+        )
+
+        if(scheduleRes.textToUser) {
+          const scheduleLog: AiRunLog = {
+            toolName: "get_schedule",
+            hoursFromNow: funcJson.hoursFromNow,
+            specificDate: funcJson.specificDate,
+            character: bot.character,
+            textToUser: scheduleRes.textToUser,
+          }
+          aiLogs.push(scheduleLog)
+        }
+        
+      }
+      else if(funcName === "get_cards") {
+        await toolHandler.get_cards(funcJson)
+      }
     }
 
-    return toolName
+    return aiLogs
   }
+
+  
+
 
   private _getRestTokensAndPrompts(
     postParam: PostRunParam,
   ) {
+    // 1. pre handle prompt and restTokens
     const { chatParam, chatCompletion } = postParam
     const usage = chatCompletion?.usage
     if(!usage) return
@@ -865,14 +918,42 @@ class BaseBot {
     return { restTokens, prompts }
   }
 
+  private async _continueAfterReadingCards(
+    postParam: PostRunParam,
+    tool_calls: OaiToolCall[],
+    readRes: LiuAi.ReadCardsResult,
+    tool_call_id: string,
+  ) {
+    // 1. handle max tokens
+    const data1 = this._getRestTokensAndPrompts(postParam)
+    if(!data1) return
+    let { restTokens, prompts } = data1
+    const textToBot = readRes.textToBot
+    const token1 = AiHelper.calculateTextToken(textToBot)
+    restTokens -= token1
+    if(restTokens > MAX_WX_TOKEN) {
+      restTokens = MAX_WX_TOKEN
+    }
+    if(restTokens < MIN_REST_TOKEN) {
+      if(prompts.length > 3) {
+        restTokens = MAX_WX_TOKEN
+        prompts.splice(0, prompts.length - 3)
+      }
+      else {
+        console.warn("not enough rest tokens!")
+        return
+      }
+    }
+    
+  }
+
   private async _continueAfterWebSearch(
     postParam: PostRunParam,
     tool_calls: OaiToolCall[],
     searchRes: LiuAi.SearchResult,
+    tool_call_id: string,
   ) {
     // 1. handle max tokens
-    const tool_call_id = tool_calls[0]?.id
-    if(!tool_call_id) return
     const data1 = this._getRestTokensAndPrompts(postParam)
     if(!data1) return
     let { restTokens, prompts } = data1
@@ -888,7 +969,7 @@ class BaseBot {
         prompts.splice(0, prompts.length - 3)
       }
       else {
-        console.warn("not enough rest tokens in _continueAfterWebSearch!")
+        console.warn("not enough rest tokens!")
         return
       }
     }
@@ -1077,9 +1158,9 @@ class BaseBot {
     console.log(chatCompletion.choices[0].message)
 
     // 3. tool calls
-    let toolName: string | undefined
+    let aiLogs: AiRunLog[] | undefined
     if(finish_reason === "tool_calls" && tool_calls) {
-      toolName = await this._handleToolUse(postParam, tool_calls)
+      aiLogs = await this._handleToolUse(postParam, tool_calls)
     }
     
     // 4. finish reason is "length"
@@ -1100,7 +1181,7 @@ class BaseBot {
       replyStatus: "yes",
       chatCompletion, 
       assistantChatId,
-      toolName,
+      logs: aiLogs,
     }
   }
 
@@ -2053,7 +2134,9 @@ class ToolHandler {
     // WIP
   }
 
-  async get_schedule(funcJson: Record<string, any>) {
+  async get_schedule(
+    funcJson: Record<string, any>,
+  ): Promise<LiuAi.ReadCardsResult | undefined> {
     // 1. checking out param
     const res1 = vbot.safeParse(Sch_AiToolGetScheduleParam, funcJson)
     if(!res1.success) {
@@ -2062,14 +2145,135 @@ class ToolHandler {
       console.log(res1.issues)
       return
     }
-    const { hoursFromNow, specificDate } = funcJson
+    const { hoursFromNow, specificDate } = funcJson as AiToolGetScheduleParam
     if(!hoursFromNow && !specificDate) {
       console.warn("hoursFromNow or specificDate is required")
       return
     }
 
-    // WIP
+    // 2. construct basic query
+    const entry = this._aiParam.entry
+    const bot = this._bot
+    const { user } = entry
+    const q2: Record<string, any> = {
+      user: user._id,
+      spaceType: "ME",
+      infoType: "THREAD",
+      oState: "OK",
+      aiReadable: "Y",
+    }
+    let sortWay: SortWay = "asc"
 
+    // 2.1 define replied text
+    let textToBot = ""
+    let textToUser = ""
+    const { t } = useI18n(aiLang, { user })
+
+    // 3. handle hoursFromNow
+    const now3 = getNowStamp()
+    if(hoursFromNow) {
+      if(hoursFromNow < 0) {
+        sortWay = "desc"
+        const command3_1 = _.lt(now3)
+        const command3_2 = _.gte(now3 + hoursFromNow * HOUR)
+        q2.calendarStamp = _.and(command3_1, command3_2)
+        textToBot = t("schedule_last", { hour: hoursFromNow })
+        textToUser = t("bot_read_last", { bot: bot.name, hour: hoursFromNow })
+      }
+      else {
+        const command3_3 = _.gt(now3)
+        const command3_4 = _.lte(now3 + hoursFromNow * HOUR)
+        q2.calendarStamp = _.and(command3_3, command3_4)
+        textToBot = t("schedule_next", { hour: hoursFromNow })
+        textToUser = t("bot_read_next", { bot: bot.name, hour: hoursFromNow })
+      }
+    }
+
+    // 4. handle specificDate
+    if(specificDate) {
+      const userStamp = localizeStamp(now3, user.timezone)
+      const diffStampBetweenUserAndServer = userStamp - now3
+      const currentDate = new Date(userStamp)
+      const todayDate = date_fn_set(currentDate, {
+        hours: 0, minutes: 0, seconds: 0, milliseconds: 0,
+      })
+      const yesterdayDate = addDays(todayDate, -1)
+      const tomorrowDate = addDays(todayDate, 1)
+      const theDayAfterTomorrowDate = addDays(todayDate, 2)
+      const todayStamp = todayDate.getTime() - diffStampBetweenUserAndServer
+      const tomorrowStamp = tomorrowDate.getTime() - diffStampBetweenUserAndServer
+
+      if(specificDate === "yesterday") {
+        const yesterdayStamp = yesterdayDate.getTime() - diffStampBetweenUserAndServer
+        const command4_1 = _.gte(yesterdayStamp)
+        const command4_2 = _.lt(todayStamp)
+        q2.calendarStamp = _.and(command4_1, command4_2)
+        textToBot = t("schedule_yesterday")
+        textToUser = t("bot_read_yesterday", { bot: bot.name })
+      }
+      else if(specificDate === "today") {
+        const command4_3 = _.gte(todayStamp)
+        const command4_4 = _.lt(tomorrowStamp)
+        q2.calendarStamp = _.and(command4_3, command4_4)
+        textToBot = t("schedule_today")
+        textToUser = t("bot_read_today", { bot: bot.name })
+      }
+      else if(specificDate === "tomorrow") {
+        const theDayAfterTomorrowStamp = theDayAfterTomorrowDate.getTime() - diffStampBetweenUserAndServer
+        const command4_5 = _.gte(tomorrowStamp)
+        const command4_6 = _.lt(theDayAfterTomorrowStamp)
+        q2.calendarStamp = _.and(command4_5, command4_6)
+        textToBot = t("schedule_tomorrow")
+        textToUser = t("bot_read_tomorrow", { bot: bot.name })
+      }
+    }
+
+    // 5. to query
+    const col5 = db.collection("Content")
+    const q5 = col5.where(q2).orderBy("calendarStamp", sortWay)
+    const res5 = await q5.limit(10).get<Table_Content>()
+    const list5 = res5.data
+    
+    // 6. package
+    let msg6 = ""
+    for(let i=0; i<list5.length; i++) {
+      const v = list5[i]
+      const card = TransformContent.getCardData(v)
+      if(!card) continue
+      const msg6_1 = TransformContent.toPlainText(card, user)
+      if(!msg6_1) continue
+      msg6 += msg6_1
+    }
+
+    // 7. has data
+    const hasData = Boolean(msg6)
+    if(hasData) {
+      textToBot += msg6
+    }
+    else {
+      textToBot += t("no_data")
+      textToUser = ""
+    }
+
+    console.warn("see textToUser: ")
+    console.log(textToUser)
+    console.warn("see textToBot: ")
+    console.log(textToBot)
+
+    // 8. add msg
+    const data8: Partial<AiHelperAssistantMsgParam> = {
+      funcName: "get_schedule",
+      funcJson,
+      text: textToUser || textToBot,
+    }
+    const assistantChatId = await this._addMsgToChat(data8)
+    if(!assistantChatId) return
+
+    return {
+      textToUser,
+      textToBot,
+      assistantChatId,
+    }
   }
 
   async get_cards(funcJson: Record<string, any>) {
@@ -2088,6 +2292,69 @@ class ToolHandler {
   }
 
 }
+
+
+class TransformContent {
+
+
+  static getCardData(v: Table_Content) {
+    const data = decryptEncData(v)
+    if(!data.pass) return
+    const summary = getSummary(data.liuDesc)
+    const obj: AiCard = {
+      title: data.title ?? "",
+      summary,
+      contentId: v._id,
+      hasImage: Boolean(data.images?.length),
+      hasFile: Boolean(data.files?.length),
+      calendarStamp: v.calendarStamp,
+      createdStamp: v.createdStamp,
+    }
+    return obj
+  }
+
+  static toPlainText(v: AiCard, user?: Table_User) {
+    let msg = ""
+
+    // title
+    if(v.title) {
+      msg += `  <title>${v.title}</title>\n`
+    }
+
+    // summary
+    if(v.summary) {
+      msg += `  <summary>${v.summary}</summary>\n`
+    }
+    else if(v.hasImage) {
+      msg += `  <summary>[Image]</summary>\n`
+    }
+    else if(v.hasFile) {
+      msg += `  <summary>[File]</summary>\n`
+    }
+
+    // calendarStamp
+    const locale = getCurrentLocale({ user })
+    if(v.calendarStamp) {
+      const dateStr = LiuDateUtil.displayTime(v.calendarStamp, locale, user?.timezone)
+      msg += `  <date>${dateStr}</date>\n`
+    }
+    if(!msg) return
+
+    // created
+    const createdStr = LiuDateUtil.displayTime(v.createdStamp, locale, user?.timezone)
+    msg += `  <created>${createdStr}</created>\n`
+    msg = `<${v.contentId}>\n${msg}</${v.contentId}>`
+    return msg
+  }
+
+
+
+
+
+
+}
+
+
 
 
 /******************** tool for web search ************************/

@@ -7,6 +7,7 @@ import type {
   OState_3, 
   SpaceType,
   OState_Draft,
+  BaseIsOn,
 } from "./types-basic"
 import type { 
   LiuContent, 
@@ -112,6 +113,7 @@ export interface ContentLocalTable extends BaseLocalTable {
 
   firstSyncStamp?: number   // the stamp when the content is first synced
   aiCharacter?: AiCharacter
+  aiReadable?: BaseIsOn
 }
 
 export interface DraftLocalTable extends BaseLocalTable {
