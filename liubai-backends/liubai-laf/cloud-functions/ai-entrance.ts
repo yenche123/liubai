@@ -648,13 +648,13 @@ class BaseBot {
     params: OpenAI.Chat.ChatCompletionCreateParams,
     bot: AiBot,
   ) {
-
     const apiData = AiHelper.getApiEndpointFromBot(bot)
     if(!apiData) {
       console.warn(`no api data for ${this._character}`)
       console.log(bot)
       return
     }
+    AiHelper.finalCheckPrompts(params.messages)
 
     // print last 5 prompts
     const msgLength = params.messages.length
@@ -994,14 +994,9 @@ class BaseBot {
     const res4 = await this.chat(newChatParam, bot)
     if(!res4) return
 
-    // 5. get text
-    const txt5 = AiHelper.getTextFromLLM(res4, bot)
-    if(!txt5) return
-
-    // 6. reply to user
-    console.log("reply user in _continueAfterReadingCards: ")
-    console.log(txt5)
-    TellUser.text(aiParam.entry, txt5, bot)
+    // 5. handle text from response
+    const assistantChatId = await this._handleAssistantText(res4, aiParam, bot)
+    if(!assistantChatId) return
   }
 
   private async _continueAfterWebSearch(
@@ -1071,13 +1066,6 @@ class BaseBot {
     // 6. handle text from response
     const assistantChatId = await this._handleAssistantText(res4, aiParam, bot)
     if(!assistantChatId) return
-
-    return {
-      character: c,
-      replyStatus: "yes",
-      chatCompletion, 
-      assistantChatId,
-    }
   }
 
   private async _autoContinue(
@@ -1799,6 +1787,7 @@ class AiCompressor {
       } as OaiPrompt
       prompts.push(msg3_2)
     }
+    AiHelper.finalCheckPrompts(prompts)
 
     // 4. construct the arg to send to LLM
     const llm = new BaseLLM(_env.LIU_SUMMARY_API_KEY, _env.LIU_SUMMARY_BASE_URL)
@@ -2851,6 +2840,23 @@ export class Palette {
 
 class AiHelper {
 
+  // try to remove `tool` prompt when the previous prompt is not assistant
+  static finalCheckPrompts(prompts: OaiPrompt[]) {
+    if(prompts.length < 3) return
+    const firstPrompt = prompts[0]
+    const secondPrompt = prompts[1]
+    if(firstPrompt.role === "system") {
+      if(secondPrompt.role === "tool" && secondPrompt.tool_call_id) {
+        prompts.splice(1, 1)
+      }
+      return
+    }
+
+    if(firstPrompt.role === "tool" && firstPrompt.tool_call_id) {
+      prompts.splice(0, 1)
+    }
+  }
+
   static async getMyAiRoom(
     entry: AiEntry,
   ) {
@@ -3308,6 +3314,7 @@ class AiHelper {
     if(!funcName) return
     
     // 2. change prompt if funcName is draw_picture
+    // just because text field storages the translated prompt
     if(funcName === "draw_picture" && v.text && funcJson) {
       funcJson.prompt = v.text
     }
