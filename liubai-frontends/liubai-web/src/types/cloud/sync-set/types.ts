@@ -6,7 +6,12 @@ import type {
   LiuUploadTask,
   LiuStateConfig,
 } from "~/types/types-atom"
-import type { OState, OState_2, OState_Draft } from "~/types/types-basic"
+import type { 
+  BaseIsOn, 
+  OState, 
+  OState_2, 
+  OState_Draft,
+} from "~/types/types-basic"
 import type { 
   Cloud_ImageStore,
   Cloud_FileStore,
@@ -57,9 +62,9 @@ export interface LiuUploadThread extends LiuUploadBase {
   showCountdown?: boolean
 
   // ai chat associated with this thread
+  // in compose page, we have to set aiChatId
   aiChatId?: string
-
-  
+  aiReadable?: BaseIsOn
 }
 
 /** 存一些 评论 与动态和草稿相比独有的字段 */
@@ -89,6 +94,7 @@ export interface LiuUploadDraft extends LiuUploadBase {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  aiReadable?: BaseIsOn
 }
 
 export interface LiuUploadMember {

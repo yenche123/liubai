@@ -1,4 +1,7 @@
-import type { SortWay } from "../../types-basic"
+import type { 
+  BaseIsOn, 
+  SortWay,
+} from "../../types-basic"
 import type { 
   AiCharacter,
   CollectionInfoType,
@@ -200,6 +203,7 @@ export interface LiuDownloadContent {
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
   aiCharacter?: AiCharacter
+  aiReadable?: BaseIsOn
 
   myFavorite?: LiuDownloadCollection
   myEmoji?: LiuDownloadCollection
@@ -231,6 +235,7 @@ export interface LiuDownloadDraft {
   tagIds?: string[]
   stateId?: string
   editedStamp: number
+  aiReadable?: BaseIsOn
 }
 
 interface LDP_Base {

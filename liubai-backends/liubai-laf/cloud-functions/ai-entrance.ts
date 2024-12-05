@@ -2226,6 +2226,7 @@ class ToolHandler {
       spaceType: "ME",
       infoType: "THREAD",
       oState: "OK",
+      storageState: "CLOUD",
       aiReadable: "Y",
     }
     let sortWay: SortWay = "asc"
@@ -2364,6 +2365,7 @@ class ToolHandler {
       spaceType: "ME",
       infoType: "THREAD",
       oState: "OK",
+      storageState: "CLOUD",
       aiReadable: "Y",
     }
 

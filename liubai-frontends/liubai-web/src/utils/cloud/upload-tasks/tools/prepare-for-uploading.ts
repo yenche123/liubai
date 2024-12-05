@@ -107,6 +107,9 @@ function whenThreadPost(c: ContentLocalTable) {
 
     emojiData: c.emojiData,
     config: c.config,
+
+    aiChatId: c.aiChatId,
+    aiReadable: c.aiReadable,
   }
   return uploadThread
 }
@@ -150,6 +153,7 @@ function whenThreadEdit(c: ContentLocalTable) {
 
     tagIds: c.tagIds,
     tagSearched: c.tagSearched,
+    aiReadable: c.aiReadable,
   }
   return uploadThread
 }
@@ -202,6 +206,7 @@ function whenDraftSet(d: DraftLocalTable) {
     remindMe: d.remindMe,
     tagIds: d.tagIds,
     stateId: d.stateId,
+    aiReadable: d.aiReadable,
   }
   if(d.liuDesc) {
     uploadDraft.liuDesc = transferUtil.tiptapToLiu(d.liuDesc, { trim: false })

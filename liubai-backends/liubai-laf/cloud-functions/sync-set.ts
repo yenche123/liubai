@@ -58,6 +58,7 @@ import {
   sch_opt_arr,
   Sch_OState_Draft,
   Sch_EmojiData,
+  Sch_BaseIsOn,
 } from "@/common-types"
 import { 
   getNowStamp,
@@ -502,6 +503,7 @@ async function toPostThread(
     emojiData: Sch_EmojiData,
     config: vbot.optional(Sch_ContentConfig),
     aiChatId: Sch_Opt_Str,
+    aiReadable: vbot.optional(Sch_BaseIsOn),
   }, vbot.never())     // open strict mode
   const res1 = checkoutInput(Sch_PostThread, thread, taskId)
   if(res1) return res1
@@ -580,6 +582,7 @@ async function toPostThread(
     levelOne: 0,
     levelOneAndTwo: 0,
     aiCharacter: aiChat?.character,
+    aiReadable: thread.aiReadable,
   }
 
   // 8. insert content
@@ -778,6 +781,7 @@ async function toThreadEdit(
 
     tagIds: sch_opt_arr(vbot.string()),
     tagSearched: sch_opt_arr(vbot.string()),
+    aiReadable: vbot.optional(Sch_BaseIsOn),
   }, vbot.never())
   const res1 = checkoutInput(Sch_EditThread, thread, taskId)
   if(res1) return res1
@@ -804,6 +808,7 @@ async function toThreadEdit(
     editedStamp: thread.editedStamp,
     tagIds: thread.tagIds,
     tagSearched: thread.tagSearched,
+    aiReadable: thread.aiReadable,
   }
   await updatePartData(ssCtx, "content", sharedData.content_id, new_data)
   return { code: "0000", taskId }
@@ -1553,6 +1558,7 @@ async function toDraftSet(
     remindMe: vbot.optional(Sch_LiuRemindMe),
     tagIds: sch_opt_arr(Sch_Id),
     stateId: Sch_Opt_Str,
+    aiReadable: vbot.optional(Sch_BaseIsOn),
   }, vbot.never())
   const res1 = checkoutInput(Sch_DraftSet, draft, taskId)
   if(res1) return res1
@@ -1632,6 +1638,7 @@ async function toDraftEdit(
     tagIds: draft.tagIds,
     stateId: draft.stateId,
     editedStamp,
+    aiReadable: draft.aiReadable,
   }
   await updatePartData(ssCtx, "draft", draft_id, u)
   return { code: "0000", taskId }
@@ -1697,6 +1704,7 @@ async function toDraftCreate(
     tagIds: draft.tagIds,
     stateId: draft.stateId,
     editedStamp: draft.editedStamp as number,
+    aiReadable: draft.aiReadable,
   }
   const new_id = await insertData(ssCtx, "draft", u)
   if(!new_id) {

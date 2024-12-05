@@ -5,6 +5,7 @@ import type {
   StorageState, 
   OState_3, 
   SpaceType,
+  BaseIsOn,
 } from "./types-basic"
 import type { AiCharacter, LiuRemindMe } from "./types-atom"
 import type { ImageShow, LiuFileStore } from "./index"
@@ -94,6 +95,7 @@ export interface ThreadShow {
   stateShow?: StateShow
   config?: ContentConfig
   aiCharacter?: AiCharacter
+  aiReadable?: BaseIsOn
 }
 
 // 评论的结构

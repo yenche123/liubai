@@ -112,6 +112,7 @@ export interface ContentLocalTable extends BaseLocalTable {
   levelOneAndTwo?: number   // 一级 + 二级评论数
 
   firstSyncStamp?: number   // the stamp when the content is first synced
+  aiChatId?: string
   aiCharacter?: AiCharacter
   aiReadable?: BaseIsOn
 }
@@ -142,6 +143,7 @@ export interface DraftLocalTable extends BaseLocalTable {
   stateId?: string
   editedStamp: number       // 草稿被用户实际编辑的时间戳
   firstSyncStamp?: number   // the stamp when the content is first synced
+  aiReadable?: BaseIsOn
 }
 
 export interface CollectionLocalTable extends BaseLocalTable {

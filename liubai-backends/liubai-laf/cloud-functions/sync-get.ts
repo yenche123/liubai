@@ -794,6 +794,7 @@ function getSharedData_6(
     tagIds: d.tagIds,
     stateId: d.stateId,
     editedStamp: d.editedStamp,
+    aiReadable: d.aiReadable,
   }
 
   parcel.status = "has_data"
@@ -1060,6 +1061,7 @@ function packContents(
       levelOne: v.levelOne,
       levelOneAndTwo: v.levelOneAndTwo,
       aiCharacter: v.aiCharacter,
+      aiReadable: v.aiReadable,
 
       myFavorite,
       myEmoji,

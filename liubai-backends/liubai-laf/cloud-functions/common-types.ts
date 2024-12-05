@@ -119,8 +119,9 @@ export interface DownloadFileRes {
 export type DownloadFileResolver = (res: DownloadFileRes) => void
 
 /*********************** 基类型、原子化类型 **********************/
-
-export type BaseIsOn = "Y" | "N"
+export const baseIsOns = ["Y", "N"] as const
+export type BaseIsOn = typeof baseIsOns[number]
+export const Sch_BaseIsOn = vbot.picklist(baseIsOns)
 
 // send email channel
 export type LiuSESChannel = "resend" | "tencent-ses"
@@ -1074,7 +1075,9 @@ export interface LiuUploadThread extends LiuUploadBase {
   showCountdown?: boolean
 
   // ai chat associated with this thread
+  // in compose page, we have to set aiChatId
   aiChatId?: string
+  aiReadable?: BaseIsOn
 }
 
 /** 存一些 评论 与动态和草稿相比独有的字段 */
@@ -1104,6 +1107,7 @@ export interface LiuUploadDraft extends LiuUploadBase {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  aiReadable?: BaseIsOn
 }
 
 export interface LiuUploadMember {
@@ -1383,6 +1387,7 @@ export interface Table_Draft extends BaseTable {
   tagIds?: string[]
   stateId?: string
   editedStamp: number       // 草稿被用户实际编辑的时间戳
+  aiReadable?: BaseIsOn
 }
 
 /** 表态和收藏表 */
@@ -2156,6 +2161,7 @@ export interface LiuDownloadContent {
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
   aiCharacter?: AiCharacter
+  aiReadable?: BaseIsOn
 
   myFavorite?: LiuDownloadCollection
   myEmoji?: LiuDownloadCollection
@@ -2187,6 +2193,7 @@ export interface LiuDownloadDraft {
   tagIds?: string[]
   stateId?: string
   editedStamp: number
+  aiReadable?: BaseIsOn
 }
 
 interface LDP_Base {
