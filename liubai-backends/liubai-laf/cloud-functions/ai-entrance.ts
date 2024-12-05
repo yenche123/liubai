@@ -144,6 +144,7 @@ interface AiRunLog_B {
 export type AiRunLog = (AiRunLog_A | AiRunLog_B) & {
   character: AiCharacter
   textToUser: string
+  logStamp: number
 }
 
 interface AiRunSuccess {
@@ -606,8 +607,6 @@ class BaseLLM {
       const errMsg = errType === "string" ? err : err?.toString?.()
 
       if(typeof errMsg === "string") {
-        console.log("errMsg is string!")
-
         // for zhipu
         if(!isRateLimit) {
           isRateLimit = errMsg.includes("当前API请求过多，请稍后重试")
@@ -854,7 +853,12 @@ class BaseBot {
       else if(funcName === "web_search") {
         const searchRes = await toolHandler.web_search(funcJson)
         if(searchRes) {
-          this._continueAfterWebSearch(postParam, tool_calls, searchRes, tool_call_id)
+          this._continueAfterWebSearch(
+            postParam, 
+            tool_calls, 
+            searchRes, 
+            tool_call_id,
+          )
           break
         }
       }
@@ -880,6 +884,7 @@ class BaseBot {
             specificDate: funcJson.specificDate,
             character: this._character,
             textToUser: scheduleRes.textToUser,
+            logStamp: getNowStamp(),
           }
           aiLogs.push(scheduleLog)
         }
@@ -902,6 +907,7 @@ class BaseBot {
             cardType: funcJson.cardType,
             character: this._character,
             textToUser: cardsRes.textToUser,
+            logStamp: getNowStamp(),
           }
           aiLogs.push(cardLog)
         }
@@ -975,17 +981,8 @@ class BaseBot {
       tool_call_id,
     })
 
-    console.warn("see prompts in _continueAfterReadingCards: ")
-    if(prompts.length < 5) {
-      console.log(prompts)
-    }
-    else {
-      const pLength = prompts.length
-      const p1 = prompts[pLength - 3]
-      const p2 = prompts[pLength - 2]
-      const p3 = prompts[pLength - 1]
-      console.log([p1, p2, p3])
-    }
+    console.log("see tool_calls in _continueAfterReadingCards: ")
+    console.log(tool_calls)
 
     // 4. new chat create param
     const { chatParam, bot, aiParam } = postParam
@@ -1581,6 +1578,7 @@ class AiController {
 
     // 2. privacy tips
     if(all_logs.length > 0) {
+      all_logs.sort((a, b) => a.logStamp - b.logStamp)
       prefixMessage += (t("privacy_title") + "\n")
       all_logs.forEach(v => {
         prefixMessage += (v.textToUser + "\n")
@@ -2320,7 +2318,6 @@ class ToolHandler {
     }
     else {
       textToBot += t("no_data")
-      textToUser = ""
     }
 
     console.warn("see textToUser: ")
@@ -2332,7 +2329,7 @@ class ToolHandler {
     const data8: Partial<AiHelperAssistantMsgParam> = {
       funcName: "get_schedule",
       funcJson,
-      text: textToUser || textToBot,
+      text: hasData ? textToUser : textToBot,
     }
     const assistantChatId = await this._addMsgToChat(data8)
     if(!assistantChatId) return
@@ -2416,7 +2413,6 @@ class ToolHandler {
     }
     else {
       textToBot += t("no_data")
-      textToUser = ""
     }
 
     console.warn("see textToUser: ")
@@ -2428,7 +2424,7 @@ class ToolHandler {
     const data8: Partial<AiHelperAssistantMsgParam> = {
       funcName: "get_cards",
       funcJson,
-      text: textToUser || textToBot,
+      text: hasData ? textToUser : textToBot,
     }
     const assistantChatId = await this._addMsgToChat(data8)
     if(!assistantChatId) return
@@ -3274,6 +3270,24 @@ class AiHelper {
         toolMsg = { 
           role: "tool", 
           content: `[Finish to draw]`, 
+          tool_call_id,
+        }
+      }
+    }
+    else if(funcName === "get_cards") {
+      if(v.text) {
+        toolMsg = {
+          role: "tool",
+          content: v.text,
+          tool_call_id,
+        }
+      }
+    }
+    else if(funcName === "get_schedule") {
+      if(v.text) {
+        toolMsg = {
+          role: "tool",
+          content: v.text,
           tool_call_id,
         }
       }
