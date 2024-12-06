@@ -246,6 +246,7 @@ export const wechatLang: LangAtom = {
     "success_1": "绑定成功🎉\n\n小诀窍：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
     "login_first": "尚未登录！<a href='{LIU_DOMAIN}/connect/wechat'>请先登录</a>",  // TODO: link to wechat-bind
     "video_unsupported": "[暂不支持发送视频消息]",
+    "voice_unsupported": "🚧 语音输入仍在开发中",
   },
   "zh-Hant": {
     "welcome_1": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n你可以在這裡記錄所有事情，所有「只屬於你」的資訊都將在這裡匯聚。\n\n若這世界就是一個巨大的遊樂園，請去體驗、去創造🥂\n\n[未完待續]",
@@ -254,6 +255,7 @@ export const wechatLang: LangAtom = {
     "success_1": "綁定成功🎉\n\n小訣竅：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
     "login_first": "尚未登入! <a href='{LIU_DOMAIN}/connect/wechat'>請先登入</a>",  // TODO: link to wechat-bind
     "video_unsupported": "[暫不支援影片訊息]",
+    "voice_unsupported": "🚧 語音訊息仍在開發中",
   },
   "en": {
     "welcome_1": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nYou can record all your life’s events, and all information you want is out here.\n\nIf this world is a giant playground, please experience it and create it 🥂\n\n[To be continued]",
@@ -262,6 +264,7 @@ export const wechatLang: LangAtom = {
     "success_1": "Binding successful🎉\n\nTip: <a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>How to avoid missing reminders</a>",
     "login_first": "Not logged in! <a href='{LIU_DOMAIN}/connect/wechat'>Please login first</a>",  // TODO: link to wechat-bind
     "video_unsupported": "[Videos are not supported to send]",
+    "voice_unsupported": "🚧 Voice message is still in development",
   }
 }
 

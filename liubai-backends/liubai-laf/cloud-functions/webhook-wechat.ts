@@ -201,44 +201,49 @@ async function handle_voice(
   const wx_media_id = msgObj.MediaId
   const wx_media_id_16k = msgObj.MediaId16K
 
-  // 2.1 TODO: temporarily check out test openid
-  const _env = process.env
-  const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
-  if(!testOpenId || testOpenId !== wx_gzh_openid) {
-    console.warn("interrupt handle_image!")
-    return
-  }
+  // 1.1 send unsupported message
+  const { t } = useI18n(wechatLang)
+  const msg = t("voice_unsupported")
+  sendText(wx_gzh_openid, msg)
 
-  // 3. get user
-  const user = await getUserByWxGzhOpenid(wx_gzh_openid)
-  if(!user) return
+  // // 2.1 TODO: temporarily check out test openid
+  // const _env = process.env
+  // const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
+  // if(!testOpenId || testOpenId !== wx_gzh_openid) {
+  //   console.warn("interrupt handle_image!")
+  //   return
+  // }
 
-  // 4. download voice
-  const res4 = await downloadVoice(wx_media_id)
-  if(!res4) return
-  const size4 = res4.fileBlob.size
-  const type4 = res4.fileBlob.type
+  // // 3. get user
+  // const user = await getUserByWxGzhOpenid(wx_gzh_openid)
+  // if(!user) return
 
-  console.log("size4: ", size4)
-  console.log("type4: ", type4)
+  // // 4. download voice
+  // const res4 = await downloadVoice(wx_media_id)
+  // if(!res4) return
+  // const size4 = res4.fileBlob.size
+  // const type4 = res4.fileBlob.type
 
-  if(size4 > MB) {
-    console.warn("the audio is too large!")
-    console.log(size4)
-    return
-  }
+  // console.log("size4: ", size4)
+  // console.log("type4: ", type4)
+
+  // if(size4 > MB) {
+  //   console.warn("the audio is too large!")
+  //   console.log(size4)
+  //   return
+  // }
   
-  // 5. get to ai system
-  enter_ai({ 
-    user, 
-    msg_type: "voice", 
-    file_type: type4,
-    file_base64: res4.b64,
-    file_blob: res4.fileBlob,
-    wx_media_id, 
-    wx_media_id_16k,
-    wx_gzh_openid,
-  })
+  // // 5. get to ai system
+  // enter_ai({ 
+  //   user, 
+  //   msg_type: "voice", 
+  //   file_type: type4,
+  //   file_base64: res4.b64,
+  //   file_blob: res4.fileBlob,
+  //   wx_media_id, 
+  //   wx_media_id_16k,
+  //   wx_gzh_openid,
+  // })
 }
 
 async function handle_video(
