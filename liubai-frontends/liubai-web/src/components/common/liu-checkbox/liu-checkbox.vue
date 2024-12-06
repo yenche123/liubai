@@ -17,6 +17,10 @@ defineProps({
     type: String,
     default: "var(--main-code)"
   },
+  checkedColor: {
+    type: String,
+    default: "var(--checkbox-bg)"
+  },
   circleSize: {
     type: Number,
     default: 12,
@@ -54,7 +58,7 @@ defineEmits<{
     height: v-bind("circleSize + 'px'");
     border-radius: 50%;
     overflow: hidden;
-    background: var(--checkbox-bg);
+    background: v-bind("checkedColor");
   }
 }
 

@@ -142,6 +142,10 @@ export function useCeData(
     toSyncCloudChange(val, ctx)
   }
 
+  const onAiReadableChange = (val: boolean) => {
+    toAiReadableChange(val, ctx)
+  }
+
   const onTapFinish = () => {
     _prepareFinish(false)
   }
@@ -218,6 +222,7 @@ export function useCeData(
     onStateChange,
     onTitleChange,
     onSyncCloudChange,
+    onAiReadableChange,
     onTapFinish,
     onTapCloseTitle,
     onTitleBarChange,
@@ -353,6 +358,17 @@ function toSyncCloudChange(
   ctx: CesCtx,
 ) {
   ctx.ceData.storageState = val ? "CLOUD" : "LOCAL"
+  if(!val) {
+    ctx.ceData.aiReadable = "N"
+  }
+  collectState(ctx, true)
+}
+
+function toAiReadableChange(
+  val: boolean,
+  ctx: CesCtx,
+) {
+  ctx.ceData.aiReadable = val ? "Y" : "N"
   collectState(ctx, true)
 }
 
@@ -422,6 +438,8 @@ async function toSave(ctx: CesCtx) {
   else if(oState === "LOCAL" && !needLocal) {
     oState = "OK"
   }
+  const aiReadable = ceData.aiReadable
+  console.log("to save ai readable: ", aiReadable)
 
   const draft: DraftLocalTable = {
     _id,
@@ -434,6 +452,7 @@ async function toSave(ctx: CesCtx) {
     threadEdited: ceData.threadEdited,
     visScope: ceData.visScope,
     storageState: ss,
+    aiReadable,
     title: ceData.title,
     liuDesc,
     images,

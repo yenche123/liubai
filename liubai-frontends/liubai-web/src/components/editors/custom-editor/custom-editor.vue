@@ -81,6 +81,7 @@ const {
   onStateChange,
   onTitleChange,
   onSyncCloudChange,
+  onAiReadableChange,
   onTapFinish,
   onTapCloseTitle,
   onTitleBarChange,
@@ -189,6 +190,7 @@ useDraftIdChanged(ceData)
     @remindmechange="onRemindMeChange"
     @titlechange="onTitleChange"
     @synccloudchange="onSyncCloudChange"
+    @aireadablechange="onAiReadableChange"
     @filechange="onFileChange"
     @statechange="onStateChange"
   ></ce-more-area>

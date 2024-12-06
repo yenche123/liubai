@@ -168,7 +168,7 @@ function _getThreadData(
   const liuList = list.length > 0 ? transferUtil.tiptapToLiu(list) : undefined
   const liuDesc = liuUtil.getRawList(liuList)
 
-  const { storageState } = ceData
+  const { storageState, aiReadable } = ceData
   const images = liuUtil.getRawList(ceData.images)
   const files = liuUtil.getRawList(ceData.files)
   const remindMe = liuUtil.toRawData(ceData.remindMe)
@@ -189,6 +189,7 @@ function _getThreadData(
     oState: "OK",
     visScope: ceData.visScope,
     storageState,
+    aiReadable,
     title: ceData.title,
     liuDesc,
     images,

@@ -4,6 +4,7 @@ import type { CeData } from "../../tools/types"
 import type { PropType } from "vue"
 import type { TipTapEditor } from "~/types/types-editor"
 import type { StateShow } from "~/types/types-content"
+import type { BaseIsOn } from "~/types/types-basic"
 
 export type CmaRemindType = "early" | "later"
 
@@ -15,6 +16,8 @@ export interface MaData {
   fileShow?: FileShow
   syncCloud: boolean
   scDisabled: boolean
+  aiReadable: BaseIsOn
+  aiReadDisabled: boolean
 
   // 浅浅记录一下 什么时候的 Date 类型，这样子再选择时，定位到该日期
   whenDate?: Date
@@ -31,6 +34,7 @@ export interface MoreAreaEmits {
   (event: "remindmechange", val: LiuRemindMe | null): void
   (event: "titlechange", val: string): void
   (event: "synccloudchange", val: boolean): void
+  (event: "aireadablechange", val: boolean): void
   (event: "filechange", val: File[] | null): void
   (event: "statechange", val: string | null): void
 }
@@ -61,6 +65,7 @@ export const cmaEmits = {
   remindmechange: (val: LiuRemindMe | null) => true,
   titlechange: (val: string) => true,
   synccloudchange: (val: boolean) => true,
+  aireadablechange: (val: boolean) => true,
   filechange: (val: File[] | null) => true,
   statechange: (val: string | null) => true,
 }

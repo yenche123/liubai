@@ -64,7 +64,8 @@
     "mine": "我的",
     "contact_us": "聯繫客服",
     "ok": "好的",
-    "check_it_out": "去看看"
+    "check_it_out": "去看看",
+    "privacy": "隱私"
   },
   "editor": {
     "when": "什麼時候",
@@ -74,6 +75,8 @@
     "add_state": "加狀態",
     "only_local": "僅存於本機",
     "sync_cloud": "同步到雲端",
+    "ai_readable": "AI可讀",
+    "refuse_ai": "拒絕AI",
     "add_file": "加附件",
     "leave_codeBlock": "{tip} 離開程式編輯",
     "add_title2": "標題",

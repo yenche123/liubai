@@ -64,7 +64,8 @@
     "mine": "我的",
     "contact_us": "联系客服",
     "ok": "好的",
-    "check_it_out": "去查看"
+    "check_it_out": "去查看",
+    "privacy": "隐私"
   },
   "editor": {
     "when": "什么时候",
@@ -74,6 +75,8 @@
     "add_state": "加状态",
     "only_local": "仅存于本地",
     "sync_cloud": "同步到云端",
+    "ai_readable": "AI可读",
+    "refuse_ai": "拒绝AI",
     "add_file": "加附件",
     "leave_codeBlock": "{tip} 离开代码块",
     "add_title2": "标题",

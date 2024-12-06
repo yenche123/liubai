@@ -37,6 +37,7 @@ function stateChanged(
   const { 
     whenStamp, 
     storageState, 
+    aiReadable,
     title: newTitle = "",
     remindMe,
     files: newFiles,
@@ -69,13 +70,24 @@ function stateChanged(
   // 文件
   checkAttachment(data, newFiles)
 
-  // 云同步
+  // cloud sync
   const canSync = liuEnv.canISync()
   
   const newSyncCloud = storageState === "CLOUD" || storageState === "WAIT_UPLOAD"
   if(newSyncCloud !== data.syncCloud) data.syncCloud = newSyncCloud
   const newDisabled = !canSync || storageState === "ONLY_LOCAL"
   if(newDisabled !== data.scDisabled) data.scDisabled = newDisabled
+
+  // ai readable
+  if(!newSyncCloud) {
+    data.aiReadDisabled = true
+    data.aiReadable = "N"
+  }
+  else {
+    data.aiReadDisabled = false
+    data.aiReadable = aiReadable ?? "N"
+  }
+
   
 }
 

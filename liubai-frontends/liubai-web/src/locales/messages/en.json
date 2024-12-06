@@ -64,7 +64,8 @@
     "mine": "Mine",
     "contact_us": "Contact",
     "ok": "OK",
-    "check_it_out": "Check it out"
+    "check_it_out": "Check it out",
+    "privacy": "Privacy"
   },
   "editor": {
     "when": "When",
@@ -74,6 +75,8 @@
     "add_state": "Add a state",
     "only_local": "Only Local",
     "sync_cloud": "Sync to cloud",
+    "ai_readable": "AI Readable",
+    "refuse_ai": "AI Refused",
     "add_file": "Add a file",
     "leave_codeBlock": "Press {tip} to leave",
     "add_title2": "Title",
