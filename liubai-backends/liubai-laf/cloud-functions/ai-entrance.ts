@@ -674,7 +674,7 @@ class BaseBot {
     AiHelper.finalCheckPrompts(params.messages)
 
     // // print last 5 prompts
-    // const msgLength = params.messages.length
+    const msgLength = params.messages.length
     // console.log(`last 5 prompts: `)
     // if(msgLength > 5) {
     //   const messages2 = params.messages.slice(msgLength - 5)
@@ -685,8 +685,9 @@ class BaseBot {
     // }
 
     // see hailuo's prompt
-    if(bot.character === "baixiaoying") {
-      console.warn("see baixiaoying's prompt: ")
+    if(bot.character === "hailuo") {
+      params.messages = params.messages.slice(msgLength - 1)
+      console.warn("see hailuo's prompt: ")
       console.log(params.messages)
     }
 
@@ -1360,6 +1361,12 @@ class BotMiniMax extends BaseBot {
     const model = bot.model
 
     // 3. handle other things
+    // turn parameters into `string` in tools
+    if(tools) {
+      tools.forEach(v => {
+        v.function.parameters = valTool.objToStr(v.function.parameters) as any
+      })
+    }
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
