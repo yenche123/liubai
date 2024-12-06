@@ -62,6 +62,11 @@ export function initCeData(
     threadEdited: threadIdRef.value,
     lastLockStamp: time.getTime(),
   })
+  const canSync = liuEnv.canISync()
+  if(!canSync) {
+    ceData.storageState = "LOCAL"
+    ceData.aiReadable = "N"
+  }
   
   const numWhenSet = ref(0)
   provide(editorSetKey, numWhenSet)

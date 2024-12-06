@@ -73,13 +73,14 @@ function stateChanged(
   // cloud sync
   const canSync = liuEnv.canISync()
   
-  const newSyncCloud = storageState === "CLOUD" || storageState === "WAIT_UPLOAD"
+  let newSyncCloud = storageState === "CLOUD" || storageState === "WAIT_UPLOAD"
+  if(!canSync) newSyncCloud = false
   if(newSyncCloud !== data.syncCloud) data.syncCloud = newSyncCloud
   const newDisabled = !canSync || storageState === "ONLY_LOCAL"
   if(newDisabled !== data.scDisabled) data.scDisabled = newDisabled
 
   // ai readable
-  if(!newSyncCloud) {
+  if(!newSyncCloud || !canSync) {
     data.aiReadDisabled = true
     data.aiReadable = "N"
   }

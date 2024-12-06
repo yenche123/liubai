@@ -48,6 +48,7 @@ export async function main(ctx: FunctionContext) {
     res = await agree_aichat(user, b.chatId)
   }
   else if(b.operateType === "get-aichat") {
+    // for compose-page
     res = await get_aichat(user, b.chatId)
   }
   
@@ -160,6 +161,7 @@ async function agree_aichat(
     oState: "OK",
     visScope: "DEFAULT",
     storageState: "CLOUD",
+    aiReadable: "Y",
 
     enc_title,
     enc_desc,

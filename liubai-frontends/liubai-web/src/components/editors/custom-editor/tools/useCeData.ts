@@ -358,9 +358,7 @@ function toSyncCloudChange(
   ctx: CesCtx,
 ) {
   ctx.ceData.storageState = val ? "CLOUD" : "LOCAL"
-  if(!val) {
-    ctx.ceData.aiReadable = "N"
-  }
+  ctx.ceData.aiReadable = val ? "Y" : "N"
   collectState(ctx, true)
 }
 

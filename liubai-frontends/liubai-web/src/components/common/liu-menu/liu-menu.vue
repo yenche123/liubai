@@ -105,6 +105,7 @@ const onMenuHide = () => {
             <LiuCheckbox
               v-if="hasCheckbox"
               :checked="item.checked"
+              :disabled="item.disabled"
               :size="20"
               :circleSize="10.6"
               checked-color="var(--cool-bg)"
@@ -213,7 +214,7 @@ const onMenuHide = () => {
 
   .menu-item_disabled {
     opacity: .6;
-    cursor: default;
+    cursor: not-allowed;
   }
 
 }

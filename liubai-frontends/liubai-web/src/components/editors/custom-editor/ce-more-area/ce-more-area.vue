@@ -149,7 +149,6 @@ export default defineComponent({
 
       <!-- privacy -->
       <LiuMenu :menu="privacyMenu" min-width-str="120px"
-        :autoHideAfterTappingItem="false"
         :hasCheckbox="true"
         @tapitem="onTapPrivacyItem"
         placement="top"
