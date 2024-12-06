@@ -646,6 +646,11 @@ export interface AiUsage {
   total_tokens: number
 }
 
+export interface AiBotMetaData {
+  onlyOneSystemRoleMsg?: boolean
+  zhipuWebSearch?: boolean     // false is default
+}
+
 export interface AiBot {
   name: string
   character: AiCharacter
@@ -657,9 +662,7 @@ export interface AiBot {
   maxWindowTokenK: number  // 8 means 8k, 128 means 128k
 
   // other meta data
-  metaData?: {
-    zhipuWebSearch?: boolean     // false is default
-  }
+  metaData?: AiBotMetaData
 }
 
 export interface AiEntry {

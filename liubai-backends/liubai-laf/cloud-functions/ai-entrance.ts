@@ -41,6 +41,7 @@ import {
   type Table_Content,
   type SortWay,
   type Table_Workspace,
+  type AiBotMetaData,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -199,6 +200,7 @@ interface PostRunParam {
 
 interface TurnChatsIntoPromptOpt {
   abilities?: AiAbility[]
+  metaData?: AiBotMetaData
 }
 
 interface BaseLLMChatOpt {
@@ -617,6 +619,11 @@ class BaseLLM {
       const errMsg = errType === "string" ? err : err?.toString?.()
 
       if(typeof errMsg === "string") {
+        // for baichuan
+        if(isRateLimit) {
+          isRateLimit = errMsg.includes("Rate limit reached for requests")
+        }
+
         // for zhipu
         if(!isRateLimit) {
           isRateLimit = errMsg.includes("当前API请求过多，请稍后重试")
@@ -666,14 +673,20 @@ class BaseBot {
     }
     AiHelper.finalCheckPrompts(params.messages)
 
-    // print last 5 prompts
-    const msgLength = params.messages.length
-    console.log(`last 5 prompts: `)
-    if(msgLength > 5) {
-      const messages2 = params.messages.slice(msgLength - 5)
-      console.log(messages2)
-    }
-    else {
+    // // print last 5 prompts
+    // const msgLength = params.messages.length
+    // console.log(`last 5 prompts: `)
+    // if(msgLength > 5) {
+    //   const messages2 = params.messages.slice(msgLength - 5)
+    //   console.log(messages2)
+    // }
+    // else {
+    //   console.log(params.messages)
+    // }
+
+    // see hailuo's prompt
+    if(bot.character === "baixiaoying") {
+      console.warn("see baixiaoying's prompt: ")
       console.log(params.messages)
     }
 
@@ -774,7 +787,7 @@ class BaseBot {
     const prompts = AiHelper.turnChatsIntoPrompt(
       chats,
       user,
-      { abilities: bot.abilities },
+      { abilities: bot.abilities, metaData: bot.metaData },
     )
 
     // 4. handle current date & time 
@@ -982,7 +995,8 @@ class BaseBot {
 
     // 2. add "assistant" message to prompts
     const c = this._character
-    prompts.push({ role: "assistant", tool_calls, name: c})
+    const assistantName = AiHelper.getCharacterName(c)
+    prompts.push({ role: "assistant", tool_calls, name: assistantName })
 
     // 3. add "tool" message to prompts
     prompts.push({
@@ -1038,7 +1052,8 @@ class BaseBot {
 
     // 2. add "assistant" message to prompts
     const c = this._character
-    prompts.push({ role: "assistant", tool_calls, name: c })
+    const assistantName = AiHelper.getCharacterName(c)
+    prompts.push({ role: "assistant", tool_calls, name: assistantName })
 
     // 3. add "tool" message to prompts
     prompts.push({
@@ -1178,7 +1193,13 @@ class BaseBot {
     const { bot, chatCompletion, aiParam } = postParam
     if(!chatCompletion) return
     const c = bot.character
-    let firstChoice = chatCompletion.choices[0]
+
+    if(bot.character === "hailuo") {
+      console.warn("see hailuo's chatCompletion: ")
+      console.log(chatCompletion)
+    }
+
+    let firstChoice = chatCompletion?.choices?.[0]
     if(!firstChoice) {
       console.warn(`${c} no choice!`)
       return
@@ -3421,7 +3442,7 @@ class AiHelper {
     opt?: TurnChatsIntoPromptOpt,
   ) {
     // 1. get params
-    const { funcName, funcJson } = v
+    const { funcName, funcJson, character } = v
     if(!funcName) return
     
     // 2. change prompt if funcName is draw_picture
@@ -3432,10 +3453,12 @@ class AiHelper {
 
     // 3. handle content
     const funcArgs = funcJson ? valTool.objToStr(funcJson) : "{}"
-    let msg = t("bot_call_tools", { funcName, funcArgs })
+    const msg = t("bot_call_tools", { funcName, funcArgs })
+    const assistantName = AiHelper.getCharacterName(character)
     const assistantMsg: OaiPrompt = {
       role: "assistant",
       content: msg,
+      name: assistantName,
     }
     return assistantMsg
   }
@@ -3445,10 +3468,11 @@ class AiHelper {
     v: Table_AiChat,
   ) {
     const { character, funcName, text } = v
+    const assistantName = this.getCharacterName(character)
     let msg: OaiPrompt = {
       role: "assistant",
       tool_calls,
-      name: character,
+      name: assistantName,
     }
 
     if(funcName === "draw_picture" && text) {
@@ -3517,17 +3541,25 @@ class AiHelper {
       }
       else if(infoType === "assistant") {
         if(text) {
-          let assistantName: string | undefined
-          if(character) {
-            assistantName = this.getCharacterName(character)
-          }
+          const assistantName = this.getCharacterName(character)
           messages.push({ role: "assistant", content: text, name: assistantName })
         }
       }
-      else if(infoType === "background" || infoType === "summary") {
-        if(text) {
-          messages.push({ role: "system", content: text })
-        }
+      else if(infoType === "summary") {
+        if(!text) continue
+        const summary = `【前方对话摘要】\n${text}`
+        messages.push({
+          role: opt?.metaData?.onlyOneSystemRoleMsg ? "user" : "system",
+          content: summary,
+        })
+      }
+      else if(infoType === "background") {
+        if(!text) continue
+        const background = `【背景信息】\n${text}`
+        messages.push({
+          role: opt?.metaData?.onlyOneSystemRoleMsg ? "user" : "system",
+          content: background,
+        })
       }
       else if(infoType === "tool_use" && tool_calls) {
         const tool_call_id = tool_calls[0]?.id
@@ -3768,7 +3800,8 @@ class AiHelper {
     }
   }
 
-  static getCharacterName(character: AiCharacter) {
+  static getCharacterName(character?: AiCharacter) {
+    if(!character) return
     let name = ""
     const bot = aiBots.find(v => v.character === character)
     if(bot) name = bot.name

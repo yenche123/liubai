@@ -48,6 +48,9 @@ export const aiBots: AiBot[] = [
     abilities: ["chat", "tool_use"],
     alias: ["百川", "百川AI"],
     maxWindowTokenK: 32,
+    metaData: {
+      onlyOneSystemRoleMsg: true,
+    }
   },
   {
     name: "DeepSeek",
