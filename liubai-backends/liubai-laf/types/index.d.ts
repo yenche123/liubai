@@ -120,8 +120,12 @@ declare global {
       LIU_ALIPAY_NOTIFY_URL?: string
 
       /** Official LLMs */
+      LIU_BAICHUAN_BASE_URL?: string         // 百川 AI 的 base url
+      LIU_BAICHUAN_API_KEY?: string          // 百川 AI 的 api key
       LIU_DEEPSEEK_BASE_URL?: string         // DeepSeek AI 的 base url
       LIU_DEEPSEEK_API_KEY?: string          // DeepSeek AI 的 api key
+      LIU_MINIMAX_BASE_URL?: string          // MiniMax AI 的 base url
+      LIU_MINIMAX_API_KEY?: string           // MiniMax AI 的 api key
       LIU_MOONSHOT_BASE_URL?: string         // Moonshot AI 的 base url
       LIU_MOONSHOT_API_KEY?: string          // Moonshot AI 的 api key
       LIU_STEPFUN_BASE_URL?: string          // Stepfun AI 的 base url
@@ -149,7 +153,9 @@ declare global {
       LIU_TRANSLATION_MODEL?: string
 
       /** Characters */
+      LIU_WXGZH_KF_BAIXIAOYING?: string      // kf_account of baixiaoying
       LIU_WXGZH_KF_DEEPSEEK?: string         // kf_account of deepseek
+      LIU_WXGZH_KF_HAILUO?: string           // kf_account of hailuo
       LIU_WXGZH_KF_KIMI?: string             // kf_account of kimi
       LIU_WXGZH_KF_WANZHI?: string           // kf_account of wanzhi
       LIU_WXGZH_KF_YUEWEN?: string           // kf_account of yuewen

@@ -314,10 +314,20 @@ function mapBots(
   aiParam: AiRunParam,
   promises: Promise<AiRunSuccess | undefined>[],
 ) {
+  if(c === "baixiaoying") {
+    const botBaichuan = new BotBaichuan()
+    const proBaichuan = botBaichuan.run(aiParam)
+    promises.push(proBaichuan)
+  }
   if(c === "deepseek") {
     const bot1 = new BotDeepSeek()
     const pro1 = bot1.run(aiParam)
     promises.push(pro1)
+  }
+  else if(c === "hailuo") {
+    const botMinimax = new BotMiniMax()
+    const proMinimax = botMinimax.run(aiParam)
+    promises.push(proMinimax)
   }
   else if(c === "kimi") {
     const bot2 = new BotMoonshot()
@@ -591,7 +601,7 @@ class BaseLLM {
 
     try {
       const chatCompletion = await client.chat.completions.create(params, {
-        timeout
+        timeout,
       })
       _this._tryTimes = 0
       return chatCompletion as OaiChatCompletion
@@ -1232,6 +1242,46 @@ class BaseBot {
 
 }
 
+class BotBaichuan extends BaseBot {
+  constructor() {
+    super("baixiaoying")
+  }
+
+  async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
+    // 1. pre run
+    const res1 = this.preRun(aiParam)
+    if(!res1) return
+    const { prompts, totalToken, bot, chats, tools } = res1
+
+    // 2. get other params
+    const model = bot.model
+
+    // 3. handle other things
+
+    // 4. calculate maxTokens
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
+
+    // 5. to chat
+    const chatParam: OpenAI.Chat.ChatCompletionCreateParams = {
+      messages: prompts,
+      max_tokens: maxToken,
+      model,
+      tools,
+    }
+    const chatCompletion = await this.chat(chatParam, bot)
+    
+    // 6. post run
+    const postParam: PostRunParam = {
+      aiParam,
+      chatParam,
+      chatCompletion,
+      bot,
+    }
+    const res6 = await this.postRun(postParam)
+    return res6
+  }
+}
+
 class BotDeepSeek extends BaseBot {
 
   constructor() {
@@ -1272,6 +1322,46 @@ class BotDeepSeek extends BaseBot {
     return res6
   }
 
+}
+
+class BotMiniMax extends BaseBot {
+  constructor() {
+    super("hailuo")
+  }
+
+  async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
+    // 1. pre run
+    const res1 = this.preRun(aiParam)
+    if(!res1) return
+    const { prompts, totalToken, bot, chats, tools } = res1
+
+    // 2. get other params
+    const model = bot.model
+
+    // 3. handle other things
+
+    // 4. calculate maxTokens
+    const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
+
+    // 5. to chat
+    const chatParam: OpenAI.Chat.ChatCompletionCreateParams = {
+      messages: prompts,
+      max_tokens: maxToken,
+      model,
+      tools,
+    }
+    const chatCompletion = await this.chat(chatParam, bot)
+    
+    // 6. post run
+    const postParam: PostRunParam = {
+      aiParam,
+      chatParam,
+      chatCompletion,
+      bot,
+    }
+    const res6 = await this.postRun(postParam)
+    return res6
+  }
 }
 
 class BotMoonshot extends BaseBot {
@@ -2922,17 +3012,21 @@ class AiHelper {
       apiKey = _env.LIU_SILICONFLOW_API_KEY
       baseURL = _env.LIU_SILICONFLOW_BASE_URL
     }
-    else if(p === "zhipu") {
-      apiKey = _env.LIU_ZHIPU_API_KEY
-      baseURL = _env.LIU_ZHIPU_BASE_URL
-    }
-    else if(p === "moonshot") {
-      apiKey = _env.LIU_MOONSHOT_API_KEY
-      baseURL = _env.LIU_MOONSHOT_BASE_URL
+    else if(p === "baichuan") {
+      apiKey = _env.LIU_BAICHUAN_API_KEY
+      baseURL = _env.LIU_BAICHUAN_BASE_URL
     }
     else if(p === "deepseek") {
       apiKey = _env.LIU_DEEPSEEK_API_KEY
       baseURL = _env.LIU_DEEPSEEK_BASE_URL
+    }
+    else if(p === "minimax") {
+      apiKey = _env.LIU_MINIMAX_API_KEY
+      baseURL = _env.LIU_MINIMAX_BASE_URL
+    }
+    else if(p === "moonshot") {
+      apiKey = _env.LIU_MOONSHOT_API_KEY
+      baseURL = _env.LIU_MOONSHOT_BASE_URL
     }
     else if(p === "stepfun") {
       apiKey = _env.LIU_STEPFUN_API_KEY
@@ -2941,6 +3035,10 @@ class AiHelper {
     else if(p === "zero-one") {
       apiKey = _env.LIU_YI_API_KEY
       baseURL = _env.LIU_YI_BASE_URL
+    }
+    else if(p === "zhipu") {
+      apiKey = _env.LIU_ZHIPU_API_KEY
+      baseURL = _env.LIU_ZHIPU_BASE_URL
     }
     
     if(apiKey && baseURL) {
@@ -3202,8 +3300,21 @@ class AiHelper {
 
   static isCharacterAvailable(c: AiCharacter) {
     const _env = process.env
+
+    if(c === "baixiaoying") {
+      if(_env.LIU_BAICHUAN_API_KEY && _env.LIU_BAICHUAN_BASE_URL) {
+        return true
+      }
+      return false
+    }
     if(c === "deepseek") {
       if(_env.LIU_DEEPSEEK_API_KEY && _env.LIU_DEEPSEEK_BASE_URL) {
+        return true
+      }
+      return false
+    }
+    else if(c === "hailuo") {
+      if(_env.LIU_MINIMAX_API_KEY && _env.LIU_MINIMAX_BASE_URL) {
         return true
       }
       return false
@@ -3329,7 +3440,7 @@ class AiHelper {
     return assistantMsg
   }
 
-  private static _getAssistantMsgWithTooMsg(
+  private static _getAssistantMsgWithToolMsg(
     tool_calls: OaiToolCall[],
     v: Table_AiChat,
   ) {
@@ -3406,7 +3517,11 @@ class AiHelper {
       }
       else if(infoType === "assistant") {
         if(text) {
-          messages.push({ role: "assistant", content: text, name: character })
+          let assistantName: string | undefined
+          if(character) {
+            assistantName = this.getCharacterName(character)
+          }
+          messages.push({ role: "assistant", content: text, name: assistantName })
         }
       }
       else if(infoType === "background" || infoType === "summary") {
@@ -3426,7 +3541,7 @@ class AiHelper {
         if(canUseTool) {  
           if(toolMsg) {
             messages.push(toolMsg)
-            let assistantMsg2 = _this._getAssistantMsgWithTooMsg(tool_calls, v)
+            let assistantMsg2 = _this._getAssistantMsgWithToolMsg(tool_calls, v)
             messages.push(assistantMsg2)
             continue
           }
@@ -3950,8 +4065,14 @@ class TellUser {
     if(!c) return
 
     const _env = process.env
-    if(c === "deepseek") {
+    if(c === "baixiaoying") {
+      return _env.LIU_WXGZH_KF_BAIXIAOYING
+    }
+    else if(c === "deepseek") {
       return _env.LIU_WXGZH_KF_DEEPSEEK
+    }
+    else if(c === "hailuo") {
+      return _env.LIU_WXGZH_KF_HAILUO
     }
     else if(c === "kimi") {
       return _env.LIU_WXGZH_KF_KIMI

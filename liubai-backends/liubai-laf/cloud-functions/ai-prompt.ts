@@ -41,6 +41,15 @@ export const aiBots: AiBot[] = [
 
   /** chat using official providers */
   {
+    name: "百小应",
+    character: "baixiaoying",
+    provider: "baichuan",
+    model: "Baichuan4-Air",
+    abilities: ["chat", "tool_use"],
+    alias: ["百川", "百川AI"],
+    maxWindowTokenK: 32,
+  },
+  {
     name: "DeepSeek",
     character: "deepseek",
     provider: "deepseek",
@@ -48,6 +57,15 @@ export const aiBots: AiBot[] = [
     abilities: ["chat", "tool_use"],
     alias: ["深度求索"],
     maxWindowTokenK: 64,
+  },
+  {
+    name: "海螺",
+    character: "hailuo",
+    provider: "minimax",
+    model: "abab6.5s-chat",
+    abilities: ["chat", "tool_use"],
+    alias: ["MM智能助理", "海螺AI"],
+    maxWindowTokenK: 245,
   },
   {
     name: "Kimi",
@@ -216,8 +234,42 @@ const system_settings = `
 你会在用词上体现出更多“支持性作用”，让对方感到慰藉，充满力量
 `.trim()
 
+const wx_baixiaoying_system_1 = `
+你叫百小应，是由百川智能开发的人工智能助手。
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+
+【留白记事介绍】
+${system_intro}
+
+【当前环境】
+${system_wx_env}
+
+【问答示例】
+${system_example}
+
+【你的设定】
+${system_settings}
+`
+
 const wx_deepseek_system_1 = `
 你叫 DeepSeek，是由深度求索公司开发的人工智能助手。
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+
+【留白记事介绍】
+${system_intro}
+
+【当前环境】
+${system_wx_env}
+
+【问答示例】
+${system_example}
+
+【你的设定】
+${system_settings}
+`
+
+const wx_hailuo_system_1 = `
+你叫海螺🐚，是由 MiniMax 公司开发的人工智能助手。
 你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
 
 【留白记事介绍】
@@ -303,8 +355,14 @@ ${system_settings}
 
 
 const wx_gzh_prompts = {
+  "baixiaoying": {
+    "system_1": wx_baixiaoying_system_1
+  },
   "deepseek": {
     "system_1": wx_deepseek_system_1
+  },
+  "hailuo": {
+    "system_1": wx_hailuo_system_1
   },
   "kimi": {
     "system_1": wx_kimi_system_1
