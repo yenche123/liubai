@@ -142,7 +142,12 @@ interface AiRunLog_B {
   cardType: AiToolGetCardType
 }
 
-export type AiRunLog = (AiRunLog_A | AiRunLog_B) & {
+interface AiRunLog_C {
+  toolName: "draw_picture"
+  drawResult: LiuAi.PaletteResult
+}
+
+export type AiRunLog = (AiRunLog_A | AiRunLog_B | AiRunLog_C) & {
   character: AiCharacter
   textToUser: string
   logStamp: number
@@ -834,14 +839,8 @@ class BaseBot {
     postParam: PostRunParam,
     tool_calls: OaiToolCall[],
   ) {
+    // 1. check out params
     const { aiParam, bot, chatCompletion } = postParam
-    const toolHandler = new ToolHandler(
-      aiParam, 
-      bot,
-      tool_calls,
-      chatCompletion,
-    )
-
     if(chatCompletion) {
       const text = AiHelper.getTextFromLLM(chatCompletion, bot)
       if(text) {
@@ -851,7 +850,18 @@ class BaseBot {
       }
     }
 
+    // 2. define some constants
+    const character = this._character
+    const botName = AiHelper.getCharacterName(character)
+    const { t } = useI18n(aiLang, { user: aiParam.entry.user })
     const aiLogs: AiRunLog[] = []
+    const toolHandler = new ToolHandler(
+      aiParam, 
+      bot,
+      tool_calls,
+      chatCompletion,
+    )
+
     for(let i=0; i<tool_calls.length; i++) {
       const v = tool_calls[i]
       const funcData = v["function"]
@@ -887,8 +897,20 @@ class BaseBot {
         }
       }
       else if(funcName === "draw_picture") {
-        await toolHandler.draw_picture(funcJson)
-        break
+        const drawRes = await toolHandler.draw_picture(funcJson)
+        if(!drawRes) continue
+        const drawTextToUser = t("bot_draw", { 
+          botName: botName ?? "", 
+          model: drawRes.model,
+        })
+        const drawLog: AiRunLog = {
+          toolName: "draw_picture",
+          drawResult: drawRes,
+          character,
+          textToUser: drawTextToUser,
+          logStamp: getNowStamp(),
+        }
+        aiLogs.push(drawLog)
       }
       else if(funcName === "get_schedule") {
         const scheduleRes = await toolHandler.get_schedule(funcJson)
@@ -906,7 +928,7 @@ class BaseBot {
             toolName: "get_schedule",
             hoursFromNow: funcJson.hoursFromNow,
             specificDate: funcJson.specificDate,
-            character: this._character,
+            character,
             textToUser: scheduleRes.textToUser,
             logStamp: getNowStamp(),
           }
@@ -1682,11 +1704,28 @@ class AiController {
     const kickList = AiHelper.getKickCharacters(characters, results)
     const addedList = AiHelper.getAddedCharacters(characters, results)
 
-    // 2. privacy tips
-    if(all_logs.length > 0) {
-      all_logs.sort((a, b) => a.logStamp - b.logStamp)
+    // 2.1 extract all logs
+    const privacyLogs = all_logs.filter(v => {
+      const bool = Boolean(v.toolName === "get_cards" || v.toolName === "get_schedule")
+      return bool
+    })
+    const workingLogs = all_logs.filter(v => v.toolName === "draw_picture")
+
+    // 2.2 privacy tips
+    if(privacyLogs.length > 0) {
+      privacyLogs.sort((a, b) => a.logStamp - b.logStamp)
       prefixMessage += (t("privacy_title") + "\n")
-      all_logs.forEach(v => {
+      privacyLogs.forEach(v => {
+        prefixMessage += (v.textToUser + "\n")
+      })
+      prefixMessage += "\n"
+    }
+
+    // 2.3 working logs
+    if(workingLogs.length > 0) {
+      workingLogs.sort((a, b) => a.logStamp - b.logStamp)
+      prefixMessage += (t("working_log_title") + "\n")
+      workingLogs.forEach(v => {
         prefixMessage += (v.textToUser + "\n")
       })
       prefixMessage += "\n"
@@ -2261,7 +2300,9 @@ class ToolHandler {
     return res
   }
 
-  async draw_picture(funcJson: Record<string, any>) {
+  async draw_picture(
+    funcJson: Record<string, any>
+  ): Promise<LiuAi.PaletteResult | undefined> {
     // 1. check out param
     const prompt = funcJson.prompt
     if(!prompt || typeof prompt !== "string") {
@@ -2301,10 +2342,9 @@ class ToolHandler {
 
     // 5. reply image
     const { entry } = this._aiParam
-    const res5 = await TellUser.image(entry, res3.url, this._bot)
+    await TellUser.image(entry, res3.url, this._bot)
 
-    // 6. menu
-    // WIP
+    return res3
   }
 
   async get_schedule(

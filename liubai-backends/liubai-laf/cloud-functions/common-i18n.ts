@@ -272,6 +272,7 @@ export const wechatLang: LangAtom = {
 export const aiLang: LangAtom = {
   "zh-Hans": {
     "privacy_title": "🔓 隐私提示:",
+    "working_log_title": "📜 工作日志:",
     "operation_title": "🕹️ 操作栏:",
     "generative_ai_warning": "⚠️ 内容由 AI 生成，请仔细甄别。",
     "kick": "踢掉",
@@ -307,6 +308,7 @@ export const aiLang: LangAtom = {
     "bot_call_tools": "调用工具: {funcName}\n参数: {funcArgs}",
     "draw_result": "作图结果: {imageUrl}",
     "bot_left": "{botName}已离开聊天室",
+    "bot_draw": "{botName}使用画笔 {model} 画了一张图片",
 
     // the first message when a bot has been called
     "called_1": "我是{botName}，想跟我聊什么呢？",
@@ -349,6 +351,7 @@ export const aiLang: LangAtom = {
   },
   "zh-Hant": {
     "privacy_title": "🔓 隱私提示:",
+    "working_log_title": "📜 工作日誌:",
     "operation_title": "🕹️ 操作欄:",
     "generative_ai_warning": "⚠️ 內容由 AI 生成，請仔細甄別。",
     "kick": "踢掉",
@@ -384,6 +387,7 @@ export const aiLang: LangAtom = {
     "bot_call_tools": "調用工具: {funcName}\n參數: {funcArgs}",
     "draw_result": "畫圖結果: {imageUrl}",
     "bot_left": "{botName}已離開聊天室",
+    "bot_draw": "{botName}使用畫筆 {model} 畫了一張圖片",
 
     // the first message when a bot has been called
     "called_1": "我是{botName}，想跟我聊什麼呢?",
@@ -426,6 +430,7 @@ export const aiLang: LangAtom = {
   },
   "en": {
     "privacy_title": "🔓 Privacy:",
+    "working_log_title": "📜 Working Logs:",
     "operation_title": "🕹️ Operations:",
     "generative_ai_warning": "⚠️ AI can make mistakes. Please double-check it.",
     "kick": "Kick ",
@@ -461,6 +466,7 @@ export const aiLang: LangAtom = {
     "bot_call_tools": "Call a tool: {funcName}\nArguments: {funcArgs}",
     "draw_result": "The drawing result: {imageUrl}",
     "bot_left": "{botName} has already left",
+    "bot_draw": "{botName} uses a brush called {model} to draw a picture",
 
     // the first message when a bot has been called
     "called_1": "I am {botName}. Let's chat together!",

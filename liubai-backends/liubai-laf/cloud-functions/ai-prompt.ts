@@ -66,7 +66,7 @@ export const aiBots: AiBot[] = [
     character: "hailuo",
     provider: "minimax",
     model: "abab6.5s-chat",
-    abilities: ["chat", "tool_use"],
+    abilities: ["chat", "tool_use", "image_to_text"],
     alias: ["MM智能助理", "海螺AI"],
     maxWindowTokenK: 245,
   },
