@@ -1217,14 +1217,10 @@ class BaseBot {
     if(!chatCompletion) return
     const c = bot.character
 
-    if(bot.character === "hailuo") {
-      console.warn("see hailuo's chatCompletion: ")
-      console.log(chatCompletion)
-    }
-
     let firstChoice = chatCompletion?.choices?.[0]
     if(!firstChoice) {
-      console.warn(`${c} no choice!`)
+      console.warn(`${c} no choice! see chatCompletion: `)
+      console.log(chatCompletion)
       return
     }
     let { finish_reason, message } = firstChoice
