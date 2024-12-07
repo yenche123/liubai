@@ -37,9 +37,11 @@ import {
   tagWxUserLang,
   getWxGzhUserInfo,
   isEmailAndNormalize,
+  valTool,
 } from "@/common-util";
 import {
   useI18n, 
+  i18nFill,
   wechatLang,
   wxClickReplies,
   wxTextRepliesItems,
@@ -124,13 +126,21 @@ async function handle_click(
   const { EventKey, FromUserName: wx_gzh_openid } = msgObj
   if(!EventKey) return false
 
+  // 2. get replies and the domain
   const replies = wxClickReplies[EventKey]
   if(!replies || replies.length < 1) return false
+  const _env = process.env
+  const LIU_DOMAIN = _env.LIU_DOMAIN ?? ""
 
-  // 2. reply
+  // 3. reply
   for(let i = 0; i < replies.length; i++) {
     const v = replies[i]
-    await sendObject(wx_gzh_openid, v)
+    const obj = valTool.copyObject(v)
+    if(obj.msgtype === "text") {
+      const str = obj.text.content 
+      obj.text.content = i18nFill(str, { LIU_DOMAIN })
+    }
+    await sendObject(wx_gzh_openid, obj)
   }
 
   return true
