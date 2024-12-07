@@ -36,6 +36,11 @@ const { enable, show } = usePlaceholderView(props)
           class="pv-emoji"
           :cover-fill-stroke="false"
         ></svg-icon>
+
+        <div v-else-if="pState === 54" 
+          class="pv-image pv-wechat"
+        ></div>
+
         <svg-icon
           v-else
           name="emojis-face_vomiting_color" 
@@ -48,6 +53,7 @@ const { enable, show } = usePlaceholderView(props)
         <span v-else-if="pState === 51">{{ t('err.no_auth') }}</span>
         <span v-else-if="pState === 52">{{ t('err.network') }}</span>
         <span v-else-if="pState === 53">{{ t('err.backend_required') }}</span>
+        <span v-else-if="pState === 54">{{ t('err.not_in_wechat') }}</span>
         <span v-else>{{ t('err.no_data') }}</span>
       </div>
       <div class="pv-err-msg" v-if="errMsg">
@@ -135,6 +141,17 @@ const { enable, show } = usePlaceholderView(props)
 .pv-container_hidden {
   opacity: 0;
 }
+
+.pv-image {
+  width: 80px;
+  height: 80px;
+  background-size: contain;
+}
+
+.pv-wechat {
+  background-image: url("/images/third-party/wechat.png");
+}
+
 
 @supports (height: calc(100dvh - 80px)) {
 

@@ -93,13 +93,12 @@ async function checkoutData(
   cwcData: CwcData,
   rr: RouteAndLiuRouter,
 ) {
-
   // 1. checking out network
-  const nStore = useNetworkStore()
-  if(nStore.level < 1) {
-    cwcData.pageState = pageStates.NETWORK_ERR
-    return
-  }
+  // const nStore = useNetworkStore()
+  // if(nStore.level < 1) {
+  //   cwcData.pageState = pageStates.NETWORK_ERR
+  //   return
+  // }
 
   // 2. get param
   const wStore = useWorkspaceStore()

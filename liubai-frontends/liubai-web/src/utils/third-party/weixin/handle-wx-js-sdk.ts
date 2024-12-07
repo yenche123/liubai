@@ -66,7 +66,6 @@ export function invokeWxJsSdk(
     console.log("wx.config.........")
 
     wx.config({
-      debug: true,
       appId,
       timestamp,
       nonceStr,

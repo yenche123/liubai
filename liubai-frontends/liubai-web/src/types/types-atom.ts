@@ -130,8 +130,9 @@ export interface TagView {
  * 51: 没有权限
  * 52: 网络不佳（需要联网才能查看）
  * 53: 该页面需要后端方可访问
+ * 54: 当前环境不在微信里（请在微信内打开）
  */
-export type PageState = -1 | 0 | 1 | 50 | 51 | 52 | 53
+export type PageState = -1 | 0 | 1 | 50 | 51 | 52 | 53 | 54
 export type PageStateKey = "OK" 
   | "LOADING"
   | "SWITCHING"
@@ -139,6 +140,7 @@ export type PageStateKey = "OK"
   | "NO_AUTH"
   | "NETWORK_ERR"
   | "NEED_BACKEND"
+  | "NOT_IN_WECHAT"
 
 // 方案限制
 export type LiuLimit = "pin" // 置顶数

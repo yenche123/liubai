@@ -354,6 +354,7 @@
   "err": {
     "no_data": "Nothing Here",
     "no_auth": "No Access",
+    "not_in_wechat": "Please open in WeChat",
     "network": "The page needs network to view",
     "backend_required": "The page needs backend to view",
     "unknown_err": "Unknown Error",

@@ -354,6 +354,7 @@
   "err": {
     "no_data": "這裡什麼都沒有",
     "no_auth": "沒有訪問權限",
+    "not_in_wechat": "請在微信內開啟",
     "network": "目前頁面需要網路才能檢視",
     "backend_required": "目前頁面需要後端才能檢視",
     "unknown_err": "未知的異常",
