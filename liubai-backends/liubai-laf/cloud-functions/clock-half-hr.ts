@@ -1,6 +1,15 @@
 // Function Name: clock-half-hr
 // 定时系统: 每 30 分钟执行一次
-// 清理过期的 cloud.shared 全局缓存
+
+/**
+ * 1. clear bind-wecom credentials in db
+ * 2. clear login state in db
+ * 3. clear login state in memory
+ * 4. clear token user in memory
+ * 5. clear expired orders in db
+ * 
+ */
+
 import cloud from '@lafjs/cloud'
 import type { 
   Shared_LoginState, 
@@ -23,7 +32,8 @@ export async function main(ctx: FunctionContext) {
 
   // console.log("---------- Start 清理缓存程序 ----------")
   await clearBindWecom()
-  clearLoginState()
+  await clearLoginStateInDB()
+  clearLoginStateInMemory()
   clearTokenUser()
   await clearExpiredOrder()
   // console.log("---------- End 清理缓存程序 ----------")
@@ -109,7 +119,7 @@ async function clearBindWecom() {
 
 
 /** 清理 liu-login-state 字段的 map */
-function clearLoginState() {
+function clearLoginStateInMemory() {
   const gShared = cloud.shared
   const loginState: Map<string, Shared_LoginState> = gShared.get('liu-login-state')
   if(!loginState) {
@@ -132,6 +142,18 @@ function clearLoginState() {
   // console.log(`清理 loginState 后的 size: ${size2}`)
 
   return true
+}
+
+/** clear LoginState in db */
+async function clearLoginStateInDB() {
+  const now = getNowStamp()
+  const sCol = db.collection("LoginState")
+  const res = await sCol.where({
+    insertedStamp: _.lt(now - MIN_20),
+  }).remove({ multi: true })
+  console.log("clearLoginStateInDB res: ")
+  console.log(res)
+  console.log(" ")
 }
 
 

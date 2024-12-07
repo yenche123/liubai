@@ -33,6 +33,8 @@ import type {
   Res_UL_WxGzhBase,
   LiuTencentSESParam,
   LiuSESChannel,
+  Partial_Id,
+  Table_LoginState,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -298,7 +300,7 @@ async function handle_wx_gzh_scan(
 ): Promise<LiuRqReturn<Res_UL_WxGzhScan>> {
   // 1. to check state
   const state = body.state
-  const res1 = checkIfStateIsErr(state)
+  const res1 = await LoginStater.check(state)
   if(res1) return res1
 
   // 2. get wx gzh access_token
@@ -382,16 +384,16 @@ async function handle_users_select(
     }
   }
 
-  // 2. to check state
-  const state = body.state
-  const res0 = checkIfStateIsErr(state)
-  if(res0) return res0
-
-  // 3. to check client_key
+  // 2. to check client_key
   const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
   if(!client_key || code1) {
     return { code: code1 ?? "E5001", errMsg: errMsg1 }
   }
+
+  // 3. to check state
+  const state = body.state
+  const res0 = await LoginStater.check(state)
+  if(res0) return res0
 
   // 4. to get credential
   const errReturnData = {
@@ -474,16 +476,16 @@ async function handle_google_one_tap(
     return { code: "E4000", errMsg: "no google_id_token" }
   }
 
-  // 2. to check state
-  const state = body.state
-  const res0 = checkIfStateIsErr(state)
-  if(res0) return res0
-
-  // 3. to check client_key
+  // 2. to check client_key
   const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
   if(!client_key || code1) {
     return { code: code1 ?? "E5001", errMsg: errMsg1 }
   }
+
+  // 3. to check state
+  const state = body.state
+  const res0 = await LoginStater.check(state)
+  if(res0) return res0
 
   // 4. to check LIU_GOOGLE_OAUTH_CLIENT_ID
   const _env = process.env
@@ -610,6 +612,9 @@ async function handle_email_code(
   // 3. to check credential
   if(email_code !== credential) {
     console.warn("the email_code is not equal to credential")
+    console.log("email: ", email)
+    console.log("email_code: ", email_code)
+    console.log("credential: ", credential)
     await addVerifyNum(firstCre._id, verifyData.verifiedNum)
     return errReturnData
   }
@@ -678,7 +683,7 @@ async function handle_email(
 
   // 2. 检查 state
   const state = body.state
-  const res0 = checkIfStateIsErr(state)
+  const res0 = await LoginStater.check(state)
   if(res0) return res0
 
   console.log(`user wants to log in using ${email}`)
@@ -837,7 +842,7 @@ async function handle_google_oauth(
   body: Record<string, string>,
 ) {
   // 1. check out parameters
-  const res1 = checkOAuthParams(body)
+  const res1 = await checkOAuthParams(body)
   const { code: code1, data: data1 } = res1
   if(code1 !== "0000" || !data1) {
     return res1 as LiuErrReturn
@@ -915,12 +920,6 @@ async function handle_wx_gzh_base(
   ctx: FunctionContext,
   body: Record<string, string>,
 ): Promise<LiuRqReturn<Res_UL_WxGzhBase>> {
-
-
-  console.log("handle_wx_gzh_base invoked!")
-  console.log(body)
-
-
   // 1. check out oauth_code
   const oauth_code = body.oauth_code
   if(!oauth_code) {
@@ -929,20 +928,18 @@ async function handle_wx_gzh_base(
 
   // 2. check out state
   const state = body.state
-  const res0 = checkIfStateIsErr(state)
+  const res0 = await LoginStater.check(state)
   if(res0) return res0
 
-  // 3. [ignore] this logic has been merged into 4.
+  // 3. get access_token with code
+  const res3 = await getWxGzhUserOAuthAccessToken(oauth_code)
 
-  // 4. get access_token with code
-  const res4 = await getWxGzhUserOAuthAccessToken(oauth_code)
-
-  // 5. extract openid
-  const data5 = res4?.data
-  const openid = data5?.openid
+  // 4. extract openid
+  const data4 = res3?.data
+  const openid = data4?.openid
   if(!openid) {
     console.warn("no openid from wx gzh")
-    console.log(res4)
+    console.log(res3)
     return { code: "E5004", errMsg: "no openid from wx gzh" }
   }
 
@@ -960,7 +957,7 @@ async function handle_wx_gzh_oauth(
   body: Record<string, string>,
 ): Promise<LiuRqReturn<Res_UserLoginNormal>> {
   // 1. check out params
-  const res1 = checkOAuthParams(body)
+  const res1 = await checkOAuthParams(body)
   const { code: code1, data: data1 } = res1
   if(code1 !== "0000" || !data1) {
     return res1 as LiuErrReturn
@@ -1057,7 +1054,7 @@ async function handle_github_oauth(
   body: Record<string, string>,
 ): Promise<LiuRqReturn<Res_UserLoginNormal>> {
   // 1. check out parameters
-  const res1 = checkOAuthParams(body)
+  const res1 = await checkOAuthParams(body)
   const { code: code1, data: data1 } = res1
   if(code1 !== "0000" || !data1) {
     return res1 as LiuErrReturn
@@ -2036,7 +2033,7 @@ function handle_init() {
   const wxGzhAppSecret = _env.LIU_WX_GZ_APPSECRET
   const wxGzhLogin = _env.LIU_WX_GZ_LOGIN
 
-  const state = generateState()
+  const state = LoginStater.generate()
   const data: Record<string, string | undefined> = {
     publicKey,
     state,
@@ -2060,70 +2057,143 @@ function handle_init() {
   return { code: `0000`, data }
 }
 
-/** 去制造 state 并存到全局缓存里，再返回 */
-function generateState() {
-  const liuLoginState = getLiuLoginState()
+class LoginStater {
 
-  let state = ""
-  let times = 0
-  while(true) {
-    if(times++ > 10) break
-    state = createLoginState()
-    const existed = liuLoginState.has(state)
-    if(!existed) {
-      const now = getNowStamp()
-      liuLoginState.set(state, { num: 0, createdStamp: now })
-      cloud.shared.set("liu-login-state", liuLoginState)
-      break
+  static generate() {
+    const map = this.getMemoryMap()
+
+    // 1. create state
+    let state = ""
+    let times = 0
+    while(true) {
+      if(times++ > 10) break
+      state = createLoginState()
+      const existed = map.has(state)
+      if(!existed) {
+        const now = getNowStamp()
+        map.set(state, { num: 0, createdStamp: now })
+        cloud.shared.set("liu-login-state", map)
+        break
+      }
     }
+    if(!state) return state
+
+    // 2. save state into db
+    const sCol = db.collection("LoginState")
+    const b2 = getBasicStampWhileAdding()
+    const data2: Partial_Id<Table_LoginState> = {
+      ...b2,
+      state,
+      num: 0,
+    }
+    sCol.add(data2)
+
+    return state
   }
 
-  return state
+  static getMemoryMap() {
+    const gShared = cloud.shared
+    const map: Map<string, Shared_LoginState> = gShared.get('liu-login-state') ?? new Map()
+    return map
+  }
+
+  static async check(
+    state: any,
+  ): Promise<LiuErrReturn | null> {
+    // 1. get params
+    if(!state || typeof state !== "string") {
+      return { code: "U0004", errMsg: "the state is required" }
+    }
+    const map = this.getMemoryMap()
+    const res = map.get(state)
+
+    // 2. check in db if we cannot find in memory
+    if(!res) {
+      const res2 = await this.checkInDB(state)
+      return res2
+    }
+
+    // start to check it out using memory data
+    const createdStamp = res.createdStamp
+    let num = res.num
+    num++
+
+    // 3. check out num
+    if(num > 5) {
+      console.warn("the state has been used too many times.......")
+      this.clear(state)
+      return { code: "U0004", errMsg: "the state has been used too many times" }
+    }
+
+    // 4. check out time
+    const now = getNowStamp()
+    const diff = now - createdStamp
+    const isMoreThan20Mins = diff > (20 * MINUTE)
+    if(isMoreThan20Mins) {
+      console.warn("the state has out of 20 mins.......")
+      this.clear(state)
+      return { code: "U0003", errMsg: "the state has been expired" }
+    }
+
+    map.set(state, { createdStamp, num })
+    return null
+  }
+
+
+  static async checkInDB(
+    state: string
+  ): Promise<LiuErrReturn | null> {
+    // 1. get data from db
+    const sCol = db.collection("LoginState")
+    const res1 = await sCol.where({ state }).get<Table_LoginState>()
+    
+    // 2. get the state
+    const list = res1.data
+    const res2 = list[0]
+    if(!res2) {
+      return { code: "U0004", errMsg: "invalid state" }
+    }
+
+    // 3. check out num
+    const createdStamp = res2.insertedStamp
+    let num = res2.num
+    num++
+    if(num > 3) {
+      console.warn("the state has been checked for db too many times.......")
+      this.clear(state)
+      return { code: "U0004", errMsg: "maximum times to interact with the state" } 
+    }
+
+    // 4. check out time
+    const now = getNowStamp()
+    const diff = now - createdStamp
+    const isMoreThan15Mins = diff > (15 * MINUTE)
+    if(isMoreThan15Mins) {
+      console.warn("the state has out of 15 mins.......")
+      this.clear(state)
+      return { code: "U0003", errMsg: "the state has been expired" }
+    }
+
+    // 5. update num
+    const u5: Partial<Table_LoginState> = {
+      num,
+      updatedStamp: now,
+    }
+    sCol.doc(res2._id).update(u5)
+
+    return null
+  }
+
+  static clear(state: string) {
+    const map = this.getMemoryMap()
+    map.delete(state)
+
+    const sCol = db.collection("LoginState")
+    sCol.where({ state }).remove()
+  }
+
 }
 
-/** 从 cloud.shared 中获取 liu-login-state 这个 map */
-function getLiuLoginState() {
-  const gShared = cloud.shared
-  const map: Map<string, Shared_LoginState> = gShared.get('liu-login-state') ?? new Map()
-  return map
-}
-
-/** 检测 state 是否正常，若正常返回 null，若不正常返回 LiuRqReturn */
-function checkIfStateIsErr(state: any): LiuErrReturn | null {
-  const liuLoginState = getLiuLoginState()
-  if(!state || typeof state !== "string") {
-    console.warn("the state is required")
-    return { code: "U0004", errMsg: "the state is required" }
-  }
-  
-  const res = liuLoginState.get(state)
-  if(!res) {
-    console.warn("the state is not in the cache.......")
-    return { code: "U0004", errMsg: "the state is not in the cache" }
-  }
-
-  let { createdStamp, num } = res
-  num++
-
-  if(num > 6) {
-    console.warn("the state has been used too many times.......")
-    liuLoginState.delete(state)
-    return { code: "U0004", errMsg: "the state has been used too many times" }
-  }
-
-  const now = getNowStamp()
-  const diff = now - createdStamp
-  const isMoreThan20Mins = diff > (20 * MINUTE)
-  if(isMoreThan20Mins) {
-    console.warn("the state has been expired........")
-    liuLoginState.delete(state)
-    return { code: "U0003", errMsg: "the state has been expired" }
-  }
-
-  
-  liuLoginState.set(state, { createdStamp, num })
-  return null
-}
 
 // 解密出 clientKey
 function getClientKey(enc_client_key: any) {
@@ -2182,9 +2252,9 @@ interface CheckOAuthParams {
 
 
 // check out params for OAuth
-function checkOAuthParams(
+async function checkOAuthParams(
   body: Record<string, string>,
-): LiuRqReturn<CheckOAuthParams> {
+): Promise<LiuRqReturn<CheckOAuthParams>> {
 
   // 检查 oauth_code
   const oauth_code = body.oauth_code
@@ -2192,16 +2262,16 @@ function checkOAuthParams(
     return { code: "E4000", errMsg: "no oauth_code" }
   }
 
-  // 检查 state
-  const state = body.state
-  const res0 = checkIfStateIsErr(state)
-  if(res0) return res0
-
   // 检查 client_key
   const { client_key, code: code1, errMsg: errMsg1 } = getClientKey(body.enc_client_key)
   if(!client_key || code1) {
     return { code: code1 ?? "E5001", errMsg: errMsg1 }
   }
+
+  // 检查 state
+  const state = body.state
+  const res0 = await LoginStater.check(state)
+  if(res0) return res0
 
   return {
     code: "0000",

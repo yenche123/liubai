@@ -1250,6 +1250,11 @@ export interface Table_Token extends BaseTable {
   ipGeo?: string
 }
 
+export interface Table_LoginState extends BaseTable {
+  state: string
+  num: number
+}
+
 /** User表 */
 export interface Table_User extends BaseTable {
   oState: OState_User
@@ -2736,7 +2741,7 @@ export interface Wx_Gzh_Create_Menu_Item {
 
   // for click
   key?: string
-  
+
   // for miniprogram
   appid?: string
   pagepath?: string
