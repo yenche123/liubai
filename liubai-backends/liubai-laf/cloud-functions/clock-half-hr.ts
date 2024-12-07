@@ -151,9 +151,6 @@ async function clearLoginStateInDB() {
   const res = await sCol.where({
     insertedStamp: _.lt(now - MIN_20),
   }).remove({ multi: true })
-  console.log("clearLoginStateInDB res: ")
-  console.log(res)
-  console.log(" ")
 }
 
 

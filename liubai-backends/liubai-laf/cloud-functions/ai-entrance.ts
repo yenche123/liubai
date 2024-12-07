@@ -681,10 +681,11 @@ class BaseBot {
 
     // // print last 5 prompts
     const msgLength = params.messages.length
-    console.log(`last 10 prompts: `)
-    if(msgLength > 10) {
-      const messages2 = params.messages.slice(msgLength - 10)
-      console.log(messages2)
+    console.log(`last 5 prompts: `)
+    if(msgLength > 5) {
+      const messages2 = params.messages.slice(msgLength - 5)
+      const printMsg = valTool.objToStr({ messages: messages2 })
+      console.log(printMsg)
     }
     else {
       console.log(params.messages)
