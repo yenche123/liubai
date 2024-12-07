@@ -104,6 +104,7 @@ const MAX_TIMES_MEMBERSHIP = 200
 const SEC_15 = SECONED * 15
 const MIN_3 = MINUTE * 3
 const MIN_30 = MINUTE * 30
+const INDEX_TO_PRESERVE_IMAGES = 12     // the images which appears in the first INDEX_TO_PRESERVE_IMAGES will be preserved rather than compressed to text like [image]
 
 /************************** types ************************/
 
@@ -680,19 +681,12 @@ class BaseBot {
 
     // // print last 5 prompts
     const msgLength = params.messages.length
-    // console.log(`last 5 prompts: `)
-    // if(msgLength > 5) {
-    //   const messages2 = params.messages.slice(msgLength - 5)
-    //   console.log(messages2)
-    // }
-    // else {
-    //   console.log(params.messages)
-    // }
-
-    // see hailuo's prompt
-    if(bot.character === "hailuo") {
-      params.messages = params.messages.slice(msgLength - 1)
-      console.warn("see hailuo's prompt: ")
+    console.log(`last 10 prompts: `)
+    if(msgLength > 10) {
+      const messages2 = params.messages.slice(msgLength - 10)
+      console.log(messages2)
+    }
+    else {
       console.log(params.messages)
     }
 
@@ -3253,7 +3247,7 @@ class AiHelper {
       if(v.msgType === "image") {
         imageNum++
 
-        if(imageNum > 3 || i > 9) {
+        if(imageNum > 3 || i > INDEX_TO_PRESERVE_IMAGES) {
           v.msgType = "text"
           v.text = "[image]"
           delete v.imageUrl

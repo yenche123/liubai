@@ -69,6 +69,9 @@ export const aiBots: AiBot[] = [
     abilities: ["chat", "tool_use", "image_to_text"],
     alias: ["MM智能助理", "海螺AI"],
     maxWindowTokenK: 245,
+    metaData: {
+      onlyOneSystemRoleMsg: true,
+    }
   },
   {
     name: "Kimi",
