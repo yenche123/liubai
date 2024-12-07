@@ -2725,6 +2725,22 @@ export type Wx_Gzh_Send_Msg = (Wx_Gzh_Send_Text | Wx_Gzh_Send_Image | Wx_Gzh_Sen
   | Wx_Gzh_Send_Video | Wx_Gzh_Send_Music | Wx_Gzh_Send_News | Wx_Gzh_Send_Article
   | Wx_Gzh_Send_Msgmenu) & Wx_Gzh_Send_Base
 
+/*********** Create Menu for Weixin Gzh  ****************/
+export interface Wx_Gzh_Create_Menu_Item {
+  name: string
+  sub_button?: Wx_Gzh_Create_Menu_Item[]
+  type?: string
+
+  // for view
+  url?: string
+
+  // for click
+  key?: string
+  
+  // for miniprogram
+  appid?: string
+  pagepath?: string
+}
 
 /******************* Some Types from WeCom  ****************/
 export interface Ww_Res_Base {
