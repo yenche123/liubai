@@ -13,11 +13,13 @@ export function useTcTopbar(
     const t = td.value
     const a = t.aiCharacter
     if(!a) return
+    if(a === "baixiaoying") return "baichuan.svg"
     if(a === "deepseek") return "deepseek.svg"
+    if(a === "hailuo") return "hailuo.svg"
     if(a === "kimi") return "kimi.png"
     if(a === "wanzhi") return "01-ai.png"
     if(a === "yuewen") return "yuewen.svg"
-    if(a === "zhipu") return "zhipu.png"
+    if(a === "zhipu") return "zhipu.svg"
   })
 
   const showTopbar = computed(() => {

@@ -37,6 +37,7 @@ const { t } = useI18n()
       <!-- icon -->
       <div class="tct-ai-character" :class="{
         'tct-ai-deepseek': aiCharacter === 'deepseek',
+        'tct-ai-circle': aiCharacter === 'kimi' || aiCharacter === 'wanzhi',
       }"></div>
 
       <span class="tctsb-text">{{ t(`ai_character.${aiCharacter}`) }}</span>
@@ -81,15 +82,16 @@ const { t } = useI18n()
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
-  border-radius: 50%;
   margin-inline-end: 5px;
 }
 
 .tct-ai-deepseek {
   height: 11.68px;
-  border-radius: 0;
 }
 
+.tct-ai-circle {
+  border-radius: 50%;
+}
 
 .tctsb-text {
   font-size: var(--state-font);

@@ -589,14 +589,18 @@
     "midnight_tip": "现在已是凌晨 {clock} 点\n今天是 {today}"
   },
   "ai_character": {
+    "baixiaoying": "百小应",
     "deepseek": "DeepSeek",
+    "hailuo": "海螺",
     "kimi": "Kimi",
     "wanzhi": "万知",
     "yuewen": "跃问",
     "zhipu": "智谱"
   },
   "ai_provider": {
+    "baixiaoying": "百川智能",
     "deepseek": "深度求索",
+    "hailuo": "MiniMax",
     "kimi": "月之暗面",
     "wanzhi": "零一万物",
     "yuewen": "阶跃星辰",

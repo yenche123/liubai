@@ -589,14 +589,18 @@
     "midnight_tip": "It's {clock} o'clock\nToday is {today}"
   },
   "ai_character": {
+    "baixiaoying": "Ying",
     "deepseek": "DeepSeek",
+    "hailuo": "Hailuo",
     "kimi": "Kimi",
     "wanzhi": "Wanzhi",
     "yuewen": "Yuewen",
     "zhipu": "Zhipu"
   },
   "ai_provider": {
+    "baixiaoying": "Baichuan",
     "deepseek": "DeepSeek",
+    "hailuo": "MiniMax",
     "kimi": "Moonshot",
     "wanzhi": "01.ai",
     "yuewen": "Stepfun",
