@@ -20,6 +20,9 @@ import type {
 import { showErrMsg } from "../../tools/show-msg";
 import type { DataPass, LiuErrReturn } from "~/requests/tools/types";
 import { createClientKey } from "../../tools/common-utils";
+import { getClientKey } from "../../tools/common-tools";
+import { fetchOAuth } from "../../tools/requests";
+import loginer from "../../tools/loginer";
 
 export function useWechatBind() {
   const rr = useRouteAndLiuRouter()
@@ -69,11 +72,14 @@ function listenContext(
   watch([rr.route, memberId], ([newV1, newV2]) => {
     if(newV1.name !== "wechat-bind") return
     const oAuthCode = newV1.query.code
+    const oAuthState = newV1.query.state
 
     if(valTool.isStringWithVal(oAuthCode)) {
       if(wbData.oAuthCode === oAuthCode) return
       wbData.oAuthCode = oAuthCode
-      handleOAuthCode(wbData)
+      if(valTool.isStringWithVal(oAuthState)) {
+        handleOAuthCode(wbData, oAuthState, rr)
+      }
     }
     else {
       handleWithoutCode(wbData, newV2)
@@ -84,7 +90,21 @@ function listenContext(
 
 function handleOAuthCode(
   wbData: WbData,
+  oAuthState: string,
+  rr: RouteAndLiuRouter,
 ) {
+
+  // 1. check out state
+  const onceData = localCache.getOnceData()
+  const oldState = onceData.wxGzhOAuthState
+  if(oldState !== oAuthState) {
+    console.warn("oAuthState 与 oldState 不匹配！！")
+    console.log("oldState: ", oldState)
+    console.log("newState: ", oAuthState)
+    return
+  }
+
+  // 2. decide which path to go
   const hasLogged = localCache.hasLoginWithBackend()
   if(hasLogged) {
     // 将当前帐号与 oAuthCode 绑定（即绑定微信）
@@ -92,7 +112,47 @@ function handleOAuthCode(
   }
   else {
     // 去登录
+    loginWithWeChat(wbData, oAuthState, rr)
+  }
+}
 
+
+async function loginWithWeChat(
+  wbData: WbData,
+  oAuthState: string,
+  rr: RouteAndLiuRouter,
+) {
+  // 1. get params
+  const { enc_client_key } = getClientKey()
+  const oAuthCode = wbData.oAuthCode
+  if(!enc_client_key || !oAuthCode) return
+
+  // 2. fetch
+  const res2 = await fetchOAuth(
+    "wx_gzh_oauth", 
+    oAuthCode, 
+    oAuthState, 
+    enc_client_key,
+  )
+
+  // 3. handle error
+  const code3 = res2.code
+  const data3 = res2.data
+  if(code3 !== "0000" || !data3) {
+    showErrMsg("login", res2)
+    handleErr(wbData, res2)
+    return
+  }
+
+  // 4. initialize user data
+  const res4 = await loginer.toLogin(rr, data3, {
+    autoRedirect: false,
+  })
+  console.warn("see login result: ")
+  console.log(res4)
+  if(res4) {
+    wbData.pageState = pageStates.OK
+    wbData.status = "success"
   }
 }
 

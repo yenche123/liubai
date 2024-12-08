@@ -170,7 +170,7 @@ async function enterFromWeChat(
   if(!valTool.isStringWithVal(code)) return
   if(!valTool.isStringWithVal(state)) return
 
-  // 1. switch via
+  // 1. switch "via"
   opData.via = "wechat"
 
   // 2. check out state
