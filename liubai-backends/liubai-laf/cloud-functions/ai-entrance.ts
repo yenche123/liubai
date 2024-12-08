@@ -267,8 +267,7 @@ export async function enter_ai(
 
   // 4.2 transcibe voice msg
   if(msg_type === "voice" && file_blob) {
-    // WIP
-    // SpeechToText.runFromBlob(file_blob)
+    
     return
   }
 
@@ -2052,7 +2051,7 @@ class ToolHandler {
   private _getAgreeAndEditLinks(assistantChatId: string) {
     const domain = getLiuDoman()
 
-    // WIP: agree page / compose page
+    // WIP: compose page
     const agreeLink = `${domain}/agree?chatId=${assistantChatId}`
     const editLink = `${domain}/compose?chatId=${assistantChatId}`
 
