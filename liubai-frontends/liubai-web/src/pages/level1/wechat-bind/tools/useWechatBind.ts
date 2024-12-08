@@ -20,9 +20,11 @@ import type {
 import { showErrMsg } from "../../tools/show-msg";
 import type { DataPass, LiuErrReturn } from "~/requests/tools/types";
 import { createClientKey } from "../../tools/common-utils";
-import { getClientKey } from "../../tools/common-tools";
+import { getClientKey, redirectToLoginPage } from "../../tools/common-tools";
 import { fetchOAuth } from "../../tools/requests";
 import loginer from "../../tools/loginer";
+import { getGlobalWx, invokeWxJsSdk } from "~/utils/third-party/weixin/handle-wx-js-sdk";
+import thirdLink from "~/config/third-link";
 
 export function useWechatBind() {
   const rr = useRouteAndLiuRouter()
@@ -30,9 +32,76 @@ export function useWechatBind() {
 
   listenContext(wbData, rr)
 
+  const onTapBtn1 = () => {
+    const s = wbData.status
+
+    // 1. back to weixin
+    if(s === "bound" || s === "logged") {
+      goBack(rr)
+      return
+    }
+
+    // 2. login in with weixin
+    redirectToWeChatOAuth(wbData)
+  }
+
+  const onTapBtn2 = () => {
+    // redirect to login page
+    redirectToLoginPage(rr)
+  }
+
   return {
     wbData,
+    onTapBtn1,
+    onTapBtn2,
   }
+}
+
+
+async function redirectToWeChatOAuth(
+  wbData: WbData,
+) {
+  // 1. get login data
+  let loginData = wbData.loginData
+  if(!loginData) {
+    const res1 = await fetchLoginData()
+    if(!res1.pass) return
+    loginData = res1.data
+  }
+  
+  // 2. get state & wxGzhAppid
+  const { state, wxGzhAppid } = loginData
+  if(!state || !wxGzhAppid) {
+    console.warn("state and wxGzhAppid are required")
+    return
+  }
+  localCache.setOnceData("wxGzhOAuthState", state)
+
+  // 3. construct redirect_uri
+  const redirect_uri = location.origin + "/wechat-bind"
+  const url = new URL(thirdLink.WX_GZH_OAUTH)
+  const sp = url.searchParams
+  sp.append("appid", wxGzhAppid)
+  sp.append("redirect_uri", redirect_uri)
+  sp.append("response_type", "code")
+  sp.append("scope", "snsapi_userinfo")
+  sp.append("state", state)
+  const link = url.toString() + `#wechat_redirect`
+  location.href = link
+}
+
+
+async function goBack(
+  rr: RouteAndLiuRouter,
+) {
+  const res1 = await invokeWxJsSdk(666)
+  if(!res1) {
+    rr.router.replace({ name: "index" })
+    return
+  }
+
+  const wx = getGlobalWx()
+  wx.closeWindow()
 }
 
 
@@ -107,7 +176,7 @@ function handleOAuthCode(
   // 2. decide which path to go
   const hasLogged = localCache.hasLoginWithBackend()
   if(hasLogged) {
-    // 将当前帐号与 oAuthCode 绑定（即绑定微信）
+    // WIP: 将当前帐号与 oAuthCode 绑定（即绑定微信）
 
   }
   else {
@@ -152,7 +221,8 @@ async function loginWithWeChat(
   console.log(res4)
   if(res4) {
     wbData.pageState = pageStates.OK
-    wbData.status = "success"
+    wbData.status = "logged"
+    invokeWxJsSdk()
   }
 }
 
@@ -220,8 +290,11 @@ async function checkBoundWhenLogged(
   const data1 = res1.data
   const hasBound = Boolean(data1.wx_gzh_openid)
   wbData.pageState = pageStates.OK
-  wbData.status = hasBound ? "success" : "waiting"
-  if(hasBound) return
+  wbData.status = hasBound ? "bound" : "waiting"
+  if(hasBound) {
+    invokeWxJsSdk()
+    return
+  }
 
   // 3. get login data for binding
   const res3 = await fetchLoginData()
