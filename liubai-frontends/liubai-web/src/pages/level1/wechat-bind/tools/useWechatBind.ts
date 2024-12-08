@@ -176,13 +176,40 @@ function handleOAuthCode(
   // 2. decide which path to go
   const hasLogged = localCache.hasLoginWithBackend()
   if(hasLogged) {
-    // WIP: 将当前帐号与 oAuthCode 绑定（即绑定微信）
-
+    // 将当前帐号与 oAuthCode 绑定（即绑定微信）
+    toBindWeChat(wbData, rr)
   }
   else {
     // 去登录
     loginWithWeChat(wbData, oAuthState, rr)
   }
+}
+
+async function toBindWeChat(
+  wbData: WbData,
+  rr: RouteAndLiuRouter,
+) {
+  const { oAuthCode } = wbData
+  if(!oAuthCode) return
+
+  // 1. fetch
+  const url = APIs.WECHAT_BIND
+  const w1 = {
+    operateType: "wechat-bind",
+    oauth_code: oAuthCode,
+  }
+  const res1 = await liuReq.request(url, w1)
+
+  // 2. handle error
+  if(res1.code !== "0000") {
+    const res2 = await showErrMsg("other", res1)
+    rr.router.replace({ name: "index" })
+    return
+  }
+  
+  wbData.pageState = pageStates.OK
+  wbData.status = "bound"
+  invokeWxJsSdk()
 }
 
 
@@ -325,11 +352,11 @@ async function fetchBound(
 ): Promise<DataPass<Res_OC_GetWeChat>> {
   // 1. fetch
   const url = APIs.OPEN_CONNECT
-  const w2 = {
+  const w1 = {
     operateType: "get-wechat",
     memberId,
   }
-  const res = await liuReq.request<Res_OC_GetWeChat>(url, w2)
+  const res = await liuReq.request<Res_OC_GetWeChat>(url, w1)
 
   // 2. handle error
   const code = res?.code

@@ -22,7 +22,6 @@ import type {
   Table_AllowList,
   UserLoginOperate,
   LiuErrReturn,
-  Wx_Res_GzhSnsUserInfo,
   UserWeChatGzh,
   Wx_Res_GzhUserInfo,
   MemberNotification,
@@ -58,6 +57,7 @@ import {
   getWxGzhUserInfo,
   getWxGzhUserOAuthAccessToken,
   valTool,
+  getWxGzhSnsUserInfo,
 } from "@/common-util"
 import { getNowStamp, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -96,9 +96,6 @@ const GOOGLE_OAUTH_ACCESS_TOKEN = "https://oauth2.googleapis.com/token"
 
 // Google 使用 accessToken 去获取用户信息
 const GOOGLE_API_USER = "https://www.googleapis.com/oauth2/v3/userinfo"
-
-// 微信公众号 OAuth2 使用 accessToken 去获取用户信息
-const WX_GZH_SNS_USERINFO = "https://api.weixin.qq.com/sns/userinfo"
 
 // 微信公众号 创建二维码
 const API_WECHAT_CREATE_QRCODE = "https://api.weixin.qq.com/cgi-bin/qrcode/create"
@@ -975,8 +972,8 @@ async function handle_wx_gzh_oauth(
 
   // 4. extract access_token, and so on
   const data4 = res3?.data
-  const access_token = data4?.access_token
-  if(!access_token) {
+  const user_access_token = data4?.access_token
+  if(!user_access_token) {
     console.warn("no access_token from wx gzh")
     console.log(res3)
     return { code: "E5004", errMsg: "no access_token from wx gzh" }
@@ -995,19 +992,12 @@ async function handle_wx_gzh_oauth(
   }
 
   // 5. get user info
-  const url5 = new URL(WX_GZH_SNS_USERINFO)
-  const sp5 = url5.searchParams
-  sp5.set("access_token", access_token)
-  sp5.set("openid", wx_gzh_openid)
-  sp5.set("lang", "en")
-  const link5 = url5.toString()
-  const res5 = await liuReq<Wx_Res_GzhSnsUserInfo>(link5, undefined, { method: "GET" })
-  const data5 = res5?.data
-
+  const data5 = await getWxGzhSnsUserInfo(wx_gzh_openid, user_access_token)
   if(!data5?.nickname) {
-    console.warn("no nickname from wx gzh")
-    console.log(res5)
-    return { code: "E5004", errMsg: "no nickname from wx gzh" }
+    return { 
+      code: "E5004", 
+      errMsg: "no nickname from wx gzh during wechat oauth2 login",
+    }
   }
 
   // 6. create userWeChatGzh
@@ -1603,7 +1593,7 @@ async function sign_up(
   return res4
 }
 
-async function handle_avatar(
+export async function handle_avatar(
   user: Table_User,
   thirdData: UserThirdData,
 ) {

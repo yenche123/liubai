@@ -58,6 +58,7 @@ import type {
   LiuAtomState,
   LiuStateConfig,
   SyncGetTable,
+  Wx_Res_GzhSnsUserInfo,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -136,6 +137,9 @@ const API_UNTAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchunta
 
 // @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
 const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
+
+// 微信公众号 OAuth2 使用 user's access_token 去获取用户信息
+const WX_GZH_SNS_USERINFO = "https://api.weixin.qq.com/sns/userinfo"
 
 // 微信公众号 OAuth2 使用 code 去换用户的 accessToken
 const WX_GZH_OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token"
@@ -2329,6 +2333,27 @@ export async function getWxGzhUserInfo(
   }
 
   return data1
+}
+
+export async function getWxGzhSnsUserInfo(
+  wx_gzh_openid: string,
+  user_access_token: string,
+) {
+  const url = new URL(WX_GZH_SNS_USERINFO)
+  const sp = url.searchParams
+  sp.set("access_token", user_access_token)
+  sp.set("openid", wx_gzh_openid)
+  sp.set("lang", "en")
+  const link = url.toString()
+  const res = await liuReq<Wx_Res_GzhSnsUserInfo>(link, undefined, { method: "GET" })
+  const data = res?.data
+
+  if(!data?.nickname) {
+    console.warn("getWxGzhSnsUserInfo failed")
+    console.log(res)
+  }
+
+  return data
 }
 
 // tag bound user for language

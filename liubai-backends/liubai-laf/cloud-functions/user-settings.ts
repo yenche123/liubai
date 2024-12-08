@@ -9,6 +9,11 @@ import {
   verifyToken,
   tagWxUserLang,
   LiuStripe,
+  valTool,
+  getWxGzhUserOAuthAccessToken,
+  getWxGzhSnsUserInfo,
+  checkAndGetWxGzhAccessToken,
+  getWxGzhUserInfo,
 } from '@/common-util'
 import { 
   type MongoFilter,
@@ -21,10 +26,13 @@ import {
   type Table_Token,
   Sch_LocalTheme,
   Sch_LocalLocale,
+  type LiuErrReturn,
+  type Table_Member,
 } from '@/common-types'
 import { getNowStamp, DAY } from "@/common-time"
 import * as vbot from "valibot"
 import { getCurrentLocale } from '@/common-i18n'
+import { handle_avatar } from '@/user-login'
 
 const db = cloud.database()
 
@@ -59,12 +67,121 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "set") {
     res = await handle_set(vRes, body)
   }
+  else if(oT === "wechat-bind") {
+    res = await handle_wechat_bind(vRes, body)
+  }
 
   const stamp2 = getNowStamp()
   const diffS = stamp2 - stamp1
-  // console.log(`调用 user-settings 耗时: ${diffS}ms`)
+  console.log(`调用 user-settings for ${oT} 耗时: ${diffS}ms`)
 
   return res
+}
+
+
+async function handle_wechat_bind(
+  vRes: VerifyTokenRes_B,
+  body: Record<string, any>,
+) {
+  // 1. get params
+  const { oauth_code } = body
+  const res1 = valTool.isStringWithVal(oauth_code)
+  if(!res1) {
+    return { code: "E4000", errMsg: "oauth_code is required" }
+  }
+
+  // 2. get user's accessToken
+  const res2 = await getWxGzhUserOAuthAccessToken(oauth_code)
+  const code2 = res2?.code
+  if(code2 !== "0000") {
+    return res2 as LiuErrReturn
+  }
+
+  // 3. extract access_token, and so on
+  const data3 = res2?.data
+  console.log("data3 in handle_wechat_bind: ")
+  console.log(data3)
+  const user_access_token = data3?.access_token
+  if(!user_access_token) {
+    console.warn("no access_token from wx gzh")
+    console.log(res2)
+    return { code: "E5004", errMsg: "no access_token from wx gzh" }
+  }
+  const wx_gzh_openid = data3?.openid
+  if(!wx_gzh_openid) {
+    console.warn("no openid from wx gzh")
+    console.log(res2)
+    return { code: "E5004", errMsg: "no openid from wx gzh" }
+  }
+  const is_snapshotuser = data3?.is_snapshotuser
+  if(is_snapshotuser === 1) {
+    console.warn("the user is a snapshot user")
+    console.log(res2)
+    return { code: "U0007", errMsg: "the user is a snapshot user" }
+  }
+
+  // 4. get user's info
+  const data4 = await getWxGzhSnsUserInfo(wx_gzh_openid, user_access_token)
+  console.log("data4 in handle_wechat_bind: ")
+  console.log(data4)
+  if(!data4?.nickname) {
+    return { 
+      code: "E5004", 
+      errMsg: "no nickname from wx gzh during wechat bind",
+    }
+  }
+
+  // 5. find user by wx_gzh_openid
+  const uCol = db.collection("User")
+  const res5 = await uCol.where({ wx_gzh_openid }).get<Table_User>()
+  const list5 = res5.data
+
+  // 6. check out if the wx_gzh_openid has been bound
+  let hasBound = false
+  for(let i=0; i<list5.length; i++) {
+    const v = list5[i]
+    if(v.oState === "NORMAL") {
+      hasBound = true
+    }
+  }
+  if(hasBound) {
+    return { code: "US002", errMsg: "wx_gzh_openid has been bound" }
+  }
+
+  // 7. get current user
+  const userId = vRes.userData._id
+  const res7 = await uCol.doc(userId).get<Table_User>()
+  const user = res7.data
+  if(!user || user.oState !== "NORMAL") {
+    console.warn("user not found in handle_wechat_bind: ")
+    console.log(user)
+    return { code: "E4004", errMsg: "user not found" }
+  }
+
+  // 8. update user
+  const thirdData = user.thirdData ?? {}
+  const wx_gzh = thirdData.wx_gzh ?? {}
+  wx_gzh.nickname = data4.nickname
+  wx_gzh.headimgurl = data4.headimgurl
+  thirdData.wx_gzh = wx_gzh
+
+  console.log("thirdData in handle_wechat_bind: ")
+  console.log(thirdData)
+
+  const u8: Partial<Table_User> = {
+    wx_gzh_openid,
+    thirdData,
+    updatedStamp: getNowStamp(),
+  }
+  const res8 = await uCol.doc(userId).update(u8)
+  user.thirdData = thirdData
+  user.wx_gzh_openid = wx_gzh_openid
+  console.log("update user res8 in handle_wechat_bind: ")
+  console.log(res8)
+
+  afterHandleWechatBind(user)
+
+  return { code: "0000" }
 }
 
 
@@ -268,7 +385,6 @@ async function getStripeCustomerPortal(
 }
 
 
-
 async function handle_enter(
   ctx: FunctionContext,
   vRes: VerifyTokenRes_B,
@@ -326,6 +442,91 @@ async function handle_latest(
     data: newData
   }
   return newRes
+}
+
+// handle avatar after binding wechat
+async function afterHandleWechatBind(
+  user: Table_User,
+) {
+  // 1. get param
+  const { wx_gzh_openid, thirdData } = user
+  if(!wx_gzh_openid || !thirdData) return
+  const userId = user._id
+  const wx_gzh_access_token = await checkAndGetWxGzhAccessToken()
+  if(!wx_gzh_access_token) return
+  const data1 = await getWxGzhUserInfo(wx_gzh_openid)
+  if(!data1) return
+
+  console.log("data1 in afterHandleWechatBind: ")
+  console.log(data1)
+
+  // 2. set wx_gzh other data
+  const wx_gzh = thirdData.wx_gzh ?? {}
+  let hasUserChanged = false
+  if(wx_gzh.subscribe !== data1.subscribe) {
+    hasUserChanged = true
+    wx_gzh.subscribe = data1.subscribe
+  }
+  if(wx_gzh.language !== data1.language) {
+    hasUserChanged = true
+    wx_gzh.language = data1.language
+  }
+  if(wx_gzh.subscribe_scene !== data1.subscribe_scene) {
+    hasUserChanged = true
+    wx_gzh.subscribe_scene = data1.subscribe_scene
+  }
+  if(wx_gzh.subscribe_time !== data1.subscribe_time) {
+    hasUserChanged = true
+    wx_gzh.subscribe_time = data1.subscribe_time
+  }
+  if(hasUserChanged) {
+    const u2: Partial<Table_User> = {
+      thirdData,
+      updatedStamp: getNowStamp(),
+    }
+    const uCol = db.collection("User")
+    await uCol.doc(userId).update(u2)
+  }
+
+  // 3. get my personal member 
+  const mCol = db.collection("Member")
+  const w3: Partial<Table_Member> = {
+    user: userId,
+    spaceType: "ME",
+  }
+  const res3 = await mCol.where(w3).getOne<Table_Member>()
+  const member = res3.data
+  if(!member) {
+    console.warn("there is no member in afterHandleWechatBind")
+    console.log(res3)
+    console.log(w3)
+    return
+  }
+
+  console.log("member in afterHandleWechatBind: ")
+  console.log(member)
+
+  // 4. check out wx_gzh_toggle
+  const memberId = member._id
+  const noti = member.notification ?? {}
+  const oldToggle = noti.wx_gzh_toggle ?? false
+  const newToggle = Boolean(data1.subscribe === 1)
+  if(oldToggle !== newToggle) {
+    noti.wx_gzh_toggle = newToggle
+    const u4: Partial<Table_Member> = {
+      notification: noti,
+      updatedStamp: getNowStamp(),
+    }
+    await mCol.doc(memberId).update(u4)
+  }
+
+  // 5. check out avatar
+  const myAvatarUrl = member.avatar?.url
+  if(!myAvatarUrl) {
+    handle_avatar(user, thirdData)
+  }
+  
+  return true
 }
 
 

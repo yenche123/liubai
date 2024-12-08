@@ -11,6 +11,7 @@ export default {
   USER_LATEST: d + `user-settings`,
   USER_SET: d + `user-settings`,
   USER_MEMBERSHIP: d + `user-settings`,
+  WECHAT_BIND: d + `user-settings`,
   SUBSCRIBE_PLAN: d + `subscribe-plan`,
   REQUEST_REFUND: d + `subscribe-plan`,
   UPLOAD_FILE: d + `file-set`,
