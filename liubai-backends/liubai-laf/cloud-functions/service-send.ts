@@ -14,6 +14,7 @@ import type {
   Wx_Gzh_Send_Text,
   Wx_Param_Msg_Templ_Send,
   Wx_Res_Common,
+  LiuErrReturn,
 } from "@/common-types"
 import { 
   getNowStamp, 
@@ -191,10 +192,15 @@ export class LiuTencentSMS {
     if(!client) {
       return { code: "E5001", errMsg: "no tencent sms client while sending" }
     }
-    const res = await client.SendSms(param)
-    console.log("sending result of tencent sms >>>")
-    console.log(res)
-    return { code: "0000", data: res }
+    try {
+      const res = await client.SendSms(param)
+      return { code: "0000", data: res }
+    }
+    catch(err) {
+      console.warn("tencent sms sending failed")
+      console.log(err)
+    }
+    return { code: "E5004", errMsg: "client.SendSms got an error" }
   }
 
   /**
@@ -231,12 +237,17 @@ export class LiuTencentSMS {
     }
 
     // 3. to fetch
-    const res = await client.PullSmsSendStatusByPhoneNumber(param)
-
-    console.log("retrieving result of tencent sms >>>")
-    console.log(res)
-
-    return { code: "0000", data: res }
+    try {
+      const res = await client.PullSmsSendStatusByPhoneNumber(param)
+      console.log("retrieving result of tencent sms >>>")
+      console.log(res)
+      return { code: "0000", data: res }
+    }
+    catch(err) {
+      console.warn("tencent sms retrieving failed")
+      console.log(err)  
+    }
+    return { code: "E5004", errMsg: "client.PullSmsSendStatusByPhoneNumber got an error" }
   }
 
 }
@@ -342,6 +353,30 @@ export class LiuResend {
 
 }
 
+/**
+ * check out if sms has been sent too much
+ * @param regionCode don't add "+" to regionCode, just only the number
+ * @param localNumber 
+ */
+export async function checkIfSmsSentTooMuch(
+  regionCode: string,
+  localNumber: string,
+) {
+  // 1. get credential
+  const now1 = getNowStamp()
+  const ONE_MIN_AGO = now1 - MINUTE
+  const w1 = {
+    infoType: "sms-code",
+    phoneNumber: `${regionCode}_${localNumber}`,
+    insertedStamp: _.gte(ONE_MIN_AGO),
+  }
+  const res1 = await db.collection("Credential").where(w1).get<Table_Credential>()
+  const list1 = res1.data ?? []
+  const firRes = list1[0]
+  if(!firRes) return false
+  return true
+}
+
 
 /** 检查是否发送过于频繁 */
 export async function checkIfEmailSentTooMuch(
@@ -362,7 +397,7 @@ export async function checkIfEmailSentTooMuch(
   if(!firRes) return
 
   // 2. retrieve email
-  const rData: LiuRqReturn = {
+  const rData: LiuErrReturn = {
     code: "E4003",
     errMsg: "sending to the email address too much"
   }

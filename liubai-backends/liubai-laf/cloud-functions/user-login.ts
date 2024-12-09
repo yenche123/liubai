@@ -34,6 +34,8 @@ import type {
   LiuSESChannel,
   Partial_Id,
   Table_LoginState,
+  LiuTencentSMSParam,
+  DataPass,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -65,12 +67,15 @@ import {
   createLoginState,
   createOpenId,
   createSignInCredential,
+  createSmsCode,
 } from "@/common-ids"
 import { 
   checkIfEmailSentTooMuch, 
+  checkIfSmsSentTooMuch, 
   getActiveEmailCode,
   LiuResend,
   LiuTencentSES,
+  LiuTencentSMS,
   WxGzhSender,
 } from "@/service-send"
 import { 
@@ -150,6 +155,12 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "email_code") {
     res = await handle_email_code(ctx, body)
   }
+  else if(oT === "phone") {
+    res = await handle_phone(ctx, body)
+  }
+  else if(oT === "phone_code") {
+    res = await handle_phone_code(ctx, body)
+  }
   else if(oT === "google_credential") {
     res = await handle_google_one_tap(ctx, body)
   }
@@ -168,6 +179,239 @@ export async function main(ctx: FunctionContext) {
 
   return res
 }
+
+/***************************** Sign in with Phone Number *************************/
+async function handle_phone(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+) {
+  // 1. get params
+  const enc_phone = body.enc_phone
+  if(!enc_phone) {
+    return { code: "E4000", errMsg: "no phone" }
+  }
+
+  // 1.2 check out system params
+  const _env = process.env
+  const SmsSdkAppId = _env.LIU_TENCENT_SMS_SDKAPPID
+  const SignName = _env.LIU_TENCENT_SMS_SIGNNAME
+  const TemplateId = _env.LIU_TENCENT_SMS_TEMPLATEID_1
+  if(!SmsSdkAppId || !SignName || !TemplateId) {
+    console.warn("there is no SmsSdkAppId or SignName or TemplateId in test_sms")
+    return { code: "E5001", errMsg: "there is no SmsSdkAppId or SignName or TemplateId in test_sms" }
+  }
+
+  // 2. decrypt
+  const res2 = getPhoneData(enc_phone)
+  if(!res2.pass) return res2.err
+  const { regionCode, localNumber } = res2.data
+
+  // 3. check out state
+  const state = body.state
+  const res0 = await LoginStater.check(state)
+  if(res0) return res0
+
+  // 4. check frequency
+  const res5 = await checkIfSmsSentTooMuch(regionCode, localNumber)
+  if(res5) {
+    return { code: "U0010", errMsg: "too much sms sent" }
+  }
+
+  // 5. create sms code
+  const phoneNumber = `${regionCode}_${localNumber}`
+  const smsCode = createSmsCode()
+  const expireStamp = getNowStamp() + 5 * MINUTE
+  const b6 = getBasicStampWhileAdding()
+  const data6: Partial_Id<Table_Credential> = {
+    ...b6,
+    credential: smsCode,
+    infoType: "sms-code",
+    expireStamp,
+    phoneNumber,
+  }
+  const cCol = db.collection("Credential")
+  const res6 = await cCol.add(data6)
+  const cId = getDocAddId(res6)
+  if(!cId) {
+    return { code: "E5000", errMsg: "creating credential failed"}
+  }
+
+  // 6. send sms
+  const phone7 = `+${regionCode}${localNumber}`
+  const param7: LiuTencentSMSParam = {
+    SmsSdkAppId,
+    SignName,
+    TemplateId,
+    TemplateParamSet: [smsCode],
+    PhoneNumberSet: [phone7],
+  }
+  const res7 = await LiuTencentSMS.send(param7)
+  
+  // 7. handle result
+  if(res7.data) {
+    const u8: Partial<Table_Credential> = {
+      send_channel: "tencent-sms",
+      sms_sent_result: res7.data,
+    }
+    cCol.doc(cId).update(u8)
+
+    // console.log for debug
+    afterSms(phone7)
+  }
+  else {
+    return res7
+  }
+
+  return { code: "0000" }
+}
+
+/**
+ * take a look at tencent sms
+ * @param phoneWithPlus the format is like "+86132xxxxyyyy"
+ * @returns 
+ */
+async function afterSms(phoneWithPlus: string) {
+  const res = await LiuTencentSMS.retrieve(phoneWithPlus)
+  const { code, data } = res
+  if(code !== "0000" || !data) return
+  const list = data.PullSmsSendStatusSet ?? []
+  const len1 = list.length
+  if(len1 < 1) return
+  const lastItem = list[len1 - 1]
+  console.log("after sms: ")
+  console.log(lastItem)
+  if(lastItem.ReportStatus === "FAIL") {
+    console.warn("figure out a problem with tencent sms")
+    console.log(lastItem)
+  }
+}
+
+
+async function handle_phone_code(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+): Promise<LiuRqReturn<Res_UserLoginNormal>> {
+  // 1. get params
+  const enc_phone = body.enc_phone
+  if(!enc_phone) {
+    return { code: "E4000", errMsg: "no phone" }
+  }
+
+  // 2. get phone data
+  const res2 = getPhoneData(enc_phone)
+  if(!res2.pass) return res2.err
+  const { regionCode, localNumber } = res2.data
+  const phoneNumber = `${regionCode}_${localNumber}`
+
+  // 3. get phone_code
+  const phone_code = body.phone_code
+  if(!phone_code) {
+    return { code: "E4000", errMsg: "no phone code" }
+  }
+
+  // 4. check client_key
+  const { client_key, code: code4, errMsg: errMsg4 } = getClientKey(body.enc_client_key)
+  if(!client_key || code4) {
+    return { code: code4 ?? "E5001", errMsg: errMsg4 }
+  }
+
+  // 5. query
+  const errReturnData = {
+    code: "E4003",
+    errMsg: "the phone_code is wrong or expired, or checking is too much"
+  }
+  const w5: Partial<Table_Credential> = {
+    phoneNumber,
+    infoType: "sms-code",
+  }
+  const cCol = db.collection("Credential")
+  const q5 = cCol.where(w5).orderBy("insertedStamp", "desc")
+  const res5 = await q5.limit(1).get<Table_Credential>()
+  const firstCre = res5.data[0]
+  if(!firstCre) return errReturnData
+
+  // 6. check out verifyNum
+  const { verifyNum, insertedStamp, credential, expireStamp } = firstCre
+  const verifyData = canPassByExponentialDoor(insertedStamp, verifyNum)
+  if(!verifyData.pass) {
+    console.warn("checking credential too much")
+    return errReturnData
+  }
+
+  // 7. check out credential
+  if(credential !== phone_code) {
+    console.warn("the phone_code is not equal to credential")
+    console.log("phone: ", phoneNumber)
+    console.log("phone_code: ", phone_code)
+    console.log("credential: ", credential)
+    await addVerifyNum(firstCre._id, verifyData.verifiedNum)
+    return errReturnData
+  }
+
+  // 8. chec expireStamp
+  const now8 = getNowStamp()
+  if(now8 > expireStamp) {
+    console.warn("the phone_code is expired")
+    return errReturnData
+  }
+
+  // 9. remove credential
+  cCol.doc(firstCre._id).remove()
+
+  // 10. sign in/up
+  const res10 = await signInUpViaPhone(ctx, body, phoneNumber, client_key)
+  return res10  
+}
+
+interface PhoneData {
+  regionCode: string
+  localNumber: string
+}
+
+function getPhoneData(enc_phone: string): DataPass<PhoneData> {
+  // 1. decrypt
+  const {
+    plainText: dec_phone,
+    code: dec_code,
+    errMsg: dec_errMsg,
+  } = decryptWithRSA(enc_phone)
+  if(dec_code || !dec_phone) {
+    return {
+      pass: false,
+      err: { code: dec_code ?? "E5001", errMsg: dec_errMsg },
+    }
+  }
+
+  // 3. check out format of phone number
+  console.log(`phone: ${dec_phone}`)
+  const tmpList3 = dec_phone.split("_")
+  const regionCode = tmpList3[0]
+  const localNumber = tmpList3[1]
+  if(regionCode !== "86") {
+    return {
+      pass: false,
+      err: { code: "U0008", errMsg: "only support +86" },
+    }
+  }
+  if(!localNumber || localNumber.length !== 11) {
+    return {
+      pass: false,
+      err: { code: "U0009", errMsg: "invalid phone" },
+    }
+  }
+
+  console.log(`regionCode: ${regionCode}`)
+  console.log(`localNumber: ${localNumber}`)
+
+  return {
+    pass: true,
+    data: {
+      regionCode,
+      localNumber,
+    }
+  }
+}
+
 
 
 /***************************** Sign in with credential_2 *************************/
@@ -1166,6 +1410,31 @@ async function signInUpViaEmail(
   return res3
 }
 
+async function signInUpViaPhone(
+  ctx: FunctionContext,
+  body: Record<string, string>,
+  phone: string,
+  client_key?: string,
+): Promise<LiuRqReturn<Res_UserLoginNormal>> {
+  const res1 = await findUserByPhone(phone)
+  // error
+  if(res1.type === 1) {
+    return res1.rqReturn
+  }
+
+  // login
+  if(res1.type === 2) {
+    const res2 = await sign_in(ctx, body, res1.userInfos, { client_key })
+    return res2
+  }
+
+  // register
+  const res3 = await sign_up(ctx, body, { phone }, client_key)
+  return res3
+}
+
+
+
 /*************************** 登录 ************************/
 interface SignInOpt {
   client_key?: string
@@ -1939,11 +2208,20 @@ async function findUserByEmail(
 
   const w = { email }
   const res = await db.collection("User").where(w).get<Table_User>()
-  // console.log("findUserByEmail res ----->")
-  // console.log("res.code: ", res.code)
-  // console.log("res.data: ", res.data)
-  // console.log("res.ok: ", res.ok)
-  // console.log(" ")
+  const list = res.data
+  const res2 = await handleUsersFound(list)
+  return res2
+}
+
+/**
+ * find user by phone number
+ * @param phone the format is like "86_132xxxxxxxx"
+ */
+async function findUserByPhone(
+  phone: string,
+) {
+  const uCol = db.collection("User")
+  const res = await uCol.where({ phone }).get<Table_User>()
   const list = res.data
   const res2 = await handleUsersFound(list)
   return res2

@@ -20,6 +20,7 @@ type LimitType = "allowUppercase" | "onlyUppercase" | "onlyNumber" | "UppercaseA
 
 interface CreateRandomOpt {
   no_l_o?: boolean
+  custom_alphabet?: string
 }
 
 // 创建随机字符串
@@ -43,6 +44,10 @@ export function createRandom(
   }
   else if(limitType === "onlyLowercase") {
     alphabet = abc
+  }
+  
+  if(opt?.custom_alphabet) {
+    alphabet = opt.custom_alphabet
   }
 
   if(opt?.no_l_o) {
@@ -103,6 +108,25 @@ export function createEmailCode() {
   randomString += createRandom(4, "onlyNumber")
 
   return randomString
+}
+
+export function createSmsCode() {
+  let code = ""
+  let runTimes = 0
+  const custom_alphabet = "012356789"
+  while(code.length < 6) {
+    runTimes++
+    if(runTimes > 50) break
+    const r = createRandom(1, undefined, { custom_alphabet })
+    if(code.length < 2) {
+      code += r
+      continue
+    }
+    const hasDoubleChar = code.endsWith(`${r}${r}`)
+    if(hasDoubleChar) continue
+    code += r
+  }
+  return code
 }
 
 

@@ -1802,6 +1802,8 @@ export interface Res_ULN_User extends LiuSpaceAndMember {
 }
 
 export type UserLoginOperate = "init" | "email" | "email_code" 
+  | "phone"
+  | "phone_code"
   | "github_oauth" 
   | "google_oauth"
   | "wx_gzh_oauth"
