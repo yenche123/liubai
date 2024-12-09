@@ -244,7 +244,7 @@ export const wechatLang: LangAtom = {
     "welcome_2": "欢迎关注留白记事！\n\n留白记事 = 备忘录📝 + 日历📆 + 任务📌 + 待办清单📂\n\n若你还没有体验资格，可以在这里回复你的邮箱，稍后将你加入哦！",
     "already_bound": "当前微信已绑定帐号 {account}\n请先在原帐号上解绑后，再重新扫码。",
     "success_1": "绑定成功🎉\n\n小诀窍：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
-    "login_first": "尚未登录！<a href='{LIU_DOMAIN}/connect/wechat'>请先登录</a>",  // TODO: link to wechat-bind
+    "login_first": "尚未登录！\n欢迎使用<a href='{LIU_DOMAIN}/wechat-bind'>微信一键登录</a>",
     "video_unsupported": "[暂不支持发送视频消息]",
     "voice_unsupported": "🚧 语音输入仍在开发中",
   },
@@ -253,7 +253,7 @@ export const wechatLang: LangAtom = {
     "welcome_2": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n若你還沒有體驗資格，可以在此處回覆你的 email，稍後將你加入喔！",
     "already_bound": "當前微信已綁定帳號 {account}\n請先在原帳號上解綁後，再重新掃描 QR Code",
     "success_1": "綁定成功🎉\n\n小訣竅：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
-    "login_first": "尚未登入! <a href='{LIU_DOMAIN}/connect/wechat'>請先登入</a>",  // TODO: link to wechat-bind
+    "login_first": "尚未登入! \n歡迎使用<a href='{LIU_DOMAIN}/wechat-bind'>微信一鍵登入</a>",
     "video_unsupported": "[暫不支援影片訊息]",
     "voice_unsupported": "🚧 語音訊息仍在開發中",
   },
@@ -262,7 +262,7 @@ export const wechatLang: LangAtom = {
     "welcome_2": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nIf you don't have access to Liubai, you can reply your email here, and we will add you later.",
     "already_bound": "Current Wechat has already bound account {account}\nPlease unbind it from the original account first, then re-scan the QR code.",
     "success_1": "Binding successful🎉\n\nTip: <a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>How to avoid missing reminders</a>",
-    "login_first": "Not logged in! <a href='{LIU_DOMAIN}/connect/wechat'>Please login first</a>",  // TODO: link to wechat-bind
+    "login_first": "Not logged in yet!\nWelcome to <a href='{LIU_DOMAIN}/wechat-bind'>Login via WeChat</a>",
     "video_unsupported": "[Videos are not supported to send]",
     "voice_unsupported": "🚧 Voice message is still in development",
   }

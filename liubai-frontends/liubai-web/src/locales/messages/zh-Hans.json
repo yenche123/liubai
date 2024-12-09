@@ -213,7 +213,9 @@
     "logged": "登录成功",
     "wechat_one_login": "微信一键登录",
     "bind_wechat": "绑定微信",
-    "other_way": "其他登录方式"
+    "other_way": "其他登录方式",
+    "bind_instantly": "立即绑定",
+    "wechat_login": "微信登录"
   },
   "tip": {
     "tip": "提示",

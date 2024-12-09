@@ -52,10 +52,10 @@ async function get_wxjssdk_config(
   const now = getNowStamp()
   const timestamp = Math.floor(now / 1000)
 
-  console.log("jsapi_ticket: ", jsapi_ticket)
-  console.log("nonceStr: ", nonceStr)
-  console.log("timestamp: ", timestamp)
-  console.log("url: ", url)
+  // console.log("jsapi_ticket: ", jsapi_ticket)
+  // console.log("nonceStr: ", nonceStr)
+  // console.log("timestamp: ", timestamp)
+  // console.log("url: ", url)
 
   // 4. calculate signature
   const str = `jsapi_ticket=${jsapi_ticket}&noncestr=${nonceStr}&timestamp=${timestamp}&url=${url}`

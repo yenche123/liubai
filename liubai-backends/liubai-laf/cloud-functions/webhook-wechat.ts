@@ -996,7 +996,7 @@ async function getUserByWxGzhOpenid(wx_gzh_openid: string) {
 
   // check out login or not
   const user4 = res3.data
-  if(!user4) {
+  if(!user4 || user4.oState !== "NORMAL") {
     const { t: t4 } = useI18n(wechatLang)
     const text4 = t4("login_first")
     await sendText(wx_gzh_openid, text4)

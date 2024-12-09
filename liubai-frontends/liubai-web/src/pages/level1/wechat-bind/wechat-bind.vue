@@ -28,13 +28,14 @@ const { t } = useI18n()
             class="ap-icon"
             :cover-fill-stroke="false"
           ></svg-icon>
-          <div class="ap-div-icon"></div>
+          <div v-else class="ap-div-icon"></div>
         </div>
 
         <div class="ap-title">
           <span v-if="wbData.status === 'bound'">{{ t('login.bound') }}</span>
           <span v-else-if="wbData.status === 'logged'">{{ t('login.logged') }}</span>
-          <spam v-else>{{ t('hello.appName') }}</spam>
+          <span v-else-if="wbData.status === 'logout'">{{ t('login.wechat_login') }}</span>
+          <span v-else>{{ t('login.bind_wechat') }}</span>
         </div>
 
         <div class="ap-btn-container">
@@ -42,7 +43,7 @@ const { t } = useI18n()
           <!-- Main Button -->
           <custom-btn class="ap-btn ap-ok-btn" @click="onTapBtn1">
             <span v-if="wbData.status === 'logout'">{{ t('login.wechat_one_login') }}</span>
-            <span v-else-if="wbData.status === 'waiting'">{{ t('login.bind_wechat') }}</span>
+            <span v-else-if="wbData.status === 'waiting'">{{ t('login.bind_instantly') }}</span>
             <span v-else>{{ t('common.back') }}</span>
           </custom-btn>
 

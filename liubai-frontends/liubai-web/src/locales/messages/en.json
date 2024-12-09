@@ -212,8 +212,10 @@
     "bound": "Succeed to Bind",
     "logged": "Succeed to Login",
     "wechat_one_login": "Continue with WeChat",
-    "bind_wechat": "Bind WeChat",
-    "other_way": "Other Method"
+    "bind_wechat": "WeChat Binding",
+    "other_way": "Other Method",
+    "bind_instantly": "Bind Now",
+    "wechat_login": "Login via WeChat"
   },
   "tip": {
     "tip": "TIP",
