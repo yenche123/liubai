@@ -44,6 +44,8 @@ const dexieIdxs = {
     "*tagIds",
     "*tagSearched",
     "stateId",
+    "stateStamp",
+    "[oState+infoType+stateId+stateStamp]",
     "editedStamp",
     "removedStamp",
   ],
