@@ -905,6 +905,14 @@ export interface LiuTencentSESParam extends LiuSendEmailsBase {
   }
 }
 
+export interface LiuTencentSMSParam {
+  SmsSdkAppId: string
+  SignName: string
+  TemplateId: string
+  TemplateParamSet?: string[]
+  PhoneNumberSet: string[]
+}
+
 
 export interface SubscriptionStripe {
   isOn: BaseIsOn
@@ -1489,6 +1497,9 @@ export interface Table_Credential extends BaseTable {
 
   stripeCheckoutSession?: Stripe.Checkout.Session
   meta_data?: CredentialMetaData
+  phoneNumber?: string
+
+  sms_sent_result?: Record<string, any>
 }
 
 /** 订阅方案表 */

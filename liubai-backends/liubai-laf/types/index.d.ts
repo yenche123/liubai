@@ -111,9 +111,16 @@ declare global {
       LIU_TENCENTCLOUD_SECRET_ID?: string    // 腾讯云的 secret id
       LIU_TENCENTCLOUD_SECRET_KEY?: string   // 腾讯云的 secret key
 
-      // 腾讯云 SES
+      // 腾讯云 SES（邮件）
       LIU_TENCENT_SES_REGION?: string        // 腾讯云 SES 所属的地域，有值 "ap-guangzhou" / "ap-hongkong"
       LIU_TENCENT_SES_FROM_EMAIL?: string    // 腾讯云 SES 的发件邮箱
+
+      // 腾讯云 SMS（短信）
+      LIU_TENCENT_SMS_REGION?: string        // 腾讯云 SMS 所属的地域，有值 "ap-guangzhou"
+      LIU_TENCENT_SMS_SDKAPPID?: string
+      LIU_TENCENT_SMS_APPKEY?: string
+      LIU_TENCENT_SMS_SIGNNAME?: string      // 签名内容，like "留白记事公众号"
+      LIU_TENCENT_SMS_TEMPLATEID_1?: string  // 登录时的短信模板
 
       // 支付宝
       LIU_ALIPAY_APP_ID?: string

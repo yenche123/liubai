@@ -8,6 +8,7 @@ import type {
   LiuSendEmailsBase,
   LiuResendEmailsParam,
   LiuTencentSESParam,
+  LiuTencentSMSParam,
   Table_Credential,
   Wx_Gzh_Send_Msg,
   Wx_Gzh_Send_Text,
@@ -17,10 +18,12 @@ import type {
 import { 
   getNowStamp, 
   MINUTE, 
+  DAY,
 } from "@/common-time"
 import { createEmailCode } from '@/common-ids'
 import { LiuDateUtil, liuReq } from '@/common-util'
 import { ses as TencentSES } from "tencentcloud-sdk-nodejs-ses"
+import { sms as TencentSMS } from "tencentcloud-sdk-nodejs-sms"
 
 const db = cloud.database()
 const _ = db.command
@@ -41,7 +44,7 @@ function checkEmailParam(param: LiuSendEmailsBase) {
 }
 
 
-/** package Tencent Simplet Email Service (SES) */
+/** package Tencent Simple Email Service (SES) */
 export class LiuTencentSES {
   static _getInstance() {
     const _env = process.env
@@ -151,6 +154,89 @@ export class LiuTencentSES {
     }
 
     return { code: "E5001", errMsg: "it's not as expected in retrieveEmail" }
+  }
+
+}
+
+/** package Tencent SMS */
+export class LiuTencentSMS {
+
+  static _getInstance() {
+    const _env = process.env
+    const secretId = _env.LIU_TENCENTCLOUD_SECRET_ID
+    const secretKey = _env.LIU_TENCENTCLOUD_SECRET_KEY
+    if(!secretId || !secretKey) {
+      console.warn("secretId and secretKey of tencent cloud are required......")
+      return
+    }
+    const region = _env.LIU_TENCENT_SMS_REGION
+    if(!region) {
+      console.warn("LIU_TENCENT_SMS_REGION is required......")
+      return
+    }
+
+    const smsClient = TencentSMS.v20210111.Client
+    const client = new smsClient({
+      credential: {
+        secretId,
+        secretKey,
+      },
+      region,
+    })
+    return client
+  }
+
+  static async send(param: LiuTencentSMSParam) {
+    const client = this._getInstance()
+    if(!client) {
+      return { code: "E5001", errMsg: "no tencent sms client while sending" }
+    }
+    const res = await client.SendSms(param)
+    console.log("sending result of tencent sms >>>")
+    console.log(res)
+    return { code: "0000", data: res }
+  }
+
+  /**
+   * get sending status about a phone number
+   * @param phoneNumber like "+86132xxxxyyyy"
+   * @param smsSdkAppId 
+   * @returns 
+   */
+  static async retrieve(
+    phoneNumber: string,
+    smsSdkAppId?: string,
+  ) {
+    // 1. get param
+    if(!smsSdkAppId) {
+      smsSdkAppId = process.env.LIU_TENCENT_SMS_SDKAPPID
+      if(!smsSdkAppId) {
+        return { code: "E5001", errMsg: "no smsSdkAppId while retrieving" }
+      }
+    }
+    const client = this._getInstance()
+    if(!client) {
+      return { code: "E5001", errMsg: "no tencent sms client while retrieving" }
+    }
+
+    // 2. construct param
+    const beginStamp = getNowStamp() - DAY
+    const BeginTime = Math.floor(beginStamp / 1000)
+    const param = {
+      SmsSdkAppId: smsSdkAppId,
+      PhoneNumber: phoneNumber,
+      BeginTime,
+      Offset: 0,
+      Limit: 10,
+    }
+
+    // 3. to fetch
+    const res = await client.PullSmsSendStatusByPhoneNumber(param)
+
+    console.log("retrieving result of tencent sms >>>")
+    console.log(res)
+
+    return { code: "0000", data: res }
   }
 
 }

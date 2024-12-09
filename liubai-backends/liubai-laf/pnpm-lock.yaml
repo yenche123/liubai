@@ -50,6 +50,9 @@ importers:
       tencentcloud-sdk-nodejs-ses:
         specifier: ^4.0.929
         version: 4.0.929
+      tencentcloud-sdk-nodejs-sms:
+        specifier: ^4.0.962
+        version: 4.0.962
       valibot:
         specifier: ^0.30.0
         version: 0.30.0
@@ -1572,6 +1575,10 @@ packages:
 
   tencentcloud-sdk-nodejs-ses@4.0.929:
     resolution: {integrity: sha512-8VDer0giVs3J1cpfMxV6YQ6mwf7SQ7dCJq7lzsfPbvJnSJkww0pwFSBJ8vjJRRqOzAopkgAJBvRVvanMt4ocpA==}
+    engines: {node: '>=10'}
+
+  tencentcloud-sdk-nodejs-sms@4.0.962:
+    resolution: {integrity: sha512-dFisI1Bw3M0v+B6Z5vdDAYua6hL/iVQq4tOFhfnk9jJHM3FQNvms9nMO6qYrsQ7n+/gJ75ZK/n4ZvmIyf/Q6Cw==}
     engines: {node: '>=10'}
 
   thenify-all@1.6.0:
@@ -3735,6 +3742,14 @@ snapshots:
       - supports-color
 
   tencentcloud-sdk-nodejs-ses@4.0.929:
+    dependencies:
+      tencentcloud-sdk-nodejs-common: 4.0.941
+      tslib: 1.13.0
+    transitivePeerDependencies:
+      - encoding
+      - supports-color
+
+  tencentcloud-sdk-nodejs-sms@4.0.962:
     dependencies:
       tencentcloud-sdk-nodejs-common: 4.0.941
       tslib: 1.13.0
