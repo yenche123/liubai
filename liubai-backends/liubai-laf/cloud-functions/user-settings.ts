@@ -525,6 +525,9 @@ async function afterHandleWechatBind(
   if(!myAvatarUrl) {
     handle_avatar(user, thirdData)
   }
+
+  // 6. tag wx user language
+  tagWxUserLang(wx_gzh_openid, user, data1)
   
   return true
 }
