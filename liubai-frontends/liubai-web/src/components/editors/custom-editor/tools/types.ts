@@ -1,5 +1,5 @@
 import type { LiuRemindMe, ContentInfoType } from "~/types/types-atom";
-import type { StorageState, VisScope } from "~/types/types-basic";
+import type { BaseIsOn, StorageState, VisScope } from "~/types/types-basic";
 import type { LiuFileStore, LiuImageStore } from "~/types"
 import type { EditorCoreContent } from "~/types/types-editor";
 
@@ -9,6 +9,7 @@ export interface CeData {
   threadEdited?: string     // 已发表的动态的 id，表示是编辑该动态
   visScope: VisScope
   storageState: StorageState
+  aiReadable?: BaseIsOn
   title?: string
   whenStamp?: number
   remindMe?: LiuRemindMe
@@ -30,6 +31,7 @@ export const defaultData: CeData = {
   infoType: "THREAD",
   visScope: "DEFAULT",
   storageState: "CLOUD",
+  aiReadable: "Y",
   tagIds: [],
   showTitleBar: false,
   canSubmit: false,

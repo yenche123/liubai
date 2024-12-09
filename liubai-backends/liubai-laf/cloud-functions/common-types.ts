@@ -1,4 +1,5 @@
 // Function Name: common-types
+import OpenAI from "openai"
 import Stripe from "stripe"
 import * as vbot from "valibot"
 import type { BaseSchema } from "valibot"
@@ -9,6 +10,7 @@ import type { BaseSchema } from "valibot"
 // Sch_ 开头的，表示类型的 Schema，用于 valibot
 // Res_ 开头的，表示返回至前端的类型
 // Param_ 开头的，表示传入云函数的类型
+// Ns_ 开头，表示命名空间
 
 export async function main(ctx: FunctionContext) {
   console.log("do nothing")
@@ -36,6 +38,8 @@ export type MongoFilter<T> = Partial<Omit<T, "_id">>
 export type Partial_Id<T extends BaseTable> = PartialSth<T, "_id">
 
 export type LiuTimeout = ReturnType<typeof setTimeout> | undefined
+
+export type T_I18N = (key: string, opt2?: Record<string, string | number>) => string
 
 /*********************** 回调类型 **********************/
 export interface LiuRqReturn<T = Record<string, any>> {
@@ -115,8 +119,9 @@ export interface DownloadFileRes {
 export type DownloadFileResolver = (res: DownloadFileRes) => void
 
 /*********************** 基类型、原子化类型 **********************/
-
-export type BaseIsOn = "Y" | "N"
+export const baseIsOns = ["Y", "N"] as const
+export type BaseIsOn = typeof baseIsOns[number]
+export const Sch_BaseIsOn = vbot.picklist(baseIsOns)
 
 // send email channel
 export type LiuSESChannel = "resend" | "tencent-ses"
@@ -224,7 +229,7 @@ interface BaseTable {
 }
 
 /** 表示 “状态” 的原子结构 */
-interface LiuAtomState {
+export interface LiuAtomState {
   id: string
   text?: string
   color?: string     // 存储 # 开头的 hex，或者 --liu-state- 开头的系统颜色
@@ -247,7 +252,7 @@ const Sch_LiuAtomState: BaseSchema<LiuAtomState> = vbot.object({
 })
 
 /** 表示数据表里，存储 “状态” 的结构  */
-interface LiuStateConfig {
+export interface LiuStateConfig {
   stateList: LiuAtomState[]
   updatedStamp: number
 }
@@ -597,32 +602,199 @@ export type DownloadUploadRes = DownloadUploadRes_1 | DownloadUploadRes_2
 
 
 /*********************** About AI **********************/
-export type AiProvider = "deepseek" | "moonshot" | "stepfun" | 
+export type AiProvider = "baichuan" | "deepseek" | "minimax" | "moonshot" | "stepfun" | 
   "zero-one" | "zhipu"
 
+export type AiSecondaryProvider = "siliconflow" | "smallai" | "302"
+
 // AiCharacter 不跟供应商绑定，它是角色，只不过现在各个供应商都有自己的 To C 角色罢了
-export type AiCharacter = "deepseek" | "kimi" | "yuewen" | "wanzhi" | "zhipu"
+export type AiCharacter = "baixiaoying" | "deepseek" | "hailuo" | "kimi" | "yuewen" | 
+  "wanzhi" | "zhipu"
 
-export type AiMsgType = "user" | "assistant" | "summary" | "clear" | 
-  "action" | "background"
+export type AiInfoType = "user" | "assistant" | "summary" | "clear" | 
+  "action" | "background" | "tool_use"
+// user: 用户发来的消息
+// assistant: AI 的回复
+// summary: AI 的总结 for context
+// clear: 清除对话
+// action: 记录用户的操作，比如“同意 xxx 读取 yyy”
+// background: 比如 url 的解析结果 / 关键词搜索结果
+// tool_use: 使用工具
 
-export type AiAbility = "chat" | "text_to_image" | "image_to_text"
+
+export type AiAbility = "chat" | "text_to_image" | "image_to_text" | "tool_use"
+// chat: interact with plain-text
+// text_to_image: user inputs text and LLM return image
+// image_to_text: user inputs image and LLM return text
+
+export type AiMsgType = "text" | "image" | "voice"
+
+export type AiCommandByHuman = "kick" | "add" | "clear_history" 
+  | "more_operations" | "continue"
+
+export type AiFinishReason = "stop" | "length"
+
+export interface AiApiEndpoint {
+  apiKey: string
+  baseURL: string
+}
 
 export interface AiUsage {
+  cached_tokens?: number
   completion_tokens: number
   prompt_tokens: number
   total_tokens: number
+}
+
+export interface AiBotMetaData {
+  onlyOneSystemRoleMsg?: boolean
+  zhipuWebSearch?: boolean     // false is default
 }
 
 export interface AiBot {
   name: string
   character: AiCharacter
   provider: AiProvider
+  secondaryProvider?: AiSecondaryProvider
   model: string
   abilities: AiAbility[]
   alias: string[]
-  wx_gzh_kf_account?: string
+  maxWindowTokenK: number  // 8 means 8k, 128 means 128k
+
+  // other meta data
+  metaData?: AiBotMetaData
 }
+
+export interface AiEntry {
+  user: Table_User
+  msg_type: AiMsgType
+  text?: string
+  image_url?: string
+
+  // file, including audio file
+  file_type?: string
+  file_blob?: Blob
+  file_base64?: string
+
+  // from weixin gzh
+  wx_media_id?: string
+  wx_media_id_16k?: string
+  wx_gzh_openid?: string
+}
+
+export interface AiI18nChannelParam {
+  character: AiCharacter
+  entry: AiEntry
+}
+
+export type AiPromptType = "compress" | "translate"
+export interface AiI18nSharedParam {
+  type: AiPromptType
+  user?: Table_User
+}
+
+export const aiImageSizeTypes = ["square", "portrait"] as const
+export type AiImageSizeType = typeof aiImageSizeTypes[number]
+export type OaiPrompt = OpenAI.Chat.ChatCompletionMessageParam
+export type OaiTool = OpenAI.Chat.ChatCompletionTool
+export type OaiToolPrompt = OpenAI.Chat.ChatCompletionToolMessageParam 
+export type OaiCreateParam = OpenAI.Chat.ChatCompletionCreateParams
+export type OaiChatCompletion = OpenAI.Chat.ChatCompletion
+export type OaiMessage = OpenAI.Chat.ChatCompletionMessage
+export type OaiToolCall = OpenAI.Chat.ChatCompletionMessageToolCall
+export type OaiChoice = OpenAI.Chat.ChatCompletion.Choice
+
+/******** ai tool-use *********/
+
+// the param of add_note
+export const Sch_AiToolAddNoteParam = vbot.object({
+  title: Sch_Opt_Str,
+  description: Sch_String_WithLength,
+})
+
+// the param of add_todo
+export const Sch_AiToolAddTodoParam = vbot.object({
+  title: Sch_String_WithLength,
+})
+
+// the param of add_calendar
+export const aiToolAddCalendarSpecificDates = [
+  "today", 
+  "tomorrow", 
+  "day_after_tomorrow", 
+  "monday", 
+  "tuesday", 
+  "wednesday", 
+  "thursday", 
+  "friday", 
+  "saturday", 
+  "sunday"
+] as const
+export type AiToolAddCalendarSpecificDate = typeof aiToolAddCalendarSpecificDates[number]
+export const Sch_AiToolAddCalendarSpecificDate = vbot.picklist(aiToolAddCalendarSpecificDates)
+
+export const aiToolAddCalendarEarlyMinutes = [
+  0, 10, 15, 30, 60, 120, 1440
+] as const
+export type AiToolAddCalendarEarlyMinute = typeof aiToolAddCalendarEarlyMinutes[number]
+export const Sch_AiToolAddCalendarEarlyMinute = vbot.picklist(aiToolAddCalendarEarlyMinutes)
+
+export const aiToolAddCalendarLaterHours = [
+  0.5, 1, 2, 3, 12, 24
+] as const
+export type AiToolAddCalendarLaterHour = typeof aiToolAddCalendarLaterHours[number]
+export const Sch_AiToolAddCalendarLaterHour = vbot.picklist(aiToolAddCalendarLaterHours)
+
+export interface AiToolAddCalendarParam {
+  title?: string
+  description: string
+  date?: string
+  specificDate?: AiToolAddCalendarSpecificDate
+  time?: string
+  earlyMinute?: AiToolAddCalendarEarlyMinute
+  laterHour?: AiToolAddCalendarLaterHour
+}
+
+export const Sch_AiToolAddCalendarParam = vbot.object({
+  title: Sch_Opt_Str,
+  description: Sch_String_WithLength,
+  date: Sch_Opt_Str,
+  specificDate: vbot.optional(Sch_AiToolAddCalendarSpecificDate),
+  time: Sch_Opt_Str,
+  earlyMinute: vbot.optional(Sch_AiToolAddCalendarEarlyMinute),
+  laterHour: vbot.optional(Sch_AiToolAddCalendarLaterHour),
+})
+
+// the param of get_schedule
+export const aiToolGetScheduleHoursFromNow = [
+  -24, 24, 48
+] as const
+export type AiToolGetScheduleHoursFromNow = typeof aiToolGetScheduleHoursFromNow[number]
+export const Sch_AiToolGetScheduleHoursFromNow = vbot.picklist(aiToolGetScheduleHoursFromNow)
+
+export const aiToolGetScheduleSpecificDates = [
+  "yesterday", "today", "tomorrow"
+] as const
+export type AiToolGetScheduleSpecificDate = typeof aiToolGetScheduleSpecificDates[number]
+export const Sch_AiToolGetScheduleSpecificDate = vbot.picklist(aiToolGetScheduleSpecificDates)
+export interface AiToolGetScheduleParam {
+  hoursFromNow?: AiToolGetScheduleHoursFromNow
+  specificDate?: AiToolGetScheduleSpecificDate
+}
+export const Sch_AiToolGetScheduleParam = vbot.object({
+  hoursFromNow: vbot.optional(Sch_AiToolGetScheduleHoursFromNow),
+  specificDate: vbot.optional(Sch_AiToolGetScheduleSpecificDate),
+})
+
+// the param of get_cards
+export const aiToolGetCardTypes = [
+  "TODO", "FINISHED", "ADD_RECENTLY"
+] as const
+export type AiToolGetCardType = typeof aiToolGetCardTypes[number]
+export const Sch_AiToolGetCardType = vbot.picklist(aiToolGetCardTypes)
+export const Sch_AiToolGetCardsParam = vbot.object({
+  cardType: Sch_AiToolGetCardType,
+})
 
 
 /*********************** 杂七杂八的 **********************/
@@ -668,7 +840,7 @@ export interface UserThirdData {
   wx_gzh?: UserWeChatGzh
 }
 
-/** 用户的订阅方案 */
+/** User's Subscription Plan */
 export interface UserSubscription {
   isOn: BaseIsOn
   plan: string             // 订阅计划 “应用内 Subscription 表” 的 _id
@@ -683,6 +855,12 @@ export interface UserSubscription {
     customer_portal_url?: string        // stripe 的订阅管理网址，供用户去管理订阅
     customer_portal_created?: number    // 注意: 以秒为单位
   }
+}
+
+/** User's Quota about AI conversation */
+export interface UserQuota {
+  aiConversationCount: number
+  lastWxGzhChatStamp?: number
 }
 
 export interface LiuSpaceAndMember {
@@ -892,6 +1070,7 @@ export interface LiuUploadThread extends LiuUploadBase {
   tagIds?: string[]
   tagSearched?: string[]
   stateId?: string
+  stateStamp?: number
   
   // 只在 thread-post 时有效，且此时必填
   emojiData?: EmojiData
@@ -899,6 +1078,11 @@ export interface LiuUploadThread extends LiuUploadBase {
 
   // 只在 thread-hourglass 时有效，且为必填
   showCountdown?: boolean
+
+  // ai chat associated with this thread
+  // in compose page, we have to set aiChatId
+  aiChatId?: string
+  aiReadable?: BaseIsOn
 }
 
 /** 存一些 评论 与动态和草稿相比独有的字段 */
@@ -928,6 +1112,8 @@ export interface LiuUploadDraft extends LiuUploadBase {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  stateStamp?: number
+  aiReadable?: BaseIsOn
 }
 
 export interface LiuUploadMember {
@@ -984,12 +1170,13 @@ export interface SyncSetCtxAtom<T> {  // 这里的 T 必须是 Table 类型
 
 export interface SyncSetCtx {
 
-  // 下面四个属性，其首字母大写后，要直接对应数据表的表名
+  // 下面 6 个属性，其首字母大写后，要直接对应数据表的表名
   content: Map<string, SyncSetCtxAtom<Table_Content>>
   draft: Map<string, SyncSetCtxAtom<Table_Draft>>
   member: Map<string, SyncSetCtxAtom<Table_Member>>
   workspace: Map<string, SyncSetCtxAtom<Table_Workspace>>
   collection: Map<string, SyncSetCtxAtom<Table_Collection>>
+  aiChat: Map<string, SyncSetCtxAtom<Table_AiChat>>
 
   // my data
   me: Table_User
@@ -1002,7 +1189,8 @@ export interface SyncSetCtx {
 }
 
 export type SyncSetTable = Table_Content | 
-  Table_Draft | Table_Member | Table_Workspace | Table_Collection
+  Table_Draft | Table_Member | Table_Workspace | 
+  Table_Collection | Table_AiChat
 
 export interface SyncSetAtomRes {
   code: string
@@ -1064,6 +1252,11 @@ export interface Table_Token extends BaseTable {
   ipGeo?: string
 }
 
+export interface Table_LoginState extends BaseTable {
+  state: string
+  num: number
+}
+
 /** User表 */
 export interface Table_User extends BaseTable {
   oState: OState_User
@@ -1083,6 +1276,7 @@ export interface Table_User extends BaseTable {
   ipArea?: string
   total_size?: number                 // 用户的总存储空间，单位为 kB
   upload_size?: number                // 用户的总历史上传空间，单位为 kB
+  quota?: UserQuota
 
   /** wechat data */
   wx_gzh_openid?: string
@@ -1172,9 +1366,12 @@ export interface Table_Content extends BaseTable {
   tagIds?: string[]         // 用于显示的 tagId
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
   stateId?: string
+  stateStamp?: number
   config?: ContentConfig
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
+  aiCharacter?: AiCharacter
+  aiReadable?: BaseIsOn
 }
 
 /** 草稿表 */
@@ -1201,7 +1398,9 @@ export interface Table_Draft extends BaseTable {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  stateStamp?: number
   editedStamp: number       // 草稿被用户实际编辑的时间戳
+  aiReadable?: BaseIsOn
 }
 
 /** 表态和收藏表 */
@@ -1222,9 +1421,14 @@ export interface Table_Collection extends BaseTable {
 
 
 export interface Config_WeChat_GZH {
+
+  // about access token
   access_token?: string
-  expires_in?: number      // how many seconds left before it expires
-  lastGetStamp?: number   // Timestamp of the last time access_token was obtained
+  expires_in?: number      // how many seconds left before it expires, which is only for access_token
+  lastGetStamp?: number    // Timestamp of the last time access_token was obtained
+
+  // about jsapi_ticket for js-sdk
+  jsapi_ticket?: string
 }
 
 export interface Config_WeCom_Qynb {
@@ -1294,6 +1498,9 @@ export interface Table_Subscription extends BaseTable {
   badge: string
   title: string
   desc: string
+  showInPricing: BaseIsOn
+  priority: number        // the smaller number means higher priority
+
   stripe?: SubscriptionStripe
   wxpay?: SubscriptionWxpay
   alipay?: SubscriptionAlipay
@@ -1312,6 +1519,7 @@ export interface Table_Subscription extends BaseTable {
   amount_CNY?: number       // 人民币价格，单位为“分”，当调用 `payment-order` 且为下单订阅单时，必填
                             // 该值可填 0
   renewal_only?: boolean    // 是否仅续费者有效，新用户不适用
+  channel?: string          // order channel, like "wx_gzh"
 
 }
 
@@ -1386,31 +1594,64 @@ export interface Table_Order extends BaseTable {
   }
 
   meta_data?: OrderMetaData
+  channel?: string             // order channel, like "wx_gzh"
 
 }
 
 
-/** AI Room */
+/********* AI Room *********/
 export interface Table_AiRoom extends BaseTable {
   owner: string           // corresponds to userId
-  bots: AiProvider[]
+  characters: AiCharacter[]
 }
 
+/********* AI Chat *********/
 export interface Table_AiChat extends BaseTable {
+  sortStamp: number        // bascially which is createdStamp except for the 'summary' chat 
   roomId: string
-  msgType: AiMsgType
+  infoType: AiInfoType
+  msgType?: AiMsgType
   text?: string
   imageUrl?: string
+  contentId?: string      // content which has been connected to this chat
+
+  // about file
+  fileType?: string
+  fileBase64?: string     // like for audio
 
   // about LLM
-  model?: string         // like "gpt-4o"
-  provider?: AiProvider
+  model?: string           // like "gpt-4o"
+  character?: AiCharacter
   usage?: AiUsage
+  requestId?: string
+  baseUrl?: string
+  funcName?: string        // like "add_todo" | "web_search"
+  funcJson?: Record<string, any>    // we have to filter from LLM response
+  tool_calls?: OaiToolCall[]
+  finish_reason?: AiFinishReason
+
+  // about web-search
+  webSearchProvider?: LiuAi.SearchProvider
+  webSearchData?: Record<string, any>
+
+  // about draw_a_picture
+  drawPictureUrl?: string           // the url of the picture
+  drawPictureModel?: string
+  drawPictureData?: Record<string, any>
 
   // about human
   userId?: string
+  channel?: "wx_gzh"
+
+  // specific data about wx gzh
+  wxMediaId?: string
+  wxMediaId16K?: string
 }
 
+export interface Table_Log extends BaseTable {
+  userId: string
+  infoType: "conversation"
+}
 
 
 
@@ -1926,12 +2167,15 @@ export interface LiuDownloadContent {
   tagIds?: string[]         // 用于显示的 tagId
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
   stateId?: string
+  stateStamp?: number
   config?: ContentConfig
   search_title?: string
   search_other?: string
 
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
+  aiCharacter?: AiCharacter
+  aiReadable?: BaseIsOn
 
   myFavorite?: LiuDownloadCollection
   myEmoji?: LiuDownloadCollection
@@ -1962,7 +2206,9 @@ export interface LiuDownloadDraft {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  stateStamp?: number
   editedStamp: number
+  aiReadable?: BaseIsOn
 }
 
 interface LDP_Base {
@@ -1992,6 +2238,64 @@ export interface SyncGetAtomRes {
 export interface Res_SyncGet_Cloud {
   results: SyncGetAtomRes[]
   plz_enc_results?: SyncGetAtomRes[]
+}
+
+
+/****************** sync-operate api ***************/
+
+export namespace SyncOperateAPI {
+  export interface Param {
+    operateType: "agree-aichat" | "get-aichat"
+    chatId: string
+  }
+
+  export const Sch_Param = vbot.object({
+    operateType: vbot.picklist(["agree-aichat", "get-aichat"]),
+    chatId: Sch_String_WithLength,
+  })
+
+  export interface WaitingData {
+    title?: string
+    liuDesc?: LiuContent[]
+    calendarStamp?: number
+    remindStamp?: number
+    whenStamp?: number
+    remindMe?: LiuRemindMe
+  }
+
+  export type ContentType = "note" | "todo" | "calendar"
+
+  export interface Res_AgreeAichat {
+    operateType: "agree-aichat"
+    contentType: ContentType
+    contentId: string
+  }
+
+  export interface Res_GetAichat {
+    operateType: "get-aichat"
+    result: "waiting" | "created"
+    contentId?: string
+    waitingData?: WaitingData
+  }
+
+  export type Result = Res_AgreeAichat | Res_GetAichat
+}
+
+/****************** service-poly api ***************/
+export namespace ServicePolyAPI {
+  
+  export interface Param {
+    operateType: "get-wxjssdk-config"
+    url: string
+  }
+
+  export interface Res_GetWxjssdkConfig {
+    operateType: "get-wxjssdk-config"
+    appId: string
+    timestamp: number
+    nonceStr: string
+    signature: string
+  }
 }
 
 /******************** open-connect **********************/
@@ -2055,7 +2359,7 @@ export interface VerifyTokenOpt {
 
 export interface VerifyTokenRes_A {
   pass: false
-  rqReturn: LiuRqReturn
+  rqReturn: LiuErrReturn
 }
 
 export interface VerifyTokenRes_B {
@@ -2159,6 +2463,12 @@ export interface Wx_Param_Msg_Templ_Send {
   url?: string
   client_msg_id?: string
   data: Record<string, Record<"value", string>>
+}
+
+export interface Wx_Res_GzhUploadMedia {
+  type?: string
+  media_id?: string
+  created_at?: number     // seconds
 }
 
 
@@ -2408,14 +2718,16 @@ export interface Wx_Gzh_Send_Article {
   }
 }
 
+export interface Wx_Gzh_Send_Msgmenu_Item {
+  id: string
+  content: string
+}
+
 export interface Wx_Gzh_Send_Msgmenu {
   msgtype: "msgmenu"
   msgmenu: {
     head_content: string
-    list: {
-      id: string
-      content: string
-    }[]
+    list: Wx_Gzh_Send_Msgmenu_Item[]
     tail_content: string
   }
 }
@@ -2424,6 +2736,22 @@ export type Wx_Gzh_Send_Msg = (Wx_Gzh_Send_Text | Wx_Gzh_Send_Image | Wx_Gzh_Sen
   | Wx_Gzh_Send_Video | Wx_Gzh_Send_Music | Wx_Gzh_Send_News | Wx_Gzh_Send_Article
   | Wx_Gzh_Send_Msgmenu) & Wx_Gzh_Send_Base
 
+/*********** Create Menu for Weixin Gzh  ****************/
+export interface Wx_Gzh_Create_Menu_Item {
+  name: string
+  sub_button?: Wx_Gzh_Create_Menu_Item[]
+  type?: string
+
+  // for view
+  url?: string
+
+  // for click
+  key?: string
+
+  // for miniprogram
+  appid?: string
+  pagepath?: string
+}
 
 /******************* Some Types from WeCom  ****************/
 export interface Ww_Res_Base {
@@ -2946,4 +3274,141 @@ export interface Res_Alipay_Refund {
   send_back_fee?: string
   fund_change?: "Y" | "N"
   refund_hyb_amount?: string     // 本次请求退惠营宝金额。单位：元。
+}
+
+/**************************** about AI **********************/
+export namespace LiuAi {
+
+  export interface Usage {
+    completion_tokens: number
+    prompt_tokens: number
+    total_tokens: number
+  }
+
+  export type SearchProvider = "zhipu" | "serper" | "tavily"
+
+  export interface SearchResult {
+    markdown: string
+    provider: SearchProvider
+    originalResult: Record<string, any>
+  }
+
+  export interface PaletteResult {
+    url: string
+    prompt: string
+    model: string      // please remove the prefix like "stabilityai/" or "black-forest-labs"
+    duration: number   // cost time (seconds) and to fixed(2)
+    originalResult: Record<string, any>
+  }
+
+  export interface TranslateResult {
+    originalText: string
+    translatedText: string
+    model: string
+  }
+
+  export interface SpeechToTextResult {
+    text: string
+    model: string
+    originalResult: Record<string, any>
+  }
+
+  export interface ReadCardsResult {
+    textToUser: string
+    textToBot: string
+    assistantChatId: string
+  }
+
+}
+
+
+/** types from siliconflow */
+export namespace Ns_SiliconFlow {
+
+  export interface GeneratedImage {
+    url: string
+  }
+
+  export interface GenerateImageTiming {
+    inference: number        // seconds
+  }
+
+  export interface ImagesGenerationsRes {
+    images: GeneratedImage[]
+    timings: GenerateImageTiming
+    seed: number
+  }
+
+}
+
+
+/** zhipu big model */
+export namespace Ns_Zhipu {
+
+  export interface WebSearchIntentItem {
+    category: string
+    index: number
+    intent: "SEARCH_URL" | "SEARCH_TOOL" | "SEARCH_ALL" | "SEARCH_NONE"
+    keywords: string    // 改写意图
+    query: string       // 原始 query
+  }
+
+  export interface WebSearchResultItem {
+    content: string
+    icon: string
+    index: 0
+    link: string
+    media: string
+    refer: string    // 角标序号
+    title: string
+  }
+
+  export interface WebSearchToolCall_A {
+    id: string
+    type: "search_intent"
+    search_intent: WebSearchIntentItem[]
+  }
+
+  export interface WebSearchToolCall_B {
+    id: string
+    type: "search_result"
+    search_result: WebSearchResultItem[]
+  }
+
+  export type WebSearchToolCall = WebSearchToolCall_A | WebSearchToolCall_B
+
+  export type WebSearchFinishReason = "stop" | "sensitive" | "network_error"
+
+  export interface WebSearchChoice {
+    finish_reason: WebSearchFinishReason
+    index: number
+    message: {
+      role: "tool"
+      tool_calls: WebSearchToolCall[]
+    }
+  }
+
+  export interface WebSearchChatCompletion {
+    choices: WebSearchChoice[]
+    created: number
+    id: string
+    model: "web-search-pro"
+    request_id: string
+    usage: LiuAi.Usage
+  }
+
+  export interface ImagesGenerationsRes {
+    created: number
+    data: Array<{
+      url: string
+    }>
+  }
+
+  export interface ErrorResponse {
+    error?: {
+      code?: string        // like "1113"
+      message?: string     // like "您的账户已欠费，请充值后重试。"
+    }
+  }
+
 }

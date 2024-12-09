@@ -128,6 +128,10 @@ export function createEncNonce() {
   return createRandom(10)
 }
 
+export function createCommonNonce(digit: number = 16) {
+  return createRandom(digit, "allowUppercase")
+}
+
 export function createFileRandom() {
   return createRandom(4, "onlyUppercase")
 }
@@ -150,4 +154,8 @@ export function createCredential2() {
 
 export function createPaymentNonce() {
   return createRandom(32, "UppercaseAndNumber")
+}
+
+export function createThreadId() {
+  return "t0" + createRandom()
 }

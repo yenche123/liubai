@@ -3,7 +3,6 @@ import type { CwcData } from "./types"
 import liuEnv from "~/utils/liu-env"
 import { pageStates } from "~/utils/atom"
 import { useAwakeNum } from "~/hooks/useCommon"
-import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import APIs from "~/requests/APIs"
 import liuReq from "~/requests/liu-req"
@@ -93,13 +92,12 @@ async function checkoutData(
   cwcData: CwcData,
   rr: RouteAndLiuRouter,
 ) {
-
   // 1. checking out network
-  const nStore = useNetworkStore()
-  if(nStore.level < 1) {
-    cwcData.pageState = pageStates.NETWORK_ERR
-    return
-  }
+  // const nStore = useNetworkStore()
+  // if(nStore.level < 1) {
+  //   cwcData.pageState = pageStates.NETWORK_ERR
+  //   return
+  // }
 
   // 2. get param
   const wStore = useWorkspaceStore()

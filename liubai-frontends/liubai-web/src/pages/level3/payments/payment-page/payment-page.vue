@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
-import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
-import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import PaymentContent from "./payment-content/payment-content.vue";
 import { onActivated } from "vue";
 import middleBridge from "~/utils/middle-bridge";

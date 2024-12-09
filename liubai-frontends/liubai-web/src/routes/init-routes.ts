@@ -29,6 +29,8 @@ const MinePage = () => import("../pages/level2/mine-page/mine-page.vue")
 const TagManagement = () => import("../pages/level3/tag-management/tag-management.vue")
 const SchedulePage = () => import("../pages/level3/schedule-page/schedule-page.vue")
 const PastPage = () => import("../pages/level3/past-page/past-page.vue")
+const AgreePage = () => import("../pages/level2/agree-page/agree-page.vue")
+const WechatBind = () => import("../pages/level1/wechat-bind/wechat-bind.vue")
 
 export const routes: Array<RouteRecordRaw> = [
   /*************** 公共页面（不区分工作区） ***************/
@@ -79,6 +81,14 @@ export const routes: Array<RouteRecordRaw> = [
     path: "/a2hs",
     component: A2hsPage,
     name: "a2hs",
+    meta: {
+      inApp: false,
+    }
+  },
+  {
+    path: "/wechat-bind",
+    component: WechatBind,
+    name: "wechat-bind",
     meta: {
       inApp: false,
     }
@@ -306,6 +316,12 @@ export const routes: Array<RouteRecordRaw> = [
       LeftSidebar,
     },
     name: "past",
+    meta: {}
+  },
+  {
+    path: "/agree",
+    component: AgreePage,
+    name: "agree",
     meta: {}
   },
   /********************* Collaborative Workspace ********************/

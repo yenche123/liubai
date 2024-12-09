@@ -18,6 +18,7 @@ import type {
   Table_Draft,
   Table_Member,
   Table_Workspace,
+  Table_AiChat,
   SyncSetCtxAtom,
   SyncSetCtx,
   LiuUploadTask,
@@ -57,6 +58,7 @@ import {
   sch_opt_arr,
   Sch_OState_Draft,
   Sch_EmojiData,
+  Sch_BaseIsOn,
 } from "@/common-types"
 import { 
   getNowStamp,
@@ -497,9 +499,12 @@ async function toPostThread(
     tagIds: sch_opt_arr(vbot.string()),
     tagSearched: sch_opt_arr(vbot.string()),
     stateId: Sch_Opt_Str,
+    stateStamp: Sch_Opt_Num,
 
     emojiData: Sch_EmojiData,
     config: vbot.optional(Sch_ContentConfig),
+    aiChatId: Sch_Opt_Str,
+    aiReadable: vbot.optional(Sch_BaseIsOn),
   }, vbot.never())     // open strict mode
   const res1 = checkoutInput(Sch_PostThread, thread, taskId)
   if(res1) return res1
@@ -536,6 +541,13 @@ async function toPostThread(
   const res6 = await checkIfContentExisted(userId, first_id, createdStamp, taskId)
   if(res6) return res6
 
+  // 6.2 get ai chat
+  const chatId = thread.aiChatId
+  let aiChat: Table_AiChat | undefined
+  if(chatId) {
+    aiChat = await getData<Table_AiChat>(ssCtx, "aiChat", chatId)
+  }
+
   // 7. construct a new row of Table_Content
   const b7 = getBasicStampWhileAdding(ssCtx)
   const newRow: PartialSth<Table_Content, "_id"> = {
@@ -567,14 +579,24 @@ async function toPostThread(
     tagIds: thread.tagIds,
     tagSearched: thread.tagSearched,
     stateId: thread.stateId,
+    stateStamp: thread.stateStamp,
     config: thread.config,
     levelOne: 0,
     levelOneAndTwo: 0,
+    aiCharacter: aiChat?.character,
+    aiReadable: thread.aiReadable,
   }
 
+  // 8. insert content
   const new_id = await insertData(ssCtx, "content", newRow)
   if(!new_id) {
     return { code: "E5001", taskId, errMsg: "inserting data failed" }
+  }
+
+  // 9. update ai chat if aiChat exists
+  if(aiChat) {
+    const u9: Partial<Table_AiChat> = { contentId: new_id }
+    await updatePartData(ssCtx, "aiChat", aiChat._id, u9)
   }
 
   return { code: "0000", taskId, first_id, new_id }
@@ -758,9 +780,12 @@ async function toThreadEdit(
     remindStamp: Sch_Opt_Num,
     whenStamp: Sch_Opt_Num,
     remindMe: vbot.optional(Sch_LiuRemindMe),
+    stateId: Sch_Opt_Str,
+    stateStamp: Sch_Opt_Num,
 
     tagIds: sch_opt_arr(vbot.string()),
     tagSearched: sch_opt_arr(vbot.string()),
+    aiReadable: vbot.optional(Sch_BaseIsOn),
   }, vbot.never())
   const res1 = checkoutInput(Sch_EditThread, thread, taskId)
   if(res1) return res1
@@ -780,13 +805,18 @@ async function toThreadEdit(
     enc_desc: sharedData.enc_desc,
     enc_images: sharedData.enc_images,
     enc_files: sharedData.enc_files,
+
     calendarStamp: thread.calendarStamp,
     remindStamp: thread.remindStamp,
     whenStamp: thread.whenStamp,
     remindMe: thread.remindMe,
+    stateId: thread.stateId,
+    stateStamp: thread.stateStamp,
+
     editedStamp: thread.editedStamp,
     tagIds: thread.tagIds,
     tagSearched: thread.tagSearched,
+    aiReadable: thread.aiReadable,
   }
   await updatePartData(ssCtx, "content", sharedData.content_id, new_data)
   return { code: "0000", taskId }
@@ -1145,6 +1175,7 @@ async function toThreadState(
     id: Sch_Id,
     first_id: Sch_Opt_Str,
     stateId: Sch_Opt_Str,
+    stateStamp: Sch_Opt_Num,
   }, vbot.never())
   const res1 = checkoutInput(Sch_State, thread, taskId)
   if(res1) return res1
@@ -1156,8 +1187,8 @@ async function toThreadState(
 
   //  3. check out every data
   const id = thread.id as string
-  const stateId = thread.stateId
-  if(oldContent.stateId === stateId) {
+  const { stateId, stateStamp } = thread
+  if(oldContent.stateId === stateId && oldContent.stateStamp === stateStamp) {
     return { code: "0001", taskId }
   }
   const { config: cfg = {} } = oldContent
@@ -1170,6 +1201,7 @@ async function toThreadState(
   cfg.lastOperateStateId = operateStamp
   const u: Partial<Table_Content> = {
     stateId,
+    stateStamp,
     config: cfg,
   }
   await updatePartData(ssCtx, "content", id, u)
@@ -1536,6 +1568,8 @@ async function toDraftSet(
     remindMe: vbot.optional(Sch_LiuRemindMe),
     tagIds: sch_opt_arr(Sch_Id),
     stateId: Sch_Opt_Str,
+    stateStamp: Sch_Opt_Num,
+    aiReadable: vbot.optional(Sch_BaseIsOn),
   }, vbot.never())
   const res1 = checkoutInput(Sch_DraftSet, draft, taskId)
   if(res1) return res1
@@ -1614,7 +1648,9 @@ async function toDraftEdit(
     remindMe: draft.remindMe,
     tagIds: draft.tagIds,
     stateId: draft.stateId,
+    stateStamp: draft.stateStamp,
     editedStamp,
+    aiReadable: draft.aiReadable,
   }
   await updatePartData(ssCtx, "draft", draft_id, u)
   return { code: "0000", taskId }
@@ -1679,7 +1715,9 @@ async function toDraftCreate(
     remindMe: draft.remindMe,
     tagIds: draft.tagIds,
     stateId: draft.stateId,
+    stateStamp: draft.stateStamp,
     editedStamp: draft.editedStamp as number,
+    aiReadable: draft.aiReadable,
   }
   const new_id = await insertData(ssCtx, "draft", u)
   if(!new_id) {
@@ -2327,6 +2365,7 @@ function initSyncSetCtx(
     member: new Map<string, SyncSetCtxAtom<Table_Member>>(),
     workspace: new Map<string, SyncSetCtxAtom<Table_Workspace>>(),
     collection: new Map<string, SyncSetCtxAtom<Table_Collection>>(),
+    aiChat: new Map<string, SyncSetCtxAtom<Table_AiChat>>(),
     me: user,
     space_ids,
     lastUsedStamp: 0,

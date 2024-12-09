@@ -25,6 +25,8 @@ export function useMoreArea(
     site: "",       // 地点名称，如果没有就显示经纬度
     syncCloud: true,
     scDisabled: false,
+    aiReadable: "Y",
+    aiReadDisabled: false,
     remindType: "later",
   })
 
@@ -112,10 +114,41 @@ export function useMoreArea(
 
   handleState(props, data)
 
+  const privacyMenu = computed<MenuItem[]>(() => {
+    const s1 = data.syncCloud
+    const s2 = data.scDisabled
+    const s3 = data.aiReadable === "Y"
+    const s4 = data.aiReadDisabled
+    return [
+      {
+        text_key: "editor.sync_cloud",
+        checked: s1,
+        disabled: s2,
+      },
+      {
+        text_key: "editor.ai_readable",
+        checked: s3,
+        disabled: s4,
+      }
+    ]
+  })
+
+  const onTapPrivacyItem = (item: MenuItem, index: number) => {
+    const _item = privacyMenu.value[index]
+    if(!_item) return
+    if(index === 0) {
+      emits("synccloudchange", !_item.checked)
+    }
+    else if(index === 1) {
+      emits("aireadablechange", !_item.checked)
+    }
+  }
+
   return { 
     selectFileEl,
     data,
     remindMenu,
+    privacyMenu,
     onTapWhen,
     onTapClearWhen,
     onTapRemindItem,
@@ -129,6 +162,7 @@ export function useMoreArea(
     onTapAddSite,
     onTapAddState: () => setNewState(ctx),
     onTapClearState: () => emits("statechange", null),
+    onTapPrivacyItem,
   }
 }
 

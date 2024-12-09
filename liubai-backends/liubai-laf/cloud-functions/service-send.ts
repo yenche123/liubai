@@ -348,54 +348,77 @@ export async function getActiveEmailCode(): Promise<LiuRqReturn> {
 
 const API_WECHAT_TMPL_SEND = "https://api.weixin.qq.com/cgi-bin/message/template/send"
 const API_WECHAT_MSG_SEND = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
+const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 
-export async function sendWxTemplateMessage(
-  access_token: string,
-  param: Wx_Param_Msg_Templ_Send,
-) {
-  const url = `${API_WECHAT_TMPL_SEND}?access_token=${access_token}`
-  const res = await liuReq<Wx_Res_Common>(url, param)
-  const { code, data } = res
-  if(code !== "0000" || data?.errcode !== 0) {
-    console.warn("sendWxTemplateMessage failed")
-    console.log(res)
-    console.log(param)
-  }
-  return res
-}
+export class WxGzhSender {
 
-export async function sendWxTextMessage(
-  wx_gzh_openid: string,
-  access_token: string,
-  text: string,
-) {
-  const body: Wx_Gzh_Send_Text = {
-    msgtype: "text",
-    text: {
-      content: text,
+  static async sendTyping(
+    wx_gzh_openid: string,
+    access_token: string,
+  ) {
+    const url = `${API_TYPING}?access_token=${access_token}`
+    const arg = {
+      touser: wx_gzh_openid,
+      command: "Typing",
     }
+    const res = await liuReq<Wx_Res_Common>(url, arg)
+    const { code, data } = res
+    if(code !== "0000" || data?.errcode !== 0) {
+      console.warn("sendTyping failed")
+      console.log(res)
+      console.log(arg)
+    }
+    return res
   }
-  const res = await sendWxMessage(wx_gzh_openid, access_token, body)
-}
 
-export async function sendWxMessage(
-  wx_gzh_openid: string,
-  access_token: string,
-  param: Wx_Gzh_Send_Msg,
-) {
-  const obj = {
-    touser: wx_gzh_openid,
-    ...param,
+  static async sendTemplateMessage(
+    access_token: string,
+    param: Wx_Param_Msg_Templ_Send,
+  ) {
+    const url = `${API_WECHAT_TMPL_SEND}?access_token=${access_token}`
+    const res = await liuReq<Wx_Res_Common>(url, param)
+    const { code, data } = res
+    if(code !== "0000" || data?.errcode !== 0) {
+      console.warn("sendTemplateMessage failed")
+      console.log(res)
+      console.log(param)
+    }
+    return res
   }
-  const url = new URL(API_WECHAT_MSG_SEND)
-  url.searchParams.set("access_token", access_token)
-  const link = url.toString()
-  const res = await liuReq<Wx_Res_Common>(link, obj)
-  const { code, data } = res
-  if(code !== "0000" || data?.errcode !== 0) {
-    console.warn("sendWxMessage failed")
-    console.log(res)
-    console.log(param)
+
+  static async sendTextMessage(
+    wx_gzh_openid: string,
+    access_token: string,
+    text: string,
+  ) {
+    const body: Wx_Gzh_Send_Text = {
+      msgtype: "text",
+      text: {
+        content: text,
+      }
+    }
+    const res = await this.sendMessage(wx_gzh_openid, access_token, body)
   }
-  return res
-} 
+
+  static async sendMessage(
+    wx_gzh_openid: string,
+    access_token: string,
+    param: Wx_Gzh_Send_Msg,
+  ) {
+    const obj = {
+      touser: wx_gzh_openid,
+      ...param,
+    }
+    const url = new URL(API_WECHAT_MSG_SEND)
+    url.searchParams.set("access_token", access_token)
+    const link = url.toString()
+    const res = await liuReq<Wx_Res_Common>(link, obj)
+    const { code, data } = res
+    if(code !== "0000" || data?.errcode !== 0) {
+      console.warn("sendMessage failed")
+      console.log(res)
+      console.log(param)
+    }
+    return res
+  }
+}

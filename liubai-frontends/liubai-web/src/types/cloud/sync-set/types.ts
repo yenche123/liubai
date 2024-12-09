@@ -6,7 +6,12 @@ import type {
   LiuUploadTask,
   LiuStateConfig,
 } from "~/types/types-atom"
-import type { OState, OState_2, OState_Draft } from "~/types/types-basic"
+import type { 
+  BaseIsOn, 
+  OState, 
+  OState_2, 
+  OState_Draft,
+} from "~/types/types-basic"
 import type { 
   Cloud_ImageStore,
   Cloud_FileStore,
@@ -48,6 +53,7 @@ export interface LiuUploadThread extends LiuUploadBase {
   tagIds?: string[]
   tagSearched?: string[]
   stateId?: string
+  stateStamp?: number
 
   // 只在 thread-post 时有效，且此时必填
   emojiData?: EmojiData
@@ -56,7 +62,10 @@ export interface LiuUploadThread extends LiuUploadBase {
   // 只在 thread-hourglass 时有效，且为必填，不得为 undefined
   showCountdown?: boolean
 
-  
+  // ai chat associated with this thread
+  // in compose page, we have to set aiChatId
+  aiChatId?: string
+  aiReadable?: BaseIsOn
 }
 
 /** 存一些 评论 与动态和草稿相比独有的字段 */
@@ -86,6 +95,8 @@ export interface LiuUploadDraft extends LiuUploadBase {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  stateStamp?: number
+  aiReadable?: BaseIsOn
 }
 
 export interface LiuUploadMember {

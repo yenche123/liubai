@@ -55,6 +55,9 @@ watch(() => scData.state, (newV) => {
         <span v-if="spi.payment_circle === 'monthly'" 
           class="scp-footer"
         >{{ t('payment.per_month', { currency: spi.currency }) }}</span>
+        <span v-else-if="spi.payment_circle === 'quarterly'" 
+          class="scp-footer"
+        >{{ t('payment.per_quarter', { currency: spi.currency }) }}</span>
         <span v-else-if="spi.payment_circle === 'yearly'" 
           class="scp-footer"
         >{{ t('payment.per_year', { currency: spi.currency }) }}</span>
@@ -69,10 +72,11 @@ watch(() => scData.state, (newV) => {
 
       <!-- 什么时候过期 或 什么时候续费 -->
       <div class="liu-no-user-select scb-footer" 
-        v-if="!scData.isLifelong && scData.expireStr && scData.isPremium"
+        v-if="!scData.isLifelong && scData.expireStr"
       >
         <span v-if="scData.autoRecharge">{{ t('payment.recharge_date', { date: scData.expireStr }) }}</span>
-        <span v-else>{{ t('payment.expire_date', { date: scData.expireStr }) }}</span>
+        <span v-else-if="scData.isPremium">{{ t('payment.until_date', { date: scData.expireStr }) }}</span>
+        <span v-else>{{ t('payment.expired_date', { date: scData.expireStr }) }}</span>
       </div>
 
       <!-- 方案内文 -->

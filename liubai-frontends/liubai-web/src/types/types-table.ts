@@ -7,6 +7,7 @@ import type {
   OState_3, 
   SpaceType,
   OState_Draft,
+  BaseIsOn,
 } from "./types-basic"
 import type { 
   LiuContent, 
@@ -18,6 +19,7 @@ import type {
   LiuTable,
   LiuUploadTask,
   UploadTaskProgressType,
+  AiCharacter,
 } from "./types-atom"
 import type { LiuFileStore, LiuImageStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
@@ -102,6 +104,7 @@ export interface ContentLocalTable extends BaseLocalTable {
   tagIds?: string[]         // 用于显示的 tagId
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
   stateId?: string
+  stateStamp?: number
   config?: ContentConfig
   search_title?: string
   search_other?: string
@@ -110,6 +113,9 @@ export interface ContentLocalTable extends BaseLocalTable {
   levelOneAndTwo?: number   // 一级 + 二级评论数
 
   firstSyncStamp?: number   // the stamp when the content is first synced
+  aiChatId?: string
+  aiCharacter?: AiCharacter
+  aiReadable?: BaseIsOn
 }
 
 export interface DraftLocalTable extends BaseLocalTable {
@@ -136,8 +142,10 @@ export interface DraftLocalTable extends BaseLocalTable {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  stateStamp?: number
   editedStamp: number       // 草稿被用户实际编辑的时间戳
   firstSyncStamp?: number   // the stamp when the content is first synced
+  aiReadable?: BaseIsOn
 }
 
 export interface CollectionLocalTable extends BaseLocalTable {

@@ -25,11 +25,14 @@ const {
   onTouchEndMask,
 } = useLiuMenu(props)
 
-const onTapBox = (e: Event) => {}
-
 const onTapItem = (item: MenuItem, index: number, hide: SimpleFunc) => {
+  if(props.hasCheckbox && item.disabled) {
+    return
+  } 
   emit("tapitem", item, index)
-  hide()
+  if(props.autoHideAfterTappingItem) {
+    hide()
+  }
 }
 
 const onMenuShow = (e: any) => {
@@ -44,7 +47,6 @@ const onMenuHide = () => {
   disconnectMaskEl()
 }
 
-const onTapMask = (e: MouseEvent) => {}
 
 </script>
 <template>
@@ -53,7 +55,7 @@ const onTapMask = (e: MouseEvent) => {}
     <div 
       ref="maskEl"
       class="lm-mask" 
-      @click.stop.prevent="onTapMask"
+      @click.stop.prevent="() => {}"
       @touchend.stop.prevent="onTouchEndMask"
     />
   </Teleport>
@@ -69,7 +71,7 @@ const onTapMask = (e: MouseEvent) => {}
   >
 
     <template #default>
-      <div @click.stop.prevent="onTapBox">
+      <div @click.stop.prevent="() => {}">
         <slot></slot>
       </div>
     </template>
@@ -82,6 +84,7 @@ const onTapMask = (e: MouseEvent) => {}
         <template v-for="(item, index) in menu" :key="item.text_key">
         
           <div class="menu-item"
+            :class="{ 'menu-item_disabled': item.disabled }"
             @click="onTapItem(item, index, hide)"
           >
           
@@ -92,12 +95,21 @@ const onTapMask = (e: MouseEvent) => {}
               ></SvgIcon>
             </div>
   
-            <div class="liu-no-user-select mi-title"
-              :class="{ 'mi-title_long': hasIcon }"
+            <div class="mi-title"
+              :class="{ 'mi-title_long': hasIcon || hasCheckbox }"
               :style="{ 'color': item.color ? item.color : defaultColor }"
             >
               <span>{{ t(item.text_key) }}</span>
             </div>
+
+            <LiuCheckbox
+              v-if="hasCheckbox"
+              :checked="item.checked"
+              :disabled="item.disabled"
+              :size="20"
+              :circleSize="10.6"
+              checked-color="var(--cool-bg)"
+            ></LiuCheckbox>
 
           </div>
         
@@ -145,6 +157,7 @@ const onTapMask = (e: MouseEvent) => {}
     position: relative;
     cursor: pointer;
     overflow: hidden;
+    align-items: center;
 
     &::before {
       background-color: var(--primary-active);
@@ -189,12 +202,19 @@ const onTapMask = (e: MouseEvent) => {}
       text-overflow: ellipsis;
       font-size: var(--mini-font);
       line-height: 28px;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .mi-title_long {
       padding-inline-end: 8px;
     }
 
+  }
+
+  .menu-item_disabled {
+    opacity: .6;
+    cursor: not-allowed;
   }
 
 }

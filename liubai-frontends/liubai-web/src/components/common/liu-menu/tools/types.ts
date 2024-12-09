@@ -6,6 +6,8 @@ export interface MenuItem {
   color?: string
   borderBottom?: boolean
   children?: MenuItem[]
+  checked?: boolean
+  disabled?: boolean
   [otherKey: string]: any
 }
 
@@ -23,6 +25,8 @@ export interface LiuMenuProps {
   maskZIndex: string
   showTriggers: MenuTrigger[]
   hideTriggers: MenuTrigger[]
+  autoHideAfterTappingItem: boolean
+  hasCheckbox: boolean
 }
 
 export const liumenu_props = {
@@ -57,4 +61,12 @@ export const liumenu_props = {
     type: Array<MenuTrigger>,
     default: ['click'],
   },
+  autoHideAfterTappingItem: {
+    type: Boolean,
+    default: true,
+  },
+  hasCheckbox: {
+    type: Boolean,
+    default: false,
+  }
 }

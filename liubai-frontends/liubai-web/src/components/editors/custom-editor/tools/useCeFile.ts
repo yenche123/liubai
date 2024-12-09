@@ -196,6 +196,10 @@ async function handleImages(
   const res = await imgHelper.compress(imgFiles)
   const res2 = await imgHelper.getMetaDataFromFiles(res, res0)
 
+  // console.log("liu image store[]: ")
+  // console.log(res2)
+  // console.log(" ")
+
   res2.forEach((v, i) => {
     if(i < canPushNum) ceData.images?.push(v)
   })

@@ -12,8 +12,12 @@ import type {
   Param_WebhookQiniu,
   DownloadUploadOpt,
   DownloadUploadRes,
+  Wx_Res_GzhUploadMedia,
 } from '@/common-types';
-import { getMimeTypeSuffix } from '@/common-util';
+import { 
+  checkAndGetWxGzhAccessToken, 
+  getMimeTypeSuffix,
+} from '@/common-util';
 import FormData from 'form-data';
 import qiniu from "qiniu";
 import { 
@@ -23,6 +27,7 @@ import {
   createFileId,
 } from "@/common-ids";
 import { getNowStamp } from "@/common-time";
+import axios from 'axios';
 
 /********************* constants *****************/
 const MB = 1024 * 1024
@@ -92,12 +97,10 @@ interface RTFD_Opt {
   filename?: string     // default: `upload.${ext}`
 }
 
-// turn response into buffer
-export async function responseToFormData(
-  res: Response,
+export async function blobToFormData(
+  fileBlob: Blob,
   opt?: RTFD_Opt,
 ) {
-  const fileBlob = await res.blob()
   const arrayBuffer = await fileBlob.arrayBuffer()
   const buffer = Buffer.from(arrayBuffer)
 
@@ -117,6 +120,16 @@ export async function responseToFormData(
   })
   
   return { form }
+}
+
+// turn response into buffer
+export async function responseToFormData(
+  response: Response,
+  opt?: RTFD_Opt,
+) {
+  const fileBlob = await response.blob()
+  const res = await blobToFormData(fileBlob, opt)
+  return res
 }
 
 
@@ -153,8 +166,7 @@ export async function downloadAndUpload(
 // 获取允许的图片类型 由 , 拼接而成的字符串
 export function getAcceptImgTypesString() {
   return "image/png,image/jpg,image/jpeg,image/gif,image/webp"
-} 
-
+}
 
 /********************* useful functions end ****************/
 
@@ -379,4 +391,62 @@ export function qiniuCallBackBody(
 }
 
 /********************* qiniu ends ****************/
+
+// uploader for wx-gzh
+export class WxGzhUploader {
+
+  // 上传临时素材
+  static API_MEDIA_UPLOAD = "https://api.weixin.qq.com/cgi-bin/media/upload"
+
+  // temporary media
+  static async mediaByUrl(file_url: string) {
+    // 0. get access token
+    const access_token = await checkAndGetWxGzhAccessToken()
+    if(!access_token) {
+      console.warn("no access token for wx gzh in mediaByUrl")
+      return
+    }
+
+    // 1. download file
+    const res1 = await downloadFile(file_url)
+    const { code, data, errMsg } = res1
+    if(code !== "0000" || !data) {
+      console.warn("download file err in mediaByUrl")
+      console.log(code)
+      console.log(errMsg)
+      return
+    }
+
+    // 2. transfrom response into formData
+    const res2 = data.res
+    const { form } = await responseToFormData(res2)
+
+    // 3. construct request
+    let link3 = this.API_MEDIA_UPLOAD + `?access_token=${access_token}`
+    link3 += `&type=image`
+
+    // 4. upload
+    try {
+      const res4 = await axios.post(link3, form, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      })
+      const data4 = res4.data
+      if(!data4 || data4.errcode) {
+        console.warn("failed to upload temporary media to wx gzh")
+        console.log(res4)
+        return
+      }
+
+      return res4.data as Wx_Res_GzhUploadMedia
+    }
+    catch(err) {
+      console.warn("failed to upload media......")
+      console.log(err)
+    }
+
+  }
+
+}
 

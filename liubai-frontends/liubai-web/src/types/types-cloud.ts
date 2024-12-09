@@ -5,7 +5,12 @@ import type {
   SpaceType, 
   OState,
 } from "./types-basic"
-import type { LiuStateConfig, TagView } from "./types-atom"
+import type { 
+  LiuContent, 
+  LiuRemindMe, 
+  LiuStateConfig, 
+  TagView,
+} from "./types-atom"
 import type { 
   MemberConfig, 
   MemberNotification, 
@@ -122,7 +127,7 @@ export interface SubscriptionAlipay {
   isOn: BaseIsOn
 }
 
-export type SubscriptionPaymentCircle = "monthly" | "yearly"
+export type SubscriptionPaymentCircle = "monthly" | "quarterly" | "yearly"
 
 /******************* Some Types from Wxpay  ****************/
 export interface Wxpay_Jsapi_Params {
@@ -137,4 +142,58 @@ export interface Wxpay_Jsapi_Params {
 /*************************** 云存储 **********************/
 // 云存储服务
 export type CloudStorageService = "qiniu" | "tecent_cos" | "aliyun_oss"
+
+
+
+/****************** sync-operate api ***************/
+
+export namespace SyncOperateAPI {
+  export interface Param {
+    operateType: "agree-aichat" | "get-aichat"
+    chatId: string
+  }
+
+  export interface WaitingData {
+    title?: string
+    liuDesc?: LiuContent[]
+    calendarStamp?: number
+    remindStamp?: number
+    whenStamp?: number
+    remindMe?: LiuRemindMe
+  }
+
+  export type ContentType = "note" | "todo" | "calendar"
+
+  export interface Res_AgreeAichat {
+    operateType: "agree-aichat"
+    contentType: ContentType
+    contentId: string
+  }
+
+  export interface Res_GetAichat {
+    operateType: "get-aichat"
+    result: "waiting" | "created"
+    contentId?: string
+    waitingData?: WaitingData
+  }
+
+  export type Result = Res_AgreeAichat | Res_GetAichat
+}
+
+/****************** service-poly api ***************/
+export namespace ServicePolyAPI {
+  
+  export interface Param {
+    operateType: "get-wxjssdk-config"
+    url: string
+  }
+
+  export interface Res_GetWxjssdkConfig {
+    operateType: "get-wxjssdk-config"
+    appId: string
+    timestamp: number
+    nonceStr: string
+    signature: string
+  }
+}
 

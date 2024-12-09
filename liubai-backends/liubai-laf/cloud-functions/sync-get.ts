@@ -8,6 +8,7 @@ import {
   getEncryptedData,
   valTool,
   decryptEncData,
+  sortListWithIds,
 } from "@/common-util"
 import {
   Sch_SyncGetAtom,
@@ -792,7 +793,9 @@ function getSharedData_6(
     remindMe: d.remindMe,
     tagIds: d.tagIds,
     stateId: d.stateId,
+    stateStamp: d.stateStamp,
     editedStamp: d.editedStamp,
+    aiReadable: d.aiReadable,
   }
 
   parcel.status = "has_data"
@@ -1054,10 +1057,13 @@ function packContents(
       tagIds: v.tagIds,
       tagSearched: v.tagSearched,
       stateId: v.stateId,
+      stateStamp: v.stateStamp,
       config: v.config,
 
       levelOne: v.levelOne,
       levelOneAndTwo: v.levelOneAndTwo,
+      aiCharacter: v.aiCharacter,
+      aiReadable: v.aiReadable,
 
       myFavorite,
       myEmoji,
@@ -1299,23 +1305,6 @@ async function getListViaIds<T extends SyncGetTable>(
   list.push(...newList)
   return list
 }
-
-
-function sortListWithIds<T extends SyncGetTable>(
-  list: T[],
-  ids: string[],
-) {
-  const newList: T[] = []
-  for(let i=0; i<ids.length; i++) {
-    const id = ids[i]
-    const index = list.findIndex(v => v._id === id)
-    if(index >= 0) {
-      newList.push(list[index])
-    }
-  }
-  return newList
-}
-
 
 /** checking out if i logged in and space ids */
 function getSharedData_1(

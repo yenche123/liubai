@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-defineProps({
+const props = defineProps({
   checked: {
     type: Boolean,
     default: false
@@ -17,20 +17,34 @@ defineProps({
     type: String,
     default: "var(--main-code)"
   },
+  checkedColor: {
+    type: String,
+    default: "var(--checkbox-bg)"
+  },
   circleSize: {
     type: Number,
     default: 12,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
   }
 })
 
-defineEmits<{
+const emit = defineEmits<{
   (event: "tapcheckbox"): void
 }>()
+
+const onTapCheckbox = () => {
+  if (!props.disabled) {
+    emit("tapcheckbox")
+  }
+}
 
 </script>
 <template>
 
-  <div class="liu-checkbox" @click="$emit('tapcheckbox')">
+  <div class="liu-checkbox" @click="onTapCheckbox">
     <div class="liu-checked" v-show="checked"></div>
   </div>
 
@@ -47,14 +61,14 @@ defineEmits<{
   justify-content: center;
   position: relative;
   box-sizing: border-box;
-  cursor: pointer;
+  cursor: v-bind("disabled ? 'inherit' : 'pointer'");
 
   .liu-checked {
     width: v-bind("circleSize + 'px'");
     height: v-bind("circleSize + 'px'");
     border-radius: 50%;
     overflow: hidden;
-    background: var(--checkbox-bg);
+    background: v-bind("checkedColor");
   }
 }
 

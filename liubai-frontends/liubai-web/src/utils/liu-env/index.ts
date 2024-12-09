@@ -97,6 +97,7 @@ function getEnv(): LiuSystemEnv {
 
   // customer service link
   const CUSTOMER_SERVICE = import.meta.env.VITE_CUSTOMER_SERVICE
+  const WECOM_GROUP_LINK = import.meta.env.VITE_WECOM_GROUP_LINK
 
   // connectors
   const CONNECTORS = import.meta.env.VITE_CONNECTORS === "01"
@@ -171,6 +172,7 @@ function getEnv(): LiuSystemEnv {
     GOATCOUNTER_SRC,
     TINYLYTICS_SRC,
     CUSTOMER_SERVICE,
+    WECOM_GROUP_LINK,
     CONNECTORS,
     C_WECHAT,
     C_DINGTALK,

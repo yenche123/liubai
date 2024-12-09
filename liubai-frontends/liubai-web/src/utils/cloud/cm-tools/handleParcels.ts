@@ -328,6 +328,7 @@ async function mergeDraft(
 
   g.title = d.title
   g.liuDesc = d.liuDesc
+  g.aiReadable = d.aiReadable
   const imgRes = CloudFiler.updateImages(d.images)
   if(imgRes.updated) {
     g.images = imgRes.images
@@ -397,6 +398,7 @@ function createDraft(
     tagIds: d.tagIds,
     editedStamp: d.editedStamp,
     firstSyncStamp: b.insertedStamp,
+    aiReadable: d.aiReadable,
   }
   new_drafts.push(c)
 }
@@ -494,6 +496,10 @@ async function mergeContent(
     g.visScope = d.visScope
     g.title = d.title
     g.liuDesc = d.liuDesc 
+    g.aiCharacter = d.aiCharacter
+    g.aiReadable = d.aiReadable
+    g.stateId = d.stateId
+    g.stateStamp = d.stateStamp
 
     const imgRes = CloudFiler.updateImages(d.images, oc.images)
     if(imgRes.updated) {
@@ -544,6 +550,7 @@ async function mergeContent(
   if(n3 > o3) {
     gCfg.lastOperateStateId = n3
     g.stateId = d.stateId
+    g.stateStamp = d.stateStamp
     g.config = gCfg
   }
 
@@ -657,6 +664,7 @@ function createContent(
     tagIds: d.tagIds,
     tagSearched: d.tagSearched,
     stateId: d.stateId,
+    stateStamp: d.stateStamp,
     config: d.config,
     search_title: d.search_title,
     search_other: d.search_other,
@@ -665,6 +673,8 @@ function createContent(
     levelOneAndTwo: d.levelOneAndTwo,
 
     firstSyncStamp: b.insertedStamp,
+    aiCharacter: d.aiCharacter,
+    aiReadable: d.aiReadable,
   }
 
   if(!c.search_title && c.title) {

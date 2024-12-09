@@ -147,18 +147,38 @@ export default defineComponent({
 
       </div>
 
-      <!-- 同步到云端 -->
-      <div class="liu-hover ma-item ma-sync" @click="onTapSyncToCloud">
-        <div class="mai-icon">
-          <svg-icon name="cloud" class="mai-svgicon" :color="default_color"></svg-icon>
+      <!-- privacy -->
+      <LiuMenu :menu="privacyMenu" min-width-str="120px"
+        :hasCheckbox="true"
+        @tapitem="onTapPrivacyItem"
+        placement="top"
+      >
+
+        <div class="liu-hover ma-item">
+          <div class="mai-icon">
+            <svg-icon name="lock" class="mai-svgicon" :color="default_color"></svg-icon>
+          </div>
+          <div class="liu-no-user-select mai-title"
+            :class="{ 
+              'mai-title_with_footer_text': !data.syncCloud || data.aiReadable === 'N',
+            }"
+          >
+            <span>{{ t('common.privacy') }}</span>
+          </div>
+
+          <div v-if="!data.syncCloud" class="mai-footer-text">
+            <span>{{ t("editor.only_local") }}</span>
+          </div>
+          <div v-else-if="data.aiReadable === 'N'" class="mai-footer-text">
+            <span>{{ t('editor.refuse_ai') }}</span>
+          </div>
+          <div class="mai-footer">
+            <svg-icon name="arrow-right2" class="maif-icon" :color="default_color"></svg-icon>
+          </div>
+
         </div>
-        <div class="liu-no-user-select mai-title">
-          <span>{{ t("editor.sync_cloud") }}</span>
-        </div>
-        <div class="mai-switch-footer">
-          <liu-switch :checked="data.syncCloud" @change="onSyncCloudChange" :disabled="data.scDisabled"></liu-switch>
-        </div>
-      </div>
+
+      </LiuMenu>
 
 
     </div>
@@ -225,6 +245,21 @@ export default defineComponent({
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  .mai-title_with_footer_text {
+    flex: none;
+  }
+
+  .mai-footer-text {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    font-size: var(--mini-font);
+    color: var(--main-note);
+    font-style: italic;
+    padding-inline-start: 8px;
+    padding-inline-end: 4px;
   }
 
   .mai-footer {

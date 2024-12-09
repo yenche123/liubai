@@ -234,13 +234,14 @@ async function addThreadToKanban(
     v1.contentIds = contentIds
   })
 
-  // 3. 发起更新 stateList
+  // 3. 发起更新 stateList for workspace
   const res2 = await stateController.setNewStateList(stateList, {
     speed: "slow",
   })
 
   // 4. 更新 content
-  const res3 = await dbOp.setStateId(threadId, stateId)
+  const newStateStamp = time.getTime()
+  const res3 = await dbOp.setStateId(threadId, stateId, newStateStamp)
 
   // 5. 加载该 thread
   const newThread = await threadController.getData({ id: threadId })

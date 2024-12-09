@@ -12,12 +12,15 @@ import type {
   UserThirdData,
   UserWeChatGzh,
   Wx_Gzh_Click,
+  Wx_Gzh_Image,
   Wx_Gzh_Msg_Event, 
   Wx_Gzh_Scan, 
   Wx_Gzh_Send_Msg, 
   Wx_Gzh_Subscribe, 
   Wx_Gzh_Text, 
   Wx_Gzh_Unsubscribe,
+  Wx_Gzh_Video,
+  Wx_Gzh_Voice,
   Wx_Res_GzhUserInfo, 
 } from "@/common-types";
 import { decrypt } from "@wecom/crypto"
@@ -34,24 +37,31 @@ import {
   tagWxUserLang,
   getWxGzhUserInfo,
   isEmailAndNormalize,
+  valTool,
 } from "@/common-util";
 import {
   useI18n, 
+  i18nFill,
   wechatLang,
   wxClickReplies,
-  wxTextReplies,
+  wxTextRepliesItems,
 } from "@/common-i18n";
 import { createCredential2 } from "@/common-ids";
 import { init_user } from "@/user-login";
-import { sendWxMessage, sendWxTextMessage } from "@/service-send";
+import { WxGzhSender } from "@/service-send";
 import { enter_ai } from "@/ai-entrance";
 
 const db = cloud.database()
 let wechat_access_token = ""
 
 /***************************** constants **************************/
+
+// 1 MB
+const MB = 1024 * 1024
 // how many accounts can be bound to one wechat gzh openid
 const MAX_ACCOUNTS_TO_BIND = 2
+// download temp media from wx gzh
+const API_MEDIA_DOWNLOAD = "https://api.weixin.qq.com/cgi-bin/media/get"
 
 /***************************** types **************************/
 type MsgMode = "plain_text" | "safe"
@@ -67,9 +77,26 @@ export async function main(ctx: FunctionContext) {
     return res
   }
 
-  const { MsgType } = msgObj
+  console.log("msgObj: ")
+  console.log(msgObj)
+
+  const { MsgType, FromUserName } = msgObj
+  if(!FromUserName) {
+    console.warn("no wx_gzh_openid!")
+    return ""
+  }
+
   if(MsgType === "text") {
     handle_text(msgObj)
+  }
+  else if(MsgType === "image") {
+    handle_image(msgObj)
+  }
+  else if(MsgType === "voice") {
+    handle_voice(msgObj)
+  }
+  else if(MsgType === "video") {
+    handle_video(msgObj)
   }
   else if(MsgType === "event") {
     const { Event } = msgObj
@@ -96,19 +123,24 @@ async function handle_click(
 ) {
 
   // 1. get params
-  const { EventKey } = msgObj
+  const { EventKey, FromUserName: wx_gzh_openid } = msgObj
   if(!EventKey) return false
 
-  const wx_gzh_openid = msgObj.FromUserName
-  if(!wx_gzh_openid) return false
-
+  // 2. get replies and the domain
   const replies = wxClickReplies[EventKey]
   if(!replies || replies.length < 1) return false
+  const _env = process.env
+  const LIU_DOMAIN = _env.LIU_DOMAIN ?? ""
 
-  // 2. reply
+  // 3. reply
   for(let i = 0; i < replies.length; i++) {
     const v = replies[i]
-    await sendObject(wx_gzh_openid, v)
+    const obj = valTool.copyObject(v)
+    if(obj.msgtype === "text") {
+      const str = obj.text.content 
+      obj.text.content = i18nFill(str, { LIU_DOMAIN })
+    }
+    await sendObject(wx_gzh_openid, obj)
   }
 
   return true
@@ -117,10 +149,8 @@ async function handle_click(
 async function handle_text(
   msgObj: Wx_Gzh_Text,
 ) {
-  
   // 1. get openid
   const wx_gzh_openid = msgObj.FromUserName
-  if(!wx_gzh_openid) return
 
   // 2. check if we get to auto-reply
   const userText = msgObj.Content
@@ -131,32 +161,111 @@ async function handle_text(
   const _env = process.env
   const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
   if(!testOpenId || testOpenId !== wx_gzh_openid) {
-    console.warn("interrupte handle_text!")
+    console.warn("interrupt handle_text!")
     return
   }
 
   // 3. get user
-  const w3: Partial<Table_User> = {
-    oState: "NORMAL",
-    wx_gzh_openid,
-  }
-  const uCol = db.collection("User")
-  const q3 = uCol.where(w3).orderBy("insertedStamp", "desc")
-  const res3 = await q3.getOne<Table_User>()
+  const user = await getUserByWxGzhOpenid(wx_gzh_openid)
+  if(!user) return
 
-  // 4. check out login or not
-  const user4 = res3.data
-  if(!user4) {
-    const { t: t4 } = useI18n(wechatLang)
-    const text4 = t4("login_first")
-    await sendText(wx_gzh_openid, text4)
+  // 4. ai!
+  enter_ai({ user, msg_type: "text", text: userText, wx_gzh_openid })
+}
+
+async function handle_image(
+  msgObj: Wx_Gzh_Image,
+) {
+  // 1. get params
+  const wx_gzh_openid = msgObj.FromUserName
+  const wx_media_id = msgObj.MediaId
+  const image_url = msgObj.PicUrl
+
+  // 2.1 TODO: temporarily check out test openid
+  const _env = process.env
+  const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
+  if(!testOpenId || testOpenId !== wx_gzh_openid) {
+    console.warn("interrupt handle_image!")
     return
   }
 
-  // 5. ai!
-  enter_ai({ user: user4, text: userText, wx_gzh_openid })
+  // 3. get user
+  const user = await getUserByWxGzhOpenid(wx_gzh_openid)
+  if(!user) return
+
+  // 4. get to ai system
+  enter_ai({ 
+    user, 
+    msg_type: "image", 
+    image_url, 
+    wx_media_id, 
+    wx_gzh_openid,
+  })
+}
+
+async function handle_voice(
+  msgObj: Wx_Gzh_Voice,
+) {
+  // 1. get params
+  const wx_gzh_openid = msgObj.FromUserName
+  const wx_media_id = msgObj.MediaId
+  const wx_media_id_16k = msgObj.MediaId16K
+
+  // 1.1 send unsupported message
+  const { t } = useI18n(wechatLang)
+  const msg = t("voice_unsupported")
+  sendText(wx_gzh_openid, msg)
+
+  // // 2.1 TODO: temporarily check out test openid
+  // const _env = process.env
+  // const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
+  // if(!testOpenId || testOpenId !== wx_gzh_openid) {
+  //   console.warn("interrupt handle_image!")
+  //   return
+  // }
+
+  // // 3. get user
+  // const user = await getUserByWxGzhOpenid(wx_gzh_openid)
+  // if(!user) return
+
+  // // 4. download voice
+  // const res4 = await downloadVoice(wx_media_id)
+  // if(!res4) return
+  // const size4 = res4.fileBlob.size
+  // const type4 = res4.fileBlob.type
+
+  // console.log("size4: ", size4)
+  // console.log("type4: ", type4)
+
+  // if(size4 > MB) {
+  //   console.warn("the audio is too large!")
+  //   console.log(size4)
+  //   return
+  // }
   
-  return true
+  // // 5. get to ai system
+  // enter_ai({ 
+  //   user, 
+  //   msg_type: "voice", 
+  //   file_type: type4,
+  //   file_base64: res4.b64,
+  //   file_blob: res4.fileBlob,
+  //   wx_media_id, 
+  //   wx_media_id_16k,
+  //   wx_gzh_openid,
+  // })
+}
+
+async function handle_video(
+  msgObj: Wx_Gzh_Video,
+) {
+  // 1. get openid
+  const wx_gzh_openid = msgObj.FromUserName
+
+  // 2. send unsupported message
+  const { t } = useI18n(wechatLang)
+  const msg = t("video_unsupported")
+  sendText(wx_gzh_openid, msg)
 }
 
 
@@ -164,7 +273,6 @@ async function handle_unsubscribe(
   msgObj: Wx_Gzh_Unsubscribe,
 ) {
   const wx_gzh_openid = msgObj.FromUserName
-  if(!wx_gzh_openid) return
 
   // 0. define functions where we update user and cache
   const uCol = db.collection("User")
@@ -218,7 +326,6 @@ async function handle_subscribe(
 
   // 2. get openid
   const wx_gzh_openid = msgObj.FromUserName
-  if(!wx_gzh_openid) return
 
   // 3. get user info
   const userInfo = await getWxGzhUserInfo(wx_gzh_openid)
@@ -254,7 +361,6 @@ async function handle_scan(
 
   // 2. get openid
   const wx_gzh_openid = msgObj.FromUserName
-  if(!wx_gzh_openid) return
 
   // 3. get user info
   const userInfo = await getWxGzhUserInfo(wx_gzh_openid)
@@ -578,6 +684,43 @@ async function make_user_subscribed(
 
 /***************** helper functions *************/
 
+async function downloadVoice(
+  media_id: string,
+) {
+  // 1. get accessToken for wx gzh
+  const res1 = await checkAccessToken()
+  if(!res1) return
+
+  // 2. construct link
+  const url = new URL(API_MEDIA_DOWNLOAD)
+  const sP = url.searchParams
+  sP.set("access_token", res1)
+  sP.set("media_id", media_id)
+  const link = url.toString()
+
+  // 3. to download
+  try {
+    const res = await fetch(link)
+    const fileBlob = await res.blob()
+    const arrayBuffer = await fileBlob.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+    const b64 = buffer.toString("base64")
+    return { fileBlob, b64 }
+  }
+  catch(err) {
+    console.warn("downloadVoice err:")
+    console.log(err)
+  }
+}
+
+// TODO WIP!
+async function convertAMRtoMP3(
+
+) {
+  
+}
+
+
 // when user sends text, check out if we have to reply automatically
 async function autoReplyAfterReceivingText(
   wx_gzh_openid: string,
@@ -602,13 +745,22 @@ async function autoReplyAfterReceivingText(
     return true
   }
 
-  // 4. whether or not the text is targeted by wxTextReplies
-  const replies = wxTextReplies[text1]
-  if(!replies || replies.length < 1) return false
+  // 4. check out if auto reply
+  let theReplies: Wx_Gzh_Send_Msg[] = []
+  for(let i=0; i<wxTextRepliesItems.length; i++) {
+    const item = wxTextRepliesItems[i]
+    const { keywords, replies } = item
+    const existed = keywords.includes(text1)
+    if(existed) {
+      theReplies = replies
+      break
+    }
+  }
+  if(theReplies.length < 1) return false
   
   // 5. auto reply
-  for(let i = 0; i < replies.length; i++) {
-    const v = replies[i]
+  for(let i = 0; i < theReplies.length; i++) {
+    const v = theReplies[i]
     await sendObject(wx_gzh_openid, v)
   }
   return true
@@ -833,7 +985,26 @@ async function getMsgObjForSafeMode(message: string) {
   return res
 }
 
-/****************************** helper functions ******************************/
+async function getUserByWxGzhOpenid(wx_gzh_openid: string) {
+  const w3: Partial<Table_User> = {
+    oState: "NORMAL",
+    wx_gzh_openid,
+  }
+  const uCol = db.collection("User")
+  const q3 = uCol.where(w3).orderBy("insertedStamp", "desc")
+  const res3 = await q3.getOne<Table_User>()
+
+  // check out login or not
+  const user4 = res3.data
+  if(!user4 || user4.oState !== "NORMAL") {
+    const { t: t4 } = useI18n(wechatLang)
+    const text4 = t4("login_first")
+    await sendText(wx_gzh_openid, text4)
+    return
+  }
+
+  return user4
+}
 
 async function sendText(
   wx_gzh_openid: string,
@@ -841,7 +1012,7 @@ async function sendText(
 ) {
   const res1 = await checkAccessToken()
   if(!res1) return false
-  await sendWxTextMessage(wx_gzh_openid, wechat_access_token, text)
+  await WxGzhSender.sendTextMessage(wx_gzh_openid, wechat_access_token, text)
 }
 
 async function sendObject(
@@ -850,7 +1021,7 @@ async function sendObject(
 ) {
   const res1 = await checkAccessToken()
   if(!res1) return false
-  await sendWxMessage(wx_gzh_openid, wechat_access_token, obj)
+  await WxGzhSender.sendMessage(wx_gzh_openid, wechat_access_token, obj)
 }
 
 function getMsgMode(

@@ -62,5 +62,9 @@ export interface LocalOnceData {
 
 }
 
-export type KeyOfLocalOnceData = keyof LocalOnceData
+export interface LocalKeepData {
+  wx_gzh_openid?: string
+}
 
+export type KeyOfLocalOnceData = keyof LocalOnceData
+export type KeyOfLocalKeepData = keyof LocalKeepData

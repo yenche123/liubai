@@ -5,6 +5,7 @@ import type { ThreadShow } from '~/types/types-content';
 import { useTcTopbar } from './tools/useTcTopbar';
 import type { TctEmits } from "./tools/types"
 import StateBadge from '~/components/common/state-badge/state-badge.vue';
+import AiCharacterBadge from './ai-character-badge/ai-character-badge.vue';
 
 const props = defineProps({
   threadData: {
@@ -19,6 +20,8 @@ const {
   td,
   showTopbar,
   cloudOffPlacement,
+  aiCharacterUrl,
+  onTapAiCharacter,
 } = useTcTopbar(props)
 
 
@@ -39,6 +42,17 @@ const {
           name="cloud_off"
         ></svg-icon>
       </LiuTooltip>
+    </div>
+
+    <!-- ai character -->
+    <div v-if="aiCharacterUrl && td.aiCharacter" 
+      class="tct-item-container tct-ai-box"
+      @click.stop="onTapAiCharacter"
+    >
+      <AiCharacterBadge
+        :ai-character="td.aiCharacter"
+        :icon-url="aiCharacterUrl"
+      ></AiCharacterBadge>
     </div>
 
     <!-- 状态 -->
@@ -83,7 +97,11 @@ const {
 
 .tct-item-container {
   position: relative;
-  margin-inline-start: 14px;
+  padding-inline-start: 14px;
+}
+
+.tct-ai-box {
+  cursor: pointer;
 }
 
 .tct-local-svg {

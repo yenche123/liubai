@@ -49,7 +49,7 @@ const onTapToggle = (e: MouseEvent) => {
 }
 
 .switch-container_disabled {
-  cursor: auto;
+  cursor: inherit;
 }
 
 .switch-box {

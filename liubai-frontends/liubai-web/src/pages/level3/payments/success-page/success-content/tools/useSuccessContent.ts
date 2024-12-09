@@ -1,20 +1,53 @@
-import { useWorkspaceStore, type WorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
+import { 
+  useWorkspaceStore, 
+  type WorkspaceStore,
+} from "~/hooks/stores/useWorkspaceStore";
 import { fetchUserSubscription } from "~/utils/cloud/tools/requests";
 import { storageMySubscription } from "../../../utils/pay-tools";
 import valTool from "~/utils/basic/val-tool";
 import { onMounted } from "vue";
 import time from "~/utils/basic/time";
+import liuEnv from "~/utils/liu-env";
+import { useRouteAndLiuRouter } from "~/routes/liu-router";
+import liuApi from "~/utils/liu-api";
+import cui from "~/components/custom-ui";
+import { useQRCode } from "~/hooks/useVueUse";
 
 const SEC_3 = time.SECONED * 3
 
 export function useSuccessContent() {
   const wStore = useWorkspaceStore()
+  const { WECOM_GROUP_LINK } = liuEnv.getEnv()
+  const cha = liuApi.getCharacteristic()
+  const qrcode = useQRCode(WECOM_GROUP_LINK ?? "")
+
+  const rr = useRouteAndLiuRouter()
+  const onTapView = () => {
+    rr.router.push({ name: "subscription" })
+  }
+  const onTapGroup = () => {
+    if(!WECOM_GROUP_LINK) return
+    if(cha.isWeChat || cha.isWeCom) {
+      window.open(WECOM_GROUP_LINK, "_blank")
+      return
+    }
+    const src = qrcode.value
+    cui.previewImage({
+      imgs: [{ src, id: "group-qrcode", width: 250, height: 250 }]
+    })
+    cui.showSnackBar({ text_key: "payment.scan_with_wx" })
+  }
 
   onMounted(() => {
     prepareToCheck(wStore)
   })
 
-  return { wStore }
+  return { 
+    wStore,
+    WECOM_GROUP_LINK,
+    onTapView,
+    onTapGroup,
+  }
 }
 
 // prepare to check my subscription

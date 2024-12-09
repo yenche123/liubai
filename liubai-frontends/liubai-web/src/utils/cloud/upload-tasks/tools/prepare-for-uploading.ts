@@ -104,9 +104,13 @@ function whenThreadPost(c: ContentLocalTable) {
     tagIds: c.tagIds,
     tagSearched: c.tagSearched,
     stateId: c.stateId,
+    stateStamp: c.stateStamp,
 
     emojiData: c.emojiData,
     config: c.config,
+
+    aiChatId: c.aiChatId,
+    aiReadable: c.aiReadable,
   }
   return uploadThread
 }
@@ -147,9 +151,12 @@ function whenThreadEdit(c: ContentLocalTable) {
     remindStamp: c.remindStamp,
     whenStamp: c.whenStamp,
     remindMe: c.remindMe,
+    stateId: c.stateId,
+    stateStamp: c.stateStamp,
 
     tagIds: c.tagIds,
     tagSearched: c.tagSearched,
+    aiReadable: c.aiReadable,
   }
   return uploadThread
 }
@@ -202,6 +209,8 @@ function whenDraftSet(d: DraftLocalTable) {
     remindMe: d.remindMe,
     tagIds: d.tagIds,
     stateId: d.stateId,
+    stateStamp: d.stateStamp,
+    aiReadable: d.aiReadable,
   }
   if(d.liuDesc) {
     uploadDraft.liuDesc = transferUtil.tiptapToLiu(d.liuDesc, { trim: false })
@@ -312,6 +321,7 @@ async function organizeAtom(task: UploadTaskLocalTable) {
       id: content._id,
       first_id: content.first_id,
       stateId: content.stateId,
+      stateStamp: content.stateStamp,
     }
     isOK = true
   }

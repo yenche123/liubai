@@ -240,6 +240,6 @@ https://brew.sh/
 10. 开启 vite dev server 时，当要用手机调试时，必须现在电脑上开启 Network 的地址，手机才打得开同一个地址。
 
 
-### MacOS 中的注意事项
+### macOS 中的注意事项
 
 只有在 Eng 输入法时（中文无效），敲击 Control + ` 才会打开 vs-code 中的终端

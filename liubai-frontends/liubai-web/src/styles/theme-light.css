@@ -149,6 +149,15 @@
   --wechat-green-hover: #02a34e;
   --alpay-blue: #1777FF;
   --alpay-blue-hover: #156ae0;
+
+  /** ai characters */
+  --baixiaoying-color: #FF6933;
+  --deepseek-color: #4D6BFE;
+  --hailuo-color: #F23F5D;
+  --kimi-color: #007AFF;
+  --wanzhi-color: #003422;
+  --yuewen-color: #015AFF;
+  --zhipu-color: #2C58E0;
   
   /** 状态色 */
   --liu-state-1: #7f766f;

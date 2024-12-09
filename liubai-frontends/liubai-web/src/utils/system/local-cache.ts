@@ -1,7 +1,9 @@
 import type { 
   LocalPreference, 
   LocalOnceData, 
+  LocalKeepData,
   KeyOfLocalOnceData,
+  KeyOfLocalKeepData,
 } from "./tools/types";
 import liuApi from "../liu-api";
 import liuEnv from "../liu-env";
@@ -68,7 +70,20 @@ function removeOnceDataWhileLogging() {
   liuApi.setStorageSync("local-once-data", localData)
 }
 
-/*********** 是否具备后端并且已登录 */
+
+/********** data which is not changed by context ********/
+function getKeepData(): LocalKeepData {
+  const res = liuApi.getStorageSync<LocalKeepData>("local-keep-data") || {}
+  return res
+}
+
+function setKeepData(key: KeyOfLocalKeepData, data: any) {
+  const localData = getKeepData()
+  localData[key] = data
+  liuApi.setStorageSync("local-keep-data", localData)
+}
+
+/*********** 是否具备后端并且已登录 ********/
 function hasLoginWithBackend() {
   const {
     local_id,
@@ -88,5 +103,7 @@ export default {
   getOnceData,
   setOnceData,
   removeOnceDataWhileLogging,
+  getKeepData,
+  setKeepData,
   hasLoginWithBackend,
 }

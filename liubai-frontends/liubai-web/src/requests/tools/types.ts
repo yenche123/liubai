@@ -17,3 +17,15 @@ export interface LiuErrReturn {
   errMsg?: string
   showMsg?: string
 }
+
+export interface CommonPass_A {
+  pass: false
+  err: LiuErrReturn
+}
+
+export interface DataPass_B<T> {
+  pass: true
+  data: T
+}
+
+export type DataPass<T = any> = CommonPass_A | DataPass_B<T>

@@ -51,6 +51,14 @@ import type {
   UserSubscription,
   Alipay_Refund_Param,
   Res_Alipay_Refund,
+  SyncOperateAPI,
+  LiuRemindMe,
+  AiToolAddCalendarParam,
+  AiToolAddCalendarSpecificDate,
+  LiuAtomState,
+  LiuStateConfig,
+  SyncGetTable,
+  Wx_Res_GzhSnsUserInfo,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -58,6 +66,9 @@ import {
   Sch_Cloud_FileStore,
   Sch_Cloud_ImageStore,
   Sch_Simple_LiuContent,
+  Sch_AiToolAddNoteParam,
+  Sch_AiToolAddTodoParam,
+  Sch_AiToolAddCalendarParam,
 } from "@/common-types"
 import { 
   createToken, 
@@ -69,7 +80,7 @@ import {
 import { 
   getNowStamp, 
   getBasicStampWhileAdding, 
-  SECONED, DAY, MINUTE,
+  SECONED, DAY, MINUTE, HOUR,
   localizeStamp,
   isWithinMillis,
   getServerTimezone,
@@ -91,7 +102,14 @@ import {
   wxpay_apiclient_key,
   alipay_cfg,
 } from "@/secret-config"
-import { addHours, addMonths, addYears, set as date_fn_set } from "date-fns"
+import { 
+  addHours,
+  addDays, 
+  addMonths,
+  addYears, 
+  set as date_fn_set,
+  differenceInCalendarDays,
+} from "date-fns"
 import { AlipaySdk, type AlipayCommonResult } from "alipay-sdk"
 
 const db = cloud.database()
@@ -114,12 +132,14 @@ export const reg_exp = {
 }
 
 // @see https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html#7
-const API_TYPING = "https://api.weixin.qq.com/cgi-bin/message/custom/typing"
 const API_TAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging"
 const API_UNTAG_USER = "https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging"
 
 // @see https://developers.weixin.qq.com/doc/offiaccount/User_Management/Get_users_basic_information_UnionID.html
 const API_USER_INFO = "https://api.weixin.qq.com/cgi-bin/user/info"
+
+// 微信公众号 OAuth2 使用 user's access_token 去获取用户信息
+const WX_GZH_SNS_USERINFO = "https://api.weixin.qq.com/sns/userinfo"
 
 // 微信公众号 OAuth2 使用 code 去换用户的 accessToken
 const WX_GZH_OAUTH_ACCESS_TOKEN = "https://api.weixin.qq.com/sns/oauth2/access_token"
@@ -191,6 +211,10 @@ const uniqueArray = (arr: string[]) => {
   return uniqueArr
 }
 
+const numToFix = (num: number, fix: number): number => {
+  const str = num.toFixed(fix)
+  return Number(str)
+}
 
 /**
  * format 0-9 to 00-09
@@ -257,17 +281,39 @@ const isStringWithVal = (val: any): val is string => {
   return hasValue<string>(val, "string")
 }
 
+const isLatinChar = (char: string) => {
+  const isEng1 = char >= "a" && char <= "z"
+  if(isEng1) return true
+  const isEng2 = char >= "A" && char <= "Z"
+  if(isEng2) return true
+  const isNum = char >= "0" && char <= "9"
+  if(isNum) return true
+  return false
+}
+
+const getChineseCharNum = (val: string) => {
+  if(!val) return 0
+  let num = 0
+  for(let i=0; i<val.length; i++) {
+    if(val.charCodeAt(i) >= 10000) num++
+  }
+  return num
+}
+
 export const valTool = {
   waitMilli,
   strToObj,
   objToStr,
   minusAndMinimumZero,
   uniqueArray,
+  numToFix,
   format0,
   copyObject,
   encode_URI_component,
   hasValue,
   isStringWithVal,
+  isLatinChar,
+  getChineseCharNum,
 }
 
 
@@ -438,7 +484,7 @@ export class LiuDateUtil {
     }
     const newStamp = localizeStamp(stamp, timezone)
     const d = new Date(newStamp)
-    const { t } = useI18n(dateLang, { locale})
+    const { t } = useI18n(dateLang, { locale })
   
     const mm = valTool.format0(d.getMonth() + 1)
     const hr = valTool.format0(d.getHours())
@@ -465,7 +511,6 @@ export class LiuDateUtil {
     const d2 = new Date(currentStamp)
     const { t } = useI18n(dateLang, { locale})
     
-  
     const yyyy = valTool.format0(d.getFullYear())
     let mm = String(d.getMonth() + 1)
     let dd = String(d.getDate())
@@ -483,6 +528,14 @@ export class LiuDateUtil {
     }
   
     return t("show_2", { mm, dd, hr, min })
+  }
+
+  static getDateAndTime(stamp: number, timezone?: string) {
+    const newStamp = localizeStamp(stamp, timezone)
+    const str = this.transformStampIntoStr(newStamp)
+    const date = str.substring(0, 10)
+    const time = str.substring(11)
+    return { date, time }
   }
 
   static transformStampIntoStr(stamp: number) {
@@ -565,9 +618,21 @@ export class LiuDateUtil {
     let endDate = new Date(startStamp)
     if(payment_circle === "monthly") {
       endDate = addMonths(startDate, 1)
+      const diffDays = differenceInCalendarDays(endDate, startDate)
+      console.warn("monthly diffDays: ", diffDays)
+      const diffOfDiffDays = 30 - diffDays
+      if(diffOfDiffDays > 0) {
+        endDate = addDays(endDate, diffOfDiffDays)
+      }
     }
     else if(payment_circle === "quarterly") {
       endDate = addMonths(startDate, 3)
+      const diffDays = differenceInCalendarDays(endDate, startDate)
+      console.warn("quarterly diffDays: ", diffDays)
+      const diffOfDiffDays = 90 - diffDays
+      if(diffOfDiffDays > 0) {
+        endDate = addDays(endDate, diffOfDiffDays)
+      }
     }
     else if(payment_circle === "yearly") {
       endDate = addYears(startDate, 1)
@@ -586,6 +651,40 @@ export class LiuDateUtil {
     
     const endStamp = endDate.getTime()
     return endStamp
+  }
+
+  // give "YYYY-MM-DD" to json { year: number, month: number, day: number }
+  // the month is from 1 to 12
+  static distractFromYYYY_MM_DD(str: string) {
+    const arr = str.split("-")
+    const yyyy = arr[0]
+    const mm = arr[1]
+    const dd = arr[2]
+    if(!yyyy || !mm || !dd) {
+      return
+    }
+    const year = Number(yyyy)
+    const month = Number(mm)
+    const day = Number(dd)
+    if(isNaN(year) || isNaN(month) || isNaN(day)) {
+      return
+    }
+    return { year, month, day }
+  }
+
+  static distractFromhh_mm(str: string) {
+    const arr = str.split(":")
+    const hh = arr[0]
+    const mm = arr[1]
+    if(!hh || !mm) {
+      return
+    }
+    const hour = Number(hh)
+    const minute = Number(mm)
+    if(isNaN(hour) || isNaN(minute)) {
+      return
+    }
+    return { hour, minute }
   }
 
 }
@@ -647,6 +746,10 @@ export function generateAvatar(url: string) {
     url,
   }
   return obj
+}
+
+export function getLiuDoman() {
+  return process.env.LIU_DOMAIN ?? ""
 }
 
 
@@ -790,6 +893,122 @@ export function getSummary(
 
   return text
 }
+
+export function sortListWithIds<T extends SyncGetTable>(
+  list: T[],
+  ids: string[],
+) {
+  const newList: T[] = []
+  for(let i=0; i<ids.length; i++) {
+    const id = ids[i]
+    const index = list.findIndex(v => v._id === id)
+    if(index >= 0) {
+      newList.push(list[index])
+    }
+  }
+  return newList
+}
+
+export class MarkdownParser {
+
+
+  private static _doesTheCharNeedTrim(char: string) {
+    if(char === " " || char === "\n" || char === "*") {
+      return true
+    }
+    else if(char === "-" || char === "•") {
+      return true
+    }
+    return false
+  }
+
+  private static _trimText(text: string) {
+    // trim start
+    for(let i=0; i<text.length; i++) {
+      const char = text[i]
+      const res = this._doesTheCharNeedTrim(char)
+      if(res) {
+        text = text.substring(1)
+        i--
+      }
+      else {
+        break
+      }
+    }
+
+    // trim end
+    for(let i=text.length-1; i>=0; i--) {
+      const char = text[i]
+      const res = this._doesTheCharNeedTrim(char)
+      if(res) {
+        text = text.substring(0, i)
+      }
+      else if(char === "#") {
+        text = text.substring(1)
+        i--
+      }
+      else {
+        break
+      }
+    }
+  
+    return text
+  }
+
+
+  static mdToText(md: string) {
+    // Convert bold/strong text (**** or **) to Chinese quotes 「」
+    // but skip if already has quotes
+    const _handleBold = (match:string, content: any, offset: any) => {
+      // check out if content has quotes
+      if (content.match(/^[「《【"“(（]/)) return content;
+
+      // check out previous char
+      if (typeof offset === "number" && offset > 1) {
+        const prevChar = md[offset - 1];
+        if(prevChar && prevChar.match(/^[「《【"“(（]/)) return content;
+      }
+
+      return `「${content}」`;
+    }
+    md = md.replace(/\*\*\*\*([^*\n]+)\*\*\*\*/g, _handleBold);
+    md = md.replace(/\*\*([^*\n]+)\*\*/g, _handleBold);
+
+    // Convert unordered list items to special character while preserving indentation
+    md = md.replace(/^(\s*)[-*+][\s]+(.+)$/gm, (match, spaces, content) => {
+      return `${spaces || ' '}• ${content}`
+    });
+    
+    // Convert headings to plain text
+    md = md.replace(/^#{1,6}\s+(.+)$/gm, '$1');
+
+    // trim “* - \n” in the beginning and ending
+    md = this._trimText(md)
+
+    return md
+  }
+
+  static mdToWxGzhText(md: string) {
+    if (!md) return '';
+
+    md = this.mdToText(md)
+
+    // Convert markdown image links to WeChat compatible <a> tags
+    // ![alt text](URL) becomes <a href="URL">alt text</a>
+    // If alt text is empty, use "打开图片" as default
+    md = md.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) => {
+      if(!alt) alt = "打开图片"
+      return `<a href="${url}">${alt}</a>`
+    })
+
+    // Convert markdown links to WeChat compatible <a> tags
+    // [link text](URL) becomes <a href="URL">link text</a>
+    md = md.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+    
+    return md
+  }
+
+} 
 
 
 /********************* 一些 “归一化” 相关的函数 *****************/
@@ -1371,7 +1590,7 @@ export async function verifyToken(
   const gShared = cloud.shared
   const map = getLiuTokenUser()
 
-  const errReturn: LiuRqReturn = { 
+  const errReturn: LiuErrReturn = { 
     code: "E4003", 
     errMsg: "the verification of token failed",
   }
@@ -1563,6 +1782,41 @@ export function updateUserInCache(
   // 若引用不存在时，代表为空的 map 也不需要更新
 }
 
+
+/********************* About Workspace ****************/
+export class SpaceUtil {
+
+  private static _getDefaultStates() {
+    const now = getNowStamp()
+    const defaultStates: LiuAtomState[] = [
+      {
+        id: "TODO",
+        showInIndex: true,
+        updatedStamp: now,
+        insertedStamp: now,
+      },
+      {
+        id: "FINISHED",
+        showInIndex: false,
+        updatedStamp: now,
+        insertedStamp: now,
+        showFireworks: true,
+      }
+    ]
+    return defaultStates
+  }
+
+  static getDefaultStateCfg() {
+    const now = getNowStamp()
+    const stateList = this._getDefaultStates()
+    const obj: LiuStateConfig = {
+      stateList,
+      updatedStamp: now,
+    }
+    return obj
+  }
+
+}
 
 /********************* Crypto 加解密相关的函数 ****************/
 
@@ -1841,7 +2095,6 @@ function decryptWithAES(
   catch(err) {
     console.warn("setAuthTag 异常......")
     console.log(err)
-    console.log(" ")
     return null
   }
 
@@ -2080,6 +2333,27 @@ export async function getWxGzhUserInfo(
   }
 
   return data1
+}
+
+export async function getWxGzhSnsUserInfo(
+  wx_gzh_openid: string,
+  user_access_token: string,
+) {
+  const url = new URL(WX_GZH_SNS_USERINFO)
+  const sp = url.searchParams
+  sp.set("access_token", user_access_token)
+  sp.set("openid", wx_gzh_openid)
+  sp.set("lang", "en")
+  const link = url.toString()
+  const res = await liuReq<Wx_Res_GzhSnsUserInfo>(link, undefined, { method: "GET" })
+  const data = res?.data
+
+  if(!data?.nickname) {
+    console.warn("getWxGzhSnsUserInfo failed")
+    console.log(res)
+  }
+
+  return data
 }
 
 // tag bound user for language
@@ -2664,6 +2938,12 @@ export async function upgrade_user_subscription(
     console.warn("the user has been charged in the past 5 seconds")
     return
   }
+
+  // 3.2 reset quota
+  const quota = theUser.quota
+  if(quota) {
+    quota.aiConversationCount = 0
+  }
   
   // 4. generate a new subscription in user
   let chargeTimes = oldUserSub?.chargeTimes ?? 0
@@ -2690,11 +2970,285 @@ export async function upgrade_user_subscription(
   // 5. update user's subscription
   console.log("newUserSub: ")
   console.log(newUserSub)
+  console.log("quota: ")
+  console.log(quota)
+
   const u5: Partial<Table_User> = {
     subscription: newUserSub,
+    quota,
     updatedStamp: now3,
   }
   const res5 = await uCol.doc(user_id).update(u5)
   const newUser: Table_User = { ...theUser, ...u5 }
   updateUserInCache(user_id, newUser)
 }
+
+
+/*************** About ai tool ***************/
+export class AiToolUtil {
+
+
+  static turnTextToLiuDesc(text: string) {
+    if(!text) return
+    let list = text.split("\n")
+    const liuDesc: LiuContent[] = []
+    for(let i=0; i<list.length; i++) {
+      const v = list[i]
+      const obj: LiuContent = {
+        type: "paragraph",
+        content: [
+          {
+            type: "text",
+            text: v,
+          }
+        ]
+      }
+      liuDesc.push(obj)
+    }
+    return liuDesc
+  }
+
+  private static _turnSpecificDateToWhenStamp(
+    specificDate: AiToolAddCalendarSpecificDate,
+    userTimezone?: string,
+  ) {
+    const opt1 = { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 }
+    const stamp1 = getNowStamp()
+    const currentStamp = localizeStamp(stamp1, userTimezone)
+    const diffStamp = currentStamp - stamp1
+    const todayMidnight = date_fn_set(new Date(currentStamp), opt1)
+
+    // 1. handle today
+    if(specificDate === "today") {
+      return todayMidnight.getTime() - diffStamp
+    }
+
+    // 2. handle tomorrow
+    if(specificDate === "tomorrow") {
+      let tomorrowMidnight = addDays(todayMidnight, 1)
+      return tomorrowMidnight.getTime() - diffStamp
+    }
+
+    // 3. handle day_after_tomorrow
+    if(specificDate === "day_after_tomorrow") {
+      let date3 = addDays(todayMidnight, 2)
+      return date3.getTime() - diffStamp
+    }
+
+    // 4. handle other days
+    let dayList: AiToolAddCalendarSpecificDate[] = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ]
+    const currentDay = todayMidnight.getDay()
+    const dayIdx = dayList.indexOf(specificDate)
+    if(dayIdx < 0) {
+      // return today midnight stamp as default
+      return todayMidnight.getTime() - diffStamp
+    }
+
+    let diffDays = dayIdx - currentDay
+    if(diffDays <= 0) diffDays += 7
+    let date4 = addDays(todayMidnight, diffDays)
+    return date4.getTime() - diffStamp
+  }
+
+
+  private static _turnCalendarJsonToWaitingData(
+    funcJson: Record<string, any>,
+    user?: Table_User,
+  ) {
+    // 1. get param and check out description
+    const {
+      title,
+      description,
+      date,
+      specificDate,
+      time,
+      earlyMinute,
+      laterHour,
+    } = funcJson as AiToolAddCalendarParam
+    const liuDesc = this.turnTextToLiuDesc(description)
+    if(!liuDesc || liuDesc.length === 0) {
+      console.warn("cannot get liuDesc1 in _turnCalendarJsonToWaitingData!")
+      console.log(funcJson)
+      return
+    }
+    let userTimezone = user?.timezone
+    let calendarStamp: number | undefined
+    let remindStamp: number | undefined
+    let whenStamp: number | undefined
+    let remindMe: LiuRemindMe | undefined
+
+    /** Priority:
+     *   date > specificDate > laterHour
+     */
+
+    // 2. date
+    let hasAddedDate = false
+    if(date) {
+      const dateObj = LiuDateUtil.distractFromYYYY_MM_DD(date)
+      if(dateObj) {
+        hasAddedDate = true
+        const tmpDate = new Date(dateObj.year, dateObj.month - 1, dateObj.day)
+        const tmpStamp = tmpDate.getTime()
+        whenStamp = localizeStamp(tmpStamp, userTimezone)
+      }
+    }
+
+    // 3. specificDate
+    if(specificDate && !hasAddedDate) {
+      whenStamp = this._turnSpecificDateToWhenStamp(specificDate, userTimezone)
+      hasAddedDate = true
+    }
+
+    // 4. time
+    if(time) {
+      const timeObj = LiuDateUtil.distractFromhh_mm(time)
+      if(!timeObj) {
+        console.warn("cannot parse time: ", time)
+        return
+      }
+      if(!whenStamp) {
+        whenStamp = this._turnSpecificDateToWhenStamp("today", userTimezone)
+      }
+      const hr4 = timeObj.hour * HOUR
+      const min4 = timeObj.minute * MINUTE
+      whenStamp += (hr4 + min4)
+    }
+
+    // 5. earlyMinute
+    if(earlyMinute && whenStamp) {
+      remindMe = {
+        type: "early",
+        early_minute: earlyMinute,
+      }
+      remindStamp = whenStamp - (earlyMinute * MINUTE)
+    }
+
+    // 6. laterHour
+    const now = getNowStamp()
+    if(laterHour && !whenStamp) {
+      remindMe = { type: "later" }
+      remindStamp = now + (laterHour * HOUR)
+      if(laterHour === 0.5) {
+        remindMe.later = "30min"
+      }
+      else if(laterHour === 1) {
+        remindMe.later = "1hr"
+      }
+      else if(laterHour === 2) {
+        remindMe.later = "2hr"
+      }
+      else if(laterHour === 3) {
+        remindMe.later = "3hr"
+      }
+      else if(laterHour === 12) {
+        remindMe = {
+          type: "specific_time",
+          specific_stamp: now + (12 * HOUR),
+        }
+      }
+      else {
+        remindMe.later = "tomorrow_this_moment"
+      }
+    }
+
+    // 7. "on time" is default if no remindMe
+    // and whenStamp is in the future
+    if(whenStamp && !remindMe && whenStamp > now) {
+      remindMe = { type: "early", early_minute: 0 }
+      remindStamp = whenStamp
+    }
+
+    // 8. handle calendarStamp
+    calendarStamp = remindStamp ?? whenStamp
+
+    // 9. return data
+    const waitingData: SyncOperateAPI.WaitingData = {
+      title,
+      liuDesc,
+      calendarStamp,
+      remindStamp,
+      whenStamp,
+      remindMe,
+    }
+    return waitingData
+  }
+
+
+  static turnJsonToWaitingData(
+    funcName: string,
+    funcJson: Record<string, any>,
+    user?: Table_User,
+  ): SyncOperateAPI.WaitingData | undefined {
+
+    // 1. add_note
+    if(funcName === "add_note") {
+      const res1 = vbot.safeParse(Sch_AiToolAddNoteParam, funcJson)
+      if(!res1.success) {
+        console.warn("cannot parse add_note param: ")
+        console.log(funcJson)
+        console.log(res1.issues)
+        return
+      }
+      
+      const { title, description } = funcJson
+      const liuDesc1 = this.turnTextToLiuDesc(description)
+      if(!liuDesc1 || liuDesc1.length === 0) {
+        console.warn("cannot get liuDesc1 in add_note!")
+        console.log(funcJson)
+        return
+      }
+      const d1: SyncOperateAPI.WaitingData = {
+        title,
+        liuDesc: liuDesc1,
+      }
+      return d1
+    }
+
+    // 2. add_todo
+    if(funcName === "add_todo") {
+      const res2 = vbot.safeParse(Sch_AiToolAddTodoParam, funcJson)
+      if(!res2.success) {
+        console.warn("cannot parse add_todo param: ")
+        console.log(funcJson)
+        console.log(res2.issues)
+        return
+      }
+
+      const { title } = funcJson
+      const liuDesc2 = this.turnTextToLiuDesc(title)
+      if(!liuDesc2 || liuDesc2.length === 0) {
+        console.warn("cannot get liuDesc2 in add_todo!")
+        console.log(funcJson)
+        return
+      }
+      const d2: SyncOperateAPI.WaitingData = {
+        liuDesc: liuDesc2,
+      }
+      return d2
+    }
+
+    // 3. add_calendar
+    if(funcName === "add_calendar") {
+      const res3 = vbot.safeParse(Sch_AiToolAddCalendarParam, funcJson)
+      if(!res3.success) {
+        console.warn("cannot parse add_calendar param: ")
+        console.log(funcJson)
+        console.log(res3.issues)
+        return
+      }
+      const d3 = this._turnCalendarJsonToWaitingData(funcJson, user)
+      return d3
+    }
+    
+  }
+
+}
+

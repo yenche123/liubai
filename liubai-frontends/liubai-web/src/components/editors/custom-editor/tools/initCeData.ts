@@ -62,6 +62,11 @@ export function initCeData(
     threadEdited: threadIdRef.value,
     lastLockStamp: time.getTime(),
   })
+  const canSync = liuEnv.canISync()
+  if(!canSync) {
+    ceData.storageState = "LOCAL"
+    ceData.aiReadable = "N"
+  }
   
   const numWhenSet = ref(0)
   provide(editorSetKey, numWhenSet)
@@ -214,6 +219,7 @@ async function setDataFromDraft(
     ceData.storageState = draft.storageState
   }
 
+  ceData.aiReadable = !canSync ? "N" : draft.aiReadable
   ceData.title = draft.title
   ceData.showTitleBar = Boolean(draft.title)
   ceData.whenStamp = draft.whenStamp
@@ -406,6 +412,7 @@ async function initFromCloudDraft(
     const s8 = ceData.storageState
     if(s8 === "LOCAL" || s8 === "ONLY_LOCAL") return
     ceData.storageState = "LOCAL"
+    ceData.aiReadable = "N"
     return
   }
 
@@ -449,6 +456,7 @@ async function toMergeDraft(
   ceData.remindMe = cloud_draft.remindMe
   ceData.tagIds = cloud_draft.tagIds ?? []
   ceData.stateId = cloud_draft.stateId
+  ceData.aiReadable = cloud_draft.aiReadable
 
   let descJSON: TipTapJSONContent[] | undefined
   if(cloud_draft.liuDesc) {
@@ -568,6 +576,7 @@ async function setDataFromThread(
   ceData.draftId = ""
   ceData.visScope = thread.visScope
   ceData.storageState = !canSync ? "LOCAL" : thread.storageState
+  ceData.aiReadable = !canSync ? "N" : thread.aiReadable
   ceData.title = thread.title
   ceData.showTitleBar = Boolean(thread.title)
   ceData.whenStamp = thread.whenStamp

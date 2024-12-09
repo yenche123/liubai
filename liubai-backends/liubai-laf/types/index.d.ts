@@ -48,6 +48,9 @@ declare global {
       LIU_EMAIL_FOR_REPLY?: string   // 用户回复 noreply 时回复到哪个邮箱地址
       LIU_EMAIL_SEND_CHANNEL?: "resend" | "tencent-ses"    // 必须与 LiuSESChannel 一致
 
+      /** customer service */
+      LIU_CUSTOMER_SERVICE?: string   // wecom customer service link, like "https://work.weixin.qq.com/kfid/kfcf......"
+
       /** GitHub OAuth */
       LIU_GITHUB_OAUTH_CLIENT_ID?: string
       LIU_GITHUB_OAUTH_CLIENT_SECRET?: string
@@ -84,6 +87,7 @@ declare global {
       LIU_WX_GZ_LOGIN?: string             // 01: logging in by wx gzh enabled, otherwise disabled
       LIU_WX_GZ_TMPL_ID_1?: string         // reminder template id enabled, otherwise disabled
       LIU_WX_GZ_TEST_OPENID?: string       // test openid of wx_gzh for testing ai
+      LIU_WX_GZ_TYPE?: "service_account" | "subscription_account"      // 服务号 or 订阅号
 
       /** 企业微信 企业内部自建应用 */
       LIU_WECOM_QYNB_CORPID?: string
@@ -115,16 +119,47 @@ declare global {
       LIU_ALIPAY_APP_ID?: string
       LIU_ALIPAY_NOTIFY_URL?: string
 
-      /** LLMs */
-      LIU_ZHIPU_BASE_URL?: string            // 智谱的 base url
-      LIU_ZHIPU_API_KEY?: string             // 智谱的 api key
-      LIU_MOONSHOT_BASE_URL?: string         // Moonshot AI 的 base url
-      LIU_MOONSHOT_API_KEY?: string          // Moonshot AI 的 api key
+      /** Official LLMs */
+      LIU_BAICHUAN_BASE_URL?: string         // 百川 AI 的 base url
+      LIU_BAICHUAN_API_KEY?: string          // 百川 AI 的 api key
       LIU_DEEPSEEK_BASE_URL?: string         // DeepSeek AI 的 base url
       LIU_DEEPSEEK_API_KEY?: string          // DeepSeek AI 的 api key
+      LIU_MINIMAX_BASE_URL?: string          // MiniMax AI 的 base url
+      LIU_MINIMAX_API_KEY?: string           // MiniMax AI 的 api key
+      LIU_MOONSHOT_BASE_URL?: string         // Moonshot AI 的 base url
+      LIU_MOONSHOT_API_KEY?: string          // Moonshot AI 的 api key
       LIU_STEPFUN_BASE_URL?: string          // Stepfun AI 的 base url
       LIU_STEPFUN_API_KEY?: string           // Stepfun AI 的 api key
-      
+      LIU_YI_BASE_URL?: string               // 01.ai 的 base url
+      LIU_YI_API_KEY?: string                // 01.ai 的 api key
+      LIU_ZHIPU_BASE_URL?: string            // 智谱的 base url
+      LIU_ZHIPU_API_KEY?: string             // 智谱的 api key
+
+      /** Secondary Providers */
+      LIU_SILICONFLOW_BASE_URL?: string
+      LIU_SILICONFLOW_API_KEY?: string
+      LIU_SILICONFLOW_IMAGE_GENERATION_MODEL?: string
+
+      /** Summary */
+      LIU_SUMMARY_BASE_URL?: string
+      LIU_SUMMARY_API_KEY?: string
+      LIU_SUMMARY_MODEL?: string
+      LIU_SUMMARY_PREFIX?: "01"              // closed by default, reference: https://api-docs.deepseek.com/zh-cn/guides/chat_prefix_completion
+      LIU_SUMMARY_PARTIAL?: "01"             // closed by default, reference: https://platform.moonshot.cn/docs/api/partial
+
+      /** Translation */
+      LIU_TRANSLATION_BASE_URL?: string
+      LIU_TRANSLATION_API_KEY?: string
+      LIU_TRANSLATION_MODEL?: string
+
+      /** Characters */
+      LIU_WXGZH_KF_BAIXIAOYING?: string      // kf_account of baixiaoying
+      LIU_WXGZH_KF_DEEPSEEK?: string         // kf_account of deepseek
+      LIU_WXGZH_KF_HAILUO?: string           // kf_account of hailuo
+      LIU_WXGZH_KF_KIMI?: string             // kf_account of kimi
+      LIU_WXGZH_KF_WANZHI?: string           // kf_account of wanzhi
+      LIU_WXGZH_KF_YUEWEN?: string           // kf_account of yuewen
+      LIU_WXGZH_KF_ZHIPU?: string            // kf_account of zhipu
 
     }
   }

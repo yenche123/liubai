@@ -28,20 +28,20 @@ export function initListenDexie() {
   const _blocked = async () => {
     console.warn("db blocked!!!")
 
-    const isStandalone = liuApi.canIUse.isRunningStandalone()
-    let content_key = "err.database_blocked_1"
-    if(isStandalone) content_key = "err.database_blocked_2"
+    // const isStandalone = liuApi.canIUse.isRunningStandalone()
+    // let content_key = "err.database_blocked_1"
+    // if(isStandalone) content_key = "err.database_blocked_2"
 
-    const res1 = await cui.showModal({
-      title: "⚠️",
-      content_key,
-      showCancel: false,
-      confirm_key: "common.contact_us",
-      isTitleEqualToEmoji: true,
-    })
-    if(res1.confirm) {
-      _redirectToCustomerService()
-    }
+    // const res1 = await cui.showModal({
+    //   title: "⚠️",
+    //   content_key,
+    //   showCancel: false,
+    //   confirm_key: "common.contact_us",
+    //   isTitleEqualToEmoji: true,
+    // })
+    // if(res1.confirm) {
+    //   _redirectToCustomerService()
+    // }
   }
 
   db.on("blocked", _blocked)

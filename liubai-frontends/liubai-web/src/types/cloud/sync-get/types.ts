@@ -1,5 +1,9 @@
-import type { SortWay } from "../../types-basic"
 import type { 
+  BaseIsOn, 
+  SortWay,
+} from "../../types-basic"
+import type { 
+  AiCharacter,
   CollectionInfoType,
   ContentInfoType,
   LiuContent,
@@ -192,12 +196,15 @@ export interface LiuDownloadContent {
   tagIds?: string[]         // 用于显示的 tagId
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
   stateId?: string
+  stateStamp?: number
   config?: ContentConfig
   search_title?: string
   search_other?: string
 
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
+  aiCharacter?: AiCharacter
+  aiReadable?: BaseIsOn
 
   myFavorite?: LiuDownloadCollection
   myEmoji?: LiuDownloadCollection
@@ -228,7 +235,9 @@ export interface LiuDownloadDraft {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  stateStamp?: number
   editedStamp: number
+  aiReadable?: BaseIsOn
 }
 
 interface LDP_Base {

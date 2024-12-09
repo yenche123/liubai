@@ -10,11 +10,18 @@ import { useSystemStore } from "~/hooks/stores/useSystemStore";
 import liuConsole from "~/utils/debug/liu-console";
 import time from "~/utils/basic/time";
 
+interface ToLoginOpt {
+  autoRedirect?: boolean  // auto redirect to `index` if success
+                          // default: true
+}
+
 // 开始去初始化本地数据
 async function toLogin(
   rr: RouteAndLiuRouter,
   d: Res_UserLoginNormal,
+  opt?: ToLoginOpt,
 ) {
+  const autoRedirect = opt?.autoRedirect ?? true
 
   // 1. 是否要选择用户
   const res1 = checkIfChooseAccounts(rr, d)
@@ -83,12 +90,15 @@ async function toLogin(
   systemStore.setLanguage(d.language)
   
   // 9. router 切换
-  if(goto) {
-    rr.router.replace(goto)
+  if(autoRedirect) {
+    if(goto) {
+      rr.router.replace(goto)
+    }
+    else {
+      rr.router.replace({ name: "index" })
+    }
   }
-  else {
-    rr.router.replace({ name: "index" })
-  }
+  
 
   // 10. timer ends
   const t2 = performance.now()

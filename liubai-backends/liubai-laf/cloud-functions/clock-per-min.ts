@@ -19,7 +19,7 @@ import {
 } from "@/common-util";
 import { commonLang, getCurrentLocale, useI18n } from "@/common-i18n";
 import { wx_reminder_tmpl } from "@/common-config";
-import { sendWxTemplateMessage } from "@/service-send";
+import { WxGzhSender } from "@/service-send";
 
 const db = cloud.database()
 const _ = db.command
@@ -93,7 +93,9 @@ async function handle_remind() {
 
   const atoms2 = await find_remind_authors(atoms)
   if(atoms2.length < 1) {
-    console.warn("没有任何 atoms2")
+    console.warn("there is no atoms2")
+    console.log("see atoms: ")
+    console.log(atoms)
     return true
   }
 
@@ -169,7 +171,7 @@ async function send_wx_message(
   const str_time = LiuDateUtil.displayTime(calendarStamp, locale, timezone)
   obj.data.time4.value = str_time
   
-  const res = await sendWxTemplateMessage(access_token, obj)
+  const res = await WxGzhSender.sendTemplateMessage(access_token, obj)
   return true
 }
 

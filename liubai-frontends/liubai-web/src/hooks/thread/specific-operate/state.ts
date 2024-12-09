@@ -55,11 +55,14 @@ export async function selectState(
 
   // 2. 操作 thread.stateId
   let newStateId = res.stateId
+  let newStateStamp = newStateId ? time.getTime() : undefined
   if(res.action === "confirm" && newStateId) {
     newThread.stateId = newStateId
+    newThread.stateStamp = newStateStamp
   }
   else if(res.action === "remove") {
     delete newThread.stateId
+    delete newThread.stateStamp
   }
 
   // 3. 处理 workspace
@@ -77,7 +80,11 @@ export async function selectState(
   }
 
   // 5. 修改动态的 db
-  const operateStamp = await dbOp.setStateId(newThread._id, newStateId)
+  const operateStamp = await dbOp.setStateId(
+    newThread._id, 
+    newStateId,
+    newStateStamp,
+  )
 
   // 6. 通知到全局
   const tsStore = useThreadShowStore()
@@ -121,7 +128,11 @@ export async function undoState(
 ) {
 
   // 1. 修改 db
-  const operateStamp = await dbOp.setStateId(oldThread._id, oldThread.stateId)
+  const operateStamp = await dbOp.setStateId(
+    oldThread._id, 
+    oldThread.stateId,
+    oldThread.stateStamp,
+  )
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()
@@ -194,11 +205,18 @@ export async function setNewStateForThread(
 ) {
   const wStore = useWorkspaceStore()
   const newThread = liuUtil.copy.newData(oldThread)
+  const newStateStamp = newStateId ? time.getTime() : undefined
+
   newThread.stateId = newStateId
+  newThread.stateStamp = newStateStamp
   newThread.stateShow = commonPack.getStateShow(newStateId, wStore)
 
   // 1. 修改 db
-  const operateStamp = await dbOp.setStateId(newThread._id, newStateId)
+  const operateStamp = await dbOp.setStateId(
+    newThread._id, 
+    newStateId,
+    newStateStamp,
+  )
 
   // 2. 通知全局
   const tsStore = useThreadShowStore()

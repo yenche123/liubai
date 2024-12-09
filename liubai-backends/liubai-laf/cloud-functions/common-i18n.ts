@@ -5,6 +5,7 @@ import {
   type SupportedLocale,
   type Table_User,
   type Wx_Gzh_Send_Msg,
+  type T_I18N,
 } from "@/common-types"
 
 export type LangAtom = Record<SupportedLocale, Record<string, string>>
@@ -47,6 +48,7 @@ export const commonLang: LangAtom = {
 export const subPlanLang: LangAtom = {
   "zh-Hans": {
     "payment_title": "留白记事会员",
+    "monthly_payment_title": "留白月度会员",
     "annual_membership": "年度会员 Premium",
     "quarterly_membership": "季度会员 Premium",
     "monthly_membership": "月度会员 Premium",
@@ -54,6 +56,7 @@ export const subPlanLang: LangAtom = {
   },
   "zh-Hant": {
     "payment_title": "留白記事會員",
+    "monthly_payment_title": "留白月度會員",
     "annual_membership": "年度會員 Premium",
     "quarterly_membership": "季度會員 Premium",
     "monthly_membership": "月度會員 Premium",
@@ -61,6 +64,7 @@ export const subPlanLang: LangAtom = {
   },
   "en": {
     "payment_title": "Liubai Membership",
+    "monthly_payment_title": "Liubai Monthly Membership",
     "annual_membership": "Annual Membership (Premium)",
     "quarterly_membership": "Quarterly Membership (Premium)",
     "monthly_membership": "Monthly Membership (Premium)",
@@ -240,23 +244,273 @@ export const wechatLang: LangAtom = {
     "welcome_2": "欢迎关注留白记事！\n\n留白记事 = 备忘录📝 + 日历📆 + 任务📌 + 待办清单📂\n\n若你还没有体验资格，可以在这里回复你的邮箱，稍后将你加入哦！",
     "already_bound": "当前微信已绑定帐号 {account}\n请先在原帐号上解绑后，再重新扫码。",
     "success_1": "绑定成功🎉\n\n小诀窍：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
-    "login_first": "尚未登录！<a href='https://alpha.liubai.cc/connect/wechat'>请先登录</a>",  // TODO: link to wechat-bind
+    "login_first": "尚未登录！\n欢迎使用<a href='{LIU_DOMAIN}/wechat-bind'>微信一键登录</a>",
+    "video_unsupported": "[暂不支持发送视频消息]",
+    "voice_unsupported": "🚧 语音输入仍在开发中",
   },
   "zh-Hant": {
     "welcome_1": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n你可以在這裡記錄所有事情，所有「只屬於你」的資訊都將在這裡匯聚。\n\n若這世界就是一個巨大的遊樂園，請去體驗、去創造🥂\n\n[未完待續]",
     "welcome_2": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n若你還沒有體驗資格，可以在此處回覆你的 email，稍後將你加入喔！",
     "already_bound": "當前微信已綁定帳號 {account}\n請先在原帳號上解綁後，再重新掃描 QR Code",
     "success_1": "綁定成功🎉\n\n小訣竅：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
-    "login_first": "尚未登入! <a href='https://alpha.liubai.cc/connect/wechat'>請先登入</a>",  // TODO: link to wechat-bind
+    "login_first": "尚未登入! \n歡迎使用<a href='{LIU_DOMAIN}/wechat-bind'>微信一鍵登入</a>",
+    "video_unsupported": "[暫不支援影片訊息]",
+    "voice_unsupported": "🚧 語音訊息仍在開發中",
   },
   "en": {
     "welcome_1": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nYou can record all your life’s events, and all information you want is out here.\n\nIf this world is a giant playground, please experience it and create it 🥂\n\n[To be continued]",
     "welcome_2": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nIf you don't have access to Liubai, you can reply your email here, and we will add you later.",
     "already_bound": "Current Wechat has already bound account {account}\nPlease unbind it from the original account first, then re-scan the QR code.",
     "success_1": "Binding successful🎉\n\nTip: <a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>How to avoid missing reminders</a>",
-    "login_first": "Not logged in! <a href='https://alpha.liubai.cc/connect/wechat'>Please login first</a>",  // TODO: link to wechat-bind
+    "login_first": "Not logged in yet!\nWelcome to <a href='{LIU_DOMAIN}/wechat-bind'>Login via WeChat</a>",
+    "video_unsupported": "[Videos are not supported to send]",
+    "voice_unsupported": "🚧 Voice message is still in development",
   }
 }
+
+
+export const aiLang: LangAtom = {
+  "zh-Hans": {
+    "privacy_title": "🔓 隐私提示:",
+    "working_log_title": "📜 工作日志:",
+    "operation_title": "🕹️ 操作栏:",
+    "generative_ai_warning": "⚠️ 内容由 AI 生成，请仔细甄别。",
+    "kick": "踢掉",
+    "add": "召唤",
+    "clear_context": "清空上文",
+    "quota_warning": "免费版共有 {freeTimes} 轮对话机会\n购买会员畅享每月 {membershipTimes} 轮对话！同时解锁留白记事所有权益。\n<a href='{link}'>戳我立即解锁</a>",
+    "deploy_tip": "若你想给自己的公众号部署一套留白记事\n<a href='{link}'>欢迎咨询</a>",
+    "quota_warning_2": "您已使用 {membershipTimes} 轮会员版对话额度。续费会员，可将“已使用额度”归零！\n<a href='{link}'>立即续费</a>",
+    "cannot_read_images": "我目前没有识图的能力",
+    "history_cleared": "已清空前面的历史记录",
+    "add_note_only_desc": "{botName}请求添加笔记:\n{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
+    "add_note_with_title": "{botName}请求添加笔记\n\n标题：{title}\n详情：{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
+    "add_todo": "{botName}请求添加待办:\n{title}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
+    "add_calendar_1": "{botName}请求添加日程\n\n",
+    "add_calendar_2": "标题: {title}\n",
+    "add_calendar_3": "内容: {desc}\n",
+    "add_calendar_4": "日期: {date}\n",
+    "add_calendar_5": "时间: {time}\n",
+    "add_calendar_6": "提醒: {str}\n",
+    "add_calendar_7": "\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 编辑</a>",
+    "early_min": "提早 {min} 分钟",
+    "early_hr": "提早 {hr} 小时",
+    "early_day": "提早 {day} 天",
+    "later_min": "{min} 分钟后",
+    "later_hr": "{hr} 小时后",
+    "later_day": "{day} 天后",
+    "added_note": "【客户已同意创建笔记】",
+    "added_todo": "【客户已同意创建待办】",
+    "added_calendar": "【客户已同意创建日程】",
+    "not_agree_yet": "【客户尚未同意你的请求】",
+    "too_many_words": "这么多字！它们思考不来💭\n（单条文本最多 3000 字符）",
+    "no_more_to_continue": "没有更多可以继续了",
+    "bot_call_tools": "调用工具: {funcName}\n参数: {funcArgs}",
+    "draw_result": "作图结果: {imageUrl}",
+    "bot_left": "{botName}已离开聊天室",
+    "bot_draw": "{botName}使用画笔 {model} 画了一张图片",
+
+    // the first message when a bot has been called
+    "called_1": "我是{botName}，想跟我聊什么呢？",
+    "called_2": "我是{botName}，很高兴为你服务！",
+    "called_3": "Hi, 我是{botName}，有什么需要帮忙的？",
+    "called_4": "我是{botName}，是你找我嘛？",
+
+    // corresponding to aiToolAddCalendarSpecificDates
+    "today": "今天",
+    "tomorrow": "明天",
+    "day_after_tomorrow": "后天",
+    "monday": "周一",
+    "tuesday": "周二",
+    "wednesday": "周三",
+    "thursday": "周四",
+    "friday": "周五",
+    "saturday": "周六",
+    "sunday": "周日",
+
+    // get schedule
+    "yesterday_schedule": "昨天的日程:\n\n",
+    "today_schedule": "今天的日程:\n\n",
+    "tomorrow_schedule": "明天的日程:\n\n",
+    "schedule_last": "过去 {hour} 小时的日程:\n\n",
+    "schedule_next": "未来 {hour} 小时内的日程:\n\n",
+    "no_data": "查无结果",
+    "bot_read_yesterday": "{bot}查看了昨天的日程",
+    "bot_read_today": "{bot}查看了今天的日程",
+    "bot_read_tomorrow": "{bot}查看了明天的日程",
+    "bot_read_last": "{bot}查看了过去 {hour} 小时的日程",
+    "bot_read_next": "{bot}查看了未来 {hour} 小时内的日程",
+
+    // get cards
+    "todo_cards": "最近的待办:\n\n",
+    "note_cards": "最近的笔记:\n\n",
+    "finished_cards": "最近完成的事项:\n\n",
+    "bot_read_todo": "{bot}查看了最近的待办",
+    "bot_read_note": "{bot}查看了最近的笔记",
+    "bot_read_finished": "{bot}查看了最近完成的事项",
+  },
+  "zh-Hant": {
+    "privacy_title": "🔓 隱私提示:",
+    "working_log_title": "📜 工作日誌:",
+    "operation_title": "🕹️ 操作欄:",
+    "generative_ai_warning": "⚠️ 內容由 AI 生成，請仔細甄別。",
+    "kick": "踢掉",
+    "add": "召喚",
+    "clear_context": "清除上文",
+    "quota_warning": "免費版共有 {freeTimes} 輪對話機會\n購買會員暢享每月 {membershipTimes} 輪對話！同時解鎖留白記事所有權益。\n<a href='{link}'>輕觸立即解鎖</a>",
+    "deploy_tip": "若你想給自己的公眾號部署一套留白記事\n<a href='{link}'>歡迎諮詢</a>",
+    "quota_warning_2": "您已使用 {membershipTimes} 輪會員版對話額度。續費會員，可將「已使用額度」歸零！\n<a href='{link}'>立即續費</a>",
+    "cannot_read_images": "我目前沒有讀取圖片的能力",
+    "history_cleared": "已清空前面的歷史記錄",
+    "add_note_only_desc": "{botName}請求新增筆記:\n{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 編輯</a>",
+    "add_note_with_title": "{botName}請求新增筆記\n\n標題：{title}\n詳情：{desc}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 編輯</a>",
+    "add_todo": "{botName}請求新增待辦:\n{title}\n\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 編輯</a>",
+    "add_calendar_1": "{botName}請求新增日程\n\n",
+    "add_calendar_2": "標題: {title}\n",
+    "add_calendar_3": "內文: {desc}\n",
+    "add_calendar_4": "日期: {date}\n",
+    "add_calendar_5": "時間: {time}\n",
+    "add_calendar_6": "提醒: {str}\n",
+    "add_calendar_7": "\n<a href='{agreeLink}'>🆗 同意</a>    <a href='{editLink}'>✏️ 編輯</a>",
+    "early_min": "提早 {min} 分鐘",
+    "early_hr": "提早 {hr} 小時",
+    "early_day": "提早 {day} 天",
+    "later_min": "{min} 分鐘後",
+    "later_hr": "{hr} 小時後",
+    "later_day": "{day} 天後",
+    "added_note": "【客户已同意新增筆記】",
+    "added_todo": "【客户已同意新增待辦】",
+    "added_calendar": "【客户已同意新增日程】",
+    "not_agree_yet": "【客户尚未同意你的請求】",
+    "too_many_words": "這麼多字！它們思考不來💭\n（單則文本最多 3000 字元）",
+    "no_more_to_continue": "沒有更多可以繼續了",
+    "bot_call_tools": "調用工具: {funcName}\n參數: {funcArgs}",
+    "draw_result": "畫圖結果: {imageUrl}",
+    "bot_left": "{botName}已離開聊天室",
+    "bot_draw": "{botName}使用畫筆 {model} 畫了一張圖片",
+
+    // the first message when a bot has been called
+    "called_1": "我是{botName}，想跟我聊什麼呢?",
+    "called_2": "我是{botName}，很高興為你服務！",
+    "called_3": "Hi, 我是{botName}，有什麼需要幫忙的？",
+    "called_4": "我是{botName}，是你找我嗎～",
+
+    // corresponding to aiToolAddCalendarSpecificDates
+    "today": "今天",
+    "tomorrow": "明天",
+    "day_after_tomorrow": "後天",
+    "monday": "星期一",
+    "tuesday": "星期二",
+    "wednesday": "星期三",
+    "thursday": "星期四",
+    "friday": "星期五",
+    "saturday": "星期六",
+    "sunday": "星期日",
+
+    // get schedule
+    "yesterday_schedule": "昨天的日程:\n\n",
+    "today_schedule": "今天的日程:\n\n",
+    "tomorrow_schedule": "明天的日程:\n\n",
+    "schedule_last": "過去 {hour} 小時的日程:\n\n",
+    "schedule_next": "未來 {hour} 小時内的日程:\n\n",
+    "no_data": "查無結果",
+    "bot_read_yesterday": "{bot}查閲了昨天的日程",
+    "bot_read_today": "{bot}查閲了今天的日程",
+    "bot_read_tomorrow": "{bot}查閱了明天的日程",
+    "bot_read_last": "{bot}查閱了過去 {hour} 小時的日程",
+    "bot_read_next": "{bot}查閱了未來 {hour} 小時内的日程",
+
+    // get cards
+    "todo_cards": "最近的待辦:\n\n",
+    "note_cards": "最近的筆記:\n\n",
+    "finished_cards": "最近完成的事項:\n\n",
+    "bot_read_todo": "{bot}查看了最近的待辦",
+    "bot_read_note": "{bot}查看了最近的筆記",
+    "bot_read_finished": "{bot}查看了最近完成的事項",
+  },
+  "en": {
+    "privacy_title": "🔓 Privacy:",
+    "working_log_title": "📜 Working Logs:",
+    "operation_title": "🕹️ Operations:",
+    "generative_ai_warning": "⚠️ AI can make mistakes. Please double-check it.",
+    "kick": "Kick ",
+    "add": "Add ",
+    "clear_context": "Clear context",
+    "quota_warning": "Free version has {freeTimes} conversation opportunities.\nPurchase membership to enjoy {membershipTimes} conversations per month! Also unlock all Liubai rights.\n<a href='{link}'>Tap to unlock</a>",
+    "deploy_tip": "If you want to deploy a Liubai for your public account\n<a href='{link}'>Welcome to consult</a>",
+    "quota_warning_2": "You have used {membershipTimes} conversations of membership. Renew membership to reset the used quota!\n<a href='{link}'>Renew now</a>",
+    "cannot_read_images": "I don't have the ability to read images yet",
+    "history_cleared": "History cleared",
+    "add_note_only_desc": "{botName} requests to add a note:\n{desc}\n\n<a href='{agreeLink}'>🆗 Agree</a>    <a href='{editLink}'>✏️ Edit</a>",
+    "add_note_with_title": "{botName} requests to add a note\n\nTitle: {title}\nDescription: {desc}\n\n<a href='{agreeLink}'>🆗 Agree</a>    <a href='{editLink}'>✏️ Edit</a>",
+    "add_todo": "{botName} requests to add a todo:\n{title}\n\n<a href='{agreeLink}'>🆗 Agree</a>    <a href='{editLink}'>✏️ Edit</a>",
+    "add_calendar_1": "{botName} requests to add a calendar\n\n",
+    "add_calendar_2": "Title: {title}\n",
+    "add_calendar_3": "Description: {desc}\n",
+    "add_calendar_4": "Date: {date}\n",
+    "add_calendar_5": "Time: {time}\n",
+    "add_calendar_6": "Reminder: {str}\n",
+    "add_calendar_7": "\n<a href='{agreeLink}'>🆗 Agree</a>    <a href='{editLink}'>✏️ Edit</a>",
+    "early_min": "{min} mins early",
+    "early_hr": "{hr} hr(s) early",
+    "early_day": "{day} day(s) early",
+    "later_min": "{min} min(s) later",
+    "later_hr": "{hr} hr(s) later",
+    "later_day": "{day} day(s) later",
+    "added_note": "【Customer has agreed to create a note】",
+    "added_todo": "【Customer has agreed to create a todo】",
+    "added_calendar": "【Customer has agreed to create a calendar】",
+    "not_agree_yet": "Customer has not yet agreed to your request",
+    "too_many_words": "Too many words to think💭\n(Text supports up to 3000 characters.)",
+    "no_more_to_continue": "No more to continue",
+    "bot_call_tools": "Call a tool: {funcName}\nArguments: {funcArgs}",
+    "draw_result": "The drawing result: {imageUrl}",
+    "bot_left": "{botName} has already left",
+    "bot_draw": "{botName} uses a brush called {model} to draw a picture",
+
+    // the first message when a bot has been called
+    "called_1": "I am {botName}. Let's chat together!",
+    "called_2": "I'm {botName}. Nice to meet you!",
+    "called_3": "Hi, my name is {botName}. How can I give you a hand?",
+    "called_4": "I'm {botName}. Are you calling me?",
+
+    // corresponding to aiToolAddCalendarSpecificDates
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "day_after_tomorrow": "Day after tomorrow",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+
+    // get schedule
+    "yesterday_schedule": "Schedule for yesterday:\n\n",
+    "today_schedule": "Schedule for today:\n\n",
+    "tomorrow_schedule": "Schedule for tomorrow:\n\n",
+    "schedule_last": "Schedule for the last {hour} hours:\n\n",
+    "schedule_next": "Schedule for the next {hour} hours:\n\n",
+    "no_data": "No results found",
+    "bot_read_yesterday": "{bot} read yesterday's schedule",
+    "bot_read_today": "{bot} read today's schedule",
+    "bot_read_tomorrow": "{bot} read tomorrow's schedule",
+    "bot_read_last": "{bot} read the schedule for the last {hour} hours",
+    "bot_read_next": "{bot} read the schedule for the next {hour} hours",
+
+    // get cards
+    "todo_cards": "Latest to-dos:\n\n",
+    "note_cards": "Latest notes:\n\n",
+    "finished_cards": "Latest finished tasks:\n\n",
+    "bot_read_todo": "{bot} read latest to-dos",
+    "bot_read_note": "{bot} read latest notes",
+    "bot_read_finished": "{bot} read latest finished tasks",
+  }
+}
+
+
+
 
 /********************* Wx Click Replies ****************/
 export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
@@ -275,11 +529,11 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
       text: {
         content: `🪧 指路牌
 
-⭐ <a href="https://alpha.liubai.cc/favorite">我的收藏</a>
+⭐ <a href="{LIU_DOMAIN}/favorite">我的收藏</a>
 
-📂 <a href="https://alpha.liubai.cc/state">我的看板</a>
+📂 <a href="{LIU_DOMAIN}/state">我的看板</a>
 
-⚙️ <a href="https://alpha.liubai.cc/settings">我的设置</a>
+⚙️ <a href="{LIU_DOMAIN}/settings">我的设置</a>
 
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">开发者的小红书</a>
 `,   // TODO: 添加到桌面（离线使用）
@@ -290,7 +544,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://alpha.liubai.cc/connect/wechat">戳我绑定微信</a>',
+        content: '<a href="{LIU_DOMAIN}/connect/wechat">戳我绑定微信</a>',
       }
     }
   ],
@@ -326,11 +580,11 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
       text: {
         content: `🪧 指路牌
 
-⭐ <a href="https://alpha.liubai.cc/favorite">我的收藏</a>
+⭐ <a href="{LIU_DOMAIN}/favorite">我的收藏</a>
 
-📂 <a href="https://alpha.liubai.cc/state">我的看板</a>
+📂 <a href="{LIU_DOMAIN}/state">我的看板</a>
 
-⚙️ <a href="https://alpha.liubai.cc/settings">我的設定</a>
+⚙️ <a href="{LIU_DOMAIN}/settings">我的設定</a>
 
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">開發者的小紅書</a>
 `,   // TODO: 添加到桌面（离线使用）
@@ -341,7 +595,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://alpha.liubai.cc/connect/wechat">輕觸我綁定微信</a>',
+        content: '<a href="{LIU_DOMAIN}/connect/wechat">輕觸我綁定微信</a>',
       }
     }
   ],
@@ -377,11 +631,11 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
       text: {
         content: `🪧 Guidebook
 
-⭐ <a href="https://alpha.liubai.cc/favorite">My Favorite</a>
+⭐ <a href="{LIU_DOMAIN}/favorite">My Favorite</a>
 
-📂 <a href="https://alpha.liubai.cc/state">My Board</a>
+📂 <a href="{LIU_DOMAIN}/state">My Board</a>
 
-⚙️ <a href="https://alpha.liubai.cc/settings">My Settings</a>
+⚙️ <a href="{LIU_DOMAIN}/settings">My Settings</a>
 
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">Follow me on RED</a>
 `,   // TODO: 添加到桌面（离线使用）
@@ -392,7 +646,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://alpha.liubai.cc/connect/wechat">Click me to bind WeChat</a>',
+        content: '<a href="{LIU_DOMAIN}/connect/wechat">Click me to bind WeChat</a>',
       }
     }
   ],
@@ -415,16 +669,79 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
 }
 
 /********************* Wx Text Auto Replies ****************/
-export const wxTextReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
-  "111": [
-    {
-      msgtype: "text",
-      text: {
-        content: '这是自动回复～',
-      }
-    }
-  ]
+interface WxTextReplyItem {
+  keywords: string[]
+  replies: Wx_Gzh_Send_Msg[]
 }
+
+export const wxTextRepliesItems: WxTextReplyItem[] = [
+  {
+    keywords: ["人工", "客服", "人工客服", "联系客服", "联系"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">戳我联系客服📞</a>',
+        }
+      }
+    ]
+  },
+  {
+    keywords: ["聯繫", "聯繫客服"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">點我聯繫客服📞</a>',
+        }
+      }
+    ]
+  },
+  {
+    keywords: ["Customer Service", "Contact"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">Here you are 📞</a>',
+        }
+      }
+    ]
+  },
+  {
+    keywords: ["商务合作"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '📨 期待你的来信！\n\n<a href="mailto:hi@liubai.cc">hi@liubai.cc</a>',
+        }
+      }
+    ]
+  },
+  {
+    keywords: ["商務合作"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '📨 期待你的來信！\n\n<a href="mailto:hi@liubai.cc">hi@liubai.cc</a>',
+        }
+      }
+    ]
+  },
+  {
+    keywords: ["Business Cooperation", "Cooperation"],
+    replies: [
+      {
+        msgtype: "text",
+        text: {
+          content: '📨 I am looking forward to your letter!\n\n<a href="mailto:hi@liubai.cc">hi@liubai.cc</a>',
+        }
+      }
+    ]
+  }
+]
 
 /********************* 映射函数 ****************/
 
@@ -494,7 +811,22 @@ export function getCurrentLocale(
   return getFallbackLocale()
 }
 
-export type T_I18N = (key: string, opt2?: Record<string, string>) => string
+
+export function i18nFill(
+  res: string,
+  opt2: Record<string, string | number>,
+) {
+  const keys = Object.keys(opt2)
+  for(let i=0; i<keys.length; i++) {
+    const v = keys[i]
+    const theVal = opt2[v]
+    const dynamicPattern = `{${v}}`
+    const escapedPattern = dynamicPattern.replace(/[{}]/g, '\\$&')
+    const regexPattern = new RegExp(escapedPattern, 'g')
+    res = res.replace(regexPattern, theVal.toString()) 
+  }
+  return res
+}
 
 
 /** 返回一个翻译函数 t */
@@ -502,6 +834,8 @@ export function useI18n(
   langAtom: LangAtom,
   opt1?: GetLangValOpt,
 ) {
+  const _env = process.env
+  const LIU_DOMAIN = _env.LIU_DOMAIN ?? ""
 
   const _getVal = (key: string) => {
     const locale = getCurrentLocale(opt1)
@@ -514,21 +848,16 @@ export function useI18n(
     }
   }
 
-  const t: T_I18N = (key: string, opt2?: Record<string, string>) => {
+  const t: T_I18N = (key, opt2) => {
     let res = _getVal(key)
     if(!res) return ""
-    if(!opt2) return res
+    if(!opt2) {
+      res = i18nFill(res, { LIU_DOMAIN })
+      return res
+    }
 
     // 处理 opt2
-    const keys = Object.keys(opt2)
-    for(let i=0; i<keys.length; i++) {
-      const v = keys[i]
-      const theVal = opt2[v]
-      const dynamicPattern = `{${v}}`
-      const escapedPattern = dynamicPattern.replace(/[{}]/g, '\\$&')
-      const regexPattern = new RegExp(escapedPattern, 'g')
-      res = res.replace(regexPattern, theVal) 
-    }
+    res = i18nFill(res, { LIU_DOMAIN, ...opt2 })
     return res
   }
 

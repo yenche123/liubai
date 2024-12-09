@@ -62,7 +62,10 @@
     "updating": "Updating..",
     "to_contact": "Contact",
     "mine": "Mine",
-    "contact_us": "Contact"
+    "contact_us": "Contact",
+    "ok": "OK",
+    "check_it_out": "Check it out",
+    "privacy": "Privacy"
   },
   "editor": {
     "when": "When",
@@ -72,6 +75,8 @@
     "add_state": "Add a state",
     "only_local": "Only Local",
     "sync_cloud": "Sync to cloud",
+    "ai_readable": "AI Readable",
+    "refuse_ai": "AI Refused",
     "add_file": "Add a file",
     "leave_codeBlock": "Press {tip} to leave",
     "add_title2": "Title",
@@ -203,7 +208,14 @@
     "err_7": "Your email address is not in the list of authorized users.",
     "err_8": "There is no email address through the current login way.",
     "err_9": "Fail to send the email. Contact the developer please.",
-    "get_permission": "Your email address is not in the list. Follow our WeChat \"留白记事\" to get the permission!"
+    "get_permission": "Your email address is not in the list. Follow our WeChat \"留白记事\" to get the permission!",
+    "bound": "Succeed to Bind",
+    "logged": "Succeed to Login",
+    "wechat_one_login": "Continue with WeChat",
+    "bind_wechat": "WeChat Binding",
+    "other_way": "Other Method",
+    "bind_instantly": "Bind Now",
+    "wechat_login": "Login via WeChat"
   },
   "tip": {
     "tip": "TIP",
@@ -289,7 +301,9 @@
     "delete_forever_2": "Are you sure to delete the post permanently? The post will not be retrieved after you delete it.",
     "delete_btn": "DELETE",
     "finished": "Finished",
+    "note": "Note",
     "todo": "Todo",
+    "agenda": "Agenda",
     "select_state": "Select",
     "switch_to": "Switch to ",
     "img_file": "[Image or file]",
@@ -297,7 +311,10 @@
     "created_at": "Created {date}",
     "edited_at": "Edited {date}",
     "saved_locally": "Only Saved Locally",
-    "content_deleted": "🗑️ It's been deleted"
+    "content_deleted": "🗑️ It's been deleted",
+    "captured_that": "{event} captured!",
+    "created_by_ai": "The card was created by {name} ({company})",
+    "created_by_ai2": "The card was created by {name}."
   },
   "state_related": {
     "add_state": "New State",
@@ -344,6 +361,7 @@
   "err": {
     "no_data": "Nothing Here",
     "no_auth": "No Access",
+    "not_in_wechat": "Please open in WeChat",
     "network": "The page needs network to view",
     "backend_required": "The page needs backend to view",
     "unknown_err": "Unknown Error",
@@ -440,13 +458,15 @@
     "success_title": "Paid",
     "think_again": "Reconsider",
     "member_subscribe": "Subscription",
-    "expire_date": "{date} Expired",
+    "until_date": "Until {date}",
+    "expired_date": "Expired on {date}",
     "recharge_date": "Will be charged on {date}",
     "lifetime": "Lifetime",
     "buy": "Buy",
     "manage_sub": "Manage Subscription",
     "per_month": "{currency} per month",
     "per_year": "{currency} per year",
+    "per_quarter": "{currency} per quarter",
     "check_out": "Check it out",
     "cancel_refund": "Not using anymore...",
     "refund_content": "You have only one chane to refund within 7 days after the first purchase. Are you sure to cancel the subscription and get the refund?",
@@ -475,7 +495,9 @@
     "refund_2": "After approval, it is expected to arrive within 24 hours.",
     "choose_pay_method": "Payment Method",
     "alipay": "Alipay",
-    "wxpay": "WeChat Pay"
+    "wxpay": "WeChat Pay",
+    "go_to_group": "Join VIP Group",
+    "scan_with_wx": "Please scan with WeChat"
   },
   "a2hs": {
     "title": "Add to Home",
@@ -572,5 +594,23 @@
     "empty_1": "No Schedule Yet",
     "empty_2": "Take a rest and enjoy your life!",
     "midnight_tip": "It's {clock} o'clock\nToday is {today}"
+  },
+  "ai_character": {
+    "baixiaoying": "Ying",
+    "deepseek": "DeepSeek",
+    "hailuo": "Hailuo",
+    "kimi": "Kimi",
+    "wanzhi": "Wanzhi",
+    "yuewen": "Yuewen",
+    "zhipu": "Zhipu"
+  },
+  "ai_provider": {
+    "baixiaoying": "Baichuan",
+    "deepseek": "DeepSeek",
+    "hailuo": "MiniMax",
+    "kimi": "Moonshot",
+    "wanzhi": "01.ai",
+    "yuewen": "Stepfun",
+    "zhipu": "Zhipu"
   }
 }

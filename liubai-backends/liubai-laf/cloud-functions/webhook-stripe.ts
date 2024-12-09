@@ -598,7 +598,7 @@ async function handle_session_completed(
     charge = inv_cha.charge
   }
   
-  // 5. generate a new subscription in user
+  // 5.1 generate a new subscription in user
   const newUserSub: UserSubscription = {
     isOn: getUserSubIsOn(sub.status),
     plan,
@@ -638,11 +638,18 @@ async function handle_session_completed(
     else newUserSub.chargeTimes = 1
   }
 
+  // 5.2 reset quota
+  const quota = user.quota
+  if(quota) {
+    quota.aiConversationCount = 0
+  }
+
   // 6. to update user
   const uUser: Partial<Table_User> = {
     stripe_subscription_id,
     stripe_customer_id,
     subscription: newUserSub,
+    quota,
     updatedStamp: getNowStamp(),
   }
   const res6 = await updateUserInDB(userId, uUser)

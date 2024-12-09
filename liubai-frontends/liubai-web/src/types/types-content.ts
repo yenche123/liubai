@@ -1,6 +1,13 @@
 
-import type { OState, VisScope, StorageState, OState_3, SpaceType } from "./types-basic"
-import type { LiuRemindMe } from "./types-atom"
+import type { 
+  OState, 
+  VisScope, 
+  StorageState, 
+  OState_3, 
+  SpaceType,
+  BaseIsOn,
+} from "./types-basic"
+import type { AiCharacter, LiuRemindMe } from "./types-atom"
 import type { ImageShow, LiuFileStore } from "./index"
 import type { TipTapJSONContent } from "./types-editor"
 import type { ContentConfig, ImgLayout } from "./other/types-custom"
@@ -85,8 +92,11 @@ export interface ThreadShow {
   tags?: TagShow[]
   tagSearched?: string[]
   stateId?: string
+  stateStamp?: number
   stateShow?: StateShow
   config?: ContentConfig
+  aiCharacter?: AiCharacter
+  aiReadable?: BaseIsOn
 }
 
 // 评论的结构
