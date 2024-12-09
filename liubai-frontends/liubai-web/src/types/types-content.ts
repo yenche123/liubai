@@ -92,6 +92,7 @@ export interface ThreadShow {
   tags?: TagShow[]
   tagSearched?: string[]
   stateId?: string
+  stateStamp?: number
   stateShow?: StateShow
   config?: ContentConfig
   aiCharacter?: AiCharacter

@@ -1070,6 +1070,7 @@ export interface LiuUploadThread extends LiuUploadBase {
   tagIds?: string[]
   tagSearched?: string[]
   stateId?: string
+  stateStamp?: number
   
   // 只在 thread-post 时有效，且此时必填
   emojiData?: EmojiData
@@ -1111,6 +1112,7 @@ export interface LiuUploadDraft extends LiuUploadBase {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  stateStamp?: number
   aiReadable?: BaseIsOn
 }
 
@@ -1364,6 +1366,7 @@ export interface Table_Content extends BaseTable {
   tagIds?: string[]         // 用于显示的 tagId
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
   stateId?: string
+  stateStamp?: number
   config?: ContentConfig
   levelOne?: number         // 一级评论数
   levelOneAndTwo?: number   // 一级 + 二级评论数
@@ -1395,6 +1398,7 @@ export interface Table_Draft extends BaseTable {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  stateStamp?: number
   editedStamp: number       // 草稿被用户实际编辑的时间戳
   aiReadable?: BaseIsOn
 }
@@ -2163,6 +2167,7 @@ export interface LiuDownloadContent {
   tagIds?: string[]         // 用于显示的 tagId
   tagSearched?: string[]      // 用于搜索的 tagId 要把 tagIds 的 parent id 都涵盖进来
   stateId?: string
+  stateStamp?: number
   config?: ContentConfig
   search_title?: string
   search_other?: string
@@ -2201,6 +2206,7 @@ export interface LiuDownloadDraft {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  stateStamp?: number
   editedStamp: number
   aiReadable?: BaseIsOn
 }

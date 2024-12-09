@@ -793,6 +793,7 @@ function getSharedData_6(
     remindMe: d.remindMe,
     tagIds: d.tagIds,
     stateId: d.stateId,
+    stateStamp: d.stateStamp,
     editedStamp: d.editedStamp,
     aiReadable: d.aiReadable,
   }
@@ -1056,6 +1057,7 @@ function packContents(
       tagIds: v.tagIds,
       tagSearched: v.tagSearched,
       stateId: v.stateId,
+      stateStamp: v.stateStamp,
       config: v.config,
 
       levelOne: v.levelOne,

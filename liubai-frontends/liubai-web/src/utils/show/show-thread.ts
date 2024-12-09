@@ -120,6 +120,7 @@ function packThread(
     tags,
     tagSearched: v.tagSearched,
     stateId: v.stateId,
+    stateStamp: v.stateStamp,
     stateShow,
     config: v.config,
     aiCharacter: v.aiCharacter,

@@ -53,6 +53,7 @@ export interface LiuUploadThread extends LiuUploadBase {
   tagIds?: string[]
   tagSearched?: string[]
   stateId?: string
+  stateStamp?: number
 
   // 只在 thread-post 时有效，且此时必填
   emojiData?: EmojiData
@@ -94,6 +95,7 @@ export interface LiuUploadDraft extends LiuUploadBase {
   remindMe?: LiuRemindMe
   tagIds?: string[]
   stateId?: string
+  stateStamp?: number
   aiReadable?: BaseIsOn
 }
 

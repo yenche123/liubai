@@ -62,7 +62,7 @@ async function get_wxjssdk_config(
   const sha1 = crypto.createHash('sha1')
   const signature = sha1.update(str).digest('hex')
 
-  console.log("signature: ", signature)
+  // console.log("signature: ", signature)
 
   const data: ServicePolyAPI.Res_GetWxjssdkConfig = {
     operateType: "get-wxjssdk-config",

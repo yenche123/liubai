@@ -191,6 +191,7 @@ async function agree_aichat(
     })
     if(todoIdx >= 0) {
       newContent.stateId = "TODO"
+      newContent.stateStamp = b6.insertedStamp
     }
   }
   console.log("see newContent: ")

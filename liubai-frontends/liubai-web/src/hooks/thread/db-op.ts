@@ -272,6 +272,7 @@ async function countPin(
 async function setStateId(
   id: string,
   newStateId?: string,
+  newStateStamp?: number
 ) {
   const oldCfg = await getOldCfg(id)
   const now1 = time.getTime()
@@ -279,6 +280,7 @@ async function setStateId(
   const newData: Partial<ContentLocalTable> = {
     updatedStamp: now1,
     stateId: newStateId,
+    stateStamp: newStateStamp,
     config: newCfg,
   }
   const res = await db.contents.update(id, newData)

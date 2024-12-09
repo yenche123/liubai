@@ -203,6 +203,7 @@ function _getThreadData(
     tagIds,
     tagSearched,
     stateId: ceData.stateId,
+    stateStamp: ceData.stateId ? now : undefined,
     search_title,
     search_other,
   }

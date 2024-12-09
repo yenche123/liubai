@@ -498,6 +498,8 @@ async function mergeContent(
     g.liuDesc = d.liuDesc 
     g.aiCharacter = d.aiCharacter
     g.aiReadable = d.aiReadable
+    g.stateId = d.stateId
+    g.stateStamp = d.stateStamp
 
     const imgRes = CloudFiler.updateImages(d.images, oc.images)
     if(imgRes.updated) {
@@ -548,6 +550,7 @@ async function mergeContent(
   if(n3 > o3) {
     gCfg.lastOperateStateId = n3
     g.stateId = d.stateId
+    g.stateStamp = d.stateStamp
     g.config = gCfg
   }
 
@@ -661,6 +664,7 @@ function createContent(
     tagIds: d.tagIds,
     tagSearched: d.tagSearched,
     stateId: d.stateId,
+    stateStamp: d.stateStamp,
     config: d.config,
     search_title: d.search_title,
     search_other: d.search_other,

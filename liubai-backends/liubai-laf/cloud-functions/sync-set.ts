@@ -499,6 +499,7 @@ async function toPostThread(
     tagIds: sch_opt_arr(vbot.string()),
     tagSearched: sch_opt_arr(vbot.string()),
     stateId: Sch_Opt_Str,
+    stateStamp: Sch_Opt_Num,
 
     emojiData: Sch_EmojiData,
     config: vbot.optional(Sch_ContentConfig),
@@ -578,6 +579,7 @@ async function toPostThread(
     tagIds: thread.tagIds,
     tagSearched: thread.tagSearched,
     stateId: thread.stateId,
+    stateStamp: thread.stateStamp,
     config: thread.config,
     levelOne: 0,
     levelOneAndTwo: 0,
@@ -778,6 +780,8 @@ async function toThreadEdit(
     remindStamp: Sch_Opt_Num,
     whenStamp: Sch_Opt_Num,
     remindMe: vbot.optional(Sch_LiuRemindMe),
+    stateId: Sch_Opt_Str,
+    stateStamp: Sch_Opt_Num,
 
     tagIds: sch_opt_arr(vbot.string()),
     tagSearched: sch_opt_arr(vbot.string()),
@@ -801,10 +805,14 @@ async function toThreadEdit(
     enc_desc: sharedData.enc_desc,
     enc_images: sharedData.enc_images,
     enc_files: sharedData.enc_files,
+
     calendarStamp: thread.calendarStamp,
     remindStamp: thread.remindStamp,
     whenStamp: thread.whenStamp,
     remindMe: thread.remindMe,
+    stateId: thread.stateId,
+    stateStamp: thread.stateStamp,
+
     editedStamp: thread.editedStamp,
     tagIds: thread.tagIds,
     tagSearched: thread.tagSearched,
@@ -1167,6 +1175,7 @@ async function toThreadState(
     id: Sch_Id,
     first_id: Sch_Opt_Str,
     stateId: Sch_Opt_Str,
+    stateStamp: Sch_Opt_Num,
   }, vbot.never())
   const res1 = checkoutInput(Sch_State, thread, taskId)
   if(res1) return res1
@@ -1178,8 +1187,8 @@ async function toThreadState(
 
   //  3. check out every data
   const id = thread.id as string
-  const stateId = thread.stateId
-  if(oldContent.stateId === stateId) {
+  const { stateId, stateStamp } = thread
+  if(oldContent.stateId === stateId && oldContent.stateStamp === stateStamp) {
     return { code: "0001", taskId }
   }
   const { config: cfg = {} } = oldContent
@@ -1192,6 +1201,7 @@ async function toThreadState(
   cfg.lastOperateStateId = operateStamp
   const u: Partial<Table_Content> = {
     stateId,
+    stateStamp,
     config: cfg,
   }
   await updatePartData(ssCtx, "content", id, u)
@@ -1558,6 +1568,7 @@ async function toDraftSet(
     remindMe: vbot.optional(Sch_LiuRemindMe),
     tagIds: sch_opt_arr(Sch_Id),
     stateId: Sch_Opt_Str,
+    stateStamp: Sch_Opt_Num,
     aiReadable: vbot.optional(Sch_BaseIsOn),
   }, vbot.never())
   const res1 = checkoutInput(Sch_DraftSet, draft, taskId)
@@ -1637,6 +1648,7 @@ async function toDraftEdit(
     remindMe: draft.remindMe,
     tagIds: draft.tagIds,
     stateId: draft.stateId,
+    stateStamp: draft.stateStamp,
     editedStamp,
     aiReadable: draft.aiReadable,
   }
@@ -1703,6 +1715,7 @@ async function toDraftCreate(
     remindMe: draft.remindMe,
     tagIds: draft.tagIds,
     stateId: draft.stateId,
+    stateStamp: draft.stateStamp,
     editedStamp: draft.editedStamp as number,
     aiReadable: draft.aiReadable,
   }
