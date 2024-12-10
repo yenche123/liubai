@@ -309,6 +309,12 @@ export const aiLang: LangAtom = {
     "draw_result": "作图结果: {imageUrl}",
     "bot_left": "{botName}已离开聊天室",
     "bot_draw": "{botName}使用画笔 {model} 画了一张图片",
+    "status_1": "【群聊成员】",
+    "status_2": "【使用额度】",
+    "status_3": "已使用: {usedTimes}轮",
+    "status_4": "免费版共有: {maxTimes}轮",
+    "status_5": "会员每月享有: {maxTimes}轮",
+    "no_member": "没有其他助手",
 
     // the first message when a bot has been called
     "called_1": "我是{botName}，想跟我聊什么呢？",
@@ -388,6 +394,12 @@ export const aiLang: LangAtom = {
     "draw_result": "畫圖結果: {imageUrl}",
     "bot_left": "{botName}已離開聊天室",
     "bot_draw": "{botName}使用畫筆 {model} 畫了一張圖片",
+    "status_1": "【群聊成員】",
+    "status_2": "【使用額度】",
+    "status_3": "已使用: {usedTimes}輪",
+    "status_4": "免費版共有: {maxTimes}輪",
+    "status_5": "會員每月享有: {maxTimes}輪",
+    "no_member": "沒有其他助手",
 
     // the first message when a bot has been called
     "called_1": "我是{botName}，想跟我聊什麼呢?",
@@ -467,6 +479,12 @@ export const aiLang: LangAtom = {
     "draw_result": "The drawing result: {imageUrl}",
     "bot_left": "{botName} has already left",
     "bot_draw": "{botName} uses a brush called {model} to draw a picture",
+    "status_1": "[Group Members]",
+    "status_2": "[Quota]",
+    "status_3": "Used: {usedTimes}",
+    "status_4": "Freemium has: {maxTimes}",
+    "status_5": "Premium has: {maxTimes}",
+    "no_member": "No assistants here",
 
     // the first message when a bot has been called
     "called_1": "I am {botName}. Let's chat together!",

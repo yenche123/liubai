@@ -396,6 +396,13 @@ class AiDirective {
     const res5 = this.isContinue(text2)
     if(res5) return res5
 
+    // 6. is it viewing status directive?
+    const res6 = this.isViewingStatus(text2)
+    if(res6) {
+      this.toViewStatus(entry)
+      return { theCommand: "group_status" }
+    }
+
   }
 
   private static _getCommandedBot(
@@ -435,6 +442,55 @@ class AiDirective {
     if(botMatched) {
       return { theCommand: "continue", theBot: botMatched }
     }
+  }
+
+  private static async toViewStatus(entry: AiEntry) {
+    // 1. get the user's ai room
+    const room = await AiHelper.getMyAiRoom(entry)
+    if(!room) return
+    const user = entry.user
+    const { t } = useI18n(aiLang, { user })
+    let msg = t("status_1") + "\n"
+
+    // 2. get assistants
+    const { characters } = room
+    if(characters.length < 1) {
+      msg += (t("no_member") + "\n")
+    }
+    else {
+      characters.forEach(v => {
+        const name = AiHelper.getCharacterName(v)
+        if(name) msg += (name + "\n")
+      })
+    }
+    msg += "\n"
+
+    // 3. get quota
+    msg += (t("status_2") + "\n")
+    const quota = user.quota
+    const usedTimes = quota?.aiConversationCount ?? 0
+    const isSubscribed = checkIfUserSubscribed(user)
+    const maxTimes = isSubscribed ? MAX_TIMES_MEMBERSHIP : MAX_TIMES_FREE
+    msg += (t("status_3", { usedTimes }) + "\n")
+    if(isSubscribed) {
+      msg += t("status_5", { maxTimes })
+    }
+    else {
+      msg += t("status_4", { maxTimes })
+    }
+
+    // 4. text user
+    TellUser.text(entry, msg)
+  }
+
+  private static isViewingStatus(text: string) {
+    const prefix = [
+      "群聊状态", "查看群聊状态",
+      "群聊狀態", "檢視群聊狀態",
+      "Status", "Group Status",
+    ]
+    const res1 = this._areTheyMatched(prefix, text)
+    return res1
   }
 
   private static async toKickBot(entry: AiEntry, bot: AiBot) {
