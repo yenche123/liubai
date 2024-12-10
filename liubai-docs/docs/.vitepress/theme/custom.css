@@ -1,0 +1,16 @@
+/** custom css */
+
+:root {
+  --vp-c-brand-1: #2a6885;
+  --vp-c-brand-2: #15455e;
+  --vp-c-brand-3: #1c5671;
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #2a6885, #88d1ff);
+}
+
+html.dark {
+  --vp-c-brand-1: #3a89aa;
+  --vp-c-brand-2: #4a99ba;
+  --vp-c-brand-3: #5aa9ca;
+  --vp-home-hero-name-background: -webkit-linear-gradient(30deg, #2a6885, #88d1ff);
+}

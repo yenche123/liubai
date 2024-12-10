@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "留白记事"
   text: "留白文档中心"
-  tagline: Supercharge yourself!
+  tagline: "放大你的能力！"
   actions:
     - theme: brand
       text: 立即开始
