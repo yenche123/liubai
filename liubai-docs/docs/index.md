@@ -9,10 +9,10 @@ hero:
   actions:
     - theme: brand
       text: 立即开始
-      link: /what-is-liubai
+      link: /guide/what-is-liubai
     - theme: alt
       text: 前往安装
-      link: /install
+      link: /guide/install
 
 features:
   - title: "多设备"

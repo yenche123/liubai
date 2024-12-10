@@ -17,29 +17,36 @@ export default defineConfig({
       dark: "/logo_512x512_v2.png",
     },
 
-    sidebar: [
-      {
-        text: 'Examples',
-        items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
-        ]
-      },
-      {
-        text: "欢迎",
-        items: [
-          { text: "简介", link: "/what-is-liubai" }
-        ]
-      },
-      {
-        text: "安装",
-        link: "/install/index",
-        items: [
-          { text: "iPhone", link: "/install/iphone" },
-          { text: "vivo", link: "/install/vivo" },
-        ]
-      }
-    ],
+    sidebar: {
+      "/guide/": [
+        {
+          text: "欢迎",
+          items: [
+            { text: "简介", link: "/guide/what-is-liubai" }
+          ]
+        },
+        {
+          text: "安装",
+          link: "/guide/install/",
+          items: [
+            { text: "iPhone", link: "/guide/install/iphone" },
+            { text: "vivo", link: "/guide/install/vivo" },
+          ]
+        },
+        {
+          text: "常见问题",
+          link: "/guide/faq/"
+        },
+        {
+          text: "条款",
+          collapsed: true,
+          items: [
+            { text: "服务条款", link: "/guide/rules/service-terms" },
+            { text: "隐私政策", link: "/guide/rules/privacy-policy" },
+          ]
+        }
+      ]
+    },
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/yenche123/liubai' }
