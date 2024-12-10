@@ -788,7 +788,7 @@ export const Sch_AiToolGetScheduleParam = vbot.object({
 
 // the param of get_cards
 export const aiToolGetCardTypes = [
-  "TODO", "FINISHED", "ADD_RECENTLY"
+  "TODO", "FINISHED", "ADD_RECENTLY", "EVENT"
 ] as const
 export type AiToolGetCardType = typeof aiToolGetCardTypes[number]
 export const Sch_AiToolGetCardType = vbot.picklist(aiToolGetCardTypes)

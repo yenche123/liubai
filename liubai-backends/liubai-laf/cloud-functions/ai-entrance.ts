@@ -67,6 +67,7 @@ import {
   HOUR, 
   isWithinMillis, 
   localizeStamp, 
+  DAY,
   MINUTE,
   SECONED,
 } from "@/common-time"
@@ -2589,6 +2590,7 @@ class ToolHandler {
     let contents: Table_Content[] | undefined
 
     // 3. get contents
+    const cCol = db.collection("Content")
     if(cardType === "TODO" || cardType === "FINISHED") {
       contents = await this._getCardsForState(cardType, userId, q2)
       if(!contents) return
@@ -2601,8 +2603,15 @@ class ToolHandler {
         textToUser = t("bot_read_finished", { bot: bot.name })
       }
     }
+    else if(cardType === "EVENT") {
+      q2.calendarStamp = _.gt(getNowStamp() - DAY)
+      const q3_1 = cCol.where(q2).orderBy("createdStamp", "desc").limit(10)
+      const res3_1 = await q3_1.get<Table_Content>()
+      contents = res3_1.data
+      textToBot = t("event_cards")
+      textToUser = t("bot_read_event", { bot: bot.name })
+    }
     else {
-      const cCol = db.collection("Content")
       const q3_2 = cCol.where(q2).orderBy("createdStamp", "desc").limit(10)
       const res3_2 = await q3_2.get<Table_Content>()
       contents = res3_2.data

@@ -351,9 +351,11 @@ export const aiLang: LangAtom = {
     "todo_cards": "最近的待办:\n\n",
     "note_cards": "最近的笔记:\n\n",
     "finished_cards": "最近完成的事项:\n\n",
+    "event_cards": "最近添加的事件:\n\n",
     "bot_read_todo": "{bot}查看了最近的待办",
     "bot_read_note": "{bot}查看了最近的笔记",
     "bot_read_finished": "{bot}查看了最近完成的事项",
+    "bot_read_event": "{bot}查看了最近添加的事件",
   },
   "zh-Hant": {
     "privacy_title": "🔓 隱私提示:",
@@ -436,9 +438,11 @@ export const aiLang: LangAtom = {
     "todo_cards": "最近的待辦:\n\n",
     "note_cards": "最近的筆記:\n\n",
     "finished_cards": "最近完成的事項:\n\n",
-    "bot_read_todo": "{bot}查看了最近的待辦",
-    "bot_read_note": "{bot}查看了最近的筆記",
-    "bot_read_finished": "{bot}查看了最近完成的事項",
+    "event_cards": "最近新增的事件:\n\n",
+    "bot_read_todo": "{bot}檢視了最近的待辦",
+    "bot_read_note": "{bot}檢視了最近的筆記",
+    "bot_read_finished": "{bot}檢視了最近完成的事項",
+    "bot_read_event": "{bot}檢視了最近新增的事件",
   },
   "en": {
     "privacy_title": "🔓 Privacy:",
@@ -521,9 +525,11 @@ export const aiLang: LangAtom = {
     "todo_cards": "Latest to-dos:\n\n",
     "note_cards": "Latest notes:\n\n",
     "finished_cards": "Latest finished tasks:\n\n",
+    "event_cards": "Latest added events:\n\n",
     "bot_read_todo": "{bot} read latest to-dos",
     "bot_read_note": "{bot} read latest notes",
     "bot_read_finished": "{bot} read latest finished tasks",
+    "bot_read_event": "{bot} read latest added events",
   }
 }
 

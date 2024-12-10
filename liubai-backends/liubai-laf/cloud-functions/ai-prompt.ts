@@ -706,7 +706,7 @@ export const aiTools: OaiTool[] = [
     }
   },
 
-  /** Get cards (TODO / FINISHED / ADD_RECENTLY) */
+  /** Get cards (TODO / FINISHED / ADD_RECENTLY / EVENT) */
   {
     type: "function",
     function: {
@@ -717,7 +717,7 @@ export const aiTools: OaiTool[] = [
         properties: {
           cardType: {
             type: "string",
-            description: "指定获取哪类事项，有以下合法值：\nTODO: 表示待办；\nFINISHED: 表示已完成；\nADD_RECENTLY: 表示最近添加的事项。",
+            description: "指定获取哪类事项，有以下合法值：\nTODO: 表示待办；\nFINISHED: 表示已完成；\nADD_RECENTLY: 表示最近添加的卡片；\nEVENT: 最近添加的、带有时间的事件。",
             enum: aiToolGetCardTypes,
           }
         },
