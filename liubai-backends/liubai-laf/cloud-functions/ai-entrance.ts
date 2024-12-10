@@ -734,7 +734,7 @@ class BaseBot {
     }
     AiHelper.finalCheckPrompts(params.messages)
 
-    // // print last 5 prompts
+    // print last 5 prompts
     const msgLength = params.messages.length
     console.log(`last 5 prompts: `)
     if(msgLength > 5) {
@@ -1066,23 +1066,38 @@ class BaseBot {
       }
     }
 
-    // 2. add "assistant" message to prompts
+    // 2. get some params
     const c = this._character
     const assistantName = AiHelper.getCharacterName(c)
-    prompts.push({ role: "assistant", tool_calls, name: assistantName })
+    const { chatParam, bot, aiParam } = postParam
+    const canUseTool = bot.abilities.includes("tool_use")
 
-    // 3. add "tool" message to prompts
-    prompts.push({
-      role: "tool",
-      content: textToBot,
-      tool_call_id,
-    })
+    // 3. add new prompts with tool_calls and its result
+    if(canUseTool) {
+      prompts.push({ role: "assistant", tool_calls, name: assistantName })
+      prompts.push({
+        role: "tool",
+        content: textToBot,
+        tool_call_id,
+      })
+    }
+    else {
+      const { t } = useI18n(aiLang, { user: aiParam.entry.user })
+      const newPrompts = AiHelper.turnToolCallsIntoNormalPrompts(
+        tool_calls,
+        tool_call_id,
+        textToBot,
+        t,
+        assistantName,
+      )
+      console.warn("see newPrompts in _continueAfterReadingCards: ")
+      console.log(newPrompts)
+      if(newPrompts.length < 1) return
+      prompts.push(...newPrompts)
+    }
 
-    console.log("see tool_calls in _continueAfterReadingCards: ")
-    console.log(tool_calls)
 
     // 4. new chat create param
-    const { chatParam, bot, aiParam } = postParam
     const newChatParam: OaiCreateParam = { 
       ...chatParam,
       messages: prompts,
@@ -1123,32 +1138,37 @@ class BaseBot {
       }
     }
 
-    // 2. add "assistant" message to prompts
+    // 2. get some params
     const c = this._character
     const assistantName = AiHelper.getCharacterName(c)
-    prompts.push({ role: "assistant", tool_calls, name: assistantName })
+    const { chatParam, aiParam, bot } = postParam
+    const canUseTool = bot.abilities.includes("tool_use")
 
-    // 3. add "tool" message to prompts
-    prompts.push({
-      role: "tool",
-      content: searchMarkdown,
-      tool_call_id,
-    })
-
-    console.warn("see prompts in _continueAfterWebSearch: ")
-    if(prompts.length < 5) {
-      console.log(prompts)
+    // 3. add prompts with tool_calls and its result
+    if(canUseTool) {
+      prompts.push({ role: "assistant", tool_calls, name: assistantName })
+      prompts.push({
+        role: "tool",
+        content: searchMarkdown,
+        tool_call_id,
+      })
     }
     else {
-      const pLength = prompts.length
-      const p1 = prompts[pLength - 3]
-      const p2 = prompts[pLength - 2]
-      const p3 = prompts[pLength - 1]
-      console.log([p1, p2, p3])
+      const { t } = useI18n(aiLang, { user: aiParam.entry.user })
+      const newPrompts = AiHelper.turnToolCallsIntoNormalPrompts(
+        tool_calls,
+        tool_call_id,
+        searchMarkdown,
+        t,
+        assistantName,
+      )
+      console.warn("see newPrompts in _continueAfterWebSearch: ")
+      console.log(newPrompts)
+      if(newPrompts.length < 1) return
+      prompts.push(...newPrompts)
     }
 
     // 4. new chat create param
-    const { chatParam, bot, aiParam, chatCompletion } = postParam
     const newChatParam: OaiCreateParam = { 
       ...chatParam,
       messages: prompts,
@@ -3527,6 +3547,38 @@ class AiHelper {
     }
 
     return toolMsg
+  }
+
+  // 调用完工具后，将返回结果返回 LLM 时，若当前模型不支持 tool_use
+  // 对返回结果进行转换
+  static turnToolCallsIntoNormalPrompts(
+    tool_calls: OaiToolCall[],
+    tool_call_id: string,
+    toolResultText: string,
+    t: T_I18N,
+    assistantName?: string,
+  ): OaiPrompt[] {
+    const theTool = tool_calls.find(v => v.id === tool_call_id)
+    if(!theTool) return []
+
+    const theFunc = theTool["function"]
+    if(!theFunc) return []
+    const funcName = theFunc.name
+    const funcArgs = theFunc.arguments || "{}"
+    const msg = t("bot_call_tools", { funcName, funcArgs })
+
+    const prompts: OaiPrompt[] = [
+      {
+        role: "assistant",
+        content: msg,
+        name: assistantName,
+      },
+      {
+        role: "user",
+        content: toolResultText,
+      }
+    ]
+    return prompts
   }
 
   private static _turnToolCallIntoNormalAssistantMsg(
