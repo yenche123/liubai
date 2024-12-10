@@ -942,7 +942,7 @@ class BaseBot {
       else if(funcName === "web_search") {
         const searchRes = await toolHandler.web_search(funcJson)
         if(searchRes) {
-          this._continueAfterWebSearch(
+          await this._continueAfterWebSearch(
             postParam, 
             tool_calls, 
             searchRes, 
@@ -1258,7 +1258,20 @@ class BaseBot {
     if(!txt6) return
 
     // 2. reply to user
-    TellUser.text(aiParam.entry, txt6, bot)
+    const _env = process.env
+    const finishReason = AiHelper.getFinishReason(chatCompletion)
+    if(finishReason === "length" && _env.LIU_WX_GZ_TYPE === "service_account") {
+      TellUser.menu(
+        aiParam.entry, 
+        txt6, 
+        [{ operation: "continue", character: c }],
+        "",
+        c,
+      )
+    }
+    else {
+      TellUser.text(aiParam.entry, txt6, bot)
+    }
     
     // 3. add assistant chat
     const apiEndpoint = AiHelper.getApiEndpointFromBot(bot)
@@ -1463,6 +1476,9 @@ class BotMiniMax extends BaseBot {
       tools.forEach(v => {
         v.function.parameters = valTool.objToStr(v.function.parameters) as any
       })
+    }
+    if(aiParam.isContinueCommand) {
+      prompts.push({ role: "user", content: "Continue / 继续" })
     }
 
     // 4. calculate maxTokens
@@ -4191,6 +4207,7 @@ class TellUser {
     prefixMessage: string,
     menuList: AiMenuItem[],
     suffixMessage: string,
+    fromCharacter?: AiCharacter
   ) {
     const _env = process.env
     const { wx_gzh_openid, user } = entry
@@ -4218,6 +4235,21 @@ class TellUser {
         if(!characterName) continue
         wx_menu_list.push({ id: "add_" + character, content: t("add") + characterName })
       }
+
+      if(operation === "continue" && character) {
+        const botName = AiHelper.getCharacterName(character)
+        if(!botName) continue
+        wx_menu_list.push({
+          id: "continue_" + character,
+          content: t("continue_bot", { botName })
+        })
+
+        // turn markdown to plain-text for wx gzh
+        if(wx_gzh_openid) {
+          prefixMessage = MarkdownParser.mdToWxGzhText(prefixMessage)
+        }
+      }
+
     }
 
     // 2. send to wx gzh
@@ -4235,8 +4267,7 @@ class TellUser {
           tail_content: suffixMessage,
         }
       }
-      console.warn("see wx_menu_list: ")
-      console.log(wx_menu_list)
+      this._fillWxGzhKf(obj2, undefined, fromCharacter)
       const res2 = await this._sendToWxGzh(wx_gzh_openid, obj2)
       return res2
     }
