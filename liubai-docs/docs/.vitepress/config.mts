@@ -6,10 +6,6 @@ export default defineConfig({
   description: "留白文档中心",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' }
-    ],
 
     sidebar: [
       {
@@ -17,6 +13,20 @@ export default defineConfig({
         items: [
           { text: 'Markdown Examples', link: '/markdown-examples' },
           { text: 'Runtime API Examples', link: '/api-examples' }
+        ]
+      },
+      {
+        text: "欢迎",
+        items: [
+          { text: "简介", link: "/what-is-liubai" }
+        ]
+      },
+      {
+        text: "安装",
+        link: "/install",
+        items: [
+          { text: "iPhone", link: "/install/iphone" },
+          { text: "vivo", link: "/install/vivo" },
         ]
       }
     ],
