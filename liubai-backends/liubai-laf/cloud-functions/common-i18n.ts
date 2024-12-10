@@ -318,6 +318,8 @@ export const aiLang: LangAtom = {
     "status_4": "免费版共有: {maxTimes}轮",
     "status_5": "会员每月享有: {maxTimes}轮",
     "no_member": "没有其他助手",
+    "already_exist": "{botName}已在群聊中",
+    "already_left": "{botName}并不在群聊内",
 
     // the first message when a bot has been called
     "called_1": "我是{botName}，想跟我聊什么呢？",
@@ -405,6 +407,8 @@ export const aiLang: LangAtom = {
     "status_4": "免費版共有: {maxTimes}輪",
     "status_5": "會員每月享有: {maxTimes}輪",
     "no_member": "沒有其他助手",
+    "already_exist": "{botName}已在群聊中",
+    "already_left": "{botName}並不在群聊内",
 
     // the first message when a bot has been called
     "called_1": "我是{botName}，想跟我聊什麼呢?",
@@ -492,6 +496,8 @@ export const aiLang: LangAtom = {
     "status_4": "Freemium has: {maxTimes}",
     "status_5": "Premium has: {maxTimes}",
     "no_member": "No assistants here",
+    "already_exist": "{botName} has already joined in the group chat",
+    "already_left": "{botName} is not in the group chat",
 
     // the first message when a bot has been called
     "called_1": "I am {botName}. Let's chat together!",

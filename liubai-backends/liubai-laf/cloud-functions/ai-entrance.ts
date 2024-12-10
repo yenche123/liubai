@@ -495,6 +495,7 @@ class AiDirective {
   }
 
   private static async toKickBot(entry: AiEntry, bot: AiBot) {
+    const { t } = useI18n(aiLang, { user: entry.user })
 
     // 1. get the user's ai room
     const room = await AiHelper.getMyAiRoom(entry)
@@ -502,7 +503,11 @@ class AiDirective {
 
     // 2. find the bot in the room
     const theBot = room.characters.find(v => v === bot.character)
-    if(!theBot) return
+    if(!theBot) {
+      const msg2 = t("already_left", { botName: bot.name })
+      TellUser.text(entry, msg2)
+      return
+    }
 
     // 3. remove the bot from the room
     const newBots = room.characters.filter(v => v !== bot.character)
@@ -513,11 +518,7 @@ class AiDirective {
     const rCol = db.collection("AiRoom")
     const res3 = await rCol.doc(room._id).update(u3)
 
-    console.log("toKickBot res3: ")
-    console.log(res3)
-
     // 4. send a message to user
-    const { t } = useI18n(aiLang, { user: entry.user })
     const msg4 = t("bot_left", { botName: bot.name })
     TellUser.text(entry, msg4)
 
@@ -525,6 +526,8 @@ class AiDirective {
   }
 
   private static async toAddBot(entry: AiEntry, bot: AiBot) {
+    const { t } = useI18n(aiLang, { user: entry.user })
+
     // 1. get the user's ai room
     const room = await AiHelper.getMyAiRoom(entry)
     if(!room) return
@@ -532,7 +535,11 @@ class AiDirective {
 
     // 2. find the bot in the room
     const theBot = bots.find(v => v === bot.character)
-    if(theBot) return
+    if(theBot) {
+      const msg2 = t("already_exist", { botName: bot.name })
+      TellUser.text(entry, msg2)
+      return
+    }
 
     // 3. check out if the room has reached the max bots
     if(bots.length >= MAX_CHARACTERS) return
@@ -550,7 +557,6 @@ class AiDirective {
     const msgList = ["called_1", "called_2", "called_3", "called_4"]
     const r = Math.floor(Math.random() * msgList.length)
     const msgKey = msgList[r]
-    const { t } = useI18n(aiLang, { user: entry.user })
     const msg5 = t(msgKey, { botName: bot.name })
     TellUser.text(entry, msg5, bot)
 
@@ -620,8 +626,6 @@ class AiDirective {
     }
     const col = db.collection("AiChat")
     const res2 = await col.add(data2)
-    console.log("toClear res2: ")
-    console.log(res2)
 
     // 3. send a cleared message to user
     const { t } = useI18n(aiLang, { user: entry.user })
