@@ -1109,7 +1109,11 @@ class BaseBot {
 
     // 5. handle text from response
     const assistantChatId = await this._handleAssistantText(res4, aiParam, bot)
-    if(!assistantChatId) return
+    if(!assistantChatId) {
+      console.warn("no assistantChatId in _continueAfterReadingCards")
+      console.log(res4)
+      return
+    }
   }
 
   private async _continueAfterWebSearch(
@@ -3788,7 +3792,21 @@ class AiHelper {
     res: OaiChatCompletion,
     bot?: AiBot,
   ) {
-    let text = res.choices[0].message.content
+    const choices = res?.choices
+    if(!choices || choices.length < 1) {
+      console.warn("no choices in getTextFromLLM")
+      console.log(res)
+      return
+    }
+
+    let message = choices[0].message
+    if(!message) {
+      console.warn("no message in getTextFromLLM")
+      console.log(choices)
+      return
+    }
+
+    let text = message.content
     if(!text) return
 
     text = text.trim()

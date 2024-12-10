@@ -13,6 +13,7 @@ import type {
   UserWeChatGzh,
   Wx_Gzh_Click,
   Wx_Gzh_Image,
+  Wx_Gzh_Location,
   Wx_Gzh_Msg_Event, 
   Wx_Gzh_Scan, 
   Wx_Gzh_Send_Msg, 
@@ -97,6 +98,9 @@ export async function main(ctx: FunctionContext) {
   }
   else if(MsgType === "video") {
     handle_video(msgObj)
+  }
+  else if(MsgType === "location") {
+    handle_location(msgObj)
   }
   else if(MsgType === "event") {
     const { Event } = msgObj
@@ -265,6 +269,18 @@ async function handle_video(
   // 2. send unsupported message
   const { t } = useI18n(wechatLang)
   const msg = t("video_unsupported")
+  sendText(wx_gzh_openid, msg)
+}
+
+async function  handle_location(
+  msgObj: Wx_Gzh_Location,
+) {
+  // 1. get openid
+  const wx_gzh_openid = msgObj.FromUserName
+
+  // 2. send unsupported message
+  const { t } = useI18n(wechatLang)
+  const msg = t("location_unsupported")
   sendText(wx_gzh_openid, msg)
 }
 

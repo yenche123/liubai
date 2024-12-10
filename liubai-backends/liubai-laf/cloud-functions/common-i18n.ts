@@ -247,6 +247,7 @@ export const wechatLang: LangAtom = {
     "login_first": "尚未登录！\n欢迎使用<a href='{LIU_DOMAIN}/wechat-bind'>微信一键登录</a>",
     "video_unsupported": "[暂不支持发送视频消息]",
     "voice_unsupported": "🚧 语音输入仍在开发中",
+    "location_unsupported": "🚧 位置消息仍在开发中",
   },
   "zh-Hant": {
     "welcome_1": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n你可以在這裡記錄所有事情，所有「只屬於你」的資訊都將在這裡匯聚。\n\n若這世界就是一個巨大的遊樂園，請去體驗、去創造🥂\n\n[未完待續]",
@@ -256,6 +257,7 @@ export const wechatLang: LangAtom = {
     "login_first": "尚未登入! \n歡迎使用<a href='{LIU_DOMAIN}/wechat-bind'>微信一鍵登入</a>",
     "video_unsupported": "[暫不支援影片訊息]",
     "voice_unsupported": "🚧 語音訊息仍在開發中",
+    "location_unsupported": "🚧 地點訊息仍在開發中",
   },
   "en": {
     "welcome_1": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nYou can record all your life’s events, and all information you want is out here.\n\nIf this world is a giant playground, please experience it and create it 🥂\n\n[To be continued]",
@@ -265,6 +267,7 @@ export const wechatLang: LangAtom = {
     "login_first": "Not logged in yet!\nWelcome to <a href='{LIU_DOMAIN}/wechat-bind'>Login via WeChat</a>",
     "video_unsupported": "[Videos are not supported to send]",
     "voice_unsupported": "🚧 Voice message is still in development",
+    "location_unsupported": "🚧 Location message is still in development",
   }
 }
 
