@@ -115,6 +115,7 @@ export function useLpMain(
     if(lpmData.smsStatus !== "can_tap") return
     _toRequestSMSCode(`86_${val}`)
     _makeElBlur(lpPhoneInput.value)
+    lpSmsInput.value?.focus()
   }
 
   const onTapGettingSMSCode = () => {
@@ -190,7 +191,8 @@ function checkPhoneAndSmsCodeInput(
 
   const smsVal = lpmData.smsVal
   const val2 = smsVal.trim()
-  if(val2.length !== 6) {
+  const res2 = liuUtil.check.isAllNumber(val2, 6)
+  if(!res2) {
     lpmData.showPhoneSubmit = false
     return
   }

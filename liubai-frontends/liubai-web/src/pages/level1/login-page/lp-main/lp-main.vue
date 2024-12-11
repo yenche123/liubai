@@ -272,6 +272,7 @@ const {
 .lp-phone-input {
   margin-block-end: 8px;
   padding: 14px 20px;
+  letter-spacing: 1px;
 }
 
 .lp-sms-bar {
@@ -292,6 +293,7 @@ const {
   border-radius: 8px;
   margin-inline-end: 8px;
   min-width: 150px;
+  letter-spacing: 1px;
 
   &::placeholder {
     color: var(--main-note);

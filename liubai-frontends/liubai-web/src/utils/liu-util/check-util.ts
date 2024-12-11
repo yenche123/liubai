@@ -31,10 +31,13 @@ function isEmail(val: string) {
 }
 
 function isAllNumber(val: string, digit?: number) {
+  if(digit) {
+    if(val.length !== digit) return false
+  }
+  
   const m = val.match(/^\d+$/g)
   const res = Boolean(m?.length)
-  if(!digit) return res
-  return val.length === digit
+  return res
 }
 
 
