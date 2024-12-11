@@ -7,6 +7,7 @@ import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
 import liuEnv from "~/utils/liu-env";
 import cui from "~/components/custom-ui"
+import type { LoginByThirdParty } from "../../tools/types";
 
 export function useLpMain(
   props: LpmProps,
@@ -162,6 +163,16 @@ export function useLpMain(
       lpmData.smsStatus = "counting"
     }
   })
+
+
+  const onTapThirdParty = (thirdParty: LoginByThirdParty) => {
+    if(!lpmData.agreeRule) {
+      lpmData.agreeShakingNum++
+      return
+    }
+    emit("tapthirdparty", thirdParty)
+  }
+
   
   return {
     lpSelectsEl,
@@ -175,6 +186,7 @@ export function useLpMain(
     onSmsEnter,
     onTapGettingSMSCode,
     onTapFinishForSMS,
+    onTapThirdParty,
   }
 }
 

@@ -32,6 +32,7 @@ const { t } = useI18n()
   display: flex;
   width: 100%;
   position: relative;
+  justify-content: v-bind("beCenter ? 'center' : 'flex-start'");
   align-items: flex-start;
   cursor: pointer;
 }
@@ -58,7 +59,7 @@ const { t } = useI18n()
 }
 
 .agree-text {
-  width: calc(100% - 30px);
+  width: auto;
   font-size: var(--mini-font);
   color: var(--main-code);
   line-height: 1.5;

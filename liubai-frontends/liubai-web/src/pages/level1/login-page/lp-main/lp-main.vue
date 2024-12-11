@@ -21,6 +21,7 @@ const {
   onSmsEnter,
   onTapGettingSMSCode,
   onTapFinishForSMS,
+  onTapThirdParty,
 } = useLpMain(props, emit)
 
 </script>
@@ -135,7 +136,7 @@ const {
     <!-- wechat -->
     <div v-if="lpmData.loginViaWeChat"
       class="liu-no-user-select liu-hover lpv-btn" 
-      @click.stop="$emit('tapthirdparty', 'wechat')"
+      @click.stop="onTapThirdParty('wechat')"
     >
       <div class="lpv-icon">
         <div class="lpv-icon-div"></div>
@@ -148,7 +149,7 @@ const {
     <!-- google -->
     <div v-if="lpmData.loginViaGoogle"
       class="liu-no-user-select liu-hover lpv-btn" 
-      @click.stop="$emit('tapthirdparty', 'google')"
+      @click.stop="onTapThirdParty('google')"
     >
       <div class="lpv-icon">
         <svg-icon name="logos-google-color" 
@@ -164,7 +165,7 @@ const {
     <!-- github -->
     <div v-if="lpmData.loginViaGitHub"
       class="liu-no-user-select liu-hover lpv-btn" 
-      @click.stop="$emit('tapthirdparty', 'github')"
+      @click.stop="onTapThirdParty('github')"
     >
       <div class="lpv-icon">
         <svg-icon name="logos-github" 
@@ -178,7 +179,7 @@ const {
     </div>
 
     <!-- Apple -->
-    <!-- <div class="liu-hover lpv-btn" @click.stop="$emit('tapthirdparty', 'apple')">
+    <!-- <div class="liu-hover lpv-btn" @click.stop="onTapThirdParty('apple')">
       <div class="lpv-icon">
         <svg-icon name="logos-apple" 
           color="var(--main-text)"
@@ -189,6 +190,13 @@ const {
         <span>{{ t('login.continue_with_apple') }}</span>
       </div>
     </div> -->
+
+    <div class="lpm-rule-box-2">
+      <AgreeBox v-model:agree="lpmData.agreeRule"
+        :shaking-num="lpmData.agreeShakingNum"
+        be-center
+      ></AgreeBox>
+    </div>
 
   </div>
 
@@ -322,6 +330,13 @@ const {
 
 .lpm-rule-box {
   margin-block-start: 24px;
+}
+
+.lpm-rule-box-2 {
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  position: relative;
 }
 
 
