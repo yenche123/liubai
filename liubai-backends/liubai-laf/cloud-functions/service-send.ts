@@ -239,8 +239,6 @@ export class LiuTencentSMS {
     // 3. to fetch
     try {
       const res = await client.PullSmsSendStatusByPhoneNumber(param)
-      console.log("retrieving result of tencent sms >>>")
-      console.log(res)
       return { code: "0000", data: res }
     }
     catch(err) {

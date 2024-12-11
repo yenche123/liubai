@@ -383,7 +383,6 @@ function getPhoneData(enc_phone: string): DataPass<PhoneData> {
   }
 
   // 3. check out format of phone number
-  console.log(`phone: ${dec_phone}`)
   const tmpList3 = dec_phone.split("_")
   const regionCode = tmpList3[0]
   const localNumber = tmpList3[1]
@@ -399,9 +398,6 @@ function getPhoneData(enc_phone: string): DataPass<PhoneData> {
       err: { code: "U0009", errMsg: "invalid phone" },
     }
   }
-
-  console.log(`regionCode: ${regionCode}`)
-  console.log(`localNumber: ${localNumber}`)
 
   return {
     pass: true,
