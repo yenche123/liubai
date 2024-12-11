@@ -20,6 +20,10 @@ export interface LpData {
   isSubmittingEmailCode: boolean
   clearCodeNum: number
 
+  // phone 相关
+  isLoggingByPhone: boolean
+  smsSendingNum: number          // 短信发送次数
+
   // 从后端获取
   publicKey?: string
   githubOAuthClientId?: string

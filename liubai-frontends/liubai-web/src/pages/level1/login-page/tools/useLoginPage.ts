@@ -71,6 +71,8 @@ export function useLoginPage() {
     isSubmittingEmailCode: false,
     isSelectingAccount: false,
     openWithBrowser: OPEN_WITH_BROWSER,
+    isLoggingByPhone: false,
+    smsSendingNum: 0,
   })
 
   // 0. 去监听登录成功后的 路由切换
@@ -134,6 +136,15 @@ export function useLoginPage() {
 
   checkIfRedirectToA2HS(rr)
 
+  const onTapRequestSmsCode = (phone: string) => {
+    console.log("phone: ", phone)
+    
+  }
+
+  const onTapFinishForPhone = () => {
+
+  }
+
   return {
     lpData,
     showBackBtn,
@@ -143,6 +154,8 @@ export function useLoginPage() {
     onTapLoginViaThirdParty,
     onSelectedAnAccount,
     onTapBack,
+    onTapRequestSmsCode,
+    onTapFinishForPhone,
   }
 }
 

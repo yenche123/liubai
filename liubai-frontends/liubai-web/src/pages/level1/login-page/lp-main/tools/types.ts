@@ -1,3 +1,4 @@
+import { SmsStatus } from "~/types/types-view"
 import type { LoginByThirdParty } from "../../tools/types"
 
 export interface LpmData {
@@ -15,10 +16,13 @@ export interface LpmData {
   loginViaGoogle: boolean
   loginViaGitHub: boolean
   btnOne: "phone" | "email"
+  smsStatus: SmsStatus
 }
 
 export interface LpmProps {
   isSendingEmail: boolean
+  isLoggingByPhone: boolean
+  smsSendingNum: number
 }
 
 export const lpmProps = {
@@ -26,19 +30,19 @@ export const lpmProps = {
     type: Boolean,
     default: false,
   },
-  isSendingSMS: {         // 是否正在传送验证码
-    type: Boolean,
-    default: false,
-  },
   isLoggingByPhone: {     // 是否正在使用手机号 + 短信登录
     type: Boolean,
     default: false,
+  },
+  smsSendingNum: {
+    type: Number,
+    default: 0,
   }
 }
 
 export interface LpmEmit {
   (evt: "submitemail", email: string): void
-  (evt: "submitphone", phone: string): void
+  (evt: "requestsmscode", phone: string): void
   (evt: "submitsmscode", phone: string, code: string): void
   (evt: "tapthirdparty", thirdParty: LoginByThirdParty): void
 }

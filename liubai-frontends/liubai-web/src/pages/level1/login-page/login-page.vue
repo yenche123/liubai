@@ -16,6 +16,8 @@ const {
   onTapLoginViaThirdParty,
   onSelectedAnAccount,
   onTapBack,
+  onTapRequestSmsCode,
+  onTapFinishForPhone,
 } = useLoginPage()
 
 </script>
@@ -54,8 +56,12 @@ const {
     <div class="lp-container lp-container_main" v-liu-show="lpData.view === 'main'">
       <LpMain
         @submitemail="onEmailSubmitted"
+        @requestsmscode="onTapRequestSmsCode"
+        @submitsmscode="onTapFinishForPhone"
         @tapthirdparty="onTapLoginViaThirdParty"
         :is-sending-email="lpData.isSendingEmail"
+        :is-logging-by-phone="lpData.isLoggingByPhone"
+        :sms-sending-num="lpData.smsSendingNum"
       ></LpMain>
     </div>
 

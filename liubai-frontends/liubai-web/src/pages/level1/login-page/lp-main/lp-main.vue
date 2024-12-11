@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SmsButton from '~/components/common/sms-button/sms-button.vue';
 import { useI18n } from 'vue-i18n';
 import { useLpMain } from "./tools/useLpMain";
 import { type LpmEmit, lpmProps } from "./tools/types"
@@ -10,6 +11,8 @@ const { t } = useI18n()
 const {
   lpSelectsEl,
   lpEmailInput,
+  lpPhoneInput,
+  lpSmsInput,
   lpmData,
   onTapSelect,
   onEmailEnter,
@@ -81,6 +84,7 @@ const {
       :placeholder="t('login.phone_ph')" 
       v-model="lpmData.phoneVal"
       id="login-phone"
+      ref="lpPhoneInput"
       @keyup.enter.exact="onPhoneEnter"
       maxlength="11"
     />
@@ -90,9 +94,14 @@ const {
         :placeholder="t('login.sms_ph')"
         id="login-sms"
         v-model="lpmData.smsVal"
+        ref="lpSmsInput"
         @keyup.enter.exact="onSmsEnter"
         maxlength="6"
       />
+
+      <SmsButton v-model:status="lpmData.smsStatus"
+        @click="onTapGettingSMSCode"
+      ></SmsButton>
 
     </div>
 
@@ -190,7 +199,7 @@ const {
 }
 
 .lpms-item {
-  padding: 10px 0;
+  padding: 9px 0;
   font-size: var(--desc-font);
   font-weight: 700;
   color: var(--main-code);
@@ -261,7 +270,7 @@ const {
 }
 
 .lp-phone-input {
-  margin-block-end: 12px;
+  margin-block-end: 8px;
   padding: 14px 20px;
 }
 
@@ -281,7 +290,7 @@ const {
   background-color: var(--card-bg);
   border: 1.4px solid var(--line-bottom);
   border-radius: 8px;
-  margin-inline-end: 12px;
+  margin-inline-end: 8px;
 
   &::placeholder {
     color: var(--main-note);

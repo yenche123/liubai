@@ -6,6 +6,7 @@ import valTool from "~/utils/basic/val-tool";
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore";
 import { storeToRefs } from "pinia";
 import liuEnv from "~/utils/liu-env";
+import cui from "~/components/custom-ui"
 
 export function useLpMain(
   props: LpmProps,
@@ -16,6 +17,8 @@ export function useLpMain(
 
   const lpSelectsEl = ref<HTMLElement>()
   const lpEmailInput = ref<HTMLInputElement>()
+  const lpPhoneInput = ref<HTMLInputElement>()
+  const lpSmsInput = ref<HTMLInputElement>()
   const lpmData = reactive<LpmData>({
     current: 1,
     showEmailSubmit: false,
@@ -31,6 +34,7 @@ export function useLpMain(
     loginViaGoogle: loginWays.includes("google"),
     loginViaGitHub: loginWays.includes("github"),
     btnOne: loginWays.includes("phone") ? "phone" : "email",
+    smsStatus: "can_tap",
   })
 
   const onTapSelect = (newIndex: number) => {
@@ -72,40 +76,82 @@ export function useLpMain(
   watch(width, _debounce)
 
   // 监听输入是否符合
-  watch(() => lpmData.emailVal, (newV) => {
-    checkEmailInput(lpmData)
-  })
+  watch(() => lpmData.emailVal, () => checkEmailInput(lpmData))
+  watch(() => lpmData.phoneVal, () => checkPhoneAndSmsCodeInput(lpmData))
+  watch(() => lpmData.smsVal, () => checkPhoneAndSmsCodeInput(lpmData))
+
+  const _makeElBlur = (el: HTMLInputElement | undefined) => {
+    if(!el) return
+    el.blur()
+  }
 
   const onEmailEnter = () => {
     if(props.isSendingEmail) return
     if(!lpmData.showEmailSubmit) return
     const email = lpmData.emailVal.trim().toLowerCase()
     emit("submitemail", email)
+    _makeElBlur(lpEmailInput.value)
+  }
 
-    const el = lpEmailInput.value
-    if(!el) return
-    el.blur()
+  const _toRequestSMSCode = (phone: string) => {
+    if(props.isLoggingByPhone || props.isSendingEmail) {
+      return false
+    }
+    emit("requestsmscode", phone)
+    lpmData.smsStatus = "loading"
+
+    console.log("mock......")
+    setTimeout(() => {
+      lpmData.smsStatus = "counting"
+    }, 2000)
+
+    return true
   }
 
   const onPhoneEnter = () => {
-
+    const val = lpmData.phoneVal.trim()
+    if(val.length !== 11) return
+    if(lpmData.smsStatus !== "can_tap") return
+    _toRequestSMSCode(`86_${val}`)
+    _makeElBlur(lpPhoneInput.value)
   }
 
   const onTapGettingSMSCode = () => {
+    // 1. checking out phone number
+    const val = lpmData.phoneVal.trim()
+    if(val.length !== 11) {
+      cui.showModal({
+        title: "🫣",
+        content_key: "login.err_10",
+        isTitleEqualToEmoji: true,
+        showCancel: false,
+      })
+      return
+    }
 
+    // 2. to request
+    _toRequestSMSCode(`86_${val}`)
   }
 
   const onSmsEnter = () => {
-
+    checkPhoneAndSmsCodeInput(lpmData)
+    if(!lpmData.showPhoneSubmit) return
+    if(props.isLoggingByPhone || props.isSendingEmail) return
+    const phone = `86_` + lpmData.phoneVal.trim()
+    const smsCode = lpmData.smsVal.trim()
+    emit("submitsmscode", phone, smsCode)
+    _makeElBlur(lpSmsInput.value)
   }
 
   const onTapFinishForSMS = () => {
-
+    onSmsEnter()
   }
   
   return {
     lpSelectsEl,
     lpEmailInput,
+    lpPhoneInput,
+    lpSmsInput,
     lpmData,
     onTapSelect,
     onEmailEnter,
@@ -127,4 +173,24 @@ function checkEmailInput(
   if(oldSubmit !== newSubmit) {
     lpmData.showEmailSubmit = newSubmit
   }
+}
+
+function checkPhoneAndSmsCodeInput(
+  lpmData: LpmData,
+) {
+  const phoneVal = lpmData.phoneVal
+  const val = phoneVal.trim()
+  if(val.length !== 11) {
+    lpmData.showPhoneSubmit = false
+    return
+  }
+
+  const smsVal = lpmData.smsVal
+  const val2 = smsVal.trim()
+  if(val2.length !== 6) {
+    lpmData.showPhoneSubmit = false
+    return
+  }
+
+  lpmData.showPhoneSubmit = true
 }
