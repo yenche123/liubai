@@ -36,6 +36,21 @@ export async function fetchInitLogin() {
   return res
 } 
 
+export async function fetchRequestSMSCode(
+  enc_phone: string,
+  state: string
+) {
+  const url = APIs.LOGIN
+  const opt = {
+    operateType: "phone",
+    state,
+    enc_phone,
+  }
+
+  const res = await liuReq.request(url, opt)
+  return res
+}
+
 export async function fetchSubmitEmail(
   enc_email: string,
   state: string,
@@ -48,6 +63,26 @@ export async function fetchSubmitEmail(
   }
 
   const res = await liuReq.request(url, opt)
+  return res
+}
+
+export async function fetchPhoneCode(
+  enc_phone: string,
+  code: string,
+  state: string,
+  enc_client_key: string
+) {
+  const url = APIs.LOGIN
+  const default_opt = _getDefaultOpt()
+  const opt = {
+    ...default_opt,
+    operateType: "phone_code",
+    state,
+    enc_phone,
+    phone_code: code,
+    enc_client_key,
+  }
+  const res = await liuReq.request<Res_UserLoginNormal>(url, opt)
   return res
 }
 

@@ -7,6 +7,8 @@ import {
   fetchEmailCode, 
   fetchUsersSelect,
   fetchScanLogin,
+  fetchRequestSMSCode,
+  fetchPhoneCode,
 } from "../../tools/requests";
 import { getClientKey } from "../../tools/common-tools"
 import { 
@@ -136,14 +138,15 @@ export function useLoginPage() {
 
   checkIfRedirectToA2HS(rr)
 
-  const onTapRequestSmsCode = (phone: string) => {
-    console.log("phone: ", phone)
-    
+  const onTapRequestSmsCode = async (phone: string) => {
+    const pass = await _waitInitLogin()
+    if(!pass) return
+    toRequestSMSCode(phone, lpData)
   }
 
-  const onTapFinishForPhone = () => {
-
-  }
+  const onTapFinishForPhone = useThrottleFn((phone: string, code: string) => {
+    toSubmitPhoneAndCode(rr, phone, code, lpData)
+  }, 1000)
 
   return {
     lpData,
@@ -371,6 +374,28 @@ function canLoginUsingLastLogged(
   return true
 }
 
+async function toRequestSMSCode(
+  phone: string,
+  lpData: LpData,
+) {
+  if(!isEverythingOkay(lpData.initCode)) return
+  const { state, publicKey } = lpData
+  if(!state || !publicKey) return
+  if(lpData.isLoggingByPhone) return
+
+  const enc_phone = await encryptTextWithRSA(publicKey, phone)
+  if(!enc_phone) {
+    console.warn("加密 phone 失败......")
+    return
+  }
+
+  const res = await fetchRequestSMSCode(enc_phone, state)
+  console.log("fetchRequestSMSCode res: ")
+  console.log(res)
+  console.log(" ")
+  lpData.smsSendingNum++
+}
+
 
 // 去提交 email 地址以发送验证码
 async function toSubmitEmailAddress(
@@ -463,6 +488,51 @@ async function showFollowToGetPermission() {
 }
 
 let isAfterFetchingLogin = false
+
+
+async function toSubmitPhoneAndCode(
+  rr: RouteAndLiuRouter,
+  phone: string,
+  code: string,
+  lpData: LpData,
+) {
+  const { state, publicKey } = lpData
+  if(!state || !publicKey) return
+
+  // 0. 判断是否可再登录
+  if(!canLoginUsingLastLogged(lpData)) return
+  if(isAfterFetchingLogin) return
+
+  // 1. 获取加密的 phone
+  const enc_phone = await encryptTextWithRSA(publicKey, phone)
+  if(!enc_phone) {
+    console.warn("fail to encrypt phone")
+    return
+  }
+
+  // 2. 获取 enc_client_key
+  const { enc_client_key } = getClientKey()
+  if(!enc_client_key) return
+
+  // 3. to login
+  if(lpData.isLoggingByPhone) return
+  lpData.isLoggingByPhone = true
+  const res = await fetchPhoneCode(enc_phone, code, state, enc_client_key)
+  lpData.isLoggingByPhone = false
+
+
+  // 4. 登录后处理
+  isAfterFetchingLogin = true
+  const res4 = await afterFetchingLogin(rr, res)
+  isAfterFetchingLogin = false
+
+  if(res4) {
+    cui.showLoading({ title_key: "login.logging2" })
+    lpData.lastLogged = time.getTime()
+  }
+}
+
+
 async function toSubmitEmailAndCode(
   rr: RouteAndLiuRouter,
   code: string,

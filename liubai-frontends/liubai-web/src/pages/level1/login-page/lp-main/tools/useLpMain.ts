@@ -1,4 +1,4 @@
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, toRef, watch } from "vue";
 import type { LpmProps, LpmData, LpmEmit } from "./types"
 import liuUtil from '~/utils/liu-util';
 import { useDebounceFn, useWindowSize } from "~/hooks/useVueUse";
@@ -99,12 +99,6 @@ export function useLpMain(
     }
     emit("requestsmscode", phone)
     lpmData.smsStatus = "loading"
-
-    console.log("mock......")
-    setTimeout(() => {
-      lpmData.smsStatus = "counting"
-    }, 2000)
-
     return true
   }
 
@@ -149,6 +143,14 @@ export function useLpMain(
   const onTapFinishForSMS = () => {
     onSmsEnter()
   }
+
+  // listen to smsSendingNum from login-page
+  const smsSendingNum = toRef(props, "smsSendingNum")
+  watch(smsSendingNum, (newV, oldV) => {
+    if(newV > oldV) {
+      lpmData.smsStatus = "counting"
+    }
+  })
   
   return {
     lpSelectsEl,
