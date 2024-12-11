@@ -3412,3 +3412,17 @@ export namespace Ns_Zhipu {
   }
 
 }
+
+export namespace Ns_Stepfun {
+
+  export interface ImagesGenerationsRes {
+    created: number
+    data: Array<{
+      seed: number
+      finish_reason: "success" | "content_filtered"
+      image?: string
+      url?: string
+    }>
+  }
+
+}

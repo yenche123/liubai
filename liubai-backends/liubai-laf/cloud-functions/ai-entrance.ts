@@ -29,11 +29,9 @@ import {
   type T_I18N,
   type AiImageSizeType,
   type AiToolGetCardType,
-  Ns_Zhipu,
   LiuAi,
   Sch_AiToolGetScheduleParam,
   Sch_AiToolGetCardsParam,
-  Ns_SiliconFlow,
   type AiApiEndpoint,
   type AiToolGetScheduleHoursFromNow,
   type AiToolGetScheduleSpecificDate,
@@ -42,6 +40,9 @@ import {
   type SortWay,
   type Table_Workspace,
   type AiBotMetaData,
+  Ns_Zhipu,
+  Ns_SiliconFlow,
+  Ns_Stepfun,
 } from "@/common-types"
 import OpenAI from "openai"
 import { 
@@ -740,16 +741,17 @@ class BaseBot {
     AiHelper.finalCheckPrompts(params.messages)
 
     // print last 5 prompts
-    const msgLength = params.messages.length
-    console.log(`last 5 prompts: `)
-    if(msgLength > 5) {
-      const messages2 = params.messages.slice(msgLength - 5)
-      const printMsg = valTool.objToStr({ messages: messages2 })
-      console.log(printMsg)
-    }
-    else {
-      console.log(params.messages)
-    }
+    // const msgLength = params.messages.length
+    // console.log(`last 5 prompts: `)
+    // if(msgLength > 5) {
+    //   const messages2 = params.messages.slice(msgLength - 5)
+    //   const printMsg = valTool.objToStr({ messages: messages2 })
+    //   console.log(printMsg)
+    // }
+    // else {
+    //   console.log(params.messages)
+    // }
+    
 
     const llm = new BaseLLM(apiData.apiKey, apiData.baseURL)
     const t1 = getNowStamp()
@@ -2386,7 +2388,13 @@ class ToolHandler {
       if(res) return res
     }
 
-    // 4. run 
+    // 4. run by stepfun if character is stepfun
+    if(c === "yuewen") {
+      res = await Palette.runByStepfun(imagePrompt, sizeType)
+      if(res) return res
+    }
+
+    // n. run 
     res = await Palette.run(imagePrompt, sizeType)
     return res
   }
@@ -2926,6 +2934,89 @@ export class Palette {
       }
       const res1 = await this.runBySiliconflow(prompt, sizeType, opt1)
       return res1
+    }
+  }
+
+  static async runByStepfun(
+    prompt: string,
+    sizeType: AiImageSizeType,
+  ) {
+    // 1. get api key and base url
+    const _env = process.env
+    const apiKey = _env.LIU_STEPFUN_API_KEY
+    const baseUrl = _env.LIU_STEPFUN_BASE_URL
+    if(!apiKey || !baseUrl) {
+      console.warn("there is no apiKey or baseUrl of stepfun in Palette")
+      return
+    }
+
+    // 2. construct url
+    const model = "step-1x-medium"
+    const url = baseUrl + "images/generations"
+    const headers = { "Authorization": `Bearer ${apiKey}` }
+    const body = {
+      model,
+      prompt,
+      size: sizeType === "square" ? "1024x1024" : "800x1280",
+    }
+    console.warn("start to draw with ", model)
+    console.log(prompt)
+
+    try {
+      const stamp1 = getNowStamp()
+      const res = await liuReq<Ns_Stepfun.ImagesGenerationsRes>(
+        url, 
+        body, 
+        { headers }
+      )
+      const stamp2 = getNowStamp()
+      const durationStamp = stamp2 - stamp1
+      if(res.code === "0000" && res.data) {
+        const parseResult = this._parseFromStepfun(res.data, model, durationStamp, prompt)
+        return parseResult
+      }
+      console.warn("palette runByStepfun got an unexpected result: ")
+      console.log(res)
+    }
+    catch(err) {
+      console.warn("palette runByStepfun error: ")
+      console.log(err)
+    }
+
+  }
+
+  private static _parseFromStepfun(
+    res: Ns_Stepfun.ImagesGenerationsRes,
+    model: string,
+    durationStamp: number,
+    prompt: string,
+  ): LiuAi.PaletteResult | undefined {
+    // 1. get duration
+    const duration = valTool.numToFix(durationStamp, 2)
+    if(isNaN(duration)) {
+      console.warn("cannot parse duration in _parseFromStepfun: ")
+      console.log(res)
+      return
+    }
+
+    console.log("_parseFromStepfun res: ")
+    console.log(res)
+
+    // 2. get img
+    const theImg = res.data?.[0]
+    const url = theImg?.url
+    if(!url) {
+      console.warn("cannot get the image url in _parseFromStepfun: ")
+      console.log(res)
+      return
+    }
+
+    return {
+      url,
+      prompt,
+      model,
+      duration,
+      originalResult: res,
     }
   }
 
