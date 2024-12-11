@@ -20,16 +20,16 @@ import { i18nFill } from "@/common-i18n"
 export const aiBots: AiBot[] = [
 
   /** chat using secondary providers */
-  {
-    name: "DeepSeek",
-    character: "deepseek",
-    provider: "deepseek",
-    secondaryProvider: "siliconflow",
-    model: "deepseek-ai/DeepSeek-V2.5",     // deepseek-chat
-    abilities: ["chat", "tool_use"],
-    alias: ["深度求索"],
-    maxWindowTokenK: 64,
-  },
+  // {
+  //   name: "DeepSeek",
+  //   character: "deepseek",
+  //   provider: "deepseek",
+  //   secondaryProvider: "siliconflow",
+  //   model: "deepseek-ai/DeepSeek-V2.5",
+  //   abilities: ["chat", "tool_use"],
+  //   alias: ["深度求索"],
+  //   maxWindowTokenK: 64,
+  // },
   // {
   //   name: "智谱",
   //   character: "zhipu",
