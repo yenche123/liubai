@@ -17,8 +17,8 @@ function isEmail(val: string) {
 
   // 使用正则判断是否为 email
   const m = val.match(reg_exp.email_completed)
-  let isEmail = Boolean(m?.length)
-  if(!isEmail) return false
+  const res = Boolean(m?.length)
+  if(!res) return false
 
   // 确保第一个字符和最后一个字符 不会是 \. 和 -
   const tmps = [".", "-"]
@@ -28,6 +28,13 @@ function isEmail(val: string) {
   if(tmps.includes(lastChar)) return false
 
   return true
+}
+
+function isAllNumber(val: string, digit?: number) {
+  const m = val.match(/^\d+$/g)
+  const res = Boolean(m?.length)
+  if(!digit) return res
+  return val.length === digit
 }
 
 
@@ -71,6 +78,7 @@ function isJustAppSetup(
 
 export default {
   isEmail,
+  isAllNumber,
   hasEverSynced,
   isLocalContent,
   canUpload,

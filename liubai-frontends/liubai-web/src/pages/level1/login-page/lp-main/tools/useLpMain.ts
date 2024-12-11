@@ -110,7 +110,8 @@ export function useLpMain(
 
   const onPhoneEnter = () => {
     const val = lpmData.phoneVal.trim()
-    if(val.length !== 11) return
+    const res1 = liuUtil.check.isAllNumber(val, 11)
+    if(!res1) return
     if(lpmData.smsStatus !== "can_tap") return
     _toRequestSMSCode(`86_${val}`)
     _makeElBlur(lpPhoneInput.value)
@@ -119,7 +120,8 @@ export function useLpMain(
   const onTapGettingSMSCode = () => {
     // 1. checking out phone number
     const val = lpmData.phoneVal.trim()
-    if(val.length !== 11) {
+    const res1 = liuUtil.check.isAllNumber(val, 11)
+    if(!res1) {
       cui.showModal({
         title: "🫣",
         content_key: "login.err_10",
@@ -180,7 +182,8 @@ function checkPhoneAndSmsCodeInput(
 ) {
   const phoneVal = lpmData.phoneVal
   const val = phoneVal.trim()
-  if(val.length !== 11) {
+  const res1 = liuUtil.check.isAllNumber(val, 11)
+  if(!res1) {
     lpmData.showPhoneSubmit = false
     return
   }

@@ -291,6 +291,7 @@ const {
   border: 1.4px solid var(--line-bottom);
   border-radius: 8px;
   margin-inline-end: 8px;
+  min-width: 150px;
 
   &::placeholder {
     color: var(--main-note);
