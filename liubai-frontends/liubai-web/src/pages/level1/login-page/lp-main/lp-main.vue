@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import SmsButton from '~/components/common/sms-button/sms-button.vue';
+import AgreeBox from '~/components/common/agree-box/agree-box.vue';
 import { useI18n } from 'vue-i18n';
 import { useLpMain } from "./tools/useLpMain";
 import { type LpmEmit, lpmProps } from "./tools/types"
@@ -74,6 +75,11 @@ const {
       <span>{{ t('common.confirm') }}</span>
       <span v-show="!isSendingEmail"> ↵</span>
     </CustomBtn>
+
+    <AgreeBox v-model:agree="lpmData.agreeRule"
+      class="lpm-rule-box"
+      :shaking-num="lpmData.agreeShakingNum"
+    ></AgreeBox>
   
   </div>
 
@@ -112,8 +118,13 @@ const {
       @click="onTapFinishForSMS"
     >
       <span>{{ t('common.confirm') }}</span>
-      <span v-show="!isSendingEmail"> ↵</span>
+      <span v-show="!isLoggingByPhone"> ↵</span>
     </CustomBtn>
+
+    <AgreeBox v-model:agree="lpmData.agreeRule"
+      class="lpm-rule-box"
+      :shaking-num="lpmData.agreeShakingNum"
+    ></AgreeBox>
   
   </div>
 
@@ -307,6 +318,10 @@ const {
   &::selection {
     background-color: var(--select-bg);
   }
+}
+
+.lpm-rule-box {
+  margin-block-start: 24px;
 }
 
 

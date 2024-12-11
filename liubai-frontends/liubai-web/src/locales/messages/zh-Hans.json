@@ -221,7 +221,11 @@
     "login_with_email": "邮箱",
     "login_with_phone": "手机号",
     "sms_ph": "请输入验证码",
-    "send_sms": "发送验证码"
+    "send_sms": "发送验证码",
+    "agree_1": "我已阅读并同意",
+    "agree_2": "《服务条款》",
+    "agree_3": "以及",
+    "agree_4": "《隐私政策》"
   },
   "tip": {
     "tip": "提示",

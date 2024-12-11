@@ -36,9 +36,6 @@ export function useSmsButton(
   }
 
   watch(status, (newV, oldV) => {
-    console.log("newV: ", newV)
-    console.log("oldV: ", oldV)
-    console.log(" ")
     if(oldV === "can_tap" || oldV === "loading") {
       if(newV === "counting") {
         _startToCount()

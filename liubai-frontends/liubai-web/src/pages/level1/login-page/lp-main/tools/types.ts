@@ -17,6 +17,8 @@ export interface LpmData {
   loginViaGitHub: boolean
   btnOne: "phone" | "email"
   smsStatus: SmsStatus
+  agreeRule: boolean
+  agreeShakingNum: number
 }
 
 export interface LpmProps {

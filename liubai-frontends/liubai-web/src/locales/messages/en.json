@@ -221,7 +221,11 @@
     "login_with_email": "Email",
     "login_with_phone": "Phone",
     "sms_ph": "Verification code",
-    "send_sms": "Send Code"
+    "send_sms": "Send Code",
+    "agree_1": "I've read and agree to",
+    "agree_2": "《Service Terms》",
+    "agree_3": " and ",
+    "agree_4": "《Privacy Policy》"
   },
   "tip": {
     "tip": "TIP",

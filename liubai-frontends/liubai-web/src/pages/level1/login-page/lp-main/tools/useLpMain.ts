@@ -35,6 +35,8 @@ export function useLpMain(
     loginViaGitHub: loginWays.includes("github"),
     btnOne: loginWays.includes("phone") ? "phone" : "email",
     smsStatus: "can_tap",
+    agreeRule: false,
+    agreeShakingNum: 0,
   })
 
   const onTapSelect = (newIndex: number) => {
@@ -97,6 +99,10 @@ export function useLpMain(
     if(props.isLoggingByPhone || props.isSendingEmail) {
       return false
     }
+    if(!lpmData.agreeRule) {
+      lpmData.agreeShakingNum++
+      return false
+    }
     emit("requestsmscode", phone)
     lpmData.smsStatus = "loading"
     return true
@@ -107,7 +113,8 @@ export function useLpMain(
     const res1 = liuUtil.check.isAllNumber(val, 11)
     if(!res1) return
     if(lpmData.smsStatus !== "can_tap") return
-    _toRequestSMSCode(`86_${val}`)
+    const res2 = _toRequestSMSCode(`86_${val}`)
+    if(!res2) return
     _makeElBlur(lpPhoneInput.value)
     lpSmsInput.value?.focus()
   }
@@ -134,6 +141,10 @@ export function useLpMain(
     checkPhoneAndSmsCodeInput(lpmData)
     if(!lpmData.showPhoneSubmit) return
     if(props.isLoggingByPhone || props.isSendingEmail) return
+    if(!lpmData.agreeRule) {
+      lpmData.agreeShakingNum++
+      return
+    }
     const phone = `86_` + lpmData.phoneVal.trim()
     const smsCode = lpmData.smsVal.trim()
     emit("submitsmscode", phone, smsCode)

@@ -221,7 +221,11 @@
     "login_with_email": "Email",
     "login_with_phone": "手機號碼",
     "sms_ph": "請輸入驗證代號",
-    "send_sms": "發送驗證代號"
+    "send_sms": "發送驗證代號",
+    "agree_1": "我已閱讀並同意",
+    "agree_2": "《服務條款》",
+    "agree_3": "以及",
+    "agree_4": "《隱私政策》"
   },
   "tip": {
     "tip": "提示",
