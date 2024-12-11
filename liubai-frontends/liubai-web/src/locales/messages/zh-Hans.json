@@ -186,6 +186,7 @@
   "login": {
     "email": "Email",
     "email_ph": "你的邮箱地址",
+    "phone_ph": "请输入手机号",
     "third_party": "通过第三方",
     "continue_with_wechat": "使用微信登录",
     "continue_with_google": "使用 Google 登录",
@@ -215,7 +216,11 @@
     "bind_wechat": "绑定微信",
     "other_way": "其他登录方式",
     "bind_instantly": "立即绑定",
-    "wechat_login": "微信登录"
+    "wechat_login": "微信登录",
+    "login_with_email": "邮箱",
+    "login_with_phone": "手机号",
+    "sms_ph": "请输入验证码",
+    "send_sms": "发送验证码"
   },
   "tip": {
     "tip": "提示",

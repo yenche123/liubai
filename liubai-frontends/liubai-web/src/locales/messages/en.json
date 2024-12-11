@@ -186,6 +186,7 @@
   "login": {
     "email": "Email",
     "email_ph": "Enter your email address",
+    "phone_ph": "Enter your phone number",
     "third_party": "Third Party",
     "continue_with_wechat": "Continue with WeChat",
     "continue_with_google": "Continue with Google",
@@ -215,7 +216,11 @@
     "bind_wechat": "WeChat Binding",
     "other_way": "Other Method",
     "bind_instantly": "Bind Now",
-    "wechat_login": "Login via WeChat"
+    "wechat_login": "Login via WeChat",
+    "login_with_email": "Email",
+    "login_with_phone": "Phone",
+    "sms_ph": "Verification code",
+    "send_sms": "Send Code"
   },
   "tip": {
     "tip": "TIP",

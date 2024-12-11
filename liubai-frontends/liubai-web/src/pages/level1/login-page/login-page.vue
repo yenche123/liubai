@@ -51,7 +51,7 @@ const {
     <div class="lp-virtual lp-virtual-first"></div>
 
     <!-- 主页 -->
-    <div class="lp-container" v-liu-show="lpData.view === 'main'">
+    <div class="lp-container lp-container_main" v-liu-show="lpData.view === 'main'">
       <LpMain
         @submitemail="onEmailSubmitted"
         @tapthirdparty="onTapLoginViaThirdParty"
@@ -163,5 +163,9 @@ const {
   max-width: 600px;
 }
 
+.lp-container_main {
+  max-width: 450px;
+  margin-block-start: -50px;
+}
 
 </style>

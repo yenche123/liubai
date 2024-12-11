@@ -19,7 +19,10 @@ export function useLpMain(
   const lpmData = reactive<LpmData>({
     current: 1,
     showEmailSubmit: false,
+    showPhoneSubmit: false,
     emailVal: "",
+    phoneVal: "",
+    smsVal: "",
     indicatorData: {
       width: "0px",
       left: "0px",
@@ -27,6 +30,7 @@ export function useLpMain(
     loginViaWeChat: loginWays.includes("wechat"),
     loginViaGoogle: loginWays.includes("google"),
     loginViaGitHub: loginWays.includes("github"),
+    btnOne: loginWays.includes("phone") ? "phone" : "email",
   })
 
   const onTapSelect = (newIndex: number) => {
@@ -82,6 +86,22 @@ export function useLpMain(
     if(!el) return
     el.blur()
   }
+
+  const onPhoneEnter = () => {
+
+  }
+
+  const onTapGettingSMSCode = () => {
+
+  }
+
+  const onSmsEnter = () => {
+
+  }
+
+  const onTapFinishForSMS = () => {
+
+  }
   
   return {
     lpSelectsEl,
@@ -89,6 +109,10 @@ export function useLpMain(
     lpmData,
     onTapSelect,
     onEmailEnter,
+    onPhoneEnter,
+    onSmsEnter,
+    onTapGettingSMSCode,
+    onTapFinishForSMS,
   }
 }
 

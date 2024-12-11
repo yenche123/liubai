@@ -13,31 +13,46 @@ const {
   lpmData,
   onTapSelect,
   onEmailEnter,
+  onPhoneEnter,
+  onSmsEnter,
+  onTapGettingSMSCode,
+  onTapFinishForSMS,
 } = useLpMain(props, emit)
 
 </script>
 <template>
 
-  <!-- Email / 第三方 等选项卡-->
-  <div class="lp-selects" ref="lpSelectsEl">
+  <!-- Big Title: Login -->
+  <div class="liu-no-user-select lpm-title">
+    <span>{{ t('common.login') }}</span>
+  </div>
 
-    <!-- Email -->
-    <div class="liu-no-user-select lps-item lps-item-1" @click.stop="onTapSelect(1)">
-      <span>{{ t('login.email')}}</span>
+  <div class="lpm-selects" ref="lpSelectsEl">
+
+    <!-- Email or Phone -->
+    <div class="liu-no-user-select lpms-item lps-item-1" 
+      @click.stop="onTapSelect(1)"
+      :class="{ 'lpms-item_active': lpmData.current === 1 }"
+    >
+      <span v-if="lpmData.btnOne === 'phone'">{{ t('login.login_with_phone') }}</span>
+      <span v-else>{{ t('login.login_with_email') }}</span>
     </div>
 
-    <!-- 第三方 -->
-    <div class="liu-no-user-select lps-item lps-item-2" @click.stop="onTapSelect(2)">
-      <span>{{ t('login.third_party')}}</span>
+    <!-- Third Party -->
+    <div class="liu-no-user-select lpms-item lps-item-2" 
+      @click.stop="onTapSelect(2)" 
+      :class="{ 'lpms-item_active': lpmData.current === 2 }"
+    >
+      <span>{{ t('login.third_party') }}</span>
     </div>
 
-    <!-- 指示器 -->
-    <div v-if="lpmData.indicatorData.width !== '0px'" class="lp-indicator"></div>
+    <!-- Indicator -->
+    <div v-if="lpmData.indicatorData.width !== '0px'" class="lpms-indicator"></div>
 
   </div>
 
   <!-- email view -->
-  <div class="lp-view" v-liu-show="lpmData.current === 1">
+  <div class="lp-view" v-liu-show="lpmData.current === 1 && lpmData.btnOne === 'email'">
 
     <input class="lp-email-input" type="email" 
       :placeholder="t('login.email_ph')" 
@@ -59,7 +74,42 @@ const {
   
   </div>
 
+  <!-- phone view -->
+  <div class="lp-view" v-liu-show="lpmData.current === 1 && lpmData.btnOne === 'phone'">
+
+    <input class="lp-phone-input" type="tel" 
+      :placeholder="t('login.phone_ph')" 
+      v-model="lpmData.phoneVal"
+      id="login-phone"
+      @keyup.enter.exact="onPhoneEnter"
+      maxlength="11"
+    />
+
+    <div class="lp-sms-bar">
+      <input class="lp-sms-input" type="text" 
+        :placeholder="t('login.sms_ph')"
+        id="login-sms"
+        v-model="lpmData.smsVal"
+        @keyup.enter.exact="onSmsEnter"
+        maxlength="6"
+      />
+
+    </div>
+
+    <CustomBtn
+      :disabled="!lpmData.showPhoneSubmit || isLoggingByPhone"
+      class="lp-phone-finish-btn"
+      :is-loading="isLoggingByPhone"
+      @click="onTapFinishForSMS"
+    >
+      <span>{{ t('common.confirm') }}</span>
+      <span v-show="!isSendingEmail"> ↵</span>
+    </CustomBtn>
+  
+  </div>
+
   <!-- third-party view -->
+
   <div class="lp-view" v-liu-show="lpmData.current === 2">
 
     <!-- wechat -->
@@ -126,42 +176,42 @@ const {
 </template>
 <style scoped lang="scss">
 
-.lp-selects {
+.lpm-title {
+  font-size: var(--big-word-style);
+  font-weight: 600;
+  color: var(--main-text);
+  margin-block-end: 10px;
+}
+
+.lpm-selects {
   width: 100%;
   display: flex;
-  justify-content: center;
   position: relative;
 }
 
-.lps-item {
-  width: 48%;
-  max-width: 220px;
-  height: 50px;
-  border-radius: 10px;
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+.lpms-item {
+  padding: 10px 0;
   font-size: var(--desc-font);
-  color: var(--main-normal);
   font-weight: 700;
+  color: var(--main-code);
   transition: .15s;
-  z-index: 90;
   cursor: pointer;
+  margin-inline-end: 16px;
+  box-sizing: border-box;
 }
 
-.lp-indicator {
+.lpms-item_active {
+  color: var(--primary-color); 
+}
+
+.lpms-indicator {
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: v-bind("lpmData.indicatorData.left");
   width: v-bind("lpmData.indicatorData.width");
-  height: 100%;
-  z-index: 80;
-  background-color: var(--primary-hover);
-  opacity: .08;
-  border-radius: 20px;
+  height: 3px;
+  background-color: var(--primary-color);
+  border-radius: 6px;
   transition: .3s;
   pointer-events: none;
 }
@@ -173,8 +223,8 @@ const {
   padding-block-end: 20px;
   height: 45vh;
   height: 45dvh;
-  min-height: 300px;
-  max-height: 420px;
+  min-height: 270px;
+  max-height: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -182,10 +232,9 @@ const {
   position: relative;
 }
 
-.lp-email-input {
+.lp-email-input, .lp-phone-input {
   box-sizing: border-box;
   width: 100%;
-  max-width: 450px;
   padding: 16px 24px;
   font-size: var(--desc-font);
   color: var(--main-normal);
@@ -211,15 +260,51 @@ const {
   }
 }
 
-.lp-email-btn {
-  max-width: 450px;
+.lp-phone-input {
+  margin-block-end: 12px;
+  padding: 14px 20px;
+}
+
+.lp-sms-bar {
+  margin-block-end: 24px;
+  display: flex;
+  width: 100%;
+  position: relative;
+}
+
+.lp-sms-input {
+  box-sizing: border-box;
+  flex: 1;
+  padding: 14px 20px;
+  font-size: var(--desc-font);
+  color: var(--main-normal);
+  background-color: var(--card-bg);
+  border: 1.4px solid var(--line-bottom);
+  border-radius: 8px;
+  margin-inline-end: 12px;
+
+  &::placeholder {
+    color: var(--main-note);
+  }
+
+  &:-webkit-autofill, &:-webkit-autofill:focus {
+    transition: background-color 0s 600000s, color 0s 600000s;
+    -webkit-box-shadow: 0 0 0px 1000px var(--card-bg) inset;
+  }
+
+  &::selection {
+    background-color: var(--select-bg);
+  }
+}
+
+
+.lp-email-btn, .lp-phone-finish-btn {
   white-space: pre-wrap;
 }
 
 
 .lpv-btn {
   width: 100%;
-  max-width: 450px;
   padding: 4px 16px;
   box-sizing: border-box;
   min-height: 48px;
@@ -261,13 +346,6 @@ const {
   text-align: center;
 }
 
-
-
-@media(hover: hover) {
-  .lps-item:hover {
-    font-size: calc(var(--desc-font) + 2px);
-  }
-}
 
 
 

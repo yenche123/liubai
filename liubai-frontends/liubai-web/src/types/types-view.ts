@@ -16,6 +16,9 @@ export type CursorHorizontalResize = "ew-resize" | "e-resize" | "w-resize"
 // LiuDisplayType
 export type LiuDisplayType = "list" | "detail"
 
+// SMS code status
+export type SmsStatus = "can_tap" | "loading" | "counting"
+
 // 自定义页面内的视图单元
 export interface BasicView {
   show: boolean
