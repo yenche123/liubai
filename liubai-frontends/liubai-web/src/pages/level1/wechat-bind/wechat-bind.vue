@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { useWechatBind } from './tools/useWechatBind';
+import AgreeBox from '~/components/common/agree-box/agree-box.vue';
 
 const { 
   wbData,
@@ -38,7 +39,15 @@ const { t } = useI18n()
           <span v-else>{{ t('login.bind_wechat') }}</span>
         </div>
 
+        <div class="ap-mobile-virtual" v-if="wbData.status === 'logout'"></div>
+
         <div class="ap-btn-container">
+
+          <div v-if="wbData.status === 'logout'" class="ap-mobile-agree">
+            <AgreeBox v-model:agree="wbData.agreeRule" be-center
+              :shaking-num="wbData.agreeShakingNum"
+            ></AgreeBox>
+          </div>
 
           <!-- Main Button -->
           <custom-btn class="ap-btn ap-ok-btn" @click="onTapBtn1">
@@ -54,6 +63,12 @@ const { t } = useI18n()
             <span>{{ t('login.other_way') }}</span>
           </custom-btn>
 
+        </div>
+
+        <div v-if="wbData.status === 'logout'" class="ap-desktop-agree">
+          <AgreeBox v-model:agree="wbData.agreeRule" be-center
+            :shaking-num="wbData.agreeShakingNum"
+          ></AgreeBox>
         </div>
 
       </div>
@@ -101,6 +116,12 @@ const { t } = useI18n()
   margin-block-end: min(10%, 50px);
 }
 
+.ap-mobile-virtual {
+  display: block;
+  width: 100%;
+  height: 100px;
+}
+
 .ap-btn-container {
   display: flex;
   flex-direction: column;
@@ -110,6 +131,16 @@ const { t } = useI18n()
   bottom: 40px;
   left: 0;
   right: 0;
+}
+
+.ap-mobile-agree {
+  width: 100%;
+  max-width: var(--btn-max);
+  padding-block-end: 20px;
+}
+
+.ap-desktop-agree {
+  display: none;
 }
 
 .ap-btn {
@@ -132,11 +163,27 @@ const { t } = useI18n()
     font-size: var(--big-word-style);
   }
 
+  .ap-mobile-virtual {
+    display: none;
+  }
+
+  .ap-mobile-agree {
+    display: none;
+  }
+
   .ap-btn-container {
     position: relative;
     flex-direction: row-reverse;
     justify-content: space-around;
     bottom: 0;
+  }
+
+  .ap-desktop-agree {
+    display: block;
+    width: 100%;
+    padding: 24px 50px;
+    box-sizing: border-box;
+    position: relative;
   }
 
   .ap-btn {

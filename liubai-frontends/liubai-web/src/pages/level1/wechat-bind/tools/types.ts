@@ -13,4 +13,6 @@ export interface WbData {
   oAuthCode: string
   status?: WbStatus
   loginData?: Res_UserLoginInit
+  agreeRule: boolean
+  agreeShakingNum: number
 }

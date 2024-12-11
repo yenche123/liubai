@@ -41,6 +41,14 @@ export function useWechatBind() {
       return
     }
 
+    // 2.1 check out if agree rules
+    if(s === "logout") {
+      if(!wbData.agreeRule) {
+        wbData.agreeShakingNum++
+        return
+      }
+    }
+
     // 2. login in with weixin
     redirectToWeChatOAuth(wbData)
   }
@@ -116,13 +124,15 @@ function initData() {
 
   // 2. check out if we are in wechat
   const cha = liuApi.getCharacteristic()
-  if(!cha.isWeChat) {
-    pageState = pageStates.NOT_IN_WECHAT
-  }
+  // if(!cha.isWeChat) {
+  //   pageState = pageStates.NOT_IN_WECHAT
+  // }
 
   const wbData = reactive<WbData>({
     pageState,
     oAuthCode: "",
+    agreeRule: false,
+    agreeShakingNum: 0,
   })
 
   return { wbData }

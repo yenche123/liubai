@@ -13,15 +13,20 @@ const { t } = useI18n()
 <template>
   <div class="agree-box" @click.stop="onTapBox" :class="{ 'agree-box_shaking': isShaking }">
     <div class="agree-checkbox">
-      <LiuCheckbox :checked="agree" :size="20"
-        :circleSize="10.6"
+      <LiuCheckbox :checked="agree" :size="19"
+        :circleSize="10"
+        :borderSize="2.5"
       ></LiuCheckbox>
     </div>
     <div class="agree-text" :class="{ 'agree-text_shaking': isShaking }">
       <span>{{ t('login.agree_1') }}</span>
-      <a href="https://www.podcastogether.com/" target="_blank">{{ t('login.agree_2') }}</a>
+      <a href="https://www.podcastogether.com/" target="_blank"
+        @click.stop
+      >{{ t('login.agree_2') }}</a>
       <span>{{ t('login.agree_3') }}</span>
-      <a href="https://www.podcastogether.com/" target="_blank">{{ t('login.agree_4') }}</a>
+      <a href="https://www.podcastogether.com/" target="_blank"
+        @click.stop
+      >{{ t('login.agree_4') }}</a>
     </div>
   </div>
 
