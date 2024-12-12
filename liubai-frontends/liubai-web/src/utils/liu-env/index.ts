@@ -49,6 +49,10 @@ function getEnv(): LiuSystemEnv {
   const IFRAME_PROXY = import.meta.env.VITE_IFRAME_PROXY
   const IFRAME_PROXY_KEY = import.meta.env.VITE_IFRAME_PROXY_KEY
 
+  // rules
+  const SERVICE_TERMS_LINK = import.meta.env.VITE_SERVICE_TERMS_LINK
+  const PRIVACY_POLICY_LINK = import.meta.env.VITE_PRIVACY_POLICY_LINK
+
   // sentry
   const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN
   const SENTRY_ENVIRONMENT = import.meta.env.VITE_SENTRY_ENVIRONMENT
@@ -147,6 +151,8 @@ function getEnv(): LiuSystemEnv {
     DELETING_DAYS: Number(DELETING_DAYS),
     IFRAME_PROXY,
     IFRAME_PROXY_KEY,
+    SERVICE_TERMS_LINK,
+    PRIVACY_POLICY_LINK,
     SENTRY_DSN,
     SENTRY_ENVIRONMENT,
     UMAMI_SCRIPT,

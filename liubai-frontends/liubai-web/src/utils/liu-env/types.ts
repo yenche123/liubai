@@ -41,6 +41,10 @@ export interface LiuSystemEnv {
   IFRAME_PROXY?: string
   IFRAME_PROXY_KEY?: string
 
+  // rules
+  SERVICE_TERMS_LINK?: string
+  PRIVACY_POLICY_LINK?: string
+
   // sentry
   SENTRY_DSN?: string
   SENTRY_ENVIRONMENT?: string

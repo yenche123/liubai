@@ -3,6 +3,7 @@ import { ref, toRef, watch } from 'vue';
 import valTool from '~/utils/basic/val-tool';
 import type { AgreeBoxProps } from "./types";
 import liuApi from "~/utils/liu-api";
+import liuEnv from "~/utils/liu-env";
 
 export function useAgreeBox(
   agree: Ref<boolean>,
@@ -28,9 +29,15 @@ export function useAgreeBox(
       _toShake()
     }
   })
+
+  const _env = liuEnv.getEnv()
+  const serviceTermsLink = _env.SERVICE_TERMS_LINK ?? "/"
+  const privacyPolicyLink = _env.PRIVACY_POLICY_LINK ?? "/"
   
   return {
     isShaking,
     onTapBox,
+    serviceTermsLink,
+    privacyPolicyLink,
   }
 }

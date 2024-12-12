@@ -26,3 +26,6 @@ dist-ssr
 
 docs/.vitepress/dist
 docs/.vitepress/cache
+
+# Tencent COSCLI
+coscli

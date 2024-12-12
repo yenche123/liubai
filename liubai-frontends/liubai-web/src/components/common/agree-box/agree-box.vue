@@ -5,7 +5,12 @@ import { agreeBoxProps } from './tools/types';
 
 const agree = defineModel<boolean>("agree", { required: true })
 const props = defineProps(agreeBoxProps)
-const { isShaking, onTapBox } = useAgreeBox(agree, props)
+const { 
+  isShaking, 
+  onTapBox,
+  serviceTermsLink,
+  privacyPolicyLink,
+} = useAgreeBox(agree, props)
 
 const { t } = useI18n()
 
@@ -20,11 +25,11 @@ const { t } = useI18n()
     </div>
     <div class="agree-text" :class="{ 'agree-text_shaking': isShaking }">
       <span>{{ t('login.agree_1') }}</span>
-      <a href="https://www.podcastogether.com/" target="_blank"
+      <a :href="serviceTermsLink" target="_blank"
         @click.stop
       >{{ t('login.agree_2') }}</a>
       <span>{{ t('login.agree_3') }}</span>
-      <a href="https://www.podcastogether.com/" target="_blank"
+      <a :href="privacyPolicyLink" target="_blank"
         @click.stop
       >{{ t('login.agree_4') }}</a>
     </div>

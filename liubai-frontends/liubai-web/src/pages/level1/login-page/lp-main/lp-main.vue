@@ -358,6 +358,7 @@ const {
   color: var(--primary-color);
   cursor: pointer;
   padding-block-end: 12px;
+  transition: .15s;
 }
 
 
@@ -415,6 +416,12 @@ const {
   color: var(--main-normal);
   min-width: 180px;
   text-align: center;
+}
+
+@media(hover: hover) {
+  .lpm-change-btn:hover {
+    opacity: .75;
+  }
 }
 
 
