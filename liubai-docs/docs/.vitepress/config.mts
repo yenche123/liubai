@@ -17,6 +17,11 @@ export default defineConfig({
       dark: "/logo_512x512_v2.png",
     },
 
+    nav: [
+      { text: "指南", link: "/guide/what-is-liubai", activeMatch: "/guide/" },
+      { text: "网页版", link: "https://my.liubai.cc" },
+    ],
+
     sidebar: {
       "/guide/": [
         {
