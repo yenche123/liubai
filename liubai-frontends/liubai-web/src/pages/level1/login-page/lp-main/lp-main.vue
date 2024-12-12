@@ -22,6 +22,7 @@ const {
   onTapGettingSMSCode,
   onTapFinishForSMS,
   onTapThirdParty,
+  onToggleEmailPhone,
 } = useLpMain(props, emit)
 
 </script>
@@ -81,11 +82,19 @@ const {
       class="lpm-rule-box"
       :shaking-num="lpmData.agreeShakingNum"
     ></AgreeBox>
+
+    <div v-if="lpmData.phoneEnabled" class="liu-no-user-select lpm-change-box">
+      <div class="lpm-change-btn" @click.stop="onToggleEmailPhone">
+        <span>{{ t('login.turn_into_phone') }}</span>
+      </div>
+    </div>
   
   </div>
 
   <!-- phone view -->
-  <div class="lp-view" v-liu-show="lpmData.current === 1 && lpmData.btnOne === 'phone'">
+  <div class="lp-view" 
+    v-liu-show="lpmData.current === 1 && lpmData.btnOne === 'phone'"
+  >
 
     <input class="lp-phone-input" type="tel" 
       :placeholder="t('login.phone_ph')" 
@@ -126,6 +135,12 @@ const {
       class="lpm-rule-box"
       :shaking-num="lpmData.agreeShakingNum"
     ></AgreeBox>
+
+    <div v-if="lpmData.emailEnabled" class="liu-no-user-select lpm-change-box">
+      <div class="lpm-change-btn" @click.stop="onToggleEmailPhone">
+        <span>{{ t('login.turn_into_email') }}</span>
+      </div>
+    </div>
   
   </div>
 
@@ -134,7 +149,7 @@ const {
   <div class="lp-view" v-liu-show="lpmData.current === 2">
 
     <!-- wechat -->
-    <div v-if="lpmData.loginViaWeChat"
+    <div v-if="lpmData.wechatEnabled"
       class="liu-no-user-select liu-hover lpv-btn" 
       @click.stop="onTapThirdParty('wechat')"
     >
@@ -147,7 +162,7 @@ const {
     </div>
 
     <!-- google -->
-    <div v-if="lpmData.loginViaGoogle"
+    <div v-if="lpmData.googleEnabled"
       class="liu-no-user-select liu-hover lpv-btn" 
       @click.stop="onTapThirdParty('google')"
     >
@@ -163,7 +178,7 @@ const {
     </div>
 
     <!-- github -->
-    <div v-if="lpmData.loginViaGitHub"
+    <div v-if="lpmData.githubEnabled"
       class="liu-no-user-select liu-hover lpv-btn" 
       @click.stop="onTapThirdParty('github')"
     >
@@ -251,7 +266,7 @@ const {
   padding-block-end: 20px;
   height: 45vh;
   height: 45dvh;
-  min-height: 270px;
+  min-height: 310px;
   max-height: 400px;
   display: flex;
   flex-direction: column;
@@ -332,6 +347,20 @@ const {
   margin-block-start: 24px;
 }
 
+.lpm-change-box {
+  width: 100%;
+  margin-block-start: 24px;
+}
+
+.lpm-change-btn {
+  width: fit-content;
+  font-size: var(--mini-font);
+  color: var(--primary-color);
+  cursor: pointer;
+  padding-block-end: 12px;
+}
+
+
 .lpm-rule-box-2 {
   width: 100%;
   padding: 12px;
@@ -388,6 +417,12 @@ const {
   text-align: center;
 }
 
+
+// @media screen and (max-width: 590px) {
+//   .lpm-title {
+//     font-size: var(--head-font);
+//   }
+// }
 
 
 

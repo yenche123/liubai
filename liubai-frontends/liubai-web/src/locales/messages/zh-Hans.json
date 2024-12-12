@@ -225,7 +225,9 @@
     "agree_1": "我已阅读并同意",
     "agree_2": "《服务条款》",
     "agree_3": "以及",
-    "agree_4": "《隐私政策》"
+    "agree_4": "《隐私政策》",
+    "turn_into_phone": "切换至手机号登录",
+    "turn_into_email": "切换至邮箱登录"
   },
   "tip": {
     "tip": "提示",

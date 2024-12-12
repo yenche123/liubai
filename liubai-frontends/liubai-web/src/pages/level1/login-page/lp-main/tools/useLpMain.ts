@@ -1,4 +1,4 @@
-import { onMounted, reactive, ref, toRef, watch } from "vue";
+import { nextTick, onMounted, reactive, ref, toRef, watch } from "vue";
 import type { LpmProps, LpmData, LpmEmit } from "./types"
 import liuUtil from '~/utils/liu-util';
 import { useDebounceFn, useWindowSize } from "~/hooks/useVueUse";
@@ -31,13 +31,15 @@ export function useLpMain(
       width: "0px",
       left: "0px",
     },
-    loginViaWeChat: loginWays.includes("wechat"),
-    loginViaGoogle: loginWays.includes("google"),
-    loginViaGitHub: loginWays.includes("github"),
+    wechatEnabled: loginWays.includes("wechat"),
+    googleEnabled: loginWays.includes("google"),
+    githubEnabled: loginWays.includes("github"),
     btnOne: loginWays.includes("phone") ? "phone" : "email",
     smsStatus: "can_tap",
     agreeRule: false,
     agreeShakingNum: 0,
+    emailEnabled: loginWays.includes("email"),
+    phoneEnabled: loginWays.includes("phone"),
   })
 
   const onTapSelect = (newIndex: number) => {
@@ -91,6 +93,10 @@ export function useLpMain(
   const onEmailEnter = () => {
     if(props.isSendingEmail) return
     if(!lpmData.showEmailSubmit) return
+    if(!lpmData.agreeRule) {
+      lpmData.agreeShakingNum++
+      return
+    }
     const email = lpmData.emailVal.trim().toLowerCase()
     emit("submitemail", email)
     _makeElBlur(lpEmailInput.value)
@@ -173,6 +179,12 @@ export function useLpMain(
     emit("tapthirdparty", thirdParty)
   }
 
+  const onToggleEmailPhone = async () => {
+    lpmData.btnOne = lpmData.btnOne === "phone" ? "email" : "phone"
+    await nextTick()
+    calculateIndicator()
+  }
+
   
   return {
     lpSelectsEl,
@@ -187,6 +199,7 @@ export function useLpMain(
     onTapGettingSMSCode,
     onTapFinishForSMS,
     onTapThirdParty,
+    onToggleEmailPhone,
   }
 }
 

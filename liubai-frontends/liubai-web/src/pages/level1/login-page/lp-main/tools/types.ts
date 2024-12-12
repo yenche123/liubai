@@ -12,13 +12,15 @@ export interface LpmData {
     width: string
     left: string
   }
-  loginViaWeChat: boolean
-  loginViaGoogle: boolean
-  loginViaGitHub: boolean
+  wechatEnabled: boolean
+  googleEnabled: boolean
+  githubEnabled: boolean
   btnOne: "phone" | "email"
   smsStatus: SmsStatus
   agreeRule: boolean
   agreeShakingNum: number
+  emailEnabled: boolean
+  phoneEnabled: boolean
 }
 
 export interface LpmProps {
