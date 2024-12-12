@@ -210,7 +210,7 @@
     "err_8": "There is no email address through the current login way.",
     "err_9": "Fail to send the email. Contact the developer please.",
     "err_10": "Please enter 11 digits of phone number",
-    "get_permission": "Your email address is not in the list. Follow our WeChat \"留白记事\" to get the permission!",
+    "get_permission": "You have not been in the allowed list. Follow our WeChat \"留白记事\" to get the permission!",
     "bound": "Succeed to Bind",
     "logged": "Succeed to Login",
     "wechat_one_login": "Continue with WeChat",

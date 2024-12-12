@@ -24,6 +24,7 @@ import {
   showContactDev, 
   showDisableTip, 
   showEmojiTip, 
+  showErrMsg, 
   showOtherTip,
 } from "../../tools/show-msg"
 import { useLoginStore } from "./useLoginStore";
@@ -394,6 +395,16 @@ async function toRequestSMSCode(
   console.log(res)
   console.log(" ")
   lpData.smsSendingNum++
+
+  const { code } = res
+  if(code === "U0011") {
+    showFollowToGetPermission()
+  }
+  else if(code !== "0000") {
+    showErrMsg("login", res)
+  }
+
+
 }
 
 

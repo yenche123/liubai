@@ -211,6 +211,12 @@ async function handle_phone(
   const res0 = await LoginStater.check(state)
   if(res0) return res0
 
+  // 3.1 check out allow-list
+  const res0_1 = await checkAllowList("phone", localNumber)
+  if(!res0_1) {
+    return { code: "U0011", errMsg: "the phone number is not in allow-list" }
+  }
+
   // 4. check frequency
   const res5 = await checkIfSmsSentTooMuch(regionCode, localNumber)
   if(res5) {
@@ -2481,21 +2487,16 @@ function getClientKey(enc_client_key: any) {
 
 // 检测许可名单
 async function checkAllowList(
-  type: "email",
+  type: "email" | "phone",
   value: string,
 ) {
-  const end_1 = value.endsWith("@sjtu.edu.cn")
-  if(end_1) {
-    return true
-  }
-  const end_2 = value.endsWith("@alumni.sjtu.edu.cn")
-  if(end_2) {
-    return true
-  }
-
-  const isTest = TEST_EMAILS.includes(value)
-  if(isTest) {
-    return true
+  if(type === "email") {
+    const end_1 = value.endsWith("@sjtu.edu.cn")
+    if(end_1) return true
+    const end_2 = value.endsWith("@alumni.sjtu.edu.cn")
+    if(end_2) return true
+    const isTest = TEST_EMAILS.includes(value)
+    if(isTest) return true
   }
 
   const w: Partial<Table_AllowList> = {

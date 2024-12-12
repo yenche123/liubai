@@ -1325,7 +1325,7 @@ export interface Table_Member extends BaseTable {
 
 /** 屏蔽表: 目前用于许可特定 email */
 export interface Table_AllowList extends BaseTable {
-  type: "email"
+  type: "email" | "phone"
   isOn: BaseIsOn
   value: string
 }
