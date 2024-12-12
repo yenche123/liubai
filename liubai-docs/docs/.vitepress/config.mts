@@ -34,8 +34,12 @@ export default defineConfig({
           text: "安装",
           link: "/guide/install/",
           items: [
+            { text: "华为", link: "/guide/install/huawei" },
             { text: "iPhone", link: "/guide/install/iphone" },
+            { text: "OPPO", link: "/guide/install/oppo" },
+            { text: "Realme", link: "/guide/install/realme" },
             { text: "vivo", link: "/guide/install/vivo" },
+            { text: "小米", link: "/guide/install/xiaomi" },
           ]
         },
         {

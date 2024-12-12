@@ -131,6 +131,8 @@ https://simpleicons.org/
 
 https://svglogo.top/
 
+https://icon-sets.iconify.design/
+
 
 ## 一些常用碎片
 
