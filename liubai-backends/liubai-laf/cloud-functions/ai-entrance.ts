@@ -2643,9 +2643,9 @@ class ToolHandler {
     if(idx8 < 0) return
     const dayStr = t(specificDate)
 
-    const currentDay = todayDate.getDay()
+    const currentDay = currentDate.getDay()
     let diffDays = idx8 - currentDay
-    if(idx8 <= 0) {
+    if(diffDays <= 0) {
       // next week
       diffDays += 7
       textToBot = t("schedule_next_week", { day: dayStr })
