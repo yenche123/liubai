@@ -898,14 +898,6 @@ class BaseBot {
   ) {
     // 1. check out params
     const { aiParam, bot, chatCompletion } = postParam
-    if(chatCompletion) {
-      const text = AiHelper.getTextFromLLM(chatCompletion, bot)
-      if(text) {
-        console.warn("_handleToolUse text 存在，先暂停！")
-        console.log(text)
-        return
-      }
-    }
 
     // 2. define some constants
     const character = this._character
@@ -1112,6 +1104,10 @@ class BaseBot {
     }
     const res4 = await this.chat(newChatParam, bot)
     if(!res4) return
+
+    console.warn(`${c}'s chat _continueAfterReadingCards: `)
+    console.log(res4.choices?.[0]?.message)
+    console.log(res4.choices?.[0].finish_reason)
 
     // 5. handle text from response
     const assistantChatId = await this._handleAssistantText(res4, aiParam, bot)
@@ -1363,7 +1359,10 @@ class BaseBot {
     }
 
     // 6. otherwise, handle text
-    const assistantChatId = await this._handleAssistantText(chatCompletion, aiParam, bot)
+    let assistantChatId: string | undefined
+    if(finish_reason !== "tool_calls") {
+      assistantChatId = await this._handleAssistantText(chatCompletion, aiParam, bot)
+    }
     
     return { 
       character: c,
@@ -2449,6 +2448,11 @@ class ToolHandler {
   async get_schedule(
     funcJson: Record<string, any>,
   ): Promise<LiuAi.ReadCardsResult | undefined> {
+    // 0. normalize for bots which are not so smart
+    if(funcJson.specificDate === "dayAfterTomorrow") {
+      funcJson.specificDate = "day_after_tomorrow"
+    }
+
     // 1. checking out param
     const res1 = vbot.safeParse(Sch_AiToolGetScheduleParam, funcJson)
     if(!res1.success) {
@@ -2504,40 +2508,13 @@ class ToolHandler {
 
     // 4. handle specificDate
     if(specificDate) {
-      const userStamp = localizeStamp(now3, user.timezone)
-      const diffStampBetweenUserAndServer = userStamp - now3
-      const currentDate = new Date(userStamp)
-      const todayDate = date_fn_set(currentDate, {
-        hours: 0, minutes: 0, seconds: 0, milliseconds: 0,
-      })
-      const yesterdayDate = addDays(todayDate, -1)
-      const tomorrowDate = addDays(todayDate, 1)
-      const theDayAfterTomorrowDate = addDays(todayDate, 2)
-      const todayStamp = todayDate.getTime() - diffStampBetweenUserAndServer
-      const tomorrowStamp = tomorrowDate.getTime() - diffStampBetweenUserAndServer
-
-      if(specificDate === "yesterday") {
-        const yesterdayStamp = yesterdayDate.getTime() - diffStampBetweenUserAndServer
-        const command4_1 = _.gte(yesterdayStamp)
-        const command4_2 = _.lt(todayStamp)
+      const res4 = this._handleGetScheduleForSpecificDate(specificDate)
+      if(res4) {
+        const command4_1 = _.gte(res4.fromStamp)
+        const command4_2 = _.lt(res4.toStamp)
         q2.calendarStamp = _.and(command4_1, command4_2)
-        textToBot = t("schedule_yesterday")
-        textToUser = t("bot_read_yesterday", { bot: bot.name })
-      }
-      else if(specificDate === "today") {
-        const command4_3 = _.gte(todayStamp)
-        const command4_4 = _.lt(tomorrowStamp)
-        q2.calendarStamp = _.and(command4_3, command4_4)
-        textToBot = t("schedule_today")
-        textToUser = t("bot_read_today", { bot: bot.name })
-      }
-      else if(specificDate === "tomorrow") {
-        const theDayAfterTomorrowStamp = theDayAfterTomorrowDate.getTime() - diffStampBetweenUserAndServer
-        const command4_5 = _.gte(tomorrowStamp)
-        const command4_6 = _.lt(theDayAfterTomorrowStamp)
-        q2.calendarStamp = _.and(command4_5, command4_6)
-        textToBot = t("schedule_tomorrow")
-        textToUser = t("bot_read_tomorrow", { bot: bot.name })
+        textToBot = res4.textToBot
+        textToUser = res4.textToUser
       }
     }
 
@@ -2586,6 +2563,104 @@ class ToolHandler {
       textToBot,
       assistantChatId,
     }
+  }
+
+  private _handleGetScheduleForSpecificDate(
+    specificDate: AiToolGetScheduleSpecificDate,
+  ) {
+    // 1. inject required data
+    const entry = this._aiParam.entry
+    const { user } = entry
+    const bot = this._bot
+    const botName = bot.name
+    const { t } = useI18n(aiLang, { user })
+
+    // 2. get today
+    const now = getNowStamp()
+    const userStamp = localizeStamp(now, user.timezone)
+    const diffStampBetweenUserAndServer = userStamp - now
+    const currentDate = new Date(userStamp)
+    const todayDate = date_fn_set(currentDate, {
+      hours: 0, minutes: 0, seconds: 0, milliseconds: 0,
+    })
+    const todayStamp = todayDate.getTime() - diffStampBetweenUserAndServer
+
+    // 3. define return data
+    let textToBot = ""
+    let textToUser = ""
+    let fromStamp: number | undefined
+    let toStamp: number | undefined
+    
+    // 4. if yesterday
+    if(specificDate === "yesterday") {
+      const yesterdayDate = addDays(todayDate, -1)
+      fromStamp = yesterdayDate.getTime() - diffStampBetweenUserAndServer
+      toStamp = todayStamp
+      textToBot = t("yesterday_schedule")
+      textToUser = t("bot_read_yesterday", { bot: botName })
+      return { fromStamp, toStamp, textToBot, textToUser }
+    }
+
+    const tomorrowDate = addDays(todayDate, 1)
+    const tomorrowStamp = tomorrowDate.getTime() - diffStampBetweenUserAndServer
+    
+    // 5. if today
+    if(specificDate === "today") {
+      fromStamp = todayStamp
+      toStamp = tomorrowStamp
+      textToBot = t("today_schedule")
+      textToUser = t("bot_read_today", { bot: botName })
+      return { fromStamp, toStamp, textToBot, textToUser }
+    }
+
+    const dayAfterTomorrow = addDays(todayDate, 2)
+    const dayAfterTomorrowStamp = dayAfterTomorrow.getTime() - diffStampBetweenUserAndServer
+
+    // 6. if tomorrow
+    if(specificDate === "tomorrow") {
+      fromStamp = tomorrowStamp
+      toStamp = dayAfterTomorrowStamp
+      textToBot = t("tomorrow_schedule")
+      textToUser = t("bot_read_tomorrow", { bot: botName })
+      return { fromStamp, toStamp, textToBot, textToUser }
+    }
+
+    const day3 = addDays(todayDate, 3)
+    const day3Stamp = day3.getTime() - diffStampBetweenUserAndServer
+
+    // 7. if day_after_tomorrow
+    if(specificDate === "day_after_tomorrow") {
+      fromStamp = dayAfterTomorrowStamp
+      toStamp = day3Stamp
+      textToBot = t("day2_schedule")
+      textToUser = t("bot_read_day2", { bot: botName })
+      return { fromStamp, toStamp, textToBot, textToUser }
+    }
+
+    // 8. calculate this or next week
+    const DAY_LIST = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+    const idx8 = DAY_LIST.indexOf(specificDate)
+    if(idx8 < 0) return
+    const dayStr = t(specificDate)
+
+    const currentDay = todayDate.getDay()
+    let diffDays = idx8 - currentDay
+    if(idx8 <= 0) {
+      // next week
+      diffDays += 7
+      textToBot = t("schedule_next_week", { day: dayStr })
+      textToUser = t("bot_read_next_week", { bot: botName, day: dayStr })
+    }
+    else {
+      // this week
+      textToBot = t("schedule_this_week", { day: dayStr })
+      textToUser = t("bot_read_this_week", { bot: botName, day: dayStr })
+    }
+
+    fromStamp = addDays(todayDate, diffDays).getTime() - diffStampBetweenUserAndServer
+    toStamp = fromStamp + DAY
+
+    return { textToBot, textToUser, fromStamp, toStamp }
   }
 
   async get_cards(

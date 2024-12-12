@@ -773,7 +773,15 @@ export type AiToolGetScheduleHoursFromNow = typeof aiToolGetScheduleHoursFromNow
 export const Sch_AiToolGetScheduleHoursFromNow = vbot.picklist(aiToolGetScheduleHoursFromNow)
 
 export const aiToolGetScheduleSpecificDates = [
-  "yesterday", "today", "tomorrow"
+  "yesterday", "today", "tomorrow", 
+  "day_after_tomorrow", 
+  "monday", 
+  "tuesday", 
+  "wednesday", 
+  "thursday", 
+  "friday", 
+  "saturday", 
+  "sunday"
 ] as const
 export type AiToolGetScheduleSpecificDate = typeof aiToolGetScheduleSpecificDates[number]
 export const Sch_AiToolGetScheduleSpecificDate = vbot.picklist(aiToolGetScheduleSpecificDates)

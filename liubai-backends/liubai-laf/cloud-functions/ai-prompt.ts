@@ -697,7 +697,7 @@ export const aiTools: OaiTool[] = [
           },
           specificDate: {
             type: "string",
-            description: "获取昨天、今天或明天的日程。specificDate 和 hoursFromNow 不可以同时指定。",
+            description: "获取昨天、今天、明天、后天、这周或下周某天的日程。specificDate 和 hoursFromNow 不可以同时指定。",
             enum: aiToolGetScheduleSpecificDates
           }
         },
