@@ -13,6 +13,7 @@ import type {
   UserWeChatGzh,
   Wx_Gzh_Click,
   Wx_Gzh_Image,
+  Wx_Gzh_Link,
   Wx_Gzh_Location,
   Wx_Gzh_Msg_Event, 
   Wx_Gzh_Scan, 
@@ -101,6 +102,9 @@ export async function main(ctx: FunctionContext) {
   }
   else if(MsgType === "location") {
     handle_location(msgObj)
+  }
+  else if(MsgType === "link") {
+    handle_link(msgObj)
   }
   else if(MsgType === "event") {
     const { Event } = msgObj
@@ -215,9 +219,8 @@ async function handle_voice(
   const wx_media_id = msgObj.MediaId
   const wx_media_id_16k = msgObj.MediaId16K
 
-  // 1.1 send unsupported message
-  const { t } = useI18n(wechatLang)
-  const msg = t("voice_unsupported")
+  // 2. send unsupported message
+  const msg = _getUnsupportedMsg("voice_unsupported")
   sendText(wx_gzh_openid, msg)
 
   // // 2.1 TODO: temporarily check out test openid
@@ -267,8 +270,7 @@ async function handle_video(
   const wx_gzh_openid = msgObj.FromUserName
 
   // 2. send unsupported message
-  const { t } = useI18n(wechatLang)
-  const msg = t("video_unsupported")
+  const msg = _getUnsupportedMsg("video_unsupported")
   sendText(wx_gzh_openid, msg)
 }
 
@@ -279,11 +281,31 @@ async function  handle_location(
   const wx_gzh_openid = msgObj.FromUserName
 
   // 2. send unsupported message
-  const { t } = useI18n(wechatLang)
-  const msg = t("location_unsupported")
+  const msg = _getUnsupportedMsg("location_unsupported")
   sendText(wx_gzh_openid, msg)
 }
 
+async function handle_link(
+  msgObj: Wx_Gzh_Link,
+) {
+  // 1. get openid
+  const wx_gzh_openid = msgObj.FromUserName
+
+  // 2. send unsupported message
+  const msg = _getUnsupportedMsg("link_unsupported")
+  sendText(wx_gzh_openid, msg)
+}
+
+
+function _getUnsupportedMsg(key: string) {
+  const { t } = useI18n(wechatLang)
+  let msg = t(key)
+  const { LIU_CUSTOMER_SERVICE } = process.env
+  if(LIU_CUSTOMER_SERVICE) {
+    msg += t("buy_time", { LIU_CUSTOMER_SERVICE })
+  }
+  return msg
+}
 
 async function handle_unsubscribe(
   msgObj: Wx_Gzh_Unsubscribe,
