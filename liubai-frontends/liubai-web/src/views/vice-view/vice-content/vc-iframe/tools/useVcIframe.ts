@@ -8,8 +8,6 @@ import valTool from "~/utils/basic/val-tool"
 import liuEnv from "~/utils/liu-env"
 import { add_white_bg } from "~/config/add-white-bgs"
 
-const { IFRAME_PROXY, IFRAME_PROXY_KEY } = liuEnv.getEnv()
-
 export function useVcIframe(props: VciProps) {
   const { route } = useRouteAndLiuRouter()
   const iframeEl = useTemplateRef<HTMLIFrameElement>("iframeEl")
@@ -77,18 +75,7 @@ function getStyles(
     }
     catch{
       return
-    } 
-
-    if(!IFRAME_PROXY || !IFRAME_PROXY_KEY) return url
-    const proxyUrl = new URL(IFRAME_PROXY)
-    if(proxyUrl.hostname === url.hostname) {
-      const val2 = url.searchParams.get(IFRAME_PROXY_KEY)
-      if(val2) {
-        const url2 = new URL(val2)
-        return url2
-      }
     }
-
     return url
   }
 

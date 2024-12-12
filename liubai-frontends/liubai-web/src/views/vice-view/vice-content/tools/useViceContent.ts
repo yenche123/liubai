@@ -177,13 +177,8 @@ function listenRouteChange(
       return
     }
 
-    const iframeProxy = _env.IFRAME_PROXY
-    const inAllowList = vvLinkStore.isInAllowedList(url)
     const embedData = vvLinkStore.getEmbedData(url)
     if(embedData) url = embedData.link
-    else if(iframeProxy && !inAllowList) {
-      url = iframeProxy + url
-    }
 
     // console.log("iframe url: ")
     // console.log(url)

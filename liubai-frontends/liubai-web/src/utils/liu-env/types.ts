@@ -38,9 +38,6 @@ export interface LiuSystemEnv {
   REMOVING_DAYS: number
   DELETING_DAYS: number
 
-  IFRAME_PROXY?: string
-  IFRAME_PROXY_KEY?: string
-
   // rules
   SERVICE_TERMS_LINK?: string
   PRIVACY_POLICY_LINK?: string

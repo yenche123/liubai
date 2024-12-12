@@ -4,10 +4,9 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { RouteLocationNormalizedLoaded } from "vue-router"
 import valTool from "~/utils/basic/val-tool"
-import { domainAllowed, domainNotAllowed, mastodonDomains } from "~/config/domain-list"
+import { domainAllowed } from "~/config/domain-list"
 import { getEmbedData } from "./tools/embed-origin"
 import { isSpecialLink } from "./tools/handle-special-link"
-import liuEnv from "~/utils/liu-env";
 
 interface VvLinkAtom {
   id: string
@@ -76,27 +75,13 @@ function canAdd(url: string) {
   const data1 = isInAllowedList(url)
   if(data1) return true
 
-  const _env = liuEnv.getEnv()
-  if(!_env.IFRAME_PROXY) {
-    return false
-  }
-
-  const data2 = domainNotAllowed.find(v => valTool.isInDomain(h, v))
-  if(data2) return false
-
-  const data3 = mastodonDomains.find(v => valTool.isInDomain(h, v))
-  if(data3) return false
-
-  return true
+  return false
 }
 
 // 检查该链接是否可直接打开，而无需代理
 function isInAllowedList(url: string) {
   const u = new URL(url)
   const h = u.hostname
-
-  const res = domainNotAllowed.find(v => v === h)
-  if(res) return false
 
   const data = domainAllowed.find(v => valTool.isInDomain(h, v))
   return Boolean(data)

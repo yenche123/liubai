@@ -45,10 +45,6 @@ function getEnv(): LiuSystemEnv {
   const REMOVING_DAYS = import.meta.env.VITE_REMOVING_DAYS
   const DELETING_DAYS = import.meta.env.VITE_DELETING_DAYS
 
-  // iframe proxy
-  const IFRAME_PROXY = import.meta.env.VITE_IFRAME_PROXY
-  const IFRAME_PROXY_KEY = import.meta.env.VITE_IFRAME_PROXY_KEY
-
   // rules
   const SERVICE_TERMS_LINK = import.meta.env.VITE_SERVICE_TERMS_LINK
   const PRIVACY_POLICY_LINK = import.meta.env.VITE_PRIVACY_POLICY_LINK
@@ -149,8 +145,6 @@ function getEnv(): LiuSystemEnv {
     OPEN_WITH_BROWSER: OPEN_WITH_BROWSER === "01",
     REMOVING_DAYS: Number(REMOVING_DAYS),
     DELETING_DAYS: Number(DELETING_DAYS),
-    IFRAME_PROXY,
-    IFRAME_PROXY_KEY,
     SERVICE_TERMS_LINK,
     PRIVACY_POLICY_LINK,
     SENTRY_DSN,
