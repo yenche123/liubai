@@ -15,15 +15,35 @@ export function useAccountsContent() {
   })
   listenContext(acData)
 
+  const _showUnsupported = () => {
+    cui.showModal({ 
+      iconName: "emojis-construction_color", 
+      content_key: "setting.unbind_unsupported",
+      showCancel: false,
+    })
+  }
+
   const onTapPhone = () => {
+    if(acData.phone_pixelated) {
+      _showUnsupported()
+      return
+    }
 
   }
 
   const onTapWeChat = () => {
-
+    if(acData.wx_gzh_openid) {
+      _showUnsupported()
+      return
+    }
+    toBindWeChat(acData)
   }
 
   const onTapEmail = () => {
+    if(acData.email) {
+      _showUnsupported()
+      return
+    }
     cui.showModal({ 
       iconName: "emojis-construction_color", 
       content_key: "common.under_construction",
@@ -37,6 +57,13 @@ export function useAccountsContent() {
     onTapWeChat,
     onTapEmail,
   }
+}
+
+async function toBindWeChat(
+  acData: AcData,
+) {
+  await cui.showQRCodePopup({ bindType: "wx_gzh" })
+  getMyData(acData)
 }
 
 function listenContext(

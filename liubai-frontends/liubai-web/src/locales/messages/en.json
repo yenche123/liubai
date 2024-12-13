@@ -418,7 +418,8 @@
     "email": "Email",
     "phone": "Phone",
     "bound": "Bound",
-    "not_yet_bound": "Not yet bound"
+    "not_yet_bound": "Not yet bound",
+    "unbind_unsupported": "Unbinding has not been supported yet"
   },
   "export": {
     "markdown": "Export as markdown files",

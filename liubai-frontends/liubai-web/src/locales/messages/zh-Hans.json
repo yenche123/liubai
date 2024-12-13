@@ -419,7 +419,8 @@
     "email": "邮箱",
     "phone": "手机号",
     "bound": "已绑定",
-    "not_yet_bound": "尚未绑定"
+    "not_yet_bound": "尚未绑定",
+    "unbind_unsupported": "暂不支持解绑"
   },
   "export": {
     "markdown": "导出成 markdown 文件",
