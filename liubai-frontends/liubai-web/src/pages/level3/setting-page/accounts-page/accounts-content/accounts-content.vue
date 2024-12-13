@@ -16,7 +16,11 @@ const iconColor = "var(--main-normal)"
 </script>
 <template>
 
-  <div class="ac-container">
+  <PlaceholderView
+    :p-state="acData.pageState"
+  ></PlaceholderView>
+
+  <div v-if="acData.pageState < 0" class="ac-container">
 
     <!-- Phone -->
     <div class="liu-no-user-select liu-hover ac-item" @click.stop="onTapPhone">

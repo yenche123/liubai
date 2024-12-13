@@ -5,5 +5,5 @@ export interface AcData {
   phone_pixelated?: string
   wx_gzh_openid?: string
   wx_gzh_nickname?: string
-  pageState?: number
+  pageState: number
 }

@@ -331,6 +331,7 @@ export const routes: Array<RouteRecordRaw> = [
       default: AccountsPage,
       LeftSidebar,
     },
+    name: "accounts",
     meta: {
       inSetting: true,
       hasViceView: false,
