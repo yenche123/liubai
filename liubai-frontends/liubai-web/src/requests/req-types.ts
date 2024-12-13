@@ -88,6 +88,11 @@ export interface Res_UserSettings_Enter {
   language: LocalLocale
   spaceMemberList: LiuSpaceAndMember[]
   subscription?: UserSubscription
+
+  /** wechat data */
+  wx_gzh_openid?: string
+  wx_gzh_nickname?: string
+
   new_serial?: string
   new_token?: string
 }

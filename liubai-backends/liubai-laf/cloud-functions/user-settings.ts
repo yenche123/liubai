@@ -28,6 +28,7 @@ import {
   Sch_LocalLocale,
   type LiuErrReturn,
   type Table_Member,
+  type DataPass,
 } from '@/common-types'
 import { getNowStamp, DAY } from "@/common-time"
 import * as vbot from "valibot"
@@ -193,10 +194,7 @@ async function handle_logout(
   const serial_id = body["x_liu_serial"]
 
   if(!token || !serial_id) {
-    return {
-      code: "E4000",
-      errMsg: "token, serial_id are required", 
-    }
+    return { code: "E4000", errMsg: "token, serial_id are required" }
   }
 
   // 1. get token data
@@ -206,19 +204,13 @@ async function handle_logout(
 
   // checking out if it exists
   if(!d) {
-    return {
-      code: "E4003",
-      errMsg: "token not found",
-    }
+    return { code: "E4003", errMsg: "token not found" }
   }
 
   // checking out the token
   const _token = d.token
   if(_token !== token) {
-    return {
-      code: "E4003",
-      errMsg: "your token is wrong",
-    }
+    return { code: "E4003", errMsg: "your token is wrong" }
   }
 
   // 2. remove for db
@@ -304,15 +296,10 @@ async function handle_set(
 async function handle_membership(
   vRes: VerifyTokenRes_B,
 ): Promise<LiuRqReturn<Res_UserSettings_Membership>> {
-
   // 1. get latest user data
-  const userId = vRes.userData._id
-  const col_user = db.collection("User")
-  const res1 = await col_user.doc(userId).get<Table_User>()
+  const res1 = await getLatestUser(vRes)
+  if(!res1.pass) return res1.err
   const user = res1.data
-  if(!user) {
-    return { code: "E4004", errMsg: "user not found" }
-  }
 
   // 2. check out subscription
   const sub = user.subscription
@@ -430,7 +417,10 @@ async function handle_enter(
 async function handle_latest(
   vRes: VerifyTokenRes_B,
 ) {
-  const user = vRes.userData
+  const res0 = await getLatestUser(vRes)
+  if(!res0.pass) return res0.err
+  const user = res0.data
+
   const res1 = await getUserSettings(user)
   const data = res1.data
   if(res1.code !== "0000" || !data) {
@@ -553,8 +543,16 @@ async function getUserSettings(
     theme, 
     language, 
     subscription,
+    wx_gzh_openid,
+    phone,
+    thirdData,
   } = user
   const spaceMemberList = ui.spaceMemberList
+  let wx_gzh_nickname = thirdData?.wx_gzh?.nickname
+  if(!wx_gzh_openid) {
+    wx_gzh_nickname = undefined
+  }
+
   const data: Res_UserSettings_Enter = {
     email,
     open_id,
@@ -563,8 +561,55 @@ async function getUserSettings(
     language,
     spaceMemberList,
     subscription,
+    phone_pixelated: pixelatePhone(phone),
+
+    /** weixin data */
+    wx_gzh_openid,
+    wx_gzh_nickname,
   }
 
   return { code: "0000", data }
+}
+
+async function getLatestUser(
+  vRes: VerifyTokenRes_B,
+): Promise<DataPass<Table_User>> {
+  const userId = vRes.userData._id
+  const col_user = db.collection("User")
+  const res1 = await col_user.doc(userId).get<Table_User>()
+  const user = res1.data
+  if(!user) {
+    return { pass: false, err: { code: "E4004", errMsg: "user not found" } }
+  }
+  return { pass: true, data: user }
+}
+
+function pixelatePhone(phone?: string) {
+  if(!phone) return
+  const tmpList = phone.split("_")
+  const regionCode = tmpList[0]
+  const localNumber = tmpList[1]
+  if(!regionCode || !localNumber) return
+
+  const aPixel = "*"
+  let prefix = ""
+  let pixels = ""
+  let suffix = ""
+
+  const len = localNumber.length
+  if(len < 5) return localNumber
+
+  if(len >= 11) {
+    prefix = localNumber.substring(0, 3)
+    pixels = aPixel.repeat(len - 5)
+    suffix = localNumber.substring(len - 2)
+  }
+  else {
+    prefix = localNumber.substring(0, 2)
+    pixels = aPixel.repeat(len - 4)
+    suffix = localNumber.substring(len - 2)
+  }
+
+  return prefix + pixels + suffix
 }
 

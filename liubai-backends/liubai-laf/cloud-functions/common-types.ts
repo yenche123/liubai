@@ -1870,9 +1870,11 @@ export interface Res_UserSettings_Enter {
   language: LocalLocale
   spaceMemberList: LiuSpaceAndMember[]
   subscription?: UserSubscription
+  phone_pixelated?: string     // like 187******56
   
   /** wechat data */
   wx_gzh_openid?: string
+  wx_gzh_nickname?: string
 
   /** wecom data for qynb, which is for company internal use */
   ww_qynb_external_userid?: string
