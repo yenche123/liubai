@@ -17,6 +17,7 @@ const ContentPanel = defineAsyncComponent(() => import("./content-panel/content-
 const CommentPopup = defineAsyncComponent(() => import("./comment-popup/comment-popup.vue"))
 const HashtagSelector = defineAsyncComponent(() => import("./hashtag-selector/hashtag-selector.vue"))
 const QrcodePopup = defineAsyncComponent(() => import("./qrcode-popup/qrcode-popup.vue"))
+const BindPopup = defineAsyncComponent(() => import("./bind-popup/bind-popup.vue"))
 
 </script>
 <template>
@@ -68,6 +69,9 @@ const QrcodePopup = defineAsyncComponent(() => import("./qrcode-popup/qrcode-pop
 
   <!-- 二维码弹窗 -->
   <QrcodePopup></QrcodePopup>
+
+  <!-- Bind account popup -->
+  <BindPopup></BindPopup>
   
 </template>
 

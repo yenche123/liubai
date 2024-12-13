@@ -15,6 +15,7 @@ import { showContentPanel } from "./content-panel/tools/useContentPanel"
 import { showCommentPopup } from "./comment-popup/tools/useCommentPopup"
 import { showHashtagSelector } from "./hashtag-selector/tools/useHashtagSelector"
 import { showQRCodePopup } from "./qrcode-popup/tools/useQRCodePopup"
+import { showBindPopup } from "./bind-popup/tools/useBindPopup"
 
 export default {
   showModal,
@@ -34,4 +35,5 @@ export default {
   showContentPanel,
   showCommentPopup,
   showQRCodePopup,
+  showBindPopup,
 }

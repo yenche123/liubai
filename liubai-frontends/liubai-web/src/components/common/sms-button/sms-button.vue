@@ -33,7 +33,6 @@ const { t } = useI18n()
 <style lang="scss" scoped>
 
 .sms-button {
-  height: 100%;
   max-height: 60px;
   display: flex;
   align-items: center;
@@ -63,6 +62,13 @@ const { t } = useI18n()
 @media(hover: hover) {
   .sms-button:hover {
     background-color: var(--card-hover);
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .sms-button {
+    padding: 0 12px;
+    font-size: var(--mini-font);
   }
 }
 

@@ -1,6 +1,7 @@
 import { reactive, toRef, watch } from "vue"
 import type { 
   BpData, 
+  BpParam, 
   BpResolver,
 } from "./types"
 import type { 
@@ -117,7 +118,7 @@ function toEnterFromFirstInput() {
 
 }
 
-export function showBindPopup(param: BpData) {
+export function showBindPopup(param: BpParam) {
   bpData.compliance = param.compliance
   if(bpData.bindType !== param.bindType) {
     bpData.bindType = param.bindType
