@@ -17,6 +17,7 @@ import {
   getDecryptedBody,
   normalizePhoneNumber,
   getDocAddId,
+  canPassByExponentialDoor,
 } from '@/common-util'
 import { 
   type MongoFilter,
@@ -39,7 +40,7 @@ import {
 import { getNowStamp, DAY, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import * as vbot from "valibot"
 import { getCurrentLocale } from '@/common-i18n'
-import { handle_avatar } from '@/user-login'
+import { handle_avatar, addVerifyNum } from '@/user-login'
 import { createSmsCode } from '@/common-ids'
 import { LiuTencentSMS } from '@/service-send'
 
@@ -84,7 +85,7 @@ export async function main(ctx: FunctionContext) {
     res = await handle_request_sms(vRes, body)
   }
   else if(oT === "bind-phone") {
-
+    res = await handle_bind_phone(vRes, body)
   }
 
   const stamp2 = getNowStamp()
@@ -92,6 +93,92 @@ export async function main(ctx: FunctionContext) {
   console.log(`调用 user-settings for ${oT} 耗时: ${diffS}ms`)
 
   return res
+}
+
+async function handle_bind_phone(
+  vRes: VerifyTokenRes_B,
+  oldBody: Record<string, any>,
+) {
+  // 1. decrypt
+  const res1 = getDecryptedBody(oldBody, vRes)
+  if(!res1.newBody || res1.rqReturn) {
+    return res1.rqReturn ?? { code: "E5001" }
+  }
+
+  // 2. get phone
+  const body = res1.newBody
+  const { phone, smsCode } = body
+  console.log("phone in handle_request_sms: ")
+  console.log(phone)
+  if(!phone || typeof phone !== "string") {
+    return { code: "E4000", errMsg: "phone is required" }
+  }
+
+  // 3. get local number
+  const res3 = normalizePhoneNumber(phone)
+  if(!res3) return { code: "E4000", errMsg: "parse phone number error" }
+
+  // 4. get credential
+  const errReturnData = {
+    code: "E4003",
+    errMsg: "the phone_code is wrong or expired, or checking is too much"
+  }
+  const w4: Partial<Table_Credential> = {
+    phoneNumber: phone,
+    infoType: "bind-phone",
+  }
+  const cCol = db.collection("Credential")
+  const q4 = cCol.where(w4).orderBy("insertedStamp", "desc")
+  const res4 = await q4.limit(1).get<Table_Credential>()
+  const firstCre = res4.data[0]
+  if(!firstCre) return errReturnData
+
+  // 5. check out verifyNum
+  const { 
+    verifyNum, 
+    insertedStamp, 
+    credential, 
+    expireStamp,
+    _id: cId,
+  } = firstCre
+  const verifyData = canPassByExponentialDoor(insertedStamp, verifyNum)
+  if(!verifyData.pass) {
+    console.warn("checking credential too much")
+    return errReturnData
+  }
+
+  // 6. check out smsCode
+  if(credential !== smsCode) {
+    console.warn("the smsCode is not equal to credential")
+    console.log("phone: ", phone)
+    console.log("smsCode: ", smsCode)
+    console.log("credential: ", credential)
+    await addVerifyNum(cId, verifyData.verifiedNum)
+    return errReturnData
+  }
+
+  // 7. check expireStamp
+  const now7 = getNowStamp()
+  if(now7 > expireStamp) {
+    console.warn("the smsCode is expired")
+    return errReturnData
+  }
+
+  // 8. remove credential
+  cCol.doc(cId).remove()
+
+  // 9. bind phone
+  const userId = vRes.userData._id
+  const u9: Partial<Table_User> = {
+    phone,
+    updatedStamp: now7,
+  }
+  const uCol = db.collection("User")
+  const res9 = await uCol.doc(userId).update(u9)
+  console.log("update user in handle_bind_phone: ")
+  console.log(res9)
+  updateUserInCache(userId)
+  return { code: "0000" }
 }
 
 async function handle_request_sms(

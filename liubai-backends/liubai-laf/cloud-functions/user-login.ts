@@ -334,7 +334,7 @@ async function handle_phone_code(
     return errReturnData
   }
 
-  // 8. chec expireStamp
+  // 8. check expireStamp
   const now8 = getNowStamp()
   if(now8 > expireStamp) {
     console.warn("the phone_code is expired")
@@ -861,7 +861,7 @@ async function handle_email_code(
 }
 
 /** 修改 Credential 的 verifyNum */
-async function addVerifyNum(
+export async function addVerifyNum(
   id: string,
   verifyNum: number,
 ) {
