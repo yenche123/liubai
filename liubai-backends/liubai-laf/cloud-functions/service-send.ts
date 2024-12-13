@@ -248,6 +248,22 @@ export class LiuTencentSMS {
     return { code: "E5004", errMsg: "client.PullSmsSendStatusByPhoneNumber got an error" }
   }
 
+  static async seeResult(phoneWithPlus: string) {
+    const res = await this.retrieve(phoneWithPlus)
+    const { code, data } = res
+    if(code !== "0000" || !data) return
+    const list = data.PullSmsSendStatusSet ?? []
+    const len1 = list.length
+    if(len1 < 1) return
+    const lastItem = list[len1 - 1]
+    console.log("after sms: ")
+    console.log(lastItem)
+    if(lastItem.ReportStatus === "FAIL") {
+      console.warn("figure out a problem with tencent sms")
+      console.log(lastItem)
+    }
+  }
+
 }
 
 

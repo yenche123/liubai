@@ -214,6 +214,11 @@ export const Sch_LocalLocale = vbot.picklist(localLocales)
 
 export type CheckBindStatus = "waiting" | "plz_check" | "expired"
 
+export interface PhoneData {
+  regionCode: string
+  localNumber: string
+}
+
 /************ atom types from third party ***************/
 // wxpay
 export type Wxpay_Trade_Type = "JSAPI" | "NATIVE" | "APP" | "MICROPAY" | "MWEB" | "FACEPAY"
@@ -1484,7 +1489,8 @@ export interface Table_Config extends BaseTable {
 
 /** 临时凭证表的类型 */
 export type Table_Credential_Type =  "sms-code" | "email-code" | "wx-gzh-scan"
-  | "users-select" | "stripe-checkout-session" | "bind-wecom" | "bind-wechat"
+  | "users-select" | "stripe-checkout-session" | "bind-wecom" | "bind-wechat" 
+  | "bind-phone"
 
 /** 临时凭证表 */
 export interface Table_Credential extends BaseTable {

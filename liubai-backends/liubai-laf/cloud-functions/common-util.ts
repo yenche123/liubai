@@ -59,6 +59,7 @@ import type {
   LiuStateConfig,
   SyncGetTable,
   Wx_Res_GzhSnsUserInfo,
+  PhoneData,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -300,6 +301,16 @@ const getChineseCharNum = (val: string) => {
   return num
 }
 
+const isAllNumber = (val: string, digit?: number) => {
+  if(digit) {
+    if(val.length !== digit) return false
+  }
+  
+  const m = val.match(/^\d+$/g)
+  const res = Boolean(m?.length)
+  return res
+}
+
 export const valTool = {
   waitMilli,
   strToObj,
@@ -314,6 +325,7 @@ export const valTool = {
   isStringWithVal,
   isLatinChar,
   getChineseCharNum,
+  isAllNumber,
 }
 
 
@@ -1023,6 +1035,32 @@ export function isEmailAndNormalize(val: any) {
   const res = vbot.safeParse(Sch, val)
   if(!res.success) return false
   return res.output
+}
+
+export function normalizePhoneNumber(
+  phone: string,
+): PhoneData | undefined {
+  const tmpList = phone.split("_")
+  const regionCode = tmpList[0]
+  const localNumber = tmpList[1]
+  if(!regionCode || !localNumber) return
+  if(!isAllNumber(regionCode) || !isAllNumber(localNumber)) {
+    console.warn("regionCode and localNumber are not all numbers!")
+    console.log(regionCode)
+    console.log(localNumber)
+    return
+  }
+  if(regionCode.length > 3) {
+    console.warn("regionCode is too long!")
+    console.log(regionCode)
+    return
+  }
+  if(localNumber.length < 5) {
+    console.warn("localNumber is too short!")
+    console.log(localNumber)
+    return
+  }
+  return { regionCode, localNumber }
 }
 
 /** 归一化主题至 LocalTheme */

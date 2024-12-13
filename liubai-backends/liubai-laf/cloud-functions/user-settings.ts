@@ -14,6 +14,9 @@ import {
   getWxGzhSnsUserInfo,
   checkAndGetWxGzhAccessToken,
   getWxGzhUserInfo,
+  getDecryptedBody,
+  normalizePhoneNumber,
+  getDocAddId,
 } from '@/common-util'
 import { 
   type MongoFilter,
@@ -29,13 +32,19 @@ import {
   type LiuErrReturn,
   type Table_Member,
   type DataPass,
+  type Table_Credential,
+  type Partial_Id,
+  type LiuTencentSMSParam,
 } from '@/common-types'
-import { getNowStamp, DAY } from "@/common-time"
+import { getNowStamp, DAY, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import * as vbot from "valibot"
 import { getCurrentLocale } from '@/common-i18n'
 import { handle_avatar } from '@/user-login'
+import { createSmsCode } from '@/common-ids'
+import { LiuTencentSMS } from '@/service-send'
 
 const db = cloud.database()
+const _ = db.command
 
 export async function main(ctx: FunctionContext) {
   const body = ctx.request?.body ?? {}
@@ -71,12 +80,144 @@ export async function main(ctx: FunctionContext) {
   else if(oT === "wechat-bind") {
     res = await handle_wechat_bind(vRes, body)
   }
+  else if(oT === "request-sms") {
+    res = await handle_request_sms(vRes, body)
+  }
+  else if(oT === "bind-phone") {
+
+  }
 
   const stamp2 = getNowStamp()
   const diffS = stamp2 - stamp1
   console.log(`调用 user-settings for ${oT} 耗时: ${diffS}ms`)
 
   return res
+}
+
+async function handle_request_sms(
+  vRes: VerifyTokenRes_B,
+  oldBody: Record<string, any>,
+) {
+  // 1. decrypt
+  const res1 = getDecryptedBody(oldBody, vRes)
+  if(!res1.newBody || res1.rqReturn) {
+    return res1.rqReturn ?? { code: "E5001" }
+  }
+
+  // 1.2 check out system params
+  const _env = process.env
+  const SmsSdkAppId = _env.LIU_TENCENT_SMS_SDKAPPID
+  const SignName = _env.LIU_TENCENT_SMS_SIGNNAME
+  const TemplateId = _env.LIU_TENCENT_SMS_TEMPLATEID_1
+  if(!SmsSdkAppId || !SignName || !TemplateId) {
+    console.warn("there is no SmsSdkAppId or SignName or TemplateId in handle_request_sms")
+    return { 
+      code: "E5001",
+      errMsg: "no required params on backend to send sms",
+    }
+  }
+
+  // 2. get phone
+  const body = res1.newBody
+  const { phone } = body
+  console.log("phone in handle_request_sms: ")
+  console.log(phone)
+  if(!phone || typeof phone !== "string") {
+    return { code: "E4000", errMsg: "phone is required" }
+  }
+
+  // 3. get local number
+  const res3 = normalizePhoneNumber(phone)
+  if(!res3) return { code: "E4000", errMsg: "parse phone number error" }
+  const { localNumber, regionCode } = res3
+  if(regionCode !== "86" || localNumber.length !== 11) {
+    return { code: "US004", errMsg: "only support +86" }
+  }
+
+  // 4. check if the number has been bound
+  const res4 = await checkIfPhoneHasBeenBound(phone)
+  if(res4) {
+    return { code: "US003", errMsg: "the phone number has been bound" }
+  }
+
+  // 5. check credential
+  const now5 = getNowStamp()
+  const ONE_MIN_AGO = now5 - MINUTE
+  const cCol = db.collection("Credential")
+  const w5 = {
+    infoType: "bind-phone",
+    phoneNumber: phone,
+    insertedStamp: _.gte(ONE_MIN_AGO),
+  }
+  const res5 = await cCol.where(w5).get<Table_Credential>()
+  const list5 = res5.data ?? []
+  const theCred = list5[0]
+  if(theCred) {
+    return { code: "E4003", errMsg: "sending to the phone number too much" }
+  }
+
+  // 6. create credential
+  const smsCode = createSmsCode()
+  const expireStamp = getNowStamp() + 5 * MINUTE
+  const b6 = getBasicStampWhileAdding()
+  const data6: Partial_Id<Table_Credential> = {
+    ...b6,
+    credential: smsCode,
+    infoType: "bind-phone",
+    expireStamp,
+    phoneNumber: phone,
+  }
+  const res6 = await cCol.add(data6)
+  const cId = getDocAddId(res6)
+  if(!cId) {
+    return { code: "E5000", errMsg: "creating credential failed"}
+  }
+
+  // 7. send sms
+  const phone7 = `+${regionCode}${localNumber}`
+  const param7: LiuTencentSMSParam = {
+    SmsSdkAppId,
+    SignName,
+    TemplateId,
+    TemplateParamSet: [smsCode],
+    PhoneNumberSet: [phone7],
+  }
+  const res7 = await LiuTencentSMS.send(param7)
+
+  // 8. handle result of sending
+  if(res7.data) {
+    console.log("send sms might be successful, let's see result: ")
+    console.log(res7.data)
+    const u8: Partial<Table_Credential> = {
+      send_channel: "tencent-sms",
+      sms_sent_result: res7.data,
+    }
+    cCol.doc(cId).update(u8)
+
+    // take a look of sending sms
+    LiuTencentSMS.seeResult(phone7)
+  }
+  else {
+    return res7
+  }
+
+  return { code: "0000" }
+}
+
+
+async function checkIfPhoneHasBeenBound(phone: string) {
+  const uCol = db.collection("User")
+  const res = await uCol.where({ phone }).get<Table_User>()
+  const list = res.data
+  let hasBound = false
+  for(let i=0; i<list.length; i++) {
+    const v = list[i]
+    if(v.oState === "NORMAL" || v.oState === "LOCK") {
+      hasBound = true
+      break
+    }
+  }
+  return hasBound
 }
 
 
@@ -141,7 +282,7 @@ async function handle_wechat_bind(
   let hasBound = false
   for(let i=0; i<list5.length; i++) {
     const v = list5[i]
-    if(v.oState === "NORMAL") {
+    if(v.oState === "NORMAL" || v.oState === "LOCK") {
       hasBound = true
     }
   }
@@ -586,10 +727,9 @@ async function getLatestUser(
 
 function pixelatePhone(phone?: string) {
   if(!phone) return
-  const tmpList = phone.split("_")
-  const regionCode = tmpList[0]
-  const localNumber = tmpList[1]
-  if(!regionCode || !localNumber) return
+  const res = normalizePhoneNumber(phone)
+  if(!res) return
+  const { localNumber } = res
 
   const aPixel = "*"
   let prefix = ""

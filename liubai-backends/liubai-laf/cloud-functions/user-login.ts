@@ -36,6 +36,7 @@ import type {
   Table_LoginState,
   LiuTencentSMSParam,
   DataPass,
+  PhoneData,
 } from "@/common-types"
 import { clientMaximum } from "@/common-types"
 import { 
@@ -60,6 +61,7 @@ import {
   getWxGzhUserOAuthAccessToken,
   valTool,
   getWxGzhSnsUserInfo,
+  normalizePhoneNumber,
 } from "@/common-util"
 import { getNowStamp, MINUTE, getBasicStampWhileAdding } from "@/common-time"
 import { 
@@ -261,8 +263,8 @@ async function handle_phone(
     }
     cCol.doc(cId).update(u8)
 
-    // console.log for debug
-    afterSms(phone7)
+    // take a look of sending sms
+    LiuTencentSMS.seeResult(phone7)
   }
   else {
     return res7
@@ -270,28 +272,6 @@ async function handle_phone(
 
   return { code: "0000" }
 }
-
-/**
- * take a look at tencent sms
- * @param phoneWithPlus the format is like "+86132xxxxyyyy"
- * @returns 
- */
-async function afterSms(phoneWithPlus: string) {
-  const res = await LiuTencentSMS.retrieve(phoneWithPlus)
-  const { code, data } = res
-  if(code !== "0000" || !data) return
-  const list = data.PullSmsSendStatusSet ?? []
-  const len1 = list.length
-  if(len1 < 1) return
-  const lastItem = list[len1 - 1]
-  console.log("after sms: ")
-  console.log(lastItem)
-  if(lastItem.ReportStatus === "FAIL") {
-    console.warn("figure out a problem with tencent sms")
-    console.log(lastItem)
-  }
-}
-
 
 async function handle_phone_code(
   ctx: FunctionContext,
@@ -369,11 +349,6 @@ async function handle_phone_code(
   return res10  
 }
 
-interface PhoneData {
-  regionCode: string
-  localNumber: string
-}
-
 function getPhoneData(enc_phone: string): DataPass<PhoneData> {
   // 1. decrypt
   const {
@@ -388,17 +363,24 @@ function getPhoneData(enc_phone: string): DataPass<PhoneData> {
     }
   }
 
+  // 2. check out phone generally
+  const res2 = normalizePhoneNumber(dec_phone)
+  if(!res2) {
+    return {
+      pass: false,
+      err: { code: "U0009", errMsg: "invalid phone" },
+    }
+  }
+  const { regionCode, localNumber } = res2
+
   // 3. check out format of phone number
-  const tmpList3 = dec_phone.split("_")
-  const regionCode = tmpList3[0]
-  const localNumber = tmpList3[1]
   if(regionCode !== "86") {
     return {
       pass: false,
       err: { code: "U0008", errMsg: "only support +86" },
     }
   }
-  if(!localNumber || localNumber.length !== 11) {
+  if(localNumber.length !== 11) {
     return {
       pass: false,
       err: { code: "U0009", errMsg: "invalid phone" },
