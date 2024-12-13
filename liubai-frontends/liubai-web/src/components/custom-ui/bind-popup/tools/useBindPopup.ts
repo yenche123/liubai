@@ -8,6 +8,8 @@ import type {
 } from "~/utils/basic/type-tool"
 import cfg from "~/config"
 import liuUtil from "~/utils/liu-util"
+import { useThrottleFn } from "~/hooks/useVueUse"
+import { i18n } from "~/locales"
 
 
 const TRANSITION_DURATION = 350
@@ -31,6 +33,11 @@ export function initBindPopup() {
   const secondInputVal = toRef(bpData, "secondInputVal")
 
   watch(firstInputVal, (newV) => {
+    let trimVal = newV.trim()
+    if(trimVal !== newV) {
+      firstInputVal.value = trimVal
+      return
+    }
     checkCanSubmit()
     if(!bpData.firstErr) return
     const phoneCorrect = liuUtil.check.isAllNumber(newV, 11)
@@ -38,6 +45,11 @@ export function initBindPopup() {
     delete bpData.firstErr
   })
   watch(secondInputVal, (newV) => {
+    let trimVal = newV.trim()
+    if(trimVal !== newV) {
+      secondInputVal.value = trimVal
+      return
+    }
     checkCanSubmit()
     if(!bpData.secondErr) return
     const smsCorrect = liuUtil.check.isAllNumber(newV, 6)
@@ -50,18 +62,59 @@ export function initBindPopup() {
     TRANSITION_DURATION,
     onTapSubmit,
     onTapClose,
+    onEnterFromFirstInput: useThrottleFn(toEnterFromFirstInput, 1000),
+    onEnterFromSecondInput: useThrottleFn(onTapSubmit, 1000),
+    onTapGettingCode,
   }
 }
 
 
 function checkCanSubmit() {
   const { firstInputVal, secondInputVal } = bpData
+  let res1 = false
   if(bpData.bindType === "phone") {
-    const res1 = liuUtil.check.isAllNumber(firstInputVal, 11)
-    const res2 = liuUtil.check.isAllNumber(secondInputVal, 6)
-    bpData.canSubmit = Boolean(res1 && res2)
+    res1 = liuUtil.check.isAllNumber(firstInputVal, 11)
   }
-  
+  else {
+    res1 = liuUtil.check.isEmail(firstInputVal)
+  }
+
+  const res2 = liuUtil.check.isAllNumber(secondInputVal, 6)
+  bpData.canSubmit = Boolean(res1 && res2)
+}
+
+function onTapGettingCode() {
+  if(bpData.btnLoading || bpData.sendCodeStatus !== "can_tap") return
+  const { firstInputVal } = bpData
+  let firstInputCorrect = false
+
+  // 1. get err msg
+  const t = i18n.global.t
+  const bT = bpData.bindType
+  let errMsg = ""
+  if(bT === "phone") {
+    firstInputCorrect = liuUtil.check.isAllNumber(firstInputVal, 11)
+    errMsg = t("bind.err_1", { num: 11 })
+  }
+  else {
+    firstInputCorrect = liuUtil.check.isEmail(firstInputVal)
+    errMsg = t("bind.err_4")
+  }
+
+  // 2. check if first input is correct
+  if(!firstInputCorrect) {
+    bpData.firstErr = errMsg
+    return
+  }
+
+  // 3. send code
+  bpData.sendCodeStatus = "loading"
+
+}
+
+
+function toEnterFromFirstInput() {
+
 }
 
 export function showBindPopup(param: BpData) {

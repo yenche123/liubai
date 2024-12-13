@@ -631,5 +631,18 @@
     "wanzhi": "零一萬物",
     "yuewen": "階躍星辰",
     "zhipu": "智譜"
+  },
+  "bind": {
+    "phone_title": "行動電話綁定",
+    "email_title": "Email 綁定",
+    "bind": "綁定",
+    "phone_ph": "請輸入手機號碼",
+    "email_ph": "你的 Email 地址",
+    "code_ph": "請輸入驗證代號",
+    "err_1": "請輸入 {num} 位手機號碼",
+    "err_2": "驗證代號錯誤",
+    "err_3": "該行動號碼已被綁定",
+    "err_4": "Email 地址格式錯誤",
+    "compliance": "根據當地法律規定，當前操作需要先完成行動電話綁定。"
   }
 }

@@ -630,5 +630,18 @@
     "wanzhi": "01.ai",
     "yuewen": "Stepfun",
     "zhipu": "Zhipu"
+  },
+  "bind": {
+    "phone_title": "Phone Number Binding",
+    "email_title": "Email Binding",
+    "bind": "Bind",
+    "phone_ph": "Your phone number",
+    "email_ph": "Your email address",
+    "code_ph": "Enter code",
+    "err_1": "Enter number with {num} digits please",
+    "err_2": "The code is wrong or expired",
+    "err_3": "The phone number has been bound by another account",
+    "err_4": "It might not be an email address",
+    "compliance": "According to the local law, you have to bind your phone number before proceeding."
   }
 }
