@@ -60,13 +60,6 @@ export function useSettingContent() {
   const { toA2HS } = listenToA2HS(data)
   listenSystemStore(data)
 
-  const onTapAccounts = () => {
-    cui.showModal({ 
-      iconName: "emojis-construction_color", 
-      content_key: "common.under_construction",
-      showCancel: false,
-    })
-  }
   const onToggleMobileDebug = (newV: boolean) => {
     data.mobileDebug = newV
     localCache.setOnceData("mobile_debug", newV)
@@ -95,7 +88,6 @@ export function useSettingContent() {
     onTapFontSize: () => whenTapFontSize(data),
     onTapTerms: () => data.openTerms = !data.openTerms,
     onTapLogout: () => whenTapLogout(),
-    onTapAccounts,
     onTapDebug: () => whenTapDebug(data),
     onToggleMobileDebug,
     onTapClearCache: () => whenTapClearCache(),

@@ -413,7 +413,12 @@
     "font_large": "Large",
     "font_medium": "Medium",
     "font_size": "Font Size",
-    "font_select": "Please select your font size"
+    "font_select": "Please select your font size",
+    "wechat": "WeChat",
+    "email": "Email",
+    "phone": "Phone",
+    "bound": "Bound",
+    "not_yet_bound": "Not yet bound"
   },
   "export": {
     "markdown": "Export as markdown files",

@@ -28,7 +28,6 @@ const {
   onTapFontSize,
   onTapTerms,
   onTapLogout,
-  onTapAccounts,
   onTapDebug,
   onToggleMobileDebug,
   onTapClearCache,
@@ -106,21 +105,21 @@ const iconColor = "var(--main-normal)"
         </AppLink>
 
         <!-- accounts -->
-        <div class="liu-no-user-select liu-hover sc-bar" 
-          @click.stop="onTapAccounts"
-        >
-          <div class="scb-hd">
-            <span>{{ t('setting.accounts') }}</span>
-          </div>
-          <div class="scb-footer">
-            <div class="scb-footer-icon">
-              <svg-icon class="scbf-back"
-                name="arrow-right2"
-                :color="iconColor"
-              ></svg-icon>
+        <AppLink to="/accounts">
+          <div class="liu-no-user-select liu-hover sc-bar">
+            <div class="scb-hd">
+              <span>{{ t('setting.accounts') }}</span>
+            </div>
+            <div class="scb-footer">
+              <div class="scb-footer-icon">
+                <svg-icon class="scbf-back"
+                  name="arrow-right2"
+                  :color="iconColor"
+                ></svg-icon>
+              </div>
             </div>
           </div>
-        </div>
+        </AppLink>
 
       </div>
 

@@ -31,6 +31,7 @@ const SchedulePage = () => import("../pages/level3/schedule-page/schedule-page.v
 const PastPage = () => import("../pages/level3/past-page/past-page.vue")
 const AgreePage = () => import("../pages/level2/agree-page/agree-page.vue")
 const WechatBind = () => import("../pages/level1/wechat-bind/wechat-bind.vue")
+const AccountsPage = () => import("../pages/level3/setting-page/accounts-page/accounts-page.vue")
 
 export const routes: Array<RouteRecordRaw> = [
   /*************** 公共页面（不区分工作区） ***************/
@@ -323,6 +324,17 @@ export const routes: Array<RouteRecordRaw> = [
     component: AgreePage,
     name: "agree",
     meta: {}
+  },
+  {
+    path: "/accounts",
+    components: {
+      default: AccountsPage,
+      LeftSidebar,
+    },
+    meta: {
+      inSetting: true,
+      hasViceView: false,
+    }
   },
   /********************* Collaborative Workspace ********************/
   {

@@ -195,7 +195,7 @@
     "email_verification": "邮箱验证",
     "email_verification_tip": "已发送验证码至 {email}\n 请记得检查你的垃圾邮件。",
     "verification_code": "验证码",
-    "choosing_account": "选择账号",
+    "choosing_account": "选择帐号",
     "logging": "正在登录..",
     "logging2": "登录中..",
     "cannot_login_via": "当前暂不支持「使用 {thirdParty} 登录」，请使用其他登录方式。",
@@ -382,7 +382,7 @@
   },
   "setting": {
     "membership": "会员",
-    "accounts": "账号",
+    "accounts": "帐号",
     "preference": "个人偏好",
     "theme": "主题",
     "language": "语言",
@@ -413,7 +413,13 @@
     "font_size": "字体大小",
     "font_large": "大杯",
     "font_medium": "中杯",
-    "font_select": "请选择字体大小"
+    "font_select": "请选择字体大小",
+    "accounts_management": "帐号管理",
+    "wechat": "微信",
+    "email": "邮箱",
+    "phone": "手机号",
+    "bound": "已绑定",
+    "not_yet_bound": "尚未绑定"
   },
   "export": {
     "markdown": "导出成 markdown 文件",
@@ -481,7 +487,7 @@
     "per_quarter": "{currency} / 季度",
     "check_out": "去看看",
     "cancel_refund": "不想用了...",
-    "refund_content": "每个账号仅支持一次 7 天无理由退款，你确定还要取消订阅并退款吗？",
+    "refund_content": "每个帐号仅支持一次 7 天无理由退款，你确定还要取消订阅并退款吗？",
     "to_refund": "确定退款",
     "err_1": "下单失败",
     "err_2": "退款异常",

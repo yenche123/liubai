@@ -413,7 +413,13 @@
     "font_large": "大杯",
     "font_medium": "中杯",
     "font_size": "字號",
-    "font_select": "請選擇字號"
+    "font_select": "請選擇字號",
+    "accounts_management": "帳號管理",
+    "wechat": "微信",
+    "email": "電子信箱",
+    "phone": "手機號碼",
+    "bound": "已綁定",
+    "not_yet_bound": "尚未綁定"
   },
   "export": {
     "markdown": "匯出成 markdown 文件",
