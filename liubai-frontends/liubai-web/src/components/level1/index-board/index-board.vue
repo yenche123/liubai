@@ -2,6 +2,7 @@
 import { useIndexBoard } from './tools/useIndexBoard';
 import A2hsTip from './a2hs-tip/a2hs-tip.vue';
 import NewVersionTip from "./new-version-tip/new-version-tip.vue"
+import cui from '~/components/custom-ui';
 
 const {
   ibData,
@@ -10,6 +11,10 @@ const {
   onConfirmNewVersion,
   onCancelNewVersion,
 } = useIndexBoard()
+
+setTimeout(() => {
+  cui.showBindPopup({ bindType: "phone", compliance: true })
+}, 2000)
 
 </script>
 <template>

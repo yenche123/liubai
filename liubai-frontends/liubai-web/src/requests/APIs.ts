@@ -21,4 +21,5 @@ export default {
   OPEN_CONNECT: d + `open-connect`,
   PAYMENT_ORDER: d + `payment-order`,
   SERVICE_POLY: d + `service-poly`,
+  BIND_DATA: d + `user-settings`,
 }

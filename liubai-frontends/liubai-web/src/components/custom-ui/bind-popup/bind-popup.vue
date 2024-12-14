@@ -4,6 +4,9 @@ import { useI18n } from 'vue-i18n';
 import { initBindPopup } from './tools/useBindPopup';
 
 const {
+  emailInputRef,
+  phoneInputRef,
+  secondInputRef,
   bpData,
   TRANSITION_DURATION,
   onTapSubmit,
@@ -38,7 +41,7 @@ const { t } = useI18n()
       </div>
 
       <!-- compliance tip -->
-      <div v-if="bpData.compliance" class="bp-compliance">
+      <div v-if="bpData.compliance" class="liu-no-user-select bp-compliance">
         <span>{{ t('bind.compliance') }}</span>
       </div>
 
@@ -50,6 +53,7 @@ const { t } = useI18n()
           v-model="bpData.firstInputVal"
           id="bind-email"
           @keyup.enter.exact="onEnterFromFirstInput"
+          ref="emailInputRef"
         />
         <input v-else class="bp-input bp-first-input" 
           :placeholder="t('bind.phone_ph')"
@@ -58,10 +62,13 @@ const { t } = useI18n()
           id="bind-phone"
           @keyup.enter.exact="onEnterFromFirstInput"
           maxlength="11"
+          ref="phoneInputRef"
         />
       </div>
 
-      <div class="bp-err" :class="{ 'bp-err_show': bpData.firstErr }">
+      <div class="liu-no-user-select bp-err" 
+        :class="{ 'bp-err_show': bpData.firstErr }"
+      >
         <span>{{ bpData.firstErr ?? " " }}</span>
       </div>
 
@@ -73,6 +80,7 @@ const { t } = useI18n()
           id="bind-code"
           maxlength="6"
           @keyup.enter.exact="onEnterFromSecondInput"
+          ref="secondInputRef"
         />
 
         <SmsButton v-model:status="bpData.sendCodeStatus"
@@ -81,7 +89,9 @@ const { t } = useI18n()
 
       </div>
 
-      <div class="bp-err" :class="{ 'bp-err_show': bpData.secondErr }">
+      <div class="liu-no-user-select bp-err" 
+        :class="{ 'bp-err_show': bpData.secondErr }"
+      >
         <span v-if="bpData.secondErr">{{ bpData.secondErr }}</span>
       </div>
 
@@ -93,6 +103,12 @@ const { t } = useI18n()
       >
         <span>{{ t('common.confirm') }}</span>
       </CustomBtn>
+
+      <div class="liu-no-user-select bp-err bp-err_btn" 
+        :class="{ 'bp-err_show': bpData.btnErr }"
+      >
+        <span>{{ bpData.btnErr ?? " " }}</span>
+      </div>
 
     </div>
   </div>
@@ -133,7 +149,7 @@ const { t } = useI18n()
 }
 
 .bp-box {
-  padding: 32px;
+  padding: 32px 32px 24px;
   border-radius: 24px;
   overflow: hidden;
   background-color: var(--card-bg);
@@ -184,10 +200,10 @@ const { t } = useI18n()
 
 .bp-compliance {
   width: 100%;
-  color: var(--main-normal);
+  color: var(--main-code);
   font-size: var(--mini-font);
   line-height: 1.5;
-  padding-block: 20px;
+  padding-block-end: 20px;
 }
 
 .bp-bar {
@@ -245,6 +261,13 @@ const { t } = useI18n()
   margin-block-start: 5px;
 }
 
+.bp-err_btn {
+  margin-block-start: 16px;
+  padding-inline: 16px;
+  text-align: center;
+  text-wrap: pretty;
+}
+
 .bp-err_show {
   opacity: 1;
   max-height: 40px;
@@ -272,11 +295,15 @@ const { t } = useI18n()
 
 @media screen and (max-width: 500px) {
   .bp-box {
-    padding: 24px;
+    padding: 24px 24px 16px;
   }
 
   .bp-title {
     font-size: var(--title-font);
+  }
+
+  .bp-compliance {
+    padding-block-end: 5px;
   }
 
   .bp-input {

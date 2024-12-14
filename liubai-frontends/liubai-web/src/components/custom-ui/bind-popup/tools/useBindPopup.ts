@@ -1,8 +1,9 @@
-import { reactive, toRef, watch } from "vue"
+import { reactive, ShallowRef, toRef, useTemplateRef, watch } from "vue"
 import type { 
   BpData, 
   BpParam, 
   BpResolver,
+  BpType,
 } from "./types"
 import type { 
   LiuTimeout,
@@ -11,6 +12,8 @@ import cfg from "~/config"
 import liuUtil from "~/utils/liu-util"
 import { useThrottleFn } from "~/hooks/useVueUse"
 import { i18n } from "~/locales"
+import APIs from "~/requests/APIs"
+import liuReq from "~/requests/liu-req"
 
 
 const TRANSITION_DURATION = 350
@@ -28,7 +31,15 @@ const bpData = reactive<BpData>({
   btnLoading: false,
 })
 
+let emailInputRef: ShallowRef<HTMLInputElement | null>
+let phoneInputRef: ShallowRef<HTMLInputElement | null>
+let secondInputRef: ShallowRef<HTMLInputElement | null>
+
 export function initBindPopup() {
+
+  emailInputRef = useTemplateRef<HTMLInputElement>("emailInputRef")
+  phoneInputRef = useTemplateRef<HTMLInputElement>("phoneInputRef")
+  secondInputRef = useTemplateRef<HTMLInputElement>("secondInputRef")
 
   const firstInputVal = toRef(bpData, "firstInputVal")
   const secondInputVal = toRef(bpData, "secondInputVal")
@@ -59,12 +70,15 @@ export function initBindPopup() {
   })
 
   return {
+    emailInputRef,
+    phoneInputRef,
+    secondInputRef,
     bpData,
     TRANSITION_DURATION,
     onTapSubmit,
     onTapClose,
     onEnterFromFirstInput: useThrottleFn(toEnterFromFirstInput, 1000),
-    onEnterFromSecondInput: useThrottleFn(onTapSubmit, 1000),
+    onEnterFromSecondInput: useThrottleFn(toEnterFromSecondInput, 1000),
     onTapGettingCode,
   }
 }
@@ -81,15 +95,20 @@ function checkCanSubmit() {
   }
 
   const res2 = liuUtil.check.isAllNumber(secondInputVal, 6)
-  bpData.canSubmit = Boolean(res1 && res2)
+  const canSubmit = Boolean(res1 && res2)
+  bpData.canSubmit = canSubmit
+
+  if(canSubmit && bpData.btnErr) {
+    delete bpData.btnErr
+  }
+
 }
 
-function onTapGettingCode() {
-  if(bpData.btnLoading || bpData.sendCodeStatus !== "can_tap") return
+
+function getFirstInputResult() {
   const { firstInputVal } = bpData
   let firstInputCorrect = false
 
-  // 1. get err msg
   const t = i18n.global.t
   const bT = bpData.bindType
   let errMsg = ""
@@ -102,20 +121,90 @@ function onTapGettingCode() {
     errMsg = t("bind.err_4")
   }
 
+  return { firstInputCorrect, errMsg }
+}
+
+function onTapGettingCode() {
+  if(bpData.btnLoading || bpData.sendCodeStatus !== "can_tap") return
+  const { firstInputCorrect, errMsg } = getFirstInputResult()
+
   // 2. check if first input is correct
   if(!firstInputCorrect) {
     bpData.firstErr = errMsg
     return
   }
 
-  // 3. send code
-  bpData.sendCodeStatus = "loading"
-
+  // 3. get required data to request code
+  const bT = bpData.bindType
+  if(bT === "phone") {
+    toGetCodeForPhone(bpData)
+  }
+  else if(bT === "email") {
+    // WIP: request auth code for binding email
+  }
+  
 }
 
 
-function toEnterFromFirstInput() {
+async function toGetCodeForPhone(
+  bpData: BpData,
+) {
+  const phone = `86_${bpData.firstInputVal}`
+  const url = APIs.BIND_DATA
+  const body = {
+    operateType: "request-sms",
+    plz_enc_phone: phone,
+  }
+  bpData.sendCodeStatus = "loading"
 
+  console.warn("ready to send!")
+  console.log(body)
+
+  
+  const res = await liuReq.request(url, body)
+  console.log("toGetCodeForPhone res: ")
+  console.log(res)
+
+  const { code } = res
+  if(code === "0000") {
+    bpData.sendCodeStatus = "counting"
+    return
+  }
+
+  const t = i18n.global.t
+  bpData.sendCodeStatus = "can_tap"
+  if(code === "US003") {
+    bpData.firstErr = t("bind.err_3")
+  }
+  else if(code === "US004") {
+    bpData.firstErr = t("bind.err_5")
+  }
+  else {
+    bpData.btnErr = t("err.unknown_err")
+  }
+}
+
+function toEnterFromSecondInput() {
+  if(bpData.btnLoading || bpData.sendCodeStatus !== "can_tap") return
+  if(!bpData.canSubmit) return
+  onTapSubmit()
+  secondInputRef?.value?.blur()
+}
+
+function toEnterFromFirstInput() {
+  if(bpData.btnLoading || bpData.sendCodeStatus !== "can_tap") return
+  const { firstInputCorrect, errMsg } = getFirstInputResult()
+  if(!firstInputCorrect) return
+  onTapGettingCode()
+
+  const bT = bpData.bindType
+  if(bT === "email") {
+    emailInputRef?.value?.blur()
+  }
+  else if(bT === "phone") {
+    phoneInputRef?.value?.blur()
+  }
+  secondInputRef?.value?.focus()
 }
 
 export function showBindPopup(param: BpParam) {
