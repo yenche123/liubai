@@ -15,7 +15,6 @@ import { equipThreads } from "~/utils/controllers/equip/threads";
 import { getTagIdsParents } from "~/utils/system/tag-related";
 import type { SpaceType } from "~/types/types-basic";
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
-import liuConsole from "~/utils/debug/liu-console";
 import { resetBasicCeData } from "./some-funcs";
 import { setStateForNewThread } from "~/hooks/thread/specific-operate/state";
 

@@ -335,7 +335,12 @@ async function initFromCloudDraft(
   if(firRes.status === "not_found") {
     if(local_draft) {
       let threadId = local_draft.threadEdited
-      ceData.draftId = ""
+      let localDraftId = ceData.draftId
+      if(localDraftId) {
+        console.warn("Let me delete the stubborn draft!")
+        localReq.deleteDraftById(localDraftId)
+        ceData.draftId = ""
+      }
       if(threadId) {
         initFromCloudThread(ctx, threadId, false)
       }
