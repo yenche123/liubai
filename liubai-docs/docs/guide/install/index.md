@@ -36,7 +36,15 @@ title: 安装
 
 ## 电脑
 
-working in progress
+<a href="./mac">
+  <img src="./assets/mac.jpg" alt="mac" width="280" style="margin-block-end: 10px; border-radius: 10px;">
+</a>
+
+<a href="./windows">
+  <img src="./assets/windows.png" alt="windows" width="280" style="margin-block-end: 10px; border-radius: 10px;">
+</a>
+
+以上品牌，按首字母排序。
 
 
 
