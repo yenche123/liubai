@@ -6,7 +6,6 @@ import cui from "~/components/custom-ui"
 import { useAwakeNum } from "~/hooks/useCommon"
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 
-
 export function useAccountsContent() {
 
   const hasBE = liuEnv.hasBackend()
@@ -28,7 +27,7 @@ export function useAccountsContent() {
       _showUnsupported()
       return
     }
-
+    toBindPhone(acData)
   }
 
   const onTapWeChat = () => {
@@ -56,6 +55,15 @@ export function useAccountsContent() {
     onTapPhone,
     onTapWeChat,
     onTapEmail,
+  }
+}
+
+async function toBindPhone(
+  acData: AcData,
+) {
+  const res = await cui.showBindPopup({ bindType: "phone", compliance: false })
+  if(res.bound) {
+    getMyData(acData)
   }
 }
 

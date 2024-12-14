@@ -3,7 +3,6 @@ import type {
   BpData, 
   BpParam, 
   BpResolver,
-  BpType,
 } from "./types"
 import type { 
   LiuTimeout,
@@ -79,7 +78,7 @@ export function initBindPopup() {
     onTapClose,
     onEnterFromFirstInput: useThrottleFn(toEnterFromFirstInput, 1000),
     onEnterFromSecondInput: useThrottleFn(toEnterFromSecondInput, 1000),
-    onTapGettingCode,
+    onTapGettingCode: useThrottleFn(onTapGettingCode, 2000),
   }
 }
 
@@ -156,16 +155,13 @@ async function toGetCodeForPhone(
     plz_enc_phone: phone,
   }
   bpData.sendCodeStatus = "loading"
-
-  console.warn("ready to send!")
-  console.log(body)
-
+  delete bpData.firstErr
   
   const res = await liuReq.request(url, body)
   console.log("toGetCodeForPhone res: ")
   console.log(res)
 
-  const { code } = res
+  const { code, errMsg } = res
   if(code === "0000") {
     bpData.sendCodeStatus = "counting"
     return
@@ -180,7 +176,7 @@ async function toGetCodeForPhone(
     bpData.firstErr = t("bind.err_5")
   }
   else {
-    bpData.btnErr = t("err.unknown_err")
+    bpData.btnErr = errMsg ?? t("err.unknown_err")
   }
 }
 
@@ -228,9 +224,65 @@ export function showBindPopup(param: BpParam) {
 }
 
 function onTapSubmit() {
-  if(!bpData.canSubmit) return
+  if(!bpData.canSubmit || bpData.btnLoading) return
   delete bpData.btnErr
 
+  const bT = bpData.bindType
+  if(bT === "phone") {
+    toSubmitForPhone()
+  }
+  else if(bT === "email") {
+    // WIP: submit for email
+  }
+
+}
+
+async function toSubmitForPhone() {
+  const { firstInputVal, secondInputVal } = bpData
+  const body = {
+    operateType: "bind-phone",
+    plz_enc_phone: `86_${firstInputVal}`,
+    smsCode: secondInputVal,
+  }
+  const url = APIs.BIND_DATA
+
+  bpData.btnLoading = true
+  const res = await liuReq.request(url, body)
+  bpData.btnLoading = false
+
+  console.warn("toSubmitForPhone res: ")
+  console.log(res)
+
+  const { code, errMsg } = res
+  if(code === "0000") {
+    _bound()
+    return
+  }
+
+  const t = i18n.global.t
+  if(code === "E4003") {
+    bpData.btnErr = t("bind.err_2")
+    bpData.canSubmit = false
+  }
+  else if(code === "US003") {
+    bpData.btnErr = t("bind.err_3")
+    bpData.firstInputVal = ""
+    bpData.secondInputVal = ""
+  }
+  else if(code === "US004") {
+    bpData.btnErr = t("bind.err_5")
+    bpData.firstInputVal = ""
+    bpData.secondInputVal = ""
+  }
+  else {
+    bpData.btnErr = errMsg ?? t("err.unknown_err")
+    bpData.canSubmit = false
+  }
+}
+
+function _bound() {
+  _resolve && _resolve({ bound: true })
+  _toClose()
 }
 
 function onTapClose() {
