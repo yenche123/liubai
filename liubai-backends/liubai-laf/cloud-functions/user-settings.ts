@@ -161,6 +161,8 @@ async function handle_bind_phone(
   const now7 = getNowStamp()
   if(now7 > expireStamp) {
     console.warn("the smsCode is expired")
+    console.log(phone)
+    console.log("duration: ", now7 - expireStamp)
     return errReturnData
   }
 
@@ -175,8 +177,6 @@ async function handle_bind_phone(
   }
   const uCol = db.collection("User")
   const res9 = await uCol.doc(userId).update(u9)
-  console.log("update user in handle_bind_phone: ")
-  console.log(res9)
   updateUserInCache(userId)
   return { code: "0000" }
 }
@@ -207,8 +207,6 @@ async function handle_request_sms(
   // 2. get phone
   const body = res1.newBody
   const { phone } = body
-  console.log("phone in handle_request_sms: ")
-  console.log(phone)
   if(!phone || typeof phone !== "string") {
     return { code: "E4000", errMsg: "phone is required" }
   }
@@ -273,8 +271,8 @@ async function handle_request_sms(
 
   // 8. handle result of sending
   if(res7.data) {
-    console.log("send sms might be successful, let's see result: ")
-    console.log(res7.data)
+    console.log("send sms might be successful, let's see SendStatusSet: ")
+    console.log(res7.data?.SendStatusSet)
     const u8: Partial<Table_Credential> = {
       send_channel: "tencent-sms",
       sms_sent_result: res7.data,

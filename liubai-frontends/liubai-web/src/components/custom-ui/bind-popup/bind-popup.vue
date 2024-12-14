@@ -96,7 +96,7 @@ const { t } = useI18n()
       </div>
 
       <CustomBtn
-        :disabled="!bpData.canSubmit"
+        :disabled="!bpData.canSubmit || bpData.btnLoading"
         class="bp-finish-btn"
         :is-loading="bpData.btnLoading"
         @click="onTapSubmit"

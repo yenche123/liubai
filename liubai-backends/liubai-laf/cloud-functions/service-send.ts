@@ -256,10 +256,12 @@ export class LiuTencentSMS {
     const len1 = list.length
     if(len1 < 1) return
     const lastItem = list[len1 - 1]
-    console.log("after sms: ")
-    console.log(lastItem)
     if(lastItem.ReportStatus === "FAIL") {
       console.warn("figure out a problem with tencent sms")
+      console.log(lastItem)
+    }
+    else if(lastItem.Description !== "DELIVRD") {
+      console.warn("figure out a kind of weird description from tencent sms")
       console.log(lastItem)
     }
   }
