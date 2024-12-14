@@ -32,6 +32,7 @@ import ider from "~/utils/basic/ider"
 import { useThrottleFn } from "~/hooks/useVueUse"
 import { useActiveSyncNum } from "~/hooks/useCommon"
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud"
+import valTool from "~/utils/basic/val-tool"
 
 const SEC_6 = 6 * time.SECONED
 const SEC_30 = 30 * time.SECONED
@@ -310,6 +311,8 @@ async function initFromCloudDraft(
   }
 
   if(local_draft) {
+    console.log("initFromCloudDraft local_draft: ")
+    console.log(valTool.copyObject(local_draft))
     const res1 = liuUtil.check.hasEverSynced(local_draft)
     if(!res1) return
     opt.draft_id = local_draft._id
