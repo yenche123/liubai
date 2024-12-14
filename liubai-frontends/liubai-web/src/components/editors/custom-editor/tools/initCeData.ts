@@ -219,7 +219,13 @@ async function setDataFromDraft(
     ceData.storageState = draft.storageState
   }
 
-  ceData.aiReadable = !canSync ? "N" : draft.aiReadable
+  // handle aiReadable
+  if(!canSync) {
+    ceData.aiReadable = "N"
+  }
+  else if(typeof draft.aiReadable === "string") {
+    ceData.aiReadable = draft.aiReadable
+  }
   ceData.title = draft.title
   ceData.showTitleBar = Boolean(draft.title)
   ceData.whenStamp = draft.whenStamp
