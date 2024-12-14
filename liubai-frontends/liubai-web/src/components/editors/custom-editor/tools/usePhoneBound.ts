@@ -3,8 +3,6 @@ import type { BaseIsOn } from "~/types/types-basic"
 import type { UserLocalTable } from "~/types/types-table"
 import { useActiveSyncNum } from "~/hooks/useCommon"
 import { watch } from "vue"
-import localCache from "~/utils/system/local-cache"
-import { db } from "~/utils/db"
 import time from "~/utils/basic/time"
 import { CloudEventBus } from "~/utils/cloud/CloudEventBus"
 
@@ -54,10 +52,7 @@ interface DataForPhoneBound {
 }
 
 async function getDataFromLocalDB(): Promise<DataForPhoneBound | undefined> {
-  const { local_id: userId } = localCache.getPreference()
-  if(!userId) return
-
-  const res1 = await db.users.get(userId)
+  const res1 = await CloudEventBus.getUserFromDB()
   if(!res1) return
   const res2 = Boolean(res1.phone_pixelated)
   const data: DataForPhoneBound = {

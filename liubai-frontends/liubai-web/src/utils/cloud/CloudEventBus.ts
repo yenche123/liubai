@@ -298,6 +298,10 @@ class CloudEventBus {
     return readonly(this.syncNum)
   }
 
+  static addSyncNumManually() {
+    this.syncNum.value += 1
+  }
+
   /** call it after just logging in */
   static justLogged() {
     this.syncNum.value += 1

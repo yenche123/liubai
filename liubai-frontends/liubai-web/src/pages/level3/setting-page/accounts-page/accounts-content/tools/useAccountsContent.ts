@@ -1,5 +1,5 @@
 import { reactive, watch } from "vue"
-import { AcData } from "./types"
+import type { AcData } from "./types"
 import { pageStates } from "~/utils/atom"
 import liuEnv from "~/utils/liu-env"
 import cui from "~/components/custom-ui"
@@ -63,7 +63,8 @@ async function toBindPhone(
 ) {
   const res = await cui.showBindPopup({ bindType: "phone", compliance: false })
   if(res.bound) {
-    getMyData(acData)
+    console.warn("addSyncNumManually!")
+    CloudEventBus.addSyncNumManually()
   }
 }
 
@@ -82,6 +83,8 @@ function listenContext(
   const { syncNum, awakeNum } = useAwakeNum()
   watch(awakeNum, (newV) => {
     if(newV < 1 || syncNum.value < 1) return
+    console.warn(`receive context changed!`)
+    console.log(`awakeNum: ${newV}; syncNum: ${syncNum.value}`)
     getMyData(acData)
   }, { immediate: true })
 }
