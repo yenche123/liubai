@@ -437,7 +437,6 @@ async function toSave(ctx: CesCtx) {
     oState = "OK"
   }
   const aiReadable = ceData.aiReadable
-  console.log("to save ai readable: ", aiReadable)
 
   const draft: DraftLocalTable = {
     _id,

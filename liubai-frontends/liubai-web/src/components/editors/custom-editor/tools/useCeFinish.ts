@@ -17,6 +17,7 @@ import type { SpaceType } from "~/types/types-basic";
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 import { resetBasicCeData } from "./some-funcs";
 import { setStateForNewThread } from "~/hooks/thread/specific-operate/state";
+import cui from "~/components/custom-ui";
 
 // 本文件处理发表的逻辑
 
@@ -42,14 +43,40 @@ export function useCeFinish(ctx: CepContext) {
   member = spaceRefs.memberId
 
   const toFinish: CepToPost = (focusRequired: boolean) => {
+    // 1. check out context
+    const { ceData } = ctx
     if(!member.value) return
-    if(!ctx.ceData.canSubmit) return
-    const { threadEdited } = ctx.ceData
+    if(!ceData.canSubmit) return
+
+    // 2. check out phone bound
+    const res2 = detectPhoneBound(ceData)
+    if(!res2) {
+      popupForPhone(ceData)
+      return
+    }
+
+    // 3. to update or release
+    const { threadEdited } = ceData
     if(threadEdited) toUpdate(ctx)
     else toRelease(ctx, focusRequired)
   }
 
   return { toFinish }
+}
+
+
+function detectPhoneBound(ceData: CeData) {
+  const { phoneBound, storageState: ss } = ceData
+  if(!phoneBound || phoneBound === "Y") return true
+  if(ss === "LOCAL" || ss === "ONLY_LOCAL") return true
+  return false
+}
+
+async function popupForPhone(ceData: CeData) {
+  const res = await cui.showBindPopup({ bindType: "phone", compliance: true })
+  if(res.bound) {
+    ceData.phoneBound = "Y"
+  }
 }
 
 // to release
