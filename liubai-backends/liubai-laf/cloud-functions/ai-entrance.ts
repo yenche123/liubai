@@ -1184,8 +1184,13 @@ class BaseBot {
     const res4 = await this.chat(newChatParam, bot)
     if(!res4) return
 
+    // console.warn(`${c}'s chat continues after web search: `)
+    // console.log(res4.usage)
+    // console.log(res4.choices?.[0]?.finish_reason)
+    // console.log(res4.choices?.[0]?.message)
+
     // 5. can i reply
-    const res5 = await AiHelper.canReply(aiParam)
+    const res5 = await AiHelper.canReply(aiParam, bot)
     if(!res5) return
 
     // 6. handle text from response
@@ -1431,6 +1436,9 @@ class BotDeepSeek extends BaseBot {
     const model = bot.model
 
     // 3. handle other things
+    if(aiParam.isContinueCommand) {
+      prompts.push({ role: "user", content: "Continue / 继续" })
+    }
 
     // 4. calculate maxTokens
     const maxToken = AiHelper.getMaxToken(totalToken, chats[0], bot)
@@ -2859,14 +2867,7 @@ class TransformContent {
     return msg
   }
 
-
-
-
-
-
 }
-
-
 
 
 /******************** tool for web search ************************/
