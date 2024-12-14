@@ -25,6 +25,7 @@ import { useI18n } from "vue-i18n";
 import { type CeEmits, ceProps } from "./tools/types";
 import { useDraftIdChanged } from "./tools/useDraftIdChanged";
 import { useEditorHeight } from "./tools/useEditorHeight";
+import { usePhoneBound } from "./tools/usePhoneBound";
 
 const { t } = useI18n()
 
@@ -92,6 +93,7 @@ const {
 } = useCeData(props, emits, ceData, toFinish, editor)
 
 useDraftIdChanged(ceData)
+usePhoneBound(props, ceData)
 
 </script>
 <template>

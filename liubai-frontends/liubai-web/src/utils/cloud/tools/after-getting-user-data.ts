@@ -76,6 +76,8 @@ async function handleUser(
     github_id: d.github_id,
     open_id: d.open_id,
     updatedStamp: now,
+    phone_pixelated: d.phone_pixelated,
+    wx_gzh_openid: d.wx_gzh_openid,
   }
   if(opt?.isRefresh) {
     u.lastRefresh = now

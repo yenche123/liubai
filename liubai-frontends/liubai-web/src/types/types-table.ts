@@ -42,9 +42,10 @@ export interface UserLocalTable extends BaseLocalTable {
   lastRefresh: number
   email?: string
   github_id?: number
-  phone?: string
   open_id?: string
   subscription?: UserSubscription
+  phone_pixelated?: string
+  wx_gzh_openid?: string
 }
 
 export interface WorkspaceLocalTable extends BaseLocalTable {

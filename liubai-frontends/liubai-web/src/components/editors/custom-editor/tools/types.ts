@@ -25,6 +25,7 @@ export interface CeData {
   canSubmit: boolean
   reject_draft_ids?: string[]
   more: boolean
+  phoneBound?: BaseIsOn
 }
 
 export const defaultData: CeData = {
