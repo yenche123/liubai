@@ -26,6 +26,7 @@ export interface ModalParam {
   isTitleEqualToEmoji?: boolean
   iconName?: string
   iconUrl?: string
+  alignment?: "center" | "left"
   success?: (res: ModalSuccessRes) => void
 }
 
@@ -46,6 +47,7 @@ export interface ModalData {
   isTitleEqualToEmoji?: boolean
   iconName?: string
   iconUrl?: string
+  alignment: "center" | "left"
   tipSelected: boolean
 }
 

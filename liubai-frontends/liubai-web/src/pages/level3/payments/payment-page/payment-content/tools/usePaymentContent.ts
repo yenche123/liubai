@@ -42,12 +42,24 @@ export function usePaymentContent() {
     whenTapWxpayH5(pcData, rr)
   }, 1000)
 
+  const onTapViewBenefits = () => {
+    const content = pcData.od?.desc
+    if(!content) return
+    cui.showModal({
+      title: pcData.od?.title,
+      content,
+      alignment: "left",
+      showCancel: false,
+    })
+  }
+
   return {
     pcData,
     cha,
     onTapAlipay,
     onTapWxpayJSAPI,
     onTapWxpayH5,
+    onTapViewBenefits,
   }
 }
 

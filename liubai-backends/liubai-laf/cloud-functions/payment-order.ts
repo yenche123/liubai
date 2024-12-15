@@ -419,6 +419,7 @@ function packageOrderData(
     tradedStamp: d.tradedStamp,
     insertedStamp: d.insertedStamp,
     canPay: d.oState === "OK" && d.orderStatus === "INIT",
+    desc: subPlan?.desc,
   }
   if(d.expireStamp) {
     if(now >= d.expireStamp) {

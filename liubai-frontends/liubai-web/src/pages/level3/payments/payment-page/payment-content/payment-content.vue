@@ -10,6 +10,7 @@ const {
   onTapAlipay,
   onTapWxpayJSAPI,
   onTapWxpayH5,
+  onTapViewBenefits,
 } = usePaymentContent()
 
 const qrcode = useQRCode(() => {
@@ -97,6 +98,15 @@ const arrowColor = "var(--main-normal)"
       <span>{{ t('payment.pay_immediately') }}</span>
     </button>
 
+    <!-- desc -->
+    <div class="pc-bottom-area">
+      <div class="pc-bottom-tip" v-if="pcData.od?.desc" 
+        @click.stop="onTapViewBenefits"
+      >
+        <span>{{ t('payment.view_benefits') }}</span>
+      </div>
+    </div>
+
   </div>
 
   <!-- 4. alipay -->
@@ -125,9 +135,16 @@ const arrowColor = "var(--main-normal)"
     </div>
 
     <!-- pay button -->
-    <button class="pc-btn pc-alipay-button" @click.stop="onTapAlipay">
-      <span>{{ t('payment.pay_immediately') }}</span>
-    </button>
+    <div class="pc-bottom-area">
+      <button class="pc-btn pc-alipay-button" @click.stop="onTapAlipay">
+        <span>{{ t('payment.pay_immediately') }}</span>
+      </button>
+      <div class="pc-bottom-tip" v-if="pcData.od?.desc" 
+        @click.stop="onTapViewBenefits"
+      >
+        <span>{{ t('payment.view_benefits') }}</span>
+      </div>
+    </div>
 
   </div>
 
@@ -315,13 +332,28 @@ const arrowColor = "var(--main-normal)"
   border-radius: 8px;
 }
 
-.pc-alipay-button {
+.pc-bottom-area {
   position: absolute;
-  bottom: 50px;
+  bottom: 30px;
   left: 0;
   right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pc-alipay-button {
   background-color: var(--alpay-blue);
   border-radius: 50px;
+  margin-block-end: 20px;
+}
+
+.pc-bottom-tip {
+  font-size: var(--mini-font);
+  color: var(--main-note);
+  text-align: center;
+  cursor: pointer;
+  transition: .15s;
 }
 
 .pc-qrcode {
@@ -439,6 +471,10 @@ const arrowColor = "var(--main-normal)"
   .pc-pay-button:hover {
     box-shadow: var(--card-shadow2-hover);
   }
+
+  .pc-bottom-tip:hover {
+    opacity: .75;
+  }
 }
 
 .pc-wxpay-button:active {
@@ -452,6 +488,10 @@ const arrowColor = "var(--main-normal)"
 .pc-pay-button:active {
   background-color: var(--on-primary);
   box-shadow: var(--card-shadow2-hover);
+}
+
+.pc-bottom-tip:active {
+  opacity: .8;
 }
 
 

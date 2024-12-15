@@ -517,7 +517,8 @@
     "alipay": "支付寶",
     "wxpay": "微信支付",
     "go_to_group": "進入 VIP 群組",
-    "scan_with_wx": "請用微信掃描"
+    "scan_with_wx": "請用微信掃描",
+    "view_benefits": "檢視權益"
   },
   "a2hs": {
     "title": "加入到桌面",

@@ -164,6 +164,7 @@ export interface Res_OrderData {
   insertedStamp: number
   canPay: boolean
   title?: string
+  desc?: string
 }
 
 export interface Res_PO_CreateOrder {

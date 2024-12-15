@@ -517,7 +517,8 @@
     "alipay": "支付宝",
     "wxpay": "微信支付",
     "go_to_group": "进入会员群",
-    "scan_with_wx": "请用微信扫一扫"
+    "scan_with_wx": "请用微信扫一扫",
+    "view_benefits": "查看权益"
   },
   "a2hs": {
     "title": "添加到桌面",

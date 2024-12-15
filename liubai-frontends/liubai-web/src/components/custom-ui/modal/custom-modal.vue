@@ -124,10 +124,10 @@ const iconUrl = computed(() => modalData.iconUrl)
     box-sizing: border-box;
     padding: 28px 6% 18px;
     border-radius: 10px;
-    text-align: center;
+    text-align: v-bind("modalData.alignment === 'left' ? 'start' : 'center'");
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: v-bind("modalData.alignment === 'left' ? 'flex-start' : 'center'");
     z-index: 5110;
     position: relative;
     overflow: hidden;

@@ -516,7 +516,8 @@
     "alipay": "Alipay",
     "wxpay": "WeChat Pay",
     "go_to_group": "Join VIP Group",
-    "scan_with_wx": "Please scan with WeChat"
+    "scan_with_wx": "Please scan with WeChat",
+    "view_benefits": "View Benefits"
   },
   "a2hs": {
     "title": "Add to Home",

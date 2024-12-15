@@ -30,7 +30,8 @@ const modalData = reactive<ModalData>({
   cancelText: "",
   confirmText: "",
   tipSelected: false,
-  modalType: "normal"
+  modalType: "normal",
+  alignment: "center",
 })
 
 
@@ -128,6 +129,7 @@ export async function showModal(
   modalData.isTitleEqualToEmoji = opt.isTitleEqualToEmoji ?? false
   modalData.iconName = opt.iconName
   modalData.iconUrl = opt.iconUrl
+  modalData.alignment = opt.alignment ?? "center"
 
   if(typeof opt.showCancel === "boolean") {
     modalData.showCancel = opt.showCancel
