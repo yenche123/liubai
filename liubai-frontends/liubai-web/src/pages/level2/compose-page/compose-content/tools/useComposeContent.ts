@@ -30,7 +30,6 @@ export function useComposeContent() {
     if(name !== "compose") return
 
     const { chatId } = query
-    console.log("chatId: ", chatId)
     if(valTool.isStringWithVal(chatId)) {
       if(chatId === ccData.chatId) return
       ccData.chatId = chatId

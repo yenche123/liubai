@@ -390,7 +390,7 @@ export function getEditedStr(
   if(!editedStamp) return
 
   let diff = Math.abs(createdStamp - editedStamp)
-  if(diff < 100) return
+  if(diff < (3 * time.SECONED)) return
 
   return showBasicTime(editedStamp)
 }
