@@ -1291,6 +1291,7 @@ export interface Table_User extends BaseTable {
   language: LocalLocale
   systemLanguage?: string
   lastEnterStamp?: number
+  activeStamp?: number
   subscription?: UserSubscription
   stripe_subscription_id?: string      // stripe 的 Subscription id
   stripe_customer_id?: string          // Customer id on Stripe

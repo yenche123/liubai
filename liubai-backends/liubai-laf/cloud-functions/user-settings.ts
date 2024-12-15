@@ -618,6 +618,7 @@ async function handle_enter(
   const now = getNowStamp()
   const u: MongoFilter<Table_User> = {
     lastEnterStamp: now,
+    activeStamp: now,
     updatedStamp: now,
     userAgent,
   }

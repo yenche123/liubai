@@ -1685,6 +1685,7 @@ async function handleUserWhileSigningIn(
   }
 
   const now = getNowStamp()
+  u.activeStamp = now
   u.lastEnterStamp = now
   u.updatedStamp = now
 

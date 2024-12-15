@@ -3965,9 +3965,11 @@ class AiHelper {
     }
 
     // 2. update
+    const now2 = getNowStamp()
     const u2: Partial<Table_User> = {
       quota,
-      updatedStamp: getNowStamp(),
+      activeStamp: now2,
+      updatedStamp: now2,
     }
     const uCol = db.collection("User")
     uCol.doc(userId).update(u2)
