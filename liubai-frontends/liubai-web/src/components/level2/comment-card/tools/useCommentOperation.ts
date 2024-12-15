@@ -74,7 +74,7 @@ function handleEmoji(
 }
 
 
-async function prepareToDelete(
+export async function prepareToDelete(
   cs: CommentShow,
 ) {
   const res = await cui.showModal({

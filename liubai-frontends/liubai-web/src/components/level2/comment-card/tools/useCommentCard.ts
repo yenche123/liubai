@@ -15,6 +15,7 @@ import {
 import { emojiList } from "~/config/emoji-list"
 import { useTemporaryStore } from "~/hooks/stores/useTemporaryStore";
 import valTool from "~/utils/basic/val-tool";
+import { prepareToDelete } from "./useCommentOperation"
 
 export function useCommentCard(
   props: CommentCardProps,
@@ -94,6 +95,12 @@ async function toContentPanel(
     const cs = props.cs
     cui.showCommentPopup({ operation: "edit_comment", commentShow: cs })
   }
+
+  if(res?.toDelete) {
+    await valTool.waitMilli(250)
+    prepareToDelete(props.cs)
+  }
+
 }
 
 function toCommentDetail(

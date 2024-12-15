@@ -22,6 +22,7 @@ export interface ContentPanelData {
 export interface ContentPanelRes {
   toReply?: boolean
   toEdit?: boolean
+  toDelete?: boolean
 }
 
 // 返回的 resolver 不带任何参数，只告知外部弹窗已关闭

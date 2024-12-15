@@ -50,6 +50,7 @@ export function initContentPanel() {
     onTapDetail,
     onTapReply,
     onTapEdit,
+    onTapDelete,
   }
 }
 
@@ -94,6 +95,11 @@ function onTapReply() {
 function onTapEdit() {
   closeIt(rr, queryKey)
   toResolve({ toEdit: true })
+}
+
+function onTapDelete() {
+  closeIt(rr, queryKey)
+  toResolve({ toDelete: true })
 }
 
 function onTapDetail() {

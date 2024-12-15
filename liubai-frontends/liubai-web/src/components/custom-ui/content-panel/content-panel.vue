@@ -16,6 +16,7 @@ const {
   onTapDetail,
   onTapReply,
   onTapEdit,
+  onTapDelete,
 } = initContentPanel()
 const { t } = useI18n()
 
@@ -116,6 +117,7 @@ const iconColor = `var(--other-btn-text)`
           <!-- 删除按钮 -->
           <div class="liu-hover cpf-last" v-else
             :aria-label="t('common.delete')"
+            @click.stop="onTapDelete"
           >
             <svg-icon name="delete_400"
               :color="iconColor"
