@@ -26,6 +26,7 @@ export interface CeData {
   reject_draft_ids?: string[]
   more: boolean
   phoneBound?: BaseIsOn
+  aiChatId?: string
 }
 
 export const defaultData: CeData = {
@@ -41,6 +42,7 @@ export const defaultData: CeData = {
 
 export interface CeProps {
   forceUpdateNum: number  // let edit-content force me to update
+  composing: boolean
   threadId?: string
 }
 
@@ -49,7 +51,11 @@ export const ceProps = {
     type: Number,
     default: 0,
   },
-  threadId: String
+  threadId: String,
+  composing: {
+    type: Boolean,
+    default: false,
+  },
 }
 
 export interface CeEmits {

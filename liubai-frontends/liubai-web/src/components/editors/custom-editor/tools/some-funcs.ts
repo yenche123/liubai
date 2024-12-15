@@ -61,5 +61,6 @@ export function resetBasicCeData(
   delete ceData.files
   delete ceData.lastEditStamp
   delete ceData.stateId
+  delete ceData.aiChatId
   ceData.canSubmit = false
 }

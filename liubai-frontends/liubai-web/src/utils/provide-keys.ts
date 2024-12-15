@@ -1,7 +1,11 @@
 
 import type { InjectionKey, Ref, ShallowRef } from 'vue'
-import type { SvProvideInject, SvBottomUp } from "~/types/components/types-scroll-view"
+import type { 
+  SvProvideInject, 
+  SvBottomUp,
+} from "~/types/components/types-scroll-view"
 import type { GetChaRes } from './liu-api/tools/types'
+import type { ComposingData } from '~/types/types-atom'
 
 // InjectionKey 是什么? 参考: 
 // https://cn.vuejs.org/guide/typescript/composition-api.html#typing-provide-inject
@@ -34,6 +38,9 @@ export const editorSetKey = Symbol() as InjectionKey<Ref<number>>
 
 // 用于确认在浏览态时，editor 是否可交互
 export const editorCanInteractKey = Symbol() as InjectionKey<Ref<boolean>>
+
+// compose-page 向 custom-editor 传递外部或 ai 生成的数据
+export const composingDataKey = Symbol() as InjectionKey<ShallowRef<ComposingData | undefined>>
 
 // 用于跨级传递 scroll-view 的事件 (触底和触顶) 被触发
 export const scrollViewKey = Symbol() as InjectionKey<SvProvideInject>

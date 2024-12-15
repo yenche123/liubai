@@ -247,3 +247,14 @@ export type SyncSpeed = "instant" | "normal" | "slow"
 // about AI
 export type AiCharacter = "baixiaoying" | "deepseek" | "hailuo" | "kimi" | 
   "wanzhi" | "yuewen" | "zhipu"
+
+// for compose-page
+export interface ComposingData {
+  aiChatId?: string
+  title?: string
+  liuDesc?: LiuContent[]
+  calendarStamp?: number
+  remindStamp?: number
+  whenStamp?: number
+  remindMe?: LiuRemindMe
+}

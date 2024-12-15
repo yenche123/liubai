@@ -38,6 +38,7 @@ const SEC_5 = time.SECONED * 5
 
 interface CesCtx {
   ceData: CeData
+  props: CeProps
   emits: CeEmits
 }
 
@@ -49,7 +50,7 @@ export function useCeData(
   editor: ShallowRef<TipTapEditor | undefined>,
 ) {
 
-  const ctx: CesCtx = { ceData, emits }
+  const ctx: CesCtx = { props, ceData, emits }
   const wStore = useWorkspaceStore()
   const wRefs = storeToRefs(wStore)
   spaceIdRef = wRefs.spaceId
@@ -393,7 +394,8 @@ function collectState(ctx: CesCtx, instant: boolean = false) {
 }
 
 async function toSave(ctx: CesCtx) {
-  const { ceData } = ctx
+  const { ceData, props } = ctx
+  if(props.composing) return
   const now = time.getTime()
   lastSaveStamp = now
 

@@ -104,6 +104,7 @@ async function toRelease(
   preThread.emojiData = { total: 0, system: [] }
   preThread.createdStamp = now
   preThread.insertedStamp = now
+  preThread.aiChatId = ceData.aiChatId
   const newThread = preThread as ContentLocalTable
   
   // 2. to release

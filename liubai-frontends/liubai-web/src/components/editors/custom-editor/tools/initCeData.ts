@@ -100,6 +100,7 @@ export function initCeData(
   const whenCtxChanged = (cloud: boolean) => {
     const ctx = getCtx()
     if(!ctx) return
+    if(props.composing) return
     ceData.threadEdited = threadIdRef.value
     if(cloud) {
       preInitWithCloud(ctx)
