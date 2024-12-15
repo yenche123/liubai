@@ -3,12 +3,9 @@
 // 没有设置 x-frame-options 的网站
 export const domainAllowed = [
   "u1s1.site",
-  "podcastogether.com",
   "ghost.io",
   "cubox.pro",
-  "pod.link",
   "zhubai.love",
-  "xiaoyuzhoufm.com",
   "quail.ink",
   "yuque.com",
   "juejin.cn",
@@ -104,7 +101,6 @@ export const domainAllowed = [
   "suno.ai",
   "jsoncrack.com",
   "supertechfans.com",
-  "thinkany.ai",
   "kimi.moonshot.cn",
   "chatglm.cn",
   "hailuoai.com",
@@ -117,6 +113,21 @@ export const domainAllowed = [
   "csdn.net",
   "utgd.net",
   "psyche.co",
+
+  // about search
+  "thinkany.ai",
+  "n.cn",
+  "onionai.so",
+  "felo.ai",
+  "memfree.me",
+
+  // about podcast
+  "podcastogether.com",
+  "xiaoyuzhoufm.com",
+  "podquest.app",
+  "pod.link",
+  "embeds.audioboom.com",
+
 ]
 
 export const mastodonDomains = [

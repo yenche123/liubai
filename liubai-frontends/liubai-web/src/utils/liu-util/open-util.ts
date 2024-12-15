@@ -6,7 +6,6 @@ import cfg from "~/config"
 import thirdLink from "~/config/third-link"
 import { useLayoutStore } from "~/views/useLayoutStore"
 import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore"
-import liuEnv from "../liu-env"
 
 interface RrOpt {
   rr: RouteAndLiuRouter
@@ -114,8 +113,6 @@ function openBing(
 
 function getBingSearchLink(keyword: string) {
   const url = new URL(thirdLink.BING_SEARCH)
-  url.searchParams.append("showconv", "1")
-  url.searchParams.append("sendquery", "1")
   url.searchParams.append("q", keyword)
   return url.toString()
 }
