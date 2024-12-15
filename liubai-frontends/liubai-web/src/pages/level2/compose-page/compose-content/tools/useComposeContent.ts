@@ -42,8 +42,16 @@ export function useComposeContent() {
 
   }, { immediate: true })
 
+
+  const onFinished = () => {
+    // WIP: popup 收到！"继续聊天 or 去查看" 
+    rr.router.goHome()
+  }
+
+
   return {
     ccData,
+    onFinished,
   }
 }
 

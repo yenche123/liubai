@@ -4,6 +4,8 @@ import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
 import ComposeContent from "./compose-content/compose-content.vue";
 import { useI18n } from "vue-i18n";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
+import { onActivated } from "vue";
+import middleBridge from "~/utils/middle-bridge";
 
 const { t } = useI18n()
 
@@ -11,6 +13,10 @@ const rr = useRouteAndLiuRouter()
 const onTapHome = () => {
   rr.router.goHome()
 }
+
+onActivated(() => {
+  middleBridge.setAppTitle({ val_key: "common.editing" })
+})
 
 </script>
 <template>

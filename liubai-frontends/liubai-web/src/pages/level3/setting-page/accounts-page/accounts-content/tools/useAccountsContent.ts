@@ -63,7 +63,6 @@ async function toBindPhone(
 ) {
   const res = await cui.showBindPopup({ bindType: "phone", compliance: false })
   if(res.bound) {
-    console.warn("addSyncNumManually!")
     CloudEventBus.addSyncNumManually()
   }
 }
@@ -83,8 +82,6 @@ function listenContext(
   const { syncNum, awakeNum } = useAwakeNum()
   watch(awakeNum, (newV) => {
     if(newV < 1 || syncNum.value < 1) return
-    console.warn(`receive context changed!`)
-    console.log(`awakeNum: ${newV}; syncNum: ${syncNum.value}`)
     getMyData(acData)
   }, { immediate: true })
 }
@@ -94,9 +91,6 @@ async function getMyData(
 ) {
   const res = await CloudEventBus.getLatestUserInfo()
   if(!res) return
-
-  console.log("getMyData: ")
-  console.log(res)
 
   acData.email = res.email
   acData.phone_pixelated = res.phone_pixelated

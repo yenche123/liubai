@@ -2,7 +2,7 @@
 import CustomEditor from "~/components/editors/custom-editor/custom-editor.vue"
 import { useComposeContent } from "./tools/useComposeContent"
 
-const { ccData } = useComposeContent()
+const { ccData, onFinished } = useComposeContent()
 
 </script>
 <template>
@@ -13,6 +13,7 @@ const { ccData } = useComposeContent()
 
   <CustomEditor v-if="ccData.pageState < 0"
     composing
+    @updated="onFinished"
   ></CustomEditor>
 
 </template>

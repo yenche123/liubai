@@ -2,7 +2,7 @@
 // 仅从本地缓存上寻找！
 
 import type { TipTapEditor, TipTapJSONContent } from "~/types/types-editor"
-import { reactive, ref, provide, watch, toRef } from "vue"
+import { reactive, ref, provide, watch, toRef, inject } from "vue"
 import type { ShallowRef, Ref } from "vue"
 import type { CeData, CeEmits, CeProps } from "./types"
 import { defaultData } from "./types"
@@ -10,7 +10,7 @@ import type { ContentLocalTable, DraftLocalTable } from "~/types/types-table"
 import { useWorkspaceStore } from "~/hooks/stores/useWorkspaceStore"
 import localReq from "./req/local-req"
 import transferUtil from "~/utils/transfer-util"
-import { editorSetKey } from "~/utils/provide-keys"
+import { composingDataKey, editorSetKey } from "~/utils/provide-keys"
 import { storeToRefs } from "pinia"
 import { useGlobalStateStore } from "~/hooks/stores/useGlobalStateStore"
 import time from "~/utils/basic/time"
@@ -33,6 +33,7 @@ import { useThrottleFn } from "~/hooks/useVueUse"
 import { useActiveSyncNum } from "~/hooks/useCommon"
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud"
 import valTool from "~/utils/basic/val-tool"
+import type { ComposingData } from "~/types/types-atom"
 
 const SEC_6 = 6 * time.SECONED
 const SEC_30 = 30 * time.SECONED
@@ -50,10 +51,8 @@ export function initCeData(
   emits: CeEmits,
   editor: ShallowRef<TipTapEditor | undefined>,
 ) {
-
   const spaceStore = useWorkspaceStore()  
   spaceIdRef = storeToRefs(spaceStore).spaceId
-
   const threadIdRef = toRef(props, "threadId")
   
   // 不能用 shallowReactive 
@@ -98,9 +97,9 @@ export function initCeData(
   }
 
   const whenCtxChanged = (cloud: boolean) => {
+    if(props.composing) return
     const ctx = getCtx()
     if(!ctx) return
-    if(props.composing) return
     ceData.threadEdited = threadIdRef.value
     if(cloud) {
       preInitWithCloud(ctx)
@@ -110,7 +109,13 @@ export function initCeData(
     }
   }
 
-  watch([editor, spaceIdRef, threadIdRef], () => {
+  const contextReady = ref(false)
+  watch([editor, spaceIdRef, threadIdRef], (
+    [newV1, newV2]
+  ) => {
+    if(newV1 && newV2) {
+      contextReady.value = true
+    }
     whenCtxChanged(false)
   })
   
@@ -128,8 +133,45 @@ export function initCeData(
     whenCtxChanged(false)
   })
 
+
+  // listen to composing data for compose-page
+  if(props.composing) {
+    const composingDataRef = inject(composingDataKey, ref())
+    watch([contextReady, composingDataRef], (
+      [newV1, newV2]
+    ) => {
+      if(!newV1 || !newV2) return
+      const ctx = getCtx()
+      if(!ctx) return
+      whenComposingDataChanged(ctx, newV2)
+    }, { immediate: true })
+  }
+
   return { ceData }
 }
+
+
+function whenComposingDataChanged(
+  ctx: IcsContext,
+  composingData: ComposingData,
+) {
+  const { ceData } = ctx
+
+  const title = composingData.title
+  ceData.lastLockStamp = time.getTime()
+  ceData.aiChatId = composingData.aiChatId
+  ceData.title = title
+  ceData.showTitleBar = Boolean(title)
+  ceData.whenStamp = composingData.whenStamp
+  ceData.remindMe = composingData.remindMe
+  let descList: TipTapJSONContent[] | undefined = composingData.liuDesc
+  if(descList) {
+    descList = transferUtil.liuToTiptap(descList)
+  }
+  setEditorContent(ctx, descList)
+  checkToggleOfMore(ceData)
+}
+
 
 // spaceId 有值的周期内，本地的 user_id 肯定存在了
 async function initDraft(
@@ -203,7 +245,7 @@ async function setDataFromDraft(
   draft: DraftLocalTable,
   loadCloud: boolean = true,
 ) {
-  let { ceData } = ctx
+  const { ceData } = ctx
 
   // 开始处理 draft 有值的情况
   ceData.lastLockStamp = time.getTime()

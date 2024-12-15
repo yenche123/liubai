@@ -146,6 +146,9 @@ async function releaseAsync(
   }
   ctx.threadShowStore.setNewThreadShows(threadShows)
 
+  // 3.1 emit
+  ctx.emits("updated", newId)
+
   // 4. ignore if it's a local thread
   const storageState = newThread.storageState
   if(storageState === "LOCAL" || storageState === "ONLY_LOCAL") return

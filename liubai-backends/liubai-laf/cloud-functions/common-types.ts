@@ -1257,7 +1257,7 @@ export type SyncGetTable = Table_User | Table_Content |
 /*********************** 数据表类型 **********************/
 
 export type TableName = "User" | "Workspace" | "Member" | "Content"
-  | "Draft" | "Collection"
+  | "Draft" | "Collection" | "AiChat"
 
 /** Token表 */
 export interface Table_Token extends BaseTable {

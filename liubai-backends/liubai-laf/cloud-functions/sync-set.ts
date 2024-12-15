@@ -550,6 +550,10 @@ async function toPostThread(
 
   // 7. construct a new row of Table_Content
   const b7 = getBasicStampWhileAdding(ssCtx)
+  let editedStamp = thread.editedStamp as number
+  if(aiChat) {
+    editedStamp = b7.insertedStamp
+  }
   const newRow: PartialSth<Table_Content, "_id"> = {
     ...b7,
     first_id,
@@ -573,7 +577,7 @@ async function toPostThread(
     pinStamp: thread.pinStamp,
 
     createdStamp,
-    editedStamp: thread.editedStamp as number,
+    editedStamp,
     removedStamp: thread.removedStamp,
 
     tagIds: thread.tagIds,
@@ -2503,12 +2507,13 @@ async function updatePartData<T extends SyncSetTable>(
 async function updateAllData(
   ssCtx: SyncSetCtx,
 ) {
-  const { content, draft, member, workspace, collection } = ssCtx
+  const { content, draft, member, workspace, collection, aiChat } = ssCtx
   await toUpdateTable(content, "Content")
   await toUpdateTable(draft, "Draft")
   await toUpdateTable(workspace, "Workspace")
   await toUpdateTable(member, "Member")
   await toUpdateTable(collection, "Collection")
+  await toUpdateTable(aiChat, "AiChat")
 }
 
 
