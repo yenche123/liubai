@@ -4,20 +4,44 @@ import { inject, provide, ref, type Ref, watch } from "vue"
 import { useLayoutStore, LayoutStore } from "../../useLayoutStore"
 import { useWindowSize } from "~/hooks/useVueUse"
 import cfg from "~/config"
-import { viceViewWidthKey, mainViewWidthKey, outterWidthKey } from "~/utils/provide-keys"
+import { 
+  viceViewWidthKey, 
+  mainViewWidthKey, 
+  outterWidthKey,
+} from "~/utils/provide-keys"
 import liuUtil from "~/utils/liu-util"
+import type { MainViewProps } from "./types"
 
-export const useMainView = () => {
+export const useMainView = (
+  props: MainViewProps,
+) => {
 
   const layoutStore = useLayoutStore()
 
   const leftPx = ref(0)
   const centerPx = ref(0)
   const rightPx = ref(0)
+  provide(mainViewWidthKey, centerPx)
+  provide(outterWidthKey, centerPx)
 
-  initMainView(layoutStore, leftPx, centerPx, rightPx)
+  if(props.disablePanels) {
+    initMainView2(centerPx)
+  }
+  else {
+    initMainView(layoutStore, leftPx, centerPx, rightPx)
+  }
   
   return { leftPx, centerPx, rightPx }
+}
+
+function initMainView2(
+  center: Ref<number>,
+) {
+  const { width } = useWindowSize()
+  
+  watch(width, (newV) => {
+    center.value = newV
+  }, { immediate: true })
 }
 
 function initMainView(
@@ -32,9 +56,6 @@ function initMainView(
   leftPx.value = liuUtil.calibrateSidebarWidth(layoutStore.sidebarWidth)
   centerPx.value = width.value - leftPx.value - vvRef.value
   rightPx.value = vvRef.value
-
-  provide(mainViewWidthKey, centerPx)
-  provide(outterWidthKey, centerPx)
 
   // 监听左边侧边栏 + 窗口的变化
   layoutStore.$subscribe((mutation, state) => {

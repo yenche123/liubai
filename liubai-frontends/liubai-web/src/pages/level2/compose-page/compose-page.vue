@@ -1,14 +1,21 @@
 <script setup lang="ts">
+import MainView from "~/views/main-view/main-view.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
-import ComposeContent from "./compose-content/compose-content.vue"
+import ComposeContent from "./compose-content/compose-content.vue";
 import { useI18n } from "vue-i18n";
+import { useRouteAndLiuRouter } from "~/routes/liu-router";
 
 const { t } = useI18n()
+
+const rr = useRouteAndLiuRouter()
+const onTapHome = () => {
+  rr.router.goHome()
+}
 
 </script>
 <template>
 
-  <div class="liu-simple-page">
+  <MainView enable-drop-files disable-panels>
     <scroll-view>
 
       <div class="liu-mc-container compose-page">
@@ -19,13 +26,15 @@ const { t } = useI18n()
       </div>
 
       <div class="cp-bottom-box">
-        <div class="liu-no-user-select liu-hover cp-back-home">
+        <div class="liu-no-user-select liu-hover cp-back-home"
+          @click.stop="onTapHome"
+        >
           <span>{{ t('common.back_home') }}</span>
         </div>
       </div>
 
     </scroll-view>
-  </div>
+  </MainView>
 
 </template>
 <style scoped lang="scss">
@@ -35,19 +44,24 @@ const { t } = useI18n()
   min-height: 90dvh;
 }
 
+.liu-tc-virtual {
+  height: 20px;
+}
+
 .cp-bottom-box {
   width: 100%;
   min-height: 10vh;
   min-height: 10dvh;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
 }
 
 .cp-back-home {
   color: var(--main-note);
   font-size: var(--mini-font);
   text-align: center;
-  width: min(90%, 400px);
+  width: min(90%, 300px);
   padding: 10px 0;
 }
 

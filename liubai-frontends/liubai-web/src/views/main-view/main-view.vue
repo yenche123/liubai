@@ -11,7 +11,7 @@ const CenterDropZone = defineAsyncComponent(() => {
 const props = defineProps(mainViewProps)
 const emits = defineEmits<MainViewEmits>()
 
-const { leftPx, rightPx } = useMainView()
+const { leftPx, rightPx } = useMainView(props)
 const { 
   isOverDropZone, 
   centerRef,
