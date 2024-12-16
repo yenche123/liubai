@@ -31,6 +31,7 @@ declare global {
        *  其结尾请不要添加路径的开头 `/`
       */
       LIU_DOMAIN?: string
+      LIU_DOCS_DOMAIN?: string   // domain for documentation, don't add `/` at the end
 
       /** 内部 debug 时，通行码 */
       LIU_DEBUG_KEY?: string

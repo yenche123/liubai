@@ -145,7 +145,6 @@ async function send_wx_message(
     locale, 
     calendarStamp,
     wx_gzh_openid,
-    userId,
     timezone,
   } = atom
 

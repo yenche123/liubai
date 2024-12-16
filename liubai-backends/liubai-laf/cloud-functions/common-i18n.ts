@@ -876,6 +876,10 @@ export function i18nFill(
   res: string,
   opt2: Record<string, string | number>,
 ) {
+  const _env = process.env
+  opt2.LIU_DOMAIN = _env.LIU_DOMAIN ?? ""
+  opt2.LIU_DOCS_DOMAIN = _env.LIU_DOCS_DOMAIN ?? ""
+  
   const keys = Object.keys(opt2)
   for(let i=0; i<keys.length; i++) {
     const v = keys[i]
@@ -894,9 +898,6 @@ export function useI18n(
   langAtom: LangAtom,
   opt1?: GetLangValOpt,
 ) {
-  const _env = process.env
-  const LIU_DOMAIN = _env.LIU_DOMAIN ?? ""
-
   const _getVal = (key: string) => {
     const locale = getCurrentLocale(opt1)
     let val = langAtom[locale]?.[key]
@@ -911,13 +912,7 @@ export function useI18n(
   const t: T_I18N = (key, opt2) => {
     let res = _getVal(key)
     if(!res) return ""
-    if(!opt2) {
-      res = i18nFill(res, { LIU_DOMAIN })
-      return res
-    }
-
-    // 处理 opt2
-    res = i18nFill(res, { LIU_DOMAIN, ...opt2 })
+    res = i18nFill(res, opt2 ?? {})
     return res
   }
 

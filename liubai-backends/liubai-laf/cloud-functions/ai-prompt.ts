@@ -471,20 +471,11 @@ const translate_prompts = {
 
 
 function _get_p(thePrompts: Record<string, string>) {
-  const _env = process.env
-  const LIU_DOMAIN = _env.LIU_DOMAIN ?? ""
-
   const p: T_I18N = (key, opt2) => {
     if(!thePrompts) return ""
     let res = thePrompts[key]
     if(!res) return ""
-    if(!opt2) {
-      res = i18nFill(res, { LIU_DOMAIN })
-      return res.trim()
-    }
-
-     // handle opt2
-     res = i18nFill(res, { LIU_DOMAIN, ...opt2 })
+     res = i18nFill(res, opt2 ?? {})
      return res.trim()
   }
   

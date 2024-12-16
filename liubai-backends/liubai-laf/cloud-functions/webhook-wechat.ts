@@ -137,16 +137,14 @@ async function handle_click(
   // 2. get replies and the domain
   const replies = wxClickReplies[EventKey]
   if(!replies || replies.length < 1) return false
-  const _env = process.env
-  const LIU_DOMAIN = _env.LIU_DOMAIN ?? ""
-
+  
   // 3. reply
   for(let i = 0; i < replies.length; i++) {
     const v = replies[i]
     const obj = valTool.copyObject(v)
     if(obj.msgtype === "text") {
       const str = obj.text.content 
-      obj.text.content = i18nFill(str, { LIU_DOMAIN })
+      obj.text.content = i18nFill(str, {})
     }
     await sendObject(wx_gzh_openid, obj)
   }
