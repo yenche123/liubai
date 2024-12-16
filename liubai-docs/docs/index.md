@@ -15,11 +15,20 @@ hero:
       link: /guide/install
 
 features:
-  - title: "多设备"
+  - icon: 
+      dark: ./assets/devices_dark_theme.svg
+      light: ./assets/devices_light_theme.svg
+    title: "多设备"
     details: "你可以在 iPhone、安卓、鸿蒙、Mac、Windows 等设备间无缝同步数据。"
-  - title: "本地优先"
+  - icon: 
+      dark: ./assets/wifi_off_dark_theme.svg
+      light: ./assets/wifi_off_light_theme.svg
+    title: "本地优先"
     details: "即使在离线环境下，比如飞机上、动车上或任何弱网空间，你依然可以无压地使用。"
-  - title: "AI 加持"
+  - icon: 
+      dark: ./assets/person_celebrate_dark_theme.svg
+      light: ./assets/person_celebrate_light_theme.svg
+    title: "AI 加持"
     details: "在微信里，任意使用 7 家大模型，协助打理你的生活。"
 ---
 
