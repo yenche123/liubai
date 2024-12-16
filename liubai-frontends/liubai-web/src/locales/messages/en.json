@@ -292,10 +292,8 @@
   },
   "card_bubble": {
     "copy": "Copy",
-    "search_in": "Search inside",
-    "search_out": "Search outside",
-    "ask_bot": "ChatGPT",
-    "ask_bing": "Ask Bing"
+    "search_in": "Retrieve",
+    "search_out": "Ask Felo"
   },
   "placeholder": {
     "no_tag_yet": "No tags yet"

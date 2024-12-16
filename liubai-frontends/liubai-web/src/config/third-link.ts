@@ -1,21 +1,25 @@
 // 存放第三方链接
 
 export default {
-  SOUGO_SEARCH: "https://m.sogou.com/web/searchList.jsp",
-  CHAT_GPT: "https://chat.openai.com/chat",
-  BING_SEARCH: "https://www.bing.com/search",
-  XHS_SEARCH: "https://www.xiaohongshu.com/search_result",
   OUTLOOK_ADD: "https://outlook.live.com/calendar/0/deeplink/compose",
   LINE_SHARE_TXT: "https://line.me/R/share",
   ZHIY_CC: "https://zhiy.cc/",
   PARAGRAPH_XYZ: "https://paragraph.xyz/",
-  GUOKR_COM: "https://guokr.com/",
   HUPU_BBS: "https://bbs.hupu.com/",
   BENTO_ME: "https://bento.me/",
   BOOKING_COM: "https://booking.com/",
   CODA_IO: "https://coda.io/",
   M_CNBETA: "https://m.cnbeta.com.tw/",
   SPEAKERDECK_COM: "https://speakerdeck.com/",
+
+  // about search
+  BING_SEARCH: "https://www.bing.com/search",
+  FELO_SEARCH: "https://felo.ai/search",
+  SOUGO_SEARCH: "https://m.sogou.com/web/searchList.jsp",
+  XHS_SEARCH: "https://www.xiaohongshu.com/search_result",
+
+  // 果壳
+  GUOKR_COM: "https://guokr.com/",
 
   // street voice
   STREET_VOICE: "https://streetvoice.com/",

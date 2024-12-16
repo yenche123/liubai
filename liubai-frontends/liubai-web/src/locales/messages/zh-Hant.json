@@ -292,10 +292,8 @@
   },
   "card_bubble": {
     "copy": "複製",
-    "search_in": "内部搜尋",
-    "search_out": "外部搜尋",
-    "ask_bot": "ChatGPT",
-    "ask_bing": "問 Bing"
+    "search_in": "内部檢索",
+    "search_out": "問 Felo"
   },
   "placeholder": {
     "no_tag_yet": "還沒有任何標籤"

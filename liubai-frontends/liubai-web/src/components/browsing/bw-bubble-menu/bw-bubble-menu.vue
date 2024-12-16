@@ -62,21 +62,11 @@ const onTapContainer = () => {}
         :class="{ 'ec-bb-two_selected': selectedIndex === 2 }"
         @click.stop="onTapSearchOut"
       >
-        <!-- <svg-icon name="logos-google" :color="bubbleColor" class="ec-bubble-icon ec-bubble-outside"></svg-icon>
-        <span>{{ t('card_bubble.search_out') }}</span> -->
-
-        <svg-icon name="logos-bing" :color="bubbleColor" class="ec-bubble-icon ec-bubble-outside"></svg-icon>
-        <span>{{ t('card_bubble.ask_bing') }}</span>
+        <svg-icon name="arrow_outward" :color="bubbleColor" 
+          class="ec-bubble-icon_outward"
+        ></svg-icon>
+        <span>{{ t('card_bubble.search_out') }}</span>
       </div>
-
-      <!-- ChatGPT -->
-      <!-- <div class="ec-bb-two"
-        :class="{ 'ec-bb-two_selected': selectedIndex === 3 }"
-        @click="onTapBot"
-      >
-        <svg-icon name="logos-openai" :color="bubbleColor" class="ec-bubble-icon ec-bubble-chatgpt"></svg-icon>
-        <span>{{ t('card_bubble.ask_bot') }}</span>
-      </div> -->
       
     </div>
 
@@ -136,25 +126,16 @@ const onTapContainer = () => {}
   opacity: 0.1;
 }
 
-
 .ec-bubble-icon {
   width: 24px;
   height: 24px;
-  margin-bottom: 4px;
+  margin-block-end: 4px;
 }
 
-.ec-bubble-outside {
-  width: 22px;
-  height: 22px;
-  margin-bottom: 6px;
+.ec-bubble-icon_outward {
+  width: 26px;
+  height: 26px;
+  margin-block-end: 2px;
 }
-
-.ec-bubble-chatgpt {
-  width: 19px;
-  height: 19px;
-  margin-top: 2px;
-  margin-bottom: 7px;
-}
-
 
 </style>

@@ -180,8 +180,8 @@ const iconColor = "var(--main-normal)"
               <span v-else>{{ data.language_txt }}</span>
             </div>
             <div class="scb-footer-icon">
-              <svg-icon class="scbf-back"
-                name="arrow-right2"
+              <svg-icon class="scbf-svg-icon"
+                name="translate"
                 :color="iconColor"
               ></svg-icon>
             </div>

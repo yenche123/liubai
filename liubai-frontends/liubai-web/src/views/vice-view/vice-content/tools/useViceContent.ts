@@ -102,10 +102,6 @@ function listenRouteChange(
     showView(ctx, "third", val, thirdParty)
   }
 
-  const openChatGPT = (q: string) => {
-    setNewIframeSrc(thirdLink.CHAT_GPT)
-  }
-
   const openPDF = (q: string) => {
     setNewIframeSrc(q)
   }
@@ -119,6 +115,11 @@ function listenRouteChange(
   const openBingSearch = (q: string) => {
     const url = liuUtil.open.getBingSearchLink(q)
     setNewIframeSrc(url)
+  }
+
+  const openFeloSearch = (q: string) => {
+    const url = liuUtil.open.getFeloSearchLink(q)
+    setNewIframeSrc(url) 
   }
 
   const openGoogleSerach = (q: string) => {
@@ -199,8 +200,7 @@ function listenRouteChange(
     } = newQuery
 
     if(_hasVal(outq)) {
-      // openGoogleSerach(outq)
-      openBingSearch(outq)
+      openFeloSearch(outq)
     }
     else if(_hasVal(cid)) {
       showView(ctx, "thread", cid)

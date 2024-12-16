@@ -122,6 +122,13 @@ function openExternalBing(keyword: string) {
   window.open(url.toString(), "_blank")
 }
 
+/************* Felo ************/
+function getFeloSearchLink(keyword: string) {
+  const url = new URL(thirdLink.FELO_SEARCH)
+  url.searchParams.append("q", keyword)
+  return url.toString()
+}
+
 
 /************* 小红书 ************/
 function openXhs(
@@ -150,7 +157,7 @@ function openExternalXhs(keyword: string) {
 }
 
 
-/************* Github ************/
+/************* GitHub ************/
 function openGithub(
   keyword: string, 
   opt: RrOpt,
@@ -214,6 +221,7 @@ export default {
   openBing,
   getBingSearchLink,
   openExternalBing,
+  getFeloSearchLink,
   openXhs,
   getXhsSearchLink,
   openExternalXhs,
