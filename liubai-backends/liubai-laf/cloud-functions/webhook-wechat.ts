@@ -51,7 +51,7 @@ import {
 import { createCredential2 } from "@/common-ids";
 import { init_user } from "@/user-login";
 import { WxGzhSender } from "@/service-send";
-import { enter_ai } from "@/ai-entrance";
+import { get_into_ai } from "@/ai-entrance";
 
 const db = cloud.database()
 let wechat_access_token = ""
@@ -176,7 +176,7 @@ async function handle_text(
   if(!user) return
 
   // 4. ai!
-  enter_ai({ user, msg_type: "text", text: userText, wx_gzh_openid })
+  get_into_ai({ user, msg_type: "text", text: userText, wx_gzh_openid })
 }
 
 async function handle_image(
@@ -200,7 +200,7 @@ async function handle_image(
   if(!user) return
 
   // 4. get to ai system
-  enter_ai({ 
+  get_into_ai({ 
     user, 
     msg_type: "image", 
     image_url, 
@@ -249,7 +249,7 @@ async function handle_voice(
   // }
   
   // // 5. get to ai system
-  // enter_ai({ 
+  // get_into_ai({ 
   //   user, 
   //   msg_type: "voice", 
   //   file_type: type4,

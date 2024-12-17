@@ -328,6 +328,7 @@ export const aiLang: LangAtom = {
     "already_left": "{botName}并不在群聊内",
     "continue_bot": "继续{botName}",
     "there_are_3": "聊天室已有 3 个助手",
+    "nobody_here": "当前群聊内没有任何助手",
 
     // the first message when a bot has been called
     "called_1": "我是{botName}，想跟我聊什么呢？",
@@ -425,6 +426,7 @@ export const aiLang: LangAtom = {
     "already_left": "{botName}並不在群聊内",
     "continue_bot": "繼續{botName}",
     "there_are_3": "聊天室已有 3 个助手",
+    "nobody_here": "當前群組內沒有任何助手",
 
     // the first message when a bot has been called
     "called_1": "我是{botName}，想跟我聊什麼呢?",
@@ -522,6 +524,7 @@ export const aiLang: LangAtom = {
     "already_left": "{botName} is not in the group chat",
     "continue_bot": "Continue {botName}",
     "there_are_3": "There are 3 assistants in the group chat.",
+    "nobody_here": "There is no assistant here.",
 
     // the first message when a bot has been called
     "called_1": "I am {botName}. Let's chat together!",

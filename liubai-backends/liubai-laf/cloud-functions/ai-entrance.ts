@@ -222,7 +222,7 @@ export async function main(ctx: FunctionContext) {
 }
 
 
-export async function enter_ai(
+export async function get_into_ai(
   entry: AiEntry,
 ) {
   // 0. pre check
@@ -256,18 +256,22 @@ export async function enter_ai(
   if(!room) return
   const roomId = room._id
 
-  // 4.1 check out if it's "continue" command
+  // 4.1 check out if no assistants
+  const res4_1 = await AiHelper.checkIfNobodyHere(entry, room)
+  if(res4_1) return
+
+  // 4.2 check out if it's "continue" command
   if(theDirective?.theCommand === "continue") {
-    const controller4_1 = new ContinueController(
+    const controller4_2 = new ContinueController(
       entry, 
       room, 
       theDirective?.theBot?.character
     )
-    controller4_1.run()
+    controller4_2.run()
     return
   }
 
-  // 4.2 transcibe voice msg
+  // 4.3 transcibe voice msg
   if(msg_type === "voice" && file_blob) {
     
     return
@@ -4188,6 +4192,54 @@ class AiHelper {
     const cCol = db.collection("AiChat")
     const res = await cCol.doc(id).update(data)
     return res
+  }
+
+  static async checkIfNobodyHere(
+    entry: AiEntry, 
+    room: Table_AiRoom,
+  ) {
+    // 1. return false if there is at least one character
+    const len = room.characters.length
+    if(len >= 1) return false
+
+    // 2. get history for ever existed characters
+    const chats = await this.getLatestChat(room._id, 10)
+    const everExistedCharacters: AiCharacter[] = []
+    chats.forEach(v => {
+      const c = v.character
+      if(everExistedCharacters.length > 2) return
+      if(c && !everExistedCharacters.includes(c)) {
+        everExistedCharacters.push(c)
+      }
+    })
+
+    // 3. get availableCharacters
+    const availableCharacters = this.getAvailableCharacters()
+    for(let i=0; i<availableCharacters.length; i++) {
+      const v = availableCharacters[i]
+      if(everExistedCharacters.includes(v)) {
+        availableCharacters.splice(i, 1)
+        i--
+      }
+    }
+    if(availableCharacters.length < 1) return true
+
+    // 4. randomly sort
+    const addedList: AiCharacter[] = []
+    while(addedList.length < 3 && availableCharacters.length > 0) {
+      const r = Math.floor(Math.random() * availableCharacters.length)
+      const c = availableCharacters[r]
+      addedList.push(c)
+      availableCharacters.splice(r, 1)
+    }
+
+    // 5. menu
+    const menuList: AiMenuItem[] = []
+    addedList.forEach(v => menuList.push({ operation: "add", character: v }))
+    const { t } = useI18n(aiLang, { user: entry.user })
+    const prefixMessage = t("nobody_here") + "\n\n" + t("operation_title")
+    TellUser.menu(entry, prefixMessage, menuList, "")
+    return true
   }
 
 }
