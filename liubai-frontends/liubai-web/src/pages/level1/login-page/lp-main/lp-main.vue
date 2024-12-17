@@ -266,8 +266,8 @@ const {
   padding-block-end: 20px;
   height: 45vh;
   height: 45dvh;
-  min-height: 310px;
-  max-height: 400px;
+  min-height: 330px;
+  max-height: 430px;
   display: flex;
   flex-direction: column;
   align-items: center;

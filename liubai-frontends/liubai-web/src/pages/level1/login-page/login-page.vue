@@ -98,7 +98,7 @@ const {
 
 .lp-navi-bar {
   width: 100%;
-  height: 100px;
+  height: 90px;
   position: fixed;
   top: 0;
   left: 0;
@@ -155,18 +155,19 @@ const {
 
 .lp-virtual {
   width: 100%;
-  height: 100px;
+  height: 90px;
   transition: .3s;
 }
 
 .lp-virtual-first {
-  min-height: 100px;
+  min-height: 90px;
 }
 
 .lp-container {
   position: relative;
   width: 92%;
   max-width: 600px;
+  margin-block-start: -30px;
 }
 
 .lp-container_main {

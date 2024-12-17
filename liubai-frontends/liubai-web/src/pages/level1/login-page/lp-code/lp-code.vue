@@ -108,7 +108,7 @@ const { t } = useI18n()
   background-color: var(--card-bg);
   border: 1.4px solid var(--line-bottom);
   border-radius: 8px;
-  margin-block-end: 48px;
+  margin-block-end: 24px;
   letter-spacing: 4px;
   line-height: 1.25;
 
@@ -131,15 +131,6 @@ const { t } = useI18n()
 .lp-btn-back {
   margin-block-end: 0;
 }
-
-@media screen and (min-height: 700px) {
-  
-  .lpc-tip, .lp-code-input {
-    margin-block-end: 96px;
-  }
-  
-}
-
 
 
 </style>
