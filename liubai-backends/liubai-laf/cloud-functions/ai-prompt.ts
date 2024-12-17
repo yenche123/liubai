@@ -702,7 +702,7 @@ export const aiTools: OaiTool[] = [
     type: "function",
     function: {
       name: "get_schedule",
-      description: "获取最近的日程",
+      description: "获取最近的日程。可以不指定 hoursFromNow 或 specificDate，那么会直接返回未来 10 条日程。",
       parameters: {
         type: "object",
         properties: {

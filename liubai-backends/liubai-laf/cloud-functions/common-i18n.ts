@@ -358,6 +358,7 @@ export const aiLang: LangAtom = {
     "schedule_next": "未来 {hour} 小时内的日程:\n\n",
     "schedule_this_week": "这{day}的日程:\n\n",
     "schedule_next_week": "下{day}的日程:\n\n",
+    "schedule_future": "未来 10 条日程:\n\n",
     "no_data": "查无结果",
     "bot_read_yesterday": "{bot}查看了昨天的日程",
     "bot_read_today": "{bot}查看了今天的日程",
@@ -367,6 +368,7 @@ export const aiLang: LangAtom = {
     "bot_read_next": "{bot}查看了未来 {hour} 小时内的日程",
     "bot_read_this_week": "{bot}查看了这{day}的日程",
     "bot_read_next_week": "{bot}查看了下{day}的日程",
+    "bot_read_future": "{bot}查看了未来 10 条日程",
 
     // get cards
     "todo_cards": "最近的待办:\n\n",
@@ -457,6 +459,7 @@ export const aiLang: LangAtom = {
     "schedule_next": "未來 {hour} 小時内的日程:\n\n",
     "schedule_this_week": "這{day}的日程:\n\n",
     "schedule_next_week": "下{day}的日程:\n\n",
+    "schedule_future": "未來 10 則日程:\n\n",
     "no_data": "查無結果",
     "bot_read_yesterday": "{bot}查閲了昨天的日程",
     "bot_read_today": "{bot}查閲了今天的日程",
@@ -466,6 +469,7 @@ export const aiLang: LangAtom = {
     "bot_read_next": "{bot}查閱了未來 {hour} 小時内的日程",
     "bot_read_this_week": "{bot}查閱了這{day}的日程",
     "bot_read_next_week": "{bot}查閱了下{day}的日程",
+    "bot_read_future": "{bot}查閱了未來 10 則日程",
 
     // get cards
     "todo_cards": "最近的待辦:\n\n",
@@ -556,6 +560,7 @@ export const aiLang: LangAtom = {
     "schedule_next": "Schedule for the next {hour} hours:\n\n",
     "schedule_this_week": "Schedule for this {day}:\n\n",
     "schedule_next_week": "Schedule for next {day}:\n\n",
+    "schedule_future": "Schedule in the future:\n\n",
     "no_data": "No results found",
     "bot_read_yesterday": "{bot} read yesterday's schedule",
     "bot_read_today": "{bot} read today's schedule",
@@ -565,6 +570,7 @@ export const aiLang: LangAtom = {
     "bot_read_next": "{bot} read the schedule for the next {hour} hours",
     "bot_read_this_week": "{bot} read the schedule for this {day}",
     "bot_read_next_week": "{bot} read the schedule for next {day}",
+    "bot_read_future": "{bot} read the recent schedule",
 
     // get cards
     "todo_cards": "Latest to-dos:\n\n",

@@ -2487,6 +2487,10 @@ class ToolHandler {
     if(funcJson.specificDate === "dayAfterTomorrow") {
       funcJson.specificDate = "day_after_tomorrow"
     }
+    if(typeof funcJson.hoursFromNow === "string") {
+      const res0_1 = valTool.isStringAsNumber(funcJson.hoursFromNow)
+      funcJson.hoursFromNow = res0_1 ? Number(funcJson.hoursFromNow) : 24
+    }
 
     // 1. checking out param
     const res1 = vbot.safeParse(Sch_AiToolGetScheduleParam, funcJson)
@@ -2497,12 +2501,9 @@ class ToolHandler {
       return
     }
     const { hoursFromNow, specificDate } = funcJson as AiToolGetScheduleParam
-    if(!hoursFromNow && !specificDate) {
-      console.warn("hoursFromNow or specificDate is required")
-      return
-    }
 
     // 2. construct basic query
+    const now = getNowStamp()
     const entry = this._aiParam.entry
     const bot = this._bot
     const { user } = entry
@@ -2513,28 +2514,28 @@ class ToolHandler {
       oState: "OK",
       storageState: "CLOUD",
       aiReadable: "Y",
+      calendarStamp: _.gte(now),
     }
     let sortWay: SortWay = "asc"
 
     // 2.1 define replied text
-    let textToBot = ""
-    let textToUser = ""
     const { t } = useI18n(aiLang, { user })
+    let textToBot = t("schedule_future")
+    let textToUser = t("bot_read_future", { bot: bot.name })
 
     // 3. handle hoursFromNow
-    const now3 = getNowStamp()
     if(hoursFromNow) {
       if(hoursFromNow < 0) {
         sortWay = "desc"
-        const command3_1 = _.lt(now3)
-        const command3_2 = _.gte(now3 + hoursFromNow * HOUR)
+        const command3_1 = _.lt(now)
+        const command3_2 = _.gte(now + hoursFromNow * HOUR)
         q2.calendarStamp = _.and(command3_1, command3_2)
         textToBot = t("schedule_last", { hour: hoursFromNow })
         textToUser = t("bot_read_last", { bot: bot.name, hour: hoursFromNow })
       }
       else {
-        const command3_3 = _.gt(now3)
-        const command3_4 = _.lte(now3 + hoursFromNow * HOUR)
+        const command3_3 = _.gt(now)
+        const command3_4 = _.lte(now + hoursFromNow * HOUR)
         q2.calendarStamp = _.and(command3_3, command3_4)
         textToBot = t("schedule_next", { hour: hoursFromNow })
         textToUser = t("bot_read_next", { bot: bot.name, hour: hoursFromNow })
@@ -4587,8 +4588,19 @@ class TellUser {
 class TransformText {
 
   static handleFromAssistantChoice(choice: OaiChoice) {
-    // 1. get text
-    if(choice.finish_reason !== "stop") return
+    const finish_reason = choice.finish_reason
+
+    // 1.1 only reserve one tool
+    if(finish_reason === "tool_calls") {
+      const toolNum = choice.message.tool_calls?.length ?? 0
+      if(toolNum > 1) {
+        choice.message.tool_calls?.splice(1, toolNum - 1)
+        return true
+      }
+    }
+
+    // 1.2 get text
+    if(finish_reason !== "stop") return
     const { message } = choice
     let text = message.content
     if(!text) return

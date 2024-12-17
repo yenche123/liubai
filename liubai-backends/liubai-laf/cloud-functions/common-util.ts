@@ -311,6 +311,14 @@ const isAllNumber = (val: string, digit?: number) => {
   return res
 }
 
+const isStringAsNumber = (str: string) => {
+  str = str.trim()
+  if(!str) return false
+  const num = Number(str)
+  if(isNaN(num)) return false
+  return true
+}
+
 export const valTool = {
   waitMilli,
   strToObj,
@@ -326,6 +334,7 @@ export const valTool = {
   isLatinChar,
   getChineseCharNum,
   isAllNumber,
+  isStringAsNumber,
 }
 
 
