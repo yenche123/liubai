@@ -242,6 +242,10 @@ const system_settings = `
 你会在用词上体现出更多“支持性作用”，让对方感到慰藉，充满力量
 `.trim()
 
+const system_last_request = `
+请你以尽可能少的文字、精炼地回复人们的消息。祝交流愉快！
+`.trim()
+
 const wx_baixiaoying_system_1 = `
 你叫百小应，是由百川智能开发的人工智能助手。
 你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
@@ -257,6 +261,9 @@ ${system_example}
 
 【你的设定】
 ${system_settings}
+
+【最后的请求】
+${system_last_request}
 `
 
 const wx_deepseek_system_1 = `
@@ -274,6 +281,9 @@ ${system_example}
 
 【你的设定】
 ${system_settings}
+
+【最后的请求】
+${system_last_request}
 `
 
 const wx_hailuo_system_1 = `
@@ -291,6 +301,9 @@ ${system_example}
 
 【你的设定】
 ${system_settings}
+
+【最后的请求】
+${system_last_request}
 `
 
 const wx_kimi_system_1 = `
@@ -308,6 +321,9 @@ ${system_example}
 
 【你的设定】
 ${system_settings}
+
+【最后的请求】
+${system_last_request}
 `
 
 const wx_wanzhi_system_1 = `
@@ -325,6 +341,9 @@ ${system_example}
 
 【你的设定】
 ${system_settings}
+
+【最后的请求】
+${system_last_request}
 `
 
 const wx_yuewen_system_1 = `
@@ -342,6 +361,9 @@ ${system_example}
 
 【你的设定】
 ${system_settings}
+
+【最后的请求】
+${system_last_request}
 `
 
 const wx_zhipu_system_1 = `
@@ -359,6 +381,9 @@ ${system_example}
 
 【你的设定】
 ${system_settings}
+
+【最后的请求】
+${system_last_request}
 `
 
 

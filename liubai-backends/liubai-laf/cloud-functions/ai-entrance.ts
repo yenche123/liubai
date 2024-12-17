@@ -1146,7 +1146,7 @@ class BaseBot {
     const data1 = this._getRestTokensAndPrompts(postParam)
     if(!data1) return
     let { restTokens, prompts } = data1
-    const searchMarkdown = searchRes.markdown
+    let searchMarkdown = searchRes.markdown
     const token1 = AiHelper.calculateTextToken(searchMarkdown)
     restTokens -= token1
     if(restTokens > MAX_WX_TOKEN) {
@@ -1168,10 +1168,12 @@ class BaseBot {
     const assistantName = AiHelper.getCharacterName(c)
     const { chatParam, aiParam, bot } = postParam
     const canUseTool = bot.abilities.includes("tool_use")
+    const { t } = useI18n(aiLang, { user: aiParam.entry.user })
 
     // 3. add prompts with tool_calls and its result
     if(canUseTool) {
       prompts.push({ role: "assistant", tool_calls, name: assistantName })
+      searchMarkdown += (`\n\n` + t("do_not_use_tool"))
       prompts.push({
         role: "tool",
         content: searchMarkdown,
@@ -1179,7 +1181,6 @@ class BaseBot {
       })
     }
     else {
-      const { t } = useI18n(aiLang, { user: aiParam.entry.user })
       const newPrompts = AiHelper.turnToolCallsIntoNormalPrompts(
         tool_calls,
         tool_call_id,
@@ -1200,18 +1201,25 @@ class BaseBot {
       max_tokens: restTokens,
     }
     const res4 = await this.chat(newChatParam, bot)
-    if(!res4) return
+    if(!res4) {
+      return
+    }
 
-    // console.warn(`${c}'s chat continues after web search: `)
-    // console.log(res4.usage)
-    // console.log(res4.choices?.[0]?.finish_reason)
-    // console.log(res4.choices?.[0]?.message)
+    // 5. see result
+    console.warn(`${c}'s chat continues after web search: `)
+    console.log(res4.usage)
+    const choice5 = res4.choices?.[0]
+    const msg5 = choice5?.message
+    console.log(msg5)
+    if(msg5.tool_calls) {
+      console.log(msg5.tool_calls[0])
+    }
 
-    // 5. can i reply
-    const res5 = await AiHelper.canReply(aiParam, bot)
-    if(!res5) return
+    // 6. can i reply
+    const res6 = await AiHelper.canReply(aiParam, bot)
+    if(!res6) return
 
-    // 6. handle text from response
+    // 7. handle text from response
     const assistantChatId = await this._handleAssistantText(res4, aiParam, bot)
     if(!assistantChatId) return
   }
@@ -1341,7 +1349,8 @@ class BaseBot {
     let { tool_calls } = message
 
     // 1.1 try to transform text into tool
-    const res1 = TransformText.handlefromAssistantChoice(firstChoice)
+    //   and remove <assistant></assistant> tag
+    const res1 = TransformText.handleFromAssistantChoice(firstChoice)
     if(res1) {
       finish_reason = firstChoice.finish_reason
       message = firstChoice.message
@@ -4577,7 +4586,7 @@ class TellUser {
 
 class TransformText {
 
-  static handlefromAssistantChoice(choice: OaiChoice) {
+  static handleFromAssistantChoice(choice: OaiChoice) {
     // 1. get text
     if(choice.finish_reason !== "stop") return
     const { message } = choice
@@ -4596,7 +4605,35 @@ class TransformText {
     // 4. for shape 3
     const res4 = this._turnIntoTool_3(choice, originalText)
     if(res4) return true
+
+    // 5. remove <assistant></assistant>
+    const res5 = this._removeAssistantTag(choice, originalText)
+    return res5
   }
+
+
+  private static _removeAssistantTag(
+    choice: OaiChoice,
+    text: string,
+  ) {
+    let hasChanged = false
+    const str1 = "<assistant>"
+    const str2 = "</assistant>"
+    if(text.startsWith(str1)) {
+      hasChanged = true
+      text = text.substring(str1.length)
+      text = text.trimStart()
+    }
+    if(text.endsWith(str2)) {
+      hasChanged = true
+      text = text.substring(0, text.length - str2.length)
+      text = text.trimEnd()
+    }
+    if(hasChanged) {
+      choice.message.content = text
+    }
+    return hasChanged
+  } 
 
   private static _fillChoiceWithToolCall(
     choice: OaiChoice, 
