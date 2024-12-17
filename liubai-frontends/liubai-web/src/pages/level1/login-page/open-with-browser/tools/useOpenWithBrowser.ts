@@ -16,6 +16,7 @@ export function useOpenWithBrowser() {
 
   onMounted(async () => {
     if(!cha.isWeChat) return
+    if(cha.isMobile) return
     await waitWindowLoaded()
     await valTool.waitMilli(500)
     isOn.value = true
