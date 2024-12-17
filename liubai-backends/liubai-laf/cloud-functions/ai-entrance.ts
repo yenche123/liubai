@@ -1066,7 +1066,7 @@ class BaseBot {
     const data1 = this._getRestTokensAndPrompts(postParam)
     if(!data1) return
     let { restTokens, prompts } = data1
-    const textToBot = readRes.textToBot
+    let textToBot = readRes.textToBot
     const token1 = AiHelper.calculateTextToken(textToBot)
     restTokens -= token1
     if(restTokens > MAX_WX_TOKEN) {
@@ -1088,10 +1088,12 @@ class BaseBot {
     const assistantName = AiHelper.getCharacterName(c)
     const { chatParam, bot, aiParam } = postParam
     const canUseTool = bot.abilities.includes("tool_use")
+    const { t } = useI18n(aiLang, { user: aiParam.entry.user })
 
     // 3. add new prompts with tool_calls and its result
     if(canUseTool) {
       prompts.push({ role: "assistant", tool_calls, name: assistantName })
+      textToBot += (`\n\n` + t("do_not_use_tool_2"))
       prompts.push({
         role: "tool",
         content: textToBot,
@@ -1099,7 +1101,6 @@ class BaseBot {
       })
     }
     else {
-      const { t } = useI18n(aiLang, { user: aiParam.entry.user })
       const newPrompts = AiHelper.turnToolCallsIntoNormalPrompts(
         tool_calls,
         tool_call_id,
@@ -2495,10 +2496,9 @@ class ToolHandler {
     // 1. checking out param
     const res1 = vbot.safeParse(Sch_AiToolGetScheduleParam, funcJson)
     if(!res1.success) {
-      console.warn("cannot parse get_schedule param: ")
-      console.log(funcJson)
+      console.warn("cannot parse get_schedule param, so we make it default")
       console.log(res1.issues)
-      return
+      funcJson = {}
     }
     const { hoursFromNow, specificDate } = funcJson as AiToolGetScheduleParam
 
