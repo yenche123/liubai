@@ -112,4 +112,7 @@ export interface LiuSystemEnv {
   // login ways
   LOGIN_WAYS?: string[]
 
+  // others
+  PHONE_BOUND_REQUIRED?: boolean
+
 }

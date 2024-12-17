@@ -119,6 +119,10 @@ function getEnv(): LiuSystemEnv {
   const loginWays = import.meta.env.VITE_LOGIN_WAYS
   const LOGIN_WAYS = loginWays ? loginWays.split(",") : []
 
+  // other
+  const phoneBoundRequired = import.meta.env.VITE_PHONE_BOUND_REQUIRED
+  const PHONE_BOUND_REQUIRED = phoneBoundRequired === "01"
+
   _env = {
     DEV,
     API_DOMAIN,
@@ -185,6 +189,7 @@ function getEnv(): LiuSystemEnv {
     NOTIFICATION_PRIORITY,
     DONOT_USE_SYNC,
     LOGIN_WAYS,
+    PHONE_BOUND_REQUIRED,
   }
   return _env
 }

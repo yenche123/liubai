@@ -18,6 +18,7 @@ import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 import { resetBasicCeData } from "./some-funcs";
 import { setStateForNewThread } from "~/hooks/thread/specific-operate/state";
 import cui from "~/components/custom-ui";
+import liuEnv from "~/utils/liu-env";
 
 // 本文件处理发表的逻辑
 
@@ -35,7 +36,7 @@ let spaceTypeRef: Ref<SpaceType>
 let member: Ref<string>
 
 export function useCeFinish(ctx: CepContext) {
-
+  const { PHONE_BOUND_REQUIRED } = liuEnv.getEnv()
   const wStore = useWorkspaceStore()
   const spaceRefs = storeToRefs(wStore)
   spaceIdRef = spaceRefs.spaceId
@@ -49,11 +50,14 @@ export function useCeFinish(ctx: CepContext) {
     if(!ceData.canSubmit) return
 
     // 2. check out phone bound
-    const res2 = detectPhoneBound(ceData)
-    if(!res2) {
-      popupForPhone(ceData)
-      return
+    if(PHONE_BOUND_REQUIRED) {
+      const res2 = detectPhoneBound(ceData)
+      if(!res2) {
+        popupForPhone(ceData)
+        return
+      }
     }
+    
 
     // 3. to update or release
     const { threadEdited } = ceData
