@@ -327,6 +327,7 @@ export const aiLang: LangAtom = {
     "already_exist": "{botName}已在群聊中",
     "already_left": "{botName}并不在群聊内",
     "continue_bot": "继续{botName}",
+    "there_are_3": "聊天室已有 3 个助手",
 
     // the first message when a bot has been called
     "called_1": "我是{botName}，想跟我聊什么呢？",
@@ -423,6 +424,7 @@ export const aiLang: LangAtom = {
     "already_exist": "{botName}已在群聊中",
     "already_left": "{botName}並不在群聊内",
     "continue_bot": "繼續{botName}",
+    "there_are_3": "聊天室已有 3 个助手",
 
     // the first message when a bot has been called
     "called_1": "我是{botName}，想跟我聊什麼呢?",
@@ -519,6 +521,7 @@ export const aiLang: LangAtom = {
     "already_exist": "{botName} has already joined in the group chat",
     "already_left": "{botName} is not in the group chat",
     "continue_bot": "Continue {botName}",
+    "there_are_3": "There are 3 assistants in the group chat.",
 
     // the first message when a bot has been called
     "called_1": "I am {botName}. Let's chat together!",

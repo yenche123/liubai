@@ -526,16 +526,27 @@ class AiDirective {
     return res3    
   }
 
+  private static async _showThereAre3(
+    entry: AiEntry,
+    characters: AiCharacter[],
+  ) {
+    const { t } = useI18n(aiLang, { user: entry.user })
+    let prefixMessage = t("there_are_3") + `\n\n` + t("operation_title")
+    const menuList: AiMenuItem[] = []
+    characters.forEach(v => menuList.push({ operation: "kick", character: v }))
+    TellUser.menu(entry, prefixMessage, menuList, "")
+  }
+
   private static async toAddBot(entry: AiEntry, bot: AiBot) {
     const { t } = useI18n(aiLang, { user: entry.user })
 
     // 1. get the user's ai room
     const room = await AiHelper.getMyAiRoom(entry)
     if(!room) return
-    const bots = room.characters
+    const { characters } = room
 
     // 2. find the bot in the room
-    const theBot = bots.find(v => v === bot.character)
+    const theBot = characters.find(v => v === bot.character)
     if(theBot) {
       const msg2 = t("already_exist", { botName: bot.name })
       TellUser.text(entry, msg2)
@@ -543,12 +554,15 @@ class AiDirective {
     }
 
     // 3. check out if the room has reached the max bots
-    if(bots.length >= MAX_CHARACTERS) return
+    if(characters.length >= MAX_CHARACTERS) {
+      this._showThereAre3(entry, characters)
+      return
+    }
 
     // 4. add the bot to the room
-    const newBots = [...bots, bot.character]
+    const newCharacters = [...characters, bot.character]
     const u4: Partial<Table_AiRoom> = {
-      characters: newBots,
+      characters: newCharacters,
       updatedStamp: getNowStamp(),
     }
     const rCol = db.collection("AiRoom")
