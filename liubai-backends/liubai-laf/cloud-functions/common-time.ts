@@ -50,7 +50,10 @@ export function formatTimezone(str?: string) {
   return timezone
 }
 
-export function localizeStamp(stamp: number, timezone?: string) {
+export function localizeStamp(
+  stamp: number, 
+  timezone?: string,
+) {
   if(!timezone) {
     const envTimezone = process.env.LIU_TIMEZONE
     if(envTimezone) timezone = envTimezone
@@ -62,6 +65,23 @@ export function localizeStamp(stamp: number, timezone?: string) {
   const newStamp = stamp + diff * HOUR
   return newStamp
 }
+
+export function userlizeStamp(
+  stamp: number, 
+  timezone?: string,
+) {
+  if(!timezone) {
+    const envTimezone = process.env.LIU_TIMEZONE
+    if(envTimezone) timezone = envTimezone
+    else timezone = "0"
+  }
+
+  const tz = formatTimezone(timezone)
+  const diff = tz - getServerTimezone()
+  const newStamp = stamp - diff * HOUR
+  return newStamp
+}
+
 
 /** to get the current hours of a specific timezone */
 export function currentHoursOfSpecificTimezone(timezone: number) {
