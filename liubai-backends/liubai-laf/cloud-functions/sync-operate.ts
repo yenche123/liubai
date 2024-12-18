@@ -297,7 +297,7 @@ async function addNewContentIntoKanban(
   // 2. update the kanban
   const now = getNowStamp()
   const ids = theState.contentIds ?? []
-  ids.push(contentId)
+  ids.unshift(contentId)
   if(ids.length > 16) {
     ids.pop()
   }
