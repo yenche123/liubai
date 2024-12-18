@@ -13,13 +13,16 @@ hero:
     - theme: alt
       text: 前往安装
       link: /guide/install
+  image: 
+    src: ./assets/hero-image.png
+    alt: Liubai
 
 features:
   - icon: 
       dark: ./assets/devices_dark_theme.svg
       light: ./assets/devices_light_theme.svg
     title: "多设备"
-    details: "你可以在 iPhone、安卓、鸿蒙、Mac、Windows 等设备间无缝同步数据。"
+    details: "你可以在 iPhone、安卓、鸿蒙、Mac 或 Windows 等设备间无缝同步数据。"
   - icon: 
       dark: ./assets/wifi_off_dark_theme.svg
       light: ./assets/wifi_off_light_theme.svg
