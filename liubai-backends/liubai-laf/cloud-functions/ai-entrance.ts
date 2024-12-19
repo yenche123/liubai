@@ -39,6 +39,7 @@ import {
   type Table_Content,
   type SortWay,
   type Table_Workspace,
+  type Table_LogAi,
   type AiBotMetaData,
   Ns_Zhipu,
   Ns_SiliconFlow,
@@ -213,6 +214,7 @@ interface TurnChatsIntoPromptOpt {
 
 interface BaseLLMChatOpt {
   maxTryTimes?: number
+  user?: Table_User
 }
 
 /********************* empty function ****************/
@@ -327,38 +329,41 @@ function mapBots(
   aiParam: AiRunParam,
   promises: Promise<AiRunSuccess | undefined>[],
 ) {
+
+  const user = aiParam.entry.user
+
   if(c === "baixiaoying") {
-    const botBaichuan = new BotBaichuan()
+    const botBaichuan = new BotBaichuan(user)
     const proBaichuan = botBaichuan.run(aiParam)
     promises.push(proBaichuan)
   }
   if(c === "deepseek") {
-    const bot1 = new BotDeepSeek()
+    const bot1 = new BotDeepSeek(user)
     const pro1 = bot1.run(aiParam)
     promises.push(pro1)
   }
   else if(c === "hailuo") {
-    const botMinimax = new BotMiniMax()
+    const botMinimax = new BotMiniMax(user)
     const proMinimax = botMinimax.run(aiParam)
     promises.push(proMinimax)
   }
   else if(c === "kimi") {
-    const bot2 = new BotMoonshot()
+    const bot2 = new BotMoonshot(user)
     const pro2 = bot2.run(aiParam)
     promises.push(pro2)
   }
   else if(c === "wanzhi") {
-    const bot3 = new BotYi()
+    const bot3 = new BotYi(user)
     const pro3 = bot3.run(aiParam)
     promises.push(pro3)
   }
   else if(c === "yuewen") {
-    const bot4 = new BotStepfun()
+    const bot4 = new BotStepfun(user)
     const pro4 = bot4.run(aiParam)
     promises.push(pro4)
   }
   else if(c === "zhipu") {
-    const bot5 = new BotZhipu()
+    const bot5 = new BotZhipu(user)
     const pro5 = bot5.run(aiParam)
     promises.push(pro5)
   }
@@ -691,6 +696,7 @@ class BaseLLM {
         timeout,
       })
       _this._tryTimes = 0
+      _this._log(chatCompletion as any, opt)
       return chatCompletion as OaiChatCompletion
     }
     catch(err) {
@@ -735,15 +741,41 @@ class BaseLLM {
       }
     }
   }
+
+  private _log(
+    chatCompletion: Partial<OaiChatCompletion>,
+    opt?: BaseLLMChatOpt,
+  ) {
+    const usage = chatCompletion?.usage
+    if(!usage) return
+
+    const logCol = db.collection("LogAi")
+    const b1 = getBasicStampWhileAdding()
+    const aLog: Partial_Id<Table_LogAi> = {
+      ...b1,
+      infoType: "cost",
+      costUsage: usage,
+      costBaseUrl: this._baseUrl,
+      userId: opt?.user?._id,
+    }
+    logCol.add(aLog)
+  }
+
+
 }
 
 class BaseBot {
   protected _character: AiCharacter
   protected _bots: AiBot[]
+  private _fromUser: Table_User | undefined
 
-  constructor(c: AiCharacter) {
+  constructor(
+    c: AiCharacter, 
+    user?: Table_User,
+  ) {
     this._character = c
     this._bots = aiBots.filter(v => v.character === c)
+    this._fromUser = user
   }
 
   protected async chat(
@@ -773,7 +805,7 @@ class BaseBot {
 
     const llm = new BaseLLM(apiData.apiKey, apiData.baseURL)
     const t1 = getNowStamp()
-    const res = await llm.chat(params)
+    const res = await llm.chat(params, { user: this._fromUser })
     const t2 = getNowStamp()
     const cost = t2 - t1
 
@@ -1087,8 +1119,9 @@ class BaseBot {
     const c = this._character
     const assistantName = AiHelper.getCharacterName(c)
     const { chatParam, bot, aiParam } = postParam
+    const user = aiParam.entry.user
     const canUseTool = bot.abilities.includes("tool_use")
-    const { t } = useI18n(aiLang, { user: aiParam.entry.user })
+    const { t } = useI18n(aiLang, { user })
 
     // 3. add new prompts with tool_calls and its result
     if(canUseTool) {
@@ -1168,8 +1201,9 @@ class BaseBot {
     const c = this._character
     const assistantName = AiHelper.getCharacterName(c)
     const { chatParam, aiParam, bot } = postParam
+    const user = aiParam.entry.user
     const canUseTool = bot.abilities.includes("tool_use")
-    const { t } = useI18n(aiLang, { user: aiParam.entry.user })
+    const { t } = useI18n(aiLang, { user })
 
     // 3. add prompts with tool_calls and its result
     if(canUseTool) {
@@ -1409,8 +1443,8 @@ class BaseBot {
 }
 
 class BotBaichuan extends BaseBot {
-  constructor() {
-    super("baixiaoying")
+  constructor(user?: Table_User) {
+    super("baixiaoying", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1450,8 +1484,8 @@ class BotBaichuan extends BaseBot {
 
 class BotDeepSeek extends BaseBot {
 
-  constructor() {
-    super("deepseek")
+  constructor(user?: Table_User) {
+    super("deepseek", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1494,8 +1528,8 @@ class BotDeepSeek extends BaseBot {
 }
 
 class BotMiniMax extends BaseBot {
-  constructor() {
-    super("hailuo")
+  constructor(user?: Table_User) {
+    super("hailuo", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1544,8 +1578,8 @@ class BotMiniMax extends BaseBot {
 
 class BotMoonshot extends BaseBot {
 
-  constructor() {
-    super("kimi")
+  constructor(user?: Table_User) {
+    super("kimi", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1586,8 +1620,8 @@ class BotMoonshot extends BaseBot {
 
 class BotStepfun extends BaseBot {
 
-  constructor() {
-    super("yuewen")
+  constructor(user?: Table_User) {
+    super("yuewen", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1628,8 +1662,8 @@ class BotStepfun extends BaseBot {
 
 class BotYi extends BaseBot {
 
-  constructor() {
-    super("wanzhi")
+  constructor(user?: Table_User) {
+    super("wanzhi", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1673,8 +1707,8 @@ class BotYi extends BaseBot {
 
 class BotZhipu extends BaseBot {
 
-  constructor() {
-    super("zhipu")
+  constructor(user?: Table_User) {
+    super("zhipu", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -2081,7 +2115,7 @@ class AiCompressor {
       model: _env.LIU_SUMMARY_MODEL ?? "",
     }
     const t1 = getNowStamp()
-    const res4 = await llm.chat(arg4)
+    const res4 = await llm.chat(arg4, { user })
     const t2 = getNowStamp()
     const cost = t2 - t1
     console.log("summary cost: ", cost)
