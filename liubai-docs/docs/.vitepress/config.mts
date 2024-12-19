@@ -64,7 +64,7 @@ export default defineConfig({
           text: "条款",
           collapsed: true,
           items: [
-            { text: "服务条款", link: "/guide/rules/service-terms" },
+            { text: "服务协议", link: "/guide/rules/service-terms" },
             { text: "隐私政策", link: "/guide/rules/privacy-policy" },
           ]
         }
