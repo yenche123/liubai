@@ -793,6 +793,13 @@ async function autoReplyAfterReceivingText(
     }
   }
   if(theReplies.length < 1) return false
+  theReplies = theReplies.map(v => {
+    if(v.msgtype !== "text") return v
+    const obj = valTool.copyObject(v)
+    const txt = obj.text.content
+    obj.text.content = i18nFill(txt, {})
+    return obj
+  })
   
   // 5. auto reply
   for(let i = 0; i < theReplies.length; i++) {

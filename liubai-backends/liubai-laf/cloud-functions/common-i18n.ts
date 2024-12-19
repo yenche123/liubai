@@ -591,33 +591,23 @@ export const aiLang: LangAtom = {
 }
 
 
-
-
 /********************* Wx Click Replies ****************/
 export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
   // zh-Hans
-  "introduction": [
-    {
-      msgtype: "text",
-      text: {
-        content: '【TODO】\n要不你帮我写一下？给钱的那种',
-      }
-    }
-  ],
   "guidebook": [
     {
       msgtype: "text",
       text: {
         content: `🪧 指路牌
 
+📆 <a href="{LIU_DOMAIN}/schedule">我的日程</a>
+
 ⭐ <a href="{LIU_DOMAIN}/favorite">我的收藏</a>
 
 📂 <a href="{LIU_DOMAIN}/state">我的看板</a>
 
-⚙️ <a href="{LIU_DOMAIN}/settings">我的设置</a>
-
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">开发者的小红书</a>
-`,   // TODO: 添加到桌面（离线使用）
+`,
       }
     }
   ],
@@ -625,7 +615,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="{LIU_DOMAIN}/connect/wechat">戳我绑定微信</a>',
+        content: '<a href="{LIU_DOMAIN}/wechat-bind">戳我绑定微信</a>',
       }
     }
   ],
@@ -633,7 +623,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">戳我联系客服📞</a>',
+        content: '<a href="{LIU_CUSTOMER_SERVICE}">戳我联系客服📞</a>',
       }
     }
   ],
@@ -647,28 +637,20 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
   ],
 
   // zh-Hant
-  "introduction=zh-Hant": [
-    {
-      msgtype: "text",
-      text: {
-        content: '【TODO】\n要不你幫我寫一下？給錢的那種',
-      }
-    }
-  ],
   "guidebook=zh-Hant": [
     {
       msgtype: "text",
       text: {
         content: `🪧 指路牌
 
+📆 <a href="{LIU_DOMAIN}/schedule">我的行程</a>
+
 ⭐ <a href="{LIU_DOMAIN}/favorite">我的收藏</a>
 
 📂 <a href="{LIU_DOMAIN}/state">我的看板</a>
 
-⚙️ <a href="{LIU_DOMAIN}/settings">我的設定</a>
-
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">開發者的小紅書</a>
-`,   // TODO: 添加到桌面（离线使用）
+`,
       }
     }
   ],
@@ -676,7 +658,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="{LIU_DOMAIN}/connect/wechat">輕觸我綁定微信</a>',
+        content: '<a href="{LIU_DOMAIN}/wechat-bind">輕觸我綁定微信</a>',
       }
     }
   ],
@@ -684,7 +666,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">點我聯繫客服📞</a>',
+        content: '<a href="{LIU_CUSTOMER_SERVICE}">點我聯繫客服📞</a>',
       }
     }
   ],
@@ -698,28 +680,20 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
   ],
 
   // en
-  "introduction=en": [
-    {
-      msgtype: "text",
-      text: {
-        content: '【TODO】\nCan you help me write it? For money.',
-      }
-    }
-  ],
   "guidebook=en": [
     {
       msgtype: "text",
       text: {
         content: `🪧 Guidebook
 
+📆 <a href="{LIU_DOMAIN}/schedule">My Schedule</a>
+
 ⭐ <a href="{LIU_DOMAIN}/favorite">My Favorite</a>
 
 📂 <a href="{LIU_DOMAIN}/state">My Board</a>
 
-⚙️ <a href="{LIU_DOMAIN}/settings">My Settings</a>
-
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">Follow me on RED</a>
-`,   // TODO: 添加到桌面（离线使用）
+`,
       }
     }
   ],
@@ -727,7 +701,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="{LIU_DOMAIN}/connect/wechat">Click me to bind WeChat</a>',
+        content: '<a href="{LIU_DOMAIN}/wechat-bind">Click me to bind WeChat</a>',
       }
     }
   ],
@@ -735,7 +709,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">Click me to contact customer service📞</a>',
+        content: '<a href="{LIU_CUSTOMER_SERVICE}">Click me to contact customer service📞</a>',
       }
     }
   ],
@@ -762,7 +736,7 @@ export const wxTextRepliesItems: WxTextReplyItem[] = [
       {
         msgtype: "text",
         text: {
-          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">戳我联系客服📞</a>',
+          content: '<a href="{LIU_CUSTOMER_SERVICE}">戳我联系客服🧑‍💻</a>',
         }
       }
     ]
@@ -773,7 +747,7 @@ export const wxTextRepliesItems: WxTextReplyItem[] = [
       {
         msgtype: "text",
         text: {
-          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">點我聯繫客服📞</a>',
+          content: '<a href="{LIU_CUSTOMER_SERVICE}">點我聯繫客服🧑‍💻</a>',
         }
       }
     ]
@@ -784,7 +758,7 @@ export const wxTextRepliesItems: WxTextReplyItem[] = [
       {
         msgtype: "text",
         text: {
-          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">Here you are 📞</a>',
+          content: '<a href="{LIU_CUSTOMER_SERVICE}">Here you are 🧑‍💻</a>',
         }
       }
     ]
@@ -900,6 +874,7 @@ export function i18nFill(
   const _env = process.env
   opt2.LIU_DOMAIN = _env.LIU_DOMAIN ?? ""
   opt2.LIU_DOCS_DOMAIN = _env.LIU_DOCS_DOMAIN ?? ""
+  opt2.LIU_CUSTOMER_SERVICE = _env.LIU_CUSTOMER_SERVICE ?? ""
   
   const keys = Object.keys(opt2)
   for(let i=0; i<keys.length; i++) {
