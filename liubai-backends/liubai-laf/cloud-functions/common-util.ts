@@ -3016,7 +3016,7 @@ export async function upgrade_user_subscription(
   }
 
   // 5. update user's subscription
-  console.log("newUserSub: ")
+  console.log("newUserSub in upgrade user subscription!")
   console.log(newUserSub)
   console.log("quota: ")
   console.log(quota)
@@ -3029,6 +3029,8 @@ export async function upgrade_user_subscription(
   const res5 = await uCol.doc(user_id).update(u5)
   const newUser: Table_User = { ...theUser, ...u5 }
   updateUserInCache(user_id, newUser)
+
+  return newUser
 }
 
 

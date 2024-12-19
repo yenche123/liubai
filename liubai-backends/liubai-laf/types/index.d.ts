@@ -89,6 +89,7 @@ declare global {
       LIU_WX_GZ_TMPL_ID_1?: string         // reminder template id enabled, otherwise disabled
       LIU_WX_GZ_TEST_OPENID?: string       // test openid of wx_gzh for testing ai
       LIU_WX_GZ_TYPE?: "service_account" | "subscription_account"      // 服务号 or 订阅号
+      LIU_WECOM_GROUP_LINK?: string        // vip group link
 
       /** 企业微信 企业内部自建应用 */
       LIU_WECOM_QYNB_CORPID?: string

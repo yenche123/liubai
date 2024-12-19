@@ -250,6 +250,7 @@ export const wechatLang: LangAtom = {
     "location_unsupported": "🚧 暂不支持位置消息",
     "link_unsupported": "🚧 暂不支持链接消息",
     "buy_time": "\n如果你急着需要，可以<a href='{LIU_CUSTOMER_SERVICE}'>与开发者联系</a>。买断他的时间，让他为你开发。",
+    "invitation_link": "您已成为留白记事 Premium 会员🎉\n邀请您加入<a href='{link}'>会员限定群聊</a>",
   },
   "zh-Hant": {
     "welcome_1": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n你可以在這裡記錄所有事情，所有「只屬於你」的資訊都將在這裡匯聚。\n\n若這世界就是一個巨大的遊樂園，請去體驗、去創造🥂\n\n[未完待續]",
@@ -262,6 +263,7 @@ export const wechatLang: LangAtom = {
     "location_unsupported": "🚧 暫不支援位置訊息",
     "link_unsupported": "🚧 暫不支援連結訊息",
     "buy_time": "\n如果你急著需要，可以<a href='{LIU_CUSTOMER_SERVICE}'>與開發者聯絡</a>。買斷他的時間，讓他為你開發。",
+    "invitation_link": "您已成为留白记事 Premium 會員🎉\n邀請您加入<a href='{link}'>會員限定群組</a>",
   },
   "en": {
     "welcome_1": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nYou can record all your life’s events, and all information you want is out here.\n\nIf this world is a giant playground, please experience it and create it 🥂\n\n[To be continued]",
@@ -274,6 +276,7 @@ export const wechatLang: LangAtom = {
     "location_unsupported": "🚧 Location message is still in development",
     "link_unsupported": "🚧 Link message is still in development",
     "buy_time": "\nIf you want to use it urgently, you can <a href='{LIU_CUSTOMER_SERVICE}'>contact the developer</a>. Buy his time and let him develop for you.",
+    "invitation_link": "You have become a member of Liubai Premium🎉\nWelcome to join our <a href='{link}'>VIP exclusive group!</a>",
   }
 }
 

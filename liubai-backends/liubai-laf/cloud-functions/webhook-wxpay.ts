@@ -7,6 +7,7 @@ import {
   WxpayHandler,
   extractOrderId,
   upgrade_user_subscription,
+  checkAndGetWxGzhAccessToken,
 } from '@/common-util'
 import { 
   wxpay_apiclient_key, 
@@ -16,13 +17,16 @@ import type {
   DataPass, 
   LiuErrReturn, 
   Table_Order,
+  Table_User,
   Wxpay_Notice_Base, 
   Wxpay_Notice_PaymentResource, 
   Wxpay_Notice_RefundResource, 
   Wxpay_Notice_Result, 
   WxpayVerifySignOpt,
 } from "@/common-types"
-import { getNowStamp } from './common-time'
+import { getNowStamp } from '@/common-time'
+import { useI18n, wechatLang } from '@/common-i18n'
+import { WxGzhSender } from '@/service-send'
 
 /*************** some constants **********************/
 const db = cloud.database()
@@ -119,9 +123,11 @@ async function handle_transaction_success(
   // 4. upgrade user's plan if he or she bought a subscription
   const oT = theOrder.orderType
   if(oT === "subscription" && theOrder.plan_id) {
-    await upgrade_user_subscription(theOrder)
+    const theUser = await upgrade_user_subscription(theOrder)
+    if(theUser) {
+      sendInvitationAfterUpgrading(theUser)
+    }
   }
-
   
 }
 
@@ -246,4 +252,34 @@ async function checkFromWxpay(
     return { code: "E4003", errMsg: "verify sign failed" }
   }
   
+}
+
+async function sendInvitationAfterUpgrading(
+  user: Table_User,
+) {
+  // 1. get user's wx_gzh_openid and invitation link
+  const wx_gzh_openid = user.wx_gzh_openid
+  if(!wx_gzh_openid) return
+  const _env = process.env
+  const link = _env.LIU_WECOM_GROUP_LINK
+  if(!link) {
+    console.warn("no vip group link")
+    return
+  }
+
+  // 2. check out chargeTimes
+  const chargeTimes = user.subscription?.chargeTimes ?? 1
+  if(chargeTimes > 2) return
+  const { t } = useI18n(wechatLang, { user })
+  const msg = t("invitation_link", { link })
+
+  // 3. get access token
+  const accessToken = await checkAndGetWxGzhAccessToken()
+  if(!accessToken) return
+
+  console.warn("try to send invitation message to: ")
+  console.log(wx_gzh_openid)
+  console.log(msg)
+
+  WxGzhSender.sendTextMessage(wx_gzh_openid, accessToken, msg)
 }
