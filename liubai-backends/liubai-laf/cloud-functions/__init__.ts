@@ -9,20 +9,51 @@ import type {
   Shared_AES_Key_IV,
 } from "@/common-types"
 import { getNowStamp } from "@/common-time"
-import { getDocAddId } from '@/common-util'
+import { getDocAddId, valTool } from '@/common-util'
 
 const db = cloud.database()
 
 export async function main(ctx: FunctionContext) {
-  console.log("__init__ 开始运行............")
+  console.warn("__init__ starts to run............")
 
   const nodeVersion = process.version
-  console.log("当前 node 版本号: ", nodeVersion)
+  console.log("the current node version: ", nodeVersion)
 
   await initBlockedIPs()
   await initConfig()
+  viewMyIP()
 
   return { data123: "Hi! __init__ has been run" }
+}
+
+async function viewMyIP() {
+  const _fetch = async () => {
+    try {
+      const res = await fetch("https://api.ip.sb/ip")
+      let ip = await res.text()
+      if(typeof ip === "string") {
+        ip = ip.trim()
+        console.warn(`my ip is ${ip}`)
+        return ip
+      }
+      else {
+        console.warn("fail to get my ip:::")
+        console.log(ip)
+      }
+    }
+    catch(err) {
+      console.warn("fetch err")
+      console.log(err)
+    }
+  }
+
+  let tryTimes = 0
+  while(tryTimes < 3) {
+    await valTool.waitMilli(5000)
+    const res = await _fetch()
+    if(res) break
+    tryTimes++
+  }
 }
 
 
