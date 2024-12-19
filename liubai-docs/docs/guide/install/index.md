@@ -6,7 +6,7 @@ title: 安装
 
 请选择你的设备，进行安装：
 
-## 手机
+## 📱 手机
 
 <a href="./huawei">
   <img src="./assets/huawei.png" alt="huawei" width="280" style="margin-block-end: 10px; border-radius: 10px;">
@@ -34,7 +34,7 @@ title: 安装
 
 以上品牌，按首字母排序。
 
-## 电脑
+## 💻 电脑
 
 <a href="./mac">
   <img src="./assets/mac.jpg" alt="mac" width="280" style="margin-block-end: 10px; border-radius: 10px;">
@@ -45,6 +45,4 @@ title: 安装
 </a>
 
 以上品牌，按首字母排序。
-
-
 
