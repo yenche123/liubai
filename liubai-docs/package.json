@@ -10,7 +10,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "docs:dev": "vitepress dev docs --port 5177",
+    "docs:dev": "vitepress dev docs --force --port 5177",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs --port 4177"
   },
