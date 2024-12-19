@@ -86,7 +86,8 @@ import {
   isWithinMillis,
   getServerTimezone,
   formatTimezone,
-  currentHoursOfSpecificTimezone, 
+  currentHoursOfSpecificTimezone,
+  userlizeStamp, 
 } from "@/common-time"
 import geoip from "geoip-lite"
 import Stripe from "stripe"
@@ -3144,7 +3145,7 @@ export class AiToolUtil {
         hasAddedDate = true
         const tmpDate = new Date(dateObj.year, dateObj.month - 1, dateObj.day)
         const tmpStamp = tmpDate.getTime()
-        whenStamp = localizeStamp(tmpStamp, userTimezone)
+        whenStamp = userlizeStamp(tmpStamp, userTimezone)
       }
     }
 
