@@ -369,8 +369,9 @@ async function handle_subscribe(
   // 4. get EventKey, and extract state
   const res4 = getDirectionCredential(msgObj.EventKey, "qrscene_")
   if(!res4) {
-    send_welcome(wx_gzh_openid, userInfo)
     make_user_subscribed(wx_gzh_openid, userInfo)
+    await send_welcome(wx_gzh_openid, userInfo)
+    send_login_guide(wx_gzh_openid, userInfo)
     return
   }
   const { direction, credential } = res4
@@ -639,12 +640,26 @@ async function send_welcome(
 
   // 2. i18n
   const { t } = useI18n(wechatLang, { lang })
-  const text = t("welcome_2")
+  const text = t("welcome_1")
   
   // 3. reply user with text
   await sendText(wx_gzh_openid, text)
 
   return true
+}
+
+async function send_login_guide(
+  wx_gzh_openid: string,
+  userInfo?: Wx_Res_GzhUserInfo,
+) {
+  // 1. get language
+  const lang = userInfo?.language
+
+  // 2. i18n
+  const { t } = useI18n(wechatLang, { lang })
+  const text = t("login_guide")
+
+  await sendText(wx_gzh_openid, text)
 }
 
 async function make_user_subscribed(
