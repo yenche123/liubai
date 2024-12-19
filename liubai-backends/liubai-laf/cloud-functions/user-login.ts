@@ -213,12 +213,6 @@ async function handle_phone(
   const res0 = await LoginStater.check(state)
   if(res0) return res0
 
-  // 3.1 check out allow-list
-  const res0_1 = await checkAllowList("phone", localNumber)
-  if(!res0_1) {
-    return { code: "U0011", errMsg: "the phone number is not in allow-list" }
-  }
-
   // 4. check frequency
   const res5 = await checkIfSmsSentTooMuch(regionCode, localNumber)
   if(res5) {
@@ -912,12 +906,6 @@ async function handle_email(
   if(res0) return res0
 
   console.log(`user wants to log in using ${email}`)
-
-  // 2.1 检测邮箱是否在许可名单内
-  const res0_1 = await checkAllowList("email", email)
-  if(!res0_1) {
-    return { code: "U0006", errMsg: "the email is not in allow-list" }
-  }
 
   // 3. 检查 email 是否发送过于频繁
   const res1 = await checkIfEmailSentTooMuch(email)
@@ -2468,36 +2456,11 @@ function getClientKey(enc_client_key: any) {
   return { client_key }
 }
 
-// 检测许可名单
-async function checkAllowList(
-  type: "email" | "phone",
-  value: string,
-) {
-  if(type === "email") {
-    const end_1 = value.endsWith("@sjtu.edu.cn")
-    if(end_1) return true
-    const end_2 = value.endsWith("@alumni.sjtu.edu.cn")
-    if(end_2) return true
-    const isTest = TEST_EMAILS.includes(value)
-    if(isTest) return true
-  }
-
-  const w: Partial<Table_AllowList> = {
-    type,
-    isOn: "Y",
-    value,
-  }
-  const res = await db.collection("AllowList").where(w).getOne()
-  return Boolean(res.data)
-}
-
-
 interface CheckOAuthParams {
   oauth_code: string
   state: string
   client_key: string
 }
-
 
 // check out params for OAuth
 async function checkOAuthParams(
