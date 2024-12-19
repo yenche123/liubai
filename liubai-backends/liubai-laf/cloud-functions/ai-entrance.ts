@@ -83,12 +83,8 @@ import cloud from "@lafjs/cloud"
 import { useI18n, aiLang, getCurrentLocale } from "@/common-i18n"
 import * as vbot from "valibot"
 import { WxGzhUploader } from "@/file-utils"
-import FormData from "form-data"
-import axios from 'axios';
 import { createRandom } from "@/common-ids"
 import { addDays, set as date_fn_set } from "date-fns"
-
-
 
 const db = cloud.database()
 const _ = db.command
@@ -106,7 +102,7 @@ const MAX_TIMES_MEMBERSHIP = 200
 
 const SEC_15 = SECONED * 15
 const MIN_3 = MINUTE * 3
-const MIN_30 = MINUTE * 30
+const HOUR_12 = HOUR * 12
 const INDEX_TO_PRESERVE_IMAGES = 12     // the images which appears in the first INDEX_TO_PRESERVE_IMAGES will be preserved rather than compressed to text like [image]
 
 /************************** types ************************/
@@ -250,7 +246,7 @@ export async function get_into_ai(
   }
 
   // 3. check out quota
-  const isQuotaEnough = await AiHelper.checkQuota(entry)
+  const isQuotaEnough = await UserHelper.checkQuota(entry)
   if(!isQuotaEnough) return
 
   // 4. get my ai room
@@ -505,7 +501,8 @@ class AiDirective {
   }
 
   private static async toKickBot(entry: AiEntry, bot: AiBot) {
-    const { t } = useI18n(aiLang, { user: entry.user })
+    const user = entry.user
+    const { t } = useI18n(aiLang, { user })
 
     // 1. get the user's ai room
     const room = await AiHelper.getMyAiRoom(entry)
@@ -532,6 +529,9 @@ class AiDirective {
     const msg4 = t("bot_left", { botName: bot.name })
     TellUser.text(entry, msg4)
 
+    // 5. log
+    LogHelper.kick([bot.character], user)
+
     return res3    
   }
 
@@ -547,7 +547,8 @@ class AiDirective {
   }
 
   private static async toAddBot(entry: AiEntry, bot: AiBot) {
-    const { t } = useI18n(aiLang, { user: entry.user })
+    const user = entry.user
+    const { t } = useI18n(aiLang, { user })
 
     // 1. get the user's ai room
     const room = await AiHelper.getMyAiRoom(entry)
@@ -583,6 +584,7 @@ class AiDirective {
     const msgKey = msgList[r]
     const msg5 = t(msgKey, { botName: bot.name })
     TellUser.text(entry, msg5, bot)
+    LogHelper.add([bot.character], user)
 
     return true
   }
@@ -3372,6 +3374,7 @@ class AiHelper {
       console.log(entry)
       return
     }
+    LogHelper.add(characters, entry.user)
   
     // 3. return room
     const newRoom: Table_AiRoom = { _id: roomId, ...room2 }
@@ -3456,31 +3459,6 @@ class AiHelper {
     }
 
     return characters
-  }
-
-
-  static async checkQuota(
-    entry: AiEntry,
-  ) {
-    const user = entry.user
-    const quota = user.quota
-    if(!quota) return true
-
-    const count = quota.aiConversationCount
-    const isSubscribed = checkIfUserSubscribed(user)
-    const MAX_TIMES = isSubscribed ? MAX_TIMES_MEMBERSHIP : MAX_TIMES_FREE
-
-    const available = count < MAX_TIMES
-    if(!available) {
-      if(MAX_TIMES === MAX_TIMES_FREE) {
-        UserHelper.sendQuotaWarning(entry)
-      }
-      else {
-        UserHelper.sendQuotaWarning2(entry)
-      }
-    }
-
-    return available
   }
 
   static async addChat(data: Partial_Id<Table_AiChat>) {
@@ -4290,6 +4268,29 @@ class AiHelper {
 
 class UserHelper {
 
+  static async checkQuota(
+    entry: AiEntry,
+  ) {
+    const user = entry.user
+    const quota = user.quota
+    if(!quota) return true
+
+    const count = quota.aiConversationCount
+    const isSubscribed = checkIfUserSubscribed(user)
+    const MAX_TIMES = isSubscribed ? MAX_TIMES_MEMBERSHIP : MAX_TIMES_FREE
+
+    const available = count < MAX_TIMES
+    if(!available) {
+      if(MAX_TIMES === MAX_TIMES_FREE) {
+        this.sendQuotaWarning(entry)
+      }
+      else {
+        this.sendQuotaWarning2(entry)
+      }
+    }
+    return available
+  }
+
   static async sendQuotaWarning2(entry: AiEntry) {
     // 1. get payment link
     const paymentLink = await this._getPaymentLink(entry)
@@ -4406,7 +4407,7 @@ class UserHelper {
       refundedAmount: 0,
       currency: "cny",
       plan_id: subPlan._id,
-      expireStamp: getNowStamp() + MIN_30,
+      expireStamp: getNowStamp() + HOUR_12,
     }
     if(wx_gzh_openid) {
       data4.channel = "wx_gzh"
@@ -4992,66 +4993,37 @@ export class Translator {
 
 }
 
+class LogHelper {
 
-class SpeechToText {
-
-  static async runFromBlob(file_blob: Blob) {
-    // 1. get apiKey, baseUrl, and request url
-    const _env = process.env
-    const apiKey = _env.LIU_SILICONFLOW_API_KEY
-    const baseUrl = _env.LIU_SILICONFLOW_BASE_URL
-    if(!apiKey || !baseUrl) {
-      console.warn("no apiKey or baseUrl in SpeechToText")
-      return
+  static kick(
+    characters: AiCharacter[],
+    user?: Table_User,
+  ) {
+    const row: Partial<Table_LogAi> = {
+      infoType: "kick_character",
+      characters,
+      userId: user?._id,
     }
-    const url = baseUrl + "/audio/transcriptions"
+    this._insert(row)
+  }
 
-    // 2. turn blob to formData
-    const arrayBuffer = await file_blob.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
-    const form = new FormData()
-    try {
-      console.log("add buffer......")
-      form.append("file", buffer)
-      form.append("model", "FunAudioLLM/SenseVoiceSmall")
+  static add(
+    characters: AiCharacter[],
+    user?: Table_User,
+  ) {
+    const row: Partial<Table_LogAi> = {
+      infoType: "add_character",
+      characters,
+      userId: user?._id,
     }
-    catch(err) {
-      console.warn("FormData append err: ")
-      console.log(err)
-    }
+    this._insert(row)
+  }
 
-    // 3. options
-    const headers = {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": 'multipart/form-data'
-    }
-
-    // 4. axios.post
-    try {
-      const res4 = await axios.post(url, form, { headers })
-      console.log("see axios.post res4: ")
-      console.log(res4.data)
-    }
-    catch(err) {
-      console.warn("SpeechToText axios.post err: ")
-      console.log(err)
-    }
-
-    // const options = {
-    //   method: "POST",
-    //   headers,
-    //   body: form,
-    // }
-
-    // // 4. to fetch (or axios.post)
-    // const s1 = getNowStamp()
-    // const res4 = await liuFetch(url, options as any)
-    // const s2 = getNowStamp()
-
-    // const diffStamp = s2 - s1
-    // console.log("耗时: ", diffStamp)
-    // console.warn("SpeechToText res4: ")
-    // console.log(res4)
+  static _insert(log: Partial<Table_LogAi>) {
+    const b1 = getBasicStampWhileAdding()
+    log = { ...b1, ...log }
+    const logCol = db.collection("LogAi")
+    logCol.add(log)
   }
 
 }
