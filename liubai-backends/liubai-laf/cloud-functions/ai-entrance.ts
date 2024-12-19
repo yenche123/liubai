@@ -39,6 +39,7 @@ import {
   type Table_Content,
   type SortWay,
   type Table_Workspace,
+  type Table_LogAi,
   type AiBotMetaData,
   Ns_Zhipu,
   Ns_SiliconFlow,
@@ -82,12 +83,8 @@ import cloud from "@lafjs/cloud"
 import { useI18n, aiLang, getCurrentLocale } from "@/common-i18n"
 import * as vbot from "valibot"
 import { WxGzhUploader } from "@/file-utils"
-import FormData from "form-data"
-import axios from 'axios';
 import { createRandom } from "@/common-ids"
 import { addDays, set as date_fn_set } from "date-fns"
-
-
 
 const db = cloud.database()
 const _ = db.command
@@ -105,7 +102,7 @@ const MAX_TIMES_MEMBERSHIP = 200
 
 const SEC_15 = SECONED * 15
 const MIN_3 = MINUTE * 3
-const MIN_30 = MINUTE * 30
+const HOUR_12 = HOUR * 12
 const INDEX_TO_PRESERVE_IMAGES = 12     // the images which appears in the first INDEX_TO_PRESERVE_IMAGES will be preserved rather than compressed to text like [image]
 
 /************************** types ************************/
@@ -213,6 +210,7 @@ interface TurnChatsIntoPromptOpt {
 
 interface BaseLLMChatOpt {
   maxTryTimes?: number
+  user?: Table_User
 }
 
 /********************* empty function ****************/
@@ -248,7 +246,7 @@ export async function get_into_ai(
   }
 
   // 3. check out quota
-  const isQuotaEnough = await AiHelper.checkQuota(entry)
+  const isQuotaEnough = await UserHelper.checkQuota(entry)
   if(!isQuotaEnough) return
 
   // 4. get my ai room
@@ -327,38 +325,41 @@ function mapBots(
   aiParam: AiRunParam,
   promises: Promise<AiRunSuccess | undefined>[],
 ) {
+
+  const user = aiParam.entry.user
+
   if(c === "baixiaoying") {
-    const botBaichuan = new BotBaichuan()
+    const botBaichuan = new BotBaichuan(user)
     const proBaichuan = botBaichuan.run(aiParam)
     promises.push(proBaichuan)
   }
   if(c === "deepseek") {
-    const bot1 = new BotDeepSeek()
+    const bot1 = new BotDeepSeek(user)
     const pro1 = bot1.run(aiParam)
     promises.push(pro1)
   }
   else if(c === "hailuo") {
-    const botMinimax = new BotMiniMax()
+    const botMinimax = new BotMiniMax(user)
     const proMinimax = botMinimax.run(aiParam)
     promises.push(proMinimax)
   }
   else if(c === "kimi") {
-    const bot2 = new BotMoonshot()
+    const bot2 = new BotMoonshot(user)
     const pro2 = bot2.run(aiParam)
     promises.push(pro2)
   }
   else if(c === "wanzhi") {
-    const bot3 = new BotYi()
+    const bot3 = new BotYi(user)
     const pro3 = bot3.run(aiParam)
     promises.push(pro3)
   }
   else if(c === "yuewen") {
-    const bot4 = new BotStepfun()
+    const bot4 = new BotStepfun(user)
     const pro4 = bot4.run(aiParam)
     promises.push(pro4)
   }
   else if(c === "zhipu") {
-    const bot5 = new BotZhipu()
+    const bot5 = new BotZhipu(user)
     const pro5 = bot5.run(aiParam)
     promises.push(pro5)
   }
@@ -500,7 +501,8 @@ class AiDirective {
   }
 
   private static async toKickBot(entry: AiEntry, bot: AiBot) {
-    const { t } = useI18n(aiLang, { user: entry.user })
+    const user = entry.user
+    const { t } = useI18n(aiLang, { user })
 
     // 1. get the user's ai room
     const room = await AiHelper.getMyAiRoom(entry)
@@ -527,6 +529,9 @@ class AiDirective {
     const msg4 = t("bot_left", { botName: bot.name })
     TellUser.text(entry, msg4)
 
+    // 5. log
+    LogHelper.kick([bot.character], user)
+
     return res3    
   }
 
@@ -542,7 +547,8 @@ class AiDirective {
   }
 
   private static async toAddBot(entry: AiEntry, bot: AiBot) {
-    const { t } = useI18n(aiLang, { user: entry.user })
+    const user = entry.user
+    const { t } = useI18n(aiLang, { user })
 
     // 1. get the user's ai room
     const room = await AiHelper.getMyAiRoom(entry)
@@ -578,6 +584,7 @@ class AiDirective {
     const msgKey = msgList[r]
     const msg5 = t(msgKey, { botName: bot.name })
     TellUser.text(entry, msg5, bot)
+    LogHelper.add([bot.character], user)
 
     return true
   }
@@ -691,6 +698,7 @@ class BaseLLM {
         timeout,
       })
       _this._tryTimes = 0
+      _this._log(chatCompletion as any, opt)
       return chatCompletion as OaiChatCompletion
     }
     catch(err) {
@@ -735,15 +743,41 @@ class BaseLLM {
       }
     }
   }
+
+  private _log(
+    chatCompletion: Partial<OaiChatCompletion>,
+    opt?: BaseLLMChatOpt,
+  ) {
+    const usage = chatCompletion?.usage
+    if(!usage) return
+
+    const logCol = db.collection("LogAi")
+    const b1 = getBasicStampWhileAdding()
+    const aLog: Partial_Id<Table_LogAi> = {
+      ...b1,
+      infoType: "cost",
+      costUsage: usage,
+      costBaseUrl: this._baseUrl,
+      userId: opt?.user?._id,
+    }
+    logCol.add(aLog)
+  }
+
+
 }
 
 class BaseBot {
   protected _character: AiCharacter
   protected _bots: AiBot[]
+  private _fromUser: Table_User | undefined
 
-  constructor(c: AiCharacter) {
+  constructor(
+    c: AiCharacter, 
+    user?: Table_User,
+  ) {
     this._character = c
     this._bots = aiBots.filter(v => v.character === c)
+    this._fromUser = user
   }
 
   protected async chat(
@@ -773,7 +807,7 @@ class BaseBot {
 
     const llm = new BaseLLM(apiData.apiKey, apiData.baseURL)
     const t1 = getNowStamp()
-    const res = await llm.chat(params)
+    const res = await llm.chat(params, { user: this._fromUser })
     const t2 = getNowStamp()
     const cost = t2 - t1
 
@@ -1087,8 +1121,9 @@ class BaseBot {
     const c = this._character
     const assistantName = AiHelper.getCharacterName(c)
     const { chatParam, bot, aiParam } = postParam
+    const user = aiParam.entry.user
     const canUseTool = bot.abilities.includes("tool_use")
-    const { t } = useI18n(aiLang, { user: aiParam.entry.user })
+    const { t } = useI18n(aiLang, { user })
 
     // 3. add new prompts with tool_calls and its result
     if(canUseTool) {
@@ -1168,8 +1203,9 @@ class BaseBot {
     const c = this._character
     const assistantName = AiHelper.getCharacterName(c)
     const { chatParam, aiParam, bot } = postParam
+    const user = aiParam.entry.user
     const canUseTool = bot.abilities.includes("tool_use")
-    const { t } = useI18n(aiLang, { user: aiParam.entry.user })
+    const { t } = useI18n(aiLang, { user })
 
     // 3. add prompts with tool_calls and its result
     if(canUseTool) {
@@ -1409,8 +1445,8 @@ class BaseBot {
 }
 
 class BotBaichuan extends BaseBot {
-  constructor() {
-    super("baixiaoying")
+  constructor(user?: Table_User) {
+    super("baixiaoying", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1450,8 +1486,8 @@ class BotBaichuan extends BaseBot {
 
 class BotDeepSeek extends BaseBot {
 
-  constructor() {
-    super("deepseek")
+  constructor(user?: Table_User) {
+    super("deepseek", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1494,8 +1530,8 @@ class BotDeepSeek extends BaseBot {
 }
 
 class BotMiniMax extends BaseBot {
-  constructor() {
-    super("hailuo")
+  constructor(user?: Table_User) {
+    super("hailuo", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1544,8 +1580,8 @@ class BotMiniMax extends BaseBot {
 
 class BotMoonshot extends BaseBot {
 
-  constructor() {
-    super("kimi")
+  constructor(user?: Table_User) {
+    super("kimi", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1586,8 +1622,8 @@ class BotMoonshot extends BaseBot {
 
 class BotStepfun extends BaseBot {
 
-  constructor() {
-    super("yuewen")
+  constructor(user?: Table_User) {
+    super("yuewen", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1628,8 +1664,8 @@ class BotStepfun extends BaseBot {
 
 class BotYi extends BaseBot {
 
-  constructor() {
-    super("wanzhi")
+  constructor(user?: Table_User) {
+    super("wanzhi", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -1673,8 +1709,8 @@ class BotYi extends BaseBot {
 
 class BotZhipu extends BaseBot {
 
-  constructor() {
-    super("zhipu")
+  constructor(user?: Table_User) {
+    super("zhipu", user)
   }
 
   async run(aiParam: AiRunParam): Promise<AiRunSuccess | undefined> {
@@ -2081,7 +2117,7 @@ class AiCompressor {
       model: _env.LIU_SUMMARY_MODEL ?? "",
     }
     const t1 = getNowStamp()
-    const res4 = await llm.chat(arg4)
+    const res4 = await llm.chat(arg4, { user })
     const t2 = getNowStamp()
     const cost = t2 - t1
     console.log("summary cost: ", cost)
@@ -3338,6 +3374,7 @@ class AiHelper {
       console.log(entry)
       return
     }
+    LogHelper.add(characters, entry.user)
   
     // 3. return room
     const newRoom: Table_AiRoom = { _id: roomId, ...room2 }
@@ -3422,31 +3459,6 @@ class AiHelper {
     }
 
     return characters
-  }
-
-
-  static async checkQuota(
-    entry: AiEntry,
-  ) {
-    const user = entry.user
-    const quota = user.quota
-    if(!quota) return true
-
-    const count = quota.aiConversationCount
-    const isSubscribed = checkIfUserSubscribed(user)
-    const MAX_TIMES = isSubscribed ? MAX_TIMES_MEMBERSHIP : MAX_TIMES_FREE
-
-    const available = count < MAX_TIMES
-    if(!available) {
-      if(MAX_TIMES === MAX_TIMES_FREE) {
-        UserHelper.sendQuotaWarning(entry)
-      }
-      else {
-        UserHelper.sendQuotaWarning2(entry)
-      }
-    }
-
-    return available
   }
 
   static async addChat(data: Partial_Id<Table_AiChat>) {
@@ -4256,6 +4268,29 @@ class AiHelper {
 
 class UserHelper {
 
+  static async checkQuota(
+    entry: AiEntry,
+  ) {
+    const user = entry.user
+    const quota = user.quota
+    if(!quota) return true
+
+    const count = quota.aiConversationCount
+    const isSubscribed = checkIfUserSubscribed(user)
+    const MAX_TIMES = isSubscribed ? MAX_TIMES_MEMBERSHIP : MAX_TIMES_FREE
+
+    const available = count < MAX_TIMES
+    if(!available) {
+      if(MAX_TIMES === MAX_TIMES_FREE) {
+        this.sendQuotaWarning(entry)
+      }
+      else {
+        this.sendQuotaWarning2(entry)
+      }
+    }
+    return available
+  }
+
   static async sendQuotaWarning2(entry: AiEntry) {
     // 1. get payment link
     const paymentLink = await this._getPaymentLink(entry)
@@ -4372,7 +4407,7 @@ class UserHelper {
       refundedAmount: 0,
       currency: "cny",
       plan_id: subPlan._id,
-      expireStamp: getNowStamp() + MIN_30,
+      expireStamp: getNowStamp() + HOUR_12,
     }
     if(wx_gzh_openid) {
       data4.channel = "wx_gzh"
@@ -4958,66 +4993,37 @@ export class Translator {
 
 }
 
+class LogHelper {
 
-class SpeechToText {
-
-  static async runFromBlob(file_blob: Blob) {
-    // 1. get apiKey, baseUrl, and request url
-    const _env = process.env
-    const apiKey = _env.LIU_SILICONFLOW_API_KEY
-    const baseUrl = _env.LIU_SILICONFLOW_BASE_URL
-    if(!apiKey || !baseUrl) {
-      console.warn("no apiKey or baseUrl in SpeechToText")
-      return
+  static kick(
+    characters: AiCharacter[],
+    user?: Table_User,
+  ) {
+    const row: Partial<Table_LogAi> = {
+      infoType: "kick_character",
+      characters,
+      userId: user?._id,
     }
-    const url = baseUrl + "/audio/transcriptions"
+    this._insert(row)
+  }
 
-    // 2. turn blob to formData
-    const arrayBuffer = await file_blob.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
-    const form = new FormData()
-    try {
-      console.log("add buffer......")
-      form.append("file", buffer)
-      form.append("model", "FunAudioLLM/SenseVoiceSmall")
+  static add(
+    characters: AiCharacter[],
+    user?: Table_User,
+  ) {
+    const row: Partial<Table_LogAi> = {
+      infoType: "add_character",
+      characters,
+      userId: user?._id,
     }
-    catch(err) {
-      console.warn("FormData append err: ")
-      console.log(err)
-    }
+    this._insert(row)
+  }
 
-    // 3. options
-    const headers = {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": 'multipart/form-data'
-    }
-
-    // 4. axios.post
-    try {
-      const res4 = await axios.post(url, form, { headers })
-      console.log("see axios.post res4: ")
-      console.log(res4.data)
-    }
-    catch(err) {
-      console.warn("SpeechToText axios.post err: ")
-      console.log(err)
-    }
-
-    // const options = {
-    //   method: "POST",
-    //   headers,
-    //   body: form,
-    // }
-
-    // // 4. to fetch (or axios.post)
-    // const s1 = getNowStamp()
-    // const res4 = await liuFetch(url, options as any)
-    // const s2 = getNowStamp()
-
-    // const diffStamp = s2 - s1
-    // console.log("耗时: ", diffStamp)
-    // console.warn("SpeechToText res4: ")
-    // console.log(res4)
+  static _insert(log: Partial<Table_LogAi>) {
+    const b1 = getBasicStampWhileAdding()
+    log = { ...b1, ...log }
+    const logCol = db.collection("LogAi")
+    logCol.add(log)
   }
 
 }

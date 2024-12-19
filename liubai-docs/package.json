@@ -1,7 +1,12 @@
 {
   "name": "liubai-docs",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.4.15",
+  "description": "It's the docs center for Liubai",
+  "author": {
+    "name": "yenche123",
+    "email": "tsuiyenche@outlook.com",
+    "url": "https://u1s1.site"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,9 +14,7 @@
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs --port 4177"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "license": "AGPL-3.0-or-later",
   "devDependencies": {
     "vitepress": "^1.5.0"
   },

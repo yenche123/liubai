@@ -1,14 +1,18 @@
 {
   "name": "liubai-laf",
-  "version": "0.0.1",
+  "version": "0.4.15",
   "description": "Liubai's backend for Laf",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx test/index.ts"
   },
-  "author": "yenche123",
-  "license": "ISC",
+  "author": {
+    "name": "yenche123",
+    "email": "tsuiyenche@outlook.com",
+    "url": "https://u1s1.site"
+  },
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
     "@lafjs/cloud": "1.0.0",
     "@wecom/crypto": "^1.0.1",

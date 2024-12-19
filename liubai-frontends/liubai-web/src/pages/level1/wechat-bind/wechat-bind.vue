@@ -53,6 +53,7 @@ const { t } = useI18n()
           <custom-btn class="ap-btn ap-ok-btn" @click="onTapBtn1">
             <span v-if="wbData.status === 'logout'">{{ t('login.wechat_one_login') }}</span>
             <span v-else-if="wbData.status === 'waiting'">{{ t('login.bind_instantly') }}</span>
+            <span v-else-if="wbData.status === 'logged'">{{ t('login.lets_chat') }}</span>
             <span v-else>{{ t('common.back') }}</span>
           </custom-btn>
 

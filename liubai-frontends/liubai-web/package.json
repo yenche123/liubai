@@ -1,13 +1,14 @@
 {
   "name": "liubai-web",
   "private": true,
-  "version": "0.4.13",
-  "description": "Your Notes, Tasks, Calendar, and To-Do List",
+  "version": "0.4.15",
+  "description": "It's the frontend project for Liubai",
   "author": {
     "name": "yenche123",
     "email": "tsuiyenche@outlook.com",
     "url": "https://u1s1.site"
   },
+  "license": "AGPL-3.0-or-later",
   "type": "module",
   "scripts": {
     "dev": "vite --host",

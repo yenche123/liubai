@@ -240,8 +240,8 @@ export const wecomLang: LangAtom = {
 // Notes Calendar Task Todo
 export const wechatLang: LangAtom = {
   "zh-Hans": {
-    "welcome_1": "欢迎关注留白记事！\n\n留白记事 = 备忘录📝 + 日历📆 + 任务📌 + 待办清单📂\n\n你可以在这里记录所有事情，所有“只属于你”的信息都将在这里汇聚。\n\n若这世界就是一个巨大的游乐园，请去体验，去创造🥂\n\n[未完待续]",
-    "welcome_2": "欢迎关注留白记事！\n\n留白记事 = 备忘录📝 + 日历📆 + 任务📌 + 待办清单📂\n\n若你还没有体验资格，可以在这里回复你的邮箱，稍后将你加入哦！",
+    "welcome_1": "欢迎关注留白记事！\n\n留白记事 = AI 加持的备忘录📝 + 日历📆 + 任务📌 + 待办清单📂\n\n你可以在这里记录所有事情，所有“只属于你”的信息都将在这里汇聚。\n\n若这世界就是一个巨大的游乐园，请去体验，去创造🥂\n\n[未完待续]",
+    "login_guide": "若你想要马上拥有三个助手，欢迎使用<a href='{LIU_DOMAIN}/wechat-bind'>微信一键登录</a>",
     "already_bound": "当前微信已绑定帐号 {account}\n请先在原帐号上解绑后，再重新扫码。",
     "success_1": "绑定成功🎉\n\n小诀窍：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
     "login_first": "尚未登录！\n欢迎使用<a href='{LIU_DOMAIN}/wechat-bind'>微信一键登录</a>",
@@ -250,10 +250,11 @@ export const wechatLang: LangAtom = {
     "location_unsupported": "🚧 暂不支持位置消息",
     "link_unsupported": "🚧 暂不支持链接消息",
     "buy_time": "\n如果你急着需要，可以<a href='{LIU_CUSTOMER_SERVICE}'>与开发者联系</a>。买断他的时间，让他为你开发。",
+    "invitation_link": "您已成为留白记事 Premium 会员🎉\n邀请您加入<a href='{link}'>会员限定群聊</a>",
   },
   "zh-Hant": {
-    "welcome_1": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n你可以在這裡記錄所有事情，所有「只屬於你」的資訊都將在這裡匯聚。\n\n若這世界就是一個巨大的遊樂園，請去體驗、去創造🥂\n\n[未完待續]",
-    "welcome_2": "歡迎追蹤留白記事！\n\n留白記事 = 備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n若你還沒有體驗資格，可以在此處回覆你的 email，稍後將你加入喔！",
+    "welcome_1": "歡迎追蹤留白記事！\n\n留白記事 = AI 加持的備忘錄📝 + 行事曆📆 + 任務📌 + 待辦清單📂\n\n你可以在這裡記錄所有事情，所有「只屬於你」的資訊都將在這裡匯聚。\n\n若這世界就是一個巨大的遊樂園，請去體驗、去創造🥂\n\n[未完待續]",
+    "login_guide": "若你想要馬上擁有三個助手，歡迎使用<a href='{LIU_DOMAIN}/wechat-bind'>微信一鍵登入</a>",
     "already_bound": "當前微信已綁定帳號 {account}\n請先在原帳號上解綁後，再重新掃描 QR Code",
     "success_1": "綁定成功🎉\n\n小訣竅：<a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>如何避免漏接提醒</a>",
     "login_first": "尚未登入! \n歡迎使用<a href='{LIU_DOMAIN}/wechat-bind'>微信一鍵登入</a>",
@@ -262,10 +263,11 @@ export const wechatLang: LangAtom = {
     "location_unsupported": "🚧 暫不支援位置訊息",
     "link_unsupported": "🚧 暫不支援連結訊息",
     "buy_time": "\n如果你急著需要，可以<a href='{LIU_CUSTOMER_SERVICE}'>與開發者聯絡</a>。買斷他的時間，讓他為你開發。",
+    "invitation_link": "您已成为留白记事 Premium 會員🎉\n邀請您加入<a href='{link}'>會員限定群組</a>",
   },
   "en": {
-    "welcome_1": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nYou can record all your life’s events, and all information you want is out here.\n\nIf this world is a giant playground, please experience it and create it 🥂\n\n[To be continued]",
-    "welcome_2": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂\n\nIf you don't have access to Liubai, you can reply your email here, and we will add you later.",
+    "welcome_1": "Welcome to follow Liubai!\n\nLiubai = Notes📝 + Calendar📆 + Tasks📌 + Todo📂 with AI\n\nYou can record all your life’s events, and all information you want is out here.\n\nIf this world is a giant playground, please experience it and create it 🥂\n\n[To be continued]",
+    "login_guide": "If you want to get three assistants immediately, welcome to <a href='{LIU_DOMAIN}/wechat-bind'>Continue with WeChat</a>",
     "already_bound": "Current Wechat has already bound account {account}\nPlease unbind it from the original account first, then re-scan the QR code.",
     "success_1": "Binding successful🎉\n\nTip: <a href='https://mp.weixin.qq.com/s/3g1vn8wnps7nKntUKXIJuw'>How to avoid missing reminders</a>",
     "login_first": "Not logged in yet!\nWelcome to <a href='{LIU_DOMAIN}/wechat-bind'>Login via WeChat</a>",
@@ -274,6 +276,7 @@ export const wechatLang: LangAtom = {
     "location_unsupported": "🚧 Location message is still in development",
     "link_unsupported": "🚧 Link message is still in development",
     "buy_time": "\nIf you want to use it urgently, you can <a href='{LIU_CUSTOMER_SERVICE}'>contact the developer</a>. Buy his time and let him develop for you.",
+    "invitation_link": "You have become a member of Liubai Premium🎉\nWelcome to join our <a href='{link}'>VIP exclusive group!</a>",
   }
 }
 
@@ -588,33 +591,23 @@ export const aiLang: LangAtom = {
 }
 
 
-
-
 /********************* Wx Click Replies ****************/
 export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
   // zh-Hans
-  "introduction": [
-    {
-      msgtype: "text",
-      text: {
-        content: '【TODO】\n要不你帮我写一下？给钱的那种',
-      }
-    }
-  ],
   "guidebook": [
     {
       msgtype: "text",
       text: {
         content: `🪧 指路牌
 
+📆 <a href="{LIU_DOMAIN}/schedule">我的日程</a>
+
 ⭐ <a href="{LIU_DOMAIN}/favorite">我的收藏</a>
 
 📂 <a href="{LIU_DOMAIN}/state">我的看板</a>
 
-⚙️ <a href="{LIU_DOMAIN}/settings">我的设置</a>
-
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">开发者的小红书</a>
-`,   // TODO: 添加到桌面（离线使用）
+`,
       }
     }
   ],
@@ -622,7 +615,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="{LIU_DOMAIN}/connect/wechat">戳我绑定微信</a>',
+        content: '<a href="{LIU_DOMAIN}/wechat-bind">戳我绑定微信</a>',
       }
     }
   ],
@@ -630,7 +623,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">戳我联系客服📞</a>',
+        content: '<a href="{LIU_CUSTOMER_SERVICE}">戳我联系客服📞</a>',
       }
     }
   ],
@@ -644,28 +637,20 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
   ],
 
   // zh-Hant
-  "introduction=zh-Hant": [
-    {
-      msgtype: "text",
-      text: {
-        content: '【TODO】\n要不你幫我寫一下？給錢的那種',
-      }
-    }
-  ],
   "guidebook=zh-Hant": [
     {
       msgtype: "text",
       text: {
         content: `🪧 指路牌
 
+📆 <a href="{LIU_DOMAIN}/schedule">我的行程</a>
+
 ⭐ <a href="{LIU_DOMAIN}/favorite">我的收藏</a>
 
 📂 <a href="{LIU_DOMAIN}/state">我的看板</a>
 
-⚙️ <a href="{LIU_DOMAIN}/settings">我的設定</a>
-
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">開發者的小紅書</a>
-`,   // TODO: 添加到桌面（离线使用）
+`,
       }
     }
   ],
@@ -673,7 +658,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="{LIU_DOMAIN}/connect/wechat">輕觸我綁定微信</a>',
+        content: '<a href="{LIU_DOMAIN}/wechat-bind">輕觸我綁定微信</a>',
       }
     }
   ],
@@ -681,7 +666,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">點我聯繫客服📞</a>',
+        content: '<a href="{LIU_CUSTOMER_SERVICE}">點我聯繫客服📞</a>',
       }
     }
   ],
@@ -695,28 +680,20 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
   ],
 
   // en
-  "introduction=en": [
-    {
-      msgtype: "text",
-      text: {
-        content: '【TODO】\nCan you help me write it? For money.',
-      }
-    }
-  ],
   "guidebook=en": [
     {
       msgtype: "text",
       text: {
         content: `🪧 Guidebook
 
+📆 <a href="{LIU_DOMAIN}/schedule">My Schedule</a>
+
 ⭐ <a href="{LIU_DOMAIN}/favorite">My Favorite</a>
 
 📂 <a href="{LIU_DOMAIN}/state">My Board</a>
 
-⚙️ <a href="{LIU_DOMAIN}/settings">My Settings</a>
-
 📕 <a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24">Follow me on RED</a>
-`,   // TODO: 添加到桌面（离线使用）
+`,
       }
     }
   ],
@@ -724,7 +701,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="{LIU_DOMAIN}/connect/wechat">Click me to bind WeChat</a>',
+        content: '<a href="{LIU_DOMAIN}/wechat-bind">Click me to bind WeChat</a>',
       }
     }
   ],
@@ -732,7 +709,7 @@ export const wxClickReplies: Record<string, Wx_Gzh_Send_Msg[]> = {
     {
       msgtype: "text",
       text: {
-        content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">Click me to contact customer service📞</a>',
+        content: '<a href="{LIU_CUSTOMER_SERVICE}">Click me to contact customer service📞</a>',
       }
     }
   ],
@@ -759,7 +736,7 @@ export const wxTextRepliesItems: WxTextReplyItem[] = [
       {
         msgtype: "text",
         text: {
-          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">戳我联系客服📞</a>',
+          content: '<a href="{LIU_CUSTOMER_SERVICE}">戳我联系客服🧑‍💻</a>',
         }
       }
     ]
@@ -770,7 +747,7 @@ export const wxTextRepliesItems: WxTextReplyItem[] = [
       {
         msgtype: "text",
         text: {
-          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">點我聯繫客服📞</a>',
+          content: '<a href="{LIU_CUSTOMER_SERVICE}">點我聯繫客服🧑‍💻</a>',
         }
       }
     ]
@@ -781,7 +758,7 @@ export const wxTextRepliesItems: WxTextReplyItem[] = [
       {
         msgtype: "text",
         text: {
-          content: '<a href="https://work.weixin.qq.com/kfid/kfcfb6f3959d36f6a0f">Here you are 📞</a>',
+          content: '<a href="{LIU_CUSTOMER_SERVICE}">Here you are 🧑‍💻</a>',
         }
       }
     ]
@@ -897,6 +874,7 @@ export function i18nFill(
   const _env = process.env
   opt2.LIU_DOMAIN = _env.LIU_DOMAIN ?? ""
   opt2.LIU_DOCS_DOMAIN = _env.LIU_DOCS_DOMAIN ?? ""
+  opt2.LIU_CUSTOMER_SERVICE = _env.LIU_CUSTOMER_SERVICE ?? ""
   
   const keys = Object.keys(opt2)
   for(let i=0; i<keys.length; i++) {

@@ -27,7 +27,8 @@ export default defineConfig({
         {
           text: "欢迎",
           items: [
-            { text: "简介", link: "/guide/what-is-liubai" }
+            { text: "简介", link: "/guide/what-is-liubai" },
+            { text: "社区", link: "/guide/community" }
           ]
         },
         {
@@ -64,7 +65,7 @@ export default defineConfig({
           text: "条款",
           collapsed: true,
           items: [
-            { text: "服务条款", link: "/guide/rules/service-terms" },
+            { text: "服务协议", link: "/guide/rules/service-terms" },
             { text: "隐私政策", link: "/guide/rules/privacy-policy" },
           ]
         }

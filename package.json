@@ -1,13 +1,13 @@
 {
   "name": "liubai",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.4.15",
+  "description": "Supercharge yourself!",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["Local First", "AI Native", "Produtivity Tools", "Tools for Thought"],
+  "author": "yenche123 <tsuiyenche@outlook.com> (https://github.com/yenche123)",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {}
 }

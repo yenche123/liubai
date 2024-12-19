@@ -1278,6 +1278,14 @@ export interface Table_LoginState extends BaseTable {
   num: number
 }
 
+export interface Table_LogAi extends BaseTable {
+  infoType: "cost" | "kick_character" | "add_character"
+  characters?: AiCharacter[]
+  costUsage?: LiuAi.Usage
+  costBaseUrl?: string
+  userId?: string
+}
+
 /** User表 */
 export interface Table_User extends BaseTable {
   oState: OState_User
@@ -1673,12 +1681,6 @@ export interface Table_AiChat extends BaseTable {
   wxMediaId?: string
   wxMediaId16K?: string
 }
-
-export interface Table_Log extends BaseTable {
-  userId: string
-  infoType: "conversation"
-}
-
 
 
 /*********************** 基于 Table 的扩展类型 ***********************/
