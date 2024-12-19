@@ -29,24 +29,6 @@ const {
     desc-key="connect.feishu_desc" icon-url="/images/third-party/feishu.png"
   ></ConnectItem>
 
-  <!-- TODO: telegram -->
-  <ConnectItem v-if="_env.C_TELEGRAM" 
-    :prefix="prefix" connector-id="telegram" title-key="connect.telegram"
-    desc-key="connect.telegram_desc" icon-url="/images/third-party/telegram.svg"
-  ></ConnectItem>
-
-  <!-- whatsapp -->
-  <ConnectItem v-if="_env.C_WHATSAPP" 
-    :prefix="prefix" connector-id="whatsapp" title-key="connect.whatsapp"
-    desc-key="connect.whatsapp_desc" icon-url="/images/third-party/whatsapp.svg"
-  ></ConnectItem>
-
-  <!-- line -->
-  <ConnectItem v-if="_env.C_LINE" 
-    :prefix="prefix" connector-id="line" title-key="connect.line"
-    desc-key="connect.line_desc" icon-url="/images/third-party/line.svg"
-  ></ConnectItem>
-
   <!-- teams -->
   <ConnectItem v-if="_env.C_TEAMS" 
     :prefix="prefix" connector-id="teams" title-key="connect.teams"
