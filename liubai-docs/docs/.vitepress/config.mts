@@ -34,12 +34,26 @@ export default defineConfig({
           text: "安装",
           link: "/guide/install/",
           items: [
-            { text: "华为", link: "/guide/install/huawei" },
-            { text: "iPhone", link: "/guide/install/iphone" },
-            { text: "OPPO", link: "/guide/install/oppo" },
-            { text: "Realme", link: "/guide/install/realme" },
-            { text: "vivo", link: "/guide/install/vivo" },
-            { text: "小米", link: "/guide/install/xiaomi" },
+            {
+              text: "手机",
+              collapsed: true,
+              items: [
+                { text: "华为", link: "/guide/install/huawei" },
+                { text: "iPhone", link: "/guide/install/iphone" },
+                { text: "OPPO", link: "/guide/install/oppo" },
+                { text: "Realme", link: "/guide/install/realme" },
+                { text: "vivo", link: "/guide/install/vivo" },
+                { text: "小米", link: "/guide/install/xiaomi" },
+              ]
+            },
+            {
+              text: "电脑",
+              collapsed: true,
+              items: [
+                { text: "Mac", link: "/guide/install/mac" },
+                { text: "Windows", link: "/guide/install/windows" },
+              ]
+            }
           ]
         },
         {
