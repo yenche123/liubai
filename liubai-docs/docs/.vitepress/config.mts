@@ -27,7 +27,8 @@ export default defineConfig({
         {
           text: "欢迎",
           items: [
-            { text: "简介", link: "/guide/what-is-liubai" }
+            { text: "简介", link: "/guide/what-is-liubai" },
+            { text: "社区", link: "/guide/community" }
           ]
         },
         {
