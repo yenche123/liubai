@@ -16,7 +16,7 @@ import * as vbot from "valibot"
 const MAXIMUM_IN_ONE_MINUTE = 60
 
 // 1s 内，最大访问次数
-const MAXIMUM_IN_ONE_SEC = 6
+const MAXIMUM_IN_ONE_SEC = 5
 
 // 收集最近多少个访问时间戳
 const VISITED_NUM = 60
@@ -79,6 +79,8 @@ export async function main(
   // 2. 检查 ip
   const res2 = checkIp(res1.output)
   if(!res2) {
+    console.log(ctx.headers)
+    console.log(ctx.body)
     return { code: "E4003", errMsg: "sorry, we cannot serve you" }
   }
 
@@ -213,7 +215,10 @@ function checkIp(ip: string) {
   // 1. 检查是否在屏蔽名单中
   const blockedIps: string[] = gShared.get(`liu-blocked-ips`) ?? []
   const hasBlocked = blockedIps.includes(ip)
-  if(hasBlocked) return false
+  if(hasBlocked) {
+    console.warn(`ip ${ip} is blocked!`)
+    return false
+  }
 
   const now = getNowStamp()
 
@@ -266,13 +271,14 @@ function checkIp(ip: string) {
     const item = recentVisitStamps[idx]
     const diff3 = now - item
     if(diff3 < SECONED) {
-      console.warn(`当前 ip ${ip} 在 1s 内访问过于频繁`)
+      console.warn(`too many requests from ip ${ip} in 1 second`)
       return false
     }
   }
 
   // 8. 检查 1 分钟内的访问次数
   if(visitNum > MAXIMUM_IN_ONE_MINUTE) {
+    console.warn(`too many requests from ip ${ip} in 1 minute`)
     return false
   }
 
