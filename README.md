@@ -1,7 +1,7 @@
 # Liubai
 
 
-## 项目概览
+## 概览 📂
 
 ```
 .
@@ -18,3 +18,15 @@
 
 `liubai-docs` 为文档根目录，使用 [VitePress](https://vitepress.dev/) 构建。
 
+
+## 保持联络 👋
+
+<a href="https://github.com/yenche123/liubai/discussions" title="GitHub Discussions">
+  <img src="./assets/github.png" width="320" style="border-radius: 16px; overflow: hidden;" />
+</a>
+
+<img src="./assets/weixin.png" width="320" style="border-radius: 16px; overflow: hidden;" />
+
+<a href="https://www.xiaohongshu.com/user/profile/5d1642d80000000011033c24" target="_blank" title="xhs">
+  <img src="./assets/xhs.png" width="320" style="border-radius: 16px; overflow: hidden;" />
+</a>
