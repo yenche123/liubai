@@ -14,6 +14,7 @@ import {
   invokeWxJsSdk,
 } from "~/utils/third-party/weixin/handle-wx-js-sdk"
 import liuApi from "~/utils/liu-api"
+import cui from "~/components/custom-ui"
 
 export function useAgreePage() {
 
@@ -111,6 +112,10 @@ function toTapCheckItOut(
   apData: ApData,
   rr: RouteAndLiuRouter,
 ) {
-
-
+  const { contentId } = apData
+  if(!contentId) {
+    cui.showModal({ content: "no contentId" })
+    return
+  }
+  rr.router.push({ name: "detail", params: { contentId } })
 }
