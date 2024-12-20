@@ -3,13 +3,12 @@ import cloud from '@lafjs/cloud'
 import * as crypto from "crypto"
 import type { 
   Partial_Id,
-  Table_BlockList, 
   Table_Config, 
   Shared_RSA_Key_Pair,
   Shared_AES_Key_IV,
 } from "@/common-types"
 import { getNowStamp } from "@/common-time"
-import { getDocAddId, valTool } from '@/common-util'
+import { getDocAddId, SafeGuard, valTool } from '@/common-util'
 
 const db = cloud.database()
 
@@ -59,23 +58,8 @@ async function viewMyIP() {
 
 /** 初始化被屏蔽的 ip */
 async function initBlockedIPs() {
-  const w: Partial<Table_BlockList> = {
-    type: "ip",
-    isOn: "Y",
-  }
-  const col = db.collection("BlockList")
-  const q = col.where(w)
-  const res = await q.get<Table_BlockList>()
-  const list = res.data
-  if(list.length < 1) {
-    console.log("没有 ip 需要屏蔽.....")
-    return true
-  }
-
-  const ips = list.map(v => v.value)
-  cloud.shared.set(`liu-blocked-ips`, ips)
-
-  return true
+  const res1 = await SafeGuard.handleBlockedIPs()
+  return res1
 }
 
 
