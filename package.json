@@ -1,6 +1,6 @@
 {
   "name": "liubai",
-  "version": "0.4.15",
+  "version": "0.5.0",
   "description": "Supercharge yourself!",
   "main": "index.js",
   "scripts": {
