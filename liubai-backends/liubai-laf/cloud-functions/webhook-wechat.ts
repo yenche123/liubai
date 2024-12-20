@@ -38,7 +38,6 @@ import {
   updateUserInCache,
   tagWxUserLang,
   getWxGzhUserInfo,
-  isEmailAndNormalize,
   valTool,
 } from "@/common-util";
 import {
@@ -163,14 +162,6 @@ async function handle_text(
   const res2 = await autoReplyAfterReceivingText(wx_gzh_openid, userText)
   if(res2) return
 
-  // 2.1 TODO: temporarily check out test openid
-  const _env = process.env
-  const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
-  if(!testOpenId || testOpenId !== wx_gzh_openid) {
-    console.warn("interrupt handle_text!")
-    return
-  }
-
   // 3. get user
   const user = await getUserByWxGzhOpenid(wx_gzh_openid)
   if(!user) return
@@ -186,14 +177,6 @@ async function handle_image(
   const wx_gzh_openid = msgObj.FromUserName
   const wx_media_id = msgObj.MediaId
   const image_url = msgObj.PicUrl
-
-  // 2.1 TODO: temporarily check out test openid
-  const _env = process.env
-  const testOpenId = _env.LIU_WX_GZ_TEST_OPENID
-  if(!testOpenId || testOpenId !== wx_gzh_openid) {
-    console.warn("interrupt handle_image!")
-    return
-  }
 
   // 3. get user
   const user = await getUserByWxGzhOpenid(wx_gzh_openid)
@@ -787,12 +770,6 @@ async function autoReplyAfterReceivingText(
   // 2. check if text is "[收到不支持的消息类型，暂无法显示]"
   if(text1.startsWith("[收到不支持的消息类型")) {
     await sendText(wx_gzh_openid, "[收到不支持的消息类型]")
-    return true
-  }
-
-  // 3. TODO: because we're in beta, check if it is email address
-  const res3 = isEmailAndNormalize(text1)
-  if(res3) {
     return true
   }
 
