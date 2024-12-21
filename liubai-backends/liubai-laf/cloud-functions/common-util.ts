@@ -60,6 +60,7 @@ import type {
   SyncGetTable,
   Wx_Res_GzhSnsUserInfo,
   PhoneData,
+  Table_BlockList,
 } from '@/common-types'
 import { 
   sch_opt_arr,
@@ -3302,3 +3303,26 @@ export class AiToolUtil {
 
 }
 
+
+export class SafeGuard {
+
+  static async handleBlockedIPs() {
+    const w: Partial<Table_BlockList> = {
+      type: "ip",
+      isOn: "Y",
+    }
+    const col = db.collection("BlockList")
+    const q = col.where(w)
+    const res = await q.get<Table_BlockList>()
+    const list = res.data
+    if(list.length < 1) {
+      console.log("no ip!")
+      return true
+    }
+  
+    const ips = list.map(v => v.value)
+    cloud.shared.set(`liu-blocked-ips`, ips)
+    return true
+  }
+
+}

@@ -7,7 +7,7 @@
  * 3. clear login state in memory
  * 4. clear token user in memory
  * 5. clear expired orders in db
- * 
+ * 6. check security like updating blocked ips
  */
 
 import cloud from '@lafjs/cloud'
@@ -18,7 +18,11 @@ import type {
   Table_Order,
 } from "@/common-types"
 import { getNowStamp, MINUTE } from "@/common-time"
-import { getWwQynbAccessToken, liuReq } from '@/common-util'
+import { 
+  getWwQynbAccessToken, 
+  liuReq, 
+  SafeGuard,
+} from '@/common-util'
 
 const db = cloud.database()
 const _ = db.command
@@ -36,6 +40,7 @@ export async function main(ctx: FunctionContext) {
   clearLoginStateInMemory()
   clearTokenUser()
   await clearExpiredOrder()
+  await checkSecurity()
   // console.log("---------- End 清理缓存程序 ----------")
   // console.log(" ")
 
@@ -63,6 +68,10 @@ async function clearExpiredOrder() {
   // console.log(res2)
   
   return true
+}
+
+async function checkSecurity() {
+  await SafeGuard.handleBlockedIPs()
 }
 
 
