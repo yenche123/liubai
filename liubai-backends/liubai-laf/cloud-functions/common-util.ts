@@ -3321,7 +3321,6 @@ export class SafeGuard {
     }
   
     const ips = list.map(v => v.value)
-    console.log("set ips: ", ips)
     cloud.shared.set(`liu-blocked-ips`, ips)
     return true
   }
