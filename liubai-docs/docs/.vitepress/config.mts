@@ -60,8 +60,13 @@ export default defineConfig({
           ]
         },
         {
-          text: "提问箱",
-          link: "/guide/faq/"
+          text: "开发与部署",
+          collapsed: true,
+          items: [
+            { text: "快速构建", link: "/guide/development/quick-build" },
+            { text: "API文档", link: "/guide/development/api-docs" },
+            { text: "提问箱", link: "/guide/faq/" }
+          ]
         },
         {
           text: "条款",
