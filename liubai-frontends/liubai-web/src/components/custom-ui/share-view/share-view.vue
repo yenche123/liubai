@@ -157,29 +157,10 @@ const icon_color = `var(--main-normal)`
       <!-- third-party apps' btns -->
       <div class="sv-apps">
 
-        <a class="liu-no-user-select liu-hover sv-app-item" target="_blank" :href="svData.googleCalendarLink"
-          title="Google Calendar"
-        >
-          <svg-icon name="logos-google-calendar" :coverFillStroke="false"
-            class="sv-app-item_svg"
-          ></svg-icon>
-        </a>
-
         <a class="liu-no-user-select liu-hover sv-app-item" target="_blank" :href="svData.outlookLink"
           title="Outlook"
         >
           <svg-icon name="logos-outlook" :coverFillStroke="false"
-            class="sv-app-item_svg"
-          ></svg-icon>
-        </a>
-
-        <a v-if="svData.lineLink" 
-          class="liu-no-user-select liu-hover sv-app-item" 
-          target="_blank" 
-          :href="svData.lineLink"
-          title="LINE"
-        >
-          <svg-icon name="logos-line" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
         </a>
@@ -192,15 +173,6 @@ const icon_color = `var(--main-normal)`
           @click.stop.prevent="onTapIcs"
         >
           <svg-icon name="calendar" :coverFillStroke="false"
-            class="sv-app-item_svg"
-          ></svg-icon>
-        </a>
-
-        <a class="liu-no-user-select liu-hover sv-app-item" target="_blank" 
-          :href="svData.twitterLink"
-          title="Twitter"
-        >
-          <svg-icon name="logos-twitter" :coverFillStroke="false"
             class="sv-app-item_svg"
           ></svg-icon>
         </a>

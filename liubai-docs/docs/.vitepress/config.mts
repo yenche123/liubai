@@ -208,6 +208,11 @@ export default defineConfig({
     darkModeSwitchTitle: "切换至深色模式",
     sidebarMenuLabel: "目录",
     returnToTopLabel: "回到顶部",
+    
+    editLink: {
+      pattern: "https://github.com/yenche123/liubai/tree/cool/liubai-docs/docs/:path",
+      text: "在 GitHub 上编辑此页面",
+    },
   },
 
   lastUpdated: true,
