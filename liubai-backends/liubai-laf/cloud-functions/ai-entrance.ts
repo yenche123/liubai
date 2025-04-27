@@ -716,6 +716,9 @@ class AiDirective {
 class BaseBot {
   protected _character: AiCharacter
   protected _bots: AiBot[]
+  protected _aiLogs: LiuAi.RunLog[] = []
+  protected _chatTimes = 0
+  protected MAX_CHAT_TIMES = 3
   private _fromUser: Table_User | undefined
 
   constructor(
@@ -747,6 +750,7 @@ class BaseBot {
     // LogHelper.printLastItems(params.messages)
     // console.log(`Let's ask ${theService}`)
 
+    this._chatTimes++
     const llm = new BaseLLM(
       apiData.apiKey, 
       apiData.baseURL,
@@ -907,7 +911,6 @@ class BaseBot {
     const character = this._character
     const botName = AiShared.getCharacterName(character)
     const { t } = useI18n(aiLang, { user: aiParam.entry.user })
-    const aiLogs: LiuAi.RunLog[] = []
     const toolHandler = new ToolHandler(
       aiParam, 
       bot,
@@ -968,7 +971,7 @@ class BaseBot {
           mapsRes,
           tool_call_id,
         )
-        this._addAiLogsForMap(aiLogs, mapsRes)
+        this._addAiLogsForMap(mapsRes)
       }
       else if(funcName === "maps_geo") {
         const mapsRes = await toolHandler.maps_geo(funcJson)
@@ -979,7 +982,7 @@ class BaseBot {
           mapsRes,
           tool_call_id,
         )
-        this._addAiLogsForMap(aiLogs, mapsRes)
+        this._addAiLogsForMap(mapsRes)
       }
       else if(funcName === "maps_text_search") {
         const mapsRes = await toolHandler.maps_text_search(funcJson)
@@ -990,7 +993,7 @@ class BaseBot {
           mapsRes,
           tool_call_id,
         )
-        this._addAiLogsForMap(aiLogs, mapsRes)
+        this._addAiLogsForMap(mapsRes)
       }
       else if(funcName === "maps_around_search") {
         const mapsRes = await toolHandler.maps_around_search(funcJson)
@@ -1001,7 +1004,7 @@ class BaseBot {
           mapsRes,
           tool_call_id,
         )
-        this._addAiLogsForMap(aiLogs, mapsRes)
+        this._addAiLogsForMap(mapsRes)
       }
       else if(funcName === "maps_direction") {
         const mapsRes = await toolHandler.maps_direction(funcJson)
@@ -1012,7 +1015,7 @@ class BaseBot {
           mapsRes,
           tool_call_id,
         )
-        this._addAiLogsForMap(aiLogs, mapsRes)
+        this._addAiLogsForMap(mapsRes)
       }
       else if(funcName === "draw_picture") {
         const drawRes = await toolHandler.draw_picture(funcJson)
@@ -1028,7 +1031,7 @@ class BaseBot {
           textToUser: drawTextToUser,
           logStamp: getNowStamp(),
         }
-        aiLogs.push(drawLog)
+        this._aiLogs.push(drawLog)
       }
       else if(funcName === "get_schedule") {
         const scheduleRes = await toolHandler.get_schedule(funcJson)
@@ -1050,7 +1053,7 @@ class BaseBot {
             textToUser: scheduleRes.textToUser,
             logStamp: getNowStamp(),
           }
-          aiLogs.push(scheduleLog)
+          this._aiLogs.push(scheduleLog)
         }
         
       }
@@ -1073,16 +1076,13 @@ class BaseBot {
             textToUser: cardsRes.textToUser,
             logStamp: getNowStamp(),
           }
-          aiLogs.push(cardLog)
+          this._aiLogs.push(cardLog)
         }
       }
     }
-
-    return aiLogs
   }
 
   private _addAiLogsForMap(
-    aiLogs: LiuAi.RunLog[],
     mapsRes: LiuAi.MapResult,
   ) {
     const textToUser = mapsRes.textToUser
@@ -1093,7 +1093,7 @@ class BaseBot {
       textToUser,
       logStamp: getNowStamp(),
     }
-    aiLogs.push(mapLog)
+    this._aiLogs.push(mapLog)
   }
 
   private _getRestTokensAndPrompts(
@@ -1200,12 +1200,19 @@ class BaseBot {
       return
     }
 
-    // 5. see result
-    const choice5 = res4.choices?.[0]
-    const msg5 = choice5?.message
-    if(msg5?.tool_calls) {
-      console.warn("what?! msg5.tool_calls[0]: ")
-      console.log(msg5.tool_calls[0])
+    // 5. generate post run param
+    const postParam5: PostRunParam = {
+      aiParam,
+      chatParam: newChatParam,
+      chatCompletion: res4,
+      bot,
+    }
+    const chatTimes = this._chatTimes
+    console.log("chatTimes: ", chatTimes)
+    if(chatTimes <= this.MAX_CHAT_TIMES) {
+      const res5 = await this.postRun(postParam5)
+      console.warn("postRun result of _continueAfterToolUse: ", res5)
+      return
     }
 
     // 6. can i reply
@@ -1426,7 +1433,9 @@ class BaseBot {
     message.content = tmpList.join("\n")
   }
 
-  protected async postRun(postParam: PostRunParam): Promise<LiuAi.RunSuccess | undefined> {
+  protected async postRun(
+    postParam: PostRunParam
+  ): Promise<LiuAi.RunSuccess | undefined> {
     // 1. get params
     const { bot, chatCompletion, aiParam } = postParam
     if(!chatCompletion) return
@@ -1470,9 +1479,8 @@ class BaseBot {
     // console.log(chatCompletion.choices[0].message)
 
     // 3. tool calls
-    let aiLogs: LiuAi.RunLog[] | undefined
     if(finish_reason === "tool_calls" && tool_calls) {
-      aiLogs = await this._handleToolUse(postParam, tool_calls)
+      await this._handleToolUse(postParam, tool_calls)
     }
     
     // 4. finish reason is "length"
@@ -1496,7 +1504,7 @@ class BaseBot {
       replyStatus: "yes",
       chatCompletion, 
       assistantChatId,
-      logs: aiLogs,
+      logs: [...this._aiLogs],
     }
   }
 
@@ -2202,7 +2210,11 @@ class AiController {
       if(v && v.replyStatus === "yes") {
         hasEverSucceeded = true
         if(v.toolName) hasEverUsedTool = true
-        if(v.logs) aiLogs.push(...v.logs)
+        if(v.logs) {
+          console.log("see logs in ai controller:::")
+          LogHelper.printLastItems(v.logs)
+          aiLogs.push(...v.logs)
+        }
       }
     }
     if(!hasEverSucceeded) return

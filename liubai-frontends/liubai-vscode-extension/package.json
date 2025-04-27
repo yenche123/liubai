@@ -3,7 +3,7 @@
   "displayName": "%package.displayName%",
   "description": "%package.description%",
   "publisher": "ptsd",
-  "version": "0.11.9",
+  "version": "0.12.0",
   "author": {
     "name": "yenche123",
     "email": "tsuiyenche@outlook.com",

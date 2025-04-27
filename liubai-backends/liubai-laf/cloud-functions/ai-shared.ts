@@ -1407,7 +1407,7 @@ class GeoLocation {
     sp.set("origin", funcJson.origin)
     sp.set("destination", funcJson.destination)
     const link = url.toString()
-    console.log("maps_direction_driving link::: ", link)
+    // console.log("maps_direction_driving link::: ", link)
     const res3 = await liuReq(link, undefined, { method: "GET" })
 
     const res4 = await this._afterFetchMaps(res3, link)
@@ -1429,7 +1429,7 @@ class GeoLocation {
     sp.set("origin", funcJson.origin)
     sp.set("destination", funcJson.destination)
     const link = url.toString()
-    console.log("maps_direction_walking link::: ", link)
+    // console.log("maps_direction_walking link::: ", link)
     const res3 = await liuReq(link, undefined, { method: "GET" })
 
     const res4 = await this._afterFetchMaps(res3, link)
@@ -1452,7 +1452,7 @@ class GeoLocation {
     sp.set("origin", funcJson.origin)
     sp.set("destination", funcJson.destination)
     const link = url.toString()
-    console.log("maps_direction_bicycling link::: ", link)
+    // console.log("maps_direction_bicycling link::: ", link)
     const res3 = await liuReq(link, undefined, { method: "GET" })
 
     const res4 = await this._afterFetchMaps(res3, link)
@@ -1473,7 +1473,7 @@ class GeoLocation {
     sp.set("origin", funcJson.origin)
     sp.set("destination", funcJson.destination)
     const link = url.toString()
-    console.log("maps_direction_electrobike link::: ", link)
+    // console.log("maps_direction_electrobike link::: ", link)
     const res3 = await liuReq(link, undefined, { method: "GET" })
 
     const res4 = await this._afterFetchMaps(res3, link)
@@ -1501,7 +1501,7 @@ class GeoLocation {
     if(funcJson.date) sp.set("date", funcJson.date)
     if(funcJson.time) sp.set("time", funcJson.time)
     const link = url.toString()
-    console.log("maps_direction_transit link::: ", link)
+    // console.log("maps_direction_transit link::: ", link)
     const res3 = await liuReq(link, undefined, { method: "GET" })
 
     const res4 = await this._afterFetchMaps(res3, link)
@@ -1529,7 +1529,7 @@ class GeoLocation {
     if(funcJson.date) sp.set("date", funcJson.date)
     if(funcJson.time) sp.set("time", funcJson.time)
     const link = url.toString()
-    console.log("maps_direction_transit_more link::: ", link)
+    // console.log("maps_direction_transit_more link::: ", link)
     const res3 = await liuReq(link, undefined, { method: "GET" })
 
     const res4 = await this._afterFetchMaps(res3, link)
@@ -1564,7 +1564,7 @@ class GeoLocation {
       url.searchParams.set("city_limit", "true")
     }
     const link = url.toString()
-    console.log("maps_text_search link::: ", link)
+    // console.log("maps_text_search link::: ", link)
     const res3 = await liuReq(link, undefined, { method: "GET" })
 
     const res4 = await this._afterFetchMaps(res3, link)
@@ -1603,7 +1603,7 @@ class GeoLocation {
       sp.set("sortrule", funcJson.sortrule)
     }
     const link = url.toString()
-    console.log("maps_around_search link::: ", link)
+    // console.log("maps_around_search link::: ", link)
     const res3 = await liuReq(link, undefined, { method: "GET" })
 
     const res4 = await this._afterFetchMaps(res3, link)
@@ -2903,7 +2903,7 @@ export class LogHelper {
     lastNum = 5,
   ) {
     const msgLength = messages.length
-    console.log(`print last ${lastNum} prompts: `)
+    // console.log(`print last ${lastNum} prompts: `)
     if(msgLength > lastNum) {
       const messages2 = messages.slice(msgLength - lastNum)
       const printMsg = valTool.objToStr({ messages: messages2 })

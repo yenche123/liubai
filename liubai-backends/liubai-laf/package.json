@@ -1,7 +1,7 @@
 {
   "name": "liubai-laf",
   "private": true,
-  "version": "0.11.9",
+  "version": "0.12.0",
   "description": "Liubai's backend for Laf",
   "main": "index.js",
   "scripts": {

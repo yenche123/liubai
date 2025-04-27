@@ -1043,8 +1043,8 @@ class SystemTwo {
       }
     ]
 
-    console.warn("system_prompt:")
-    LogHelper.printLastChars(system_prompt)
+    // console.warn("system_prompt:")
+    // LogHelper.printLastChars(system_prompt)
 
     // 7. add _reasonerAndUs
     messages.push(...reasonerAndUs)

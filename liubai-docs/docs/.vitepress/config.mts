@@ -25,7 +25,7 @@ export default defineConfig({
       { text: "指南", link: "/guide/what-is-liubai", activeMatch: "/guide/" },
       { 
         text: "文章", 
-        link: "/article/2025/system-two", 
+        link: "/article/2025/labour-day", 
         activeMatch: "/(tool-review|article)/"
       },
       { text: "网页版", link: "https://my.liubai.cc" },
@@ -141,6 +141,10 @@ export default defineConfig({
       ],
 
       "/article/": [
+        {
+          text: "地图能力",
+          link: "/article/2025/labour-day",
+        },
         {
           text: "系统二",
           link: "/article/2025/system-two"
