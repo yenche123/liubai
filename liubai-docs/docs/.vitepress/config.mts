@@ -209,6 +209,10 @@ export default defineConfig({
       next: '下一页',
     },
 
+    editLink: {
+      pattern: "https://github.com/yenche123/liubai/tree/cool/liubai-docs/docs/:path",
+      text: "在 GitHub 上编辑此页面",
+    },
     darkModeSwitchLabel: "外观",
     lightModeSwitchTitle: "切换至浅色模式",
     darkModeSwitchTitle: "切换至深色模式",

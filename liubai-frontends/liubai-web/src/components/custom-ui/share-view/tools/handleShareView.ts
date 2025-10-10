@@ -13,15 +13,11 @@ export function handleShareView(
   svData: ShareViewData, 
   thread: ThreadShow,
 ) {
-
   // 1. 处理 copLink
   handleCopyLink(svData, thread)
 
   // 获取要传给外部应用的 title / desc
   const ed = getExportData(thread)
-
-  // 2. 处理 google calendar
-  handleGoogleCalendar(svData, thread, ed)
 
   // 3. 处理 outlook
   handleOutlook(svData, thread, ed)
@@ -29,14 +25,8 @@ export function handleShareView(
   // 4. 处理 .ics
   handleIcs(svData, thread, ed)
 
-  // 5. 处理 Twitter
-  handleTwitter(svData, thread, ed)
-
   // 6. 处理 mail
   handleEmail(svData, thread, ed)
-
-  // 7. 处理 LINE
-  handleLINE(svData, thread, ed)
 
   // 8. 处理 text & markdown
   handleTextAndMd(svData, thread, ed)
@@ -130,38 +120,6 @@ function handleCopyLink(svData: ShareViewData, thread: ThreadShow) {
   svData.copyLink = url.toString()
 }
 
-function handleGoogleCalendar(
-  svData: ShareViewData, 
-  thread: ThreadShow,
-  ed: ExportData,
-) {
-  const url = new URL(thirdLink.GOOGLE_CALENDAR_ADD)
-  const sp = url.searchParams
-
-  const getDates = (stamp: number) => {
-    const startDate = new Date(stamp)
-    const endDate = dateTool.add(startDate, { minutes: 30 })
-    const s = liuUtil.getLiuDate(startDate, { utc: true })
-    const e = liuUtil.getLiuDate(endDate, { utc: true })
-    let dates = `${s.YYYY}${s.MM}${s.DD}T${s.hh}${s.mm}00Z/`
-    dates += `${e.YYYY}${e.MM}${e.DD}T${e.hh}${e.mm}00Z`
-    return dates
-  }
-
-  if(ed.title) {
-    sp.append("text", ed.title)
-  }
-  if(ed.desc) {
-    sp.append("details", ed.desc)
-  }
-  if(ed.startStamp) {
-    sp.append("dates", getDates(ed.startStamp))
-  }
-  
-  const gLink = url.toString()
-  svData.googleCalendarLink = gLink
-}
-
 function handleOutlook(
   svData: ShareViewData, 
   thread: ThreadShow,
@@ -192,24 +150,6 @@ function handleOutlook(
   svData.outlookLink = oLink
 }
 
-
-function handleTwitter(
-  svData: ShareViewData, 
-  thread: ThreadShow,
-  ed: ExportData,
-) {
-  const url = new URL(thirdLink.TWITTER_ADD)
-  const sp = url.searchParams
-
-  sp.append("related", "liubai")
-  sp.append("hashtags", "Liubai")
-  if(ed.content) {
-    sp.append("text", ed.content)
-  }
-
-  const tLink = url.toString()
-  svData.twitterLink = tLink
-}
 
 async function getIcs() {
   const ics = await import("ics")
@@ -291,32 +231,4 @@ function handleEmail(
 
   const eLink = url.toString()
   svData.emailLink = eLink
-}
-
-
-function handleLINE(
-  svData: ShareViewData, 
-  thread: ThreadShow,
-  ed: ExportData,
-) {
-
-  const cha = liuApi.getCharacteristic()
-  const { isMobile } = cha
-  if(!isMobile) {
-    svData.lineLink = ""
-    return
-  }
-
-  if(!ed.content2) {
-    svData.lineLink = ""
-    return
-  }
-
-  const url = new URL(thirdLink.LINE_SHARE_TXT)
-  const sp = url.searchParams
-
-  sp.append("text", ed.content2)
-
-  const lineLink = url.toString()
-  svData.lineLink = lineLink
 }
