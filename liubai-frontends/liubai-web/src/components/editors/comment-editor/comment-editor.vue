@@ -11,8 +11,6 @@ import { useI18n } from 'vue-i18n';
 import { useCommentFile } from './tools/useCommentFile';
 import type { LocatedA } from "~/types/other/types-custom";
 import type { CeEmit } from "./tools/types"
-import type { TipTapJSONContent } from "~/types/types-editor"
-import type { LiuImageStore, LiuFileStore } from "~/types"
 
 const { t } = useI18n()
 
@@ -44,9 +42,6 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  initialContent: Object as PropType<TipTapJSONContent>,
-  initialImages: Array as PropType<LiuImageStore[]>,
-  initialFiles: Array as PropType<LiuFileStore[]>,
 })
 
 const emit = defineEmits<CeEmit>()

@@ -213,13 +213,12 @@ async function initEditorContent(
   
   const atom = getStorageAtom(props)
   let res = commentCache.toGet(atom)
+  if(props.commentId && res && !hasStoredContent(res)) {
+    res = undefined
+  }
 
   if(!res) {
     if(props.commentId) {
-      if(props.initialContent || props.initialImages?.length || props.initialFiles?.length) {
-        setEditorContentFromProps(props, ctx, editor)
-        return
-      }
       initEditorContentFromDB(props, ctx, editor)
       return
     }
@@ -304,38 +303,11 @@ async function initEditorContentFromDB(
 }
 
 
-function setEditorContentFromProps(
-  props: CeProps,
-  ctx: CeCtx,
-  editor: TipTapEditor,
+function hasStoredContent(
+  atom: CommentStorageAtom,
 ) {
-  const { initialContent, initialImages, initialFiles } = props
-
-  // 由于是 "已发表后的编辑" 态，canSubmit 默认为 false
-  ctx.canSubmit = false
-  ctx.releasedData = {}
-
-  if(initialContent) {
-    const text = transferUtil.tiptapToText(initialContent.content ?? [])
-    editor.commands.setContent(initialContent)
-    ctx.editorContent = { text, json: initialContent }
-    ctx.isToolbarTranslateY = false
-    ctx.releasedData.text = text.trim()
-  }
-
-  if(initialImages?.length) {
-    ctx.images = valTool.copyObject(initialImages)
-    ctx.isToolbarTranslateY = false
-    ctx.releasedData.images = valTool.copyObject(initialImages)
-  }
-  if(initialFiles?.length) {
-    ctx.files = valTool.copyObject(initialFiles)
-    ctx.isToolbarTranslateY = false
-    ctx.releasedData.files = valTool.copyObject(initialFiles)
-  }
-
-  ctx.numWhenSet++
-  checkCanSubmit(props, ctx)
+  const text = atom.editorContent?.text?.trim()
+  return Boolean(text) || Boolean(atom.images?.length) || Boolean(atom.files?.length)
 }
 
 

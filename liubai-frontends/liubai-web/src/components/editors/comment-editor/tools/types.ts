@@ -4,7 +4,7 @@ import type {
   LiuImageStore,
 } from "~/types";
 import type { WorkspaceStore } from "~/hooks/stores/useWorkspaceStore";
-import type { TipTapEditor, TipTapJSONContent, EditorCoreContent } from "~/types/types-editor"
+import type { TipTapEditor, EditorCoreContent } from "~/types/types-editor"
 
 export interface CeReleasedData {
   text?: string
@@ -22,9 +22,6 @@ export interface CeProps {
   focusNum: number
   submitNum: number
   showSubmitBtn: boolean
-  initialContent?: TipTapJSONContent
-  initialImages?: LiuImageStore[]
-  initialFiles?: LiuFileStore[]
 }
 
 export interface CeEmit {

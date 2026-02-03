@@ -102,8 +102,6 @@ const onTapTopFooterBtn = () => {
         :focus-num="cpData.focusNum"
         :submit-num="cpData.submitNum"
         :show-submit-btn="!cpData.rightTopBtn"
-        :initial-content="cpData.operation === 'edit_comment' ? cpData.commentShow?.content : undefined"
-        :initial-files="cpData.operation === 'edit_comment' ? cpData.commentShow?.files : undefined"
         @finished="onFinished"
         @cansubmit="(newV) => cpData.canSubmit = newV"
       ></CommentEditor>
