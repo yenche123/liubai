@@ -81,6 +81,10 @@ export interface SyncGet_ThreadList {
 
   // 跳过 skip 个动态
   skip?: number
+
+  // 用于 CALENDAR_RANGE：按 calendarStamp 在 [calendarStart, calendarEnd) 区间内查询
+  calendarStart?: number
+  calendarEnd?: number
 }
 
 export interface SyncGet_ThreadData {

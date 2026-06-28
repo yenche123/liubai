@@ -12,7 +12,7 @@ import type { OState } from "~/types/types-basic";
 async function getList(
   opt: TcListOption
 ) {
-  const { 
+  const {
     spaceId,
     sort = "desc",
     lastItemStamp,
@@ -23,15 +23,18 @@ async function getList(
     specific_ids,
     excluded_ids,
     stateId,
+    calendarStart,
+    calendarEnd,
   } = opt
 
   if(collectType === "EXPRESS" || collectType === "FAVORITE") {
     const res0 = await getThreadsByCollection(opt as TcListOption)
     return res0
   }
-  
+
   const isIndex= vT === "INDEX"
   const isCalendar = vT === "CALENDAR"
+  const isCalendarRange = vT === "CALENDAR_RANGE"
   const isPin = vT === "PINNED"
   const isTrash = vT === "TRASH"
   const isTodayFuture = vT === "TODAY_FUTURE"
@@ -96,6 +99,14 @@ async function getList(
     const b2 = ["OK", "THREAD", now + time.DAY + (time.HOUR * 2)]
     const q = db.contents.where(w).between(b1, b2, false, true).filter(filterFunc)
     list = await q.sortBy("calendarStamp")
+  }
+  else if(isCalendarRange && typeof calendarStart === "number" && typeof calendarEnd === "number") {
+    // 按 calendarStamp 在 [calendarStart, calendarEnd) 区间内查询，升序，支持以 lastItemStamp 为游标分页
+    const cursor = lastItemStamp ?? calendarStart
+    const lowerIncl = lastItemStamp ? false : true
+    let tmp = db.contents.where("calendarStamp").between(cursor, calendarEnd, lowerIncl, false)
+    tmp = tmp.filter(filterFunc).limit(limit)
+    list = await tmp.toArray()
   }
   else if(isTodayFuture) {
     const theStamp = lastItemStamp ?? (now - time.DAY)

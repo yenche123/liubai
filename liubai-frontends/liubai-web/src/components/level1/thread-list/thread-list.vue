@@ -31,9 +31,18 @@ const enableBottom = computed(() => {
 })
 
 
+// headless 模式下不渲染可见 DOM，但保留全部加载/分页/响应式 hooks，
+// 供日历视图作为「数据引擎」通过 ref 读取 tlData
+defineExpose({
+  tlData,
+  receiveOperation,
+  whenTapBriefing,
+})
+
+
 </script>
 <template>
-  <div :class="{
+  <div v-if="!headless" :class="{
     'thread-list_reverse': viewType === 'PAST',
   }">
 

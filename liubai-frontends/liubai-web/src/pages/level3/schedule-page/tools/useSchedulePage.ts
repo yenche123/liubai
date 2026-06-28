@@ -1,3 +1,4 @@
+import { ref } from "vue";
 import cui from "~/components/custom-ui";
 import valTool from "~/utils/basic/val-tool";
 import liuUtil from "~/utils/liu-util";
@@ -7,13 +8,32 @@ import { equipThreads } from "~/utils/controllers/equip/threads";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 import { getDefaultThread } from "~/utils/other/thread-related";
+import localCache from "~/utils/system/local-cache";
+
+export type ScheduleViewMode = "list" | "calendar"
 
 export function useSchedulePage() {
+  // 视图模式：列表 / 日历，持久化到 LocalPreference
+  const viewMode = ref<ScheduleViewMode>(
+    localCache.getPreference().scheduleViewType ?? "list")
+  const selectedDay = ref(new Date())
+
+  const onToggleView = () => {
+    const n: ScheduleViewMode = viewMode.value === "list" ? "calendar" : "list"
+    viewMode.value = n
+    localCache.setPreference("scheduleViewType", n)
+  }
+
   const onTapAdd = async () => {
+    const minDate = new Date()
+    const initialDate = selectedDay.value.getTime() >= minDate.getTime()
+      ? selectedDay.value
+      : minDate
 
     // 1. choose a date
-    const res1 = await cui.showDatePicker({ minDate: new Date() })
+    const res1 = await cui.showDatePicker({ minDate, date: initialDate })
     if(!res1.confirm || !res1.date) return
+    selectedDay.value = res1.date
     
     // 2. turn date into stamp & str
     const whenStamp = res1.date.getTime()
@@ -31,6 +51,9 @@ export function useSchedulePage() {
   }
 
   return {
+    viewMode,
+    selectedDay,
+    onToggleView,
     onTapAdd,
   }
 }

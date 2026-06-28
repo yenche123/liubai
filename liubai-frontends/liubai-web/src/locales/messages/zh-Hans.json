@@ -682,6 +682,10 @@
   "calendar": {
     "past": "过往",
     "schedule": "日程",
+    "view_list": "列表",
+    "view_calendar": "日历",
+    "already_today": "你已在今天",
+    "no_item_that_day": "这天没有日程",
     "empty_1": "你已清空日程",
     "empty_2": "你的现在和未来都留白了！",
     "midnight_tip": "现在已是凌晨 {clock} 点\n今天是 {today}",

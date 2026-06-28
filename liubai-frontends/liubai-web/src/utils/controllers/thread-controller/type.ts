@@ -40,7 +40,11 @@ export interface TcListOption {
 
   // 加载特定状态的动态
   stateId?: string
-  
+
+  // 用于 CALENDAR_RANGE：按 calendarStamp 在 [calendarStart, calendarEnd) 区间内查询
+  calendarStart?: number
+  calendarEnd?: number
+
 }
 
 export interface TcDataOption {

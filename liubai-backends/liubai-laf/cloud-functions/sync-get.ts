@@ -557,9 +557,9 @@ async function toThreadListFromContent(
   opt: OperationOpt,
 ): Promise<SyncGetAtomRes> {
   const { taskId } = opt
-  const { 
-    spaceId, 
-    viewType: vT, 
+  const {
+    spaceId,
+    viewType: vT,
     limit = 16,
     lastItemStamp,
     specific_ids,
@@ -567,6 +567,8 @@ async function toThreadListFromContent(
     tagId,
     stateId,
     skip,
+    calendarStart,
+    calendarEnd,
   } = atom
   let sort = atom.sort ?? "desc"
 
@@ -577,6 +579,9 @@ async function toThreadListFromContent(
   if(vT === "TAG" && !tagId) {
     return { code: "E4000", errMsg: "tagId is required", taskId }
   }
+  if(vT === "CALENDAR_RANGE" && (!calendarStart || !calendarEnd)) {
+    return { code: "E4000", errMsg: "calendarStart and calendarEnd are required", taskId }
+  }
 
   // 1. checking out logged in and spaceId
   const res1 = getSharedData_1(sgCtx, spaceId, opt)
@@ -585,6 +590,7 @@ async function toThreadListFromContent(
   // 2.1 handle w
   const isIndex = vT === "INDEX"
   const isCalendar = vT === "CALENDAR"
+  const isCalendarRange = vT === "CALENDAR_RANGE"
   const isPin = vT === "PINNED"
   const isTrash = vT === "TRASH"
   const isTodayFuture = vT === "TODAY_FUTURE"
@@ -603,6 +609,10 @@ async function toThreadListFromContent(
     const s1 = now - DAY
     const s2 = now + DAY + (HOUR * 2)
     w.calendarStamp = _.and(_.gt(s1), _.lte(s2))
+  }
+  else if(isCalendarRange) {
+    sort = "asc"
+    w.calendarStamp = _.and(_.gte(calendarStart!), _.lt(calendarEnd!))
   }
   else if(isTodayFuture) {
     sort = "asc"
@@ -639,7 +649,7 @@ async function toThreadListFromContent(
 
   // 2.3 handle lastItemStamp using key
   let key = oState === "OK" ? "createdStamp" : "updatedStamp"
-  if(isCalendar || isTodayFuture || isPast) {
+  if(isCalendar || isCalendarRange || isTodayFuture || isPast) {
     key = "calendarStamp"
   }
   else if(isPin) key = "pinStamp"

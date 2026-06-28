@@ -8,8 +8,8 @@ import { useI18n } from "vue-i18n";
 import { usePageEnabled } from "~/hooks/useOpenClose";
 import { useSchedulePage } from "./tools/useSchedulePage";
 
-const { 
-  hiddenScrollBar, 
+const {
+  hiddenScrollBar,
   goToTop,
   onVvWidthChange,
   onTapFab,
@@ -17,7 +17,7 @@ const {
   onScroll,
 } = useMainVice()
 const { t } = useI18n()
-const { onTapAdd } = useSchedulePage()
+const { onTapAdd, viewMode, selectedDay, onToggleView } = useSchedulePage()
 
 const { pageEnabled } = usePageEnabled("schedule")
 
@@ -30,9 +30,15 @@ const { pageEnabled } = usePageEnabled("schedule")
       :go-to-top="goToTop"
     >
       <navi-virtual></navi-virtual>
-      <ScheduleContent></ScheduleContent>
+      <ScheduleContent
+        :view-mode="viewMode"
+        v-model:selected-day="selectedDay"
+      ></ScheduleContent>
     </scroll-view>
-    <navi-bar :title="t('calendar.schedule')" show-add @tapadd="onTapAdd"></navi-bar>
+    <navi-bar :title="t('calendar.schedule')" show-add
+      :show-view-toggle="true" :view-mode="viewMode"
+      @tapadd="onTapAdd" @toggleview="onToggleView"
+    ></navi-bar>
 
     <FloatingActionButton :scroll-position="scrollPosition"
       @tapfab="onTapFab"

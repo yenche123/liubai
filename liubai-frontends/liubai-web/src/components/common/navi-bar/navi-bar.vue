@@ -34,8 +34,16 @@ const { t } = useI18n()
         <span v-else-if="placeholderKey">{{ t(placeholderKey) }}</span>
       </div>
 
+      <!-- view toggle (list <-> calendar) -->
+      <div v-if="showViewToggle"
+        class="liu-hover nbb-normal"
+        @click="$emit('toggleview')"
+      >
+        <SvgIcon class="nb-icon" :name="viewMode === 'list' ? 'schedule' : 'list'"></SvgIcon>
+      </div>
+
       <!-- add -->
-      <div v-if="showAdd" 
+      <div v-if="showAdd"
         class="liu-hover nbb-normal"
         style="margin-inline-end: -10px;"
         @click="$emit('tapadd')"

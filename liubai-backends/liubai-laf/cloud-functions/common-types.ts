@@ -218,6 +218,7 @@ export const threadListViewTypes = [
   "INDEX",
   "STATE",
   "CALENDAR",
+  "CALENDAR_RANGE",
   "TODAY_FUTURE",
   "PAST",
 ] as const
@@ -2365,6 +2366,10 @@ export interface SyncGet_ThreadList {
 
   // 跳过 skip 个动态
   skip?: number
+
+  // 用于 CALENDAR_RANGE：按 calendarStamp 在 [calendarStart, calendarEnd) 区间内查询
+  calendarStart?: number
+  calendarEnd?: number
 }
 
 export const Sch_SyncGet_ThreadList = vbot.object({
@@ -2381,6 +2386,8 @@ export const Sch_SyncGet_ThreadList = vbot.object({
   excluded_ids: sch_opt_arr(Sch_Id, [vbot.maxLength(32)]),
   stateId: Sch_Opt_Str,
   skip: Sch_Opt_Num,
+  calendarStart: Sch_Opt_Num,
+  calendarEnd: Sch_Opt_Num,
 })
 
 export interface SyncGet_ThreadData {

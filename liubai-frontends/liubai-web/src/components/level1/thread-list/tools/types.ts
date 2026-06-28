@@ -27,6 +27,12 @@ export interface TlProps {
   tagId: string
   stateId: string
   showTxt?: TrueOrFalse
+  // for CALENDAR_RANGE: query threads whose calendarStamp is in [calendarStart, calendarEnd)
+  calendarStart?: number
+  calendarEnd?: number
+  // when true, render nothing visible but still run all data-loading/reactivity hooks
+  // (used by calendar-view as a headless data engine)
+  headless?: boolean
 }
 
 export interface TlHasDataOpt {
@@ -64,5 +70,15 @@ export const tlProps = {
   },
   showTxt: {
     type: String as PropType<TrueOrFalse>
-  }
+  },
+  calendarStart: {
+    type: Number,
+  },
+  calendarEnd: {
+    type: Number,
+  },
+  headless: {
+    type: Boolean,
+    default: false,
+  },
 }

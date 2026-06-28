@@ -680,6 +680,10 @@
   "calendar": {
     "past": "Past",
     "schedule": "Schedule",
+    "view_list": "List",
+    "view_calendar": "Calendar",
+    "already_today": "You're already on today",
+    "no_item_that_day": "No schedule on this day",
     "empty_1": "No Schedule Yet",
     "empty_2": "Take a rest and enjoy your life!",
     "midnight_tip": "It's {clock} o'clock\nToday is {today}",

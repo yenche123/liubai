@@ -2,6 +2,8 @@
 
 这是一个为 Liubai 后端设计的 Web Push 代理服务。
 
+本文件是该目录的 harness 文件，用于协助 AI 和自动化工具理解、检查、构建和验证代码。仓库级约定见根目录 `AGENTS.md`；本目录仍然使用 Bun，运行脚本时优先使用 `bun run ...`，临时执行 CLI 时使用 `bunx ...`。
+
 ---
 
 # Cloudflare Workers API Documentation
@@ -19,11 +21,12 @@ For all limits and quotas, retrieve from the product's `/platform/limits/` page.
 
 | Command | Purpose |
 |---------|---------|
-| `npx wrangler dev` | Local development |
-| `npx wrangler deploy` | Deploy to Cloudflare |
-| `npx wrangler types` | Generate TypeScript types |
+| `bun run dev` | Local development |
+| `bun run deploy` | Deploy to Cloudflare |
+| `bun run cf-typegen` | Generate TypeScript types |
+| `bunx wrangler <command>` | Run one-off Wrangler commands when no package script exists |
 
-Run `wrangler types` after changing bindings in wrangler.jsonc.
+Run `bun run cf-typegen` after changing bindings in wrangler.jsonc.
 
 ## Node.js Compatibility
 

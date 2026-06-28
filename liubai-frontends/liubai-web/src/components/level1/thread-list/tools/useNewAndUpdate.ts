@@ -169,6 +169,13 @@ function handleNewList(
     }
 
     if(vT === "CALENDAR") return Boolean(v.calendarStamp)
+    if(vT === "CALENDAR_RANGE") {
+      const cs = v.calendarStamp
+      if(!cs) return false
+      const s0 = props.calendarStart ?? -Infinity
+      const s1 = props.calendarEnd ?? Infinity
+      return cs >= s0 && cs < s1
+    }
     if(vT === "TODAY_FUTURE") {
       if(!v.calendarStamp) return false
       return v.calendarStamp >= now
@@ -187,7 +194,7 @@ function handleNewList(
     handleNewListForCalendar(ctx, myList)
     return
   }
-  if(vT === "TODAY_FUTURE") {
+  if(vT === "TODAY_FUTURE" || vT === "CALENDAR_RANGE") {
     handleNewListForTodayAndFuture(ctx, myList)
     return
   }

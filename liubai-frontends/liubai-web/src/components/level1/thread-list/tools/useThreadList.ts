@@ -40,7 +40,7 @@ export function useThreadList(
   props: TlProps,
   emits: TlEmits,
 ) {
-  const { viewType, tagId } = toRefs(props)
+  const { viewType, tagId, calendarStart, calendarEnd } = toRefs(props)
 
   const wStore = useWorkspaceStore()
   const spaceIdRef = storeToRefs(wStore).spaceId
@@ -156,6 +156,14 @@ export function useThreadList(
   }, { immediate: true })
 
 
+  // 3.1 监听 CALENDAR_RANGE 的区间变化（如日历切月），重载整月
+  watch([calendarStart, calendarEnd], (n, o) => {
+    if(!spaceIdRef.value) return
+    if(o && n[0] === o[0] && n[1] === o[1]) return
+    loadList(ctx, true)
+  })
+
+
   // 4. 监听来自同组件其他函数请求重新加载
   const rfNum = toRef(tlData, "requestRefreshNum")
   watch(rfNum, (newV, oldV) => {
@@ -192,7 +200,7 @@ function scrollTopAndUpdate(
   cloud: boolean,
 ) {
   if(ctx.svBottomUp) {
-    if(!isViewType(ctx, "PINNED") && !isViewType(ctx, "CALENDAR")) {
+    if(!isViewType(ctx, "PINNED") && !isViewType(ctx, "CALENDAR") && !isViewType(ctx, "CALENDAR_RANGE")) {
       ctx.svBottomUp.value = { type: "pixel", pixel: 0 }
     }
   }
@@ -309,6 +317,12 @@ async function loadList(
       if(!tagId) return
       opt1.tagId = tagId
       opt3.tagId = tagId
+    }
+    else if(vT === "CALENDAR_RANGE") {
+      opt1.calendarStart = props.calendarStart
+      opt1.calendarEnd = props.calendarEnd
+      opt3.calendarStart = props.calendarStart
+      opt3.calendarEnd = props.calendarEnd
     }
 
     results = await threadController.getList(opt1)
