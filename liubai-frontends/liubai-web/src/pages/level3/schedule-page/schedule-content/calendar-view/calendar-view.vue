@@ -4,6 +4,7 @@ import ThreadList from "~/components/level1/thread-list/thread-list.vue"
 import ThreadCard from "~/components/level1/thread-list/thread-card/thread-card.vue"
 import ListBottom from "~/components/common/list-bottom/list-bottom.vue"
 import { useCalendarView } from "./tools/useCalendarView"
+import { useCalendarSwipe } from "./tools/useCalendarSwipe"
 import { useI18n } from "vue-i18n"
 
 const tlRef = ref<any>(null)
@@ -43,6 +44,12 @@ const onNewOperate = (...args: any[]) => {
 const onTapBriefing = (...args: any[]) => {
   tlRef.value?.whenTapBriefing?.(...args)
 }
+
+// Touch swipe gesture handlers for switching months on mobile
+const { onTouchStart, onTouchMove, onTouchEnd } = useCalendarSwipe({
+  onSwipeLeft: nextMonth,
+  onSwipeRight: prevMonth,
+})
 </script>
 
 <template>
@@ -54,7 +61,14 @@ const onTapBriefing = (...args: any[]) => {
     ></thread-list>
 
     <div class="cv-shell">
-      <section class="cv-calendar" aria-label="calendar">
+      <section
+        class="cv-calendar"
+        aria-label="calendar"
+        @touchstart.passive="onTouchStart"
+        @touchmove.passive="onTouchMove"
+        @touchend.passive="onTouchEnd"
+        @touchcancel.passive="onTouchEnd"
+      >
         <div class="cv-toolbar liu-no-user-select">
           <button class="liu-hover cv-icon-btn" type="button" @click="prevMonth">
             <SvgIcon class="cv-icon" name="arrow-back700"></SvgIcon>
@@ -191,9 +205,9 @@ const onTapBriefing = (...args: any[]) => {
 .cv-title {
   min-width: 0;
   text-align: center;
-  font-size: var(--desc-font);
+  font-size: var(--btn-font);
   line-height: 1.2;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--main-text);
   overflow: hidden;
   white-space: nowrap;
@@ -362,8 +376,8 @@ const onTapBriefing = (...args: any[]) => {
   flex: 1;
   font-size: var(--desc-font);
   line-height: 1.3;
-  font-weight: 500;
-  color: var(--main-text);
+  font-weight: 700;
+  color: var(--main-normal);
 }
 
 .cv-agenda-count {
