@@ -209,7 +209,7 @@ const onTapBriefing = (...args: any[]) => {
   justify-content: center;
   font-size: var(--mini-font);
   line-height: 1;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--primary-color);
   background-color: color-mix(in srgb, var(--primary-color) 9%, transparent);
 }
@@ -234,7 +234,7 @@ const onTapBriefing = (...args: any[]) => {
   text-align: center;
   font-size: var(--mini-font);
   line-height: 1;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--main-note);
 }
 
@@ -253,7 +253,7 @@ const onTapBriefing = (...args: any[]) => {
   justify-items: center;
   row-gap: 2px;
   color: var(--main-text);
-  background-color: color-mix(in srgb, var(--bg-color) 34%, transparent);
+  background-color: transparent;
   cursor: pointer;
   transition: background-color .15s, box-shadow .15s, color .15s, opacity .15s;
 
@@ -261,7 +261,7 @@ const onTapBriefing = (...args: any[]) => {
     align-self: center;
     font-size: var(--btn-font);
     line-height: 1;
-    font-weight: 800;
+    font-weight: 500;
     color: currentColor;
   }
 
@@ -306,7 +306,7 @@ const onTapBriefing = (...args: any[]) => {
     justify-content: center;
     font-size: 10px;
     line-height: 1;
-    font-weight: 800;
+    font-weight: 500;
     color: var(--on-primary);
     background-color: var(--primary-color);
     text-box: trim-both cap alphabetic;
@@ -328,6 +328,10 @@ const onTapBriefing = (...args: any[]) => {
   color: var(--on-primary);
   background-color: var(--primary-color);
   box-shadow: 0 8px 18px -14px var(--primary-color);
+
+  .cv-daynum {
+    font-weight: 700;
+  }
 
   .cv-markers {
     color: var(--on-primary);
@@ -358,7 +362,7 @@ const onTapBriefing = (...args: any[]) => {
   flex: 1;
   font-size: var(--desc-font);
   line-height: 1.3;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--main-text);
 }
 
@@ -374,7 +378,7 @@ const onTapBriefing = (...args: any[]) => {
   flex: none;
   font-size: var(--mini-font);
   line-height: 1;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--primary-color);
   background-color: color-mix(in srgb, var(--primary-color) 9%, transparent);
 }
