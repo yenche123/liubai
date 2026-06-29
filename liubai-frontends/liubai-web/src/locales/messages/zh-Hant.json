@@ -330,7 +330,7 @@
     "finished": "已完成",
     "note": "筆記",
     "todo": "待辦",
-    "agenda": "日程",
+    "agenda": "行事曆",
     "select_state": "選擇狀態",
     "switch_to": "切換至 ",
     "img_file": "[圖片或文件]",
@@ -588,7 +588,7 @@
     "no_new_version": "都很好！暫無新版本。",
     "installing_tip": "正在加載新的版本，请稍後再來點選更新。",
     "web_push_title": "開啟通知",
-    "web_push_desc": "不錯過你的任何日程 🔔",
+    "web_push_desc": "不錯過你的任何行事曆提醒 🔔",
     "web_push_confirm": "去開啟",
     "open_webpush": "你可以在瀏覽器「設定」的「網站」部分，開啟通知設定。"
   },
@@ -596,16 +596,16 @@
     "inbox": "收件匣",
     "today": "今天",
     "future_24": "接下來一天",
-    "view_calendar": "檢視行程"
+    "view_calendar": "檢視行事曆"
   },
   "connect": {
     "add": "去新增",
     "follow": "去關注",
     "bind": "去綁定",
     "wechat": "微信",
-    "wechat_desc": "在微信上收取日程提醒",
+    "wechat_desc": "在微信上收取行事曆提醒",
     "wechat_remind": "微信提醒",
-    "wechat_remind_desc": "關注「留白記事」官方賬號，當你的日程需要提醒時，它會在第一時間通知你！",
+    "wechat_remind_desc": "關注「留白記事」官方賬號，當你的行事曆事項需要提醒時，它會在第一時間通知你！",
     "wps": "WPS",
     "wps_desc": "將你的卡片傳送到 WPS 上",
     "wps_backup": "備份到 WPS 上",
@@ -679,14 +679,8 @@
   },
   "calendar": {
     "past": "過往",
-    "schedule": "行程",
-    "view_list": "列表",
-    "view_calendar": "行事曆",
+    "schedule": "行事曆",
     "already_today": "你已在今天",
-    "no_item_that_day": "這天沒有行程",
-    "empty_1": "沒有任何行程",
-    "empty_2": "你的現在和未來都留白了！",
-    "midnight_tip": "現在已是凌晨 {clock} 點\n今天是 {today}",
     "what_to_add": "想在這時做什麼？"
   },
   "ai_character": {

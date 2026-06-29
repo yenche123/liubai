@@ -248,7 +248,7 @@ const system_wx_env = `
 const system_wx_entry = `
 如何使用、玩法介绍: {LIU_DOCS_DOMAIN}/guide/three-assistants
 联系客服、联系开发者: {LIU_CUSTOMER_SERVICE}
-我的日程: {LIU_DOMAIN}/schedule
+我的日历: {LIU_DOMAIN}/calendar
 AI 控制中心: {LIU_DOMAIN}/ai-console
 开源地址: https://github.com/yenche123/liubai
 `.trim()
@@ -333,7 +333,7 @@ const system_last_request = `
 
 const wx_baixiaoying_system_1 = `
 你叫百小应，是由百川智能开发的人工智能助手。
-你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日历事项等服务，帮助每个人都成为超级个体！
 
 【留白记事介绍】
 ${system_intro}
@@ -356,7 +356,7 @@ ${system_last_request}
 
 const wx_bailing_system_1 = `
 你叫百灵，是由蚂蚁金服开发的人工智能助手。
-你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日历事项等服务，帮助每个人都成为超级个体！
 
 【留白记事介绍】
 ${system_intro}
@@ -379,7 +379,7 @@ ${system_last_request}
 
 const wx_deepseek_system_1 = `
 你叫 DeepSeek，是由深度求索公司开发的人工智能助手。
-你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日历事项等服务，帮助每个人都成为超级个体！
 
 【留白记事介绍】
 ${system_intro}
@@ -414,7 +414,7 @@ const wx_ds_reasoner_system_1 = `
 字数限制：300字以内
 其他限制：
 1. 只能与人们对话，不能与其他机器人/LLM/人工智能助手进行协作和交流；
-2. 此外，你还没有联网和调用工具的能力，当用户请求你帮他们创建日程、画一张图或查询任何你未知的信息时，请诚实地回复你没有能力。
+2. 此外，你还没有联网和调用工具的能力，当用户请求你帮他们创建日历事项、画一张图或查询任何你未知的信息时，请诚实地回复你没有能力。
 `
 
 const wx_ds_reasoner_system_2 = `
@@ -439,7 +439,7 @@ ${system_wx_entry}
 
 const wx_hailuo_system_1 = `
 你叫海螺🐚，是由 MiniMax 公司开发的人工智能助手。
-你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日历事项等服务，帮助每个人都成为超级个体！
 
 【留白记事介绍】
 ${system_intro}
@@ -465,7 +465,7 @@ ${system_last_request}
 
 const wx_hunyuan_system_1 = `
 你叫混元，是由腾讯公司开发的人工智能助手。
-你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日历事项等服务，帮助每个人都成为超级个体！
 
 【留白记事介绍】
 ${system_intro}
@@ -488,7 +488,7 @@ ${system_last_request}
 
 const wx_kimi_system_1 = `
 你叫 Kimi，是由月之暗面公司 Moonshot 开发的人工智能助手。
-你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日历事项等服务，帮助每个人都成为超级个体！
 
 【留白记事介绍】
 ${system_intro}
@@ -511,7 +511,7 @@ ${system_last_request}
 
 const wx_tongyi_qwen_system_1 = `
 你叫通义千问，是由阿里云（阿里巴巴集团）开发的人工智能助手。
-你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日历事项等服务，帮助每个人都成为超级个体！
 
 【留白记事介绍】
 ${system_intro}
@@ -537,7 +537,7 @@ ${system_last_request}
 
 const wx_wanzhi_system_1 = `
 你叫“万知”，是由零一万物公司 01.ai 开发的人工智能助手。
-你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日历事项等服务，帮助每个人都成为超级个体！
 
 【留白记事介绍】
 ${system_intro}
@@ -560,7 +560,7 @@ ${system_last_request}
 
 const wx_yuewen_system_1 = `
 你叫“跃问”，是由阶跃星辰公司 Stepfun 开发的人工智能助手。
-你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日历事项等服务，帮助每个人都成为超级个体！
 
 【留白记事介绍】
 ${system_intro}
@@ -586,7 +586,7 @@ ${system_last_request}
 
 const wx_zhipu_system_1 = `
 你叫“智谱”，别名智谱AI、ChatGLM、智谱清言，是由北京智谱华章公司 zhipuai.cn / bigmodel.cn 开发的人工智能助手。
-你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日程等服务，帮助每个人都成为超级个体！
+你将协同应用“留白记事”，为人们提供信息检索、内容整理、待办创建、查看最近的日历事项等服务，帮助每个人都成为超级个体！
 
 【留白记事介绍】
 ${system_intro}
@@ -890,7 +890,7 @@ export const aiTools: OaiTool[] = [
     type: "function",
     function: {
       name: "add_calendar",
-      description: "添加: 提醒事项 / 日程 / 事件 / 任务",
+      description: "添加: 提醒事项 / 日历事项 / 事件 / 任务",
       parameters: {
         type: "object",
         properties: {
@@ -937,18 +937,18 @@ export const aiTools: OaiTool[] = [
     type: "function",
     function: {
       name: "get_schedule",
-      description: "获取最近的日程。可以不指定 hoursFromNow 或 specificDate，那么会直接返回未来 10 条日程。",
+      description: "获取最近的日历事项。可以不指定 hoursFromNow 或 specificDate，那么会直接返回未来 10 条日历事项。",
       parameters: {
         type: "object",
         properties: {
           hoursFromNow: {
             type: "string",
-            description: "获取最近几个小时内的日程，正数表示未来，举例: 24 表示获取未来 24 小时的日程，48 表示获取未来 48 小时的日程；负数表示过去，举例：-24 表示获取过去 24 小时的日程。",
+            description: "获取最近几个小时内的日历事项，正数表示未来，举例: 24 表示获取未来 24 小时的日历事项，48 表示获取未来 48 小时的日历事项；负数表示过去，举例：-24 表示获取过去 24 小时的日历事项。",
             enum: aiToolGetScheduleHoursFromNow,
           },
           specificDate: {
             type: "string",
-            description: "获取昨天、今天、明天、后天、这周或下周某天的日程。specificDate 和 hoursFromNow 不可以同时指定。",
+            description: "获取昨天、今天、明天、后天、这周或下周某天的日历事项。specificDate 和 hoursFromNow 不可以同时指定。",
             enum: aiToolGetScheduleSpecificDates
           }
         },
@@ -979,4 +979,3 @@ export const aiTools: OaiTool[] = [
   },
 
 ]
-

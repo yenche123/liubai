@@ -330,7 +330,7 @@
     "finished": "Finished",
     "note": "Note",
     "todo": "Todo",
-    "agenda": "Agenda",
+    "agenda": "Calendar",
     "select_state": "Select",
     "switch_to": "Switch to ",
     "img_file": "[Image or file]",
@@ -588,7 +588,7 @@
     "no_new_version": "All good! No new version yet.",
     "installing_tip": "We are loading new version. Please wait a moment and click again.",
     "web_push_title": "Turn on Notification",
-    "web_push_desc": "Put your schedule at your fingertips 🔔",
+    "web_push_desc": "Keep your calendar at your fingertips 🔔",
     "web_push_confirm": "Sounds great",
     "open_webpush": "You can turn on the notification in the Browser Settings"
   },
@@ -596,7 +596,7 @@
     "inbox": "Inbox",
     "today": "Today",
     "future_24": "Next 24 Hours",
-    "view_calendar": "View more"
+    "view_calendar": "View Calendar"
   },
   "connect": {
     "add": "Add",
@@ -605,7 +605,7 @@
     "wechat": "WeChat",
     "wechat_desc": "Using Liubai on WeChat",
     "wechat_remind": "WeChat Remind",
-    "wechat_remind_desc": "Follow \"Liubai\" on WeChat. It will reach out to you when your agenda needs a reminder.",
+    "wechat_remind_desc": "Follow \"Liubai\" on WeChat. It will reach out to you when one of your calendar items needs a reminder.",
     "wps": "WPS",
     "wps_desc": "Send your cards to WPS Docs",
     "wps_backup": "Backup to WPS",
@@ -679,14 +679,8 @@
   },
   "calendar": {
     "past": "Past",
-    "schedule": "Schedule",
-    "view_list": "List",
-    "view_calendar": "Calendar",
+    "schedule": "Calendar",
     "already_today": "You're already on today",
-    "no_item_that_day": "No schedule on this day",
-    "empty_1": "No Schedule Yet",
-    "empty_2": "Take a rest and enjoy your life!",
-    "midnight_tip": "It's {clock} o'clock\nToday is {today}",
     "what_to_add": "What to do?"
   },
   "ai_character": {

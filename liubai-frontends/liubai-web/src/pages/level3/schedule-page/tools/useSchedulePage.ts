@@ -8,21 +8,9 @@ import { equipThreads } from "~/utils/controllers/equip/threads";
 import { useThreadShowStore } from "~/hooks/stores/useThreadShowStore";
 import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 import { getDefaultThread } from "~/utils/other/thread-related";
-import localCache from "~/utils/system/local-cache";
-
-export type ScheduleViewMode = "list" | "calendar"
 
 export function useSchedulePage() {
-  // 视图模式：列表 / 日历，持久化到 LocalPreference
-  const viewMode = ref<ScheduleViewMode>(
-    localCache.getPreference().scheduleViewType ?? "list")
   const selectedDay = ref(new Date())
-
-  const onToggleView = () => {
-    const n: ScheduleViewMode = viewMode.value === "list" ? "calendar" : "list"
-    viewMode.value = n
-    localCache.setPreference("scheduleViewType", n)
-  }
 
   const onTapAdd = async () => {
     const minDate = new Date()
@@ -51,9 +39,7 @@ export function useSchedulePage() {
   }
 
   return {
-    viewMode,
     selectedDay,
-    onToggleView,
     onTapAdd,
   }
 }

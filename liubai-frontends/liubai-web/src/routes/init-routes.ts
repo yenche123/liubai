@@ -31,7 +31,7 @@ const ConnectFeishu = () => import("../pages/connectors/connect-feishu/connect-f
 const PaymentPage = () => import("../pages/level3/payments/payment-page/payment-page.vue")
 const MinePage = () => import("../pages/level2/mine-page/mine-page.vue")
 const TagManagement = () => import("../pages/level3/tag-management/tag-management.vue")
-const SchedulePage = () => import("../pages/level3/schedule-page/schedule-page.vue")
+const CalendarPage = () => import("../pages/level3/schedule-page/schedule-page.vue")
 const PastPage = () => import("../pages/level3/past-page/past-page.vue")
 const AgreePage = () => import("../pages/level2/agree-page/agree-page.vue")
 const WechatBind = () => import("../pages/level1/wechat-bind/wechat-bind.vue")
@@ -397,12 +397,12 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {}
   },
   {
-    path: "/schedule",
+    path: "/calendar",
     components: {
-      default: SchedulePage,
+      default: CalendarPage,
       LeftSidebar,
     },
-    name: "schedule",
+    name: "calendar",
     meta: {}
   },
   {
@@ -641,12 +641,12 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {}
   },
   {
-    path: "/w/:workspaceId(\\w{10,})/schedule",
+    path: "/w/:workspaceId(\\w{10,})/calendar",
     components: {
-      default: SchedulePage,
+      default: CalendarPage,
       LeftSidebar,
     },
-    name: "collaborative-schedule",
+    name: "collaborative-calendar",
     meta: {}
   },
   {

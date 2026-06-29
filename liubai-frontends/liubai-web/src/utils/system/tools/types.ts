@@ -19,9 +19,6 @@ export interface LocalPreference {
 
   // 已完成 CREATE_FIRST 的 spaceId 列表，这些 space 不再重复跑历史回填
   preDownloadCreateFirstDone?: string[]
-
-  // 日程页的视图模式：列表 / 日历
-  scheduleViewType?: "list" | "calendar"
 }
 
 export interface LocalOnceData {

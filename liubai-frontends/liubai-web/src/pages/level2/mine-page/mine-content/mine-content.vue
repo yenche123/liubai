@@ -111,8 +111,8 @@ const { onTapAvatar } = chooseAvatar()
       </div>
     </NaviLink>
 
-    <!-- schedule -->
-    <NaviLink :to="prefix + 'schedule'">
+    <!-- calendar -->
+    <NaviLink :to="prefix + 'calendar'">
       <div class="iu-no-user-select liu-hover mc-item">
         <div class="mci-icon-box">
           <SvgIcon :color="iconColor" name="schedule" class="mci-icon"></SvgIcon>

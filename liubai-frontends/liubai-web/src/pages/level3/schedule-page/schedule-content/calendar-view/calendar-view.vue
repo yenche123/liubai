@@ -245,19 +245,20 @@ const onTapBriefing = (...args: any[]) => {
 
 .cv-cell {
   min-width: 0;
-  position: relative;
   border-radius: 8px;
-  padding: 0;
+  padding-block: 4px 3px;
+  padding-inline: 0;
   display: grid;
-  place-items: center;
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-items: center;
+  row-gap: 2px;
   color: var(--main-text);
   background-color: color-mix(in srgb, var(--bg-color) 34%, transparent);
   cursor: pointer;
   transition: background-color .15s, box-shadow .15s, color .15s, opacity .15s;
 
   .cv-daynum {
-    position: relative;
-    z-index: 1;
+    align-self: center;
     font-size: var(--btn-font);
     line-height: 1;
     font-weight: 800;
@@ -265,10 +266,9 @@ const onTapBriefing = (...args: any[]) => {
   }
 
   .cv-markers {
-    position: absolute;
-    z-index: 1;
-    inset-inline: 8px;
-    bottom: 4px;
+    width: 100%;
+    padding-inline: 8px;
+    box-sizing: border-box;
     height: 8px;
     display: flex;
     align-items: center;
@@ -309,6 +309,7 @@ const onTapBriefing = (...args: any[]) => {
     font-weight: 800;
     color: var(--on-primary);
     background-color: var(--primary-color);
+    text-box: trim-both cap alphabetic;
   }
 }
 
@@ -446,8 +447,11 @@ const onTapBriefing = (...args: any[]) => {
   }
 
   .cv-cell {
+    padding-block: 3px 2px;
+    row-gap: 1px;
+
     .cv-markers {
-      inset-inline: 5px;
+      padding-inline: 5px;
       gap: 3px;
     }
 

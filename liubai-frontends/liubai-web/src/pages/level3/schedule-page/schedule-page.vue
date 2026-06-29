@@ -2,7 +2,7 @@
 import MainView from "~/views/main-view/main-view.vue";
 import ViceView from "~/views/vice-view/vice-view.vue";
 import ScrollView from "~/components/common/scroll-view/scroll-view.vue";
-import ScheduleContent from "./schedule-content/schedule-content.vue";
+import CalendarView from "./schedule-content/calendar-view/calendar-view.vue";
 import { useMainVice } from "~/hooks/useMainVice";
 import { useI18n } from "vue-i18n";
 import { usePageEnabled } from "~/hooks/useOpenClose";
@@ -17,9 +17,9 @@ const {
   onScroll,
 } = useMainVice()
 const { t } = useI18n()
-const { onTapAdd, viewMode, selectedDay, onToggleView } = useSchedulePage()
+const { onTapAdd, selectedDay } = useSchedulePage()
 
-const { pageEnabled } = usePageEnabled("schedule")
+const { pageEnabled } = usePageEnabled("calendar")
 
 </script>
 <template>
@@ -30,15 +30,13 @@ const { pageEnabled } = usePageEnabled("schedule")
       :go-to-top="goToTop"
     >
       <navi-virtual></navi-virtual>
-      <ScheduleContent
-        :view-mode="viewMode"
-        v-model:selected-day="selectedDay"
-      ></ScheduleContent>
+      <div class="liu-mc-container">
+        <div class="liu-mc-box">
+          <CalendarView v-model:selected-day="selectedDay"></CalendarView>
+        </div>
+      </div>
     </scroll-view>
-    <navi-bar :title="t('calendar.schedule')" show-add
-      :show-view-toggle="true" :view-mode="viewMode"
-      @tapadd="onTapAdd" @toggleview="onToggleView"
-    ></navi-bar>
+    <navi-bar :title="t('calendar.schedule')" show-add @tapadd="onTapAdd"></navi-bar>
 
     <FloatingActionButton :scroll-position="scrollPosition"
       @tapfab="onTapFab"

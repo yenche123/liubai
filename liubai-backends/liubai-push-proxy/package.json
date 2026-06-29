@@ -1,7 +1,7 @@
 {
 	"name": "liubai-push-proxy",
 	"description": "liubai web push proxy for fcm.googleapis.com",
-	"version": "0.33.0",
+	"version": "0.34.0",
 	"private": true,
 	"scripts": {
 		"deploy": "wrangler deploy",

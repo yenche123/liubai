@@ -362,14 +362,14 @@ const system_prompt = `
 }
 \`\`\`
 
-### 添加提醒事项、事件或日程
+### 添加提醒事项、事件或日历事项
 
 \`\`\`json
 {
   type: "function",
   function: {
     name: "add_calendar",
-    description: "添加: 提醒事项 / 日程 / 事件 / 任务",
+    description: "添加: 提醒事项 / 日历事项 / 事件 / 任务",
     parameters: {
       type: "object",
       properties: {
@@ -412,25 +412,25 @@ const system_prompt = `
 }
 \`\`\`
 
-### 获取日程
+### 获取日历事项
 
 \`\`\`
 {
   type: "function",
   function: {
     name: "get_schedule",
-    description: "获取最近的日程。可以不指定 hoursFromNow 或 specificDate，那么会直接返回未来 10 条日程。",
+    description: "获取最近的日历事项。可以不指定 hoursFromNow 或 specificDate，那么会直接返回未来 10 条日历事项。",
     parameters: {
       type: "object",
       properties: {
         hoursFromNow: {
           type: "string",
-          description: "获取最近几个小时内的日程，正数表示未来，举例: 24 表示获取未来 24 小时的日程，48 表示获取未来 48 小时的日程；负数表示过去，举例：-24 表示获取过去 24 小时的日程。",
+          description: "获取最近几个小时内的日历事项，正数表示未来，举例: 24 表示获取未来 24 小时的日历事项，48 表示获取未来 48 小时的日历事项；负数表示过去，举例：-24 表示获取过去 24 小时的日历事项。",
           enum: ${enumGetScheduleHoursFromNow},
         },
         specificDate: {
           type: "string",
-          description: "获取昨天、今天、明天、后天、这周或下周某天的日程。specificDate 和 hoursFromNow 不可以同时指定。",
+          description: "获取昨天、今天、明天、后天、这周或下周某天的日历事项。specificDate 和 hoursFromNow 不可以同时指定。",
           enum: ${enumGetScheduleSpecificDates}
         }
       },

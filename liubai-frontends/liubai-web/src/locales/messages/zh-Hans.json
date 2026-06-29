@@ -330,7 +330,7 @@
     "finished": "已完成",
     "note": "笔记",
     "todo": "待办",
-    "agenda": "日程",
+    "agenda": "日历",
     "select_state": "选择状态",
     "switch_to": "切换至 ",
     "img_file": "[图片或文件]",
@@ -588,7 +588,7 @@
     "checking": "检查中..",
     "installing_tip": "正在载入新的版本，请稍后再来点击更新。",
     "web_push_title": "打开通知",
-    "web_push_desc": "不错过你的任何日程 🔔",
+    "web_push_desc": "不错过你的任何日历提醒 🔔",
     "web_push_confirm": "去打开",
     "open_webpush": "你可以在浏览器“设置”的“网站”部分，更改通知设置"
   },
@@ -596,16 +596,16 @@
     "inbox": "收件箱",
     "today": "今天",
     "future_24": "接下来一天",
-    "view_calendar": "查看日程"
+    "view_calendar": "查看日历"
   },
   "connect": {
     "add": "去添加",
     "follow": "去关注",
     "bind": "去关联",
     "wechat": "微信",
-    "wechat_desc": "在微信上接收日程提醒",
+    "wechat_desc": "在微信上接收日历提醒",
     "wechat_remind": "微信提醒",
-    "wechat_remind_desc": "关注【留白记事】公众号，当你的日程需要提醒时，它会在第一时间通知你！",
+    "wechat_remind_desc": "关注【留白记事】公众号，当你的日历事项需要提醒时，它会在第一时间通知你！",
     "wps": "WPS",
     "wps_desc": "将你的卡片传送到金山文档上",
     "wps_backup": "备份到 WPS",
@@ -681,14 +681,8 @@
   },
   "calendar": {
     "past": "过往",
-    "schedule": "日程",
-    "view_list": "列表",
-    "view_calendar": "日历",
+    "schedule": "日历",
     "already_today": "你已在今天",
-    "no_item_that_day": "这天没有日程",
-    "empty_1": "你已清空日程",
-    "empty_2": "你的现在和未来都留白了！",
-    "midnight_tip": "现在已是凌晨 {clock} 点\n今天是 {today}",
     "what_to_add": "想在这时做什么？"
   },
   "ai_character": {
