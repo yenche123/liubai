@@ -657,7 +657,10 @@ async function toThreadListFromContent(
   else if(isKanban) key = "stateStamp"
 
   if(lastItemStamp) {
-    const pageCond = sort === "desc" ? _.lt(lastItemStamp) : _.gt(lastItemStamp)
+    // CALENDAR_RANGE 用含等值游标（>=）+ excluded_ids 翻页，
+    // 避免多条数据共享同一 calendarStamp 时被跳过
+    let pageCond = sort === "desc" ? _.lt(lastItemStamp) : _.gt(lastItemStamp)
+    if(isCalendarRange) pageCond = _.gte(lastItemStamp)
     if(w[key]) {
       w[key] = _.and(w[key], pageCond)
     }

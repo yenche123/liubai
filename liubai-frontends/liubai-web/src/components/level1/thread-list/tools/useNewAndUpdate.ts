@@ -158,6 +158,7 @@ function handleNewList(
     if(vT === "PINNED") return Boolean(v.pinStamp)
 
     // check out stateShow.showInIndex if we're in INDEX or CALENDAR
+    // 注意：CALENDAR_RANGE（月视图）刻意不过滤，「已完成」等卡片在月视图里仍要展示
     if(vT === "INDEX" || vT === "CALENDAR") {
       if(v.stateId && v.stateShow) {
         if(v.stateShow.showInIndex === false) {
@@ -169,10 +170,12 @@ function handleNewList(
     if(vT === "CALENDAR") return Boolean(v.calendarStamp)
     if(vT === "CALENDAR_RANGE") {
       const cs = v.calendarStamp
+      const { calendarStart, calendarEnd } = props
       if(!cs) return false
-      const s0 = props.calendarStart ?? -Infinity
-      const s1 = props.calendarEnd ?? Infinity
-      return cs >= s0 && cs < s1
+      // 区间端点缺失时不插入，避免非目标区间的日历事项混入月视图
+      if(typeof calendarStart !== "number") return false
+      if(typeof calendarEnd !== "number") return false
+      return cs >= calendarStart && cs < calendarEnd
     }
     if(vT === "STATE") {
       if(!v.stateId) return false

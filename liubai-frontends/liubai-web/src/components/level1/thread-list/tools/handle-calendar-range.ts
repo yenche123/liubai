@@ -86,6 +86,7 @@ async function loadMonthLocally(
   const limit = cfg.default_limit_num
   let results: ThreadShow[] = []
   let lastItemStamp: number | undefined
+  let excluded_ids: string[] | undefined
 
   for(let i = 0; i < MAX_PAGES; i++) {
     const opt: TcListOption = {
@@ -94,15 +95,19 @@ async function loadMonthLocally(
       calendarStart,
       calendarEnd,
       lastItemStamp,
+      excluded_ids,
       limit,
     }
     const page = await threadController.getList(opt)
     results = results.concat(page)
     if(page.length < limit) break
 
+    // 游标为含等值查询（>=），把已加载且 calendarStamp 相同的项放入 excluded_ids，
+    // 避免多条数据共享同一 calendarStamp 时翻页漏数据
     const nextStamp = page[page.length - 1].calendarStamp
-    if(!nextStamp || nextStamp === lastItemStamp) break
+    if(!nextStamp) break
     lastItemStamp = nextStamp
+    excluded_ids = results.filter(v => v.calendarStamp === nextStamp).map(v => v._id)
   }
 
   return results
@@ -117,6 +122,7 @@ async function loadMonthFromCloud(
   const limit = cfg.default_limit_num
   let parcels: LiuDownloadParcel[] = []
   let lastItemStamp: number | undefined
+  let excluded_ids: string[] | undefined
 
   for(let i = 0; i < MAX_PAGES; i++) {
     const param: SyncGet_ThreadList = {
@@ -126,6 +132,7 @@ async function loadMonthFromCloud(
       calendarStart,
       calendarEnd,
       lastItemStamp,
+      excluded_ids,
       limit,
     }
     const delay = i > 0 ? 0 : undefined
@@ -135,15 +142,21 @@ async function loadMonthFromCloud(
     parcels = parcels.concat(res)
     if(res.length < limit) break
 
-    // 用本页最大的 calendarStamp 作为下一页游标
+    // 用本页最大的 calendarStamp 作为下一页游标；云端对 CALENDAR_RANGE 为含等值查询（>=），
+    // 需把已加载且 calendarStamp 相同的记录放入 excluded_ids，避免同 stamp 翻页漏数据
     let maxStamp = 0
     res.forEach(p => {
       if(p.parcelType !== "content") return
       const cs = p.content?.calendarStamp
       if(cs && cs > maxStamp) maxStamp = cs
     })
-    if(!maxStamp || maxStamp === lastItemStamp) break
+    if(!maxStamp) break
     lastItemStamp = maxStamp
+    excluded_ids = []
+    parcels.forEach(p => {
+      if(p.parcelType !== "content") return
+      if(p.content?.calendarStamp === maxStamp) excluded_ids?.push(p.id)
+    })
   }
 
   return parcels
