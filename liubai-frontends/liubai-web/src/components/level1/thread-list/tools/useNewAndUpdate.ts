@@ -12,7 +12,6 @@ import { watch } from "vue";
 import { filterForCalendar } from "./handle-calendar";
 import tlUtil from "./tl-util";
 import cfg from "~/config";
-import time from "~/utils/basic/time";
 
 interface TlNuCtx {
   props: TlProps,
@@ -146,7 +145,6 @@ function handleNewList(
   // console.log(newList)
   // console.log(" ")
 
-  const now = time.getTime()
   const myList = newList.filter(v => {
     const { tagSearched = [], oState } = v
     // 垃圾桶时
@@ -176,10 +174,6 @@ function handleNewList(
       const s1 = props.calendarEnd ?? Infinity
       return cs >= s0 && cs < s1
     }
-    if(vT === "TODAY_FUTURE") {
-      if(!v.calendarStamp) return false
-      return v.calendarStamp >= now
-    }
     if(vT === "STATE") {
       if(!v.stateId) return false
       return stateId === v.stateId
@@ -194,12 +188,12 @@ function handleNewList(
     handleNewListForCalendar(ctx, myList)
     return
   }
-  if(vT === "TODAY_FUTURE" || vT === "CALENDAR_RANGE") {
-    handleNewListForTodayAndFuture(ctx, myList)
+  if(vT === "CALENDAR_RANGE") {
+    handleNewListForCalendarRange(ctx, myList)
     return
   }
 
-  const _myList = tlUtil.threadShowsToList(myList, vT)
+  const _myList = tlUtil.threadShowsToList(myList)
   tlData.list.splice(0, 0, ..._myList)
 
   if(tlData.lastItemStamp) return
@@ -208,23 +202,23 @@ function handleNewList(
 }
 
 
-function handleNewListForTodayAndFuture(
+function handleNewListForCalendarRange(
   ctx: TlNuCtx,
   results: ThreadShow[],
 ) {
   const { tlData, emit } = ctx
   const oldList = tlData.list
-  const newList = tlUtil.threadShowsToList(results, "TODAY_FUTURE")
+  const newList = tlUtil.threadShowsToList(results)
 
   if(oldList.length < 1) {
     tlData.list = newList
-    tlUtil.handleLastItemStamp("TODAY_FUTURE", tlData)
+    tlUtil.handleLastItemStamp("CALENDAR_RANGE", tlData)
     emit("hasdata")
     return
   }
 
   insertListUsingCalendarStamp(newList, oldList)
-  tlUtil.handleLastItemStamp("TODAY_FUTURE", tlData)
+  tlUtil.handleLastItemStamp("CALENDAR_RANGE", tlData)
 }
 
 
@@ -241,7 +235,7 @@ function handleNewListForCalendar(
   } = filterForCalendar(results)
 
   if(tmpList.length < 1) return
-  const newList = tlUtil.threadShowsToList(tmpList, "CALENDAR")
+  const newList = tlUtil.threadShowsToList(tmpList)
 
   if(oldList.length < 1) {
     tlData.list = newList

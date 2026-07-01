@@ -108,11 +108,13 @@ export function useCalendarView(
     curMonth.value = startOfMonth(addMonths(curMonth.value, 1))
   }
   const goToday = () => {
-    if(dfIsToday(selectedDay.value)) {
+    const n = new Date(time.getTime())
+    // 已选中今天且日历停留在当月，才算「已在今天」；
+    // 否则可能只是翻到了别的月份，此时应跳回当月
+    if(dfIsToday(selectedDay.value) && isSameMonth(n, curMonth.value)) {
       cui.showSnackBar({ text_key: "calendar.already_today" })
       return
     }
-    const n = new Date(time.getTime())
     curMonth.value = startOfMonth(n)
     selectedDay.value = n
   }

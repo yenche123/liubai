@@ -10,7 +10,6 @@ export type TlViewType = ThreadListViewType
 export interface TlAtom {
   thread: ThreadShow
   showType: ThreadCardShowType
-  dateText?: string     // which is for calendar TODAY_FUTURE & PAST
 }
 
 export interface TlData {
@@ -53,6 +52,10 @@ export interface TlContext {
   emits: TlEmits
   props: TlProps
   scrollPosition?: Ref<number>
+
+  // for CALENDAR_RANGE: id of the latest whole-month loading,
+  // so that a stale loading (e.g. after switching months) can abort itself
+  calendarRangeLoadId?: number
 }
 
 export const tlProps = {

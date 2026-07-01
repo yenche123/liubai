@@ -210,6 +210,13 @@ export const genderTypes = ["male", "female"] as const
 export type GenderType = typeof genderTypes[number]
 export const Sch_GenderType = vbot.picklist(genderTypes)
 
+// 「日历类」的四个视图名字相近，注意区分：
+// CALENDAR:       前端首页「今日 / 未来 24 小时」摘要卡片，固定加载当前时间前后约一天
+// CALENDAR_RANGE: 前端日历页（/calendar）整月视图，
+//                 按 calendarStamp ∈ [calendarStart, calendarEnd) 区间查询
+// TODAY_FUTURE:   [legacy] 旧版日程页（从今天起往未来翻页），新前端已移除；
+//                 保留此值以兼容未更新缓存（PWA / webview）的旧客户端，勿删
+// PAST:           过去页，从现在起往过去翻页
 export const threadListViewTypes = [
   "TRASH",
   "TAG",

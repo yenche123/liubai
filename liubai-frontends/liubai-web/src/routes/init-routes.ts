@@ -406,6 +406,12 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {}
   },
   {
+    // 旧版路径，已更名为 /calendar
+    // 历史消息（如微信里 AI 发过的链接）和书签仍可能指向这里
+    path: "/schedule",
+    redirect: { name: "calendar" },
+  },
+  {
     path: "/past",
     components: {
       default: PastPage,
@@ -648,6 +654,11 @@ export const routes: Array<RouteRecordRaw> = [
     },
     name: "collaborative-calendar",
     meta: {}
+  },
+  {
+    // 旧版路径，已更名为 /w/:workspaceId/calendar
+    path: "/w/:workspaceId(\\w{10,})/schedule",
+    redirect: (to) => ({ name: "collaborative-calendar", params: to.params }),
   },
   {
     path: "/w/:workspaceId(\\w{10,})/past",

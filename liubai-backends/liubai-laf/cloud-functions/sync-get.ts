@@ -579,7 +579,7 @@ async function toThreadListFromContent(
   if(vT === "TAG" && !tagId) {
     return { code: "E4000", errMsg: "tagId is required", taskId }
   }
-  if(vT === "CALENDAR_RANGE" && (!calendarStart || !calendarEnd)) {
+  if(vT === "CALENDAR_RANGE" && (calendarStart == null || calendarEnd == null)) {
     return { code: "E4000", errMsg: "calendarStart and calendarEnd are required", taskId }
   }
 
@@ -589,11 +589,11 @@ async function toThreadListFromContent(
 
   // 2.1 handle w
   const isIndex = vT === "INDEX"
-  const isCalendar = vT === "CALENDAR"
-  const isCalendarRange = vT === "CALENDAR_RANGE"
+  const isCalendar = vT === "CALENDAR"             // 前端首页「今日 / 未来 24 小时」摘要卡片
+  const isCalendarRange = vT === "CALENDAR_RANGE"  // 前端日历页整月视图，[calendarStart, calendarEnd)
   const isPin = vT === "PINNED"
   const isTrash = vT === "TRASH"
-  const isTodayFuture = vT === "TODAY_FUTURE"
+  const isTodayFuture = vT === "TODAY_FUTURE"     // [legacy] 仅旧客户端会发送，见 common-types.ts
   const isPast = vT === "PAST"
   const oState = isTrash ? "REMOVED" : "OK"
   const isKanban = vT === "STATE"

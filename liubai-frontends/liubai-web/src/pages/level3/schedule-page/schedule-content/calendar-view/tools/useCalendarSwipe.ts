@@ -51,9 +51,17 @@ export function useCalendarSwipe(options: UseCalendarSwipeOptions) {
     }
   }
 
+  // 手势被系统中断（来电、系统边缘手势等）时仅重置状态，不判定为滑动
+  const onTouchCancel = () => {
+    touchStartX = touchEndX = 0
+    touchStartY = touchEndY = 0
+    startTime = 0
+  }
+
   return {
     onTouchStart,
     onTouchMove,
     onTouchEnd,
+    onTouchCancel,
   }
 }

@@ -33,11 +33,10 @@ async function getList(
   }
 
   const isIndex= vT === "INDEX"
-  const isCalendar = vT === "CALENDAR"
-  const isCalendarRange = vT === "CALENDAR_RANGE"
+  const isCalendar = vT === "CALENDAR"             // 首页「今日 / 未来 24 小时」摘要卡片
+  const isCalendarRange = vT === "CALENDAR_RANGE"  // 日历页整月视图，[calendarStart, calendarEnd)
   const isPin = vT === "PINNED"
   const isTrash = vT === "TRASH"
-  const isTodayFuture = vT === "TODAY_FUTURE"
   const isPast = vT === "PAST"
   const isKanban = vT === "STATE"
 
@@ -105,12 +104,6 @@ async function getList(
     const cursor = lastItemStamp ?? calendarStart
     const lowerIncl = lastItemStamp ? false : true
     let tmp = db.contents.where("calendarStamp").between(cursor, calendarEnd, lowerIncl, false)
-    tmp = tmp.filter(filterFunc).limit(limit)
-    list = await tmp.toArray()
-  }
-  else if(isTodayFuture) {
-    const theStamp = lastItemStamp ?? (now - time.DAY)
-    let tmp = db.contents.where("calendarStamp").above(theStamp)
     tmp = tmp.filter(filterFunc).limit(limit)
     list = await tmp.toArray()
   }

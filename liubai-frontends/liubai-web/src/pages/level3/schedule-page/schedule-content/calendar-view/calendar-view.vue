@@ -46,7 +46,12 @@ const onTapBriefing = (...args: any[]) => {
 }
 
 // Touch swipe gesture handlers for switching months on mobile
-const { onTouchStart, onTouchMove, onTouchEnd } = useCalendarSwipe({
+const {
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
+  onTouchCancel,
+} = useCalendarSwipe({
   onSwipeLeft: nextMonth,
   onSwipeRight: prevMonth,
 })
@@ -67,7 +72,7 @@ const { onTouchStart, onTouchMove, onTouchEnd } = useCalendarSwipe({
         @touchstart.passive="onTouchStart"
         @touchmove.passive="onTouchMove"
         @touchend.passive="onTouchEnd"
-        @touchcancel.passive="onTouchEnd"
+        @touchcancel.passive="onTouchCancel"
       >
         <div class="cv-toolbar liu-no-user-select">
           <button class="liu-hover cv-icon-btn" type="button" @click="prevMonth">

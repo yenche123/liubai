@@ -27,6 +27,7 @@ import localCache from "~/utils/system/local-cache"
 import { useAwakeNum } from "~/hooks/useCommon"
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
 import { handleCalendarList } from "./handle-calendar"
+import { handleCalendarRangeList } from "./handle-calendar-range"
 import type { ThreadListViewType } from "~/types/types-view"
 import time from "~/utils/basic/time"
 import { preDownloadStart } from "~/utils/cloud/pre-download"
@@ -256,6 +257,10 @@ async function loadList(
     handleCalendarList(ctx, cloud)
     return
   }
+  if(vT === "CALENDAR_RANGE") {
+    handleCalendarRangeList(ctx, cloud)
+    return
+  }
 
   if(reload) {
     tlData.hasReachedBottom = false
@@ -318,26 +323,13 @@ async function loadList(
       opt1.tagId = tagId
       opt3.tagId = tagId
     }
-    else if(vT === "CALENDAR_RANGE") {
-      opt1.calendarStart = props.calendarStart
-      opt1.calendarEnd = props.calendarEnd
-      opt3.calendarStart = props.calendarStart
-      opt3.calendarEnd = props.calendarEnd
-    }
-
     results = await threadController.getList(opt1)
   }
 
   // 2. 加载完数据后，开始封装
   cloudOpt.threadShows = results
-  const newList = tlUtil.threadShowsToList(results, vT)
+  const newList = tlUtil.threadShowsToList(results)
   const newLength = newList.length
-
-  // if(vT === "TODAY_FUTURE") {
-  //   console.warn("TODAY_FUTURE newList: ")
-  //   console.log(newList)
-  // }
-
 
   // 3. 赋值到 list 上
   if(isInit || vT === "PINNED") {
@@ -468,7 +460,7 @@ async function loadAgain(
     results = await threadController.getList(opt1)
   }  
 
-  const newList = tlUtil.threadShowsToList(results, vT)
+  const newList = tlUtil.threadShowsToList(results)
   const deltaLength = newList.length
   const newLength = deltaLength + startIndex
   const oldLength = tlData.list.length
