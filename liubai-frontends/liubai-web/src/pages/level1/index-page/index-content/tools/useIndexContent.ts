@@ -16,7 +16,7 @@ export function useIndexContent() {
 
   const { prefix } = usePrefix()
   const onTapViewCalendar = () => {
-    rr.router.push(`${prefix.value}schedule`)
+    rr.router.push(`${prefix.value}calendar`)
   }
 
   onActivated(() => {

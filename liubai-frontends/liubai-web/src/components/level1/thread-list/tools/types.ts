@@ -10,7 +10,6 @@ export type TlViewType = ThreadListViewType
 export interface TlAtom {
   thread: ThreadShow
   showType: ThreadCardShowType
-  dateText?: string     // which is for calendar TODAY_FUTURE & PAST
 }
 
 export interface TlData {
@@ -27,6 +26,12 @@ export interface TlProps {
   tagId: string
   stateId: string
   showTxt?: TrueOrFalse
+  // for CALENDAR_RANGE: query threads whose calendarStamp is in [calendarStart, calendarEnd)
+  calendarStart?: number
+  calendarEnd?: number
+  // when true, render nothing visible but still run all data-loading/reactivity hooks
+  // (used by calendar-view as a headless data engine)
+  headless?: boolean
 }
 
 export interface TlHasDataOpt {
@@ -47,6 +52,10 @@ export interface TlContext {
   emits: TlEmits
   props: TlProps
   scrollPosition?: Ref<number>
+
+  // for CALENDAR_RANGE: id of the latest whole-month loading,
+  // so that a stale loading (e.g. after switching months) can abort itself
+  calendarRangeLoadId?: number
 }
 
 export const tlProps = {
@@ -64,5 +73,15 @@ export const tlProps = {
   },
   showTxt: {
     type: String as PropType<TrueOrFalse>
-  }
+  },
+  calendarStart: {
+    type: Number,
+  },
+  calendarEnd: {
+    type: Number,
+  },
+  headless: {
+    type: Boolean,
+    default: false,
+  },
 }

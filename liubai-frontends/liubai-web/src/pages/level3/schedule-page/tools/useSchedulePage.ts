@@ -1,3 +1,4 @@
+import { ref } from "vue";
 import cui from "~/components/custom-ui";
 import valTool from "~/utils/basic/val-tool";
 import liuUtil from "~/utils/liu-util";
@@ -9,11 +10,18 @@ import { LocalToCloud } from "~/utils/cloud/LocalToCloud";
 import { getDefaultThread } from "~/utils/other/thread-related";
 
 export function useSchedulePage() {
+  const selectedDay = ref(new Date())
+
   const onTapAdd = async () => {
+    const minDate = new Date()
+    const initialDate = selectedDay.value.getTime() >= minDate.getTime()
+      ? selectedDay.value
+      : minDate
 
     // 1. choose a date
-    const res1 = await cui.showDatePicker({ minDate: new Date() })
+    const res1 = await cui.showDatePicker({ minDate, date: initialDate })
     if(!res1.confirm || !res1.date) return
+    selectedDay.value = res1.date
     
     // 2. turn date into stamp & str
     const whenStamp = res1.date.getTime()
@@ -31,6 +39,7 @@ export function useSchedulePage() {
   }
 
   return {
+    selectedDay,
     onTapAdd,
   }
 }

@@ -29,5 +29,5 @@ export const naviBarProps = {
   },
   confirmKey: {
     type: String,
-  }
+  },
 }

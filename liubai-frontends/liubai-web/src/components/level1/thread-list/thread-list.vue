@@ -31,38 +31,32 @@ const enableBottom = computed(() => {
 })
 
 
+// headless 模式下不渲染可见 DOM，但保留全部加载/分页/响应式 hooks，
+// 供日历视图作为「数据引擎」通过 ref 读取 tlData
+defineExpose({
+  tlData,
+  receiveOperation,
+  whenTapBriefing,
+})
+
+
 </script>
 <template>
-  <div :class="{
+  <div v-if="!headless" :class="{
     'thread-list_reverse': viewType === 'PAST',
   }">
 
-    <template v-for="(item, index) in tlData.list" 
+    <ThreadCard v-for="(item, index) in tlData.list"
       :key="item.thread.first_id"
-    >
-
-      <!-- the bar of date for TODAY_FUTURE -->
-      <template v-if="viewType === 'TODAY_FUTURE' && item.dateText">
-        <div v-if="index === 0 || tlData.list[index - 1].dateText !== item.dateText" 
-          class="liu-no-user-select thread-list-bar"
-        >
-          <span>{{ item.dateText }}</span>
-        </div>
-      </template>
-      
-      <!-- the card of thread -->
-      <ThreadCard 
-        :thread-data="item.thread"
-        :position="index"
-        :view-type="viewType"
-        :show-type="item.showType"
-        :show-txt="showTxt"
-        :css-detect-overflow="tlData.cssDetectOverflow"
-        @newoperate="receiveOperation"
-        @tapbriefing="whenTapBriefing"
-      ></ThreadCard>
-    
-    </template>
+      :thread-data="item.thread"
+      :position="index"
+      :view-type="viewType"
+      :show-type="item.showType"
+      :show-txt="showTxt"
+      :css-detect-overflow="tlData.cssDetectOverflow"
+      @newoperate="receiveOperation"
+      @tapbriefing="whenTapBriefing"
+    ></ThreadCard>
     
     <ListBottom 
       v-if="enableBottom"
@@ -79,16 +73,6 @@ const enableBottom = computed(() => {
   flex-direction: column-reverse;
   width: 100%;
   position: relative;
-}
-
-.thread-list-bar {
-  width: 100%;
-  padding-inline-start: 8px;
-  padding-block: 8px;
-  box-sizing: border-box;
-  font-size: var(--title-font);
-  color: var(--main-text);
-  font-weight: 700;
 }
 
 

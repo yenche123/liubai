@@ -83,7 +83,7 @@ export function useThreadCard(
 
   const showActionBar = computed(() => {
     const vT = props.viewType
-    if(vT === "TODAY_FUTURE" || vT === "PAST") return false
+    if(vT === "PAST") return false
     return props.threadData.oState === "OK"
   })
 

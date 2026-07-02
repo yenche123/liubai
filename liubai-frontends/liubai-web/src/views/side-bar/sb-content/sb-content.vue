@@ -139,21 +139,21 @@ const color_selected = "var(--main-normal)"
     </NaviLink>
   </div>
 
-  <!-- 日程 -->
-  <div class="sb-link-box sb-link-schedule"
-    @mouseenter="() => onMouseEnter('schedule')"
+  <!-- 日历 -->
+  <div class="sb-link-box sb-link-calendar"
+    @mouseenter="() => onMouseEnter('calendar')"
     @mouseleave="onMouseLeave"
   >
     <NaviLink class="liu-no-user-select sb-link" 
-      :to="prefix + 'schedule'"
-      :class="{ 'sb-link_selected': state === 'schedule' }"
+      :to="prefix + 'calendar'"
+      :class="{ 'sb-link_selected': state === 'calendar' }"
       :tabindex="tabindex"
       @aftertap="toClosePopup"
     >
       <div class="sb-icon-container">
         <SvgIcon class="sb-icon" style="padding-block-end: 1px"
-          :name="state === 'schedule' ? 'schedule_selected' : 'schedule'" 
-          :color="state === 'schedule' ? color_selected : color"
+          :name="state === 'calendar' ? 'schedule_selected' : 'schedule'" 
+          :color="state === 'calendar' ? color_selected : color"
         ></SvgIcon>
       </div>
       <span>{{ t("calendar.schedule") }}</span>

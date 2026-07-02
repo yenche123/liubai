@@ -1,7 +1,7 @@
 {
   "name": "liubai-docs",
   "private": true,
-  "version": "0.33.0",
+  "version": "0.34.3",
   "type": "module",
   "description": "It's the docs center for Liubai",
   "author": {

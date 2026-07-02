@@ -27,6 +27,7 @@ import localCache from "~/utils/system/local-cache"
 import { useAwakeNum } from "~/hooks/useCommon"
 import { useNetworkStore } from "~/hooks/stores/useNetworkStore"
 import { handleCalendarList } from "./handle-calendar"
+import { handleCalendarRangeList } from "./handle-calendar-range"
 import type { ThreadListViewType } from "~/types/types-view"
 import time from "~/utils/basic/time"
 import { preDownloadStart } from "~/utils/cloud/pre-download"
@@ -40,7 +41,7 @@ export function useThreadList(
   props: TlProps,
   emits: TlEmits,
 ) {
-  const { viewType, tagId } = toRefs(props)
+  const { viewType, tagId, calendarStart, calendarEnd } = toRefs(props)
 
   const wStore = useWorkspaceStore()
   const spaceIdRef = storeToRefs(wStore).spaceId
@@ -156,6 +157,14 @@ export function useThreadList(
   }, { immediate: true })
 
 
+  // 3.1 监听 CALENDAR_RANGE 的区间变化（如日历切月），重载整月
+  watch([calendarStart, calendarEnd], (n, o) => {
+    if(!spaceIdRef.value) return
+    if(o && n[0] === o[0] && n[1] === o[1]) return
+    loadList(ctx, true)
+  })
+
+
   // 4. 监听来自同组件其他函数请求重新加载
   const rfNum = toRef(tlData, "requestRefreshNum")
   watch(rfNum, (newV, oldV) => {
@@ -192,7 +201,7 @@ function scrollTopAndUpdate(
   cloud: boolean,
 ) {
   if(ctx.svBottomUp) {
-    if(!isViewType(ctx, "PINNED") && !isViewType(ctx, "CALENDAR")) {
+    if(!isViewType(ctx, "PINNED") && !isViewType(ctx, "CALENDAR") && !isViewType(ctx, "CALENDAR_RANGE")) {
       ctx.svBottomUp.value = { type: "pixel", pixel: 0 }
     }
   }
@@ -246,6 +255,10 @@ async function loadList(
   const { viewType: vT, tagId, stateId } = props
   if(vT === "CALENDAR") {
     handleCalendarList(ctx, cloud)
+    return
+  }
+  if(vT === "CALENDAR_RANGE") {
+    handleCalendarRangeList(ctx, cloud)
     return
   }
 
@@ -310,20 +323,13 @@ async function loadList(
       opt1.tagId = tagId
       opt3.tagId = tagId
     }
-
     results = await threadController.getList(opt1)
   }
 
   // 2. 加载完数据后，开始封装
   cloudOpt.threadShows = results
-  const newList = tlUtil.threadShowsToList(results, vT)
+  const newList = tlUtil.threadShowsToList(results)
   const newLength = newList.length
-
-  // if(vT === "TODAY_FUTURE") {
-  //   console.warn("TODAY_FUTURE newList: ")
-  //   console.log(newList)
-  // }
-
 
   // 3. 赋值到 list 上
   if(isInit || vT === "PINNED") {
@@ -454,7 +460,7 @@ async function loadAgain(
     results = await threadController.getList(opt1)
   }  
 
-  const newList = tlUtil.threadShowsToList(results, vT)
+  const newList = tlUtil.threadShowsToList(results)
   const deltaLength = newList.length
   const newLength = deltaLength + startIndex
   const oldLength = tlData.list.length

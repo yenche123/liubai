@@ -56,7 +56,7 @@ const tools_1 = [
     type: "function",
     function: {
       name: "add_todo",
-      description: "添加: 待办 / 提醒事项 / 日程 / 事件 / 任务",
+      description: "添加: 待办 / 提醒事项 / 日历事项 / 事件 / 任务",
       parameters: {
         type: "object",
         properties: {
@@ -75,7 +75,7 @@ const tools_2 = [
     type: "function",
     function: {
       name: "add_todo",
-      description: "添加: 待办 / 提醒事项 / 日程 / 事件 / 任务",
+      description: "添加: 待办 / 提醒事项 / 日历事项 / 事件 / 任务",
       parameters: {
         type: "object",
         properties: {

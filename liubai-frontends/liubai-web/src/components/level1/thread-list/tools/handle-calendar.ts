@@ -87,7 +87,7 @@ function showCalendarList(
     return list
   }
 
-  const newList = tlUtil.threadShowsToList(list, "CALENDAR")
+  const newList = tlUtil.threadShowsToList(list)
   tlData.list = newList
   emits("hasdata", { title_key })
   

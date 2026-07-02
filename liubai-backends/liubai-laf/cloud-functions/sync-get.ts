@@ -557,9 +557,9 @@ async function toThreadListFromContent(
   opt: OperationOpt,
 ): Promise<SyncGetAtomRes> {
   const { taskId } = opt
-  const { 
-    spaceId, 
-    viewType: vT, 
+  const {
+    spaceId,
+    viewType: vT,
     limit = 16,
     lastItemStamp,
     specific_ids,
@@ -567,6 +567,8 @@ async function toThreadListFromContent(
     tagId,
     stateId,
     skip,
+    calendarStart,
+    calendarEnd,
   } = atom
   let sort = atom.sort ?? "desc"
 
@@ -577,6 +579,9 @@ async function toThreadListFromContent(
   if(vT === "TAG" && !tagId) {
     return { code: "E4000", errMsg: "tagId is required", taskId }
   }
+  if(vT === "CALENDAR_RANGE" && (calendarStart == null || calendarEnd == null)) {
+    return { code: "E4000", errMsg: "calendarStart and calendarEnd are required", taskId }
+  }
 
   // 1. checking out logged in and spaceId
   const res1 = getSharedData_1(sgCtx, spaceId, opt)
@@ -584,10 +589,11 @@ async function toThreadListFromContent(
 
   // 2.1 handle w
   const isIndex = vT === "INDEX"
-  const isCalendar = vT === "CALENDAR"
+  const isCalendar = vT === "CALENDAR"             // 前端首页「今日 / 未来 24 小时」摘要卡片
+  const isCalendarRange = vT === "CALENDAR_RANGE"  // 前端日历页整月视图，[calendarStart, calendarEnd)
   const isPin = vT === "PINNED"
   const isTrash = vT === "TRASH"
-  const isTodayFuture = vT === "TODAY_FUTURE"
+  const isTodayFuture = vT === "TODAY_FUTURE"     // [legacy] 仅旧客户端会发送，见 common-types.ts
   const isPast = vT === "PAST"
   const oState = isTrash ? "REMOVED" : "OK"
   const isKanban = vT === "STATE"
@@ -603,6 +609,10 @@ async function toThreadListFromContent(
     const s1 = now - DAY
     const s2 = now + DAY + (HOUR * 2)
     w.calendarStamp = _.and(_.gt(s1), _.lte(s2))
+  }
+  else if(isCalendarRange) {
+    sort = "asc"
+    w.calendarStamp = _.and(_.gte(calendarStart!), _.lt(calendarEnd!))
   }
   else if(isTodayFuture) {
     sort = "asc"
@@ -639,7 +649,7 @@ async function toThreadListFromContent(
 
   // 2.3 handle lastItemStamp using key
   let key = oState === "OK" ? "createdStamp" : "updatedStamp"
-  if(isCalendar || isTodayFuture || isPast) {
+  if(isCalendar || isCalendarRange || isTodayFuture || isPast) {
     key = "calendarStamp"
   }
   else if(isPin) key = "pinStamp"
@@ -647,7 +657,10 @@ async function toThreadListFromContent(
   else if(isKanban) key = "stateStamp"
 
   if(lastItemStamp) {
-    const pageCond = sort === "desc" ? _.lt(lastItemStamp) : _.gt(lastItemStamp)
+    // CALENDAR_RANGE 用含等值游标（>=）+ excluded_ids 翻页，
+    // 避免多条数据共享同一 calendarStamp 时被跳过
+    let pageCond = sort === "desc" ? _.lt(lastItemStamp) : _.gt(lastItemStamp)
+    if(isCalendarRange) pageCond = _.gte(lastItemStamp)
     if(w[key]) {
       w[key] = _.and(w[key], pageCond)
     }

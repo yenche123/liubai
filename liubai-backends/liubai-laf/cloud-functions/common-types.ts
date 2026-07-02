@@ -210,6 +210,13 @@ export const genderTypes = ["male", "female"] as const
 export type GenderType = typeof genderTypes[number]
 export const Sch_GenderType = vbot.picklist(genderTypes)
 
+// 「日历类」的四个视图名字相近，注意区分：
+// CALENDAR:       前端首页「今日 / 未来 24 小时」摘要卡片，固定加载当前时间前后约一天
+// CALENDAR_RANGE: 前端日历页（/calendar）整月视图，
+//                 按 calendarStamp ∈ [calendarStart, calendarEnd) 区间查询
+// TODAY_FUTURE:   [legacy] 旧版日程页（从今天起往未来翻页），新前端已移除；
+//                 保留此值以兼容未更新缓存（PWA / webview）的旧客户端，勿删
+// PAST:           过去页，从现在起往过去翻页
 export const threadListViewTypes = [
   "TRASH",
   "TAG",
@@ -218,6 +225,7 @@ export const threadListViewTypes = [
   "INDEX",
   "STATE",
   "CALENDAR",
+  "CALENDAR_RANGE",
   "TODAY_FUTURE",
   "PAST",
 ] as const
@@ -2365,6 +2373,10 @@ export interface SyncGet_ThreadList {
 
   // 跳过 skip 个动态
   skip?: number
+
+  // 用于 CALENDAR_RANGE：按 calendarStamp 在 [calendarStart, calendarEnd) 区间内查询
+  calendarStart?: number
+  calendarEnd?: number
 }
 
 export const Sch_SyncGet_ThreadList = vbot.object({
@@ -2381,6 +2393,8 @@ export const Sch_SyncGet_ThreadList = vbot.object({
   excluded_ids: sch_opt_arr(Sch_Id, [vbot.maxLength(32)]),
   stateId: Sch_Opt_Str,
   skip: Sch_Opt_Num,
+  calendarStart: Sch_Opt_Num,
+  calendarEnd: Sch_Opt_Num,
 })
 
 export interface SyncGet_ThreadData {

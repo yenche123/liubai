@@ -35,7 +35,7 @@ const { t } = useI18n()
       </div>
 
       <!-- add -->
-      <div v-if="showAdd" 
+      <div v-if="showAdd"
         class="liu-hover nbb-normal"
         style="margin-inline-end: -10px;"
         @click="$emit('tapadd')"

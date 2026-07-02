@@ -12,7 +12,7 @@ import type { OState } from "~/types/types-basic";
 async function getList(
   opt: TcListOption
 ) {
-  const { 
+  const {
     spaceId,
     sort = "desc",
     lastItemStamp,
@@ -23,18 +23,20 @@ async function getList(
     specific_ids,
     excluded_ids,
     stateId,
+    calendarStart,
+    calendarEnd,
   } = opt
 
   if(collectType === "EXPRESS" || collectType === "FAVORITE") {
     const res0 = await getThreadsByCollection(opt as TcListOption)
     return res0
   }
-  
+
   const isIndex= vT === "INDEX"
-  const isCalendar = vT === "CALENDAR"
+  const isCalendar = vT === "CALENDAR"             // 首页「今日 / 未来 24 小时」摘要卡片
+  const isCalendarRange = vT === "CALENDAR_RANGE"  // 日历页整月视图，[calendarStart, calendarEnd)
   const isPin = vT === "PINNED"
   const isTrash = vT === "TRASH"
-  const isTodayFuture = vT === "TODAY_FUTURE"
   const isPast = vT === "PAST"
   const isKanban = vT === "STATE"
 
@@ -43,6 +45,8 @@ async function getList(
   const now = time.getTime()
 
   let list: ContentLocalTable[] = []
+  // 注意：CALENDAR_RANGE（日历月视图）刻意不过滤 showInIndex === false 的状态，
+  // 「已完成」等不在首页显示的卡片，在月视图里仍要展示
   const statesNoInIndex = getNoShowInIndexStates(isIndex || isCalendar)
 
   const filterFunc = (item: ContentLocalTable) => {
@@ -97,9 +101,15 @@ async function getList(
     const q = db.contents.where(w).between(b1, b2, false, true).filter(filterFunc)
     list = await q.sortBy("calendarStamp")
   }
-  else if(isTodayFuture) {
-    const theStamp = lastItemStamp ?? (now - time.DAY)
-    let tmp = db.contents.where("calendarStamp").above(theStamp)
+  else if(isCalendarRange) {
+    // 区间端点缺失时直接返回空，避免落入默认分支返回与日历区间无关的数据
+    if(typeof calendarStart !== "number" || typeof calendarEnd !== "number") {
+      return []
+    }
+    // 按 calendarStamp 在 [calendarStart, calendarEnd) 区间内查询，升序
+    // 游标为含等值（>=），同 calendarStamp 的已加载项由调用方以 excluded_ids 排除
+    const cursor = lastItemStamp ?? calendarStart
+    let tmp = db.contents.where("calendarStamp").between(cursor, calendarEnd, true, false)
     tmp = tmp.filter(filterFunc).limit(limit)
     list = await tmp.toArray()
   }
