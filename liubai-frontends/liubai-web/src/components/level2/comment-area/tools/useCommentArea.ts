@@ -42,6 +42,8 @@ export function useCommentArea(
     comments: [],
     threadId: "",
     hasReachedBottom: false,
+    loading: false,
+    loadGeneration: 0,
     networkLevel: level.value,
   })
 
@@ -86,62 +88,79 @@ async function preloadComments(
   reload?: boolean,
 ) {
 
+  if(reload) {
+    caData.loadGeneration++
+    caData.loading = false
+  }
+  else if(caData.loading) return
+
   // 1. if it's reached bottom
   if(!reload && caData.hasReachedBottom) {
     return
   }
 
-  const oldLength = caData.comments.length
-  const lastComment = caData.comments[oldLength - 1]
-  const isInit = Boolean(reload || oldLength < 1)
+  const generation = caData.loadGeneration
+  caData.loading = true
 
-  // 2. construct query
-  const opt: LoadByThreadOpt = {
-    targetThread: caData.threadId,
-    lastItemStamp: isInit ? undefined : lastComment.createdStamp,
-  }
+  try {
+    const oldLength = caData.comments.length
+    const lastComment = caData.comments[oldLength - 1]
+    const isInit = Boolean(reload || oldLength < 1)
 
-  // 3. get local comments first
-  const currentList = await commentController.loadByThread(opt)
+    // 2. construct query
+    const opt: LoadByThreadOpt = {
+      targetThread: caData.threadId,
+      lastItemStamp: isInit ? undefined : lastComment.createdStamp,
+    }
 
-  // 4. check out if get to sync
-  const canSync = liuEnv.canISync()
-  if(!canSync || caData.networkLevel < 1) {
-    toLoadComments(caData, opt, currentList)
-    return
-  }
+    // 3. get local comments first
+    const currentList = await commentController.loadByThread(opt)
+    if(!isCurrent(caData, generation)) return
 
-  // 5. construct param for sync
-  const param5: SyncGet_CommentList_A = {
-    taskType: "comment_list",
-    loadType: "under_thread",
-    targetThread: opt.targetThread,
-    lastItemStamp: opt.lastItemStamp,
-  }
-  const delay5 = liuUtil.check.isJustAppSetup() ? undefined : 0
-  const res5 = await CloudMerger.request(param5, { 
-    waitMilli: 3000,
-    delay: delay5,
-  })
-  if(!res5) {
-    toLoadComments(caData, opt, currentList)
-    return
-  }
+    // 4. check out if get to sync
+    const canSync = liuEnv.canISync()
+    if(!canSync || caData.networkLevel < 1) {
+      await toLoadComments(caData, opt, currentList, generation)
+      return
+    }
 
-  // 6. get ids
-  const ids = CloudMerger.getIdsForCheckingContents(res5, currentList)
-  if(ids.length < 1) {
-    toLoadComments(caData, opt)
-    return
-  }
+    // 5. construct param for sync
+    const param5: SyncGet_CommentList_A = {
+      taskType: "comment_list",
+      loadType: "under_thread",
+      targetThread: opt.targetThread,
+      lastItemStamp: opt.lastItemStamp,
+    }
+    const delay5 = liuUtil.check.isJustAppSetup() ? undefined : 0
+    const res5 = await CloudMerger.request(param5, {
+      waitMilli: 3000,
+      delay: delay5,
+    })
+    if(!isCurrent(caData, generation)) return
+    if(!res5) {
+      await toLoadComments(caData, opt, currentList, generation)
+      return
+    }
 
-  // 7. check contents out
-  const param7: SyncGet_CheckContents = {
-    taskType: "check_contents",
-    ids,
+    // 6. get ids
+    const ids = CloudMerger.getIdsForCheckingContents(res5, currentList)
+    if(ids.length < 1) {
+      await toLoadComments(caData, opt, undefined, generation)
+      return
+    }
+
+    // 7. check contents out
+    const param7: SyncGet_CheckContents = {
+      taskType: "check_contents",
+      ids,
+    }
+    await CloudMerger.request(param7, { waitMilli: 3000, delay: 0 })
+    if(!isCurrent(caData, generation)) return
+    await toLoadComments(caData, opt, undefined, generation)
   }
-  await CloudMerger.request(param7, { waitMilli: 3000, delay: 0 })
-  toLoadComments(caData, opt)
+  finally {
+    if(isCurrent(caData, generation)) caData.loading = false
+  }
 }
 
 
@@ -149,9 +168,12 @@ async function toLoadComments(
   caData: CommentAreaData,
   opt: LoadByThreadOpt,
   newList?: CommentShow[],
+  generation = caData.loadGeneration,
 ) {
+  if(!isCurrent(caData, generation)) return
   if(!newList) {
     newList = await commentController.loadByThread(opt)
+    if(!isCurrent(caData, generation)) return
   }
 
   const oldList = caData.comments
@@ -172,14 +194,17 @@ async function toLoadComments(
     caData.hasReachedBottom = true
   }
 
-  preloadChildren(caData, newList)
+  preloadChildren(caData, newList, generation)
 }
 
 async function preloadChildren(
   caData: CommentAreaData,
   newList: CommentShow[],
+  generation = caData.loadGeneration,
 ) {
+  if(!isCurrent(caData, generation)) return
   const valueComments = await fetchChildrenComments(newList, caData.networkLevel)
+  if(!isCurrent(caData, generation)) return
   if(valueComments.length < 1) return
 
   toLoadChildren(caData, valueComments)
@@ -195,6 +220,13 @@ async function toLoadChildren(
 ) {
   const { comments } = caData
   addChildrenIntoValueComments(comments, valueComments)
+}
+
+function isCurrent(
+  caData: CommentAreaData,
+  generation: number,
+) {
+  return caData.loadGeneration === generation
 }
 
 
@@ -239,6 +271,3 @@ function listenScoll(
   })
 
 }
-
-
-
