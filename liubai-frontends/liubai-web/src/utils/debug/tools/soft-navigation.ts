@@ -36,7 +36,7 @@ export function installSoftNavigationPerformanceTracking(router: Router) {
 		return () => {};
 
 	let disposed = false;
-	let pending: { routeKey: string; trace: Trace } | undefined;
+	let pending: { to: RouteLocationNormalized; trace: Trace } | undefined;
 	let visualTrace: Trace | undefined;
 	let frame: number | undefined;
 	const retained: Trace[] = [];
@@ -71,12 +71,13 @@ export function installSoftNavigationPerformanceTracking(router: Router) {
 			paintMeasure: `${base}:paint-duration`,
 		};
 		performance.mark(trace.start);
-		pending = { routeKey: to.fullPath, trace };
+		pending = { to, trace };
 	});
 
 	const removeAfterEach = router.afterEach((to, _from, failure) => {
-		// A cancelled older navigation can finish after a newer one has started.
-		if (pending?.routeKey !== to.fullPath) return;
+		// A cancelled older navigation can finish after a newer one has started,
+		// even with the same fullPath; Vue Router passes the same `to` object to both hooks.
+		if (pending?.to !== to) return;
 		const { trace } = pending;
 		pending = undefined;
 		if (failure) {

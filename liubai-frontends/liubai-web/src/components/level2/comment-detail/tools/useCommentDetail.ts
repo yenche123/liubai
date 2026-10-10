@@ -513,14 +513,14 @@ async function preloadThread(
   // 2. show thread if it exists
   // because we fetch it in preloadTargetComment
   if(res) {
-    toLoadThread(ctx, false, res, generation)
+    await toLoadThread(ctx, false, res, generation)
     return
   }
 
   // 3. check out if get to sync
   const canSync = liuEnv.canISync()
   if(!canSync || cdData.networkLevel < 1) {
-    toLoadThread(ctx, false, res, generation)
+    await toLoadThread(ctx, false, res, generation)
     return
   }
 
@@ -536,7 +536,7 @@ async function preloadThread(
   })
   if(!isAboveCurrent(ctx, generation)) return
 
-  toLoadThread(ctx, true, undefined, generation)
+  await toLoadThread(ctx, true, undefined, generation)
 }
 
 async function toLoadThread(
