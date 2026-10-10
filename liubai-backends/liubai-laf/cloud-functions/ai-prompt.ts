@@ -128,7 +128,7 @@ export const aiBots: AiBot[] = [
     character: "tongyi-qwen",
     provider: "aliyun-bailian",
     model: "qwen3.8-max",
-    abilities: ["chat", "tool_use"],
+    abilities: ["chat", "tool_use", "image_to_text"],
     alias: ["通义", "千问", "qwen", "qwq", "tongyi", "ty"],
     maxWindowTokenK: 128,
     priority: 10,
@@ -177,16 +177,6 @@ export const aiBots: AiBot[] = [
     metaData: {
       onlyOneSystemRoleMsg: true,
     }
-  },
-  {
-    name: "通义千问",
-    character: "tongyi-qwen",
-    provider: "aliyun-bailian",
-    model: "qwen3.7-plus",
-    abilities: ["chat", "image_to_text", "tool_use"],
-    alias: ["通义", "千问", "qwen", "qwq", "tongyi", "ty"],
-    maxWindowTokenK: 128,
-    priority: 10,
   },
   {
     name: "万知",
