@@ -27,13 +27,13 @@
 目前支持的 AI 有:
 
 - 百灵 (来自 [蚂蚁金服](https://alipaytbox.yuque.com/sxs0ba/ling))
-- DeepSeek (来自 [深度求索](https://api-docs.deepseek.com/zh-cn/))，已适配至 V4
+- DeepSeek (来自 [深度求索](https://api-docs.deepseek.com/zh-cn/))，已适配至 V4.1
 - 海螺 (来自 [MiniMax](https://minimaxi.com/))，已适配至 MiniMax-M3
 - 混元 (来自[腾讯](https://hunyuan.tencent.com/))
-- Kimi（来自[月之暗面](https://www.moonshot.cn/)），已适配至 kimi-2.6
-- 通义千问（来自[阿里巴巴](https://tongyi.aliyun.com/welcome)），已适配至 qwen3.7
-- 跃问（来自[阶跃星辰](https://www.stepfun.com/)），已适配至 step-3.7
-- 智谱（来自[智谱华章](https://bigmodel.cn/)），已适配至 glm-5.1
+- Kimi（来自[月之暗面](https://www.moonshot.cn/)），已适配至 kimi-k3
+- 通义千问（来自[阿里巴巴](https://tongyi.aliyun.com/welcome)），已适配至 qwen3.8-max
+- 跃问（来自[阶跃星辰](https://www.stepfun.com/)），已适配至 step-5-preview
+- 智谱（来自[智谱华章](https://bigmodel.cn/)），已适配至 glm-5.3-flash
 
 我们让你无需切换 APP，直接在微信里一次性体验世界顶尖大模型！
 

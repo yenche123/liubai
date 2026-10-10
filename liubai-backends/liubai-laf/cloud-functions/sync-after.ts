@@ -51,64 +51,29 @@ const AI_CLUSTER_FREE = 10
 const fastAiWorkers: LiuAi.AiWorker[] = [
   {
     "computingProvider": "aliyun-bailian",
-    "model": "qwen3-max-preview",
+    "model": "qwen3.8-max",
     "character": "tongyi-qwen",
   },
   {
     "computingProvider": "aliyun-bailian",
-    "model": "qwen-plus-2025-12-01",
-    "character": "tongyi-qwen",
-  },
-  {
-    "computingProvider": "aliyun-bailian",
-    "model": "qwen3.7-plus",
-    "character": "tongyi-qwen",
-  },
-  {
-    "computingProvider": "aliyun-bailian",
-    "model": "qwen3.7-plus-2026-05-26",
-    "character": "tongyi-qwen",
-  },
-  {
-    "computingProvider": "aliyun-bailian",
-    "model": "qwen3.7-max-2026-06-08",
+    "model": "qwen3.8-flash",
     "character": "tongyi-qwen",
   },
   {
     "computingProvider": "zhipu",
-    "model": "glm-5-turbo",
+    "model": "glm-5.3-flash",
     "character": "zhipu",
   },
   {
     "computingProvider": "zhipu",
-    "model": "glm-5",
-    "character": "zhipu",
-  },
-  {
-    "computingProvider": "zhipu",
-    "model": "glm-5.1",
+    "model": "glm-5.3-flashx",
     "character": "zhipu",
   },
   {
     "computingProvider": "moonshot",
-    "model": "kimi-k2.6",
+    "model": "kimi-k3",
     "character": "kimi",
   },
-  {
-    "computingProvider": "siliconflow",
-    "model": "Qwen/Qwen3.6-27B",
-    "character": "tongyi-qwen",
-  },
-  {
-    "computingProvider": "siliconflow",
-    "model": "Qwen/Qwen3.6-35B-A3B",
-    "character": "tongyi-qwen",
-  },
-  {
-    "computingProvider": "siliconflow",
-    "model": "Pro/zai-org/GLM-5.1",
-    "character": "zhipu",
-  }
 ]
 
 export async function main(ctx: FunctionContext) {
@@ -776,13 +741,19 @@ class ClusterHelper {
         "partial": true,
       }
       prompts.push(prompt_32 as OaiPrompt)
+      if (aiWorker.model === "kimi-k3") {
+        param3.reasoning_effort = "low"
+      }
     }
-    // 3.2 close thinking for zhipu
+    // 3.2 close thinking for qwen
+    if (provider === "aliyun-bailian" && aiWorker.model.startsWith("qwen")) {
+      //@ts-expect-error enable_thinking
+      param3.enable_thinking = false
+    }
+    // 3.3 glm-5.3 cannot close thinking, otherwise "</output>" may hit inside reasoning
     if (provider === "zhipu" && aiWorker.model.startsWith("glm-")) {
-      //@ts-expect-error thinking
-      param3.thinking = { type: "disabled" }
+      param3.reasoning_effort = "low"
     }
-
     // LogHelper.printLastItems(prompts)
 
     // 4. fetch

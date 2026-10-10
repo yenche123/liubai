@@ -108,25 +108,19 @@ export const txt2TxtAiWorkers: LiuAi.AiWorker[] = [
   },
   {
     computingProvider: "aliyun-bailian",
-    model: "qwen3.6-flash",
+    model: "qwen3.8-flash",
     character: "tongyi-qwen",
     stream: true,
   },
   {
     computingProvider: "aliyun-bailian",
-    model: "qwen3.5-397b-a17b",
-    character: "tongyi-qwen",
-    stream: true,
-  },
-  {
-    computingProvider: "aliyun-bailian",
-    model: "qwen3.5-122b-a10b",
+    model: "qwen3.8-max-0902",
     character: "tongyi-qwen",
     stream: true,
   },
   {
     computingProvider: "zhipu",
-    model: "glm-5.1",
+    model: "glm-5.3-flashx",
     character: "zhipu",
     stream: true,
   }
@@ -141,19 +135,13 @@ export const img2TxtWorkers: LiuAi.AiWorker[] = [
   },
   {
     computingProvider: "aliyun-bailian",
-    model: "qwen3.6-flash",
+    model: "qwen3.8-flash",
     character: "tongyi-qwen",
     stream: true,
   },
   {
     computingProvider: "aliyun-bailian",
-    model: "qwen3.6-flash-2026-04-16",
-    character: "tongyi-qwen",
-    stream: true,
-  },
-  {
-    computingProvider: "aliyun-bailian",
-    model: "qwen3.6-35b-a3b",
+    model: "qwen3.8-max-0902",
     character: "tongyi-qwen",
     stream: true,
   },
@@ -167,6 +155,12 @@ export const img2TxtWorkers: LiuAi.AiWorker[] = [
     computingProvider: "aliyun-bailian",
     model: "qwen3.7-plus-2026-05-26",
     character: "tongyi-qwen",
+    stream: true,
+  },
+  {
+    computingProvider: "zhipu",
+    model: "glm-5.3-flash",
+    character: "zhipu",
     stream: true,
   }
 ]

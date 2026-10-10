@@ -5,6 +5,7 @@ import type {
   AiCharacter,
   AiEntry,
   AiCommandByHuman,
+  DsReasonerMessage,
   OaiPrompt,
   OaiContentPart,
   OaiTool,
@@ -2019,8 +2020,10 @@ class BotMoonshot extends BaseBot {
       model,
       tools,
     }
-    //@ts-expect-error thinking for Kimi K2.6
-    chatParam.thinking = { type: "disabled" }
+    // Kimi K3 cannot disable thinking and defaults to "max"
+    if (model === "kimi-k3") {
+      chatParam.reasoning_effort = "low"
+    }
     const chatCompletion = await this.chat(chatParam, bot)
 
     // 6. post run
@@ -2154,6 +2157,11 @@ class BotTongyiQwen extends BaseBot {
       max_tokens: maxToken,
       model,
       tools,
+    }
+    // qwen3.8 thinks by default, which exhausts max_tokens of non-reasoning bots
+    if (!AiShared.isReasoningBot(bot)) {
+      //@ts-expect-error enable_thinking
+      chatParam.enable_thinking = false
     }
     const chatCompletion = await this.chat(chatParam, bot)
 
@@ -4127,8 +4135,14 @@ class ChatIntoPrompter {
     const isContinue = this._opt?.isContinueCommand
     const assistantName = AiShared.getCharacterName(character)
 
+    // Kimi K3 requires its own reasoning_content to be passed back as-is
+    const isKimiTurn = character === "kimi" && this._opt?.character === "kimi"
+
     let content = ""
-    if (isContinue && index < 3 && reasoning_content && finish_reason === "length") {
+    if (isKimiTurn) {
+      content = text ?? ""
+    }
+    else if (isContinue && index < 3 && reasoning_content && finish_reason === "length") {
       const hasThink = reasoning_content.startsWith("<think>")
       if (hasThink) content = reasoning_content
       else content = `<think>${reasoning_content}</think>`
@@ -4145,13 +4159,17 @@ class ChatIntoPrompter {
       else content = `<think>${reasoning_content}`
     }
 
-    if (!content) return
+    if (!content && !(isKimiTurn && reasoning_content)) return
 
-    return {
+    const prompt: DsReasonerMessage = {
       role: "assistant",
       content,
       name: assistantName,
     }
+    if (isKimiTurn && reasoning_content) {
+      prompt.reasoning_content = reasoning_content
+    }
+    return prompt
   }
 
   private turnForUser(
