@@ -62,6 +62,9 @@ const {
 <template>
 
   <div class="cc-container"
+    :data-comment-id="cs._id"
+    :data-comment-key="cs.first_id"
+    :data-target-comment="isTargetComment ? 'true' : undefined"
     @mouseenter="onMouseEnterComment"
     @mouseleave="onMouseLeaveComment"
     @click.stop="onTapContainer"

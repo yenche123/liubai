@@ -5,6 +5,8 @@ export interface CommentAreaData {
   comments: CommentShow[]
   threadId: string
   hasReachedBottom: boolean
+  loading: boolean
+  loadGeneration: number
   networkLevel: number
 }
 

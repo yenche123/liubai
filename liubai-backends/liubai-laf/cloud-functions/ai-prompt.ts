@@ -117,8 +117,8 @@ export const aiBots: AiBot[] = [
     name: "Kimi",
     character: "kimi",
     provider: "moonshot",
-    model: "kimi-k2.6",
-    abilities: ["chat", "tool_use", "image_to_text"],
+    model: "kimi-k3",
+    abilities: ["chat", "tool_use", "reasoning", "image_to_text"],
     alias: ["Moonshot", "月之暗面"],
     maxWindowTokenK: 128,
     priority: 10,
@@ -127,8 +127,8 @@ export const aiBots: AiBot[] = [
     name: "通义千问",
     character: "tongyi-qwen",
     provider: "aliyun-bailian",
-    model: "qwen3.7-max",
-    abilities: ["chat", "tool_use"],
+    model: "qwen3.8-max",
+    abilities: ["chat", "tool_use", "image_to_text"],
     alias: ["通义", "千问", "qwen", "qwq", "tongyi", "ty"],
     maxWindowTokenK: 128,
     priority: 10,
@@ -137,10 +137,10 @@ export const aiBots: AiBot[] = [
     name: "跃问",
     character: "yuewen",
     provider: "stepfun",
-    model: "step-3.7-flash",
-    abilities: ["chat", "reasoning"],
+    model: "step-5-preview",
+    abilities: ["chat", "tool_use", "reasoning", "image_to_text"],
     alias: ["阶跃星辰", "stepfun", "阶跃", "jieyue", "jyxc"],
-    maxWindowTokenK: 32,
+    maxWindowTokenK: 64,
     priority: 10,
   },
   {
@@ -157,14 +157,11 @@ export const aiBots: AiBot[] = [
     name: "智谱",
     character: "zhipu",
     provider: "zhipu",
-    model: "glm-5.1",
-    abilities: ["chat", "tool_use", "reasoning"],
+    model: "glm-5.3-flash",
+    abilities: ["chat", "tool_use", "reasoning", "image_to_text"],
     alias: ["智谱AI", "智谱清言", "ChatGLM", "zp", "glm", "z-ai"],
     maxWindowTokenK: 64,
     priority: 10,
-    metaData: {
-      zhipuWebSearch: true,
-    }
   },
 
   /** image to text */
@@ -182,26 +179,6 @@ export const aiBots: AiBot[] = [
     }
   },
   {
-    name: "通义千问",
-    character: "tongyi-qwen",
-    provider: "aliyun-bailian",
-    model: "qwen3.7-plus",
-    abilities: ["chat", "image_to_text", "tool_use"],
-    alias: ["通义", "千问", "qwen", "qwq", "tongyi", "ty"],
-    maxWindowTokenK: 128,
-    priority: 10,
-  },
-  {
-    name: "跃问",
-    character: "yuewen",
-    provider: "stepfun",
-    model: "step-3.7-flash",
-    abilities: ["chat", "image_to_text", "reasoning"],
-    alias: ["阶跃星辰", "stepfun", "阶跃", "jieyue", "jyxc"],
-    maxWindowTokenK: 32,
-    priority: 10,
-  },
-  {
     name: "万知",
     character: "wanzhi",
     provider: "zero-one",
@@ -211,20 +188,6 @@ export const aiBots: AiBot[] = [
     maxWindowTokenK: 16,
     priority: 10,
   },
-  {
-    name: "智谱",
-    character: "zhipu",
-    provider: "zhipu",
-    model: "glm-5v-turbo",
-    abilities: ["chat", "tool_use", "image_to_text", "reasoning"],
-    alias: ["智谱AI", "智谱清言", "ChatGLM", "zp", "glm", "z-ai"],
-    maxWindowTokenK: 16,
-    priority: 10,
-    metaData: {
-      zhipuWebSearch: true,
-    }
-  },
-
 ]
 
 /***************************** Prompts ***************************/

@@ -1,4 +1,4 @@
-import { computed, inject, reactive, ref, toRef, watch } from "vue";
+import { computed, inject, nextTick, reactive, ref, toRef, watch } from "vue";
 import type { 
   CommentDetailData,
   CommentDetailCtx,
@@ -12,7 +12,6 @@ import threadController from "~/utils/controllers/thread-controller/thread-contr
 import { useWindowSize } from "~/hooks/useVueUse";
 import { 
   scrollViewKey, 
-  svBottomUpKey, 
   svScrollingKey,
   svElementKey,
 } from "~/utils/provide-keys";
@@ -45,7 +44,6 @@ export function useCommentDetail(
 
   const tmpStore = useTemporaryStore()
   const { height } = useWindowSize()
-  const svBottomUp = inject(svBottomUpKey)
   const scrollPosition = inject(svScrollingKey, ref(0))
   const svEl = inject(svElementKey)
 
@@ -56,6 +54,11 @@ export function useCommentDetail(
     belowList: [],
     hasReachedBottom: false,
     hasReachedTop: false,
+    loadingAbove: false,
+    loadingBelow: false,
+    loadGeneration: 0,
+    aboveLoadGeneration: 0,
+    belowLoadGeneration: 0,
     focusNum: 0,
     lastLockStamp: time.getTime(),
     networkLevel: level.value,
@@ -66,7 +69,6 @@ export function useCommentDetail(
 
   const ctx: CommentDetailCtx = {
     cdData,
-    svBottomUp,
     svEl,
     scrollPosition,
     emit,
@@ -83,6 +85,11 @@ export function useCommentDetail(
   const cid2 = toRef(props, "targetId")
   watch(cid2, (newV) => {
     cdData.targetId = newV
+    cdData.loadGeneration++
+    cdData.loadingAbove = false
+    cdData.loadingBelow = false
+    cdData.aboveLoadGeneration++
+    cdData.belowLoadGeneration++
     cdData.lastLockStamp = time.getTime()
     preloadTargetComment(ctx)
   }, { immediate: true })
@@ -108,6 +115,7 @@ async function preloadTargetComment(
   ctx: CommentDetailCtx,
 ) {
   const { cdData } = ctx
+  const generation = cdData.loadGeneration
   cdData.state = 0
 
   // 1. construct query
@@ -120,12 +128,14 @@ async function preloadTargetComment(
   // 2. load target comment locally for parentThread
   // so that we can fetch parentThread in advance
   const res2 = await commentController.loadByComment(opt)
+  if(!isCurrent(ctx, generation)) return
   const c2 = res2[0]
 
   // 3. check out if get to sync
   const canSync = liuEnv.canISync()
   if(!canSync || cdData.networkLevel < 1) {
-    await toLoadTargetComment(ctx, opt, false, c2)
+    await toLoadTargetComment(ctx, opt, false, c2, generation)
+    if(!isCurrent(ctx, generation)) return
     preloadBelowList(ctx, true)
     preloadAboveList(ctx, true)
     return
@@ -133,12 +143,12 @@ async function preloadTargetComment(
 
   // 4. show target comment before fetching if it exists
   if(c2) {
-    toLoadTargetComment(ctx, opt, false, c2)
+    toLoadTargetComment(ctx, opt, false, c2, generation)
   }
 
   // 5. construct param for sync
   const ids = [id]
-  if(c2.parentThread) {
+  if(c2?.parentThread) {
     ids.push(c2.parentThread)
   }
   const param5: SyncGet_CheckContents = {
@@ -150,9 +160,11 @@ async function preloadTargetComment(
     waitMilli: 2500,
     delay: delay5,
   })
+  if(!isCurrent(ctx, generation)) return
 
   // 6. load target comment currently
-  await toLoadTargetComment(ctx, opt, true)
+  await toLoadTargetComment(ctx, opt, true, undefined, generation)
+  if(!isCurrent(ctx, generation)) return
 
   // 7. load below & above list
   preloadBelowList(ctx, true)
@@ -164,10 +176,13 @@ async function toLoadTargetComment(
   opt: LoadByCommentOpt,
   loadAgain: boolean,
   c?: CommentShow,
+  generation = ctx.cdData.loadGeneration,
 ) {
   const { cdData, emit } = ctx
+  if(!isCurrent(ctx, generation)) return
   if(loadAgain) {
     const res = await commentController.loadByComment(opt)
+    if(!isCurrent(ctx, generation)) return
     c = res[0]
   }
 
@@ -175,6 +190,10 @@ async function toLoadTargetComment(
 
   // reset some properties
   delete cdData.thread
+  cdData.aboveLoadGeneration++
+  cdData.belowLoadGeneration++
+  cdData.loadingAbove = false
+  cdData.loadingBelow = false
   cdData.aboveList = []
   cdData.belowList = []
   cdData.hasReachedBottom = false
@@ -193,74 +212,89 @@ async function preloadBelowList(
   reload = false,
 ) {
   const { cdData } = ctx
+  if(reload) {
+    cdData.belowLoadGeneration++
+    cdData.loadingBelow = false
+  }
+  else if(cdData.loadingBelow) return
   if(!reload && cdData.hasReachedBottom) {
     return
   }
 
-  // 1. get some required data
-  const tmpList = cdData.belowList
-  const oldLength = tmpList.length
-  const lastComment = tmpList[oldLength - 1]
-  const isInit = Boolean(reload || oldLength < 1)
+  const generation = cdData.belowLoadGeneration
+  cdData.loadingBelow = true
+  try {
+    // 1. get some required data
+    const tmpList = cdData.belowList
+    const oldLength = tmpList.length
+    const lastComment = tmpList[oldLength - 1]
+    const isInit = Boolean(reload || oldLength < 1)
 
-  // 2. construct query
-  const commentId = cdData.targetId
-  const opt: LoadByCommentOpt = {
-    commentId,
-    loadType: "find_children",
-    lastItemStamp: isInit ? undefined : lastComment.createdStamp,
-  }
+    // 2. construct query
+    const commentId = cdData.targetId
+    const opt: LoadByCommentOpt = {
+      commentId,
+      loadType: "find_children",
+      lastItemStamp: isInit ? undefined : lastComment.createdStamp,
+    }
 
-  // 3. get local comments first
-  const currentList = await commentController.loadByComment(opt)
+    // 3. get local comments first
+    const currentList = await commentController.loadByComment(opt)
+    if(!isBelowCurrent(ctx, generation)) return
 
-  // 4. check out if get to sync
-  const canSync = liuEnv.canISync()
-  if(!canSync || cdData.networkLevel < 1) {
-    toLoadBelowList(ctx, opt, true, currentList)
-    return
-  }
+    // 4. check out if get to sync
+    const canSync = liuEnv.canISync()
+    if(!canSync || cdData.networkLevel < 1) {
+      await toLoadBelowList(ctx, opt, true, currentList, generation)
+      return
+    }
 
-  // 5. if init, show currentList in advance
-  if(isInit) {
-    toLoadBelowList(ctx, opt, false, currentList)
-  }
+    // 5. if init, show currentList in advance
+    if(isInit) {
+      await toLoadBelowList(ctx, opt, false, currentList, generation)
+    }
 
-  // 6. construct param for sync
-  const param6: SyncGet_CommentList_B = {
-    taskType: "comment_list",
-    loadType: "find_children",
-    commentId,
-    lastItemStamp: opt.lastItemStamp,
-  }
-  const delay = isInit ? 16 : 0
-  const res6 = await CloudMerger.request(param6, {
-    waitMilli: 3000,
-    maxStackNum: 2,
-    delay,
-  })
-  if(!res6) {
-    toLoadBelowList(ctx, opt, true, currentList)
-    return
-  }
+    // 6. construct param for sync
+    const param6: SyncGet_CommentList_B = {
+      taskType: "comment_list",
+      loadType: "find_children",
+      commentId,
+      lastItemStamp: opt.lastItemStamp,
+    }
+    const delay = isInit ? 16 : 0
+    const res6 = await CloudMerger.request(param6, {
+      waitMilli: 3000,
+      maxStackNum: 2,
+      delay,
+    })
+    if(!isBelowCurrent(ctx, generation)) return
+    if(!res6) {
+      await toLoadBelowList(ctx, opt, true, currentList, generation)
+      return
+    }
 
-  // 7. get ids
-  const ids = CloudMerger.getIdsForCheckingContents(res6, currentList)
-  if(ids.length < 1) {
-    toLoadBelowList(ctx, opt, true)
-    return
-  }
+    // 7. get ids
+    const ids = CloudMerger.getIdsForCheckingContents(res6, currentList)
+    if(ids.length < 1) {
+      await toLoadBelowList(ctx, opt, true, undefined, generation)
+      return
+    }
 
-  // 8. check out contents
-  const param8: SyncGet_CheckContents = {
-    taskType: "check_contents",
-    ids,
+    // 8. check out contents
+    const param8: SyncGet_CheckContents = {
+      taskType: "check_contents",
+      ids,
+    }
+    await CloudMerger.request(param8, {
+      waitMilli: 2500,
+      delay: 0,
+    })
+    if(!isBelowCurrent(ctx, generation)) return
+    await toLoadBelowList(ctx, opt, true, undefined, generation)
   }
-  await CloudMerger.request(param8, {
-    waitMilli: 2500,
-    delay: 0,
-  })
-  toLoadBelowList(ctx, opt, true)
+  finally {
+    if(isBelowCurrent(ctx, generation)) cdData.loadingBelow = false
+  }
 }
 
 async function toLoadBelowList(
@@ -268,11 +302,14 @@ async function toLoadBelowList(
   opt: LoadByCommentOpt,
   loadChildren: boolean,
   newList?: CommentShow[],
+  generation = ctx.cdData.belowLoadGeneration,
 ) {
   const { cdData } = ctx
+  if(!isBelowCurrent(ctx, generation)) return
 
   if(!newList) {
     newList = await commentController.loadByComment(opt)
+    if(!isBelowCurrent(ctx, generation)) return
   }
 
   const oldList = cdData.belowList
@@ -286,11 +323,6 @@ async function toLoadBelowList(
   }
   else {
     commentController.handleRelation(newList)
-
-    // To avoid fixPosition() positioning incorrectly, 
-    // a delay is made
-    await liuUtil.waitAFrame()
-
     cdData.belowList = newList
   }
 
@@ -299,7 +331,7 @@ async function toLoadBelowList(
   }
   
   if(loadChildren) {
-    preloadChildrenOfBelow(ctx, newList)
+    preloadChildrenOfBelow(ctx, newList, generation)
   }
 }
 
@@ -308,9 +340,12 @@ async function toLoadBelowList(
 async function preloadChildrenOfBelow(
   ctx: CommentDetailCtx,
   newList: CommentShow[],
+  generation = ctx.cdData.belowLoadGeneration,
 ) {
+  if(!isBelowCurrent(ctx, generation)) return
   const { networkLevel } = ctx.cdData
   const valueComments = await fetchChildrenComments(newList, networkLevel)
+  if(!isBelowCurrent(ctx, generation)) return
   if(valueComments.length < 1) return
   
   toLoadChildrenOfBelow(ctx, valueComments)
@@ -330,70 +365,83 @@ async function preloadAboveList(
   reload = false,
 ) {
   const { cdData } = ctx
+  if(reload) {
+    cdData.aboveLoadGeneration++
+    cdData.loadingAbove = false
+  }
+  else if(cdData.loadingAbove) return
   if(!reload && cdData.hasReachedTop) {
     return
   }
 
-  // 1. get some required data
-  const c = cdData.targetComment
-  const tmpList = cdData.aboveList
-  const oldLength = tmpList.length
-  const firstComment = tmpList[0]
-  const isInit = Boolean(reload || oldLength < 1)
+  const generation = cdData.aboveLoadGeneration
+  cdData.loadingAbove = true
+  try {
+    // 1. get some required data
+    const c = cdData.targetComment
+    const tmpList = cdData.aboveList
+    const oldLength = tmpList.length
+    const firstComment = tmpList[0]
+    const isInit = Boolean(reload || oldLength < 1)
 
-  let parentWeWant = ""
-  let grandparent: string | undefined
+    let parentWeWant = ""
+    let grandparent: string | undefined
 
-  if(!isInit) {
-    parentWeWant = firstComment.replyToComment ?? ""
-    grandparent = firstComment.parentComment
+    if(!isInit) {
+      parentWeWant = firstComment.replyToComment ?? ""
+      grandparent = firstComment.parentComment
+    }
+    else if(c) {
+      parentWeWant = c.replyToComment ?? ""
+      grandparent = c.parentComment
+    }
+
+    if(!parentWeWant) {
+      await preloadThread(ctx, undefined, generation)
+      return
+    }
+
+
+    // 2. construct query
+    const commentId = cdData.targetId
+    const opt: LoadByCommentOpt = {
+      commentId,
+      loadType: "find_parent",
+      parentWeWant,
+      grandparent,
+    }
+
+    // 3. check out if get to sync
+    const canSync = liuEnv.canISync()
+    if(!canSync || cdData.networkLevel < 1) {
+      await toLoadAboveList(ctx, opt, isInit, 0, generation)
+      return
+    }
+
+    // 4. construct param
+    const param: SyncGet_CommentList_C = {
+      taskType: "comment_list",
+      loadType: "find_parent",
+      parentWeWant,
+      grandparent,
+    }
+
+    // 5. get to sync
+    const delay = isInit ? undefined : 0
+    const res5 = await CloudMerger.request(param, {
+      waitMilli: 3000,
+      maxStackNum: 2,
+      delay,
+    })
+    if(!isAboveCurrent(ctx, generation)) return
+
+    // 6. get number where we got from cloud
+    const res6 = res5?.length ?? 0
+    await toLoadAboveList(ctx, opt, isInit, res6, generation)
   }
-  else if(c) {
-    parentWeWant = c.replyToComment ?? ""
-    grandparent = c.parentComment
+  finally {
+    if(isAboveCurrent(ctx, generation)) cdData.loadingAbove = false
   }
-
-  if(!parentWeWant) {
-    preloadThread(ctx)
-    return
-  }
-
-  
-  // 2. construct query
-  const commentId = cdData.targetId
-  const opt: LoadByCommentOpt = {
-    commentId,
-    loadType: "find_parent",
-    parentWeWant,
-    grandparent,
-  }
-
-  // 3. check out if get to sync
-  const canSync = liuEnv.canISync()
-  if(!canSync || cdData.networkLevel < 1) {
-    toLoadAboveList(ctx, opt, isInit, 0)
-    return
-  }
-
-  // 4. construct param
-  const param: SyncGet_CommentList_C = {
-    taskType: "comment_list",
-    loadType: "find_parent",
-    parentWeWant,
-    grandparent,
-  }
-
-  // 5. get to sync
-  const delay = isInit ? undefined : 0
-  const res5 = await CloudMerger.request(param, {
-    waitMilli: 3000,
-    maxStackNum: 2,
-    delay,
-  })
-
-  // 6. get number where we got from cloud
-  const res6 = res5?.length ?? 0
-  toLoadAboveList(ctx, opt, isInit, res6)  
 }
 
 async function toLoadAboveList(
@@ -401,15 +449,18 @@ async function toLoadAboveList(
   opt: LoadByCommentOpt,
   isInit: boolean,
   num: number,
+  generation = ctx.cdData.aboveLoadGeneration,
 ) {
   const { cdData } = ctx
+  if(!isAboveCurrent(ctx, generation)) return
   const { targetComment, aboveList } = cdData
   const firstComment = aboveList[0]
   
   const newList = await commentController.loadByComment(opt)
+  if(!isAboveCurrent(ctx, generation)) return
   usefulTool.filterDuplicated(aboveList, newList)
 
-  fixPosition(ctx)
+  const anchor = captureScrollAnchor(ctx)
 
   if(isInit) {
     commentController.handleRelation(newList, undefined, targetComment)
@@ -419,6 +470,8 @@ async function toLoadAboveList(
     commentController.handleRelation(newList, undefined,  firstComment)
     cdData.aboveList.push(...newList)
   }
+
+  await restoreScrollAnchor(ctx, anchor, () => isAboveCurrent(ctx, generation))
   
   const newLength = newList.length
   const newFirstComment = newList[0]
@@ -431,12 +484,12 @@ async function toLoadAboveList(
     console.log("toLoadAboveList again......")
     opt.parentWeWant = newRe
     opt.grandparent = newFirstComment.parentComment
-    toLoadAboveList(ctx, opt, false, 0)
+    await toLoadAboveList(ctx, opt, false, 0, generation)
     return
   }
 
   if(!newRe) {
-    preloadThread(ctx, 0)
+    await preloadThread(ctx, 0, generation)
   }  
 }
 
@@ -445,26 +498,29 @@ async function toLoadAboveList(
 async function preloadThread(
   ctx: CommentDetailCtx,
   delay?: number,
+  generation = ctx.cdData.aboveLoadGeneration,
 ) {
   const { cdData } = ctx
+  if(!isAboveCurrent(ctx, generation)) return
   
   const id = cdData.targetComment?.parentThread
   if(!id) return
 
   // 1. load locally
   const res = await threadController.getData({ id })
+  if(!isAboveCurrent(ctx, generation)) return
 
   // 2. show thread if it exists
   // because we fetch it in preloadTargetComment
   if(res) {
-    toLoadThread(ctx, false, res)
+    await toLoadThread(ctx, false, res, generation)
     return
   }
 
   // 3. check out if get to sync
   const canSync = liuEnv.canISync()
   if(!canSync || cdData.networkLevel < 1) {
-    toLoadThread(ctx, false, res)
+    await toLoadThread(ctx, false, res, generation)
     return
   }
 
@@ -478,82 +534,120 @@ async function preloadThread(
     maxStackNum: 2,
     delay,
   })
+  if(!isAboveCurrent(ctx, generation)) return
 
-  toLoadThread(ctx, true)
+  await toLoadThread(ctx, true, undefined, generation)
 }
 
 async function toLoadThread(
   ctx: CommentDetailCtx,
   loadAgain: boolean,
   res?: ThreadShow,
+  generation = ctx.cdData.aboveLoadGeneration,
 ) {
   const { cdData } = ctx
+  if(!isAboveCurrent(ctx, generation)) return
   if(loadAgain) {
-    const id = cdData.targetComment?.parentComment
+    const id = cdData.targetComment?.parentThread
     if(!id) return
     res = await threadController.getData({ id })
+    if(!isAboveCurrent(ctx, generation)) return
   }
 
-  fixPosition(ctx)
-
+  const anchor = captureScrollAnchor(ctx)
   cdData.hasReachedTop = true
   cdData.thread = res
+  await restoreScrollAnchor(ctx, anchor, () => isAboveCurrent(ctx, generation))
 }
 
 
 
 /****************************** OTHER *************************/
-let isFixingPosition = false
-
-function _resetFixing() {
-  isFixingPosition = false
+interface ScrollAnchor {
+  id: string
+  offset: number
 }
 
-async function fixPosition(
-  ctx: CommentDetailCtx
+function isCurrent(
+  ctx: CommentDetailCtx,
+  generation: number,
 ) {
-  const { svEl, scrollPosition, svBottomUp } = ctx
-  const sv = svEl?.value
-  if(!sv || !svBottomUp) return
+  return ctx.cdData.loadGeneration === generation
+}
 
-  if(isFixingPosition) return
-  isFixingPosition = true
+function isAboveCurrent(
+  ctx: CommentDetailCtx,
+  generation: number,
+) {
+  return ctx.cdData.aboveLoadGeneration === generation
+}
 
-  const h1 = sv.scrollHeight
-  const s1 = scrollPosition.value
+function isBelowCurrent(
+  ctx: CommentDetailCtx,
+  generation: number,
+) {
+  return ctx.cdData.belowLoadGeneration === generation
+}
 
-  await liuUtil.waitAFrame()
+function captureScrollAnchor(
+  ctx: CommentDetailCtx,
+): ScrollAnchor | undefined {
+  const sv = ctx.svEl?.value
+  if(!sv) return
 
-  const h2 = sv.scrollHeight
-  const diff = h2 - h1
-  if(diff === 0) {
-    _resetFixing()
-    return
+  const containerRect = sv.getBoundingClientRect()
+  const items = sv.querySelectorAll<HTMLElement>("[data-comment-key]")
+  let firstVisible: HTMLElement | undefined
+
+  for(const item of Array.from(items)) {
+    const rect = item.getBoundingClientRect()
+    if(rect.bottom > containerRect.top && rect.top < containerRect.bottom) {
+      firstVisible = item
+      break
+    }
   }
 
-  const s2 = scrollPosition.value
-  const newPosition = s1 + diff
-  const diff2 = Math.abs(newPosition - s2)
+  if(!firstVisible) return
+  const id = firstVisible.dataset.commentKey
+  if(!id) return
 
-  // console.warn("h1: ", h1)
-  // console.log("s1: ", s1)
-  // console.log("h2: ", h2)
-  // console.log("s2: ", s2)
-  // console.log("nP: ", newPosition)
-  // console.log(" ")
+  return {
+    id,
+    offset: firstVisible.getBoundingClientRect().top - containerRect.top,
+  }
+}
 
-  if(diff2 < 2) {
-    _resetFixing()
-    return
-  }  
+async function restoreScrollAnchor(
+  ctx: CommentDetailCtx,
+  anchor: ScrollAnchor | undefined,
+  isValid: () => boolean,
+) {
+  if(!anchor || !isValid()) return
+  const sv = ctx.svEl?.value
+  if(!sv) return
+
+  await nextTick()
+  if(!isValid()) return
+
+  const items = sv.querySelectorAll<HTMLElement>("[data-comment-key]")
+  let target: HTMLElement | undefined
+  for(const item of Array.from(items)) {
+    if(item.dataset.commentKey === anchor.id) {
+      target = item
+      break
+    }
+  }
+  if(!target) return
+
+  const containerRect = sv.getBoundingClientRect()
+  const currentOffset = target.getBoundingClientRect().top - containerRect.top
+  const delta = currentOffset - anchor.offset
+  if(Math.abs(delta) < 1) return
 
   ctx.cdData.lastLockStamp = time.getTime()
-  svBottomUp.value = {
-    type: "pixel",
-    pixel: newPosition,
-    instant: true
-  }
-  _resetFixing()
+  const nextPosition = sv.scrollTop + delta
+  sv.scrollTo({ top: nextPosition, behavior: "instant" })
+  ctx.scrollPosition.value = nextPosition
 }
 
 

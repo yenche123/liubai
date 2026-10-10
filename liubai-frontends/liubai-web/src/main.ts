@@ -29,6 +29,7 @@ import { liuShowDirective } from "~/utils/directives/v-liu-show"
 import VueDraggableResizable from 'vue-draggable-resizable'
 import { useSystemStore } from './hooks/stores/useSystemStore'
 import { initSentry } from "~/utils/third-party/sentry/init-sentry"
+import { installSoftNavigationPerformanceTracking } from "~/utils/debug/tools/soft-navigation"
 
 const app = createApp(App)
 
@@ -53,6 +54,9 @@ app.component("vue-draggable-resizable", VueDraggableResizable)
 
 app.use(createPinia())
 app.use(i18n)
+const stopNavigationTracking = installSoftNavigationPerformanceTracking(router)
+app.onUnmount(stopNavigationTracking)
+if(import.meta.hot) import.meta.hot.dispose(stopNavigationTracking)
 app.use(router)
 app.use(FloatingVue, {
   themes: {
