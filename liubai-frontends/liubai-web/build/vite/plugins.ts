@@ -1,15 +1,14 @@
 import type { PluginOption, UserConfig } from "vite"
 import vue from "@vitejs/plugin-vue"
 import { compression as viteCompression } from "vite-plugin-compression2"
-import { createSvgIconsPlugin } from "vite-plugin-svg-icons"
 import Inspect from "vite-plugin-inspect"
 import { qrcode } from "vite-plugin-qrcode"
 import { visualizer } from "rollup-plugin-visualizer"
 import { VitePWA } from "vite-plugin-pwa"
 import { sentryVitePlugin } from "@sentry/vite-plugin"
-import { resolve } from "node:path"
 import copy200Html from "../../deploy/vite-plugin-copy-200"
 import { vconsoleAsset } from "./vconsole-asset"
+import { svgSymbols } from "./svg-symbols"
 
 interface GetVitePluginsParams {
   command: string
@@ -44,11 +43,7 @@ export function getVitePlugins({
       },
     }),
 
-    createSvgIconsPlugin({
-      iconDirs: [resolve(projectRoot, "src/assets/icons")],
-      symbolId: "icon-[dir]-[name]",
-      svgoOptions: false,
-    }),
+    svgSymbols(projectRoot),
 
     vconsoleAsset(),
 

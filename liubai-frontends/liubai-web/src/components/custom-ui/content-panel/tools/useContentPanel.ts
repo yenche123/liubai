@@ -1,7 +1,8 @@
+import { ensureCustomUi } from "../../tools/lazy-custom-ui"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import { openIt, closeIt, handleCustomUiQueryErr } from "../../tools/useCuiTool"
-import { onMounted, reactive, watch } from "vue"
+import { reactive, watch } from "vue"
 import type { 
   ContentPanelData,
   ContentPanelParam,
@@ -34,10 +35,6 @@ let rr: RouteAndLiuRouter | undefined
 export function initContentPanel() {
   rr = useRouteAndLiuRouter()
   listenRouteChange()
-  
-  onMounted(() => {
-    _makeItHot()
-  })
 
   return {
     TRANSITION_DURATION,
@@ -54,7 +51,7 @@ export function initContentPanel() {
   }
 }
 
-export function showContentPanel(param: ContentPanelParam) {
+export async function showContentPanel(param: ContentPanelParam) {
   if(!param.comment && !param.thread) {
     console.warn("showContentPanel 必须指定 comment 或 thread 中的其一")
     return
@@ -79,6 +76,8 @@ export function showContentPanel(param: ContentPanelParam) {
   } 
   cpData.title = i18n.global.t(`common.reaction`)
   
+  await ensureCustomUi("content-panel")
+
   openIt(rr, queryKey)
 
   const _wait = (a: ContentPanelResolver) => {
@@ -169,8 +168,8 @@ function listenRouteChange() {
     if(!query) return
 
     if(query[queryKey] === "01") {
-      if(_resolve) _toOpen()
-      else handleCustomUiQueryErr(rr, queryKey)
+      if(cpData.comment || cpData.thread) _toOpen()
+      else handleCustomUiQueryErr(rr, queryKey, () => !cpData.comment && !cpData.thread)
       return
     }
 
@@ -179,7 +178,7 @@ function listenRouteChange() {
     }
 
     _toClose()
-  })
+  }, { immediate: true })
 }
 
 function onTapCancel() {
@@ -217,35 +216,6 @@ function _toClose() {
     _reset()
     toggleTimeout = undefined
   }, TRANSITION_DURATION)
-}
-
-
-// 因为 content-panel 第一次被启用时，时常卡卡的
-// 所以使用 requestIdleCallback 让系统再闲置时间加热它
-function _makeItHot() {
-  if(typeof window.requestIdleCallback === "undefined") return
-
-  const _getItHot = () => {
-    cpData.enable = true
-    toggleTimeout = setTimeout(() => {
-      cpData.enable = false
-      toggleTimeout = undefined
-    }, cfg.frame_duration_2)
-  }
-
-  const idleID = window.requestIdleCallback((idleDeadline) => {
-    const timeRemaining = idleDeadline.timeRemaining()
-    const didTimeout = idleDeadline.didTimeout
-    // console.log("didTimeout: ", didTimeout)
-    // console.log("timeRemaining: ", timeRemaining)
-
-    if(didTimeout) return
-    if(cpData.enable) return
-    if(toggleTimeout) return
-    
-    _getItHot()
-    window.cancelIdleCallback(idleID)
-  }, { timeout: 9000 })
 }
 
 

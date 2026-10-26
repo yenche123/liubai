@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../../tools/lazy-custom-ui"
 import { provide, reactive, watch, ref, type WatchStopHandle } from "vue"
 import type {
   CommentPopupParam,
@@ -47,7 +48,7 @@ export function initCommentPopup() {
 }
 
 
-export function showCommentPopup(
+export async function showCommentPopup(
   param: CommentPopupParam,
 ) {
   if(!checkParam(param)) return
@@ -86,6 +87,8 @@ export function showCommentPopup(
     delete cpData.replyToComment
     delete cpData.commentId
   }
+
+  await ensureCustomUi("comment-popup")
 
   openIt(rr, queryKey)
 }
@@ -157,7 +160,7 @@ function listenRouteChange() {
 
     if(query[queryKey] === "01") {
       if(cpData.parentThread) _toOpen()
-      else handleCustomUiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey, () => !cpData.parentThread)
       return
     }
     _toClose()

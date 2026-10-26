@@ -81,15 +81,6 @@ app.directive('liu-show', liuShowDirective)
 // 初始化主题，要在 pinia 之后
 useSystemStore()
 
-const runMain = async () => {
-  // Move the generated svg sprite out of the main entry chunk.
-  await import("virtual:svg-icons-register")
-
-  // initialize sentry
-  initSentry(app)
-
-  // mount app of Vue
-  app.mount('#app')
-}
-
-void runMain()
+// Icons load when rendered and no longer block the application mount.
+initSentry(app)
+app.mount('#app')

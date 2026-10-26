@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../tools/lazy-custom-ui"
 import { nextTick, reactive, ref, watch } from "vue"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
@@ -51,7 +52,7 @@ function listenRouteChange() {
 
     if(query[queryKey] === "01") {
       if(data.imgs.length) _toOpen()
-      else handleCustomUiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey, () => !data.imgs.length)
     }
     else {
       _toClose()
@@ -81,6 +82,9 @@ export async function previewImage(opt: PiParam) {
   data.viewTransition = opt.viewTransition
   data.viewTransitionCallbackWhileShowing = opt.viewTransitionCallbackWhileShowing
   data.viewTransitionCallbackWhileClosing = opt.viewTransitionCallbackWhileClosing
+
+  await ensureCustomUi("preview-image")
+
   initViewTransition(opt.viewTransitionBorderRadius ?? "0px")
 
   openIt(rr, queryKey)

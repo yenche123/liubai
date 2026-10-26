@@ -73,6 +73,7 @@ export default defineConfig(({ command, mode }) => {
       rolldownOptions: {
         output: {
           codeSplitting: vendorCodeSplitting,
+          strictExecutionOrder: true,
         },
       },
     },

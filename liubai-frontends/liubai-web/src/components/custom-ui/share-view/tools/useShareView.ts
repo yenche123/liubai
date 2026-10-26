@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../../tools/lazy-custom-ui"
 
 import { reactive, ref, watch } from "vue"
 import type {
@@ -60,12 +61,14 @@ export function initShareView() {
   }
 }
 
-export function showShareView(param: ShareViewParam) {
+export async function showShareView(param: ShareViewParam) {
   svData.public = param.visScope === "PUBLIC"
   svData.allowComment = param.allowComment ?? false
   svData.threadId = param.threadId
 
   handleShareView(svData, param.thread)
+
+  await ensureCustomUi("share-view")
 
   openIt(rr, queryKey)
 
@@ -157,8 +160,8 @@ function listenRouteChange() {
     if(!query) return
 
     if(query[queryKey] === "01") {
-      if(_resolve) _toOpen()
-      else handleCustomUiQueryErr(rr, queryKey)
+      if(svData.threadId) _toOpen()
+      else handleCustomUiQueryErr(rr, queryKey, () => !svData.threadId)
       return
     }
 
@@ -167,7 +170,7 @@ function listenRouteChange() {
     }
 
     _toClose()
-  })
+  }, { immediate: true })
 }
 
 

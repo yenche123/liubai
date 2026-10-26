@@ -21,39 +21,38 @@ function getPackageName(id: string) {
 
   if (first.startsWith("@")) {
     const second = segments[1]
-    if (!second) return normalizePackageName(first)
-    return normalizePackageName(`${first}/${second}`)
+    if (!second) return null
+    return `${first}/${second}`
   }
 
-  return normalizePackageName(first)
+  return first
 }
 
-const vendorChunkRules: { patterns: string[]; chunk: string }[] = [
-  { patterns: ["/vue/", "/vue-router/", "/pinia/"], chunk: "vue-core" },
-  { patterns: ["/vue-i18n/", "/@intlify/"], chunk: "vue-i18n" },
-  { patterns: ["/floating-vue/", "/@floating-ui/", "/vue-slicksort/", "/vue-draggable-resizable/"], chunk: "ui-vendor" },
-  { patterns: ["/dexie/", "/flexsearch/"], chunk: "search-vendor" },
+const vendorChunkRules: { packages: string[]; scopes?: string[]; chunk: string }[] = [
+  { packages: ["vue", "vue-router", "pinia"], scopes: ["@vue"], chunk: "vue-core" },
+  { packages: ["vue-i18n"], scopes: ["@intlify"], chunk: "vue-i18n" },
+  { packages: ["floating-vue", "vue-slicksort", "vue-draggable-resizable"], scopes: ["@floating-ui"], chunk: "ui-vendor" },
+  { packages: ["dexie", "flexsearch"], chunk: "search-vendor" },
 ]
 
-function getVendorChunkName(moduleId: string) {
+export function getVendorChunkName(moduleId: string) {
   const id = normalizeModuleId(moduleId)
-  if (!id.includes("node_modules")) return null
+  if (!id.includes("node_modules/")) return null
+  const packageName = getPackageName(id)
+  if (!packageName) return "vendor"
 
   for (const rule of vendorChunkRules) {
-    if (rule.patterns.some((p) => id.includes(p))) {
+    if (rule.packages.includes(packageName) || rule.scopes?.includes(packageName.split("/")[0])) {
       return rule.chunk
     }
   }
 
-  const packageName = getPackageName(id)
-  if (packageName) {
-    return `vendor-${packageName}`
-  }
-
-  return "vendor"
+  return `vendor-${normalizePackageName(packageName)}`
 }
 
 export const vendorCodeSplitting = {
+  // A lazy vendor must not absorb shared dependencies used by the entry chunk.
+  includeDependenciesRecursively: false,
   groups: [
     {
       test: "node_modules",

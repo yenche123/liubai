@@ -1,16 +1,20 @@
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
 import valTool from "~/utils/basic/val-tool"
 
-let errNum = 0
 export async function handleCustomUiQueryErr(
   rr: RouteAndLiuRouter | undefined,
   queryKey: string,
+  stillInvalid: () => boolean,
 ) {
   if(!rr) return
-  if(errNum > 2) return
+  const fullPath = rr.route.fullPath
   await valTool.waitMilli(200)
-  errNum++
-  rr.router.naviBackUntilNoSpecificQuery(rr.route, queryKey)
+  // A valid open or a navigation may have happened while waiting.
+  if(rr.route.fullPath !== fullPath || !stillInvalid()) return
+  if(!(queryKey in rr.route.query)) return
+  const query = { ...rr.route.query }
+  delete query[queryKey]
+  await rr.router.replace({ path: rr.route.path, query, hash: rr.route.hash })
 }
 
 export function openIt(

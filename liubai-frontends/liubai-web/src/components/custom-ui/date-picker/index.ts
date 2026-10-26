@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../tools/lazy-custom-ui"
 import { computed, ref } from "vue"
 import type { LiuTimeout } from "~/utils/basic/type-tool"
 import valTool from "~/utils/basic/val-tool"
@@ -47,7 +48,9 @@ export function initDatePicker() {
   }
 }
 
-export function showDatePicker(opt?: DatePickerParam): Promise<DpSuccessRes> {
+export async function showDatePicker(opt?: DatePickerParam): Promise<DpSuccessRes> {
+  await ensureCustomUi("date-picker")
+
   if(!opt) opt = {}
 
   // 处理 date

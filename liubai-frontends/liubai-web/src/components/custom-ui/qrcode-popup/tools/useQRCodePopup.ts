@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../../tools/lazy-custom-ui"
 import { reactive, watch } from "vue";
 import type { 
   QpParam, 
@@ -66,7 +67,7 @@ export function initQRCodePopup() {
 }
 
 
-export function showQRCodePopup(param: QpParam) {
+export async function showQRCodePopup(param: QpParam) {
   const bT = param.bindType
   qpData.bindType = bT
   qpData.order_id = param.order_id
@@ -85,6 +86,8 @@ export function showQRCodePopup(param: QpParam) {
     console.warn("order_id is required while one-off pay")
     return new Promise(_wait)
   }
+
+  await ensureCustomUi("qrcode-popup")
 
   openIt(rr, queryKey)
   fetchData()
@@ -130,7 +133,7 @@ function listenRouteChange() {
 
     if(query[queryKey] === "01") {
       if(qpData.bindType) _toOpen()
-      else handleCustomUiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey, () => !qpData.bindType)
       return
     }
     _toClose()

@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../../tools/lazy-custom-ui"
 import { reactive, watch } from "vue";
 import type { HsData, HsParam, HsRes, HtsResolver } from "./types"
 import { useRouteAndLiuRouter, type RouteAndLiuRouter } from "~/routes/liu-router"
@@ -47,11 +48,13 @@ export function initHashtagSelector() {
 }
 
 
-export function showHashtagSelector(param: HsParam) {
+export async function showHashtagSelector(param: HsParam) {
   hsData.nonce = "whatever"
   hsData.list = valTool.copyObject(param.tags)
   hsData.originalList = valTool.copyObject(param.tags)
   hsData.canSubmit = false
+  await ensureCustomUi("hashtag-selector")
+
   openIt(rr, queryKey)
 
   const _wait = (a: HtsResolver) => {
@@ -109,7 +112,7 @@ function listenRouteChange() {
 
     if(query[queryKey] === "01") {
       if(hsData.nonce) _toOpen()
-      else handleCustomUiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey, () => !hsData.nonce)
       return
     }
     _toClose()

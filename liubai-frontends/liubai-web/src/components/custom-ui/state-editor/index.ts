@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../tools/lazy-custom-ui"
 import type {
   SeResolver,
   StateEditorData,
@@ -49,7 +50,7 @@ export function initStateEditor() {
   }
 }
 
-export function showStateEditor(param: StateEditorParam) {
+export async function showStateEditor(param: StateEditorParam) {
   lastShowEditorStamp = time.getTime()
   reData.mode = param.mode
   reData.text = param.text ?? ""
@@ -57,6 +58,8 @@ export function showStateEditor(param: StateEditorParam) {
   reData.showFireworks = Boolean(param.showFireworks)
   reData.color = param.color ? liuUtil.colorToStorage(param.color) : ""
   reData.canSubmit = false
+
+  await ensureCustomUi("state-editor")
 
   openIt(rr, queryKey)
 
@@ -133,12 +136,12 @@ function listenRouteChange() {
 
     if(query[queryKey] === "01") {
       if(reData.mode) _toOpen()
-      else handleCustomUiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey, () => !reData.mode)
     }
     else {
       _toClose()
     }
-  })
+  }, { immediate: true })
 }
 
 let toggleTimeout: LiuTimeout
