@@ -21,7 +21,7 @@ const ios_ipad = Boolean(cha.isIOS || cha.isIPadOS)
 
 <template>
   
-  <div 
+  <main
     class="app-container"
     :class="{ 
       'liu-ios-device': ios_ipad,
@@ -55,7 +55,7 @@ const ios_ipad = Boolean(cha.isIOS || cha.isIPadOS)
     <who-are-you />
     <TrustDetection></TrustDetection>
     <GlobalLoading></GlobalLoading>
-  </div>
+  </main>
 </template>
 
 <style scoped>
