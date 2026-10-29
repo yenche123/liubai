@@ -211,6 +211,7 @@ function _toClose() {
 
   toggleTimeout = setTimeout(() => {
     enable.value = false
+    svData.threadId = ""
 
     const icsUrl = svData.icsLink
     if(icsUrl) {

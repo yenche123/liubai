@@ -1,5 +1,8 @@
 import { watch } from "vue"
 import { useRoute, useRouter } from "vue-router"
+import {
+  isSearchQueryOpen,
+} from "~/config/atom"
 import { ensureCustomUi, requestedCustomUi, type CustomUiName } from "./lazy-custom-ui"
 
 // These URLs only describe transient UI; their payload lives in controller memory.
@@ -34,7 +37,7 @@ export function useCustomUiRoute() {
       return
     }
     // Search is recoverable from the URL, including navigation after app startup.
-    if (inApp !== false && (query.search === "01" || query.q)) {
+    if (inApp !== false && isSearchQueryOpen(query)) {
       void ensureCustomUi("search-editor").catch(error => {
         console.warn("Failed to load search editor", error)
       })

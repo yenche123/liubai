@@ -220,6 +220,8 @@ function _toClose() {
 
 
 function _reset() {
+  delete cpData.comment
+  delete cpData.thread
   cpData.emojiList.forEach(v => {
     if(v.currentFilter) {
       delete v.currentFilter

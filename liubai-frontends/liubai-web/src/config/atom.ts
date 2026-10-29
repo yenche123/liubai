@@ -34,3 +34,12 @@ export const POPUP_KEYS = [
   "stateeditor",
   "stateselector",
 ]
+
+export const SEARCH_QUERY_KEY = "search"
+export const SEARCH_TEXT_QUERY_KEY = "q"
+export const SEARCH_OPEN_QUERY_VALUE = "01"
+
+export function isSearchQueryOpen(query: Record<string, unknown>) {
+  return query[SEARCH_QUERY_KEY] === SEARCH_OPEN_QUERY_VALUE
+    || typeof query[SEARCH_TEXT_QUERY_KEY] === "string"
+}

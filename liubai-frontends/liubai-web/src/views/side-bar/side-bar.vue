@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref, toRefs, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useSidebar } from './tools/useSidebar';
 import { useSidebarOther } from './tools/useSidebarOther';
 import { useSidebarRoute } from './tools/useSidebarRoute';
@@ -9,6 +10,7 @@ import SbBottom from './sb-bottom/sb-bottom.vue';
 import SbOpen from './sb-open/sb-open.vue';
 
 const SbTags = defineAsyncComponent(() => import('./sb-tags/sb-tags.vue'))
+const { t } = useI18n()
 
 const {
   bgSrc,
@@ -75,7 +77,12 @@ const {
       :class="{ 'sb-box-other_show': expandState === 'tags' }"
     >
       <div class="sb-inner-box">
-        <SbTags v-if="hasShownTags" :show="expandState === 'tags'"></SbTags>
+        <Suspense v-if="hasShownTags">
+          <SbTags :show="expandState === 'tags'"></SbTags>
+          <template #fallback>
+            <div class="liu-async-fallback sb-tags-fallback" role="status" :aria-label="t('common.processing')"></div>
+          </template>
+        </Suspense>
       </div>
     </div>
 
@@ -133,6 +140,10 @@ const {
   transition: .3s;
   overflow: hidden;
   content-visibility: auto;
+}
+
+.sb-tags-fallback {
+  min-height: 160px;
 }
 
 .sb-container_hidden {

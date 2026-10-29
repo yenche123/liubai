@@ -87,6 +87,7 @@
 
 <script lang="ts">
 import { NodeViewContent, nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
+import { createHighlightRefresh } from './tools/refresh-highlighting'
 import liuUtil from '~/utils/liu-util'
 import { useI18n } from 'vue-i18n'
 import { computed, ref, inject } from 'vue'
@@ -126,12 +127,8 @@ export default {
       if (!justLoaded || props.editor.isDestroyed) return
       const pos = typeof props.getPos === "function" ? props.getPos() : undefined
       if (typeof pos === "number") {
-        const node = props.editor.state.doc.nodeAt(pos)
-        if (node) {
-          const tr = props.editor.state.tr.replaceWith(pos, pos + node.nodeSize, node.copy(node.content))
-          tr.setMeta("addToHistory", false)
-          props.editor.view.dispatch(tr)
-        }
+        const tr = createHighlightRefresh(props.editor.state, pos)
+        if (tr) props.editor.view.dispatch(tr)
       }
     })
 

@@ -43,7 +43,7 @@ describe("lazy popup routes", () => {
     expect(panelLoaded).not.toHaveBeenCalled()
   })
 
-  it.each(["search=01", "q=keyword"])("mounts search on a direct link with %s", async query => {
+  it.each(["search=01", "q=keyword", "q="])("mounts search on a direct link with %s", async query => {
     const { router, searchLoaded } = await mountAt(`/calendar?${query}`)
     await ensureCustomUi("search-editor")
     expect(searchLoaded).toHaveBeenCalledTimes(1)

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, toRefs, watch, defineAsyncComponent } from "vue";
+import { useI18n } from "vue-i18n";
 import { useViceView } from "./tools/useViceView"
 import { useVvUI } from "./tools/useVvUI";
 import type { VcState } from "./vice-content/tools/types";
@@ -12,6 +13,7 @@ const ViceContent = defineAsyncComponent(() => {
 const IframeRestriction = defineAsyncComponent(() => {
   return import("./iframe-restriction/iframe-restriction.vue")
 })
+const { t } = useI18n()
 
 const emits = defineEmits<{
   (e: "widthchange", widthPx: number): void
@@ -76,11 +78,16 @@ const sbProperty = middleBridge.canShowScrollbarProperty()
     <div class="vv-box" :class="{ 'vv-box_sb': sbProperty }">
 
       <div class="vv-inner-box">
-        <ViceContent v-if="hasOpened"
-          :is-outter-draging="isDraging"
-          @vcstatechange="onVcStateChange"
-          @intendedminchange="onIntendedMinVvPxChange"
-        ></ViceContent>
+        <Suspense v-if="hasOpened">
+          <ViceContent
+            :is-outter-draging="isDraging"
+            @vcstatechange="onVcStateChange"
+            @intendedminchange="onIntendedMinVvPxChange"
+          ></ViceContent>
+          <template #fallback>
+            <div class="liu-async-fallback vv-content-fallback" role="status" :aria-label="t('common.processing')"></div>
+          </template>
+        </Suspense>
       </div>
       
     </div>
@@ -211,6 +218,10 @@ const sbProperty = middleBridge.canShowScrollbarProperty()
   height: 100%;
   position: relative;
   overflow: hidden;
+}
+
+.vv-content-fallback {
+  height: 100%;
 }
 
 .vv-box::-webkit-scrollbar-thumb {

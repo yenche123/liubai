@@ -5,6 +5,7 @@ import { onMounted } from "vue";
 import { useGlobalStateStore } from "../stores/useGlobalStateStore";
 import liuUtil from "~/utils/liu-util";
 import liuApi from "~/utils/liu-api";
+import { router } from "~/routes/router";
 
 const MAX_WAITING = 3 * time.SECOND
 
@@ -49,7 +50,7 @@ export function listenLoaded() {
   }, MAX_WAITING)
 
   onMounted(() => {
-    _byebye()
+    void router.isReady().then(_byebye, _byebye)
   })
 
 }

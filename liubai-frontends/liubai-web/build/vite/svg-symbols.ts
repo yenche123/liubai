@@ -62,15 +62,16 @@ export function svgSymbols(projectRoot: string): Plugin {
       }))
       return `export default ${JSON.stringify(symbols.join(""))}`
     },
-    handleHotUpdate(ctx) {
-      if (!ctx.file.startsWith(iconRoot) || !ctx.file.endsWith(".svg")) return
-      // A reload avoids stale symbols in the DOM after an icon changes.
-      for (const mod of ctx.server.moduleGraph.idToModuleMap.values()) {
+    hotUpdate(options) {
+      if (!options.file.startsWith(iconRoot) || !options.file.endsWith(".svg")) return
+      if (this.environment.name !== "client") return []
+      // Rebuild the virtual groups for SVG create, update, and delete events.
+      for (const mod of this.environment.moduleGraph.idToModuleMap.values()) {
         if (mod.id?.startsWith(`\0${PUBLIC_ID}`) || mod.id?.startsWith(`\0${GROUP_PREFIX}`)) {
-          ctx.server.moduleGraph.invalidateModule(mod)
+          this.environment.moduleGraph.invalidateModule(mod)
         }
       }
-      ctx.server.ws.send({ type: "full-reload" })
+      this.environment.hot.send({ type: "full-reload" })
       return []
     },
   }

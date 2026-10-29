@@ -1,4 +1,4 @@
-import { createApp, defineAsyncComponent } from 'vue'
+import { createApp, defineAsyncComponent, watch } from 'vue'
 
 // 引入 CSS
 // 根据加载顺序 custom-style 可以使用 theme-light/dark 里的 CSS 变量
@@ -78,6 +78,9 @@ app.directive('liu-show', liuShowDirective)
 
 // 初始化主题，要在 pinia 之后
 useSystemStore()
+watch(i18n.global.locale, (locale) => {
+  document.documentElement.setAttribute("lang", locale)
+}, { immediate: true })
 
 // Icons load when rendered and no longer block the application mount.
 initSentry(app)
