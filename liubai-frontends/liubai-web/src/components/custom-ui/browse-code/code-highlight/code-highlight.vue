@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { initLowlight } from '~/utils/other/lowlight-related'
+import { ensureLowlightLanguages, initLowlight, lowlightReady } from '~/utils/other/lowlight-related'
 
 interface Props {
   code: string
@@ -51,6 +51,11 @@ function astToHtml(node: any): string {
 
 const highlightedCode = computed(() => {
   if (!props.code) return ''
+
+  void ensureLowlightLanguages()
+  if (!lowlightReady.value) {
+    return escapeHtml(props.code)
+  }
 
   const { lowlight } = initLowlight()
   

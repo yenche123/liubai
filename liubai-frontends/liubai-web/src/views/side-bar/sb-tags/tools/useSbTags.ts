@@ -57,7 +57,7 @@ export function useSbTags(emits: SbtEmits) {
     if(typeof tagId === "string") {
       sbtData.currentTagId = tagId
     }
-  })
+  }, { immediate: true })
 
   const onTreeChange = async (e: any) => {
     console.log("onTreeChange.........")

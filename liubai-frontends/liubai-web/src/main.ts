@@ -8,8 +8,6 @@ import './styles/theme-light.css'
 import './styles/theme-dark.css'
 import './styles/custom-style.css'
 import 'floating-vue/dist/style.css'
-import '@he-tree/vue/style/default.css'
-import 'vue-draggable-resizable/style.css'
 
 import App from './App.vue'
 import { i18n } from './locales'
@@ -24,9 +22,7 @@ import PlaceholderView from "./views/common/placeholder-view/placeholder-view.vu
 import NaviBar from "~/components/common/navi-bar/navi-bar.vue";
 import NaviVirtual from '~/components/common/navi-virtual/navi-virtual.vue';
 import FloatingVue from 'floating-vue'
-import { plugin as Slicksort } from 'vue-slicksort';
 import { liuShowDirective } from "~/utils/directives/v-liu-show"
-import VueDraggableResizable from 'vue-draggable-resizable'
 import { useSystemStore } from './hooks/stores/useSystemStore'
 import { initSentry } from "~/utils/third-party/sentry/init-sentry"
 import { installSoftNavigationPerformanceTracking } from "~/utils/debug/tools/soft-navigation"
@@ -50,7 +46,10 @@ app.component("FloatingActionButton", defineAsyncComponent(() =>
 app.component("LiuTooltip", defineAsyncComponent(() => 
   import("./components/common/liu-tooltip/liu-tooltip.vue")
 ))
-app.component("vue-draggable-resizable", VueDraggableResizable)
+app.component("vue-draggable-resizable", defineAsyncComponent(async () => {
+  await import("vue-draggable-resizable/style.css")
+  return import("vue-draggable-resizable")
+}))
 
 app.use(createPinia())
 app.use(i18n)
@@ -73,7 +72,6 @@ app.use(FloatingVue, {
     }
   }
 })
-app.use(Slicksort)
 
 // 注册全局指令
 app.directive('liu-show', liuShowDirective)

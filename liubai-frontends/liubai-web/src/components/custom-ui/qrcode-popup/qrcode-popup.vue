@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { initQRCodePopup } from "./tools/useQRCodePopup";
-import { useQRCode } from "~/hooks/useVueUse"
+import { useQRCode } from "@vueuse/integrations/useQRCode"
 import RingLoader from "~/components/loaders/ring-loader/ring-loader.vue";
 import { useI18n } from "vue-i18n";
 import liuApi from "~/utils/liu-api"

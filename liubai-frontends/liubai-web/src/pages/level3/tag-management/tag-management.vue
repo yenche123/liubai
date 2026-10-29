@@ -3,6 +3,7 @@ import PageDefault from "~/pages/shared/page-default/page-default.vue";
 import { useTagManagement } from "./tools/useTagManagement";
 import { useTagMenu } from "~/hooks/shared/useTagMenu"
 import { Draggable } from "@he-tree/vue";
+import "@he-tree/vue/style/default.css";
 import TmItem from "./tm-item/tm-item.vue";
 
 const {

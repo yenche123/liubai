@@ -1,11 +1,17 @@
 <script lang="ts" setup>
+import { defineAsyncComponent, ref, watch } from "vue";
 import { initFixedSideBar } from "./index"
 import SbContent from '../sb-content/sb-content.vue';
-import SbTags from '../sb-tags/sb-tags.vue';
 import { useSbfTouch } from "./tools/useSbfTouch";
 import type { SbfProps } from "./tools/types"
 
-defineProps<SbfProps>()
+const SbTags = defineAsyncComponent(() => import('../sb-tags/sb-tags.vue'))
+
+const props = defineProps<SbfProps>()
+const hasShownTags = ref(false)
+watch(() => props.expandState, (val) => {
+  if (val === 'tags') hasShownTags.value = true
+}, { immediate: true })
 
 const {
   TRANSITION_DURATION,
@@ -66,7 +72,8 @@ const {
         :class="{ 'sf-other_show': expandState === 'tags' }"
       >
         <div class="sf-inner-box">
-          <SbTags :show="expandState === 'tags'"
+          <SbTags v-if="hasShownTags"
+            :show="expandState === 'tags'"
             @aftertap="onTapPopup"
           ></SbTags>
         </div>        

@@ -1,28 +1,51 @@
-import { createLowlight, common } from 'lowlight'
-import dart from 'highlight.js/lib/languages/dart'
+import { createLowlight } from 'lowlight'
+import { ref } from 'vue'
 
 type LowlightType = ReturnType<typeof createLowlight>
 let gLowlight: LowlightType | null = null
+let gLoadPromise: Promise<boolean> | null = null
+export const lowlightReady = ref(false)
 
 export function initLowlight() {
   if(gLowlight) {
     return { lowlight: gLowlight }
   }
-  const lowlight = createLowlight(common)
-  if(!lowlight.registered("Plain Text")) {
-    lowlight.registerAlias({ plaintext: ["Plain Text"] })
-  }
-  if(!lowlight.registered("Objective-C")) {
-    lowlight.registerAlias({ objectivec: ["Objective-C"] })
-  }
-  if(!lowlight.registered("dart")) {
-    lowlight.register({ dart })
-  }
+  const lowlight = createLowlight()
   gLowlight = lowlight
   return { lowlight }
 }
 
+export function ensureLowlightLanguages(): Promise<boolean> {
+  if (lowlightReady.value) {
+    return Promise.resolve(false)
+  }
+  if (gLoadPromise) {
+    return gLoadPromise
+  }
+  const { lowlight } = initLowlight()
+  gLoadPromise = import('./lowlight-grammars').then(({ lowlightGrammars }) => {
+    lowlight.register(lowlightGrammars)
+    if(!lowlight.registered("Plain Text")) {
+      lowlight.registerAlias({ plaintext: ["Plain Text"] })
+    }
+    if(!lowlight.registered("Objective-C")) {
+      lowlight.registerAlias({ objectivec: ["Objective-C"] })
+    }
+    lowlightReady.value = true
+    return true
+  }).catch((err) => {
+    console.warn("Failed to load highlight.js languages:", err)
+    gLoadPromise = null
+    return false
+  })
+  return gLoadPromise
+}
+
 export function showProgrammingLanguages() {
+  void ensureLowlightLanguages()
+  if (!lowlightReady.value) {
+    return []
+  }
   const { lowlight } = initLowlight()
   const tmpList = lowlight.listLanguages()
   const list: string[] = []
@@ -66,6 +89,11 @@ export function showToSupported(v: string | null) {
   }
   else {
     v2 = v.toLowerCase()
+  }
+
+  void ensureLowlightLanguages()
+  if (!lowlightReady.value) {
+    return v2
   }
 
   const { lowlight } = initLowlight()
@@ -114,6 +142,11 @@ export function supportedToShow(v: string | null) {
   }
   else {
     v2 = v[0].toUpperCase() + v.substring(1)
+  }
+
+  void ensureLowlightLanguages()
+  if (!lowlightReady.value) {
+    return v2
   }
 
   const { lowlight } = initLowlight()

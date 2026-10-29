@@ -31,7 +31,7 @@ function getPackageName(id: string) {
 const vendorChunkRules: { packages: string[]; scopes?: string[]; chunk: string }[] = [
   { packages: ["vue", "vue-router", "pinia"], scopes: ["@vue"], chunk: "vue-core" },
   { packages: ["vue-i18n"], scopes: ["@intlify"], chunk: "vue-i18n" },
-  { packages: ["floating-vue", "vue-slicksort", "vue-draggable-resizable"], scopes: ["@floating-ui"], chunk: "ui-vendor" },
+  { packages: ["floating-vue"], scopes: ["@floating-ui"], chunk: "ui-vendor" },
   { packages: ["dexie", "flexsearch"], chunk: "search-vendor" },
 ]
 
@@ -40,6 +40,13 @@ export function getVendorChunkName(moduleId: string) {
   if (!id.includes("node_modules/")) return null
   const packageName = getPackageName(id)
   if (!packageName) return "vendor"
+
+  if (packageName === "highlight.js" && id.includes("/languages/")) {
+    return "vendor-highlight-langs"
+  }
+  if (packageName === "lowlight" && (id.includes("/lib/common") || id.includes("/lib/all"))) {
+    return "vendor-highlight-langs"
+  }
 
   for (const rule of vendorChunkRules) {
     if (rule.packages.includes(packageName) || rule.scopes?.includes(packageName.split("/")[0])) {

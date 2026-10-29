@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, toRefs, defineAsyncComponent } from "vue";
+import { ref, toRefs, watch, defineAsyncComponent } from "vue";
 import { useViceView } from "./tools/useViceView"
 import { useVvUI } from "./tools/useVvUI";
 import type { VcState } from "./vice-content/tools/types";
@@ -45,6 +45,13 @@ const onVcStateChange = (newV: VcState) => {
   vcStateToIr.value = newV
 }
 
+const hasOpened = ref(false)
+watch(openType, (val) => {
+  if (val === "opened") {
+    hasOpened.value = true
+  }
+}, { immediate: true })
+
 const sbProperty = middleBridge.canShowScrollbarProperty()
 
 </script>
@@ -69,7 +76,8 @@ const sbProperty = middleBridge.canShowScrollbarProperty()
     <div class="vv-box" :class="{ 'vv-box_sb': sbProperty }">
 
       <div class="vv-inner-box">
-        <ViceContent :is-outter-draging="isDraging"
+        <ViceContent v-if="hasOpened"
+          :is-outter-draging="isDraging"
           @vcstatechange="onVcStateChange"
           @intendedminchange="onIntendedMinVvPxChange"
         ></ViceContent>
@@ -78,7 +86,7 @@ const sbProperty = middleBridge.canShowScrollbarProperty()
     </div>
 
     <!-- 放于底部给用户拖动的盒子 -->
-    <vue-draggable-resizable
+    <vue-draggable-resizable v-if="hasOpened"
       @resizing="onResizing"
       :class-name="isAnimating ? 'liu-vv-vdr_animating' : 'liu-vv-vdr'"
       class-name-handle="liu-vv-vdr-handle"
@@ -102,7 +110,7 @@ const sbProperty = middleBridge.canShowScrollbarProperty()
     
   </div>
 
-  <IframeRestriction
+  <IframeRestriction v-if="hasOpened"
     :vice-view-px="viceViewPx"
     :vc-state="vcStateToIr"
   ></IframeRestriction>
@@ -115,6 +123,7 @@ const sbProperty = middleBridge.canShowScrollbarProperty()
   top: 0;
   right: 0;
   bottom: 0;
+  width: v-bind("viceViewPx + 'px'");
   height: 100vh;
   height: 100dvh;
   z-index: 700;

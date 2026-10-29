@@ -5,7 +5,6 @@ import type {
   LocationQuery,
 } from "vue-router"
 import cfg from "~/config"
-import confetti from "canvas-confetti";
 import { useWindowSize } from "~/hooks/useVueUse"
 import { useVvLinkStore } from "~/hooks/stores/useVvLinkStore";
 import { useVvFileStore } from "~/hooks/stores/useVvFileStore";
@@ -147,9 +146,10 @@ export function getMainViewCriticalValue(
 /**
  * 发射烟花
  */
-export function lightFireworks() {
+export async function lightFireworks() {
   const { width } = useWindowSize()
   const w = width.value
+  const { default: confetti } = await import("canvas-confetti")
 
   // 碎片的数量 介于 60 ~ 180 之间
   let particleCount = Math.round((0.08 * w) + 36)
