@@ -1,11 +1,19 @@
 <script lang="ts" setup>
+import { defineAsyncComponent, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { initFixedSideBar } from "./index"
 import SbContent from '../sb-content/sb-content.vue';
-import SbTags from '../sb-tags/sb-tags.vue';
 import { useSbfTouch } from "./tools/useSbfTouch";
 import type { SbfProps } from "./tools/types"
 
-defineProps<SbfProps>()
+const SbTags = defineAsyncComponent(() => import('../sb-tags/sb-tags.vue'))
+const { t } = useI18n()
+
+const props = defineProps<SbfProps>()
+const hasShownTags = ref(false)
+watch(() => props.expandState, (val) => {
+  if (val === 'tags') hasShownTags.value = true
+}, { immediate: true })
 
 const {
   TRANSITION_DURATION,
@@ -66,9 +74,15 @@ const {
         :class="{ 'sf-other_show': expandState === 'tags' }"
       >
         <div class="sf-inner-box">
-          <SbTags :show="expandState === 'tags'"
-            @aftertap="onTapPopup"
-          ></SbTags>
+          <Suspense v-if="hasShownTags">
+            <SbTags
+              :show="expandState === 'tags'"
+              @aftertap="onTapPopup"
+            ></SbTags>
+            <template #fallback>
+              <div class="liu-async-fallback sf-tags-fallback" role="status" :aria-label="t('common.processing')"></div>
+            </template>
+          </Suspense>
         </div>        
       </div>
 
@@ -151,6 +165,10 @@ const {
     height: max-content;
     position: relative;
   }
+}
+
+.sf-tags-fallback {
+  min-height: 160px;
 }
 
 .sf-main_hidden {

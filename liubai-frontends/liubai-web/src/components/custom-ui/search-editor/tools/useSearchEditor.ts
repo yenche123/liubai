@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../../tools/lazy-custom-ui"
 import { provide, reactive, ref, toRef, watch } from "vue";
 import type { 
   SearchEditorData,
@@ -48,17 +49,10 @@ let _resolve: SeResolver | undefined
 let rr: RouteAndLiuRouter | undefined
 
 export function initSearchEditor() {
+  useSeKeyboard({ whenOpen: showSearchEditor, seData, tranMs: TRANSITION_DURATION, show })
   initProvideData()
-  listenRouteChange()
   listenInputChange()
-
-  const opt = {
-    whenOpen: showSearchEditor,
-    seData,
-    tranMs: TRANSITION_DURATION,
-    show
-  }
-  useSeKeyboard(opt)
+  listenRouteChange()
 
   const onInput = (e: Event) => {
     //@ts-expect-error
@@ -79,7 +73,9 @@ export function initSearchEditor() {
 }
 
 
-export function showSearchEditor(param: SearchEditorParam) {
+export async function showSearchEditor(param: SearchEditorParam) {
+  await ensureCustomUi("search-editor")
+
   const initTxt = param.initText ?? ""
   seData.mode = param.type
   if(initTxt || param.type === "select_thread") {

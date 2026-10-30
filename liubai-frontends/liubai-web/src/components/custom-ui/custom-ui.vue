@@ -1,85 +1,49 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from "vue"
-import SnackBar from "./snack-bar/snack-bar.vue";
-import SearchEditor from "./search-editor/search-editor.vue";
-import StateEditor from "./state-editor/state-editor.vue";
-import CustomLoading from "./loading/custom-loading.vue";
+import SnackBar from "./snack-bar/snack-bar.vue"
+import CustomLoading from "./loading/custom-loading.vue"
+import { defineLazyCustomUi, requestedCustomUi } from "./tools/lazy-custom-ui"
+import { useCustomUiRoute } from "./tools/use-custom-ui-route"
+import { useSearchShortcut } from "./tools/use-search-shortcut"
 
-const CustomModal = defineAsyncComponent(() => import("./modal/custom-modal.vue"))
-const TextEditor = defineAsyncComponent(() => import("./text-editor/text-editor.vue"))
-const DatePicker = defineAsyncComponent(() => import("./date-picker/date-picker.vue"))
-const PreviewImage = defineAsyncComponent(() => import("./preview-image/preview-image.vue"))
-const HashtagEditor = defineAsyncComponent(() => import("./hashtag-editor/hashtag-editor.vue"))
-const ActionSheet = defineAsyncComponent(() => import("./action-sheet/action-sheet.vue"))
-const StateSelector = defineAsyncComponent(() => import("./state-selector/state-selector.vue"))
-const ShareView = defineAsyncComponent(() => import("./share-view/share-view.vue"))
-const ContentPanel = defineAsyncComponent(() => import("./content-panel/content-panel.vue"))
-const CommentPopup = defineAsyncComponent(() => import("./comment-popup/comment-popup.vue"))
-const HashtagSelector = defineAsyncComponent(() => import("./hashtag-selector/hashtag-selector.vue"))
-const QrcodePopup = defineAsyncComponent(() => import("./qrcode-popup/qrcode-popup.vue"))
-const BindPopup = defineAsyncComponent(() => import("./bind-popup/bind-popup.vue"))
-const BrowseCode = defineAsyncComponent(() => import("./browse-code/browse-code.vue"))
+const CustomModal = defineLazyCustomUi("modal", () => import("./modal/custom-modal.vue"))
+const TextEditor = defineLazyCustomUi("text-editor", () => import("./text-editor/text-editor.vue"))
+const DatePicker = defineLazyCustomUi("date-picker", () => import("./date-picker/date-picker.vue"))
+const PreviewImage = defineLazyCustomUi("preview-image", () => import("./preview-image/preview-image.vue"))
+const HashtagEditor = defineLazyCustomUi("hashtag-editor", () => import("./hashtag-editor/hashtag-editor.vue"))
+const ActionSheet = defineLazyCustomUi("action-sheet", () => import("./action-sheet/action-sheet.vue"))
+const StateSelector = defineLazyCustomUi("state-selector", () => import("./state-selector/state-selector.vue"))
+const StateEditor = defineLazyCustomUi("state-editor", () => import("./state-editor/state-editor.vue"))
+const ShareView = defineLazyCustomUi("share-view", () => import("./share-view/share-view.vue"))
+const ContentPanel = defineLazyCustomUi("content-panel", () => import("./content-panel/content-panel.vue"))
+const CommentPopup = defineLazyCustomUi("comment-popup", () => import("./comment-popup/comment-popup.vue"))
+const HashtagSelector = defineLazyCustomUi("hashtag-selector", () => import("./hashtag-selector/hashtag-selector.vue"))
+const QrcodePopup = defineLazyCustomUi("qrcode-popup", () => import("./qrcode-popup/qrcode-popup.vue"))
+const BindPopup = defineLazyCustomUi("bind-popup", () => import("./bind-popup/bind-popup.vue"))
+const BrowseCode = defineLazyCustomUi("browse-code", () => import("./browse-code/browse-code.vue"))
+const SearchEditor = defineLazyCustomUi("search-editor", () => import("./search-editor/search-editor.vue"))
 
+useCustomUiRoute()
+useSearchShortcut()
 </script>
+
 <template>
-
-  <!-- 弹窗 -->
-  <CustomModal></CustomModal>
-
-  <!-- 文字输入框 -->
-  <TextEditor></TextEditor>
-
-  <!-- 加载 loading 框 -->
-  <CustomLoading></CustomLoading>
-
-  <!-- hashtag 编辑器 -->
-  <HashtagEditor></HashtagEditor>
-
-  <!-- hashtag 选择器 -->
-  <HashtagSelector></HashtagSelector>
-
-  <!-- 日期选择器 -->
-  <DatePicker></DatePicker>
-
-  <!-- 预览图片 -->
-  <PreviewImage></PreviewImage>
-
-  <!-- actionsheet -->
-  <ActionSheet></ActionSheet>
-
-  <!-- snack-bar -->
-  <SnackBar></SnackBar>
-
-  <!-- 搜索 -->
-  <SearchEditor></SearchEditor>
-
-  <!-- 状态选择组件 -->
-  <StateSelector></StateSelector>
-
-  <!-- 状态编辑组件 -->
-  <StateEditor></StateEditor>
-
-  <!-- 分享管理弹窗: 公开分享、允许评论、到出至 -->
-  <ShareView></ShareView>
-
-  <!-- 内容选单 -->
-  <ContentPanel></ContentPanel>
-
-  <!-- 评论弹窗 -->
-  <CommentPopup></CommentPopup>
-
-  <!-- 二维码弹窗 -->
-  <QrcodePopup></QrcodePopup>
-
-  <!-- Bind account popup -->
-  <BindPopup></BindPopup>
-
-  <!-- Browse code -->
-  <BrowseCode></BrowseCode>
-
+  <!-- Keep each popup mounted after first use, preserving route listeners and state. -->
+  <CustomModal v-if="requestedCustomUi.modal" />
+  <TextEditor v-if="requestedCustomUi['text-editor']" />
+  <CustomLoading />
+  <HashtagEditor v-if="requestedCustomUi['hashtag-editor']" />
+  <HashtagSelector v-if="requestedCustomUi['hashtag-selector']" />
+  <DatePicker v-if="requestedCustomUi['date-picker']" />
+  <PreviewImage v-if="requestedCustomUi['preview-image']" />
+  <ActionSheet v-if="requestedCustomUi['action-sheet']" />
+  <SnackBar />
+  <SearchEditor v-if="requestedCustomUi['search-editor']" />
+  <StateSelector v-if="requestedCustomUi['state-selector']" />
+  <StateEditor v-if="requestedCustomUi['state-editor']" />
+  <ShareView v-if="requestedCustomUi['share-view']" />
+  <ContentPanel v-if="requestedCustomUi['content-panel']" />
+  <CommentPopup v-if="requestedCustomUi['comment-popup']" />
+  <QrcodePopup v-if="requestedCustomUi['qrcode-popup']" />
+  <BindPopup v-if="requestedCustomUi['bind-popup']" />
+  <BrowseCode v-if="requestedCustomUi['browse-code']" />
 </template>
-
-<style scoped lang="scss">
-
-
-</style>

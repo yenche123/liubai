@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../../tools/lazy-custom-ui"
 import { reactive, type ShallowRef, toRef, useTemplateRef, watch } from "vue"
 import type { 
   BpData, 
@@ -203,7 +204,9 @@ function toEnterFromFirstInput() {
   secondInputRef?.value?.focus()
 }
 
-export function showBindPopup(param: BpParam) {
+export async function showBindPopup(param: BpParam) {
+  await ensureCustomUi("bind-popup")
+
   bpData.compliance = param.compliance
   if(bpData.bindType !== param.bindType) {
     bpData.bindType = param.bindType

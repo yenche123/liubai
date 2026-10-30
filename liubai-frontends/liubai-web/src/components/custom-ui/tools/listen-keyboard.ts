@@ -132,6 +132,10 @@ export function cancelListenKeyboard() {
 export function toFocusInput(
   inputEl: Ref<HTMLInputElement | null>
 ) {
+  if(inputEl.value) {
+    inputEl.value.focus()
+    return
+  }
   const stop = watch(inputEl, (newV) => {
     if(!newV) return
     newV.focus()

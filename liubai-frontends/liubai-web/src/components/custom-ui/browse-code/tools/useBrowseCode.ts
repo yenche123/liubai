@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../../tools/lazy-custom-ui"
 import { reactive, watch } from "vue"
 import { useRouteAndLiuRouter } from "~/routes/liu-router"
 import type { RouteAndLiuRouter } from "~/routes/liu-router"
@@ -44,7 +45,7 @@ function listenRouteChange() {
 
     if (query[queryKey] === "01") {
       if (bcData.code) _toOpen()
-      else handleCustomUiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey, () => !bcData.code)
     }
     else {
       _toClose()
@@ -69,7 +70,7 @@ function onTapCopy() {
   }, 2000)
 }
 
-export function browseCode(param: BcParam) {
+export async function browseCode(param: BcParam) {
   if (!param.code) {
     console.warn("param.code 必须有值")
     return
@@ -77,6 +78,8 @@ export function browseCode(param: BcParam) {
 
   bcData.code = param.code
   bcData.language = param.language
+
+  await ensureCustomUi("browse-code")
 
   openIt(rr, queryKey)
 

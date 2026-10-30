@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { toRefs } from 'vue';
+import { defineAsyncComponent, ref, toRefs, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useSidebar } from './tools/useSidebar';
 import { useSidebarOther } from './tools/useSidebarOther';
 import { useSidebarRoute } from './tools/useSidebarRoute';
 import SbContent from './sb-content/sb-content.vue';
-import SbTags from './sb-tags/sb-tags.vue';
 import SbFixed from './sb-fixed/sb-fixed.vue';
 import SbBottom from './sb-bottom/sb-bottom.vue';
 import SbOpen from './sb-open/sb-open.vue';
+
+const SbTags = defineAsyncComponent(() => import('./sb-tags/sb-tags.vue'))
+const { t } = useI18n()
 
 const {
   bgSrc,
@@ -24,6 +27,10 @@ const {
 } = useSidebarOther()
 
 const { expandState } = useSidebarRoute()
+const hasShownTags = ref(false)
+watch(expandState, (val) => {
+  if (val === 'tags') hasShownTags.value = true
+}, { immediate: true })
 
 const {
   openType,
@@ -70,7 +77,12 @@ const {
       :class="{ 'sb-box-other_show': expandState === 'tags' }"
     >
       <div class="sb-inner-box">
-        <SbTags :show="expandState === 'tags'"></SbTags>
+        <Suspense v-if="hasShownTags">
+          <SbTags :show="expandState === 'tags'"></SbTags>
+          <template #fallback>
+            <div class="liu-async-fallback sb-tags-fallback" role="status" :aria-label="t('common.processing')"></div>
+          </template>
+        </Suspense>
       </div>
     </div>
 
@@ -121,12 +133,17 @@ const {
   top: 0;
   left: 0;
   bottom: 0;
+  width: v-bind("sidebarWidthPx + 'px'");
   height: 100vh;
   height: 100dvh;
   z-index: 600;
   transition: .3s;
   overflow: hidden;
   content-visibility: auto;
+}
+
+.sb-tags-fallback {
+  min-height: 160px;
 }
 
 .sb-container_hidden {

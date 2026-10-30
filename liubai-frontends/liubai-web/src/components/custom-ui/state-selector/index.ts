@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../tools/lazy-custom-ui"
 import type { 
   StateSelectorParam,
   SsResolver,
@@ -50,18 +51,20 @@ function listenRouteChange() {
 
     if(query[queryKey] === "01") {
       if(list.value.length) _toOpen()
-      else handleCustomUiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey, () => !list.value.length)
     }
     else {
       _toClose()
     }
-  })
+  }, { immediate: true })
 }
 
 
 export async function showStateSelector(param: StateSelectorParam) {
   const tmpList = getList()
   initList(tmpList, param.stateIdSelected)
+
+  await ensureCustomUi("state-selector")
 
   openIt(rr, queryKey)
 

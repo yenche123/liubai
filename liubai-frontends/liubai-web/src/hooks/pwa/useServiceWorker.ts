@@ -81,7 +81,7 @@ export function initServiceWorker() {
     if (!r) return
     setTimeout(() => {
       _checkSW(r)
-    }, time.SECOND)
+    }, 5 * time.SECOND)
     setInterval(() => {
       _checkSW(r)
     }, MIN_15)
@@ -117,7 +117,7 @@ export function initServiceWorker() {
     needRefresh,
     updateServiceWorker,
   } = useRegisterSW({
-    immediate: true,
+    immediate: false,
     onRegisteredSW,
     onRegisterError,
   })

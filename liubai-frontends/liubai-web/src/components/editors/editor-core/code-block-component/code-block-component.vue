@@ -87,10 +87,12 @@
 
 <script lang="ts">
 import { NodeViewContent, nodeViewProps, NodeViewWrapper } from '@tiptap/vue-3'
+import { createHighlightRefresh } from './tools/refresh-highlighting'
 import liuUtil from '~/utils/liu-util'
 import { useI18n } from 'vue-i18n'
 import { computed, ref, inject } from 'vue'
 import { 
+  ensureLowlightLanguages,
   showProgrammingLanguages,
   supportedToShow,
   showToSupported,
@@ -117,9 +119,18 @@ export default {
   setup(props) {
     const { t } = useI18n()
     const leaveTip = liuUtil.getHelpTip("Mod_Enter")
-    const languages = showProgrammingLanguages()
+    const languages = computed(() => showProgrammingLanguages())
     const cha = inject(deviceChaKey)
     const rr = useRouteAndLiuRouter()
+
+    void ensureLowlightLanguages().then((justLoaded) => {
+      if (!justLoaded || props.editor.isDestroyed) return
+      const pos = typeof props.getPos === "function" ? props.getPos() : undefined
+      if (typeof pos === "number") {
+        const tr = createHighlightRefresh(props.editor.state, pos)
+        if (tr) props.editor.view.dispatch(tr)
+      }
+    })
 
     const isBriefing = inject(editorBriefingKey, ref(false))
 

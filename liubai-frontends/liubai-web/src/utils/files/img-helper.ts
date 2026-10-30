@@ -1,8 +1,6 @@
-import Compressor from 'compressorjs';
 import type { LiuExif, ImageShow, LiuImageStore } from "~/types"
 import liuUtil from '../liu-util';
 import ider from '../basic/ider';
-import { encode as blurhashEncode } from "blurhash";
 import { getImgLayout } from "./tools/img-layout"
 import type { Ref } from "vue"
 import { useWindowSize } from "~/hooks/useVueUse"
@@ -121,10 +119,11 @@ async function compress<F extends FileOrBlob>(
   return list
 }
 
-function _toCompress<F extends FileOrBlob>(
+async function _toCompress<F extends FileOrBlob>(
   file: F,
   opt?: CompressOpt,
 ) {
+  const { default: Compressor } = await import("compressorjs")
   const fileSize = file.size
 
   // 1. handle maxWidth
@@ -181,6 +180,8 @@ async function getMetaDataFromFiles(
   exifs?: LiuExif[],
 ) {
   const list: LiuImageStore[] = []
+  if (files.length < 1) return list
+  const { encode: blurhashEncode } = await import("blurhash")
 
   const _get = (file: File) => {
 

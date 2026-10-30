@@ -25,6 +25,7 @@ class LocalWorkerSearchProvider implements SearchProvider {
 
   private worker: Worker | undefined
   private hasInit = false
+  private hasStartedWorker = false
   private hasHooks = false
   private isBroken = false
   private requestMap = new Map<string, PendingReq>()
@@ -37,6 +38,27 @@ class LocalWorkerSearchProvider implements SearchProvider {
   init() {
     if (this.hasInit) return
     this.hasInit = true
+    this.installHooks()
+
+    // 延后在浏览器空闲时启动搜索 Worker，避免抢占首屏网络与 IndexedDB IO
+    const startIdle = () => {
+      const schedule = (window as any).requestIdleCallback || ((cb: () => void) => setTimeout(cb, 200))
+      schedule(() => {
+        if (location.pathname.startsWith("/login")) return
+        this.ensureWorkerInitialized()
+      })
+    }
+
+    if (document.readyState === "complete") {
+      setTimeout(startIdle, 1500)
+    } else {
+      window.addEventListener("load", () => setTimeout(startIdle, 1500), { once: true })
+    }
+  }
+
+  private ensureWorkerInitialized() {
+    if (this.hasStartedWorker) return this.initPromise
+    this.hasStartedWorker = true
     this.ensureWorker()
     this.initPromise = this.call("init", undefined)
       .then(() => {
@@ -47,14 +69,13 @@ class LocalWorkerSearchProvider implements SearchProvider {
         console.warn("local search init failed")
         console.log(err)
       })
-
-    this.installHooks()
+    return this.initPromise
   }
 
   async searchContents(opt: SearchOpt) {
     if (this.isBroken) return []
 
-    const initPromise = this.initPromise
+    const initPromise = this.ensureWorkerInitialized()
     if (initPromise) {
       await initPromise
     }
@@ -100,6 +121,7 @@ class LocalWorkerSearchProvider implements SearchProvider {
     }
     this.pendingUpserts.clear()
     this.pendingRemovals.clear()
+    if (!this.hasStartedWorker) return
     const initPromise = this.initPromise
     if (initPromise) {
       await initPromise
@@ -232,6 +254,12 @@ class LocalWorkerSearchProvider implements SearchProvider {
   private async flushSync() {
     if (this.isBroken) return
     if (this.pendingUpserts.size < 1 && this.pendingRemovals.size < 1) return
+
+    const initPromise = this.ensureWorkerInitialized()
+    if (initPromise) {
+      await initPromise
+    }
+    if (this.isBroken) return
 
     const upsertCount = this.pendingUpserts.size
     const removalCount = this.pendingRemovals.size

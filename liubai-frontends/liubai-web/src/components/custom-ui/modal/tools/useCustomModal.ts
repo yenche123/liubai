@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../../tools/lazy-custom-ui"
 import { reactive, ref } from "vue"
 import { 
   toListenEnterKey, 
@@ -112,6 +113,8 @@ export function initModal() {
 export async function showModal(
   opt: ModalParam
 ): Promise<ModalSuccessRes> {
+  await ensureCustomUi("modal")
+
 
   modalData.title = opt.title ?? ""
   modalData.content = opt.content ?? ""

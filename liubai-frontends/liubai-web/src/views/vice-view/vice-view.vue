@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, toRefs, defineAsyncComponent } from "vue";
+import { ref, toRefs, watch, defineAsyncComponent } from "vue";
+import { useI18n } from "vue-i18n";
 import { useViceView } from "./tools/useViceView"
 import { useVvUI } from "./tools/useVvUI";
 import type { VcState } from "./vice-content/tools/types";
@@ -12,6 +13,7 @@ const ViceContent = defineAsyncComponent(() => {
 const IframeRestriction = defineAsyncComponent(() => {
   return import("./iframe-restriction/iframe-restriction.vue")
 })
+const { t } = useI18n()
 
 const emits = defineEmits<{
   (e: "widthchange", widthPx: number): void
@@ -45,6 +47,13 @@ const onVcStateChange = (newV: VcState) => {
   vcStateToIr.value = newV
 }
 
+const hasOpened = ref(false)
+watch(openType, (val) => {
+  if (val === "opened") {
+    hasOpened.value = true
+  }
+}, { immediate: true })
+
 const sbProperty = middleBridge.canShowScrollbarProperty()
 
 </script>
@@ -69,16 +78,22 @@ const sbProperty = middleBridge.canShowScrollbarProperty()
     <div class="vv-box" :class="{ 'vv-box_sb': sbProperty }">
 
       <div class="vv-inner-box">
-        <ViceContent :is-outter-draging="isDraging"
-          @vcstatechange="onVcStateChange"
-          @intendedminchange="onIntendedMinVvPxChange"
-        ></ViceContent>
+        <Suspense v-if="hasOpened">
+          <ViceContent
+            :is-outter-draging="isDraging"
+            @vcstatechange="onVcStateChange"
+            @intendedminchange="onIntendedMinVvPxChange"
+          ></ViceContent>
+          <template #fallback>
+            <div class="liu-async-fallback vv-content-fallback" role="status" :aria-label="t('common.processing')"></div>
+          </template>
+        </Suspense>
       </div>
       
     </div>
 
     <!-- 放于底部给用户拖动的盒子 -->
-    <vue-draggable-resizable
+    <vue-draggable-resizable v-if="hasOpened"
       @resizing="onResizing"
       :class-name="isAnimating ? 'liu-vv-vdr_animating' : 'liu-vv-vdr'"
       class-name-handle="liu-vv-vdr-handle"
@@ -102,7 +117,7 @@ const sbProperty = middleBridge.canShowScrollbarProperty()
     
   </div>
 
-  <IframeRestriction
+  <IframeRestriction v-if="hasOpened"
     :vice-view-px="viceViewPx"
     :vc-state="vcStateToIr"
   ></IframeRestriction>
@@ -115,6 +130,7 @@ const sbProperty = middleBridge.canShowScrollbarProperty()
   top: 0;
   right: 0;
   bottom: 0;
+  width: v-bind("viceViewPx + 'px'");
   height: 100vh;
   height: 100dvh;
   z-index: 700;
@@ -202,6 +218,10 @@ const sbProperty = middleBridge.canShowScrollbarProperty()
   height: 100%;
   position: relative;
   overflow: hidden;
+}
+
+.vv-content-fallback {
+  height: 100%;
 }
 
 .vv-box::-webkit-scrollbar-thumb {

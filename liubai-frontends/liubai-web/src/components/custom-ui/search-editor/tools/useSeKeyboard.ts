@@ -29,7 +29,7 @@ export function useSeKeyboard(param: SeKeyboardParam) {
     }
 
     allowSearch = true
-  })
+  }, { immediate: true })
 
   const _keydownDuringOpening = (e: KeyboardEvent) => {
     const key = e.key

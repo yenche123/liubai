@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../../tools/lazy-custom-ui"
 import type {
   TeData,
   TextEditorSuccessRes,
@@ -123,6 +124,8 @@ export function initTextEditor() {
 export async function showTextEditor(
   opt: TextEditorParam
 ): Promise<TextEditorSuccessRes> {
+  await ensureCustomUi("text-editor")
+
   teData.title = opt.title ?? ""
   teData.title_key = opt.title_key ?? ""
   teData.placeholder = opt.placeholder ?? ""

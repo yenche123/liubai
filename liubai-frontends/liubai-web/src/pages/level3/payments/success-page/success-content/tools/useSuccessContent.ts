@@ -11,7 +11,7 @@ import liuEnv from "~/utils/liu-env";
 import { useRouteAndLiuRouter } from "~/routes/liu-router";
 import liuApi from "~/utils/liu-api";
 import cui from "~/components/custom-ui";
-import { useQRCode } from "~/hooks/useVueUse";
+import { useQRCode } from "@vueuse/integrations/useQRCode";
 
 const SEC_3 = time.SECOND * 3
 

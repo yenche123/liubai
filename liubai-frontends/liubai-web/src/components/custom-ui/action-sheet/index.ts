@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../tools/lazy-custom-ui"
 import { reactive, ref } from "vue"
 import type {
   ActionSheetParam,
@@ -31,7 +32,9 @@ export function initActionSheet() {
   }
 }
 
-export function showActionSheet(opt: ActionSheetParam) {
+export async function showActionSheet(opt: ActionSheetParam) {
+  await ensureCustomUi("action-sheet")
+
   asData.title = opt.title ?? ""
   asData.title_key = opt.title_key ?? ""
   asData.itemList = opt.itemList

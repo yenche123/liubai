@@ -1,3 +1,4 @@
+import { ensureCustomUi } from "../../tools/lazy-custom-ui"
 import { reactive, ref, watch } from "vue"
 import valTool from "~/utils/basic/val-tool"
 import type { HteData, HteResolver } from "./types"
@@ -71,7 +72,7 @@ function listenRouteChange() {
 
     if(query[queryKey] === "01") {
       if(hteData.mode !== "") _toOpen()
-      else handleCustomUiQueryErr(rr, queryKey)
+      else handleCustomUiQueryErr(rr, queryKey, () => !hteData.mode)
       return
     }
 
@@ -85,7 +86,7 @@ function listenRouteChange() {
 }
 
 
-export function showHashtagEditor(opt: HashTagEditorParam) {
+export async function showHashtagEditor(opt: HashTagEditorParam) {
   firstInputVal = opt.text ?? ""
   setInputTxt(firstInputVal)
   firstEmoji = opt.icon ? liuApi.decode_URI_component(opt.icon) : ""
@@ -99,6 +100,8 @@ export function showHashtagEditor(opt: HashTagEditorParam) {
   if(opt.mode === "search") {
     initRecent(hteData)
   }
+
+  await ensureCustomUi("hashtag-editor")
 
   openIt(rr, queryKey)
 

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { PropType } from 'vue';
+import { provide, type PropType } from 'vue';
 import StateNavi from '../state-navi/state-navi.vue';
 import type { StateWhichPage } from "../tools/types";
 import type { KanbanColumn } from '~/types/types-content';
 import { useInjectSnIndicator } from "../tools/useSnIndicator";
 import cfg from "~/config"
-import { SlickList, SlickItem, HandleDirective } from 'vue-slicksort'
+import { SlickList, SlickItem, HandleDirective, plugin as Slicksort } from 'vue-slicksort'
 import { useKanbanColumns } from '../tools/useKanbanColumns';
 import KvColumn from "./kv-column/kv-column.vue"
 import { useI18n } from 'vue-i18n';
@@ -30,6 +30,7 @@ const props = defineProps({
 })
 
 useKanbanView()
+Slicksort.install?.({ directive: () => {}, provide } as any)
 const vHandle = HandleDirective
 
 const iconColor = "var(--main-note)"

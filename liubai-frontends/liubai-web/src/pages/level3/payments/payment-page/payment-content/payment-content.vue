@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { usePaymentContent } from "./tools/usePaymentContent"
-import { useQRCode } from "~/hooks/useVueUse"
+import { useQRCode } from "@vueuse/integrations/useQRCode"
 
 const { t } = useI18n()
 const { 

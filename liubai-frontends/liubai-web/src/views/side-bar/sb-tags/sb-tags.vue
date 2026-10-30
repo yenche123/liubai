@@ -2,6 +2,7 @@
 import { useI18n } from 'vue-i18n';
 import cfg from "~/config"
 import { Draggable } from "@he-tree/vue";
+import "@he-tree/vue/style/default.css";
 import { useSbTags } from "./tools/useSbTags";
 import { RouterLink } from 'vue-router'
 import SbtItem from './sbt-item/sbt-item.vue';

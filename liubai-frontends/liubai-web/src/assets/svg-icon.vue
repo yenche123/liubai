@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
+import { loadSvgIcon } from './load-svg-icon';
 
 const props = defineProps({
   prefix: {
@@ -26,6 +27,12 @@ const props = defineProps({
 const symbolId = computed(() => {
   return `#${props.prefix}-${props.name}`
 })
+
+watch(() => [props.name, props.prefix], () => {
+  void loadSvgIcon(props.name, props.prefix).catch((error) => {
+    console.warn(`Failed to load SVG icon: ${props.name}`, error)
+  })
+}, { immediate: true })
 
 </script>
 <template>

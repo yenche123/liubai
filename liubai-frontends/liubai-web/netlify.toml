@@ -6,7 +6,7 @@
 
 [build]
   publish = "dist"
-  command = "pnpm run build"
+  command = "bun run build"
 
 [[redirects]]
   from = "/*"
@@ -25,3 +25,4 @@
     max-age=31536000,
     immutable
     '''
+

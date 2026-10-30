@@ -55,6 +55,19 @@
   background-color: var(--bg-color);
 }
 
+/** Shared loading placeholder for lazily loaded panels. */
+.liu-async-fallback {
+  width: 100%;
+  background: linear-gradient(90deg, transparent, var(--line-default), transparent);
+  background-size: 200% 100%;
+  animation: liu-async-fallback 1.2s ease-in-out infinite;
+}
+
+@keyframes liu-async-fallback {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
 /************************ premium **********************/
 .liu-premium {
   font-size: var(--state-font);

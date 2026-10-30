@@ -14,7 +14,6 @@ import {
   useDateFormat,
   useNow,
 } from "@vueuse/core"
-import { useQRCode } from "@vueuse/integrations/useQRCode"
 import type { NetworkState } from "@vueuse/core"
 
 const useWindowSize = () => {
@@ -52,8 +51,6 @@ export {
 
   // 当浏览器分页被聚焦时
   useWindowFocus,
-
-  useQRCode,
 
   useScreenOrientation,
 
