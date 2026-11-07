@@ -13,17 +13,19 @@
         <span>{{ t("editor.leave_codeBlock", { tip: leaveTip }) }}</span>
       </div>
 
-      <select contenteditable="false" v-model="langDisplayed">
-        <option :value="null">
-          Auto
-        </option>
-        <option disabled>
-          —
-        </option>
-        <option v-for="(language, index) in languages" :value="language" :key="index">
-          {{ language }}
-        </option>
-      </select>
+      <div class="cb-language-select" contenteditable="false">
+        <select v-model="langDisplayed">
+          <option :value="null">
+            Auto
+          </option>
+          <option disabled>
+            —
+          </option>
+          <option v-for="(language, index) in languages" :value="language" :key="index">
+            {{ language }}
+          </option>
+        </select>
+      </div>
 
     </div>
 
@@ -207,7 +209,6 @@ export default {
       languages, 
       isBriefing,
       isMobile: cha?.isMobile,
-      isSafari: cha?.isSafari,
       leaveTip, 
       selectedLanguage,
       langDisplayed,
@@ -253,20 +254,40 @@ export default {
       opacity: 0;
     }
 
+    .cb-language-select {
+      position: relative;
+      flex-shrink: 0;
+      margin: 0.1rem;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        inset-inline-end: 0.65rem;
+        width: 0.4rem;
+        height: 0.4rem;
+        border-right: 1.5px solid var(--main-text);
+        border-bottom: 1.5px solid var(--main-text);
+        transform: translateY(-75%) rotate(45deg);
+        pointer-events: none;
+      }
+    }
+
     select {
       font-size: var(--btn-font);
       font-family: inherit;
       color: var(--main-text);
-      margin: 0.1rem;
+      margin: 0;
       border: 1px solid var(--line-default);
       border-radius: 0.3rem;
-      padding: 0.1rem 0.4rem;
+      padding: 0.1rem 0.6rem;
+      padding-inline-end: 1.7rem;
       background: var(--card-bg);
       accent-color: var(--main-text);
       user-select: none;
       -webkit-user-select: none;
       cursor: pointer;
-      appearance: v-bind("isSafari ? 'none' : 'auto'");
+      appearance: none;
 
       &[disabled] {
         opacity: 0.8;
