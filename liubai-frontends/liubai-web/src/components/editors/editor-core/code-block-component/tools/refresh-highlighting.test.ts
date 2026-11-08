@@ -27,7 +27,10 @@ describe("async code highlighting refresh", () => {
     ["select all", new AllSelection(doc)],
   ])("preserves %s and document content", (_, selection) => {
     const state = EditorState.create({ doc, selection })
-    const tr = createHighlightRefresh(state, pos)!
+    const tr = createHighlightRefresh(state, pos)
+    if (!tr) {
+      throw new Error("Expected a highlighting refresh transaction for the code block")
+    }
     const next = state.apply(tr)
     expect(tr.docChanged).toBe(true)
     expect(tr.getMeta("addToHistory")).toBe(false)
