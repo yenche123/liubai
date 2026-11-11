@@ -151,6 +151,9 @@ export function initExtensions(
       code: false,
       horizontalRule: false,
       link: false,
+      // Keep a trailing paragraph for editing after a code block, but do not
+      // render an artificial empty line at the bottom of read-only cards.
+      trailingNode: props.isEdit ? {} : false,
     }),
     Placeholder.configure({
       placeholder: ({ node }) => {
