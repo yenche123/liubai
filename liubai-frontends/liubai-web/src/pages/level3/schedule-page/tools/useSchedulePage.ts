@@ -33,6 +33,7 @@ export function useSchedulePage() {
       title: whenStr, 
       placeholder_key: "calendar.what_to_add",
       confirm_key: "common.add",
+      maxLength: 66,
     })
     if(!res3.confirm || !res3.value) return
     toAddNewAgenda(whenStamp, res3.value)
