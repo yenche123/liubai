@@ -1,4 +1,13 @@
-import { inject, reactive, watch } from "vue";
+import {
+  inject,
+  onActivated,
+  onBeforeUnmount,
+  onDeactivated,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from "vue";
 import { type RouteAndLiuRouter, useRouteAndLiuRouter } from "~/routes/liu-router";
 import liuEnv from "~/utils/liu-env";
 import type { PcData } from "./types";
@@ -9,16 +18,27 @@ import liuApi from "~/utils/liu-api";
 import localCache from "~/utils/system/local-cache";
 import { deviceChaKey } from "~/utils/provide-keys";
 import valTool from "~/utils/basic/val-tool";
-import { useThrottleFn } from "~/hooks/useVueUse"; 
+import {
+  useDocumentVisibility,
+  useThrottleFn,
+  useWindowFocus,
+} from "~/hooks/useVueUse";
 import cui from "~/components/custom-ui";
 import { 
   buyViaAlipayWap,
   buyViaWxpayJSAPI, 
+  clearPendingAlipayPayment,
   getWxGzhOpenid, 
+  isPendingAlipayPayment,
   preloadAlipayWap, 
   redirectForWxGzhOpenid,
+  waitForOrderPaid,
 } from "../../../utils/pay-tools";
 import { fetchOrder } from "~/requests/shared";
+import time from "~/utils/basic/time";
+
+const ALIPAY_STATUS_POLL_INTERVAL = 2 * time.SECOND
+const ALIPAY_STATUS_POLL_MAX_TIMES = 15
 
 export function usePaymentContent() {
   const rr = useRouteAndLiuRouter()
@@ -26,16 +46,151 @@ export function usePaymentContent() {
   const pcData = reactive<PcData>({
     state: hasBackend ? pageStates.LOADING : pageStates.NEED_BACKEND,
   })
+  const alipayPaying = ref(false)
+  const visibility = useDocumentVisibility()
+  const focused = useWindowFocus()
+  let alipayPollTimeout: ReturnType<typeof setTimeout> | undefined
+  let alipayPollRun = 0
+  let alipayPollTimes = 0
+  let alipayPollActive = false
+  let alipayPollInFlight = false
+
+  const stopAlipayStatusPolling = () => {
+    alipayPollRun++
+    alipayPollTimes = 0
+    alipayPollActive = false
+    if(alipayPollTimeout) {
+      clearTimeout(alipayPollTimeout)
+      alipayPollTimeout = undefined
+    }
+  }
+
+  const checkAlipayOrder = async (run: number) => {
+    const order_id = pcData.order_id
+    if(!order_id || !alipayPaying.value || run !== alipayPollRun) return true
+
+    let res: Awaited<ReturnType<typeof fetchOrder>>
+    try {
+      res = await fetchOrder(order_id)
+    }
+    catch(err) {
+      console.warn("failed to check Alipay order status", err)
+      return false
+    }
+    if(run !== alipayPollRun || order_id !== pcData.order_id) return true
+
+    const orderData = res.data?.orderData
+    if(res.code === "0000" && orderData) {
+      pcData.state = pageStates.OK
+      setNewOrderData(pcData, orderData)
+
+      if(orderData.orderStatus === "PAID") {
+        alipayPaying.value = false
+        clearPendingAlipayPayment()
+        stopAlipayStatusPolling()
+        await rr.router.replace({ name: "payment-success" })
+        return true
+      }
+
+      if(orderData.orderStatus === "CLOSED" || orderData.canPay === false) {
+        alipayPaying.value = false
+        clearPendingAlipayPayment()
+        stopAlipayStatusPolling()
+        return true
+      }
+    }
+
+    return false
+  }
+
+  const startAlipayStatusPolling = (delayFirstCheck = false) => {
+    if(!alipayPaying.value || visibility.value !== "visible") return
+    if(rr.route.name !== "payment" || rr.route.params.order_id !== pcData.order_id) return
+    if(alipayPollActive || alipayPollInFlight) return
+
+    alipayPollActive = true
+    alipayPollTimes = 0
+    const run = alipayPollRun
+
+    const poll = async () => {
+      if(run !== alipayPollRun || !alipayPaying.value) return
+      alipayPollInFlight = true
+      alipayPollTimes++
+      try {
+        const isDone = await checkAlipayOrder(run)
+        if(isDone || run !== alipayPollRun || !alipayPaying.value) return
+        if(alipayPollTimes >= ALIPAY_STATUS_POLL_MAX_TIMES) {
+          alipayPollActive = false
+          return
+        }
+
+        alipayPollTimeout = setTimeout(poll, ALIPAY_STATUS_POLL_INTERVAL)
+      }
+      finally {
+        alipayPollInFlight = false
+        // A visibility/route change may have invalidated this request. Resume
+        // only after it finishes, so multiple lifecycle events cannot overlap it.
+        if(run !== alipayPollRun) handlePageVisible()
+      }
+    }
+
+    if(delayFirstCheck) {
+      alipayPollTimeout = setTimeout(poll, ALIPAY_STATUS_POLL_INTERVAL)
+    }
+    else poll()
+  }
+
+  const handlePageVisible = () => {
+    if(visibility.value === "visible" && alipayPaying.value) {
+      startAlipayStatusPolling()
+    }
+  }
+
+  const onPageShow = () => handlePageVisible()
+
+  watch([visibility, focused], (
+    [newVisibility, newFocused],
+    [oldVisibility, oldFocused],
+  ) => {
+    const becameVisible = newVisibility === "visible" && oldVisibility === "hidden"
+    const regainedFocus = newFocused && !oldFocused
+    if(becameVisible || regainedFocus) handlePageVisible()
+    if(newVisibility === "hidden") {
+      stopAlipayStatusPolling()
+    }
+  })
+
+  onMounted(() => {
+    window.addEventListener("pageshow", onPageShow)
+  })
+  onActivated(() => handlePageVisible())
+  onDeactivated(() => stopAlipayStatusPolling())
+  onBeforeUnmount(() => {
+    window.removeEventListener("pageshow", onPageShow)
+    stopAlipayStatusPolling()
+  })
 
   const cha = inject(deviceChaKey)
-  initPaymentContent(pcData, rr)
+  initPaymentContent(pcData, rr, (order_id) => {
+    alipayPaying.value = false
+    stopAlipayStatusPolling()
+    if(isPendingAlipayPayment(order_id)) {
+      alipayPaying.value = true
+      startAlipayStatusPolling()
+    }
+    return alipayPaying.value
+  })
 
   const onTapWxpayJSAPI = useThrottleFn(() => {
     whenTapWxpayJSAPI(pcData, rr)
   }, 1000)
 
   const onTapAlipay = useThrottleFn(() => {
-    whenTapAlipay(pcData, rr)
+    whenTapAlipay(pcData, rr, (isPaying) => {
+      alipayPaying.value = isPaying
+      if(isPaying) startAlipayStatusPolling(true)
+      else stopAlipayStatusPolling()
+    })
   }, 1000)
 
   const onTapWxpayH5 = useThrottleFn(() => {
@@ -63,9 +218,10 @@ export function usePaymentContent() {
   }
 }
 
-function whenTapAlipay(
+async function whenTapAlipay(
   pcData: PcData,
   rr: RouteAndLiuRouter,
+  onPayingChanged: (isPaying: boolean) => void,
 ) {
   // 1. check if we can pay
   const od = pcData.od
@@ -77,7 +233,8 @@ function whenTapAlipay(
 
   // 2. invoke pay-tool
   const order_id = od.order_id
-  buyViaAlipayWap(order_id, rr, "payment")
+  const isStarted = await buyViaAlipayWap(order_id, rr, "payment")
+  onPayingChanged(isStarted)
 }
 
 async function whenTapWxpayH5(
@@ -95,13 +252,16 @@ async function whenTapWxpayH5(
   // 2. use wxpay H5 but use popup for now
   const order_id = od.order_id
   const res2 = await cui.showQRCodePopup({ bindType: "one_off_pay", order_id })
-  if(res2.resultType === "error") return
+  if(res2.resultType !== "plz_check") return
 
-  // 3. fetch order data
+  // 3. Refresh once after the QR popup has detected a completed/expired order.
   const res3 = await fetchOrder(order_id)
-  const od3 = res3.data?.orderData
-  if(od3?.orderStatus === "PAID") {
-    rr.router.replace({ name: "payment-success" })
+  const orderData = res3.data?.orderData
+  if(!orderData) return
+  pcData.state = pageStates.OK
+  setNewOrderData(pcData, orderData)
+  if(orderData.orderStatus === "PAID") {
+    await rr.router.replace({ name: "payment-success" })
   }
 }
 
@@ -128,7 +288,7 @@ async function whenTapWxpayJSAPI(
   // 3. buy via wxpay
   const res3 = await buyViaWxpayJSAPI(order_id, wx_gzh_openid)
   if(res3) {
-    rr.router.replace({ name: "payment-success" })
+    await goToPaymentSuccessAfterWxpay(order_id, rr, pcData)
   }
 }
 
@@ -145,6 +305,7 @@ function showCannotPayTip() {
 function initPaymentContent(
   pcData: PcData,
   rr: RouteAndLiuRouter,
+  onOrderChanged: (order_id: string) => boolean,
 ) {
   if(pcData.state === pageStates.NEED_BACKEND) return
   watch(rr.route, (newV) => {
@@ -154,6 +315,9 @@ function initPaymentContent(
     if(!valTool.isStringWithVal(order_id)) return
     if(pcData.order_id === order_id) return
     pcData.order_id = order_id
+    pcData.od = undefined
+    pcData.state = pageStates.LOADING
+    if(onOrderChanged(order_id)) return
 
     // 2.1 check out code from wx gzh oAuth
     const { code } = newV.query
@@ -287,7 +451,7 @@ async function fetchOrderData(
   if(opt?.fr === "wx_gzh_oauth" && wx_gzh_openid) {
     const res5 = await buyViaWxpayJSAPI(order_id, wx_gzh_openid)
     if(!res5) return
-    rr.router.replace({ name: "payment-success" })
+    await goToPaymentSuccessAfterWxpay(order_id, rr, pcData)
     return
   }
 
@@ -298,6 +462,23 @@ async function fetchOrderData(
     return
   }
   
+}
+
+async function goToPaymentSuccessAfterWxpay(
+  order_id: string,
+  rr: RouteAndLiuRouter,
+  pcData?: PcData,
+) {
+  cui.showLoading({ title_key: "payment.paying" })
+  const result = await waitForOrderPaid(order_id)
+  cui.hideLoading()
+  if(pcData && result.orderData) {
+    pcData.state = pageStates.OK
+    setNewOrderData(pcData, result.orderData)
+  }
+  if(result.status === "paid") {
+    await rr.router.replace({ name: "payment-success" })
+  }
 }
 
 function setNewOrderData(

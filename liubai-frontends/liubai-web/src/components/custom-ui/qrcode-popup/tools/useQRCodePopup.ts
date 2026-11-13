@@ -52,6 +52,7 @@ const qpData = reactive<QpData>({
 })
 
 let rr: RouteAndLiuRouter | undefined
+let oneOffPayRun = 0
 
 export function initQRCodePopup() {
   rr = useRouteAndLiuRouter()
@@ -68,6 +69,7 @@ export function initQRCodePopup() {
 
 
 export async function showQRCodePopup(param: QpParam) {
+  oneOffPayRun++
   const bT = param.bindType
   qpData.bindType = bT
   qpData.order_id = param.order_id
@@ -162,6 +164,8 @@ async function fetchData() {
   // 3. show qrcode for one-off pay
   if(bT === "one_off_pay") {
     handle_one_off_pay()
+    const run = oneOffPayRun
+    pollTimeout = setTimeout(() => pollOneOffPayOrder(run), SEC_3)
     return
   }
 
@@ -187,6 +191,42 @@ function handle_one_off_pay() {
   const path = `/payment/${order_id}`
   qpData.qr_code = `${origin}${path}`
   qpData.loading = false
+}
+
+async function pollOneOffPayOrder(run: number) {
+  const order_id = qpData.order_id
+  if(run !== oneOffPayRun) return
+  if(!order_id || qpData.bindType !== "one_off_pay") return
+  if(!qpData.enable) return
+
+  qpData.runTimes++
+  if(qpData.runTimes >= 100) {
+    _over({ resultType: "plz_check" })
+    return
+  }
+
+  try {
+    const res = await fetchOrder(order_id)
+    if(run !== oneOffPayRun || !qpData.enable || qpData.order_id !== order_id) return
+    if(res.code === "E4004") {
+      _over()
+      return
+    }
+
+    const orderData = res.data?.orderData
+    if(orderData?.orderStatus === "PAID" || orderData?.canPay === false) {
+      _over({ resultType: "plz_check" })
+      return
+    }
+  }
+  catch(err) {
+    console.warn("failed to check one-off payment order status", err)
+  }
+
+  if(qpData.enable && run === oneOffPayRun) {
+    if(pollTimeout) clearTimeout(pollTimeout)
+    pollTimeout = setTimeout(() => pollOneOffPayOrder(run), SEC_3)
+  }
 }
 
 
@@ -413,6 +453,11 @@ function onTapMask() {
 function _over(
   res?: QpResult,
 ) {
+  oneOffPayRun++
+  if(pollTimeout) {
+    clearTimeout(pollTimeout)
+    pollTimeout = undefined
+  }
   if(!res) {
     res = { resultType: "error" }
   }
@@ -434,6 +479,8 @@ function _toOpen() {
 }
 
 async function _toClose() {
+  oneOffPayRun++
+  if(pollTimeout) clearTimeout(pollTimeout)
   if(!qpData.enable) return
   if(toggleTimeout) {
     clearTimeout(toggleTimeout)

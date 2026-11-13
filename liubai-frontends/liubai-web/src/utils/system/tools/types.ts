@@ -60,6 +60,10 @@ export interface LocalOnceData {
   goto?: string
   gotoStamp?: number
 
+  // the latest Alipay order waiting for the payment page to resume
+  alipayOrderId?: string
+  alipayOrderStamp?: number
+
   // the timestamp when user launched the app
   launchStamp?: number
   launchNum?: number

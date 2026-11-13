@@ -11,6 +11,7 @@ import type {
   UserSubscription,
   Wxpay_Jsapi_Params,
 } from "~/types/types-cloud";
+import type { Res_OrderData } from "~/requests/req-types";
 import time from "~/utils/basic/time";
 import type { BoolFunc, SimpleObject } from "~/utils/basic/type-tool";
 import localCache from "~/utils/system/local-cache";
@@ -25,6 +26,7 @@ import type { UserLocalTable } from "~/types/types-table";
 import { db } from "~/utils/db";
 import liuApi from "~/utils/liu-api";
 import type { RouteAndLiuRouter } from "~/routes/liu-router";
+import { fetchOrder } from "~/requests/shared";
 
 let initData: UserLoginAPI.Res_Init | undefined
 
@@ -98,6 +100,66 @@ interface VwjData {
 }
 
 const vwjData: VwjData = {}
+
+const PAYMENT_STATUS_POLL_INTERVAL = 2 * time.SECOND
+const PAYMENT_STATUS_POLL_MAX_TIMES = 15
+const ALIPAY_PAYMENT_INTENT_MAX_AGE = 15 * time.MINUTE
+
+export function isPendingAlipayPayment(order_id: string) {
+  const onceData = localCache.getOnceData()
+  if(onceData.alipayOrderId !== order_id) return false
+  const stamp = onceData.alipayOrderStamp ?? 0
+  if(time.getLocalTime() - stamp > ALIPAY_PAYMENT_INTENT_MAX_AGE) {
+    clearPendingAlipayPayment()
+    return false
+  }
+  return true
+}
+
+function markPendingAlipayPayment(order_id: string) {
+  localCache.setOnceData("alipayOrderId", order_id)
+  localCache.setOnceData("alipayOrderStamp", time.getLocalTime())
+}
+
+export function clearPendingAlipayPayment() {
+  localCache.setOnceData("alipayOrderId", undefined)
+  localCache.setOnceData("alipayOrderStamp", undefined)
+}
+
+export interface WaitForOrderPaidResult {
+  status: "paid" | "closed" | "timeout"
+  orderData?: Res_OrderData
+}
+
+export async function waitForOrderPaid(
+  order_id: string,
+): Promise<WaitForOrderPaidResult> {
+  let latestOrderData: Res_OrderData | undefined
+  for(let i = 0; i < PAYMENT_STATUS_POLL_MAX_TIMES; i++) {
+    try {
+      const res = await fetchOrder(order_id)
+      const orderData = res.data?.orderData
+      if(orderData) latestOrderData = orderData
+      if(orderData?.orderStatus === "PAID") {
+        return { status: "paid", orderData }
+      }
+      if(orderData?.orderStatus === "CLOSED" || orderData?.canPay === false) {
+        return { status: "closed", orderData }
+      }
+    }
+    catch(err) {
+      console.warn("failed to check payment order status", err)
+    }
+
+    if(i < PAYMENT_STATUS_POLL_MAX_TIMES - 1) {
+      await new Promise(resolve => {
+        setTimeout(resolve, PAYMENT_STATUS_POLL_INTERVAL)
+      })
+    }
+  }
+
+  return { status: "timeout", orderData: latestOrderData }
+}
 
 // pay by JSAPI of Wxpay
 export async function buyViaWxpayJSAPI(
@@ -223,6 +285,8 @@ function jumpToAlipayWap(
 ) {
   const url = vawData.wap_url
   if(!url) return
+  const order_id = vawData.order_id
+  if(order_id) markPendingAlipayPayment(order_id)
   cui.showLoading({ title_key: "payment.paying" })
 
   const cha = liuApi.getCharacteristic()
@@ -238,7 +302,6 @@ function jumpToAlipayWap(
   setTimeout(() => {
     cui.hideLoading()
 
-    const order_id = vawData.order_id
     if(!order_id) return
     if(currentPage === "subscription" && !cha.isAlipay) {
       rr.router.push({ name: "payment", params: { order_id } })
